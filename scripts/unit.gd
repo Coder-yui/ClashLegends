@@ -96,7 +96,6 @@ var _presentation: UnitPresentation = null
 
 # 渲染插值：sim 为 20Hz，渲染在上一模拟位置与当前位置间过渡
 var _prev_pos := Vector2.ZERO
-var _interp := 1.0
 var _vis_offset := Vector2.ZERO
 
 func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
@@ -152,9 +151,8 @@ func _process(delta: float) -> void:
 		return
 	if is_building or hp <= 0.0:
 		return
-	# 主机/单机：渲染层在两次模拟之间插值
-	_interp = minf(_interp + delta / SIM_DT, 1.0)
-	_vis_offset = (_prev_pos - position) * (1.0 - _interp)
+	# 主机/单机：使用 main 的统一模拟余量插值，不能让每个节点独立累计进度。
+	_vis_offset = get_visual_screen_position() - position
 	_sync_presentation(get_visual_state_code(), _facing_x)
 	queue_redraw()
 
@@ -177,6 +175,16 @@ func get_visual_state_code() -> int:
 func get_facing_x() -> float:
 	return _facing_x
 
+## 3D 与 2D 表现都直接读取同一个最终渲染位置，不依赖彼此的 _process 执行顺序。
+func get_visual_screen_position() -> Vector2:
+	if _in_client_mode():
+		return global_position
+	var scene := get_tree().current_scene
+	var alpha := 1.0
+	if scene != null and scene.has_method("get_sim_interpolation_alpha"):
+		alpha = scene.get_sim_interpolation_alpha()
+	return _prev_pos.lerp(global_position, alpha)
+
 func get_attack_visual_serial() -> int:
 	return _attack_visual_serial
 
@@ -197,7 +205,6 @@ func sim_tick(dt: float) -> void:
 	if hp <= 0.0:
 		return
 	_prev_pos = position
-	_interp = 0.0
 	_move_intent = Vector2.ZERO
 	_forced_movement = false
 	# CR 卡牌落地后有部署时间；期间不索敌、不移动、不可被锁定。

@@ -268,6 +268,13 @@ func _setup_player_ui() -> void:
 func is_net_client() -> bool:
 	return mode == "client"
 
+## 固定模拟完成后剩余时间占一个 tick 的比例。所有本地表现共用该值，避免各节点
+## 独立累计插值进度，或因 Unit / 3D 代理的 _process 顺序不同而前后跳动。
+func get_sim_interpolation_alpha() -> float:
+	if mode == "client":
+		return 1.0
+	return clampf(_sim_acc / SIM_DT, 0.0, 1.0)
+
 func _setup_battle_presentation() -> void:
 	if _battle_presentation != null:
 		return

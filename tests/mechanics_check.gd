@@ -36,6 +36,7 @@ func _run() -> void:
 	_check_nearest_unit_or_building_target()
 	_check_per_card_sight()
 	_check_visual_state_contract()
+	_check_shared_render_interpolation()
 	_check_unit_reaches_and_damages_tower()
 	_check_garen_death_animation()
 	_check_masteryi_art_integration()
@@ -423,6 +424,28 @@ func _check_visual_state_contract() -> void:
 	_expect(unit.visual_radius > unit.body_radius and unit._presentation != null, "单位美术尺寸与物理碰撞同样已解耦")
 	unit.free()
 
+func _check_shared_render_interpolation() -> void:
+	var stats: Dictionary = CardDB.all()["masteryi"].duplicate(true)
+	stats["deploy_time"] = 0.0
+	var unit := Unit.new()
+	unit.position = Vector2(300.0, 900.0)
+	unit.setup(0, stats, stats.name)
+	_main.add_child(unit)
+	unit._prev_pos = Vector2(300.0, 900.0)
+	unit.position = Vector2(300.0, 903.9)
+	var saved_accumulator: float = _main._sim_acc
+	_main._sim_acc = 0.0
+	var at_start := unit.get_visual_screen_position()
+	_main._sim_acc = _main.SIM_DT * 0.5
+	var at_half := unit.get_visual_screen_position()
+	_main._sim_acc = _main.SIM_DT
+	var at_end := unit.get_visual_screen_position()
+	_main._sim_acc = saved_accumulator
+	var monotonic := at_start.y < at_half.y and at_half.y < at_end.y
+	var exact := is_equal_approx(at_start.y, 900.0) and is_equal_approx(at_half.y, 901.95) and is_equal_approx(at_end.y, 903.9)
+	_expect(monotonic and exact, "高速单位使用主模拟器统一 alpha 在前后状态间单调插值")
+	unit.free()
+
 func _check_unit_reaches_and_damages_tower() -> void:
 	var stats: Dictionary = CardDB.all()["garen"].duplicate(true)
 	stats["deploy_time"] = 0.0
@@ -504,13 +527,16 @@ func _check_masteryi_art_integration() -> void:
 	var attached: bool = _main._battle_presentation.attach_unit(unit, stats)
 	unit.take_damage(unit.max_hp + 1.0)
 	var death_view_found := false
+	var process_order_ok := false
 	for child in _main._battle_presentation._world_root.get_children():
 		if child is UnitModel3D and child._source == unit:
 			var view := child as UnitModel3D
 			death_view_found = view._dying and view._animation_player.current_animation == "Death"
+			process_order_ok = view.process_priority > unit.process_priority
 			view.free()
 			break
 	_expect(attached and death_view_found, "剑圣死亡时由独立 3D 代理播放完整 Death")
+	_expect(process_order_ok, "客户端 3D 代理在 Unit 快照插值完成后读取最终位置")
 	if is_instance_valid(unit):
 		unit.free()
 	if sample != null:

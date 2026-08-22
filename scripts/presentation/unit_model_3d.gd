@@ -21,6 +21,8 @@ var _death_animation := &""
 var _dying := false
 
 func setup(unit: Unit, packed: PackedScene, camera: Camera3D, animations: Dictionary, forward_yaw: float) -> bool:
+	# 客户端 Unit 会在默认优先级更新快照插值；3D 代理随后读取最终位置。
+	process_priority = 10
 	var instance := packed.instantiate()
 	if not instance is Node3D:
 		push_warning("单位 3D 表现场景的根节点必须是 Node3D")
@@ -54,7 +56,7 @@ func _process(delta: float) -> void:
 	_sync_visual(false, delta)
 
 func _sync_visual(force: bool, delta: float) -> void:
-	var screen_position := _source.global_position + _source._vis_offset
+	var screen_position := _source.get_visual_screen_position()
 	var ground_position := _screen_to_ground(screen_position)
 	position = ground_position
 
