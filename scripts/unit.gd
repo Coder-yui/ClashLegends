@@ -9,6 +9,8 @@ class_name Unit
 ## 渲染层每帧在前后两个模拟位置间插值，画面保持流畅。
 ## 联机时客户端单位由 main 的快照插值驱动（net_target_pos），不跑本地模拟。
 
+signal died
+
 const SIM_DT := 1.0 / 20.0
 const PATH_REACH := 8.0
 const REPATH_INTERVAL := 0.25
@@ -39,6 +41,7 @@ var can_attack_air := true
 var continuous_attack := false
 var color := Color.DIM_GRAY
 var visual_frames: SpriteFrames = null
+var has_model_art := false
 var deploy_time := 1.0
 var first_hit_time := 0.2
 var projectile_speed := 0.0
@@ -63,6 +66,9 @@ var _attack_cd := 0.0
 var _attacking := false
 var _attack_windup := 0.0
 var _attack_load := 0.0
+var _attack_visual_serial := 0
+var _attack_visual_pending := false
+var _death_visual_emitted := false
 var _deploy_timer := 0.0
 var _lifespan_left := 0.0
 var _spawn_timer := 0.0
@@ -85,6 +91,7 @@ var _just_deployed := false
 var _facing_x := 1.0
 var net_visual_state := 1
 var net_facing_x := 1.0
+var net_attack_visual_serial := 0
 var _presentation: UnitPresentation = null
 
 # 渲染插值：sim 为 20Hz，渲染在上一模拟位置与当前位置间过渡
@@ -170,6 +177,21 @@ func get_visual_state_code() -> int:
 func get_facing_x() -> float:
 	return _facing_x
 
+func get_attack_visual_serial() -> int:
+	return _attack_visual_serial
+
+## 3D 表现使用完整方向；客户端首版仍按队伍推进方向显示，避免扩大快照协议。
+func get_visual_facing_direction() -> Vector2:
+	if _in_client_mode():
+		return Vector2.UP if team == 0 else Vector2.DOWN
+	if _attacking and _target != null and is_instance_valid(_target):
+		var attack_direction: Vector2 = global_position.direction_to(_target.global_position)
+		if attack_direction.length_squared() > 0.001:
+			return attack_direction
+	if _move_direction.length_squared() > 0.001:
+		return _move_direction.normalized()
+	return Vector2.UP if team == 0 else Vector2.DOWN
+
 ## 固定 tick 模拟入口，由 main._sim_step 以 SIM_DT 驱动
 func sim_tick(dt: float) -> void:
 	if hp <= 0.0:
@@ -209,6 +231,7 @@ func sim_tick(dt: float) -> void:
 			if not _attacking:
 				# 移动期间会预装填一部分攻击周期；被推出射程会丢失这次预装填。
 				_attack_windup = maxf(first_hit_time, attack_interval - _attack_load)
+				_attack_visual_pending = true
 			_attacking = true
 			_path = PackedVector2Array()
 			_path_index = 0
@@ -443,7 +466,9 @@ func _follow_current_path(dt: float) -> void:
 				break
 	if _path_index < _path.size():
 		_prepare_movement((_path[_path_index] - global_position).normalized(), dt)
-	elif _target != null and not (_target is Tower):
+	elif _target != null and _target_gap(_target) > attack_range:
+		# A* 终点落在离散格心，可能比精确攻击圈多出几像素。所有目标都补齐最后一段，
+		# 尤其不能让 Tower 在路径结束后停在射程外；连续碰撞仍会阻止单位穿入塔身。
 		_prepare_movement((_target.global_position - global_position).normalized(), dt)
 
 func _prepare_movement(direction: Vector2, _dt: float) -> void:
@@ -498,18 +523,29 @@ func _attack(dt: float) -> void:
 	if absf(face_delta) > 0.05:
 		_facing_x = signf(face_delta)
 	if _attack_windup > 0.0:
+		_try_start_attack_visual(_attack_windup)
 		_attack_windup = maxf(0.0, _attack_windup - dt)
 		if _attack_windup > 0.0:
 			return
 	if continuous_attack:
 		_deal_attack_damage(damage * dt)
 		return
+	_try_start_attack_visual(_attack_cd)
 	if _attack_cd <= 0.0:
 		_attack_cd = attack_interval
 		var hit_damage := damage * (charge_damage_multiplier if _charged else 1.0)
 		_deal_attack_damage(hit_damage)
 		_attack_load = 0.0
+		_attack_visual_pending = true
 		cancel_charge()
+
+## 每次攻击在命中前 first_hit_time 发出一次表现序号。表现层可以据此播放完整动作，
+## 但伤害仍只由上面的固定 tick 逻辑结算。
+func _try_start_attack_visual(time_until_hit: float) -> void:
+	if continuous_attack or not _attack_visual_pending or time_until_hit > first_hit_time + 0.001:
+		return
+	_attack_visual_pending = false
+	_attack_visual_serial += 1
 
 func _deal_attack_damage(amount: float) -> void:
 	if _target == null or not is_instance_valid(_target):
@@ -568,10 +604,19 @@ func _die() -> void:
 		if scene != null and scene.has_method("unblock_nav_cells"):
 			scene.unblock_nav_cells(nav_cells)
 		nav_cells = []
-	# 联机单位死亡 → 通知主机立即清理 net_id 映射（快照靠缺席判定给客户端移除）
+	# 表现层只保留一个无碰撞代理播放死亡动作；战斗节点仍在本帧释放。
+	notify_visual_death()
+	# 联机单位死亡 → 主机可靠通知客户端播放死亡动作，并立即清理 net_id 映射。
 	if net_id >= 0 and scene != null and scene.has_method("on_unit_died"):
 		scene.on_unit_died(net_id)
 	queue_free()
+
+## 可由客户端死亡 RPC / 快照缺席兜底调用；信号只发一次，避免重复死亡表现。
+func notify_visual_death() -> void:
+	if _death_visual_emitted:
+		return
+	_death_visual_emitted = true
+	died.emit()
 
 func _draw() -> void:
 	draw_set_transform(_vis_offset, 0.0, Vector2.ONE)
@@ -581,7 +626,7 @@ func _draw() -> void:
 			target_pos += (_target as Unit)._vis_offset
 		var dir := (target_pos - global_position).normalized()
 		draw_line(dir * body_radius, target_pos - global_position, Color(0.95, 0.6, 0.2, 0.8), 3.0)
-	var has_art := _presentation != null and _presentation.has_art()
+	var has_art := has_model_art or (_presentation != null and _presentation.has_art())
 	if is_building and not has_art:
 		draw_rect(Rect2(-body_radius, -body_radius, body_radius * 2.0, body_radius * 2.0), color)
 		draw_rect(Rect2(-body_radius, -body_radius, body_radius * 2.0, body_radius * 2.0), Color(0.2, 0.18, 0.12), false, 2.0)

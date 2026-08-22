@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/units/masteryi/source/masteryi.glb" id="1_masteryi"]
+
+[node name="MasterYiView" type="Node3D"]
+
+[node name="Model" parent="." instance=ExtResource("1_masteryi")]
+position = Vector3(0, 0.009, 0)
+scale = Vector3(0.0121, 0.0121, 0.0121)

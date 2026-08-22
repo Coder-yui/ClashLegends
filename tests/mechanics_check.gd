@@ -17,6 +17,7 @@ func _run() -> void:
 	_main._start_local()
 	_main.set_process(false)
 	_main._ai.set_process(false)
+	_expect(_main._battle_presentation._viewport.msaa_3d == Viewport.MSAA_4X, "3D 单位视口启用 4x MSAA，降低高速移动轮廓频闪")
 
 	_check_official_arena_grid()
 	_check_lane_weight_field()
@@ -35,6 +36,9 @@ func _run() -> void:
 	_check_nearest_unit_or_building_target()
 	_check_per_card_sight()
 	_check_visual_state_contract()
+	_check_unit_reaches_and_damages_tower()
+	_check_garen_death_animation()
+	_check_masteryi_art_integration()
 	_check_attack_target_lock()
 	_check_basic_attack_has_no_knockback()
 	_check_freed_target_cleanup()
@@ -418,6 +422,99 @@ func _check_visual_state_contract() -> void:
 	_expect(deploy_state_ok and move_state_ok and attack_state_ok, "表现层可读取部署/移动/攻击状态，但不驱动战斗逻辑")
 	_expect(unit.visual_radius > unit.body_radius and unit._presentation != null, "单位美术尺寸与物理碰撞同样已解耦")
 	unit.free()
+
+func _check_unit_reaches_and_damages_tower() -> void:
+	var stats: Dictionary = CardDB.all()["garen"].duplicate(true)
+	stats["deploy_time"] = 0.0
+	stats["hp"] = 100000.0
+	var tower: Tower = _main._towers[3]
+	var unit := Unit.new()
+	var stop_distance: float = tower.body_radius + stats.radius + stats.range
+	unit.position = tower.position + Vector2.DOWN * (stop_distance + 12.0)
+	unit.setup(0, stats, stats.name)
+	_main.add_child(unit)
+	unit._target = tower
+	var hp_before := tower.hp
+	tower.frozen_timer = 5.0
+	for _tick in 60:
+		_main._sim_step(_main.SIM_DT)
+	_expect(tower.hp < hp_before, "攻城单位会补齐 A* 末端距离并对塔造成伤害")
+	var hit_ratio := unit.first_hit_time / unit.attack_interval
+	_expect(hit_ratio > 0.3 and hit_ratio < 0.4, "盖伦权威命中点提前到完整攻击周期约 35%")
+	_expect(unit.get_attack_visual_serial() >= 2, "连续真实攻击会产生递增的独立表现序号")
+	var attack_animations: Array = stats.visual_animations.attack
+	_expect(attack_animations == ["Attack1", "Attack2"], "盖伦两套攻击动作按表现序号交替选择")
+	tower.hp = hp_before
+	tower.frozen_timer = 0.0
+	if is_instance_valid(unit):
+		unit.free()
+
+func _check_garen_death_animation() -> void:
+	var stats: Dictionary = CardDB.all()["garen"].duplicate(true)
+	stats["deploy_time"] = 0.0
+	var unit := Unit.new()
+	unit.position = Vector2(360.0, 900.0)
+	unit.setup(0, stats, stats.name)
+	_main.add_child(unit)
+	var attached: bool = _main._battle_presentation.attach_unit(unit, stats)
+	var death_signal_count := [0]
+	unit.died.connect(func() -> void: death_signal_count[0] += 1)
+	unit.take_damage(unit.max_hp + 1.0)
+	var death_view_found := false
+	for child in _main._battle_presentation._world_root.get_children():
+		if child is UnitModel3D and child._source == unit:
+			var view := child as UnitModel3D
+			death_view_found = view._dying and view._animation_player.current_animation == "Death"
+			view.free()
+			break
+	_expect(attached and death_signal_count[0] == 1 and death_view_found, "盖伦死亡时立即退出战斗并由独立 3D 代理播放 Death")
+	if is_instance_valid(unit):
+		unit.free()
+
+func _find_anim_player(node: Node) -> AnimationPlayer:
+	if node is AnimationPlayer:
+		return node as AnimationPlayer
+	for child in node.get_children():
+		var found := _find_anim_player(child)
+		if found != null:
+			return found
+	return null
+
+func _check_masteryi_art_integration() -> void:
+	var stats: Dictionary = CardDB.all()["masteryi"].duplicate(true)
+	stats["deploy_time"] = 0.0
+	var packed := load(stats.visual_scene_path) as PackedScene
+	_expect(packed != null, "剑圣包装场景可加载")
+	if packed == null:
+		return
+	var anim_names: Dictionary = stats.visual_animations
+	var sample := packed.instantiate() as Node3D
+	var anim_player := _find_anim_player(sample)
+	var names_found := true
+	for key in ["deploy", "idle", "move", "death"]:
+		var animation_name: String = anim_names.get(key, "")
+		names_found = names_found and animation_name != "" and anim_player != null and anim_player.has_animation(animation_name)
+	_expect(names_found, "剑圣 Idle/Run/A 两套普攻/Death/Deploy 动画名在源模型中都存在")
+	var attacks: Array = anim_names.attack
+	_expect(attacks == ["masteryi_2013_attack1_anm", "masteryi_2013_attack2_anm"], "剑圣两套攻击动作按表现序号交替选择")
+	var unit := Unit.new()
+	unit.position = Vector2(360.0, 900.0)
+	unit.setup(0, stats, stats.name)
+	_main.add_child(unit)
+	var attached: bool = _main._battle_presentation.attach_unit(unit, stats)
+	unit.take_damage(unit.max_hp + 1.0)
+	var death_view_found := false
+	for child in _main._battle_presentation._world_root.get_children():
+		if child is UnitModel3D and child._source == unit:
+			var view := child as UnitModel3D
+			death_view_found = view._dying and view._animation_player.current_animation == "Death"
+			view.free()
+			break
+	_expect(attached and death_view_found, "剑圣死亡时由独立 3D 代理播放完整 Death")
+	if is_instance_valid(unit):
+		unit.free()
+	if sample != null:
+		sample.free()
 
 func _check_attack_target_lock() -> void:
 	var stats: Dictionary = CardDB.all()["xin"].duplicate()

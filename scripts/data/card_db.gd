@@ -16,8 +16,15 @@ static func all() -> Dictionary:
 		"garen": {
 			"name": "盖伦", "cost": 5, "type": "unit",
 			"hp": 1050.0, "damage": 88.0, "range": 32.0,
-			"speed": 46.0, "interval": 1.1, "first_hit": 0.4, "radius": 16.0, "visual_radius": 19.0, "mass": 8.0, "sight": 220.0,
+			# 命中位于攻击周期约 35% 处，给挥剑留出短前摇，把较长时间留给收招。
+			"speed": 46.0, "interval": 1.1, "first_hit": 0.38, "radius": 16.0, "visual_radius": 19.0, "mass": 8.0, "sight": 220.0,
 			"color": Color(0.35, 0.55, 0.90),
+			"visual_scene_path": "res://assets/units/garen/garen_view.tscn",
+			"visual_forward_yaw": 0.0,
+			"visual_animations": {
+				"deploy": "Respawn_Base", "idle": "Idle1_Base",
+				"move": "Run_Base", "attack": ["Attack1", "Attack2"], "death": "Death",
+			},
 			"is_air": false, "building_only": true, "can_attack_air": false,
 		},
 		"xin": {
@@ -58,6 +65,12 @@ static func all() -> Dictionary:
 			"hp": 480.0, "damage": 52.0, "range": 28.0,
 			"speed": 78.0, "interval": 0.45, "first_hit": 0.2, "radius": 12.0, "visual_radius": 16.0, "mass": 4.0, "sight": 200.0,
 			"color": Color(0.20, 0.80, 0.50),
+			"visual_scene_path": "res://assets/units/masteryi/masteryi_view.tscn",
+			"visual_forward_yaw": 0.0,
+			"visual_animations": {
+				"deploy": "Respawn", "idle": "masteryi_2013_idle1_anm",
+				"move": "Run", "attack": ["masteryi_2013_attack1_anm", "masteryi_2013_attack2_anm"], "death": "Death",
+			},
 			"is_air": false, "building_only": false, "can_attack_air": false,
 		},
 		"tombstone": {

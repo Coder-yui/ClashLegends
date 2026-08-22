@@ -12,7 +12,8 @@
 
 1. 用 Godot 4.x 打开本目录（识别 `project.godot`）
 2. 按 F5 运行主场景 `scenes/main.tscn`
-3. 目前无命令行测试；验证方式 = 在编辑器中运行并观察行为
+3. 核心机制回归：`Godot --headless --path . --script tests/mechanics_check.gd`
+4. 美术接入还必须在编辑器或实际渲染中目视检查，不能只依赖 headless 测试
 
 ## 目录结构
 
@@ -22,14 +23,15 @@ scenes/              场景文件（.tscn）
 scripts/             GDScript 脚本
   data/card_db.gd    卡牌数值定义（改数值只动这里）
 docs/                规划与文档
-assets/              美术/音效资源（阶段 4 才填充，不入库二进制大文件）
+assets/              美术/音效资源（约定见 assets/README.md；大体积源文件不入库）
 ```
 
 ## 代码约定
 
 - 使用 Godot 4 语法（`func _process(delta: float) -> void:` 全类型标注）
 - 注释与 UI 文案使用中文，标识符使用英文
-- 当前阶段所有视觉均为代码绘制（`_draw()` + 色块/圆形），**不要引入图片资源**
+- 阶段 4 已允许接入美术资源；资源结构遵循 `assets/README.md`，3D 近战角色遵循 `docs/MELEE_3D_INTEGRATION.md`
+- 美术表现不得驱动伤害、碰撞、寻路或联网权威状态
 - 场景尽量由代码构建，保持 .tscn 文件极简，便于 AI 读写
 - 战斗单位与塔都加入 `combatants` 组，统一接口：`team` / `hp` / `body_radius` / `take_damage(amount)`
 
@@ -47,4 +49,5 @@ assets/              美术/音效资源（阶段 4 才填充，不入库二进�
 - [ ] **阶段 3 进行中**：ENet 主机权威联机（端口 39152）。主机端跑完整模拟，客户端只发部署 RPC + 收快照插值（`is_net_client()` 判断），新单位/新机制必须走 `_spawn_unit` / `_cast_spell` 才能被同步
 - 无界面联机测试：`-- --mode=host --auto-test` / `-- --mode=join --ip=127.0.0.1 --auto-test`（headless 需配大 --quit-after）
 - 新增卡牌先看 `docs/CARD_DESIGN.md`，数值只改 `scripts/data/card_db.gd`
-- 阶段 4 未开始，不要引入美术资源
+- **阶段 4 进行中**：已加入竞技场背景与盖伦原始模型；按 `assets/README.md` 归档，表现层不得驱动战斗逻辑
+- 接入剑圣、亚索等普通近战 3D 角色前，必须完整阅读并执行 `docs/MELEE_3D_INTEGRATION.md`

@@ -68,6 +68,7 @@ var _timer_label: Label
 var _king_player: Tower
 var _king_enemy: Tower
 var _towers: Array[Tower] = []
+var _battle_presentation: BattlePresentation3D
 
 # 主菜单
 var _menu_layer: CanvasLayer
@@ -177,6 +178,7 @@ func _start_local() -> void:
 	mode = "local"
 	_match_started = true
 	_hide_menu()
+	_setup_battle_presentation()
 	_setup_player_ui()
 	_ai = AIOpponent.new()
 	add_child(_ai)
@@ -225,6 +227,7 @@ func _start_client(ip: String) -> void:
 func _begin_net_match_host() -> void:
 	_match_started = true
 	_hide_menu()
+	_setup_battle_presentation()
 	_setup_player_ui()
 	_elixir_p1 = ElixirManager.new()
 	add_child(_elixir_p1)
@@ -238,6 +241,7 @@ func _rpc_start() -> void:
 	print("[联机] 客户端：收到开局通知")
 	_hide_menu()
 	_flip_camera()
+	_setup_battle_presentation()
 	_setup_player_ui()
 	_create_towers()
 	_build_nav()
@@ -263,6 +267,13 @@ func _setup_player_ui() -> void:
 
 func is_net_client() -> bool:
 	return mode == "client"
+
+func _setup_battle_presentation() -> void:
+	if _battle_presentation != null:
+		return
+	_battle_presentation = BattlePresentation3D.new()
+	add_child(_battle_presentation)
+	_battle_presentation.setup(Vector2(FIELD_W, FIELD_H), TILE_SIZE)
 
 ## 顶部右侧的比赛计时器
 func _create_timer_ui() -> void:
@@ -654,6 +665,8 @@ func _spawn_unit(team: int, card_id: String, pos: Vector2) -> Unit:
 	u.position = pos
 	u.setup(team, stats, stats.name)
 	add_child(u)
+	if _battle_presentation != null:
+		_battle_presentation.attach_unit(u, stats)
 	# 建筑卡：把占地格动态注册进导航网格，死亡/到期时由 unit._die 解除
 	if nav != null and u.is_building:
 		u.nav_cells = nav.cells_for_rect(_structure_rect(u).grow(NAV_CLEARANCE + NAV_GRID_PADDING))
@@ -679,9 +692,11 @@ func find_ground_path(from: Vector2, goal: Vector2, _target: Node2D, _mover_radi
 		return PackedVector2Array()
 	return nav.find_path(from, goal)
 
-## 单位死亡回调（由 unit._die 调用）：主机端立即清理 net_id 映射
+## 单位死亡回调（由 unit._die 调用）：主机可靠广播死亡表现并立即清理映射。
 func on_unit_died(id: int) -> void:
 	_net_units.erase(id)
+	if mode == "host":
+		_rpc_unit_died.rpc(id)
 
 ## 固定 20Hz 模拟步：驱动全部战斗单位与塔，处理国王塔激活与障碍移除。
 ## 帧率高低只影响每帧跑多少步，不改变战斗结果（联机两端行为一致）。
@@ -1085,12 +1100,30 @@ func _rpc_spawn_unit(card_id: String, p_team: int, pos: Vector2, net_id: int) ->
 	u.net_id = net_id
 	u.net_target_pos = pos
 	add_child(u)
+	if _battle_presentation != null:
+		_battle_presentation.attach_unit(u, stats)
 	if nav != null and u.is_building:
 		u.nav_cells = nav.cells_for_rect(_structure_rect(u).grow(NAV_CLEARANCE + NAV_GRID_PADDING))
 		nav.set_cells_blocked(u.nav_cells, true)
 	_client_units[net_id] = u
 	if _auto_test:
 		print("[测试] 客户端收到单位生成: ", card_id, " net_id=", net_id)
+
+## 主机 → 客户端：可靠触发死亡动作。逻辑单位立即释放，3D 代理独立播完动作。
+@rpc("authority", "call_remote", "reliable")
+func _rpc_unit_died(net_id: int) -> void:
+	if mode != "client":
+		return
+	var u: Unit = _client_units.get(net_id)
+	if u == null or not is_instance_valid(u):
+		_client_units.erase(net_id)
+		return
+	if u.is_building and not u.nav_cells.is_empty():
+		unblock_nav_cells(u.nav_cells)
+		u.nav_cells = []
+	u.notify_visual_death()
+	u.queue_free()
+	_client_units.erase(net_id)
 
 ## 主机 → 客户端：定期快照（位置/血量/金币/计时）
 @rpc("authority", "call_remote", "unreliable")
@@ -1110,6 +1143,8 @@ func _rpc_snapshot(units_data: Array, projectiles_data: Array, towers_data: Arra
 		if d.size() >= 8:
 			u.net_visual_state = d[6]
 			u.net_facing_x = d[7]
+		if d.size() >= 9:
+			u.net_attack_visual_serial = d[8]
 		u.queue_redraw()
 	# 快照中消失的单位 = 已死亡
 	var gone := []
@@ -1122,6 +1157,7 @@ func _rpc_snapshot(units_data: Array, projectiles_data: Array, towers_data: Arra
 			if u.is_building and not u.nav_cells.is_empty():
 				unblock_nav_cells(u.nav_cells)
 				u.nav_cells = []
+			u.notify_visual_death()
 			u.queue_free()
 		_client_units.erase(id)
 	var seen_projectiles := {}
@@ -1187,7 +1223,7 @@ func _send_snapshot() -> void:
 		if u == null or not is_instance_valid(u) or u.hp <= 0.0:
 			dead.append(id)
 			continue
-		units_data.append([id, u.global_position.x, u.global_position.y, u.hp, 1 if u.frozen_timer > 0.0 else 0, 1 if u.is_charged() else 0, u.get_visual_state_code(), u.get_facing_x()])
+		units_data.append([id, u.global_position.x, u.global_position.y, u.hp, 1 if u.frozen_timer > 0.0 else 0, 1 if u.is_charged() else 0, u.get_visual_state_code(), u.get_facing_x(), u.get_attack_visual_serial()])
 	for id in dead:
 		_net_units.erase(id)
 	var towers_data := []

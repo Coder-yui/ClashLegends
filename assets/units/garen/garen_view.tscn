@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/units/garen/source/garen.glb" id="1_garen"]
+
+[node name="GarenView" type="Node3D"]
+
+[node name="Model" parent="." instance=ExtResource("1_garen")]
+position = Vector3(0, -0.013, 0)
+scale = Vector3(0.008, 0.008, 0.008)

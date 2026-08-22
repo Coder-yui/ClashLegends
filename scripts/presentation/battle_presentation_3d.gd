@@ -1,0 +1,86 @@
+class_name BattlePresentation3D
+extends Node
+## 战场的 3D 表现容器。模拟、碰撞与联机仍在 Node2D 中运行；
+## 本节点只把带 visual_scene_path 的单位镜像到透明 3D 视口。
+
+var _viewport: SubViewport
+var _world_root: Node3D
+var _camera: Camera3D
+
+func setup(field_size: Vector2, tile_size: float) -> void:
+	_viewport = SubViewport.new()
+	_viewport.name = "UnitViewport3D"
+	_viewport.size = Vector2i(roundi(field_size.x), roundi(field_size.y))
+	_viewport.transparent_bg = true
+	_viewport.own_world_3d = true
+	# 高速移动的细长武器和模型轮廓容易产生时间闪烁；4x MSAA 只改善 3D 表现，不影响模拟。
+	_viewport.msaa_3d = Viewport.MSAA_4X
+	_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	add_child(_viewport)
+
+	_world_root = Node3D.new()
+	_world_root.name = "UnitWorld3D"
+	_viewport.add_child(_world_root)
+
+	_create_environment()
+	_create_camera(field_size.y / tile_size)
+
+	# 透明视口作为普通 2D 画布叠在灰盒地图之上；后添加的单位血条仍会画在它上面。
+	var overlay := Sprite2D.new()
+	overlay.name = "UnitOverlay3D"
+	overlay.centered = false
+	overlay.texture = _viewport.get_texture()
+	add_child(overlay)
+
+func attach_unit(unit: Unit, stats: Dictionary) -> bool:
+	var scene_path: String = stats.get("visual_scene_path", "")
+	if scene_path.is_empty():
+		return false
+	var packed := load(scene_path) as PackedScene
+	if packed == null:
+		push_warning("无法加载单位 3D 表现：%s" % scene_path)
+		return false
+	var view := UnitModel3D.new()
+	_world_root.add_child(view)
+	var animations: Dictionary = stats.get("visual_animations", {})
+	var forward_yaw: float = stats.get("visual_forward_yaw", 0.0)
+	if not view.setup(unit, packed, _camera, animations, forward_yaw):
+		view.queue_free()
+		return false
+	unit.has_model_art = true
+	unit.queue_redraw()
+	return true
+
+func _create_camera(field_rows: float) -> void:
+	_camera = Camera3D.new()
+	_camera.name = "UnitCamera3D"
+	_camera.projection = Camera3D.PROJECTION_ORTHOGONAL
+	_camera.keep_aspect = Camera3D.KEEP_HEIGHT
+	_camera.size = field_rows
+	_camera.near = 0.1
+	_camera.far = 100.0
+	_camera.position = Vector3(0.0, 24.0, 24.0)
+	_world_root.add_child(_camera)
+	_camera.look_at(Vector3.ZERO, Vector3.UP)
+	_camera.current = true
+
+func _create_environment() -> void:
+	var environment := Environment.new()
+	environment.background_mode = Environment.BG_COLOR
+	environment.background_color = Color(0.0, 0.0, 0.0, 0.0)
+	environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+	environment.ambient_light_color = Color(0.72, 0.76, 0.86)
+	environment.ambient_light_energy = 1.1
+
+	var world_environment := WorldEnvironment.new()
+	world_environment.name = "UnitEnvironment3D"
+	world_environment.environment = environment
+	_world_root.add_child(world_environment)
+
+	var light := DirectionalLight3D.new()
+	light.name = "UnitKeyLight3D"
+	light.rotation_degrees = Vector3(-55.0, -35.0, 0.0)
+	light.light_color = Color(1.0, 0.93, 0.82)
+	light.light_energy = 1.35
+	light.shadow_enabled = false
+	_world_root.add_child(light)
