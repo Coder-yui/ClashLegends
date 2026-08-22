@@ -1,0 +1,7 @@
+# Godot 4 编辑器缓存
+.godot/
+# 导出产物
+export_presets.cfg
+builds/
+# macOS
+.DS_Store
