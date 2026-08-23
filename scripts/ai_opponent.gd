@@ -9,9 +9,11 @@ const PLAY_THRESHOLD := 6.0   # 金币攒到这个数才开始出牌
 var _main: Node
 var _elixir: ElixirManager
 var _think_timer := 0.0
+var _deck: Array = []
 
-func setup(main: Node) -> void:
+func setup(main: Node, deck: Array = []) -> void:
 	_main = main
+	_deck = deck
 	_elixir = ElixirManager.new()
 	add_child(_elixir)
 
@@ -26,7 +28,8 @@ func _process(delta: float) -> void:
 	if _elixir.elixir < PLAY_THRESHOLD:
 		return
 	var affordable := []
-	for card_id in CardDB.all():
+	var candidate_ids: Array = _deck if _deck.size() == 8 else CardDB.all().keys()
+	for card_id in candidate_ids:
 		var stats: Dictionary = CardDB.all()[card_id]
 		if _elixir.can_afford(stats.cost):
 			affordable.append(card_id)
@@ -52,7 +55,7 @@ func _play(card_id: String, stats: Dictionary) -> void:
 			# 单位在公主塔前方的合法格出兵；旧坐标 y=250 会与新塔位直接重叠。
 			var bx: float = _main.BRIDGE_X_LEFT if randi() % 2 == 0 else _main.BRIDGE_X_RIGHT
 			pos = Vector2(bx + randf_range(-30.0, 30.0), 460.0)
-	pos = _main._snap_card_position(card_id, pos)
+	pos = _main._snap_card_position(card_id, pos, 1)
 	if not _main.is_card_deploy_position_valid(1, card_id, pos):
 		return
 	if not _elixir.spend(stats.cost):

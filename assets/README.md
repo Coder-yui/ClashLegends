@@ -9,10 +9,35 @@ assets/
   arena/
     arena_default.png          # 竞技场背景（1200x1311）
   units/
+    ashe/
+      ashe_view.tscn          # 首个远程 3D 样例，Attack 离弦后生成蓝色小箭
+      source/
+        ashe.glb
     garen/
       garen_view.tscn         # 运行时 3D 包装场景（统一缩放与脚底原点）
       source/
         garen.glb              # 盖伦原始 3D 模型
+    gwen/
+      gwen_view.tscn          # 格温包装场景，已校正脚底高度
+      source/
+        gwen.glb
+    sett/
+      sett_view.tscn          # 瑟提包装场景，四段左右拳与右拳收势
+      source/
+        sett.glb
+    teemo/
+      teemo_view.tscn         # 提莫远程包装场景，暂用绿色短线毒针
+      source/
+        teemo.glb
+  towers/
+    princess/
+      princess_tower_blue_view.tscn
+      princess_tower_red_view.tscn
+      source/                  # 蓝/红方塔 GLB 及导入纹理
+    nexus/
+      nexus_blue_view.tscn
+      nexus_red_view.tscn
+      source/                  # 蓝/红方水晶 GLB 及导入纹理
 ```
 
 ## 目录约定
@@ -44,3 +69,13 @@ assets/
 普通近战角色的完整操作步骤、验收项和排错方法见
 [`docs/MELEE_3D_INTEGRATION.md`](../docs/MELEE_3D_INTEGRATION.md)。后续接入应复用现有
 `BattlePresentation3D` / `UnitModel3D`，不要为每个角色复制表现脚本。
+
+远程角色还需执行
+[`docs/RANGED_3D_INTEGRATION.md`](../docs/RANGED_3D_INTEGRATION.md)，尤其要区分“动画
+离弦时创建弹体”和“弹体抵达时结算伤害”。
+
+防御塔和基地水晶同样采用“2D 权威节点 + 3D 表现代理”。双方素材分别使用明确的
+`blue` / `red` 文件名；原始下载文件名中的 `(2)` 已归档为红方版本。塔的 `Base` 与
+`Rubble`、水晶的 startup（`SRUAP_OrderNexus_Mat`）与 `Destroyed` 是同一网格中的
+独立材质表面：存活时只显示前者，摧毁后切换到后者并播放摧毁动画。源模型 Y=0 以下
+还有地下几何，运行时材质会按蒙皮后的世界坐标逐帧裁切，不能通过整体抬高模型来掩盖。

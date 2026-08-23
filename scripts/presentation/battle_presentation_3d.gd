@@ -1,7 +1,7 @@
 class_name BattlePresentation3D
 extends Node
 ## 战场的 3D 表现容器。模拟、碰撞与联机仍在 Node2D 中运行；
-## 本节点只把带 visual_scene_path 的单位镜像到透明 3D 视口。
+## 本节点只把单位、塔与基地水晶镜像到透明 3D 视口。
 
 var _viewport: SubViewport
 var _world_root: Node3D
@@ -13,8 +13,6 @@ func setup(field_size: Vector2, tile_size: float) -> void:
 	_viewport.size = Vector2i(roundi(field_size.x), roundi(field_size.y))
 	_viewport.transparent_bg = true
 	_viewport.own_world_3d = true
-	# 高速移动的细长武器和模型轮廓容易产生时间闪烁；4x MSAA 只改善 3D 表现，不影响模拟。
-	_viewport.msaa_3d = Viewport.MSAA_4X
 	_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	add_child(_viewport)
 
@@ -49,6 +47,24 @@ func attach_unit(unit: Unit, stats: Dictionary) -> bool:
 		return false
 	unit.has_model_art = true
 	unit.queue_redraw()
+	return true
+
+func attach_tower(tower: Tower, config: Dictionary) -> bool:
+	var scene_paths: Array = config.get("scene_paths", [])
+	if tower.team < 0 or tower.team >= scene_paths.size():
+		return false
+	var scene_path := String(scene_paths[tower.team])
+	var packed := load(scene_path) as PackedScene
+	if packed == null:
+		push_warning("无法加载塔的 3D 表现：%s" % scene_path)
+		return false
+	var view := TowerModel3D.new()
+	_world_root.add_child(view)
+	if not view.setup(tower, packed, _camera, config):
+		view.queue_free()
+		return false
+	tower.has_model_art = true
+	tower.queue_redraw()
 	return true
 
 func _create_camera(field_rows: float) -> void:

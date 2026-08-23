@@ -18,12 +18,17 @@
 如果角色拥有位移攻击、连招、蓄力、远程弹道、变身或技能动画，不要假设本流程已经
 覆盖这些特殊机制，应先按普通近战完成基础接入，再单独定义玩法和表现需求。
 
+瑟提是当前“分段普通攻击”参考：权威命中节奏由 `attack_pattern` 定义，Start / Hit /
+Recover 动画仍只是数据映射。具体字段见 `docs/CARD_DESIGN.md` 的“分段普通攻击表现”，
+不要把动画结束回调当成下一拳或伤害计时器。
+
 ## 不可破坏的边界
 
 1. `Unit`、塔、碰撞、寻路和伤害仍是 2D 固定 tick 逻辑；3D 模型只负责显示。
 2. 不得通过动画回调直接扣血，也不得用动画长度改变攻击间隔。
 3. `radius`、`range`、`interval` 等是玩法数据，不能为了让模型“看起来合适”随意修改。
-4. 模型大小只在包装场景中调 `scale`；画面辅助尺寸使用 `visual_radius`。
+4. 单位先在 `CardDB` 选择七档 `size_tier` 与对应权威碰撞 `radius`；模型大小只在包装
+   场景中调 `scale` 来匹配该档位，画面辅助尺寸使用 `visual_radius`。
 5. 新角色正常不需要修改 `unit_model_3d.gd`、`battle_presentation_3d.gd`、`unit.gd`
    或死亡 RPC。先用数据映射解决差异，避免每个角色出现专用分支。
 6. 新卡牌的玩法定义和数值仍遵循 `docs/CARD_DESIGN.md`，数值只放在
@@ -97,15 +102,21 @@ assets/units/garen/
 [node name="GarenView" type="Node3D"]
 
 [node name="Model" parent="." instance=ExtResource("1_model")]
-position = Vector3(0, -0.013, 0)
-scale = Vector3(0.008, 0.008, 0.008)
+position = Vector3(0, -0.0195, 0)
+scale = Vector3(0.015, 0.015, 0.015)
 ```
 
-新角色必须根据自己的模型重新测量 `position` 和 `scale`，不能照抄盖伦的数值。
+盖伦属于“大”档；新角色必须根据自己的模型和体型档位重新测量 `position` 与 `scale`，
+不能照抄盖伦的数值。
+
+当前人物包装场景在各自校准尺寸上统一应用 `1.5×`；带脚底 `position` 校正的角色必须
+同步放大该偏移，避免只放大网格后悬空或下沉。权威碰撞仍是 `CardDB` 档位对应的圆柱，
+不得从模型网格自动生成不规则碰撞体。
 
 - 脚底应落在包装根节点的 `y = 0` 地面附近；
 - 模型视觉高度应与同体型单位协调；
 - 不要靠修改 2D `radius` 解决 3D 模型过大或过小；
+- 血条会读取模型网格投影顶部自动放到人物头顶，不要在角色脚本里硬编码血条像素偏移；
 - 朝向优先通过下方的 `visual_forward_yaw` 校正，避免包装场景和卡牌数据同时旋转。
 
 ## 步骤三：配置 CardDB 表现映射

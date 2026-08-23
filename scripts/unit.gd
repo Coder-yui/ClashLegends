@@ -10,16 +10,23 @@ class_name Unit
 ## 联机时客户端单位由 main 的快照插值驱动（net_target_pos），不跑本地模拟。
 
 signal died
+signal visual_hit
 
 const SIM_DT := 1.0 / 20.0
-const PATH_REACH := 8.0
+## 权威移动把人物视为竖直圆柱；俯视碰撞只需计算其圆形底面，完全不读取 3D 网格。
+const COLLISION_SHAPE := &"cylinder"
+const PATH_REACH := 8.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
 const REPATH_INTERVAL := 0.25
 const MARCH_REPATH_INTERVAL := 0.8
 const DEFAULT_SIGHT_RANGE := 220.0
+const HIT_FLASH_EVENT_COOLDOWN := 0.18
+const HEALTH_BAR_HEAD_GAP := 3.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
+const HEALTH_BAR_HEIGHT := 4.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
+const SUMMON_SEPARATION := 2.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
 # 建筑卡召唤小鬼的确定性方向偏移（按序轮转，不引入随机数）
-const SPAWN_OFFSETS := [
-	Vector2(24, 0), Vector2(17, 17), Vector2(0, 24), Vector2(-17, 17),
-	Vector2(-24, 0), Vector2(-17, -17), Vector2(0, -24), Vector2(17, -17),
+const SPAWN_DIRECTIONS := [
+	Vector2.RIGHT, Vector2(0.70710678, 0.70710678), Vector2.DOWN, Vector2(-0.70710678, 0.70710678),
+	Vector2.LEFT, Vector2(-0.70710678, -0.70710678), Vector2.UP, Vector2(0.70710678, -0.70710678),
 ]
 
 var net_id := -1
@@ -45,11 +52,18 @@ var has_model_art := false
 var deploy_time := 1.0
 var first_hit_time := 0.2
 var projectile_speed := 0.0
+var projectile_visual := &"orb"
+var projectile_visual_height := 0.0
 var splash_radius := 0.0
 var attack_knockback := 0.0
 var charge_time := 0.0
 var charge_speed_multiplier := 1.0
 var charge_damage_multiplier := 1.0
+# 丝缕缠流：开启后，离开自身 shroud_radius（px）的敌方看不到她、不会把她当目标，攻击对其无效；0 表示未启用。
+var shroud_radius := 0.0
+## 连招攻击节奏：每次命中后到下一次命中的间隔（秒），按数组循环；空数组表示每个周期间隔固定为 attack_interval。
+## 例如 [0.28, 1.05, 0.28, 1.05] 表示快速两拳后停顿、再快速两拳后停顿。
+var attack_pattern: Array = []
 
 var frozen_timer := 0.0
 
@@ -65,9 +79,14 @@ var _target: Node2D = null
 var _attack_cd := 0.0
 var _attacking := false
 var _attack_windup := 0.0
+## 本次攻击已经命中后的收招锁定。期间保持 Attack 表现且不能开始追击；
+## 时长由权威攻击节奏推导，不读取 3D 动画长度。
+var _attack_recovery_timer := 0.0
 var _attack_load := 0.0
 var _attack_visual_serial := 0
 var _attack_visual_pending := false
+var _attack_hit_index := 0
+var _hit_flash_event_cooldown := 0.0
 var _death_visual_emitted := false
 var _deploy_timer := 0.0
 var _lifespan_left := 0.0
@@ -92,7 +111,14 @@ var _facing_x := 1.0
 var net_visual_state := 1
 var net_facing_x := 1.0
 var net_attack_visual_serial := 0
+var net_shroud_active := false
 var _presentation: UnitPresentation = null
+var _shroud_active := false
+## 血条绘制中心（兼容旧调试字段）；实际位置由屏幕空间头顶锚点计算。
+var _health_bar_y := -24.0
+var _health_bar_center := Vector2.ZERO
+var _health_bar_screen_center := Vector2.ZERO
+var _health_bar_head_screen := Vector2.ZERO
 
 # 渲染插值：sim 为 20Hz，渲染在上一模拟位置与当前位置间过渡
 var _prev_pos := Vector2.ZERO
@@ -108,6 +134,8 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	move_speed = stats.speed
 	body_radius = stats.radius
 	visual_radius = stats.get("visual_radius", body_radius)
+	_health_bar_y = -visual_radius - HEALTH_BAR_HEAD_GAP
+	_health_bar_center = Vector2(0.0, _health_bar_y - HEALTH_BAR_HEIGHT * 0.5)
 	mass = stats.get("mass", maxf(1.0, body_radius / 3.0))
 	sight_range = stats.get("sight", DEFAULT_SIGHT_RANGE)
 	color = stats.get("color", Color.DIM_GRAY)
@@ -115,6 +143,9 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	if not frames_path.is_empty() and ResourceLoader.exists(frames_path):
 		visual_frames = load(frames_path) as SpriteFrames
 	is_air = stats.get("is_air", false)
+	# 单位 2D 层（血条/状态圈）必须盖在防御塔 2D 层之上：塔层 z_index=10，
+	# 地面单位取 11、空中单位取 12；否则贴塔/水晶作战的单位血条会被建筑血条挡住。
+	z_index = 12 if is_air else 11
 	is_building = stats.get("is_building", false)
 	building_only = stats.get("building_only", false)
 	can_attack_air = stats.get("can_attack_air", true)
@@ -122,11 +153,15 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	deploy_time = stats.get("deploy_time", 1.0)
 	first_hit_time = stats.get("first_hit", minf(attack_interval * 0.5, 0.4))
 	projectile_speed = stats.get("projectile_speed", 0.0)
+	projectile_visual = StringName(stats.get("projectile_visual", "orb"))
+	projectile_visual_height = stats.get("projectile_visual_height", 0.0)
 	splash_radius = stats.get("splash_radius", 0.0)
 	attack_knockback = stats.get("knockback", 0.0)
 	charge_time = stats.get("charge_time", 0.0)
 	charge_speed_multiplier = stats.get("charge_speed_multiplier", 1.0)
 	charge_damage_multiplier = stats.get("charge_damage_multiplier", 1.0)
+	shroud_radius = stats.get("shroud_radius", 0.0)
+	attack_pattern = stats.get("attack_pattern", [])
 	lifespan = stats.get("lifespan", 0.0)
 	spawn_interval = stats.get("spawn_interval", 0.0)
 	_lifespan_left = lifespan
@@ -134,12 +169,14 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	_deploy_timer = deploy_time
 	net_target_pos = global_position
 	_prev_pos = global_position
+	_update_fallback_health_bar_anchor()
 
 func _ready() -> void:
 	add_to_group("combatants")
 	_presentation = UnitPresentation.new()
 	add_child(_presentation)
 	_presentation.setup(visual_frames, visual_radius)
+	_update_fallback_health_bar_anchor()
 
 func _process(delta: float) -> void:
 	if _in_client_mode():
@@ -147,6 +184,8 @@ func _process(delta: float) -> void:
 		position = position.lerp(net_target_pos, minf(delta * 10.0, 1.0))
 		_deploy_timer = maxf(0.0, _deploy_timer - delta)
 		_sync_presentation(net_visual_state, net_facing_x)
+		if not has_model_art and (_presentation == null or not _presentation.has_art()):
+			_update_fallback_health_bar_anchor()
 		queue_redraw()
 		return
 	if is_building or hp <= 0.0:
@@ -154,6 +193,8 @@ func _process(delta: float) -> void:
 	# 主机/单机：使用 main 的统一模拟余量插值，不能让每个节点独立累计进度。
 	_vis_offset = get_visual_screen_position() - position
 	_sync_presentation(get_visual_state_code(), _facing_x)
+	if not has_model_art and (_presentation == null or not _presentation.has_art()):
+		_update_fallback_health_bar_anchor()
 	queue_redraw()
 
 func _sync_presentation(state: int, facing_x: float) -> void:
@@ -204,6 +245,7 @@ func get_visual_facing_direction() -> Vector2:
 func sim_tick(dt: float) -> void:
 	if hp <= 0.0:
 		return
+	_hit_flash_event_cooldown = maxf(0.0, _hit_flash_event_cooldown - dt)
 	_prev_pos = position
 	_move_intent = Vector2.ZERO
 	_forced_movement = false
@@ -232,9 +274,19 @@ func sim_tick(dt: float) -> void:
 		_charged = false
 		return
 	_attack_cd = maxf(0.0, _attack_cd - dt)
-	_update_target()
+	# 命中后必须完整收招。目标此时即使死亡、失效或离开射程，也要等后摇结束
+	# 才重新索敌/追击；冻结会在上方提前 return，因此同样会暂停后摇计时。
+	if _attack_recovery_timer > 0.0:
+		_attack_recovery_timer = maxf(0.0, _attack_recovery_timer - dt)
+		_attacking = true
+		if _attack_recovery_timer > 0.0:
+			return
+	# 正好到达权威命中节点的这个 tick 不再做距离取消。这样目标在最后一刻跨出
+	# 攻击圈时，本次挥击仍会命中；更早脱离则仍会取消前摇并继续追击。
+	var reaches_hit_this_tick := _reaches_attack_hit_this_tick(dt)
+	_update_target(reaches_hit_this_tick)
 	if _target != null:
-		if _target_gap(_target) <= attack_range:
+		if _target_gap(_target) <= attack_range or reaches_hit_this_tick:
 			if not _attacking:
 				# 移动期间会预装填一部分攻击周期；被推出射程会丢失这次预装填。
 				_attack_windup = maxf(first_hit_time, attack_interval - _attack_load)
@@ -246,8 +298,11 @@ func sim_tick(dt: float) -> void:
 			return
 	if _attacking and _attack_windup > 0.0:
 		_attack_load = 0.0
+	# 退出攻击状态（目标丢失/脱离攻击圈，回到行军）→ 关闭丝缕缠流。
 	_attacking = false
 	_attack_windup = 0.0
+	_attack_recovery_timer = 0.0
+	_shroud_active = false
 	_chase(dt)
 
 func is_deployed() -> bool:
@@ -285,8 +340,10 @@ func apply_knockback(origin: Vector2, distance: float, duration: float = 0.2) ->
 	_knockback_timer = maxf(duration, SIM_DT)
 	_knockback_velocity = direction * distance * mass_factor / _knockback_timer
 	_attack_windup = 0.0
+	_attack_recovery_timer = 0.0
 	_attack_load = 0.0
 	_attacking = false
+	_shroud_active = false
 	cancel_charge()
 
 func _target_gap(target: Node2D) -> float:
@@ -294,7 +351,7 @@ func _target_gap(target: Node2D) -> float:
 		return target.surface_gap_to_circle(global_position, body_radius)
 	return maxf(0.0, global_position.distance_to(target.global_position) - body_radius - target.body_radius)
 
-## 普通单位是圆；建筑卡按绘制出来的方形占地计算。
+## 人物圆柱使用圆形底面；建筑卡按绘制出来的方形占地计算。
 func surface_gap_to_circle(center: Vector2, radius: float) -> float:
 	if not is_building:
 		return maxf(0.0, center.distance_to(global_position) - body_radius - radius)
@@ -321,21 +378,25 @@ func _spawn_imp() -> void:
 	var scene := get_tree().current_scene
 	if scene == null or not scene.has_method("spawn_summoned"):
 		return
-	var spawn_pos: Vector2 = global_position + SPAWN_OFFSETS[_spawn_counter % SPAWN_OFFSETS.size()]
+	var direction: Vector2 = SPAWN_DIRECTIONS[_spawn_counter % SPAWN_DIRECTIONS.size()]
+	var spawn_distance := body_radius + CardDB.RADIUS_EXTREMELY_SMALL + SUMMON_SEPARATION
+	var spawn_pos: Vector2 = global_position + direction * spawn_distance
 	_spawn_counter += 1
 	scene.spawn_summoned(team, "imp", spawn_pos)
 
 ## 目标管理：当前目标失效/超距则丢弃，重新索敌；目标切换时强制重寻路
-func _update_target() -> void:
+func _update_target(allow_out_of_range_hit: bool = false) -> void:
 	# 一旦挥出攻击/进入攻击前摇，就锁定当前目标。只有目标死亡、失效或真正离开
 	# 攻击范围才解除锁定；不会因为旁边出现更近单位而中途转火。
 	if _attacking:
-		if _target_is_attackable(_target) and _target_gap(_target) <= attack_range:
+		if _target_is_attackable(_target) and (_target_gap(_target) <= attack_range or allow_out_of_range_hit):
 			return
 		_target = null
 		_attacking = false
 		_attack_windup = 0.0
+		_attack_recovery_timer = 0.0
 		_attack_load = 0.0
+		_shroud_active = false
 		_path = PackedVector2Array()
 		_path_index = 0
 	# Godot 的已释放对象引用不等同于普通 null，任何 `is Type` 判断前都必须先清理。
@@ -343,6 +404,8 @@ func _update_target() -> void:
 		_target = null
 		_attacking = false
 		_attack_windup = 0.0
+		_attack_recovery_timer = 0.0
+		_shroud_active = false
 		_path = PackedVector2Array()
 		_path_index = 0
 	if _target != null:
@@ -355,12 +418,16 @@ func _update_target() -> void:
 			drop = true
 		elif _target is Unit and not (_target as Unit).is_deployed():
 			drop = true
+		elif _target is Unit and (_target as Unit).is_hidden_from(self):
+			drop = true
 		elif not _target is Tower and _target_gap(_target) > sight_range:
 			drop = true
 		if drop:
 			_target = null
 			_attacking = false
 			_attack_windup = 0.0
+			_attack_recovery_timer = 0.0
+			_shroud_active = false
 			_path = PackedVector2Array()
 			_path_index = 0
 	# 塔只是没有仇恨目标时的行军目标；途中进入视野的合法单位/建筑应能拉走部队。
@@ -370,6 +437,8 @@ func _update_target() -> void:
 			_target = distraction
 			_attacking = false
 			_attack_windup = 0.0
+			_attack_recovery_timer = 0.0
+			_shroud_active = false
 			_path = PackedVector2Array()
 			_path_index = 0
 			_repath_cd = 0.0
@@ -398,6 +467,9 @@ func _target_is_attackable(target) -> bool:
 		return false
 	if target is Unit and not (target as Unit).is_deployed():
 		return false
+	# 丝缕缠流：目标开启且我方在圈外 → 视为无法看到，不锁定。
+	if target is Unit and (target as Unit).is_hidden_from(self):
+		return false
 	return true
 
 func _is_struct(c: Node) -> bool:
@@ -411,6 +483,9 @@ func _find_nearest_distraction() -> Node2D:
 			continue
 		var u := c as Unit
 		if not u.is_deployed() or (u.is_air and not can_attack_air):
+			continue
+		# 丝缕缠流：目标开启但我方在圈外 → 看不到它，照常做自己的事。
+		if u.is_hidden_from(self):
 			continue
 		if building_only and not u.is_building:
 			continue
@@ -525,6 +600,7 @@ func _recompute_path_to(goal: Vector2) -> void:
 func _attack(dt: float) -> void:
 	if _target == null or not is_instance_valid(_target):
 		_attacking = false
+		_shroud_active = false
 		return
 	var face_delta: float = _target.global_position.x - global_position.x
 	if absf(face_delta) > 0.05:
@@ -539,12 +615,34 @@ func _attack(dt: float) -> void:
 		return
 	_try_start_attack_visual(_attack_cd)
 	if _attack_cd <= 0.0:
-		_attack_cd = attack_interval
+		# 连招节奏：若配置了 attack_pattern，则按本次命中后的间隔取值；否则固定为 attack_interval。
+		var next_attack_gap := _next_attack_gap()
+		_attack_cd = next_attack_gap
 		var hit_damage := damage * (charge_damage_multiplier if _charged else 1.0)
 		_deal_attack_damage(hit_damage)
+		# 从命中点锁定到下一次攻击动作应当开始的时刻，即当前动作的后摇段。
+		# 若目标仍在射程内，计时结束后无缝开始下一次前摇；若已离开，则此时才追击。
+		_attack_recovery_timer = maxf(next_attack_gap - first_hit_time, 0.0)
 		_attack_load = 0.0
 		_attack_visual_pending = true
 		cancel_charge()
+
+## 当前固定 tick 是否正好跨过一次攻击命中节点。
+## 命中节点之外仍严格检查射程，避免把整个前摇都变成不可取消的攻击锁定。
+func _reaches_attack_hit_this_tick(dt: float) -> bool:
+	if not _attacking or continuous_attack or not _target_is_attackable(_target):
+		return false
+	if _attack_windup > 0.0:
+		return _attack_windup <= dt + 0.0001
+	return not _attack_visual_pending and _attack_cd <= dt + 0.0001
+
+## 连招间距：attack_pattern 为每次命中后到下一次命中的间隔，按数组顺序循环。
+func _next_attack_gap() -> float:
+	if attack_pattern.is_empty():
+		return attack_interval
+	var gap: float = float(attack_pattern[_attack_hit_index % attack_pattern.size()])
+	_attack_hit_index += 1
+	return maxf(gap, 0.01)
 
 ## 每次攻击在命中前 first_hit_time 发出一次表现序号。表现层可以据此播放完整动作，
 ## 但伤害仍只由上面的固定 tick 逻辑结算。
@@ -561,7 +659,16 @@ func _deal_attack_damage(amount: float) -> void:
 	if scene != null and scene.has_method("launch_attack"):
 		scene.launch_attack(self, _target, amount, projectile_speed, splash_radius, attack_knockback, color)
 	else:
-		_target.take_damage(amount)
+		var landed: bool = _target.take_damage(amount, self)
+		if landed:
+			on_attack_landed()
+
+## 主机在伤害真正落到目标后调用。格温由此精确地在首次普攻命中而非出手时开启缠流。
+func on_attack_landed() -> void:
+	if shroud_radius <= 0.0 or _shroud_active:
+		return
+	_shroud_active = true
+	queue_redraw()
 
 func freeze(duration: float) -> void:
 	frozen_timer = maxf(frozen_timer, duration)
@@ -570,14 +677,60 @@ func freeze(duration: float) -> void:
 func is_frozen() -> bool:
 	return frozen_timer > 0.0
 
-func take_damage(amount: float) -> void:
+func take_damage(amount: float, from: Node2D = null, source_team: int = -1, source_position: Vector2 = Vector2(INF, INF)) -> bool:
 	if hp <= 0.0:
-		return
+		return false
+	if _is_shroud_blocked(from, source_team, source_position):
+		return false
 	hp -= amount
 	if hp <= 0.0:
 		_die()
 	else:
+		# 持续伤害可能每个 20Hz tick 都结算；限制纯表现事件频率，避免模型常亮和可靠 RPC 洪泛。
+		if _hit_flash_event_cooldown <= 0.0:
+			_hit_flash_event_cooldown = HIT_FLASH_EVENT_COOLDOWN
+			notify_visual_hit()
+			var scene := get_tree().current_scene
+			if net_id >= 0 and scene != null and scene.has_method("on_unit_hit"):
+				scene.on_unit_hit(net_id)
 		queue_redraw()
+	return true
+
+## 只触发表现，不参与血量或硬直；主机通过可靠 RPC 在客户端重放同一次闪白。
+func notify_visual_hit() -> void:
+	visual_hit.emit()
+
+## 丝缕缠流：开启后，距离 viewer 超过 shroud_radius 的敌方看到她但无法锁定/命中，
+## 视她为不存在。用于敌方索敌时跳过格温，让其照常做自己的事。
+## viewer 为试图攻击/索敌的敌方（单位或塔），距离按两中心点计算。
+func is_hidden_from(viewer: Node2D) -> bool:
+	if viewer == null or not is_instance_valid(viewer):
+		return false
+	return is_hidden_from_position(viewer.team, viewer.global_position)
+
+## 弹体保留攻击者最后的有效位置；即使攻击者在飞行途中死亡，也能正确判断圈外攻击。
+func is_hidden_from_position(viewer_team: int, viewer_position: Vector2) -> bool:
+	if not _shroud_active or shroud_radius <= 0.0 or viewer_team == team:
+		return false
+	return global_position.distance_to(viewer_position) > shroud_radius
+
+## 丝缕缠流：开启后，伤害来源离开自身 shroud_radius 时整次伤害失效。
+## from 由 main 在近战/弹道命中时透传攻击者（单位或塔），仅主机结算。
+## main 会优先让在途弹体消散；这里继续兜底同一 tick 的竞态或其他直接伤害入口，
+## 确保圈外伤害和击退都不能穿透，而敌方能看见的圈内攻击仍正常生效。
+func _is_shroud_blocked(from: Node2D, source_team: int = -1, source_position: Vector2 = Vector2(INF, INF)) -> bool:
+	if not _shroud_active or shroud_radius <= 0.0:
+		return false
+	var resolved_team := source_team
+	var resolved_position := source_position
+	if from != null and is_instance_valid(from):
+		resolved_team = from.team
+		resolved_position = from.global_position
+	if resolved_team < 0 or resolved_position.x == INF or resolved_position.y == INF:
+		return false
+	if resolved_team == team:
+		return false
+	return global_position.distance_to(resolved_position) > shroud_radius
 
 ## 供 main 的推挤逻辑调用：该位置对当前单位是否可行走
 func is_walkable_at(pos: Vector2) -> bool:
@@ -625,8 +778,48 @@ func notify_visual_death() -> void:
 	_death_visual_emitted = true
 	died.emit()
 
+## 3D 表现回传模型头顶锚点。该值只用于 UI，不参与任何战斗判定。
+func set_visual_head_top_offset(top_offset_y: float) -> void:
+	set_visual_head_world_position(get_visual_screen_position() + Vector2(0.0, top_offset_y))
+
+
+func set_visual_head_world_position(world_position: Vector2) -> void:
+	# 模型投影坐标属于战场画布，先转换到最终视口，再把血条放到屏幕上方。
+	# 这样 Camera2D 翻转（红蓝双方视角）时，血条仍然贴在画面中的头顶。
+	var local_to_view := get_global_transform_with_canvas()
+	var world_to_view := local_to_view * global_transform.affine_inverse()
+	var head_screen := world_to_view * world_position
+	var bar_screen := head_screen - Vector2(0.0, HEALTH_BAR_HEAD_GAP + HEALTH_BAR_HEIGHT * 0.5)
+	var local_center := local_to_view.affine_inverse() * bar_screen
+	_health_bar_center = local_center - _vis_offset
+	_health_bar_y = _health_bar_center.y
+	_health_bar_head_screen = head_screen
+	_health_bar_screen_center = bar_screen
+	queue_redraw()
+
+
+func get_health_bar_screen_center() -> Vector2:
+	return _health_bar_screen_center
+
+
+func get_visual_head_screen_position() -> Vector2:
+	return _health_bar_head_screen
+
+
+func get_health_bar_fill_color() -> Color:
+	return Color(0.95, 0.25, 0.25) if team == 1 else Color(0.2, 0.9, 0.2)
+
+
+func _update_fallback_health_bar_anchor() -> void:
+	if is_inside_tree():
+		set_visual_head_world_position(get_visual_screen_position() + Vector2(0.0, -visual_radius))
+
 func _draw() -> void:
 	draw_set_transform(_vis_offset, 0.0, Vector2.ONE)
+	var shroud_visible := net_shroud_active if _in_client_mode() else _shroud_active
+	if shroud_visible and shroud_radius > 0.0:
+		draw_circle(Vector2.ZERO, shroud_radius, Color(0.34, 0.76, 0.92, 0.08))
+		draw_arc(Vector2.ZERO, shroud_radius, 0.0, TAU, 72, Color(0.55, 0.88, 1.0, 0.58), 2.0, true)
 	if continuous_attack and _attacking and _target != null and is_instance_valid(_target):
 		var target_pos: Vector2 = _target.global_position
 		if _target is Unit:
@@ -648,9 +841,14 @@ func _draw() -> void:
 	var ratio := maxf(hp / max_hp, 0.0)
 	if ratio < 1.0:
 		var bar_w := visual_radius * 2.0
-		var bar_y := -visual_radius - 10.0
-		draw_rect(Rect2(-bar_w / 2.0, bar_y, bar_w, 4.0), Color(0.15, 0.15, 0.15))
-		draw_rect(Rect2(-bar_w / 2.0, bar_y, bar_w * ratio, 4.0), Color(0.2, 0.9, 0.2))
+		var bar_rect := Rect2(
+			_health_bar_center.x - bar_w * 0.5,
+			_health_bar_center.y - HEALTH_BAR_HEIGHT * 0.5,
+			bar_w,
+			HEALTH_BAR_HEIGHT
+		)
+		draw_rect(bar_rect, Color(0.15, 0.15, 0.15))
+		draw_rect(Rect2(bar_rect.position, Vector2(bar_w * ratio, HEALTH_BAR_HEIGHT)), get_health_bar_fill_color())
 	if frozen_timer > 0.0:
 		draw_circle(Vector2.ZERO, visual_radius + 4.0, Color(0.4, 0.8, 1.0, 0.3))
 	if _charged:

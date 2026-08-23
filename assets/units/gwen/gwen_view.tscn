@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/units/gwen/source/gwen.glb" id="1_gwen"]
+
+[node name="GwenView" type="Node3D"]
+
+[node name="Model" parent="." instance=ExtResource("1_gwen")]
+position = Vector3(0, -0.045, 0)
+scale = Vector3(0.00945, 0.00945, 0.00945)

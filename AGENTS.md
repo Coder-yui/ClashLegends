@@ -51,3 +51,4 @@ assets/              美术/音效资源（约定见 assets/README.md；大体�
 - 新增卡牌先看 `docs/CARD_DESIGN.md`，数值只改 `scripts/data/card_db.gd`
 - **阶段 4 进行中**：已加入竞技场背景与盖伦原始模型；按 `assets/README.md` 归档，表现层不得驱动战斗逻辑
 - 接入剑圣、亚索等普通近战 3D 角色前，必须完整阅读并执行 `docs/MELEE_3D_INTEGRATION.md`
+- 接入寒冰等远程 3D 角色时，还必须阅读 `docs/RANGED_3D_INTEGRATION.md`，弹体命中前不得结算伤害

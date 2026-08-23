@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/units/teemo/source/teemo.glb" id="1_teemo"]
+
+[node name="TeemoView" type="Node3D"]
+
+[node name="Model" parent="." instance=ExtResource("1_teemo")]
+scale = Vector3(0.01185, 0.01185, 0.01185)

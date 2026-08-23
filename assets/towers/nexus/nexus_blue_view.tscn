@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/towers/nexus/source/nexus_blue.glb" id="1_nexus"]
+
+[node name="NexusBlueView" type="Node3D"]
+
+[node name="Model" parent="." instance=ExtResource("1_nexus")]
+scale = Vector3(0.00534, 0.00534, 0.00534)

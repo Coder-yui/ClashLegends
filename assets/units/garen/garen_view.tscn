@@ -5,5 +5,5 @@
 [node name="GarenView" type="Node3D"]
 
 [node name="Model" parent="." instance=ExtResource("1_garen")]
-position = Vector3(0, -0.013, 0)
-scale = Vector3(0.008, 0.008, 0.008)
+position = Vector3(0, -0.0195, 0)
+scale = Vector3(0.015, 0.015, 0.015)

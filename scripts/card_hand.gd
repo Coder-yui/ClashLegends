@@ -15,9 +15,11 @@ var _next_label: Label
 # 卡组轮换
 var _hand: Array[String] = []   # 当前4张手牌
 var _queue: Array[String] = []  # 等待队列4张
+var _deck: Array = []           # 本次对战选定的 8 张卡组（空则随机 8 张）
 
-func setup(elixir: ElixirManager) -> void:
+func setup(elixir: ElixirManager, deck: Array = []) -> void:
 	_elixir = elixir
+	_deck = deck
 	_init_deck()
 	_build_ui()
 	_elixir.changed.connect(_refresh)
@@ -37,14 +39,18 @@ func card_used(card_id: String) -> void:
 	_refresh(_elixir.elixir)
 
 func _init_deck() -> void:
-	var all_cards: Array = CardDB.all().keys()
-	all_cards.shuffle()
+	# 优先使用对战前选定的 8 张卡组；未指定时从全部卡里随机取 8 张。
+	var pool: Array = _deck.duplicate() if _deck.size() == 8 else []
+	if pool.is_empty():
+		pool = CardDB.all().keys()
+		pool.shuffle()
+		pool = pool.slice(0, 8)
 	_hand.clear()
 	_queue.clear()
 	for i in range(4):
-		_hand.append(all_cards[i])
+		_hand.append(pool[i])
 	for i in range(4, 8):
-		_queue.append(all_cards[i])
+		_queue.append(pool[i])
 
 func _build_ui() -> void:
 	var root := Control.new()

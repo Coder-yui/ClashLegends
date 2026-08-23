@@ -1,6 +1,8 @@
 extends Node2D
 ## 主场景：战场搭建、部署输入、敌方占位出兵、胜负判定。
 
+const ART_DEV_PANEL_SCRIPT := preload("res://scripts/art_dev_panel.gd")
+
 ## CR 标准 1v1 场地：18 列 x 32 行。项目分辨率正好对应每格 40px。
 ## 后续地图、部署、塔位和导航只能从这组格子常量派生，避免再次出现比例漂移。
 const ARENA_COLUMNS := 18
@@ -16,17 +18,21 @@ const RIVER_HALF := TILE_SIZE
 const BRIDGE_HALF := TILE_SIZE * 1.5
 const BRIDGE_X_LEFT := 3.5 * TILE_SIZE
 const BRIDGE_X_RIGHT := 14.5 * TILE_SIZE
-const NAV_CLEARANCE := 16.0
+## A* 用当前最大人物圆柱半径统一收窄桥面、扩张河岸与静态障碍；
+## 连续碰撞仍按每个单位自己的档位半径精确判定。
+const NAV_CLEARANCE := CardDB.RADIUS_EXTREMELY_LARGE
 const NAV_GRID_PADDING := 8.0
-const STRUCTURE_SEPARATION := 1.0
-const AVOID_LOOKAHEAD := 34.0
-const AVOID_NEIGHBOR_PADDING := 26.0
+const STRUCTURE_SEPARATION := 1.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
+const AVOID_LOOKAHEAD := 34.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
+const AVOID_NEIGHBOR_PADDING := 26.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
 const AVOID_MIN_FORWARD_RATIO := 0.35
-const COLLISION_SLOP := 0.5
+const COLLISION_SLOP := 0.5 * CardDB.CHARACTER_SCALE_MULTIPLIER
 const COLLISION_CORRECTION_PERCENT := 0.35
-const COLLISION_MAX_CORRECTION := 3.0
+const COLLISION_MAX_CORRECTION := 3.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
 const LANDING_CORRECTION_PERCENT := 0.75
-const LANDING_MAX_CORRECTION := 8.0
+const LANDING_MAX_CORRECTION := 8.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
+const BRIDGE_EDGE_MARGIN := 2.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
+const PROJECTILE_MUZZLE_FORWARD_GAP := 5.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
 # 双方地面部署区各 15 行；贴河外角与国王塔后方两侧不可部署。
 const TEAM_0_FIRST_ROW := RIVER_BOTTOM_ROW
 const TEAM_0_LAST_ROW := ARENA_ROWS - 1
@@ -35,10 +41,34 @@ const BACK_CENTER_MAX_COLUMN := 11
 const POCKET_FIRST_ROW := 9
 const POCKET_LAST_ROW := RIVER_TOP_ROW - 1
 
-# 视觉占地、部署禁区与移动碰撞分离：塔仍显示为 3x3 / 4x4，
-# 但单位绕行使用参考项目的 1.0 / 1.4 格圆形物理半径。
-const PRINCESS_STATS := {"hp": 1400.0, "damage": 55.0, "range": 300.0, "interval": 0.8, "radius": 40.0, "visual_radius": 60.0, "deployment_radius": 40.0, "first_hit": 0.2, "projectile_speed": 420.0}
-const KING_STATS := {"hp": 2400.0, "damage": 70.0, "range": 280.0, "interval": 1.0, "radius": 56.0, "visual_radius": 80.0, "deployment_radius": 56.0, "first_hit": 0.2, "projectile_speed": 380.0}
+# 视觉占地、部署禁区与移动碰撞分离：塔仍显示为 3x3 / 4x4，物理与部署圆稍微内收，
+# 给放大后的人物在公主塔侧面和水晶底部留下稳定的绕行空间。
+const PRINCESS_STATS := {"hp": 1400.0, "damage": 55.0, "range": 300.0, "interval": 0.8, "radius": 54.0, "visual_radius": 60.0, "deployment_radius": 54.0, "first_hit": 0.2, "projectile_speed": 420.0}
+const KING_STATS := {"hp": 2400.0, "damage": 70.0, "range": 280.0, "interval": 1.0, "radius": 72.0, "visual_radius": 80.0, "deployment_radius": 72.0, "first_hit": 0.2, "projectile_speed": 380.0}
+const PRINCESS_VISUAL_CONFIG := {
+	"scene_paths": [
+		"res://assets/towers/princess/princess_tower_blue_view.tscn",
+		"res://assets/towers/princess/princess_tower_red_view.tscn",
+	],
+	"ground_cutoff": 0.0,
+	"animations": {
+		"spawn": "Respawn", "idle": "Idle1", "destroy": "Destroyed",
+		"spawn_duration": 2.0, "destroy_duration": 3.0,
+		"alive_materials": ["Base"], "destroyed_materials": ["Rubble"],
+	},
+}
+const NEXUS_VISUAL_CONFIG := {
+	"scene_paths": [
+		"res://assets/towers/nexus/nexus_blue_view.tscn",
+		"res://assets/towers/nexus/nexus_red_view.tscn",
+	],
+	"ground_cutoff": 0.0,
+	"animations": {
+		"spawn": "Nexus_spawn_anm", "idle": "Idle1_Base", "destroy": "Death",
+		"spawn_duration": 2.5, "destroy_duration": 4.0,
+		"alive_materials": ["SRUAP_OrderNexus_Mat"], "destroyed_materials": ["Destroyed"],
+	},
+}
 
 # 比赛计时：3 分钟正赛，平局进 60 秒加时（先破塔者胜），再平则平局
 const MATCH_TIME := 180.0
@@ -62,6 +92,9 @@ var _elixir: ElixirManager
 var _hand: CardHand
 var _ai: AIOpponent
 var _selected_card := ""
+# 本次对战选定的 8 张卡组（空表示未指定，随机取）
+var _deck: Array = []
+var _deck_layer: CanvasLayer
 var _match_timer := MATCH_TIME
 var _overtime := false
 var _timer_label: Label
@@ -69,6 +102,10 @@ var _king_player: Tower
 var _king_enemy: Tower
 var _towers: Array[Tower] = []
 var _battle_presentation: BattlePresentation3D
+var _art_dev_mode := false
+var _art_dev_selection := "training_dummy"
+var _art_dev_team := 1
+var _art_dev_panel: CanvasLayer
 
 # 主菜单
 var _menu_layer: CanvasLayer
@@ -139,10 +176,13 @@ func _show_menu() -> void:
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(title)
 	var btn_solo := _make_menu_button("单机对战 AI")
-	btn_solo.pressed.connect(_start_local)
+	btn_solo.pressed.connect(func(): _pick_deck_ui(_start_local))
 	vbox.add_child(btn_solo)
+	var btn_art_dev := _make_menu_button("美术开发面板")
+	btn_art_dev.pressed.connect(_start_art_dev)
+	vbox.add_child(btn_art_dev)
 	var btn_host := _make_menu_button("创建房间（我做主机）")
-	btn_host.pressed.connect(_start_host)
+	btn_host.pressed.connect(func(): _pick_deck_ui(_start_host))
 	vbox.add_child(btn_host)
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 8)
@@ -152,7 +192,7 @@ func _show_menu() -> void:
 	_ip_input.placeholder_text = "对方 IP 地址"
 	row.add_child(_ip_input)
 	var btn_join := _make_menu_button("加入房间")
-	btn_join.pressed.connect(func(): _start_client(_ip_input.text.strip_edges()))
+	btn_join.pressed.connect(func(): _pick_deck_ui(func(): _start_client(_ip_input.text.strip_edges())))
 	row.add_child(btn_join)
 	vbox.add_child(row)
 	_menu_status = Label.new()
@@ -164,6 +204,110 @@ func _make_menu_button(text: String) -> Button:
 	b.text = text
 	b.custom_minimum_size = Vector2(260, 44)
 	return b
+
+# ============================================================
+#  选卡组界面
+# ============================================================
+
+var _deck_toggles := {}       # card_id -> Button
+var _deck_selected: Array = []  # 当前已勾选的卡组
+var _deck_confirm: Button
+var _deck_status: Label
+
+## 在对战开始前弹出选卡组界面；选定 8 张后回调 after_start。
+func _pick_deck_ui(after_start: Callable) -> void:
+	_deck_selected = _deck.duplicate() if _deck.size() == 8 else []
+	var layer := CanvasLayer.new()
+	layer.layer = 20
+	add_child(layer)
+	_deck_layer = layer
+	var root := Control.new()
+	root.set_anchors_preset(Control.PRESET_FULL_RECT)
+	layer.add_child(root)
+	var dim := ColorRect.new()
+	dim.color = Color(0.95, 0.96, 0.98)
+	dim.set_anchors_preset(Control.PRESET_FULL_RECT)
+	root.add_child(dim)
+	var center := CenterContainer.new()
+	center.set_anchors_preset(Control.PRESET_FULL_RECT)
+	root.add_child(center)
+	var vbox := VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 12)
+	center.add_child(vbox)
+	var title := Label.new()
+	title.text = "选择卡组（8 张）"
+	title.add_theme_font_size_override("font_size", 40)
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	vbox.add_child(title)
+	var grid := GridContainer.new()
+	grid.columns = 5
+	grid.add_theme_constant_override("h_separation", 8)
+	grid.add_theme_constant_override("v_separation", 8)
+	vbox.add_child(grid)
+	_deck_toggles.clear()
+	var card_ids: Array = CardDB.all().keys()
+	card_ids.sort()
+	for id in card_ids:
+		var stats: Dictionary = CardDB.all()[id]
+		var b := Button.new()
+		b.toggle_mode = true
+		b.custom_minimum_size = Vector2(120, 52)
+		b.text = stats.name
+		b.toggled.connect(_on_deck_toggle.bind(id))
+		grid.add_child(b)
+		_deck_toggles[id] = b
+	# 回填已选卡组（不回发 toggled 事件）
+	for id in card_ids:
+		if _deck_selected.has(id):
+			(_deck_toggles[id] as Button).button_pressed = true
+	_deck_status = Label.new()
+	_deck_status.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	vbox.add_child(_deck_status)
+	var btn_row := HBoxContainer.new()
+	btn_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	btn_row.add_theme_constant_override("separation", 12)
+	vbox.add_child(btn_row)
+	var back := _make_menu_button("返回")
+	back.custom_minimum_size = Vector2(150, 44)
+	back.pressed.connect(_clear_deck_ui)
+	btn_row.add_child(back)
+	_deck_confirm = _make_menu_button("开始对战")
+	_deck_confirm.custom_minimum_size = Vector2(180, 44)
+	_deck_confirm.pressed.connect(func(): _confirm_deck(after_start))
+	btn_row.add_child(_deck_confirm)
+	_update_deck_ui()
+
+func _on_deck_toggle(pressed: bool, id: String) -> void:
+	if pressed:
+		if _deck_selected.size() >= 8:
+			(_deck_toggles[id] as Button).button_pressed = false
+			return
+		_deck_selected.append(id)
+	else:
+		_deck_selected.erase(id)
+	_update_deck_ui()
+
+func _update_deck_ui() -> void:
+	if _deck_status == null:
+		return
+	_deck_status.text = "已选 %d/8" % _deck_selected.size()
+	var ready := _deck_selected.size() == 8
+	if _deck_confirm != null:
+		_deck_confirm.disabled = not ready
+		_deck_confirm.text = "开始对战" if ready else "请选满 8 张"
+
+func _confirm_deck(after_start: Callable) -> void:
+	if _deck_selected.size() != 8:
+		return
+	_deck = _deck_selected.duplicate()
+	_clear_deck_ui()
+	after_start.call()
+
+func _clear_deck_ui() -> void:
+	if _deck_layer != null:
+		_deck_layer.queue_free()
+		_deck_layer = null
+	_deck_toggles.clear()
 
 func _hide_menu() -> void:
 	if _menu_layer != null:
@@ -182,10 +326,27 @@ func _start_local() -> void:
 	_setup_player_ui()
 	_ai = AIOpponent.new()
 	add_child(_ai)
-	_ai.setup(self)
+	_ai.setup(self, _deck)
 	_create_towers()
 	_build_nav()
 	_create_timer_ui()
+
+## 美术开发模式复用正式模拟与表现，但不创建金币、手牌、AI 和比赛倒计时。
+func _start_art_dev() -> void:
+	mode = "local"
+	_match_started = true
+	_art_dev_mode = true
+	_hide_menu()
+	_setup_battle_presentation()
+	_create_towers()
+	_build_nav()
+	_art_dev_panel = ART_DEV_PANEL_SCRIPT.new()
+	add_child(_art_dev_panel)
+	_art_dev_panel.setup(CardDB.all())
+	_art_dev_panel.item_selected.connect(func(item_id: String): _art_dev_selection = item_id)
+	_art_dev_panel.team_changed.connect(func(team: int): _art_dev_team = team)
+	_art_dev_panel.clear_requested.connect(_clear_art_dev_units)
+	_art_dev_panel.exit_requested.connect(func(): get_tree().reload_current_scene())
 
 func _start_host() -> void:
 	mode = "host"
@@ -262,7 +423,7 @@ func _setup_player_ui() -> void:
 	add_child(_elixir)
 	_hand = CardHand.new()
 	add_child(_hand)
-	_hand.setup(_elixir)
+	_hand.setup(_elixir, _deck)
 	_hand.card_selected.connect(_on_card_selected)
 
 func is_net_client() -> bool:
@@ -305,16 +466,25 @@ func _create_towers() -> void:
 		t.setup(spec[0], PRINCESS_STATS, false)
 		t.position = spec[1]
 		add_child(t)
+		t.z_index = 10
+		if _battle_presentation != null:
+			_battle_presentation.attach_tower(t, PRINCESS_VISUAL_CONFIG)
 		_towers.append(t)
 	_king_player = Tower.new()
 	_king_player.setup(0, KING_STATS, true)
 	_king_player.position = Vector2(9.0 * TILE_SIZE, 29.0 * TILE_SIZE)
 	add_child(_king_player)
+	_king_player.z_index = 10
+	if _battle_presentation != null:
+		_battle_presentation.attach_tower(_king_player, NEXUS_VISUAL_CONFIG)
 	_towers.append(_king_player)
 	_king_enemy = Tower.new()
 	_king_enemy.setup(1, KING_STATS, true)
 	_king_enemy.position = Vector2(9.0 * TILE_SIZE, 3.0 * TILE_SIZE)
 	add_child(_king_enemy)
+	_king_enemy.z_index = 10
+	if _battle_presentation != null:
+		_battle_presentation.attach_tower(_king_enemy, NEXUS_VISUAL_CONFIG)
 	_towers.append(_king_enemy)
 
 ## 构建导航网格：河道（除两座桥）与所有防御塔为障碍
@@ -341,14 +511,20 @@ func _on_card_selected(card_id: String) -> void:
 	queue_redraw()
 
 func _unhandled_input(event: InputEvent) -> void:
+	if _art_dev_mode:
+		if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+			var art_pos := get_global_mouse_position()
+			if art_pos.x >= 0.0 and art_pos.x < FIELD_W and art_pos.y >= 0.0 and art_pos.y < FIELD_H:
+				_place_art_dev_item(art_pos)
+		return
 	if game_over or _selected_card == "":
 		return
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		var pos := _snap_card_position(_selected_card, get_global_mouse_position())
+		var my_team := 1 if mode == "client" else 0
+		var pos := _snap_card_position(_selected_card, get_global_mouse_position(), my_team)
 		var stats: Dictionary = CardDB.all()[_selected_card]
 		if not _elixir.can_afford(stats.cost):
 			return
-		var my_team := 1 if mode == "client" else 0
 		if not is_card_deploy_position_valid(my_team, _selected_card, pos):
 			return
 		var used_card := _selected_card
@@ -367,6 +543,45 @@ func _unhandled_input(event: InputEvent) -> void:
 		_deploy_card(0, used_card, pos)
 		_hand.card_used(used_card)
 
+func _place_art_dev_item(pos: Vector2) -> void:
+	if _art_dev_selection == "training_dummy":
+		pos = _snap_to_tile_center(pos)
+		var stats := CardDB.training_dummy_stats()
+		var dummy := Unit.new()
+		dummy.position = pos
+		dummy.setup(_art_dev_team, stats, stats.name)
+		add_child(dummy)
+		_register_dynamic_building(dummy)
+		return
+	if not CardDB.all().has(_art_dev_selection):
+		return
+	var stats: Dictionary = CardDB.all()[_art_dev_selection]
+	pos = _snap_card_position(_art_dev_selection, pos, _art_dev_team)
+	if stats.get("type", "unit") == "spell":
+		_cast_spell(_art_dev_team, _art_dev_selection, pos)
+	else:
+		_spawn_unit(_art_dev_team, _art_dev_selection, pos)
+
+func _register_dynamic_building(unit: Unit) -> void:
+	if nav == null or not unit.is_building:
+		return
+	unit.nav_cells = nav.cells_for_rect(_structure_rect(unit).grow(NAV_CLEARANCE + NAV_GRID_PADDING))
+	nav.set_cells_blocked(unit.nav_cells, true)
+
+func _clear_art_dev_units() -> void:
+	for combatant in get_tree().get_nodes_in_group("combatants"):
+		if not combatant is Unit:
+			continue
+		var unit := combatant as Unit
+		if unit.is_building and not unit.nav_cells.is_empty():
+			unblock_nav_cells(unit.nav_cells)
+			unit.nav_cells = []
+		unit.queue_free()
+	_projectiles.clear()
+	_client_projectiles.clear()
+	_freeze_effects.clear()
+	queue_redraw()
+
 func _world_to_arena_tile(pos: Vector2) -> Vector2i:
 	return Vector2i(floori(pos.x / TILE_SIZE), floori(pos.y / TILE_SIZE))
 
@@ -380,13 +595,26 @@ func _snap_to_tile_center(pos: Vector2) -> Vector2:
 	return _arena_tile_center(tile)
 
 ## 单格单位落在格心；偶数格建筑落在格线交点，确保实际覆盖完整的 2x2 格。
-func _snap_card_position(card_id: String, pos: Vector2) -> Vector2:
+func _snap_card_position(card_id: String, pos: Vector2, p_team: int = -1) -> Vector2:
 	if not CardDB.all().has(card_id):
 		return _snap_to_tile_center(pos)
 	var stats: Dictionary = CardDB.all()[card_id]
 	var footprint: Vector2i = stats.get("footprint_tiles", Vector2i.ONE)
 	if stats.get("type", "unit") != "building" or footprint == Vector2i.ONE:
-		return _snap_to_tile_center(pos)
+		var snapped := _snap_to_tile_center(pos)
+		# 放大后的圆柱可能超过半格；仍归属点击的原格，但把中心向场内推到完整容纳碰撞圆的位置。
+		if stats.get("type", "unit") == "unit":
+			var radius: float = stats.get("radius", 14.0)
+			snapped.x = clampf(snapped.x, radius, FIELD_W - radius)
+			snapped.y = clampf(snapped.y, radius, FIELD_H - radius)
+			if not _is_ground_terrain_walkable(snapped, radius):
+				var shore_clearance := RIVER_HALF + radius
+				if snapped.y < RIVER_Y or (is_equal_approx(snapped.y, RIVER_Y) and p_team == 1):
+					snapped.y = RIVER_Y - shore_clearance
+				else:
+					snapped.y = RIVER_Y + shore_clearance
+			snapped = _fit_boundary_unit_around_towers(snapped, radius)
+		return snapped
 	var half_size := Vector2(footprint) * TILE_SIZE * 0.5
 	var snapped := Vector2(
 		roundf(pos.x / TILE_SIZE) * TILE_SIZE if footprint.x % 2 == 0 else floorf(pos.x / TILE_SIZE) * TILE_SIZE + TILE_SIZE * 0.5,
@@ -395,6 +623,30 @@ func _snap_card_position(card_id: String, pos: Vector2) -> Vector2:
 	snapped.x = clampf(snapped.x, half_size.x, FIELD_W - half_size.x)
 	snapped.y = clampf(snapped.y, half_size.y, FIELD_H - half_size.y)
 	return snapped
+
+## 末行格心在人物放大后会略微压到国王塔。保持原部署格归属，只沿场地边缘横向
+## 推开圆柱中心，既完整容纳碰撞体，也保留国王塔后方中央六格的部署能力。
+func _fit_boundary_unit_around_towers(pos: Vector2, radius: float) -> Vector2:
+	if not (is_equal_approx(pos.y, radius) or is_equal_approx(pos.y, FIELD_H - radius)):
+		return pos
+	var fitted := pos
+	for combatant in get_tree().get_nodes_in_group("combatants"):
+		if not combatant is Tower or not is_instance_valid(combatant) or combatant.hp <= 0.0:
+			continue
+		var tower := combatant as Tower
+		var required_distance := tower.deployment_radius + radius + STRUCTURE_SEPARATION
+		var vertical_distance := absf(fitted.y - tower.global_position.y)
+		if vertical_distance >= required_distance:
+			continue
+		var required_x := sqrt(maxf(required_distance * required_distance - vertical_distance * vertical_distance, 0.0))
+		var delta_x := fitted.x - tower.global_position.x
+		if absf(delta_x) >= required_x:
+			continue
+		var side := signf(delta_x)
+		if is_zero_approx(side):
+			side = -1.0
+		fitted.x = clampf(tower.global_position.x + side * required_x, radius, FIELD_W - radius)
+	return fitted
 
 ## 部署区域按 CR 格子掩码判断：法术全场，单位/建筑为己方 15 行及已解锁 pocket。
 func _pos_in_deploy_zone(pos: Vector2, p_team: int, is_spell: bool) -> bool:
@@ -454,7 +706,7 @@ func _can_deploy_at(pos: Vector2, radius: float, is_air: bool = false, footprint
 func is_card_deploy_position_valid(p_team: int, card_id: String, pos: Vector2) -> bool:
 	if not CardDB.all().has(card_id):
 		return false
-	pos = _snap_card_position(card_id, pos)
+	pos = _snap_card_position(card_id, pos, p_team)
 	var stats: Dictionary = CardDB.all()[card_id]
 	var is_spell: bool = stats.get("type", "unit") == "spell"
 	var footprint: Vector2i = stats.get("footprint_tiles", Vector2i.ONE)
@@ -573,7 +825,7 @@ func _nearest_valid_ground_spawn(desired: Vector2, radius: float, p_team: int) -
 
 func _deploy_card(p_team: int, card_id: String, pos: Vector2) -> void:
 	# 玩家、AI 与联机请求统一落在同一格中心；召唤物走 _spawn_unit，不受此吸附影响。
-	pos = _snap_card_position(card_id, pos)
+	pos = _snap_card_position(card_id, pos, p_team)
 	var stats: Dictionary = CardDB.all()[card_id]
 	var type: String = stats.get("type", "unit")
 	match type:
@@ -586,21 +838,35 @@ func _deploy_card(p_team: int, card_id: String, pos: Vector2) -> void:
 func launch_attack(attacker: Node2D, target: Node2D, amount: float, projectile_speed: float, splash_radius: float, knockback: float, projectile_color: Color) -> void:
 	if target == null or not is_instance_valid(target) or target.hp <= 0.0:
 		return
-	if projectile_speed <= 0.0:
-		_resolve_attack_hit(attacker.team, attacker.global_position, target, amount, splash_radius, knockback)
+	# 丝缕缠流开启后，圈外攻击者连目标都看不到；这个出口再做一次竞态兜底。
+	if target is Unit and (target as Unit).is_hidden_from(attacker):
 		return
+	if projectile_speed <= 0.0:
+		_resolve_attack_hit(attacker.team, attacker.global_position, target, amount, splash_radius, knockback, attacker, attacker.global_position)
+		return
+	var direction := attacker.global_position.direction_to(target.global_position)
+	var projectile_visual := StringName(attacker.projectile_visual) if attacker is Unit else &"orb"
+	var projectile_visual_height: float = attacker.projectile_visual_height if attacker is Unit else 0.0
+	var start_position := attacker.global_position
+	if projectile_visual == &"arrow" or projectile_visual == &"needle":
+		start_position += direction * (attacker.body_radius + PROJECTILE_MUZZLE_FORWARD_GAP)
 	var id := _next_projectile_id
 	_next_projectile_id += 1
 	_projectiles[id] = {
-		"pos": attacker.global_position,
+		"pos": start_position,
 		"target": target,
+		"attacker": attacker,
+		"source_pos": attacker.global_position,
 		"team": attacker.team,
 		"damage": amount,
 		"speed": projectile_speed,
 		"splash": splash_radius,
 		"knockback": knockback,
 		"color": projectile_color,
-		"radius": 4.0,
+		"radius": 3.0 if projectile_visual == &"arrow" else 4.0,
+		"visual": projectile_visual,
+		"visual_height": projectile_visual_height,
+		"direction": direction,
 	}
 
 func _tick_projectiles(dt: float) -> void:
@@ -612,35 +878,52 @@ func _tick_projectiles(dt: float) -> void:
 		if target == null or not is_instance_valid(target) or target.hp <= 0.0:
 			finished.append(id)
 			continue
+		var attacker = projectile.get("attacker")
+		if attacker != null and is_instance_valid(attacker):
+			projectile.source_pos = attacker.global_position
+		# 弹体在飞行途中遇到格温开启缠流：圈外来源立即失去目标，弹体消散且不结算伤害。
+		if target is Unit and (target as Unit).is_hidden_from_position(projectile.team, projectile.source_pos):
+			finished.append(id)
+			continue
 		var target_pos: Vector2 = target.global_position
 		var pos: Vector2 = projectile.pos
+		projectile.direction = pos.direction_to(target_pos)
 		var next_pos := pos.move_toward(target_pos, projectile.speed * dt)
 		projectile.pos = next_pos
 		_projectiles[id] = projectile
 		if next_pos.distance_to(target_pos) <= target.body_radius + projectile.radius:
-			_resolve_attack_hit(projectile.team, pos, target, projectile.damage, projectile.splash, projectile.knockback)
+			# 攻击者可能已在弹体飞行途中被释放，命中仍结算，但以无来源处理，
+			# 避免把已释放对象传入类型化函数参数。
+			var hit_from: Node2D = projectile.attacker if (projectile.attacker != null and is_instance_valid(projectile.attacker)) else null
+			_resolve_attack_hit(projectile.team, pos, target, projectile.damage, projectile.splash, projectile.knockback, hit_from, projectile.source_pos)
 			finished.append(id)
 	for id in finished:
 		_projectiles.erase(id)
 
-func _resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: float, radius: float, knockback: float) -> void:
+func _resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: float, radius: float, knockback: float, from: Node2D = null, source_position: Vector2 = Vector2(INF, INF)) -> void:
 	if primary == null or not is_instance_valid(primary) or primary.hp <= 0.0:
 		return
 	if radius <= 0.0:
-		primary.take_damage(amount)
-		if knockback > 0.0 and primary is Unit and is_instance_valid(primary) and primary.hp > 0.0:
+		var landed: bool = primary.take_damage(amount, from, p_team, source_position)
+		if landed and from is Unit and is_instance_valid(from):
+			(from as Unit).on_attack_landed()
+		if landed and knockback > 0.0 and primary is Unit and is_instance_valid(primary) and primary.hp > 0.0:
 			(primary as Unit).apply_knockback(origin, knockback)
 		return
 	var impact_pos := primary.global_position
+	var any_landed := false
 	for c in get_tree().get_nodes_in_group("combatants"):
 		if not is_instance_valid(c) or c.team == p_team or c.hp <= 0.0:
 			continue
 		if c is Unit and not (c as Unit).is_deployed():
 			continue
 		if c.global_position.distance_to(impact_pos) <= radius + c.body_radius:
-			c.take_damage(amount)
-			if knockback > 0.0 and c is Unit and is_instance_valid(c) and c.hp > 0.0:
+			var landed: bool = c.take_damage(amount, from, p_team, source_position)
+			any_landed = landed or any_landed
+			if landed and knockback > 0.0 and c is Unit and is_instance_valid(c) and c.hp > 0.0:
 				(c as Unit).apply_knockback(origin, knockback)
+	if any_landed and from is Unit and is_instance_valid(from):
+		(from as Unit).on_attack_landed()
 
 func _cast_spell(p_team: int, card_id: String, pos: Vector2) -> void:
 	match card_id:
@@ -705,6 +988,18 @@ func on_unit_died(id: int) -> void:
 	if mode == "host":
 		_rpc_unit_died.rpc(id)
 
+## 单位受击回调：本地模型已由 Unit 信号闪白，主机只负责可靠转发给客户端表现层。
+func on_unit_hit(id: int) -> void:
+	if mode == "host":
+		_rpc_unit_hit.rpc(id)
+
+## 塔受击回调：本地模型已由 Tower 信号闪白，主机按 _towers 下标可靠转发给客户端。
+func on_tower_hit(tower: Tower) -> void:
+	if mode == "host":
+		var index := _towers.find(tower)
+		if index >= 0:
+			_rpc_tower_hit.rpc(index)
+
 ## 固定 20Hz 模拟步：驱动全部战斗单位与塔，处理国王塔激活与障碍移除。
 ## 帧率高低只影响每帧跑多少步，不改变战斗结果（联机两端行为一致）。
 func _sim_step(dt: float) -> void:
@@ -766,10 +1061,47 @@ func _try_apply_velocity(unit: Unit, velocity: Vector2, dt: float) -> bool:
 		return false
 	var next_pos := unit.global_position + velocity * dt
 	if not unit.is_walkable_at(next_pos):
-		return false
+		return _try_bridge_corner_tangent(unit, velocity, dt)
 	unit.global_position = Vector2(
 		clampf(next_pos.x, unit.body_radius, FIELD_W - unit.body_radius),
 		clampf(next_pos.y, unit.body_radius, FIELD_H - unit.body_radius)
+	)
+	return true
+
+## 圆柱碰到桥面与河岸的直角交界时，把剩余速度投影到河岸切线。
+## 这样单位会以原速度横向对准桥口，再连续进入桥面，不会先原地停一帧才缓慢挪动。
+func _try_bridge_corner_tangent(unit: Unit, velocity: Vector2, dt: float) -> bool:
+	if unit.is_air or velocity.length_squared() < 0.001:
+		return false
+	var shore_clearance := RIVER_HALF + unit.body_radius
+	var distance_to_river := absf(unit.global_position.y - RIVER_Y)
+	var movement_step := velocity.length() * dt
+	if distance_to_river > shore_clearance + movement_step + BRIDGE_EDGE_MARGIN:
+		return false
+	var moving_toward_river := (
+		(unit.global_position.y > RIVER_Y and velocity.y < 0.0)
+		or (unit.global_position.y < RIVER_Y and velocity.y > 0.0)
+	)
+	if not moving_toward_river and distance_to_river >= shore_clearance:
+		return false
+	var bridge_x := BRIDGE_X_LEFT
+	if absf(unit.global_position.x - BRIDGE_X_RIGHT) < absf(unit.global_position.x - BRIDGE_X_LEFT):
+		bridge_x = BRIDGE_X_RIGHT
+	var safe_half := maxf(BRIDGE_HALF - unit.body_radius - BRIDGE_EDGE_MARGIN, 0.0)
+	var safe_min_x := bridge_x - safe_half
+	var safe_max_x := bridge_x + safe_half
+	var candidate := unit.global_position + velocity * dt
+	if unit.global_position.x < safe_min_x:
+		candidate = Vector2(minf(unit.global_position.x + movement_step, safe_min_x), unit.global_position.y)
+	elif unit.global_position.x > safe_max_x:
+		candidate = Vector2(maxf(unit.global_position.x - movement_step, safe_max_x), unit.global_position.y)
+	else:
+		candidate.x = clampf(candidate.x, safe_min_x, safe_max_x)
+	if not unit.is_walkable_at(candidate):
+		return false
+	unit.global_position = Vector2(
+		clampf(candidate.x, unit.body_radius, FIELD_W - unit.body_radius),
+		clampf(candidate.y, unit.body_radius, FIELD_H - unit.body_radius)
 	)
 	return true
 
@@ -955,6 +1287,16 @@ func _process(delta: float) -> void:
 		_freeze_effects = _freeze_effects.filter(func(fe): return fe.timer > 0.0)
 		queue_redraw()
 		return
+	if _art_dev_mode:
+		for fe in _freeze_effects:
+			fe.timer -= delta
+		_freeze_effects = _freeze_effects.filter(func(fe): return fe.timer > 0.0)
+		queue_redraw()
+		_sim_acc += delta
+		while _sim_acc >= SIM_DT:
+			_sim_acc -= SIM_DT
+			_sim_step(SIM_DT)
+		return
 	if not _match_started or game_over:
 		return
 	# 更新冰冻视觉效果
@@ -1085,7 +1427,7 @@ func _rpc_deploy_request(card_id: String, pos: Vector2) -> void:
 		return
 	if not CardDB.all().has(card_id):
 		return
-	pos = _snap_card_position(card_id, pos)
+	pos = _snap_card_position(card_id, pos, 1)
 	var stats: Dictionary = CardDB.all()[card_id]
 	if not is_card_deploy_position_valid(1, card_id, pos):
 		return
@@ -1115,6 +1457,25 @@ func _rpc_spawn_unit(card_id: String, p_team: int, pos: Vector2, net_id: int) ->
 	_client_units[net_id] = u
 	if _auto_test:
 		print("[测试] 客户端收到单位生成: ", card_id, " net_id=", net_id)
+
+## 主机 → 客户端：可靠触发一次短暂闪白，不依赖不可靠血量快照是否刚好采到该帧。
+@rpc("authority", "call_remote", "reliable")
+func _rpc_unit_hit(net_id: int) -> void:
+	if mode != "client":
+		return
+	var u: Unit = _client_units.get(net_id)
+	if u != null and is_instance_valid(u):
+		u.notify_visual_hit()
+		if _auto_test:
+			print("[测试] 客户端收到受击闪白事件: net_id=", net_id)
+
+## 主机 → 客户端：可靠触发一次塔/水晶受击闪白。
+@rpc("authority", "call_remote", "reliable")
+func _rpc_tower_hit(index: int) -> void:
+	if mode != "client":
+		return
+	if index >= 0 and index < _towers.size():
+		_towers[index].notify_visual_hit()
 
 ## 主机 → 客户端：可靠触发死亡动作。逻辑单位立即释放，3D 代理独立播完动作。
 @rpc("authority", "call_remote", "reliable")
@@ -1152,6 +1513,8 @@ func _rpc_snapshot(units_data: Array, projectiles_data: Array, towers_data: Arra
 			u.net_facing_x = d[7]
 		if d.size() >= 9:
 			u.net_attack_visual_serial = d[8]
+		if d.size() >= 10:
+			u.net_shroud_active = d[9] == 1
 		u.queue_redraw()
 	# 快照中消失的单位 = 已死亡
 	var gone := []
@@ -1178,10 +1541,19 @@ func _rpc_snapshot(units_data: Array, projectiles_data: Array, towers_data: Arra
 			"target_pos": Vector2(d[1], d[2]),
 			"color": d[3],
 			"radius": d[4],
+			"visual": StringName(d[5]) if d.size() >= 6 else &"orb",
+			"direction": Vector2(d[6], d[7]) if d.size() >= 8 else Vector2.UP,
+			"visual_height": float(d[8]) if d.size() >= 9 else 0.0,
 		})
 		projectile.target_pos = Vector2(d[1], d[2])
 		projectile.color = d[3]
 		projectile.radius = d[4]
+		if d.size() >= 6:
+			projectile.visual = StringName(d[5])
+		if d.size() >= 8:
+			projectile.direction = Vector2(d[6], d[7])
+		if d.size() >= 9:
+			projectile.visual_height = float(d[8])
 		_client_projectiles[d[0]] = projectile
 	var gone_projectiles := []
 	for id in _client_projectiles:
@@ -1190,8 +1562,11 @@ func _rpc_snapshot(units_data: Array, projectiles_data: Array, towers_data: Arra
 	for id in gone_projectiles:
 		_client_projectiles.erase(id)
 	for i in range(mini(towers_data.size(), _towers.size())):
+		var tower_was_alive := _towers[i].hp > 0.0
 		_towers[i].hp = towers_data[i][0]
 		_towers[i].activated = towers_data[i][1] == 1
+		if tower_was_alive and _towers[i].hp <= 0.0:
+			_towers[i].notify_visual_destroyed()
 		if _towers[i].hp <= 0.0 and not _towers[i].nav_cells.is_empty():
 			unblock_nav_cells(_towers[i].nav_cells)
 			_towers[i].nav_cells = []
@@ -1230,7 +1605,7 @@ func _send_snapshot() -> void:
 		if u == null or not is_instance_valid(u) or u.hp <= 0.0:
 			dead.append(id)
 			continue
-		units_data.append([id, u.global_position.x, u.global_position.y, u.hp, 1 if u.frozen_timer > 0.0 else 0, 1 if u.is_charged() else 0, u.get_visual_state_code(), u.get_facing_x(), u.get_attack_visual_serial()])
+		units_data.append([id, u.global_position.x, u.global_position.y, u.hp, 1 if u.frozen_timer > 0.0 else 0, 1 if u.is_charged() else 0, u.get_visual_state_code(), u.get_facing_x(), u.get_attack_visual_serial(), 1 if u._shroud_active else 0])
 	for id in dead:
 		_net_units.erase(id)
 	var towers_data := []
@@ -1240,7 +1615,7 @@ func _send_snapshot() -> void:
 	var projectiles_data := []
 	for id in _projectiles:
 		var projectile: Dictionary = _projectiles[id]
-		projectiles_data.append([id, projectile.pos.x, projectile.pos.y, projectile.color, projectile.radius])
+		projectiles_data.append([id, projectile.pos.x, projectile.pos.y, projectile.color, projectile.radius, String(projectile.visual), projectile.direction.x, projectile.direction.y, projectile.get("visual_height", 0.0)])
 	_rpc_snapshot.rpc(units_data, projectiles_data, towers_data, _elixir.elixir, _elixir_p1.elixir, _match_timer, _overtime)
 
 func _draw() -> void:
@@ -1284,4 +1659,39 @@ func _draw() -> void:
 	var visible_projectiles: Dictionary = _client_projectiles if mode == "client" else _projectiles
 	for id in visible_projectiles:
 		var projectile: Dictionary = visible_projectiles[id]
-		draw_circle(projectile.pos, projectile.radius, projectile.color)
+		match StringName(projectile.get("visual", &"orb")):
+			&"arrow":
+				_draw_arrow_projectile(projectile)
+			&"needle":
+				_draw_needle_projectile(projectile)
+			_:
+				draw_circle(projectile.pos, projectile.radius, projectile.color)
+
+func _draw_needle_projectile(projectile: Dictionary) -> void:
+	# 提莫毒针：很短短小的直线，无箭头，颜色沿用单位色（提莫为绿色）。
+	var pos := _projectile_visual_position(projectile)
+	var direction: Vector2 = projectile.get("direction", Vector2.UP)
+	if direction.length_squared() < 0.001:
+		direction = Vector2.UP
+	direction = direction.normalized()
+	var head := pos + direction * 8.0
+	var tail := pos - direction * 8.0
+	draw_line(tail, head, projectile.color, 2.0, true)
+
+func _draw_arrow_projectile(projectile: Dictionary) -> void:
+	var pos := _projectile_visual_position(projectile)
+	var direction: Vector2 = projectile.get("direction", Vector2.UP)
+	if direction.length_squared() < 0.001:
+		direction = Vector2.UP
+	direction = direction.normalized()
+	var side := Vector2(-direction.y, direction.x)
+	var color: Color = projectile.color
+	var tip := pos + direction * 10.0
+	var neck := pos + direction * 4.0
+	var tail := pos - direction * 8.0
+	draw_line(tail, neck, color, 3.0, true)
+	draw_colored_polygon(PackedVector2Array([tip, neck + side * 4.0, neck - side * 4.0]), color)
+
+## 弹体仍在 2D 地面坐标中做权威碰撞；这里只把绘制点抬到弓/吹管高度。
+func _projectile_visual_position(projectile: Dictionary) -> Vector2:
+	return projectile.pos + Vector2(0.0, -float(projectile.get("visual_height", 0.0)))
