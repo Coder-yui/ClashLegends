@@ -2,6 +2,8 @@
 
 本目录只存放游戏美术与音频资源。资源文件统一使用英文 `snake_case` 命名；单位目录名必须与 `CardDB` 的 `card_id` 一致，例如盖伦使用 `garen`。
 
+如果是为新卡接入资源，请先阅读 [`docs/AGENT_WORKFLOW.md`](../docs/AGENT_WORKFLOW.md) 的完整 Agent 流程，再按本文件的目录和命名约定操作；本文只描述资源归档，不替代卡牌玩法和联网回归要求。
+
 ## 当前资源
 
 ```text

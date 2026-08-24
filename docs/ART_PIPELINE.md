@@ -113,3 +113,55 @@ assets/
 通过可靠 RPC 同步死亡事件，快照缺席仍作为客户端兜底。
 
 主机快照同步 `deploy/idle/move/attack` 表现状态、朝向和攻击表现序号，客户端只播放。当前 3D 客户端竖切按队伍推进方向显示；后续需要精确转向时再把完整朝向加入快照。伤害、命中、移动和碰撞仍由主机固定 20Hz 模拟决定，不得从动画帧回调触发。
+
+## Agent 标准接入流程
+
+接入新卡美术时，建议先让卡牌用占位表现跑通，再按以下顺序加入资源。这样模型导入失败不会掩盖玩法或联机问题。
+
+### 1. 建立资源目录并检查源文件
+
+1. 确认 `card_id` 已存在于 `scripts/data/card_db.gd`，目录名和文件名均使用英文 `snake_case`。
+2. 卡面放到 `assets/cards/<card_id>_loading.jpg/png/webp`；没有卡面时 UI 会自动显示数据色占位。
+3. GLB 和外部纹理全部放到 `assets/units/<card_id>/source/`。不要手工编辑 `.import` 文件，不要把临时截图、重复导出或源文件放在运行时目录。
+4. 让 Godot 完成导入后，在编辑器中打开源 GLB，确认材质、骨骼、脚底、朝向和 `AnimationPlayer` 动画名。动画名区分大小写，必须记录真实名称。
+
+### 2. 创建运行时包装场景
+
+创建 `assets/units/<card_id>/<card_id>_view.tscn`，包装场景只负责实例化 GLB、设置静态 `scale`、脚底 `position` 和必要的朝向。不要把权威碰撞体、寻路或伤害脚本挂到模型上；这些仍由 `Unit` 和 `CardDB` 管理。
+
+模型大小根据同体型单位目视校准，战斗半径使用 `CardDB` 七档 `radius`。如果模型悬空或下沉，同时调整包装场景的缩放和脚底偏移，不要修改 `radius` 迎合素材。
+
+### 3. 配置 CardDB 表现字段
+
+在卡牌条目中填写：
+
+```gdscript
+"visual_scene_path": "res://assets/units/<card_id>/<card_id>_view.tscn",
+"visual_forward_yaw": 0.0,
+"visual_animations": {
+    "deploy": "<实际出场或 Idle 动画名>",
+    "idle": "<实际待机动画名>",
+    "move": "<实际移动动画名>",
+    "attack": ["<实际攻击动画名>"],
+    "death": "<实际死亡动画名>",
+},
+```
+
+双方有不同模型时使用 `visual_scene_paths = [order_scene, chaos_scene]`。近战按 [`MELEE_3D_INTEGRATION.md`](MELEE_3D_INTEGRATION.md) 执行，远程还必须按 [`RANGED_3D_INTEGRATION.md`](RANGED_3D_INTEGRATION.md) 配置离弦时刻、弹体类型和绘制高度。所有手牌的出场动画都要遵循 [`UNIT_DEPLOYMENT.md`](UNIT_DEPLOYMENT.md) 的 0.5 秒卡牌延迟和 `deploy_time` 规则。
+
+### 4. 按层验收
+
+先运行 `Godot --headless --path . --script tests/mechanics_check.gd`，再按 F5 实际检查：
+
+- 卡面、卡组选择、手牌和卡牌占位是否正确；
+- 部署后脚底、尺寸、蓝红朝向和血条顶部是否正确；
+- Idle / Move / Attack / Death 是否都能播放，攻击命中时刻是否与 `first_hit` 一致；
+- 近战是否在权威攻击时刻掉血，远程是否先离弦、弹体到达后才掉血；
+- 死亡表现结束前，2D 单位是否已经退出碰撞、寻路和伤害系统；
+- 塔、普通单位、建筑、主机和客户端视角是否都正常。
+
+联机表现不能只看模型是否出现，还要确认生成、快照、朝向、攻击序号、弹体、受击闪白和死亡事件在客户端一致。新卡没有被自动测试样本使用时，必须通过实际卡组或美术开发面板手动部署验证。
+
+### 5. Agent 交付记录
+
+交付时写明：资源路径、包装场景、实际动画名、`scale`/脚底偏移/`visual_forward_yaw`、`first_hit` 调校值、卡面格式，以及 headless、F5 和 host/join 的结果。尚缺资源或特殊机制要明确列出，不要用“已接入”掩盖缺失项。
