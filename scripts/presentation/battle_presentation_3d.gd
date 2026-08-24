@@ -32,6 +32,10 @@ func setup(field_size: Vector2, tile_size: float) -> void:
 
 func attach_unit(unit: Unit, stats: Dictionary) -> bool:
 	var scene_path: String = stats.get("visual_scene_path", "")
+	# 水晶兵线等阵营单位共用玩法数据，但 order/chaos 使用各自模型包装场景。
+	var scene_paths: Array = stats.get("visual_scene_paths", [])
+	if unit.team >= 0 and unit.team < scene_paths.size():
+		scene_path = String(scene_paths[unit.team])
 	if scene_path.is_empty():
 		return false
 	var packed := load(scene_path) as PackedScene

@@ -1,0 +1,142 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/units/tombstone/source/tombstone.glb" id="1_tombstone"]
+[ext_resource type="Script" path="res://scripts/presentation/tombstone_view.gd" id="2_view"]
+
+[sub_resource type="Shader" id="Shader_tombstone_fog"]
+code = "shader_type spatial;
+render_mode unshaded, cull_disabled, depth_draw_never, blend_mix, shadows_disabled;
+
+uniform vec4 fog_color : source_color = vec4(0.004, 0.006, 0.012, 0.92);
+uniform vec4 inner_color : source_color = vec4(0.018, 0.055, 0.065, 0.94);
+uniform float density : hint_range(0.0, 1.5) = 1.0;
+uniform float layer_shape : hint_range(0.0, 1.0) = 0.0;
+uniform float layer_seed = 0.0;
+uniform float fog_visibility : hint_range(0.0, 1.0) = 1.0;
+uniform float disperse : hint_range(0.0, 1.0) = 0.0;
+
+float random_value(vec2 point) {
+    return fract(sin(dot(point, vec2(127.1, 311.7))) * 43758.5453);
+}
+
+float value_noise(vec2 point) {
+    vec2 cell = floor(point);
+    vec2 fraction = fract(point);
+    fraction = fraction * fraction * (3.0 - 2.0 * fraction);
+    float a = random_value(cell);
+    float b = random_value(cell + vec2(1.0, 0.0));
+    float c = random_value(cell + vec2(0.0, 1.0));
+    float d = random_value(cell + vec2(1.0, 1.0));
+    return mix(mix(a, b, fraction.x), mix(c, d, fraction.x), fraction.y);
+}
+
+float fog_noise(vec2 point) {
+    float result = 0.0;
+    float amplitude = 0.55;
+    for (int octave = 0; octave < 4; octave++) {
+        result += value_noise(point) * amplitude;
+        point = point * 2.03 + vec2(4.2, 1.7);
+        amplitude *= 0.48;
+    }
+    return result;
+}
+
+void fragment() {
+    vec2 centered = UV * 2.0 - vec2(1.0);
+    float ground_mask = 1.0 - smoothstep(0.50, 1.0, length(centered * vec2(1.0, 0.88)));
+    float vertical_sides = 1.0 - smoothstep(0.42, 1.0, abs(centered.x));
+    float vertical_bottom = smoothstep(-1.08, -0.55, centered.y);
+    float vertical_top = 1.0 - smoothstep(0.28, 1.0, centered.y);
+    float vertical_mask = vertical_sides * vertical_bottom * vertical_top;
+    float shape_mask = mix(ground_mask, vertical_mask, layer_shape);
+
+    vec2 drift = vec2(TIME * (0.045 + layer_shape * 0.035), -TIME * (0.09 + layer_shape * 0.08));
+    vec2 noise_uv = UV * mix(vec2(3.0), vec2(3.6, 2.5), layer_shape) + drift + layer_seed;
+    float broad_noise = fog_noise(noise_uv);
+    float fine_noise = value_noise(noise_uv * 3.7 - drift * 1.8);
+    float tendrils = smoothstep(0.20, 0.82, broad_noise + fine_noise * 0.20);
+    float solid_core = mix(0.76, 0.34, layer_shape);
+    float alpha = shape_mask * (solid_core + tendrils * mix(0.28, 0.56, layer_shape));
+    alpha *= density * fog_visibility * (1.0 - disperse * 0.20);
+
+    vec3 color = mix(fog_color.rgb, inner_color.rgb, broad_noise * 0.48 + fine_noise * 0.10);
+    color = mix(color, vec3(0.025, 0.040, 0.045), disperse * 0.34);
+    color += vec3(0.008, 0.018, 0.020) * tendrils;
+    ALBEDO = color;
+    ALPHA = clamp(alpha, 0.0, 0.96);
+}
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ground"]
+shader = SubResource("Shader_tombstone_fog")
+shader_parameter/fog_color = Color(0.002, 0.003, 0.008, 0.96)
+shader_parameter/inner_color = Color(0.012, 0.042, 0.052, 0.96)
+shader_parameter/density = 1.18
+shader_parameter/layer_shape = 0.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ground_detail"]
+shader = SubResource("Shader_tombstone_fog")
+shader_parameter/fog_color = Color(0.004, 0.005, 0.012, 0.88)
+shader_parameter/inner_color = Color(0.018, 0.06, 0.07, 0.92)
+shader_parameter/density = 0.78
+shader_parameter/layer_shape = 0.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vertical"]
+shader = SubResource("Shader_tombstone_fog")
+shader_parameter/fog_color = Color(0.002, 0.003, 0.008, 0.86)
+shader_parameter/inner_color = Color(0.014, 0.045, 0.055, 0.9)
+shader_parameter/density = 0.78
+shader_parameter/layer_shape = 1.0
+
+[sub_resource type="QuadMesh" id="QuadMesh_ground"]
+material = SubResource("ShaderMaterial_ground")
+size = Vector2(2.24, 2.24)
+
+[sub_resource type="QuadMesh" id="QuadMesh_ground_detail"]
+material = SubResource("ShaderMaterial_ground_detail")
+size = Vector2(1.84, 1.84)
+
+[sub_resource type="QuadMesh" id="QuadMesh_vertical"]
+material = SubResource("ShaderMaterial_vertical")
+size = Vector2(1.72, 1.42)
+
+[sub_resource type="QuadMesh" id="QuadMesh_plume"]
+material = SubResource("ShaderMaterial_vertical")
+size = Vector2(1.18, 1.78)
+
+[node name="TombstoneView" type="Node3D"]
+script = ExtResource("2_view")
+
+[node name="Model" parent="." instance=ExtResource("1_tombstone")]
+position = Vector3(0, 0.0778, 0)
+scale = Vector3(0.004, 0.004, 0.004)
+
+[node name="BlackFogGround" type="MeshInstance3D" parent="." groups=["presentation_fx", "tombstone_fog"]]
+position = Vector3(0, 0.032, 0)
+rotation = Vector3(-1.570796, 0, 0)
+mesh = SubResource("QuadMesh_ground")
+cast_shadow = 0
+
+[node name="BlackFogGroundDetail" type="MeshInstance3D" parent="." groups=["presentation_fx", "tombstone_fog"]]
+position = Vector3(0.08, 0.046, -0.04)
+rotation = Vector3(-1.570796, 0.62, 0)
+mesh = SubResource("QuadMesh_ground_detail")
+cast_shadow = 0
+
+[node name="BlackFogVolumeA" type="MeshInstance3D" parent="." groups=["presentation_fx", "tombstone_fog"]]
+position = Vector3(0, 0.52, 0.18)
+rotation = Vector3(0, 0.58, 0)
+mesh = SubResource("QuadMesh_vertical")
+cast_shadow = 0
+
+[node name="BlackFogVolumeB" type="MeshInstance3D" parent="." groups=["presentation_fx", "tombstone_fog"]]
+position = Vector3(-0.05, 0.49, -0.08)
+rotation = Vector3(0, -0.72, 0)
+mesh = SubResource("QuadMesh_vertical")
+cast_shadow = 0
+
+[node name="BlackFogInnerPlume" type="MeshInstance3D" parent="." groups=["presentation_fx", "tombstone_fog"]]
+position = Vector3(0.03, 0.68, 0.08)
+rotation = Vector3(0, -0.18, 0)
+mesh = SubResource("QuadMesh_plume")
+cast_shadow = 0

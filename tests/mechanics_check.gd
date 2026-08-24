@@ -17,9 +17,17 @@ func _run() -> void:
 	_main._start_local()
 	_main.set_process(false)
 	_main._ai.set_process(false)
+	# 常规机制用例手动推进大量固定 tick，关闭自动兵线避免跨用例污染；兵线有独立回归。
+	_main._minion_waves_enabled = false
 
 	_check_official_arena_grid()
+	_check_card_deployment_preview()
+	_check_large_unit_front_row_exit()
+	_check_landing_position_correction()
 	_check_structure_art_integration()
+	_check_tombstone_art_integration()
+	_check_minion_line_mechanism()
+	_check_death_animation_durations()
 	_check_lane_weight_field()
 	_check_bridge_path()
 	_check_left_spawn_crosses_without_backtracking()
@@ -28,14 +36,19 @@ func _run() -> void:
 	_check_unit_routes_around_friendly_tower()
 	_check_right_corner_keeps_outer_side()
 	_check_weighted_lane_march()
+	_check_destroyed_lane_targets_king()
 	_check_dense_group_keeps_moving()
 	_check_tower_ingress_guards()
 	_check_tombstone_footprint()
+	_check_tombstone_spawn_cycle()
+	_check_card_play_delay()
 	_check_deploy_delay()
 	_check_building_pulls_tower_target()
 	_check_nearest_unit_or_building_target()
+	_check_crystal_target_and_nearest_attack_target()
 	_check_per_card_sight()
 	_check_unit_size_tiers()
+	_check_imp_tower_damage()
 	_check_visual_state_contract()
 	_check_hit_flash_presentation()
 	_check_health_bar_team_anchor()
@@ -50,13 +63,17 @@ func _run() -> void:
 	_check_sett_attack_rhythm()
 	_check_sett_art_integration()
 	_check_teemo_art_integration()
+	_check_aurelionsol_art_integration()
+	_check_aurelionsol_direct_retarget()
 	_check_attack_target_lock()
 	_check_attack_hit_recovery_commitment()
 	_check_basic_attack_has_no_knockback()
 	_check_freed_target_cleanup()
 	_check_projectile_travel()
+	_check_tower_projectile_visual()
 	_check_splash_and_knockback()
-	_check_charge()
+	_check_xin_deploy_sweep()
+	_check_xin_art_integration()
 	_check_tower_loses_out_of_range_target()
 	_check_landing_body_push_retargets_attacker()
 	_check_king_activation()
@@ -101,14 +118,39 @@ func _check_official_arena_grid() -> void:
 		is_equal_approx(_main._towers[0].body_radius, 54.0)
 		and is_equal_approx(_main._towers[0].visual_radius, 60.0)
 		and is_equal_approx(_main._towers[0].deployment_radius, 54.0)
+		and is_equal_approx(_main._towers[0].attack_range, 240.0)
+		and is_equal_approx(_main._towers[0].max_hp, 2100.0)
 		and is_equal_approx(_main._king_player.body_radius, 72.0)
 		and is_equal_approx(_main._king_player.visual_radius, 80.0)
 		and is_equal_approx(_main._king_player.deployment_radius, 72.0)
+		and is_equal_approx(_main._king_player.attack_range, 0.0)
+		and is_equal_approx(_main._king_player.max_hp, 3600.0)
+		and not _main._king_player.can_attack
+		and is_equal_approx(Tower.PRINCESS_HEALTH_BAR_WIDTH, 120.0)
+		and is_equal_approx(Tower.KING_HEALTH_BAR_WIDTH, 160.0)
+		and Tower.HEALTH_BAR_HEIGHT >= float(Tower.HEALTH_TEXT_SIZE)
+		and _main._towers[0]._health_text() == "2100"
 	)
-	_expect(tower_sizes_ok, "塔与水晶保持原视觉尺寸，同时缩小物理和部署碰撞圆")
+	_expect(tower_sizes_ok, "塔/水晶生命提升 50%，血条保持原宽度且只显示当前生命，水晶不具备攻击能力")
 	_expect(_main.is_card_deploy_position_valid(0, "xin", Vector2(20.0, 700.0)), "我方靠河左上角可部署")
 	_expect(_main.is_card_deploy_position_valid(0, "xin", Vector2(700.0, 700.0)), "我方靠河右上角可部署")
+	var same_front_row: bool = (
+		_main.is_card_deploy_position_valid(0, "xin", Vector2(300.0, 700.0))
+		and _main.is_card_deploy_position_valid(0, "garen", Vector2(300.0, 700.0))
+		and _main.is_card_deploy_position_valid(0, "ashe", Vector2(300.0, 700.0))
+	)
+	_expect(same_front_row, "不同体型兵种在同一部署格拥有相同的可部署资格")
 	_expect(_main.is_card_deploy_position_valid(1, "xin", Vector2(20.0, 580.0)), "敌方视角对应靠河角格同样可部署")
+	var princess_footprint_locked: bool = (
+		not _main.is_card_deploy_position_valid(0, "garen", Vector2(100.0, 980.0))
+		and _main.is_card_deploy_position_valid(0, "garen", Vector2(60.0, 1020.0))
+	)
+	_expect(princess_footprint_locked, "存活公主塔只封锁精确 3x3 格，塔外相邻格不受体型半径额外影响")
+	var nexus_footprint_locked: bool = (
+		not _main.is_card_deploy_position_valid(0, "garen", Vector2(300.0, 1100.0))
+		and _main.is_card_deploy_position_valid(0, "garen", Vector2(260.0, 1100.0))
+	)
+	_expect(nexus_footprint_locked, "存活水晶只封锁精确 4x4 格，水晶外相邻格仍按网格规则处理")
 	_expect(_main._pos_in_deploy_zone(Vector2(260.0, 1260.0), 0, false), "国王塔正后方中央格可部署")
 	_expect(_main._pos_in_deploy_zone(Vector2(20.0, 1260.0), 0, false) == false, "国王塔后方两侧不可部署")
 	var full_back_row := true
@@ -116,6 +158,63 @@ func _check_official_arena_grid() -> void:
 		full_back_row = full_back_row and _main.is_card_deploy_position_valid(0, "xin", Vector2(column * 40.0 + 20.0, 1260.0))
 	_expect(full_back_row, "国王塔后方中央 6 格组成完整可部署行")
 	_expect(int(ProjectSettings.get_setting("display/window/size/viewport_height")) > int(_main.FIELD_H), "手牌区位于战场之外，不遮挡最后一行")
+
+func _check_card_deployment_preview() -> void:
+	# 鼠标落在格子内部任意位置时，兵种预览和最终部署坐标都必须是该格格心。
+	_main._on_card_selected("xin")
+	_main._update_deployment_preview(Vector2(63.0, 742.0))
+	var expected_tile := Vector2i(1, 18)
+	var expected_center: Vector2 = _main._arena_tile_center(expected_tile)
+	var valid_preview: bool = (
+		_main._deployment_preview_visible
+		and _main._deployment_preview_tile == expected_tile
+		and _main._deployment_preview_pos.is_equal_approx(expected_center)
+		and _main._deployment_preview_valid
+	)
+	_expect(valid_preview, "选卡后鼠标移动会预览当前格，兵种落点严格吸附格心")
+
+	# 非己方部署区也要显示当前格，但变红并拒绝点击，不能自动跳到相邻合法格。
+	_main._update_deployment_preview(Vector2(63.0, 102.0))
+	var invalid_preview: bool = (
+		_main._deployment_preview_visible
+		and _main._deployment_preview_tile == Vector2i(1, 2)
+		and _main._deployment_preview_pos.is_equal_approx(Vector2(60.0, 100.0))
+		and not _main._deployment_preview_valid
+	)
+	_expect(invalid_preview, "非法部署格保留红色预览并拒绝部署，不会悄悄改落点")
+	_main._on_card_selected("")
+
+func _check_large_unit_front_row_exit() -> void:
+	var stats: Dictionary = CardDB.all()["garen"].duplicate()
+	stats["deploy_time"] = 0.0
+	stats["hp"] = 100000.0
+	var unit := Unit.new()
+	unit.setup(0, stats, stats.name)
+	unit.position = _main._snap_card_position("garen", Vector2(300.0, 700.0), 0)
+	_main.add_child(unit)
+	var start := unit.position
+	for _tick in 100:
+		_main._sim_step(_main.SIM_DT)
+	var exited: bool = unit.position.y < start.y - 10.0 or unit.position.x != start.x
+	_expect(exited, "大体型兵种在靠河第一排落地后仍能离开部署格继续推进")
+	unit.free()
+
+func _check_landing_position_correction() -> void:
+	var cases := [
+		["河岸", Vector2(300.0, 700.0)],
+		["桥边", Vector2(180.0, 700.0)],
+		["公主塔", Vector2(100.0, 1060.0)],
+		["水晶", Vector2(300.0, 1220.0)],
+	]
+	var all_corrected := true
+	for landing_case in cases:
+		var desired: Vector2 = landing_case[1]
+		var unit: Unit = _main._spawn_unit(0, "garen", desired)
+		var corrected: bool = not unit.position.is_equal_approx(desired)
+		var physically_valid: bool = _main.is_ground_position_walkable(unit.position, unit.body_radius, unit)
+		all_corrected = all_corrected and corrected and physically_valid
+		unit.free()
+	_expect(all_corrected, "盖伦落在河岸、桥边、塔体或水晶重叠格时会被修正到最近合法位置")
 
 func _check_structure_art_integration() -> void:
 	var wrapper_paths := [
@@ -135,27 +234,43 @@ func _check_structure_art_integration() -> void:
 			views.append(child as TowerModel3D)
 	var views_ok := views.size() == 6
 	var orientation_ok := true
-	var surfaces_ok := true
-	var animations_ok := true
+	var stage_views := 0
+	var stage_surfaces_ok := true
+	var stage_animations_ok := true
+	var nexus_surfaces_ok := true
+	var nexus_animations_ok := true
 	for view in views:
 		views_ok = views_ok and view._source.has_model_art and view._ground_clip_material_count >= 2
 		var expected_yaw := PI if view._source.team == 0 else 0.0
 		orientation_ok = orientation_ok and is_equal_approx(view.rotation.y, expected_yaw)
-		var alive_names: Array = view._animations.get("alive_materials", [])
-		var destroyed_names: Array = view._animations.get("destroyed_materials", [])
-		for material_name in alive_names:
-			for material in view._surface_materials_by_name.get(String(material_name), []):
-				surfaces_ok = surfaces_ok and is_equal_approx(float(material.get_shader_parameter("surface_visible")), 1.0)
-		for material_name in destroyed_names:
-			for material in view._surface_materials_by_name.get(String(material_name), []):
-				surfaces_ok = surfaces_ok and is_equal_approx(float(material.get_shader_parameter("surface_visible")), 0.0)
-		for animation_key in ["spawn", "idle", "destroy"]:
-			animations_ok = animations_ok and view._animation_player.has_animation(String(view._animations[animation_key]))
+		if view._stage_mode:
+			# 公主塔阶段模式：满血只显示 Base，其余阶段/碎块/废墟表面全部隐藏待用。
+			stage_views += 1
+			stage_surfaces_ok = stage_surfaces_ok and _surfaces_visible(view, ["Base"], true)
+			stage_surfaces_ok = stage_surfaces_ok and _surfaces_visible(view, ["Stage1", "Stage2", "Stage3", "Broken1", "Broken2", "Broken3", "Rubble"], false)
+			stage_animations_ok = stage_animations_ok and view._animation_player.has_animation(String(view._animations.get("destroy", "")))
+			for i in range(3):
+				stage_animations_ok = stage_animations_ok and view._animation_player.has_animation(StringName("debris/debris%d" % (i + 1)))
+		else:
+			var alive_names: Array = view._animations.get("alive_materials", [])
+			var destroyed_names: Array = view._animations.get("destroyed_materials", [])
+			for material_name in alive_names:
+				for material in view._surface_materials_by_name.get(String(material_name), []):
+					nexus_surfaces_ok = nexus_surfaces_ok and is_equal_approx(float(material.get_shader_parameter("surface_visible")), 1.0)
+			for material_name in destroyed_names:
+				for material in view._surface_materials_by_name.get(String(material_name), []):
+					nexus_surfaces_ok = nexus_surfaces_ok and is_equal_approx(float(material.get_shader_parameter("surface_visible")), 0.0)
+			for animation_key in ["spawn", "idle", "destroy"]:
+				nexus_animations_ok = nexus_animations_ok and view._animation_player.has_animation(String(view._animations[animation_key]))
 	_expect(views_ok, "六座建筑都使用独立 3D 表现代理，并为地上/地下表面启用动态地面裁切")
 	_expect(orientation_ok, "蓝方塔朝向红方、红方塔朝向蓝方")
-	_expect(surfaces_ok, "存活时仅显示塔体/水晶 startup 部件，隐藏 Rubble/Destroyed 部件")
-	_expect(animations_ok, "防御塔与水晶的出生、待机和摧毁动画映射均存在")
+	_expect(stage_views == 4 and stage_surfaces_ok, "公主塔满血仅显示 Base 表面，八个阶段/碎块/废墟材质全部按名接入")
+	_expect(stage_animations_ok, "公主塔摧毁动画与三段碎块片段均已注册到专用动画库")
+	_expect(nexus_surfaces_ok, "水晶存活时仅显示 startup 部件，隐藏 Rubble/Destroyed 部件")
+	_expect(nexus_animations_ok, "水晶的出生、待机和摧毁动画映射均存在")
 
+	# 阶段推进回归：破 2/3 换 Stage1+Broken1 坠毁；破 1/3 换 Stage2+Broken2；
+	# 摧毁换 Stage3+Broken3，掉块演完隐藏残核并定格 Rubble。
 	var temp_tower := Tower.new()
 	temp_tower.setup(0, _main.PRINCESS_STATS, false)
 	temp_tower.position = Vector2(360.0, 800.0)
@@ -166,21 +281,414 @@ func _check_structure_art_integration() -> void:
 		if child is TowerModel3D and child._source == temp_tower:
 			temp_view = child as TowerModel3D
 			break
-	var destroyed_events := [0]
-	temp_tower.destroyed.connect(func() -> void: destroyed_events[0] += 1)
-	temp_tower.take_damage(temp_tower.max_hp + 1.0)
-	temp_tower.notify_visual_destroyed()
-	var destroy_state_ok := attached and temp_view != null and temp_view._destroyed
+	var stage_flow_ok := attached and temp_view != null and temp_view._stage_mode
 	if temp_view != null:
-		destroy_state_ok = destroy_state_ok and temp_view._animation_player.current_animation == "Destroyed"
-		for material in temp_view._surface_materials_by_name.get("Base", []):
-			destroy_state_ok = destroy_state_ok and is_equal_approx(float(material.get_shader_parameter("surface_visible")), 0.0)
-		for material in temp_view._surface_materials_by_name.get("Rubble", []):
-			destroy_state_ok = destroy_state_ok and is_equal_approx(float(material.get_shader_parameter("surface_visible")), 1.0)
-	_expect(destroyed_events[0] == 1 and destroy_state_ok, "塔被摧毁时只触发一次表现事件，并切换到 Destroyed 动画与 Rubble 废墟")
+		# 破 2/3：Base 换 Stage1，Broken1 从附着位坠入地下。
+		temp_tower.take_damage(temp_tower.max_hp * 0.4)
+		temp_view._update_stage_flow(0.016)
+		stage_flow_ok = stage_flow_ok and temp_view._visual_stage == 1
+		stage_flow_ok = stage_flow_ok and _surfaces_visible(temp_view, ["Base"], false)
+		stage_flow_ok = stage_flow_ok and _surfaces_visible(temp_view, ["Stage1", "Broken1"], true)
+		stage_flow_ok = stage_flow_ok and temp_view._animation_player.current_animation == "debris/debris1"
+		stage_flow_ok = stage_flow_ok and temp_view._animation_player.is_playing()
+		# 掉块演完（2 秒）：碎块隐藏，塔体保持 Stage1。
+		temp_view._update_stage_flow(2.2)
+		stage_flow_ok = stage_flow_ok and _surfaces_visible(temp_view, ["Broken1"], false)
+		stage_flow_ok = stage_flow_ok and _surfaces_visible(temp_view, ["Stage1"], true)
+		# 破 1/3：Stage1 换 Stage2，Broken2 坠毁。
+		temp_tower.take_damage(temp_tower.max_hp * 0.3)
+		temp_view._update_stage_flow(0.016)
+		stage_flow_ok = stage_flow_ok and temp_view._visual_stage == 2
+		stage_flow_ok = stage_flow_ok and _surfaces_visible(temp_view, ["Stage1"], false)
+		stage_flow_ok = stage_flow_ok and _surfaces_visible(temp_view, ["Stage2", "Broken2"], true)
+		stage_flow_ok = stage_flow_ok and temp_view._animation_player.current_animation == "debris/debris2"
+		stage_flow_ok = stage_flow_ok and temp_view._animation_player.is_playing()
+		temp_view._update_stage_flow(2.2)
+		stage_flow_ok = stage_flow_ok and _surfaces_visible(temp_view, ["Broken2"], false)
+		# 摧毁：Stage2 换 Stage3+Broken3，掉块演完定格 Rubble；表现事件只触发一次。
+		var destroyed_events := [0]
+		temp_tower.destroyed.connect(func() -> void: destroyed_events[0] += 1)
+		temp_tower.take_damage(temp_tower.max_hp + 1.0)
+		temp_tower.notify_visual_destroyed()
+		stage_flow_ok = stage_flow_ok and destroyed_events[0] == 1 and temp_view._destroyed
+		stage_flow_ok = stage_flow_ok and _surfaces_visible(temp_view, ["Stage2", "Rubble"], false)
+		stage_flow_ok = stage_flow_ok and _surfaces_visible(temp_view, ["Stage3", "Broken3"], true)
+		stage_flow_ok = stage_flow_ok and temp_view._animation_player.current_animation == "debris/debris3"
+		stage_flow_ok = stage_flow_ok and temp_view._animation_player.is_playing()
+		temp_view._update_stage_flow(2.2)
+		stage_flow_ok = stage_flow_ok and _surfaces_visible(temp_view, ["Stage3", "Broken3"], false)
+		stage_flow_ok = stage_flow_ok and _surfaces_visible(temp_view, ["Rubble"], true)
+	_expect(stage_flow_ok, "公主塔按血量切换阶段表面，碎块坠毁，摧毁后定格 Rubble 废墟")
 	if temp_view != null:
 		temp_view.free()
 	temp_tower.free()
+
+	# 跳阶段直播回归：满血一击掉到 1/4（跨两阶段），直接跳 Stage2 播 Broken2，
+	# 不补演 Broken1。
+	var burst_tower := Tower.new()
+	burst_tower.setup(0, _main.PRINCESS_STATS, false)
+	burst_tower.position = Vector2(360.0, 700.0)
+	_main.add_child(burst_tower)
+	_main._battle_presentation.attach_tower(burst_tower, _main.PRINCESS_VISUAL_CONFIG)
+	var burst_view: TowerModel3D = null
+	for child in _main._battle_presentation._world_root.get_children():
+		if child is TowerModel3D and child._source == burst_tower:
+			burst_view = child as TowerModel3D
+			break
+	var burst_ok := burst_view != null and burst_view._stage_mode
+	if burst_view != null:
+		burst_tower.take_damage(burst_tower.max_hp * 0.75)
+		burst_view._update_stage_flow(0.016)
+		burst_ok = burst_ok and burst_view._visual_stage == 2
+		burst_ok = burst_ok and burst_view._active_debris_surface == "Broken2"
+		burst_ok = burst_ok and _surfaces_visible(burst_view, ["Stage2", "Broken2"], true)
+		burst_ok = burst_ok and _surfaces_visible(burst_view, ["Base", "Stage1", "Broken1"], false)
+		burst_ok = burst_ok and burst_view._animation_player.current_animation == "debris/debris2"
+		burst_ok = burst_ok and burst_view._animation_player.is_playing()
+		burst_view._update_stage_flow(2.2)
+		burst_ok = burst_ok and burst_view._active_debris_surface.is_empty()
+		burst_ok = burst_ok and _surfaces_visible(burst_view, ["Stage2"], true)
+		burst_ok = burst_ok and _surfaces_visible(burst_view, ["Broken1", "Broken2"], false)
+	_expect(burst_ok, "一击跨两个阶段时直接跳播第二块碎块动画，不补演第一块")
+	if burst_view != null:
+		burst_view.free()
+	burst_tower.free()
+
+	# 途中打断回归：Broken1 播到一半跌破下一阶段，直接切 Stage2 从头播 Broken2，
+	# Broken1 立即隐藏（不管它放没放完）。
+	var mid_tower := Tower.new()
+	mid_tower.setup(0, _main.PRINCESS_STATS, false)
+	mid_tower.position = Vector2(360.0, 600.0)
+	_main.add_child(mid_tower)
+	_main._battle_presentation.attach_tower(mid_tower, _main.PRINCESS_VISUAL_CONFIG)
+	var mid_view: TowerModel3D = null
+	for child in _main._battle_presentation._world_root.get_children():
+		if child is TowerModel3D and child._source == mid_tower:
+			mid_view = child as TowerModel3D
+			break
+	var mid_ok := mid_view != null and mid_view._stage_mode
+	if mid_view != null:
+		mid_tower.take_damage(mid_tower.max_hp * 0.4)
+		mid_view._update_stage_flow(0.016)
+		mid_view._update_stage_flow(1.0)
+		mid_ok = mid_ok and mid_view._active_debris_surface == "Broken1"
+		mid_tower.take_damage(mid_tower.max_hp * 0.3)
+		mid_view._update_stage_flow(0.016)
+		mid_ok = mid_ok and mid_view._visual_stage == 2
+		mid_ok = mid_ok and mid_view._active_debris_surface == "Broken2"
+		mid_ok = mid_ok and _surfaces_visible(mid_view, ["Stage2", "Broken2"], true)
+		mid_ok = mid_ok and _surfaces_visible(mid_view, ["Stage1", "Broken1"], false)
+		mid_ok = mid_ok and mid_view._animation_player.current_animation == "debris/debris2"
+		mid_ok = mid_ok and mid_view._animation_player.is_playing()
+		mid_ok = mid_ok and mid_view._animation_player.current_animation_position < 0.2
+		mid_view._update_stage_flow(2.2)
+		mid_ok = mid_ok and mid_view._active_debris_surface.is_empty()
+		mid_ok = mid_ok and _surfaces_visible(mid_view, ["Stage2"], true)
+	_expect(mid_ok, "掉落途中跌破下一阶段时直接切第二块动画并隐藏第一块，不等待旧动画播完")
+	if mid_view != null:
+		mid_view.free()
+	mid_tower.free()
+
+	# 途中摧毁回归：Broken1 播到一半塔被摧毁，直接切 Stage3 播 Broken3，
+	# 演完定格 Rubble。
+	var death_tower := Tower.new()
+	death_tower.setup(0, _main.PRINCESS_STATS, false)
+	death_tower.position = Vector2(360.0, 500.0)
+	_main.add_child(death_tower)
+	_main._battle_presentation.attach_tower(death_tower, _main.PRINCESS_VISUAL_CONFIG)
+	var death_view: TowerModel3D = null
+	for child in _main._battle_presentation._world_root.get_children():
+		if child is TowerModel3D and child._source == death_tower:
+			death_view = child as TowerModel3D
+			break
+	var death_ok := death_view != null and death_view._stage_mode
+	if death_view != null:
+		death_tower.take_damage(death_tower.max_hp * 0.4)
+		death_view._update_stage_flow(0.016)
+		death_view._update_stage_flow(1.0)
+		death_tower.take_damage(death_tower.max_hp + 1.0)
+		death_tower.notify_visual_destroyed()
+		death_view._update_stage_flow(0.016)
+		death_ok = death_ok and death_view._destroyed and death_view._visual_stage == 3
+		death_ok = death_ok and death_view._active_debris_surface == "Broken3"
+		death_ok = death_ok and _surfaces_visible(death_view, ["Stage3", "Broken3"], true)
+		death_ok = death_ok and _surfaces_visible(death_view, ["Stage1", "Stage2", "Broken1", "Broken2", "Rubble"], false)
+		death_ok = death_ok and death_view._animation_player.current_animation == "debris/debris3"
+		death_view._update_stage_flow(2.2)
+		death_ok = death_ok and death_view._active_debris_surface.is_empty()
+		death_ok = death_ok and _surfaces_visible(death_view, ["Stage3", "Broken3"], false)
+		death_ok = death_ok and _surfaces_visible(death_view, ["Rubble"], true)
+	_expect(death_ok, "掉落途中被摧毁时直接切第三块动画，演完定格 Rubble")
+	if death_view != null:
+		death_view.free()
+	death_tower.free()
+
+	# 满血秒杀回归：直接 Stage3+Broken3，演完定格 Rubble。
+	var instant_tower := Tower.new()
+	instant_tower.setup(0, _main.PRINCESS_STATS, false)
+	instant_tower.position = Vector2(360.0, 400.0)
+	_main.add_child(instant_tower)
+	_main._battle_presentation.attach_tower(instant_tower, _main.PRINCESS_VISUAL_CONFIG)
+	var instant_view: TowerModel3D = null
+	for child in _main._battle_presentation._world_root.get_children():
+		if child is TowerModel3D and child._source == instant_tower:
+			instant_view = child as TowerModel3D
+			break
+	var instant_ok := instant_view != null and instant_view._stage_mode
+	if instant_view != null:
+		instant_tower.take_damage(instant_tower.max_hp + 1.0)
+		instant_tower.notify_visual_destroyed()
+		instant_view._update_stage_flow(0.016)
+		instant_ok = instant_ok and instant_view._active_debris_surface == "Broken3"
+		instant_ok = instant_ok and _surfaces_visible(instant_view, ["Stage3", "Broken3"], true)
+		instant_ok = instant_ok and _surfaces_visible(instant_view, ["Base", "Broken1", "Broken2", "Rubble"], false)
+		instant_view._update_stage_flow(2.2)
+		instant_ok = instant_ok and instant_view._active_debris_surface.is_empty()
+		instant_ok = instant_ok and _surfaces_visible(instant_view, ["Stage3", "Broken3"], false)
+		instant_ok = instant_ok and _surfaces_visible(instant_view, ["Rubble"], true)
+	_expect(instant_ok, "满血秒杀时直接播第三块碎块动画，演完定格 Rubble")
+	if instant_view != null:
+		instant_view.free()
+	instant_tower.free()
+
+func _check_tombstone_art_integration() -> void:
+	var cards := CardDB.all()
+	var tombstone_stats: Dictionary = cards["tombstone"]
+	var imp_stats: Dictionary = CardDB.imp_stats()
+	var tombstone_packed := load(tombstone_stats.visual_scene_path) as PackedScene
+	var imp_packed := load(imp_stats.visual_scene_path) as PackedScene
+	var tombstone_sample := tombstone_packed.instantiate() as Node3D if tombstone_packed != null else null
+	var imp_sample := imp_packed.instantiate() as Node3D if imp_packed != null else null
+	if tombstone_sample != null:
+		_main.add_child(tombstone_sample)
+	if imp_sample != null:
+		_main.add_child(imp_sample)
+	var tombstone_player := _find_anim_player(tombstone_sample) if tombstone_sample != null else null
+	var imp_player := _find_anim_player(imp_sample) if imp_sample != null else null
+	var tombstone_animations_ok := tombstone_player != null
+	for key in ["deploy", "idle", "death"]:
+		var animation_name := String(tombstone_stats.visual_animations.get(key, ""))
+		tombstone_animations_ok = tombstone_animations_ok and tombstone_player.has_animation(animation_name)
+	var fog_layers: Array[Node] = tombstone_sample.find_children("BlackFog*", "MeshInstance3D", true, false) if tombstone_sample != null else []
+	var fog_ok := fog_layers.size() >= 5
+	var fog_material_ids := {}
+	for fog_node in fog_layers:
+		var fog := fog_node as MeshInstance3D
+		var fog_material := fog.material_override as ShaderMaterial
+		fog_ok = fog_ok and fog.mesh is QuadMesh and fog_material != null
+		fog_ok = fog_ok and fog.is_in_group("tombstone_fog") and fog.is_in_group("presentation_fx")
+		if fog_material != null:
+			fog_material_ids[fog_material.get_instance_id()] = true
+	fog_ok = fog_ok and fog_material_ids.size() == fog_layers.size()
+	var fog_death_ok := tombstone_sample != null and tombstone_sample.has_method("begin_visual_death")
+	var health_anchor_ok := tombstone_sample != null and tombstone_sample.has_method("get_health_bar_anchor_local")
+	if fog_death_ok:
+		tombstone_sample.call("begin_visual_death", 0.8)
+		tombstone_sample.call("_process", 0.4)
+		for fog_node in fog_layers:
+			var fog_material := (fog_node as MeshInstance3D).material_override as ShaderMaterial
+			var visibility := float(fog_material.get_shader_parameter("fog_visibility")) if fog_material != null else 1.0
+			fog_death_ok = fog_death_ok and visibility > 0.0 and visibility < 1.0
+	if health_anchor_ok:
+		var anchor = tombstone_sample.call("get_health_bar_anchor_local")
+		health_anchor_ok = anchor is Vector3 and (anchor as Vector3).y > 1.0
+	var imp_animations_ok := imp_player != null
+	for key in ["deploy", "idle", "move", "death"]:
+		var animation_name := String(imp_stats.visual_animations.get(key, ""))
+		imp_animations_ok = imp_animations_ok and imp_player.has_animation(animation_name)
+	for animation_name in imp_stats.visual_animations.attack:
+		imp_animations_ok = imp_animations_ok and imp_player.has_animation(String(animation_name))
+	imp_animations_ok = imp_animations_ok and String(imp_stats.visual_animations.move) == "Run1"
+	imp_animations_ok = imp_animations_ok and imp_stats.visual_animations.attack == ["Yorick_ghoul_leapWindup_anm"]
+	_expect(tombstone_packed != null and tombstone_animations_ok and fog_ok, "墓碑包装场景接入 Spawn/Idle1/Death，并用五层独立流动黑雾覆盖地面与模型内部")
+	_expect(fog_death_ok, "墓碑死亡时每座墓碑的黑雾独立随 Death 动画扩散并淡出")
+	_expect(health_anchor_ok, "墓碑使用稳定的模型顶部锚点定位血条")
+	_expect(imp_packed != null and imp_animations_ok, "小鬼移动循环 Run1，攻击使用 leapWindup，Spawn/Idle/Death 保持原动画")
+	if tombstone_sample != null:
+		tombstone_sample.free()
+	if imp_sample != null:
+		imp_sample.free()
+
+## 校验表面组内所有裁切材质的可见参数，且表面名必须真实存在（防止配置名写错）。
+func _surfaces_visible(view: TowerModel3D, surface_names: Array, expected: bool) -> bool:
+	var target := 1.0 if expected else 0.0
+	for surface_name in surface_names:
+		var materials: Array = view._surface_materials_by_name.get(String(surface_name), [])
+		if materials.is_empty():
+			return false
+		for material in materials:
+			if not is_equal_approx(float(material.get_shader_parameter("surface_visible")), target):
+				return false
+	return true
+
+func _check_minion_line_mechanism() -> void:
+	var cards := CardDB.all()
+	var minion_ids := ["melee_minion", "ranged_minion", "siege_minion", "super_minion"]
+	var data_ok := true
+	var expected_costs := {"melee_minion": 1, "ranged_minion": 1, "siege_minion": 3, "super_minion": 4}
+	for card_id in minion_ids:
+		data_ok = data_ok and cards.has(card_id) and bool(cards[card_id].get("selectable", true))
+		data_ok = data_ok and CardDB.selectable_ids().has(card_id)
+		data_ok = data_ok and int(cards[card_id].cost) == int(expected_costs[card_id])
+	_expect(data_ok, "四类兵线单位进入玩家/AI 卡池，费用为近战1、远程1、炮车3、超级兵4")
+	_expect(
+		cards.melee_minion.size_tier == CardDB.SIZE_SMALL
+		and cards.ranged_minion.size_tier == CardDB.SIZE_SMALL
+		and cards.siege_minion.size_tier == CardDB.SIZE_SLIGHTLY_SMALL
+		and cards.super_minion.size_tier == CardDB.SIZE_MEDIUM
+		and is_equal_approx(cards.melee_minion.speed, CardDB.SPEED_MEDIUM)
+		and is_equal_approx(cards.ranged_minion.speed, CardDB.SPEED_MEDIUM)
+		and is_equal_approx(cards.siege_minion.speed, CardDB.SPEED_MEDIUM)
+		and is_equal_approx(cards.super_minion.speed, CardDB.SPEED_MEDIUM)
+		and cards.ranged_minion.can_attack_air
+		and cards.siege_minion.can_attack_air,
+		"四类小兵的权威体型统一下调一档，速度与对空能力保持原定义"
+	)
+
+	var art_ok := true
+	for card_id in minion_ids:
+		var stats: Dictionary = cards[card_id]
+		var scene_paths: Array = stats.visual_scene_paths
+		art_ok = art_ok and scene_paths.size() == 2
+		for scene_path in scene_paths:
+			var packed := load(String(scene_path)) as PackedScene
+			var sample := packed.instantiate() as Node3D if packed != null else null
+			var anim_player := _find_anim_player(sample) if sample != null else null
+			for key in ["deploy", "idle", "move", "death"]:
+				var animation_name := String(stats.visual_animations[key])
+				art_ok = art_ok and anim_player != null and anim_player.has_animation(animation_name)
+			for attack_name in stats.visual_animations.attack:
+				art_ok = art_ok and anim_player != null and anim_player.has_animation(String(attack_name))
+			if sample != null:
+				sample.free()
+	_expect(art_ok, "四类兵线的 order/chaos 包装场景均可加载，Idle/Run/Attack/Death 映射真实存在")
+
+	var ranged_blue := Unit.new()
+	var ranged_red := Unit.new()
+	var siege_blue := Unit.new()
+	ranged_blue.setup(0, cards.ranged_minion, cards.ranged_minion.name)
+	ranged_red.setup(1, cards.ranged_minion, cards.ranged_minion.name)
+	siege_blue.setup(0, cards.siege_minion, cards.siege_minion.name)
+	_expect(
+		ranged_blue.projectile_visual == &"orb"
+		and ranged_blue.projectile_color.b > ranged_blue.projectile_color.r
+		and ranged_red.projectile_color.r > ranged_red.projectile_color.b
+		and siege_blue.projectile_color.r < 0.1
+		and ranged_blue.projectile_visual_forward_offset > 0.0
+		and siege_blue.projectile_visual_forward_offset > ranged_blue.projectile_visual_forward_offset,
+		"远程兵按阵营发射蓝/红小光球，炮车发射黑球，权杖与炮口均配置纯表现起点"
+	)
+	ranged_blue.free()
+	ranged_red.free()
+	siege_blue.free()
+
+	_clear_minion_test_units()
+	_main._pending_lane_minions.clear()
+	_main._battle_elapsed = 4.95
+	_main._next_minion_wave_time = 5.0
+	_main._tick_minion_waves(0.05)
+	var first_spawn := _minion_test_units()
+	var first_wave_ok := first_spawn.size() == 4
+	var first_wave_ready_ok := true
+	for minion in first_spawn:
+		first_wave_ok = first_wave_ok and minion.card_id == "melee_minion"
+		first_wave_ready_ok = first_wave_ready_ok and minion.is_deployed() and is_equal_approx(minion._deploy_timer, 0.0)
+	_expect(first_wave_ok and first_wave_ready_ok, "开局第 5 秒双方左右两路各生成一个近战兵，生成后立即可行动")
+	_main._tick_minion_waves(0.45)
+	_expect(_minion_test_units().size() == 4, "首波经过 0.45 秒尚未生成后排")
+	_main._tick_minion_waves(0.05)
+	var normal_wave := _minion_test_units()
+	var ranged_count := 0
+	var ranged_ready_ok := true
+	for minion in normal_wave:
+		if minion.card_id == "ranged_minion":
+			ranged_count += 1
+			ranged_ready_ok = ranged_ready_ok and minion.is_deployed() and is_equal_approx(minion._deploy_timer, 0.0)
+	_expect(normal_wave.size() == 8 and ranged_count == 4 and ranged_ready_ok, "首波 0.5 秒后双方左右两路各补一个远程兵，生成后立即可行动")
+
+	_clear_minion_test_units()
+	_main._pending_lane_minions.clear()
+	_main._battle_elapsed = 124.95
+	_main._next_minion_wave_time = 125.0
+	_main._tick_minion_waves(0.05)
+	_main._tick_minion_waves(0.5)
+	var double_wave := _minion_test_units()
+	var siege_count := 0
+	for minion in double_wave:
+		if minion.card_id == "siege_minion":
+			siege_count += 1
+	_expect(double_wave.size() == 8 and siege_count == 4, "进入双倍圣水后每路编成为近战兵加炮车兵")
+
+	_clear_minion_test_units()
+	_main._pending_lane_minions.clear()
+	var enemy_left_hp: float = _main._towers[2].hp
+	_main._towers[2].hp = 0.0
+	_main._battle_elapsed = 0.0
+	_main._spawn_minion_wave()
+	var upgraded_front_ok := false
+	var untouched_front_ok := false
+	for minion in _minion_test_units():
+		if minion.team == 0 and minion.position.x < _main.FIELD_W * 0.5:
+			upgraded_front_ok = minion.card_id == "super_minion"
+		elif minion.team == 0 and minion.position.x > _main.FIELD_W * 0.5:
+			untouched_front_ok = minion.card_id == "melee_minion"
+	_expect(upgraded_front_ok and untouched_front_ok, "推掉敌方左塔后，仅己方左路后续近战兵替换为超级兵")
+	_main._towers[2].hp = enemy_left_hp
+	_clear_minion_test_units()
+	_main._pending_lane_minions.clear()
+	_main._battle_elapsed = 0.0
+	_main._next_minion_wave_time = _main.FIRST_MINION_WAVE_TIME
+
+func _check_death_animation_durations() -> void:
+	var cards := CardDB.all()
+	var hero_ids := ["garen", "xin", "ashe", "teemo", "masteryi", "gwen", "sett", "aurelionsol"]
+	var minion_ids := ["melee_minion", "ranged_minion", "siege_minion", "super_minion"]
+	var durations_ok := true
+	for card_id in hero_ids:
+		durations_ok = durations_ok and is_equal_approx(float(cards[card_id].visual_animations.get("death_duration", 0.0)), 0.8)
+	for card_id in minion_ids:
+		durations_ok = durations_ok and is_equal_approx(float(cards[card_id].visual_animations.get("death_duration", 0.0)), 0.5)
+	_expect(durations_ok, "全部英雄死亡动画统一为 0.8 秒，四类小兵统一为 0.5 秒")
+	_expect(
+		_runtime_death_speed_matches("garen", 0.8)
+		and _runtime_death_speed_matches("melee_minion", 0.5),
+		"通用 3D 表现层按配置时长缩放英雄与小兵的死亡动画"
+	)
+
+func _runtime_death_speed_matches(card_id: String, expected_duration: float) -> bool:
+	var stats: Dictionary = CardDB.all()[card_id].duplicate(true)
+	stats["deploy_time"] = 0.0
+	var unit := Unit.new()
+	unit.position = Vector2(360.0, 900.0)
+	unit.card_id = card_id
+	unit.setup(0, stats, stats.name)
+	_main.add_child(unit)
+	var attached: bool = _main._battle_presentation.attach_unit(unit, stats)
+	unit.take_damage(unit.max_hp + 1.0)
+	var playback_ok := false
+	for child in _main._battle_presentation._world_root.get_children():
+		if child is UnitModel3D and child._source == unit:
+			var view := child as UnitModel3D
+			var animation := view._animation_player.get_animation(view._death_animation) if view._animation_player != null else null
+			if animation != null and animation.length > 0.0:
+				var expected_speed: float = animation.length / expected_duration
+				playback_ok = is_equal_approx(view._animation_player.get_playing_speed(), expected_speed)
+			view.free()
+			break
+	if is_instance_valid(unit):
+		unit.free()
+	return attached and playback_ok
+
+func _minion_test_units() -> Array[Unit]:
+	var result: Array[Unit] = []
+	for combatant in _main.get_tree().get_nodes_in_group("combatants"):
+		if combatant is Unit and ["melee_minion", "ranged_minion", "siege_minion", "super_minion"].has(combatant.card_id):
+			result.append(combatant as Unit)
+	return result
+
+func _clear_minion_test_units() -> void:
+	for minion in _minion_test_units():
+		minion.free()
 
 func _check_lane_weight_field() -> void:
 	var lane_weight: float = _main.nav.get_lane_weight_at(Vector2(_main.BRIDGE_X_LEFT, 800.0))
@@ -355,6 +863,31 @@ func _check_weighted_lane_march() -> void:
 	_expect(unit._path == first_path, "推进路径生成后会复用，不会每个模拟帧重跑 A*")
 	unit.free()
 
+func _check_destroyed_lane_targets_king() -> void:
+	var stats: Dictionary = CardDB.all()["xin"].duplicate()
+	stats["deploy_time"] = 0.0
+	var blue_left := Unit.new()
+	blue_left.position = Vector2(204.0, 520.0)
+	blue_left.setup(0, stats, stats.name)
+	_main.add_child(blue_left)
+	var red_left_hp: float = _main._towers[2].hp
+	_main._towers[2].hp = 0.0
+	blue_left._update_target()
+	_expect(blue_left._target == _main._king_enemy, "左路敌方公主塔摧毁后，同路单位转推敌方水晶而不是跨向右塔")
+	_main._towers[2].hp = red_left_hp
+	blue_left.free()
+
+	var red_right := Unit.new()
+	red_right.position = Vector2(516.0, 760.0)
+	red_right.setup(1, stats, stats.name)
+	_main.add_child(red_right)
+	var blue_right_hp: float = _main._towers[1].hp
+	_main._towers[1].hp = 0.0
+	red_right._update_target()
+	_expect(red_right._target == _main._king_player, "右路我方公主塔摧毁后，敌方单位镜像转推我方水晶而不是跨向左塔")
+	_main._towers[1].hp = blue_right_hp
+	red_right.free()
+
 func _check_dense_group_keeps_moving() -> void:
 	var stats: Dictionary = CardDB.all()["xin"].duplicate()
 	stats["deploy_time"] = 0.0
@@ -414,16 +947,130 @@ func _check_tombstone_footprint() -> void:
 	_expect(half_size_ok and occupied, "墓碑实际占据完整 2x2 格并写入导航障碍")
 	tombstone._die()
 
+func _check_tombstone_spawn_cycle() -> void:
+	var stats: Dictionary = CardDB.all()["tombstone"].duplicate(true)
+	stats["deploy_time"] = 0.0
+	var left := Unit.new()
+	left.position = Vector2(240.0, 900.0)
+	left.setup(0, stats, stats.name)
+	_main.add_child(left)
+	var before_left := _imp_units()
+	left.sim_tick(_main.SIM_DT)
+	var after_initial := _imp_units()
+	var initial_count := after_initial.size() - before_left.size()
+	var initial_left_side := true
+	for imp in after_initial:
+		if not before_left.has(imp):
+			initial_left_side = initial_left_side and imp.position.x < left.position.x
+	var initial_ready := true
+	for imp in after_initial:
+		if not before_left.has(imp):
+			initial_ready = initial_ready and imp.is_deployed() and is_equal_approx(imp._deploy_timer, 0.0)
+	_expect(initial_count == 2 and initial_left_side and initial_ready, "墓碑完成部署后立即在地图左侧连续生成两个无需部署读条的小鬼")
+	left.sim_tick(4.95)
+	var after_periodic := _imp_units()
+	_expect(after_periodic.size() - after_initial.size() == 2, "墓碑每 5 秒额外生成两个小鬼")
+
+	var right := Unit.new()
+	right.position = Vector2(480.0, 900.0)
+	right.setup(1, stats, stats.name)
+	_main.add_child(right)
+	var before_right := _imp_units()
+	right.sim_tick(_main.SIM_DT)
+	var after_right := _imp_units()
+	var right_count := after_right.size() - before_right.size()
+	var initial_right_side := true
+	for imp in after_right:
+		if not before_right.has(imp):
+			initial_right_side = initial_right_side and imp.position.x > right.position.x
+	_expect(right_count == 2 and initial_right_side, "墓碑完成部署后立即在地图右侧生成两个小鬼")
+
+	var diagonal_corner := left.position + Vector2(40.0, 40.0)
+	var direct_overlap := left.position + Vector2(30.0, 0.0)
+	_expect(
+		_main.is_ground_position_walkable(diagonal_corner, CardDB.RADIUS_EXTREMELY_SMALL)
+		and not _main.is_ground_position_walkable(direct_overlap, CardDB.RADIUS_EXTREMELY_SMALL),
+		"墓碑 2x2 格占地的实际碰撞为内切圆，圆角外可通行而边缘内不可穿过"
+	)
+	for imp in _imp_units():
+		imp.free()
+	left.free()
+	right.free()
+
+func _imp_units() -> Array[Unit]:
+	var result: Array[Unit] = []
+	for combatant in get_nodes_in_group("combatants"):
+		if combatant is Unit and (combatant as Unit).card_id == "imp":
+			result.append(combatant as Unit)
+	return result
+
 func _check_deploy_delay() -> void:
-	var stats: Dictionary = CardDB.all()["xin"].duplicate()
+	var stats: Dictionary = CardDB.all()["garen"].duplicate()
 	var unit := Unit.new()
 	unit.position = Vector2(204.0, 820.0)
 	unit.setup(0, stats, stats.name)
 	_main.add_child(unit)
 	var before := unit.position
 	unit.sim_tick(0.5)
-	_expect(unit.position.is_equal_approx(before) and not unit.is_deployed(), "部署时间内单位不移动、不进入战斗")
+	_expect(
+		is_equal_approx(unit.deploy_time, 1.0)
+		and unit.position.is_equal_approx(before)
+		and not unit.is_deployed(),
+		"普通单位默认部署 1 秒，期间没有自主移动或攻击"
+	)
+	var attacker_stats: Dictionary = CardDB.all()["ashe"].duplicate()
+	attacker_stats["deploy_time"] = 0.0
+	var attacker := Unit.new()
+	attacker.position = unit.position
+	attacker.setup(1, attacker_stats, attacker_stats.name)
+	_main.add_child(attacker)
+	attacker._update_target()
+	var hp_before := unit.hp
+	unit.take_damage(25.0, attacker)
+	var overlap_before := attacker.position.distance_to(unit.position)
+	_main._resolve_unit_collisions(_main.SIM_DT)
+	_expect(attacker._target == unit and unit.hp < hp_before, "部署中的单位可以被敌方索敌并命中")
+	_expect(attacker.position.distance_to(unit.position) > overlap_before, "部署中的单位拥有实体碰撞并参与推挤")
+	attacker.free()
 	unit.free()
+
+func _check_card_play_delay() -> void:
+	var target_stats: Dictionary = CardDB.all()["garen"].duplicate()
+	target_stats["deploy_time"] = 0.0
+	var target := Unit.new()
+	target.position = Vector2(360.0, 920.0)
+	target.setup(1, target_stats, target_stats.name)
+	_main.add_child(target)
+	var combatants_before := get_nodes_in_group("combatants").size()
+	_main._deploy_card(0, "ashe", Vector2(280.0, 980.0))
+	_main._deploy_card(0, "tombstone", Vector2(480.0, 1000.0))
+	_main._deploy_card(0, "freeze", target.position)
+	for _i in 9:
+		_main._tick_pending_card_deployments(_main.SIM_DT)
+	_expect(
+		get_nodes_in_group("combatants").size() == combatants_before
+		and target.frozen_timer <= 0.0,
+		"兵种、建筑和法术在出牌后 0.45 秒仍未生成或生效"
+	)
+	_main._tick_pending_card_deployments(_main.SIM_DT)
+	var spawned: Array[Unit] = []
+	for c in get_nodes_in_group("combatants"):
+		if c is Unit and c != target and c.global_position in [Vector2(300.0, 980.0), Vector2(480.0, 1000.0)]:
+			spawned.append(c as Unit)
+	_expect(
+		get_nodes_in_group("combatants").size() == combatants_before + 2
+		and target.frozen_timer > 0.0,
+		"兵种、建筑和法术在主机权威 0.5 秒节点统一生效"
+	)
+	var spawned_with_default_deploy := false
+	for unit in spawned:
+		if not unit.is_building and is_equal_approx(unit._deploy_timer, 1.0):
+			spawned_with_default_deploy = true
+	_expect(spawned_with_default_deploy, "兵种在 0.5 秒卡牌延迟结束时生成，并另行开始 1 秒部署")
+	for unit in spawned:
+		unit._die()
+	target.free()
+	_main._freeze_effects.clear()
 
 func _check_building_pulls_tower_target() -> void:
 	var attacker_stats: Dictionary = CardDB.all()["garen"].duplicate()
@@ -474,6 +1121,47 @@ func _check_nearest_unit_or_building_target() -> void:
 	attacker.free()
 	troop.free()
 	building.free()
+
+func _check_crystal_target_and_nearest_attack_target() -> void:
+	# 普通单位在攻击范围内应优先锁定最近的合法敌方单位；测试位置都在赵信的攻击距离内。
+	var attacker_stats: Dictionary = CardDB.all()["xin"].duplicate()
+	var target_stats: Dictionary = CardDB.all()["xin"].duplicate()
+	attacker_stats["deploy_time"] = 0.0
+	target_stats["deploy_time"] = 0.0
+	var attacker := Unit.new()
+	var nearer := Unit.new()
+	var farther := Unit.new()
+	attacker.position = Vector2(300.0, 800.0)
+	nearer.position = Vector2(300.0, 755.0)
+	farther.position = Vector2(300.0, 980.0)
+	attacker.setup(0, attacker_stats, attacker_stats.name)
+	nearer.setup(1, target_stats, target_stats.name)
+	farther.setup(1, target_stats, target_stats.name)
+	_main.add_child(attacker)
+	_main.add_child(nearer)
+	_main.add_child(farther)
+	attacker._update_target()
+	var nearest_unit_ok: bool = (
+		attacker._target == nearer
+		and attacker._target_gap(nearer) <= attacker.attack_range
+		and attacker._target_gap(farther) > attacker.attack_range
+		and attacker._target_gap(farther) <= attacker.sight_range
+	)
+	_expect(nearest_unit_ok, "攻击范围内优先攻击最近单位，只有视野内的较远单位则继续追击最近目标")
+	attacker.free()
+	nearer.free()
+	farther.free()
+
+	# 两座敌方公主塔都还存活时，贴近水晶的单位也应能把水晶作为合法目标。
+	var crystal_attacker := Unit.new()
+	crystal_attacker.position = _main._king_enemy.position + Vector2.DOWN * 100.0
+	crystal_attacker.setup(0, attacker_stats, attacker_stats.name)
+	_main.add_child(crystal_attacker)
+	crystal_attacker._target = _main._towers[3]
+	crystal_attacker._update_target()
+	var princesses_alive: bool = _main._towers[2].hp > 0.0 and _main._towers[3].hp > 0.0
+	_expect(princesses_alive and crystal_attacker._target == _main._king_enemy, "公主塔未被摧毁时，进入攻击范围的单位也能选择敌方水晶")
+	crystal_attacker.free()
 
 func _check_per_card_sight() -> void:
 	var melee_stats: Dictionary = CardDB.all()["masteryi"].duplicate()
@@ -552,6 +1240,7 @@ func _check_unit_size_tiers() -> void:
 		"ashe": 0.012,
 		"teemo": 0.01185,
 		"gwen": 0.00945,
+		"aurelionsol": 0.006,
 	}
 	var models_scaled := true
 	for card_id in model_scales:
@@ -796,7 +1485,7 @@ func _check_masteryi_art_integration() -> void:
 			process_order_ok = view.process_priority > unit.process_priority
 			view.free()
 			break
-	_expect(attached and death_view_found, "剑圣死亡时由独立 3D 代理播放完整 Death")
+	_expect(attached and death_view_found, "剑圣死亡时由独立 3D 代理播放 Death")
 	_expect(process_order_ok, "客户端 3D 代理在 Unit 快照插值完成后读取最终位置")
 	if is_instance_valid(unit):
 		unit.free()
@@ -836,7 +1525,7 @@ func _check_ashe_art_integration() -> void:
 			death_view_found = view._dying and view._animation_player.current_animation == "Death"
 			view.free()
 			break
-	_expect(attached and death_view_found, "寒冰死亡时由独立 3D 代理播放完整 Death")
+	_expect(attached and death_view_found, "寒冰死亡时由独立 3D 代理播放 Death")
 	if is_instance_valid(unit):
 		unit.free()
 	if sample != null:
@@ -996,8 +1685,8 @@ func _check_gwen_tower_combat() -> void:
 		_main._sim_step(_main.SIM_DT)
 	_expect(attacker._shroud_active, "格温攻击水晶首次命中后开启丝缕缠流")
 	_expect(king.hp < king_hp, "格温对水晶持续输出")
-	_expect(king.activated, "水晶受到攻击后激活")
-	_expect(attacker.hp < attacker_hp, "缠流开启后，贴身的水晶仍在圈内，能看见并反击格温")
+	_expect(not king.activated, "水晶受到攻击后仍不激活攻击能力")
+	_expect(is_equal_approx(attacker.hp, attacker_hp), "水晶不索敌、不发射弹体也不造成伤害")
 	# 水晶同样接入受击闪白表现。
 	var king_view: TowerModel3D = null
 	for child in _main._battle_presentation._world_root.get_children():
@@ -1046,7 +1735,7 @@ func _check_gwen_art_integration() -> void:
 			death_view_found = view._dying and view._animation_player.current_animation == "Death"
 			view.free()
 			break
-	_expect(attached and death_view_found, "格温死亡时由独立 3D 代理播放完整 Death")
+	_expect(attached and death_view_found, "格温死亡时由独立 3D 代理播放 Death")
 	if is_instance_valid(unit):
 		unit.free()
 	if sample != null:
@@ -1122,7 +1811,7 @@ func _check_sett_art_integration() -> void:
 			death_view_found = view._dying and view._animation_player.current_animation == "Death"
 			view.free()
 			break
-	_expect(attached and death_view_found, "腕豪死亡时由独立 3D 代理播放完整 Death")
+	_expect(attached and death_view_found, "腕豪死亡时由独立 3D 代理播放 Death")
 	if is_instance_valid(unit):
 		unit.free()
 	if sample != null:
@@ -1163,11 +1852,177 @@ func _check_teemo_art_integration() -> void:
 			death_view_found = view._dying and view._animation_player.current_animation == "Death"
 			view.free()
 			break
-	_expect(attached and death_view_found, "提莫死亡时由独立 3D 代理播放完整 Death")
+	_expect(attached and death_view_found, "提莫死亡时由独立 3D 代理播放 Death")
 	if is_instance_valid(unit):
 		unit.free()
 	if sample != null:
 		sample.free()
+
+## 龙王是首个空中 3D 单位：模型悬空，移动四段循环，吐息进入/循环与退出衔接均由表现状态驱动。
+func _check_aurelionsol_art_integration() -> void:
+	var stats: Dictionary = CardDB.all()["aurelionsol"].duplicate(true)
+	stats["deploy_time"] = 0.0
+	var packed := load(stats.visual_scene_path) as PackedScene
+	_expect(packed != null, "龙王包装场景可加载")
+	if packed == null:
+		return
+	var sample := packed.instantiate() as Node3D
+	var model_node := sample.get_node_or_null("Model") as Node3D
+	_expect(
+		model_node != null and model_node.position.y > 2.0 and is_equal_approx(model_node.scale.x, 0.006),
+		"龙王模型以独立表现高度悬在地面上方，权威空中坐标仍留在 2D 地面",
+	)
+	var anim_names: Dictionary = stats.visual_animations
+	var anim_player := _find_anim_player(sample)
+	_expect(anim_names.deploy == "Respawn" and is_equal_approx(anim_names.deploy_clip_ratio, 0.5), "龙王部署使用 Respawn 前半段翻滚动画")
+	var names_found := anim_player != null
+	for key in ["deploy", "idle", "move", "move_enter", "attack_enter", "attack_retarget_enter", "attack_loop", "attack_to_move", "death"]:
+		var animation_name := String(anim_names.get(key, ""))
+		names_found = names_found and animation_name != "" and anim_player.has_animation(animation_name)
+	for animation_name in anim_names.move_cycle:
+		names_found = names_found and anim_player.has_animation(String(animation_name))
+	_expect(names_found, "龙王 Idle/RunIn/Run1A~D/吐息进入与循环/吐息转移动/Death 动画名均存在")
+	_expect(
+		anim_names.move_cycle == ["Run1B", "Run1C", "Run1D", "Run1A"]
+		and anim_names.attack_enter == "AurelionSol_Spell1_newtst_anm"
+		and anim_names.attack_retarget_enter == "AurelionSol_Spell1_new_looptoin_anm"
+		and anim_names.attack_loop == "AurelionSol_Spell1_loop_anm"
+		and anim_names.attack_to_move == "Spell1_2Run"
+		and anim_names.move_enter_after_attack == false,
+		"龙王区分移动后 newtst 与原地换目标 new_looptoin，并保留吐息转移动链路",
+	)
+	var beam_color: Color = stats.continuous_beam_color
+	_expect(
+		is_equal_approx(beam_color.a, 0.7)
+		and stats.continuous_beam_start_width < stats.continuous_beam_end_width,
+		"龙王临时吐息为 70% 不透明度、嘴部窄目标端宽的浅蓝梯形光柱",
+	)
+	var unit := Unit.new()
+	var dummy := Unit.new()
+	unit.position = Vector2(360.0, 900.0)
+	dummy.position = Vector2(360.0, 780.0)
+	unit.setup(0, stats, stats.name)
+	dummy.setup(1, _sweep_dummy_stats(CardDB.all()["ashe"]), "龙息木桩")
+	_main.add_child(unit)
+	_main.add_child(dummy)
+	var attached: bool = _main._battle_presentation.attach_unit(unit, stats)
+	var view: UnitModel3D = null
+	for child in _main._battle_presentation._world_root.get_children():
+		if child is UnitModel3D and child._source == unit:
+			view = child as UnitModel3D
+			break
+	var attack_transition_ok := false
+	var retarget_transition_ok := false
+	var move_transition_ok := false
+	var move_cycle_ok := false
+	var immediate_stop_ok := false
+	if view != null:
+		unit._target = dummy
+		unit._attacking = true
+		view._sync_visual(false, 0.05)
+		var entered_attack := (
+			view._animation_player.current_animation == "AurelionSol_Spell1_newtst_anm"
+			and not unit.continuous_beam_visible
+		)
+		view._on_animation_finished(&"AurelionSol_Spell1_newtst_anm")
+		attack_transition_ok = (
+			entered_attack
+			and view._animation_player.current_animation == "AurelionSol_Spell1_loop_anm"
+			and unit.continuous_beam_visible
+		)
+		# 攻击状态未退出但目标序号推进：表示原目标被击败后在范围内直接换目标。
+		unit._attack_visual_serial += 1
+		view._sync_visual(false, 0.05)
+		var entered_retarget := (
+			view._animation_player.current_animation == "AurelionSol_Spell1_new_looptoin_anm"
+			and not unit.continuous_beam_visible
+		)
+		view._on_animation_finished(&"AurelionSol_Spell1_new_looptoin_anm")
+		retarget_transition_ok = (
+			entered_retarget
+			and view._animation_player.current_animation == "AurelionSol_Spell1_loop_anm"
+			and unit.continuous_beam_visible
+		)
+		unit._attacking = false
+		unit._move_intent = Vector2.UP * unit.move_speed
+		view._sync_visual(false, 0.05)
+		var attack_to_run := view._animation_player.current_animation == "Spell1_2Run"
+		view._on_animation_finished(&"Spell1_2Run")
+		var run_b := view._animation_player.current_animation == "Run1B"
+		view._on_animation_finished(&"Run1B")
+		var run_c := view._animation_player.current_animation == "Run1C"
+		view._on_animation_finished(&"Run1C")
+		var run_d := view._animation_player.current_animation == "Run1D"
+		view._on_animation_finished(&"Run1D")
+		var run_a := view._animation_player.current_animation == "Run1A"
+		view._on_animation_finished(&"Run1A")
+		var looped_to_b := view._animation_player.current_animation == "Run1B"
+		move_transition_ok = attack_to_run and run_b and not unit.continuous_beam_visible
+		move_cycle_ok = run_b and run_c and run_d and run_a and looped_to_b
+		unit._move_intent = Vector2.ZERO
+		unit._attacking = true
+		view._sync_visual(false, 0.05)
+		view._on_animation_finished(&"AurelionSol_Spell1_newtst_anm")
+		unit._attacking = false
+		view._sync_visual(false, 0.05)
+		immediate_stop_ok = (
+			view._animation_player.current_animation == "Idle1_Base"
+			and not unit.continuous_beam_visible
+		)
+	_expect(attached and attack_transition_ok, "龙王吐息进入段不显示光柱，进入循环吐息后才显示")
+	_expect(retarget_transition_ok, "龙王原地击败目标并直接换目标时播放 new_looptoin→loop")
+	_expect(move_transition_ok, "龙王吐息后按 Spell1_2Run→Run1B 直接接入移动循环")
+	_expect(move_cycle_ok, "龙王移动按 Run1B→Run1C→Run1D→Run1A 循环")
+	_expect(immediate_stop_ok, "龙王退出攻击时立即打断吐息循环，不等待循环动画播完")
+	unit.take_damage(unit.max_hp + 1.0)
+	var death_view_found := view != null and view._dying and view._animation_player.current_animation == "Death"
+	_expect(death_view_found, "龙王死亡时由独立 3D 代理播放 Death")
+	if view != null:
+		view.free()
+	if is_instance_valid(unit):
+		unit.free()
+	if is_instance_valid(dummy):
+		dummy.free()
+	if sample != null:
+		sample.free()
+
+## 持续吐息的真实换目标：两个目标都在射程内时，击败其一后不移动，直接推进表现序号攻击另一个。
+func _check_aurelionsol_direct_retarget() -> void:
+	var dragon_stats: Dictionary = CardDB.all()["aurelionsol"].duplicate(true)
+	dragon_stats["deploy_time"] = 0.0
+	var dummy_stats: Dictionary = CardDB.training_dummy_stats().duplicate(true)
+	dummy_stats["deploy_time"] = 0.0
+	dummy_stats["hp"] = 30.0
+	var dragon := Unit.new()
+	var first_dummy := Unit.new()
+	var second_dummy := Unit.new()
+	dragon.position = Vector2(360.0, 1100.0)
+	first_dummy.position = Vector2(360.0, 990.0)
+	# 与第一目标相距超过吐息溅射判定，同时仍在龙王攻击范围内。
+	second_dummy.position = Vector2(430.0, 980.0)
+	dragon.setup(0, dragon_stats, dragon_stats.name)
+	first_dummy.setup(1, dummy_stats, "换目标木桩一")
+	second_dummy.setup(1, dummy_stats, "换目标木桩二")
+	_main.add_child(dragon)
+	_main.add_child(first_dummy)
+	_main.add_child(second_dummy)
+	var start_position := dragon.global_position
+	var retargeted_without_move := false
+	for _tick in 80:
+		dragon.sim_tick(_main.SIM_DT)
+		if dragon.get_attack_visual_serial() >= 2 and dragon._target == second_dummy and dragon._attacking:
+			retargeted_without_move = true
+			break
+	_expect(
+		first_dummy.hp <= 0.0
+		and second_dummy.hp > 0.0
+		and retargeted_without_move
+		and dragon.global_position.is_equal_approx(start_position),
+		"龙王击败射程内第一个目标后不移动，直接推进目标序号并攻击第二个目标",
+	)
+	for unit in [dragon, first_dummy, second_dummy]:
+		if is_instance_valid(unit):
+			unit.free()
 
 func _check_attack_target_lock() -> void:
 	var stats: Dictionary = CardDB.all()["xin"].duplicate()
@@ -1367,6 +2222,69 @@ func _check_projectile_travel() -> void:
 	teemo.free()
 	teemo_target.free()
 
+## 防御塔弹体只改变表现起点：权威位置仍从塔心出发，蓝/红塔分别使用蓝/红能量球。
+func _check_tower_projectile_visual() -> void:
+	var tower_stats: Dictionary = _main.PRINCESS_STATS
+	var target_stats: Dictionary = CardDB.all()["xin"].duplicate()
+	target_stats["deploy_time"] = 0.0
+	var blue_tower := Tower.new()
+	var blue_target := Unit.new()
+	blue_tower.position = Vector2(140.0, 900.0)
+	blue_target.position = Vector2(140.0, 700.0)
+	blue_tower.setup(0, tower_stats, false)
+	blue_target.setup(1, target_stats, target_stats.name)
+	_main.add_child(blue_tower)
+	_main.add_child(blue_target)
+	_main.launch_attack(blue_tower, blue_target, blue_tower.damage, blue_tower.projectile_speed, 0.0, 0.0, Tower.BLUE_PROJECTILE_COLOR)
+	var blue_projectile: Dictionary = _main._projectiles.values()[0]
+	var blue_visual_start: Vector2 = _main._projectile_visual_position(blue_projectile)
+	var blue_start_ok: bool = (
+		blue_projectile.visual == &"tower_orb"
+		and blue_projectile.pos == blue_tower.global_position
+		and blue_projectile.color == Tower.BLUE_PROJECTILE_COLOR
+		and blue_projectile.visual_offset == blue_tower.projectile_visual_offset
+		and blue_visual_start == blue_tower.global_position + blue_tower.projectile_visual_offset
+	)
+	_expect(blue_start_ok, "我方防御塔弹体从权杖晶石位置发出，权威发射点仍在塔心且使用蓝色")
+	_main._tick_projectiles(_main.SIM_DT)
+	var blue_after_tick: Dictionary = _main._projectiles.values()[0]
+	_expect(
+		blue_after_tick.pos != blue_tower.global_position
+		and blue_after_tick.visual_offset.length() < blue_tower.projectile_visual_offset.length(),
+		"塔弹体飞行后视觉偏移回到真实命中轨迹，不改变权威飞行位置",
+	)
+	_main._projectiles.clear()
+	blue_tower.free()
+	blue_target.free()
+
+	var red_tower := Tower.new()
+	var red_target := Unit.new()
+	red_tower.position = Vector2(580.0, 300.0)
+	red_target.position = Vector2(580.0, 500.0)
+	red_tower.setup(1, tower_stats, false)
+	red_target.setup(0, target_stats, target_stats.name)
+	_main.add_child(red_tower)
+	_main.add_child(red_target)
+	_main.launch_attack(red_tower, red_target, red_tower.damage, red_tower.projectile_speed, 0.0, 0.0, Tower.RED_PROJECTILE_COLOR)
+	var red_projectile: Dictionary = _main._projectiles.values()[0]
+	_expect(
+		red_projectile.color == Tower.RED_PROJECTILE_COLOR
+		and red_tower.projectile_visual_offset.x < 0.0
+		and red_projectile.pos == red_tower.global_position,
+		"敌方防御塔弹体使用红色并镜像到另一侧权杖晶石，实际发射位置不变",
+	)
+	_main._projectiles.clear()
+	red_tower.free()
+	red_target.free()
+
+## 墓碑小鬼的生命值与公主塔单次伤害一致，确保一次塔击恰好击杀。
+func _check_imp_tower_damage() -> void:
+	var imp_stats: Dictionary = CardDB.imp_stats()
+	_expect(
+		is_equal_approx(imp_stats.hp, _main.PRINCESS_STATS.damage),
+		"墓碑小鬼生命值恰好等于公主塔单次伤害（一次击杀）",
+	)
+
 func _check_splash_and_knockback() -> void:
 	var stats: Dictionary = CardDB.all()["xin"].duplicate()
 	stats["deploy_time"] = 0.0
@@ -1394,24 +2312,140 @@ func _check_splash_and_knockback() -> void:
 	primary.free()
 	secondary.free()
 
-func _check_charge() -> void:
-	var stats: Dictionary = CardDB.all()["xin"].duplicate()
-	stats["deploy_time"] = 0.0
-	var unit := Unit.new()
-	unit.position = Vector2(204.0, 850.0)
-	unit.setup(0, stats, stats.name)
-	_main.add_child(unit)
-	for _i in 42:
-		unit.sim_tick(_main.SIM_DT)
+func _check_xin_deploy_sweep() -> void:
+	# 横扫千军：赵信生成当帧挥击并击退，Spell4 → Spell4_To_Idle 整段就是 1.5 秒部署。
+	var xin_stats: Dictionary = CardDB.all()["xin"].duplicate()
+	var light_stats := _sweep_dummy_stats(CardDB.imp_stats())            # 质量 1
+	var heavy_stats := _sweep_dummy_stats(CardDB.all()["garen"])         # 质量 8
+	var far_stats := _sweep_dummy_stats(CardDB.all()["ashe"])            # 圈外
+	var air_stats := _sweep_dummy_stats(CardDB.all()["aurelionsol"])     # 空中
+	var xin := Unit.new()
+	var light := Unit.new()
+	var heavy := Unit.new()
+	var far := Unit.new()
+	var air := Unit.new()
+	xin.position = Vector2(360.0, 900.0)
+	light.position = Vector2(360.0, 840.0)
+	heavy.position = Vector2(420.0, 900.0)
+	far.position = Vector2(360.0, 720.0)
+	air.position = Vector2(300.0, 900.0)
+	xin.setup(0, xin_stats, xin_stats.name)
+	light.setup(1, light_stats, light_stats.name)
+	heavy.setup(1, heavy_stats, heavy_stats.name)
+	far.setup(1, far_stats, far_stats.name)
+	air.setup(1, air_stats, air_stats.name)
+	# 敌人先进入战场；赵信加入 combatants 的同一帧就应命中它们。
+	for u in [light, heavy, far, air]:
+		_main.add_child(u)
+	var light_start := light.global_position
+	var heavy_start := heavy.global_position
+	var far_start := far.global_position
+	var air_start := air.global_position
+	_main.add_child(xin)
+	_expect(not xin.is_deployed() and is_equal_approx(xin._deploy_timer, 1.5), "赵信生成后进入 1.5 秒特殊部署阶段")
+	_expect(light._knockback_timer > 0.0 and heavy._knockback_timer > 0.0, "赵信生成当帧立即结算横扫击退")
+	_expect(xin._sweep_fx_timer > 0.0, "横扫击退触发短暂扇形冲击特效")
+	var xin_start := xin.global_position
+	# 跑完整段部署；赵信自身不行动，受击单位的权威击退照常推进。
+	for _i in 30:
+		for u in [xin, light, heavy, far, air]:
+			u.sim_tick(_main.SIM_DT)
 		_main._apply_unit_movement(_main.SIM_DT)
-	_expect(unit.is_charged(), "连续移动达到阈值后进入冲锋状态")
-	unit.free()
+	_expect(xin.is_deployed(), "Spell4 → Spell4_To_Idle 的 1.5 秒演出结束后赵信解锁行动")
+	_expect(xin.global_position.distance_to(xin_start) < 0.01, "赵信在出场演出期间没有自主移动")
+	_expect(light.hp == 99999.0 and heavy.hp == 99999.0, "横扫千军只击退不造成伤害")
+	var light_push := light.global_position.distance_to(light_start)
+	var heavy_push := heavy.global_position.distance_to(heavy_start)
+	var far_push := far.global_position.distance_to(far_start)
+	var air_push := air.global_position.distance_to(air_start)
+	_expect(light_push > 90.0, "圈内轻单位（质量1）被大幅击退出圈（推移 %.1fpx）" % light_push)
+	_expect(heavy_push > 10.0 and heavy_push < light_push, "圈内重单位（质量8）被顶开但幅度小于轻单位（推移 %.1fpx < %.1fpx）" % [heavy_push, light_push])
+	_expect(far_push < 0.5, "圈外地面单位不受横扫影响（位移 %.2fpx）" % far_push)
+	_expect(air_push < 0.5, "空中单位扫不到（位移 %.2fpx）" % air_push)
+	for u in [xin, light, heavy, far, air]:
+		u.free()
+
+## 静止木桩属性：不索敌、不移动、不还手，但保留质量与体型，专测横扫本身。
+func _sweep_dummy_stats(base: Dictionary) -> Dictionary:
+	var stats: Dictionary = base.duplicate()
+	stats["deploy_time"] = 0.0
+	stats["hp"] = 99999.0
+	stats["damage"] = 0.0
+	stats["speed"] = 0.0
+	stats["sight"] = 0.0
+	return stats
+
+func _check_xin_art_integration() -> void:
+	# 赵信素材接入：三段普攻循环、出场技能序列与第三击回血。
+	var stats: Dictionary = CardDB.all()["xin"].duplicate(true)
+	var packed := load(stats.visual_scene_path) as PackedScene
+	_expect(packed != null, "赵信包装场景可加载")
+	if packed == null:
+		return
+	var anim_names: Dictionary = stats.visual_animations
+	var sample := packed.instantiate() as Node3D
+	var anim_player := _find_anim_player(sample)
+	var names_found := true
+	for key in ["idle", "move", "death"]:
+		var animation_name: String = anim_names.get(key, "")
+		names_found = names_found and animation_name != "" and anim_player != null and anim_player.has_animation(animation_name)
+	for key in ["attack", "attack_hit", "deploy"]:
+		for value in anim_names.get(key, []):
+			names_found = names_found and String(value) != "" and anim_player != null and anim_player.has_animation(String(value))
+	_expect(names_found, "赵信 Idle/Run/Death、三段普攻与出场技能动画名在源模型中都存在")
+	_expect(anim_names.deploy == ["Spell4", "Spell4_To_Idle"], "赵信出场技能按 Spell4 → Spell4_To_Idle 序列播放")
+	_expect(anim_names.deploy_durations == [1.0, 0.5], "赵信出场技能分段时长为 Spell4 1 秒、Spell4_To_Idle 0.5 秒")
+	_expect(anim_names.attack.size() == 3 and anim_names.attack_hit.size() == 3, "赵信三段普攻 Start/收势映射一一对应")
+	if sample != null:
+		sample.free()
+	# 第三击回血：站桩木桩不还手，赵信只应在第 3/6/9…次命中时回复 heal_amount。
+	var combat_stats: Dictionary = stats.duplicate()
+	combat_stats["deploy_time"] = 0.0
+	var xin := Unit.new()
+	var dummy := Unit.new()
+	xin.position = Vector2(360.0, 900.0)
+	dummy.position = Vector2(360.0, 870.0)
+	xin.setup(0, combat_stats, combat_stats.name)
+	dummy.setup(1, _sweep_dummy_stats(stats), stats.name)
+	_main.add_child(xin)
+	_main.add_child(dummy)
+	xin.take_damage(xin.max_hp - 300.0)
+	var hits := 0
+	var heals := 0
+	var heal_at_third := false
+	var heal_at_sixth := false
+	var third_checked := false
+	var sixth_checked := false
+	var last_self_hp := xin.hp
+	var last_dummy_hp := dummy.hp
+	# 部署锁定已由上一项独立验证；这里关闭部署时间，只验证三段攻击与回血循环。
+	for _i in 280:
+		xin.sim_tick(_main.SIM_DT)
+		if not is_equal_approx(dummy.hp, last_dummy_hp):
+			hits += 1
+			last_dummy_hp = dummy.hp
+		if xin.hp > last_self_hp + 0.01:
+			heals += 1
+			last_self_hp = xin.hp
+		# 里程碑在 tick 末检查：命中与回血在同一 tick 同步结算。
+		if hits >= 3 and not third_checked:
+			third_checked = true
+			heal_at_third = heals == 1
+		if hits >= 6 and not sixth_checked:
+			sixth_checked = true
+			heal_at_sixth = heals == 2
+	_expect(hits >= 7, "赵信在模拟窗口内完成多轮普攻循环（命中 %d 次）" % hits)
+	_expect(heal_at_third, "三段循环第三击命中时回复生命")
+	_expect(heal_at_sixth, "第六击命中时再次回复，循环持续生效")
+	_expect(is_equal_approx(xin.hp, 300.0 + heals * stats.heal_amount), "回血总量与 heal_amount × 触发次数一致（300→%.0f，回复 %d 次）" % [xin.hp, heals])
+	xin.free()
+	dummy.free()
 
 func _check_king_activation() -> void:
 	var king: Tower = _main._king_player
 	_main._towers[0].hp = 0.0
 	_main._sim_step(_main.SIM_DT)
-	_expect(king.activated, "任一公主塔被摧毁后国王塔激活")
+	_expect(not king.activated and not king.can_attack, "任一公主塔被摧毁后水晶仍不具备攻击能力")
 
 func _check_pocket_deployment() -> void:
 	_main._towers[2].hp = 0.0

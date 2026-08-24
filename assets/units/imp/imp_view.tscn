@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/units/imp/source/imp.glb" id="1_imp"]
+
+[node name="ImpView" type="Node3D"]
+
+[node name="Model" parent="." instance=ExtResource("1_imp")]
+position = Vector3(0, 0.012, 0)
+scale = Vector3(0.007, 0.007, 0.007)

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tests/demo_xin_sweep.gd" id="1_demo"]
+
+[node name="DemoXinSweep" type="Node2D"]
+script = ExtResource("1_demo")

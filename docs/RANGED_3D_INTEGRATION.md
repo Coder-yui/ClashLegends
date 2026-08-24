@@ -42,8 +42,16 @@
 - 未设置 `projectile_visual` 时使用普通圆形弹体 `orb`。
 - `projectile_visual_height`：将屏幕绘制位置从脚底原点抬到弓、吹管或枪口高度。权威
   弹体仍在 2D 地面坐标飞行和碰撞，因此这个值不能改变射程、飞行时间或命中结果。
+- `projectile_visual_forward_offset`：把弹体第一帧沿攻击方向移到权杖/炮口前方，随后沿
+  航程收敛回权威弹道；只改变绘制起点。
+- `projectile_colors`：可为 `[蓝方, 红方]` 分别配置弹体颜色；水晶远程兵用蓝/红小光球，
+  炮车兵两方都用黑色小球。
 - 弹体颜色沿用单位 `color`；寒冰配置为浅蓝色。
 - 多套射击动作按数组顺序循环。
+- `deploy` 部署动画选片与近战一致：优先 `Respawn`，没有时用 Recall（回城）的收尾段
+  （如 `Recall_WindDown`），再没有才回退到 Idle。远程素材多无独立落点，常按 Idle 处理。
+- 实际动画名必须显式写入卡牌映射；完整规则见
+  [`UNIT_DEPLOYMENT.md`](UNIT_DEPLOYMENT.md)。
 
 ## 离弦时刻调校
 

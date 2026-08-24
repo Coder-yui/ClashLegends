@@ -22,6 +22,25 @@ var _attack_hit_timer := 0.0
 var _attack_recover_timer := 0.0
 var _attack_hit_pending := false
 var _attack_recover_pending := false
+# 持续攻击单位使用“进入攻击 → 循环攻击”，移动则可使用“进入移动 → 多段循环”。
+# 这些状态仅消费 Unit 的粗粒度表现状态，不驱动索敌、伤害或移动。
+var _continuous_attack_active := false
+var _continuous_attack_animation := &""
+var _move_sequence: Array = []
+var _move_sequence_index := 0
+var _move_cycle: Array = []
+var _move_cycle_index := 0
+var _move_sequence_active := false
+var _move_active_animation := &""
+# 出场技能序列：deploy 配置为数组时，从单位生成的部署阶段首帧开始依次播放
+# （如赵信 Spell4 → Spell4_To_Idle），两段合计对齐权威部署时长；
+# 部署结束前不被基础状态切换打断。
+var _deploy_sequence: Array = []
+var _deploy_sequence_index := 0
+var _deploy_sequence_speeds: Array = []
+var _playing_deploy_sequence := false
+var _deploy_active_animation := &""
+var _deploy_sequence_started := false
 var _death_animation := &""
 var _dying := false
 var _hit_flash_timer := 0.0
@@ -84,13 +103,24 @@ func _sync_visual(force: bool, delta: float) -> void:
 		rotation.y = target_yaw if force else lerp_angle(rotation.y, target_yaw, minf(delta * 12.0, 1.0))
 
 	var attack_serial := _source.net_attack_visual_serial if _source._in_client_mode() else _source.get_attack_visual_serial()
-	if attack_serial != _last_attack_serial:
+	var attack_serial_changed := attack_serial != _last_attack_serial
+	if attack_serial_changed:
 		_last_attack_serial = attack_serial
-		_play_attack(attack_serial)
+		if not _uses_continuous_state_animations():
+			_play_attack(attack_serial)
 	var state := _source.net_visual_state if _source._in_client_mode() else _source.get_visual_state_code()
+	# 出场演出：单位生成首帧启动序列；部署结束后让位给基础状态机。
+	_update_deploy_sequence_lifecycle()
+	# 出场技能序列在部署锁定期间保持动作，不被其他状态打断。
+	if _playing_deploy_sequence:
+		pass
+	# 龙王等持续攻击单位用状态区分移动/攻击，并用目标序号识别“原地换目标”。
+	# 两种进入动作最终都接循环吐息，退出攻击则在同一帧打断循环。
+	elif _uses_continuous_state_animations():
+		_sync_continuous_state_animations(state, force, attack_serial_changed)
 	# attack_serial 只触发一次挥剑；逻辑仍处于攻击状态时，动作结束后保持末帧。
 	# 只有失去目标或开始移动，才从当前攻击姿态混合回对应的基础状态。
-	if state != 3 and (_playing_attack or _holding_attack_pose):
+	elif state != 3 and (_playing_attack or _holding_attack_pose):
 		_playing_attack = false
 		_holding_attack_pose = false
 		_attack_hit_pending = false
@@ -107,6 +137,120 @@ func _sync_visual(force: bool, delta: float) -> void:
 	if _animation_player != null:
 		_animation_player.speed_scale = 0.0 if _source.frozen_timer > 0.0 else 1.0
 
+func _uses_continuous_state_animations() -> bool:
+	return String(_animation_names.get("attack_loop", "")) != ""
+
+func _sync_continuous_state_animations(state: int, force: bool, target_changed: bool) -> void:
+	if not force and state == _current_state and not (state == 3 and target_changed):
+		return
+	var previous_state := _current_state
+	var retargeting_without_move := state == 3 and previous_state == 3 and target_changed
+	_current_state = state
+	_source.set_continuous_beam_visible(false)
+	_continuous_attack_active = false
+	_continuous_attack_animation = &""
+	_move_sequence_active = false
+	_move_active_animation = &""
+	match state:
+		3:
+			_start_continuous_attack(retargeting_without_move)
+		2:
+			_start_move_sequence(previous_state == 3)
+		_:
+			# play() 会立即替换仍在播放的吐息循环，不等待循环素材结束。
+			_play_state(state, 0.08 if force else 0.12)
+
+func _start_continuous_attack(retargeting_without_move: bool = false) -> void:
+	if _animation_player == null:
+		return
+	# 进入吐息动画只表现蓄势；蓝色光柱要等循环吐息真正开始后才出现。
+	_source.set_continuous_beam_visible(false)
+	_continuous_attack_active = true
+	var enter_key := "attack_retarget_enter" if retargeting_without_move else "attack_enter"
+	var enter_name := StringName(_animation_names.get(enter_key, _animation_names.get("attack_enter", "")))
+	if enter_name != &"" and _animation_player.has_animation(enter_name):
+		var enter_animation := _animation_player.get_animation(enter_name)
+		if enter_animation != null:
+			enter_animation.loop_mode = Animation.LOOP_NONE
+		_continuous_attack_animation = enter_name
+		_animation_player.play(enter_name, 0.06)
+		return
+	_play_continuous_attack_loop()
+
+func _play_continuous_attack_loop() -> void:
+	if _animation_player == null or not _continuous_attack_active or _current_state != 3:
+		return
+	var loop_name := StringName(_animation_names.get("attack_loop", ""))
+	if loop_name == &"" or not _animation_player.has_animation(loop_name):
+		return
+	var loop_animation := _animation_player.get_animation(loop_name)
+	if loop_animation != null:
+		loop_animation.loop_mode = Animation.LOOP_LINEAR
+	_continuous_attack_animation = loop_name
+	_animation_player.play(loop_name, 0.05)
+	_source.set_continuous_beam_visible(true)
+
+## 进入普通移动先播 move_enter；若刚退出持续攻击，则在它之前插入
+## attack_to_move。过渡完成后按 move_cycle 数组顺序逐段循环。
+func _start_move_sequence(from_continuous_attack: bool) -> void:
+	if _animation_player == null:
+		return
+	_move_sequence.clear()
+	if from_continuous_attack:
+		_append_valid_animations(_move_sequence, "attack_to_move")
+	var use_move_enter := not from_continuous_attack or bool(_animation_names.get("move_enter_after_attack", true))
+	if use_move_enter:
+		_append_valid_animations(_move_sequence, "move_enter")
+	_move_cycle.clear()
+	_append_valid_animations(_move_cycle, "move_cycle")
+	_move_sequence_index = 0
+	_move_cycle_index = 0
+	_move_sequence_active = not _move_sequence.is_empty() or not _move_cycle.is_empty()
+	if not _move_sequence.is_empty():
+		_play_move_clip(StringName(_move_sequence[0]))
+	elif not _move_cycle.is_empty():
+		_play_move_cycle_clip()
+	else:
+		_play_state(2)
+
+func _append_valid_animations(target: Array, key: String) -> void:
+	for value in _animation_list(key):
+		var animation_name := StringName(value)
+		if animation_name != &"" and _animation_player.has_animation(animation_name):
+			target.append(animation_name)
+
+func _play_move_clip(animation_name: StringName) -> void:
+	var animation := _animation_player.get_animation(animation_name)
+	if animation == null:
+		return
+	animation.loop_mode = Animation.LOOP_NONE
+	_move_active_animation = animation_name
+	_animation_player.play(animation_name, 0.06)
+
+func _play_move_cycle_clip() -> void:
+	if _move_cycle.is_empty() or _current_state != 2:
+		return
+	_play_move_clip(StringName(_move_cycle[_move_cycle_index]))
+
+func _advance_move_sequence() -> void:
+	if _move_sequence_index < _move_sequence.size():
+		_move_sequence_index += 1
+		if _move_sequence_index < _move_sequence.size():
+			_play_move_clip(StringName(_move_sequence[_move_sequence_index]))
+			return
+	if _move_cycle.is_empty():
+		_move_sequence_active = false
+		_play_state(2)
+		return
+	_move_cycle_index = 0
+	_play_move_cycle_clip()
+
+func _advance_move_cycle() -> void:
+	if _move_cycle.is_empty():
+		return
+	_move_cycle_index = (_move_cycle_index + 1) % _move_cycle.size()
+	_play_move_cycle_clip()
+
 func _screen_to_ground(screen_position: Vector2) -> Vector3:
 	var origin := _camera.project_ray_origin(screen_position)
 	var direction := _camera.project_ray_normal(screen_position)
@@ -119,6 +263,15 @@ func _update_health_bar_anchor() -> void:
 	if _source == null or _camera == null or _flash_meshes.is_empty():
 		return
 	var ground_screen := _camera.unproject_position(global_position)
+	# 建筑等横向展开模型可由包装场景提供稳定的 3D 顶端锚点；仍只影响 UI 投影。
+	if _model_root != null and _model_root.has_method("get_health_bar_anchor_local"):
+		var local_anchor = _model_root.call("get_health_bar_anchor_local")
+		if local_anchor is Vector3:
+			var world_anchor := _model_root.to_global(local_anchor as Vector3)
+			if not _camera.is_position_behind(world_anchor):
+				var anchor_screen := _camera.unproject_position(world_anchor)
+				_source.set_visual_head_world_position(Vector2(ground_screen.x, anchor_screen.y))
+				return
 	var top_screen_y := ground_screen.y
 	var found_visible_point := false
 	for mesh_instance in _flash_meshes:
@@ -147,15 +300,97 @@ func _play_state(state: int, blend_time: float = 0.08) -> void:
 	if _animation_player == null:
 		return
 	var key: StringName = STATE_KEYS[clampi(state, 0, STATE_KEYS.size() - 1)]
-	var animation_name := StringName(_animation_names.get(String(key), ""))
+	var configured = _animation_names.get(String(key), "")
+	# deploy 配置为数组时由部署序列生命周期单独处理。
+	if configured is Array:
+		configured = ""
+	var animation_name := StringName(configured)
 	if animation_name == &"" or not _animation_player.has_animation(animation_name):
 		animation_name = StringName(_animation_names.get("idle", ""))
 	if animation_name != &"" and _animation_player.has_animation(animation_name):
 		var playback_speed := _state_playback_speed(state, animation_name)
 		_animation_player.play(animation_name, blend_time, playback_speed)
 
+## 出场演出生命周期：生成首帧启动序列；权威部署计时耗尽时终止序列。
+func _update_deploy_sequence_lifecycle() -> void:
+	if _dying or _source == null:
+		return
+	var deploy_names = _animation_names.get("deploy", "")
+	var has_sequence: bool = deploy_names is Array and not (deploy_names as Array).is_empty()
+	var deploying := _source._deploy_timer > 0.0
+	if has_sequence and deploying and not _deploy_sequence_started:
+		_deploy_sequence_started = true
+		_start_deploy_sequence(deploy_names as Array)
+	# 权威部署已结束（解锁移动/攻击）而序列尚未播完：立即让位给基础状态机。
+	if _playing_deploy_sequence and not deploying:
+		_finish_deploy_sequence()
+
+## 出场技能序列只影响表现：优先按 deploy_durations 逐段缩放播放，
+## 没有逐段配置时才按权威部署总时长统一缩放。视觉序列不参与权威效果结算。
+func _start_deploy_sequence(names: Array) -> void:
+	_playing_deploy_sequence = true
+	_deploy_sequence = names
+	_deploy_sequence_index = 0
+	_current_state = 0
+	var total_length := 0.0
+	var clip_lengths: Array = []
+	for value in names:
+		var clip := StringName(value)
+		var clip_length := 0.0
+		if clip != &"" and _animation_player != null and _animation_player.has_animation(clip):
+			var animation := _animation_player.get_animation(clip)
+			if animation != null:
+				clip_length = animation.length
+		total_length += clip_length
+		clip_lengths.append(clip_length)
+	_deploy_sequence_speeds.clear()
+	var configured_durations = _animation_names.get("deploy_durations", [])
+	for index in names.size():
+		var target_duration := 0.0
+		if configured_durations is Array and index < (configured_durations as Array).size():
+			target_duration = maxf(float((configured_durations as Array)[index]), 0.0)
+		var playback_speed := 1.0
+		if target_duration > 0.001 and float(clip_lengths[index]) > 0.001:
+			playback_speed = float(clip_lengths[index]) / target_duration
+		elif total_length > 0.001 and _source.deploy_time > 0.001:
+			playback_speed = total_length / _source.deploy_time
+		_deploy_sequence_speeds.append(playback_speed)
+	_play_deploy_clip(StringName(names[0]))
+
+func _play_deploy_clip(animation_name: StringName) -> void:
+	if animation_name == &"" or not _animation_player.has_animation(animation_name):
+		return
+	var animation := _animation_player.get_animation(animation_name)
+	if animation == null:
+		return
+	animation.loop_mode = Animation.LOOP_NONE
+	_deploy_active_animation = animation_name
+	var playback_speed := 1.0
+	if _deploy_sequence_index < _deploy_sequence_speeds.size():
+		playback_speed = float(_deploy_sequence_speeds[_deploy_sequence_index])
+	_animation_player.play(animation_name, 0.08, playback_speed)
+
+func _advance_deploy_sequence() -> void:
+	_deploy_sequence_index += 1
+	if _deploy_sequence_index < _deploy_sequence.size():
+		_play_deploy_clip(StringName(_deploy_sequence[_deploy_sequence_index]))
+		return
+	_finish_deploy_sequence()
+
+## 终止出场演出：交还基础状态机，按当前权威状态混合回 Idle/Move/Attack。
+func _finish_deploy_sequence() -> void:
+	_playing_deploy_sequence = false
+	_deploy_active_animation = &""
+	var state := _source.net_visual_state if _source._in_client_mode() else _source.get_visual_state_code()
+	_current_state = state
+	if state != 0:
+		_play_state(state, 0.12)
+
 func _play_attack(serial: int) -> void:
 	if _animation_player == null or serial <= 0:
+		return
+	# 出场演出期间权威锁定攻击，不会推进攻击序号；此防御仅兜底客户端快照乱序。
+	if _playing_deploy_sequence:
 		return
 	var configured = _animation_names.get("attack", [])
 	var attacks: Array = configured if configured is Array else [configured]
@@ -254,7 +489,9 @@ func _state_playback_speed(state: int, animation_name: StringName) -> float:
 	var target_duration := 0.0
 	match state:
 		0:
-			target_duration = _source.deploy_time
+			# 可选的通用裁剪：只播放部署动画开头的一段，剩余部分由普通状态机接管。
+			var deploy_ratio := clampf(float(_animation_names.get("deploy_clip_ratio", 1.0)), 0.01, 1.0)
+			target_duration = _source.deploy_time / deploy_ratio
 	if target_duration <= 0.001:
 		return 1.0
 	return maxf(float(animation.length) / target_duration, 0.01)
@@ -262,14 +499,27 @@ func _state_playback_speed(state: int, animation_name: StringName) -> float:
 func _configure_looping_animations() -> void:
 	if _animation_player == null:
 		return
-	for key in ["idle", "move"]:
+	for key in ["idle"]:
 		var animation_name := StringName(_animation_names.get(key, ""))
 		if animation_name == &"" or not _animation_player.has_animation(animation_name):
 			continue
 		var animation := _animation_player.get_animation(animation_name)
 		if animation != null:
 			animation.loop_mode = Animation.LOOP_LINEAR
-	for key in ["attack", "attack_hit", "attack_recover"]:
+	# 普通单位的单段移动继续原地循环；配置 move_cycle 时由结束事件按数组推进。
+	if _animation_list("move_cycle").is_empty():
+		var move_name := StringName(_animation_names.get("move", ""))
+		if move_name != &"" and _animation_player.has_animation(move_name):
+			var move_animation := _animation_player.get_animation(move_name)
+			if move_animation != null:
+				move_animation.loop_mode = Animation.LOOP_LINEAR
+	var continuous_loop := StringName(_animation_names.get("attack_loop", ""))
+	if continuous_loop != &"" and _animation_player.has_animation(continuous_loop):
+		var continuous_animation := _animation_player.get_animation(continuous_loop)
+		if continuous_animation != null:
+			continuous_animation.loop_mode = Animation.LOOP_LINEAR
+	# 出场技能与攻击分段动画都必须是非循环完整动作。
+	for key in ["attack", "attack_hit", "attack_recover", "deploy", "attack_enter", "attack_retarget_enter", "attack_to_move", "move_enter", "move_cycle"]:
 		for value in _animation_list(key):
 			var animation_name := StringName(value)
 			if animation_name != &"" and _animation_player.has_animation(animation_name):
@@ -281,6 +531,23 @@ func _on_animation_finished(animation_name: StringName) -> void:
 	if _dying:
 		if animation_name == _death_animation:
 			queue_free()
+		return
+	# 出场技能序列按段推进；只有当前段播完才进入下一段，其余动画结束事件忽略。
+	if _playing_deploy_sequence:
+		if animation_name == _deploy_active_animation:
+			_advance_deploy_sequence()
+		return
+	if _continuous_attack_active:
+		if animation_name == _continuous_attack_animation and _current_state == 3:
+			_play_continuous_attack_loop()
+		return
+	if _move_sequence_active:
+		if animation_name != _move_active_animation or _current_state != 2:
+			return
+		if _move_sequence_index < _move_sequence.size():
+			_advance_move_sequence()
+		else:
+			_advance_move_cycle()
 		return
 	if not _playing_attack or animation_name != _active_attack_animation:
 		return
@@ -306,6 +573,13 @@ func _on_source_died() -> void:
 	_dying = true
 	_playing_attack = false
 	_holding_attack_pose = false
+	_playing_deploy_sequence = false
+	_deploy_active_animation = &""
+	_continuous_attack_active = false
+	_continuous_attack_animation = &""
+	_move_sequence_active = false
+	_move_active_animation = &""
+	_source.set_continuous_beam_visible(false)
 	_attack_hit_pending = false
 	_attack_recover_pending = false
 	_active_attack_animation = &""
@@ -321,11 +595,21 @@ func _on_source_died() -> void:
 		queue_free()
 		return
 	var animation := _animation_player.get_animation(_death_animation)
+	var death_playback_speed := 1.0
+	var death_duration := float(_animation_names.get("death_duration", 0.0))
 	if animation != null:
 		animation.loop_mode = Animation.LOOP_NONE
-	# 死亡不再受生前冰冻状态影响；播完素材的完整动作后再清理纯视觉代理。
+		if death_duration > 0.0 and animation.length > 0.0:
+			death_playback_speed = animation.length / death_duration
+	# 包装场景可选择同步淡出粒子/雾气等纯表现节点；动画仍不参与死亡判定。
+	if _model_root != null and _model_root.has_method("begin_visual_death"):
+		var visual_duration := death_duration
+		if visual_duration <= 0.0 and animation != null:
+			visual_duration = animation.length
+		_model_root.call("begin_visual_death", maxf(visual_duration, 0.05))
+	# 死亡不再受生前冰冻状态影响；按卡牌配置时长播完动作后清理纯视觉代理。
 	_animation_player.speed_scale = 1.0
-	_animation_player.play(_death_animation, 0.08)
+	_animation_player.play(_death_animation, 0.08, death_playback_speed)
 
 func _find_animation_player(node: Node) -> AnimationPlayer:
 	if node is AnimationPlayer:
@@ -337,6 +621,8 @@ func _find_animation_player(node: Node) -> AnimationPlayer:
 	return null
 
 func _create_team_ring() -> void:
+	if not _source.show_team_ring:
+		return
 	var ring_mesh := CylinderMesh.new()
 	var ring_radius := maxf(_source.visual_radius / 40.0, 0.42)
 	ring_mesh.top_radius = ring_radius
@@ -366,7 +652,8 @@ func _prepare_hit_flash() -> void:
 	_collect_flash_meshes(_model_root)
 
 func _collect_flash_meshes(node: Node) -> void:
-	if node is MeshInstance3D:
+	# 雾、光环、弹体等效果材质不参与人物闪白，也不应影响模型 AABB 血条定位。
+	if node is MeshInstance3D and not node.is_in_group("presentation_fx"):
 		var mesh_instance := node as MeshInstance3D
 		_flash_meshes.append(mesh_instance)
 		_original_overlays.append(mesh_instance.material_overlay)

@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/units/aurelionsol/source/aurelionsol.glb" id="1_aurelionsol"]
+
+[node name="AurelionSolView" type="Node3D"]
+
+[node name="Model" parent="." instance=ExtResource("1_aurelionsol")]
+position = Vector3(0, 2.2, 0)
+scale = Vector3(0.006, 0.006, 0.006)

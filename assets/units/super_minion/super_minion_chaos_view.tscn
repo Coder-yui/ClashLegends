@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/units/super_minion/source/super_minion_chaos.glb" id="1_model"]
+
+[node name="SuperMinionChaosView" type="Node3D"]
+
+[node name="Model" parent="." instance=ExtResource("1_model")]
+position = Vector3(0, -0.050, 0)
+scale = Vector3(0.0137, 0.0137, 0.0137)

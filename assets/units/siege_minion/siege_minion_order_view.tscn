@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/units/siege_minion/source/siege_minion_order.glb" id="1_model"]
+
+[node name="SiegeMinionOrderView" type="Node3D"]
+
+[node name="Model" parent="." instance=ExtResource("1_model")]
+position = Vector3(0, 0.001, 0)
+scale = Vector3(0.0121, 0.0121, 0.0121)

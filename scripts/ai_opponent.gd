@@ -28,7 +28,7 @@ func _process(delta: float) -> void:
 	if _elixir.elixir < PLAY_THRESHOLD:
 		return
 	var affordable := []
-	var candidate_ids: Array = _deck if _deck.size() == 8 else CardDB.all().keys()
+	var candidate_ids: Array = _deck if _deck.size() == 8 else CardDB.selectable_ids()
 	for card_id in candidate_ids:
 		var stats: Dictionary = CardDB.all()[card_id]
 		if _elixir.can_afford(stats.cost):

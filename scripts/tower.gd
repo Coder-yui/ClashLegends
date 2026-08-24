@@ -10,6 +10,12 @@ signal visual_hit
 
 ## 受击闪白事件限频：与单位一致，持续伤害（如龙息）每 0.18 秒最多触发一次表现。
 const HIT_FLASH_EVENT_COOLDOWN := 0.18
+const BLUE_PROJECTILE_COLOR := Color(0.18, 0.66, 1.0)
+const RED_PROJECTILE_COLOR := Color(1.0, 0.18, 0.22)
+const PRINCESS_HEALTH_BAR_WIDTH := 120.0
+const KING_HEALTH_BAR_WIDTH := 160.0
+const HEALTH_BAR_HEIGHT := 18.0
+const HEALTH_TEXT_SIZE := 13
 
 var team := 0  # 0 = 玩家（下方），1 = 敌方（上方）
 var max_hp := 2000.0
@@ -23,10 +29,13 @@ var visual_radius := 34.0
 var deployment_radius := 34.0
 var first_hit_time := 0.2
 var projectile_speed := 400.0
+## 仅用于弹体绘制的晶石起点偏移；权威发射位置仍是塔心。
+var projectile_visual_offset := Vector2.ZERO
 var splash_radius := 0.0
 var attack_knockback := 0.0
 var is_king := false
 var activated := true
+var can_attack := true
 var has_model_art := false
 
 var nav_cells: Array = []
@@ -51,8 +60,12 @@ func setup(p_team: int, stats: Dictionary, p_is_king: bool) -> void:
 	deployment_radius = stats.get("deployment_radius", visual_radius)
 	first_hit_time = stats.get("first_hit", 0.2)
 	projectile_speed = stats.get("projectile_speed", 400.0)
+	var configured_projectile_offset: Vector2 = stats.get("projectile_visual_offset", Vector2.ZERO)
+	# 蓝/红塔素材在表现层相差 180°，权杖晶石的水平偏移随阵营镜像。
+	projectile_visual_offset = Vector2(configured_projectile_offset.x if team == 0 else -configured_projectile_offset.x, configured_projectile_offset.y)
 	splash_radius = stats.get("splash_radius", 0.0)
 	attack_knockback = stats.get("knockback", 0.0)
+	can_attack = stats.get("can_attack", true)
 	# 国王塔初始休眠；公主塔默认激活
 	activated = not is_king
 
@@ -80,6 +93,8 @@ func sim_tick(dt: float) -> void:
 		frozen_timer = maxf(0.0, frozen_timer - dt)
 		queue_redraw()
 		return
+	if not can_attack:
+		return
 	# 国王塔休眠中：不索敌不攻击
 	if is_king and not activated:
 		return
@@ -100,7 +115,7 @@ func sim_tick(dt: float) -> void:
 	if _cooldown <= 0.0:
 		var scene := get_tree().current_scene
 		if scene != null and scene.has_method("launch_attack"):
-			var projectile_color := Color(1.0, 0.82, 0.30) if is_king else Color(0.95, 0.95, 0.82)
+			var projectile_color := BLUE_PROJECTILE_COLOR if team == 0 else RED_PROJECTILE_COLOR
 			scene.launch_attack(self, _target, damage, projectile_speed, splash_radius, attack_knockback, projectile_color)
 		else:
 			_target.take_damage(damage)
@@ -112,8 +127,6 @@ func _target_is_valid(target) -> bool:
 	if not target is Unit or target.team == team:
 		return false
 	var unit := target as Unit
-	if not unit.is_deployed():
-		return false
 	# 丝缕缠流：目标开启且塔在圈外 → 看不到它，解锁目标。
 	if unit.is_hidden_from(self):
 		return false
@@ -137,8 +150,6 @@ func _find_enemy_in_range() -> Node2D:
 		if not c is Unit or c.team == team or c.hp <= 0.0:
 			continue
 		var unit := c as Unit
-		if not unit.is_deployed():
-			continue
 		# 丝缕缠流：目标开启且塔在圈外 → 看不到它，不锁定。
 		if unit.is_hidden_from(self):
 			continue
@@ -154,7 +165,7 @@ func take_damage(amount: float, _from: Node2D = null, _source_team: int = -1, _s
 	var was_alive := hp > 0.0
 	hp = maxf(hp - amount, 0.0)
 	# CR 规则：国王塔受到伤害即激活
-	if is_king and not activated and hp > 0.0:
+	if is_king and can_attack and not activated and hp > 0.0:
 		activate()
 	# 受击闪白只发限频表现事件；摧毁走 destroy 动画，不再闪白。
 	if hp > 0.0 and _hit_flash_event_cooldown <= 0.0:
@@ -180,6 +191,9 @@ func notify_visual_destroyed() -> void:
 func notify_visual_hit() -> void:
 	visual_hit.emit()
 
+func _health_text() -> String:
+	return "%d" % ceili(hp)
+
 func _draw() -> void:
 	# 已被摧毁：画废墟，不画描边和血条
 	if hp <= 0.0:
@@ -201,8 +215,8 @@ func _draw() -> void:
 		draw_circle(Vector2(0, -visual_radius * 0.4), visual_radius * 0.35, crown_color)
 	# 血条：塔3格、水晶4格（每格40px）。敌方红条在建筑上方；
 	# 己方塔绿条在塔身中央，己方水晶绿条贴着水晶底座下方。
-	var bar_w := 160.0 if is_king else 120.0
-	var bar_h := 8.0
+	var bar_w := KING_HEALTH_BAR_WIDTH if is_king else PRINCESS_HEALTH_BAR_WIDTH
+	var bar_h := HEALTH_BAR_HEIGHT
 	var ratio := maxf(hp / max_hp, 0.0)
 	var bar_center_y := -visual_radius - 16.0  # 敌方塔：塔上方；敌方水晶：水晶上方
 	if is_king and team == 0:
@@ -215,3 +229,8 @@ func _draw() -> void:
 	var bar_rect := Rect2(Vector2(-bar_w / 2.0, bar_center_y - bar_h / 2.0), Vector2(bar_w, bar_h))
 	draw_rect(bar_rect, Color(0.10, 0.10, 0.10))
 	draw_rect(Rect2(bar_rect.position, Vector2(bar_w * ratio, bar_h)), bar_color)
+	# 血条内只显示权威当前生命；轻微黑色偏移保证在红绿填充上都清晰。
+	var hp_text := _health_text()
+	var text_pos := Vector2(bar_rect.position.x, bar_rect.position.y + 14.0)
+	draw_string(ThemeDB.fallback_font, text_pos + Vector2.ONE, hp_text, HORIZONTAL_ALIGNMENT_CENTER, bar_w, HEALTH_TEXT_SIZE, Color(0.0, 0.0, 0.0, 0.85))
+	draw_string(ThemeDB.fallback_font, text_pos, hp_text, HORIZONTAL_ALIGNMENT_CENTER, bar_w, HEALTH_TEXT_SIZE, Color.WHITE)

@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/units/xin/source/xin.glb" id="1_xin"]
+
+[node name="XinView" type="Node3D"]
+
+[node name="Model" parent="." instance=ExtResource("1_xin")]
+scale = Vector3(0.0108, 0.0108, 0.0108)
