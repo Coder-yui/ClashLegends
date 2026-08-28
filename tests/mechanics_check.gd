@@ -14,6 +14,7 @@ func _run() -> void:
 	root.add_child(_main)
 	current_scene = _main
 	await process_frame
+	await _check_deck_builder_ui()
 	_main._start_local()
 	_main.set_process(false)
 	_main._ai.set_process(false)
@@ -43,6 +44,9 @@ func _run() -> void:
 	_check_tombstone_spawn_cycle()
 	_check_card_play_delay()
 	_check_deploy_delay()
+	_check_active_skill_loadout_rule()
+	_check_active_skill_activation()
+	_check_empowered_freeze_slow_zone()
 	_check_building_pulls_tower_target()
 	_check_nearest_unit_or_building_target()
 	_check_crystal_target_and_nearest_attack_target()
@@ -95,6 +99,177 @@ func _expect(condition: bool, message: String) -> void:
 	else:
 		_failed += 1
 		push_error("[失败] " + message)
+
+func _check_deck_builder_ui() -> void:
+	_main._deck = []
+	_main._pick_deck_ui(func() -> void: return)
+	await process_frame
+	await process_frame
+	_expect(not _main._deck_slot_buttons[0].disabled and _main._deck_slot_buttons[0].text == "+", "空卡组位置显示加号并可点击选择位置")
+	_main._deck_slot_buttons[0].emit_signal("pressed")
+	_expect(_main._deck_pending_slot == 0 and not _main._deck_context_popup.visible, "点击空卡槽后进入指定位置添加状态")
+	var ashe_button: Button = _main._deck_toggles["ashe"]
+	ashe_button.emit_signal("pressed")
+	await process_frame
+	_expect(_main._deck_selected == ["ashe"] and not _main._deck_toggles.has("ashe"), "从牌库选牌后添加到指定卡槽并从牌库隐藏")
+	_main._on_deck_slot_pressed(0)
+	_main._perform_deck_context_action()
+	_expect(_main._deck_selected.is_empty() and _main._deck_toggles.has("ashe"), "移除卡槽卡牌后重新显示在牌库")
+	_main._on_deck_filter_selected(3)
+	_expect(_main._deck_toggles.has("tombstone") and not _main._deck_toggles.has("garen"), "牌库可以按建筑类型筛选")
+	_main._on_deck_filter_selected(0)
+	_main._on_deck_sort_selected(1)
+	var asc_pool: Array = _main._deck_pool_grid.get_children()
+	var asc_first_id: String = String(asc_pool[0].get_meta("card_id", ""))
+	var asc_last_id: String = String(asc_pool[-1].get_meta("card_id", ""))
+	var asc_ok: bool = asc_pool.size() > 1 and int(CardDB.all()[asc_first_id].cost) <= int(CardDB.all()[asc_last_id].cost)
+	_main._on_deck_sort_selected(2)
+	var desc_pool: Array = _main._deck_pool_grid.get_children()
+	var desc_first_id: String = String(desc_pool[0].get_meta("card_id", ""))
+	var desc_last_id: String = String(desc_pool[-1].get_meta("card_id", ""))
+	var desc_ok: bool = desc_pool.size() > 1 and int(CardDB.all()[desc_first_id].cost) >= int(CardDB.all()[desc_last_id].cost)
+	_expect(asc_ok and desc_ok, "牌库支持按金币消耗递增或递减排序")
+	_main._on_deck_sort_selected(0)
+	_main._on_deck_pool_card_pressed("garen")
+	_expect(
+		_main._deck_context_popup.visible
+		and _main._deck_context_from_pool
+		and _main._deck_context_action.text == "添加"
+		and _main._deck_selected.is_empty(),
+		"点击卡牌库卡牌只显示信息/添加，不会立即改动卡组"
+	)
+	_main._on_deck_pool_card_pressed("garen")
+	_expect(not _main._deck_context_popup.visible, "再次点击同一张牌会收起信息/添加操作")
+	_main._on_deck_pool_card_pressed("garen")
+	_main._perform_deck_context_action()
+	_expect(_main._deck_selected == ["garen"], "卡牌库的添加操作把卡牌放入下一个空卡位")
+	_main._on_deck_slot_pressed(0)
+	_expect(
+		_main._deck_context_popup.visible
+		and not _main._deck_context_from_pool
+		and _main._deck_context_action.text == "移除",
+		"点击卡槽卡牌显示信息/移除"
+	)
+	_main._open_selected_card_info()
+	await process_frame
+	_expect(
+		_main._deck_info_overlay != null
+		and _main._deck_info_active_option.item_count == 1
+		and _main._deck_info_active_option.disabled
+		and _main._skin_choices.get("garen", "") == "default",
+		"信息页展示唯一主动技能选择与默认原皮入口"
+	)
+	_main._close_card_info()
+	_main._on_deck_slot_pressed(0)
+	_main._perform_deck_context_action()
+	_expect(_main._deck_selected.is_empty(), "卡槽的移除操作移除选中卡牌")
+	_main._clear_deck_ui()
+	await process_frame
+
+func _check_active_skill_loadout_rule() -> void:
+	var cards := CardDB.all()
+	var data_ok := true
+	for card_id in CardDB.selectable_ids():
+		var stats: Dictionary = cards[card_id]
+		if stats.get("type", "unit") == "spell":
+			data_ok = data_ok and CardDB.active_skills_for(card_id).is_empty()
+		else:
+			var available_skills := CardDB.active_skills_for(card_id)
+			data_ok = data_ok and available_skills.size() == 1 and not String(available_skills[0].get("name", "")).is_empty()
+	_expect(data_ok, "当前每张可选单位/建筑卡恰有一个可携带主动技能，法术卡不生成主动按钮")
+	var left_position: Vector2 = ActiveSkillBar.LEFT_SLOT_POSITION
+	var right_position: Vector2 = ActiveSkillBar.RIGHT_SLOT_POSITION
+	_expect(
+		is_equal_approx(left_position.x + right_position.x + ActiveSkillBar.BUTTON_SIZE.x, _main.FIELD_W)
+		and is_equal_approx(left_position.y, right_position.y),
+		"主动槽 2 圆位以战场中线严格镜像主动槽 1"
+	)
+	var old_deck: Array = _main._deck.duplicate()
+	_main._deck = ["garen", "freeze", "xin", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
+	_expect(
+		_main._card_has_active_for_team(0, "garen")
+		and _main._card_has_active_for_team(0, "freeze")
+		and not _main._card_has_active_for_team(0, "xin")
+		and _main._active_card_slot_for_team(0, "garen") == 0
+		and _main._active_card_slot_for_team(0, "freeze") == 1,
+		"只有备战卡组前两个卡位携带主动版本"
+	)
+	_main._deck = old_deck
+
+func _check_active_skill_activation() -> void:
+	var old_deck: Array = _main._deck.duplicate()
+	_main._deck = ["garen", "xin", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
+	var first_source: Unit = _main._spawn_unit(0, "garen", Vector2(340.0, 800.0), 0.0, 0)
+	var first_ability_id := first_source.active_ability_id
+	var source: Unit = _main._spawn_unit(0, "garen", Vector2(380.0, 800.0), 0.0, 0)
+	var enemy_stats: Dictionary = CardDB.imp_stats().duplicate()
+	enemy_stats["deploy_time"] = 0.0
+	enemy_stats["hp"] = 500.0
+	var enemy := Unit.new()
+	enemy.position = Vector2(410.0, 800.0)
+	enemy.setup(1, enemy_stats, enemy_stats.name)
+	_main.add_child(enemy)
+	var ability_id := source.active_ability_id
+	_expect(
+		ability_id >= 0
+		and not _main._active_skills.has(first_ability_id)
+		and first_source.active_ability_id == -1
+		and _main._active_skills.has(ability_id)
+		and _main._active_skill_bar.current_ability_id(0) == ability_id,
+		"同一主动槽再次部署时，新单位覆盖旧单位的技能资格"
+	)
+	var hp_before := enemy.hp
+	var queued: bool = not _main._queue_active_skill(first_ability_id, 0, 0) and _main._queue_active_skill(ability_id, 0, 0)
+	_main._active_skill_bar.set_pending(ability_id, true)
+	_main._tick_pending_active_skills(0.45)
+	_expect(
+		queued and is_equal_approx(enemy.hp, hp_before) and is_zero_approx(source.shield_hp)
+		and _main._active_skills.has(ability_id) and _main._active_skill_bar.is_slot_visible(0),
+		"点击主动技能后 0.45 秒仍处于等待状态，不提前结算"
+	)
+	_main._tick_pending_active_skills(0.05)
+	_expect(enemy.hp < hp_before and source.shield_hp > 0.0, "满 0.5 秒后由权威逻辑造成范围伤害并获得护盾")
+	_expect(
+		not _main._active_skills.has(ability_id)
+		and not _main._activate_active_skill(ability_id, 0)
+		and not _main._active_skill_bar.is_slot_visible(0),
+		"主动技能结算一次后固定圆位立即隐藏"
+	)
+	var slot_two_unit: Unit = _main._spawn_unit(0, "xin", Vector2(440.0, 840.0), 0.0, 1)
+	var slot_two_ability_id := slot_two_unit.active_ability_id
+	var slot_two_was_visible: bool = _main._active_skill_bar.is_slot_visible(1)
+	slot_two_unit.take_damage(slot_two_unit.hp + 1.0)
+	_expect(
+		slot_two_was_visible
+		and not _main._active_skills.has(slot_two_ability_id)
+		and not _main._active_skill_bar.is_slot_visible(1),
+		"最新主动实例死亡后对应圆位立即隐藏"
+	)
+	first_source.free()
+	source.free()
+	enemy.free()
+	_main._deck = old_deck
+
+func _check_empowered_freeze_slow_zone() -> void:
+	var stats: Dictionary = CardDB.imp_stats().duplicate()
+	stats["deploy_time"] = 0.0
+	var enemy := Unit.new()
+	enemy.position = Vector2(360.0, 600.0)
+	enemy.setup(1, stats, stats.name)
+	_main.add_child(enemy)
+	_main._apply_freeze(enemy.position, 110.0, 3.0, 0, 2.0, 0.5)
+	_main._tick_slow_zones(2.95)
+	var delayed_ok := enemy.slow_timer <= 0.0
+	_main._tick_slow_zones(0.05)
+	_main._tick_slow_zones(_main.SIM_DT)
+	enemy._prepare_movement(Vector2.UP, _main.SIM_DT)
+	var slowed_ok := enemy.slow_timer > 0.0 and is_equal_approx(enemy._move_intent.length(), enemy.move_speed * 0.5)
+	_main._tick_slow_zones(2.0)
+	_expect(delayed_ok and slowed_ok, "主动版冰冻在 3 秒冻结结束后才开启区域减速")
+	_expect(_main._slow_zones.is_empty(), "强化冰冻减速区域持续 2 秒后由权威模拟移除")
+	_main._freeze_effects.clear()
+	_main._slow_effects.clear()
+	enemy.free()
 
 func _check_official_arena_grid() -> void:
 	var dimensions_ok: bool = (
@@ -617,7 +792,7 @@ func _check_minion_line_mechanism() -> void:
 	for minion in double_wave:
 		if minion.card_id == "siege_minion":
 			siege_count += 1
-	_expect(double_wave.size() == 8 and siege_count == 4, "进入双倍圣水后每路编成为近战兵加炮车兵")
+	_expect(double_wave.size() == 8 and siege_count == 4, "进入双倍金币后每路编成为近战兵加炮车兵")
 
 	_clear_minion_test_units()
 	_main._pending_lane_minions.clear()
@@ -1755,6 +1930,11 @@ func _check_sett_attack_rhythm() -> void:
 		var gap: float = unit._next_attack_gap()
 		rhythm_ok = rhythm_ok and is_equal_approx(gap, float(expected[i % expected.size()]))
 	_expect(rhythm_ok, "腕豪连招间距按 两拳→停顿→两拳→停顿 依次循环")
+	var damage_multipliers: Array = stats.get("attack_damage_multipliers", [])
+	var damage_ok := damage_multipliers == [1.0, 1.5, 1.0, 1.5]
+	for i in range(4):
+		damage_ok = damage_ok and is_equal_approx(unit._attack_damage_multiplier(i), float(damage_multipliers[i]))
+	_expect(damage_ok, "腕豪右拳伤害为左拳的1.5倍，并按左右拳循环")
 	unit.free()
 
 ## 腕豪美术集成：包装场景可加载，模型落到地面，动画名在源模型中存在，死亡由 3D 代理播放。

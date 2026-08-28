@@ -32,6 +32,10 @@ const SPAWN_DIRECTIONS := [
 ]
 
 var net_id := -1
+## 每次由主动位卡牌部署时分配一次；-1 表示该实例没有携带主动技能。
+var active_ability_id := -1
+## 0/1 分别对应备战卡组的第 1/2 主动槽；同槽新实例会覆盖旧实例资格。
+var active_ability_slot := -1
 var card_id := ""
 var team := 0
 var hp := 100.0
@@ -85,8 +89,18 @@ var shroud_radius := 0.0
 ## 连招攻击节奏：每次命中后到下一次命中的间隔（秒），按数组循环；空数组表示每个周期间隔固定为 attack_interval。
 ## 例如 [0.28, 1.05, 0.28, 1.05] 表示快速两拳后停顿、再快速两拳后停顿。
 var attack_pattern: Array = []
+## 连招伤害倍率：按每次命中的顺序循环；空数组表示每拳使用 damage 原值。
+var attack_damage_multipliers: Array = []
 
 var frozen_timer := 0.0
+var slow_timer := 0.0
+var slow_multiplier := 1.0
+var shield_hp := 0.0
+var shield_timer := 0.0
+var active_buff_timer := 0.0
+var active_speed_multiplier := 1.0
+var active_damage_multiplier := 1.0
+var active_attack_speed_multiplier := 1.0
 
 # 联机客户端插值字段（main 快照写入）
 var net_target_pos: Vector2
@@ -96,6 +110,8 @@ var lifespan := 0.0
 var spawn_interval := 0.0
 var spawn_count := 1
 var spawn_side := ""
+var death_spawn_id := ""
+var death_spawn_count := 0
 var nav_cells: Array = []
 
 var _target: Node2D = null
@@ -141,6 +157,8 @@ var net_visual_state := 1
 var net_facing_x := 1.0
 var net_attack_visual_serial := 0
 var net_shroud_active := false
+var net_shield_active := false
+var net_slow_active := false
 var net_has_continuous_target := false
 var net_continuous_target_pos := Vector2.ZERO
 ## 仅由表现代理切换：进入吐息循环后显示，进入动画和退出攻击时隐藏。
@@ -211,10 +229,13 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	charge_damage_multiplier = stats.get("charge_damage_multiplier", 1.0)
 	shroud_radius = stats.get("shroud_radius", 0.0)
 	attack_pattern = stats.get("attack_pattern", [])
+	attack_damage_multipliers = stats.get("attack_damage_multipliers", [])
 	lifespan = stats.get("lifespan", 0.0)
 	spawn_interval = stats.get("spawn_interval", 0.0)
 	spawn_count = maxi(int(stats.get("spawn_count", 1)), 1)
 	spawn_side = String(stats.get("spawn_side", ""))
+	death_spawn_id = String(stats.get("death_spawn_id", ""))
+	death_spawn_count = maxi(int(stats.get("death_spawn_count", 0)), 0)
 	_lifespan_left = lifespan
 	_spawn_timer = spawn_interval
 	_deploy_timer = deploy_time
@@ -332,6 +353,7 @@ func set_continuous_beam_visible(visible: bool) -> void:
 func sim_tick(dt: float) -> void:
 	if hp <= 0.0:
 		return
+	_tick_active_statuses(dt)
 	_hit_flash_event_cooldown = maxf(0.0, _hit_flash_event_cooldown - dt)
 	_prev_pos = position
 	_move_intent = Vector2.ZERO
@@ -746,6 +768,9 @@ func _prepare_movement(direction: Vector2, _dt: float) -> void:
 		var turn_weight := minf(_dt * 8.0, 1.0)
 		_move_direction = _move_direction.lerp(direction.normalized(), turn_weight).normalized()
 	var speed_multiplier := charge_speed_multiplier if _charged else 1.0
+	speed_multiplier *= active_speed_multiplier
+	if slow_timer > 0.0:
+		speed_multiplier *= slow_multiplier
 	_move_intent = _move_direction * move_speed * speed_multiplier
 
 func _recompute_path() -> void:
@@ -792,14 +817,15 @@ func _attack(dt: float) -> void:
 		if _attack_windup > 0.0:
 			return
 	if continuous_attack:
-		_deal_attack_damage(damage * dt)
+		_deal_attack_damage(damage * active_damage_multiplier * active_attack_speed_multiplier * dt)
 		return
 	_try_start_attack_visual(_attack_cd)
 	if _attack_cd <= 0.0:
 		# 连招节奏：若配置了 attack_pattern，则按本次命中后的间隔取值；否则固定为 attack_interval。
+		var hit_index := _attack_hit_index
 		var next_attack_gap := _next_attack_gap()
 		_attack_cd = next_attack_gap
-		var hit_damage := damage * (charge_damage_multiplier if _charged else 1.0)
+		var hit_damage := damage * _attack_damage_multiplier(hit_index) * active_damage_multiplier * (charge_damage_multiplier if _charged else 1.0)
 		# 挥击序号与表现层攻击动画序号同步推进，供命中回血按三段循环取模。
 		_attack_swing_count += 1
 		_deal_attack_damage(hit_damage)
@@ -822,10 +848,15 @@ func _reaches_attack_hit_this_tick(dt: float) -> bool:
 ## 连招间距：attack_pattern 为每次命中后到下一次命中的间隔，按数组顺序循环。
 func _next_attack_gap() -> float:
 	if attack_pattern.is_empty():
-		return attack_interval
+		return attack_interval / active_attack_speed_multiplier
 	var gap: float = float(attack_pattern[_attack_hit_index % attack_pattern.size()])
 	_attack_hit_index += 1
-	return maxf(gap, 0.01)
+	return maxf(gap / active_attack_speed_multiplier, 0.01)
+
+func _attack_damage_multiplier(hit_index: int) -> float:
+	if attack_damage_multipliers.is_empty():
+		return 1.0
+	return maxf(float(attack_damage_multipliers[hit_index % attack_damage_multipliers.size()]), 0.0)
 
 ## 每次攻击在命中前 first_hit_time 发出一次表现序号。表现层可以据此播放完整动作，
 ## 但伤害仍只由上面的固定 tick 逻辑结算。
@@ -868,6 +899,41 @@ func freeze(duration: float) -> void:
 	frozen_timer = maxf(frozen_timer, duration)
 	queue_redraw()
 
+func apply_slow(duration: float, multiplier: float) -> void:
+	slow_timer = maxf(slow_timer, duration)
+	slow_multiplier = minf(slow_multiplier, clampf(multiplier, 0.1, 1.0))
+	queue_redraw()
+
+func apply_active_buff(duration: float, speed_multiplier: float, damage_multiplier: float, attack_speed_multiplier: float) -> void:
+	active_buff_timer = maxf(active_buff_timer, duration)
+	active_speed_multiplier = maxf(active_speed_multiplier, speed_multiplier)
+	active_damage_multiplier = maxf(active_damage_multiplier, damage_multiplier)
+	active_attack_speed_multiplier = maxf(active_attack_speed_multiplier, attack_speed_multiplier)
+	# 已经进入普攻冷却时也立即获得攻速收益，避免按钮按下后要等完整旧周期。
+	_attack_cd /= maxf(attack_speed_multiplier, 1.0)
+	queue_redraw()
+
+func add_shield(amount: float, duration: float) -> void:
+	shield_hp += maxf(amount, 0.0)
+	shield_timer = maxf(shield_timer, duration)
+	queue_redraw()
+
+func _tick_active_statuses(dt: float) -> void:
+	if slow_timer > 0.0:
+		slow_timer = maxf(0.0, slow_timer - dt)
+		if slow_timer <= 0.0:
+			slow_multiplier = 1.0
+	if shield_timer > 0.0:
+		shield_timer = maxf(0.0, shield_timer - dt)
+		if shield_timer <= 0.0:
+			shield_hp = 0.0
+	if active_buff_timer > 0.0:
+		active_buff_timer = maxf(0.0, active_buff_timer - dt)
+		if active_buff_timer <= 0.0:
+			active_speed_multiplier = 1.0
+			active_damage_multiplier = 1.0
+			active_attack_speed_multiplier = 1.0
+
 func is_frozen() -> bool:
 	return frozen_timer > 0.0
 
@@ -876,9 +942,16 @@ func take_damage(amount: float, from: Node2D = null, source_team: int = -1, sour
 		return false
 	if _is_shroud_blocked(from, source_team, source_position):
 		return false
-	hp -= amount
+	var remaining_damage := amount
+	if shield_hp > 0.0 and shield_timer > 0.0:
+		var absorbed := minf(shield_hp, remaining_damage)
+		shield_hp -= absorbed
+		remaining_damage -= absorbed
+		if shield_hp <= 0.0:
+			shield_timer = 0.0
+	hp -= remaining_damage
 	if hp <= 0.0:
-		_die()
+		_die(death_spawn_count > 0)
 	else:
 		# 持续伤害可能每个 20Hz tick 都结算；限制纯表现事件频率，避免模型常亮和可靠 RPC 洪泛。
 		if _hit_flash_event_cooldown <= 0.0:
@@ -950,7 +1023,7 @@ func _in_client_mode() -> bool:
 		return false
 	return scene.is_net_client()
 
-func _die() -> void:
+func _die(trigger_death_effect: bool = false) -> void:
 	remove_from_group("combatants")
 	var scene := get_tree().current_scene
 	# 建筑卡死亡 → 解除导航网格占地
@@ -958,12 +1031,30 @@ func _die() -> void:
 		if scene != null and scene.has_method("unblock_nav_cells"):
 			scene.unblock_nav_cells(nav_cells)
 		nav_cells = []
+	if trigger_death_effect:
+		_spawn_death_summons()
 	# 表现层只保留一个无碰撞代理播放死亡动作；战斗节点仍在本帧释放。
 	notify_visual_death()
 	# 联机单位死亡 → 主机可靠通知客户端播放死亡动作，并立即清理 net_id 映射。
 	if net_id >= 0 and scene != null and scene.has_method("on_unit_died"):
 		scene.on_unit_died(net_id)
 	queue_free()
+
+func _spawn_death_summons() -> void:
+	if death_spawn_count <= 0 or death_spawn_id.is_empty() or _in_client_mode():
+		return
+	var scene := get_tree().current_scene
+	if scene == null or not scene.has_method("spawn_summoned"):
+		return
+	var summon_stats: Dictionary = CardDB.imp_stats() if death_spawn_id == "imp" else CardDB.all().get(death_spawn_id, {})
+	if summon_stats.is_empty():
+		return
+	var summon_radius := float(summon_stats.get("radius", 14.0))
+	var spawn_distance := body_radius + summon_radius + SUMMON_SEPARATION
+	for index in range(death_spawn_count):
+		var direction: Vector2 = SPAWN_DIRECTIONS[index % SPAWN_DIRECTIONS.size()]
+		var spawn_pos := global_position + direction * spawn_distance
+		scene.spawn_summoned(team, death_spawn_id, spawn_pos)
 
 ## 可由客户端死亡 RPC / 快照缺席兜底调用；信号只发一次，避免重复死亡表现。
 func notify_visual_death() -> void:
@@ -1043,6 +1134,12 @@ func _draw() -> void:
 		draw_rect(Rect2(bar_rect.position, Vector2(bar_w * ratio, HEALTH_BAR_HEIGHT)), get_health_bar_fill_color())
 	if frozen_timer > 0.0:
 		draw_circle(Vector2.ZERO, visual_radius + 4.0, Color(0.4, 0.8, 1.0, 0.3))
+	var shield_visible := net_shield_active if _in_client_mode() else shield_hp > 0.0
+	if shield_visible:
+		draw_arc(Vector2.ZERO, visual_radius + 7.0, 0.0, TAU, 36, Color(0.35, 0.85, 1.0, 0.9), 3.0, true)
+	var slow_visible := net_slow_active if _in_client_mode() else slow_timer > 0.0
+	if slow_visible:
+		draw_arc(Vector2.ZERO, visual_radius + 10.0, 0.0, TAU, 24, Color(0.45, 0.65, 1.0, 0.75), 2.0, true)
 	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 
 ## 临时吐息表现：嘴部端窄、目标端宽的半透明梯形光柱。

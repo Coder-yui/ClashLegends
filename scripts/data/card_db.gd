@@ -37,6 +37,7 @@ static func all() -> Dictionary:
 		# ===== 原有4张 =====
 		"garen": {
 			"name": "盖伦", "cost": 5, "type": "unit",
+			"description": "高生命值的近战战士，专注攻击建筑，适合在前线持续推进。",
 			"hp": 1050.0, "damage": 88.0, "range": 28.0,
 			# 命中位于攻击周期约 35% 处，给挥剑留出短前摇，把较长时间留给收招。
 			"speed": SPEED_SLOW, "interval": 1.1, "first_hit": 0.38,
@@ -51,9 +52,11 @@ static func all() -> Dictionary:
 				"death": "Death", "death_duration": 0.8,
 			},
 			"is_air": false, "building_only": true, "can_attack_air": false,
+			"active_skill": {"name": "德玛西亚正义", "kind": "nova", "radius": 90.0, "damage": 150.0, "shield": 180.0, "shield_duration": 4.0},
 		},
 		"xin": {
 			"name": "赵信", "cost": 4, "type": "unit",
+			"description": "近战战士，部署时横扫周围地面敌人，连续攻击还能恢复生命。",
 			"hp": 620.0, "damage": 68.0, "range": 40.0,
 			"speed": SPEED_SLIGHTLY_FAST, "interval": 0.9, "first_hit": 0.3,
 			"deploy_time": 1.5,
@@ -89,9 +92,11 @@ static func all() -> Dictionary:
 				"death": "Death", "death_duration": 0.8,
 			},
 			"is_air": false, "building_only": false, "can_attack_air": false,
+			"active_skill": {"name": "新月护卫", "kind": "nova", "radius": 105.0, "damage": 90.0, "knockback": 90.0},
 		},
 		"ashe": {
 			"name": "艾希", "cost": 3, "type": "unit",
+			"description": "远程射手，能攻击空中和地面目标，在安全距离持续输出。",
 			"hp": 340.0, "damage": 58.0, "range": 170.0,
 			# Attack1/2 的箭矢在素材约 44% 处离弦；first_hit 表示动画开始到弹体生成的时间。
 			"speed": SPEED_SLIGHTLY_SLOW, "interval": 1.0, "first_hit": 0.45,
@@ -109,9 +114,11 @@ static func all() -> Dictionary:
 				"attack": ["Attack1", "Attack2"], "death": "Death", "death_duration": 0.8,
 			},
 			"is_air": false, "building_only": false, "can_attack_air": true,
+			"active_skill": {"name": "万箭齐发", "kind": "nova", "radius": 180.0, "damage": 70.0, "slow_duration": 2.0, "slow_multiplier": 0.55},
 		},
 		"teemo": {
 			"name": "提莫", "cost": 2, "type": "unit",
+			"description": "灵活的远程射手，移速较快，擅长用毒针干扰敌人。",
 			"hp": 230.0, "damage": 38.0, "range": 160.0,
 			"speed": SPEED_FAST, "interval": 1.0, "first_hit": 0.25,
 			"size_tier": SIZE_SMALL, "radius": RADIUS_SMALL, "visual_radius": RADIUS_SMALL + VISUAL_RADIUS_PADDING,
@@ -130,10 +137,12 @@ static func all() -> Dictionary:
 				"attack_hit_duration": 0.75, "death": "Death", "death_duration": 0.8,
 			},
 			"is_air": false, "building_only": false, "can_attack_air": true,
+			"active_skill": {"name": "致盲毒雾", "kind": "nova", "radius": 105.0, "damage": 55.0, "slow_duration": 2.5, "slow_multiplier": 0.50},
 		},
 		# ===== 水晶兵线（也可作为玩家卡牌） =====
 		"melee_minion": {
 			"name": "近战兵", "cost": 1, "type": "unit", "selectable": true,
+			"description": "基础近战单位，适合成群推进并为后排吸收伤害。",
 			"hp": 210.0, "damage": 42.0, "range": 22.0,
 			"speed": SPEED_MEDIUM, "interval": 1.0, "first_hit": 0.32,
 			"size_tier": SIZE_SMALL, "radius": RADIUS_SMALL,
@@ -150,9 +159,11 @@ static func all() -> Dictionary:
 				"attack": ["Attack1", "Attack2"], "death": "Death", "death_duration": 0.5,
 			},
 			"is_air": false, "building_only": false, "can_attack_air": false,
+			"active_skill": {"name": "列阵突击", "kind": "buff", "duration": 4.0, "speed_multiplier": 1.35, "damage_multiplier": 1.25},
 		},
 		"ranged_minion": {
 			"name": "远程兵", "cost": 1, "type": "unit", "selectable": true,
+			"description": "后排远程单位，能够攻击空中和地面目标并持续输出。",
 			"hp": 135.0, "damage": 32.0, "range": 150.0,
 			# Attack1/2 约在动作前段举杖发射；first_hit 是权威弹体生成时刻。
 			"speed": SPEED_MEDIUM, "interval": 1.25, "first_hit": 0.42,
@@ -175,9 +186,11 @@ static func all() -> Dictionary:
 				"attack": ["Attack1", "Attack2"], "death": "Death", "death_duration": 0.5,
 			},
 			"is_air": false, "building_only": false, "can_attack_air": true,
+			"active_skill": {"name": "奥术齐射", "kind": "nova", "radius": 150.0, "damage": 48.0},
 		},
 		"siege_minion": {
 			"name": "炮车兵", "cost": 3, "type": "unit", "selectable": true,
+			"description": "远程炮击单位，攻击距离较远，适合从后方压制敌方建筑。",
 			"hp": 390.0, "damage": 58.0, "range": 170.0,
 			"speed": SPEED_MEDIUM, "interval": 1.65, "first_hit": 0.55,
 			"size_tier": SIZE_SLIGHTLY_SMALL, "radius": RADIUS_SLIGHTLY_SMALL,
@@ -199,9 +212,11 @@ static func all() -> Dictionary:
 				"attack": ["Attack1_BASE", "Attack2_BASE"], "death": "Death", "death_duration": 0.5,
 			},
 			"is_air": false, "building_only": false, "can_attack_air": true,
+			"active_skill": {"name": "超载炮击", "kind": "nova", "radius": 180.0, "damage": 100.0, "knockback": 35.0},
 		},
 		"super_minion": {
 			"name": "超级兵", "cost": 4, "type": "unit", "selectable": true,
+			"description": "强化型近战单位，生命和伤害更高，适合在一路形成突破。",
 			"hp": 720.0, "damage": 72.0, "range": 28.0,
 			"speed": SPEED_MEDIUM, "interval": 1.15, "first_hit": 0.38,
 			"size_tier": SIZE_MEDIUM, "radius": RADIUS_MEDIUM,
@@ -218,17 +233,23 @@ static func all() -> Dictionary:
 				"attack": ["Attack1", "Attack2"], "death": "Death_Base", "death_duration": 0.5,
 			},
 			"is_air": false, "building_only": false, "can_attack_air": false,
+			"active_skill": {"name": "超级冲锋", "kind": "buff", "duration": 5.0, "speed_multiplier": 1.35, "damage_multiplier": 1.35, "shield": 140.0, "shield_duration": 5.0},
 		},
 		# ===== 新增4张 =====
 		"freeze": {
 			"name": "冰冻", "cost": 3, "type": "spell",
+			"description": "范围控制法术，冻结范围内的敌方单位，为己方争取进攻窗口。",
+			"active_name": "强化冰冻",
 			# 法术卡：不生成单位，在点击位置范围内冻结敌方单位3秒
 			"radius": 110.0,    # 影响范围半径
 			"duration": 3.0,    # 冰冻持续时间
+			"active_slow_duration": 2.0,
+			"active_slow_multiplier": 0.50,
 			"color": Color(0.40, 0.70, 1.00),
 		},
 		"masteryi": {
 			"name": "剑圣", "cost": 3, "type": "unit",
+			"description": "高速近战刺客，攻击频率高，适合快速处理脆弱目标。",
 			# 近战高攻速刺客：血薄但攻速极快
 			"hp": 480.0, "damage": 52.0, "range": 26.0,
 			"speed": SPEED_EXTREMELY_FAST, "interval": 0.45, "first_hit": 0.2,
@@ -243,9 +264,11 @@ static func all() -> Dictionary:
 				"death": "Death", "death_duration": 0.8,
 			},
 			"is_air": false, "building_only": false, "can_attack_air": false,
+			"active_skill": {"name": "高原血统", "kind": "buff", "duration": 5.0, "speed_multiplier": 1.45, "damage_multiplier": 1.20, "attack_speed_multiplier": 1.55},
 		},
 		"gwen": {
 			"name": "格温", "cost": 4, "type": "unit",
+			"description": "近战刺客，首次普攻命中后进入缠流，能避开远处敌人的视野和锁定。",
 			# 近战刺客：首次普攻命中后开启丝缕缠流；3 格（120px）外的敌方看不到她、不再把她当目标。
 			"hp": 580.0, "damage": 62.0, "range": 30.0,
 			"speed": SPEED_FAST, "interval": 0.85, "first_hit": 0.28,
@@ -260,15 +283,19 @@ static func all() -> Dictionary:
 				"attack": ["Attack1", "Attack2", "Attack3"], "death": "Death", "death_duration": 0.8,
 			},
 			"is_air": false, "building_only": false, "can_attack_air": false,
+			"active_skill": {"name": "神圣裁缝", "kind": "buff", "duration": 4.0, "speed_multiplier": 1.20, "damage_multiplier": 1.30, "shield": 130.0, "shield_duration": 4.0},
 		},
 		"sett": {
 			"name": "腕豪", "cost": 4, "type": "unit",
+			"description": "近战拳师，以快速双拳连招输出，第二拳造成更高伤害。",
 			# 近战拳师：连招节奏——快速两拳→稍作停顿→再快速两拳→再停顿。
 			"hp": 800.0, "damage": 72.0, "range": 18.0,
 			"speed": SPEED_MEDIUM, "interval": 1.1, "first_hit": 0.12,
 			"size_tier": SIZE_SLIGHTLY_LARGE, "radius": RADIUS_SLIGHTLY_LARGE, "visual_radius": RADIUS_SLIGHTLY_LARGE + VISUAL_RADIUS_PADDING,
 			"mass": 6.0, "sight": 210.0,
 			"attack_pattern": [0.28, 1.05, 0.28, 1.05],  # 两拳→停顿→两拳→停顿
+			"attack_damage_multipliers": [1.0, 1.5, 1.0, 1.5],  # 左拳基础伤害，右拳为左拳的1.5倍
+			"attack_interval_display": 1.05,  # 属性面板显示两拳结束后的循环间隔
 			"color": Color(0.85, 0.55, 0.25),
 			"visual_scene_path": "res://assets/units/sett/sett_view.tscn",
 			"visual_forward_yaw": 0.0,
@@ -282,9 +309,11 @@ static func all() -> Dictionary:
 				"death": "Death", "death_duration": 0.8,
 			},
 			"is_air": false, "building_only": false, "can_attack_air": false,
+			"active_skill": {"name": "蓄意轰拳", "kind": "nova", "radius": 95.0, "damage": 130.0, "knockback": 55.0, "shield": 170.0, "shield_duration": 4.0},
 		},
 		"tombstone": {
 			"name": "墓碑", "cost": 3, "type": "building",
+			"description": "持续召唤小鬼的建筑，适合建立防守屏障并拖延敌军。",
 			# 建筑卡：2x2 格占地，物理碰撞使用 2x2 格内切圆，不可移动。
 			# 完成部署立即生成两个小鬼，之后每 5 秒在地图中心线对应的一侧生成两个。
 			"hp": 400.0, "damage": 0.0, "range": 0.0,
@@ -297,6 +326,8 @@ static func all() -> Dictionary:
 			"spawn_interval": 5.0,  # 每隔多久生成一批小鬼
 			"spawn_count": 2,
 			"spawn_side": "map_side",
+			"death_spawn_id": "imp",
+			"death_spawn_count": 2,
 			"show_team_ring": false,
 			"visual_radius": 40.0,
 			"visual_scene_path": "res://assets/units/tombstone/tombstone_view.tscn",
@@ -304,9 +335,11 @@ static func all() -> Dictionary:
 			"visual_animations": {
 				"deploy": "Spawn", "idle": "Idle1", "death": "Death", "death_duration": 0.8,
 			},
+			"active_skill": {"name": "亡者集结", "kind": "summon", "spawn_id": "imp", "spawn_count": 4},
 		},
 		"aurelionsol": {
 			"name": "龙王", "cost": 4, "type": "unit",
+			"description": "空中持续输出单位，吐息能够同时压制目标及其周围敌人。",
 			# 空中远程单位：持续喷吐龙息（DPS模式）
 			"hp": 580.0, "damage": 55.0, "range": 130.0,
 			"speed": SPEED_EXTREMELY_SLOW, "interval": 0.0, "first_hit": 0.4,
@@ -340,6 +373,7 @@ static func all() -> Dictionary:
 			},
 			"is_air": true, "building_only": false, "can_attack_air": true,
 			"is_continuous_attack": true,  # 持续伤害：每帧 damage*delta
+			"active_skill": {"name": "星穹坠落", "kind": "nova", "radius": 145.0, "damage": 120.0, "slow_duration": 1.5, "slow_multiplier": 0.60},
 		},
 	}
 
@@ -351,6 +385,21 @@ static func selectable_ids() -> Array:
 		if bool(cards[card_id].get("selectable", true)):
 			ids.append(card_id)
 	return ids
+
+## 返回一张卡可供主动槽选择的技能集合。当前每张卡只有 active_skill 一个技能；
+## 未来可改用 active_skills 数组，但一次出战仍只从集合中携带一个。
+static func active_skills_for(card_id: String) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	var cards := all()
+	if not cards.has(card_id):
+		return result
+	var stats: Dictionary = cards[card_id]
+	for configured_skill in stats.get("active_skills", []):
+		if configured_skill is Dictionary:
+			result.append((configured_skill as Dictionary).duplicate(true))
+	if result.is_empty() and stats.has("active_skill"):
+		result.append((stats.active_skill as Dictionary).duplicate(true))
+	return result
 
 ## 小鬼属性（墓碑生成，非卡牌）— 1费近战单位
 static func imp_stats() -> Dictionary:

@@ -2,6 +2,7 @@ extends Node2D
 ## 主场景：战场搭建、部署输入、敌方占位出兵、胜负判定。
 
 const ART_DEV_PANEL_SCRIPT := preload("res://scripts/art_dev_panel.gd")
+const ACTIVE_SKILL_BAR_SCRIPT := preload("res://scripts/active_skill_bar.gd")
 const ARENA_BACKGROUND_TEXTURE := preload("res://assets/arena/arena_rift_v4.png")
 
 ## CR 标准 1v1 场地：18 列 x 32 行。项目分辨率正好对应每格 40px。
@@ -97,6 +98,8 @@ const SIM_DT := 1.0 / 20.0
 const DOUBLE_ELIXIR_TIME := 60.0
 ## 所有手牌在主机确认并扣费后统一延迟执行，给联网指令留出稳定的表现窗口。
 const CARD_DEPLOY_DELAY := 0.5
+## 主动技能点击后同样进入主机权威等待窗口，再由固定 tick 结算。
+const ACTIVE_SKILL_CAST_DELAY := 0.5
 ## 水晶兵线由主机固定 tick 驱动：开局 5 秒首波，之后每 30 秒一波，第二只延迟 0.5 秒。
 const FIRST_MINION_WAVE_TIME := 5.0
 const MINION_WAVE_INTERVAL := 30.0
@@ -111,12 +114,21 @@ var nav: NavGrid
 var mode := "local"  # local=单机 / host=主机 / client=客户端
 var _match_started := false  # 比赛是否已开始（联机时主机需等对手加入）
 var _freeze_effects: Array = []  # [{pos, timer, duration, radius}]
+## 强化冰冻结束后的权威减速区域与客户端纯视觉区域分开保存。
+var _slow_zones: Array[Dictionary] = []
+var _slow_effects: Array[Dictionary] = []
 var _projectiles := {}  # 主机/单机：id -> {pos, target, team, damage, speed, ...}
 var _client_projectiles := {}  # 客户端仅保存插值表现
 var _next_projectile_id := 1
 
 var _elixir: ElixirManager
 var _hand: CardHand
+var _active_skill_bar: ActiveSkillBar
+## ability_id -> {unit, card_id, team}；按钮只是这份权威状态的视图。
+var _active_skills: Dictionary = {}
+var _next_active_ability_id := 1
+## 主动请求确认后等待 0.5 秒；同一 ability_id 在队列中只能存在一次。
+var _pending_active_skill_activations: Array[Dictionary] = []
 var _ai: AIOpponent
 var _selected_card := ""
 ## 选卡后的落点预览：单位以单格格心为目标，点击时使用当前预览而不是重新猜测落点。
@@ -126,13 +138,18 @@ var _deployment_preview_valid := false
 var _deployment_preview_visible := false
 ## 主机/单机权威卡牌队列：单位、建筑和法术都在倒计时结束后才真正生效。
 var _pending_card_deployments: Array[Dictionary] = []
-## 兵线第二只单位的权威延迟队列；不经过手牌 0.5 秒部署队列，也不扣圣水。
+## 兵线第二只单位的权威延迟队列；不经过手牌 0.5 秒部署队列，也不扣金币。
 var _pending_lane_minions: Array[Dictionary] = []
 var _battle_elapsed := 0.0
 var _next_minion_wave_time := FIRST_MINION_WAVE_TIME
 var _minion_waves_enabled := true
 # 本次对战选定的 8 张卡组（空表示未指定，随机取）
 var _deck: Array = []
+## card_id -> active_skills 候选下标。当前每张卡只有一项，界面与联机协议先保留选择能力。
+var _active_skill_choices: Dictionary = {}
+## 主机收到的客户端卡组；用于校验出牌归属及前两槽主动资格。
+var _remote_deck: Array = []
+var _remote_active_skill_choices: Dictionary = {}
 var _deck_layer: CanvasLayer
 var _match_timer := MATCH_TIME
 var _overtime := false
@@ -249,33 +266,75 @@ func _make_menu_button(text: String) -> Button:
 #  选卡组界面
 # ============================================================
 
-var _deck_toggles := {}       # card_id -> 下方卡池按钮
+var _deck_toggles := {}       # card_id -> 下方卡牌库按钮
 var _deck_slot_buttons: Array[Button] = []
 var _deck_selected: Array = []  # 当前卡组，顺序就是上方 8 个卡位的顺序
 var _deck_confirm: Button
 var _deck_status: Label
 var _deck_average_label: Label
+var _deck_ui_root: Control
+var _deck_pool_grid: GridContainer
+var _deck_filter_option: OptionButton
+var _deck_sort_option: OptionButton
+var _deck_pool_filter := "all"
+var _deck_pool_sort := "name"
+var _deck_pending_slot := -1
+var _deck_context_popup: PanelContainer
+var _deck_context_info: Button
+var _deck_context_action: Button
+var _deck_context_card_id := ""
+var _deck_context_slot := -1
+var _deck_context_from_pool := false
+var _deck_context_anchor: Control
+var _deck_info_overlay: Control
+var _deck_info_active_option: OptionButton
+var _deck_info_active_description: Label
+var _deck_info_skin_option: OptionButton
+var _skin_choices: Dictionary = {}
 
 func _deck_style(background: Color, border: Color, border_width: int = 2) -> StyleBoxFlat:
 	return CardArt.frame_style(background, border, border_width)
 
 func _make_deck_card_button(card_id: String, is_slot: bool) -> Button:
 	var button := Button.new()
-	button.toggle_mode = not is_slot
+	button.toggle_mode = false
 	button.focus_mode = Control.FOCUS_NONE
+	button.set_meta("card_id", card_id)
 	CardArt.apply_frame(button, 165.0 if is_slot else 172.0)
 	if card_id.is_empty():
 		CardArt.show_empty_slot(button, 1)
-		button.disabled = true
+		button.disabled = false
 	else:
 		var stats: Dictionary = CardDB.all()[card_id]
 		var accent: Color = stats.get("color", CardArt.DEFAULT_ACCENT)
 		CardArt.apply_to_button(button, card_id, stats.name, stats.cost, false, accent)
 	return button
 
+func _set_active_slot_badge(button: Button, enabled: bool) -> void:
+	var badge := button.get_node_or_null("ActiveSlotBadge") as Label
+	if badge == null:
+		badge = Label.new()
+		badge.name = "ActiveSlotBadge"
+		badge.position = Vector2(4.0, 42.0)
+		badge.custom_minimum_size = Vector2(72.0, 24.0)
+		badge.text = "主动位"
+		badge.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		badge.add_theme_font_override("font", CardArt.ui_font())
+		badge.add_theme_font_size_override("font_size", 14)
+		badge.add_theme_color_override("font_color", Color(1.0, 0.88, 0.30))
+		badge.add_theme_color_override("font_outline_color", Color(0.03, 0.04, 0.08))
+		badge.add_theme_constant_override("outline_size", 4)
+		badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		button.add_child(badge)
+	badge.visible = enabled
+	button.move_child(badge, button.get_child_count() - 1)
+
 ## 在对战开始前弹出选卡组界面；上方固定 8 个卡位，下方滚动卡池。
 func _pick_deck_ui(after_start: Callable) -> void:
 	_deck_selected = _deck.duplicate() if _deck.size() == 8 else []
+	_deck_pool_filter = "all"
+	_deck_pool_sort = "name"
+	_deck_pending_slot = -1
 	var layer := CanvasLayer.new()
 	layer.layer = 20
 	add_child(layer)
@@ -283,6 +342,7 @@ func _pick_deck_ui(after_start: Callable) -> void:
 	var root := Control.new()
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
 	layer.add_child(root)
+	_deck_ui_root = root
 	var background_art := TextureRect.new()
 	background_art.texture = ARENA_BACKGROUND_TEXTURE
 	background_art.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -329,7 +389,7 @@ func _pick_deck_ui(after_start: Callable) -> void:
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	header_box.add_child(title)
 	var subtitle := Label.new()
-	subtitle.text = "选择 8 张卡牌组成你的出战队伍"
+	subtitle.text = "选择 8 张卡牌；前两个卡位会把主动技能带进对局"
 	subtitle.add_theme_font_size_override("font_size", 14)
 	subtitle.add_theme_color_override("font_color", Color(0.68, 0.84, 1.0))
 	subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -368,6 +428,8 @@ func _pick_deck_ui(after_start: Callable) -> void:
 	for i in range(8):
 		var slot := _make_deck_card_button("", true)
 		CardArt.show_empty_slot(slot, i + 1)
+		_set_active_slot_badge(slot, i < 2)
+		slot.tooltip_text = "主动技能位" if i < 2 else "普通卡位"
 		slot.pressed.connect(_on_deck_slot_pressed.bind(i))
 		deck_grid.add_child(slot)
 		_deck_slot_buttons.append(slot)
@@ -377,16 +439,50 @@ func _pick_deck_ui(after_start: Callable) -> void:
 	_deck_status.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(_deck_status)
 	var pool_header := Label.new()
-	pool_header.text = "卡牌收藏"
+	pool_header.text = "卡牌库"
 	pool_header.add_theme_font_size_override("font_size", 20)
 	pool_header.add_theme_color_override("font_color", Color(0.92, 0.95, 1.0))
 	vbox.add_child(pool_header)
+	var pool_controls := HBoxContainer.new()
+	pool_controls.add_theme_constant_override("separation", 8)
+	vbox.add_child(pool_controls)
+	var filter_label := Label.new()
+	filter_label.text = "类型"
+	filter_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	filter_label.add_theme_font_size_override("font_size", 15)
+	filter_label.add_theme_color_override("font_color", Color(0.68, 0.84, 1.0))
+	pool_controls.add_child(filter_label)
+	_deck_filter_option = OptionButton.new()
+	_deck_filter_option.custom_minimum_size = Vector2(150.0, 38.0)
+	_deck_filter_option.add_theme_font_override("font", CardArt.ui_font())
+	_deck_filter_option.add_theme_font_size_override("font_size", 15)
+	for filter_name in ["全部", "地面", "空军", "建筑", "法术"]:
+		_deck_filter_option.add_item(filter_name)
+	_deck_filter_option.select(0)
+	_deck_filter_option.item_selected.connect(_on_deck_filter_selected)
+	pool_controls.add_child(_deck_filter_option)
+	var sort_label := Label.new()
+	sort_label.text = "排序"
+	sort_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	sort_label.add_theme_font_size_override("font_size", 15)
+	sort_label.add_theme_color_override("font_color", Color(0.68, 0.84, 1.0))
+	pool_controls.add_child(sort_label)
+	_deck_sort_option = OptionButton.new()
+	_deck_sort_option.custom_minimum_size = Vector2(190.0, 38.0)
+	_deck_sort_option.add_theme_font_override("font", CardArt.ui_font())
+	_deck_sort_option.add_theme_font_size_override("font_size", 15)
+	for sort_name in ["名称排序", "金币消耗递增", "金币消耗递减"]:
+		_deck_sort_option.add_item(sort_name)
+	_deck_sort_option.select(0)
+	_deck_sort_option.item_selected.connect(_on_deck_sort_selected)
+	pool_controls.add_child(_deck_sort_option)
 	var scroll := ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll.custom_minimum_size = Vector2(0.0, 560.0)
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	vbox.add_child(scroll)
 	var grid := GridContainer.new()
+	_deck_pool_grid = grid
 	grid.columns = 4
 	grid.add_theme_constant_override("h_separation", 14)
 	grid.add_theme_constant_override("v_separation", 12)
@@ -395,15 +491,7 @@ func _pick_deck_ui(after_start: Callable) -> void:
 	grid_center.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	grid_center.add_child(grid)
 	scroll.add_child(grid_center)
-	_deck_toggles.clear()
-	var card_ids: Array = CardDB.selectable_ids()
-	card_ids.sort()
-	for id in card_ids:
-		var card_id := String(id)
-		var card_button := _make_deck_card_button(card_id, false)
-		card_button.toggled.connect(_on_deck_toggle.bind(card_id))
-		grid.add_child(card_button)
-		_deck_toggles[card_id] = card_button
+	_refresh_deck_pool()
 	var btn_row := HBoxContainer.new()
 	btn_row.alignment = BoxContainer.ALIGNMENT_CENTER
 	btn_row.add_theme_constant_override("separation", 16)
@@ -421,64 +509,700 @@ func _pick_deck_ui(after_start: Callable) -> void:
 	_deck_confirm.add_theme_stylebox_override("pressed", _deck_style(Color(0.04, 0.32, 0.60), Color(1.0, 0.84, 0.32), 3))
 	_deck_confirm.pressed.connect(func(): _confirm_deck(after_start))
 	btn_row.add_child(_deck_confirm)
+	_create_deck_context_popup(root)
 	_update_deck_ui()
 
-func _on_deck_toggle(pressed: bool, id: String) -> void:
-	if pressed:
-		if _deck_selected.size() >= 8:
-			(_deck_toggles[id] as Button).set_pressed_no_signal(false)
-			return
-		_deck_selected.append(id)
-	else:
-		_deck_selected.erase(id)
-	_update_deck_ui()
+func _create_deck_context_popup(root: Control) -> void:
+	_deck_context_popup = PanelContainer.new()
+	_deck_context_popup.custom_minimum_size = Vector2(132.0, 96.0)
+	_deck_context_popup.size = Vector2(132.0, 96.0)
+	_deck_context_popup.z_index = 50
+	_deck_context_popup.add_theme_stylebox_override("panel", _deck_style(Color(0.025, 0.12, 0.22, 0.99), Color(0.28, 0.72, 1.0), 3))
+	root.add_child(_deck_context_popup)
+	var margin := MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 7)
+	margin.add_theme_constant_override("margin_right", 7)
+	margin.add_theme_constant_override("margin_top", 6)
+	margin.add_theme_constant_override("margin_bottom", 6)
+	_deck_context_popup.add_child(margin)
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 5)
+	margin.add_child(box)
+	_deck_context_info = _make_deck_action_button("信息", Color(0.08, 0.43, 0.72), Color(0.36, 0.78, 1.0))
+	_deck_context_info.pressed.connect(_open_selected_card_info)
+	box.add_child(_deck_context_info)
+	_deck_context_action = _make_deck_action_button("添加", Color(0.08, 0.55, 0.30), Color(0.38, 0.95, 0.58))
+	_deck_context_action.pressed.connect(_perform_deck_context_action)
+	box.add_child(_deck_context_action)
+	_deck_context_popup.visible = false
+
+func _make_deck_action_button(text: String, background: Color, border: Color) -> Button:
+	var button := Button.new()
+	button.text = text
+	button.custom_minimum_size = Vector2(116.0, 38.0)
+	button.focus_mode = Control.FOCUS_NONE
+	button.add_theme_font_override("font", CardArt.ui_font())
+	button.add_theme_font_size_override("font_size", 17)
+	button.add_theme_stylebox_override("normal", _deck_style(background, border, 2))
+	button.add_theme_stylebox_override("hover", _deck_style(background.lightened(0.12), border.lightened(0.12), 3))
+	button.add_theme_stylebox_override("pressed", _deck_style(background.darkened(0.12), Color(1.0, 0.84, 0.30), 3))
+	button.add_theme_stylebox_override("disabled", _deck_style(Color(0.08, 0.10, 0.14), Color(0.28, 0.32, 0.38), 2))
+	return button
+
+func _on_deck_pool_card_pressed(card_id: String) -> void:
+	if not _deck_toggles.has(card_id):
+		return
+	if _deck_pending_slot >= 0:
+		_add_card_to_pending_slot(card_id)
+		return
+	_show_deck_context(card_id, -1, true, _deck_toggles[card_id])
 
 func _on_deck_slot_pressed(slot_index: int) -> void:
-	if slot_index < 0 or slot_index >= _deck_selected.size():
+	if slot_index < 0 or slot_index >= 8:
 		return
-	_deck_selected.remove_at(slot_index)
+	var slot_card_id := String(_deck_selected[slot_index]) if slot_index < _deck_selected.size() else ""
+	if slot_card_id.is_empty():
+		_deck_pending_slot = -1 if _deck_pending_slot == slot_index else slot_index
+		_hide_deck_context()
+		_update_deck_ui()
+		return
+	_deck_pending_slot = -1
+	_show_deck_context(slot_card_id, slot_index, false, _deck_slot_buttons[slot_index])
+
+func _show_deck_context(card_id: String, slot_index: int, from_pool: bool, anchor: Control) -> void:
+	if not CardDB.all().has(card_id) or _deck_context_popup == null:
+		return
+	if _deck_context_popup.visible and _deck_context_card_id == card_id and _deck_context_slot == slot_index and _deck_context_from_pool == from_pool:
+		_hide_deck_context()
+		_update_deck_ui()
+		return
+	_deck_pending_slot = -1
+	_deck_context_card_id = card_id
+	_deck_context_slot = slot_index
+	_deck_context_from_pool = from_pool
+	_deck_context_anchor = anchor
+	_deck_context_action.text = "添加" if from_pool else "移除"
+	if from_pool:
+		_deck_context_action.disabled = _deck_selected.has(card_id) or _selected_card_count() >= 8
+		_deck_context_action.tooltip_text = "已在卡组中" if _deck_selected.has(card_id) else ("卡组已满" if _selected_card_count() >= 8 else "添加到下一个空卡位")
+		_deck_context_action.add_theme_stylebox_override("normal", _deck_style(Color(0.08, 0.55, 0.30), Color(0.38, 0.95, 0.58), 2))
+	else:
+		_deck_context_action.disabled = false
+		_deck_context_action.tooltip_text = "从卡组移除"
+		_deck_context_action.add_theme_stylebox_override("normal", _deck_style(Color(0.70, 0.16, 0.18), Color(1.0, 0.43, 0.43), 2))
+	_deck_context_popup.visible = true
+	_deck_context_popup.move_to_front()
 	_update_deck_ui()
+	_position_deck_context_popup.call_deferred()
+
+func _add_card_to_pending_slot(card_id: String) -> void:
+	if _deck_pending_slot < 0 or not _add_card_to_slot(card_id, _deck_pending_slot):
+		return
+	_deck_pending_slot = -1
+	_hide_deck_context()
+	_refresh_deck_pool()
+	_update_deck_ui()
+
+func _selected_card_count() -> int:
+	var count := 0
+	for card_id in _deck_selected:
+		if not String(card_id).is_empty():
+			count += 1
+	return count
+
+func _first_empty_deck_slot() -> int:
+	for slot_index in range(8):
+		if slot_index >= _deck_selected.size() or String(_deck_selected[slot_index]).is_empty():
+			return slot_index
+	return -1
+
+func _add_card_to_slot(card_id: String, slot_index: int) -> bool:
+	if not CardDB.all().has(card_id) or slot_index < 0 or slot_index >= 8:
+		return false
+	if _selected_card_count() >= 8 or _deck_selected.has(card_id):
+		return false
+	while _deck_selected.size() <= slot_index:
+		_deck_selected.append("")
+	_deck_selected[slot_index] = card_id
+	return true
+
+func _trim_trailing_empty_slots() -> void:
+	while not _deck_selected.is_empty() and String(_deck_selected.back()).is_empty():
+		_deck_selected.pop_back()
+
+func _on_deck_filter_selected(index: int) -> void:
+	var filters := ["all", "ground", "air", "building", "spell"]
+	if index < 0 or index >= filters.size():
+		return
+	_deck_pool_filter = filters[index]
+	_hide_deck_context()
+	_refresh_deck_pool()
+
+func _on_deck_sort_selected(index: int) -> void:
+	var sort_modes := ["name", "cost_asc", "cost_desc"]
+	if index < 0 or index >= sort_modes.size():
+		return
+	_deck_pool_sort = sort_modes[index]
+	_hide_deck_context()
+	_refresh_deck_pool()
+
+func _deck_card_matches_filter(card_id: String) -> bool:
+	if _deck_pool_filter == "all":
+		return true
+	var stats: Dictionary = CardDB.all()[card_id]
+	match _deck_pool_filter:
+		"ground": return String(stats.get("type", "unit")) == "unit" and not bool(stats.get("is_air", false))
+		"air": return String(stats.get("type", "unit")) == "unit" and bool(stats.get("is_air", false))
+		"building": return String(stats.get("type", "unit")) == "building"
+		"spell": return String(stats.get("type", "unit")) == "spell"
+	return false
+
+func _sort_deck_card_ids(first_id: String, second_id: String) -> bool:
+	var cards := CardDB.all()
+	var first_stats: Dictionary = cards[first_id]
+	var second_stats: Dictionary = cards[second_id]
+	if _deck_pool_sort == "cost_asc" or _deck_pool_sort == "cost_desc":
+		var first_cost := int(first_stats.get("cost", 0))
+		var second_cost := int(second_stats.get("cost", 0))
+		if first_cost != second_cost:
+			return first_cost < second_cost if _deck_pool_sort == "cost_asc" else first_cost > second_cost
+	var first_name := String(first_stats.get("name", first_id))
+	var second_name := String(second_stats.get("name", second_id))
+	return first_name < second_name if first_name != second_name else first_id < second_id
+
+func _refresh_deck_pool() -> void:
+	if _deck_pool_grid == null:
+		return
+	for child in _deck_pool_grid.get_children():
+		child.queue_free()
+	_deck_toggles.clear()
+	var card_ids: Array = []
+	for configured_id in CardDB.selectable_ids():
+		var card_id := String(configured_id)
+		if _deck_selected.has(card_id) or not _deck_card_matches_filter(card_id):
+			continue
+		card_ids.append(card_id)
+	card_ids.sort_custom(Callable(self, "_sort_deck_card_ids"))
+	for card_id in card_ids:
+		var card_button := _make_deck_card_button(card_id, false)
+		card_button.pressed.connect(_on_deck_pool_card_pressed.bind(card_id))
+		_deck_pool_grid.add_child(card_button)
+		_deck_toggles[card_id] = card_button
+
+func _position_deck_context_popup() -> void:
+	if _deck_context_popup == null or not _deck_context_popup.visible or _deck_context_anchor == null or not is_instance_valid(_deck_context_anchor) or _deck_ui_root == null:
+		return
+	var anchor_rect := _deck_context_anchor.get_global_rect()
+	var root_rect := _deck_ui_root.get_global_rect()
+	var popup_size := _deck_context_popup.size
+	var x := anchor_rect.position.x - root_rect.position.x + (anchor_rect.size.x - popup_size.x) * 0.5
+	var y := anchor_rect.end.y - root_rect.position.y + 5.0
+	x = clampf(x, 8.0, maxf(8.0, root_rect.size.x - popup_size.x - 8.0))
+	if y + popup_size.y > root_rect.size.y - 76.0:
+		y = anchor_rect.position.y - root_rect.position.y - popup_size.y - 5.0
+	_deck_context_popup.position = Vector2(x, maxf(y, 8.0))
+
+func _perform_deck_context_action() -> void:
+	if _deck_context_card_id.is_empty():
+		return
+	if _deck_context_from_pool:
+		var empty_slot := _first_empty_deck_slot()
+		if empty_slot < 0 or not _add_card_to_slot(_deck_context_card_id, empty_slot):
+			return
+	else:
+		if _deck_context_slot < 0 or _deck_context_slot >= _deck_selected.size() or String(_deck_selected[_deck_context_slot]).is_empty():
+			return
+		_deck_selected[_deck_context_slot] = ""
+		_trim_trailing_empty_slots()
+	_deck_pending_slot = -1
+	_hide_deck_context()
+	_refresh_deck_pool()
+	_update_deck_ui()
+
+func _hide_deck_context() -> void:
+	_deck_context_card_id = ""
+	_deck_context_slot = -1
+	_deck_context_from_pool = false
+	_deck_context_anchor = null
+	if _deck_context_popup != null:
+		_deck_context_popup.visible = false
+
+func _open_selected_card_info() -> void:
+	if _deck_context_card_id.is_empty() or not CardDB.all().has(_deck_context_card_id):
+		return
+	_open_card_info(_deck_context_card_id)
+
+func _open_card_info(card_id: String) -> void:
+	_close_card_info()
+	_hide_deck_context()
+	if _deck_ui_root == null or not CardDB.all().has(card_id):
+		return
+	var stats: Dictionary = CardDB.all()[card_id]
+	var accent: Color = stats.get("color", CardArt.DEFAULT_ACCENT)
+	var overlay := ColorRect.new()
+	overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	overlay.color = Color(0.005, 0.015, 0.035, 0.82)
+	overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+	overlay.z_index = 80
+	_deck_ui_root.add_child(overlay)
+	_deck_info_overlay = overlay
+	var center := CenterContainer.new()
+	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	overlay.add_child(center)
+	var panel := PanelContainer.new()
+	# 信息页按内容自然收缩，避免固定大面板在内容较少时把下半部分留空。
+	panel.custom_minimum_size = Vector2(650.0, 0.0)
+	panel.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	panel.add_theme_stylebox_override("panel", _deck_style(Color(0.025, 0.075, 0.14, 0.995), accent.lightened(0.22), 3))
+	center.add_child(panel)
+	var margin := MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 20)
+	margin.add_theme_constant_override("margin_right", 20)
+	margin.add_theme_constant_override("margin_top", 18)
+	margin.add_theme_constant_override("margin_bottom", 16)
+	panel.add_child(margin)
+	var layout := VBoxContainer.new()
+	layout.add_theme_constant_override("separation", 10)
+	margin.add_child(layout)
+	var header := HBoxContainer.new()
+	header.add_theme_constant_override("separation", 18)
+	layout.add_child(header)
+	var preview := _make_deck_card_button(card_id, false)
+	CardArt.apply_frame(preview, 224.0)
+	CardArt.apply_to_button(preview, card_id, stats.name, stats.cost, false, accent)
+	preview.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	header.add_child(preview)
+	var identity := VBoxContainer.new()
+	identity.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	identity.alignment = BoxContainer.ALIGNMENT_CENTER
+	identity.add_theme_constant_override("separation", 8)
+	header.add_child(identity)
+	var name_label := Label.new()
+	name_label.text = String(stats.name)
+	name_label.add_theme_font_override("font", CardArt.ui_font())
+	name_label.add_theme_font_size_override("font_size", 34)
+	name_label.add_theme_color_override("font_color", Color(1.0, 0.88, 0.42))
+	name_label.add_theme_color_override("font_outline_color", Color(0.0, 0.02, 0.06))
+	name_label.add_theme_constant_override("outline_size", 5)
+	identity.add_child(name_label)
+	var identity_line := Label.new()
+	identity_line.text = "%s　·　%d 费" % [_card_type_name(String(stats.get("type", "unit")), stats), int(stats.cost)]
+	identity_line.add_theme_font_override("font", CardArt.ui_font())
+	identity_line.add_theme_font_size_override("font_size", 19)
+	identity_line.add_theme_color_override("font_color", Color(0.68, 0.86, 1.0))
+	identity.add_child(identity_line)
+	# 皮肤入口固定在信息面板右上角，默认选择原皮；未来只需在卡牌数据中
+	# 增加 skins 数组即可出现更多选项，皮肤选择不参与战斗数值。
+	var skin_box := VBoxContainer.new()
+	skin_box.custom_minimum_size = Vector2(124.0, 0.0)
+	skin_box.alignment = BoxContainer.ALIGNMENT_CENTER
+	skin_box.add_theme_constant_override("separation", 4)
+	header.add_child(skin_box)
+	_deck_info_skin_option = _make_card_skin_option(card_id, stats)
+	skin_box.add_child(_deck_info_skin_option)
+	var separator := HSeparator.new()
+	layout.add_child(separator)
+	var details := VBoxContainer.new()
+	details.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	details.add_theme_constant_override("separation", 7)
+	# 详情内容控制弹窗自身高度；当前属性量可完整放下，不再用会被压成零高的滚动容器。
+	layout.add_child(details)
+	details.add_child(_make_card_info_heading("简介"))
+	details.add_child(_make_card_info_body(_card_brief_description(stats)))
+	details.add_child(_make_card_info_heading("属性"))
+	details.add_child(_make_card_attribute_grid(stats))
+	if card_id == "tombstone":
+		details.add_child(_make_card_info_subheading("召唤物：小鬼（每批 %d 只）" % int(stats.get("spawn_count", 1))))
+		var imp_stats := CardDB.imp_stats()
+		details.add_child(_make_card_attribute_grid(imp_stats, "%d /批" % int(stats.get("spawn_count", 1))))
+	var passives := _card_passives(stats)
+	if not passives.is_empty():
+		details.add_child(_make_card_info_heading("被动"))
+		for passive in passives:
+			details.add_child(_make_card_passive_row(String(passive.get("name", "被动")), String(passive.get("description", ""))))
+	details.add_child(_make_card_info_heading("主动"))
+	var skills := CardDB.active_skills_for(card_id)
+	_deck_info_active_option = OptionButton.new()
+	_deck_info_active_option.custom_minimum_size = Vector2(0.0, 46.0)
+	_deck_info_active_option.add_theme_font_override("font", CardArt.ui_font())
+	_deck_info_active_option.add_theme_font_size_override("font_size", 17)
+	if skills.is_empty():
+		if String(stats.get("type", "unit")) == "spell":
+			_deck_info_active_option.add_item(String(stats.get("active_name", "强化" + String(stats.get("name", "法术")))))
+		else:
+			_deck_info_active_option.add_item("无主动技能")
+		_deck_info_active_option.disabled = true
+	else:
+		for skill in skills:
+			_deck_info_active_option.add_item(String(skill.get("name", "未命名技能")))
+		var selected_skill := clampi(int(_active_skill_choices.get(card_id, 0)), 0, skills.size() - 1)
+		_active_skill_choices[card_id] = selected_skill
+		_deck_info_active_option.select(selected_skill)
+		_deck_info_active_option.disabled = skills.size() <= 1
+		_deck_info_active_option.item_selected.connect(_on_info_active_skill_selected.bind(card_id))
+	details.add_child(_deck_info_active_option)
+	_deck_info_active_description = _make_card_info_body(_active_choice_description(card_id))
+	details.add_child(_deck_info_active_description)
+	var close := _make_deck_action_button("返回备战", Color(0.08, 0.38, 0.68), Color(0.38, 0.80, 1.0))
+	close.custom_minimum_size = Vector2(220.0, 48.0)
+	close.pressed.connect(_close_card_info)
+	var close_center := CenterContainer.new()
+	close_center.add_child(close)
+	layout.add_child(close_center)
+	overlay.move_to_front()
+
+func _make_card_skin_option(card_id: String, stats: Dictionary) -> OptionButton:
+	var option := OptionButton.new()
+	option.custom_minimum_size = Vector2(124.0, 42.0)
+	option.add_theme_font_override("font", CardArt.ui_font())
+	option.add_theme_font_size_override("font_size", 15)
+	option.tooltip_text = "选择外观；皮肤不改变战斗数值"
+	var skins := _card_skin_entries(stats)
+	var selected_id := String(_skin_choices.get(card_id, "default"))
+	var selected_index := 0
+	for i in range(skins.size()):
+		var skin: Dictionary = skins[i]
+		option.add_item(String(skin.get("name", "原皮")))
+		if String(skin.get("id", "default")) == selected_id:
+			selected_index = i
+	_skin_choices[card_id] = String(skins[selected_index].get("id", "default"))
+	option.select(selected_index)
+	option.item_selected.connect(_on_info_skin_selected.bind(card_id, skins))
+	return option
+
+func _card_skin_entries(stats: Dictionary) -> Array:
+	var skins: Array = [{"id": "default", "name": "原皮"}]
+	for configured in stats.get("skins", []):
+		if configured is Dictionary:
+			var skin_id := String(configured.get("id", ""))
+			if not skin_id.is_empty() and skin_id != "default":
+				skins.append((configured as Dictionary).duplicate(true))
+		elif configured is String and not String(configured).is_empty() and String(configured) != "default":
+			skins.append({"id": String(configured), "name": String(configured)})
+	return skins
+
+func _make_card_info_heading(text: String) -> Label:
+	var label := Label.new()
+	label.text = text
+	label.add_theme_font_override("font", CardArt.ui_font())
+	label.add_theme_font_size_override("font_size", 21)
+	label.add_theme_color_override("font_color", Color(1.0, 0.82, 0.32))
+	return label
+
+func _make_card_info_body(text: String) -> Label:
+	var label := Label.new()
+	label.text = text
+	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	label.add_theme_font_override("font", CardArt.ui_font())
+	label.add_theme_font_size_override("font_size", 16)
+	label.add_theme_color_override("font_color", Color(0.84, 0.91, 0.98))
+	label.add_theme_constant_override("line_spacing", 4)
+	return label
+
+func _card_type_name(card_type: String, stats: Dictionary = {}) -> String:
+	match card_type:
+		"spell": return "法术"
+		"building": return "建筑"
+		_:
+			return "空军" if bool(stats.get("is_air", false)) else "地面"
+
+func _format_card_number(value: float) -> String:
+	return str(int(value)) if is_equal_approx(value, roundf(value)) else "%.2f" % value
+
+func _card_brief_description(stats: Dictionary) -> String:
+	var description := String(stats.get("description", ""))
+	return description if not description.is_empty() else "这张卡可以通过合理的部署位置和出牌时机发挥作用。"
+
+func _make_card_info_subheading(text: String) -> Label:
+	var label := Label.new()
+	label.text = text
+	label.add_theme_font_override("font", CardArt.ui_font())
+	label.add_theme_font_size_override("font_size", 16)
+	label.add_theme_color_override("font_color", Color(0.64, 0.82, 1.0))
+	return label
+
+func _make_card_attribute_grid(stats: Dictionary, quantity_override: String = "") -> Control:
+	var grid := GridContainer.new()
+	grid.columns = 2
+	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	grid.add_theme_constant_override("h_separation", 10)
+	grid.add_theme_constant_override("v_separation", 6)
+	for attribute in _card_attributes(stats, quantity_override):
+		var attribute_value := String(attribute.get("value", ""))
+		if attribute_value.is_empty():
+			continue
+		var item := PanelContainer.new()
+		item.custom_minimum_size = Vector2(0.0, 32.0)
+		item.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		item.add_theme_stylebox_override("panel", _deck_style(Color(0.035, 0.12, 0.21, 0.88), Color(0.10, 0.30, 0.48, 0.75), 1))
+		var label := Label.new()
+		label.text = "%s：%s" % [String(attribute.get("name", "")), attribute_value]
+		label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		label.add_theme_font_override("font", CardArt.ui_font())
+		label.add_theme_font_size_override("font_size", 15)
+		label.add_theme_color_override("font_color", Color(0.86, 0.93, 1.0))
+		label.add_theme_color_override("font_outline_color", Color(0.0, 0.03, 0.08, 0.70))
+		label.add_theme_constant_override("outline_size", 2)
+		item.add_child(label)
+		grid.add_child(item)
+	return grid
+
+func _card_attributes(stats: Dictionary, quantity_override: String = "") -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	var card_type := String(stats.get("type", "unit"))
+	if card_type == "spell":
+		result.append({"name": "类型", "value": _card_type_name(card_type, stats)})
+		result.append({"name": "目标", "value": "敌方单位"})
+		result.append({"name": "作用范围", "value": "%s（%.1f格）" % [_format_card_number(float(stats.get("radius", 0.0))), float(stats.get("radius", 0.0)) / TILE_SIZE]})
+		result.append({"name": "持续时间", "value": "%s秒" % _format_card_number(float(stats.get("duration", 0.0)))})
+		return result
+
+	var quantity := quantity_override if not quantity_override.is_empty() else "1"
+	result.append({"name": "生命", "value": _format_card_number(float(stats.get("hp", 0.0)))})
+	result.append({"name": "类型", "value": _card_type_name(card_type, stats)})
+	if card_type == "building":
+		result.append({"name": "数量", "value": quantity})
+		if stats.has("footprint_tiles") or stats.has("radius"):
+			result.append({"name": "体积", "value": _card_volume_name(stats)})
+		if stats.has("lifespan"):
+			result.append({"name": "存活时间", "value": "%s秒" % _format_card_number(float(stats.get("lifespan", 0.0)))})
+		return result
+
+	result.append({"name": "目标", "value": _card_target_name(stats)})
+	if stats.has("sight") and float(stats.get("sight", 0.0)) > 0.0:
+		result.append({"name": "视野", "value": _format_card_number(float(stats.get("sight", 0.0)))})
+	var speed := float(stats.get("speed", 0.0))
+	if stats.has("speed"):
+		result.append({"name": "移速", "value": "%s/秒（%s）" % [_format_card_number(speed), CardDB.speed_tier_name(speed)]})
+	# 数量占据原视野所在的位序，视野统一放到属性列表最后。
+	result.append({"name": "数量", "value": quantity})
+	var damage := float(stats.get("damage", 0.0))
+	var continuous := bool(stats.get("is_continuous_attack", false))
+	var damage_multipliers: Array = stats.get("attack_damage_multipliers", [])
+	if not continuous and damage > 0.0:
+		if damage_multipliers.is_empty():
+			result.append({"name": "单次伤害", "value": _format_card_number(damage)})
+		else:
+			var fist_names := ["左拳", "右拳", "左拳", "右拳"]
+			var fist_values: Array[String] = []
+			for index in range(mini(damage_multipliers.size(), 2)):
+				var fist_name: String = fist_names[index % fist_names.size()]
+				var fist_damage := damage * float(damage_multipliers[index])
+				fist_values.append("%s（%s）" % [_format_card_number(fist_damage), fist_name])
+			result.append({"name": "单次伤害", "value": "，".join(fist_values)})
+	var interval := float(stats.get("interval", 0.0))
+	var dps: float = damage if continuous else (damage / interval if interval > 0.0 and damage > 0.0 else 0.0)
+	if not continuous and not damage_multipliers.is_empty():
+		var combo_pattern: Array = stats.get("attack_pattern", [])
+		if combo_pattern.size() > 1:
+			var combo_damage := damage * (float(damage_multipliers[0]) + float(damage_multipliers[1]))
+			var combo_interval := float(stats.get("attack_interval_display", combo_pattern[1])) + float(combo_pattern[0])
+			if combo_interval > 0.0:
+				dps = combo_damage / combo_interval
+	if damage > 0.0:
+		result.append({"name": "每秒伤害", "value": _format_card_number(dps)})
+	if not continuous and interval > 0.0:
+		var display_interval := float(stats.get("attack_interval_display", interval))
+		result.append({"name": "攻击间隔", "value": "%s秒" % _format_card_number(display_interval)})
+	if damage > 0.0 and stats.has("range"):
+		result.append({"name": "攻击距离", "value": "%s（%.1f格）" % [_format_card_number(float(stats.get("range", 0.0))), float(stats.get("range", 0.0)) / TILE_SIZE]})
+	if stats.has("radius"):
+		result.append({"name": "体积", "value": _card_volume_name(stats)})
+	if stats.has("mass"):
+		result.append({"name": "质量", "value": _format_card_number(float(stats.get("mass", 0.0)))})
+	return result
+
+func _card_target_name(stats: Dictionary) -> String:
+	if String(stats.get("type", "unit")) == "spell":
+		return "敌方单位"
+	if String(stats.get("type", "unit")) == "building" or float(stats.get("damage", 0.0)) <= 0.0:
+		return "无"
+	if bool(stats.get("building_only", false)):
+		return "建筑"
+	return "空中和地面" if bool(stats.get("can_attack_air", false)) else "地面"
+
+func _card_volume_name(stats: Dictionary) -> String:
+	if stats.has("footprint_tiles"):
+		var footprint: Vector2i = stats.footprint_tiles
+		return "%d×%d格（半径%s）" % [footprint.x, footprint.y, _format_card_number(float(stats.get("radius", 0.0)))]
+	var tier := String(stats.get("size_tier", ""))
+	var tier_name := CardDB.size_tier_name(StringName(tier)) if not tier.is_empty() else ""
+	return "%s（半径%s）" % [tier_name, _format_card_number(float(stats.get("radius", 0.0)))] if not tier_name.is_empty() else _format_card_number(float(stats.get("radius", 0.0)))
+
+func _card_passives(stats: Dictionary) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	if bool(stats.get("is_continuous_attack", false)):
+		result.append({"name": "龙息", "description": "持续造成每秒%s伤害，并对目标周围%s范围造成伤害。" % [_format_card_number(float(stats.get("damage", 0.0))), _format_card_number(float(stats.get("splash_radius", 0.0)))]})
+	if stats.has("deploy_sweep_radius"):
+		result.append({"name": "横扫千军", "description": "部署时击退%s半径内的地面敌人。" % _format_card_number(float(stats.get("deploy_sweep_radius", 0.0)))})
+	if stats.has("heal_every_hits"):
+		result.append({"name": "无畏战吼", "description": "每第%d次普通攻击命中回复%s点生命。" % [int(stats.get("heal_every_hits", 0)), _format_card_number(float(stats.get("heal_amount", 0.0))) ]})
+	if stats.has("shroud_radius"):
+		result.append({"name": "丝缕缠流", "description": "首次普攻命中后，%s半径外的敌人无法看见或锁定她。" % _format_card_number(float(stats.get("shroud_radius", 0.0)))})
+	if stats.has("attack_pattern"):
+		var combo_damage := float(stats.get("damage", 0.0))
+		var combo_multipliers: Array = stats.get("attack_damage_multipliers", [])
+		var left_damage := combo_damage
+		var right_damage := combo_damage * 1.5
+		if not combo_multipliers.is_empty():
+			left_damage = combo_damage * float(combo_multipliers[0])
+			if combo_multipliers.size() > 1:
+				right_damage = combo_damage * float(combo_multipliers[1])
+		var combo_pattern: Array = stats.get("attack_pattern", [])
+		var punch_gap := float(combo_pattern[0]) if not combo_pattern.is_empty() else 0.0
+		var pair_gap := float(stats.get("attack_interval_display", combo_pattern[1] if combo_pattern.size() > 1 else stats.get("interval", 0.0)))
+		result.append({"name": "拳锋连击", "description": "左拳造成%s点伤害，右拳造成%s点伤害；两拳之间间隔%s秒，打完两拳后间隔%s秒，循环进行。" % [_format_card_number(left_damage), _format_card_number(right_damage), _format_card_number(punch_gap), _format_card_number(pair_gap)]})
+	if String(stats.get("type", "unit")) == "building" and float(stats.get("spawn_interval", 0.0)) > 0.0:
+		result.append({"name": "亡者召唤", "description": "部署完成生成%d只小鬼，之后每%s秒再次生成。" % [int(stats.get("spawn_count", 0)), _format_card_number(float(stats.get("spawn_interval", 0.0)))]})
+	if int(stats.get("death_spawn_count", 0)) > 0 and not String(stats.get("death_spawn_id", "")).is_empty():
+		var death_spawn_name := "小鬼" if String(stats.get("death_spawn_id", "")) == "imp" else String(stats.get("death_spawn_id", ""))
+		result.append({"name": "亡语", "description": "被摧毁时产生%d只%s。" % [int(stats.get("death_spawn_count", 0)), death_spawn_name]})
+	return result
+
+func _make_card_passive_row(name: String, description: String) -> Label:
+	var label := _make_card_info_body("%s：%s" % [name, description])
+	label.custom_minimum_size = Vector2(0.0, 28.0)
+	return label
+
+func _active_choice_description(card_id: String) -> String:
+	var skills := CardDB.active_skills_for(card_id)
+	if skills.is_empty():
+		var stats: Dictionary = CardDB.all()[card_id]
+		if String(stats.get("type", "unit")) == "spell":
+			var radius := float(stats.get("radius", 0.0))
+			var duration := float(stats.get("duration", 0.0))
+			var slow_duration := float(stats.get("active_slow_duration", 0.0))
+			if slow_duration > 0.0:
+				var slow_percent := roundi(float(stats.get("active_slow_multiplier", 1.0)) * 100.0)
+				return "冻结半径%s（%.1f格）内的敌方单位，持续%s秒；冰冻结束后，范围内的敌军继续减速至%d%%，持续%s秒。" % [_format_card_number(radius), radius / TILE_SIZE, _format_card_number(duration), slow_percent, _format_card_number(slow_duration)]
+			return "冻结半径%s（%.1f格）内的敌方单位，持续%s秒。" % [_format_card_number(radius), radius / TILE_SIZE, _format_card_number(duration)]
+		return "该卡没有可携带的主动技能。"
+	var selected := clampi(int(_active_skill_choices.get(card_id, 0)), 0, skills.size() - 1)
+	return _active_skill_description(skills[selected])
+
+func _active_skill_description(skill: Dictionary) -> String:
+	var parts: Array[String] = []
+	match String(skill.get("kind", "")):
+		"nova":
+			parts.append("以自身为中心，影响 %s 半径" % _format_card_number(float(skill.get("radius", 0.0))))
+			if float(skill.get("damage", 0.0)) > 0.0:
+				parts.append("造成 %s 伤害" % _format_card_number(float(skill.damage)))
+			if float(skill.get("knockback", 0.0)) > 0.0:
+				parts.append("击退 %s" % _format_card_number(float(skill.knockback)))
+			if float(skill.get("slow_duration", 0.0)) > 0.0:
+				parts.append("减速至 %d%%，持续 %s 秒" % [roundi(float(skill.get("slow_multiplier", 1.0)) * 100.0), _format_card_number(float(skill.slow_duration))])
+		"buff":
+			parts.append("持续 %s 秒" % _format_card_number(float(skill.get("duration", 0.0))))
+			if float(skill.get("speed_multiplier", 1.0)) != 1.0:
+				parts.append("移速 ×%.2f" % float(skill.speed_multiplier))
+			if float(skill.get("damage_multiplier", 1.0)) != 1.0:
+				parts.append("伤害 ×%.2f" % float(skill.damage_multiplier))
+			if float(skill.get("attack_speed_multiplier", 1.0)) != 1.0:
+				parts.append("攻速 ×%.2f" % float(skill.attack_speed_multiplier))
+		"summon":
+			parts.append("在自身周围立即召唤 %d 个单位" % int(skill.get("spawn_count", 1)))
+	if float(skill.get("shield", 0.0)) > 0.0:
+		parts.append("获得 %s 点护盾，持续 %s 秒" % [_format_card_number(float(skill.shield)), _format_card_number(float(skill.get("shield_duration", 0.0)))])
+	return "%s：%s。" % [String(skill.get("name", "主动技能")), "；".join(parts)]
+
+func _on_info_active_skill_selected(skill_index: int, card_id: String) -> void:
+	var skills := CardDB.active_skills_for(card_id)
+	if skills.is_empty():
+		return
+	_active_skill_choices[card_id] = clampi(skill_index, 0, skills.size() - 1)
+	if _deck_info_active_description != null:
+		_deck_info_active_description.text = _active_choice_description(card_id)
+
+func _on_info_skin_selected(skin_index: int, card_id: String, skins: Array) -> void:
+	if skin_index < 0 or skin_index >= skins.size():
+		return
+	var skin: Dictionary = skins[skin_index]
+	_skin_choices[card_id] = String(skin.get("id", "default"))
+
+func _close_card_info() -> void:
+	if _deck_info_overlay != null:
+		_deck_info_overlay.queue_free()
+		_deck_info_overlay = null
+		_deck_info_active_option = null
+		_deck_info_active_description = null
+		_deck_info_skin_option = null
 
 func _update_deck_ui() -> void:
 	if _deck_status == null:
 		return
-	_deck_status.text = "已选择 %d / 8　·　点卡牌加入，点卡组移除" % _deck_selected.size()
+	var selected_count := _selected_card_count()
+	if _deck_pending_slot >= 0:
+		_deck_status.text = "已选择 %d / 8　·　已选中第%d个卡槽，请点击下方卡牌　·　1、2 号为主动技能位" % [selected_count, _deck_pending_slot + 1]
+	else:
+		_deck_status.text = "已选择 %d / 8　·　点卡牌后选择信息或添加/移除　·　1、2 号为主动技能位" % selected_count
 	var total_cost := 0.0
 	for selected_id in _deck_selected:
-		total_cost += float(CardDB.all()[selected_id].cost)
+		if not String(selected_id).is_empty():
+			total_cost += float(CardDB.all()[selected_id].cost)
 	if _deck_average_label != null:
-		_deck_average_label.text = "平均圣水  --" if _deck_selected.is_empty() else "平均圣水  %.1f" % (total_cost / _deck_selected.size())
+		_deck_average_label.text = "平均金币  --" if selected_count == 0 else "平均金币  %.1f" % (total_cost / selected_count)
 	for i in range(_deck_slot_buttons.size()):
 		var slot: Button = _deck_slot_buttons[i]
-		if i < _deck_selected.size():
-			var card_id: String = _deck_selected[i]
+		var card_id := String(_deck_selected[i]) if i < _deck_selected.size() else ""
+		if not card_id.is_empty():
 			var stats: Dictionary = CardDB.all()[card_id]
 			slot.disabled = false
 			var accent: Color = stats.get("color", CardArt.DEFAULT_ACCENT)
 			CardArt.apply_to_button(slot, card_id, stats.name, stats.cost, false, accent)
-			CardArt.set_selected(slot, true)
+			CardArt.set_selected(slot, not _deck_context_from_pool and _deck_context_slot == i and _deck_context_card_id == card_id)
+			_set_active_slot_badge(slot, i < 2)
+			slot.tooltip_text = ("主动技能位：点击查看信息或移除" if i < 2 else "普通卡位：点击查看信息或移除")
 		else:
-			slot.disabled = true
+			slot.disabled = false
 			CardArt.show_empty_slot(slot, i + 1)
+			CardArt.set_selected(slot, _deck_pending_slot == i)
+			_set_active_slot_badge(slot, i < 2)
 	for id in _deck_toggles:
 		var button: Button = _deck_toggles[id]
-		var selected := _deck_selected.has(id)
-		button.set_pressed_no_signal(selected)
-		button.disabled = not selected and _deck_selected.size() >= 8
-		CardArt.set_selected(button, selected, true)
-	var ready := _deck_selected.size() == 8
+		button.disabled = false
+		CardArt.set_selected(button, _deck_context_from_pool and _deck_context_card_id == id)
+		button.tooltip_text = "%s · %d 金币 · 点击查看信息" % [CardDB.all()[id].name, int(CardDB.all()[id].cost)]
+	var ready := selected_count == 8
 	if _deck_confirm != null:
 		_deck_confirm.disabled = not ready
 		_deck_confirm.text = "开始对战" if ready else "请选择 8 张卡"
 
+func _set_card_in_deck_badge(button: Button, in_deck: bool) -> void:
+	var badge := button.get_node_or_null("InDeckBadge") as Label
+	if badge == null:
+		badge = Label.new()
+		badge.name = "InDeckBadge"
+		badge.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+		badge.offset_left = -54.0
+		badge.offset_top = 5.0
+		badge.offset_right = -4.0
+		badge.offset_bottom = 29.0
+		badge.text = "已加入"
+		badge.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		badge.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		badge.add_theme_font_override("font", CardArt.ui_font())
+		badge.add_theme_font_size_override("font_size", 12)
+		badge.add_theme_color_override("font_color", Color(0.48, 1.0, 0.61))
+		badge.add_theme_color_override("font_outline_color", Color(0.0, 0.08, 0.02))
+		badge.add_theme_constant_override("outline_size", 4)
+		badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		button.add_child(badge)
+	badge.visible = in_deck
+	button.move_child(badge, button.get_child_count() - 1)
+
 func _confirm_deck(after_start: Callable) -> void:
-	if _deck_selected.size() != 8:
+	if _selected_card_count() != 8:
 		return
-	_deck = _deck_selected.duplicate()
+	_deck = []
+	for card_id in _deck_selected:
+		if not String(card_id).is_empty():
+			_deck.append(card_id)
 	_clear_deck_ui()
 	after_start.call()
 
 func _clear_deck_ui() -> void:
+	_close_card_info()
 	if _deck_layer != null:
 		_deck_layer.queue_free()
 		_deck_layer = null
@@ -487,6 +1211,18 @@ func _clear_deck_ui() -> void:
 	_deck_status = null
 	_deck_confirm = null
 	_deck_average_label = null
+	_deck_ui_root = null
+	_deck_pool_grid = null
+	_deck_filter_option = null
+	_deck_sort_option = null
+	_deck_pending_slot = -1
+	_deck_context_popup = null
+	_deck_context_info = null
+	_deck_context_action = null
+	_deck_context_card_id = ""
+	_deck_context_slot = -1
+	_deck_context_from_pool = false
+	_deck_context_anchor = null
 
 func _hide_menu() -> void:
 	if _menu_layer != null:
@@ -583,6 +1319,7 @@ func _rpc_start() -> void:
 	_flip_camera()
 	_setup_battle_presentation()
 	_setup_player_ui()
+	_rpc_register_deck.rpc_id(1, _deck, _active_skill_choices)
 	_create_towers()
 	_build_nav()
 	_create_timer_ui()
@@ -604,6 +1341,39 @@ func _setup_player_ui() -> void:
 	add_child(_hand)
 	_hand.setup(_elixir, _deck)
 	_hand.card_selected.connect(_on_card_selected)
+	_active_skill_bar = ACTIVE_SKILL_BAR_SCRIPT.new()
+	add_child(_active_skill_bar)
+	_active_skill_bar.skill_pressed.connect(_on_active_skill_pressed)
+
+func _is_local_player_team(p_team: int) -> bool:
+	return p_team == (1 if mode == "client" else 0)
+
+func _team_deck(p_team: int) -> Array:
+	if mode == "host" and p_team == 1:
+		return _remote_deck
+	return _deck
+
+func _team_active_skill_choices(p_team: int) -> Dictionary:
+	if mode == "host" and p_team == 1:
+		return _remote_active_skill_choices
+	return _active_skill_choices
+
+func _active_skill_choice_for_team(p_team: int, card_id: String, skill_count: int) -> int:
+	if skill_count <= 0:
+		return -1
+	return clampi(int(_team_active_skill_choices(p_team).get(card_id, 0)), 0, skill_count - 1)
+
+func _card_has_active_for_team(p_team: int, card_id: String) -> bool:
+	return _active_card_slot_for_team(p_team, card_id) >= 0
+
+func _active_card_slot_for_team(p_team: int, card_id: String) -> int:
+	var team_deck := _team_deck(p_team)
+	if team_deck.size() != 8:
+		return -1
+	for slot_index in range(2):
+		if String(team_deck[slot_index]) == card_id:
+			return slot_index
+	return -1
 
 func is_net_client() -> bool:
 	return mode == "client"
@@ -792,6 +1562,8 @@ func _clear_art_dev_units() -> void:
 	_projectiles.clear()
 	_client_projectiles.clear()
 	_freeze_effects.clear()
+	_slow_zones.clear()
+	_slow_effects.clear()
 	queue_redraw()
 
 func _world_to_arena_tile(pos: Vector2) -> Vector2i:
@@ -1081,13 +1853,14 @@ func _tick_pending_card_deployments(dt: float) -> void:
 func _execute_card_deployment(p_team: int, card_id: String, pos: Vector2) -> void:
 	var stats: Dictionary = CardDB.all()[card_id]
 	var type: String = stats.get("type", "unit")
+	var active_slot := _active_card_slot_for_team(p_team, card_id)
 	match type:
 		"spell":
-			_cast_spell(p_team, card_id, pos)
+			_cast_spell(p_team, card_id, pos, active_slot >= 0)
 		_:
 			if type == "building":
 				_push_units_around(pos, stats.get("radius", 14.0))
-			_spawn_unit(p_team, card_id, pos)
+			_spawn_unit(p_team, card_id, pos, -1.0, active_slot)
 
 ## 单位/塔统一攻击出口：近战即时结算，远程生成主机权威弹道。
 func launch_attack(attacker: Node2D, target: Node2D, amount: float, projectile_speed: float, splash_radius: float, knockback: float, projectile_color: Color) -> void:
@@ -1204,20 +1977,25 @@ func _resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: 
 	if any_landed and from is Unit and is_instance_valid(from):
 		(from as Unit).on_attack_landed()
 
-func _cast_spell(p_team: int, card_id: String, pos: Vector2) -> void:
+func _cast_spell(p_team: int, card_id: String, pos: Vector2, active_enabled: bool = false) -> void:
 	match card_id:
 		"freeze":
 			var stats: Dictionary = CardDB.all()["freeze"]
 			var radius: float = stats.radius
 			var duration: float = stats.duration
-			_apply_freeze(pos, radius, duration, p_team)
+			var slow_duration: float = stats.active_slow_duration if active_enabled else 0.0
+			var slow_multiplier: float = stats.active_slow_multiplier
+			_apply_freeze(pos, radius, duration, p_team, slow_duration, slow_multiplier)
 			# 主机：同步冰冻视觉效果给客户端
 			if mode == "host":
-				_rpc_freeze_fx.rpc(pos, radius, duration)
+				_rpc_freeze_fx.rpc(pos, radius, duration, slow_duration, slow_multiplier)
 
-func _apply_freeze(pos: Vector2, radius: float, duration: float, p_team: int) -> void:
+func _apply_freeze(pos: Vector2, radius: float, duration: float, p_team: int, slow_duration: float = 0.0, slow_multiplier: float = 1.0) -> void:
 	# 记录视觉效果
 	_freeze_effects.append({"pos": pos, "timer": duration, "duration": duration, "radius": radius})
+	if slow_duration > 0.0:
+		_slow_zones.append({"pos": pos, "radius": radius, "delay": duration, "timer": slow_duration, "team": p_team, "multiplier": slow_multiplier})
+		_slow_effects.append({"pos": pos, "radius": radius, "delay": duration, "timer": slow_duration, "duration": slow_duration})
 	for c in get_tree().get_nodes_in_group("combatants"):
 		if not is_instance_valid(c) or c.team == p_team or c.hp <= 0.0:
 			continue
@@ -1228,7 +2006,32 @@ func _apply_freeze(pos: Vector2, radius: float, duration: float, p_team: int) ->
 			elif c is Tower:
 				(c as Tower).freeze(duration)
 
-func _spawn_unit(team: int, card_id: String, pos: Vector2, deploy_time_override: float = -1.0) -> Unit:
+func _tick_slow_zones(dt: float) -> void:
+	var alive: Array[Dictionary] = []
+	for zone in _slow_zones:
+		if float(zone.delay) > 0.0:
+			zone.delay = maxf(0.0, float(zone.delay) - dt)
+			alive.append(zone)
+			continue
+		zone.timer = maxf(0.0, float(zone.timer) - dt)
+		for c in get_tree().get_nodes_in_group("combatants"):
+			if not c is Unit or not is_instance_valid(c) or c.team == int(zone.team) or c.hp <= 0.0:
+				continue
+			if c.global_position.distance_to(zone.pos) <= float(zone.radius) + c.body_radius:
+				(c as Unit).apply_slow(dt + SIM_DT, float(zone.multiplier))
+		if float(zone.timer) > 0.0:
+			alive.append(zone)
+	_slow_zones = alive
+
+func _tick_slow_effect_visuals(delta: float) -> void:
+	for effect in _slow_effects:
+		if float(effect.delay) > 0.0:
+			effect.delay = maxf(0.0, float(effect.delay) - delta)
+		else:
+			effect.timer = maxf(0.0, float(effect.timer) - delta)
+	_slow_effects = _slow_effects.filter(func(effect): return float(effect.delay) > 0.0 or float(effect.timer) > 0.0)
+
+func _spawn_unit(team: int, card_id: String, pos: Vector2, deploy_time_override: float = -1.0, active_slot: int = -1) -> Unit:
 	var stats: Dictionary = CardDB.imp_stats() if card_id == "imp" else CardDB.all()[card_id]
 	if deploy_time_override >= 0.0:
 		stats = stats.duplicate()
@@ -1256,8 +2059,181 @@ func _spawn_unit(team: int, card_id: String, pos: Vector2, deploy_time_override:
 		u.net_id = _next_net_id
 		_next_net_id += 1
 		_net_units[u.net_id] = u
-		_rpc_spawn_unit.rpc(card_id, team, pos, u.net_id, deploy_time_override)
+	if active_slot >= 0 and active_slot < 2 and not CardDB.active_skills_for(card_id).is_empty():
+		u.active_ability_id = u.net_id if u.net_id >= 0 else _next_active_ability_id
+		u.active_ability_slot = active_slot
+		if u.net_id < 0:
+			_next_active_ability_id += 1
+		_register_active_skill(u, card_id, team)
+	if mode == "host":
+		_rpc_spawn_unit.rpc(card_id, team, pos, u.net_id, deploy_time_override, u.active_ability_id, u.active_ability_slot)
 	return u
+
+func _register_active_skill(unit: Unit, card_id: String, p_team: int) -> void:
+	if unit.active_ability_id < 0 or unit.active_ability_slot < 0 or unit.active_ability_slot >= 2 or not CardDB.all().has(card_id):
+		return
+	var stats: Dictionary = CardDB.all()[card_id]
+	var available_skills := CardDB.active_skills_for(card_id)
+	if available_skills.is_empty():
+		return
+	# 备战信息页只允许从候选集合中携带一个；场上实例不会同时获得多个主动技能。
+	var chosen_skill_index := _active_skill_choice_for_team(p_team, card_id, available_skills.size())
+	var carried_skill: Dictionary = available_skills[chosen_skill_index]
+	var ability_id := unit.active_ability_id
+	var active_slot := unit.active_ability_slot
+	# 每个主动槽始终只控制最近部署的实例。新实例落地时，旧实例的未用资格立即作废。
+	var replaced_id := -1
+	for existing_id in _active_skills:
+		var existing: Dictionary = _active_skills[existing_id]
+		if int(existing.team) == p_team and int(existing.slot) == active_slot:
+			replaced_id = int(existing_id)
+			break
+	if replaced_id >= 0:
+		var replaced: Dictionary = _active_skills[replaced_id]
+		var replaced_unit: Unit = replaced.unit
+		if replaced_unit != null and is_instance_valid(replaced_unit):
+			replaced_unit.active_ability_id = -1
+			replaced_unit.active_ability_slot = -1
+		_active_skills.erase(replaced_id)
+		_cancel_pending_active_skill(replaced_id)
+		if _active_skill_bar != null:
+			_active_skill_bar.remove_skill(replaced_id)
+	_active_skills[ability_id] = {"unit": unit, "card_id": card_id, "team": p_team, "slot": active_slot, "skill": carried_skill}
+	unit.died.connect(_on_active_skill_unit_died.bind(ability_id), CONNECT_ONE_SHOT)
+	if _is_local_player_team(p_team) and _active_skill_bar != null:
+		_active_skill_bar.show_skill(active_slot, ability_id, String(stats.name), String(carried_skill.name), stats.get("color", CardArt.DEFAULT_ACCENT))
+	# 单机 AI 也携带卡组前两槽的技能；占位 AI 同样经过 0.5 秒待释放窗口。
+	if mode == "local" and p_team == 1:
+		call_deferred("_queue_active_skill", ability_id, p_team, 0)
+
+func _on_active_skill_unit_died(ability_id: int) -> void:
+	_active_skills.erase(ability_id)
+	_cancel_pending_active_skill(ability_id)
+	if _active_skill_bar != null:
+		_active_skill_bar.remove_skill(ability_id)
+
+func _on_active_skill_pressed(ability_id: int) -> void:
+	if mode == "client":
+		_rpc_active_skill_request.rpc_id(1, ability_id)
+		return
+	if not _queue_active_skill(ability_id, 0, 0) and _active_skill_bar != null:
+		_active_skill_bar.set_pending(ability_id, false)
+
+func _queue_active_skill(ability_id: int, expected_team: int = -1, requester_peer_id: int = 0) -> bool:
+	if game_over or not _active_skills.has(ability_id):
+		return false
+	for pending in _pending_active_skill_activations:
+		if int(pending.ability_id) == ability_id:
+			return false
+	var entry: Dictionary = _active_skills[ability_id]
+	var unit: Unit = entry.unit
+	var p_team := int(entry.team)
+	var card_id := String(entry.card_id)
+	if unit == null or not is_instance_valid(unit) or unit.hp <= 0.0:
+		return false
+	if expected_team >= 0 and p_team != expected_team:
+		return false
+	if not _card_has_active_for_team(p_team, card_id):
+		return false
+	_pending_active_skill_activations.append({
+		"ability_id": ability_id,
+		"team": p_team,
+		"requester_peer_id": requester_peer_id,
+		"time_left": ACTIVE_SKILL_CAST_DELAY,
+	})
+	return true
+
+func _tick_pending_active_skills(dt: float) -> void:
+	var waiting: Array[Dictionary] = []
+	var ready: Array[Dictionary] = []
+	for pending in _pending_active_skill_activations:
+		pending.time_left = float(pending.time_left) - dt
+		if float(pending.time_left) > 0.001:
+			waiting.append(pending)
+		else:
+			ready.append(pending)
+	_pending_active_skill_activations = waiting
+	for pending in ready:
+		var ability_id := int(pending.ability_id)
+		if _activate_active_skill(ability_id, int(pending.team)):
+			continue
+		var requester_peer_id := int(pending.requester_peer_id)
+		if mode == "host" and requester_peer_id > 0:
+			_rpc_active_skill_rejected.rpc_id(requester_peer_id, ability_id)
+		elif _active_skill_bar != null:
+			_active_skill_bar.set_pending(ability_id, false)
+
+func _cancel_pending_active_skill(ability_id: int) -> void:
+	_pending_active_skill_activations = _pending_active_skill_activations.filter(
+		func(pending): return int(pending.ability_id) != ability_id
+	)
+
+func _activate_active_skill(ability_id: int, expected_team: int = -1) -> bool:
+	if not _active_skills.has(ability_id):
+		return false
+	var entry: Dictionary = _active_skills[ability_id]
+	var unit: Unit = entry.unit
+	var p_team := int(entry.team)
+	var card_id := String(entry.card_id)
+	if unit == null or not is_instance_valid(unit) or unit.hp <= 0.0:
+		_on_active_skill_unit_died(ability_id)
+		return false
+	if expected_team >= 0 and p_team != expected_team:
+		return false
+	if not _card_has_active_for_team(p_team, card_id):
+		return false
+	var skill: Dictionary = entry.skill
+	match String(skill.kind):
+		"buff":
+			unit.apply_active_buff(
+				float(skill.get("duration", 0.0)),
+				float(skill.get("speed_multiplier", 1.0)),
+				float(skill.get("damage_multiplier", 1.0)),
+				float(skill.get("attack_speed_multiplier", 1.0))
+			)
+			unit.add_shield(float(skill.get("shield", 0.0)), float(skill.get("shield_duration", skill.get("duration", 0.0))))
+		"nova":
+			_activate_nova_skill(unit, skill)
+		"summon":
+			_activate_summon_skill(unit, skill)
+		_:
+			return false
+	unit.active_ability_id = -1
+	unit.active_ability_slot = -1
+	_active_skills.erase(ability_id)
+	if _active_skill_bar != null:
+		_active_skill_bar.remove_skill(ability_id)
+	if mode == "host":
+		_rpc_active_skill_used.rpc(ability_id)
+	return true
+
+func _activate_nova_skill(source: Unit, skill: Dictionary) -> void:
+	var radius := float(skill.get("radius", 0.0))
+	var amount := float(skill.get("damage", 0.0))
+	var knockback := float(skill.get("knockback", 0.0))
+	var slow_duration := float(skill.get("slow_duration", 0.0))
+	var skill_slow_multiplier := float(skill.get("slow_multiplier", 1.0))
+	for c in get_tree().get_nodes_in_group("combatants"):
+		if c == source or not is_instance_valid(c) or c.team == source.team or c.hp <= 0.0:
+			continue
+		if c.global_position.distance_to(source.global_position) > radius + c.body_radius:
+			continue
+		if amount > 0.0:
+			c.take_damage(amount, source, source.team, source.global_position)
+		if c is Unit and is_instance_valid(c) and c.hp > 0.0:
+			if knockback > 0.0:
+				(c as Unit).apply_knockback(source.global_position, knockback)
+			if slow_duration > 0.0:
+				(c as Unit).apply_slow(slow_duration, skill_slow_multiplier)
+	source.add_shield(float(skill.get("shield", 0.0)), float(skill.get("shield_duration", 0.0)))
+
+func _activate_summon_skill(source: Unit, skill: Dictionary) -> void:
+	var spawn_id := String(skill.get("spawn_id", "imp"))
+	var count := maxi(int(skill.get("spawn_count", 1)), 1)
+	for i in range(count):
+		var angle := TAU * float(i) / float(count)
+		var offset := Vector2.RIGHT.rotated(angle) * (source.body_radius + 18.0)
+		spawn_summoned(source.team, spawn_id, source.global_position + offset)
 
 ## 水晶兵线入口。只在单机/主机固定模拟调用，最终仍统一走 _spawn_unit 与现有 RPC。
 func _tick_minion_waves(dt: float) -> void:
@@ -1307,7 +2283,7 @@ func _enemy_lane_tower_destroyed(team: int, lane: int) -> bool:
 	return tower_index >= 0 and tower_index < 4 and _towers[tower_index].hp <= 0.0
 
 func _is_double_elixir_phase() -> bool:
-	# 第 120 秒起即为双倍圣水；加时仍沿用炮车编成。
+	# 第 120 秒起即为双倍金币；加时仍沿用炮车编成。
 	return _battle_elapsed + 0.001 >= MATCH_TIME - DOUBLE_ELIXIR_TIME
 
 ## 解除导航网格阻挡格（建筑卡死亡 / 塔被摧毁时调用）
@@ -1345,6 +2321,8 @@ func on_tower_hit(tower: Tower) -> void:
 ## 帧率高低只影响每帧跑多少步，不改变战斗结果（联机两端行为一致）。
 func _sim_step(dt: float) -> void:
 	_tick_pending_card_deployments(dt)
+	_tick_pending_active_skills(dt)
+	_tick_slow_zones(dt)
 	if not _art_dev_mode and _minion_waves_enabled:
 		_tick_minion_waves(dt)
 	for c in get_tree().get_nodes_in_group("combatants"):
@@ -1662,12 +2640,14 @@ func _process(delta: float) -> void:
 		for fe in _freeze_effects:
 			fe.timer -= delta
 		_freeze_effects = _freeze_effects.filter(func(fe): return fe.timer > 0.0)
+		_tick_slow_effect_visuals(delta)
 		queue_redraw()
 		return
 	if _art_dev_mode:
 		for fe in _freeze_effects:
 			fe.timer -= delta
 		_freeze_effects = _freeze_effects.filter(func(fe): return fe.timer > 0.0)
+		_tick_slow_effect_visuals(delta)
 		queue_redraw()
 		_sim_acc += delta
 		while _sim_acc >= SIM_DT:
@@ -1680,6 +2660,7 @@ func _process(delta: float) -> void:
 	for fe in _freeze_effects:
 		fe.timer -= delta
 	_freeze_effects = _freeze_effects.filter(func(fe): return fe.timer > 0.0)
+	_tick_slow_effect_visuals(delta)
 	queue_redraw()
 	# 主机：定时向客户端发送快照
 	if mode == "host":
@@ -1750,7 +2731,7 @@ func _update_timer_label() -> void:
 		text += " 加时"
 	_timer_label.text = text
 
-## 圣水回复倍率：常规时间最后一分钟双倍、加时三倍（对齐皇室战争节奏）
+## 金币回复倍率：常规时间最后一分钟双倍、加时三倍（对齐皇室战争节奏）
 func _update_elixir_rate() -> void:
 	var mult := 3.0 if _overtime else (2.0 if _match_timer <= DOUBLE_ELIXIR_TIME else 1.0)
 	_elixir.regen_multiplier = mult
@@ -1797,6 +2778,51 @@ func _end_game(text: String) -> void:
 #  联机 RPC
 # ============================================================
 
+## 客户端开局后上报完整卡组。主机只接受 8 张互不重复、可选的合法卡牌。
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_register_deck(deck: Array, active_skill_choices: Dictionary = {}) -> void:
+	if mode != "host" or deck.size() != 8:
+		return
+	var validated: Array = []
+	for raw_id in deck:
+		var card_id := String(raw_id)
+		if not CardDB.all().has(card_id) or not bool(CardDB.all()[card_id].get("selectable", true)) or card_id in validated:
+			return
+		validated.append(card_id)
+	_remote_deck = validated
+	_remote_active_skill_choices.clear()
+	for card_id in validated:
+		var skills := CardDB.active_skills_for(card_id)
+		if not skills.is_empty():
+			_remote_active_skill_choices[card_id] = clampi(int(active_skill_choices.get(card_id, 0)), 0, skills.size() - 1)
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_active_skill_request(ability_id: int) -> void:
+	if mode != "host" or game_over:
+		return
+	var sender := multiplayer.get_remote_sender_id()
+	if not _queue_active_skill(ability_id, 1, sender):
+		_rpc_active_skill_rejected.rpc_id(sender, ability_id)
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_active_skill_used(ability_id: int) -> void:
+	if mode != "client":
+		return
+	if _active_skills.has(ability_id):
+		var entry: Dictionary = _active_skills[ability_id]
+		var unit: Unit = entry.unit
+		if unit != null and is_instance_valid(unit):
+			unit.active_ability_id = -1
+			unit.active_ability_slot = -1
+	_active_skills.erase(ability_id)
+	if _active_skill_bar != null:
+		_active_skill_bar.remove_skill(ability_id)
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_active_skill_rejected(ability_id: int) -> void:
+	if mode == "client" and _active_skill_bar != null:
+		_active_skill_bar.set_pending(ability_id, false)
+
 ## 客户端 → 主机：部署请求（主机校验区域/占位/费用后进入 0.5 秒权威队列）
 @rpc("any_peer", "call_remote", "reliable")
 func _rpc_deploy_request(card_id: String, pos: Vector2) -> void:
@@ -1809,6 +2835,8 @@ func _rpc_deploy_request(card_id: String, pos: Vector2) -> void:
 	# 未来若加入纯系统单位，客户端不能绕过卡池伪造部署请求。
 	if not bool(stats.get("selectable", true)):
 		return
+	if _remote_deck.size() != 8 or card_id not in _remote_deck:
+		return
 	if not is_card_deploy_position_valid(1, card_id, pos):
 		return
 	if _elixir_p1 == null or not _elixir_p1.spend(stats.cost):
@@ -1817,7 +2845,7 @@ func _rpc_deploy_request(card_id: String, pos: Vector2) -> void:
 
 ## 主机 → 客户端：单位生成
 @rpc("authority", "call_remote", "reliable")
-func _rpc_spawn_unit(card_id: String, p_team: int, pos: Vector2, net_id: int, deploy_time_override: float = -1.0) -> void:
+func _rpc_spawn_unit(card_id: String, p_team: int, pos: Vector2, net_id: int, deploy_time_override: float = -1.0, active_ability_id: int = -1, active_ability_slot: int = -1) -> void:
 	if mode != "client":
 		return
 	var stats: Dictionary = CardDB.imp_stats() if card_id == "imp" else CardDB.all()[card_id]
@@ -1831,6 +2859,8 @@ func _rpc_spawn_unit(card_id: String, p_team: int, pos: Vector2, net_id: int, de
 	if deploy_time_override >= 0.0:
 		u._just_deployed = true
 	u.net_id = net_id
+	u.active_ability_id = active_ability_id
+	u.active_ability_slot = active_ability_slot
 	u.net_target_pos = pos
 	add_child(u)
 	if _battle_presentation != null:
@@ -1839,6 +2869,8 @@ func _rpc_spawn_unit(card_id: String, p_team: int, pos: Vector2, net_id: int, de
 		u.nav_cells = nav.cells_for_rect(_structure_rect(u).grow(NAV_CLEARANCE + NAV_GRID_PADDING))
 		nav.set_cells_blocked(u.nav_cells, true)
 	_client_units[net_id] = u
+	if active_ability_id >= 0:
+		_register_active_skill(u, card_id, p_team)
 	if _auto_test:
 		print("[测试] 客户端收到单位生成: ", card_id, " net_id=", net_id)
 
@@ -1920,6 +2952,9 @@ func _rpc_snapshot(snapshot_bytes: PackedByteArray) -> void:
 			if _auto_test and not _auto_continuous_target_seen and u.net_has_continuous_target:
 				_auto_continuous_target_seen = true
 				print("[测试] 客户端已收到持续吐息目标端点")
+		if d.size() >= 15:
+			u.net_shield_active = d[13] == 1
+			u.net_slow_active = d[14] == 1
 		u.queue_redraw()
 	# 快照中消失的单位 = 已死亡
 	var gone := []
@@ -1992,10 +3027,12 @@ func _rpc_snapshot(snapshot_bytes: PackedByteArray) -> void:
 
 ## 主机 → 客户端：冰冻法术视觉
 @rpc("authority", "call_remote", "reliable")
-func _rpc_freeze_fx(pos: Vector2, radius: float, duration: float) -> void:
+func _rpc_freeze_fx(pos: Vector2, radius: float, duration: float, slow_duration: float = 0.0, _slow_multiplier: float = 1.0) -> void:
 	if mode != "client":
 		return
 	_freeze_effects.append({"pos": pos, "timer": duration, "duration": duration, "radius": radius})
+	if slow_duration > 0.0:
+		_slow_effects.append({"pos": pos, "radius": radius, "delay": duration, "timer": slow_duration, "duration": slow_duration})
 
 ## 主机 → 客户端：比赛结束
 @rpc("authority", "call_remote", "reliable")
@@ -2022,6 +3059,7 @@ func _send_snapshot() -> void:
 			u.get_visual_state_code(), u.get_facing_x(), u.get_attack_visual_serial(),
 			1 if u._shroud_active else 0,
 			1 if has_continuous_target else 0, continuous_target_pos.x, continuous_target_pos.y,
+			1 if u.shield_hp > 0.0 else 0, 1 if u.slow_timer > 0.0 else 0,
 		])
 	for id in dead:
 		_net_units.erase(id)
@@ -2067,6 +3105,13 @@ func _draw() -> void:
 		var alpha: float = (fe.timer / fe.duration) * 0.25
 		draw_circle(fe.pos, fe.radius, Color(0.40, 0.70, 1.00, alpha))
 		draw_circle(fe.pos, fe.radius, Color(0.60, 0.85, 1.00, alpha * 0.5), false, 2.0)
+	# 强化冰冻的减速阶段在冻结结束后才显示，和权威区域使用相同半径与时长。
+	for effect in _slow_effects:
+		if float(effect.delay) > 0.0:
+			continue
+		var slow_alpha: float = clampf(float(effect.timer) / maxf(float(effect.duration), 0.001), 0.0, 1.0)
+		draw_circle(effect.pos, effect.radius, Color(0.20, 0.48, 0.92, 0.12 * slow_alpha))
+		draw_arc(effect.pos, effect.radius, 0.0, TAU, 48, Color(0.38, 0.70, 1.0, 0.72 * slow_alpha), 3.0, true)
 	var visible_projectiles: Dictionary = _client_projectiles if mode == "client" else _projectiles
 	for id in visible_projectiles:
 		var projectile: Dictionary = visible_projectiles[id]
