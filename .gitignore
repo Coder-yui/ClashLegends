@@ -5,3 +5,6 @@ export_presets.cfg
 builds/
 # macOS
 .DS_Store
+
+# Promotional materials (kept local)
+/ClashLegends-promo-materials/

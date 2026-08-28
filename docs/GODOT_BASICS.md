@@ -32,7 +32,7 @@
 - `_draw()`：画图形（占位美术全靠它）
 
 **4. 信号（Signal）**
-节点间通信的方式。比如圣水变化时 `changed.emit(elixir)` 发出信号，UI 里 `connect` 了 `_refresh` 就会自动刷新。
+节点间通信的方式。比如金币变化时 `changed.emit(elixir)` 发出信号，UI 里 `connect` 了 `_refresh` 就会自动刷新。
 
 **5. 组（Group）**
 给节点打标签。所有单位和塔都在 `combatants` 组里，单位找敌人就是遍历这个组。
