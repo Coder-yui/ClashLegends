@@ -226,9 +226,9 @@ static func apply_to_button(
 	return texture != null
 
 static func show_empty_slot(button: Button, slot_number: int) -> void:
-	button.text = "%d\n空卡位" % slot_number
-	button.tooltip_text = "从下方卡池选择一张卡牌"
-	button.add_theme_font_size_override("font_size", 14)
+	button.text = "+"
+	button.tooltip_text = "点击卡槽，再从下方卡牌库选择一张卡牌"
+	button.add_theme_font_size_override("font_size", 34)
 	button.add_theme_color_override("font_color", Color(0.58, 0.70, 0.84))
 	for child_name in ["CardArtwork", "CardPlaceholder", "CardPlaceholderGlyph", "CardUnavailableTint", "CardNameBar", "CardCostBadge", "CardSelectedMark"]:
 		var child := button.get_node_or_null(child_name)

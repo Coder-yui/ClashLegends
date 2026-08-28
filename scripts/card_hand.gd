@@ -1,6 +1,6 @@
 class_name CardHand
 extends CanvasLayer
-## 底部手牌 UI：4 张手牌 + 圣水条。
+## 底部手牌 UI：4 张手牌 + 金币条。
 ## CR 轮换机制：8 张卡组，4 张手牌，用一张从队列补一张。
 
 signal card_selected(card_id: String)
@@ -123,7 +123,7 @@ func _build_ui() -> void:
 		hand_row.add_child(b)
 		_button_slots.append(b)
 
-	# 圣水条放在当前手牌下方，卡牌抽屉不占用竞技场空间。
+	# 金币条放在当前手牌下方，卡牌抽屉不占用竞技场空间。
 	var bar_row := HBoxContainer.new()
 	bar_row.alignment = BoxContainer.ALIGNMENT_CENTER
 	vbox.add_child(bar_row)
@@ -157,7 +157,7 @@ func _build_ui() -> void:
 	_elixir_label.add_theme_constant_override("outline_size", 4)
 	bar_row.add_child(_elixir_label)
 	bar_row.add_child(_elixir_bar)
-	# 细分刻度让资源条更容易估算每张牌还差多少圣水。
+	# 细分刻度让资源条更容易估算每张牌还差多少金币。
 	for i in range(1, int(ElixirManager.MAX_ELIXIR)):
 		var tick := ColorRect.new()
 		tick.color = Color(0.12, 0.015, 0.18, 0.52)
