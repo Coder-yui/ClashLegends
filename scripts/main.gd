@@ -820,6 +820,10 @@ func _open_card_info(card_id: String) -> void:
 	details.add_child(_make_card_info_body(_card_brief_description(stats)))
 	details.add_child(_make_card_info_heading("属性"))
 	details.add_child(_make_card_attribute_grid(stats))
+	var transformed_stats: Dictionary = stats.get("transformed_stats", {})
+	if not transformed_stats.is_empty():
+		details.add_child(_make_card_info_subheading("大纳尔（变形后）"))
+		details.add_child(_make_card_attribute_grid(transformed_stats))
 	if card_id == "tombstone":
 		details.add_child(_make_card_info_subheading("召唤物：小鬼（每批 %d 只）" % int(stats.get("spawn_count", 1))))
 		var imp_stats := CardDB.imp_stats()

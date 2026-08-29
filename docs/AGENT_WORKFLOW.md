@@ -84,7 +84,7 @@ sed -n '1,260p' docs/ART_PIPELINE.md
 
 先完成卡牌数据，再接表现资源，这样可以先用占位色块跑通战斗。资源流程如下：
 
-1. 卡面放到 `assets/cards/<card_id>_loading.jpg`、`.png` 或 `.webp`。文件名必须与 `card_id` 完全一致，UI 会自动按顺序查找这三种扩展名；没有卡面时会显示数据色占位，不会阻塞玩法测试。
+1. 按优先级准备卡面：英雄先从 CommunityDragon 下载基础皮肤 Loading Screen；没有原生图但有模型时拍 3D 模型；图像和模型都没有时再用 AI 生成。文件放到 `assets/cards/<card_id>_loading.jpg`、`.png` 或 `.webp`，文件名必须与 `card_id` 完全一致。
 2. 原始 GLB 和纹理放到 `assets/units/<card_id>/source/`，统一使用英文 `snake_case`。不要手工编辑 Godot 生成的 `.import` 文件。
 3. 让 Godot 完成导入，在编辑器里实际检查材质、骨骼、AnimationPlayer、脚底位置、朝向和动画是否存在；动画名区分大小写，不要按文件名猜。
 4. 创建 `assets/units/<card_id>/<card_id>_view.tscn` 作为运行时包装场景，包装场景只负责实例化 GLB、校正缩放、朝向和脚底原点。

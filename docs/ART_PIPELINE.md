@@ -10,8 +10,8 @@
 ## 第一个竖切
 
 盖伦已经跑通地面近战 3D 链路：部署、待机、移动、双普攻、命中时序、死亡表现、
-受击闪白和联机同步。普通近战角色现在可以按复用流程逐个接入；盖伦仍缺卡牌头像，
-不再阻塞其他模型接入。
+受击闪白和联机同步。普通近战角色现在可以按复用流程逐个接入；英雄卡面优先使用
+CommunityDragon 的原生 Loading Screen。
 
 ## 资源结构
 
@@ -22,7 +22,7 @@ assets/
     source/                    # GLB、原始图等制作源文件
     <card_id>_view.tscn        # 3D 模型运行时包装场景
     <card_id>_frames.tres      # 可选的 2D SpriteFrames
-  cards/<card_id>_portrait.png
+  cards/<card_id>_loading.png
   towers/
     princess/
       source/princess_tower_blue.glb
@@ -121,7 +121,9 @@ assets/
 ### 1. 建立资源目录并检查源文件
 
 1. 确认 `card_id` 已存在于 `scripts/data/card_db.gd`，目录名和文件名均使用英文 `snake_case`。
-2. 卡面放到 `assets/cards/<card_id>_loading.jpg/png/webp`；没有卡面时 UI 会自动显示数据色占位。
+2. 按以下优先级准备卡面：英雄使用 CommunityDragon 基础皮肤 Loading Screen；有模型但没有
+   原生图像时，用统一摄影棚拍 3D 模型；两者都没有时，使用 AI 生成图像。最终文件放到
+   `assets/cards/<card_id>_loading.jpg/png/webp`，没有正式卡面时 UI 才显示数据色占位。
 3. GLB 和外部纹理全部放到 `assets/units/<card_id>/source/`。不要手工编辑 `.import` 文件，不要把临时截图、重复导出或源文件放在运行时目录。
 4. 让 Godot 完成导入后，在编辑器中打开源 GLB，确认材质、骨骼、脚底、朝向和 `AnimationPlayer` 动画名。动画名区分大小写，必须记录真实名称。
 

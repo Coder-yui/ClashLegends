@@ -2285,6 +2285,15 @@ func _check_gnar_art_integration() -> void:
 	art_panel._select_item("gnar")
 	_expect(not art_panel._skill_button.disabled, "美术开发面板选择纳尔后可用主动技能按钮")
 	art_panel.free()
+	var mega_attributes := _main._card_attributes(mega_stats)
+	var mega_hp_shown := false
+	var mega_damage_shown := false
+	for attribute in mega_attributes:
+		if String(attribute.get("name", "")) == "生命" and String(attribute.get("value", "")) == "820":
+			mega_hp_shown = true
+		if String(attribute.get("name", "")) == "单次伤害" and String(attribute.get("value", "")) == "85":
+			mega_damage_shown = true
+	_expect(mega_hp_shown and mega_damage_shown, "纳尔信息面板可读取大纳尔变形后的生命与伤害")
 	var visuals_valid := true
 	for form_stats in [stats, mega_stats]:
 		var sample := (load(form_stats.visual_scene_path) as PackedScene).instantiate() as Node3D

@@ -83,7 +83,7 @@ assets/
   units/imp/
     imp_view.tscn              # 小鬼 3D 包装场景（Run1 移动 / leapWindup 攻击）
     source/imp.glb             # 牧魂人小鬼模型及其材质
-  cards/<card_id>_loading.jpg  # 英雄基础皮肤 Loading Screen；UI 自动按比例 cover 裁剪
+  cards/<card_id>_loading.jpg  # 英雄 Loading Screen、3D 模型摄影或 AI 卡面
   towers/                      # 塔与建筑表现
   ui/                          # 界面资源
   fx/                          # 特效资源
@@ -92,10 +92,15 @@ assets/
 
 仅在实际加入某类资源时创建对应目录，不为未使用的分类保留空文件夹。当前单位采用“2D 模拟 + 透明 3D 表现层”：原始模型保留在 `source/`，在同级包装场景中校正缩放和原点，再通过 `CardDB.visual_scene_path` 接入；同一玩法单位有 order/chaos 两套模型时使用 `visual_scene_paths = [order, chaos]`。`SpriteFrames` 方案继续作为低配置或特殊单位的可选路径。
 
-卡牌图片统一使用 `assets/cards/<card_id>_loading.jpg` 或 `.png` 命名。`CardArt` 会按同一规则自动查找
-`jpg`、`png` 或 `webp`，因此新增英雄卡时只需将基础皮肤 `loadScreenPath` 图片放入该目录；
-手牌和选卡组按钮会使用 `KEEP_ASPECT_COVERED` 保持比例，从中心裁剪 Loading Screen。
-统一卡框比例为 CommunityDragon 当前 Loading Screen 的 `308:560`；不同界面只缩放高度，保持同一套框形。
+卡牌图片统一使用 `assets/cards/<card_id>_loading.jpg/png/webp` 命名，`CardArt` 会自动查找。
+来源按优先级选择：英雄使用 CommunityDragon 基础皮肤 Loading Screen；没有原生图但有模型时，
+用统一摄影棚拍模型；两者都没有时，使用 AI 生成。手牌和选卡组按钮会按比例 cover 裁剪，
+统一卡框比例为 `308:560`。
+
+CommunityDragon 英雄图通常位于
+`game/assets/characters/<champion>/skins/base/*loadscreen*`；先查该英雄的 JSON 确认实际路径，
+下载后按 `card_id` 重命名。模型摄影可参考 `tools/capture_minion_card_art.gd` 的摄影棚设置；
+AI 图像也必须保存为同样的卡面文件名和尺寸。
 
 四类兵线卡面直接由项目内 Order 阵营 3D 模型拍摄，源模型更新后运行
 `Godot --path . --script tools/capture_minion_card_art.gd` 即可按统一摄影棚、灯光和 `308×560`
