@@ -1,0 +1,23 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/units/gnar/source/gnar_mega.glb" id="1_mega"]
+[ext_resource type="Script" path="res://assets/units/gnar/gnar_view_filter.gd" id="2_filter"]
+
+[node name="GnarMegaView" type="Node3D"]
+script = ExtResource("2_filter")
+filtered_clips = PackedStringArray("gnar_runtime/Rage_Transform", "gnar_runtime/Rage_Spell2_Transform", "Run_In")
+hidden_bone_name = &"Rock"
+additive_output_clip = &"Rage_Transform"
+additive_scale_clip = &"Rage_Scale"
+additive_base_clip = &"Rage_Scale_Base"
+additive_pose_clip = &"Rage_Move"
+additive_secondary_output_clip = &"Rage_Spell2_Transform"
+additive_secondary_pose_clip = &"GnarBig_Spell2_Tran_anm"
+additive_scale_start_overrides = {
+"Skeleton/Skeleton3D:Root": 0.68,
+"Skeleton/Skeleton3D:Tail1": 1.470588
+}
+
+[node name="Model" parent="." instance=ExtResource("1_mega")]
+position = Vector3(0, 0.46, 0)
+scale = Vector3(0.00825, 0.00825, 0.00825)

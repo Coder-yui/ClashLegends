@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/units/gnar/source/gnar_small.glb" id="1_small"]
+[ext_resource type="Script" path="res://assets/units/gnar/gnar_view_filter.gd" id="2_filter"]
+
+[node name="GnarSmallView" type="Node3D"]
+script = ExtResource("2_filter")
+filtered_clips = PackedStringArray("gnar_runtime/Revert_Transform", "Run1_In")
+hidden_surface_indices = PackedInt32Array(2)
+additive_output_clip = &"Revert_Transform"
+additive_scale_clip = &"Revert_Scale"
+additive_base_clip = &"Scale_Base"
+additive_pose_clip = &"Gnar_Revert_anm"
+additive_scale_start_overrides = {
+"Skeleton/Skeleton3D:Root_Lower": 2.45,
+"Skeleton/Skeleton3D:Root_Upper": 2.45
+}
+
+[node name="Model" parent="." instance=ExtResource("1_small")]
+position = Vector3(0, 0.5, 0)
+scale = Vector3(0.0105, 0.0105, 0.0105)

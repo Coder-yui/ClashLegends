@@ -89,6 +89,36 @@ assets/units/garen/
 
 素材有问题时优先修复导出或依赖文件，不要在战斗脚本中补偿损坏的骨骼或材质。
 
+### 识别并合成 Scale / Base 加法动画
+
+提取素材里出现成对的 `Rage_Scale` / `Rage_Scale_Base`、`Revert_Scale` / `Scale_Base`
+时，不要只按名称把 Scale 当成一段完整动作。先检查轨道结构：如果 Base 只有约 0.001 秒
+且所有轨道只有一个参考键，而 Scale 的位移/缩放有多键、绝大多数骨骼旋转却只有一个键，
+它通常是“相对 Base 的加法层”。直接播放会让缺少主体旋转的骨骼回到绑定姿势，表现为角色
+挤成一团。
+
+正确处理方式：为它选择同一时刻应播放的完整主体动作，把 Scale 相对 Base 的局部变换差值
+逐帧叠加到主体姿势，而不是把两段动画前后串联：
+
+- 位移：`body_position + scale_position - base_position`；
+- 旋转：`body_rotation * inverse(base_rotation) * scale_rotation`；
+- 缩放：`body_scale * scale_scale / base_scale`，分母接近 0 时回退为 1；
+- 合成时取双方关键帧时间的并集；短动画结束后保持末值，总时长取两者较长者。
+
+合成后还必须单独检查四件事：
+
+1. 变形起点是否与旧形态的包装尺寸一致，终点是否精确回到新形态尺寸；源游戏两套模型
+   比例可能与本项目包装比例不同，需要只重映射相关根缩放轨道的首值，不能改权威半径；
+2. 用 0%、25%、50%、75%、100% 接触表检查身体始终正常展开，并实机确认脚底；
+3. 临时石头、武器或重复道具属于网格/骨骼可见性问题，与加法姿势是否正确无关；若未过滤
+   时仍出现，继续按动画名过滤对应表面或绑定几何，不能因为姿势修好就删除过滤；
+4. 动画合成和道具过滤都只属于表现层，时长、碰撞、伤害和联网权威状态仍由固定模拟决定。
+
+纳尔的运行时参考实现位于
+[`assets/units/gnar/gnar_view_filter.gd`](../assets/units/gnar/gnar_view_filter.gd)：普通变大把
+`Rage_Scale` 叠到 `Rage_Move`，技能变大叠到 `GnarBig_Spell2_Tran`，变小把
+`Revert_Scale` 叠到 `Gnar_Revert`；同时保留变形和 `Run_In` 的临时道具过滤。
+
 ## 步骤二：创建包装场景
 
 为角色创建 `assets/units/<card_id>/<card_id>_view.tscn`。包装场景只负责实例化源

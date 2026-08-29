@@ -117,6 +117,9 @@ var _freeze_effects: Array = []  # [{pos, timer, duration, radius}]
 ## 强化冰冻结束后的权威减速区域与客户端纯视觉区域分开保存。
 var _slow_zones: Array[Dictionary] = []
 var _slow_effects: Array[Dictionary] = []
+## 纳尔 Spell2：固定模拟延迟到手掌触地才结算；范围框是独立纯表现数据。
+var _pending_frontal_stun_skills: Array[Dictionary] = []
+var _frontal_skill_effects: Array[Dictionary] = []
 var _projectiles := {}  # 主机/单机：id -> {pos, target, team, damage, speed, ...}
 var _client_projectiles := {}  # 客户端仅保存插值表现
 var _next_projectile_id := 1
@@ -162,6 +165,7 @@ var _art_dev_mode := false
 var _art_dev_selection := "training_dummy"
 var _art_dev_team := 1
 var _art_dev_panel: CanvasLayer
+var _art_dev_last_units: Dictionary = {}
 
 # 主菜单
 var _menu_layer: CanvasLayer
@@ -179,7 +183,12 @@ var _client_units := {}
 var _snapshots_received := 0
 var _auto_projectile_seen := false
 var _auto_continuous_target_seen := false
-# 命令行联机测试钩子（--auto-test：主机 2 秒后生成近战与远程交战样本）
+var _auto_gnar_form_seen := false
+var _auto_gnar_revert_seen := false
+var _auto_gnar_skill_fx_seen := false
+var _auto_gnar_revert_unit: Unit = null
+var _auto_gnar_revert_timer := 0.0
+# 命令行联机测试钩子（--auto-test：主机 2 秒后生成近战、远程、持续攻击与双形态样本）
 var _auto_test := false
 var _auto_timer := 2.0
 # 固定 20Hz 模拟累加器：帧率高低都不影响战斗逻辑步数
@@ -1040,6 +1049,17 @@ func _card_passives(stats: Dictionary) -> Array[Dictionary]:
 		result.append({"name": "无畏战吼", "description": "每第%d次普通攻击命中回复%s点生命。" % [int(stats.get("heal_every_hits", 0)), _format_card_number(float(stats.get("heal_amount", 0.0))) ]})
 	if stats.has("shroud_radius"):
 		result.append({"name": "丝缕缠流", "description": "首次普攻命中后，%s半径外的敌人无法看见或锁定她。" % _format_card_number(float(stats.get("shroud_radius", 0.0)))})
+	if int(stats.get("transform_after_hits", 0)) > 0:
+		var transformed: Dictionary = stats.get("transformed_stats", {})
+		result.append({
+			"name": "狂怒基因",
+			"description": "小纳尔完成%d次普攻后变大，大纳尔完成%d次普攻后变小；大形态生命上限为%s、体型为%s且只能近战地面目标。" % [
+				int(stats.transform_after_hits),
+				int(stats.get("revert_after_hits", 0)),
+				_format_card_number(float(transformed.get("hp", 0.0))),
+				CardDB.size_tier_name(StringName(transformed.get("size_tier", ""))),
+			],
+		})
 	if stats.has("attack_pattern"):
 		var combo_damage := float(stats.get("damage", 0.0))
 		var combo_multipliers: Array = stats.get("attack_damage_multipliers", [])
@@ -1102,6 +1122,14 @@ func _active_skill_description(skill: Dictionary) -> String:
 				parts.append("攻速 ×%.2f" % float(skill.attack_speed_multiplier))
 		"summon":
 			parts.append("在自身周围立即召唤 %d 个单位" % int(skill.get("spawn_count", 1)))
+		"dual_form":
+			parts.append("小纳尔状态立即变大并释放 Spell2")
+			parts.append("手掌触地时朝前方 %s×%s 区域造成 %s 伤害，并眩晕 %s 秒" % [
+				_format_card_number(float(skill.get("width", 0.0))),
+				_format_card_number(float(skill.get("length", 0.0))),
+				_format_card_number(float(skill.get("damage", 0.0))),
+				_format_card_number(float(skill.get("stun_duration", 0.0))),
+			])
 	if float(skill.get("shield", 0.0)) > 0.0:
 		parts.append("获得 %s 点护盾，持续 %s 秒" % [_format_card_number(float(skill.shield)), _format_card_number(float(skill.get("shield_duration", 0.0)))])
 	return "%s：%s。" % [String(skill.get("name", "主动技能")), "；".join(parts)]
@@ -1260,8 +1288,11 @@ func _start_art_dev() -> void:
 	_art_dev_panel.setup(CardDB.all())
 	_art_dev_panel.item_selected.connect(func(item_id: String): _art_dev_selection = item_id)
 	_art_dev_panel.team_changed.connect(func(team: int): _art_dev_team = team)
+	_art_dev_panel.active_skill_requested.connect(_use_art_dev_active_skill)
 	_art_dev_panel.clear_requested.connect(_clear_art_dev_units)
-	_art_dev_panel.exit_requested.connect(func(): get_tree().reload_current_scene())
+	_art_dev_panel.exit_requested.connect(func():
+		get_tree().reload_current_scene()
+	)
 
 func _start_host() -> void:
 	mode = "host"
@@ -1542,7 +1573,25 @@ func _place_art_dev_item(pos: Vector2) -> void:
 	if stats.get("type", "unit") == "spell":
 		_cast_spell(_art_dev_team, _art_dev_selection, pos)
 	else:
-		_spawn_unit(_art_dev_team, _art_dev_selection, pos)
+		var unit := _spawn_unit(_art_dev_team, _art_dev_selection, pos)
+		_art_dev_last_units[_art_dev_selection] = weakref(unit)
+
+func _art_dev_selected_unit() -> Unit:
+	var candidate_ref = _art_dev_last_units.get(_art_dev_selection)
+	var candidate = (candidate_ref as WeakRef).get_ref() if candidate_ref is WeakRef else null
+	if candidate is Unit and is_instance_valid(candidate) and candidate.hp > 0.0:
+		return candidate as Unit
+	return null
+
+## 美术面板不消耗正式主动资格，允许对最后放置的同卡单位反复检查技能演出。
+func _use_art_dev_active_skill() -> void:
+	var unit := _art_dev_selected_unit()
+	if unit == null or unit.is_form_transitioning() or unit.is_active_skill_casting():
+		return
+	var skills := CardDB.active_skills_for(_art_dev_selection)
+	if skills.is_empty():
+		return
+	_apply_active_skill_effect(unit, skills[0])
 
 func _register_dynamic_building(unit: Unit) -> void:
 	if nav == null or not unit.is_building:
@@ -1551,6 +1600,7 @@ func _register_dynamic_building(unit: Unit) -> void:
 	nav.set_cells_blocked(unit.nav_cells, true)
 
 func _clear_art_dev_units() -> void:
+	_art_dev_last_units.clear()
 	for combatant in get_tree().get_nodes_in_group("combatants"):
 		if not combatant is Unit:
 			continue
@@ -1564,6 +1614,8 @@ func _clear_art_dev_units() -> void:
 	_freeze_effects.clear()
 	_slow_zones.clear()
 	_slow_effects.clear()
+	_pending_frontal_stun_skills.clear()
+	_frontal_skill_effects.clear()
 	queue_redraw()
 
 func _world_to_arena_tile(pos: Vector2) -> Vector2i:
@@ -1821,6 +1873,21 @@ func _nearest_valid_ground_spawn(desired: Vector2, radius: float, p_team: int) -
 	push_warning("召唤物找不到合法出生点：team=%d pos=%s" % [p_team, desired])
 	return desired
 
+## 形态放大采用权威半径瞬时切换。若当前位置对新半径不合法，确定性地挪到最近安全点，
+## 并重置插值/路径，避免桥角、河岸或塔边因为旧体积合法而新体积永久卡住。
+func ensure_unit_form_resize_safe(unit: Unit) -> void:
+	if unit == null or not is_instance_valid(unit) or unit.is_air or unit.is_building:
+		return
+	if is_ground_position_walkable(unit.global_position, unit.body_radius, unit):
+		return
+	var safe_position := _nearest_valid_ground_spawn(unit.global_position, unit.body_radius, unit.team)
+	unit.global_position = safe_position
+	unit._prev_pos = safe_position
+	unit.net_target_pos = safe_position
+	unit._path = PackedVector2Array()
+	unit._path_index = 0
+	unit._repath_cd = 0.0
+
 func _deploy_card(p_team: int, card_id: String, pos: Vector2) -> void:
 	# 玩家、AI 与联机请求统一进入 0.5 秒权威队列；召唤物走 _spawn_unit，不受此延迟影响。
 	pos = _snap_card_position(card_id, pos, p_team)
@@ -1869,8 +1936,9 @@ func launch_attack(attacker: Node2D, target: Node2D, amount: float, projectile_s
 	# 丝缕缠流开启后，圈外攻击者连目标都看不到；这个出口再做一次竞态兜底。
 	if target is Unit and (target as Unit).is_hidden_from(attacker):
 		return
+	var source_form_index := (attacker as Unit).form_index if attacker is Unit else -1
 	if projectile_speed <= 0.0:
-		_resolve_attack_hit(attacker.team, attacker.global_position, target, amount, splash_radius, knockback, attacker, attacker.global_position)
+		_resolve_attack_hit(attacker.team, attacker.global_position, target, amount, splash_radius, knockback, attacker, attacker.global_position, source_form_index)
 		return
 	var direction := attacker.global_position.direction_to(target.global_position)
 	var projectile_visual := &"orb"
@@ -1891,7 +1959,7 @@ func launch_attack(attacker: Node2D, target: Node2D, amount: float, projectile_s
 		visual_offset = (attacker as Tower).projectile_visual_offset
 		visual_offset_follows_trajectory = visual_offset.length_squared() > 0.001
 	var start_position := attacker.global_position
-	if projectile_visual == &"arrow" or projectile_visual == &"needle":
+	if projectile_visual == &"arrow" or projectile_visual == &"needle" or projectile_visual == &"boomerang":
 		start_position += direction * (attacker.body_radius + PROJECTILE_MUZZLE_FORWARD_GAP)
 	var id := _next_projectile_id
 	_next_projectile_id += 1
@@ -1899,6 +1967,7 @@ func launch_attack(attacker: Node2D, target: Node2D, amount: float, projectile_s
 		"pos": start_position,
 		"target": target,
 		"attacker": attacker,
+		"source_form_index": source_form_index,
 		"source_pos": attacker.global_position,
 		"team": attacker.team,
 		"damage": amount,
@@ -1949,18 +2018,18 @@ func _tick_projectiles(dt: float) -> void:
 			# 攻击者可能已在弹体飞行途中被释放，命中仍结算，但以无来源处理，
 			# 避免把已释放对象传入类型化函数参数。
 			var hit_from: Node2D = projectile.attacker if (projectile.attacker != null and is_instance_valid(projectile.attacker)) else null
-			_resolve_attack_hit(projectile.team, pos, target, projectile.damage, projectile.splash, projectile.knockback, hit_from, projectile.source_pos)
+			_resolve_attack_hit(projectile.team, pos, target, projectile.damage, projectile.splash, projectile.knockback, hit_from, projectile.source_pos, int(projectile.get("source_form_index", -1)))
 			finished.append(id)
 	for id in finished:
 		_projectiles.erase(id)
 
-func _resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: float, radius: float, knockback: float, from: Node2D = null, source_position: Vector2 = Vector2(INF, INF)) -> void:
+func _resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: float, radius: float, knockback: float, from: Node2D = null, source_position: Vector2 = Vector2(INF, INF), source_form_index: int = -1) -> void:
 	if primary == null or not is_instance_valid(primary) or primary.hp <= 0.0:
 		return
 	if radius <= 0.0:
 		var landed: bool = primary.take_damage(amount, from, p_team, source_position)
 		if landed and from is Unit and is_instance_valid(from):
-			(from as Unit).on_attack_landed()
+			(from as Unit).on_attack_landed(source_form_index)
 		if landed and knockback > 0.0 and primary is Unit and is_instance_valid(primary) and primary.hp > 0.0:
 			(primary as Unit).apply_knockback(origin, knockback)
 		return
@@ -1975,7 +2044,7 @@ func _resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: 
 			if landed and knockback > 0.0 and c is Unit and is_instance_valid(c) and c.hp > 0.0:
 				(c as Unit).apply_knockback(origin, knockback)
 	if any_landed and from is Unit and is_instance_valid(from):
-		(from as Unit).on_attack_landed()
+		(from as Unit).on_attack_landed(source_form_index)
 
 func _cast_spell(p_team: int, card_id: String, pos: Vector2, active_enabled: bool = false) -> void:
 	match card_id:
@@ -2135,6 +2204,9 @@ func _queue_active_skill(ability_id: int, expected_team: int = -1, requester_pee
 		return false
 	if not _card_has_active_for_team(p_team, card_id):
 		return false
+	# 变形演出期间主动技能也视作攻击类动作，拒绝并保留按钮，避免打断形态序列。
+	if unit.is_form_transitioning() or unit.is_active_skill_casting():
+		return false
 	_pending_active_skill_activations.append({
 		"ability_id": ability_id,
 		"team": p_team,
@@ -2183,6 +2255,18 @@ func _activate_active_skill(ability_id: int, expected_team: int = -1) -> bool:
 	if not _card_has_active_for_team(p_team, card_id):
 		return false
 	var skill: Dictionary = entry.skill
+	if not _apply_active_skill_effect(unit, skill):
+		return false
+	unit.active_ability_id = -1
+	unit.active_ability_slot = -1
+	_active_skills.erase(ability_id)
+	if _active_skill_bar != null:
+		_active_skill_bar.remove_skill(ability_id)
+	if mode == "host":
+		_rpc_active_skill_used.rpc(ability_id)
+	return true
+
+func _apply_active_skill_effect(unit: Unit, skill: Dictionary) -> bool:
 	match String(skill.kind):
 		"buff":
 			unit.apply_active_buff(
@@ -2196,15 +2280,10 @@ func _activate_active_skill(ability_id: int, expected_team: int = -1) -> bool:
 			_activate_nova_skill(unit, skill)
 		"summon":
 			_activate_summon_skill(unit, skill)
+		"dual_form":
+			_activate_dual_form_skill(unit, skill)
 		_:
 			return false
-	unit.active_ability_id = -1
-	unit.active_ability_slot = -1
-	_active_skills.erase(ability_id)
-	if _active_skill_bar != null:
-		_active_skill_bar.remove_skill(ability_id)
-	if mode == "host":
-		_rpc_active_skill_used.rpc(ability_id)
 	return true
 
 func _activate_nova_skill(source: Unit, skill: Dictionary) -> void:
@@ -2234,6 +2313,138 @@ func _activate_summon_skill(source: Unit, skill: Dictionary) -> void:
 		var angle := TAU * float(i) / float(count)
 		var offset := Vector2.RIGHT.rotated(angle) * (source.body_radius + 18.0)
 		spawn_summoned(source.team, spawn_id, source.global_position + offset)
+
+func _activate_dual_form_skill(source: Unit, skill: Dictionary) -> void:
+	var cast_forward := _frontal_skill_forward(source)
+	if source.form_index == 0:
+		source.transform_to_mega(true)
+		_activate_frontal_stun_skill(
+			source, skill, false,
+			float(skill.get("transform_impact_delay", 0.9)),
+			float(skill.get("transform_cast_duration", 1.3)),
+			cast_forward
+		)
+		return
+	_activate_frontal_stun_skill(
+		source, skill, true,
+		float(skill.get("impact_delay", 0.8)),
+		float(skill.get("cast_duration", 1.2)),
+		cast_forward
+	)
+
+## Spell2 先启动动画和无近端边线的矩形预警；固定模拟到手掌触地时才结算伤害/眩晕。
+func _activate_frontal_stun_skill(source: Unit, skill: Dictionary, play_action: bool = true, impact_delay: float = -1.0, cast_duration: float = -1.0, cast_forward: Vector2 = Vector2.ZERO) -> void:
+	if impact_delay < 0.0:
+		impact_delay = maxf(float(skill.get("impact_delay", 0.8)), 0.0)
+	else:
+		impact_delay = maxf(impact_delay, 0.0)
+	if cast_duration < 0.0:
+		cast_duration = maxf(float(skill.get("cast_duration", 1.2)), 0.0)
+	else:
+		cast_duration = maxf(cast_duration, 0.0)
+	if cast_forward.length_squared() < 0.001:
+		cast_forward = _frontal_skill_forward(source)
+	else:
+		cast_forward = cast_forward.normalized()
+	source.begin_active_skill_cast(cast_duration, cast_forward)
+	if play_action:
+		source.play_visual_action(&"active")
+	_pending_frontal_stun_skills.append({
+		"source_ref": weakref(source),
+		"skill": skill.duplicate(true),
+		"forward": cast_forward,
+		"time_left": impact_delay,
+	})
+	_add_frontal_skill_effect(source, skill, impact_delay, cast_forward)
+	if mode == "host":
+		_rpc_frontal_skill_fx.rpc(
+			source.net_id,
+			source.global_position,
+			cast_forward,
+			source.body_radius,
+			float(skill.get("length", 0.0)),
+			float(skill.get("width", 0.0)),
+			impact_delay,
+			source.team,
+		)
+
+func _tick_pending_frontal_stun_skills(dt: float) -> void:
+	var waiting: Array[Dictionary] = []
+	for pending in _pending_frontal_stun_skills:
+		var source = (pending.source_ref as WeakRef).get_ref()
+		if not source is Unit or not is_instance_valid(source) or source.hp <= 0.0:
+			continue
+		if source.frozen_timer > 0.0 or source.stun_timer > 0.0:
+			waiting.append(pending)
+			continue
+		pending.time_left = maxf(0.0, float(pending.time_left) - dt)
+		if float(pending.time_left) > 0.001:
+			waiting.append(pending)
+			continue
+		_apply_frontal_stun_impact(source as Unit, pending.skill, pending.forward)
+	_pending_frontal_stun_skills = waiting
+
+func _apply_frontal_stun_impact(source: Unit, skill: Dictionary, forward: Vector2) -> void:
+	forward = forward.normalized()
+	var side := Vector2(-forward.y, forward.x)
+	var length := maxf(float(skill.get("length", 0.0)), 0.0)
+	var half_width := maxf(float(skill.get("width", 0.0)) * 0.5, 0.0)
+	var amount := maxf(float(skill.get("damage", 0.0)), 0.0)
+	var stun_duration := maxf(float(skill.get("stun_duration", 0.0)), 0.0)
+	var ground_only := bool(skill.get("ground_only", true))
+	for c in get_tree().get_nodes_in_group("combatants"):
+		if c == source or not is_instance_valid(c) or c.team == source.team or c.hp <= 0.0:
+			continue
+		if ground_only and c is Unit and (c as Unit).is_air:
+			continue
+		var local_offset: Vector2 = c.global_position - source.global_position
+		var forward_distance := local_offset.dot(forward) - source.body_radius
+		var lateral_distance := absf(local_offset.dot(side))
+		if forward_distance < -c.body_radius or forward_distance > length + c.body_radius:
+			continue
+		if lateral_distance > half_width + c.body_radius:
+			continue
+		if amount > 0.0:
+			c.take_damage(amount, source, source.team, source.global_position)
+		if is_instance_valid(c) and c.hp > 0.0 and stun_duration > 0.0 and c.has_method("stun"):
+			c.stun(stun_duration)
+
+func _frontal_skill_forward(source: Unit) -> Vector2:
+	var forward := source.get_visual_facing_direction()
+	if forward.length_squared() < 0.001:
+		forward = Vector2.UP if source.team == 0 else Vector2.DOWN
+	return forward.normalized()
+
+func _add_frontal_skill_effect(source: Unit, skill: Dictionary, duration: float, cast_forward: Vector2) -> void:
+	_frontal_skill_effects.append({
+		"source_ref": weakref(source),
+		"net_id": source.net_id,
+		"pos": source.global_position,
+		"forward": cast_forward,
+		"source_radius": source.body_radius,
+		"length": maxf(float(skill.get("length", 0.0)), 0.0),
+		"width": maxf(float(skill.get("width", 0.0)), 0.0),
+		"timer": duration,
+		"duration": duration,
+		"team": source.team,
+	})
+
+func _tick_frontal_skill_effect_visuals(delta: float) -> void:
+	for effect in _frontal_skill_effects:
+		var source = _frontal_skill_effect_source(effect)
+		if source is Unit and (source.frozen_timer > 0.0 or source.stun_timer > 0.0):
+			continue
+		effect.timer = maxf(0.0, float(effect.timer) - delta)
+	_frontal_skill_effects = _frontal_skill_effects.filter(func(effect): return float(effect.timer) > 0.001)
+
+func _frontal_skill_effect_source(effect: Dictionary):
+	var source = null
+	var source_ref = effect.get("source_ref")
+	if source_ref is WeakRef:
+		source = (source_ref as WeakRef).get_ref()
+	if (source == null or not is_instance_valid(source)) and mode == "client":
+		source = _client_units.get(int(effect.get("net_id", -1)))
+	return source
 
 ## 水晶兵线入口。只在单机/主机固定模拟调用，最终仍统一走 _spawn_unit 与现有 RPC。
 func _tick_minion_waves(dt: float) -> void:
@@ -2322,6 +2533,7 @@ func on_tower_hit(tower: Tower) -> void:
 func _sim_step(dt: float) -> void:
 	_tick_pending_card_deployments(dt)
 	_tick_pending_active_skills(dt)
+	_tick_pending_frontal_stun_skills(dt)
 	_tick_slow_zones(dt)
 	if not _art_dev_mode and _minion_waves_enabled:
 		_tick_minion_waves(dt)
@@ -2343,7 +2555,12 @@ func _sim_step(dt: float) -> void:
 		if t.hp <= 0.0 and not t.nav_cells.is_empty():
 			unblock_nav_cells(t.nav_cells)
 			t.nav_cells = []
-	# 联机测试钩子：进入模拟 2 秒后生成近战、远程、弹道与持续吐息样本。
+	# 联机测试钩子：主动变大序列结束后再强制变小，覆盖双向形态序号与动作快照。
+	if _auto_gnar_revert_timer > 0.0:
+		_auto_gnar_revert_timer = maxf(0.0, _auto_gnar_revert_timer - dt)
+		if _auto_gnar_revert_timer <= 0.0 and _auto_gnar_revert_unit != null and is_instance_valid(_auto_gnar_revert_unit):
+			_auto_gnar_revert_unit.transform_to_small()
+	# 进入模拟 2 秒后生成近战、远程、弹道、持续吐息与双形态样本。
 	if _auto_test:
 		_auto_timer -= dt
 		if _auto_timer <= 0.0:
@@ -2352,6 +2569,10 @@ func _sim_step(dt: float) -> void:
 			_deploy_card(0, "ashe", Vector2(300, 700))
 			_deploy_card(0, "aurelionsol", Vector2(410, 700))
 			_deploy_card(1, "xin", Vector2(300, 580))
+			var auto_gnar := _spawn_unit(0, "gnar", Vector2(520, 760), 0.0)
+			_activate_dual_form_skill(auto_gnar, CardDB.all()["gnar"].active_skill)
+			_auto_gnar_revert_unit = auto_gnar
+			_auto_gnar_revert_timer = 2.4
 
 ## 所有单位先计算移动意图，再统一做局部避让并应用，避免节点遍历顺序影响结果。
 func _apply_unit_movement(dt: float) -> void:
@@ -2641,6 +2862,7 @@ func _process(delta: float) -> void:
 			fe.timer -= delta
 		_freeze_effects = _freeze_effects.filter(func(fe): return fe.timer > 0.0)
 		_tick_slow_effect_visuals(delta)
+		_tick_frontal_skill_effect_visuals(delta)
 		queue_redraw()
 		return
 	if _art_dev_mode:
@@ -2648,6 +2870,7 @@ func _process(delta: float) -> void:
 			fe.timer -= delta
 		_freeze_effects = _freeze_effects.filter(func(fe): return fe.timer > 0.0)
 		_tick_slow_effect_visuals(delta)
+		_tick_frontal_skill_effect_visuals(delta)
 		queue_redraw()
 		_sim_acc += delta
 		while _sim_acc >= SIM_DT:
@@ -2661,6 +2884,7 @@ func _process(delta: float) -> void:
 		fe.timer -= delta
 	_freeze_effects = _freeze_effects.filter(func(fe): return fe.timer > 0.0)
 	_tick_slow_effect_visuals(delta)
+	_tick_frontal_skill_effect_visuals(delta)
 	queue_redraw()
 	# 主机：定时向客户端发送快照
 	if mode == "host":
@@ -2936,6 +3160,10 @@ func _rpc_snapshot(snapshot_bytes: PackedByteArray) -> void:
 		if u == null or not is_instance_valid(u):
 			continue
 		u.net_target_pos = Vector2(d[1], d[2])
+		if d.size() >= 23:
+			u.sync_network_form(int(d[15]), int(d[22]))
+		elif d.size() >= 16:
+			u.sync_network_form(int(d[15]))
 		u.hp = d[3]
 		u.frozen_timer = 0.15 if d[4] == 1 else 0.0
 		u._charged = d[5] == 1
@@ -2955,6 +3183,31 @@ func _rpc_snapshot(snapshot_bytes: PackedByteArray) -> void:
 		if d.size() >= 15:
 			u.net_shield_active = d[13] == 1
 			u.net_slow_active = d[14] == 1
+		if d.size() >= 19:
+			u.net_stun_active = d[16] == 1
+			u.stun_timer = 0.15 if u.net_stun_active else 0.0
+			var action_serial := int(d[17])
+			if action_serial >= u.net_visual_action_serial:
+				u.net_visual_action_serial = action_serial
+				u.net_visual_action_name = StringName(d[18])
+		if d.size() >= 21:
+			u.net_facing_direction = Vector2(d[19], d[20])
+		if d.size() >= 22:
+			u.net_attacking_structure = d[21] == 1
+		if (
+			_auto_test and not _auto_gnar_form_seen and u.card_id == "gnar"
+			and u.form_index == 1 and u.net_visual_action_name == &"transform_active"
+			and u.net_facing_direction.length_squared() > 0.001
+		):
+			_auto_gnar_form_seen = true
+			print("[测试] 客户端已收到纳尔大形态、主动变形动作与完整朝向快照")
+		if (
+			_auto_test and not _auto_gnar_revert_seen and u.card_id == "gnar"
+			and u.form_index == 0 and u.net_form_change_serial >= 2
+			and u.net_visual_action_name == &"revert"
+		):
+			_auto_gnar_revert_seen = true
+			print("[测试] 客户端已收到纳尔回到小形态的递增序号与变小动作快照")
 		u.queue_redraw()
 	# 快照中消失的单位 = 已死亡
 	var gone := []
@@ -3009,6 +3262,8 @@ func _rpc_snapshot(snapshot_bytes: PackedByteArray) -> void:
 		var tower_was_alive := _towers[i].hp > 0.0
 		_towers[i].hp = towers_data[i][0]
 		_towers[i].activated = towers_data[i][1] == 1
+		if towers_data[i].size() >= 3:
+			_towers[i].stun_timer = 0.15 if towers_data[i][2] == 1 else 0.0
 		if tower_was_alive and _towers[i].hp <= 0.0:
 			_towers[i].notify_visual_destroyed()
 		if _towers[i].hp <= 0.0 and not _towers[i].nav_cells.is_empty():
@@ -3034,6 +3289,27 @@ func _rpc_freeze_fx(pos: Vector2, radius: float, duration: float, slow_duration:
 	if slow_duration > 0.0:
 		_slow_effects.append({"pos": pos, "radius": radius, "delay": duration, "timer": slow_duration, "duration": slow_duration})
 
+## 主机 → 客户端：纳尔 Spell2 蓄力范围。客户端只画框，伤害和眩晕仍由主机快照体现。
+@rpc("authority", "call_remote", "reliable")
+func _rpc_frontal_skill_fx(net_id: int, pos: Vector2, forward: Vector2, source_radius: float, length: float, width: float, duration: float, p_team: int) -> void:
+	if mode != "client":
+		return
+	_frontal_skill_effects.append({
+		"source_ref": null,
+		"net_id": net_id,
+		"pos": pos,
+		"forward": forward.normalized(),
+		"source_radius": source_radius,
+		"length": length,
+		"width": width,
+		"timer": duration,
+		"duration": duration,
+		"team": p_team,
+	})
+	if _auto_test and not _auto_gnar_skill_fx_seen:
+		_auto_gnar_skill_fx_seen = true
+		print("[测试] 客户端已收到纳尔固定方向 Spell2 三边范围框")
+
 ## 主机 → 客户端：比赛结束
 @rpc("authority", "call_remote", "reliable")
 func _rpc_end(text: String) -> void:
@@ -3053,6 +3329,7 @@ func _send_snapshot() -> void:
 			continue
 		var has_continuous_target: bool = u.has_continuous_visual_target()
 		var continuous_target_pos: Vector2 = u.get_continuous_visual_target_position()
+		var facing_direction: Vector2 = u.get_visual_facing_direction()
 		units_data.append([
 			id, u.global_position.x, u.global_position.y, u.hp,
 			1 if u.frozen_timer > 0.0 else 0, 1 if u.is_charged() else 0,
@@ -3060,13 +3337,18 @@ func _send_snapshot() -> void:
 			1 if u._shroud_active else 0,
 			1 if has_continuous_target else 0, continuous_target_pos.x, continuous_target_pos.y,
 			1 if u.shield_hp > 0.0 else 0, 1 if u.slow_timer > 0.0 else 0,
+			u.form_index, 1 if u.stun_timer > 0.0 else 0,
+			u.get_visual_action_serial(), String(u.get_visual_action_name()),
+			facing_direction.x, facing_direction.y,
+			1 if u.is_attacking_structure_visual() else 0,
+			u.form_change_serial,
 		])
 	for id in dead:
 		_net_units.erase(id)
 	var towers_data := []
 	for t in _towers:
-		# [血量, 国王塔是否已激活]
-		towers_data.append([t.hp, 1 if t.activated else 0])
+		# [血量, 国王塔是否已激活, 是否眩晕]
+		towers_data.append([t.hp, 1 if t.activated else 0, 1 if t.stun_timer > 0.0 else 0])
 	var projectiles_data := []
 	for id in _projectiles:
 		var projectile: Dictionary = _projectiles[id]
@@ -3112,6 +3394,9 @@ func _draw() -> void:
 		var slow_alpha: float = clampf(float(effect.timer) / maxf(float(effect.duration), 0.001), 0.0, 1.0)
 		draw_circle(effect.pos, effect.radius, Color(0.20, 0.48, 0.92, 0.12 * slow_alpha))
 		draw_arc(effect.pos, effect.radius, 0.0, TAU, 48, Color(0.38, 0.70, 1.0, 0.72 * slow_alpha), 3.0, true)
+	# 纳尔 Spell2 使用三边矩形：两条侧边加远端宽边，靠纳尔的近端宽边刻意留空。
+	for effect in _frontal_skill_effects:
+		_draw_frontal_skill_effect(effect)
 	var visible_projectiles: Dictionary = _client_projectiles if mode == "client" else _projectiles
 	for id in visible_projectiles:
 		var projectile: Dictionary = visible_projectiles[id]
@@ -3122,8 +3407,37 @@ func _draw() -> void:
 				_draw_arrow_projectile(projectile)
 			&"needle":
 				_draw_needle_projectile(projectile)
+			&"boomerang":
+				_draw_boomerang_projectile(projectile)
 			_:
 				draw_circle(projectile.pos, projectile.radius, projectile.color)
+
+func _draw_frontal_skill_effect(effect: Dictionary) -> void:
+	var source = _frontal_skill_effect_source(effect)
+	var center: Vector2 = effect.get("pos", Vector2.ZERO)
+	var forward: Vector2 = effect.get("forward", Vector2.UP)
+	var source_radius := float(effect.get("source_radius", 0.0))
+	if source is Unit and is_instance_valid(source):
+		center = (source as Unit).get_visual_screen_position()
+		source_radius = (source as Unit).body_radius
+	if forward.length_squared() < 0.001:
+		return
+	forward = forward.normalized()
+	var side := Vector2(-forward.y, forward.x)
+	var half_width := maxf(float(effect.get("width", 0.0)) * 0.5, 0.0)
+	var near_center := center + forward * source_radius
+	var far_center := near_center + forward * maxf(float(effect.get("length", 0.0)), 0.0)
+	var near_left := near_center - side * half_width
+	var near_right := near_center + side * half_width
+	var far_left := far_center - side * half_width
+	var far_right := far_center + side * half_width
+	var remaining_ratio := clampf(float(effect.get("timer", 0.0)) / maxf(float(effect.get("duration", 0.0)), 0.001), 0.0, 1.0)
+	var line_color := Color(0.28, 0.68, 1.0, 0.9) if int(effect.get("team", 0)) == 0 else Color(1.0, 0.34, 0.24, 0.9)
+	var fill_color := Color(line_color.r, line_color.g, line_color.b, 0.10 + 0.06 * remaining_ratio)
+	draw_colored_polygon(PackedVector2Array([near_left, far_left, far_right, near_right]), fill_color)
+	draw_line(near_left, far_left, line_color, 3.0, true)
+	draw_line(far_left, far_right, line_color, 3.0, true)
+	draw_line(far_right, near_right, line_color, 3.0, true)
 
 ## 绘制当前卡牌的落点：格子边框用于确认“哪一格”，半透明占位用于确认卡牌大小。
 ## 这是纯表现层，不会修改部署坐标或战斗状态。
@@ -3168,6 +3482,19 @@ func _draw_needle_projectile(projectile: Dictionary) -> void:
 	var head := pos + direction * 8.0
 	var tail := pos - direction * 8.0
 	draw_line(tail, head, projectile.color, 2.0, true)
+
+func _draw_boomerang_projectile(projectile: Dictionary) -> void:
+	# 小纳尔回旋镖的代码占位：双臂 V 形随飞行方向旋转，权威碰撞仍是圆形弹体。
+	var pos := _projectile_visual_position(projectile)
+	var direction: Vector2 = projectile.get("direction", Vector2.UP)
+	if direction.length_squared() < 0.001:
+		direction = Vector2.UP
+	direction = direction.normalized()
+	var side := Vector2(-direction.y, direction.x)
+	var color: Color = projectile.color
+	var joint := pos + direction * 3.0
+	draw_line(joint, pos - direction * 7.0 + side * 8.0, color, 3.0, true)
+	draw_line(joint, pos - direction * 7.0 - side * 8.0, color, 3.0, true)
 
 func _draw_arrow_projectile(projectile: Dictionary) -> void:
 	var pos := _projectile_visual_position(projectile)

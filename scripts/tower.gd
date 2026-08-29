@@ -44,6 +44,7 @@ var _cooldown := 0.0
 var _lock_windup := 0.0
 var _target: Node2D = null
 var frozen_timer := 0.0
+var stun_timer := 0.0
 var _destroyed_visual_emitted := false
 var _hit_flash_event_cooldown := 0.0
 
@@ -80,6 +81,10 @@ func freeze(duration: float) -> void:
 	frozen_timer = maxf(frozen_timer, duration)
 	queue_redraw()
 
+func stun(duration: float) -> void:
+	stun_timer = maxf(stun_timer, duration)
+	queue_redraw()
+
 func _ready() -> void:
 	add_to_group("combatants")
 
@@ -89,8 +94,9 @@ func sim_tick(dt: float) -> void:
 		return
 	# 冰冻计时不因国王塔休眠而暂停。
 	_hit_flash_event_cooldown = maxf(0.0, _hit_flash_event_cooldown - dt)
-	if frozen_timer > 0.0:
+	if frozen_timer > 0.0 or stun_timer > 0.0:
 		frozen_timer = maxf(0.0, frozen_timer - dt)
+		stun_timer = maxf(0.0, stun_timer - dt)
 		queue_redraw()
 		return
 	if not can_attack:
@@ -209,6 +215,8 @@ func _draw() -> void:
 	# 冰冻状态：蓝色覆盖
 	if frozen_timer > 0.0:
 		draw_circle(Vector2.ZERO, visual_radius + 4.0, Color(0.40, 0.70, 1.00, 0.35))
+	if stun_timer > 0.0:
+		draw_arc(Vector2.ZERO, visual_radius + 5.0, 0.0, TAU, 28, Color(1.0, 0.78, 0.18, 0.95), 3.0, true)
 	# 国王塔顶部标记：激活金色，休眠灰色
 	if is_king and not has_model_art:
 		var crown_color := Color(0.95, 0.80, 0.25) if activated else Color(0.5, 0.5, 0.5)

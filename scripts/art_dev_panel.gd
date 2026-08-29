@@ -4,6 +4,7 @@ extends CanvasLayer
 
 signal item_selected(item_id: String)
 signal team_changed(team: int)
+signal active_skill_requested
 signal clear_requested
 signal exit_requested
 
@@ -12,6 +13,7 @@ var _team := 1
 var _item_buttons: Dictionary = {}
 var _team_button: Button
 var _selection_label: Label
+var _skill_button: Button
 
 func setup(cards: Dictionary) -> void:
 	layer = 30
@@ -28,7 +30,7 @@ func _build_ui(cards: Dictionary) -> void:
 	var panel := PanelContainer.new()
 	panel.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
 	panel.grow_vertical = Control.GROW_DIRECTION_BEGIN
-	panel.custom_minimum_size = Vector2(0.0, 120.0)
+	panel.custom_minimum_size = Vector2(0.0, 158.0)
 	panel.mouse_filter = Control.MOUSE_FILTER_STOP
 	root.add_child(panel)
 
@@ -60,6 +62,19 @@ func _build_ui(cards: Dictionary) -> void:
 	exit_button.text = "返回主菜单"
 	exit_button.pressed.connect(func(): exit_requested.emit())
 	tools.add_child(exit_button)
+
+	var actions := HBoxContainer.new()
+	actions.alignment = BoxContainer.ALIGNMENT_CENTER
+	actions.add_theme_constant_override("separation", 8)
+	rows.add_child(actions)
+	_skill_button = Button.new()
+	_skill_button.text = "释放主动技能"
+	_skill_button.custom_minimum_size = Vector2(150.0, 32.0)
+	_skill_button.pressed.connect(func(): active_skill_requested.emit())
+	actions.add_child(_skill_button)
+	var action_hint := Label.new()
+	action_hint.text = "作用于当前所选卡牌最后放置的单位"
+	actions.add_child(action_hint)
 
 	var scroll := ScrollContainer.new()
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
@@ -101,7 +116,13 @@ func _select_item(item_id: String) -> void:
 			_selection_label.text = "当前：%s｜体型：%s｜点击战场放置" % [stats.name, size_label]
 		else:
 			_selection_label.text = "当前：%s｜点击战场放置" % stats.name
+	_update_action_buttons()
 	item_selected.emit(item_id)
+
+func _update_action_buttons() -> void:
+	var has_active_skill := _selected_id != "training_dummy" and not CardDB.active_skills_for(_selected_id).is_empty()
+	if _skill_button != null:
+		_skill_button.disabled = not has_active_skill
 
 func _on_team_toggled(pressed: bool) -> void:
 	_team = 1 if pressed else 0

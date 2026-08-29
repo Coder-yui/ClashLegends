@@ -29,6 +29,12 @@ assets/
       gwen_view.tscn          # 格温包装场景，已校正脚底高度
       source/
         gwen.glb
+    gnar/
+      gnar_small_view.tscn    # 小纳尔：非 Fast Attack1/2、Revert 加法合成、Run_In/变形隐藏额外回旋镖
+      gnar_mega_view.tscn     # 大纳尔：Rage 加法合成、Run_In/变形隐藏石头、Spell2/BigDeath
+      source/
+        gnar_small.glb
+        gnar_mega.glb         # 用户提供的“迷失之牙 (1)”大纳尔模型
     sett/
       sett_view.tscn          # 瑟提包装场景，四段左右拳与右拳收势
       source/

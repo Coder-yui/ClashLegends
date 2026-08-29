@@ -31,9 +31,10 @@ func setup(field_size: Vector2, tile_size: float) -> void:
 	add_child(overlay)
 
 func attach_unit(unit: Unit, stats: Dictionary) -> bool:
-	var scene_path: String = stats.get("visual_scene_path", "")
+	var visual_stats := _unit_visual_stats_for_form(stats, unit.get_form_index())
+	var scene_path: String = visual_stats.get("visual_scene_path", "")
 	# 水晶兵线等阵营单位共用玩法数据，但 order/chaos 使用各自模型包装场景。
-	var scene_paths: Array = stats.get("visual_scene_paths", [])
+	var scene_paths: Array = visual_stats.get("visual_scene_paths", [])
 	if unit.team >= 0 and unit.team < scene_paths.size():
 		scene_path = String(scene_paths[unit.team])
 	if scene_path.is_empty():
@@ -44,14 +45,39 @@ func attach_unit(unit: Unit, stats: Dictionary) -> bool:
 		return false
 	var view := UnitModel3D.new()
 	_world_root.add_child(view)
-	var animations: Dictionary = stats.get("visual_animations", {})
-	var forward_yaw: float = stats.get("visual_forward_yaw", 0.0)
+	var animations: Dictionary = visual_stats.get("visual_animations", {})
+	var forward_yaw: float = visual_stats.get("visual_forward_yaw", 0.0)
 	if not view.setup(unit, packed, _camera, animations, forward_yaw):
 		view.queue_free()
 		return false
 	unit.has_model_art = true
 	unit.queue_redraw()
+	unit.form_changed.connect(_on_unit_form_changed.bind(unit, view, stats))
 	return true
+
+func _unit_visual_stats_for_form(base_stats: Dictionary, form_index: int) -> Dictionary:
+	if form_index == 1:
+		var transformed: Dictionary = base_stats.get("transformed_stats", {})
+		if not transformed.is_empty():
+			return transformed
+	return base_stats
+
+func _on_unit_form_changed(form_index: int, unit: Unit, view: UnitModel3D, base_stats: Dictionary) -> void:
+	if unit == null or not is_instance_valid(unit) or view == null or not is_instance_valid(view):
+		return
+	var visual_stats := _unit_visual_stats_for_form(base_stats, form_index)
+	var scene_path := String(visual_stats.get("visual_scene_path", ""))
+	if scene_path.is_empty():
+		return
+	var packed := load(scene_path) as PackedScene
+	if packed == null:
+		push_warning("无法加载单位形态 3D 表现：%s" % scene_path)
+		return
+	view.replace_visual(
+		packed,
+		visual_stats.get("visual_animations", {}),
+		float(visual_stats.get("visual_forward_yaw", 0.0))
+	)
 
 func attach_tower(tower: Tower, config: Dictionary) -> bool:
 	var scene_paths: Array = config.get("scene_paths", [])

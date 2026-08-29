@@ -11,6 +11,8 @@ class_name Unit
 
 signal died
 signal visual_hit
+## 权威形态改变后通知 3D 表现替换模型；表现层不能反向修改形态。
+signal form_changed(form_index: int)
 
 const SIM_DT := 1.0 / 20.0
 ## 权威移动把人物视为竖直圆柱；俯视碰撞只需计算其圆形底面，完全不读取 3D 网格。
@@ -91,8 +93,25 @@ var shroud_radius := 0.0
 var attack_pattern: Array = []
 ## 连招伤害倍率：按每次命中的顺序循环；空数组表示每拳使用 damage 原值。
 var attack_damage_multipliers: Array = []
+## 双形态单位配置。0 为初始形态，1 为 transformed_stats；命中次数可让两形态循环切换。
+var transform_after_hits := 0
+var revert_after_hits := 0
+var transform_hit_count := 0
+var form_index := 0
+var transformed_stats: Dictionary = {}
+var _base_form_stats: Dictionary = {}
+## 形态数值在命中瞬间切换；这段固定计时只锁自主攻击，仍允许按新形态寻路移动。
+var form_transition_timer := 0.0
+var transform_duration := 0.0
+var active_transform_duration := 0.0
+var revert_duration := 0.0
+var form_change_serial := 0
+## 主动技能施放锁：方向在发动帧固定，计时期间禁止自主移动与普攻。
+var active_skill_cast_timer := 0.0
+var active_skill_cast_facing := Vector2.ZERO
 
 var frozen_timer := 0.0
+var stun_timer := 0.0
 var slow_timer := 0.0
 var slow_multiplier := 1.0
 var shield_hp := 0.0
@@ -159,12 +178,22 @@ var net_attack_visual_serial := 0
 var net_shroud_active := false
 var net_shield_active := false
 var net_slow_active := false
+var net_stun_active := false
+var net_form_index := 0
+var net_form_change_serial := 0
+var net_visual_action_serial := 0
+var net_visual_action_name := &""
+var net_facing_direction := Vector2.ZERO
+## 主机快照同步当前普攻目标是否为建筑，供客户端选择对应动作；不参与伤害判定。
+var net_attacking_structure := false
 var net_has_continuous_target := false
 var net_continuous_target_pos := Vector2.ZERO
 ## 仅由表现代理切换：进入吐息循环后显示，进入动画和退出攻击时隐藏。
 var continuous_beam_visible := false
 var _presentation: UnitPresentation = null
 var _shroud_active := false
+var _visual_action_serial := 0
+var _visual_action_name := &""
 ## 血条绘制中心（兼容旧调试字段）；实际位置由屏幕空间头顶锚点计算。
 var _health_bar_y := -24.0
 var _health_bar_center := Vector2.ZERO
@@ -176,6 +205,7 @@ var _prev_pos := Vector2.ZERO
 var _vis_offset := Vector2.ZERO
 
 func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
+	_base_form_stats = stats.duplicate(true)
 	team = p_team
 	hp = stats.hp
 	max_hp = stats.hp
@@ -230,6 +260,16 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	shroud_radius = stats.get("shroud_radius", 0.0)
 	attack_pattern = stats.get("attack_pattern", [])
 	attack_damage_multipliers = stats.get("attack_damage_multipliers", [])
+	transform_after_hits = maxi(int(stats.get("transform_after_hits", 0)), 0)
+	revert_after_hits = maxi(int(stats.get("revert_after_hits", 0)), 0)
+	transform_duration = maxf(float(stats.get("transform_duration", 0.0)), 0.0)
+	active_transform_duration = maxf(float(stats.get("active_transform_duration", transform_duration)), 0.0)
+	revert_duration = maxf(float(stats.get("revert_duration", 0.0)), 0.0)
+	transformed_stats = stats.get("transformed_stats", {}).duplicate(true)
+	form_index = 0
+	net_form_index = 0
+	form_change_serial = 0
+	net_form_change_serial = 0
 	lifespan = stats.get("lifespan", 0.0)
 	spawn_interval = stats.get("spawn_interval", 0.0)
 	spawn_count = maxi(int(stats.get("spawn_count", 1)), 1)
@@ -310,14 +350,145 @@ func get_visual_screen_position() -> Vector2:
 func get_attack_visual_serial() -> int:
 	return _attack_visual_serial
 
-## 3D 表现使用完整方向；客户端首版仍按队伍推进方向显示，避免扩大快照协议。
+## 仅供表现层选择普通普攻或建筑普攻动作。目标类型由权威端判定并随快照同步。
+func is_attacking_structure_visual() -> bool:
+	if _in_client_mode():
+		return net_attacking_structure
+	return _attacking and _target != null and is_instance_valid(_target) and _is_struct(_target)
+
+func get_form_index() -> int:
+	return net_form_index if _in_client_mode() else form_index
+
+func get_visual_action_serial() -> int:
+	return _visual_action_serial
+
+func get_visual_action_name() -> StringName:
+	return _visual_action_name
+
+## 主机记录一次纯表现动作；序号和名称会随快照同步，动画无权决定效果时刻。
+func play_visual_action(action_name: StringName) -> void:
+	_visual_action_name = action_name
+	_visual_action_serial += 1
+
+func begin_active_skill_cast(duration: float, facing: Vector2) -> void:
+	active_skill_cast_timer = maxf(duration, 0.0)
+	if facing.length_squared() < 0.001:
+		facing = Vector2.UP if team == 0 else Vector2.DOWN
+	active_skill_cast_facing = facing.normalized()
+	_target = null
+	_attacking = false
+	_attack_cd = 0.0
+	_attack_windup = 0.0
+	_attack_recovery_timer = 0.0
+	_attack_load = 0.0
+	_attack_visual_pending = false
+	_move_intent = Vector2.ZERO
+	set_continuous_beam_visible(false)
+
+## 客户端只接受主机快照中的形态。战斗数值用于正确显示体型、血条和目标过滤，
+## 当前生命会在同一份快照中由主机值覆盖，不在这里发放变身生命增量。
+func sync_network_form(next_form_index: int, next_form_serial: int = 0) -> void:
+	next_form_index = clampi(next_form_index, 0, 1)
+	# 双向变形时用权威形态序号过滤晚到的旧快照，不能再按形态数字大小判断新旧。
+	if next_form_serial < net_form_change_serial:
+		return
+	net_form_change_serial = next_form_serial
+	net_form_index = next_form_index
+	if form_index == net_form_index:
+		return
+	_apply_form(net_form_index, false, false)
+
+func transform_to_mega(active_cast: bool = false) -> bool:
+	if form_index != 0 or transformed_stats.is_empty():
+		return false
+	_apply_form(1, true)
+	form_transition_timer = active_transform_duration if active_cast else transform_duration
+	play_visual_action(&"transform_active" if active_cast else &"transform")
+	return true
+
+func transform_to_small() -> bool:
+	if form_index != 1:
+		return false
+	_apply_form(0, false)
+	form_transition_timer = revert_duration
+	play_visual_action(&"revert")
+	return true
+
+func _apply_form(next_form_index: int, grant_max_hp_increase: bool, advance_form_serial: bool = true) -> void:
+	var next_stats: Dictionary = transformed_stats if next_form_index == 1 else _base_form_stats
+	if next_stats.is_empty():
+		return
+	var old_max_hp := max_hp
+	var old_body_radius := body_radius
+	max_hp = float(next_stats.get("hp", max_hp))
+	if grant_max_hp_increase:
+		hp = minf(hp + maxf(max_hp - old_max_hp, 0.0), max_hp)
+	else:
+		hp = minf(hp, max_hp)
+	damage = float(next_stats.get("damage", damage))
+	attack_range = float(next_stats.get("range", attack_range))
+	attack_interval = float(next_stats.get("interval", attack_interval))
+	first_hit_time = float(next_stats.get("first_hit", first_hit_time))
+	move_speed = float(next_stats.get("speed", move_speed))
+	body_radius = float(next_stats.get("radius", body_radius))
+	visual_radius = float(next_stats.get("visual_radius", body_radius))
+	mass = float(next_stats.get("mass", mass))
+	sight_range = float(next_stats.get("sight", sight_range))
+	is_air = bool(next_stats.get("is_air", is_air))
+	building_only = bool(next_stats.get("building_only", building_only))
+	can_attack_air = bool(next_stats.get("can_attack_air", can_attack_air))
+	projectile_speed = float(next_stats.get("projectile_speed", projectile_speed))
+	projectile_visual = StringName(next_stats.get("projectile_visual", projectile_visual))
+	projectile_visual_height = float(next_stats.get("projectile_visual_height", projectile_visual_height))
+	projectile_visual_forward_offset = float(next_stats.get("projectile_visual_forward_offset", projectile_visual_forward_offset))
+	splash_radius = float(next_stats.get("splash_radius", splash_radius))
+	attack_knockback = float(next_stats.get("knockback", attack_knockback))
+	form_index = next_form_index
+	net_form_index = next_form_index
+	if advance_form_serial:
+		form_change_serial += 1
+		net_form_change_serial = form_change_serial
+	else:
+		form_change_serial = net_form_change_serial
+	transform_hit_count = 0
+	# 攻击形态和射程已经改变，旧前摇/后摇不能带入新形态；在途远程弹体仍由主机独立推进。
+	_target = null
+	_attacking = false
+	_attack_cd = 0.0
+	_attack_windup = 0.0
+	_attack_recovery_timer = 0.0
+	_attack_load = 0.0
+	_attack_visual_pending = false
+	_path = PackedVector2Array()
+	_path_index = 0
+	cancel_charge()
+	_health_bar_y = -visual_radius - HEALTH_BAR_HEAD_GAP
+	_health_bar_center = Vector2(0.0, _health_bar_y - HEALTH_BAR_HEIGHT * 0.5)
+	form_changed.emit(form_index)
+	# 放大碰撞半径后立即做一次地形/建筑安全修正；单位间重叠仍交给本 tick 的统一推挤。
+	var scene := get_tree().current_scene
+	if body_radius > old_body_radius and not _in_client_mode() and scene != null and scene.has_method("ensure_unit_form_resize_safe"):
+		scene.ensure_unit_form_resize_safe(self)
+	queue_redraw()
+
+func is_form_transitioning() -> bool:
+	return form_transition_timer > 0.0
+
+func is_active_skill_casting() -> bool:
+	return active_skill_cast_timer > 0.0
+
+## 3D 表现使用完整方向；客户端读取主机快照，保证前方技能动作朝向与权威判定一致。
 func get_visual_facing_direction() -> Vector2:
 	if _in_client_mode():
 		if continuous_attack and net_visual_state == 3 and net_has_continuous_target:
 			var continuous_direction := global_position.direction_to(net_continuous_target_pos)
 			if continuous_direction.length_squared() > 0.001:
 				return continuous_direction
+		if net_facing_direction.length_squared() > 0.001:
+			return net_facing_direction.normalized()
 		return Vector2.UP if team == 0 else Vector2.DOWN
+	if active_skill_cast_timer > 0.0 and active_skill_cast_facing.length_squared() > 0.001:
+		return active_skill_cast_facing
 	if _attacking and _target != null and is_instance_valid(_target):
 		var attack_direction: Vector2 = global_position.direction_to(_target.global_position)
 		if attack_direction.length_squared() > 0.001:
@@ -358,12 +529,26 @@ func sim_tick(dt: float) -> void:
 	_prev_pos = position
 	_move_intent = Vector2.ZERO
 	_forced_movement = false
+	var active_skill_cast_ticked := false
+	# 技能动作被冰冻/眩晕时表现层也会暂停，因此施放锁和变形锁必须一起暂停。
+	if active_skill_cast_timer > 0.0:
+		_target = null
+		_attacking = false
+		_move_intent = Vector2.ZERO
+		if frozen_timer <= 0.0 and stun_timer <= 0.0:
+			active_skill_cast_ticked = true
+			active_skill_cast_timer = maxf(0.0, active_skill_cast_timer - dt)
+			if form_transition_timer > 0.0:
+				form_transition_timer = maxf(0.0, form_transition_timer - dt)
+			if active_skill_cast_timer <= 0.0:
+				active_skill_cast_facing = Vector2.ZERO
 	# 卡牌生成后进入部署时间：自身不索敌、不移动、不攻击，但实体已经存在，
 	# 会参与碰撞，也能被敌方索敌、命中、受伤和施加状态。
 	if _deploy_timer > 0.0:
 		_deploy_timer = maxf(0.0, _deploy_timer - dt)
 		# 冰冻时长从命中当帧开始消耗；不会在部署结束后再额外补一整段冻结。
 		frozen_timer = maxf(0.0, frozen_timer - dt)
+		stun_timer = maxf(0.0, stun_timer - dt)
 		# “不能移动”只锁自主行军；碰撞与击退等外力仍可改变位置，保证部署实体
 		# 被命中后的附带效果不会延迟到部署结束才突然补播。
 		if _knockback_timer > 0.0:
@@ -376,9 +561,10 @@ func sim_tick(dt: float) -> void:
 				_spawn_initial_summons()
 		queue_redraw()
 		return
-	if frozen_timer > 0.0:
+	if frozen_timer > 0.0 or stun_timer > 0.0:
 		frozen_timer = maxf(0.0, frozen_timer - dt)
-		if frozen_timer <= 0.0:
+		stun_timer = maxf(0.0, stun_timer - dt)
+		if frozen_timer <= 0.0 and stun_timer <= 0.0:
 			queue_redraw()
 		_charge_timer = 0.0
 		_charged = false
@@ -393,6 +579,17 @@ func sim_tick(dt: float) -> void:
 		_charge_timer = 0.0
 		_charged = false
 		return
+	if active_skill_cast_timer > 0.0:
+		_target = null
+		_attacking = false
+		_move_intent = Vector2.ZERO
+		return
+	if form_transition_timer > 0.0:
+		if not active_skill_cast_ticked:
+			form_transition_timer = maxf(0.0, form_transition_timer - dt)
+		if form_transition_timer > 0.0:
+			_tick_form_transition_movement(dt)
+			return
 	_attack_cd = maxf(0.0, _attack_cd - dt)
 	# 命中后必须完整收招。目标此时即使死亡、失效或离开射程，也要等后摇结束
 	# 才重新索敌/追击；冻结会在上方提前 return，因此同样会暂停后摇计时。
@@ -429,6 +626,21 @@ func sim_tick(dt: float) -> void:
 	_attack_windup = 0.0
 	_attack_recovery_timer = 0.0
 	_shroud_active = false
+	_chase(dt)
+
+## 变形期间用新形态的视野/射程立即决策：圈外继续移动，圈内预装填但不开始攻击。
+func _tick_form_transition_movement(dt: float) -> void:
+	_attacking = false
+	_attack_windup = 0.0
+	_attack_recovery_timer = 0.0
+	_attack_visual_pending = false
+	_update_target(false)
+	if _target != null and is_instance_valid(_target) and _target_gap(_target) <= attack_range:
+		_attack_load = maxf(attack_interval - first_hit_time, 0.0)
+		var face_delta: float = _target.global_position.x - global_position.x
+		if absf(face_delta) > 0.05:
+			_facing_x = signf(face_delta)
+		return
 	_chase(dt)
 
 func is_deployed() -> bool:
@@ -828,7 +1040,11 @@ func _attack(dt: float) -> void:
 		var hit_damage := damage * _attack_damage_multiplier(hit_index) * active_damage_multiplier * (charge_damage_multiplier if _charged else 1.0)
 		# 挥击序号与表现层攻击动画序号同步推进，供命中回血按三段循环取模。
 		_attack_swing_count += 1
+		var attack_form_index := form_index
 		_deal_attack_damage(hit_damage)
+		# 这一击若触发形态变化，新形态已清空旧攻击状态；不能再写回旧形态的后摇。
+		if form_index != attack_form_index:
+			return
 		# 从命中点锁定到下一次攻击动作应当开始的时刻，即当前动作的后摇段。
 		# 若目标仍在射程内，计时结束后无缝开始下一次前摇；若已离开，则此时才追击。
 		_attack_recovery_timer = maxf(next_attack_gap - first_hit_time, 0.0)
@@ -879,7 +1095,19 @@ func _deal_attack_damage(amount: float) -> void:
 
 ## 主机在伤害真正落到目标后调用。格温由此精确地在首次普攻命中而非出手时开启缠流；
 ## 赵信等配置了命中回血的单位也在这里结算，未真正造成伤害的挥击不触发回复。
-func on_attack_landed() -> void:
+func on_attack_landed(attack_form_index: int = -1) -> void:
+	var landed_form := form_index if attack_form_index < 0 else attack_form_index
+	# 在途小纳尔回旋镖不会在大形态下误算成大纳尔的 4 次近战命中。
+	if landed_form != form_index:
+		return
+	if transform_after_hits > 0 and form_index == 0:
+		transform_hit_count += 1
+		if transform_hit_count >= transform_after_hits:
+			transform_to_mega()
+	elif revert_after_hits > 0 and form_index == 1:
+		transform_hit_count += 1
+		if transform_hit_count >= revert_after_hits:
+			transform_to_small()
 	if shroud_radius > 0.0 and not _shroud_active:
 		_shroud_active = true
 		queue_redraw()
@@ -897,6 +1125,10 @@ func _try_heal_on_hit() -> void:
 
 func freeze(duration: float) -> void:
 	frozen_timer = maxf(frozen_timer, duration)
+	queue_redraw()
+
+func stun(duration: float) -> void:
+	stun_timer = maxf(stun_timer, duration)
 	queue_redraw()
 
 func apply_slow(duration: float, multiplier: float) -> void:
@@ -936,6 +1168,9 @@ func _tick_active_statuses(dt: float) -> void:
 
 func is_frozen() -> bool:
 	return frozen_timer > 0.0
+
+func is_stunned() -> bool:
+	return stun_timer > 0.0
 
 func take_damage(amount: float, from: Node2D = null, source_team: int = -1, source_position: Vector2 = Vector2(INF, INF)) -> bool:
 	if hp <= 0.0:
@@ -1134,6 +1369,9 @@ func _draw() -> void:
 		draw_rect(Rect2(bar_rect.position, Vector2(bar_w * ratio, HEALTH_BAR_HEIGHT)), get_health_bar_fill_color())
 	if frozen_timer > 0.0:
 		draw_circle(Vector2.ZERO, visual_radius + 4.0, Color(0.4, 0.8, 1.0, 0.3))
+	var stunned_visible := net_stun_active if _in_client_mode() else stun_timer > 0.0
+	if stunned_visible:
+		draw_arc(Vector2.ZERO, visual_radius + 5.0, 0.0, TAU, 24, Color(1.0, 0.78, 0.18, 0.95), 3.0, true)
 	var shield_visible := net_shield_active if _in_client_mode() else shield_hp > 0.0
 	if shield_visible:
 		draw_arc(Vector2.ZERO, visual_radius + 7.0, 0.0, TAU, 36, Color(0.35, 0.85, 1.0, 0.9), 3.0, true)
