@@ -16,6 +16,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_large_unit_front_row_exit()
 	_check_landing_position_correction()
 	_check_tower_ingress_guards()
+	_check_command_tick_estimation()
 	_check_card_play_delay()
 	_check_deploy_delay()
 	_check_pocket_deployment()
@@ -156,6 +157,64 @@ func _check_tower_ingress_guards() -> void:
 	_expect(outside_old_circle and _main.is_ground_position_walkable(corner, 14.0), "塔使用圆形碰撞，单位可沿塔角外侧通过")
 	imp.free()
 	tombstone._die()
+
+func _check_command_tick_estimation() -> void:
+	var old_mode: String = _main.mode
+	var old_authoritative_tick: int = _main._authoritative_server_tick
+	var old_estimated_tick: int = _main._estimated_server_tick
+	var old_estimated_fraction: float = _main._estimated_server_tick_fraction
+	var old_has_estimate: bool = _main._has_estimated_server_tick
+	var old_sim_tick: int = _main._sim_tick_id
+	_main.mode = "client"
+	_main._authoritative_server_tick = 100
+	_main._estimated_server_tick = 100
+	_main._estimated_server_tick_fraction = 0.0
+	_main._has_estimated_server_tick = true
+	var normal_future_tick: int = _main._authority_tick_for_new_command()
+	_main._advance_estimated_server_tick(0.23)
+	var estimated_after_gap: int = _main.get_estimated_server_tick()
+	var snapshot_system := NetworkSnapshotSystem.new(_main)
+	var newer_but_behind_estimate := [
+		NetworkSnapshotSystem.SNAPSHOT_PROTOCOL_VERSION, 102,
+		[], [], [], 0.0, 0.0, 180.0, false,
+	]
+	snapshot_system.apply(var_to_bytes(newer_but_behind_estimate).compress(FileAccess.COMPRESSION_DEFLATE))
+	var estimate_survives_stale_snapshot: bool = (
+		_main._authoritative_server_tick == 102
+		and _main.get_estimated_server_tick() == estimated_after_gap
+	)
+	var stale_packet := [
+		NetworkSnapshotSystem.SNAPSHOT_PROTOCOL_VERSION, 101,
+		[], [], [], 0.0, 0.0, 180.0, false,
+	]
+	snapshot_system.apply(var_to_bytes(stale_packet).compress(FileAccess.COMPRESSION_DEFLATE))
+	var stale_snapshot_rejected: bool = _main._authoritative_server_tick == 102
+	var current_client_tick: int = _main.get_estimated_server_tick()
+	var past_tick_keeps_buffer: int = _main._resolve_command_execute_tick(current_client_tick - 1)
+	var obviously_stale_rejected: int = _main._resolve_command_execute_tick(current_client_tick - (_main.COMMAND_MAX_PAST_TICKS + 1))
+	var far_future_limited: int = _main._resolve_command_execute_tick(current_client_tick + 999)
+	var client_default_tick: int = _main._authority_tick_for_new_command()
+	_main.mode = "host"
+	_main._sim_tick_id = current_client_tick
+	var host_default_tick: int = _main._authority_tick_for_new_command()
+	var host_client_share_timeline: bool = host_default_tick == client_default_tick
+	_main.mode = old_mode
+	_main._authoritative_server_tick = old_authoritative_tick
+	_main._estimated_server_tick = old_estimated_tick
+	_main._estimated_server_tick_fraction = old_estimated_fraction
+	_main._has_estimated_server_tick = old_has_estimate
+	_main._sim_tick_id = old_sim_tick
+	_expect(
+		normal_future_tick == 110
+		and estimated_after_gap == 104
+		and estimate_survives_stale_snapshot
+		and stale_snapshot_rejected
+		and past_tick_keeps_buffer == current_client_tick + _main.COMMAND_DELAY_TICKS
+		and obviously_stale_rejected == -1
+		and far_future_limited == current_client_tick + _main.COMMAND_MAX_FUTURE_TICKS
+		and host_client_share_timeline,
+		"客户端估计服务器 Tick、迟到/异常命令边界与 Host 共用 10 Tick 权威时间线",
+	)
 
 func _check_card_play_delay() -> void:
 	var target_stats: Dictionary = CardDB.get_card("garen").duplicate()

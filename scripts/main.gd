@@ -102,6 +102,8 @@ const CARD_DEPLOY_DELAY := SIM_DT * COMMAND_DELAY_TICKS
 const ACTIVE_SKILL_CAST_DELAY := SIM_DT * COMMAND_DELAY_TICKS
 ## 客户端不能把命令安排到任意远期；迟到命令会落到最近的下一权威 Tick。
 const COMMAND_MAX_FUTURE_TICKS := COMMAND_DELAY_TICKS * 2
+## 过去超过两个 Buffer 的目标 Tick 视为异常请求；合理迟到统一回退到 current + 10。
+const COMMAND_MAX_PAST_TICKS := COMMAND_DELAY_TICKS * 2
 ## 水晶兵线由主机固定 tick 驱动：开局 5 秒首波，之后每 30 秒一波，第二只延迟 0.5 秒。
 const FIRST_MINION_WAVE_TIME := 5.0
 const MINION_WAVE_INTERVAL := 30.0
@@ -204,6 +206,10 @@ var _auto_timer := 2.0
 var _sim_acc := 0.0
 ## 客户端由快照提供的最后已知主机 Tick，用于生成带缓冲的命令目标 Tick。
 var _authoritative_server_tick := 0
+## 客户端只估计服务器时钟，不推进任何战斗状态；快照到达时向前校正，间隔内按本地时间补 Tick。
+var _estimated_server_tick := 0
+var _estimated_server_tick_fraction := 0.0
+var _has_estimated_server_tick := false
 var _sim_tick_id := 0
 
 func _ready() -> void:
@@ -512,18 +518,49 @@ func _consume_authoritative_card(p_team: int, card_id: String) -> bool:
 		_hand.set_cycle_state(hand, queue)
 	return true
 
+## 客户端只用本地时间估计服务器 Tick；这里不调用 _sim_step，也不触碰任何战斗状态。
+func _advance_estimated_server_tick(delta: float) -> void:
+	if mode != "client" or not _has_estimated_server_tick or delta <= 0.0:
+		return
+	_estimated_server_tick_fraction += delta
+	while _estimated_server_tick_fraction >= SIM_DT:
+		_estimated_server_tick += 1
+		_estimated_server_tick_fraction -= SIM_DT
+
+## 接收快照中的权威时钟。乱序快照被拒绝；若本地估计已经领先，则不让旧快照把命令时钟拨回去。
+func _accept_authoritative_server_tick(server_tick: int) -> bool:
+	if mode != "client" or server_tick < 0 or server_tick < _authoritative_server_tick:
+		return false
+	_authoritative_server_tick = server_tick
+	if not _has_estimated_server_tick or server_tick >= _estimated_server_tick:
+		_estimated_server_tick = server_tick
+		_estimated_server_tick_fraction = 0.0
+	_has_estimated_server_tick = true
+	return true
+
+func get_estimated_server_tick() -> int:
+	return _estimated_server_tick if _has_estimated_server_tick else _authoritative_server_tick
+
 func _authority_tick_for_new_command() -> int:
 	return _current_authority_tick() + COMMAND_DELAY_TICKS
 
-func _resolve_command_execute_tick(requested_tick: int = -1) -> int:
+func _command_tick_is_obviously_stale(requested_tick: int) -> bool:
 	if requested_tick < 0:
-		return _authority_tick_for_new_command()
-	# 迟到命令不静默丢弃；下一 Tick 是确定性 fallback。未来命令限制在有限窗口内。
+		return false
+	return requested_tick < _current_authority_tick() - COMMAND_MAX_PAST_TICKS
+
+func _resolve_command_execute_tick(requested_tick: int = -1) -> int:
 	var current_tick := _current_authority_tick()
-	return clampi(requested_tick, current_tick + 1, current_tick + COMMAND_MAX_FUTURE_TICKS)
+	if requested_tick < 0:
+		return current_tick + COMMAND_DELAY_TICKS
+	if _command_tick_is_obviously_stale(requested_tick):
+		return -1
+	# 合理迟到或估计偏旧的请求不能缩短 Buffer；统一从当前权威 Tick 再保留 10 Tick。
+	var minimum_execute_tick := current_tick + COMMAND_DELAY_TICKS
+	return clampi(maxi(requested_tick, minimum_execute_tick), minimum_execute_tick, current_tick + COMMAND_MAX_FUTURE_TICKS)
 
 func _current_authority_tick() -> int:
-	return _authoritative_server_tick if mode == "client" else _sim_tick_id
+	return get_estimated_server_tick() if mode == "client" else _sim_tick_id
 
 func get_authoritative_server_tick() -> int:
 	return _authoritative_server_tick if mode == "client" else _sim_tick_id
@@ -739,11 +776,13 @@ func _use_art_dev_active_skill() -> void:
 func preview_active_skill(unit: Unit, skill: Dictionary) -> bool:
 	if unit == null or not is_instance_valid(unit):
 		return false
-	# ArtDev 的 immediate 只绕过玩家命令缓冲；有配置的动作仍先开始施法，再立即展示效果。
-	# dual_form 自己包含变形/前方技能的完整旧时间轴，不能在这里重复启动一次。
-	if String(skill.get("kind", "")) != "dual_form":
-		_begin_configured_active_skill_cast(unit, skill)
-	return _apply_active_skill_effect(unit, skill)
+	# ArtDev 只绕过玩家命令缓冲；普通主动仍必须经过 Cast Start → Impact → Recovery。
+	# dual_form 自己包含变形/前方技能的完整特殊时间轴，不能在这里重复启动一次。
+	if String(skill.get("kind", "")) == "dual_form":
+		return _apply_active_skill_effect(unit, skill)
+	_begin_configured_active_skill_cast(unit, skill)
+	_queue_active_skill_impact(unit, skill, maxf(float(skill.get("impact_delay", 0.0)), 0.0))
+	return true
 
 func _register_dynamic_building(unit: Unit) -> void:
 	if nav == null or not unit.is_building:
@@ -1043,6 +1082,8 @@ func _deploy_card(p_team: int, card_id: String, pos: Vector2, execute_tick: int 
 	# 玩家、AI 与联机请求统一进入 10 Tick 权威队列；召唤物走 _spawn_unit，不受此延迟影响。
 	pos = _snap_card_position(card_id, pos, p_team)
 	var resolved_execute_tick := _resolve_command_execute_tick(execute_tick)
+	if resolved_execute_tick < 0:
+		return -1
 	_pending_card_deployments.append({
 		"team": p_team,
 		"card_id": card_id,
@@ -1068,6 +1109,9 @@ func play_card(p_team: int, card_id: String, pos: Vector2, options: Dictionary =
 		if team_deck.size() != 8 or card_id not in team_deck:
 			return false
 	if not immediate and not _authoritative_card_in_hand(p_team, card_id):
+		return false
+	var requested_tick := int(options.get("execute_tick", -1))
+	if not immediate and _command_tick_is_obviously_stale(requested_tick):
 		return false
 	var elixir = options.get("elixir")
 	if options.has("elixir") and elixir == null:
@@ -1097,8 +1141,10 @@ func play_card(p_team: int, card_id: String, pos: Vector2, options: Dictionary =
 		if elixir != null:
 			elixir.elixir += float(stats.cost)
 		return false
-	var requested_tick := int(options.get("execute_tick", -1))
 	var execute_tick := _deploy_card(p_team, card_id, pos, requested_tick)
+	if execute_tick < 0:
+		# 仅作为未来扩展的兜底；常规异常 Tick 已在扣费/轮换前被拒绝。
+		return false
 	var requester_peer_id := int(options.get("requester_peer_id", 0))
 	if mode == "host" and requester_peer_id > 0:
 		_rpc_deploy_accepted.rpc_id(
@@ -1321,11 +1367,14 @@ func _queue_active_skill(ability_id: int, expected_team: int = -1, requester_pee
 		return false
 	var entry: Dictionary = _active_skills[ability_id]
 	var p_team := int(entry.team)
+	var execute_tick := _resolve_command_execute_tick(requested_execute_tick)
+	if execute_tick < 0:
+		return false
 	_pending_active_skill_activations.append({
 		"ability_id": ability_id,
 		"team": p_team,
 		"requester_peer_id": requester_peer_id,
-		"execute_tick": _resolve_command_execute_tick(requested_execute_tick),
+		"execute_tick": execute_tick,
 	})
 	return true
 
@@ -2032,6 +2081,7 @@ func _landing_overlap_direction(a: Unit, b: Unit) -> Vector2:
 func _process(delta: float) -> void:
 	# 客户端：只更新冰冻视觉与重绘，逻辑状态全靠主机快照
 	if mode == "client":
+		_advance_estimated_server_tick(delta)
 		_projectile_system.tick_client_interpolation(delta)
 		for fe in _freeze_effects:
 			fe.timer -= delta

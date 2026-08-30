@@ -19,7 +19,10 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_pending_active_skill_revalidation()
 	_check_pending_control_revalidation()
 	_check_cast_impact_recovery_timeline()
+	_check_artdev_active_skill_timeline()
+	_check_cast_control_pause_and_death_cancel()
 	_check_authoritative_hand_cycle()
+	_check_network_hand_confirmation()
 	_check_empowered_freeze_slow_zone()
 
 func _check_active_skill_loadout_rule() -> void:
@@ -275,6 +278,122 @@ func _check_cast_impact_recovery_timeline() -> void:
 	source.free()
 	_main._deck = old_deck
 
+func _check_artdev_active_skill_timeline() -> void:
+	var old_deck: Array = _main._deck.duplicate()
+	_main._deck = ["garen", "xin", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
+	var source: Unit = _main._spawn_unit(0, "garen", Vector2(260.0, 680.0), 0.0, 0)
+	var ability_id: int = source.active_ability_id
+	var skill: Dictionary = {
+		"name": "ArtDev 时间轴",
+		"kind": "buff",
+		"duration": 2.0,
+		"cast_duration": 1.0,
+		"impact_delay": 0.4,
+		"shield": 100.0,
+		"shield_duration": 2.0,
+		"cast_locks": ["movement", "attack", "facing"],
+	}
+	var pending_before: int = _main._pending_active_skill_impacts.size()
+	var previewed: bool = _main.preview_active_skill(source, skill)
+	var command_buffer_skipped: bool = (
+		previewed
+		and _main._pending_active_skill_activations.is_empty()
+		and _main._pending_active_skill_impacts.size() == pending_before + 1
+		and source.active_skill_cast_timer > 0.0
+		and is_zero_approx(source.shield_hp)
+	)
+	_run_main_ticks(7)
+	var no_early_impact: bool = is_zero_approx(source.shield_hp)
+	_run_main_ticks(1)
+	var impact_after_delay: bool = source.shield_hp > 0.0
+	_expect(command_buffer_skipped and no_early_impact and impact_after_delay, "ArtDev 只跳过 Command Buffer，普通主动仍按 Cast Start→impact_delay→Gameplay Impact 结算")
+	_main._on_active_skill_unit_died(ability_id)
+	source.free()
+	_main._deck = old_deck
+
+func _check_cast_control_pause_and_death_cancel() -> void:
+	var old_deck: Array = _main._deck.duplicate()
+	_main._deck = ["garen", "xin", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
+	var freeze_source: Unit = _main._spawn_unit(0, "garen", Vector2(260.0, 680.0), 0.0, 0)
+	var freeze_skill: Dictionary = {
+		"name": "冻结施法",
+		"kind": "buff",
+		"duration": 2.0,
+		"cast_duration": 1.0,
+		"impact_delay": 0.6,
+		"shield": 100.0,
+		"shield_duration": 2.0,
+		"cast_locks": ["movement", "attack", "facing"],
+	}
+	var freeze_entry: Dictionary = _main._active_skills[freeze_source.active_ability_id]
+	freeze_entry["skill"] = freeze_skill
+	_main._active_skills[freeze_source.active_ability_id] = freeze_entry
+	var freeze_queued: bool = _main._queue_active_skill(freeze_source.active_ability_id, 0, 0)
+	_run_main_ticks(_main.COMMAND_DELAY_TICKS)
+	_run_main_ticks(4)
+	var freeze_cast_before: float = freeze_source.active_skill_cast_timer
+	var freeze_impact_before: float = float(_main._pending_active_skill_impacts[0].time_left)
+	freeze_source.freeze(0.3)
+	_run_main_ticks(6)
+	var freeze_paused: bool = (
+		is_zero_approx(freeze_source.active_skill_cast_timer - freeze_cast_before)
+		and is_zero_approx(float(_main._pending_active_skill_impacts[0].time_left) - freeze_impact_before)
+		and is_zero_approx(freeze_source.shield_hp)
+	)
+	_run_main_ticks(7)
+	var freeze_still_waiting: bool = is_zero_approx(freeze_source.shield_hp)
+	_run_main_ticks(2)
+	var freeze_resumed: bool = freeze_source.shield_hp > 0.0
+
+	var stun_source: Unit = _main._spawn_unit(0, "xin", Vector2(260.0, 900.0), 0.0, 1)
+	var stun_skill: Dictionary = freeze_skill.duplicate(true)
+	stun_skill["name"] = "眩晕施法"
+	var stun_entry: Dictionary = _main._active_skills[stun_source.active_ability_id]
+	stun_entry["skill"] = stun_skill
+	_main._active_skills[stun_source.active_ability_id] = stun_entry
+	var stun_queued: bool = _main._queue_active_skill(stun_source.active_ability_id, 0, 0)
+	_run_main_ticks(_main.COMMAND_DELAY_TICKS)
+	_run_main_ticks(4)
+	var stun_cast_before: float = stun_source.active_skill_cast_timer
+	var stun_impact_before: float = float(_main._pending_active_skill_impacts[0].time_left)
+	stun_source.stun(0.3)
+	_run_main_ticks(6)
+	var stun_paused: bool = (
+		is_zero_approx(stun_source.active_skill_cast_timer - stun_cast_before)
+		and is_zero_approx(float(_main._pending_active_skill_impacts[0].time_left) - stun_impact_before)
+		and is_zero_approx(stun_source.shield_hp)
+	)
+	_run_main_ticks(7)
+	var stun_still_waiting: bool = is_zero_approx(stun_source.shield_hp)
+	_run_main_ticks(2)
+	var stun_resumed: bool = stun_source.shield_hp > 0.0
+
+	var death_source: Unit = _main._spawn_unit(0, "garen", Vector2(520.0, 680.0), 0.0, 0)
+	var death_ability_id: int = death_source.active_ability_id
+	var death_entry: Dictionary = _main._active_skills[death_ability_id]
+	death_entry["skill"] = freeze_skill
+	_main._active_skills[death_ability_id] = death_entry
+	var death_queued: bool = _main._queue_active_skill(death_ability_id, 0, 0)
+	_run_main_ticks(_main.COMMAND_DELAY_TICKS)
+	_run_main_ticks(3)
+	death_source.take_damage(death_source.hp + 1.0)
+	_run_main_ticks(12)
+	var death_cancelled: bool = is_zero_approx(death_source.shield_hp) and _main._pending_active_skill_impacts.is_empty()
+	_expect(
+		freeze_queued and freeze_paused and freeze_still_waiting and freeze_resumed
+		and stun_queued and stun_paused and stun_still_waiting and stun_resumed
+		and death_queued and death_cancelled,
+		"Cast 中途 Freeze/Stun 暂停 cast/impact 并从剩余时间继续，施法者死亡取消未发生的 Impact",
+	)
+	_main._on_active_skill_unit_died(freeze_source.active_ability_id)
+	_main._on_active_skill_unit_died(stun_source.active_ability_id)
+	_main._on_active_skill_unit_died(death_ability_id)
+	freeze_source.free()
+	stun_source.free()
+	death_source.free()
+	_main._pending_active_skill_impacts.clear()
+	_main._deck = old_deck
+
 func _check_authoritative_hand_cycle() -> void:
 	var old_deck: Array = _main._deck.duplicate()
 	_main._deck = ["garen", "xin", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
@@ -307,6 +426,98 @@ func _check_authoritative_hand_cycle() -> void:
 	_main._pending_card_deployments.clear()
 	_main._elixir.elixir = ElixirManager.MAX_ELIXIR
 	_main._deck = old_deck
+	_main._initialize_authoritative_card_cycle(0, old_deck)
+
+func _check_network_hand_confirmation() -> void:
+	var old_mode: String = _main.mode
+	var old_deck: Array = _main._deck.duplicate()
+	var old_remote_deck: Array = _main._remote_deck.duplicate()
+	var old_cycles: Dictionary = _main._authoritative_card_cycles.duplicate(true)
+	var old_elixir_p1: ElixirManager = _main._elixir_p1
+	var old_elixir_value: float = _main._elixir.elixir
+	var deck: Array = ["garen", "xin", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
+	var network_elixir: ElixirManager = ElixirManager.new()
+	_main.add_child(network_elixir)
+	_main._elixir_p1 = network_elixir
+	_main._remote_deck = deck.duplicate()
+	_main.mode = "host"
+	_main._initialize_authoritative_card_cycle(1, deck)
+	network_elixir.elixir = ElixirManager.MAX_ELIXIR
+	var host_initial_hand: Array = _main.get_authoritative_hand(1)
+	var host_initial_queue: Array = _main.get_authoritative_queue(1)
+	_main._rpc_deploy_request("garen", Vector2(300.0, 580.0))
+	var host_accepted_hand: Array = _main.get_authoritative_hand(1)
+	var host_accepted_queue: Array = _main.get_authoritative_queue(1)
+	var host_elixir_after_accept: float = network_elixir.elixir
+	var host_pending_after_accept: int = _main._pending_card_deployments.size()
+	var host_hand_before_reject: Array = host_accepted_hand.duplicate()
+	var host_queue_before_reject: Array = host_accepted_queue.duplicate()
+	var host_elixir_before_reject: float = network_elixir.elixir
+	_main._rpc_deploy_request("garen", Vector2(300.0, 580.0))
+	var host_reject_kept_state: bool = (
+		_main.get_authoritative_hand(1) == host_hand_before_reject
+		and _main.get_authoritative_queue(1) == host_queue_before_reject
+		and is_equal_approx(network_elixir.elixir, host_elixir_before_reject)
+		and _main._pending_card_deployments.size() == host_pending_after_accept
+	)
+	var host_accept_once: bool = (
+		host_initial_hand == ["garen", "xin", "freeze", "ashe"]
+		and host_initial_queue == ["teemo", "masteryi", "tombstone", "aurelionsol"]
+		and host_accepted_hand == ["teemo", "xin", "freeze", "ashe"]
+		and host_accepted_queue == ["masteryi", "tombstone", "aurelionsol", "garen"]
+		and is_equal_approx(host_elixir_after_accept, 5.0)
+		and host_pending_after_accept == 1
+	)
+
+	_main.mode = "client"
+	_main._deck = deck.duplicate()
+	_main._initialize_authoritative_card_cycle(1, deck)
+	_main._elixir.elixir = ElixirManager.MAX_ELIXIR
+	_main._hand.set_card_pending("garen", false)
+	_main._hand.set_card_pending("xin", false)
+	var client_initial_hand: Array = _main.get_authoritative_hand(1)
+	var client_initial_queue: Array = _main.get_authoritative_queue(1)
+	var client_elixir_before_request: float = _main._elixir.elixir
+	# 单元回归不建立第二个 ENet peer；这里模拟客户端请求已发出后的 pending UI 状态。
+	_main._hand.set_card_pending("garen", true)
+	var client_pending_request: bool = (
+		_main._hand.is_card_pending("garen")
+		and _main.get_authoritative_hand(1) == client_initial_hand
+		and _main.get_authoritative_queue(1) == client_initial_queue
+		and is_equal_approx(_main._elixir.elixir, client_elixir_before_request)
+	)
+	_main._rpc_deploy_accepted("garen", _main.get_estimated_server_tick() + _main.COMMAND_DELAY_TICKS, host_accepted_hand, host_accepted_queue)
+	var client_after_accept_hand: Array = _main.get_authoritative_hand(1)
+	var client_after_accept_queue: Array = _main.get_authoritative_queue(1)
+	var client_accept_synced: bool = (
+		client_initial_hand == host_initial_hand
+		and client_initial_queue == host_initial_queue
+		and client_after_accept_hand == host_accepted_hand
+		and client_after_accept_queue == host_accepted_queue
+		and not _main._hand.is_card_pending("garen")
+	)
+	var client_hand_before_reject: Array = client_after_accept_hand.duplicate()
+	var client_queue_before_reject: Array = client_after_accept_queue.duplicate()
+	var client_elixir_before_reject: float = _main._elixir.elixir
+	_main._hand.set_card_pending("xin", true)
+	_main._rpc_deploy_rejected("xin")
+	var client_reject_kept_state: bool = (
+		_main.get_authoritative_hand(1) == client_hand_before_reject
+		and _main.get_authoritative_queue(1) == client_queue_before_reject
+		and is_equal_approx(_main._elixir.elixir, client_elixir_before_reject)
+		and not _main._hand.is_card_pending("xin")
+	)
+	_expect(host_accept_once and host_reject_kept_state and client_pending_request and client_accept_synced and client_reject_kept_state, "联机出牌 accepted 同步手牌/队列，rejected 不扣费不轮换且仅恢复 pending UI")
+
+	_main._pending_card_deployments.clear()
+	_main.mode = old_mode
+	_main._deck = old_deck
+	_main._remote_deck = old_remote_deck
+	_main._authoritative_card_cycles = old_cycles
+	_main._elixir_p1 = old_elixir_p1
+	_main._elixir.elixir = old_elixir_value
+	if is_instance_valid(network_elixir):
+		network_elixir.free()
 	_main._initialize_authoritative_card_cycle(0, old_deck)
 
 func _check_empowered_freeze_slow_zone() -> void:

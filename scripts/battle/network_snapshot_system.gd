@@ -64,11 +64,10 @@ func apply(snapshot_bytes: PackedByteArray) -> void:
 		payload_start = S_PAYLOAD_START
 		server_tick = int(decoded[S_SERVER_TICK])
 		has_server_tick = true
-		# 可靠 RPC 仍可能在不同发送周期交错到达；旧快照不能回拨客户端命令时钟。
-		if server_tick < _controller._authoritative_server_tick:
-			return
 	if has_server_tick:
-		_controller._authoritative_server_tick = server_tick
+		# 可靠 RPC 仍可能在不同发送周期交错到达；旧快照不能回拨客户端命令时钟。
+		if not _controller._accept_authoritative_server_tick(server_tick):
+			return
 	var units_data: Array = decoded[payload_start + S_UNITS]
 	var projectiles_data: Array = decoded[payload_start + S_PROJECTILES]
 	var towers_data: Array = decoded[payload_start + S_TOWERS]
