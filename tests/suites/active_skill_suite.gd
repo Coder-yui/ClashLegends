@@ -12,6 +12,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_main = main
 	_check_active_skill_loadout_rule()
 	_check_active_skill_activation()
+	_check_pending_active_skill_revalidation()
 	_check_empowered_freeze_slow_zone()
 
 func _check_active_skill_loadout_rule() -> void:
@@ -98,6 +99,89 @@ func _check_active_skill_activation() -> void:
 	enemy.free()
 	_main._deck = old_deck
 
+func _check_pending_active_skill_revalidation() -> void:
+	var old_deck: Array = _main._deck.duplicate()
+	_main._deck = ["garen", "xin", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
+	var enemy_stats: Dictionary = CardDB.imp_stats().duplicate(true)
+	enemy_stats["deploy_time"] = 0.0
+	enemy_stats["hp"] = 1000.0
+	var enemy := Unit.new()
+	enemy.position = Vector2(330.0, 800.0)
+	enemy.setup(1, enemy_stats, enemy_stats.name)
+	_main.add_child(enemy)
+
+	# 点击时合法，但单位在 0.5 秒等待窗内死亡：资格和 pending 一起作废，绝不落地效果。
+	var dead_source: Unit = _main._spawn_unit(0, "garen", Vector2(300.0, 800.0), 0.0, 0)
+	var dead_ability_id := dead_source.active_ability_id
+	var hp_before_death_reject := enemy.hp
+	var queued_before_death: bool = _main._queue_active_skill(dead_ability_id, 0, 0)
+	_main._active_skill_bar.set_pending(dead_ability_id, true)
+	dead_source.take_damage(dead_source.hp + 1.0)
+	_main._tick_pending_active_skills(_main.ACTIVE_SKILL_CAST_DELAY)
+	_expect(
+		queued_before_death
+		and is_equal_approx(enemy.hp, hp_before_death_reject)
+		and not _main._active_skills.has(dead_ability_id)
+		and _main._pending_active_skill_activations.is_empty()
+		and not _main._active_skill_bar.is_slot_visible(0),
+		"主动 pending 期间单位死亡会取消释放，不产生效果并清理对应按钮",
+	)
+
+	# 点击后由其他权威机制开始变形；到期检查应拒绝，而不是把主动解释成大形态技能。
+	_main._deck[0] = "gnar"
+	var gnar: Unit = _main._spawn_unit(0, "gnar", Vector2(360.0, 800.0), 0.0, 0)
+	var gnar_ability_id := gnar.active_ability_id
+	var queued_before_transform: bool = _main._queue_active_skill(gnar_ability_id, 0, 0)
+	_main._active_skill_bar.set_pending(gnar_ability_id, true)
+	var pending_impacts_before: int = _main._pending_frontal_stun_skills.size()
+	var transformed_after_click := gnar.transform_to_mega()
+	var transform_action_serial := gnar.get_visual_action_serial()
+	_main._tick_pending_active_skills(_main.ACTIVE_SKILL_CAST_DELAY)
+	_expect(
+		queued_before_transform
+		and transformed_after_click
+		and _main._active_skills.has(gnar_ability_id)
+		and _main._pending_frontal_stun_skills.size() == pending_impacts_before
+		and gnar.get_visual_action_serial() == transform_action_serial
+		and not _main._active_skill_bar._buttons[0].disabled,
+		"主动 pending 到期时若已进入 transform，会拒绝效果/技能动作并恢复按钮",
+	)
+	_main._on_active_skill_unit_died(gnar_ability_id)
+	gnar.free()
+
+	# 同理，等待窗内开始另一段 active cast 时必须拒绝；cast 结束后仍可重新请求并正常释放。
+	_main._deck[0] = "garen"
+	var casting_source: Unit = _main._spawn_unit(0, "garen", Vector2(300.0, 800.0), 0.0, 0)
+	var casting_ability_id := casting_source.active_ability_id
+	var queued_before_cast: bool = _main._queue_active_skill(casting_ability_id, 0, 0)
+	_main._active_skill_bar.set_pending(casting_ability_id, true)
+	casting_source.begin_active_skill_cast(1.0, Vector2.UP)
+	var cast_action_serial := casting_source.get_visual_action_serial()
+	var hp_before_cast_reject := enemy.hp
+	_main._tick_pending_active_skills(_main.ACTIVE_SKILL_CAST_DELAY)
+	var rejected_during_cast: bool = (
+		queued_before_cast
+		and is_equal_approx(enemy.hp, hp_before_cast_reject)
+		and is_zero_approx(casting_source.shield_hp)
+		and casting_source.get_visual_action_serial() == cast_action_serial
+		and _main._active_skills.has(casting_ability_id)
+		and not _main._active_skill_bar._buttons[0].disabled
+	)
+	casting_source.active_skill_cast_timer = 0.0
+	casting_source.active_skill_cast_locks.clear()
+	var queued_after_cast: bool = _main._queue_active_skill(casting_ability_id, 0, 0)
+	_main._active_skill_bar.set_pending(casting_ability_id, true)
+	_main._tick_pending_active_skills(_main.ACTIVE_SKILL_CAST_DELAY)
+	_expect(rejected_during_cast, "主动 pending 到期时若已进入另一段 active cast，会拒绝效果/技能动作并恢复按钮")
+	_expect(
+		queued_after_cast and enemy.hp < hp_before_cast_reject and casting_source.shield_hp > 0.0
+		and not _main._active_skills.has(casting_ability_id),
+		"pending 期间权威状态始终合法时，主动技能仍在 0.5 秒后正常释放",
+	)
+	casting_source.free()
+	enemy.free()
+	_main._deck = old_deck
+
 func _check_empowered_freeze_slow_zone() -> void:
 	var stats: Dictionary = CardDB.imp_stats().duplicate()
 	stats["deploy_time"] = 0.0
@@ -118,4 +202,3 @@ func _check_empowered_freeze_slow_zone() -> void:
 	_main._freeze_effects.clear()
 	_main._slow_effects.clear()
 	enemy.free()
-

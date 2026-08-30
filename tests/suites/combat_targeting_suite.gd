@@ -16,6 +16,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_crystal_target_and_nearest_attack_target()
 	_check_per_card_sight()
 	_check_attack_target_lock()
+	_check_attack_direct_retarget()
 	_check_attack_hit_recovery_commitment()
 	_check_basic_attack_has_no_knockback()
 	_check_freed_target_cleanup()
@@ -167,6 +168,142 @@ func _check_attack_target_lock() -> void:
 	attacker.free()
 	locked_target.free()
 	closer_target.free()
+
+func _check_attack_direct_retarget() -> void:
+	var attacker_stats: Dictionary = CardDB.get_card("xin").duplicate(true)
+	var target_stats: Dictionary = CardDB.imp_stats().duplicate(true)
+	attacker_stats["deploy_time"] = 0.0
+	target_stats["deploy_time"] = 0.0
+	target_stats["hp"] = 1.0
+
+	# 场景 A：连续击杀时，只要圈内还有合法目标，整条攻击链都不产生移动 tick。
+	var chain_attacker := Unit.new()
+	chain_attacker.position = Vector2(360.0, 760.0)
+	chain_attacker.setup(0, attacker_stats, attacker_stats.name)
+	_main.add_child(chain_attacker)
+	var chain_targets: Array[Unit] = []
+	for offset in [Vector2(0.0, -30.0), Vector2(30.0, 0.0), Vector2(0.0, 30.0)]:
+		var target := Unit.new()
+		target.position = chain_attacker.position + offset
+		target.setup(1, target_stats, target_stats.name)
+		_main.add_child(target)
+		chain_targets.append(target)
+	chain_attacker._target = chain_targets[0]
+	chain_attacker._attacking = true
+	chain_attacker._attack_cd = 0.0
+	chain_attacker._attack_visual_pending = false
+	var chain_kept := true
+	for _tick in 160:
+		chain_attacker.sim_tick(_main.SIM_DT)
+		var live_targets_in_range := 0
+		for target in chain_targets:
+			if is_instance_valid(target) and target.hp > 0.0 and chain_attacker._target_gap(target) <= chain_attacker.attack_range:
+				live_targets_in_range += 1
+		if live_targets_in_range > 0:
+			chain_kept = chain_kept and chain_attacker._attacking and chain_attacker._move_intent.is_zero_approx()
+		else:
+			break
+	var all_chain_targets_defeated := true
+	for target in chain_targets:
+		all_chain_targets_defeated = all_chain_targets_defeated and target.hp <= 0.0
+	_expect(
+		all_chain_targets_defeated and chain_kept,
+		"场景 A：近战单位连续击杀圈内目标时始终保持 Attack 链，不插入 chase/move tick",
+	)
+	chain_attacker.free()
+
+	# 场景 B：旧目标主动离圈时，在合法候选中直接选择攻击范围内最近者，并保留攻击进度。
+	var leave_attacker := Unit.new()
+	var leaving_target := Unit.new()
+	var nearer_target := Unit.new()
+	var farther_target := Unit.new()
+	leave_attacker.position = Vector2(360.0, 760.0)
+	leaving_target.position = Vector2(360.0, 720.0)
+	nearer_target.position = Vector2(390.0, 760.0)
+	farther_target.position = Vector2(415.0, 760.0)
+	leave_attacker.setup(0, attacker_stats, attacker_stats.name)
+	leaving_target.setup(1, target_stats, target_stats.name)
+	nearer_target.setup(1, target_stats, target_stats.name)
+	farther_target.setup(1, target_stats, target_stats.name)
+	for unit in [leave_attacker, leaving_target, nearer_target, farther_target]:
+		_main.add_child(unit)
+	leave_attacker._target = leaving_target
+	leave_attacker._attacking = true
+	leave_attacker._attack_windup = 0.18
+	leave_attacker._attack_cd = 0.41
+	leave_attacker._attack_load = 0.12
+	leave_attacker._move_intent = Vector2.RIGHT * leave_attacker.move_speed
+	leaving_target.position = Vector2(360.0, 480.0)
+	leave_attacker._update_target()
+	_expect(
+		leave_attacker._target == nearer_target
+		and leave_attacker._attacking
+		and leave_attacker._move_intent.is_zero_approx()
+		and is_equal_approx(leave_attacker._attack_windup, 0.18)
+		and is_equal_approx(leave_attacker._attack_cd, 0.41)
+		and is_equal_approx(leave_attacker._attack_load, 0.12),
+		"场景 B：当前目标离圈时直接换打圈内最近合法目标，不追旧目标且不清空攻击进度",
+	)
+	for unit in [leave_attacker, leaving_target, nearer_target, farther_target]:
+		unit.free()
+
+	# 场景 C：圈内没有替代目标时，才真正退出 Attack 并追击仍在视野内的旧目标。
+	var chase_attacker := Unit.new()
+	var chase_target := Unit.new()
+	chase_attacker.position = Vector2(360.0, 760.0)
+	chase_attacker.setup(0, attacker_stats, attacker_stats.name)
+	chase_target.setup(1, target_stats, target_stats.name)
+	var chase_distance := chase_attacker.body_radius + chase_target.body_radius + chase_attacker.attack_range + 20.0
+	chase_target.position = chase_attacker.position + Vector2.RIGHT * chase_distance
+	_main.add_child(chase_attacker)
+	_main.add_child(chase_target)
+	chase_attacker._target = chase_target
+	chase_attacker._attacking = true
+	chase_attacker._attack_windup = 0.2
+	chase_attacker.sim_tick(_main.SIM_DT)
+	_expect(
+		chase_attacker._target == chase_target
+		and not chase_attacker._attacking
+		and chase_attacker._move_intent.length_squared() > 0.01,
+		"场景 C：当前目标失效且圈内无其他目标时，才退出 Attack 并进入 chase",
+	)
+	chase_attacker.free()
+	chase_target.free()
+
+	# 场景 D：模拟一次命中后的剩余 cooldown；换目标后下一击应按剩余时间发生，不能重等完整周期。
+	var cadence_attacker := Unit.new()
+	var defeated_target := Unit.new()
+	var cadence_target := Unit.new()
+	cadence_attacker.position = Vector2(360.0, 760.0)
+	defeated_target.position = Vector2(360.0, 730.0)
+	cadence_target.position = Vector2(390.0, 760.0)
+	cadence_attacker.setup(0, attacker_stats, attacker_stats.name)
+	defeated_target.setup(1, target_stats, target_stats.name)
+	cadence_target.setup(1, target_stats, target_stats.name)
+	for unit in [cadence_attacker, defeated_target, cadence_target]:
+		_main.add_child(unit)
+	defeated_target.hp = 0.0
+	cadence_attacker._target = defeated_target
+	cadence_attacker._attacking = true
+	cadence_attacker._attack_cd = cadence_attacker.first_hit_time
+	cadence_attacker._attack_visual_pending = true
+	var cadence_hp_before := cadence_target.hp
+	var elapsed := 0.0
+	var cadence_kept := true
+	while is_equal_approx(cadence_target.hp, cadence_hp_before) and elapsed <= cadence_attacker.attack_interval:
+		cadence_attacker.sim_tick(_main.SIM_DT)
+		elapsed += _main.SIM_DT
+		cadence_kept = cadence_kept and cadence_attacker._attacking and cadence_attacker._move_intent.is_zero_approx()
+	_expect(
+		cadence_attacker._target == cadence_target
+		and cadence_target.hp < cadence_hp_before
+		and cadence_kept
+		and elapsed <= cadence_attacker.first_hit_time + _main.SIM_DT
+		and elapsed < cadence_attacker.attack_interval,
+		"场景 D：retarget 后沿用剩余 cooldown，在原 cadence 内命中而非重等完整 attack_interval",
+	)
+	for unit in [cadence_attacker, defeated_target, cadence_target]:
+		unit.free()
 
 func _check_attack_hit_recovery_commitment() -> void:
 	var stats: Dictionary = CardDB.get_card("xin").duplicate()

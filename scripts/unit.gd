@@ -826,12 +826,23 @@ func _spawn_imp_batch() -> void:
 		_spawn_counter += 1
 		battle_context.spawn_summoned(team, "imp", spawn_pos)
 
-## 目标管理：当前目标失效/超距则丢弃，重新索敌；目标切换时强制重寻路
+## 目标管理：攻击中的目标失效/超距时优先原地换打射程内最近合法目标；
+## 只有没有替代目标时才退出 Attack 并按视野规则重新索敌/追击。
 func _update_target(allow_out_of_range_hit: bool = false) -> void:
 	# 一旦挥出攻击/进入攻击前摇，就锁定当前目标。只有目标死亡、失效或真正离开
 	# 攻击范围才解除锁定；不会因为旁边出现更近单位而中途转火。
 	if _attacking:
 		if _target_is_attackable(_target) and (_target_gap(_target) <= attack_range or allow_out_of_range_hit):
+			return
+		var in_range_retarget := _find_nearest_attackable_in_range()
+		if in_range_retarget != null:
+			# 这是 Attack -> Attack，不是一次强制打断。保留当前 windup/cooldown/recovery/load，
+			# 让下一击沿用原有 cadence；击退、变形、技能锁等明确打断仍走各自的重置入口。
+			_target = in_range_retarget
+			_move_intent = Vector2.ZERO
+			_path = PackedVector2Array()
+			_path_index = 0
+			_repath_cd = 0.0
 			return
 		_target = null
 		_attacking = false
@@ -914,6 +925,8 @@ func _update_target(allow_out_of_range_hit: bool = false) -> void:
 func _target_is_attackable(target) -> bool:
 	if target == null or not is_instance_valid(target) or target.hp <= 0.0:
 		return false
+	if target == self or target.team == team:
+		return false
 	if building_only and not _is_struct(target):
 		return false
 	if not can_attack_air and target is Unit and (target as Unit).is_air:
@@ -922,6 +935,21 @@ func _target_is_attackable(target) -> bool:
 	if target is Unit and (target as Unit).is_hidden_from(self):
 		return false
 	return true
+
+## 攻击态无缝换目标专用：只限定距离，所有 team/hp/攻城/空中/隐身规则统一复用
+## _target_is_attackable()，避免与常规索敌逐渐形成两套合法性判断。
+func _find_nearest_attackable_in_range() -> Node2D:
+	var best: Node2D = null
+	var best_gap := INF
+	for candidate in get_tree().get_nodes_in_group("combatants"):
+		if not candidate is Node2D or not _target_is_attackable(candidate):
+			continue
+		var candidate_node := candidate as Node2D
+		var gap := _target_gap(candidate_node)
+		if gap <= attack_range and gap < best_gap:
+			best = candidate_node
+			best_gap = gap
+	return best
 
 func _is_struct(c: Node) -> bool:
 	return c is Tower or (c is Unit and (c as Unit).is_building)

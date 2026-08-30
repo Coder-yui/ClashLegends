@@ -1198,24 +1198,13 @@ func use_active_skill(ability_id: int, expected_team: int = -1, requester_peer_i
 	return _queue_active_skill(ability_id, expected_team, requester_peer_id)
 
 func _queue_active_skill(ability_id: int, expected_team: int = -1, requester_peer_id: int = 0) -> bool:
-	if game_over or not _active_skills.has(ability_id):
-		return false
 	for pending in _pending_active_skill_activations:
 		if int(pending.ability_id) == ability_id:
 			return false
+	if not _active_skill_is_legal(ability_id, expected_team):
+		return false
 	var entry: Dictionary = _active_skills[ability_id]
-	var unit: Unit = entry.unit
 	var p_team := int(entry.team)
-	var card_id := String(entry.card_id)
-	if unit == null or not is_instance_valid(unit) or unit.hp <= 0.0:
-		return false
-	if expected_team >= 0 and p_team != expected_team:
-		return false
-	if not _card_has_active_for_team(p_team, card_id):
-		return false
-	# deploy/transform/skill 都高于普通攻击；高优先级窗口内拒绝新技能并保留按钮。
-	if not unit.is_deployed() or unit.is_form_transitioning() or unit.is_active_skill_casting():
-		return false
 	_pending_active_skill_activations.append({
 		"ability_id": ability_id,
 		"team": p_team,
@@ -1249,20 +1238,34 @@ func _cancel_pending_active_skill(ability_id: int) -> void:
 		func(pending): return int(pending.ability_id) != ability_id
 	)
 
-func _activate_active_skill(ability_id: int, expected_team: int = -1) -> bool:
-	if not _active_skills.has(ability_id):
+## 点击只决定请求能否进入 pending；队列到期时必须用同一谓词重新读取权威状态。
+## pending 占用检查刻意留在 _queue_active_skill()，否则队列中的请求永远无法落地。
+func _active_skill_is_legal(ability_id: int, expected_team: int = -1) -> bool:
+	if game_over or not _active_skills.has(ability_id):
 		return false
 	var entry: Dictionary = _active_skills[ability_id]
 	var unit: Unit = entry.unit
 	var p_team := int(entry.team)
-	var card_id := String(entry.card_id)
 	if unit == null or not is_instance_valid(unit) or unit.hp <= 0.0:
-		_on_active_skill_unit_died(ability_id)
 		return false
 	if expected_team >= 0 and p_team != expected_team:
 		return false
-	if not _card_has_active_for_team(p_team, card_id):
+	if not _card_has_active_for_team(p_team, String(entry.card_id)):
 		return false
+	# deploy/transform/skill 都高于普通攻击；高优先级窗口内拒绝新技能并保留按钮。
+	return unit.is_deployed() and not unit.is_form_transitioning() and not unit.is_active_skill_casting()
+
+func _activate_active_skill(ability_id: int, expected_team: int = -1) -> bool:
+	if not _active_skill_is_legal(ability_id, expected_team):
+		# 正常死亡会由 died 信号立即清理；这里保留对失效引用/直接调用的兜底。
+		if _active_skills.has(ability_id):
+			var stale_entry: Dictionary = _active_skills[ability_id]
+			var stale_unit: Unit = stale_entry.unit
+			if stale_unit == null or not is_instance_valid(stale_unit) or stale_unit.hp <= 0.0:
+				_on_active_skill_unit_died(ability_id)
+		return false
+	var entry: Dictionary = _active_skills[ability_id]
+	var unit: Unit = entry.unit
 	var skill: Dictionary = entry.skill
 	if not _apply_active_skill_effect(unit, skill):
 		return false
