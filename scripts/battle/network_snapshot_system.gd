@@ -40,6 +40,7 @@ func apply(snapshot_bytes: PackedByteArray) -> void:
 		if d.size() >= 8:
 			u.net_visual_state = d[6]
 			u.net_facing_x = d[7]
+			u.net_locomotion_state = int(d[6]) if int(d[6]) in [0, 1, 2] else 1
 		if d.size() >= 9:
 			u.net_attack_visual_serial = d[8]
 		if d.size() >= 10:
@@ -64,6 +65,13 @@ func apply(snapshot_bytes: PackedByteArray) -> void:
 			u.net_facing_direction = Vector2(d[19], d[20])
 		if d.size() >= 22:
 			u.net_attacking_structure = d[21] == 1
+		# v2 表现通道：追加字段保持旧协议下标不变。动作总时长/剩余时长让晚到客户端
+		# 能从权威进度开始播放；locomotion 与 attack/action 分开同步。
+		if d.size() >= 25:
+			u.net_visual_action_duration = maxf(float(d[23]), 0.0)
+			u.net_visual_action_time_left = clampf(float(d[24]), 0.0, u.net_visual_action_duration)
+		if d.size() >= 26:
+			u.net_locomotion_state = int(d[25])
 		if (
 			_controller._auto_test and not _controller._auto_gnar_form_seen and u.card_id == "gnar"
 			and u.form_index == 1 and u.net_visual_action_name == &"transform_active"
@@ -164,19 +172,7 @@ func send() -> void:
 		var has_continuous_target: bool = u.has_continuous_visual_target()
 		var continuous_target_pos: Vector2 = u.get_continuous_visual_target_position()
 		var facing_direction: Vector2 = u.get_visual_facing_direction()
-		units_data.append([
-			id, u.global_position.x, u.global_position.y, u.hp,
-			1 if u.frozen_timer > 0.0 else 0, 1 if u.is_charged() else 0,
-			u.get_visual_state_code(), u.get_facing_x(), u.get_attack_visual_serial(),
-			1 if u._shroud_active else 0,
-			1 if has_continuous_target else 0, continuous_target_pos.x, continuous_target_pos.y,
-			1 if u.shield_hp > 0.0 else 0, 1 if u.slow_timer > 0.0 else 0,
-			u.form_index, 1 if u.stun_timer > 0.0 else 0,
-			u.get_visual_action_serial(), String(u.get_visual_action_name()),
-			facing_direction.x, facing_direction.y,
-			1 if u.is_attacking_structure_visual() else 0,
-			u.form_change_serial,
-		])
+		units_data.append(_unit_snapshot_payload(id, u, has_continuous_target, continuous_target_pos, facing_direction))
 	for id in dead:
 		_controller._net_units.erase(id)
 	var towers_data := []
@@ -197,3 +193,23 @@ func send() -> void:
 		_controller._elixir.elixir, _controller._elixir_p1.elixir, _controller._match_timer, _controller._overtime,
 	]).compress(FileAccess.COMPRESSION_DEFLATE)
 	_controller._rpc_snapshot.rpc(snapshot_bytes)
+
+## 单位载荷集中构造，测试可直接锁定向后兼容下标与新增 locomotion/action 时间轴。
+func _unit_snapshot_payload(id: int, u: Unit, has_continuous_target: bool = false, continuous_target_pos: Vector2 = Vector2.ZERO, facing_direction: Vector2 = Vector2.ZERO) -> Array:
+	if facing_direction.is_zero_approx():
+		facing_direction = u.get_visual_facing_direction()
+	return [
+		id, u.global_position.x, u.global_position.y, u.hp,
+		1 if u.frozen_timer > 0.0 else 0, 1 if u.is_charged() else 0,
+		u.get_visual_state_code(), u.get_facing_x(), u.get_attack_visual_serial(),
+		1 if u._shroud_active else 0,
+		1 if has_continuous_target else 0, continuous_target_pos.x, continuous_target_pos.y,
+		1 if u.shield_hp > 0.0 else 0, 1 if u.slow_timer > 0.0 else 0,
+		u.form_index, 1 if u.stun_timer > 0.0 else 0,
+		u.get_visual_action_serial(), String(u.get_visual_action_name()),
+		facing_direction.x, facing_direction.y,
+		1 if u.is_attacking_structure_visual() else 0,
+		u.form_change_serial,
+		u.get_visual_action_duration(), u.get_visual_action_time_left(),
+		u.get_locomotion_visual_state_code(),
+	]

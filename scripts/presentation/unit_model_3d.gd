@@ -3,6 +3,24 @@ extends Node3D
 ## 单个 3D 模型的表现代理。只读取 Unit 的插值位置与表现状态，不参与模拟。
 
 const STATE_KEYS := [&"deploy", &"idle", &"move", &"attack"]
+const ACTION_PRIORITY := {
+	&"locomotion": 0,
+	&"attack": 20,
+	&"skill": 40,
+	&"transform": 60,
+	&"deploy": 80,
+	&"death": 100,
+}
+const TRANSITION_DEFAULTS := {
+	&"default": 0.08,
+	&"locomotion": 0.08,
+	&"action_in": 0.06,
+	&"action_out": 0.12,
+	&"attack": 0.05,
+	&"sequence": 0.04,
+	&"death": 0.08,
+	&"model_swap": 0.02,
+}
 
 var _source: Unit
 var _camera: Camera3D
@@ -21,6 +39,11 @@ var _active_visual_action := &""
 var _visual_action_sequence: Array = []
 var _visual_action_clip_durations: Array = []
 var _visual_action_sequence_index := 0
+var _active_action_name := &""
+var _active_action_kind := &"locomotion"
+var _active_action_priority := 0
+var _active_action_blend_in := -1.0
+var _active_action_blend_out := -1.0
 var _playing_attack := false
 var _holding_attack_pose := false
 var _active_attack_animation := &""
@@ -92,6 +115,11 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 	_visual_action_sequence.clear()
 	_visual_action_clip_durations.clear()
 	_visual_action_sequence_index = 0
+	_active_action_name = &""
+	_active_action_kind = &"locomotion"
+	_active_action_priority = 0
+	_active_action_blend_in = -1.0
+	_active_action_blend_out = -1.0
 	_playing_deploy_sequence = false
 	_deploy_sequence_started = false
 	_continuous_attack_active = false
@@ -135,21 +163,24 @@ func _sync_visual(force: bool, delta: float) -> void:
 		var target_yaw := atan2(facing_3d.x, facing_3d.z) + _forward_yaw
 		rotation.y = target_yaw if force else lerp_angle(rotation.y, target_yaw, minf(delta * 12.0, 1.0))
 
-	var attack_serial := _source.net_attack_visual_serial if _source._in_client_mode() else _source.get_attack_visual_serial()
-	var attack_serial_changed := attack_serial != _last_attack_serial
-	if attack_serial_changed:
-		_last_attack_serial = attack_serial
-		if not _uses_continuous_state_animations():
-			if _playing_visual_action:
-				_pending_attack_serial = attack_serial
-			else:
-				_play_attack(attack_serial)
+	# visual_action 先于同一快照内的攻击序号处理，确保技能/变形动作能按优先级
+	# 挡住并排队普攻，不会先播一帧 Attack 再被技能覆盖。
 	var visual_action_serial := _source.net_visual_action_serial if _source._in_client_mode() else _source.get_visual_action_serial()
 	if visual_action_serial != _last_visual_action_serial:
 		_last_visual_action_serial = visual_action_serial
 		var action_name := _source.net_visual_action_name if _source._in_client_mode() else _source.get_visual_action_name()
 		_play_visual_action(action_name)
+	var attack_serial := _source.net_attack_visual_serial if _source._in_client_mode() else _source.get_attack_visual_serial()
+	var attack_serial_changed := attack_serial != _last_attack_serial
+	if attack_serial_changed:
+		_last_attack_serial = attack_serial
+		if not _uses_continuous_state_animations():
+			if _playing_visual_action and _active_action_priority > int(ACTION_PRIORITY.get(&"attack", 20)):
+				_pending_attack_serial = attack_serial
+			else:
+				_play_attack(attack_serial)
 	var state := _source.net_visual_state if _source._in_client_mode() else _source.get_visual_state_code()
+	var locomotion_state := _source.net_locomotion_state if _source._in_client_mode() else _source.get_locomotion_visual_state_code()
 	# 出场演出：单位生成首帧启动序列；部署结束后让位给基础状态机。
 	_update_deploy_sequence_lifecycle()
 	# 出场技能序列在部署锁定期间保持动作，不被其他状态打断。
@@ -169,9 +200,9 @@ func _sync_visual(force: bool, delta: float) -> void:
 		_attack_hit_pending = false
 		_attack_recover_pending = false
 		_active_attack_animation = &""
-		_transition_to_basic_state(state, 0.12)
+		_transition_to_basic_state(locomotion_state, _transition_blend(&"action_out"), &"attack")
 	elif state != 3 and not _playing_attack and (force or state != _current_state):
-		_transition_to_basic_state(state)
+		_transition_to_basic_state(locomotion_state)
 	elif state == 3 and not _playing_attack and not _holding_attack_pose and force:
 		_current_state = 1
 		_play_state(1)
@@ -183,9 +214,17 @@ func _play_visual_action(action_name: StringName) -> void:
 		return
 	var actions: Dictionary = _animation_names.get("visual_actions", {})
 	var configured = actions.get(String(action_name), [])
+	var descriptor: Dictionary = configured if configured is Dictionary else {}
+	var action_kind := StringName(descriptor.get("kind", _default_action_kind(action_name)))
+	var action_priority := int(descriptor.get("priority", ACTION_PRIORITY.get(action_kind, ACTION_PRIORITY.get(&"skill", 40))))
+	# 新事件只有达到当前覆盖动作的优先级才可打断；death 走独立最高优先级入口。
+	if _playing_visual_action and action_priority < _active_action_priority:
+		return
+	if not descriptor.is_empty():
+		configured = descriptor.get("animation", [])
 	var candidates: Array = configured if configured is Array else [configured]
 	var action_durations: Dictionary = _animation_names.get("visual_action_durations", {})
-	var configured_durations = action_durations.get(String(action_name), [])
+	var configured_durations = descriptor.get("durations", action_durations.get(String(action_name), []))
 	var duration_candidates: Array = configured_durations if configured_durations is Array else [configured_durations]
 	_visual_action_sequence.clear()
 	_visual_action_clip_durations.clear()
@@ -200,13 +239,38 @@ func _play_visual_action(action_name: StringName) -> void:
 			_visual_action_clip_durations.append(target_duration)
 	if _visual_action_sequence.is_empty():
 		return
+	# 若 CardDB 没逐段写时长，使用权威动作窗口按素材长度等比分配；这只校准表现速度。
+	var authoritative_duration := _source.get_visual_action_duration()
+	var configured_total := 0.0
+	for target_duration in _visual_action_clip_durations:
+		configured_total += float(target_duration)
+	if configured_total <= 0.001 and authoritative_duration > 0.001:
+		var source_total := 0.0
+		for animation_name in _visual_action_sequence:
+			var animation := _animation_player.get_animation(StringName(animation_name))
+			if animation != null:
+				source_total += animation.length
+		if source_total > 0.001:
+			for index in _visual_action_sequence.size():
+				var animation := _animation_player.get_animation(StringName(_visual_action_sequence[index]))
+				_visual_action_clip_durations[index] = authoritative_duration * animation.length / source_total
 	_playing_visual_action = true
 	_visual_action_sequence_index = 0
+	_active_action_name = action_name
+	_active_action_kind = action_kind
+	_active_action_priority = action_priority
+	_active_action_blend_in = float(descriptor.get("blend_in", -1.0))
+	_active_action_blend_out = float(descriptor.get("blend_out", -1.0))
 	_playing_attack = false
 	_holding_attack_pose = false
+	_attack_hit_pending = false
+	_attack_recover_pending = false
 	_move_sequence_active = false
 	_move_active_animation = &""
 	_play_visual_action_clip(StringName(_visual_action_sequence[0]))
+	# 晚到客户端从权威时间轴对应位置开始，不会把已过去的 Spell2 从头补播。
+	if _source._in_client_mode() and authoritative_duration > 0.001:
+		_seek_visual_action(maxf(authoritative_duration - _source.get_visual_action_time_left(), 0.0))
 
 func _play_visual_action_clip(animation_name: StringName) -> void:
 	var animation := _animation_player.get_animation(animation_name)
@@ -221,22 +285,70 @@ func _play_visual_action_clip(animation_name: StringName) -> void:
 	if target_duration > 0.001:
 		playback_speed = maxf(float(animation.length) / target_duration, 0.01)
 	_set_model_visual_clip(animation_name)
-	_animation_player.play(animation_name, 0.02, playback_speed)
+	var blend_override := _active_action_blend_in if _visual_action_sequence_index == 0 else -1.0
+	_play_clip(animation_name, &"action_in" if _visual_action_sequence_index == 0 else &"sequence", playback_speed, blend_override)
+
+func _seek_visual_action(elapsed: float) -> void:
+	if elapsed <= 0.001 or _visual_action_sequence.is_empty():
+		return
+	var remaining := elapsed
+	for index in _visual_action_sequence.size():
+		var animation_name := StringName(_visual_action_sequence[index])
+		var animation := _animation_player.get_animation(animation_name)
+		if animation == null:
+			continue
+		var target_duration := float(_visual_action_clip_durations[index])
+		if target_duration <= 0.001:
+			target_duration = animation.length
+		if remaining >= target_duration and index + 1 < _visual_action_sequence.size():
+			remaining -= target_duration
+			continue
+		_visual_action_sequence_index = index
+		_play_visual_action_clip(animation_name)
+		var playback_speed := animation.length / maxf(target_duration, 0.001)
+		_animation_player.seek(clampf(remaining * playback_speed, 0.0, animation.length), true)
+		return
+
+func _default_action_kind(action_name: StringName) -> StringName:
+	return &"transform" if String(action_name).contains("transform") or action_name == &"revert" else &"skill"
 
 func _set_model_visual_clip(animation_name: StringName) -> void:
 	if _model_root != null and _model_root.has_method("set_visual_clip"):
 		_model_root.call("set_visual_clip", animation_name)
 
+## 所有 AnimationPlayer 切换都经过这一层：Godot 会从当前任意播放进度的骨骼 Pose
+## crossfade 到目标片段，不再假设源末帧与目标首帧天然一致。
+func _play_clip(animation_name: StringName, transition_kind: StringName = &"default", playback_speed: float = 1.0, blend_override: float = -1.0) -> void:
+	if _animation_player == null or animation_name == &"" or not _animation_player.has_animation(animation_name):
+		return
+	var blend_time := _transition_blend(transition_kind) if blend_override < 0.0 else maxf(blend_override, 0.0)
+	_animation_player.play(animation_name, blend_time, playback_speed)
+
+func _transition_blend(transition_kind: StringName) -> float:
+	var configured: Dictionary = _animation_names.get("transition_blends", {})
+	return maxf(float(configured.get(transition_kind, TRANSITION_DEFAULTS.get(transition_kind, TRANSITION_DEFAULTS.get(&"default", 0.08)))), 0.0)
+
+## 专门制作的 transition clip 优先；没有配置时调用方直接走通用 Pose crossfade。
+func _transition_clip(from_action: StringName, to_action: StringName) -> StringName:
+	var transitions: Dictionary = _animation_names.get("transitions", {})
+	var configured = transitions.get("%s>%s" % [from_action, to_action], "")
+	var candidates: Array = configured if configured is Array else [configured]
+	for candidate in candidates:
+		var animation_name := StringName(candidate)
+		if animation_name != &"" and _animation_player.has_animation(animation_name):
+			return animation_name
+	return &""
+
 ## 普通单位也可配置 move_enter。过渡动作只表现移动起步，移动仍由权威模拟决定。
-func _transition_to_basic_state(state: int, blend_time: float = 0.08) -> void:
+func _transition_to_basic_state(state: int, blend_time: float = -1.0, from_action: StringName = &"locomotion") -> void:
 	var previous_state := _current_state
 	_current_state = state
 	_move_sequence_active = false
 	_move_active_animation = &""
 	if state == 2:
-		_start_move_sequence(previous_state == 3)
+		_start_move_sequence(&"attack" if previous_state == 3 else from_action, blend_time)
 	else:
-		_play_state(state, blend_time)
+		_play_state(state, _transition_blend(&"locomotion") if blend_time < 0.0 else blend_time)
 
 func _uses_continuous_state_animations() -> bool:
 	return String(_animation_names.get("attack_loop", "")) != ""
@@ -256,10 +368,10 @@ func _sync_continuous_state_animations(state: int, force: bool, target_changed: 
 		3:
 			_start_continuous_attack(retargeting_without_move)
 		2:
-			_start_move_sequence(previous_state == 3)
+			_start_move_sequence(&"attack" if previous_state == 3 else &"locomotion")
 		_:
 			# play() 会立即替换仍在播放的吐息循环，不等待循环素材结束。
-			_play_state(state, 0.08 if force else 0.12)
+			_play_state(state, _transition_blend(&"locomotion") if force else _transition_blend(&"action_out"))
 
 func _start_continuous_attack(retargeting_without_move: bool = false) -> void:
 	if _animation_player == null:
@@ -274,7 +386,7 @@ func _start_continuous_attack(retargeting_without_move: bool = false) -> void:
 		if enter_animation != null:
 			enter_animation.loop_mode = Animation.LOOP_NONE
 		_continuous_attack_animation = enter_name
-		_animation_player.play(enter_name, 0.06)
+		_play_clip(enter_name, &"attack")
 		return
 	_play_continuous_attack_loop()
 
@@ -288,18 +400,23 @@ func _play_continuous_attack_loop() -> void:
 	if loop_animation != null:
 		loop_animation.loop_mode = Animation.LOOP_LINEAR
 	_continuous_attack_animation = loop_name
-	_animation_player.play(loop_name, 0.05)
+	_play_clip(loop_name, &"attack")
 	_source.set_continuous_beam_visible(true)
 
-## 进入普通移动先播 move_enter；若刚退出持续攻击，则在它之前插入
-## attack_to_move。过渡完成后按 move_cycle 数组顺序逐段循环。
-func _start_move_sequence(from_continuous_attack: bool) -> void:
+## 进入普通移动先播 move_enter；若配置了来源动作到 move 的专用 transition，
+## 则优先插在它之前。过渡完成后按 move_cycle 数组顺序逐段循环。
+func _start_move_sequence(from_action: StringName = &"locomotion", blend_override: float = -1.0) -> void:
 	if _animation_player == null:
 		return
 	_move_sequence.clear()
-	if from_continuous_attack:
+	var dedicated_transition := _transition_clip(from_action, &"move")
+	if dedicated_transition != &"":
+		_move_sequence.append(dedicated_transition)
+	# 兼容旧 CardDB 的 attack_to_move；新配置统一写 transitions["attack>move"]。
+	elif from_action == &"attack":
 		_append_valid_animations(_move_sequence, "attack_to_move")
-	var use_move_enter := not from_continuous_attack or bool(_animation_names.get("move_enter_after_attack", true))
+	var from_attack := from_action == &"attack"
+	var use_move_enter := not from_attack or bool(_animation_names.get("move_enter_after_attack", true))
 	if use_move_enter:
 		_append_valid_animations(_move_sequence, "move_enter")
 	_move_cycle.clear()
@@ -308,11 +425,11 @@ func _start_move_sequence(from_continuous_attack: bool) -> void:
 	_move_cycle_index = 0
 	_move_sequence_active = not _move_sequence.is_empty() or not _move_cycle.is_empty()
 	if not _move_sequence.is_empty():
-		_play_move_clip(StringName(_move_sequence[0]))
+		_play_move_clip(StringName(_move_sequence[0]), blend_override)
 	elif not _move_cycle.is_empty():
-		_play_move_cycle_clip()
+		_play_move_cycle_clip(blend_override)
 	else:
-		_play_state(2)
+		_play_state(2, _transition_blend(&"locomotion") if blend_override < 0.0 else blend_override)
 
 func _append_valid_animations(target: Array, key: String) -> void:
 	for value in _animation_list(key):
@@ -320,19 +437,19 @@ func _append_valid_animations(target: Array, key: String) -> void:
 		if animation_name != &"" and _animation_player.has_animation(animation_name):
 			target.append(animation_name)
 
-func _play_move_clip(animation_name: StringName) -> void:
+func _play_move_clip(animation_name: StringName, blend_override: float = -1.0) -> void:
 	var animation := _animation_player.get_animation(animation_name)
 	if animation == null:
 		return
 	animation.loop_mode = Animation.LOOP_NONE
 	_move_active_animation = animation_name
 	_set_model_visual_clip(animation_name)
-	_animation_player.play(animation_name, 0.06)
+	_play_clip(animation_name, &"sequence", 1.0, blend_override)
 
-func _play_move_cycle_clip() -> void:
+func _play_move_cycle_clip(blend_override: float = -1.0) -> void:
 	if _move_cycle.is_empty() or _current_state != 2:
 		return
-	_play_move_clip(StringName(_move_cycle[_move_cycle_index]))
+	_play_move_clip(StringName(_move_cycle[_move_cycle_index]), blend_override)
 
 func _advance_move_sequence() -> void:
 	if _move_sequence_index < _move_sequence.size():
@@ -398,7 +515,7 @@ func _update_health_bar_anchor() -> void:
 		top_screen_y = maxf(top_screen_y, ground_screen.y - max_head_height)
 		_source.set_visual_head_world_position(Vector2(ground_screen.x, top_screen_y))
 
-func _play_state(state: int, blend_time: float = 0.08) -> void:
+func _play_state(state: int, blend_time: float = -1.0) -> void:
 	if _animation_player == null:
 		return
 	var key: StringName = STATE_KEYS[clampi(state, 0, STATE_KEYS.size() - 1)]
@@ -412,7 +529,7 @@ func _play_state(state: int, blend_time: float = 0.08) -> void:
 	if animation_name != &"" and _animation_player.has_animation(animation_name):
 		var playback_speed := _state_playback_speed(state, animation_name)
 		_set_model_visual_clip(animation_name)
-		_animation_player.play(animation_name, blend_time, playback_speed)
+		_play_clip(animation_name, &"locomotion", playback_speed, _transition_blend(&"locomotion") if blend_time < 0.0 else blend_time)
 
 ## 出场演出生命周期：生成首帧启动序列；权威部署计时耗尽时终止序列。
 func _update_deploy_sequence_lifecycle() -> void:
@@ -471,7 +588,7 @@ func _play_deploy_clip(animation_name: StringName) -> void:
 	var playback_speed := 1.0
 	if _deploy_sequence_index < _deploy_sequence_speeds.size():
 		playback_speed = float(_deploy_sequence_speeds[_deploy_sequence_index])
-	_animation_player.play(animation_name, 0.08, playback_speed)
+	_play_clip(animation_name, &"sequence", playback_speed)
 
 func _advance_deploy_sequence() -> void:
 	_deploy_sequence_index += 1
@@ -485,15 +602,25 @@ func _finish_deploy_sequence() -> void:
 	_playing_deploy_sequence = false
 	_deploy_active_animation = &""
 	var state := _source.net_visual_state if _source._in_client_mode() else _source.get_visual_state_code()
-	_current_state = state
+	var locomotion_state := _source.net_locomotion_state if _source._in_client_mode() else _source.get_locomotion_visual_state_code()
+	_current_state = 0
 	if state != 0:
-		_play_state(state, 0.12)
+		if state == 3 and _pending_attack_serial > 0:
+			var pending_serial := _pending_attack_serial
+			_pending_attack_serial = 0
+			_play_attack(pending_serial, _transition_blend(&"action_out"))
+		else:
+			_transition_to_basic_state(locomotion_state, _transition_blend(&"action_out"), &"deploy")
 
-func _play_attack(serial: int) -> void:
+func _play_attack(serial: int, blend_override: float = -1.0) -> void:
 	if _animation_player == null or serial <= 0:
 		return
 	# 出场演出期间权威锁定攻击，不会推进攻击序号；此防御仅兜底客户端快照乱序。
 	if _playing_deploy_sequence:
+		_pending_attack_serial = serial
+		return
+	if _playing_visual_action and _active_action_priority > int(ACTION_PRIORITY.get(&"attack", 20)):
+		_pending_attack_serial = serial
 		return
 	var attack_key := "attack_structure" if _source.is_attacking_structure_visual() else "attack"
 	var configured = _animation_names.get(attack_key, _animation_names.get("attack", []))
@@ -519,9 +646,9 @@ func _play_attack(serial: int) -> void:
 		# 分段普攻只影响表现：Start 在权威 first_hit 窗口内播放，计时到点切到 Hit。
 		_attack_hit_pending = true
 		_attack_hit_timer = maxf(_source.first_hit_time, 0.01)
-		_play_attack_clip(animation_name, _attack_hit_timer)
+		_play_attack_clip(animation_name, _attack_hit_timer, blend_override)
 	else:
-		_play_attack_clip(animation_name, _attack_duration)
+		_play_attack_clip(animation_name, _attack_duration, blend_override)
 
 func _update_attack_stages(delta: float) -> void:
 	if not _playing_attack or _animation_player == null:
@@ -554,7 +681,7 @@ func _update_attack_stages(delta: float) -> void:
 			if _active_attack_index < recover_animations.size():
 				_play_attack_clip(StringName(recover_animations[_active_attack_index]), 0.0)
 
-func _play_attack_clip(animation_name: StringName, target_duration: float) -> void:
+func _play_attack_clip(animation_name: StringName, target_duration: float, blend_override: float = -1.0) -> void:
 	if animation_name == &"" or not _animation_player.has_animation(animation_name):
 		return
 	var animation := _animation_player.get_animation(animation_name)
@@ -566,7 +693,7 @@ func _play_attack_clip(animation_name: StringName, target_duration: float) -> vo
 		playback_speed = maxf(float(animation.length) / target_duration, 0.01)
 	_active_attack_animation = animation_name
 	_set_model_visual_clip(animation_name)
-	_animation_player.play(animation_name, 0.05, playback_speed)
+	_play_clip(animation_name, &"attack", playback_speed, blend_override)
 
 func _animation_list(key: String) -> Array:
 	var configured = _animation_names.get(key, [])
@@ -635,6 +762,17 @@ func _configure_looping_animations() -> void:
 					animation.loop_mode = Animation.LOOP_NONE
 	var visual_actions: Dictionary = _animation_names.get("visual_actions", {})
 	for value in visual_actions.values():
+		if value is Dictionary:
+			value = (value as Dictionary).get("animation", [])
+		var configured: Array = value if value is Array else [value]
+		for configured_name in configured:
+			var animation_name := StringName(configured_name)
+			if animation_name != &"" and _animation_player.has_animation(animation_name):
+				var animation := _animation_player.get_animation(animation_name)
+				if animation != null:
+					animation.loop_mode = Animation.LOOP_NONE
+	var transitions: Dictionary = _animation_names.get("transitions", {})
+	for value in transitions.values():
 		var configured: Array = value if value is Array else [value]
 		for configured_name in configured:
 			var animation_name := StringName(configured_name)
@@ -655,17 +793,7 @@ func _on_animation_finished(animation_name: StringName) -> void:
 			if _visual_action_sequence_index < _visual_action_sequence.size():
 				_play_visual_action_clip(StringName(_visual_action_sequence[_visual_action_sequence_index]))
 			else:
-				_playing_visual_action = false
-				_active_visual_action = &""
-				_visual_action_sequence.clear()
-				_visual_action_clip_durations.clear()
-				_current_state = -1
-				if _pending_attack_serial > 0:
-					var pending_serial := _pending_attack_serial
-					_pending_attack_serial = 0
-					var state := _source.net_visual_state if _source._in_client_mode() else _source.get_visual_state_code()
-					if state == 3:
-						_play_attack(pending_serial)
+				_finish_visual_action()
 		return
 	# 出场技能序列按段推进；只有当前段播完才进入下一段，其余动画结束事件忽略。
 	if _playing_deploy_sequence:
@@ -699,8 +827,38 @@ func _on_animation_finished(animation_name: StringName) -> void:
 	else:
 		_holding_attack_pose = false
 		_active_attack_animation = &""
-		_current_state = state
-		_play_state(state, 0.12)
+		var locomotion_state := _source.net_locomotion_state if _source._in_client_mode() else _source.get_locomotion_visual_state_code()
+		_transition_to_basic_state(locomotion_state, _transition_blend(&"action_out"), &"attack")
+
+func _finish_visual_action() -> void:
+	var action_kind := _active_action_kind
+	var blend_out := _transition_blend(&"action_out") if _active_action_blend_out < 0.0 else _active_action_blend_out
+	_playing_visual_action = false
+	_active_visual_action = &""
+	_visual_action_sequence.clear()
+	_visual_action_clip_durations.clear()
+	_active_action_name = &""
+	_active_action_kind = &"locomotion"
+	_active_action_priority = 0
+	_active_action_blend_in = -1.0
+	_active_action_blend_out = -1.0
+	_current_state = -1
+	var state := _source.net_visual_state if _source._in_client_mode() else _source.get_visual_state_code()
+	var locomotion_state := _source.net_locomotion_state if _source._in_client_mode() else _source.get_locomotion_visual_state_code()
+	if _pending_attack_serial > 0 and state == 3:
+		var pending_serial := _pending_attack_serial
+		_pending_attack_serial = 0
+		_play_attack(pending_serial, blend_out)
+		return
+	_pending_attack_serial = 0
+	if state == 3 and _uses_continuous_state_animations():
+		_sync_continuous_state_animations(state, true, false)
+		return
+	if state == 3:
+		_current_state = 1
+		_play_state(1, blend_out)
+		return
+	_transition_to_basic_state(locomotion_state, blend_out, action_kind)
 
 func _on_source_died() -> void:
 	if _dying:
@@ -719,6 +877,11 @@ func _on_source_died() -> void:
 	_active_visual_action = &""
 	_visual_action_sequence.clear()
 	_visual_action_clip_durations.clear()
+	_active_action_name = &""
+	_active_action_kind = &"death"
+	_active_action_priority = int(ACTION_PRIORITY.get(&"death", 100))
+	_active_action_blend_in = -1.0
+	_active_action_blend_out = -1.0
 	_move_active_animation = &""
 	_source.set_continuous_beam_visible(false)
 	_attack_hit_pending = false
@@ -751,7 +914,7 @@ func _on_source_died() -> void:
 	# 死亡不再受生前冰冻状态影响；按卡牌配置时长播完动作后清理纯视觉代理。
 	_animation_player.speed_scale = 1.0
 	_set_model_visual_clip(_death_animation)
-	_animation_player.play(_death_animation, 0.08, death_playback_speed)
+	_play_clip(_death_animation, &"death", death_playback_speed)
 
 ## 大纳尔死亡的第一段很短，结束后在同一纯表现代理中换成小纳尔模型继续播放 Death。
 ## 战斗单位在第一帧已经退出权威模拟，这个模型切换不会复活、改碰撞或延迟死亡。
@@ -787,7 +950,7 @@ func _start_death_followup() -> bool:
 		if target_duration > 0.0 and animation.length > 0.0:
 			playback_speed = animation.length / target_duration
 	_set_model_visual_clip(followup_name)
-	_animation_player.play(followup_name, 0.02, playback_speed)
+	_play_clip(followup_name, &"model_swap", playback_speed)
 	return true
 
 func _find_animation_player(node: Node) -> AnimationPlayer:

@@ -41,9 +41,13 @@ const SIZE_RADII := {
 }
 const PROJECTILE_VISUALS := [&"orb", &"arrow", &"needle", &"boomerang"]
 const ACTIVE_SKILL_KINDS := [&"nova", &"buff", &"summon", &"dual_form"]
+const CAST_LOCKS := [&"movement", &"attack", &"facing"]
+const VISUAL_ACTION_KINDS := [&"deploy", &"transform", &"skill"]
+const VISUAL_ACTION_DESCRIPTOR_FIELDS := [&"animation", &"durations", &"kind", &"priority", &"blend_in", &"blend_out"]
+const TRANSITION_BLEND_FIELDS := [&"default", &"locomotion", &"action_in", &"action_out", &"attack", &"sequence", &"death", &"model_swap"]
 
-## 这里列出的字段都必须有运行时代码读取。新增字段若未登记，validate_all() 会直接报错，
-## 防止 Agent 只把配置写进 CardDB、却忘记接入权威模拟或表现层。
+## Validator 会检测未知或未登记字段。新增字段必须同时实现运行时读取逻辑、
+## validator 登记和对应机制测试，防止只把配置写进 CardDB、却忘记接入权威模拟或表现层。
 const CARD_FIELDS := [
 	&"name", &"cost", &"type", &"description", &"selectable",
 	&"hp", &"damage", &"range", &"speed", &"interval", &"first_hit",
@@ -69,12 +73,14 @@ const VISUAL_ANIMATION_FIELDS := [
 	&"attack_hit", &"attack_hit_duration", &"attack_recover", &"attack_recover_delay",
 	&"attack_structure", &"attack_to_move", &"move_enter_after_attack", &"death", &"death_duration",
 	&"death_followup_scene_path", &"death_followup_animation", &"death_followup_duration", &"visual_actions",
+	&"visual_action_durations", &"transitions", &"transition_blends",
 ]
 const ACTIVE_SKILL_FIELDS := [
 	&"name", &"kind", &"radius", &"damage", &"knockback", &"slow_duration", &"slow_multiplier",
 	&"shield", &"shield_duration", &"duration", &"speed_multiplier", &"damage_multiplier",
 	&"attack_speed_multiplier", &"spawn_id", &"spawn_count", &"length", &"width", &"impact_delay",
 	&"transform_impact_delay", &"cast_duration", &"transform_cast_duration", &"stun_duration", &"ground_only",
+	&"cast_locks", &"visual_action",
 ]
 ## building_only: true 时只攻击建筑（塔+建筑卡），无视普通单位
 ## can_attack_air: false 时无法选中/攻击空中单位（近战地面单位通常不能对空）
@@ -207,7 +213,10 @@ static func all() -> Dictionary:
 				"attack": ["Gnar_Attack1_anm", "Gnar_Attack2_anm"],
 				"death": "Death", "death_duration": 0.8,
 				"visual_actions": {
-					"revert": "gnar_runtime/Revert_Transform",
+					"revert": {
+						"animation": "gnar_runtime/Revert_Transform", "kind": "transform",
+						"durations": [1.333333], "blend_out": 0.12,
+					},
 				},
 			},
 			"is_air": false, "building_only": false, "can_attack_air": true,
@@ -239,9 +248,18 @@ static func all() -> Dictionary:
 					"death_followup_animation": "Death",
 					"death_followup_duration": 0.8,
 					"visual_actions": {
-						"transform": "gnar_runtime/Rage_Transform",
-						"transform_active": "gnar_runtime/Rage_Spell2_Transform",
-						"active": "GnarBig_Spell2_anm",
+						"transform": {
+							"animation": "gnar_runtime/Rage_Transform", "kind": "transform",
+							"durations": [1.5], "blend_out": 0.12,
+						},
+						"transform_active": {
+							"animation": "gnar_runtime/Rage_Spell2_Transform", "kind": "transform",
+							"durations": [1.2], "blend_out": 0.12,
+						},
+						"active": {
+							"animation": "GnarBig_Spell2_anm", "kind": "skill",
+							"durations": [1.2], "blend_in": 0.06, "blend_out": 0.12,
+						},
 					},
 				},
 			},
@@ -252,6 +270,7 @@ static func all() -> Dictionary:
 				"impact_delay": 0.8, "transform_impact_delay": 0.8,
 				"cast_duration": 1.2, "transform_cast_duration": 1.2,
 				"stun_duration": 1.0, "ground_only": true,
+				"cast_locks": ["movement", "attack", "facing"], "visual_action": "active",
 			},
 		},
 		# ===== 水晶兵线（也可作为玩家卡牌） =====
@@ -482,7 +501,7 @@ static func all() -> Dictionary:
 				"attack_retarget_enter": "AurelionSol_Spell1_new_looptoin_anm",
 				"attack_loop": "AurelionSol_Spell1_loop_anm",
 				# 吐息后进入移动：Spell1_2Run 后摇 → Run1B→C→D→A。
-				"attack_to_move": "Spell1_2Run",
+				"transitions": {"attack>move": "Spell1_2Run"},
 				"move_enter_after_attack": false,
 				"death": "Death", "death_duration": 0.8,
 			},
@@ -660,10 +679,79 @@ static func _validate_visual_config(label: String, stats: Dictionary, errors: Pa
 			errors.append("%s.visual_animations.visual_actions: 必须是 Dictionary" % label)
 		else:
 			for action in actions:
-				if not actions[action] is String and not actions[action] is StringName:
-					errors.append("%s.visual_animations.visual_actions.%s: 必须是动画名" % [label, action])
+				var action_label := "%s.visual_animations.visual_actions.%s" % [label, action]
+				var action_config = actions[action]
+				if action_config is Dictionary:
+					_validate_visual_action_descriptor(action_label, action_config, errors)
+				else:
+					_validate_animation_name_value(action_label, action_config, errors)
+	if animations.has("visual_action_durations"):
+		var durations = animations.visual_action_durations
+		if not durations is Dictionary:
+			errors.append("%s.visual_animations.visual_action_durations: 必须是 Dictionary" % label)
+		else:
+			for action in durations:
+				_validate_positive_number_or_array("%s.visual_animations.visual_action_durations.%s" % [label, action], durations[action], errors)
+	if animations.has("transitions"):
+		var transitions = animations.transitions
+		if not transitions is Dictionary:
+			errors.append("%s.visual_animations.transitions: 必须是 Dictionary" % label)
+		else:
+			for transition in transitions:
+				_validate_animation_name_value("%s.visual_animations.transitions.%s" % [label, transition], transitions[transition], errors)
+	if animations.has("transition_blends"):
+		var blends = animations.transition_blends
+		if not blends is Dictionary:
+			errors.append("%s.visual_animations.transition_blends: 必须是 Dictionary" % label)
+		else:
+			_validate_known_fields("%s.visual_animations.transition_blends" % label, blends, TRANSITION_BLEND_FIELDS, errors)
+			for blend_key in blends:
+				var blend_value = blends[blend_key]
+				if (not blend_value is float and not blend_value is int) or float(blend_value) < 0.0:
+					errors.append("%s.visual_animations.transition_blends.%s: 必须是 >= 0 的秒数" % [label, blend_key])
 	if animations.has("death_followup_scene_path") and not ResourceLoader.exists(String(animations.death_followup_scene_path)):
 		errors.append("%s.visual_animations.death_followup_scene_path: 资源不存在" % label)
+
+static func _validate_visual_action_descriptor(label: String, descriptor: Dictionary, errors: PackedStringArray) -> void:
+	_validate_known_fields(label, descriptor, VISUAL_ACTION_DESCRIPTOR_FIELDS, errors)
+	_require_fields(label, descriptor, [&"animation", &"kind"], errors)
+	_validate_animation_name_value("%s.animation" % label, descriptor.get("animation", ""), errors)
+	var kind := StringName(descriptor.get("kind", ""))
+	if kind not in VISUAL_ACTION_KINDS:
+		errors.append("%s.kind: 不支持的动作类型 %s" % [label, kind])
+	if descriptor.has("durations"):
+		_validate_positive_number_or_array("%s.durations" % label, descriptor.durations, errors)
+	for blend_field in [&"blend_in", &"blend_out"]:
+		if descriptor.has(blend_field):
+			var blend_value = descriptor[blend_field]
+			if (not blend_value is float and not blend_value is int) or float(blend_value) < 0.0:
+				errors.append("%s.%s: 必须是 >= 0 的秒数" % [label, blend_field])
+	if descriptor.has("priority") and int(descriptor.priority) < 0:
+		errors.append("%s.priority: 必须 >= 0" % label)
+
+static func _validate_animation_name_value(label: String, value: Variant, errors: PackedStringArray) -> void:
+	if value is String or value is StringName:
+		if String(value).is_empty():
+			errors.append("%s: 动画名不能为空" % label)
+		return
+	if value is Array:
+		if value.is_empty():
+			errors.append("%s: 动画数组不能为空" % label)
+		for animation_name in value:
+			if (not animation_name is String and not animation_name is StringName) or String(animation_name).is_empty():
+				errors.append("%s: 数组只能包含非空动画名" % label)
+		return
+	errors.append("%s: 必须是动画名或动画名数组" % label)
+
+static func _validate_positive_number_or_array(label: String, value: Variant, errors: PackedStringArray) -> void:
+	var values: Array = value if value is Array else [value]
+	if values.is_empty():
+		errors.append("%s: 不能为空" % label)
+		return
+	for duration in values:
+		if (not duration is float and not duration is int) or float(duration) <= 0.0:
+			errors.append("%s: 必须是正数或正数数组" % label)
+			return
 
 static func _validate_active_skills(card_id: String, stats: Dictionary, errors: PackedStringArray) -> void:
 	var skills: Array = []
@@ -691,6 +779,17 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 			&"buff": _require_fields(label, skill, [&"duration"], errors)
 			&"summon": _require_fields(label, skill, [&"spawn_id", &"spawn_count"], errors)
 			&"dual_form": _require_fields(label, skill, [&"length", &"width", &"damage", &"impact_delay", &"cast_duration", &"stun_duration"], errors)
+		if skill.has("cast_locks"):
+			if not skill.cast_locks is Array:
+				errors.append("%s.cast_locks: 必须是 Array" % label)
+			else:
+				for cast_lock in skill.cast_locks:
+					if StringName(cast_lock) not in CAST_LOCKS:
+						errors.append("%s.cast_locks: 不支持 %s" % [label, cast_lock])
+		if skill.has("visual_action") and String(skill.visual_action).is_empty():
+			errors.append("%s.visual_action: 动作名不能为空" % label)
+		if skill.has("cast_duration") and float(skill.cast_duration) < 0.0:
+			errors.append("%s.cast_duration: 必须 >= 0" % label)
 
 static func _require_fields(label: String, data: Dictionary, fields: Array, errors: PackedStringArray) -> void:
 	for field in fields:

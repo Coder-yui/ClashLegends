@@ -22,6 +22,10 @@ const REPATH_INTERVAL := 0.25
 const MARCH_REPATH_INTERVAL := 0.8
 const DEFAULT_SIGHT_RANGE := 220.0
 const HIT_FLASH_EVENT_COOLDOWN := 0.18
+const CAST_LOCK_MOVEMENT := &"movement"
+const CAST_LOCK_ATTACK := &"attack"
+const CAST_LOCK_FACING := &"facing"
+const DEFAULT_CAST_LOCKS: Array[StringName] = [CAST_LOCK_MOVEMENT, CAST_LOCK_ATTACK, CAST_LOCK_FACING]
 ## 横扫击退的短暂表现时长，不参与命中或位移判定。
 const SWEEP_FX_DURATION := 0.35
 const HEALTH_BAR_HEAD_GAP := 3.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
@@ -107,9 +111,11 @@ var transform_duration := 0.0
 var active_transform_duration := 0.0
 var revert_duration := 0.0
 var form_change_serial := 0
-## 主动技能施放锁：方向在发动帧固定，计时期间禁止自主移动与普攻。
+## 主动技能施放窗口与权限分离。默认锁移动/普攻/朝向；技能可用 cast_locks
+## 独立放开任一权限，避免把“正在施法”硬编码成一种互斥战斗状态。
 var active_skill_cast_timer := 0.0
 var active_skill_cast_facing := Vector2.ZERO
+var active_skill_cast_locks: Array[StringName] = []
 
 var frozen_timer := 0.0
 var stun_timer := 0.0
@@ -184,6 +190,9 @@ var net_form_index := 0
 var net_form_change_serial := 0
 var net_visual_action_serial := 0
 var net_visual_action_name := &""
+var net_visual_action_duration := 0.0
+var net_visual_action_time_left := 0.0
+var net_locomotion_state := 1
 var net_facing_direction := Vector2.ZERO
 ## 主机快照同步当前普攻目标是否为建筑，供客户端选择对应动作；不参与伤害判定。
 var net_attacking_structure := false
@@ -195,6 +204,8 @@ var _presentation: UnitPresentation = null
 var _shroud_active := false
 var _visual_action_serial := 0
 var _visual_action_name := &""
+var _visual_action_duration := 0.0
+var _visual_action_time_left := 0.0
 ## 血条绘制中心（兼容旧调试字段）；实际位置由屏幕空间头顶锚点计算。
 var _health_bar_y := -24.0
 var _health_bar_center := Vector2.ZERO
@@ -328,12 +339,19 @@ func _sync_presentation(state: int, facing_x: float) -> void:
 	_presentation.position = _vis_offset
 	_presentation.play_state(state, facing_x, frozen_timer > 0.0)
 
-## 网络快照只同步这个粗粒度表现状态；动画无权决定攻击是否命中。
+## 兼容 2D 表现与持续攻击的组合状态。3D 动画控制器另外读取 locomotion，
+## 再用攻击序号/visual_action 作为 action 通道覆盖它；动画无权决定攻击是否命中。
 func get_visual_state_code() -> int:
 	if _deploy_timer > 0.0:
 		return 0
 	if _attacking:
 		return 3
+	return get_locomotion_visual_state_code()
+
+## locomotion 只表达 Idle/Move（部署沿用 0 便于旧客户端降级），不包含攻击或技能。
+func get_locomotion_visual_state_code() -> int:
+	if _deploy_timer > 0.0:
+		return 0
 	if _move_intent.length_squared() > 0.01:
 		return 2
 	return 1
@@ -368,24 +386,53 @@ func get_visual_action_serial() -> int:
 func get_visual_action_name() -> StringName:
 	return _visual_action_name
 
-## 主机记录一次纯表现动作；序号和名称会随快照同步，动画无权决定效果时刻。
-func play_visual_action(action_name: StringName) -> void:
+func get_visual_action_duration() -> float:
+	return net_visual_action_duration if _in_client_mode() else _visual_action_duration
+
+func get_visual_action_time_left() -> float:
+	return net_visual_action_time_left if _in_client_mode() else _visual_action_time_left
+
+## 主机记录一次纯表现动作；序号、名称和权威动作窗口会随快照同步。
+## duration 只用于客户端对齐播放进度，动画依旧不能决定效果时刻。
+func play_visual_action(action_name: StringName, duration: float = 0.0) -> void:
 	_visual_action_name = action_name
+	_visual_action_duration = maxf(duration, 0.0)
+	_visual_action_time_left = _visual_action_duration
 	_visual_action_serial += 1
 
-func begin_active_skill_cast(duration: float, facing: Vector2) -> void:
+func begin_active_skill_cast(duration: float, facing: Vector2, cast_locks: Array = DEFAULT_CAST_LOCKS) -> void:
 	active_skill_cast_timer = maxf(duration, 0.0)
+	active_skill_cast_locks.clear()
+	for configured_lock in cast_locks:
+		var cast_lock := StringName(configured_lock)
+		if cast_lock in DEFAULT_CAST_LOCKS and cast_lock not in active_skill_cast_locks:
+			active_skill_cast_locks.append(cast_lock)
 	if facing.length_squared() < 0.001:
 		facing = Vector2.UP if team == 0 else Vector2.DOWN
 	active_skill_cast_facing = facing.normalized()
-	_target = null
+	if is_active_skill_attack_locked():
+		_cancel_attack_for_cast(true)
+	if is_active_skill_movement_locked():
+		_move_intent = Vector2.ZERO
+
+func is_active_skill_movement_locked() -> bool:
+	return active_skill_cast_timer > 0.0 and CAST_LOCK_MOVEMENT in active_skill_cast_locks
+
+func is_active_skill_attack_locked() -> bool:
+	return active_skill_cast_timer > 0.0 and CAST_LOCK_ATTACK in active_skill_cast_locks
+
+func is_active_skill_facing_locked() -> bool:
+	return active_skill_cast_timer > 0.0 and CAST_LOCK_FACING in active_skill_cast_locks
+
+func _cancel_attack_for_cast(reset_attack_load: bool = false) -> void:
 	_attacking = false
 	_attack_cd = 0.0
 	_attack_windup = 0.0
 	_attack_recovery_timer = 0.0
-	_attack_load = 0.0
+	if reset_attack_load:
+		_attack_load = 0.0
 	_attack_visual_pending = false
-	_move_intent = Vector2.ZERO
+	_continuous_visual_target_id = 0
 	set_continuous_beam_visible(false)
 
 ## 客户端只接受主机快照中的形态。战斗数值用于正确显示体型、血条和目标过滤，
@@ -406,7 +453,7 @@ func transform_to_mega(active_cast: bool = false) -> bool:
 		return false
 	_apply_form(1, true)
 	form_transition_timer = active_transform_duration if active_cast else transform_duration
-	play_visual_action(&"transform_active" if active_cast else &"transform")
+	play_visual_action(&"transform_active" if active_cast else &"transform", form_transition_timer)
 	return true
 
 func transform_to_small() -> bool:
@@ -414,7 +461,7 @@ func transform_to_small() -> bool:
 		return false
 	_apply_form(0, false)
 	form_transition_timer = revert_duration
-	play_visual_action(&"revert")
+	play_visual_action(&"revert", form_transition_timer)
 	return true
 
 func _apply_form(next_form_index: int, grant_max_hp_increase: bool, advance_form_serial: bool = true) -> void:
@@ -489,7 +536,7 @@ func get_visual_facing_direction() -> Vector2:
 		if net_facing_direction.length_squared() > 0.001:
 			return net_facing_direction.normalized()
 		return Vector2.UP if team == 0 else Vector2.DOWN
-	if active_skill_cast_timer > 0.0 and active_skill_cast_facing.length_squared() > 0.001:
+	if is_active_skill_facing_locked() and active_skill_cast_facing.length_squared() > 0.001:
 		return active_skill_cast_facing
 	if _attacking and _target != null and is_instance_valid(_target):
 		var attack_direction: Vector2 = global_position.direction_to(_target.global_position)
@@ -532,11 +579,13 @@ func sim_tick(dt: float) -> void:
 	_move_intent = Vector2.ZERO
 	_forced_movement = false
 	var active_skill_cast_ticked := false
-	# 技能动作被冰冻/眩晕时表现层也会暂停，因此施放锁和变形锁必须一起暂停。
+	# 表现动作进度只镜像权威窗口，绝不回调战斗效果；冰冻/眩晕时与模型一起暂停。
+	if _visual_action_time_left > 0.0 and frozen_timer <= 0.0 and stun_timer <= 0.0:
+		_visual_action_time_left = maxf(0.0, _visual_action_time_left - dt)
+	# 技能动作被冰冻/眩晕时表现层也会暂停，因此施放窗口和变形锁必须一起暂停。
 	if active_skill_cast_timer > 0.0:
-		_target = null
-		_attacking = false
-		_move_intent = Vector2.ZERO
+		if is_active_skill_attack_locked():
+			_cancel_attack_for_cast()
 		if frozen_timer <= 0.0 and stun_timer <= 0.0:
 			active_skill_cast_ticked = true
 			active_skill_cast_timer = maxf(0.0, active_skill_cast_timer - dt)
@@ -544,6 +593,7 @@ func sim_tick(dt: float) -> void:
 				form_transition_timer = maxf(0.0, form_transition_timer - dt)
 			if active_skill_cast_timer <= 0.0:
 				active_skill_cast_facing = Vector2.ZERO
+				active_skill_cast_locks.clear()
 	# 卡牌生成后进入部署时间：自身不索敌、不移动、不攻击，但实体已经存在，
 	# 会参与碰撞，也能被敌方索敌、命中、受伤和施加状态。
 	if _deploy_timer > 0.0:
@@ -581,10 +631,10 @@ func sim_tick(dt: float) -> void:
 		_charge_timer = 0.0
 		_charged = false
 		return
-	if active_skill_cast_timer > 0.0:
-		_target = null
-		_attacking = false
-		_move_intent = Vector2.ZERO
+	# 攻击锁和移动锁彼此独立：移动施法会继续追击/行军，但在技能窗口内绝不普攻；
+	# 只锁移动的技能仍可原地攻击。纯 Buff 可配置空 locks，完全不改变基础行为。
+	if is_active_skill_attack_locked():
+		_tick_attack_locked_cast_movement(dt)
 		return
 	if form_transition_timer > 0.0:
 		if not active_skill_cast_ticked:
@@ -628,6 +678,23 @@ func sim_tick(dt: float) -> void:
 	_attack_windup = 0.0
 	_attack_recovery_timer = 0.0
 	_shroud_active = false
+	if is_active_skill_movement_locked():
+		return
+	_chase(dt)
+
+## 施法期间禁止普攻时仍可按策略移动。进入攻击范围后只停在待攻位置，
+## 让 cast 窗口结束的同一权威 tick 可以立即开始普通攻击。
+func _tick_attack_locked_cast_movement(dt: float) -> void:
+	_cancel_attack_for_cast()
+	_update_target(false)
+	if _target != null and is_instance_valid(_target) and _target_gap(_target) <= attack_range:
+		_attack_load = maxf(attack_interval - first_hit_time, 0.0)
+		var face_delta: float = _target.global_position.x - global_position.x
+		if absf(face_delta) > 0.05:
+			_facing_x = signf(face_delta)
+		return
+	if is_active_skill_movement_locked():
+		return
 	_chase(dt)
 
 ## 变形期间用新形态的视野/射程立即决策：圈外继续移动，圈内预装填但不开始攻击。

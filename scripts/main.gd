@@ -34,7 +34,6 @@ const COLLISION_MAX_CORRECTION := 3.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
 const LANDING_CORRECTION_PERCENT := 0.75
 const LANDING_MAX_CORRECTION := 8.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
 const BRIDGE_EDGE_MARGIN := 2.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
-const PROJECTILE_MUZZLE_FORWARD_GAP := 5.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
 const DEPLOY_PREVIEW_VALID := Color(0.35, 0.95, 0.58, 0.82)
 const DEPLOY_PREVIEW_INVALID := Color(1.0, 0.30, 0.30, 0.88)
 # 公主塔的权杖晶石相对 2D 塔心的屏幕偏移，只用于弹体绘制，不参与射程、碰撞或命中。
@@ -639,7 +638,7 @@ func _art_dev_selected_unit() -> Unit:
 ## 美术面板不消耗正式主动资格，允许对最后放置的同卡单位反复检查技能演出。
 func _use_art_dev_active_skill() -> void:
 	var unit := _art_dev_selected_unit()
-	if unit == null or unit.is_form_transitioning() or unit.is_active_skill_casting():
+	if unit == null or not unit.is_deployed() or unit.is_form_transitioning() or unit.is_active_skill_casting():
 		return
 	var skills := CardDB.active_skills_for(_art_dev_selection)
 	if skills.is_empty():
@@ -1214,8 +1213,8 @@ func _queue_active_skill(ability_id: int, expected_team: int = -1, requester_pee
 		return false
 	if not _card_has_active_for_team(p_team, card_id):
 		return false
-	# 变形演出期间主动技能也视作攻击类动作，拒绝并保留按钮，避免打断形态序列。
-	if unit.is_form_transitioning() or unit.is_active_skill_casting():
+	# deploy/transform/skill 都高于普通攻击；高优先级窗口内拒绝新技能并保留按钮。
+	if not unit.is_deployed() or unit.is_form_transitioning() or unit.is_active_skill_casting():
 		return false
 	_pending_active_skill_activations.append({
 		"ability_id": ability_id,
@@ -1277,7 +1276,8 @@ func _activate_active_skill(ability_id: int, expected_team: int = -1) -> bool:
 	return true
 
 func _apply_active_skill_effect(unit: Unit, skill: Dictionary) -> bool:
-	match String(skill.kind):
+	var skill_kind := String(skill.kind)
+	match skill_kind:
 		"buff":
 			unit.apply_active_buff(
 				float(skill.get("duration", 0.0)),
@@ -1294,7 +1294,22 @@ func _apply_active_skill_effect(unit: Unit, skill: Dictionary) -> bool:
 			_activate_dual_form_skill(unit, skill)
 		_:
 			return false
+	# 普通 nova/buff/summon 也可只靠 CardDB 接入施法动作与权限窗口；效果时刻仍由
+	# 上方对应 kind 的权威代码决定。dual_form 已在自己的 impact 时间轴中启动窗口。
+	if skill_kind != "dual_form":
+		_begin_configured_active_skill_cast(unit, skill)
 	return true
+
+func _begin_configured_active_skill_cast(unit: Unit, skill: Dictionary) -> void:
+	var cast_duration := maxf(float(skill.get("cast_duration", 0.0)), 0.0)
+	var action_name := StringName(skill.get("visual_action", ""))
+	if cast_duration <= 0.0 and action_name == &"":
+		return
+	var cast_locks: Array = skill.get("cast_locks", Unit.DEFAULT_CAST_LOCKS)
+	if cast_duration > 0.0:
+		unit.begin_active_skill_cast(cast_duration, unit.get_visual_facing_direction(), cast_locks)
+	if action_name != &"":
+		unit.play_visual_action(action_name, cast_duration)
 
 func _activate_nova_skill(source: Unit, skill: Dictionary) -> void:
 	var radius := float(skill.get("radius", 0.0))
@@ -1356,9 +1371,10 @@ func _activate_frontal_stun_skill(source: Unit, skill: Dictionary, play_action: 
 		cast_forward = _frontal_skill_forward(source)
 	else:
 		cast_forward = cast_forward.normalized()
-	source.begin_active_skill_cast(cast_duration, cast_forward)
+	var cast_locks: Array = skill.get("cast_locks", Unit.DEFAULT_CAST_LOCKS)
+	source.begin_active_skill_cast(cast_duration, cast_forward, cast_locks)
 	if play_action:
-		source.play_visual_action(&"active")
+		source.play_visual_action(StringName(skill.get("visual_action", "active")), cast_duration)
 	_pending_frontal_stun_skills.append({
 		"source_ref": weakref(source),
 		"skill": skill.duplicate(true),

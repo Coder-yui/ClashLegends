@@ -1,0 +1,192 @@
+class_name AnimationStateSuite
+extends RefCounted
+## locomotion + action 动画通道、任意 Pose 打断、施法权限与网络载荷回归。
+
+var _harness: Object
+var _main: Node2D
+
+func _expect(condition: bool, message: String) -> void:
+	_harness._expect(condition, message)
+
+func run(harness: Object, main: Node2D) -> void:
+	_harness = harness
+	_main = main
+	_check_locomotion_attack_interrupts()
+	_check_skill_recovery_routes()
+	_check_cast_policies_and_snapshot()
+
+func _view_for(unit: Unit) -> UnitModel3D:
+	for child in _main._battle_presentation._world_root.get_children():
+		if child is UnitModel3D and child._source == unit:
+			return child as UnitModel3D
+	return null
+
+func _check_locomotion_attack_interrupts() -> void:
+	var stats := CardDB.get_card("gnar").duplicate(true)
+	stats["deploy_time"] = 0.0
+	var unit := Unit.new()
+	var dummy := Unit.new()
+	unit.position = Vector2(360.0, 900.0)
+	dummy.position = Vector2(360.0, 860.0)
+	unit.setup(0, stats, stats.name)
+	dummy.setup(1, SuiteUtils.sweep_dummy_stats(CardDB.get_card("garen")), "动画木桩")
+	_main.add_child(unit)
+	_main.add_child(dummy)
+	_main._battle_presentation.attach_unit(unit, stats)
+	var view := _view_for(unit)
+	var run_in_interrupted := false
+	var attack_to_move := false
+	var run_interrupted := false
+	if view != null:
+		unit._move_intent = Vector2.UP * unit.move_speed
+		view._sync_visual(false, 0.05)
+		view._animation_player.advance(0.12)
+		var run_in_was_mid_clip := view._animation_player.current_animation == "Run1_In" and view._animation_player.current_animation_position > 0.05
+		unit._target = dummy
+		unit._attacking = true
+		unit._attack_visual_serial += 1
+		view._sync_visual(false, 0.05)
+		run_in_interrupted = run_in_was_mid_clip and view._animation_player.current_animation == "Gnar_Attack1_anm"
+
+		view._animation_player.advance(0.08)
+		unit._attacking = false
+		unit._move_intent = Vector2.UP * unit.move_speed
+		view._sync_visual(false, 0.05)
+		attack_to_move = view._animation_player.current_animation == "Run1_In"
+		view._on_animation_finished(&"Run1_In")
+		view._animation_player.advance(0.12)
+		var run_was_mid_clip := view._animation_player.current_animation == "Run_Base" and view._animation_player.current_animation_position > 0.05
+		unit._target = dummy
+		unit._attacking = true
+		unit._attack_visual_serial += 1
+		view._sync_visual(false, 0.05)
+		run_interrupted = run_was_mid_clip and view._animation_player.current_animation == "Gnar_Attack2_anm"
+	_expect(run_in_interrupted, "Run_In 播放到中途可在同帧从当前 Pose 混合切入 Attack")
+	_expect(run_interrupted, "Run 循环播放到任意进度可在同帧从当前 Pose 混合切入 Attack")
+	_expect(attack_to_move, "Attack 播放中退出攻击时立即混合到 Move，不等待攻击素材结束")
+	if view != null:
+		view.free()
+	unit.free()
+	dummy.free()
+
+func _check_skill_recovery_routes() -> void:
+	var stats: Dictionary = CardDB.get_card("gnar").get("transformed_stats", {}).duplicate(true)
+	stats["deploy_time"] = 0.0
+	var unit := Unit.new()
+	var dummy := Unit.new()
+	unit.position = Vector2(360.0, 900.0)
+	dummy.position = Vector2(360.0, 860.0)
+	unit.setup(0, stats, stats.name)
+	dummy.setup(1, SuiteUtils.sweep_dummy_stats(CardDB.get_card("garen")), "技能衔接木桩")
+	_main.add_child(unit)
+	_main.add_child(dummy)
+	_main._battle_presentation.attach_unit(unit, stats)
+	var view := _view_for(unit)
+	var spell_to_idle := false
+	var spell_to_move := false
+	var spell_to_attack := false
+	var animation_is_read_only := false
+	var transition_policy_applied := false
+	if view != null:
+		unit.begin_active_skill_cast(1.2, Vector2.UP)
+		unit.play_visual_action(&"active", 1.2)
+		view._sync_visual(false, 0.05)
+		transition_policy_applied = (
+			view._active_action_kind == &"skill"
+			and view._active_action_priority > int(UnitModel3D.ACTION_PRIORITY.get(&"attack", 20))
+			and is_equal_approx(view._transition_blend(&"action_in"), 0.06)
+			and is_equal_approx(view._active_action_blend_out, 0.12)
+		)
+		var cast_timer_before_finish := unit.active_skill_cast_timer
+		view._on_animation_finished(&"GnarBig_Spell2_anm")
+		spell_to_idle = view._animation_player.current_animation == "Idle1_Base"
+		animation_is_read_only = is_equal_approx(unit.active_skill_cast_timer, cast_timer_before_finish)
+
+		unit.active_skill_cast_timer = 0.0
+		unit.active_skill_cast_locks.clear()
+		unit.play_visual_action(&"active", 1.2)
+		view._sync_visual(false, 0.05)
+		unit._move_intent = Vector2.UP * unit.move_speed
+		view._on_animation_finished(&"GnarBig_Spell2_anm")
+		spell_to_move = view._animation_player.current_animation == "Run_In"
+
+		unit._move_intent = Vector2.ZERO
+		unit.play_visual_action(&"active", 1.2)
+		view._sync_visual(false, 0.05)
+		unit._target = dummy
+		unit._attacking = true
+		unit._attack_visual_serial += 1
+		view._sync_visual(false, 0.05)
+		var attack_waited := view._animation_player.current_animation == "GnarBig_Spell2_anm" and view._pending_attack_serial > 0
+		view._on_animation_finished(&"GnarBig_Spell2_anm")
+		spell_to_attack = attack_waited and view._animation_player.current_animation == "GnarBig_Attack1_anm"
+	_expect(spell_to_idle, "纳尔 Spell2 结束当帧按统一 blend-out 恢复 Idle")
+	_expect(spell_to_move, "纳尔 Spell2 结束当帧按统一 blend-out 衔接 Move/Run_In")
+	_expect(spell_to_attack, "纳尔 Spell2 期间排队的普攻在动作结束当帧立即衔接 Attack")
+	_expect(transition_policy_applied, "Skill 优先级高于 Attack，blend-in/out 统一从 transition policy 读取")
+	_expect(animation_is_read_only, "animation_finished 只切换表现，不会提前结束权威 cast timing")
+	if view != null:
+		view.free()
+	unit.free()
+	dummy.free()
+
+func _check_cast_policies_and_snapshot() -> void:
+	var stats: Dictionary = CardDB.get_card("gnar").get("transformed_stats", {}).duplicate(true)
+	stats["deploy_time"] = 0.0
+	var dummy_stats := SuiteUtils.sweep_dummy_stats(CardDB.get_card("garen"))
+	var stationary := Unit.new()
+	var mobile := Unit.new()
+	var unrestricted := Unit.new()
+	var near_dummy := Unit.new()
+	var far_dummy := Unit.new()
+	stationary.position = Vector2(260.0, 900.0)
+	mobile.position = Vector2(360.0, 900.0)
+	unrestricted.position = Vector2(300.0, 900.0)
+	near_dummy.position = Vector2(260.0, 860.0)
+	far_dummy.position = Vector2(360.0, 790.0)
+	for unit in [stationary, mobile, unrestricted]:
+		unit.setup(0, stats, stats.name)
+		_main.add_child(unit)
+	near_dummy.setup(1, dummy_stats, "近端木桩")
+	far_dummy.setup(1, dummy_stats, "远端木桩")
+	_main.add_child(near_dummy)
+	_main.add_child(far_dummy)
+
+	stationary._target = near_dummy
+	stationary.begin_active_skill_cast(0.15, Vector2.UP)
+	var stationary_serial := stationary.get_attack_visual_serial()
+	stationary.sim_tick(_main.SIM_DT)
+	var stationary_locked := stationary._move_intent.is_zero_approx() and not stationary._attacking and stationary.get_attack_visual_serial() == stationary_serial
+	while stationary.active_skill_cast_timer > 0.0:
+		stationary.sim_tick(_main.SIM_DT)
+	var attacks_after_cast := stationary._attacking and stationary.get_attack_visual_serial() > stationary_serial
+
+	mobile._target = far_dummy
+	mobile.begin_active_skill_cast(0.3, Vector2.UP, [Unit.CAST_LOCK_ATTACK, Unit.CAST_LOCK_FACING])
+	var mobile_serial := mobile.get_attack_visual_serial()
+	mobile.sim_tick(_main.SIM_DT)
+	var mobile_cast_policy := mobile._move_intent.length_squared() > 0.01 and not mobile._attacking and mobile.get_attack_visual_serial() == mobile_serial
+
+	unrestricted._target = near_dummy
+	unrestricted.begin_active_skill_cast(0.3, Vector2.UP, [])
+	unrestricted.sim_tick(_main.SIM_DT)
+	var unrestricted_policy := unrestricted._attacking
+
+	stationary.play_visual_action(&"active", 1.2)
+	stationary.sim_tick(_main.SIM_DT)
+	var payload := NetworkSnapshotSystem.new(_main)._unit_snapshot_payload(77, stationary)
+	var snapshot_contract := (
+		payload.size() == 26
+		and int(payload[17]) == stationary.get_visual_action_serial()
+		and String(payload[18]) == "active"
+		and is_equal_approx(float(payload[23]), 1.2)
+		and is_equal_approx(float(payload[24]), 1.2 - _main.SIM_DT)
+		and int(payload[25]) == stationary.get_locomotion_visual_state_code()
+	)
+	_expect(stationary_locked and attacks_after_cast, "默认技能施法独立锁住移动与普攻，并在窗口结束后立即允许攻击")
+	_expect(mobile_cast_policy, "cast_locks 可配置允许移动施法，同时继续禁止普通攻击")
+	_expect(unrestricted_policy, "空 cast_locks 的纯 Buff 窗口不影响 locomotion 或普通攻击")
+	_expect(snapshot_contract, "网络快照追加同步 action 时间轴与 locomotion，旧表现字段下标保持不变")
+	for unit in [stationary, mobile, unrestricted, near_dummy, far_dummy]:
+		if is_instance_valid(unit):
+			unit.free()

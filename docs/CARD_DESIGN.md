@@ -28,9 +28,11 @@ CardDB 是卡牌数值、通用机制参数和表现配置的唯一来源。普�
 - 状态/被动：部署横扫、命中回血、缠流、攻击节奏/伤害倍率、护盾/减速/眩晕、主动 buff。
 - 生命周期：部署时间、建筑寿命/周期召唤/亡语召唤。
 - 双形态：命中次数、变形/还原时长、完整 `transformed_stats`。
-- 表现：`visual_scene_path(s)`、`visual_forward_yaw`、`visual_animations`；这些不能参与权威判定。
+- 表现：`visual_scene_path(s)`、`visual_forward_yaw`、`visual_animations`；这些不能参与权威判定。单位动画采用 locomotion + action 通道，详见 `ANIMATION_STATE_SYSTEM.md`。
 
 主动 `kind` 当前只允许 `nova`、`buff`、`summon`、`dual_form`。新增 kind 必须同时实现权威执行、CardDB validator、必要快照/RPC、UI 描述和回归；不能只写数据。
+
+带施法窗口的主动可配置 `cast_duration`、`visual_action` 与 `cast_locks`。locks 可独立包含 `movement / attack / facing`；未写时默认三项全锁，空数组表示不限制基础行为。Gameplay lock 不由动画推导，impact 时刻仍由固定模拟实现。
 
 ## 普通卡与特殊机制
 

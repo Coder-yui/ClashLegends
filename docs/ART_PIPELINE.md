@@ -25,6 +25,8 @@ assets/units/<card_id>/<card_id>_view.tscn
 
 `visual_forward_yaw`、包装场景 scale/脚底偏移、`visual_radius` 都是表现数据，不能反向修改 `radius`。CardArt 自动发现 `<card_id>_loading.*`，无需在代码登记图片路径。
 
+单位动画使用 `locomotion + action` 双通道、统一 Pose crossfade 和可选专用 transition clip。技能动作描述、施法权限与接入示例见 `ANIMATION_STATE_SYSTEM.md`。
+
 ## 通用接入顺序
 
 1. 确认任务 Router 和 `card_id`。
