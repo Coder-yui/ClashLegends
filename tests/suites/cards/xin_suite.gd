@@ -70,26 +70,10 @@ func _check_xin_deploy_sweep() -> void:
 func _check_xin_art_integration() -> void:
 	# 赵信素材接入：三段普攻循环、出场技能序列与第三击回血。
 	var stats: Dictionary = CardDB.get_card("xin").duplicate(true)
-	var packed := load(stats.visual_scene_path) as PackedScene
-	_expect(packed != null, "赵信包装场景可加载")
-	if packed == null:
-		return
 	var anim_names: Dictionary = stats.visual_animations
-	var sample := packed.instantiate() as Node3D
-	var anim_player := SuiteUtils.find_anim_player(sample)
-	var names_found := true
-	for key in ["idle", "move", "death"]:
-		var animation_name: String = anim_names.get(key, "")
-		names_found = names_found and animation_name != "" and anim_player != null and anim_player.has_animation(animation_name)
-	for key in ["attack", "attack_hit", "deploy"]:
-		for value in anim_names.get(key, []):
-			names_found = names_found and String(value) != "" and anim_player != null and anim_player.has_animation(String(value))
-	_expect(names_found, "赵信 Idle/Run/Death、三段普攻与出场技能动画名在源模型中都存在")
 	_expect(anim_names.deploy == ["Spell4", "Spell4_To_Idle"], "赵信出场技能按 Spell4 → Spell4_To_Idle 序列播放")
 	_expect(anim_names.deploy_durations == [1.0, 0.5], "赵信出场技能分段时长为 Spell4 1 秒、Spell4_To_Idle 0.5 秒")
 	_expect(anim_names.attack.size() == 3 and anim_names.attack_hit.size() == 3, "赵信三段普攻 Start/收势映射一一对应")
-	if sample != null:
-		sample.free()
 	# 第三击回血：站桩木桩不还手，赵信只应在第 3/6/9…次命中时回复 heal_amount。
 	var combat_stats: Dictionary = stats.duplicate()
 	combat_stats["deploy_time"] = 0.0

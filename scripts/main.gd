@@ -3,6 +3,8 @@ extends Node2D
 
 const ART_DEV_PANEL_SCRIPT := preload("res://scripts/art_dev_panel.gd")
 const ACTIVE_SKILL_BAR_SCRIPT := preload("res://scripts/active_skill_bar.gd")
+const SPELL_SYSTEM_SCRIPT := preload("res://scripts/battle/spell_system.gd")
+const ACTIVE_SKILL_EFFECT_SYSTEM_SCRIPT := preload("res://scripts/battle/active_skill_effect_system.gd")
 const ARENA_BACKGROUND_TEXTURE := preload("res://assets/arena/arena_rift_v4.png")
 
 ## CR 标准 1v1 场地：18 列 x 32 行。项目分辨率正好对应每格 40px。
@@ -122,9 +124,11 @@ var _freeze_effects: Array = []  # [{pos, timer, duration, radius}]
 ## 强化冰冻结束后的权威减速区域与客户端纯视觉区域分开保存。
 var _slow_zones: Array[Dictionary] = []
 var _slow_effects: Array[Dictionary] = []
+var _spell_system: RefCounted
 ## 纳尔 Spell2：固定模拟延迟到手掌触地才结算；范围框是独立纯表现数据。
 var _pending_frontal_stun_skills: Array[Dictionary] = []
 var _frontal_skill_effects: Array[Dictionary] = []
+var _active_skill_effect_system: RefCounted
 var _projectile_system: ProjectileSystem
 var _projectiles := {}  # 主机/单机：id -> {pos, target, team, damage, speed, ...}
 var _client_projectiles := {}  # 客户端仅保存插值表现
@@ -214,6 +218,13 @@ var _sim_tick_id := 0
 
 func _ready() -> void:
 	battle_context = BattleContext.new(self)
+	_spell_system = SPELL_SYSTEM_SCRIPT.new(self)
+	_freeze_effects = _spell_system.freeze_effects
+	_slow_zones = _spell_system.slow_zones
+	_slow_effects = _spell_system.slow_effects
+	_active_skill_effect_system = ACTIVE_SKILL_EFFECT_SYSTEM_SCRIPT.new(self)
+	_pending_frontal_stun_skills = _active_skill_effect_system.pending_frontal_stuns
+	_frontal_skill_effects = _active_skill_effect_system.frontal_effects
 	child_entered_tree.connect(_provide_battle_context)
 	_projectile_system = ProjectileSystem.new()
 	_projectile_system.setup(battle_context)
@@ -1054,6 +1065,9 @@ func _push_units_around(pos: Vector2, radius: float) -> void:
 ## 墓碑等建筑的召唤入口。召唤偏移可能指向塔/建筑，生成前必须找到最近合法位置。
 func spawn_summoned(p_team: int, card_id: String, pos: Vector2) -> Unit:
 	var stats: Dictionary = CardDB.get_unit_stats(card_id)
+	if stats.is_empty():
+		push_error("尝试生成不存在的召唤单位：%s" % card_id)
+		return null
 	if not stats.get("is_air", false):
 		pos = _nearest_valid_ground_spawn(pos, stats.get("radius", 14.0), p_team)
 	return _spawn_unit(p_team, card_id, pos)
@@ -1105,6 +1119,8 @@ func play_card(p_team: int, card_id: String, pos: Vector2, options: Dictionary =
 	if game_over or not CardDB.has_card(card_id):
 		return false
 	var stats := CardDB.get_card(card_id)
+	if StringName(stats.get("type", "unit")) == &"spell" and not SPELL_SYSTEM_SCRIPT.supports(StringName(stats.get("spell_kind", ""))):
+		return false
 	var immediate := bool(options.get("immediate", false))
 	if not bool(stats.get("selectable", true)) and not immediate:
 		return false
@@ -1217,62 +1233,23 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 	if any_landed and from is Unit and is_instance_valid(from):
 		(from as Unit).on_attack_landed(source_form_index)
 
-func _cast_spell(p_team: int, card_id: String, pos: Vector2, active_enabled: bool = false) -> void:
-	match card_id:
-		"freeze":
-			var stats: Dictionary = CardDB.get_card("freeze")
-			var radius: float = stats.radius
-			var duration: float = stats.duration
-			var slow_duration: float = stats.active_slow_duration if active_enabled else 0.0
-			var slow_multiplier: float = stats.active_slow_multiplier
-			_apply_freeze(pos, radius, duration, p_team, slow_duration, slow_multiplier)
-			# 主机：同步冰冻视觉效果给客户端
-			if mode == "host":
-				_rpc_freeze_fx.rpc(pos, radius, duration, slow_duration, slow_multiplier)
+func _cast_spell(p_team: int, card_id: String, pos: Vector2, active_enabled: bool = false) -> bool:
+	return _spell_system.cast(p_team, CardDB.get_card(card_id), pos, active_enabled)
 
 func _apply_freeze(pos: Vector2, radius: float, duration: float, p_team: int, slow_duration: float = 0.0, slow_multiplier: float = 1.0) -> void:
-	# 记录视觉效果
-	_freeze_effects.append({"pos": pos, "timer": duration, "duration": duration, "radius": radius})
-	if slow_duration > 0.0:
-		_slow_zones.append({"pos": pos, "radius": radius, "delay": duration, "timer": slow_duration, "team": p_team, "multiplier": slow_multiplier})
-		_slow_effects.append({"pos": pos, "radius": radius, "delay": duration, "timer": slow_duration, "duration": slow_duration})
-	for c in get_tree().get_nodes_in_group("combatants"):
-		if not is_instance_valid(c) or c.team == p_team or c.hp <= 0.0:
-			continue
-		# 法术圆与目标碰撞圆相交即命中，而不是只判断目标中心点。
-		if c.global_position.distance_to(pos) <= radius + c.body_radius:
-			if c is Unit:
-				(c as Unit).freeze(duration)
-			elif c is Tower:
-				(c as Tower).freeze(duration)
+	_spell_system.apply_freeze(pos, radius, duration, p_team, slow_duration, slow_multiplier)
 
 func _tick_slow_zones(dt: float) -> void:
-	var alive: Array[Dictionary] = []
-	for zone in _slow_zones:
-		if float(zone.delay) > 0.0:
-			zone.delay = maxf(0.0, float(zone.delay) - dt)
-			alive.append(zone)
-			continue
-		zone.timer = maxf(0.0, float(zone.timer) - dt)
-		for c in get_tree().get_nodes_in_group("combatants"):
-			if not c is Unit or not is_instance_valid(c) or c.team == int(zone.team) or c.hp <= 0.0:
-				continue
-			if c.global_position.distance_to(zone.pos) <= float(zone.radius) + c.body_radius:
-				(c as Unit).apply_slow(dt + SIM_DT, float(zone.multiplier))
-		if float(zone.timer) > 0.0:
-			alive.append(zone)
-	_slow_zones = alive
+	_spell_system.tick(dt)
 
 func _tick_slow_effect_visuals(delta: float) -> void:
-	for effect in _slow_effects:
-		if float(effect.delay) > 0.0:
-			effect.delay = maxf(0.0, float(effect.delay) - delta)
-		else:
-			effect.timer = maxf(0.0, float(effect.timer) - delta)
-	_slow_effects = _slow_effects.filter(func(effect): return float(effect.delay) > 0.0 or float(effect.timer) > 0.0)
+	_spell_system.tick_visuals(delta)
 
 func _spawn_unit(team: int, card_id: String, pos: Vector2, deploy_time_override: float = -1.0, active_slot: int = -1) -> Unit:
 	var stats: Dictionary = CardDB.get_unit_stats(card_id)
+	if stats.is_empty():
+		push_error("尝试生成不存在的单位：%s" % card_id)
+		return null
 	if deploy_time_override >= 0.0:
 		stats = stats.duplicate()
 		stats["deploy_time"] = deploy_time_override
@@ -1487,25 +1464,7 @@ func _activate_active_skill(ability_id: int, expected_team: int = -1) -> bool:
 	return true
 
 func _apply_active_skill_effect(unit: Unit, skill: Dictionary) -> bool:
-	var skill_kind := String(skill.kind)
-	match skill_kind:
-		"buff":
-			unit.apply_active_buff(
-				float(skill.get("duration", 0.0)),
-				float(skill.get("speed_multiplier", 1.0)),
-				float(skill.get("damage_multiplier", 1.0)),
-				float(skill.get("attack_speed_multiplier", 1.0))
-			)
-			unit.add_shield(float(skill.get("shield", 0.0)), float(skill.get("shield_duration", skill.get("duration", 0.0))))
-		"nova":
-			_activate_nova_skill(unit, skill)
-		"summon":
-			_activate_summon_skill(unit, skill)
-		"dual_form":
-			_activate_dual_form_skill(unit, skill)
-		_:
-			return false
-	return true
+	return _active_skill_effect_system.apply(unit, skill)
 
 func _begin_configured_active_skill_cast(unit: Unit, skill: Dictionary) -> void:
 	var cast_duration := maxf(float(skill.get("cast_duration", 0.0)), 0.0)
@@ -1519,165 +1478,35 @@ func _begin_configured_active_skill_cast(unit: Unit, skill: Dictionary) -> void:
 		unit.play_visual_action(action_name, cast_duration)
 
 func _activate_nova_skill(source: Unit, skill: Dictionary) -> void:
-	var radius := float(skill.get("radius", 0.0))
-	var amount := float(skill.get("damage", 0.0))
-	var knockback := float(skill.get("knockback", 0.0))
-	var slow_duration := float(skill.get("slow_duration", 0.0))
-	var skill_slow_multiplier := float(skill.get("slow_multiplier", 1.0))
-	for c in get_tree().get_nodes_in_group("combatants"):
-		if c == source or not is_instance_valid(c) or c.team == source.team or c.hp <= 0.0:
-			continue
-		if c.global_position.distance_to(source.global_position) > radius + c.body_radius:
-			continue
-		if amount > 0.0:
-			c.take_damage(amount, source, source.team, source.global_position)
-		if c is Unit and is_instance_valid(c) and c.hp > 0.0:
-			if knockback > 0.0:
-				(c as Unit).apply_knockback(source.global_position, knockback)
-			if slow_duration > 0.0:
-				(c as Unit).apply_slow(slow_duration, skill_slow_multiplier)
-	source.add_shield(float(skill.get("shield", 0.0)), float(skill.get("shield_duration", 0.0)))
+	_active_skill_effect_system.activate_nova(source, skill)
 
 func _activate_summon_skill(source: Unit, skill: Dictionary) -> void:
-	var spawn_id := String(skill.get("spawn_id", "imp"))
-	var count := maxi(int(skill.get("spawn_count", 1)), 1)
-	for i in range(count):
-		var angle := TAU * float(i) / float(count)
-		var offset := Vector2.RIGHT.rotated(angle) * (source.body_radius + 18.0)
-		spawn_summoned(source.team, spawn_id, source.global_position + offset)
+	_active_skill_effect_system.activate_summon(source, skill)
 
 func _activate_dual_form_skill(source: Unit, skill: Dictionary) -> void:
-	var cast_forward := _frontal_skill_forward(source)
-	if source.form_index == 0:
-		source.transform_to_mega(true)
-		_activate_frontal_stun_skill(
-			source, skill, false,
-			float(skill.get("transform_impact_delay", 0.9)),
-			float(skill.get("transform_cast_duration", 1.3)),
-			cast_forward
-		)
-		return
-	_activate_frontal_stun_skill(
-		source, skill, true,
-		float(skill.get("impact_delay", 0.8)),
-		float(skill.get("cast_duration", 1.2)),
-		cast_forward
-	)
+	_active_skill_effect_system.activate_dual_form(source, skill)
 
 ## Spell2 先启动动画和无近端边线的矩形预警；固定模拟到手掌触地时才结算伤害/眩晕。
 func _activate_frontal_stun_skill(source: Unit, skill: Dictionary, play_action: bool = true, impact_delay: float = -1.0, cast_duration: float = -1.0, cast_forward: Vector2 = Vector2.ZERO) -> void:
-	if impact_delay < 0.0:
-		impact_delay = maxf(float(skill.get("impact_delay", 0.8)), 0.0)
-	else:
-		impact_delay = maxf(impact_delay, 0.0)
-	if cast_duration < 0.0:
-		cast_duration = maxf(float(skill.get("cast_duration", 1.2)), 0.0)
-	else:
-		cast_duration = maxf(cast_duration, 0.0)
-	if cast_forward.length_squared() < 0.001:
-		cast_forward = _frontal_skill_forward(source)
-	else:
-		cast_forward = cast_forward.normalized()
-	var cast_locks: Array = skill.get("cast_locks", Unit.DEFAULT_CAST_LOCKS)
-	source.begin_active_skill_cast(cast_duration, cast_forward, cast_locks)
-	if play_action:
-		source.play_visual_action(StringName(skill.get("visual_action", "active")), cast_duration)
-	_pending_frontal_stun_skills.append({
-		"source_ref": weakref(source),
-		"skill": skill.duplicate(true),
-		"forward": cast_forward,
-		"time_left": impact_delay,
-	})
-	_add_frontal_skill_effect(source, skill, impact_delay, cast_forward)
-	if mode == "host":
-		_rpc_frontal_skill_fx.rpc(
-			source.net_id,
-			source.global_position,
-			cast_forward,
-			source.body_radius,
-			float(skill.get("length", 0.0)),
-			float(skill.get("width", 0.0)),
-			impact_delay,
-			source.team,
-		)
+	_active_skill_effect_system.activate_frontal_stun(source, skill, play_action, impact_delay, cast_duration, cast_forward)
 
 func _tick_pending_frontal_stun_skills(dt: float) -> void:
-	var waiting: Array[Dictionary] = []
-	for pending in _pending_frontal_stun_skills:
-		var source = (pending.source_ref as WeakRef).get_ref()
-		if not source is Unit or not is_instance_valid(source) or source.hp <= 0.0:
-			continue
-		if source.frozen_timer > 0.0 or source.stun_timer > 0.0:
-			waiting.append(pending)
-			continue
-		pending.time_left = maxf(0.0, float(pending.time_left) - dt)
-		if float(pending.time_left) > 0.001:
-			waiting.append(pending)
-			continue
-		_apply_frontal_stun_impact(source as Unit, pending.skill, pending.forward)
-	_pending_frontal_stun_skills = waiting
+	_active_skill_effect_system.tick_pending(dt)
 
 func _apply_frontal_stun_impact(source: Unit, skill: Dictionary, forward: Vector2) -> void:
-	forward = forward.normalized()
-	var side := Vector2(-forward.y, forward.x)
-	var length := maxf(float(skill.get("length", 0.0)), 0.0)
-	var half_width := maxf(float(skill.get("width", 0.0)) * 0.5, 0.0)
-	var amount := maxf(float(skill.get("damage", 0.0)), 0.0)
-	var stun_duration := maxf(float(skill.get("stun_duration", 0.0)), 0.0)
-	var ground_only := bool(skill.get("ground_only", true))
-	for c in get_tree().get_nodes_in_group("combatants"):
-		if c == source or not is_instance_valid(c) or c.team == source.team or c.hp <= 0.0:
-			continue
-		if ground_only and c is Unit and (c as Unit).is_air:
-			continue
-		var local_offset: Vector2 = c.global_position - source.global_position
-		var forward_distance := local_offset.dot(forward) - source.body_radius
-		var lateral_distance := absf(local_offset.dot(side))
-		if forward_distance < -c.body_radius or forward_distance > length + c.body_radius:
-			continue
-		if lateral_distance > half_width + c.body_radius:
-			continue
-		if amount > 0.0:
-			c.take_damage(amount, source, source.team, source.global_position)
-		if is_instance_valid(c) and c.hp > 0.0 and stun_duration > 0.0 and c.has_method("stun"):
-			c.stun(stun_duration)
+	_active_skill_effect_system.apply_frontal_stun(source, skill, forward)
 
 func _frontal_skill_forward(source: Unit) -> Vector2:
-	var forward := source.get_visual_facing_direction()
-	if forward.length_squared() < 0.001:
-		forward = Vector2.UP if source.team == 0 else Vector2.DOWN
-	return forward.normalized()
+	return _active_skill_effect_system.frontal_forward(source)
 
 func _add_frontal_skill_effect(source: Unit, skill: Dictionary, duration: float, cast_forward: Vector2) -> void:
-	_frontal_skill_effects.append({
-		"source_ref": weakref(source),
-		"net_id": source.net_id,
-		"pos": source.global_position,
-		"forward": cast_forward,
-		"source_radius": source.body_radius,
-		"length": maxf(float(skill.get("length", 0.0)), 0.0),
-		"width": maxf(float(skill.get("width", 0.0)), 0.0),
-		"timer": duration,
-		"duration": duration,
-		"team": source.team,
-	})
+	_active_skill_effect_system.add_frontal_effect(source, skill, duration, cast_forward)
 
 func _tick_frontal_skill_effect_visuals(delta: float) -> void:
-	for effect in _frontal_skill_effects:
-		var source = _frontal_skill_effect_source(effect)
-		if source is Unit and (source.frozen_timer > 0.0 or source.stun_timer > 0.0):
-			continue
-		effect.timer = maxf(0.0, float(effect.timer) - delta)
-	_frontal_skill_effects = _frontal_skill_effects.filter(func(effect): return float(effect.timer) > 0.001)
+	_active_skill_effect_system.tick_visuals(delta)
 
 func _frontal_skill_effect_source(effect: Dictionary):
-	var source = null
-	var source_ref = effect.get("source_ref")
-	if source_ref is WeakRef:
-		source = (source_ref as WeakRef).get_ref()
-	if (source == null or not is_instance_valid(source)) and mode == "client":
-		source = _client_units.get(int(effect.get("net_id", -1)))
-	return source
+	return _active_skill_effect_system.effect_source(effect)
 
 ## 水晶兵线入口。只在单机/主机固定模拟调用，最终仍统一走 _spawn_unit 与现有 RPC。
 func _tick_minion_waves(dt: float) -> void:

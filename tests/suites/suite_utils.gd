@@ -20,3 +20,83 @@ static func sweep_dummy_stats(base: Dictionary) -> Dictionary:
 	stats["speed"] = 0.0
 	stats["sight"] = 0.0
 	return stats
+
+
+## 所有新卡共用的美术契约：包装场景可实例化，配置中的动画名真实存在。
+## 独特动画时序仍由角色领域测试覆盖，不再为每张卡复制基础名称检查。
+static func visual_contract_errors(card_id: String, stats: Dictionary) -> PackedStringArray:
+	var errors := PackedStringArray()
+	_validate_visual_stats(card_id, stats, errors)
+	var transformed = stats.get("transformed_stats")
+	if transformed is Dictionary and not (transformed as Dictionary).is_empty():
+		_validate_visual_stats("%s.transformed_stats" % card_id, transformed, errors)
+	return errors
+
+
+static func _validate_visual_stats(label: String, stats: Dictionary, errors: PackedStringArray) -> void:
+	var scene_paths: Array[String] = []
+	var single_path := String(stats.get("visual_scene_path", ""))
+	if not single_path.is_empty():
+		scene_paths.append(single_path)
+	for configured_path in stats.get("visual_scene_paths", []):
+		if not String(configured_path).is_empty():
+			scene_paths.append(String(configured_path))
+	if scene_paths.is_empty():
+		return
+	var animations: Dictionary = stats.get("visual_animations", {})
+	var animation_names := _configured_animation_names(animations)
+	for scene_path in scene_paths:
+		var packed := load(scene_path) as PackedScene
+		if packed == null:
+			errors.append("%s: 无法加载 %s" % [label, scene_path])
+			continue
+		var sample := packed.instantiate()
+		if sample.has_method("prepare_visual_animations"):
+			sample.call("prepare_visual_animations")
+		var player := find_anim_player(sample)
+		if player == null:
+			errors.append("%s: %s 中没有 AnimationPlayer" % [label, scene_path])
+		else:
+			for animation_name in animation_names:
+				if not player.has_animation(animation_name):
+					errors.append("%s: %s 缺少动画 %s" % [label, scene_path, animation_name])
+		sample.free()
+	var followup_path := String(animations.get("death_followup_scene_path", ""))
+	var followup_animation := StringName(animations.get("death_followup_animation", ""))
+	if not followup_path.is_empty() and followup_animation != &"":
+		var followup_packed := load(followup_path) as PackedScene
+		var followup_sample := followup_packed.instantiate() if followup_packed != null else null
+		var followup_player := find_anim_player(followup_sample) if followup_sample != null else null
+		if followup_player == null or not followup_player.has_animation(followup_animation):
+			errors.append("%s: 死亡后续场景缺少动画 %s" % [label, followup_animation])
+		if followup_sample != null:
+			followup_sample.free()
+
+
+static func _configured_animation_names(animations: Dictionary) -> Array[StringName]:
+	var names: Array[StringName] = []
+	for key in [
+		"deploy", "idle", "move", "move_enter", "move_cycle",
+		"attack", "attack_enter", "attack_retarget_enter", "attack_loop",
+		"attack_hit", "attack_recover", "attack_structure", "attack_to_move", "death",
+	]:
+		_append_animation_names(names, animations.get(key))
+	var transitions = animations.get("transitions")
+	if transitions is Dictionary:
+		for value in (transitions as Dictionary).values():
+			_append_animation_names(names, value)
+	var actions = animations.get("visual_actions")
+	if actions is Dictionary:
+		for configured in (actions as Dictionary).values():
+			_append_animation_names(names, configured.get("animation") if configured is Dictionary else configured)
+	return names
+
+
+static func _append_animation_names(names: Array[StringName], configured: Variant) -> void:
+	var values: Array = configured if configured is Array else [configured]
+	for value in values:
+		if value == null:
+			continue
+		var animation_name := StringName(value)
+		if animation_name != &"" and animation_name not in names:
+			names.append(animation_name)

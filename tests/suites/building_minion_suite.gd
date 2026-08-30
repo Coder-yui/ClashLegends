@@ -16,6 +16,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_death_animation_durations()
 	_check_tombstone_footprint()
 	_check_tombstone_spawn_cycle()
+	_check_generic_periodic_summon()
 
 func _check_tombstone_art_integration() -> void:
 	var cards := CardDB.all()
@@ -31,10 +32,6 @@ func _check_tombstone_art_integration() -> void:
 		_main.add_child(imp_sample)
 	var tombstone_player := SuiteUtils.find_anim_player(tombstone_sample) if tombstone_sample != null else null
 	var imp_player := SuiteUtils.find_anim_player(imp_sample) if imp_sample != null else null
-	var tombstone_animations_ok := tombstone_player != null
-	for key in ["deploy", "idle", "death"]:
-		var animation_name := String(tombstone_stats.visual_animations.get(key, ""))
-		tombstone_animations_ok = tombstone_animations_ok and tombstone_player.has_animation(animation_name)
 	var fog_layers: Array[Node] = tombstone_sample.find_children("BlackFog*", "MeshInstance3D", true, false) if tombstone_sample != null else []
 	var fog_ok := fog_layers.size() >= 5
 	var fog_material_ids := {}
@@ -58,18 +55,11 @@ func _check_tombstone_art_integration() -> void:
 	if health_anchor_ok:
 		var anchor = tombstone_sample.call("get_health_bar_anchor_local")
 		health_anchor_ok = anchor is Vector3 and (anchor as Vector3).y > 1.0
-	var imp_animations_ok := imp_player != null
-	for key in ["deploy", "idle", "move", "death"]:
-		var animation_name := String(imp_stats.visual_animations.get(key, ""))
-		imp_animations_ok = imp_animations_ok and imp_player.has_animation(animation_name)
-	for animation_name in imp_stats.visual_animations.attack:
-		imp_animations_ok = imp_animations_ok and imp_player.has_animation(String(animation_name))
-	imp_animations_ok = imp_animations_ok and String(imp_stats.visual_animations.move) == "Run1"
-	imp_animations_ok = imp_animations_ok and imp_stats.visual_animations.attack == ["Yorick_ghoul_leapWindup_anm"]
-	_expect(tombstone_packed != null and tombstone_animations_ok and fog_ok, "墓碑包装场景接入 Spawn/Idle1/Death，并用五层独立流动黑雾覆盖地面与模型内部")
+	var imp_animation_mapping_ok: bool = String(imp_stats.visual_animations.move) == "Run1" and imp_stats.visual_animations.attack == ["Yorick_ghoul_leapWindup_anm"]
+	_expect(tombstone_packed != null and tombstone_player != null and fog_ok, "墓碑包装场景使用五层独立流动黑雾覆盖地面与模型内部")
 	_expect(fog_death_ok, "墓碑死亡时每座墓碑的黑雾独立随 Death 动画扩散并淡出")
 	_expect(health_anchor_ok, "墓碑使用稳定的模型顶部锚点定位血条")
-	_expect(imp_packed != null and imp_animations_ok, "小鬼移动循环 Run1，攻击使用 leapWindup，Spawn/Idle/Death 保持原动画")
+	_expect(imp_packed != null and imp_player != null and imp_animation_mapping_ok, "小鬼移动循环 Run1，攻击使用 leapWindup")
 	if tombstone_sample != null:
 		tombstone_sample.free()
 	if imp_sample != null:
@@ -98,24 +88,6 @@ func _check_minion_line_mechanism() -> void:
 		and cards.siege_minion.can_attack_air,
 		"四类小兵的权威体型统一下调一档，速度与对空能力保持原定义"
 	)
-
-	var art_ok := true
-	for card_id in minion_ids:
-		var stats: Dictionary = cards[card_id]
-		var scene_paths: Array = stats.visual_scene_paths
-		art_ok = art_ok and scene_paths.size() == 2
-		for scene_path in scene_paths:
-			var packed := load(String(scene_path)) as PackedScene
-			var sample := packed.instantiate() as Node3D if packed != null else null
-			var anim_player := SuiteUtils.find_anim_player(sample) if sample != null else null
-			for key in ["deploy", "idle", "move", "death"]:
-				var animation_name := String(stats.visual_animations[key])
-				art_ok = art_ok and anim_player != null and anim_player.has_animation(animation_name)
-			for attack_name in stats.visual_animations.attack:
-				art_ok = art_ok and anim_player != null and anim_player.has_animation(String(attack_name))
-			if sample != null:
-				sample.free()
-	_expect(art_ok, "四类兵线的 order/chaos 包装场景均可加载，Idle/Run/Attack/Death 映射真实存在")
 
 	var ranged_blue := Unit.new()
 	var ranged_red := Unit.new()
@@ -305,6 +277,24 @@ func _check_tombstone_spawn_cycle() -> void:
 		imp.free()
 	left.free()
 	right.free()
+
+
+func _check_generic_periodic_summon() -> void:
+	var stats: Dictionary = CardDB.get_card("tombstone").duplicate(true)
+	stats["spawn_id"] = "melee_minion"
+	stats["spawn_count"] = 1
+	stats["spawn_side"] = ""
+	var generator := Unit.new()
+	generator.position = Vector2(360.0, 900.0)
+	generator.setup(0, stats, stats.name)
+	_main.add_child(generator)
+	var before: Unit = _main._latest_unit_for_card("melee_minion", 0)
+	generator._spawn_batch()
+	var summoned: Unit = _main._latest_unit_for_card("melee_minion", 0)
+	_expect(summoned != null and summoned != before, "周期召唤建筑按 spawn_id 生成任意已登记单位，不再写死小鬼")
+	if summoned != null and is_instance_valid(summoned):
+		summoned.free()
+	generator.free()
 
 func _imp_units() -> Array[Unit]:
 	var result: Array[Unit] = []

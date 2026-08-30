@@ -59,3 +59,18 @@ func run(harness: Object) -> void:
 		and not unknown_field_errors.is_empty() and "未知或未登记字段" in unknown_field_errors[0],
 		"CardDB validator 校验主动动作映射、动作时长数组、Impact/施法关系、全身动作攻击锁和统一未知字段提示",
 	)
+	var spell_errors := PackedStringArray()
+	CardDB._validate_card("spell_probe", {
+		"name": "探针", "cost": 1, "type": "spell", "description": "测试",
+		"radius": 10.0, "duration": 1.0, "spell_kind": "missing", "color": Color.WHITE,
+	}, spell_errors)
+	var reference_errors := PackedStringArray()
+	CardDB._validate_references("reference_probe", {
+		"spawn_id": "missing_unit",
+		"active_skill": {"kind": "summon", "spawn_id": "missing_active_unit"},
+	}, CardDB.all(), reference_errors)
+	harness._expect(
+		not spell_errors.is_empty() and "spell_kind" in "；".join(spell_errors)
+		and reference_errors.size() == 2,
+		"CardDB 在运行前拒绝未实现法术和失效的周期/主动召唤引用",
+	)

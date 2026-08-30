@@ -16,6 +16,7 @@ func _run() -> void:
 	current_scene = _main
 	await process_frame
 	CardDBValidationSuite.new().run(self)
+	ContentContractSuite.new().run(self)
 	await DeckBuilderSuite.new().run(self, _main)
 	_main._start_local()
 	_main.set_process(false)

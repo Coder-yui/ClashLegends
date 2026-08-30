@@ -133,6 +133,7 @@ var net_target_pos: Vector2
 
 # 建筑卡专用
 var lifespan := 0.0
+var spawn_id := ""
 var spawn_interval := 0.0
 var spawn_count := 1
 var spawn_side := ""
@@ -286,6 +287,7 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	form_change_serial = 0
 	net_form_change_serial = 0
 	lifespan = stats.get("lifespan", 0.0)
+	spawn_id = String(stats.get("spawn_id", ""))
 	spawn_interval = stats.get("spawn_interval", 0.0)
 	spawn_count = maxi(int(stats.get("spawn_count", 1)), 1)
 	spawn_side = String(stats.get("spawn_side", ""))
@@ -795,36 +797,41 @@ func _building_tick(dt: float) -> void:
 		_spawn_timer -= dt
 		if _spawn_timer <= 0.0:
 			_spawn_timer += spawn_interval
-			_spawn_imp_batch()
+			_spawn_batch()
 
 func _spawn_initial_summons() -> void:
 	if _initial_summons_spawned or spawn_interval <= 0.0:
 		return
 	_initial_summons_spawned = true
-	_spawn_imp_batch()
+	_spawn_batch()
 
-func _spawn_imp_batch() -> void:
-	if battle_context == null:
+func _spawn_batch() -> void:
+	if battle_context == null or spawn_id.is_empty():
 		return
+	var summon_stats := CardDB.get_unit_stats(spawn_id)
+	if summon_stats.is_empty():
+		push_error("周期召唤引用了不存在的单位：%s" % spawn_id)
+		return
+	var summon_radius := float(summon_stats.get("radius", 14.0))
 	var count := maxi(spawn_count, 1)
 	if spawn_side == "map_side":
-		# 以地图中线决定墓碑的产出侧：左半区始终在左侧，右半区始终在右侧。
+		# 以地图中线决定产出侧：左半区始终在左侧，右半区始终在右侧。
 		var side := Vector2.LEFT if global_position.x < battle_context.field_width() * 0.5 else Vector2.RIGHT
-		var lateral_step := CardDB.RADIUS_EXTREMELY_SMALL * 2.0 + SUMMON_SEPARATION
+		var lateral_step := summon_radius * 2.0 + SUMMON_SEPARATION
 		var first_lateral := -float(count - 1) * lateral_step * 0.5
-		var spawn_distance := body_radius + CardDB.RADIUS_EXTREMELY_SMALL + SUMMON_SEPARATION
+		var spawn_distance := body_radius + summon_radius + SUMMON_SEPARATION
 		for index in count:
 			var lateral := first_lateral + float(index) * lateral_step
 			var spawn_pos := global_position + side * spawn_distance + Vector2.UP * lateral
-			battle_context.spawn_summoned(team, "imp", spawn_pos)
+			battle_context.spawn_summoned(team, spawn_id, spawn_pos)
 		_spawn_counter += count
 		return
 	for index in count:
 		var direction: Vector2 = SPAWN_DIRECTIONS[_spawn_counter % SPAWN_DIRECTIONS.size()]
-		var spawn_distance := body_radius + CardDB.RADIUS_EXTREMELY_SMALL + SUMMON_SEPARATION
+		var spawn_distance := body_radius + summon_radius + SUMMON_SEPARATION
 		var spawn_pos: Vector2 = global_position + direction * spawn_distance
 		_spawn_counter += 1
-		battle_context.spawn_summoned(team, "imp", spawn_pos)
+		battle_context.spawn_summoned(team, spawn_id, spawn_pos)
 
 ## 目标管理：攻击中的目标失效/超距时优先原地换打射程内最近合法目标；
 ## 只有没有替代目标时才退出 Attack 并按视野规则重新索敌/追击。

@@ -505,18 +505,7 @@ func _check_garen_death_animation() -> void:
 func _check_masteryi_art_integration() -> void:
 	var stats: Dictionary = CardDB.get_card("masteryi").duplicate(true)
 	stats["deploy_time"] = 0.0
-	var packed := load(stats.visual_scene_path) as PackedScene
-	_expect(packed != null, "剑圣包装场景可加载")
-	if packed == null:
-		return
 	var anim_names: Dictionary = stats.visual_animations
-	var sample := packed.instantiate() as Node3D
-	var anim_player := SuiteUtils.find_anim_player(sample)
-	var names_found := true
-	for key in ["deploy", "idle", "move", "death"]:
-		var animation_name: String = anim_names.get(key, "")
-		names_found = names_found and animation_name != "" and anim_player != null and anim_player.has_animation(animation_name)
-	_expect(names_found, "剑圣 Idle/Run/A 两套普攻/Death/Deploy 动画名在源模型中都存在")
 	var attacks: Array = anim_names.attack
 	_expect(attacks == ["masteryi_2013_attack1_anm", "masteryi_2013_attack2_anm"], "剑圣两套攻击动作按表现序号交替选择")
 	var unit := Unit.new()
@@ -538,26 +527,11 @@ func _check_masteryi_art_integration() -> void:
 	_expect(process_order_ok, "客户端 3D 代理在 Unit 快照插值完成后读取最终位置")
 	if is_instance_valid(unit):
 		unit.free()
-	if sample != null:
-		sample.free()
 
 func _check_ashe_art_integration() -> void:
 	var stats: Dictionary = CardDB.get_card("ashe").duplicate(true)
 	stats["deploy_time"] = 0.0
-	var packed := load(stats.visual_scene_path) as PackedScene
-	_expect(packed != null, "寒冰包装场景可加载")
-	if packed == null:
-		return
 	var anim_names: Dictionary = stats.visual_animations
-	var sample := packed.instantiate() as Node3D
-	var anim_player := SuiteUtils.find_anim_player(sample)
-	var names_found := true
-	for key in ["deploy", "idle", "move", "death"]:
-		var animation_name: String = anim_names.get(key, "")
-		names_found = names_found and animation_name != "" and anim_player != null and anim_player.has_animation(animation_name)
-	for attack in anim_names.attack:
-		names_found = names_found and anim_player != null and anim_player.has_animation(String(attack))
-	_expect(names_found, "寒冰 Idle/Run/两套普攻/Death 动画名在源模型中都存在")
 	_expect(anim_names.attack == ["Attack1", "Attack2"], "寒冰两套射箭动作按表现序号交替选择")
 	_expect(stats.projectile_visual == "arrow" and is_equal_approx(stats.first_hit / stats.interval, 0.45), "寒冰在攻击动画约 45% 的离弦姿态生成蓝色箭矢")
 	_expect(is_equal_approx(stats.projectile_visual_height, 45.0), "寒冰放大后箭矢绘制点同步抬到新的弓部高度")
@@ -577,30 +551,12 @@ func _check_ashe_art_integration() -> void:
 	_expect(attached and death_view_found, "寒冰死亡时由独立 3D 代理播放 Death")
 	if is_instance_valid(unit):
 		unit.free()
-	if sample != null:
-		sample.free()
 
 ## 腕豪美术集成：包装场景可加载，模型落到地面，动画名在源模型中存在，死亡由 3D 代理播放。
 func _check_sett_art_integration() -> void:
 	var stats: Dictionary = CardDB.get_card("sett").duplicate(true)
 	stats["deploy_time"] = 0.0
-	var packed := load(stats.visual_scene_path) as PackedScene
-	_expect(packed != null, "腕豪包装场景可加载")
-	if packed == null:
-		return
 	var anim_names: Dictionary = stats.visual_animations
-	var sample := packed.instantiate() as Node3D
-	var anim_player := SuiteUtils.find_anim_player(sample)
-	var names_found := true
-	for key in ["deploy", "idle", "move", "death"]:
-		var animation_name: String = anim_names.get(key, "")
-		names_found = names_found and animation_name != "" and anim_player != null and anim_player.has_animation(animation_name)
-	for key in ["attack", "attack_hit", "attack_recover"]:
-		for animation_value in anim_names.get(key, []):
-			if String(animation_value).is_empty():
-				continue
-			names_found = names_found and anim_player != null and anim_player.has_animation(String(animation_value))
-	_expect(names_found, "腕豪 Idle/Run/四段普攻/两段收势/Death/Deploy 动画名在源模型中都存在")
 	var starts_ok: bool = anim_names.attack == ["Attack1_Start", "Attack1_Passive_Start", "Attack2_Start", "Attack2_Passive_Start"]
 	var hits_ok: bool = anim_names.attack_hit == ["Attack1_Hit", "Sett_Attack1_Passive_anm", "Attack2_Hit", "Sett_Attack2_Passive_anm"]
 	var recovers_ok: bool = anim_names.attack_recover == ["", "Attack1_Passive_Into_Idle", "", "Attack2_Passive_Into_Idle"]
@@ -637,8 +593,6 @@ func _check_sett_art_integration() -> void:
 	_expect(attached and death_view_found, "腕豪死亡时由独立 3D 代理播放 Death")
 	if is_instance_valid(unit):
 		unit.free()
-	if sample != null:
-		sample.free()
 
 ## 提莫美术集成：远程射节约一处弹体发射（不命中前不结算伤害），毒针走独立 needle 表现。
 func _check_teemo_art_integration() -> void:
@@ -648,20 +602,6 @@ func _check_teemo_art_integration() -> void:
 	_expect(is_equal_approx(stats.projectile_visual_height, 42.0), "提莫放大后绿色短针同步从新的吹管口高度出现")
 	_expect(is_equal_approx(stats.interval, 1.0) and is_equal_approx(stats.range, 160.0), "提莫降低攻速并保持 4 格攻击距离")
 	_expect(is_equal_approx(stats.visual_animations.attack_hit_duration, stats.interval - stats.first_hit), "提莫两段攻击后摇与降低后的攻速周期对齐")
-	var packed := load(stats.visual_scene_path) as PackedScene
-	_expect(packed != null, "提莫包装场景可加载")
-	if packed == null:
-		return
-	var anim_names: Dictionary = stats.visual_animations
-	var sample := packed.instantiate() as Node3D
-	var anim_player := SuiteUtils.find_anim_player(sample)
-	var names_found := true
-	for key in ["deploy", "idle", "move", "death"]:
-		var animation_name: String = anim_names.get(key, "")
-		names_found = names_found and animation_name != "" and anim_player != null and anim_player.has_animation(animation_name)
-	for attack in anim_names.attack:
-		names_found = names_found and anim_player != null and anim_player.has_animation(String(attack))
-	_expect(names_found, "提莫 Idle/Run/普攻/Death/Deploy 动画名在源模型中都存在")
 	var unit := Unit.new()
 	unit.position = Vector2(260.0, 900.0)
 	unit.setup(0, stats, stats.name)
@@ -678,5 +618,3 @@ func _check_teemo_art_integration() -> void:
 	_expect(attached and death_view_found, "提莫死亡时由独立 3D 代理播放 Death")
 	if is_instance_valid(unit):
 		unit.free()
-	if sample != null:
-		sample.free()

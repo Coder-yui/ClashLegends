@@ -18,6 +18,7 @@
   - [x] 寻路、碰撞、拥挤避让、格子部署、pocket、水晶兵线。
   - [x] 追踪弹体、范围/击退、冰冻/减速、护盾、召唤、缠流、持续攻击、双形态、前方眩晕。
   - [x] 中期架构：BattleContext、Deck Builder、Projectile、Snapshot、统一命令、CardDB validator、领域测试。
+  - [x] 内容扩展边界：SpellSystem、ActiveSkillEffectSystem、通用召唤引用与全卡美术契约。
   - [ ] 新卡需要时再增加非追踪/穿透等通用机制；不预先空抽象。
   - [ ] 广域网连通方案；局域网已可用。
 - [ ] 阶段 4：美术与打磨持续进行。

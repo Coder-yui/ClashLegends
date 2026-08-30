@@ -570,12 +570,13 @@ func _open_card_info(card_id: String) -> void:
 	details.add_child(_make_card_attribute_grid(stats))
 	var transformed_stats: Dictionary = stats.get("transformed_stats", {})
 	if not transformed_stats.is_empty():
-		details.add_child(_make_card_info_subheading("大纳尔（变形后）"))
+		details.add_child(_make_card_info_subheading("%s（变形后）" % String(transformed_stats.get("name", "变形形态"))))
 		details.add_child(_make_card_attribute_grid(transformed_stats))
-	if card_id == "tombstone":
-		details.add_child(_make_card_info_subheading("召唤物：小鬼（每批 %d 只）" % int(stats.get("spawn_count", 1))))
-		var imp_stats := CardDB.imp_stats()
-		details.add_child(_make_card_attribute_grid(imp_stats, "%d /批" % int(stats.get("spawn_count", 1))))
+	var periodic_spawn_id := String(stats.get("spawn_id", ""))
+	var periodic_spawn_stats := CardDB.get_unit_stats(periodic_spawn_id)
+	if float(stats.get("spawn_interval", 0.0)) > 0.0 and not periodic_spawn_stats.is_empty():
+		details.add_child(_make_card_info_subheading("召唤物：%s（每批 %d 只）" % [String(periodic_spawn_stats.get("name", periodic_spawn_id)), int(stats.get("spawn_count", 1))]))
+		details.add_child(_make_card_attribute_grid(periodic_spawn_stats, "%d /批" % int(stats.get("spawn_count", 1))))
 	var passives := _card_passives(stats)
 	if not passives.is_empty():
 		details.add_child(_make_card_info_heading("被动"))
@@ -826,9 +827,14 @@ func _card_passives(stats: Dictionary) -> Array[Dictionary]:
 		var pair_gap := float(stats.get("attack_interval_display", combo_pattern[1] if combo_pattern.size() > 1 else stats.get("interval", 0.0)))
 		result.append({"name": "拳锋连击", "description": "左拳造成%s点伤害，右拳造成%s点伤害；两拳之间间隔%s秒，打完两拳后间隔%s秒，循环进行。" % [_format_card_number(left_damage), _format_card_number(right_damage), _format_card_number(punch_gap), _format_card_number(pair_gap)]})
 	if String(stats.get("type", "unit")) == "building" and float(stats.get("spawn_interval", 0.0)) > 0.0:
-		result.append({"name": "亡者召唤", "description": "部署完成生成%d只小鬼，之后每%s秒再次生成。" % [int(stats.get("spawn_count", 0)), _format_card_number(float(stats.get("spawn_interval", 0.0)))]})
+		var spawn_id := String(stats.get("spawn_id", ""))
+		var spawn_stats := CardDB.get_unit_stats(spawn_id)
+		var spawn_name := String(spawn_stats.get("name", spawn_id))
+		result.append({"name": "周期召唤", "description": "部署完成生成%d只%s，之后每%s秒再次生成。" % [int(stats.get("spawn_count", 0)), spawn_name, _format_card_number(float(stats.get("spawn_interval", 0.0)))]})
 	if int(stats.get("death_spawn_count", 0)) > 0 and not String(stats.get("death_spawn_id", "")).is_empty():
-		var death_spawn_name := "小鬼" if String(stats.get("death_spawn_id", "")) == "imp" else String(stats.get("death_spawn_id", ""))
+		var death_spawn_id := String(stats.get("death_spawn_id", ""))
+		var death_spawn_stats := CardDB.get_unit_stats(death_spawn_id)
+		var death_spawn_name := String(death_spawn_stats.get("name", death_spawn_id))
 		result.append({"name": "亡语", "description": "被摧毁时产生%d只%s。" % [int(stats.get("death_spawn_count", 0)), death_spawn_name]})
 	return result
 
@@ -854,6 +860,9 @@ func _active_choice_description(card_id: String) -> String:
 	return _active_skill_description(skills[selected])
 
 func _active_skill_description(skill: Dictionary) -> String:
+	var configured_description := String(skill.get("description", ""))
+	if not configured_description.is_empty():
+		return "%s：%s" % [String(skill.get("name", "主动技能")), configured_description]
 	var parts: Array[String] = []
 	match String(skill.get("kind", "")):
 		"nova":
@@ -873,10 +882,11 @@ func _active_skill_description(skill: Dictionary) -> String:
 			if float(skill.get("attack_speed_multiplier", 1.0)) != 1.0:
 				parts.append("攻速 ×%.2f" % float(skill.attack_speed_multiplier))
 		"summon":
-			parts.append("在自身周围立即召唤 %d 个单位" % int(skill.get("spawn_count", 1)))
+			var spawn_id := String(skill.get("spawn_id", ""))
+			var spawn_stats := CardDB.get_unit_stats(spawn_id)
+			parts.append("在自身周围立即召唤 %d 个%s" % [int(skill.get("spawn_count", 1)), String(spawn_stats.get("name", spawn_id))])
 		"dual_form":
-			parts.append("小纳尔状态立即变大并释放 Spell2")
-			parts.append("手掌触地时朝前方 %s×%s 区域造成 %s 伤害，并眩晕 %s 秒" % [
+			parts.append("变形并朝前方 %s×%s 区域造成 %s 伤害，眩晕 %s 秒" % [
 				_format_card_number(float(skill.get("width", 0.0))),
 				_format_card_number(float(skill.get("length", 0.0))),
 				_format_card_number(float(skill.get("damage", 0.0))),

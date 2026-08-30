@@ -40,6 +40,7 @@ const SIZE_RADII := {
 	SIZE_EXTREMELY_LARGE: RADIUS_EXTREMELY_LARGE,
 }
 const PROJECTILE_VISUALS := [&"orb", &"arrow", &"needle", &"boomerang"]
+const SPELL_KINDS := [&"freeze"]
 const ACTIVE_SKILL_KINDS := [&"nova", &"buff", &"summon", &"dual_form"]
 const CAST_LOCKS := [&"movement", &"attack", &"facing"]
 const VISUAL_ACTION_KINDS := [&"deploy", &"transform", &"skill"]
@@ -54,7 +55,7 @@ const CARD_FIELDS := [
 	&"size_tier", &"radius", &"visual_radius", &"mass", &"sight", &"color",
 	&"is_air", &"is_building", &"building_only", &"can_attack_air", &"is_continuous_attack",
 	&"deploy_time", &"show_team_ring", &"footprint_tiles", &"lifespan",
-	&"spawn_interval", &"spawn_count", &"spawn_side", &"death_spawn_id", &"death_spawn_count",
+	&"spawn_id", &"spawn_interval", &"spawn_count", &"spawn_side", &"death_spawn_id", &"death_spawn_count",
 	&"projectile_speed", &"projectile_visual", &"projectile_visual_height",
 	&"projectile_visual_forward_offset", &"projectile_colors", &"splash_radius", &"knockback",
 	&"continuous_beam_color", &"continuous_beam_start_width", &"continuous_beam_end_width",
@@ -64,7 +65,7 @@ const CARD_FIELDS := [
 	&"charge_damage_multiplier", &"shroud_radius", &"attack_pattern", &"attack_damage_multipliers",
 	&"attack_interval_display", &"transform_after_hits", &"revert_after_hits",
 	&"transform_duration", &"active_transform_duration", &"revert_duration", &"transformed_stats",
-	&"duration", &"active_name", &"active_slow_duration", &"active_slow_multiplier", &"active_skill", &"active_skills",
+	&"spell_kind", &"duration", &"active_name", &"active_slow_duration", &"active_slow_multiplier", &"active_skill", &"active_skills",
 	&"visual_frames_path", &"visual_scene_path", &"visual_scene_paths", &"visual_forward_yaw", &"visual_animations",
 ]
 const VISUAL_ANIMATION_FIELDS := [
@@ -80,7 +81,7 @@ const ACTIVE_SKILL_FIELDS := [
 	&"shield", &"shield_duration", &"duration", &"speed_multiplier", &"damage_multiplier",
 	&"attack_speed_multiplier", &"spawn_id", &"spawn_count", &"length", &"width", &"impact_delay",
 	&"transform_impact_delay", &"cast_duration", &"transform_cast_duration", &"stun_duration", &"ground_only",
-	&"cast_locks", &"visual_action",
+	&"cast_locks", &"visual_action", &"description",
 ]
 ## building_only: true 时只攻击建筑（塔+建筑卡），无视普通单位
 ## can_attack_air: false 时无法选中/攻击空中单位（近战地面单位通常不能对空）
@@ -265,6 +266,7 @@ static func all() -> Dictionary:
 			},
 			"active_skill": {
 				"name": "怒气爆发", "kind": "dual_form",
+				"description": "当前形态立即释放前方重击；小形态会先变为大形态。命中时造成伤害并眩晕地面敌人。",
 				"length": 160.0, "width": 120.0, "damage": 120.0,
 				# 两种 Spell2 主体动作均从施法首帧开始，0.8s 手掌触地。
 				"impact_delay": 0.8, "transform_impact_delay": 0.8,
@@ -372,6 +374,7 @@ static func all() -> Dictionary:
 		# ===== 新增4张 =====
 		"freeze": {
 			"name": "冰冻", "cost": 3, "type": "spell",
+			"spell_kind": "freeze",
 			"description": "范围控制法术，冻结范围内的敌方单位，为己方争取进攻窗口。",
 			"active_name": "强化冰冻",
 			# 法术卡：不生成单位，在点击位置范围内冻结敌方单位3秒
@@ -457,6 +460,7 @@ static func all() -> Dictionary:
 			"is_air": false, "building_only": false, "can_attack_air": false,
 			"is_building": true,
 			"lifespan": 10.0,       # 存活时间（秒），到时自动消失
+			"spawn_id": "imp",
 			"spawn_interval": 5.0,  # 每隔多久生成一批小鬼
 			"spawn_count": 2,
 			"spawn_side": "map_side",
@@ -556,6 +560,7 @@ static func validate_all() -> PackedStringArray:
 		_validate_card_id(card_id, errors)
 		_validate_known_fields(card_id, stats, CARD_FIELDS, errors)
 		_validate_card(card_id, stats, errors)
+		_validate_references(card_id, stats, cards, errors)
 	return errors
 
 static func _validate_card_id(card_id: String, errors: PackedStringArray) -> void:
@@ -581,7 +586,10 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 			_validate_combat_stats(card_id, stats, false, errors)
 			_validate_building(card_id, stats, errors)
 		&"spell":
-			_require_fields(card_id, stats, [&"duration"], errors)
+			_require_fields(card_id, stats, [&"spell_kind", &"duration"], errors)
+			var spell_kind := StringName(stats.get("spell_kind", ""))
+			if spell_kind not in SPELL_KINDS:
+				errors.append("%s.spell_kind: 系统不支持 %s" % [card_id, spell_kind])
 			if float(stats.get("duration", 0.0)) <= 0.0:
 				errors.append("%s.duration: 法术持续时间必须 > 0" % card_id)
 	_validate_visual_config(card_id, stats, errors)
@@ -642,6 +650,43 @@ static func _validate_building(card_id: String, stats: Dictionary, errors: Packe
 		errors.append("%s.footprint_tiles: 必须是正数 Vector2i" % card_id)
 	if float(stats.get("speed", -1.0)) != 0.0:
 		errors.append("%s.speed: 建筑必须为 0" % card_id)
+	if float(stats.get("spawn_interval", 0.0)) < 0.0:
+		errors.append("%s.spawn_interval: 必须 >= 0" % card_id)
+	if float(stats.get("spawn_interval", 0.0)) > 0.0:
+		_require_fields(card_id, stats, [&"spawn_id", &"spawn_count"], errors)
+		if int(stats.get("spawn_count", 0)) <= 0:
+			errors.append("%s.spawn_count: 周期召唤数量必须 > 0" % card_id)
+	if int(stats.get("death_spawn_count", 0)) < 0:
+		errors.append("%s.death_spawn_count: 必须 >= 0" % card_id)
+	elif int(stats.get("death_spawn_count", 0)) > 0 and String(stats.get("death_spawn_id", "")).is_empty():
+		errors.append("%s.death_spawn_id: 亡语召唤数量大于 0 时不能为空" % card_id)
+
+
+static func _validate_references(card_id: String, stats: Dictionary, cards: Dictionary, errors: PackedStringArray) -> void:
+	for field in [&"spawn_id", &"death_spawn_id"]:
+		var referenced_id := String(stats.get(field, ""))
+		if not referenced_id.is_empty() and not _unit_reference_exists(referenced_id, cards):
+			errors.append("%s.%s: 引用了不存在或不可生成的单位 %s" % [card_id, field, referenced_id])
+	var skills: Array = []
+	if stats.get("active_skill") is Dictionary:
+		skills.append(stats.active_skill)
+	if stats.get("active_skills") is Array:
+		skills.append_array(stats.active_skills)
+	for index in range(skills.size()):
+		var skill = skills[index]
+		if not skill is Dictionary or StringName(skill.get("kind", "")) != &"summon":
+			continue
+		var spawn_id := String(skill.get("spawn_id", ""))
+		if not _unit_reference_exists(spawn_id, cards):
+			errors.append("%s.active_skill[%d].spawn_id: 引用了不存在或不可生成的单位 %s" % [card_id, index, spawn_id])
+
+
+static func _unit_reference_exists(card_id: String, cards: Dictionary) -> bool:
+	if card_id == "imp":
+		return true
+	if not cards.has(card_id):
+		return false
+	return StringName((cards[card_id] as Dictionary).get("type", "")) in [&"unit", &"building"]
 
 static func _validate_visual_config(label: String, stats: Dictionary, errors: PackedStringArray) -> void:
 	for path_field in [&"visual_frames_path", &"visual_scene_path"]:
