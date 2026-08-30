@@ -28,6 +28,54 @@ const SPEED_MEDIUM := 60.0
 const SPEED_SLIGHTLY_SLOW := 52.0
 const SPEED_SLOW := 44.0
 const SPEED_EXTREMELY_SLOW := 36.0
+
+const CARD_TYPES := [&"unit", &"spell", &"building"]
+const SIZE_RADII := {
+	SIZE_EXTREMELY_SMALL: RADIUS_EXTREMELY_SMALL,
+	SIZE_SMALL: RADIUS_SMALL,
+	SIZE_SLIGHTLY_SMALL: RADIUS_SLIGHTLY_SMALL,
+	SIZE_MEDIUM: RADIUS_MEDIUM,
+	SIZE_SLIGHTLY_LARGE: RADIUS_SLIGHTLY_LARGE,
+	SIZE_LARGE: RADIUS_LARGE,
+	SIZE_EXTREMELY_LARGE: RADIUS_EXTREMELY_LARGE,
+}
+const PROJECTILE_VISUALS := [&"orb", &"arrow", &"needle", &"boomerang"]
+const ACTIVE_SKILL_KINDS := [&"nova", &"buff", &"summon", &"dual_form"]
+
+## 这里列出的字段都必须有运行时代码读取。新增字段若未登记，validate_all() 会直接报错，
+## 防止 Agent 只把配置写进 CardDB、却忘记接入权威模拟或表现层。
+const CARD_FIELDS := [
+	&"name", &"cost", &"type", &"description", &"selectable",
+	&"hp", &"damage", &"range", &"speed", &"interval", &"first_hit",
+	&"size_tier", &"radius", &"visual_radius", &"mass", &"sight", &"color",
+	&"is_air", &"is_building", &"building_only", &"can_attack_air", &"is_continuous_attack",
+	&"deploy_time", &"show_team_ring", &"footprint_tiles", &"lifespan",
+	&"spawn_interval", &"spawn_count", &"spawn_side", &"death_spawn_id", &"death_spawn_count",
+	&"projectile_speed", &"projectile_visual", &"projectile_visual_height",
+	&"projectile_visual_forward_offset", &"projectile_colors", &"splash_radius", &"knockback",
+	&"continuous_beam_color", &"continuous_beam_start_width", &"continuous_beam_end_width",
+	&"continuous_beam_origin_height", &"continuous_beam_forward_offset",
+	&"deploy_sweep_radius", &"deploy_sweep_knockback", &"deploy_sweep_duration",
+	&"heal_every_hits", &"heal_amount", &"charge_time", &"charge_speed_multiplier",
+	&"charge_damage_multiplier", &"shroud_radius", &"attack_pattern", &"attack_damage_multipliers",
+	&"attack_interval_display", &"transform_after_hits", &"revert_after_hits",
+	&"transform_duration", &"active_transform_duration", &"revert_duration", &"transformed_stats",
+	&"duration", &"active_name", &"active_slow_duration", &"active_slow_multiplier", &"active_skill", &"active_skills",
+	&"visual_frames_path", &"visual_scene_path", &"visual_scene_paths", &"visual_forward_yaw", &"visual_animations",
+]
+const VISUAL_ANIMATION_FIELDS := [
+	&"deploy", &"deploy_durations", &"deploy_clip_ratio", &"idle", &"move", &"move_enter",
+	&"move_cycle", &"attack", &"attack_enter", &"attack_retarget_enter", &"attack_loop",
+	&"attack_hit", &"attack_hit_duration", &"attack_recover", &"attack_recover_delay",
+	&"attack_structure", &"attack_to_move", &"move_enter_after_attack", &"death", &"death_duration",
+	&"death_followup_scene_path", &"death_followup_animation", &"death_followup_duration", &"visual_actions",
+]
+const ACTIVE_SKILL_FIELDS := [
+	&"name", &"kind", &"radius", &"damage", &"knockback", &"slow_duration", &"slow_multiplier",
+	&"shield", &"shield_duration", &"duration", &"speed_multiplier", &"damage_multiplier",
+	&"attack_speed_multiplier", &"spawn_id", &"spawn_count", &"length", &"width", &"impact_delay",
+	&"transform_impact_delay", &"cast_duration", &"transform_cast_duration", &"stun_duration", &"ground_only",
+]
 ## building_only: true 时只攻击建筑（塔+建筑卡），无视普通单位
 ## can_attack_air: false 时无法选中/攻击空中单位（近战地面单位通常不能对空）
 ## is_continuous_attack: true 时持续伤害（DPS模式，每帧造成 damage*delta）
@@ -453,6 +501,17 @@ static func selectable_ids() -> Array:
 			ids.append(card_id)
 	return ids
 
+## 统一读取入口。调用方在确认 has_card() 后可以安全读取；未知 id 返回空字典。
+static func get_card(card_id: String) -> Dictionary:
+	return all().get(card_id, {})
+
+static func has_card(card_id: String) -> bool:
+	return all().has(card_id)
+
+## 召唤物与正式卡共用数据读取入口，避免调用方散落 imp 特判。
+static func get_unit_stats(card_id: String) -> Dictionary:
+	return imp_stats() if card_id == "imp" else get_card(card_id)
+
 ## 返回一张卡可供主动槽选择的技能集合。当前每张卡只有 active_skill 一个技能；
 ## 未来可改用 active_skills 数组，但一次出战仍只从集合中携带一个。
 static func active_skills_for(card_id: String) -> Array[Dictionary]:
@@ -467,6 +526,181 @@ static func active_skills_for(card_id: String) -> Array[Dictionary]:
 	if result.is_empty() and stats.has("active_skill"):
 		result.append((stats.active_skill as Dictionary).duplicate(true))
 	return result
+
+## 返回当前全部配置错误。空数组表示 CardDB 可以安全进入运行时。
+static func validate_all() -> PackedStringArray:
+	var errors := PackedStringArray()
+	var cards := all()
+	for raw_card_id in cards:
+		var card_id := String(raw_card_id)
+		var stats: Dictionary = cards[raw_card_id]
+		_validate_card_id(card_id, errors)
+		_validate_known_fields(card_id, stats, CARD_FIELDS, errors)
+		_validate_card(card_id, stats, errors)
+	return errors
+
+static func _validate_card_id(card_id: String, errors: PackedStringArray) -> void:
+	if card_id.is_empty() or card_id != card_id.to_snake_case() or card_id.to_lower() != card_id:
+		errors.append("%s: card_id 必须是非空英文 snake_case" % card_id)
+
+static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStringArray) -> void:
+	_require_fields(card_id, stats, [&"name", &"cost", &"type", &"description", &"radius", &"color"], errors)
+	var card_type := StringName(stats.get("type", ""))
+	if card_type not in CARD_TYPES:
+		errors.append("%s.type: 不支持的卡牌类型 %s" % [card_id, card_type])
+		return
+	if String(stats.get("name", "")).is_empty():
+		errors.append("%s.name: 不能为空" % card_id)
+	if float(stats.get("cost", -1.0)) < 0.0:
+		errors.append("%s.cost: 必须 >= 0" % card_id)
+	if float(stats.get("radius", 0.0)) <= 0.0:
+		errors.append("%s.radius: 必须 > 0" % card_id)
+	match card_type:
+		&"unit":
+			_validate_combat_stats(card_id, stats, true, errors)
+		&"building":
+			_validate_combat_stats(card_id, stats, false, errors)
+			_validate_building(card_id, stats, errors)
+		&"spell":
+			_require_fields(card_id, stats, [&"duration"], errors)
+			if float(stats.get("duration", 0.0)) <= 0.0:
+				errors.append("%s.duration: 法术持续时间必须 > 0" % card_id)
+	_validate_visual_config(card_id, stats, errors)
+	_validate_active_skills(card_id, stats, errors)
+	if stats.has("transformed_stats"):
+		var transformed = stats.get("transformed_stats")
+		if not transformed is Dictionary or (transformed as Dictionary).is_empty():
+			errors.append("%s.transformed_stats: 必须是非空 Dictionary" % card_id)
+		else:
+			_validate_known_fields("%s.transformed_stats" % card_id, transformed, CARD_FIELDS, errors)
+			_validate_combat_stats("%s.transformed_stats" % card_id, transformed, true, errors)
+			_validate_visual_config("%s.transformed_stats" % card_id, transformed, errors)
+
+static func _validate_combat_stats(label: String, stats: Dictionary, require_size_tier: bool, errors: PackedStringArray) -> void:
+	_require_fields(label, stats, [&"hp", &"damage", &"range", &"speed", &"interval", &"is_air", &"building_only", &"can_attack_air"], errors)
+	if float(stats.get("damage", 0.0)) > 0.0:
+		_require_fields(label, stats, [&"first_hit"], errors)
+	for field in [&"hp", &"range", &"speed", &"interval"]:
+		if float(stats.get(field, -1.0)) < 0.0:
+			errors.append("%s.%s: 必须 >= 0" % [label, field])
+	if float(stats.get("hp", 0.0)) <= 0.0:
+		errors.append("%s.hp: 必须 > 0" % label)
+	if stats.has("first_hit") and float(stats.first_hit) < 0.0:
+		errors.append("%s.first_hit: 必须 >= 0" % label)
+	if require_size_tier:
+		_require_fields(label, stats, [&"size_tier", &"mass", &"sight", &"visual_radius"], errors)
+		var size_tier := StringName(stats.get("size_tier", ""))
+		if not SIZE_RADII.has(size_tier):
+			errors.append("%s.size_tier: 不属于七档体型" % label)
+		elif not is_equal_approx(float(stats.get("radius", 0.0)), float(SIZE_RADII[size_tier])):
+			errors.append("%s.radius: 与 size_tier=%s 的规范半径不匹配" % [label, size_tier])
+	if stats.has("visual_radius") and float(stats.visual_radius) < float(stats.get("radius", 0.0)):
+		errors.append("%s.visual_radius: 不得小于权威 radius" % label)
+	_validate_projectile(label, stats, errors)
+
+static func _validate_projectile(label: String, stats: Dictionary, errors: PackedStringArray) -> void:
+	var speed := float(stats.get("projectile_speed", 0.0))
+	if speed < 0.0:
+		errors.append("%s.projectile_speed: 必须 >= 0" % label)
+	if speed <= 0.0:
+		return
+	var visual := StringName(stats.get("projectile_visual", "orb"))
+	if visual not in PROJECTILE_VISUALS:
+		errors.append("%s.projectile_visual: 不支持 %s" % [label, visual])
+	if float(stats.get("projectile_visual_height", 0.0)) < 0.0 or float(stats.get("projectile_visual_forward_offset", 0.0)) < 0.0:
+		errors.append("%s: 弹体表现高度和前向偏移必须 >= 0" % label)
+	if stats.has("projectile_colors"):
+		var colors = stats.projectile_colors
+		if not colors is Array or colors.size() != 2 or not colors[0] is Color or not colors[1] is Color:
+			errors.append("%s.projectile_colors: 必须是蓝/红双方两个 Color" % label)
+
+static func _validate_building(card_id: String, stats: Dictionary, errors: PackedStringArray) -> void:
+	_require_fields(card_id, stats, [&"is_building", &"footprint_tiles", &"lifespan", &"visual_radius"], errors)
+	if not bool(stats.get("is_building", false)):
+		errors.append("%s.is_building: building 卡必须为 true" % card_id)
+	var footprint = stats.get("footprint_tiles")
+	if not footprint is Vector2i or footprint.x <= 0 or footprint.y <= 0:
+		errors.append("%s.footprint_tiles: 必须是正数 Vector2i" % card_id)
+	if float(stats.get("speed", -1.0)) != 0.0:
+		errors.append("%s.speed: 建筑必须为 0" % card_id)
+
+static func _validate_visual_config(label: String, stats: Dictionary, errors: PackedStringArray) -> void:
+	for path_field in [&"visual_frames_path", &"visual_scene_path"]:
+		var path := String(stats.get(path_field, ""))
+		if not path.is_empty() and not ResourceLoader.exists(path):
+			errors.append("%s.%s: 资源不存在 %s" % [label, path_field, path])
+	if stats.has("visual_scene_paths"):
+		var paths = stats.visual_scene_paths
+		if not paths is Array or paths.size() != 2:
+			errors.append("%s.visual_scene_paths: 必须是蓝/红双方两个路径" % label)
+		else:
+			for path in paths:
+				if not path is String or not ResourceLoader.exists(path):
+					errors.append("%s.visual_scene_paths: 资源不存在 %s" % [label, path])
+	if not stats.has("visual_animations"):
+		return
+	var animations = stats.visual_animations
+	if not animations is Dictionary:
+		errors.append("%s.visual_animations: 必须是 Dictionary" % label)
+		return
+	_validate_known_fields("%s.visual_animations" % label, animations, VISUAL_ANIMATION_FIELDS, errors)
+	for state in [&"deploy", &"idle", &"move", &"attack", &"attack_hit", &"attack_recover", &"attack_structure", &"move_cycle"]:
+		if not animations.has(state):
+			continue
+		var value = animations[state]
+		if not value is String and not value is StringName and not value is Array:
+			errors.append("%s.visual_animations.%s: 必须是动画名或动画名数组" % [label, state])
+		elif value is Array:
+			for animation_name in value:
+				if not animation_name is String and not animation_name is StringName:
+					errors.append("%s.visual_animations.%s: 数组只能包含动画名" % [label, state])
+	if animations.has("visual_actions"):
+		var actions = animations.visual_actions
+		if not actions is Dictionary:
+			errors.append("%s.visual_animations.visual_actions: 必须是 Dictionary" % label)
+		else:
+			for action in actions:
+				if not actions[action] is String and not actions[action] is StringName:
+					errors.append("%s.visual_animations.visual_actions.%s: 必须是动画名" % [label, action])
+	if animations.has("death_followup_scene_path") and not ResourceLoader.exists(String(animations.death_followup_scene_path)):
+		errors.append("%s.visual_animations.death_followup_scene_path: 资源不存在" % label)
+
+static func _validate_active_skills(card_id: String, stats: Dictionary, errors: PackedStringArray) -> void:
+	var skills: Array = []
+	if stats.has("active_skill"):
+		skills.append(stats.active_skill)
+	if stats.has("active_skills"):
+		if not stats.active_skills is Array:
+			errors.append("%s.active_skills: 必须是 Array" % card_id)
+		else:
+			skills.append_array(stats.active_skills)
+	for index in range(skills.size()):
+		var skill = skills[index]
+		var label := "%s.active_skill[%d]" % [card_id, index]
+		if not skill is Dictionary:
+			errors.append("%s: 必须是 Dictionary" % label)
+			continue
+		_validate_known_fields(label, skill, ACTIVE_SKILL_FIELDS, errors)
+		_require_fields(label, skill, [&"name", &"kind"], errors)
+		var kind := StringName(skill.get("kind", ""))
+		if kind not in ACTIVE_SKILL_KINDS:
+			errors.append("%s.kind: 系统不支持 %s" % [label, kind])
+			continue
+		match kind:
+			&"nova": _require_fields(label, skill, [&"radius", &"damage"], errors)
+			&"buff": _require_fields(label, skill, [&"duration"], errors)
+			&"summon": _require_fields(label, skill, [&"spawn_id", &"spawn_count"], errors)
+			&"dual_form": _require_fields(label, skill, [&"length", &"width", &"damage", &"impact_delay", &"cast_duration", &"stun_duration"], errors)
+
+static func _require_fields(label: String, data: Dictionary, fields: Array, errors: PackedStringArray) -> void:
+	for field in fields:
+		if not data.has(field):
+			errors.append("%s.%s: 缺少必要字段" % [label, field])
+
+static func _validate_known_fields(label: String, data: Dictionary, known_fields: Array, errors: PackedStringArray) -> void:
+	for field in data:
+		if StringName(field) not in known_fields:
+			errors.append("%s.%s: 字段没有已知运行时读取方" % [label, field])
 
 ## 小鬼属性（墓碑生成，非卡牌）— 1费近战单位
 static func imp_stats() -> Dictionary:

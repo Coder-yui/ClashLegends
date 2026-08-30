@@ -30,14 +30,14 @@ func _process(delta: float) -> void:
 	var affordable := []
 	var candidate_ids: Array = _deck if _deck.size() == 8 else CardDB.selectable_ids()
 	for card_id in candidate_ids:
-		var stats: Dictionary = CardDB.all()[card_id]
+		var stats: Dictionary = CardDB.get_card(card_id)
 		if _elixir.can_afford(stats.cost):
 			affordable.append(card_id)
 	if affordable.is_empty():
 		return
 	# 随机出一张
 	var card_id: String = affordable[randi() % affordable.size()]
-	var stats: Dictionary = CardDB.all()[card_id]
+	var stats: Dictionary = CardDB.get_card(card_id)
 	_play(card_id, stats)
 
 func _play(card_id: String, stats: Dictionary) -> void:
@@ -55,9 +55,4 @@ func _play(card_id: String, stats: Dictionary) -> void:
 			# 单位在公主塔前方的合法格出兵；旧坐标 y=250 会与新塔位直接重叠。
 			var bx: float = _main.BRIDGE_X_LEFT if randi() % 2 == 0 else _main.BRIDGE_X_RIGHT
 			pos = Vector2(bx + randf_range(-30.0, 30.0), 460.0)
-	pos = _main._snap_card_position(card_id, pos, 1)
-	if not _main.is_card_deploy_position_valid(1, card_id, pos):
-		return
-	if not _elixir.spend(stats.cost):
-		return
-	_main._deploy_card(1, card_id, pos)
+	_main.play_card(1, card_id, pos, {"elixir": _elixir})

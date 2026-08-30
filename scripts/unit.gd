@@ -34,6 +34,7 @@ const SPAWN_DIRECTIONS := [
 ]
 
 var net_id := -1
+var battle_context: BattleContext
 ## 每次由主动位卡牌部署时分配一次；-1 表示该实例没有携带主动技能。
 var active_ability_id := -1
 ## 0/1 分别对应备战卡组的第 1/2 主动槽；同槽新实例会覆盖旧实例资格。
@@ -204,6 +205,9 @@ var _health_bar_head_screen := Vector2.ZERO
 var _prev_pos := Vector2.ZERO
 var _vis_offset := Vector2.ZERO
 
+func set_battle_context(context: BattleContext) -> void:
+	battle_context = context
+
 func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	_base_form_stats = stats.duplicate(true)
 	team = p_team
@@ -341,10 +345,9 @@ func get_facing_x() -> float:
 func get_visual_screen_position() -> Vector2:
 	if _in_client_mode():
 		return global_position
-	var scene := get_tree().current_scene
 	var alpha := 1.0
-	if scene != null and scene.has_method("get_sim_interpolation_alpha"):
-		alpha = scene.get_sim_interpolation_alpha()
+	if battle_context != null:
+		alpha = battle_context.simulation_interpolation_alpha()
 	return _prev_pos.lerp(global_position, alpha)
 
 func get_attack_visual_serial() -> int:
@@ -466,9 +469,8 @@ func _apply_form(next_form_index: int, grant_max_hp_increase: bool, advance_form
 	_health_bar_center = Vector2(0.0, _health_bar_y - HEALTH_BAR_HEIGHT * 0.5)
 	form_changed.emit(form_index)
 	# 放大碰撞半径后立即做一次地形/建筑安全修正；单位间重叠仍交给本 tick 的统一推挤。
-	var scene := get_tree().current_scene
-	if body_radius > old_body_radius and not _in_client_mode() and scene != null and scene.has_method("ensure_unit_form_resize_safe"):
-		scene.ensure_unit_form_resize_safe(self)
+	if body_radius > old_body_radius and not _in_client_mode() and battle_context != null:
+		battle_context.ensure_unit_form_resize_safe(self)
 	queue_redraw()
 
 func is_form_transitioning() -> bool:
@@ -735,20 +737,19 @@ func _spawn_initial_summons() -> void:
 	_spawn_imp_batch()
 
 func _spawn_imp_batch() -> void:
-	var scene := get_tree().current_scene
-	if scene == null or not scene.has_method("spawn_summoned"):
+	if battle_context == null:
 		return
 	var count := maxi(spawn_count, 1)
 	if spawn_side == "map_side":
 		# 以地图中线决定墓碑的产出侧：左半区始终在左侧，右半区始终在右侧。
-		var side := Vector2.LEFT if global_position.x < float(scene.FIELD_W) * 0.5 else Vector2.RIGHT
+		var side := Vector2.LEFT if global_position.x < battle_context.field_width() * 0.5 else Vector2.RIGHT
 		var lateral_step := CardDB.RADIUS_EXTREMELY_SMALL * 2.0 + SUMMON_SEPARATION
 		var first_lateral := -float(count - 1) * lateral_step * 0.5
 		var spawn_distance := body_radius + CardDB.RADIUS_EXTREMELY_SMALL + SUMMON_SEPARATION
 		for index in count:
 			var lateral := first_lateral + float(index) * lateral_step
 			var spawn_pos := global_position + side * spawn_distance + Vector2.UP * lateral
-			scene.spawn_summoned(team, "imp", spawn_pos)
+			battle_context.spawn_summoned(team, "imp", spawn_pos)
 		_spawn_counter += count
 		return
 	for index in count:
@@ -756,7 +757,7 @@ func _spawn_imp_batch() -> void:
 		var spawn_distance := body_radius + CardDB.RADIUS_EXTREMELY_SMALL + SUMMON_SEPARATION
 		var spawn_pos: Vector2 = global_position + direction * spawn_distance
 		_spawn_counter += 1
-		scene.spawn_summoned(team, "imp", spawn_pos)
+		battle_context.spawn_summoned(team, "imp", spawn_pos)
 
 ## 目标管理：当前目标失效/超距则丢弃，重新索敌；目标切换时强制重寻路
 func _update_target(allow_out_of_range_hit: bool = false) -> void:
@@ -941,9 +942,8 @@ func _chase(dt: float) -> void:
 func _chase_march(dt: float) -> void:
 	_repath_cd -= dt
 	var needs_path := _path_target != _target or _path_goal.x == INF or _path_index >= _path.size()
-	var scene := get_tree().current_scene
-	if not needs_path and _path_index < _path.size() and scene != null:
-		needs_path = not scene.is_ground_segment_walkable(global_position, _path[_path_index], body_radius, self)
+	if not needs_path and _path_index < _path.size() and battle_context != null:
+		needs_path = not battle_context.is_ground_segment_walkable(global_position, _path[_path_index], body_radius, self)
 	if needs_path and _repath_cd <= 0.0:
 		_recompute_path()
 		_repath_cd = MARCH_REPATH_INTERVAL
@@ -1005,10 +1005,9 @@ func _recompute_path_to(goal: Vector2) -> void:
 	var nav_grid := _get_nav()
 	if nav_grid == null:
 		return
-	var scene := get_tree().current_scene
 	var full: PackedVector2Array
-	if scene != null and scene.has_method("find_ground_path"):
-		full = scene.find_ground_path(global_position, goal, _target, body_radius)
+	if battle_context != null:
+		full = battle_context.find_ground_path(global_position, goal, _target, body_radius)
 	else:
 		full = nav_grid.find_path(global_position, goal)
 	if full.size() >= 2:
@@ -1085,9 +1084,8 @@ func _try_start_attack_visual(time_until_hit: float) -> void:
 func _deal_attack_damage(amount: float) -> void:
 	if _target == null or not is_instance_valid(_target):
 		return
-	var scene := get_tree().current_scene
-	if scene != null and scene.has_method("launch_attack"):
-		scene.launch_attack(self, _target, amount, projectile_speed, splash_radius, attack_knockback, projectile_color)
+	if battle_context != null:
+		battle_context.launch_attack(self, _target, amount, projectile_speed, splash_radius, attack_knockback, projectile_color)
 	else:
 		var landed: bool = _target.take_damage(amount, self)
 		if landed:
@@ -1192,9 +1190,8 @@ func take_damage(amount: float, from: Node2D = null, source_team: int = -1, sour
 		if _hit_flash_event_cooldown <= 0.0:
 			_hit_flash_event_cooldown = HIT_FLASH_EVENT_COOLDOWN
 			notify_visual_hit()
-			var scene := get_tree().current_scene
-			if net_id >= 0 and scene != null and scene.has_method("on_unit_hit"):
-				scene.on_unit_hit(net_id)
+			if net_id >= 0 and battle_context != null:
+				battle_context.notify_unit_hit(net_id)
 		queue_redraw()
 	return true
 
@@ -1238,50 +1235,41 @@ func _is_shroud_blocked(from: Node2D, source_team: int = -1, source_position: Ve
 func is_walkable_at(pos: Vector2) -> bool:
 	if is_air:
 		return true
-	var scene := get_tree().current_scene
-	if scene != null and scene.has_method("is_ground_position_walkable"):
-		return scene.is_ground_position_walkable(pos, body_radius, self)
+	if battle_context != null:
+		return battle_context.is_ground_position_walkable(pos, body_radius, self)
 	var nav_grid := _get_nav()
 	if nav_grid == null:
 		return true
 	return nav_grid.is_walkable(pos)
 
 func _get_nav() -> NavGrid:
-	var scene := get_tree().current_scene
-	if scene == null or not ("nav" in scene):
-		return null
-	return scene.nav
+	return battle_context.navigation() if battle_context != null else null
 
 func _in_client_mode() -> bool:
-	var scene := get_tree().current_scene
-	if scene == null or not scene.has_method("is_net_client"):
-		return false
-	return scene.is_net_client()
+	return battle_context != null and battle_context.is_net_client()
 
 func _die(trigger_death_effect: bool = false) -> void:
 	remove_from_group("combatants")
-	var scene := get_tree().current_scene
 	# 建筑卡死亡 → 解除导航网格占地
 	if is_building and not nav_cells.is_empty():
-		if scene != null and scene.has_method("unblock_nav_cells"):
-			scene.unblock_nav_cells(nav_cells)
+		if battle_context != null:
+			battle_context.unblock_nav_cells(nav_cells)
 		nav_cells = []
 	if trigger_death_effect:
 		_spawn_death_summons()
 	# 表现层只保留一个无碰撞代理播放死亡动作；战斗节点仍在本帧释放。
 	notify_visual_death()
 	# 联机单位死亡 → 主机可靠通知客户端播放死亡动作，并立即清理 net_id 映射。
-	if net_id >= 0 and scene != null and scene.has_method("on_unit_died"):
-		scene.on_unit_died(net_id)
+	if net_id >= 0 and battle_context != null:
+		battle_context.notify_unit_died(net_id)
 	queue_free()
 
 func _spawn_death_summons() -> void:
 	if death_spawn_count <= 0 or death_spawn_id.is_empty() or _in_client_mode():
 		return
-	var scene := get_tree().current_scene
-	if scene == null or not scene.has_method("spawn_summoned"):
+	if battle_context == null:
 		return
-	var summon_stats: Dictionary = CardDB.imp_stats() if death_spawn_id == "imp" else CardDB.all().get(death_spawn_id, {})
+	var summon_stats: Dictionary = CardDB.get_unit_stats(death_spawn_id)
 	if summon_stats.is_empty():
 		return
 	var summon_radius := float(summon_stats.get("radius", 14.0))
@@ -1289,7 +1277,7 @@ func _spawn_death_summons() -> void:
 	for index in range(death_spawn_count):
 		var direction: Vector2 = SPAWN_DIRECTIONS[index % SPAWN_DIRECTIONS.size()]
 		var spawn_pos := global_position + direction * spawn_distance
-		scene.spawn_summoned(team, death_spawn_id, spawn_pos)
+		battle_context.spawn_summoned(team, death_spawn_id, spawn_pos)
 
 ## 可由客户端死亡 RPC / 快照缺席兜底调用；信号只发一次，避免重复死亡表现。
 func notify_visual_death() -> void:

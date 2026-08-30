@@ -1,137 +1,29 @@
 # 美术资源目录
 
-本目录只存放游戏美术与音频资源。资源文件统一使用英文 `snake_case` 命名；单位目录名必须与 `CardDB` 的 `card_id` 一致，例如盖伦使用 `garen`。
-
-如果是为新卡接入资源，请先阅读 [`docs/AGENT_WORKFLOW.md`](../docs/AGENT_WORKFLOW.md) 的完整 Agent 流程，再按本文件的目录和命名约定操作；本文只描述资源归档，不替代卡牌玩法和联网回归要求。
-
-## 当前资源
+资源使用英文 `snake_case`，单位目录名与 CardDB `card_id` 一致。任务先通过 `docs/AGENT_WORKFLOW.md` 路由；本文只规定归档和命名。
 
 ```text
 assets/
-  arena/
-    arena_rift_v4.png          # 当前竞技场背景（720x1400，干净场地与符文之地场外景观）
-    arena_default.png          # 旧版竞技场概念图（1200x1311）
-  units/
-    ashe/
-      ashe_view.tscn          # 首个远程 3D 样例，Attack 离弦后生成蓝色小箭
-      source/
-        ashe.glb
-    aurelionsol/
-      aurelionsol_view.tscn   # 首个空中 3D 单位，持续吐息与四段飞行动画循环
-      source/
-        aurelionsol.glb
-        aurelionsol_AurelionSol_BodyLower.png
-    garen/
-      garen_view.tscn         # 运行时 3D 包装场景（统一缩放与脚底原点）
-      source/
-        garen.glb              # 盖伦原始 3D 模型
-    gwen/
-      gwen_view.tscn          # 格温包装场景，已校正脚底高度
-      source/
-        gwen.glb
-    gnar/
-      gnar_small_view.tscn    # 小纳尔：非 Fast Attack1/2、Revert 加法合成、Run_In/变形隐藏额外回旋镖
-      gnar_mega_view.tscn     # 大纳尔：Rage 加法合成、Run_In/变形隐藏石头、Spell2/BigDeath
-      source/
-        gnar_small.glb
-        gnar_mega.glb         # 用户提供的“迷失之牙 (1)”大纳尔模型
-    sett/
-      sett_view.tscn          # 瑟提包装场景，四段左右拳与右拳收势
-      source/
-        sett.glb
-    teemo/
-      teemo_view.tscn         # 提莫远程包装场景，暂用绿色短线毒针
-      source/
-        teemo.glb
-    melee_minion/
-      melee_minion_order_view.tscn / melee_minion_chaos_view.tscn
-      source/                  # order=蓝方、chaos=红方
-    ranged_minion/
-      ranged_minion_order_view.tscn / ranged_minion_chaos_view.tscn
-      source/                  # 权杖发射阵营色小光球
-    siege_minion/
-      siege_minion_order_view.tscn / siege_minion_chaos_view.tscn
-      source/                  # 炮口发射黑色小球
-    super_minion/
-      super_minion_order_view.tscn / super_minion_chaos_view.tscn
-      source/
-  cards/
-    <card_id>_loading.jpg/png  # 英雄 Loading Screen、模型摄影或法术插画卡面
-  towers/
-    princess/
-      princess_tower_blue_view.tscn
-      princess_tower_red_view.tscn
-      source/                  # 蓝/红方塔 GLB 及导入纹理
-    nexus/
-      nexus_blue_view.tscn
-      nexus_red_view.tscn
-      source/                  # 蓝/红方水晶 GLB 及导入纹理
-```
-
-## 目录约定
-
-```text
-assets/
-  arena/                       # 战场背景与场地资源
+  arena/arena_rift_v4.png                 当前 720×1400 背景
+  cards/<card_id>_loading.jpg|png|webp     CardArt 自动发现
   units/<card_id>/
-    source/                    # GLB、原始图等制作源文件
-    <card_id>_view.tscn        # 直接使用 3D 模型时的运行时包装场景
-    <card_id>_frames.tres      # 使用预渲染 2D 动画时的 SpriteFrames（可选）
-  units/tombstone/
-    tombstone_view.tscn        # 墓碑 3D 包装场景，五层流动黑雾覆盖地面与模型内部
-    source/tombstone.glb       # 牧魂人（1）墓碑模型及其材质
-  units/imp/
-    imp_view.tscn              # 小鬼 3D 包装场景（Run1 移动 / leapWindup 攻击）
-    source/imp.glb             # 牧魂人小鬼模型及其材质
-  cards/<card_id>_loading.jpg  # 英雄 Loading Screen、3D 模型摄影或 AI 卡面
-  towers/                      # 塔与建筑表现
-  ui/                          # 界面资源
-  fx/                          # 特效资源
-  audio/                       # 音乐与音效
+    README.md                              仅角色存在素材特例时添加
+    source/                                GLB、纹理等源文件
+    <card_id>_view.tscn                    通用运行时包装场景
+  towers/<type>/source/                    塔/水晶源素材
+  towers/<type>/*_view.tscn                双方包装场景
 ```
 
-仅在实际加入某类资源时创建对应目录，不为未使用的分类保留空文件夹。当前单位采用“2D 模拟 + 透明 3D 表现层”：原始模型保留在 `source/`，在同级包装场景中校正缩放和原点，再通过 `CardDB.visual_scene_path` 接入；同一玩法单位有 order/chaos 两套模型时使用 `visual_scene_paths = [order, chaos]`。`SpriteFrames` 方案继续作为低配置或特殊单位的可选路径。
+同一单位双方模型使用 `visual_scene_paths = [order/blue, chaos/red]`；单模型使用 `visual_scene_path`。原始素材留在 `source/`，包装场景只校正缩放、脚底、朝向或必要的素材过滤。不要手改 `.import`，不要让素材脚本驱动权威战斗。
 
-卡牌图片统一使用 `assets/cards/<card_id>_loading.jpg/png/webp` 命名，`CardArt` 会自动查找。
-来源按优先级选择：英雄使用 CommunityDragon 基础皮肤 Loading Screen；没有原生图但有模型时，
-用统一摄影棚拍模型；两者都没有时，使用 AI 生成。手牌和选卡组按钮会按比例 cover 裁剪，
-统一卡框比例为 `308:560`。
+## 卡面
 
-CommunityDragon 英雄图通常位于
-`game/assets/characters/<champion>/skins/base/*loadscreen*`；先查该英雄的 JSON 确认实际路径，
-下载后按 `card_id` 重命名。模型摄影可参考 `tools/capture_minion_card_art.gd` 的摄影棚设置；
-AI 图像也必须保存为同样的卡面文件名和尺寸。
+`CardArt` 按 jpg → png → webp 自动发现 `assets/cards/<card_id>_loading.*`，手牌与 Deck Builder 使用统一卡框裁剪；无需在 CardDB 写图片路径。现有可选卡均已有卡面。四类兵线和墓碑的摄影工具位于 `tools/`，只生成图片，不参与运行时。
 
-四类兵线卡面直接由项目内 Order 阵营 3D 模型拍摄，源模型更新后运行
-`Godot --path . --script tools/capture_minion_card_art.gd` 即可按统一摄影棚、灯光和 `308×560`
-尺寸重新生成；该工具只写入卡面 PNG，不参与运行时表现或战斗逻辑。
+## 当前特殊目录
 
-墓碑卡面由正式墓碑、小鬼模型和运行时黑雾共同拍摄；更新相关模型或雾效后运行
-`Godot --path . --script tools/capture_tombstone_card_art.gd` 重新生成
-`assets/cards/tombstone_loading.png`。
+- `units/gnar/`：小/大双模型、加法动画合成和网格过滤；读该目录 README。
+- `units/tombstone/`：包装场景含独立雾效脚本。
+- `towers/`：TowerModel3D 管理材质阶段、碎块和废墟；仍由 2D Tower 决定血量/死亡。
 
-添加新单位时：
-
-1. 在 `scripts/data/card_db.gd` 确认其 `card_id`。
-2. 将原始文件放入 `assets/units/<card_id>/source/`。
-3. 创建 `assets/units/<card_id>/<card_id>_view.tscn`，在其中实例化源模型并校正缩放、朝向和脚底原点。
-4. 在卡牌数据中设置 `visual_scene_path`、`visual_animations`，必要时设置 `visual_forward_yaw`；攻击动画会自动匹配该卡的 `interval`。
-5. 不要让 3D 动画事件驱动伤害、碰撞或联网状态。
-
-每个角色接入前还必须按
-[`docs/UNIT_DEPLOYMENT.md`](../docs/UNIT_DEPLOYMENT.md) 检查部署动画：优先选素材中的
-Respawn，其次 Recall-Winddown，最后才用 Idle，并在卡牌数据中显式填写实际动画名。
-
-普通近战角色的完整操作步骤、验收项和排错方法见
-[`docs/MELEE_3D_INTEGRATION.md`](../docs/MELEE_3D_INTEGRATION.md)。后续接入应复用现有
-`BattlePresentation3D` / `UnitModel3D`，不要为每个角色复制表现脚本。
-
-远程角色还需执行
-[`docs/RANGED_3D_INTEGRATION.md`](../docs/RANGED_3D_INTEGRATION.md)，尤其要区分“动画
-离弦时创建弹体”和“弹体抵达时结算伤害”。
-
-防御塔和基地水晶同样采用“2D 权威节点 + 3D 表现代理”。双方素材分别使用明确的
-`blue` / `red` 文件名；原始下载文件名中的 `(2)` 已归档为红方版本。塔的 `Base` 与
-`Rubble`、水晶的 startup（`SRUAP_OrderNexus_Mat`）与 `Destroyed` 是同一网格中的
-独立材质表面：存活时只显示前者，摧毁后切换到后者并播放摧毁动画。源模型 Y=0 以下
-还有地下几何，运行时材质会按蒙皮后的世界坐标逐帧裁切，不能通过整体抬高模型来掩盖。
+普通近战不要阅读角色特例；按 `ART_PIPELINE.md` 与 `MELEE_3D_INTEGRATION.md` 即可。远程再读 `RANGED_3D_INTEGRATION.md`。

@@ -110,7 +110,7 @@ func _select_item(item_id: String) -> void:
 	if item_id == "training_dummy":
 		_selection_label.text = "当前：训练木桩｜点击战场放置"
 	else:
-		var stats: Dictionary = CardDB.all()[item_id]
+		var stats: Dictionary = CardDB.get_card(item_id)
 		if stats.get("type", "unit") == "unit":
 			var size_label := CardDB.size_tier_name(stats.get("size_tier", &""))
 			_selection_label.text = "当前：%s｜体型：%s｜点击战场放置" % [stats.name, size_label]

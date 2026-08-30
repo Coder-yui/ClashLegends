@@ -18,6 +18,7 @@ const HEALTH_BAR_HEIGHT := 18.0
 const HEALTH_TEXT_SIZE := 13
 
 var team := 0  # 0 = 玩家（下方），1 = 敌方（上方）
+var battle_context: BattleContext
 var max_hp := 2000.0
 var hp := 2000.0
 var damage := 50.0
@@ -47,6 +48,9 @@ var frozen_timer := 0.0
 var stun_timer := 0.0
 var _destroyed_visual_emitted := false
 var _hit_flash_event_cooldown := 0.0
+
+func set_battle_context(context: BattleContext) -> void:
+	battle_context = context
 
 func setup(p_team: int, stats: Dictionary, p_is_king: bool) -> void:
 	team = p_team
@@ -119,10 +123,9 @@ func sim_tick(dt: float) -> void:
 		if _lock_windup > 0.0:
 			return
 	if _cooldown <= 0.0:
-		var scene := get_tree().current_scene
-		if scene != null and scene.has_method("launch_attack"):
+		if battle_context != null:
 			var projectile_color := BLUE_PROJECTILE_COLOR if team == 0 else RED_PROJECTILE_COLOR
-			scene.launch_attack(self, _target, damage, projectile_speed, splash_radius, attack_knockback, projectile_color)
+			battle_context.launch_attack(self, _target, damage, projectile_speed, splash_radius, attack_knockback, projectile_color)
 		else:
 			_target.take_damage(damage)
 		_cooldown = attack_interval
@@ -177,9 +180,8 @@ func take_damage(amount: float, _from: Node2D = null, _source_team: int = -1, _s
 	if hp > 0.0 and _hit_flash_event_cooldown <= 0.0:
 		_hit_flash_event_cooldown = HIT_FLASH_EVENT_COOLDOWN
 		notify_visual_hit()
-		var scene := get_tree().current_scene
-		if scene != null and scene.has_method("on_tower_hit"):
-			scene.on_tower_hit(self)
+		if battle_context != null:
+			battle_context.notify_tower_hit(self)
 	if was_alive and hp <= 0.0:
 		notify_visual_destroyed()
 	queue_redraw()

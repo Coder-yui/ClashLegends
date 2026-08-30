@@ -189,7 +189,7 @@ func _refresh(_value: float) -> void:
 	_elixir_label.text = str(int(_elixir.elixir))
 	# 下一张卡预览
 	if _next_label != null and _next_button != null and _queue.size() > 0:
-		var next_stats: Dictionary = CardDB.all()[_queue[0]]
+		var next_stats: Dictionary = CardDB.get_card(_queue[0])
 		_next_label.text = "下一张"
 		var next_accent: Color = next_stats.get("color", CardArt.DEFAULT_ACCENT)
 		CardArt.apply_to_button(_next_button, _queue[0], next_stats.name, next_stats.cost, true, next_accent)
@@ -197,7 +197,7 @@ func _refresh(_value: float) -> void:
 	# 更新4张手牌按钮
 	for i in range(4):
 		var card_id := _hand[i]
-		var stats: Dictionary = CardDB.all()[card_id]
+		var stats: Dictionary = CardDB.get_card(card_id)
 		var b: Button = _button_slots[i]
 		var accent: Color = stats.get("color", CardArt.DEFAULT_ACCENT)
 		CardArt.apply_to_button(b, card_id, stats.name, stats.cost, true, accent)

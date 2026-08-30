@@ -98,7 +98,7 @@ func spawn_round() -> void:
 	_spawn_dummy(1, "aurelionsol", CENTER + Vector2(-52, 44), "龙王·空中", Color(0.45, 0.45, 0.50))
 
 	# 赵信使用真实 1.5 秒部署，加入场景当帧结算横扫。
-	var xin_stats: Dictionary = CardDB.all()["xin"].duplicate()
+	var xin_stats: Dictionary = CardDB.get_card("xin").duplicate()
 	var xin := _spawn_unit(0, xin_stats, CENTER, "赵信", Color(0.10, 0.35, 0.85))
 	# 预扣部分生命，让三段循环第三击的回血在血条上可见。
 	xin.take_damage(320.0)
@@ -112,7 +112,7 @@ func spawn_round() -> void:
 
 ## 静止木桩：不索敌、不移动、不还手，但保留质量与体型。
 func _dummy_stats(base_id: String) -> Dictionary:
-	var stats: Dictionary = (CardDB.imp_stats() if base_id == "imp" else CardDB.all()[base_id]).duplicate()
+	var stats: Dictionary = (CardDB.imp_stats() if base_id == "imp" else CardDB.get_card(base_id)).duplicate()
 	stats["deploy_time"] = 0.0
 	stats["hp"] = 999999.0
 	stats["damage"] = 0.0
