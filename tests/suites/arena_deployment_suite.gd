@@ -165,14 +165,26 @@ func _check_command_tick_estimation() -> void:
 	var old_estimated_fraction: float = _main._estimated_server_tick_fraction
 	var old_has_estimate: bool = _main._has_estimated_server_tick
 	var old_sim_tick: int = _main._sim_tick_id
+	_main.mode = "host"
+	_main._sim_tick_id = 103
+	var case_one_target: int = _main._resolve_command_execute_tick(100)
+	_main._sim_tick_id = 108
+	var case_two_target: int = _main._resolve_command_execute_tick(100)
+	_main._sim_tick_id = 110
+	var late_target: int = _main._resolve_command_execute_tick(100)
+	_main._sim_tick_id = 103
+	var obviously_old_target: int = _main._resolve_command_execute_tick(103 - _main.COMMAND_MAX_LATENCY_TICKS - 1)
+	var obviously_future_target: int = _main._resolve_command_execute_tick(103 + _main.COMMAND_CLOCK_FUTURE_TOLERANCE + 1)
+	var host_local_target: int = _main._resolve_command_execute_tick()
 	_main.mode = "client"
 	_main._authoritative_server_tick = 100
 	_main._estimated_server_tick = 100
 	_main._estimated_server_tick_fraction = 0.0
 	_main._has_estimated_server_tick = true
-	var normal_future_tick: int = _main._authority_tick_for_new_command()
+	var client_input_tick: int = _main._input_tick_for_new_command()
 	_main._advance_estimated_server_tick(0.23)
 	var estimated_after_gap: int = _main.get_estimated_server_tick()
+	var client_target_after_gap: int = _main._resolve_command_execute_tick(_main._input_tick_for_new_command())
 	var snapshot_system := NetworkSnapshotSystem.new(_main)
 	var newer_but_behind_estimate := [
 		NetworkSnapshotSystem.SNAPSHOT_PROTOCOL_VERSION, 102,
@@ -190,14 +202,10 @@ func _check_command_tick_estimation() -> void:
 	snapshot_system.apply(var_to_bytes(stale_packet).compress(FileAccess.COMPRESSION_DEFLATE))
 	var stale_snapshot_rejected: bool = _main._authoritative_server_tick == 102
 	var current_client_tick: int = _main.get_estimated_server_tick()
-	var past_tick_keeps_buffer: int = _main._resolve_command_execute_tick(current_client_tick - 1)
-	var obviously_stale_rejected: int = _main._resolve_command_execute_tick(current_client_tick - (_main.COMMAND_MAX_PAST_TICKS + 1))
-	var far_future_limited: int = _main._resolve_command_execute_tick(current_client_tick + 999)
-	var client_default_tick: int = _main._authority_tick_for_new_command()
 	_main.mode = "host"
 	_main._sim_tick_id = current_client_tick
-	var host_default_tick: int = _main._authority_tick_for_new_command()
-	var host_client_share_timeline: bool = host_default_tick == client_default_tick
+	var host_target_from_client_input: int = _main._resolve_command_execute_tick(current_client_tick)
+	var host_client_share_timeline: bool = host_target_from_client_input == client_target_after_gap
 	_main.mode = old_mode
 	_main._authoritative_server_tick = old_authoritative_tick
 	_main._estimated_server_tick = old_estimated_tick
@@ -205,15 +213,19 @@ func _check_command_tick_estimation() -> void:
 	_main._has_estimated_server_tick = old_has_estimate
 	_main._sim_tick_id = old_sim_tick
 	_expect(
-		normal_future_tick == 110
+		case_one_target == 110
+		and case_two_target == 110
+		and late_target == -1
+		and obviously_old_target == -1
+		and obviously_future_target == -1
+		and host_local_target == 113
+		and client_input_tick == 100
 		and estimated_after_gap == 104
+		and client_target_after_gap == 114
 		and estimate_survives_stale_snapshot
 		and stale_snapshot_rejected
-		and past_tick_keeps_buffer == current_client_tick + _main.COMMAND_DELAY_TICKS
-		and obviously_stale_rejected == -1
-		and far_future_limited == current_client_tick + _main.COMMAND_MAX_FUTURE_TICKS
 		and host_client_share_timeline,
-		"客户端估计服务器 Tick、迟到/异常命令边界与 Host 共用 10 Tick 权威时间线",
+		"Command Buffer 按 input_tick + 10 Tick 吸收网络延迟，迟到/异常请求拒绝且 Host/Client 共用权威时间线",
 	)
 
 func _check_card_play_delay() -> void:

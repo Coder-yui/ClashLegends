@@ -89,7 +89,7 @@ func _check_active_skill_activation() -> void:
 		"点击主动技能后目标执行 Tick 前仍处于等待状态，不提前结算"
 	)
 	_run_main_ticks(1)
-	_expect(command_tick_contract and enemy.hp < hp_before and source.shield_hp > 0.0, "主动技能使用请求与主机共享 execute_tick，满 10 Tick 后由权威逻辑造成范围伤害并获得护盾")
+	_expect(command_tick_contract and enemy.hp < hp_before and source.shield_hp > 0.0, "主动技能与卡牌共用 input_tick→execute_tick 解析，Host 本地输入保持 10 Tick 后由权威逻辑结算")
 	_expect(
 		not _main._active_skills.has(ability_id)
 		and not _main._activate_active_skill(ability_id, 0)
@@ -435,17 +435,19 @@ func _check_network_hand_confirmation() -> void:
 	var old_cycles: Dictionary = _main._authoritative_card_cycles.duplicate(true)
 	var old_elixir_p1: ElixirManager = _main._elixir_p1
 	var old_elixir_value: float = _main._elixir.elixir
+	var old_sim_tick: int = _main._sim_tick_id
 	var deck: Array = ["garen", "xin", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
 	var network_elixir: ElixirManager = ElixirManager.new()
 	_main.add_child(network_elixir)
 	_main._elixir_p1 = network_elixir
 	_main._remote_deck = deck.duplicate()
 	_main.mode = "host"
+	_main._sim_tick_id = 103
 	_main._initialize_authoritative_card_cycle(1, deck)
 	network_elixir.elixir = ElixirManager.MAX_ELIXIR
 	var host_initial_hand: Array = _main.get_authoritative_hand(1)
 	var host_initial_queue: Array = _main.get_authoritative_queue(1)
-	_main._rpc_deploy_request("garen", Vector2(300.0, 580.0))
+	_main._rpc_deploy_request("garen", Vector2(300.0, 580.0), 100)
 	var host_accepted_hand: Array = _main.get_authoritative_hand(1)
 	var host_accepted_queue: Array = _main.get_authoritative_queue(1)
 	var host_elixir_after_accept: float = network_elixir.elixir
@@ -453,12 +455,24 @@ func _check_network_hand_confirmation() -> void:
 	var host_hand_before_reject: Array = host_accepted_hand.duplicate()
 	var host_queue_before_reject: Array = host_accepted_queue.duplicate()
 	var host_elixir_before_reject: float = network_elixir.elixir
-	_main._rpc_deploy_request("garen", Vector2(300.0, 580.0))
+	_main._rpc_deploy_request("garen", Vector2(300.0, 580.0), 100)
 	var host_reject_kept_state: bool = (
 		_main.get_authoritative_hand(1) == host_hand_before_reject
 		and _main.get_authoritative_queue(1) == host_queue_before_reject
 		and is_equal_approx(network_elixir.elixir, host_elixir_before_reject)
 		and _main._pending_card_deployments.size() == host_pending_after_accept
+	)
+	_main._sim_tick_id = 110
+	var host_hand_before_late: Array = _main.get_authoritative_hand(1)
+	var host_queue_before_late: Array = _main.get_authoritative_queue(1)
+	var host_elixir_before_late: float = network_elixir.elixir
+	var host_pending_before_late: int = _main._pending_card_deployments.size()
+	_main._rpc_deploy_request("xin", Vector2(300.0, 580.0), 100)
+	var host_late_reject_kept_state: bool = (
+		_main.get_authoritative_hand(1) == host_hand_before_late
+		and _main.get_authoritative_queue(1) == host_queue_before_late
+		and is_equal_approx(network_elixir.elixir, host_elixir_before_late)
+		and _main._pending_card_deployments.size() == host_pending_before_late
 	)
 	var host_accept_once: bool = (
 		host_initial_hand == ["garen", "xin", "freeze", "ashe"]
@@ -507,7 +521,7 @@ func _check_network_hand_confirmation() -> void:
 		and is_equal_approx(_main._elixir.elixir, client_elixir_before_reject)
 		and not _main._hand.is_card_pending("xin")
 	)
-	_expect(host_accept_once and host_reject_kept_state and client_pending_request and client_accept_synced and client_reject_kept_state, "联机出牌 accepted 同步手牌/队列，rejected 不扣费不轮换且仅恢复 pending UI")
+	_expect(host_accept_once and host_reject_kept_state and host_late_reject_kept_state and client_pending_request and client_accept_synced and client_reject_kept_state, "联机出牌 accepted 同步手牌/队列，late/rejected 不扣费不轮换且仅恢复 pending UI")
 
 	_main._pending_card_deployments.clear()
 	_main.mode = old_mode
@@ -515,6 +529,7 @@ func _check_network_hand_confirmation() -> void:
 	_main._remote_deck = old_remote_deck
 	_main._authoritative_card_cycles = old_cycles
 	_main._elixir_p1 = old_elixir_p1
+	_main._sim_tick_id = old_sim_tick
 	_main._elixir.elixir = old_elixir_value
 	if is_instance_valid(network_elixir):
 		network_elixir.free()

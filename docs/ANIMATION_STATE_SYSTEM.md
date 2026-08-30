@@ -26,8 +26,8 @@ Gameplay lock 与动画优先级互不推导：一个全身 Skill 动画可以�
 
 ```text
 Player Input
-    ↓
-Authoritative Command Buffer（10 ticks / 0.5s）
+    ↓ input_tick（客户端点击时观察到的 Host Tick）
+Authoritative Command Buffer（input_tick + 10 ticks / 0.5s）
     ↓
 Cast Start
     ↓ impact_delay
@@ -38,7 +38,7 @@ Cast End
 Locomotion / Attack
 ```
 
-Command Buffer 用于吸收联网输入延迟；`cast_duration` 是技能自身的施法窗口；`impact_delay` 是从 Cast Start 到效果生效的时刻。三者是不同概念，动画只读取权威时间线，不能触发 Gameplay Impact。施法者被冻结或眩晕时，施法与 impact 倒计时和动作表现同时暂停；施法者在 impact 前死亡则取消尚未发生的效果。
+Command Buffer 从玩家输入时刻开始计时，用于吸收联网输入延迟；网络传输时间消耗这 10 Tick 的一部分，Host 不会在收到网络请求后重新追加完整 10 Tick。客户端只提交 `input_tick`，Host 计算 `execute_tick = input_tick + 10`；若目标已到达则按 late policy 拒绝，不重新排队。`cast_duration` 是技能自身的施法窗口；`impact_delay` 是从 Cast Start 到效果生效的时刻。三者是不同概念，动画只读取权威时间线，不能触发 Gameplay Impact。施法者被冻结或眩晕时，施法与 impact 倒计时和动作表现同时暂停；施法者在 impact 前死亡则取消尚未发生的效果。
 
 ## CardDB 动作配置
 

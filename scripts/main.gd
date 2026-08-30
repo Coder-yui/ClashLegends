@@ -100,10 +100,10 @@ const COMMAND_DELAY_TICKS := 10
 ## 保留旧常量名供现有调用方读取，但延迟来源统一由 Tick 定义。
 const CARD_DEPLOY_DELAY := SIM_DT * COMMAND_DELAY_TICKS
 const ACTIVE_SKILL_CAST_DELAY := SIM_DT * COMMAND_DELAY_TICKS
-## 客户端不能把命令安排到任意远期；迟到命令会落到最近的下一权威 Tick。
-const COMMAND_MAX_FUTURE_TICKS := COMMAND_DELAY_TICKS * 2
-## 过去超过两个 Buffer 的目标 Tick 视为异常请求；合理迟到统一回退到 current + 10。
-const COMMAND_MAX_PAST_TICKS := COMMAND_DELAY_TICKS * 2
+## 网络请求的 input_tick 最多允许落后两个 Buffer；更早的输入直接视为异常。
+const COMMAND_MAX_LATENCY_TICKS := COMMAND_DELAY_TICKS * 2
+## 允许少量客户端时钟领先 Host；这只是校验窗口，不是客户端执行权。
+const COMMAND_CLOCK_FUTURE_TOLERANCE := 2
 ## 水晶兵线由主机固定 tick 驱动：开局 5 秒首波，之后每 30 秒一波，第二只延迟 0.5 秒。
 const FIRST_MINION_WAVE_TIME := 5.0
 const MINION_WAVE_INTERVAL := 30.0
@@ -135,7 +135,7 @@ var _active_skill_bar: ActiveSkillBar
 ## ability_id -> {unit, card_id, team}；按钮只是这份权威状态的视图。
 var _active_skills: Dictionary = {}
 var _next_active_ability_id := 1
-## 主动请求确认后按 execute_tick 等待；同一 ability_id 在队列中只能存在一次。
+## 主动请求确认后按 Host 由 input_tick 计算出的 execute_tick 等待；同一 ability_id 只能存在一次。
 var _pending_active_skill_activations: Array[Dictionary] = []
 ## Cast Start 后的通用 Gameplay Impact 队列；与 dual_form 的旧专用前方技能队列分开。
 var _pending_active_skill_impacts: Array[Dictionary] = []
@@ -146,7 +146,7 @@ var _deployment_preview_pos := Vector2.ZERO
 var _deployment_preview_tile := Vector2i(-1, -1)
 var _deployment_preview_valid := false
 var _deployment_preview_visible := false
-## 主机/单机权威卡牌队列：单位、建筑和法术都在 execute_tick 才真正生效。
+## 主机/单机权威卡牌队列：单位、建筑和法术都在 Host 计算的 execute_tick 才真正生效。
 var _pending_card_deployments: Array[Dictionary] = []
 ## 兵线第二只单位的权威延迟队列；不经过手牌 0.5 秒部署队列，也不扣金币。
 var _pending_lane_minions: Array[Dictionary] = []
@@ -204,7 +204,7 @@ var _auto_test := false
 var _auto_timer := 2.0
 # 固定 20Hz 模拟累加器：帧率高低都不影响战斗逻辑步数
 var _sim_acc := 0.0
-## 客户端由快照提供的最后已知主机 Tick，用于生成带缓冲的命令目标 Tick。
+## 客户端由快照提供的最后已知主机 Tick，用于生成 input_tick。
 var _authoritative_server_tick := 0
 ## 客户端只估计服务器时钟，不推进任何战斗状态；快照到达时向前校正，间隔内按本地时间补 Tick。
 var _estimated_server_tick := 0
@@ -541,23 +541,30 @@ func _accept_authoritative_server_tick(server_tick: int) -> bool:
 func get_estimated_server_tick() -> int:
 	return _estimated_server_tick if _has_estimated_server_tick else _authoritative_server_tick
 
+## Host/单机本地输入发生在当前权威 Tick；客户端请求则携带点击时观察到的 input_tick。
+func _input_tick_for_new_command() -> int:
+	return _current_authority_tick()
+
+## 仅供 Host/单机本地命令读取其固定的 10 Tick 目标；网络请求不能直接提交 execute_tick。
 func _authority_tick_for_new_command() -> int:
-	return _current_authority_tick() + COMMAND_DELAY_TICKS
+	return _input_tick_for_new_command() + COMMAND_DELAY_TICKS
 
-func _command_tick_is_obviously_stale(requested_tick: int) -> bool:
-	if requested_tick < 0:
-		return false
-	return requested_tick < _current_authority_tick() - COMMAND_MAX_PAST_TICKS
-
-func _resolve_command_execute_tick(requested_tick: int = -1) -> int:
+## 所有卡牌与主动技能共用：Command Buffer 从 input_tick 开始计时，网络耗时消耗其中一部分。
+## 返回 -1 表示迟到或时钟明显异常；Host 不会把已过期请求重新排到 current + 10。
+func _resolve_command_execute_tick(input_tick: int = -1) -> int:
 	var current_tick := _current_authority_tick()
-	if requested_tick < 0:
+	# -1 只表示 Host/单机本地输入；RPC 入口会拒绝缺失的客户端 input_tick。
+	if input_tick < 0:
 		return current_tick + COMMAND_DELAY_TICKS
-	if _command_tick_is_obviously_stale(requested_tick):
+	if input_tick < current_tick - COMMAND_MAX_LATENCY_TICKS:
 		return -1
-	# 合理迟到或估计偏旧的请求不能缩短 Buffer；统一从当前权威 Tick 再保留 10 Tick。
-	var minimum_execute_tick := current_tick + COMMAND_DELAY_TICKS
-	return clampi(maxi(requested_tick, minimum_execute_tick), minimum_execute_tick, current_tick + COMMAND_MAX_FUTURE_TICKS)
+	if input_tick > current_tick + COMMAND_CLOCK_FUTURE_TOLERANCE:
+		return -1
+	var execute_tick := input_tick + COMMAND_DELAY_TICKS
+	# 网络延迟已经耗尽整个 Buffer 时，按明确 late policy 拒绝，不再追加一轮 Buffer。
+	if execute_tick <= current_tick:
+		return -1
+	return execute_tick
 
 func _current_authority_tick() -> int:
 	return get_estimated_server_tick() if mode == "client" else _sim_tick_id
@@ -1078,10 +1085,10 @@ func ensure_unit_form_resize_safe(unit: Unit) -> void:
 	unit._path_index = 0
 	unit._repath_cd = 0.0
 
-func _deploy_card(p_team: int, card_id: String, pos: Vector2, execute_tick: int = -1) -> int:
-	# 玩家、AI 与联机请求统一进入 10 Tick 权威队列；召唤物走 _spawn_unit，不受此延迟影响。
+func _deploy_card(p_team: int, card_id: String, pos: Vector2, input_tick: int = -1) -> int:
+	# 玩家、AI 与联机请求统一从 input_tick 进入 10 Tick 权威队列；召唤物不受此延迟影响。
 	pos = _snap_card_position(card_id, pos, p_team)
-	var resolved_execute_tick := _resolve_command_execute_tick(execute_tick)
+	var resolved_execute_tick := _resolve_command_execute_tick(input_tick)
 	if resolved_execute_tick < 0:
 		return -1
 	_pending_card_deployments.append({
@@ -1093,7 +1100,7 @@ func _deploy_card(p_team: int, card_id: String, pos: Vector2, execute_tick: int 
 	return resolved_execute_tick
 
 ## 玩家、AI、联机 RPC 与 ArtDevPanel 共用的出牌命令入口。
-## options 只描述请求来源；权威部署按固定 Tick 排程，联机请求可以携带客户端估计的目标 Tick。
+## options 只描述请求来源；联机请求携带客户端观察到的 input_tick，Host 计算目标 Tick。
 func play_card(p_team: int, card_id: String, pos: Vector2, options: Dictionary = {}) -> bool:
 	if game_over or not CardDB.has_card(card_id):
 		return false
@@ -1110,8 +1117,8 @@ func play_card(p_team: int, card_id: String, pos: Vector2, options: Dictionary =
 			return false
 	if not immediate and not _authoritative_card_in_hand(p_team, card_id):
 		return false
-	var requested_tick := int(options.get("execute_tick", -1))
-	if not immediate and _command_tick_is_obviously_stale(requested_tick):
+	var input_tick := int(options.get("input_tick", -1))
+	if not immediate and _resolve_command_execute_tick(input_tick) < 0:
 		return false
 	var elixir = options.get("elixir")
 	if options.has("elixir") and elixir == null:
@@ -1119,8 +1126,7 @@ func play_card(p_team: int, card_id: String, pos: Vector2, options: Dictionary =
 	if bool(options.get("client_request", false)):
 		if mode != "client" or immediate or elixir == null or not elixir.can_afford(stats.cost):
 			return false
-		var requested_execute_tick := _authority_tick_for_new_command()
-		_rpc_deploy_request.rpc_id(1, card_id, pos, requested_execute_tick)
+		_rpc_deploy_request.rpc_id(1, card_id, pos, _input_tick_for_new_command())
 		if _hand != null:
 			_hand.set_card_pending(card_id, true)
 		return true
@@ -1141,7 +1147,7 @@ func play_card(p_team: int, card_id: String, pos: Vector2, options: Dictionary =
 		if elixir != null:
 			elixir.elixir += float(stats.cost)
 		return false
-	var execute_tick := _deploy_card(p_team, card_id, pos, requested_tick)
+	var execute_tick := _deploy_card(p_team, card_id, pos, input_tick)
 	if execute_tick < 0:
 		# 仅作为未来扩展的兜底；常规异常 Tick 已在扣费/轮换前被拒绝。
 		return false
@@ -1350,16 +1356,16 @@ func _on_active_skill_pressed(ability_id: int) -> void:
 	if not use_active_skill(ability_id, 0, 0, mode == "client") and _active_skill_bar != null:
 		_active_skill_bar.set_pending(ability_id, false)
 
-## 玩家、AI 和联机 RPC 共用的主动技能请求入口；实际结算仍经过 10 Tick 权威队列。
-func use_active_skill(ability_id: int, expected_team: int = -1, requester_peer_id: int = 0, client_request: bool = false, requested_execute_tick: int = -1) -> bool:
+## 玩家、AI 和联机 RPC 共用的主动技能请求入口；客户端提交 input_tick，Host 统一计算 10 Tick 目标。
+func use_active_skill(ability_id: int, expected_team: int = -1, requester_peer_id: int = 0, client_request: bool = false, input_tick: int = -1) -> bool:
 	if client_request:
 		if mode != "client":
 			return false
-		_rpc_active_skill_request.rpc_id(1, ability_id, _authority_tick_for_new_command())
+		_rpc_active_skill_request.rpc_id(1, ability_id, _input_tick_for_new_command())
 		return true
-	return _queue_active_skill(ability_id, expected_team, requester_peer_id, requested_execute_tick)
+	return _queue_active_skill(ability_id, expected_team, requester_peer_id, input_tick)
 
-func _queue_active_skill(ability_id: int, expected_team: int = -1, requester_peer_id: int = 0, requested_execute_tick: int = -1) -> bool:
+func _queue_active_skill(ability_id: int, expected_team: int = -1, requester_peer_id: int = 0, input_tick: int = -1) -> bool:
 	for pending in _pending_active_skill_activations:
 		if int(pending.ability_id) == ability_id:
 			return false
@@ -1367,7 +1373,7 @@ func _queue_active_skill(ability_id: int, expected_team: int = -1, requester_pee
 		return false
 	var entry: Dictionary = _active_skills[ability_id]
 	var p_team := int(entry.team)
-	var execute_tick := _resolve_command_execute_tick(requested_execute_tick)
+	var execute_tick := _resolve_command_execute_tick(input_tick)
 	if execute_tick < 0:
 		return false
 	_pending_active_skill_activations.append({
@@ -2247,11 +2253,11 @@ func _rpc_register_deck(deck: Array, active_skill_choices: Dictionary = {}) -> v
 	_initialize_authoritative_card_cycle(1, _remote_deck)
 
 @rpc("any_peer", "call_remote", "reliable")
-func _rpc_active_skill_request(ability_id: int, requested_execute_tick: int = -1) -> void:
+func _rpc_active_skill_request(ability_id: int, input_tick: int = -1) -> void:
 	if mode != "host" or game_over:
 		return
 	var sender := multiplayer.get_remote_sender_id()
-	if not use_active_skill(ability_id, 1, sender, false, requested_execute_tick):
+	if input_tick < 0 or not use_active_skill(ability_id, 1, sender, false, input_tick):
 		_rpc_active_skill_rejected.rpc_id(sender, ability_id)
 
 @rpc("authority", "call_remote", "reliable")
@@ -2273,17 +2279,17 @@ func _rpc_active_skill_rejected(ability_id: int) -> void:
 	if mode == "client" and _active_skill_bar != null:
 		_active_skill_bar.set_pending(ability_id, false)
 
-## 客户端 → 主机：部署请求。客户端携带目标 Tick，主机只在有限窗口内接受/修正。
+## 客户端 → 主机：部署请求。客户端只携带点击时观察到的 input_tick，目标 Tick 由 Host 计算。
 @rpc("any_peer", "call_remote", "reliable")
-func _rpc_deploy_request(card_id: String, pos: Vector2, requested_execute_tick: int = -1) -> void:
+func _rpc_deploy_request(card_id: String, pos: Vector2, input_tick: int = -1) -> void:
 	if mode != "host" or game_over:
 		return
 	var sender := multiplayer.get_remote_sender_id()
-	var accepted := play_card(1, card_id, pos, {
+	var accepted := input_tick >= 0 and play_card(1, card_id, pos, {
 		"elixir": _elixir_p1,
 		"require_team_deck": true,
 		"requester_peer_id": sender,
-		"execute_tick": requested_execute_tick,
+		"input_tick": input_tick,
 	})
 	if not accepted:
 		_rpc_deploy_rejected.rpc_id(sender, card_id)
