@@ -10,15 +10,35 @@
 
 ## 施法权限
 
-带 `cast_duration` 的技能默认锁定移动、普通攻击和朝向。`active_skill.cast_locks` 可从下列值中组合：
+带 `cast_duration` 的技能默认锁定移动、普通攻击和朝向。`active_skill.cast_locks` 可从下列值中组合；若配置了全身 `visual_action`，必须包含 `attack`：
 
 ```gdscript
 "cast_locks": ["movement", "attack", "facing"] # 站定施法（默认）
 "cast_locks": ["attack", "facing"]             # 可移动，不能普攻
-"cast_locks": []                                # 纯 Buff，不影响基础行为
+"cast_locks": []                                # 纯 Buff，不影响基础行为；不能同时配置全身 visual_action
 ```
 
-Gameplay lock 与动画优先级互不推导：一个全身 Skill 动画可以伴随权威位移；没有动作素材的 Buff 可以只开 gameplay 窗口。技能效果/impact 仍由对应 kind 的固定模拟代码结算。
+Gameplay lock 与动画优先级互不推导：一个全身 Skill 动画可以伴随权威位移，但不能让权威普攻继续发生。没有动作素材的 Buff 可以只开 gameplay 窗口。技能效果/impact 仍由对应 kind 的固定模拟代码结算。
+
+## 统一主动技能时间线
+
+主动技能统一遵循：
+
+```text
+Player Input
+    ↓
+Authoritative Command Buffer（10 ticks / 0.5s）
+    ↓
+Cast Start
+    ↓ impact_delay
+Gameplay Impact
+    ↓ cast_duration
+Cast End
+    ↓
+Locomotion / Attack
+```
+
+Command Buffer 用于吸收联网输入延迟；`cast_duration` 是技能自身的施法窗口；`impact_delay` 是从 Cast Start 到效果生效的时刻。三者是不同概念，动画只读取权威时间线，不能触发 Gameplay Impact。施法者被冻结或眩晕时，施法与 impact 倒计时和动作表现同时暂停；施法者在 impact 前死亡则取消尚未发生的效果。
 
 ## CardDB 动作配置
 
@@ -37,6 +57,7 @@ Gameplay lock 与动画优先级互不推导：一个全身 Skill 动画可以�
 "active_skill": {
     # kind 的权威效果字段略
     "cast_duration": 1.2,
+    "impact_delay": 0.55,
     "visual_action": "active",
     "cast_locks": ["movement", "attack", "facing"],
 },
@@ -58,4 +79,4 @@ Gameplay lock 与动画优先级互不推导：一个全身 Skill 动画可以�
 
 ## 联机
 
-快照保留原有组合表现状态和动作字段下标，并在尾部追加 action 总时长、剩余时长和 locomotion。晚到客户端按权威剩余时间 seek，不从技能第一帧补播；旧载荷仍可降级为原组合状态。动画时间轴只用于表现同步，不参与权威判定。
+快照使用紧凑 Array，并保留原有 Unit 字段下标；当前协议在顶层携带 `SNAPSHOT_PROTOCOL_VERSION`、权威 `server_tick`，Unit 载荷尾部继续追加 action 总时长、剩余时长和 locomotion。晚到客户端按权威剩余时间 seek，不从技能第一帧补播；旧的无版本载荷仍可降级为原组合状态。动画时间轴只用于表现同步，不参与权威判定。

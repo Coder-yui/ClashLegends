@@ -7,12 +7,19 @@ var _main: Node2D
 func _expect(condition: bool, message: String) -> void:
 	_harness._expect(condition, message)
 
+func _run_main_ticks(count: int) -> void:
+	for _tick in count:
+		_main._sim_step(_main.SIM_DT)
+
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
 	_check_active_skill_loadout_rule()
 	_check_active_skill_activation()
 	_check_pending_active_skill_revalidation()
+	_check_pending_control_revalidation()
+	_check_cast_impact_recovery_timeline()
+	_check_authoritative_hand_cycle()
 	_check_empowered_freeze_slow_zone()
 
 func _check_active_skill_loadout_rule() -> void:
@@ -69,15 +76,17 @@ func _check_active_skill_activation() -> void:
 	)
 	var hp_before := enemy.hp
 	var queued: bool = not _main._queue_active_skill(first_ability_id, 0, 0) and _main._queue_active_skill(ability_id, 0, 0)
+	var expected_execute_tick: int = _main._sim_tick_id + _main.COMMAND_DELAY_TICKS
+	var command_tick_contract: bool = not _main._pending_active_skill_activations.is_empty() and int(_main._pending_active_skill_activations[0].execute_tick) == expected_execute_tick
 	_main._active_skill_bar.set_pending(ability_id, true)
-	_main._tick_pending_active_skills(0.45)
+	_run_main_ticks(_main.COMMAND_DELAY_TICKS - 1)
 	_expect(
 		queued and is_equal_approx(enemy.hp, hp_before) and is_zero_approx(source.shield_hp)
 		and _main._active_skills.has(ability_id) and _main._active_skill_bar.is_slot_visible(0),
-		"点击主动技能后 0.45 秒仍处于等待状态，不提前结算"
+		"点击主动技能后目标执行 Tick 前仍处于等待状态，不提前结算"
 	)
-	_main._tick_pending_active_skills(0.05)
-	_expect(enemy.hp < hp_before and source.shield_hp > 0.0, "满 0.5 秒后由权威逻辑造成范围伤害并获得护盾")
+	_run_main_ticks(1)
+	_expect(command_tick_contract and enemy.hp < hp_before and source.shield_hp > 0.0, "主动技能使用请求与主机共享 execute_tick，满 10 Tick 后由权威逻辑造成范围伤害并获得护盾")
 	_expect(
 		not _main._active_skills.has(ability_id)
 		and not _main._activate_active_skill(ability_id, 0)
@@ -117,7 +126,7 @@ func _check_pending_active_skill_revalidation() -> void:
 	var queued_before_death: bool = _main._queue_active_skill(dead_ability_id, 0, 0)
 	_main._active_skill_bar.set_pending(dead_ability_id, true)
 	dead_source.take_damage(dead_source.hp + 1.0)
-	_main._tick_pending_active_skills(_main.ACTIVE_SKILL_CAST_DELAY)
+	_run_main_ticks(_main.COMMAND_DELAY_TICKS)
 	_expect(
 		queued_before_death
 		and is_equal_approx(enemy.hp, hp_before_death_reject)
@@ -136,7 +145,7 @@ func _check_pending_active_skill_revalidation() -> void:
 	var pending_impacts_before: int = _main._pending_frontal_stun_skills.size()
 	var transformed_after_click := gnar.transform_to_mega()
 	var transform_action_serial := gnar.get_visual_action_serial()
-	_main._tick_pending_active_skills(_main.ACTIVE_SKILL_CAST_DELAY)
+	_run_main_ticks(_main.COMMAND_DELAY_TICKS)
 	_expect(
 		queued_before_transform
 		and transformed_after_click
@@ -158,7 +167,7 @@ func _check_pending_active_skill_revalidation() -> void:
 	casting_source.begin_active_skill_cast(1.0, Vector2.UP)
 	var cast_action_serial := casting_source.get_visual_action_serial()
 	var hp_before_cast_reject := enemy.hp
-	_main._tick_pending_active_skills(_main.ACTIVE_SKILL_CAST_DELAY)
+	_run_main_ticks(_main.COMMAND_DELAY_TICKS)
 	var rejected_during_cast: bool = (
 		queued_before_cast
 		and is_equal_approx(enemy.hp, hp_before_cast_reject)
@@ -171,7 +180,7 @@ func _check_pending_active_skill_revalidation() -> void:
 	casting_source.active_skill_cast_locks.clear()
 	var queued_after_cast: bool = _main._queue_active_skill(casting_ability_id, 0, 0)
 	_main._active_skill_bar.set_pending(casting_ability_id, true)
-	_main._tick_pending_active_skills(_main.ACTIVE_SKILL_CAST_DELAY)
+	_run_main_ticks(_main.COMMAND_DELAY_TICKS)
 	_expect(rejected_during_cast, "主动 pending 到期时若已进入另一段 active cast，会拒绝效果/技能动作并恢复按钮")
 	_expect(
 		queued_after_cast and enemy.hp < hp_before_cast_reject and casting_source.shield_hp > 0.0
@@ -181,6 +190,124 @@ func _check_pending_active_skill_revalidation() -> void:
 	casting_source.free()
 	enemy.free()
 	_main._deck = old_deck
+
+func _check_pending_control_revalidation() -> void:
+	var old_deck: Array = _main._deck.duplicate()
+	_main._deck = ["garen", "xin", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
+	var enemy_stats: Dictionary = CardDB.imp_stats().duplicate(true)
+	enemy_stats["deploy_time"] = 0.0
+	enemy_stats["hp"] = 1000000.0
+	enemy_stats["is_air"] = true
+	var enemy := Unit.new()
+	enemy.position = Vector2(360.0, 800.0)
+	enemy.setup(1, enemy_stats, enemy_stats.name)
+	_main.add_child(enemy)
+
+	var frozen_source: Unit = _main._spawn_unit(0, "garen", Vector2(300.0, 800.0), 0.0, 0)
+	var frozen_ability_id := frozen_source.active_ability_id
+	var frozen_hp := enemy.hp
+	var frozen_queued: bool = _main._queue_active_skill(frozen_ability_id, 0, 0)
+	_main._active_skill_bar.set_pending(frozen_ability_id, true)
+	_run_main_ticks(4)
+	frozen_source.freeze(1.0)
+	_run_main_ticks(_main.COMMAND_DELAY_TICKS - 4)
+	var frozen_rejected: bool = (
+		frozen_queued
+		and is_equal_approx(enemy.hp, frozen_hp)
+		and _main._active_skills.has(frozen_ability_id)
+		and not _main._active_skill_bar._buttons[0].disabled
+	)
+
+	var stunned_source: Unit = _main._spawn_unit(0, "xin", Vector2(300.0, 900.0), 0.0, 1)
+	var stunned_ability_id := stunned_source.active_ability_id
+	var stunned_hp := enemy.hp
+	var stunned_queued: bool = _main._queue_active_skill(stunned_ability_id, 0, 0)
+	_main._active_skill_bar.set_pending(stunned_ability_id, true)
+	_run_main_ticks(4)
+	stunned_source.stun(1.0)
+	_run_main_ticks(_main.COMMAND_DELAY_TICKS - 4)
+	var stunned_rejected: bool = (
+		stunned_queued
+		and is_equal_approx(enemy.hp, stunned_hp)
+		and _main._active_skills.has(stunned_ability_id)
+		and not _main._active_skill_bar._buttons[1].disabled
+	)
+	_expect(frozen_rejected and stunned_rejected, "主动技能执行 Tick 重新校验 Freeze/Stun，拒绝释放且保留 ability/UI")
+	_main._on_active_skill_unit_died(frozen_ability_id)
+	_main._on_active_skill_unit_died(stunned_ability_id)
+	frozen_source.free()
+	stunned_source.free()
+	enemy.free()
+	_main._deck = old_deck
+
+func _check_cast_impact_recovery_timeline() -> void:
+	var old_deck: Array = _main._deck.duplicate()
+	_main._deck = ["garen", "xin", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
+	var source: Unit = _main._spawn_unit(0, "garen", Vector2(260.0, 680.0), 0.0, 0)
+	var ability_id := source.active_ability_id
+	var timeline_skill := {
+		"name": "测试施法",
+		"kind": "buff",
+		"duration": 2.0,
+		"cast_duration": 1.0,
+		"impact_delay": 0.4,
+		"shield": 100.0,
+		"shield_duration": 2.0,
+		"cast_locks": ["movement", "attack", "facing"],
+	}
+	var timeline_entry: Dictionary = _main._active_skills[ability_id]
+	timeline_entry["skill"] = timeline_skill
+	_main._active_skills[ability_id] = timeline_entry
+	var queued: bool = _main._queue_active_skill(ability_id, 0, 0)
+	_main._active_skill_bar.set_pending(ability_id, true)
+	_run_main_ticks(_main.COMMAND_DELAY_TICKS)
+	var cast_started_no_impact: bool = queued and source.active_skill_cast_timer > 0.0 and is_zero_approx(source.shield_hp)
+	_run_main_ticks(7)
+	var before_impact := is_zero_approx(source.shield_hp) and source.active_skill_cast_timer > 0.0
+	_run_main_ticks(1)
+	var impact_at_delay := source.shield_hp > 0.0 and source.active_skill_cast_timer > 0.0
+	_run_main_ticks(10)
+	var still_casting_before_end := source.active_skill_cast_timer > 0.0
+	_run_main_ticks(1)
+	var recovered := is_zero_approx(source.active_skill_cast_timer) and source.active_skill_cast_locks.is_empty()
+	_expect(cast_started_no_impact and before_impact and impact_at_delay and still_casting_before_end and recovered, "主动技能按 Cast Start→impact_delay→Impact→cast_duration 固定 Tick 结算")
+	_main._on_active_skill_unit_died(ability_id)
+	source.free()
+	_main._deck = old_deck
+
+func _check_authoritative_hand_cycle() -> void:
+	var old_deck: Array = _main._deck.duplicate()
+	_main._deck = ["garen", "xin", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
+	_main._initialize_authoritative_card_cycle(0, _main._deck)
+	_main._elixir.elixir = ElixirManager.MAX_ELIXIR
+	var hand_before: Array = _main.get_authoritative_hand(0)
+	var queue_before: Array = _main.get_authoritative_queue(0)
+	var accepted: bool = _main.play_card(0, "garen", Vector2(300.0, 980.0), {"elixir": _main._elixir, "validate_position": false})
+	var hand_after: Array = _main.get_authoritative_hand(0)
+	var queue_after: Array = _main.get_authoritative_queue(0)
+	var elixir_after_accept: float = _main._elixir.elixir
+	var duplicate_rejected: bool = not _main.play_card(0, "garen", Vector2(300.0, 980.0), {"elixir": _main._elixir, "validate_position": false})
+	var cycle_unchanged_after_duplicate: bool = _main.get_authoritative_hand(0) == hand_after and _main.get_authoritative_queue(0) == queue_after
+	_main._elixir.elixir = 0.0
+	var insufficient_rejected: bool = not _main.play_card(0, "xin", Vector2(340.0, 980.0), {"elixir": _main._elixir, "validate_position": false})
+	var cycle_unchanged_after_insufficient: bool = _main.get_authoritative_hand(0) == hand_after
+	var deck_card_not_in_hand_rejected: bool = not _main.play_card(0, "tombstone", Vector2(420.0, 980.0), {"elixir": _main._elixir, "validate_position": false})
+	_expect(
+		accepted
+		and hand_before == ["garen", "xin", "freeze", "ashe"]
+		and queue_before == ["teemo", "masteryi", "tombstone", "aurelionsol"]
+		and hand_after == ["teemo", "xin", "freeze", "ashe"]
+		and queue_after == ["masteryi", "tombstone", "aurelionsol", "garen"]
+		and is_equal_approx(elixir_after_accept, 5.0)
+		and duplicate_rejected and cycle_unchanged_after_duplicate
+		and insufficient_rejected and cycle_unchanged_after_insufficient
+		and deck_card_not_in_hand_rejected,
+		"权威手牌只接受当前 hand，成功后一次性扣费/轮换，重复、缺牌和金币不足均不改变状态",
+	)
+	_main._pending_card_deployments.clear()
+	_main._elixir.elixir = ElixirManager.MAX_ELIXIR
+	_main._deck = old_deck
+	_main._initialize_authoritative_card_cycle(0, old_deck)
 
 func _check_empowered_freeze_slow_zone() -> void:
 	var stats: Dictionary = CardDB.imp_stats().duplicate()

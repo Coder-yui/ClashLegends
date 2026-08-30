@@ -721,6 +721,10 @@ static func _validate_visual_action_descriptor(label: String, descriptor: Dictio
 		errors.append("%s.kind: 不支持的动作类型 %s" % [label, kind])
 	if descriptor.has("durations"):
 		_validate_positive_number_or_array("%s.durations" % label, descriptor.durations, errors)
+		var animation_value = descriptor.get("animation", null)
+		var duration_value = descriptor.get("durations", null)
+		if animation_value is Array and duration_value is Array and animation_value.size() != duration_value.size():
+			errors.append("%s.durations: 与 animation 数组长度必须匹配" % label)
 	for blend_field in [&"blend_in", &"blend_out"]:
 		if descriptor.has(blend_field):
 			var blend_value = descriptor[blend_field]
@@ -786,10 +790,45 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 				for cast_lock in skill.cast_locks:
 					if StringName(cast_lock) not in CAST_LOCKS:
 						errors.append("%s.cast_locks: 不支持 %s" % [label, cast_lock])
-		if skill.has("visual_action") and String(skill.visual_action).is_empty():
+		var visual_action := String(skill.get("visual_action", ""))
+		if skill.has("visual_action") and visual_action.is_empty():
 			errors.append("%s.visual_action: 动作名不能为空" % label)
+		elif not visual_action.is_empty() and not _has_visual_action(stats, visual_action):
+			errors.append("%s.visual_action: visual_animations.visual_actions 中不存在 %s" % [label, visual_action])
+		if not visual_action.is_empty() and skill.has("cast_locks") and skill.cast_locks is Array and StringName("attack") not in skill.cast_locks:
+			errors.append("%s.cast_locks: 使用全身 visual_action 时必须包含 attack" % label)
 		if skill.has("cast_duration") and float(skill.cast_duration) < 0.0:
 			errors.append("%s.cast_duration: 必须 >= 0" % label)
+		if skill.has("impact_delay"):
+			var impact_delay := float(skill.impact_delay)
+			if impact_delay < 0.0:
+				errors.append("%s.impact_delay: 必须 >= 0" % label)
+			if impact_delay > 0.0 and not skill.has("cast_duration") and kind != &"dual_form":
+				errors.append("%s.impact_delay: 大于 0 时必须配置 cast_duration" % label)
+			elif skill.has("cast_duration") and impact_delay > float(skill.cast_duration):
+				errors.append("%s.impact_delay: 不得大于 cast_duration" % label)
+		if skill.has("transform_cast_duration") and float(skill.transform_cast_duration) < 0.0:
+			errors.append("%s.transform_cast_duration: 必须 >= 0" % label)
+		if skill.has("transform_impact_delay"):
+			var transform_impact_delay := float(skill.transform_impact_delay)
+			if transform_impact_delay < 0.0:
+				errors.append("%s.transform_impact_delay: 必须 >= 0" % label)
+			if transform_impact_delay > 0.0 and not skill.has("transform_cast_duration"):
+				errors.append("%s.transform_impact_delay: 大于 0 时必须配置 transform_cast_duration" % label)
+			elif skill.has("transform_cast_duration") and transform_impact_delay > float(skill.transform_cast_duration):
+				errors.append("%s.transform_impact_delay: 不得大于 transform_cast_duration" % label)
+
+static func _has_visual_action(stats: Dictionary, action_name: String) -> bool:
+	var candidates: Array[Dictionary] = [stats]
+	var transformed = stats.get("transformed_stats")
+	if transformed is Dictionary:
+		candidates.append(transformed)
+	for candidate in candidates:
+		var animations = candidate.get("visual_animations", {})
+		if animations is Dictionary and animations.get("visual_actions", {}) is Dictionary:
+			if (animations.get("visual_actions", {}) as Dictionary).has(action_name):
+				return true
+	return false
 
 static func _require_fields(label: String, data: Dictionary, fields: Array, errors: PackedStringArray) -> void:
 	for field in fields:
@@ -799,7 +838,7 @@ static func _require_fields(label: String, data: Dictionary, fields: Array, erro
 static func _validate_known_fields(label: String, data: Dictionary, known_fields: Array, errors: PackedStringArray) -> void:
 	for field in data:
 		if StringName(field) not in known_fields:
-			errors.append("%s.%s: 字段没有已知运行时读取方" % [label, field])
+			errors.append("%s.%s: 未知或未登记字段" % [label, field])
 
 ## 小鬼属性（墓碑生成，非卡牌）— 1费近战单位
 static func imp_stats() -> Dictionary:

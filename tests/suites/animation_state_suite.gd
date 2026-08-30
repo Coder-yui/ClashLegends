@@ -175,13 +175,17 @@ func _check_cast_policies_and_snapshot() -> void:
 	stationary.play_visual_action(&"active", 1.2)
 	stationary.sim_tick(_main.SIM_DT)
 	var payload := NetworkSnapshotSystem.new(_main)._unit_snapshot_payload(77, stationary)
-	var snapshot_contract := (
+	var snapshot_system := NetworkSnapshotSystem.new(_main)
+	var snapshot_header := snapshot_system.snapshot_header()
+	var snapshot_contract: bool = (
 		payload.size() == 26
-		and int(payload[17]) == stationary.get_visual_action_serial()
-		and String(payload[18]) == "active"
-		and is_equal_approx(float(payload[23]), 1.2)
-		and is_equal_approx(float(payload[24]), 1.2 - _main.SIM_DT)
-		and int(payload[25]) == stationary.get_locomotion_visual_state_code()
+		and int(payload[NetworkSnapshotSystem.U_ACTION_SERIAL]) == stationary.get_visual_action_serial()
+		and String(payload[NetworkSnapshotSystem.U_ACTION_NAME]) == "active"
+		and is_equal_approx(float(payload[NetworkSnapshotSystem.U_ACTION_DURATION]), 1.2)
+		and is_equal_approx(float(payload[NetworkSnapshotSystem.U_ACTION_TIME_LEFT]), 1.2 - _main.SIM_DT)
+		and int(payload[NetworkSnapshotSystem.U_LOCOMOTION]) == stationary.get_locomotion_visual_state_code()
+		and int(snapshot_header[0]) == NetworkSnapshotSystem.SNAPSHOT_PROTOCOL_VERSION
+		and int(snapshot_header[1]) == _main._sim_tick_id
 	)
 	_expect(stationary_locked and attacks_after_cast, "默认技能施法独立锁住移动与普攻，并在窗口结束后立即允许攻击")
 	_expect(mobile_cast_policy, "cast_locks 可配置允许移动施法，同时继续禁止普通攻击")

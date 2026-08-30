@@ -32,7 +32,7 @@ CardDB 是卡牌数值、通用机制参数和表现配置的唯一来源。普�
 
 主动 `kind` 当前只允许 `nova`、`buff`、`summon`、`dual_form`。新增 kind 必须同时实现权威执行、CardDB validator、必要快照/RPC、UI 描述和回归；不能只写数据。
 
-带施法窗口的主动可配置 `cast_duration`、`visual_action` 与 `cast_locks`。locks 可独立包含 `movement / attack / facing`；未写时默认三项全锁，空数组表示不限制基础行为。Gameplay lock 不由动画推导，impact 时刻仍由固定模拟实现。
+带施法窗口的主动可配置 `cast_duration`、`impact_delay`、`visual_action` 与 `cast_locks`。`cast_duration` 是 Cast Start 到 Cast End 的权威窗口，`impact_delay` 是 Cast Start 到 Gameplay Impact 的权威延迟，未写时为 0；`impact_delay` 必须满足 `0 <= impact_delay <= cast_duration`。locks 可独立包含 `movement / attack / facing`；未写时默认三项全锁，空数组表示不限制基础行为。使用全身 `visual_action` 时必须包含 `attack`，不能让权威普攻被全身动作遮住。Gameplay lock 不由动画推导，impact 时刻仍由固定模拟实现。
 
 ## 普通卡与特殊机制
 
@@ -42,4 +42,4 @@ CardDB 是卡牌数值、通用机制参数和表现配置的唯一来源。普�
 
 ## Validator 覆盖
 
-当前会发现：非法类型/字段、必要战斗字段缺失、体型半径不匹配、弹体速度/类型/颜色错误、资源路径不存在、动画结构/未知键、建筑字段、双形态字段、未知主动 kind/必填项，以及“数据字段存在但没有已知读取方”。新增普通卡应先让 validator 通过，再做实机平衡/表现验收。
+当前会发现：非法类型/字段、必要战斗字段缺失、体型半径不匹配、弹体速度/类型/颜色错误、资源路径不存在、动画结构/未知键、建筑字段、双形态字段、未知主动 kind/必填项、主动动作映射、动作数组时长、施法时间关系和全身动作锁约束。新增普通卡应先让 validator 通过，再做实机平衡/表现验收。

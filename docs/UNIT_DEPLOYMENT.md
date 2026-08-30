@@ -1,6 +1,6 @@
 # 手牌部署与出场动画
 
-所有手牌先经 `play_card()` 的权威校验并等待 `0.5` 秒；窗口结束后单位/建筑生成或法术生效。单位生成后再进入自己的 `deploy_time`（默认 1 秒）：不能索敌、移动、攻击，但已有碰撞、可被索敌/命中/施加状态。召唤物和水晶兵线不经过手牌等待；兵线通过 `deploy_time_override = 0` 即时行动。
+所有手牌先经 `play_card()` 的权威校验并进入 20Hz 的 10 Tick（0.5 秒）Command Buffer；目标 `execute_tick` 到达后单位/建筑生成或法术生效。单位生成后再进入自己的 `deploy_time`（默认 1 秒）：不能索敌、移动、攻击，但已有碰撞、可被索敌/命中/施加状态。召唤物和水晶兵线不经过手牌等待；兵线通过 `deploy_time_override = 0` 即时行动。
 
 `visual_animations.deploy` 必须写素材真实动画名：优先 Respawn，其次 Recall WindDown，最后 Idle。单段会适配 `deploy_time`；多段使用动画数组和等长 `deploy_durations`，总时长应等于部署锁。
 

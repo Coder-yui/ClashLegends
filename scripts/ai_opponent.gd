@@ -28,7 +28,8 @@ func _process(delta: float) -> void:
 	if _elixir.elixir < PLAY_THRESHOLD:
 		return
 	var affordable := []
-	var candidate_ids: Array = _deck if _deck.size() == 8 else CardDB.selectable_ids()
+	# AI 也是玩家命令来源，候选牌必须来自主机维护的当前 4 张手牌。
+	var candidate_ids: Array = _main.get_authoritative_hand(1)
 	for card_id in candidate_ids:
 		var stats: Dictionary = CardDB.get_card(card_id)
 		if _elixir.can_afford(stats.cost):

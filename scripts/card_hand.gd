@@ -22,6 +22,7 @@ const HAND_CARD_WIDTH := 112.0
 var _hand: Array[String] = []   # 当前4张手牌
 var _queue: Array[String] = []  # 等待队列4张
 var _deck: Array = []           # 本次对战选定的 8 张卡组（空则随机 8 张）
+var _pending_cards: Dictionary = {}  # 客户端已发出、等待主机确认的卡牌
 
 func setup(elixir: ElixirManager, deck: Array = []) -> void:
 	_elixir = elixir
@@ -36,6 +37,37 @@ func clear_selection() -> void:
 		CardArt.set_selected(b, false)
 	_selected = ""
 
+func get_hand() -> Array[String]:
+	return _hand.duplicate()
+
+func get_queue() -> Array[String]:
+	return _queue.duplicate()
+
+func get_deck() -> Array:
+	return _deck.duplicate()
+
+## 手牌只是权威 Card Cycle 的表现视图；主机确认后的完整状态由 Main 推送到这里。
+func set_cycle_state(hand: Array, queue: Array) -> void:
+	if hand.size() != 4 or queue.size() != 4:
+		return
+	_hand.clear()
+	_queue.clear()
+	for card_id in hand:
+		_hand.append(String(card_id))
+	for card_id in queue:
+		_queue.append(String(card_id))
+	_refresh(_elixir.elixir if _elixir != null else 0.0)
+
+func set_card_pending(card_id: String, pending: bool) -> void:
+	if pending:
+		_pending_cards[card_id] = true
+	else:
+		_pending_cards.erase(card_id)
+	_refresh(_elixir.elixir if _elixir != null else 0.0)
+
+func is_card_pending(card_id: String) -> bool:
+	return bool(_pending_cards.get(card_id, false))
+
 ## 卡牌使用后：从队列补一张，用过的牌排到队尾
 func card_used(card_id: String) -> void:
 	var idx := _hand.find(card_id)
@@ -43,6 +75,7 @@ func card_used(card_id: String) -> void:
 		return
 	_hand[idx] = _queue.pop_front()
 	_queue.push_back(card_id)
+	_pending_cards.erase(card_id)
 	_refresh(_elixir.elixir)
 
 func _init_deck() -> void:
@@ -173,6 +206,8 @@ func _build_ui() -> void:
 
 func _on_slot_pressed(slot_idx: int) -> void:
 	var card_id := _hand[slot_idx]
+	if is_card_pending(card_id):
+		return
 	if _selected == card_id:
 		clear_selection()
 	else:
@@ -202,6 +237,7 @@ func _refresh(_value: float) -> void:
 		var accent: Color = stats.get("color", CardArt.DEFAULT_ACCENT)
 		CardArt.apply_to_button(b, card_id, stats.name, stats.cost, true, accent)
 		var affordable := _elixir.can_afford(stats.cost)
-		CardArt.set_affordable(b, affordable or card_id == _selected)
-		CardArt.set_selected(b, card_id == _selected)
-		b.disabled = not affordable and card_id != _selected
+		var pending := is_card_pending(card_id)
+		CardArt.set_affordable(b, (affordable or card_id == _selected) and not pending)
+		CardArt.set_selected(b, card_id == _selected and not pending)
+		b.disabled = pending or (not affordable and card_id != _selected)

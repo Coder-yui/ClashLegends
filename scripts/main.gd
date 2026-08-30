@@ -95,10 +95,13 @@ const MATCH_TIME := 180.0
 const OVERTIME_TIME := 60.0
 const SIM_DT := 1.0 / 20.0
 const DOUBLE_ELIXIR_TIME := 60.0
-## 所有手牌在主机确认并扣费后统一延迟执行，给联网指令留出稳定的表现窗口。
-const CARD_DEPLOY_DELAY := 0.5
-## 主动技能点击后同样进入主机权威等待窗口，再由固定 tick 结算。
-const ACTIVE_SKILL_CAST_DELAY := 0.5
+## 所有玩家命令使用 20Hz 权威 Tick 排程，0.5 秒对应 10 个模拟 Tick。
+const COMMAND_DELAY_TICKS := 10
+## 保留旧常量名供现有调用方读取，但延迟来源统一由 Tick 定义。
+const CARD_DEPLOY_DELAY := SIM_DT * COMMAND_DELAY_TICKS
+const ACTIVE_SKILL_CAST_DELAY := SIM_DT * COMMAND_DELAY_TICKS
+## 客户端不能把命令安排到任意远期；迟到命令会落到最近的下一权威 Tick。
+const COMMAND_MAX_FUTURE_TICKS := COMMAND_DELAY_TICKS * 2
 ## 水晶兵线由主机固定 tick 驱动：开局 5 秒首波，之后每 30 秒一波，第二只延迟 0.5 秒。
 const FIRST_MINION_WAVE_TIME := 5.0
 const MINION_WAVE_INTERVAL := 30.0
@@ -130,8 +133,10 @@ var _active_skill_bar: ActiveSkillBar
 ## ability_id -> {unit, card_id, team}；按钮只是这份权威状态的视图。
 var _active_skills: Dictionary = {}
 var _next_active_ability_id := 1
-## 主动请求确认后等待 0.5 秒；同一 ability_id 在队列中只能存在一次。
+## 主动请求确认后按 execute_tick 等待；同一 ability_id 在队列中只能存在一次。
 var _pending_active_skill_activations: Array[Dictionary] = []
+## Cast Start 后的通用 Gameplay Impact 队列；与 dual_form 的旧专用前方技能队列分开。
+var _pending_active_skill_impacts: Array[Dictionary] = []
 var _ai: AIOpponent
 var _selected_card := ""
 ## 选卡后的落点预览：单位以单格格心为目标，点击时使用当前预览而不是重新猜测落点。
@@ -139,7 +144,7 @@ var _deployment_preview_pos := Vector2.ZERO
 var _deployment_preview_tile := Vector2i(-1, -1)
 var _deployment_preview_valid := false
 var _deployment_preview_visible := false
-## 主机/单机权威卡牌队列：单位、建筑和法术都在倒计时结束后才真正生效。
+## 主机/单机权威卡牌队列：单位、建筑和法术都在 execute_tick 才真正生效。
 var _pending_card_deployments: Array[Dictionary] = []
 ## 兵线第二只单位的权威延迟队列；不经过手牌 0.5 秒部署队列，也不扣金币。
 var _pending_lane_minions: Array[Dictionary] = []
@@ -154,6 +159,8 @@ var _skin_choices: Dictionary = {}
 ## 主机收到的客户端卡组；用于校验出牌归属及前两槽主动资格。
 var _remote_deck: Array = []
 var _remote_active_skill_choices: Dictionary = {}
+## team -> {deck, hand, queue}。主机同时维护双方；客户端只维护自己的本地镜像。
+var _authoritative_card_cycles: Dictionary = {}
 var _deck_builder: DeckBuilder
 var _match_timer := MATCH_TIME
 var _overtime := false
@@ -195,6 +202,9 @@ var _auto_test := false
 var _auto_timer := 2.0
 # 固定 20Hz 模拟累加器：帧率高低都不影响战斗逻辑步数
 var _sim_acc := 0.0
+## 客户端由快照提供的最后已知主机 Tick，用于生成带缓冲的命令目标 Tick。
+var _authoritative_server_tick := 0
+var _sim_tick_id := 0
 
 func _ready() -> void:
 	battle_context = BattleContext.new(self)
@@ -424,6 +434,10 @@ func _setup_player_ui() -> void:
 	add_child(_hand)
 	_hand.setup(_elixir, _deck)
 	_hand.card_selected.connect(_on_card_selected)
+	var local_team := 1 if mode == "client" else 0
+	_initialize_authoritative_card_cycle(local_team, _deck)
+	if mode == "local":
+		_initialize_authoritative_card_cycle(1, _deck)
 	_active_skill_bar = ACTIVE_SKILL_BAR_SCRIPT.new()
 	add_child(_active_skill_bar)
 	_active_skill_bar.skill_pressed.connect(_on_active_skill_pressed)
@@ -435,6 +449,84 @@ func _team_deck(p_team: int) -> Array:
 	if mode == "host" and p_team == 1:
 		return _remote_deck
 	return _deck
+
+func _initialize_authoritative_card_cycle(p_team: int, deck: Array) -> bool:
+	if deck.size() != 8:
+		_authoritative_card_cycles.erase(p_team)
+		return false
+	var normalized: Array = []
+	for raw_card_id in deck:
+		normalized.append(String(raw_card_id))
+	var cycle := {
+		"deck": normalized.duplicate(),
+		"hand": normalized.slice(0, 4),
+		"queue": normalized.slice(4, 8),
+	}
+	_authoritative_card_cycles[p_team] = cycle
+	if _hand != null and _is_local_player_team(p_team):
+		_hand.set_cycle_state(cycle.hand, cycle.queue)
+	return true
+
+func _ensure_authoritative_card_cycle(p_team: int) -> bool:
+	var team_deck := _team_deck(p_team)
+	if team_deck.size() != 8:
+		return false
+	var cycle: Dictionary = _authoritative_card_cycles.get(p_team, {})
+	var normalized: Array = []
+	for raw_card_id in team_deck:
+		normalized.append(String(raw_card_id))
+	if cycle.is_empty() or cycle.get("deck", []) != normalized:
+		return _initialize_authoritative_card_cycle(p_team, normalized)
+	return true
+
+func get_authoritative_hand(p_team: int) -> Array:
+	if not _ensure_authoritative_card_cycle(p_team):
+		return []
+	var cycle: Dictionary = _authoritative_card_cycles[p_team]
+	return cycle.hand.duplicate()
+
+func get_authoritative_queue(p_team: int) -> Array:
+	if not _ensure_authoritative_card_cycle(p_team):
+		return []
+	var cycle: Dictionary = _authoritative_card_cycles[p_team]
+	return cycle.queue.duplicate()
+
+func _authoritative_card_in_hand(p_team: int, card_id: String) -> bool:
+	return card_id in get_authoritative_hand(p_team)
+
+func _consume_authoritative_card(p_team: int, card_id: String) -> bool:
+	if not _ensure_authoritative_card_cycle(p_team):
+		return false
+	var cycle: Dictionary = _authoritative_card_cycles[p_team]
+	var hand: Array = cycle.hand
+	var queue: Array = cycle.queue
+	var hand_index := hand.find(card_id)
+	if hand_index < 0 or queue.is_empty():
+		return false
+	hand[hand_index] = queue.pop_front()
+	queue.push_back(card_id)
+	cycle.hand = hand
+	cycle.queue = queue
+	_authoritative_card_cycles[p_team] = cycle
+	if _hand != null and _is_local_player_team(p_team):
+		_hand.set_cycle_state(hand, queue)
+	return true
+
+func _authority_tick_for_new_command() -> int:
+	return _current_authority_tick() + COMMAND_DELAY_TICKS
+
+func _resolve_command_execute_tick(requested_tick: int = -1) -> int:
+	if requested_tick < 0:
+		return _authority_tick_for_new_command()
+	# 迟到命令不静默丢弃；下一 Tick 是确定性 fallback。未来命令限制在有限窗口内。
+	var current_tick := _current_authority_tick()
+	return clampi(requested_tick, current_tick + 1, current_tick + COMMAND_MAX_FUTURE_TICKS)
+
+func _current_authority_tick() -> int:
+	return _authoritative_server_tick if mode == "client" else _sim_tick_id
+
+func get_authoritative_server_tick() -> int:
+	return _authoritative_server_tick if mode == "client" else _sim_tick_id
 
 func _team_active_skill_choices(p_team: int) -> Dictionary:
 	if mode == "host" and p_team == 1:
@@ -601,7 +693,6 @@ func _unhandled_input(event: InputEvent) -> void:
 		_clear_deployment_preview()
 		_hand.clear_selection()
 		queue_redraw()
-		_hand.card_used(used_card)
 
 func _place_art_dev_item(pos: Vector2) -> void:
 	if _art_dev_selection == "training_dummy":
@@ -646,7 +737,13 @@ func _use_art_dev_active_skill() -> void:
 	preview_active_skill(unit, skills[0])
 
 func preview_active_skill(unit: Unit, skill: Dictionary) -> bool:
-	return unit != null and is_instance_valid(unit) and _apply_active_skill_effect(unit, skill)
+	if unit == null or not is_instance_valid(unit):
+		return false
+	# ArtDev 的 immediate 只绕过玩家命令缓冲；有配置的动作仍先开始施法，再立即展示效果。
+	# dual_form 自己包含变形/前方技能的完整旧时间轴，不能在这里重复启动一次。
+	if String(skill.get("kind", "")) != "dual_form":
+		_begin_configured_active_skill_cast(unit, skill)
+	return _apply_active_skill_effect(unit, skill)
 
 func _register_dynamic_building(unit: Unit) -> void:
 	if nav == null or not unit.is_building:
@@ -942,23 +1039,26 @@ func ensure_unit_form_resize_safe(unit: Unit) -> void:
 	unit._path_index = 0
 	unit._repath_cd = 0.0
 
-func _deploy_card(p_team: int, card_id: String, pos: Vector2) -> void:
-	# 玩家、AI 与联机请求统一进入 0.5 秒权威队列；召唤物走 _spawn_unit，不受此延迟影响。
+func _deploy_card(p_team: int, card_id: String, pos: Vector2, execute_tick: int = -1) -> int:
+	# 玩家、AI 与联机请求统一进入 10 Tick 权威队列；召唤物走 _spawn_unit，不受此延迟影响。
 	pos = _snap_card_position(card_id, pos, p_team)
+	var resolved_execute_tick := _resolve_command_execute_tick(execute_tick)
 	_pending_card_deployments.append({
 		"team": p_team,
 		"card_id": card_id,
 		"pos": pos,
-		"time_left": CARD_DEPLOY_DELAY,
+		"execute_tick": resolved_execute_tick,
 	})
+	return resolved_execute_tick
 
 ## 玩家、AI、联机 RPC 与 ArtDevPanel 共用的出牌命令入口。
-## options 只描述请求来源；权威部署仍进入原 0.5 秒队列，联机协议与生成入口不变。
+## options 只描述请求来源；权威部署按固定 Tick 排程，联机请求可以携带客户端估计的目标 Tick。
 func play_card(p_team: int, card_id: String, pos: Vector2, options: Dictionary = {}) -> bool:
 	if game_over or not CardDB.has_card(card_id):
 		return false
 	var stats := CardDB.get_card(card_id)
-	if not bool(stats.get("selectable", true)) and not bool(options.get("immediate", false)):
+	var immediate := bool(options.get("immediate", false))
+	if not bool(stats.get("selectable", true)) and not immediate:
 		return false
 	pos = _snap_card_position(card_id, pos, p_team)
 	if bool(options.get("validate_position", true)) and not is_card_deploy_position_valid(p_team, card_id, pos):
@@ -967,17 +1067,22 @@ func play_card(p_team: int, card_id: String, pos: Vector2, options: Dictionary =
 		var team_deck := _team_deck(p_team)
 		if team_deck.size() != 8 or card_id not in team_deck:
 			return false
+	if not immediate and not _authoritative_card_in_hand(p_team, card_id):
+		return false
 	var elixir = options.get("elixir")
 	if options.has("elixir") and elixir == null:
 		return false
 	if bool(options.get("client_request", false)):
-		if mode != "client" or elixir == null or not elixir.can_afford(stats.cost):
+		if mode != "client" or immediate or elixir == null or not elixir.can_afford(stats.cost):
 			return false
-		_rpc_deploy_request.rpc_id(1, card_id, pos)
+		var requested_execute_tick := _authority_tick_for_new_command()
+		_rpc_deploy_request.rpc_id(1, card_id, pos, requested_execute_tick)
+		if _hand != null:
+			_hand.set_card_pending(card_id, true)
 		return true
 	if elixir != null and not elixir.spend(stats.cost):
 		return false
-	if bool(options.get("immediate", false)):
+	if immediate:
 		var type := String(stats.get("type", "unit"))
 		if type == "spell":
 			_cast_spell(p_team, card_id, pos)
@@ -986,16 +1091,27 @@ func play_card(p_team: int, card_id: String, pos: Vector2, options: Dictionary =
 				_push_units_around(pos, float(stats.get("radius", 14.0)))
 			_spawn_unit(p_team, card_id, pos)
 		return true
-	_deploy_card(p_team, card_id, pos)
+	# 只有命令已完成权威校验、扣费与手牌轮换后才向客户端确认。
+	if not _consume_authoritative_card(p_team, card_id):
+		# spend 已经成功时理论上不会失败；保留事务式回滚，避免未来扩展插入中间验证后丢费。
+		if elixir != null:
+			elixir.elixir += float(stats.cost)
+		return false
+	var requested_tick := int(options.get("execute_tick", -1))
+	var execute_tick := _deploy_card(p_team, card_id, pos, requested_tick)
+	var requester_peer_id := int(options.get("requester_peer_id", 0))
+	if mode == "host" and requester_peer_id > 0:
+		_rpc_deploy_accepted.rpc_id(
+			requester_peer_id, card_id, execute_tick,
+			get_authoritative_hand(p_team), get_authoritative_queue(p_team)
+		)
 	return true
 
-func _tick_pending_card_deployments(dt: float) -> void:
+func _tick_pending_card_deployments(_dt: float) -> void:
 	var waiting: Array[Dictionary] = []
 	var ready: Array[Dictionary] = []
 	for deployment in _pending_card_deployments:
-		var time_left := float(deployment.time_left) - dt
-		if time_left > 0.001:
-			deployment.time_left = time_left
+		if int(deployment.execute_tick) > _sim_tick_id:
 			waiting.append(deployment)
 		else:
 			ready.append(deployment)
@@ -1188,16 +1304,16 @@ func _on_active_skill_pressed(ability_id: int) -> void:
 	if not use_active_skill(ability_id, 0, 0, mode == "client") and _active_skill_bar != null:
 		_active_skill_bar.set_pending(ability_id, false)
 
-## 玩家、AI 和联机 RPC 共用的主动技能请求入口；实际结算仍经过 0.5 秒权威队列。
-func use_active_skill(ability_id: int, expected_team: int = -1, requester_peer_id: int = 0, client_request: bool = false) -> bool:
+## 玩家、AI 和联机 RPC 共用的主动技能请求入口；实际结算仍经过 10 Tick 权威队列。
+func use_active_skill(ability_id: int, expected_team: int = -1, requester_peer_id: int = 0, client_request: bool = false, requested_execute_tick: int = -1) -> bool:
 	if client_request:
 		if mode != "client":
 			return false
-		_rpc_active_skill_request.rpc_id(1, ability_id)
+		_rpc_active_skill_request.rpc_id(1, ability_id, _authority_tick_for_new_command())
 		return true
-	return _queue_active_skill(ability_id, expected_team, requester_peer_id)
+	return _queue_active_skill(ability_id, expected_team, requester_peer_id, requested_execute_tick)
 
-func _queue_active_skill(ability_id: int, expected_team: int = -1, requester_peer_id: int = 0) -> bool:
+func _queue_active_skill(ability_id: int, expected_team: int = -1, requester_peer_id: int = 0, requested_execute_tick: int = -1) -> bool:
 	for pending in _pending_active_skill_activations:
 		if int(pending.ability_id) == ability_id:
 			return false
@@ -1209,16 +1325,15 @@ func _queue_active_skill(ability_id: int, expected_team: int = -1, requester_pee
 		"ability_id": ability_id,
 		"team": p_team,
 		"requester_peer_id": requester_peer_id,
-		"time_left": ACTIVE_SKILL_CAST_DELAY,
+		"execute_tick": _resolve_command_execute_tick(requested_execute_tick),
 	})
 	return true
 
-func _tick_pending_active_skills(dt: float) -> void:
+func _tick_pending_active_skills(_dt: float) -> void:
 	var waiting: Array[Dictionary] = []
 	var ready: Array[Dictionary] = []
 	for pending in _pending_active_skill_activations:
-		pending.time_left = float(pending.time_left) - dt
-		if float(pending.time_left) > 0.001:
+		if int(pending.execute_tick) > _sim_tick_id:
 			waiting.append(pending)
 		else:
 			ready.append(pending)
@@ -1238,6 +1353,37 @@ func _cancel_pending_active_skill(ability_id: int) -> void:
 		func(pending): return int(pending.ability_id) != ability_id
 	)
 
+## Cast Start 后的通用 Gameplay Impact 队列。计时在固定 Tick 中推进，
+## 并在施法者被冻结/眩晕时与 Unit 的 cast timer 同步暂停。
+func _queue_active_skill_impact(source: Unit, skill: Dictionary, impact_delay: float) -> void:
+	if source == null or not is_instance_valid(source):
+		return
+	if impact_delay <= 0.0:
+		_apply_active_skill_effect(source, skill)
+		return
+	_pending_active_skill_impacts.append({
+		"source_ref": weakref(source),
+		"skill": skill.duplicate(true),
+		"time_left": impact_delay,
+	})
+
+func _tick_pending_active_skill_impacts(dt: float) -> void:
+	var waiting: Array[Dictionary] = []
+	for pending in _pending_active_skill_impacts:
+		var source = (pending.source_ref as WeakRef).get_ref()
+		if not source is Unit or not is_instance_valid(source) or source.hp <= 0.0:
+			continue
+		var unit := source as Unit
+		if unit.is_frozen() or unit.is_stunned():
+			waiting.append(pending)
+			continue
+		pending.time_left = maxf(0.0, float(pending.time_left) - dt)
+		if float(pending.time_left) > 0.001:
+			waiting.append(pending)
+			continue
+		_apply_active_skill_effect(unit, pending.skill)
+	_pending_active_skill_impacts = waiting
+
 ## 点击只决定请求能否进入 pending；队列到期时必须用同一谓词重新读取权威状态。
 ## pending 占用检查刻意留在 _queue_active_skill()，否则队列中的请求永远无法落地。
 func _active_skill_is_legal(ability_id: int, expected_team: int = -1) -> bool:
@@ -1251,6 +1397,8 @@ func _active_skill_is_legal(ability_id: int, expected_team: int = -1) -> bool:
 	if expected_team >= 0 and p_team != expected_team:
 		return false
 	if not _card_has_active_for_team(p_team, String(entry.card_id)):
+		return false
+	if unit.is_frozen() or unit.is_stunned():
 		return false
 	# deploy/transform/skill 都高于普通攻击；高优先级窗口内拒绝新技能并保留按钮。
 	return unit.is_deployed() and not unit.is_form_transitioning() and not unit.is_active_skill_casting()
@@ -1267,8 +1415,13 @@ func _activate_active_skill(ability_id: int, expected_team: int = -1) -> bool:
 	var entry: Dictionary = _active_skills[ability_id]
 	var unit: Unit = entry.unit
 	var skill: Dictionary = entry.skill
-	if not _apply_active_skill_effect(unit, skill):
-		return false
+	# 先发布 Cast Start，再按 impact_delay 结算效果；AnimationPlayer 完成事件不参与这里。
+	var skill_kind := String(skill.get("kind", ""))
+	if skill_kind == "dual_form":
+		_activate_dual_form_skill(unit, skill)
+	else:
+		_begin_configured_active_skill_cast(unit, skill)
+		_queue_active_skill_impact(unit, skill, maxf(float(skill.get("impact_delay", 0.0)), 0.0))
 	unit.active_ability_id = -1
 	unit.active_ability_slot = -1
 	_active_skills.erase(ability_id)
@@ -1297,10 +1450,6 @@ func _apply_active_skill_effect(unit: Unit, skill: Dictionary) -> bool:
 			_activate_dual_form_skill(unit, skill)
 		_:
 			return false
-	# 普通 nova/buff/summon 也可只靠 CardDB 接入施法动作与权限窗口；效果时刻仍由
-	# 上方对应 kind 的权威代码决定。dual_form 已在自己的 impact 时间轴中启动窗口。
-	if skill_kind != "dual_form":
-		_begin_configured_active_skill_cast(unit, skill)
 	return true
 
 func _begin_configured_active_skill_cast(unit: Unit, skill: Dictionary) -> void:
@@ -1560,9 +1709,12 @@ func on_tower_hit(tower: Tower) -> void:
 ## 固定 20Hz 模拟步：驱动全部战斗单位与塔，处理国王塔激活与障碍移除。
 ## 帧率高低只影响每帧跑多少步，不改变战斗结果（联机两端行为一致）。
 func _sim_step(dt: float) -> void:
+	_sim_tick_id += 1
+	# 已存在的施法时间线先推进；本 Tick 新执行的命令从当前 Tick 边界开始计时。
+	_tick_pending_active_skill_impacts(dt)
+	_tick_pending_frontal_stun_skills(dt)
 	_tick_pending_card_deployments(dt)
 	_tick_pending_active_skills(dt)
-	_tick_pending_frontal_stun_skills(dt)
 	_tick_slow_zones(dt)
 	if not _art_dev_mode and _minion_waves_enabled:
 		_tick_minion_waves(dt)
@@ -2042,13 +2194,14 @@ func _rpc_register_deck(deck: Array, active_skill_choices: Dictionary = {}) -> v
 		var skills := CardDB.active_skills_for(card_id)
 		if not skills.is_empty():
 			_remote_active_skill_choices[card_id] = clampi(int(active_skill_choices.get(card_id, 0)), 0, skills.size() - 1)
+	_initialize_authoritative_card_cycle(1, _remote_deck)
 
 @rpc("any_peer", "call_remote", "reliable")
-func _rpc_active_skill_request(ability_id: int) -> void:
+func _rpc_active_skill_request(ability_id: int, requested_execute_tick: int = -1) -> void:
 	if mode != "host" or game_over:
 		return
 	var sender := multiplayer.get_remote_sender_id()
-	if not use_active_skill(ability_id, 1, sender):
+	if not use_active_skill(ability_id, 1, sender, false, requested_execute_tick):
 		_rpc_active_skill_rejected.rpc_id(sender, ability_id)
 
 @rpc("authority", "call_remote", "reliable")
@@ -2070,12 +2223,40 @@ func _rpc_active_skill_rejected(ability_id: int) -> void:
 	if mode == "client" and _active_skill_bar != null:
 		_active_skill_bar.set_pending(ability_id, false)
 
-## 客户端 → 主机：部署请求（主机校验区域/占位/费用后进入 0.5 秒权威队列）
+## 客户端 → 主机：部署请求。客户端携带目标 Tick，主机只在有限窗口内接受/修正。
 @rpc("any_peer", "call_remote", "reliable")
-func _rpc_deploy_request(card_id: String, pos: Vector2) -> void:
+func _rpc_deploy_request(card_id: String, pos: Vector2, requested_execute_tick: int = -1) -> void:
 	if mode != "host" or game_over:
 		return
-	play_card(1, card_id, pos, {"elixir": _elixir_p1, "require_team_deck": true})
+	var sender := multiplayer.get_remote_sender_id()
+	var accepted := play_card(1, card_id, pos, {
+		"elixir": _elixir_p1,
+		"require_team_deck": true,
+		"requester_peer_id": sender,
+		"execute_tick": requested_execute_tick,
+	})
+	if not accepted:
+		_rpc_deploy_rejected.rpc_id(sender, card_id)
+
+## 主机 → 客户端：仅在权威扣费、轮换手牌并排程成功后确认出牌。
+@rpc("authority", "call_remote", "reliable")
+func _rpc_deploy_accepted(card_id: String, execute_tick: int, hand: Array, queue: Array) -> void:
+	if mode != "client":
+		return
+	if _hand != null:
+		_hand.set_card_pending(card_id, false)
+		_hand.set_cycle_state(hand, queue)
+	_authoritative_card_cycles[1] = {
+		"deck": _deck.duplicate(),
+		"hand": hand.duplicate(),
+		"queue": queue.duplicate(),
+	}
+
+## 主机 → 客户端：拒绝不改变权威手牌；只恢复对应卡牌按钮。
+@rpc("authority", "call_remote", "reliable")
+func _rpc_deploy_rejected(card_id: String) -> void:
+	if mode == "client" and _hand != null:
+		_hand.set_card_pending(card_id, false)
 
 ## 主机 → 客户端：单位生成
 @rpc("authority", "call_remote", "reliable")

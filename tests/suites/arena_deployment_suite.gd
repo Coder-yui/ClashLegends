@@ -168,26 +168,32 @@ func _check_card_play_delay() -> void:
 	_main._deploy_card(0, "ashe", Vector2(280.0, 980.0))
 	_main._deploy_card(0, "tombstone", Vector2(480.0, 1000.0))
 	_main._deploy_card(0, "freeze", target.position)
+	var command_buffer_contract: bool = (
+		_main._pending_card_deployments.size() == 3
+		and int(_main._pending_card_deployments[0].execute_tick) == _main._sim_tick_id + _main.COMMAND_DELAY_TICKS
+		and not _main._pending_card_deployments[0].has("time_left")
+	)
 	for _i in 9:
-		_main._tick_pending_card_deployments(_main.SIM_DT)
+		_main._sim_step(_main.SIM_DT)
 	_expect(
 		_main.get_tree().get_nodes_in_group("combatants").size() == combatants_before
 		and target.frozen_timer <= 0.0,
-		"兵种、建筑和法术在出牌后 0.45 秒仍未生成或生效"
+		"兵种、建筑和法术在目标执行 Tick 前仍未生成或生效"
 	)
-	_main._tick_pending_card_deployments(_main.SIM_DT)
+	_main._sim_step(_main.SIM_DT)
 	var spawned: Array[Unit] = []
 	for c in _main.get_tree().get_nodes_in_group("combatants"):
 		if c is Unit and c != target and c.global_position in [Vector2(300.0, 980.0), Vector2(480.0, 1000.0)]:
 			spawned.append(c as Unit)
 	_expect(
-		_main.get_tree().get_nodes_in_group("combatants").size() == combatants_before + 2
+		command_buffer_contract
+		and _main.get_tree().get_nodes_in_group("combatants").size() == combatants_before + 2
 		and target.frozen_timer > 0.0,
-		"兵种、建筑和法术在主机权威 0.5 秒节点统一生效"
+		"卡牌使用进入 10 Tick Command Buffer，并在主机权威执行 Tick 统一生效"
 	)
 	var spawned_with_default_deploy := false
 	for unit in spawned:
-		if not unit.is_building and is_equal_approx(unit._deploy_timer, 1.0):
+		if not unit.is_building and unit._deploy_timer > 0.9 and unit._deploy_timer <= 1.0:
 			spawned_with_default_deploy = true
 	_expect(spawned_with_default_deploy, "兵种在 0.5 秒卡牌延迟结束时生成，并另行开始 1 秒部署")
 	for unit in spawned:
