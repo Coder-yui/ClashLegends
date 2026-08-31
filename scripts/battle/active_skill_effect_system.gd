@@ -26,18 +26,54 @@ func prepare_cast(source: Unit, skill: Dictionary) -> Dictionary:
 		if damage_by_stacks is Array and not (damage_by_stacks as Array).is_empty():
 			var damage_index := clampi(resource_stacks, 0, (damage_by_stacks as Array).size() - 1)
 			prepared["damage"] = float((damage_by_stacks as Array)[damage_index])
+		var resource_actions = prepared.get("resource_visual_actions", [])
+		if resource_actions is Array and not (resource_actions as Array).is_empty():
+			var action_index := clampi(resource_stacks, 0, (resource_actions as Array).size() - 1)
+			prepared["visual_action"] = String((resource_actions as Array)[action_index])
+		var hit_damage_sequences = prepared.get("resource_hit_damage_sequences", [])
+		var hit_delay_sequences = prepared.get("resource_hit_delay_sequences", [])
+		if (
+			hit_damage_sequences is Array and hit_delay_sequences is Array
+			and not (hit_damage_sequences as Array).is_empty() and not (hit_delay_sequences as Array).is_empty()
+		):
+			var hit_index := clampi(resource_stacks, 0, mini((hit_damage_sequences as Array).size(), (hit_delay_sequences as Array).size()) - 1)
+			prepared["prepared_hit_damages"] = (hit_damage_sequences as Array)[hit_index].duplicate()
+			prepared["prepared_hit_delays"] = (hit_delay_sequences as Array)[hit_index].duplicate()
 		var max_scale := maxf(float(prepared.get("resource_damage_scale_max", 1.0)), 1.0)
 		if max_scale > 1.0:
 			prepared["damage"] = float(prepared.get("damage", 0.0)) * lerpf(1.0, max_scale, resource_ratio)
 		var strong_action := String(prepared.get("full_resource_visual_action", ""))
-		if resource_ratio >= 0.999 and not strong_action.is_empty():
-			prepared["visual_action"] = strong_action
+		if resource_ratio >= 0.999:
+			if not strong_action.is_empty():
+				prepared["visual_action"] = strong_action
 			prepared["damage"] = float(prepared.get("damage", 0.0)) * maxf(float(prepared.get("resource_full_damage_multiplier", 1.0)), 1.0)
 			prepared["stun_duration"] = float(prepared.get("stun_duration", 0.0)) * maxf(float(prepared.get("resource_full_stun_multiplier", 1.0)), 1.0)
 			prepared["cast_duration"] = float(prepared.get("full_resource_cast_duration", prepared.get("cast_duration", 0.0)))
 			prepared["impact_delay"] = float(prepared.get("full_resource_impact_delay", prepared.get("impact_delay", 0.0)))
 			prepared["full_resource"] = true
+			prepared["cast_end_heal"] = maxf(float(prepared.get("full_resource_cast_end_heal", 0.0)), 0.0)
+		if prepared.has("resource_shield_max"):
+			prepared["shield"] = maxf(float(prepared.get("resource_shield_max", 0.0)), 0.0) * resource_ratio
 	return prepared
+
+
+## Cast Start 的效果必须在施法窗口开始时发生；它不依赖动画，也不等待 Gameplay Impact。
+func apply_cast_start(source: Unit, skill: Dictionary) -> void:
+	if not bool(skill.get("shield_on_cast_start", false)):
+		return
+	var amount := maxf(float(skill.get("shield", 0.0)), 0.0)
+	var duration := maxf(float(skill.get("shield_duration", 0.0)), 0.0)
+	if amount <= 0.0 or duration <= 0.0:
+		return
+	source.mark_skill_resource_combat_activity()
+	source.add_shield(amount, duration, bool(skill.get("shield_decay", false)))
+
+
+## Cast End 效果与动作总时长对齐，但仍由固定模拟计时，不依赖 AnimationPlayer 回调。
+func apply_cast_end(source: Unit, skill: Dictionary) -> void:
+	var heal_amount := maxf(float(skill.get("cast_end_heal", 0.0)), 0.0)
+	if heal_amount > 0.0:
+		source.heal(heal_amount)
 
 
 func apply(source: Unit, skill: Dictionary) -> bool:
@@ -49,7 +85,8 @@ func apply(source: Unit, skill: Dictionary) -> bool:
 				float(skill.get("damage_multiplier", 1.0)),
 				float(skill.get("attack_speed_multiplier", 1.0))
 			)
-			source.add_shield(float(skill.get("shield", 0.0)), float(skill.get("shield_duration", skill.get("duration", 0.0))))
+			if not bool(skill.get("shield_on_cast_start", false)):
+				source.add_shield(float(skill.get("shield", 0.0)), float(skill.get("shield_duration", skill.get("duration", 0.0))), bool(skill.get("shield_decay", false)))
 		&"nova":
 			activate_nova(source, skill)
 		&"summon":
@@ -95,7 +132,8 @@ func activate_nova(source: Unit, skill: Dictionary) -> void:
 				(combatant as Unit).apply_knockback(source.global_position, knockback, knockback_duration, knockback_mass_factor_max)
 			if slow_duration > 0.0:
 				(combatant as Unit).apply_slow(slow_duration, slow_multiplier)
-	source.add_shield(float(skill.get("shield", 0.0)), float(skill.get("shield_duration", 0.0)))
+	if not bool(skill.get("shield_on_cast_start", false)):
+		source.add_shield(float(skill.get("shield", 0.0)), float(skill.get("shield_duration", 0.0)), bool(skill.get("shield_decay", false)))
 
 
 func activate_summon(source: Unit, skill: Dictionary) -> void:
@@ -132,12 +170,52 @@ func apply_frontal(source: Unit, skill: Dictionary, forward: Vector2 = Vector2.Z
 		var hit := false
 		var damage_multiplier := 1.0
 		if shape == &"fan":
-			var center_distance := maxf(local_offset.dot(forward), 0.0)
 			var half_angle := deg_to_rad(clampf(float(skill.get("arc_degrees", 0.0)), 0.0, 179.0) * 0.5)
-			var fan_half_width := tan(half_angle) * center_distance
-			hit = forward_distance >= -combatant.body_radius and forward_distance <= length + combatant.body_radius and lateral_distance <= fan_half_width + combatant.body_radius
+			var fan_inner_arc := bool(skill.get("fan_inner_arc", false))
+			# 普通扇形以施法者前缘为圆心；环形扇区则以内外同心圆弧贴合施法者体型。
+			var inner_radius := source.body_radius if fan_inner_arc else 0.0
+			var outer_radius := inner_radius + length
+			var sector_offset := local_offset if fan_inner_arc else local_offset - forward * source.body_radius
+			var radial_distance := sector_offset.length()
+			var angular_margin := asin(clampf(combatant.body_radius / maxf(radial_distance, combatant.body_radius), 0.0, 1.0))
+			var angular_distance := absf(wrapf(sector_offset.angle() - forward.angle(), -PI, PI))
+			var sector_hit := false
+			if fan_inner_arc:
+				# 内边界沿人物前半圆，侧边从人物左右两侧连接至外圆弧端点。
+				var outer_forward := cos(half_angle) * outer_radius
+				var outer_lateral := sin(half_angle) * outer_radius
+				var boundary_forward := clampf(local_offset.dot(forward), 0.0, outer_radius)
+				var side_half_width := 0.0
+				if boundary_forward <= outer_forward:
+					side_half_width = lerpf(inner_radius, outer_lateral, boundary_forward / maxf(outer_forward, 0.001))
+				else:
+					side_half_width = sqrt(maxf(outer_radius * outer_radius - boundary_forward * boundary_forward, 0.0))
+				sector_hit = (
+					local_offset.dot(forward) >= -combatant.body_radius
+					and radial_distance >= maxf(inner_radius - combatant.body_radius, 0.0)
+					and radial_distance <= outer_radius + combatant.body_radius
+					and lateral_distance <= side_half_width + combatant.body_radius
+				)
+			else:
+				sector_hit = (
+					forward_distance >= -combatant.body_radius
+					and radial_distance <= outer_radius + combatant.body_radius
+					and angular_distance <= half_angle + angular_margin
+				)
+			var center_width := maxf(float(skill.get("center_width", 0.0)), 0.0)
 			var center_ratio := clampf(float(skill.get("center_ratio", 0.0)), 0.0, 1.0)
-			if hit and center_ratio > 0.0 and lateral_distance <= fan_half_width * center_ratio + combatant.body_radius:
+			var in_center := false
+			if center_width > 0.0:
+				# 格温式核心区是从扇区起点延伸到外弧的恒定宽度长条，而不是随距离变宽的小扇形。
+				in_center = forward_distance >= -combatant.body_radius and forward_distance <= length + combatant.body_radius and lateral_distance <= center_width * 0.5 + combatant.body_radius
+				hit = sector_hit or in_center
+			elif center_ratio > 0.0:
+				var center_distance := maxf(forward_distance, 0.0)
+				in_center = lateral_distance <= tan(half_angle * center_ratio) * center_distance + combatant.body_radius
+				hit = sector_hit
+			else:
+				hit = sector_hit
+			if hit and in_center:
 				damage_multiplier = maxf(float(skill.get("center_damage_multiplier", 1.0)), 1.0)
 		else:
 			var near_half := maxf(float(skill.get("near_width", skill.get("width", 0.0))) * 0.5, 0.0)
@@ -231,6 +309,10 @@ func _damage_combatant(source: Unit, combatant: Node2D, amount: float, origin: V
 
 func begin_frontal_visual(source: Unit, skill: Dictionary, cast_forward: Vector2) -> void:
 	var duration := maxf(float(skill.get("impact_delay", 0.0)), 0.0)
+	var hit_delays = skill.get("prepared_hit_delays", [])
+	if hit_delays is Array:
+		for hit_delay in hit_delays:
+			duration = maxf(duration, float(hit_delay))
 	if duration <= 0.0:
 		return
 	add_frontal_effect(source, skill, duration, cast_forward)
@@ -241,7 +323,8 @@ func begin_frontal_visual(source: Unit, skill: Dictionary, cast_forward: Vector2
 			duration, source.team, String(skill.get("shape", "rectangle")),
 			float(skill.get("near_width", skill.get("width", 0.0))), float(skill.get("far_width", skill.get("width", 0.0))),
 			float(skill.get("arc_degrees", 0.0)), int(skill.get("projectile_count", 0)),
-			float(skill.get("center_ratio", 0.0))
+			float(skill.get("center_ratio", 0.0)), float(skill.get("center_width", 0.0)),
+			bool(skill.get("fan_inner_arc", false))
 		)
 
 
@@ -386,6 +469,8 @@ func add_frontal_effect(source: Unit, skill: Dictionary, duration: float, cast_f
 		"arc_degrees": maxf(float(skill.get("arc_degrees", 0.0)), 0.0),
 		"projectile_count": maxi(int(skill.get("projectile_count", 0)), 0),
 		"center_ratio": clampf(float(skill.get("center_ratio", 0.0)), 0.0, 1.0),
+		"center_width": maxf(float(skill.get("center_width", 0.0)), 0.0),
+		"fan_inner_arc": bool(skill.get("fan_inner_arc", false)),
 		"timer": duration,
 		"duration": duration,
 		"team": source.team,

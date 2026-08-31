@@ -99,9 +99,6 @@ const SIM_DT := 1.0 / 20.0
 const DOUBLE_ELIXIR_TIME := 60.0
 ## 所有玩家命令使用 20Hz 权威 Tick 排程，0.5 秒对应 10 个模拟 Tick。
 const COMMAND_DELAY_TICKS := 10
-## 保留旧常量名供现有调用方读取，但延迟来源统一由 Tick 定义。
-const CARD_DEPLOY_DELAY := SIM_DT * COMMAND_DELAY_TICKS
-const ACTIVE_SKILL_CAST_DELAY := SIM_DT * COMMAND_DELAY_TICKS
 ## 网络请求的 input_tick 最多允许落后两个 Buffer；更早的输入直接视为异常。
 const COMMAND_MAX_LATENCY_TICKS := COMMAND_DELAY_TICKS * 2
 ## 允许少量客户端时钟领先 Host；这只是校验窗口，不是客户端执行权。
@@ -126,8 +123,6 @@ var _slow_zones: Array[Dictionary] = []
 var _slow_effects: Array[Dictionary] = []
 var _spell_system: RefCounted
 ## 纳尔 Spell2：固定模拟延迟到手掌触地才结算；范围框是独立纯表现数据。
-var _pending_frontal_stun_skills: Array[Dictionary] = []
-var _frontal_skill_effects: Array[Dictionary] = []
 var _active_skill_effect_system: RefCounted
 var _projectile_system: ProjectileSystem
 var _projectiles := {}  # 主机/单机：id -> {pos, target, team, damage, speed, ...}
@@ -136,7 +131,7 @@ var _client_projectiles := {}  # 客户端仅保存插值表现
 var _elixir: ElixirManager
 var _hand: CardHand
 var _active_skill_bar: ActiveSkillBar
-## ability_id -> {unit, card_id, team}；按钮只是这份权威状态的视图。
+## ability_id -> {unit, card_id, team, skill, uses_remaining, cooldown_left}；按钮只是这份权威状态的视图。
 var _active_skills: Dictionary = {}
 var _next_active_ability_id := 1
 ## 主动请求确认后按 Host 由 input_tick 计算出的 execute_tick 等待；同一 ability_id 只能存在一次。
@@ -223,8 +218,6 @@ func _ready() -> void:
 	_slow_zones = _spell_system.slow_zones
 	_slow_effects = _spell_system.slow_effects
 	_active_skill_effect_system = ACTIVE_SKILL_EFFECT_SYSTEM_SCRIPT.new(self)
-	_pending_frontal_stun_skills = _active_skill_effect_system.pending_frontal_stuns
-	_frontal_skill_effects = _active_skill_effect_system.frontal_effects
 	child_entered_tree.connect(_provide_battle_context)
 	_projectile_system = ProjectileSystem.new()
 	_projectile_system.setup(battle_context)
@@ -450,6 +443,7 @@ func _setup_player_ui() -> void:
 	_hand = CardHand.new()
 	add_child(_hand)
 	_hand.setup(_elixir, _deck)
+	_hand.set_active_skill_cards(_deck.slice(0, 2))
 	_hand.card_selected.connect(_on_card_selected)
 	var local_team := 1 if mode == "client" else 0
 	_initialize_authoritative_card_cycle(local_team, _deck)
@@ -458,6 +452,8 @@ func _setup_player_ui() -> void:
 	_active_skill_bar = ACTIVE_SKILL_BAR_SCRIPT.new()
 	add_child(_active_skill_bar)
 	_active_skill_bar.skill_pressed.connect(_on_active_skill_pressed)
+	_active_skill_bar.set_elixir(_elixir.elixir)
+	_elixir.changed.connect(_active_skill_bar.set_elixir)
 
 func _is_local_player_team(p_team: int) -> bool:
 	return p_team == (1 if mode == "client" else 0)
@@ -797,8 +793,9 @@ func preview_active_skill(unit: Unit, skill: Dictionary) -> bool:
 	# ArtDev 只绕过玩家命令缓冲；普通主动仍必须经过 Cast Start → Impact → Recovery。
 	# dual_form 自己包含变形/前方技能的完整特殊时间轴，不能在这里重复启动一次。
 	if String(skill.get("kind", "")) == "dual_form":
-		return _apply_active_skill_effect(unit, skill)
+		return _active_skill_effect_system.apply(unit, skill)
 	var prepared_skill: Dictionary = _active_skill_effect_system.prepare_cast(unit, skill)
+	_active_skill_effect_system.apply_cast_start(unit, prepared_skill)
 	_begin_configured_active_skill_cast(unit, prepared_skill)
 	_queue_active_skill_impact(unit, prepared_skill, maxf(float(prepared_skill.get("impact_delay", 0.0)), 0.0))
 	return true
@@ -823,8 +820,8 @@ func _clear_art_dev_units() -> void:
 	_freeze_effects.clear()
 	_slow_zones.clear()
 	_slow_effects.clear()
-	_pending_frontal_stun_skills.clear()
-	_frontal_skill_effects.clear()
+	_active_skill_effect_system.pending_frontal_stuns.clear()
+	_active_skill_effect_system.frontal_effects.clear()
 	queue_redraw()
 
 func _world_to_arena_tile(pos: Vector2) -> Vector2i:
@@ -1316,6 +1313,7 @@ func _register_active_skill(unit: Unit, card_id: String, p_team: int) -> void:
 	unit.configure_carried_active_skill(carried_skill)
 	var ability_id := unit.active_ability_id
 	var active_slot := unit.active_ability_slot
+	var max_uses := maxi(int(carried_skill.get("max_uses", 1)), 1)
 	# 每个主动槽始终只控制最近部署的实例。新实例落地时，旧实例的未用资格立即作废。
 	var replaced_id := -1
 	for existing_id in _active_skills:
@@ -1325,11 +1323,12 @@ func _register_active_skill(unit: Unit, card_id: String, p_team: int) -> void:
 			break
 	if replaced_id >= 0:
 		var replaced: Dictionary = _active_skills[replaced_id]
-		var replaced_unit: Unit = replaced.unit
-		if replaced_unit != null and is_instance_valid(replaced_unit):
-			replaced_unit.active_ability_id = -1
-			replaced_unit.active_ability_slot = -1
-			replaced_unit.clear_carried_active_skill_resource()
+		var replaced_unit = replaced.get("unit")
+		if is_instance_valid(replaced_unit) and replaced_unit is Unit:
+			var valid_replaced_unit := replaced_unit as Unit
+			valid_replaced_unit.active_ability_id = -1
+			valid_replaced_unit.active_ability_slot = -1
+			valid_replaced_unit.clear_carried_active_skill_resource()
 		_active_skills.erase(replaced_id)
 		_cancel_pending_active_skill(replaced_id)
 		if _active_skill_bar != null:
@@ -1340,10 +1339,16 @@ func _register_active_skill(unit: Unit, card_id: String, p_team: int) -> void:
 		"team": p_team,
 		"slot": active_slot,
 		"skill": carried_skill,
+		"max_uses": max_uses,
+		"uses_remaining": max_uses,
+		"cooldown_left": 0.0,
 	}
 	unit.died.connect(_on_active_skill_unit_died.bind(ability_id), CONNECT_ONE_SHOT)
 	if _is_local_player_team(p_team) and _active_skill_bar != null:
-		_active_skill_bar.show_skill(active_slot, ability_id, String(stats.name), String(carried_skill.name), stats.get("color", CardArt.DEFAULT_ACCENT), unit.is_deployed())
+		_active_skill_bar.show_skill(
+			active_slot, ability_id, String(carried_skill.name), stats.get("color", CardArt.DEFAULT_ACCENT),
+			float(carried_skill.get("cost", 0.0)), max_uses, max_uses, float(carried_skill.get("cooldown", 0.0)), unit.is_deployed()
+		)
 	# 单机 AI 也携带卡组前两槽的技能；占位 AI 同样经过 0.5 秒待释放窗口。
 	if mode == "local" and p_team == 1:
 		call_deferred("use_active_skill", ability_id, p_team, 0, false)
@@ -1353,12 +1358,24 @@ func _sync_active_skill_deployment_readiness() -> void:
 	for ability_value in _active_skills.keys():
 		var ability_id := int(ability_value)
 		var entry: Dictionary = _active_skills[ability_id]
-		var unit: Unit = entry.unit
-		if unit == null or not is_instance_valid(unit):
+		var unit = entry.get("unit")
+		if not is_instance_valid(unit) or not unit is Unit:
+			_active_skills.erase(ability_id)
+			_cancel_pending_active_skill(ability_id)
+			if _active_skill_bar != null:
+				_active_skill_bar.remove_skill(ability_id)
 			continue
-		var deployed := unit.is_deployed()
+		var valid_unit := unit as Unit
+		var deployed := valid_unit.is_deployed()
 		if _is_local_player_team(int(entry.team)) and _active_skill_bar != null:
-			_active_skill_bar.set_deployment_ready(ability_id, deployed)
+			_active_skill_bar.update_skill_state(
+				ability_id,
+				int(entry.get("uses_remaining", entry.get("max_uses", 1))),
+				float(entry.get("cooldown_left", 0.0)),
+				deployed,
+				float((entry.get("skill", {}) as Dictionary).get("cost", 0.0)),
+				int(entry.get("max_uses", (entry.get("skill", {}) as Dictionary).get("max_uses", 1)))
+			)
 
 func _on_active_skill_unit_died(ability_id: int) -> void:
 	_active_skills.erase(ability_id)
@@ -1373,7 +1390,12 @@ func _on_active_skill_pressed(ability_id: int) -> void:
 ## 玩家、AI 和联机 RPC 共用的主动技能请求入口；客户端提交 input_tick，Host 统一计算 10 Tick 目标。
 func use_active_skill(ability_id: int, expected_team: int = -1, requester_peer_id: int = 0, client_request: bool = false, input_tick: int = -1) -> bool:
 	if client_request:
-		if mode != "client":
+		if mode != "client" or not _active_skill_is_legal(ability_id, 1):
+			return false
+		var client_entry: Dictionary = _active_skills[ability_id]
+		var client_skill: Dictionary = client_entry.skill
+		var client_elixir := _elixir_for_team(1)
+		if client_elixir == null or client_elixir.elixir < maxf(float(client_skill.get("cost", 0.0)), 0.0):
 			return false
 		_rpc_active_skill_request.rpc_id(1, ability_id, _input_tick_for_new_command())
 		return true
@@ -1389,6 +1411,9 @@ func _queue_active_skill(ability_id: int, expected_team: int = -1, requester_pee
 	var p_team := int(entry.team)
 	var execute_tick := _resolve_command_execute_tick(input_tick)
 	if execute_tick < 0:
+		return false
+	var skill: Dictionary = entry.skill
+	if not _spend_active_skill_cost(p_team, skill):
 		return false
 	_pending_active_skill_activations.append({
 		"ability_id": ability_id,
@@ -1422,18 +1447,73 @@ func _cancel_pending_active_skill(ability_id: int) -> void:
 		func(pending): return int(pending.ability_id) != ability_id
 	)
 
+func _tick_active_skill_cooldowns(dt: float) -> void:
+	for ability_value in _active_skills.keys():
+		var ability_id := int(ability_value)
+		var entry: Dictionary = _active_skills[ability_id]
+		entry["cooldown_left"] = maxf(float(entry.get("cooldown_left", 0.0)) - dt, 0.0)
+		_active_skills[ability_id] = entry
+
+func _elixir_for_team(p_team: int) -> ElixirManager:
+	if _is_local_player_team(p_team):
+		return _elixir
+	if mode == "host" and p_team == 1:
+		return _elixir_p1
+	if mode == "local" and p_team == 1 and _ai != null:
+		return _ai._elixir
+	return null
+
+func _spend_active_skill_cost(p_team: int, skill: Dictionary) -> bool:
+	var cost := maxf(float(skill.get("cost", 0.0)), 0.0)
+	if cost <= 0.0:
+		return true
+	var elixir := _elixir_for_team(p_team)
+	return elixir != null and elixir.spend(cost)
+
+func get_active_skill_snapshot(ability_id: int) -> Dictionary:
+	if not _active_skills.has(ability_id):
+		return {}
+	var entry: Dictionary = _active_skills[ability_id]
+	return {
+		"uses_remaining": int(entry.get("uses_remaining", entry.get("max_uses", 1))),
+		"cooldown_left": maxf(float(entry.get("cooldown_left", 0.0)), 0.0),
+	}
+
 ## Cast Start 后的通用 Gameplay Impact 队列。计时在固定 Tick 中推进，
 ## 并在施法者被冻结/眩晕时与 Unit 的 cast timer 同步暂停。
 func _queue_active_skill_impact(source: Unit, skill: Dictionary, impact_delay: float) -> void:
 	if source == null or not is_instance_valid(source):
 		return
+	var hit_damages = skill.get("prepared_hit_damages", [])
+	var hit_delays = skill.get("prepared_hit_delays", [])
+	if hit_damages is Array and hit_delays is Array and not (hit_damages as Array).is_empty():
+		var hit_count := mini((hit_damages as Array).size(), (hit_delays as Array).size())
+		for hit_index in hit_count:
+			var hit_skill := skill.duplicate(true)
+			hit_skill.erase("prepared_hit_damages")
+			hit_skill.erase("prepared_hit_delays")
+			hit_skill["damage"] = maxf(float((hit_damages as Array)[hit_index]), 0.0)
+			_queue_single_active_skill_impact(source, hit_skill, maxf(float((hit_delays as Array)[hit_index]), 0.0))
+	else:
+		_queue_single_active_skill_impact(source, skill, impact_delay)
+	var cast_end_heal := maxf(float(skill.get("cast_end_heal", 0.0)), 0.0)
+	if cast_end_heal > 0.0:
+		_pending_active_skill_impacts.append({
+			"source_ref": weakref(source),
+			"skill": {"cast_end_heal": cast_end_heal},
+			"time_left": maxf(float(skill.get("cast_duration", 0.0)), 0.0),
+			"phase": &"cast_end",
+		})
+
+func _queue_single_active_skill_impact(source: Unit, skill: Dictionary, impact_delay: float) -> void:
 	if impact_delay <= 0.0:
-		_apply_active_skill_effect(source, skill)
+		_active_skill_effect_system.apply(source, skill)
 		return
 	_pending_active_skill_impacts.append({
 		"source_ref": weakref(source),
 		"skill": skill.duplicate(true),
 		"time_left": impact_delay,
+		"phase": &"impact",
 	})
 
 func _tick_pending_active_skill_impacts(dt: float) -> void:
@@ -1450,7 +1530,10 @@ func _tick_pending_active_skill_impacts(dt: float) -> void:
 		if float(pending.time_left) > 0.001:
 			waiting.append(pending)
 			continue
-		_apply_active_skill_effect(unit, pending.skill)
+		if StringName(pending.get("phase", &"impact")) == &"cast_end":
+			_active_skill_effect_system.apply_cast_end(unit, pending.skill)
+		else:
+			_active_skill_effect_system.apply(unit, pending.skill)
 	_pending_active_skill_impacts = waiting
 
 ## 点击只决定请求能否进入 pending；队列到期时必须用同一谓词重新读取权威状态。
@@ -1459,51 +1542,56 @@ func _active_skill_is_legal(ability_id: int, expected_team: int = -1) -> bool:
 	if game_over or not _active_skills.has(ability_id):
 		return false
 	var entry: Dictionary = _active_skills[ability_id]
-	var unit: Unit = entry.unit
+	var unit = entry.get("unit")
 	var p_team := int(entry.team)
-	if unit == null or not is_instance_valid(unit) or unit.hp <= 0.0:
+	if not is_instance_valid(unit) or not unit is Unit or unit.hp <= 0.0:
 		return false
 	if expected_team >= 0 and p_team != expected_team:
 		return false
+	if int(entry.get("uses_remaining", entry.get("max_uses", 1))) <= 0:
+		return false
+	if float(entry.get("cooldown_left", 0.0)) > 0.001:
+		return false
 	if not _card_has_active_for_team(p_team, String(entry.card_id)):
 		return false
-	if unit.is_frozen() or unit.is_stunned():
+	var valid_unit := unit as Unit
+	if valid_unit.is_frozen() or valid_unit.is_stunned():
 		return false
 	# deploy/transform/skill 都高于普通攻击；高优先级窗口内拒绝新技能并保留按钮。
-	return unit.is_deployed() and not unit.is_form_transitioning() and not unit.is_active_skill_casting()
+	return valid_unit.is_deployed() and not valid_unit.is_form_transitioning() and not valid_unit.is_active_skill_casting()
 
 func _activate_active_skill(ability_id: int, expected_team: int = -1) -> bool:
 	if not _active_skill_is_legal(ability_id, expected_team):
 		# 正常死亡会由 died 信号立即清理；这里保留对失效引用/直接调用的兜底。
 		if _active_skills.has(ability_id):
 			var stale_entry: Dictionary = _active_skills[ability_id]
-			var stale_unit: Unit = stale_entry.unit
-			if stale_unit == null or not is_instance_valid(stale_unit) or stale_unit.hp <= 0.0:
+			var stale_unit = stale_entry.get("unit")
+			if not is_instance_valid(stale_unit) or not stale_unit is Unit or stale_unit.hp <= 0.0:
 				_on_active_skill_unit_died(ability_id)
 		return false
 	var entry: Dictionary = _active_skills[ability_id]
 	var unit: Unit = entry.unit
 	var skill: Dictionary = entry.skill
+	entry["uses_remaining"] = maxi(int(entry.get("uses_remaining", entry.get("max_uses", 1))) - 1, 0)
+	entry["cooldown_left"] = maxf(float(skill.get("cooldown", 0.0)), 0.0)
+	_active_skills[ability_id] = entry
 	# 先发布 Cast Start，再按 impact_delay 结算效果；AnimationPlayer 完成事件不参与这里。
 	var skill_kind := String(skill.get("kind", ""))
+	var prepared_skill: Dictionary = skill
 	if skill_kind == "dual_form":
-		_activate_dual_form_skill(unit, skill)
+		_active_skill_effect_system.apply_cast_start(unit, prepared_skill)
+		_active_skill_effect_system.activate_dual_form(unit, prepared_skill)
 	else:
-		var prepared_skill: Dictionary = _active_skill_effect_system.prepare_cast(unit, skill)
+		prepared_skill = _active_skill_effect_system.prepare_cast(unit, skill)
+		_active_skill_effect_system.apply_cast_start(unit, prepared_skill)
 		_begin_configured_active_skill_cast(unit, prepared_skill)
 		_queue_active_skill_impact(unit, prepared_skill, maxf(float(prepared_skill.get("impact_delay", 0.0)), 0.0))
-	unit.active_ability_id = -1
-	unit.active_ability_slot = -1
-	unit.clear_carried_active_skill_resource()
-	_active_skills.erase(ability_id)
 	if _active_skill_bar != null:
-		_active_skill_bar.remove_skill(ability_id)
+		_active_skill_bar.set_pending(ability_id, false)
+		_sync_active_skill_deployment_readiness()
 	if mode == "host":
-		_rpc_active_skill_used.rpc(ability_id)
+		_rpc_active_skill_used.rpc(ability_id, int(entry["uses_remaining"]), float(entry["cooldown_left"]))
 	return true
-
-func _apply_active_skill_effect(unit: Unit, skill: Dictionary) -> bool:
-	return _active_skill_effect_system.apply(unit, skill)
 
 func _begin_configured_active_skill_cast(unit: Unit, skill: Dictionary) -> void:
 	var cast_duration := maxf(float(skill.get("cast_duration", 0.0)), 0.0)
@@ -1525,37 +1613,6 @@ func _begin_configured_active_skill_cast(unit: Unit, skill: Dictionary) -> void:
 		if cast_forward.length_squared() < 0.001:
 			cast_forward = unit.get_visual_facing_direction()
 		_active_skill_effect_system.begin_forward_area_visual(unit, skill, cast_forward)
-
-func _activate_nova_skill(source: Unit, skill: Dictionary) -> void:
-	_active_skill_effect_system.activate_nova(source, skill)
-
-func _activate_summon_skill(source: Unit, skill: Dictionary) -> void:
-	_active_skill_effect_system.activate_summon(source, skill)
-
-func _activate_dual_form_skill(source: Unit, skill: Dictionary) -> void:
-	_active_skill_effect_system.activate_dual_form(source, skill)
-
-## Spell2 先启动动画和无近端边线的矩形预警；固定模拟到手掌触地时才结算伤害/眩晕。
-func _activate_frontal_stun_skill(source: Unit, skill: Dictionary, play_action: bool = true, impact_delay: float = -1.0, cast_duration: float = -1.0, cast_forward: Vector2 = Vector2.ZERO) -> void:
-	_active_skill_effect_system.activate_frontal_stun(source, skill, play_action, impact_delay, cast_duration, cast_forward)
-
-func _tick_pending_frontal_stun_skills(dt: float) -> void:
-	_active_skill_effect_system.tick_pending(dt)
-
-func _apply_frontal_stun_impact(source: Unit, skill: Dictionary, forward: Vector2) -> void:
-	_active_skill_effect_system.apply_frontal_stun(source, skill, forward)
-
-func _frontal_skill_forward(source: Unit) -> Vector2:
-	return _active_skill_effect_system.frontal_forward(source)
-
-func _add_frontal_skill_effect(source: Unit, skill: Dictionary, duration: float, cast_forward: Vector2) -> void:
-	_active_skill_effect_system.add_frontal_effect(source, skill, duration, cast_forward)
-
-func _tick_frontal_skill_effect_visuals(delta: float) -> void:
-	_active_skill_effect_system.tick_visuals(delta)
-
-func _frontal_skill_effect_source(effect: Dictionary):
-	return _active_skill_effect_system.effect_source(effect)
 
 ## 水晶兵线入口。只在单机/主机固定模拟调用，最终仍统一走 _spawn_unit 与现有 RPC。
 func _tick_minion_waves(dt: float) -> void:
@@ -1644,8 +1701,9 @@ func on_tower_hit(tower: Tower) -> void:
 func _sim_step(dt: float) -> void:
 	_sim_tick_id += 1
 	# 已存在的施法时间线先推进；本 Tick 新执行的命令从当前 Tick 边界开始计时。
+	_tick_active_skill_cooldowns(dt)
 	_tick_pending_active_skill_impacts(dt)
-	_tick_pending_frontal_stun_skills(dt)
+	_active_skill_effect_system.tick_pending(dt)
 	_tick_pending_card_deployments(dt)
 	_tick_pending_active_skills(dt)
 	_tick_slow_zones(dt)
@@ -1685,7 +1743,7 @@ func _sim_step(dt: float) -> void:
 			_deploy_card(0, "aurelionsol", Vector2(410, 700))
 			_deploy_card(1, "xin", Vector2(300, 580))
 			var auto_gnar := _spawn_unit(0, "gnar", Vector2(520, 760), 0.0)
-			_activate_dual_form_skill(auto_gnar, CardDB.get_card("gnar").active_skill)
+			_active_skill_effect_system.activate_dual_form(auto_gnar, CardDB.get_card("gnar").active_skill)
 			_auto_gnar_revert_unit = auto_gnar
 			_auto_gnar_revert_timer = 2.4
 
@@ -1964,16 +2022,16 @@ func _landing_overlap_direction(a: Unit, b: Unit) -> Vector2:
 	return existing_direction if existing == a else -existing_direction
 
 func _process(delta: float) -> void:
+	_sync_active_skill_deployment_readiness()
 	# 客户端：只更新冰冻视觉与重绘，逻辑状态全靠主机快照
 	if mode == "client":
 		_advance_estimated_server_tick(delta)
-		_sync_active_skill_deployment_readiness()
 		_projectile_system.tick_client_interpolation(delta)
 		for fe in _freeze_effects:
 			fe.timer -= delta
 		_freeze_effects = _freeze_effects.filter(func(fe): return fe.timer > 0.0)
 		_tick_slow_effect_visuals(delta)
-		_tick_frontal_skill_effect_visuals(delta)
+		_active_skill_effect_system.tick_visuals(delta)
 		queue_redraw()
 		return
 	if _art_dev_mode:
@@ -1981,7 +2039,7 @@ func _process(delta: float) -> void:
 			fe.timer -= delta
 		_freeze_effects = _freeze_effects.filter(func(fe): return fe.timer > 0.0)
 		_tick_slow_effect_visuals(delta)
-		_tick_frontal_skill_effect_visuals(delta)
+		_active_skill_effect_system.tick_visuals(delta)
 		queue_redraw()
 		_sim_acc += delta
 		while _sim_acc >= SIM_DT:
@@ -1995,7 +2053,7 @@ func _process(delta: float) -> void:
 		fe.timer -= delta
 	_freeze_effects = _freeze_effects.filter(func(fe): return fe.timer > 0.0)
 	_tick_slow_effect_visuals(delta)
-	_tick_frontal_skill_effect_visuals(delta)
+	_active_skill_effect_system.tick_visuals(delta)
 	queue_redraw()
 	# 主机：定时向客户端发送快照
 	if mode == "host":
@@ -2141,19 +2199,15 @@ func _rpc_active_skill_request(ability_id: int, input_tick: int = -1) -> void:
 		_rpc_active_skill_rejected.rpc_id(sender, ability_id)
 
 @rpc("authority", "call_remote", "reliable")
-func _rpc_active_skill_used(ability_id: int) -> void:
+func _rpc_active_skill_used(ability_id: int, uses_remaining: int = 0, cooldown_left: float = 0.0) -> void:
 	if mode != "client":
 		return
 	if _active_skills.has(ability_id):
 		var entry: Dictionary = _active_skills[ability_id]
-		var unit: Unit = entry.unit
-		if unit != null and is_instance_valid(unit):
-			unit.active_ability_id = -1
-			unit.active_ability_slot = -1
-			unit.clear_carried_active_skill_resource()
-	_active_skills.erase(ability_id)
-	if _active_skill_bar != null:
-		_active_skill_bar.remove_skill(ability_id)
+		entry["uses_remaining"] = maxi(uses_remaining, 0)
+		entry["cooldown_left"] = maxf(cooldown_left, 0.0)
+		_active_skills[ability_id] = entry
+		_sync_active_skill_deployment_readiness()
 
 @rpc("authority", "call_remote", "reliable")
 func _rpc_active_skill_rejected(ability_id: int) -> void:
@@ -2279,10 +2333,10 @@ func _rpc_freeze_fx(pos: Vector2, radius: float, duration: float, slow_duration:
 
 ## 主机 → 客户端：定向技能蓄力范围。客户端只画表现，伤害与状态仍由主机快照体现。
 @rpc("authority", "call_remote", "reliable")
-func _rpc_frontal_skill_fx(net_id: int, pos: Vector2, forward: Vector2, source_radius: float, length: float, width: float, duration: float, p_team: int, shape: String = "rectangle", near_width: float = 0.0, far_width: float = 0.0, arc_degrees: float = 0.0, projectile_count: int = 0, center_ratio: float = 0.0) -> void:
+func _rpc_frontal_skill_fx(net_id: int, pos: Vector2, forward: Vector2, source_radius: float, length: float, width: float, duration: float, p_team: int, shape: String = "rectangle", near_width: float = 0.0, far_width: float = 0.0, arc_degrees: float = 0.0, projectile_count: int = 0, center_ratio: float = 0.0, center_width: float = 0.0, fan_inner_arc: bool = false) -> void:
 	if mode != "client":
 		return
-	_frontal_skill_effects.append({
+	_active_skill_effect_system.frontal_effects.append({
 		"source_ref": null,
 		"net_id": net_id,
 		"fixed_position": shape in ["target_circle", "shockwave"],
@@ -2297,6 +2351,8 @@ func _rpc_frontal_skill_fx(net_id: int, pos: Vector2, forward: Vector2, source_r
 		"arc_degrees": arc_degrees,
 		"projectile_count": projectile_count,
 		"center_ratio": center_ratio,
+		"center_width": center_width,
+		"fan_inner_arc": fan_inner_arc,
 		"timer": duration,
 		"duration": duration,
 		"team": p_team,
@@ -2347,11 +2403,11 @@ func _draw() -> void:
 		draw_circle(effect.pos, effect.radius, Color(0.20, 0.48, 0.92, 0.12 * slow_alpha))
 		draw_arc(effect.pos, effect.radius, 0.0, TAU, 48, Color(0.38, 0.70, 1.0, 0.72 * slow_alpha), 3.0, true)
 	# 纳尔 Spell2 使用三边矩形：两条侧边加远端宽边，靠纳尔的近端宽边刻意留空。
-	for effect in _frontal_skill_effects:
+	for effect in _active_skill_effect_system.frontal_effects:
 		_draw_frontal_skill_effect(effect)
 
 func _draw_frontal_skill_effect(effect: Dictionary) -> void:
-	var source = _frontal_skill_effect_source(effect)
+	var source = _active_skill_effect_system.effect_source(effect)
 	var center: Vector2 = effect.get("pos", Vector2.ZERO)
 	var forward: Vector2 = effect.get("forward", Vector2.UP)
 	var source_radius := float(effect.get("source_radius", 0.0))
@@ -2392,14 +2448,71 @@ func _draw_frontal_skill_effect(effect: Dictionary) -> void:
 	if shape == &"fan":
 		var half_angle := deg_to_rad(float(effect.get("arc_degrees", 0.0)) * 0.5)
 		var center_angle := forward.angle()
-		var points := PackedVector2Array([near_center])
+		var fan_inner_arc := bool(effect.get("fan_inner_arc", false))
+		if fan_inner_arc:
+			var inner_radius := source_radius
+			var outer_radius := inner_radius + length
+			var inner_left := center - side * inner_radius
+			var inner_right := center + side * inner_radius
+			var outer_left := center + Vector2.from_angle(center_angle - half_angle) * outer_radius
+			var outer_right := center + Vector2.from_angle(center_angle + half_angle) * outer_radius
+			var ring_points := PackedVector2Array([inner_left])
+			for index in range(17):
+				var outer_angle := lerpf(center_angle - half_angle, center_angle + half_angle, float(index) / 16.0)
+				ring_points.append(center + Vector2.from_angle(outer_angle) * outer_radius)
+			ring_points.append(inner_right)
+			for index in range(16, -1, -1):
+				var inner_angle := lerpf(center_angle - PI * 0.5, center_angle + PI * 0.5, float(index) / 16.0)
+				ring_points.append(center + Vector2.from_angle(inner_angle) * inner_radius)
+			draw_colored_polygon(ring_points, fill_color)
+			draw_arc(center, outer_radius, center_angle - half_angle, center_angle + half_angle, 32, line_color, 3.0, true)
+			draw_line(inner_left, outer_left, line_color, 2.0, true)
+			draw_line(inner_right, outer_right, line_color, 2.0, true)
+			draw_arc(center, inner_radius, center_angle - PI * 0.5, center_angle + PI * 0.5, 24, line_color, 2.0, true)
+			var arrow_count := maxi(int(effect.get("projectile_count", 0)), 0)
+			var arrow_distance := length * clampf(progress * 1.25, 0.0, 1.0)
+			for index in range(arrow_count):
+				var ratio := 0.5 if arrow_count == 1 else float(index) / float(arrow_count - 1)
+				var arrow_angle := lerpf(center_angle - half_angle * 0.92, center_angle + half_angle * 0.92, ratio)
+				var arrow_direction := Vector2.from_angle(arrow_angle)
+				var arrow_pos := center + arrow_direction * (inner_radius + arrow_distance)
+				draw_line(arrow_pos - arrow_direction * 10.0, arrow_pos + arrow_direction * 5.0, Color(0.78, 0.94, 1.0, 0.95), 2.0, true)
+			return
+		var center_width := maxf(float(effect.get("center_width", 0.0)), 0.0)
+		var center_half_width := center_width * 0.5
+		var sector_near_left := near_center - side * center_half_width if center_width > 0.0 else near_center
+		var sector_near_right := near_center + side * center_half_width if center_width > 0.0 else near_center
+		var left_arc := near_center + Vector2.from_angle(center_angle - half_angle) * length
+		var right_arc := near_center + Vector2.from_angle(center_angle + half_angle) * length
+		var points := PackedVector2Array([sector_near_left])
 		for index in range(17):
 			var angle := lerpf(center_angle - half_angle, center_angle + half_angle, float(index) / 16.0)
 			points.append(near_center + Vector2.from_angle(angle) * length)
+		points.append(sector_near_right)
 		draw_colored_polygon(points, fill_color)
 		draw_arc(near_center, length, center_angle - half_angle, center_angle + half_angle, 32, line_color, 3.0, true)
-		draw_line(near_center, near_center + Vector2.from_angle(center_angle - half_angle) * length, line_color, 2.0, true)
-		draw_line(near_center, near_center + Vector2.from_angle(center_angle + half_angle) * length, line_color, 2.0, true)
+		draw_line(sector_near_left, left_arc, line_color, 2.0, true)
+		draw_line(sector_near_right, right_arc, line_color, 2.0, true)
+		var center_ratio := clampf(float(effect.get("center_ratio", 0.0)), 0.0, 1.0)
+		if center_width > 0.0:
+			var center_points := PackedVector2Array([
+				sector_near_left,
+				far_center - side * center_half_width,
+				far_center + side * center_half_width,
+				sector_near_right,
+			])
+			var center_fill := Color(0.54, 0.94, 1.0, 0.22 + 0.12 * progress)
+			draw_colored_polygon(center_points, center_fill)
+			draw_line(center_points[0], center_points[1], Color(line_color.r, line_color.g, line_color.b, 0.72), 1.5, true)
+			draw_line(center_points[3], center_points[2], Color(line_color.r, line_color.g, line_color.b, 0.72), 1.5, true)
+		elif center_ratio > 0.0:
+			var center_half_angle := half_angle * center_ratio
+			var center_points := PackedVector2Array([near_center])
+			for index in range(9):
+				var angle := lerpf(center_angle - center_half_angle, center_angle + center_half_angle, float(index) / 8.0)
+				center_points.append(near_center + Vector2.from_angle(angle) * length)
+			var center_fill := Color(1.0, 0.96, 0.76, 0.16 + 0.10 * progress)
+			draw_colored_polygon(center_points, center_fill)
 		var arrow_count := maxi(int(effect.get("projectile_count", 0)), 0)
 		var arrow_distance := length * clampf(progress * 1.25, 0.0, 1.0)
 		for index in range(arrow_count):
@@ -2419,6 +2532,8 @@ func _draw_frontal_skill_effect(effect: Dictionary) -> void:
 	draw_line(near_left, far_left, line_color, 3.0, true)
 	draw_line(far_left, far_right, line_color, 3.0, true)
 	draw_line(far_right, near_right, line_color, 3.0, true)
+	if shape == &"trapezoid":
+		draw_line(near_left, near_right, line_color, 3.0, true)
 	var center_ratio := clampf(float(effect.get("center_ratio", 0.0)), 0.0, 1.0)
 	if center_ratio > 0.0:
 		var center_fill := Color(1.0, 0.96, 0.76, 0.16 + 0.10 * progress)

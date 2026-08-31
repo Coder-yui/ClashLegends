@@ -32,6 +32,7 @@ const HEALTH_BAR_HEAD_GAP := 3.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
 const HEALTH_BAR_HEIGHT := 4.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
 const SKILL_RESOURCE_BAR_HEIGHT := 2.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
 const SKILL_RESOURCE_BAR_GAP := 1.5 * CardDB.CHARACTER_SCALE_MULTIPLIER
+const SKILL_RESOURCE_UNFILLED_COLOR := Color(0.96, 0.96, 1.0, 0.96)
 const SUMMON_SEPARATION := 2.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
 # 建筑卡召唤小鬼的确定性方向偏移（按序轮转，不引入随机数）
 const SPAWN_DIRECTIONS := [
@@ -114,12 +115,17 @@ var skill_resource_attack_gain := 0.0
 var skill_resource_hit_gain := 0.0
 var skill_resource_kill_gain := 0.0
 var skill_resource_damage_gain_multiplier := 0.0
+var skill_resource_decay_delay := 0.0
+var skill_resource_decay_rate := 0.0
+var skill_resource_full_color := SKILL_RESOURCE_UNFILLED_COLOR
 var skill_resource_enabled := false
 var _configured_skill_resource_max := 0.0
 var _configured_skill_resource_attack_gain := 0.0
 var _configured_skill_resource_hit_gain := 0.0
 var _configured_skill_resource_kill_gain := 0.0
 var _configured_skill_resource_damage_gain_multiplier := 0.0
+var _configured_skill_resource_decay_delay := 0.0
+var _configured_skill_resource_decay_rate := 0.0
 ## 双形态单位配置。0 为初始形态，1 为 transformed_stats；命中次数可让两形态循环切换。
 var transform_after_hits := 0
 var revert_after_hits := 0
@@ -145,6 +151,7 @@ var slow_timer := 0.0
 var slow_multiplier := 1.0
 var shield_hp := 0.0
 var shield_timer := 0.0
+var shield_decay_rate := 0.0
 var active_buff_timer := 0.0
 var active_speed_multiplier := 1.0
 var active_damage_multiplier := 1.0
@@ -208,6 +215,7 @@ var _knockback_velocity := Vector2.ZERO
 var _knockback_timer := 0.0
 var _charge_timer := 0.0
 var _charged := false
+var _skill_resource_combat_timer := 0.0
 var _just_deployed := false
 var _facing_x := 1.0
 var net_visual_state := 1
@@ -322,12 +330,17 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	_configured_skill_resource_hit_gain = maxf(float(stats.get("skill_resource_hit_gain", 0.0)), 0.0)
 	_configured_skill_resource_kill_gain = maxf(float(stats.get("skill_resource_kill_gain", 0.0)), 0.0)
 	_configured_skill_resource_damage_gain_multiplier = maxf(float(stats.get("skill_resource_damage_gain_multiplier", 0.0)), 0.0)
+	_configured_skill_resource_decay_delay = maxf(float(stats.get("skill_resource_decay_delay", 0.0)), 0.0)
+	_configured_skill_resource_decay_rate = maxf(float(stats.get("skill_resource_decay_rate", 0.0)), 0.0)
+	skill_resource_full_color = stats.get("skill_resource_full_color", SKILL_RESOURCE_UNFILLED_COLOR)
 	skill_resource_max = 0.0
 	skill_resource_value = 0.0
 	skill_resource_attack_gain = 0.0
 	skill_resource_hit_gain = 0.0
 	skill_resource_kill_gain = 0.0
 	skill_resource_damage_gain_multiplier = 0.0
+	skill_resource_decay_delay = 0.0
+	skill_resource_decay_rate = 0.0
 	skill_resource_enabled = false
 	transform_after_hits = maxi(int(stats.get("transform_after_hits", 0)), 0)
 	revert_after_hits = maxi(int(stats.get("revert_after_hits", 0)), 0)
@@ -501,7 +514,20 @@ func consume_skill_resource_ratio() -> float:
 	return ratio
 
 func get_skill_resource_stacks() -> int:
-	return clampi(int(round(skill_resource_value)), 0, int(round(skill_resource_max)))
+	var resource_value := skill_resource_value
+	if _in_client_mode():
+		resource_value = clampf(net_skill_resource_ratio, 0.0, 1.0) * skill_resource_max
+	return clampi(int(round(resource_value)), 0, int(round(skill_resource_max)))
+
+func get_skill_resource_fill_color() -> Color:
+	return skill_resource_full_color if is_equal_approx(get_skill_resource_ratio(), 1.0) else SKILL_RESOURCE_UNFILLED_COLOR
+
+## 格温/龙王这类小整数资源使用分段白条；连续资源（例如瑟提豪意）仍画成连续进度。
+func get_skill_resource_segment_count() -> int:
+	if not is_skill_resource_visible():
+		return 0
+	var segment_count := int(round(skill_resource_max))
+	return segment_count if segment_count >= 2 and segment_count <= 10 and is_equal_approx(skill_resource_max, float(segment_count)) else 0
 
 ## 卡牌数值可声明资源规则，但只有主动槽实际携带 uses_skill_resource 的实例才启用。
 func configure_carried_active_skill(skill: Dictionary) -> void:
@@ -514,6 +540,9 @@ func configure_carried_active_skill(skill: Dictionary) -> void:
 	skill_resource_hit_gain = _configured_skill_resource_hit_gain
 	skill_resource_kill_gain = _configured_skill_resource_kill_gain
 	skill_resource_damage_gain_multiplier = _configured_skill_resource_damage_gain_multiplier
+	skill_resource_decay_delay = _configured_skill_resource_decay_delay
+	skill_resource_decay_rate = _configured_skill_resource_decay_rate
+	_skill_resource_combat_timer = skill_resource_decay_delay
 	queue_redraw()
 
 func clear_carried_active_skill_resource() -> void:
@@ -524,6 +553,9 @@ func clear_carried_active_skill_resource() -> void:
 	skill_resource_hit_gain = 0.0
 	skill_resource_kill_gain = 0.0
 	skill_resource_damage_gain_multiplier = 0.0
+	skill_resource_decay_delay = 0.0
+	skill_resource_decay_rate = 0.0
+	_skill_resource_combat_timer = 0.0
 	queue_redraw()
 
 func add_skill_resource(amount: float) -> void:
@@ -531,6 +563,24 @@ func add_skill_resource(amount: float) -> void:
 		return
 	skill_resource_value = minf(skill_resource_value + amount, skill_resource_max)
 	queue_redraw()
+
+func mark_skill_resource_combat_activity() -> void:
+	if not skill_resource_enabled:
+		return
+	_skill_resource_combat_timer = skill_resource_decay_delay
+
+func _tick_skill_resource_decay(dt: float) -> void:
+	if not skill_resource_enabled or skill_resource_value <= 0.0:
+		return
+	var decay_dt := dt
+	if _skill_resource_combat_timer > 0.0:
+		if dt <= _skill_resource_combat_timer:
+			_skill_resource_combat_timer -= dt
+			return
+		decay_dt = dt - _skill_resource_combat_timer
+		_skill_resource_combat_timer = 0.0
+	if decay_dt > 0.0 and skill_resource_decay_rate > 0.0:
+		skill_resource_value = maxf(0.0, skill_resource_value - skill_resource_decay_rate * decay_dt)
 
 ## 只给下一次原有普攻加标签；不写 _attack_cd/_attack_windup，因此不会重置攻速或攻击节奏。
 func prepare_empowered_attack(damage_multiplier: float, speed_multiplier: float = 1.0, applied_blind_charges: int = 0) -> void:
@@ -1300,6 +1350,7 @@ func _attack(dt: float) -> void:
 			empowered_attack_blind_charges = 0
 		# 挥击序号与表现层攻击动画序号同步推进，供命中回血按三段循环取模。
 		_attack_swing_count += 1
+		mark_skill_resource_combat_activity()
 		add_skill_resource(skill_resource_attack_gain)
 		var attack_form_index := form_index
 		_perform_attack_strike(_target, hit_damage, attack_effects)
@@ -1404,6 +1455,7 @@ func _tick_pending_extra_attacks(dt: float) -> void:
 		if not target is Node2D or not is_instance_valid(target) or target.hp <= 0.0:
 			continue
 		_attack_swing_count += 1
+		mark_skill_resource_combat_activity()
 		add_skill_resource(skill_resource_attack_gain)
 		_perform_attack_strike(target as Node2D, float(pending.damage))
 	_pending_extra_attacks.assign(waiting)
@@ -1468,9 +1520,14 @@ func apply_active_buff(duration: float, speed_multiplier: float, damage_multipli
 	_attack_recovery_timer /= haste
 	queue_redraw()
 
-func add_shield(amount: float, duration: float) -> void:
-	shield_hp += maxf(amount, 0.0)
+func add_shield(amount: float, duration: float, decays: bool = false) -> void:
+	amount = maxf(amount, 0.0)
+	duration = maxf(duration, 0.0)
+	if amount <= 0.0 or duration <= 0.0:
+		return
+	shield_hp += amount
 	shield_timer = maxf(shield_timer, duration)
+	shield_decay_rate = amount / duration if decays else 0.0
 	queue_redraw()
 
 func _tick_active_statuses(dt: float) -> void:
@@ -1480,14 +1537,18 @@ func _tick_active_statuses(dt: float) -> void:
 			slow_multiplier = 1.0
 	if shield_timer > 0.0:
 		shield_timer = maxf(0.0, shield_timer - dt)
+		if shield_decay_rate > 0.0:
+			shield_hp = maxf(0.0, shield_hp - shield_decay_rate * dt)
 		if shield_timer <= 0.0:
 			shield_hp = 0.0
+			shield_decay_rate = 0.0
 	if active_buff_timer > 0.0:
 		active_buff_timer = maxf(0.0, active_buff_timer - dt)
 		if active_buff_timer <= 0.0:
 			active_speed_multiplier = 1.0
 			active_damage_multiplier = 1.0
 			active_attack_speed_multiplier = 1.0
+	_tick_skill_resource_decay(dt)
 
 func is_frozen() -> bool:
 	return frozen_timer > 0.0
@@ -1495,11 +1556,19 @@ func is_frozen() -> bool:
 func is_stunned() -> bool:
 	return stun_timer > 0.0
 
+func heal(amount: float) -> void:
+	if hp <= 0.0 or amount <= 0.0:
+		return
+	hp = minf(hp + amount, max_hp)
+	queue_redraw()
+
 func take_damage(amount: float, from: Node2D = null, source_team: int = -1, source_position: Vector2 = Vector2(INF, INF)) -> bool:
 	if hp <= 0.0:
 		return false
 	if _is_shroud_blocked(from, source_team, source_position):
 		return false
+	if amount > 0.0:
+		mark_skill_resource_combat_activity()
 	var remaining_damage := amount
 	if shield_hp > 0.0 and shield_timer > 0.0:
 		var absorbed := minf(shield_hp, remaining_damage)
@@ -1507,6 +1576,7 @@ func take_damage(amount: float, from: Node2D = null, source_team: int = -1, sour
 		remaining_damage -= absorbed
 		if shield_hp <= 0.0:
 			shield_timer = 0.0
+			shield_decay_rate = 0.0
 	var hp_before := hp
 	hp -= remaining_damage
 	add_skill_resource(minf(maxf(hp_before, 0.0), remaining_damage) * skill_resource_damage_gain_multiplier)
@@ -1685,9 +1755,22 @@ func _draw() -> void:
 	if is_skill_resource_visible():
 		var resource_w := visual_radius * 2.0
 		var resource_y := _health_bar_center.y + HEALTH_BAR_HEIGHT * 0.5 + SKILL_RESOURCE_BAR_GAP
-		var resource_rect := Rect2(Vector2(-resource_w * 0.5, resource_y), Vector2(resource_w, SKILL_RESOURCE_BAR_HEIGHT))
-		draw_rect(resource_rect, Color(0.10, 0.10, 0.12, 0.9))
-		draw_rect(Rect2(resource_rect.position, Vector2(resource_w * get_skill_resource_ratio(), SKILL_RESOURCE_BAR_HEIGHT)), Color(0.96, 0.96, 1.0, 0.96))
+		var segment_count := get_skill_resource_segment_count()
+		if segment_count > 0:
+			var segment_gap := maxf(1.0, SKILL_RESOURCE_BAR_GAP * 0.75)
+			var segment_w := maxf((resource_w - segment_gap * float(segment_count - 1)) / float(segment_count), 0.0)
+			var filled_segments := mini(get_skill_resource_stacks(), segment_count)
+			var resource_fill_color := get_skill_resource_fill_color()
+			for segment_index in range(segment_count):
+				var segment_x := -resource_w * 0.5 + float(segment_index) * (segment_w + segment_gap)
+				var segment_rect := Rect2(Vector2(segment_x, resource_y), Vector2(segment_w, SKILL_RESOURCE_BAR_HEIGHT))
+				draw_rect(segment_rect, Color(0.10, 0.10, 0.12, 0.9))
+				if segment_index < filled_segments:
+					draw_rect(segment_rect, resource_fill_color)
+		else:
+			var resource_rect := Rect2(Vector2(-resource_w * 0.5, resource_y), Vector2(resource_w, SKILL_RESOURCE_BAR_HEIGHT))
+			draw_rect(resource_rect, Color(0.10, 0.10, 0.12, 0.9))
+			draw_rect(Rect2(resource_rect.position, Vector2(resource_w * get_skill_resource_ratio(), SKILL_RESOURCE_BAR_HEIGHT)), get_skill_resource_fill_color())
 	if frozen_timer > 0.0:
 		draw_circle(Vector2.ZERO, visual_radius + 4.0, Color(0.4, 0.8, 1.0, 0.3))
 	var stunned_visible := net_stun_active if _in_client_mode() else stun_timer > 0.0

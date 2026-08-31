@@ -2,7 +2,7 @@ class_name NetworkSnapshotSystem
 extends RefCounted
 ## 20Hz 单位/塔/弹体快照的序列化与客户端应用。RPC 端点仍保留在 Main。
 
-const SNAPSHOT_PROTOCOL_VERSION := 5
+const SNAPSHOT_PROTOCOL_VERSION := 6
 const S_UNITS := 0
 const S_PROJECTILES := 1
 const S_TOWERS := 2
@@ -47,6 +47,8 @@ const U_BLIND_ATTACK_CHARGES := 29
 const U_SKILL_RESOURCE_ENABLED := 30
 const U_ACTIVE_SPEED_MULTIPLIER := 31
 const U_ACTIVE_ATTACK_SPEED_MULTIPLIER := 32
+const U_ACTIVE_SKILL_USES_REMAINING := 33
+const U_ACTIVE_SKILL_COOLDOWN := 34
 
 var _controller: Node2D
 
@@ -141,6 +143,11 @@ func apply(snapshot_bytes: PackedByteArray) -> void:
 			u.net_skill_resource_enabled = int(d[U_SKILL_RESOURCE_ENABLED]) == 1
 			u.net_active_speed_multiplier = maxf(float(d[U_ACTIVE_SPEED_MULTIPLIER]), 1.0)
 			u.net_active_attack_speed_multiplier = maxf(float(d[U_ACTIVE_ATTACK_SPEED_MULTIPLIER]), 1.0)
+		if d.size() >= 35 and _controller._active_skills.has(u.active_ability_id):
+			var active_entry: Dictionary = _controller._active_skills[u.active_ability_id]
+			active_entry["uses_remaining"] = maxi(int(d[U_ACTIVE_SKILL_USES_REMAINING]), 0)
+			active_entry["cooldown_left"] = maxf(float(d[U_ACTIVE_SKILL_COOLDOWN]), 0.0)
+			_controller._active_skills[u.active_ability_id] = active_entry
 		if (
 			_controller._auto_test and not _controller._auto_gnar_form_seen and u.card_id == "gnar"
 			and u.form_index == 1 and u.net_visual_action_name == &"transform_active"
@@ -272,6 +279,7 @@ func snapshot_header() -> Array:
 func _unit_snapshot_payload(id: int, u: Unit, has_continuous_target: bool = false, continuous_target_pos: Vector2 = Vector2.ZERO, facing_direction: Vector2 = Vector2.ZERO) -> Array:
 	if facing_direction.is_zero_approx():
 		facing_direction = u.get_visual_facing_direction()
+	var active_skill_state: Dictionary = _controller.get_active_skill_snapshot(u.active_ability_id)
 	return [
 		id, u.global_position.x, u.global_position.y, u.hp,
 		1 if u.frozen_timer > 0.0 else 0, 1 if u.is_charged() else 0,
@@ -289,4 +297,5 @@ func _unit_snapshot_payload(id: int, u: Unit, has_continuous_target: bool = fals
 		1 if u.empowered_attack_ready else 0, u.get_empowered_attack_visual_serial(),
 		u.get_skill_resource_ratio(), u.blind_attack_charges,
 		1 if u.skill_resource_enabled else 0, u.active_speed_multiplier, u.active_attack_speed_multiplier,
+		active_skill_state.get("uses_remaining", 0), active_skill_state.get("cooldown_left", 0.0),
 	]
