@@ -32,6 +32,9 @@ var _deck_context_from_pool := false
 var _deck_context_anchor: Control
 var _deck_info_overlay: Control
 var _deck_info_active_option: OptionButton
+var _deck_info_active_rules: PanelContainer
+var _deck_info_active_cost_label: Label
+var _deck_info_active_uses_label: Label
 var _deck_info_active_description: Label
 var _deck_info_skin_option: OptionButton
 
@@ -603,6 +606,9 @@ func _open_card_info(card_id: String) -> void:
 		_deck_info_active_option.disabled = skills.size() <= 1
 		_deck_info_active_option.item_selected.connect(_on_info_active_skill_selected.bind(card_id))
 	details.add_child(_deck_info_active_option)
+	if not skills.is_empty():
+		_deck_info_active_rules = _make_active_skill_rules(skills[clampi(int(_active_skill_choices.get(card_id, 0)), 0, skills.size() - 1)])
+		details.add_child(_deck_info_active_rules)
 	_deck_info_active_description = _make_card_info_body(_active_choice_description(card_id))
 	details.add_child(_deck_info_active_description)
 	var close := _make_deck_action_button("返回备战", Color(0.08, 0.38, 0.68), Color(0.38, 0.80, 1.0))
@@ -903,11 +909,45 @@ func _active_skill_description(skill: Dictionary) -> String:
 		parts.append("获得 %s 点护盾，持续 %s 秒" % [_format_card_number(float(skill.shield)), _format_card_number(float(skill.get("shield_duration", 0.0)))])
 	return "%s：%s。" % [String(skill.get("name", "主动技能")), "；".join(parts)]
 
+func _make_active_skill_rules(skill: Dictionary) -> PanelContainer:
+	var panel := PanelContainer.new()
+	panel.custom_minimum_size = Vector2(0.0, 38.0)
+	panel.add_theme_stylebox_override("panel", _deck_style(Color(0.035, 0.13, 0.22, 0.95), Color(0.18, 0.45, 0.65, 0.9), 1))
+	var row := HBoxContainer.new()
+	row.alignment = BoxContainer.ALIGNMENT_CENTER
+	row.add_theme_constant_override("separation", 8)
+	panel.add_child(row)
+	_deck_info_active_cost_label = _make_active_skill_rule_label("")
+	_deck_info_active_cost_label.add_theme_color_override("font_color", Color(1.0, 0.84, 0.34))
+	_deck_info_active_uses_label = _make_active_skill_rule_label("")
+	_deck_info_active_uses_label.add_theme_color_override("font_color", Color(0.60, 0.86, 1.0))
+	row.add_child(_deck_info_active_cost_label)
+	row.add_child(_deck_info_active_uses_label)
+	_update_active_skill_rules(skill)
+	return panel
+
+func _make_active_skill_rule_label(text: String) -> Label:
+	var label := Label.new()
+	label.text = text
+	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.add_theme_font_override("font", CardArt.ui_font())
+	label.add_theme_font_size_override("font_size", 16)
+	return label
+
+func _update_active_skill_rules(skill: Dictionary) -> void:
+	if _deck_info_active_cost_label == null or _deck_info_active_uses_label == null:
+		return
+	_deck_info_active_cost_label.text = "金币消耗：%s" % _format_card_number(maxf(float(skill.get("cost", 0.0)), 0.0))
+	_deck_info_active_uses_label.text = "单个单位：最多 %d 次" % maxi(int(skill.get("max_uses", 1)), 1)
+
 func _on_info_active_skill_selected(skill_index: int, card_id: String) -> void:
 	var skills := CardDB.active_skills_for(card_id)
 	if skills.is_empty():
 		return
 	_active_skill_choices[card_id] = clampi(skill_index, 0, skills.size() - 1)
+	_update_active_skill_rules(skills[_active_skill_choices[card_id]])
 	if _deck_info_active_description != null:
 		_deck_info_active_description.text = _active_choice_description(card_id)
 
@@ -922,6 +962,9 @@ func _close_card_info() -> void:
 		_deck_info_overlay.queue_free()
 		_deck_info_overlay = null
 		_deck_info_active_option = null
+		_deck_info_active_rules = null
+		_deck_info_active_cost_label = null
+		_deck_info_active_uses_label = null
 		_deck_info_active_description = null
 		_deck_info_skin_option = null
 

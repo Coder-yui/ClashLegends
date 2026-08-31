@@ -23,6 +23,7 @@ var _hand: Array[String] = []   # 当前4张手牌
 var _queue: Array[String] = []  # 等待队列4张
 var _deck: Array = []           # 本次对战选定的 8 张卡组（空则随机 8 张）
 var _pending_cards: Dictionary = {}  # 客户端已发出、等待主机确认的卡牌
+var _active_skill_cards: Dictionary = {}  # 卡牌 ID -> 主动槽序号；标记跟随卡牌轮换
 
 func setup(elixir: ElixirManager, deck: Array = []) -> void:
 	_elixir = elixir
@@ -45,6 +46,16 @@ func get_queue() -> Array[String]:
 
 func get_deck() -> Array:
 	return _deck.duplicate()
+
+## 设置本局前两个卡位中的主动卡；表现标记只绑定 card_id，不绑定当前手牌索引。
+func set_active_skill_cards(card_ids: Array) -> void:
+	_active_skill_cards.clear()
+	for slot_index in range(mini(card_ids.size(), 2)):
+		var card_id := String(card_ids[slot_index])
+		if card_id.is_empty() or not CardDB.has_card(card_id):
+			continue
+		_active_skill_cards[card_id] = slot_index
+	_refresh(_elixir.elixir if _elixir != null else 0.0)
 
 ## 手牌只是权威 Card Cycle 的表现视图；主机确认后的完整状态由 Main 推送到这里。
 func set_cycle_state(hand: Array, queue: Array) -> void:
@@ -236,6 +247,7 @@ func _refresh(_value: float) -> void:
 		var b: Button = _button_slots[i]
 		var accent: Color = stats.get("color", CardArt.DEFAULT_ACCENT)
 		CardArt.apply_to_button(b, card_id, stats.name, stats.cost, true, accent)
+		CardArt.set_active_skill_card(b, _active_skill_cards.has(card_id))
 		var affordable := _elixir.can_afford(stats.cost)
 		var pending := is_card_pending(card_id)
 		CardArt.set_affordable(b, (affordable or card_id == _selected) and not pending)

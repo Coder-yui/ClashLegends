@@ -78,16 +78,19 @@ static func apply_frame(button: Button, height: float, compact: bool = false, wi
 	button.set_meta("card_accent", DEFAULT_ACCENT)
 	button.set_meta("card_selected", false)
 	button.set_meta("card_affordable", true)
+	button.set_meta("active_skill_card", false)
 	_apply_button_styles(button)
 
 static func _apply_button_styles(button: Button) -> void:
 	var accent: Color = button.get_meta("card_accent", DEFAULT_ACCENT)
 	var selected := bool(button.get_meta("card_selected", false))
 	var affordable := bool(button.get_meta("card_affordable", true))
-	var border_width := 3 if selected else 2
-	var normal_border := Color(1.0, 0.82, 0.25) if selected else accent.lightened(0.18)
+	var active_skill_card := bool(button.get_meta("active_skill_card", false))
+	var border_width := 4 if selected else (3 if active_skill_card else 2)
+	var normal_border := Color(1.0, 0.82, 0.25) if selected else (Color(1.0, 0.76, 0.28, 0.96) if active_skill_card else accent.lightened(0.18))
 	button.add_theme_stylebox_override("normal", frame_style(Color(0.045, 0.08, 0.14), normal_border, border_width))
-	button.add_theme_stylebox_override("hover", frame_style(Color(0.08, 0.16, 0.26), accent.lightened(0.38), 3))
+	var hover_border := Color(1.0, 0.91, 0.54, 1.0) if active_skill_card else accent.lightened(0.38)
+	button.add_theme_stylebox_override("hover", frame_style(Color(0.08, 0.16, 0.26), hover_border, 3))
 	button.add_theme_stylebox_override("pressed", frame_style(Color(0.07, 0.22, 0.36), Color(1.0, 0.84, 0.28), 4))
 	var disabled_border := normal_border.darkened(0.48) if affordable else Color(0.20, 0.24, 0.31)
 	button.add_theme_stylebox_override("disabled", frame_style(Color(0.035, 0.045, 0.065), disabled_border, 2))
@@ -230,13 +233,14 @@ static func show_empty_slot(button: Button, slot_number: int) -> void:
 	button.tooltip_text = "点击卡槽，再从下方卡牌库选择一张卡牌"
 	button.add_theme_font_size_override("font_size", 34)
 	button.add_theme_color_override("font_color", Color(0.58, 0.70, 0.84))
-	for child_name in ["CardArtwork", "CardPlaceholder", "CardPlaceholderGlyph", "CardUnavailableTint", "CardNameBar", "CardCostBadge", "CardSelectedMark"]:
+	for child_name in ["CardArtwork", "CardPlaceholder", "CardPlaceholderGlyph", "CardUnavailableTint", "CardNameBar", "CardCostBadge", "CardSelectedMark", "ActiveSkillMarker"]:
 		var child := button.get_node_or_null(child_name)
 		if child != null:
 			child.visible = false
 	button.set_meta("card_accent", Color(0.23, 0.34, 0.48))
 	button.set_meta("card_selected", false)
 	button.set_meta("card_affordable", true)
+	button.set_meta("active_skill_card", false)
 	_apply_button_styles(button)
 
 static func set_affordable(button: Button, affordable: bool) -> void:
@@ -248,6 +252,49 @@ static func set_affordable(button: Button, affordable: bool) -> void:
 	if cost_badge != null:
 		var badge_color := ELIXIR_PURPLE if affordable else Color(0.34, 0.28, 0.38)
 		cost_badge.add_theme_stylebox_override("panel", _badge_style(badge_color))
+	_apply_button_styles(button)
+
+## 主动卡的非文字识别标记：细金边 + 角落符印，跟随卡牌而不是跟随手牌位置。
+static func set_active_skill_card(button: Button, active: bool) -> void:
+	button.set_meta("active_skill_card", active)
+	var marker := button.get_node_or_null("ActiveSkillMarker") as Control
+	if marker == null:
+		marker = Control.new()
+		marker.name = "ActiveSkillMarker"
+		marker.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+		marker.offset_left = -31.0
+		marker.offset_top = 5.0
+		marker.offset_right = -5.0
+		marker.offset_bottom = 31.0
+		marker.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		button.add_child(marker)
+
+		var halo := Panel.new()
+		halo.name = "Halo"
+		halo.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		halo.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		halo.add_theme_stylebox_override("panel", frame_style(Color(0.36, 0.20, 0.04, 0.48), Color(1.0, 0.86, 0.48, 0.88), 1, 99))
+		marker.add_child(halo)
+
+		var gem := Panel.new()
+		gem.name = "Gem"
+		gem.position = Vector2(8.0, 8.0)
+		gem.size = Vector2(10.0, 10.0)
+		gem.pivot_offset = Vector2(5.0, 5.0)
+		gem.rotation = PI * 0.25
+		gem.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		gem.add_theme_stylebox_override("panel", frame_style(Color(1.0, 0.76, 0.22, 0.98), Color(1.0, 0.97, 0.72, 1.0), 1, 3))
+		marker.add_child(gem)
+
+		var core := Panel.new()
+		core.name = "Core"
+		core.position = Vector2(11.0, 11.0)
+		core.size = Vector2(4.0, 4.0)
+		core.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		core.add_theme_stylebox_override("panel", _badge_style(Color(0.12, 0.08, 0.02, 0.95), Color(1.0, 0.93, 0.62, 1.0)))
+		marker.add_child(core)
+	marker.move_to_front()
+	marker.visible = active
 	_apply_button_styles(button)
 
 static func set_selected(button: Button, selected: bool, show_mark: bool = false) -> void:

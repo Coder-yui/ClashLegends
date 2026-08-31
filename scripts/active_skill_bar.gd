@@ -16,6 +16,12 @@ var _ability_ids: Array[int] = [-1, -1]
 var _base_labels: Array[String] = ["", ""]
 var _deployment_ready: Array[bool] = [false, false]
 var _pending: Array[bool] = [false, false]
+var _skill_costs: Array[float] = [0.0, 0.0]
+var _max_uses: Array[int] = [1, 1]
+var _uses_remaining: Array[int] = [0, 0]
+var _cooldowns: Array[float] = [0.0, 0.0]
+var _elixir := 0.0
+var _rule_labels: Array[Label] = []
 
 
 func _ready() -> void:
@@ -42,9 +48,22 @@ func _ready() -> void:
 		button.visible = false
 		root.add_child(button)
 		_buttons.append(button)
+		var rule_label := Label.new()
+		rule_label.position = SLOT_POSITIONS[slot_index] + Vector2(-12.0, BUTTON_SIZE.y + 2.0)
+		rule_label.size = Vector2(BUTTON_SIZE.x + 24.0, 20.0)
+		rule_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		rule_label.add_theme_font_override("font", CardArt.ui_font())
+		rule_label.add_theme_font_size_override("font_size", 12)
+		rule_label.add_theme_color_override("font_color", Color(1.0, 0.88, 0.42))
+		rule_label.add_theme_color_override("font_outline_color", Color(0.01, 0.03, 0.07))
+		rule_label.add_theme_constant_override("outline_size", 4)
+		rule_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		rule_label.visible = false
+		root.add_child(rule_label)
+		_rule_labels.append(rule_label)
 
 
-func show_skill(slot_index: int, ability_id: int, card_name: String, skill_name: String, accent: Color, deployment_ready: bool = true) -> void:
+func show_skill(slot_index: int, ability_id: int, skill_name: String, accent: Color, skill_cost: float = 0.0, max_uses: int = 1, uses_remaining: int = 1, cooldown: float = 0.0, deployment_ready: bool = true) -> void:
 	if slot_index < 0 or slot_index >= _buttons.size():
 		return
 	var button := _buttons[slot_index]
@@ -52,14 +71,18 @@ func show_skill(slot_index: int, ability_id: int, card_name: String, skill_name:
 	_base_labels[slot_index] = skill_name.left(1)
 	_deployment_ready[slot_index] = deployment_ready
 	_pending[slot_index] = false
+	_skill_costs[slot_index] = maxf(skill_cost, 0.0)
+	_max_uses[slot_index] = maxi(max_uses, 1)
+	_uses_remaining[slot_index] = clampi(uses_remaining, 0, _max_uses[slot_index])
+	_cooldowns[slot_index] = maxf(cooldown, 0.0)
 	button.text = _base_labels[slot_index]
-	button.tooltip_text = "主动槽 %d · %s · %s\n部署完成后可点击；点击后等待 0.5 秒，由最近部署的该槽单位释放" % [slot_index + 1, card_name, skill_name]
+	button.tooltip_text = ""
 	button.add_theme_stylebox_override("normal", _circle_style(Color(accent.r * 0.34, accent.g * 0.34, accent.b * 0.34, 0.96), Color.WHITE, 3))
 	button.add_theme_stylebox_override("hover", _circle_style(Color(accent.r * 0.55, accent.g * 0.55, accent.b * 0.55, 1.0), Color(0.62, 0.90, 1.0), 4))
 	button.add_theme_stylebox_override("pressed", _circle_style(Color(accent.r * 0.24, accent.g * 0.24, accent.b * 0.24, 1.0), Color(1.0, 0.84, 0.28), 4))
 	button.add_theme_stylebox_override("disabled", _circle_style(Color(0.08, 0.12, 0.18, 0.88), Color(0.42, 0.52, 0.62), 3))
-	_refresh_slot(slot_index)
 	button.visible = true
+	_refresh_slot(slot_index)
 
 
 func set_pending(ability_id: int, pending: bool) -> void:
@@ -67,14 +90,6 @@ func set_pending(ability_id: int, pending: bool) -> void:
 	if slot_index < 0:
 		return
 	_pending[slot_index] = pending
-	_refresh_slot(slot_index)
-
-
-func set_deployment_ready(ability_id: int, ready: bool) -> void:
-	var slot_index := _ability_ids.find(ability_id)
-	if slot_index < 0:
-		return
-	_deployment_ready[slot_index] = ready
 	_refresh_slot(slot_index)
 
 
@@ -86,13 +101,37 @@ func remove_skill(ability_id: int) -> void:
 	_base_labels[slot_index] = ""
 	_deployment_ready[slot_index] = false
 	_pending[slot_index] = false
+	_skill_costs[slot_index] = 0.0
+	_max_uses[slot_index] = 1
+	_uses_remaining[slot_index] = 0
+	_cooldowns[slot_index] = 0.0
 	_buttons[slot_index].visible = false
 	_buttons[slot_index].disabled = false
 	_buttons[slot_index].text = ""
+	if slot_index < _rule_labels.size():
+		_rule_labels[slot_index].visible = false
 
 
 func current_ability_id(slot_index: int) -> int:
 	return _ability_ids[slot_index] if slot_index >= 0 and slot_index < _ability_ids.size() else -1
+
+
+func set_elixir(value: float) -> void:
+	_elixir = maxf(value, 0.0)
+	for slot_index in _buttons.size():
+		_refresh_slot(slot_index)
+
+
+func update_skill_state(ability_id: int, uses_remaining: int, cooldown: float, deployment_ready: bool, skill_cost: float, max_uses: int) -> void:
+	var slot_index := _ability_ids.find(ability_id)
+	if slot_index < 0:
+		return
+	_uses_remaining[slot_index] = clampi(uses_remaining, 0, maxi(max_uses, 1))
+	_max_uses[slot_index] = maxi(max_uses, 1)
+	_cooldowns[slot_index] = maxf(cooldown, 0.0)
+	_skill_costs[slot_index] = maxf(skill_cost, 0.0)
+	_deployment_ready[slot_index] = deployment_ready
+	_refresh_slot(slot_index)
 
 
 func is_slot_visible(slot_index: int) -> bool:
@@ -111,8 +150,31 @@ func _refresh_slot(slot_index: int) -> void:
 	if slot_index < 0 or slot_index >= _buttons.size():
 		return
 	var button := _buttons[slot_index]
-	button.disabled = _pending[slot_index] or not _deployment_ready[slot_index]
+	var cooldown := _cooldowns[slot_index]
+	var uses_remaining := _uses_remaining[slot_index]
+	var skill_cost := _skill_costs[slot_index]
+	button.disabled = _pending[slot_index] or not _deployment_ready[slot_index] or uses_remaining <= 0 or cooldown > 0.001 or _elixir < skill_cost
 	button.text = "…" if _pending[slot_index] else _base_labels[slot_index]
+	if slot_index < _rule_labels.size():
+		var rule_label := _rule_labels[slot_index]
+		rule_label.visible = button.visible
+		rule_label.text = "金币 %s · 次数 %d/%d" % [_format_number(skill_cost), uses_remaining, _max_uses[slot_index]]
+	var state := "可用"
+	if _pending[slot_index]:
+		state = "等待权威执行"
+	elif not _deployment_ready[slot_index]:
+		state = "部署中"
+	elif uses_remaining <= 0:
+		state = "次数已用尽"
+	elif cooldown > 0.001:
+		state = "冷却 %.1fs" % cooldown
+	elif _elixir < skill_cost:
+		state = "金币不足"
+	button.tooltip_text = "主动槽 %d\n消耗 %.1f 金币 · 剩余 %d/%d 次 · 冷却 %.1f 秒\n%s" % [slot_index + 1, skill_cost, uses_remaining, _max_uses[slot_index], cooldown, state]
+
+
+func _format_number(value: float) -> String:
+	return str(int(value)) if is_equal_approx(value, roundf(value)) else "%.1f" % value
 
 
 func _circle_style(fill: Color, border: Color, border_width: int) -> StyleBoxFlat:
