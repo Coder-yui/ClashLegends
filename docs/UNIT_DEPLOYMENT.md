@@ -4,6 +4,8 @@
 
 `visual_animations.deploy` 必须写素材真实动画名：优先 Respawn，其次 Recall WindDown，最后 Idle。单段会适配 `deploy_time`；多段使用动画数组和等长 `deploy_durations`，总时长应等于部署锁。
 
+主动技能与出牌共用 10 Tick Command Buffer。主动技能请求进入 Host 队列时检查技能携带单位、主动位归属、金币、剩余次数、冷却和单位状态，并扣除技能金币；目标 Tick 到达后在 Cast Start 扣除一次使用次数、开始冷却，随后按 `impact_delay` 和 `cast_duration` 推进效果。主动技能按钮显示金币、剩余次数和冷却，状态由 Host 快照同步。
+
 赵信是当前特殊样例：`deploy_time = 1.0`，部署阶段只播放 `Spell4`；生成当帧由权威逻辑结算新月护卫的地面范围伤害与击退，动画不驱动效果。部署后进入移动使用 `Spell4_To_Run`，直接攻击则由统一 Pose 衔接机制过渡。
 
 验收：普通单位约 1 秒不自主行动但能被命中/推挤；玩家单位/建筑/法术均在 0.5 秒生效；赵信新月护卫部署伤害、击退和 1 秒锁正确；兵线即时行动；本地、host、client 顺序一致。

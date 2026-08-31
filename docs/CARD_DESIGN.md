@@ -30,19 +30,21 @@ CardDB 是卡牌数值、通用机制参数和表现配置的唯一来源。普�
 - 状态/被动：部署横扫、命中回血、缠流、攻击节奏/伤害倍率、延迟追加刀、技能资源、强化下一次普攻、攻击次数致盲、护盾/减速/眩晕、主动 buff。
 - 生命周期：部署时间、建筑寿命/周期召唤/亡语召唤。
 - 双形态：命中次数、变形/还原时长、完整 `transformed_stats`。
-- 表现：`visual_scene_path(s)`、`visual_forward_yaw`、`visual_animations`；这些不能参与权威判定。单位动画采用 locomotion + action 通道，详见 `ANIMATION_STATE_SYSTEM.md`。
+- 表现：`visual_scene_path(s)`、`visual_forward_yaw`、`visual_animations`；这些不能参与权威判定。单位动画采用 locomotion + action 通道，专用转场和全局混合规则详见 `ANIMATION_STATE_SYSTEM.md`。
 
-主动 `kind` 当前允许 `nova`、`buff`、`summon`、`dual_form`、`frontal`、`forward_area`、`empowered_attack`。`frontal` 可用 `fan` 或 `trapezoid` 表达锁定朝向的扇形/梯形命中；`forward_area` 在锁定方向的前方圆形区域结算，并可排定固定模拟扩散的冲击波，`shockwave_full_only` 可将冲击波限定为满资源升级形态；`empowered_attack` 只强化原攻击时间线中的下一次普攻，不重置攻速或另起攻击动作。技能资格、Command Buffer 与 Cast/Impact 时间线由 Main 编排，Gameplay Impact 集中在 `ActiveSkillEffectSystem`。新增 kind 必须同时实现权威效果、CardDB validator、必要快照/RPC、UI 描述和领域回归；不能只写数据。技能可提供纯表现用 `description`，避免 UI 出现英雄名分支。
+主动 `kind` 当前允许 `nova`、`buff`、`summon`、`dual_form`、`frontal`、`forward_area`、`empowered_attack`。`frontal` 可用 `fan` 或 `trapezoid` 表达锁定朝向的扇形/梯形命中；`fan` 的外缘按圆弧半径判定，`center_width` 可在其中声明恒定宽度的中央强化长条，未配置时仍可用 `center_ratio` 表达按角度缩放的小扇区。`forward_area` 在锁定方向的前方圆形区域结算，并可排定固定模拟扩散的冲击波，`shockwave_full_only` 可将冲击波限定为满资源升级形态；`empowered_attack` 只强化原攻击时间线中的下一次普攻，不重置攻速或另起攻击动作。每个主动技能都必须配置 `cost`、`max_uses`、`cooldown`：命令进入 Host 的 Command Buffer 时扣除金币，技能在权威 Cast Start 时扣除一次使用次数并开始 CD；这些状态属于场上该技能实例，重新下卡生成新实例后重置。技能资格、Command Buffer 与 Cast/Impact 时间线由 Main 编排，Gameplay Impact 集中在 `ActiveSkillEffectSystem`。新增 kind 必须同时实现权威效果、CardDB validator、必要快照/RPC、UI 描述和领域回归；不能只写数据。技能可提供纯表现用 `description`，避免 UI 出现英雄名分支。
 
-`skill_resource_*` 只声明潜在规则；单位必须由主动槽实际携带 `uses_skill_resource` 的技能才启用、显示和积攒资源，被同槽新单位替换或释放技能后立即关闭。资源可按受伤、出手、真实命中或击杀敌方单位积攒；技能在 Cast Start 固化层数/倍率并消费旧资源，保证普通/满层动作选择与最终伤害来自同一快照。`blind_charges` 随强化攻击命中写入目标，目标随后对应次数的普通攻击仍推进动作和冷却，但不产生伤害或命中特效。
+`skill_resource_*` 只声明潜在规则；单位必须由主动槽实际携带 `uses_skill_resource` 的技能才启用、显示和积攒资源，同槽出现新单位时立即关闭。资源可按受伤、出手、真实命中或击杀敌方单位积攒；`skill_resource_decay_delay` 与 `skill_resource_decay_rate` 表示脱离这些战斗活动后的延迟和每秒衰减。技能在 Cast Start 固化层数/倍率并清空当前资源，释放后仍保留携带状态并可为下一次技能重新积攒，保证普通/满层动作选择与最终伤害来自同一快照。`resource_shield_max` 可把资源比例映射为护盾，`shield_on_cast_start` 让护盾在施法起始立即获得；配合 `shield_decay` 与 `shield_duration` 可表达持续衰减护盾。`skill_resource_full_color` 指定资源满层时的填充颜色；最大值为 2～10 的整数时，资源条按层分段显示，其余资源使用连续进度。`blind_charges` 随强化攻击命中写入目标，目标随后对应次数的普通攻击仍推进动作和冷却，但不产生伤害或命中特效。
 
 一段动作需要多次普通攻击判定时，使用与攻击段对齐的 `attack_extra_hit_damage_multipliers / attack_extra_hit_delays`。每一刀都由固定模拟延迟结算并独立消费致盲，动画结束事件不能触发第二刀。
 
 带施法窗口的主动可配置 `cast_duration`、`impact_delay`、`visual_action` 与 `cast_locks`。`cast_duration` 是 Cast Start 到 Cast End 的权威窗口，`impact_delay` 是 Cast Start 到 Gameplay Impact 的权威延迟，未写时为 0；`impact_delay` 必须满足 `0 <= impact_delay <= cast_duration`。locks 可独立包含 `movement / attack / facing`；未写时默认三项全锁，空数组表示不限制基础行为。使用全身 `visual_action` 时必须包含 `attack`，不能让权威普攻被全身动作遮住。Gameplay lock 不由动画推导，impact 时刻仍由固定模拟实现。
 
+资源层数需要改变完整动作链时，可用 `resource_visual_actions` 为 0～满层逐档选择表现动作；同一次技能需要多次独立命中时，用等长的 `resource_hit_damage_sequences / resource_hit_delay_sequences` 为每档声明逐次伤害与相对 Cast Start 的固定时刻。满层结束回血使用 `full_resource_cast_end_heal`，由 Cast End 固定模拟结算，不读取动画完成事件。
+
 ## 普通卡与特殊机制
 
-普通卡：新增 CardDB 条目，通过 `play_card()` → `_spawn_unit()`，CardArt 自动发现卡面，3D 表现读取路径/动画配置。通常不改 Main/Unit。
+普通卡：新增 CardDB 条目，通过 `play_card()` → `_spawn_unit()`，CardArt 自动发现卡面，3D 表现读取路径/动画配置。通用机制字段由 Unit 和 Battle 系统读取。
 
 特殊机制：先写不依赖英雄名的规则，再在通用系统中实现字段读取；如客户端必须显示或模拟该状态，更新 Snapshot/可靠事件；为领域套件增加断言；最后更新本手册与 validator 字段白名单。禁止 `if card_id == "hero"` 和英雄继承树。
 
@@ -50,4 +52,4 @@ CardDB 是卡牌数值、通用机制参数和表现配置的唯一来源。普�
 
 当前会发现：非法类型/字段、必要战斗字段缺失、体型半径不匹配、弹体速度/类型/颜色错误、资源路径不存在、动画结构/未知键、建筑字段、未知法术 kind、失效召唤引用、双形态字段、未知主动 kind/必填项、主动动作映射、动作数组时长、施法时间关系和全身动作锁约束。
 
-完整 mechanics 还会对全部单位/建筑/双形态统一实例化包装场景，检查真实动画名，并检查所有可选卡的自动卡面发现。普通新卡不再复制角色美术测试；只有特殊机制或特殊动画链才增加领域断言。
+完整 mechanics 还会对全部单位/建筑/双形态统一实例化包装场景，检查真实动画名，并检查所有可选卡的自动卡面发现。普通卡使用通用场景/动画契约；特殊机制或特殊动画链在对应领域套件中增加断言。

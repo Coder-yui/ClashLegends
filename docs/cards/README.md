@@ -33,8 +33,10 @@
 - 动画名保留素材 `AnimationPlayer` 中的原名。数组按顺序播放；`attack_hit`、`attack_recover`、`transitions` 等是攻击动作的后续或转场映射。
 - `impact_delay` 是主动技能从 Cast Start 到 Gameplay Impact 的权威延迟，`cast_duration` 是施法锁定窗口。动画结束回调不负责伤害、移动、碰撞或状态结算。
 - 文档所说“无主动专属动画”，表示该卡没有配置 `visual_animations.visual_actions`；技能仍可由纯逻辑效果或攻击通道的既有动画表现。
+- 每个主动技能配置金币消耗、单个单位的最大使用次数和冷却时间；主动槽按钮显示金币与次数，冷却中的按钮显示剩余冷却。
 - 主动槽按钮在携带技能的单位完成部署后可用；点击后进入 `10` Tick（`0.5 s`）Command Buffer，再开始技能自身的 Cast 时间线。文档中的“立即结算”表示 Cast Start 后 `impact_delay = 0`。
+- 备战界面前两个卡位标记为主动位；对战手牌中的金色符印跟随对应 `card_id`，卡牌轮换时继续标记主动位卡牌。卡牌信息页展示主动技能的金币消耗和单个单位的使用次数。
 
 ## 当前动画混合策略
 
-全局默认混合时间来自 `UnitModel3D`：`action_in = 0.06 s`、`action_out = 0.12 s`、`sequence = 0.02 s`、`locomotion = 0.08 s`、`death = 0.08 s`、`model_swap = 0.02 s`。卡牌的专用 `transitions` 和按段 `attack_to_move` 片段以 `sequence` 进入和离开；没有专用转场片段的动作使用对应的全局 `action_out` 或 `locomotion`。
+全局默认混合时间来自 `UnitModel3D`：`action_in = 0.08 s`、`action_out = 0.14 s`、`sequence = 0.04 s`、`locomotion = 0.10 s`、`death = 0.10 s`、`model_swap = 0.02 s`。`attack` 配置键的默认值为 `0.06 s`，普通攻击入口使用 `action_in`。卡牌的专用 `transitions` 和按段 `attack_to_move` 片段以 `sequence` 进入和离开；没有专用转场片段的动作使用对应的全局 `action_out` 或 `locomotion`。

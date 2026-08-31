@@ -52,8 +52,8 @@ Command Buffer 从玩家输入时刻开始计时，用于吸收联网输入延�
         "animation": "Spell2",
         "kind": "skill",
         "durations": [1.2],
-        "blend_in": 0.06,
-        "blend_out": 0.12,
+        "blend_in": 0.08,
+        "blend_out": 0.14,
     },
 },
 "active_skill": {
@@ -65,7 +65,9 @@ Command Buffer 从玩家输入时刻开始计时，用于吸收联网输入延�
 },
 ```
 
-`animation` 和 `durations` 都支持数组。旧的动画名/动画名数组写法以及 `visual_action_durations` 仍兼容，但新技能优先使用同一描述字典，避免生命周期配置散落。
+`animation` 和 `durations` 都支持数组；单段动作和多段动作都可在 `visual_actions` 的描述字典中声明。`visual_action_durations` 作为按动作名提供时长的配置入口参与读取。
+
+动作数组还可用 `clip_ranges` 为每段声明素材的 `[开始秒, 结束秒]`，以截取无动作持姿区而不改源资源；数组长度必须与 `animation` 相同。默认多段内部使用 `sequence` 混合，只有素材已经逐帧无缝衔接时才在动作描述中设置 `sequence_blend = 0.0`。例如格温按层数从 `Spell1_0` 尾部持姿区让出时间给数个保持原速的 `Spell1_B`，再无混合直连 `Spell1_C_anm`，四档动作都保持 1.5 秒。
 
 ## 全局切换与默认混合
 
@@ -73,14 +75,16 @@ Command Buffer 从玩家输入时刻开始计时，用于吸收联网输入延�
 
 | 配置键 | 默认时间 | 用途 |
 | --- | ---: | --- |
-| `action_in` | `0.06s` | Idle/Move/Attack 进入一次新的 Attack、Skill 或 Transform 动作；部署结束进入 Attack 也使用它 |
-| `action_out` | `0.12s` | Attack、Skill 或 Transform 在没有任何转场素材时直接退出到最终基础状态 |
-| `sequence` | `0.02s` | 作者制作的 transition 首尾、技能多段、攻击 Start/Hit/Recover、连续攻击片段、移动序列内部 |
-| `locomotion` | `0.08s` | Idle/Move 基础状态切换，以及普通移动与加速/强化移动互切 |
-| `death` | `0.08s` | 任意生前 Pose 进入死亡动作 |
-| `model_swap` | `0.02s` | 形态或死亡跟随模型替换后的首个片段 |
+| `action_in` | `0.08s` | Idle/Move/Attack 进入一次新的 Attack、Skill 或 Transform 动作；部署结束进入 Attack 也使用它 |
+| `action_out` | `0.14s` | Attack、Skill 或 Transform 在没有任何转场素材时直接退出到最终基础状态 |
+| `sequence` | `0.04s` | 作者制作的 transition 首尾、技能多段、攻击 Start/Hit/Recover、连续攻击片段、移动序列内部 |
+| `locomotion` | `0.10s` | Idle/Move 基础状态切换，以及普通移动与加速/强化移动互切 |
+| `death` | `0.10s` | 任意生前 Pose 进入死亡动作 |
+| `model_swap` | `0.02s` | 形态或死亡后续模型接入后的首个片段 |
 
-`attack` 作为兼容配置键保留，默认值与 `action_in` 同为 `0.06s`；通用播放路径不再依赖旧的 `0.05s attack` 特例。各角色仍可用 `transition_blends` 覆盖，但没有必要时应使用全局值。腕豪蓄意轰拳不再配置 `blend_in = 0.05 / blend_out = 0.08`，直接使用 `action_in = 0.06 / action_out = 0.12`。
+`attack` 配置键的默认值为 `0.06s`，用于显式指定攻击类混合；普通攻击入口使用 `action_in = 0.08s`。各角色仍可用 `transition_blends` 覆盖，但没有必要时应使用全局值。腕豪蓄意轰拳不配置角色混合覆盖，直接使用 `action_in = 0.08 / action_out = 0.14`。
+
+腕豪的蓄意轰拳没有 `skill>move` 路由，技能结束以 `action_out = 0.14s` crossfade 到 `Run_Base`。
 
 全局切换归纳为：
 
@@ -92,10 +96,10 @@ Command Buffer 从玩家输入时刻开始计时，用于吸收联网输入延�
 6. Skill/Transform → Move：有专用 ToRun 时用 `sequence` 首尾；无专用片段时用 `action_out` 直接进入 Run。
 7. Attack → Skill/Transform：目标动作使用 `action_in`。
 8. Skill/Transform → Attack：源动作结束用 `action_out` 进入排队的攻击。
-9. 普通 Move ↔ Haste/Empowered Move：`locomotion = 0.08s`，不重播 `RunIn`。
+9. 普通 Move ↔ Haste/Empowered Move：`locomotion = 0.10s`，不重播 `RunIn`。
 10. `model_swap`：`0.02s`。
 
-攻击序列中的下一轮普攻、Start → Hit → Recover，连续攻击的 enter/retarget/loop，以及技能和移动多段内部，都属于同一动作/序列内部切片，统一使用 `sequence = 0.02s`。
+攻击序列中的下一轮普攻、Start → Hit → Recover，连续攻击的 enter/retarget/loop，以及技能和移动多段内部，都属于同一动作/序列内部切片，统一使用 `sequence = 0.04s`。
 
 ## Transition clip
 
@@ -105,29 +109,43 @@ Command Buffer 从玩家输入时刻开始计时，用于吸收联网输入延�
 "transitions": {"attack>move": "Attack_To_Run"}
 ```
 
+若两段素材本身已经逐帧对齐，可在同一个 route 描述中只关闭某一条边的 crossfade：
+
+```gdscript
+"transitions": {
+    "skill>move": {
+        "animation": "Skill_To_Run",
+        "blend_in": 0.0,  # Skill → Skill_To_Run 直接切换
+        "blend_out": 0.04 # Skill_To_Run → Run；省略时也回退到全局 sequence
+    },
+}
+```
+
+`blend_in` 表示前一 Action → transition clip，`blend_out` 表示 transition clip → 最终 Move；两者都允许为 `0.0`。未配置的边仍使用全局 `sequence`，因此无需为了一个精准接缝把角色的技能多段、普攻分段等全部设成零混合。
+
 Move route 中的 transition 分为两类：
 
-- 通用 `RunIn / IntoRun`：通过 `move_enter` 配置，只用于 `Deploy / Idle / Attack → Move`。播放链为 `前一动画 ─0.02→ RunIn/IntoRun ─0.02→ Run`。
-- 技能或特殊动作专用 `ToRun`：通过 `transitions["...>move"]`、按段 `attack_to_move` 或 `empowered_attack_to_move` 配置。播放链为 `Skill/特殊动作 ─0.02→ 专用 ToRun ─0.02→ Run`。
+- 通用 `RunIn / IntoRun`：通过 `move_enter` 配置，只用于 `Deploy / Idle / Attack → Move`。默认播放链为 `前一动画 ─0.04→ RunIn/IntoRun ─0.04→ Run`。
+- 技能或特殊动作专用 `ToRun`：通过 `transitions["...>move"]`、按段 `attack_to_move` 或 `empowered_attack_to_move` 配置。默认播放链为 `Skill/特殊动作 ─0.04→ 专用 ToRun ─0.04→ Run`；route 描述可以按上述方式覆盖单条边。
 
-两类 transition 在一条 Move route 中互斥。找到专用 `ToRun` 后会直接进入最终 Run，不再追加通用 `move_enter`；只有没有专用片段时，Deploy、Idle 或 Attack 才回退到通用 `RunIn/IntoRun`。
+一条 Move route 只使用一种 transition 来源，优先级为专用 `ToRun`、按段 `attack_to_move`、通用 `move_enter`。使用专用 `ToRun` 或按段转场时直接进入最终 Run；没有这些片段时，Deploy、Idle 或 Attack 使用通用 `RunIn/IntoRun`。
 
 `action_out` 与 `sequence` 的语义严格区分：
 
 **有专用 transition clip 时使用 `sequence` blend；无专用 transition 时使用 `action_out` generic crossfade。** 通用 `move_enter` 本身也属于 transition clip。
 
-- 有专用 transition clip 时，作者素材承担主要姿势转换，统一使用 `Action → sequence blend → Transition Clip → sequence blend → Move`。上层即使传入 `action_out` 或 action 描述里的 `blend_out`，也不会把这段较长混合套在专用片段上。
+- 有专用 transition clip 时，作者素材承担主要姿势转换，统一使用 `Action → sequence blend → Transition Clip → sequence blend → Move`；route 描述中的 `blend_in`、`blend_out` 可以分别覆盖两条边。
 - 有通用 `move_enter` 时，它同样是作者制作的 transition，因此首尾都使用 `sequence`。
 - 完全没有专用 `ToRun` 或通用 `move_enter` 时，crossfade 本身承担完整姿势转换，使用 `Action → action_out generic crossfade → Move`。普通 locomotion 状态之间仍使用 `locomotion`。
 
-这条规则统一覆盖 `transitions["attack/skill/deploy/transform>move"]`、按段 `attack_to_move`、`empowered_attack_to_move` 和 continuous attack 的转跑路线。龙王不再使用 `move_enter_from_deploy_only / move_enter_after_attack` 旧覆盖：Deploy/Idle 可使用通用 `RunIn`，吐息 Attack → Move 则由更具体的 `Spell1_2Run` 优先并直接接 `Run1B`。不要新增角色名判断或 `Spell2 → Run` 等硬编码。
+这条规则统一覆盖 `transitions["attack/skill/deploy/transform>move"]`、按段 `attack_to_move`、`empowered_attack_to_move` 和 continuous attack 的转跑路线。龙王的 Deploy/Idle 使用通用 `RunIn`，吐息 Attack → Move 使用更具体的 `Spell1_2Run` 并直接接 `Run1B`。不要新增角色名判断或 `Spell2 → Run` 等硬编码。
 
-强化普攻仍属于 Attack 通道，可用 `empowered_move / empowered_attack / empowered_attack_hit / empowered_attack_recover / empowered_attack_to_move` 替换待命移动、出手、长后摇和转跑素材。普通多段攻击需要按本次动作选择不同转跑路线时，使用与 `attack` 等长的 `attack_move` 和 `attack_to_move` 数组；空字符串表示该段没有专用转场。所有这些片段都允许被下一次权威攻击或移动状态从任意进度打断。
+强化普攻仍属于 Attack 通道，可用 `empowered_move / empowered_attack / empowered_attack_hit / empowered_attack_recover / empowered_attack_to_move` 作为待命移动、出手、长后摇和转跑素材。普通多段攻击需要按本次动作选择不同转跑路线时，使用与 `attack` 等长的 `attack_move` 和 `attack_to_move` 数组；空字符串表示该段没有专用转场。所有这些片段都允许被下一次权威攻击或移动状态从任意进度打断。
 
-主动加速移动可配置 `haste_move`；表现层读取权威/快照中的 buff 倍率，在 buff 开关当帧以 `locomotion = 0.08s` 切换移动动作。攻击动作的播放速度实时跟随权威攻速倍率，已经播放到中途的动作也会同步加速或恢复，但命中仍由 Unit 的固定计时决定。
+主动加速移动可配置 `haste_move`；表现层读取权威/快照中的 buff 倍率，在 buff 开关当帧以 `locomotion = 0.10s` 切换移动动作。攻击动作的播放速度实时跟随权威攻速倍率，已经播放到中途的动作也会同步加速或恢复，但命中仍由 Unit 的固定计时决定。
 
-持续攻击的首次 `attack_enter` 使用 `action_in`；`attack_retarget_enter`、enter 数组内部和进入 `attack_loop` 使用 `sequence`。数组按顺序播完后才进入循环，例如龙王换目标为 `new_looptoin ─0.02→ newtst ─0.02→ loop`。
+持续攻击的首次 `attack_enter` 使用 `action_in`；`attack_retarget_enter`、enter 数组内部和进入 `attack_loop` 使用 `sequence`。数组按顺序播完后才进入循环，例如龙王换目标为 `new_looptoin ─0.04→ newtst ─0.04→ loop`。
 
 ## 联机
 
-快照使用紧凑 Array，并保留原有 Unit 字段下标；当前协议在顶层携带 `SNAPSHOT_PROTOCOL_VERSION`、权威 `server_tick`，Unit 载荷尾部继续追加 action 时间轴、locomotion、强化攻击、技能资源启用状态及主动移速/攻速倍率。晚到客户端按权威剩余时间 seek，不从技能第一帧补播；旧的无版本载荷仍可降级为原组合状态。动画时间轴只用于表现同步，不参与权威判定。
+快照使用紧凑 Array，并保留 Unit 字段下标；当前 `SNAPSHOT_PROTOCOL_VERSION = 6`，顶层携带权威 `server_tick`，Unit 载荷尾部包含 action 时间轴、locomotion、强化攻击、技能资源启用状态、主动移速/攻速倍率、主动技能剩余次数与冷却时间。晚到客户端按权威剩余时间 seek；无版本载荷按兼容路径解析为基础组合状态。动画时间轴只用于表现同步，不参与权威判定。

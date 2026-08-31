@@ -14,7 +14,7 @@
 | 质量 / 视野 | 6 / 210 |
 | 空中单位 / 仅攻击建筑 / 可攻击空中 | 否 / 否 / 否 |
 | 部署时间 | 1.0 s（默认值） |
-| 技能资源 | 豪意最大 200；每次挥拳 +20；承受实际生命伤害按 1:1 增加 |
+| 技能资源 | 豪意最大 200；每次挥拳 +20；承受实际生命伤害按 1:1 增加；脱战 1.0 s 后按 100/s 衰减 |
 | 弹体 / 溅射 / 击退 | 无 / 0 / 0 |
 | 阵营颜色 | `Color(0.85, 0.55, 0.25)` |
 
@@ -28,15 +28,18 @@
 ### 豪意
 
 - 豪意上限 `200`；每次挥拳获得 `20`，承受实际生命伤害按 `1.0` 倍获得资源。被护盾吸收的部分不算生命伤害。
-- 只有主动槽实际携带“蓄意轰拳”时才显示和积攒豪意；主动技能 Cast Start 会消费当前豪意快照。
+- 只有主动槽实际携带“蓄意轰拳”时才显示和积攒豪意；受击或挥拳会刷新 1.0 s 脱战计时，计时结束后按 100/s 衰减；主动技能 Cast Start 读取当前豪意并清空资源。
+- 资源条以连续进度显示，未满时为白色，满层为黄色 `Color(1.0, 0.82, 0.24, 0.96)`。
 
 ## 3. 主动技能
 
 **蓄意轰拳**（`kind = frontal`，`shape = trapezoid`）
 
+- 主动技能规则：消耗 `3` 金币；每个腕豪最多使用 `2` 次；每次使用后冷却 `8.0 s`。
 - 锁定移动、普通攻击和朝向，在前方长度 `155` 的梯形区域结算；近端宽 `54`，远端宽 `170`，只影响地面目标。
 - 基础伤害 `130`，随豪意从 `1.0x` 线性提升到满豪意 `2.0x`，所以外圈最高 `260` 点。
 - 梯形中央比例 `0.34`，中央伤害倍率 `1.5`；满豪意中央最高 `390` 点。
+- 护盾按豪意比例从 `0` 到 `300` 点映射，Cast Start 立即获得，持续 `2.0 s` 并线性衰减。
 - 普通资源 `impact_delay = 0.72 s`、`cast_duration = 1.4 s`；施法期间全锁。
 - 满豪意使用 `Spell2_Strong`，但权威伤害仍由固定模拟的 impact 时间结算。
 
@@ -48,7 +51,6 @@
 - 四段命中：`Attack1_Hit`、`Sett_Attack1_Passive_anm`、`Attack2_Hit`、`Sett_Attack2_Passive_anm`。
 - 被动段收势：第二、第四段使用 `Attack1_Passive_Into_Idle`、`Attack2_Passive_Into_Idle`；`attack_recover_delay = 0.32 s`。
 - 攻击后移动：`Run_Passive`、`Run_Base`、`Run_Passive`、`Run_Base`；第二、第四段的专用转跑为 `Sett_Passive_INTO_Run_anm`。
-- 普通主动技能 `active`：`Sett_spell2_anm`，`1.4 s`；入口使用全局 `action_in = 0.06 s`。
-- 满豪意主动技能 `active_strong`：`Spell2_Strong`，`1.4 s`；入口使用全局 `action_in = 0.06 s`。
-- 技能转移动画：`Sett_Spell2_INTO_Run_anm`，片段首尾使用 `sequence = 0.02 s`，结束后进入 `Run_Base`。
+- 普通主动技能 `active`：`Sett_spell2_anm`，`1.4 s`；入口使用全局 `action_in = 0.08 s`，结束使用全局 `action_out = 0.14 s` 进入 `Run_Base`。
+- 满豪意主动技能 `active_strong`：`Spell2_Strong`，`1.4 s`；入口使用全局 `action_in = 0.08 s`，结束使用全局 `action_out = 0.14 s` 进入 `Run_Base`。
 - 死亡：`Death`，表现时长 `0.8 s`。
