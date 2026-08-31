@@ -24,6 +24,7 @@ func _check_starfall_and_falling_sky() -> void:
 	dragon.position = Vector2(360.0, 1000.0)
 	dragon.setup(0, stats, stats.name)
 	_main.add_child(dragon)
+	_expect(is_equal_approx(float(skill.forward_distance), 175.0) and is_equal_approx(float(skill.radius), 92.0), "龙王星落/天瀑落点位置不变，技能范围半径缩小 20% 至 92px")
 	var kill_dummy := Unit.new()
 	var dummy_stats := SuiteUtils.sweep_dummy_stats(CardDB.get_card("garen"))
 	kill_dummy.position = Vector2(600.0, 1100.0)

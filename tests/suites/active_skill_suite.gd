@@ -11,13 +11,18 @@ func _run_main_ticks(count: int) -> void:
 	for _tick in count:
 		_main._sim_step(_main.SIM_DT)
 
+func _reset_local_elixir() -> void:
+	_main._elixir.elixir = ElixirManager.MAX_ELIXIR
+
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
 	_check_active_skill_loadout_rule()
 	_check_deployment_skill_gate()
 	_check_skill_resource_loadout_visibility()
+	_check_skill_resource_colors()
 	_check_active_skill_activation()
+	_check_active_skill_cost_uses_and_refresh()
 	_check_pending_active_skill_revalidation()
 	_check_pending_control_revalidation()
 	_check_cast_impact_recovery_timeline()
@@ -45,6 +50,23 @@ func _check_active_skill_loadout_rule() -> void:
 		and is_equal_approx(left_position.y, right_position.y),
 		"主动槽 2 圆位以战场中线严格镜像主动槽 1"
 	)
+	var old_marked_cards: Array = _main._hand._active_skill_cards.keys()
+	_main._hand.set_cycle_state(["garen", "freeze", "xin", "ashe"], ["teemo", "masteryi", "tombstone", "aurelionsol"])
+	_main._hand.set_active_skill_cards(["garen", "freeze"])
+	var active_card_markers_visible: bool = (
+		_main._hand._button_slots[0].get_node_or_null("ActiveSkillMarker") != null
+		and (_main._hand._button_slots[0].get_node("ActiveSkillMarker") as Control).visible
+		and (_main._hand._button_slots[1].get_node("ActiveSkillMarker") as Control).visible
+		and not (_main._hand._button_slots[2].get_node("ActiveSkillMarker") as Control).visible
+	)
+	_main._hand.set_cycle_state(["xin", "ashe", "garen", "freeze"], ["teemo", "masteryi", "tombstone", "aurelionsol"])
+	var marker_follows_card: bool = (
+		not (_main._hand._button_slots[0].get_node("ActiveSkillMarker") as Control).visible
+		and (_main._hand._button_slots[2].get_node("ActiveSkillMarker") as Control).visible
+		and (_main._hand._button_slots[3].get_node("ActiveSkillMarker") as Control).visible
+	)
+	_main._hand.set_active_skill_cards(old_marked_cards)
+	_expect(active_card_markers_visible and marker_follows_card, "战斗手牌用无文字主动符印标记主动卡，并随手牌轮换跟随卡牌")
 	var old_deck: Array = _main._deck.duplicate()
 	_main._deck = ["garen", "freeze", "xin", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
 	_expect(
@@ -58,6 +80,7 @@ func _check_active_skill_loadout_rule() -> void:
 	_main._deck = old_deck
 
 func _check_deployment_skill_gate() -> void:
+	_reset_local_elixir()
 	var old_deck: Array = _main._deck.duplicate()
 	_main._deck = ["garen", "xin", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
 	var source: Unit = _main._spawn_unit(0, "garen", Vector2(360.0, 1000.0), -1.0, 0)
@@ -103,7 +126,29 @@ func _check_skill_resource_loadout_visibility() -> void:
 			unit.take_damage(unit.hp + 1.0)
 	_main._deck = old_deck
 
+func _check_skill_resource_colors() -> void:
+	var expected_colors := {
+		"sett": Color(1.0, 0.82, 0.24, 0.96),
+		"gwen": Color(0.28, 0.72, 1.0, 0.96),
+		"aurelionsol": Color(0.58, 0.42, 1.0, 0.96),
+	}
+	var colors_ok := true
+	var units: Array[Unit] = []
+	for card_id in expected_colors:
+		var stats: Dictionary = CardDB.get_card(card_id).duplicate(true)
+		var unit := Unit.new()
+		unit.setup(0, stats, stats.name)
+		unit.configure_carried_active_skill(stats.active_skill)
+		units.append(unit)
+		colors_ok = colors_ok and unit.get_skill_resource_fill_color() == Unit.SKILL_RESOURCE_UNFILLED_COLOR
+		unit.add_skill_resource(unit.skill_resource_max)
+		colors_ok = colors_ok and unit.get_skill_resource_fill_color() == expected_colors[card_id]
+	_expect(colors_ok, "瑟提/格温/龙王资源未满为白色，满层分别切换为黄色/蓝色/蓝紫色")
+	for unit in units:
+		unit.free()
+
 func _check_active_skill_activation() -> void:
+	_reset_local_elixir()
 	var old_deck: Array = _main._deck.duplicate()
 	_main._deck = ["garen", "xin", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
 	var first_source: Unit = _main._spawn_unit(0, "garen", Vector2(340.0, 800.0), 0.0, 0)
@@ -139,10 +184,12 @@ func _check_active_skill_activation() -> void:
 	_run_main_ticks(1)
 	_expect(command_tick_contract and is_equal_approx(enemy.hp, hp_before) and source.empowered_attack_ready, "主动技能与卡牌共用 input_tick→execute_tick 解析，Host 本地输入保持 10 Tick 后由权威逻辑结算")
 	_expect(
-		not _main._active_skills.has(ability_id)
+		_main._active_skills.has(ability_id)
+		and int(_main._active_skills[ability_id].uses_remaining) == 1
+		and float(_main._active_skills[ability_id].cooldown_left) > 0.0
 		and not _main._activate_active_skill(ability_id, 0)
-		and not _main._active_skill_bar.is_slot_visible(0),
-		"主动技能结算一次后固定圆位立即隐藏"
+		and _main._active_skill_bar.is_slot_visible(0),
+		"主动技能结算后保留单位资格，扣除一次使用次数并进入技能 CD"
 	)
 	var slot_two_unit: Unit = _main._spawn_unit(0, "xin", Vector2(440.0, 840.0), 0.0, 1)
 	var slot_two_ability_id := slot_two_unit.active_ability_id
@@ -159,7 +206,53 @@ func _check_active_skill_activation() -> void:
 	enemy.free()
 	_main._deck = old_deck
 
+func _check_active_skill_cost_uses_and_refresh() -> void:
+	_reset_local_elixir()
+	var old_deck: Array = _main._deck.duplicate()
+	_main._deck = ["teemo", "xin", "freeze", "ashe", "garen", "masteryi", "tombstone", "aurelionsol"]
+	var teemo: Unit = _main._spawn_unit(0, "teemo", Vector2(260.0, 760.0), 0.0, 0)
+	var ability_id := teemo.active_ability_id
+	var initial_elixir: float = _main._elixir.elixir
+	var combat_rules_visible: bool = (
+		_main._active_skill_bar._rule_labels[0].visible
+		and _main._active_skill_bar._rule_labels[0].text.contains("金币 1")
+		and _main._active_skill_bar._rule_labels[0].text.contains("次数 3/3")
+	)
+	var queued_first: bool = _main._queue_active_skill(ability_id, 0, 0)
+	var paid_on_queue: bool = is_equal_approx(_main._elixir.elixir, initial_elixir - 1.0)
+	_run_main_ticks(_main.COMMAND_DELAY_TICKS)
+	var first_entry: Dictionary = _main._active_skills[ability_id]
+	var first_use_state: bool = int(first_entry.uses_remaining) == 2 and float(first_entry.cooldown_left) > 0.0
+	var blocked_during_cooldown: bool = not _main._queue_active_skill(ability_id, 0, 0) and is_equal_approx(_main._elixir.elixir, initial_elixir - 1.0)
+	_main._tick_active_skill_cooldowns(4.0)
+	var queued_second: bool = _main._queue_active_skill(ability_id, 0, 0)
+	_run_main_ticks(_main.COMMAND_DELAY_TICKS)
+	_main._tick_active_skill_cooldowns(4.0)
+	var queued_third: bool = _main._queue_active_skill(ability_id, 0, 0)
+	_run_main_ticks(_main.COMMAND_DELAY_TICKS)
+	var exhausted_entry: Dictionary = _main._active_skills[ability_id]
+	var uses_exhausted: bool = int(exhausted_entry.uses_remaining) == 0 and not _main._queue_active_skill(ability_id, 0, 0)
+	var spent_three_times: bool = is_equal_approx(_main._elixir.elixir, initial_elixir - 3.0)
+
+	var refreshed: Unit = _main._spawn_unit(0, "teemo", Vector2(320.0, 760.0), 0.0, 0)
+	var refreshed_id := refreshed.active_ability_id
+	var refreshed_entry: Dictionary = _main._active_skills[refreshed_id]
+	var redeploy_resets_uses: bool = refreshed_id != ability_id and int(refreshed_entry.uses_remaining) == 3 and is_equal_approx(float(refreshed_entry.cooldown_left), 0.0)
+	var refreshed_queue_paid: bool = _main._queue_active_skill(refreshed_id, 0, 0) and is_equal_approx(_main._elixir.elixir, initial_elixir - 4.0)
+	_expect(
+		combat_rules_visible and queued_first and paid_on_queue and first_use_state and blocked_during_cooldown and queued_second and queued_third
+		and uses_exhausted and spent_three_times and redeploy_resets_uses and refreshed_queue_paid,
+		"主动技能按各自金币费用进入队列、每个单位独立扣使用次数并进入 CD，次数耗尽后重新下卡会刷新次数",
+	)
+	_main._cancel_pending_active_skill(refreshed_id)
+	_main._on_active_skill_unit_died(refreshed_id)
+	for unit in [teemo, refreshed]:
+		if is_instance_valid(unit):
+			unit.free()
+	_main._deck = old_deck
+
 func _check_pending_active_skill_revalidation() -> void:
+	_reset_local_elixir()
 	var old_deck: Array = _main._deck.duplicate()
 	_main._deck = ["garen", "xin", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
 	var enemy_stats: Dictionary = CardDB.imp_stats().duplicate(true)
@@ -193,7 +286,7 @@ func _check_pending_active_skill_revalidation() -> void:
 	var gnar_ability_id := gnar.active_ability_id
 	var queued_before_transform: bool = _main._queue_active_skill(gnar_ability_id, 0, 0)
 	_main._active_skill_bar.set_pending(gnar_ability_id, true)
-	var pending_impacts_before: int = _main._pending_frontal_stun_skills.size()
+	var pending_impacts_before: int = _main._active_skill_effect_system.pending_frontal_stuns.size()
 	var transformed_after_click := gnar.transform_to_mega()
 	var transform_action_serial := gnar.get_visual_action_serial()
 	_run_main_ticks(_main.COMMAND_DELAY_TICKS)
@@ -201,7 +294,7 @@ func _check_pending_active_skill_revalidation() -> void:
 		queued_before_transform
 		and transformed_after_click
 		and _main._active_skills.has(gnar_ability_id)
-		and _main._pending_frontal_stun_skills.size() == pending_impacts_before
+		and _main._active_skill_effect_system.pending_frontal_stuns.size() == pending_impacts_before
 		and gnar.get_visual_action_serial() == transform_action_serial
 		and not _main._active_skill_bar._buttons[0].disabled,
 		"主动 pending 到期时若已进入 transform，会拒绝效果/技能动作并恢复按钮",
@@ -235,14 +328,17 @@ func _check_pending_active_skill_revalidation() -> void:
 	_expect(rejected_during_cast, "主动 pending 到期时若已进入另一段 active cast，会拒绝效果/技能动作并恢复按钮")
 	_expect(
 		queued_after_cast and (casting_source.empowered_attack_ready or casting_source.get_empowered_attack_visual_serial() > 0)
-		and not _main._active_skills.has(casting_ability_id),
-		"pending 期间权威状态始终合法时，主动技能仍在 0.5 秒后正常释放",
+		and _main._active_skills.has(casting_ability_id)
+		and int(_main._active_skills[casting_ability_id].uses_remaining) == 1
+		and float(_main._active_skills[casting_ability_id].cooldown_left) > 0.0,
+		"pending 期间权威状态始终合法时，主动技能仍在 0.5 秒后正常释放并进入 CD",
 	)
 	casting_source.free()
 	enemy.free()
 	_main._deck = old_deck
 
 func _check_pending_control_revalidation() -> void:
+	_reset_local_elixir()
 	var old_deck: Array = _main._deck.duplicate()
 	_main._deck = ["garen", "xin", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
 	var enemy_stats: Dictionary = CardDB.imp_stats().duplicate(true)
@@ -292,6 +388,7 @@ func _check_pending_control_revalidation() -> void:
 	_main._deck = old_deck
 
 func _check_cast_impact_recovery_timeline() -> void:
+	_reset_local_elixir()
 	var old_deck: Array = _main._deck.duplicate()
 	_main._deck = ["garen", "xin", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
 	var source: Unit = _main._spawn_unit(0, "garen", Vector2(260.0, 680.0), 0.0, 0)
@@ -360,6 +457,7 @@ func _check_artdev_active_skill_timeline() -> void:
 	_main._deck = old_deck
 
 func _check_cast_control_pause_and_death_cancel() -> void:
+	_reset_local_elixir()
 	var old_deck: Array = _main._deck.duplicate()
 	_main._deck = ["garen", "xin", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
 	var freeze_source: Unit = _main._spawn_unit(0, "garen", Vector2(260.0, 680.0), 0.0, 0)

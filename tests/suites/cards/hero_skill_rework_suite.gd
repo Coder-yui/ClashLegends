@@ -12,6 +12,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
 	_check_sett_resource_and_frontal_damage()
+	_check_sett_shield_and_combat_decay()
 	_check_ashe_volley()
 	_check_empowered_attacks_and_blind()
 	_check_masteryi_double_strike_and_highlander()
@@ -51,9 +52,11 @@ func _check_sett_resource_and_frontal_damage() -> void:
 	sett.add_skill_resource(100.0)
 	var skill: Dictionary = CardDB.get_card("sett").active_skill
 	var prepared: Dictionary = _main._active_skill_effect_system.prepare_cast(sett, skill)
+	_main._active_skill_effect_system.apply_cast_start(sett, prepared)
 	var prepared_full := (
 		is_equal_approx(float(prepared.damage), float(skill.damage) * 2.0)
 		and String(prepared.visual_action) == "active_strong"
+		and is_equal_approx(sett.shield_hp, 300.0)
 		and is_zero_approx(sett.skill_resource_value)
 	)
 	var center := _spawn_dummy(Vector2(100.0, 1000.0))
@@ -77,22 +80,85 @@ func _check_sett_resource_and_frontal_damage() -> void:
 	for unit in [sett, center, edge, behind]:
 		unit.free()
 
+func _check_sett_shield_and_combat_decay() -> void:
+	var skill: Dictionary = CardDB.get_card("sett").active_skill
+	var zero_sett := _spawn_test_unit("sett", 0, Vector2(100.0, 1120.0))
+	zero_sett.configure_carried_active_skill(skill)
+	var zero_prepared: Dictionary = _main._active_skill_effect_system.prepare_cast(zero_sett, skill)
+	_main._active_skill_effect_system.apply_cast_start(zero_sett, zero_prepared)
+	var zero_grit_no_shield := is_zero_approx(zero_sett.shield_hp)
+
+	var sett := _spawn_test_unit("sett", 0, Vector2(180.0, 1120.0))
+	sett.configure_carried_active_skill(skill)
+	sett.add_skill_resource(180.0)
+	var resource_from_attack := false
+	var dummy := _spawn_dummy(Vector2(180.0, 1060.0))
+	sett._target = dummy
+	sett._attacking = true
+	sett._attack_windup = 0.0
+	sett._attack_cd = 0.0
+	sett._attack_visual_pending = true
+	sett._attack(_main.SIM_DT)
+	resource_from_attack = is_equal_approx(sett.skill_resource_value, 200.0)
+
+	var full_prepared: Dictionary = _main._active_skill_effect_system.prepare_cast(sett, skill)
+	_main._active_skill_effect_system.apply_cast_start(sett, full_prepared)
+	var cast_start_shield := is_equal_approx(sett.shield_hp, 300.0) and is_zero_approx(sett.skill_resource_value)
+	sett._tick_active_statuses(1.0)
+	var halfway_shield := is_equal_approx(sett.shield_hp, 150.0)
+	sett._tick_active_statuses(1.0)
+	var shield_expired := is_zero_approx(sett.shield_hp) and is_zero_approx(sett.shield_timer)
+
+	sett.add_skill_resource(100.0)
+	sett._tick_active_statuses(0.75)
+	var combat_delay_holds := is_equal_approx(sett.skill_resource_value, 100.0)
+	sett.take_damage(10.0)
+	sett._tick_active_statuses(1.0)
+	var damage_refreshes_decay := is_equal_approx(sett.skill_resource_value, 110.0)
+	sett._tick_active_statuses(0.5)
+	var out_of_combat_decay := sett.skill_resource_value < 110.0
+	_expect(
+		zero_grit_no_shield and resource_from_attack and cast_start_shield and halfway_shield and shield_expired,
+		"腕豪 0 豪意不生成护盾，攻击可积攒豪意，技能释放瞬间按满豪意获得 300 护盾并在 2 秒线性衰减至 0",
+	)
+	_expect(
+		combat_delay_holds and damage_refreshes_decay and out_of_combat_decay,
+		"腕豪受伤/攻击后的豪意会刷新脱战计时，脱战后才开始衰减",
+	)
+	for unit in [zero_sett, sett, dummy]:
+		if is_instance_valid(unit):
+			unit.free()
+
 func _check_ashe_volley() -> void:
 	var ashe := _spawn_test_unit("ashe", 0, Vector2(300.0, 1120.0))
 	var front := _spawn_dummy(Vector2(300.0, 980.0))
 	var behind := _spawn_dummy(Vector2(300.0, 1250.0))
 	var skill: Dictionary = CardDB.get_card("ashe").active_skill
+	var active_visual: Dictionary = CardDB.get_card("ashe").visual_animations.visual_actions.active
+	var animation_duration_ok: bool = active_visual.get("durations", []) == [1.0]
 	ashe.begin_active_skill_cast(float(skill.cast_duration), Vector2.UP, skill.cast_locks)
 	var front_before := front.hp
 	var behind_before := behind.hp
+	_main._active_skill_effect_system.begin_frontal_visual(ashe, skill, Vector2.UP)
+	var range_effect: Dictionary = _main._active_skill_effect_system.frontal_effects.back()
+	var ring_sector_shape := (
+		bool(skill.fan_inner_arc)
+		and bool(range_effect.fan_inner_arc)
+		and is_equal_approx(float(range_effect.source_radius), ashe.body_radius)
+		and is_equal_approx(float(range_effect.length), 190.0)
+		and is_equal_approx(float(range_effect.arc_degrees), 72.0)
+	)
 	_main._active_skill_effect_system.apply(ashe, skill)
 	_expect(
-		int(skill.projectile_count) == 8 and String(skill.shape) == "fan" and String(skill.visual_action) == "active"
-		and is_equal_approx(front_before - front.hp, float(skill.damage))
+			int(skill.projectile_count) == 8 and String(skill.shape) == "fan" and String(skill.visual_action) == "active"
+			and animation_duration_ok
+			and ring_sector_shape
+			and is_equal_approx(front_before - front.hp, float(skill.damage))
 		and is_equal_approx(front.slow_timer, 1.0)
 		and is_equal_approx(behind.hp, behind_before),
-		"寒冰 Spell2 万箭齐发以 8 箭扇形命中前方目标一次、造成伤害并施加 1 秒减速，不命中身后",
+		"寒冰 Spell2 万箭齐发动画为 1 秒，使用贴合人物体型内圆弧的 8 箭环形扇区，命中前方目标一次并减速，不命中身后",
 	)
+	_main._active_skill_effect_system.frontal_effects.clear()
 	for unit in [ashe, front, behind]:
 		unit.free()
 
@@ -253,18 +319,14 @@ func _check_animation_routes() -> void:
 		)
 		sett._move_intent = Vector2.UP * sett.move_speed
 		sett_view._on_animation_finished(&"Sett_spell2_anm")
-		var skill_transition_short := (
-			sett_view._animation_player.current_animation == "Sett_Spell2_INTO_Run_anm"
-			and is_equal_approx(sett_view._last_clip_blend_time, sett_view._transition_blend(&"sequence"))
-		)
-		sett_view._on_animation_finished(&"Sett_Spell2_INTO_Run_anm")
 		sett_skill_route = (
-			skill_uses_global_action_in and skill_transition_short
+			skill_uses_global_action_in
 			and sett_view._animation_player.current_animation == "Run_Base"
-			and is_equal_approx(sett_view._last_clip_blend_time, sett_view._transition_blend(&"sequence"))
+			and is_equal_approx(sett_view._last_clip_blend_time, sett_view._transition_blend(&"action_out"))
+			and not CardDB.get_card("sett").visual_animations.get("transitions", {}).has("skill>move")
 		)
 	_expect(sett_routes, "腕豪第一拳丢失目标后接 Run Passive；第二拳先接 Sett Passive Into Run 再进入 Run Base")
-	_expect(sett_skill_route, "腕豪蓄意轰拳移除角色混合覆盖：入口用全局 action_in，专用转跑首尾用 sequence")
+	_expect(sett_skill_route, "腕豪蓄意轰拳不再使用 Spell2 IntoRun；技能结束按 action_out 直接进入 Run Base")
 
 	var garen := _spawn_test_unit("garen", 0, Vector2(260.0, 900.0))
 	_main._battle_presentation.attach_unit(garen, CardDB.get_card("garen"))

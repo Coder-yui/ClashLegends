@@ -66,8 +66,11 @@ func run(harness: Object, main: Node2D) -> void:
 		builder._deck_info_overlay != null
 		and builder._deck_info_active_option.item_count == 1
 		and builder._deck_info_active_option.disabled
+		and builder._deck_info_active_rules != null
+		and builder._deck_info_active_cost_label.text.contains("金币消耗")
+		and builder._deck_info_active_uses_label.text.contains("最多 2 次")
 		and builder._skin_choices.get("garen", "") == "default",
-		"信息页展示唯一主动技能选择与默认原皮入口"
+		"信息页展示主动技能选择、金币消耗、单位次数与默认原皮入口"
 	)
 	builder._close_card_info()
 	builder._on_deck_slot_pressed(0)

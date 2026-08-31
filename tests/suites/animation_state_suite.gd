@@ -96,7 +96,7 @@ func _check_skill_recovery_routes() -> void:
 		transition_policy_applied = (
 			view._active_action_kind == &"skill"
 			and view._active_action_priority > int(UnitModel3D.ACTION_PRIORITY.get(&"attack", 20))
-			and is_equal_approx(view._transition_blend(&"action_in"), 0.06)
+			and is_equal_approx(view._transition_blend(&"action_in"), 0.08)
 			and is_equal_approx(view._active_action_blend_out, 0.12)
 		)
 		var cast_timer_before_finish := unit.active_skill_cast_timer
@@ -112,7 +112,7 @@ func _check_skill_recovery_routes() -> void:
 		view._on_animation_finished(&"GnarBig_Spell2_anm")
 		spell_to_move = view._animation_player.current_animation == "Run_Base"
 		generic_move_uses_action_out = (
-			is_equal_approx(view._last_clip_blend_time, view._transition_blend(&"action_out"))
+			is_equal_approx(view._last_clip_blend_time, 0.12)
 		)
 
 		unit._move_intent = Vector2.ZERO
@@ -129,7 +129,7 @@ func _check_skill_recovery_routes() -> void:
 	_expect(spell_to_move, "纳尔 Spell2 没有专用 ToRun 时按 action_out 直接衔接基础 Run")
 	_expect(spell_to_attack, "纳尔 Spell2 期间排队的普攻在动作结束当帧立即衔接 Attack")
 	_expect(transition_policy_applied, "Skill 优先级高于 Attack，blend-in/out 统一从 transition policy 读取")
-	_expect(generic_move_uses_action_out, "没有 dedicated transition 时，Skill→Move 首段仍使用 action_out generic crossfade")
+	_expect(generic_move_uses_action_out, "没有 dedicated transition 时，Skill→Move 使用动作描述覆盖的 action_out generic crossfade")
 	_expect(animation_is_read_only, "animation_finished 只切换表现，不会提前结束权威 cast timing")
 	if view != null:
 		view.free()
@@ -155,11 +155,13 @@ func _check_dedicated_move_transition_blends() -> void:
 		var sequence_blend := xin_view._transition_blend(&"sequence")
 		var action_out_blend := xin_view._transition_blend(&"action_out")
 		_expect(
-			is_equal_approx(sequence_blend, 0.02)
-			and is_equal_approx(xin_view._transition_blend(&"action_in"), 0.06)
-			and is_equal_approx(action_out_blend, 0.12)
-			and is_equal_approx(xin_view._transition_blend(&"locomotion"), 0.08),
-			"全局默认混合为 action_in 0.06、action_out 0.12、sequence 0.02、locomotion/加速切换 0.08",
+			is_equal_approx(sequence_blend, 0.04)
+			and is_equal_approx(xin_view._transition_blend(&"action_in"), 0.08)
+			and is_equal_approx(action_out_blend, 0.14)
+			and is_equal_approx(xin_view._transition_blend(&"locomotion"), 0.10)
+			and is_equal_approx(xin_view._transition_blend(&"death"), 0.10)
+			and is_equal_approx(xin_view._transition_blend(&"model_swap"), 0.02),
+			"全局默认混合为 action_in 0.08、action_out 0.14、sequence 0.04、locomotion/death 0.10、model_swap 0.02",
 		)
 
 		xin_view._current_state = 0
@@ -312,11 +314,15 @@ func _check_cast_policies_and_snapshot() -> void:
 	stationary.blind_attack_charges = 2
 	stationary.active_speed_multiplier = 1.5
 	stationary.active_attack_speed_multiplier = 1.4
+	stationary.active_ability_id = 9001
+	_main._active_skills[stationary.active_ability_id] = {
+		"unit": stationary, "uses_remaining": 2, "cooldown_left": 1.25,
+	}
 	var payload := NetworkSnapshotSystem.new(_main)._unit_snapshot_payload(77, stationary)
 	var snapshot_system := NetworkSnapshotSystem.new(_main)
 	var snapshot_header := snapshot_system.snapshot_header()
 	var snapshot_contract: bool = (
-		payload.size() == 33
+		payload.size() == 35
 		and int(payload[NetworkSnapshotSystem.U_ACTION_SERIAL]) == stationary.get_visual_action_serial()
 		and String(payload[NetworkSnapshotSystem.U_ACTION_NAME]) == "active"
 		and is_equal_approx(float(payload[NetworkSnapshotSystem.U_ACTION_DURATION]), 1.2)
@@ -329,13 +335,16 @@ func _check_cast_policies_and_snapshot() -> void:
 		and int(payload[NetworkSnapshotSystem.U_SKILL_RESOURCE_ENABLED]) == 1
 		and is_equal_approx(float(payload[NetworkSnapshotSystem.U_ACTIVE_SPEED_MULTIPLIER]), 1.5)
 		and is_equal_approx(float(payload[NetworkSnapshotSystem.U_ACTIVE_ATTACK_SPEED_MULTIPLIER]), 1.4)
+		and int(payload[NetworkSnapshotSystem.U_ACTIVE_SKILL_USES_REMAINING]) == 2
+		and is_equal_approx(float(payload[NetworkSnapshotSystem.U_ACTIVE_SKILL_COOLDOWN]), 1.25)
 		and int(snapshot_header[0]) == NetworkSnapshotSystem.SNAPSHOT_PROTOCOL_VERSION
 		and int(snapshot_header[1]) == _main._sim_tick_id
 	)
 	_expect(stationary_locked and attacks_after_cast, "默认技能施法独立锁住移动与普攻，并在窗口结束后立即允许攻击")
 	_expect(mobile_cast_policy, "cast_locks 可配置允许移动施法，同时继续禁止普通攻击")
 	_expect(unrestricted_policy, "空 cast_locks 的纯 Buff 窗口不影响 locomotion 或普通攻击")
-	_expect(snapshot_contract, "网络快照追加同步 action 时间轴、locomotion、强化普攻、豪意与致盲，旧表现字段下标保持不变")
+	_expect(snapshot_contract, "网络快照追加同步 action 时间轴、locomotion、强化普攻、豪意、致盲与主动技能次数/CD，旧表现字段下标保持不变")
 	for unit in [stationary, mobile, unrestricted, near_dummy, far_dummy]:
 		if is_instance_valid(unit):
 			unit.free()
+	_main._active_skills.erase(9001)

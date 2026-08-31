@@ -86,6 +86,8 @@ static func _configured_animation_names(animations: Dictionary) -> Array[StringN
 	var transitions = animations.get("transitions")
 	if transitions is Dictionary:
 		for value in (transitions as Dictionary).values():
+			if value is Dictionary:
+				value = (value as Dictionary).get("animation")
 			_append_animation_names(names, value)
 	var actions = animations.get("visual_actions")
 	if actions is Dictionary:

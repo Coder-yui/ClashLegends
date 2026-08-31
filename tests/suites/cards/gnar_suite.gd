@@ -192,7 +192,7 @@ func _check_gnar_mechanic() -> void:
 	var back_hp := back.hp
 	var air_hp := air.hp
 	var cast_facing := active_small.get_visual_facing_direction()
-	_main._activate_dual_form_skill(active_small, skill)
+	_main._active_skill_effect_system.activate_dual_form(active_small, skill)
 	var active_small_contract := (
 		active_small.form_index == 1
 		and active_small.get_visual_action_name() == &"transform_active"
@@ -212,12 +212,12 @@ func _check_gnar_mechanic() -> void:
 	var telegraph_queued: bool = (
 		front.hp == front_hp
 		and is_zero_approx(front.stun_timer)
-		and _main._pending_frontal_stun_skills.size() == 1
-		and _main._frontal_skill_effects.size() == 1
+		and _main._active_skill_effect_system.pending_frontal_stuns.size() == 1
+		and _main._active_skill_effect_system.frontal_effects.size() == 1
 	)
-	_main._tick_pending_frontal_stun_skills(float(skill.transform_impact_delay) - 0.05)
+	_main._active_skill_effect_system.tick_pending(float(skill.transform_impact_delay) - 0.05)
 	var waits_for_hand_impact := front.hp == front_hp and is_zero_approx(front.stun_timer)
-	_main._tick_pending_frontal_stun_skills(0.05)
+	_main._active_skill_effect_system.tick_pending(0.05)
 	var frontal_hit_ok := front.hp == front_hp - float(skill.damage) and is_equal_approx(front.stun_timer, 1.0)
 	var filtering_ok := back.hp == back_hp and is_zero_approx(back.stun_timer) and air.hp == air_hp and is_zero_approx(air.stun_timer)
 	var frozen_position := front.position
@@ -228,15 +228,15 @@ func _check_gnar_mechanic() -> void:
 	active_small.form_transition_timer = 0.0
 	active_small.active_skill_cast_timer = 0.0
 	active_small.active_skill_cast_facing = Vector2.ZERO
-	_main._activate_dual_form_skill(active_small, skill)
+	_main._active_skill_effect_system.activate_dual_form(active_small, skill)
 	var mega_waits_for_impact: bool = (
 		active_small.get_visual_action_name() == &"active"
-		and _main._pending_frontal_stun_skills.size() == 1
+		and _main._active_skill_effect_system.pending_frontal_stuns.size() == 1
 		and is_equal_approx(active_small.active_skill_cast_timer, float(skill.cast_duration))
 	)
 	_expect(mega_waits_for_impact, "大纳尔主动固定方向并锁定行动，直接播放 Spell2 后延迟到 0.8 秒手掌触地时结算")
-	_main._pending_frontal_stun_skills.clear()
-	_main._frontal_skill_effects.clear()
+	_main._active_skill_effect_system.pending_frontal_stuns.clear()
+	_main._active_skill_effect_system.frontal_effects.clear()
 	active_small.active_skill_cast_timer = 0.0
 	active_small.active_skill_cast_facing = Vector2.ZERO
 	for unit in [gnar, dummy, resize_gnar, crowded_gnar, edge_gnar, edge_neighbor, active_small, front, back, air] + crowded_neighbors:
@@ -403,7 +403,7 @@ func _check_gnar_art_integration() -> void:
 		unit._target = unit
 		view._play_attack(2)
 		unit_attack_playing = view._animation_player.current_animation == "GnarBig_Attack2_anm"
-	_main._activate_frontal_stun_skill(unit, stats.active_skill)
+	_main._active_skill_effect_system.activate_frontal_stun(unit, stats.active_skill)
 	if view != null:
 		view._sync_visual(false, 0.05)
 	var spell2_playing := view != null and view._animation_player.current_animation == "GnarBig_Spell2_anm"
@@ -431,5 +431,5 @@ func _check_gnar_art_integration() -> void:
 	if is_instance_valid(unit):
 		unit.free()
 	# 清理待结算主动技能现场，避免污染后续领域 suite。
-	_main._pending_frontal_stun_skills.clear()
-	_main._frontal_skill_effects.clear()
+	_main._active_skill_effect_system.pending_frontal_stuns.clear()
+	_main._active_skill_effect_system.frontal_effects.clear()

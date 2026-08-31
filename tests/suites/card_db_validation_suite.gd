@@ -15,11 +15,11 @@ func run(harness: Object) -> void:
 		"visual_animations": {
 			"visual_actions": {"active": "Spell"},
 			"visual_action_durations": {"active": 1.0},
-			"transitions": {"skill>move": "Spell_To_Run"},
+			"transitions": {"skill>move": {"animation": "Spell_To_Run", "blend_in": 0.0, "blend_out": 0.02}},
 			"transition_blends": {"action_in": 0.06, "action_out": 0.12},
 		},
 	}, animation_schema_errors)
-	harness._expect(animation_schema_errors.is_empty(), "CardDB validator 登记 visual_action_durations、动作描述与统一 transition policy 字段")
+	harness._expect(animation_schema_errors.is_empty(), "CardDB validator 登记 visual_action_durations、动作描述与逐边 transition blend 字段")
 	var active_schema_errors := PackedStringArray()
 	CardDB._validate_active_skills("timeline_probe", {
 		"visual_animations": {"visual_actions": {"active": {"animation": ["A", "B"], "durations": [1.0], "kind": "skill"}}},
@@ -92,8 +92,8 @@ func run(harness: Object) -> void:
 	}, hero_rework_errors)
 	CardDB._validate_active_skills("frontal_probe", {
 		"active_skill": {
-		"name": "非法扇形", "kind": "frontal", "shape": "fan",
-			"length": 0.0, "damage": -1.0, "arc_degrees": 180.0, "projectile_count": -1,
+			"name": "非法扇形", "kind": "frontal", "shape": "fan",
+			"length": 0.0, "damage": -1.0, "arc_degrees": 180.0, "projectile_count": -1, "center_width": -1.0,
 			"impact_delay": 0.2, "cast_duration": 0.3,
 		},
 	}, hero_rework_errors)
@@ -131,7 +131,7 @@ func run(harness: Object) -> void:
 		and "deploy_sweep_damage" in hero_error_text and "deploy_sweep_duration" in hero_error_text
 		and "knockback_duration" in hero_error_text and "knockback_mass_factor_max" in hero_error_text
 		and "attack_to_move" in hero_error_text
-		and "length" in hero_error_text and "arc_degrees" in hero_error_text and "projectile_count" in hero_error_text
+		and "length" in hero_error_text and "arc_degrees" in hero_error_text and "projectile_count" in hero_error_text and "center_width" in hero_error_text
 		and "empowered_damage_multiplier" in hero_error_text
 		and "empowered_speed_multiplier" in hero_error_text and "blind_charges" in hero_error_text
 		and "forward_distance" in hero_error_text and "shockwave_duration" in hero_error_text

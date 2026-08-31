@@ -8,6 +8,12 @@ var _main: Node2D
 func _expect(condition: bool, message: String) -> void:
 	_harness._expect(condition, message)
 
+func _view_for(unit: Unit) -> UnitModel3D:
+	for child in _main._battle_presentation._world_root.get_children():
+		if child is UnitModel3D and child._source == unit:
+			return child as UnitModel3D
+	return null
+
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
@@ -31,11 +37,12 @@ func _check_gwen_snip_snip_skill() -> void:
 		gwen.on_attack_landed()
 	var charged_full := is_equal_approx(gwen.skill_resource_value, 3.0)
 	var prepared_full: Dictionary = _main._active_skill_effect_system.prepare_cast(gwen, skill)
-	var full_tier := (
+	var full_tier: bool = (
 		charged_full and is_zero_approx(gwen.skill_resource_value)
-		and is_equal_approx(float(prepared_full.damage), 160.0)
-		and String(prepared_full.visual_action) == "active_strong"
-		and is_equal_approx(float(prepared_full.cast_duration), 2.8000002)
+		and String(prepared_full.visual_action) == "active_3"
+		and is_equal_approx(float(prepared_full.cast_duration), 1.5)
+		and prepared_full.prepared_hit_damages == [40.0, 20.0, 20.0, 20.0, 60.0]
+		and is_equal_approx(float(prepared_full.cast_end_heal), 100.0)
 	)
 	var partial := Unit.new()
 	partial.position = Vector2(560.0, 900.0)
@@ -44,33 +51,92 @@ func _check_gwen_snip_snip_skill() -> void:
 	partial.add_skill_resource(2.0)
 	_main.add_child(partial)
 	var prepared_partial: Dictionary = _main._active_skill_effect_system.prepare_cast(partial, skill)
+	var zero := Unit.new()
+	zero.setup(0, stats, stats.name)
+	zero.configure_carried_active_skill(skill)
+	_main.add_child(zero)
+	var prepared_zero: Dictionary = _main._active_skill_effect_system.prepare_cast(zero, skill)
+	var one := Unit.new()
+	one.setup(0, stats, stats.name)
+	one.configure_carried_active_skill(skill)
+	one.add_skill_resource(1.0)
+	_main.add_child(one)
+	var prepared_one: Dictionary = _main._active_skill_effect_system.prepare_cast(one, skill)
+	var all_tiers: bool = (
+		String(prepared_zero.visual_action) == "active_0" and prepared_zero.prepared_hit_damages == [40.0, 60.0]
+		and String(prepared_one.visual_action) == "active_1" and prepared_one.prepared_hit_damages == [40.0, 20.0, 60.0]
+		and String(prepared_partial.visual_action) == "active_2" and prepared_partial.prepared_hit_damages == [40.0, 20.0, 20.0, 60.0]
+		and String(prepared_full.visual_action) == "active_3" and prepared_full.prepared_hit_damages == [40.0, 20.0, 20.0, 20.0, 60.0]
+	)
+	var visual_actions: Dictionary = stats.visual_animations.visual_actions
+	var spell_0_time_scale := float(visual_actions.active_0.durations[0]) / 1.6666667
+	var uncompressed_b_timing := true
+	for tier in range(1, 4):
+		var descriptor: Dictionary = visual_actions["active_%d" % tier]
+		var durations: Array = descriptor.durations
+		var animations: Array = descriptor.animation
+		var total_duration := 0.0
+		for clip_index in range(durations.size()):
+			total_duration += float(durations[clip_index])
+			if String(animations[clip_index]) == "Spell1_B":
+				uncompressed_b_timing = uncompressed_b_timing and is_equal_approx(float(durations[clip_index]), 0.1666667)
+		var spell_0_source_duration := float(descriptor.clip_ranges[0][1]) - float(descriptor.clip_ranges[0][0])
+		uncompressed_b_timing = (
+			uncompressed_b_timing
+			and is_equal_approx(total_duration, 1.5)
+			and is_equal_approx(float(durations[0]) / spell_0_source_duration, spell_0_time_scale)
+		)
+	_main._active_skill_effect_system.begin_frontal_visual(gwen, prepared_full, Vector2.UP)
+	var range_effect: Dictionary = _main._active_skill_effect_system.frontal_effects.back()
+	var reference_range: bool = (
+		String(range_effect.shape) == "fan"
+		and is_equal_approx(float(range_effect.arc_degrees), 78.0)
+		and is_equal_approx(float(range_effect.length), 135.0)
+		and is_equal_approx(float(range_effect.center_width), 30.0)
+		and is_equal_approx(float(range_effect.duration), 1.0443036)
+	)
+	_main._active_skill_effect_system.frontal_effects.clear()
 	_expect(
-		disabled_without_loadout and full_tier
-		and is_equal_approx(float(prepared_partial.damage), 120.0)
-		and String(prepared_partial.visual_action) == "active",
-		"格温只有携带快刀乱剪时普攻命中才充能；0~3 层读取对应伤害，满层选择 Spell1 0→B→C 并消耗全部层数",
+		disabled_without_loadout and full_tier and all_tiers and uncompressed_b_timing and reference_range,
+		"格温只有携带快刀乱剪时普攻命中才充能；四档总时长均为 1.5 秒且 Spell1 B 保持原速，圆弧扇区和恒宽核心提示持续到最后一剪",
 	)
 	var dummy_stats := SuiteUtils.sweep_dummy_stats(CardDB.get_card("garen"))
 	var center := Unit.new()
 	var edge := Unit.new()
 	var behind := Unit.new()
+	var outside_arc := Unit.new()
 	center.position = Vector2(360.0, 790.0)
 	edge.position = Vector2(414.0, 790.0)
 	behind.position = Vector2(360.0, 990.0)
-	for target in [center, edge, behind]:
+	# 该点位于旧三角形远端角落内，但落在新圆弧半径外，用于锁定参考图式扇区。
+	outside_arc.position = Vector2(460.0, 737.0)
+	for target in [center, edge, behind, outside_arc]:
 		target.setup(1, dummy_stats, "剪切木桩")
 		_main.add_child(target)
 	gwen.begin_active_skill_cast(float(prepared_full.cast_duration), Vector2.UP, prepared_full.cast_locks)
+	gwen.hp = 300.0
 	var center_before := center.hp
 	var edge_before := edge.hp
 	var behind_before := behind.hp
-	_main._active_skill_effect_system.apply(gwen, prepared_full)
-	_expect(
+	var outside_arc_before := outside_arc.hp
+	_main._queue_active_skill_impact(gwen, prepared_full, float(prepared_full.impact_delay))
+	for _tick in 3:
+		_main._tick_pending_active_skill_impacts(0.05)
+	var first_cut := is_equal_approx(center_before - center.hp, 40.0 * 1.2)
+	for _tick in 25:
+		_main._tick_pending_active_skill_impacts(0.05)
+	var all_cuts := (
 		is_equal_approx(center_before - center.hp, 160.0 * 1.2)
 		and is_equal_approx(edge_before - edge.hp, 160.0)
 		and is_equal_approx(behind.hp, behind_before)
+		and is_equal_approx(outside_arc.hp, outside_arc_before)
+	)
+	for _tick in 12:
+		_main._tick_pending_active_skill_impacts(0.05)
+	_expect(
+		first_cut and all_cuts and is_equal_approx(gwen.hp, 400.0)
 		and gwen.is_active_skill_movement_locked() and gwen.is_active_skill_attack_locked() and gwen.is_active_skill_facing_locked(),
-		"格温快刀乱剪锁定行动并命中前方扇形，中央区域造成 1.2 倍伤害且不命中身后",
+		"格温按 40→20×3→60 分次剪切，恒宽中央长条逐次乘 1.2，圆弧扇区不误伤远端角落或身后；满层在 1.5 秒结束时回复 100 生命",
 	)
 	_main._battle_presentation.attach_unit(gwen, stats)
 	var view: UnitModel3D = null
@@ -80,13 +146,18 @@ func _check_gwen_snip_snip_skill() -> void:
 			break
 	var animation_chain := false
 	if view != null:
-		gwen.play_visual_action(&"active_strong", float(prepared_full.cast_duration))
+		gwen.play_visual_action(&"active_3", float(prepared_full.cast_duration))
 		view._sync_visual(false, 0.05)
 		var clip_0 := view._animation_player.current_animation == "Spell1_0"
 		view._on_animation_finished(&"Spell1_0")
-		var clip_b := view._animation_player.current_animation == "Spell1_B"
+		var clip_b_1 := view._animation_player.current_animation == "Spell1_B" and is_zero_approx(view._last_clip_blend_time)
+		view._on_animation_finished(&"Spell1_B")
+		var clip_b_2 := view._animation_player.current_animation == "Spell1_B" and is_zero_approx(view._last_clip_blend_time)
+		view._on_animation_finished(&"Spell1_B")
+		var clip_b_3 := view._animation_player.current_animation == "Spell1_B" and is_zero_approx(view._last_clip_blend_time)
 		view._on_animation_finished(&"Spell1_B")
 		var clip_c := view._animation_player.current_animation == "Spell1_C_anm"
+		var clip_c_no_blend := is_zero_approx(view._last_clip_blend_time)
 		gwen.active_skill_cast_timer = 0.0
 		gwen.active_skill_cast_locks.clear()
 		gwen._move_intent = Vector2.UP * gwen.move_speed
@@ -100,9 +171,9 @@ func _check_gwen_snip_snip_skill() -> void:
 			view._animation_player.current_animation == "Run_anm"
 			and is_equal_approx(view._last_clip_blend_time, view._transition_blend(&"sequence"))
 		)
-		animation_chain = clip_0 and clip_b and clip_c and transition_entry_short and transition_to_run_short
-	_expect(animation_chain, "格温满层技能播放 Spell1 0→B→C，技能后移动直接衔接 Spell1 C ToRun；普通移动入口配置 Into Run")
-	for unit in [gwen, partial, center, edge, behind]:
+		animation_chain = clip_0 and clip_b_1 and clip_b_2 and clip_b_3 and clip_c and clip_c_no_blend and transition_entry_short and transition_to_run_short
+	_expect(animation_chain, "格温满层技能在 Spell1 0 的 1.5 秒总时槽内无混合直连 B×3→C，技能后移动直接衔接 Spell1 C ToRun")
+	for unit in [gwen, partial, zero, one, center, edge, behind, outside_arc]:
 		if is_instance_valid(unit):
 			unit.free()
 
@@ -288,18 +359,31 @@ func _check_gwen_art_integration() -> void:
 	_expect(model_node != null and is_equal_approx(model_node.position.y, -0.045), "格温放大后脚底校正同步缩放，模型仍落在地面")
 	var attacks: Array = anim_names.attack
 	_expect(attacks == ["Attack1", "Attack2", "Attack3"], "格温三套攻击动作按表现序号交替选择")
+	var attack_to_move: Array = anim_names.attack_to_move
+	_expect(attack_to_move == ["Into_Run", "Into_Run", "INTO_Run_180_anm"], "格温前两段攻击接 Into_Run，第三段攻击接 180° 转跑动作")
 	var unit := Unit.new()
 	unit.position = Vector2(360.0, 900.0)
 	unit.setup(0, stats, stats.name)
 	_main.add_child(unit)
 	var attached: bool = _main._battle_presentation.attach_unit(unit, stats)
+	var attack_move_routes_ok := false
+	var model_view := _view_for(unit)
+	if attached and model_view != null:
+		attack_move_routes_ok = true
+		for serial in range(1, 4):
+			model_view._play_attack(serial)
+			model_view._transition_to_basic_state(2, model_view._transition_blend(&"action_out"), &"attack")
+			var expected_transition := StringName(attack_to_move[serial - 1])
+			attack_move_routes_ok = attack_move_routes_ok and model_view._animation_player.current_animation == expected_transition
+			model_view._on_animation_finished(expected_transition)
+	_expect(attack_move_routes_ok, "格温攻击 1/2/3 退出到移动时分别播放 Into_Run、Into_Run、INTO_Run_180_anm")
 	unit.take_damage(unit.max_hp + 1.0)
 	var death_view_found := false
 	for child in _main._battle_presentation._world_root.get_children():
 		if child is UnitModel3D and child._source == unit:
-			var view := child as UnitModel3D
-			death_view_found = view._dying and view._animation_player.current_animation == "Death"
-			view.free()
+			var death_view := child as UnitModel3D
+			death_view_found = death_view._dying and death_view._animation_player.current_animation == "Death"
+			death_view.free()
 			break
 	_expect(attached and death_view_found, "格温死亡时由独立 3D 代理播放 Death")
 	if is_instance_valid(unit):
