@@ -14,6 +14,8 @@ const SLOT_POSITIONS := [LEFT_SLOT_POSITION, RIGHT_SLOT_POSITION]
 var _buttons: Array[Button] = []
 var _ability_ids: Array[int] = [-1, -1]
 var _base_labels: Array[String] = ["", ""]
+var _deployment_ready: Array[bool] = [false, false]
+var _pending: Array[bool] = [false, false]
 
 
 func _ready() -> void:
@@ -42,19 +44,21 @@ func _ready() -> void:
 		_buttons.append(button)
 
 
-func show_skill(slot_index: int, ability_id: int, card_name: String, skill_name: String, accent: Color) -> void:
+func show_skill(slot_index: int, ability_id: int, card_name: String, skill_name: String, accent: Color, deployment_ready: bool = true) -> void:
 	if slot_index < 0 or slot_index >= _buttons.size():
 		return
 	var button := _buttons[slot_index]
 	_ability_ids[slot_index] = ability_id
 	_base_labels[slot_index] = skill_name.left(1)
+	_deployment_ready[slot_index] = deployment_ready
+	_pending[slot_index] = false
 	button.text = _base_labels[slot_index]
-	button.tooltip_text = "主动槽 %d · %s · %s\n点击后等待 0.5 秒，由最近部署的该槽单位释放" % [slot_index + 1, card_name, skill_name]
+	button.tooltip_text = "主动槽 %d · %s · %s\n部署完成后可点击；点击后等待 0.5 秒，由最近部署的该槽单位释放" % [slot_index + 1, card_name, skill_name]
 	button.add_theme_stylebox_override("normal", _circle_style(Color(accent.r * 0.34, accent.g * 0.34, accent.b * 0.34, 0.96), Color.WHITE, 3))
 	button.add_theme_stylebox_override("hover", _circle_style(Color(accent.r * 0.55, accent.g * 0.55, accent.b * 0.55, 1.0), Color(0.62, 0.90, 1.0), 4))
 	button.add_theme_stylebox_override("pressed", _circle_style(Color(accent.r * 0.24, accent.g * 0.24, accent.b * 0.24, 1.0), Color(1.0, 0.84, 0.28), 4))
 	button.add_theme_stylebox_override("disabled", _circle_style(Color(0.08, 0.12, 0.18, 0.88), Color(0.42, 0.52, 0.62), 3))
-	button.disabled = false
+	_refresh_slot(slot_index)
 	button.visible = true
 
 
@@ -62,9 +66,16 @@ func set_pending(ability_id: int, pending: bool) -> void:
 	var slot_index := _ability_ids.find(ability_id)
 	if slot_index < 0:
 		return
-	var button := _buttons[slot_index]
-	button.disabled = pending
-	button.text = "…" if pending else _base_labels[slot_index]
+	_pending[slot_index] = pending
+	_refresh_slot(slot_index)
+
+
+func set_deployment_ready(ability_id: int, ready: bool) -> void:
+	var slot_index := _ability_ids.find(ability_id)
+	if slot_index < 0:
+		return
+	_deployment_ready[slot_index] = ready
+	_refresh_slot(slot_index)
 
 
 func remove_skill(ability_id: int) -> void:
@@ -73,6 +84,8 @@ func remove_skill(ability_id: int) -> void:
 		return
 	_ability_ids[slot_index] = -1
 	_base_labels[slot_index] = ""
+	_deployment_ready[slot_index] = false
+	_pending[slot_index] = false
 	_buttons[slot_index].visible = false
 	_buttons[slot_index].disabled = false
 	_buttons[slot_index].text = ""
@@ -92,6 +105,14 @@ func _on_slot_pressed(slot_index: int) -> void:
 		return
 	set_pending(ability_id, true)
 	skill_pressed.emit(ability_id)
+
+
+func _refresh_slot(slot_index: int) -> void:
+	if slot_index < 0 or slot_index >= _buttons.size():
+		return
+	var button := _buttons[slot_index]
+	button.disabled = _pending[slot_index] or not _deployment_ready[slot_index]
+	button.text = "…" if _pending[slot_index] else _base_labels[slot_index]
 
 
 func _circle_style(fill: Color, border: Color, border_width: int) -> StyleBoxFlat:

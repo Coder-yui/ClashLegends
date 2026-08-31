@@ -48,8 +48,7 @@
 - 四段命中：`Attack1_Hit`、`Sett_Attack1_Passive_anm`、`Attack2_Hit`、`Sett_Attack2_Passive_anm`。
 - 被动段收势：第二、第四段使用 `Attack1_Passive_Into_Idle`、`Attack2_Passive_Into_Idle`；`attack_recover_delay = 0.32 s`。
 - 攻击后移动：`Run_Passive`、`Run_Base`、`Run_Passive`、`Run_Base`；第二、第四段的专用转跑为 `Sett_Passive_INTO_Run_anm`。
-- 普通主动技能 `active`：`Sett_spell2_anm`，`1.4 s`，淡入 `0.05 s`、淡出 `0.08 s`。
-- 满豪意主动技能 `active_strong`：`Spell2_Strong`，`1.4 s`，淡入 `0.05 s`、淡出 `0.08 s`。
-- 技能转移动画：`Sett_Spell2_INTO_Run_anm`。
+- 普通主动技能 `active`：`Sett_spell2_anm`，`1.4 s`；入口使用全局 `action_in = 0.06 s`。
+- 满豪意主动技能 `active_strong`：`Spell2_Strong`，`1.4 s`；入口使用全局 `action_in = 0.06 s`。
+- 技能转移动画：`Sett_Spell2_INTO_Run_anm`，片段首尾使用 `sequence = 0.02 s`，结束后进入 `Run_Base`。
 - 死亡：`Death`，表现时长 `0.8 s`。
-

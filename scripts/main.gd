@@ -1334,13 +1334,31 @@ func _register_active_skill(unit: Unit, card_id: String, p_team: int) -> void:
 		_cancel_pending_active_skill(replaced_id)
 		if _active_skill_bar != null:
 			_active_skill_bar.remove_skill(replaced_id)
-	_active_skills[ability_id] = {"unit": unit, "card_id": card_id, "team": p_team, "slot": active_slot, "skill": carried_skill}
+	_active_skills[ability_id] = {
+		"unit": unit,
+		"card_id": card_id,
+		"team": p_team,
+		"slot": active_slot,
+		"skill": carried_skill,
+	}
 	unit.died.connect(_on_active_skill_unit_died.bind(ability_id), CONNECT_ONE_SHOT)
 	if _is_local_player_team(p_team) and _active_skill_bar != null:
-		_active_skill_bar.show_skill(active_slot, ability_id, String(stats.name), String(carried_skill.name), stats.get("color", CardArt.DEFAULT_ACCENT))
+		_active_skill_bar.show_skill(active_slot, ability_id, String(stats.name), String(carried_skill.name), stats.get("color", CardArt.DEFAULT_ACCENT), unit.is_deployed())
 	# 单机 AI 也携带卡组前两槽的技能；占位 AI 同样经过 0.5 秒待释放窗口。
 	if mode == "local" and p_team == 1:
 		call_deferred("use_active_skill", ability_id, p_team, 0, false)
+
+## 部署期间技能按钮保持不可点击；部署计时归零后只同步可用表现，不改变权威技能判定。
+func _sync_active_skill_deployment_readiness() -> void:
+	for ability_value in _active_skills.keys():
+		var ability_id := int(ability_value)
+		var entry: Dictionary = _active_skills[ability_id]
+		var unit: Unit = entry.unit
+		if unit == null or not is_instance_valid(unit):
+			continue
+		var deployed := unit.is_deployed()
+		if _is_local_player_team(int(entry.team)) and _active_skill_bar != null:
+			_active_skill_bar.set_deployment_ready(ability_id, deployed)
 
 func _on_active_skill_unit_died(ability_id: int) -> void:
 	_active_skills.erase(ability_id)
@@ -1636,6 +1654,7 @@ func _sim_step(dt: float) -> void:
 	for c in get_tree().get_nodes_in_group("combatants"):
 		if c.has_method("sim_tick"):
 			c.sim_tick(dt)
+	_sync_active_skill_deployment_readiness()
 	_apply_unit_movement(dt)
 	_resolve_unit_collisions(dt)
 	_tick_projectiles(dt)
@@ -1948,6 +1967,7 @@ func _process(delta: float) -> void:
 	# 客户端：只更新冰冻视觉与重绘，逻辑状态全靠主机快照
 	if mode == "client":
 		_advance_estimated_server_tick(delta)
+		_sync_active_skill_deployment_readiness()
 		_projectile_system.tick_client_interpolation(delta)
 		for fe in _freeze_effects:
 			fe.timer -= delta

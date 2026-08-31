@@ -44,7 +44,7 @@
 - 场景：`res://assets/units/xin/xin_view.tscn`；`visual_forward_yaw = 0`。
 - 部署新月护卫：只播放 `Spell4`（`1.0 s`）；部署后移动接 `Spell4_To_Run`，部署后攻击使用统一 Pose 衔接。
 - 待机 / 移动：`IdleBase` / `RunBase`。
-- 三段普攻出手：`Attack1_Hit`、`Attack3_Hit`、`Passive_AA_01_XinZhaoRework_anm`；第三段只播放这一条完整动画，不再使用 `Passive_AA_01_hit_XinZhaoRework_anm`。
+- 三段普攻出手：`Attack1_Hit`、`Attack3_Hit`、`Passive_AA_01_XinZhaoRework_anm`；第三段使用完整的 `Passive_AA_01_XinZhaoRework_anm`。
 - 第一、二段普攻命中后的收势：`Attack_AA_01_settle_XinZhaoRework_anm`、`Attack_AA_03_settle_XinZhaoRework_anm`；第三段没有额外收势片段。
 - 第一、二段普攻后移动：`RunIn`；第三段被动攻击后移动：`PassiveAA_to_Run_XinZhaoRework_anm`。
 - 主动新月护卫：`Spell4`（`1.0 s`）；主动后移动接 `Spell4_To_Run`，主动后攻击使用统一 Pose 衔接。

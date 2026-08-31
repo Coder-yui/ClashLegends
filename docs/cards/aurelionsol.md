@@ -45,10 +45,9 @@
 
 - 场景：`res://assets/units/aurelionsol/aurelionsol_view.tscn`；`visual_forward_yaw = 0`。
 - 部署：`Respawn`，只播放前 `0.5` 比例；待机 `Idle1_Base`。
-- 移动入口 / 循环：首次部署后 `RunIn`；循环 `Run1B`、`Run1C`、`Run1D`、`Run1A`。
+- 移动入口 / 循环：部署、待机和普通攻击进入移动时使用 `RunIn`（存在专用转跑片段时使用专用片段）；循环 `Run1B`、`Run1C`、`Run1D`、`Run1A`。
 - 持续攻击入口：`AurelionSol_Spell1_newtst_anm`；换目标入口：`AurelionSol_Spell1_new_looptoin_anm` → `AurelionSol_Spell1_newtst_anm`；吐息循环：`AurelionSol_Spell1_loop_anm`。
 - 攻击后转移动画：`Spell1_2Run`。
 - 普通主动技能 `active`：`Spell4`，`1.9333328 s`。
 - 满层主动技能 `active_strong`：`AurelionSol_Spell4_base_anm`，`1.8999995 s`。
 - 死亡：`Death`，表现时长 `0.8 s`。
-

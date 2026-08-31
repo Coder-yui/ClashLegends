@@ -76,7 +76,7 @@ const VISUAL_ANIMATION_FIELDS := [
 	&"deploy", &"deploy_durations", &"deploy_clip_ratio", &"idle", &"move", &"move_enter", &"haste_move",
 	&"move_cycle", &"attack", &"attack_enter", &"attack_retarget_enter", &"attack_loop",
 	&"attack_hit", &"attack_hit_duration", &"attack_recover", &"attack_recover_delay",
-	&"attack_structure", &"attack_move", &"attack_to_move", &"move_enter_after_attack", &"move_enter_from_deploy_only",
+	&"attack_structure", &"attack_move", &"attack_to_move",
 	&"empowered_move", &"empowered_attack", &"empowered_attack_hit", &"empowered_attack_recover",
 	&"empowered_attack_to_move", &"death", &"death_duration",
 	&"death_followup_scene_path", &"death_followup_animation", &"death_followup_duration", &"visual_actions",
@@ -154,7 +154,7 @@ static func all() -> Dictionary:
 			"visual_animations": {
 				# 部署与主动新月护卫都使用完整 1 秒 Spell4；动作本身不驱动权威效果。
 				"deploy": "Spell4",
-				"idle": "IdleBase", "move": "RunBase",
+				"idle": "IdleBase", "move": "RunBase", "move_enter": "RunIn",
 				# 前两段按 Hit→settle 播放；第三段只使用完整 Passive_AA_01，不再播放其 hit 前置片段。
 				"attack": ["Attack1_Hit", "Attack3_Hit", "Passive_AA_01_XinZhaoRework_anm"],
 				"attack_hit": [
@@ -163,9 +163,8 @@ static func all() -> Dictionary:
 					"",
 				],
 				"attack_hit_duration": 0.6,
-				# 第一、二段攻击转移动先播 RunIn；第三段被动攻击使用素材专用转跑动作。
-				"attack_to_move": ["RunIn", "RunIn", "PassiveAA_to_Run_XinZhaoRework_anm"],
-				"move_enter_after_attack": false,
+				# 第一、二段攻击复用通用 RunIn；第三段被动攻击使用素材专用转跑动作。
+				"attack_to_move": ["", "", "PassiveAA_to_Run_XinZhaoRework_anm"],
 				"visual_actions": {
 					"active": {"animation": "Spell4", "durations": [1.0], "kind": "skill"},
 				},
@@ -527,8 +526,8 @@ static func all() -> Dictionary:
 				"attack_move": ["Run_Passive", "Run_Base", "Run_Passive", "Run_Base"],
 				"attack_to_move": ["", "Sett_Passive_INTO_Run_anm", "", "Sett_Passive_INTO_Run_anm"],
 				"visual_actions": {
-					"active": {"animation": "Sett_spell2_anm", "kind": "skill", "durations": [1.4], "blend_in": 0.05, "blend_out": 0.08},
-					"active_strong": {"animation": "Spell2_Strong", "kind": "skill", "durations": [1.4], "blend_in": 0.05, "blend_out": 0.08},
+					"active": {"animation": "Sett_spell2_anm", "kind": "skill", "durations": [1.4]},
+					"active_strong": {"animation": "Spell2_Strong", "kind": "skill", "durations": [1.4]},
 				},
 				"transitions": {"skill>move": "Sett_Spell2_INTO_Run_anm"},
 				"death": "Death", "death_duration": 0.8,
@@ -597,8 +596,8 @@ static func all() -> Dictionary:
 			"visual_animations": {
 				# 只取 Respawn 前半段翻滚；后半段由普通状态机接管，不做龙王专用保护。
 				"deploy": "Respawn", "deploy_clip_ratio": 0.5, "idle": "Idle1_Base",
-				# RunIn 只用于部署完成后首次进入移动；其他移动入口直接进入 Run1B 循环。
-				"move": "Run1B", "move_enter": "RunIn", "move_enter_from_deploy_only": true,
+				# RunIn 是部署、待机或无专用转跑素材的普攻进入移动时共用的通用衔接。
+				"move": "Run1B", "move_enter": "RunIn",
 				"move_cycle": ["Run1B", "Run1C", "Run1D", "Run1A"],
 				# 移动后首次攻击用 newtst；原地击败目标并直接换目标时用 new_looptoin。
 				"attack_enter": "AurelionSol_Spell1_newtst_anm",
@@ -606,7 +605,6 @@ static func all() -> Dictionary:
 				"attack_loop": "AurelionSol_Spell1_loop_anm",
 				# 吐息后进入移动：Spell1_2Run 后摇 → Run1B→C→D→A。
 				"transitions": {"attack>move": "Spell1_2Run"},
-				"move_enter_after_attack": false,
 				"visual_actions": {
 					"active": {"animation": "Spell4", "durations": [1.9333328], "kind": "skill"},
 					"active_strong": {"animation": "AurelionSol_Spell4_base_anm", "durations": [1.8999995], "kind": "skill"},

@@ -13,6 +13,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_main = main
 	_check_locomotion_attack_interrupts()
 	_check_skill_recovery_routes()
+	_check_dedicated_move_transition_blends()
 	_check_cast_policies_and_snapshot()
 
 func _view_for(unit: Unit) -> UnitModel3D:
@@ -87,6 +88,7 @@ func _check_skill_recovery_routes() -> void:
 	var spell_to_attack := false
 	var animation_is_read_only := false
 	var transition_policy_applied := false
+	var generic_move_uses_action_out := false
 	if view != null:
 		unit.begin_active_skill_cast(1.2, Vector2.UP)
 		unit.play_visual_action(&"active", 1.2)
@@ -108,7 +110,10 @@ func _check_skill_recovery_routes() -> void:
 		view._sync_visual(false, 0.05)
 		unit._move_intent = Vector2.UP * unit.move_speed
 		view._on_animation_finished(&"GnarBig_Spell2_anm")
-		spell_to_move = view._animation_player.current_animation == "Run_In"
+		spell_to_move = view._animation_player.current_animation == "Run_Base"
+		generic_move_uses_action_out = (
+			is_equal_approx(view._last_clip_blend_time, view._transition_blend(&"action_out"))
+		)
 
 		unit._move_intent = Vector2.ZERO
 		unit.play_visual_action(&"active", 1.2)
@@ -121,14 +126,139 @@ func _check_skill_recovery_routes() -> void:
 		view._on_animation_finished(&"GnarBig_Spell2_anm")
 		spell_to_attack = attack_waited and view._animation_player.current_animation == "GnarBig_Attack1_anm"
 	_expect(spell_to_idle, "纳尔 Spell2 结束当帧按统一 blend-out 恢复 Idle")
-	_expect(spell_to_move, "纳尔 Spell2 结束当帧按统一 blend-out 衔接 Move/Run_In")
+	_expect(spell_to_move, "纳尔 Spell2 没有专用 ToRun 时按 action_out 直接衔接基础 Run")
 	_expect(spell_to_attack, "纳尔 Spell2 期间排队的普攻在动作结束当帧立即衔接 Attack")
 	_expect(transition_policy_applied, "Skill 优先级高于 Attack，blend-in/out 统一从 transition policy 读取")
+	_expect(generic_move_uses_action_out, "没有 dedicated transition 时，Skill→Move 首段仍使用 action_out generic crossfade")
 	_expect(animation_is_read_only, "animation_finished 只切换表现，不会提前结束权威 cast timing")
 	if view != null:
 		view.free()
 	unit.free()
 	dummy.free()
+
+func _check_dedicated_move_transition_blends() -> void:
+	var xin_stats: Dictionary = CardDB.get_card("xin").duplicate(true)
+	xin_stats["deploy_time"] = 0.0
+	# 复用真实赵信转跑素材构造 transform route 探针，验证 action kind 通用分派，无角色特判。
+	xin_stats.visual_animations.transitions["transform>move"] = "Spell4_To_Run"
+	var xin := Unit.new()
+	xin.position = Vector2(180.0, 900.0)
+	xin.setup(0, xin_stats, xin_stats.name)
+	_main.add_child(xin)
+	_main._battle_presentation.attach_unit(xin, xin_stats)
+	var xin_view := _view_for(xin)
+	var deploy_route_ok := false
+	var skill_route_ok := false
+	var transform_route_ok := false
+	var indexed_attack_route_ok := false
+	if xin_view != null:
+		var sequence_blend := xin_view._transition_blend(&"sequence")
+		var action_out_blend := xin_view._transition_blend(&"action_out")
+		_expect(
+			is_equal_approx(sequence_blend, 0.02)
+			and is_equal_approx(xin_view._transition_blend(&"action_in"), 0.06)
+			and is_equal_approx(action_out_blend, 0.12)
+			and is_equal_approx(xin_view._transition_blend(&"locomotion"), 0.08),
+			"全局默认混合为 action_in 0.06、action_out 0.12、sequence 0.02、locomotion/加速切换 0.08",
+		)
+
+		xin_view._current_state = 0
+		xin_view._play_state(0, 0.0)
+		xin_view._transition_to_basic_state(2, action_out_blend, &"deploy")
+		var deploy_entry_short := (
+			xin_view._animation_player.current_animation == "Spell4_To_Run"
+			and is_equal_approx(xin_view._last_clip_blend_time, sequence_blend)
+			and not is_equal_approx(xin_view._last_clip_blend_time, action_out_blend)
+		)
+		xin_view._on_animation_finished(&"Spell4_To_Run")
+		deploy_route_ok = (
+			deploy_entry_short
+			and xin_view._animation_player.current_animation == "RunBase"
+			and is_equal_approx(xin_view._last_clip_blend_time, sequence_blend)
+		)
+
+		xin.play_visual_action(&"active", 1.0)
+		xin_view._sync_visual(false, 0.05)
+		xin._move_intent = Vector2.UP * xin.move_speed
+		xin_view._on_animation_finished(&"Spell4")
+		var skill_entry_short := (
+			xin_view._animation_player.current_animation == "Spell4_To_Run"
+			and is_equal_approx(xin_view._last_clip_blend_time, sequence_blend)
+		)
+		xin_view._on_animation_finished(&"Spell4_To_Run")
+		skill_route_ok = (
+			skill_entry_short
+			and xin_view._animation_player.current_animation == "RunBase"
+			and is_equal_approx(xin_view._last_clip_blend_time, sequence_blend)
+		)
+
+		xin_view._transition_to_basic_state(2, action_out_blend, &"transform")
+		var transform_entry_short := (
+			xin_view._animation_player.current_animation == "Spell4_To_Run"
+			and is_equal_approx(xin_view._last_clip_blend_time, sequence_blend)
+		)
+		xin_view._on_animation_finished(&"Spell4_To_Run")
+		transform_route_ok = (
+			transform_entry_short
+			and xin_view._animation_player.current_animation == "RunBase"
+			and is_equal_approx(xin_view._last_clip_blend_time, sequence_blend)
+		)
+
+		xin_view._play_attack(3)
+		xin_view._transition_to_basic_state(2, action_out_blend, &"attack")
+		var indexed_entry_short := (
+			xin_view._animation_player.current_animation == "PassiveAA_to_Run_XinZhaoRework_anm"
+			and is_equal_approx(xin_view._last_clip_blend_time, sequence_blend)
+		)
+		xin_view._on_animation_finished(&"PassiveAA_to_Run_XinZhaoRework_anm")
+		indexed_attack_route_ok = (
+			indexed_entry_short
+			and xin_view._animation_player.current_animation == "RunBase"
+			and is_equal_approx(xin_view._last_clip_blend_time, sequence_blend)
+		)
+
+		# 前两段没有专用 attack_to_move，统一复用 move_enter RunIn，首尾同样是 sequence。
+		xin_view._play_attack(1)
+		xin_view._transition_to_basic_state(2, action_out_blend, &"attack")
+		var generic_run_in_entry := (
+			xin_view._animation_player.current_animation == "RunIn"
+			and is_equal_approx(xin_view._last_clip_blend_time, sequence_blend)
+		)
+		xin_view._on_animation_finished(&"RunIn")
+		indexed_attack_route_ok = indexed_attack_route_ok and generic_run_in_entry and (
+			xin_view._animation_player.current_animation == "RunBase"
+			and is_equal_approx(xin_view._last_clip_blend_time, sequence_blend)
+		)
+
+	var teemo_stats: Dictionary = CardDB.get_card("teemo").duplicate(true)
+	teemo_stats["deploy_time"] = 0.0
+	var teemo := Unit.new()
+	teemo.position = Vector2(540.0, 900.0)
+	teemo.setup(0, teemo_stats, teemo_stats.name)
+	_main.add_child(teemo)
+	_main._battle_presentation.attach_unit(teemo, teemo_stats)
+	var teemo_view := _view_for(teemo)
+	var empowered_route_ok := false
+	if teemo_view != null:
+		teemo._empowered_attack_visual_serial = 1
+		teemo_view._play_attack(1)
+		teemo_view._transition_to_basic_state(2, teemo_view._transition_blend(&"action_out"), &"attack")
+		empowered_route_ok = (
+			teemo_view._animation_player.current_animation == "Spell1_ToRun"
+			and is_equal_approx(teemo_view._last_clip_blend_time, teemo_view._transition_blend(&"sequence"))
+		)
+
+	_expect(deploy_route_ok, "transitions[deploy>move] 进入专用片段及其进入 Run 均使用 sequence blend")
+	_expect(skill_route_ok, "transitions[skill>move] 忽略上层 action_out，专用片段首尾均使用 sequence blend")
+	_expect(transform_route_ok, "transitions[transform>move] 的专用片段首尾均使用 sequence blend")
+	_expect(indexed_attack_route_ok, "按段 attack_to_move 专用片段与空项回退通用 RunIn 都遵循 sequence 规则")
+	_expect(empowered_route_ok, "empowered_attack_to_move 进入专用片段时使用 sequence blend")
+	if xin_view != null:
+		xin_view.free()
+	if teemo_view != null:
+		teemo_view.free()
+	xin.free()
+	teemo.free()
 
 func _check_cast_policies_and_snapshot() -> void:
 	var stats: Dictionary = CardDB.get_card("gnar").get("transformed_stats", {}).duplicate(true)

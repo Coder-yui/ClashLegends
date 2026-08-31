@@ -226,16 +226,45 @@ func _check_animation_routes() -> void:
 	_main._battle_presentation.attach_unit(sett, CardDB.get_card("sett"))
 	var sett_view := _view_for(sett)
 	var sett_routes := false
+	var sett_skill_route := false
 	if sett_view != null:
 		sett_view._play_attack(1)
 		sett_view._transition_to_basic_state(2, 0.0, &"attack")
 		var first_to_passive_run := sett_view._animation_player.current_animation == "Run_Passive"
 		sett_view._play_attack(2)
 		sett_view._transition_to_basic_state(2, 0.0, &"attack")
-		var second_transition := sett_view._animation_player.current_animation == "Sett_Passive_INTO_Run_anm"
+		var second_transition := (
+			sett_view._animation_player.current_animation == "Sett_Passive_INTO_Run_anm"
+			and is_equal_approx(sett_view._last_clip_blend_time, sett_view._transition_blend(&"sequence"))
+		)
 		sett_view._on_animation_finished(&"Sett_Passive_INTO_Run_anm")
-		sett_routes = first_to_passive_run and second_transition and sett_view._animation_player.current_animation == "Run_Base"
+		sett_routes = (
+			first_to_passive_run and second_transition
+			and sett_view._animation_player.current_animation == "Run_Base"
+			and is_equal_approx(sett_view._last_clip_blend_time, sett_view._transition_blend(&"sequence"))
+		)
+
+		sett.play_visual_action(&"active", 1.4)
+		sett_view._sync_visual(false, 0.05)
+		var skill_uses_global_action_in: bool = (
+			is_equal_approx(sett_view._last_clip_blend_time, sett_view._transition_blend(&"action_in"))
+			and not CardDB.get_card("sett").visual_animations.visual_actions.active.has("blend_in")
+			and not CardDB.get_card("sett").visual_animations.visual_actions.active.has("blend_out")
+		)
+		sett._move_intent = Vector2.UP * sett.move_speed
+		sett_view._on_animation_finished(&"Sett_spell2_anm")
+		var skill_transition_short := (
+			sett_view._animation_player.current_animation == "Sett_Spell2_INTO_Run_anm"
+			and is_equal_approx(sett_view._last_clip_blend_time, sett_view._transition_blend(&"sequence"))
+		)
+		sett_view._on_animation_finished(&"Sett_Spell2_INTO_Run_anm")
+		sett_skill_route = (
+			skill_uses_global_action_in and skill_transition_short
+			and sett_view._animation_player.current_animation == "Run_Base"
+			and is_equal_approx(sett_view._last_clip_blend_time, sett_view._transition_blend(&"sequence"))
+		)
 	_expect(sett_routes, "腕豪第一拳丢失目标后接 Run Passive；第二拳先接 Sett Passive Into Run 再进入 Run Base")
+	_expect(sett_skill_route, "腕豪蓄意轰拳移除角色混合覆盖：入口用全局 action_in，专用转跑首尾用 sequence")
 
 	var garen := _spawn_test_unit("garen", 0, Vector2(260.0, 900.0))
 	_main._battle_presentation.attach_unit(garen, CardDB.get_card("garen"))
@@ -267,7 +296,16 @@ func _check_animation_routes() -> void:
 		teemo_view._update_attack_stages(teemo.first_hit_time + 0.01)
 		var long_recover := teemo_view._animation_player.current_animation == "Spell1_ToIdle"
 		teemo_view._transition_to_basic_state(2, 0.0, &"attack")
-		teemo_routes = run_in and spell1 and long_recover and teemo_view._animation_player.current_animation == "Spell1_ToRun"
+		var empowered_transition_short := (
+			teemo_view._animation_player.current_animation == "Spell1_ToRun"
+			and is_equal_approx(teemo_view._last_clip_blend_time, teemo_view._transition_blend(&"sequence"))
+		)
+		teemo_view._on_animation_finished(&"Spell1_ToRun")
+		var transition_to_run_short := (
+			teemo_view._animation_player.current_animation == "Run_Base"
+			and is_equal_approx(teemo_view._last_clip_blend_time, teemo_view._transition_blend(&"sequence"))
+		)
+		teemo_routes = run_in and spell1 and long_recover and empowered_transition_short and transition_to_run_short
 	_expect(teemo_routes, "提莫进入移动使用 Run In；强化攻击 Spell1 后继续攻击接长 Spell1 ToIdle，改为移动则可中断并接 Spell1 ToRun")
 	for unit in [sett, garen, teemo]:
 		unit.free()

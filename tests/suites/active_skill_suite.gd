@@ -15,6 +15,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
 	_check_active_skill_loadout_rule()
+	_check_deployment_skill_gate()
 	_check_skill_resource_loadout_visibility()
 	_check_active_skill_activation()
 	_check_pending_active_skill_revalidation()
@@ -54,6 +55,35 @@ func _check_active_skill_loadout_rule() -> void:
 		and _main._active_card_slot_for_team(0, "freeze") == 1,
 		"只有备战卡组前两个卡位携带主动版本"
 	)
+	_main._deck = old_deck
+
+func _check_deployment_skill_gate() -> void:
+	var old_deck: Array = _main._deck.duplicate()
+	_main._deck = ["garen", "xin", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
+	var source: Unit = _main._spawn_unit(0, "garen", Vector2(360.0, 1000.0), -1.0, 0)
+	var ability_id := source.active_ability_id
+	var locked_during_deploy: bool = (
+		not source.is_deployed()
+		and _main._active_skill_bar.is_slot_visible(0)
+		and _main._active_skill_bar._buttons[0].disabled
+		and not _main._queue_active_skill(ability_id, 0, 0)
+	)
+	_run_main_ticks(19)
+	var locked_until_last_tick: bool = not source.is_deployed() and _main._active_skill_bar._buttons[0].disabled
+	_run_main_ticks(1)
+	var enabled_after_deploy: bool = (
+		source.is_deployed()
+		and not _main._active_skill_bar._buttons[0].disabled
+		and _main._queue_active_skill(ability_id, 0, 0)
+	)
+	_expect(
+		locked_during_deploy and locked_until_last_tick and enabled_after_deploy,
+		"单位部署动画/锁定完整结束前主动技能按钮不可点击，部署完成 Tick 才允许提交技能",
+	)
+	_main._cancel_pending_active_skill(ability_id)
+	_main._on_active_skill_unit_died(ability_id)
+	if is_instance_valid(source):
+		source.free()
 	_main._deck = old_deck
 
 func _check_skill_resource_loadout_visibility() -> void:

@@ -91,7 +91,16 @@ func _check_gwen_snip_snip_skill() -> void:
 		gwen.active_skill_cast_locks.clear()
 		gwen._move_intent = Vector2.UP * gwen.move_speed
 		view._on_animation_finished(&"Spell1_C_anm")
-		animation_chain = clip_0 and clip_b and clip_c and view._animation_player.current_animation == "Spell1_C_to_Run_anm"
+		var transition_entry_short := (
+			view._animation_player.current_animation == "Spell1_C_to_Run_anm"
+			and is_equal_approx(view._last_clip_blend_time, view._transition_blend(&"sequence"))
+		)
+		view._on_animation_finished(&"Spell1_C_to_Run_anm")
+		var transition_to_run_short := (
+			view._animation_player.current_animation == "Run_anm"
+			and is_equal_approx(view._last_clip_blend_time, view._transition_blend(&"sequence"))
+		)
+		animation_chain = clip_0 and clip_b and clip_c and transition_entry_short and transition_to_run_short
 	_expect(animation_chain, "格温满层技能播放 Spell1 0→B→C，技能后移动直接衔接 Spell1 C ToRun；普通移动入口配置 Into Run")
 	for unit in [gwen, partial, center, edge, behind]:
 		if is_instance_valid(unit):

@@ -122,9 +122,10 @@ func _check_aurelionsol_art_integration() -> void:
 		and anim_names.attack_retarget_enter == ["AurelionSol_Spell1_new_looptoin_anm", "AurelionSol_Spell1_newtst_anm"]
 		and anim_names.attack_loop == "AurelionSol_Spell1_loop_anm"
 		and anim_names.transitions.get("attack>move", "") == "Spell1_2Run"
-		and anim_names.move_enter_after_attack == false
-		and anim_names.move_enter_from_deploy_only == true,
-		"龙王 RunIn 只用于部署后移动；初次攻击 newtst，原地换目标按 new_looptoin→newtst，并保留吐息转移动链路",
+		and anim_names.move_enter == "RunIn"
+		and not anim_names.has("move_enter_after_attack")
+		and not anim_names.has("move_enter_from_deploy_only"),
+		"龙王不再保留旧规则覆盖；RunIn 走通用入口，初次攻击 newtst，原地换目标按 new_looptoin→newtst",
 	)
 	_expect(
 		anim_names.visual_actions.active.animation == "Spell4"
@@ -155,9 +156,10 @@ func _check_aurelionsol_art_integration() -> void:
 	var retarget_transition_ok := false
 	var move_transition_ok := false
 	var move_cycle_ok := false
-	var deploy_only_run_in_ok := false
+	var generic_run_in_ok := false
 	var immediate_stop_ok := false
 	var mouth_binding_ok := false
+	var continuous_generic_fallback_ok := false
 	if view != null:
 		view._current_state = 0
 		unit._move_intent = Vector2.UP * unit.move_speed
@@ -169,7 +171,9 @@ func _check_aurelionsol_art_integration() -> void:
 		view._sync_visual(false, 0.05)
 		unit._move_intent = Vector2.UP * unit.move_speed
 		view._sync_visual(false, 0.05)
-		deploy_only_run_in_ok = deployed_to_run_in and deployed_to_run_b and view._animation_player.current_animation == "Run1B"
+		var idle_to_run_in := view._animation_player.current_animation == "RunIn"
+		view._on_animation_finished(&"RunIn")
+		generic_run_in_ok = deployed_to_run_in and deployed_to_run_b and idle_to_run_in and view._animation_player.current_animation == "Run1B"
 		unit._move_intent = Vector2.ZERO
 		unit._target = dummy
 		unit._attacking = true
@@ -178,12 +182,14 @@ func _check_aurelionsol_art_integration() -> void:
 		mouth_binding_ok = unit.continuous_beam_origin_tracks_model and not unit.continuous_beam_origin_world_position.is_zero_approx()
 		var entered_attack := (
 			view._animation_player.current_animation == "AurelionSol_Spell1_newtst_anm"
+			and is_equal_approx(view._last_clip_blend_time, view._transition_blend(&"action_in"))
 			and unit.continuous_beam_visible
 		)
 		view._on_animation_finished(&"AurelionSol_Spell1_newtst_anm")
 		attack_transition_ok = (
 			entered_attack
 			and view._animation_player.current_animation == "AurelionSol_Spell1_loop_anm"
+			and is_equal_approx(view._last_clip_blend_time, view._transition_blend(&"sequence"))
 			and unit.continuous_beam_visible
 		)
 		# 攻击状态未退出但目标序号推进：表示原目标被击败后在范围内直接换目标。
@@ -191,6 +197,7 @@ func _check_aurelionsol_art_integration() -> void:
 		view._sync_visual(false, 0.05)
 		var entered_retarget := (
 			view._animation_player.current_animation == "AurelionSol_Spell1_new_looptoin_anm"
+			and is_equal_approx(view._last_clip_blend_time, view._transition_blend(&"sequence"))
 			and unit.continuous_beam_visible
 		)
 		view._on_animation_finished(&"AurelionSol_Spell1_new_looptoin_anm")
@@ -205,9 +212,15 @@ func _check_aurelionsol_art_integration() -> void:
 		unit._attacking = false
 		unit._move_intent = Vector2.UP * unit.move_speed
 		view._sync_visual(false, 0.05)
-		var attack_to_run := view._animation_player.current_animation == "Spell1_2Run"
+		var attack_to_run := (
+			view._animation_player.current_animation == "Spell1_2Run"
+			and is_equal_approx(view._last_clip_blend_time, view._transition_blend(&"sequence"))
+		)
 		view._on_animation_finished(&"Spell1_2Run")
-		var run_b := view._animation_player.current_animation == "Run1B"
+		var run_b := (
+			view._animation_player.current_animation == "Run1B"
+			and is_equal_approx(view._last_clip_blend_time, view._transition_blend(&"sequence"))
+		)
 		view._on_animation_finished(&"Run1B")
 		var run_c := view._animation_player.current_animation == "Run1C"
 		view._on_animation_finished(&"Run1C")
@@ -218,6 +231,18 @@ func _check_aurelionsol_art_integration() -> void:
 		var looped_to_b := view._animation_player.current_animation == "Run1B"
 		move_transition_ok = attack_to_run and run_b and not unit.continuous_beam_visible
 		move_cycle_ok = run_b and run_c and run_d and run_a and looped_to_b
+		# 同一 continuous route 临时移除专用片段，确认 fallback 仍是较长 action_out。
+		var saved_transitions: Dictionary = view._animation_names.get("transitions", {}).duplicate(true)
+		var saved_move_enter = view._animation_names.get("move_enter", "")
+		view._animation_names["transitions"] = {}
+		view._animation_names["move_enter"] = ""
+		view._start_move_sequence(&"attack")
+		continuous_generic_fallback_ok = (
+			view._animation_player.current_animation == "Run1B"
+			and is_equal_approx(view._last_clip_blend_time, view._transition_blend(&"action_out"))
+		)
+		view._animation_names["transitions"] = saved_transitions
+		view._animation_names["move_enter"] = saved_move_enter
 		unit._move_intent = Vector2.ZERO
 		unit._attacking = true
 		view._sync_visual(false, 0.05)
@@ -230,10 +255,11 @@ func _check_aurelionsol_art_integration() -> void:
 		)
 	_expect(attached and attack_transition_ok, "龙王进入攻击距离立即开始吐息，newtst 与 loop 全程保持光柱")
 	_expect(retarget_transition_ok, "龙王原地击败目标并直接换目标时播放 new_looptoin→newtst→loop")
-	_expect(deploy_only_run_in_ok, "龙王 RunIn 只在部署完成后首次进入移动时播放，之后从待机进入移动直接使用 Run1B")
+	_expect(generic_run_in_ok, "龙王 RunIn 按新通用规则用于部署与 Idle 后进入移动，首尾均为 sequence blend")
 	_expect(mouth_binding_ok, "龙王吐息起点每帧绑定当前动画 Pose 的 Jaw 骨骼，不再使用固定屏幕高度近似嘴部")
 	_expect(move_transition_ok, "龙王吐息后按 Spell1_2Run→Run1B 直接接入移动循环")
 	_expect(move_cycle_ok, "龙王移动按 Run1B→Run1C→Run1D→Run1A 循环")
+	_expect(continuous_generic_fallback_ok, "continuous attack 无专用转跑片段时仍使用 action_out generic crossfade")
 	_expect(immediate_stop_ok, "龙王退出攻击时立即打断吐息循环，不等待循环动画播完")
 	unit.take_damage(unit.max_hp + 1.0)
 	var death_view_found := view != null and view._dying and view._animation_player.current_animation == "Death"

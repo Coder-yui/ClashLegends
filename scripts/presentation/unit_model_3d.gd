@@ -16,8 +16,8 @@ const TRANSITION_DEFAULTS := {
 	&"locomotion": 0.08,
 	&"action_in": 0.06,
 	&"action_out": 0.12,
-	&"attack": 0.05,
-	&"sequence": 0.04,
+	&"attack": 0.06,
+	&"sequence": 0.02,
 	&"death": 0.08,
 	&"model_swap": 0.02,
 }
@@ -66,6 +66,9 @@ var _move_cycle_index := 0
 var _move_sequence_active := false
 var _move_active_animation := &""
 var _move_override_animation := &""
+# 最近一次统一播放入口实际采用的策略与时长，供表现回归验证；不参与状态决策。
+var _last_clip_transition_kind := &""
+var _last_clip_blend_time := 0.0
 var _last_empowered_ready := false
 var _last_haste_active := false
 var _beam_skeleton: Skeleton3D
@@ -135,6 +138,8 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 	_continuous_attack_sequence.clear()
 	_move_sequence_active = false
 	_move_override_animation = &""
+	_last_clip_transition_kind = &""
+	_last_clip_blend_time = 0.0
 	_last_empowered_ready = _source.is_empowered_attack_ready_visual()
 	_last_haste_active = _source.get_active_speed_multiplier_visual() > 1.001
 	add_child(_model_root)
@@ -350,6 +355,8 @@ func _play_clip(animation_name: StringName, transition_kind: StringName = &"defa
 	if _animation_player == null or animation_name == &"" or not _animation_player.has_animation(animation_name):
 		return
 	var blend_time := _transition_blend(transition_kind) if blend_override < 0.0 else maxf(blend_override, 0.0)
+	_last_clip_transition_kind = transition_kind
+	_last_clip_blend_time = blend_time
 	_animation_player.play(animation_name, blend_time, playback_speed)
 
 func _transition_blend(transition_kind: StringName) -> float:
@@ -374,9 +381,16 @@ func _transition_to_basic_state(state: int, blend_time: float = -1.0, from_actio
 	_move_sequence_active = false
 	_move_active_animation = &""
 	if state == 2:
-		var route_from := &"attack" if previous_state == 3 else from_action
-		if previous_state == 0 and from_action == &"locomotion":
-			route_from = &"deploy"
+		var route_from := from_action
+		if from_action == &"locomotion":
+			if previous_state == 0:
+				route_from = &"deploy"
+			elif previous_state == 3:
+				route_from = &"attack"
+			elif previous_state == 2:
+				route_from = &"move"
+			else:
+				route_from = &"idle"
 		_start_move_sequence(route_from, blend_time)
 	else:
 		_play_state(state, _transition_blend(&"locomotion") if blend_time < 0.0 else blend_time)
@@ -405,7 +419,7 @@ func _sync_continuous_state_animations(state: int, force: bool, target_changed: 
 			# play() 会立即替换仍在播放的吐息循环，不等待循环素材结束。
 			_play_state(state, _transition_blend(&"locomotion") if force else _transition_blend(&"action_out"))
 
-func _start_continuous_attack(retargeting_without_move: bool = false) -> void:
+func _start_continuous_attack(retargeting_without_move: bool = false, blend_override: float = -1.0) -> void:
 	if _animation_player == null:
 		return
 	# 权威攻击进入范围即开始；光柱在所有进入/换目标/循环动画中持续显示。
@@ -421,19 +435,23 @@ func _start_continuous_attack(retargeting_without_move: bool = false) -> void:
 			_continuous_attack_sequence.append(enter_name)
 	_continuous_attack_sequence_index = 0
 	if not _continuous_attack_sequence.is_empty():
-		_play_continuous_attack_enter(StringName(_continuous_attack_sequence[0]))
+		_play_continuous_attack_enter(
+			StringName(_continuous_attack_sequence[0]),
+			&"sequence" if retargeting_without_move else &"action_in",
+			blend_override
+		)
 		return
-	_play_continuous_attack_loop()
+	_play_continuous_attack_loop(&"sequence" if retargeting_without_move else &"action_in", blend_override)
 
-func _play_continuous_attack_enter(animation_name: StringName) -> void:
+func _play_continuous_attack_enter(animation_name: StringName, transition_kind: StringName = &"sequence", blend_override: float = -1.0) -> void:
 	var enter_animation := _animation_player.get_animation(animation_name)
 	if enter_animation == null:
 		return
 	enter_animation.loop_mode = Animation.LOOP_NONE
 	_continuous_attack_animation = animation_name
-	_play_clip(animation_name, &"attack")
+	_play_clip(animation_name, transition_kind, 1.0, blend_override)
 
-func _play_continuous_attack_loop() -> void:
+func _play_continuous_attack_loop(transition_kind: StringName = &"sequence", blend_override: float = -1.0) -> void:
 	if _animation_player == null or not _continuous_attack_active or _current_state != 3:
 		return
 	var loop_name := StringName(_animation_names.get("attack_loop", ""))
@@ -443,11 +461,12 @@ func _play_continuous_attack_loop() -> void:
 	if loop_animation != null:
 		loop_animation.loop_mode = Animation.LOOP_LINEAR
 	_continuous_attack_animation = loop_name
-	_play_clip(loop_name, &"attack")
+	_play_clip(loop_name, transition_kind, 1.0, blend_override)
 	_source.set_continuous_beam_visible(true)
 
-## 进入普通移动先播 move_enter；若配置了来源动作到 move 的专用 transition，
-## 则优先插在它之前。过渡完成后按 move_cycle 数组顺序逐段循环。
+## Move route 分为两类且互斥：技能/特殊动作专用 ToRun 直接接 Run；否则部署、Idle、
+## 普攻可复用通用 RunIn/IntoRun。只要 route 含作者制作的 transition，首尾都用 sequence；
+## 完全没有 transition 时才让 action_out generic crossfade 承担完整姿态转换。
 func _start_move_sequence(from_action: StringName = &"locomotion", blend_override: float = -1.0) -> void:
 	if _animation_player == null:
 		return
@@ -464,23 +483,35 @@ func _start_move_sequence(from_action: StringName = &"locomotion", blend_overrid
 	elif from_action == &"attack":
 		var indexed_transition := _indexed_animation("attack_to_move", _active_attack_index)
 		if indexed_transition != &"":
+			dedicated_transition = indexed_transition
 			_move_sequence.append(indexed_transition)
-	var from_attack := from_action == &"attack"
-	var deploy_only := bool(_animation_names.get("move_enter_from_deploy_only", false))
-	var use_move_enter := (not deploy_only or from_action == &"deploy") and (not from_attack or bool(_animation_names.get("move_enter_after_attack", true)))
-	if use_move_enter:
+	# 专用 ToRun 已经完成动作到跑步的完整转换，不能再在其后重复串通用 RunIn。
+	# 通用 RunIn/IntoRun 只覆盖部署、Idle、普通攻击到移动。
+	var use_generic_move_enter := dedicated_transition == &"" and from_action in [&"deploy", &"idle", &"locomotion", &"attack"]
+	if use_generic_move_enter:
 		_append_valid_animations(_move_sequence, "move_enter")
 	_move_cycle.clear()
 	_append_valid_animations(_move_cycle, "move_cycle")
 	_move_sequence_index = 0
 	_move_cycle_index = 0
 	_move_sequence_active = not _move_sequence.is_empty() or not _move_cycle.is_empty()
+	var has_transition_clip := not _move_sequence.is_empty()
+	var entry_blend := _move_route_entry_blend(from_action, has_transition_clip, blend_override)
 	if not _move_sequence.is_empty():
-		_play_move_clip(StringName(_move_sequence[0]), blend_override)
+		_play_move_clip(StringName(_move_sequence[0]), entry_blend)
 	elif not _move_cycle.is_empty():
-		_play_move_cycle_clip(blend_override)
+		_play_move_cycle_clip(entry_blend)
 	else:
-		_play_state(2, _transition_blend(&"locomotion") if blend_override < 0.0 else blend_override)
+		_play_state(2, entry_blend)
+
+func _move_route_entry_blend(from_action: StringName, has_transition_clip: bool, blend_override: float) -> float:
+	if has_transition_clip:
+		return _transition_blend(&"sequence")
+	if blend_override >= 0.0:
+		return maxf(blend_override, 0.0)
+	if from_action in [&"attack", &"skill", &"deploy", &"transform"]:
+		return _transition_blend(&"action_out")
+	return _transition_blend(&"locomotion")
 
 func _move_animation_for_route(from_action: StringName) -> StringName:
 	if _source.get_active_speed_multiplier_visual() > 1.001:
@@ -539,7 +570,7 @@ func _advance_move_sequence() -> void:
 			return
 	if _move_cycle.is_empty():
 		_move_sequence_active = false
-		_play_state(2)
+		_play_state(2, _transition_blend(&"sequence"))
 		return
 	_move_cycle_index = 0
 	_play_move_cycle_clip()
@@ -694,7 +725,7 @@ func _finish_deploy_sequence() -> void:
 		if state == 3 and _pending_attack_serial > 0:
 			var pending_serial := _pending_attack_serial
 			_pending_attack_serial = 0
-			_play_attack(pending_serial, _transition_blend(&"action_out"))
+			_play_attack(pending_serial)
 		else:
 			_transition_to_basic_state(locomotion_state, _transition_blend(&"action_out"), &"deploy")
 
@@ -708,6 +739,7 @@ func _play_attack(serial: int, blend_override: float = -1.0) -> void:
 	if _playing_visual_action and _active_action_priority > int(ACTION_PRIORITY.get(&"attack", 20)):
 		_pending_attack_serial = serial
 		return
+	var entry_transition_kind := &"sequence" if _current_state == 3 else &"action_in"
 	_active_attack_empowered = serial == _source.get_empowered_attack_visual_serial()
 	var attack_key := "empowered_attack" if _active_attack_empowered else ("attack_structure" if _source.is_attacking_structure_visual() else "attack")
 	var configured = _animation_names.get(attack_key, _animation_names.get("attack", []))
@@ -734,9 +766,9 @@ func _play_attack(serial: int, blend_override: float = -1.0) -> void:
 		# 分段普攻只影响表现：Start 在权威 first_hit 窗口内播放，计时到点切到 Hit。
 		_attack_hit_pending = true
 		_attack_hit_timer = maxf(_source.first_hit_time, 0.01)
-		_play_attack_clip(animation_name, _attack_hit_timer, blend_override)
+		_play_attack_clip(animation_name, _attack_hit_timer, entry_transition_kind, blend_override)
 	else:
-		_play_attack_clip(animation_name, _attack_duration, blend_override)
+		_play_attack_clip(animation_name, _attack_duration, entry_transition_kind, blend_override)
 
 func _update_attack_stages(delta: float) -> void:
 	if not _playing_attack or _animation_player == null:
@@ -770,7 +802,7 @@ func _update_attack_stages(delta: float) -> void:
 			if _active_attack_index < recover_animations.size():
 				_play_attack_clip(StringName(recover_animations[_active_attack_index]), 0.0)
 
-func _play_attack_clip(animation_name: StringName, target_duration: float, blend_override: float = -1.0) -> void:
+func _play_attack_clip(animation_name: StringName, target_duration: float, transition_kind: StringName = &"sequence", blend_override: float = -1.0) -> void:
 	if animation_name == &"" or not _animation_player.has_animation(animation_name):
 		return
 	var animation := _animation_player.get_animation(animation_name)
@@ -782,7 +814,7 @@ func _play_attack_clip(animation_name: StringName, target_duration: float, blend
 		playback_speed = maxf(float(animation.length) / target_duration, 0.01)
 	_active_attack_animation = animation_name
 	_set_model_visual_clip(animation_name)
-	_play_clip(animation_name, &"attack", playback_speed, blend_override)
+	_play_clip(animation_name, transition_kind, playback_speed, blend_override)
 
 func _animation_list(key: String) -> Array:
 	var configured = _animation_names.get(key, [])
@@ -910,9 +942,9 @@ func _on_animation_finished(animation_name: StringName) -> void:
 		if animation_name == _continuous_attack_animation and _current_state == 3:
 			_continuous_attack_sequence_index += 1
 			if _continuous_attack_sequence_index < _continuous_attack_sequence.size():
-				_play_continuous_attack_enter(StringName(_continuous_attack_sequence[_continuous_attack_sequence_index]))
+				_play_continuous_attack_enter(StringName(_continuous_attack_sequence[_continuous_attack_sequence_index]), &"sequence")
 			else:
-				_play_continuous_attack_loop()
+				_play_continuous_attack_loop(&"sequence")
 		return
 	if _move_sequence_active:
 		if animation_name != _move_active_animation or _current_state != 2:
@@ -962,7 +994,15 @@ func _finish_visual_action() -> void:
 		return
 	_pending_attack_serial = 0
 	if state == 3 and _uses_continuous_state_animations():
-		_sync_continuous_state_animations(state, true, false)
+		# Skill/Transform -> continuous Attack 由源动作的 action_out 承担进入混合。
+		_current_state = 3
+		_source.set_continuous_beam_visible(false)
+		_continuous_attack_active = false
+		_continuous_attack_animation = &""
+		_continuous_attack_sequence.clear()
+		_move_sequence_active = false
+		_move_active_animation = &""
+		_start_continuous_attack(false, blend_out)
 		return
 	if state == 3:
 		_current_state = 1
