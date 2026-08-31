@@ -13,7 +13,89 @@ func run(harness: Object, main: Node2D) -> void:
 	_main = main
 	_check_gwen_mechanic()
 	_check_gwen_tower_combat()
+	_check_gwen_snip_snip_skill()
 	_check_gwen_art_integration()
+
+func _check_gwen_snip_snip_skill() -> void:
+	var stats: Dictionary = CardDB.get_card("gwen").duplicate(true)
+	stats["deploy_time"] = 0.0
+	var skill: Dictionary = stats.active_skill
+	var gwen := Unit.new()
+	gwen.position = Vector2(360.0, 900.0)
+	gwen.setup(0, stats, stats.name)
+	_main.add_child(gwen)
+	gwen.on_attack_landed()
+	var disabled_without_loadout := not gwen.is_skill_resource_visible() and is_zero_approx(gwen.skill_resource_value)
+	gwen.configure_carried_active_skill(skill)
+	for _hit in range(3):
+		gwen.on_attack_landed()
+	var charged_full := is_equal_approx(gwen.skill_resource_value, 3.0)
+	var prepared_full: Dictionary = _main._active_skill_effect_system.prepare_cast(gwen, skill)
+	var full_tier := (
+		charged_full and is_zero_approx(gwen.skill_resource_value)
+		and is_equal_approx(float(prepared_full.damage), 160.0)
+		and String(prepared_full.visual_action) == "active_strong"
+		and is_equal_approx(float(prepared_full.cast_duration), 2.8000002)
+	)
+	var partial := Unit.new()
+	partial.position = Vector2(560.0, 900.0)
+	partial.setup(0, stats, stats.name)
+	partial.configure_carried_active_skill(skill)
+	partial.add_skill_resource(2.0)
+	_main.add_child(partial)
+	var prepared_partial: Dictionary = _main._active_skill_effect_system.prepare_cast(partial, skill)
+	_expect(
+		disabled_without_loadout and full_tier
+		and is_equal_approx(float(prepared_partial.damage), 120.0)
+		and String(prepared_partial.visual_action) == "active",
+		"格温只有携带快刀乱剪时普攻命中才充能；0~3 层读取对应伤害，满层选择 Spell1 0→B→C 并消耗全部层数",
+	)
+	var dummy_stats := SuiteUtils.sweep_dummy_stats(CardDB.get_card("garen"))
+	var center := Unit.new()
+	var edge := Unit.new()
+	var behind := Unit.new()
+	center.position = Vector2(360.0, 790.0)
+	edge.position = Vector2(414.0, 790.0)
+	behind.position = Vector2(360.0, 990.0)
+	for target in [center, edge, behind]:
+		target.setup(1, dummy_stats, "剪切木桩")
+		_main.add_child(target)
+	gwen.begin_active_skill_cast(float(prepared_full.cast_duration), Vector2.UP, prepared_full.cast_locks)
+	var center_before := center.hp
+	var edge_before := edge.hp
+	var behind_before := behind.hp
+	_main._active_skill_effect_system.apply(gwen, prepared_full)
+	_expect(
+		is_equal_approx(center_before - center.hp, 160.0 * 1.2)
+		and is_equal_approx(edge_before - edge.hp, 160.0)
+		and is_equal_approx(behind.hp, behind_before)
+		and gwen.is_active_skill_movement_locked() and gwen.is_active_skill_attack_locked() and gwen.is_active_skill_facing_locked(),
+		"格温快刀乱剪锁定行动并命中前方扇形，中央区域造成 1.2 倍伤害且不命中身后",
+	)
+	_main._battle_presentation.attach_unit(gwen, stats)
+	var view: UnitModel3D = null
+	for child in _main._battle_presentation._world_root.get_children():
+		if child is UnitModel3D and child._source == gwen:
+			view = child as UnitModel3D
+			break
+	var animation_chain := false
+	if view != null:
+		gwen.play_visual_action(&"active_strong", float(prepared_full.cast_duration))
+		view._sync_visual(false, 0.05)
+		var clip_0 := view._animation_player.current_animation == "Spell1_0"
+		view._on_animation_finished(&"Spell1_0")
+		var clip_b := view._animation_player.current_animation == "Spell1_B"
+		view._on_animation_finished(&"Spell1_B")
+		var clip_c := view._animation_player.current_animation == "Spell1_C_anm"
+		gwen.active_skill_cast_timer = 0.0
+		gwen.active_skill_cast_locks.clear()
+		gwen._move_intent = Vector2.UP * gwen.move_speed
+		view._on_animation_finished(&"Spell1_C_anm")
+		animation_chain = clip_0 and clip_b and clip_c and view._animation_player.current_animation == "Spell1_C_to_Run_anm"
+	_expect(animation_chain, "格温满层技能播放 Spell1 0→B→C，技能后移动直接衔接 Spell1 C ToRun；普通移动入口配置 Into Run")
+	for unit in [gwen, partial, center, edge, behind]:
+		if is_instance_valid(unit):
+			unit.free()
 
 func _check_gwen_mechanic() -> void:
 	var gwen_stats: Dictionary = CardDB.get_card("gwen").duplicate(true)

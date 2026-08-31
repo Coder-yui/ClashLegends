@@ -48,6 +48,7 @@ var _playing_attack := false
 var _holding_attack_pose := false
 var _active_attack_animation := &""
 var _active_attack_index := 0
+var _active_attack_empowered := false
 var _attack_hit_timer := 0.0
 var _attack_recover_timer := 0.0
 var _attack_hit_pending := false
@@ -56,14 +57,21 @@ var _attack_recover_pending := false
 # 这些状态仅消费 Unit 的粗粒度表现状态，不驱动索敌、伤害或移动。
 var _continuous_attack_active := false
 var _continuous_attack_animation := &""
+var _continuous_attack_sequence: Array = []
+var _continuous_attack_sequence_index := 0
 var _move_sequence: Array = []
 var _move_sequence_index := 0
 var _move_cycle: Array = []
 var _move_cycle_index := 0
 var _move_sequence_active := false
 var _move_active_animation := &""
-# 出场技能序列：deploy 配置为数组时，从单位生成的部署阶段首帧开始依次播放
-# （如赵信 Spell4 → Spell4_To_Idle），两段合计对齐权威部署时长；
+var _move_override_animation := &""
+var _last_empowered_ready := false
+var _last_haste_active := false
+var _beam_skeleton: Skeleton3D
+var _beam_mouth_bone := -1
+# 出场技能序列：deploy 配置为数组时，从单位生成的部署阶段首帧开始依次播放；
+# 单段部署（如赵信 1 秒 Spell4）继续由基础状态通道按 deploy_time 缩放；
 # 部署结束前不被基础状态切换打断。
 var _deploy_sequence: Array = []
 var _deploy_sequence_index := 0
@@ -109,6 +117,7 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 	_current_state = -1
 	_pending_attack_serial = 0
 	_playing_attack = false
+	_active_attack_empowered = false
 	_holding_attack_pose = false
 	_playing_visual_action = false
 	_active_visual_action = &""
@@ -123,7 +132,11 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 	_playing_deploy_sequence = false
 	_deploy_sequence_started = false
 	_continuous_attack_active = false
+	_continuous_attack_sequence.clear()
 	_move_sequence_active = false
+	_move_override_animation = &""
+	_last_empowered_ready = _source.is_empowered_attack_ready_visual()
+	_last_haste_active = _source.get_active_speed_multiplier_visual() > 1.001
 	add_child(_model_root)
 	if _model_root.has_method("prepare_visual_animations"):
 		_model_root.call("prepare_visual_animations")
@@ -132,6 +145,8 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 		push_warning("单位 3D 模型中未找到 AnimationPlayer")
 	else:
 		_animation_player.animation_finished.connect(_on_animation_finished)
+	_beam_skeleton = _find_skeleton(_model_root)
+	_beam_mouth_bone = _beam_skeleton.find_bone("Jaw") if _beam_skeleton != null else -1
 	_prepare_hit_flash()
 	_configure_looping_animations()
 	_recreate_team_ring()
@@ -148,6 +163,7 @@ func _process(delta: float) -> void:
 		return
 	_update_attack_stages(delta)
 	_sync_visual(false, delta)
+	_update_continuous_beam_origin()
 	_update_health_bar_anchor()
 
 func _sync_visual(force: bool, delta: float) -> void:
@@ -181,6 +197,17 @@ func _sync_visual(force: bool, delta: float) -> void:
 				_play_attack(attack_serial)
 	var state := _source.net_visual_state if _source._in_client_mode() else _source.get_visual_state_code()
 	var locomotion_state := _source.net_locomotion_state if _source._in_client_mode() else _source.get_locomotion_visual_state_code()
+	var empowered_ready := _source.is_empowered_attack_ready_visual()
+	if empowered_ready != _last_empowered_ready:
+		_last_empowered_ready = empowered_ready
+		# 盖伦在移动中开启强化后同帧从普通 Run 切到 Spell1 Run；只换表现，不改位移。
+		if not _playing_visual_action and not _playing_attack and locomotion_state == 2:
+			_transition_to_basic_state(2, _transition_blend(&"locomotion"))
+	var haste_active := _source.get_active_speed_multiplier_visual() > 1.001
+	if haste_active != _last_haste_active:
+		_last_haste_active = haste_active
+		if not _playing_visual_action and not _playing_attack and locomotion_state == 2:
+			_transition_to_basic_state(2, _transition_blend(&"locomotion"))
 	# 出场演出：单位生成首帧启动序列；部署结束后让位给基础状态机。
 	_update_deploy_sequence_lifecycle()
 	# 出场技能序列在部署锁定期间保持动作，不被其他状态打断。
@@ -207,7 +234,8 @@ func _sync_visual(force: bool, delta: float) -> void:
 		_current_state = 1
 		_play_state(1)
 	if _animation_player != null:
-		_animation_player.speed_scale = 0.0 if _source.frozen_timer > 0.0 or _source.stun_timer > 0.0 else 1.0
+		var playback_scale := _source.get_active_attack_speed_multiplier_visual() if _playing_attack else 1.0
+		_animation_player.speed_scale = 0.0 if _source.frozen_timer > 0.0 or _source.stun_timer > 0.0 else playback_scale
 
 func _play_visual_action(action_name: StringName) -> void:
 	if _animation_player == null or action_name == &"":
@@ -346,7 +374,10 @@ func _transition_to_basic_state(state: int, blend_time: float = -1.0, from_actio
 	_move_sequence_active = false
 	_move_active_animation = &""
 	if state == 2:
-		_start_move_sequence(&"attack" if previous_state == 3 else from_action, blend_time)
+		var route_from := &"attack" if previous_state == 3 else from_action
+		if previous_state == 0 and from_action == &"locomotion":
+			route_from = &"deploy"
+		_start_move_sequence(route_from, blend_time)
 	else:
 		_play_state(state, _transition_blend(&"locomotion") if blend_time < 0.0 else blend_time)
 
@@ -362,6 +393,7 @@ func _sync_continuous_state_animations(state: int, force: bool, target_changed: 
 	_source.set_continuous_beam_visible(false)
 	_continuous_attack_active = false
 	_continuous_attack_animation = &""
+	_continuous_attack_sequence.clear()
 	_move_sequence_active = false
 	_move_active_animation = &""
 	match state:
@@ -376,19 +408,30 @@ func _sync_continuous_state_animations(state: int, force: bool, target_changed: 
 func _start_continuous_attack(retargeting_without_move: bool = false) -> void:
 	if _animation_player == null:
 		return
-	# 进入吐息动画只表现蓄势；蓝色光柱要等循环吐息真正开始后才出现。
-	_source.set_continuous_beam_visible(false)
+	# 权威攻击进入范围即开始；光柱在所有进入/换目标/循环动画中持续显示。
+	_source.set_continuous_beam_visible(true)
 	_continuous_attack_active = true
 	var enter_key := "attack_retarget_enter" if retargeting_without_move else "attack_enter"
-	var enter_name := StringName(_animation_names.get(enter_key, _animation_names.get("attack_enter", "")))
-	if enter_name != &"" and _animation_player.has_animation(enter_name):
-		var enter_animation := _animation_player.get_animation(enter_name)
-		if enter_animation != null:
-			enter_animation.loop_mode = Animation.LOOP_NONE
-		_continuous_attack_animation = enter_name
-		_play_clip(enter_name, &"attack")
+	var configured = _animation_names.get(enter_key, _animation_names.get("attack_enter", ""))
+	var candidates: Array = configured if configured is Array else [configured]
+	_continuous_attack_sequence.clear()
+	for candidate in candidates:
+		var enter_name := StringName(candidate)
+		if enter_name != &"" and _animation_player.has_animation(enter_name):
+			_continuous_attack_sequence.append(enter_name)
+	_continuous_attack_sequence_index = 0
+	if not _continuous_attack_sequence.is_empty():
+		_play_continuous_attack_enter(StringName(_continuous_attack_sequence[0]))
 		return
 	_play_continuous_attack_loop()
+
+func _play_continuous_attack_enter(animation_name: StringName) -> void:
+	var enter_animation := _animation_player.get_animation(animation_name)
+	if enter_animation == null:
+		return
+	enter_animation.loop_mode = Animation.LOOP_NONE
+	_continuous_attack_animation = animation_name
+	_play_clip(animation_name, &"attack")
 
 func _play_continuous_attack_loop() -> void:
 	if _animation_player == null or not _continuous_attack_active or _current_state != 3:
@@ -409,14 +452,22 @@ func _start_move_sequence(from_action: StringName = &"locomotion", blend_overrid
 	if _animation_player == null:
 		return
 	_move_sequence.clear()
-	var dedicated_transition := _transition_clip(from_action, &"move")
+	_move_override_animation = _move_animation_for_route(from_action)
+	var dedicated_transition := &""
+	if from_action == &"attack" and _active_attack_empowered:
+		dedicated_transition = _first_valid_animation("empowered_attack_to_move")
+	if dedicated_transition == &"":
+		dedicated_transition = _transition_clip(from_action, &"move")
 	if dedicated_transition != &"":
 		_move_sequence.append(dedicated_transition)
 	# 兼容旧 CardDB 的 attack_to_move；新配置统一写 transitions["attack>move"]。
 	elif from_action == &"attack":
-		_append_valid_animations(_move_sequence, "attack_to_move")
+		var indexed_transition := _indexed_animation("attack_to_move", _active_attack_index)
+		if indexed_transition != &"":
+			_move_sequence.append(indexed_transition)
 	var from_attack := from_action == &"attack"
-	var use_move_enter := not from_attack or bool(_animation_names.get("move_enter_after_attack", true))
+	var deploy_only := bool(_animation_names.get("move_enter_from_deploy_only", false))
+	var use_move_enter := (not deploy_only or from_action == &"deploy") and (not from_attack or bool(_animation_names.get("move_enter_after_attack", true)))
 	if use_move_enter:
 		_append_valid_animations(_move_sequence, "move_enter")
 	_move_cycle.clear()
@@ -430,6 +481,35 @@ func _start_move_sequence(from_action: StringName = &"locomotion", blend_overrid
 		_play_move_cycle_clip(blend_override)
 	else:
 		_play_state(2, _transition_blend(&"locomotion") if blend_override < 0.0 else blend_override)
+
+func _move_animation_for_route(from_action: StringName) -> StringName:
+	if _source.get_active_speed_multiplier_visual() > 1.001:
+		var haste_move := _first_valid_animation("haste_move")
+		if haste_move != &"":
+			return haste_move
+	if _source.is_empowered_attack_ready_visual():
+		var empowered_move := _first_valid_animation("empowered_move")
+		if empowered_move != &"":
+			return empowered_move
+	if from_action == &"attack" and not _active_attack_empowered:
+		var routed_move := _indexed_animation("attack_move", _active_attack_index)
+		if routed_move != &"":
+			return routed_move
+	return &""
+
+func _indexed_animation(key: String, index: int) -> StringName:
+	var values := _animation_list(key)
+	if values.is_empty():
+		return &""
+	var candidate := StringName(values[index % values.size()])
+	return candidate if candidate != &"" and _animation_player.has_animation(candidate) else &""
+
+func _first_valid_animation(key: String) -> StringName:
+	for value in _animation_list(key):
+		var candidate := StringName(value)
+		if candidate != &"" and _animation_player.has_animation(candidate):
+			return candidate
+	return &""
 
 func _append_valid_animations(target: Array, key: String) -> void:
 	for value in _animation_list(key):
@@ -519,7 +599,13 @@ func _play_state(state: int, blend_time: float = -1.0) -> void:
 	if _animation_player == null:
 		return
 	var key: StringName = STATE_KEYS[clampi(state, 0, STATE_KEYS.size() - 1)]
-	var configured = _animation_names.get(String(key), "")
+	if state != 2:
+		_move_override_animation = &""
+	var configured = _move_override_animation if state == 2 and _move_override_animation != &"" else _animation_names.get(String(key), "")
+	if state == 2 and _source.get_active_speed_multiplier_visual() > 1.001:
+		var haste_move := _first_valid_animation("haste_move")
+		if haste_move != &"":
+			configured = haste_move
 	# deploy 配置为数组时由部署序列生命周期单独处理。
 	if configured is Array:
 		configured = ""
@@ -622,12 +708,13 @@ func _play_attack(serial: int, blend_override: float = -1.0) -> void:
 	if _playing_visual_action and _active_action_priority > int(ACTION_PRIORITY.get(&"attack", 20)):
 		_pending_attack_serial = serial
 		return
-	var attack_key := "attack_structure" if _source.is_attacking_structure_visual() else "attack"
+	_active_attack_empowered = serial == _source.get_empowered_attack_visual_serial()
+	var attack_key := "empowered_attack" if _active_attack_empowered else ("attack_structure" if _source.is_attacking_structure_visual() else "attack")
 	var configured = _animation_names.get(attack_key, _animation_names.get("attack", []))
 	var attacks: Array = configured if configured is Array else [configured]
 	if attacks.is_empty():
 		return
-	_active_attack_index = (serial - 1) % attacks.size()
+	_active_attack_index = 0 if _active_attack_empowered else (serial - 1) % attacks.size()
 	var animation_name := StringName(attacks[_active_attack_index])
 	if animation_name == &"" or not _animation_player.has_animation(animation_name):
 		return
@@ -640,8 +727,9 @@ func _play_attack(serial: int, blend_override: float = -1.0) -> void:
 	_holding_attack_pose = false
 	_move_sequence_active = false
 	_move_active_animation = &""
+	_move_override_animation = &""
 	_current_state = 3
-	var hit_animations := _animation_list("attack_hit")
+	var hit_animations := _active_attack_animation_list("attack_hit")
 	if _active_attack_index < hit_animations.size() and StringName(hit_animations[_active_attack_index]) != &"":
 		# 分段普攻只影响表现：Start 在权威 first_hit 窗口内播放，计时到点切到 Hit。
 		_attack_hit_pending = true
@@ -656,14 +744,15 @@ func _update_attack_stages(delta: float) -> void:
 	# 冰冻期间模拟攻击计时不推进，分段表现计时也必须同步暂停。
 	if _source.frozen_timer > 0.0 or _source.stun_timer > 0.0:
 		return
+	delta *= maxf(_source.get_active_attack_speed_multiplier_visual(), 1.0)
 	if _attack_hit_pending:
 		_attack_hit_timer = maxf(0.0, _attack_hit_timer - delta)
 		if _attack_hit_timer <= 0.0:
 			_attack_hit_pending = false
-			var hit_animations := _animation_list("attack_hit")
+			var hit_animations := _active_attack_animation_list("attack_hit")
 			if _active_attack_index < hit_animations.size():
 				var hit_name := StringName(hit_animations[_active_attack_index])
-				var recover_animations := _animation_list("attack_recover")
+				var recover_animations := _active_attack_animation_list("attack_recover")
 				var recover_name := &""
 				if _active_attack_index < recover_animations.size():
 					recover_name = StringName(recover_animations[_active_attack_index])
@@ -677,7 +766,7 @@ func _update_attack_stages(delta: float) -> void:
 		_attack_recover_timer = maxf(0.0, _attack_recover_timer - delta)
 		if _attack_recover_timer <= 0.0:
 			_attack_recover_pending = false
-			var recover_animations := _animation_list("attack_recover")
+			var recover_animations := _active_attack_animation_list("attack_recover")
 			if _active_attack_index < recover_animations.size():
 				_play_attack_clip(StringName(recover_animations[_active_attack_index]), 0.0)
 
@@ -699,6 +788,13 @@ func _animation_list(key: String) -> Array:
 	var configured = _animation_names.get(key, [])
 	return configured if configured is Array else [configured]
 
+func _active_attack_animation_list(base_key: String) -> Array:
+	if _active_attack_empowered:
+		var empowered_key := "empowered_%s" % base_key
+		if _animation_names.has(empowered_key):
+			return _animation_list(empowered_key)
+	return _animation_list(base_key)
+
 func _attack_recover_delay(index: int) -> float:
 	var configured = _animation_names.get("attack_recover_delay", 0.3)
 	if configured is Array:
@@ -708,6 +804,9 @@ func _attack_recover_delay(index: int) -> float:
 	return maxf(float(configured), 0.01)
 
 func _attack_hit_duration(index: int) -> float:
+	# 强化攻击的专用后摇默认按素材原速播放，允许下一次普攻或移动在任意进度打断。
+	if _active_attack_empowered and not _animation_names.has("empowered_attack_hit_duration"):
+		return 0.0
 	var configured = _animation_names.get("attack_hit_duration", _attack_duration)
 	if configured is Array:
 		var values := configured as Array
@@ -747,13 +846,20 @@ func _configure_looping_animations() -> void:
 			var move_animation := _animation_player.get_animation(move_name)
 			if move_animation != null:
 				move_animation.loop_mode = Animation.LOOP_LINEAR
+	for key in ["attack_move", "empowered_move", "haste_move"]:
+		for value in _animation_list(key):
+			var routed_move := StringName(value)
+			if routed_move != &"" and _animation_player.has_animation(routed_move):
+				var routed_animation := _animation_player.get_animation(routed_move)
+				if routed_animation != null:
+					routed_animation.loop_mode = Animation.LOOP_LINEAR
 	var continuous_loop := StringName(_animation_names.get("attack_loop", ""))
 	if continuous_loop != &"" and _animation_player.has_animation(continuous_loop):
 		var continuous_animation := _animation_player.get_animation(continuous_loop)
 		if continuous_animation != null:
 			continuous_animation.loop_mode = Animation.LOOP_LINEAR
 	# 出场技能与攻击分段动画都必须是非循环完整动作。
-	for key in ["attack", "attack_structure", "attack_hit", "attack_recover", "deploy", "attack_enter", "attack_retarget_enter", "attack_to_move", "move_enter", "move_cycle"]:
+	for key in ["attack", "attack_structure", "attack_hit", "attack_recover", "empowered_attack", "empowered_attack_hit", "empowered_attack_recover", "empowered_attack_to_move", "deploy", "attack_enter", "attack_retarget_enter", "attack_to_move", "move_enter", "move_cycle"]:
 		for value in _animation_list(key):
 			var animation_name := StringName(value)
 			if animation_name != &"" and _animation_player.has_animation(animation_name):
@@ -802,7 +908,11 @@ func _on_animation_finished(animation_name: StringName) -> void:
 		return
 	if _continuous_attack_active:
 		if animation_name == _continuous_attack_animation and _current_state == 3:
-			_play_continuous_attack_loop()
+			_continuous_attack_sequence_index += 1
+			if _continuous_attack_sequence_index < _continuous_attack_sequence.size():
+				_play_continuous_attack_enter(StringName(_continuous_attack_sequence[_continuous_attack_sequence_index]))
+			else:
+				_play_continuous_attack_loop()
 		return
 	if _move_sequence_active:
 		if animation_name != _move_active_animation or _current_state != 2:
@@ -961,6 +1071,25 @@ func _find_animation_player(node: Node) -> AnimationPlayer:
 		if found != null:
 			return found
 	return null
+
+func _find_skeleton(node: Node) -> Skeleton3D:
+	if node is Skeleton3D:
+		return node as Skeleton3D
+	for child in node.get_children():
+		var found := _find_skeleton(child)
+		if found != null:
+			return found
+	return null
+
+## 龙息起点每帧读取当前动画 Pose 的 Jaw 骨骼，再投影回权威 2D 战场。
+## 这只修正表现起点，持续伤害仍由 Unit 固定 tick 结算。
+func _update_continuous_beam_origin() -> void:
+	if _beam_skeleton == null or _beam_mouth_bone < 0 or _camera == null:
+		return
+	var mouth_world := _beam_skeleton.to_global(_beam_skeleton.get_bone_global_pose(_beam_mouth_bone).origin)
+	if _camera.is_position_behind(mouth_world):
+		return
+	_source.set_continuous_beam_origin_world_position(_camera.unproject_position(mouth_world))
 
 func _create_team_ring() -> void:
 	if not _source.show_team_ring:

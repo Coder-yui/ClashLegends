@@ -798,8 +798,9 @@ func preview_active_skill(unit: Unit, skill: Dictionary) -> bool:
 	# dual_form 自己包含变形/前方技能的完整特殊时间轴，不能在这里重复启动一次。
 	if String(skill.get("kind", "")) == "dual_form":
 		return _apply_active_skill_effect(unit, skill)
-	_begin_configured_active_skill_cast(unit, skill)
-	_queue_active_skill_impact(unit, skill, maxf(float(skill.get("impact_delay", 0.0)), 0.0))
+	var prepared_skill: Dictionary = _active_skill_effect_system.prepare_cast(unit, skill)
+	_begin_configured_active_skill_cast(unit, prepared_skill)
+	_queue_active_skill_impact(unit, prepared_skill, maxf(float(prepared_skill.get("impact_delay", 0.0)), 0.0))
 	return true
 
 func _register_dynamic_building(unit: Unit) -> void:
@@ -1204,19 +1205,24 @@ func _execute_card_deployment(p_team: int, card_id: String, pos: Vector2) -> voi
 				_push_units_around(pos, stats.get("radius", 14.0))
 			_spawn_unit(p_team, card_id, pos, -1.0, active_slot)
 
-func launch_attack(attacker: Node2D, target: Node2D, amount: float, projectile_speed: float, splash_radius: float, knockback: float, projectile_color: Color) -> void:
-	_projectile_system.launch(attacker, target, amount, projectile_speed, splash_radius, knockback, projectile_color)
+func launch_attack(attacker: Node2D, target: Node2D, amount: float, projectile_speed: float, splash_radius: float, knockback: float, projectile_color: Color, effects: Dictionary = {}) -> void:
+	_projectile_system.launch(attacker, target, amount, projectile_speed, splash_radius, knockback, projectile_color, effects)
 
 func _tick_projectiles(dt: float) -> void:
 	_projectile_system.tick(dt)
 
-func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: float, radius: float, knockback: float, from: Node2D = null, source_position: Vector2 = Vector2(INF, INF), source_form_index: int = -1) -> void:
+func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: float, radius: float, knockback: float, from: Node2D = null, source_position: Vector2 = Vector2(INF, INF), source_form_index: int = -1, effects: Dictionary = {}) -> void:
 	if primary == null or not is_instance_valid(primary) or primary.hp <= 0.0:
 		return
 	if radius <= 0.0:
+		var was_alive: bool = primary.hp > 0.0
 		var landed: bool = primary.take_damage(amount, from, p_team, source_position)
+		if landed:
+			_apply_attack_hit_effects(primary, effects)
 		if landed and from is Unit and is_instance_valid(from):
 			(from as Unit).on_attack_landed(source_form_index)
+			if was_alive and primary.hp <= 0.0:
+				(from as Unit).on_enemy_killed(primary)
 		if landed and knockback > 0.0 and primary is Unit and is_instance_valid(primary) and primary.hp > 0.0:
 			(primary as Unit).apply_knockback(origin, knockback)
 		return
@@ -1226,12 +1232,23 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 		if not is_instance_valid(c) or c.team == p_team or c.hp <= 0.0:
 			continue
 		if c.global_position.distance_to(impact_pos) <= radius + c.body_radius:
+			var was_alive: bool = c.hp > 0.0
 			var landed: bool = c.take_damage(amount, from, p_team, source_position)
+			if landed:
+				_apply_attack_hit_effects(c, effects)
 			any_landed = landed or any_landed
+			if landed and was_alive and c.hp <= 0.0 and from is Unit and is_instance_valid(from):
+				(from as Unit).on_enemy_killed(c)
 			if landed and knockback > 0.0 and c is Unit and is_instance_valid(c) and c.hp > 0.0:
 				(c as Unit).apply_knockback(origin, knockback)
 	if any_landed and from is Unit and is_instance_valid(from):
 		(from as Unit).on_attack_landed(source_form_index)
+
+func _apply_attack_hit_effects(target: Node2D, effects: Dictionary) -> void:
+	if target is Unit and is_instance_valid(target) and target.hp > 0.0:
+		var blind_charges := maxi(int(effects.get("blind_charges", 0)), 0)
+		if blind_charges > 0:
+			(target as Unit).apply_blind(blind_charges)
 
 func _cast_spell(p_team: int, card_id: String, pos: Vector2, active_enabled: bool = false) -> bool:
 	return _spell_system.cast(p_team, CardDB.get_card(card_id), pos, active_enabled)
@@ -1296,6 +1313,7 @@ func _register_active_skill(unit: Unit, card_id: String, p_team: int) -> void:
 	# 备战信息页只允许从候选集合中携带一个；场上实例不会同时获得多个主动技能。
 	var chosen_skill_index := _active_skill_choice_for_team(p_team, card_id, available_skills.size())
 	var carried_skill: Dictionary = available_skills[chosen_skill_index]
+	unit.configure_carried_active_skill(carried_skill)
 	var ability_id := unit.active_ability_id
 	var active_slot := unit.active_ability_slot
 	# 每个主动槽始终只控制最近部署的实例。新实例落地时，旧实例的未用资格立即作废。
@@ -1311,6 +1329,7 @@ func _register_active_skill(unit: Unit, card_id: String, p_team: int) -> void:
 		if replaced_unit != null and is_instance_valid(replaced_unit):
 			replaced_unit.active_ability_id = -1
 			replaced_unit.active_ability_slot = -1
+			replaced_unit.clear_carried_active_skill_resource()
 		_active_skills.erase(replaced_id)
 		_cancel_pending_active_skill(replaced_id)
 		if _active_skill_bar != null:
@@ -1452,10 +1471,12 @@ func _activate_active_skill(ability_id: int, expected_team: int = -1) -> bool:
 	if skill_kind == "dual_form":
 		_activate_dual_form_skill(unit, skill)
 	else:
-		_begin_configured_active_skill_cast(unit, skill)
-		_queue_active_skill_impact(unit, skill, maxf(float(skill.get("impact_delay", 0.0)), 0.0))
+		var prepared_skill: Dictionary = _active_skill_effect_system.prepare_cast(unit, skill)
+		_begin_configured_active_skill_cast(unit, prepared_skill)
+		_queue_active_skill_impact(unit, prepared_skill, maxf(float(prepared_skill.get("impact_delay", 0.0)), 0.0))
 	unit.active_ability_id = -1
 	unit.active_ability_slot = -1
+	unit.clear_carried_active_skill_resource()
 	_active_skills.erase(ability_id)
 	if _active_skill_bar != null:
 		_active_skill_bar.remove_skill(ability_id)
@@ -1476,6 +1497,16 @@ func _begin_configured_active_skill_cast(unit: Unit, skill: Dictionary) -> void:
 		unit.begin_active_skill_cast(cast_duration, unit.get_visual_facing_direction(), cast_locks)
 	if action_name != &"":
 		unit.play_visual_action(action_name, cast_duration)
+	if StringName(skill.get("kind", "")) == &"frontal":
+		var cast_forward := unit.active_skill_cast_facing
+		if cast_forward.length_squared() < 0.001:
+			cast_forward = unit.get_visual_facing_direction()
+		_active_skill_effect_system.begin_frontal_visual(unit, skill, cast_forward)
+	elif StringName(skill.get("kind", "")) == &"forward_area":
+		var cast_forward := unit.active_skill_cast_facing
+		if cast_forward.length_squared() < 0.001:
+			cast_forward = unit.get_visual_facing_direction()
+		_active_skill_effect_system.begin_forward_area_visual(unit, skill, cast_forward)
 
 func _activate_nova_skill(source: Unit, skill: Dictionary) -> void:
 	_active_skill_effect_system.activate_nova(source, skill)
@@ -2099,6 +2130,7 @@ func _rpc_active_skill_used(ability_id: int) -> void:
 		if unit != null and is_instance_valid(unit):
 			unit.active_ability_id = -1
 			unit.active_ability_slot = -1
+			unit.clear_carried_active_skill_resource()
 	_active_skills.erase(ability_id)
 	if _active_skill_bar != null:
 		_active_skill_bar.remove_skill(ability_id)
@@ -2225,26 +2257,33 @@ func _rpc_freeze_fx(pos: Vector2, radius: float, duration: float, slow_duration:
 	if slow_duration > 0.0:
 		_slow_effects.append({"pos": pos, "radius": radius, "delay": duration, "timer": slow_duration, "duration": slow_duration})
 
-## 主机 → 客户端：纳尔 Spell2 蓄力范围。客户端只画框，伤害和眩晕仍由主机快照体现。
+## 主机 → 客户端：定向技能蓄力范围。客户端只画表现，伤害与状态仍由主机快照体现。
 @rpc("authority", "call_remote", "reliable")
-func _rpc_frontal_skill_fx(net_id: int, pos: Vector2, forward: Vector2, source_radius: float, length: float, width: float, duration: float, p_team: int) -> void:
+func _rpc_frontal_skill_fx(net_id: int, pos: Vector2, forward: Vector2, source_radius: float, length: float, width: float, duration: float, p_team: int, shape: String = "rectangle", near_width: float = 0.0, far_width: float = 0.0, arc_degrees: float = 0.0, projectile_count: int = 0, center_ratio: float = 0.0) -> void:
 	if mode != "client":
 		return
 	_frontal_skill_effects.append({
 		"source_ref": null,
 		"net_id": net_id,
+		"fixed_position": shape in ["target_circle", "shockwave"],
 		"pos": pos,
 		"forward": forward.normalized(),
 		"source_radius": source_radius,
 		"length": length,
 		"width": width,
+		"shape": shape,
+		"near_width": width if near_width <= 0.0 else near_width,
+		"far_width": width if far_width <= 0.0 else far_width,
+		"arc_degrees": arc_degrees,
+		"projectile_count": projectile_count,
+		"center_ratio": center_ratio,
 		"timer": duration,
 		"duration": duration,
 		"team": p_team,
 	})
 	if _auto_test and not _auto_gnar_skill_fx_seen:
 		_auto_gnar_skill_fx_seen = true
-		print("[测试] 客户端已收到纳尔固定方向 Spell2 三边范围框")
+		print("[测试] 客户端已收到固定方向技能范围表现")
 
 ## 主机 → 客户端：比赛结束
 @rpc("authority", "call_remote", "reliable")
@@ -2296,27 +2335,79 @@ func _draw_frontal_skill_effect(effect: Dictionary) -> void:
 	var center: Vector2 = effect.get("pos", Vector2.ZERO)
 	var forward: Vector2 = effect.get("forward", Vector2.UP)
 	var source_radius := float(effect.get("source_radius", 0.0))
-	if source is Unit and is_instance_valid(source):
+	if not bool(effect.get("fixed_position", false)) and source is Unit and is_instance_valid(source):
 		center = (source as Unit).get_visual_screen_position()
 		source_radius = (source as Unit).body_radius
 	if forward.length_squared() < 0.001:
 		return
 	forward = forward.normalized()
 	var side := Vector2(-forward.y, forward.x)
-	var half_width := maxf(float(effect.get("width", 0.0)) * 0.5, 0.0)
 	var near_center := center + forward * source_radius
-	var far_center := near_center + forward * maxf(float(effect.get("length", 0.0)), 0.0)
-	var near_left := near_center - side * half_width
-	var near_right := near_center + side * half_width
-	var far_left := far_center - side * half_width
-	var far_right := far_center + side * half_width
+	var length := maxf(float(effect.get("length", 0.0)), 0.0)
+	var far_center := near_center + forward * length
 	var remaining_ratio := clampf(float(effect.get("timer", 0.0)) / maxf(float(effect.get("duration", 0.0)), 0.001), 0.0, 1.0)
+	var progress := 1.0 - remaining_ratio
 	var line_color := Color(0.28, 0.68, 1.0, 0.9) if int(effect.get("team", 0)) == 0 else Color(1.0, 0.34, 0.24, 0.9)
 	var fill_color := Color(line_color.r, line_color.g, line_color.b, 0.10 + 0.06 * remaining_ratio)
+	var shape := StringName(effect.get("shape", "rectangle"))
+	if shape == &"target_circle":
+		var radius := length
+		# 星落/天瀑的落点需要清晰可辨，但不能用大面积色块遮住圈内人物。
+		# 填充最高仅 6% 不透明度，边缘单独保留适中的亮度用于读范围。
+		var area_fill_alpha := 0.025 + 0.035 * remaining_ratio
+		var area_line_color := Color(line_color.r, line_color.g, line_color.b, 0.52)
+		draw_circle(center, radius, Color(line_color.r, line_color.g, line_color.b, area_fill_alpha))
+		draw_arc(center, radius, 0.0, TAU, 64, area_line_color, 3.0, true)
+		var star_height := radius * lerpf(2.2, 0.0, progress)
+		var star_pos := center + Vector2(0.0, -star_height)
+		draw_circle(star_pos, 9.0 + 5.0 * progress, Color(1.0, 0.90, 0.48, 0.96))
+		draw_line(star_pos + Vector2(0.0, -34.0), star_pos, Color(0.72, 0.90, 1.0, 0.65), 5.0, true)
+		return
+	if shape == &"shockwave":
+		var wave_radius := lerpf(maxf(float(effect.get("width", 0.0)), 0.0), length, progress)
+		var wave_alpha := 0.92 * remaining_ratio
+		draw_arc(center, wave_radius, 0.0, TAU, 96, Color(0.72, 0.90, 1.0, wave_alpha), 7.0, true)
+		draw_arc(center, wave_radius + 7.0, 0.0, TAU, 96, Color(1.0, 0.84, 0.42, wave_alpha * 0.65), 3.0, true)
+		return
+	if shape == &"fan":
+		var half_angle := deg_to_rad(float(effect.get("arc_degrees", 0.0)) * 0.5)
+		var center_angle := forward.angle()
+		var points := PackedVector2Array([near_center])
+		for index in range(17):
+			var angle := lerpf(center_angle - half_angle, center_angle + half_angle, float(index) / 16.0)
+			points.append(near_center + Vector2.from_angle(angle) * length)
+		draw_colored_polygon(points, fill_color)
+		draw_arc(near_center, length, center_angle - half_angle, center_angle + half_angle, 32, line_color, 3.0, true)
+		draw_line(near_center, near_center + Vector2.from_angle(center_angle - half_angle) * length, line_color, 2.0, true)
+		draw_line(near_center, near_center + Vector2.from_angle(center_angle + half_angle) * length, line_color, 2.0, true)
+		var arrow_count := maxi(int(effect.get("projectile_count", 0)), 0)
+		var arrow_distance := length * clampf(progress * 1.25, 0.0, 1.0)
+		for index in range(arrow_count):
+			var ratio := 0.5 if arrow_count == 1 else float(index) / float(arrow_count - 1)
+			var arrow_angle := lerpf(center_angle - half_angle * 0.92, center_angle + half_angle * 0.92, ratio)
+			var arrow_direction := Vector2.from_angle(arrow_angle)
+			var arrow_pos := near_center + arrow_direction * arrow_distance
+			draw_line(arrow_pos - arrow_direction * 10.0, arrow_pos + arrow_direction * 5.0, Color(0.78, 0.94, 1.0, 0.95), 2.0, true)
+		return
+	var near_half := maxf(float(effect.get("near_width", effect.get("width", 0.0))) * 0.5, 0.0)
+	var far_half := maxf(float(effect.get("far_width", effect.get("width", 0.0))) * 0.5, 0.0)
+	var near_left := near_center - side * near_half
+	var near_right := near_center + side * near_half
+	var far_left := far_center - side * far_half
+	var far_right := far_center + side * far_half
 	draw_colored_polygon(PackedVector2Array([near_left, far_left, far_right, near_right]), fill_color)
 	draw_line(near_left, far_left, line_color, 3.0, true)
 	draw_line(far_left, far_right, line_color, 3.0, true)
 	draw_line(far_right, near_right, line_color, 3.0, true)
+	var center_ratio := clampf(float(effect.get("center_ratio", 0.0)), 0.0, 1.0)
+	if center_ratio > 0.0:
+		var center_fill := Color(1.0, 0.96, 0.76, 0.16 + 0.10 * progress)
+		draw_colored_polygon(PackedVector2Array([
+			near_center - side * near_half * center_ratio,
+			far_center - side * far_half * center_ratio,
+			far_center + side * far_half * center_ratio,
+			near_center + side * near_half * center_ratio,
+		]), center_fill)
 
 ## 绘制当前卡牌的落点：格子边框用于确认“哪一格”，半透明占位用于确认卡牌大小。
 ## 这是纯表现层，不会修改部署坐标或战斗状态。

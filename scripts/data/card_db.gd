@@ -41,7 +41,7 @@ const SIZE_RADII := {
 }
 const PROJECTILE_VISUALS := [&"orb", &"arrow", &"needle", &"boomerang"]
 const SPELL_KINDS := [&"freeze"]
-const ACTIVE_SKILL_KINDS := [&"nova", &"buff", &"summon", &"dual_form"]
+const ACTIVE_SKILL_KINDS := [&"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"empowered_attack"]
 const CAST_LOCKS := [&"movement", &"attack", &"facing"]
 const VISUAL_ACTION_KINDS := [&"deploy", &"transform", &"skill"]
 const VISUAL_ACTION_DESCRIPTOR_FIELDS := [&"animation", &"durations", &"kind", &"priority", &"blend_in", &"blend_out"]
@@ -60,28 +60,41 @@ const CARD_FIELDS := [
 	&"projectile_visual_forward_offset", &"projectile_colors", &"splash_radius", &"knockback",
 	&"continuous_beam_color", &"continuous_beam_start_width", &"continuous_beam_end_width",
 	&"continuous_beam_origin_height", &"continuous_beam_forward_offset",
-	&"deploy_sweep_radius", &"deploy_sweep_knockback", &"deploy_sweep_duration",
+	&"deploy_sweep_name", &"deploy_sweep_radius", &"deploy_sweep_damage", &"deploy_sweep_knockback",
+	&"deploy_sweep_duration", &"deploy_sweep_mass_factor_max",
 	&"heal_every_hits", &"heal_amount", &"charge_time", &"charge_speed_multiplier",
 	&"charge_damage_multiplier", &"shroud_radius", &"attack_pattern", &"attack_damage_multipliers",
+	&"attack_extra_hit_damage_multipliers", &"attack_extra_hit_delays",
+	&"skill_resource_max", &"skill_resource_attack_gain", &"skill_resource_hit_gain", &"skill_resource_kill_gain",
+	&"skill_resource_damage_gain_multiplier",
 	&"attack_interval_display", &"transform_after_hits", &"revert_after_hits",
 	&"transform_duration", &"active_transform_duration", &"revert_duration", &"transformed_stats",
 	&"spell_kind", &"duration", &"active_name", &"active_slow_duration", &"active_slow_multiplier", &"active_skill", &"active_skills",
 	&"visual_frames_path", &"visual_scene_path", &"visual_scene_paths", &"visual_forward_yaw", &"visual_animations",
 ]
 const VISUAL_ANIMATION_FIELDS := [
-	&"deploy", &"deploy_durations", &"deploy_clip_ratio", &"idle", &"move", &"move_enter",
+	&"deploy", &"deploy_durations", &"deploy_clip_ratio", &"idle", &"move", &"move_enter", &"haste_move",
 	&"move_cycle", &"attack", &"attack_enter", &"attack_retarget_enter", &"attack_loop",
 	&"attack_hit", &"attack_hit_duration", &"attack_recover", &"attack_recover_delay",
-	&"attack_structure", &"attack_to_move", &"move_enter_after_attack", &"death", &"death_duration",
+	&"attack_structure", &"attack_move", &"attack_to_move", &"move_enter_after_attack", &"move_enter_from_deploy_only",
+	&"empowered_move", &"empowered_attack", &"empowered_attack_hit", &"empowered_attack_recover",
+	&"empowered_attack_to_move", &"death", &"death_duration",
 	&"death_followup_scene_path", &"death_followup_animation", &"death_followup_duration", &"visual_actions",
 	&"visual_action_durations", &"transitions", &"transition_blends",
 ]
 const ACTIVE_SKILL_FIELDS := [
-	&"name", &"kind", &"radius", &"damage", &"knockback", &"slow_duration", &"slow_multiplier",
+	&"name", &"kind", &"radius", &"damage", &"knockback", &"knockback_duration", &"knockback_mass_factor_max",
+	&"slow_duration", &"slow_multiplier",
 	&"shield", &"shield_duration", &"duration", &"speed_multiplier", &"damage_multiplier",
 	&"attack_speed_multiplier", &"spawn_id", &"spawn_count", &"length", &"width", &"impact_delay",
 	&"transform_impact_delay", &"cast_duration", &"transform_cast_duration", &"stun_duration", &"ground_only",
-	&"cast_locks", &"visual_action", &"description",
+	&"cast_locks", &"visual_action", &"description", &"shape", &"near_width", &"far_width", &"arc_degrees",
+	&"projectile_count", &"center_ratio", &"center_damage_multiplier", &"resource_damage_scale_max",
+	&"uses_skill_resource", &"resource_damage_by_stacks", &"resource_full_damage_multiplier", &"resource_full_stun_multiplier",
+	&"full_resource_visual_action", &"full_resource_cast_duration", &"full_resource_impact_delay",
+	&"forward_distance", &"shockwave_damage", &"shockwave_duration", &"shockwave_end_radius",
+	&"shockwave_slow_duration", &"shockwave_slow_multiplier", &"shockwave_full_only",
+	&"empowered_damage_multiplier", &"empowered_speed_multiplier", &"blind_charges",
 ]
 ## building_only: true 时只攻击建筑（塔+建筑卡），无视普通单位
 ## can_attack_air: false 时无法选中/攻击空中单位（近战地面单位通常不能对空）
@@ -103,51 +116,76 @@ static func all() -> Dictionary:
 			"visual_forward_yaw": 0.0,
 			"visual_animations": {
 				"deploy": "Respawn_Base", "idle": "Idle1_Base",
-				"move": "Run_Base", "attack": ["Attack1", "Attack2"],
+				"move": "Run_Base", "empowered_move": "Run_Spell1",
+				"attack": ["Attack1", "Attack2"], "empowered_attack": "Spell1",
 				"death": "Death", "death_duration": 0.8,
 			},
 			"is_air": false, "building_only": true, "can_attack_air": false,
-			"active_skill": {"name": "德玛西亚正义", "kind": "nova", "radius": 90.0, "damage": 150.0, "shield": 180.0, "shield_duration": 4.0},
+			"active_skill": {
+				"name": "致命打击", "kind": "empowered_attack",
+				"description": "强化下一次普通攻击，使其造成双倍伤害；强化尚未打出时移动速度提高两档。技能不会重置或延后当前攻击节奏。",
+				"empowered_damage_multiplier": 2.0,
+				# 盖伦基础为“慢”，提高两档后达到“中等”。强化攻击出手后立即失去加速。
+				"empowered_speed_multiplier": SPEED_MEDIUM / SPEED_SLOW,
+			},
 		},
 		"xin": {
 			"name": "赵信", "cost": 4, "type": "unit",
-			"description": "近战战士，部署时横扫周围地面敌人，连续攻击还能恢复生命。",
+			"description": "近战战士，部署时发动新月护卫伤害并击退周围地面敌人，连续攻击还能恢复生命。",
 			"hp": 620.0, "damage": 68.0, "range": 40.0,
 			"speed": SPEED_SLIGHTLY_FAST, "interval": 0.9, "first_hit": 0.3,
-			"deploy_time": 1.5,
+			"deploy_time": 1.0,
 			"size_tier": SIZE_MEDIUM, "radius": RADIUS_MEDIUM, "visual_radius": RADIUS_MEDIUM + VISUAL_RADIUS_PADDING,
 			"mass": 5.0, "sight": 220.0,
-			# 横扫千军就是赵信的 1.5 秒部署阶段：生成瞬间播放 Spell4 挥舞，
-			# 随后 Spell4_To_Idle 收枪；期间不能移动和攻击，但可被索敌、碰撞和命中。
-			# 生成当帧立即击退四周地面敌人。
-			# 只击退不造成伤害，击退距离经 apply_knockback 的质量因子衰减：
-			# 轻单位飞出圈外，重单位只被顶开一小步。
-			"deploy_sweep_radius": 100.0,     # 横扫半径（2.5 格）
-			"deploy_sweep_knockback": 90.0,   # 基础击退距离（按质量 4/mass 衰减，clamp 0.35~1.4）
-			"deploy_sweep_duration": 0.25,    # 击退位移持续时间（秒）
+			# 部署时发动新月护卫：1 秒部署阶段只播放 Spell4，生成当帧立即伤害并击退四周地面敌人。
+			# 期间不能移动和攻击，但可被索敌、碰撞和命中。
+			# 建筑/防御塔会受伤但不会被击退；轻单位的质量倍率封顶 1.0，避免超过基础击退距离。
+			"deploy_sweep_name": "新月护卫（部署）",
+			"deploy_sweep_radius": 90.0,
+			"deploy_sweep_damage": 90.0,
+			"deploy_sweep_knockback": 90.0,
+			"deploy_sweep_duration": 0.25,
+			"deploy_sweep_mass_factor_max": 1.0,
 			# 无畏战吼：三段普攻循环中的第三击（Passive_AA_01）命中时回复少许生命值。
 			"heal_every_hits": 3, "heal_amount": 60.0,
 			"color": Color(0.85, 0.30, 0.25),
 			"visual_scene_path": "res://assets/units/xin/xin_view.tscn",
 			"visual_forward_yaw": 0.0,
 			"visual_animations": {
-				# 出场技能：生成当帧播放 Spell4（横扫挥舞），随后快速播放
-				# Spell4_To_Idle 收枪；两段总长与 1.5 秒部署锁定一致。
-				"deploy": ["Spell4", "Spell4_To_Idle"],
-				"deploy_durations": [1.0, 0.5], # Spell4 1 秒，Spell4_To_Idle 0.5 秒
+				# 部署与主动新月护卫都使用完整 1 秒 Spell4；动作本身不驱动权威效果。
+				"deploy": "Spell4",
 				"idle": "IdleBase", "move": "RunBase",
-				# 三段普攻循环：Start 段（Hit 打击动作）在 first_hit 窗口播放，命中时刻切 settle 收势。
-				"attack": ["Attack1_Hit", "Attack3_Hit", "Passive_AA_01_hit_XinZhaoRework_anm"],
+				# 前两段按 Hit→settle 播放；第三段只使用完整 Passive_AA_01，不再播放其 hit 前置片段。
+				"attack": ["Attack1_Hit", "Attack3_Hit", "Passive_AA_01_XinZhaoRework_anm"],
 				"attack_hit": [
 					"Attack_AA_01_settle_XinZhaoRework_anm",
 					"Attack_AA_03_settle_XinZhaoRework_anm",
-					"Passive_AA_01_XinZhaoRework_anm",
+					"",
 				],
 				"attack_hit_duration": 0.6,
+				# 第一、二段攻击转移动先播 RunIn；第三段被动攻击使用素材专用转跑动作。
+				"attack_to_move": ["RunIn", "RunIn", "PassiveAA_to_Run_XinZhaoRework_anm"],
+				"move_enter_after_attack": false,
+				"visual_actions": {
+					"active": {"animation": "Spell4", "durations": [1.0], "kind": "skill"},
+				},
+				"transitions": {
+					"deploy>move": "Spell4_To_Run",
+					"skill>move": "Spell4_To_Run",
+				},
 				"death": "Death", "death_duration": 0.8,
 			},
 			"is_air": false, "building_only": false, "can_attack_air": false,
-			"active_skill": {"name": "新月护卫", "kind": "nova", "radius": 105.0, "damage": 90.0, "knockback": 90.0},
+			"active_skill": {
+				"name": "新月护卫", "kind": "nova",
+				"description": "挥舞长枪震开周围敌人，造成范围伤害与击退；施放期间锁定移动、攻击和朝向。",
+				"radius": 90.0, "damage": 90.0, "knockback": 90.0,
+				"knockback_duration": 0.25, "knockback_mass_factor_max": 1.0,
+				"ground_only": true,
+				"impact_delay": 0.0, "cast_duration": 1.0,
+				"cast_locks": ["movement", "attack", "facing"],
+				"visual_action": "active",
+			},
 		},
 		"ashe": {
 			"name": "艾希", "cost": 3, "type": "unit",
@@ -166,10 +204,21 @@ static func all() -> Dictionary:
 			"visual_forward_yaw": 0.0,
 			"visual_animations": {
 				"deploy": "Idle1", "idle": "Idle1", "move": "Run",
-				"attack": ["Attack1", "Attack2"], "death": "Death", "death_duration": 0.8,
+				"attack": ["Attack1", "Attack2"],
+				"visual_actions": {
+					"active": {"animation": "Spell2", "kind": "skill", "durations": [1.833333], "blend_in": 0.05, "blend_out": 0.10},
+				},
+				"death": "Death", "death_duration": 0.8,
 			},
 			"is_air": false, "building_only": false, "can_attack_air": true,
-			"active_skill": {"name": "万箭齐发", "kind": "nova", "radius": 180.0, "damage": 70.0, "slow_duration": 2.0, "slow_multiplier": 0.55},
+			"active_skill": {
+				"name": "万箭齐发", "kind": "frontal", "shape": "fan",
+				"description": "使用 Spell2 朝前方扇形区域射出 8 根箭矢，造成 70 点伤害并减速 1 秒。",
+				"length": 190.0, "arc_degrees": 72.0, "projectile_count": 8,
+				"damage": 70.0, "slow_duration": 1.0, "slow_multiplier": 0.55,
+				"impact_delay": 0.62, "cast_duration": 1.833333,
+				"cast_locks": ["movement", "attack", "facing"], "visual_action": "active",
+			},
 		},
 		"teemo": {
 			"name": "提莫", "cost": 2, "type": "unit",
@@ -186,13 +235,20 @@ static func all() -> Dictionary:
 			"visual_scene_path": "res://assets/units/teemo/teemo_view.tscn",
 			"visual_forward_yaw": 0.0,
 			"visual_animations": {
-				"deploy": "Respawn", "idle": "Idle1_Base", "move": "Run_Base",
+				"deploy": "Respawn", "idle": "Idle1_Base", "move": "Run_Base", "move_enter": "Run_In_ASU_Teemo_anm",
 				# Attack1 播放完的离弦点创建弹体，随后切入 Attack1_ToIdle 完成后摇。
 				"attack": ["Attack1_ASU_Teemo_anm"], "attack_hit": ["Attack1_ToIdle"],
-				"attack_hit_duration": 0.75, "death": "Death", "death_duration": 0.8,
+				"attack_hit_duration": 0.75,
+				"empowered_attack": "Spell1", "empowered_attack_hit": "Spell1_ToIdle",
+				"empowered_attack_to_move": "Spell1_ToRun",
+				"death": "Death", "death_duration": 0.8,
 			},
 			"is_air": false, "building_only": false, "can_attack_air": true,
-			"active_skill": {"name": "致盲毒雾", "kind": "nova", "radius": 105.0, "damage": 55.0, "slow_duration": 2.5, "slow_multiplier": 0.50},
+			"active_skill": {
+				"name": "致盲", "kind": "empowered_attack",
+				"description": "强化下一次普通攻击；命中单位后使其接下来的两次普通攻击（包括强化普攻）不造成伤害。技能不改变攻击间隔。",
+				"empowered_damage_multiplier": 1.0, "blind_charges": 2,
+			},
 		},
 		"gnar": {
 			"name": "纳尔", "cost": 4, "type": "unit",
@@ -397,11 +453,15 @@ static func all() -> Dictionary:
 			"visual_forward_yaw": 0.0,
 			"visual_animations": {
 				"deploy": "Respawn", "idle": "masteryi_2013_idle1_anm",
-				"move": "Run", "attack": ["masteryi_2013_attack1_anm", "masteryi_2013_attack2_anm"],
+				"move": "Run", "haste_move": "2013_Run_Haste",
+				"attack": ["masteryi_2013_attack1_anm", "masteryi_2013_attack2_anm", "masteryi_2013_passive_anm"],
 				"death": "Death", "death_duration": 0.8,
 			},
+			# 双重打击：第三段被动动作在首刀后追加一次 50% 伤害的普通攻击判定。
+			"attack_extra_hit_damage_multipliers": [[], [], [0.5]],
+			"attack_extra_hit_delays": [[], [], [0.12]],
 			"is_air": false, "building_only": false, "can_attack_air": false,
-			"active_skill": {"name": "高原血统", "kind": "buff", "duration": 5.0, "speed_multiplier": 1.45, "damage_multiplier": 1.20, "attack_speed_multiplier": 1.55},
+			"active_skill": {"name": "高原血统", "kind": "buff", "duration": 5.0, "speed_multiplier": 1.5, "damage_multiplier": 1.0, "attack_speed_multiplier": 1.5},
 		},
 		"gwen": {
 			"name": "格温", "cost": 4, "type": "unit",
@@ -412,15 +472,33 @@ static func all() -> Dictionary:
 			"size_tier": SIZE_MEDIUM, "radius": RADIUS_MEDIUM, "visual_radius": RADIUS_MEDIUM + VISUAL_RADIUS_PADDING,
 			"mass": 4.0, "sight": 210.0,
 			"shroud_radius": 120.0,   # 3 格 = 3 × 40px；贴身推塔时塔心仍在圈内，会被反击
+			"skill_resource_max": 3.0, "skill_resource_hit_gain": 1.0,
 			"color": Color(0.95, 0.75, 0.85),
 			"visual_scene_path": "res://assets/units/gwen/gwen_view.tscn",
 			"visual_forward_yaw": 0.0,
 			"visual_animations": {
-				"deploy": "Respawn", "idle": "Idle_anm", "move": "Run_anm",
+				"deploy": "Respawn", "idle": "Idle_anm", "move": "Run_anm", "move_enter": "Into_Run",
 				"attack": ["Attack1", "Attack2", "Attack3"], "death": "Death", "death_duration": 0.8,
+				"visual_actions": {
+					"active": {"animation": ["Spell1_0", "Spell1_C_anm"], "durations": [1.6666664, 0.9666671], "kind": "skill"},
+					"active_strong": {"animation": ["Spell1_0", "Spell1_B", "Spell1_C_anm"], "durations": [1.6666664, 0.1666667, 0.9666671], "kind": "skill"},
+				},
+				"transitions": {"skill>move": "Spell1_C_to_Run_anm"},
 			},
 			"is_air": false, "building_only": false, "can_attack_air": false,
-			"active_skill": {"name": "神圣裁缝", "kind": "buff", "duration": 4.0, "speed_multiplier": 1.20, "damage_multiplier": 1.30, "shield": 130.0, "shield_duration": 4.0},
+			"active_skill": {
+				"name": "快刀乱剪", "kind": "frontal", "shape": "fan",
+				"description": "普通攻击命中充能，最多 3 层；向前方扇形剪切并消耗全部充能，中央区域造成 1.2 倍伤害。",
+				"uses_skill_resource": true,
+				"length": 150.0, "arc_degrees": 70.0, "projectile_count": 0,
+				"center_ratio": 0.36, "center_damage_multiplier": 1.2,
+				"damage": 40.0, "resource_damage_by_stacks": [40.0, 80.0, 120.0, 160.0],
+				"impact_delay": 1.82, "cast_duration": 2.6333335,
+				"full_resource_impact_delay": 1.98, "full_resource_cast_duration": 2.8000002,
+				"cast_locks": ["movement", "attack", "facing"],
+				"visual_action": "active", "full_resource_visual_action": "active_strong",
+				"ground_only": true,
+			},
 		},
 		"sett": {
 			"name": "腕豪", "cost": 4, "type": "unit",
@@ -432,6 +510,8 @@ static func all() -> Dictionary:
 			"mass": 6.0, "sight": 210.0,
 			"attack_pattern": [0.28, 1.05, 0.28, 1.05],  # 两拳→停顿→两拳→停顿
 			"attack_damage_multipliers": [1.0, 1.5, 1.0, 1.5],  # 左拳基础伤害，右拳为左拳的1.5倍
+			# 豪意为通用技能资源：受实际生命伤害按 1:1、每次挥拳按固定值积攒。
+			"skill_resource_max": 200.0, "skill_resource_attack_gain": 20.0, "skill_resource_damage_gain_multiplier": 1.0,
 			"attack_interval_display": 1.05,  # 属性面板显示两拳结束后的循环间隔
 			"color": Color(0.85, 0.55, 0.25),
 			"visual_scene_path": "res://assets/units/sett/sett_view.tscn",
@@ -443,10 +523,29 @@ static func all() -> Dictionary:
 				"attack_hit": ["Attack1_Hit", "Sett_Attack1_Passive_anm", "Attack2_Hit", "Sett_Attack2_Passive_anm"],
 				"attack_recover": ["", "Attack1_Passive_Into_Idle", "", "Attack2_Passive_Into_Idle"],
 				"attack_recover_delay": 0.32,
+				# 第一拳丢失目标后直接使用被动跑；第二拳先用专用收拳转跑，再进入基础跑。
+				"attack_move": ["Run_Passive", "Run_Base", "Run_Passive", "Run_Base"],
+				"attack_to_move": ["", "Sett_Passive_INTO_Run_anm", "", "Sett_Passive_INTO_Run_anm"],
+				"visual_actions": {
+					"active": {"animation": "Sett_spell2_anm", "kind": "skill", "durations": [1.4], "blend_in": 0.05, "blend_out": 0.08},
+					"active_strong": {"animation": "Spell2_Strong", "kind": "skill", "durations": [1.4], "blend_in": 0.05, "blend_out": 0.08},
+				},
+				"transitions": {"skill>move": "Sett_Spell2_INTO_Run_anm"},
 				"death": "Death", "death_duration": 0.8,
 			},
 			"is_air": false, "building_only": false, "can_attack_air": false,
-			"active_skill": {"name": "蓄意轰拳", "kind": "nova", "radius": 95.0, "damage": 130.0, "knockback": 55.0, "shield": 170.0, "shield_duration": 4.0},
+			"active_skill": {
+				"name": "蓄意轰拳", "kind": "frontal", "shape": "trapezoid",
+				"description": "锁定移动、朝向和攻击后向前轰出梯形冲击波；豪意令伤害最高提高至 2 倍，中央区域再造成 1.5 倍伤害。满豪意改用 Spell2 Strong。",
+				"length": 155.0, "near_width": 54.0, "far_width": 170.0,
+				"center_ratio": 0.34, "center_damage_multiplier": 1.5,
+				"damage": 130.0, "resource_damage_scale_max": 2.0,
+				"uses_skill_resource": true,
+				"impact_delay": 0.72, "cast_duration": 1.4,
+				"cast_locks": ["movement", "attack", "facing"],
+				"visual_action": "active", "full_resource_visual_action": "active_strong",
+				"ground_only": true,
+			},
 		},
 		"tombstone": {
 			"name": "墓碑", "cost": 3, "type": "building",
@@ -480,10 +579,11 @@ static func all() -> Dictionary:
 			"description": "空中持续输出单位，吐息能够同时压制目标及其周围敌人。",
 			# 空中远程单位：持续喷吐龙息（DPS模式）
 			"hp": 580.0, "damage": 55.0, "range": 130.0,
-			"speed": SPEED_EXTREMELY_SLOW, "interval": 0.0, "first_hit": 0.4,
+			"speed": SPEED_EXTREMELY_SLOW, "interval": 0.0, "first_hit": 0.0,
 			"size_tier": SIZE_SLIGHTLY_LARGE, "radius": RADIUS_SLIGHTLY_LARGE, "visual_radius": RADIUS_SLIGHTLY_LARGE + VISUAL_RADIUS_PADDING,
 			"mass": 5.0, "sight": 250.0,
 			"splash_radius": 34.0,
+			"skill_resource_max": 5.0, "skill_resource_kill_gain": 1.0,
 			"color": Color(0.95, 0.75, 0.25),
 			# 正式吐息素材接入前，用嘴部窄、目标端宽的半透明浅蓝梯形光柱占位。
 			# 这些字段只控制 2D 表现，不参与持续伤害、范围或命中判定。
@@ -497,21 +597,38 @@ static func all() -> Dictionary:
 			"visual_animations": {
 				# 只取 Respawn 前半段翻滚；后半段由普通状态机接管，不做龙王专用保护。
 				"deploy": "Respawn", "deploy_clip_ratio": 0.5, "idle": "Idle1_Base",
-				# 普通进入移动仍用 RunIn；吐息后由 Spell1_2Run 直接接 Run1B，不重复 RunIn。
-				"move": "Run1B", "move_enter": "RunIn",
+				# RunIn 只用于部署完成后首次进入移动；其他移动入口直接进入 Run1B 循环。
+				"move": "Run1B", "move_enter": "RunIn", "move_enter_from_deploy_only": true,
 				"move_cycle": ["Run1B", "Run1C", "Run1D", "Run1A"],
 				# 移动后首次攻击用 newtst；原地击败目标并直接换目标时用 new_looptoin。
 				"attack_enter": "AurelionSol_Spell1_newtst_anm",
-				"attack_retarget_enter": "AurelionSol_Spell1_new_looptoin_anm",
+				"attack_retarget_enter": ["AurelionSol_Spell1_new_looptoin_anm", "AurelionSol_Spell1_newtst_anm"],
 				"attack_loop": "AurelionSol_Spell1_loop_anm",
 				# 吐息后进入移动：Spell1_2Run 后摇 → Run1B→C→D→A。
 				"transitions": {"attack>move": "Spell1_2Run"},
 				"move_enter_after_attack": false,
+				"visual_actions": {
+					"active": {"animation": "Spell4", "durations": [1.9333328], "kind": "skill"},
+					"active_strong": {"animation": "AurelionSol_Spell4_base_anm", "durations": [1.8999995], "kind": "skill"},
+				},
 				"death": "Death", "death_duration": 0.8,
 			},
 			"is_air": true, "building_only": false, "can_attack_air": true,
 			"is_continuous_attack": true,  # 持续伤害：每帧 damage*delta
-			"active_skill": {"name": "星穹坠落", "kind": "nova", "radius": 145.0, "damage": 120.0, "slow_duration": 1.5, "slow_multiplier": 0.60},
+			"active_skill": {
+				"name": "星落/天瀑", "kind": "forward_area",
+				"description": "击杀敌方单位充能，最多 5 层。向前方圆形区域降下星辰并眩晕；满层升级为伤害和眩晕提高 50% 的天瀑，且只有天瀑落地后会产生扩散至全场的冲击波。",
+				"uses_skill_resource": true,
+				"forward_distance": 175.0, "radius": 115.0,
+				"damage": 120.0, "stun_duration": 1.2,
+				"resource_full_damage_multiplier": 1.5, "resource_full_stun_multiplier": 1.5,
+				"shockwave_damage": 55.0, "shockwave_duration": 1.4, "shockwave_end_radius": 1500.0,
+				"shockwave_slow_duration": 2.0, "shockwave_slow_multiplier": 0.60, "shockwave_full_only": true,
+				"impact_delay": 1.15, "cast_duration": 1.9333328,
+				"full_resource_impact_delay": 1.12, "full_resource_cast_duration": 1.8999995,
+				"cast_locks": ["movement", "attack", "facing"],
+				"visual_action": "active", "full_resource_visual_action": "active_strong",
+			},
 		},
 	}
 
@@ -623,7 +740,45 @@ static func _validate_combat_stats(label: String, stats: Dictionary, require_siz
 			errors.append("%s.radius: 与 size_tier=%s 的规范半径不匹配" % [label, size_tier])
 	if stats.has("visual_radius") and float(stats.visual_radius) < float(stats.get("radius", 0.0)):
 		errors.append("%s.visual_radius: 不得小于权威 radius" % label)
+	if stats.has("deploy_sweep_radius"):
+		_require_fields(label, stats, [&"deploy_sweep_damage", &"deploy_sweep_knockback", &"deploy_sweep_duration", &"deploy_sweep_mass_factor_max"], errors)
+		if float(stats.get("deploy_sweep_radius", 0.0)) <= 0.0:
+			errors.append("%s.deploy_sweep_radius: 必须 > 0" % label)
+		for deploy_nonnegative in [&"deploy_sweep_damage", &"deploy_sweep_knockback"]:
+			if float(stats.get(deploy_nonnegative, 0.0)) < 0.0:
+				errors.append("%s.%s: 必须 >= 0" % [label, deploy_nonnegative])
+		for deploy_positive in [&"deploy_sweep_duration", &"deploy_sweep_mass_factor_max"]:
+			if float(stats.get(deploy_positive, 0.0)) <= 0.0:
+				errors.append("%s.%s: 必须 > 0" % [label, deploy_positive])
+	for resource_field in [&"skill_resource_max", &"skill_resource_attack_gain", &"skill_resource_hit_gain", &"skill_resource_kill_gain", &"skill_resource_damage_gain_multiplier"]:
+		if float(stats.get(resource_field, 0.0)) < 0.0:
+			errors.append("%s.%s: 必须 >= 0" % [label, resource_field])
+	if (
+		float(stats.get("skill_resource_attack_gain", 0.0)) > 0.0
+		or float(stats.get("skill_resource_hit_gain", 0.0)) > 0.0
+		or float(stats.get("skill_resource_kill_gain", 0.0)) > 0.0
+		or float(stats.get("skill_resource_damage_gain_multiplier", 0.0)) > 0.0
+	) and float(stats.get("skill_resource_max", 0.0)) <= 0.0:
+		errors.append("%s.skill_resource_max: 配置资源获取时必须 > 0" % label)
 	_validate_projectile(label, stats, errors)
+	var attack_extras = stats.get("attack_extra_hit_damage_multipliers", [])
+	var attack_delays = stats.get("attack_extra_hit_delays", [])
+	if attack_extras is Array:
+		if not (attack_delays is Array) or (attack_delays as Array).size() != (attack_extras as Array).size():
+			errors.append("%s.attack_extra_hit_delays: 必须与额外刀伤害配置长度一致" % label)
+		else:
+			for index in (attack_extras as Array).size():
+				var multipliers = (attack_extras as Array)[index]
+				var delays = (attack_delays as Array)[index]
+				if not multipliers is Array or not delays is Array or (multipliers as Array).size() != (delays as Array).size():
+					errors.append("%s.attack_extra_hit_damage_multipliers[%d]: 伤害与延迟必须是等长数组" % [label, index])
+					continue
+				for value in multipliers:
+					if float(value) <= 0.0:
+						errors.append("%s.attack_extra_hit_damage_multipliers[%d]: 倍率必须 > 0" % [label, index])
+				for value in delays:
+					if float(value) < 0.0:
+						errors.append("%s.attack_extra_hit_delays[%d]: 延迟必须 >= 0" % [label, index])
 
 static func _validate_projectile(label: String, stats: Dictionary, errors: PackedStringArray) -> void:
 	var speed := float(stats.get("projectile_speed", 0.0))
@@ -708,7 +863,11 @@ static func _validate_visual_config(label: String, stats: Dictionary, errors: Pa
 		errors.append("%s.visual_animations: 必须是 Dictionary" % label)
 		return
 	_validate_known_fields("%s.visual_animations" % label, animations, VISUAL_ANIMATION_FIELDS, errors)
-	for state in [&"deploy", &"idle", &"move", &"attack", &"attack_hit", &"attack_recover", &"attack_structure", &"move_cycle"]:
+	for state in [
+		&"deploy", &"idle", &"move", &"move_enter", &"haste_move", &"move_cycle", &"attack", &"attack_hit", &"attack_recover",
+		&"attack_structure", &"attack_move", &"attack_to_move", &"empowered_move", &"empowered_attack",
+		&"empowered_attack_hit", &"empowered_attack_recover", &"empowered_attack_to_move",
+	]:
 		if not animations.has(state):
 			continue
 		var value = animations[state]
@@ -718,6 +877,14 @@ static func _validate_visual_config(label: String, stats: Dictionary, errors: Pa
 			for animation_name in value:
 				if not animation_name is String and not animation_name is StringName:
 					errors.append("%s.visual_animations.%s: 数组只能包含动画名" % [label, state])
+	var attack_values = animations.get("attack", [])
+	var attack_count: int = attack_values.size() if attack_values is Array else (1 if animations.has("attack") else 0)
+	for route_key in [&"attack_move", &"attack_to_move"]:
+		if not animations.has(route_key):
+			continue
+		var route_values = animations.get(route_key, [])
+		if route_values is Array and attack_count > 0 and route_values.size() != attack_count:
+			errors.append("%s.visual_animations.%s: 按攻击段配置时必须与 attack 数量一致" % [label, route_key])
 	if animations.has("visual_actions"):
 		var actions = animations.visual_actions
 		if not actions is Dictionary:
@@ -828,6 +995,68 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 			&"buff": _require_fields(label, skill, [&"duration"], errors)
 			&"summon": _require_fields(label, skill, [&"spawn_id", &"spawn_count"], errors)
 			&"dual_form": _require_fields(label, skill, [&"length", &"width", &"damage", &"impact_delay", &"cast_duration", &"stun_duration"], errors)
+			&"frontal":
+				_require_fields(label, skill, [&"shape", &"length", &"damage", &"impact_delay", &"cast_duration"], errors)
+				var shape := StringName(skill.get("shape", ""))
+				if float(skill.get("length", 0.0)) <= 0.0:
+					errors.append("%s.length: 必须 > 0" % label)
+				if float(skill.get("damage", 0.0)) < 0.0:
+					errors.append("%s.damage: 必须 >= 0" % label)
+				if shape == &"fan":
+					_require_fields(label, skill, [&"arc_degrees"], errors)
+					var arc_degrees := float(skill.get("arc_degrees", 0.0))
+					if arc_degrees <= 0.0 or arc_degrees >= 180.0:
+						errors.append("%s.arc_degrees: 必须在 0 到 180 之间" % label)
+					if int(skill.get("projectile_count", 0)) < 0:
+						errors.append("%s.projectile_count: 必须 >= 0" % label)
+				elif shape == &"trapezoid":
+					_require_fields(label, skill, [&"near_width", &"far_width"], errors)
+					if float(skill.get("near_width", 0.0)) <= 0.0 or float(skill.get("far_width", 0.0)) <= 0.0:
+						errors.append("%s: near_width/far_width 必须 > 0" % label)
+				else:
+					errors.append("%s.shape: 只支持 fan/trapezoid" % label)
+			&"forward_area":
+				_require_fields(label, skill, [&"forward_distance", &"radius", &"damage", &"stun_duration", &"impact_delay", &"cast_duration", &"shockwave_damage", &"shockwave_duration", &"shockwave_end_radius"], errors)
+				for positive_field in [&"forward_distance", &"radius", &"cast_duration", &"shockwave_duration", &"shockwave_end_radius"]:
+					if float(skill.get(positive_field, 0.0)) <= 0.0:
+						errors.append("%s.%s: 必须 > 0" % [label, positive_field])
+				for nonnegative_field in [&"damage", &"stun_duration", &"impact_delay", &"shockwave_damage", &"shockwave_slow_duration"]:
+					if float(skill.get(nonnegative_field, 0.0)) < 0.0:
+						errors.append("%s.%s: 必须 >= 0" % [label, nonnegative_field])
+			&"empowered_attack":
+				_require_fields(label, skill, [&"empowered_damage_multiplier"], errors)
+				if float(skill.get("empowered_damage_multiplier", 0.0)) <= 0.0:
+					errors.append("%s.empowered_damage_multiplier: 必须 > 0" % label)
+				if float(skill.get("empowered_speed_multiplier", 1.0)) < 1.0:
+					errors.append("%s.empowered_speed_multiplier: 必须 >= 1" % label)
+				if int(skill.get("blind_charges", 0)) < 0:
+					errors.append("%s.blind_charges: 必须 >= 0" % label)
+		if skill.has("center_ratio") and (float(skill.center_ratio) < 0.0 or float(skill.center_ratio) > 1.0):
+			errors.append("%s.center_ratio: 必须在 0 到 1 之间" % label)
+		if skill.has("knockback_duration") and float(skill.knockback_duration) <= 0.0:
+			errors.append("%s.knockback_duration: 必须 > 0" % label)
+		if skill.has("knockback_mass_factor_max") and float(skill.knockback_mass_factor_max) <= 0.0:
+			errors.append("%s.knockback_mass_factor_max: 必须 > 0" % label)
+		if float(skill.get("center_damage_multiplier", 1.0)) < 1.0:
+			errors.append("%s.center_damage_multiplier: 必须 >= 1" % label)
+		if skill.has("resource_damage_scale_max"):
+			if float(skill.resource_damage_scale_max) < 1.0:
+				errors.append("%s.resource_damage_scale_max: 必须 >= 1" % label)
+			if float(stats.get("skill_resource_max", 0.0)) <= 0.0:
+				errors.append("%s.resource_damage_scale_max: 卡牌必须配置正数 skill_resource_max" % label)
+		if bool(skill.get("uses_skill_resource", false)) and float(stats.get("skill_resource_max", 0.0)) <= 0.0:
+			errors.append("%s.uses_skill_resource: 卡牌必须配置正数 skill_resource_max" % label)
+		if skill.has("resource_damage_by_stacks"):
+			var damage_tiers = skill.resource_damage_by_stacks
+			var expected_tiers := int(round(float(stats.get("skill_resource_max", 0.0)))) + 1
+			if not damage_tiers is Array or (damage_tiers as Array).size() != expected_tiers:
+				errors.append("%s.resource_damage_by_stacks: 必须覆盖 0 到满层的所有档位" % label)
+		if skill.has("full_resource_cast_duration") and float(skill.full_resource_cast_duration) <= 0.0:
+			errors.append("%s.full_resource_cast_duration: 必须 > 0" % label)
+		if skill.has("full_resource_impact_delay"):
+			var full_cast := float(skill.get("full_resource_cast_duration", skill.get("cast_duration", 0.0)))
+			if float(skill.full_resource_impact_delay) < 0.0 or float(skill.full_resource_impact_delay) > full_cast:
+				errors.append("%s.full_resource_impact_delay: 必须位于满层施法窗口内" % label)
 		if skill.has("cast_locks"):
 			if not skill.cast_locks is Array:
 				errors.append("%s.cast_locks: 必须是 Array" % label)
@@ -840,6 +1069,9 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 			errors.append("%s.visual_action: 动作名不能为空" % label)
 		elif not visual_action.is_empty() and not _has_visual_action(stats, visual_action):
 			errors.append("%s.visual_action: visual_animations.visual_actions 中不存在 %s" % [label, visual_action])
+		var full_resource_action := String(skill.get("full_resource_visual_action", ""))
+		if not full_resource_action.is_empty() and not _has_visual_action(stats, full_resource_action):
+			errors.append("%s.full_resource_visual_action: visual_animations.visual_actions 中不存在 %s" % [label, full_resource_action])
 		if not visual_action.is_empty() and skill.has("cast_locks") and skill.cast_locks is Array and StringName("attack") not in skill.cast_locks:
 			errors.append("%s.cast_locks: 使用全身 visual_action 时必须包含 attack" % label)
 		if skill.has("cast_duration") and float(skill.cast_duration) < 0.0:

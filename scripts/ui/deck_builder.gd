@@ -797,7 +797,14 @@ func _card_passives(stats: Dictionary) -> Array[Dictionary]:
 	if bool(stats.get("is_continuous_attack", false)):
 		result.append({"name": "龙息", "description": "持续造成每秒%s伤害，并对目标周围%s范围造成伤害。" % [_format_card_number(float(stats.get("damage", 0.0))), _format_card_number(float(stats.get("splash_radius", 0.0)))]})
 	if stats.has("deploy_sweep_radius"):
-		result.append({"name": "横扫千军", "description": "部署时击退%s半径内的地面敌人。" % _format_card_number(float(stats.get("deploy_sweep_radius", 0.0)))})
+		var deploy_damage := float(stats.get("deploy_sweep_damage", 0.0))
+		result.append({
+			"name": String(stats.get("deploy_sweep_name", "部署横扫")),
+			"description": (
+				"部署时对%s半径内的地面敌人造成%s点伤害并击退。"
+				% [_format_card_number(float(stats.get("deploy_sweep_radius", 0.0))), _format_card_number(deploy_damage)]
+			),
+		})
 	if stats.has("heal_every_hits"):
 		result.append({"name": "无畏战吼", "description": "每第%d次普通攻击命中回复%s点生命。" % [int(stats.get("heal_every_hits", 0)), _format_card_number(float(stats.get("heal_amount", 0.0))) ]})
 	if stats.has("shroud_radius"):

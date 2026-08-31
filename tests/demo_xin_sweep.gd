@@ -1,22 +1,22 @@
 extends Node2D
-## 赵信「横扫千军」部署演示：生成首帧 Spell4 并立即击退四周敌人（按质量分级）→
-## Spell4_To_Idle 收枪；整段 1.5 秒锁行动 → 恢复行动进入三段普攻。
+## 赵信部署版「新月护卫」演示：生成首帧 Spell4 并立即击退四周敌人（按质量分级）；
+## 整段 1 秒锁行动，结束后按权威状态衔接移动或三段普攻。
 ## 运行方式：Godot 编辑器打开 tests/demo_xin_sweep.tscn 后按 F6，或命令行：
 ##   Godot --path . tests/demo_xin_sweep.tscn
-## 每轮时间线：生成并立即横扫 → 1.5 秒内完成 Spell4 与收枪 → 普攻循环。
+## 每轮时间线：生成并立即击退 → 1 秒 Spell4 → 普攻循环。
 ## 看点：
 ##   - 赵信生成就开始 Spell4，演出期间原地不动但仍拥有碰撞并可被攻击
-##   - 质量 1 的小鬼被推出横扫圈外，质量 8 的盖伦只被顶开一小步
-##   - 圈外单位与空中单位（龙王）完全不受影响；横扫只击退不造成伤害
+##   - 质量 1 的小鬼最多承受基础 90px 击退，质量 8 的盖伦只被顶开一小步
+##   - 圈内地面目标受到 90 伤害；圈外单位与空中单位（龙王）完全不受影响
 ##   - 演出结束后赵信追击木桩，三段普攻循环，第三击命中回血
 
 const SIM_DT := 1.0 / 20.0
 const FIELD_W := 720.0
 const FIELD_H := 1280.0
 const CENTER := Vector2(360.0, 660.0)
-## 一轮 = 1.5s 特殊部署 + 普攻观察约 4s。
+## 一轮 = 1s 部署 + 普攻观察约 4.5s。
 const CYCLE_SECONDS := 5.5
-## 木桩环绕半径：小于横扫半径（100）+ 最大木桩半径，保证全部命中。
+## 木桩环绕半径：小于部署技能半径（90）+ 最大木桩半径，保证全部命中。
 const RING_DISTANCE := 62.0
 const FAR_DISTANCE := 175.0
 
@@ -39,7 +39,7 @@ const RING_DUMMIES := [
 
 func _ready() -> void:
 	_build_static_ui()
-	# 3D 表现层：赵信出场播放 Spell4 横扫，木桩显示各自 3D 模型。
+	# 3D 表现层：赵信出场播放 Spell4 新月护卫，木桩显示各自 3D 模型。
 	_presentation = BattlePresentation3D.new()
 	add_child(_presentation)
 	_presentation.setup(Vector2(FIELD_W, FIELD_H), 40.0)
@@ -50,12 +50,12 @@ func _build_static_ui() -> void:
 	bg.color = Color(0.93, 0.93, 0.90)
 	bg.size = Vector2(FIELD_W, FIELD_H)
 	add_child(bg)
-	var title := _make_caption("赵信 · 横扫千军（落地击退）", 30, Vector2(0, 46), Color(0.15, 0.15, 0.18))
+	var title := _make_caption("赵信 · 新月护卫（部署击退）", 30, Vector2(0, 46), Color(0.15, 0.15, 0.18))
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.size = Vector2(FIELD_W, 40)
 	add_child(title)
 	var help := _make_caption(
-		"生成首帧 Spell4 并击退圈内敌人 → Spell4_To_Idle 收枪（共 1.5 秒无法行动）\n部署中仍可碰撞、被索敌和受伤；之后进入三段普攻，第三击回复 60 生命\n虚线圆 = 横扫半径 100px ｜ 每 5.5 秒重演一轮",
+		"生成首帧 Spell4，对圈内地面敌人造成 90 伤害并击退（共 1 秒无法行动）\n部署中仍可碰撞、被索敌和受伤；之后进入三段普攻，第三击回复 60 生命\n虚线圆 = 新月护卫半径 90px ｜ 每 5.5 秒重演一轮",
 		17, Vector2(0, 96), Color(0.35, 0.35, 0.40)
 	)
 	help.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -92,12 +92,12 @@ func spawn_round() -> void:
 		var pos := CENTER + Vector2(cos(angle), sin(angle)) * RING_DISTANCE
 		_spawn_dummy(1, entry[1], pos, entry[0], Color(0.75, 0.25, 0.20))
 
-	# 圈外地面木桩：横扫半径之外
+	# 圈外地面木桩：部署技能半径之外
 	_spawn_dummy(1, "ashe", CENTER + Vector2(0, -FAR_DISTANCE), "艾希·圈外", Color(0.45, 0.45, 0.50))
-	# 空中木桩：圈内但飞在天上，横扫扫不到
+	# 空中木桩：圈内但飞在天上，部署击退扫不到
 	_spawn_dummy(1, "aurelionsol", CENTER + Vector2(-52, 44), "龙王·空中", Color(0.45, 0.45, 0.50))
 
-	# 赵信使用真实 1.5 秒部署，加入场景当帧结算横扫。
+	# 赵信使用真实 1 秒部署，加入场景当帧结算部署版新月护卫。
 	var xin_stats: Dictionary = CardDB.get_card("xin").duplicate()
 	var xin := _spawn_unit(0, xin_stats, CENTER, "赵信", Color(0.10, 0.35, 0.85))
 	# 预扣部分生命，让三段循环第三击的回血在血条上可见。

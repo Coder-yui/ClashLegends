@@ -507,7 +507,10 @@ func _check_masteryi_art_integration() -> void:
 	stats["deploy_time"] = 0.0
 	var anim_names: Dictionary = stats.visual_animations
 	var attacks: Array = anim_names.attack
-	_expect(attacks == ["masteryi_2013_attack1_anm", "masteryi_2013_attack2_anm"], "剑圣两套攻击动作按表现序号交替选择")
+	_expect(
+		attacks == ["masteryi_2013_attack1_anm", "masteryi_2013_attack2_anm", "masteryi_2013_passive_anm"],
+		"剑圣 2013 Attack1 → Attack2 → Passive 三段攻击动作按表现序号循环",
+	)
 	var unit := Unit.new()
 	unit.position = Vector2(360.0, 900.0)
 	unit.setup(0, stats, stats.name)

@@ -76,9 +76,11 @@ static func _validate_visual_stats(label: String, stats: Dictionary, errors: Pac
 static func _configured_animation_names(animations: Dictionary) -> Array[StringName]:
 	var names: Array[StringName] = []
 	for key in [
-		"deploy", "idle", "move", "move_enter", "move_cycle",
+		"deploy", "idle", "move", "move_enter", "haste_move", "move_cycle",
 		"attack", "attack_enter", "attack_retarget_enter", "attack_loop",
-		"attack_hit", "attack_recover", "attack_structure", "attack_to_move", "death",
+		"attack_hit", "attack_recover", "attack_structure", "attack_move", "attack_to_move",
+		"empowered_move", "empowered_attack", "empowered_attack_hit", "empowered_attack_recover",
+		"empowered_attack_to_move", "death",
 	]:
 		_append_animation_names(names, animations.get(key))
 	var transitions = animations.get("transitions")

@@ -30,6 +30,8 @@ const DEFAULT_CAST_LOCKS: Array[StringName] = [CAST_LOCK_MOVEMENT, CAST_LOCK_ATT
 const SWEEP_FX_DURATION := 0.35
 const HEALTH_BAR_HEAD_GAP := 3.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
 const HEALTH_BAR_HEIGHT := 4.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
+const SKILL_RESOURCE_BAR_HEIGHT := 2.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
+const SKILL_RESOURCE_BAR_GAP := 1.5 * CardDB.CHARACTER_SCALE_MULTIPLIER
 const SUMMON_SEPARATION := 2.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
 # 建筑卡召唤小鬼的确定性方向偏移（按序轮转，不引入随机数）
 const SPAWN_DIRECTIONS := [
@@ -80,11 +82,15 @@ var continuous_beam_start_width := 3.0
 var continuous_beam_end_width := 3.0
 var continuous_beam_origin_height := 0.0
 var continuous_beam_forward_offset := 0.0
-# 横扫千军：赵信生成瞬间击退半径内敌方地面单位；radius<=0 表示未启用。
+var continuous_beam_origin_world_position := Vector2.ZERO
+var continuous_beam_origin_tracks_model := false
+# 部署范围击退：赵信当前将其表现为新月护卫；radius<=0 表示未启用。
 # 只击退不造成伤害，击退距离由 apply_knockback 的质量因子衰减。
 var deploy_sweep_radius := 0.0
+var deploy_sweep_damage := 0.0
 var deploy_sweep_knockback := 0.0
 var deploy_sweep_duration := 0.25
+var deploy_sweep_mass_factor_max := 1.4
 # 命中回血：每 heal_every_hits 次普攻命中回复 heal_amount 生命（赵信三段循环的第三击）。
 var heal_every_hits := 0
 var heal_amount := 0.0
@@ -98,6 +104,22 @@ var shroud_radius := 0.0
 var attack_pattern: Array = []
 ## 连招伤害倍率：按每次命中的顺序循环；空数组表示每拳使用 damage 原值。
 var attack_damage_multipliers: Array = []
+## 某一段普通攻击可在权威延迟后追加额外刀数；内层数组与 attack 动画段一一对应。
+var attack_extra_hit_damage_multipliers: Array = []
+var attack_extra_hit_delays: Array = []
+## 可复用的主动技能资源。当前腕豪用它表达豪意；权威值不由白条或动画反推。
+var skill_resource_max := 0.0
+var skill_resource_value := 0.0
+var skill_resource_attack_gain := 0.0
+var skill_resource_hit_gain := 0.0
+var skill_resource_kill_gain := 0.0
+var skill_resource_damage_gain_multiplier := 0.0
+var skill_resource_enabled := false
+var _configured_skill_resource_max := 0.0
+var _configured_skill_resource_attack_gain := 0.0
+var _configured_skill_resource_hit_gain := 0.0
+var _configured_skill_resource_kill_gain := 0.0
+var _configured_skill_resource_damage_gain_multiplier := 0.0
 ## 双形态单位配置。0 为初始形态，1 为 transformed_stats；命中次数可让两形态循环切换。
 var transform_after_hits := 0
 var revert_after_hits := 0
@@ -127,6 +149,12 @@ var active_buff_timer := 0.0
 var active_speed_multiplier := 1.0
 var active_damage_multiplier := 1.0
 var active_attack_speed_multiplier := 1.0
+## 强化下一次普攻不另起攻击计时，只在原本的下一次命中节点消费。
+var empowered_attack_ready := false
+var empowered_attack_damage_multiplier := 1.0
+var empowered_attack_speed_multiplier := 1.0
+var empowered_attack_blind_charges := 0
+var blind_attack_charges := 0
 
 # 联机客户端插值字段（main 快照写入）
 var net_target_pos: Vector2
@@ -156,6 +184,8 @@ var _attack_visual_pending := false
 var _attack_hit_index := 0
 ## 挥击总数：与表现层攻击动画序号同步推进，用于命中回血按三段循环取模。
 var _attack_swing_count := 0
+var _empowered_attack_visual_serial := 0
+var _pending_extra_attacks: Array[Dictionary] = []
 var _sweep_fx_timer := 0.0
 var _hit_flash_event_cooldown := 0.0
 var _death_visual_emitted := false
@@ -194,6 +224,13 @@ var net_visual_action_name := &""
 var net_visual_action_duration := 0.0
 var net_visual_action_time_left := 0.0
 var net_locomotion_state := 1
+var net_empowered_attack_ready := false
+var net_empowered_attack_visual_serial := 0
+var net_skill_resource_ratio := 0.0
+var net_skill_resource_enabled := false
+var net_blind_attack_charges := 0
+var net_active_speed_multiplier := 1.0
+var net_active_attack_speed_multiplier := 1.0
 var net_facing_direction := Vector2.ZERO
 ## 主机快照同步当前普攻目标是否为建筑，供客户端选择对应动作；不参与伤害判定。
 var net_attacking_structure := false
@@ -266,8 +303,10 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	continuous_beam_origin_height = stats.get("continuous_beam_origin_height", continuous_beam_origin_height)
 	continuous_beam_forward_offset = stats.get("continuous_beam_forward_offset", continuous_beam_forward_offset)
 	deploy_sweep_radius = stats.get("deploy_sweep_radius", 0.0)
+	deploy_sweep_damage = stats.get("deploy_sweep_damage", 0.0)
 	deploy_sweep_knockback = stats.get("deploy_sweep_knockback", 0.0)
 	deploy_sweep_duration = stats.get("deploy_sweep_duration", 0.25)
+	deploy_sweep_mass_factor_max = stats.get("deploy_sweep_mass_factor_max", 1.4)
 	heal_every_hits = stats.get("heal_every_hits", 0)
 	heal_amount = stats.get("heal_amount", 0.0)
 	charge_time = stats.get("charge_time", 0.0)
@@ -276,6 +315,20 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	shroud_radius = stats.get("shroud_radius", 0.0)
 	attack_pattern = stats.get("attack_pattern", [])
 	attack_damage_multipliers = stats.get("attack_damage_multipliers", [])
+	attack_extra_hit_damage_multipliers = stats.get("attack_extra_hit_damage_multipliers", [])
+	attack_extra_hit_delays = stats.get("attack_extra_hit_delays", [])
+	_configured_skill_resource_max = maxf(float(stats.get("skill_resource_max", 0.0)), 0.0)
+	_configured_skill_resource_attack_gain = maxf(float(stats.get("skill_resource_attack_gain", 0.0)), 0.0)
+	_configured_skill_resource_hit_gain = maxf(float(stats.get("skill_resource_hit_gain", 0.0)), 0.0)
+	_configured_skill_resource_kill_gain = maxf(float(stats.get("skill_resource_kill_gain", 0.0)), 0.0)
+	_configured_skill_resource_damage_gain_multiplier = maxf(float(stats.get("skill_resource_damage_gain_multiplier", 0.0)), 0.0)
+	skill_resource_max = 0.0
+	skill_resource_value = 0.0
+	skill_resource_attack_gain = 0.0
+	skill_resource_hit_gain = 0.0
+	skill_resource_kill_gain = 0.0
+	skill_resource_damage_gain_multiplier = 0.0
+	skill_resource_enabled = false
 	transform_after_hits = maxi(int(stats.get("transform_after_hits", 0)), 0)
 	revert_after_hits = maxi(int(stats.get("revert_after_hits", 0)), 0)
 	transform_duration = maxf(float(stats.get("transform_duration", 0.0)), 0.0)
@@ -306,9 +359,9 @@ func _ready() -> void:
 	add_child(_presentation)
 	_presentation.setup(visual_frames, visual_radius)
 	_update_fallback_health_bar_anchor()
-	# 赵信的横扫就是部署动作本身：生成当帧结算一次，不等待部署锁定结束，
+	# 赵信的新月护卫就是部署动作本身：生成当帧结算一次，不等待部署锁定结束，
 	# 也不让动画帧反向驱动权威效果。客户端仅显示同帧特效。
-	if deploy_time > 0.0 and deploy_sweep_radius > 0.0 and deploy_sweep_knockback > 0.0:
+	if deploy_time > 0.0 and deploy_sweep_radius > 0.0 and (deploy_sweep_damage > 0.0 or deploy_sweep_knockback > 0.0):
 		if _in_client_mode():
 			_sweep_fx_timer = SWEEP_FX_DURATION
 		else:
@@ -373,6 +426,28 @@ func get_visual_screen_position() -> Vector2:
 func get_attack_visual_serial() -> int:
 	return _attack_visual_serial
 
+func get_empowered_attack_visual_serial() -> int:
+	return net_empowered_attack_visual_serial if _in_client_mode() else _empowered_attack_visual_serial
+
+func is_empowered_attack_ready_visual() -> bool:
+	return net_empowered_attack_ready if _in_client_mode() else empowered_attack_ready
+
+func get_skill_resource_ratio() -> float:
+	if _in_client_mode():
+		return clampf(net_skill_resource_ratio, 0.0, 1.0)
+	if skill_resource_max <= 0.0:
+		return 0.0
+	return clampf(skill_resource_value / skill_resource_max, 0.0, 1.0)
+
+func is_skill_resource_visible() -> bool:
+	return net_skill_resource_enabled if _in_client_mode() else skill_resource_enabled
+
+func get_active_speed_multiplier_visual() -> float:
+	return net_active_speed_multiplier if _in_client_mode() else active_speed_multiplier
+
+func get_active_attack_speed_multiplier_visual() -> float:
+	return net_active_attack_speed_multiplier if _in_client_mode() else active_attack_speed_multiplier
+
 ## 仅供表现层选择普通普攻或建筑普攻动作。目标类型由权威端判定并随快照同步。
 func is_attacking_structure_visual() -> bool:
 	if _in_client_mode():
@@ -416,6 +491,63 @@ func begin_active_skill_cast(duration: float, facing: Vector2, cast_locks: Array
 		_cancel_attack_for_cast(true)
 	if is_active_skill_movement_locked():
 		_move_intent = Vector2.ZERO
+
+## 在 Cast Start 锁定本次资源倍率并清空旧资源。施法期间新获得的资源留给下一次技能，
+## 从而保证强动画选择、权威伤害与联网表现始终来自同一个资源快照。
+func consume_skill_resource_ratio() -> float:
+	var ratio := get_skill_resource_ratio()
+	skill_resource_value = 0.0
+	queue_redraw()
+	return ratio
+
+func get_skill_resource_stacks() -> int:
+	return clampi(int(round(skill_resource_value)), 0, int(round(skill_resource_max)))
+
+## 卡牌数值可声明资源规则，但只有主动槽实际携带 uses_skill_resource 的实例才启用。
+func configure_carried_active_skill(skill: Dictionary) -> void:
+	if not bool(skill.get("uses_skill_resource", false)) or _configured_skill_resource_max <= 0.0:
+		clear_carried_active_skill_resource()
+		return
+	skill_resource_enabled = true
+	skill_resource_max = _configured_skill_resource_max
+	skill_resource_attack_gain = _configured_skill_resource_attack_gain
+	skill_resource_hit_gain = _configured_skill_resource_hit_gain
+	skill_resource_kill_gain = _configured_skill_resource_kill_gain
+	skill_resource_damage_gain_multiplier = _configured_skill_resource_damage_gain_multiplier
+	queue_redraw()
+
+func clear_carried_active_skill_resource() -> void:
+	skill_resource_enabled = false
+	skill_resource_max = 0.0
+	skill_resource_value = 0.0
+	skill_resource_attack_gain = 0.0
+	skill_resource_hit_gain = 0.0
+	skill_resource_kill_gain = 0.0
+	skill_resource_damage_gain_multiplier = 0.0
+	queue_redraw()
+
+func add_skill_resource(amount: float) -> void:
+	if skill_resource_max <= 0.0 or amount <= 0.0:
+		return
+	skill_resource_value = minf(skill_resource_value + amount, skill_resource_max)
+	queue_redraw()
+
+## 只给下一次原有普攻加标签；不写 _attack_cd/_attack_windup，因此不会重置攻速或攻击节奏。
+func prepare_empowered_attack(damage_multiplier: float, speed_multiplier: float = 1.0, applied_blind_charges: int = 0) -> void:
+	empowered_attack_ready = true
+	empowered_attack_damage_multiplier = maxf(damage_multiplier, 0.0)
+	# 已在攻击链中使用时没有移动加速；强化仍落在当前前摇或下一次原有攻击节点。
+	empowered_attack_speed_multiplier = 1.0 if _attacking else maxf(speed_multiplier, 1.0)
+	empowered_attack_blind_charges = maxi(applied_blind_charges, 0)
+	# 若技能在当前攻击前摇中落地，立即从当前 Pose 改播强化动作，但仍沿用原命中时刻。
+	if _attacking and not _attack_visual_pending and (_attack_windup > 0.0 or _attack_cd <= 0.0):
+		_attack_visual_serial += 1
+		_empowered_attack_visual_serial = _attack_visual_serial
+	queue_redraw()
+
+func apply_blind(attacks: int) -> void:
+	blind_attack_charges = maxi(blind_attack_charges, maxi(attacks, 0))
+	queue_redraw()
 
 func is_active_skill_movement_locked() -> bool:
 	return active_skill_cast_timer > 0.0 and CAST_LOCK_MOVEMENT in active_skill_cast_locks
@@ -571,6 +703,11 @@ func set_continuous_beam_visible(visible: bool) -> void:
 	continuous_beam_visible = visible
 	queue_redraw()
 
+func set_continuous_beam_origin_world_position(world_position: Vector2) -> void:
+	continuous_beam_origin_world_position = world_position
+	continuous_beam_origin_tracks_model = true
+	queue_redraw()
+
 ## 固定 tick 模拟入口，由 main._sim_step 以 SIM_DT 驱动
 func sim_tick(dt: float) -> void:
 	if hp <= 0.0:
@@ -606,9 +743,7 @@ func sim_tick(dt: float) -> void:
 		# “不能移动”只锁自主行军；碰撞与击退等外力仍可改变位置，保证部署实体
 		# 被命中后的附带效果不会延迟到部署结束才突然补播。
 		if _knockback_timer > 0.0:
-			_knockback_timer = maxf(0.0, _knockback_timer - dt)
-			_move_intent = _knockback_velocity
-			_forced_movement = true
+			_tick_knockback_movement(dt)
 		if _deploy_timer <= 0.0:
 			_just_deployed = true
 			if is_building and frozen_timer <= 0.0:
@@ -623,13 +758,12 @@ func sim_tick(dt: float) -> void:
 		_charge_timer = 0.0
 		_charged = false
 		return
+	_tick_pending_extra_attacks(dt)
 	if is_building:
 		_building_tick(dt)
 		return
 	if _knockback_timer > 0.0:
-		_knockback_timer = maxf(0.0, _knockback_timer - dt)
-		_move_intent = _knockback_velocity
-		_forced_movement = true
+		_tick_knockback_movement(dt)
 		_charge_timer = 0.0
 		_charged = false
 		return
@@ -739,31 +873,37 @@ func on_movement_applied(distance: float, dt: float) -> void:
 		# 有行进意图但被堵停，不能站在原地继续积攒冲锋。
 		cancel_charge()
 
-## 横扫千军：赵信生成的瞬间以自身为中心击退四周敌人。
-## 只击退，不造成伤害；空中单位扫不到，建筑/塔不可被击退。
-## 击退距离经 apply_knockback 的质量因子衰减——轻单位被推出圈外，重单位只被顶开一小步。
+## 部署范围效果：赵信生成的瞬间以自身为中心发动新月护卫，伤害四周地面敌人。
+## 建筑/防御塔可受伤；击退只对非建筑 Unit 生效，空中单位完全不受影响。
+## 击退距离经 apply_knockback 的质量因子衰减；赵信将轻单位倍率封顶 1.0。
 ## 由主机/单机的 _ready 在生成当帧触发，客户端击退位移由快照插值驱动。
 func _perform_deploy_sweep() -> void:
-	if deploy_sweep_radius <= 0.0 or deploy_sweep_knockback <= 0.0:
+	if deploy_sweep_radius <= 0.0:
 		return
 	_sweep_fx_timer = SWEEP_FX_DURATION
 	for c in get_tree().get_nodes_in_group("combatants"):
-		if not c is Unit or c == self or c.team == team or c.hp <= 0.0:
+		if c == self or not is_instance_valid(c) or c.team == team or c.hp <= 0.0:
 			continue
-		var u := c as Unit
-		if u.is_air or u.is_building:
+		if c is Unit and (c as Unit).is_air:
 			continue
-		# 命中判定与法术/溅射一致：横扫圆与目标碰撞圆相交即命中。
-		if global_position.distance_to(u.global_position) <= deploy_sweep_radius + u.body_radius:
-			u.apply_knockback(global_position, deploy_sweep_knockback, deploy_sweep_duration)
+		# 命中判定与法术/溅射一致：技能圆与目标碰撞圆相交即命中。
+		if global_position.distance_to(c.global_position) > deploy_sweep_radius + c.body_radius:
+			continue
+		var was_alive: bool = c.hp > 0.0
+		if deploy_sweep_damage > 0.0:
+			c.take_damage(deploy_sweep_damage, self, team, global_position)
+		if was_alive and c.hp <= 0.0:
+			on_enemy_killed(c)
+		if c is Unit and is_instance_valid(c) and c.hp > 0.0 and deploy_sweep_knockback > 0.0:
+			(c as Unit).apply_knockback(global_position, deploy_sweep_knockback, deploy_sweep_duration, deploy_sweep_mass_factor_max)
 
-func apply_knockback(origin: Vector2, distance: float, duration: float = 0.2) -> void:
+func apply_knockback(origin: Vector2, distance: float, duration: float = 0.2, mass_factor_max: float = 1.4) -> void:
 	if is_building or distance <= 0.0:
 		return
 	var direction := origin.direction_to(global_position)
 	if direction.length_squared() < 0.001:
 		direction = Vector2.DOWN if team == 0 else Vector2.UP
-	var mass_factor := clampf(4.0 / maxf(mass, 1.0), 0.35, 1.4)
+	var mass_factor := clampf(4.0 / maxf(mass, 1.0), 0.35, maxf(mass_factor_max, 0.35))
 	_knockback_timer = maxf(duration, SIM_DT)
 	_knockback_velocity = direction * distance * mass_factor / _knockback_timer
 	_attack_windup = 0.0
@@ -772,6 +912,13 @@ func apply_knockback(origin: Vector2, distance: float, duration: float = 0.2) ->
 	_attacking = false
 	_shroud_active = false
 	cancel_charge()
+
+func _tick_knockback_movement(dt: float) -> void:
+	# 最后一 Tick 只结算剩余时长，避免浮点余量让 0.25s 击退多走一个完整 20Hz Tick。
+	var movement_time := minf(_knockback_timer, dt)
+	_knockback_timer = maxf(0.0, _knockback_timer - dt)
+	_move_intent = _knockback_velocity * movement_time / maxf(dt, 0.0001)
+	_forced_movement = true
 
 func _target_gap(target: Node2D) -> float:
 	if target.has_method("surface_gap_to_circle"):
@@ -1083,6 +1230,8 @@ func _prepare_movement(direction: Vector2, _dt: float) -> void:
 		_move_direction = _move_direction.lerp(direction.normalized(), turn_weight).normalized()
 	var speed_multiplier := charge_speed_multiplier if _charged else 1.0
 	speed_multiplier *= active_speed_multiplier
+	if empowered_attack_ready:
+		speed_multiplier *= empowered_attack_speed_multiplier
 	if slow_timer > 0.0:
 		speed_multiplier *= slow_multiplier
 	_move_intent = _move_direction * move_speed * speed_multiplier
@@ -1138,11 +1287,23 @@ func _attack(dt: float) -> void:
 		var hit_index := _attack_hit_index
 		var next_attack_gap := _next_attack_gap()
 		_attack_cd = next_attack_gap
-		var hit_damage := damage * _attack_damage_multiplier(hit_index) * active_damage_multiplier * (charge_damage_multiplier if _charged else 1.0)
+		var base_hit_damage := damage * _attack_damage_multiplier(hit_index) * active_damage_multiplier * (charge_damage_multiplier if _charged else 1.0)
+		var hit_damage := base_hit_damage
+		var attack_effects: Dictionary = {}
+		if empowered_attack_ready:
+			hit_damage *= empowered_attack_damage_multiplier
+			if empowered_attack_blind_charges > 0:
+				attack_effects["blind_charges"] = empowered_attack_blind_charges
+			empowered_attack_ready = false
+			empowered_attack_damage_multiplier = 1.0
+			empowered_attack_speed_multiplier = 1.0
+			empowered_attack_blind_charges = 0
 		# 挥击序号与表现层攻击动画序号同步推进，供命中回血按三段循环取模。
 		_attack_swing_count += 1
+		add_skill_resource(skill_resource_attack_gain)
 		var attack_form_index := form_index
-		_deal_attack_damage(hit_damage)
+		_perform_attack_strike(_target, hit_damage, attack_effects)
+		_queue_extra_attack_hits(hit_index, base_hit_damage, _target)
 		# 这一击若触发形态变化，新形态已清空旧攻击状态；不能再写回旧形态的后摇。
 		if form_index != attack_form_index:
 			return
@@ -1165,6 +1326,7 @@ func _reaches_attack_hit_this_tick(dt: float) -> bool:
 ## 连招间距：attack_pattern 为每次命中后到下一次命中的间隔，按数组顺序循环。
 func _next_attack_gap() -> float:
 	if attack_pattern.is_empty():
+		_attack_hit_index += 1
 		return attack_interval / active_attack_speed_multiplier
 	var gap: float = float(attack_pattern[_attack_hit_index % attack_pattern.size()])
 	_attack_hit_index += 1
@@ -1182,16 +1344,69 @@ func _try_start_attack_visual(time_until_hit: float) -> void:
 		return
 	_attack_visual_pending = false
 	_attack_visual_serial += 1
+	if empowered_attack_ready:
+		_empowered_attack_visual_serial = _attack_visual_serial
 
-func _deal_attack_damage(amount: float) -> void:
+func _deal_attack_damage(amount: float, effects: Dictionary = {}) -> void:
 	if _target == null or not is_instance_valid(_target):
 		return
+	_deal_attack_damage_to(_target, amount, effects)
+
+func _deal_attack_damage_to(target: Node2D, amount: float, effects: Dictionary = {}) -> void:
+	if target == null or not is_instance_valid(target) or target.hp <= 0.0:
+		return
 	if battle_context != null:
-		battle_context.launch_attack(self, _target, amount, projectile_speed, splash_radius, attack_knockback, projectile_color)
+		battle_context.launch_attack(self, target, amount, projectile_speed, splash_radius, attack_knockback, projectile_color, effects)
 	else:
-		var landed: bool = _target.take_damage(amount, self)
+		var was_alive: bool = target.hp > 0.0
+		var landed: bool = target.take_damage(amount, self)
 		if landed:
+			if target is Unit and int(effects.get("blind_charges", 0)) > 0:
+				(target as Unit).apply_blind(int(effects.blind_charges))
 			on_attack_landed()
+			if was_alive and target.hp <= 0.0:
+				on_enemy_killed(target)
+
+## 每一刀都独立消费一次致盲。剑圣 Passive 的第二刀因此确实算作第二次普通攻击。
+func _perform_attack_strike(target: Node2D, amount: float, effects: Dictionary = {}) -> void:
+	if blind_attack_charges > 0:
+		blind_attack_charges -= 1
+		queue_redraw()
+		return
+	_deal_attack_damage_to(target, amount, effects)
+
+func _queue_extra_attack_hits(hit_index: int, base_hit_damage: float, target: Node2D) -> void:
+	if hit_index < 0 or hit_index >= attack_extra_hit_damage_multipliers.size():
+		return
+	var configured_multipliers = attack_extra_hit_damage_multipliers[hit_index]
+	var multipliers: Array = configured_multipliers if configured_multipliers is Array else [configured_multipliers]
+	var configured_delays = attack_extra_hit_delays[hit_index] if hit_index < attack_extra_hit_delays.size() else []
+	var delays: Array = configured_delays if configured_delays is Array else [configured_delays]
+	for index in multipliers.size():
+		var multiplier := maxf(float(multipliers[index]), 0.0)
+		if multiplier <= 0.0:
+			continue
+		var delay := float(delays[index]) if index < delays.size() else 0.0
+		_pending_extra_attacks.append({
+			"target_ref": weakref(target),
+			"damage": base_hit_damage * multiplier,
+			"time_left": maxf(delay / maxf(active_attack_speed_multiplier, 1.0), 0.0),
+		})
+
+func _tick_pending_extra_attacks(dt: float) -> void:
+	var waiting: Array[Dictionary] = []
+	for pending in _pending_extra_attacks:
+		pending.time_left = maxf(float(pending.time_left) - dt, 0.0)
+		if float(pending.time_left) > 0.001:
+			waiting.append(pending)
+			continue
+		var target = (pending.target_ref as WeakRef).get_ref()
+		if not target is Node2D or not is_instance_valid(target) or target.hp <= 0.0:
+			continue
+		_attack_swing_count += 1
+		add_skill_resource(skill_resource_attack_gain)
+		_perform_attack_strike(target as Node2D, float(pending.damage))
+	_pending_extra_attacks.assign(waiting)
 
 ## 主机在伤害真正落到目标后调用。格温由此精确地在首次普攻命中而非出手时开启缠流；
 ## 赵信等配置了命中回血的单位也在这里结算，未真正造成伤害的挥击不触发回复。
@@ -1211,7 +1426,12 @@ func on_attack_landed(attack_form_index: int = -1) -> void:
 	if shroud_radius > 0.0 and not _shroud_active:
 		_shroud_active = true
 		queue_redraw()
+	add_skill_resource(skill_resource_hit_gain)
 	_try_heal_on_hit()
+
+func on_enemy_killed(target: Node2D) -> void:
+	if target is Unit and target.team != team:
+		add_skill_resource(skill_resource_kill_gain)
 
 ## 命中回血：每 heal_every_hits 次挥击中的命中回复 heal_amount 生命。
 ## 挥击序号与三段普攻动画循环对齐——第三击（Passive_AA_01）命中时回复。
@@ -1242,7 +1462,10 @@ func apply_active_buff(duration: float, speed_multiplier: float, damage_multipli
 	active_damage_multiplier = maxf(active_damage_multiplier, damage_multiplier)
 	active_attack_speed_multiplier = maxf(active_attack_speed_multiplier, attack_speed_multiplier)
 	# 已经进入普攻冷却时也立即获得攻速收益，避免按钮按下后要等完整旧周期。
-	_attack_cd /= maxf(attack_speed_multiplier, 1.0)
+	var haste := maxf(attack_speed_multiplier, 1.0)
+	_attack_cd /= haste
+	_attack_windup /= haste
+	_attack_recovery_timer /= haste
 	queue_redraw()
 
 func add_shield(amount: float, duration: float) -> void:
@@ -1284,7 +1507,9 @@ func take_damage(amount: float, from: Node2D = null, source_team: int = -1, sour
 		remaining_damage -= absorbed
 		if shield_hp <= 0.0:
 			shield_timer = 0.0
+	var hp_before := hp
 	hp -= remaining_damage
+	add_skill_resource(minf(maxf(hp_before, 0.0), remaining_damage) * skill_resource_damage_gain_multiplier)
 	if hp <= 0.0:
 		_die(death_spawn_count > 0)
 	else:
@@ -1457,6 +1682,12 @@ func _draw() -> void:
 		)
 		draw_rect(bar_rect, Color(0.15, 0.15, 0.15))
 		draw_rect(Rect2(bar_rect.position, Vector2(bar_w * ratio, HEALTH_BAR_HEIGHT)), get_health_bar_fill_color())
+	if is_skill_resource_visible():
+		var resource_w := visual_radius * 2.0
+		var resource_y := _health_bar_center.y + HEALTH_BAR_HEIGHT * 0.5 + SKILL_RESOURCE_BAR_GAP
+		var resource_rect := Rect2(Vector2(-resource_w * 0.5, resource_y), Vector2(resource_w, SKILL_RESOURCE_BAR_HEIGHT))
+		draw_rect(resource_rect, Color(0.10, 0.10, 0.12, 0.9))
+		draw_rect(Rect2(resource_rect.position, Vector2(resource_w * get_skill_resource_ratio(), SKILL_RESOURCE_BAR_HEIGHT)), Color(0.96, 0.96, 1.0, 0.96))
 	if frozen_timer > 0.0:
 		draw_circle(Vector2.ZERO, visual_radius + 4.0, Color(0.4, 0.8, 1.0, 0.3))
 	var stunned_visible := net_stun_active if _in_client_mode() else stun_timer > 0.0
@@ -1475,12 +1706,13 @@ func _draw() -> void:
 func _draw_continuous_beam() -> void:
 	var source_screen := get_visual_screen_position()
 	var target_local := get_continuous_visual_target_position() - source_screen
-	var mouth_local := Vector2(0.0, -continuous_beam_origin_height)
+	var mouth_local := continuous_beam_origin_world_position - source_screen if continuous_beam_origin_tracks_model else Vector2(0.0, -continuous_beam_origin_height)
 	var to_target := target_local - mouth_local
 	if to_target.length_squared() < 0.001:
 		return
 	var direction := to_target.normalized()
-	mouth_local += direction * continuous_beam_forward_offset
+	if not continuous_beam_origin_tracks_model:
+		mouth_local += direction * continuous_beam_forward_offset
 	to_target = target_local - mouth_local
 	if to_target.length_squared() < 0.001:
 		return

@@ -35,11 +35,11 @@ func is_ground_segment_walkable(from: Vector2, to: Vector2, mover_radius: float,
 func find_ground_path(from: Vector2, goal: Vector2, target: Node2D, mover_radius: float) -> PackedVector2Array:
 	return _controller.find_ground_path(from, goal, target, mover_radius)
 
-func launch_attack(attacker: Node2D, target: Node2D, amount: float, projectile_speed: float, splash_radius: float, knockback: float, projectile_color: Color) -> void:
-	_controller.launch_attack(attacker, target, amount, projectile_speed, splash_radius, knockback, projectile_color)
+func launch_attack(attacker: Node2D, target: Node2D, amount: float, projectile_speed: float, splash_radius: float, knockback: float, projectile_color: Color, effects: Dictionary = {}) -> void:
+	_controller.launch_attack(attacker, target, amount, projectile_speed, splash_radius, knockback, projectile_color, effects)
 
-func resolve_attack_hit(team: int, origin: Vector2, primary: Node2D, amount: float, radius: float, knockback: float, from: Node2D, source_position: Vector2, source_form_index: int) -> void:
-	_controller.resolve_attack_hit(team, origin, primary, amount, radius, knockback, from, source_position, source_form_index)
+func resolve_attack_hit(team: int, origin: Vector2, primary: Node2D, amount: float, radius: float, knockback: float, from: Node2D, source_position: Vector2, source_form_index: int, effects: Dictionary = {}) -> void:
+	_controller.resolve_attack_hit(team, origin, primary, amount, radius, knockback, from, source_position, source_form_index, effects)
 
 func unblock_nav_cells(cells: Array) -> void:
 	_controller.unblock_nav_cells(cells)

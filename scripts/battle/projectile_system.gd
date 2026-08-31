@@ -12,14 +12,14 @@ var _context: BattleContext
 func setup(context: BattleContext) -> void:
 	_context = context
 
-func launch(attacker: Node2D, target: Node2D, amount: float, projectile_speed: float, splash_radius: float, knockback: float, projectile_color: Color) -> void:
+func launch(attacker: Node2D, target: Node2D, amount: float, projectile_speed: float, splash_radius: float, knockback: float, projectile_color: Color, effects: Dictionary = {}) -> void:
 	if target == null or not is_instance_valid(target) or target.hp <= 0.0:
 		return
 	if target is Unit and (target as Unit).is_hidden_from(attacker):
 		return
 	var source_form_index := (attacker as Unit).form_index if attacker is Unit else -1
 	if projectile_speed <= 0.0:
-		_context.resolve_attack_hit(attacker.team, attacker.global_position, target, amount, splash_radius, knockback, attacker, attacker.global_position, source_form_index)
+		_context.resolve_attack_hit(attacker.team, attacker.global_position, target, amount, splash_radius, knockback, attacker, attacker.global_position, source_form_index, effects)
 		return
 	var direction := attacker.global_position.direction_to(target.global_position)
 	var projectile_visual := &"orb"
@@ -46,6 +46,7 @@ func launch(attacker: Node2D, target: Node2D, amount: float, projectile_speed: f
 		"pos": start_position, "target": target, "attacker": attacker,
 		"source_form_index": source_form_index, "source_pos": attacker.global_position,
 		"team": attacker.team, "damage": amount, "speed": projectile_speed,
+		"effects": effects.duplicate(true),
 		"splash": splash_radius, "knockback": knockback, "color": projectile_color,
 		"radius": 7.0 if projectile_visual == &"tower_orb" else (3.0 if projectile_visual == &"arrow" else 4.0),
 		"visual": projectile_visual, "visual_height": projectile_visual_height,
@@ -84,7 +85,7 @@ func tick(dt: float) -> void:
 		projectiles[id] = projectile
 		if next_pos.distance_to(target_pos) <= target.body_radius + projectile.radius:
 			var hit_from: Node2D = projectile.attacker if (projectile.attacker != null and is_instance_valid(projectile.attacker)) else null
-			_context.resolve_attack_hit(projectile.team, pos, target, projectile.damage, projectile.splash, projectile.knockback, hit_from, projectile.source_pos, int(projectile.get("source_form_index", -1)))
+			_context.resolve_attack_hit(projectile.team, pos, target, projectile.damage, projectile.splash, projectile.knockback, hit_from, projectile.source_pos, int(projectile.get("source_form_index", -1)), projectile.get("effects", {}))
 			finished.append(id)
 	for id in finished:
 		projectiles.erase(id)

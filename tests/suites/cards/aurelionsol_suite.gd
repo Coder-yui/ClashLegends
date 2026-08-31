@@ -13,6 +13,93 @@ func run(harness: Object, main: Node2D) -> void:
 	_main = main
 	_check_aurelionsol_art_integration()
 	_check_aurelionsol_direct_retarget()
+	_check_starfall_and_falling_sky()
+
+func _check_starfall_and_falling_sky() -> void:
+	_main._active_skill_effect_system.clear()
+	var stats: Dictionary = CardDB.get_card("aurelionsol").duplicate(true)
+	stats["deploy_time"] = 0.0
+	var skill: Dictionary = stats.active_skill
+	var dragon := Unit.new()
+	dragon.position = Vector2(360.0, 1000.0)
+	dragon.setup(0, stats, stats.name)
+	_main.add_child(dragon)
+	var kill_dummy := Unit.new()
+	var dummy_stats := SuiteUtils.sweep_dummy_stats(CardDB.get_card("garen"))
+	kill_dummy.position = Vector2(600.0, 1100.0)
+	kill_dummy.setup(1, dummy_stats, "充能木桩")
+	_main.add_child(kill_dummy)
+	dragon.on_enemy_killed(kill_dummy)
+	var disabled_without_loadout := not dragon.is_skill_resource_visible() and is_zero_approx(dragon.skill_resource_value)
+	dragon.configure_carried_active_skill(skill)
+	var prepared_starfall: Dictionary = _main._active_skill_effect_system.prepare_cast(dragon, skill)
+	_main._active_skill_effect_system.apply_forward_area(dragon, prepared_starfall, Vector2.UP)
+	var starfall_without_shockwave: bool = (
+		not bool(prepared_starfall.get("full_resource", false))
+		and is_equal_approx(float(prepared_starfall.damage), float(skill.damage))
+		and is_equal_approx(float(prepared_starfall.stun_duration), float(skill.stun_duration))
+		and String(prepared_starfall.visual_action) == "active"
+		and _main._active_skill_effect_system.expanding_shockwaves.is_empty()
+	)
+	for _kill in range(5):
+		dragon.on_enemy_killed(kill_dummy)
+	var prepared: Dictionary = _main._active_skill_effect_system.prepare_cast(dragon, skill)
+	_expect(
+		disabled_without_loadout
+		and starfall_without_shockwave
+		and is_equal_approx(float(prepared.damage), float(skill.damage) * 1.5)
+		and is_equal_approx(float(prepared.stun_duration), float(skill.stun_duration) * 1.5)
+		and String(prepared.visual_action) == "active_strong"
+		and is_zero_approx(dragon.skill_resource_value),
+		"龙王只有携带星落/天瀑时击杀敌方单位才充能；普通星落没有冲击波，5 层升级天瀑并把区域伤害与眩晕提高至 1.5 倍",
+	)
+	var center := Unit.new()
+	var wave := Unit.new()
+	var behind := Unit.new()
+	center.position = Vector2(360.0, 825.0)
+	wave.position = Vector2(760.0, 825.0)
+	behind.position = Vector2(360.0, 1180.0)
+	for target in [center, wave, behind]:
+		target.setup(1, dummy_stats, "天瀑木桩")
+		_main.add_child(target)
+	dragon.begin_active_skill_cast(float(prepared.cast_duration), Vector2.UP, prepared.cast_locks)
+	var center_before := center.hp
+	var wave_before := wave.hp
+	var behind_before := behind.hp
+	_main._active_skill_effect_system.apply(dragon, prepared)
+	var impact_ok := (
+		is_equal_approx(center_before - center.hp, float(skill.damage) * 1.5)
+		and is_equal_approx(center.stun_timer, float(skill.stun_duration) * 1.5)
+		and is_equal_approx(wave.hp, wave_before) and is_equal_approx(behind.hp, behind_before)
+	)
+	_main._active_skill_effect_system._tick_expanding_shockwaves(float(skill.shockwave_duration))
+	var wave_ok := (
+		is_equal_approx(wave_before - wave.hp, float(skill.shockwave_damage))
+		and is_equal_approx(behind_before - behind.hp, float(skill.shockwave_damage))
+		and is_equal_approx(wave.slow_timer, float(skill.shockwave_slow_duration))
+		and is_equal_approx(center_before - center.hp, float(skill.damage) * 1.5)
+	)
+	_expect(
+		impact_ok and wave_ok
+		and dragon.is_active_skill_movement_locked() and dragon.is_active_skill_attack_locked() and dragon.is_active_skill_facing_locked(),
+		"星落/天瀑锁定行动，在龙王前方圆形区域造成伤害与眩晕；只有天瀑的落地冲击波从区域外围扩至全场，造成公主塔单次伤害并减速且不重复命中中心",
+	)
+	var breath_target := Unit.new()
+	breath_target.position = Vector2(360.0, 940.0)
+	breath_target.setup(1, dummy_stats, "即时吐息木桩")
+	_main.add_child(breath_target)
+	dragon.active_skill_cast_timer = 0.0
+	dragon.active_skill_cast_locks.clear()
+	dragon._target = breath_target
+	dragon._attacking = true
+	dragon._attack_windup = 0.0
+	var breath_before := breath_target.hp
+	dragon._attack(_main.SIM_DT)
+	_expect(is_zero_approx(dragon.first_hit_time) and breath_target.hp < breath_before, "龙王移除人为攻击前摇，进入攻击距离的第一个固定 tick 就开始造成持续吐息伤害")
+	for unit in [dragon, kill_dummy, center, wave, behind, breath_target]:
+		if is_instance_valid(unit):
+			unit.free()
+	_main._active_skill_effect_system.clear()
 
 ## 龙王是首个空中 3D 单位：模型悬空，移动四段循环，吐息进入/循环与退出衔接均由表现状态驱动。
 func _check_aurelionsol_art_integration() -> void:
@@ -32,11 +119,17 @@ func _check_aurelionsol_art_integration() -> void:
 	_expect(
 		anim_names.move_cycle == ["Run1B", "Run1C", "Run1D", "Run1A"]
 		and anim_names.attack_enter == "AurelionSol_Spell1_newtst_anm"
-		and anim_names.attack_retarget_enter == "AurelionSol_Spell1_new_looptoin_anm"
+		and anim_names.attack_retarget_enter == ["AurelionSol_Spell1_new_looptoin_anm", "AurelionSol_Spell1_newtst_anm"]
 		and anim_names.attack_loop == "AurelionSol_Spell1_loop_anm"
 		and anim_names.transitions.get("attack>move", "") == "Spell1_2Run"
-		and anim_names.move_enter_after_attack == false,
-		"龙王区分移动后 newtst 与原地换目标 new_looptoin，并保留吐息转移动链路",
+		and anim_names.move_enter_after_attack == false
+		and anim_names.move_enter_from_deploy_only == true,
+		"龙王 RunIn 只用于部署后移动；初次攻击 newtst，原地换目标按 new_looptoin→newtst，并保留吐息转移动链路",
+	)
+	_expect(
+		anim_names.visual_actions.active.animation == "Spell4"
+		and anim_names.visual_actions.active_strong.animation == "AurelionSol_Spell4_base_anm",
+		"龙王星落使用 Spell4，满层天瀑使用 Spell4 Base",
 	)
 	var beam_color: Color = stats.continuous_beam_color
 	_expect(
@@ -62,14 +155,30 @@ func _check_aurelionsol_art_integration() -> void:
 	var retarget_transition_ok := false
 	var move_transition_ok := false
 	var move_cycle_ok := false
+	var deploy_only_run_in_ok := false
 	var immediate_stop_ok := false
+	var mouth_binding_ok := false
 	if view != null:
+		view._current_state = 0
+		unit._move_intent = Vector2.UP * unit.move_speed
+		view._transition_to_basic_state(2, 0.0)
+		var deployed_to_run_in := view._animation_player.current_animation == "RunIn"
+		view._on_animation_finished(&"RunIn")
+		var deployed_to_run_b := view._animation_player.current_animation == "Run1B"
+		unit._move_intent = Vector2.ZERO
+		view._sync_visual(false, 0.05)
+		unit._move_intent = Vector2.UP * unit.move_speed
+		view._sync_visual(false, 0.05)
+		deploy_only_run_in_ok = deployed_to_run_in and deployed_to_run_b and view._animation_player.current_animation == "Run1B"
+		unit._move_intent = Vector2.ZERO
 		unit._target = dummy
 		unit._attacking = true
 		view._sync_visual(false, 0.05)
+		view._update_continuous_beam_origin()
+		mouth_binding_ok = unit.continuous_beam_origin_tracks_model and not unit.continuous_beam_origin_world_position.is_zero_approx()
 		var entered_attack := (
 			view._animation_player.current_animation == "AurelionSol_Spell1_newtst_anm"
-			and not unit.continuous_beam_visible
+			and unit.continuous_beam_visible
 		)
 		view._on_animation_finished(&"AurelionSol_Spell1_newtst_anm")
 		attack_transition_ok = (
@@ -82,11 +191,14 @@ func _check_aurelionsol_art_integration() -> void:
 		view._sync_visual(false, 0.05)
 		var entered_retarget := (
 			view._animation_player.current_animation == "AurelionSol_Spell1_new_looptoin_anm"
-			and not unit.continuous_beam_visible
+			and unit.continuous_beam_visible
 		)
 		view._on_animation_finished(&"AurelionSol_Spell1_new_looptoin_anm")
+		var retarget_to_newtst := view._animation_player.current_animation == "AurelionSol_Spell1_newtst_anm"
+		view._on_animation_finished(&"AurelionSol_Spell1_newtst_anm")
 		retarget_transition_ok = (
 			entered_retarget
+			and retarget_to_newtst
 			and view._animation_player.current_animation == "AurelionSol_Spell1_loop_anm"
 			and unit.continuous_beam_visible
 		)
@@ -116,8 +228,10 @@ func _check_aurelionsol_art_integration() -> void:
 			view._animation_player.current_animation == "Idle1_Base"
 			and not unit.continuous_beam_visible
 		)
-	_expect(attached and attack_transition_ok, "龙王吐息进入段不显示光柱，进入循环吐息后才显示")
-	_expect(retarget_transition_ok, "龙王原地击败目标并直接换目标时播放 new_looptoin→loop")
+	_expect(attached and attack_transition_ok, "龙王进入攻击距离立即开始吐息，newtst 与 loop 全程保持光柱")
+	_expect(retarget_transition_ok, "龙王原地击败目标并直接换目标时播放 new_looptoin→newtst→loop")
+	_expect(deploy_only_run_in_ok, "龙王 RunIn 只在部署完成后首次进入移动时播放，之后从待机进入移动直接使用 Run1B")
+	_expect(mouth_binding_ok, "龙王吐息起点每帧绑定当前动画 Pose 的 Jaw 骨骼，不再使用固定屏幕高度近似嘴部")
 	_expect(move_transition_ok, "龙王吐息后按 Spell1_2Run→Run1B 直接接入移动循环")
 	_expect(move_cycle_ok, "龙王移动按 Run1B→Run1C→Run1D→Run1A 循环")
 	_expect(immediate_stop_ok, "龙王退出攻击时立即打断吐息循环，不等待循环动画播完")

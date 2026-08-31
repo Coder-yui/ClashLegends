@@ -2,7 +2,7 @@ class_name NetworkSnapshotSystem
 extends RefCounted
 ## 20Hz 单位/塔/弹体快照的序列化与客户端应用。RPC 端点仍保留在 Main。
 
-const SNAPSHOT_PROTOCOL_VERSION := 3
+const SNAPSHOT_PROTOCOL_VERSION := 5
 const S_UNITS := 0
 const S_PROJECTILES := 1
 const S_TOWERS := 2
@@ -40,6 +40,13 @@ const U_FORM_CHANGE_SERIAL := 22
 const U_ACTION_DURATION := 23
 const U_ACTION_TIME_LEFT := 24
 const U_LOCOMOTION := 25
+const U_EMPOWERED_READY := 26
+const U_EMPOWERED_ATTACK_SERIAL := 27
+const U_SKILL_RESOURCE_RATIO := 28
+const U_BLIND_ATTACK_CHARGES := 29
+const U_SKILL_RESOURCE_ENABLED := 30
+const U_ACTIVE_SPEED_MULTIPLIER := 31
+const U_ACTIVE_ATTACK_SPEED_MULTIPLIER := 32
 
 var _controller: Node2D
 
@@ -124,6 +131,16 @@ func apply(snapshot_bytes: PackedByteArray) -> void:
 			u.net_visual_action_time_left = clampf(float(d[U_ACTION_TIME_LEFT]), 0.0, u.net_visual_action_duration)
 		if d.size() >= 26:
 			u.net_locomotion_state = int(d[U_LOCOMOTION])
+		if d.size() >= 30:
+			u.net_empowered_attack_ready = int(d[U_EMPOWERED_READY]) == 1
+			u.net_empowered_attack_visual_serial = int(d[U_EMPOWERED_ATTACK_SERIAL])
+			u.net_skill_resource_ratio = clampf(float(d[U_SKILL_RESOURCE_RATIO]), 0.0, 1.0)
+			u.net_blind_attack_charges = maxi(int(d[U_BLIND_ATTACK_CHARGES]), 0)
+			u.blind_attack_charges = u.net_blind_attack_charges
+		if d.size() >= 33:
+			u.net_skill_resource_enabled = int(d[U_SKILL_RESOURCE_ENABLED]) == 1
+			u.net_active_speed_multiplier = maxf(float(d[U_ACTIVE_SPEED_MULTIPLIER]), 1.0)
+			u.net_active_attack_speed_multiplier = maxf(float(d[U_ACTIVE_ATTACK_SPEED_MULTIPLIER]), 1.0)
 		if (
 			_controller._auto_test and not _controller._auto_gnar_form_seen and u.card_id == "gnar"
 			and u.form_index == 1 and u.net_visual_action_name == &"transform_active"
@@ -269,4 +286,7 @@ func _unit_snapshot_payload(id: int, u: Unit, has_continuous_target: bool = fals
 		u.form_change_serial,
 		u.get_visual_action_duration(), u.get_visual_action_time_left(),
 		u.get_locomotion_visual_state_code(),
+		1 if u.empowered_attack_ready else 0, u.get_empowered_attack_visual_serial(),
+		u.get_skill_resource_ratio(), u.blind_attack_charges,
+		1 if u.skill_resource_enabled else 0, u.active_speed_multiplier, u.active_attack_speed_multiplier,
 	]

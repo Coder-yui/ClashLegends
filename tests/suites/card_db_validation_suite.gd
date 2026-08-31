@@ -74,3 +74,67 @@ func run(harness: Object) -> void:
 		and reference_errors.size() == 2,
 		"CardDB 在运行前拒绝未实现法术和失效的周期/主动召唤引用",
 	)
+	var hero_rework_errors := PackedStringArray()
+	CardDB._validate_combat_stats("resource_probe", {
+		"hp": 100.0, "damage": 10.0, "range": 10.0, "speed": 10.0, "interval": 1.0,
+		"first_hit": 0.2, "is_air": false, "building_only": false, "can_attack_air": false,
+		"size_tier": "medium", "mass": 1.0, "sight": 100.0, "visual_radius": 20.0,
+		"radius": CardDB.SIZE_RADII.medium,
+		"skill_resource_max": 0.0, "skill_resource_attack_gain": 10.0,
+		"deploy_sweep_radius": 90.0, "deploy_sweep_damage": -1.0, "deploy_sweep_knockback": 90.0,
+		"deploy_sweep_duration": 0.0, "deploy_sweep_mass_factor_max": 0.0,
+	}, true, hero_rework_errors)
+	CardDB._validate_visual_config("attack_route_probe", {
+		"visual_animations": {
+			"attack": ["Attack1", "Attack2"],
+			"attack_to_move": ["Attack1_ToRun"],
+		},
+	}, hero_rework_errors)
+	CardDB._validate_active_skills("frontal_probe", {
+		"active_skill": {
+		"name": "非法扇形", "kind": "frontal", "shape": "fan",
+			"length": 0.0, "damage": -1.0, "arc_degrees": 180.0, "projectile_count": -1,
+			"impact_delay": 0.2, "cast_duration": 0.3,
+		},
+	}, hero_rework_errors)
+	CardDB._validate_active_skills("nova_probe", {
+		"active_skill": {
+			"name": "非法范围击退", "kind": "nova", "radius": 90.0, "damage": 90.0,
+			"knockback": 90.0, "knockback_duration": 0.0, "knockback_mass_factor_max": 0.0,
+		},
+	}, hero_rework_errors)
+	CardDB._validate_active_skills("empowered_probe", {
+		"active_skill": {
+			"name": "非法强化普攻", "kind": "empowered_attack",
+			"empowered_damage_multiplier": 0.0, "empowered_speed_multiplier": 0.5,
+			"blind_charges": -1,
+		},
+	}, hero_rework_errors)
+	CardDB._validate_active_skills("forward_area_probe", {
+		"active_skill": {
+			"name": "非法落星", "kind": "forward_area", "uses_skill_resource": true,
+			"forward_distance": 0.0, "radius": 0.0, "damage": -1.0, "stun_duration": -1.0,
+			"impact_delay": 2.0, "cast_duration": 1.0,
+			"shockwave_damage": -1.0, "shockwave_duration": 0.0, "shockwave_end_radius": 0.0,
+		},
+	}, hero_rework_errors)
+	CardDB._validate_combat_stats("extra_hit_probe", {
+		"hp": 100.0, "damage": 10.0, "range": 10.0, "speed": 10.0, "interval": 1.0,
+		"first_hit": 0.2, "is_air": false, "building_only": false, "can_attack_air": false,
+		"size_tier": "medium", "mass": 1.0, "sight": 100.0, "visual_radius": 20.0,
+		"radius": CardDB.SIZE_RADII.medium,
+		"attack_extra_hit_damage_multipliers": [[], [0.5]], "attack_extra_hit_delays": [[]],
+	}, true, hero_rework_errors)
+	var hero_error_text := "；".join(hero_rework_errors)
+	harness._expect(
+		"skill_resource_max" in hero_error_text
+		and "deploy_sweep_damage" in hero_error_text and "deploy_sweep_duration" in hero_error_text
+		and "knockback_duration" in hero_error_text and "knockback_mass_factor_max" in hero_error_text
+		and "attack_to_move" in hero_error_text
+		and "length" in hero_error_text and "arc_degrees" in hero_error_text and "projectile_count" in hero_error_text
+		and "empowered_damage_multiplier" in hero_error_text
+		and "empowered_speed_multiplier" in hero_error_text and "blind_charges" in hero_error_text
+		and "forward_distance" in hero_error_text and "shockwave_duration" in hero_error_text
+		and "uses_skill_resource" in hero_error_text and "attack_extra_hit_delays" in hero_error_text,
+		"CardDB 在运行前拒绝非法豪意、部署/主动击退、攻击转移动路线、前方/落点范围、追加刀和强化普攻配置",
+	)

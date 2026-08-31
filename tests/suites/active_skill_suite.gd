@@ -15,6 +15,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
 	_check_active_skill_loadout_rule()
+	_check_skill_resource_loadout_visibility()
 	_check_active_skill_activation()
 	_check_pending_active_skill_revalidation()
 	_check_pending_control_revalidation()
@@ -55,6 +56,23 @@ func _check_active_skill_loadout_rule() -> void:
 	)
 	_main._deck = old_deck
 
+func _check_skill_resource_loadout_visibility() -> void:
+	var old_deck: Array = _main._deck.duplicate()
+	_main._deck = ["sett", "garen", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
+	var ordinary_sett: Unit = _main._spawn_unit(0, "sett", Vector2(180.0, 1000.0), 0.0, -1)
+	var active_sett: Unit = _main._spawn_unit(0, "sett", Vector2(260.0, 1000.0), 0.0, 0)
+	var enabled_only_in_slot := not ordinary_sett.is_skill_resource_visible() and active_sett.is_skill_resource_visible()
+	var replacement: Unit = _main._spawn_unit(0, "garen", Vector2(340.0, 1000.0), 0.0, 0)
+	_expect(
+		enabled_only_in_slot and not active_sett.is_skill_resource_visible()
+		and active_sett.active_ability_id == -1 and replacement.active_ability_id >= 0,
+		"豪意白条只属于主动槽实际携带蓄意轰拳的瑟提；同槽新单位覆盖资格后旧瑟提立即隐藏并停止积攒",
+	)
+	for unit in [ordinary_sett, active_sett, replacement]:
+		if is_instance_valid(unit):
+			unit.take_damage(unit.hp + 1.0)
+	_main._deck = old_deck
+
 func _check_active_skill_activation() -> void:
 	var old_deck: Array = _main._deck.duplicate()
 	_main._deck = ["garen", "xin", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
@@ -89,7 +107,7 @@ func _check_active_skill_activation() -> void:
 		"点击主动技能后目标执行 Tick 前仍处于等待状态，不提前结算"
 	)
 	_run_main_ticks(1)
-	_expect(command_tick_contract and enemy.hp < hp_before and source.shield_hp > 0.0, "主动技能与卡牌共用 input_tick→execute_tick 解析，Host 本地输入保持 10 Tick 后由权威逻辑结算")
+	_expect(command_tick_contract and is_equal_approx(enemy.hp, hp_before) and source.empowered_attack_ready, "主动技能与卡牌共用 input_tick→execute_tick 解析，Host 本地输入保持 10 Tick 后由权威逻辑结算")
 	_expect(
 		not _main._active_skills.has(ability_id)
 		and not _main._activate_active_skill(ability_id, 0)
@@ -186,7 +204,7 @@ func _check_pending_active_skill_revalidation() -> void:
 	_run_main_ticks(_main.COMMAND_DELAY_TICKS)
 	_expect(rejected_during_cast, "主动 pending 到期时若已进入另一段 active cast，会拒绝效果/技能动作并恢复按钮")
 	_expect(
-		queued_after_cast and enemy.hp < hp_before_cast_reject and casting_source.shield_hp > 0.0
+		queued_after_cast and (casting_source.empowered_attack_ready or casting_source.get_empowered_attack_visual_serial() > 0)
 		and not _main._active_skills.has(casting_ability_id),
 		"pending 期间权威状态始终合法时，主动技能仍在 0.5 秒后正常释放",
 	)

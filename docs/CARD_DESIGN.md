@@ -27,12 +27,16 @@ CardDB 是卡牌数值、通用机制参数和表现配置的唯一来源。普�
 
 - 目标/攻击：`building_only`、`can_attack_air`、`is_continuous_attack`、`splash_radius`、`knockback`。
 - 弹体：`projectile_speed`、`projectile_visual`（`orb/arrow/needle/boomerang`）、高度、前向偏移、双方颜色。
-- 状态/被动：部署横扫、命中回血、缠流、攻击节奏/伤害倍率、护盾/减速/眩晕、主动 buff。
+- 状态/被动：部署横扫、命中回血、缠流、攻击节奏/伤害倍率、延迟追加刀、技能资源、强化下一次普攻、攻击次数致盲、护盾/减速/眩晕、主动 buff。
 - 生命周期：部署时间、建筑寿命/周期召唤/亡语召唤。
 - 双形态：命中次数、变形/还原时长、完整 `transformed_stats`。
 - 表现：`visual_scene_path(s)`、`visual_forward_yaw`、`visual_animations`；这些不能参与权威判定。单位动画采用 locomotion + action 通道，详见 `ANIMATION_STATE_SYSTEM.md`。
 
-主动 `kind` 当前只允许 `nova`、`buff`、`summon`、`dual_form`。技能资格、Command Buffer 与 Cast/Impact 时间线由 Main 编排，Gameplay Impact 集中在 `ActiveSkillEffectSystem`。新增 kind 必须同时实现权威效果、CardDB validator、必要快照/RPC、UI 描述和领域回归；不能只写数据。技能可提供纯表现用 `description`，避免 UI 出现英雄名分支。
+主动 `kind` 当前允许 `nova`、`buff`、`summon`、`dual_form`、`frontal`、`forward_area`、`empowered_attack`。`frontal` 可用 `fan` 或 `trapezoid` 表达锁定朝向的扇形/梯形命中；`forward_area` 在锁定方向的前方圆形区域结算，并可排定固定模拟扩散的冲击波，`shockwave_full_only` 可将冲击波限定为满资源升级形态；`empowered_attack` 只强化原攻击时间线中的下一次普攻，不重置攻速或另起攻击动作。技能资格、Command Buffer 与 Cast/Impact 时间线由 Main 编排，Gameplay Impact 集中在 `ActiveSkillEffectSystem`。新增 kind 必须同时实现权威效果、CardDB validator、必要快照/RPC、UI 描述和领域回归；不能只写数据。技能可提供纯表现用 `description`，避免 UI 出现英雄名分支。
+
+`skill_resource_*` 只声明潜在规则；单位必须由主动槽实际携带 `uses_skill_resource` 的技能才启用、显示和积攒资源，被同槽新单位替换或释放技能后立即关闭。资源可按受伤、出手、真实命中或击杀敌方单位积攒；技能在 Cast Start 固化层数/倍率并消费旧资源，保证普通/满层动作选择与最终伤害来自同一快照。`blind_charges` 随强化攻击命中写入目标，目标随后对应次数的普通攻击仍推进动作和冷却，但不产生伤害或命中特效。
+
+一段动作需要多次普通攻击判定时，使用与攻击段对齐的 `attack_extra_hit_damage_multipliers / attack_extra_hit_delays`。每一刀都由固定模拟延迟结算并独立消费致盲，动画结束事件不能触发第二刀。
 
 带施法窗口的主动可配置 `cast_duration`、`impact_delay`、`visual_action` 与 `cast_locks`。`cast_duration` 是 Cast Start 到 Cast End 的权威窗口，`impact_delay` 是 Cast Start 到 Gameplay Impact 的权威延迟，未写时为 0；`impact_delay` 必须满足 `0 <= impact_delay <= cast_duration`。locks 可独立包含 `movement / attack / facing`；未写时默认三项全锁，空数组表示不限制基础行为。使用全身 `visual_action` 时必须包含 `attack`，不能让权威普攻被全身动作遮住。Gameplay lock 不由动画推导，impact 时刻仍由固定模拟实现。
 

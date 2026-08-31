@@ -77,6 +77,12 @@ Command Buffer 从玩家输入时刻开始计时，用于吸收联网输入延�
 
 龙王的 `Spell1_2Run` 使用这条通用映射；不要新增角色名判断或 `Spell2 -> Run` 等硬编码。没有专门片段时，Skill/Transform/Attack 会直接从当前 Pose 按统一 blend-out 进入目标动作。
 
+强化普攻仍属于 Attack 通道，可用 `empowered_move / empowered_attack / empowered_attack_hit / empowered_attack_recover / empowered_attack_to_move` 替换待命移动、出手、长后摇和转跑素材。普通多段攻击需要按本次动作选择不同转跑路线时，使用与 `attack` 等长的 `attack_move` 和 `attack_to_move` 数组；空字符串表示该段没有专用转场。所有这些片段都允许被下一次权威攻击或移动状态从任意进度打断。
+
+主动加速移动可配置 `haste_move`；表现层读取权威/快照中的 buff 倍率，在 buff 开关当帧切换移动动作。攻击动作的播放速度实时跟随权威攻速倍率，已经播放到中途的动作也会同步加速或恢复，但命中仍由 Unit 的固定计时决定。
+
+`move_enter_from_deploy_only = true` 会把 `move_enter` 限制为部署结束后的首次移动，待机、技能或攻击后进入移动直接使用基础循环。持续攻击的 `attack_enter / attack_retarget_enter` 均可配置数组；数组按顺序播完后才进入 `attack_loop`，例如换目标的 `new_looptoin → newtst → loop`。
+
 ## 联机
 
-快照使用紧凑 Array，并保留原有 Unit 字段下标；当前协议在顶层携带 `SNAPSHOT_PROTOCOL_VERSION`、权威 `server_tick`，Unit 载荷尾部继续追加 action 总时长、剩余时长和 locomotion。晚到客户端按权威剩余时间 seek，不从技能第一帧补播；旧的无版本载荷仍可降级为原组合状态。动画时间轴只用于表现同步，不参与权威判定。
+快照使用紧凑 Array，并保留原有 Unit 字段下标；当前协议在顶层携带 `SNAPSHOT_PROTOCOL_VERSION`、权威 `server_tick`，Unit 载荷尾部继续追加 action 时间轴、locomotion、强化攻击、技能资源启用状态及主动移速/攻速倍率。晚到客户端按权威剩余时间 seek，不从技能第一帧补播；旧的无版本载荷仍可降级为原组合状态。动画时间轴只用于表现同步，不参与权威判定。

@@ -30,6 +30,7 @@ func _run() -> void:
 	NavigationCollisionSuite.new().run(self, _main)
 	ActiveSkillSuite.new().run(self, _main)
 	AnimationStateSuite.new().run(self, _main)
+	HeroSkillReworkSuite.new().run(self, _main)
 	CombatTargetingSuite.new().run(self, _main)
 	GnarSuite.new().run(self, _main)
 	XinSuite.new().run(self, _main)

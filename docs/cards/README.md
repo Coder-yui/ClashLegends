@@ -1,0 +1,36 @@
+# 卡牌文档
+
+本目录记录 `CardDB.all()` 当前登记的正式卡牌。数值以
+[`scripts/data/card_db.gd`](../../scripts/data/card_db.gd) 为准；本目录只做可读归档，不能替代运行时数据。
+
+## 卡牌清单
+
+| card_id | 名称 | 类型 | 费用 | 文档 |
+| --- | --- | --- | ---: | --- |
+| `garen` | 盖伦 | 单位 | 5 | [garen.md](garen.md) |
+| `xin` | 赵信 | 单位 | 4 | [xin.md](xin.md) |
+| `ashe` | 艾希 | 单位 | 3 | [ashe.md](ashe.md) |
+| `teemo` | 提莫 | 单位 | 2 | [teemo.md](teemo.md) |
+| `gnar` | 纳尔 | 单位 | 4 | [gnar.md](gnar.md) |
+| `melee_minion` | 近战兵 | 单位 | 1 | [melee_minion.md](melee_minion.md) |
+| `ranged_minion` | 远程兵 | 单位 | 1 | [ranged_minion.md](ranged_minion.md) |
+| `siege_minion` | 炮车兵 | 单位 | 3 | [siege_minion.md](siege_minion.md) |
+| `super_minion` | 超级兵 | 单位 | 4 | [super_minion.md](super_minion.md) |
+| `freeze` | 冰冻 | 法术 | 3 | [freeze.md](freeze.md) |
+| `masteryi` | 剑圣 | 单位 | 3 | [masteryi.md](masteryi.md) |
+| `gwen` | 格温 | 单位 | 4 | [gwen.md](gwen.md) |
+| `sett` | 腕豪 | 单位 | 4 | [sett.md](sett.md) |
+| `tombstone` | 墓碑 | 建筑 | 3 | [tombstone.md](tombstone.md) |
+| `aurelionsol` | 龙王 | 单位 | 4 | [aurelionsol.md](aurelionsol.md) |
+
+共 15 张正式卡，当前均可进入选卡池。`imp`（小鬼）是墓碑使用的系统召唤物，不是独立卡牌；其数据和动画见 [imp.md](imp.md)。
+
+## 字段与动画约定
+
+- 距离使用战场像素，时间使用秒，伤害/生命值使用数值点数。
+- 移速同时列出 CardDB 原始值和七档名称；攻击间隔是两次普通攻击命中之间的权威模拟间隔，`first_hit` 是从攻击开始到首个命中节点的时间。
+- `radius` 是权威碰撞、部署、寻路和攻击距离使用的半径；`visual_radius` 只影响表现占位、队伍圈和状态提示。
+- 动画名保留素材 `AnimationPlayer` 中的原名。数组按顺序播放；`attack_hit`、`attack_recover`、`transitions` 等是攻击动作的后续或转场映射。
+- `impact_delay` 是主动技能从 Cast Start 到 Gameplay Impact 的权威延迟，`cast_duration` 是施法锁定窗口。动画结束回调不负责伤害、移动、碰撞或状态结算。
+- 文档所说“无主动专属动画”，表示该卡没有配置 `visual_animations.visual_actions`；技能仍可由纯逻辑效果或攻击通道的既有动画表现。
+
