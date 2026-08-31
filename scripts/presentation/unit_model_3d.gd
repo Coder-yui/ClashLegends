@@ -13,12 +13,12 @@ const ACTION_PRIORITY := {
 }
 const TRANSITION_DEFAULTS := {
 	&"default": 0.08,
-	&"locomotion": 0.08,
-	&"action_in": 0.06,
-	&"action_out": 0.12,
+	&"locomotion": 0.10,
+	&"action_in": 0.08,
+	&"action_out": 0.14,
 	&"attack": 0.06,
-	&"sequence": 0.02,
-	&"death": 0.08,
+	&"sequence": 0.04,
+	&"death": 0.10,
 	&"model_swap": 0.02,
 }
 
@@ -38,12 +38,14 @@ var _playing_visual_action := false
 var _active_visual_action := &""
 var _visual_action_sequence: Array = []
 var _visual_action_clip_durations: Array = []
+var _visual_action_clip_ranges: Array[Vector2] = []
 var _visual_action_sequence_index := 0
 var _active_action_name := &""
 var _active_action_kind := &"locomotion"
 var _active_action_priority := 0
 var _active_action_blend_in := -1.0
 var _active_action_blend_out := -1.0
+var _active_action_sequence_blend := -1.0
 var _playing_attack := false
 var _holding_attack_pose := false
 var _active_attack_animation := &""
@@ -61,6 +63,7 @@ var _continuous_attack_sequence: Array = []
 var _continuous_attack_sequence_index := 0
 var _move_sequence: Array = []
 var _move_sequence_index := 0
+var _move_sequence_exit_blend := -1.0
 var _move_cycle: Array = []
 var _move_cycle_index := 0
 var _move_sequence_active := false
@@ -126,17 +129,20 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 	_active_visual_action = &""
 	_visual_action_sequence.clear()
 	_visual_action_clip_durations.clear()
+	_visual_action_clip_ranges.clear()
 	_visual_action_sequence_index = 0
 	_active_action_name = &""
 	_active_action_kind = &"locomotion"
 	_active_action_priority = 0
 	_active_action_blend_in = -1.0
 	_active_action_blend_out = -1.0
+	_active_action_sequence_blend = -1.0
 	_playing_deploy_sequence = false
 	_deploy_sequence_started = false
 	_continuous_attack_active = false
 	_continuous_attack_sequence.clear()
 	_move_sequence_active = false
+	_move_sequence_exit_blend = -1.0
 	_move_override_animation = &""
 	_last_clip_transition_kind = &""
 	_last_clip_blend_time = 0.0
@@ -259,17 +265,30 @@ func _play_visual_action(action_name: StringName) -> void:
 	var action_durations: Dictionary = _animation_names.get("visual_action_durations", {})
 	var configured_durations = descriptor.get("durations", action_durations.get(String(action_name), []))
 	var duration_candidates: Array = configured_durations if configured_durations is Array else [configured_durations]
+	var configured_ranges = descriptor.get("clip_ranges", [])
+	var range_candidates: Array = configured_ranges if configured_ranges is Array else []
 	_visual_action_sequence.clear()
 	_visual_action_clip_durations.clear()
+	_visual_action_clip_ranges.clear()
 	for candidate_index in candidates.size():
 		var value = candidates[candidate_index]
 		var animation_name := StringName(value)
 		if animation_name != &"" and _animation_player.has_animation(animation_name):
+			var animation := _animation_player.get_animation(animation_name)
+			if animation == null:
+				continue
 			_visual_action_sequence.append(animation_name)
 			var target_duration := 0.0
 			if candidate_index < duration_candidates.size():
 				target_duration = maxf(float(duration_candidates[candidate_index]), 0.0)
 			_visual_action_clip_durations.append(target_duration)
+			var clip_range := Vector2(0.0, animation.length)
+			if candidate_index < range_candidates.size():
+				var configured_range = range_candidates[candidate_index]
+				if configured_range is Array and (configured_range as Array).size() == 2:
+					clip_range.x = clampf(float(configured_range[0]), 0.0, animation.length)
+					clip_range.y = clampf(float(configured_range[1]), clip_range.x, animation.length)
+			_visual_action_clip_ranges.append(clip_range)
 	if _visual_action_sequence.is_empty():
 		return
 	# 若 CardDB 没逐段写时长，使用权威动作窗口按素材长度等比分配；这只校准表现速度。
@@ -279,14 +298,12 @@ func _play_visual_action(action_name: StringName) -> void:
 		configured_total += float(target_duration)
 	if configured_total <= 0.001 and authoritative_duration > 0.001:
 		var source_total := 0.0
-		for animation_name in _visual_action_sequence:
-			var animation := _animation_player.get_animation(StringName(animation_name))
-			if animation != null:
-				source_total += animation.length
+		for clip_range in _visual_action_clip_ranges:
+			source_total += maxf(clip_range.y - clip_range.x, 0.0)
 		if source_total > 0.001:
 			for index in _visual_action_sequence.size():
-				var animation := _animation_player.get_animation(StringName(_visual_action_sequence[index]))
-				_visual_action_clip_durations[index] = authoritative_duration * animation.length / source_total
+				var clip_range := _visual_action_clip_ranges[index]
+				_visual_action_clip_durations[index] = authoritative_duration * (clip_range.y - clip_range.x) / source_total
 	_playing_visual_action = true
 	_visual_action_sequence_index = 0
 	_active_action_name = action_name
@@ -294,6 +311,7 @@ func _play_visual_action(action_name: StringName) -> void:
 	_active_action_priority = action_priority
 	_active_action_blend_in = float(descriptor.get("blend_in", -1.0))
 	_active_action_blend_out = float(descriptor.get("blend_out", -1.0))
+	_active_action_sequence_blend = float(descriptor.get("sequence_blend", -1.0))
 	_playing_attack = false
 	_holding_attack_pose = false
 	_attack_hit_pending = false
@@ -314,12 +332,20 @@ func _play_visual_action_clip(animation_name: StringName) -> void:
 	var target_duration := 0.0
 	if _visual_action_sequence_index < _visual_action_clip_durations.size():
 		target_duration = float(_visual_action_clip_durations[_visual_action_sequence_index])
+	var clip_range := Vector2(0.0, animation.length)
+	if _visual_action_sequence_index < _visual_action_clip_ranges.size():
+		clip_range = _visual_action_clip_ranges[_visual_action_sequence_index]
 	var playback_speed := 1.0
 	if target_duration > 0.001:
-		playback_speed = maxf(float(animation.length) / target_duration, 0.01)
+		playback_speed = maxf((clip_range.y - clip_range.x) / target_duration, 0.01)
 	_set_model_visual_clip(animation_name)
-	var blend_override := _active_action_blend_in if _visual_action_sequence_index == 0 else -1.0
-	_play_clip(animation_name, &"action_in" if _visual_action_sequence_index == 0 else &"sequence", playback_speed, blend_override)
+	var first_clip := _visual_action_sequence_index == 0
+	var blend_override := _active_action_blend_in if first_clip else _active_action_sequence_blend
+	var transition_kind := &"action_in" if first_clip else &"sequence"
+	var blend_time := _transition_blend(transition_kind) if blend_override < 0.0 else maxf(blend_override, 0.0)
+	_last_clip_transition_kind = transition_kind
+	_last_clip_blend_time = blend_time
+	_animation_player.play_section(animation_name, clip_range.x, clip_range.y, blend_time, playback_speed)
 
 func _seek_visual_action(elapsed: float) -> void:
 	if elapsed <= 0.001 or _visual_action_sequence.is_empty():
@@ -331,15 +357,16 @@ func _seek_visual_action(elapsed: float) -> void:
 		if animation == null:
 			continue
 		var target_duration := float(_visual_action_clip_durations[index])
+		var clip_range := _visual_action_clip_ranges[index] if index < _visual_action_clip_ranges.size() else Vector2(0.0, animation.length)
 		if target_duration <= 0.001:
-			target_duration = animation.length
+			target_duration = clip_range.y - clip_range.x
 		if remaining >= target_duration and index + 1 < _visual_action_sequence.size():
 			remaining -= target_duration
 			continue
 		_visual_action_sequence_index = index
 		_play_visual_action_clip(animation_name)
-		var playback_speed := animation.length / maxf(target_duration, 0.001)
-		_animation_player.seek(clampf(remaining * playback_speed, 0.0, animation.length), true)
+		var playback_speed := (clip_range.y - clip_range.x) / maxf(target_duration, 0.001)
+		_animation_player.seek(clampf(clip_range.x + remaining * playback_speed, clip_range.x, clip_range.y), true)
 		return
 
 func _default_action_kind(action_name: StringName) -> StringName:
@@ -367,12 +394,22 @@ func _transition_blend(transition_kind: StringName) -> float:
 func _transition_clip(from_action: StringName, to_action: StringName) -> StringName:
 	var transitions: Dictionary = _animation_names.get("transitions", {})
 	var configured = transitions.get("%s>%s" % [from_action, to_action], "")
+	if configured is Dictionary:
+		configured = (configured as Dictionary).get("animation", "")
 	var candidates: Array = configured if configured is Array else [configured]
 	for candidate in candidates:
 		var animation_name := StringName(candidate)
 		if animation_name != &"" and _animation_player.has_animation(animation_name):
 			return animation_name
 	return &""
+
+## 单条 transitions route 可只覆盖两条素材边界；未配置的边继续使用全局 sequence。
+func _transition_route_blend(from_action: StringName, to_action: StringName, edge: StringName) -> float:
+	var transitions: Dictionary = _animation_names.get("transitions", {})
+	var configured = transitions.get("%s>%s" % [from_action, to_action], null)
+	if not configured is Dictionary or not (configured as Dictionary).has(edge):
+		return -1.0
+	return maxf(float((configured as Dictionary)[edge]), 0.0)
 
 ## 普通单位也可配置 move_enter。过渡动作只表现移动起步，移动仍由权威模拟决定。
 func _transition_to_basic_state(state: int, blend_time: float = -1.0, from_action: StringName = &"locomotion") -> void:
@@ -471,12 +508,15 @@ func _start_move_sequence(from_action: StringName = &"locomotion", blend_overrid
 	if _animation_player == null:
 		return
 	_move_sequence.clear()
+	_move_sequence_exit_blend = -1.0
 	_move_override_animation = _move_animation_for_route(from_action)
 	var dedicated_transition := &""
+	var route_transition_used := false
 	if from_action == &"attack" and _active_attack_empowered:
 		dedicated_transition = _first_valid_animation("empowered_attack_to_move")
 	if dedicated_transition == &"":
 		dedicated_transition = _transition_clip(from_action, &"move")
+		route_transition_used = dedicated_transition != &""
 	if dedicated_transition != &"":
 		_move_sequence.append(dedicated_transition)
 	# 兼容旧 CardDB 的 attack_to_move；新配置统一写 transitions["attack>move"]。
@@ -496,7 +536,10 @@ func _start_move_sequence(from_action: StringName = &"locomotion", blend_overrid
 	_move_cycle_index = 0
 	_move_sequence_active = not _move_sequence.is_empty() or not _move_cycle.is_empty()
 	var has_transition_clip := not _move_sequence.is_empty()
-	var entry_blend := _move_route_entry_blend(from_action, has_transition_clip, blend_override)
+	var route_entry_blend := _transition_route_blend(from_action, &"move", &"blend_in") if route_transition_used else -1.0
+	if route_transition_used:
+		_move_sequence_exit_blend = _transition_route_blend(from_action, &"move", &"blend_out")
+	var entry_blend := route_entry_blend if route_entry_blend >= 0.0 else _move_route_entry_blend(from_action, has_transition_clip, blend_override)
 	if not _move_sequence.is_empty():
 		_play_move_clip(StringName(_move_sequence[0]), entry_blend)
 	elif not _move_cycle.is_empty():
@@ -568,12 +611,14 @@ func _advance_move_sequence() -> void:
 		if _move_sequence_index < _move_sequence.size():
 			_play_move_clip(StringName(_move_sequence[_move_sequence_index]))
 			return
+	var exit_blend := _move_sequence_exit_blend if _move_sequence_exit_blend >= 0.0 else _transition_blend(&"sequence")
+	_move_sequence_exit_blend = -1.0
 	if _move_cycle.is_empty():
 		_move_sequence_active = false
-		_play_state(2, _transition_blend(&"sequence"))
+		_play_state(2, exit_blend)
 		return
 	_move_cycle_index = 0
-	_play_move_cycle_clip()
+	_play_move_cycle_clip(exit_blend)
 
 func _advance_move_cycle() -> void:
 	if _move_cycle.is_empty():
@@ -911,6 +956,8 @@ func _configure_looping_animations() -> void:
 					animation.loop_mode = Animation.LOOP_NONE
 	var transitions: Dictionary = _animation_names.get("transitions", {})
 	for value in transitions.values():
+		if value is Dictionary:
+			value = (value as Dictionary).get("animation", [])
 		var configured: Array = value if value is Array else [value]
 		for configured_name in configured:
 			var animation_name := StringName(configured_name)
@@ -979,8 +1026,10 @@ func _finish_visual_action() -> void:
 	_active_visual_action = &""
 	_visual_action_sequence.clear()
 	_visual_action_clip_durations.clear()
+	_visual_action_clip_ranges.clear()
 	_active_action_name = &""
 	_active_action_kind = &"locomotion"
+	_active_action_sequence_blend = -1.0
 	_active_action_priority = 0
 	_active_action_blend_in = -1.0
 	_active_action_blend_out = -1.0
@@ -1027,11 +1076,13 @@ func _on_source_died() -> void:
 	_active_visual_action = &""
 	_visual_action_sequence.clear()
 	_visual_action_clip_durations.clear()
+	_visual_action_clip_ranges.clear()
 	_active_action_name = &""
 	_active_action_kind = &"death"
 	_active_action_priority = int(ACTION_PRIORITY.get(&"death", 100))
 	_active_action_blend_in = -1.0
 	_active_action_blend_out = -1.0
+	_active_action_sequence_blend = -1.0
 	_move_active_animation = &""
 	_source.set_continuous_beam_visible(false)
 	_attack_hit_pending = false
