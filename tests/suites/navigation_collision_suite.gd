@@ -19,8 +19,11 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_unit_routes_around_friendly_tower()
 	_check_right_corner_keeps_outer_side()
 	_check_weighted_lane_march()
+	_check_melee_minimum_range()
 	_check_dense_group_keeps_moving()
 	_check_bridge_queue()
+	_check_tower_follower_splits_quickly()
+	_check_rear_momentum_push()
 	_check_pair_collision()
 	_check_mass_weighting()
 	_check_lane_stress()
@@ -198,6 +201,17 @@ func _check_weighted_lane_march() -> void:
 	_expect(unit._path == first_path, "推进路径生成后会复用，不会每个模拟帧重跑 A*")
 	unit.free()
 
+func _check_melee_minimum_range() -> void:
+	var melee_ranges: Array[float] = []
+	for card_id in ["garen", "xin", "melee_minion", "super_minion", "masteryi", "gwen", "sett"]:
+		melee_ranges.append(float(CardDB.get_card(card_id).range))
+	melee_ranges.append(float(CardDB.get_card("gnar").transformed_stats.range))
+	melee_ranges.append(float(CardDB.imp_stats().range))
+	var all_reach_minimum := true
+	for attack_range in melee_ranges:
+		all_reach_minimum = all_reach_minimum and attack_range >= CardDB.MELEE_RANGE_MIN
+	_expect(all_reach_minimum, "所有近战单位的表面攻击距离至少为 0.8 格")
+
 func _check_dense_group_keeps_moving() -> void:
 	var stats: Dictionary = CardDB.get_card("xin").duplicate()
 	stats["deploy_time"] = 0.0
@@ -244,9 +258,110 @@ func _check_bridge_queue() -> void:
 	var units: Array[Unit] = [front, rear]
 	var rear_velocity: Vector2 = _main._adjust_unit_velocity(rear, units, _main.SIM_DT)
 	_expect(rear_velocity.length() > rear.move_speed * 0.2 and rear_velocity.length() < rear.move_speed, "桥区后排会减速避让但不会完全停住")
-	_expect(absf(rear_velocity.x) < absf(rear_velocity.y), "局部侧移用于找空隙，但不会取代主要推进方向")
+	_expect(-rear_velocity.y >= rear.move_speed * _main.AVOID_MIN_FORWARD_RATIO - 0.01, "加快侧移时仍保留最低向前推进速度")
 	front.free()
 	rear.free()
+
+func _check_tower_follower_splits_quickly() -> void:
+	var tower: Tower = _main._towers[2]
+	var tower_hp := tower.hp
+	tower.hp = 100000.0
+	var stats: Dictionary = CardDB.get_card("sett").duplicate()
+	stats["deploy_time"] = 0.0
+	stats["hp"] = 100000.0
+	var front := Unit.new()
+	var rear := Unit.new()
+	front.setup(0, stats, stats.name)
+	rear.setup(0, stats, stats.name)
+	var stop_distance: float = tower.body_radius + front.body_radius + front.attack_range
+	front.position = tower.position + Vector2.DOWN * (stop_distance - 1.0)
+	# 后排已经追到接触 skin 外，专门测量“发现被堵”到侧向错开所需时间，
+	# 不把正常赶路耗时混进避让响应指标。
+	rear.position = front.position + Vector2.DOWN * (front.body_radius + rear.body_radius + 4.0)
+	_main.add_child(front)
+	_main.add_child(rear)
+	front._target = tower
+	rear._target = tower
+	var enter_tick := -1
+	var side_separation := 0.0
+	var max_side_separation := 0.0
+	for tick in 40:
+		_main._sim_step(_main.SIM_DT)
+		max_side_separation = maxf(max_side_separation, absf(rear.position.x - front.position.x))
+		if rear._target_gap(tower) <= rear.attack_range:
+			enter_tick = tick + 1
+			side_separation = absf(rear.position.x - front.position.x)
+			break
+	_expect(
+		enter_tick > 0 and enter_tick <= 36 and side_separation > front.body_radius,
+		"塔前有横向空间时，后排近战会在 1.8 秒内错开友军并进入攻击圈（tick=%d，横向差=%.1f，最大横移=%.1f，末端gap=%.1f）" % [enter_tick, side_separation, max_side_separation, rear._target_gap(tower)]
+	)
+	front.free()
+	rear.free()
+	tower.hp = tower_hp
+
+func _check_rear_momentum_push() -> void:
+	var equal_mass_speeds := _measure_rear_momentum_push(4.0, 4.0)
+	var expected_equal_speed := (4.0 * CardDB.SPEED_SLOW + 4.0 * CardDB.SPEED_FAST) / 8.0
+	_expect(
+		is_equal_approx(equal_mass_speeds.x, expected_equal_speed)
+		and is_equal_approx(equal_mass_speeds.y, expected_equal_speed),
+		"等质量快慢单位追尾后按完全非弹性碰撞共享质量加权速度"
+	)
+	var momentum_before := 4.0 * CardDB.SPEED_SLOW + 4.0 * CardDB.SPEED_FAST
+	var momentum_after := 4.0 * equal_mass_speeds.x + 4.0 * equal_mass_speeds.y
+	_expect(is_equal_approx(momentum_before, momentum_after), "追尾接触前后的质量×速度总动量守恒")
+	var light_rear_speeds := _measure_rear_momentum_push(8.0, 2.0)
+	var heavy_rear_speeds := _measure_rear_momentum_push(2.0, 8.0)
+	_expect(
+		heavy_rear_speeds.x > equal_mass_speeds.x and equal_mass_speeds.x > light_rear_speeds.x,
+		"相同速度差下，重后排推动轻前排的加速大于轻后排推动重前排"
+	)
+	var probe_stats: Dictionary = CardDB.get_card("xin").duplicate()
+	probe_stats["deploy_time"] = 0.0
+	var probe_front := Unit.new()
+	var probe_rear := Unit.new()
+	probe_front.setup(0, probe_stats, probe_stats.name)
+	probe_rear.setup(0, probe_stats, probe_stats.name)
+	probe_front.position = Vector2(360.0, 800.0)
+	probe_rear.position = probe_front.position + Vector2.DOWN * (probe_front.body_radius + probe_rear.body_radius + 1.0)
+	probe_front._move_intent = Vector2.UP * CardDB.SPEED_MEDIUM
+	probe_rear._move_intent = Vector2.UP * CardDB.SPEED_MEDIUM
+	var same_speed_contact: bool = _main._is_unit_momentum_contact(probe_front, probe_rear)
+	probe_rear._move_intent = Vector2.UP * CardDB.SPEED_FAST
+	probe_rear.position = probe_front.position + Vector2.RIGHT * (probe_front.body_radius + probe_rear.body_radius + 1.0)
+	var side_contact: bool = _main._is_unit_momentum_contact(probe_front, probe_rear)
+	_expect(not same_speed_contact and not side_contact, "同速纵队与并排行军均不会产生追尾冲量")
+	probe_front.free()
+	probe_rear.free()
+
+func _measure_rear_momentum_push(front_mass: float, rear_mass: float) -> Vector2:
+	var front_stats: Dictionary = CardDB.get_card("xin").duplicate()
+	var rear_stats: Dictionary = front_stats.duplicate()
+	front_stats["deploy_time"] = 0.0
+	rear_stats["deploy_time"] = 0.0
+	front_stats["speed"] = CardDB.SPEED_SLOW
+	rear_stats["speed"] = CardDB.SPEED_FAST
+	front_stats["mass"] = front_mass
+	rear_stats["mass"] = rear_mass
+	var front := Unit.new()
+	var rear := Unit.new()
+	front.setup(0, front_stats, front_stats.name)
+	rear.setup(0, rear_stats, rear_stats.name)
+	front.position = Vector2(360.0, 800.0)
+	rear.position = front.position + Vector2.DOWN * (front.body_radius + rear.body_radius + _main.MOMENTUM_CONTACT_PADDING * 0.25)
+	_main.add_child(front)
+	_main.add_child(rear)
+	front._move_intent = Vector2.UP * front.move_speed
+	rear._move_intent = Vector2.UP * rear.move_speed
+	var front_start := front.position
+	var rear_start := rear.position
+	_main._apply_unit_movement(_main.SIM_DT)
+	var front_tick_speed: float = front_start.distance_to(front.position) / float(_main.SIM_DT)
+	var rear_tick_speed: float = rear_start.distance_to(rear.position) / float(_main.SIM_DT)
+	front.free()
+	rear.free()
+	return Vector2(front_tick_speed, rear_tick_speed)
 
 func _check_pair_collision() -> void:
 	var stats: Dictionary = CardDB.get_card("xin").duplicate()

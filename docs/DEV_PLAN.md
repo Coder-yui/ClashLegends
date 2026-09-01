@@ -15,7 +15,7 @@
 - [ ] 阶段 3：主机权威联机持续维护。
   - [x] ENet 房间、独立金币、部署/主动请求、固定 Tick、压缩 Snapshot 和插值。
   - [x] 完整 `net_facing_direction`、形态/动作/连续目标端点、可靠生成/受击/死亡/特效。
-  - [x] 寻路、碰撞、拥挤避让、格子部署、pocket、水晶兵线。
+  - [x] 寻路、碰撞、拥挤避让、质量守恒式同队追尾动量、格子部署、pocket、水晶兵线。
   - [x] 追踪弹体、范围/击退、冰冻/减速、护盾、召唤、缠流、持续攻击、双形态、前方眩晕。
   - [x] 中期架构：BattleContext、Deck Builder、Projectile、Snapshot、统一命令、CardDB validator、领域测试。
   - [x] 内容扩展边界：SpellSystem、ActiveSkillEffectSystem、通用召唤引用与全卡美术契约。

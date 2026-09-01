@@ -20,6 +20,8 @@ const RADIUS_MEDIUM := 14.0 * CHARACTER_SCALE_MULTIPLIER - 3.0
 const RADIUS_SLIGHTLY_LARGE := 16.0 * CHARACTER_SCALE_MULTIPLIER - 3.0
 const RADIUS_LARGE := 18.0 * CHARACTER_SCALE_MULTIPLIER - 3.0
 const RADIUS_EXTREMELY_LARGE := 20.0 * CHARACTER_SCALE_MULTIPLIER - 3.0
+## 权威战场每格 40px；近战至少保留 0.8 格表面攻击距离，避免模型已经贴身仍需补步。
+const MELEE_RANGE_MIN := 32.0
 ## 地面移动速度统一使用七档，避免不同角色只有几 px/s、实机看不出差异。
 const SPEED_EXTREMELY_FAST := 88.0
 const SPEED_FAST := 76.0
@@ -108,7 +110,7 @@ static func all() -> Dictionary:
 		"garen": {
 			"name": "盖伦", "cost": 5, "type": "unit",
 			"description": "高生命值的近战战士，专注攻击建筑，适合在前线持续推进。",
-			"hp": 1050.0, "damage": 88.0, "range": 28.0,
+			"hp": 1050.0, "damage": 88.0, "range": MELEE_RANGE_MIN,
 			# 命中位于攻击周期约 35% 处，给挥剑留出短前摇，把较长时间留给收招。
 			"speed": SPEED_SLOW, "interval": 1.1, "first_hit": 0.38,
 			"size_tier": SIZE_LARGE, "radius": RADIUS_LARGE, "visual_radius": RADIUS_LARGE + VISUAL_RADIUS_PADDING,
@@ -290,7 +292,7 @@ static func all() -> Dictionary:
 			# 变身只替换权威战斗字段与表现映射；单位、net_id 和主动技能归属保持不变。
 			"transformed_stats": {
 				"name": "大纳尔",
-				"hp": 820.0, "damage": 85.0, "range": 30.0,
+				"hp": 820.0, "damage": 85.0, "range": MELEE_RANGE_MIN,
 				"speed": SPEED_SLIGHTLY_SLOW, "interval": 1.15, "first_hit": 0.40,
 				"size_tier": SIZE_EXTREMELY_LARGE, "radius": RADIUS_EXTREMELY_LARGE,
 				"visual_radius": RADIUS_EXTREMELY_LARGE + VISUAL_RADIUS_PADDING,
@@ -341,7 +343,7 @@ static func all() -> Dictionary:
 		"melee_minion": {
 			"name": "近战兵", "cost": 1, "type": "unit", "selectable": true,
 			"description": "基础近战单位，适合成群推进并为后排吸收伤害。",
-			"hp": 210.0, "damage": 42.0, "range": 22.0,
+			"hp": 210.0, "damage": 42.0, "range": MELEE_RANGE_MIN,
 			"speed": SPEED_MEDIUM, "interval": 1.0, "first_hit": 0.32,
 			"size_tier": SIZE_SMALL, "radius": RADIUS_SMALL,
 			"visual_radius": RADIUS_SMALL + VISUAL_RADIUS_PADDING,
@@ -415,7 +417,7 @@ static func all() -> Dictionary:
 		"super_minion": {
 			"name": "超级兵", "cost": 4, "type": "unit", "selectable": true,
 			"description": "强化型近战单位，生命和伤害更高，适合在一路形成突破。",
-			"hp": 720.0, "damage": 72.0, "range": 28.0,
+			"hp": 720.0, "damage": 72.0, "range": MELEE_RANGE_MIN,
 			"speed": SPEED_MEDIUM, "interval": 1.15, "first_hit": 0.38,
 			"size_tier": SIZE_MEDIUM, "radius": RADIUS_MEDIUM,
 			"visual_radius": RADIUS_MEDIUM + VISUAL_RADIUS_PADDING,
@@ -450,7 +452,7 @@ static func all() -> Dictionary:
 			"name": "剑圣", "cost": 3, "type": "unit",
 			"description": "高速近战刺客，攻击频率高，适合快速处理脆弱目标。",
 			# 近战高攻速刺客：血薄但攻速极快
-			"hp": 480.0, "damage": 52.0, "range": 26.0,
+			"hp": 480.0, "damage": 52.0, "range": MELEE_RANGE_MIN,
 			"speed": SPEED_EXTREMELY_FAST, "interval": 0.45, "first_hit": 0.2,
 			"size_tier": SIZE_MEDIUM, "radius": RADIUS_MEDIUM, "visual_radius": RADIUS_MEDIUM + VISUAL_RADIUS_PADDING,
 			"mass": 4.0, "sight": 200.0,
@@ -473,7 +475,7 @@ static func all() -> Dictionary:
 			"name": "格温", "cost": 4, "type": "unit",
 			"description": "近战刺客，首次普攻命中后进入缠流，能避开远处敌人的视野和锁定。",
 			# 近战刺客：首次普攻命中后开启丝缕缠流；3 格（120px）外的敌方看不到她、不再把她当目标。
-			"hp": 580.0, "damage": 62.0, "range": 30.0,
+			"hp": 580.0, "damage": 62.0, "range": MELEE_RANGE_MIN,
 			"speed": SPEED_FAST, "interval": 0.85, "first_hit": 0.28,
 			"size_tier": SIZE_MEDIUM, "radius": RADIUS_MEDIUM, "visual_radius": RADIUS_MEDIUM + VISUAL_RADIUS_PADDING,
 			"mass": 4.0, "sight": 210.0,
@@ -521,7 +523,7 @@ static func all() -> Dictionary:
 			"name": "腕豪", "cost": 4, "type": "unit",
 			"description": "近战拳师，以快速双拳连招输出，第二拳造成更高伤害。",
 			# 近战拳师：连招节奏——快速两拳→稍作停顿→再快速两拳→再停顿。
-			"hp": 800.0, "damage": 72.0, "range": 18.0,
+			"hp": 800.0, "damage": 72.0, "range": MELEE_RANGE_MIN,
 			"speed": SPEED_MEDIUM, "interval": 1.1, "first_hit": 0.12,
 			"size_tier": SIZE_SLIGHTLY_LARGE, "radius": RADIUS_SLIGHTLY_LARGE, "visual_radius": RADIUS_SLIGHTLY_LARGE + VISUAL_RADIUS_PADDING,
 			"mass": 6.0, "sight": 210.0,
@@ -1231,7 +1233,7 @@ static func imp_stats() -> Dictionary:
 	return {
 		"name": "小鬼",
 		# 公主塔单次伤害为 55，小鬼落地后应恰好被防御塔一击击杀。
-		"hp": 55.0, "damage": 25.0, "range": 24.0,
+		"hp": 55.0, "damage": 25.0, "range": MELEE_RANGE_MIN,
 		"speed": SPEED_SLIGHTLY_FAST, "interval": 0.7, "first_hit": 0.25,
 		"deploy_time": 0.0,
 		"size_tier": SIZE_EXTREMELY_SMALL, "radius": RADIUS_EXTREMELY_SMALL, "visual_radius": RADIUS_EXTREMELY_SMALL + VISUAL_RADIUS_PADDING,

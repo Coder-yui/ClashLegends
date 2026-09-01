@@ -30,6 +30,13 @@ const STRUCTURE_SEPARATION := 1.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
 const AVOID_LOOKAHEAD := 34.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
 const AVOID_NEIGHBOR_PADDING := 26.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
 const AVOID_MIN_FORWARD_RATIO := 0.35
+## 保留现有局部避让结构；提高速度跟随响应，并把被堵时的修正更多分配给横向错开。
+const AVOID_RESPONSE := 14.0
+## 追尾进入近邻范围后停止纵向避让，让双方真正接触；接触 skin 只覆盖 20Hz 下
+## 一个 Tick 的最大追近距离，实际速度交换仍严格由质量与接触前速度决定。
+const MOMENTUM_APPROACH_PADDING := 8.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
+const MOMENTUM_CONTACT_PADDING := 2.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
+const MOMENTUM_MIN_ALIGNMENT := 0.75
 const COLLISION_SLOP := 0.5 * CardDB.CHARACTER_SCALE_MULTIPLIER
 const COLLISION_CORRECTION_PERCENT := 0.35
 const COLLISION_MAX_CORRECTION := 3.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
@@ -1753,6 +1760,7 @@ func _apply_unit_movement(dt: float) -> void:
 	var velocities := {}
 	for unit in units:
 		velocities[_unit_order_key(unit)] = _adjust_unit_velocity(unit, units, dt)
+	_resolve_unit_contact_momentum(velocities, units)
 	for unit in units:
 		var velocity: Vector2 = velocities[_unit_order_key(unit)]
 		if velocity.length_squared() < 0.001:
@@ -1884,6 +1892,10 @@ func _adjust_unit_velocity(unit: Unit, units: Array[Unit], dt: float) -> Vector2
 	for other in units:
 		if other == unit or other.is_air != unit.is_air or other.team != unit.team:
 			continue
+		# 紧贴追尾交给后续成对冲量求解；这里若再做分离/减速，会在接触前凭空
+		# 消耗后排动量，导致质量属性无法影响推行速度。
+		if _is_unit_momentum_pair(unit, other, MOMENTUM_APPROACH_PADDING):
+			continue
 		var relative := other.global_position - unit.global_position
 		var distance := relative.length()
 		var clearance := unit.body_radius + other.body_radius + 2.0
@@ -1897,7 +1909,7 @@ func _adjust_unit_velocity(unit: Unit, units: Array[Unit], dt: float) -> Vector2
 		else:
 			away = side * (-1.0 if _unit_order_key(unit) < _unit_order_key(other) else 1.0)
 		# 分离力从邻域边缘平滑增大，不等到真正穿透才处理。
-		steering += away * desired_speed * 0.55 * proximity
+		steering += away * desired_speed * 0.35 * proximity
 		var forward := relative.dot(direction)
 		if forward <= 0.0 or forward > AVOID_LOOKAHEAD + clearance:
 			continue
@@ -1913,10 +1925,10 @@ func _adjust_unit_velocity(unit: Unit, units: Array[Unit], dt: float) -> Vector2
 		var corridor := 1.0 - side_distance / (clearance + 8.0)
 		var ahead_weight := 1.0 - forward / (AVOID_LOOKAHEAD + clearance)
 		var avoid_weight := maxf(corridor * ahead_weight, 0.0)
-		steering += side * side_sign * desired_speed * 0.45 * avoid_weight
+		steering += side * side_sign * desired_speed * 0.75 * avoid_weight
 		forward_speed = minf(forward_speed, lerpf(desired_speed, desired_speed * AVOID_MIN_FORWARD_RATIO, avoid_weight))
 	var target_velocity := direction * maxf(forward_speed, desired_speed * AVOID_MIN_FORWARD_RATIO) + steering
-	# 避让不能把单位推成倒车；总速度也不超过卡牌本身速度。
+	# 避让不能把单位推成倒车；接触冲量会在所有单位完成自主速度计算后统一施加。
 	var forward_component := target_velocity.dot(direction)
 	var min_forward := desired_speed * AVOID_MIN_FORWARD_RATIO
 	if forward_component < min_forward:
@@ -1926,8 +1938,77 @@ func _adjust_unit_velocity(unit: Unit, units: Array[Unit], dt: float) -> Vector2
 	if unit._steering_velocity.length_squared() < 0.001:
 		unit._steering_velocity = target_velocity
 	else:
-		unit._steering_velocity = unit._steering_velocity.lerp(target_velocity, minf(dt * 8.0, 1.0))
+		unit._steering_velocity = unit._steering_velocity.lerp(target_velocity, minf(dt * AVOID_RESPONSE, 1.0))
 	return unit._steering_velocity
+
+## 只识别同层、同队、同向且后排更快的紧贴纵队。并排擦肩、对向移动、击退
+## 与不同空地层不属于编队追尾，继续使用普通避让/碰撞规则。
+func _is_unit_momentum_contact(a: Unit, b: Unit) -> bool:
+	return _is_unit_momentum_pair(a, b, MOMENTUM_CONTACT_PADDING)
+
+func _is_unit_momentum_pair(a: Unit, b: Unit, contact_padding: float) -> bool:
+	if a == b or a.team != b.team or a.is_air != b.is_air or a._forced_movement or b._forced_movement:
+		return false
+	var desired_a: Vector2 = a._move_intent
+	var desired_b: Vector2 = b._move_intent
+	if desired_a.length_squared() < 0.001 or desired_b.length_squared() < 0.001:
+		return false
+	var direction_a := desired_a.normalized()
+	var direction_b := desired_b.normalized()
+	if direction_a.dot(direction_b) < MOMENTUM_MIN_ALIGNMENT:
+		return false
+	var direction := (direction_a + direction_b).normalized()
+	var relative := b.global_position - a.global_position
+	var clearance := a.body_radius + b.body_radius
+	if relative.length() >= clearance + contact_padding:
+		return false
+	var longitudinal := relative.dot(direction)
+	if absf(longitudinal) <= 0.01:
+		return false
+	var side := Vector2(-direction.y, direction.x)
+	if absf(relative.dot(side)) >= clearance:
+		return false
+	var front_speed: float
+	var rear_speed: float
+	if longitudinal > 0.0:
+		front_speed = desired_b.dot(direction)
+		rear_speed = desired_a.dot(direction)
+	else:
+		front_speed = desired_a.dot(direction)
+		rear_speed = desired_b.dot(direction)
+	return rear_speed > front_speed + 0.01
+
+## 完全非弹性接触冲量（恢复系数 e=0）：只修改接触法线分量，切向速度保留。
+## j = -v_rel·n / (1/m_a + 1/m_b)，双方获得大小相等、方向相反的冲量，
+## 因此每次接触都严格守恒 Σ(mv)，且重后排推轻前排会比轻后排推重前排更明显。
+func _resolve_unit_contact_momentum(velocities: Dictionary, units: Array[Unit]) -> void:
+	for i in range(units.size()):
+		var a := units[i]
+		for j in range(i + 1, units.size()):
+			var b := units[j]
+			if not _is_unit_momentum_contact(a, b):
+				continue
+			var delta := b.global_position - a.global_position
+			if delta.length_squared() <= 0.0001:
+				continue
+			var normal := delta.normalized()
+			var key_a := _unit_order_key(a)
+			var key_b := _unit_order_key(b)
+			var velocity_a: Vector2 = velocities[key_a]
+			var velocity_b: Vector2 = velocities[key_b]
+			var closing_speed := (velocity_b - velocity_a).dot(normal)
+			if closing_speed >= -0.001:
+				continue
+			var mass_a := maxf(a.mass, 0.001)
+			var mass_b := maxf(b.mass, 0.001)
+			var impulse := -closing_speed / (1.0 / mass_a + 1.0 / mass_b)
+			velocity_a -= normal * (impulse / mass_a)
+			velocity_b += normal * (impulse / mass_b)
+			velocities[key_a] = velocity_a
+			velocities[key_b] = velocity_b
+			# 下一 Tick 从碰撞后的真实速度继续受自主移动驱动，而不是丢失本次冲量。
+			a._steering_velocity = velocity_a
+			b._steering_velocity = velocity_b
 
 ## 穿透修正采用常见的 slop + 百分比校正：轻微接触不处理，明显重叠逐步
 ## 消除且单 tick 有上限。它只修复几何穿透，不承担移动避让或击退玩法。
