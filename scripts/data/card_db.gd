@@ -1048,11 +1048,11 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 			errors.append("%s.kind: 系统不支持 %s" % [label, kind])
 			continue
 		var skill_cost := float(skill.get("cost", -1.0))
-		if skill_cost < 0.0 or skill_cost > 2.0 or not is_equal_approx(skill_cost, round(skill_cost)):
-			errors.append("%s.cost: 必须是 0、1 或 2 的整数" % label)
+		if skill_cost < 0.0:
+			errors.append("%s.cost: 必须 >= 0" % label)
 		var max_uses := int(skill.get("max_uses", 0))
-		if max_uses <= 0 or max_uses > 2:
-			errors.append("%s.max_uses: 必须是 1 或 2" % label)
+		if max_uses <= 0:
+			errors.append("%s.max_uses: 必须 > 0" % label)
 		if float(skill.get("cooldown", -1.0)) < 0.0:
 			errors.append("%s.cooldown: 必须 >= 0" % label)
 		match kind:
