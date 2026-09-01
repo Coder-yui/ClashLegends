@@ -127,7 +127,7 @@ static func all() -> Dictionary:
 			"is_air": false, "building_only": true, "can_attack_air": false,
 			"active_skill": {
 				"name": "致命打击", "kind": "empowered_attack",
-				"cost": 2, "max_uses": 2, "cooldown": 6.0,
+				"cost": 1, "max_uses": 2, "cooldown": 6.0,
 				"description": "强化下一次普通攻击，使其造成双倍伤害；强化尚未打出时移动速度提高两档。技能不会重置或延后当前攻击节奏。",
 				"empowered_damage_multiplier": 2.0,
 				# 盖伦基础为“慢”，提高两档后达到“中等”。强化攻击出手后立即失去加速。
@@ -182,7 +182,7 @@ static func all() -> Dictionary:
 			"is_air": false, "building_only": false, "can_attack_air": false,
 			"active_skill": {
 				"name": "新月护卫", "kind": "nova",
-				"cost": 2, "max_uses": 2, "cooldown": 8.0,
+				"cost": 1, "max_uses": 2, "cooldown": 8.0,
 				"description": "挥舞长枪震开周围敌人，造成范围伤害与击退；施放期间锁定移动、攻击和朝向。",
 				"radius": 90.0, "damage": 90.0, "knockback": 90.0,
 				"knockback_duration": 0.25, "knockback_mass_factor_max": 1.0,
@@ -218,7 +218,7 @@ static func all() -> Dictionary:
 			"is_air": false, "building_only": false, "can_attack_air": true,
 			"active_skill": {
 				"name": "万箭齐发", "kind": "frontal", "shape": "fan",
-				"cost": 3, "max_uses": 2, "cooldown": 10.0,
+				"cost": 2, "max_uses": 1, "cooldown": 10.0,
 				"description": "使用 Spell2 朝前方扇形区域射出 8 根箭矢，造成 70 点伤害并减速 1 秒。",
 				"length": 190.0, "arc_degrees": 72.0, "projectile_count": 8, "fan_inner_arc": true,
 				"damage": 70.0, "slow_duration": 1.0, "slow_multiplier": 0.55,
@@ -252,7 +252,7 @@ static func all() -> Dictionary:
 			"is_air": false, "building_only": false, "can_attack_air": true,
 			"active_skill": {
 				"name": "致盲", "kind": "empowered_attack",
-				"cost": 1, "max_uses": 3, "cooldown": 4.0,
+				"cost": 0, "max_uses": 2, "cooldown": 4.0,
 				"description": "强化下一次普通攻击；命中单位后使其接下来的两次普通攻击（包括强化普攻）不造成伤害。技能不改变攻击间隔。",
 				"empowered_damage_multiplier": 1.0, "blind_charges": 2,
 			},
@@ -329,7 +329,7 @@ static func all() -> Dictionary:
 			},
 			"active_skill": {
 				"name": "怒气爆发", "kind": "dual_form",
-				"cost": 3, "max_uses": 2, "cooldown": 8.0,
+				"cost": 2, "max_uses": 1, "cooldown": 8.0,
 				"description": "当前形态立即释放前方重击；小形态会先变为大形态。命中时造成伤害并眩晕地面敌人。",
 				"length": 140.0, "width": 60.0, "damage": 120.0,
 				# 两种 Spell2 主体动作均从施法首帧开始，0.8s 手掌触地。
@@ -359,7 +359,7 @@ static func all() -> Dictionary:
 				"attack": ["Attack1", "Attack2"], "death": "Death", "death_duration": 0.5,
 			},
 			"is_air": false, "building_only": false, "can_attack_air": false,
-			"active_skill": {"name": "列阵突击", "kind": "buff", "cost": 1, "max_uses": 3, "cooldown": 5.0, "duration": 4.0, "speed_multiplier": 1.35, "damage_multiplier": 1.25},
+			"active_skill": {"name": "列阵突击", "kind": "buff", "cost": 0, "max_uses": 2, "cooldown": 5.0, "duration": 4.0, "speed_multiplier": 1.35, "damage_multiplier": 1.25},
 		},
 		"ranged_minion": {
 			"name": "远程兵", "cost": 1, "type": "unit", "selectable": true,
@@ -386,7 +386,7 @@ static func all() -> Dictionary:
 				"attack": ["Attack1", "Attack2"], "death": "Death", "death_duration": 0.5,
 			},
 			"is_air": false, "building_only": false, "can_attack_air": true,
-			"active_skill": {"name": "奥术齐射", "kind": "nova", "cost": 1, "max_uses": 3, "cooldown": 5.0, "radius": 150.0, "damage": 48.0},
+			"active_skill": {"name": "奥术齐射", "kind": "nova", "cost": 0, "max_uses": 2, "cooldown": 5.0, "radius": 150.0, "damage": 48.0},
 		},
 		"siege_minion": {
 			"name": "炮车兵", "cost": 3, "type": "unit", "selectable": true,
@@ -412,7 +412,7 @@ static func all() -> Dictionary:
 				"attack": ["Attack1_BASE", "Attack2_BASE"], "death": "Death", "death_duration": 0.5,
 			},
 			"is_air": false, "building_only": false, "can_attack_air": true,
-			"active_skill": {"name": "超载炮击", "kind": "nova", "cost": 2, "max_uses": 2, "cooldown": 8.0, "radius": 180.0, "damage": 100.0, "knockback": 35.0},
+			"active_skill": {"name": "超载炮击", "kind": "nova", "cost": 1, "max_uses": 2, "cooldown": 8.0, "radius": 180.0, "damage": 100.0, "knockback": 35.0},
 		},
 		"super_minion": {
 			"name": "超级兵", "cost": 4, "type": "unit", "selectable": true,
@@ -433,7 +433,7 @@ static func all() -> Dictionary:
 				"attack": ["Attack1", "Attack2"], "death": "Death_Base", "death_duration": 0.5,
 			},
 			"is_air": false, "building_only": false, "can_attack_air": false,
-			"active_skill": {"name": "超级冲锋", "kind": "buff", "cost": 2, "max_uses": 2, "cooldown": 7.0, "duration": 5.0, "speed_multiplier": 1.35, "damage_multiplier": 1.35, "shield": 140.0, "shield_duration": 5.0},
+			"active_skill": {"name": "超级冲锋", "kind": "buff", "cost": 2, "max_uses": 1, "cooldown": 7.0, "duration": 5.0, "speed_multiplier": 1.35, "damage_multiplier": 1.35, "shield": 140.0, "shield_duration": 5.0},
 		},
 		# ===== 新增4张 =====
 		"freeze": {
@@ -469,7 +469,7 @@ static func all() -> Dictionary:
 			"attack_extra_hit_damage_multipliers": [[], [], [0.5]],
 			"attack_extra_hit_delays": [[], [], [0.12]],
 			"is_air": false, "building_only": false, "can_attack_air": false,
-			"active_skill": {"name": "高原血统", "kind": "buff", "cost": 2, "max_uses": 2, "cooldown": 6.0, "duration": 5.0, "speed_multiplier": 1.5, "damage_multiplier": 1.0, "attack_speed_multiplier": 1.5},
+			"active_skill": {"name": "高原血统", "kind": "buff", "cost": 1, "max_uses": 2, "cooldown": 6.0, "duration": 5.0, "speed_multiplier": 1.5, "damage_multiplier": 1.0, "attack_speed_multiplier": 1.5},
 		},
 		"gwen": {
 			"name": "格温", "cost": 4, "type": "unit",
@@ -504,7 +504,7 @@ static func all() -> Dictionary:
 			"is_air": false, "building_only": false, "can_attack_air": false,
 			"active_skill": {
 				"name": "快刀乱剪", "kind": "frontal", "shape": "fan",
-				"cost": 3, "max_uses": 2, "cooldown": 8.0,
+				"cost": 2, "max_uses": 1, "cooldown": 8.0,
 				"description": "普通攻击命中充能，最多 3 层；必定先剪 40 点、最后剪 60 点，每层充能在中间追加一次 20 点剪切。满层结束时回复 100 点生命值。",
 				"uses_skill_resource": true,
 				"length": 135.0, "arc_degrees": 78.0, "projectile_count": 0,
@@ -556,8 +556,8 @@ static func all() -> Dictionary:
 			"is_air": false, "building_only": false, "can_attack_air": false,
 			"active_skill": {
 				"name": "蓄意轰拳", "kind": "frontal", "shape": "trapezoid",
-				"description": "消耗 3 金币。锁定移动、朝向和攻击后向前轰出梯形冲击波；豪意令伤害最高提高至 2 倍，中央区域再造成 1.5 倍伤害。释放瞬间按豪意获得护盾，0 豪意无护盾，满豪意 300 点并在 2 秒内衰减至 0。每个腕豪最多释放 2 次，冷却 8 秒。",
-				"cost": 3, "max_uses": 2, "cooldown": 8.0,
+				"description": "消耗 2 金币。锁定移动、朝向和攻击后向前轰出梯形冲击波；豪意令伤害最高提高至 2 倍，中央区域再造成 1.5 倍伤害。释放瞬间按豪意获得护盾，0 豪意无护盾，满豪意 300 点并在 2 秒内衰减至 0。每个腕豪最多释放 1 次，冷却 8 秒。",
+				"cost": 2, "max_uses": 1, "cooldown": 8.0,
 				"length": 155.0, "near_width": 54.0, "far_width": 170.0,
 				"center_ratio": 0.34, "center_damage_multiplier": 1.5,
 				"damage": 130.0, "resource_damage_scale_max": 2.0,
@@ -594,7 +594,7 @@ static func all() -> Dictionary:
 			"visual_animations": {
 				"deploy": "Spawn", "idle": "Idle1", "death": "Death", "death_duration": 0.8,
 			},
-			"active_skill": {"name": "亡者集结", "kind": "summon", "cost": 2, "max_uses": 1, "cooldown": 10.0, "spawn_id": "imp", "spawn_count": 4},
+			"active_skill": {"name": "亡者集结", "kind": "summon", "cost": 1, "max_uses": 1, "cooldown": 10.0, "spawn_id": "imp", "spawn_count": 4},
 		},
 		"aurelionsol": {
 			"name": "龙王", "cost": 4, "type": "unit",
@@ -639,7 +639,7 @@ static func all() -> Dictionary:
 			"is_continuous_attack": true,  # 持续伤害：每帧 damage*delta
 			"active_skill": {
 				"name": "星落/天瀑", "kind": "forward_area",
-				"cost": 3, "max_uses": 2, "cooldown": 10.0,
+				"cost": 2, "max_uses": 1, "cooldown": 10.0,
 				"description": "击杀敌方单位充能，最多 5 层。向前方圆形区域降下星辰并眩晕；满层升级为伤害和眩晕提高 50% 的天瀑，且只有天瀑落地后会产生扩散至全场的冲击波。",
 				"uses_skill_resource": true,
 				"forward_distance": 175.0, "radius": 92.0,
@@ -1047,10 +1047,12 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 		if kind not in ACTIVE_SKILL_KINDS:
 			errors.append("%s.kind: 系统不支持 %s" % [label, kind])
 			continue
-		if float(skill.get("cost", -1.0)) < 0.0:
-			errors.append("%s.cost: 必须 >= 0" % label)
-		if int(skill.get("max_uses", 0)) <= 0:
-			errors.append("%s.max_uses: 必须 > 0" % label)
+		var skill_cost := float(skill.get("cost", -1.0))
+		if skill_cost < 0.0 or skill_cost > 2.0 or not is_equal_approx(skill_cost, round(skill_cost)):
+			errors.append("%s.cost: 必须是 0、1 或 2 的整数" % label)
+		var max_uses := int(skill.get("max_uses", 0))
+		if max_uses <= 0 or max_uses > 2:
+			errors.append("%s.max_uses: 必须是 1 或 2" % label)
 		if float(skill.get("cooldown", -1.0)) < 0.0:
 			errors.append("%s.cooldown: 必须 >= 0" % label)
 		match kind:

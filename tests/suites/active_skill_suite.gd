@@ -209,44 +209,43 @@ func _check_active_skill_activation() -> void:
 func _check_active_skill_cost_uses_and_refresh() -> void:
 	_reset_local_elixir()
 	var old_deck: Array = _main._deck.duplicate()
-	_main._deck = ["teemo", "xin", "freeze", "ashe", "garen", "masteryi", "tombstone", "aurelionsol"]
-	var teemo: Unit = _main._spawn_unit(0, "teemo", Vector2(260.0, 760.0), 0.0, 0)
-	var ability_id := teemo.active_ability_id
+	_main._deck = ["garen", "xin", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
+	var garen: Unit = _main._spawn_unit(0, "garen", Vector2(260.0, 760.0), 0.0, 0)
+	var ability_id := garen.active_ability_id
 	var initial_elixir: float = _main._elixir.elixir
 	var combat_rules_visible: bool = (
 		_main._active_skill_bar._rule_labels[0].visible
 		and _main._active_skill_bar._rule_labels[0].text.contains("金币 1")
-		and _main._active_skill_bar._rule_labels[0].text.contains("次数 3/3")
+		and _main._active_skill_bar._rule_labels[0].text.contains("次数 2/2")
 	)
 	var queued_first: bool = _main._queue_active_skill(ability_id, 0, 0)
 	var paid_on_queue: bool = is_equal_approx(_main._elixir.elixir, initial_elixir - 1.0)
 	_run_main_ticks(_main.COMMAND_DELAY_TICKS)
 	var first_entry: Dictionary = _main._active_skills[ability_id]
-	var first_use_state: bool = int(first_entry.uses_remaining) == 2 and float(first_entry.cooldown_left) > 0.0
+	var first_use_state: bool = int(first_entry.uses_remaining) == 1 and float(first_entry.cooldown_left) > 0.0
 	var blocked_during_cooldown: bool = not _main._queue_active_skill(ability_id, 0, 0) and is_equal_approx(_main._elixir.elixir, initial_elixir - 1.0)
-	_main._tick_active_skill_cooldowns(4.0)
+	_main._tick_active_skill_cooldowns(6.0)
 	var queued_second: bool = _main._queue_active_skill(ability_id, 0, 0)
 	_run_main_ticks(_main.COMMAND_DELAY_TICKS)
-	_main._tick_active_skill_cooldowns(4.0)
-	var queued_third: bool = _main._queue_active_skill(ability_id, 0, 0)
-	_run_main_ticks(_main.COMMAND_DELAY_TICKS)
+	_main._tick_active_skill_cooldowns(6.0)
+	var queued_third: bool = not _main._queue_active_skill(ability_id, 0, 0)
 	var exhausted_entry: Dictionary = _main._active_skills[ability_id]
-	var uses_exhausted: bool = int(exhausted_entry.uses_remaining) == 0 and not _main._queue_active_skill(ability_id, 0, 0)
-	var spent_three_times: bool = is_equal_approx(_main._elixir.elixir, initial_elixir - 3.0)
+	var uses_exhausted: bool = int(exhausted_entry.uses_remaining) == 0
+	var spent_twice: bool = is_equal_approx(_main._elixir.elixir, initial_elixir - 2.0)
 
-	var refreshed: Unit = _main._spawn_unit(0, "teemo", Vector2(320.0, 760.0), 0.0, 0)
+	var refreshed: Unit = _main._spawn_unit(0, "garen", Vector2(320.0, 760.0), 0.0, 0)
 	var refreshed_id := refreshed.active_ability_id
 	var refreshed_entry: Dictionary = _main._active_skills[refreshed_id]
-	var redeploy_resets_uses: bool = refreshed_id != ability_id and int(refreshed_entry.uses_remaining) == 3 and is_equal_approx(float(refreshed_entry.cooldown_left), 0.0)
-	var refreshed_queue_paid: bool = _main._queue_active_skill(refreshed_id, 0, 0) and is_equal_approx(_main._elixir.elixir, initial_elixir - 4.0)
+	var redeploy_resets_uses: bool = refreshed_id != ability_id and int(refreshed_entry.uses_remaining) == 2 and is_equal_approx(float(refreshed_entry.cooldown_left), 0.0)
+	var refreshed_queue_paid: bool = _main._queue_active_skill(refreshed_id, 0, 0) and is_equal_approx(_main._elixir.elixir, initial_elixir - 3.0)
 	_expect(
 		combat_rules_visible and queued_first and paid_on_queue and first_use_state and blocked_during_cooldown and queued_second and queued_third
-		and uses_exhausted and spent_three_times and redeploy_resets_uses and refreshed_queue_paid,
+		and uses_exhausted and spent_twice and redeploy_resets_uses and refreshed_queue_paid,
 		"主动技能按各自金币费用进入队列、每个单位独立扣使用次数并进入 CD，次数耗尽后重新下卡会刷新次数",
 	)
 	_main._cancel_pending_active_skill(refreshed_id)
 	_main._on_active_skill_unit_died(refreshed_id)
-	for unit in [teemo, refreshed]:
+	for unit in [garen, refreshed]:
 		if is_instance_valid(unit):
 			unit.free()
 	_main._deck = old_deck

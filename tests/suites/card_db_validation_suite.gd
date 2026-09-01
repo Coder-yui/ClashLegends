@@ -10,6 +10,22 @@ func run(harness: Object) -> void:
 	for card_id in CardDB.selectable_ids():
 		access_api_ok = access_api_ok and CardDB.has_card(card_id) and not CardDB.get_card(card_id).is_empty()
 	harness._expect(access_api_ok and CardDB.get_card("missing_card").is_empty(), "CardDB 统一查询 API 正确处理可选卡与未知 card_id")
+	var active_balance_ok := true
+	for card_id in CardDB.selectable_ids():
+		var stats: Dictionary = CardDB.get_card(card_id)
+		if StringName(stats.get("type", "unit")) == &"spell":
+			active_balance_ok = active_balance_ok and card_id == "freeze" and String(stats.get("active_name", "")) == "强化冰冻"
+			continue
+		var skills := CardDB.active_skills_for(card_id)
+		if skills.is_empty():
+			active_balance_ok = false
+			continue
+		var skill: Dictionary = skills[0]
+		var skill_cost := float(skill.get("cost", -1.0))
+		var max_uses := int(skill.get("max_uses", 0))
+		active_balance_ok = active_balance_ok and skill_cost >= 0.0 and skill_cost <= 2.0 \
+			and is_equal_approx(skill_cost, round(skill_cost)) and max_uses >= 1 and max_uses <= 2
+	harness._expect(active_balance_ok, "当前主动技能花费限制为 0/1/2 费、使用次数限制为 1/2 次，冰冻主动槽直接启用强化效果")
 	var animation_schema_errors := PackedStringArray()
 	CardDB._validate_visual_config("animation_schema_probe", {
 		"visual_animations": {
