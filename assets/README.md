@@ -18,7 +18,7 @@ assets/
 
 ## 卡面
 
-`CardArt` 按 jpg → png → webp 自动发现 `assets/cards/<card_id>_loading.*`，手牌与 Deck Builder 使用统一卡框裁剪；无需在 CardDB 写图片路径。现有可选卡均已有卡面。四类兵线和墓碑的摄影工具位于 `tools/`，只生成图片，不参与运行时。
+`CardArt` 按 jpg → png → webp 自动发现 `assets/cards/<card_id>_loading.*`，手牌与 Deck Builder 使用统一卡框裁剪；无需在 CardDB 写图片路径。现有可选卡均已有卡面。四类兵线和墓碑的摄影工具位于 `tools/capture/`，只生成图片，不参与运行时。
 
 ## 当前特殊目录
 

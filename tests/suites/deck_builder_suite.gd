@@ -64,8 +64,8 @@ func run(harness: Object, main: Node2D) -> void:
 	await _main.get_tree().process_frame
 	_expect(
 		builder._deck_info_overlay != null
-		and builder._deck_info_active_option.item_count == 1
-		and builder._deck_info_active_option.disabled
+		and builder._deck_info_active_option.item_count == 2
+		and not builder._deck_info_active_option.disabled
 		and builder._deck_info_active_rules != null
 		and builder._deck_info_active_cost_label.text.contains("金币消耗")
 		and builder._deck_info_active_uses_label.text.contains("最多 2 次")

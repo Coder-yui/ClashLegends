@@ -23,7 +23,7 @@
 | `tombstone` | 墓碑 | 建筑 | 3 | [tombstone.md](tombstone.md) |
 | `aurelionsol` | 龙王 | 单位 | 4 | [aurelionsol.md](aurelionsol.md) |
 
-共 15 张正式卡，当前均可进入选卡池。`imp`（小鬼）是墓碑使用的系统召唤物，不是独立卡牌；其数据和动画见 [imp.md](imp.md)。
+共 15 张可选卡，当前均可进入选卡池。`imp`（小鬼）也登记在 `CardDB`，但通过 `selectable = false` 明确标记为墓碑使用的系统召唤物，不会进入选卡池；其数据和动画见 [imp.md](imp.md)。
 
 各张卡的主动技能金币消耗、使用次数和冷却时间以 `CardDB` 当前条目及对应卡牌文档为准。冰冻是法术卡特例：放在主动槽时直接启用强化冰冻，强化额外花费为 `0`，次数随该张法术卡本次施放计算。
 

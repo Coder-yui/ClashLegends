@@ -905,6 +905,15 @@ func _active_skill_description(skill: Dictionary) -> String:
 				_format_card_number(float(skill.get("damage", 0.0))),
 				_format_card_number(float(skill.get("stun_duration", 0.0))),
 			])
+		"continuous_area":
+			parts.append("以自身当前位置为中心，影响 %s 半径" % _format_card_number(float(skill.get("radius", 0.0))))
+			if float(skill.get("damage", 0.0)) > 0.0:
+				parts.append("每 %s 秒造成 %s 伤害" % [
+					_format_card_number(float(skill.get("tick_interval", 1.0))),
+					_format_card_number(float(skill.get("damage", 0.0))),
+				])
+			if float(skill.get("duration", 0.0)) > 0.0:
+				parts.append("持续 %s 秒并跟随移动" % _format_card_number(float(skill.get("duration", 0.0))))
 	if float(skill.get("shield", 0.0)) > 0.0:
 		parts.append("获得 %s 点护盾，持续 %s 秒" % [_format_card_number(float(skill.shield)), _format_card_number(float(skill.get("shield_duration", 0.0)))])
 	return "%s：%s。" % [String(skill.get("name", "主动技能")), "；".join(parts)]

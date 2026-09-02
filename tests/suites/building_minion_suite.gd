@@ -21,7 +21,7 @@ func run(harness: Object, main: Node2D) -> void:
 func _check_tombstone_art_integration() -> void:
 	var cards := CardDB.all()
 	var tombstone_stats: Dictionary = cards["tombstone"]
-	var imp_stats: Dictionary = CardDB.imp_stats()
+	var imp_stats: Dictionary = CardDB.get_unit_stats("imp")
 	var tombstone_packed := load(tombstone_stats.visual_scene_path) as PackedScene
 	var imp_packed := load(imp_stats.visual_scene_path) as PackedScene
 	var tombstone_sample := tombstone_packed.instantiate() as Node3D if tombstone_packed != null else null

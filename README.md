@@ -17,16 +17,18 @@ Godot --headless --path . --quit-after 20 -- --mode=join --ip=127.0.0.1 --auto-t
 
 ```text
 scripts/main.gd                          Battle Controller 与 RPC 端点
-scripts/battle/battle_context.gd         Unit/Tower 的轻量战场服务边界
-scripts/battle/projectile_system.gd      权威弹体、客户端插值与绘制
-scripts/battle/network_snapshot_system.gd Snapshot 编解码与应用
-scripts/ui/deck_builder.gd               备战卡组与卡牌信息
+scripts/battle/                          战场服务、AI、金币、寻路、弹体与网络快照
+scripts/ui/                              备战、手牌、主动技能与美术开发界面
 scripts/data/card_db.gd                  数据唯一来源、查询 API、validator
 scripts/unit.gd                          数据驱动通用单位机制
 scripts/presentation/                    3D 表现代理
 tests/mechanics_check.gd                 统一回归入口；领域套件在 tests/suites/
+tools/capture/                           卡面与宣传素材摄影脚本
+tools/demos/                             需要实际渲染的交互演示场景
 ```
 
 玩家、AI、部署 RPC 和 ArtDevPanel 进入 `play_card()`；主动请求进入 `use_active_skill()`。权威单位仍由 `_spawn_unit()` 生成，法术由 `_cast_spell()` 结算。Unit 通过注入的 `BattleContext` 请求路径、地形、召唤、攻击与网络表现通知。
 
 新增普通卡通常只需 CardDB、自动发现的 `<card_id>_loading.*` 卡面和可选 3D 包装场景。任务阅读入口见 `docs/AGENT_WORKFLOW.md`。
+
+macOS 本地双端冒烟可运行 `tools/run_local_multiplayer.sh`；如果 Godot 不在默认应用目录，通过 `GODOT_BIN` 指定可执行文件。

@@ -25,7 +25,7 @@ func run(harness: Object, main: Node2D) -> void:
 func _check_gwen_snip_snip_skill() -> void:
 	var stats: Dictionary = CardDB.get_card("gwen").duplicate(true)
 	stats["deploy_time"] = 0.0
-	var skill: Dictionary = stats.active_skill
+	var skill: Dictionary = stats.active_skills[0]
 	var gwen := Unit.new()
 	gwen.position = Vector2(360.0, 900.0)
 	gwen.setup(0, stats, stats.name)
@@ -283,7 +283,7 @@ func _check_gwen_mechanic() -> void:
 
 ## 缠流扩大到 3 格后的推塔回归：格温贴身攻击时，公主塔心距她 ≤ 54+18+30=102px、
 ## 水晶心距她 ≤ 72+18+30=120px，都落在 120px 缠流圈内 → 塔和水晶能看见她并反击，
-## 修复旧版 100px 半径下"圈外塔心看不到格温"导致的无伤推塔。
+## 锁定 100px 塔半径边界下的双向视野，防止圈外单向攻塔。
 func _check_gwen_tower_combat() -> void:
 	var gwen_stats: Dictionary = CardDB.get_card("gwen").duplicate(true)
 	gwen_stats["deploy_time"] = 0.0

@@ -18,7 +18,7 @@ func run(harness: Object, main: Node2D) -> void:
 func _check_xin_deploy_sweep() -> void:
 	# 部署新月护卫：赵信生成当帧挥击并击退，部署阶段只播放 1 秒 Spell4。
 	var xin_stats: Dictionary = CardDB.get_card("xin").duplicate()
-	var light_stats := SuiteUtils.sweep_dummy_stats(CardDB.imp_stats())            # 质量 1
+	var light_stats := SuiteUtils.sweep_dummy_stats(CardDB.get_unit_stats("imp")) # 质量 1
 	var heavy_stats := SuiteUtils.sweep_dummy_stats(CardDB.get_card("garen"))         # 质量 8
 	var far_stats := SuiteUtils.sweep_dummy_stats(CardDB.get_card("ashe"))            # 圈外
 	var air_stats := SuiteUtils.sweep_dummy_stats(CardDB.get_card("aurelionsol"))     # 空中
@@ -159,7 +159,7 @@ func _check_xin_art_integration() -> void:
 
 func _check_xin_animation_routes_and_active() -> void:
 	var stats: Dictionary = CardDB.get_card("xin").duplicate(true)
-	var skill: Dictionary = stats.active_skill
+	var skill: Dictionary = stats.active_skills[0]
 	var xin := Unit.new()
 	var dummy := Unit.new()
 	var air := Unit.new()

@@ -8,7 +8,7 @@ extends Node3D
 ##    正放坠毁轨迹，原动画倒放压缩到演出时长）。跨阶段掉血直接跳播对应阶段的
 ##    碎块动画并打断旧的；被摧毁直接播第三块，演完定格 Rubble 废墟。
 ##    坠入地下由裁切材质隐藏，演出结束后彻底隐藏碎块表面。
-## 2. 旧模式（基地水晶）：存活/摧毁表面组 + 出生/待机/摧毁动画。
+## 2. 水晶模式：存活/摧毁表面组 + 出生/待机/摧毁动画。
 
 const GROUND_CLIP_SHADER_CODE := """
 shader_type spatial;
@@ -288,7 +288,7 @@ func _bake_fall_clip(clip: Animation, window_start: float, window_end: float, du
 		for pair in spec.keys:
 			clip.track_insert_key(new_index, float(pair[0]), pair[1])
 
-## ---------------- 旧模式（基地水晶）：表面组 + 动画 ----------------
+## ---------------- 水晶模式：表面组 + 动画 ----------------
 
 func _play_spawn_or_idle() -> void:
 	var spawn_name := StringName(_animations.get("spawn", ""))

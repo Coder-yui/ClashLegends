@@ -2,7 +2,7 @@
 
 单位动画采用轻量的 `locomotion + action` 两通道设计，不引入 AnimationTree：
 
-- `locomotion` 只表示 `idle / move`；部署阶段保留兼容码 `0`。
+- `locomotion` 表示 `deploy / idle / move`，分别使用状态码 `0 / 1 / 2`。
 - `action` 覆盖层处理 `attack / skill / transform / deploy / death`。
 - 权威 Unit 只发布状态、攻击序号和 action 序号/时间轴；`UnitModel3D` 消费这些数据，动画结束回调不得结算伤害、技能、位移或索敌。
 
@@ -56,13 +56,13 @@ Command Buffer 从玩家输入时刻开始计时，用于吸收联网输入延�
         "blend_out": 0.14,
     },
 },
-"active_skill": {
+"active_skills": [{
     # kind 的权威效果字段略
     "cast_duration": 1.2,
     "impact_delay": 0.55,
     "visual_action": "active",
     "cast_locks": ["movement", "attack", "facing"],
-},
+}],
 ```
 
 `animation` 和 `durations` 都支持数组；单段动作和多段动作都可在 `visual_actions` 的描述字典中声明。`visual_action_durations` 作为按动作名提供时长的配置入口参与读取。
@@ -148,4 +148,4 @@ Move route 中的 transition 分为两类：
 
 ## 联机
 
-快照使用紧凑 Array，并保留 Unit 字段下标；当前 `SNAPSHOT_PROTOCOL_VERSION = 6`，顶层携带权威 `server_tick`，Unit 载荷尾部包含 action 时间轴、locomotion、强化攻击、技能资源启用状态、主动移速/攻速倍率、主动技能剩余次数与冷却时间。晚到客户端按权威剩余时间 seek；无版本载荷按兼容路径解析为基础组合状态。动画时间轴只用于表现同步，不参与权威判定。
+快照使用紧凑、固定长度的 Array；当前 `SNAPSHOT_PROTOCOL_VERSION = 8`，顶层为 `[version, server_tick, units, projectiles, towers, client_elixir, match_timer, overtime]`。Unit 载荷包含 action 时间轴、locomotion、强化攻击、技能资源启用状态、主动移速/攻速倍率、主动技能剩余次数与冷却、护盾比例。版本或载荷长度不匹配时整份快照直接丢弃；任何字段变更都必须提升版本并同步读写两端。晚到客户端按权威剩余时间 seek，动画时间轴只用于表现同步，不参与权威判定。

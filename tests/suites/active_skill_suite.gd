@@ -18,6 +18,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
 	_check_active_skill_loadout_rule()
+	_check_multiple_skill_selection()
 	_check_deployment_skill_gate()
 	_check_skill_resource_loadout_visibility()
 	_check_skill_resource_colors()
@@ -41,8 +42,9 @@ func _check_active_skill_loadout_rule() -> void:
 			data_ok = data_ok and CardDB.active_skills_for(card_id).is_empty()
 		else:
 			var available_skills := CardDB.active_skills_for(card_id)
-			data_ok = data_ok and available_skills.size() == 1 and not String(available_skills[0].get("name", "")).is_empty()
-	_expect(data_ok, "当前每张可选单位/建筑卡恰有一个可携带主动技能，法术卡不生成主动按钮")
+			var expected_count := 2 if card_id == "garen" else 1
+			data_ok = data_ok and available_skills.size() == expected_count and not String(available_skills[0].get("name", "")).is_empty()
+	_expect(data_ok, "当前每张可选单位/建筑卡至少有一个主动候选，盖伦有两个候选但每个实例只携带一个，法术卡不生成主动按钮")
 	var left_position: Vector2 = ActiveSkillBar.LEFT_SLOT_POSITION
 	var right_position: Vector2 = ActiveSkillBar.RIGHT_SLOT_POSITION
 	_expect(
@@ -77,6 +79,24 @@ func _check_active_skill_loadout_rule() -> void:
 		and _main._active_card_slot_for_team(0, "freeze") == 1,
 		"只有备战卡组前两个卡位携带主动版本"
 	)
+	_main._deck = old_deck
+
+func _check_multiple_skill_selection() -> void:
+	var old_deck: Array = _main._deck.duplicate()
+	var old_choices: Dictionary = _main._active_skill_choices.duplicate(true)
+	_main._deck = ["garen", "xin", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
+	_main._active_skill_choices["garen"] = 1
+	var source: Unit = _main._spawn_unit(0, "garen", Vector2(360.0, 1000.0), 0.0, 0)
+	var carried_skill: Dictionary = _main._active_skills[source.active_ability_id].skill
+	var selected_judgment := (
+		String(carried_skill.get("name", "")) == "审判"
+		and StringName(carried_skill.get("kind", "")) == &"continuous_area"
+	)
+	_expect(selected_judgment, "盖伦备战选择第二个候选时，场上主动槽只注册审判而不是同时注册两个技能")
+	_main._on_active_skill_unit_died(source.active_ability_id)
+	if is_instance_valid(source):
+		source.free()
+	_main._active_skill_choices = old_choices
 	_main._deck = old_deck
 
 func _check_deployment_skill_gate() -> void:
@@ -138,7 +158,7 @@ func _check_skill_resource_colors() -> void:
 		var stats: Dictionary = CardDB.get_card(card_id).duplicate(true)
 		var unit := Unit.new()
 		unit.setup(0, stats, stats.name)
-		unit.configure_carried_active_skill(stats.active_skill)
+		unit.configure_carried_active_skill(stats.active_skills[0])
 		units.append(unit)
 		colors_ok = colors_ok and unit.get_skill_resource_fill_color() == Unit.SKILL_RESOURCE_UNFILLED_COLOR
 		unit.add_skill_resource(unit.skill_resource_max)
@@ -154,7 +174,7 @@ func _check_active_skill_activation() -> void:
 	var first_source: Unit = _main._spawn_unit(0, "garen", Vector2(340.0, 800.0), 0.0, 0)
 	var first_ability_id := first_source.active_ability_id
 	var source: Unit = _main._spawn_unit(0, "garen", Vector2(380.0, 800.0), 0.0, 0)
-	var enemy_stats: Dictionary = CardDB.imp_stats().duplicate()
+	var enemy_stats: Dictionary = CardDB.get_unit_stats("imp").duplicate()
 	enemy_stats["deploy_time"] = 0.0
 	enemy_stats["hp"] = 500.0
 	var enemy := Unit.new()
@@ -254,7 +274,7 @@ func _check_pending_active_skill_revalidation() -> void:
 	_reset_local_elixir()
 	var old_deck: Array = _main._deck.duplicate()
 	_main._deck = ["garen", "xin", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
-	var enemy_stats: Dictionary = CardDB.imp_stats().duplicate(true)
+	var enemy_stats: Dictionary = CardDB.get_unit_stats("imp").duplicate(true)
 	enemy_stats["deploy_time"] = 0.0
 	enemy_stats["hp"] = 1000.0
 	var enemy := Unit.new()
@@ -285,7 +305,7 @@ func _check_pending_active_skill_revalidation() -> void:
 	var gnar_ability_id := gnar.active_ability_id
 	var queued_before_transform: bool = _main._queue_active_skill(gnar_ability_id, 0, 0)
 	_main._active_skill_bar.set_pending(gnar_ability_id, true)
-	var pending_impacts_before: int = _main._active_skill_effect_system.pending_frontal_stuns.size()
+	var pending_impacts_before: int = _main._pending_active_skill_impacts.size()
 	var transformed_after_click := gnar.transform_to_mega()
 	var transform_action_serial := gnar.get_visual_action_serial()
 	_run_main_ticks(_main.COMMAND_DELAY_TICKS)
@@ -293,7 +313,7 @@ func _check_pending_active_skill_revalidation() -> void:
 		queued_before_transform
 		and transformed_after_click
 		and _main._active_skills.has(gnar_ability_id)
-		and _main._active_skill_effect_system.pending_frontal_stuns.size() == pending_impacts_before
+		and _main._pending_active_skill_impacts.size() == pending_impacts_before
 		and gnar.get_visual_action_serial() == transform_action_serial
 		and not _main._active_skill_bar._buttons[0].disabled,
 		"主动 pending 到期时若已进入 transform，会拒绝效果/技能动作并恢复按钮",
@@ -340,7 +360,7 @@ func _check_pending_control_revalidation() -> void:
 	_reset_local_elixir()
 	var old_deck: Array = _main._deck.duplicate()
 	_main._deck = ["garen", "xin", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
-	var enemy_stats: Dictionary = CardDB.imp_stats().duplicate(true)
+	var enemy_stats: Dictionary = CardDB.get_unit_stats("imp").duplicate(true)
 	enemy_stats["deploy_time"] = 0.0
 	enemy_stats["hp"] = 1000000.0
 	enemy_stats["is_air"] = true
@@ -681,7 +701,7 @@ func _check_network_hand_confirmation() -> void:
 	_main._initialize_authoritative_card_cycle(0, old_deck)
 
 func _check_empowered_freeze_slow_zone() -> void:
-	var stats: Dictionary = CardDB.imp_stats().duplicate()
+	var stats: Dictionary = CardDB.get_unit_stats("imp").duplicate()
 	stats["deploy_time"] = 0.0
 	var enemy := Unit.new()
 	enemy.position = Vector2(360.0, 600.0)

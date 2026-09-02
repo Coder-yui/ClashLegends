@@ -3,9 +3,10 @@ extends RefCounted
 ## 主动技能 Gameplay Impact 执行器。
 ## 技能资格、Command Buffer 与 Cast 时间线仍由 Main 编排；具体效果集中在这里扩展。
 
-var pending_frontal_stuns: Array[Dictionary] = []
 var frontal_effects: Array[Dictionary] = []
 var expanding_shockwaves: Array[Dictionary] = []
+## 施法者跟随型持续范围效果；每个 pulse 都读取施法者当前权威位置。
+var continuous_area_effects: Array[Dictionary] = []
 
 var _controller: Node2D
 
@@ -57,6 +58,20 @@ func prepare_cast(source: Unit, skill: Dictionary) -> Dictionary:
 	return prepared
 
 
+## 双形态技能只在 Cast Start 决定形态分支和锁定朝向，之后进入 Main 的通用 Impact 队列。
+func prepare_dual_form_cast(source: Unit, skill: Dictionary) -> Dictionary:
+	var prepared := skill.duplicate(true)
+	prepared["cast_forward"] = frontal_forward(source)
+	if source.form_index == 0:
+		if not source.transform_to_mega(true):
+			return {}
+		prepared["impact_delay"] = maxf(float(prepared.get("transform_impact_delay", 0.0)), 0.0)
+		prepared["cast_duration"] = maxf(float(prepared.get("transform_cast_duration", 0.0)), 0.0)
+		# transform_to_mega() 已发布合成变形动作，不再重复播放大形态主动动作。
+		prepared["visual_action"] = ""
+	return prepared
+
+
 ## Cast Start 的效果必须在施法窗口开始时发生；它不依赖动画，也不等待 Gameplay Impact。
 func apply_cast_start(source: Unit, skill: Dictionary) -> void:
 	if not bool(skill.get("shield_on_cast_start", false)):
@@ -92,11 +107,13 @@ func apply(source: Unit, skill: Dictionary) -> bool:
 		&"summon":
 			activate_summon(source, skill)
 		&"dual_form":
-			activate_dual_form(source, skill)
+			apply_frontal_stun(source, skill, source.active_skill_cast_facing)
 		&"frontal":
 			apply_frontal(source, skill, source.active_skill_cast_facing)
 		&"forward_area":
 			apply_forward_area(source, skill, source.active_skill_cast_facing)
+		&"continuous_area":
+			activate_continuous_area(source, skill)
 		&"empowered_attack":
 			source.prepare_empowered_attack(
 				float(skill.get("empowered_damage_multiplier", 1.0)),
@@ -134,6 +151,43 @@ func activate_nova(source: Unit, skill: Dictionary) -> void:
 				(combatant as Unit).apply_slow(slow_duration, slow_multiplier)
 	if not bool(skill.get("shield_on_cast_start", false)):
 		source.add_shield(float(skill.get("shield", 0.0)), float(skill.get("shield_duration", 0.0)), bool(skill.get("shield_decay", false)))
+
+
+## 持续范围伤害不保存固定中心；每次脉冲都以 source.global_position 为中心。
+## 首次伤害在第一个 tick_interval 到达时结算，持续 duration 秒，避免把施法
+## 起始帧重复算成额外伤害。技能窗口可只锁 attack，让施法者继续移动/转向。
+func activate_continuous_area(source: Unit, skill: Dictionary) -> void:
+	var duration := maxf(float(skill.get("duration", skill.get("cast_duration", 0.0))), 0.0)
+	var tick_interval := maxf(float(skill.get("tick_interval", 1.0)), 0.01)
+	var radius := maxf(float(skill.get("radius", 0.0)), 0.0)
+	var amount := maxf(float(skill.get("damage", 0.0)), 0.0)
+	if duration <= 0.0 or radius <= 0.0 or amount <= 0.0:
+		return
+	continuous_area_effects.append({
+		"source_ref": weakref(source),
+		"team": source.team,
+		"radius": radius,
+		"damage": amount,
+		"ground_only": bool(skill.get("ground_only", false)),
+		"time_left": duration,
+		"next_tick": tick_interval,
+		"tick_interval": tick_interval,
+	})
+
+
+func _apply_continuous_area_pulse(source: Unit, effect: Dictionary) -> void:
+	var center := source.global_position
+	var radius := maxf(float(effect.get("radius", 0.0)), 0.0)
+	var amount := maxf(float(effect.get("damage", 0.0)), 0.0)
+	var ground_only := bool(effect.get("ground_only", false))
+	for combatant in _controller.get_tree().get_nodes_in_group("combatants"):
+		if combatant == source or not is_instance_valid(combatant) or combatant.team == source.team or combatant.hp <= 0.0:
+			continue
+		if ground_only and combatant is Unit and (combatant as Unit).is_air:
+			continue
+		if combatant.global_position.distance_to(center) > radius + combatant.body_radius:
+			continue
+		_damage_combatant(source, combatant, amount, center)
 
 
 func activate_summon(source: Unit, skill: Dictionary) -> void:
@@ -299,6 +353,8 @@ func add_fixed_area_effect(center: Vector2, start_radius: float, end_radius: flo
 func _damage_combatant(source: Unit, combatant: Node2D, amount: float, origin: Vector2 = Vector2(INF, INF)) -> bool:
 	if combatant == null or not is_instance_valid(combatant) or combatant.hp <= 0.0 or amount <= 0.0:
 		return false
+	if source.battle_context != null:
+		return source.battle_context.apply_damage_pulse(source, combatant, amount, 0.0, origin, false)
 	var was_alive: bool = combatant.hp > 0.0
 	var source_position := source.global_position if origin.x == INF else origin
 	var landed: bool = combatant.take_damage(amount, source, source.team, source_position)
@@ -328,69 +384,32 @@ func begin_frontal_visual(source: Unit, skill: Dictionary, cast_forward: Vector2
 		)
 
 
-func activate_dual_form(source: Unit, skill: Dictionary) -> void:
-	var cast_forward := frontal_forward(source)
-	if source.form_index == 0:
-		source.transform_to_mega(true)
-		activate_frontal_stun(
-			source, skill, false,
-			float(skill.get("transform_impact_delay", 0.9)),
-			float(skill.get("transform_cast_duration", 1.3)),
-			cast_forward
-		)
-		return
-	activate_frontal_stun(
-		source, skill, true,
-		float(skill.get("impact_delay", 0.8)),
-		float(skill.get("cast_duration", 1.2)),
-		cast_forward
-	)
+func tick_effects(dt: float) -> void:
+	_tick_expanding_shockwaves(dt)
+	_tick_continuous_area_effects(dt)
 
 
-func activate_frontal_stun(source: Unit, skill: Dictionary, play_action: bool = true, impact_delay: float = -1.0, cast_duration: float = -1.0, cast_forward: Vector2 = Vector2.ZERO) -> void:
-	impact_delay = maxf(float(skill.get("impact_delay", 0.8)), 0.0) if impact_delay < 0.0 else maxf(impact_delay, 0.0)
-	cast_duration = maxf(float(skill.get("cast_duration", 1.2)), 0.0) if cast_duration < 0.0 else maxf(cast_duration, 0.0)
-	cast_forward = frontal_forward(source) if cast_forward.length_squared() < 0.001 else cast_forward.normalized()
-	var cast_locks: Array = skill.get("cast_locks", Unit.DEFAULT_CAST_LOCKS)
-	source.begin_active_skill_cast(cast_duration, cast_forward, cast_locks)
-	if play_action:
-		source.play_visual_action(StringName(skill.get("visual_action", "active")), cast_duration)
-	pending_frontal_stuns.append({
-		"source_ref": weakref(source),
-		"skill": skill.duplicate(true),
-		"forward": cast_forward,
-		"time_left": impact_delay,
-	})
-	add_frontal_effect(source, skill, impact_delay, cast_forward)
-	if _controller.mode == "host":
-		_controller._rpc_frontal_skill_fx.rpc(
-			source.net_id,
-			source.global_position,
-			cast_forward,
-			source.body_radius,
-			float(skill.get("length", 0.0)),
-			float(skill.get("width", 0.0)),
-			impact_delay,
-			source.team,
-		)
-
-
-func tick_pending(dt: float) -> void:
-	var waiting: Array[Dictionary] = []
-	for pending in pending_frontal_stuns:
-		var source = (pending.source_ref as WeakRef).get_ref()
+func _tick_continuous_area_effects(dt: float) -> void:
+	var alive: Array[Dictionary] = []
+	for effect in continuous_area_effects:
+		var source = (effect.source_ref as WeakRef).get_ref()
 		if not source is Unit or not is_instance_valid(source) or source.hp <= 0.0:
 			continue
-		if source.frozen_timer > 0.0 or source.stun_timer > 0.0:
-			waiting.append(pending)
+		var unit := source as Unit
+		# 与 Cast/Impact 队列一致：被控制时持续时间和脉冲计时一起暂停。
+		if unit.is_frozen() or unit.is_stunned():
+			alive.append(effect)
 			continue
-		pending.time_left = maxf(0.0, float(pending.time_left) - dt)
-		if float(pending.time_left) > 0.001:
-			waiting.append(pending)
-			continue
-		apply_frontal_stun(source as Unit, pending.skill, pending.forward)
-	pending_frontal_stuns.assign(waiting)
-	_tick_expanding_shockwaves(dt)
+		effect.time_left = maxf(float(effect.time_left) - dt, 0.0)
+		effect.next_tick = float(effect.next_tick) - dt
+		var tick_interval := maxf(float(effect.get("tick_interval", 1.0)), 0.01)
+		# 支持测试或低帧率调用一次跨过多个固定脉冲；固定模拟通常每次只跨一个。
+		while float(effect.next_tick) <= 0.001:
+			_apply_continuous_area_pulse(unit, effect)
+			effect.next_tick = float(effect.next_tick) + tick_interval
+		if float(effect.time_left) > 0.001:
+			alive.append(effect)
+	continuous_area_effects.assign(alive)
 
 
 func _tick_expanding_shockwaves(dt: float) -> void:
@@ -477,6 +496,33 @@ func add_frontal_effect(source: Unit, skill: Dictionary, duration: float, cast_f
 	})
 
 
+## 审判等持续范围技能的预警跟随施法者，只影响表现，不参与权威命中。
+func begin_continuous_area_visual(source: Unit, skill: Dictionary) -> void:
+	var duration := maxf(float(skill.get("cast_duration", skill.get("duration", 0.0))), 0.0)
+	var radius := maxf(float(skill.get("radius", 0.0)), 0.0)
+	if duration <= 0.0 or radius <= 0.0:
+		return
+	frontal_effects.append({
+		"source_ref": weakref(source),
+		"net_id": source.net_id,
+		"fixed_position": false,
+		"pos": source.global_position,
+		"forward": Vector2.UP,
+		"source_radius": source.body_radius,
+		"length": radius,
+		"width": radius,
+		"shape": "continuous_area",
+		"timer": duration,
+		"duration": duration,
+		"team": source.team,
+	})
+	if _controller.mode == "host":
+		_controller._rpc_frontal_skill_fx.rpc(
+			source.net_id, source.global_position, Vector2.UP, source.body_radius,
+			radius, radius, duration, source.team, "continuous_area"
+		)
+
+
 func tick_visuals(delta: float) -> void:
 	var alive: Array[Dictionary] = []
 	for effect in frontal_effects:
@@ -505,6 +551,6 @@ func effect_source(effect: Dictionary):
 
 
 func clear() -> void:
-	pending_frontal_stuns.clear()
 	frontal_effects.clear()
 	expanding_shockwaves.clear()
+	continuous_area_effects.clear()

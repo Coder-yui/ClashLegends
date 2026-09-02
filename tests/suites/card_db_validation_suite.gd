@@ -23,11 +23,11 @@ func run(harness: Object) -> void:
 	var active_schema_errors := PackedStringArray()
 	CardDB._validate_active_skills("timeline_probe", {
 		"visual_animations": {"visual_actions": {"active": {"animation": ["A", "B"], "durations": [1.0], "kind": "skill"}}},
-		"active_skill": {
+		"active_skills": [{
 			"name": "时间轴探针", "kind": "buff", "duration": 1.0,
 			"cast_duration": 1.0, "impact_delay": 1.1,
 			"visual_action": "active", "cast_locks": ["movement"],
-		},
+		}],
 	}, active_schema_errors)
 	CardDB._validate_visual_config("timeline_probe", {
 		"visual_animations": {"visual_actions": {"active": {"animation": ["A", "B"], "durations": [1.0], "kind": "skill"}}},
@@ -43,12 +43,12 @@ func run(harness: Object) -> void:
 		has_lock_error = has_lock_error or "cast_locks" in error
 	var transform_timing_errors := PackedStringArray()
 	CardDB._validate_active_skills("transform_timing_probe", {
-		"active_skill": {
+		"active_skills": [{
 			"name": "变形时间轴探针", "kind": "dual_form",
 			"length": 1.0, "width": 1.0, "damage": 1.0,
 			"impact_delay": 0.5, "cast_duration": 1.0, "stun_duration": 1.0,
 			"transform_impact_delay": 0.5,
-		},
+		}],
 	}, transform_timing_errors)
 	var has_transform_timing_error := false
 	for error in transform_timing_errors:
@@ -67,7 +67,7 @@ func run(harness: Object) -> void:
 	var reference_errors := PackedStringArray()
 	CardDB._validate_references("reference_probe", {
 		"spawn_id": "missing_unit",
-		"active_skill": {"kind": "summon", "spawn_id": "missing_active_unit"},
+		"active_skills": [{"kind": "summon", "spawn_id": "missing_active_unit"}],
 	}, CardDB.all(), reference_errors)
 	harness._expect(
 		not spell_errors.is_empty() and "spell_kind" in "；".join(spell_errors)
@@ -91,32 +91,39 @@ func run(harness: Object) -> void:
 		},
 	}, hero_rework_errors)
 	CardDB._validate_active_skills("frontal_probe", {
-		"active_skill": {
+		"active_skills": [{
 			"name": "非法扇形", "kind": "frontal", "shape": "fan",
 			"length": 0.0, "damage": -1.0, "arc_degrees": 180.0, "projectile_count": -1, "center_width": -1.0,
 			"impact_delay": 0.2, "cast_duration": 0.3,
-		},
+		}],
 	}, hero_rework_errors)
 	CardDB._validate_active_skills("nova_probe", {
-		"active_skill": {
+		"active_skills": [{
 			"name": "非法范围击退", "kind": "nova", "radius": 90.0, "damage": 90.0,
 			"knockback": 90.0, "knockback_duration": 0.0, "knockback_mass_factor_max": 0.0,
-		},
+		}],
 	}, hero_rework_errors)
 	CardDB._validate_active_skills("empowered_probe", {
-		"active_skill": {
+		"active_skills": [{
 			"name": "非法强化普攻", "kind": "empowered_attack",
 			"empowered_damage_multiplier": 0.0, "empowered_speed_multiplier": 0.5,
 			"blind_charges": -1,
-		},
+		}],
 	}, hero_rework_errors)
 	CardDB._validate_active_skills("forward_area_probe", {
-		"active_skill": {
+		"active_skills": [{
 			"name": "非法落星", "kind": "forward_area", "uses_skill_resource": true,
 			"forward_distance": 0.0, "radius": 0.0, "damage": -1.0, "stun_duration": -1.0,
 			"impact_delay": 2.0, "cast_duration": 1.0,
 			"shockwave_damage": -1.0, "shockwave_duration": 0.0, "shockwave_end_radius": 0.0,
-		},
+		}],
+	}, hero_rework_errors)
+	CardDB._validate_active_skills("continuous_area_probe", {
+		"active_skills": [{
+			"name": "非法持续范围", "kind": "continuous_area",
+			"radius": 0.0, "damage": -1.0, "duration": 4.0, "tick_interval": 0.0,
+			"cast_duration": 3.0,
+		}],
 	}, hero_rework_errors)
 	CardDB._validate_combat_stats("extra_hit_probe", {
 		"hp": 100.0, "damage": 10.0, "range": 10.0, "speed": 10.0, "interval": 1.0,
@@ -135,6 +142,7 @@ func run(harness: Object) -> void:
 		and "empowered_damage_multiplier" in hero_error_text
 		and "empowered_speed_multiplier" in hero_error_text and "blind_charges" in hero_error_text
 		and "forward_distance" in hero_error_text and "shockwave_duration" in hero_error_text
+		and "tick_interval" in hero_error_text
 		and "uses_skill_resource" in hero_error_text and "attack_extra_hit_delays" in hero_error_text,
 		"CardDB 在运行前拒绝非法豪意、部署/主动击退、攻击转移动路线、前方/落点范围、追加刀和强化普攻配置",
 	)

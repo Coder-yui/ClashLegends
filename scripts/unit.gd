@@ -64,7 +64,6 @@ var building_only := false
 var can_attack_air := true
 var continuous_attack := false
 var color := Color.DIM_GRAY
-var visual_frames: SpriteFrames = null
 var has_model_art := false
 var show_team_ring := true
 var deploy_time := 1.0
@@ -220,12 +219,9 @@ var _charge_timer := 0.0
 var _charged := false
 var _skill_resource_combat_timer := 0.0
 var _just_deployed := false
-var _facing_x := 1.0
 var net_visual_state := 1
-var net_facing_x := 1.0
 var net_attack_visual_serial := 0
 var net_shroud_active := false
-var net_shield_active := false
 var net_shield_ratio := 0.0
 var net_shield_capacity_ratio := 0.0
 var net_slow_active := false
@@ -241,7 +237,6 @@ var net_empowered_attack_ready := false
 var net_empowered_attack_visual_serial := 0
 var net_skill_resource_ratio := 0.0
 var net_skill_resource_enabled := false
-var net_blind_attack_charges := 0
 var net_active_speed_multiplier := 1.0
 var net_active_attack_speed_multiplier := 1.0
 var net_facing_direction := Vector2.ZERO
@@ -251,14 +246,12 @@ var net_has_continuous_target := false
 var net_continuous_target_pos := Vector2.ZERO
 ## 仅由表现代理切换：进入吐息循环后显示，进入动画和退出攻击时隐藏。
 var continuous_beam_visible := false
-var _presentation: UnitPresentation = null
 var _shroud_active := false
 var _visual_action_serial := 0
 var _visual_action_name := &""
 var _visual_action_duration := 0.0
 var _visual_action_time_left := 0.0
-## 血条绘制中心（兼容旧调试字段）；实际位置由屏幕空间头顶锚点计算。
-var _health_bar_y := -24.0
+## 血条绘制中心；实际位置由屏幕空间头顶锚点计算。
 var _health_bar_center := Vector2.ZERO
 var _health_bar_screen_center := Vector2.ZERO
 var _health_bar_head_screen := Vector2.ZERO
@@ -281,8 +274,7 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	move_speed = stats.speed
 	body_radius = stats.radius
 	visual_radius = stats.get("visual_radius", body_radius)
-	_health_bar_y = -visual_radius - HEALTH_BAR_HEAD_GAP
-	_health_bar_center = Vector2(0.0, _health_bar_y - HEALTH_BAR_HEIGHT * 0.5)
+	_health_bar_center = Vector2(0.0, -visual_radius - HEALTH_BAR_HEAD_GAP - HEALTH_BAR_HEIGHT * 0.5)
 	mass = stats.get("mass", maxf(1.0, body_radius / 3.0))
 	sight_range = stats.get("sight", DEFAULT_SIGHT_RANGE)
 	color = stats.get("color", Color.DIM_GRAY)
@@ -291,9 +283,6 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	var projectile_colors: Array = stats.get("projectile_colors", [])
 	if team >= 0 and team < projectile_colors.size():
 		projectile_color = projectile_colors[team]
-	var frames_path: String = stats.get("visual_frames_path", "")
-	if not frames_path.is_empty() and ResourceLoader.exists(frames_path):
-		visual_frames = load(frames_path) as SpriteFrames
 	is_air = stats.get("is_air", false)
 	# 单位 2D 层（血条/状态圈）必须盖在防御塔 2D 层之上：塔层 z_index=10，
 	# 地面单位取 11、空中单位取 12；否则贴塔/水晶作战的单位血条会被建筑血条挡住。
@@ -378,9 +367,6 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 
 func _ready() -> void:
 	add_to_group("combatants")
-	_presentation = UnitPresentation.new()
-	add_child(_presentation)
-	_presentation.setup(visual_frames, visual_radius)
 	_update_fallback_health_bar_anchor()
 	# 赵信的新月护卫就是部署动作本身：生成当帧结算一次，不等待部署锁定结束，
 	# 也不让动画帧反向驱动权威效果。客户端仅显示同帧特效。
@@ -397,8 +383,7 @@ func _process(delta: float) -> void:
 		position = position.lerp(net_target_pos, minf(delta * 10.0, 1.0))
 		# 客户端不跑权威横扫，只倒计时部署状态；击退与受伤结果由快照驱动。
 		_deploy_timer = maxf(0.0, _deploy_timer - delta)
-		_sync_presentation(net_visual_state, net_facing_x)
-		if not has_model_art and (_presentation == null or not _presentation.has_art()):
+		if not has_model_art:
 			_update_fallback_health_bar_anchor()
 		queue_redraw()
 		return
@@ -406,18 +391,11 @@ func _process(delta: float) -> void:
 		return
 	# 主机/单机：使用 main 的统一模拟余量插值，不能让每个节点独立累计进度。
 	_vis_offset = get_visual_screen_position() - position
-	_sync_presentation(get_visual_state_code(), _facing_x)
-	if not has_model_art and (_presentation == null or not _presentation.has_art()):
+	if not has_model_art:
 		_update_fallback_health_bar_anchor()
 	queue_redraw()
 
-func _sync_presentation(state: int, facing_x: float) -> void:
-	if _presentation == null:
-		return
-	_presentation.position = _vis_offset
-	_presentation.play_state(state, facing_x, frozen_timer > 0.0)
-
-## 兼容 2D 表现与持续攻击的组合状态。3D 动画控制器另外读取 locomotion，
+## 表现层的部署/移动/攻击组合状态。3D 动画控制器另外读取 locomotion，
 ## 再用攻击序号/visual_action 作为 action 通道覆盖它；动画无权决定攻击是否命中。
 func get_visual_state_code() -> int:
 	if _deploy_timer > 0.0:
@@ -426,16 +404,13 @@ func get_visual_state_code() -> int:
 		return 3
 	return get_locomotion_visual_state_code()
 
-## locomotion 只表达 Idle/Move（部署沿用 0 便于旧客户端降级），不包含攻击或技能。
+## locomotion 只表达 Deploy/Idle/Move，不包含攻击或技能。
 func get_locomotion_visual_state_code() -> int:
 	if _deploy_timer > 0.0:
 		return 0
 	if _move_intent.length_squared() > 0.01:
 		return 2
 	return 1
-
-func get_facing_x() -> float:
-	return _facing_x
 
 ## 3D 与 2D 表现都直接读取同一个最终渲染位置，不依赖彼此的 _process 执行顺序。
 func get_visual_screen_position() -> Vector2:
@@ -706,8 +681,7 @@ func _apply_form(next_form_index: int, grant_max_hp_increase: bool, advance_form
 	_path = PackedVector2Array()
 	_path_index = 0
 	cancel_charge()
-	_health_bar_y = -visual_radius - HEALTH_BAR_HEAD_GAP
-	_health_bar_center = Vector2(0.0, _health_bar_y - HEALTH_BAR_HEIGHT * 0.5)
+	_health_bar_center = Vector2(0.0, -visual_radius - HEALTH_BAR_HEAD_GAP - HEALTH_BAR_HEIGHT * 0.5)
 	form_changed.emit(form_index)
 	# 放大碰撞半径后立即做一次地形/建筑安全修正；单位间重叠仍交给本 tick 的统一推挤。
 	if body_radius > old_body_radius and not _in_client_mode() and battle_context != null:
@@ -905,9 +879,6 @@ func _tick_attack_locked_cast_movement(dt: float) -> void:
 	_update_target(false)
 	if _target != null and is_instance_valid(_target) and _target_gap(_target) <= attack_range:
 		_attack_load = maxf(attack_interval - first_hit_time, 0.0)
-		var face_delta: float = _target.global_position.x - global_position.x
-		if absf(face_delta) > 0.05:
-			_facing_x = signf(face_delta)
 		return
 	if is_active_skill_movement_locked():
 		return
@@ -922,17 +893,11 @@ func _tick_form_transition_movement(dt: float) -> void:
 	_update_target(false)
 	if _target != null and is_instance_valid(_target) and _target_gap(_target) <= attack_range:
 		_attack_load = maxf(attack_interval - first_hit_time, 0.0)
-		var face_delta: float = _target.global_position.x - global_position.x
-		if absf(face_delta) > 0.05:
-			_facing_x = signf(face_delta)
 		return
 	_chase(dt)
 
 func is_deployed() -> bool:
 	return _deploy_timer <= 0.0
-
-func is_charged() -> bool:
-	return _charged
 
 func cancel_charge() -> void:
 	_charge_timer = 0.0
@@ -1300,8 +1265,6 @@ func _follow_current_path(dt: float) -> void:
 func _prepare_movement(direction: Vector2, _dt: float) -> void:
 	if direction.length_squared() < 0.001:
 		return
-	if absf(direction.x) > 0.05:
-		_facing_x = signf(direction.x)
 	# 路径拐点和路线汇入采用短暂方向插值，形成弧线感，避免突然水平切线。
 	if _move_direction.length_squared() < 0.001:
 		_move_direction = direction.normalized()
@@ -1350,16 +1313,13 @@ func _attack(dt: float) -> void:
 		_attacking = false
 		_shroud_active = false
 		return
-	var face_delta: float = _target.global_position.x - global_position.x
-	if absf(face_delta) > 0.05:
-		_facing_x = signf(face_delta)
 	if _attack_windup > 0.0:
 		_try_start_attack_visual(_attack_windup)
 		_attack_windup = maxf(0.0, _attack_windup - dt)
 		if _attack_windup > 0.0:
 			return
 	if continuous_attack:
-		_deal_attack_damage(damage * active_damage_multiplier * active_attack_speed_multiplier * dt)
+		_deal_continuous_damage(damage * active_damage_multiplier * active_attack_speed_multiplier * dt)
 		return
 	_try_start_attack_visual(_attack_cd)
 	if _attack_cd <= 0.0:
@@ -1432,6 +1392,16 @@ func _deal_attack_damage(amount: float, effects: Dictionary = {}) -> void:
 	if _target == null or not is_instance_valid(_target):
 		return
 	_deal_attack_damage_to(_target, amount, effects)
+
+## 龙王等持续普攻与主动持续伤害共用 BattleContext 的权威伤害脉冲结算。
+## 龙王仍由 _attack(dt) 以 damage*dt 驱动，并保留自身的溅射和普攻击中回调。
+func _deal_continuous_damage(amount: float) -> void:
+	if _target == null or not is_instance_valid(_target):
+		return
+	if battle_context != null:
+		battle_context.apply_damage_pulse(self, _target, amount, splash_radius, global_position, true, form_index)
+		return
+	_deal_attack_damage_to(_target, amount)
 
 func _deal_attack_damage_to(target: Node2D, amount: float, effects: Dictionary = {}) -> void:
 	if target == null or not is_instance_valid(target) or target.hp <= 0.0:
@@ -1730,7 +1700,6 @@ func set_visual_head_world_position(world_position: Vector2) -> void:
 	var bar_screen := head_screen - Vector2(0.0, HEALTH_BAR_HEAD_GAP + HEALTH_BAR_HEIGHT * 0.5)
 	var local_center := local_to_view.affine_inverse() * bar_screen
 	_health_bar_center = local_center - _vis_offset
-	_health_bar_y = _health_bar_center.y
 	_health_bar_head_screen = head_screen
 	_health_bar_screen_center = bar_screen
 	queue_redraw()
@@ -1760,11 +1729,10 @@ func _draw() -> void:
 		draw_arc(Vector2.ZERO, shroud_radius, 0.0, TAU, 72, Color(0.55, 0.88, 1.0, 0.58), 2.0, true)
 	if continuous_beam_visible and has_continuous_visual_target():
 		_draw_continuous_beam()
-	var has_art := has_model_art or (_presentation != null and _presentation.has_art())
-	if is_building and not has_art:
+	if is_building and not has_model_art:
 		draw_rect(Rect2(-body_radius, -body_radius, body_radius * 2.0, body_radius * 2.0), color)
 		draw_rect(Rect2(-body_radius, -body_radius, body_radius * 2.0, body_radius * 2.0), Color(0.2, 0.18, 0.12), false, 2.0)
-	elif not is_building and not has_art:
+	elif not is_building and not has_model_art:
 		var outline := Color(0.30, 0.60, 1.00) if team == 0 else Color(1.00, 0.35, 0.30)
 		draw_circle(Vector2.ZERO, visual_radius + 2.0, outline)
 		draw_circle(Vector2.ZERO, visual_radius, color)
@@ -1825,14 +1793,14 @@ func _draw() -> void:
 
 func get_shield_ratio() -> float:
 	if _in_client_mode():
-		return clampf(net_shield_ratio if net_shield_active else 0.0, 0.0, 1.0)
+		return clampf(net_shield_ratio, 0.0, 1.0)
 	if shield_hp <= 0.0 or shield_max_hp <= 0.0 or shield_timer <= 0.0:
 		return 0.0
 	return clampf(shield_hp / shield_max_hp, 0.0, 1.0)
 
 func get_shield_capacity_ratio() -> float:
 	if _in_client_mode():
-		return net_shield_capacity_ratio if net_shield_active else 0.0
+		return maxf(net_shield_capacity_ratio, 0.0)
 	return maxf(shield_max_hp / maxf(max_hp, 0.001), 0.0) if shield_hp > 0.0 and shield_timer > 0.0 else 0.0
 
 func get_shield_health_ratio() -> float:

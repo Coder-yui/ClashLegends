@@ -79,10 +79,10 @@ func _check_structure_art_integration() -> void:
 	# 阶段推进回归：破 2/3 换 Stage1+Broken1 坠毁；破 1/3 换 Stage2+Broken2；
 	# 摧毁换 Stage3+Broken3，掉块演完隐藏残核并定格 Rubble。
 	var temp_tower := Tower.new()
-	temp_tower.setup(0, _main.PRINCESS_STATS, false)
+	temp_tower.setup(0, CardDB.PRINCESS_TOWER_STATS, false)
 	temp_tower.position = Vector2(360.0, 800.0)
 	_main.add_child(temp_tower)
-	var attached: bool = _main._battle_presentation.attach_tower(temp_tower, _main.PRINCESS_VISUAL_CONFIG)
+	var attached: bool = _main._battle_presentation.attach_tower(temp_tower, CardDB.PRINCESS_TOWER_VISUAL_CONFIG)
 	var temp_view: TowerModel3D = null
 	for child in _main._battle_presentation._world_root.get_children():
 		if child is TowerModel3D and child._source == temp_tower:
@@ -133,10 +133,10 @@ func _check_structure_art_integration() -> void:
 	# 跳阶段直播回归：满血一击掉到 1/4（跨两阶段），直接跳 Stage2 播 Broken2，
 	# 不补演 Broken1。
 	var burst_tower := Tower.new()
-	burst_tower.setup(0, _main.PRINCESS_STATS, false)
+	burst_tower.setup(0, CardDB.PRINCESS_TOWER_STATS, false)
 	burst_tower.position = Vector2(360.0, 700.0)
 	_main.add_child(burst_tower)
-	_main._battle_presentation.attach_tower(burst_tower, _main.PRINCESS_VISUAL_CONFIG)
+	_main._battle_presentation.attach_tower(burst_tower, CardDB.PRINCESS_TOWER_VISUAL_CONFIG)
 	var burst_view: TowerModel3D = null
 	for child in _main._battle_presentation._world_root.get_children():
 		if child is TowerModel3D and child._source == burst_tower:
@@ -164,10 +164,10 @@ func _check_structure_art_integration() -> void:
 	# 途中打断回归：Broken1 播到一半跌破下一阶段，直接切 Stage2 从头播 Broken2，
 	# Broken1 立即隐藏（不管它放没放完）。
 	var mid_tower := Tower.new()
-	mid_tower.setup(0, _main.PRINCESS_STATS, false)
+	mid_tower.setup(0, CardDB.PRINCESS_TOWER_STATS, false)
 	mid_tower.position = Vector2(360.0, 600.0)
 	_main.add_child(mid_tower)
-	_main._battle_presentation.attach_tower(mid_tower, _main.PRINCESS_VISUAL_CONFIG)
+	_main._battle_presentation.attach_tower(mid_tower, CardDB.PRINCESS_TOWER_VISUAL_CONFIG)
 	var mid_view: TowerModel3D = null
 	for child in _main._battle_presentation._world_root.get_children():
 		if child is TowerModel3D and child._source == mid_tower:
@@ -199,10 +199,10 @@ func _check_structure_art_integration() -> void:
 	# 途中摧毁回归：Broken1 播到一半塔被摧毁，直接切 Stage3 播 Broken3，
 	# 演完定格 Rubble。
 	var death_tower := Tower.new()
-	death_tower.setup(0, _main.PRINCESS_STATS, false)
+	death_tower.setup(0, CardDB.PRINCESS_TOWER_STATS, false)
 	death_tower.position = Vector2(360.0, 500.0)
 	_main.add_child(death_tower)
-	_main._battle_presentation.attach_tower(death_tower, _main.PRINCESS_VISUAL_CONFIG)
+	_main._battle_presentation.attach_tower(death_tower, CardDB.PRINCESS_TOWER_VISUAL_CONFIG)
 	var death_view: TowerModel3D = null
 	for child in _main._battle_presentation._world_root.get_children():
 		if child is TowerModel3D and child._source == death_tower:
@@ -232,10 +232,10 @@ func _check_structure_art_integration() -> void:
 
 	# 满血秒杀回归：直接 Stage3+Broken3，演完定格 Rubble。
 	var instant_tower := Tower.new()
-	instant_tower.setup(0, _main.PRINCESS_STATS, false)
+	instant_tower.setup(0, CardDB.PRINCESS_TOWER_STATS, false)
 	instant_tower.position = Vector2(360.0, 400.0)
 	_main.add_child(instant_tower)
-	_main._battle_presentation.attach_tower(instant_tower, _main.PRINCESS_VISUAL_CONFIG)
+	_main._battle_presentation.attach_tower(instant_tower, CardDB.PRINCESS_TOWER_VISUAL_CONFIG)
 	var instant_view: TowerModel3D = null
 	for child in _main._battle_presentation._world_root.get_children():
 		if child is TowerModel3D and child._source == instant_tower:
@@ -288,7 +288,7 @@ func _check_unit_size_tiers() -> void:
 		var stats: Dictionary = cards[card_id]
 		var spec: Array = expected[card_id]
 		tiers_ok = tiers_ok and stats.size_tier == spec[0] and is_equal_approx(stats.radius, spec[1])
-	var imp := CardDB.imp_stats()
+	var imp := CardDB.get_unit_stats("imp")
 	tiers_ok = tiers_ok and imp.size_tier == CardDB.SIZE_EXTREMELY_SMALL
 	tiers_ok = tiers_ok and is_equal_approx(imp.radius, CardDB.RADIUS_EXTREMELY_SMALL)
 	tiers_ok = tiers_ok and [
@@ -349,7 +349,7 @@ func _check_visual_state_contract() -> void:
 	unit._attacking = true
 	var attack_state_ok := unit.get_visual_state_code() == 3
 	_expect(deploy_state_ok and move_state_ok and attack_state_ok, "表现层可读取部署/移动/攻击状态，但不驱动战斗逻辑")
-	_expect(unit.visual_radius > unit.body_radius and unit._presentation != null, "单位美术尺寸与物理碰撞同样已解耦")
+	_expect(unit.visual_radius > unit.body_radius, "单位美术尺寸与物理碰撞同样已解耦")
 	# 单位 2D 层（血条/状态圈）必须整体盖在塔/水晶 2D 层之上，贴身攻塔时血条才不会被建筑血条挡住。
 	var air_stats: Dictionary = CardDB.get_card("aurelionsol").duplicate()
 	var air_unit := Unit.new()
@@ -381,7 +381,7 @@ func _check_hit_flash_presentation() -> void:
 			break
 	unit.take_damage(1.0)
 	var flashed := attached and view != null and view._hit_flash_timer > 0.0 and not view._flash_meshes.is_empty()
-	var health_bar_above_head := view != null and unit._health_bar_y < -unit.visual_radius - Unit.HEALTH_BAR_HEAD_GAP
+	var health_bar_above_head := view != null and unit._health_bar_center.y < -unit.visual_radius - Unit.HEALTH_BAR_HEAD_GAP
 	var flash_is_subtle := flashed and view._hit_flash_timer <= 0.051 and is_equal_approx(view._hit_flash_material.albedo_color.a, 0.22)
 	if flashed:
 		for mesh_instance in view._flash_meshes:

@@ -9,7 +9,7 @@ func run(harness: Object) -> void:
 		var stats: Dictionary = CardDB.get_card(card_id)
 		if StringName(stats.get("type", "")) != &"spell":
 			errors.append_array(SuiteUtils.visual_contract_errors(card_id, stats))
-	for error in SuiteUtils.visual_contract_errors("imp", CardDB.imp_stats()):
+	for error in SuiteUtils.visual_contract_errors("imp", CardDB.get_unit_stats("imp")):
 		errors.append(error)
 	harness._expect(
 		errors.is_empty(),

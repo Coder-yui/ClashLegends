@@ -1,6 +1,6 @@
 extends SceneTree
 ## 从项目内 Order 阵营 3D 模型拍摄四张小兵卡面。
-## 运行：Godot --path . --script tools/capture_minion_card_art.gd
+## 运行：Godot --path . --script tools/capture/capture_minion_card_art.gd
 
 const RENDER_SIZE := Vector2i(616, 1120)
 const OUTPUT_SIZE := Vector2i(308, 560)

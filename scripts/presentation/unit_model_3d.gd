@@ -519,7 +519,7 @@ func _start_move_sequence(from_action: StringName = &"locomotion", blend_overrid
 		route_transition_used = dedicated_transition != &""
 	if dedicated_transition != &"":
 		_move_sequence.append(dedicated_transition)
-	# 兼容旧 CardDB 的 attack_to_move；新配置统一写 transitions["attack>move"]。
+	# 没有整条 attack>move 路由时，按当前攻击段选取 attack_to_move。
 	elif from_action == &"attack":
 		var indexed_transition := _indexed_animation("attack_to_move", _active_attack_index)
 		if indexed_transition != &"":

@@ -323,9 +323,9 @@ func _check_cast_policies_and_snapshot() -> void:
 	}
 	var payload := NetworkSnapshotSystem.new(_main)._unit_snapshot_payload(77, stationary)
 	var snapshot_system := NetworkSnapshotSystem.new(_main)
-	var snapshot_header := snapshot_system.snapshot_header()
+	var snapshot_packet := snapshot_system._snapshot_packet([], [], [], 0.0, _main._match_timer, _main._overtime)
 	var snapshot_contract: bool = (
-		payload.size() == 37
+		payload.size() == NetworkSnapshotSystem.UNIT_PAYLOAD_SIZE
 		and int(payload[NetworkSnapshotSystem.U_ACTION_SERIAL]) == stationary.get_visual_action_serial()
 		and String(payload[NetworkSnapshotSystem.U_ACTION_NAME]) == "active"
 		and is_equal_approx(float(payload[NetworkSnapshotSystem.U_ACTION_DURATION]), 1.2)
@@ -334,7 +334,6 @@ func _check_cast_policies_and_snapshot() -> void:
 		and int(payload[NetworkSnapshotSystem.U_EMPOWERED_READY]) == 1
 		and int(payload[NetworkSnapshotSystem.U_EMPOWERED_ATTACK_SERIAL]) == 9
 		and is_equal_approx(float(payload[NetworkSnapshotSystem.U_SKILL_RESOURCE_RATIO]), 0.75)
-		and int(payload[NetworkSnapshotSystem.U_BLIND_ATTACK_CHARGES]) == 2
 		and int(payload[NetworkSnapshotSystem.U_SKILL_RESOURCE_ENABLED]) == 1
 		and is_equal_approx(float(payload[NetworkSnapshotSystem.U_ACTIVE_SPEED_MULTIPLIER]), 1.5)
 		and is_equal_approx(float(payload[NetworkSnapshotSystem.U_ACTIVE_ATTACK_SPEED_MULTIPLIER]), 1.4)
@@ -342,13 +341,14 @@ func _check_cast_policies_and_snapshot() -> void:
 		and is_equal_approx(float(payload[NetworkSnapshotSystem.U_ACTIVE_SKILL_COOLDOWN]), 1.25)
 		and is_equal_approx(float(payload[NetworkSnapshotSystem.U_SHIELD_RATIO]), 0.625)
 		and is_equal_approx(float(payload[NetworkSnapshotSystem.U_SHIELD_CAPACITY_RATIO]), stationary.shield_max_hp / stationary.max_hp)
-		and int(snapshot_header[0]) == NetworkSnapshotSystem.SNAPSHOT_PROTOCOL_VERSION
-		and int(snapshot_header[1]) == _main._sim_tick_id
+		and snapshot_packet.size() == NetworkSnapshotSystem.SNAPSHOT_PACKET_SIZE
+		and int(snapshot_packet[NetworkSnapshotSystem.S_VERSION]) == NetworkSnapshotSystem.SNAPSHOT_PROTOCOL_VERSION
+		and int(snapshot_packet[NetworkSnapshotSystem.S_SERVER_TICK]) == _main._sim_tick_id
 	)
 	_expect(stationary_locked and attacks_after_cast, "默认技能施法独立锁住移动与普攻，并在窗口结束后立即允许攻击")
 	_expect(mobile_cast_policy, "cast_locks 可配置允许移动施法，同时继续禁止普通攻击")
 	_expect(unrestricted_policy, "空 cast_locks 的纯 Buff 窗口不影响 locomotion 或普通攻击")
-	_expect(snapshot_contract, "网络快照追加同步 action 时间轴、locomotion、强化普攻、豪意、致盲与主动技能次数/CD，旧表现字段下标保持不变")
+	_expect(snapshot_contract, "当前固定快照协议同步 action 时间轴、locomotion、强化普攻、豪意、主动技能次数/CD 与护盾比例")
 	for unit in [stationary, mobile, unrestricted, near_dummy, far_dummy]:
 		if is_instance_valid(unit):
 			unit.free()

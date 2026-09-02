@@ -206,7 +206,7 @@ func _check_melee_minimum_range() -> void:
 	for card_id in ["garen", "xin", "melee_minion", "super_minion", "masteryi", "gwen", "sett"]:
 		melee_ranges.append(float(CardDB.get_card(card_id).range))
 	melee_ranges.append(float(CardDB.get_card("gnar").transformed_stats.range))
-	melee_ranges.append(float(CardDB.imp_stats().range))
+	melee_ranges.append(float(CardDB.get_unit_stats("imp").range))
 	var all_reach_minimum := true
 	for attack_range in melee_ranges:
 		all_reach_minimum = all_reach_minimum and attack_range >= CardDB.MELEE_RANGE_MIN
@@ -382,7 +382,7 @@ func _check_pair_collision() -> void:
 
 func _check_mass_weighting() -> void:
 	var heavy_stats: Dictionary = CardDB.get_card("garen").duplicate()
-	var light_stats: Dictionary = CardDB.imp_stats().duplicate()
+	var light_stats: Dictionary = CardDB.get_unit_stats("imp").duplicate()
 	heavy_stats["deploy_time"] = 0.0
 	light_stats["deploy_time"] = 0.0
 	var heavy := Unit.new()

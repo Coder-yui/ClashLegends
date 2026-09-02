@@ -54,7 +54,7 @@ func _check_projectile_travel() -> void:
 
 ## 防御塔弹体只改变表现起点：权威位置仍从塔心出发，蓝/红塔分别使用蓝/红能量球。
 func _check_tower_projectile_visual() -> void:
-	var tower_stats: Dictionary = _main.PRINCESS_STATS
+	var tower_stats: Dictionary = CardDB.PRINCESS_TOWER_STATS
 	var target_stats: Dictionary = CardDB.get_card("xin").duplicate()
 	target_stats["deploy_time"] = 0.0
 	var blue_tower := Tower.new()
@@ -109,9 +109,9 @@ func _check_tower_projectile_visual() -> void:
 
 ## 墓碑小鬼的生命值与公主塔单次伤害一致，确保一次塔击恰好击杀。
 func _check_imp_tower_damage() -> void:
-	var imp_stats: Dictionary = CardDB.imp_stats()
+	var imp_stats: Dictionary = CardDB.get_unit_stats("imp")
 	_expect(
-		is_equal_approx(imp_stats.hp, _main.PRINCESS_STATS.damage),
+		is_equal_approx(imp_stats.hp, CardDB.PRINCESS_TOWER_STATS.damage),
 		"墓碑小鬼生命值恰好等于公主塔单次伤害（一次击杀）",
 	)
 

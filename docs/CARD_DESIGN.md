@@ -1,12 +1,12 @@
 # CardDB 与卡牌机制设计
 
-CardDB 是卡牌数值、通用机制参数和表现配置的唯一来源。普通卡牌不创建英雄专属 Unit 脚本；只有现有字段无法表达且规则可复用时才扩展系统。
+CardDB 是卡牌、系统召唤物、防御塔/水晶的权威数值与表现配置的唯一来源。普通卡牌不创建英雄专属 Unit 脚本；只有现有字段无法表达且规则可复用时才扩展系统。
 
 ## 统一 API
 
 - `get_card(card_id)`：未知 id 返回空 Dictionary。
 - `has_card(card_id)`：存在性检查。
-- `get_unit_stats(card_id)`：同时处理正式卡与系统召唤物 imp。
+- `get_unit_stats(card_id)`：只返回可生成的单位/建筑；系统召唤物用 `selectable = false` 留在同一数据表。
 - `selectable_ids()`：选卡/AI 卡池。
 - `active_skills_for(card_id)`：主动候选的深拷贝。
 - `validate_all()`：字段、结构、资源和机制校验；完整 mechanics 自动执行。
@@ -32,7 +32,7 @@ CardDB 是卡牌数值、通用机制参数和表现配置的唯一来源。普�
 - 双形态：命中次数、变形/还原时长、完整 `transformed_stats`。
 - 表现：`visual_scene_path(s)`、`visual_forward_yaw`、`visual_animations`；这些不能参与权威判定。单位动画采用 locomotion + action 通道，专用转场和全局混合规则详见 `ANIMATION_STATE_SYSTEM.md`。
 
-主动 `kind` 当前允许 `nova`、`buff`、`summon`、`dual_form`、`frontal`、`forward_area`、`empowered_attack`。`frontal` 可用 `fan` 或 `trapezoid` 表达锁定朝向的扇形/梯形命中；`fan` 的外缘按圆弧半径判定，`center_width` 可在其中声明恒定宽度的中央强化长条，未配置时仍可用 `center_ratio` 表达按角度缩放的小扇区。`forward_area` 在锁定方向的前方圆形区域结算，并可排定固定模拟扩散的冲击波，`shockwave_full_only` 可将冲击波限定为满资源升级形态；`empowered_attack` 只强化原攻击时间线中的下一次普攻，不重置攻速或另起攻击动作。每个单位/建筑主动技能都配置 `cost`、`max_uses`、`cooldown`：命令进入 Host 的 Command Buffer 时扣除当前技能金币，技能在权威 Cast Start 时扣除一次使用次数并开始 CD；这些状态属于场上该技能实例，重新下卡生成新实例后重置。各张卡的具体数值由 CardDB 当前条目和对应卡牌文档记录。技能资格、Command Buffer 与 Cast/Impact 时间线由 Main 编排，Gameplay Impact 集中在 `ActiveSkillEffectSystem`。冰冻是法术卡特例，放在主动槽即启用强化效果，额外技能花费为 `0`，次数随该张卡的一次施放计算，不进入单位主动技能实例。新增 kind 必须同时实现权威效果、CardDB validator、必要快照/RPC、UI 描述和领域回归；不能只写数据。技能可提供纯表现用 `description`，避免 UI 出现英雄名分支。
+主动 `kind` 当前允许 `nova`、`buff`、`summon`、`dual_form`、`frontal`、`forward_area`、`continuous_area`、`empowered_attack`。`frontal` 可用 `fan` 或 `trapezoid` 表达锁定朝向的扇形/梯形命中；`fan` 的外缘按圆弧半径判定，`center_width` 可在其中声明恒定宽度的中央强化长条，未配置时仍可用 `center_ratio` 表达按角度缩放的小扇区。`forward_area` 在锁定方向的前方圆形区域结算，并可排定固定模拟扩散的冲击波，`shockwave_full_only` 可将冲击波限定为满资源升级形态；`continuous_area` 不保存固定落点，每个固定模拟脉冲都以施法者当前权威位置为中心，适合边移动边持续造成范围伤害；`empowered_attack` 只强化原攻击时间线中的下一次普攻，不重置攻速或另起攻击动作。每个单位/建筑主动技能都配置 `cost`、`max_uses`、`cooldown`：命令进入 Host 的 Command Buffer 时扣除当前技能金币，技能在权威 Cast Start 时扣除一次使用次数并开始 CD；这些状态属于场上该技能实例，重新下卡生成新实例后重置。各张卡的具体数值由 CardDB 当前条目和对应卡牌文档记录。技能资格、Command Buffer 与 Cast/Impact 时间线由 Main 编排，Gameplay Impact 集中在 `ActiveSkillEffectSystem`。冰冻是法术卡特例，放在主动槽即启用强化效果，额外技能花费为 `0`，次数随该张卡的一次施放计算，不进入单位主动技能实例。新增 kind 必须同时实现权威效果、CardDB validator、必要快照/RPC、UI 描述和领域回归；不能只写数据。技能可提供纯表现用 `description`，避免 UI 出现英雄名分支。
 
 `skill_resource_*` 只声明潜在规则；单位必须由主动槽实际携带 `uses_skill_resource` 的技能才启用、显示和积攒资源，同槽出现新单位时立即关闭。资源可按受伤、出手、真实命中或击杀敌方单位积攒；`skill_resource_decay_delay` 与 `skill_resource_decay_rate` 表示脱离这些战斗活动后的延迟和每秒衰减。技能在 Cast Start 固化层数/倍率并清空当前资源，释放后仍保留携带状态并可为下一次技能重新积攒，保证普通/满层动作选择与最终伤害来自同一快照。`resource_shield_max` 可把资源比例映射为护盾，`shield_on_cast_start` 让护盾在施法起始立即获得；配合 `shield_decay` 与 `shield_duration` 可表达持续衰减护盾。`skill_resource_full_color` 指定资源满层时的填充颜色；最大值为 2～10 的整数时，资源条按层分段显示，其余资源使用连续进度。`blind_charges` 随强化攻击命中写入目标，目标随后对应次数的普通攻击仍推进动作和冷却，但不产生伤害或命中特效。
 

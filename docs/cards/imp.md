@@ -1,6 +1,6 @@
 # 小鬼（`imp`，系统召唤物）
 
-小鬼由墓碑周期召唤、亡语或“亡者集结”生成，不在 `CardDB.all()` 中，不占用独立卡槽，也不是可选卡牌。数据来自 `CardDB.imp_stats()`。
+小鬼由墓碑周期召唤、亡语或“亡者集结”生成，是 `CardDB.all()` 中 `selectable = false` 的系统单位，不占用独立卡槽，也不会出现在选卡池。
 
 ## 1. 属性数据
 
@@ -30,4 +30,3 @@
 - 部署 / 待机 / 移动：`Spawn1` / `Idle1` / `Run1`。
 - 普攻：`Yorick_ghoul_leapWindup_anm`。
 - 死亡：`Death`，表现时长 `0.5 s`。
-

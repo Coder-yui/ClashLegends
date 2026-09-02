@@ -31,6 +31,51 @@ const SPEED_SLIGHTLY_SLOW := 52.0
 const SPEED_SLOW := 44.0
 const SPEED_EXTREMELY_SLOW := 36.0
 
+# 防御塔与水晶不进入卡池，但其权威数值与表现配置仍归数据层统一管理。
+const PRINCESS_TOWER_PROJECTILE_VISUAL_OFFSET := Vector2(12.0, -205.0)
+const PRINCESS_TOWER_STATS := {
+	"hp": 2100.0, "damage": 55.0, "range": 240.0, "interval": 0.8,
+	"radius": 54.0, "visual_radius": 60.0, "deployment_radius": 54.0,
+	"first_hit": 0.2, "projectile_speed": 420.0,
+	"projectile_visual_offset": PRINCESS_TOWER_PROJECTILE_VISUAL_OFFSET,
+}
+const NEXUS_STATS := {
+	"hp": 3600.0, "damage": 0.0, "range": 0.0, "interval": 1.0,
+	"radius": 72.0, "visual_radius": 80.0, "deployment_radius": 72.0,
+	"first_hit": 0.2, "projectile_speed": 0.0, "can_attack": false,
+}
+const PRINCESS_TOWER_VISUAL_CONFIG := {
+	"scene_paths": [
+		"res://assets/towers/princess/princess_tower_blue_view.tscn",
+		"res://assets/towers/princess/princess_tower_red_view.tscn",
+	],
+	"ground_cutoff": 0.0,
+	"animations": {
+		"destroy": "Destroyed",
+		"stage_surfaces": ["Base", "Stage1", "Stage2"],
+		"final_stage_surface": "Stage3",
+		"ruin_surface": "Rubble",
+		"debris": [
+			{"bones": "Break1", "surface": "Broken1", "window": [10.0, 15.0]},
+			{"bones": "Break2", "surface": "Broken2", "window": [8.0, 15.0]},
+			{"bones": "Break3", "surface": "Broken3", "window": [8.0, 15.0]},
+		],
+		"debris_duration": 2.0,
+	},
+}
+const NEXUS_VISUAL_CONFIG := {
+	"scene_paths": [
+		"res://assets/towers/nexus/nexus_blue_view.tscn",
+		"res://assets/towers/nexus/nexus_red_view.tscn",
+	],
+	"ground_cutoff": 0.0,
+	"animations": {
+		"spawn": "Nexus_spawn_anm", "idle": "Idle1_Base", "destroy": "Death",
+		"spawn_duration": 2.5, "destroy_duration": 4.0,
+		"alive_materials": ["SRUAP_OrderNexus_Mat"], "destroyed_materials": ["Destroyed"],
+	},
+}
+
 const CARD_TYPES := [&"unit", &"spell", &"building"]
 const SIZE_RADII := {
 	SIZE_EXTREMELY_SMALL: RADIUS_EXTREMELY_SMALL,
@@ -43,7 +88,7 @@ const SIZE_RADII := {
 }
 const PROJECTILE_VISUALS := [&"orb", &"arrow", &"needle", &"boomerang"]
 const SPELL_KINDS := [&"freeze"]
-const ACTIVE_SKILL_KINDS := [&"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"empowered_attack"]
+const ACTIVE_SKILL_KINDS := [&"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"continuous_area", &"empowered_attack"]
 const CAST_LOCKS := [&"movement", &"attack", &"facing"]
 const VISUAL_ACTION_KINDS := [&"deploy", &"transform", &"skill"]
 const VISUAL_ACTION_DESCRIPTOR_FIELDS := [&"animation", &"durations", &"clip_ranges", &"kind", &"priority", &"blend_in", &"blend_out", &"sequence_blend"]
@@ -73,8 +118,8 @@ const CARD_FIELDS := [
 	&"skill_resource_damage_gain_multiplier", &"skill_resource_decay_delay", &"skill_resource_decay_rate",
 	&"attack_interval_display", &"transform_after_hits", &"revert_after_hits",
 	&"transform_duration", &"active_transform_duration", &"revert_duration", &"transformed_stats",
-	&"spell_kind", &"duration", &"active_name", &"active_slow_duration", &"active_slow_multiplier", &"active_skill", &"active_skills",
-	&"visual_frames_path", &"visual_scene_path", &"visual_scene_paths", &"visual_forward_yaw", &"visual_animations",
+	&"spell_kind", &"duration", &"active_name", &"active_slow_duration", &"active_slow_multiplier", &"active_skills",
+	&"visual_scene_path", &"visual_scene_paths", &"visual_forward_yaw", &"visual_animations",
 ]
 const VISUAL_ANIMATION_FIELDS := [
 	&"deploy", &"deploy_durations", &"deploy_clip_ratio", &"idle", &"move", &"move_enter", &"haste_move",
@@ -99,6 +144,7 @@ const ACTIVE_SKILL_FIELDS := [
 	&"full_resource_visual_action", &"full_resource_cast_duration", &"full_resource_impact_delay", &"full_resource_cast_end_heal",
 	&"forward_distance", &"shockwave_damage", &"shockwave_duration", &"shockwave_end_radius",
 	&"shockwave_slow_duration", &"shockwave_slow_multiplier", &"shockwave_full_only",
+	&"tick_interval",
 	&"empowered_damage_multiplier", &"empowered_speed_multiplier", &"blind_charges",
 ]
 ## building_only: true 时只攻击建筑（塔+建筑卡），无视普通单位
@@ -123,17 +169,31 @@ static func all() -> Dictionary:
 				"deploy": "Respawn_Base", "idle": "Idle1_Base",
 				"move": "Run_Base", "empowered_move": "Run_Spell1",
 				"attack": ["Attack1", "Attack2"], "empowered_attack": "Spell1",
+				"visual_actions": {
+					"judgment": {"animation": "Spell3_0", "durations": [3.0], "kind": "skill"},
+				},
 				"death": "Death", "death_duration": 0.8,
 			},
 			"is_air": false, "building_only": true, "can_attack_air": false,
-			"active_skill": {
-				"name": "致命打击", "kind": "empowered_attack",
-				"cost": 1, "max_uses": 2, "cooldown": 6.0,
-				"description": "强化下一次普通攻击，使其造成双倍伤害；强化尚未打出时移动速度提高两档。技能不会重置或延后当前攻击节奏。",
-				"empowered_damage_multiplier": 2.0,
-				# 盖伦基础为“慢”，提高两档后达到“中等”。强化攻击出手后立即失去加速。
-				"empowered_speed_multiplier": SPEED_MEDIUM / SPEED_SLOW,
-			},
+			"active_skills": [
+				{
+					"name": "致命打击", "kind": "empowered_attack",
+					"cost": 1, "max_uses": 2, "cooldown": 6.0,
+					"description": "强化下一次普通攻击，使其造成双倍伤害；强化尚未打出时移动速度提高两档。技能不会重置或延后当前攻击节奏。",
+					"empowered_damage_multiplier": 2.0,
+					# 盖伦基础为“慢”，提高两档后达到“中等”。强化攻击出手后立即失去加速。
+					"empowered_speed_multiplier": SPEED_MEDIUM / SPEED_SLOW,
+				},
+				{
+					"name": "审判", "kind": "continuous_area",
+					"cost": 2, "max_uses": 1, "cooldown": 10.0,
+					"description": "旋转 3 秒，对当前身边的地面敌人每秒造成 60 点伤害；施放期间只锁定攻击，仍可移动和改变朝向。",
+					"radius": 90.0, "damage": 60.0, "ground_only": true,
+					"duration": 3.0, "tick_interval": 1.0,
+					"impact_delay": 0.0, "cast_duration": 3.0,
+					"cast_locks": ["attack"], "visual_action": "judgment",
+				},
+			],
 		},
 		"xin": {
 			"name": "赵信", "cost": 4, "type": "unit",
@@ -181,7 +241,7 @@ static func all() -> Dictionary:
 				"death": "Death", "death_duration": 0.8,
 			},
 			"is_air": false, "building_only": false, "can_attack_air": false,
-			"active_skill": {
+			"active_skills": [{
 				"name": "新月护卫", "kind": "nova",
 				"cost": 1, "max_uses": 2, "cooldown": 8.0,
 				"description": "挥舞长枪震开周围敌人，造成范围伤害与击退；施放期间锁定移动、攻击和朝向。",
@@ -191,7 +251,7 @@ static func all() -> Dictionary:
 				"impact_delay": 0.0, "cast_duration": 1.0,
 				"cast_locks": ["movement", "attack", "facing"],
 				"visual_action": "active",
-			},
+			}],
 		},
 		"ashe": {
 			"name": "艾希", "cost": 3, "type": "unit",
@@ -217,7 +277,7 @@ static func all() -> Dictionary:
 				"death": "Death", "death_duration": 0.8,
 			},
 			"is_air": false, "building_only": false, "can_attack_air": true,
-			"active_skill": {
+			"active_skills": [{
 				"name": "万箭齐发", "kind": "frontal", "shape": "fan",
 				"cost": 2, "max_uses": 1, "cooldown": 10.0,
 				"description": "使用 Spell2 朝前方扇形区域射出 8 根箭矢，造成 70 点伤害并减速 1 秒。",
@@ -225,7 +285,7 @@ static func all() -> Dictionary:
 				"damage": 70.0, "slow_duration": 1.0, "slow_multiplier": 0.55,
 				"impact_delay": 0.62, "cast_duration": 1.833333,
 				"cast_locks": ["movement", "attack", "facing"], "visual_action": "active",
-			},
+			}],
 		},
 		"teemo": {
 			"name": "提莫", "cost": 2, "type": "unit",
@@ -251,12 +311,12 @@ static func all() -> Dictionary:
 				"death": "Death", "death_duration": 0.8,
 			},
 			"is_air": false, "building_only": false, "can_attack_air": true,
-			"active_skill": {
+			"active_skills": [{
 				"name": "致盲", "kind": "empowered_attack",
 				"cost": 0, "max_uses": 2, "cooldown": 4.0,
 				"description": "强化下一次普通攻击；命中单位后使其接下来的两次普通攻击（包括强化普攻）不造成伤害。技能不改变攻击间隔。",
 				"empowered_damage_multiplier": 1.0, "blind_charges": 2,
-			},
+			}],
 		},
 		"gnar": {
 			"name": "纳尔", "cost": 4, "type": "unit",
@@ -328,7 +388,7 @@ static func all() -> Dictionary:
 					},
 				},
 			},
-			"active_skill": {
+			"active_skills": [{
 				"name": "怒气爆发", "kind": "dual_form",
 				"cost": 2, "max_uses": 1, "cooldown": 8.0,
 				"description": "当前形态立即释放前方重击；小形态会先变为大形态。命中时造成伤害并眩晕地面敌人。",
@@ -338,7 +398,7 @@ static func all() -> Dictionary:
 				"cast_duration": 1.2, "transform_cast_duration": 1.2,
 				"stun_duration": 1.0, "ground_only": true,
 				"cast_locks": ["movement", "attack", "facing"], "visual_action": "active",
-			},
+			}],
 		},
 		# ===== 水晶兵线（也可作为玩家卡牌） =====
 		"melee_minion": {
@@ -360,7 +420,7 @@ static func all() -> Dictionary:
 				"attack": ["Attack1", "Attack2"], "death": "Death", "death_duration": 0.5,
 			},
 			"is_air": false, "building_only": false, "can_attack_air": false,
-			"active_skill": {"name": "列阵突击", "kind": "buff", "cost": 0, "max_uses": 2, "cooldown": 5.0, "duration": 4.0, "speed_multiplier": 1.35, "damage_multiplier": 1.25},
+			"active_skills": [{"name": "列阵突击", "kind": "buff", "cost": 0, "max_uses": 2, "cooldown": 5.0, "duration": 4.0, "speed_multiplier": 1.35, "damage_multiplier": 1.25}],
 		},
 		"ranged_minion": {
 			"name": "远程兵", "cost": 1, "type": "unit", "selectable": true,
@@ -387,7 +447,7 @@ static func all() -> Dictionary:
 				"attack": ["Attack1", "Attack2"], "death": "Death", "death_duration": 0.5,
 			},
 			"is_air": false, "building_only": false, "can_attack_air": true,
-			"active_skill": {"name": "奥术齐射", "kind": "nova", "cost": 0, "max_uses": 2, "cooldown": 5.0, "radius": 150.0, "damage": 48.0},
+			"active_skills": [{"name": "奥术齐射", "kind": "nova", "cost": 0, "max_uses": 2, "cooldown": 5.0, "radius": 150.0, "damage": 48.0}],
 		},
 		"siege_minion": {
 			"name": "炮车兵", "cost": 3, "type": "unit", "selectable": true,
@@ -413,7 +473,7 @@ static func all() -> Dictionary:
 				"attack": ["Attack1_BASE", "Attack2_BASE"], "death": "Death", "death_duration": 0.5,
 			},
 			"is_air": false, "building_only": false, "can_attack_air": true,
-			"active_skill": {"name": "超载炮击", "kind": "nova", "cost": 1, "max_uses": 2, "cooldown": 8.0, "radius": 180.0, "damage": 100.0, "knockback": 35.0},
+			"active_skills": [{"name": "超载炮击", "kind": "nova", "cost": 1, "max_uses": 2, "cooldown": 8.0, "radius": 180.0, "damage": 100.0, "knockback": 35.0}],
 		},
 		"super_minion": {
 			"name": "超级兵", "cost": 4, "type": "unit", "selectable": true,
@@ -434,7 +494,7 @@ static func all() -> Dictionary:
 				"attack": ["Attack1", "Attack2"], "death": "Death_Base", "death_duration": 0.5,
 			},
 			"is_air": false, "building_only": false, "can_attack_air": false,
-			"active_skill": {"name": "超级冲锋", "kind": "buff", "cost": 2, "max_uses": 1, "cooldown": 7.0, "duration": 5.0, "speed_multiplier": 1.35, "damage_multiplier": 1.35, "shield": 140.0, "shield_duration": 5.0},
+			"active_skills": [{"name": "超级冲锋", "kind": "buff", "cost": 2, "max_uses": 1, "cooldown": 7.0, "duration": 5.0, "speed_multiplier": 1.35, "damage_multiplier": 1.35, "shield": 140.0, "shield_duration": 5.0}],
 		},
 		# ===== 新增4张 =====
 		"freeze": {
@@ -470,7 +530,7 @@ static func all() -> Dictionary:
 			"attack_extra_hit_damage_multipliers": [[], [], [0.5]],
 			"attack_extra_hit_delays": [[], [], [0.12]],
 			"is_air": false, "building_only": false, "can_attack_air": false,
-			"active_skill": {"name": "高原血统", "kind": "buff", "cost": 1, "max_uses": 2, "cooldown": 6.0, "duration": 5.0, "speed_multiplier": 1.5, "damage_multiplier": 1.0, "attack_speed_multiplier": 1.5},
+			"active_skills": [{"name": "高原血统", "kind": "buff", "cost": 1, "max_uses": 2, "cooldown": 6.0, "duration": 5.0, "speed_multiplier": 1.5, "damage_multiplier": 1.0, "attack_speed_multiplier": 1.5}],
 		},
 		"gwen": {
 			"name": "格温", "cost": 4, "type": "unit",
@@ -503,7 +563,7 @@ static func all() -> Dictionary:
 				"transitions": {"skill>move": "Spell1_C_to_Run_anm"},
 			},
 			"is_air": false, "building_only": false, "can_attack_air": false,
-			"active_skill": {
+			"active_skills": [{
 				"name": "快刀乱剪", "kind": "frontal", "shape": "fan",
 				"cost": 2, "max_uses": 1, "cooldown": 8.0,
 				"description": "普通攻击命中充能，最多 3 层；必定先剪 40 点、最后剪 60 点，每层充能在中间追加一次 20 点剪切。满层结束时回复 100 点生命值。",
@@ -518,7 +578,7 @@ static func all() -> Dictionary:
 				"visual_action": "active_0", "resource_visual_actions": ["active_0", "active_1", "active_2", "active_3"],
 				"full_resource_cast_end_heal": 100.0,
 				"ground_only": true,
-			},
+			}],
 		},
 		"sett": {
 			"name": "腕豪", "cost": 4, "type": "unit",
@@ -557,7 +617,7 @@ static func all() -> Dictionary:
 				"death": "Death", "death_duration": 0.8,
 			},
 			"is_air": false, "building_only": false, "can_attack_air": false,
-			"active_skill": {
+			"active_skills": [{
 				"name": "蓄意轰拳", "kind": "frontal", "shape": "trapezoid",
 				"description": "消耗 2 金币。锁定移动、朝向和攻击后向前轰出梯形冲击波；豪意令伤害最高提高至 2 倍，中央区域再造成 1.5 倍伤害。释放瞬间按豪意获得护盾，0 豪意无护盾，满豪意 300 点并在 2 秒内衰减至 0。每个腕豪最多释放 1 次，冷却 8 秒。",
 				"cost": 2, "max_uses": 1, "cooldown": 8.0,
@@ -570,7 +630,7 @@ static func all() -> Dictionary:
 				"cast_locks": ["movement", "attack", "facing"],
 				"visual_action": "active", "full_resource_visual_action": "active_strong",
 				"ground_only": true,
-			},
+			}],
 		},
 		"tombstone": {
 			"name": "墓碑", "cost": 3, "type": "building",
@@ -597,7 +657,7 @@ static func all() -> Dictionary:
 			"visual_animations": {
 				"deploy": "Spawn", "idle": "Idle1", "death": "Death", "death_duration": 0.8,
 			},
-			"active_skill": {"name": "亡者集结", "kind": "summon", "cost": 1, "max_uses": 1, "cooldown": 10.0, "spawn_id": "imp", "spawn_count": 4},
+			"active_skills": [{"name": "亡者集结", "kind": "summon", "cost": 1, "max_uses": 1, "cooldown": 10.0, "spawn_id": "imp", "spawn_count": 4}],
 		},
 		"aurelionsol": {
 			"name": "龙王", "cost": 4, "type": "unit",
@@ -640,7 +700,7 @@ static func all() -> Dictionary:
 			},
 			"is_air": true, "building_only": false, "can_attack_air": true,
 			"is_continuous_attack": true,  # 持续伤害：每帧 damage*delta
-			"active_skill": {
+			"active_skills": [{
 				"name": "星落/天瀑", "kind": "forward_area",
 				"cost": 2, "max_uses": 1, "cooldown": 10.0,
 				"description": "击杀敌方单位充能，最多 5 层。向前方圆形区域降下星辰并眩晕；满层升级为伤害和眩晕提高 50% 的天瀑，且只有天瀑落地后会产生扩散至全场的冲击波。",
@@ -654,7 +714,28 @@ static func all() -> Dictionary:
 				"full_resource_impact_delay": 1.12, "full_resource_cast_duration": 1.8999995,
 				"cast_locks": ["movement", "attack", "facing"],
 				"visual_action": "active", "full_resource_visual_action": "active_strong",
+			}],
+		},
+		# 系统召唤物仍属于 CardDB 数据，只通过 selectable=false 排除出玩家卡池。
+		"imp": {
+			"name": "小鬼", "cost": 0, "type": "unit", "selectable": false,
+			"description": "墓碑及召唤技能生成的系统近战单位。",
+			# 公主塔单次伤害为 55，小鬼落地后应恰好被防御塔一击击杀。
+			"hp": 55.0, "damage": 25.0, "range": MELEE_RANGE_MIN,
+			"speed": SPEED_SLIGHTLY_FAST, "interval": 0.7, "first_hit": 0.25,
+			"deploy_time": 0.0,
+			"size_tier": SIZE_EXTREMELY_SMALL, "radius": RADIUS_EXTREMELY_SMALL,
+			"visual_radius": RADIUS_EXTREMELY_SMALL + VISUAL_RADIUS_PADDING,
+			"mass": 1.0, "sight": 180.0,
+			"color": Color(0.55, 0.45, 0.80),
+			"visual_scene_path": "res://assets/units/imp/imp_view.tscn",
+			"visual_forward_yaw": 0.0,
+			"visual_animations": {
+				"deploy": "Spawn1", "idle": "Idle1", "move": "Run1",
+				"attack": ["Yorick_ghoul_leapWindup_anm"],
+				"death": "Death", "death_duration": 0.5,
 			},
+			"is_air": false, "building_only": false, "can_attack_air": false,
 		},
 	}
 
@@ -674,12 +755,14 @@ static func get_card(card_id: String) -> Dictionary:
 static func has_card(card_id: String) -> bool:
 	return all().has(card_id)
 
-## 召唤物与正式卡共用数据读取入口，避免调用方散落 imp 特判。
+## 只读取可生成的单位/建筑数据；系统召唤物同样是 selectable=false 的正式条目。
 static func get_unit_stats(card_id: String) -> Dictionary:
-	return imp_stats() if card_id == "imp" else get_card(card_id)
+	var stats := get_card(card_id)
+	if StringName(stats.get("type", "")) not in [&"unit", &"building"]:
+		return {}
+	return stats
 
-## 返回一张卡可供主动槽选择的技能集合。当前每张卡只有 active_skill 一个技能；
-## 未来可改用 active_skills 数组，但一次出战仍只从集合中携带一个。
+## 返回一张卡可供主动槽选择的技能集合；一次出战仍只从候选集合中携带一个。
 static func active_skills_for(card_id: String) -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
 	var cards := all()
@@ -689,8 +772,6 @@ static func active_skills_for(card_id: String) -> Array[Dictionary]:
 	for configured_skill in stats.get("active_skills", []):
 		if configured_skill is Dictionary:
 			result.append((configured_skill as Dictionary).duplicate(true))
-	if result.is_empty() and stats.has("active_skill"):
-		result.append((stats.active_skill as Dictionary).duplicate(true))
 	return result
 
 ## 返回当前全部配置错误。空数组表示 CardDB 可以安全进入运行时。
@@ -851,29 +932,23 @@ static func _validate_references(card_id: String, stats: Dictionary, cards: Dict
 		var referenced_id := String(stats.get(field, ""))
 		if not referenced_id.is_empty() and not _unit_reference_exists(referenced_id, cards):
 			errors.append("%s.%s: 引用了不存在或不可生成的单位 %s" % [card_id, field, referenced_id])
-	var skills: Array = []
-	if stats.get("active_skill") is Dictionary:
-		skills.append(stats.active_skill)
-	if stats.get("active_skills") is Array:
-		skills.append_array(stats.active_skills)
+	var skills: Array = stats.get("active_skills", []) if stats.get("active_skills", []) is Array else []
 	for index in range(skills.size()):
 		var skill = skills[index]
 		if not skill is Dictionary or StringName(skill.get("kind", "")) != &"summon":
 			continue
 		var spawn_id := String(skill.get("spawn_id", ""))
 		if not _unit_reference_exists(spawn_id, cards):
-			errors.append("%s.active_skill[%d].spawn_id: 引用了不存在或不可生成的单位 %s" % [card_id, index, spawn_id])
+			errors.append("%s.active_skills[%d].spawn_id: 引用了不存在或不可生成的单位 %s" % [card_id, index, spawn_id])
 
 
 static func _unit_reference_exists(card_id: String, cards: Dictionary) -> bool:
-	if card_id == "imp":
-		return true
 	if not cards.has(card_id):
 		return false
 	return StringName((cards[card_id] as Dictionary).get("type", "")) in [&"unit", &"building"]
 
 static func _validate_visual_config(label: String, stats: Dictionary, errors: PackedStringArray) -> void:
-	for path_field in [&"visual_frames_path", &"visual_scene_path"]:
+	for path_field in [&"visual_scene_path"]:
 		var path := String(stats.get(path_field, ""))
 		if not path.is_empty() and not ResourceLoader.exists(path):
 			errors.append("%s.%s: 资源不存在 %s" % [label, path_field, path])
@@ -1031,8 +1106,6 @@ static func _validate_positive_number_or_array(label: String, value: Variant, er
 
 static func _validate_active_skills(card_id: String, stats: Dictionary, errors: PackedStringArray) -> void:
 	var skills: Array = []
-	if stats.has("active_skill"):
-		skills.append(stats.active_skill)
 	if stats.has("active_skills"):
 		if not stats.active_skills is Array:
 			errors.append("%s.active_skills: 必须是 Array" % card_id)
@@ -1040,7 +1113,7 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 			skills.append_array(stats.active_skills)
 	for index in range(skills.size()):
 		var skill = skills[index]
-		var label := "%s.active_skill[%d]" % [card_id, index]
+		var label := "%s.active_skills[%d]" % [card_id, index]
 		if not skill is Dictionary:
 			errors.append("%s: 必须是 Dictionary" % label)
 			continue
@@ -1091,6 +1164,15 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 				for nonnegative_field in [&"damage", &"stun_duration", &"impact_delay", &"shockwave_damage", &"shockwave_slow_duration"]:
 					if float(skill.get(nonnegative_field, 0.0)) < 0.0:
 						errors.append("%s.%s: 必须 >= 0" % [label, nonnegative_field])
+			&"continuous_area":
+				_require_fields(label, skill, [&"radius", &"damage", &"duration", &"tick_interval", &"cast_duration"], errors)
+				for positive_field in [&"radius", &"duration", &"tick_interval", &"cast_duration"]:
+					if float(skill.get(positive_field, 0.0)) <= 0.0:
+						errors.append("%s.%s: 必须 > 0" % [label, positive_field])
+				if float(skill.get("damage", 0.0)) < 0.0:
+					errors.append("%s.damage: 必须 >= 0" % label)
+				if float(skill.get("duration", 0.0)) > float(skill.get("cast_duration", 0.0)):
+					errors.append("%s.duration: 不得大于 cast_duration" % label)
 			&"empowered_attack":
 				_require_fields(label, skill, [&"empowered_damage_multiplier"], errors)
 				if float(skill.get("empowered_damage_multiplier", 0.0)) <= 0.0:
@@ -1232,28 +1314,6 @@ static func _validate_known_fields(label: String, data: Dictionary, known_fields
 	for field in data:
 		if StringName(field) not in known_fields:
 			errors.append("%s.%s: 未知或未登记字段" % [label, field])
-
-## 小鬼属性（墓碑生成，非卡牌）— 1费近战单位
-static func imp_stats() -> Dictionary:
-	return {
-		"name": "小鬼",
-		# 公主塔单次伤害为 55，小鬼落地后应恰好被防御塔一击击杀。
-		"hp": 55.0, "damage": 25.0, "range": MELEE_RANGE_MIN,
-		"speed": SPEED_SLIGHTLY_FAST, "interval": 0.7, "first_hit": 0.25,
-		"deploy_time": 0.0,
-		"size_tier": SIZE_EXTREMELY_SMALL, "radius": RADIUS_EXTREMELY_SMALL, "visual_radius": RADIUS_EXTREMELY_SMALL + VISUAL_RADIUS_PADDING,
-		"mass": 1.0, "sight": 180.0,
-		"color": Color(0.55, 0.45, 0.80),
-		"visual_scene_path": "res://assets/units/imp/imp_view.tscn",
-		"visual_forward_yaw": 0.0,
-		"visual_animations": {
-			"deploy": "Spawn1", "idle": "Idle1", "move": "Run1",
-			# 小鬼移动固定循环 Run1；普攻使用短促跃击前摇，权威伤害仍由 first_hit 结算。
-			"attack": ["Yorick_ghoul_leapWindup_anm"],
-			"death": "Death", "death_duration": 0.5,
-		},
-		"is_air": false, "building_only": false, "can_attack_air": false,
-	}
 
 ## 美术开发面板专用木桩，不进入正式卡牌池。
 static func training_dummy_stats() -> Dictionary:

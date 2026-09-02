@@ -19,7 +19,7 @@ func _check_starfall_and_falling_sky() -> void:
 	_main._active_skill_effect_system.clear()
 	var stats: Dictionary = CardDB.get_card("aurelionsol").duplicate(true)
 	stats["deploy_time"] = 0.0
-	var skill: Dictionary = stats.active_skill
+	var skill: Dictionary = stats.active_skills[0]
 	var dragon := Unit.new()
 	dragon.position = Vector2(360.0, 1000.0)
 	dragon.setup(0, stats, stats.name)
@@ -126,7 +126,7 @@ func _check_aurelionsol_art_integration() -> void:
 		and anim_names.move_enter == "RunIn"
 		and not anim_names.has("move_enter_after_attack")
 		and not anim_names.has("move_enter_from_deploy_only"),
-		"龙王不再保留旧规则覆盖；RunIn 走通用入口，初次攻击 newtst，原地换目标按 new_looptoin→newtst",
+		"龙王 RunIn 走通用入口，初次攻击 newtst，原地换目标按 new_looptoin→newtst",
 	)
 	_expect(
 		anim_names.visual_actions.active.animation == "Spell4"

@@ -38,8 +38,13 @@ func find_ground_path(from: Vector2, goal: Vector2, target: Node2D, mover_radius
 func launch_attack(attacker: Node2D, target: Node2D, amount: float, projectile_speed: float, splash_radius: float, knockback: float, projectile_color: Color, effects: Dictionary = {}) -> void:
 	_controller.launch_attack(attacker, target, amount, projectile_speed, splash_radius, knockback, projectile_color, effects)
 
-func resolve_attack_hit(team: int, origin: Vector2, primary: Node2D, amount: float, radius: float, knockback: float, from: Node2D, source_position: Vector2, source_form_index: int, effects: Dictionary = {}) -> void:
-	_controller.resolve_attack_hit(team, origin, primary, amount, radius, knockback, from, source_position, source_form_index, effects)
+## 所有持续伤害共用的权威脉冲入口：目标筛选/计时由调用方负责，护盾、隐匿、死亡和命中回调由战场统一结算。
+## counts_as_attack 仅供龙王吐息这类持续普攻使用；主动技能伤害传 false，避免给普攻资源或命中回血。
+func apply_damage_pulse(source: Node2D, target: Node2D, amount: float, splash_radius: float = 0.0, origin: Vector2 = Vector2(INF, INF), counts_as_attack: bool = false, source_form_index: int = -1, effects: Dictionary = {}) -> bool:
+	return _controller.apply_damage_pulse(source, target, amount, splash_radius, origin, counts_as_attack, source_form_index, effects)
+
+func resolve_attack_hit(team: int, origin: Vector2, primary: Node2D, amount: float, radius: float, knockback: float, from: Node2D, source_position: Vector2, source_form_index: int, effects: Dictionary = {}, counts_as_attack: bool = true) -> bool:
+	return _controller.resolve_attack_hit(team, origin, primary, amount, radius, knockback, from, source_position, source_form_index, effects, counts_as_attack)
 
 func unblock_nav_cells(cells: Array) -> void:
 	_controller.unblock_nav_cells(cells)

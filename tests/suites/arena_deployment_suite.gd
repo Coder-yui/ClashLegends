@@ -188,16 +188,22 @@ func _check_command_tick_estimation() -> void:
 	var snapshot_system := NetworkSnapshotSystem.new(_main)
 	var newer_but_behind_estimate := [
 		NetworkSnapshotSystem.SNAPSHOT_PROTOCOL_VERSION, 102,
-		[], [], [], 0.0, 0.0, 180.0, false,
+		[], [], [], 0.0, 180.0, false,
 	]
 	snapshot_system.apply(var_to_bytes(newer_but_behind_estimate).compress(FileAccess.COMPRESSION_DEFLATE))
 	var estimate_survives_stale_snapshot: bool = (
 		_main._authoritative_server_tick == 102
 		and _main.get_estimated_server_tick() == estimated_after_gap
 	)
+	var incompatible_version_packet := [
+		NetworkSnapshotSystem.SNAPSHOT_PROTOCOL_VERSION - 1, 103,
+		[], [], [], 0.0, 180.0, false,
+	]
+	snapshot_system.apply(var_to_bytes(incompatible_version_packet).compress(FileAccess.COMPRESSION_DEFLATE))
+	var incompatible_version_rejected: bool = _main._authoritative_server_tick == 102
 	var stale_packet := [
 		NetworkSnapshotSystem.SNAPSHOT_PROTOCOL_VERSION, 101,
-		[], [], [], 0.0, 0.0, 180.0, false,
+		[], [], [], 0.0, 180.0, false,
 	]
 	snapshot_system.apply(var_to_bytes(stale_packet).compress(FileAccess.COMPRESSION_DEFLATE))
 	var stale_snapshot_rejected: bool = _main._authoritative_server_tick == 102
@@ -223,9 +229,10 @@ func _check_command_tick_estimation() -> void:
 		and estimated_after_gap == 104
 		and client_target_after_gap == 114
 		and estimate_survives_stale_snapshot
+		and incompatible_version_rejected
 		and stale_snapshot_rejected
 		and host_client_share_timeline,
-		"Command Buffer 按 input_tick + 10 Tick 吸收网络延迟，迟到/异常请求拒绝且 Host/Client 共用权威时间线",
+		"Command Buffer 按 input_tick + 10 Tick 吸收网络延迟，迟到/异常请求与非当前快照版本均拒绝",
 	)
 
 func _check_card_play_delay() -> void:

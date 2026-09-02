@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://c0u7xytdlj0s0"]
+
+[ext_resource type="Script" path="res://tools/demos/demo_xin_sweep.gd" id="1_demo"]
+
+[node name="DemoXinSweep" type="Node2D" unique_id=1305452878]
+script = ExtResource("1_demo")

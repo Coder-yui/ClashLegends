@@ -172,7 +172,7 @@ func _check_attack_target_lock() -> void:
 
 func _check_attack_direct_retarget() -> void:
 	var attacker_stats: Dictionary = CardDB.get_card("xin").duplicate(true)
-	var target_stats: Dictionary = CardDB.imp_stats().duplicate(true)
+	var target_stats: Dictionary = CardDB.get_unit_stats("imp").duplicate(true)
 	attacker_stats["deploy_time"] = 0.0
 	target_stats["deploy_time"] = 0.0
 	target_stats["hp"] = 1.0

@@ -8,6 +8,10 @@ var _main: Node2D
 func _expect(condition: bool, message: String) -> void:
 	_harness._expect(condition, message)
 
+func _run_main_ticks(count: int) -> void:
+	for _tick in count:
+		_main._sim_step(_main.SIM_DT)
+
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
@@ -15,6 +19,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_sett_shield_and_combat_decay()
 	_check_ashe_volley()
 	_check_empowered_attacks_and_blind()
+	_check_garen_judgment()
 	_check_masteryi_double_strike_and_highlander()
 	_check_animation_routes()
 
@@ -45,12 +50,12 @@ func _check_sett_resource_and_frontal_damage() -> void:
 	var sett := _spawn_test_unit("sett", 0, Vector2(100.0, 1120.0))
 	sett.take_damage(20.0)
 	var hidden_without_loadout := not sett.is_skill_resource_visible() and is_zero_approx(sett.skill_resource_value)
-	sett.configure_carried_active_skill(CardDB.get_card("sett").active_skill)
+	sett.configure_carried_active_skill(CardDB.active_skills_for("sett")[0])
 	sett.take_damage(80.0)
 	sett.add_skill_resource(sett.skill_resource_attack_gain)
 	var resource_from_combat := is_equal_approx(sett.skill_resource_value, 100.0)
 	sett.add_skill_resource(100.0)
-	var skill: Dictionary = CardDB.get_card("sett").active_skill
+	var skill: Dictionary = CardDB.active_skills_for("sett")[0]
 	var prepared: Dictionary = _main._active_skill_effect_system.prepare_cast(sett, skill)
 	_main._active_skill_effect_system.apply_cast_start(sett, prepared)
 	var prepared_full := (
@@ -81,7 +86,7 @@ func _check_sett_resource_and_frontal_damage() -> void:
 		unit.free()
 
 func _check_sett_shield_and_combat_decay() -> void:
-	var skill: Dictionary = CardDB.get_card("sett").active_skill
+	var skill: Dictionary = CardDB.active_skills_for("sett")[0]
 	var zero_sett := _spawn_test_unit("sett", 0, Vector2(100.0, 1120.0))
 	zero_sett.configure_carried_active_skill(skill)
 	var zero_prepared: Dictionary = _main._active_skill_effect_system.prepare_cast(zero_sett, skill)
@@ -148,7 +153,7 @@ func _check_ashe_volley() -> void:
 	var ashe := _spawn_test_unit("ashe", 0, Vector2(300.0, 1120.0))
 	var front := _spawn_dummy(Vector2(300.0, 980.0))
 	var behind := _spawn_dummy(Vector2(300.0, 1250.0))
-	var skill: Dictionary = CardDB.get_card("ashe").active_skill
+	var skill: Dictionary = CardDB.active_skills_for("ashe")[0]
 	var active_visual: Dictionary = CardDB.get_card("ashe").visual_animations.visual_actions.active
 	var animation_duration_ok: bool = active_visual.get("durations", []) == [1.0]
 	ashe.begin_active_skill_cast(float(skill.cast_duration), Vector2.UP, skill.cast_locks)
@@ -180,7 +185,7 @@ func _check_ashe_volley() -> void:
 func _check_empowered_attacks_and_blind() -> void:
 	var garen := _spawn_test_unit("garen", 0, Vector2(500.0, 1120.0))
 	var target := _spawn_dummy(Vector2(500.0, 1070.0))
-	var garen_skill: Dictionary = CardDB.get_card("garen").active_skill
+	var garen_skill: Dictionary = CardDB.active_skills_for("garen")[0]
 	garen._target = target
 	garen._attacking = true
 	garen._attack_windup = 0.2
@@ -212,7 +217,7 @@ func _check_empowered_attacks_and_blind() -> void:
 
 	var teemo := _spawn_test_unit("teemo", 0, Vector2(600.0, 1120.0))
 	var blinded := _spawn_test_unit("garen", 1, Vector2(600.0, 1070.0))
-	_main._active_skill_effect_system.apply(teemo, CardDB.get_card("teemo").active_skill)
+	_main._active_skill_effect_system.apply(teemo, CardDB.active_skills_for("teemo")[0])
 	teemo._target = blinded
 	teemo._attacking = true
 	teemo._attack_windup = 0.0
@@ -246,6 +251,80 @@ func _check_empowered_attacks_and_blind() -> void:
 	for unit in [garen, target, teemo, blinded, victim]:
 		unit.free()
 
+func _check_garen_judgment() -> void:
+	var skills := CardDB.active_skills_for("garen")
+	var skill: Dictionary = skills[1] if skills.size() > 1 else {}
+	var garen := _spawn_test_unit("garen", 0, Vector2(360.0, 500.0))
+	var target := _spawn_dummy(Vector2(410.0, 500.0))
+	var outside := _spawn_dummy(Vector2(550.0, 500.0))
+	var air := _spawn_dummy(Vector2(360.0, 420.0))
+	air.is_air = true
+	# 盖伦的规则是攻城行军；放一个不入树的同阵营 Tower 锚点，避免测试脉冲时被场景塔的
+	# 固定推进目标带走，移动能力单独用统一移动应用验证。
+	var movement_anchor := Tower.new()
+	movement_anchor.team = 0
+	movement_anchor.hp = 100000.0
+	movement_anchor.body_radius = 54.0
+	movement_anchor.position = garen.position
+	garen._target = movement_anchor
+	_main._battle_presentation.attach_unit(garen, CardDB.get_card("garen"))
+	var garen_view := _view_for(garen)
+	_main._begin_configured_active_skill_cast(garen, skill)
+	_main._active_skill_effect_system.apply(garen, skill)
+	if garen_view != null:
+		garen_view._sync_visual(false, 0.0)
+	var animation_ok := garen_view != null and garen_view._animation_player.current_animation == "Spell3_0"
+	var cast_locks_ok := (
+		garen.is_active_skill_attack_locked()
+		and not garen.is_active_skill_movement_locked()
+		and not garen.is_active_skill_facing_locked()
+		and is_equal_approx(garen.active_skill_cast_timer, 3.0)
+	)
+	# 主动施法锁定攻击但不锁移动：实际走一次统一移动应用，确认窗口内仍可位移。
+	var position_before_move := garen.position
+	garen._move_intent = Vector2.RIGHT * garen.move_speed
+	_main._apply_unit_movement(_main.SIM_DT)
+	var moved_during_cast := garen.position.distance_to(position_before_move) > 0.001
+	var target_before := target.hp
+	var outside_before := outside.hp
+	var air_before := air.hp
+	var no_immediate_damage: bool = is_equal_approx(target.hp, target_before) and _main._active_skill_effect_system.continuous_area_effects.size() == 1
+	_run_main_ticks(19)
+	var no_early_pulse := is_equal_approx(target.hp, target_before) and is_equal_approx(outside.hp, outside_before)
+	_run_main_ticks(1)
+	var first_pulse := (
+		is_equal_approx(target_before - target.hp, float(skill.damage))
+		and is_equal_approx(outside.hp, outside_before)
+		and is_equal_approx(air.hp, air_before)
+	)
+	# 把施法者移到原本圈外的目标附近；下一次脉冲必须读取新位置，而不是固定 Cast Start 坐标。
+	garen.position = Vector2(470.0, 500.0)
+	movement_anchor.position = garen.position
+	_run_main_ticks(20)
+	var follows_caster := is_equal_approx(outside_before - outside.hp, float(skill.damage))
+	_run_main_ticks(20)
+	var three_second_timeline: bool = (
+		is_equal_approx(target_before - target.hp, float(skill.damage) * 3.0)
+		and is_equal_approx(outside_before - outside.hp, float(skill.damage) * 2.0)
+		and is_equal_approx(air.hp, air_before)
+		and _main._active_skill_effect_system.continuous_area_effects.is_empty()
+		and is_zero_approx(garen.active_skill_cast_timer)
+	)
+	_expect(
+		StringName(skill.get("kind", "")) == &"continuous_area"
+		and is_equal_approx(float(skill.get("duration", 0.0)), 3.0)
+		and is_equal_approx(float(skill.get("tick_interval", 0.0)), 1.0)
+		and animation_ok and cast_locks_ok and moved_during_cast and no_immediate_damage
+		and no_early_pulse and first_pulse and follows_caster and three_second_timeline,
+		"盖伦审判播放 Spell3_0 3 秒；每秒按施法者当前位置造成环形伤害，只锁攻击并允许移动，地面目标可被跟随命中而空中目标不受影响",
+	)
+	_main._active_skill_effect_system.continuous_area_effects.clear()
+	_main._active_skill_effect_system.frontal_effects.clear()
+	movement_anchor.free()
+	for unit in [garen, target, outside, air]:
+		if is_instance_valid(unit):
+			unit.free()
+
 func _check_masteryi_double_strike_and_highlander() -> void:
 	var yi := _spawn_test_unit("masteryi", 0, Vector2(520.0, 900.0))
 	var target := _spawn_dummy(Vector2(520.0, 850.0))
@@ -265,7 +344,7 @@ func _check_masteryi_double_strike_and_highlander() -> void:
 		and is_equal_approx(double_strike_damage, yi.damage * 1.5),
 		"剑圣第三段 2013 Passive 算两次普通攻击，第二刀在固定延迟后造成普通攻击 50% 伤害",
 	)
-	var skill: Dictionary = CardDB.get_card("masteryi").active_skill
+	var skill: Dictionary = CardDB.active_skills_for("masteryi")[0]
 	yi._attack_windup = 0.18
 	_main._active_skill_effect_system.apply(yi, skill)
 	var haste_mechanics := (

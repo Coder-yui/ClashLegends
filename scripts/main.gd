@@ -1,8 +1,8 @@
 extends Node2D
 ## 主场景：战场搭建、部署输入、敌方占位出兵、胜负判定。
 
-const ART_DEV_PANEL_SCRIPT := preload("res://scripts/art_dev_panel.gd")
-const ACTIVE_SKILL_BAR_SCRIPT := preload("res://scripts/active_skill_bar.gd")
+const ART_DEV_PANEL_SCRIPT := preload("res://scripts/ui/art_dev_panel.gd")
+const ACTIVE_SKILL_BAR_SCRIPT := preload("res://scripts/ui/active_skill_bar.gd")
 const SPELL_SYSTEM_SCRIPT := preload("res://scripts/battle/spell_system.gd")
 const ACTIVE_SKILL_EFFECT_SYSTEM_SCRIPT := preload("res://scripts/battle/active_skill_effect_system.gd")
 const ARENA_BACKGROUND_TEXTURE := preload("res://assets/arena/arena_rift_v4.png")
@@ -45,10 +45,6 @@ const LANDING_MAX_CORRECTION := 8.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
 const BRIDGE_EDGE_MARGIN := 2.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
 const DEPLOY_PREVIEW_VALID := Color(0.35, 0.95, 0.58, 0.82)
 const DEPLOY_PREVIEW_INVALID := Color(1.0, 0.30, 0.30, 0.88)
-# 公主塔的权杖晶石相对 2D 塔心的屏幕偏移，只用于弹体绘制，不参与射程、碰撞或命中。
-# 蓝方/红方塔模型在表现层相差 180°，Tower.setup() 会镜像 X。
-const PRINCESS_PROJECTILE_VISUAL_OFFSET := Vector2(12.0, -205.0)
-const TOWER_RANGE_REDUCTION := 1.5 * TILE_SIZE
 # 双方地面部署区各 15 行；贴河外角与国王塔后方两侧不可部署。
 const TEAM_0_FIRST_ROW := RIVER_BOTTOM_ROW
 const TEAM_0_LAST_ROW := ARENA_ROWS - 1
@@ -56,48 +52,6 @@ const BACK_CENTER_MIN_COLUMN := 6
 const BACK_CENTER_MAX_COLUMN := 11
 const POCKET_FIRST_ROW := 9
 const POCKET_LAST_ROW := RIVER_TOP_ROW - 1
-
-# 视觉占地、部署禁区与移动碰撞分离：塔仍显示为 3x3 / 4x4，物理与部署圆稍微内收，
-# 给放大后的人物在公主塔侧面和水晶底部留下稳定的绕行空间。
-const PRINCESS_STATS := {"hp": 2100.0, "damage": 55.0, "range": 300.0 - TOWER_RANGE_REDUCTION, "interval": 0.8, "radius": 54.0, "visual_radius": 60.0, "deployment_radius": 54.0, "first_hit": 0.2, "projectile_speed": 420.0, "projectile_visual_offset": PRINCESS_PROJECTILE_VISUAL_OFFSET}
-# 基地水晶只承担被保护/被摧毁的胜负目标，不再索敌或攻击；兵线由主机固定模拟生成。
-const KING_STATS := {"hp": 3600.0, "damage": 0.0, "range": 0.0, "interval": 1.0, "radius": 72.0, "visual_radius": 80.0, "deployment_radius": 72.0, "first_hit": 0.2, "projectile_speed": 0.0, "can_attack": false}
-# 公主塔阶段模式：满血显示 Base；血量破 2/3 换 Stage1 并播 Broken1 坠落，
-# 破 1/3 换 Stage2 并播 Broken2；被摧毁换 Stage3 并播 Broken3，演完定格 Rubble。
-# 掉到哪个阶段就直接播该阶段的碎块动画（跨阶段跳播、打断旧的）。
-# 素材轨迹是组装向（地下→附着位），窗口 [落定时刻, 附着时刻] 反转烘焙成
-# 正放坠毁（原动画倒放压缩到 2 秒）。
-const PRINCESS_VISUAL_CONFIG := {
-	"scene_paths": [
-		"res://assets/towers/princess/princess_tower_blue_view.tscn",
-		"res://assets/towers/princess/princess_tower_red_view.tscn",
-	],
-	"ground_cutoff": 0.0,
-	"animations": {
-		"destroy": "Destroyed",
-		"stage_surfaces": ["Base", "Stage1", "Stage2"],
-		"final_stage_surface": "Stage3",
-		"ruin_surface": "Rubble",
-		"debris": [
-			{"bones": "Break1", "surface": "Broken1", "window": [10.0, 15.0]},
-			{"bones": "Break2", "surface": "Broken2", "window": [8.0, 15.0]},
-			{"bones": "Break3", "surface": "Broken3", "window": [8.0, 15.0]},
-		],
-		"debris_duration": 2.0,
-	},
-}
-const NEXUS_VISUAL_CONFIG := {
-	"scene_paths": [
-		"res://assets/towers/nexus/nexus_blue_view.tscn",
-		"res://assets/towers/nexus/nexus_red_view.tscn",
-	],
-	"ground_cutoff": 0.0,
-	"animations": {
-		"spawn": "Nexus_spawn_anm", "idle": "Idle1_Base", "destroy": "Death",
-		"spawn_duration": 2.5, "destroy_duration": 4.0,
-		"alive_materials": ["SRUAP_OrderNexus_Mat"], "destroyed_materials": ["Destroyed"],
-	},
-}
 
 # 比赛计时：3 分钟正赛，平局进 60 秒加时（先破塔者胜），再平则平局
 const MATCH_TIME := 180.0
@@ -143,7 +97,7 @@ var _active_skills: Dictionary = {}
 var _next_active_ability_id := 1
 ## 主动请求确认后按 Host 由 input_tick 计算出的 execute_tick 等待；同一 ability_id 只能存在一次。
 var _pending_active_skill_activations: Array[Dictionary] = []
-## Cast Start 后的通用 Gameplay Impact 队列；与 dual_form 的旧专用前方技能队列分开。
+## Cast Start 后的统一 Gameplay Impact 队列，所有主动技能 kind 共用。
 var _pending_active_skill_impacts: Array[Dictionary] = []
 var _ai: AIOpponent
 var _selected_card := ""
@@ -161,7 +115,7 @@ var _next_minion_wave_time := FIRST_MINION_WAVE_TIME
 var _minion_waves_enabled := true
 # 本次对战选定的 8 张卡组（空表示未指定，随机取）
 var _deck: Array = []
-## card_id -> active_skills 候选下标。当前每张卡只有一项，界面与联机协议先保留选择能力。
+## card_id -> active_skills 候选下标。界面与联机协议保留多候选选择，但每次出战只携带一项。
 var _active_skill_choices: Dictionary = {}
 var _skin_choices: Dictionary = {}
 ## 主机收到的客户端卡组；用于校验出牌归属及前两槽主动资格。
@@ -645,28 +599,28 @@ func _create_towers() -> void:
 		[1, Vector2(BRIDGE_X_RIGHT, 6.5 * TILE_SIZE)],
 	]:
 		var t := Tower.new()
-		t.setup(spec[0], PRINCESS_STATS, false)
+		t.setup(spec[0], CardDB.PRINCESS_TOWER_STATS, false)
 		t.position = spec[1]
 		add_child(t)
 		t.z_index = 10
 		if _battle_presentation != null:
-			_battle_presentation.attach_tower(t, PRINCESS_VISUAL_CONFIG)
+			_battle_presentation.attach_tower(t, CardDB.PRINCESS_TOWER_VISUAL_CONFIG)
 		_towers.append(t)
 	_king_player = Tower.new()
-	_king_player.setup(0, KING_STATS, true)
+	_king_player.setup(0, CardDB.NEXUS_STATS, true)
 	_king_player.position = Vector2(9.0 * TILE_SIZE, 29.0 * TILE_SIZE)
 	add_child(_king_player)
 	_king_player.z_index = 10
 	if _battle_presentation != null:
-		_battle_presentation.attach_tower(_king_player, NEXUS_VISUAL_CONFIG)
+		_battle_presentation.attach_tower(_king_player, CardDB.NEXUS_VISUAL_CONFIG)
 	_towers.append(_king_player)
 	_king_enemy = Tower.new()
-	_king_enemy.setup(1, KING_STATS, true)
+	_king_enemy.setup(1, CardDB.NEXUS_STATS, true)
 	_king_enemy.position = Vector2(9.0 * TILE_SIZE, 3.0 * TILE_SIZE)
 	add_child(_king_enemy)
 	_king_enemy.z_index = 10
 	if _battle_presentation != null:
-		_battle_presentation.attach_tower(_king_enemy, NEXUS_VISUAL_CONFIG)
+		_battle_presentation.attach_tower(_king_enemy, CardDB.NEXUS_VISUAL_CONFIG)
 	_towers.append(_king_enemy)
 
 ## 构建导航网格：河道（除两座桥）与所有防御塔为障碍
@@ -798,14 +752,7 @@ func preview_active_skill(unit: Unit, skill: Dictionary) -> bool:
 	if unit == null or not is_instance_valid(unit):
 		return false
 	# ArtDev 只绕过玩家命令缓冲；普通主动仍必须经过 Cast Start → Impact → Recovery。
-	# dual_form 自己包含变形/前方技能的完整特殊时间轴，不能在这里重复启动一次。
-	if String(skill.get("kind", "")) == "dual_form":
-		return _active_skill_effect_system.apply(unit, skill)
-	var prepared_skill: Dictionary = _active_skill_effect_system.prepare_cast(unit, skill)
-	_active_skill_effect_system.apply_cast_start(unit, prepared_skill)
-	_begin_configured_active_skill_cast(unit, prepared_skill)
-	_queue_active_skill_impact(unit, prepared_skill, maxf(float(prepared_skill.get("impact_delay", 0.0)), 0.0))
-	return true
+	return _start_active_skill_cast(unit, skill)
 
 func _register_dynamic_building(unit: Unit) -> void:
 	if nav == null or not unit.is_building:
@@ -827,8 +774,7 @@ func _clear_art_dev_units() -> void:
 	_freeze_effects.clear()
 	_slow_zones.clear()
 	_slow_effects.clear()
-	_active_skill_effect_system.pending_frontal_stuns.clear()
-	_active_skill_effect_system.frontal_effects.clear()
+	_active_skill_effect_system.clear()
 	queue_redraw()
 
 func _world_to_arena_tile(pos: Vector2) -> Vector2i:
@@ -1212,24 +1158,35 @@ func _execute_card_deployment(p_team: int, card_id: String, pos: Vector2) -> voi
 func launch_attack(attacker: Node2D, target: Node2D, amount: float, projectile_speed: float, splash_radius: float, knockback: float, projectile_color: Color, effects: Dictionary = {}) -> void:
 	_projectile_system.launch(attacker, target, amount, projectile_speed, splash_radius, knockback, projectile_color, effects)
 
+## 持续伤害（龙王吐息、审判等）共用的战斗层入口。调用方决定脉冲频率和命中目标，
+## 这里统一处理攻击来源、护盾/隐匿、受击表现、击杀以及可选的普攻击中回调。
+func apply_damage_pulse(source: Node2D, target: Node2D, amount: float, splash_radius: float = 0.0, origin: Vector2 = Vector2(INF, INF), counts_as_attack: bool = false, source_form_index: int = -1, effects: Dictionary = {}) -> bool:
+	if source == null or not is_instance_valid(source) or target == null or not is_instance_valid(target):
+		return false
+	if target.hp <= 0.0 or amount <= 0.0:
+		return false
+	var source_team := int(source.team)
+	var source_position := source.global_position if origin.x == INF else origin
+	return resolve_attack_hit(source_team, source_position, target, amount, maxf(splash_radius, 0.0), 0.0, source, source_position, source_form_index, effects, counts_as_attack)
+
 func _tick_projectiles(dt: float) -> void:
 	_projectile_system.tick(dt)
 
-func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: float, radius: float, knockback: float, from: Node2D = null, source_position: Vector2 = Vector2(INF, INF), source_form_index: int = -1, effects: Dictionary = {}) -> void:
+func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: float, radius: float, knockback: float, from: Node2D = null, source_position: Vector2 = Vector2(INF, INF), source_form_index: int = -1, effects: Dictionary = {}, counts_as_attack: bool = true) -> bool:
 	if primary == null or not is_instance_valid(primary) or primary.hp <= 0.0:
-		return
+		return false
 	if radius <= 0.0:
 		var was_alive: bool = primary.hp > 0.0
 		var landed: bool = primary.take_damage(amount, from, p_team, source_position)
 		if landed:
 			_apply_attack_hit_effects(primary, effects)
-		if landed and from is Unit and is_instance_valid(from):
+		if landed and counts_as_attack and from is Unit and is_instance_valid(from):
 			(from as Unit).on_attack_landed(source_form_index)
-			if was_alive and primary.hp <= 0.0:
-				(from as Unit).on_enemy_killed(primary)
+		if landed and was_alive and primary.hp <= 0.0 and from is Unit and is_instance_valid(from):
+			(from as Unit).on_enemy_killed(primary)
 		if landed and knockback > 0.0 and primary is Unit and is_instance_valid(primary) and primary.hp > 0.0:
 			(primary as Unit).apply_knockback(origin, knockback)
-		return
+		return landed
 	var impact_pos := primary.global_position
 	var any_landed := false
 	for c in get_tree().get_nodes_in_group("combatants"):
@@ -1245,8 +1202,9 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 				(from as Unit).on_enemy_killed(c)
 			if landed and knockback > 0.0 and c is Unit and is_instance_valid(c) and c.hp > 0.0:
 				(c as Unit).apply_knockback(origin, knockback)
-	if any_landed and from is Unit and is_instance_valid(from):
+	if any_landed and counts_as_attack and from is Unit and is_instance_valid(from):
 		(from as Unit).on_attack_landed(source_form_index)
+	return any_landed
 
 func _apply_attack_hit_effects(target: Node2D, effects: Dictionary) -> void:
 	if target is Unit and is_instance_valid(target) and target.hp > 0.0:
@@ -1579,25 +1537,28 @@ func _activate_active_skill(ability_id: int, expected_team: int = -1) -> bool:
 	var entry: Dictionary = _active_skills[ability_id]
 	var unit: Unit = entry.unit
 	var skill: Dictionary = entry.skill
+	if not _start_active_skill_cast(unit, skill):
+		return false
 	entry["uses_remaining"] = maxi(int(entry.get("uses_remaining", entry.get("max_uses", 1))) - 1, 0)
 	entry["cooldown_left"] = maxf(float(skill.get("cooldown", 0.0)), 0.0)
 	_active_skills[ability_id] = entry
-	# 先发布 Cast Start，再按 impact_delay 结算效果；AnimationPlayer 完成事件不参与这里。
-	var skill_kind := String(skill.get("kind", ""))
-	var prepared_skill: Dictionary = skill
-	if skill_kind == "dual_form":
-		_active_skill_effect_system.apply_cast_start(unit, prepared_skill)
-		_active_skill_effect_system.activate_dual_form(unit, prepared_skill)
-	else:
-		prepared_skill = _active_skill_effect_system.prepare_cast(unit, skill)
-		_active_skill_effect_system.apply_cast_start(unit, prepared_skill)
-		_begin_configured_active_skill_cast(unit, prepared_skill)
-		_queue_active_skill_impact(unit, prepared_skill, maxf(float(prepared_skill.get("impact_delay", 0.0)), 0.0))
 	if _active_skill_bar != null:
 		_active_skill_bar.set_pending(ability_id, false)
 		_sync_active_skill_deployment_readiness()
 	if mode == "host":
 		_rpc_active_skill_used.rpc(ability_id, int(entry["uses_remaining"]), float(entry["cooldown_left"]))
+	return true
+
+func _start_active_skill_cast(unit: Unit, skill: Dictionary) -> bool:
+	var prepared_skill: Dictionary = _active_skill_effect_system.prepare_cast(unit, skill)
+	if StringName(prepared_skill.get("kind", "")) == &"dual_form":
+		prepared_skill = _active_skill_effect_system.prepare_dual_form_cast(unit, prepared_skill)
+	if prepared_skill.is_empty():
+		return false
+	# 先发布 Cast Start，再按 impact_delay 进入固定 Tick 队列；动画回调不参与结算。
+	_active_skill_effect_system.apply_cast_start(unit, prepared_skill)
+	_begin_configured_active_skill_cast(unit, prepared_skill)
+	_queue_active_skill_impact(unit, prepared_skill, maxf(float(prepared_skill.get("impact_delay", 0.0)), 0.0))
 	return true
 
 func _begin_configured_active_skill_cast(unit: Unit, skill: Dictionary) -> void:
@@ -1606,11 +1567,12 @@ func _begin_configured_active_skill_cast(unit: Unit, skill: Dictionary) -> void:
 	if cast_duration <= 0.0 and action_name == &"":
 		return
 	var cast_locks: Array = skill.get("cast_locks", Unit.DEFAULT_CAST_LOCKS)
+	var cast_facing: Vector2 = skill.get("cast_forward", unit.get_visual_facing_direction())
 	if cast_duration > 0.0:
-		unit.begin_active_skill_cast(cast_duration, unit.get_visual_facing_direction(), cast_locks)
+		unit.begin_active_skill_cast(cast_duration, cast_facing, cast_locks)
 	if action_name != &"":
 		unit.play_visual_action(action_name, cast_duration)
-	if StringName(skill.get("kind", "")) == &"frontal":
+	if StringName(skill.get("kind", "")) in [&"frontal", &"dual_form"]:
 		var cast_forward := unit.active_skill_cast_facing
 		if cast_forward.length_squared() < 0.001:
 			cast_forward = unit.get_visual_facing_direction()
@@ -1620,6 +1582,8 @@ func _begin_configured_active_skill_cast(unit: Unit, skill: Dictionary) -> void:
 		if cast_forward.length_squared() < 0.001:
 			cast_forward = unit.get_visual_facing_direction()
 		_active_skill_effect_system.begin_forward_area_visual(unit, skill, cast_forward)
+	elif StringName(skill.get("kind", "")) == &"continuous_area":
+		_active_skill_effect_system.begin_continuous_area_visual(unit, skill)
 
 ## 水晶兵线入口。只在单机/主机固定模拟调用，最终仍统一走 _spawn_unit 与现有 RPC。
 func _tick_minion_waves(dt: float) -> void:
@@ -1710,7 +1674,7 @@ func _sim_step(dt: float) -> void:
 	# 已存在的施法时间线先推进；本 Tick 新执行的命令从当前 Tick 边界开始计时。
 	_tick_active_skill_cooldowns(dt)
 	_tick_pending_active_skill_impacts(dt)
-	_active_skill_effect_system.tick_pending(dt)
+	_active_skill_effect_system.tick_effects(dt)
 	_tick_pending_card_deployments(dt)
 	_tick_pending_active_skills(dt)
 	_tick_slow_zones(dt)
@@ -1750,7 +1714,7 @@ func _sim_step(dt: float) -> void:
 			_deploy_card(0, "aurelionsol", Vector2(410, 700))
 			_deploy_card(1, "xin", Vector2(300, 580))
 			var auto_gnar := _spawn_unit(0, "gnar", Vector2(520, 760), 0.0)
-			_active_skill_effect_system.activate_dual_form(auto_gnar, CardDB.get_card("gnar").active_skill)
+			preview_active_skill(auto_gnar, CardDB.active_skills_for("gnar")[0])
 			_auto_gnar_revert_unit = auto_gnar
 			_auto_gnar_revert_timer = 2.4
 
@@ -2507,6 +2471,13 @@ func _draw_frontal_skill_effect(effect: Dictionary) -> void:
 	var line_color := Color(0.28, 0.68, 1.0, 0.9) if int(effect.get("team", 0)) == 0 else Color(1.0, 0.34, 0.24, 0.9)
 	var fill_color := Color(line_color.r, line_color.g, line_color.b, 0.10 + 0.06 * remaining_ratio)
 	var shape := StringName(effect.get("shape", "rectangle"))
+	if shape == &"continuous_area":
+		var radius := maxf(length, 0.0)
+		var pulse := 0.5 + 0.5 * sin(progress * TAU * 2.0)
+		draw_circle(center, radius, Color(line_color.r, line_color.g, line_color.b, 0.035 + 0.025 * pulse))
+		draw_arc(center, radius, 0.0, TAU, 72, Color(line_color.r, line_color.g, line_color.b, 0.72 * remaining_ratio), 3.0, true)
+		draw_arc(center, radius * (0.82 + 0.10 * pulse), 0.0, TAU, 64, Color(1.0, 0.88, 0.36, 0.34 * remaining_ratio), 2.0, true)
+		return
 	if shape == &"target_circle":
 		var radius := length
 		# 星落/天瀑的落点需要清晰可辨，但不能用大面积色块遮住圈内人物。

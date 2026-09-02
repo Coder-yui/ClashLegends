@@ -1,6 +1,6 @@
 extends SceneTree
 ## 使用正式墓碑黑雾与小鬼模型拍摄墓碑卡面。
-## 运行：Godot --path . --script tools/capture_tombstone_card_art.gd
+## 运行：Godot --path . --script tools/capture/capture_tombstone_card_art.gd
 
 const RENDER_SIZE := Vector2i(616, 1120)
 const OUTPUT_SIZE := Vector2i(308, 560)

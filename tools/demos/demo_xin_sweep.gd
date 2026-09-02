@@ -1,8 +1,8 @@
 extends Node2D
 ## 赵信部署版「新月护卫」演示：生成首帧 Spell4 并立即击退四周敌人（按质量分级）；
 ## 整段 1 秒锁行动，结束后按权威状态衔接移动或三段普攻。
-## 运行方式：Godot 编辑器打开 tests/demo_xin_sweep.tscn 后按 F6，或命令行：
-##   Godot --path . tests/demo_xin_sweep.tscn
+## 运行方式：Godot 编辑器打开 tools/demos/demo_xin_sweep.tscn 后按 F6，或命令行：
+##   Godot --path . tools/demos/demo_xin_sweep.tscn
 ## 每轮时间线：生成并立即击退 → 1 秒 Spell4 → 普攻循环。
 ## 看点：
 ##   - 赵信生成就开始 Spell4，演出期间原地不动但仍拥有碰撞并可被攻击
@@ -112,7 +112,7 @@ func spawn_round() -> void:
 
 ## 静止木桩：不索敌、不移动、不还手，但保留质量与体型。
 func _dummy_stats(base_id: String) -> Dictionary:
-	var stats: Dictionary = (CardDB.imp_stats() if base_id == "imp" else CardDB.get_card(base_id)).duplicate()
+	var stats: Dictionary = CardDB.get_unit_stats(base_id).duplicate()
 	stats["deploy_time"] = 0.0
 	stats["hp"] = 999999.0
 	stats["damage"] = 0.0

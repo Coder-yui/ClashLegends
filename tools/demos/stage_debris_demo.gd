@@ -3,7 +3,7 @@ extends Node
 ## 时序（游戏时间）：破 2/3 掉 Broken1 → Broken1 播到一半再破 1/3（直接切
 ## Stage2+Broken2，Broken1 立即消失）→ Broken2 播到一半被摧毁（直接切
 ## Stage3+Broken3）→ 演完定格 Rubble。每段碎块动画 2 秒，倒放原动画。
-## 运行：Godot --path . res://tests/stage_debris_demo.tscn
+## 运行：Godot --path . res://tools/demos/stage_debris_demo.tscn
 ## 操作：R 重播 / S 切换慢放速度（0.25 / 0.5 / 1.0）/ ESC 退出。
 
 const TIME_SCALES := [0.25, 0.5, 1.0]
@@ -74,10 +74,10 @@ func _run_sequence() -> void:
 		await get_tree().process_frame
 		await get_tree().process_frame
 	_demo_tower = Tower.new()
-	_demo_tower.setup(0, _main.PRINCESS_STATS, false)
+	_demo_tower.setup(0, CardDB.PRINCESS_TOWER_STATS, false)
 	_demo_tower.position = DEMO_POSITION
 	_main.add_child(_demo_tower)
-	_main._battle_presentation.attach_tower(_demo_tower, _main.PRINCESS_VISUAL_CONFIG)
+	_main._battle_presentation.attach_tower(_demo_tower, CardDB.PRINCESS_TOWER_VISUAL_CONFIG)
 	await get_tree().create_timer(0.8).timeout
 	_status_label.text = "① 破 2/3 血：Base → Stage1+Broken1，播 Broken1 坠落（2 秒倒放）"
 	_demo_tower.take_damage(_demo_tower.max_hp * 0.4)
