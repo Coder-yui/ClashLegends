@@ -105,25 +105,40 @@ func _check_sett_shield_and_combat_decay() -> void:
 	_main._active_skill_effect_system.apply_cast_start(sett, full_prepared)
 	var cast_start_shield := is_equal_approx(sett.shield_hp, 300.0) and is_zero_approx(sett.skill_resource_value)
 	sett._tick_active_statuses(1.0)
-	var halfway_shield := is_equal_approx(sett.shield_hp, 150.0)
+	var halfway_shield := (
+		is_equal_approx(sett.shield_hp, 150.0)
+		and is_equal_approx(sett.get_shield_ratio(), 0.5)
+		and is_equal_approx(sett.get_shield_health_ratio(), 150.0 / sett.max_hp)
+	)
 	sett._tick_active_statuses(1.0)
 	var shield_expired := is_zero_approx(sett.shield_hp) and is_zero_approx(sett.shield_timer)
 
 	sett.add_skill_resource(100.0)
 	sett._tick_active_statuses(0.75)
 	var combat_delay_holds := is_equal_approx(sett.skill_resource_value, 100.0)
-	sett.take_damage(10.0)
-	sett._tick_active_statuses(1.0)
-	var damage_refreshes_decay := is_equal_approx(sett.skill_resource_value, 110.0)
+	sett.take_damage(1.0)
+	var damage_refreshes_decay := is_equal_approx(sett.skill_resource_value, 101.0)
 	sett._tick_active_statuses(0.5)
-	var out_of_combat_decay := sett.skill_resource_value < 110.0
+	var reentered_combat_holds := is_equal_approx(sett.skill_resource_value, 101.0)
+	sett._tick_active_statuses(0.5)
+	var exact_delay_boundary_holds := is_equal_approx(sett.skill_resource_value, 101.0)
+	sett._tick_active_statuses(0.1)
+	var out_of_combat_decay := sett.skill_resource_value < 101.0
+
+	sett.add_shield(100.0, 2.0, true)
+	var hp_before_shielded_hit := sett.hp
+	sett.take_damage(60.0)
+	var shield_absorbs_first := is_equal_approx(sett.hp, hp_before_shielded_hit) and is_equal_approx(sett.shield_hp, 40.0)
+	sett.take_damage(60.0)
+	var damage_overflow_reaches_hp := is_equal_approx(sett.shield_hp, 0.0) and is_equal_approx(sett.hp, hp_before_shielded_hit - 20.0)
 	_expect(
-		zero_grit_no_shield and resource_from_attack and cast_start_shield and halfway_shield and shield_expired,
+		zero_grit_no_shield and resource_from_attack and cast_start_shield and halfway_shield and shield_expired
+		and shield_absorbs_first and damage_overflow_reaches_hp,
 		"腕豪 0 豪意不生成护盾，攻击可积攒豪意，技能释放瞬间按满豪意获得 300 护盾并在 2 秒线性衰减至 0",
 	)
 	_expect(
-		combat_delay_holds and damage_refreshes_decay and out_of_combat_decay,
-		"腕豪受伤/攻击后的豪意会刷新脱战计时，脱战后才开始衰减",
+		combat_delay_holds and damage_refreshes_decay and reentered_combat_holds and exact_delay_boundary_holds and out_of_combat_decay,
+		"腕豪受伤/攻击后的豪意会刷新脱战计时，1 秒内重新进入战斗不衰减，脱战满 1 秒后才开始衰减",
 	)
 	for unit in [zero_sett, sett, dummy]:
 		if is_instance_valid(unit):
@@ -295,19 +310,24 @@ func _check_animation_routes() -> void:
 	var sett_skill_route := false
 	if sett_view != null:
 		sett_view._play_attack(1)
-		sett_view._transition_to_basic_state(2, 0.0, &"attack")
-		var first_to_passive_run := sett_view._animation_player.current_animation == "Run_Passive"
+		sett_view._transition_to_basic_state(2, -1.0, &"attack")
+		var first_to_passive_run := (
+			sett_view._animation_player.current_animation == "Run_Passive"
+			and is_equal_approx(sett_view._last_clip_blend_time, sett_view._transition_blend(&"action_out"))
+		)
 		sett_view._play_attack(2)
-		sett_view._transition_to_basic_state(2, 0.0, &"attack")
+		sett_view._transition_to_basic_state(2, -1.0, &"attack")
 		var second_transition := (
 			sett_view._animation_player.current_animation == "Sett_Passive_INTO_Run_anm"
 			and is_equal_approx(sett_view._last_clip_blend_time, sett_view._transition_blend(&"sequence"))
 		)
 		sett_view._on_animation_finished(&"Sett_Passive_INTO_Run_anm")
-		sett_routes = (
-			first_to_passive_run and second_transition
-			and sett_view._animation_player.current_animation == "Run_Base"
+		var second_to_base_run := (
+			sett_view._animation_player.current_animation == "Run_Base"
 			and is_equal_approx(sett_view._last_clip_blend_time, sett_view._transition_blend(&"sequence"))
+		)
+		sett_routes = (
+			first_to_passive_run and second_transition and second_to_base_run
 		)
 
 		sett.play_visual_action(&"active", 1.4)
@@ -325,7 +345,7 @@ func _check_animation_routes() -> void:
 			and is_equal_approx(sett_view._last_clip_blend_time, sett_view._transition_blend(&"action_out"))
 			and not CardDB.get_card("sett").visual_animations.get("transitions", {}).has("skill>move")
 		)
-	_expect(sett_routes, "腕豪第一拳丢失目标后接 Run Passive；第二拳先接 Sett Passive Into Run 再进入 Run Base")
+	_expect(sett_routes, "腕豪第二拳无下一目标时先接 Sett Passive Into Run 再进入 Run Base，第一拳直接接 Run Passive")
 	_expect(sett_skill_route, "腕豪蓄意轰拳不再使用 Spell2 IntoRun；技能结束按 action_out 直接进入 Run Base")
 
 	var garen := _spawn_test_unit("garen", 0, Vector2(260.0, 900.0))

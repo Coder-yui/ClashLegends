@@ -23,6 +23,7 @@
 ### 四段双拳连招
 
 - 命中后到下一次命中的间隔数组为 `[0.28, 1.05, 0.28, 1.05]`，形成“两拳、停顿、两拳、停顿”的循环。
+- 第二或第四拳命中后如果已经没有攻击范围内的下一目标，会立即结束攻击后摇并进入移动，不播放对应的 `Into_Idle` 收势；仍有目标时保持原连招停顿。
 - 四段伤害倍率为 `[1.0, 1.5, 1.0, 1.5]`，对应 `72 / 108 / 72 / 108` 点基础伤害。
 
 ### 豪意
@@ -40,6 +41,7 @@
 - 基础伤害 `130`，随豪意从 `1.0x` 线性提升到满豪意 `2.0x`，所以外圈最高 `260` 点。
 - 梯形中央比例 `0.34`，中央伤害倍率 `1.5`；满豪意中央最高 `390` 点。
 - 护盾按豪意比例从 `0` 到 `300` 点映射，Cast Start 立即获得，持续 `2.0 s` 并线性衰减。
+- 护盾剩余值与生命条处于同一行，接在当前生命值段之后以白色条显示；护盾即使没有受到攻击也会按时间减少，伤害结算时优先扣除护盾。
 - 普通资源 `impact_delay = 0.72 s`、`cast_duration = 1.4 s`；施法期间全锁。
 - 满豪意使用 `Spell2_Strong`，但权威伤害仍由固定模拟的 impact 时间结算。
 
@@ -50,7 +52,7 @@
 - 四段出手：`Attack1_Start`、`Attack1_Passive_Start`、`Attack2_Start`、`Attack2_Passive_Start`。
 - 四段命中：`Attack1_Hit`、`Sett_Attack1_Passive_anm`、`Attack2_Hit`、`Sett_Attack2_Passive_anm`。
 - 被动段收势：第二、第四段使用 `Attack1_Passive_Into_Idle`、`Attack2_Passive_Into_Idle`；`attack_recover_delay = 0.32 s`。
-- 攻击后移动：`Run_Passive`、`Run_Base`、`Run_Passive`、`Run_Base`；第二、第四段的专用转跑为 `Sett_Passive_INTO_Run_anm`。
+- 攻击后移动：`Run_Passive`、`Run_Base`、`Run_Passive`、`Run_Base`；第二、第四拳无下一目标而提前移动时使用 `Sett_Passive_INTO_Run_anm`，随后进入 `Run_Base`。
 - 普通主动技能 `active`：`Sett_spell2_anm`，`1.4 s`；入口使用全局 `action_in = 0.08 s`，结束使用全局 `action_out = 0.14 s` 进入 `Run_Base`。
 - 满豪意主动技能 `active_strong`：`Spell2_Strong`，`1.4 s`；入口使用全局 `action_in = 0.08 s`，结束使用全局 `action_out = 0.14 s` 进入 `Run_Base`。
 - 死亡：`Death`，表现时长 `0.8 s`。

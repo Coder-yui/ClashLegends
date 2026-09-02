@@ -312,6 +312,9 @@ func _check_cast_policies_and_snapshot() -> void:
 	stationary.skill_resource_value = 150.0
 	stationary.skill_resource_enabled = true
 	stationary.blind_attack_charges = 2
+	stationary.shield_max_hp = 200.0
+	stationary.shield_hp = 125.0
+	stationary.shield_timer = 1.0
 	stationary.active_speed_multiplier = 1.5
 	stationary.active_attack_speed_multiplier = 1.4
 	stationary.active_ability_id = 9001
@@ -322,7 +325,7 @@ func _check_cast_policies_and_snapshot() -> void:
 	var snapshot_system := NetworkSnapshotSystem.new(_main)
 	var snapshot_header := snapshot_system.snapshot_header()
 	var snapshot_contract: bool = (
-		payload.size() == 35
+		payload.size() == 37
 		and int(payload[NetworkSnapshotSystem.U_ACTION_SERIAL]) == stationary.get_visual_action_serial()
 		and String(payload[NetworkSnapshotSystem.U_ACTION_NAME]) == "active"
 		and is_equal_approx(float(payload[NetworkSnapshotSystem.U_ACTION_DURATION]), 1.2)
@@ -337,6 +340,8 @@ func _check_cast_policies_and_snapshot() -> void:
 		and is_equal_approx(float(payload[NetworkSnapshotSystem.U_ACTIVE_ATTACK_SPEED_MULTIPLIER]), 1.4)
 		and int(payload[NetworkSnapshotSystem.U_ACTIVE_SKILL_USES_REMAINING]) == 2
 		and is_equal_approx(float(payload[NetworkSnapshotSystem.U_ACTIVE_SKILL_COOLDOWN]), 1.25)
+		and is_equal_approx(float(payload[NetworkSnapshotSystem.U_SHIELD_RATIO]), 0.625)
+		and is_equal_approx(float(payload[NetworkSnapshotSystem.U_SHIELD_CAPACITY_RATIO]), stationary.shield_max_hp / stationary.max_hp)
 		and int(snapshot_header[0]) == NetworkSnapshotSystem.SNAPSHOT_PROTOCOL_VERSION
 		and int(snapshot_header[1]) == _main._sim_tick_id
 	)

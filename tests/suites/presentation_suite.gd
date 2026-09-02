@@ -567,6 +567,7 @@ func _check_sett_art_integration() -> void:
 	var unit := Unit.new()
 	unit.position = Vector2(360.0, 900.0)
 	unit.setup(0, stats, stats.name)
+	unit._attacking = true
 	_main.add_child(unit)
 	var attached: bool = _main._battle_presentation.attach_unit(unit, stats)
 	var staged_attacks_ok := false
@@ -582,9 +583,22 @@ func _check_sett_art_integration() -> void:
 			var right_hit_ok: bool = staged_view._animation_player.current_animation == "Sett_Attack1_Passive_anm"
 			staged_view._update_attack_stages(float(anim_names.attack_recover_delay) + 0.01)
 			var recover_ok: bool = staged_view._animation_player.current_animation == "Attack1_Passive_Into_Idle"
-			staged_attacks_ok = left_start_ok and left_hit_ok and right_hit_ok and recover_ok
+			unit._attacking = false
+			unit._move_intent = Vector2.UP * unit.move_speed
+			staged_view._update_attack_stages(1.0)
+			staged_view._sync_visual(false, 0.05)
+			var transition_to_move_ok: bool = (
+				staged_view._animation_player.current_animation == "Sett_Passive_INTO_Run_anm"
+				and is_equal_approx(staged_view._last_clip_blend_time, staged_view._transition_blend(&"sequence"))
+			)
+			staged_view._on_animation_finished(&"Sett_Passive_INTO_Run_anm")
+			var move_after_transition_ok: bool = (
+				staged_view._animation_player.current_animation == "Run_Base"
+				and is_equal_approx(staged_view._last_clip_blend_time, staged_view._transition_blend(&"sequence"))
+			)
+			staged_attacks_ok = left_start_ok and left_hit_ok and right_hit_ok and recover_ok and transition_to_move_ok and move_after_transition_ok
 			break
-	_expect(staged_attacks_ok, "腕豪分段普攻按 Start→Hit，并在右拳后播放 Passive_Into_Idle 停顿")
+	_expect(staged_attacks_ok, "腕豪有下一次目标时右拳播放 Passive_Into_Idle，无目标时接 Sett Passive Into Run 再进入 Run Base")
 	unit.take_damage(unit.max_hp + 1.0)
 	var death_view_found := false
 	for child in _main._battle_presentation._world_root.get_children():

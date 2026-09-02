@@ -818,6 +818,11 @@ func _play_attack(serial: int, blend_override: float = -1.0) -> void:
 func _update_attack_stages(delta: float) -> void:
 	if not _playing_attack or _animation_player == null:
 		return
+	# 权威状态已离开 Attack 时不要在同一渲染帧补播收势；否则刚命中且无目标的
+	# 瑟提会先闪过 Into_Idle，再被 _sync_visual 切到移动。
+	var state := _source.net_visual_state if _source._in_client_mode() else _source.get_visual_state_code()
+	if state != 3 and _source.cancel_attack_recovery_without_target:
+		return
 	# 冰冻期间模拟攻击计时不推进，分段表现计时也必须同步暂停。
 	if _source.frozen_timer > 0.0 or _source.stun_timer > 0.0:
 		return

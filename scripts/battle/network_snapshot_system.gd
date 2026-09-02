@@ -2,7 +2,7 @@ class_name NetworkSnapshotSystem
 extends RefCounted
 ## 20Hz 单位/塔/弹体快照的序列化与客户端应用。RPC 端点仍保留在 Main。
 
-const SNAPSHOT_PROTOCOL_VERSION := 6
+const SNAPSHOT_PROTOCOL_VERSION := 7
 const S_UNITS := 0
 const S_PROJECTILES := 1
 const S_TOWERS := 2
@@ -49,6 +49,8 @@ const U_ACTIVE_SPEED_MULTIPLIER := 31
 const U_ACTIVE_ATTACK_SPEED_MULTIPLIER := 32
 const U_ACTIVE_SKILL_USES_REMAINING := 33
 const U_ACTIVE_SKILL_COOLDOWN := 34
+const U_SHIELD_RATIO := 35
+const U_SHIELD_CAPACITY_RATIO := 36
 
 var _controller: Node2D
 
@@ -114,6 +116,7 @@ func apply(snapshot_bytes: PackedByteArray) -> void:
 				print("[测试] 客户端已收到持续吐息目标端点")
 		if d.size() >= 15:
 			u.net_shield_active = d[U_SHIELD] == 1
+			u.net_shield_ratio = 1.0 if u.net_shield_active else 0.0
 			u.net_slow_active = d[U_SLOW] == 1
 		if d.size() >= 19:
 			u.net_stun_active = d[U_STUN] == 1
@@ -148,6 +151,10 @@ func apply(snapshot_bytes: PackedByteArray) -> void:
 			active_entry["uses_remaining"] = maxi(int(d[U_ACTIVE_SKILL_USES_REMAINING]), 0)
 			active_entry["cooldown_left"] = maxf(float(d[U_ACTIVE_SKILL_COOLDOWN]), 0.0)
 			_controller._active_skills[u.active_ability_id] = active_entry
+		if d.size() > U_SHIELD_RATIO:
+			u.net_shield_ratio = clampf(float(d[U_SHIELD_RATIO]), 0.0, 1.0)
+		if d.size() > U_SHIELD_CAPACITY_RATIO:
+			u.net_shield_capacity_ratio = maxf(float(d[U_SHIELD_CAPACITY_RATIO]), 0.0)
 		if (
 			_controller._auto_test and not _controller._auto_gnar_form_seen and u.card_id == "gnar"
 			and u.form_index == 1 and u.net_visual_action_name == &"transform_active"
@@ -298,4 +305,6 @@ func _unit_snapshot_payload(id: int, u: Unit, has_continuous_target: bool = fals
 		u.get_skill_resource_ratio(), u.blind_attack_charges,
 		1 if u.skill_resource_enabled else 0, u.active_speed_multiplier, u.active_attack_speed_multiplier,
 		active_skill_state.get("uses_remaining", 0), active_skill_state.get("cooldown_left", 0.0),
+		u.get_shield_ratio(),
+		u.get_shield_capacity_ratio(),
 	]

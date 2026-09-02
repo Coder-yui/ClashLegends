@@ -25,6 +25,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_destroyed_lane_targets_king()
 	_check_unit_reaches_and_damages_tower()
 	_check_sett_attack_rhythm()
+	_check_sett_recovery_without_target()
 	_check_king_activation()
 
 func _check_building_pulls_tower_target() -> void:
@@ -506,6 +507,51 @@ func _check_sett_attack_rhythm() -> void:
 		damage_ok = damage_ok and is_equal_approx(unit._attack_damage_multiplier(i), float(damage_multipliers[i]))
 	_expect(damage_ok, "腕豪右拳伤害为左拳的1.5倍，并按左右拳循环")
 	unit.free()
+
+## 腕豪第二/第四拳：有下一目标时保留连招后摇；没有攻击范围内目标时立即追击。
+func _check_sett_recovery_without_target() -> void:
+	var stats: Dictionary = CardDB.get_card("sett").duplicate(true)
+	stats["deploy_time"] = 0.0
+	var sett := Unit.new()
+	var target := Unit.new()
+	sett.position = Vector2(300.0, 760.0)
+	target.position = Vector2(300.0, 900.0)
+	sett.setup(0, stats, stats.name)
+	target.setup(1, stats, stats.name)
+	_main.add_child(sett)
+	_main.add_child(target)
+	sett._target = target
+	sett._attacking = true
+	sett._attack_recovery_timer = 0.5
+	sett._attack_cd = 0.5
+	sett.sim_tick(_main.SIM_DT)
+	var no_target_moves_immediately := (
+		not sett._attacking
+		and is_zero_approx(sett._attack_recovery_timer)
+		and not sett._move_intent.is_zero_approx()
+	)
+
+	var held_sett := Unit.new()
+	var held_target := Unit.new()
+	held_sett.position = Vector2(500.0, 760.0)
+	held_target.position = Vector2(500.0, 760.0)
+	held_sett.setup(0, stats, stats.name)
+	held_target.setup(1, stats, stats.name)
+	_main.add_child(held_sett)
+	_main.add_child(held_target)
+	held_sett._target = held_target
+	held_sett._attacking = true
+	held_sett._attack_recovery_timer = 0.5
+	held_sett._attack_cd = 0.5
+	held_sett.sim_tick(_main.SIM_DT)
+	var target_keeps_recovery := (
+		held_sett._attacking
+		and held_sett._attack_recovery_timer > 0.0
+		and held_sett._move_intent.is_zero_approx()
+	)
+	_expect(no_target_moves_immediately and target_keeps_recovery, "腕豪没有下一次攻击目标时跳过 Into_Idle 立即移动，有目标时保留连招后摇")
+	for unit in [sett, target, held_sett, held_target]:
+		unit.free()
 
 func _check_king_activation() -> void:
 	var king: Tower = _main._king_player

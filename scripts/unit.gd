@@ -108,6 +108,8 @@ var attack_damage_multipliers: Array = []
 ## 某一段普通攻击可在权威延迟后追加额外刀数；内层数组与 attack 动画段一一对应。
 var attack_extra_hit_damage_multipliers: Array = []
 var attack_extra_hit_delays: Array = []
+## 配置为 true 时，攻击后摇期间若已没有攻击范围内目标，立即解除后摇并追击。
+var cancel_attack_recovery_without_target := false
 ## 可复用的主动技能资源。当前腕豪用它表达豪意；权威值不由白条或动画反推。
 var skill_resource_max := 0.0
 var skill_resource_value := 0.0
@@ -150,6 +152,7 @@ var stun_timer := 0.0
 var slow_timer := 0.0
 var slow_multiplier := 1.0
 var shield_hp := 0.0
+var shield_max_hp := 0.0
 var shield_timer := 0.0
 var shield_decay_rate := 0.0
 var active_buff_timer := 0.0
@@ -223,6 +226,8 @@ var net_facing_x := 1.0
 var net_attack_visual_serial := 0
 var net_shroud_active := false
 var net_shield_active := false
+var net_shield_ratio := 0.0
+var net_shield_capacity_ratio := 0.0
 var net_slow_active := false
 var net_stun_active := false
 var net_form_index := 0
@@ -325,6 +330,7 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	attack_damage_multipliers = stats.get("attack_damage_multipliers", [])
 	attack_extra_hit_damage_multipliers = stats.get("attack_extra_hit_damage_multipliers", [])
 	attack_extra_hit_delays = stats.get("attack_extra_hit_delays", [])
+	cancel_attack_recovery_without_target = bool(stats.get("cancel_attack_recovery_without_target", false))
 	_configured_skill_resource_max = maxf(float(stats.get("skill_resource_max", 0.0)), 0.0)
 	_configured_skill_resource_attack_gain = maxf(float(stats.get("skill_resource_attack_gain", 0.0)), 0.0)
 	_configured_skill_resource_hit_gain = maxf(float(stats.get("skill_resource_hit_gain", 0.0)), 0.0)
@@ -342,6 +348,10 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	skill_resource_decay_delay = 0.0
 	skill_resource_decay_rate = 0.0
 	skill_resource_enabled = false
+	shield_hp = 0.0
+	shield_max_hp = 0.0
+	shield_timer = 0.0
+	shield_decay_rate = 0.0
 	transform_after_hits = maxi(int(stats.get("transform_after_hits", 0)), 0)
 	revert_after_hits = maxi(int(stats.get("revert_after_hits", 0)), 0)
 	transform_duration = maxf(float(stats.get("transform_duration", 0.0)), 0.0)
@@ -829,13 +839,33 @@ func sim_tick(dt: float) -> void:
 			_tick_form_transition_movement(dt)
 			return
 	_attack_cd = maxf(0.0, _attack_cd - dt)
-	# 命中后必须完整收招。目标此时即使死亡、失效或离开射程，也要等后摇结束
-	# 才重新索敌/追击；冻结会在上方提前 return，因此同样会暂停后摇计时。
+	# 默认命中后必须完整收招。部分卡牌（当前为腕豪）若已经没有攻击范围内目标，
+	# 则提前解除后摇并追击；冻结会在上方提前 return，因此同样会暂停后摇计时。
 	if _attack_recovery_timer > 0.0:
-		_attack_recovery_timer = maxf(0.0, _attack_recovery_timer - dt)
-		_attacking = true
-		if _attack_recovery_timer > 0.0:
-			return
+		if cancel_attack_recovery_without_target:
+			# 复用权威索敌规则：目标死亡/离圈时优先换打圈内目标；完全没有
+			# 下一次攻击目标时才解除 Attack，避免表现层提前猜测目标状态。
+			_update_target(false)
+			var has_next_attack_target := (
+				_attacking
+				and _target != null
+				and is_instance_valid(_target)
+				and _target_is_attackable(_target)
+				and _target_gap(_target) <= attack_range
+			)
+			if not has_next_attack_target:
+				_attack_recovery_timer = 0.0
+				_attacking = false
+			else:
+				_attack_recovery_timer = maxf(0.0, _attack_recovery_timer - dt)
+				_attacking = true
+				if _attack_recovery_timer > 0.0:
+					return
+		else:
+			_attack_recovery_timer = maxf(0.0, _attack_recovery_timer - dt)
+			_attacking = true
+			if _attack_recovery_timer > 0.0:
+				return
 	# 正好到达权威命中节点的这个 tick 不再做距离取消。这样目标在最后一刻跨出
 	# 攻击圈时，本次挥击仍会命中；更早脱离则仍会取消前摇并继续追击。
 	var reaches_hit_this_tick := _reaches_attack_hit_this_tick(dt)
@@ -1526,6 +1556,7 @@ func add_shield(amount: float, duration: float, decays: bool = false) -> void:
 	if amount <= 0.0 or duration <= 0.0:
 		return
 	shield_hp += amount
+	shield_max_hp += amount
 	shield_timer = maxf(shield_timer, duration)
 	shield_decay_rate = amount / duration if decays else 0.0
 	queue_redraw()
@@ -1541,6 +1572,7 @@ func _tick_active_statuses(dt: float) -> void:
 			shield_hp = maxf(0.0, shield_hp - shield_decay_rate * dt)
 		if shield_timer <= 0.0:
 			shield_hp = 0.0
+			shield_max_hp = 0.0
 			shield_decay_rate = 0.0
 	if active_buff_timer > 0.0:
 		active_buff_timer = maxf(0.0, active_buff_timer - dt)
@@ -1576,6 +1608,7 @@ func take_damage(amount: float, from: Node2D = null, source_team: int = -1, sour
 		remaining_damage -= absorbed
 		if shield_hp <= 0.0:
 			shield_timer = 0.0
+			shield_max_hp = 0.0
 			shield_decay_rate = 0.0
 	var hp_before := hp
 	hp -= remaining_damage
@@ -1741,8 +1774,10 @@ func _draw() -> void:
 		draw_arc(Vector2.ZERO, visual_radius + 6.0, -PI / 2.0, -PI / 2.0 + TAU * deploy_ratio, 24, Color.WHITE, 3.0)
 	if _sweep_fx_timer > 0.0 and deploy_sweep_radius > 0.0:
 		_draw_sweep_fx()
-	var ratio := maxf(hp / max_hp, 0.0)
-	if ratio < 1.0:
+	var hp_ratio := clampf(hp / maxf(max_hp, 0.001), 0.0, 1.0)
+	var shield_health_ratio := get_shield_health_ratio()
+	var shield_capacity_ratio := get_shield_capacity_ratio()
+	if hp_ratio < 1.0 or shield_health_ratio > 0.0:
 		var bar_w := visual_radius * 2.0
 		var bar_rect := Rect2(
 			_health_bar_center.x - bar_w * 0.5,
@@ -1751,7 +1786,14 @@ func _draw() -> void:
 			HEALTH_BAR_HEIGHT
 		)
 		draw_rect(bar_rect, Color(0.15, 0.15, 0.15))
-		draw_rect(Rect2(bar_rect.position, Vector2(bar_w * ratio, HEALTH_BAR_HEIGHT)), get_health_bar_fill_color())
+		# 生命与护盾共用一条固定宽度的容量条；护盾始终接在当前生命段之后。
+		var combined_capacity := 1.0 + shield_capacity_ratio
+		var hp_width := bar_w * hp_ratio / combined_capacity
+		var shield_width := bar_w * shield_health_ratio / combined_capacity
+		if hp_width > 0.0:
+			draw_rect(Rect2(bar_rect.position, Vector2(hp_width, HEALTH_BAR_HEIGHT)), get_health_bar_fill_color())
+		if shield_width > 0.0:
+			draw_rect(Rect2(Vector2(bar_rect.position.x + hp_width, bar_rect.position.y), Vector2(shield_width, HEALTH_BAR_HEIGHT)), Color.WHITE)
 	if is_skill_resource_visible():
 		var resource_w := visual_radius * 2.0
 		var resource_y := _health_bar_center.y + HEALTH_BAR_HEIGHT * 0.5 + SKILL_RESOURCE_BAR_GAP
@@ -1776,13 +1818,29 @@ func _draw() -> void:
 	var stunned_visible := net_stun_active if _in_client_mode() else stun_timer > 0.0
 	if stunned_visible:
 		draw_arc(Vector2.ZERO, visual_radius + 5.0, 0.0, TAU, 24, Color(1.0, 0.78, 0.18, 0.95), 3.0, true)
-	var shield_visible := net_shield_active if _in_client_mode() else shield_hp > 0.0
-	if shield_visible:
-		draw_arc(Vector2.ZERO, visual_radius + 7.0, 0.0, TAU, 36, Color(0.35, 0.85, 1.0, 0.9), 3.0, true)
 	var slow_visible := net_slow_active if _in_client_mode() else slow_timer > 0.0
 	if slow_visible:
 		draw_arc(Vector2.ZERO, visual_radius + 10.0, 0.0, TAU, 24, Color(0.45, 0.65, 1.0, 0.75), 2.0, true)
 	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+
+func get_shield_ratio() -> float:
+	if _in_client_mode():
+		return clampf(net_shield_ratio if net_shield_active else 0.0, 0.0, 1.0)
+	if shield_hp <= 0.0 or shield_max_hp <= 0.0 or shield_timer <= 0.0:
+		return 0.0
+	return clampf(shield_hp / shield_max_hp, 0.0, 1.0)
+
+func get_shield_capacity_ratio() -> float:
+	if _in_client_mode():
+		return net_shield_capacity_ratio if net_shield_active else 0.0
+	return maxf(shield_max_hp / maxf(max_hp, 0.001), 0.0) if shield_hp > 0.0 and shield_timer > 0.0 else 0.0
+
+func get_shield_health_ratio() -> float:
+	if _in_client_mode():
+		return get_shield_ratio() * get_shield_capacity_ratio()
+	if shield_hp <= 0.0 or shield_timer <= 0.0:
+		return 0.0
+	return maxf(shield_hp / maxf(max_hp, 0.001), 0.0)
 
 ## 临时吐息表现：嘴部端窄、目标端宽的半透明梯形光柱。
 ## 光柱只读取已经确定的攻击目标，宽度与高度均不参与权威命中判定。

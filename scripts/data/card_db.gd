@@ -68,6 +68,7 @@ const CARD_FIELDS := [
 	&"heal_every_hits", &"heal_amount", &"charge_time", &"charge_speed_multiplier",
 	&"charge_damage_multiplier", &"shroud_radius", &"attack_pattern", &"attack_damage_multipliers",
 	&"attack_extra_hit_damage_multipliers", &"attack_extra_hit_delays",
+	&"cancel_attack_recovery_without_target",
 	&"skill_resource_max", &"skill_resource_attack_gain", &"skill_resource_hit_gain", &"skill_resource_kill_gain", &"skill_resource_full_color",
 	&"skill_resource_damage_gain_multiplier", &"skill_resource_decay_delay", &"skill_resource_decay_rate",
 	&"attack_interval_display", &"transform_after_hits", &"revert_after_hits",
@@ -529,6 +530,8 @@ static func all() -> Dictionary:
 			"mass": 6.0, "sight": 210.0,
 			"attack_pattern": [0.28, 1.05, 0.28, 1.05],  # 两拳→停顿→两拳→停顿
 			"attack_damage_multipliers": [1.0, 1.5, 1.0, 1.5],  # 左拳基础伤害，右拳为左拳的1.5倍
+			# 两拳结束后没有下一次可攻击目标时立即追击，不播放被动段 Into_Idle 收势。
+			"cancel_attack_recovery_without_target": true,
 			# 豪意为通用技能资源：受实际生命伤害按 1:1、每次挥拳按固定值积攒；脱战后延迟衰减。
 			"skill_resource_max": 200.0, "skill_resource_attack_gain": 20.0, "skill_resource_damage_gain_multiplier": 1.0,
 			"skill_resource_decay_delay": 1.0, "skill_resource_decay_rate": 100.0,
@@ -544,7 +547,7 @@ static func all() -> Dictionary:
 				"attack_hit": ["Attack1_Hit", "Sett_Attack1_Passive_anm", "Attack2_Hit", "Sett_Attack2_Passive_anm"],
 				"attack_recover": ["", "Attack1_Passive_Into_Idle", "", "Attack2_Passive_Into_Idle"],
 				"attack_recover_delay": 0.32,
-				# 第一拳丢失目标后直接使用被动跑；第二拳先用专用收拳转跑，再进入基础跑。
+				# 第二、第四拳没有下一目标而提前追击时，使用被动拳专用转跑片段。
 				"attack_move": ["Run_Passive", "Run_Base", "Run_Passive", "Run_Base"],
 				"attack_to_move": ["", "Sett_Passive_INTO_Run_anm", "", "Sett_Passive_INTO_Run_anm"],
 				"visual_actions": {
