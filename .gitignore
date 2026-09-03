@@ -10,3 +10,6 @@ builds/
 
 # Promotional materials (kept local)
 /ClashLegends-promo-materials/
+
+# 待开发卡牌美术素材仅作为本地开发队列，不纳入版本库
+/待开发卡牌美术素材/
