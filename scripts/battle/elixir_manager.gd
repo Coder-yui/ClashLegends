@@ -12,7 +12,7 @@ var elixir := 5.0:
 		elixir = clampf(value, 0.0, MAX_ELIXIR)
 		changed.emit(elixir)
 
-# 回复倍率：常规时间最后一分钟双倍、加时三倍，由 main 按比赛计时统一设置
+# 回复倍率由 main 按比赛计时统一设置：正赛末段/加时前段为双倍，加时最后一分钟为三倍。
 var regen_multiplier := 1.0
 
 var _timer := 0.0

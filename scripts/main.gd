@@ -53,22 +53,27 @@ const BACK_CENTER_MAX_COLUMN := 11
 const POCKET_FIRST_ROW := 9
 const POCKET_LAST_ROW := RIVER_TOP_ROW - 1
 
-# 比赛计时：3 分钟正赛，平局进 60 秒加时（先破塔者胜），再平则平局
-const MATCH_TIME := 180.0
-const OVERTIME_TIME := 60.0
+# 比赛计时：3 分 05 秒正赛，平局进 2 分钟加时（先破塔者胜），再平则平局
+const MATCH_TIME := 185.0
+const OVERTIME_TIME := 120.0
 const SIM_DT := 1.0 / 20.0
 const DOUBLE_ELIXIR_TIME := 60.0
+const OVERTIME_TRIPLE_ELIXIR_TIME := 60.0
+const DOUBLE_ELIXIR_START_TIME := MATCH_TIME - DOUBLE_ELIXIR_TIME
 ## 所有玩家命令使用 20Hz 权威 Tick 排程，0.5 秒对应 10 个模拟 Tick。
 const COMMAND_DELAY_TICKS := 10
 ## 网络请求的 input_tick 最多允许落后两个 Buffer；更早的输入直接视为异常。
 const COMMAND_MAX_LATENCY_TICKS := COMMAND_DELAY_TICKS * 2
 ## 允许少量客户端时钟领先 Host；这只是校验窗口，不是客户端执行权。
 const COMMAND_CLOCK_FUTURE_TOLERANCE := 2
-## 水晶兵线由主机固定 tick 驱动：开局 5 秒首波，之后每 30 秒一波，第二只延迟 0.5 秒。
+## 水晶兵线由主机固定 tick 驱动：普通阶段 5/50/95 秒，2:05 切换炮车并改为每 30 秒一波，第二只延迟 0.5 秒。
 const FIRST_MINION_WAVE_TIME := 5.0
-const MINION_WAVE_INTERVAL := 30.0
+const NORMAL_MINION_WAVE_INTERVAL := 45.0
+const DOUBLE_MINION_WAVE_INTERVAL := 30.0
 const MINION_WAVE_STAGGER := 0.5
 const MINION_SPAWN_X_OFFSET := 3.0 * TILE_SIZE
+const MINION_WAVE_NORMAL := "normal"
+const MINION_WAVE_SIEGE := "siege"
 
 # 联机
 const NET_PORT := 39152
@@ -1010,11 +1015,11 @@ func is_ground_segment_walkable(from: Vector2, to: Vector2, mover_radius: float,
 			return false
 	return true
 
-## 部署前把落点内的可移动单位挤开（建筑不动）
+## 部署前把落点内的可移动单位挤开（建筑与空军不动）
 func _push_units_around(pos: Vector2, radius: float) -> void:
 	for c in get_tree().get_nodes_in_group("combatants"):
 		var u := c as Unit
-		if u == null or u.is_building or not is_instance_valid(u) or u.hp <= 0.0:
+		if u == null or u.is_building or u.is_air or not is_instance_valid(u) or u.hp <= 0.0:
 			continue
 		var min_dist: float = u.body_radius + radius
 		var gap: float = pos.distance_to(u.global_position)
@@ -1647,12 +1652,28 @@ func _tick_minion_waves(dt: float) -> void:
 		_spawn_lane_minion(int(minion.team), int(minion.lane), String(minion.card_id))
 
 	_battle_elapsed += dt
-	while _battle_elapsed + 0.001 >= _next_minion_wave_time:
-		_spawn_minion_wave()
-		_next_minion_wave_time += MINION_WAVE_INTERVAL
+	while true:
+		# 双倍金币阶段是独立的兵线事件：取消普通阶段原本会落在 2:20 的下一波，
+		# 在 2:05 立即出炮车线，之后再从 2:05 以 30 秒为周期排程。
+		if not _overtime and _battle_elapsed + 0.001 >= DOUBLE_ELIXIR_START_TIME \
+			and _next_minion_wave_time >= DOUBLE_ELIXIR_START_TIME \
+			and _next_minion_wave_time < DOUBLE_ELIXIR_START_TIME + DOUBLE_MINION_WAVE_INTERVAL:
+			_spawn_minion_wave(MINION_WAVE_SIEGE)
+			_next_minion_wave_time = DOUBLE_ELIXIR_START_TIME + DOUBLE_MINION_WAVE_INTERVAL
+			continue
+		if _battle_elapsed + 0.001 < _next_minion_wave_time:
+			break
+		# 正赛结束和加时结束都是硬边界：自动 scheduler 不能生成 3:05/5:05 兵线。
+		if not _overtime and _next_minion_wave_time >= MATCH_TIME:
+			break
+		if _overtime and _next_minion_wave_time >= MATCH_TIME + OVERTIME_TIME:
+			break
+		var wave_type := MINION_WAVE_SIEGE if _overtime or _next_minion_wave_time >= DOUBLE_ELIXIR_START_TIME else MINION_WAVE_NORMAL
+		_spawn_minion_wave(wave_type)
+		_next_minion_wave_time += DOUBLE_MINION_WAVE_INTERVAL if wave_type == MINION_WAVE_SIEGE else NORMAL_MINION_WAVE_INTERVAL
 
-func _spawn_minion_wave() -> void:
-	var second_card := "siege_minion" if _is_double_elixir_phase() else "ranged_minion"
+func _spawn_minion_wave(wave_type: String = MINION_WAVE_NORMAL) -> void:
+	var second_card := "siege_minion" if wave_type == MINION_WAVE_SIEGE else "ranged_minion"
 	# 固定顺序保证相同 tick 的出生与碰撞结果不依赖节点遍历或随机数。
 	for team in [0, 1]:
 		for lane in [0, 1]:
@@ -1679,8 +1700,8 @@ func _enemy_lane_tower_destroyed(team: int, lane: int) -> bool:
 	return tower_index >= 0 and tower_index < 4 and _towers[tower_index].hp <= 0.0
 
 func _is_double_elixir_phase() -> bool:
-	# 第 120 秒起即为双倍金币；加时仍沿用炮车编成。
-	return _battle_elapsed + 0.001 >= MATCH_TIME - DOUBLE_ELIXIR_TIME
+	# 正赛 2:05 起双倍金币；加时全程保持双倍。match_timer 兼容客户端不推进 _battle_elapsed 的情况。
+	return _overtime or _battle_elapsed + 0.001 >= DOUBLE_ELIXIR_START_TIME or _match_timer <= DOUBLE_ELIXIR_TIME + 0.001
 
 ## 解除导航网格阻挡格（建筑卡死亡 / 塔被摧毁时调用）
 func unblock_nav_cells(cells: Array) -> void:
@@ -2183,15 +2204,27 @@ func _process(delta: float) -> void:
 				_end_game_by_towers(my_lost, enemy_lost)
 			else:
 				# 战平进入加时
-				_overtime = true
-				_match_timer = OVERTIME_TIME
-				_update_timer_label()
+				_enter_overtime()
 		else:
 			# 加时结束仍平 → 平局
 			if my_lost != enemy_lost:
 				_end_game_by_towers(my_lost, enemy_lost)
 			else:
 				_end_game("平局！双方战成 %d:%d" % [enemy_lost, my_lost])
+
+## 进入加时的唯一入口：重置 2 分钟倒计时，并在 3:05 立即生成一波炮车线。
+func _enter_overtime() -> void:
+	if _overtime or game_over:
+		return
+	_overtime = true
+	_match_timer = OVERTIME_TIME
+	# 渲染帧可能让固定模拟比比赛计时落后不到一个 Tick；加时事件锚定在 3:05。
+	_battle_elapsed = maxf(_battle_elapsed, MATCH_TIME)
+	_next_minion_wave_time = MATCH_TIME + DOUBLE_MINION_WAVE_INTERVAL
+	if _minion_waves_enabled and not _art_dev_mode:
+		_spawn_minion_wave(MINION_WAVE_SIEGE)
+	_update_timer_label()
+	_update_elixir_rate()
 
 ## 某方被摧毁的塔数量
 func _count_destroyed_towers(p_team: int) -> int:
@@ -2217,9 +2250,13 @@ func _update_timer_label() -> void:
 		text += " 加时"
 	_timer_label.text = text
 
-## 金币回复倍率：常规时间最后一分钟双倍、加时三倍（对齐皇室战争节奏）
+## 金币回复倍率：正赛 2:05 起双倍；加时前一分钟双倍，最后一分钟三倍。
 func _update_elixir_rate() -> void:
-	var mult := 3.0 if _overtime else (2.0 if _match_timer <= DOUBLE_ELIXIR_TIME else 1.0)
+	var mult := 1.0
+	if _overtime:
+		mult = 3.0 if _match_timer <= OVERTIME_TRIPLE_ELIXIR_TIME else 2.0
+	elif _is_double_elixir_phase():
+		mult = 2.0
 	_elixir.regen_multiplier = mult
 	if _elixir_p1 != null:
 		_elixir_p1.regen_multiplier = mult
