@@ -100,6 +100,8 @@ var _active_skill_bar: ActiveSkillBar
 ## ability_id -> {unit, card_id, team, skill, uses_remaining, cooldown_left}；按钮只是这份权威状态的视图。
 var _active_skills: Dictionary = {}
 var _next_active_ability_id := 1
+## 一次卡牌部署生成的单位共享同一编队 id；单体卡保持 -1。
+var _next_deployment_group_id := 1
 ## 主动请求确认后按 Host 由 input_tick 计算出的 execute_tick 等待；同一 ability_id 只能存在一次。
 var _pending_active_skill_activations: Array[Dictionary] = []
 ## Cast Start 后的统一 Gameplay Impact 队列，所有主动技能 kind 共用。
@@ -1157,7 +1159,7 @@ func play_card(p_team: int, card_id: String, pos: Vector2, options: Dictionary =
 		else:
 			if type == "building":
 				_push_units_around(pos, float(stats.get("radius", 14.0)))
-			_spawn_unit(p_team, card_id, pos)
+			_spawn_card_units(p_team, card_id, pos)
 		return true
 	# 只有命令已完成权威校验、扣费与手牌轮换后才向客户端确认。
 	if not _consume_authoritative_card(p_team, card_id):
@@ -1205,7 +1207,7 @@ func _tick_pending_card_pre_deployments(dt: float) -> void:
 			ready.append(deployment)
 	_pending_card_pre_deployments = waiting
 	for deployment in ready:
-		_spawn_unit(
+		_spawn_card_units(
 			int(deployment.team), String(deployment.card_id), deployment.pos as Vector2,
 			-1.0, int(deployment.get("active_slot", -1)), int(deployment.get("id", -1))
 		)
@@ -1236,7 +1238,7 @@ func _execute_card_deployment(p_team: int, card_id: String, pos: Vector2) -> voi
 		_:
 			if type == "building":
 				_push_units_around(pos, stats.get("radius", 14.0))
-			_spawn_unit(p_team, card_id, pos, -1.0, active_slot)
+			_spawn_card_units(p_team, card_id, pos, -1.0, active_slot)
 
 func launch_attack(attacker: Node2D, target: Node2D, amount: float, projectile_speed: float, splash_radius: float, knockback: float, projectile_color: Color, effects: Dictionary = {}) -> void:
 	_projectile_system.launch(attacker, target, amount, projectile_speed, splash_radius, knockback, projectile_color, effects)
@@ -1264,7 +1266,7 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 		if landed:
 			_apply_attack_hit_effects(primary, effects)
 		if landed and counts_as_attack and from is Unit and is_instance_valid(from):
-			(from as Unit).on_attack_landed(source_form_index)
+			(from as Unit).on_attack_landed(source_form_index, amount)
 		if landed and was_alive and primary.hp <= 0.0 and from is Unit and is_instance_valid(from):
 			(from as Unit).on_enemy_killed(primary)
 		if landed and knockback > 0.0 and primary is Unit and is_instance_valid(primary) and primary.hp > 0.0:
@@ -1286,7 +1288,7 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 			if landed and knockback > 0.0 and c is Unit and is_instance_valid(c) and c.hp > 0.0:
 				(c as Unit).apply_knockback(origin, knockback)
 	if any_landed and counts_as_attack and from is Unit and is_instance_valid(from):
-		(from as Unit).on_attack_landed(source_form_index)
+		(from as Unit).on_attack_landed(source_form_index, amount)
 	return any_landed
 
 func _apply_attack_hit_effects(target: Node2D, effects: Dictionary) -> void:
@@ -1307,7 +1309,49 @@ func _tick_slow_zones(dt: float) -> void:
 func _tick_slow_effect_visuals(delta: float) -> void:
 	_spell_system.tick_visuals(delta)
 
-func _spawn_unit(team: int, card_id: String, pos: Vector2, deploy_time_override: float = -1.0, active_slot: int = -1, pre_deploy_id: int = -1) -> Unit:
+## 手牌单位卡的生成入口。一条部署命令和一个落点提示可以展开为确定性编队；
+## 每个成员仍是独立 Unit，碰撞、索敌、快照和死亡都沿用普通单位规则。
+func _spawn_card_units(team: int, card_id: String, pos: Vector2, deploy_time_override: float = -1.0, active_slot: int = -1, pre_deploy_id: int = -1) -> Array[Unit]:
+	var stats := CardDB.get_unit_stats(card_id)
+	var count := maxi(int(stats.get("deployment_count", 1)), 1)
+	var spacing := maxf(float(stats.get("deployment_spacing", 0.0)), 0.0)
+	var group_id := -1
+	if count > 1:
+		group_id = _next_deployment_group_id
+		_next_deployment_group_id += 1
+	var offsets := _deployment_formation_offsets(count, spacing, team)
+	var spawned: Array[Unit] = []
+	for index in range(count):
+		var member_slot := active_slot if index == 0 else -1
+		var member_pos := pos + offsets[index]
+		var member_radius := float(stats.get("radius", 14.0))
+		member_pos.x = clampf(member_pos.x, member_radius, FIELD_W - member_radius)
+		member_pos.y = clampf(member_pos.y, member_radius, FIELD_H - member_radius)
+		var member := _spawn_unit(team, card_id, member_pos, deploy_time_override, member_slot, pre_deploy_id, group_id)
+		if member != null:
+			spawned.append(member)
+	return spawned
+
+
+## 奇数编队保留中心成员，其余成员围绕点击格心均匀排列；队伍方向只旋转阵型，
+## 不影响中心和成员间距。部署 UI 仍只显示点击格心的一个读条圈。
+func _deployment_formation_offsets(count: int, spacing: float, team: int) -> Array[Vector2]:
+	var offsets: Array[Vector2] = []
+	if count <= 1:
+		offsets.append(Vector2.ZERO)
+		return offsets
+	var ring_count := count
+	if count % 2 == 1:
+		offsets.append(Vector2.ZERO)
+		ring_count -= 1
+	var rotation := 0.0 if team == 0 else PI
+	for index in range(ring_count):
+		var angle := rotation - PI * 0.5 + TAU * float(index) / float(ring_count)
+		offsets.append(Vector2.RIGHT.rotated(angle) * spacing)
+	return offsets
+
+
+func _spawn_unit(team: int, card_id: String, pos: Vector2, deploy_time_override: float = -1.0, active_slot: int = -1, pre_deploy_id: int = -1, deployment_group_id: int = -1) -> Unit:
 	var stats: Dictionary = CardDB.get_unit_stats(card_id)
 	if stats.is_empty():
 		push_error("尝试生成不存在的单位：%s" % card_id)
@@ -1321,6 +1365,7 @@ func _spawn_unit(team: int, card_id: String, pos: Vector2, deploy_time_override:
 		pos = _nearest_valid_ground_spawn(pos, float(stats.get("radius", 14.0)), team)
 	var u := Unit.new()
 	u.card_id = card_id
+	u.deployment_group_id = deployment_group_id
 	u.position = pos
 	u.setup(team, stats, stats.name)
 	if deploy_time_override >= 0.0:
@@ -1345,7 +1390,7 @@ func _spawn_unit(team: int, card_id: String, pos: Vector2, deploy_time_override:
 			_next_active_ability_id += 1
 		_register_active_skill(u, card_id, team)
 	if mode == "host":
-		_rpc_spawn_unit.rpc(card_id, team, pos, u.net_id, deploy_time_override, u.active_ability_id, u.active_ability_slot, pre_deploy_id)
+		_rpc_spawn_unit.rpc(card_id, team, pos, u.net_id, deploy_time_override, u.active_ability_id, u.active_ability_slot, pre_deploy_id, deployment_group_id)
 	return u
 
 func _register_active_skill(unit: Unit, card_id: String, p_team: int) -> void:
@@ -1426,6 +1471,25 @@ func _sync_active_skill_deployment_readiness() -> void:
 			)
 
 func _on_active_skill_unit_died(ability_id: int) -> void:
+	if _active_skills.has(ability_id):
+		var entry: Dictionary = _active_skills[ability_id]
+		var dead_unit = entry.get("unit")
+		var skill: Dictionary = entry.get("skill", {})
+		if dead_unit is Unit and StringName(skill.get("target_scope", "self")) == &"deployment_group":
+			var group_id := (dead_unit as Unit).deployment_group_id
+			for combatant in get_tree().get_nodes_in_group("combatants"):
+				if not combatant is Unit or not is_instance_valid(combatant) or combatant.hp <= 0.0:
+					continue
+				var replacement := combatant as Unit
+				if replacement.deployment_group_id != group_id or replacement.team != int(entry.team):
+					continue
+				replacement.active_ability_id = ability_id
+				replacement.active_ability_slot = int(entry.slot)
+				replacement.configure_carried_active_skill(skill)
+				entry["unit"] = replacement
+				_active_skills[ability_id] = entry
+				replacement.died.connect(_on_active_skill_unit_died.bind(ability_id), CONNECT_ONE_SHOT)
+				return
 	_active_skills.erase(ability_id)
 	_cancel_pending_active_skill(ability_id)
 	if _active_skill_bar != null:
@@ -2430,7 +2494,7 @@ func _rpc_deploy_rejected(card_id: String) -> void:
 
 ## 主机 → 客户端：单位生成
 @rpc("authority", "call_remote", "reliable")
-func _rpc_spawn_unit(card_id: String, p_team: int, pos: Vector2, net_id: int, deploy_time_override: float = -1.0, active_ability_id: int = -1, active_ability_slot: int = -1, pre_deploy_id: int = -1) -> void:
+func _rpc_spawn_unit(card_id: String, p_team: int, pos: Vector2, net_id: int, deploy_time_override: float = -1.0, active_ability_id: int = -1, active_ability_slot: int = -1, pre_deploy_id: int = -1, deployment_group_id: int = -1) -> void:
 	if mode != "client":
 		return
 	_remove_card_pre_deploy_visual(pre_deploy_id)
@@ -2440,6 +2504,7 @@ func _rpc_spawn_unit(card_id: String, p_team: int, pos: Vector2, net_id: int, de
 		stats["deploy_time"] = deploy_time_override
 	var u := Unit.new()
 	u.card_id = card_id
+	u.deployment_group_id = deployment_group_id
 	u.position = pos
 	u.setup(p_team, stats, stats.name)
 	if deploy_time_override >= 0.0:

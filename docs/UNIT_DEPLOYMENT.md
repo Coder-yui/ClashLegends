@@ -4,6 +4,8 @@
 
 `visual_animations.deploy` 必须写素材真实动画名：优先 Respawn，其次 Recall WindDown，最后 Idle。单段会适配 `deploy_time`；多段使用动画数组和等长 `deploy_durations`，总时长应等于部署锁。
 
+群体单位卡仍只提交一个格心并显示一个 Command Buffer/部署读条圈；目标 Tick 到达后，`deployment_count / deployment_spacing` 把这条命令展开为中心与环形位置。成员共享本次部署的编队 id，但各自拥有独立生命、碰撞、索敌、弹体与死亡状态。编队主动可用 `target_scope = deployment_group` 定位同一次部署中的存活成员。
+
 需要“先预警、后出场”的单位可配置 `pre_deploy_time`。Command Buffer 的目标 Tick 到达后，Host 先创建一个只含落点提示的权威预部署记录，并通过可靠 RPC 把提示同步给客户端；计时结束才调用通用 `_spawn_unit()`。生成后的 Unit 仍按 `deploy_time` 进入第二段部署锁，预部署提示不加入 `combatants`，也不参与伤害、碰撞或寻路。`deploy_anywhere` 可让单位使用全图地面部署规则，但河道和塔/水晶占地仍由通用落点校验拦截。
 
 主动技能与出牌共用 10 Tick Command Buffer。主动技能请求进入 Host 队列时检查技能携带单位、主动位归属、金币、剩余次数、冷却和单位状态，并扣除技能金币；目标 Tick 到达后在 Cast Start 扣除一次使用次数、开始冷却，随后按 `impact_delay` 和 `cast_duration` 推进效果。主动技能按钮显示金币、剩余次数和冷却，状态由 Host 快照同步。

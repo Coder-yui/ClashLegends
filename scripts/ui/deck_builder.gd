@@ -726,7 +726,7 @@ func _card_attributes(stats: Dictionary, quantity_override: String = "") -> Arra
 		result.append({"name": "持续时间", "value": "%s秒" % _format_card_number(float(stats.get("duration", 0.0)))})
 		return result
 
-	var quantity := quantity_override if not quantity_override.is_empty() else "1"
+	var quantity := quantity_override if not quantity_override.is_empty() else str(maxi(int(stats.get("deployment_count", 1)), 1))
 	result.append({"name": "生命", "value": _format_card_number(float(stats.get("hp", 0.0)))})
 	result.append({"name": "类型", "value": _card_type_name(card_type, stats)})
 	if card_type == "building":
@@ -949,7 +949,8 @@ func _update_active_skill_rules(skill: Dictionary) -> void:
 	if _deck_info_active_cost_label == null or _deck_info_active_uses_label == null:
 		return
 	_deck_info_active_cost_label.text = "金币消耗：%s" % _format_card_number(maxf(float(skill.get("cost", 0.0)), 0.0))
-	_deck_info_active_uses_label.text = "单个单位：最多 %d 次" % maxi(int(skill.get("max_uses", 1)), 1)
+	var owner_label := "本次编队" if StringName(skill.get("target_scope", "self")) == &"deployment_group" else "单个单位"
+	_deck_info_active_uses_label.text = "%s：最多 %d 次" % [owner_label, maxi(int(skill.get("max_uses", 1)), 1)]
 
 func _on_info_active_skill_selected(skill_index: int, card_id: String) -> void:
 	var skills := CardDB.active_skills_for(card_id)

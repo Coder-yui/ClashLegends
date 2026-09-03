@@ -149,6 +149,9 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 	_last_empowered_ready = _source.is_empowered_attack_ready_visual()
 	_last_haste_active = _source.get_active_speed_multiplier_visual() > 1.001
 	add_child(_model_root)
+	# 空军统一把模型实际底部平移到默认离地高度；只改位置，不改变包装场景的任何缩放。
+	if _source.is_air:
+		_align_air_visual_elevation()
 	if _model_root.has_method("prepare_visual_animations"):
 		_model_root.call("prepare_visual_animations")
 	_animation_player = _find_animation_player(_model_root)
@@ -633,6 +636,31 @@ func _screen_to_ground(screen_position: Vector2) -> Vector3:
 		return Vector3.ZERO
 	return origin + direction * (-origin.y / direction.y)
 
+
+## 不依赖素材原点：读取全部网格的实际底部，再整体平移包装根节点到统一空军高度。
+func _align_air_visual_elevation() -> void:
+	var current_bottom := _visual_bounds_bottom_y()
+	if not is_finite(current_bottom):
+		return
+	_model_root.position.y += CardDB.AIR_VISUAL_ELEVATION - current_bottom
+
+
+func _visual_bounds_bottom_y() -> float:
+	if _model_root == null or not is_instance_valid(_model_root):
+		return INF
+	var bottom := INF
+	for node in _model_root.find_children("*", "MeshInstance3D", true, false):
+		var mesh_instance := node as MeshInstance3D
+		var bounds := mesh_instance.get_aabb()
+		for corner_index in range(8):
+			var corner := Vector3(
+				bounds.position.x + bounds.size.x * float(corner_index & 1),
+				bounds.position.y + bounds.size.y * float((corner_index >> 1) & 1),
+				bounds.position.z + bounds.size.z * float((corner_index >> 2) & 1)
+			)
+			bottom = minf(bottom, to_local(mesh_instance.to_global(corner)).y)
+	return bottom
+
 ## 用包装场景中全部网格的实际投影顶部定位血条；模型缩放或脚底校正后无需再手填像素偏移。
 func _update_health_bar_anchor() -> void:
 	if _source == null or _camera == null or _flash_meshes.is_empty():
@@ -666,9 +694,15 @@ func _update_health_bar_anchor() -> void:
 			found_visible_point = true
 	if found_visible_point:
 		# 武器/披风等网格也在 AABB 内，直接取最顶点会把血条拉离头部；
-		# 以体型半径给人物头顶设合理上限，避免红蓝朝向或动作造成大幅漂移。
+		# 以体型半径给人物头顶设合理上限。空军从统一离地平面而非权威地面计算，
+		# 让血条随模型一起上移，同时避免红蓝朝向或动作造成大幅漂移。
 		var max_head_height := _source.visual_radius * 3.25
-		top_screen_y = maxf(top_screen_y, ground_screen.y - max_head_height)
+		var visual_base_screen_y := ground_screen.y
+		if _source.is_air:
+			var air_base_world := global_position + Vector3.UP * CardDB.AIR_VISUAL_ELEVATION
+			if not _camera.is_position_behind(air_base_world):
+				visual_base_screen_y = _camera.unproject_position(air_base_world).y
+		top_screen_y = maxf(top_screen_y, visual_base_screen_y - max_head_height)
 		_source.set_visual_head_world_position(Vector2(ground_screen.x, top_screen_y))
 
 func _play_state(state: int, blend_time: float = -1.0) -> void:

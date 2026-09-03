@@ -112,8 +112,10 @@ func _check_aurelionsol_art_integration() -> void:
 	var sample := packed.instantiate() as Node3D
 	var model_node := sample.get_node_or_null("Model") as Node3D
 	_expect(
-		model_node != null and model_node.position.y > 2.0 and is_equal_approx(model_node.scale.x, 0.006),
-		"龙王模型以独立表现高度悬在地面上方，权威空中坐标仍留在 2D 地面",
+		model_node != null
+		and model_node.position.y > 2.0
+		and model_node.scale.is_equal_approx(Vector3.ONE * 0.006),
+		"龙王包装模型恢复三个轴0.006整体缩放，悬空高度由统一表现层负责且不再拉伸模型",
 	)
 	var anim_names: Dictionary = stats.visual_animations
 	_expect(anim_names.deploy == "Respawn" and is_equal_approx(anim_names.deploy_clip_ratio, 0.5), "龙王部署使用 Respawn 前半段翻滚动画")
@@ -161,7 +163,16 @@ func _check_aurelionsol_art_integration() -> void:
 	var immediate_stop_ok := false
 	var mouth_binding_ok := false
 	var continuous_generic_fallback_ok := false
+	var default_air_height_applied := false
+	var air_health_bar_follows_model := false
 	if view != null:
+		default_air_height_applied = (
+			view._model_root.scale.is_equal_approx(Vector3.ONE)
+			and is_equal_approx(view._visual_bounds_bottom_y(), CardDB.AIR_VISUAL_ELEVATION)
+		)
+		view._update_health_bar_anchor()
+		var air_base_screen_y := view._camera.unproject_position(view.global_position + Vector3.UP * CardDB.AIR_VISUAL_ELEVATION).y
+		air_health_bar_follows_model = unit.get_visual_head_screen_position().y < air_base_screen_y
 		view._current_state = 0
 		unit._move_intent = Vector2.UP * unit.move_speed
 		view._transition_to_basic_state(2, 0.0)
@@ -254,7 +265,9 @@ func _check_aurelionsol_art_integration() -> void:
 			view._animation_player.current_animation == "Idle1_Base"
 			and not unit.continuous_beam_visible
 		)
-	_expect(attached and attack_transition_ok, "龙王进入攻击距离立即开始吐息，newtst 与 loop 全程保持光柱")
+	_expect(attached and default_air_height_applied, "空军模型尺寸不变，实际模型底部统一平移到默认离地高度")
+	_expect(air_health_bar_follows_model, "空军血条以离地后的模型为基准定位，不再停留在权威地面附近")
+	_expect(attack_transition_ok, "龙王进入攻击距离立即开始吐息，newtst 与 loop 全程保持光柱")
 	_expect(retarget_transition_ok, "龙王原地击败目标并直接换目标时播放 new_looptoin→newtst→loop")
 	_expect(generic_run_in_ok, "龙王 RunIn 按新通用规则用于部署与 Idle 后进入移动，首尾均为 sequence blend")
 	_expect(mouth_binding_ok, "龙王吐息起点每帧绑定当前动画 Pose 的 Jaw 骨骼，不再使用固定屏幕高度近似嘴部")

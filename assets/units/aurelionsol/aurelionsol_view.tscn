@@ -6,4 +6,4 @@
 
 [node name="Model" parent="." instance=ExtResource("1_aurelionsol")]
 position = Vector3(0, 2.2, 0)
-scale = Vector3(0.006, 0.008, 0.006)
+scale = Vector3(0.006, 0.006, 0.006)

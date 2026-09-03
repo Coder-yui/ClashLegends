@@ -46,6 +46,8 @@ var battle_context: BattleContext
 var active_ability_id := -1
 ## 0/1 分别对应备战卡组的第 1/2 主动槽；同槽新实例会覆盖旧实例资格。
 var active_ability_slot := -1
+## 同一次卡牌命令展开出的编队共享此 id；单体与召唤物为 -1。
+var deployment_group_id := -1
 var card_id := ""
 var team := 0
 var hp := 100.0
@@ -164,6 +166,9 @@ var empowered_attack_damage_multiplier := 1.0
 var empowered_attack_speed_multiplier := 1.0
 var empowered_attack_blind_charges := 0
 var blind_attack_charges := 0
+## 通用普攻击中吸血。主动赋予后持续到该单位死亡，不因主动槽被新编队替换而清除。
+var attack_lifesteal_ratio := 0.0
+var attack_lifesteal_max_health_ratio := 1.0
 
 # 联机客户端插值字段（main 快照写入）
 var net_target_pos: Vector2
@@ -578,6 +583,12 @@ func prepare_empowered_attack(damage_multiplier: float, speed_multiplier: float 
 	if _attacking and not _attack_visual_pending and (_attack_windup > 0.0 or _attack_cd <= 0.0):
 		_attack_visual_serial += 1
 		_empowered_attack_visual_serial = _attack_visual_serial
+	queue_redraw()
+
+## 给此单位后续每次真正命中的普通攻击附加吸血；不会改写攻击计时或主动技能归属。
+func apply_attack_lifesteal(heal_ratio: float, max_health_ratio: float = 1.0) -> void:
+	attack_lifesteal_ratio = maxf(heal_ratio, 0.0)
+	attack_lifesteal_max_health_ratio = maxf(max_health_ratio, 1.0)
 	queue_redraw()
 
 func apply_blind(attacks: int) -> void:
@@ -1414,7 +1425,7 @@ func _deal_attack_damage_to(target: Node2D, amount: float, effects: Dictionary =
 		if landed:
 			if target is Unit and int(effects.get("blind_charges", 0)) > 0:
 				(target as Unit).apply_blind(int(effects.blind_charges))
-			on_attack_landed()
+			on_attack_landed(-1, amount)
 			if was_alive and target.hp <= 0.0:
 				on_enemy_killed(target)
 
@@ -1463,7 +1474,7 @@ func _tick_pending_extra_attacks(dt: float) -> void:
 
 ## 主机在伤害真正落到目标后调用。格温由此精确地在首次普攻命中而非出手时开启缠流；
 ## 赵信等配置了命中回血的单位也在这里结算，未真正造成伤害的挥击不触发回复。
-func on_attack_landed(attack_form_index: int = -1) -> void:
+func on_attack_landed(attack_form_index: int = -1, landed_damage: float = 0.0) -> void:
 	var landed_form := form_index if attack_form_index < 0 else attack_form_index
 	# 在途小纳尔回旋镖不会在大形态下误算成大纳尔的 4 次近战命中。
 	if landed_form != form_index:
@@ -1481,6 +1492,7 @@ func on_attack_landed(attack_form_index: int = -1) -> void:
 		queue_redraw()
 	add_skill_resource(skill_resource_hit_gain)
 	_try_heal_on_hit()
+	_try_attack_lifesteal(landed_damage)
 
 func on_enemy_killed(target: Node2D) -> void:
 	if target is Unit and target.team != team:
@@ -1493,7 +1505,14 @@ func _try_heal_on_hit() -> void:
 		return
 	if _attack_swing_count % heal_every_hits != 0:
 		return
-	hp = minf(hp + heal_amount, max_hp)
+	hp = maxf(hp, minf(hp + heal_amount, max_hp))
+	queue_redraw()
+
+func _try_attack_lifesteal(landed_damage: float) -> void:
+	if attack_lifesteal_ratio <= 0.0 or landed_damage <= 0.0:
+		return
+	var health_cap := max_hp * attack_lifesteal_max_health_ratio
+	hp = minf(hp + landed_damage * attack_lifesteal_ratio, health_cap)
 	queue_redraw()
 
 func freeze(duration: float) -> void:
@@ -1562,7 +1581,8 @@ func is_stunned() -> bool:
 func heal(amount: float) -> void:
 	if hp <= 0.0 or amount <= 0.0:
 		return
-	hp = minf(hp + amount, max_hp)
+	# 普通治疗不能突破基础上限，也不能把已经存在的溢出生命反向截回基础上限。
+	hp = maxf(hp, minf(hp + amount, max_hp))
 	queue_redraw()
 
 func take_damage(amount: float, from: Node2D = null, source_team: int = -1, source_position: Vector2 = Vector2(INF, INF)) -> bool:
@@ -1743,10 +1763,12 @@ func _draw() -> void:
 		draw_arc(Vector2.ZERO, visual_radius + 6.0, -PI / 2.0, -PI / 2.0 + TAU * deploy_ratio, 24, Color.WHITE, 3.0)
 	if _sweep_fx_timer > 0.0 and deploy_sweep_radius > 0.0:
 		_draw_sweep_fx()
-	var hp_ratio := clampf(hp / maxf(max_hp, 0.001), 0.0, 1.0)
+	var raw_hp_ratio := maxf(hp / maxf(max_hp, 0.001), 0.0)
+	var hp_ratio := minf(raw_hp_ratio, 1.0)
+	var overheal_ratio := maxf(raw_hp_ratio - 1.0, 0.0)
 	var shield_health_ratio := get_shield_health_ratio()
 	var shield_capacity_ratio := get_shield_capacity_ratio()
-	if hp_ratio < 1.0 or shield_health_ratio > 0.0:
+	if not is_equal_approx(raw_hp_ratio, 1.0) or shield_health_ratio > 0.0:
 		var bar_w := visual_radius * 2.0
 		var bar_rect := Rect2(
 			_health_bar_center.x - bar_w * 0.5,
@@ -1763,6 +1785,12 @@ func _draw() -> void:
 			draw_rect(Rect2(bar_rect.position, Vector2(hp_width, HEALTH_BAR_HEIGHT)), get_health_bar_fill_color())
 		if shield_width > 0.0:
 			draw_rect(Rect2(Vector2(bar_rect.position.x + hp_width, bar_rect.position.y), Vector2(shield_width, HEALTH_BAR_HEIGHT)), Color.WHITE)
+		# 溢出生命画在基础血条右侧，长度直接表示超过基础上限的比例；皮克斯最多延伸 50%。
+		if overheal_ratio > 0.0:
+			draw_rect(
+				Rect2(Vector2(bar_rect.end.x, bar_rect.position.y), Vector2(bar_w * overheal_ratio, HEALTH_BAR_HEIGHT)),
+				Color(0.82, 0.35, 1.0),
+			)
 	if is_skill_resource_visible():
 		var resource_w := visual_radius * 2.0
 		var resource_y := _health_bar_center.y + HEALTH_BAR_HEIGHT * 0.5 + SKILL_RESOURCE_BAR_GAP

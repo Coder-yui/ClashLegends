@@ -120,10 +120,31 @@ func apply(source: Unit, skill: Dictionary) -> bool:
 				float(skill.get("empowered_speed_multiplier", 1.0)),
 				int(skill.get("blind_charges", 0))
 			)
+		&"attack_lifesteal":
+			for target in _skill_target_units(source, skill):
+				target.apply_attack_lifesteal(
+					float(skill.get("heal_ratio", 0.0)),
+					float(skill.get("max_health_ratio", 1.0))
+				)
 		_:
 			push_error("未实现的主动技能 kind：%s" % String(skill.get("kind", "")))
 			return false
 	return true
+
+
+## 主动效果默认只作用于施法者；deployment_group 会选中同一次卡牌部署中仍存活的成员。
+func _skill_target_units(source: Unit, skill: Dictionary) -> Array[Unit]:
+	var targets: Array[Unit] = []
+	if StringName(skill.get("target_scope", "self")) != &"deployment_group" or source.deployment_group_id < 0:
+		targets.append(source)
+		return targets
+	for combatant in _controller.get_tree().get_nodes_in_group("combatants"):
+		if not combatant is Unit or not is_instance_valid(combatant) or combatant.hp <= 0.0:
+			continue
+		var member := combatant as Unit
+		if member.team == source.team and member.deployment_group_id == source.deployment_group_id:
+			targets.append(member)
+	return targets
 
 
 func activate_nova(source: Unit, skill: Dictionary) -> void:

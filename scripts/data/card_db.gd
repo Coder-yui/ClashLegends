@@ -4,6 +4,8 @@ class_name CardDB
 ## 单位体型使用七档。这里的半径是权威战斗数据，会参与碰撞、部署、寻路与攻击距离；
 ## visual_radius 只负责占位图、队伍圈和状态提示，不得反过来驱动战斗。
 const CHARACTER_SCALE_MULTIPLIER := 1.5
+## 空军3D模型底部相对权威地面点的统一离地高度。表现层只平移模型，不缩放模型。
+const AIR_VISUAL_ELEVATION := 2.3
 const VISUAL_RADIUS_PADDING := 3.0 * CHARACTER_SCALE_MULTIPLIER
 const SIZE_EXTREMELY_SMALL := &"extremely_small"
 const SIZE_SMALL := &"small"
@@ -89,7 +91,8 @@ const SIZE_RADII := {
 }
 const PROJECTILE_VISUALS := [&"orb", &"arrow", &"needle", &"boomerang"]
 const SPELL_KINDS := [&"freeze"]
-const ACTIVE_SKILL_KINDS := [&"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"continuous_area", &"empowered_attack"]
+const ACTIVE_SKILL_KINDS := [&"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"continuous_area", &"empowered_attack", &"attack_lifesteal"]
+const ACTIVE_SKILL_TARGET_SCOPES := [&"self", &"deployment_group"]
 const CAST_LOCKS := [&"movement", &"attack", &"facing"]
 const VISUAL_ACTION_KINDS := [&"deploy", &"transform", &"skill"]
 const VISUAL_ACTION_DESCRIPTOR_FIELDS := [&"animation", &"durations", &"clip_ranges", &"kind", &"priority", &"blend_in", &"blend_out", &"sequence_blend"]
@@ -104,6 +107,7 @@ const CARD_FIELDS := [
 	&"size_tier", &"radius", &"visual_radius", &"mass", &"sight", &"color",
 	&"is_air", &"is_building", &"building_only", &"can_attack_air", &"is_continuous_attack",
 	&"deploy_time", &"pre_deploy_time", &"deploy_zone", &"deploy_ignore_structures", &"show_team_ring", &"footprint_tiles", &"lifespan",
+	&"deployment_count", &"deployment_spacing",
 	&"spawn_id", &"spawn_interval", &"spawn_count", &"spawn_side", &"death_spawn_id", &"death_spawn_count",
 	&"projectile_speed", &"projectile_visual", &"projectile_visual_height",
 	&"projectile_visual_forward_offset", &"projectile_colors", &"splash_radius", &"knockback",
@@ -148,6 +152,7 @@ const ACTIVE_SKILL_FIELDS := [
 	&"shockwave_slow_duration", &"shockwave_slow_multiplier", &"shockwave_full_only",
 	&"tick_interval",
 	&"empowered_damage_multiplier", &"empowered_speed_multiplier", &"blind_charges",
+	&"target_scope", &"heal_ratio", &"max_health_ratio",
 ]
 ## building_only: true 时只攻击建筑（塔+建筑卡），无视普通单位
 ## can_attack_air: false 时无法选中/攻击空中单位（近战地面单位通常不能对空）
@@ -497,6 +502,39 @@ static func all() -> Dictionary:
 			},
 			"is_air": false, "building_only": false, "can_attack_air": false,
 			"active_skills": [{"name": "超级冲锋", "kind": "buff", "cost": 2, "max_uses": 1, "cooldown": 7.0, "duration": 5.0, "speed_multiplier": 1.35, "damage_multiplier": 1.35, "shield": 140.0, "shield_duration": 5.0}],
+		},
+		"pix": {
+			"name": "皮克斯", "cost": 2, "type": "unit",
+			"description": "一次部署五只皮克斯。体型极小的近距离空中射手，会发射紫色光弹。",
+			# 生命和单次伤害都严格等于公主塔的一次攻击伤害。
+			"hp": PRINCESS_TOWER_STATS.damage, "damage": PRINCESS_TOWER_STATS.damage,
+			"range": 1.2 * 40.0,
+			# Attack1/2 都约在 40% 处完成蓄势；first_hit 在固定模拟中生成光弹。
+			"speed": SPEED_FAST, "interval": 1.0, "first_hit": 0.40,
+			"size_tier": SIZE_EXTREMELY_SMALL, "radius": RADIUS_EXTREMELY_SMALL,
+			"visual_radius": RADIUS_EXTREMELY_SMALL + VISUAL_RADIUS_PADDING,
+			"mass": 1.0, "sight": 180.0,
+			"deployment_count": 5, "deployment_spacing": 36.0,
+			"projectile_speed": 360.0, "projectile_visual": "orb",
+			# 统一悬空后的施法手位约在权威地面点上方 84px；只影响紫色光弹绘制起点。
+			"projectile_visual_height": 84.0,
+			"projectile_visual_forward_offset": 4.0,
+			"projectile_colors": [Color(0.72, 0.24, 1.0), Color(0.72, 0.24, 1.0)],
+			"color": Color(0.72, 0.24, 1.0),
+			"visual_scene_path": "res://assets/units/pix/pix_view.tscn",
+			"visual_forward_yaw": 0.0,
+			"visual_animations": {
+				"deploy": "Idle1", "idle": "Idle1", "move": "Run",
+				"attack": ["Attack1", "Attack2"],
+			},
+			"is_air": true, "building_only": false, "can_attack_air": true,
+			"active_skills": [{
+				"name": "仙灵汲取", "kind": "attack_lifesteal",
+				"cost": 1, "max_uses": 1, "cooldown": 0.0,
+				"target_scope": "deployment_group",
+				"heal_ratio": 0.25, "max_health_ratio": 1.5,
+				"description": "使这次部署中仍存活的所有皮克斯此后的每次普通攻击命中都回复该次伤害25%的生命；可溢出生命上限，最高达到150%。",
+			}],
 		},
 		# ===== 新增4张 =====
 		"freeze": {
@@ -853,6 +891,14 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 		errors.append("%s.pre_deploy_time: 必须 >= 0" % card_id)
 	if float(stats.get("pre_deploy_time", 0.0)) > 0.0 and card_type == &"spell":
 		errors.append("%s.pre_deploy_time: 法术不能使用单位预部署阶段" % card_id)
+	if stats.has("deployment_count"):
+		if card_type != &"unit":
+			errors.append("%s.deployment_count: 只有单位卡可以编队部署" % card_id)
+		var deployment_count := int(stats.get("deployment_count", 0))
+		if deployment_count <= 0:
+			errors.append("%s.deployment_count: 必须 > 0" % card_id)
+		if deployment_count > 1 and float(stats.get("deployment_spacing", 0.0)) <= 0.0:
+			errors.append("%s.deployment_spacing: 编队数量大于 1 时必须 > 0" % card_id)
 	match card_type:
 		&"unit":
 			_validate_combat_stats(card_id, stats, true, errors)
@@ -1231,6 +1277,15 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 					errors.append("%s.empowered_speed_multiplier: 必须 >= 1" % label)
 				if int(skill.get("blind_charges", 0)) < 0:
 					errors.append("%s.blind_charges: 必须 >= 0" % label)
+			&"attack_lifesteal":
+				_require_fields(label, skill, [&"heal_ratio", &"max_health_ratio"], errors)
+				if float(skill.get("heal_ratio", 0.0)) <= 0.0:
+					errors.append("%s.heal_ratio: 必须 > 0" % label)
+				if float(skill.get("max_health_ratio", 0.0)) < 1.0:
+					errors.append("%s.max_health_ratio: 必须 >= 1" % label)
+		var target_scope := StringName(skill.get("target_scope", "self"))
+		if target_scope not in ACTIVE_SKILL_TARGET_SCOPES:
+			errors.append("%s.target_scope: 只支持 self/deployment_group" % label)
 		if skill.has("center_ratio") and (float(skill.center_ratio) < 0.0 or float(skill.center_ratio) > 1.0):
 			errors.append("%s.center_ratio: 必须在 0 到 1 之间" % label)
 		if skill.has("center_width") and float(skill.center_width) < 0.0:
