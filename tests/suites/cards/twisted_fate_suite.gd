@@ -29,12 +29,13 @@ func _check_card_config() -> void:
 		and stats.get("type", "") == "unit"
 		and not bool(stats.get("is_air", true))
 		and bool(stats.get("can_attack_air", false))
-		and bool(stats.get("deploy_anywhere", false))
+		and String(stats.get("deploy_zone", "")) == "global"
+		and not bool(stats.get("deploy_ignore_structures", false))
 		and is_equal_approx(float(stats.get("interval", 0.0)), 1.2)
 		and is_equal_approx(float(stats.get("first_hit", -1.0)), 0.25)
 		and is_equal_approx(float(stats.get("pre_deploy_time", 0.0)), 1.0)
 		and is_equal_approx(float(stats.get("deploy_time", 0.0)), 1.0),
-		"卡牌大师是远程对陆对空单位，并启用 1 秒预部署 + 1 秒单位部署",
+		"卡牌大师是远程对陆对空单位，deploy_zone=global 且受占位（含河道）限制，启用 1 秒预部署 + 1 秒单位部署",
 	)
 	_expect(
 		attack_animations == ["Attack1", "Attack2", "Attack3", "Attack4", "Spell3"]
@@ -63,6 +64,8 @@ func _check_global_ground_deployment() -> void:
 	var center_ground := Vector2(360.0, 800.0)
 	var river_top := Vector2(360.0, 620.0)
 	var river_bottom := Vector2(360.0, 660.0)
+	var left_bridge_top := Vector2(_main.BRIDGE_X_LEFT, river_top.y)
+	var right_bridge_bottom := Vector2(_main.BRIDGE_X_RIGHT, river_bottom.y)
 	var enemy_king: Vector2 = _main._king_enemy.global_position
 	var player_king: Vector2 = _main._king_player.global_position
 	_expect(
@@ -70,15 +73,18 @@ func _check_global_ground_deployment() -> void:
 		and _main.is_card_deploy_position_valid(0, "twisted_fate", own_side)
 		and _main.is_card_deploy_position_valid(1, "twisted_fate", enemy_side)
 		and _main.is_card_deploy_position_valid(1, "twisted_fate", own_side)
-		and _main.is_card_deploy_position_valid(0, "twisted_fate", center_ground),
-		"卡牌大师可在敌我双方以及中场的河道外地面落点部署",
+		and _main.is_card_deploy_position_valid(0, "twisted_fate", center_ground)
+		and _main.is_card_deploy_position_valid(0, "twisted_fate", left_bridge_top)
+		and _main.is_card_deploy_position_valid(0, "twisted_fate", right_bridge_bottom)
+		and _main.is_card_deploy_position_valid(1, "twisted_fate", left_bridge_top),
+		"卡牌大师可在敌我双方、中场河道外、左右桥面的地面落点部署",
 	)
 	_expect(
 		not _main.is_card_deploy_position_valid(0, "twisted_fate", river_top)
 		and not _main.is_card_deploy_position_valid(0, "twisted_fate", river_bottom)
 		and not _main.is_card_deploy_position_valid(0, "twisted_fate", enemy_king)
 		and not _main.is_card_deploy_position_valid(0, "twisted_fate", player_king),
-		"卡牌大师不能落在河道、桥面或防御塔/水晶占地格",
+		"卡牌大师不能落在非桥面河道、或防御塔/水晶占地格",
 	)
 
 func _check_two_stage_deployment() -> void:

@@ -77,6 +77,7 @@ const NEXUS_VISUAL_CONFIG := {
 }
 
 const CARD_TYPES := [&"unit", &"spell", &"building"]
+const DEPLOY_ZONES := [&"own_side", &"global_no_river", &"global"]
 const SIZE_RADII := {
 	SIZE_EXTREMELY_SMALL: RADIUS_EXTREMELY_SMALL,
 	SIZE_SMALL: RADIUS_SMALL,
@@ -102,7 +103,7 @@ const CARD_FIELDS := [
 	&"hp", &"damage", &"range", &"speed", &"interval", &"first_hit",
 	&"size_tier", &"radius", &"visual_radius", &"mass", &"sight", &"color",
 	&"is_air", &"is_building", &"building_only", &"can_attack_air", &"is_continuous_attack",
-	&"deploy_time", &"pre_deploy_time", &"deploy_anywhere", &"show_team_ring", &"footprint_tiles", &"lifespan",
+	&"deploy_time", &"pre_deploy_time", &"deploy_zone", &"deploy_ignore_structures", &"show_team_ring", &"footprint_tiles", &"lifespan",
 	&"spawn_id", &"spawn_interval", &"spawn_count", &"spawn_side", &"death_spawn_id", &"death_spawn_count",
 	&"projectile_speed", &"projectile_visual", &"projectile_visual_height",
 	&"projectile_visual_forward_offset", &"projectile_colors", &"splash_radius", &"knockback",
@@ -501,6 +502,7 @@ static func all() -> Dictionary:
 		"freeze": {
 			"name": "冰冻", "cost": 3, "type": "spell",
 			"spell_kind": "freeze",
+			"deploy_zone": "global", "deploy_ignore_structures": true,
 			"description": "范围控制法术，冻结范围内的敌方单位，为己方争取进攻窗口。",
 			"active_name": "强化冰冻",
 			# 法术卡：不生成单位，在点击位置范围内冻结敌方单位3秒
@@ -543,7 +545,7 @@ static func all() -> Dictionary:
 			"projectile_speed": 520.0, "projectile_visual": "orb", "projectile_visual_height": 60.0,
 			"color": Color(0.34, 0.56, 0.92),
 			# deploy_time 是单位出现后的部署锁定；pre_deploy_time 是出现前只显示卡牌落点提示的阶段。
-			"deploy_time": 1.0, "pre_deploy_time": 1.0, "deploy_anywhere": true,
+			"deploy_time": 1.0, "pre_deploy_time": 1.0, "deploy_zone": "global",
 			"visual_scene_path": "res://assets/units/twisted_fate/twisted_fate_view.tscn",
 			"visual_forward_yaw": 0.0,
 			"visual_animations": {
@@ -841,8 +843,12 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 		errors.append("%s.cost: 必须 >= 0" % card_id)
 	if float(stats.get("radius", 0.0)) <= 0.0:
 		errors.append("%s.radius: 必须 > 0" % card_id)
-	if stats.has("deploy_anywhere") and typeof(stats.deploy_anywhere) != TYPE_BOOL:
-		errors.append("%s.deploy_anywhere: 必须是 bool" % card_id)
+	if stats.has("deploy_zone"):
+		var dz := StringName(stats.get("deploy_zone", ""))
+		if dz not in DEPLOY_ZONES:
+			errors.append("%s.deploy_zone: 必须是 DEPLOY_ZONES 之一 (%s)" % [card_id, "、".join(DEPLOY_ZONES)])
+	if stats.has("deploy_ignore_structures") and typeof(stats.deploy_ignore_structures) != TYPE_BOOL:
+		errors.append("%s.deploy_ignore_structures: 必须是 bool" % card_id)
 	if stats.has("pre_deploy_time") and float(stats.get("pre_deploy_time", 0.0)) < 0.0:
 		errors.append("%s.pre_deploy_time: 必须 >= 0" % card_id)
 	if float(stats.get("pre_deploy_time", 0.0)) > 0.0 and card_type == &"spell":

@@ -15,6 +15,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_minion_line_mechanism()
 	_check_death_animation_durations()
 	_check_tombstone_footprint()
+	_check_tombstone_does_not_push_air_units()
 	_check_tombstone_spawn_cycle()
 	_check_generic_periodic_summon()
 
@@ -338,6 +339,33 @@ func _check_tombstone_footprint() -> void:
 		occupied = occupied and not _main.nav.is_walkable(first + offset)
 	_expect(half_size_ok and occupied, "墓碑实际占据完整 2x2 格并写入导航障碍")
 	tombstone._die()
+
+func _check_tombstone_does_not_push_air_units() -> void:
+	# 空军在墓碑落地时不受建筑部署推挤影响，位置应保持不变。
+	var dragon_stats: Dictionary = CardDB.get_card("aurelionsol").duplicate(true)
+	dragon_stats["deploy_time"] = 0.0
+	var dragon := Unit.new()
+	# 墓碑 2x2 吸附到格线交点；龙王也放在同一中心，确保 overlap 触发推挤分支。
+	var shared_pos: Vector2 = Vector2(480.0, 1080.0)
+	dragon.position = shared_pos
+	dragon.setup(0, dragon_stats, dragon_stats.name)
+	_main.add_child(dragon)
+	var before_pos: Vector2 = dragon.global_position
+	_expect(dragon.is_air, "龙王 is_air=true，属于空军")
+	# 先直接调用 _push_units_around：墓碑 radius=40，龙王 radius≈21，中心距 0 < 61 → 若不加 is_air 保护必推。
+	_main._push_units_around(shared_pos, 40.0)
+	var after_direct: Vector2 = dragon.global_position
+	_expect(before_pos.is_equal_approx(after_direct), "直接推挤时龙王位置不动：before=%s after=%s" % [str(before_pos), str(after_direct)])
+	# 再走 _execute_card_deployment 真实链路：building 分支会先 _push_units_around 再生成墓碑。
+	_main._execute_card_deployment(0, "tombstone", shared_pos)
+	var after_execute: Vector2 = dragon.global_position
+	_expect(before_pos.is_equal_approx(after_execute), "真实墓碑落地在龙王上方时，龙王位置仍保持不变")
+	# 清理：查找生成的墓碑并销毁
+	for c in _main.get_tree().get_nodes_in_group("combatants"):
+		if c is Unit and (c as Unit).card_id == "tombstone" and c.global_position.is_equal_approx(shared_pos):
+			(c as Unit)._die()
+			break
+	dragon.free()
 
 func _check_tombstone_spawn_cycle() -> void:
 	var stats: Dictionary = CardDB.get_card("tombstone").duplicate(true)

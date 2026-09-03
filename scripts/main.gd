@@ -869,13 +869,19 @@ func _tile_in_ground_deploy_zone(tile: Vector2i, p_team: int) -> bool:
 	var is_left := tile.x < ARENA_COLUMNS / 2
 	return _pocket_unlocked(p_team, is_left)
 
-## 全图卡牌只允许落在河道外的地面格；敌我双方区域都合法，但塔/水晶占地格
-## 仍由 is_card_deploy_position_valid() 单独拦截。河道两行保守作为不可部署区，
-## 这样桥面也不会被当成可落点。
+## 全图卡牌允许落在河道外的地面格 + 两座桥面三格；敌我双方区域都合法，但塔/水晶占地格
+## 仍由 is_card_deploy_position_valid() 单独拦截。除桥面外，河道其余两行保持不可部署。
 func _tile_in_global_ground_deploy_zone(tile: Vector2i) -> bool:
 	if tile.x < 0 or tile.x >= ARENA_COLUMNS or tile.y < 0 or tile.y >= ARENA_ROWS:
 		return false
-	return tile.y < RIVER_TOP_ROW or tile.y >= RIVER_BOTTOM_ROW
+	var in_river: bool = tile.y >= RIVER_TOP_ROW and tile.y < RIVER_BOTTOM_ROW
+	if not in_river:
+		return true
+	# 河道中：只允许左右桥的三格宽列通过
+	var colf: float = float(tile.x)
+	var on_left_bridge: bool = abs(colf - BRIDGE_X_LEFT / TILE_SIZE) <= 1.5
+	var on_right_bridge: bool = abs(colf - BRIDGE_X_RIGHT / TILE_SIZE) <= 1.5
+	return on_left_bridge or on_right_bridge
 
 func _pocket_unlocked(p_team: int, is_left: bool) -> bool:
 	if _towers.size() < 4:
@@ -921,27 +927,53 @@ func is_card_deploy_position_valid(p_team: int, card_id: String, pos: Vector2) -
 		return false
 	pos = _snap_card_position(card_id, pos, p_team)
 	var stats: Dictionary = CardDB.get_card(card_id)
-	var is_spell: bool = stats.get("type", "unit") == "spell"
+	var deploy_zone: String = String(stats.get("deploy_zone", "own_side"))
+	var ignore_structures: bool = bool(stats.get("deploy_ignore_structures", false))
 	var footprint: Vector2i = stats.get("footprint_tiles", Vector2i.ONE)
-	if is_spell:
-		if not _pos_in_deploy_zone(pos, p_team, true):
-			return false
-	else:
-		var first_tile := Vector2i(roundi(pos.x / TILE_SIZE - float(footprint.x) * 0.5), roundi(pos.y / TILE_SIZE - float(footprint.y) * 0.5))
+	var is_rect := footprint != Vector2i.ONE
+	var card_type: String = String(stats.get("type", "unit"))
+
+	# 1. 部署区域：从 CardDB 独立读取 deploy_zone。只有 own_side / global 两态；
+	#    「河道非桥面不可下」统一放在下一段占位层里（和塔/水晶/建筑同开关），不重复耦合到区域分类。
+	match deploy_zone:
+		"global":
+			if pos.x < 0.0 or pos.x >= FIELD_W or pos.y < 0.0 or pos.y >= FIELD_H:
+				return false
+		_:  # own_side
+			var first_tile := Vector2i(
+				roundi(pos.x / TILE_SIZE - float(footprint.x) * 0.5),
+				roundi(pos.y / TILE_SIZE - float(footprint.y) * 0.5))
+			for y in range(first_tile.y, first_tile.y + footprint.y):
+				for x in range(first_tile.x, first_tile.x + footprint.x):
+					var tile := Vector2i(x, y)
+					if not _tile_in_ground_deploy_zone(tile, p_team):
+						return false
+
+	# 2. 占位：独立开关；河流非桥面、塔/水晶占地格、结构圆/矩重叠统一由 deploy_ignore_structures 控制。
+	#    用户语义：河流非桥面占位等同于水晶/防御塔/建筑；桥面可通过。ignore=true 时（如冰冻）全部跳过。
+	if not ignore_structures:
+		var first_tile := Vector2i(
+			roundi(pos.x / TILE_SIZE - float(footprint.x) * 0.5),
+			roundi(pos.y / TILE_SIZE - float(footprint.y) * 0.5))
 		for y in range(first_tile.y, first_tile.y + footprint.y):
 			for x in range(first_tile.x, first_tile.x + footprint.x):
 				var tile := Vector2i(x, y)
-				var deploy_anywhere := bool(stats.get("deploy_anywhere", false))
-				if not (_tile_in_global_ground_deploy_zone(tile) if deploy_anywhere else _tile_in_ground_deploy_zone(tile, p_team)):
-					return false
+				# 河流：非桥面三格的列一律当作占位阻挡
+				var tile_in_river: bool = tile.y >= RIVER_TOP_ROW and tile.y < RIVER_BOTTOM_ROW
+				if tile_in_river:
+					var colf: float = float(tile.x)
+					var on_left_bridge: bool = abs(colf - BRIDGE_X_LEFT / TILE_SIZE) <= 1.5
+					var on_right_bridge: bool = abs(colf - BRIDGE_X_RIGHT / TILE_SIZE) <= 1.5
+					if not on_left_bridge and not on_right_bridge:
+						return false
 				if _is_tower_deployment_tile_blocked(tile):
 					return false
-	if is_spell:
-		return true
-	# 单格兵种共用同一套部署位置。不要因为盖伦等大体型兵种的真实半径较大，
-	# 把本来属于部署区的格子判成非法；真实体积从生成后才参与战斗碰撞。
-	var placement_radius: float = 0.0 if stats.get("type", "unit") == "unit" else stats.get("radius", 14.0)
-	return _can_deploy_at(pos, placement_radius, stats.get("is_air", false), footprint)
+		if card_type != "spell":
+			# 单格兵种共用同一套部署位置。不要因为盖伦等大体型兵种的真实半径较大，
+			# 把本来属于部署区的格子判成非法；真实体积从生成后才参与战斗碰撞。
+			var placement_radius: float = 0.0 if card_type == "unit" else stats.get("radius", 14.0)
+			return _can_deploy_at(pos, placement_radius, stats.get("is_air", false), footprint)
+	return true
 
 func _structure_rect(c: Node2D) -> Rect2:
 	return Rect2(c.global_position - Vector2.ONE * c.body_radius, Vector2.ONE * c.body_radius * 2.0)
@@ -2546,18 +2578,20 @@ func _draw() -> void:
 	# 选中卡牌时高亮可部署区域
 	if _selected_card != "":
 		var sel_stats: Dictionary = CardDB.get_card(_selected_card)
-		var is_spell_sel: bool = sel_stats.get("type", "unit") == "spell"
-		if is_spell_sel:
-			# 法术：高亮全场
-			draw_rect(Rect2(0, 0, FIELD_W, FIELD_H), Color(0.40, 0.70, 1.00, 0.08))
-		else:
-			var deploy_team := 1 if mode == "client" else 0
-			var deploy_anywhere := bool(sel_stats.get("deploy_anywhere", false))
-			for row in ARENA_ROWS:
-				for column in ARENA_COLUMNS:
-					var tile := Vector2i(column, row)
-					if _tile_in_global_ground_deploy_zone(tile) if deploy_anywhere else _tile_in_ground_deploy_zone(tile, deploy_team):
-						draw_rect(Rect2(Vector2(tile) * TILE_SIZE, Vector2.ONE * TILE_SIZE), Color(0.40, 0.70, 1.00, 0.15))
+		var deploy_zone: String = String(sel_stats.get("deploy_zone", "own_side"))
+		match deploy_zone:
+			"global":
+				# global 级卡（冰冻、卡牌大师）：整个竞技场提示为范围提示色；
+				# 具体水面/塔上等占位不可点的位置，由红/绿圆形落点预览精确反馈。
+				draw_rect(Rect2(0, 0, FIELD_W, FIELD_H), Color(0.40, 0.70, 1.00, 0.08))
+			_:
+				# own_side：逐格按己方部署掩码绘制
+				var deploy_team := 1 if mode == "client" else 0
+				for row in ARENA_ROWS:
+					for column in ARENA_COLUMNS:
+						var tile := Vector2i(column, row)
+						if _tile_in_ground_deploy_zone(tile, deploy_team):
+							draw_rect(Rect2(Vector2(tile) * TILE_SIZE, Vector2.ONE * TILE_SIZE), Color(0.40, 0.70, 1.00, 0.15))
 		_draw_deployment_preview(sel_stats)
 	# 两段式部署的第一段只显示一个落点卡牌标记，不创建单位或战斗碰撞体。
 	for pre_deployment in _pending_card_pre_deployments:
