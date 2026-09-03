@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/units/twisted_fate/source/twisted_fate.glb" id="1_twisted_fate"]
+
+[node name="TwistedFateView" type="Node3D"]
+
+[node name="Model" parent="." instance=ExtResource("1_twisted_fate")]
+scale = Vector3(0.012, 0.012, 0.012)

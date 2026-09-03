@@ -18,7 +18,9 @@ assets/
 
 ## 卡面
 
-`CardArt` 按 jpg → png → webp 自动发现 `assets/cards/<card_id>_loading.*`，手牌与 Deck Builder 使用统一卡框裁剪；无需在 CardDB 写图片路径。现有可选卡均已有卡面。四类兵线和墓碑的摄影工具位于 `tools/capture/`，只生成图片，不参与运行时。
+`CardArt` 按 jpg → png → webp 自动发现 `assets/cards/<card_id>_loading.*`，手牌与 Deck Builder 使用统一卡框裁剪；无需在 CardDB 写图片路径。现有可选卡均已有卡面。没有现成卡面时，可参考 `tools/capture/` 中的摄影脚本；四类兵线和墓碑使用各自脚本。这些脚本只生成图片，不参与运行时。
+
+卡面资源获取遵循“现成资源优先”：英雄先从 CommunityDragon 下载基础皮肤 Loading Screen；没有原生图但有模型时拍 3D 模型；图像和模型都没有时再用 AI 生成。已有卡面不得被后续拍摄或 AI 结果覆盖。
 
 ## 当前特殊目录
 

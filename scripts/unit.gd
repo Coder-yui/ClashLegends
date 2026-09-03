@@ -1378,8 +1378,8 @@ func _attack_damage_multiplier(hit_index: int) -> float:
 		return 1.0
 	return maxf(float(attack_damage_multipliers[hit_index % attack_damage_multipliers.size()]), 0.0)
 
-## 每次攻击在命中前 first_hit_time 发出一次表现序号。表现层可以据此播放完整动作，
-## 但伤害仍只由上面的固定 tick 逻辑结算。
+## 每次攻击在命中前 first_hit_time 发出一次表现序号；对远程单位，这个时刻就是出手/离弦点。
+## 表现层可以据此播放完整动作，但权威弹体仍只在下面的固定 tick 出手逻辑中生成。
 func _try_start_attack_visual(time_until_hit: float) -> void:
 	if continuous_attack or not _attack_visual_pending or time_until_hit > first_hit_time + 0.001:
 		return
@@ -1424,6 +1424,7 @@ func _perform_attack_strike(target: Node2D, amount: float, effects: Dictionary =
 		blind_attack_charges -= 1
 		queue_redraw()
 		return
+	# 远程单位在这里进入 BattleContext.launch_attack，弹体与出手 tick 同步；命中由弹体抵达后结算。
 	_deal_attack_damage_to(target, amount, effects)
 
 func _queue_extra_attack_hits(hit_index: int, base_hit_damage: float, target: Node2D) -> void:

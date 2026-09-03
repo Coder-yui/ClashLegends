@@ -365,10 +365,14 @@ func _damage_combatant(source: Unit, combatant: Node2D, amount: float, origin: V
 
 func begin_frontal_visual(source: Unit, skill: Dictionary, cast_forward: Vector2) -> void:
 	var duration := maxf(float(skill.get("impact_delay", 0.0)), 0.0)
+	var projectile_launch_delay := maxf(float(skill.get("projectile_launch_delay", 0.0)), 0.0)
+	var projectile_flight_duration := maxf(float(skill.get("projectile_flight_duration", 0.0)), 0.0)
 	var hit_delays = skill.get("prepared_hit_delays", [])
 	if hit_delays is Array:
 		for hit_delay in hit_delays:
 			duration = maxf(duration, float(hit_delay))
+	if projectile_flight_duration > 0.0:
+		duration = maxf(duration, projectile_launch_delay + projectile_flight_duration)
 	if duration <= 0.0:
 		return
 	add_frontal_effect(source, skill, duration, cast_forward)
@@ -380,7 +384,8 @@ func begin_frontal_visual(source: Unit, skill: Dictionary, cast_forward: Vector2
 			float(skill.get("near_width", skill.get("width", 0.0))), float(skill.get("far_width", skill.get("width", 0.0))),
 			float(skill.get("arc_degrees", 0.0)), int(skill.get("projectile_count", 0)),
 			float(skill.get("center_ratio", 0.0)), float(skill.get("center_width", 0.0)),
-			bool(skill.get("fan_inner_arc", false))
+			bool(skill.get("fan_inner_arc", false)), String(skill.get("projectile_visual", "arrow")),
+			projectile_launch_delay, projectile_flight_duration
 		)
 
 
@@ -487,6 +492,9 @@ func add_frontal_effect(source: Unit, skill: Dictionary, duration: float, cast_f
 		"far_width": maxf(float(skill.get("far_width", skill.get("width", 0.0))), 0.0),
 		"arc_degrees": maxf(float(skill.get("arc_degrees", 0.0)), 0.0),
 		"projectile_count": maxi(int(skill.get("projectile_count", 0)), 0),
+		"projectile_visual": String(skill.get("projectile_visual", "arrow")),
+		"projectile_launch_delay": maxf(float(skill.get("projectile_launch_delay", 0.0)), 0.0),
+		"projectile_flight_duration": maxf(float(skill.get("projectile_flight_duration", 0.0)), 0.0),
 		"center_ratio": clampf(float(skill.get("center_ratio", 0.0)), 0.0, 1.0),
 		"center_width": maxf(float(skill.get("center_width", 0.0)), 0.0),
 		"fan_inner_arc": bool(skill.get("fan_inner_arc", false)),

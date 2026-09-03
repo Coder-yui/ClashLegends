@@ -108,6 +108,10 @@ var _deployment_preview_valid := false
 var _deployment_preview_visible := false
 ## 主机/单机权威卡牌队列：单位、建筑和法术都在 Host 计算的 execute_tick 才真正生效。
 var _pending_card_deployments: Array[Dictionary] = []
+## 两段式单位部署：第一段只有落点提示，第二段才生成单位并进入 Unit.deploy_time。
+## 客户端也复用这份表现队列，直到收到权威生成 RPC 后移除标记。
+var _pending_card_pre_deployments: Array[Dictionary] = []
+var _next_card_pre_deploy_id := 1
 ## 兵线第二只单位的权威延迟队列；不经过手牌 0.5 秒部署队列，也不扣金币。
 var _pending_lane_minions: Array[Dictionary] = []
 var _battle_elapsed := 0.0
@@ -762,6 +766,7 @@ func _register_dynamic_building(unit: Unit) -> void:
 
 func _clear_art_dev_units() -> void:
 	_art_dev_last_units.clear()
+	_pending_card_pre_deployments.clear()
 	for combatant in get_tree().get_nodes_in_group("combatants"):
 		if not combatant is Unit:
 			continue
@@ -859,6 +864,14 @@ func _tile_in_ground_deploy_zone(tile: Vector2i, p_team: int) -> bool:
 	var is_left := tile.x < ARENA_COLUMNS / 2
 	return _pocket_unlocked(p_team, is_left)
 
+## 全图卡牌只允许落在河道外的地面格；敌我双方区域都合法，但塔/水晶占地格
+## 仍由 is_card_deploy_position_valid() 单独拦截。河道两行保守作为不可部署区，
+## 这样桥面也不会被当成可落点。
+func _tile_in_global_ground_deploy_zone(tile: Vector2i) -> bool:
+	if tile.x < 0 or tile.x >= ARENA_COLUMNS or tile.y < 0 or tile.y >= ARENA_ROWS:
+		return false
+	return tile.y < RIVER_TOP_ROW or tile.y >= RIVER_BOTTOM_ROW
+
 func _pocket_unlocked(p_team: int, is_left: bool) -> bool:
 	if _towers.size() < 4:
 		return false
@@ -913,7 +926,8 @@ func is_card_deploy_position_valid(p_team: int, card_id: String, pos: Vector2) -
 		for y in range(first_tile.y, first_tile.y + footprint.y):
 			for x in range(first_tile.x, first_tile.x + footprint.x):
 				var tile := Vector2i(x, y)
-				if not _tile_in_ground_deploy_zone(tile, p_team):
+				var deploy_anywhere := bool(stats.get("deploy_anywhere", false))
+				if not (_tile_in_global_ground_deploy_zone(tile) if deploy_anywhere else _tile_in_ground_deploy_zone(tile, p_team)):
 					return false
 				if _is_tower_deployment_tile_blocked(tile):
 					return false
@@ -1143,10 +1157,42 @@ func _tick_pending_card_deployments(_dt: float) -> void:
 			deployment.pos as Vector2
 		)
 
+func _tick_pending_card_pre_deployments(dt: float) -> void:
+	var waiting: Array[Dictionary] = []
+	var ready: Array[Dictionary] = []
+	for deployment in _pending_card_pre_deployments:
+		deployment.time_left = maxf(float(deployment.get("time_left", 0.0)) - dt, 0.0)
+		if float(deployment.time_left) > 0.001:
+			waiting.append(deployment)
+		else:
+			ready.append(deployment)
+	_pending_card_pre_deployments = waiting
+	for deployment in ready:
+		_spawn_unit(
+			int(deployment.team), String(deployment.card_id), deployment.pos as Vector2,
+			-1.0, int(deployment.get("active_slot", -1)), int(deployment.get("id", -1))
+		)
+
 func _execute_card_deployment(p_team: int, card_id: String, pos: Vector2) -> void:
 	var stats: Dictionary = CardDB.get_card(card_id)
 	var type: String = stats.get("type", "unit")
 	var active_slot := _active_card_slot_for_team(p_team, card_id)
+	var pre_deploy_time := maxf(float(stats.get("pre_deploy_time", 0.0)), 0.0)
+	if pre_deploy_time > 0.0 and type != "spell":
+		var pre_deploy_id := _next_card_pre_deploy_id
+		_next_card_pre_deploy_id += 1
+		_pending_card_pre_deployments.append({
+			"id": pre_deploy_id,
+			"team": p_team,
+			"card_id": card_id,
+			"pos": pos,
+			"active_slot": active_slot,
+			"time_left": pre_deploy_time,
+			"duration": pre_deploy_time,
+		})
+		if mode == "host":
+			_rpc_card_pre_deploy_started.rpc(pre_deploy_id, card_id, p_team, pos, pre_deploy_time)
+		return
 	match type:
 		"spell":
 			_cast_spell(p_team, card_id, pos, active_slot >= 0)
@@ -1224,7 +1270,7 @@ func _tick_slow_zones(dt: float) -> void:
 func _tick_slow_effect_visuals(delta: float) -> void:
 	_spell_system.tick_visuals(delta)
 
-func _spawn_unit(team: int, card_id: String, pos: Vector2, deploy_time_override: float = -1.0, active_slot: int = -1) -> Unit:
+func _spawn_unit(team: int, card_id: String, pos: Vector2, deploy_time_override: float = -1.0, active_slot: int = -1, pre_deploy_id: int = -1) -> Unit:
 	var stats: Dictionary = CardDB.get_unit_stats(card_id)
 	if stats.is_empty():
 		push_error("尝试生成不存在的单位：%s" % card_id)
@@ -1262,7 +1308,7 @@ func _spawn_unit(team: int, card_id: String, pos: Vector2, deploy_time_override:
 			_next_active_ability_id += 1
 		_register_active_skill(u, card_id, team)
 	if mode == "host":
-		_rpc_spawn_unit.rpc(card_id, team, pos, u.net_id, deploy_time_override, u.active_ability_id, u.active_ability_slot)
+		_rpc_spawn_unit.rpc(card_id, team, pos, u.net_id, deploy_time_override, u.active_ability_id, u.active_ability_slot, pre_deploy_id)
 	return u
 
 func _register_active_skill(unit: Unit, card_id: String, p_team: int) -> void:
@@ -1676,6 +1722,7 @@ func _sim_step(dt: float) -> void:
 	_tick_pending_active_skill_impacts(dt)
 	_active_skill_effect_system.tick_effects(dt)
 	_tick_pending_card_deployments(dt)
+	_tick_pending_card_pre_deployments(dt)
 	_tick_pending_active_skills(dt)
 	_tick_slow_zones(dt)
 	if not _art_dev_mode and _minion_waves_enabled:
@@ -2072,6 +2119,7 @@ func _process(delta: float) -> void:
 	if mode == "client":
 		_advance_estimated_server_tick(delta)
 		_projectile_system.tick_client_interpolation(delta)
+		_tick_card_pre_deploy_visuals(delta)
 		for fe in _freeze_effects:
 			fe.timer -= delta
 		_freeze_effects = _freeze_effects.filter(func(fe): return fe.timer > 0.0)
@@ -2243,6 +2291,23 @@ func _rpc_active_skill_request(ability_id: int, input_tick: int = -1) -> void:
 	if input_tick < 0 or not use_active_skill(ability_id, 1, sender, false, input_tick):
 		_rpc_active_skill_rejected.rpc_id(sender, ability_id)
 
+func _tick_card_pre_deploy_visuals(delta: float) -> void:
+	var alive: Array[Dictionary] = []
+	for deployment in _pending_card_pre_deployments:
+		deployment.time_left = maxf(float(deployment.get("time_left", 0.0)) - delta, 0.0)
+		if float(deployment.time_left) > 0.001:
+			alive.append(deployment)
+	_pending_card_pre_deployments = alive
+
+func _remove_card_pre_deploy_visual(pre_deploy_id: int) -> void:
+	if pre_deploy_id < 0:
+		return
+	var alive: Array[Dictionary] = []
+	for deployment in _pending_card_pre_deployments:
+		if int(deployment.get("id", -1)) != pre_deploy_id:
+			alive.append(deployment)
+	_pending_card_pre_deployments = alive
+
 @rpc("authority", "call_remote", "reliable")
 func _rpc_active_skill_used(ability_id: int, uses_remaining: int = 0, cooldown_left: float = 0.0) -> void:
 	if mode != "client":
@@ -2296,9 +2361,10 @@ func _rpc_deploy_rejected(card_id: String) -> void:
 
 ## 主机 → 客户端：单位生成
 @rpc("authority", "call_remote", "reliable")
-func _rpc_spawn_unit(card_id: String, p_team: int, pos: Vector2, net_id: int, deploy_time_override: float = -1.0, active_ability_id: int = -1, active_ability_slot: int = -1) -> void:
+func _rpc_spawn_unit(card_id: String, p_team: int, pos: Vector2, net_id: int, deploy_time_override: float = -1.0, active_ability_id: int = -1, active_ability_slot: int = -1, pre_deploy_id: int = -1) -> void:
 	if mode != "client":
 		return
+	_remove_card_pre_deploy_visual(pre_deploy_id)
 	var stats: Dictionary = CardDB.get_unit_stats(card_id)
 	if deploy_time_override >= 0.0:
 		stats = stats.duplicate()
@@ -2324,6 +2390,23 @@ func _rpc_spawn_unit(card_id: String, p_team: int, pos: Vector2, net_id: int, de
 		_register_active_skill(u, card_id, p_team)
 	if _auto_test:
 		print("[测试] 客户端收到单位生成: ", card_id, " net_id=", net_id)
+
+## 主机 → 客户端：两段式部署的第一段落点提示。客户端只计时和绘制标记，
+## 真正生成仍以随后到达的 _rpc_spawn_unit 为准。
+@rpc("authority", "call_remote", "reliable")
+func _rpc_card_pre_deploy_started(pre_deploy_id: int, card_id: String, p_team: int, pos: Vector2, duration: float) -> void:
+	if mode != "client":
+		return
+	_remove_card_pre_deploy_visual(pre_deploy_id)
+	_pending_card_pre_deployments.append({
+		"id": pre_deploy_id,
+		"card_id": card_id,
+		"team": p_team,
+		"pos": pos,
+		"time_left": maxf(duration, 0.0),
+		"duration": maxf(duration, 0.0),
+	})
+	queue_redraw()
 
 ## 主机 → 客户端：可靠触发一次短暂闪白，不依赖不可靠血量快照是否刚好采到该帧。
 @rpc("authority", "call_remote", "reliable")
@@ -2378,7 +2461,7 @@ func _rpc_freeze_fx(pos: Vector2, radius: float, duration: float, slow_duration:
 
 ## 主机 → 客户端：定向技能蓄力范围。客户端只画表现，伤害与状态仍由主机快照体现。
 @rpc("authority", "call_remote", "reliable")
-func _rpc_frontal_skill_fx(net_id: int, pos: Vector2, forward: Vector2, source_radius: float, length: float, width: float, duration: float, p_team: int, shape: String = "rectangle", near_width: float = 0.0, far_width: float = 0.0, arc_degrees: float = 0.0, projectile_count: int = 0, center_ratio: float = 0.0, center_width: float = 0.0, fan_inner_arc: bool = false) -> void:
+func _rpc_frontal_skill_fx(net_id: int, pos: Vector2, forward: Vector2, source_radius: float, length: float, width: float, duration: float, p_team: int, shape: String = "rectangle", near_width: float = 0.0, far_width: float = 0.0, arc_degrees: float = 0.0, projectile_count: int = 0, center_ratio: float = 0.0, center_width: float = 0.0, fan_inner_arc: bool = false, projectile_visual: String = "arrow", projectile_launch_delay: float = 0.0, projectile_flight_duration: float = 0.0) -> void:
 	if mode != "client":
 		return
 	_active_skill_effect_system.frontal_effects.append({
@@ -2395,6 +2478,9 @@ func _rpc_frontal_skill_fx(net_id: int, pos: Vector2, forward: Vector2, source_r
 		"far_width": width if far_width <= 0.0 else far_width,
 		"arc_degrees": arc_degrees,
 		"projectile_count": projectile_count,
+		"projectile_visual": projectile_visual,
+		"projectile_launch_delay": maxf(projectile_launch_delay, 0.0),
+		"projectile_flight_duration": maxf(projectile_flight_duration, 0.0),
 		"center_ratio": center_ratio,
 		"center_width": center_width,
 		"fan_inner_arc": fan_inner_arc,
@@ -2429,12 +2515,16 @@ func _draw() -> void:
 			draw_rect(Rect2(0, 0, FIELD_W, FIELD_H), Color(0.40, 0.70, 1.00, 0.08))
 		else:
 			var deploy_team := 1 if mode == "client" else 0
+			var deploy_anywhere := bool(sel_stats.get("deploy_anywhere", false))
 			for row in ARENA_ROWS:
 				for column in ARENA_COLUMNS:
 					var tile := Vector2i(column, row)
-					if _tile_in_ground_deploy_zone(tile, deploy_team):
+					if _tile_in_global_ground_deploy_zone(tile) if deploy_anywhere else _tile_in_ground_deploy_zone(tile, deploy_team):
 						draw_rect(Rect2(Vector2(tile) * TILE_SIZE, Vector2.ONE * TILE_SIZE), Color(0.40, 0.70, 1.00, 0.15))
 		_draw_deployment_preview(sel_stats)
+	# 两段式部署的第一段只显示一个落点卡牌标记，不创建单位或战斗碰撞体。
+	for pre_deployment in _pending_card_pre_deployments:
+		_draw_card_pre_deploy_indicator(pre_deployment)
 	# 冰冻区域效果
 	for fe in _freeze_effects:
 		var alpha: float = (fe.timer / fe.duration) * 0.25
@@ -2450,6 +2540,32 @@ func _draw() -> void:
 	# 纳尔 Spell2 使用三边矩形：两条侧边加远端宽边，靠纳尔的近端宽边刻意留空。
 	for effect in _active_skill_effect_system.frontal_effects:
 		_draw_frontal_skill_effect(effect)
+
+func _draw_card_pre_deploy_indicator(deployment: Dictionary) -> void:
+	var center: Vector2 = deployment.get("pos", Vector2.ZERO)
+	var duration := maxf(float(deployment.get("duration", 1.0)), 0.001)
+	var remaining := clampf(float(deployment.get("time_left", duration)), 0.0, duration)
+	var progress := 1.0 - remaining / duration
+	var team_color := Color(0.28, 0.68, 1.0, 0.96) if int(deployment.get("team", 0)) == 0 else Color(1.0, 0.34, 0.24, 0.96)
+	var pulse := 0.5 + 0.5 * sin(progress * TAU * 2.0)
+	draw_circle(center, 34.0, Color(team_color.r, team_color.g, team_color.b, 0.10 + 0.04 * pulse))
+	draw_arc(center, 34.0, 0.0, TAU, 48, Color(team_color.r, team_color.g, team_color.b, 0.42), 2.0, true)
+	draw_arc(center, 34.0, -PI * 0.5, -PI * 0.5 + TAU * progress, 48, team_color, 4.0, true)
+	for index in range(8):
+		var angle := TAU * float(index) / 8.0 - PI * 0.5
+		var direction := Vector2.from_angle(angle)
+		var tangent := Vector2(-direction.y, direction.x)
+		var card_center := center + direction * 31.0
+		var card_points := PackedVector2Array([
+			card_center - direction * 8.0 - tangent * 5.0,
+			card_center + direction * 8.0 - tangent * 5.0,
+			card_center + direction * 8.0 + tangent * 5.0,
+			card_center - direction * 8.0 + tangent * 5.0,
+		])
+		draw_colored_polygon(card_points, Color(0.98, 0.97, 0.90, 0.94))
+		draw_polyline(PackedVector2Array([card_points[0], card_points[1], card_points[2], card_points[3], card_points[0]]), Color(0.35, 0.18, 0.08, 0.96), 1.5, true)
+		draw_line(card_center - direction * 2.0, card_center + direction * 3.0, team_color, 1.5, true)
+	draw_circle(center, 4.0, Color(1.0, 0.95, 0.66, 0.96))
 
 func _draw_frontal_skill_effect(effect: Dictionary) -> void:
 	var source = _active_skill_effect_system.effect_source(effect)
@@ -2468,6 +2584,15 @@ func _draw_frontal_skill_effect(effect: Dictionary) -> void:
 	var far_center := near_center + forward * length
 	var remaining_ratio := clampf(float(effect.get("timer", 0.0)) / maxf(float(effect.get("duration", 0.0)), 0.001), 0.0, 1.0)
 	var progress := 1.0 - remaining_ratio
+	# 技能范围预警可以从施法开始显示，但卡牌/箭矢等纯表现弹体要等到出手 tick 才出现。
+	var projectile_progress := progress
+	var projectile_visible := true
+	var projectile_flight_duration := maxf(float(effect.get("projectile_flight_duration", 0.0)), 0.0)
+	if projectile_flight_duration > 0.0:
+		var cast_elapsed := progress * maxf(float(effect.get("duration", 0.0)), 0.0)
+		var projectile_elapsed := cast_elapsed - maxf(float(effect.get("projectile_launch_delay", 0.0)), 0.0)
+		projectile_visible = projectile_elapsed >= -0.0001
+		projectile_progress = clampf(projectile_elapsed / projectile_flight_duration, 0.0, 1.0)
 	var line_color := Color(0.28, 0.68, 1.0, 0.9) if int(effect.get("team", 0)) == 0 else Color(1.0, 0.34, 0.24, 0.9)
 	var fill_color := Color(line_color.r, line_color.g, line_color.b, 0.10 + 0.06 * remaining_ratio)
 	var shape := StringName(effect.get("shape", "rectangle"))
@@ -2521,14 +2646,15 @@ func _draw_frontal_skill_effect(effect: Dictionary) -> void:
 			draw_line(inner_left, outer_left, line_color, 2.0, true)
 			draw_line(inner_right, outer_right, line_color, 2.0, true)
 			draw_arc(center, inner_radius, center_angle - PI * 0.5, center_angle + PI * 0.5, 24, line_color, 2.0, true)
-			var arrow_count := maxi(int(effect.get("projectile_count", 0)), 0)
-			var arrow_distance := length * clampf(progress * 1.25, 0.0, 1.0)
-			for index in range(arrow_count):
-				var ratio := 0.5 if arrow_count == 1 else float(index) / float(arrow_count - 1)
-				var arrow_angle := lerpf(center_angle - half_angle * 0.92, center_angle + half_angle * 0.92, ratio)
-				var arrow_direction := Vector2.from_angle(arrow_angle)
-				var arrow_pos := center + arrow_direction * (inner_radius + arrow_distance)
-				draw_line(arrow_pos - arrow_direction * 10.0, arrow_pos + arrow_direction * 5.0, Color(0.78, 0.94, 1.0, 0.95), 2.0, true)
+			if projectile_visible:
+				var arrow_count := maxi(int(effect.get("projectile_count", 0)), 0)
+				var arrow_distance := length * clampf(projectile_progress * 1.25, 0.0, 1.0)
+				for index in range(arrow_count):
+					var ratio := 0.5 if arrow_count == 1 else float(index) / float(arrow_count - 1)
+					var arrow_angle := lerpf(center_angle - half_angle * 0.92, center_angle + half_angle * 0.92, ratio)
+					var arrow_direction := Vector2.from_angle(arrow_angle)
+					var arrow_pos := center + arrow_direction * (inner_radius + arrow_distance)
+					_draw_frontal_projectile(arrow_pos, arrow_direction, effect)
 			return
 		var center_width := maxf(float(effect.get("center_width", 0.0)), 0.0)
 		var center_half_width := center_width * 0.5
@@ -2565,14 +2691,15 @@ func _draw_frontal_skill_effect(effect: Dictionary) -> void:
 				center_points.append(near_center + Vector2.from_angle(angle) * length)
 			var center_fill := Color(1.0, 0.96, 0.76, 0.16 + 0.10 * progress)
 			draw_colored_polygon(center_points, center_fill)
-		var arrow_count := maxi(int(effect.get("projectile_count", 0)), 0)
-		var arrow_distance := length * clampf(progress * 1.25, 0.0, 1.0)
-		for index in range(arrow_count):
-			var ratio := 0.5 if arrow_count == 1 else float(index) / float(arrow_count - 1)
-			var arrow_angle := lerpf(center_angle - half_angle * 0.92, center_angle + half_angle * 0.92, ratio)
-			var arrow_direction := Vector2.from_angle(arrow_angle)
-			var arrow_pos := near_center + arrow_direction * arrow_distance
-			draw_line(arrow_pos - arrow_direction * 10.0, arrow_pos + arrow_direction * 5.0, Color(0.78, 0.94, 1.0, 0.95), 2.0, true)
+		if projectile_visible:
+			var arrow_count := maxi(int(effect.get("projectile_count", 0)), 0)
+			var arrow_distance := length * clampf(projectile_progress * 1.25, 0.0, 1.0)
+			for index in range(arrow_count):
+				var ratio := 0.5 if arrow_count == 1 else float(index) / float(arrow_count - 1)
+				var arrow_angle := lerpf(center_angle - half_angle * 0.92, center_angle + half_angle * 0.92, ratio)
+				var arrow_direction := Vector2.from_angle(arrow_angle)
+				var arrow_pos := near_center + arrow_direction * arrow_distance
+				_draw_frontal_projectile(arrow_pos, arrow_direction, effect)
 		return
 	var near_half := maxf(float(effect.get("near_width", effect.get("width", 0.0))) * 0.5, 0.0)
 	var far_half := maxf(float(effect.get("far_width", effect.get("width", 0.0))) * 0.5, 0.0)
@@ -2595,6 +2722,24 @@ func _draw_frontal_skill_effect(effect: Dictionary) -> void:
 			far_center + side * far_half * center_ratio,
 			near_center + side * near_half * center_ratio,
 		]), center_fill)
+
+func _draw_frontal_projectile(center: Vector2, direction: Vector2, effect: Dictionary) -> void:
+	var visual := StringName(effect.get("projectile_visual", "arrow"))
+	if visual != &"card":
+		draw_line(center - direction * 10.0, center + direction * 5.0, Color(0.78, 0.94, 1.0, 0.95), 2.0, true)
+		return
+	var side := Vector2(-direction.y, direction.x)
+	var half_width := 5.0
+	var half_height := 9.0
+	var points := PackedVector2Array([
+		center - direction * half_height - side * half_width,
+		center + direction * half_height - side * half_width,
+		center + direction * half_height + side * half_width,
+		center - direction * half_height + side * half_width,
+	])
+	draw_colored_polygon(points, Color(1.0, 0.94, 0.58, 0.96))
+	draw_polyline(PackedVector2Array([points[0], points[1], points[2], points[3], points[0]]), Color(0.32, 0.14, 0.08, 0.96), 1.5, true)
+	draw_line(center - direction * 2.0, center + direction * 3.0, Color(0.78, 0.24, 0.18, 0.9), 1.5, true)
 
 ## 绘制当前卡牌的落点：格子边框用于确认“哪一格”，半透明占位用于确认卡牌大小。
 ## 这是纯表现层，不会修改部署坐标或战斗状态。

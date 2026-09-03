@@ -102,7 +102,7 @@ const CARD_FIELDS := [
 	&"hp", &"damage", &"range", &"speed", &"interval", &"first_hit",
 	&"size_tier", &"radius", &"visual_radius", &"mass", &"sight", &"color",
 	&"is_air", &"is_building", &"building_only", &"can_attack_air", &"is_continuous_attack",
-	&"deploy_time", &"show_team_ring", &"footprint_tiles", &"lifespan",
+	&"deploy_time", &"pre_deploy_time", &"deploy_anywhere", &"show_team_ring", &"footprint_tiles", &"lifespan",
 	&"spawn_id", &"spawn_interval", &"spawn_count", &"spawn_side", &"death_spawn_id", &"death_spawn_count",
 	&"projectile_speed", &"projectile_visual", &"projectile_visual_height",
 	&"projectile_visual_forward_offset", &"projectile_colors", &"splash_radius", &"knockback",
@@ -138,7 +138,8 @@ const ACTIVE_SKILL_FIELDS := [
 	&"attack_speed_multiplier", &"spawn_id", &"spawn_count", &"length", &"width", &"impact_delay",
 	&"transform_impact_delay", &"cast_duration", &"transform_cast_duration", &"stun_duration", &"ground_only",
 	&"cast_locks", &"visual_action", &"description", &"shape", &"near_width", &"far_width", &"arc_degrees", &"fan_inner_arc",
-	&"projectile_count", &"center_ratio", &"center_width", &"center_damage_multiplier", &"resource_damage_scale_max",
+	&"projectile_count", &"projectile_visual", &"projectile_launch_delay", &"projectile_flight_duration",
+	&"center_ratio", &"center_width", &"center_damage_multiplier", &"resource_damage_scale_max",
 	&"uses_skill_resource", &"resource_damage_by_stacks", &"resource_full_damage_multiplier", &"resource_full_stun_multiplier",
 	&"resource_visual_actions", &"resource_hit_damage_sequences", &"resource_hit_delay_sequences",
 	&"full_resource_visual_action", &"full_resource_cast_duration", &"full_resource_impact_delay", &"full_resource_cast_end_heal",
@@ -532,6 +533,43 @@ static func all() -> Dictionary:
 			"is_air": false, "building_only": false, "can_attack_air": false,
 			"active_skills": [{"name": "高原血统", "kind": "buff", "cost": 1, "max_uses": 2, "cooldown": 6.0, "duration": 5.0, "speed_multiplier": 1.5, "damage_multiplier": 1.0, "attack_speed_multiplier": 1.5}],
 		},
+		"twisted_fate": {
+			"name": "卡牌大师", "cost": 4, "type": "unit",
+			"description": "远程法师，可攻击地面与空中目标；能在河道外的全图地面落点部署。",
+			"hp": 460.0, "damage": 62.0, "range": 190.0,
+			"speed": SPEED_MEDIUM, "interval": 1.2, "first_hit": 0.25,
+			"size_tier": SIZE_MEDIUM, "radius": RADIUS_MEDIUM, "visual_radius": RADIUS_MEDIUM + VISUAL_RADIUS_PADDING,
+			"mass": 3.0, "sight": 250.0,
+			"projectile_speed": 520.0, "projectile_visual": "orb", "projectile_visual_height": 60.0,
+			"color": Color(0.34, 0.56, 0.92),
+			# deploy_time 是单位出现后的部署锁定；pre_deploy_time 是出现前只显示卡牌落点提示的阶段。
+			"deploy_time": 1.0, "pre_deploy_time": 1.0, "deploy_anywhere": true,
+			"visual_scene_path": "res://assets/units/twisted_fate/twisted_fate_view.tscn",
+			"visual_forward_yaw": 0.0,
+			"visual_animations": {
+				"deploy": "twistedfate_2012_idle_enter_anm", "idle": "twistedfate_2012_idle1_anm",
+				"move": "Run1",
+				"attack": ["Attack1", "Attack2", "Attack3", "Attack4", "Spell3"],
+				"visual_actions": {
+					"wild_cards": {"animation": "Spell1", "durations": [0.9677415], "kind": "skill", "blend_in": 0.06, "blend_out": 0.10},
+				},
+				"death": "Death", "death_duration": 0.8,
+			},
+			# 第五次普攻使用 Spell3 动作，并在同一次攻击窗口追加 50% 伤害。
+			"attack_extra_hit_damage_multipliers": [[], [], [], [], [0.5]],
+			"attack_extra_hit_delays": [[], [], [], [], [0.12]],
+			"is_air": false, "building_only": false, "can_attack_air": true,
+			"active_skills": [{
+				"name": "万能牌", "kind": "frontal", "shape": "fan",
+				"cost": 1, "max_uses": 2, "cooldown": 8.0,
+				"description": "朝前方扇出 3 张牌，命中敌方地面或空中单位造成伤害。",
+				"length": 190.0, "arc_degrees": 54.0, "projectile_count": 3, "projectile_visual": "card",
+				# 纯表现卡牌在 Spell1 的出手 tick 生成，再飞到扇形末端；不驱动权威伤害。
+				"projectile_launch_delay": 0.25, "projectile_flight_duration": 0.7177415,
+				"damage": 100.0, "impact_delay": 0.25, "cast_duration": 0.9677415,
+				"cast_locks": ["movement", "attack", "facing"], "visual_action": "wild_cards",
+			}],
+		},
 		"gwen": {
 			"name": "格温", "cost": 4, "type": "unit",
 			"description": "近战刺客，首次普攻命中后进入缠流，能避开远处敌人的视野和锁定。",
@@ -803,6 +841,12 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 		errors.append("%s.cost: 必须 >= 0" % card_id)
 	if float(stats.get("radius", 0.0)) <= 0.0:
 		errors.append("%s.radius: 必须 > 0" % card_id)
+	if stats.has("deploy_anywhere") and typeof(stats.deploy_anywhere) != TYPE_BOOL:
+		errors.append("%s.deploy_anywhere: 必须是 bool" % card_id)
+	if stats.has("pre_deploy_time") and float(stats.get("pre_deploy_time", 0.0)) < 0.0:
+		errors.append("%s.pre_deploy_time: 必须 >= 0" % card_id)
+	if float(stats.get("pre_deploy_time", 0.0)) > 0.0 and card_type == &"spell":
+		errors.append("%s.pre_deploy_time: 法术不能使用单位预部署阶段" % card_id)
 	match card_type:
 		&"unit":
 			_validate_combat_stats(card_id, stats, true, errors)
@@ -1187,6 +1231,14 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 			errors.append("%s.center_width: 必须 >= 0" % label)
 		if skill.has("fan_inner_arc") and typeof(skill.fan_inner_arc) != TYPE_BOOL:
 			errors.append("%s.fan_inner_arc: 必须是 bool" % label)
+		if skill.has("projectile_visual") and StringName(skill.projectile_visual) not in [&"arrow", &"card", &"orb"]:
+			errors.append("%s.projectile_visual: 只支持 arrow/card/orb" % label)
+		if skill.has("projectile_launch_delay") and float(skill.projectile_launch_delay) < 0.0:
+			errors.append("%s.projectile_launch_delay: 必须 >= 0" % label)
+		if skill.has("projectile_flight_duration") and float(skill.projectile_flight_duration) < 0.0:
+			errors.append("%s.projectile_flight_duration: 必须 >= 0" % label)
+		if skill.has("projectile_launch_delay") and skill.has("cast_duration") and float(skill.projectile_launch_delay) > float(skill.cast_duration):
+			errors.append("%s.projectile_launch_delay: 不得大于 cast_duration" % label)
 		if skill.has("knockback_duration") and float(skill.knockback_duration) <= 0.0:
 			errors.append("%s.knockback_duration: 必须 > 0" % label)
 		if skill.has("knockback_mass_factor_max") and float(skill.knockback_mass_factor_max) <= 0.0:

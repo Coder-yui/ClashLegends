@@ -2,6 +2,12 @@
 
 本文只回答“这个任务接下来读什么”。共同边界见根目录 `AGENTS.md`，资源命名见 `assets/README.md`。
 
+## 美术资源获取优先级
+
+卡面按以下优先级准备：英雄先从 CommunityDragon 下载基础皮肤 Loading Screen；没有原生图但有模型时拍 3D 模型；图像和模型都没有时再用 AI 生成。最终文件放到 `assets/cards/<card_id>_loading.jpg/png/webp`，没有正式卡面时 UI 才显示数据色占位。
+
+已有资源接入后，不应再用 3D 拍摄或 AI 生成结果覆盖它。
+
 | 任务 | 必读 | 通常修改 |
 | --- | --- | --- |
 | 只接卡图 | `assets/README.md` 卡面段落 | `assets/cards/<card_id>_loading.jpg/png/webp` |

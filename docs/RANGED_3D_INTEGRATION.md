@@ -12,6 +12,8 @@
 
 `first_hit` 对远程单位是离弦时刻，不是伤害时刻。动画回调不能创建权威弹体或扣血。
 
+定向技能的多枚纯表现弹体也必须把出手延迟与飞行时长写入技能配置：范围预警可以从 Cast Start 显示，但弹体要在 `projectile_launch_delay` 对应的出手 tick 才出现；`projectile_flight_duration` 只控制表现飞行，不改变权威 `impact_delay`、碰撞或伤害结算。
+
 ```gdscript
 "projectile_speed": 480.0,
 "projectile_visual": "arrow",
