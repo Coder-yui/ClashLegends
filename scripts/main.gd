@@ -144,8 +144,9 @@ var _battle_presentation: BattlePresentation3D
 var _art_dev_mode := false
 var _art_dev_selection := "training_dummy"
 var _art_dev_team := 1
-var _art_dev_panel: CanvasLayer
+var _art_dev_panel: ArtDevPanel
 var _art_dev_last_units: Dictionary = {}
+var _art_dev_active_skill_choices: Dictionary = {}
 
 # 主菜单
 var _menu_layer: CanvasLayer
@@ -328,10 +329,12 @@ func _start_art_dev() -> void:
 	_build_nav()
 	_art_dev_panel = ART_DEV_PANEL_SCRIPT.new()
 	add_child(_art_dev_panel)
-	_art_dev_panel.setup(CardDB.all())
-	_art_dev_panel.item_selected.connect(func(item_id: String): _art_dev_selection = item_id)
-	_art_dev_panel.team_changed.connect(func(team: int): _art_dev_team = team)
+	_art_dev_panel.setup(CardDB.all(), _deck)
+	_art_dev_panel.item_selected.connect(_set_art_dev_selection)
+	_art_dev_panel.team_changed.connect(_set_art_dev_team)
+	_art_dev_panel.active_skill_selected.connect(_on_art_dev_active_skill_selected)
 	_art_dev_panel.active_skill_requested.connect(_use_art_dev_active_skill)
+	_art_dev_panel.skill_resource_requested.connect(_set_art_dev_skill_resource)
 	_art_dev_panel.clear_requested.connect(_clear_art_dev_units)
 	_art_dev_panel.exit_requested.connect(func():
 		get_tree().reload_current_scene()
@@ -685,6 +688,8 @@ func _update_deployment_preview(pointer_pos: Vector2) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if _art_dev_mode:
+		if _art_dev_panel != null and _art_dev_panel.is_card_picker_open():
+			return
 		if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 			var art_pos := get_global_mouse_position()
 			if art_pos.x >= 0.0 and art_pos.x < FIELD_W and art_pos.y >= 0.0 and art_pos.y < FIELD_H:
@@ -732,7 +737,9 @@ func _place_art_dev_item(pos: Vector2) -> void:
 	if play_card(_art_dev_team, _art_dev_selection, pos, {"immediate": true, "validate_position": false}):
 		var unit := _latest_unit_for_card(_art_dev_selection, _art_dev_team)
 		if unit != null:
-			_art_dev_last_units[_art_dev_selection] = weakref(unit)
+			_art_dev_last_units[_art_dev_unit_key(_art_dev_selection, _art_dev_team)] = weakref(unit)
+			_configure_art_dev_unit_skill(unit)
+			_sync_art_dev_panel_state()
 
 func _latest_unit_for_card(card_id: String, p_team: int) -> Unit:
 	var latest: Unit = null
@@ -742,21 +749,86 @@ func _latest_unit_for_card(card_id: String, p_team: int) -> Unit:
 	return latest
 
 func _art_dev_selected_unit() -> Unit:
-	var candidate_ref = _art_dev_last_units.get(_art_dev_selection)
+	var candidate_ref = _art_dev_last_units.get(_art_dev_unit_key(_art_dev_selection, _art_dev_team))
 	var candidate = (candidate_ref as WeakRef).get_ref() if candidate_ref is WeakRef else null
 	if candidate is Unit and is_instance_valid(candidate) and candidate.hp > 0.0:
 		return candidate as Unit
 	return null
 
+func _art_dev_unit_key(card_id: String, p_team: int) -> String:
+	return "%s:%d" % [card_id, p_team]
+
+func _set_art_dev_selection(item_id: String) -> void:
+	_art_dev_selection = item_id
+	_sync_art_dev_panel_state()
+
+func _set_art_dev_team(team: int) -> void:
+	_art_dev_team = team
+	_sync_art_dev_panel_state()
+
+func _art_dev_selected_skill(card_id: String = "", requested_index: int = -1) -> Dictionary:
+	var resolved_card_id := _art_dev_selection if card_id.is_empty() else card_id
+	var skills := CardDB.active_skills_for(resolved_card_id)
+	if skills.is_empty():
+		return {}
+	var selected_index := requested_index
+	if selected_index < 0:
+		selected_index = int(_art_dev_active_skill_choices.get(resolved_card_id, 0))
+	selected_index = clampi(selected_index, 0, skills.size() - 1)
+	return skills[selected_index]
+
+func _configure_art_dev_unit_skill(unit: Unit) -> void:
+	var skill := _art_dev_selected_skill(unit.card_id)
+	if skill.is_empty():
+		unit.clear_carried_active_skill_resource()
+	else:
+		unit.configure_carried_active_skill(skill)
+
+func _on_art_dev_active_skill_selected(item_id: String, skill_index: int) -> void:
+	var skills := CardDB.active_skills_for(item_id)
+	if skills.is_empty():
+		return
+	_art_dev_active_skill_choices[item_id] = clampi(skill_index, 0, skills.size() - 1)
+	if item_id == _art_dev_selection:
+		var unit := _art_dev_selected_unit()
+		if unit != null:
+			_configure_art_dev_unit_skill(unit)
+	_sync_art_dev_panel_state()
+
 ## 美术面板不消耗正式主动资格，允许对最后放置的同卡单位反复检查技能演出。
-func _use_art_dev_active_skill() -> void:
+func _use_art_dev_active_skill(skill_index: int = -1) -> void:
 	var unit := _art_dev_selected_unit()
 	if unit == null or not unit.is_deployed() or unit.is_form_transitioning() or unit.is_active_skill_casting():
 		return
-	var skills := CardDB.active_skills_for(_art_dev_selection)
-	if skills.is_empty():
+	var skill := _art_dev_selected_skill(_art_dev_selection, skill_index)
+	if skill.is_empty():
 		return
-	preview_active_skill(unit, skills[0])
+	_art_dev_active_skill_choices[_art_dev_selection] = clampi(skill_index, 0, CardDB.active_skills_for(_art_dev_selection).size() - 1) if skill_index >= 0 else int(_art_dev_active_skill_choices.get(_art_dev_selection, 0))
+	unit.configure_carried_active_skill(skill)
+	preview_active_skill(unit, skill)
+	_sync_art_dev_panel_state()
+
+func _set_art_dev_skill_resource(value: float) -> void:
+	var unit := _art_dev_selected_unit()
+	if unit == null or not unit.is_skill_resource_visible() or unit.skill_resource_max <= 0.0:
+		return
+	unit.skill_resource_value = clampf(value, 0.0, unit.skill_resource_max)
+	unit.mark_skill_resource_combat_activity()
+	unit.queue_redraw()
+	_sync_art_dev_panel_state()
+
+func _sync_art_dev_panel_state() -> void:
+	if _art_dev_panel == null:
+		return
+	var unit := _art_dev_selected_unit()
+	_art_dev_panel.update_selected_unit_state(
+		unit != null,
+		unit != null and unit.is_deployed(),
+		unit != null and (unit.is_form_transitioning() or unit.is_active_skill_casting()),
+		unit != null and unit.is_skill_resource_visible(),
+		unit.skill_resource_value if unit != null else 0.0,
+		unit.skill_resource_max if unit != null else 0.0,
+	)
 
 func preview_active_skill(unit: Unit, skill: Dictionary) -> bool:
 	if unit == null or not is_instance_valid(unit):
@@ -787,6 +859,7 @@ func _clear_art_dev_units() -> void:
 	_slow_zones.clear()
 	_slow_effects.clear()
 	_active_skill_effect_system.clear()
+	_sync_art_dev_panel_state()
 	queue_redraw()
 
 func _world_to_arena_tile(pos: Vector2) -> Vector2i:
@@ -2238,6 +2311,7 @@ func _process(delta: float) -> void:
 		while _sim_acc >= SIM_DT:
 			_sim_acc -= SIM_DT
 			_sim_step(SIM_DT)
+		_sync_art_dev_panel_state()
 		return
 	if not _match_started or game_over:
 		return

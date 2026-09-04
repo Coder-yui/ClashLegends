@@ -28,6 +28,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_pending_control_revalidation()
 	_check_cast_impact_recovery_timeline()
 	_check_artdev_active_skill_timeline()
+	_check_artdev_workbench()
 	_check_cast_control_pause_and_death_cancel()
 	_check_authoritative_hand_cycle()
 	_check_network_hand_confirmation()
@@ -474,6 +475,116 @@ func _check_artdev_active_skill_timeline() -> void:
 	_main._on_active_skill_unit_died(ability_id)
 	source.free()
 	_main._deck = old_deck
+
+func _check_artdev_workbench() -> void:
+	var old_panel: ArtDevPanel = _main._art_dev_panel
+	var old_selection: String = _main._art_dev_selection
+	var old_team: int = _main._art_dev_team
+	var old_last_units: Dictionary = _main._art_dev_last_units.duplicate()
+	var old_choices: Dictionary = _main._art_dev_active_skill_choices.duplicate(true)
+	var panel := ArtDevPanel.new()
+	_main.add_child(panel)
+	var initial_cards: Array[String] = [
+		"garen", "xin", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol", "freeze",
+	]
+	panel.setup(CardDB.all(), initial_cards)
+	_main._art_dev_panel = panel
+	panel.item_selected.connect(_main._set_art_dev_selection)
+	panel.team_changed.connect(_main._set_art_dev_team)
+	panel.active_skill_selected.connect(_main._on_art_dev_active_skill_selected)
+	panel.active_skill_requested.connect(_main._use_art_dev_active_skill)
+	panel.skill_resource_requested.connect(_main._set_art_dev_skill_resource)
+
+	var fixed_loadout_ok := panel.get_test_card_ids() == initial_cards and panel._loadout_buttons.size() == ArtDevPanel.LOADOUT_SIZE
+	panel._toggle_card_picker()
+	var full_pool_opened := panel.is_card_picker_open() and panel._pool_buttons.size() == CardDB.all().size()
+	panel._toggle_pool_card("garen")
+	panel._toggle_pool_card("gwen")
+	panel._close_card_picker()
+	var swapped_and_reusable := (
+		not panel.is_card_picker_open()
+		and panel.get_test_card_ids().size() == ArtDevPanel.LOADOUT_SIZE
+		and "garen" not in panel.get_test_card_ids()
+		and "gwen" in panel.get_test_card_ids()
+	)
+	_expect(
+		fixed_loadout_ok and full_pool_opened and swapped_and_reusable,
+		"ArtDev 底栏固定 8 张测试卡，按需展开完整卡池并可移除旧卡、换入新卡后继续测试",
+	)
+
+	panel._select_item("garen")
+	panel._on_skill_option_selected(1)
+	var skill_switch_ok := (
+		panel._skill_option.item_count == 2
+		and panel.selected_skill_index() == 1
+		and int(_main._art_dev_active_skill_choices.get("garen", -1)) == 1
+	)
+	_expect(skill_switch_ok, "ArtDev 可在同一英雄的多个主动技能候选之间切换")
+
+	panel._select_item("gwen")
+	var gwen_stats: Dictionary = CardDB.get_card("gwen").duplicate(true)
+	gwen_stats["deploy_time"] = 0.0
+	var gwen := Unit.new()
+	gwen.position = Vector2(260.0, 720.0)
+	gwen.setup(0, gwen_stats, gwen_stats.name)
+	gwen.card_id = "gwen"
+	_main.add_child(gwen)
+	_main._art_dev_last_units[_main._art_dev_unit_key("gwen", 0)] = weakref(gwen)
+	panel._on_team_toggled(false)
+	_main._configure_art_dev_unit_skill(gwen)
+	gwen.add_skill_resource(2.0)
+	_main._sync_art_dev_panel_state()
+	var gwen_resource_visible := (
+		gwen.is_skill_resource_visible()
+		and gwen.get_skill_resource_segment_count() == 3
+		and panel._resource_controls.visible
+		and is_equal_approx(panel._resource_slider.value, 2.0)
+		and is_equal_approx(panel._resource_slider.max_value, 3.0)
+	)
+	panel._request_resource_value(3.0)
+	panel._on_active_skill_pressed()
+	var gwen_full_cast_ok := (
+		is_zero_approx(gwen.skill_resource_value)
+		and gwen.get_visual_action_name() == &"active_3"
+		and gwen.is_active_skill_casting()
+	)
+	_expect(
+		gwen_resource_visible and gwen_full_cast_ok,
+		"ArtDev 放置格温后显示 3 段资源条，可调满并用满层资源播放对应强化技能动作",
+	)
+
+	panel._select_item("sett")
+	var sett_stats: Dictionary = CardDB.get_card("sett").duplicate(true)
+	sett_stats["deploy_time"] = 0.0
+	var sett := Unit.new()
+	sett.position = Vector2(460.0, 720.0)
+	sett.setup(0, sett_stats, sett_stats.name)
+	sett.card_id = "sett"
+	_main.add_child(sett)
+	_main._art_dev_last_units[_main._art_dev_unit_key("sett", 0)] = weakref(sett)
+	_main._configure_art_dev_unit_skill(sett)
+	_main._sync_art_dev_panel_state()
+	panel._request_resource_value(125.0)
+	var sett_resource_visible := (
+		sett.is_skill_resource_visible()
+		and sett.get_skill_resource_segment_count() == 0
+		and is_equal_approx(sett.skill_resource_value, 125.0)
+		and is_equal_approx(panel._resource_slider.max_value, 200.0)
+	)
+	_expect(sett_resource_visible, "ArtDev 腕豪显示 0–200 连续豪意条并允许直接调整测试值")
+
+	_main._pending_active_skill_impacts.clear()
+	_main._active_skill_effect_system.clear()
+	if is_instance_valid(gwen):
+		gwen.free()
+	if is_instance_valid(sett):
+		sett.free()
+	_main._art_dev_panel = old_panel
+	_main._art_dev_selection = old_selection
+	_main._art_dev_team = old_team
+	_main._art_dev_last_units = old_last_units
+	_main._art_dev_active_skill_choices = old_choices
+	panel.free()
 
 func _check_cast_control_pause_and_death_cancel() -> void:
 	_reset_local_elixir()

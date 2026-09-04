@@ -255,7 +255,11 @@ func _check_gnar_art_integration() -> void:
 	_main.add_child(art_panel)
 	art_panel.setup(CardDB.all())
 	art_panel._select_item("gnar")
-	_expect(not art_panel._skill_button.disabled, "美术开发面板选择纳尔后可用主动技能按钮")
+	_expect(
+		art_panel._skill_option.item_count == 1 and art_panel.selected_skill_index() == 0
+		and art_panel._skill_button.disabled,
+		"美术开发面板选择纳尔后列出主动技能，并在放置单位前保持播放按钮禁用",
+	)
 	art_panel.free()
 	var deck_builder := DeckBuilder.new()
 	var mega_attributes: Array[Dictionary] = deck_builder._card_attributes(mega_stats)
