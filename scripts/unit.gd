@@ -635,7 +635,9 @@ func sync_network_form(next_form_index: int, next_form_serial: int = 0) -> void:
 	_apply_form(net_form_index, false, false)
 
 func transform_to_mega(active_cast: bool = false) -> bool:
-	if form_index != 0 or transformed_stats.is_empty():
+	# queue_free() 到帧末才真正释放节点；在途弹体等弱引用仍可能于同帧回调。
+	# 死亡单位不能再改变权威形态，否则 form_changed 会替换正在播放 Death 的表现模型。
+	if hp <= 0.0 or form_index != 0 or transformed_stats.is_empty():
 		return false
 	_apply_form(1, true)
 	form_transition_timer = active_transform_duration if active_cast else transform_duration
@@ -643,7 +645,7 @@ func transform_to_mega(active_cast: bool = false) -> bool:
 	return true
 
 func transform_to_small() -> bool:
-	if form_index != 1:
+	if hp <= 0.0 or form_index != 1:
 		return false
 	_apply_form(0, false)
 	form_transition_timer = revert_duration
@@ -1498,6 +1500,10 @@ func _tick_pending_extra_attacks(dt: float) -> void:
 ## 主机在伤害真正落到目标后调用。格温由此精确地在首次普攻命中而非出手时开启缠流；
 ## 赵信等配置了命中回血的单位也在这里结算，未真正造成伤害的挥击不触发回复。
 func on_attack_landed(attack_form_index: int = -1, landed_damage: float = 0.0) -> void:
+	# 远程弹体可以在攻击者死亡后抵达；此时只保留已经结算给目标的伤害，
+	# 不再给已退出战斗的攻击者计层、回血、充能或触发形态切换。
+	if hp <= 0.0:
+		return
 	var landed_form := form_index if attack_form_index < 0 else attack_form_index
 	# 在途小纳尔回旋镖不会在大形态下误算成大纳尔的 4 次近战命中。
 	if landed_form != form_index:
@@ -1518,7 +1524,8 @@ func on_attack_landed(attack_form_index: int = -1, landed_damage: float = 0.0) -
 	_try_attack_lifesteal(landed_damage)
 
 func on_enemy_killed(target: Node2D) -> void:
-	if target is Unit and target.team != team:
+	# 与 on_attack_landed 同理，在途弹体可以晚于攻击者死亡完成击杀。
+	if hp > 0.0 and target is Unit and target.team != team:
 		add_skill_resource(skill_resource_kill_gain)
 
 ## 命中回血：每 heal_every_hits 次挥击中的命中回复 heal_amount 生命。

@@ -106,6 +106,10 @@ func setup(unit: Unit, packed: PackedScene, camera: Camera3D, animations: Dictio
 
 ## 形态改变时只替换表现模型和动画映射；Unit 的权威位置、血量、碰撞与 net_id 不变。
 func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: float) -> bool:
+	# 死亡代理独立持有当前模型直到 Death 播完。即使权威层发生同帧晚到的
+	# form_changed，也不能替换掉死亡动画并留下一个永不再同步的静止模型。
+	if _dying:
+		return false
 	var instance := packed.instantiate()
 	if not instance is Node3D:
 		push_warning("单位 3D 表现场景的根节点必须是 Node3D")

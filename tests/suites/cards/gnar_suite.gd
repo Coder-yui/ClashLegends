@@ -415,6 +415,55 @@ func _check_gnar_art_integration() -> void:
 		var big_death_started := view._animation_player.current_animation == "GnarBig_Death_anm"
 		view._on_animation_finished(&"GnarBig_Death_anm")
 		death_chain = big_death_started and view._model_root != mega_death_root and view._animation_player.current_animation == "Death"
+	var transform_death_safe := false
+	var transform_death_unit := Unit.new()
+	transform_death_unit.position = Vector2(300.0, 900.0)
+	transform_death_unit.setup(0, stats, stats.name)
+	_main.add_child(transform_death_unit)
+	_main._battle_presentation.attach_unit(transform_death_unit, stats)
+	var transform_death_view: UnitModel3D = null
+	for child in _main._battle_presentation._world_root.get_children():
+		if child is UnitModel3D and child._source == transform_death_unit:
+			transform_death_view = child as UnitModel3D
+			break
+	if transform_death_view != null:
+		transform_death_unit.transform_to_mega(true)
+		transform_death_view._sync_visual(false, 0.05)
+		var was_transforming := transform_death_view._animation_player.current_animation == "gnar_runtime/Rage_Spell2_Transform"
+		transform_death_unit.hp = 0.0
+		transform_death_unit.notify_visual_death()
+		transform_death_safe = was_transforming and transform_death_view._animation_player.current_animation == "GnarBig_Death_anm"
+	var postmortem_projectile_safe := false
+	var death_race_unit := Unit.new()
+	death_race_unit.position = Vector2(420.0, 900.0)
+	death_race_unit.setup(0, stats, stats.name)
+	_main.add_child(death_race_unit)
+	_main._battle_presentation.attach_unit(death_race_unit, stats)
+	var death_race_view: UnitModel3D = null
+	for child in _main._battle_presentation._world_root.get_children():
+		if child is UnitModel3D and child._source == death_race_unit:
+			death_race_view = child as UnitModel3D
+			break
+	if death_race_view != null:
+		death_race_unit.transform_hit_count = int(stats.transform_after_hits) - 1
+		death_race_unit.hp = 0.0
+		death_race_unit.notify_visual_death()
+		var death_model: Node3D = death_race_view._model_root
+		# 模拟小纳尔死亡后，同一渲染帧内最后一枚在途回旋镖抵达。
+		death_race_unit.on_attack_landed(0, death_race_unit.damage)
+		var late_visual_swap_rejected := not death_race_view.replace_visual(
+			mega_packed,
+			mega_stats.visual_animations,
+			float(mega_stats.visual_forward_yaw),
+		)
+		death_race_view._animation_player.advance(0.1)
+		postmortem_projectile_safe = (
+			death_race_unit.form_index == 0
+			and late_visual_swap_rejected
+			and death_race_view._model_root == death_model
+			and death_race_view._animation_player.current_animation == "Death"
+			and death_race_view._animation_player.current_animation_position > 0.0
+		)
 	_expect(attached and swapped_and_playing, "普通变大使用 Rage_Scale 相对 Base 叠加到 Rage_Move 的单段合成动画，权威形态已先切换")
 	_expect(small_standard_attack_playing, "小纳尔实战表现代理播放非 Fast 版 Gnar_Attack1")
 	_expect(rage_transform_filtered and rage_transform_duration_ok and rage_transform_has_body_motion, "变大合成动画保留 1.5 秒完整动作与多帧身体旋转，并隐藏石头")
@@ -426,6 +475,16 @@ func _check_gnar_art_integration() -> void:
 	_expect(turret_attack_playing and unit_attack_playing, "大纳尔攻击建筑使用 Turret_Attack，攻击单位仍使用普通 Attack")
 	_expect(spell2_playing, "大纳尔前方主动使用源模型 Spell2 动画，效果时刻仍由固定模拟决定")
 	_expect(death_chain, "大纳尔死亡先播放极短 BigGnar Death，再换小纳尔模型播放 Death")
+	_expect(transform_death_safe, "纳尔在主动变身动画中死亡时立即打断变身并播放大形态死亡动画")
+	_expect(postmortem_projectile_safe, "小纳尔死亡后同帧抵达的回旋镖不再触发变身，Death 持续播放且模型不会定格")
+	if transform_death_view != null:
+		transform_death_view.free()
+	if is_instance_valid(transform_death_unit):
+		transform_death_unit.free()
+	if death_race_view != null:
+		death_race_view.free()
+	if is_instance_valid(death_race_unit):
+		death_race_unit.free()
 	if view != null:
 		view.free()
 	if is_instance_valid(unit):
