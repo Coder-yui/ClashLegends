@@ -40,14 +40,14 @@ func _check_official_arena_grid() -> void:
 	)
 	_expect(towers_ok, "公主塔与国王塔落在参考项目的镜像格位")
 	var tower_sizes_ok: bool = (
-		is_equal_approx(_main._towers[0].body_radius, 54.0)
+		_main._towers[0].footprint_tiles == Vector2i(3, 3)
+		and is_equal_approx(_main._towers[0].body_radius, 54.0)
 		and is_equal_approx(_main._towers[0].visual_radius, 60.0)
-		and is_equal_approx(_main._towers[0].deployment_radius, 54.0)
 		and is_equal_approx(_main._towers[0].attack_range, 240.0)
 		and is_equal_approx(_main._towers[0].max_hp, 2100.0)
+		and _main._king_player.footprint_tiles == Vector2i(4, 4)
 		and is_equal_approx(_main._king_player.body_radius, 72.0)
 		and is_equal_approx(_main._king_player.visual_radius, 80.0)
-		and is_equal_approx(_main._king_player.deployment_radius, 72.0)
 		and is_equal_approx(_main._king_player.attack_range, 0.0)
 		and is_equal_approx(_main._king_player.max_hp, 3600.0)
 		and not _main._king_player.can_attack

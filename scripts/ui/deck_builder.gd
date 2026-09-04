@@ -731,10 +731,25 @@ func _card_attributes(stats: Dictionary, quantity_override: String = "") -> Arra
 	result.append({"name": "类型", "value": _card_type_name(card_type, stats)})
 	if card_type == "building":
 		result.append({"name": "数量", "value": quantity})
+		result.append({"name": "目标", "value": _card_target_name(stats)})
+		var building_damage := float(stats.get("damage", 0.0))
+		var building_interval := float(stats.get("interval", 0.0))
+		if building_damage > 0.0:
+			result.append({"name": "单次伤害", "value": _format_card_number(building_damage)})
+			if building_interval > 0.0:
+				result.append({"name": "每秒伤害", "value": _format_card_number(building_damage / building_interval)})
+				result.append({"name": "攻击间隔", "value": "%s秒" % _format_card_number(building_interval)})
+			if stats.has("range"):
+				var building_range := float(stats.get("range", 0.0))
+				result.append({"name": "攻击距离", "value": "%s（%.1f格）" % [_format_card_number(building_range), building_range / TILE_SIZE]})
+		if float(stats.get("splash_radius", 0.0)) > 0.0:
+			var splash_radius := float(stats.get("splash_radius", 0.0))
+			result.append({"name": "溅射半径", "value": "%s（%.1f格）" % [_format_card_number(splash_radius), splash_radius / TILE_SIZE]})
 		if stats.has("footprint_tiles") or stats.has("radius"):
 			result.append({"name": "体积", "value": _card_volume_name(stats)})
 		if stats.has("lifespan"):
-			result.append({"name": "存活时间", "value": "%s秒" % _format_card_number(float(stats.get("lifespan", 0.0)))})
+			var lifespan_suffix := "（生命持续衰减）" if bool(stats.get("lifespan_hp_decay", false)) else ""
+			result.append({"name": "存活时间", "value": "%s秒%s" % [_format_card_number(float(stats.get("lifespan", 0.0))), lifespan_suffix]})
 		return result
 
 	result.append({"name": "目标", "value": _card_target_name(stats)})
@@ -784,7 +799,7 @@ func _card_attributes(stats: Dictionary, quantity_override: String = "") -> Arra
 func _card_target_name(stats: Dictionary) -> String:
 	if String(stats.get("type", "unit")) == "spell":
 		return "敌方单位"
-	if String(stats.get("type", "unit")) == "building" or float(stats.get("damage", 0.0)) <= 0.0:
+	if float(stats.get("damage", 0.0)) <= 0.0:
 		return "无"
 	if bool(stats.get("building_only", false)):
 		return "建筑"
@@ -802,6 +817,8 @@ func _card_passives(stats: Dictionary) -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
 	if bool(stats.get("is_continuous_attack", false)):
 		result.append({"name": "龙息", "description": "持续造成每秒%s伤害，并对目标周围%s范围造成伤害。" % [_format_card_number(float(stats.get("damage", 0.0))), _format_card_number(float(stats.get("splash_radius", 0.0)))]})
+	elif float(stats.get("splash_radius", 0.0)) > 0.0 and float(stats.get("damage", 0.0)) > 0.0:
+		result.append({"name": "范围炮击", "description": "普通攻击命中后，对目标周围%s（%.1f格）范围造成同等伤害。" % [_format_card_number(float(stats.get("splash_radius", 0.0))), float(stats.get("splash_radius", 0.0)) / TILE_SIZE]})
 	if stats.has("deploy_sweep_radius"):
 		var deploy_damage := float(stats.get("deploy_sweep_damage", 0.0))
 		result.append({
@@ -950,7 +967,11 @@ func _update_active_skill_rules(skill: Dictionary) -> void:
 		return
 	_deck_info_active_cost_label.text = "金币消耗：%s" % _format_card_number(maxf(float(skill.get("cost", 0.0)), 0.0))
 	var owner_label := "本次编队" if StringName(skill.get("target_scope", "self")) == &"deployment_group" else "单个单位"
-	_deck_info_active_uses_label.text = "%s：最多 %d 次" % [owner_label, maxi(int(skill.get("max_uses", 1)), 1)]
+	_deck_info_active_uses_label.text = "%s：最多 %d 次　·　冷却 %s秒" % [
+		owner_label,
+		maxi(int(skill.get("max_uses", 1)), 1),
+		_format_card_number(maxf(float(skill.get("cooldown", 0.0)), 0.0)),
+	]
 
 func _on_info_active_skill_selected(skill_index: int, card_id: String) -> void:
 	var skills := CardDB.active_skills_for(card_id)

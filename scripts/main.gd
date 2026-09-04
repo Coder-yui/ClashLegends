@@ -25,7 +25,6 @@ const BRIDGE_X_RIGHT := 14.5 * TILE_SIZE
 ## A* 用当前最大人物圆柱半径统一收窄桥面、扩张河岸与静态障碍；
 ## 连续碰撞仍按每个单位自己的档位半径精确判定。
 const NAV_CLEARANCE := CardDB.RADIUS_EXTREMELY_LARGE
-const NAV_GRID_PADDING := 8.0
 const STRUCTURE_SEPARATION := 1.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
 const AVOID_LOOKAHEAD := 34.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
 const AVOID_NEIGHBOR_PADDING := 26.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
@@ -768,7 +767,8 @@ func preview_active_skill(unit: Unit, skill: Dictionary) -> bool:
 func _register_dynamic_building(unit: Unit) -> void:
 	if nav == null or not unit.is_building:
 		return
-	unit.nav_cells = nav.cells_for_rect(_structure_rect(unit).grow(NAV_CLEARANCE + NAV_GRID_PADDING))
+	# 建筑的格子占地只限制下牌；A* 障碍按实际圆柱碰撞扩张移动单位净空。
+	unit.nav_cells = nav.cells_for_circle(unit.global_position, unit.body_radius + NAV_CLEARANCE)
 	nav.set_cells_blocked(unit.nav_cells, true)
 
 func _clear_art_dev_units() -> void:
@@ -828,7 +828,7 @@ func _pos_in_deploy_zone(pos: Vector2, p_team: int, is_spell: bool) -> bool:
 		return true
 	return _tile_in_ground_deploy_zone(_world_to_arena_tile(pos), p_team)
 
-## 防御塔/水晶的部署禁区使用规则占地格，而不是物理圆：公主塔 3x3，水晶 4x4。
+## 防御塔、水晶和建筑卡的部署禁区使用规则占地格，而不是物理圆。
 ## 矩形边界按格子归属取样，避免刚好贴边时误封锁相邻格。
 func _arena_tiles_for_rect(rect: Rect2) -> Array[Vector2i]:
 	var tiles: Array[Vector2i] = []
@@ -841,16 +841,26 @@ func _arena_tiles_for_rect(rect: Rect2) -> Array[Vector2i]:
 				tiles.append(tile)
 	return tiles
 
-func _tower_deployment_tiles(tower: Tower) -> Array[Vector2i]:
-	var footprint := Vector2i(4, 4) if tower.is_king else Vector2i(3, 3)
+func _structure_deployment_rect(structure: Node2D) -> Rect2:
+	var footprint := Vector2i.ONE
+	if structure is Tower:
+		footprint = (structure as Tower).footprint_tiles
+	elif structure is Unit and (structure as Unit).is_building:
+		footprint = (structure as Unit).footprint_tiles
 	var size := Vector2(footprint) * TILE_SIZE
-	return _arena_tiles_for_rect(Rect2(tower.global_position - size * 0.5, size))
+	return Rect2(structure.global_position - size * 0.5, size)
 
-func _is_tower_deployment_tile_blocked(tile: Vector2i) -> bool:
+func _structure_deployment_tiles(structure: Node2D) -> Array[Vector2i]:
+	return _arena_tiles_for_rect(_structure_deployment_rect(structure))
+
+func _is_structure_deployment_tile_blocked(tile: Vector2i) -> bool:
 	for c in get_tree().get_nodes_in_group("combatants"):
-		if not c is Tower or not is_instance_valid(c) or c.hp <= 0.0:
+		if not is_instance_valid(c) or c.hp <= 0.0:
 			continue
-		if tile in _tower_deployment_tiles(c as Tower):
+		var is_structure: bool = c is Tower or (c is Unit and (c as Unit).is_building)
+		if not is_structure:
+			continue
+		if tile in _structure_deployment_tiles(c):
 			return true
 	return false
 
@@ -895,31 +905,21 @@ func _pocket_unlocked(p_team: int, is_left: bool) -> bool:
 		tower_index = 0 if is_left else 1
 	return _towers[tower_index].hp <= 0.0
 
-## 占位检查：该位置与存活的塔/建筑卡不重叠才允许部署。
-## 兵种调用时使用统一的格心占位半径 0，体型不参与“能否落这格”的判断；
-## 兵种生成后的真实半径只交给移动、碰撞和挤压系统处理。
-func _can_deploy_at(pos: Vector2, radius: float, is_air: bool = false, footprint: Vector2i = Vector2i.ONE) -> bool:
-	var is_rect := footprint != Vector2i.ONE
-	if not is_air and not is_rect and not is_ground_position_walkable(pos, radius, null, true, true):
+## 占位检查：候选卡的规则占地不得与存活塔/水晶/建筑卡的规则占地重叠。
+## 兵种生成后的真实半径只交给移动、碰撞和挤压系统处理；建筑卡即使是 1x1，
+## 部署资格也只按 footprint_tiles 与地面格规则判断，不读取圆柱碰撞半径。
+func _can_deploy_at(pos: Vector2, radius: float, is_air: bool = false, footprint: Vector2i = Vector2i.ONE, is_building_card: bool = false) -> bool:
+	if not is_air and not is_building_card and not is_ground_position_walkable(pos, radius, null, true, true):
 		return false
+	var deploy_rect := Rect2(pos - Vector2(footprint) * TILE_SIZE * 0.5, Vector2(footprint) * TILE_SIZE)
 	for c in get_tree().get_nodes_in_group("combatants"):
 		if not is_instance_valid(c) or c.hp <= 0.0:
 			continue
 		var is_static: bool = c is Tower or (c is Unit and (c as Unit).is_building)
 		if not is_static:
 			continue
-		if is_rect:
-			var deploy_rect := Rect2(pos - Vector2(footprint) * TILE_SIZE * 0.5, Vector2(footprint) * TILE_SIZE)
-			if c is Tower:
-				# 防御塔/水晶的精确 3x3/4x4 禁区已由格子掩码统一判断。
-				continue
-			if _structure_intersects_rect(c, deploy_rect):
-				return false
-		elif c is Tower:
-			# 防御塔/水晶的精确禁区已由 _is_tower_deployment_tile_blocked 判断；
-			# 这里不能再用圆形半径扩大或缩小部署禁区。
-			continue
-		elif _structure_deploy_gap_to_circle(c, pos, radius) < STRUCTURE_SEPARATION:
+		# 共边不算重叠，相邻部署格必须保持可用。
+		if _structure_deployment_rect(c).intersects(deploy_rect, false):
 			return false
 	return true
 
@@ -932,7 +932,6 @@ func is_card_deploy_position_valid(p_team: int, card_id: String, pos: Vector2) -
 	var deploy_zone: String = String(stats.get("deploy_zone", "own_side"))
 	var ignore_structures: bool = bool(stats.get("deploy_ignore_structures", false))
 	var footprint: Vector2i = stats.get("footprint_tiles", Vector2i.ONE)
-	var is_rect := footprint != Vector2i.ONE
 	var card_type: String = String(stats.get("type", "unit"))
 
 	# 1. 部署区域：从 CardDB 独立读取 deploy_zone。只有 own_side / global 两态；
@@ -951,7 +950,7 @@ func is_card_deploy_position_valid(p_team: int, card_id: String, pos: Vector2) -
 					if not _tile_in_ground_deploy_zone(tile, p_team):
 						return false
 
-	# 2. 占位：独立开关；河流非桥面、塔/水晶占地格、结构圆/矩重叠统一由 deploy_ignore_structures 控制。
+	# 2. 占位：独立开关；河流非桥面及塔/水晶/建筑卡占地格统一由 deploy_ignore_structures 控制。
 	#    用户语义：河流非桥面占位等同于水晶/防御塔/建筑；桥面可通过。ignore=true 时（如冰冻）全部跳过。
 	if not ignore_structures:
 		var first_tile := Vector2i(
@@ -968,39 +967,19 @@ func is_card_deploy_position_valid(p_team: int, card_id: String, pos: Vector2) -
 					var on_right_bridge: bool = abs(colf - BRIDGE_X_RIGHT / TILE_SIZE) <= 1.5
 					if not on_left_bridge and not on_right_bridge:
 						return false
-				if _is_tower_deployment_tile_blocked(tile):
+				if _is_structure_deployment_tile_blocked(tile):
 					return false
 		if card_type != "spell":
 			# 单格兵种共用同一套部署位置。不要因为盖伦等大体型兵种的真实半径较大，
 			# 把本来属于部署区的格子判成非法；真实体积从生成后才参与战斗碰撞。
-			var placement_radius: float = 0.0 if card_type == "unit" else stats.get("radius", 14.0)
-			return _can_deploy_at(pos, placement_radius, stats.get("is_air", false), footprint)
+			var placement_radius := 0.0
+			return _can_deploy_at(pos, placement_radius, stats.get("is_air", false), footprint, card_type == "building")
 	return true
-
-func _structure_rect(c: Node2D) -> Rect2:
-	return Rect2(c.global_position - Vector2.ONE * c.body_radius, Vector2.ONE * c.body_radius * 2.0)
 
 func _structure_gap_to_circle(c: Node2D, center: Vector2, radius: float) -> float:
 	if c.has_method("surface_gap_to_circle"):
 		return c.surface_gap_to_circle(center, radius)
 	return maxf(0.0, center.distance_to(c.global_position) - c.body_radius - radius)
-
-## 部署禁区与视觉尺寸分离：新单位不能与存活塔的物理圆重叠，
-## 但可以放在精灵图透明/外缘区域，才能在塔前近战单位后方落地并参与挤压。
-func _structure_deploy_gap_to_circle(c: Node2D, center: Vector2, radius: float) -> float:
-	if c.has_method("deployment_gap_to_circle"):
-		return c.deployment_gap_to_circle(center, radius)
-	return _structure_gap_to_circle(c, center, radius)
-
-func _structure_intersects_rect(c: Node2D, rect: Rect2) -> bool:
-	if c is Unit and (c as Unit).is_building:
-		return _structure_rect(c).intersects(rect, true)
-	var closest := Vector2(
-		clampf(c.global_position.x, rect.position.x, rect.end.x),
-		clampf(c.global_position.y, rect.position.y, rect.end.y)
-	)
-	var structure_radius: float = c.deployment_radius if c is Tower else c.body_radius
-	return closest.distance_squared_to(c.global_position) < structure_radius * structure_radius
 
 ## 按当前单位真实半径检查连续空间，而不只检查 16px 导航格中心。
 ## 导航格负责全局路线；这里补足塔角/建筑角最多半格的离散误差。
@@ -1260,6 +1239,9 @@ func _tick_projectiles(dt: float) -> void:
 func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: float, radius: float, knockback: float, from: Node2D = null, source_position: Vector2 = Vector2(INF, INF), source_form_index: int = -1, effects: Dictionary = {}, counts_as_attack: bool = true) -> bool:
 	if primary == null or not is_instance_valid(primary) or primary.hp <= 0.0:
 		return false
+	var ground_only := bool(effects.get("ground_only", false))
+	if ground_only and primary is Unit and (primary as Unit).is_air:
+		return false
 	if radius <= 0.0:
 		var was_alive: bool = primary.hp > 0.0
 		var landed: bool = primary.take_damage(amount, from, p_team, source_position)
@@ -1276,6 +1258,8 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 	var any_landed := false
 	for c in get_tree().get_nodes_in_group("combatants"):
 		if not is_instance_valid(c) or c.team == p_team or c.hp <= 0.0:
+			continue
+		if ground_only and c is Unit and (c as Unit).is_air:
 			continue
 		if c.global_position.distance_to(impact_pos) <= radius + c.body_radius:
 			var was_alive: bool = c.hp > 0.0
@@ -1374,10 +1358,9 @@ func _spawn_unit(team: int, card_id: String, pos: Vector2, deploy_time_override:
 	add_child(u)
 	if _battle_presentation != null:
 		_battle_presentation.attach_unit(u, stats)
-	# 建筑卡：把占地格动态注册进导航网格，死亡/到期时由 unit._die 解除
+	# 建筑卡：按实际碰撞圆动态注册导航障碍，死亡/到期时由 unit._die 解除。
 	if nav != null and u.is_building:
-		u.nav_cells = nav.cells_for_rect(_structure_rect(u).grow(NAV_CLEARANCE + NAV_GRID_PADDING))
-		nav.set_cells_blocked(u.nav_cells, true)
+		_register_dynamic_building(u)
 	# 主机：分配网络 id 并广播给客户端
 	if mode == "host":
 		u.net_id = _next_net_id
@@ -2517,8 +2500,7 @@ func _rpc_spawn_unit(card_id: String, p_team: int, pos: Vector2, net_id: int, de
 	if _battle_presentation != null:
 		_battle_presentation.attach_unit(u, stats)
 	if nav != null and u.is_building:
-		u.nav_cells = nav.cells_for_rect(_structure_rect(u).grow(NAV_CLEARANCE + NAV_GRID_PADDING))
-		nav.set_cells_blocked(u.nav_cells, true)
+		_register_dynamic_building(u)
 	_client_units[net_id] = u
 	if active_ability_id >= 0:
 		_register_active_skill(u, card_id, p_team)
@@ -2858,9 +2840,23 @@ func _draw_frontal_skill_effect(effect: Dictionary) -> void:
 			far_center + side * far_half * center_ratio,
 			near_center + side * near_half * center_ratio,
 		]), center_fill)
+	if projectile_visible:
+		var projectile_count := maxi(int(effect.get("projectile_count", 0)), 0)
+		var projectile_distance := length * clampf(projectile_progress, 0.0, 1.0)
+		for index in range(projectile_count):
+			var width_ratio := 0.5 if projectile_count == 1 else float(index) / float(projectile_count - 1)
+			var lateral := lerpf(-near_half, near_half, width_ratio)
+			var projectile_pos := near_center + forward * projectile_distance + side * lateral
+			_draw_frontal_projectile(projectile_pos, forward, effect)
 
 func _draw_frontal_projectile(center: Vector2, direction: Vector2, effect: Dictionary) -> void:
 	var visual := StringName(effect.get("projectile_visual", "arrow"))
+	if visual == &"laser":
+		draw_line(center - direction * 18.0, center + direction * 18.0, Color(0.16, 0.76, 1.0, 0.20), 10.0, true)
+		draw_line(center - direction * 16.0, center + direction * 16.0, Color(0.28, 0.88, 1.0, 0.92), 5.0, true)
+		draw_line(center - direction * 14.0, center + direction * 14.0, Color(0.94, 1.0, 1.0, 1.0), 2.0, true)
+		draw_circle(center + direction * 16.0, 4.0, Color(0.86, 1.0, 1.0, 0.96))
+		return
 	if visual != &"card":
 		draw_line(center - direction * 10.0, center + direction * 5.0, Color(0.78, 0.94, 1.0, 0.95), 2.0, true)
 		return

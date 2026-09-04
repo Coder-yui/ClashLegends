@@ -174,7 +174,11 @@ var attack_lifesteal_max_health_ratio := 1.0
 var net_target_pos: Vector2
 
 # 建筑卡专用
+## 只用于下牌占地；移动、寻路和攻击距离始终使用 body_radius 的圆柱碰撞。
+var footprint_tiles := Vector2i.ONE
 var lifespan := 0.0
+## 可选的建筑寿命表现：按初始最大生命/寿命匀速扣减，仍由固定模拟驱动。
+var lifespan_hp_decay := false
 var spawn_id := ""
 var spawn_interval := 0.0
 var spawn_count := 1
@@ -293,6 +297,7 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	# 地面单位取 11、空中单位取 12；否则贴塔/水晶作战的单位血条会被建筑血条挡住。
 	z_index = 12 if is_air else 11
 	is_building = stats.get("is_building", false)
+	footprint_tiles = stats.get("footprint_tiles", Vector2i.ONE)
 	building_only = stats.get("building_only", false)
 	can_attack_air = stats.get("can_attack_air", true)
 	continuous_attack = stats.get("is_continuous_attack", false)
@@ -357,6 +362,7 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	form_change_serial = 0
 	net_form_change_serial = 0
 	lifespan = stats.get("lifespan", 0.0)
+	lifespan_hp_decay = bool(stats.get("lifespan_hp_decay", false))
 	spawn_id = String(stats.get("spawn_id", ""))
 	spawn_interval = stats.get("spawn_interval", 0.0)
 	spawn_count = maxi(int(stats.get("spawn_count", 1)), 1)
@@ -806,8 +812,11 @@ func sim_tick(dt: float) -> void:
 	_tick_pending_extra_attacks(dt)
 	if is_building:
 		_building_tick(dt)
-		return
-	if _knockback_timer > 0.0:
+		# 建筑也必须继续进入通用索敌/攻击状态机；这里只在寿命耗尽死亡后结束。
+		# 位移仍由 _chase() 的建筑保护拦截，建筑不会因为圈外目标开始行军。
+		if hp <= 0.0 or is_queued_for_deletion():
+			return
+	elif _knockback_timer > 0.0:
 		_tick_knockback_movement(dt)
 		_charge_timer = 0.0
 		_charged = false
@@ -990,8 +999,16 @@ func surface_gap_to_circle(center: Vector2, radius: float) -> float:
 
 func _building_tick(dt: float) -> void:
 	if lifespan > 0.0:
-		_lifespan_left -= dt
+		var lifetime_step := minf(dt, _lifespan_left)
+		_lifespan_left -= lifetime_step
+		if lifespan_hp_decay and lifetime_step > 0.0:
+			# 自然寿命衰减不算受击，不触发护盾、资源、闪白或攻击者击杀收益。
+			hp = maxf(0.0, hp - max_hp * lifetime_step / lifespan)
+			if hp <= 0.0:
+				_die()
+				return
 		if _lifespan_left <= 0.0:
+			hp = 0.0
 			_die()
 			return
 	if not _initial_summons_spawned:
@@ -1232,6 +1249,9 @@ func _nearest_tower_from(towers: Array[Tower]) -> Tower:
 	return best
 
 func _chase(dt: float) -> void:
+	# 建筑共享通用索敌和攻击状态机，但永远不能为了圈外目标移动。
+	if is_building:
+		return
 	if _target == null or not is_instance_valid(_target):
 		return
 	if is_air:
@@ -1341,6 +1361,9 @@ func _attack(dt: float) -> void:
 		var base_hit_damage := damage * _attack_damage_multiplier(hit_index) * active_damage_multiplier * (charge_damage_multiplier if _charged else 1.0)
 		var hit_damage := base_hit_damage
 		var attack_effects: Dictionary = {}
+		# 对空能力同时约束溅射层，避免对地炮弹借地面主目标误伤空军。
+		if not can_attack_air:
+			attack_effects["ground_only"] = true
 		if empowered_attack_ready:
 			hit_damage *= empowered_attack_damage_multiplier
 			if empowered_attack_blind_charges > 0:

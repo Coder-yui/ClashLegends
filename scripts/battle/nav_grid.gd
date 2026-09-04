@@ -2,7 +2,7 @@ extends RefCounted
 class_name NavGrid
 ## 导航网格：全网格 A* 寻路，参考皇室战争竞技场布局。
 ## 河道为硬阻挡，桥是唯一的地面跨河通道；
-## 塔的占地在 build() 时写入，建筑卡的占地由外部动态注册。
+## 塔与建筑卡的实际圆柱碰撞由外部按半径扩张后动态注册；部署格占地不进入寻路。
 ## 动态阻挡用引用计数：塔被摧毁 / 建筑卡到期或被摧毁时解除对应格子，
 ## 路径即可穿过原塔位（对齐 CR 摧毁后塔位可通行的规则）。
 ## 寻路与渲染解耦，不依赖帧率，保证联机两端行为一致。
@@ -82,7 +82,7 @@ const LANE_MAP := [
 var _astar: AStarGrid2D
 # 永久阻挡（河道），引用计数解除时也不放开
 var _base_blocked := {}
-# 动态阻挡引用计数（塔 / 建筑卡占地）
+# 动态阻挡引用计数（塔 / 建筑卡碰撞圆）
 var _block_counts := {}
 
 ## 构建网格：河道（除桥）永久阻挡，obstacles = [[pos, radius], ...] 圆形占地阻挡
@@ -169,7 +169,7 @@ func cells_for_circle(center: Vector2, radius: float) -> Array:
 				cells.append(cell)
 	return cells
 
-## 矩形占地覆盖的格子（用于方形塔与建筑卡）。
+## 矩形覆盖的格子（供通用网格计算与测试使用；建筑寻路障碍不使用部署矩形）。
 func cells_for_rect(rect: Rect2) -> Array:
 	var cells := []
 	if _astar == null:

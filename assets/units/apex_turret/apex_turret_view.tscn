@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/units/apex_turret/source/apex_turret.glb" id="1_apex"]
+
+[node name="H28QTurretView" type="Node3D"]
+
+[node name="Model" parent="." instance=ExtResource("1_apex")]
+position = Vector3(0, 0.002, 0)
+scale = Vector3(0.012, 0.012, 0.012)

@@ -12,12 +12,153 @@ func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
 	_check_tombstone_art_integration()
+	_check_apex_turret()
 	_check_minion_line_mechanism()
 	_check_death_animation_durations()
 	_check_tombstone_footprint()
 	_check_tombstone_does_not_push_air_units()
 	_check_tombstone_spawn_cycle()
 	_check_generic_periodic_summon()
+
+
+func _check_apex_turret() -> void:
+	var stats: Dictionary = CardDB.get_card("apex_turret")
+	var skill: Dictionary = CardDB.active_skills_for("apex_turret")[0]
+	_expect(
+		stats.name == "H-28Q尖端炮台"
+		and int(stats.cost) == 5
+		and stats.footprint_tiles == Vector2i(2, 2)
+		and is_equal_approx(float(stats.lifespan), 45.0)
+		and bool(stats.lifespan_hp_decay)
+		and not bool(stats.can_attack_air)
+		and float(stats.splash_radius) > 0.0,
+		"H-28Q 尖端炮台为 5 费 2x2 对地溅射建筑，并在 45 秒内衰减生命",
+	)
+	_expect(
+		int(skill.cost) == 1
+		and int(skill.max_uses) == 2
+		and is_equal_approx(float(skill.cooldown), 2.0)
+		and skill.kind == "frontal"
+		and skill.shape == "trapezoid"
+		and is_equal_approx(float(skill.near_width), float(skill.far_width))
+		and bool(skill.ground_only)
+		and skill.projectile_visual == "laser",
+		"H-28Q 穿透激光费用 1、可用 2 次、冷却 2 秒，并以等宽对地路径结算",
+	)
+	var deck_builder := DeckBuilder.new()
+	var turret_attributes: Array[Dictionary] = deck_builder._card_attributes(stats)
+	deck_builder.free()
+	var turret_attribute_names: Array[String] = []
+	for attribute in turret_attributes:
+		turret_attribute_names.append(String(attribute.get("name", "")))
+	_expect(
+		"生命" in turret_attribute_names
+		and "目标" in turret_attribute_names
+		and "单次伤害" in turret_attribute_names
+		and "每秒伤害" in turret_attribute_names
+		and "攻击间隔" in turret_attribute_names
+		and "攻击距离" in turret_attribute_names
+		and "溅射半径" in turret_attribute_names
+		and "体积" in turret_attribute_names
+		and "存活时间" in turret_attribute_names,
+		"H-28Q 信息面板完整展示生命、对地目标、伤害、攻速、射程、溅射、占地和衰减寿命",
+	)
+
+	var packed := load(stats.visual_scene_path) as PackedScene
+	var sample := packed.instantiate() as Node3D if packed != null else null
+	if sample != null:
+		_main.add_child(sample)
+	var player := SuiteUtils.find_anim_player(sample) if sample != null else null
+	var animations_ok := player != null
+	for animation_name in [&"Spawn", &"Idle1", &"Attack1", &"Attack_Beam", &"Death"]:
+		animations_ok = animations_ok and player.has_animation(animation_name)
+	_expect(packed != null and animations_ok, "H-28Q 正式包装场景包含部署、待机、普攻、激光和死亡动画")
+	if sample != null:
+		sample.free()
+
+	var lifetime_stats := stats.duplicate(true)
+	lifetime_stats["deploy_time"] = 0.0
+	var lifetime_turret := Unit.new()
+	lifetime_turret.card_id = "apex_turret"
+	lifetime_turret.position = Vector2(360.0, 960.0)
+	lifetime_turret.setup(0, lifetime_stats, stats.name)
+	_main.add_child(lifetime_turret)
+	lifetime_turret._building_tick(22.5)
+	var half_life_ok := is_equal_approx(lifetime_turret.hp, lifetime_turret.max_hp * 0.5)
+	lifetime_turret._building_tick(22.5)
+	_expect(
+		half_life_ok and lifetime_turret.hp <= 0.0 and lifetime_turret.is_queued_for_deletion(),
+		"H-28Q 未受伤时生命在 22.5 秒减半，并在 45 秒固定模拟时归零",
+	)
+	var damaged_lifetime_turret := Unit.new()
+	damaged_lifetime_turret.card_id = "apex_turret"
+	damaged_lifetime_turret.position = Vector2(440.0, 960.0)
+	damaged_lifetime_turret.setup(0, lifetime_stats, stats.name)
+	_main.add_child(damaged_lifetime_turret)
+	damaged_lifetime_turret.hp = damaged_lifetime_turret.max_hp * 0.05
+	damaged_lifetime_turret._building_tick(2.25)
+	_expect(
+		damaged_lifetime_turret.hp <= 0.0 and damaged_lifetime_turret.is_queued_for_deletion(),
+		"H-28Q 受伤后的剩余生命仍继续自然衰减，并会提前归零死亡",
+	)
+
+	var source := _make_apex_turret_test_unit(stats, 0, Vector2(360.0, 900.0), false)
+	var ground_near := _make_apex_turret_test_unit(CardDB.get_card("melee_minion"), 1, Vector2(360.0, 810.0), false)
+	var ground_far := _make_apex_turret_test_unit(CardDB.get_card("melee_minion"), 1, Vector2(360.0, 680.0), false)
+	var ground_off_path := _make_apex_turret_test_unit(CardDB.get_card("melee_minion"), 1, Vector2(440.0, 810.0), false)
+	var air_on_path := _make_apex_turret_test_unit(CardDB.get_card("aurelionsol"), 1, Vector2(360.0, 760.0), true)
+	var hp_before := {
+		"near": ground_near.hp,
+		"far": ground_far.hp,
+		"off": ground_off_path.hp,
+		"air": air_on_path.hp,
+	}
+	_main._active_skill_effect_system.apply_frontal(source, skill, Vector2.UP)
+	_expect(
+		ground_near.hp < float(hp_before.near)
+		and ground_far.hp < float(hp_before.far)
+		and is_equal_approx(ground_off_path.hp, float(hp_before.off))
+		and is_equal_approx(air_on_path.hp, float(hp_before.air)),
+		"H-28Q 激光一次穿透命中路径内多个地面敌人，不伤害路径外或空中敌人",
+	)
+
+	var splash_air := _make_apex_turret_test_unit(CardDB.get_card("aurelionsol"), 1, ground_near.position + Vector2(8.0, 0.0), true)
+	var splash_air_hp := splash_air.hp
+	var ground_hp := ground_near.hp
+	var projectiles_before: Array = _main._projectiles.keys()
+	# 静止建筑没有行军预装填，首次炮击需要走完一个完整攻击周期。
+	for _tick in range(36):
+		source.sim_tick(_main.SIM_DT)
+	var projectile_carries_ground_only := false
+	var source_projectile_id := -1
+	for projectile_id in _main._projectiles:
+		var projectile: Dictionary = _main._projectiles[projectile_id]
+		if not projectiles_before.has(projectile_id) and projectile.get("attacker") == source:
+			projectile_carries_ground_only = bool((projectile.get("effects", {}) as Dictionary).get("ground_only", false))
+			source_projectile_id = int(projectile_id)
+			break
+	if source_projectile_id >= 0:
+		_main._projectiles.erase(source_projectile_id)
+	_main.resolve_attack_hit(0, ground_near.position, ground_near, 30.0, float(stats.splash_radius), 0.0, source, source.position, -1, {"ground_only": true})
+	_expect(
+		projectile_carries_ground_only and ground_near.hp < ground_hp and is_equal_approx(splash_air.hp, splash_air_hp),
+		"H-28Q 通过固定模拟主动索敌并发射炮弹，溅射伤害仍严格过滤空中单位",
+	)
+	for unit in [source, ground_near, ground_far, ground_off_path, air_on_path, splash_air]:
+		if is_instance_valid(unit):
+			unit.free()
+
+
+func _make_apex_turret_test_unit(base_stats: Dictionary, team: int, pos: Vector2, force_air: bool) -> Unit:
+	var stats := base_stats.duplicate(true)
+	stats["hp"] = 1000.0
+	stats["deploy_time"] = 0.0
+	stats["is_air"] = force_air
+	var unit := Unit.new()
+	unit.position = pos
+	unit.setup(team, stats, String(stats.name))
+	_main.add_child(unit)
+	return unit
 
 func _check_tombstone_art_integration() -> void:
 	var cards := CardDB.all()
@@ -329,15 +470,51 @@ func _clear_minion_test_units() -> void:
 		minion.free()
 
 func _check_tombstone_footprint() -> void:
-	var snapped: Vector2 = _main._snap_card_position("tombstone", Vector2(467.0, 1093.0))
+	var snapped: Vector2 = _main._snap_card_position("tombstone", Vector2(467.0, 873.0))
 	_expect(fmod(snapped.x, _main.TILE_SIZE) == 0.0 and fmod(snapped.y, _main.TILE_SIZE) == 0.0, "2x2 墓碑中心吸附在格线交点")
-	var tombstone: Unit = _main._spawn_unit(0, "tombstone", snapped)
-	var half_size_ok := is_equal_approx(tombstone.body_radius, _main.TILE_SIZE)
+	# 故意让测试建筑的圆柱半径远小于 2x2 占地，确保两个概念不会因当前数值相近而误测为同一个。
+	var stats: Dictionary = CardDB.get_card("tombstone").duplicate(true)
+	stats["radius"] = 8.0
+	stats["deploy_time"] = 0.0
+	var tombstone := Unit.new()
+	tombstone.card_id = "tombstone"
+	tombstone.position = snapped
+	tombstone.setup(0, stats, stats.name)
+	_main.add_child(tombstone)
+	_main._register_dynamic_building(tombstone)
+	var footprint_ok := tombstone.footprint_tiles == Vector2i(2, 2)
 	var first := Vector2(snapped.x - 20.0, snapped.y - 20.0)
-	var occupied := true
+	var footprint_blocks_deployment := true
 	for offset in [Vector2.ZERO, Vector2(40.0, 0.0), Vector2(0.0, 40.0), Vector2(40.0, 40.0)]:
-		occupied = occupied and not _main.nav.is_walkable(first + offset)
-	_expect(half_size_ok and occupied, "墓碑实际占据完整 2x2 格并写入导航障碍")
+		var occupied_center: Vector2 = first + offset
+		footprint_blocks_deployment = (
+			footprint_blocks_deployment
+			and _main.is_ground_position_walkable(occupied_center, 0.0)
+			and not _main.is_card_deploy_position_valid(0, "xin", occupied_center)
+		)
+	var adjacent_center := first + Vector2(-40.0, 0.0)
+	var adjacent_deployment_allowed: bool = _main.is_card_deploy_position_valid(0, "xin", adjacent_center)
+	_expect(
+		footprint_ok and footprint_blocks_deployment and adjacent_deployment_allowed,
+		"建筑下牌严格使用 2x2 格占地，即使实际碰撞圆更小也封锁四格且不多封相邻格",
+	)
+
+	var expected_nav_cells: Array = _main.nav.cells_for_circle(
+		tombstone.position,
+		tombstone.body_radius + _main.NAV_CLEARANCE,
+	)
+	var footprint_nav_cells: Array = _main.nav.cells_for_rect(
+		_main._structure_deployment_rect(tombstone).grow(_main.NAV_CLEARANCE),
+	)
+	var footprint_only_corner_found := false
+	for cell in footprint_nav_cells:
+		if cell not in expected_nav_cells:
+			footprint_only_corner_found = true
+			break
+	_expect(
+		tombstone.nav_cells == expected_nav_cells and footprint_only_corner_found,
+		"建筑寻路障碍按实际圆柱碰撞注册，不把 2x2 下牌占地当成方形碰撞",
+	)
 	tombstone._die()
 
 func _check_tombstone_does_not_push_air_units() -> void:

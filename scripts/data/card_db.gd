@@ -1,7 +1,8 @@
 class_name CardDB
 ## 卡牌数值定义库。调整平衡只改这里。
 ## 卡牌类型 type: "unit"=单位, "spell"=法术, "building"=建筑
-## 单位体型使用七档。这里的半径是权威战斗数据，会参与碰撞、部署、寻路与攻击距离；
+## 单位体型使用七档。这里的半径是权威战斗数据，会参与碰撞、寻路与攻击距离；
+## 建筑下牌限制只读取 footprint_tiles，不能由 radius 或 visual_radius 反推；
 ## visual_radius 只负责占位图、队伍圈和状态提示，不得反过来驱动战斗。
 const CHARACTER_SCALE_MULTIPLIER := 1.5
 ## 空军3D模型底部相对权威地面点的统一离地高度。表现层只平移模型，不缩放模型。
@@ -37,13 +38,15 @@ const SPEED_EXTREMELY_SLOW := 36.0
 const PRINCESS_TOWER_PROJECTILE_VISUAL_OFFSET := Vector2(12.0, -205.0)
 const PRINCESS_TOWER_STATS := {
 	"hp": 2100.0, "damage": 55.0, "range": 240.0, "interval": 0.8,
-	"radius": 54.0, "visual_radius": 60.0, "deployment_radius": 54.0,
+	"footprint_tiles": Vector2i(3, 3),
+	"radius": 54.0, "visual_radius": 60.0,
 	"first_hit": 0.2, "projectile_speed": 420.0,
 	"projectile_visual_offset": PRINCESS_TOWER_PROJECTILE_VISUAL_OFFSET,
 }
 const NEXUS_STATS := {
 	"hp": 3600.0, "damage": 0.0, "range": 0.0, "interval": 1.0,
-	"radius": 72.0, "visual_radius": 80.0, "deployment_radius": 72.0,
+	"footprint_tiles": Vector2i(4, 4),
+	"radius": 72.0, "visual_radius": 80.0,
 	"first_hit": 0.2, "projectile_speed": 0.0, "can_attack": false,
 }
 const PRINCESS_TOWER_VISUAL_CONFIG := {
@@ -106,7 +109,7 @@ const CARD_FIELDS := [
 	&"hp", &"damage", &"range", &"speed", &"interval", &"first_hit",
 	&"size_tier", &"radius", &"visual_radius", &"mass", &"sight", &"color",
 	&"is_air", &"is_building", &"building_only", &"can_attack_air", &"is_continuous_attack",
-	&"deploy_time", &"pre_deploy_time", &"deploy_zone", &"deploy_ignore_structures", &"show_team_ring", &"footprint_tiles", &"lifespan",
+	&"deploy_time", &"pre_deploy_time", &"deploy_zone", &"deploy_ignore_structures", &"show_team_ring", &"footprint_tiles", &"lifespan", &"lifespan_hp_decay",
 	&"deployment_count", &"deployment_spacing",
 	&"spawn_id", &"spawn_interval", &"spawn_count", &"spawn_side", &"death_spawn_id", &"death_spawn_count",
 	&"projectile_speed", &"projectile_visual", &"projectile_visual_height",
@@ -737,6 +740,44 @@ static func all() -> Dictionary:
 			},
 			"active_skills": [{"name": "亡者集结", "kind": "summon", "cost": 1, "max_uses": 1, "cooldown": 10.0, "spawn_id": "imp", "spawn_count": 4}],
 		},
+		"apex_turret": {
+			"name": "H-28Q尖端炮台", "cost": 5, "type": "building",
+			"description": "强力的远程防守建筑。炮弹只攻击地面目标并造成小范围伤害，可额外发射两次穿透激光弹。",
+			# 2x2 建筑；无外部伤害时，1450 生命会在 45 秒寿命内匀速衰减到 0。
+			"hp": 1450.0, "damage": 130.0, "range": 220.0,
+			"speed": 0.0, "interval": 1.5, "first_hit": 0.55,
+			"radius": 40.0, "visual_radius": 40.0,
+			"footprint_tiles": Vector2i(2, 2),
+			"lifespan": 45.0, "lifespan_hp_decay": true,
+			"projectile_speed": 420.0, "projectile_visual": "orb",
+			"projectile_visual_height": 34.0, "projectile_visual_forward_offset": 34.0,
+			"projectile_colors": [Color(0.20, 0.82, 1.0), Color(1.0, 0.30, 0.18)],
+			"splash_radius": 32.0,
+			"color": Color(0.20, 0.72, 0.86),
+			"is_air": false, "building_only": false, "can_attack_air": false,
+			"is_building": true, "show_team_ring": false,
+			"visual_scene_path": "res://assets/units/apex_turret/apex_turret_view.tscn",
+			"visual_forward_yaw": 0.0,
+			"visual_animations": {
+				"deploy": "Spawn", "idle": "Idle1", "attack": "Attack1",
+				"visual_actions": {
+					"laser": {"animation": "Attack_Beam", "durations": [1.6666664], "kind": "skill"},
+				},
+				"death": "Death", "death_duration": 0.8,
+			},
+			"active_skills": [{
+				"name": "海克斯穿透激光", "kind": "frontal", "shape": "trapezoid",
+				"cost": 1, "max_uses": 2, "cooldown": 2.0,
+				"description": "沿当前朝向发射一枚可穿透的激光弹，对 270（4.5格）长路径上的所有地面敌人造成 240 点伤害。",
+				"length": 270.0, "near_width": 24.0, "far_width": 24.0,
+				"damage": 240.0, "ground_only": true,
+				# 激光在动作 0.45 秒时离开炮口，0.30 秒后到达路径末端并统一结算。
+				"projectile_count": 1, "projectile_visual": "laser",
+				"projectile_launch_delay": 0.45, "projectile_flight_duration": 0.30,
+				"impact_delay": 0.75, "cast_duration": 1.6666664,
+				"cast_locks": ["movement", "attack", "facing"], "visual_action": "laser",
+			}],
+		},
 		"aurelionsol": {
 			"name": "龙王", "cost": 4, "type": "unit",
 			"description": "空中持续输出单位，吐息能够同时压制目标及其周围敌人。",
@@ -1006,6 +1047,8 @@ static func _validate_building(card_id: String, stats: Dictionary, errors: Packe
 	_require_fields(card_id, stats, [&"is_building", &"footprint_tiles", &"lifespan", &"visual_radius"], errors)
 	if not bool(stats.get("is_building", false)):
 		errors.append("%s.is_building: building 卡必须为 true" % card_id)
+	if stats.has("lifespan_hp_decay") and typeof(stats.lifespan_hp_decay) != TYPE_BOOL:
+		errors.append("%s.lifespan_hp_decay: 必须是 bool" % card_id)
 	var footprint = stats.get("footprint_tiles")
 	if not footprint is Vector2i or footprint.x <= 0 or footprint.y <= 0:
 		errors.append("%s.footprint_tiles: 必须是正数 Vector2i" % card_id)
@@ -1292,8 +1335,8 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 			errors.append("%s.center_width: 必须 >= 0" % label)
 		if skill.has("fan_inner_arc") and typeof(skill.fan_inner_arc) != TYPE_BOOL:
 			errors.append("%s.fan_inner_arc: 必须是 bool" % label)
-		if skill.has("projectile_visual") and StringName(skill.projectile_visual) not in [&"arrow", &"card", &"orb"]:
-			errors.append("%s.projectile_visual: 只支持 arrow/card/orb" % label)
+		if skill.has("projectile_visual") and StringName(skill.projectile_visual) not in [&"arrow", &"card", &"orb", &"laser"]:
+			errors.append("%s.projectile_visual: 只支持 arrow/card/orb/laser" % label)
 		if skill.has("projectile_launch_delay") and float(skill.projectile_launch_delay) < 0.0:
 			errors.append("%s.projectile_launch_delay: 必须 >= 0" % label)
 		if skill.has("projectile_flight_duration") and float(skill.projectile_flight_duration) < 0.0:

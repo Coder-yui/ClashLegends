@@ -25,9 +25,10 @@ var damage := 50.0
 var attack_range := 300.0
 var attack_interval := 0.8
 var body_radius := 34.0
-## 物理圆、绘制尺寸、部署禁区分离，美术不再反向改变手感。
+## 只用于下牌占地；单位绕行始终使用 body_radius 的圆柱碰撞。
+var footprint_tiles := Vector2i(3, 3)
+## 物理圆、规则占地与绘制尺寸分离，美术不再反向改变手感。
 var visual_radius := 34.0
-var deployment_radius := 34.0
 var first_hit_time := 0.2
 var projectile_speed := 400.0
 ## 仅用于弹体绘制的晶石起点偏移；权威发射位置仍是塔心。
@@ -61,8 +62,8 @@ func setup(p_team: int, stats: Dictionary, p_is_king: bool) -> void:
 	attack_range = stats.range
 	attack_interval = stats.interval
 	body_radius = stats.radius
+	footprint_tiles = stats.get("footprint_tiles", Vector2i(4, 4) if is_king else Vector2i(3, 3))
 	visual_radius = stats.get("visual_radius", body_radius)
-	deployment_radius = stats.get("deployment_radius", visual_radius)
 	first_hit_time = stats.get("first_hit", 0.2)
 	projectile_speed = stats.get("projectile_speed", 400.0)
 	var configured_projectile_offset: Vector2 = stats.get("projectile_visual_offset", Vector2.ZERO)
@@ -147,9 +148,6 @@ func _target_gap(target: Node2D) -> float:
 ## 塔使用圆形碰撞；单位从正后方推进时会自然贴着圆周绕到侧面。
 func surface_gap_to_circle(center: Vector2, radius: float) -> float:
 	return maxf(0.0, center.distance_to(global_position) - body_radius - radius)
-
-func deployment_gap_to_circle(center: Vector2, radius: float) -> float:
-	return maxf(0.0, center.distance_to(global_position) - deployment_radius - radius)
 
 func _find_enemy_in_range() -> Node2D:
 	var best: Node2D = null
