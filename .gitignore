@@ -8,8 +8,8 @@ builds/
 # macOS
 .DS_Store
 
-# Promotional materials (kept local)
-/ClashLegends-promo-materials/
-
-# 待开发卡牌美术素材仅作为本地开发队列，不纳入版本库
-/待开发卡牌美术素材/
+# Godot 项目外的本地素材目录：只保留目录级 .gdignore 标记，素材本身不纳入版本库
+/ClashLegends-promo-materials/**
+!/ClashLegends-promo-materials/.gdignore
+/待开发卡牌美术素材/**
+!/待开发卡牌美术素材/.gdignore
