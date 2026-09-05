@@ -2,7 +2,7 @@ class_name NetworkSnapshotSystem
 extends RefCounted
 ## 20Hz 单位/塔/弹体快照的序列化与客户端应用。RPC 端点仍保留在 Main。
 
-const SNAPSHOT_PROTOCOL_VERSION := 8
+const SNAPSHOT_PROTOCOL_VERSION := 9
 const S_VERSION := 0
 const S_SERVER_TICK := 1
 const S_UNITS := 2
@@ -60,7 +60,8 @@ const P_DIRECTION_Y := 7
 const P_VISUAL_HEIGHT := 8
 const P_VISUAL_OFFSET_X := 9
 const P_VISUAL_OFFSET_Y := 10
-const PROJECTILE_PAYLOAD_SIZE := 11
+const P_VISUAL_SCALE := 11
+const PROJECTILE_PAYLOAD_SIZE := 12
 
 const T_HP := 0
 const T_ACTIVATED := 1
@@ -215,6 +216,7 @@ func _apply_projectiles(projectiles_data: Array) -> void:
 			"visual_height": float(d[P_VISUAL_HEIGHT]),
 			"visual_offset": Vector2(d[P_VISUAL_OFFSET_X], d[P_VISUAL_OFFSET_Y]),
 			"target_visual_offset": Vector2(d[P_VISUAL_OFFSET_X], d[P_VISUAL_OFFSET_Y]),
+			"visual_scale": float(d[P_VISUAL_SCALE]),
 		})
 		projectile.target_pos = Vector2(d[P_X], d[P_Y])
 		projectile.color = d[P_COLOR]
@@ -223,6 +225,7 @@ func _apply_projectiles(projectiles_data: Array) -> void:
 		projectile.direction = Vector2(d[P_DIRECTION_X], d[P_DIRECTION_Y])
 		projectile.visual_height = float(d[P_VISUAL_HEIGHT])
 		projectile.target_visual_offset = Vector2(d[P_VISUAL_OFFSET_X], d[P_VISUAL_OFFSET_Y])
+		projectile.visual_scale = float(d[P_VISUAL_SCALE])
 		_controller._client_projectiles[d[P_ID]] = projectile
 	var gone := []
 	for id in _controller._client_projectiles:
@@ -269,12 +272,7 @@ func send() -> void:
 	var projectiles_data := []
 	for id in _controller._projectiles:
 		var projectile: Dictionary = _controller._projectiles[id]
-		var visual_offset: Vector2 = projectile.get("visual_offset", Vector2.ZERO)
-		projectiles_data.append([
-			id, projectile.pos.x, projectile.pos.y, projectile.color, projectile.radius,
-			String(projectile.visual), projectile.direction.x, projectile.direction.y,
-			projectile.get("visual_height", 0.0), visual_offset.x, visual_offset.y,
-		])
+		projectiles_data.append(_projectile_snapshot_payload(id, projectile))
 
 	var towers_data := []
 	for tower in _controller._towers:
@@ -300,6 +298,19 @@ func _snapshot_packet(units_data: Array, projectiles_data: Array, towers_data: A
 		client_elixir,
 		match_timer,
 		overtime,
+	]
+
+
+## 弹体载荷集中构造，确保新增纯表现字段在主机和客户端使用同一固定顺序。
+func _projectile_snapshot_payload(id: int, projectile: Dictionary) -> Array:
+	var visual_offset: Vector2 = projectile.get("visual_offset", Vector2.ZERO)
+	var direction: Vector2 = projectile.get("direction", Vector2.UP)
+	var position: Vector2 = projectile.get("pos", Vector2.ZERO)
+	return [
+		id, position.x, position.y, projectile.get("color", Color.WHITE), projectile.get("radius", 4.0),
+		String(projectile.get("visual", &"orb")), direction.x, direction.y,
+		projectile.get("visual_height", 0.0), visual_offset.x, visual_offset.y,
+		projectile.get("visual_scale", 1.0),
 	]
 
 

@@ -113,7 +113,8 @@ const CARD_FIELDS := [
 	&"deployment_count", &"deployment_spacing",
 	&"spawn_id", &"spawn_interval", &"spawn_count", &"spawn_side", &"death_spawn_id", &"death_spawn_count",
 	&"projectile_speed", &"projectile_visual", &"projectile_visual_height",
-	&"projectile_visual_forward_offset", &"projectile_colors", &"splash_radius", &"knockback",
+	&"projectile_visual_forward_offset", &"projectile_visual_scale", &"projectile_impact_visual",
+	&"projectile_colors", &"splash_radius", &"knockback",
 	&"continuous_beam_color", &"continuous_beam_start_width", &"continuous_beam_end_width",
 	&"continuous_beam_origin_height", &"continuous_beam_forward_offset",
 	&"deploy_sweep_name", &"deploy_sweep_radius", &"deploy_sweep_damage", &"deploy_sweep_knockback",
@@ -147,6 +148,7 @@ const ACTIVE_SKILL_FIELDS := [
 	&"transform_impact_delay", &"cast_duration", &"transform_cast_duration", &"stun_duration", &"ground_only",
 	&"cast_locks", &"visual_action", &"description", &"shape", &"near_width", &"far_width", &"arc_degrees", &"fan_inner_arc",
 	&"projectile_count", &"projectile_visual", &"projectile_launch_delay", &"projectile_flight_duration",
+	&"projectile_visual_height", &"projectile_visual_forward_offset", &"projectile_visual_width",
 	&"center_ratio", &"center_width", &"center_damage_multiplier", &"resource_damage_scale_max",
 	&"uses_skill_resource", &"resource_damage_by_stacks", &"resource_full_damage_multiplier", &"resource_full_stun_multiplier",
 	&"resource_visual_actions", &"resource_hit_damage_sequences", &"resource_hit_delay_sequences",
@@ -716,11 +718,11 @@ static func all() -> Dictionary:
 		"tombstone": {
 			"name": "墓碑", "cost": 3, "type": "building",
 			"description": "持续召唤小鬼的建筑，适合建立防守屏障并拖延敌军。",
-			# 建筑卡：2x2 格占地，物理碰撞使用 2x2 格内切圆，不可移动。
+			# 建筑卡：3x3 格部署占地；权威碰撞仍使用 radius=40 的圆柱，不可移动。
 			# 完成部署立即生成两个小鬼，之后每 5 秒在地图中心线对应的一侧生成两个。
 			"hp": 400.0, "damage": 0.0, "range": 0.0,
 			"speed": 0.0, "interval": 1.0, "radius": 40.0,
-			"footprint_tiles": Vector2i(2, 2),
+			"footprint_tiles": Vector2i(3, 3),
 			"color": Color(0.45, 0.40, 0.35),
 			"is_air": false, "building_only": false, "can_attack_air": false,
 			"is_building": true,
@@ -732,7 +734,7 @@ static func all() -> Dictionary:
 			"death_spawn_id": "imp",
 			"death_spawn_count": 2,
 			"show_team_ring": false,
-			"visual_radius": 40.0,
+			"visual_radius": 50.0,
 			"visual_scene_path": "res://assets/units/tombstone/tombstone_view.tscn",
 			"visual_forward_yaw": 0.0,
 			"visual_animations": {
@@ -743,15 +745,16 @@ static func all() -> Dictionary:
 		"apex_turret": {
 			"name": "H-28Q尖端炮台", "cost": 5, "type": "building",
 			"description": "强力的远程防守建筑。炮弹只攻击地面目标并造成小范围伤害，可额外发射两次穿透激光弹。",
-			# 2x2 建筑；无外部伤害时，1450 生命会在 45 秒寿命内匀速衰减到 0。
+			# 3x3 格部署占地，权威碰撞半径仍为 40；无外部伤害时，1450 生命会在 45 秒寿命内匀速衰减到 0。
 			"hp": 1450.0, "damage": 130.0, "range": 220.0,
 			"speed": 0.0, "interval": 1.5, "first_hit": 0.55,
-			"radius": 40.0, "visual_radius": 40.0,
-			"footprint_tiles": Vector2i(2, 2),
+			"radius": 40.0, "visual_radius": 55.0,
+			"footprint_tiles": Vector2i(3, 3),
 			"lifespan": 45.0, "lifespan_hp_decay": true,
 			"projectile_speed": 420.0, "projectile_visual": "orb",
-			"projectile_visual_height": 34.0, "projectile_visual_forward_offset": 34.0,
-			"projectile_colors": [Color(0.20, 0.82, 1.0), Color(1.0, 0.30, 0.18)],
+			"projectile_visual_height": 46.75, "projectile_visual_forward_offset": 46.75,
+			"projectile_visual_scale": 2.25, "projectile_impact_visual": "splash_wave",
+			"projectile_colors": [Color(1.0, 0.34, 0.08), Color(1.0, 0.22, 0.055)],
 			"splash_radius": 32.0,
 			"color": Color(0.20, 0.72, 0.86),
 			"is_air": false, "building_only": false, "can_attack_air": false,
@@ -769,10 +772,11 @@ static func all() -> Dictionary:
 				"name": "海克斯穿透激光", "kind": "frontal", "shape": "trapezoid",
 				"cost": 1, "max_uses": 2, "cooldown": 2.0,
 				"description": "沿当前朝向发射一枚可穿透的激光弹，对 270（4.5格）长路径上的所有地面敌人造成 240 点伤害。",
-				"length": 270.0, "near_width": 24.0, "far_width": 24.0,
+				"length": 270.0, "near_width": 28.8, "far_width": 28.8,
 				"damage": 240.0, "ground_only": true,
 				# 激光在动作 0.45 秒时离开炮口，0.30 秒后到达路径末端并统一结算。
-				"projectile_count": 1, "projectile_visual": "laser",
+				"projectile_count": 1, "projectile_visual": "electromagnetic_wave", "projectile_visual_width": 28.8,
+				"projectile_visual_height": 46.75, "projectile_visual_forward_offset": 46.75,
 				"projectile_launch_delay": 0.45, "projectile_flight_duration": 0.30,
 				"impact_delay": 0.75, "cast_duration": 1.6666664,
 				"cast_locks": ["movement", "attack", "facing"], "visual_action": "laser",
@@ -1038,6 +1042,10 @@ static func _validate_projectile(label: String, stats: Dictionary, errors: Packe
 		errors.append("%s.projectile_visual: 不支持 %s" % [label, visual])
 	if float(stats.get("projectile_visual_height", 0.0)) < 0.0 or float(stats.get("projectile_visual_forward_offset", 0.0)) < 0.0:
 		errors.append("%s: 弹体表现高度和前向偏移必须 >= 0" % label)
+	if float(stats.get("projectile_visual_scale", 1.0)) <= 0.0:
+		errors.append("%s.projectile_visual_scale: 必须 > 0" % label)
+	if StringName(stats.get("projectile_impact_visual", "")) not in [&"", &"splash_wave"]:
+		errors.append("%s.projectile_impact_visual: 只支持 splash_wave" % label)
 	if stats.has("projectile_colors"):
 		var colors = stats.projectile_colors
 		if not colors is Array or colors.size() != 2 or not colors[0] is Color or not colors[1] is Color:
@@ -1335,12 +1343,18 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 			errors.append("%s.center_width: 必须 >= 0" % label)
 		if skill.has("fan_inner_arc") and typeof(skill.fan_inner_arc) != TYPE_BOOL:
 			errors.append("%s.fan_inner_arc: 必须是 bool" % label)
-		if skill.has("projectile_visual") and StringName(skill.projectile_visual) not in [&"arrow", &"card", &"orb", &"laser"]:
-			errors.append("%s.projectile_visual: 只支持 arrow/card/orb/laser" % label)
+		if skill.has("projectile_visual") and StringName(skill.projectile_visual) not in [&"arrow", &"card", &"orb", &"laser", &"electromagnetic_wave"]:
+			errors.append("%s.projectile_visual: 只支持 arrow/card/orb/laser/electromagnetic_wave" % label)
 		if skill.has("projectile_launch_delay") and float(skill.projectile_launch_delay) < 0.0:
 			errors.append("%s.projectile_launch_delay: 必须 >= 0" % label)
 		if skill.has("projectile_flight_duration") and float(skill.projectile_flight_duration) < 0.0:
 			errors.append("%s.projectile_flight_duration: 必须 >= 0" % label)
+		if skill.has("projectile_visual_height") and float(skill.projectile_visual_height) < 0.0:
+			errors.append("%s.projectile_visual_height: 必须 >= 0" % label)
+		if skill.has("projectile_visual_forward_offset") and float(skill.projectile_visual_forward_offset) < 0.0:
+			errors.append("%s.projectile_visual_forward_offset: 必须 >= 0" % label)
+		if skill.has("projectile_visual_width") and float(skill.projectile_visual_width) <= 0.0:
+			errors.append("%s.projectile_visual_width: 必须 > 0" % label)
 		if skill.has("projectile_launch_delay") and skill.has("cast_duration") and float(skill.projectile_launch_delay) > float(skill.cast_duration):
 			errors.append("%s.projectile_launch_delay: 不得大于 cast_duration" % label)
 		if skill.has("knockback_duration") and float(skill.knockback_duration) <= 0.0:

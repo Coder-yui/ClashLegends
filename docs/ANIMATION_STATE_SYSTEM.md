@@ -148,4 +148,4 @@ Move route 中的 transition 分为两类：
 
 ## 联机
 
-快照使用紧凑、固定长度的 Array；当前 `SNAPSHOT_PROTOCOL_VERSION = 8`，顶层为 `[version, server_tick, units, projectiles, towers, client_elixir, match_timer, overtime]`。Unit 载荷包含 action 时间轴、locomotion、强化攻击、技能资源启用状态、主动移速/攻速倍率、主动技能剩余次数与冷却、护盾比例。版本或载荷长度不匹配时整份快照直接丢弃；任何字段变更都必须提升版本并同步读写两端。晚到客户端按权威剩余时间 seek，动画时间轴只用于表现同步，不参与权威判定。
+快照使用紧凑、固定长度的 Array；当前 `SNAPSHOT_PROTOCOL_VERSION = 9`，顶层为 `[version, server_tick, units, projectiles, towers, client_elixir, match_timer, overtime]`。Unit 载荷包含 action 时间轴、locomotion、强化攻击、技能资源启用状态、主动移速/攻速倍率、主动技能剩余次数与冷却、护盾比例；Projectile 载荷额外同步纯表现尺寸倍率。版本或载荷长度不匹配时整份快照直接丢弃；任何字段变更都必须提升版本并同步读写两端。晚到客户端按权威剩余时间 seek，动画时间轴只用于表现同步，不参与权威判定。

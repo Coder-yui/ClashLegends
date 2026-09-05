@@ -6,6 +6,7 @@ const MUZZLE_FORWARD_GAP := 5.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
 
 var projectiles: Dictionary = {}
 var client_projectiles: Dictionary = {}
+var impact_effects: Array[Dictionary] = []
 var _next_id := 1
 var _context: BattleContext
 
@@ -24,11 +25,15 @@ func launch(attacker: Node2D, target: Node2D, amount: float, projectile_speed: f
 	var direction := attacker.global_position.direction_to(target.global_position)
 	var projectile_visual := &"orb"
 	var projectile_visual_height := 0.0
+	var projectile_visual_scale := 1.0
+	var projectile_impact_visual := &""
 	var visual_offset := Vector2.ZERO
 	var visual_offset_follows_trajectory := false
 	if attacker is Unit:
 		projectile_visual = StringName((attacker as Unit).projectile_visual)
 		projectile_visual_height = (attacker as Unit).projectile_visual_height
+		projectile_visual_scale = (attacker as Unit).projectile_visual_scale
+		projectile_impact_visual = (attacker as Unit).projectile_impact_visual
 		var forward_offset := (attacker as Unit).projectile_visual_forward_offset
 		if forward_offset > 0.0:
 			visual_offset = direction * forward_offset
@@ -50,6 +55,7 @@ func launch(attacker: Node2D, target: Node2D, amount: float, projectile_speed: f
 		"splash": splash_radius, "knockback": knockback, "color": projectile_color,
 		"radius": 7.0 if projectile_visual == &"tower_orb" else (3.0 if projectile_visual == &"arrow" else 4.0),
 		"visual": projectile_visual, "visual_height": projectile_visual_height,
+		"visual_scale": projectile_visual_scale, "impact_visual": projectile_impact_visual,
 		"visual_offset": visual_offset, "visual_origin_offset": visual_offset,
 		"visual_offset_follows_trajectory": visual_offset_follows_trajectory,
 		"visual_launch_pos": start_position, "direction": direction,
@@ -84,6 +90,8 @@ func tick(dt: float) -> void:
 			projectile.visual_offset = visual_origin_offset * (1.0 - travel_ratio)
 		projectiles[id] = projectile
 		if next_pos.distance_to(target_pos) <= target.body_radius + projectile.radius:
+			if projectile.splash > 0.0 and StringName(projectile.get("impact_visual", "")) != &"":
+				_context.show_projectile_impact(target_pos, projectile.splash, projectile.color, StringName(projectile.impact_visual))
 			var hit_from: Node2D = projectile.attacker if (projectile.attacker != null and is_instance_valid(projectile.attacker)) else null
 			_context.resolve_attack_hit(projectile.team, pos, target, projectile.damage, projectile.splash, projectile.knockback, hit_from, projectile.source_pos, int(projectile.get("source_form_index", -1)), projectile.get("effects", {}))
 			finished.append(id)
@@ -101,9 +109,29 @@ func tick_client_interpolation(delta: float) -> void:
 		client_projectiles[id] = projectile
 	queue_redraw()
 
+func tick_visuals(delta: float) -> void:
+	var alive: Array[Dictionary] = []
+	for effect in impact_effects:
+		effect.timer = maxf(float(effect.timer) - delta, 0.0)
+		if float(effect.timer) > 0.001:
+			alive.append(effect)
+	impact_effects.assign(alive)
+	if not impact_effects.is_empty():
+		queue_redraw()
+
+func add_impact_visual(position: Vector2, radius: float, color: Color, visual: StringName) -> void:
+	if visual == &"" or radius <= 0.0:
+		return
+	impact_effects.append({
+		"pos": position, "radius": radius, "color": color, "visual": visual,
+		"timer": 0.38, "duration": 0.38,
+	})
+	queue_redraw()
+
 func clear_all() -> void:
 	projectiles.clear()
 	client_projectiles.clear()
+	impact_effects.clear()
 	queue_redraw()
 
 func _draw() -> void:
@@ -115,7 +143,42 @@ func _draw() -> void:
 			&"arrow": _draw_arrow(projectile)
 			&"needle": _draw_needle(projectile)
 			&"boomerang": _draw_boomerang(projectile)
-			_: draw_circle(projectile.pos, projectile.radius, projectile.color)
+			# orb 同样必须使用纯表现炮口偏移；权威弹体位置仍保留在 projectile.pos。
+			_:
+				if StringName(projectile.get("impact_visual", "")) == &"splash_wave" or float(projectile.get("visual_scale", 1.0)) > 1.01:
+					_draw_splash_orb(projectile)
+				else:
+					draw_circle(_visual_position(projectile), projectile.radius * float(projectile.get("visual_scale", 1.0)), projectile.color)
+	for effect in impact_effects:
+		_draw_impact_effect(effect)
+
+func _draw_splash_orb(projectile: Dictionary) -> void:
+	var pos := _visual_position(projectile)
+	var direction := _direction(projectile)
+	var radius := float(projectile.radius) * maxf(float(projectile.get("visual_scale", 1.0)), 1.0)
+	var color: Color = projectile.color
+	draw_line(pos - direction * radius * 2.2, pos - direction * radius * 0.35, Color(1.0, 0.16, 0.03, 0.28), radius * 1.15, true)
+	draw_circle(pos, radius * 1.55, Color(1.0, 0.12, 0.025, 0.16))
+	draw_circle(pos, radius * 1.16, Color(color.r, color.g, color.b, 0.52))
+	draw_circle(pos, radius, color)
+	draw_circle(pos - direction * radius * 0.22, radius * 0.46, Color(1.0, 0.88, 0.42, 0.98))
+	draw_circle(pos - direction * radius * 0.34, radius * 0.20, Color(1.0, 1.0, 0.86, 1.0))
+
+func _draw_impact_effect(effect: Dictionary) -> void:
+	if StringName(effect.get("visual", "")) != &"splash_wave":
+		return
+	var duration := maxf(float(effect.get("duration", 0.38)), 0.001)
+	var progress := 1.0 - clampf(float(effect.get("timer", 0.0)) / duration, 0.0, 1.0)
+	var fade := 1.0 - progress
+	var radius := float(effect.get("radius", 0.0)) * ease(clampf(progress * 1.28, 0.0, 1.0), -2.0)
+	var pos: Vector2 = effect.get("pos", Vector2.ZERO)
+	draw_circle(pos, radius, Color(1.0, 0.18, 0.025, 0.10 * fade))
+	draw_arc(pos, radius, 0.0, TAU, 48, Color(1.0, 0.34, 0.06, 0.92 * fade), 3.5, true)
+	draw_arc(pos, radius * 0.72, 0.0, TAU, 40, Color(1.0, 0.78, 0.24, 0.58 * fade), 2.0, true)
+	var ray_length := radius * 0.38 * fade
+	for index in range(8):
+		var ray_direction := Vector2.from_angle(TAU * float(index) / 8.0)
+		draw_line(pos + ray_direction * radius * 0.18, pos + ray_direction * (radius * 0.18 + ray_length), Color(1.0, 0.52, 0.10, 0.72 * fade), 2.0, true)
 
 func _draw_needle(projectile: Dictionary) -> void:
 	var pos := _visual_position(projectile)

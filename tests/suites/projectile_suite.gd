@@ -107,6 +107,27 @@ func _check_tower_projectile_visual() -> void:
 	red_tower.free()
 	red_target.free()
 
+func _check_projectile_visual_snapshot() -> void:
+	var snapshot_system := NetworkSnapshotSystem.new(_main)
+	var payload := snapshot_system._projectile_snapshot_payload(991, {
+		"pos": Vector2(120.0, 340.0), "color": Color(1.0, 0.34, 0.08), "radius": 4.0,
+		"visual": &"orb", "direction": Vector2.UP, "visual_height": 46.75,
+		"visual_offset": Vector2(0.0, -20.0), "visual_scale": 2.25,
+	})
+	var old_mode: String = _main.mode
+	_main.mode = "client"
+	_main._client_projectiles.clear()
+	snapshot_system._apply_projectiles([payload])
+	var client_projectile: Dictionary = _main._client_projectiles.get(991, {})
+	_expect(
+		payload.size() == NetworkSnapshotSystem.PROJECTILE_PAYLOAD_SIZE
+		and is_equal_approx(float(client_projectile.get("visual_scale", 0.0)), 2.25)
+		and client_projectile.get("color", Color.BLACK) == Color(1.0, 0.34, 0.08),
+		"弹体快照协议同步橙红颜色与纯表现尺寸倍率，客户端不会回退为普通小光球",
+	)
+	_main._client_projectiles.clear()
+	_main.mode = old_mode
+
 ## 墓碑小鬼的生命值与公主塔单次伤害一致，确保一次塔击恰好击杀。
 func _check_imp_tower_damage() -> void:
 	var imp_stats: Dictionary = CardDB.get_unit_stats("imp")

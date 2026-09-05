@@ -41,6 +41,7 @@ func _run() -> void:
 	var projectiles := ProjectileSuite.new(self, _main)
 	projectiles._check_projectile_travel()
 	projectiles._check_tower_projectile_visual()
+	projectiles._check_projectile_visual_snapshot()
 	projectiles._check_imp_tower_damage()
 	projectiles._check_splash_and_knockback()
 

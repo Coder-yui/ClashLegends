@@ -27,12 +27,19 @@ func _check_apex_turret() -> void:
 	_expect(
 		stats.name == "H-28Q尖端炮台"
 		and int(stats.cost) == 5
-		and stats.footprint_tiles == Vector2i(2, 2)
+		and stats.footprint_tiles == Vector2i(3, 3)
+		and is_equal_approx(float(stats.radius), 40.0)
+		and is_equal_approx(float(stats.visual_radius), 55.0)
+		and is_equal_approx(float(stats.projectile_visual_height), 46.75)
+		and is_equal_approx(float(stats.projectile_visual_forward_offset), 46.75)
+		and is_equal_approx(float(stats.projectile_visual_scale), 2.25)
+		and StringName(stats.projectile_impact_visual) == &"splash_wave"
+		and (stats.projectile_colors as Array).all(func(color): return color is Color and color.r > color.g and color.g > color.b)
 		and is_equal_approx(float(stats.lifespan), 45.0)
 		and bool(stats.lifespan_hp_decay)
 		and not bool(stats.can_attack_air)
 		and float(stats.splash_radius) > 0.0,
-		"H-28Q 尖端炮台为 5 费 2x2 对地溅射建筑，并在 45 秒内衰减生命",
+		"H-28Q 尖端炮台为 5 费 3x3 对地溅射建筑，权威碰撞仍为半径 40，并在 45 秒内衰减生命",
 	)
 	_expect(
 		int(skill.cost) == 1
@@ -40,10 +47,12 @@ func _check_apex_turret() -> void:
 		and is_equal_approx(float(skill.cooldown), 2.0)
 		and skill.kind == "frontal"
 		and skill.shape == "trapezoid"
-		and is_equal_approx(float(skill.near_width), float(skill.far_width))
+		and is_equal_approx(float(skill.near_width), 28.8)
+		and is_equal_approx(float(skill.far_width), 28.8)
 		and bool(skill.ground_only)
-		and skill.projectile_visual == "laser",
-		"H-28Q 穿透激光费用 1、可用 2 次、冷却 2 秒，并以等宽对地路径结算",
+		and skill.projectile_visual == "electromagnetic_wave"
+		and is_equal_approx(float(skill.projectile_visual_width), 28.8),
+		"H-28Q 穿透技能费用 1、可用 2 次、冷却 2 秒，路径和电磁波光弹均加宽 20% 至 28.8",
 	)
 	var deck_builder := DeckBuilder.new()
 	var turret_attributes: Array[Dictionary] = deck_builder._card_attributes(stats)
@@ -72,7 +81,8 @@ func _check_apex_turret() -> void:
 	var animations_ok := player != null
 	for animation_name in [&"Spawn", &"Idle1", &"Attack1", &"Attack_Beam", &"Death"]:
 		animations_ok = animations_ok and player.has_animation(animation_name)
-	_expect(packed != null and animations_ok, "H-28Q 正式包装场景包含部署、待机、普攻、激光和死亡动画")
+	var visual_scale_ok := sample != null and sample.scale.is_equal_approx(Vector3.ONE * 1.375)
+	_expect(packed != null and animations_ok and visual_scale_ok, "H-28Q 正式包装场景放大 1.375 倍，并包含部署、待机、普攻、激光和死亡动画")
 	if sample != null:
 		sample.free()
 
@@ -113,13 +123,32 @@ func _check_apex_turret() -> void:
 		"off": ground_off_path.hp,
 		"air": air_on_path.hp,
 	}
+	_main._active_skill_effect_system.begin_frontal_visual(source, skill, Vector2.UP)
+	var laser_effect: Dictionary = _main._active_skill_effect_system.frontal_effects.back()
+	var laser_launch_position: Vector2 = _main._frontal_projectile_visual_position(
+		laser_effect, source.position, Vector2.UP, source.body_radius,
+		float(skill.near_width) * 0.5, float(skill.far_width) * 0.5, 0.5, 0.0,
+	)
+	var expected_laser_launch := (
+		source.position
+		+ Vector2.UP * float(skill.projectile_visual_forward_offset)
+		+ Vector2.UP * float(skill.projectile_visual_height)
+	)
+	var laser_visual_origin_ok := (
+		is_equal_approx(float(laser_effect.projectile_visual_forward_offset), 46.75)
+		and is_equal_approx(float(laser_effect.projectile_visual_height), 46.75)
+		and is_equal_approx(float(laser_effect.projectile_visual_width), 28.8)
+		and laser_launch_position.is_equal_approx(expected_laser_launch)
+	)
+	_main._active_skill_effect_system.frontal_effects.clear()
 	_main._active_skill_effect_system.apply_frontal(source, skill, Vector2.UP)
 	_expect(
-		ground_near.hp < float(hp_before.near)
+		laser_visual_origin_ok
+		and ground_near.hp < float(hp_before.near)
 		and ground_far.hp < float(hp_before.far)
 		and is_equal_approx(ground_off_path.hp, float(hp_before.off))
 		and is_equal_approx(air_on_path.hp, float(hp_before.air)),
-		"H-28Q 激光一次穿透命中路径内多个地面敌人，不伤害路径外或空中敌人",
+		"H-28Q 激光从放大后炮口显示，权威路径仍一次穿透命中多个地面敌人且不伤害路径外或空中敌人",
 	)
 
 	var splash_air := _make_apex_turret_test_unit(CardDB.get_card("aurelionsol"), 1, ground_near.position + Vector2(8.0, 0.0), true)
@@ -130,19 +159,45 @@ func _check_apex_turret() -> void:
 	for _tick in range(36):
 		source.sim_tick(_main.SIM_DT)
 	var projectile_carries_ground_only := false
+	var projectile_visual_origin_ok := false
+	var projectile_visual_style_ok := false
 	var source_projectile_id := -1
 	for projectile_id in _main._projectiles:
 		var projectile: Dictionary = _main._projectiles[projectile_id]
 		if not projectiles_before.has(projectile_id) and projectile.get("attacker") == source:
 			projectile_carries_ground_only = bool((projectile.get("effects", {}) as Dictionary).get("ground_only", false))
+			var authority_position: Vector2 = projectile.pos
+			var expected_visual_position: Vector2 = (
+				authority_position
+				+ Vector2.UP * float(stats.projectile_visual_forward_offset)
+				+ Vector2.UP * float(stats.projectile_visual_height)
+			)
+			projectile_visual_origin_ok = (
+				authority_position.is_equal_approx(source.position)
+				and _main._projectile_system._visual_position(projectile).is_equal_approx(expected_visual_position)
+			)
+			projectile_visual_style_ok = (
+				is_equal_approx(float(projectile.radius), 4.0)
+				and is_equal_approx(float(projectile.visual_scale), 2.25)
+				and StringName(projectile.impact_visual) == &"splash_wave"
+			)
 			source_projectile_id = int(projectile_id)
 			break
+	var impact_effects_before: int = _main._projectile_system.impact_effects.size()
 	if source_projectile_id >= 0:
-		_main._projectiles.erase(source_projectile_id)
-	_main.resolve_attack_hit(0, ground_near.position, ground_near, 30.0, float(stats.splash_radius), 0.0, source, source.position, -1, {"ground_only": true})
+		_main._projectile_system.tick(1.0)
+	var impact_visual_ok: bool = _main._projectile_system.impact_effects.size() == impact_effects_before + 1
+	if impact_visual_ok:
+		var impact_effect: Dictionary = _main._projectile_system.impact_effects.back()
+		impact_visual_ok = (
+			StringName(impact_effect.visual) == &"splash_wave"
+			and is_equal_approx(float(impact_effect.radius), float(stats.splash_radius))
+			and (impact_effect.pos as Vector2).is_equal_approx(ground_near.position)
+		)
 	_expect(
-		projectile_carries_ground_only and ground_near.hp < ground_hp and is_equal_approx(splash_air.hp, splash_air_hp),
-		"H-28Q 通过固定模拟主动索敌并发射炮弹，溅射伤害仍严格过滤空中单位",
+		projectile_carries_ground_only and projectile_visual_origin_ok and projectile_visual_style_ok and impact_visual_ok
+		and ground_near.hp < ground_hp and is_equal_approx(splash_air.hp, splash_air_hp),
+		"H-28Q 橙红炮弹以 2.25 倍表现尺寸从炮口显示，权威弹体半径仍为 4，命中范围环取 32 且溅射严格过滤空中单位",
 	)
 	for unit in [source, ground_near, ground_far, ground_off_path, air_on_path, splash_air]:
 		if is_instance_valid(unit):
@@ -198,7 +253,8 @@ func _check_tombstone_art_integration() -> void:
 		var anchor = tombstone_sample.call("get_health_bar_anchor_local")
 		health_anchor_ok = anchor is Vector3 and (anchor as Vector3).y > 1.0
 	var imp_animation_mapping_ok: bool = String(imp_stats.visual_animations.move) == "Run1" and imp_stats.visual_animations.attack == ["Yorick_ghoul_leapWindup_anm"]
-	_expect(tombstone_packed != null and tombstone_player != null and fog_ok, "墓碑包装场景使用五层独立流动黑雾覆盖地面与模型内部")
+	var tombstone_visual_scale_ok := tombstone_sample != null and tombstone_sample.scale.is_equal_approx(Vector3.ONE * 1.25)
+	_expect(tombstone_packed != null and tombstone_player != null and fog_ok and tombstone_visual_scale_ok, "墓碑包装场景放大 1.25 倍，并使用五层独立流动黑雾覆盖地面与模型内部")
 	_expect(fog_death_ok, "墓碑死亡时每座墓碑的黑雾独立随 Death 动画扩散并淡出")
 	_expect(health_anchor_ok, "墓碑使用稳定的模型顶部锚点定位血条")
 	_expect(imp_packed != null and imp_player != null and imp_animation_mapping_ok, "小鬼移动循环 Run1，攻击使用 leapWindup")
@@ -471,9 +527,14 @@ func _clear_minion_test_units() -> void:
 
 func _check_tombstone_footprint() -> void:
 	var snapped: Vector2 = _main._snap_card_position("tombstone", Vector2(467.0, 873.0))
-	_expect(fmod(snapped.x, _main.TILE_SIZE) == 0.0 and fmod(snapped.y, _main.TILE_SIZE) == 0.0, "2x2 墓碑中心吸附在格线交点")
-	# 故意让测试建筑的圆柱半径远小于 2x2 占地，确保两个概念不会因当前数值相近而误测为同一个。
-	var stats: Dictionary = CardDB.get_card("tombstone").duplicate(true)
+	_expect(
+		is_equal_approx(fmod(snapped.x, _main.TILE_SIZE), _main.TILE_SIZE * 0.5)
+		and is_equal_approx(fmod(snapped.y, _main.TILE_SIZE), _main.TILE_SIZE * 0.5),
+		"3x3 墓碑中心吸附在中央格格心",
+	)
+	# 故意让测试建筑的圆柱半径远小于 3x3 占地，确保两个概念不会因当前数值相近而误测为同一个。
+	var configured_stats: Dictionary = CardDB.get_card("tombstone")
+	var stats: Dictionary = configured_stats.duplicate(true)
 	stats["radius"] = 8.0
 	stats["deploy_time"] = 0.0
 	var tombstone := Unit.new()
@@ -482,21 +543,27 @@ func _check_tombstone_footprint() -> void:
 	tombstone.setup(0, stats, stats.name)
 	_main.add_child(tombstone)
 	_main._register_dynamic_building(tombstone)
-	var footprint_ok := tombstone.footprint_tiles == Vector2i(2, 2)
-	var first := Vector2(snapped.x - 20.0, snapped.y - 20.0)
+	var footprint_ok := tombstone.footprint_tiles == Vector2i(3, 3)
+	var first: Vector2 = snapped - Vector2.ONE * _main.TILE_SIZE
 	var footprint_blocks_deployment := true
-	for offset in [Vector2.ZERO, Vector2(40.0, 0.0), Vector2(0.0, 40.0), Vector2(40.0, 40.0)]:
-		var occupied_center: Vector2 = first + offset
-		footprint_blocks_deployment = (
-			footprint_blocks_deployment
-			and _main.is_ground_position_walkable(occupied_center, 0.0)
-			and not _main.is_card_deploy_position_valid(0, "xin", occupied_center)
-		)
-	var adjacent_center := first + Vector2(-40.0, 0.0)
+	var footprint_outer_tiles_remain_walkable := true
+	for y in range(3):
+		for x in range(3):
+			var occupied_center: Vector2 = first + Vector2(x, y) * _main.TILE_SIZE
+			footprint_blocks_deployment = footprint_blocks_deployment and not _main.is_card_deploy_position_valid(0, "xin", occupied_center)
+			if x != 1 or y != 1:
+				footprint_outer_tiles_remain_walkable = footprint_outer_tiles_remain_walkable and _main.is_ground_position_walkable(occupied_center, 0.0)
+	var adjacent_center: Vector2 = first + Vector2.LEFT * _main.TILE_SIZE
 	var adjacent_deployment_allowed: bool = _main.is_card_deploy_position_valid(0, "xin", adjacent_center)
 	_expect(
-		footprint_ok and footprint_blocks_deployment and adjacent_deployment_allowed,
-		"建筑下牌严格使用 2x2 格占地，即使实际碰撞圆更小也封锁四格且不多封相邻格",
+		footprint_ok
+		and configured_stats.footprint_tiles == Vector2i(3, 3)
+		and is_equal_approx(float(configured_stats.radius), 40.0)
+		and is_equal_approx(float(configured_stats.visual_radius), 50.0)
+		and footprint_blocks_deployment
+		and footprint_outer_tiles_remain_walkable
+		and adjacent_deployment_allowed,
+		"墓碑使用 3x3 下牌占地和 50 表现半径，权威碰撞仍为半径 40；九格封锁下牌但外围八格与相邻格保持可通行",
 	)
 
 	var expected_nav_cells: Array = _main.nav.cells_for_circle(
@@ -513,7 +580,7 @@ func _check_tombstone_footprint() -> void:
 			break
 	_expect(
 		tombstone.nav_cells == expected_nav_cells and footprint_only_corner_found,
-		"建筑寻路障碍按实际圆柱碰撞注册，不把 2x2 下牌占地当成方形碰撞",
+		"建筑寻路障碍按实际圆柱碰撞注册，不把 3x3 下牌占地当成方形碰撞",
 	)
 	tombstone._die()
 
@@ -522,7 +589,7 @@ func _check_tombstone_does_not_push_air_units() -> void:
 	var dragon_stats: Dictionary = CardDB.get_card("aurelionsol").duplicate(true)
 	dragon_stats["deploy_time"] = 0.0
 	var dragon := Unit.new()
-	# 墓碑 2x2 吸附到格线交点；龙王也放在同一中心，确保 overlap 触发推挤分支。
+	# 墓碑 3x3 吸附到中央格格心；龙王也放在同一中心，确保 overlap 触发推挤分支。
 	var shared_pos: Vector2 = Vector2(480.0, 1080.0)
 	dragon.position = shared_pos
 	dragon.setup(0, dragon_stats, dragon_stats.name)
@@ -587,7 +654,7 @@ func _check_tombstone_spawn_cycle() -> void:
 	_expect(
 		_main.is_ground_position_walkable(diagonal_corner, CardDB.RADIUS_EXTREMELY_SMALL)
 		and not _main.is_ground_position_walkable(direct_overlap, CardDB.RADIUS_EXTREMELY_SMALL),
-		"墓碑 2x2 格占地的实际碰撞为内切圆，圆角外可通行而边缘内不可穿过"
+		"墓碑扩大为 3x3 格占地后，实际碰撞仍为半径 40 的圆柱，圆外可通行而圆内不可穿过"
 	)
 	for imp in _imp_units():
 		imp.free()

@@ -105,6 +105,7 @@ material = SubResource("ShaderMaterial_vertical")
 size = Vector2(1.18, 1.78)
 
 [node name="TombstoneView" type="Node3D"]
+scale = Vector3(1.25, 1.25, 1.25)
 script = ExtResource("2_view")
 
 [node name="Model" parent="." instance=ExtResource("1_tombstone")]

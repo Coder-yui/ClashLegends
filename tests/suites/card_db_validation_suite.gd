@@ -94,9 +94,15 @@ func run(harness: Object) -> void:
 		"active_skills": [{
 			"name": "非法扇形", "kind": "frontal", "shape": "fan",
 			"length": 0.0, "damage": -1.0, "arc_degrees": 180.0, "projectile_count": -1, "center_width": -1.0,
+			"projectile_visual_height": -1.0, "projectile_visual_forward_offset": -1.0, "projectile_visual_width": 0.0,
 			"impact_delay": 0.2, "cast_duration": 0.3,
 		}],
 	}, hero_rework_errors)
+	var projectile_visual_errors := PackedStringArray()
+	CardDB._validate_projectile("projectile_visual_probe", {
+		"projectile_speed": 100.0, "projectile_visual": "orb",
+		"projectile_visual_scale": 0.0, "projectile_impact_visual": "unknown",
+	}, projectile_visual_errors)
 	CardDB._validate_active_skills("nova_probe", {
 		"active_skills": [{
 			"name": "非法范围击退", "kind": "nova", "radius": 90.0, "damage": 90.0,
@@ -139,6 +145,9 @@ func run(harness: Object) -> void:
 		and "knockback_duration" in hero_error_text and "knockback_mass_factor_max" in hero_error_text
 		and "attack_to_move" in hero_error_text
 		and "length" in hero_error_text and "arc_degrees" in hero_error_text and "projectile_count" in hero_error_text and "center_width" in hero_error_text
+		and "projectile_visual_height" in hero_error_text and "projectile_visual_forward_offset" in hero_error_text
+		and "projectile_visual_width" in hero_error_text
+		and "projectile_visual_scale" in "；".join(projectile_visual_errors) and "projectile_impact_visual" in "；".join(projectile_visual_errors)
 		and "empowered_damage_multiplier" in hero_error_text
 		and "empowered_speed_multiplier" in hero_error_text and "blind_charges" in hero_error_text
 		and "forward_distance" in hero_error_text and "shockwave_duration" in hero_error_text

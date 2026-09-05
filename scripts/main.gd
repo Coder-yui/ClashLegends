@@ -874,7 +874,7 @@ func _snap_to_tile_center(pos: Vector2) -> Vector2:
 	tile.y = clampi(tile.y, 0, ARENA_ROWS - 1)
 	return _arena_tile_center(tile)
 
-## 单格单位落在格心；偶数格建筑落在格线交点，确保实际覆盖完整的 2x2 格。
+## 单格单位和奇数格建筑落在格心；偶数格建筑落在格线交点，确保规则占地对齐完整格子。
 func _snap_card_position(card_id: String, pos: Vector2, p_team: int = -1) -> Vector2:
 	if not CardDB.has_card(card_id):
 		return _snap_to_tile_center(pos)
@@ -1294,6 +1294,12 @@ func _execute_card_deployment(p_team: int, card_id: String, pos: Vector2) -> voi
 
 func launch_attack(attacker: Node2D, target: Node2D, amount: float, projectile_speed: float, splash_radius: float, knockback: float, projectile_color: Color, effects: Dictionary = {}) -> void:
 	_projectile_system.launch(attacker, target, amount, projectile_speed, splash_radius, knockback, projectile_color, effects)
+
+## 弹体命中表现与伤害结算分离；半径只用于绘制对应的权威溅射范围。
+func show_projectile_impact(position: Vector2, radius: float, color: Color, visual: StringName) -> void:
+	_projectile_system.add_impact_visual(position, radius, color, visual)
+	if mode == "host":
+		_rpc_projectile_impact_fx.rpc(position, radius, color, String(visual))
 
 ## 持续伤害（龙王吐息、审判等）共用的战斗层入口。调用方决定脉冲频率和命中目标，
 ## 这里统一处理攻击来源、护盾/隐匿、受击表现、击杀以及可选的普攻击中回调。
@@ -2288,6 +2294,7 @@ func _landing_overlap_direction(a: Unit, b: Unit) -> Vector2:
 
 func _process(delta: float) -> void:
 	_sync_active_skill_deployment_readiness()
+	_projectile_system.tick_visuals(delta)
 	# 客户端：只更新冰冻视觉与重绘，逻辑状态全靠主机快照
 	if mode == "client":
 		_advance_estimated_server_tick(delta)
@@ -2617,6 +2624,13 @@ func _rpc_tower_hit(index: int) -> void:
 	if index >= 0 and index < _towers.size():
 		_towers[index].notify_visual_hit()
 
+## 主机 → 客户端：可靠播放一次弹体命中表现；伤害结果仍只来自主机快照。
+@rpc("authority", "call_remote", "reliable")
+func _rpc_projectile_impact_fx(pos: Vector2, radius: float, color: Color, visual: String) -> void:
+	if mode != "client":
+		return
+	_projectile_system.add_impact_visual(pos, radius, color, StringName(visual))
+
 ## 主机 → 客户端：可靠触发死亡动作。逻辑单位立即释放，3D 代理独立播完动作。
 @rpc("authority", "call_remote", "reliable")
 func _rpc_unit_died(net_id: int) -> void:
@@ -2651,7 +2665,7 @@ func _rpc_freeze_fx(pos: Vector2, radius: float, duration: float, slow_duration:
 
 ## 主机 → 客户端：定向技能蓄力范围。客户端只画表现，伤害与状态仍由主机快照体现。
 @rpc("authority", "call_remote", "reliable")
-func _rpc_frontal_skill_fx(net_id: int, pos: Vector2, forward: Vector2, source_radius: float, length: float, width: float, duration: float, p_team: int, shape: String = "rectangle", near_width: float = 0.0, far_width: float = 0.0, arc_degrees: float = 0.0, projectile_count: int = 0, center_ratio: float = 0.0, center_width: float = 0.0, fan_inner_arc: bool = false, projectile_visual: String = "arrow", projectile_launch_delay: float = 0.0, projectile_flight_duration: float = 0.0) -> void:
+func _rpc_frontal_skill_fx(net_id: int, pos: Vector2, forward: Vector2, source_radius: float, length: float, width: float, duration: float, p_team: int, shape: String = "rectangle", near_width: float = 0.0, far_width: float = 0.0, arc_degrees: float = 0.0, projectile_count: int = 0, center_ratio: float = 0.0, center_width: float = 0.0, fan_inner_arc: bool = false, projectile_visual: String = "arrow", projectile_launch_delay: float = 0.0, projectile_flight_duration: float = 0.0, projectile_visual_height: float = 0.0, projectile_visual_forward_offset: float = -1.0, projectile_visual_width: float = 0.0) -> void:
 	if mode != "client":
 		return
 	_active_skill_effect_system.frontal_effects.append({
@@ -2671,6 +2685,9 @@ func _rpc_frontal_skill_fx(net_id: int, pos: Vector2, forward: Vector2, source_r
 		"projectile_visual": projectile_visual,
 		"projectile_launch_delay": maxf(projectile_launch_delay, 0.0),
 		"projectile_flight_duration": maxf(projectile_flight_duration, 0.0),
+		"projectile_visual_height": maxf(projectile_visual_height, 0.0),
+		"projectile_visual_forward_offset": source_radius if projectile_visual_forward_offset < 0.0 else projectile_visual_forward_offset,
+		"projectile_visual_width": maxf(projectile_visual_width, 0.0),
 		"center_ratio": center_ratio,
 		"center_width": center_width,
 		"fan_inner_arc": fan_inner_arc,
@@ -2916,15 +2933,27 @@ func _draw_frontal_skill_effect(effect: Dictionary) -> void:
 		]), center_fill)
 	if projectile_visible:
 		var projectile_count := maxi(int(effect.get("projectile_count", 0)), 0)
-		var projectile_distance := length * clampf(projectile_progress, 0.0, 1.0)
 		for index in range(projectile_count):
 			var width_ratio := 0.5 if projectile_count == 1 else float(index) / float(projectile_count - 1)
-			var lateral := lerpf(-near_half, near_half, width_ratio)
-			var projectile_pos := near_center + forward * projectile_distance + side * lateral
+			var projectile_pos := _frontal_projectile_visual_position(
+				effect, center, forward, source_radius, near_half, far_half, width_ratio, projectile_progress
+			)
 			_draw_frontal_projectile(projectile_pos, forward, effect)
+
+## 定向技能的纯表现弹体从模型炮口飞向权威路径末端；不改变范围轮廓或命中判定。
+func _frontal_projectile_visual_position(effect: Dictionary, center: Vector2, forward: Vector2, source_radius: float, near_half: float, far_half: float, width_ratio: float, progress: float) -> Vector2:
+	var launch_forward := maxf(float(effect.get("projectile_visual_forward_offset", source_radius)), 0.0)
+	var height_offset := Vector2(0.0, -maxf(float(effect.get("projectile_visual_height", 0.0)), 0.0))
+	var side := Vector2(-forward.y, forward.x)
+	var start := center + forward * launch_forward + side * lerpf(-near_half, near_half, width_ratio) + height_offset
+	var end := center + forward * (source_radius + maxf(float(effect.get("length", 0.0)), 0.0)) + side * lerpf(-far_half, far_half, width_ratio) + height_offset
+	return start.lerp(end, clampf(progress, 0.0, 1.0))
 
 func _draw_frontal_projectile(center: Vector2, direction: Vector2, effect: Dictionary) -> void:
 	var visual := StringName(effect.get("projectile_visual", "arrow"))
+	if visual == &"electromagnetic_wave":
+		_draw_electromagnetic_wave_projectile(center, direction, effect)
+		return
 	if visual == &"laser":
 		draw_line(center - direction * 18.0, center + direction * 18.0, Color(0.16, 0.76, 1.0, 0.20), 10.0, true)
 		draw_line(center - direction * 16.0, center + direction * 16.0, Color(0.28, 0.88, 1.0, 0.92), 5.0, true)
@@ -2946,6 +2975,29 @@ func _draw_frontal_projectile(center: Vector2, direction: Vector2, effect: Dicti
 	draw_colored_polygon(points, Color(1.0, 0.94, 0.58, 0.96))
 	draw_polyline(PackedVector2Array([points[0], points[1], points[2], points[3], points[0]]), Color(0.32, 0.14, 0.08, 0.96), 1.5, true)
 	draw_line(center - direction * 2.0, center + direction * 3.0, Color(0.78, 0.24, 0.18, 0.9), 1.5, true)
+
+func _draw_electromagnetic_wave_projectile(center: Vector2, direction: Vector2, effect: Dictionary) -> void:
+	var forward := Vector2.UP if direction.length_squared() < 0.001 else direction.normalized()
+	var side := Vector2(-forward.y, forward.x)
+	var visual_width := maxf(float(effect.get("projectile_visual_width", effect.get("far_width", 24.0))), 4.0)
+	var half_width := visual_width * 0.5
+	var half_length := 25.0
+	# 宽外辉光与权威路径同宽，核心和双股电弧构成电磁波光弹；全部仅参与绘制。
+	draw_line(center - forward * half_length, center + forward * half_length, Color(0.05, 0.46, 1.0, 0.16), visual_width, true)
+	draw_line(center - forward * (half_length - 2.0), center + forward * (half_length - 2.0), Color(0.10, 0.78, 1.0, 0.58), visual_width * 0.52, true)
+	draw_line(center - forward * (half_length - 4.0), center + forward * (half_length - 4.0), Color(0.82, 0.98, 1.0, 0.96), visual_width * 0.16, true)
+	for polarity in [-1.0, 1.0]:
+		var wave_points := PackedVector2Array()
+		for index in range(9):
+			var ratio := float(index) / 8.0
+			var longitudinal := lerpf(-half_length, half_length, ratio)
+			var amplitude: float = sin(ratio * TAU * 2.0) * half_width * 0.48 * polarity
+			wave_points.append(center + forward * longitudinal + side * amplitude)
+		draw_polyline(wave_points, Color(0.42, 0.92, 1.0, 0.90), 1.8, true)
+	var head := center + forward * half_length
+	draw_circle(head, half_width, Color(0.08, 0.58, 1.0, 0.22))
+	draw_arc(head, half_width * 0.82, 0.0, TAU, 28, Color(0.54, 0.96, 1.0, 0.92), 2.2, true)
+	draw_circle(head, maxf(half_width * 0.25, 2.0), Color(0.94, 1.0, 1.0, 1.0))
 
 ## 绘制当前卡牌的落点：格子边框用于确认“哪一格”，半透明占位用于确认卡牌大小。
 ## 这是纯表现层，不会修改部署坐标或战斗状态。
@@ -2975,7 +3027,7 @@ func _draw_deployment_preview(stats: Dictionary) -> void:
 		draw_circle(_deployment_preview_pos, unit_radius, Color(color.r, color.g, color.b, 0.26))
 		draw_arc(_deployment_preview_pos, unit_radius, 0.0, TAU, 32, color, 2.0, true)
 	else:
-		# 建筑中心在格线交点，额外画一个中心十字，避免 2x2 预览看起来像单格落点。
+		# 建筑额外画中心十字，明确规则占地中心；奇数格在格心，偶数格在线交点。
 		var cross_size := 7.0
 		draw_line(_deployment_preview_pos - Vector2(cross_size, 0.0), _deployment_preview_pos + Vector2(cross_size, 0.0), color, 2.0, true)
 		draw_line(_deployment_preview_pos - Vector2(0.0, cross_size), _deployment_preview_pos + Vector2(0.0, cross_size), color, 2.0, true)

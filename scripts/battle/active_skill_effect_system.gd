@@ -406,7 +406,10 @@ func begin_frontal_visual(source: Unit, skill: Dictionary, cast_forward: Vector2
 			float(skill.get("arc_degrees", 0.0)), int(skill.get("projectile_count", 0)),
 			float(skill.get("center_ratio", 0.0)), float(skill.get("center_width", 0.0)),
 			bool(skill.get("fan_inner_arc", false)), String(skill.get("projectile_visual", "arrow")),
-			projectile_launch_delay, projectile_flight_duration
+			projectile_launch_delay, projectile_flight_duration,
+			float(skill.get("projectile_visual_height", 0.0)),
+			float(skill.get("projectile_visual_forward_offset", source.body_radius)),
+			float(skill.get("projectile_visual_width", 0.0))
 		)
 
 
@@ -516,6 +519,9 @@ func add_frontal_effect(source: Unit, skill: Dictionary, duration: float, cast_f
 		"projectile_visual": String(skill.get("projectile_visual", "arrow")),
 		"projectile_launch_delay": maxf(float(skill.get("projectile_launch_delay", 0.0)), 0.0),
 		"projectile_flight_duration": maxf(float(skill.get("projectile_flight_duration", 0.0)), 0.0),
+		"projectile_visual_height": maxf(float(skill.get("projectile_visual_height", 0.0)), 0.0),
+		"projectile_visual_forward_offset": maxf(float(skill.get("projectile_visual_forward_offset", source.body_radius)), 0.0),
+		"projectile_visual_width": maxf(float(skill.get("projectile_visual_width", 0.0)), 0.0),
 		"center_ratio": clampf(float(skill.get("center_ratio", 0.0)), 0.0, 1.0),
 		"center_width": maxf(float(skill.get("center_width", 0.0)), 0.0),
 		"fan_inner_arc": bool(skill.get("fan_inner_arc", false)),

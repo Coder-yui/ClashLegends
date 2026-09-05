@@ -75,6 +75,9 @@ var projectile_visual := &"orb"
 var projectile_visual_height := 0.0
 ## 纯表现用的武器前向发射偏移；权威弹体仍从单位地面原点推进和判定。
 var projectile_visual_forward_offset := 0.0
+## 弹体尺寸与命中样式只参与绘制；权威到达判定仍使用 ProjectileSystem 的固定半径。
+var projectile_visual_scale := 1.0
+var projectile_impact_visual := &""
 var projectile_color := Color.DIM_GRAY
 var splash_radius := 0.0
 var attack_knockback := 0.0
@@ -307,6 +310,8 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	projectile_visual = StringName(stats.get("projectile_visual", "orb"))
 	projectile_visual_height = stats.get("projectile_visual_height", 0.0)
 	projectile_visual_forward_offset = stats.get("projectile_visual_forward_offset", 0.0)
+	projectile_visual_scale = stats.get("projectile_visual_scale", 1.0)
+	projectile_impact_visual = StringName(stats.get("projectile_impact_visual", ""))
 	splash_radius = stats.get("splash_radius", 0.0)
 	attack_knockback = stats.get("knockback", 0.0)
 	continuous_beam_color = stats.get("continuous_beam_color", continuous_beam_color)
@@ -679,6 +684,8 @@ func _apply_form(next_form_index: int, grant_max_hp_increase: bool, advance_form
 	projectile_visual = StringName(next_stats.get("projectile_visual", projectile_visual))
 	projectile_visual_height = float(next_stats.get("projectile_visual_height", projectile_visual_height))
 	projectile_visual_forward_offset = float(next_stats.get("projectile_visual_forward_offset", projectile_visual_forward_offset))
+	projectile_visual_scale = float(next_stats.get("projectile_visual_scale", projectile_visual_scale))
+	projectile_impact_visual = StringName(next_stats.get("projectile_impact_visual", projectile_impact_visual))
 	splash_radius = float(next_stats.get("splash_radius", splash_radius))
 	attack_knockback = float(next_stats.get("knockback", attack_knockback))
 	form_index = next_form_index
@@ -992,11 +999,11 @@ func _target_gap(target: Node2D) -> float:
 		return target.surface_gap_to_circle(global_position, body_radius)
 	return maxf(0.0, global_position.distance_to(target.global_position) - body_radius - target.body_radius)
 
-## 人物圆柱使用圆形底面；建筑卡按绘制出来的方形占地计算。
+## 人物与建筑都使用权威圆柱的圆形底面；建筑部署方格只负责限制下牌。
 func surface_gap_to_circle(center: Vector2, radius: float) -> float:
 	if not is_building:
 		return maxf(0.0, center.distance_to(global_position) - body_radius - radius)
-	# 墓碑的 2x2 格占地仍由 nav/部署格子保留为正方形，但真实静态碰撞使用其内切圆。
+	# 建筑的规则方格占地不参与攻击距离、寻路或防穿模计算。
 	return maxf(0.0, center.distance_to(global_position) - body_radius - radius)
 
 func _building_tick(dt: float) -> void:
