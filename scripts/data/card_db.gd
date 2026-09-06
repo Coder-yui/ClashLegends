@@ -120,7 +120,7 @@ const CARD_FIELDS := [
 	&"deploy_sweep_name", &"deploy_sweep_radius", &"deploy_sweep_damage", &"deploy_sweep_knockback",
 	&"deploy_sweep_duration", &"deploy_sweep_mass_factor_max",
 	&"heal_every_hits", &"heal_amount", &"charge_time", &"charge_speed_multiplier",
-	&"charge_damage_multiplier", &"shroud_radius", &"attack_pattern", &"attack_damage_multipliers",
+	&"charge_damage_multiplier", &"shroud_radius", &"attack_pattern", &"attack_damage_multipliers", &"first_strike_damage_multiplier",
 	&"attack_extra_hit_damage_multipliers", &"attack_extra_hit_delays",
 	&"cancel_attack_recovery_without_target",
 	&"skill_resource_max", &"skill_resource_attack_gain", &"skill_resource_hit_gain", &"skill_resource_kill_gain", &"skill_resource_full_color",
@@ -839,6 +839,35 @@ static func all() -> Dictionary:
 				"visual_action": "active", "full_resource_visual_action": "active_strong",
 			}],
 		},
+		"missfortune": {
+			"name": "赏金猎人", "cost": 3, "type": "unit",
+			"description": "远程双枪射手，对每个敌方目标的首次攻击造成1.5倍伤害；主动技大步流星可短时提升移速与攻速。",
+			# 远程双枪：Attack1/2 举枪射击的出手点在动作前段（约 12%），first_hit 按此调校。
+			"hp": 380.0, "damage": 62.0, "range": 165.0,
+			"speed": SPEED_MEDIUM, "interval": 0.95, "first_hit": 0.12,
+			# 先声夺人：对每个敌方目标的首次普通攻击造成 1.5 倍伤害。
+			"first_strike_damage_multiplier": 1.5,
+			"size_tier": SIZE_MEDIUM, "radius": RADIUS_MEDIUM, "visual_radius": RADIUS_MEDIUM + VISUAL_RADIUS_PADDING,
+			"mass": 3.0, "sight": 230.0,
+			"projectile_speed": 500.0, "projectile_visual": "orb",
+			# 双枪枪口约在身高中段偏上；高度只影响弹体绘制起点，不参与权威判定。
+			"projectile_visual_height": 52.0,
+			"color": Color(0.80, 0.35, 0.60),
+			"visual_scene_path": "res://assets/units/missfortune/missfortune_view.tscn",
+			"visual_forward_yaw": 0.0,
+			"visual_animations": {
+				"deploy": "Respawn", "idle": "Idle1_Base", "move": "Run",
+				# 大步流星生效期间（移速倍率 > 1）移动表现切换为 Run2，由通用 haste_move 机制驱动。
+				"haste_move": "Run2",
+				"attack": ["Attack1", "Attack2"],
+				"death": "Death", "death_duration": 0.8,
+			},
+			"is_air": false, "building_only": false, "can_attack_air": true,
+			"active_skills": [{
+				"name": "大步流星", "kind": "buff", "cost": 0, "max_uses": 1, "cooldown": 5.0,
+				"duration": 3.0, "speed_multiplier": 1.5, "damage_multiplier": 1.0, "attack_speed_multiplier": 1.3,
+			}],
+		},
 		# 系统召唤物仍属于 CardDB 数据，只通过 selectable=false 排除出玩家卡池。
 		"imp": {
 			"name": "小鬼", "cost": 0, "type": "unit", "selectable": false,
@@ -998,6 +1027,8 @@ static func _validate_combat_stats(label: String, stats: Dictionary, require_siz
 		for deploy_positive in [&"deploy_sweep_duration", &"deploy_sweep_mass_factor_max"]:
 			if float(stats.get(deploy_positive, 0.0)) <= 0.0:
 				errors.append("%s.%s: 必须 > 0" % [label, deploy_positive])
+	if stats.has("first_strike_damage_multiplier") and float(stats.first_strike_damage_multiplier) <= 0.0:
+		errors.append("%s.first_strike_damage_multiplier: 必须 > 0" % label)
 	for resource_field in [&"skill_resource_max", &"skill_resource_attack_gain", &"skill_resource_hit_gain", &"skill_resource_kill_gain", &"skill_resource_damage_gain_multiplier"]:
 		if float(stats.get(resource_field, 0.0)) < 0.0:
 			errors.append("%s.%s: 必须 >= 0" % [label, resource_field])

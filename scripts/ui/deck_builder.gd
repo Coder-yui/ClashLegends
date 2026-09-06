@@ -832,6 +832,8 @@ func _card_passives(stats: Dictionary) -> Array[Dictionary]:
 		result.append({"name": "无畏战吼", "description": "每第%d次普通攻击命中回复%s点生命。" % [int(stats.get("heal_every_hits", 0)), _format_card_number(float(stats.get("heal_amount", 0.0))) ]})
 	if stats.has("shroud_radius"):
 		result.append({"name": "丝缕缠流", "description": "首次普攻命中后，%s半径外的敌人无法看见或锁定她。" % _format_card_number(float(stats.get("shroud_radius", 0.0)))})
+	if stats.has("first_strike_damage_multiplier"):
+		result.append({"name": "先声夺人", "description": "对每个敌方目标的首次普通攻击造成%s倍伤害。" % _format_card_number(float(stats.get("first_strike_damage_multiplier", 0.0)))})
 	if int(stats.get("transform_after_hits", 0)) > 0:
 		var transformed: Dictionary = stats.get("transformed_stats", {})
 		result.append({

@@ -37,6 +37,7 @@ func _run() -> void:
 	GwenSuite.new().run(self, _main)
 	TwistedFateSuite.new().run(self, _main)
 	AurelionSolSuite.new().run(self, _main)
+	MissFortuneSuite.new().run(self, _main)
 	PixSuite.new().run(self, _main)
 	var projectiles := ProjectileSuite.new(self, _main)
 	projectiles._check_projectile_travel()

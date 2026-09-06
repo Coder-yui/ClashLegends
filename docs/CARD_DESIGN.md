@@ -25,7 +25,7 @@ CardDB 是卡牌、系统召唤物、防御塔/水晶的权威数值与表现配
 
 ## 已实现的通用机制字段
 
-- 目标/攻击：`building_only`、`can_attack_air`、`is_continuous_attack`、`splash_radius`、`knockback`。
+- 目标/攻击：`building_only`、`can_attack_air`、`is_continuous_attack`、`splash_radius`、`knockback`、`first_strike_damage_multiplier`（对每个敌方目标的首次普通攻击伤害倍率）。
 - 弹体：`projectile_speed`、`projectile_visual`（`orb/arrow/needle/boomerang`）、高度、前向偏移、双方颜色。
 - 状态/被动：部署横扫、命中回血、缠流、攻击节奏/伤害倍率、延迟追加刀、技能资源、强化下一次普攻、攻击次数致盲、护盾/减速/眩晕、主动 buff。
 - 生命周期：部署时间、建筑寿命/周期召唤/亡语召唤。

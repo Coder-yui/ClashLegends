@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/units/missfortune/source/missfortune.glb" id="1_missfortune"]
+
+[node name="MissFortuneView" type="Node3D"]
+
+[node name="Model" parent="." instance=ExtResource("1_missfortune")]
+scale = Vector3(0.014, 0.014, 0.014)

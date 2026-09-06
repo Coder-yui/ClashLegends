@@ -4,7 +4,9 @@
 
 ```text
 assets/
-  arena/arena_rift_v4.png                 当前 720×1400 背景
+  arena/arena_rift_v4.png                 当前 720×1400 运行时 2D 背景
+  arena/rift_arena/rift_arena.tscn        候选 720×1280 3D 地图（暂不启用）
+  arena/rift_arena/source/               Blender 可编辑源文件（不自动导入）
   cards/<card_id>_loading.jpg|png|webp     CardArt 自动发现
   units/<card_id>/
     README.md                              仅角色存在素材特例时添加
@@ -24,6 +26,7 @@ assets/
 
 ## 当前特殊目录
 
+- `arena/rift_arena/`：候选地图的规格、Blender 重建/导出和实际渲染验收见该目录 README；当前运行时仍使用 `arena_rift_v4.png`，候选地形仅影响独立预览。
 - `units/gnar/`：小/大双模型、加法动画合成和网格过滤；读该目录 README。
 - `units/tombstone/`：包装场景含独立雾效脚本。
 - `towers/`：TowerModel3D 管理材质阶段、碎块和废墟；仍由 2D Tower 决定血量/死亡。

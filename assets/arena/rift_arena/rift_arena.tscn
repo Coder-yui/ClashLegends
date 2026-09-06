@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/arena/rift_arena/rift_arena.glb" id="1_mesh"]
+[ext_resource type="Script" path="res://assets/arena/rift_arena/rift_arena.gd" id="2_script"]
+
+[node name="RiftArena" type="Node3D"]
+script = ExtResource("2_script")
+
+[node name="Scenery" parent="." instance=ExtResource("1_mesh")]

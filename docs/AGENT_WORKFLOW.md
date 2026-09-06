@@ -31,6 +31,7 @@
 | 普通近战模型 | `ART_PIPELINE.md` → `MELEE_3D_INTEGRATION.md` → `UNIT_DEPLOYMENT.md` | `source/`、`<id>_view.tscn`、CardDB 表现字段 |
 | 普通远程模型 | 普通近战路径，再读 `RANGED_3D_INTEGRATION.md` | 另核对离弦、弹体类型/高度/速度 |
 | 建筑 | `ART_PIPELINE.md`、`assets/README.md` | 包装场景与 CardDB；动画不驱动权威死亡 |
+| 竞技场地图 | `ART_PIPELINE.md`、`assets/arena/rift_arena/README.md`、同目录 `ART_DIRECTION.md` | Blender 源文件、GLB、地图材质；保持格子、河道、桥宽和塔位 |
 | 特殊角色素材 | 通用文档 + 角色目录 README | 角色专属包装或过滤脚本 |
 | 新普通卡牌 | `CARD_DESIGN.md`；有素材再走美术路径 | CardDB + 素材；通常不改 Unit/Main |
 | 新玩法机制 | `CARD_DESIGN.md`、`DEV_PLAN.md`、相关 battle 模块与测试 | SpellSystem / ActiveSkillEffectSystem + 字段/validator + 必要网络 + 领域回归 |

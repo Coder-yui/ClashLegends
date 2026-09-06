@@ -109,6 +109,10 @@ var shroud_radius := 0.0
 var attack_pattern: Array = []
 ## 连招伤害倍率：按每次命中的顺序循环；空数组表示每拳使用 damage 原值。
 var attack_damage_multipliers: Array = []
+## 先声夺人：对每个敌方目标的首次普通攻击伤害倍率；1.0 表示未启用。
+var first_strike_damage_multiplier := 1.0
+## 已被本单位普攻命中的目标 instance_id 集合，用于判定"首次攻击"。
+var _first_strike_hit_target_ids := {}
 ## 某一段普通攻击可在权威延迟后追加额外刀数；内层数组与 attack 动画段一一对应。
 var attack_extra_hit_damage_multipliers: Array = []
 var attack_extra_hit_delays: Array = []
@@ -332,6 +336,7 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	shroud_radius = stats.get("shroud_radius", 0.0)
 	attack_pattern = stats.get("attack_pattern", [])
 	attack_damage_multipliers = stats.get("attack_damage_multipliers", [])
+	first_strike_damage_multiplier = maxf(float(stats.get("first_strike_damage_multiplier", 1.0)), 0.0)
 	attack_extra_hit_damage_multipliers = stats.get("attack_extra_hit_damage_multipliers", [])
 	attack_extra_hit_delays = stats.get("attack_extra_hit_delays", [])
 	cancel_attack_recovery_without_target = bool(stats.get("cancel_attack_recovery_without_target", false))
@@ -1369,6 +1374,12 @@ func _attack(dt: float) -> void:
 		_attack_cd = next_attack_gap
 		var base_hit_damage := damage * _attack_damage_multiplier(hit_index) * active_damage_multiplier * (charge_damage_multiplier if _charged else 1.0)
 		var hit_damage := base_hit_damage
+		# 先声夺人：对每个目标的首次普攻附加伤害倍率；远程弹体在出手 tick 固化该次伤害。
+		if first_strike_damage_multiplier != 1.0:
+			var first_strike_target_id := _target.get_instance_id()
+			if not _first_strike_hit_target_ids.has(first_strike_target_id):
+				_first_strike_hit_target_ids[first_strike_target_id] = true
+				hit_damage *= first_strike_damage_multiplier
 		var attack_effects: Dictionary = {}
 		# 对空能力同时约束溅射层，避免对地炮弹借地面主目标误伤空军。
 		if not can_attack_air:

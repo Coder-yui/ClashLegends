@@ -13,6 +13,8 @@ CardDB 表现配置
 
 `Unit`、`Tower` 和主机固定 Tick 是权威层。3D 代理只读取位置、状态、攻击序号、完整朝向、形态和可靠表现事件。客户端 Snapshot 已同步完整 `net_facing_direction`，不是只同步水平朝向，也不是未来 TODO。动画回调不得扣血、生成权威弹体、位移、改变碰撞或联网状态。
 
+候选竞技场保存在 `assets/arena/rift_arena/rift_arena.tscn`，目前运行时仍使用 `assets/arena/arena_rift_v4.png`。候选场景的规格和 Blender 编辑流程见该目录 README；它只在独立预览中与单位/建筑共用正交相机。场景中不添加碰撞或导航，权威地面仍由 Main 格子常量定义。
+
 ## 资源与配置
 
 ```text
