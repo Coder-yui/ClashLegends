@@ -3,6 +3,8 @@ extends SceneTree
 ## 领域测试实现位于 tests/suites/，统一运行命令保持不变：
 ## Godot --headless --path . --script tests/mechanics_check.gd
 
+const ANIVIA_SUITE_SCRIPT := preload("res://tests/suites/cards/anivia_suite.gd")
+
 var _failed := 0
 var _main: Node2D
 
@@ -39,6 +41,7 @@ func _run() -> void:
 	AurelionSolSuite.new().run(self, _main)
 	MissFortuneSuite.new().run(self, _main)
 	PixSuite.new().run(self, _main)
+	ANIVIA_SUITE_SCRIPT.new().run(self, _main)
 	var projectiles := ProjectileSuite.new(self, _main)
 	projectiles._check_projectile_travel()
 	projectiles._check_tower_projectile_visual()

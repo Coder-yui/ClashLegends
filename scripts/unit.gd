@@ -192,6 +192,19 @@ var spawn_count := 1
 var spawn_side := ""
 var death_spawn_id := ""
 var death_spawn_count := 0
+## 通用一次性死亡替身：原单位死亡时立即生成指定单位（例如凤凰→蛋）。
+var death_replacement_id := ""
+var death_replacement_charges := 0
+var death_replacement_visual_transition := ""
+## 通用存活计时复生：单位在计时结束前未死亡时，生成指定单位并自身退出（例如蛋→凤凰）。
+var timed_revival_id := ""
+var timed_revival_delay := 0.0
+var timed_revival_death_replacement_charges := -1
+var timed_revival_visual_transition := ""
+var _timed_revival_left := 0.0
+## 仅供表现层读取的生成过渡；由死亡替身/计时复生入口传入，不参与权威模拟。
+var visual_spawn_transition: StringName = &""
+var _skip_death_visual := false
 var nav_cells: Array = []
 
 var _target: Node2D = null
@@ -379,6 +392,14 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	spawn_side = String(stats.get("spawn_side", ""))
 	death_spawn_id = String(stats.get("death_spawn_id", ""))
 	death_spawn_count = maxi(int(stats.get("death_spawn_count", 0)), 0)
+	death_replacement_id = String(stats.get("death_replacement_id", ""))
+	death_replacement_charges = maxi(int(stats.get("death_replacement_charges", 0)), 0)
+	death_replacement_visual_transition = String(stats.get("death_replacement_visual_transition", ""))
+	timed_revival_id = String(stats.get("timed_revival_id", ""))
+	timed_revival_delay = maxf(float(stats.get("timed_revival_delay", 0.0)), 0.0)
+	timed_revival_death_replacement_charges = int(stats.get("timed_revival_death_replacement_charges", -1))
+	timed_revival_visual_transition = String(stats.get("timed_revival_visual_transition", ""))
+	_timed_revival_left = timed_revival_delay
 	_lifespan_left = lifespan
 	_spawn_timer = spawn_interval
 	_deploy_timer = deploy_time
@@ -776,6 +797,9 @@ func set_continuous_beam_origin_world_position(world_position: Vector2) -> void:
 ## 固定 tick 模拟入口，由 main._sim_step 以 SIM_DT 驱动
 func sim_tick(dt: float) -> void:
 	if hp <= 0.0:
+		return
+	_tick_timed_revival(dt)
+	if hp <= 0.0 or is_queued_for_deletion():
 		return
 	_tick_active_statuses(dt)
 	_hit_flash_event_cooldown = maxf(0.0, _hit_flash_event_cooldown - dt)
@@ -1718,20 +1742,51 @@ func _in_client_mode() -> bool:
 	return battle_context != null and battle_context.is_net_client()
 
 func _die(trigger_death_effect: bool = false) -> void:
+	var has_death_replacement := not death_replacement_id.is_empty() and death_replacement_charges > 0
+	var play_death_visual := not _skip_death_visual and not has_death_replacement
+	_skip_death_visual = false
 	remove_from_group("combatants")
 	# 建筑卡死亡 → 解除导航网格占地
 	if is_building and not nav_cells.is_empty():
 		if battle_context != null:
 			battle_context.unblock_nav_cells(nav_cells)
 		nav_cells = []
-	if trigger_death_effect:
+	if has_death_replacement:
+		death_replacement_charges -= 1
+		_spawn_death_replacement()
+	elif trigger_death_effect:
 		_spawn_death_summons()
-	# 表现层只保留一个无碰撞代理播放死亡动作；战斗节点仍在本帧释放。
-	notify_visual_death()
+	# 表现层只保留一个无碰撞代理播放死亡动作；死亡替身/复生切换直接移除旧代理。
+	if play_death_visual:
+		notify_visual_death()
 	# 联机单位死亡 → 主机可靠通知客户端播放死亡动作，并立即清理 net_id 映射。
 	if net_id >= 0 and battle_context != null:
-		battle_context.notify_unit_died(net_id)
+		battle_context.notify_unit_died(net_id, play_death_visual)
 	queue_free()
+
+## 蛋等地面复生单位使用固定 20Hz 计时；死亡替身和孵化都走 BattleContext，
+## 主机/单机负责生成，客户端只接受可靠生成/死亡事件和快照。
+func _tick_timed_revival(dt: float) -> void:
+	if timed_revival_id.is_empty() or _timed_revival_left <= 0.0 or _in_client_mode():
+		return
+	_timed_revival_left = maxf(0.0, _timed_revival_left - dt)
+	if _timed_revival_left > 0.001 or battle_context == null:
+		return
+	var revival_id := timed_revival_id
+	timed_revival_id = ""
+	battle_context.spawn_summoned(team, revival_id, global_position, 0.0, timed_revival_visual_transition, timed_revival_death_replacement_charges)
+	_skip_death_visual = true
+	_die(false)
+
+func _spawn_death_replacement() -> void:
+	if _in_client_mode() or battle_context == null:
+		return
+	var replacement_stats := CardDB.get_unit_stats(death_replacement_id)
+	if replacement_stats.is_empty():
+		push_error("死亡替身引用了不存在的单位：%s" % death_replacement_id)
+		return
+	# 替身立即落地；其自身的 deploy_time/复生计时仍由替身 CardDB 条目决定。
+	battle_context.spawn_summoned(team, death_replacement_id, global_position, 0.0, death_replacement_visual_transition)
 
 func _spawn_death_summons() -> void:
 	if death_spawn_count <= 0 or death_spawn_id.is_empty() or _in_client_mode():

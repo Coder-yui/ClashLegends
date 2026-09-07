@@ -1119,14 +1119,14 @@ func _push_units_around(pos: Vector2, radius: float) -> void:
 				u.global_position = new_pos
 
 ## 墓碑等建筑的召唤入口。召唤偏移可能指向塔/建筑，生成前必须找到最近合法位置。
-func spawn_summoned(p_team: int, card_id: String, pos: Vector2) -> Unit:
+func spawn_summoned(p_team: int, card_id: String, pos: Vector2, deploy_time_override: float = -1.0, visual_transition: String = "", death_replacement_charges_override: int = -1) -> Unit:
 	var stats: Dictionary = CardDB.get_unit_stats(card_id)
 	if stats.is_empty():
 		push_error("尝试生成不存在的召唤单位：%s" % card_id)
 		return null
 	if not stats.get("is_air", false):
 		pos = _nearest_valid_ground_spawn(pos, stats.get("radius", 14.0), p_team)
-	return _spawn_unit(p_team, card_id, pos)
+	return _spawn_unit(p_team, card_id, pos, deploy_time_override, -1, -1, -1, visual_transition, death_replacement_charges_override)
 
 func _nearest_valid_ground_spawn(desired: Vector2, radius: float, p_team: int) -> Vector2:
 	if is_ground_position_walkable(desired, radius):
@@ -1414,7 +1414,7 @@ func _deployment_formation_offsets(count: int, spacing: float, team: int) -> Arr
 	return offsets
 
 
-func _spawn_unit(team: int, card_id: String, pos: Vector2, deploy_time_override: float = -1.0, active_slot: int = -1, pre_deploy_id: int = -1, deployment_group_id: int = -1) -> Unit:
+func _spawn_unit(team: int, card_id: String, pos: Vector2, deploy_time_override: float = -1.0, active_slot: int = -1, pre_deploy_id: int = -1, deployment_group_id: int = -1, visual_transition: String = "", death_replacement_charges_override: int = -1) -> Unit:
 	var stats: Dictionary = CardDB.get_unit_stats(card_id)
 	if stats.is_empty():
 		push_error("尝试生成不存在的单位：%s" % card_id)
@@ -1429,8 +1429,11 @@ func _spawn_unit(team: int, card_id: String, pos: Vector2, deploy_time_override:
 	var u := Unit.new()
 	u.card_id = card_id
 	u.deployment_group_id = deployment_group_id
+	u.visual_spawn_transition = StringName(visual_transition)
 	u.position = pos
 	u.setup(team, stats, stats.name)
+	if death_replacement_charges_override >= 0:
+		u.death_replacement_charges = death_replacement_charges_override
 	if deploy_time_override >= 0.0:
 		# 自动兵线不经过卡牌部署读条，生成当帧即可行动；仍标记为新落地单位供碰撞分离使用。
 		u._just_deployed = true
@@ -1452,7 +1455,7 @@ func _spawn_unit(team: int, card_id: String, pos: Vector2, deploy_time_override:
 			_next_active_ability_id += 1
 		_register_active_skill(u, card_id, team)
 	if mode == "host":
-		_rpc_spawn_unit.rpc(card_id, team, pos, u.net_id, deploy_time_override, u.active_ability_id, u.active_ability_slot, pre_deploy_id, deployment_group_id)
+		_rpc_spawn_unit.rpc(card_id, team, pos, u.net_id, deploy_time_override, u.active_ability_id, u.active_ability_slot, pre_deploy_id, deployment_group_id, visual_transition, death_replacement_charges_override)
 	return u
 
 func _register_active_skill(unit: Unit, card_id: String, p_team: int) -> void:
@@ -1875,10 +1878,10 @@ func find_ground_path(from: Vector2, goal: Vector2, _target: Node2D, _mover_radi
 	return nav.find_path(from, goal)
 
 ## 单位死亡回调（由 unit._die 调用）：主机可靠广播死亡表现并立即清理映射。
-func on_unit_died(id: int) -> void:
+func on_unit_died(id: int, play_death_visual: bool = true) -> void:
 	_net_units.erase(id)
 	if mode == "host":
-		_rpc_unit_died.rpc(id)
+		_rpc_unit_died.rpc(id, play_death_visual)
 
 ## 单位受击回调：本地模型已由 Unit 信号闪白，主机只负责可靠转发给客户端表现层。
 func on_unit_hit(id: int) -> void:
@@ -2558,7 +2561,7 @@ func _rpc_deploy_rejected(card_id: String) -> void:
 
 ## 主机 → 客户端：单位生成
 @rpc("authority", "call_remote", "reliable")
-func _rpc_spawn_unit(card_id: String, p_team: int, pos: Vector2, net_id: int, deploy_time_override: float = -1.0, active_ability_id: int = -1, active_ability_slot: int = -1, pre_deploy_id: int = -1, deployment_group_id: int = -1) -> void:
+func _rpc_spawn_unit(card_id: String, p_team: int, pos: Vector2, net_id: int, deploy_time_override: float = -1.0, active_ability_id: int = -1, active_ability_slot: int = -1, pre_deploy_id: int = -1, deployment_group_id: int = -1, visual_transition: String = "", death_replacement_charges_override: int = -1) -> void:
 	if mode != "client":
 		return
 	_remove_card_pre_deploy_visual(pre_deploy_id)
@@ -2569,8 +2572,11 @@ func _rpc_spawn_unit(card_id: String, p_team: int, pos: Vector2, net_id: int, de
 	var u := Unit.new()
 	u.card_id = card_id
 	u.deployment_group_id = deployment_group_id
+	u.visual_spawn_transition = StringName(visual_transition)
 	u.position = pos
 	u.setup(p_team, stats, stats.name)
+	if death_replacement_charges_override >= 0:
+		u.death_replacement_charges = death_replacement_charges_override
 	if deploy_time_override >= 0.0:
 		u._just_deployed = true
 	u.net_id = net_id
@@ -2633,7 +2639,7 @@ func _rpc_projectile_impact_fx(pos: Vector2, radius: float, color: Color, visual
 
 ## 主机 → 客户端：可靠触发死亡动作。逻辑单位立即释放，3D 代理独立播完动作。
 @rpc("authority", "call_remote", "reliable")
-func _rpc_unit_died(net_id: int) -> void:
+func _rpc_unit_died(net_id: int, play_death_visual: bool = true) -> void:
 	if mode != "client":
 		return
 	var u: Unit = _client_units.get(net_id)
@@ -2643,7 +2649,8 @@ func _rpc_unit_died(net_id: int) -> void:
 	if u.is_building and not u.nav_cells.is_empty():
 		unblock_nav_cells(u.nav_cells)
 		u.nav_cells = []
-	u.notify_visual_death()
+	if play_death_visual:
+		u.notify_visual_death()
 	u.queue_free()
 	_client_units.erase(net_id)
 
@@ -2671,7 +2678,7 @@ func _rpc_frontal_skill_fx(net_id: int, pos: Vector2, forward: Vector2, source_r
 	_active_skill_effect_system.frontal_effects.append({
 		"source_ref": null,
 		"net_id": net_id,
-		"fixed_position": shape in ["target_circle", "shockwave"],
+		"fixed_position": shape in ["target_circle", "shockwave", "frost_storm"],
 		"pos": pos,
 		"forward": forward.normalized(),
 		"source_radius": source_radius,
@@ -2811,6 +2818,22 @@ func _draw_frontal_skill_effect(effect: Dictionary) -> void:
 		draw_circle(center, radius, Color(line_color.r, line_color.g, line_color.b, 0.035 + 0.025 * pulse))
 		draw_arc(center, radius, 0.0, TAU, 72, Color(line_color.r, line_color.g, line_color.b, 0.72 * remaining_ratio), 3.0, true)
 		draw_arc(center, radius * (0.82 + 0.10 * pulse), 0.0, TAU, 64, Color(1.0, 0.88, 0.36, 0.34 * remaining_ratio), 2.0, true)
+		return
+	if shape == &"frost_storm":
+		var radius := maxf(length, 0.0)
+		var pulse := 0.5 + 0.5 * sin(progress * TAU * 2.5)
+		var frost_color := Color(0.56, 0.88, 1.0, 0.78 * remaining_ratio)
+		draw_circle(center, radius, Color(0.28, 0.68, 1.0, 0.045 + 0.025 * pulse))
+		draw_arc(center, radius, 0.0, TAU, 72, frost_color, 3.0, true)
+		draw_arc(center, radius * (0.68 + 0.06 * pulse), 0.0, TAU, 64, Color(0.78, 0.96, 1.0, 0.52 * remaining_ratio), 2.0, true)
+		for index in range(10):
+			var angle := TAU * float(index) / 10.0 + progress * 0.8
+			var flake_distance := radius * (0.28 + 0.42 * float((index * 7) % 10) / 9.0)
+			var flake_center := center + Vector2.from_angle(angle) * flake_distance
+			var flake_size := 3.0 + 2.0 * (0.5 + 0.5 * sin(progress * TAU + float(index)))
+			var flake_direction := Vector2.from_angle(angle + PI * 0.25)
+			draw_line(flake_center - flake_direction * flake_size, flake_center + flake_direction * flake_size, Color(0.88, 0.98, 1.0, 0.72 * remaining_ratio), 1.5, true)
+			draw_line(flake_center - flake_direction.rotated(PI * 0.5) * flake_size, flake_center + flake_direction.rotated(PI * 0.5) * flake_size, Color(0.70, 0.92, 1.0, 0.58 * remaining_ratio), 1.0, true)
 		return
 	if shape == &"target_circle":
 		var radius := length

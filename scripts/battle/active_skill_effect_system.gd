@@ -197,18 +197,27 @@ func activate_continuous_area(source: Unit, skill: Dictionary) -> void:
 
 
 func _apply_continuous_area_pulse(source: Unit, effect: Dictionary) -> void:
-	var center := source.global_position
+	var center: Vector2 = effect.get("center", Vector2.ZERO)
+	if not bool(effect.get("fixed_position", false)) and source != null and is_instance_valid(source):
+		center = source.global_position
 	var radius := maxf(float(effect.get("radius", 0.0)), 0.0)
 	var amount := maxf(float(effect.get("damage", 0.0)), 0.0)
 	var ground_only := bool(effect.get("ground_only", false))
 	for combatant in _controller.get_tree().get_nodes_in_group("combatants"):
-		if combatant == source or not is_instance_valid(combatant) or combatant.team == source.team or combatant.hp <= 0.0:
+		var source_team := int(effect.get("team", source.team if source != null else -1))
+		if combatant == source or not is_instance_valid(combatant) or combatant.team == source_team or combatant.hp <= 0.0:
 			continue
 		if ground_only and combatant is Unit and (combatant as Unit).is_air:
 			continue
 		if combatant.global_position.distance_to(center) > radius + combatant.body_radius:
 			continue
-		_damage_combatant(source, combatant, amount, center)
+		if amount > 0.0:
+			if source != null and is_instance_valid(source):
+				_damage_combatant(source, combatant, amount, center)
+			else:
+				combatant.take_damage(amount, null, source_team, center)
+		if combatant is Unit and is_instance_valid(combatant) and combatant.hp > 0.0 and float(effect.get("slow_duration", 0.0)) > 0.0:
+			(combatant as Unit).apply_slow(float(effect.get("slow_duration", 0.0)), float(effect.get("slow_multiplier", 1.0)))
 
 
 func activate_summon(source: Unit, skill: Dictionary) -> void:
@@ -325,8 +334,30 @@ func apply_forward_area(source: Unit, skill: Dictionary, forward: Vector2 = Vect
 		already_hit[int(combatant.get_instance_id())] = true
 		if amount > 0.0:
 			_damage_combatant(source, combatant, amount, center)
+		if combatant is Unit and is_instance_valid(combatant) and combatant.hp > 0.0 and float(skill.get("slow_duration", 0.0)) > 0.0:
+			(combatant as Unit).apply_slow(float(skill.slow_duration), float(skill.get("slow_multiplier", 1.0)))
 		if is_instance_valid(combatant) and combatant.hp > 0.0 and stun_duration > 0.0 and combatant.has_method("stun"):
 			combatant.stun(stun_duration)
+	var zone_duration := maxf(float(skill.get("zone_duration", 0.0)), 0.0)
+	var zone_tick_interval := maxf(float(skill.get("zone_tick_interval", 1.0)), 0.01)
+	if zone_duration > 0.0:
+		# 固定落点区域独立于施法者存活状态，创造后完整维持 zone_duration。
+		continuous_area_effects.append({
+			"source_ref": weakref(source), "team": source.team,
+			"fixed_position": true, "center": center,
+			"radius": radius,
+			"damage": maxf(float(skill.get("zone_damage", 0.0)), 0.0),
+			"ground_only": bool(skill.get("ground_only", false)),
+			"time_left": zone_duration, "next_tick": zone_tick_interval,
+			"tick_interval": zone_tick_interval,
+			"slow_duration": maxf(float(skill.get("zone_slow_duration", 0.0)), 0.0),
+			"slow_multiplier": clampf(float(skill.get("zone_slow_multiplier", 1.0)), 0.1, 1.0),
+		})
+		add_fixed_area_effect(center, radius, radius, zone_duration, source.team, &"frost_storm")
+		if _controller.mode == "host":
+			_controller._rpc_frontal_skill_fx.rpc(
+				-1, center, Vector2.UP, 0.0, radius, radius, zone_duration, source.team, "frost_storm"
+			)
 	var shockwave_duration := maxf(float(skill.get("shockwave_duration", 0.0)), 0.0)
 	if bool(skill.get("shockwave_full_only", false)) and not bool(skill.get("full_resource", false)):
 		shockwave_duration = 0.0
@@ -350,6 +381,9 @@ func apply_forward_area(source: Unit, skill: Dictionary, forward: Vector2 = Vect
 
 
 func begin_forward_area_visual(source: Unit, skill: Dictionary, cast_forward: Vector2) -> void:
+	# 固定持续区域技能在 Impact 时直接生成正式区域；不提前绘制龙王式落点预警/星体。
+	if float(skill.get("zone_duration", 0.0)) > 0.0:
+		return
 	var duration := maxf(float(skill.get("impact_delay", 0.0)), 0.0)
 	if duration <= 0.0:
 		return
@@ -422,11 +456,12 @@ func _tick_continuous_area_effects(dt: float) -> void:
 	var alive: Array[Dictionary] = []
 	for effect in continuous_area_effects:
 		var source = (effect.source_ref as WeakRef).get_ref()
-		if not source is Unit or not is_instance_valid(source) or source.hp <= 0.0:
+		var fixed_position := bool(effect.get("fixed_position", false))
+		if not fixed_position and (not source is Unit or not is_instance_valid(source) or source.hp <= 0.0):
 			continue
-		var unit := source as Unit
-		# 与 Cast/Impact 队列一致：被控制时持续时间和脉冲计时一起暂停。
-		if unit.is_frozen() or unit.is_stunned():
+		# 跟随施法者的持续范围与施法者控制状态一起暂停；固定落点区域
+		# 已经脱离施法动作，不因凤凰死亡或被控制而缩短 3 秒寿命。
+		if not fixed_position and source is Unit and ((source as Unit).is_frozen() or (source as Unit).is_stunned()):
 			alive.append(effect)
 			continue
 		effect.time_left = maxf(float(effect.time_left) - dt, 0.0)
@@ -434,7 +469,7 @@ func _tick_continuous_area_effects(dt: float) -> void:
 		var tick_interval := maxf(float(effect.get("tick_interval", 1.0)), 0.01)
 		# 支持测试或低帧率调用一次跨过多个固定脉冲；固定模拟通常每次只跨一个。
 		while float(effect.next_tick) <= 0.001:
-			_apply_continuous_area_pulse(unit, effect)
+			_apply_continuous_area_pulse(source as Unit, effect)
 			effect.next_tick = float(effect.next_tick) + tick_interval
 		if float(effect.time_left) > 0.001:
 			alive.append(effect)

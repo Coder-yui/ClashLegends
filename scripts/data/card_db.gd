@@ -92,7 +92,8 @@ const SIZE_RADII := {
 	SIZE_LARGE: RADIUS_LARGE,
 	SIZE_EXTREMELY_LARGE: RADIUS_EXTREMELY_LARGE,
 }
-const PROJECTILE_VISUALS := [&"orb", &"arrow", &"needle", &"boomerang"]
+const PROJECTILE_VISUALS := [&"orb", &"arrow", &"needle", &"boomerang", &"ice_cone"]
+const VISUAL_SPAWN_TRANSITIONS := [&"drop", &"rebirth"]
 const SPELL_KINDS := [&"freeze"]
 const ACTIVE_SKILL_KINDS := [&"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"continuous_area", &"empowered_attack", &"attack_lifesteal"]
 const ACTIVE_SKILL_TARGET_SCOPES := [&"self", &"deployment_group"]
@@ -112,6 +113,7 @@ const CARD_FIELDS := [
 	&"deploy_time", &"pre_deploy_time", &"deploy_zone", &"deploy_ignore_structures", &"show_team_ring", &"footprint_tiles", &"lifespan", &"lifespan_hp_decay",
 	&"deployment_count", &"deployment_spacing",
 	&"spawn_id", &"spawn_interval", &"spawn_count", &"spawn_side", &"death_spawn_id", &"death_spawn_count",
+	&"death_replacement_id", &"death_replacement_charges", &"death_replacement_visual_transition", &"timed_revival_id", &"timed_revival_delay", &"timed_revival_death_replacement_charges", &"timed_revival_visual_transition",
 	&"projectile_speed", &"projectile_visual", &"projectile_visual_height",
 	&"projectile_visual_forward_offset", &"projectile_visual_scale", &"projectile_impact_visual",
 	&"projectile_colors", &"splash_radius", &"knockback",
@@ -155,6 +157,7 @@ const ACTIVE_SKILL_FIELDS := [
 	&"full_resource_visual_action", &"full_resource_cast_duration", &"full_resource_impact_delay", &"full_resource_cast_end_heal",
 	&"forward_distance", &"shockwave_damage", &"shockwave_duration", &"shockwave_end_radius",
 	&"shockwave_slow_duration", &"shockwave_slow_multiplier", &"shockwave_full_only",
+	&"zone_duration", &"zone_tick_interval", &"zone_damage", &"zone_slow_duration", &"zone_slow_multiplier",
 	&"tick_interval",
 	&"empowered_damage_multiplier", &"empowered_speed_multiplier", &"blind_charges",
 	&"target_scope", &"heal_ratio", &"max_health_ratio",
@@ -839,6 +842,56 @@ static func all() -> Dictionary:
 				"visual_action": "active", "full_resource_visual_action": "active_strong",
 			}],
 		},
+		"anivia": {
+			"name": "艾尼维亚（冰晶凤凰）", "cost": 5, "type": "unit",
+			"description": "远程空中单位，攻速较慢；施放冰雪风暴在身前制造持续伤害与减速区域。被动可化为蛋，3秒未被击破后满血复活。",
+			"hp": 620.0, "damage": 78.0, "range": 190.0,
+			"speed": SPEED_EXTREMELY_SLOW, "interval": 1.4, "first_hit": 0.58,
+			"size_tier": SIZE_SLIGHTLY_LARGE, "radius": RADIUS_SLIGHTLY_LARGE, "visual_radius": RADIUS_SLIGHTLY_LARGE + VISUAL_RADIUS_PADDING,
+			"mass": 5.0, "sight": 270.0,
+			"projectile_speed": 420.0, "projectile_visual": "ice_cone", "projectile_visual_height": 62.0,
+			"color": Color(0.45, 0.82, 1.0),
+			"visual_scene_path": "res://assets/units/anivia/anivia_view.tscn",
+			"visual_forward_yaw": 0.0,
+			"visual_animations": {
+				"deploy": "Idle1", "idle": "Idle1", "move": "Run",
+				"attack": ["Attack1", "Attack2"],
+				"visual_actions": {
+					"frost_storm": {"animation": "Spell4", "durations": [1.166667], "kind": "skill"},
+				},
+				"death": "Death", "death_duration": 2.4,
+			},
+			"is_air": true, "building_only": false, "can_attack_air": true,
+			"death_replacement_id": "anivia_egg", "death_replacement_charges": 1, "death_replacement_visual_transition": "drop",
+			"active_skills": [{
+				"name": "冰雪风暴", "kind": "forward_area",
+				"cost": 2, "max_uses": 1, "cooldown": 10.0,
+				"description": "使用 Spell4 在身前创造冰雪风暴；落地造成伤害，区域持续 3 秒并周期性造成伤害与减速。施法期间锁定攻击、移动和朝向。",
+				"forward_distance": 125.0, "radius": 86.0,
+				"damage": 90.0, "stun_duration": 0.0, "slow_duration": 1.0, "slow_multiplier": 0.65,
+				"zone_duration": 3.0, "zone_tick_interval": 1.0, "zone_damage": 42.0,
+				"zone_slow_duration": 1.1, "zone_slow_multiplier": 0.60,
+				"impact_delay": 0.72, "cast_duration": 1.166667,
+				"cast_locks": ["movement", "attack", "facing"], "visual_action": "frost_storm",
+			}],
+		},
+		"anivia_egg": {
+			"name": "冰晶凤凰蛋", "cost": 0, "type": "unit", "selectable": false,
+			"description": "冰晶凤凰被动复活期间的地面蛋形态；存活 3 秒后满血孵化。",
+			"hp": PRINCESS_TOWER_STATS.damage * 3.0, "damage": 0.0, "range": 0.0,
+			"speed": 0.0, "interval": 1.0,
+			"size_tier": SIZE_SMALL, "radius": RADIUS_SMALL, "visual_radius": RADIUS_SMALL + VISUAL_RADIUS_PADDING,
+			"mass": 3.0, "sight": 0.0,
+			"color": Color(0.50, 0.86, 1.0),
+			"visual_scene_path": "res://assets/units/anivia/anivia_egg_view.tscn",
+			"visual_forward_yaw": 0.0,
+			"visual_animations": {
+				"deploy": "Idle1", "idle": "Idle1", "death": "Death", "death_duration": 1.066667,
+			},
+			"is_air": false, "building_only": false, "can_attack_air": false,
+			"timed_revival_id": "anivia", "timed_revival_delay": 3.0,
+			"timed_revival_death_replacement_charges": 0, "timed_revival_visual_transition": "rebirth",
+		},
 		"missfortune": {
 			"name": "赏金猎人", "cost": 3, "type": "unit",
 			"description": "远程双枪射手，对每个敌方目标的首次攻击造成1.5倍伤害；主动技大步流星可短时提升移速与攻速。",
@@ -1017,6 +1070,16 @@ static func _validate_combat_stats(label: String, stats: Dictionary, require_siz
 			errors.append("%s.radius: 与 size_tier=%s 的规范半径不匹配" % [label, size_tier])
 	if stats.has("visual_radius") and float(stats.visual_radius) < float(stats.get("radius", 0.0)):
 		errors.append("%s.visual_radius: 不得小于权威 radius" % label)
+	if stats.has("timed_revival_delay"):
+		if float(stats.get("timed_revival_delay", 0.0)) <= 0.0:
+			errors.append("%s.timed_revival_delay: 必须 > 0" % label)
+	if stats.has("death_replacement_id") and int(stats.get("death_replacement_charges", 0)) <= 0:
+		errors.append("%s.death_replacement_charges: 声明死亡替身时必须 > 0" % label)
+	if stats.has("timed_revival_death_replacement_charges") and int(stats.get("timed_revival_death_replacement_charges", -1)) < 0:
+		errors.append("%s.timed_revival_death_replacement_charges: 必须 >= 0" % label)
+	for transition_field in [&"death_replacement_visual_transition", &"timed_revival_visual_transition"]:
+		if stats.has(transition_field) and not StringName(stats.get(transition_field, "")) in VISUAL_SPAWN_TRANSITIONS:
+			errors.append("%s.%s: 只支持 %s" % [label, transition_field, VISUAL_SPAWN_TRANSITIONS])
 	if stats.has("deploy_sweep_radius"):
 		_require_fields(label, stats, [&"deploy_sweep_damage", &"deploy_sweep_knockback", &"deploy_sweep_duration", &"deploy_sweep_mass_factor_max"], errors)
 		if float(stats.get("deploy_sweep_radius", 0.0)) <= 0.0:
@@ -1106,7 +1169,7 @@ static func _validate_building(card_id: String, stats: Dictionary, errors: Packe
 
 
 static func _validate_references(card_id: String, stats: Dictionary, cards: Dictionary, errors: PackedStringArray) -> void:
-	for field in [&"spawn_id", &"death_spawn_id"]:
+	for field in [&"spawn_id", &"death_spawn_id", &"death_replacement_id", &"timed_revival_id"]:
 		var referenced_id := String(stats.get(field, ""))
 		if not referenced_id.is_empty() and not _unit_reference_exists(referenced_id, cards):
 			errors.append("%s.%s: 引用了不存在或不可生成的单位 %s" % [card_id, field, referenced_id])
@@ -1335,13 +1398,31 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 				else:
 					errors.append("%s.shape: 只支持 fan/trapezoid" % label)
 			&"forward_area":
-				_require_fields(label, skill, [&"forward_distance", &"radius", &"damage", &"stun_duration", &"impact_delay", &"cast_duration", &"shockwave_damage", &"shockwave_duration", &"shockwave_end_radius"], errors)
-				for positive_field in [&"forward_distance", &"radius", &"cast_duration", &"shockwave_duration", &"shockwave_end_radius"]:
+				_require_fields(label, skill, [&"forward_distance", &"radius", &"damage", &"stun_duration", &"impact_delay", &"cast_duration"], errors)
+				var has_shockwave_config: bool = skill.has("shockwave_damage") or skill.has("shockwave_duration") or skill.has("shockwave_end_radius")
+				if has_shockwave_config:
+					_require_fields(label, skill, [&"shockwave_damage", &"shockwave_duration", &"shockwave_end_radius"], errors)
+				for positive_field in [&"forward_distance", &"radius", &"cast_duration"]:
 					if float(skill.get(positive_field, 0.0)) <= 0.0:
 						errors.append("%s.%s: 必须 > 0" % [label, positive_field])
+				if has_shockwave_config:
+					for positive_field in [&"shockwave_duration", &"shockwave_end_radius"]:
+						if float(skill.get(positive_field, 0.0)) <= 0.0:
+							errors.append("%s.%s: 必须 > 0" % [label, positive_field])
 				for nonnegative_field in [&"damage", &"stun_duration", &"impact_delay", &"shockwave_damage", &"shockwave_slow_duration"]:
-					if float(skill.get(nonnegative_field, 0.0)) < 0.0:
+					if skill.has(nonnegative_field) and float(skill.get(nonnegative_field, 0.0)) < 0.0:
 						errors.append("%s.%s: 必须 >= 0" % [label, nonnegative_field])
+				if skill.has("zone_duration"):
+					if float(skill.get("zone_duration", 0.0)) <= 0.0:
+						errors.append("%s.zone_duration: 必须 > 0" % label)
+					if float(skill.get("zone_tick_interval", 0.0)) <= 0.0:
+						errors.append("%s.zone_tick_interval: 必须 > 0" % label)
+					if float(skill.get("zone_damage", 0.0)) < 0.0:
+						errors.append("%s.zone_damage: 必须 >= 0" % label)
+					if float(skill.get("zone_slow_duration", 0.0)) < 0.0:
+						errors.append("%s.zone_slow_duration: 必须 >= 0" % label)
+					if float(skill.get("zone_slow_multiplier", 1.0)) < 0.1 or float(skill.get("zone_slow_multiplier", 1.0)) > 1.0:
+						errors.append("%s.zone_slow_multiplier: 必须在 0.1 到 1.0 之间" % label)
 			&"continuous_area":
 				_require_fields(label, skill, [&"radius", &"damage", &"duration", &"tick_interval", &"cast_duration"], errors)
 				for positive_field in [&"radius", &"duration", &"tick_interval", &"cast_duration"]:

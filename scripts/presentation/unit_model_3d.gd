@@ -92,11 +92,22 @@ var _hit_flash_timer := 0.0
 var _hit_flash_material: StandardMaterial3D
 var _flash_meshes: Array[MeshInstance3D] = []
 var _original_overlays: Array[Material] = []
+var _spawn_transition_kind: StringName = &""
+var _spawn_transition_initialized := false
+var _spawn_transition_active := false
+var _spawn_transition_elapsed := 0.0
+var _spawn_transition_duration := 0.0
+var _spawn_transition_start_position := Vector3.ZERO
+var _spawn_transition_base_position := Vector3.ZERO
+var _spawn_transition_start_scale := Vector3.ONE
+var _spawn_transition_base_scale := Vector3.ONE
 
 func setup(unit: Unit, packed: PackedScene, camera: Camera3D, animations: Dictionary, forward_yaw: float) -> bool:
 	# 客户端 Unit 会在默认优先级更新快照插值；3D 代理随后读取最终位置。
 	process_priority = 10
 	_source = unit
+	_spawn_transition_kind = unit.visual_spawn_transition
+	_spawn_transition_initialized = false
 	_source.died.connect(_on_source_died)
 	_source.visual_hit.connect(_on_source_visual_hit)
 	_camera = camera
@@ -156,6 +167,7 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 	# 空军统一把模型实际底部平移到默认离地高度；只改位置，不改变包装场景的任何缩放。
 	if _source.is_air:
 		_align_air_visual_elevation()
+	_start_spawn_transition_if_needed()
 	if _model_root.has_method("prepare_visual_animations"):
 		_model_root.call("prepare_visual_animations")
 	_animation_player = _find_animation_player(_model_root)
@@ -179,10 +191,49 @@ func _process(delta: float) -> void:
 	if _source == null or not is_instance_valid(_source):
 		queue_free()
 		return
+	_tick_spawn_transition(delta)
 	_update_attack_stages(delta)
 	_sync_visual(false, delta)
 	_update_continuous_beam_origin()
 	_update_health_bar_anchor()
+
+## 死亡替身与计时复生没有专用动作素材时，使用纯表现的通用模型过渡：
+## 蛋从空中落到地面，凤凰从蛋的位置缩放升起。过渡不修改 Unit 的权威位置或碰撞。
+func _start_spawn_transition_if_needed() -> void:
+	if _spawn_transition_initialized or _spawn_transition_kind == &"" or _model_root == null:
+		return
+	_spawn_transition_initialized = true
+	_spawn_transition_base_position = _model_root.position
+	_spawn_transition_base_scale = _model_root.scale
+	_spawn_transition_start_position = _spawn_transition_base_position
+	_spawn_transition_start_scale = _spawn_transition_base_scale
+	match _spawn_transition_kind:
+		&"drop":
+			_spawn_transition_duration = 0.28
+			_spawn_transition_start_position += Vector3.UP * CardDB.AIR_VISUAL_ELEVATION
+		&"rebirth":
+			_spawn_transition_duration = 0.42
+			_spawn_transition_start_position += Vector3.UP * 0.24
+			_spawn_transition_start_scale *= 0.24
+		_:
+			return
+	_spawn_transition_elapsed = 0.0
+	_spawn_transition_active = true
+	_model_root.position = _spawn_transition_start_position
+	_model_root.scale = _spawn_transition_start_scale
+
+func _tick_spawn_transition(delta: float) -> void:
+	if not _spawn_transition_active or _model_root == null or not is_instance_valid(_model_root):
+		return
+	_spawn_transition_elapsed = minf(_spawn_transition_elapsed + maxf(delta, 0.0), _spawn_transition_duration)
+	var ratio := _spawn_transition_elapsed / maxf(_spawn_transition_duration, 0.001)
+	var eased := 1.0 - pow(1.0 - ratio, 3.0)
+	_model_root.position = _spawn_transition_start_position.lerp(_spawn_transition_base_position, eased)
+	_model_root.scale = _spawn_transition_start_scale.lerp(_spawn_transition_base_scale, eased)
+	if ratio >= 0.999:
+		_model_root.position = _spawn_transition_base_position
+		_model_root.scale = _spawn_transition_base_scale
+		_spawn_transition_active = false
 
 func _sync_visual(force: bool, delta: float) -> void:
 	var screen_position := _source.get_visual_screen_position()

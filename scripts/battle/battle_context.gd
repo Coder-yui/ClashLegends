@@ -23,8 +23,8 @@ func field_width() -> float:
 func ensure_unit_form_resize_safe(unit: Unit) -> void:
 	_controller.ensure_unit_form_resize_safe(unit)
 
-func spawn_summoned(team: int, card_id: String, position: Vector2) -> Unit:
-	return _controller.spawn_summoned(team, card_id, position)
+func spawn_summoned(team: int, card_id: String, position: Vector2, deploy_time_override: float = -1.0, visual_transition: String = "", death_replacement_charges_override: int = -1) -> Unit:
+	return _controller.spawn_summoned(team, card_id, position, deploy_time_override, visual_transition, death_replacement_charges_override)
 
 func is_ground_position_walkable(position: Vector2, mover_radius: float, excluded: Node = null) -> bool:
 	return _controller.is_ground_position_walkable(position, mover_radius, excluded)
@@ -55,8 +55,8 @@ func unblock_nav_cells(cells: Array) -> void:
 func notify_unit_hit(net_id: int) -> void:
 	_controller.on_unit_hit(net_id)
 
-func notify_unit_died(net_id: int) -> void:
-	_controller.on_unit_died(net_id)
+func notify_unit_died(net_id: int, play_death_visual: bool = true) -> void:
+	_controller.on_unit_died(net_id, play_death_visual)
 
 func notify_tower_hit(tower: Tower) -> void:
 	_controller.on_tower_hit(tower)

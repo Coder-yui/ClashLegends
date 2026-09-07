@@ -43,7 +43,7 @@ func launch(attacker: Node2D, target: Node2D, amount: float, projectile_speed: f
 		visual_offset = (attacker as Tower).projectile_visual_offset
 		visual_offset_follows_trajectory = visual_offset.length_squared() > 0.001
 	var start_position := attacker.global_position
-	if projectile_visual in [&"arrow", &"needle", &"boomerang"]:
+	if projectile_visual in [&"arrow", &"needle", &"boomerang", &"ice_cone"]:
 		start_position += direction * (attacker.body_radius + MUZZLE_FORWARD_GAP)
 	var id := _next_id
 	_next_id += 1
@@ -143,6 +143,7 @@ func _draw() -> void:
 			&"arrow": _draw_arrow(projectile)
 			&"needle": _draw_needle(projectile)
 			&"boomerang": _draw_boomerang(projectile)
+			&"ice_cone": _draw_ice_cone(projectile)
 			# orb 同样必须使用纯表现炮口偏移；权威弹体位置仍保留在 projectile.pos。
 			_:
 				if StringName(projectile.get("impact_visual", "")) == &"splash_wave" or float(projectile.get("visual_scale", 1.0)) > 1.01:
@@ -184,6 +185,18 @@ func _draw_needle(projectile: Dictionary) -> void:
 	var pos := _visual_position(projectile)
 	var direction := _direction(projectile)
 	draw_line(pos - direction * 8.0, pos + direction * 8.0, projectile.color, 2.0, true)
+
+func _draw_ice_cone(projectile: Dictionary) -> void:
+	var pos := _visual_position(projectile)
+	var direction := _direction(projectile)
+	var side := Vector2(-direction.y, direction.x)
+	var tip := pos + direction * 9.0
+	var base := pos - direction * 5.0
+	var glow := Color(0.72, 0.94, 1.0, 0.36)
+	draw_circle(pos, 6.0, glow)
+	draw_colored_polygon(PackedVector2Array([tip, base + side * 4.5, base - side * 4.5]), projectile.color)
+	draw_polyline(PackedVector2Array([tip, base + side * 4.5, base - side * 4.5, tip]), Color(0.88, 0.98, 1.0, 0.96), 1.2, true)
+	draw_line(base - direction * 1.0, tip - direction * 2.0, Color(0.95, 1.0, 1.0, 0.85), 1.2, true)
 
 func _draw_boomerang(projectile: Dictionary) -> void:
 	var pos := _visual_position(projectile)
