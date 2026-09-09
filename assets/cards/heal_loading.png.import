@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d23gb4hcsq6oe"
-path="res://.godot/imported/anivia_loading.png-7cac28e491eee6d560626ed5f649e449.ctex"
+uid="uid://y0cxcmgp22bl"
+path="res://.godot/imported/heal_loading.png-a2eb73c9e606f42295fa84c198d52a0a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/cards/anivia_loading.png"
-dest_files=["res://.godot/imported/anivia_loading.png-7cac28e491eee6d560626ed5f649e449.ctex"]
+source_file="res://assets/cards/heal_loading.png"
+dest_files=["res://.godot/imported/heal_loading.png-a2eb73c9e606f42295fa84c198d52a0a.ctex"]
 
 [params]
 

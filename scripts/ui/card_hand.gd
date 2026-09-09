@@ -238,7 +238,7 @@ func _refresh(_value: float) -> void:
 		var next_stats: Dictionary = CardDB.get_card(_queue[0])
 		_next_label.text = "下一张"
 		var next_accent: Color = next_stats.get("color", CardArt.DEFAULT_ACCENT)
-		CardArt.apply_to_button(_next_button, _queue[0], next_stats.name, next_stats.cost, true, next_accent)
+		CardArt.apply_to_button(_next_button, _queue[0], next_stats.name, _display_cost(_queue[0], next_stats), true, next_accent)
 		CardArt.set_affordable(_next_button, true)
 	# 更新4张手牌按钮
 	for i in range(4):
@@ -246,10 +246,19 @@ func _refresh(_value: float) -> void:
 		var stats: Dictionary = CardDB.get_card(card_id)
 		var b: Button = _button_slots[i]
 		var accent: Color = stats.get("color", CardArt.DEFAULT_ACCENT)
-		CardArt.apply_to_button(b, card_id, stats.name, stats.cost, true, accent)
+		CardArt.apply_to_button(b, card_id, stats.name, _display_cost(card_id, stats), true, accent)
 		CardArt.set_active_skill_card(b, _active_skill_cards.has(card_id))
-		var affordable := _elixir.can_afford(stats.cost)
+		var affordable := _elixir.can_afford(_display_cost(card_id, stats))
 		var pending := is_card_pending(card_id)
 		CardArt.set_affordable(b, (affordable or card_id == _selected) and not pending)
 		CardArt.set_selected(b, card_id == _selected and not pending)
 		b.disabled = pending or (not affordable and card_id != _selected)
+
+## 主动槽法术卡按 active_cost_bonus 提升显示费用（强化治疗 +1）；其余卡返回原费用。
+func _display_cost(card_id: String, stats: Dictionary) -> int:
+	var cost := int(stats.get("cost", 0))
+	if _active_skill_cards.has(card_id) and StringName(stats.get("type", "")) == &"spell":
+		var cost_bonus := int(stats.get("active_cost_bonus", 0))
+		if cost_bonus > 0:
+			return cost + cost_bonus
+	return cost

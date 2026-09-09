@@ -17,6 +17,7 @@
 | `siege_minion` | 炮车兵 | 单位 | 3 | [siege_minion.md](siege_minion.md) |
 | `super_minion` | 超级兵 | 单位 | 4 | [super_minion.md](super_minion.md) |
 | `freeze` | 冰冻 | 法术 | 3 | [freeze.md](freeze.md) |
+| `heal` | 治疗术 | 法术 | 3 | [heal.md](heal.md) |
 | `masteryi` | 剑圣 | 单位 | 3 | [masteryi.md](masteryi.md) |
 | `gwen` | 格温 | 单位 | 4 | [gwen.md](gwen.md) |
 | `sett` | 腕豪 | 单位 | 4 | [sett.md](sett.md) |
@@ -26,9 +27,9 @@
 | `missfortune` | 赏金猎人 | 单位 | 3 | [missfortune.md](missfortune.md) |
 | `anivia` | 艾尼维亚（冰晶凤凰） | 单位 | 5 | [anivia.md](anivia.md) |
 
-共 18 张可选卡，当前均可进入选卡池。`imp`（小鬼）与 `anivia_egg`（冰晶凤凰蛋）也登记在 `CardDB`，但通过 `selectable = false` 明确标记为系统召唤物，不会进入选卡池；其数据和动画见 [imp.md](imp.md) 与 [anivia.md](anivia.md)。
+共 19 张可选卡，当前均可进入选卡池。`imp`（小鬼）与 `anivia_egg`（冰晶凤凰蛋）也登记在 `CardDB`，但通过 `selectable = false` 明确标记为系统召唤物，不会进入选卡池；其数据和动画见 [imp.md](imp.md) 与 [anivia.md](anivia.md)。
 
-各张卡的主动技能金币消耗、使用次数和冷却时间以 `CardDB` 当前条目及对应卡牌文档为准。冰冻是法术卡特例：放在主动槽时直接启用强化冰冻，强化额外花费为 `0`，次数随该张法术卡本次施放计算。
+各张卡的主动技能金币消耗、使用次数和冷却时间以 `CardDB` 当前条目及对应卡牌文档为准。法术卡特例：冰冻放在主动槽时直接启用强化冰冻，强化额外花费为 `0`，次数随该张法术卡本次施放计算；治疗术放在主动槽时启用强化治疗，强化额外花费为 `1`（即施放费用 +1），次数同样随该张法术卡本次施放计算。
 
 ## 字段与动画约定
 

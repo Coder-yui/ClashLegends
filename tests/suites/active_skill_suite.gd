@@ -33,6 +33,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_authoritative_hand_cycle()
 	_check_network_hand_confirmation()
 	_check_empowered_freeze_slow_zone()
+	_check_heal_spell()
 
 func _check_active_skill_loadout_rule() -> void:
 	var cards := CardDB.all()
@@ -831,3 +832,107 @@ func _check_empowered_freeze_slow_zone() -> void:
 	_main._freeze_effects.clear()
 	_main._slow_effects.clear()
 	enemy.free()
+
+func _check_heal_spell() -> void:
+	var heal_stats: Dictionary = CardDB.get_card("heal")
+	var heal_amount := float(heal_stats.get("heal_amount", 0.0))
+	var enhanced_heal := heal_amount * float(heal_stats.get("active_heal_multiplier", 1.0))
+	var shield_amount := float(heal_stats.get("active_shield", 0.0))
+	# 以己方公主塔为中心，确保防御塔落在治疗/护盾范围内，便于验证强化版对建筑生效。
+	var tower: Tower = _main._towers[0]
+	var cast_pos := tower.position
+	# 范围内重伤单位 + 范围内轻伤单位（验证不溢出上限）+ 范围外单位 + 范围内建筑卡。
+	var hurt: Unit = _main._spawn_unit(0, "masteryi", cast_pos + Vector2(80.0, 0.0), 0.0, -1)
+	var nearly_full: Unit = _main._spawn_unit(0, "masteryi", cast_pos + Vector2(-80.0, 0.0), 0.0, -1)
+	var distant: Unit = _main._spawn_unit(0, "masteryi", cast_pos + Vector2(0.0, -400.0), 0.0, -1)
+	var building: Unit = _main._spawn_unit(0, "tombstone", cast_pos + Vector2(0.0, 80.0), 0.0, -1)
+	hurt.take_damage(400.0, null, 1, hurt.position)
+	nearly_full.take_damage(50.0, null, 1, nearly_full.position)
+	distant.take_damage(400.0, null, 1, distant.position)
+	building.take_damage(200.0, null, 1, building.position)
+	var tower_damage := 260.0
+	tower.take_damage(tower_damage, null, 1, tower.position)
+	var hurt_before := hurt.hp
+	var nearly_full_before := nearly_full.hp
+	var distant_before := distant.hp
+	var building_before := building.hp
+	var tower_before := tower.hp
+	var tower_id := int(tower.get_instance_id())
+
+	# 普通治疗：范围内单位回复，不溢出上限；建筑卡、防御塔不吃治疗也没有护盾。
+	_main._cast_spell(0, "heal", cast_pos, false)
+	var base_healed: bool = (
+		is_equal_approx(hurt.hp, hurt_before + heal_amount)
+		and is_equal_approx(nearly_full.hp, nearly_full.max_hp)
+		and is_equal_approx(distant.hp, distant_before)
+	)
+	var base_skips_structures: bool = (
+		is_equal_approx(building.hp, building_before)
+		and is_equal_approx(tower.hp, tower_before)
+		and building.shield_hp <= 0.0
+		and tower.shield_hp <= 0.0
+		and hurt.shield_hp <= 0.0
+	)
+	_expect(base_healed and base_skips_structures, "普通治疗术回复范围内友军单位且不超过最大生命值，对建筑卡/防御塔无治疗无护盾")
+	_main._heal_effects.clear()
+
+	# 重新压低生命后释放强化治疗：全图单位按提高后的数值回复，范围内友军（含建筑）获得护盾。
+	hurt.hp = hurt_before
+	nearly_full.hp = nearly_full_before
+	distant.hp = distant_before
+	tower.hp = tower_before
+	_main._cast_spell(0, "heal", cast_pos, true)
+	var enhanced_global_heal: bool = (
+		is_equal_approx(hurt.hp, hurt_before + enhanced_heal)
+		and is_equal_approx(distant.hp, distant_before + enhanced_heal)
+		and is_equal_approx(nearly_full.hp, nearly_full.max_hp)
+	)
+	var enhanced_shield_scope: bool = (
+		is_equal_approx(hurt.shield_hp, shield_amount)
+		and distant.shield_hp <= 0.0
+		and is_equal_approx(building.shield_hp, shield_amount)
+		and is_equal_approx(tower.shield_hp, shield_amount)
+		and is_equal_approx(building.hp, building_before)
+		and is_equal_approx(tower.hp, tower_before)
+	)
+	_expect(enhanced_global_heal and enhanced_shield_scope, "强化治疗全图友军单位按提高后数值回复且不溢出，范围内友军（含建筑卡/防御塔）获得护盾但生命不变")
+	_expect(_main._heal_effects.size() > 0 and bool(_main._heal_effects[0].get("enhanced", false)), "治疗术淡黄光效进入表现队列并标记强化版")
+	_main._heal_effects.clear()
+
+	for unit in [hurt, nearly_full, distant, building]:
+		(unit as Unit).shield_hp = 0.0
+		(unit as Unit).shield_max_hp = 0.0
+		(unit as Unit).shield_timer = 0.0
+		if is_instance_valid(unit):
+			unit.free()
+	if is_instance_id_valid(tower_id) and is_instance_valid(tower):
+		tower.shield_hp = 0.0
+		tower.shield_max_hp = 0.0
+		tower.shield_timer = 0.0
+		tower.hp = tower.max_hp
+		tower.queue_redraw()
+
+	# 主动槽费用：治疗术在卡组前两位时费用 +1，其余位置保持 3 费。
+	var old_deck: Array = _main._deck.duplicate()
+	var old_elixir: float = _main._elixir.elixir
+	_main._deck = ["heal", "garen", "xin", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
+	_reset_local_elixir()
+	_main._elixir.elixir = 6.0
+	var played: bool = _main.play_card(0, "heal", cast_pos, {"elixir": _main._elixir, "immediate": true})
+	var active_cost_charged: bool = played and is_equal_approx(_main._elixir.elixir, 2.0)
+	_main._heal_effects.clear()
+	_main._deck = ["garen", "heal", "xin", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
+	_reset_local_elixir()
+	_main._elixir.elixir = 6.0
+	played = _main.play_card(0, "heal", cast_pos, {"elixir": _main._elixir, "immediate": true})
+	var second_slot_cost_charged: bool = played and is_equal_approx(_main._elixir.elixir, 2.0)
+	_main._heal_effects.clear()
+	_main._deck = ["garen", "xin", "heal", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
+	_reset_local_elixir()
+	_main._elixir.elixir = 6.0
+	played = _main.play_card(0, "heal", cast_pos, {"elixir": _main._elixir, "immediate": true})
+	var normal_cost_charged: bool = played and is_equal_approx(_main._elixir.elixir, 3.0)
+	_main._heal_effects.clear()
+	_expect(active_cost_charged and second_slot_cost_charged and normal_cost_charged, "治疗术位于主动槽（前两个卡位）施放费用 +1，在普通卡位保持原费用")
+	_main._deck = old_deck
+	_main._elixir.elixir = old_elixir

@@ -25,6 +25,6 @@
 - `assets/units/anivia/source/anivia_order.glb`：冰晶凤凰空中模型，由待开发素材队列中的 `冰晶凤凰.glb` 移动而来，源文件已从队列移除。
 - `assets/units/anivia/source/anivia_chaos.glb`：凤凰蛋模型，由待开发素材队列中的 `冰晶凤凰 (1).glb` 移动而来，源文件已从队列移除。
 - `assets/units/anivia/anivia_view.tscn` 与 `anivia_egg_view.tscn`：正式模型包装场景。
-- `assets/cards/anivia_loading.png`：使用正式冰晶凤凰模型拍摄的卡面；摄影脚本为 `tools/capture/capture_anivia_card_art.gd`。
+- `assets/cards/anivia_loading.jpg`：冰晶凤凰官方游戏加载图（LoL 官方加载界面原画），优先于模型拍摄卡面使用。
 
 表现配置只读取 `CardDB` 的动画映射，普通战斗、复生和冰雪风暴的权威状态均由通用 `Unit`、`Main` 与 `ActiveSkillEffectSystem` 处理。

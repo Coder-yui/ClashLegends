@@ -94,7 +94,7 @@ const SIZE_RADII := {
 }
 const PROJECTILE_VISUALS := [&"orb", &"arrow", &"needle", &"boomerang", &"ice_cone"]
 const VISUAL_SPAWN_TRANSITIONS := [&"drop", &"rebirth"]
-const SPELL_KINDS := [&"freeze"]
+const SPELL_KINDS := [&"freeze", &"heal"]
 const ACTIVE_SKILL_KINDS := [&"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"continuous_area", &"empowered_attack", &"attack_lifesteal", &"area_shield"]
 const ACTIVE_SKILL_TARGET_SCOPES := [&"self", &"deployment_group"]
 const CAST_LOCKS := [&"movement", &"attack", &"facing"]
@@ -130,6 +130,7 @@ const CARD_FIELDS := [
 	&"attack_interval_display", &"transform_after_hits", &"revert_after_hits",
 	&"transform_duration", &"active_transform_duration", &"revert_duration", &"transformed_stats",
 	&"spell_kind", &"duration", &"active_name", &"active_slow_duration", &"active_slow_multiplier", &"active_skills",
+	&"heal_amount", &"active_heal_multiplier", &"active_shield", &"active_shield_duration", &"active_cost_bonus",
 	&"visual_scene_path", &"visual_scene_paths", &"visual_forward_yaw", &"visual_animations", &"audio",
 ]
 const AUDIO_FIELDS := [&"attack_swing", &"attack_hit", &"attack_swing_volume_db", &"attack_hit_volume_db"]
@@ -595,6 +596,23 @@ static func all() -> Dictionary:
 			"active_slow_duration": 2.0,
 			"active_slow_multiplier": 0.50,
 			"color": Color(0.40, 0.70, 1.00),
+		},
+		"heal": {
+			"name": "治疗术", "cost": 3, "type": "spell",
+			"spell_kind": "heal",
+			"deploy_zone": "global", "deploy_ignore_structures": true,
+			"description": "范围治疗法术，立刻回复范围内友军单位的生命值；对建筑卡、防御塔和水晶无效。",
+			"active_name": "强化治疗",
+			# 法术卡：不生成单位，点击位置范围内友军单位立刻回复生命。
+			"radius": 110.0,    # 影响范围半径
+			"duration": 1.2,    # 治疗光效持续时间（治疗本身立即结算）
+			"heal_amount": 300.0,
+			# 强化治疗（主动槽）：费用 +1；全图友军单位获得略提高的治疗，范围内友军额外获得护盾（含建筑）。
+			"active_cost_bonus": 1,
+			"active_heal_multiplier": 1.25,
+			"active_shield": 240.0,
+			"active_shield_duration": 3.0,
+			"color": Color(1.00, 0.93, 0.60),
 		},
 		"masteryi": {
 			"name": "剑圣", "cost": 3, "type": "unit",
@@ -1115,6 +1133,19 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 				errors.append("%s.spell_kind: 系统不支持 %s" % [card_id, spell_kind])
 			if float(stats.get("duration", 0.0)) <= 0.0:
 				errors.append("%s.duration: 法术持续时间必须 > 0" % card_id)
+			match spell_kind:
+				&"heal":
+					if float(stats.get("heal_amount", 0.0)) <= 0.0:
+						errors.append("%s.heal_amount: 治疗法术必须配置 > 0 的治疗量" % card_id)
+					if stats.has("active_cost_bonus") and int(stats.active_cost_bonus) < 0:
+						errors.append("%s.active_cost_bonus: 必须是 >= 0 的整数" % card_id)
+					if stats.has("active_heal_multiplier") and float(stats.active_heal_multiplier) < 1.0:
+						errors.append("%s.active_heal_multiplier: 强化治疗倍率必须 >= 1" % card_id)
+					if stats.has("active_shield"):
+						if float(stats.active_shield) <= 0.0:
+							errors.append("%s.active_shield: 强化护盾必须 > 0" % card_id)
+						elif float(stats.get("active_shield_duration", 0.0)) <= 0.0:
+							errors.append("%s.active_shield_duration: 配置强化护盾时必须 > 0" % card_id)
 	_validate_visual_config(card_id, stats, errors)
 	_validate_audio_config(card_id, stats, errors)
 	_validate_active_skills(card_id, stats, errors)

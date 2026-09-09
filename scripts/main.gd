@@ -87,6 +87,8 @@ var _freeze_effects: Array = []  # [{pos, timer, duration, radius}]
 ## 强化冰冻结束后的权威减速区域与客户端纯视觉区域分开保存。
 var _slow_zones: Array[Dictionary] = []
 var _slow_effects: Array[Dictionary] = []
+## 治疗术淡黄光效区域；治疗本身立即结算，这里只保存表现。
+var _heal_effects: Array[Dictionary] = []
 var _spell_system: RefCounted
 ## 纳尔 Spell2：固定模拟延迟到手掌触地才结算；范围框是独立纯表现数据。
 var _active_skill_effect_system: RefCounted
@@ -191,6 +193,7 @@ func _ready() -> void:
 	_freeze_effects = _spell_system.freeze_effects
 	_slow_zones = _spell_system.slow_zones
 	_slow_effects = _spell_system.slow_effects
+	_heal_effects = _spell_system.heal_effects
 	_active_skill_effect_system = ACTIVE_SKILL_EFFECT_SYSTEM_SCRIPT.new(self)
 	child_entered_tree.connect(_provide_battle_context)
 	_projectile_system = ProjectileSystem.new()
@@ -580,6 +583,18 @@ func _active_card_slot_for_team(p_team: int, card_id: String) -> int:
 			return slot_index
 	return -1
 
+## 法术卡位于主动槽时的实际施放费用：基础费用 + active_cost_bonus（强化治疗 +1）。
+## 单位卡与不在主动槽的法术卡返回原费用；出牌扣费、客户端预检和 UI 角标共用这一口径。
+func card_cost_for_team(p_team: int, card_id: String) -> int:
+	var stats := CardDB.get_card(card_id)
+	var cost := int(stats.get("cost", 0))
+	if StringName(stats.get("type", "")) != &"spell":
+		return cost
+	var cost_bonus := int(stats.get("active_cost_bonus", 0))
+	if cost_bonus > 0 and _active_card_slot_for_team(p_team, card_id) >= 0:
+		return cost + cost_bonus
+	return cost
+
 func is_net_client() -> bool:
 	return mode == "client"
 
@@ -871,6 +886,7 @@ func _clear_art_dev_units() -> void:
 	_freeze_effects.clear()
 	_slow_zones.clear()
 	_slow_effects.clear()
+	_heal_effects.clear()
 	_active_skill_effect_system.clear()
 	_sync_art_dev_panel_state()
 	queue_redraw()
@@ -1233,14 +1249,16 @@ func play_card(p_team: int, card_id: String, pos: Vector2, options: Dictionary =
 	var elixir = options.get("elixir")
 	if options.has("elixir") and elixir == null:
 		return false
+	# 强化法术（如主动槽治疗术）的实际费用含 active_cost_bonus；扣费、预检与回滚共用。
+	var card_cost := card_cost_for_team(p_team, card_id)
 	if bool(options.get("client_request", false)):
-		if mode != "client" or immediate or elixir == null or not elixir.can_afford(stats.cost):
+		if mode != "client" or immediate or elixir == null or not elixir.can_afford(card_cost):
 			return false
 		_rpc_deploy_request.rpc_id(1, card_id, pos, _input_tick_for_new_command())
 		if _hand != null:
 			_hand.set_card_pending(card_id, true)
 		return true
-	if elixir != null and not elixir.spend(stats.cost):
+	if elixir != null and not elixir.spend(card_cost):
 		return false
 	if immediate:
 		var type := String(stats.get("type", "unit"))
@@ -1255,7 +1273,7 @@ func play_card(p_team: int, card_id: String, pos: Vector2, options: Dictionary =
 	if not _consume_authoritative_card(p_team, card_id):
 		# spend 已经成功时理论上不会失败；保留事务式回滚，避免未来扩展插入中间验证后丢费。
 		if elixir != null:
-			elixir.elixir += float(stats.cost)
+			elixir.elixir += float(card_cost)
 		return false
 	var execute_tick := _deploy_card(p_team, card_id, pos, input_tick)
 	if execute_tick < 0:
@@ -2737,6 +2755,13 @@ func _rpc_freeze_fx(pos: Vector2, radius: float, duration: float, slow_duration:
 	if slow_duration > 0.0:
 		_slow_effects.append({"pos": pos, "radius": radius, "delay": duration, "timer": slow_duration, "duration": slow_duration})
 
+## 主机 → 客户端：治疗法术视觉。治疗数值由主机权威结算，客户端只显示淡黄光效。
+@rpc("authority", "call_remote", "reliable")
+func _rpc_heal_fx(pos: Vector2, radius: float, duration: float, enhanced: bool = false) -> void:
+	if mode != "client":
+		return
+	_heal_effects.append({"pos": pos, "radius": radius, "timer": duration, "duration": duration, "enhanced": enhanced})
+
 ## 主机 → 客户端：定向技能蓄力范围。客户端只画表现，伤害与状态仍由主机快照体现。
 @rpc("authority", "call_remote", "reliable")
 func _rpc_frontal_skill_fx(net_id: int, pos: Vector2, forward: Vector2, source_radius: float, length: float, width: float, duration: float, p_team: int, shape: String = "rectangle", near_width: float = 0.0, far_width: float = 0.0, arc_degrees: float = 0.0, projectile_count: int = 0, center_ratio: float = 0.0, center_width: float = 0.0, fan_inner_arc: bool = false, projectile_visual: String = "arrow", projectile_launch_delay: float = 0.0, projectile_flight_duration: float = 0.0, projectile_visual_height: float = 0.0, projectile_visual_forward_offset: float = -1.0, projectile_visual_width: float = 0.0) -> void:
@@ -2820,6 +2845,31 @@ func _draw() -> void:
 		var slow_alpha: float = clampf(float(effect.timer) / maxf(float(effect.duration), 0.001), 0.0, 1.0)
 		draw_circle(effect.pos, effect.radius, Color(0.20, 0.48, 0.92, 0.12 * slow_alpha))
 		draw_arc(effect.pos, effect.radius, 0.0, TAU, 48, Color(0.38, 0.70, 1.0, 0.72 * slow_alpha), 3.0, true)
+	# 治疗术区域效果：淡黄光圈 + 上升的十字光点；强化版额外扩散全图金圈。
+	for effect in _heal_effects:
+		var heal_progress := 1.0 - clampf(float(effect.timer) / maxf(float(effect.duration), 0.001), 0.0, 1.0)
+		var heal_remaining := clampf(float(effect.timer) / maxf(float(effect.duration), 0.001), 0.0, 1.0)
+		var heal_pos: Vector2 = effect.pos
+		var heal_radius := float(effect.radius)
+		if bool(effect.get("enhanced", false)):
+			# 强化治疗是全图生效，用快速扩散的金圈提示全图友军都被治疗。
+			var wave_progress := clampf(heal_progress * 2.2, 0.0, 1.0)
+			var wave_radius := lerpf(heal_radius * 0.6, 1180.0, wave_progress)
+			var wave_alpha := 0.5 * maxf(1.0 - wave_progress * 1.3, 0.0)
+			draw_arc(heal_pos, wave_radius, 0.0, TAU, 64, Color(1.0, 0.93, 0.60, wave_alpha), 4.0, true)
+			draw_arc(heal_pos, wave_radius * 0.92, 0.0, TAU, 64, Color(1.0, 0.97, 0.75, wave_alpha * 0.6), 2.0, true)
+		draw_circle(heal_pos, heal_radius, Color(1.0, 0.93, 0.60, 0.20 * heal_remaining))
+		draw_arc(heal_pos, heal_radius, 0.0, TAU, 48, Color(1.0, 0.96, 0.72, 0.70 * heal_remaining), 3.0, true)
+		# 中心圣光与上升的十字光点都是纯表现，不参与任何权威判定。
+		draw_circle(heal_pos, 10.0 + 4.0 * sin(heal_progress * PI), Color(1.0, 0.98, 0.85, 0.85 * heal_remaining))
+		for index in range(7):
+			var mote_angle := TAU * float(index) / 7.0 + 0.35
+			var mote_distance := heal_radius * (0.30 + 0.42 * float((index * 3) % 5) / 4.0)
+			var mote_pos := heal_pos + Vector2.from_angle(mote_angle) * mote_distance - Vector2(0.0, heal_progress * 44.0)
+			var mote_size := 4.5 + 2.0 * (0.5 + 0.5 * sin(heal_progress * PI * 2.0 + float(index)))
+			var mote_color := Color(1.0, 0.97, 0.78, 0.85 * heal_remaining)
+			draw_line(mote_pos - Vector2(mote_size, 0.0), mote_pos + Vector2(mote_size, 0.0), mote_color, 2.5, true)
+			draw_line(mote_pos - Vector2(0.0, mote_size), mote_pos + Vector2(0.0, mote_size), mote_color, 2.5, true)
 	# 纳尔 Spell2 使用三边矩形：两条侧边加远端宽边，靠纳尔的近端宽边刻意留空。
 	for effect in _active_skill_effect_system.frontal_effects:
 		_draw_frontal_skill_effect(effect)

@@ -881,12 +881,25 @@ func _active_choice_description(card_id: String) -> String:
 		var stats: Dictionary = CardDB.get_card(card_id)
 		if String(stats.get("type", "unit")) == "spell":
 			var radius := float(stats.get("radius", 0.0))
-			var duration := float(stats.get("duration", 0.0))
-			var slow_duration := float(stats.get("active_slow_duration", 0.0))
-			if slow_duration > 0.0:
-				var slow_percent := roundi(float(stats.get("active_slow_multiplier", 1.0)) * 100.0)
-				return "冻结半径%s（%.1f格）内的敌方单位，持续%s秒；冰冻结束后，范围内的敌军继续减速至%d%%，持续%s秒。" % [_format_card_number(radius), radius / TILE_SIZE, _format_card_number(duration), slow_percent, _format_card_number(slow_duration)]
-			return "冻结半径%s（%.1f格）内的敌方单位，持续%s秒。" % [_format_card_number(radius), radius / TILE_SIZE, _format_card_number(duration)]
+			match StringName(stats.get("spell_kind", "")):
+				&"heal":
+					var heal_amount := float(stats.get("heal_amount", 0.0))
+					var enhanced_heal := heal_amount * maxf(float(stats.get("active_heal_multiplier", 1.0)), 1.0)
+					var shield := float(stats.get("active_shield", 0.0))
+					var shield_duration := float(stats.get("active_shield_duration", 0.0))
+					var cost_bonus := maxi(int(stats.get("active_cost_bonus", 0)), 0)
+					var bonus_text := "" if cost_bonus <= 0 else "，主动槽强化额外花费 +%d 金币" % cost_bonus
+					return "回复半径%s（%.1f格）内友军单位%s生命（不作用于建筑）；强化后全图友军单位回复%s生命，范围内友军（含建筑卡、防御塔与水晶）额外获得%s护盾，持续%s秒%s。" % [
+						_format_card_number(radius), radius / TILE_SIZE, _format_card_number(heal_amount),
+						_format_card_number(enhanced_heal), _format_card_number(shield), _format_card_number(shield_duration), bonus_text,
+					]
+				_:
+					var duration := float(stats.get("duration", 0.0))
+					var slow_duration := float(stats.get("active_slow_duration", 0.0))
+					if slow_duration > 0.0:
+						var slow_percent := roundi(float(stats.get("active_slow_multiplier", 1.0)) * 100.0)
+						return "冻结半径%s（%.1f格）内的敌方单位，持续%s秒；冰冻结束后，范围内的敌军继续减速至%d%%，持续%s秒。" % [_format_card_number(radius), radius / TILE_SIZE, _format_card_number(duration), slow_percent, _format_card_number(slow_duration)]
+					return "冻结半径%s（%.1f格）内的敌方单位，持续%s秒。" % [_format_card_number(radius), radius / TILE_SIZE, _format_card_number(duration)]
 		return "该卡没有可携带的主动技能。"
 	var selected := clampi(int(_active_skill_choices.get(card_id, 0)), 0, skills.size() - 1)
 	return _active_skill_description(skills[selected])
