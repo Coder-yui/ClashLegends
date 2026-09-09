@@ -130,8 +130,9 @@ const CARD_FIELDS := [
 	&"attack_interval_display", &"transform_after_hits", &"revert_after_hits",
 	&"transform_duration", &"active_transform_duration", &"revert_duration", &"transformed_stats",
 	&"spell_kind", &"duration", &"active_name", &"active_slow_duration", &"active_slow_multiplier", &"active_skills",
-	&"visual_scene_path", &"visual_scene_paths", &"visual_forward_yaw", &"visual_animations",
+	&"visual_scene_path", &"visual_scene_paths", &"visual_forward_yaw", &"visual_animations", &"audio",
 ]
+const AUDIO_FIELDS := [&"attack_swing", &"attack_hit", &"attack_swing_volume_db", &"attack_hit_volume_db"]
 const VISUAL_ANIMATION_FIELDS := [
 	&"deploy", &"deploy_durations", &"deploy_clip_ratio", &"idle", &"move", &"move_enter", &"haste_move",
 	&"move_cycle", &"attack", &"attack_enter", &"attack_retarget_enter", &"attack_loop",
@@ -188,6 +189,43 @@ static func all() -> Dictionary:
 					"judgment": {"animation": "Spell3_0", "durations": [3.0], "kind": "skill"},
 				},
 				"death": "Death", "death_duration": 0.8,
+			},
+			"audio": {
+				# 两套挥剑动作分别使用原事件的 4 个 OnCast 变体；命中使用共享 OnHit 池。
+				"attack_swing": [
+					[
+						"res://assets/audio/units/garen/garen_basic_attack_swing_01.wav",
+						"res://assets/audio/units/garen/garen_basic_attack_swing_02.wav",
+						"res://assets/audio/units/garen/garen_basic_attack_swing_03.wav",
+						"res://assets/audio/units/garen/garen_basic_attack_swing_04.wav",
+					],
+					[
+						"res://assets/audio/units/garen/garen_basic_attack_swing_05.wav",
+						"res://assets/audio/units/garen/garen_basic_attack_swing_06.wav",
+						"res://assets/audio/units/garen/garen_basic_attack_swing_07.wav",
+						"res://assets/audio/units/garen/garen_basic_attack_swing_08.wav",
+					],
+				],
+				"attack_hit": [
+					"res://assets/audio/units/garen/garen_basic_attack_hit_01.wav",
+					"res://assets/audio/units/garen/garen_basic_attack_hit_02.wav",
+					"res://assets/audio/units/garen/garen_basic_attack_hit_03.wav",
+					"res://assets/audio/units/garen/garen_basic_attack_hit_04.wav",
+					"res://assets/audio/units/garen/garen_basic_attack_hit_05.wav",
+					"res://assets/audio/units/garen/garen_basic_attack_hit_06.wav",
+					"res://assets/audio/units/garen/garen_basic_attack_hit_07.wav",
+					"res://assets/audio/units/garen/garen_basic_attack_hit_08.wav",
+					"res://assets/audio/units/garen/garen_basic_attack_hit_09.wav",
+					"res://assets/audio/units/garen/garen_basic_attack_hit_10.wav",
+					"res://assets/audio/units/garen/garen_basic_attack_hit_11.wav",
+					"res://assets/audio/units/garen/garen_basic_attack_hit_12.wav",
+					"res://assets/audio/units/garen/garen_basic_attack_hit_13.wav",
+					"res://assets/audio/units/garen/garen_basic_attack_hit_14.wav",
+					"res://assets/audio/units/garen/garen_basic_attack_hit_15.wav",
+					"res://assets/audio/units/garen/garen_basic_attack_hit_16.wav",
+				],
+				"attack_swing_volume_db": -5.0,
+				"attack_hit_volume_db": -4.0,
 			},
 			"is_air": false, "building_only": true, "can_attack_air": false,
 			"active_skills": [
@@ -1040,6 +1078,7 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 			if float(stats.get("duration", 0.0)) <= 0.0:
 				errors.append("%s.duration: 法术持续时间必须 > 0" % card_id)
 	_validate_visual_config(card_id, stats, errors)
+	_validate_audio_config(card_id, stats, errors)
 	_validate_active_skills(card_id, stats, errors)
 	if stats.has("transformed_stats"):
 		var transformed = stats.get("transformed_stats")
@@ -1049,6 +1088,44 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 			_validate_known_fields("%s.transformed_stats" % card_id, transformed, CARD_FIELDS, errors)
 			_validate_combat_stats("%s.transformed_stats" % card_id, transformed, true, errors)
 			_validate_visual_config("%s.transformed_stats" % card_id, transformed, errors)
+			_validate_audio_config("%s.transformed_stats" % card_id, transformed, errors)
+
+static func _validate_audio_config(label: String, stats: Dictionary, errors: PackedStringArray) -> void:
+	if not stats.has("audio"):
+		return
+	var audio = stats.get("audio")
+	if not audio is Dictionary:
+		errors.append("%s.audio: 必须是 Dictionary" % label)
+		return
+	_validate_known_fields("%s.audio" % label, audio as Dictionary, AUDIO_FIELDS, errors)
+	var swing = (audio as Dictionary).get("attack_swing", [])
+	if not swing is Array or (swing as Array).is_empty():
+		errors.append("%s.audio.attack_swing: 必须是按攻击段排列的非空声音池数组" % label)
+	else:
+		var animations = stats.get("visual_animations", {})
+		var configured_attacks = (animations as Dictionary).get("attack", []) if animations is Dictionary else []
+		var attack_count := (configured_attacks as Array).size() if configured_attacks is Array else (0 if String(configured_attacks).is_empty() else 1)
+		if attack_count != (swing as Array).size():
+			errors.append("%s.audio.attack_swing: 声音池数量必须与 visual_animations.attack 数量一致" % label)
+		for index in (swing as Array).size():
+			_validate_audio_path_pool("%s.audio.attack_swing[%d]" % [label, index], (swing as Array)[index], errors)
+	_validate_audio_path_pool("%s.audio.attack_hit" % label, (audio as Dictionary).get("attack_hit", []), errors)
+	for volume_field in [&"attack_swing_volume_db", &"attack_hit_volume_db"]:
+		if (audio as Dictionary).has(volume_field) and typeof((audio as Dictionary)[volume_field]) not in [TYPE_INT, TYPE_FLOAT]:
+			errors.append("%s.audio.%s: 必须是分贝数值" % [label, volume_field])
+
+static func _validate_audio_path_pool(label: String, configured: Variant, errors: PackedStringArray) -> void:
+	if not configured is Array or (configured as Array).is_empty():
+		errors.append("%s: 必须是非空资源路径数组" % label)
+		return
+	for index in (configured as Array).size():
+		var path := String((configured as Array)[index])
+		if path.is_empty() or not path.begins_with("res://"):
+			errors.append("%s[%d]: 必须是 res:// 音频资源路径" % [label, index])
+		elif not ResourceLoader.exists(path):
+			errors.append("%s[%d]: 资源不存在 %s" % [label, index, path])
+		elif not load(path) is AudioStream:
+			errors.append("%s[%d]: 资源不是 AudioStream" % [label, index])
 
 static func _validate_combat_stats(label: String, stats: Dictionary, require_size_tier: bool, errors: PackedStringArray) -> void:
 	_require_fields(label, stats, [&"hp", &"damage", &"range", &"speed", &"interval", &"is_air", &"building_only", &"can_attack_air"], errors)

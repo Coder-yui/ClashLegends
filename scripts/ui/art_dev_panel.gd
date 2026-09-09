@@ -6,6 +6,7 @@ signal item_selected(item_id: String)
 signal team_changed(team: int)
 signal active_skill_selected(item_id: String, skill_index: int)
 signal active_skill_requested(skill_index: int)
+signal attack_audio_requested(item_id: String)
 signal skill_resource_requested(value: float)
 signal clear_requested
 signal exit_requested
@@ -27,6 +28,7 @@ var _edit_button: Button
 var _dummy_button: Button
 var _skill_option: OptionButton
 var _skill_button: Button
+var _attack_audio_button: Button
 var _unit_status_label: Label
 var _resource_controls: HBoxContainer
 var _resource_slider: HSlider
@@ -140,6 +142,11 @@ func _build_bottom_dock(root: Control) -> void:
 	_skill_button.custom_minimum_size = Vector2(96.0, 32.0)
 	_skill_button.pressed.connect(_on_active_skill_pressed)
 	active_row.add_child(_skill_button)
+	_attack_audio_button = Button.new()
+	_attack_audio_button.text = "试听普攻"
+	_attack_audio_button.custom_minimum_size = Vector2(92.0, 32.0)
+	_attack_audio_button.pressed.connect(func(): attack_audio_requested.emit(_selected_id))
+	active_row.add_child(_attack_audio_button)
 	_unit_status_label = Label.new()
 	_unit_status_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_unit_status_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
@@ -390,6 +397,9 @@ func _refresh_skill_controls() -> void:
 		_active_skill_choices[_selected_id] = selected_index
 		_skill_option.select(selected_index)
 	_skill_option.disabled = skills.is_empty()
+	var stats: Dictionary = _cards.get(_selected_id, {})
+	var audio = stats.get("audio", {})
+	_attack_audio_button.disabled = not audio is Dictionary or (audio as Dictionary).is_empty()
 	_update_resource_config(skills[selected_index] if not skills.is_empty() else {})
 	_update_action_state(not skills.is_empty())
 

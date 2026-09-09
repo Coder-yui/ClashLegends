@@ -4,6 +4,7 @@
 
 ```text
 assets/
+  audio/units/<card_id>/                    单位攻击、技能等短音效
   arena/arena_rift_v4.png                 当前 720×1400 运行时 2D 背景
   arena/rift_arena/rift_arena.tscn        候选 720×1280 3D 地图（暂不启用）
   arena/rift_arena/source/               Blender 可编辑源文件（不自动导入）
@@ -32,3 +33,7 @@ assets/
 - `towers/`：TowerModel3D 管理材质阶段、碎块和废墟；仍由 2D Tower 决定血量/死亡。
 
 普通近战不要阅读角色特例；按 `ART_PIPELINE.md` 与 `MELEE_3D_INTEGRATION.md` 即可。远程再读 `RANGED_3D_INTEGRATION.md`。
+
+## 音频
+
+短促、重复播放的战斗音效放在 `assets/audio/units/<card_id>/`，卡牌的音频池在 CardDB `audio` 中登记并由 `GameAudioManager` 消费。挥击声按攻击动画段配置，真实命中声只由权威伤害成功事件触发；音频不得反向驱动伤害或动画状态。背景音乐与 UI 音效分别使用 `Music`、`UI` 总线，战斗音效使用 `Combat` 总线。

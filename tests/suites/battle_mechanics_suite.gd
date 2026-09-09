@@ -4,6 +4,7 @@ extends SceneTree
 ## Godot --headless --path . --script tests/mechanics_check.gd
 
 const ANIVIA_SUITE_SCRIPT := preload("res://tests/suites/cards/anivia_suite.gd")
+const AUDIO_PRESENTATION_SUITE_SCRIPT := preload("res://tests/suites/audio_presentation_suite.gd")
 
 var _failed := 0
 var _main: Node2D
@@ -27,6 +28,7 @@ func _run() -> void:
 	_main._minion_waves_enabled = false
 
 	ArenaDeploymentSuite.new().run(self, _main)
+	AUDIO_PRESENTATION_SUITE_SCRIPT.new().run(self, _main)
 	PresentationSuite.new().run(self, _main)
 	BuildingMinionSuite.new().run(self, _main)
 	NavigationCollisionSuite.new().run(self, _main)

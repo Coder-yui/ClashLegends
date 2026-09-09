@@ -5,6 +5,7 @@ const ART_DEV_PANEL_SCRIPT := preload("res://scripts/ui/art_dev_panel.gd")
 const ACTIVE_SKILL_BAR_SCRIPT := preload("res://scripts/ui/active_skill_bar.gd")
 const SPELL_SYSTEM_SCRIPT := preload("res://scripts/battle/spell_system.gd")
 const ACTIVE_SKILL_EFFECT_SYSTEM_SCRIPT := preload("res://scripts/battle/active_skill_effect_system.gd")
+const AUDIO_MANAGER_SCRIPT := preload("res://scripts/audio/game_audio_manager.gd")
 const ARENA_BACKGROUND_TEXTURE := preload("res://assets/arena/arena_rift_v4.png")
 
 ## CR 标准 1v1 场地：18 列 x 32 行。项目分辨率正好对应每格 40px。
@@ -141,6 +142,7 @@ var _king_player: Tower
 var _king_enemy: Tower
 var _towers: Array[Tower] = []
 var _battle_presentation: BattlePresentation3D
+var _audio_manager: GameAudioManager
 var _art_dev_mode := false
 var _art_dev_selection := "training_dummy"
 var _art_dev_team := 1
@@ -197,6 +199,8 @@ func _ready() -> void:
 	_projectiles = _projectile_system.projectiles
 	_client_projectiles = _projectile_system.client_projectiles
 	_snapshot_system = NetworkSnapshotSystem.new(self)
+	_audio_manager = AUDIO_MANAGER_SCRIPT.new()
+	add_child(_audio_manager)
 	randomize()
 	var card_errors := CardDB.validate_all()
 	if not card_errors.is_empty():
@@ -334,6 +338,7 @@ func _start_art_dev() -> void:
 	_art_dev_panel.team_changed.connect(_set_art_dev_team)
 	_art_dev_panel.active_skill_selected.connect(_on_art_dev_active_skill_selected)
 	_art_dev_panel.active_skill_requested.connect(_use_art_dev_active_skill)
+	_art_dev_panel.attack_audio_requested.connect(_preview_art_dev_attack_audio)
 	_art_dev_panel.skill_resource_requested.connect(_set_art_dev_skill_resource)
 	_art_dev_panel.clear_requested.connect(_clear_art_dev_units)
 	_art_dev_panel.exit_requested.connect(func():
@@ -816,6 +821,14 @@ func _set_art_dev_skill_resource(value: float) -> void:
 	unit.mark_skill_resource_combat_activity()
 	unit.queue_redraw()
 	_sync_art_dev_panel_state()
+
+func _preview_art_dev_attack_audio(card_id: String) -> void:
+	if _audio_manager == null or not CardDB.has_card(card_id):
+		return
+	var stats := CardDB.get_card(card_id)
+	var unit := _art_dev_selected_unit()
+	var position := unit.get_visual_screen_position() if unit != null else Vector2(FIELD_W * 0.5, FIELD_H * 0.5)
+	_audio_manager.preview_attack(card_id, stats, position)
 
 func _sync_art_dev_panel_state() -> void:
 	if _art_dev_panel == null:
@@ -1328,6 +1341,7 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 			_apply_attack_hit_effects(primary, effects)
 		if landed and counts_as_attack and from is Unit and is_instance_valid(from):
 			(from as Unit).on_attack_landed(source_form_index, amount)
+			_notify_attack_audio_hit(from as Unit, primary.global_position)
 		if landed and was_alive and primary.hp <= 0.0 and from is Unit and is_instance_valid(from):
 			(from as Unit).on_enemy_killed(primary)
 		if landed and knockback > 0.0 and primary is Unit and is_instance_valid(primary) and primary.hp > 0.0:
@@ -1352,7 +1366,16 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 				(c as Unit).apply_knockback(origin, knockback)
 	if any_landed and counts_as_attack and from is Unit and is_instance_valid(from):
 		(from as Unit).on_attack_landed(source_form_index, amount)
+		_notify_attack_audio_hit(from as Unit, impact_pos)
 	return any_landed
+
+func _notify_attack_audio_hit(attacker: Unit, position: Vector2) -> void:
+	if attacker == null or not is_instance_valid(attacker):
+		return
+	if _audio_manager != null:
+		_audio_manager.play_attack_hit(attacker, position)
+	if mode == "host" and attacker.net_id >= 0:
+		_rpc_attack_audio_hit.rpc(attacker.net_id, position)
 
 func _apply_attack_hit_effects(target: Node2D, effects: Dictionary) -> void:
 	if target is Unit and is_instance_valid(target) and target.hp > 0.0:
@@ -1440,6 +1463,8 @@ func _spawn_unit(team: int, card_id: String, pos: Vector2, deploy_time_override:
 	add_child(u)
 	if _battle_presentation != null:
 		_battle_presentation.attach_unit(u, stats)
+	if _audio_manager != null:
+		_audio_manager.attach_unit(u, stats)
 	# 建筑卡：按实际碰撞圆动态注册导航障碍，死亡/到期时由 unit._die 解除。
 	if nav != null and u.is_building:
 		_register_dynamic_building(u)
@@ -2586,6 +2611,8 @@ func _rpc_spawn_unit(card_id: String, p_team: int, pos: Vector2, net_id: int, de
 	add_child(u)
 	if _battle_presentation != null:
 		_battle_presentation.attach_unit(u, stats)
+	if _audio_manager != null:
+		_audio_manager.attach_unit(u, stats)
 	if nav != null and u.is_building:
 		_register_dynamic_building(u)
 	_client_units[net_id] = u
@@ -2621,6 +2648,15 @@ func _rpc_unit_hit(net_id: int) -> void:
 		u.notify_visual_hit()
 		if _auto_test:
 			print("[测试] 客户端收到受击闪白事件: net_id=", net_id)
+
+## 主机 → 客户端：一次真实普攻命中对应一个短促的纯表现音频事件；允许丢失，绝不阻塞快照。
+@rpc("authority", "call_remote", "unreliable")
+func _rpc_attack_audio_hit(net_id: int, position: Vector2) -> void:
+	if mode != "client" or _audio_manager == null:
+		return
+	var unit: Unit = _client_units.get(net_id)
+	if unit != null and is_instance_valid(unit):
+		_audio_manager.play_attack_hit(unit, position)
 
 ## 主机 → 客户端：可靠触发一次塔/水晶受击闪白。
 @rpc("authority", "call_remote", "reliable")

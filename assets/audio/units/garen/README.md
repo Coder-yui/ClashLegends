@@ -1,5 +1,14 @@
 Garen default-skin basic attack SFX extraction
 
+Project integration:
+- `swing_01` through `swing_04` are the random pool for `Attack1`.
+- `swing_05` through `swing_08` are the random pool for `Attack2`.
+- `hit_01` through `hit_16` form the shared successful-hit pool.
+- Files were moved from the repository-root `Garen_Attack_SFX/` directory to
+  `assets/audio/units/garen/` when the audio presentation system was added.
+- These extracted Riot assets are for this noncommercial learning prototype and
+  must not be used in a commercial release without appropriate permission.
+
 Game WAD source:
 D:\WeGameApps\????\Game\DATA\FINAL\Champions\Garen.wad.client
 

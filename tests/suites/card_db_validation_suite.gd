@@ -10,6 +10,23 @@ func run(harness: Object) -> void:
 	for card_id in CardDB.selectable_ids():
 		access_api_ok = access_api_ok and CardDB.has_card(card_id) and not CardDB.get_card(card_id).is_empty()
 	harness._expect(access_api_ok and CardDB.get_card("missing_card").is_empty(), "CardDB 统一查询 API 正确处理可选卡与未知 card_id")
+	var garen_audio: Dictionary = CardDB.get_card("garen").get("audio", {})
+	var garen_audio_ok := (
+		(garen_audio.get("attack_swing", []) as Array).size() == 2
+		and (garen_audio.get("attack_hit", []) as Array).size() == 16
+	)
+	var audio_schema_errors := PackedStringArray()
+	CardDB._validate_audio_config("audio_probe", {
+		"visual_animations": {"attack": ["Attack1", "Attack2"]},
+		"audio": {
+			"attack_swing": [["res://missing.wav"]],
+			"attack_hit": [],
+		},
+	}, audio_schema_errors)
+	harness._expect(
+		garen_audio_ok and "声音池数量" in "；".join(audio_schema_errors) and "资源不存在" in "；".join(audio_schema_errors),
+		"CardDB 登记盖伦两段挥击/命中音频池，并拒绝段数不匹配与失效资源路径",
+	)
 	var animation_schema_errors := PackedStringArray()
 	CardDB._validate_visual_config("animation_schema_probe", {
 		"visual_animations": {
