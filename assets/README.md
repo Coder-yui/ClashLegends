@@ -30,6 +30,7 @@ assets/
 - `arena/rift_arena/`：候选地图的规格、Blender 重建/导出和实际渲染验收见该目录 README；当前运行时仍使用 `arena_rift_v4.png`，候选地形仅影响独立预览。
 - `units/gnar/`：小/大双模型、加法动画合成和网格过滤；读该目录 README。
 - `units/tombstone/`：包装场景含独立雾效脚本。
+- `units/sun_disc/`：圆盘与静态公主塔 Rubble 组合；建于真实塔墟时只隐藏自带基座。
 - `towers/`：TowerModel3D 管理材质阶段、碎块和废墟；仍由 2D Tower 决定血量/死亡。
 
 普通近战不要阅读角色特例；按 `ART_PIPELINE.md` 与 `MELEE_3D_INTEGRATION.md` 即可。远程再读 `RANGED_3D_INTEGRATION.md`。

@@ -13,6 +13,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_main = main
 	_check_tombstone_art_integration()
 	_check_apex_turret()
+	_check_sun_disc()
 	_check_minion_line_mechanism()
 	_check_death_animation_durations()
 	_check_tombstone_footprint()
@@ -214,6 +215,210 @@ func _make_apex_turret_test_unit(base_stats: Dictionary, team: int, pos: Vector2
 	unit.setup(team, stats, String(stats.name))
 	_main.add_child(unit)
 	return unit
+
+
+func _check_sun_disc() -> void:
+	var stats: Dictionary = CardDB.get_card("sun_disc")
+	var skill: Dictionary = CardDB.active_skills_for("sun_disc")[0]
+	_expect(
+		stats.name == "太阳圆盘"
+		and int(stats.cost) == 4
+		and stats.footprint_tiles == Vector2i(3, 3)
+		and is_equal_approx(float(stats.radius), 40.0)
+		and is_equal_approx(float(stats.range), float(skill.radius))
+		and bool(stats.can_attack_air)
+		and is_equal_approx(float(stats.projectile_visual_height), 154.0)
+		and is_zero_approx(float(stats.projectile_visual_forward_offset))
+		and bool(stats.lifespan_hp_decay)
+		and bool(stats.tower_ruin_foundation),
+		"太阳圆盘为 4 费 3x3、半径 40 的对空对陆建筑，弹体从圆盘中心发出，普通地面部署会衰减生命并启用塔墟基座被动",
+	)
+	_expect(
+		StringName(skill.kind) == &"area_shield"
+		and int(skill.cost) == 1
+		and int(skill.max_uses) == 1
+		and is_equal_approx(float(skill.shield), 180.0)
+		and is_equal_approx(float(skill.shield_duration), 6.0),
+		"太阳圆盘日耀庇护消耗 1 金币且每个实例限用 1 次，为攻击范围内友军提供 180 点、6 秒护盾",
+	)
+
+	var animation_and_ruin_ok := true
+	for scene_path in stats.visual_scene_paths:
+		var packed := load(String(scene_path)) as PackedScene
+		var sample := packed.instantiate() as Node3D if packed != null else null
+		if sample != null:
+			_main.add_child(sample)
+		var player := SuiteUtils.find_anim_player(sample) if sample != null else null
+		animation_and_ruin_ok = animation_and_ruin_ok and player != null
+		animation_and_ruin_ok = animation_and_ruin_ok and sample != null and sample.get_node("DiscModel").scale.is_equal_approx(Vector3(0.0172, 0.0172, 0.0172))
+		for animation_name in [&"Spawn", &"Idle1_Base", &"Idle2_Base", &"Attack1_BASE", &"Death"]:
+			animation_and_ruin_ok = animation_and_ruin_ok and player != null and player.has_animation(animation_name)
+		var ruin_meshes: Array[Node] = sample.get_node("RuinBase").find_children("*", "MeshInstance3D", true, false) if sample != null else []
+		var static_rubble_only := ruin_meshes.size() == 1
+		if static_rubble_only:
+			var ruin_mesh := ruin_meshes[0] as MeshInstance3D
+			static_rubble_only = ruin_mesh.mesh != null and ruin_mesh.mesh.get_surface_count() == 1
+			if static_rubble_only:
+				var ruin_material := ruin_mesh.mesh.surface_get_material(0)
+				static_rubble_only = ruin_material != null and ruin_material.resource_name == "Rubble"
+		animation_and_ruin_ok = animation_and_ruin_ok and static_rubble_only
+		if sample != null:
+			sample.free()
+	_expect(animation_and_ruin_ok, "太阳圆盘双方包装将主体放大至略宽于废墟，只显示对应阵营防御塔 Rubble，并包含部署、双待机、普攻与死亡动画")
+	_expect(
+		(stats.visual_animations.idle_cycle as Array) == ["Idle1_Base", "Idle1_Base", "Idle2_Base"],
+		"太阳圆盘待机严格按 Idle1、Idle1、Idle2 的三段序列循环",
+	)
+
+	# 组合包装的废墟固定朝向；Spawn 保持正常深度遮挡；自带废墟只在 Death 末帧隐藏。
+	var visual_source := Unit.new()
+	visual_source.setup(0, stats, "太阳圆盘表现测试")
+	_main.add_child(visual_source)
+	var visual_wrapper := (load(String(stats.visual_scene_paths[0])) as PackedScene).instantiate()
+	_main.add_child(visual_wrapper)
+	visual_wrapper.call("configure_unit_visual", visual_source)
+	var visual_ruin := visual_wrapper.get_node("RuinBase") as Node3D
+	var initial_parent_yaw := 0.35
+	visual_wrapper.call("sync_visual_facing", initial_parent_yaw)
+	var fixed_ruin_world_yaw := initial_parent_yaw + visual_ruin.rotation.y
+	var changed_parent_yaw := 1.10
+	visual_wrapper.call("sync_visual_facing", changed_parent_yaw)
+	var ruin_facing_fixed := is_equal_approx(changed_parent_yaw + visual_ruin.rotation.y, fixed_ruin_world_yaw)
+	var spawn_uses_ground_clip := false
+	for node in visual_wrapper.get_node("DiscModel").find_children("*", "MeshInstance3D", true, false):
+		var mesh_instance := node as MeshInstance3D
+		for surface_index in mesh_instance.mesh.get_surface_count():
+			var active_material := mesh_instance.get_active_material(surface_index)
+			if active_material is ShaderMaterial:
+				var clip_material := active_material as ShaderMaterial
+				var clip_shader := clip_material.shader
+				spawn_uses_ground_clip = spawn_uses_ground_clip or (
+					clip_shader != null
+					and "world_height < ground_cutoff" in clip_shader.code
+					and is_equal_approx(float(clip_material.get_shader_parameter("ground_cutoff")), 0.85)
+				)
+	visual_wrapper.call("begin_visual_death", 1.0)
+	var ruin_visible_during_death := visual_ruin.visible
+	visual_wrapper.call("finish_visual_death")
+	var ruin_hidden_at_death_end := not visual_ruin.visible
+	_expect(
+		ruin_facing_fixed and spawn_uses_ground_clip and ruin_visible_during_death and ruin_hidden_at_death_end,
+		"太阳圆盘转向时废墟保持初始朝向，Spawn 地下碎片经地面裁切并由废墟正常遮挡，且自带废墟只在 Death 末帧移除",
+	)
+	visual_wrapper.free()
+	visual_source.free()
+
+	# 活塔仍按原 3x3 阻挡。塔毁后，太阳圆盘中心落在九格中的任意格都合法；
+	# 自身占地只擦到废墟但中心在九格外时仍非法。
+	var own_tower: Tower = _main._towers[0]
+	var enemy_tower: Tower = _main._towers[2]
+	var own_hp := own_tower.hp
+	var enemy_hp := enemy_tower.hp
+	var own_ruin_tiles: Array[Vector2i] = _main._structure_deployment_tiles(own_tower)
+	var alive_tower_blocked: bool = not _main.is_card_deploy_position_valid(0, "sun_disc", own_tower.position)
+	own_tower.hp = 0.0
+	enemy_tower.hp = 0.0
+	var all_own_ruin_centers_valid := true
+	for tile in own_ruin_tiles:
+		all_own_ruin_centers_valid = all_own_ruin_centers_valid and _main.is_card_deploy_position_valid(0, "sun_disc", _main._arena_tile_center(tile))
+	var all_enemy_ruin_centers_valid := true
+	for tile in _main._structure_deployment_tiles(enemy_tower):
+		all_enemy_ruin_centers_valid = all_enemy_ruin_centers_valid and _main.is_card_deploy_position_valid(0, "sun_disc", _main._arena_tile_center(tile))
+	var edge_overlap_center: Vector2 = _main._arena_tile_center(Vector2i(own_ruin_tiles[0].x - 1, own_ruin_tiles[0].y + 1))
+	var ruin_edge_overlap_blocked: bool = not _main.is_card_deploy_position_valid(0, "sun_disc", edge_overlap_center)
+	_expect(
+		alive_tower_blocked and all_own_ruin_centers_valid and all_enemy_ruin_centers_valid and ruin_edge_overlap_blocked,
+		"活塔继续阻挡太阳圆盘；塔毁后九格任意中心（含敌方 pocket 外塔位）可建，3x3 仅擦边但中心不在塔墟时拒绝",
+	)
+
+	# 由卡牌生成入口固化塔墟状态；禁用 nav 仅避免专项测试改写主场景共享网格。
+	var saved_nav = _main.nav
+	_main.nav = null
+	var ruined_spawn: Unit = _main._spawn_card_units(0, "sun_disc", own_tower.position, 0.0)[0]
+	var normal_spawn: Unit = _main._spawn_card_units(0, "sun_disc", Vector2(360.0, 900.0), 0.0)[0]
+	_main.nav = saved_nav
+	var ruined_hp := ruined_spawn.hp
+	ruined_spawn._building_tick(100.0)
+	var ruined_view: UnitModel3D = null
+	var normal_view: UnitModel3D = null
+	for child in _main._battle_presentation._world_root.get_children():
+		if child is UnitModel3D and child._source == ruined_spawn:
+			ruined_view = child
+		elif child is UnitModel3D and child._source == normal_spawn:
+			normal_view = child
+	var ruin_visual_hidden := ruined_view != null and not (ruined_view._model_root.get_node("RuinBase") as Node3D).visible
+	var normal_visual_present := normal_view != null and (normal_view._model_root.get_node("RuinBase") as Node3D).visible
+	var idle_cycle_runtime_ok := normal_view != null and normal_view._animation_player.current_animation == "Idle1_Base"
+	if normal_view != null:
+		normal_view._current_state = 1
+		normal_view._on_animation_finished(&"Idle1_Base")
+		idle_cycle_runtime_ok = idle_cycle_runtime_ok and normal_view._idle_cycle_index == 1 and normal_view._animation_player.current_animation == "Idle1_Base"
+		normal_view._on_animation_finished(&"Idle1_Base")
+		idle_cycle_runtime_ok = idle_cycle_runtime_ok and normal_view._idle_cycle_index == 2 and normal_view._animation_player.current_animation == "Idle2_Base"
+		normal_view._on_animation_finished(&"Idle2_Base")
+		idle_cycle_runtime_ok = idle_cycle_runtime_ok and normal_view._idle_cycle_index == 0 and normal_view._animation_player.current_animation == "Idle1_Base"
+	_expect(
+		ruined_spawn.built_on_tower_ruin
+		and is_zero_approx(ruined_spawn.lifespan)
+		and not ruined_spawn.lifespan_hp_decay
+		and is_equal_approx(ruined_spawn.hp, ruined_hp)
+		and not normal_spawn.built_on_tower_ruin
+		and is_equal_approx(normal_spawn.lifespan, float(stats.lifespan))
+		and normal_spawn.lifespan_hp_decay
+		and ruin_visual_hidden and normal_visual_present and idle_cycle_runtime_ok,
+		"主机生成固化塔墟标记：塔墟圆盘不倒计时、不衰减且隐藏自带废墟；普通圆盘保留寿命、基座与双 Idle 循环",
+	)
+	if ruined_view != null:
+		ruined_view.free()
+	if normal_view != null:
+		normal_view.free()
+	ruined_spawn.free()
+	normal_spawn.free()
+	own_tower.hp = own_hp
+	enemy_tower.hp = enemy_hp
+
+	var source := _make_apex_turret_test_unit(stats, 0, Vector2(360.0, 900.0), false)
+	var building_inside := _make_apex_turret_test_unit(CardDB.get_card("apex_turret"), 0, Vector2(400.0, 870.0), false)
+	var ground_inside := _make_apex_turret_test_unit(CardDB.get_card("melee_minion"), 0, Vector2(360.0, 630.0), false)
+	var air_inside := _make_apex_turret_test_unit(CardDB.get_card("aurelionsol"), 0, Vector2(390.0, 650.0), true)
+	var ground_outside := _make_apex_turret_test_unit(CardDB.get_card("melee_minion"), 0, Vector2(360.0, 580.0), false)
+	var enemy_inside := _make_apex_turret_test_unit(CardDB.get_card("melee_minion"), 1, Vector2(330.0, 650.0), false)
+	var friendly_tower: Tower = _main._towers[0]
+	var friendly_crystal: Tower = _main._king_player
+	var enemy_tower_outside: Tower = _main._towers[2]
+	for structure in [friendly_tower, friendly_crystal, enemy_tower_outside]:
+		structure._clear_shield()
+	_main._active_skill_effect_system.apply_area_shield(source, skill)
+	var tower_hp_before := friendly_tower.hp
+	friendly_tower.take_damage(100.0)
+	var tower_shield_absorbs_first := is_equal_approx(friendly_tower.hp, tower_hp_before) and is_equal_approx(friendly_tower.shield_hp, float(skill.shield) - 100.0)
+	var tower_payload := NetworkSnapshotSystem.new(_main)._tower_snapshot_payload(friendly_tower)
+	var tower_shield_snapshot_ok := (
+		tower_payload.size() == NetworkSnapshotSystem.TOWER_PAYLOAD_SIZE
+		and is_equal_approx(float(tower_payload[NetworkSnapshotSystem.T_SHIELD_RATIO]), friendly_tower.get_shield_ratio())
+		and is_equal_approx(float(tower_payload[NetworkSnapshotSystem.T_SHIELD_CAPACITY_RATIO]), friendly_tower.get_shield_capacity_ratio())
+	)
+	var decaying_building := _make_apex_turret_test_unit(stats, 0, Vector2(500.0, 900.0), false)
+	decaying_building.add_shield(float(skill.shield), float(skill.shield_duration))
+	decaying_building._building_tick(decaying_building.lifespan)
+	var lifespan_ignores_shield := decaying_building.hp <= 0.0 and decaying_building.shield_hp > 0.0
+	_expect(
+		is_equal_approx(source.shield_hp, float(skill.shield))
+		and is_equal_approx(building_inside.shield_hp, float(skill.shield))
+		and is_equal_approx(ground_inside.shield_hp, float(skill.shield))
+		and is_equal_approx(air_inside.shield_hp, float(skill.shield))
+		and is_equal_approx(friendly_crystal.shield_hp, float(skill.shield))
+		and tower_shield_absorbs_first and tower_shield_snapshot_ok and lifespan_ignores_shield
+		and is_zero_approx(ground_outside.shield_hp)
+		and is_zero_approx(enemy_inside.shield_hp)
+		and is_zero_approx(enemy_tower_outside.shield_hp),
+		"日耀庇护覆盖范围内单位、建筑、防御塔和水晶并优先承伤；寿命衰减仍直接耗尽建筑生命，范围外与敌方不受影响",
+	)
+	for structure in [friendly_tower, friendly_crystal, enemy_tower_outside]:
+		structure._clear_shield()
+	for unit in [source, building_inside, ground_inside, air_inside, ground_outside, enemy_inside, decaying_building]:
+		if is_instance_valid(unit):
+			unit.free()
 
 func _check_tombstone_art_integration() -> void:
 	var cards := CardDB.all()

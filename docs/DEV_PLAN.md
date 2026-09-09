@@ -20,6 +20,7 @@
   - [x] 中期架构：BattleContext、Deck Builder、Projectile、Snapshot、统一命令、CardDB validator、领域测试。
   - [x] 内容扩展边界：SpellSystem、ActiveSkillEffectSystem、通用召唤引用与全卡美术契约。
   - [x] 群体卡牌：单落点/单读条展开确定性编队，支持编队共享主动资格与存活成员效果。
+  - [x] 塔墟基座建筑：保留已毁公主塔九格的卡牌专属落点，支持范围友军护盾与塔墟寿命豁免。
   - [ ] 新卡需要时再增加非追踪/穿透等通用机制；不预先空抽象。
   - [ ] 广域网连通方案；局域网已可用。
 - [ ] 阶段 4：美术与打磨持续进行。

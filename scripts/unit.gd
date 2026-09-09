@@ -186,6 +186,9 @@ var footprint_tiles := Vector2i.ONE
 var lifespan := 0.0
 ## 可选的建筑寿命表现：按初始最大生命/寿命匀速扣减，仍由固定模拟驱动。
 var lifespan_hp_decay := false
+## 由主机在生成时固化并可靠同步。只声明“这次部署位于已毁防御塔九格内”，
+## 不负责找塔；权威寿命规则与纯表现废墟显隐分别读取该不可变状态。
+var built_on_tower_ruin := false
 var spawn_id := ""
 var spawn_interval := 0.0
 var spawn_count := 1
@@ -384,8 +387,9 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	net_form_index = 0
 	form_change_serial = 0
 	net_form_change_serial = 0
-	lifespan = stats.get("lifespan", 0.0)
-	lifespan_hp_decay = bool(stats.get("lifespan_hp_decay", false))
+	var tower_ruin_exempt := built_on_tower_ruin and bool(stats.get("tower_ruin_foundation", false))
+	lifespan = 0.0 if tower_ruin_exempt else stats.get("lifespan", 0.0)
+	lifespan_hp_decay = false if tower_ruin_exempt else bool(stats.get("lifespan_hp_decay", false))
 	spawn_id = String(stats.get("spawn_id", ""))
 	spawn_interval = stats.get("spawn_interval", 0.0)
 	spawn_count = maxi(int(stats.get("spawn_count", 1)), 1)

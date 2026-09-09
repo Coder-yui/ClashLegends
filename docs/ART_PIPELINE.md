@@ -23,7 +23,7 @@ assets/units/<card_id>/source/<source files>
 assets/units/<card_id>/<card_id>_view.tscn
 ```
 
-同一卡两套阵营模型使用 `visual_scene_paths = [blue/order, red/chaos]`；单模型使用 `visual_scene_path`。CardDB 的 `visual_animations` 使用素材中真实、区分大小写的动画名。常用键为 `deploy`、`idle`、`move`、`move_enter`、`move_cycle`、`attack`、`attack_hit`、`attack_recover`、`attack_structure`、`death`、`visual_actions`；详细合法结构由 `CardDB.validate_all()` 检查，实际播放行为以 `unit_model_3d.gd` 为准。
+同一卡两套阵营模型使用 `visual_scene_paths = [blue/order, red/chaos]`；单模型使用 `visual_scene_path`。CardDB 的 `visual_animations` 使用素材中真实、区分大小写的动画名。常用键为 `deploy`、`idle`、`idle_cycle`、`move`、`move_enter`、`move_cycle`、`attack`、`attack_hit`、`attack_recover`、`attack_structure`、`death`、`visual_actions`；`idle_cycle` 可按固定顺序循环待机片段并允许重复名称，只影响表现。详细合法结构由 `CardDB.validate_all()` 检查，实际播放行为以 `unit_model_3d.gd` 为准。
 
 `visual_forward_yaw`、包装场景 scale/脚底偏移、`visual_radius` 都是表现数据，不能反向修改 `radius`。CardArt 自动发现 `<card_id>_loading.*`，无需在代码登记图片路径。
 

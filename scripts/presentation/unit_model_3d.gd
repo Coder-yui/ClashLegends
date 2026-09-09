@@ -69,6 +69,10 @@ var _move_cycle_index := 0
 var _move_sequence_active := false
 var _move_active_animation := &""
 var _move_override_animation := &""
+## 可选待机序列在静止状态内循环；例如 [idle1, idle1, idle2]。
+## 它只选择表现片段，不改变权威状态或固定模拟节奏。
+var _idle_cycle_index := 0
+var _idle_cycle_active_animation := &""
 # 最近一次统一播放入口实际采用的策略与时长，供表现回归验证；不参与状态决策。
 var _last_clip_transition_kind := &""
 var _last_clip_blend_time := 0.0
@@ -159,6 +163,8 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 	_move_sequence_active = false
 	_move_sequence_exit_blend = -1.0
 	_move_override_animation = &""
+	_idle_cycle_index = 0
+	_idle_cycle_active_animation = &""
 	_last_clip_transition_kind = &""
 	_last_clip_blend_time = 0.0
 	_last_empowered_ready = _source.is_empowered_attack_ready_visual()
@@ -170,6 +176,8 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 	_start_spawn_transition_if_needed()
 	if _model_root.has_method("prepare_visual_animations"):
 		_model_root.call("prepare_visual_animations")
+	if _model_root.has_method("configure_unit_visual"):
+		_model_root.call("configure_unit_visual", _source)
 	_animation_player = _find_animation_player(_model_root)
 	if _animation_player == null:
 		push_warning("单位 3D 模型中未找到 AnimationPlayer")
@@ -247,6 +255,8 @@ func _sync_visual(force: bool, delta: float) -> void:
 	if facing_3d.length_squared() > 0.0001:
 		var target_yaw := atan2(facing_3d.x, facing_3d.z) + _forward_yaw
 		rotation.y = target_yaw if force else lerp_angle(rotation.y, target_yaw, minf(delta * 12.0, 1.0))
+		if _model_root != null and _model_root.has_method("sync_visual_facing"):
+			_model_root.call("sync_visual_facing", rotation.y)
 
 	# visual_action 先于同一快照内的攻击序号处理，确保技能/变形动作能按优先级
 	# 挡住并排队普攻，不会先播一帧 Attack 再被技能覆盖。
@@ -763,6 +773,11 @@ func _update_health_bar_anchor() -> void:
 func _play_state(state: int, blend_time: float = -1.0) -> void:
 	if _animation_player == null:
 		return
+	if state == 1 and not _animation_list("idle_cycle").is_empty():
+		_start_idle_cycle(true, blend_time)
+		return
+	if state != 1:
+		_idle_cycle_active_animation = &""
 	var key: StringName = STATE_KEYS[clampi(state, 0, STATE_KEYS.size() - 1)]
 	if state != 2:
 		_move_override_animation = &""
@@ -781,6 +796,25 @@ func _play_state(state: int, blend_time: float = -1.0) -> void:
 		var playback_speed := _state_playback_speed(state, animation_name)
 		_set_model_visual_clip(animation_name)
 		_play_clip(animation_name, &"locomotion", playback_speed, _transition_blend(&"locomotion") if blend_time < 0.0 else blend_time)
+
+func _start_idle_cycle(reset_index: bool, blend_time: float = -1.0) -> void:
+	var configured := _animation_list("idle_cycle")
+	if configured.is_empty():
+		return
+	if reset_index:
+		_idle_cycle_index = 0
+	else:
+		_idle_cycle_index = (_idle_cycle_index + 1) % configured.size()
+	var animation_name := StringName(configured[_idle_cycle_index])
+	if animation_name == &"" or not _animation_player.has_animation(animation_name):
+		return
+	_idle_cycle_active_animation = animation_name
+	var animation := _animation_player.get_animation(animation_name)
+	if animation != null:
+		animation.loop_mode = Animation.LOOP_NONE
+	_set_model_visual_clip(animation_name)
+	var resolved_blend := _transition_blend(&"sequence") if blend_time < 0.0 else blend_time
+	_play_clip(animation_name, &"locomotion", 1.0, resolved_blend)
 
 ## 出场演出生命周期：生成首帧启动序列；权威部署计时耗尽时终止序列。
 func _update_deploy_sequence_lifecycle() -> void:
@@ -866,6 +900,7 @@ func _finish_deploy_sequence() -> void:
 func _play_attack(serial: int, blend_override: float = -1.0) -> void:
 	if _animation_player == null or serial <= 0:
 		return
+	_idle_cycle_active_animation = &""
 	# 出场演出期间权威锁定攻击，不会推进攻击序号；此防御仅兜底客户端快照乱序。
 	if _playing_deploy_sequence:
 		_pending_attack_serial = serial
@@ -1030,7 +1065,7 @@ func _configure_looping_animations() -> void:
 		if continuous_animation != null:
 			continuous_animation.loop_mode = Animation.LOOP_LINEAR
 	# 出场技能与攻击分段动画都必须是非循环完整动作。
-	for key in ["attack", "attack_structure", "attack_hit", "attack_recover", "empowered_attack", "empowered_attack_hit", "empowered_attack_recover", "empowered_attack_to_move", "deploy", "attack_enter", "attack_retarget_enter", "attack_to_move", "move_enter", "move_cycle"]:
+	for key in ["attack", "attack_structure", "attack_hit", "attack_recover", "empowered_attack", "empowered_attack_hit", "empowered_attack_recover", "empowered_attack_to_move", "deploy", "attack_enter", "attack_retarget_enter", "attack_to_move", "idle_cycle", "move_enter", "move_cycle"]:
 		for value in _animation_list(key):
 			var animation_name := StringName(value)
 			if animation_name != &"" and _animation_player.has_animation(animation_name):
@@ -1064,6 +1099,7 @@ func _on_animation_finished(animation_name: StringName) -> void:
 	if _dying:
 		if animation_name == _death_animation:
 			if not _start_death_followup():
+				_finish_model_visual_death()
 				queue_free()
 		return
 	if _playing_visual_action:
@@ -1094,6 +1130,9 @@ func _on_animation_finished(animation_name: StringName) -> void:
 			_advance_move_sequence()
 		else:
 			_advance_move_cycle()
+		return
+	if animation_name == _idle_cycle_active_animation and _current_state == 1:
+		_start_idle_cycle(false)
 		return
 	if not _playing_attack or animation_name != _active_attack_animation:
 		return
@@ -1167,6 +1206,7 @@ func _on_source_died() -> void:
 	_continuous_attack_animation = &""
 	_move_sequence_active = false
 	_playing_visual_action = false
+	_idle_cycle_active_animation = &""
 	_active_visual_action = &""
 	_visual_action_sequence.clear()
 	_visual_action_clip_durations.clear()
@@ -1187,10 +1227,12 @@ func _on_source_died() -> void:
 	if _team_ring != null:
 		_team_ring.hide()
 	if _animation_player == null:
+		_finish_model_visual_death()
 		queue_free()
 		return
 	_death_animation = StringName(_animation_names.get("death", ""))
 	if _death_animation == &"" or not _animation_player.has_animation(_death_animation):
+		_finish_model_visual_death()
 		queue_free()
 		return
 	var animation := _animation_player.get_animation(_death_animation)
@@ -1210,6 +1252,11 @@ func _on_source_died() -> void:
 	_animation_player.speed_scale = 1.0
 	_set_model_visual_clip(_death_animation)
 	_play_clip(_death_animation, &"death", death_playback_speed)
+
+
+func _finish_model_visual_death() -> void:
+	if _model_root != null and _model_root.has_method("finish_visual_death"):
+		_model_root.call("finish_visual_death")
 
 ## 大纳尔死亡的第一段很短，结束后在同一纯表现代理中换成小纳尔模型继续播放 Death。
 ## 战斗单位在第一帧已经退出权威模拟，这个模型切换不会复活、改碰撞或延迟死亡。

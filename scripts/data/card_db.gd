@@ -95,7 +95,7 @@ const SIZE_RADII := {
 const PROJECTILE_VISUALS := [&"orb", &"arrow", &"needle", &"boomerang", &"ice_cone"]
 const VISUAL_SPAWN_TRANSITIONS := [&"drop", &"rebirth"]
 const SPELL_KINDS := [&"freeze"]
-const ACTIVE_SKILL_KINDS := [&"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"continuous_area", &"empowered_attack", &"attack_lifesteal"]
+const ACTIVE_SKILL_KINDS := [&"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"continuous_area", &"empowered_attack", &"attack_lifesteal", &"area_shield"]
 const ACTIVE_SKILL_TARGET_SCOPES := [&"self", &"deployment_group"]
 const CAST_LOCKS := [&"movement", &"attack", &"facing"]
 const VISUAL_ACTION_KINDS := [&"deploy", &"transform", &"skill"]
@@ -110,7 +110,7 @@ const CARD_FIELDS := [
 	&"hp", &"damage", &"range", &"speed", &"interval", &"first_hit",
 	&"size_tier", &"radius", &"visual_radius", &"mass", &"sight", &"color",
 	&"is_air", &"is_building", &"building_only", &"can_attack_air", &"is_continuous_attack",
-	&"deploy_time", &"pre_deploy_time", &"deploy_zone", &"deploy_ignore_structures", &"show_team_ring", &"footprint_tiles", &"lifespan", &"lifespan_hp_decay",
+	&"deploy_time", &"pre_deploy_time", &"deploy_zone", &"deploy_ignore_structures", &"show_team_ring", &"footprint_tiles", &"lifespan", &"lifespan_hp_decay", &"tower_ruin_foundation",
 	&"deployment_count", &"deployment_spacing",
 	&"spawn_id", &"spawn_interval", &"spawn_count", &"spawn_side", &"death_spawn_id", &"death_spawn_count",
 	&"death_replacement_id", &"death_replacement_charges", &"death_replacement_visual_transition", &"timed_revival_id", &"timed_revival_delay", &"timed_revival_death_replacement_charges", &"timed_revival_visual_transition",
@@ -134,7 +134,7 @@ const CARD_FIELDS := [
 ]
 const AUDIO_FIELDS := [&"attack_swing", &"attack_hit", &"attack_swing_volume_db", &"attack_hit_volume_db"]
 const VISUAL_ANIMATION_FIELDS := [
-	&"deploy", &"deploy_durations", &"deploy_clip_ratio", &"idle", &"move", &"move_enter", &"haste_move",
+	&"deploy", &"deploy_durations", &"deploy_clip_ratio", &"idle", &"idle_cycle", &"move", &"move_enter", &"haste_move",
 	&"move_cycle", &"attack", &"attack_enter", &"attack_retarget_enter", &"attack_loop",
 	&"attack_hit", &"attack_hit_duration", &"attack_recover", &"attack_recover_delay",
 	&"attack_structure", &"attack_move", &"attack_to_move",
@@ -823,6 +823,44 @@ static func all() -> Dictionary:
 				"cast_locks": ["movement", "attack", "facing"], "visual_action": "laser",
 			}],
 		},
+		"sun_disc": {
+			"name": "太阳圆盘", "cost": 4, "type": "building",
+			"description": "建立在防御塔废墟之上的远程建筑，可攻击空中与地面目标。主动为攻击范围内的友军提供护盾；建于塔墟时不再随时间失去生命。",
+			# 普通地面部署时使用 40 秒建筑寿命；中心落在已毁防御塔九格内时，
+			# tower_ruin_foundation 会保留完整生命且取消寿命倒计时。
+			"hp": 1200.0, "damage": 105.0, "range": 220.0,
+			"speed": 0.0, "interval": 1.4, "first_hit": 0.5,
+			"radius": 40.0, "visual_radius": 60.0,
+			"footprint_tiles": Vector2i(3, 3),
+			"lifespan": 40.0, "lifespan_hp_decay": true,
+			"tower_ruin_foundation": true,
+			"projectile_speed": 440.0, "projectile_visual": "orb",
+			# 圆盘中心约在权威地面点上方 154px；不沿目标方向偏移，保证双方镜像一致。
+			"projectile_visual_height": 154.0, "projectile_visual_forward_offset": 0.0,
+			"projectile_visual_scale": 1.65,
+			"projectile_colors": [Color(1.0, 0.78, 0.18), Color(1.0, 0.52, 0.10)],
+			"color": Color(0.96, 0.72, 0.16),
+			"is_air": false, "building_only": false, "can_attack_air": true,
+			"is_building": true, "show_team_ring": false,
+			"visual_scene_paths": [
+				"res://assets/units/sun_disc/sun_disc_blue_view.tscn",
+				"res://assets/units/sun_disc/sun_disc_red_view.tscn",
+			],
+			"visual_forward_yaw": 0.0,
+			"visual_animations": {
+				"deploy": "Spawn",
+				"idle": "Idle1_Base",
+				"idle_cycle": ["Idle1_Base", "Idle1_Base", "Idle2_Base"],
+				"attack": "Attack1_BASE",
+				"death": "Death", "death_duration": 1.0,
+			},
+			"active_skills": [{
+				"name": "日耀庇护", "kind": "area_shield",
+				"cost": 1, "max_uses": 1, "cooldown": 0.0,
+				"radius": 220.0, "shield": 180.0, "shield_duration": 6.0,
+				"description": "立即为太阳圆盘攻击范围内的所有存活友军、友方建筑、防御塔与水晶提供 180 点护盾，持续 6 秒。每个圆盘只能使用 1 次。",
+			}],
+		},
 		"aurelionsol": {
 			"name": "龙王", "cost": 4, "type": "unit",
 			"description": "空中持续输出单位，吐息能够同时压制目标及其周围敌人。",
@@ -1228,6 +1266,8 @@ static func _validate_building(card_id: String, stats: Dictionary, errors: Packe
 		errors.append("%s.is_building: building 卡必须为 true" % card_id)
 	if stats.has("lifespan_hp_decay") and typeof(stats.lifespan_hp_decay) != TYPE_BOOL:
 		errors.append("%s.lifespan_hp_decay: 必须是 bool" % card_id)
+	if stats.has("tower_ruin_foundation") and typeof(stats.tower_ruin_foundation) != TYPE_BOOL:
+		errors.append("%s.tower_ruin_foundation: 必须是 bool" % card_id)
 	var footprint = stats.get("footprint_tiles")
 	if not footprint is Vector2i or footprint.x <= 0 or footprint.y <= 0:
 		errors.append("%s.footprint_tiles: 必须是正数 Vector2i" % card_id)
@@ -1286,7 +1326,7 @@ static func _validate_visual_config(label: String, stats: Dictionary, errors: Pa
 		return
 	_validate_known_fields("%s.visual_animations" % label, animations, VISUAL_ANIMATION_FIELDS, errors)
 	for state in [
-		&"deploy", &"idle", &"move", &"move_enter", &"haste_move", &"move_cycle", &"attack", &"attack_hit", &"attack_recover",
+		&"deploy", &"idle", &"idle_cycle", &"move", &"move_enter", &"haste_move", &"move_cycle", &"attack", &"attack_hit", &"attack_recover",
 		&"attack_structure", &"attack_move", &"attack_to_move", &"empowered_move", &"empowered_attack",
 		&"empowered_attack_hit", &"empowered_attack_recover", &"empowered_attack_to_move",
 	]:
@@ -1452,6 +1492,11 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 		match kind:
 			&"nova": _require_fields(label, skill, [&"radius", &"damage"], errors)
 			&"buff": _require_fields(label, skill, [&"duration"], errors)
+			&"area_shield":
+				_require_fields(label, skill, [&"radius", &"shield", &"shield_duration"], errors)
+				for positive_field in [&"radius", &"shield", &"shield_duration"]:
+					if float(skill.get(positive_field, 0.0)) <= 0.0:
+						errors.append("%s.%s: 必须 > 0" % [label, positive_field])
 			&"summon": _require_fields(label, skill, [&"spawn_id", &"spawn_count"], errors)
 			&"dual_form": _require_fields(label, skill, [&"length", &"width", &"damage", &"impact_delay", &"cast_duration", &"stun_duration"], errors)
 			&"frontal":

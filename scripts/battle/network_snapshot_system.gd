@@ -2,7 +2,7 @@ class_name NetworkSnapshotSystem
 extends RefCounted
 ## 20Hz 单位/塔/弹体快照的序列化与客户端应用。RPC 端点仍保留在 Main。
 
-const SNAPSHOT_PROTOCOL_VERSION := 9
+const SNAPSHOT_PROTOCOL_VERSION := 10
 const S_VERSION := 0
 const S_SERVER_TICK := 1
 const S_UNITS := 2
@@ -66,7 +66,9 @@ const PROJECTILE_PAYLOAD_SIZE := 12
 const T_HP := 0
 const T_ACTIVATED := 1
 const T_STUNNED := 2
-const TOWER_PAYLOAD_SIZE := 3
+const T_SHIELD_RATIO := 3
+const T_SHIELD_CAPACITY_RATIO := 4
+const TOWER_PAYLOAD_SIZE := 5
 
 var _controller: Node2D
 
@@ -242,6 +244,12 @@ func _apply_towers(towers_data: Array) -> void:
 		_controller._towers[i].hp = float(tower_data[T_HP])
 		_controller._towers[i].activated = int(tower_data[T_ACTIVATED]) == 1
 		_controller._towers[i].stun_timer = 0.15 if int(tower_data[T_STUNNED]) == 1 else 0.0
+		var shield_ratio := clampf(float(tower_data[T_SHIELD_RATIO]), 0.0, 1.0)
+		var shield_capacity_ratio := maxf(float(tower_data[T_SHIELD_CAPACITY_RATIO]), 0.0)
+		_controller._towers[i].shield_max_hp = shield_capacity_ratio * _controller._towers[i].max_hp
+		_controller._towers[i].shield_hp = shield_ratio * _controller._towers[i].shield_max_hp
+		_controller._towers[i].shield_timer = 0.15 if _controller._towers[i].shield_hp > 0.0 else 0.0
+		_controller._towers[i].shield_decay_rate = 0.0
 		if tower_was_alive and _controller._towers[i].hp <= 0.0:
 			_controller._towers[i].notify_visual_destroyed()
 		if _controller._towers[i].hp <= 0.0 and not _controller._towers[i].nav_cells.is_empty():
@@ -276,7 +284,7 @@ func send() -> void:
 
 	var towers_data := []
 	for tower in _controller._towers:
-		towers_data.append([tower.hp, 1 if tower.activated else 0, 1 if tower.stun_timer > 0.0 else 0])
+		towers_data.append(_tower_snapshot_payload(tower))
 	var snapshot_bytes := var_to_bytes(_snapshot_packet(
 		units_data,
 		projectiles_data,
@@ -298,6 +306,16 @@ func _snapshot_packet(units_data: Array, projectiles_data: Array, towers_data: A
 		client_elixir,
 		match_timer,
 		overtime,
+	]
+
+
+func _tower_snapshot_payload(tower: Tower) -> Array:
+	return [
+		tower.hp,
+		1 if tower.activated else 0,
+		1 if tower.stun_timer > 0.0 else 0,
+		tower.get_shield_ratio(),
+		tower.get_shield_capacity_ratio(),
 	]
 
 

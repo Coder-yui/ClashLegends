@@ -126,10 +126,32 @@ func apply(source: Unit, skill: Dictionary) -> bool:
 					float(skill.get("heal_ratio", 0.0)),
 					float(skill.get("max_health_ratio", 1.0))
 				)
+		&"area_shield":
+			apply_area_shield(source, skill)
 		_:
 			push_error("未实现的主动技能 kind：%s" % String(skill.get("kind", "")))
 			return false
 	return true
+
+
+## 范围护盾沿用普通攻击的“表面间距”口径：技能 radius 与卡牌 attack range
+## 可以填同一数值，大小不同的友军也会在与索敌一致的边界上获得护盾。
+## combatants 中的 Unit、建筑、防御塔与水晶统一提供 add_shield()，都可成为目标。
+func apply_area_shield(source: Unit, skill: Dictionary) -> void:
+	var radius := maxf(float(skill.get("radius", 0.0)), 0.0)
+	var amount := maxf(float(skill.get("shield", 0.0)), 0.0)
+	var duration := maxf(float(skill.get("shield_duration", 0.0)), 0.0)
+	if radius <= 0.0 or amount <= 0.0 or duration <= 0.0:
+		return
+	for combatant in _controller.get_tree().get_nodes_in_group("combatants"):
+		if not combatant is Node2D or not is_instance_valid(combatant) or combatant.hp <= 0.0:
+			continue
+		var ally = combatant
+		if ally.team != source.team or not ally.has_method("add_shield"):
+			continue
+		if source.surface_gap_to_circle(ally.global_position, ally.body_radius) > radius:
+			continue
+		ally.add_shield(amount, duration, bool(skill.get("shield_decay", false)))
 
 
 ## 主动效果默认只作用于施法者；deployment_group 会选中同一次卡牌部署中仍存活的成员。

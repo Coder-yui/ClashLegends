@@ -21,6 +21,10 @@ var team := 0  # 0 = 玩家（下方），1 = 敌方（上方）
 var battle_context: BattleContext
 var max_hp := 2000.0
 var hp := 2000.0
+var shield_hp := 0.0
+var shield_max_hp := 0.0
+var shield_timer := 0.0
+var shield_decay_rate := 0.0
 var damage := 50.0
 var attack_range := 300.0
 var attack_interval := 0.8
@@ -58,6 +62,10 @@ func setup(p_team: int, stats: Dictionary, p_is_king: bool) -> void:
 	is_king = p_is_king
 	max_hp = stats.hp
 	hp = max_hp
+	shield_hp = 0.0
+	shield_max_hp = 0.0
+	shield_timer = 0.0
+	shield_decay_rate = 0.0
 	damage = stats.damage
 	attack_range = stats.range
 	attack_interval = stats.interval
@@ -97,6 +105,7 @@ func sim_tick(dt: float) -> void:
 	# 已被摧毁：不再攻击
 	if hp <= 0.0:
 		return
+	_tick_shield(dt)
 	# 冰冻计时不因国王塔休眠而暂停。
 	_hit_flash_event_cooldown = maxf(0.0, _hit_flash_event_cooldown - dt)
 	if frozen_timer > 0.0 or stun_timer > 0.0:
@@ -170,7 +179,14 @@ func take_damage(amount: float, _from: Node2D = null, _source_team: int = -1, _s
 	if hp <= 0.0:
 		return false
 	var was_alive := hp > 0.0
-	hp = maxf(hp - amount, 0.0)
+	var remaining_damage := maxf(amount, 0.0)
+	if shield_hp > 0.0 and shield_timer > 0.0:
+		var absorbed := minf(shield_hp, remaining_damage)
+		shield_hp -= absorbed
+		remaining_damage -= absorbed
+		if shield_hp <= 0.0:
+			_clear_shield()
+	hp = maxf(hp - remaining_damage, 0.0)
 	# CR 规则：国王塔受到伤害即激活
 	if is_king and can_attack and not activated and hp > 0.0:
 		activate()
@@ -184,6 +200,50 @@ func take_damage(amount: float, _from: Node2D = null, _source_team: int = -1, _s
 		notify_visual_destroyed()
 	queue_redraw()
 	return true
+
+
+func add_shield(amount: float, duration: float, decays: bool = false) -> void:
+	amount = maxf(amount, 0.0)
+	duration = maxf(duration, 0.0)
+	if hp <= 0.0 or amount <= 0.0 or duration <= 0.0:
+		return
+	shield_hp += amount
+	shield_max_hp += amount
+	shield_timer = maxf(shield_timer, duration)
+	shield_decay_rate = amount / duration if decays else 0.0
+	queue_redraw()
+
+
+func _tick_shield(dt: float) -> void:
+	if shield_timer <= 0.0:
+		return
+	shield_timer = maxf(0.0, shield_timer - dt)
+	if shield_decay_rate > 0.0:
+		shield_hp = maxf(0.0, shield_hp - shield_decay_rate * dt)
+	if shield_timer <= 0.0 or shield_hp <= 0.0:
+		_clear_shield()
+	queue_redraw()
+
+
+func _clear_shield() -> void:
+	shield_hp = 0.0
+	shield_max_hp = 0.0
+	shield_timer = 0.0
+	shield_decay_rate = 0.0
+
+
+func get_shield_ratio() -> float:
+	if shield_hp <= 0.0 or shield_max_hp <= 0.0 or shield_timer <= 0.0:
+		return 0.0
+	return clampf(shield_hp / shield_max_hp, 0.0, 1.0)
+
+
+func get_shield_capacity_ratio() -> float:
+	return maxf(shield_max_hp / maxf(max_hp, 0.001), 0.0) if shield_hp > 0.0 and shield_timer > 0.0 else 0.0
+
+
+func get_shield_health_ratio() -> float:
+	return get_shield_ratio() * get_shield_capacity_ratio()
 
 ## 塔不会像单位一样立即释放，因此血量快照本身可反复兜底这个一次性表现事件。
 ## 幂等标记确保本地伤害与客户端快照不会重复播放摧毁动画。
@@ -226,6 +286,8 @@ func _draw() -> void:
 	var bar_w := KING_HEALTH_BAR_WIDTH if is_king else PRINCESS_HEALTH_BAR_WIDTH
 	var bar_h := HEALTH_BAR_HEIGHT
 	var ratio := maxf(hp / max_hp, 0.0)
+	var shield_health_ratio := get_shield_health_ratio()
+	var shield_capacity_ratio := get_shield_capacity_ratio()
 	var bar_center_y := -visual_radius - 16.0  # 敌方塔：塔上方；敌方水晶：水晶上方
 	if is_king and team == 0:
 		bar_center_y = 84.0                    # 己方水晶：上移至血条顶边贴住最近的网格线(y=1240)
@@ -236,7 +298,12 @@ func _draw() -> void:
 	var bar_color := Color(0.95, 0.28, 0.26) if team == 1 else Color(0.28, 0.88, 0.28)
 	var bar_rect := Rect2(Vector2(-bar_w / 2.0, bar_center_y - bar_h / 2.0), Vector2(bar_w, bar_h))
 	draw_rect(bar_rect, Color(0.10, 0.10, 0.10))
-	draw_rect(Rect2(bar_rect.position, Vector2(bar_w * ratio, bar_h)), bar_color)
+	var combined_capacity := 1.0 + shield_capacity_ratio
+	var hp_width := bar_w * ratio / combined_capacity
+	var shield_width := bar_w * shield_health_ratio / combined_capacity
+	draw_rect(Rect2(bar_rect.position, Vector2(hp_width, bar_h)), bar_color)
+	if shield_width > 0.0:
+		draw_rect(Rect2(Vector2(bar_rect.position.x + hp_width, bar_rect.position.y), Vector2(shield_width, bar_h)), Color.WHITE)
 	# 血条内只显示权威当前生命；轻微黑色偏移保证在红绿填充上都清晰。
 	var hp_text := _health_text()
 	var text_pos := Vector2(bar_rect.position.x, bar_rect.position.y + 14.0)

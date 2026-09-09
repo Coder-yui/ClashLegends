@@ -939,6 +939,19 @@ func _structure_deployment_rect(structure: Node2D) -> Rect2:
 func _structure_deployment_tiles(structure: Node2D) -> Array[Vector2i]:
 	return _arena_tiles_for_rect(_structure_deployment_rect(structure))
 
+## 已毁公主塔仍为太阳圆盘保留 3x3 塔墟语义；国王水晶废墟不属于该被动。
+## Tower 的 hp 与 footprint_tiles 是唯一权威来源，3D Rubble 表面不参与判定。
+func _destroyed_princess_tower_for_tile(tile: Vector2i) -> Tower:
+	for tower in _towers:
+		if not is_instance_valid(tower) or tower.is_king or tower.hp > 0.0:
+			continue
+		if tile in _structure_deployment_tiles(tower):
+			return tower
+	return null
+
+func _destroyed_princess_tower_at_card_center(pos: Vector2) -> Tower:
+	return _destroyed_princess_tower_for_tile(_world_to_arena_tile(pos))
+
 func _is_structure_deployment_tile_blocked(tile: Vector2i) -> bool:
 	for c in get_tree().get_nodes_in_group("combatants"):
 		if not is_instance_valid(c) or c.hp <= 0.0:
@@ -1019,13 +1032,19 @@ func is_card_deploy_position_valid(p_team: int, card_id: String, pos: Vector2) -
 	var ignore_structures: bool = bool(stats.get("deploy_ignore_structures", false))
 	var footprint: Vector2i = stats.get("footprint_tiles", Vector2i.ONE)
 	var card_type: String = String(stats.get("type", "unit"))
+	var uses_tower_ruin_foundation := bool(stats.get("tower_ruin_foundation", false))
+	var foundation_tower := _destroyed_princess_tower_at_card_center(pos) if uses_tower_ruin_foundation else null
 
 	# 1. 部署区域：从 CardDB 独立读取 deploy_zone。只有 own_side / global 两态；
 	#    「河道非桥面不可下」统一放在下一段占位层里（和塔/水晶/建筑同开关），不重复耦合到区域分类。
-	match deploy_zone:
+	# 塔墟被动允许直接选中敌方已毁公主塔的九格；这些格通常位于普通 pocket
+	# 部署区之外。中心未落在塔墟时仍严格执行原部署区域。
+	match deploy_zone if foundation_tower == null else "tower_ruin":
 		"global":
 			if pos.x < 0.0 or pos.x >= FIELD_W or pos.y < 0.0 or pos.y >= FIELD_H:
 				return false
+		"tower_ruin":
+			pass
 		_:  # own_side
 			var first_tile := Vector2i(
 				roundi(pos.x / TILE_SIZE - float(footprint.x) * 0.5),
@@ -1045,6 +1064,12 @@ func is_card_deploy_position_valid(p_team: int, card_id: String, pos: Vector2) -
 		for y in range(first_tile.y, first_tile.y + footprint.y):
 			for x in range(first_tile.x, first_tile.x + footprint.x):
 				var tile := Vector2i(x, y)
+				# 太阳圆盘的 3x3 只要擦到塔墟就被阻挡；唯一例外是建筑中心
+				# 本身落在该塔墟九格内，此时只豁免这一个已毁公主塔。
+				if uses_tower_ruin_foundation:
+					var ruined_tower := _destroyed_princess_tower_for_tile(tile)
+					if ruined_tower != null and ruined_tower != foundation_tower:
+						return false
 				# 河流：非桥面三格的列一律当作占位阻挡
 				var tile_in_river: bool = tile.y >= RIVER_TOP_ROW and tile.y < RIVER_BOTTOM_ROW
 				if tile_in_river:
@@ -1399,6 +1424,10 @@ func _tick_slow_effect_visuals(delta: float) -> void:
 ## 每个成员仍是独立 Unit，碰撞、索敌、快照和死亡都沿用普通单位规则。
 func _spawn_card_units(team: int, card_id: String, pos: Vector2, deploy_time_override: float = -1.0, active_slot: int = -1, pre_deploy_id: int = -1) -> Array[Unit]:
 	var stats := CardDB.get_unit_stats(card_id)
+	var built_on_tower_ruin := (
+		bool(stats.get("tower_ruin_foundation", false))
+		and _destroyed_princess_tower_at_card_center(pos) != null
+	)
 	var count := maxi(int(stats.get("deployment_count", 1)), 1)
 	var spacing := maxf(float(stats.get("deployment_spacing", 0.0)), 0.0)
 	var group_id := -1
@@ -1413,7 +1442,7 @@ func _spawn_card_units(team: int, card_id: String, pos: Vector2, deploy_time_ove
 		var member_radius := float(stats.get("radius", 14.0))
 		member_pos.x = clampf(member_pos.x, member_radius, FIELD_W - member_radius)
 		member_pos.y = clampf(member_pos.y, member_radius, FIELD_H - member_radius)
-		var member := _spawn_unit(team, card_id, member_pos, deploy_time_override, member_slot, pre_deploy_id, group_id)
+		var member := _spawn_unit(team, card_id, member_pos, deploy_time_override, member_slot, pre_deploy_id, group_id, "", -1, built_on_tower_ruin)
 		if member != null:
 			spawned.append(member)
 	return spawned
@@ -1437,7 +1466,7 @@ func _deployment_formation_offsets(count: int, spacing: float, team: int) -> Arr
 	return offsets
 
 
-func _spawn_unit(team: int, card_id: String, pos: Vector2, deploy_time_override: float = -1.0, active_slot: int = -1, pre_deploy_id: int = -1, deployment_group_id: int = -1, visual_transition: String = "", death_replacement_charges_override: int = -1) -> Unit:
+func _spawn_unit(team: int, card_id: String, pos: Vector2, deploy_time_override: float = -1.0, active_slot: int = -1, pre_deploy_id: int = -1, deployment_group_id: int = -1, visual_transition: String = "", death_replacement_charges_override: int = -1, built_on_tower_ruin: bool = false) -> Unit:
 	var stats: Dictionary = CardDB.get_unit_stats(card_id)
 	if stats.is_empty():
 		push_error("尝试生成不存在的单位：%s" % card_id)
@@ -1453,6 +1482,7 @@ func _spawn_unit(team: int, card_id: String, pos: Vector2, deploy_time_override:
 	u.card_id = card_id
 	u.deployment_group_id = deployment_group_id
 	u.visual_spawn_transition = StringName(visual_transition)
+	u.built_on_tower_ruin = built_on_tower_ruin
 	u.position = pos
 	u.setup(team, stats, stats.name)
 	if death_replacement_charges_override >= 0:
@@ -1480,7 +1510,7 @@ func _spawn_unit(team: int, card_id: String, pos: Vector2, deploy_time_override:
 			_next_active_ability_id += 1
 		_register_active_skill(u, card_id, team)
 	if mode == "host":
-		_rpc_spawn_unit.rpc(card_id, team, pos, u.net_id, deploy_time_override, u.active_ability_id, u.active_ability_slot, pre_deploy_id, deployment_group_id, visual_transition, death_replacement_charges_override)
+		_rpc_spawn_unit.rpc(card_id, team, pos, u.net_id, deploy_time_override, u.active_ability_id, u.active_ability_slot, pre_deploy_id, deployment_group_id, visual_transition, death_replacement_charges_override, built_on_tower_ruin)
 	return u
 
 func _register_active_skill(unit: Unit, card_id: String, p_team: int) -> void:
@@ -2586,7 +2616,7 @@ func _rpc_deploy_rejected(card_id: String) -> void:
 
 ## 主机 → 客户端：单位生成
 @rpc("authority", "call_remote", "reliable")
-func _rpc_spawn_unit(card_id: String, p_team: int, pos: Vector2, net_id: int, deploy_time_override: float = -1.0, active_ability_id: int = -1, active_ability_slot: int = -1, pre_deploy_id: int = -1, deployment_group_id: int = -1, visual_transition: String = "", death_replacement_charges_override: int = -1) -> void:
+func _rpc_spawn_unit(card_id: String, p_team: int, pos: Vector2, net_id: int, deploy_time_override: float = -1.0, active_ability_id: int = -1, active_ability_slot: int = -1, pre_deploy_id: int = -1, deployment_group_id: int = -1, visual_transition: String = "", death_replacement_charges_override: int = -1, built_on_tower_ruin: bool = false) -> void:
 	if mode != "client":
 		return
 	_remove_card_pre_deploy_visual(pre_deploy_id)
@@ -2598,6 +2628,7 @@ func _rpc_spawn_unit(card_id: String, p_team: int, pos: Vector2, net_id: int, de
 	u.card_id = card_id
 	u.deployment_group_id = deployment_group_id
 	u.visual_spawn_transition = StringName(visual_transition)
+	u.built_on_tower_ruin = built_on_tower_ruin
 	u.position = pos
 	u.setup(p_team, stats, stats.name)
 	if death_replacement_charges_override >= 0:
