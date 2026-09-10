@@ -6,16 +6,32 @@ signal cue_played(card_id: String, cue: StringName, position: Vector2)
 
 const COMBAT_BUS := &"Combat"
 const WORLD_PLAYER_COUNT := 24
+const SUSTAIN_PLAYER_COUNT := 24
 const WORLD_MAX_DISTANCE := 1100.0
 const WORLD_ATTENUATION := 0.55
 const WORLD_PANNING_STRENGTH := 0.35
 
 var _world_players: Array[AudioStreamPlayer2D] = []
+var _sustain_players: Dictionary = {}
 var _unit_entries: Dictionary = {}
 var _stream_pool_cache: Dictionary = {}
 var _preview_hit_queue: Array[Dictionary] = []
 var _preview_serials: Dictionary = {}
 var _recycle_cursor := 0
+
+func _exit_tree() -> void:
+	# 换场时主动释放音频线程的播放引用，而非等声音自然结束。
+	for player in _world_players:
+		if is_instance_valid(player):
+			player.stop()
+			player.stream = null
+	for player in _sustain_players.values():
+		if is_instance_valid(player):
+			player.stop()
+			player.stream = null
+	_sustain_players.clear()
+	_unit_entries.clear()
+	_stream_pool_cache.clear()
 
 func _ready() -> void:
 	process_priority = 20
@@ -32,6 +48,7 @@ func _ready() -> void:
 func attach_unit(unit: Unit, stats: Dictionary) -> void:
 	if unit == null or not is_instance_valid(unit):
 		return
+	_stop_sustain(unit.get_instance_id())
 	var audio = stats.get("audio", {})
 	if not audio is Dictionary or (audio as Dictionary).is_empty():
 		return
@@ -40,7 +57,17 @@ func attach_unit(unit: Unit, stats: Dictionary) -> void:
 		"card_id": unit.card_id,
 		"audio": (audio as Dictionary).duplicate(true),
 		"last_attack_serial": _attack_serial(unit),
+		"last_empowered_serial": unit.get_empowered_attack_visual_serial(),
+		"empowered_ready": unit.is_empowered_attack_ready_visual(),
+		"action_serial": _action_serial(unit),
+		"active_action": &"",
 	}
+	var death_callback := _on_unit_death.bind(unit.get_instance_id())
+	if not unit.died.is_connected(death_callback):
+		unit.died.connect(death_callback)
+	var exit_callback := _detach_unit.bind(unit.get_instance_id())
+	if not unit.tree_exiting.is_connected(exit_callback):
+		unit.tree_exiting.connect(exit_callback)
 
 func _process(delta: float) -> void:
 	_tick_attached_units()
@@ -55,14 +82,96 @@ func _tick_attached_units() -> void:
 			stale_ids.append(instance_id)
 			continue
 		var serial := _attack_serial(unit as Unit)
-		if serial == int(entry.last_attack_serial):
-			continue
+		var empowered_serial: int = unit.get_empowered_attack_visual_serial()
+		var ready: bool = unit.is_empowered_attack_ready_visual()
+		if ready and not bool(entry.empowered_ready):
+			play_event(unit, &"empowered_ready", unit.get_visual_screen_position())
+		entry.empowered_ready = ready
+		# 技能可在当前攻击前摇中强化这一击；同一个攻击序号也需要切换声音。
+		if serial > 0 and empowered_serial == serial and empowered_serial != int(entry.last_empowered_serial):
+			if not play_event(unit, &"empowered_swing", unit.get_visual_screen_position()):
+				_play_attack_swing(String(entry.card_id), entry.audio, unit.get_visual_screen_position(), serial)
+		elif serial > 0 and serial != int(entry.last_attack_serial):
+			_play_attack_swing(String(entry.card_id), entry.audio, unit.get_visual_screen_position(), serial)
 		entry.last_attack_serial = serial
+		entry.last_empowered_serial = empowered_serial
+		var action_serial := _action_serial(unit)
+		var client: bool = unit.battle_context != null and unit.battle_context.is_net_client()
+		var action: StringName = unit.net_visual_action_name if client else unit.get_visual_action_name()
+		var active: bool = unit.get_visual_action_time_left() > 0.0
+		if StringName(entry.active_action) != &"" and (not active or action_serial != int(entry.action_serial)):
+			_stop_sustain(instance_id)
+			play_event(unit, StringName(String(entry.active_action) + ":end"), unit.get_visual_screen_position())
+			entry.active_action = &""
+		if action_serial != int(entry.action_serial) and active:
+			play_event(unit, StringName(String(action) + ":start"), unit.get_visual_screen_position())
+			_start_sustain(unit, entry, action)
+			entry.active_action = action
+		if _sustain_players.has(instance_id):
+			var sustained: AudioStreamPlayer2D = _sustain_players[instance_id]
+			sustained.global_position = unit.get_visual_screen_position()
+			sustained.stream_paused = unit.is_frozen() or unit.is_stunned()
+		entry.action_serial = action_serial
 		_unit_entries[instance_id] = entry
-		if serial > 0:
-			_play_attack_swing(String(entry.card_id), entry.audio, (unit as Unit).get_visual_screen_position(), serial)
 	for instance_id in stale_ids:
-		_unit_entries.erase(instance_id)
+		_detach_unit(instance_id)
+
+## 每个单位最多一条动作长音，独立于短音回收池；一次播放，不自动重启/无限循环。
+func _start_sustain(unit: Unit, entry: Dictionary, action: StringName) -> void:
+	var cue := StringName(String(action) + ":sustain")
+	var event: Dictionary = entry.audio.get("events", {}).get(String(cue), {})
+	if event.is_empty():
+		return
+	_stop_sustain(unit.get_instance_id())
+	if _sustain_players.size() >= SUSTAIN_PLAYER_COUNT:
+		_stop_sustain(int(_sustain_players.keys()[0]))
+	var player := AudioStreamPlayer2D.new()
+	player.bus = StringName(event.get("bus", "Combat"))
+	player.max_distance = WORLD_MAX_DISTANCE
+	player.attenuation = WORLD_ATTENUATION
+	player.panning_strength = WORLD_PANNING_STRENGTH
+	player.volume_db = float(event.get("volume_db", 0.0))
+	player.stream = _randomized_stream(PackedStringArray(event.get("pool", [])))
+	add_child(player)
+	player.global_position = unit.get_visual_screen_position()
+	_sustain_players[unit.get_instance_id()] = player
+	player.play()
+	cue_played.emit(String(entry.card_id), cue, player.global_position)
+
+func _stop_sustain(instance_id: int) -> void:
+	var player: AudioStreamPlayer2D = _sustain_players.get(instance_id)
+	if player != null:
+		player.stop()
+		player.queue_free()
+		_sustain_players.erase(instance_id)
+
+func _detach_unit(instance_id: int) -> void:
+	_stop_sustain(instance_id)
+	_unit_entries.erase(instance_id)
+
+func _action_serial(unit: Unit) -> int:
+	return unit.net_visual_action_serial if unit.battle_context != null and unit.battle_context.is_net_client() else unit.get_visual_action_serial()
+
+func _on_unit_death(instance_id: int) -> void:
+	_stop_sustain(instance_id)
+	var entry: Dictionary = _unit_entries.get(instance_id, {})
+	if entry.is_empty():
+		return
+	var unit = (entry.unit_ref as WeakRef).get_ref()
+	if unit is Unit and is_instance_valid(unit):
+		play_event(unit, &"death", unit.get_visual_screen_position())
+	# 死亡不补播技能结束声；已释放单位也不会遗留轮询项。
+	_unit_entries.erase(instance_id)
+
+## 通用纯表现事件入口；未配置的事件保持静音，不猜测或替代技能素材。
+func play_event(unit: Unit, cue: StringName, position: Vector2) -> bool:
+	if unit == null or not is_instance_valid(unit):
+		return false
+	var entry: Dictionary = _unit_entries.get(unit.get_instance_id(), {})
+	if entry.is_empty():
+		return false
+	var event: Dictionary = entry.audio.get("events", {}).get(String(cue), {})
+	return _play_pool(String(entry.card_id), cue, event.get("pool", []), position, float(event.get("volume_db", 0.0)), StringName(event.get("bus", "Combat")))
 
 func _attack_serial(unit: Unit) -> int:
 	if unit.battle_context != null and unit.battle_context.is_net_client():
@@ -133,7 +242,7 @@ func _play_attack_swing(card_id: String, audio: Dictionary, position: Vector2, s
 		float(audio.get("attack_swing_volume_db", -5.0))
 	)
 
-func _play_pool(card_id: String, cue: StringName, configured: Variant, position: Vector2, volume_db: float) -> bool:
+func _play_pool(card_id: String, cue: StringName, configured: Variant, position: Vector2, volume_db: float, bus: StringName = COMBAT_BUS) -> bool:
 	if not configured is Array or (configured as Array).is_empty():
 		return false
 	var paths := PackedStringArray()
@@ -146,6 +255,7 @@ func _play_pool(card_id: String, cue: StringName, configured: Variant, position:
 	if player == null:
 		return false
 	player.global_position = position
+	player.bus = bus
 	player.volume_db = volume_db
 	player.stream = stream
 	player.play()

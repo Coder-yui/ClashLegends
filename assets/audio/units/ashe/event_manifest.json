@@ -1,0 +1,150 @@
+[
+  {
+    "file": "play_sfx_ashe_ashebasicattack_oncast_r1_d.wav",
+    "event": "Play_sfx_Ashe_AsheBasicAttack_OnCast",
+    "event_id": 3679250772,
+    "source_preview": "event_wav/Play_sfx_Ashe_AsheBasicAttack_OnCast {r1} {d}.wav",
+    "media_ids": [
+      9562456,
+      95721405
+    ]
+  },
+  {
+    "file": "play_sfx_ashe_ashebasicattack_oncast_r2_d.wav",
+    "event": "Play_sfx_Ashe_AsheBasicAttack_OnCast",
+    "event_id": 3679250772,
+    "source_preview": "event_wav/Play_sfx_Ashe_AsheBasicAttack_OnCast {r2} {d}.wav",
+    "media_ids": [
+      9562456,
+      95721405
+    ]
+  },
+  {
+    "file": "play_sfx_ashe_ashebasicattack_onmissilelaunch_r1_d.wav",
+    "event": "Play_sfx_Ashe_AsheBasicAttack_OnMissileLaunch",
+    "event_id": 3896208514,
+    "source_preview": "event_wav/Play_sfx_Ashe_AsheBasicAttack_OnMissileLaunch {r1} {d}.wav",
+    "media_ids": [
+      85843841,
+      106727677,
+      251273485
+    ]
+  },
+  {
+    "file": "play_sfx_ashe_ashebasicattack_onmissilelaunch_r2_d.wav",
+    "event": "Play_sfx_Ashe_AsheBasicAttack_OnMissileLaunch",
+    "event_id": 3896208514,
+    "source_preview": "event_wav/Play_sfx_Ashe_AsheBasicAttack_OnMissileLaunch {r2} {d}.wav",
+    "media_ids": [
+      85843841,
+      106727677,
+      251273485
+    ]
+  },
+  {
+    "file": "play_sfx_ashe_ashebasicattack_onmissilelaunch_r3_d.wav",
+    "event": "Play_sfx_Ashe_AsheBasicAttack_OnMissileLaunch",
+    "event_id": 3896208514,
+    "source_preview": "event_wav/Play_sfx_Ashe_AsheBasicAttack_OnMissileLaunch {r3} {d}.wav",
+    "media_ids": [
+      85843841,
+      106727677,
+      251273485
+    ]
+  },
+  {
+    "file": "play_sfx_ashe_ashebasicattack_onhit_r1_d.wav",
+    "event": "Play_sfx_Ashe_AsheBasicAttack_OnHit",
+    "event_id": 219790332,
+    "source_preview": "event_wav/Play_sfx_Ashe_AsheBasicAttack_OnHit {r1} {d}.wav",
+    "media_ids": [
+      67757603,
+      69888753,
+      147327516
+    ]
+  },
+  {
+    "file": "play_sfx_ashe_ashebasicattack_onhit_r2_d.wav",
+    "event": "Play_sfx_Ashe_AsheBasicAttack_OnHit",
+    "event_id": 219790332,
+    "source_preview": "event_wav/Play_sfx_Ashe_AsheBasicAttack_OnHit {r2} {d}.wav",
+    "media_ids": [
+      67757603,
+      69888753,
+      147327516
+    ]
+  },
+  {
+    "file": "play_sfx_ashe_ashebasicattack_onhit_r3_d.wav",
+    "event": "Play_sfx_Ashe_AsheBasicAttack_OnHit",
+    "event_id": 219790332,
+    "source_preview": "event_wav/Play_sfx_Ashe_AsheBasicAttack_OnHit {r3} {d}.wav",
+    "media_ids": [
+      67757603,
+      69888753,
+      147327516
+    ]
+  },
+  {
+    "file": "play_sfx_ashe_volley_oncast_r1_d.wav",
+    "event": "Play_sfx_Ashe_Volley_OnCast",
+    "event_id": 2971874842,
+    "source_preview": "event_wav/Play_sfx_Ashe_Volley_OnCast {r1} {d}.wav",
+    "media_ids": [
+      9562456,
+      95721405
+    ]
+  },
+  {
+    "file": "play_sfx_ashe_volley_oncast_r2_d.wav",
+    "event": "Play_sfx_Ashe_Volley_OnCast",
+    "event_id": 2971874842,
+    "source_preview": "event_wav/Play_sfx_Ashe_Volley_OnCast {r2} {d}.wav",
+    "media_ids": [
+      9562456,
+      95721405
+    ]
+  },
+  {
+    "file": "play_sfx_ashe_volleyattackwithsound_onmissilelaunch.wav",
+    "event": "Play_sfx_Ashe_VolleyAttackWithSound_OnMissileLaunch",
+    "event_id": 1644862203,
+    "source_preview": "event_wav/Play_sfx_Ashe_VolleyAttackWithSound_OnMissileLaunch.wav",
+    "media_ids": [
+      548530414
+    ]
+  },
+  {
+    "file": "play_sfx_ashe_volleyattack_onhit_r1.wav",
+    "event": "Play_sfx_Ashe_VolleyAttack_OnHit",
+    "event_id": 2544149430,
+    "source_preview": "event_wav/Play_sfx_Ashe_VolleyAttack_OnHit {r1}.wav",
+    "media_ids": [
+      130757730,
+      426243264,
+      572389194
+    ]
+  },
+  {
+    "file": "play_sfx_ashe_volleyattack_onhit_r2.wav",
+    "event": "Play_sfx_Ashe_VolleyAttack_OnHit",
+    "event_id": 2544149430,
+    "source_preview": "event_wav/Play_sfx_Ashe_VolleyAttack_OnHit {r2}.wav",
+    "media_ids": [
+      130757730,
+      426243264,
+      572389194
+    ]
+  },
+  {
+    "file": "play_sfx_ashe_volleyattack_onhit_r3.wav",
+    "event": "Play_sfx_Ashe_VolleyAttack_OnHit",
+    "event_id": 2544149430,
+    "source_preview": "event_wav/Play_sfx_Ashe_VolleyAttack_OnHit {r3}.wav",
+    "media_ids": [
+      130757730,
+      426243264,
+      572389194
+    ]
+  }
+]

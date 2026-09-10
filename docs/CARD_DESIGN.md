@@ -32,6 +32,7 @@ CardDB 是卡牌、系统召唤物、防御塔/水晶的权威数值与表现配
 - 编队部署：单位卡可用 `deployment_count / deployment_spacing` 让一次落点与一个部署读条展开为确定性中心/环形编队；每名成员仍是独立 `Unit`。
 - 双形态：命中次数、变形/还原时长、完整 `transformed_stats`。
 - 表现：`visual_scene_path(s)`、`visual_forward_yaw`、`visual_animations`；这些不能参与权威判定。单位动画采用 locomotion + action 通道，专用转场和全局混合规则详见 `ANIMATION_STATE_SYSTEM.md`。
+- 音频表现：`audio` 的攻击分段声音池、共享命中池及 `events`；由 GameAudioManager 读取，不参与权威判定。字段契约、真实触发范围、素材归档与验收见 `AUDIO_INTEGRATION.md`；不要把 validator 接受的事件名等同于所有技能都已实现发声入口。
 
 主动 `kind` 当前允许 `nova`、`buff`、`summon`、`dual_form`、`frontal`、`forward_area`、`continuous_area`、`empowered_attack`、`attack_lifesteal`、`area_shield`。`area_shield` 以施法者表面距离选择半径内所有存活友方战斗对象，可覆盖地面、空中、建筑、自身、防御塔与水晶；护盾优先承受外部伤害，但限时建筑的自然寿命衰减仍直接扣除生命，生命归零时不会被护盾延命。`frontal` 可用 `fan` 或 `trapezoid` 表达锁定朝向的扇形/梯形命中；等宽的 `trapezoid` 可表达一次命中路径上所有敌人的穿透弹，`projectile_visual = laser` 仅绘制对应的飞行表现，不参与权威命中。`fan` 的外缘按圆弧半径判定，`center_width` 可在其中声明恒定宽度的中央强化长条，未配置时仍可用 `center_ratio` 表达按角度缩放的小扇区。`forward_area` 在锁定方向的前方圆形区域结算，并可排定固定模拟扩散的冲击波，`shockwave_full_only` 可将冲击波限定为满资源升级形态；若声明 `zone_duration/zone_tick_interval/zone_damage`，则会在技能落点创建与施法者解绑的固定区域，并按固定模拟脉冲读取可选减速字段；`continuous_area` 不保存固定落点，每个固定模拟脉冲都以施法者当前权威位置为中心，适合边移动边持续造成范围伤害；`empowered_attack` 只强化原攻击时间线中的下一次普攻，不重置攻速或另起攻击动作；`attack_lifesteal` 在此后每次真实普攻命中时按该击伤害与 `heal_ratio` 回复生命，持续到单位死亡，`max_health_ratio` 决定允许的溢出上限。主动默认只作用于持有者，`target_scope = deployment_group` 时作用于同一次卡牌部署中仍存活的编队成员，持有者死亡后技能资格转交同编队存活成员。再次部署会替换主动槽资格，但不会清除旧编队已经获得的持续效果。每个单位/建筑主动技能都配置 `cost`、`max_uses`、`cooldown`：命令进入 Host 的 Command Buffer 时扣除当前技能金币，技能在权威 Cast Start 时扣除一次使用次数并开始 CD；这些状态属于场上该技能实例，重新下卡生成新实例后重置。各张卡的具体数值由 CardDB 当前条目和对应卡牌文档记录。技能资格、Command Buffer 与 Cast/Impact 时间线由 Main 编排，Gameplay Impact 集中在 `ActiveSkillEffectSystem`。冰冻是法术卡特例，放在主动槽即启用强化效果，额外技能花费为 `0`，次数随该张卡的一次施放计算，不进入单位主动技能实例。治疗术是另一例法术强化：放在主动槽时启用强化治疗，额外技能花费为 `1`（即施放费用 +1，由 `active_cost_bonus` 声明），普通治疗只回复范围内友军单位且不作用于建筑，强化后全图友军单位按倍率回复并为范围内友军（含建筑卡、防御塔、水晶）添加护盾。新增 kind 必须同时实现权威效果、CardDB validator、必要快照/RPC、UI 描述和领域回归；不能只写数据。技能可提供纯表现用 `description`，避免 UI 出现英雄名分支。
 
@@ -47,6 +48,8 @@ CardDB 是卡牌、系统召唤物、防御塔/水晶的权威数值与表现配
 
 普通卡：新增 CardDB 条目，通过 `play_card()` → `_spawn_unit()`，CardArt 自动发现卡面，3D 表现读取路径/动画配置。通用机制字段由 Unit 和 Battle 系统读取。
 
+整卡交付按 `AGENT_WORKFLOW.md` 的四项制作阶段及联合验收执行；模型、卡面完成后还需检查音频。已有通用音频事件通常只需加素材与 CardDB.audio；缺少事件消费者时才按 `AUDIO_INTEGRATION.md` 扩展通用表现入口与测试。
+
 特殊机制：先写不依赖英雄名的规则，再在通用系统中实现字段读取；如客户端必须显示或模拟该状态，更新 Snapshot/可靠事件；为领域套件增加断言；最后更新本手册与 validator 字段白名单。禁止 `if card_id == "hero"` 和英雄继承树。
 
 ## Validator 覆盖
@@ -54,3 +57,5 @@ CardDB 是卡牌、系统召唤物、防御塔/水晶的权威数值与表现配
 当前会发现：非法类型/字段、必要战斗字段缺失、体型半径不匹配、弹体速度/类型/颜色错误、资源路径不存在、动画结构/未知键、建筑字段、未知法术 kind、失效召唤引用、双形态字段、未知主动 kind/必填项、主动动作映射、动作数组时长、施法时间关系和全身动作锁约束。
 
 完整 mechanics 还会对全部单位/建筑/双形态统一实例化包装场景，检查真实动画名，并检查所有可选卡的自动卡面发现。普通卡使用通用场景/动画契约；特殊机制或特殊动画链在对应领域套件中增加断言。
+
+音频 validator 检查声音池结构、攻击段数量、资源存在且为 AudioStream、事件字段/动作名及音量类型。它不验证听感、真实技能命中派发、声音中断或每个技能候选是否已经试听；这些按音频专项验收补齐。

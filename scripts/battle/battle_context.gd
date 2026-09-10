@@ -55,6 +55,10 @@ func unblock_nav_cells(cells: Array) -> void:
 func notify_unit_hit(net_id: int) -> void:
 	_controller.on_unit_hit(net_id)
 
+## 权威事件后的纯表现通知，不改变战斗状态。
+func notify_unit_audio_event(unit: Unit, cue: StringName, position: Vector2) -> void:
+	_controller._notify_unit_audio_event(unit, cue, position)
+
 func notify_unit_died(net_id: int, play_death_visual: bool = true) -> void:
 	_controller.on_unit_died(net_id, play_death_visual)
 

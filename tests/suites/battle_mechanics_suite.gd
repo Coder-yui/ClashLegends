@@ -28,7 +28,7 @@ func _run() -> void:
 	_main._minion_waves_enabled = false
 
 	ArenaDeploymentSuite.new().run(self, _main)
-	AUDIO_PRESENTATION_SUITE_SCRIPT.new().run(self, _main)
+	await AUDIO_PRESENTATION_SUITE_SCRIPT.new().run(self, _main)
 	PresentationSuite.new().run(self, _main)
 	BuildingMinionSuite.new().run(self, _main)
 	NavigationCollisionSuite.new().run(self, _main)

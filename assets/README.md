@@ -38,3 +38,5 @@ assets/
 ## 音频
 
 短促、重复播放的战斗音效放在 `assets/audio/units/<card_id>/`，卡牌的音频池在 CardDB `audio` 中登记并由 `GameAudioManager` 消费。挥击声按攻击动画段配置，真实命中声只由权威伤害成功事件触发；音频不得反向驱动伤害或动画状态。背景音乐与 UI 音效分别使用 `Music`、`UI` 总线，战斗音效使用 `Combat` 总线。
+
+完整制作流程见 `docs/AUDIO_INTEGRATION.md`。只归档实际用到的 WAV；同目录放 `README.md`（cue/原始事件/来源/限制）和 `event_manifest.json`（文件映射）。文件使用英文 snake_case，保留可追溯的事件名、随机变体及未知条件 ID；原始包和整套未使用音频保留在项目外。不要手改 Godot 生成的 `.import`。待开发队列的迁移规则同样适用于音频，但外部共享原始库只读提取，不整包移入项目。

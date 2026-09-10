@@ -1420,6 +1420,23 @@ func _notify_attack_audio_hit(attacker: Unit, position: Vector2) -> void:
 	if mode == "host" and attacker.net_id >= 0:
 		_rpc_attack_audio_hit.rpc(attacker.net_id, position)
 
+## 一次范围脉冲即使命中多个目标也只播放一次；空挥/免疫不产生命中声。
+func _notify_unit_audio_event(unit: Unit, cue: StringName, position: Vector2) -> void:
+	if unit == null or not is_instance_valid(unit):
+		return
+	if _audio_manager != null:
+		_audio_manager.play_event(unit, cue, position)
+	if mode == "host" and unit.net_id >= 0:
+		_rpc_unit_audio_event.rpc(unit.net_id, String(cue), position)
+
+@rpc("authority", "call_remote", "unreliable")
+func _rpc_unit_audio_event(net_id: int, cue: String, position: Vector2) -> void:
+	if mode != "client" or _audio_manager == null:
+		return
+	var unit: Unit = _client_units.get(net_id)
+	if unit != null and is_instance_valid(unit):
+		_audio_manager.play_event(unit, StringName(cue), position)
+
 func _apply_attack_hit_effects(target: Node2D, effects: Dictionary) -> void:
 	if target is Unit and is_instance_valid(target) and target.hp > 0.0:
 		var blind_charges := maxi(int(effects.get("blind_charges", 0)), 0)

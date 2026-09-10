@@ -1,70 +1,41 @@
-Garen default-skin basic attack SFX extraction
+# 盖伦原皮：当前玩法音频
 
-Project integration:
-- `swing_01` through `swing_04` are the random pool for `Attack1`.
-- `swing_05` through `swing_08` are the random pool for `Attack2`.
-- `hit_01` through `hit_16` form the shared successful-hit pool.
-- Files were moved from the repository-root `Garen_Attack_SFX/` directory to
-  `assets/audio/units/garen/` when the audio presentation system was added.
-- These extracted Riot assets are for this noncommercial learning prototype and
-  must not be used in a commercial release without appropriate permission.
+已移除旧的 24 份实验 WAV 及其导入文件；现在使用本次解析的事件组合 WAV，共 42 份。原始完整素材库保留在项目外，不会整包导入。
 
-Game WAD source:
-D:\WeGameApps\????\Game\DATA\FINAL\Champions\Garen.wad.client
+| 游戏触发 | 原始事件（省略 Play_sfx_Garen_） | 变体数 |
+| --- | --- | --- |
+| Attack1 / Attack2 出手 | GarenBasicAttack_OnCast / GarenBasicAttack2_OnCast | 4 + 4 |
+| 普攻/强化普攻实际命中 | GarenBasicAttack_OnHit | 16 |
+| 致命打击准备状态出现 | GarenQ_OnCast | 3 |
+| Spell1 强化出手（替代普通挥击） | GarenQAttack_OnCast | 1 |
+| judgment / Spell3_0 开始 | GarenE_OnCast | 3 |
+| judgment 持续旋转层（空转也播放） | GarenE_OnBuffActivate | 3 |
+| judgment 结束 | GarenE_OnBuffDeactivate | 3 |
+| 审判实际伤害脉冲（每脉冲至多一次） | GarenE_hit | 4 |
+| Death 开始 | Death3D_cast | 1 |
 
-Extracted WAD resources copied to:
-C:\Users\Lenovo\Desktop\garen_sfx_extract
+## 接入约定
 
-Resources used from Garen.wad.client:
-data/characters/garen/skins/skin0.bin
-assets/sounds/wwise2016/sfx/characters/garen/skins/base/garen_base_sfx_audio.bnk
-assets/sounds/wwise2016/sfx/characters/garen/skins/base/garen_base_sfx_events.bnk
+- CardDB.audio 登记所有路径、变体池与音量；GameAudioManager 只消费动作序号、强化状态、死亡信号和真实命中事件。
+- 两个技能仍由原有备战选择决定；没有配置让两者同时释放。普通攻击命中共享素材，不把暴击或 R 命中声冒充 Q 命中。
+- 没有给部署、待机、跑步凭空配声音；未引入 W、R、被动、表情或 VO。
+- judgment:sustain 随起手同时启动，随机选择约 3.49/3.56/3.64 秒的 BuffActivate 原片段，按单次播放而非无限循环；由单位持有独立播放器，位置跟随角色。3 秒技能结束时停止该层并播放收尾；死亡/销毁立即停止且不补播收尾，替换动作也停止旧层。冻结/眩晕期间该层暂停并随动作恢复。命中声独立叠加，没有敌人也有旋转声音。
+- 这复刻主要播放组织，不宣称完整还原 LOL 动态滤波/停止淡出参数；起手等短音仍自然保留尾音。持续层最多 24 路，满时回收最早一条，不抢占短音池。
+- 攻击序号/技能动作由快照同步；审判真实命中通过 authority-only RPC 重放。声音丢失不影响伤害。
+- WAV 保留事件解析后的层级增益，CardDB 额外增益为 0 dB，没有逐文件峰值归一化。
+- OnHit 的四个数值 Switch 分支尚未恢复材质名称，目前作为共享随机池使用，不能宣称是已识别的“建筑材质分支”。文件保留数值 ID，后续可按确认结果细分。
 
-Tools used:
-LeagueToolkit/wadtools v0.5.7, with latest Mimir/CommunityDragon hash tables downloaded by wadtools
-Morilli/bnk-extract v1.9_fix1
-vgmstream r2117
+## 来源与重现
 
-Confirmed included events:
-Play_sfx_Garen_GarenBasicAttack_OnCast - base attack swing/whoosh variants
-Play_sfx_Garen_GarenBasicAttack2_OnCast - second base attack swing/whoosh variants
-Play_sfx_Garen_GarenBasicAttack_OnHit and Play_sfx_Garen_GarenBasicAttack2_OnHit - base attack impact variants; these reuse the same WEM audio ID pool, so exported hit WAVs are de-duplicated
+源目录：`/Users/czh/Tools/lol-asset-tools/garen_base_audio/event_wav/`。
+源包：LOL_Asset_Source 的 Garen.wad.client 原皮 SFX Audio/Events BNK，结合 skin0.bin 事件名及 init.bnk。
+工具：wadtools、wwiser、vgmstream；导出保留可解析事件层级，不能完整复现 Wwise 运行时滤波、动态音高及全部嵌套随机组合。
 
-Excluded events/pools:
-GarenCritAttack_OnCast / GarenCritAttack_OnHit
-GarenQAttack_OnCast
-GarenQ/GarenW/GarenE/GarenR events
-emote/3D loops, passive, death and other non-basic-attack SFX
-voice/language WADs were not used
+`event_manifest.json` 记录项目文件 → 原始事件名/ShortID → 源预览 → 事件关联 WEM 集合。
+其中 media_ids 是整个事件的候选来源，不表示每个变体包含全部 WEM。
+文件按项目 snake_case 命名；rN、Switch 数字与 d（wwiser 重复事件标记）均保留。
+恢复的是事件名，不是 Riot 工程里的原 WAV 名。
 
-Confirmed WAV files:
-garen_basic_attack_swing_01.wav | Event: Play_sfx_Garen_GarenBasicAttack_OnCast | Event action/group: 3603 | WEM audio ID: 20848802
-garen_basic_attack_swing_02.wav | Event: Play_sfx_Garen_GarenBasicAttack_OnCast | Event action/group: 3603 | WEM audio ID: 470705115
-garen_basic_attack_swing_03.wav | Event: Play_sfx_Garen_GarenBasicAttack_OnCast | Event action/group: 3603 | WEM audio ID: 147893136
-garen_basic_attack_swing_04.wav | Event: Play_sfx_Garen_GarenBasicAttack_OnCast | Event action/group: 3603 | WEM audio ID: 1246050
-garen_basic_attack_swing_05.wav | Event: Play_sfx_Garen_GarenBasicAttack2_OnCast | Event action/group: 3605 | WEM audio ID: 498203661
-garen_basic_attack_swing_06.wav | Event: Play_sfx_Garen_GarenBasicAttack2_OnCast | Event action/group: 3605 | WEM audio ID: 160268863
-garen_basic_attack_swing_07.wav | Event: Play_sfx_Garen_GarenBasicAttack2_OnCast | Event action/group: 3605 | WEM audio ID: 745780724
-garen_basic_attack_swing_08.wav | Event: Play_sfx_Garen_GarenBasicAttack2_OnCast | Event action/group: 3605 | WEM audio ID: 3618390
-garen_basic_attack_hit_01.wav | Event: Play_sfx_Garen_GarenBasicAttack2_OnHit; also shared by GarenBasicAttack_OnHit | Event action/group: 1004934447 | WEM audio ID: 79667740
-garen_basic_attack_hit_02.wav | Event: Play_sfx_Garen_GarenBasicAttack2_OnHit; also shared by GarenBasicAttack_OnHit | Event action/group: 1004934447 | WEM audio ID: 14110164
-garen_basic_attack_hit_03.wav | Event: Play_sfx_Garen_GarenBasicAttack2_OnHit; also shared by GarenBasicAttack_OnHit | Event action/group: 1004934447 | WEM audio ID: 36191544
-garen_basic_attack_hit_04.wav | Event: Play_sfx_Garen_GarenBasicAttack2_OnHit; also shared by GarenBasicAttack_OnHit | Event action/group: 1004934447 | WEM audio ID: 53736152
-garen_basic_attack_hit_05.wav | Event: Play_sfx_Garen_GarenBasicAttack2_OnHit; also shared by GarenBasicAttack_OnHit | Event action/group: 197700997 | WEM audio ID: 19449746
-garen_basic_attack_hit_06.wav | Event: Play_sfx_Garen_GarenBasicAttack2_OnHit; also shared by GarenBasicAttack_OnHit | Event action/group: 197700997 | WEM audio ID: 18709251
-garen_basic_attack_hit_07.wav | Event: Play_sfx_Garen_GarenBasicAttack2_OnHit; also shared by GarenBasicAttack_OnHit | Event action/group: 197700997 | WEM audio ID: 117531801
-garen_basic_attack_hit_08.wav | Event: Play_sfx_Garen_GarenBasicAttack2_OnHit; also shared by GarenBasicAttack_OnHit | Event action/group: 197700997 | WEM audio ID: 120191057
-garen_basic_attack_hit_09.wav | Event: Play_sfx_Garen_GarenBasicAttack2_OnHit; also shared by GarenBasicAttack_OnHit | Event action/group: 281933185 | WEM audio ID: 206316614
-garen_basic_attack_hit_10.wav | Event: Play_sfx_Garen_GarenBasicAttack2_OnHit; also shared by GarenBasicAttack_OnHit | Event action/group: 281933185 | WEM audio ID: 162685102
-garen_basic_attack_hit_11.wav | Event: Play_sfx_Garen_GarenBasicAttack2_OnHit; also shared by GarenBasicAttack_OnHit | Event action/group: 281933185 | WEM audio ID: 57311359
-garen_basic_attack_hit_12.wav | Event: Play_sfx_Garen_GarenBasicAttack2_OnHit; also shared by GarenBasicAttack_OnHit | Event action/group: 281933185 | WEM audio ID: 63889480
-garen_basic_attack_hit_13.wav | Event: Play_sfx_Garen_GarenBasicAttack2_OnHit; also shared by GarenBasicAttack_OnHit | Event action/group: 432925646 | WEM audio ID: 13912708
-garen_basic_attack_hit_14.wav | Event: Play_sfx_Garen_GarenBasicAttack2_OnHit; also shared by GarenBasicAttack_OnHit | Event action/group: 432925646 | WEM audio ID: 188285667
-garen_basic_attack_hit_15.wav | Event: Play_sfx_Garen_GarenBasicAttack2_OnHit; also shared by GarenBasicAttack_OnHit | Event action/group: 432925646 | WEM audio ID: 45134918
-garen_basic_attack_hit_16.wav | Event: Play_sfx_Garen_GarenBasicAttack2_OnHit; also shared by GarenBasicAttack_OnHit | Event action/group: 432925646 | WEM audio ID: 178848513
-
-Candidates:
-None. The BasicAttack event mapping was available and specific enough to avoid fallback extraction.
-
-Notes:
-The original League of Legends client files were only read. All extraction and conversion happened in copied files under Desktop\garen_sfx_extract and Desktop\Garen_Attack_SFX.
+可运行 `python3 tools/import_garen_audio.py` 从上述完整库重新复制这 42 份素材；不会删除或改变源库。
+顺序试听 Q/E：`Godot --path . --script tools/demos/garen_audio_demo.gd`；每段分别生成角色并使用正式技能/表现入口，日志显示实际音频事件，截图写入系统临时目录。
+仅供学习原型使用；商业使用需取得素材权利人的许可。

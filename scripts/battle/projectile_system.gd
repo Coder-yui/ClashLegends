@@ -60,6 +60,8 @@ func launch(attacker: Node2D, target: Node2D, amount: float, projectile_speed: f
 		"visual_offset_follows_trajectory": visual_offset_follows_trajectory,
 		"visual_launch_pos": start_position, "direction": direction,
 	}
+	if attacker is Unit:
+		_context.notify_unit_audio_event(attacker as Unit, &"attack_launch", attacker.global_position)
 	queue_redraw()
 
 func tick(dt: float) -> void:

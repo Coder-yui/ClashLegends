@@ -2,6 +2,8 @@
 
 本文只描述所有素材共用的架构与边界。具体近战流程见 `MELEE_3D_INTEGRATION.md`；远程差异见 `RANGED_3D_INTEGRATION.md`；部署选片见 `UNIT_DEPLOYMENT.md`；角色特例放角色目录 README。
 
+完整新卡顺序为 2D 权威逻辑 → 3D 模型/动画 → 卡面 → 音频 → 联合验收，见 `AGENT_WORKFLOW.md`。本文的模型验收不代表整卡完成；音频专项流程见 `AUDIO_INTEGRATION.md`。
+
 ## 运行时分层
 
 ```text
@@ -21,6 +23,7 @@ CardDB 表现配置
 assets/cards/<card_id>_loading.jpg|png|webp
 assets/units/<card_id>/source/<source files>
 assets/units/<card_id>/<card_id>_view.tscn
+assets/audio/units/<card_id>/<event_name_and_variant>.wav
 ```
 
 同一卡两套阵营模型使用 `visual_scene_paths = [blue/order, red/chaos]`；单模型使用 `visual_scene_path`。CardDB 的 `visual_animations` 使用素材中真实、区分大小写的动画名。常用键为 `deploy`、`idle`、`idle_cycle`、`move`、`move_enter`、`move_cycle`、`attack`、`attack_hit`、`attack_recover`、`attack_structure`、`death`、`visual_actions`；`idle_cycle` 可按固定顺序循环待机片段并允许重复名称，只影响表现。详细合法结构由 `CardDB.validate_all()` 检查，实际播放行为以 `unit_model_3d.gd` 为准。
@@ -42,5 +45,6 @@ assets/units/<card_id>/<card_id>_view.tscn
 5. 只在 CardDB 配路径/动画映射；普通角色不新增表现脚本。
 6. 运行 mechanics（含路径和字段 validator）。
 7. F5 目视双方阵营、部署/待机/移动/攻击/死亡、脚底、遮挡和朝向。
+8. 完整新卡继续核对卡面，并按 `AUDIO_INTEGRATION.md` 给当前使用的表现/命中事件接入声音；音频不挂在模型动画方法轨道中，不反向控制权威时序。
 
 只有素材本身需要组合、网格过滤或双模型切换时才增加角色专属包装脚本，并把说明放在 `assets/units/<card_id>/README.md`。

@@ -1,0 +1,686 @@
+[
+  {
+    "file": "play_sfx_garen_garenbasicattack_oncast_r1.wav",
+    "event": "Play_sfx_Garen_GarenBasicAttack_OnCast",
+    "event_id": 2146347944,
+    "source_preview": "event_wav/Play_sfx_Garen_GarenBasicAttack_OnCast {r1}.wav",
+    "media_ids": [
+      1246050,
+      20848802,
+      147893136,
+      470705115
+    ]
+  },
+  {
+    "file": "play_sfx_garen_garenbasicattack_oncast_r2.wav",
+    "event": "Play_sfx_Garen_GarenBasicAttack_OnCast",
+    "event_id": 2146347944,
+    "source_preview": "event_wav/Play_sfx_Garen_GarenBasicAttack_OnCast {r2}.wav",
+    "media_ids": [
+      1246050,
+      20848802,
+      147893136,
+      470705115
+    ]
+  },
+  {
+    "file": "play_sfx_garen_garenbasicattack_oncast_r3.wav",
+    "event": "Play_sfx_Garen_GarenBasicAttack_OnCast",
+    "event_id": 2146347944,
+    "source_preview": "event_wav/Play_sfx_Garen_GarenBasicAttack_OnCast {r3}.wav",
+    "media_ids": [
+      1246050,
+      20848802,
+      147893136,
+      470705115
+    ]
+  },
+  {
+    "file": "play_sfx_garen_garenbasicattack_oncast_r4.wav",
+    "event": "Play_sfx_Garen_GarenBasicAttack_OnCast",
+    "event_id": 2146347944,
+    "source_preview": "event_wav/Play_sfx_Garen_GarenBasicAttack_OnCast {r4}.wav",
+    "media_ids": [
+      1246050,
+      20848802,
+      147893136,
+      470705115
+    ]
+  },
+  {
+    "file": "play_sfx_garen_garenbasicattack2_oncast_r1.wav",
+    "event": "Play_sfx_Garen_GarenBasicAttack2_OnCast",
+    "event_id": 3696094040,
+    "source_preview": "event_wav/Play_sfx_Garen_GarenBasicAttack2_OnCast {r1}.wav",
+    "media_ids": [
+      3618390,
+      160268863,
+      498203661,
+      745780724
+    ]
+  },
+  {
+    "file": "play_sfx_garen_garenbasicattack2_oncast_r2.wav",
+    "event": "Play_sfx_Garen_GarenBasicAttack2_OnCast",
+    "event_id": 3696094040,
+    "source_preview": "event_wav/Play_sfx_Garen_GarenBasicAttack2_OnCast {r2}.wav",
+    "media_ids": [
+      3618390,
+      160268863,
+      498203661,
+      745780724
+    ]
+  },
+  {
+    "file": "play_sfx_garen_garenbasicattack2_oncast_r3.wav",
+    "event": "Play_sfx_Garen_GarenBasicAttack2_OnCast",
+    "event_id": 3696094040,
+    "source_preview": "event_wav/Play_sfx_Garen_GarenBasicAttack2_OnCast {r3}.wav",
+    "media_ids": [
+      3618390,
+      160268863,
+      498203661,
+      745780724
+    ]
+  },
+  {
+    "file": "play_sfx_garen_garenbasicattack2_oncast_r4.wav",
+    "event": "Play_sfx_Garen_GarenBasicAttack2_OnCast",
+    "event_id": 3696094040,
+    "source_preview": "event_wav/Play_sfx_Garen_GarenBasicAttack2_OnCast {r4}.wav",
+    "media_ids": [
+      3618390,
+      160268863,
+      498203661,
+      745780724
+    ]
+  },
+  {
+    "file": "play_sfx_garen_garenbasicattack_onhit_1559186049_1153642577_r1_d.wav",
+    "event": "Play_sfx_Garen_GarenBasicAttack_OnHit",
+    "event_id": 4182934200,
+    "source_preview": "event_wav/Play_sfx_Garen_GarenBasicAttack_OnHit [1559186049=1153642577] {r1} {d}.wav",
+    "media_ids": [
+      13912708,
+      14110164,
+      18709251,
+      19449746,
+      36191544,
+      45134918,
+      53736152,
+      57311359,
+      63889480,
+      79667740,
+      117531801,
+      120191057,
+      162685102,
+      178848513,
+      188285667,
+      206316614
+    ]
+  },
+  {
+    "file": "play_sfx_garen_garenbasicattack_onhit_1559186049_1153642577_r2_d.wav",
+    "event": "Play_sfx_Garen_GarenBasicAttack_OnHit",
+    "event_id": 4182934200,
+    "source_preview": "event_wav/Play_sfx_Garen_GarenBasicAttack_OnHit [1559186049=1153642577] {r2} {d}.wav",
+    "media_ids": [
+      13912708,
+      14110164,
+      18709251,
+      19449746,
+      36191544,
+      45134918,
+      53736152,
+      57311359,
+      63889480,
+      79667740,
+      117531801,
+      120191057,
+      162685102,
+      178848513,
+      188285667,
+      206316614
+    ]
+  },
+  {
+    "file": "play_sfx_garen_garenbasicattack_onhit_1559186049_1153642577_r3_d.wav",
+    "event": "Play_sfx_Garen_GarenBasicAttack_OnHit",
+    "event_id": 4182934200,
+    "source_preview": "event_wav/Play_sfx_Garen_GarenBasicAttack_OnHit [1559186049=1153642577] {r3} {d}.wav",
+    "media_ids": [
+      13912708,
+      14110164,
+      18709251,
+      19449746,
+      36191544,
+      45134918,
+      53736152,
+      57311359,
+      63889480,
+      79667740,
+      117531801,
+      120191057,
+      162685102,
+      178848513,
+      188285667,
+      206316614
+    ]
+  },
+  {
+    "file": "play_sfx_garen_garenbasicattack_onhit_1559186049_1153642577_r4_d.wav",
+    "event": "Play_sfx_Garen_GarenBasicAttack_OnHit",
+    "event_id": 4182934200,
+    "source_preview": "event_wav/Play_sfx_Garen_GarenBasicAttack_OnHit [1559186049=1153642577] {r4} {d}.wav",
+    "media_ids": [
+      13912708,
+      14110164,
+      18709251,
+      19449746,
+      36191544,
+      45134918,
+      53736152,
+      57311359,
+      63889480,
+      79667740,
+      117531801,
+      120191057,
+      162685102,
+      178848513,
+      188285667,
+      206316614
+    ]
+  },
+  {
+    "file": "play_sfx_garen_garenbasicattack_onhit_1559186049_1216965916_r1_d.wav",
+    "event": "Play_sfx_Garen_GarenBasicAttack_OnHit",
+    "event_id": 4182934200,
+    "source_preview": "event_wav/Play_sfx_Garen_GarenBasicAttack_OnHit [1559186049=1216965916] {r1} {d}.wav",
+    "media_ids": [
+      13912708,
+      14110164,
+      18709251,
+      19449746,
+      36191544,
+      45134918,
+      53736152,
+      57311359,
+      63889480,
+      79667740,
+      117531801,
+      120191057,
+      162685102,
+      178848513,
+      188285667,
+      206316614
+    ]
+  },
+  {
+    "file": "play_sfx_garen_garenbasicattack_onhit_1559186049_1216965916_r2_d.wav",
+    "event": "Play_sfx_Garen_GarenBasicAttack_OnHit",
+    "event_id": 4182934200,
+    "source_preview": "event_wav/Play_sfx_Garen_GarenBasicAttack_OnHit [1559186049=1216965916] {r2} {d}.wav",
+    "media_ids": [
+      13912708,
+      14110164,
+      18709251,
+      19449746,
+      36191544,
+      45134918,
+      53736152,
+      57311359,
+      63889480,
+      79667740,
+      117531801,
+      120191057,
+      162685102,
+      178848513,
+      188285667,
+      206316614
+    ]
+  },
+  {
+    "file": "play_sfx_garen_garenbasicattack_onhit_1559186049_1216965916_r3_d.wav",
+    "event": "Play_sfx_Garen_GarenBasicAttack_OnHit",
+    "event_id": 4182934200,
+    "source_preview": "event_wav/Play_sfx_Garen_GarenBasicAttack_OnHit [1559186049=1216965916] {r3} {d}.wav",
+    "media_ids": [
+      13912708,
+      14110164,
+      18709251,
+      19449746,
+      36191544,
+      45134918,
+      53736152,
+      57311359,
+      63889480,
+      79667740,
+      117531801,
+      120191057,
+      162685102,
+      178848513,
+      188285667,
+      206316614
+    ]
+  },
+  {
+    "file": "play_sfx_garen_garenbasicattack_onhit_1559186049_1216965916_r4_d.wav",
+    "event": "Play_sfx_Garen_GarenBasicAttack_OnHit",
+    "event_id": 4182934200,
+    "source_preview": "event_wav/Play_sfx_Garen_GarenBasicAttack_OnHit [1559186049=1216965916] {r4} {d}.wav",
+    "media_ids": [
+      13912708,
+      14110164,
+      18709251,
+      19449746,
+      36191544,
+      45134918,
+      53736152,
+      57311359,
+      63889480,
+      79667740,
+      117531801,
+      120191057,
+      162685102,
+      178848513,
+      188285667,
+      206316614
+    ]
+  },
+  {
+    "file": "play_sfx_garen_garenbasicattack_onhit_1559186049_2058049674_r1_d.wav",
+    "event": "Play_sfx_Garen_GarenBasicAttack_OnHit",
+    "event_id": 4182934200,
+    "source_preview": "event_wav/Play_sfx_Garen_GarenBasicAttack_OnHit [1559186049=2058049674] {r1} {d}.wav",
+    "media_ids": [
+      13912708,
+      14110164,
+      18709251,
+      19449746,
+      36191544,
+      45134918,
+      53736152,
+      57311359,
+      63889480,
+      79667740,
+      117531801,
+      120191057,
+      162685102,
+      178848513,
+      188285667,
+      206316614
+    ]
+  },
+  {
+    "file": "play_sfx_garen_garenbasicattack_onhit_1559186049_2058049674_r2_d.wav",
+    "event": "Play_sfx_Garen_GarenBasicAttack_OnHit",
+    "event_id": 4182934200,
+    "source_preview": "event_wav/Play_sfx_Garen_GarenBasicAttack_OnHit [1559186049=2058049674] {r2} {d}.wav",
+    "media_ids": [
+      13912708,
+      14110164,
+      18709251,
+      19449746,
+      36191544,
+      45134918,
+      53736152,
+      57311359,
+      63889480,
+      79667740,
+      117531801,
+      120191057,
+      162685102,
+      178848513,
+      188285667,
+      206316614
+    ]
+  },
+  {
+    "file": "play_sfx_garen_garenbasicattack_onhit_1559186049_2058049674_r3_d.wav",
+    "event": "Play_sfx_Garen_GarenBasicAttack_OnHit",
+    "event_id": 4182934200,
+    "source_preview": "event_wav/Play_sfx_Garen_GarenBasicAttack_OnHit [1559186049=2058049674] {r3} {d}.wav",
+    "media_ids": [
+      13912708,
+      14110164,
+      18709251,
+      19449746,
+      36191544,
+      45134918,
+      53736152,
+      57311359,
+      63889480,
+      79667740,
+      117531801,
+      120191057,
+      162685102,
+      178848513,
+      188285667,
+      206316614
+    ]
+  },
+  {
+    "file": "play_sfx_garen_garenbasicattack_onhit_1559186049_2058049674_r4_d.wav",
+    "event": "Play_sfx_Garen_GarenBasicAttack_OnHit",
+    "event_id": 4182934200,
+    "source_preview": "event_wav/Play_sfx_Garen_GarenBasicAttack_OnHit [1559186049=2058049674] {r4} {d}.wav",
+    "media_ids": [
+      13912708,
+      14110164,
+      18709251,
+      19449746,
+      36191544,
+      45134918,
+      53736152,
+      57311359,
+      63889480,
+      79667740,
+      117531801,
+      120191057,
+      162685102,
+      178848513,
+      188285667,
+      206316614
+    ]
+  },
+  {
+    "file": "play_sfx_garen_garenbasicattack_onhit_1559186049_2473969246_r1_d.wav",
+    "event": "Play_sfx_Garen_GarenBasicAttack_OnHit",
+    "event_id": 4182934200,
+    "source_preview": "event_wav/Play_sfx_Garen_GarenBasicAttack_OnHit [1559186049=2473969246] {r1} {d}.wav",
+    "media_ids": [
+      13912708,
+      14110164,
+      18709251,
+      19449746,
+      36191544,
+      45134918,
+      53736152,
+      57311359,
+      63889480,
+      79667740,
+      117531801,
+      120191057,
+      162685102,
+      178848513,
+      188285667,
+      206316614
+    ]
+  },
+  {
+    "file": "play_sfx_garen_garenbasicattack_onhit_1559186049_2473969246_r2_d.wav",
+    "event": "Play_sfx_Garen_GarenBasicAttack_OnHit",
+    "event_id": 4182934200,
+    "source_preview": "event_wav/Play_sfx_Garen_GarenBasicAttack_OnHit [1559186049=2473969246] {r2} {d}.wav",
+    "media_ids": [
+      13912708,
+      14110164,
+      18709251,
+      19449746,
+      36191544,
+      45134918,
+      53736152,
+      57311359,
+      63889480,
+      79667740,
+      117531801,
+      120191057,
+      162685102,
+      178848513,
+      188285667,
+      206316614
+    ]
+  },
+  {
+    "file": "play_sfx_garen_garenbasicattack_onhit_1559186049_2473969246_r3_d.wav",
+    "event": "Play_sfx_Garen_GarenBasicAttack_OnHit",
+    "event_id": 4182934200,
+    "source_preview": "event_wav/Play_sfx_Garen_GarenBasicAttack_OnHit [1559186049=2473969246] {r3} {d}.wav",
+    "media_ids": [
+      13912708,
+      14110164,
+      18709251,
+      19449746,
+      36191544,
+      45134918,
+      53736152,
+      57311359,
+      63889480,
+      79667740,
+      117531801,
+      120191057,
+      162685102,
+      178848513,
+      188285667,
+      206316614
+    ]
+  },
+  {
+    "file": "play_sfx_garen_garenbasicattack_onhit_1559186049_2473969246_r4_d.wav",
+    "event": "Play_sfx_Garen_GarenBasicAttack_OnHit",
+    "event_id": 4182934200,
+    "source_preview": "event_wav/Play_sfx_Garen_GarenBasicAttack_OnHit [1559186049=2473969246] {r4} {d}.wav",
+    "media_ids": [
+      13912708,
+      14110164,
+      18709251,
+      19449746,
+      36191544,
+      45134918,
+      53736152,
+      57311359,
+      63889480,
+      79667740,
+      117531801,
+      120191057,
+      162685102,
+      178848513,
+      188285667,
+      206316614
+    ]
+  },
+  {
+    "file": "play_sfx_garen_garenq_oncast_r1.wav",
+    "event": "Play_sfx_Garen_GarenQ_OnCast",
+    "event_id": 3594645705,
+    "source_preview": "event_wav/Play_sfx_Garen_GarenQ_OnCast {r1}.wav",
+    "media_ids": [
+      143575041,
+      362558345,
+      787993323
+    ]
+  },
+  {
+    "file": "play_sfx_garen_garenq_oncast_r2.wav",
+    "event": "Play_sfx_Garen_GarenQ_OnCast",
+    "event_id": 3594645705,
+    "source_preview": "event_wav/Play_sfx_Garen_GarenQ_OnCast {r2}.wav",
+    "media_ids": [
+      143575041,
+      362558345,
+      787993323
+    ]
+  },
+  {
+    "file": "play_sfx_garen_garenq_oncast_r3.wav",
+    "event": "Play_sfx_Garen_GarenQ_OnCast",
+    "event_id": 3594645705,
+    "source_preview": "event_wav/Play_sfx_Garen_GarenQ_OnCast {r3}.wav",
+    "media_ids": [
+      143575041,
+      362558345,
+      787993323
+    ]
+  },
+  {
+    "file": "play_sfx_garen_garenqattack_oncast_r.wav",
+    "event": "Play_sfx_Garen_GarenQAttack_OnCast",
+    "event_id": 449467445,
+    "source_preview": "event_wav/Play_sfx_Garen_GarenQAttack_OnCast {r}.wav",
+    "media_ids": [
+      154299907,
+      276898048,
+      381621008,
+      536754521,
+      559757315,
+      642271584,
+      1036434606
+    ]
+  },
+  {
+    "file": "play_sfx_garen_garene_oncast_r1.wav",
+    "event": "Play_sfx_Garen_GarenE_OnCast",
+    "event_id": 1626520941,
+    "source_preview": "event_wav/Play_sfx_Garen_GarenE_OnCast {r1}.wav",
+    "media_ids": [
+      133377736,
+      594755842,
+      754874955
+    ]
+  },
+  {
+    "file": "play_sfx_garen_garene_oncast_r2.wav",
+    "event": "Play_sfx_Garen_GarenE_OnCast",
+    "event_id": 1626520941,
+    "source_preview": "event_wav/Play_sfx_Garen_GarenE_OnCast {r2}.wav",
+    "media_ids": [
+      133377736,
+      594755842,
+      754874955
+    ]
+  },
+  {
+    "file": "play_sfx_garen_garene_oncast_r3.wav",
+    "event": "Play_sfx_Garen_GarenE_OnCast",
+    "event_id": 1626520941,
+    "source_preview": "event_wav/Play_sfx_Garen_GarenE_OnCast {r3}.wav",
+    "media_ids": [
+      133377736,
+      594755842,
+      754874955
+    ]
+  },
+  {
+    "file": "play_sfx_garen_garene_onbuffactivate_r1.wav",
+    "event": "Play_sfx_Garen_GarenE_OnBuffActivate",
+    "event_id": 1863231484,
+    "source_preview": "event_wav/Play_sfx_Garen_GarenE_OnBuffActivate {r1}.wav",
+    "media_ids": [
+      244591647,
+      796822086,
+      965589492
+    ]
+  },
+  {
+    "file": "play_sfx_garen_garene_onbuffactivate_r2.wav",
+    "event": "Play_sfx_Garen_GarenE_OnBuffActivate",
+    "event_id": 1863231484,
+    "source_preview": "event_wav/Play_sfx_Garen_GarenE_OnBuffActivate {r2}.wav",
+    "media_ids": [
+      244591647,
+      796822086,
+      965589492
+    ]
+  },
+  {
+    "file": "play_sfx_garen_garene_onbuffactivate_r3.wav",
+    "event": "Play_sfx_Garen_GarenE_OnBuffActivate",
+    "event_id": 1863231484,
+    "source_preview": "event_wav/Play_sfx_Garen_GarenE_OnBuffActivate {r3}.wav",
+    "media_ids": [
+      244591647,
+      796822086,
+      965589492
+    ]
+  },
+  {
+    "file": "play_sfx_garen_garene_onbuffdeactivate_r1.wav",
+    "event": "Play_sfx_Garen_GarenE_OnBuffDeactivate",
+    "event_id": 2378836493,
+    "source_preview": "event_wav/Play_sfx_Garen_GarenE_OnBuffDeactivate {r1}.wav",
+    "media_ids": [
+      157743629,
+      1013602027,
+      1042272981
+    ]
+  },
+  {
+    "file": "play_sfx_garen_garene_onbuffdeactivate_r2.wav",
+    "event": "Play_sfx_Garen_GarenE_OnBuffDeactivate",
+    "event_id": 2378836493,
+    "source_preview": "event_wav/Play_sfx_Garen_GarenE_OnBuffDeactivate {r2}.wav",
+    "media_ids": [
+      157743629,
+      1013602027,
+      1042272981
+    ]
+  },
+  {
+    "file": "play_sfx_garen_garene_onbuffdeactivate_r3.wav",
+    "event": "Play_sfx_Garen_GarenE_OnBuffDeactivate",
+    "event_id": 2378836493,
+    "source_preview": "event_wav/Play_sfx_Garen_GarenE_OnBuffDeactivate {r3}.wav",
+    "media_ids": [
+      157743629,
+      1013602027,
+      1042272981
+    ]
+  },
+  {
+    "file": "play_sfx_garen_garene_hit_r1.wav",
+    "event": "Play_sfx_Garen_GarenE_hit",
+    "event_id": 1000429542,
+    "source_preview": "event_wav/Play_sfx_Garen_GarenE_hit {r1}.wav",
+    "media_ids": [
+      5845376,
+      186083851,
+      417478327,
+      923840198
+    ]
+  },
+  {
+    "file": "play_sfx_garen_garene_hit_r2.wav",
+    "event": "Play_sfx_Garen_GarenE_hit",
+    "event_id": 1000429542,
+    "source_preview": "event_wav/Play_sfx_Garen_GarenE_hit {r2}.wav",
+    "media_ids": [
+      5845376,
+      186083851,
+      417478327,
+      923840198
+    ]
+  },
+  {
+    "file": "play_sfx_garen_garene_hit_r3.wav",
+    "event": "Play_sfx_Garen_GarenE_hit",
+    "event_id": 1000429542,
+    "source_preview": "event_wav/Play_sfx_Garen_GarenE_hit {r3}.wav",
+    "media_ids": [
+      5845376,
+      186083851,
+      417478327,
+      923840198
+    ]
+  },
+  {
+    "file": "play_sfx_garen_garene_hit_r4.wav",
+    "event": "Play_sfx_Garen_GarenE_hit",
+    "event_id": 1000429542,
+    "source_preview": "event_wav/Play_sfx_Garen_GarenE_hit {r4}.wav",
+    "media_ids": [
+      5845376,
+      186083851,
+      417478327,
+      923840198
+    ]
+  },
+  {
+    "file": "play_sfx_garen_death3d_cast.wav",
+    "event": "Play_sfx_Garen_Death3D_cast",
+    "event_id": 3199914363,
+    "source_preview": "event_wav/Play_sfx_Garen_Death3D_cast.wav",
+    "media_ids": [
+      98921429
+    ]
+  }
+]

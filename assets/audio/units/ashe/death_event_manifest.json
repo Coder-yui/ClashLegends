@@ -1,0 +1,38 @@
+[
+  {
+    "file": "play_vo_ashe_death3d_r1_zh_cn.wav",
+    "event": "Play_vo_Ashe_Death3D",
+    "event_id": 1632532837,
+    "media_ids": [
+      2320440732,
+      2413345029,
+      2639712284
+    ],
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/ashe_death_zh_audio/event_wav/Play_vo_Ashe_Death3D {r1}.wav",
+    "source_package": "Ashe.zh_CN.wad.client"
+  },
+  {
+    "file": "play_vo_ashe_death3d_r2_zh_cn.wav",
+    "event": "Play_vo_Ashe_Death3D",
+    "event_id": 1632532837,
+    "media_ids": [
+      2320440732,
+      2413345029,
+      2639712284
+    ],
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/ashe_death_zh_audio/event_wav/Play_vo_Ashe_Death3D {r2}.wav",
+    "source_package": "Ashe.zh_CN.wad.client"
+  },
+  {
+    "file": "play_vo_ashe_death3d_r3_zh_cn.wav",
+    "event": "Play_vo_Ashe_Death3D",
+    "event_id": 1632532837,
+    "media_ids": [
+      2320440732,
+      2413345029,
+      2639712284
+    ],
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/ashe_death_zh_audio/event_wav/Play_vo_Ashe_Death3D {r3}.wav",
+    "source_package": "Ashe.zh_CN.wad.client"
+  }
+]

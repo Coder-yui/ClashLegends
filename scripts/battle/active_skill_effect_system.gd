@@ -208,6 +208,7 @@ func activate_continuous_area(source: Unit, skill: Dictionary) -> void:
 		return
 	continuous_area_effects.append({
 		"source_ref": weakref(source),
+		"visual_action": String(skill.get("visual_action", "")),
 		"team": source.team,
 		"radius": radius,
 		"damage": amount,
@@ -225,6 +226,7 @@ func _apply_continuous_area_pulse(source: Unit, effect: Dictionary) -> void:
 	var radius := maxf(float(effect.get("radius", 0.0)), 0.0)
 	var amount := maxf(float(effect.get("damage", 0.0)), 0.0)
 	var ground_only := bool(effect.get("ground_only", false))
+	var any_landed := false
 	for combatant in _controller.get_tree().get_nodes_in_group("combatants"):
 		var source_team := int(effect.get("team", source.team if source != null else -1))
 		if combatant == source or not is_instance_valid(combatant) or combatant.team == source_team or combatant.hp <= 0.0:
@@ -235,11 +237,14 @@ func _apply_continuous_area_pulse(source: Unit, effect: Dictionary) -> void:
 			continue
 		if amount > 0.0:
 			if source != null and is_instance_valid(source):
-				_damage_combatant(source, combatant, amount, center)
+				any_landed = _damage_combatant(source, combatant, amount, center) or any_landed
 			else:
 				combatant.take_damage(amount, null, source_team, center)
 		if combatant is Unit and is_instance_valid(combatant) and combatant.hp > 0.0 and float(effect.get("slow_duration", 0.0)) > 0.0:
 			(combatant as Unit).apply_slow(float(effect.get("slow_duration", 0.0)), float(effect.get("slow_multiplier", 1.0)))
+	var action := String(effect.get("visual_action", ""))
+	if any_landed and not action.is_empty():
+		_controller._notify_unit_audio_event(source, StringName(action + ":hit"), center)
 
 
 func activate_summon(source: Unit, skill: Dictionary) -> void:
@@ -259,6 +264,10 @@ func activate_summon(source: Unit, skill: Dictionary) -> void:
 ## 扇形/梯形主动统一按施法开始时锁定的朝向结算。目标碰撞圆会扩张边界，
 ## 但动画、箭矢线条和预警多边形都不参与权威命中。
 func apply_frontal(source: Unit, skill: Dictionary, forward: Vector2 = Vector2.ZERO) -> void:
+	var action := String(skill.get("visual_action", ""))
+	if not action.is_empty():
+		_controller._notify_unit_audio_event(source, StringName(action + ":release"), source.global_position)
+	var any_landed := false
 	forward = frontal_forward(source) if forward.length_squared() < 0.001 else forward.normalized()
 	var side := Vector2(-forward.y, forward.x)
 	var length := maxf(float(skill.get("length", 0.0)), 0.0)
@@ -335,9 +344,11 @@ func apply_frontal(source: Unit, skill: Dictionary, forward: Vector2 = Vector2.Z
 		if not hit:
 			continue
 		if amount > 0.0:
-			_damage_combatant(source, combatant, amount * damage_multiplier)
+			any_landed = _damage_combatant(source, combatant, amount * damage_multiplier) or any_landed
 		if combatant is Unit and is_instance_valid(combatant) and combatant.hp > 0.0 and float(skill.get("slow_duration", 0.0)) > 0.0:
 			(combatant as Unit).apply_slow(float(skill.slow_duration), float(skill.get("slow_multiplier", 1.0)))
+	if any_landed and not action.is_empty():
+		_controller._notify_unit_audio_event(source, StringName(action + ":hit"), source.global_position)
 
 
 ## 向施法开始时锁定方向的前方圆形区域落下一颗星；冲击波由固定 tick 独立扩散。

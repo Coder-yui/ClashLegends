@@ -133,7 +133,7 @@ const CARD_FIELDS := [
 	&"heal_amount", &"active_heal_multiplier", &"active_shield", &"active_shield_duration", &"active_cost_bonus",
 	&"visual_scene_path", &"visual_scene_paths", &"visual_forward_yaw", &"visual_animations", &"audio",
 ]
-const AUDIO_FIELDS := [&"attack_swing", &"attack_hit", &"attack_swing_volume_db", &"attack_hit_volume_db"]
+const AUDIO_FIELDS := [&"attack_swing", &"attack_hit", &"attack_swing_volume_db", &"attack_hit_volume_db", &"events"]
 const VISUAL_ANIMATION_FIELDS := [
 	&"deploy", &"deploy_durations", &"deploy_clip_ratio", &"idle", &"idle_cycle", &"move", &"move_enter", &"haste_move",
 	&"move_cycle", &"attack", &"attack_enter", &"attack_retarget_enter", &"attack_loop",
@@ -192,41 +192,74 @@ static func all() -> Dictionary:
 				"death": "Death", "death_duration": 0.8,
 			},
 			"audio": {
-				# 两套挥剑动作分别使用原事件的 4 个 OnCast 变体；命中使用共享 OnHit 池。
 				"attack_swing": [
 					[
-						"res://assets/audio/units/garen/garen_basic_attack_swing_01.wav",
-						"res://assets/audio/units/garen/garen_basic_attack_swing_02.wav",
-						"res://assets/audio/units/garen/garen_basic_attack_swing_03.wav",
-						"res://assets/audio/units/garen/garen_basic_attack_swing_04.wav",
+						"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack_oncast_r1.wav",
+						"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack_oncast_r2.wav",
+						"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack_oncast_r3.wav",
+						"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack_oncast_r4.wav",
 					],
 					[
-						"res://assets/audio/units/garen/garen_basic_attack_swing_05.wav",
-						"res://assets/audio/units/garen/garen_basic_attack_swing_06.wav",
-						"res://assets/audio/units/garen/garen_basic_attack_swing_07.wav",
-						"res://assets/audio/units/garen/garen_basic_attack_swing_08.wav",
+						"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack2_oncast_r1.wav",
+						"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack2_oncast_r2.wav",
+						"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack2_oncast_r3.wav",
+						"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack2_oncast_r4.wav",
 					],
 				],
 				"attack_hit": [
-					"res://assets/audio/units/garen/garen_basic_attack_hit_01.wav",
-					"res://assets/audio/units/garen/garen_basic_attack_hit_02.wav",
-					"res://assets/audio/units/garen/garen_basic_attack_hit_03.wav",
-					"res://assets/audio/units/garen/garen_basic_attack_hit_04.wav",
-					"res://assets/audio/units/garen/garen_basic_attack_hit_05.wav",
-					"res://assets/audio/units/garen/garen_basic_attack_hit_06.wav",
-					"res://assets/audio/units/garen/garen_basic_attack_hit_07.wav",
-					"res://assets/audio/units/garen/garen_basic_attack_hit_08.wav",
-					"res://assets/audio/units/garen/garen_basic_attack_hit_09.wav",
-					"res://assets/audio/units/garen/garen_basic_attack_hit_10.wav",
-					"res://assets/audio/units/garen/garen_basic_attack_hit_11.wav",
-					"res://assets/audio/units/garen/garen_basic_attack_hit_12.wav",
-					"res://assets/audio/units/garen/garen_basic_attack_hit_13.wav",
-					"res://assets/audio/units/garen/garen_basic_attack_hit_14.wav",
-					"res://assets/audio/units/garen/garen_basic_attack_hit_15.wav",
-					"res://assets/audio/units/garen/garen_basic_attack_hit_16.wav",
+					"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack_onhit_1559186049_1153642577_r1_d.wav",
+					"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack_onhit_1559186049_1153642577_r2_d.wav",
+					"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack_onhit_1559186049_1153642577_r3_d.wav",
+					"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack_onhit_1559186049_1153642577_r4_d.wav",
+					"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack_onhit_1559186049_1216965916_r1_d.wav",
+					"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack_onhit_1559186049_1216965916_r2_d.wav",
+					"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack_onhit_1559186049_1216965916_r3_d.wav",
+					"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack_onhit_1559186049_1216965916_r4_d.wav",
+					"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack_onhit_1559186049_2058049674_r1_d.wav",
+					"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack_onhit_1559186049_2058049674_r2_d.wav",
+					"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack_onhit_1559186049_2058049674_r3_d.wav",
+					"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack_onhit_1559186049_2058049674_r4_d.wav",
+					"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack_onhit_1559186049_2473969246_r1_d.wav",
+					"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack_onhit_1559186049_2473969246_r2_d.wav",
+					"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack_onhit_1559186049_2473969246_r3_d.wav",
+					"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack_onhit_1559186049_2473969246_r4_d.wav",
 				],
-				"attack_swing_volume_db": -5.0,
-				"attack_hit_volume_db": -4.0,
+				"attack_swing_volume_db": 0.0,
+				"attack_hit_volume_db": 0.0,
+				"events": {
+					"empowered_ready": {"pool": [
+						"res://assets/audio/units/garen/play_sfx_garen_garenq_oncast_r1.wav",
+						"res://assets/audio/units/garen/play_sfx_garen_garenq_oncast_r2.wav",
+						"res://assets/audio/units/garen/play_sfx_garen_garenq_oncast_r3.wav",
+					], "volume_db": 0.0},
+					"empowered_swing": {"pool": [
+						"res://assets/audio/units/garen/play_sfx_garen_garenqattack_oncast_r.wav",
+					], "volume_db": 0.0},
+					"judgment:start": {"pool": [
+						"res://assets/audio/units/garen/play_sfx_garen_garene_oncast_r1.wav",
+						"res://assets/audio/units/garen/play_sfx_garen_garene_oncast_r2.wav",
+						"res://assets/audio/units/garen/play_sfx_garen_garene_oncast_r3.wav",
+					], "volume_db": 0.0},
+					"judgment:sustain": {"pool": [
+						"res://assets/audio/units/garen/play_sfx_garen_garene_onbuffactivate_r1.wav",
+						"res://assets/audio/units/garen/play_sfx_garen_garene_onbuffactivate_r2.wav",
+						"res://assets/audio/units/garen/play_sfx_garen_garene_onbuffactivate_r3.wav",
+					], "volume_db": 0.0},
+					"judgment:end": {"pool": [
+						"res://assets/audio/units/garen/play_sfx_garen_garene_onbuffdeactivate_r1.wav",
+						"res://assets/audio/units/garen/play_sfx_garen_garene_onbuffdeactivate_r2.wav",
+						"res://assets/audio/units/garen/play_sfx_garen_garene_onbuffdeactivate_r3.wav",
+					], "volume_db": 0.0},
+					"judgment:hit": {"pool": [
+						"res://assets/audio/units/garen/play_sfx_garen_garene_hit_r1.wav",
+						"res://assets/audio/units/garen/play_sfx_garen_garene_hit_r2.wav",
+						"res://assets/audio/units/garen/play_sfx_garen_garene_hit_r3.wav",
+						"res://assets/audio/units/garen/play_sfx_garen_garene_hit_r4.wav",
+					], "volume_db": 0.0},
+					"death": {"pool": [
+						"res://assets/audio/units/garen/play_sfx_garen_death3d_cast.wav",
+					], "volume_db": 0.0},
+				},
 			},
 			"is_air": false, "building_only": true, "can_attack_air": false,
 			"active_skills": [
@@ -329,6 +362,49 @@ static func all() -> Dictionary:
 					"active": {"animation": "Spell2", "kind": "skill", "durations": [1.0], "blend_in": 0.05, "blend_out": 0.10},
 				},
 				"death": "Death", "death_duration": 0.8,
+			},
+			"audio": {
+				"attack_swing": [
+					[
+						"res://assets/audio/units/ashe/play_sfx_ashe_ashebasicattack_oncast_r1_d.wav",
+						"res://assets/audio/units/ashe/play_sfx_ashe_ashebasicattack_oncast_r2_d.wav",
+					],
+					[
+						"res://assets/audio/units/ashe/play_sfx_ashe_ashebasicattack_oncast_r1_d.wav",
+						"res://assets/audio/units/ashe/play_sfx_ashe_ashebasicattack_oncast_r2_d.wav",
+					],
+				],
+				"attack_hit": [
+					"res://assets/audio/units/ashe/play_sfx_ashe_ashebasicattack_onhit_r1_d.wav",
+					"res://assets/audio/units/ashe/play_sfx_ashe_ashebasicattack_onhit_r2_d.wav",
+					"res://assets/audio/units/ashe/play_sfx_ashe_ashebasicattack_onhit_r3_d.wav",
+				],
+				"attack_swing_volume_db": 0.0,
+				"attack_hit_volume_db": 0.0,
+				"events": {
+					"attack_launch": {"pool": [
+						"res://assets/audio/units/ashe/play_sfx_ashe_ashebasicattack_onmissilelaunch_r1_d.wav",
+						"res://assets/audio/units/ashe/play_sfx_ashe_ashebasicattack_onmissilelaunch_r2_d.wav",
+						"res://assets/audio/units/ashe/play_sfx_ashe_ashebasicattack_onmissilelaunch_r3_d.wav",
+					], "volume_db": 0.0},
+					"death": {"pool": [
+						"res://assets/audio/units/ashe/play_vo_ashe_death3d_r1_zh_cn.wav",
+						"res://assets/audio/units/ashe/play_vo_ashe_death3d_r2_zh_cn.wav",
+						"res://assets/audio/units/ashe/play_vo_ashe_death3d_r3_zh_cn.wav",
+					], "volume_db": 0.0, "bus": "Voice"},
+					"active:start": {"pool": [
+						"res://assets/audio/units/ashe/play_sfx_ashe_volley_oncast_r1_d.wav",
+						"res://assets/audio/units/ashe/play_sfx_ashe_volley_oncast_r2_d.wav",
+					], "volume_db": 0.0},
+					"active:release": {"pool": [
+						"res://assets/audio/units/ashe/play_sfx_ashe_volleyattackwithsound_onmissilelaunch.wav",
+					], "volume_db": 0.0},
+					"active:hit": {"pool": [
+						"res://assets/audio/units/ashe/play_sfx_ashe_volleyattack_onhit_r1.wav",
+						"res://assets/audio/units/ashe/play_sfx_ashe_volleyattack_onhit_r2.wav",
+						"res://assets/audio/units/ashe/play_sfx_ashe_volleyattack_onhit_r3.wav",
+					], "volume_db": 0.0},
+				},
 			},
 			"is_air": false, "building_only": false, "can_attack_air": true,
 			"active_skills": [{
@@ -1167,6 +1243,25 @@ static func _validate_audio_config(label: String, stats: Dictionary, errors: Pac
 		errors.append("%s.audio: 必须是 Dictionary" % label)
 		return
 	_validate_known_fields("%s.audio" % label, audio as Dictionary, AUDIO_FIELDS, errors)
+	var events = audio.get("events", {})
+	if not events is Dictionary:
+		errors.append("%s.audio.events: 必须是 Dictionary" % label)
+	else:
+		var actions: Dictionary = stats.get("visual_animations", {}).get("visual_actions", {})
+		for cue in events:
+			var parts := String(cue).split(":")
+			if String(cue) not in ["empowered_ready", "empowered_swing", "death", "attack_launch"] and not (parts.size() == 2 and actions.has(parts[0]) and parts[1] in ["start", "end", "hit", "release", "sustain"]):
+				errors.append("%s.audio.events.%s: 未绑定的表现事件" % [label, cue])
+			var event = events[cue]
+			if not event is Dictionary:
+				errors.append("%s.audio.events.%s: 必须是 Dictionary" % [label, cue])
+				continue
+			_validate_known_fields("%s.audio.events.%s" % [label, cue], event, [&"pool", &"volume_db", &"bus"], errors)
+			if event.get("bus", "Combat") not in ["Combat", "Voice"]:
+				errors.append("%s.audio.events.%s.bus: 只支持 Combat / Voice" % [label, cue])
+			_validate_audio_path_pool("%s.audio.events.%s.pool" % [label, cue], event.get("pool", []), errors)
+			if typeof(event.get("volume_db", 0.0)) not in [TYPE_INT, TYPE_FLOAT]:
+				errors.append("%s.audio.events.%s.volume_db: 必须是分贝数值" % [label, cue])
 	var swing = (audio as Dictionary).get("attack_swing", [])
 	if not swing is Array or (swing as Array).is_empty():
 		errors.append("%s.audio.attack_swing: 必须是按攻击段排列的非空声音池数组" % label)
