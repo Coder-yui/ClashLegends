@@ -98,7 +98,9 @@ func apply(source: Unit, skill: Dictionary) -> bool:
 				float(skill.get("duration", 0.0)),
 				float(skill.get("speed_multiplier", 1.0)),
 				float(skill.get("damage_multiplier", 1.0)),
-				float(skill.get("attack_speed_multiplier", 1.0))
+				float(skill.get("attack_speed_multiplier", 1.0)),
+				bool(skill.get("ignore_movement_slow", false)),
+				bool(skill.get("ignore_attack_speed_slow", false))
 			)
 			if not bool(skill.get("shield_on_cast_start", false)):
 				source.add_shield(float(skill.get("shield", 0.0)), float(skill.get("shield_duration", skill.get("duration", 0.0))), bool(skill.get("shield_decay", false)))

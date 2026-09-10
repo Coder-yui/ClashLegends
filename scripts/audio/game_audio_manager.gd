@@ -61,6 +61,7 @@ func attach_unit(unit: Unit, stats: Dictionary) -> void:
 		"empowered_ready": unit.is_empowered_attack_ready_visual(),
 		"action_serial": _action_serial(unit),
 		"active_action": &"",
+		"active_buff": _active_buff_active(unit),
 	}
 	var death_callback := _on_unit_death.bind(unit.get_instance_id())
 	if not unit.died.is_connected(death_callback):
@@ -111,6 +112,14 @@ func _tick_attached_units() -> void:
 			var sustained: AudioStreamPlayer2D = _sustain_players[instance_id]
 			sustained.global_position = unit.get_visual_screen_position()
 			sustained.stream_paused = unit.is_frozen() or unit.is_stunned()
+		var active_buff := _active_buff_active(unit)
+		if active_buff and not bool(entry.active_buff):
+			play_event(unit, &"active_buff:start", unit.get_visual_screen_position())
+			_start_sustain(unit, entry, &"active_buff")
+		elif not active_buff and bool(entry.active_buff):
+			_stop_sustain(instance_id)
+			play_event(unit, &"active_buff:end", unit.get_visual_screen_position())
+		entry.active_buff = active_buff
 		entry.action_serial = action_serial
 		_unit_entries[instance_id] = entry
 	for instance_id in stale_ids:
@@ -151,6 +160,11 @@ func _detach_unit(instance_id: int) -> void:
 
 func _action_serial(unit: Unit) -> int:
 	return unit.net_visual_action_serial if unit.battle_context != null and unit.battle_context.is_net_client() else unit.get_visual_action_serial()
+
+func _active_buff_active(unit: Unit) -> bool:
+	if unit.battle_context != null and unit.battle_context.is_net_client():
+		return unit.net_active_buff_active
+	return unit.active_buff_timer > 0.0
 
 func _on_unit_death(instance_id: int) -> void:
 	_stop_sustain(instance_id)

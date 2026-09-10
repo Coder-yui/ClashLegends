@@ -159,6 +159,10 @@ var frozen_timer := 0.0
 var stun_timer := 0.0
 var slow_timer := 0.0
 var slow_multiplier := 1.0
+## 预留的减攻速控制状态；高原血统在 Buff 期间会忽略它。
+var attack_speed_slow_timer := 0.0
+var attack_speed_slow_multiplier := 1.0
+var _attack_speed_slow_suppressed_by_buff := false
 var shield_hp := 0.0
 var shield_max_hp := 0.0
 var shield_timer := 0.0
@@ -167,6 +171,8 @@ var active_buff_timer := 0.0
 var active_speed_multiplier := 1.0
 var active_damage_multiplier := 1.0
 var active_attack_speed_multiplier := 1.0
+var active_buff_ignores_movement_slow := false
+var active_buff_ignores_attack_speed_slow := false
 ## 强化下一次普攻不另起攻击计时，只在原本的下一次命中节点消费。
 var empowered_attack_ready := false
 var empowered_attack_damage_multiplier := 1.0
@@ -271,6 +277,7 @@ var net_skill_resource_ratio := 0.0
 var net_skill_resource_enabled := false
 var net_active_speed_multiplier := 1.0
 var net_active_attack_speed_multiplier := 1.0
+var net_active_buff_active := false
 var net_facing_direction := Vector2.ZERO
 ## 主机快照同步当前普攻目标是否为建筑，供客户端选择对应动作；不参与伤害判定。
 var net_attacking_structure := false
@@ -1348,7 +1355,7 @@ func _prepare_movement(direction: Vector2, _dt: float) -> void:
 	speed_multiplier *= active_speed_multiplier
 	if empowered_attack_ready:
 		speed_multiplier *= empowered_attack_speed_multiplier
-	if slow_timer > 0.0:
+	if slow_timer > 0.0 and not active_buff_ignores_movement_slow:
 		speed_multiplier *= slow_multiplier
 	_move_intent = _move_direction * move_speed * speed_multiplier
 
@@ -1450,10 +1457,16 @@ func _reaches_attack_hit_this_tick(dt: float) -> bool:
 func _next_attack_gap() -> float:
 	if attack_pattern.is_empty():
 		_attack_hit_index += 1
-		return attack_interval / active_attack_speed_multiplier
+		return attack_interval / _effective_attack_speed_multiplier()
 	var gap: float = float(attack_pattern[_attack_hit_index % attack_pattern.size()])
 	_attack_hit_index += 1
-	return maxf(gap / active_attack_speed_multiplier, 0.01)
+	return maxf(gap / _effective_attack_speed_multiplier(), 0.01)
+
+func _effective_attack_speed_multiplier() -> float:
+	var multiplier := maxf(active_attack_speed_multiplier, 0.01)
+	if attack_speed_slow_timer > 0.0 and not active_buff_ignores_attack_speed_slow:
+		multiplier *= attack_speed_slow_multiplier
+	return maxf(multiplier, 0.01)
 
 func _attack_damage_multiplier(hit_index: int) -> float:
 	if attack_damage_multipliers.is_empty():
@@ -1600,15 +1613,38 @@ func stun(duration: float) -> void:
 	queue_redraw()
 
 func apply_slow(duration: float, multiplier: float) -> void:
+	if active_buff_ignores_movement_slow:
+		return
 	slow_timer = maxf(slow_timer, duration)
 	slow_multiplier = minf(slow_multiplier, clampf(multiplier, 0.1, 1.0))
 	queue_redraw()
 
-func apply_active_buff(duration: float, speed_multiplier: float, damage_multiplier: float, attack_speed_multiplier: float) -> void:
+## 预留给后续控制效果的减攻速入口；它与减速一样只改战斗计时，不改变动画权威。
+func apply_attack_speed_slow(duration: float, multiplier: float) -> void:
+	if active_buff_ignores_attack_speed_slow:
+		return
+	var clamped_multiplier := clampf(multiplier, 0.1, 1.0)
+	attack_speed_slow_timer = maxf(attack_speed_slow_timer, duration)
+	attack_speed_slow_multiplier = minf(attack_speed_slow_multiplier, clamped_multiplier)
+	_attack_cd /= clamped_multiplier
+	_attack_windup /= clamped_multiplier
+	_attack_recovery_timer /= clamped_multiplier
+	queue_redraw()
+
+func apply_active_buff(duration: float, speed_multiplier: float, damage_multiplier: float, attack_speed_multiplier: float, ignores_movement_slow: bool = false, ignores_attack_speed_slow: bool = false) -> void:
 	active_buff_timer = maxf(active_buff_timer, duration)
 	active_speed_multiplier = maxf(active_speed_multiplier, speed_multiplier)
 	active_damage_multiplier = maxf(active_damage_multiplier, damage_multiplier)
 	active_attack_speed_multiplier = maxf(active_attack_speed_multiplier, attack_speed_multiplier)
+	active_buff_ignores_movement_slow = active_buff_ignores_movement_slow or ignores_movement_slow
+	active_buff_ignores_attack_speed_slow = active_buff_ignores_attack_speed_slow or ignores_attack_speed_slow
+	if duration > 0.0 and active_buff_ignores_attack_speed_slow and attack_speed_slow_timer > 0.0 and not _attack_speed_slow_suppressed_by_buff:
+		# 减攻速若先于高原血统施加，之前已延长的当前计时也必须立即恢复为未减攻速状态。
+		var slow_multiplier := maxf(attack_speed_slow_multiplier, 0.1)
+		_attack_cd *= slow_multiplier
+		_attack_windup *= slow_multiplier
+		_attack_recovery_timer *= slow_multiplier
+		_attack_speed_slow_suppressed_by_buff = true
 	# 已经进入普攻冷却时也立即获得攻速收益，避免按钮按下后要等完整旧周期。
 	var haste := maxf(attack_speed_multiplier, 1.0)
 	_attack_cd /= haste
@@ -1632,6 +1668,11 @@ func _tick_active_statuses(dt: float) -> void:
 		slow_timer = maxf(0.0, slow_timer - dt)
 		if slow_timer <= 0.0:
 			slow_multiplier = 1.0
+	if attack_speed_slow_timer > 0.0:
+		attack_speed_slow_timer = maxf(0.0, attack_speed_slow_timer - dt)
+		if attack_speed_slow_timer <= 0.0:
+			attack_speed_slow_multiplier = 1.0
+			_attack_speed_slow_suppressed_by_buff = false
 	if shield_timer > 0.0:
 		shield_timer = maxf(0.0, shield_timer - dt)
 		if shield_decay_rate > 0.0:
@@ -1643,9 +1684,17 @@ func _tick_active_statuses(dt: float) -> void:
 	if active_buff_timer > 0.0:
 		active_buff_timer = maxf(0.0, active_buff_timer - dt)
 		if active_buff_timer <= 0.0:
+			if _attack_speed_slow_suppressed_by_buff and attack_speed_slow_timer > 0.0:
+				var slow_multiplier := maxf(attack_speed_slow_multiplier, 0.1)
+				_attack_cd /= slow_multiplier
+				_attack_windup /= slow_multiplier
+				_attack_recovery_timer /= slow_multiplier
+			_attack_speed_slow_suppressed_by_buff = false
 			active_speed_multiplier = 1.0
 			active_damage_multiplier = 1.0
 			active_attack_speed_multiplier = 1.0
+			active_buff_ignores_movement_slow = false
+			active_buff_ignores_attack_speed_slow = false
 	_tick_skill_resource_decay(dt)
 
 func is_frozen() -> bool:

@@ -148,7 +148,7 @@ const ACTIVE_SKILL_FIELDS := [
 	&"name", &"kind", &"cost", &"max_uses", &"cooldown", &"radius", &"damage", &"knockback", &"knockback_duration", &"knockback_mass_factor_max",
 	&"slow_duration", &"slow_multiplier",
 	&"shield", &"shield_duration", &"shield_decay", &"shield_on_cast_start", &"resource_shield_max", &"duration", &"speed_multiplier", &"damage_multiplier",
-	&"attack_speed_multiplier", &"spawn_id", &"spawn_count", &"length", &"width", &"impact_delay",
+	&"attack_speed_multiplier", &"ignore_movement_slow", &"ignore_attack_speed_slow", &"spawn_id", &"spawn_count", &"length", &"width", &"impact_delay",
 	&"transform_impact_delay", &"cast_duration", &"transform_cast_duration", &"stun_duration", &"ground_only",
 	&"cast_locks", &"visual_action", &"description", &"shape", &"near_width", &"far_width", &"arc_degrees", &"fan_inner_arc",
 	&"projectile_count", &"projectile_visual", &"projectile_launch_delay", &"projectile_flight_duration",
@@ -695,7 +695,7 @@ static func all() -> Dictionary:
 			"description": "高速近战刺客，攻击频率高，适合快速处理脆弱目标。",
 			# 近战高攻速刺客：血薄但攻速极快
 			"hp": 480.0, "damage": 52.0, "range": MELEE_RANGE_MIN,
-			"speed": SPEED_EXTREMELY_FAST, "interval": 0.45, "first_hit": 0.2,
+			"speed": SPEED_EXTREMELY_FAST, "interval": 0.7, "first_hit": 0.2,
 			"size_tier": SIZE_MEDIUM, "radius": RADIUS_MEDIUM, "visual_radius": RADIUS_MEDIUM + VISUAL_RADIUS_PADDING,
 			"mass": 4.0, "sight": 200.0,
 			"color": Color(0.20, 0.80, 0.50),
@@ -711,7 +711,58 @@ static func all() -> Dictionary:
 			"attack_extra_hit_damage_multipliers": [[], [], [0.5]],
 			"attack_extra_hit_delays": [[], [], [0.12]],
 			"is_air": false, "building_only": false, "can_attack_air": false,
-			"active_skills": [{"name": "高原血统", "kind": "buff", "cost": 1, "max_uses": 2, "cooldown": 6.0, "duration": 5.0, "speed_multiplier": 1.5, "damage_multiplier": 1.0, "attack_speed_multiplier": 1.5}],
+			"active_skills": [{
+				"name": "高原血统", "kind": "buff", "cost": 1, "max_uses": 2, "cooldown": 6.0,
+				"duration": 5.0, "speed_multiplier": 1.5, "damage_multiplier": 1.0, "attack_speed_multiplier": 1.4,
+				"ignore_movement_slow": true, "ignore_attack_speed_slow": true,
+			}],
+			"audio": {
+				"attack_swing": [
+					[
+						"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_oncast_r1.wav",
+						"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_oncast_r2.wav",
+						"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_oncast_r3.wav",
+						"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_oncast_r4.wav",
+						"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_oncast_r5.wav",
+					],
+					[
+						"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack2_oncast_r1.wav",
+						"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack2_oncast_r2.wav",
+						"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack2_oncast_r3.wav",
+						"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack2_oncast_r4.wav",
+					],
+					[
+						"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryidoublestrike_oncast_r1.wav",
+						"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryidoublestrike_oncast_r2.wav",
+						"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryidoublestrike_oncast_r3.wav",
+					],
+				],
+				"attack_hit": [
+					"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1153642577_r1_d.wav",
+					"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1153642577_r2_d.wav",
+					"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1153642577_r3_d.wav",
+					"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1153642577_r4_d.wav",
+					"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1216965916_r1_d.wav",
+					"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1216965916_r2_d.wav",
+					"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1216965916_r3_d.wav",
+					"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1216965916_r4_d.wav",
+					"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_2058049674_r1_d.wav",
+					"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_2058049674_r2_d.wav",
+					"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_2058049674_r3_d.wav",
+					"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_2058049674_r4_d.wav",
+					"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_2473969246_r1_d.wav",
+					"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_2473969246_r2_d.wav",
+					"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_2473969246_r3_d.wav",
+					"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_2473969246_r4_d.wav",
+				],
+				"attack_swing_volume_db": 0.0, "attack_hit_volume_db": 0.0,
+				"events": {
+					"active_buff:start": {"pool": ["res://assets/audio/units/masteryi/play_sfx_masteryi_highlander_onbuffactivate.wav"]},
+					"active_buff:sustain": {"pool": ["res://assets/audio/units/masteryi/play_sfx_masteryi_highlander_trail.wav"]},
+					"active_buff:end": {"pool": ["res://assets/audio/units/masteryi/play_sfx_masteryi_highlander_onbuffdeactivate.wav"]},
+					"death": {"pool": ["res://assets/audio/units/masteryi/play_sfx_masteryi_death3d_cast.wav"]},
+				},
+			},
 		},
 		"twisted_fate": {
 			"name": "卡牌大师", "cost": 4, "type": "unit",
@@ -1250,7 +1301,7 @@ static func _validate_audio_config(label: String, stats: Dictionary, errors: Pac
 		var actions: Dictionary = stats.get("visual_animations", {}).get("visual_actions", {})
 		for cue in events:
 			var parts := String(cue).split(":")
-			if String(cue) not in ["empowered_ready", "empowered_swing", "death", "attack_launch"] and not (parts.size() == 2 and actions.has(parts[0]) and parts[1] in ["start", "end", "hit", "release", "sustain"]):
+			if String(cue) not in ["empowered_ready", "empowered_swing", "death", "attack_launch"] and not (parts.size() == 2 and (parts[0] == "active_buff" or actions.has(parts[0])) and parts[1] in ["start", "end", "hit", "release", "sustain"]):
 				errors.append("%s.audio.events.%s: 未绑定的表现事件" % [label, cue])
 			var event = events[cue]
 			if not event is Dictionary:
@@ -1699,6 +1750,9 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 			errors.append("%s.target_scope: 只支持 self/deployment_group" % label)
 		if skill.has("center_ratio") and (float(skill.center_ratio) < 0.0 or float(skill.center_ratio) > 1.0):
 			errors.append("%s.center_ratio: 必须在 0 到 1 之间" % label)
+		for bool_field in [&"ignore_movement_slow", &"ignore_attack_speed_slow"]:
+			if skill.has(bool_field) and typeof(skill.get(bool_field)) != TYPE_BOOL:
+				errors.append("%s.%s: 必须是 bool" % [label, bool_field])
 		if skill.has("center_width") and float(skill.center_width) < 0.0:
 			errors.append("%s.center_width: 必须 >= 0" % label)
 		if skill.has("fan_inner_arc") and typeof(skill.fan_inner_arc) != TYPE_BOOL:

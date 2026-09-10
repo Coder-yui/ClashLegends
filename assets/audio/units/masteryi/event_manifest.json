@@ -1,0 +1,568 @@
+[
+  {
+    "file": "play_sfx_masteryi_masteryibasicattack_oncast_r1.wav",
+    "event": "Play_sfx_MasterYi_MasterYiBasicAttack_OnCast",
+    "event_id": 2382207730,
+    "source_preview": "event_wav/Play_sfx_MasterYi_MasterYiBasicAttack_OnCast {r1}.wav",
+    "media_ids": [
+      49002591,
+      104024387,
+      314446760,
+      505054137,
+      506082516
+    ]
+  },
+  {
+    "file": "play_sfx_masteryi_masteryibasicattack_oncast_r2.wav",
+    "event": "Play_sfx_MasterYi_MasterYiBasicAttack_OnCast",
+    "event_id": 2382207730,
+    "source_preview": "event_wav/Play_sfx_MasterYi_MasterYiBasicAttack_OnCast {r2}.wav",
+    "media_ids": [
+      49002591,
+      104024387,
+      314446760,
+      505054137,
+      506082516
+    ]
+  },
+  {
+    "file": "play_sfx_masteryi_masteryibasicattack_oncast_r3.wav",
+    "event": "Play_sfx_MasterYi_MasterYiBasicAttack_OnCast",
+    "event_id": 2382207730,
+    "source_preview": "event_wav/Play_sfx_MasterYi_MasterYiBasicAttack_OnCast {r3}.wav",
+    "media_ids": [
+      49002591,
+      104024387,
+      314446760,
+      505054137,
+      506082516
+    ]
+  },
+  {
+    "file": "play_sfx_masteryi_masteryibasicattack_oncast_r4.wav",
+    "event": "Play_sfx_MasterYi_MasterYiBasicAttack_OnCast",
+    "event_id": 2382207730,
+    "source_preview": "event_wav/Play_sfx_MasterYi_MasterYiBasicAttack_OnCast {r4}.wav",
+    "media_ids": [
+      49002591,
+      104024387,
+      314446760,
+      505054137,
+      506082516
+    ]
+  },
+  {
+    "file": "play_sfx_masteryi_masteryibasicattack_oncast_r5.wav",
+    "event": "Play_sfx_MasterYi_MasterYiBasicAttack_OnCast",
+    "event_id": 2382207730,
+    "source_preview": "event_wav/Play_sfx_MasterYi_MasterYiBasicAttack_OnCast {r5}.wav",
+    "media_ids": [
+      49002591,
+      104024387,
+      314446760,
+      505054137,
+      506082516
+    ]
+  },
+  {
+    "file": "play_sfx_masteryi_masteryibasicattack2_oncast_r1.wav",
+    "event": "Play_sfx_MasterYi_MasterYiBasicAttack2_OnCast",
+    "event_id": 1424861522,
+    "source_preview": "event_wav/Play_sfx_MasterYi_MasterYiBasicAttack2_OnCast {r1}.wav",
+    "media_ids": [
+      63444143,
+      410080597,
+      522993466,
+      903113665
+    ]
+  },
+  {
+    "file": "play_sfx_masteryi_masteryibasicattack2_oncast_r2.wav",
+    "event": "Play_sfx_MasterYi_MasterYiBasicAttack2_OnCast",
+    "event_id": 1424861522,
+    "source_preview": "event_wav/Play_sfx_MasterYi_MasterYiBasicAttack2_OnCast {r2}.wav",
+    "media_ids": [
+      63444143,
+      410080597,
+      522993466,
+      903113665
+    ]
+  },
+  {
+    "file": "play_sfx_masteryi_masteryibasicattack2_oncast_r3.wav",
+    "event": "Play_sfx_MasterYi_MasterYiBasicAttack2_OnCast",
+    "event_id": 1424861522,
+    "source_preview": "event_wav/Play_sfx_MasterYi_MasterYiBasicAttack2_OnCast {r3}.wav",
+    "media_ids": [
+      63444143,
+      410080597,
+      522993466,
+      903113665
+    ]
+  },
+  {
+    "file": "play_sfx_masteryi_masteryibasicattack2_oncast_r4.wav",
+    "event": "Play_sfx_MasterYi_MasterYiBasicAttack2_OnCast",
+    "event_id": 1424861522,
+    "source_preview": "event_wav/Play_sfx_MasterYi_MasterYiBasicAttack2_OnCast {r4}.wav",
+    "media_ids": [
+      63444143,
+      410080597,
+      522993466,
+      903113665
+    ]
+  },
+  {
+    "file": "play_sfx_masteryi_masteryidoublestrike_oncast_r1.wav",
+    "event": "Play_sfx_MasterYi_MasterYiDoubleStrike_OnCast",
+    "event_id": 657081849,
+    "source_preview": "event_wav/Play_sfx_MasterYi_MasterYiDoubleStrike_OnCast {r1}.wav",
+    "media_ids": [
+      271120929,
+      425476853,
+      860189031
+    ]
+  },
+  {
+    "file": "play_sfx_masteryi_masteryidoublestrike_oncast_r2.wav",
+    "event": "Play_sfx_MasterYi_MasterYiDoubleStrike_OnCast",
+    "event_id": 657081849,
+    "source_preview": "event_wav/Play_sfx_MasterYi_MasterYiDoubleStrike_OnCast {r2}.wav",
+    "media_ids": [
+      271120929,
+      425476853,
+      860189031
+    ]
+  },
+  {
+    "file": "play_sfx_masteryi_masteryidoublestrike_oncast_r3.wav",
+    "event": "Play_sfx_MasterYi_MasterYiDoubleStrike_OnCast",
+    "event_id": 657081849,
+    "source_preview": "event_wav/Play_sfx_MasterYi_MasterYiDoubleStrike_OnCast {r3}.wav",
+    "media_ids": [
+      271120929,
+      425476853,
+      860189031
+    ]
+  },
+  {
+    "file": "play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1153642577_r1_d.wav",
+    "event": "Play_sfx_MasterYi_MasterYiBasicAttack_OnHit",
+    "event_id": 1563071254,
+    "source_preview": "event_wav/Play_sfx_MasterYi_MasterYiBasicAttack_OnHit [1559186049=1153642577] {r1} {d}.wav",
+    "media_ids": [
+      789302,
+      7394909,
+      16380216,
+      19763561,
+      21301409,
+      31491481,
+      33081959,
+      33473320,
+      52272044,
+      84648135,
+      95976721,
+      112126905,
+      116463815,
+      126775659,
+      142894910,
+      204395837
+    ]
+  },
+  {
+    "file": "play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1153642577_r2_d.wav",
+    "event": "Play_sfx_MasterYi_MasterYiBasicAttack_OnHit",
+    "event_id": 1563071254,
+    "source_preview": "event_wav/Play_sfx_MasterYi_MasterYiBasicAttack_OnHit [1559186049=1153642577] {r2} {d}.wav",
+    "media_ids": [
+      789302,
+      7394909,
+      16380216,
+      19763561,
+      21301409,
+      31491481,
+      33081959,
+      33473320,
+      52272044,
+      84648135,
+      95976721,
+      112126905,
+      116463815,
+      126775659,
+      142894910,
+      204395837
+    ]
+  },
+  {
+    "file": "play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1153642577_r3_d.wav",
+    "event": "Play_sfx_MasterYi_MasterYiBasicAttack_OnHit",
+    "event_id": 1563071254,
+    "source_preview": "event_wav/Play_sfx_MasterYi_MasterYiBasicAttack_OnHit [1559186049=1153642577] {r3} {d}.wav",
+    "media_ids": [
+      789302,
+      7394909,
+      16380216,
+      19763561,
+      21301409,
+      31491481,
+      33081959,
+      33473320,
+      52272044,
+      84648135,
+      95976721,
+      112126905,
+      116463815,
+      126775659,
+      142894910,
+      204395837
+    ]
+  },
+  {
+    "file": "play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1153642577_r4_d.wav",
+    "event": "Play_sfx_MasterYi_MasterYiBasicAttack_OnHit",
+    "event_id": 1563071254,
+    "source_preview": "event_wav/Play_sfx_MasterYi_MasterYiBasicAttack_OnHit [1559186049=1153642577] {r4} {d}.wav",
+    "media_ids": [
+      789302,
+      7394909,
+      16380216,
+      19763561,
+      21301409,
+      31491481,
+      33081959,
+      33473320,
+      52272044,
+      84648135,
+      95976721,
+      112126905,
+      116463815,
+      126775659,
+      142894910,
+      204395837
+    ]
+  },
+  {
+    "file": "play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1216965916_r1_d.wav",
+    "event": "Play_sfx_MasterYi_MasterYiBasicAttack_OnHit",
+    "event_id": 1563071254,
+    "source_preview": "event_wav/Play_sfx_MasterYi_MasterYiBasicAttack_OnHit [1559186049=1216965916] {r1} {d}.wav",
+    "media_ids": [
+      789302,
+      7394909,
+      16380216,
+      19763561,
+      21301409,
+      31491481,
+      33081959,
+      33473320,
+      52272044,
+      84648135,
+      95976721,
+      112126905,
+      116463815,
+      126775659,
+      142894910,
+      204395837
+    ]
+  },
+  {
+    "file": "play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1216965916_r2_d.wav",
+    "event": "Play_sfx_MasterYi_MasterYiBasicAttack_OnHit",
+    "event_id": 1563071254,
+    "source_preview": "event_wav/Play_sfx_MasterYi_MasterYiBasicAttack_OnHit [1559186049=1216965916] {r2} {d}.wav",
+    "media_ids": [
+      789302,
+      7394909,
+      16380216,
+      19763561,
+      21301409,
+      31491481,
+      33081959,
+      33473320,
+      52272044,
+      84648135,
+      95976721,
+      112126905,
+      116463815,
+      126775659,
+      142894910,
+      204395837
+    ]
+  },
+  {
+    "file": "play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1216965916_r3_d.wav",
+    "event": "Play_sfx_MasterYi_MasterYiBasicAttack_OnHit",
+    "event_id": 1563071254,
+    "source_preview": "event_wav/Play_sfx_MasterYi_MasterYiBasicAttack_OnHit [1559186049=1216965916] {r3} {d}.wav",
+    "media_ids": [
+      789302,
+      7394909,
+      16380216,
+      19763561,
+      21301409,
+      31491481,
+      33081959,
+      33473320,
+      52272044,
+      84648135,
+      95976721,
+      112126905,
+      116463815,
+      126775659,
+      142894910,
+      204395837
+    ]
+  },
+  {
+    "file": "play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1216965916_r4_d.wav",
+    "event": "Play_sfx_MasterYi_MasterYiBasicAttack_OnHit",
+    "event_id": 1563071254,
+    "source_preview": "event_wav/Play_sfx_MasterYi_MasterYiBasicAttack_OnHit [1559186049=1216965916] {r4} {d}.wav",
+    "media_ids": [
+      789302,
+      7394909,
+      16380216,
+      19763561,
+      21301409,
+      31491481,
+      33081959,
+      33473320,
+      52272044,
+      84648135,
+      95976721,
+      112126905,
+      116463815,
+      126775659,
+      142894910,
+      204395837
+    ]
+  },
+  {
+    "file": "play_sfx_masteryi_masteryibasicattack_onhit_1559186049_2058049674_r1_d.wav",
+    "event": "Play_sfx_MasterYi_MasterYiBasicAttack_OnHit",
+    "event_id": 1563071254,
+    "source_preview": "event_wav/Play_sfx_MasterYi_MasterYiBasicAttack_OnHit [1559186049=2058049674] {r1} {d}.wav",
+    "media_ids": [
+      789302,
+      7394909,
+      16380216,
+      19763561,
+      21301409,
+      31491481,
+      33081959,
+      33473320,
+      52272044,
+      84648135,
+      95976721,
+      112126905,
+      116463815,
+      126775659,
+      142894910,
+      204395837
+    ]
+  },
+  {
+    "file": "play_sfx_masteryi_masteryibasicattack_onhit_1559186049_2058049674_r2_d.wav",
+    "event": "Play_sfx_MasterYi_MasterYiBasicAttack_OnHit",
+    "event_id": 1563071254,
+    "source_preview": "event_wav/Play_sfx_MasterYi_MasterYiBasicAttack_OnHit [1559186049=2058049674] {r2} {d}.wav",
+    "media_ids": [
+      789302,
+      7394909,
+      16380216,
+      19763561,
+      21301409,
+      31491481,
+      33081959,
+      33473320,
+      52272044,
+      84648135,
+      95976721,
+      112126905,
+      116463815,
+      126775659,
+      142894910,
+      204395837
+    ]
+  },
+  {
+    "file": "play_sfx_masteryi_masteryibasicattack_onhit_1559186049_2058049674_r3_d.wav",
+    "event": "Play_sfx_MasterYi_MasterYiBasicAttack_OnHit",
+    "event_id": 1563071254,
+    "source_preview": "event_wav/Play_sfx_MasterYi_MasterYiBasicAttack_OnHit [1559186049=2058049674] {r3} {d}.wav",
+    "media_ids": [
+      789302,
+      7394909,
+      16380216,
+      19763561,
+      21301409,
+      31491481,
+      33081959,
+      33473320,
+      52272044,
+      84648135,
+      95976721,
+      112126905,
+      116463815,
+      126775659,
+      142894910,
+      204395837
+    ]
+  },
+  {
+    "file": "play_sfx_masteryi_masteryibasicattack_onhit_1559186049_2058049674_r4_d.wav",
+    "event": "Play_sfx_MasterYi_MasterYiBasicAttack_OnHit",
+    "event_id": 1563071254,
+    "source_preview": "event_wav/Play_sfx_MasterYi_MasterYiBasicAttack_OnHit [1559186049=2058049674] {r4} {d}.wav",
+    "media_ids": [
+      789302,
+      7394909,
+      16380216,
+      19763561,
+      21301409,
+      31491481,
+      33081959,
+      33473320,
+      52272044,
+      84648135,
+      95976721,
+      112126905,
+      116463815,
+      126775659,
+      142894910,
+      204395837
+    ]
+  },
+  {
+    "file": "play_sfx_masteryi_masteryibasicattack_onhit_1559186049_2473969246_r1_d.wav",
+    "event": "Play_sfx_MasterYi_MasterYiBasicAttack_OnHit",
+    "event_id": 1563071254,
+    "source_preview": "event_wav/Play_sfx_MasterYi_MasterYiBasicAttack_OnHit [1559186049=2473969246] {r1} {d}.wav",
+    "media_ids": [
+      789302,
+      7394909,
+      16380216,
+      19763561,
+      21301409,
+      31491481,
+      33081959,
+      33473320,
+      52272044,
+      84648135,
+      95976721,
+      112126905,
+      116463815,
+      126775659,
+      142894910,
+      204395837
+    ]
+  },
+  {
+    "file": "play_sfx_masteryi_masteryibasicattack_onhit_1559186049_2473969246_r2_d.wav",
+    "event": "Play_sfx_MasterYi_MasterYiBasicAttack_OnHit",
+    "event_id": 1563071254,
+    "source_preview": "event_wav/Play_sfx_MasterYi_MasterYiBasicAttack_OnHit [1559186049=2473969246] {r2} {d}.wav",
+    "media_ids": [
+      789302,
+      7394909,
+      16380216,
+      19763561,
+      21301409,
+      31491481,
+      33081959,
+      33473320,
+      52272044,
+      84648135,
+      95976721,
+      112126905,
+      116463815,
+      126775659,
+      142894910,
+      204395837
+    ]
+  },
+  {
+    "file": "play_sfx_masteryi_masteryibasicattack_onhit_1559186049_2473969246_r3_d.wav",
+    "event": "Play_sfx_MasterYi_MasterYiBasicAttack_OnHit",
+    "event_id": 1563071254,
+    "source_preview": "event_wav/Play_sfx_MasterYi_MasterYiBasicAttack_OnHit [1559186049=2473969246] {r3} {d}.wav",
+    "media_ids": [
+      789302,
+      7394909,
+      16380216,
+      19763561,
+      21301409,
+      31491481,
+      33081959,
+      33473320,
+      52272044,
+      84648135,
+      95976721,
+      112126905,
+      116463815,
+      126775659,
+      142894910,
+      204395837
+    ]
+  },
+  {
+    "file": "play_sfx_masteryi_masteryibasicattack_onhit_1559186049_2473969246_r4_d.wav",
+    "event": "Play_sfx_MasterYi_MasterYiBasicAttack_OnHit",
+    "event_id": 1563071254,
+    "source_preview": "event_wav/Play_sfx_MasterYi_MasterYiBasicAttack_OnHit [1559186049=2473969246] {r4} {d}.wav",
+    "media_ids": [
+      789302,
+      7394909,
+      16380216,
+      19763561,
+      21301409,
+      31491481,
+      33081959,
+      33473320,
+      52272044,
+      84648135,
+      95976721,
+      112126905,
+      116463815,
+      126775659,
+      142894910,
+      204395837
+    ]
+  },
+  {
+    "file": "play_sfx_masteryi_highlander_onbuffactivate.wav",
+    "event": "Play_sfx_MasterYi_Highlander_OnBuffActivate",
+    "event_id": 4094174657,
+    "source_preview": "event_wav/Play_sfx_MasterYi_Highlander_OnBuffActivate.wav",
+    "media_ids": [
+      873615538
+    ]
+  },
+  {
+    "file": "play_sfx_masteryi_highlander_onbuffdeactivate.wav",
+    "event": "Play_sfx_MasterYi_Highlander_OnBuffDeactivate",
+    "event_id": 3946579200,
+    "source_preview": "event_wav/Play_sfx_MasterYi_Highlander_OnBuffDeactivate.wav",
+    "media_ids": [
+      449771614
+    ]
+  },
+  {
+    "file": "play_sfx_masteryi_highlander_trail.wav",
+    "event": "Play_sfx_MasterYi_Highlander_trail",
+    "event_id": 2547007766,
+    "source_preview": "event_wav/Play_sfx_MasterYi_Highlander_trail.wav",
+    "media_ids": [
+      560618281
+    ]
+  },
+  {
+    "file": "play_sfx_masteryi_death3d_cast.wav",
+    "event": "Play_sfx_MasterYi_Death3D_cast",
+    "event_id": 846545954,
+    "source_preview": "event_wav/Play_sfx_MasterYi_Death3D_cast.wav",
+    "media_ids": [
+      778800605
+    ]
+  }
+]

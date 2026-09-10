@@ -2,7 +2,7 @@ class_name NetworkSnapshotSystem
 extends RefCounted
 ## 20Hz 单位/塔/弹体快照的序列化与客户端应用。RPC 端点仍保留在 Main。
 
-const SNAPSHOT_PROTOCOL_VERSION := 10
+const SNAPSHOT_PROTOCOL_VERSION := 11
 const S_VERSION := 0
 const S_SERVER_TICK := 1
 const S_UNITS := 2
@@ -47,7 +47,8 @@ const U_ACTIVE_SKILL_USES_REMAINING := 29
 const U_ACTIVE_SKILL_COOLDOWN := 30
 const U_SHIELD_RATIO := 31
 const U_SHIELD_CAPACITY_RATIO := 32
-const UNIT_PAYLOAD_SIZE := 33
+const U_ACTIVE_BUFF_ACTIVE := 33
+const UNIT_PAYLOAD_SIZE := 34
 
 const P_ID := 0
 const P_X := 1
@@ -163,6 +164,7 @@ func _apply_units(units_data: Array) -> void:
 		u.net_skill_resource_enabled = int(d[U_SKILL_RESOURCE_ENABLED]) == 1
 		u.net_active_speed_multiplier = maxf(float(d[U_ACTIVE_SPEED_MULTIPLIER]), 1.0)
 		u.net_active_attack_speed_multiplier = maxf(float(d[U_ACTIVE_ATTACK_SPEED_MULTIPLIER]), 1.0)
+		u.net_active_buff_active = int(d[U_ACTIVE_BUFF_ACTIVE]) == 1
 		if _controller._active_skills.has(u.active_ability_id):
 			var active_entry: Dictionary = _controller._active_skills[u.active_ability_id]
 			active_entry["uses_remaining"] = maxi(int(d[U_ACTIVE_SKILL_USES_REMAINING]), 0)
@@ -357,4 +359,5 @@ func _unit_snapshot_payload(id: int, u: Unit, has_continuous_target: bool = fals
 		active_skill_state.get("uses_remaining", 0), active_skill_state.get("cooldown_left", 0.0),
 		u.get_shield_ratio(),
 		u.get_shield_capacity_ratio(),
+		1 if u.active_buff_timer > 0.0 else 0,
 	]

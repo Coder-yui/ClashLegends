@@ -27,6 +27,21 @@ func run(harness: Object) -> void:
 		garen_audio_ok and "声音池数量" in "；".join(audio_schema_errors) and "资源不存在" in "；".join(audio_schema_errors),
 		"CardDB 登记盖伦两段挥击/命中音频池，并拒绝段数不匹配与失效资源路径",
 	)
+	var masteryi_audio: Dictionary = CardDB.get_card("masteryi").get("audio", {})
+	var masteryi_swing_groups: Array = masteryi_audio.get("attack_swing", [])
+	var masteryi_swing_pools_ok := masteryi_swing_groups.size() == 3
+	for pool in masteryi_swing_groups:
+		masteryi_swing_pools_ok = masteryi_swing_pools_ok and pool is Array and not (pool as Array).is_empty()
+	var masteryi_events: Dictionary = masteryi_audio.get("events", {})
+	var masteryi_audio_ok := (
+		masteryi_swing_pools_ok
+		and (masteryi_audio.get("attack_hit", []) as Array).size() == 16
+		and masteryi_events.has("active_buff:start")
+		and masteryi_events.has("active_buff:sustain")
+		and masteryi_events.has("active_buff:end")
+		and masteryi_events.has("death")
+	)
+	harness._expect(masteryi_audio_ok, "CardDB 登记剑圣三段挥击、命中、高原血统起止/持续与死亡音频事件")
 	var animation_schema_errors := PackedStringArray()
 	CardDB._validate_visual_config("animation_schema_probe", {
 		"visual_animations": {

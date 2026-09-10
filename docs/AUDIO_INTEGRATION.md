@@ -42,6 +42,7 @@
 | events.<action>:end | 已跟踪动作剩余时长归零或被新 action 替换 | 死亡移除跟踪项，不补播 end；冻结/眩晕影响动作计时，但不会暂停已播放短音 |
 | events.<action>:release | frontal 的 apply_frontal 进入实际 Impact | 可用于释放音，空放也触发；不等于动画起手，不改变 impact_delay |
 | events.<action>:hit | Main._notify_unit_audio_event → play_event / _rpc_unit_audio_event | 当前自动派发来自 continuous_area 的真实成功脉冲及 frontal 的真实成功命中；同一脉冲/释放多目标只响一次，空挥静音 |
+| events.active_buff:start / :sustain / :end | GameAudioManager 观察 Unit.active_buff_timer（客户端读取快照状态） | 给没有 visual_action 的通用主动 Buff 使用；起止各一次，sustain 是单位持有的一次播放音层，Buff 结束或死亡时停止 |
 
 重要限制：
 

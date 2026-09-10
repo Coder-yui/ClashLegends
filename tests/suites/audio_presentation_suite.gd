@@ -90,6 +90,30 @@ func run(harness: Object, main: Node2D) -> void:
 	harness._expect(cues == [&"empowered_swing", &"judgment:start", &"judgment:sustain", &"judgment:end"], "客户端音频跟随快照动作与强化序号，重复快照不重播")
 	main.mode = previous_mode
 	client_unit.free()
+	var yi_cues: Array[StringName] = []
+	var yi_listener := func(card_id: String, cue: StringName, _position: Vector2):
+		if card_id == "masteryi":
+			yi_cues.append(cue)
+	audio.cue_played.connect(yi_listener)
+	var yi_stats := CardDB.get_card("masteryi")
+	var yi := Unit.new()
+	yi.card_id = "masteryi"
+	yi.setup(0, yi_stats, yi_stats.name)
+	main.add_child(yi)
+	audio.attach_unit(yi, yi_stats)
+	yi._attack_visual_serial = 1
+	audio._process(0.0)
+	yi.active_buff_timer = 5.0
+	audio._process(0.0)
+	yi.active_buff_timer = 0.0
+	audio._process(0.0)
+	harness._expect(
+		yi_cues == [&"attack_swing", &"active_buff:start", &"active_buff:sustain", &"active_buff:end"]
+		and not audio._sustain_players.has(yi.get_instance_id()),
+		"剑圣播放三段普攻挥击池，并在高原血统开启/持续/结束时接入对应音频且结束释放持续播放器",
+	)
+	audio.cue_played.disconnect(yi_listener)
+	yi.free()
 	var owners: Array[Unit] = []
 	for i in 2:
 		var owner := Unit.new()

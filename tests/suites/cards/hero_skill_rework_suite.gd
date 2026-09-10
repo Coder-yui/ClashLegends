@@ -345,32 +345,57 @@ func _check_masteryi_double_strike_and_highlander() -> void:
 		"剑圣第三段 2013 Passive 算两次普通攻击，第二刀在固定延迟后造成普通攻击 50% 伤害",
 	)
 	var skill: Dictionary = CardDB.active_skills_for("masteryi")[0]
+	yi._attack_cd = 0.7
 	yi._attack_windup = 0.18
+	yi.apply_slow(2.0, 0.5)
+	yi.apply_attack_speed_slow(2.0, 0.5)
+	var slow_preexisting := yi.slow_timer > 0.0 and yi.attack_speed_slow_timer > 0.0
 	_main._active_skill_effect_system.apply(yi, skill)
 	var haste_mechanics := (
-		is_equal_approx(yi.active_speed_multiplier, 1.5)
-		and is_equal_approx(yi.active_attack_speed_multiplier, 1.5)
-		and is_equal_approx(yi._attack_windup, 0.12)
-		and is_equal_approx(yi._next_attack_gap(), yi.attack_interval / 1.5)
+		is_equal_approx(yi.attack_interval, 0.7)
+		and is_equal_approx(yi.active_speed_multiplier, 1.5)
+		and is_equal_approx(yi.active_attack_speed_multiplier, 1.4)
+		and is_equal_approx(yi._attack_cd, 0.7 / 1.4)
+		and is_equal_approx(yi._attack_windup, 0.18 / 1.4)
+		and is_equal_approx(yi._next_attack_gap(), 0.5)
 	)
+	var slow_timer_before_refresh := yi.slow_timer
+	var attack_speed_slow_timer_before_refresh := yi.attack_speed_slow_timer
+	yi.apply_slow(2.0, 0.5)
+	yi.apply_attack_speed_slow(2.0, 0.5)
+	var slow_ignored := (
+		slow_preexisting
+		and is_equal_approx(yi.slow_timer, slow_timer_before_refresh)
+		and is_equal_approx(yi.attack_speed_slow_timer, attack_speed_slow_timer_before_refresh)
+	)
+	yi._prepare_movement(Vector2.UP, 0.05)
+	slow_ignored = slow_ignored and is_equal_approx(yi._move_intent.length(), yi.move_speed * 1.5)
 	_main._battle_presentation.attach_unit(yi, CardDB.get_card("masteryi"))
 	var view := _view_for(yi)
 	var haste_visual := false
+	var haste_run := false
+	var passive_attack := false
+	var shortened_attack := false
+	var visual_speed := -1.0
+	var expected_visual_speed := -1.0
 	if view != null:
 		yi._attacking = false
 		yi._move_intent = Vector2.UP * yi.move_speed * yi.active_speed_multiplier
 		view._sync_visual(false, 0.05)
-		var haste_run := view._animation_player.current_animation == "2013_Run_Haste"
+		haste_run = view._animation_player.current_animation == "2013_Run_Haste"
 		yi._attacking = true
 		yi._move_intent = Vector2.ZERO
 		view._play_attack(3)
 		view._sync_visual(false, 0.05)
-		var passive_attack := view._animation_player.current_animation == "masteryi_2013_passive_anm"
-		var shortened_attack := view._animation_player.get_playing_speed() > 4.1
+		passive_attack = view._animation_player.current_animation == "masteryi_2013_passive_anm"
+		var attack_animation := view._animation_player.get_animation("masteryi_2013_passive_anm")
+		visual_speed = view._animation_player.get_playing_speed()
+		expected_visual_speed = attack_animation.length / yi.attack_interval * yi.active_attack_speed_multiplier if attack_animation != null else -1.0
+		shortened_attack = attack_animation != null and is_equal_approx(visual_speed, expected_visual_speed)
 		haste_visual = haste_run and passive_attack and shortened_attack
-	_expect(haste_mechanics and haste_visual, "剑圣高原血统持续期间移速和攻速均为 1.5 倍，移动使用 2013 Run Haste，三段攻击动画同步缩短")
+	_expect(haste_mechanics and slow_ignored and haste_visual, "剑圣基础攻击间隔为 0.7 秒，高原血统将间隔缩短为 0.5 秒并免疫减速/减攻速，移动使用 2013 Run Haste，三段攻击动画同步缩短")
 	yi._tick_active_statuses(5.0)
-	_expect(is_equal_approx(yi.active_speed_multiplier, 1.0) and is_equal_approx(yi.active_attack_speed_multiplier, 1.0), "剑圣高原血统在 5 秒后恢复基础速度与攻速")
+	_expect(is_equal_approx(yi.active_speed_multiplier, 1.0) and is_equal_approx(yi.active_attack_speed_multiplier, 1.0) and not yi.active_buff_ignores_movement_slow and not yi.active_buff_ignores_attack_speed_slow, "剑圣高原血统在 5 秒后恢复基础速度与攻速及控制抗性")
 	for unit in [yi, target]:
 		if is_instance_valid(unit):
 			unit.free()
