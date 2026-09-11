@@ -114,6 +114,51 @@ func run(harness: Object, main: Node2D) -> void:
 	)
 	audio.cue_played.disconnect(yi_listener)
 	yi.free()
+	var mf_cues: Array[StringName] = []
+	var mf_listener := func(card_id: String, cue: StringName, _position: Vector2):
+		if card_id == "missfortune":
+			mf_cues.append(cue)
+	audio.cue_played.connect(mf_listener)
+	var mf_stats := CardDB.get_card("missfortune")
+	var mf := Unit.new()
+	mf.card_id = "missfortune"
+	mf.setup(0, mf_stats, mf_stats.name)
+	main.add_child(mf)
+	audio.attach_unit(mf, mf_stats)
+	mf._attack_visual_serial = 1
+	audio._process(0.0)
+	mf.active_buff_timer = 3.0
+	audio._process(0.0)
+	var mf_sustain: AudioStreamPlayer2D = audio._sustain_players.get(mf.get_instance_id())
+	mf.active_buff_timer = 0.0
+	audio._process(0.0)
+	harness._expect(
+		mf_cues == [&"attack_swing", &"active_buff:start", &"active_buff:sustain", &"active_buff:end"]
+		and mf_sustain != null and not audio._sustain_players.has(mf.get_instance_id()),
+		"赏金猎人 W 按施放/激活/结束事件播放大步流星音效，并在 Buff 结束时释放持续播放器",
+	)
+	mf_cues.clear()
+	var mf_target := Unit.new()
+	mf_target.card_id = "garen"
+	mf_target.setup(1, stats, stats.name)
+	main.add_child(mf_target)
+	mf_target.global_position = Vector2(360.0, 600.0)
+	var target_hp_before := mf_target.hp
+	var passive_landed: bool = main.resolve_attack_hit(0, mf.global_position, mf_target, 20.0, 0.0, 0.0, mf, mf.global_position, -1, {"first_strike": true})
+	var regular_landed: bool = main.resolve_attack_hit(0, mf.global_position, mf_target, 20.0, 0.0, 0.0, mf, mf.global_position)
+	harness._expect(
+		passive_landed and regular_landed and mf_cues == [&"first_strike_hit", &"first_strike:hit_location", &"attack_hit"]
+		and is_equal_approx(mf_target.hp, target_hp_before - 40.0),
+		"赏金猎人被动首次真实命中替换普通命中音，后续命中恢复普通音且不改变伤害结算",
+	)
+	mf_cues.clear()
+	mf._attack_visual_serial = 2
+	mf._attack_visual_first_strike = true
+	audio._process(0.0)
+	harness._expect(mf_cues == [&"first_strike:cast"], "赏金猎人首击从攻击起手就切换到 PassiveAttack 音效链，不先播放普通挥击")
+	mf_target.free()
+	audio.cue_played.disconnect(mf_listener)
+	mf.free()
 	var owners: Array[Unit] = []
 	for i in 2:
 		var owner := Unit.new()

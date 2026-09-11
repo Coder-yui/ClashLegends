@@ -1384,7 +1384,7 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 			_apply_attack_hit_effects(primary, effects)
 		if landed and counts_as_attack and from is Unit and is_instance_valid(from):
 			(from as Unit).on_attack_landed(source_form_index, amount)
-			_notify_attack_audio_hit(from as Unit, primary.global_position)
+			_notify_attack_audio_hit(from as Unit, primary.global_position, bool(effects.get("first_strike", false)))
 		if landed and was_alive and primary.hp <= 0.0 and from is Unit and is_instance_valid(from):
 			(from as Unit).on_enemy_killed(primary)
 		if landed and knockback > 0.0 and primary is Unit and is_instance_valid(primary) and primary.hp > 0.0:
@@ -1409,16 +1409,16 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 				(c as Unit).apply_knockback(origin, knockback)
 	if any_landed and counts_as_attack and from is Unit and is_instance_valid(from):
 		(from as Unit).on_attack_landed(source_form_index, amount)
-		_notify_attack_audio_hit(from as Unit, impact_pos)
+		_notify_attack_audio_hit(from as Unit, impact_pos, bool(effects.get("first_strike", false)))
 	return any_landed
 
-func _notify_attack_audio_hit(attacker: Unit, position: Vector2) -> void:
+func _notify_attack_audio_hit(attacker: Unit, position: Vector2, first_strike: bool = false) -> void:
 	if attacker == null or not is_instance_valid(attacker):
 		return
 	if _audio_manager != null:
-		_audio_manager.play_attack_hit(attacker, position)
+		_audio_manager.play_attack_hit(attacker, position, first_strike)
 	if mode == "host" and attacker.net_id >= 0:
-		_rpc_attack_audio_hit.rpc(attacker.net_id, position)
+		_rpc_attack_audio_hit.rpc(attacker.net_id, position, first_strike)
 
 ## 一次范围脉冲即使命中多个目标也只播放一次；空挥/免疫不产生命中声。
 func _notify_unit_audio_event(unit: Unit, cue: StringName, position: Vector2) -> void:
@@ -2717,12 +2717,12 @@ func _rpc_unit_hit(net_id: int) -> void:
 
 ## 主机 → 客户端：一次真实普攻命中对应一个短促的纯表现音频事件；允许丢失，绝不阻塞快照。
 @rpc("authority", "call_remote", "unreliable")
-func _rpc_attack_audio_hit(net_id: int, position: Vector2) -> void:
+func _rpc_attack_audio_hit(net_id: int, position: Vector2, first_strike: bool = false) -> void:
 	if mode != "client" or _audio_manager == null:
 		return
 	var unit: Unit = _client_units.get(net_id)
 	if unit != null and is_instance_valid(unit):
-		_audio_manager.play_attack_hit(unit, position)
+		_audio_manager.play_attack_hit(unit, position, first_strike)
 
 ## 主机 → 客户端：可靠触发一次塔/水晶受击闪白。
 @rpc("authority", "call_remote", "reliable")

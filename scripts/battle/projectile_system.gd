@@ -19,7 +19,12 @@ func launch(attacker: Node2D, target: Node2D, amount: float, projectile_speed: f
 	if target is Unit and (target as Unit).is_hidden_from(attacker):
 		return
 	var source_form_index := (attacker as Unit).form_index if attacker is Unit else -1
+	var first_strike := bool(effects.get("first_strike", false))
+	if first_strike and attacker is Unit:
+		_context.notify_unit_audio_event(attacker as Unit, &"first_strike:missile_cast", attacker.global_position)
 	if projectile_speed <= 0.0:
+		if first_strike and attacker is Unit:
+			_context.notify_unit_audio_event(attacker as Unit, &"first_strike:missile_launch", attacker.global_position)
 		_context.resolve_attack_hit(attacker.team, attacker.global_position, target, amount, splash_radius, knockback, attacker, attacker.global_position, source_form_index, effects)
 		return
 	var direction := attacker.global_position.direction_to(target.global_position)
@@ -52,6 +57,7 @@ func launch(attacker: Node2D, target: Node2D, amount: float, projectile_speed: f
 		"source_form_index": source_form_index, "source_pos": attacker.global_position,
 		"team": attacker.team, "damage": amount, "speed": projectile_speed,
 		"effects": effects.duplicate(true),
+		"first_strike": first_strike,
 		"splash": splash_radius, "knockback": knockback, "color": projectile_color,
 		"radius": 7.0 if projectile_visual == &"tower_orb" else (3.0 if projectile_visual == &"arrow" else 4.0),
 		"visual": projectile_visual, "visual_height": projectile_visual_height,
@@ -61,7 +67,7 @@ func launch(attacker: Node2D, target: Node2D, amount: float, projectile_speed: f
 		"visual_launch_pos": start_position, "direction": direction,
 	}
 	if attacker is Unit:
-		_context.notify_unit_audio_event(attacker as Unit, &"attack_launch", attacker.global_position)
+		_context.notify_unit_audio_event(attacker as Unit, &"first_strike:missile_launch" if first_strike else &"attack_launch", attacker.global_position)
 	queue_redraw()
 
 func tick(dt: float) -> void:
@@ -148,7 +154,9 @@ func _draw() -> void:
 			&"ice_cone": _draw_ice_cone(projectile)
 			# orb 同样必须使用纯表现炮口偏移；权威弹体位置仍保留在 projectile.pos。
 			_:
-				if StringName(projectile.get("impact_visual", "")) == &"splash_wave" or float(projectile.get("visual_scale", 1.0)) > 1.01:
+				if bool(projectile.get("first_strike", false)):
+					_draw_first_strike_orb(projectile)
+				elif StringName(projectile.get("impact_visual", "")) == &"splash_wave" or float(projectile.get("visual_scale", 1.0)) > 1.01:
 					_draw_splash_orb(projectile)
 				else:
 					draw_circle(_visual_position(projectile), projectile.radius * float(projectile.get("visual_scale", 1.0)), projectile.color)
@@ -166,6 +174,21 @@ func _draw_splash_orb(projectile: Dictionary) -> void:
 	draw_circle(pos, radius, color)
 	draw_circle(pos - direction * radius * 0.22, radius * 0.46, Color(1.0, 0.88, 0.42, 0.98))
 	draw_circle(pos - direction * radius * 0.34, radius * 0.20, Color(1.0, 1.0, 0.86, 1.0))
+
+func _draw_first_strike_orb(projectile: Dictionary) -> void:
+	var pos := _visual_position(projectile)
+	var direction := _direction(projectile)
+	var side := Vector2(-direction.y, direction.x)
+	var radius := float(projectile.radius) * maxf(float(projectile.get("visual_scale", 1.0)), 1.0)
+	var color: Color = projectile.color
+	# 首击弹体仅增加表现层火光包围，不改变弹体半径、飞行和命中判定。
+	draw_line(pos - direction * radius * 3.4, pos - direction * radius * 0.45, Color(1.0, 0.12, 0.015, 0.40), radius * 0.95, true)
+	draw_line(pos - direction * radius * 2.4 + side * radius * 0.52, pos - direction * radius * 0.35, Color(1.0, 0.52, 0.06, 0.68), radius * 0.42, true)
+	draw_line(pos - direction * radius * 2.25 - side * radius * 0.48, pos - direction * radius * 0.25, Color(1.0, 0.28, 0.02, 0.58), radius * 0.34, true)
+	draw_circle(pos, radius * 2.05, Color(1.0, 0.12, 0.01, 0.18))
+	draw_circle(pos, radius * 1.46, Color(1.0, 0.48, 0.04, 0.56))
+	draw_circle(pos, radius * 1.05, Color(1.0, 0.76, 0.20, 0.96))
+	draw_circle(pos - direction * radius * 0.20, radius * 0.54, Color(1.0, 0.98, 0.76, 1.0))
 
 func _draw_impact_effect(effect: Dictionary) -> void:
 	if StringName(effect.get("visual", "")) != &"splash_wave":

@@ -46,3 +46,16 @@
 - 使用动画：部署 `Respawn`，待机 `Idle1_Base`，普通移动 `Run`，加速移动 `Run2`，普攻 `Attack1`/`Attack2` 循环，死亡 `Death`（表现时长 `0.8 s`）。
 - `Attack1/2` 的出手点在动作前段（约 12% 处），`first_hit = 0.12 s` 按此调校；具体命中仍由固定 20Hz 权威模拟结算，动画不驱动伤害。
 - 卡面：`res://assets/cards/missfortune_loading.jpg`，来自官方 Data Dragon 的基础皮肤加载图：<https://ddragon.leagueoflegends.com/cdn/img/champion/loading/MissFortune_0.jpg>。
+
+## 5. 音频
+
+- 状态：已接入当前玩法实际使用的普攻、远程离弦、真实命中、被动首次攻击完整音效链、LOL W“大步流星”和死亡事件；死亡长语音暂保留，后续单独处理。
+- CardDB 配置：`scripts/data/card_db.gd` 的 `missfortune.audio`。
+- 映射真相来源：[赏金猎人音频说明](../../assets/audio/units/missfortune/README.md)；白名单文件与原始事件/媒体映射见同目录 `event_manifest.json`。
+- W 技能按 `MissFortuneViciousStrikes_OnCast` → `active_buff:start`、`OnBuffActivate` → `active_buff:sustain`、`OnBuffDeactivate` → `active_buff:end` 接入；持续层由通用单位音频生命周期在 Buff 结束、死亡或销毁时停止。
+- 被动“先声夺人”按 `MissFortunePassiveAttack_OnCast` → `OnMissileCast` → `OnMissileLaunch` → `OnHit` + `OnHitLocation` 接入；攻击表现序号开始时就确定首击变体，命中尾段仍只在权威伤害结算成功后播放，并通过快照/RPC同步客户端。
+- 首击弹体携带纯表现 `first_strike` 标记，绘制为紫色弹体外包一层橙红火光；火光不改变弹体半径、飞行速度、射程或命中判定。
+- 普攻 `BasicAttack2_OnHit` 与 `BasicAttack_OnHit` 使用同一套事件图和候选媒体，因此由共享 `attack_hit` 池消费，不重复导入一份相同素材。
+- 素材来源：原皮 SFX 来自 `MissFortune.wad.client`；死亡语音来自 `MissFortune.zh_CN.wad.client`。原包仅在项目外解析，项目内只保留 52 份已选 WAV；被动各阶段保留两个已验证的自然变体，命中位置层为单一事件。
+- 导入：`python3 tools/import_missfortune_audio.py`。素材仅供学习原型使用，其他用途需核实相应权限。
+- 验证：`Godot --headless --path . --script tests/mechanics_check.gd` 全部通过；F5 场景启动无错误；`Godot --path . --script tools/demos/missfortune_audio_demo.gd` 实际触发普攻、离弦、命中、W 起手/持续/结束和死亡事件，并生成 `/tmp/clash_missfortune_audio.wav`。

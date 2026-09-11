@@ -133,7 +133,7 @@ const CARD_FIELDS := [
 	&"heal_amount", &"active_heal_multiplier", &"active_shield", &"active_shield_duration", &"active_cost_bonus",
 	&"visual_scene_path", &"visual_scene_paths", &"visual_forward_yaw", &"visual_animations", &"audio",
 ]
-const AUDIO_FIELDS := [&"attack_swing", &"attack_hit", &"attack_swing_volume_db", &"attack_hit_volume_db", &"events"]
+const AUDIO_FIELDS := [&"attack_swing", &"attack_hit", &"first_strike_hit", &"attack_swing_volume_db", &"attack_hit_volume_db", &"events"]
 const VISUAL_ANIMATION_FIELDS := [
 	&"deploy", &"deploy_durations", &"deploy_clip_ratio", &"idle", &"idle_cycle", &"move", &"move_enter", &"haste_move",
 	&"move_cycle", &"attack", &"attack_enter", &"attack_retarget_enter", &"attack_loop",
@@ -1136,6 +1136,97 @@ static func all() -> Dictionary:
 				"attack": ["Attack1", "Attack2"],
 				"death": "Death", "death_duration": 0.8,
 			},
+			"audio": {
+				"attack_swing": [
+					[
+						"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_oncast_r1_d.wav",
+						"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_oncast_r2_d.wav",
+						"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_oncast_r3_d.wav",
+					],
+					[
+						"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack2_oncast_r1.wav",
+						"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack2_oncast_r2.wav",
+						"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack2_oncast_r3.wav",
+					],
+				],
+				# BasicAttack2_OnHit 与 BasicAttack_OnHit 使用同一套 Switch/随机素材；项目命中入口按普攻共享池消费。
+				"attack_hit": [
+					"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1153642577_r1_d.wav",
+					"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1153642577_r2_d.wav",
+					"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1153642577_r3_d.wav",
+					"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1153642577_r4_d.wav",
+					"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1153642577_r5_d.wav",
+					"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1153642577_r6_d.wav",
+					"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1216965916_r1_d.wav",
+					"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1216965916_r2_d.wav",
+					"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1216965916_r3_d.wav",
+					"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1216965916_r4_d.wav",
+					"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1216965916_r5_d.wav",
+					"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1216965916_r6_d.wav",
+					"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2058049674_r1_d.wav",
+					"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2058049674_r2_d.wav",
+					"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2058049674_r3_d.wav",
+					"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2058049674_r4_d.wav",
+					"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2058049674_r5_d.wav",
+					"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2058049674_r6_d.wav",
+					"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2473969246_r1_d.wav",
+					"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2473969246_r2_d.wav",
+					"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2473969246_r3_d.wav",
+					"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2473969246_r4_d.wav",
+					"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2473969246_r5_d.wav",
+					"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2473969246_r6_d.wav",
+				],
+				# 赏金猎人被动“先声夺人”：首次对每个目标的真实命中替换普通命中音。
+				"first_strike_hit": [
+					"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunepassiveattack_onhit_1559186049_1153642577_r1_d.wav",
+					"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunepassiveattack_onhit_1559186049_1153642577_r2_d.wav",
+				],
+				"attack_swing_volume_db": 0.0,
+				"attack_hit_volume_db": 0.0,
+				"events": {
+					"attack_launch": {"pool": [
+						"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onmissilelaunch_r1_d.wav",
+						"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onmissilelaunch_r2_d.wav",
+						"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onmissilelaunch_r3_d.wav",
+					], "volume_db": 0.0},
+					# 首击在攻击起手、弹体准备和离弦阶段使用 LOL PassiveAttack 音效链；
+					# 这些事件只由权威攻击变体派发，不改变伤害或弹体时序。
+					"first_strike:cast": {"pool": [
+						"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunepassiveattack_oncast_r1_d.wav",
+						"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunepassiveattack_oncast_r2_d.wav",
+					], "volume_db": 0.0},
+					"first_strike:missile_cast": {"pool": [
+						"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunepassiveattack_onmissilecast_r1_d.wav",
+						"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunepassiveattack_onmissilecast_r2_d.wav",
+					], "volume_db": 0.0},
+					"first_strike:missile_launch": {"pool": [
+						"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunepassiveattack_onmissilelaunch_r1_d.wav",
+						"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunepassiveattack_onmissilelaunch_r2_d.wav",
+					], "volume_db": 0.0},
+					"first_strike:hit_location": {"pool": [
+						"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunepassiveattack_onhitlocation_d.wav",
+					], "volume_db": 0.0},
+					# 大步流星按 LOL W 的 ViciousStrikes 事件接入：施放、持续层、结束分别独立播放。
+					"active_buff:start": {"pool": [
+						"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortuneviciousstrikes_oncast_r1.wav",
+						"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortuneviciousstrikes_oncast_r2.wav",
+					], "volume_db": 0.0},
+					"active_buff:sustain": {"pool": [
+						"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortuneviciousstrikes_onbuffactivate_r1.wav",
+						"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortuneviciousstrikes_onbuffactivate_r2.wav",
+					], "volume_db": 0.0},
+					"active_buff:end": {"pool": [
+						"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortuneviciousstrikes_onbuffdeactivate_r1.wav",
+						"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortuneviciousstrikes_onbuffdeactivate_r2.wav",
+					], "volume_db": 0.0},
+					"death": {"pool": [
+						"res://assets/audio/units/missfortune/play_vo_missfortune_death3d_r1_zh_cn.wav",
+						"res://assets/audio/units/missfortune/play_vo_missfortune_death3d_r2_zh_cn.wav",
+						"res://assets/audio/units/missfortune/play_vo_missfortune_death3d_r3_zh_cn.wav",
+						"res://assets/audio/units/missfortune/play_vo_missfortune_death3d_r4_zh_cn.wav",
+					], "volume_db": 0.0, "bus": "Voice"},
+				},
+			},
 			"is_air": false, "building_only": false, "can_attack_air": true,
 			"active_skills": [{
 				"name": "大步流星", "kind": "buff", "cost": 0, "max_uses": 1, "cooldown": 5.0,
@@ -1301,7 +1392,7 @@ static func _validate_audio_config(label: String, stats: Dictionary, errors: Pac
 		var actions: Dictionary = stats.get("visual_animations", {}).get("visual_actions", {})
 		for cue in events:
 			var parts := String(cue).split(":")
-			if String(cue) not in ["empowered_ready", "empowered_swing", "death", "attack_launch"] and not (parts.size() == 2 and (parts[0] == "active_buff" or actions.has(parts[0])) and parts[1] in ["start", "end", "hit", "release", "sustain"]):
+			if String(cue) not in ["empowered_ready", "empowered_swing", "death", "attack_launch", "first_strike:cast", "first_strike:missile_cast", "first_strike:missile_launch", "first_strike:hit_location"] and not (parts.size() == 2 and (parts[0] == "active_buff" or actions.has(parts[0])) and parts[1] in ["start", "end", "hit", "release", "sustain"]):
 				errors.append("%s.audio.events.%s: 未绑定的表现事件" % [label, cue])
 			var event = events[cue]
 			if not event is Dictionary:
@@ -1325,6 +1416,8 @@ static func _validate_audio_config(label: String, stats: Dictionary, errors: Pac
 		for index in (swing as Array).size():
 			_validate_audio_path_pool("%s.audio.attack_swing[%d]" % [label, index], (swing as Array)[index], errors)
 	_validate_audio_path_pool("%s.audio.attack_hit" % label, (audio as Dictionary).get("attack_hit", []), errors)
+	if (audio as Dictionary).has("first_strike_hit"):
+		_validate_audio_path_pool("%s.audio.first_strike_hit" % label, (audio as Dictionary).get("first_strike_hit", []), errors)
 	for volume_field in [&"attack_swing_volume_db", &"attack_hit_volume_db"]:
 		if (audio as Dictionary).has(volume_field) and typeof((audio as Dictionary)[volume_field]) not in [TYPE_INT, TYPE_FLOAT]:
 			errors.append("%s.audio.%s: 必须是分贝数值" % [label, volume_field])

@@ -2,7 +2,7 @@ class_name NetworkSnapshotSystem
 extends RefCounted
 ## 20Hz 单位/塔/弹体快照的序列化与客户端应用。RPC 端点仍保留在 Main。
 
-const SNAPSHOT_PROTOCOL_VERSION := 11
+const SNAPSHOT_PROTOCOL_VERSION := 12
 const S_VERSION := 0
 const S_SERVER_TICK := 1
 const S_UNITS := 2
@@ -48,7 +48,8 @@ const U_ACTIVE_SKILL_COOLDOWN := 30
 const U_SHIELD_RATIO := 31
 const U_SHIELD_CAPACITY_RATIO := 32
 const U_ACTIVE_BUFF_ACTIVE := 33
-const UNIT_PAYLOAD_SIZE := 34
+const U_ATTACK_FIRST_STRIKE := 34
+const UNIT_PAYLOAD_SIZE := 35
 
 const P_ID := 0
 const P_X := 1
@@ -62,7 +63,8 @@ const P_VISUAL_HEIGHT := 8
 const P_VISUAL_OFFSET_X := 9
 const P_VISUAL_OFFSET_Y := 10
 const P_VISUAL_SCALE := 11
-const PROJECTILE_PAYLOAD_SIZE := 12
+const P_FIRST_STRIKE := 12
+const PROJECTILE_PAYLOAD_SIZE := 13
 
 const T_HP := 0
 const T_ACTIVATED := 1
@@ -139,6 +141,7 @@ func _apply_units(units_data: Array) -> void:
 		u.frozen_timer = 0.15 if int(d[U_FROZEN]) == 1 else 0.0
 		u.net_visual_state = int(d[U_VISUAL_STATE])
 		u.net_attack_visual_serial = int(d[U_ATTACK_SERIAL])
+		u.net_attack_visual_first_strike = int(d[U_ATTACK_FIRST_STRIKE]) == 1
 		u.net_shroud_active = int(d[U_SHROUD]) == 1
 		u.net_has_continuous_target = int(d[U_HAS_CONTINUOUS_TARGET]) == 1
 		u.net_continuous_target_pos = Vector2(d[U_CONTINUOUS_X], d[U_CONTINUOUS_Y])
@@ -221,6 +224,7 @@ func _apply_projectiles(projectiles_data: Array) -> void:
 			"visual_offset": Vector2(d[P_VISUAL_OFFSET_X], d[P_VISUAL_OFFSET_Y]),
 			"target_visual_offset": Vector2(d[P_VISUAL_OFFSET_X], d[P_VISUAL_OFFSET_Y]),
 			"visual_scale": float(d[P_VISUAL_SCALE]),
+			"first_strike": int(d[P_FIRST_STRIKE]) == 1,
 		})
 		projectile.target_pos = Vector2(d[P_X], d[P_Y])
 		projectile.color = d[P_COLOR]
@@ -230,6 +234,7 @@ func _apply_projectiles(projectiles_data: Array) -> void:
 		projectile.visual_height = float(d[P_VISUAL_HEIGHT])
 		projectile.target_visual_offset = Vector2(d[P_VISUAL_OFFSET_X], d[P_VISUAL_OFFSET_Y])
 		projectile.visual_scale = float(d[P_VISUAL_SCALE])
+		projectile.first_strike = int(d[P_FIRST_STRIKE]) == 1
 		_controller._client_projectiles[d[P_ID]] = projectile
 	var gone := []
 	for id in _controller._client_projectiles:
@@ -330,7 +335,7 @@ func _projectile_snapshot_payload(id: int, projectile: Dictionary) -> Array:
 		id, position.x, position.y, projectile.get("color", Color.WHITE), projectile.get("radius", 4.0),
 		String(projectile.get("visual", &"orb")), direction.x, direction.y,
 		projectile.get("visual_height", 0.0), visual_offset.x, visual_offset.y,
-		projectile.get("visual_scale", 1.0),
+		projectile.get("visual_scale", 1.0), 1 if bool(projectile.get("effects", {}).get("first_strike", false)) else 0,
 	]
 
 
@@ -360,4 +365,5 @@ func _unit_snapshot_payload(id: int, u: Unit, has_continuous_target: bool = fals
 		u.get_shield_ratio(),
 		u.get_shield_capacity_ratio(),
 		1 if u.active_buff_timer > 0.0 else 0,
+		1 if u.is_attack_visual_first_strike() else 0,
 	]

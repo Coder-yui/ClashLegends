@@ -33,6 +33,7 @@
 | --- | --- | --- |
 | audio.attack_swing | GameAudioManager 读取攻击序号，按段选池 | 一段一个非空池，池数等于 visual_animations.attack 数量 |
 | audio.attack_hit | Main._notify_attack_audio_hit → play_attack_hit | 普攻成功命中才触发；客户端经 _rpc_attack_audio_hit 重放，不用 first_hit 定时猜实际命中 |
+| audio.first_strike_hit / events.first_strike:* | 攻击表现序号、ProjectileSystem、Main._notify_attack_audio_hit | 权威攻击变体标记的首击完整链；起手/弹体阶段按 `events.first_strike:*` 播放，`first_strike_hit` 在真实命中时替换 `attack_hit`，未命中/免疫不触发命中尾段 |
 | events.attack_launch | ProjectileSystem.launch 在权威弹体实际创建后通过 BattleContext 通知 Main | 远程离弦事件；无效目标/未生成弹体不发声，客户端经通用音频 RPC 重放 |
 | events.empowered_ready | 可视强化准备状态 false → true | 这是状态观察，不是任意 buff 的通用 Cast Start；已准备时再次施放不保证重播 |
 | events.empowered_swing | 强化攻击序号对应当前攻击 | 替代此次普通挥击；未配置时回退普通挥击；当前前摇被强化时也会触发，已播放短音尾音不会自动撤销 |
@@ -48,6 +49,7 @@
 
 - validator 允许已有 action 的 `:hit` / `:release`，不代表 nova、forward_area 等其他效果已有派发入口；frontal 已支持 release/hit，continuous_area 支持 hit。需要在对应权威成功命中路径扩展；不能在动画上加方法轨道伪造命中。
 - 短音位置固定在触发点，共享 24 个声道，满时回收旧声道；死亡不会切断所有短音。sustain 另用最多 24 个单位持有播放器，支持跟随、暂停恢复、生命周期停止；满时回收最早一条，片段自然结束不重播。目前仍无无限循环、可配置淡出或任意 Wwise Stop 图的完整复刻。
+- `first_strike_hit` 是可选的命中替代池，不是额外叠加层；只有权威攻击效果将 `first_strike` 随弹体/命中路径带到真实结算，并且 `take_damage` 成功后才播放。没有该池时回退普通 `attack_hit`。
 - 当前只要声明 audio，validator 就要求非空 attack_swing 和 attack_hit，不能直接用于“只有死亡音的无攻击单位”、纯法术或空池。需要按任务扩展可选池契约、消费者与测试；不能放假静音文件骗过校验。
 - 世界 Tower 不是此 Unit 接口的自动消费者；双形态虽然校验 transformed_stats.audio，当前管理器不会因 form_changed 自动重挂配置。为这些情况接音频时先实现并测试相应通用生命周期，不能只填数据声称完成。
 - 技能动作序号/强化状态从权威或客户端快照读取；短暂状态可能因快照间隔被跳过。若任务要求每次施法都必达，需要设计明确的事件传输/去重，不能偷偷将声音变成权威判定条件。

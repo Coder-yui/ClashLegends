@@ -228,6 +228,8 @@ var _attack_visual_serial := 0
 ## 持续攻击的目标表现标识；原地换目标时推进序号，让两端播放换目标衔接。
 var _continuous_visual_target_id := 0
 var _attack_visual_pending := false
+## 当前攻击表现序号是否采用赏金猎人首次攻击音效链；仅表现读取，不参与伤害判定。
+var _attack_visual_first_strike := false
 var _attack_hit_index := 0
 ## 挥击总数：与表现层攻击动画序号同步推进，用于命中回血按三段循环取模。
 var _attack_swing_count := 0
@@ -259,6 +261,7 @@ var _skill_resource_combat_timer := 0.0
 var _just_deployed := false
 var net_visual_state := 1
 var net_attack_visual_serial := 0
+var net_attack_visual_first_strike := false
 var net_shroud_active := false
 var net_shield_ratio := 0.0
 var net_shield_capacity_ratio := 0.0
@@ -477,6 +480,9 @@ func get_visual_screen_position() -> Vector2:
 func get_attack_visual_serial() -> int:
 	return _attack_visual_serial
 
+func is_attack_visual_first_strike() -> bool:
+	return net_attack_visual_first_strike if _in_client_mode() else _attack_visual_first_strike
+
 func get_empowered_attack_visual_serial() -> int:
 	return net_empowered_attack_visual_serial if _in_client_mode() else _empowered_attack_visual_serial
 
@@ -660,6 +666,7 @@ func _cancel_attack_for_cast(reset_attack_load: bool = false) -> void:
 	if reset_attack_load:
 		_attack_load = 0.0
 	_attack_visual_pending = false
+	_attack_visual_first_strike = false
 	_continuous_visual_target_id = 0
 	set_continuous_beam_visible(false)
 
@@ -741,6 +748,7 @@ func _apply_form(next_form_index: int, grant_max_hp_increase: bool, advance_form
 	_attack_recovery_timer = 0.0
 	_attack_load = 0.0
 	_attack_visual_pending = false
+	_attack_visual_first_strike = false
 	_path = PackedVector2Array()
 	_path_index = 0
 	cancel_charge()
@@ -1409,13 +1417,18 @@ func _attack(dt: float) -> void:
 		_attack_cd = next_attack_gap
 		var base_hit_damage := damage * _attack_damage_multiplier(hit_index) * active_damage_multiplier * (charge_damage_multiplier if _charged else 1.0)
 		var hit_damage := base_hit_damage
+		var first_strike := _attack_visual_first_strike and first_strike_damage_multiplier != 1.0
 		# 先声夺人：对每个目标的首次普攻附加伤害倍率；远程弹体在出手 tick 固化该次伤害。
 		if first_strike_damage_multiplier != 1.0:
 			var first_strike_target_id := _target.get_instance_id()
 			if not _first_strike_hit_target_ids.has(first_strike_target_id):
 				_first_strike_hit_target_ids[first_strike_target_id] = true
 				hit_damage *= first_strike_damage_multiplier
+				first_strike = true
 		var attack_effects: Dictionary = {}
+		if first_strike:
+			# 效果随弹体携带到真实命中点；表现层不会在出手或预判 first_hit 时播放被动音。
+			attack_effects["first_strike"] = true
 		# 对空能力同时约束溅射层，避免对地炮弹借地面主目标误伤空军。
 		if not can_attack_air:
 			attack_effects["ground_only"] = true
@@ -1479,6 +1492,9 @@ func _try_start_attack_visual(time_until_hit: float) -> void:
 	if continuous_attack or not _attack_visual_pending or time_until_hit > first_hit_time + 0.001:
 		return
 	_attack_visual_pending = false
+	_attack_visual_first_strike = false
+	if first_strike_damage_multiplier != 1.0 and _target != null and is_instance_valid(_target):
+		_attack_visual_first_strike = not _first_strike_hit_target_ids.has(_target.get_instance_id())
 	_attack_visual_serial += 1
 	if empowered_attack_ready:
 		_empowered_attack_visual_serial = _attack_visual_serial

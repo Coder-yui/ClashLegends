@@ -93,7 +93,11 @@ func _tick_attached_units() -> void:
 			if not play_event(unit, &"empowered_swing", unit.get_visual_screen_position()):
 				_play_attack_swing(String(entry.card_id), entry.audio, unit.get_visual_screen_position(), serial)
 		elif serial > 0 and serial != int(entry.last_attack_serial):
-			_play_attack_swing(String(entry.card_id), entry.audio, unit.get_visual_screen_position(), serial)
+			if _attack_is_first_strike(unit):
+				if not play_event(unit, &"first_strike:cast", unit.get_visual_screen_position()):
+					_play_attack_swing(String(entry.card_id), entry.audio, unit.get_visual_screen_position(), serial)
+			else:
+				_play_attack_swing(String(entry.card_id), entry.audio, unit.get_visual_screen_position(), serial)
 		entry.last_attack_serial = serial
 		entry.last_empowered_serial = empowered_serial
 		var action_serial := _action_serial(unit)
@@ -192,21 +196,38 @@ func _attack_serial(unit: Unit) -> int:
 		return unit.net_attack_visual_serial
 	return unit.get_attack_visual_serial()
 
+func _attack_is_first_strike(unit: Unit) -> bool:
+	if unit.battle_context != null and unit.battle_context.is_net_client():
+		return unit.net_attack_visual_first_strike
+	return unit.is_attack_visual_first_strike()
+
 ## 真实伤害结算成功后由 Main 调用。position 是命中点，来源单位只用于选择声音配置。
-func play_attack_hit(unit: Unit, position: Vector2) -> bool:
+## first_strike 为权威攻击效果携带的首次命中标记；有专用素材时替换普通命中音。
+func play_attack_hit(unit: Unit, position: Vector2, first_strike: bool = false) -> bool:
 	if unit == null or not is_instance_valid(unit):
 		return false
 	var entry: Dictionary = _unit_entries.get(unit.get_instance_id(), {})
 	if entry.is_empty():
 		return false
 	var audio: Dictionary = entry.audio
-	return _play_pool(
+	var cue := &"attack_hit"
+	var configured = audio.get("attack_hit", [])
+	var volume_db := float(audio.get("attack_hit_volume_db", -4.0))
+	var first_strike_pool = audio.get("first_strike_hit", [])
+	var first_strike_hit := first_strike and first_strike_pool is Array and not (first_strike_pool as Array).is_empty()
+	if first_strike_hit:
+		cue = &"first_strike_hit"
+		configured = first_strike_pool
+	var played := _play_pool(
 		String(entry.card_id),
-		&"attack_hit",
-		audio.get("attack_hit", []),
+		cue,
+		configured,
 		position,
-		float(audio.get("attack_hit_volume_db", -4.0))
+		volume_db
 	)
+	if played and first_strike_hit:
+		play_event(unit, &"first_strike:hit_location", position)
+	return played
 
 ## 开发面板专用试听：复用正式随机池与 first_hit 时序，但不创建攻击或伤害。
 func preview_attack(card_id: String, stats: Dictionary, position: Vector2) -> bool:
