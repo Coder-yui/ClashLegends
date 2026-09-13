@@ -23,6 +23,7 @@ var max_hp := 2000.0
 var hp := 2000.0
 var shield_hp := 0.0
 var shield_max_hp := 0.0
+var _shield_decay_remainder := 0.0
 var shield_timer := 0.0
 var shield_decay_rate := 0.0
 var damage := 50.0
@@ -50,7 +51,7 @@ var _cooldown := 0.0
 var _lock_windup := 0.0
 var _target: Node2D = null
 var frozen_timer := 0.0
-var stun_timer := 0.0
+var control := ControlState.new()
 var _destroyed_visual_emitted := false
 var _hit_flash_event_cooldown := 0.0
 
@@ -60,15 +61,15 @@ func set_battle_context(context: BattleContext) -> void:
 func setup(p_team: int, stats: Dictionary, p_is_king: bool) -> void:
 	team = p_team
 	is_king = p_is_king
-	max_hp = stats.hp
+	max_hp = BattleNumbers.quantity(stats.hp)
 	hp = max_hp
 	shield_hp = 0.0
 	shield_max_hp = 0.0
 	shield_timer = 0.0
 	shield_decay_rate = 0.0
-	damage = stats.damage
+	damage = BattleNumbers.quantity(stats.damage)
 	attack_range = stats.range
-	attack_interval = stats.interval
+	attack_interval = snappedf(stats.interval, 0.01)
 	body_radius = stats.radius
 	footprint_tiles = stats.get("footprint_tiles", Vector2i(4, 4) if is_king else Vector2i(3, 3))
 	visual_radius = stats.get("visual_radius", body_radius)
@@ -95,7 +96,7 @@ func freeze(duration: float) -> void:
 	queue_redraw()
 
 func stun(duration: float) -> void:
-	stun_timer = maxf(stun_timer, duration)
+	control.stun_timer = maxf(control.stun_timer, duration)
 	queue_redraw()
 
 func _ready() -> void:
@@ -108,9 +109,9 @@ func sim_tick(dt: float) -> void:
 	_tick_shield(dt)
 	# 冰冻计时不因国王塔休眠而暂停。
 	_hit_flash_event_cooldown = maxf(0.0, _hit_flash_event_cooldown - dt)
-	if frozen_timer > 0.0 or stun_timer > 0.0:
+	if frozen_timer > 0.0 or control.stun_timer > 0.0:
 		frozen_timer = maxf(0.0, frozen_timer - dt)
-		stun_timer = maxf(0.0, stun_timer - dt)
+		control.stun_timer = maxf(0.0, control.stun_timer - dt)
 		queue_redraw()
 		return
 	if not can_attack:
@@ -179,9 +180,9 @@ func take_damage(amount: float, _from: Node2D = null, _source_team: int = -1, _s
 	if hp <= 0.0:
 		return false
 	var was_alive := hp > 0.0
-	var remaining_damage := maxf(amount, 0.0)
+	var remaining_damage := BattleNumbers.quantity(maxf(amount, 0.0))
 	if shield_hp > 0.0 and shield_timer > 0.0:
-		var absorbed := minf(shield_hp, remaining_damage)
+		var absorbed := minf(roundf(shield_hp), remaining_damage)
 		shield_hp -= absorbed
 		remaining_damage -= absorbed
 		if shield_hp <= 0.0:
@@ -203,14 +204,15 @@ func take_damage(amount: float, _from: Node2D = null, _source_team: int = -1, _s
 
 
 func add_shield(amount: float, duration: float, decays: bool = false) -> void:
-	amount = maxf(amount, 0.0)
-	duration = maxf(duration, 0.0)
+	amount = BattleNumbers.quantity(maxf(amount, 0.0))
+	duration = maxf(BattleNumbers.decimal(duration), 0.0)
 	if hp <= 0.0 or amount <= 0.0 or duration <= 0.0:
 		return
 	shield_hp += amount
 	shield_max_hp += amount
 	shield_timer = maxf(shield_timer, duration)
 	shield_decay_rate = amount / duration if decays else 0.0
+	_shield_decay_remainder = 0.0
 	queue_redraw()
 
 
@@ -219,7 +221,10 @@ func _tick_shield(dt: float) -> void:
 		return
 	shield_timer = maxf(0.0, shield_timer - dt)
 	if shield_decay_rate > 0.0:
-		shield_hp = maxf(0.0, shield_hp - shield_decay_rate * dt)
+		_shield_decay_remainder += shield_decay_rate * dt
+		var decay := roundf(_shield_decay_remainder)
+		_shield_decay_remainder -= decay
+		shield_hp = maxf(0.0, shield_hp - decay)
 	if shield_timer <= 0.0 or shield_hp <= 0.0:
 		_clear_shield()
 	queue_redraw()
@@ -258,7 +263,7 @@ func notify_visual_hit() -> void:
 	visual_hit.emit()
 
 func _health_text() -> String:
-	return "%d" % ceili(hp)
+	return "%d" % BattleNumbers.quantity(hp)
 
 func _draw() -> void:
 	# 已被摧毁：画废墟，不画描边和血条
@@ -275,7 +280,7 @@ func _draw() -> void:
 	# 冰冻状态：蓝色覆盖
 	if frozen_timer > 0.0:
 		draw_circle(Vector2.ZERO, visual_radius + 4.0, Color(0.40, 0.70, 1.00, 0.35))
-	if stun_timer > 0.0:
+	if control.stun_timer > 0.0:
 		draw_arc(Vector2.ZERO, visual_radius + 5.0, 0.0, TAU, 28, Color(1.0, 0.78, 0.18, 0.95), 3.0, true)
 	# 国王塔顶部标记：激活金色，休眠灰色
 	if is_king and not has_model_art:

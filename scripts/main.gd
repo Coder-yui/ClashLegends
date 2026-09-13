@@ -1,62 +1,17 @@
 extends Node2D
 ## 主场景：战场搭建、部署输入、敌方占位出兵、胜负判定。
 
-const ART_DEV_PANEL_SCRIPT := preload("res://scripts/ui/art_dev_panel.gd")
+const WORKBENCH_SCRIPT := preload("res://scripts/ui/development_workbench.gd")
 const ACTIVE_SKILL_BAR_SCRIPT := preload("res://scripts/ui/active_skill_bar.gd")
 const SPELL_SYSTEM_SCRIPT := preload("res://scripts/battle/spell_system.gd")
 const ACTIVE_SKILL_EFFECT_SYSTEM_SCRIPT := preload("res://scripts/battle/active_skill_effect_system.gd")
 const AUDIO_MANAGER_SCRIPT := preload("res://scripts/audio/game_audio_manager.gd")
 const ARENA_BACKGROUND_TEXTURE := preload("res://assets/arena/arena_rift_v4.png")
 
-## CR 标准 1v1 场地：18 列 x 32 行。项目分辨率正好对应每格 40px。
-## 后续地图、部署、塔位和导航只能从这组格子常量派生，避免再次出现比例漂移。
-const ARENA_COLUMNS := 18
-const ARENA_ROWS := 32
-const TILE_SIZE := 40.0
-const FIELD_W := ARENA_COLUMNS * TILE_SIZE
-const FIELD_H := ARENA_ROWS * TILE_SIZE
-const RIVER_TOP_ROW := 15
-const RIVER_BOTTOM_ROW := 17
-const RIVER_Y := 16.0 * TILE_SIZE
-const RIVER_HALF := TILE_SIZE
-# 参考竞技场的两座桥均为 3 格宽，中心与对应公主塔同轴。
-const BRIDGE_HALF := TILE_SIZE * 1.5
-const BRIDGE_X_LEFT := 3.5 * TILE_SIZE
-const BRIDGE_X_RIGHT := 14.5 * TILE_SIZE
-## A* 用当前最大人物圆柱半径统一收窄桥面、扩张河岸与静态障碍；
-## 连续碰撞仍按每个单位自己的档位半径精确判定。
-const NAV_CLEARANCE := CardDB.RADIUS_EXTREMELY_LARGE
-const STRUCTURE_SEPARATION := 1.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
-const AVOID_LOOKAHEAD := 34.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
-const AVOID_NEIGHBOR_PADDING := 26.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
-const AVOID_MIN_FORWARD_RATIO := 0.35
-## 保留现有局部避让结构；提高速度跟随响应，并把被堵时的修正更多分配给横向错开。
-const AVOID_RESPONSE := 14.0
-## 追尾进入近邻范围后停止纵向避让，让双方真正接触；接触 skin 只覆盖 20Hz 下
-## 一个 Tick 的最大追近距离，实际速度交换仍严格由质量与接触前速度决定。
-const MOMENTUM_APPROACH_PADDING := 8.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
-const MOMENTUM_CONTACT_PADDING := 2.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
-const MOMENTUM_MIN_ALIGNMENT := 0.75
-const COLLISION_SLOP := 0.5 * CardDB.CHARACTER_SCALE_MULTIPLIER
-const COLLISION_CORRECTION_PERCENT := 0.35
-const COLLISION_MAX_CORRECTION := 3.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
-const LANDING_CORRECTION_PERCENT := 0.75
-const LANDING_MAX_CORRECTION := 8.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
-const BRIDGE_EDGE_MARGIN := 2.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
-const DEPLOY_PREVIEW_VALID := Color(0.35, 0.95, 0.58, 0.82)
-const DEPLOY_PREVIEW_INVALID := Color(1.0, 0.30, 0.30, 0.88)
-# 双方地面部署区各 15 行；贴河外角与国王塔后方两侧不可部署。
-const TEAM_0_FIRST_ROW := RIVER_BOTTOM_ROW
-const TEAM_0_LAST_ROW := ARENA_ROWS - 1
-const BACK_CENTER_MIN_COLUMN := 6
-const BACK_CENTER_MAX_COLUMN := 11
-const POCKET_FIRST_ROW := 9
-const POCKET_LAST_ROW := RIVER_TOP_ROW - 1
-
 # 比赛计时：3 分 05 秒正赛，平局进 2 分钟加时（先破塔者胜），再平则平局
-const MATCH_TIME := 185.0
-const OVERTIME_TIME := 120.0
-const SIM_DT := 1.0 / 20.0
+const MATCH_TIME := MatchRules.REGULATION_TIME
+const OVERTIME_TIME := MatchRules.OVERTIME_TIME
+const SIM_DT := FixedStepClock.STEP
 const DOUBLE_ELIXIR_TIME := 60.0
 const OVERTIME_TRIPLE_ELIXIR_TIME := 60.0
 const DOUBLE_ELIXIR_START_TIME := MATCH_TIME - DOUBLE_ELIXIR_TIME
@@ -71,24 +26,27 @@ const FIRST_MINION_WAVE_TIME := 5.0
 const NORMAL_MINION_WAVE_INTERVAL := 45.0
 const DOUBLE_MINION_WAVE_INTERVAL := 30.0
 const MINION_WAVE_STAGGER := 0.5
-const MINION_SPAWN_X_OFFSET := 3.0 * TILE_SIZE
+const MINION_SPAWN_X_OFFSET := 3.0 * ArenaRules.TILE_SIZE
 const MINION_WAVE_NORMAL := "normal"
 const MINION_WAVE_SIEGE := "siege"
 
 # 联机
 const NET_PORT := 39152
 
+var _presentation_event_id := 0
+var _last_card_event_id := -1
+var _commands := CommandSchedule.new()
+var _effects_view: BattleEffects2D
+var _resources := MatchResources.new()
+var _combat: CombatResolver
+var _movement: MovementSystem
 var game_over := false
 var nav: NavGrid
 var battle_context: BattleContext
 var mode := "local"  # local=单机 / host=主机 / client=客户端
 var _match_started := false  # 比赛是否已开始（联机时主机需等对手加入）
-var _freeze_effects: Array = []  # [{pos, timer, duration, radius}]
 ## 强化冰冻结束后的权威减速区域与客户端纯视觉区域分开保存。
-var _slow_zones: Array[Dictionary] = []
-var _slow_effects: Array[Dictionary] = []
 ## 治疗术淡黄光效区域；治疗本身立即结算，这里只保存表现。
-var _heal_effects: Array[Dictionary] = []
 var _spell_system: RefCounted
 ## 纳尔 Spell2：固定模拟延迟到手掌触地才结算；范围框是独立纯表现数据。
 var _active_skill_effect_system: RefCounted
@@ -99,15 +57,14 @@ var _client_projectiles := {}  # 客户端仅保存插值表现
 var _elixir: ElixirManager
 var _hand: CardHand
 var _active_skill_bar: ActiveSkillBar
+var _arena_background_sprite: Sprite2D
 ## ability_id -> {unit, card_id, team, skill, uses_remaining, cooldown_left}；按钮只是这份权威状态的视图。
 var _active_skills: Dictionary = {}
 var _next_active_ability_id := 1
 ## 一次卡牌部署生成的单位共享同一编队 id；单体卡保持 -1。
 var _next_deployment_group_id := 1
 ## 主动请求确认后按 Host 由 input_tick 计算出的 execute_tick 等待；同一 ability_id 只能存在一次。
-var _pending_active_skill_activations: Array[Dictionary] = []
 ## Cast Start 后的统一 Gameplay Impact 队列，所有主动技能 kind 共用。
-var _pending_active_skill_impacts: Array[Dictionary] = []
 var _ai: AIOpponent
 var _selected_card := ""
 ## 选卡后的落点预览：单位以单格格心为目标，点击时使用当前预览而不是重新猜测落点。
@@ -116,11 +73,8 @@ var _deployment_preview_tile := Vector2i(-1, -1)
 var _deployment_preview_valid := false
 var _deployment_preview_visible := false
 ## 主机/单机权威卡牌队列：单位、建筑和法术都在 Host 计算的 execute_tick 才真正生效。
-var _pending_card_deployments: Array[Dictionary] = []
 ## 两段式单位部署：第一段只有落点提示，第二段才生成单位并进入 Unit.deploy_time。
 ## 客户端也复用这份表现队列，直到收到权威生成 RPC 后移除标记。
-var _pending_card_pre_deployments: Array[Dictionary] = []
-var _next_card_pre_deploy_id := 1
 ## 兵线第二只单位的权威延迟队列；不经过手牌 0.5 秒部署队列，也不扣金币。
 var _pending_lane_minions: Array[Dictionary] = []
 var _battle_elapsed := 0.0
@@ -137,8 +91,7 @@ var _remote_active_skill_choices: Dictionary = {}
 ## team -> {deck, hand, queue}。主机同时维护双方；客户端只维护自己的本地镜像。
 var _authoritative_card_cycles: Dictionary = {}
 var _deck_builder: DeckBuilder
-var _match_timer := MATCH_TIME
-var _overtime := false
+var _match_rules := MatchRules.new()
 var _timer_label: Label
 var _king_player: Tower
 var _king_enemy: Tower
@@ -148,8 +101,10 @@ var _audio_manager: GameAudioManager
 var _art_dev_mode := false
 var _art_dev_selection := "training_dummy"
 var _art_dev_team := 1
-var _art_dev_panel: ArtDevPanel
+var _art_dev_spell_active := false
+var _art_dev_panel: DevelopmentWorkbench
 var _art_dev_last_units: Dictionary = {}
+var _workbench_preset_loading := false
 var _art_dev_active_skill_choices: Dictionary = {}
 
 # 主菜单
@@ -168,6 +123,7 @@ const SNAPSHOT_INTERVAL := 0.05
 var _client_units := {}
 var _snapshots_received := 0
 var _auto_projectile_seen := false
+var _auto_audio_source_seen := false
 var _auto_continuous_target_seen := false
 var _auto_gnar_form_seen := false
 var _auto_gnar_revert_seen := false
@@ -178,7 +134,7 @@ var _auto_gnar_revert_timer := 0.0
 var _auto_test := false
 var _auto_timer := 2.0
 # 固定 20Hz 模拟累加器：帧率高低都不影响战斗逻辑步数
-var _sim_acc := 0.0
+var _simulation_clock := FixedStepClock.new()
 ## 客户端由快照提供的最后已知主机 Tick，用于生成 input_tick。
 var _authoritative_server_tick := 0
 ## 客户端只估计服务器时钟，不推进任何战斗状态；快照到达时向前校正，间隔内按本地时间补 Tick。
@@ -188,22 +144,39 @@ var _has_estimated_server_tick := false
 var _sim_tick_id := 0
 
 func _ready() -> void:
+	_setup_arena_background()
+	_simulation_clock.step = _sim_step
+	_simulation_clock.running = func(): return not game_over
+	_combat = CombatResolver.new()
+	_combat.attack_hit.connect(_notify_attack_presentation)
+	add_child(_combat)
+	_match_rules.overtime_started.connect(_on_overtime_started)
+	_movement = MovementSystem.new()
+	_movement.terrain_walkable = _is_ground_terrain_walkable
+	_movement.structure_gap = _structure_gap_to_circle
+	add_child(_movement)
 	battle_context = BattleContext.new(self)
 	_spell_system = SPELL_SYSTEM_SCRIPT.new(self)
-	_freeze_effects = _spell_system.freeze_effects
-	_slow_zones = _spell_system.slow_zones
-	_slow_effects = _spell_system.slow_effects
-	_heal_effects = _spell_system.heal_effects
 	_active_skill_effect_system = ACTIVE_SKILL_EFFECT_SYSTEM_SCRIPT.new(self)
+	_commands.impact = _active_skill_effect_system.apply
+	_commands.cast_end = _active_skill_effect_system.apply_cast_end
+	_effects_view = BattleEffects2D.new()
+	_effects_view.spells = _spell_system
+	_effects_view.skills = _active_skill_effect_system
+	add_child(_effects_view)
 	child_entered_tree.connect(_provide_battle_context)
 	_projectile_system = ProjectileSystem.new()
 	_projectile_system.setup(battle_context)
+	_projectile_system.skill_hit.connect(_on_skill_projectile_hit)
+	_projectile_system.launch_audio_started.connect(_on_projectile_launch_audio_started)
+	_projectile_system.launch_audio_stopped.connect(_on_projectile_launch_audio_stopped)
 	add_child(_projectile_system)
 	_projectiles = _projectile_system.projectiles
 	_client_projectiles = _projectile_system.client_projectiles
 	_snapshot_system = NetworkSnapshotSystem.new(self)
 	_audio_manager = AUDIO_MANAGER_SCRIPT.new()
 	add_child(_audio_manager)
+	_projectile_system.launch_audio_cleared.connect(_audio_manager.clear_projectile_launch_audio)
 	randomize()
 	var card_errors := CardDB.validate_all()
 	if not card_errors.is_empty():
@@ -219,6 +192,8 @@ func _ready() -> void:
 			_start_client(cli.get("ip", "127.0.0.1"))
 		"local":
 			_start_local()
+		"workbench":
+			_start_art_dev()
 		_:
 			_show_menu()
 
@@ -264,7 +239,7 @@ func _show_menu() -> void:
 	var btn_solo := _make_menu_button("单机对战 AI")
 	btn_solo.pressed.connect(func(): _pick_deck_ui(_start_local))
 	vbox.add_child(btn_solo)
-	var btn_art_dev := _make_menu_button("美术开发面板")
+	var btn_art_dev := _make_menu_button("卡牌开发工作台")
 	btn_art_dev.pressed.connect(_start_art_dev)
 	vbox.add_child(btn_art_dev)
 	var btn_host := _make_menu_button("创建房间（我做主机）")
@@ -315,6 +290,7 @@ func _hide_menu() -> void:
 func _start_local() -> void:
 	mode = "local"
 	_match_started = true
+	queue_redraw()
 	_hide_menu()
 	_setup_battle_presentation()
 	_setup_player_ui()
@@ -327,23 +303,30 @@ func _start_local() -> void:
 
 ## 美术开发模式复用正式模拟与表现，但不创建金币、手牌、AI 和比赛倒计时。
 func _start_art_dev() -> void:
+	_resources.prepare(CardDB.all().keys())
 	mode = "local"
 	_match_started = true
+	queue_redraw()
 	_art_dev_mode = true
 	_hide_menu()
 	_setup_battle_presentation()
 	_create_towers()
 	_build_nav()
-	_art_dev_panel = ART_DEV_PANEL_SCRIPT.new()
+	_art_dev_panel = WORKBENCH_SCRIPT.new()
 	add_child(_art_dev_panel)
-	_art_dev_panel.setup(CardDB.all(), _deck)
+	_art_dev_panel.setup(CardDB.all())
 	_art_dev_panel.item_selected.connect(_set_art_dev_selection)
 	_art_dev_panel.team_changed.connect(_set_art_dev_team)
 	_art_dev_panel.active_skill_selected.connect(_on_art_dev_active_skill_selected)
 	_art_dev_panel.active_skill_requested.connect(_use_art_dev_active_skill)
-	_art_dev_panel.attack_audio_requested.connect(_preview_art_dev_attack_audio)
+	_art_dev_panel.scenario_requested.connect(_run_workbench_scenario)
+	_art_dev_panel.spell_active_changed.connect(func(enabled): _art_dev_spell_active = enabled)
+	_art_dev_panel.workspace_changed.connect(_set_workbench_battle_active)
 	_art_dev_panel.skill_resource_requested.connect(_set_art_dev_skill_resource)
 	_art_dev_panel.clear_requested.connect(_clear_art_dev_units)
+	_set_art_dev_selection("garen")
+	_set_art_dev_team(0)
+	_set_workbench_battle_active(false)
 	_art_dev_panel.exit_requested.connect(func():
 		get_tree().reload_current_scene()
 	)
@@ -387,6 +370,7 @@ func _start_client(ip: String) -> void:
 ## 主机端开局：双方金币独立，主机权威模拟
 func _begin_net_match_host() -> void:
 	_match_started = true
+	queue_redraw()
 	_hide_menu()
 	_setup_battle_presentation()
 	_setup_player_ui()
@@ -400,6 +384,8 @@ func _begin_net_match_host() -> void:
 @rpc("authority", "call_remote", "reliable")
 func _rpc_start() -> void:
 	print("[联机] 客户端：收到开局通知")
+	_match_started = true
+	queue_redraw()
 	_hide_menu()
 	_flip_camera()
 	_setup_battle_presentation()
@@ -414,12 +400,14 @@ func _flip_camera() -> void:
 	var cam := Camera2D.new()
 	# 只旋转 1280px 高的战场；下方额外的 120px 手牌区保持不动。
 	var viewport_height := get_viewport_rect().size.y
-	cam.position = Vector2(FIELD_W / 2.0, FIELD_H - viewport_height / 2.0)
+	cam.position = Vector2(ArenaRules.FIELD_W / 2.0, ArenaRules.FIELD_H - viewport_height / 2.0)
 	cam.rotation = PI
 	add_child(cam)
 	cam.make_current()
 
 func _setup_player_ui() -> void:
+	_resources.prepare(CardDB.selectable_ids() if _deck.is_empty() else _deck)
+	_resources.prepare(_remote_deck + ["melee_minion", "ranged_minion", "siege_minion", "super_minion"])
 	_elixir = ElixirManager.new()
 	add_child(_elixir)
 	_hand = CardHand.new()
@@ -603,14 +591,15 @@ func is_net_client() -> bool:
 func get_sim_interpolation_alpha() -> float:
 	if mode == "client":
 		return 1.0
-	return clampf(_sim_acc / SIM_DT, 0.0, 1.0)
+	return clampf(_simulation_clock.remainder / SIM_DT, 0.0, 1.0)
 
 func _setup_battle_presentation() -> void:
 	if _battle_presentation != null:
 		return
 	_battle_presentation = BattlePresentation3D.new()
 	add_child(_battle_presentation)
-	_battle_presentation.setup(Vector2(FIELD_W, FIELD_H), TILE_SIZE)
+	_battle_presentation.setup(Vector2(ArenaRules.FIELD_W, ArenaRules.FIELD_H), ArenaRules.TILE_SIZE)
+	_battle_presentation.attach_projectile_system(_projectile_system)
 
 ## 顶部右侧的比赛计时器
 func _create_timer_ui() -> void:
@@ -619,17 +608,17 @@ func _create_timer_ui() -> void:
 	_timer_label = Label.new()
 	_timer_label.add_theme_font_size_override("font_size", 32)
 	# CR 计时器位于顶部右侧；避开按官方格位上移后的敌方国王塔血条。
-	_timer_label.position = Vector2(FIELD_W - 132.0, 8.0)
+	_timer_label.position = Vector2(ArenaRules.FIELD_W - 132.0, 8.0)
 	layer.add_child(_timer_label)
 	_update_timer_label()
 
 func _create_towers() -> void:
 	# 参考项目格位：公主塔中心 y=6.5/25.5，国王塔 y=3/29。
 	for spec in [
-		[0, Vector2(BRIDGE_X_LEFT,  25.5 * TILE_SIZE)],
-		[0, Vector2(BRIDGE_X_RIGHT, 25.5 * TILE_SIZE)],
-		[1, Vector2(BRIDGE_X_LEFT,  6.5 * TILE_SIZE)],
-		[1, Vector2(BRIDGE_X_RIGHT, 6.5 * TILE_SIZE)],
+		[0, Vector2(ArenaRules.BRIDGE_X_LEFT,  25.5 * ArenaRules.TILE_SIZE)],
+		[0, Vector2(ArenaRules.BRIDGE_X_RIGHT, 25.5 * ArenaRules.TILE_SIZE)],
+		[1, Vector2(ArenaRules.BRIDGE_X_LEFT,  6.5 * ArenaRules.TILE_SIZE)],
+		[1, Vector2(ArenaRules.BRIDGE_X_RIGHT, 6.5 * ArenaRules.TILE_SIZE)],
 	]:
 		var t := Tower.new()
 		t.setup(spec[0], CardDB.PRINCESS_TOWER_STATS, false)
@@ -641,7 +630,7 @@ func _create_towers() -> void:
 		_towers.append(t)
 	_king_player = Tower.new()
 	_king_player.setup(0, CardDB.NEXUS_STATS, true)
-	_king_player.position = Vector2(9.0 * TILE_SIZE, 29.0 * TILE_SIZE)
+	_king_player.position = Vector2(9.0 * ArenaRules.TILE_SIZE, 29.0 * ArenaRules.TILE_SIZE)
 	add_child(_king_player)
 	_king_player.z_index = 10
 	if _battle_presentation != null:
@@ -649,12 +638,23 @@ func _create_towers() -> void:
 	_towers.append(_king_player)
 	_king_enemy = Tower.new()
 	_king_enemy.setup(1, CardDB.NEXUS_STATS, true)
-	_king_enemy.position = Vector2(9.0 * TILE_SIZE, 3.0 * TILE_SIZE)
+	_king_enemy.position = Vector2(9.0 * ArenaRules.TILE_SIZE, 3.0 * ArenaRules.TILE_SIZE)
 	add_child(_king_enemy)
 	_king_enemy.z_index = 10
 	if _battle_presentation != null:
 		_battle_presentation.attach_tower(_king_enemy, CardDB.NEXUS_VISUAL_CONFIG)
 	_towers.append(_king_enemy)
+	for tower in _towers:
+		var audio_id := PresentationConfig.world_card_id(tower)
+		tower.destroyed.connect(_on_world_building_destroyed.bind(audio_id, weakref(tower)))
+		if _audio_manager != null:
+			_audio_manager.attach_building_audio(tower, CardDB.NEXUS_VISUAL_CONFIG if tower.is_king else CardDB.PRINCESS_TOWER_VISUAL_CONFIG)
+
+func _on_world_building_destroyed(audio_id: String, tower_ref: WeakRef) -> void:
+	var tower = tower_ref.get_ref()
+	if is_instance_valid(tower) and _audio_manager != null:
+		_audio_manager.stop_building_audio(tower.get_instance_id())
+		_audio_manager.play_card_event(audio_id, "death", tower.global_position)
 
 ## 构建导航网格：河道（除两座桥）与所有防御塔为障碍
 func _build_nav() -> void:
@@ -663,17 +663,17 @@ func _build_nav() -> void:
 	for t in _towers:
 		# 塔后最后一行是合法出生区；圆形导航占地只按最大单位半径扩张，
 		# 不再额外扩大到合法点上，否则 A* 会先让单位后退以离开实心格。
-		obstacles.append([t.position, t.body_radius + NAV_CLEARANCE])
+		obstacles.append([t.position, t.body_radius + ArenaRules.NAV_CLEARANCE])
 	nav.build(
-		Vector2(FIELD_W, FIELD_H),
-		RIVER_Y, RIVER_HALF + NAV_CLEARANCE,
-		[BRIDGE_X_LEFT, BRIDGE_X_RIGHT],
-		BRIDGE_HALF - NAV_CLEARANCE,
+		Vector2(ArenaRules.FIELD_W, ArenaRules.FIELD_H),
+		ArenaRules.RIVER_Y, ArenaRules.RIVER_HALF + ArenaRules.NAV_CLEARANCE,
+		[ArenaRules.BRIDGE_X_LEFT, ArenaRules.BRIDGE_X_RIGHT],
+		ArenaRules.BRIDGE_HALF - ArenaRules.NAV_CLEARANCE,
 		obstacles
 	)
 	# 记录每个塔的占地格，塔被摧毁时解除阻挡（路径可穿过原塔位）
 	for t in _towers:
-		t.nav_cells = nav.cells_for_circle(t.position, t.body_radius + NAV_CLEARANCE)
+		t.nav_cells = nav.cells_for_circle(t.position, t.body_radius + ArenaRules.NAV_CLEARANCE)
 
 func _on_card_selected(card_id: String) -> void:
 	_selected_card = card_id
@@ -693,13 +693,13 @@ func _update_deployment_preview(pointer_pos: Vector2) -> void:
 	if _selected_card.is_empty() or not CardDB.has_card(_selected_card):
 		queue_redraw()
 		return
-	if pointer_pos.x < 0.0 or pointer_pos.x >= FIELD_W or pointer_pos.y < 0.0 or pointer_pos.y >= FIELD_H:
+	if pointer_pos.x < 0.0 or pointer_pos.x >= ArenaRules.FIELD_W or pointer_pos.y < 0.0 or pointer_pos.y >= ArenaRules.FIELD_H:
 		queue_redraw()
 		return
 	var my_team := 1 if mode == "client" else 0
 	var tile := _world_to_arena_tile(pointer_pos)
-	tile.x = clampi(tile.x, 0, ARENA_COLUMNS - 1)
-	tile.y = clampi(tile.y, 0, ARENA_ROWS - 1)
+	tile.x = clampi(tile.x, 0, ArenaRules.ARENA_COLUMNS - 1)
+	tile.y = clampi(tile.y, 0, ArenaRules.ARENA_ROWS - 1)
 	_deployment_preview_tile = tile
 	_deployment_preview_pos = _snap_card_position(_selected_card, pointer_pos, my_team)
 	_deployment_preview_visible = true
@@ -708,11 +708,11 @@ func _update_deployment_preview(pointer_pos: Vector2) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if _art_dev_mode:
-		if _art_dev_panel != null and _art_dev_panel.is_card_picker_open():
+		if _art_dev_panel != null and not _art_dev_panel.accepts_battle_input():
 			return
 		if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 			var art_pos := get_global_mouse_position()
-			if art_pos.x >= 0.0 and art_pos.x < FIELD_W and art_pos.y >= 0.0 and art_pos.y < FIELD_H:
+			if art_pos.x >= 0.0 and art_pos.x < ArenaRules.FIELD_W and art_pos.y >= 0.0 and art_pos.y < ArenaRules.FIELD_H:
 				_place_art_dev_item(art_pos)
 		return
 	if game_over or _selected_card == "":
@@ -748,13 +748,16 @@ func _place_art_dev_item(pos: Vector2) -> void:
 		var dummy := Unit.new()
 		dummy.position = pos
 		dummy.setup(_art_dev_team, stats, stats.name)
+		dummy.card_id = "training_dummy"
 		add_child(dummy)
 		_register_dynamic_building(dummy)
+		_art_dev_last_units[_art_dev_unit_key("training_dummy", _art_dev_team)] = weakref(dummy)
+		_sync_art_dev_panel_state()
 		return
 	if not CardDB.has_card(_art_dev_selection):
 		return
 	pos = _snap_card_position(_art_dev_selection, pos, _art_dev_team)
-	if play_card(_art_dev_team, _art_dev_selection, pos, {"immediate": true, "validate_position": false}):
+	if play_card(_art_dev_team, _art_dev_selection, pos, {"immediate": true, "validate_position": false, "preview_active_spell": _art_dev_spell_active}):
 		var unit := _latest_unit_for_card(_art_dev_selection, _art_dev_team)
 		if unit != null:
 			_art_dev_last_units[_art_dev_unit_key(_art_dev_selection, _art_dev_team)] = weakref(unit)
@@ -780,6 +783,7 @@ func _art_dev_unit_key(card_id: String, p_team: int) -> String:
 
 func _set_art_dev_selection(item_id: String) -> void:
 	_art_dev_selection = item_id
+	_art_dev_spell_active = false
 	_sync_art_dev_panel_state()
 
 func _set_art_dev_team(team: int) -> void:
@@ -837,13 +841,82 @@ func _set_art_dev_skill_resource(value: float) -> void:
 	unit.queue_redraw()
 	_sync_art_dev_panel_state()
 
-func _preview_art_dev_attack_audio(card_id: String) -> void:
-	if _audio_manager == null or not CardDB.has_card(card_id):
+## 开发场景操作使用现有单位/出牌接口，不能进入正式比赛。
+func _run_workbench_scenario(action: String) -> void:
+	if not _art_dev_mode:
 		return
-	var stats := CardDB.get_card(card_id)
+	if action.begins_with("preset:"):
+		_load_workbench_preset(action.trim_prefix("preset:"))
+		return
 	var unit := _art_dev_selected_unit()
-	var position := unit.get_visual_screen_position() if unit != null else Vector2(FIELD_W * 0.5, FIELD_H * 0.5)
-	_audio_manager.preview_attack(card_id, stats, position)
+	match action:
+		"spawn":
+			_place_art_dev_item(Vector2(300, 780) if _art_dev_team == 0 else Vector2(300, 500))
+		"target":
+			var old_selection := _art_dev_selection
+			var old_team := _art_dev_team
+			_art_dev_selection = "training_dummy"
+			_art_dev_team = 1 - old_team
+			var origin := unit.position if unit != null else Vector2(300, 780 if old_team == 0 else 500)
+			_place_art_dev_item(origin + Vector2(0, -100 if old_team == 0 else 100))
+			_art_dev_selection = old_selection
+			_art_dev_team = old_team
+		"freeze":
+			if unit != null: unit.freeze(2.0)
+		"stun":
+			if unit != null: unit.stun(2.0)
+		"slow":
+			if unit != null: unit.apply_slow(3.0, 0.5)
+		"attack_slow":
+			if unit != null: unit.apply_attack_speed_slow(3.0, 0.5)
+		"death":
+			if unit != null: unit.take_damage(unit.max_hp * 100.0)
+	_sync_art_dev_panel_state()
+
+func _load_workbench_preset(id: String) -> void:
+	if not _art_dev_mode or _workbench_preset_loading:
+		return
+	var recipe := preload("res://scripts/ui/workbench/battle_scenarios.gd").placements(id, _art_dev_selection, _art_dev_team)
+	if recipe.is_empty():
+		return
+	_workbench_preset_loading = true
+	var selection := _art_dev_selection
+	var selected_team := _art_dev_team
+	var enhanced := _art_dev_spell_active
+	_clear_art_dev_units()
+	if _audio_manager != null:
+		for player in _audio_manager.get_children():
+			if player is AudioStreamPlayer2D:
+				player.stop()
+				player.stream = null
+	for tower in _towers:
+		tower.queue_free()
+	_towers.clear()
+	# 清空使用 queue_free；等旧对象退场后再布置，避免部署效果命中旧对象。
+	await get_tree().process_frame
+	_create_towers()
+	_build_nav()
+	for entry in recipe:
+		_art_dev_selection = entry.card
+		_art_dev_team = entry.team
+		_place_art_dev_item(entry.pos)
+	_art_dev_selection = selection
+	_art_dev_team = selected_team
+	_art_dev_spell_active = enhanced
+	_workbench_preset_loading = false
+	_sync_art_dev_panel_state()
+
+func _set_workbench_battle_active(active: bool) -> void:
+	# 检查素材时暂停整个实战分支（包括 3D 代理和声音），防止后台攻击干扰试听。
+	if not _art_dev_mode:
+		return
+	for child in get_children():
+		if child != _art_dev_panel:
+			child.process_mode = Node.PROCESS_MODE_INHERIT if active else Node.PROCESS_MODE_DISABLED
+	if _audio_manager != null:
+		for player in _audio_manager.get_children():
+			if player is AudioStreamPlayer2D:
+				player.stream_paused = not active
 
 func _sync_art_dev_panel_state() -> void:
 	if _art_dev_panel == null:
@@ -857,6 +930,7 @@ func _sync_art_dev_panel_state() -> void:
 		unit.skill_resource_value if unit != null else 0.0,
 		unit.skill_resource_max if unit != null else 0.0,
 	)
+	_art_dev_panel.update_live_details(unit)
 
 func preview_active_skill(unit: Unit, skill: Dictionary) -> bool:
 	if unit == null or not is_instance_valid(unit):
@@ -868,12 +942,15 @@ func _register_dynamic_building(unit: Unit) -> void:
 	if nav == null or not unit.is_building:
 		return
 	# 建筑的格子占地只限制下牌；A* 障碍按实际圆柱碰撞扩张移动单位净空。
-	unit.nav_cells = nav.cells_for_circle(unit.global_position, unit.body_radius + NAV_CLEARANCE)
+	unit.nav_cells = nav.cells_for_circle(unit.global_position, unit.body_radius + ArenaRules.NAV_CLEARANCE)
 	nav.set_cells_blocked(unit.nav_cells, true)
 
 func _clear_art_dev_units() -> void:
 	_art_dev_last_units.clear()
-	_pending_card_pre_deployments.clear()
+	_commands.pre_deployments.clear()
+	_commands.impacts.clear()
+	_commands.card_commands.clear()
+	_commands.skill_commands.clear()
 	for combatant in get_tree().get_nodes_in_group("combatants"):
 		if not combatant is Unit:
 			continue
@@ -883,24 +960,24 @@ func _clear_art_dev_units() -> void:
 			unit.nav_cells = []
 		unit.queue_free()
 	_projectile_system.clear_all()
-	_freeze_effects.clear()
-	_slow_zones.clear()
-	_slow_effects.clear()
-	_heal_effects.clear()
+	_spell_system.freeze_effects.clear()
+	_spell_system.slow_zones.clear()
+	_spell_system.slow_effects.clear()
+	_spell_system.heal_effects.clear()
 	_active_skill_effect_system.clear()
 	_sync_art_dev_panel_state()
 	queue_redraw()
 
 func _world_to_arena_tile(pos: Vector2) -> Vector2i:
-	return Vector2i(floori(pos.x / TILE_SIZE), floori(pos.y / TILE_SIZE))
+	return Vector2i(floori(pos.x / ArenaRules.TILE_SIZE), floori(pos.y / ArenaRules.TILE_SIZE))
 
 func _arena_tile_center(tile: Vector2i) -> Vector2:
-	return Vector2(tile) * TILE_SIZE + Vector2.ONE * TILE_SIZE * 0.5
+	return Vector2(tile) * ArenaRules.TILE_SIZE + Vector2.ONE * ArenaRules.TILE_SIZE * 0.5
 
 func _snap_to_tile_center(pos: Vector2) -> Vector2:
 	var tile := _world_to_arena_tile(pos)
-	tile.x = clampi(tile.x, 0, ARENA_COLUMNS - 1)
-	tile.y = clampi(tile.y, 0, ARENA_ROWS - 1)
+	tile.x = clampi(tile.x, 0, ArenaRules.ARENA_COLUMNS - 1)
+	tile.y = clampi(tile.y, 0, ArenaRules.ARENA_ROWS - 1)
 	return _arena_tile_center(tile)
 
 ## 单格单位和奇数格建筑落在格心；偶数格建筑落在格线交点，确保规则占地对齐完整格子。
@@ -913,18 +990,18 @@ func _snap_card_position(card_id: String, pos: Vector2, p_team: int = -1) -> Vec
 		# 单位严格落在鼠标所在格的格心。若该格因河岸、塔或边界不合法，
 		# 由预览显示红色并拒绝部署，不能通过微调中心偷偷换到别的位置。
 		return _snap_to_tile_center(pos)
-	var half_size := Vector2(footprint) * TILE_SIZE * 0.5
+	var half_size := Vector2(footprint) * ArenaRules.TILE_SIZE * 0.5
 	var snapped := Vector2(
-		roundf(pos.x / TILE_SIZE) * TILE_SIZE if footprint.x % 2 == 0 else floorf(pos.x / TILE_SIZE) * TILE_SIZE + TILE_SIZE * 0.5,
-		roundf(pos.y / TILE_SIZE) * TILE_SIZE if footprint.y % 2 == 0 else floorf(pos.y / TILE_SIZE) * TILE_SIZE + TILE_SIZE * 0.5
+		roundf(pos.x / ArenaRules.TILE_SIZE) * ArenaRules.TILE_SIZE if footprint.x % 2 == 0 else floorf(pos.x / ArenaRules.TILE_SIZE) * ArenaRules.TILE_SIZE + ArenaRules.TILE_SIZE * 0.5,
+		roundf(pos.y / ArenaRules.TILE_SIZE) * ArenaRules.TILE_SIZE if footprint.y % 2 == 0 else floorf(pos.y / ArenaRules.TILE_SIZE) * ArenaRules.TILE_SIZE + ArenaRules.TILE_SIZE * 0.5
 	)
-	snapped.x = clampf(snapped.x, half_size.x, FIELD_W - half_size.x)
-	snapped.y = clampf(snapped.y, half_size.y, FIELD_H - half_size.y)
+	snapped.x = clampf(snapped.x, half_size.x, ArenaRules.FIELD_W - half_size.x)
+	snapped.y = clampf(snapped.y, half_size.y, ArenaRules.FIELD_H - half_size.y)
 	return snapped
 
 ## 部署区域按 CR 格子掩码判断：法术全场，单位/建筑为己方 15 行及已解锁 pocket。
 func _pos_in_deploy_zone(pos: Vector2, p_team: int, is_spell: bool) -> bool:
-	if pos.x < 0.0 or pos.x >= FIELD_W or pos.y < 0.0 or pos.y >= FIELD_H:
+	if pos.x < 0.0 or pos.x >= ArenaRules.FIELD_W or pos.y < 0.0 or pos.y >= ArenaRules.FIELD_H:
 		return false
 	if is_spell:
 		return true
@@ -939,7 +1016,7 @@ func _arena_tiles_for_rect(rect: Rect2) -> Array[Vector2i]:
 	for y in range(min_tile.y, max_tile.y + 1):
 		for x in range(min_tile.x, max_tile.x + 1):
 			var tile := Vector2i(x, y)
-			if tile.x >= 0 and tile.x < ARENA_COLUMNS and tile.y >= 0 and tile.y < ARENA_ROWS:
+			if tile.x >= 0 and tile.x < ArenaRules.ARENA_COLUMNS and tile.y >= 0 and tile.y < ArenaRules.ARENA_ROWS:
 				tiles.append(tile)
 	return tiles
 
@@ -949,7 +1026,7 @@ func _structure_deployment_rect(structure: Node2D) -> Rect2:
 		footprint = (structure as Tower).footprint_tiles
 	elif structure is Unit and (structure as Unit).is_building:
 		footprint = (structure as Unit).footprint_tiles
-	var size := Vector2(footprint) * TILE_SIZE
+	var size := Vector2(footprint) * ArenaRules.TILE_SIZE
 	return Rect2(structure.global_position - size * 0.5, size)
 
 func _structure_deployment_tiles(structure: Node2D) -> Array[Vector2i]:
@@ -980,34 +1057,34 @@ func _is_structure_deployment_tile_blocked(tile: Vector2i) -> bool:
 	return false
 
 func _tile_in_ground_deploy_zone(tile: Vector2i, p_team: int) -> bool:
-	if tile.x < 0 or tile.x >= ARENA_COLUMNS or tile.y < 0 or tile.y >= ARENA_ROWS:
+	if tile.x < 0 or tile.x >= ArenaRules.ARENA_COLUMNS or tile.y < 0 or tile.y >= ArenaRules.ARENA_ROWS:
 		return false
-	var local_row := tile.y if p_team == 0 else ARENA_ROWS - 1 - tile.y
+	var local_row := tile.y if p_team == 0 else ArenaRules.ARENA_ROWS - 1 - tile.y
 	# 自己半场包含靠河第一行的左右角；最后一行只保留国王塔正后方中央 6 格。
-	if local_row >= TEAM_0_FIRST_ROW and local_row <= TEAM_0_LAST_ROW:
-		if local_row == TEAM_0_LAST_ROW and (tile.x < BACK_CENTER_MIN_COLUMN or tile.x > BACK_CENTER_MAX_COLUMN):
+	if local_row >= ArenaRules.TEAM_0_FIRST_ROW and local_row <= ArenaRules.TEAM_0_LAST_ROW:
+		if local_row == ArenaRules.TEAM_0_LAST_ROW and (tile.x < ArenaRules.BACK_CENTER_MIN_COLUMN or tile.x > ArenaRules.BACK_CENTER_MAX_COLUMN):
 			return false
 		return true
 	# 摧毁某一路公主塔后，只解锁该路塔后至河岸的 6 行 pocket。
-	if local_row < POCKET_FIRST_ROW or local_row > POCKET_LAST_ROW:
+	if local_row < ArenaRules.POCKET_FIRST_ROW or local_row > ArenaRules.POCKET_LAST_ROW:
 		return false
-	if local_row == POCKET_LAST_ROW and (tile.x == 0 or tile.x == ARENA_COLUMNS - 1):
+	if local_row == ArenaRules.POCKET_LAST_ROW and (tile.x == 0 or tile.x == ArenaRules.ARENA_COLUMNS - 1):
 		return false
-	var is_left := tile.x < ARENA_COLUMNS / 2
+	var is_left := tile.x < ArenaRules.ARENA_COLUMNS / 2
 	return _pocket_unlocked(p_team, is_left)
 
 ## 全图卡牌允许落在河道外的地面格 + 两座桥面三格；敌我双方区域都合法，但塔/水晶占地格
 ## 仍由 is_card_deploy_position_valid() 单独拦截。除桥面外，河道其余两行保持不可部署。
 func _tile_in_global_ground_deploy_zone(tile: Vector2i) -> bool:
-	if tile.x < 0 or tile.x >= ARENA_COLUMNS or tile.y < 0 or tile.y >= ARENA_ROWS:
+	if tile.x < 0 or tile.x >= ArenaRules.ARENA_COLUMNS or tile.y < 0 or tile.y >= ArenaRules.ARENA_ROWS:
 		return false
-	var in_river: bool = tile.y >= RIVER_TOP_ROW and tile.y < RIVER_BOTTOM_ROW
+	var in_river: bool = tile.y >= ArenaRules.RIVER_TOP_ROW and tile.y < ArenaRules.RIVER_BOTTOM_ROW
 	if not in_river:
 		return true
 	# 河道中：只允许左右桥的三格宽列通过
 	var colf: float = float(tile.x)
-	var on_left_bridge: bool = abs(colf - BRIDGE_X_LEFT / TILE_SIZE) <= 1.5
-	var on_right_bridge: bool = abs(colf - BRIDGE_X_RIGHT / TILE_SIZE) <= 1.5
+	var on_left_bridge: bool = abs(colf - ArenaRules.BRIDGE_X_LEFT / ArenaRules.TILE_SIZE) <= 1.5
+	var on_right_bridge: bool = abs(colf - ArenaRules.BRIDGE_X_RIGHT / ArenaRules.TILE_SIZE) <= 1.5
 	return on_left_bridge or on_right_bridge
 
 func _pocket_unlocked(p_team: int, is_left: bool) -> bool:
@@ -1026,7 +1103,7 @@ func _pocket_unlocked(p_team: int, is_left: bool) -> bool:
 func _can_deploy_at(pos: Vector2, radius: float, is_air: bool = false, footprint: Vector2i = Vector2i.ONE, is_building_card: bool = false) -> bool:
 	if not is_air and not is_building_card and not is_ground_position_walkable(pos, radius, null, true, true):
 		return false
-	var deploy_rect := Rect2(pos - Vector2(footprint) * TILE_SIZE * 0.5, Vector2(footprint) * TILE_SIZE)
+	var deploy_rect := Rect2(pos - Vector2(footprint) * ArenaRules.TILE_SIZE * 0.5, Vector2(footprint) * ArenaRules.TILE_SIZE)
 	for c in get_tree().get_nodes_in_group("combatants"):
 		if not is_instance_valid(c) or c.hp <= 0.0:
 			continue
@@ -1057,14 +1134,14 @@ func is_card_deploy_position_valid(p_team: int, card_id: String, pos: Vector2) -
 	# 部署区之外。中心未落在塔墟时仍严格执行原部署区域。
 	match deploy_zone if foundation_tower == null else "tower_ruin":
 		"global":
-			if pos.x < 0.0 or pos.x >= FIELD_W or pos.y < 0.0 or pos.y >= FIELD_H:
+			if pos.x < 0.0 or pos.x >= ArenaRules.FIELD_W or pos.y < 0.0 or pos.y >= ArenaRules.FIELD_H:
 				return false
 		"tower_ruin":
 			pass
 		_:  # own_side
 			var first_tile := Vector2i(
-				roundi(pos.x / TILE_SIZE - float(footprint.x) * 0.5),
-				roundi(pos.y / TILE_SIZE - float(footprint.y) * 0.5))
+				roundi(pos.x / ArenaRules.TILE_SIZE - float(footprint.x) * 0.5),
+				roundi(pos.y / ArenaRules.TILE_SIZE - float(footprint.y) * 0.5))
 			for y in range(first_tile.y, first_tile.y + footprint.y):
 				for x in range(first_tile.x, first_tile.x + footprint.x):
 					var tile := Vector2i(x, y)
@@ -1075,8 +1152,8 @@ func is_card_deploy_position_valid(p_team: int, card_id: String, pos: Vector2) -
 	#    用户语义：河流非桥面占位等同于水晶/防御塔/建筑；桥面可通过。ignore=true 时（如冰冻）全部跳过。
 	if not ignore_structures:
 		var first_tile := Vector2i(
-			roundi(pos.x / TILE_SIZE - float(footprint.x) * 0.5),
-			roundi(pos.y / TILE_SIZE - float(footprint.y) * 0.5))
+			roundi(pos.x / ArenaRules.TILE_SIZE - float(footprint.x) * 0.5),
+			roundi(pos.y / ArenaRules.TILE_SIZE - float(footprint.y) * 0.5))
 		for y in range(first_tile.y, first_tile.y + footprint.y):
 			for x in range(first_tile.x, first_tile.x + footprint.x):
 				var tile := Vector2i(x, y)
@@ -1087,11 +1164,11 @@ func is_card_deploy_position_valid(p_team: int, card_id: String, pos: Vector2) -
 					if ruined_tower != null and ruined_tower != foundation_tower:
 						return false
 				# 河流：非桥面三格的列一律当作占位阻挡
-				var tile_in_river: bool = tile.y >= RIVER_TOP_ROW and tile.y < RIVER_BOTTOM_ROW
+				var tile_in_river: bool = tile.y >= ArenaRules.RIVER_TOP_ROW and tile.y < ArenaRules.RIVER_BOTTOM_ROW
 				if tile_in_river:
 					var colf: float = float(tile.x)
-					var on_left_bridge: bool = abs(colf - BRIDGE_X_LEFT / TILE_SIZE) <= 1.5
-					var on_right_bridge: bool = abs(colf - BRIDGE_X_RIGHT / TILE_SIZE) <= 1.5
+					var on_left_bridge: bool = abs(colf - ArenaRules.BRIDGE_X_LEFT / ArenaRules.TILE_SIZE) <= 1.5
+					var on_right_bridge: bool = abs(colf - ArenaRules.BRIDGE_X_RIGHT / ArenaRules.TILE_SIZE) <= 1.5
 					if not on_left_bridge and not on_right_bridge:
 						return false
 				if _is_structure_deployment_tile_blocked(tile):
@@ -1108,18 +1185,18 @@ func _structure_gap_to_circle(c: Node2D, center: Vector2, radius: float) -> floa
 		return c.surface_gap_to_circle(center, radius)
 	return maxf(0.0, center.distance_to(c.global_position) - c.body_radius - radius)
 
-## 按当前单位真实半径检查连续空间，而不只检查 16px 导航格中心。
+## 按当前单位真实半径检查连续空间，而不只检查半格导航格中心。
 ## 导航格负责全局路线；这里补足塔角/建筑角最多半格的离散误差。
 func is_ground_position_walkable(pos: Vector2, mover_radius: float, excluded: Node = null, allow_deploy_edge_center: bool = false, ignore_structures: bool = false) -> bool:
 	# 玩家部署允许第一/最后一列、第一/最后一行的格心作为出生点；
 	# 单位会从边缘格向场内移动。正常战斗移动仍要求整个圆柱留在场内。
 	if allow_deploy_edge_center:
-		if pos.x < 0.0 or pos.x > FIELD_W or pos.y < 0.0 or pos.y > FIELD_H:
+		if pos.x < 0.0 or pos.x > ArenaRules.FIELD_W or pos.y < 0.0 or pos.y > ArenaRules.FIELD_H:
 			return false
 	else:
-		if pos.x < mover_radius or pos.x > FIELD_W - mover_radius:
+		if pos.x < mover_radius or pos.x > ArenaRules.FIELD_W - mover_radius:
 			return false
-		if pos.y < mover_radius or pos.y > FIELD_H - mover_radius:
+		if pos.y < mover_radius or pos.y > ArenaRules.FIELD_H - mover_radius:
 			return false
 	if not _is_ground_terrain_walkable(pos, mover_radius):
 		return false
@@ -1131,19 +1208,19 @@ func is_ground_position_walkable(pos: Vector2, mover_radius: float, excluded: No
 			continue
 		if ignore_structures:
 			continue
-		if _structure_gap_to_circle(c, pos, mover_radius) < STRUCTURE_SEPARATION:
+		if _structure_gap_to_circle(c, pos, mover_radius) < ArenaRules.STRUCTURE_SEPARATION:
 			return false
 	return true
 
 ## 连续河道碰撞：河岸按单位真实半径扩张，桥面按真实半径收窄。
 ## 不读取 A* 的离散格，避免合法部署格因格心取样误判为河道。
 func _is_ground_terrain_walkable(pos: Vector2, mover_radius: float) -> bool:
-	if absf(pos.y - RIVER_Y) >= RIVER_HALF + mover_radius:
+	if absf(pos.y - ArenaRules.RIVER_Y) >= ArenaRules.RIVER_HALF + mover_radius:
 		return true
-	var bridge_clearance := maxf(BRIDGE_HALF - mover_radius, 0.0)
+	var bridge_clearance := maxf(ArenaRules.BRIDGE_HALF - mover_radius, 0.0)
 	return (
-		absf(pos.x - BRIDGE_X_LEFT) <= bridge_clearance
-		or absf(pos.x - BRIDGE_X_RIGHT) <= bridge_clearance
+		absf(pos.x - ArenaRules.BRIDGE_X_LEFT) <= bridge_clearance
+		or absf(pos.x - ArenaRules.BRIDGE_X_RIGHT) <= bridge_clearance
 	)
 
 ## 推进路线能直达时不调用 A*。按连续空间采样，保证直线不会切进圆形塔或建筑。
@@ -1215,7 +1292,7 @@ func _deploy_card(p_team: int, card_id: String, pos: Vector2, input_tick: int = 
 	var resolved_execute_tick := _resolve_command_execute_tick(input_tick)
 	if resolved_execute_tick < 0:
 		return -1
-	_pending_card_deployments.append({
+	_commands.card_commands.append({
 		"team": p_team,
 		"card_id": card_id,
 		"pos": pos,
@@ -1223,7 +1300,7 @@ func _deploy_card(p_team: int, card_id: String, pos: Vector2, input_tick: int = 
 	})
 	return resolved_execute_tick
 
-## 玩家、AI、联机 RPC 与 ArtDevPanel 共用的出牌命令入口。
+## 玩家、AI、联机 RPC 与 DevelopmentWorkbench 共用的出牌命令入口。
 ## options 只描述请求来源；联机请求携带客户端观察到的 input_tick，Host 计算目标 Tick。
 func play_card(p_team: int, card_id: String, pos: Vector2, options: Dictionary = {}) -> bool:
 	if game_over or not CardDB.has_card(card_id):
@@ -1263,7 +1340,9 @@ func play_card(p_team: int, card_id: String, pos: Vector2, options: Dictionary =
 	if immediate:
 		var type := String(stats.get("type", "unit"))
 		if type == "spell":
-			_cast_spell(p_team, card_id, pos)
+			_cast_spell(p_team, card_id, pos, _art_dev_mode and bool(options.get("preview_active_spell", false)))
+		elif float(stats.get("pre_deploy_time", 0.0)) > 0.0:
+			_execute_card_deployment(p_team, card_id, pos)
 		else:
 			if type == "building":
 				_push_units_around(pos, float(stats.get("radius", 14.0)))
@@ -1288,15 +1367,7 @@ func play_card(p_team: int, card_id: String, pos: Vector2, options: Dictionary =
 	return true
 
 func _tick_pending_card_deployments(_dt: float) -> void:
-	var waiting: Array[Dictionary] = []
-	var ready: Array[Dictionary] = []
-	for deployment in _pending_card_deployments:
-		if int(deployment.execute_tick) > _sim_tick_id:
-			waiting.append(deployment)
-		else:
-			ready.append(deployment)
-	_pending_card_deployments = waiting
-	# 同一个 tick 到期时保持出牌顺序，避免主机结果依赖数组反向删除顺序。
+	var ready := _commands.take_card_commands(_sim_tick_id)
 	for deployment in ready:
 		_execute_card_deployment(
 			int(deployment.team),
@@ -1305,15 +1376,7 @@ func _tick_pending_card_deployments(_dt: float) -> void:
 		)
 
 func _tick_pending_card_pre_deployments(dt: float) -> void:
-	var waiting: Array[Dictionary] = []
-	var ready: Array[Dictionary] = []
-	for deployment in _pending_card_pre_deployments:
-		deployment.time_left = maxf(float(deployment.get("time_left", 0.0)) - dt, 0.0)
-		if float(deployment.time_left) > 0.001:
-			waiting.append(deployment)
-		else:
-			ready.append(deployment)
-	_pending_card_pre_deployments = waiting
+	var ready := _commands.take_pre_deployments(dt)
 	for deployment in ready:
 		_spawn_card_units(
 			int(deployment.team), String(deployment.card_id), deployment.pos as Vector2,
@@ -1326,9 +1389,9 @@ func _execute_card_deployment(p_team: int, card_id: String, pos: Vector2) -> voi
 	var active_slot := _active_card_slot_for_team(p_team, card_id)
 	var pre_deploy_time := maxf(float(stats.get("pre_deploy_time", 0.0)), 0.0)
 	if pre_deploy_time > 0.0 and type != "spell":
-		var pre_deploy_id := _next_card_pre_deploy_id
-		_next_card_pre_deploy_id += 1
-		_pending_card_pre_deployments.append({
+		var pre_deploy_id := _commands.next_pre_deploy_id
+		_commands.next_pre_deploy_id += 1
+		_commands.pre_deployments.append({
 			"id": pre_deploy_id,
 			"team": p_team,
 			"card_id": card_id,
@@ -1339,6 +1402,10 @@ func _execute_card_deployment(p_team: int, card_id: String, pos: Vector2) -> voi
 		})
 		if mode == "host":
 			_rpc_card_pre_deploy_started.rpc(pre_deploy_id, card_id, p_team, pos, pre_deploy_time)
+		_presentation_event_id += 1
+		_play_card_event(_presentation_event_id, card_id, "pre_deploy:start", pos)
+		if mode == "host":
+			_rpc_card_event.rpc(_presentation_event_id, card_id, "pre_deploy:start", pos)
 		return
 	match type:
 		"spell":
@@ -1350,6 +1417,10 @@ func _execute_card_deployment(p_team: int, card_id: String, pos: Vector2) -> voi
 
 func launch_attack(attacker: Node2D, target: Node2D, amount: float, projectile_speed: float, splash_radius: float, knockback: float, projectile_color: Color, effects: Dictionary = {}) -> void:
 	_projectile_system.launch(attacker, target, amount, projectile_speed, splash_radius, knockback, projectile_color, effects)
+	if attacker is Tower and is_instance_valid(target) and target.hp > 0.0:
+		var source := PresentationConfig.attack_source(attacker)
+		_on_skill_projectile_hit(source, "attack", attacker.global_position, "cast")
+		_on_skill_projectile_hit(source, "attack", attacker.global_position, "launch")
 
 ## 弹体命中表现与伤害结算分离；半径只用于绘制对应的权威溅射范围。
 func show_projectile_impact(position: Vector2, radius: float, color: Color, visual: StringName) -> void:
@@ -1366,85 +1437,70 @@ func apply_damage_pulse(source: Node2D, target: Node2D, amount: float, splash_ra
 		return false
 	var source_team := int(source.team)
 	var source_position := source.global_position if origin.x == INF else origin
-	return resolve_attack_hit(source_team, source_position, target, amount, maxf(splash_radius, 0.0), 0.0, source, source_position, source_form_index, effects, counts_as_attack)
+	return _combat.resolve_attack_hit(source_team, source_position, target, amount, maxf(splash_radius, 0.0), 0.0, source, source_position, source_form_index, effects, counts_as_attack)
 
 func _tick_projectiles(dt: float) -> void:
 	_projectile_system.tick(dt)
 
-func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: float, radius: float, knockback: float, from: Node2D = null, source_position: Vector2 = Vector2(INF, INF), source_form_index: int = -1, effects: Dictionary = {}, counts_as_attack: bool = true) -> bool:
-	if primary == null or not is_instance_valid(primary) or primary.hp <= 0.0:
-		return false
-	var ground_only := bool(effects.get("ground_only", false))
-	if ground_only and primary is Unit and (primary as Unit).is_air:
-		return false
-	if radius <= 0.0:
-		var was_alive: bool = primary.hp > 0.0
-		var landed: bool = primary.take_damage(amount, from, p_team, source_position)
-		if landed:
-			_apply_attack_hit_effects(primary, effects)
-		if landed and counts_as_attack and from is Unit and is_instance_valid(from):
-			(from as Unit).on_attack_landed(source_form_index, amount)
-			_notify_attack_audio_hit(from as Unit, primary.global_position, bool(effects.get("first_strike", false)))
-		if landed and was_alive and primary.hp <= 0.0 and from is Unit and is_instance_valid(from):
-			(from as Unit).on_enemy_killed(primary)
-		if landed and knockback > 0.0 and primary is Unit and is_instance_valid(primary) and primary.hp > 0.0:
-			(primary as Unit).apply_knockback(origin, knockback)
-		return landed
-	var impact_pos := primary.global_position
-	var any_landed := false
-	for c in get_tree().get_nodes_in_group("combatants"):
-		if not is_instance_valid(c) or c.team == p_team or c.hp <= 0.0:
-			continue
-		if ground_only and c is Unit and (c as Unit).is_air:
-			continue
-		if c.global_position.distance_to(impact_pos) <= radius + c.body_radius:
-			var was_alive: bool = c.hp > 0.0
-			var landed: bool = c.take_damage(amount, from, p_team, source_position)
-			if landed:
-				_apply_attack_hit_effects(c, effects)
-			any_landed = landed or any_landed
-			if landed and was_alive and c.hp <= 0.0 and from is Unit and is_instance_valid(from):
-				(from as Unit).on_enemy_killed(c)
-			if landed and knockback > 0.0 and c is Unit and is_instance_valid(c) and c.hp > 0.0:
-				(c as Unit).apply_knockback(origin, knockback)
-	if any_landed and counts_as_attack and from is Unit and is_instance_valid(from):
-		(from as Unit).on_attack_landed(source_form_index, amount)
-		_notify_attack_audio_hit(from as Unit, impact_pos, bool(effects.get("first_strike", false)))
-	return any_landed
-
-func _notify_attack_audio_hit(attacker: Unit, position: Vector2, first_strike: bool = false) -> void:
-	if attacker == null or not is_instance_valid(attacker):
+func _notify_attack_presentation(source: Dictionary, position: Vector2, first_strike: bool) -> void:
+	if source.is_empty():
 		return
 	if _audio_manager != null:
-		_audio_manager.play_attack_hit(attacker, position, first_strike)
-	if mode == "host" and attacker.net_id >= 0:
-		_rpc_attack_audio_hit.rpc(attacker.net_id, position, first_strike)
+		_audio_manager.play_attack_source(source, position, first_strike)
+	if mode == "host":
+		_rpc_attack_audio_hit.rpc(source, position, first_strike)
 
 ## 一次范围脉冲即使命中多个目标也只播放一次；空挥/免疫不产生命中声。
+func _on_projectile_launch_audio_started(id: int, source: Dictionary, position: Vector2) -> void:
+	if _audio_manager != null:
+		_audio_manager.start_projectile_launch(id, source, position)
+	if mode == "host":
+		_rpc_projectile_launch_audio.rpc(id, source, position, true)
+
+func _on_projectile_launch_audio_stopped(id: int) -> void:
+	if _audio_manager != null:
+		_audio_manager.stop_projectile_launch(id)
+	if mode == "host":
+		_rpc_projectile_launch_audio.rpc(id, {}, Vector2.ZERO, false)
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_projectile_launch_audio(id: int, source: Dictionary, position: Vector2, started: bool) -> void:
+	if mode != "client" or _audio_manager == null:
+		return
+	if started:
+		_audio_manager.start_projectile_launch(id, source, position)
+	else:
+		_audio_manager.stop_projectile_launch(id)
+
 func _notify_unit_audio_event(unit: Unit, cue: StringName, position: Vector2) -> void:
 	if unit == null or not is_instance_valid(unit):
+		return
+	if cue == &"revival:end" and _audio_manager != null:
+		_audio_manager.complete_revival(unit)
+	if cue in [&"deploy:hit", &"replacement:start", &"revival:end", &"shield:cast", &"shield:applied"]:
+		_on_skill_projectile_hit(PresentationConfig.attack_source(unit), String(cue).get_slice(":", 0), position, String(cue).get_slice(":", 1))
 		return
 	if _audio_manager != null:
 		_audio_manager.play_event(unit, cue, position)
 	if mode == "host" and unit.net_id >= 0:
-		_rpc_unit_audio_event.rpc(unit.net_id, String(cue), position)
+		_rpc_unit_audio_event.rpc(unit.net_id, String(cue), position, unit.presentation_state().attack_serial)
 
 @rpc("authority", "call_remote", "unreliable")
-func _rpc_unit_audio_event(net_id: int, cue: String, position: Vector2) -> void:
+func _rpc_unit_audio_event(net_id: int, cue: String, position: Vector2, attack_serial: int = -1) -> void:
 	if mode != "client" or _audio_manager == null:
 		return
 	var unit: Unit = _client_units.get(net_id)
 	if unit != null and is_instance_valid(unit):
-		_audio_manager.play_event(unit, StringName(cue), position)
-
-func _apply_attack_hit_effects(target: Node2D, effects: Dictionary) -> void:
-	if target is Unit and is_instance_valid(target) and target.hp > 0.0:
-		var blind_charges := maxi(int(effects.get("blind_charges", 0)), 0)
-		if blind_charges > 0:
-			(target as Unit).apply_blind(blind_charges)
+		_audio_manager.play_event(unit, StringName(cue), position, attack_serial)
 
 func _cast_spell(p_team: int, card_id: String, pos: Vector2, active_enabled: bool = false) -> bool:
-	return _spell_system.cast(p_team, CardDB.get_card(card_id), pos, active_enabled)
+	var cast: bool = _spell_system.cast(p_team, CardDB.get_card(card_id), pos, active_enabled)
+	if cast:
+		_presentation_event_id += 1
+		_play_card_event(_presentation_event_id, card_id, "spell:cast", pos)
+		if mode == "host":
+			_rpc_card_event.rpc(_presentation_event_id, card_id, "spell:cast", pos)
+	return cast
 
 func _apply_freeze(pos: Vector2, radius: float, duration: float, p_team: int, slow_duration: float = 0.0, slow_multiplier: float = 1.0) -> void:
 	_spell_system.apply_freeze(pos, radius, duration, p_team, slow_duration, slow_multiplier)
@@ -1475,8 +1531,8 @@ func _spawn_card_units(team: int, card_id: String, pos: Vector2, deploy_time_ove
 		var member_slot := active_slot if index == 0 else -1
 		var member_pos := pos + offsets[index]
 		var member_radius := float(stats.get("radius", 14.0))
-		member_pos.x = clampf(member_pos.x, member_radius, FIELD_W - member_radius)
-		member_pos.y = clampf(member_pos.y, member_radius, FIELD_H - member_radius)
+		member_pos.x = clampf(member_pos.x, member_radius, ArenaRules.FIELD_W - member_radius)
+		member_pos.y = clampf(member_pos.y, member_radius, ArenaRules.FIELD_H - member_radius)
 		var member := _spawn_unit(team, card_id, member_pos, deploy_time_override, member_slot, pre_deploy_id, group_id, "", -1, built_on_tower_ruin)
 		if member != null:
 			spawned.append(member)
@@ -1669,7 +1725,7 @@ func use_active_skill(ability_id: int, expected_team: int = -1, requester_peer_i
 	return _queue_active_skill(ability_id, expected_team, requester_peer_id, input_tick)
 
 func _queue_active_skill(ability_id: int, expected_team: int = -1, requester_peer_id: int = 0, input_tick: int = -1) -> bool:
-	for pending in _pending_active_skill_activations:
+	for pending in _commands.skill_commands:
 		if int(pending.ability_id) == ability_id:
 			return false
 	if not _active_skill_is_legal(ability_id, expected_team):
@@ -1682,7 +1738,7 @@ func _queue_active_skill(ability_id: int, expected_team: int = -1, requester_pee
 	var skill: Dictionary = entry.skill
 	if not _spend_active_skill_cost(p_team, skill):
 		return false
-	_pending_active_skill_activations.append({
+	_commands.skill_commands.append({
 		"ability_id": ability_id,
 		"team": p_team,
 		"requester_peer_id": requester_peer_id,
@@ -1691,14 +1747,7 @@ func _queue_active_skill(ability_id: int, expected_team: int = -1, requester_pee
 	return true
 
 func _tick_pending_active_skills(_dt: float) -> void:
-	var waiting: Array[Dictionary] = []
-	var ready: Array[Dictionary] = []
-	for pending in _pending_active_skill_activations:
-		if int(pending.execute_tick) > _sim_tick_id:
-			waiting.append(pending)
-		else:
-			ready.append(pending)
-	_pending_active_skill_activations = waiting
+	var ready := _commands.take_skill_commands(_sim_tick_id)
 	for pending in ready:
 		var ability_id := int(pending.ability_id)
 		if _activate_active_skill(ability_id, int(pending.team)):
@@ -1710,7 +1759,7 @@ func _tick_pending_active_skills(_dt: float) -> void:
 			_active_skill_bar.set_pending(ability_id, false)
 
 func _cancel_pending_active_skill(ability_id: int) -> void:
-	_pending_active_skill_activations = _pending_active_skill_activations.filter(
+	_commands.skill_commands = _commands.skill_commands.filter(
 		func(pending): return int(pending.ability_id) != ability_id
 	)
 
@@ -1749,8 +1798,8 @@ func get_active_skill_snapshot(ability_id: int) -> Dictionary:
 ## Cast Start 后的通用 Gameplay Impact 队列。计时在固定 Tick 中推进，
 ## 并在施法者被冻结/眩晕时与 Unit 的 cast timer 同步暂停。
 func _queue_active_skill_impact(source: Unit, skill: Dictionary, impact_delay: float) -> void:
-	if source == null or not is_instance_valid(source):
-		return
+	skill = skill.duplicate(true)
+	skill["cast_hit_state"] = ActiveSkillEffectSystem.CastHitState.new()
 	var hit_damages = skill.get("prepared_hit_damages", [])
 	var hit_delays = skill.get("prepared_hit_delays", [])
 	if hit_damages is Array and hit_delays is Array and not (hit_damages as Array).is_empty():
@@ -1759,15 +1808,16 @@ func _queue_active_skill_impact(source: Unit, skill: Dictionary, impact_delay: f
 			var hit_skill := skill.duplicate(true)
 			hit_skill.erase("prepared_hit_damages")
 			hit_skill.erase("prepared_hit_delays")
+			hit_skill["hit_audio_phase"] = "first" if hit_index == 0 else ("last" if hit_index == hit_count - 1 else "middle")
 			hit_skill["damage"] = maxf(float((hit_damages as Array)[hit_index]), 0.0)
 			_queue_single_active_skill_impact(source, hit_skill, maxf(float((hit_delays as Array)[hit_index]), 0.0))
 	else:
 		_queue_single_active_skill_impact(source, skill, impact_delay)
 	var cast_end_heal := maxf(float(skill.get("cast_end_heal", 0.0)), 0.0)
 	if cast_end_heal > 0.0:
-		_pending_active_skill_impacts.append({
+		_commands.impacts.append({
 			"source_ref": weakref(source),
-			"skill": {"cast_end_heal": cast_end_heal},
+			"skill": {"cast_end_heal": cast_end_heal, "cast_end_heal_requires_hit": bool(skill.get("cast_end_heal_requires_hit", false)), "cast_hit_state": skill.cast_hit_state},
 			"time_left": maxf(float(skill.get("cast_duration", 0.0)), 0.0),
 			"phase": &"cast_end",
 		})
@@ -1776,32 +1826,13 @@ func _queue_single_active_skill_impact(source: Unit, skill: Dictionary, impact_d
 	if impact_delay <= 0.0:
 		_active_skill_effect_system.apply(source, skill)
 		return
-	_pending_active_skill_impacts.append({
+	_commands.impacts.append({
 		"source_ref": weakref(source),
 		"skill": skill.duplicate(true),
 		"time_left": impact_delay,
 		"phase": &"impact",
 	})
 
-func _tick_pending_active_skill_impacts(dt: float) -> void:
-	var waiting: Array[Dictionary] = []
-	for pending in _pending_active_skill_impacts:
-		var source = (pending.source_ref as WeakRef).get_ref()
-		if not source is Unit or not is_instance_valid(source) or source.hp <= 0.0:
-			continue
-		var unit := source as Unit
-		if unit.is_frozen() or unit.is_stunned():
-			waiting.append(pending)
-			continue
-		pending.time_left = maxf(0.0, float(pending.time_left) - dt)
-		if float(pending.time_left) > 0.001:
-			waiting.append(pending)
-			continue
-		if StringName(pending.get("phase", &"impact")) == &"cast_end":
-			_active_skill_effect_system.apply_cast_end(unit, pending.skill)
-		else:
-			_active_skill_effect_system.apply(unit, pending.skill)
-	_pending_active_skill_impacts = waiting
 
 ## 点击只决定请求能否进入 pending；队列到期时必须用同一谓词重新读取权威状态。
 ## pending 占用检查刻意留在 _queue_active_skill()，否则队列中的请求永远无法落地。
@@ -1906,7 +1937,7 @@ func _tick_minion_waves(dt: float) -> void:
 	while true:
 		# 双倍金币阶段是独立的兵线事件：取消普通阶段原本会落在 2:20 的下一波，
 		# 在 2:05 立即出炮车线，之后再从 2:05 以 30 秒为周期排程。
-		if not _overtime and _battle_elapsed + 0.001 >= DOUBLE_ELIXIR_START_TIME \
+		if not _match_rules.overtime and _battle_elapsed + 0.001 >= DOUBLE_ELIXIR_START_TIME \
 			and _next_minion_wave_time >= DOUBLE_ELIXIR_START_TIME \
 			and _next_minion_wave_time < DOUBLE_ELIXIR_START_TIME + DOUBLE_MINION_WAVE_INTERVAL:
 			_spawn_minion_wave(MINION_WAVE_SIEGE)
@@ -1915,11 +1946,13 @@ func _tick_minion_waves(dt: float) -> void:
 		if _battle_elapsed + 0.001 < _next_minion_wave_time:
 			break
 		# 正赛结束和加时结束都是硬边界：自动 scheduler 不能生成 3:05/5:05 兵线。
-		if not _overtime and _next_minion_wave_time >= MATCH_TIME:
+		if not _match_rules.overtime and _next_minion_wave_time >= MATCH_TIME:
 			break
-		if _overtime and _next_minion_wave_time >= MATCH_TIME + OVERTIME_TIME:
+		if _match_rules.overtime and _next_minion_wave_time >= MATCH_TIME + OVERTIME_TIME:
 			break
-		var wave_type := MINION_WAVE_SIEGE if _overtime or _next_minion_wave_time >= DOUBLE_ELIXIR_START_TIME else MINION_WAVE_NORMAL
+		var wave_type := MINION_WAVE_SIEGE if _match_rules.overtime or _next_minion_wave_time >= DOUBLE_ELIXIR_START_TIME else MINION_WAVE_NORMAL
+		if is_equal_approx(_next_minion_wave_time, FIRST_MINION_WAVE_TIME):
+			_present_match_announcement("minions_spawn")
 		_spawn_minion_wave(wave_type)
 		_next_minion_wave_time += DOUBLE_MINION_WAVE_INTERVAL if wave_type == MINION_WAVE_SIEGE else NORMAL_MINION_WAVE_INTERVAL
 
@@ -1938,8 +1971,8 @@ func _spawn_minion_wave(wave_type: String = MINION_WAVE_NORMAL) -> void:
 			})
 
 func _spawn_lane_minion(team: int, lane: int, card_id: String) -> Unit:
-	var x := FIELD_W * 0.5 + (-MINION_SPAWN_X_OFFSET if lane == 0 else MINION_SPAWN_X_OFFSET)
-	var y := 29.0 * TILE_SIZE if team == 0 else 3.0 * TILE_SIZE
+	var x := ArenaRules.FIELD_W * 0.5 + (-MINION_SPAWN_X_OFFSET if lane == 0 else MINION_SPAWN_X_OFFSET)
+	var y := 29.0 * ArenaRules.TILE_SIZE if team == 0 else 3.0 * ArenaRules.TILE_SIZE
 	var stats: Dictionary = CardDB.get_card(card_id)
 	var pos := _nearest_valid_ground_spawn(Vector2(x, y), float(stats.radius), team)
 	return _spawn_unit(team, card_id, pos, 0.0)
@@ -1952,7 +1985,7 @@ func _enemy_lane_tower_destroyed(team: int, lane: int) -> bool:
 
 func _is_double_elixir_phase() -> bool:
 	# 正赛 2:05 起双倍金币；加时全程保持双倍。match_timer 兼容客户端不推进 _battle_elapsed 的情况。
-	return _overtime or _battle_elapsed + 0.001 >= DOUBLE_ELIXIR_START_TIME or _match_timer <= DOUBLE_ELIXIR_TIME + 0.001
+	return _match_rules.overtime or _battle_elapsed + 0.001 >= DOUBLE_ELIXIR_START_TIME or _match_rules.time_left <= DOUBLE_ELIXIR_TIME + 0.001
 
 ## 解除导航网格阻挡格（建筑卡死亡 / 塔被摧毁时调用）
 func unblock_nav_cells(cells: Array) -> void:
@@ -1962,7 +1995,7 @@ func unblock_nav_cells(cells: Array) -> void:
 
 ## 河道本身是硬障碍，A* 会自然选择总代价最低的桥。
 ## 不再拼接“桥入口 -> 桥出口”三段路径：单位踏上桥后重算时，旧实现会先把它拉回入口。
-func find_ground_path(from: Vector2, goal: Vector2, _target: Node2D, _mover_radius: float = NAV_CLEARANCE) -> PackedVector2Array:
+func find_ground_path(from: Vector2, goal: Vector2, _target: Node2D, _mover_radius: float = ArenaRules.NAV_CLEARANCE) -> PackedVector2Array:
 	if nav == null:
 		return PackedVector2Array()
 	return nav.find_path(from, goal)
@@ -1989,12 +2022,20 @@ func on_tower_hit(tower: Tower) -> void:
 ## 帧率高低只影响每帧跑多少步，不改变战斗结果（联机两端行为一致）。
 func _sim_step(dt: float) -> void:
 	_sim_tick_id += 1
+	if _match_started and not _art_dev_mode:
+		_update_elixir_rate()
+		_elixir.sim_tick(dt)
+		if _elixir_p1 != null:
+			_elixir_p1.sim_tick(dt)
+		if _ai != null:
+			_ai._elixir.sim_tick(dt)
+			if _ai.enabled:
+				_ai.sim_tick(dt)
 	# 已存在的施法时间线先推进；本 Tick 新执行的命令从当前 Tick 边界开始计时。
 	_tick_active_skill_cooldowns(dt)
-	_tick_pending_active_skill_impacts(dt)
+	_commands.tick_impacts(dt)
 	_active_skill_effect_system.tick_effects(dt)
 	_tick_pending_card_deployments(dt)
-	_tick_pending_card_pre_deployments(dt)
 	_tick_pending_active_skills(dt)
 	_tick_slow_zones(dt)
 	if not _art_dev_mode and _minion_waves_enabled:
@@ -2002,9 +2043,10 @@ func _sim_step(dt: float) -> void:
 	for c in get_tree().get_nodes_in_group("combatants"):
 		if c.has_method("sim_tick"):
 			c.sim_tick(dt)
+	# 预部署在本 Tick 边界完成；新单位从下一 Tick 推进实际部署，避免两阶段共用一个 Tick。
+	_tick_pending_card_pre_deployments(dt)
 	_sync_active_skill_deployment_readiness()
-	_apply_unit_movement(dt)
-	_resolve_unit_collisions(dt)
+	_movement.tick(dt)
 	_tick_projectiles(dt)
 	# 己方任一公主塔被摧毁 → 国王塔参战。
 	for king in [_king_player, _king_enemy]:
@@ -2037,388 +2079,34 @@ func _sim_step(dt: float) -> void:
 			_auto_gnar_revert_unit = auto_gnar
 			_auto_gnar_revert_timer = 2.4
 
-## 所有单位先计算移动意图，再统一做局部避让并应用，避免节点遍历顺序影响结果。
-func _apply_unit_movement(dt: float) -> void:
-	var units := _active_mobile_units()
-	var velocities := {}
-	for unit in units:
-		velocities[_unit_order_key(unit)] = _adjust_unit_velocity(unit, units, dt)
-	_resolve_unit_contact_momentum(velocities, units)
-	for unit in units:
-		var velocity: Vector2 = velocities[_unit_order_key(unit)]
-		if velocity.length_squared() < 0.001:
-			unit.on_movement_applied(0.0, dt)
-			continue
-		var old_pos := unit.global_position
-		var applied := _try_apply_velocity(unit, velocity, dt)
-		if not applied and not velocity.is_equal_approx(unit._move_intent):
-			# 先去掉局部避让分量，尝试原始路径速度。
-			applied = _try_apply_velocity(unit, unit._move_intent, dt)
-		if not applied:
-			# 桥角/塔角的斜向步进可能同时跨入障碍。沿障碍切线尝试单轴分量，
-			# 让单位先滑到桥口再向前，而不是在角点原地踏步。
-			applied = _try_slide_velocity(unit, velocity, dt)
-		if applied:
-			unit.on_movement_applied(unit.global_position.distance_to(old_pos), dt)
-		else:
-			unit.cancel_charge()
-			unit.on_movement_applied(0.0, dt)
-
-func _try_apply_velocity(unit: Unit, velocity: Vector2, dt: float) -> bool:
-	if velocity.length_squared() < 0.001:
-		return false
-	# 部署允许单位从边缘格心出生；先把候选位置收回完整圆柱可活动的场内，
-	# 再做塔/河岸碰撞检查，避免边缘格心因为半径超出几像素而永远无法向内移动。
-	var raw_next_pos := unit.global_position + velocity * dt
-	var next_pos := Vector2(
-			clampf(raw_next_pos.x, unit.body_radius, FIELD_W - unit.body_radius),
-			clampf(raw_next_pos.y, unit.body_radius, FIELD_H - unit.body_radius)
-		)
-	if not unit.is_walkable_at(next_pos):
-		if _try_leave_deployment_river_overlap(unit, next_pos):
-			unit.global_position = next_pos
-			return true
-		return _try_bridge_corner_tangent(unit, velocity, dt)
-	unit.global_position = Vector2(
-		clampf(next_pos.x, unit.body_radius, FIELD_W - unit.body_radius),
-		clampf(next_pos.y, unit.body_radius, FIELD_H - unit.body_radius)
-	)
-	return true
-
-## 大体型单位允许在靠河第一部署排的格心出生，落点可能暂时压过河岸几像素。
-## 若这一步正沿远离河道的方向移动，允许它先退出这段部署重叠，再恢复标准地形碰撞。
-func _try_leave_deployment_river_overlap(unit: Unit, candidate: Vector2) -> bool:
-	if unit.is_air:
-		return false
-	var clearance := RIVER_HALF + unit.body_radius
-	var current_gap := absf(unit.global_position.y - RIVER_Y)
-	var candidate_gap := absf(candidate.y - RIVER_Y)
-	if current_gap >= clearance or candidate_gap <= current_gap + 0.001:
-		return false
-	if _is_ground_terrain_walkable(candidate, unit.body_radius):
-		return false
-	for c in get_tree().get_nodes_in_group("combatants"):
-		if c == unit or not is_instance_valid(c) or c.hp <= 0.0:
-			continue
-		var is_structure: bool = c is Tower or (c is Unit and (c as Unit).is_building)
-		if is_structure and _structure_gap_to_circle(c, candidate, unit.body_radius) < STRUCTURE_SEPARATION:
-			return false
-	return true
-
-## 圆柱碰到桥面与河岸的直角交界时，把剩余速度投影到河岸切线。
-## 这样单位会以原速度横向对准桥口，再连续进入桥面，不会先原地停一帧才缓慢挪动。
-func _try_bridge_corner_tangent(unit: Unit, velocity: Vector2, dt: float) -> bool:
-	if unit.is_air or velocity.length_squared() < 0.001:
-		return false
-	var shore_clearance := RIVER_HALF + unit.body_radius
-	var distance_to_river := absf(unit.global_position.y - RIVER_Y)
-	var movement_step := velocity.length() * dt
-	if distance_to_river > shore_clearance + movement_step + BRIDGE_EDGE_MARGIN:
-		return false
-	var moving_toward_river := (
-		(unit.global_position.y > RIVER_Y and velocity.y < 0.0)
-		or (unit.global_position.y < RIVER_Y and velocity.y > 0.0)
-	)
-	if not moving_toward_river and distance_to_river >= shore_clearance:
-		return false
-	var bridge_x := BRIDGE_X_LEFT
-	if absf(unit.global_position.x - BRIDGE_X_RIGHT) < absf(unit.global_position.x - BRIDGE_X_LEFT):
-		bridge_x = BRIDGE_X_RIGHT
-	var safe_half := maxf(BRIDGE_HALF - unit.body_radius - BRIDGE_EDGE_MARGIN, 0.0)
-	var safe_min_x := bridge_x - safe_half
-	var safe_max_x := bridge_x + safe_half
-	var candidate := unit.global_position + velocity * dt
-	if unit.global_position.x < safe_min_x:
-		candidate = Vector2(minf(unit.global_position.x + movement_step, safe_min_x), unit.global_position.y)
-	elif unit.global_position.x > safe_max_x:
-		candidate = Vector2(maxf(unit.global_position.x - movement_step, safe_max_x), unit.global_position.y)
-	else:
-		candidate.x = clampf(candidate.x, safe_min_x, safe_max_x)
-	if not unit.is_walkable_at(candidate):
-		return false
-	unit.global_position = Vector2(
-		clampf(candidate.x, unit.body_radius, FIELD_W - unit.body_radius),
-		clampf(candidate.y, unit.body_radius, FIELD_H - unit.body_radius)
-	)
-	return true
-
-func _try_slide_velocity(unit: Unit, velocity: Vector2, dt: float) -> bool:
-	var primary := Vector2(velocity.x, 0.0)
-	var secondary := Vector2(0.0, velocity.y)
-	if absf(velocity.y) > absf(velocity.x):
-		primary = Vector2(0.0, velocity.y)
-		secondary = Vector2(velocity.x, 0.0)
-	return _try_apply_velocity(unit, primary, dt) or _try_apply_velocity(unit, secondary, dt)
-
-func _active_mobile_units() -> Array[Unit]:
-	var units: Array[Unit] = []
-	for c in get_tree().get_nodes_in_group("combatants"):
-		if c is Unit:
-			var unit := c as Unit
-			if unit.hp > 0.0 and not unit.is_building:
-				units.append(unit)
-	units.sort_custom(func(a: Unit, b: Unit): return _unit_order_key(a) < _unit_order_key(b))
-	return units
-
-func _adjust_unit_velocity(unit: Unit, units: Array[Unit], dt: float) -> Vector2:
-	var desired: Vector2 = unit._move_intent
-	if desired.length_squared() < 0.001:
-		unit._steering_velocity = Vector2.ZERO
-		return Vector2.ZERO
-	if unit._forced_movement:
-		return desired
-	var direction := desired.normalized()
-	var desired_speed := desired.length()
-	var forward_speed := desired_speed
-	var side := Vector2(-direction.y, direction.x)
-	var steering := Vector2.ZERO
-	for other in units:
-		if other == unit or other.is_air != unit.is_air or other.team != unit.team:
-			continue
-		# 紧贴追尾交给后续成对冲量求解；这里若再做分离/减速，会在接触前凭空
-		# 消耗后排动量，导致质量属性无法影响推行速度。
-		if _is_unit_momentum_pair(unit, other, MOMENTUM_APPROACH_PADDING):
-			continue
-		var relative := other.global_position - unit.global_position
-		var distance := relative.length()
-		var clearance := unit.body_radius + other.body_radius + 2.0
-		var neighbor_range := clearance + AVOID_NEIGHBOR_PADDING
-		if distance >= neighbor_range:
-			continue
-		var proximity := 1.0 - distance / neighbor_range
-		var away: Vector2
-		if distance > 0.01:
-			away = -relative / distance
-		else:
-			away = side * (-1.0 if _unit_order_key(unit) < _unit_order_key(other) else 1.0)
-		# 分离力从邻域边缘平滑增大，不等到真正穿透才处理。
-		steering += away * desired_speed * 0.35 * proximity
-		var forward := relative.dot(direction)
-		if forward <= 0.0 or forward > AVOID_LOOKAHEAD + clearance:
-			continue
-		var signed_side := relative.dot(side)
-		var side_distance := absf(signed_side)
-		if side_distance >= clearance + 8.0:
-			continue
-		# 预测到前方走廊被占用时，双方按稳定 id 选择相反侧，形成互惠避让；
-		# 已有侧向偏移时沿当前空隙继续，不会左右反复切换。
-		var side_sign := signf(-signed_side)
-		if side_distance < 1.0:
-			side_sign = -1.0 if _unit_order_key(unit) < _unit_order_key(other) else 1.0
-		var corridor := 1.0 - side_distance / (clearance + 8.0)
-		var ahead_weight := 1.0 - forward / (AVOID_LOOKAHEAD + clearance)
-		var avoid_weight := maxf(corridor * ahead_weight, 0.0)
-		steering += side * side_sign * desired_speed * 0.75 * avoid_weight
-		forward_speed = minf(forward_speed, lerpf(desired_speed, desired_speed * AVOID_MIN_FORWARD_RATIO, avoid_weight))
-	var target_velocity := direction * maxf(forward_speed, desired_speed * AVOID_MIN_FORWARD_RATIO) + steering
-	# 避让不能把单位推成倒车；接触冲量会在所有单位完成自主速度计算后统一施加。
-	var forward_component := target_velocity.dot(direction)
-	var min_forward := desired_speed * AVOID_MIN_FORWARD_RATIO
-	if forward_component < min_forward:
-		target_velocity += direction * (min_forward - forward_component)
-	target_velocity = target_velocity.limit_length(desired_speed)
-	# 对避让速度做低通滤波，侧移表现为弧线而不是突然折线。
-	if unit._steering_velocity.length_squared() < 0.001:
-		unit._steering_velocity = target_velocity
-	else:
-		unit._steering_velocity = unit._steering_velocity.lerp(target_velocity, minf(dt * AVOID_RESPONSE, 1.0))
-	return unit._steering_velocity
-
-## 只识别同层、同队、同向且后排更快的紧贴纵队。并排擦肩、对向移动、击退
-## 与不同空地层不属于编队追尾，继续使用普通避让/碰撞规则。
-func _is_unit_momentum_contact(a: Unit, b: Unit) -> bool:
-	return _is_unit_momentum_pair(a, b, MOMENTUM_CONTACT_PADDING)
-
-func _is_unit_momentum_pair(a: Unit, b: Unit, contact_padding: float) -> bool:
-	if a == b or a.team != b.team or a.is_air != b.is_air or a._forced_movement or b._forced_movement:
-		return false
-	var desired_a: Vector2 = a._move_intent
-	var desired_b: Vector2 = b._move_intent
-	if desired_a.length_squared() < 0.001 or desired_b.length_squared() < 0.001:
-		return false
-	var direction_a := desired_a.normalized()
-	var direction_b := desired_b.normalized()
-	if direction_a.dot(direction_b) < MOMENTUM_MIN_ALIGNMENT:
-		return false
-	var direction := (direction_a + direction_b).normalized()
-	var relative := b.global_position - a.global_position
-	var clearance := a.body_radius + b.body_radius
-	if relative.length() >= clearance + contact_padding:
-		return false
-	var longitudinal := relative.dot(direction)
-	if absf(longitudinal) <= 0.01:
-		return false
-	var side := Vector2(-direction.y, direction.x)
-	if absf(relative.dot(side)) >= clearance:
-		return false
-	var front_speed: float
-	var rear_speed: float
-	if longitudinal > 0.0:
-		front_speed = desired_b.dot(direction)
-		rear_speed = desired_a.dot(direction)
-	else:
-		front_speed = desired_a.dot(direction)
-		rear_speed = desired_b.dot(direction)
-	return rear_speed > front_speed + 0.01
-
-## 完全非弹性接触冲量（恢复系数 e=0）：只修改接触法线分量，切向速度保留。
-## j = -v_rel·n / (1/m_a + 1/m_b)，双方获得大小相等、方向相反的冲量，
-## 因此每次接触都严格守恒 Σ(mv)，且重后排推轻前排会比轻后排推重前排更明显。
-func _resolve_unit_contact_momentum(velocities: Dictionary, units: Array[Unit]) -> void:
-	for i in range(units.size()):
-		var a := units[i]
-		for j in range(i + 1, units.size()):
-			var b := units[j]
-			if not _is_unit_momentum_contact(a, b):
-				continue
-			var delta := b.global_position - a.global_position
-			if delta.length_squared() <= 0.0001:
-				continue
-			var normal := delta.normalized()
-			var key_a := _unit_order_key(a)
-			var key_b := _unit_order_key(b)
-			var velocity_a: Vector2 = velocities[key_a]
-			var velocity_b: Vector2 = velocities[key_b]
-			var closing_speed := (velocity_b - velocity_a).dot(normal)
-			if closing_speed >= -0.001:
-				continue
-			var mass_a := maxf(a.mass, 0.001)
-			var mass_b := maxf(b.mass, 0.001)
-			var impulse := -closing_speed / (1.0 / mass_a + 1.0 / mass_b)
-			velocity_a -= normal * (impulse / mass_a)
-			velocity_b += normal * (impulse / mass_b)
-			velocities[key_a] = velocity_a
-			velocities[key_b] = velocity_b
-			# 下一 Tick 从碰撞后的真实速度继续受自主移动驱动，而不是丢失本次冲量。
-			a._steering_velocity = velocity_a
-			b._steering_velocity = velocity_b
-
-## 穿透修正采用常见的 slop + 百分比校正：轻微接触不处理，明显重叠逐步
-## 消除且单 tick 有上限。它只修复几何穿透，不承担移动避让或击退玩法。
-func _resolve_unit_collisions(_dt: float) -> void:
-	var units := _active_mobile_units()
-	for i in range(units.size()):
-		var a := units[i]
-		if not is_instance_valid(a) or a.hp <= 0.0:
-			continue
-		for j in range(i + 1, units.size()):
-			var b := units[j]
-			if not is_instance_valid(b) or b.hp <= 0.0 or a.is_air != b.is_air:
-				continue
-			_resolve_unit_pair(a, b, a._just_deployed or b._just_deployed)
-	for unit in units:
-		unit._just_deployed = false
-
-func _unit_order_key(unit: Unit) -> int:
-	return unit.net_id if unit.net_id >= 0 else unit.get_instance_id()
-
-func _resolve_unit_pair(a: Unit, b: Unit, landing_contact: bool = false) -> void:
-	var delta_pos := a.global_position - b.global_position
-	var distance := delta_pos.length()
-	var min_distance := a.body_radius + b.body_radius
-	if distance >= min_distance:
-		return
-	var direction: Vector2
-	if distance <= 0.01:
-		if landing_contact:
-			direction = _landing_overlap_direction(a, b)
-		else:
-			# 完全重叠时使用稳定方向拆分；桥区优先纵向，避免被挤进河道。
-			direction = Vector2.UP if absf(a.global_position.y - RIVER_Y) < 70.0 else Vector2.RIGHT
-	else:
-		direction = delta_pos / distance
-	if absf((a.global_position.y + b.global_position.y) * 0.5 - RIVER_Y) < 70.0:
-		direction.x *= 0.15
-	var penetration := maxf(min_distance - distance - COLLISION_SLOP, 0.0)
-	if penetration <= 0.0:
-		return
-	var correction_percent := LANDING_CORRECTION_PERCENT if landing_contact else COLLISION_CORRECTION_PERCENT
-	var max_correction := LANDING_MAX_CORRECTION if landing_contact else COLLISION_MAX_CORRECTION
-	var overlap := minf(penetration * correction_percent, max_correction)
-	var mass_a := a.mass
-	var mass_b := b.mass
-	var move_a := direction * overlap * (mass_b / (mass_a + mass_b))
-	var move_b := -direction * overlap * (mass_a / (mass_a + mass_b))
-	var next_a := a.global_position + move_a
-	var next_b := b.global_position + move_b
-	var can_move_a := a.is_walkable_at(next_a)
-	var can_move_b := b.is_walkable_at(next_b)
-	if can_move_a and can_move_b:
-		a.global_position = Vector2(
-			clampf(next_a.x, a.body_radius, FIELD_W - a.body_radius),
-			clampf(next_a.y, a.body_radius, FIELD_H - a.body_radius)
-		)
-		b.global_position = Vector2(
-			clampf(next_b.x, b.body_radius, FIELD_W - b.body_radius),
-			clampf(next_b.y, b.body_radius, FIELD_H - b.body_radius)
-		)
-	elif can_move_a:
-		var full_next_a := a.global_position + direction * overlap
-		if a.is_walkable_at(full_next_a):
-			a.global_position = full_next_a
-	elif can_move_b:
-		var full_next_b := b.global_position - direction * overlap
-		if b.is_walkable_at(full_next_b):
-			b.global_position = full_next_b
-
-## 两个单位完全重合落地时没有几何法线。如果附近有塔/建筑，优先把原有单位
-## 沿远离该结构的方向挤开，支持“在塔和近战单位之间下兵”的细节交互。
-func _landing_overlap_direction(a: Unit, b: Unit) -> Vector2:
-	var landing := a if a._just_deployed else b
-	var existing := b if landing == a else a
-	var nearest_structure: Node2D = null
-	var nearest_distance := INF
-	for c in get_tree().get_nodes_in_group("combatants"):
-		if c == a or c == b or not is_instance_valid(c) or c.hp <= 0.0:
-			continue
-		if not (c is Tower or (c is Unit and (c as Unit).is_building)):
-			continue
-		var dist: float = c.global_position.distance_squared_to(landing.global_position)
-		if dist < nearest_distance:
-			nearest_distance = dist
-			nearest_structure = c
-	var existing_direction := Vector2.ZERO
-	if nearest_structure != null:
-		existing_direction = nearest_structure.global_position.direction_to(landing.global_position)
-	if existing_direction.length_squared() < 0.001:
-		existing_direction = Vector2.UP if existing.team == 1 else Vector2.DOWN
-	# direction 是 b -> a：若 a 是原有单位则直接返回其应移动方向。
-	return existing_direction if existing == a else -existing_direction
+	if _match_started and not _art_dev_mode:
+		_tick_match_rules(dt)
 
 func _process(delta: float) -> void:
-	_sync_active_skill_deployment_readiness()
+	if mode == "client":
+		_sync_active_skill_deployment_readiness()
 	_projectile_system.tick_visuals(delta)
 	# 客户端：只更新冰冻视觉与重绘，逻辑状态全靠主机快照
 	if mode == "client":
 		_advance_estimated_server_tick(delta)
 		_projectile_system.tick_client_interpolation(delta)
 		_tick_card_pre_deploy_visuals(delta)
-		for fe in _freeze_effects:
-			fe.timer -= delta
-		_freeze_effects = _freeze_effects.filter(func(fe): return fe.timer > 0.0)
 		_tick_slow_effect_visuals(delta)
 		_active_skill_effect_system.tick_visuals(delta)
 		queue_redraw()
 		return
 	if _art_dev_mode:
-		for fe in _freeze_effects:
-			fe.timer -= delta
-		_freeze_effects = _freeze_effects.filter(func(fe): return fe.timer > 0.0)
+		if _art_dev_panel != null and not _art_dev_panel.accepts_battle_input():
+			return
 		_tick_slow_effect_visuals(delta)
 		_active_skill_effect_system.tick_visuals(delta)
 		queue_redraw()
-		_sim_acc += delta
-		while _sim_acc >= SIM_DT:
-			_sim_acc -= SIM_DT
-			_sim_step(SIM_DT)
+		_simulation_clock.advance(delta)
 		_sync_art_dev_panel_state()
 		return
 	if not _match_started or game_over:
 		return
 	# 更新冰冻视觉效果
-	for fe in _freeze_effects:
-		fe.timer -= delta
-	_freeze_effects = _freeze_effects.filter(func(fe): return fe.timer > 0.0)
 	_tick_slow_effect_visuals(delta)
 	_active_skill_effect_system.tick_visuals(delta)
 	queue_redraw()
@@ -2429,49 +2117,16 @@ func _process(delta: float) -> void:
 			_snapshot_timer = SNAPSHOT_INTERVAL
 			_send_snapshot()
 	# 固定 20Hz 战斗模拟：与渲染帧率解耦（auto-test 出兵也在模拟内计时）
-	_sim_acc += delta
-	while _sim_acc >= SIM_DT:
-		_sim_acc -= SIM_DT
-		_sim_step(SIM_DT)
-	# 比赛计时与胜负判断
-	_match_timer -= delta
+	_simulation_clock.advance(delta)
 	_update_timer_label()
-	_update_elixir_rate()
-	# 国王塔被毁立即结束
-	if _king_enemy.hp <= 0.0:
-		_end_game("胜利！敌方国王塔已被摧毁")
-		return
-	if _king_player.hp <= 0.0:
-		_end_game("失败……我方国王塔被摧毁")
-		return
-	var my_lost := _count_destroyed_towers(0)
-	var enemy_lost := _count_destroyed_towers(1)
-	# 加时赛：任何一方破塔数领先立即获胜
-	if _overtime and my_lost != enemy_lost:
-		_end_game_by_towers(my_lost, enemy_lost)
-		return
-	if _match_timer <= 0.0:
-		if not _overtime:
-			if my_lost != enemy_lost:
-				# 正赛结束，破塔多者胜
-				_end_game_by_towers(my_lost, enemy_lost)
-			else:
-				# 战平进入加时
-				_enter_overtime()
-		else:
-			# 加时结束仍平 → 平局
-			if my_lost != enemy_lost:
-				_end_game_by_towers(my_lost, enemy_lost)
-			else:
-				_end_game("平局！双方战成 %d:%d" % [enemy_lost, my_lost])
 
-## 进入加时的唯一入口：重置 2 分钟倒计时，并在 3:05 立即生成一波炮车线。
-func _enter_overtime() -> void:
-	if _overtime or game_over:
-		return
-	_overtime = true
-	_match_timer = OVERTIME_TIME
-	# 渲染帧可能让固定模拟比比赛计时落后不到一个 Tick；加时事件锚定在 3:05。
+func _tick_match_rules(dt: float) -> void:
+	var outcome := _match_rules.advance(dt, _king_player.hp, _king_enemy.hp, _count_destroyed_towers(0), _count_destroyed_towers(1))
+	_update_elixir_rate()
+	if not outcome.is_empty():
+		_end_game(outcome)
+
+func _on_overtime_started() -> void:
 	_battle_elapsed = maxf(_battle_elapsed, MATCH_TIME)
 	_next_minion_wave_time = MATCH_TIME + DOUBLE_MINION_WAVE_INTERVAL
 	if _minion_waves_enabled and not _art_dev_mode:
@@ -2487,27 +2142,20 @@ func _count_destroyed_towers(p_team: int) -> int:
 			count += 1
 	return count
 
-## 按破塔数结算（enemy_lost 多 = 玩家胜）
-func _end_game_by_towers(my_lost: int, enemy_lost: int) -> void:
-	if enemy_lost > my_lost:
-		_end_game("胜利！破塔 %d:%d" % [enemy_lost, my_lost])
-	else:
-		_end_game("失败……破塔 %d:%d" % [enemy_lost, my_lost])
-
 func _update_timer_label() -> void:
 	if _timer_label == null:
 		return
-	var t := maxi(int(_match_timer), 0)
+	var t := maxi(int(_match_rules.time_left), 0)
 	var text := "%d:%02d" % [t / 60, t % 60]
-	if _overtime:
+	if _match_rules.overtime:
 		text += " 加时"
 	_timer_label.text = text
 
 ## 金币回复倍率：正赛 2:05 起双倍；加时前一分钟双倍，最后一分钟三倍。
 func _update_elixir_rate() -> void:
 	var mult := 1.0
-	if _overtime:
-		mult = 3.0 if _match_timer <= OVERTIME_TRIPLE_ELIXIR_TIME else 2.0
+	if _match_rules.overtime:
+		mult = 3.0 if _match_rules.time_left <= OVERTIME_TRIPLE_ELIXIR_TIME else 2.0
 	elif _is_double_elixir_phase():
 		mult = 2.0
 	_elixir.regen_multiplier = mult
@@ -2541,6 +2189,9 @@ func _end_game(text: String) -> void:
 	if game_over:
 		return
 	game_over = true
+	if _audio_manager != null:
+		if text.begins_with("胜利"): _audio_manager.play_match_event("victory")
+		elif text.begins_with("失败"): _audio_manager.play_match_event("defeat")
 	var label := Label.new()
 	label.text = text
 	label.add_theme_font_size_override("font_size", 48)
@@ -2565,6 +2216,7 @@ func _rpc_register_deck(deck: Array, active_skill_choices: Dictionary = {}) -> v
 		if not CardDB.has_card(card_id) or not bool(CardDB.get_card(card_id).get("selectable", true)) or card_id in validated:
 			return
 		validated.append(card_id)
+	_resources.prepare(validated)
 	_remote_deck = validated
 	_remote_active_skill_choices.clear()
 	for card_id in validated:
@@ -2583,20 +2235,20 @@ func _rpc_active_skill_request(ability_id: int, input_tick: int = -1) -> void:
 
 func _tick_card_pre_deploy_visuals(delta: float) -> void:
 	var alive: Array[Dictionary] = []
-	for deployment in _pending_card_pre_deployments:
+	for deployment in _commands.pre_deployments:
 		deployment.time_left = maxf(float(deployment.get("time_left", 0.0)) - delta, 0.0)
 		if float(deployment.time_left) > 0.001:
 			alive.append(deployment)
-	_pending_card_pre_deployments = alive
+	_commands.pre_deployments = alive
 
 func _remove_card_pre_deploy_visual(pre_deploy_id: int) -> void:
 	if pre_deploy_id < 0:
 		return
 	var alive: Array[Dictionary] = []
-	for deployment in _pending_card_pre_deployments:
+	for deployment in _commands.pre_deployments:
 		if int(deployment.get("id", -1)) != pre_deploy_id:
 			alive.append(deployment)
-	_pending_card_pre_deployments = alive
+	_commands.pre_deployments = alive
 
 @rpc("authority", "call_remote", "reliable")
 func _rpc_active_skill_used(ability_id: int, uses_remaining: int = 0, cooldown_left: float = 0.0) -> void:
@@ -2694,7 +2346,7 @@ func _rpc_card_pre_deploy_started(pre_deploy_id: int, card_id: String, p_team: i
 	if mode != "client":
 		return
 	_remove_card_pre_deploy_visual(pre_deploy_id)
-	_pending_card_pre_deployments.append({
+	_commands.pre_deployments.append({
 		"id": pre_deploy_id,
 		"card_id": card_id,
 		"team": p_team,
@@ -2717,14 +2369,15 @@ func _rpc_unit_hit(net_id: int) -> void:
 
 ## 主机 → 客户端：一次真实普攻命中对应一个短促的纯表现音频事件；允许丢失，绝不阻塞快照。
 @rpc("authority", "call_remote", "unreliable")
-func _rpc_attack_audio_hit(net_id: int, position: Vector2, first_strike: bool = false) -> void:
-	if mode != "client" or _audio_manager == null:
+func _rpc_attack_audio_hit(source: Dictionary, position: Vector2, first_strike: bool = false) -> void:
+	if mode != "client":
 		return
-	var unit: Unit = _client_units.get(net_id)
-	if unit != null and is_instance_valid(unit):
-		_audio_manager.play_attack_hit(unit, position, first_strike)
+	if _auto_test and not _auto_audio_source_seen:
+		_auto_audio_source_seen = true
+		print("[测试] 客户端收到独立攻击来源命中事件：", source)
+	if _audio_manager != null:
+		_audio_manager.play_attack_source(source, position, first_strike)
 
-## 主机 → 客户端：可靠触发一次塔/水晶受击闪白。
 @rpc("authority", "call_remote", "reliable")
 func _rpc_tower_hit(index: int) -> void:
 	if mode != "client":
@@ -2751,6 +2404,8 @@ func _rpc_unit_died(net_id: int, play_death_visual: bool = true) -> void:
 	if u.is_building and not u.nav_cells.is_empty():
 		unblock_nav_cells(u.nav_cells)
 		u.nav_cells = []
+	if not play_death_visual and not u.timed_revival_id.is_empty() and _audio_manager != null:
+		_audio_manager.complete_revival(u)
 	if play_death_visual:
 		u.notify_visual_death()
 	u.queue_free()
@@ -2768,16 +2423,16 @@ func _rpc_snapshot(snapshot_bytes: PackedByteArray) -> void:
 func _rpc_freeze_fx(pos: Vector2, radius: float, duration: float, slow_duration: float = 0.0, _slow_multiplier: float = 1.0) -> void:
 	if mode != "client":
 		return
-	_freeze_effects.append({"pos": pos, "timer": duration, "duration": duration, "radius": radius})
+	_spell_system.freeze_effects.append({"pos": pos, "timer": duration, "duration": duration, "radius": radius})
 	if slow_duration > 0.0:
-		_slow_effects.append({"pos": pos, "radius": radius, "delay": duration, "timer": slow_duration, "duration": slow_duration})
+		_spell_system.slow_effects.append({"pos": pos, "radius": radius, "delay": duration, "timer": slow_duration, "duration": slow_duration})
 
 ## 主机 → 客户端：治疗法术视觉。治疗数值由主机权威结算，客户端只显示淡黄光效。
 @rpc("authority", "call_remote", "reliable")
 func _rpc_heal_fx(pos: Vector2, radius: float, duration: float, enhanced: bool = false) -> void:
 	if mode != "client":
 		return
-	_heal_effects.append({"pos": pos, "radius": radius, "timer": duration, "duration": duration, "enhanced": enhanced})
+	_spell_system.heal_effects.append({"pos": pos, "radius": radius, "timer": duration, "duration": duration, "enhanced": enhanced})
 
 ## 主机 → 客户端：定向技能蓄力范围。客户端只画表现，伤害与状态仍由主机快照体现。
 @rpc("authority", "call_remote", "reliable")
@@ -2820,7 +2475,14 @@ func _rpc_frontal_skill_fx(net_id: int, pos: Vector2, forward: Vector2, source_r
 func _rpc_end(text: String) -> void:
 	if mode != "client":
 		return
-	_end_game(text)
+	# 结果文本来自主机视角；客户端的胜负及播报必须相反。
+	var local_text := text
+	if text.begins_with("胜利"):
+		local_text = "失败" + text.substr(2)
+	elif text.begins_with("失败"):
+		local_text = "胜利" + text.substr(2)
+	local_text = local_text.replace("敌方", "__opponent__").replace("我方", "敌方").replace("__opponent__", "我方")
+	_end_game(local_text)
 
 ## 主机端：组装并发送快照
 func _send_snapshot() -> void:
@@ -2828,7 +2490,6 @@ func _send_snapshot() -> void:
 
 func _draw() -> void:
 	# 完整 720x1400 地图（含手牌区后方场外风景）；3D 表现视口继续透明叠加。
-	draw_texture(ARENA_BACKGROUND_TEXTURE, Vector2.ZERO)
 	# 选中卡牌时高亮可部署区域
 	if _selected_card != "":
 		var sel_stats: Dictionary = CardDB.get_card(_selected_card)
@@ -2837,59 +2498,29 @@ func _draw() -> void:
 			"global":
 				# global 级卡（冰冻、卡牌大师）：整个竞技场提示为范围提示色；
 				# 具体水面/塔上等占位不可点的位置，由红/绿圆形落点预览精确反馈。
-				draw_rect(Rect2(0, 0, FIELD_W, FIELD_H), Color(0.40, 0.70, 1.00, 0.08))
+				draw_rect(Rect2(0, 0, ArenaRules.FIELD_W, ArenaRules.FIELD_H), Color(0.40, 0.70, 1.00, 0.08))
 			_:
 				# own_side：逐格按己方部署掩码绘制
 				var deploy_team := 1 if mode == "client" else 0
-				for row in ARENA_ROWS:
-					for column in ARENA_COLUMNS:
+				for row in ArenaRules.ARENA_ROWS:
+					for column in ArenaRules.ARENA_COLUMNS:
 						var tile := Vector2i(column, row)
 						if _tile_in_ground_deploy_zone(tile, deploy_team):
-							draw_rect(Rect2(Vector2(tile) * TILE_SIZE, Vector2.ONE * TILE_SIZE), Color(0.40, 0.70, 1.00, 0.15))
+							draw_rect(Rect2(Vector2(tile) * ArenaRules.TILE_SIZE, Vector2.ONE * ArenaRules.TILE_SIZE), Color(0.40, 0.70, 1.00, 0.15))
 		_draw_deployment_preview(sel_stats)
 	# 两段式部署的第一段只显示一个落点卡牌标记，不创建单位或战斗碰撞体。
-	for pre_deployment in _pending_card_pre_deployments:
+	for pre_deployment in _commands.pre_deployments:
 		_draw_card_pre_deploy_indicator(pre_deployment)
-	# 冰冻区域效果
-	for fe in _freeze_effects:
-		var alpha: float = (fe.timer / fe.duration) * 0.25
-		draw_circle(fe.pos, fe.radius, Color(0.40, 0.70, 1.00, alpha))
-		draw_circle(fe.pos, fe.radius, Color(0.60, 0.85, 1.00, alpha * 0.5), false, 2.0)
-	# 强化冰冻的减速阶段在冻结结束后才显示，和权威区域使用相同半径与时长。
-	for effect in _slow_effects:
-		if float(effect.delay) > 0.0:
-			continue
-		var slow_alpha: float = clampf(float(effect.timer) / maxf(float(effect.duration), 0.001), 0.0, 1.0)
-		draw_circle(effect.pos, effect.radius, Color(0.20, 0.48, 0.92, 0.12 * slow_alpha))
-		draw_arc(effect.pos, effect.radius, 0.0, TAU, 48, Color(0.38, 0.70, 1.0, 0.72 * slow_alpha), 3.0, true)
-	# 治疗术区域效果：淡黄光圈 + 上升的十字光点；强化版额外扩散全图金圈。
-	for effect in _heal_effects:
-		var heal_progress := 1.0 - clampf(float(effect.timer) / maxf(float(effect.duration), 0.001), 0.0, 1.0)
-		var heal_remaining := clampf(float(effect.timer) / maxf(float(effect.duration), 0.001), 0.0, 1.0)
-		var heal_pos: Vector2 = effect.pos
-		var heal_radius := float(effect.radius)
-		if bool(effect.get("enhanced", false)):
-			# 强化治疗是全图生效，用快速扩散的金圈提示全图友军都被治疗。
-			var wave_progress := clampf(heal_progress * 2.2, 0.0, 1.0)
-			var wave_radius := lerpf(heal_radius * 0.6, 1180.0, wave_progress)
-			var wave_alpha := 0.5 * maxf(1.0 - wave_progress * 1.3, 0.0)
-			draw_arc(heal_pos, wave_radius, 0.0, TAU, 64, Color(1.0, 0.93, 0.60, wave_alpha), 4.0, true)
-			draw_arc(heal_pos, wave_radius * 0.92, 0.0, TAU, 64, Color(1.0, 0.97, 0.75, wave_alpha * 0.6), 2.0, true)
-		draw_circle(heal_pos, heal_radius, Color(1.0, 0.93, 0.60, 0.20 * heal_remaining))
-		draw_arc(heal_pos, heal_radius, 0.0, TAU, 48, Color(1.0, 0.96, 0.72, 0.70 * heal_remaining), 3.0, true)
-		# 中心圣光与上升的十字光点都是纯表现，不参与任何权威判定。
-		draw_circle(heal_pos, 10.0 + 4.0 * sin(heal_progress * PI), Color(1.0, 0.98, 0.85, 0.85 * heal_remaining))
-		for index in range(7):
-			var mote_angle := TAU * float(index) / 7.0 + 0.35
-			var mote_distance := heal_radius * (0.30 + 0.42 * float((index * 3) % 5) / 4.0)
-			var mote_pos := heal_pos + Vector2.from_angle(mote_angle) * mote_distance - Vector2(0.0, heal_progress * 44.0)
-			var mote_size := 4.5 + 2.0 * (0.5 + 0.5 * sin(heal_progress * PI * 2.0 + float(index)))
-			var mote_color := Color(1.0, 0.97, 0.78, 0.85 * heal_remaining)
-			draw_line(mote_pos - Vector2(mote_size, 0.0), mote_pos + Vector2(mote_size, 0.0), mote_color, 2.5, true)
-			draw_line(mote_pos - Vector2(0.0, mote_size), mote_pos + Vector2(0.0, mote_size), mote_color, 2.5, true)
-	# 纳尔 Spell2 使用三边矩形：两条侧边加远端宽边，靠纳尔的近端宽边刻意留空。
-	for effect in _active_skill_effect_system.frontal_effects:
-		_draw_frontal_skill_effect(effect)
+
+func _setup_arena_background() -> void:
+	_arena_background_sprite = Sprite2D.new()
+	_arena_background_sprite.name = "ArenaBackground2D"
+	_arena_background_sprite.texture = ARENA_BACKGROUND_TEXTURE
+	_arena_background_sprite.centered = false
+	_arena_background_sprite.position = Vector2.ZERO
+	_arena_background_sprite.z_index = -100
+	add_child(_arena_background_sprite)
+	move_child(_arena_background_sprite, 0)
 
 func _draw_card_pre_deploy_indicator(deployment: Dictionary) -> void:
 	var center: Vector2 = deployment.get("pos", Vector2.ZERO)
@@ -2917,270 +2548,29 @@ func _draw_card_pre_deploy_indicator(deployment: Dictionary) -> void:
 		draw_line(card_center - direction * 2.0, card_center + direction * 3.0, team_color, 1.5, true)
 	draw_circle(center, 4.0, Color(1.0, 0.95, 0.66, 0.96))
 
-func _draw_frontal_skill_effect(effect: Dictionary) -> void:
-	var source = _active_skill_effect_system.effect_source(effect)
-	var center: Vector2 = effect.get("pos", Vector2.ZERO)
-	var forward: Vector2 = effect.get("forward", Vector2.UP)
-	var source_radius := float(effect.get("source_radius", 0.0))
-	if not bool(effect.get("fixed_position", false)) and source is Unit and is_instance_valid(source):
-		center = (source as Unit).get_visual_screen_position()
-		source_radius = (source as Unit).body_radius
-	if forward.length_squared() < 0.001:
-		return
-	forward = forward.normalized()
-	var side := Vector2(-forward.y, forward.x)
-	var near_center := center + forward * source_radius
-	var length := maxf(float(effect.get("length", 0.0)), 0.0)
-	var far_center := near_center + forward * length
-	var remaining_ratio := clampf(float(effect.get("timer", 0.0)) / maxf(float(effect.get("duration", 0.0)), 0.001), 0.0, 1.0)
-	var progress := 1.0 - remaining_ratio
-	# 技能范围预警可以从施法开始显示，但卡牌/箭矢等纯表现弹体要等到出手 tick 才出现。
-	var projectile_progress := progress
-	var projectile_visible := true
-	var projectile_flight_duration := maxf(float(effect.get("projectile_flight_duration", 0.0)), 0.0)
-	if projectile_flight_duration > 0.0:
-		var cast_elapsed := progress * maxf(float(effect.get("duration", 0.0)), 0.0)
-		var projectile_elapsed := cast_elapsed - maxf(float(effect.get("projectile_launch_delay", 0.0)), 0.0)
-		projectile_visible = projectile_elapsed >= -0.0001
-		projectile_progress = clampf(projectile_elapsed / projectile_flight_duration, 0.0, 1.0)
-	var line_color := Color(0.28, 0.68, 1.0, 0.9) if int(effect.get("team", 0)) == 0 else Color(1.0, 0.34, 0.24, 0.9)
-	var fill_color := Color(line_color.r, line_color.g, line_color.b, 0.10 + 0.06 * remaining_ratio)
-	var shape := StringName(effect.get("shape", "rectangle"))
-	if shape == &"continuous_area":
-		var radius := maxf(length, 0.0)
-		var pulse := 0.5 + 0.5 * sin(progress * TAU * 2.0)
-		draw_circle(center, radius, Color(line_color.r, line_color.g, line_color.b, 0.035 + 0.025 * pulse))
-		draw_arc(center, radius, 0.0, TAU, 72, Color(line_color.r, line_color.g, line_color.b, 0.72 * remaining_ratio), 3.0, true)
-		draw_arc(center, radius * (0.82 + 0.10 * pulse), 0.0, TAU, 64, Color(1.0, 0.88, 0.36, 0.34 * remaining_ratio), 2.0, true)
-		return
-	if shape == &"frost_storm":
-		var radius := maxf(length, 0.0)
-		var pulse := 0.5 + 0.5 * sin(progress * TAU * 2.5)
-		var frost_color := Color(0.56, 0.88, 1.0, 0.78 * remaining_ratio)
-		draw_circle(center, radius, Color(0.28, 0.68, 1.0, 0.045 + 0.025 * pulse))
-		draw_arc(center, radius, 0.0, TAU, 72, frost_color, 3.0, true)
-		draw_arc(center, radius * (0.68 + 0.06 * pulse), 0.0, TAU, 64, Color(0.78, 0.96, 1.0, 0.52 * remaining_ratio), 2.0, true)
-		for index in range(10):
-			var angle := TAU * float(index) / 10.0 + progress * 0.8
-			var flake_distance := radius * (0.28 + 0.42 * float((index * 7) % 10) / 9.0)
-			var flake_center := center + Vector2.from_angle(angle) * flake_distance
-			var flake_size := 3.0 + 2.0 * (0.5 + 0.5 * sin(progress * TAU + float(index)))
-			var flake_direction := Vector2.from_angle(angle + PI * 0.25)
-			draw_line(flake_center - flake_direction * flake_size, flake_center + flake_direction * flake_size, Color(0.88, 0.98, 1.0, 0.72 * remaining_ratio), 1.5, true)
-			draw_line(flake_center - flake_direction.rotated(PI * 0.5) * flake_size, flake_center + flake_direction.rotated(PI * 0.5) * flake_size, Color(0.70, 0.92, 1.0, 0.58 * remaining_ratio), 1.0, true)
-		return
-	if shape == &"target_circle":
-		var radius := length
-		# 星落/天瀑的落点需要清晰可辨，但不能用大面积色块遮住圈内人物。
-		# 填充最高仅 6% 不透明度，边缘单独保留适中的亮度用于读范围。
-		var area_fill_alpha := 0.025 + 0.035 * remaining_ratio
-		var area_line_color := Color(line_color.r, line_color.g, line_color.b, 0.52)
-		draw_circle(center, radius, Color(line_color.r, line_color.g, line_color.b, area_fill_alpha))
-		draw_arc(center, radius, 0.0, TAU, 64, area_line_color, 3.0, true)
-		var star_height := radius * lerpf(2.2, 0.0, progress)
-		var star_pos := center + Vector2(0.0, -star_height)
-		draw_circle(star_pos, 9.0 + 5.0 * progress, Color(1.0, 0.90, 0.48, 0.96))
-		draw_line(star_pos + Vector2(0.0, -34.0), star_pos, Color(0.72, 0.90, 1.0, 0.65), 5.0, true)
-		return
-	if shape == &"shockwave":
-		var wave_radius := lerpf(maxf(float(effect.get("width", 0.0)), 0.0), length, progress)
-		var wave_alpha := 0.92 * remaining_ratio
-		draw_arc(center, wave_radius, 0.0, TAU, 96, Color(0.72, 0.90, 1.0, wave_alpha), 7.0, true)
-		draw_arc(center, wave_radius + 7.0, 0.0, TAU, 96, Color(1.0, 0.84, 0.42, wave_alpha * 0.65), 3.0, true)
-		return
-	if shape == &"fan":
-		var half_angle := deg_to_rad(float(effect.get("arc_degrees", 0.0)) * 0.5)
-		var center_angle := forward.angle()
-		var fan_inner_arc := bool(effect.get("fan_inner_arc", false))
-		if fan_inner_arc:
-			var inner_radius := source_radius
-			var outer_radius := inner_radius + length
-			var inner_left := center - side * inner_radius
-			var inner_right := center + side * inner_radius
-			var outer_left := center + Vector2.from_angle(center_angle - half_angle) * outer_radius
-			var outer_right := center + Vector2.from_angle(center_angle + half_angle) * outer_radius
-			var ring_points := PackedVector2Array([inner_left])
-			for index in range(17):
-				var outer_angle := lerpf(center_angle - half_angle, center_angle + half_angle, float(index) / 16.0)
-				ring_points.append(center + Vector2.from_angle(outer_angle) * outer_radius)
-			ring_points.append(inner_right)
-			for index in range(16, -1, -1):
-				var inner_angle := lerpf(center_angle - PI * 0.5, center_angle + PI * 0.5, float(index) / 16.0)
-				ring_points.append(center + Vector2.from_angle(inner_angle) * inner_radius)
-			draw_colored_polygon(ring_points, fill_color)
-			draw_arc(center, outer_radius, center_angle - half_angle, center_angle + half_angle, 32, line_color, 3.0, true)
-			draw_line(inner_left, outer_left, line_color, 2.0, true)
-			draw_line(inner_right, outer_right, line_color, 2.0, true)
-			draw_arc(center, inner_radius, center_angle - PI * 0.5, center_angle + PI * 0.5, 24, line_color, 2.0, true)
-			if projectile_visible:
-				var arrow_count := maxi(int(effect.get("projectile_count", 0)), 0)
-				var arrow_distance := length * clampf(projectile_progress * 1.25, 0.0, 1.0)
-				for index in range(arrow_count):
-					var ratio := 0.5 if arrow_count == 1 else float(index) / float(arrow_count - 1)
-					var arrow_angle := lerpf(center_angle - half_angle * 0.92, center_angle + half_angle * 0.92, ratio)
-					var arrow_direction := Vector2.from_angle(arrow_angle)
-					var arrow_pos := center + arrow_direction * (inner_radius + arrow_distance)
-					_draw_frontal_projectile(arrow_pos, arrow_direction, effect)
-			return
-		var center_width := maxf(float(effect.get("center_width", 0.0)), 0.0)
-		var center_half_width := center_width * 0.5
-		var sector_near_left := near_center - side * center_half_width if center_width > 0.0 else near_center
-		var sector_near_right := near_center + side * center_half_width if center_width > 0.0 else near_center
-		var left_arc := near_center + Vector2.from_angle(center_angle - half_angle) * length
-		var right_arc := near_center + Vector2.from_angle(center_angle + half_angle) * length
-		var points := PackedVector2Array([sector_near_left])
-		for index in range(17):
-			var angle := lerpf(center_angle - half_angle, center_angle + half_angle, float(index) / 16.0)
-			points.append(near_center + Vector2.from_angle(angle) * length)
-		points.append(sector_near_right)
-		draw_colored_polygon(points, fill_color)
-		draw_arc(near_center, length, center_angle - half_angle, center_angle + half_angle, 32, line_color, 3.0, true)
-		draw_line(sector_near_left, left_arc, line_color, 2.0, true)
-		draw_line(sector_near_right, right_arc, line_color, 2.0, true)
-		var center_ratio := clampf(float(effect.get("center_ratio", 0.0)), 0.0, 1.0)
-		if center_width > 0.0:
-			var center_points := PackedVector2Array([
-				sector_near_left,
-				far_center - side * center_half_width,
-				far_center + side * center_half_width,
-				sector_near_right,
-			])
-			var center_fill := Color(0.54, 0.94, 1.0, 0.22 + 0.12 * progress)
-			draw_colored_polygon(center_points, center_fill)
-			draw_line(center_points[0], center_points[1], Color(line_color.r, line_color.g, line_color.b, 0.72), 1.5, true)
-			draw_line(center_points[3], center_points[2], Color(line_color.r, line_color.g, line_color.b, 0.72), 1.5, true)
-		elif center_ratio > 0.0:
-			var center_half_angle := half_angle * center_ratio
-			var center_points := PackedVector2Array([near_center])
-			for index in range(9):
-				var angle := lerpf(center_angle - center_half_angle, center_angle + center_half_angle, float(index) / 8.0)
-				center_points.append(near_center + Vector2.from_angle(angle) * length)
-			var center_fill := Color(1.0, 0.96, 0.76, 0.16 + 0.10 * progress)
-			draw_colored_polygon(center_points, center_fill)
-		if projectile_visible:
-			var arrow_count := maxi(int(effect.get("projectile_count", 0)), 0)
-			var arrow_distance := length * clampf(projectile_progress * 1.25, 0.0, 1.0)
-			for index in range(arrow_count):
-				var ratio := 0.5 if arrow_count == 1 else float(index) / float(arrow_count - 1)
-				var arrow_angle := lerpf(center_angle - half_angle * 0.92, center_angle + half_angle * 0.92, ratio)
-				var arrow_direction := Vector2.from_angle(arrow_angle)
-				var arrow_pos := near_center + arrow_direction * arrow_distance
-				_draw_frontal_projectile(arrow_pos, arrow_direction, effect)
-		return
-	var near_half := maxf(float(effect.get("near_width", effect.get("width", 0.0))) * 0.5, 0.0)
-	var far_half := maxf(float(effect.get("far_width", effect.get("width", 0.0))) * 0.5, 0.0)
-	var near_left := near_center - side * near_half
-	var near_right := near_center + side * near_half
-	var far_left := far_center - side * far_half
-	var far_right := far_center + side * far_half
-	draw_colored_polygon(PackedVector2Array([near_left, far_left, far_right, near_right]), fill_color)
-	draw_line(near_left, far_left, line_color, 3.0, true)
-	draw_line(far_left, far_right, line_color, 3.0, true)
-	draw_line(far_right, near_right, line_color, 3.0, true)
-	if shape == &"trapezoid":
-		draw_line(near_left, near_right, line_color, 3.0, true)
-	var center_ratio := clampf(float(effect.get("center_ratio", 0.0)), 0.0, 1.0)
-	if center_ratio > 0.0:
-		var center_fill := Color(1.0, 0.96, 0.76, 0.16 + 0.10 * progress)
-		draw_colored_polygon(PackedVector2Array([
-			near_center - side * near_half * center_ratio,
-			far_center - side * far_half * center_ratio,
-			far_center + side * far_half * center_ratio,
-			near_center + side * near_half * center_ratio,
-		]), center_fill)
-	if projectile_visible:
-		var projectile_count := maxi(int(effect.get("projectile_count", 0)), 0)
-		for index in range(projectile_count):
-			var width_ratio := 0.5 if projectile_count == 1 else float(index) / float(projectile_count - 1)
-			var projectile_pos := _frontal_projectile_visual_position(
-				effect, center, forward, source_radius, near_half, far_half, width_ratio, projectile_progress
-			)
-			_draw_frontal_projectile(projectile_pos, forward, effect)
-
-## 定向技能的纯表现弹体从模型炮口飞向权威路径末端；不改变范围轮廓或命中判定。
-func _frontal_projectile_visual_position(effect: Dictionary, center: Vector2, forward: Vector2, source_radius: float, near_half: float, far_half: float, width_ratio: float, progress: float) -> Vector2:
-	var launch_forward := maxf(float(effect.get("projectile_visual_forward_offset", source_radius)), 0.0)
-	var height_offset := Vector2(0.0, -maxf(float(effect.get("projectile_visual_height", 0.0)), 0.0))
-	var side := Vector2(-forward.y, forward.x)
-	var start := center + forward * launch_forward + side * lerpf(-near_half, near_half, width_ratio) + height_offset
-	var end := center + forward * (source_radius + maxf(float(effect.get("length", 0.0)), 0.0)) + side * lerpf(-far_half, far_half, width_ratio) + height_offset
-	return start.lerp(end, clampf(progress, 0.0, 1.0))
-
-func _draw_frontal_projectile(center: Vector2, direction: Vector2, effect: Dictionary) -> void:
-	var visual := StringName(effect.get("projectile_visual", "arrow"))
-	if visual == &"electromagnetic_wave":
-		_draw_electromagnetic_wave_projectile(center, direction, effect)
-		return
-	if visual == &"laser":
-		draw_line(center - direction * 18.0, center + direction * 18.0, Color(0.16, 0.76, 1.0, 0.20), 10.0, true)
-		draw_line(center - direction * 16.0, center + direction * 16.0, Color(0.28, 0.88, 1.0, 0.92), 5.0, true)
-		draw_line(center - direction * 14.0, center + direction * 14.0, Color(0.94, 1.0, 1.0, 1.0), 2.0, true)
-		draw_circle(center + direction * 16.0, 4.0, Color(0.86, 1.0, 1.0, 0.96))
-		return
-	if visual != &"card":
-		draw_line(center - direction * 10.0, center + direction * 5.0, Color(0.78, 0.94, 1.0, 0.95), 2.0, true)
-		return
-	var side := Vector2(-direction.y, direction.x)
-	var half_width := 5.0
-	var half_height := 9.0
-	var points := PackedVector2Array([
-		center - direction * half_height - side * half_width,
-		center + direction * half_height - side * half_width,
-		center + direction * half_height + side * half_width,
-		center - direction * half_height + side * half_width,
-	])
-	draw_colored_polygon(points, Color(1.0, 0.94, 0.58, 0.96))
-	draw_polyline(PackedVector2Array([points[0], points[1], points[2], points[3], points[0]]), Color(0.32, 0.14, 0.08, 0.96), 1.5, true)
-	draw_line(center - direction * 2.0, center + direction * 3.0, Color(0.78, 0.24, 0.18, 0.9), 1.5, true)
-
-func _draw_electromagnetic_wave_projectile(center: Vector2, direction: Vector2, effect: Dictionary) -> void:
-	var forward := Vector2.UP if direction.length_squared() < 0.001 else direction.normalized()
-	var side := Vector2(-forward.y, forward.x)
-	var visual_width := maxf(float(effect.get("projectile_visual_width", effect.get("far_width", 24.0))), 4.0)
-	var half_width := visual_width * 0.5
-	var half_length := 25.0
-	# 宽外辉光与权威路径同宽，核心和双股电弧构成电磁波光弹；全部仅参与绘制。
-	draw_line(center - forward * half_length, center + forward * half_length, Color(0.05, 0.46, 1.0, 0.16), visual_width, true)
-	draw_line(center - forward * (half_length - 2.0), center + forward * (half_length - 2.0), Color(0.10, 0.78, 1.0, 0.58), visual_width * 0.52, true)
-	draw_line(center - forward * (half_length - 4.0), center + forward * (half_length - 4.0), Color(0.82, 0.98, 1.0, 0.96), visual_width * 0.16, true)
-	for polarity in [-1.0, 1.0]:
-		var wave_points := PackedVector2Array()
-		for index in range(9):
-			var ratio := float(index) / 8.0
-			var longitudinal := lerpf(-half_length, half_length, ratio)
-			var amplitude: float = sin(ratio * TAU * 2.0) * half_width * 0.48 * polarity
-			wave_points.append(center + forward * longitudinal + side * amplitude)
-		draw_polyline(wave_points, Color(0.42, 0.92, 1.0, 0.90), 1.8, true)
-	var head := center + forward * half_length
-	draw_circle(head, half_width, Color(0.08, 0.58, 1.0, 0.22))
-	draw_arc(head, half_width * 0.82, 0.0, TAU, 28, Color(0.54, 0.96, 1.0, 0.92), 2.2, true)
-	draw_circle(head, maxf(half_width * 0.25, 2.0), Color(0.94, 1.0, 1.0, 1.0))
-
-## 绘制当前卡牌的落点：格子边框用于确认“哪一格”，半透明占位用于确认卡牌大小。
-## 这是纯表现层，不会修改部署坐标或战斗状态。
 func _draw_deployment_preview(stats: Dictionary) -> void:
 	if not _deployment_preview_visible:
 		return
-	var color := DEPLOY_PREVIEW_VALID if _deployment_preview_valid else DEPLOY_PREVIEW_INVALID
+	var color := ArenaRules.DEPLOY_PREVIEW_VALID if _deployment_preview_valid else ArenaRules.DEPLOY_PREVIEW_INVALID
 	var footprint: Vector2i = stats.get("footprint_tiles", Vector2i.ONE)
 	var type: String = stats.get("type", "unit")
 	var preview_rect: Rect2
 	if type == "building" and footprint != Vector2i.ONE:
 		preview_rect = Rect2(
-			_deployment_preview_pos - Vector2(footprint) * TILE_SIZE * 0.5,
-			Vector2(footprint) * TILE_SIZE
+			_deployment_preview_pos - Vector2(footprint) * ArenaRules.TILE_SIZE * 0.5,
+			Vector2(footprint) * ArenaRules.TILE_SIZE
 		)
 	else:
-		preview_rect = Rect2(Vector2(_deployment_preview_tile) * TILE_SIZE, Vector2.ONE * TILE_SIZE)
+		preview_rect = Rect2(Vector2(_deployment_preview_tile) * ArenaRules.TILE_SIZE, Vector2.ONE * ArenaRules.TILE_SIZE)
 	draw_rect(preview_rect, Color(color.r, color.g, color.b, 0.18), true)
 	draw_rect(preview_rect, color, false, 3.0)
 
 	if type == "spell":
-		var spell_radius: float = stats.get("radius", TILE_SIZE * 0.5)
+		var spell_radius: float = stats.get("radius", ArenaRules.TILE_SIZE * 0.5)
 		draw_circle(_deployment_preview_pos, spell_radius, Color(color.r, color.g, color.b, 0.12))
 		draw_arc(_deployment_preview_pos, spell_radius, 0.0, TAU, 48, color, 2.0, true)
 	elif type == "unit":
-		var unit_radius: float = minf(float(stats.get("radius", TILE_SIZE * 0.5)), TILE_SIZE * 0.42)
+		var unit_radius: float = minf(float(stats.get("radius", ArenaRules.TILE_SIZE * 0.5)), ArenaRules.TILE_SIZE * 0.42)
 		draw_circle(_deployment_preview_pos, unit_radius, Color(color.r, color.g, color.b, 0.26))
 		draw_arc(_deployment_preview_pos, unit_radius, 0.0, TAU, 32, color, 2.0, true)
 	else:
@@ -3188,3 +2578,49 @@ func _draw_deployment_preview(stats: Dictionary) -> void:
 		var cross_size := 7.0
 		draw_line(_deployment_preview_pos - Vector2(cross_size, 0.0), _deployment_preview_pos + Vector2(cross_size, 0.0), color, 2.0, true)
 		draw_line(_deployment_preview_pos - Vector2(0.0, cross_size), _deployment_preview_pos + Vector2(0.0, cross_size), color, 2.0, true)
+
+func _play_card_event(event_id: int, card_id: String, cue: String, pos: Vector2, form: int = 0) -> void:
+	if event_id <= _last_card_event_id:
+		return
+	_last_card_event_id = event_id
+	if card_id == "match":
+		if not game_over and _audio_manager != null: _audio_manager.play_match_event(cue)
+		return
+	if cue == "shield:cast":
+		_active_skill_effect_system.present_area_shield(card_id, form, pos)
+	if _audio_manager != null:
+		_audio_manager.play_card_event(card_id, cue, pos, form)
+
+func _on_skill_projectile_hit(source: Dictionary, action: String, pos: Vector2, phase: String = "hit") -> void:
+	if action.is_empty():
+		return
+	_presentation_event_id += 1
+	var card_id := String(source.get("card_id", ""))
+	var form := int(source.get("form", 0))
+	_play_card_event(_presentation_event_id, card_id, action + ":" + phase, pos, form)
+	if mode == "host":
+		_rpc_card_event.rpc(_presentation_event_id, card_id, action + ":" + phase, pos, form)
+
+func present_zone_audio(source: Unit, action: String, pos: Vector2, duration: float) -> void:
+	_presentation_event_id += 1
+	if _audio_manager != null:
+		_audio_manager.start_zone_audio(_presentation_event_id, source.card_id, source.form_index, action, pos, duration)
+	if mode == "host":
+		_rpc_zone_audio.rpc(_presentation_event_id, source.card_id, source.form_index, action, pos, duration)
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_zone_audio(event_id: int, card_id: String, form: int, action: String, pos: Vector2, duration: float) -> void:
+	if mode == "client" and _audio_manager != null:
+		_audio_manager.start_zone_audio(event_id, card_id, form, action, pos, duration)
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_card_event(event_id: int, card_id: String, cue: String, pos: Vector2, form: int = 0) -> void:
+	if mode == "client":
+		_play_card_event(event_id, card_id, cue, pos, form)
+
+
+func _present_match_announcement(cue: String) -> void:
+	_presentation_event_id += 1
+	_play_card_event(_presentation_event_id, "match", cue, Vector2.ZERO)
+	if mode == "host":
+		_rpc_card_event.rpc(_presentation_event_id, "match", cue, Vector2.ZERO)

@@ -98,6 +98,9 @@ func tick(dt: float) -> void:
 
 
 func tick_visuals(delta: float) -> void:
+	for effect in freeze_effects:
+		effect.timer = maxf(0.0, float(effect.timer) - delta)
+	freeze_effects.assign(freeze_effects.filter(func(effect): return float(effect.timer) > 0.0))
 	for effect in slow_effects:
 		if float(effect.delay) > 0.0:
 			effect.delay = maxf(0.0, float(effect.delay) - delta)

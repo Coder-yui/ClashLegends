@@ -4,9 +4,14 @@ extends RefCounted
 ## 技能资格、Command Buffer 与 Cast 时间线仍由 Main 编排；具体效果集中在这里扩展。
 
 var frontal_effects: Array[Dictionary] = []
+## 由可靠施法表现事件创建，纯视觉，不参与加盾结算。
+var shield_effects: Array[Dictionary] = []
 var expanding_shockwaves: Array[Dictionary] = []
 ## 施法者跟随型持续范围效果；每个 pulse 都读取施法者当前权威位置。
 var continuous_area_effects: Array[Dictionary] = []
+
+class CastHitState extends RefCounted:
+	var landed := false
 
 var _controller: Node2D
 
@@ -55,6 +60,9 @@ func prepare_cast(source: Unit, skill: Dictionary) -> Dictionary:
 			prepared["cast_end_heal"] = maxf(float(prepared.get("full_resource_cast_end_heal", 0.0)), 0.0)
 		if prepared.has("resource_shield_max"):
 			prepared["shield"] = maxf(float(prepared.get("resource_shield_max", 0.0)), 0.0) * resource_ratio
+	for key in prepared:
+		if String(key).ends_with("duration") and (prepared[key] is float or prepared[key] is int):
+			prepared[key] = BattleNumbers.decimal(float(prepared[key]))
 	return prepared
 
 
@@ -69,6 +77,9 @@ func prepare_dual_form_cast(source: Unit, skill: Dictionary) -> Dictionary:
 		prepared["cast_duration"] = maxf(float(prepared.get("transform_cast_duration", 0.0)), 0.0)
 		# transform_to_mega() 已发布合成变形动作，不再重复播放大形态主动动作。
 		prepared["visual_action"] = ""
+	for key in prepared:
+		if String(key).ends_with("duration") and (prepared[key] is float or prepared[key] is int):
+			prepared[key] = BattleNumbers.decimal(float(prepared[key]))
 	return prepared
 
 
@@ -86,6 +97,10 @@ func apply_cast_start(source: Unit, skill: Dictionary) -> void:
 
 ## Cast End 效果与动作总时长对齐，但仍由固定模拟计时，不依赖 AnimationPlayer 回调。
 func apply_cast_end(source: Unit, skill: Dictionary) -> void:
+	if bool(skill.get("cast_end_heal_requires_hit", false)):
+		var state = skill.get("cast_hit_state")
+		if not state is CastHitState or not state.landed:
+			return
 	var heal_amount := maxf(float(skill.get("cast_end_heal", 0.0)), 0.0)
 	if heal_amount > 0.0:
 		source.heal(heal_amount)
@@ -140,6 +155,7 @@ func apply(source: Unit, skill: Dictionary) -> bool:
 ## 可以填同一数值，大小不同的友军也会在与索敌一致的边界上获得护盾。
 ## combatants 中的 Unit、建筑、防御塔与水晶统一提供 add_shield()，都可成为目标。
 func apply_area_shield(source: Unit, skill: Dictionary) -> void:
+	_controller._notify_unit_audio_event(source, &"shield:cast", source.global_position)
 	var radius := maxf(float(skill.get("radius", 0.0)), 0.0)
 	var amount := maxf(float(skill.get("shield", 0.0)), 0.0)
 	var duration := maxf(float(skill.get("shield_duration", 0.0)), 0.0)
@@ -154,6 +170,7 @@ func apply_area_shield(source: Unit, skill: Dictionary) -> void:
 		if source.surface_gap_to_circle(ally.global_position, ally.body_radius) > radius:
 			continue
 		ally.add_shield(amount, duration, bool(skill.get("shield_decay", false)))
+		_controller._notify_unit_audio_event(source, &"shield:applied", ally.global_position)
 
 
 ## 主动效果默认只作用于施法者；deployment_group 会选中同一次卡牌部署中仍存活的成员。
@@ -180,6 +197,7 @@ func activate_nova(source: Unit, skill: Dictionary) -> void:
 	var ground_only := bool(skill.get("ground_only", false))
 	var slow_duration := float(skill.get("slow_duration", 0.0))
 	var slow_multiplier := float(skill.get("slow_multiplier", 1.0))
+	var any_landed := false
 	for combatant in _controller.get_tree().get_nodes_in_group("combatants"):
 		if combatant == source or not is_instance_valid(combatant) or combatant.team == source.team or combatant.hp <= 0.0:
 			continue
@@ -188,7 +206,7 @@ func activate_nova(source: Unit, skill: Dictionary) -> void:
 		if combatant.global_position.distance_to(source.global_position) > radius + combatant.body_radius:
 			continue
 		if amount > 0.0:
-			_damage_combatant(source, combatant, amount, source.global_position)
+			any_landed = _damage_combatant(source, combatant, amount, source.global_position) or any_landed
 		if combatant is Unit and is_instance_valid(combatant) and combatant.hp > 0.0:
 			if knockback > 0.0:
 				(combatant as Unit).apply_knockback(source.global_position, knockback, knockback_duration, knockback_mass_factor_max)
@@ -201,6 +219,9 @@ func activate_nova(source: Unit, skill: Dictionary) -> void:
 ## 持续范围伤害不保存固定中心；每次脉冲都以 source.global_position 为中心。
 ## 首次伤害在第一个 tick_interval 到达时结算，持续 duration 秒，避免把施法
 ## 起始帧重复算成额外伤害。技能窗口可只锁 attack，让施法者继续移动/转向。
+	if any_landed:
+		_controller._notify_unit_audio_event(source, StringName(String(skill.get("visual_action", "")) + ":hit"), source.global_position)
+
 func activate_continuous_area(source: Unit, skill: Dictionary) -> void:
 	var duration := maxf(float(skill.get("duration", skill.get("cast_duration", 0.0))), 0.0)
 	var tick_interval := maxf(float(skill.get("tick_interval", 1.0)), 0.01)
@@ -269,7 +290,11 @@ func apply_frontal(source: Unit, skill: Dictionary, forward: Vector2 = Vector2.Z
 	var action := String(skill.get("visual_action", ""))
 	if not action.is_empty():
 		_controller._notify_unit_audio_event(source, StringName(action + ":release"), source.global_position)
+	if bool(skill.get("projectile_stop_on_hit", false)) or bool(skill.get("projectile_piercing", false)):
+		_controller._projectile_system.launch_skill_fan(source, skill, frontal_forward(source) if forward.length_squared() < 0.001 else forward.normalized())
+		return
 	var any_landed := false
+	var center_landed := false
 	forward = frontal_forward(source) if forward.length_squared() < 0.001 else forward.normalized()
 	var side := Vector2(-forward.y, forward.x)
 	var length := maxf(float(skill.get("length", 0.0)), 0.0)
@@ -286,6 +311,7 @@ func apply_frontal(source: Unit, skill: Dictionary, forward: Vector2 = Vector2.Z
 		var lateral_distance := absf(local_offset.dot(side))
 		var hit := false
 		var damage_multiplier := 1.0
+		var in_center := false
 		if shape == &"fan":
 			var half_angle := deg_to_rad(clampf(float(skill.get("arc_degrees", 0.0)), 0.0, 179.0) * 0.5)
 			var fan_inner_arc := bool(skill.get("fan_inner_arc", false))
@@ -321,7 +347,7 @@ func apply_frontal(source: Unit, skill: Dictionary, forward: Vector2 = Vector2.Z
 				)
 			var center_width := maxf(float(skill.get("center_width", 0.0)), 0.0)
 			var center_ratio := clampf(float(skill.get("center_ratio", 0.0)), 0.0, 1.0)
-			var in_center := false
+			in_center = false
 			if center_width > 0.0:
 				# 格温式核心区是从扇区起点延伸到外弧的恒定宽度长条，而不是随距离变宽的小扇形。
 				in_center = forward_distance >= -combatant.body_radius and forward_distance <= length + combatant.body_radius and lateral_distance <= center_width * 0.5 + combatant.body_radius
@@ -342,21 +368,38 @@ func apply_frontal(source: Unit, skill: Dictionary, forward: Vector2 = Vector2.Z
 			hit = forward_distance >= -combatant.body_radius and forward_distance <= length + combatant.body_radius and lateral_distance <= half_width + combatant.body_radius
 			var center_ratio := clampf(float(skill.get("center_ratio", 0.0)), 0.0, 1.0)
 			if hit and center_ratio > 0.0 and lateral_distance <= half_width * center_ratio + combatant.body_radius:
+				in_center = true
 				damage_multiplier = maxf(float(skill.get("center_damage_multiplier", 1.0)), 1.0)
 		if not hit:
 			continue
 		if amount > 0.0:
-			any_landed = _damage_combatant(source, combatant, amount * damage_multiplier) or any_landed
+			var hit_amount := BattleNumbers.quantity(amount * damage_multiplier)
+			if bool(skill.get("applies_on_hit_passive", false)):
+				hit_amount += source.on_hit_passive_damage(combatant)
+			var landed := _damage_combatant(source, combatant, hit_amount)
+			if landed and skill.get("cast_hit_state") is CastHitState:
+				skill.cast_hit_state.landed = true
+			any_landed = landed or any_landed
+			center_landed = (landed and in_center) or center_landed
 		if combatant is Unit and is_instance_valid(combatant) and combatant.hp > 0.0 and float(skill.get("slow_duration", 0.0)) > 0.0:
 			(combatant as Unit).apply_slow(float(skill.slow_duration), float(skill.get("slow_multiplier", 1.0)))
 	if any_landed and not action.is_empty():
-		_controller._notify_unit_audio_event(source, StringName(action + ":hit"), source.global_position)
+		var cue := action + ":hit"
+		if skill.has("hit_audio_phase"):
+			cue += "_" + String(skill.hit_audio_phase)
+			if center_landed:
+				cue += "_center"
+		_controller._notify_unit_audio_event(source, StringName(cue), source.global_position)
 
 
 ## 向施法开始时锁定方向的前方圆形区域落下一颗星；冲击波由固定 tick 独立扩散。
+	if center_landed and not action.is_empty():
+		_controller._notify_unit_audio_event(source, StringName(action + ":hit_center"), source.global_position)
+
 func apply_forward_area(source: Unit, skill: Dictionary, forward: Vector2 = Vector2.ZERO) -> void:
 	forward = frontal_forward(source) if forward.length_squared() < 0.001 else forward.normalized()
 	var center := source.global_position + forward * maxf(float(skill.get("forward_distance", 0.0)), 0.0)
+	_controller._notify_unit_audio_event(source, StringName(String(skill.get("visual_action", "")) + ":impact"), center)
 	var radius := maxf(float(skill.get("radius", 0.0)), 0.0)
 	var amount := maxf(float(skill.get("damage", 0.0)), 0.0)
 	var stun_duration := maxf(float(skill.get("stun_duration", 0.0)), 0.0)
@@ -389,6 +432,7 @@ func apply_forward_area(source: Unit, skill: Dictionary, forward: Vector2 = Vect
 			"slow_multiplier": clampf(float(skill.get("zone_slow_multiplier", 1.0)), 0.1, 1.0),
 		})
 		add_fixed_area_effect(center, radius, radius, zone_duration, source.team, &"frost_storm")
+		_controller.present_zone_audio(source, String(skill.get("visual_action", "")), center, zone_duration)
 		if _controller.mode == "host":
 			_controller._rpc_frontal_skill_fx.rpc(
 				-1, center, Vector2.UP, 0.0, radius, radius, zone_duration, source.team, "frost_storm"
@@ -407,6 +451,8 @@ func apply_forward_area(source: Unit, skill: Dictionary, forward: Vector2 = Vect
 		"slow_duration": maxf(float(skill.get("shockwave_slow_duration", 0.0)), 0.0),
 		"slow_multiplier": clampf(float(skill.get("shockwave_slow_multiplier", 1.0)), 0.1, 1.0),
 		"hit_ids": already_hit,
+		"audio_source": PresentationConfig.attack_source(source),
+		"visual_action": String(skill.get("visual_action", "")),
 	})
 	add_fixed_area_effect(center, radius, end_radius, shockwave_duration, source.team, &"shockwave")
 	if _controller.mode == "host":
@@ -454,6 +500,13 @@ func _damage_combatant(source: Unit, combatant: Node2D, amount: float, origin: V
 
 
 func begin_frontal_visual(source: Unit, skill: Dictionary, cast_forward: Vector2) -> void:
+	# 真实弹体通过 ProjectileSystem/快照绘制；这里只保留范围预警，避免重复画箭或卡牌。
+	if bool(skill.get("projectile_stop_on_hit", false)) or bool(skill.get("projectile_piercing", false)):
+		skill = skill.duplicate(true)
+		if bool(skill.get("projectile_piercing", false)) and String(skill.get("shape", "")) == "fan":
+			skill["shape"] = "projectile_fan"
+		else:
+			skill["projectile_count"] = 0
 	var duration := maxf(float(skill.get("impact_delay", 0.0)), 0.0)
 	var projectile_launch_delay := maxf(float(skill.get("projectile_launch_delay", 0.0)), 0.0)
 	var projectile_flight_duration := maxf(float(skill.get("projectile_flight_duration", 0.0)), 0.0)
@@ -527,10 +580,13 @@ func _tick_expanding_shockwaves(dt: float) -> void:
 			if combatant.global_position.distance_to(shockwave.center) > current_radius + combatant.body_radius:
 				continue
 			shockwave.hit_ids[instance_id] = true
+			var landed := false
 			if source is Unit and is_instance_valid(source):
-				_damage_combatant(source as Unit, combatant, float(shockwave.damage), shockwave.center)
+				landed = _damage_combatant(source as Unit, combatant, float(shockwave.damage), shockwave.center)
 			else:
-				combatant.take_damage(float(shockwave.damage), null, int(shockwave.team), shockwave.center)
+				landed = combatant.take_damage(float(shockwave.damage), null, int(shockwave.team), shockwave.center)
+			if landed:
+				_controller._on_skill_projectile_hit(shockwave.get("audio_source", {}), String(shockwave.get("visual_action", "")), combatant.global_position, "wave_hit")
 			if combatant is Unit and is_instance_valid(combatant) and combatant.hp > 0.0 and float(shockwave.slow_duration) > 0.0:
 				(combatant as Unit).apply_slow(float(shockwave.slow_duration), float(shockwave.slow_multiplier))
 		shockwave.previous_radius = current_radius
@@ -547,6 +603,7 @@ func apply_frontal_stun(source: Unit, skill: Dictionary, forward: Vector2) -> vo
 	var amount := maxf(float(skill.get("damage", 0.0)), 0.0)
 	var stun_duration := maxf(float(skill.get("stun_duration", 0.0)), 0.0)
 	var ground_only := bool(skill.get("ground_only", true))
+	var any_landed := false
 	for combatant in _controller.get_tree().get_nodes_in_group("combatants"):
 		if combatant == source or not is_instance_valid(combatant) or combatant.team == source.team or combatant.hp <= 0.0:
 			continue
@@ -560,10 +617,16 @@ func apply_frontal_stun(source: Unit, skill: Dictionary, forward: Vector2) -> vo
 		if lateral_distance > half_width + combatant.body_radius:
 			continue
 		if amount > 0.0:
-			combatant.take_damage(amount, source, source.team, source.global_position)
+			any_landed = combatant.take_damage(amount, source, source.team, source.global_position) or any_landed
 		if is_instance_valid(combatant) and combatant.hp > 0.0 and stun_duration > 0.0 and combatant.has_method("stun"):
 			combatant.stun(stun_duration)
 
+
+	if any_landed:
+		var action := String(skill.get("visual_action", "active"))
+		if action.is_empty():
+			action = "transform_active"
+		_controller._notify_unit_audio_event(source, StringName(action + ":hit"), source.global_position)
 
 func frontal_forward(source: Unit) -> Vector2:
 	var forward := source.get_visual_facing_direction()
@@ -629,10 +692,16 @@ func begin_continuous_area_visual(source: Unit, skill: Dictionary) -> void:
 
 
 func tick_visuals(delta: float) -> void:
+	for index in range(shield_effects.size() - 1, -1, -1):
+		shield_effects[index].timer = maxf(0.0, float(shield_effects[index].timer) - delta)
+		if shield_effects[index].timer <= 0.0: shield_effects.remove_at(index)
+	# 和固定区域表现共用时钟，工作台暂停时不单独耗尽音频生命周期。
+	if _controller._audio_manager != null:
+		_controller._audio_manager._tick_zone_audio(delta)
 	var alive: Array[Dictionary] = []
 	for effect in frontal_effects:
 		var source = effect_source(effect)
-		if source is Unit and (source.frozen_timer > 0.0 or source.stun_timer > 0.0):
+		if source is Unit and (source.control.frozen_timer > 0.0 or source.control.stun_timer > 0.0):
 			alive.append(effect)
 			continue
 		effect.timer = maxf(0.0, float(effect.timer) - delta)
@@ -656,6 +725,20 @@ func effect_source(effect: Dictionary):
 
 
 func clear() -> void:
+	if _controller._audio_manager != null:
+		_controller._audio_manager.clear_zone_audio()
+	shield_effects.clear()
 	frontal_effects.clear()
 	expanding_shockwaves.clear()
 	continuous_area_effects.clear()
+
+
+func present_area_shield(card_id: String, form: int, position: Vector2) -> void:
+	var stats := PresentationConfig.for_form(CardDB.get_card(card_id), form)
+	for skill in stats.get("active_skills", []):
+		if String(skill.get("kind", "")) != "area_shield":
+			continue
+		# 射程从自身表面起算；波前到达自身半径 + 技能射程。
+		var radius := float(stats.get("radius", 0.0)) + float(skill.get("radius", 0.0))
+		shield_effects.append({"pos":position,"radius":radius,"duration":0.5,"timer":0.5})
+		return

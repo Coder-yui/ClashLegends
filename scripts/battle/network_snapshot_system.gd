@@ -2,7 +2,7 @@ class_name NetworkSnapshotSystem
 extends RefCounted
 ## 20Hz 单位/塔/弹体快照的序列化与客户端应用。RPC 端点仍保留在 Main。
 
-const SNAPSHOT_PROTOCOL_VERSION := 12
+const SNAPSHOT_PROTOCOL_VERSION := 13
 const S_VERSION := 0
 const S_SERVER_TICK := 1
 const S_UNITS := 2
@@ -49,7 +49,10 @@ const U_SHIELD_RATIO := 31
 const U_SHIELD_CAPACITY_RATIO := 32
 const U_ACTIVE_BUFF_ACTIVE := 33
 const U_ATTACK_FIRST_STRIKE := 34
-const UNIT_PAYLOAD_SIZE := 35
+const U_ATTACK_ELAPSED := 35
+const U_MOVEMENT_RATE := 36
+const U_ACTION_PERMISSIONS := 37
+const UNIT_PAYLOAD_SIZE := 38
 
 const P_ID := 0
 const P_X := 1
@@ -112,8 +115,8 @@ func apply(snapshot_bytes: PackedByteArray) -> void:
 	_apply_projectiles(projectiles_data)
 	_apply_towers(towers_data)
 	_controller._elixir.elixir = float(decoded[S_CLIENT_ELIXIR])
-	_controller._match_timer = float(decoded[S_MATCH_TIMER])
-	_controller._overtime = bool(decoded[S_OVERTIME])
+	_controller._match_rules.time_left = float(decoded[S_MATCH_TIMER])
+	_controller._match_rules.overtime = bool(decoded[S_OVERTIME])
 	_controller._update_timer_label()
 	_controller._update_elixir_rate()
 	_controller._snapshots_received += 1
@@ -137,8 +140,8 @@ func _apply_units(units_data: Array) -> void:
 			continue
 		u.net_target_pos = Vector2(d[U_X], d[U_Y])
 		u.sync_network_form(int(d[U_FORM]), int(d[U_FORM_CHANGE_SERIAL]))
-		u.hp = float(d[U_HP])
-		u.frozen_timer = 0.15 if int(d[U_FROZEN]) == 1 else 0.0
+		u.hp = BattleNumbers.quantity(float(d[U_HP]))
+		u.control.frozen_timer = 0.15 if int(d[U_FROZEN]) == 1 else 0.0
 		u.net_visual_state = int(d[U_VISUAL_STATE])
 		u.net_attack_visual_serial = int(d[U_ATTACK_SERIAL])
 		u.net_attack_visual_first_strike = int(d[U_ATTACK_FIRST_STRIKE]) == 1
@@ -150,7 +153,7 @@ func _apply_units(units_data: Array) -> void:
 			print("[测试] 客户端已收到持续吐息目标端点")
 		u.net_slow_active = int(d[U_SLOW]) == 1
 		u.net_stun_active = int(d[U_STUN]) == 1
-		u.stun_timer = 0.15 if u.net_stun_active else 0.0
+		u.control.stun_timer = 0.15 if u.net_stun_active else 0.0
 		var action_serial := int(d[U_ACTION_SERIAL])
 		if action_serial >= u.net_visual_action_serial:
 			u.net_visual_action_serial = action_serial
@@ -166,7 +169,10 @@ func _apply_units(units_data: Array) -> void:
 		u.net_skill_resource_ratio = clampf(float(d[U_SKILL_RESOURCE_RATIO]), 0.0, 1.0)
 		u.net_skill_resource_enabled = int(d[U_SKILL_RESOURCE_ENABLED]) == 1
 		u.net_active_speed_multiplier = maxf(float(d[U_ACTIVE_SPEED_MULTIPLIER]), 1.0)
-		u.net_active_attack_speed_multiplier = maxf(float(d[U_ACTIVE_ATTACK_SPEED_MULTIPLIER]), 1.0)
+		u.net_active_attack_speed_multiplier = maxf(float(d[U_ACTIVE_ATTACK_SPEED_MULTIPLIER]), 0.01)
+		u.net_attack_elapsed = maxf(float(d[U_ATTACK_ELAPSED]), 0.0)
+		u.net_action_permissions = int(d[U_ACTION_PERMISSIONS])
+		u.net_movement_rate = maxf(float(d[U_MOVEMENT_RATE]), 0.01)
 		u.net_active_buff_active = int(d[U_ACTIVE_BUFF_ACTIVE]) == 1
 		if _controller._active_skills.has(u.active_ability_id):
 			var active_entry: Dictionary = _controller._active_skills[u.active_ability_id]
@@ -248,13 +254,13 @@ func _apply_towers(towers_data: Array) -> void:
 	for i in range(mini(towers_data.size(), _controller._towers.size())):
 		var tower_data: Array = towers_data[i]
 		var tower_was_alive: bool = _controller._towers[i].hp > 0.0
-		_controller._towers[i].hp = float(tower_data[T_HP])
+		_controller._towers[i].hp = BattleNumbers.quantity(float(tower_data[T_HP]))
 		_controller._towers[i].activated = int(tower_data[T_ACTIVATED]) == 1
-		_controller._towers[i].stun_timer = 0.15 if int(tower_data[T_STUNNED]) == 1 else 0.0
+		_controller._towers[i].control.stun_timer = 0.15 if int(tower_data[T_STUNNED]) == 1 else 0.0
 		var shield_ratio := clampf(float(tower_data[T_SHIELD_RATIO]), 0.0, 1.0)
 		var shield_capacity_ratio := maxf(float(tower_data[T_SHIELD_CAPACITY_RATIO]), 0.0)
-		_controller._towers[i].shield_max_hp = shield_capacity_ratio * _controller._towers[i].max_hp
-		_controller._towers[i].shield_hp = shield_ratio * _controller._towers[i].shield_max_hp
+		_controller._towers[i].shield_max_hp = BattleNumbers.quantity(shield_capacity_ratio * _controller._towers[i].max_hp)
+		_controller._towers[i].shield_hp = BattleNumbers.quantity(shield_ratio * _controller._towers[i].shield_max_hp)
 		_controller._towers[i].shield_timer = 0.15 if _controller._towers[i].shield_hp > 0.0 else 0.0
 		_controller._towers[i].shield_decay_rate = 0.0
 		if tower_was_alive and _controller._towers[i].hp <= 0.0:
@@ -297,8 +303,8 @@ func send() -> void:
 		projectiles_data,
 		towers_data,
 		_controller._elixir_p1.elixir,
-		_controller._match_timer,
-		_controller._overtime,
+		_controller._match_rules.time_left,
+		_controller._match_rules.overtime,
 	)).compress(FileAccess.COMPRESSION_DEFLATE)
 	_controller._rpc_snapshot.rpc(snapshot_bytes)
 
@@ -320,7 +326,7 @@ func _tower_snapshot_payload(tower: Tower) -> Array:
 	return [
 		tower.hp,
 		1 if tower.activated else 0,
-		1 if tower.stun_timer > 0.0 else 0,
+		1 if tower.control.stun_timer > 0.0 else 0,
 		tower.get_shield_ratio(),
 		tower.get_shield_capacity_ratio(),
 	]
@@ -346,12 +352,12 @@ func _unit_snapshot_payload(id: int, u: Unit, has_continuous_target: bool = fals
 	var active_skill_state: Dictionary = _controller.get_active_skill_snapshot(u.active_ability_id)
 	return [
 		id, u.global_position.x, u.global_position.y, u.hp,
-		1 if u.frozen_timer > 0.0 else 0,
+		1 if u.control.frozen_timer > 0.0 else 0,
 		u.get_visual_state_code(), u.get_attack_visual_serial(),
 		1 if u._shroud_active else 0,
 		1 if has_continuous_target else 0, continuous_target_pos.x, continuous_target_pos.y,
-		1 if u.slow_timer > 0.0 else 0,
-		u.form_index, 1 if u.stun_timer > 0.0 else 0,
+		1 if u.control.slow_timer > 0.0 else 0,
+		u.form_index, 1 if u.control.stun_timer > 0.0 else 0,
 		u.get_visual_action_serial(), String(u.get_visual_action_name()),
 		facing_direction.x, facing_direction.y,
 		1 if u.is_attacking_structure_visual() else 0,
@@ -360,10 +366,11 @@ func _unit_snapshot_payload(id: int, u: Unit, has_continuous_target: bool = fals
 		u.get_locomotion_visual_state_code(),
 		1 if u.empowered_attack_ready else 0, u.get_empowered_attack_visual_serial(),
 		u.get_skill_resource_ratio(),
-		1 if u.skill_resource_enabled else 0, u.active_speed_multiplier, u.active_attack_speed_multiplier,
+		1 if u.skill_resource_enabled else 0, u.active_speed_multiplier, u.get_active_attack_speed_multiplier_visual(),
 		active_skill_state.get("uses_remaining", 0), active_skill_state.get("cooldown_left", 0.0),
 		u.get_shield_ratio(),
 		u.get_shield_capacity_ratio(),
 		1 if u.active_buff_timer > 0.0 else 0,
 		1 if u.is_attack_visual_first_strike() else 0,
+		u.get_attack_elapsed_visual(), u.get_effective_movement_rate_visual(), u.get_action_permissions_visual(),
 	]

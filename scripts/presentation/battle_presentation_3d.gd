@@ -28,15 +28,13 @@ func setup(field_size: Vector2, tile_size: float) -> void:
 	overlay.name = "UnitOverlay3D"
 	overlay.centered = false
 	overlay.texture = _viewport.get_texture()
+	# 3D 模型与水晶槽底覆盖 2D 背景；凹槽遮挡在 3D 内完成。
+	overlay.z_index = 5
 	add_child(overlay)
 
 func attach_unit(unit: Unit, stats: Dictionary) -> bool:
-	var visual_stats := _unit_visual_stats_for_form(stats, unit.get_form_index())
-	var scene_path: String = visual_stats.get("visual_scene_path", "")
-	# 水晶兵线等阵营单位共用玩法数据，但 order/chaos 使用各自模型包装场景。
-	var scene_paths: Array = visual_stats.get("visual_scene_paths", [])
-	if unit.team >= 0 and unit.team < scene_paths.size():
-		scene_path = String(scene_paths[unit.team])
+	var visual_stats := PresentationConfig.for_form(stats, unit.get_form_index())
+	var scene_path := PresentationConfig.scene_path(visual_stats, unit.team)
 	if scene_path.is_empty():
 		return false
 	var packed := load(scene_path) as PackedScene
@@ -47,7 +45,7 @@ func attach_unit(unit: Unit, stats: Dictionary) -> bool:
 	_world_root.add_child(view)
 	var animations: Dictionary = visual_stats.get("visual_animations", {})
 	var forward_yaw: float = visual_stats.get("visual_forward_yaw", 0.0)
-	if not view.setup(unit, packed, _camera, animations, forward_yaw):
+	if not view.setup(unit, packed, _camera, animations, forward_yaw, String(visual_stats.get("visual_active_buff_scene", ""))):
 		view.queue_free()
 		return false
 	unit.has_model_art = true
@@ -55,18 +53,11 @@ func attach_unit(unit: Unit, stats: Dictionary) -> bool:
 	unit.form_changed.connect(_on_unit_form_changed.bind(unit, view, stats))
 	return true
 
-func _unit_visual_stats_for_form(base_stats: Dictionary, form_index: int) -> Dictionary:
-	if form_index == 1:
-		var transformed: Dictionary = base_stats.get("transformed_stats", {})
-		if not transformed.is_empty():
-			return transformed
-	return base_stats
-
 func _on_unit_form_changed(form_index: int, unit: Unit, view: UnitModel3D, base_stats: Dictionary) -> void:
 	if unit == null or not is_instance_valid(unit) or view == null or not is_instance_valid(view):
 		return
-	var visual_stats := _unit_visual_stats_for_form(base_stats, form_index)
-	var scene_path := String(visual_stats.get("visual_scene_path", ""))
+	var visual_stats := PresentationConfig.for_form(base_stats, form_index)
+	var scene_path := PresentationConfig.scene_path(visual_stats, unit.team)
 	if scene_path.is_empty():
 		return
 	var packed := load(scene_path) as PackedScene
@@ -76,7 +67,8 @@ func _on_unit_form_changed(form_index: int, unit: Unit, view: UnitModel3D, base_
 	view.replace_visual(
 		packed,
 		visual_stats.get("visual_animations", {}),
-		float(visual_stats.get("visual_forward_yaw", 0.0))
+		float(visual_stats.get("visual_forward_yaw", 0.0)),
+		String(visual_stats.get("visual_active_buff_scene", ""))
 	)
 
 func attach_tower(tower: Tower, config: Dictionary) -> bool:
@@ -130,3 +122,9 @@ func _create_environment() -> void:
 	light.light_energy = 1.35
 	light.shadow_enabled = false
 	_world_root.add_child(light)
+
+
+func attach_projectile_system(system: ProjectileSystem) -> void:
+	var particles := ProjectileParticles3D.new()
+	_world_root.add_child(particles)
+	particles.setup(system, _camera)

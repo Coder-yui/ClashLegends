@@ -9,6 +9,7 @@ const CARD_FRAME_ASPECT := 0.72
 const DEFAULT_ACCENT := Color(0.30, 0.62, 0.94)
 const ELIXIR_PURPLE := Color(0.83, 0.16, 0.93)
 static var _card_ui_font: SystemFont
+static var _textures: Dictionary = {}
 
 ## 默认字体对少数字（例如“远”“程”）可能没有回退字形，卡牌文字统一走中文系统字体链。
 static func ui_font() -> SystemFont:
@@ -20,10 +21,20 @@ static func ui_font() -> SystemFont:
 	return _card_ui_font
 
 static func texture_for(card_id: String) -> Texture2D:
-	for extension in CARD_ART_EXTENSIONS:
-		var path := "%s%s_loading.%s" % [CARD_ART_DIR, card_id, extension]
+	if _textures.has(card_id):
+		return _textures[card_id]
+	var configured := String(CardDB.get_card(card_id).get("card_art", {}).get("path", ""))
+	var candidates: Array[String] = []
+	if not configured.is_empty():
+		candidates.append(configured)
+	else:
+		for extension in CARD_ART_EXTENSIONS:
+			candidates.append("%s%s_loading.%s" % [CARD_ART_DIR, card_id, extension])
+	for path in candidates:
 		if ResourceLoader.exists(path):
-			return load(path) as Texture2D
+			_textures[card_id] = load(path) as Texture2D
+			return _textures[card_id]
+	_textures[card_id] = null
 	return null
 
 static func frame_size_for_height(height: float) -> Vector2:

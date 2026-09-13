@@ -3,7 +3,6 @@ extends CanvasLayer
 ## 备战卡组、卡牌详情、主动技能选择和皮肤选择的独立 UI 模块。
 
 const ARENA_BACKGROUND_TEXTURE := preload("res://assets/arena/arena_rift_v4.png")
-const TILE_SIZE := 40.0
 
 var _deck: Array = []
 var _active_skill_choices: Dictionary = {}
@@ -546,7 +545,7 @@ func _open_card_info(card_id: String) -> void:
 	name_label.add_theme_constant_override("outline_size", 5)
 	identity.add_child(name_label)
 	var identity_line := Label.new()
-	identity_line.text = "%s　·　%d 费" % [_card_type_name(String(stats.get("type", "unit")), stats), int(stats.cost)]
+	identity_line.text = "%s　·　%d 费" % [CardDetails.type_name(String(stats.get("type", "unit")), stats), int(stats.cost)]
 	identity_line.add_theme_font_override("font", CardArt.ui_font())
 	identity_line.add_theme_font_size_override("font_size", 19)
 	identity_line.add_theme_color_override("font_color", Color(0.68, 0.86, 1.0))
@@ -568,7 +567,7 @@ func _open_card_info(card_id: String) -> void:
 	# 详情内容控制弹窗自身高度；当前属性量可完整放下，不再用会被压成零高的滚动容器。
 	layout.add_child(details)
 	details.add_child(_make_card_info_heading("简介"))
-	details.add_child(_make_card_info_body(_card_brief_description(stats)))
+	details.add_child(_make_card_info_body(CardDetails.brief_description(stats)))
 	details.add_child(_make_card_info_heading("属性"))
 	details.add_child(_make_card_attribute_grid(stats))
 	var transformed_stats: Dictionary = stats.get("transformed_stats", {})
@@ -580,7 +579,7 @@ func _open_card_info(card_id: String) -> void:
 	if float(stats.get("spawn_interval", 0.0)) > 0.0 and not periodic_spawn_stats.is_empty():
 		details.add_child(_make_card_info_subheading("召唤物：%s（每批 %d 只）" % [String(periodic_spawn_stats.get("name", periodic_spawn_id)), int(stats.get("spawn_count", 1))]))
 		details.add_child(_make_card_attribute_grid(periodic_spawn_stats, "%d /批" % int(stats.get("spawn_count", 1))))
-	var passives := _card_passives(stats)
+	var passives := CardDetails.passives(stats)
 	if not passives.is_empty():
 		details.add_child(_make_card_info_heading("被动"))
 		for passive in passives:
@@ -609,7 +608,7 @@ func _open_card_info(card_id: String) -> void:
 	if not skills.is_empty():
 		_deck_info_active_rules = _make_active_skill_rules(skills[clampi(int(_active_skill_choices.get(card_id, 0)), 0, skills.size() - 1)])
 		details.add_child(_deck_info_active_rules)
-	_deck_info_active_description = _make_card_info_body(_active_choice_description(card_id))
+	_deck_info_active_description = _make_card_info_body(CardDetails.active_choice_description(card_id, int(_active_skill_choices.get(card_id, 0))))
 	details.add_child(_deck_info_active_description)
 	var close := _make_deck_action_button("返回备战", Color(0.08, 0.38, 0.68), Color(0.38, 0.80, 1.0))
 	close.custom_minimum_size = Vector2(220.0, 48.0)
@@ -668,20 +667,6 @@ func _make_card_info_body(text: String) -> Label:
 	label.add_theme_constant_override("line_spacing", 4)
 	return label
 
-func _card_type_name(card_type: String, stats: Dictionary = {}) -> String:
-	match card_type:
-		"spell": return "法术"
-		"building": return "建筑"
-		_:
-			return "空军" if bool(stats.get("is_air", false)) else "地面"
-
-func _format_card_number(value: float) -> String:
-	return str(int(value)) if is_equal_approx(value, roundf(value)) else "%.2f" % value
-
-func _card_brief_description(stats: Dictionary) -> String:
-	var description := String(stats.get("description", ""))
-	return description if not description.is_empty() else "这张卡可以通过合理的部署位置和出牌时机发挥作用。"
-
 func _make_card_info_subheading(text: String) -> Label:
 	var label := Label.new()
 	label.text = text
@@ -696,7 +681,7 @@ func _make_card_attribute_grid(stats: Dictionary, quantity_override: String = ""
 	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	grid.add_theme_constant_override("h_separation", 10)
 	grid.add_theme_constant_override("v_separation", 6)
-	for attribute in _card_attributes(stats, quantity_override):
+	for attribute in CardDetails.attributes(stats, quantity_override):
 		var attribute_value := String(attribute.get("value", ""))
 		if attribute_value.is_empty():
 			continue
@@ -716,239 +701,10 @@ func _make_card_attribute_grid(stats: Dictionary, quantity_override: String = ""
 		grid.add_child(item)
 	return grid
 
-func _card_attributes(stats: Dictionary, quantity_override: String = "") -> Array[Dictionary]:
-	var result: Array[Dictionary] = []
-	var card_type := String(stats.get("type", "unit"))
-	if card_type == "spell":
-		result.append({"name": "类型", "value": _card_type_name(card_type, stats)})
-		result.append({"name": "目标", "value": "敌方单位"})
-		result.append({"name": "作用范围", "value": "%s（%.1f格）" % [_format_card_number(float(stats.get("radius", 0.0))), float(stats.get("radius", 0.0)) / TILE_SIZE]})
-		result.append({"name": "持续时间", "value": "%s秒" % _format_card_number(float(stats.get("duration", 0.0)))})
-		return result
-
-	var quantity := quantity_override if not quantity_override.is_empty() else str(maxi(int(stats.get("deployment_count", 1)), 1))
-	result.append({"name": "生命", "value": _format_card_number(float(stats.get("hp", 0.0)))})
-	result.append({"name": "类型", "value": _card_type_name(card_type, stats)})
-	if card_type == "building":
-		result.append({"name": "数量", "value": quantity})
-		result.append({"name": "目标", "value": _card_target_name(stats)})
-		var building_damage := float(stats.get("damage", 0.0))
-		var building_interval := float(stats.get("interval", 0.0))
-		if building_damage > 0.0:
-			result.append({"name": "单次伤害", "value": _format_card_number(building_damage)})
-			if building_interval > 0.0:
-				result.append({"name": "每秒伤害", "value": _format_card_number(building_damage / building_interval)})
-				result.append({"name": "攻击间隔", "value": "%s秒" % _format_card_number(building_interval)})
-			if stats.has("range"):
-				var building_range := float(stats.get("range", 0.0))
-				result.append({"name": "攻击距离", "value": "%s（%.1f格）" % [_format_card_number(building_range), building_range / TILE_SIZE]})
-		if float(stats.get("splash_radius", 0.0)) > 0.0:
-			var splash_radius := float(stats.get("splash_radius", 0.0))
-			result.append({"name": "溅射半径", "value": "%s（%.1f格）" % [_format_card_number(splash_radius), splash_radius / TILE_SIZE]})
-		if stats.has("footprint_tiles") or stats.has("radius"):
-			result.append({"name": "体积", "value": _card_volume_name(stats)})
-		if stats.has("lifespan"):
-			var lifespan_suffix := "（生命持续衰减）" if bool(stats.get("lifespan_hp_decay", false)) else ""
-			result.append({"name": "存活时间", "value": "%s秒%s" % [_format_card_number(float(stats.get("lifespan", 0.0))), lifespan_suffix]})
-		return result
-
-	result.append({"name": "目标", "value": _card_target_name(stats)})
-	if stats.has("sight") and float(stats.get("sight", 0.0)) > 0.0:
-		result.append({"name": "视野", "value": _format_card_number(float(stats.get("sight", 0.0)))})
-	var speed := float(stats.get("speed", 0.0))
-	if stats.has("speed"):
-		result.append({"name": "移速", "value": "%s/秒（%s）" % [_format_card_number(speed), CardDB.speed_tier_name(speed)]})
-	# 数量占据原视野所在的位序，视野统一放到属性列表最后。
-	result.append({"name": "数量", "value": quantity})
-	var damage := float(stats.get("damage", 0.0))
-	var continuous := bool(stats.get("is_continuous_attack", false))
-	var damage_multipliers: Array = stats.get("attack_damage_multipliers", [])
-	if not continuous and damage > 0.0:
-		if damage_multipliers.is_empty():
-			result.append({"name": "单次伤害", "value": _format_card_number(damage)})
-		else:
-			var fist_names := ["左拳", "右拳", "左拳", "右拳"]
-			var fist_values: Array[String] = []
-			for index in range(mini(damage_multipliers.size(), 2)):
-				var fist_name: String = fist_names[index % fist_names.size()]
-				var fist_damage := damage * float(damage_multipliers[index])
-				fist_values.append("%s（%s）" % [_format_card_number(fist_damage), fist_name])
-			result.append({"name": "单次伤害", "value": "，".join(fist_values)})
-	var interval := float(stats.get("interval", 0.0))
-	var dps: float = damage if continuous else (damage / interval if interval > 0.0 and damage > 0.0 else 0.0)
-	if not continuous and not damage_multipliers.is_empty():
-		var combo_pattern: Array = stats.get("attack_pattern", [])
-		if combo_pattern.size() > 1:
-			var combo_damage := damage * (float(damage_multipliers[0]) + float(damage_multipliers[1]))
-			var combo_interval := float(stats.get("attack_interval_display", combo_pattern[1])) + float(combo_pattern[0])
-			if combo_interval > 0.0:
-				dps = combo_damage / combo_interval
-	if damage > 0.0:
-		result.append({"name": "每秒伤害", "value": _format_card_number(dps)})
-	if not continuous and interval > 0.0:
-		var display_interval := float(stats.get("attack_interval_display", interval))
-		result.append({"name": "攻击间隔", "value": "%s秒" % _format_card_number(display_interval)})
-	if damage > 0.0 and stats.has("range"):
-		result.append({"name": "攻击距离", "value": "%s（%.1f格）" % [_format_card_number(float(stats.get("range", 0.0))), float(stats.get("range", 0.0)) / TILE_SIZE]})
-	if stats.has("radius"):
-		result.append({"name": "体积", "value": _card_volume_name(stats)})
-	if stats.has("mass"):
-		result.append({"name": "质量", "value": _format_card_number(float(stats.get("mass", 0.0)))})
-	return result
-
-func _card_target_name(stats: Dictionary) -> String:
-	if String(stats.get("type", "unit")) == "spell":
-		return "敌方单位"
-	if float(stats.get("damage", 0.0)) <= 0.0:
-		return "无"
-	if bool(stats.get("building_only", false)):
-		return "建筑"
-	return "空中和地面" if bool(stats.get("can_attack_air", false)) else "地面"
-
-func _card_volume_name(stats: Dictionary) -> String:
-	if stats.has("footprint_tiles"):
-		var footprint: Vector2i = stats.footprint_tiles
-		return "%d×%d格（半径%s）" % [footprint.x, footprint.y, _format_card_number(float(stats.get("radius", 0.0)))]
-	var tier := String(stats.get("size_tier", ""))
-	var tier_name := CardDB.size_tier_name(StringName(tier)) if not tier.is_empty() else ""
-	return "%s（半径%s）" % [tier_name, _format_card_number(float(stats.get("radius", 0.0)))] if not tier_name.is_empty() else _format_card_number(float(stats.get("radius", 0.0)))
-
-func _card_passives(stats: Dictionary) -> Array[Dictionary]:
-	var result: Array[Dictionary] = []
-	if bool(stats.get("is_continuous_attack", false)):
-		result.append({"name": "龙息", "description": "持续造成每秒%s伤害，并对目标周围%s范围造成伤害。" % [_format_card_number(float(stats.get("damage", 0.0))), _format_card_number(float(stats.get("splash_radius", 0.0)))]})
-	elif float(stats.get("splash_radius", 0.0)) > 0.0 and float(stats.get("damage", 0.0)) > 0.0:
-		result.append({"name": "范围炮击", "description": "普通攻击命中后，对目标周围%s（%.1f格）范围造成同等伤害。" % [_format_card_number(float(stats.get("splash_radius", 0.0))), float(stats.get("splash_radius", 0.0)) / TILE_SIZE]})
-	if stats.has("deploy_sweep_radius"):
-		var deploy_damage := float(stats.get("deploy_sweep_damage", 0.0))
-		result.append({
-			"name": String(stats.get("deploy_sweep_name", "部署横扫")),
-			"description": (
-				"部署时对%s半径内的地面敌人造成%s点伤害并击退。"
-				% [_format_card_number(float(stats.get("deploy_sweep_radius", 0.0))), _format_card_number(deploy_damage)]
-			),
-		})
-	if stats.has("heal_every_hits"):
-		result.append({"name": "无畏战吼", "description": "每第%d次普通攻击命中回复%s点生命。" % [int(stats.get("heal_every_hits", 0)), _format_card_number(float(stats.get("heal_amount", 0.0))) ]})
-	if stats.has("shroud_radius"):
-		result.append({"name": "丝缕缠流", "description": "首次普攻命中后，%s半径外的敌人无法看见或锁定她。" % _format_card_number(float(stats.get("shroud_radius", 0.0)))})
-	if stats.has("first_strike_damage_multiplier"):
-		result.append({"name": "先声夺人", "description": "对每个敌方目标的首次普通攻击造成%s倍伤害。" % _format_card_number(float(stats.get("first_strike_damage_multiplier", 0.0)))})
-	if int(stats.get("transform_after_hits", 0)) > 0:
-		var transformed: Dictionary = stats.get("transformed_stats", {})
-		result.append({
-			"name": "狂怒基因",
-			"description": "小纳尔完成%d次普攻后变大，大纳尔完成%d次普攻后变小；大形态生命上限为%s、体型为%s且只能近战地面目标。" % [
-				int(stats.transform_after_hits),
-				int(stats.get("revert_after_hits", 0)),
-				_format_card_number(float(transformed.get("hp", 0.0))),
-				CardDB.size_tier_name(StringName(transformed.get("size_tier", ""))),
-			],
-		})
-	if stats.has("attack_pattern"):
-		var combo_damage := float(stats.get("damage", 0.0))
-		var combo_multipliers: Array = stats.get("attack_damage_multipliers", [])
-		var left_damage := combo_damage
-		var right_damage := combo_damage * 1.5
-		if not combo_multipliers.is_empty():
-			left_damage = combo_damage * float(combo_multipliers[0])
-			if combo_multipliers.size() > 1:
-				right_damage = combo_damage * float(combo_multipliers[1])
-		var combo_pattern: Array = stats.get("attack_pattern", [])
-		var punch_gap := float(combo_pattern[0]) if not combo_pattern.is_empty() else 0.0
-		var pair_gap := float(stats.get("attack_interval_display", combo_pattern[1] if combo_pattern.size() > 1 else stats.get("interval", 0.0)))
-		result.append({"name": "拳锋连击", "description": "左拳造成%s点伤害，右拳造成%s点伤害；两拳之间间隔%s秒，打完两拳后间隔%s秒，循环进行。" % [_format_card_number(left_damage), _format_card_number(right_damage), _format_card_number(punch_gap), _format_card_number(pair_gap)]})
-	if String(stats.get("type", "unit")) == "building" and float(stats.get("spawn_interval", 0.0)) > 0.0:
-		var spawn_id := String(stats.get("spawn_id", ""))
-		var spawn_stats := CardDB.get_unit_stats(spawn_id)
-		var spawn_name := String(spawn_stats.get("name", spawn_id))
-		result.append({"name": "周期召唤", "description": "部署完成生成%d只%s，之后每%s秒再次生成。" % [int(stats.get("spawn_count", 0)), spawn_name, _format_card_number(float(stats.get("spawn_interval", 0.0)))]})
-	if int(stats.get("death_spawn_count", 0)) > 0 and not String(stats.get("death_spawn_id", "")).is_empty():
-		var death_spawn_id := String(stats.get("death_spawn_id", ""))
-		var death_spawn_stats := CardDB.get_unit_stats(death_spawn_id)
-		var death_spawn_name := String(death_spawn_stats.get("name", death_spawn_id))
-		result.append({"name": "亡语", "description": "被摧毁时产生%d只%s。" % [int(stats.get("death_spawn_count", 0)), death_spawn_name]})
-	return result
-
 func _make_card_passive_row(name: String, description: String) -> Label:
 	var label := _make_card_info_body("%s：%s" % [name, description])
 	label.custom_minimum_size = Vector2(0.0, 28.0)
 	return label
-
-func _active_choice_description(card_id: String) -> String:
-	var skills := CardDB.active_skills_for(card_id)
-	if skills.is_empty():
-		var stats: Dictionary = CardDB.get_card(card_id)
-		if String(stats.get("type", "unit")) == "spell":
-			var radius := float(stats.get("radius", 0.0))
-			match StringName(stats.get("spell_kind", "")):
-				&"heal":
-					var heal_amount := float(stats.get("heal_amount", 0.0))
-					var enhanced_heal := heal_amount * maxf(float(stats.get("active_heal_multiplier", 1.0)), 1.0)
-					var shield := float(stats.get("active_shield", 0.0))
-					var shield_duration := float(stats.get("active_shield_duration", 0.0))
-					var cost_bonus := maxi(int(stats.get("active_cost_bonus", 0)), 0)
-					var bonus_text := "" if cost_bonus <= 0 else "，主动槽强化额外花费 +%d 金币" % cost_bonus
-					return "回复半径%s（%.1f格）内友军单位%s生命（不作用于建筑）；强化后全图友军单位回复%s生命，范围内友军（含建筑卡、防御塔与水晶）额外获得%s护盾，持续%s秒%s。" % [
-						_format_card_number(radius), radius / TILE_SIZE, _format_card_number(heal_amount),
-						_format_card_number(enhanced_heal), _format_card_number(shield), _format_card_number(shield_duration), bonus_text,
-					]
-				_:
-					var duration := float(stats.get("duration", 0.0))
-					var slow_duration := float(stats.get("active_slow_duration", 0.0))
-					if slow_duration > 0.0:
-						var slow_percent := roundi(float(stats.get("active_slow_multiplier", 1.0)) * 100.0)
-						return "冻结半径%s（%.1f格）内的敌方单位，持续%s秒；冰冻结束后，范围内的敌军继续减速至%d%%，持续%s秒。" % [_format_card_number(radius), radius / TILE_SIZE, _format_card_number(duration), slow_percent, _format_card_number(slow_duration)]
-					return "冻结半径%s（%.1f格）内的敌方单位，持续%s秒。" % [_format_card_number(radius), radius / TILE_SIZE, _format_card_number(duration)]
-		return "该卡没有可携带的主动技能。"
-	var selected := clampi(int(_active_skill_choices.get(card_id, 0)), 0, skills.size() - 1)
-	return _active_skill_description(skills[selected])
-
-func _active_skill_description(skill: Dictionary) -> String:
-	var configured_description := String(skill.get("description", ""))
-	if not configured_description.is_empty():
-		return "%s：%s" % [String(skill.get("name", "主动技能")), configured_description]
-	var parts: Array[String] = []
-	match String(skill.get("kind", "")):
-		"nova":
-			parts.append("以自身为中心，影响 %s 半径" % _format_card_number(float(skill.get("radius", 0.0))))
-			if float(skill.get("damage", 0.0)) > 0.0:
-				parts.append("造成 %s 伤害" % _format_card_number(float(skill.damage)))
-			if float(skill.get("knockback", 0.0)) > 0.0:
-				parts.append("击退 %s" % _format_card_number(float(skill.knockback)))
-			if float(skill.get("slow_duration", 0.0)) > 0.0:
-				parts.append("减速至 %d%%，持续 %s 秒" % [roundi(float(skill.get("slow_multiplier", 1.0)) * 100.0), _format_card_number(float(skill.slow_duration))])
-		"buff":
-			parts.append("持续 %s 秒" % _format_card_number(float(skill.get("duration", 0.0))))
-			if float(skill.get("speed_multiplier", 1.0)) != 1.0:
-				parts.append("移速 ×%.2f" % float(skill.speed_multiplier))
-			if float(skill.get("damage_multiplier", 1.0)) != 1.0:
-				parts.append("伤害 ×%.2f" % float(skill.damage_multiplier))
-			if float(skill.get("attack_speed_multiplier", 1.0)) != 1.0:
-				parts.append("攻速 ×%.2f" % float(skill.attack_speed_multiplier))
-		"summon":
-			var spawn_id := String(skill.get("spawn_id", ""))
-			var spawn_stats := CardDB.get_unit_stats(spawn_id)
-			parts.append("在自身周围立即召唤 %d 个%s" % [int(skill.get("spawn_count", 1)), String(spawn_stats.get("name", spawn_id))])
-		"dual_form":
-			parts.append("变形并朝前方 %s×%s 区域造成 %s 伤害，眩晕 %s 秒" % [
-				_format_card_number(float(skill.get("width", 0.0))),
-				_format_card_number(float(skill.get("length", 0.0))),
-				_format_card_number(float(skill.get("damage", 0.0))),
-				_format_card_number(float(skill.get("stun_duration", 0.0))),
-			])
-		"continuous_area":
-			parts.append("以自身当前位置为中心，影响 %s 半径" % _format_card_number(float(skill.get("radius", 0.0))))
-			if float(skill.get("damage", 0.0)) > 0.0:
-				parts.append("每 %s 秒造成 %s 伤害" % [
-					_format_card_number(float(skill.get("tick_interval", 1.0))),
-					_format_card_number(float(skill.get("damage", 0.0))),
-				])
-			if float(skill.get("duration", 0.0)) > 0.0:
-				parts.append("持续 %s 秒并跟随移动" % _format_card_number(float(skill.get("duration", 0.0))))
-	if float(skill.get("shield", 0.0)) > 0.0:
-		parts.append("获得 %s 点护盾，持续 %s 秒" % [_format_card_number(float(skill.shield)), _format_card_number(float(skill.get("shield_duration", 0.0)))])
-	return "%s：%s。" % [String(skill.get("name", "主动技能")), "；".join(parts)]
 
 func _make_active_skill_rules(skill: Dictionary) -> PanelContainer:
 	var panel := PanelContainer.new()
@@ -980,12 +736,12 @@ func _make_active_skill_rule_label(text: String) -> Label:
 func _update_active_skill_rules(skill: Dictionary) -> void:
 	if _deck_info_active_cost_label == null or _deck_info_active_uses_label == null:
 		return
-	_deck_info_active_cost_label.text = "金币消耗：%s" % _format_card_number(maxf(float(skill.get("cost", 0.0)), 0.0))
+	_deck_info_active_cost_label.text = "金币消耗：%s" % CardDetails.format_number(maxf(float(skill.get("cost", 0.0)), 0.0))
 	var owner_label := "本次编队" if StringName(skill.get("target_scope", "self")) == &"deployment_group" else "单个单位"
 	_deck_info_active_uses_label.text = "%s：最多 %d 次　·　冷却 %s秒" % [
 		owner_label,
 		maxi(int(skill.get("max_uses", 1)), 1),
-		_format_card_number(maxf(float(skill.get("cooldown", 0.0)), 0.0)),
+		CardDetails.format_number(maxf(float(skill.get("cooldown", 0.0)), 0.0)),
 	]
 
 func _on_info_active_skill_selected(skill_index: int, card_id: String) -> void:
@@ -995,7 +751,7 @@ func _on_info_active_skill_selected(skill_index: int, card_id: String) -> void:
 	_active_skill_choices[card_id] = clampi(skill_index, 0, skills.size() - 1)
 	_update_active_skill_rules(skills[_active_skill_choices[card_id]])
 	if _deck_info_active_description != null:
-		_deck_info_active_description.text = _active_choice_description(card_id)
+		_deck_info_active_description.text = CardDetails.active_choice_description(card_id, int(_active_skill_choices.get(card_id, 0)))
 
 func _on_info_skin_selected(skin_index: int, card_id: String, skins: Array) -> void:
 	if skin_index < 0 or skin_index >= skins.size():
@@ -1027,7 +783,7 @@ func _update_deck_ui() -> void:
 		if not String(selected_id).is_empty():
 			total_cost += float(CardDB.get_card(String(selected_id)).cost)
 	if _deck_average_label != null:
-		_deck_average_label.text = "平均金币  --" if selected_count == 0 else "平均金币  %.1f" % (total_cost / selected_count)
+		_deck_average_label.text = "平均金币  --" if selected_count == 0 else "平均金币  %.2f" % (total_cost / selected_count)
 	for i in range(_deck_slot_buttons.size()):
 		var slot: Button = _deck_slot_buttons[i]
 		var card_id := String(_deck_selected[i]) if i < _deck_selected.size() else ""

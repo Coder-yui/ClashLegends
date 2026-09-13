@@ -126,6 +126,8 @@ func update_skill_state(ability_id: int, uses_remaining: int, cooldown: float, d
 	var slot_index := _ability_ids.find(ability_id)
 	if slot_index < 0:
 		return
+	if _uses_remaining[slot_index] == clampi(uses_remaining, 0, maxi(max_uses, 1)) and _max_uses[slot_index] == maxi(max_uses, 1) and is_equal_approx(_cooldowns[slot_index], maxf(cooldown, 0.0)) and is_equal_approx(_skill_costs[slot_index], maxf(skill_cost, 0.0)) and _deployment_ready[slot_index] == deployment_ready:
+		return
 	_uses_remaining[slot_index] = clampi(uses_remaining, 0, maxi(max_uses, 1))
 	_max_uses[slot_index] = maxi(max_uses, 1)
 	_cooldowns[slot_index] = maxf(cooldown, 0.0)
@@ -167,14 +169,14 @@ func _refresh_slot(slot_index: int) -> void:
 	elif uses_remaining <= 0:
 		state = "次数已用尽"
 	elif cooldown > 0.001:
-		state = "冷却 %.1fs" % cooldown
+		state = "冷却 %s秒" % BattleNumbers.format_value(cooldown)
 	elif _elixir < skill_cost:
 		state = "金币不足"
-	button.tooltip_text = "主动槽 %d\n消耗 %.1f 金币 · 剩余 %d/%d 次 · 冷却 %.1f 秒\n%s" % [slot_index + 1, skill_cost, uses_remaining, _max_uses[slot_index], cooldown, state]
+	button.tooltip_text = "主动槽 %d\n消耗 %s 金币 · 剩余 %d/%d 次 · 冷却 %s 秒\n%s" % [slot_index + 1, BattleNumbers.format_value(skill_cost), uses_remaining, _max_uses[slot_index], BattleNumbers.format_value(cooldown), state]
 
 
 func _format_number(value: float) -> String:
-	return str(int(value)) if is_equal_approx(value, roundf(value)) else "%.1f" % value
+	return BattleNumbers.format_value(value)
 
 
 func _circle_style(fill: Color, border: Color, border_width: int) -> StyleBoxFlat:

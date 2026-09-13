@@ -18,7 +18,7 @@ func navigation() -> NavGrid:
 	return _controller.nav
 
 func field_width() -> float:
-	return float(_controller.FIELD_W)
+	return float(ArenaRules.FIELD_W)
 
 func ensure_unit_form_resize_safe(unit: Unit) -> void:
 	_controller.ensure_unit_form_resize_safe(unit)
@@ -44,7 +44,7 @@ func apply_damage_pulse(source: Node2D, target: Node2D, amount: float, splash_ra
 	return _controller.apply_damage_pulse(source, target, amount, splash_radius, origin, counts_as_attack, source_form_index, effects)
 
 func resolve_attack_hit(team: int, origin: Vector2, primary: Node2D, amount: float, radius: float, knockback: float, from: Node2D, source_position: Vector2, source_form_index: int, effects: Dictionary = {}, counts_as_attack: bool = true) -> bool:
-	return _controller.resolve_attack_hit(team, origin, primary, amount, radius, knockback, from, source_position, source_form_index, effects, counts_as_attack)
+	return _controller._combat.resolve_attack_hit(team, origin, primary, amount, radius, knockback, from, source_position, source_form_index, effects, counts_as_attack)
 
 func show_projectile_impact(position: Vector2, radius: float, color: Color, visual: StringName) -> void:
 	_controller.show_projectile_impact(position, radius, color, visual)

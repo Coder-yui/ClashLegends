@@ -22,6 +22,19 @@ const TRANSITION_DEFAULTS := {
 	&"model_swap": 0.02,
 }
 
+var _active_buff_visual: ActiveBuffVisual3D
+var _active_buff_overlays: Array[Material] = []
+var _last_buff_visible := false
+
+var _state: UnitPresentationState
+var _control_stage := &""
+var _saved_control_clip := &""
+var _saved_control_position := 0.0
+var _saved_control_speed := 1.0
+var _current_clip_speed := 1.0
+var _stable_head_offset := NAN
+var _last_frozen_overlay := false
+var _was_controlled := false
 var _source: Unit
 var _camera: Camera3D
 var _model_root: Node3D
@@ -51,6 +64,8 @@ var _holding_attack_pose := false
 var _active_attack_animation := &""
 var _active_attack_index := 0
 var _active_attack_empowered := false
+var _attack_clip_start := 0.0
+var _attack_clip_end := 0.0
 var _attack_hit_timer := 0.0
 var _attack_recover_timer := 0.0
 var _attack_hit_pending := false
@@ -73,13 +88,13 @@ var _move_override_animation := &""
 ## 它只选择表现片段，不改变权威状态或固定模拟节奏。
 var _idle_cycle_index := 0
 var _idle_cycle_active_animation := &""
+var _idle_transition_animation := &""
+var _idle_transition_exit_blend := -1.0
 # 最近一次统一播放入口实际采用的策略与时长，供表现回归验证；不参与状态决策。
 var _last_clip_transition_kind := &""
 var _last_clip_blend_time := 0.0
 var _last_empowered_ready := false
 var _last_haste_active := false
-var _beam_skeleton: Skeleton3D
-var _beam_mouth_bone := -1
 # 出场技能序列：deploy 配置为数组时，从单位生成的部署阶段首帧开始依次播放；
 # 单段部署（如赵信 1 秒 Spell4）继续由基础状态通道按 deploy_time 缩放；
 # 部署结束前不被基础状态切换打断。
@@ -106,10 +121,11 @@ var _spawn_transition_base_position := Vector3.ZERO
 var _spawn_transition_start_scale := Vector3.ONE
 var _spawn_transition_base_scale := Vector3.ONE
 
-func setup(unit: Unit, packed: PackedScene, camera: Camera3D, animations: Dictionary, forward_yaw: float) -> bool:
+func setup(unit: Unit, packed: PackedScene, camera: Camera3D, animations: Dictionary, forward_yaw: float, buff_scene_path: String = "") -> bool:
 	# 客户端 Unit 会在默认优先级更新快照插值；3D 代理随后读取最终位置。
 	process_priority = 10
 	_source = unit
+	_state = unit.presentation_state()
 	_spawn_transition_kind = unit.visual_spawn_transition
 	_spawn_transition_initialized = false
 	_source.died.connect(_on_source_died)
@@ -117,10 +133,10 @@ func setup(unit: Unit, packed: PackedScene, camera: Camera3D, animations: Dictio
 	_camera = camera
 	# 一套完整挥剑（前摇、命中、后摇）占满一个攻击周期；动画长度不改变战斗计时。
 	_attack_duration = maxf(unit.attack_interval, 0.05)
-	return replace_visual(packed, animations, forward_yaw)
+	return replace_visual(packed, animations, forward_yaw, buff_scene_path)
 
 ## 形态改变时只替换表现模型和动画映射；Unit 的权威位置、血量、碰撞与 net_id 不变。
-func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: float) -> bool:
+func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: float, buff_scene_path: String = "") -> bool:
 	# 死亡代理独立持有当前模型直到 Death 播完。即使权威层发生同帧晚到的
 	# form_changed，也不能替换掉死亡动画并留下一个永不再同步的静止模型。
 	if _dying:
@@ -131,9 +147,11 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 		instance.queue_free()
 		return false
 	if _model_root != null and is_instance_valid(_model_root):
+		_model_root.hide()
 		_model_root.queue_free()
 	_model_root = instance as Node3D
 	_animation_names = animations.duplicate(true)
+	_idle_transition_animation = &""
 	_forward_yaw = forward_yaw
 	_attack_duration = maxf(_source.attack_interval, 0.05)
 	_animation_player = null
@@ -179,13 +197,19 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 	if _model_root.has_method("configure_unit_visual"):
 		_model_root.call("configure_unit_visual", _source)
 	_animation_player = _find_animation_player(_model_root)
+	_stable_head_offset = NAN
+	_control_stage = &""
+	if _animation_player != null:
+		for library_name in _animation_player.get_animation_library_list():
+			var library := _animation_player.get_animation_library(library_name).duplicate(true) as AnimationLibrary
+			_animation_player.remove_animation_library(library_name)
+			_animation_player.add_animation_library(library_name, library)
 	if _animation_player == null:
 		push_warning("单位 3D 模型中未找到 AnimationPlayer")
 	else:
 		_animation_player.animation_finished.connect(_on_animation_finished)
-	_beam_skeleton = _find_skeleton(_model_root)
-	_beam_mouth_bone = _beam_skeleton.find_bone("Jaw") if _beam_skeleton != null else -1
 	_prepare_hit_flash()
+	_replace_active_buff_visual(buff_scene_path)
 	_configure_looping_animations()
 	_recreate_team_ring()
 	_sync_visual(true, 0.0)
@@ -193,6 +217,7 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 	return true
 
 func _process(delta: float) -> void:
+	_update_active_buff_visual(delta)
 	_update_hit_flash(delta)
 	if _dying:
 		return
@@ -200,6 +225,11 @@ func _process(delta: float) -> void:
 		queue_free()
 		return
 	_tick_spawn_transition(delta)
+	if _sync_control_override():
+		_sync_transform(false, delta)
+		_update_continuous_beam_origin()
+		_update_health_bar_anchor()
+		return
 	_update_attack_stages(delta)
 	_sync_visual(false, delta)
 	_update_continuous_beam_origin()
@@ -243,7 +273,7 @@ func _tick_spawn_transition(delta: float) -> void:
 		_model_root.scale = _spawn_transition_base_scale
 		_spawn_transition_active = false
 
-func _sync_visual(force: bool, delta: float) -> void:
+func _sync_transform(force: bool, delta: float) -> void:
 	var screen_position := _source.get_visual_screen_position()
 	var ground_position := _screen_to_ground(screen_position)
 	position = ground_position
@@ -258,14 +288,16 @@ func _sync_visual(force: bool, delta: float) -> void:
 		if _model_root != null and _model_root.has_method("sync_visual_facing"):
 			_model_root.call("sync_visual_facing", rotation.y)
 
+func _sync_visual(force: bool, delta: float) -> void:
+	_sync_transform(force, delta)
 	# visual_action 先于同一快照内的攻击序号处理，确保技能/变形动作能按优先级
 	# 挡住并排队普攻，不会先播一帧 Attack 再被技能覆盖。
-	var visual_action_serial := _source.net_visual_action_serial if _source._in_client_mode() else _source.get_visual_action_serial()
+	var visual_action_serial := _source.get_visual_action_serial()
 	if visual_action_serial != _last_visual_action_serial:
 		_last_visual_action_serial = visual_action_serial
-		var action_name := _source.net_visual_action_name if _source._in_client_mode() else _source.get_visual_action_name()
+		var action_name := _source.get_visual_action_name()
 		_play_visual_action(action_name)
-	var attack_serial := _source.net_attack_visual_serial if _source._in_client_mode() else _source.get_attack_visual_serial()
+	var attack_serial := _source.get_attack_visual_serial()
 	var attack_serial_changed := attack_serial != _last_attack_serial
 	if attack_serial_changed:
 		_last_attack_serial = attack_serial
@@ -274,8 +306,8 @@ func _sync_visual(force: bool, delta: float) -> void:
 				_pending_attack_serial = attack_serial
 			else:
 				_play_attack(attack_serial)
-	var state := _source.net_visual_state if _source._in_client_mode() else _source.get_visual_state_code()
-	var locomotion_state := _source.net_locomotion_state if _source._in_client_mode() else _source.get_locomotion_visual_state_code()
+	var state := _source.get_visual_state_code()
+	var locomotion_state := _source.get_locomotion_visual_state_code()
 	var empowered_ready := _source.is_empowered_attack_ready_visual()
 	if empowered_ready != _last_empowered_ready:
 		_last_empowered_ready = empowered_ready
@@ -313,10 +345,11 @@ func _sync_visual(force: bool, delta: float) -> void:
 		_current_state = 1
 		_play_state(1)
 	if _animation_player != null:
-		var playback_scale := _source.get_active_attack_speed_multiplier_visual() if _playing_attack else 1.0
-		_animation_player.speed_scale = 0.0 if _source.frozen_timer > 0.0 or _source.stun_timer > 0.0 else playback_scale
+		var playback_scale := _state.attack_rate if _playing_attack else (_state.movement_rate if _current_state == 2 and not _playing_visual_action else 1.0)
+		_animation_player.speed_scale = 0.0 if _state.frozen or _state.stunned else playback_scale
 
 func _play_visual_action(action_name: StringName) -> void:
+	_idle_transition_animation = &""
 	if _animation_player == null or action_name == &"":
 		return
 	var actions: Dictionary = _animation_names.get("visual_actions", {})
@@ -388,7 +421,7 @@ func _play_visual_action(action_name: StringName) -> void:
 	_move_active_animation = &""
 	_play_visual_action_clip(StringName(_visual_action_sequence[0]))
 	# 晚到客户端从权威时间轴对应位置开始，不会把已过去的 Spell2 从头补播。
-	if _source._in_client_mode() and authoritative_duration > 0.001:
+	if authoritative_duration > 0.001:
 		_seek_visual_action(maxf(authoritative_duration - _source.get_visual_action_time_left(), 0.0))
 
 func _play_visual_action_clip(animation_name: StringName) -> void:
@@ -410,7 +443,7 @@ func _play_visual_action_clip(animation_name: StringName) -> void:
 	var first_clip := _visual_action_sequence_index == 0
 	var blend_override := _active_action_blend_in if first_clip else _active_action_sequence_blend
 	var transition_kind := &"action_in" if first_clip else &"sequence"
-	var blend_time := _transition_blend(transition_kind) if blend_override < 0.0 else maxf(blend_override, 0.0)
+	var blend_time := _resolve_clip_blend(animation_name, transition_kind, blend_override)
 	_last_clip_transition_kind = transition_kind
 	_last_clip_blend_time = blend_time
 	_animation_player.play_section(animation_name, clip_range.x, clip_range.y, blend_time, playback_speed)
@@ -447,12 +480,25 @@ func _set_model_visual_clip(animation_name: StringName) -> void:
 ## 所有 AnimationPlayer 切换都经过这一层：Godot 会从当前任意播放进度的骨骼 Pose
 ## crossfade 到目标片段，不再假设源末帧与目标首帧天然一致。
 func _play_clip(animation_name: StringName, transition_kind: StringName = &"default", playback_speed: float = 1.0, blend_override: float = -1.0) -> void:
+	_current_clip_speed = playback_speed
 	if _animation_player == null or animation_name == &"" or not _animation_player.has_animation(animation_name):
 		return
-	var blend_time := _transition_blend(transition_kind) if blend_override < 0.0 else maxf(blend_override, 0.0)
+	var blend_time := _resolve_clip_blend(animation_name, transition_kind, blend_override)
 	_last_clip_transition_kind = transition_kind
 	_last_clip_blend_time = blend_time
 	_animation_player.play(animation_name, blend_time, playback_speed)
+
+## 原始片段对的例外覆盖通用策略；目标通配只用于已核验的一组入口。
+func _resolve_clip_blend(target: StringName, kind: StringName, fallback: float = -1.0) -> float:
+	var blends: Dictionary = _animation_names.get("clip_blends", {})
+	var source := _animation_player.assigned_animation
+	var edge := "%s>%s" % [source, target]
+	if blends.has(edge):
+		return float(blends[edge])
+	var target_edge := "*>%s" % target
+	if blends.has(target_edge):
+		return float(blends[target_edge])
+	return _transition_blend(kind) if fallback < 0.0 else maxf(fallback, 0.0)
 
 func _transition_blend(transition_kind: StringName) -> float:
 	var configured: Dictionary = _animation_names.get("transition_blends", {})
@@ -460,8 +506,7 @@ func _transition_blend(transition_kind: StringName) -> float:
 
 ## 专门制作的 transition clip 优先；没有配置时调用方直接走通用 Pose crossfade。
 func _transition_clip(from_action: StringName, to_action: StringName) -> StringName:
-	var transitions: Dictionary = _animation_names.get("transitions", {})
-	var configured = transitions.get("%s>%s" % [from_action, to_action], "")
+	var configured = _transition_config(from_action, to_action)
 	if configured is Dictionary:
 		configured = (configured as Dictionary).get("animation", "")
 	var candidates: Array = configured if configured is Array else [configured]
@@ -471,16 +516,21 @@ func _transition_clip(from_action: StringName, to_action: StringName) -> StringN
 			return animation_name
 	return &""
 
+func _transition_config(from_action: StringName, to_action: StringName) -> Variant:
+	var transitions: Dictionary = _animation_names.get("transitions", {})
+	var clip_edge := "%s>%s" % [_animation_player.assigned_animation, to_action]
+	return transitions.get(clip_edge, transitions.get("%s>%s" % [from_action, to_action], ""))
+
 ## 单条 transitions route 可只覆盖两条素材边界；未配置的边继续使用全局 sequence。
 func _transition_route_blend(from_action: StringName, to_action: StringName, edge: StringName) -> float:
-	var transitions: Dictionary = _animation_names.get("transitions", {})
-	var configured = transitions.get("%s>%s" % [from_action, to_action], null)
+	var configured = _transition_config(from_action, to_action)
 	if not configured is Dictionary or not (configured as Dictionary).has(edge):
 		return -1.0
 	return maxf(float((configured as Dictionary)[edge]), 0.0)
 
 ## 普通单位也可配置 move_enter。过渡动作只表现移动起步，移动仍由权威模拟决定。
 func _transition_to_basic_state(state: int, blend_time: float = -1.0, from_action: StringName = &"locomotion") -> void:
+	_idle_transition_animation = &""
 	var previous_state := _current_state
 	_current_state = state
 	_move_sequence_active = false
@@ -497,6 +547,14 @@ func _transition_to_basic_state(state: int, blend_time: float = -1.0, from_actio
 			else:
 				route_from = &"idle"
 		_start_move_sequence(route_from, blend_time)
+	elif state == 1 and _transition_clip(from_action, &"idle") != &"":
+		_idle_transition_animation = _transition_clip(from_action, &"idle")
+		var entry_blend := _transition_route_blend(from_action, &"idle", &"blend_in")
+		_idle_transition_exit_blend = _transition_route_blend(from_action, &"idle", &"blend_out")
+		var start_time := maxf(_transition_route_blend(from_action, &"idle", &"start_time"), 0.0)
+		_animation_player.get_animation(_idle_transition_animation).loop_mode = Animation.LOOP_NONE
+		_play_clip(_idle_transition_animation, &"sequence", 1.0, entry_blend)
+		_animation_player.seek(start_time, true)
 	else:
 		_play_state(state, _transition_blend(&"locomotion") if blend_time < 0.0 else blend_time)
 
@@ -521,8 +579,8 @@ func _sync_continuous_state_animations(state: int, force: bool, target_changed: 
 		2:
 			_start_move_sequence(&"attack" if previous_state == 3 else &"locomotion")
 		_:
-			# play() 会立即替换仍在播放的吐息循环，不等待循环素材结束。
-			_play_state(state, _transition_blend(&"locomotion") if force else _transition_blend(&"action_out"))
+			# 立即关闭持续攻击，再按实际源片段接收势；不等待吐息循环结束。
+			_transition_to_basic_state(state, _transition_blend(&"locomotion") if force else _transition_blend(&"action_out"), &"attack" if previous_state == 3 else &"locomotion")
 
 func _start_continuous_attack(retargeting_without_move: bool = false, blend_override: float = -1.0) -> void:
 	if _animation_player == null:
@@ -608,8 +666,11 @@ func _start_move_sequence(from_action: StringName = &"locomotion", blend_overrid
 	if route_transition_used:
 		_move_sequence_exit_blend = _transition_route_blend(from_action, &"move", &"blend_out")
 	var entry_blend := route_entry_blend if route_entry_blend >= 0.0 else _move_route_entry_blend(from_action, has_transition_clip, blend_override)
+	var start_time := maxf(_transition_route_blend(from_action, &"move", &"start_time"), 0.0) if route_transition_used else 0.0
 	if not _move_sequence.is_empty():
 		_play_move_clip(StringName(_move_sequence[0]), entry_blend)
+		if start_time > 0.0:
+			_animation_player.seek(start_time, true)
 	elif not _move_cycle.is_empty():
 		_play_move_cycle_clip(entry_blend)
 	else:
@@ -740,6 +801,13 @@ func _update_health_bar_anchor() -> void:
 				var anchor_screen := _camera.unproject_position(world_anchor)
 				_source.set_visual_head_world_position(Vector2(ground_screen.x, anchor_screen.y))
 				return
+	var anchor_node := _model_root.get_node_or_null("HeadAnchor") as Node3D
+	if anchor_node != null:
+		_source.set_visual_head_world_position(Vector2(ground_screen.x, _camera.unproject_position(anchor_node.global_position).y))
+		return
+	if not is_nan(_stable_head_offset):
+		_source.set_visual_head_world_position(Vector2(ground_screen.x, ground_screen.y + _stable_head_offset))
+		return
 	var top_screen_y := ground_screen.y
 	var found_visible_point := false
 	for mesh_instance in _flash_meshes:
@@ -768,9 +836,11 @@ func _update_health_bar_anchor() -> void:
 			if not _camera.is_position_behind(air_base_world):
 				visual_base_screen_y = _camera.unproject_position(air_base_world).y
 		top_screen_y = maxf(top_screen_y, visual_base_screen_y - max_head_height)
+		_stable_head_offset = top_screen_y - ground_screen.y
 		_source.set_visual_head_world_position(Vector2(ground_screen.x, top_screen_y))
 
 func _play_state(state: int, blend_time: float = -1.0) -> void:
+	_idle_transition_animation = &""
 	if _animation_player == null:
 		return
 	if state == 1 and not _animation_list("idle_cycle").is_empty():
@@ -886,8 +956,8 @@ func _advance_deploy_sequence() -> void:
 func _finish_deploy_sequence() -> void:
 	_playing_deploy_sequence = false
 	_deploy_active_animation = &""
-	var state := _source.net_visual_state if _source._in_client_mode() else _source.get_visual_state_code()
-	var locomotion_state := _source.net_locomotion_state if _source._in_client_mode() else _source.get_locomotion_visual_state_code()
+	var state := _source.get_visual_state_code()
+	var locomotion_state := _source.get_locomotion_visual_state_code()
 	_current_state = 0
 	if state != 0:
 		if state == 3 and _pending_attack_serial > 0:
@@ -901,6 +971,7 @@ func _play_attack(serial: int, blend_override: float = -1.0) -> void:
 	if _animation_player == null or serial <= 0:
 		return
 	_idle_cycle_active_animation = &""
+	_idle_transition_animation = &""
 	# 出场演出期间权威锁定攻击，不会推进攻击序号；此防御仅兜底客户端快照乱序。
 	if _playing_deploy_sequence:
 		_pending_attack_serial = serial
@@ -935,24 +1006,27 @@ func _play_attack(serial: int, blend_override: float = -1.0) -> void:
 		# 分段普攻只影响表现：Start 在权威 first_hit 窗口内播放，计时到点切到 Hit。
 		_attack_hit_pending = true
 		_attack_hit_timer = maxf(_source.first_hit_time, 0.01)
-		_play_attack_clip(animation_name, _attack_hit_timer, entry_transition_kind, blend_override)
+		_play_attack_clip(animation_name, _attack_hit_timer, entry_transition_kind, blend_override, _attack_section("attack_clip_ranges"))
 	else:
-		_play_attack_clip(animation_name, _attack_duration, entry_transition_kind, blend_override)
+		_play_attack_clip(animation_name, _attack_duration, entry_transition_kind, blend_override, _attack_section("attack_clip_ranges"))
+	_align_attack_progress(_state.attack_elapsed)
 
 func _update_attack_stages(delta: float) -> void:
 	if not _playing_attack or _animation_player == null:
 		return
 	# 权威状态已离开 Attack 时不要在同一渲染帧补播收势；否则刚命中且无目标的
 	# 瑟提会先闪过 Into_Idle，再被 _sync_visual 切到移动。
-	var state := _source.net_visual_state if _source._in_client_mode() else _source.get_visual_state_code()
+	var state := _source.get_visual_state_code()
 	if state != 3 and _source.cancel_attack_recovery_without_target:
 		return
 	# 冰冻期间模拟攻击计时不推进，分段表现计时也必须同步暂停。
-	if _source.frozen_timer > 0.0 or _source.stun_timer > 0.0:
+	if _state.frozen or _state.stunned:
 		return
-	delta *= maxf(_source.get_active_attack_speed_multiplier_visual(), 1.0)
+	delta *= _state.attack_rate
 	if _attack_hit_pending:
-		_attack_hit_timer = maxf(0.0, _attack_hit_timer - delta)
+		var consumed := minf(_attack_hit_timer, delta)
+		_attack_hit_timer -= consumed
+		delta -= consumed
 		if _attack_hit_timer <= 0.0:
 			_attack_hit_pending = false
 			var hit_animations := _active_attack_animation_list("attack_hit")
@@ -963,11 +1037,12 @@ func _update_attack_stages(delta: float) -> void:
 				if _active_attack_index < recover_animations.size():
 					recover_name = StringName(recover_animations[_active_attack_index])
 				var recover_delay := _attack_recover_delay(_active_attack_index)
-				_play_attack_clip(hit_name, recover_delay if recover_name != &"" else _attack_hit_duration(_active_attack_index))
+				_play_attack_clip(hit_name, recover_delay if recover_name != &"" else _attack_hit_duration(_active_attack_index), &"sequence", -1.0, _attack_section("attack_hit_clip_ranges"))
 				if recover_name != &"":
 					_attack_recover_pending = true
 					_attack_recover_timer = recover_delay
-		return
+		else:
+			return
 	if _attack_recover_pending:
 		_attack_recover_timer = maxf(0.0, _attack_recover_timer - delta)
 		if _attack_recover_timer <= 0.0:
@@ -976,19 +1051,35 @@ func _update_attack_stages(delta: float) -> void:
 			if _active_attack_index < recover_animations.size():
 				_play_attack_clip(StringName(recover_animations[_active_attack_index]), 0.0)
 
-func _play_attack_clip(animation_name: StringName, target_duration: float, transition_kind: StringName = &"sequence", blend_override: float = -1.0) -> void:
+func _attack_section(key: String) -> Vector2:
+	var ranges: Array = _animation_names.get(key, [])
+	if _active_attack_empowered or _active_attack_index >= ranges.size() or ranges[_active_attack_index].size() != 2:
+		return Vector2(-1.0, -1.0)
+	return Vector2(float(ranges[_active_attack_index][0]), float(ranges[_active_attack_index][1]))
+
+func _play_attack_clip(animation_name: StringName, target_duration: float, transition_kind: StringName = &"sequence", blend_override: float = -1.0, section: Vector2 = Vector2(-1.0, -1.0)) -> void:
 	if animation_name == &"" or not _animation_player.has_animation(animation_name):
 		return
 	var animation := _animation_player.get_animation(animation_name)
 	if animation == null:
 		return
 	animation.loop_mode = Animation.LOOP_NONE
-	var playback_speed := 1.0
+	_attack_clip_start = maxf(section.x, 0.0)
+	_attack_clip_end = minf(section.y, animation.length) if section.y > 0.0 else animation.length
+	var playback_speed := 1.0 / _attack_reference_time_scale()
 	if target_duration > 0.001:
-		playback_speed = maxf(float(animation.length) / target_duration, 0.01)
+		playback_speed = maxf((_attack_clip_end - _attack_clip_start) / target_duration, 0.01)
 	_active_attack_animation = animation_name
 	_set_model_visual_clip(animation_name)
-	_play_clip(animation_name, transition_kind, playback_speed, blend_override)
+	if section.x >= 0.0:
+		_current_clip_speed = playback_speed
+		var blend := _resolve_clip_blend(animation_name, transition_kind, blend_override)
+		_last_clip_transition_kind = transition_kind
+		_last_clip_blend_time = blend
+		_animation_player.play_section(animation_name, _attack_clip_start, _attack_clip_end, blend, playback_speed)
+		_animation_player.seek(_attack_clip_start, true)
+	else:
+		_play_clip(animation_name, transition_kind, playback_speed, blend_override)
 
 func _animation_list(key: String) -> Array:
 	var configured = _animation_names.get(key, [])
@@ -1002,6 +1093,8 @@ func _active_attack_animation_list(base_key: String) -> Array:
 	return _animation_list(base_key)
 
 func _attack_recover_delay(index: int) -> float:
+	if _animation_names.has("attack_reference_interval"):
+		return _reference_hit_duration(index)
 	var configured = _animation_names.get("attack_recover_delay", 0.3)
 	if configured is Array:
 		var values := configured as Array
@@ -1010,6 +1103,8 @@ func _attack_recover_delay(index: int) -> float:
 	return maxf(float(configured), 0.01)
 
 func _attack_hit_duration(index: int) -> float:
+	if _animation_names.has("attack_reference_interval") and not _active_attack_empowered:
+		return _reference_hit_duration(index)
 	# 强化攻击的专用后摇默认按素材原速播放，允许下一次普攻或移动在任意进度打断。
 	if _active_attack_empowered and not _animation_names.has("empowered_attack_hit_duration"):
 		return 0.0
@@ -1019,6 +1114,17 @@ func _attack_hit_duration(index: int) -> float:
 		if not values.is_empty():
 			return maxf(float(values[index % values.size()]), 0.01)
 	return maxf(float(configured), 0.01)
+
+## 参考攻速下保留 Hit/Recover 的素材时长；基础数值变化与局内 Buff 分开缩放。
+func _attack_reference_time_scale() -> float:
+	var reference := float(_animation_names.get("attack_reference_interval", 0.0))
+	return _source.attack_interval / reference if reference > 0.0 else 1.0
+
+func _reference_hit_duration(index: int) -> float:
+	var hits := _active_attack_animation_list("attack_hit")
+	if index < hits.size() and _animation_player.has_animation(StringName(hits[index])):
+		return _animation_player.get_animation(StringName(hits[index])).length * _attack_reference_time_scale()
+	return _attack_duration
 
 ## 部署动画按部署窗口缩放；逐次攻击动作有独立时长，不在这里绑定攻击间隔。
 func _state_playback_speed(state: int, animation_name: StringName) -> float:
@@ -1096,6 +1202,15 @@ func _configure_looping_animations() -> void:
 					animation.loop_mode = Animation.LOOP_NONE
 
 func _on_animation_finished(animation_name: StringName) -> void:
+	# 场景重建可先释放权威单位；死亡表现仍独立播放，其余回调不再读取旧单位。
+	if not _dying and not is_instance_valid(_source):
+		return
+	if not _dying and _control_stage != &"":
+		if _control_stage == &"enter":
+			_play_control_clip("stun_loop", &"loop")
+		elif _control_stage == &"exit":
+			_restore_control_pose()
+		return
 	if _dying:
 		if animation_name == _death_animation:
 			if not _start_death_followup():
@@ -1134,6 +1249,11 @@ func _on_animation_finished(animation_name: StringName) -> void:
 	if animation_name == _idle_cycle_active_animation and _current_state == 1:
 		_start_idle_cycle(false)
 		return
+	if animation_name == _idle_transition_animation and _current_state == 1:
+		var exit_blend := _idle_transition_exit_blend
+		_idle_transition_animation = &""
+		_play_state(1, _transition_blend(&"sequence") if exit_blend < 0.0 else exit_blend)
+		return
 	if not _playing_attack or animation_name != _active_attack_animation:
 		return
 	# 分段动作的 Start/Hit 由表现计时器继续推进，不能被普通“动作播完”逻辑提前截断。
@@ -1142,14 +1262,14 @@ func _on_animation_finished(animation_name: StringName) -> void:
 	_playing_attack = false
 	# AnimationPlayer 停在非循环动画的最后一帧。只要模拟仍锁定攻击目标，
 	# 就保留这套骨骼姿态，下一次攻击从此处短混合到另一套动作。
-	var state := _source.net_visual_state if _source._in_client_mode() else _source.get_visual_state_code()
+	var state := _source.get_visual_state_code()
 	if state == 3:
 		_holding_attack_pose = true
 		_current_state = 3
 	else:
 		_holding_attack_pose = false
 		_active_attack_animation = &""
-		var locomotion_state := _source.net_locomotion_state if _source._in_client_mode() else _source.get_locomotion_visual_state_code()
+		var locomotion_state := _source.get_locomotion_visual_state_code()
 		_transition_to_basic_state(locomotion_state, _transition_blend(&"action_out"), &"attack")
 
 func _finish_visual_action() -> void:
@@ -1167,8 +1287,8 @@ func _finish_visual_action() -> void:
 	_active_action_blend_in = -1.0
 	_active_action_blend_out = -1.0
 	_current_state = -1
-	var state := _source.net_visual_state if _source._in_client_mode() else _source.get_visual_state_code()
-	var locomotion_state := _source.net_locomotion_state if _source._in_client_mode() else _source.get_locomotion_visual_state_code()
+	var state := _source.get_visual_state_code()
+	var locomotion_state := _source.get_locomotion_visual_state_code()
 	if _pending_attack_serial > 0 and state == 3:
 		var pending_serial := _pending_attack_serial
 		_pending_attack_serial = 0
@@ -1196,6 +1316,7 @@ func _on_source_died() -> void:
 	if _dying:
 		return
 	_dying = true
+	_idle_transition_animation = &""
 	_pending_attack_serial = 0
 	_death_followup_started = false
 	_playing_attack = false
@@ -1230,6 +1351,8 @@ func _on_source_died() -> void:
 		_finish_model_visual_death()
 		queue_free()
 		return
+	if bool(_animation_names.get("death_followup_immediate", false)) and _start_death_followup():
+		return
 	_death_animation = StringName(_animation_names.get("death", ""))
 	if _death_animation == &"" or not _animation_player.has_animation(_death_animation):
 		_finish_model_visual_death()
@@ -1238,20 +1361,23 @@ func _on_source_died() -> void:
 	var animation := _animation_player.get_animation(_death_animation)
 	var death_playback_speed := 1.0
 	var death_duration := float(_animation_names.get("death_duration", 0.0))
+	var death_end := animation.length if animation != null else 0.0
+	death_end = minf(float(_animation_names.get("death_clip_end", death_end)), death_end)
 	if animation != null:
 		animation.loop_mode = Animation.LOOP_NONE
 		if death_duration > 0.0 and animation.length > 0.0:
-			death_playback_speed = animation.length / death_duration
+			death_playback_speed = death_end / death_duration
 	# 包装场景可选择同步淡出粒子/雾气等纯表现节点；动画仍不参与死亡判定。
 	if _model_root != null and _model_root.has_method("begin_visual_death"):
 		var visual_duration := death_duration
 		if visual_duration <= 0.0 and animation != null:
-			visual_duration = animation.length
+			visual_duration = death_end
 		_model_root.call("begin_visual_death", maxf(visual_duration, 0.05))
 	# 死亡不再受生前冰冻状态影响；按卡牌配置时长播完动作后清理纯视觉代理。
 	_animation_player.speed_scale = 1.0
 	_set_model_visual_clip(_death_animation)
 	_play_clip(_death_animation, &"death", death_playback_speed)
+	_animation_player.set_section(0.0, death_end)
 
 
 func _finish_model_visual_death() -> void:
@@ -1275,10 +1401,18 @@ func _start_death_followup() -> bool:
 		instance.queue_free()
 		return false
 	if _model_root != null and is_instance_valid(_model_root):
+		_model_root.hide()
 		_model_root.queue_free()
 	_model_root = instance as Node3D
 	add_child(_model_root)
 	_animation_player = _find_animation_player(_model_root)
+	_stable_head_offset = NAN
+	_control_stage = &""
+	if _animation_player != null:
+		for library_name in _animation_player.get_animation_library_list():
+			var library := _animation_player.get_animation_library(library_name).duplicate(true) as AnimationLibrary
+			_animation_player.remove_animation_library(library_name)
+			_animation_player.add_animation_library(library_name, library)
 	if _animation_player == null or not _animation_player.has_animation(followup_name):
 		return false
 	_animation_player.animation_finished.connect(_on_animation_finished)
@@ -1304,24 +1438,20 @@ func _find_animation_player(node: Node) -> AnimationPlayer:
 			return found
 	return null
 
-func _find_skeleton(node: Node) -> Skeleton3D:
-	if node is Skeleton3D:
-		return node as Skeleton3D
-	for child in node.get_children():
-		var found := _find_skeleton(child)
-		if found != null:
-			return found
-	return null
-
-## 龙息起点每帧读取当前动画 Pose 的 Jaw 骨骼，再投影回权威 2D 战场。
-## 这只修正表现起点，持续伤害仍由 Unit 固定 tick 结算。
+## 包装接口或稳定 Marker 挂点，骨骼解剖映射只在对应包装内。
 func _update_continuous_beam_origin() -> void:
-	if _beam_skeleton == null or _beam_mouth_bone < 0 or _camera == null:
+	if _model_root == null or _camera == null:
 		return
-	var mouth_world := _beam_skeleton.to_global(_beam_skeleton.get_bone_global_pose(_beam_mouth_bone).origin)
-	if _camera.is_position_behind(mouth_world):
-		return
-	_source.set_continuous_beam_origin_world_position(_camera.unproject_position(mouth_world))
+	var mouth_world: Vector3
+	if _model_root.has_method("get_beam_origin_world"):
+		mouth_world = _model_root.call("get_beam_origin_world")
+	else:
+		var anchor := _model_root.get_node_or_null("BeamOrigin") as Node3D
+		if anchor == null:
+			return
+		mouth_world = anchor.global_position
+	if not _camera.is_position_behind(mouth_world):
+		_source.set_continuous_beam_origin_world_position(_camera.unproject_position(mouth_world))
 
 func _create_team_ring() -> void:
 	if not _source.show_team_ring:
@@ -1372,10 +1502,15 @@ func _collect_flash_meshes(node: Node) -> void:
 func _on_source_visual_hit() -> void:
 	if _dying:
 		return
+	if is_instance_valid(_active_buff_visual):
+		_active_buff_visual.on_hit()
 	_hit_flash_timer = 0.05
 	_set_hit_flash(true)
 
 func _update_hit_flash(delta: float) -> void:
+	if _last_frozen_overlay != (_state.frozen and not _dying):
+		_last_frozen_overlay = _state.frozen and not _dying
+		_set_hit_flash(_hit_flash_timer > 0.0)
 	if _hit_flash_timer <= 0.0:
 		return
 	_hit_flash_timer = maxf(0.0, _hit_flash_timer - delta)
@@ -1387,4 +1522,112 @@ func _set_hit_flash(enabled: bool) -> void:
 		var mesh_instance := _flash_meshes[i]
 		if mesh_instance == null or not is_instance_valid(mesh_instance):
 			continue
-		mesh_instance.material_overlay = _hit_flash_material if enabled else _original_overlays[i]
+		var base_overlay := _original_overlays[i]
+		if _last_buff_visible and i < _active_buff_overlays.size():
+			base_overlay = _active_buff_overlays[i]
+		if enabled or (_state.frozen and not _dying):
+			var overlay := _hit_flash_material.duplicate() as StandardMaterial3D
+			overlay.albedo_color = Color(1.0, 1.0, 1.0, 0.22) if enabled else Color(0.3, 0.7, 1.0, 0.28)
+			overlay.next_pass = base_overlay
+			mesh_instance.material_overlay = overlay
+		else:
+			mesh_instance.material_overlay = base_overlay
+
+## 冰冻优先保持当前姿态；眩晕片段自身播放。无素材明确回退为保持姿态。
+func _sync_control_override() -> bool:
+	if _animation_player == null:
+		return false
+	if _state.frozen:
+		_was_controlled = true
+		_animation_player.speed_scale = 0.0
+		return true
+	if _state.stunned:
+		_was_controlled = true
+		if _control_stage == &"":
+			_saved_control_clip = _animation_player.current_animation
+			_saved_control_position = _animation_player.current_animation_position
+			_saved_control_speed = _current_clip_speed
+			_play_control_clip("stun_enter", &"enter")
+		_animation_player.speed_scale = 0.0 if _control_stage == &"hold" else 1.0
+		return true
+	if _control_stage != &"":
+		if _control_stage != &"exit":
+			if _first_valid_animation("stun_exit") != &"":
+				_play_control_clip("stun_exit", &"exit")
+			else:
+				_restore_control_pose()
+		return _control_stage != &""
+	if _was_controlled:
+		_was_controlled = false
+		if _playing_visual_action:
+			_play_visual_action(_source.get_visual_action_name())
+		elif _playing_attack:
+			_play_attack(_state.attack_serial)
+	return false
+
+func _play_control_clip(key: String, stage: StringName) -> void:
+	var clip := _first_valid_animation(key)
+	if clip == &"" and stage == &"enter":
+		_play_control_clip("stun_loop", &"loop")
+		return
+	_control_stage = stage if clip != &"" else &"hold"
+	if clip != &"":
+		_animation_player.get_animation(clip).loop_mode = Animation.LOOP_LINEAR if stage == &"loop" else Animation.LOOP_NONE
+		_play_clip(clip, &"action_in")
+
+func _restore_control_pose() -> void:
+	_control_stage = &""
+	if _saved_control_clip != &"" and _animation_player.has_animation(_saved_control_clip):
+		_play_clip(_saved_control_clip, &"action_out", _saved_control_speed)
+		_animation_player.seek(_saved_control_position, true)
+	_animation_player.speed_scale = 1.0
+
+## 晚到的普攻序号从权威已流逝阶段开始；分段计时仍纯表现，不触发命中。
+func _align_attack_progress(elapsed: float) -> void:
+	# 新攻击即使进度恰为零也必须 seek；play(同名片段) 会继续上一轮进度。
+	if not _playing_attack or _animation_player == null:
+		return
+	_update_attack_stages(elapsed / maxf(_state.attack_rate, 0.01))
+	var clip_elapsed := elapsed
+	var hits := _active_attack_animation_list("attack_hit")
+	if _active_attack_index < hits.size() and StringName(hits[_active_attack_index]) != &"" and not _attack_hit_pending:
+		clip_elapsed = maxf(elapsed - _source.first_hit_time, 0.0)
+		var recovers := _active_attack_animation_list("attack_recover")
+		if _active_attack_index < recovers.size() and StringName(recovers[_active_attack_index]) != &"" and not _attack_recover_pending:
+			clip_elapsed = maxf(clip_elapsed - _attack_recover_delay(_active_attack_index), 0.0)
+	var clip := _animation_player.get_animation(_animation_player.current_animation)
+	if clip != null:
+		_animation_player.seek(minf(_attack_clip_start + clip_elapsed * _current_clip_speed, _attack_clip_end), true)
+
+
+func _replace_active_buff_visual(scene_path: String) -> void:
+	if is_instance_valid(_active_buff_visual):
+		_active_buff_visual.hide()
+		_active_buff_visual.queue_free()
+	_active_buff_visual = null
+	_active_buff_overlays.clear()
+	_last_buff_visible = false
+	if scene_path.is_empty():
+		return
+	var packed := load(scene_path) as PackedScene
+	if packed == null:
+		return
+	_active_buff_visual = packed.instantiate() as ActiveBuffVisual3D
+	if _active_buff_visual == null:
+		return
+	add_child(_active_buff_visual)
+	_active_buff_visual.configure(_source.visual_radius, _source.team)
+	for original in _original_overlays:
+		_active_buff_overlays.append(_active_buff_visual.make_overlay(original))
+	_update_active_buff_visual(0.0)
+
+
+func _update_active_buff_visual(delta: float) -> void:
+	if not is_instance_valid(_active_buff_visual):
+		return
+	var enabled := not _dying and is_instance_valid(_source) and _state.active_buff
+	_active_buff_visual.advance(enabled, delta)
+	var shown := _active_buff_visual.visible
+	if shown != _last_buff_visible:
+		_last_buff_visible = shown
+		_set_hit_flash(_hit_flash_timer > 0.0)

@@ -9,7 +9,10 @@ const REGEN_INTERVAL := 2.8
 
 var elixir := 5.0:
 	set(value):
-		elixir = clampf(value, 0.0, MAX_ELIXIR)
+		var next := clampf(value, 0.0, MAX_ELIXIR)
+		if is_equal_approx(elixir, next):
+			return
+		elixir = next
 		changed.emit(elixir)
 
 # 回复倍率由 main 按比赛计时统一设置：正赛末段/加时前段为双倍，加时最后一分钟为三倍。
@@ -17,12 +20,12 @@ var regen_multiplier := 1.0
 
 var _timer := 0.0
 
-func _process(delta: float) -> void:
+func sim_tick(delta: float) -> void:
 	if elixir >= MAX_ELIXIR or regen_multiplier <= 0.0:
 		return
 	_timer += delta
-	if _timer >= REGEN_INTERVAL / regen_multiplier:
-		_timer = 0.0
+	while _timer + 0.0000001 >= REGEN_INTERVAL / regen_multiplier and elixir < MAX_ELIXIR:
+		_timer = maxf(0.0, _timer - REGEN_INTERVAL / regen_multiplier)
 		elixir += 1.0
 
 func can_afford(cost: float) -> bool:

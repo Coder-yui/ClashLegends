@@ -6,6 +6,7 @@ extends Node
 const THINK_INTERVAL := 1.0   # 每秒决策一次
 const PLAY_THRESHOLD := 6.0   # 金币攒到这个数才开始出牌
 
+var enabled := true
 var _main: Node
 var _elixir: ElixirManager
 var _think_timer := 0.0
@@ -17,7 +18,7 @@ func setup(main: Node, deck: Array = []) -> void:
 	_elixir = ElixirManager.new()
 	add_child(_elixir)
 
-func _process(delta: float) -> void:
+func sim_tick(delta: float) -> void:
 	if _main == null or _main.game_over:
 		return
 	_think_timer -= delta
@@ -51,10 +52,10 @@ func _play(card_id: String, stats: Dictionary) -> void:
 			pos = _main._find_player_cluster()
 		"building":
 			# 建筑放在己方半场内靠前的位置
-			var bx: float = _main.BRIDGE_X_LEFT if randi() % 2 == 0 else _main.BRIDGE_X_RIGHT
+			var bx: float = ArenaRules.BRIDGE_X_LEFT if randi() % 2 == 0 else ArenaRules.BRIDGE_X_RIGHT
 			pos = Vector2(bx + randf_range(-20.0, 20.0), 420.0)
 		_:
 			# 单位在公主塔前方的合法格出兵；旧坐标 y=250 会与新塔位直接重叠。
-			var bx: float = _main.BRIDGE_X_LEFT if randi() % 2 == 0 else _main.BRIDGE_X_RIGHT
+			var bx: float = ArenaRules.BRIDGE_X_LEFT if randi() % 2 == 0 else ArenaRules.BRIDGE_X_RIGHT
 			pos = Vector2(bx + randf_range(-30.0, 30.0), 460.0)
 	_main.play_card(1, card_id, pos, {"elixir": _elixir})
