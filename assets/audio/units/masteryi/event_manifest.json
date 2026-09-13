@@ -560,9 +560,35 @@
     "file": "play_sfx_masteryi_death3d_cast.wav",
     "event": "Play_sfx_MasterYi_Death3D_cast",
     "event_id": 846545954,
-    "source_preview": "event_wav/Play_sfx_MasterYi_Death3D_cast.wav",
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/masteryi_base_audio/event_wav/Play_sfx_MasterYi_Death3D_cast.wav",
     "media_ids": [
       778800605
-    ]
+    ],
+    "duration": 1.5,
+    "sha256": "88b6e70b5dbfd4417887497edd7ff729bd49e0a2917fd4e1ec933d9e4902b743",
+    "death_envelope": {
+      "source_duration": 1.7572562358276644,
+      "source_sha256": "26781361fe5e52e935b2142855869d02d6a20102cb66558bbd632f7616507724",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    },
+    "processing": "source PCM gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s"
+  },
+  {
+    "file": "play_sfx_masteryi_masteryidoublestrike_onhit_1559186049_1153642577_r.wav",
+    "event": "Play_sfx_MasterYi_MasterYiDoubleStrike_OnHit",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/masteryi_base_audio/txtp/Play_sfx_MasterYi_MasterYiDoubleStrike_OnHit [1559186049=1153642577] {r}.txtp",
+    "event_id": 2349492419,
+    "media_ids": [
+      7394909,
+      16380216,
+      33081959,
+      112126905
+    ],
+    "duration": 0.7687074829931972,
+    "sha256": "97732c8ed302ed5c7194a149ce6d800f10a9b88115fed61b32ec616676a9de09",
+    "processing": "vgmstream-cli -i; first explicit material branch, nested layers retained"
   }
 ]

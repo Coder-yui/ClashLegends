@@ -1,0 +1,572 @@
+[
+  {
+    "file": "play_sfx_sett_settbasicattack_cast_r1.wav",
+    "event": "Play_sfx_Sett_SettBasicAttack_cast",
+    "event_id": 3589742249,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/event_wav/Play_sfx_Sett_SettBasicAttack_cast {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/txtp/Play_sfx_Sett_SettBasicAttack_cast {r1}.txtp",
+    "media_ids": [
+      5331247,
+      22277956,
+      23542778,
+      184162044
+    ],
+    "duration": 0.7499,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "671dddadeab887709ad96339f63eccabdf435f64702fa8cd24a92bd56abaea42",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sett_settbasicattack_cast_r2.wav",
+    "event": "Play_sfx_Sett_SettBasicAttack_cast",
+    "event_id": 3589742249,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/event_wav/Play_sfx_Sett_SettBasicAttack_cast {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/txtp/Play_sfx_Sett_SettBasicAttack_cast {r2}.txtp",
+    "media_ids": [
+      5331247,
+      22277956,
+      23542778,
+      184162044
+    ],
+    "duration": 0.7546,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "4e2d10783765b20720d72ae6ac02747f282af444547885258a60db593c6cdf9e",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sett_settbasicattack_cast_r3.wav",
+    "event": "Play_sfx_Sett_SettBasicAttack_cast",
+    "event_id": 3589742249,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/event_wav/Play_sfx_Sett_SettBasicAttack_cast {r3}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/txtp/Play_sfx_Sett_SettBasicAttack_cast {r3}.txtp",
+    "media_ids": [
+      5331247,
+      22277956,
+      23542778,
+      184162044
+    ],
+    "duration": 0.8593,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "09a2a70e892cab2475f072a1296f201d29f315d52408ad745344cae96e044b5a",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sett_settbasicattack2_cast_r1.wav",
+    "event": "Play_sfx_Sett_SettBasicAttack2_cast",
+    "event_id": 1507730249,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/event_wav/Play_sfx_Sett_SettBasicAttack2_cast {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/txtp/Play_sfx_Sett_SettBasicAttack2_cast {r1}.txtp",
+    "media_ids": [
+      197676997,
+      206533864,
+      534446973,
+      1018954348
+    ],
+    "duration": 0.8422,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "0099966944bf801615722736dbe99a378493f1d2dc4074d1cbec5dffb9f482f5",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sett_settbasicattack2_cast_r2.wav",
+    "event": "Play_sfx_Sett_SettBasicAttack2_cast",
+    "event_id": 1507730249,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/event_wav/Play_sfx_Sett_SettBasicAttack2_cast {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/txtp/Play_sfx_Sett_SettBasicAttack2_cast {r2}.txtp",
+    "media_ids": [
+      197676997,
+      206533864,
+      534446973,
+      1018954348
+    ],
+    "duration": 0.8422,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "7725197a58d026b7965669bb3e48a13a7e7d4a2e00e9b531add3498ebe390c5f",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sett_settbasicattack2_cast_r3.wav",
+    "event": "Play_sfx_Sett_SettBasicAttack2_cast",
+    "event_id": 1507730249,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/event_wav/Play_sfx_Sett_SettBasicAttack2_cast {r3}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/txtp/Play_sfx_Sett_SettBasicAttack2_cast {r3}.txtp",
+    "media_ids": [
+      197676997,
+      206533864,
+      534446973,
+      1018954348
+    ],
+    "duration": 0.8422,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "646640b72aec605f26d02070e90113281f853b8b905c425574b5615602f1c4e5",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sett_settbasicattack_onhit_1559186049_1153642577_r1_d.wav",
+    "event": "Play_sfx_Sett_SettBasicAttack_OnHit",
+    "event_id": 4025747878,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/event_wav/Play_sfx_Sett_SettBasicAttack_OnHit [1559186049=1153642577] {r1} {d}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/txtp/Play_sfx_Sett_SettBasicAttack_OnHit [1559186049=1153642577] {r1} {d}.txtp",
+    "media_ids": [
+      236914936,
+      466045792,
+      964213463,
+      993414669
+    ],
+    "duration": 0.7081,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "ac9d100ab275873361f8d3c6c4befdb7042161bba291d25197a968d22dbbaaba",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sett_settbasicattack_onhit_1559186049_1153642577_r2_d.wav",
+    "event": "Play_sfx_Sett_SettBasicAttack_OnHit",
+    "event_id": 4025747878,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/event_wav/Play_sfx_Sett_SettBasicAttack_OnHit [1559186049=1153642577] {r2} {d}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/txtp/Play_sfx_Sett_SettBasicAttack_OnHit [1559186049=1153642577] {r2} {d}.txtp",
+    "media_ids": [
+      236914936,
+      466045792,
+      964213463,
+      993414669
+    ],
+    "duration": 0.7081,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "5631c1847f30e58125f8c1b91511a93b7390243f2c928db2ec324a610d489f47",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sett_settbasicattack_onhit_1559186049_1153642577_r3_d.wav",
+    "event": "Play_sfx_Sett_SettBasicAttack_OnHit",
+    "event_id": 4025747878,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/event_wav/Play_sfx_Sett_SettBasicAttack_OnHit [1559186049=1153642577] {r3} {d}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/txtp/Play_sfx_Sett_SettBasicAttack_OnHit [1559186049=1153642577] {r3} {d}.txtp",
+    "media_ids": [
+      236914936,
+      466045792,
+      964213463,
+      993414669
+    ],
+    "duration": 0.7081,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "39c0713dead2c65b8ab9ca1cfbdb7e2946fb3b8ca58783505874f140c828ffad",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sett_settbasicattack2_onhit_1559186049_1153642577_r1.wav",
+    "event": "Play_sfx_Sett_SettBasicAttack2_OnHit",
+    "event_id": 1307379398,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/event_wav/Play_sfx_Sett_SettBasicAttack2_OnHit [1559186049=1153642577] {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/txtp/Play_sfx_Sett_SettBasicAttack2_OnHit [1559186049=1153642577] {r1}.txtp",
+    "media_ids": [
+      18718757,
+      48058828,
+      184399406,
+      310749678
+    ],
+    "duration": 0.7938,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "20d768b4af15015bfc1bdaddfd8ab744c7769431c3bed2376dfdef3515919f42",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sett_settbasicattack2_onhit_1559186049_1153642577_r2.wav",
+    "event": "Play_sfx_Sett_SettBasicAttack2_OnHit",
+    "event_id": 1307379398,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/event_wav/Play_sfx_Sett_SettBasicAttack2_OnHit [1559186049=1153642577] {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/txtp/Play_sfx_Sett_SettBasicAttack2_OnHit [1559186049=1153642577] {r2}.txtp",
+    "media_ids": [
+      18718757,
+      48058828,
+      184399406,
+      310749678
+    ],
+    "duration": 0.7724,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "95523094edb501e1ad88e579f5504f39df81b4c3a54be07977a94fc79ce46220",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sett_settbasicattack2_onhit_1559186049_1153642577_r3.wav",
+    "event": "Play_sfx_Sett_SettBasicAttack2_OnHit",
+    "event_id": 1307379398,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/event_wav/Play_sfx_Sett_SettBasicAttack2_OnHit [1559186049=1153642577] {r3}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/txtp/Play_sfx_Sett_SettBasicAttack2_OnHit [1559186049=1153642577] {r3}.txtp",
+    "media_ids": [
+      18718757,
+      48058828,
+      184399406,
+      310749678
+    ],
+    "duration": 0.8507,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "fe1575c4acc04ac97972ea5ebef9b0e851d765b2b7277be37a712205858feed3",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sett_settbasicattack3_onhit_1559186049_1153642577_r1.wav",
+    "event": "Play_sfx_Sett_SettBasicAttack3_OnHit",
+    "event_id": 990329087,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/event_wav/Play_sfx_Sett_SettBasicAttack3_OnHit [1559186049=1153642577] {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/txtp/Play_sfx_Sett_SettBasicAttack3_OnHit [1559186049=1153642577] {r1}.txtp",
+    "media_ids": [
+      236914936,
+      466045792,
+      964213463,
+      993414669
+    ],
+    "duration": 0.7081,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "ac9d100ab275873361f8d3c6c4befdb7042161bba291d25197a968d22dbbaaba",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sett_settbasicattack3_onhit_1559186049_1153642577_r2.wav",
+    "event": "Play_sfx_Sett_SettBasicAttack3_OnHit",
+    "event_id": 990329087,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/event_wav/Play_sfx_Sett_SettBasicAttack3_OnHit [1559186049=1153642577] {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/txtp/Play_sfx_Sett_SettBasicAttack3_OnHit [1559186049=1153642577] {r2}.txtp",
+    "media_ids": [
+      236914936,
+      466045792,
+      964213463,
+      993414669
+    ],
+    "duration": 0.7081,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "5631c1847f30e58125f8c1b91511a93b7390243f2c928db2ec324a610d489f47",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sett_settbasicattack3_onhit_1559186049_1153642577_r3.wav",
+    "event": "Play_sfx_Sett_SettBasicAttack3_OnHit",
+    "event_id": 990329087,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/event_wav/Play_sfx_Sett_SettBasicAttack3_OnHit [1559186049=1153642577] {r3}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/txtp/Play_sfx_Sett_SettBasicAttack3_OnHit [1559186049=1153642577] {r3}.txtp",
+    "media_ids": [
+      236914936,
+      466045792,
+      964213463,
+      993414669
+    ],
+    "duration": 0.7081,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "39c0713dead2c65b8ab9ca1cfbdb7e2946fb3b8ca58783505874f140c828ffad",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sett_settbasicattack4_onhit_1559186049_1153642577_r1_d.wav",
+    "event": "Play_sfx_Sett_SettBasicAttack4_OnHit",
+    "event_id": 1780621016,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/event_wav/Play_sfx_Sett_SettBasicAttack4_OnHit [1559186049=1153642577] {r1} {d}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/txtp/Play_sfx_Sett_SettBasicAttack4_OnHit [1559186049=1153642577] {r1} {d}.txtp",
+    "media_ids": [
+      18718757,
+      48058828,
+      184399406,
+      310749678
+    ],
+    "duration": 0.7938,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "20d768b4af15015bfc1bdaddfd8ab744c7769431c3bed2376dfdef3515919f42",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sett_settbasicattack4_onhit_1559186049_1153642577_r2_d.wav",
+    "event": "Play_sfx_Sett_SettBasicAttack4_OnHit",
+    "event_id": 1780621016,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/event_wav/Play_sfx_Sett_SettBasicAttack4_OnHit [1559186049=1153642577] {r2} {d}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/txtp/Play_sfx_Sett_SettBasicAttack4_OnHit [1559186049=1153642577] {r2} {d}.txtp",
+    "media_ids": [
+      18718757,
+      48058828,
+      184399406,
+      310749678
+    ],
+    "duration": 0.7724,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "95523094edb501e1ad88e579f5504f39df81b4c3a54be07977a94fc79ce46220",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sett_settbasicattack4_onhit_1559186049_1153642577_r3_d.wav",
+    "event": "Play_sfx_Sett_SettBasicAttack4_OnHit",
+    "event_id": 1780621016,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/event_wav/Play_sfx_Sett_SettBasicAttack4_OnHit [1559186049=1153642577] {r3} {d}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/txtp/Play_sfx_Sett_SettBasicAttack4_OnHit [1559186049=1153642577] {r3} {d}.txtp",
+    "media_ids": [
+      18718757,
+      48058828,
+      184399406,
+      310749678
+    ],
+    "duration": 0.8507,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "fe1575c4acc04ac97972ea5ebef9b0e851d765b2b7277be37a712205858feed3",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sett_settw_cast_r1.wav",
+    "event": "Play_sfx_Sett_SettW_cast",
+    "event_id": 4260903270,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/event_wav/Play_sfx_Sett_SettW_cast {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/txtp/Play_sfx_Sett_SettW_cast {r1}.txtp",
+    "media_ids": [
+      296294238,
+      706012001
+    ],
+    "duration": 2.5346,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "433f0c5c391e3ff2cf13d0b59b5862f41af6c034dfa7078f1c9222643ff111e3",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sett_settw_cast_r2.wav",
+    "event": "Play_sfx_Sett_SettW_cast",
+    "event_id": 4260903270,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/event_wav/Play_sfx_Sett_SettW_cast {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/txtp/Play_sfx_Sett_SettW_cast {r2}.txtp",
+    "media_ids": [
+      296294238,
+      706012001
+    ],
+    "duration": 2.3982,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "9522e8e6e1480ffed8c1c78d90c88663b5692174eed0a5d5e1c36c62d79f9baa",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sett_settw_hit_r1.wav",
+    "event": "Play_sfx_Sett_SettW_hit",
+    "event_id": 897359554,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/event_wav/Play_sfx_Sett_SettW_hit {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/txtp/Play_sfx_Sett_SettW_hit {r1}.txtp",
+    "media_ids": [
+      587761099,
+      927211823
+    ],
+    "duration": 1.6256,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "f67a25352740c1f6f5464167c5e0a3ec462c15c236fbb43425c4723f0499b0a7",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sett_settw_hit_r2.wav",
+    "event": "Play_sfx_Sett_SettW_hit",
+    "event_id": 897359554,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/event_wav/Play_sfx_Sett_SettW_hit {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/txtp/Play_sfx_Sett_SettW_hit {r2}.txtp",
+    "media_ids": [
+      587761099,
+      927211823
+    ],
+    "duration": 1.6679,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "46349e1e6d3bf89f50ff29f4181ddc726f7ac25195f6bc4312dd6664c34eebc5",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sett_settw_maxed_cast.wav",
+    "event": "Play_sfx_Sett_SettW_maxed_cast",
+    "event_id": 3178282238,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/event_wav/Play_sfx_Sett_SettW_maxed_cast.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/txtp/Play_sfx_Sett_SettW_maxed_cast.txtp",
+    "media_ids": [
+      282592070
+    ],
+    "duration": 3.4575,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "6554e94833ae89c1acf9a496d16a0eb78d7eb941db3538bb0d7473422478deb2",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sett_settw_maxed_hit_r1.wav",
+    "event": "Play_sfx_Sett_SettW_maxed_hit",
+    "event_id": 190377994,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/event_wav/Play_sfx_Sett_SettW_maxed_hit {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/txtp/Play_sfx_Sett_SettW_maxed_hit {r1}.txtp",
+    "media_ids": [
+      73376965,
+      866442714
+    ],
+    "duration": 1.9912,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "f29a85cb750ed4073f9c4f2fa379be7f1aa47c163de184d1a257a2873c35aaf5",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_sett_settw_maxed_hit_r2.wav",
+    "event": "Play_sfx_Sett_SettW_maxed_hit",
+    "event_id": 190377994,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/event_wav/Play_sfx_Sett_SettW_maxed_hit {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/txtp/Play_sfx_Sett_SettW_maxed_hit {r2}.txtp",
+    "media_ids": [
+      73376965,
+      866442714
+    ],
+    "duration": 1.9912,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "78feeece5ceb35baf0b0daf381ff9bd0617c0a0d0327608a5da4c346e0352a6b",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_vo_sett_death3d_r10_zh_cn.wav",
+    "event": "Play_vo_Sett_Death3D",
+    "event_id": 2346438840,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett_vo/event_wav/Play_vo_Sett_Death3D {r10}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett_vo/txtp/Play_vo_Sett_Death3D {r10}.txtp",
+    "media_ids": [
+      387419108,
+      668821009,
+      742537394,
+      789151248,
+      823876277,
+      1355743425,
+      1379175089,
+      1411673787,
+      1554365289,
+      1663478266,
+      1965283235
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "19290555c74ede49950f7e1582044220c39ddf04b3760afdebb19483dfc60ee1",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 3.7384126984126986,
+      "source_sha256": "256f00e609d2894e011c934a6e19fdc42882aa8d4740b3a6764067928ab910d0",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_vo_sett_death3d_r11_zh_cn.wav",
+    "event": "Play_vo_Sett_Death3D",
+    "event_id": 2346438840,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett_vo/event_wav/Play_vo_Sett_Death3D {r11}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett_vo/txtp/Play_vo_Sett_Death3D {r11}.txtp",
+    "media_ids": [
+      387419108,
+      668821009,
+      742537394,
+      789151248,
+      823876277,
+      1355743425,
+      1379175089,
+      1411673787,
+      1554365289,
+      1663478266,
+      1965283235
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "462cf2813e3838c705fc5a48818eb3e53557f5dcb16ac0d62d33e809b420f516",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 3.1811337868480725,
+      "source_sha256": "abef8e1d5c692136d2f07f1888d7d629ba9c1731faf745b7e9294f4944fb6091",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_vo_sett_death3d_r1_zh_cn.wav",
+    "event": "Play_vo_Sett_Death3D",
+    "event_id": 2346438840,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett_vo/event_wav/Play_vo_Sett_Death3D {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett_vo/txtp/Play_vo_Sett_Death3D {r1}.txtp",
+    "media_ids": [
+      387419108,
+      668821009,
+      742537394,
+      789151248,
+      823876277,
+      1355743425,
+      1379175089,
+      1411673787,
+      1554365289,
+      1663478266,
+      1965283235
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "c27ce0566f418ea5d375efcc7d3a9cbe29dcf0a6b0aef8276692a442c0ef9d3e",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 3.8545124716553287,
+      "source_sha256": "3d765d9e834c362e549b2581b657a1e60b2b72bf25e5e1421982baebfdf11955",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_sfx_sett_respawn3d_buffactivate_intro.wav",
+    "event": "Play_sfx_Sett_Respawn3D_buffactivate",
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/event_wav/Play_sfx_Sett_Respawn3D_buffactivate.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/txtp/Play_sfx_Sett_Respawn3D_buffactivate.txtp",
+    "media_ids": [
+      564986862
+    ],
+    "duration": 1.0,
+    "processing": "vgmstream-cli -i; FFmpeg first 1.0 s PCM16, final 0.05 s fade-out; original event -6 dB retained",
+    "sha256": "75582f6e0ff846e8e160769dc5333885fc7b98ecaf6baf86654e25bbb0485a99"
+  },
+  {
+    "file": "play_sfx_sett_settw_hit_center_sweetener_r1.wav",
+    "event": "Play_sfx_Sett_SettW_hit_center_sweetener",
+    "event_id": 1470894139,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/txtp/Play_sfx_Sett_SettW_hit_center_sweetener {r1}.txtp",
+    "media_ids": [
+      269423461,
+      357659307
+    ],
+    "duration": 1.3923809523809523,
+    "sha256": "78e6f8cc350266659da28c0ab3354090a64c792478b5c02f364cf941efdc5a44",
+    "processing": "vgmstream-cli -i; source event gain retained"
+  },
+  {
+    "file": "play_sfx_sett_settw_hit_center_sweetener_r2.wav",
+    "event": "Play_sfx_Sett_SettW_hit_center_sweetener",
+    "event_id": 1470894139,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/txtp/Play_sfx_Sett_SettW_hit_center_sweetener {r2}.txtp",
+    "media_ids": [
+      269423461,
+      357659307
+    ],
+    "duration": 1.3923809523809523,
+    "sha256": "7d8ff3895bf0d64bd496a348181bd544ae58ca1bd8af3c3a1c4d8ebc589f847c",
+    "processing": "vgmstream-cli -i; source event gain retained"
+  },
+  {
+    "file": "play_sfx_sett_settw_maxed_hit_center_sweetener_r1.wav",
+    "event": "Play_sfx_Sett_SettW_maxed_hit_center_sweetener",
+    "event_id": 1203426899,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/txtp/Play_sfx_Sett_SettW_maxed_hit_center_sweetener {r1}.txtp",
+    "media_ids": [
+      269423461,
+      357659307
+    ],
+    "duration": 1.3923809523809523,
+    "sha256": "08fbc8e31c234ed90425a0dfe1d26a65dd615b0f87286eb70b952fe94911cedd",
+    "processing": "vgmstream-cli -i; source event gain retained"
+  },
+  {
+    "file": "play_sfx_sett_settw_maxed_hit_center_sweetener_r2.wav",
+    "event": "Play_sfx_Sett_SettW_maxed_hit_center_sweetener",
+    "event_id": 1203426899,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/txtp/Play_sfx_Sett_SettW_maxed_hit_center_sweetener {r2}.txtp",
+    "media_ids": [
+      269423461,
+      357659307
+    ],
+    "duration": 1.3923809523809523,
+    "sha256": "657bdf2b59e5861057e5594a63f86d8a499c386038a8bdd5cbdb26fe08c447f4",
+    "processing": "vgmstream-cli -i; source event gain retained"
+  }
+]

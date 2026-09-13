@@ -1,0 +1,516 @@
+[
+  {
+    "file": "play_sfx_xinzhao_xinzhaobasicattack_oncast_r1_d.wav",
+    "event": "Play_sfx_XinZhao_XinZhaoBasicAttack_OnCast",
+    "event_id": 1151710672,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/event_wav/Play_sfx_XinZhao_XinZhaoBasicAttack_OnCast {r1} {d}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/txtp/Play_sfx_XinZhao_XinZhaoBasicAttack_OnCast {r1} {d}.txtp",
+    "media_ids": [
+      214441466,
+      906265197,
+      995958984
+    ],
+    "duration": 0.514,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "60a1820da6cfd30f8fea97c7317771c6c79260c2c8442af00352c79356316626",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_xinzhao_xinzhaobasicattack_oncast_r2_d.wav",
+    "event": "Play_sfx_XinZhao_XinZhaoBasicAttack_OnCast",
+    "event_id": 1151710672,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/event_wav/Play_sfx_XinZhao_XinZhaoBasicAttack_OnCast {r2} {d}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/txtp/Play_sfx_XinZhao_XinZhaoBasicAttack_OnCast {r2} {d}.txtp",
+    "media_ids": [
+      214441466,
+      906265197,
+      995958984
+    ],
+    "duration": 0.4982,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "ac5252e3cef543655a9d198708fd311857d8696c0c1a814a34f412b4052d3ec6",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_xinzhao_xinzhaobasicattack_oncast_r3_d.wav",
+    "event": "Play_sfx_XinZhao_XinZhaoBasicAttack_OnCast",
+    "event_id": 1151710672,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/event_wav/Play_sfx_XinZhao_XinZhaoBasicAttack_OnCast {r3} {d}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/txtp/Play_sfx_XinZhao_XinZhaoBasicAttack_OnCast {r3} {d}.txtp",
+    "media_ids": [
+      214441466,
+      906265197,
+      995958984
+    ],
+    "duration": 0.3454,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "a835f72e7960e1cd86e60e15135a990732ef6ae4e2575013ed78d15c636ec93c",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_xinzhao_xinzhaobasicattack2_oncast_r1.wav",
+    "event": "Play_sfx_XinZhao_XinZhaoBasicAttack2_OnCast",
+    "event_id": 266525040,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/event_wav/Play_sfx_XinZhao_XinZhaoBasicAttack2_OnCast {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/txtp/Play_sfx_XinZhao_XinZhaoBasicAttack2_OnCast {r1}.txtp",
+    "media_ids": [
+      214441466,
+      906265197,
+      995958984
+    ],
+    "duration": 0.514,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "60a1820da6cfd30f8fea97c7317771c6c79260c2c8442af00352c79356316626",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_xinzhao_xinzhaobasicattack2_oncast_r2.wav",
+    "event": "Play_sfx_XinZhao_XinZhaoBasicAttack2_OnCast",
+    "event_id": 266525040,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/event_wav/Play_sfx_XinZhao_XinZhaoBasicAttack2_OnCast {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/txtp/Play_sfx_XinZhao_XinZhaoBasicAttack2_OnCast {r2}.txtp",
+    "media_ids": [
+      214441466,
+      906265197,
+      995958984
+    ],
+    "duration": 0.4982,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "ac5252e3cef543655a9d198708fd311857d8696c0c1a814a34f412b4052d3ec6",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_xinzhao_xinzhaobasicattack2_oncast_r3.wav",
+    "event": "Play_sfx_XinZhao_XinZhaoBasicAttack2_OnCast",
+    "event_id": 266525040,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/event_wav/Play_sfx_XinZhao_XinZhaoBasicAttack2_OnCast {r3}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/txtp/Play_sfx_XinZhao_XinZhaoBasicAttack2_OnCast {r3}.txtp",
+    "media_ids": [
+      214441466,
+      906265197,
+      995958984
+    ],
+    "duration": 0.3454,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "a835f72e7960e1cd86e60e15135a990732ef6ae4e2575013ed78d15c636ec93c",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_xinzhao_xinzhaopassivecritattack_oncast_r1.wav",
+    "event": "Play_sfx_XinZhao_XinZhaoPassiveCritAttack_OnCast",
+    "event_id": 3010709727,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/event_wav/Play_sfx_XinZhao_XinZhaoPassiveCritAttack_OnCast {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/txtp/Play_sfx_XinZhao_XinZhaoPassiveCritAttack_OnCast {r1}.txtp",
+    "media_ids": [
+      122943645,
+      449517073,
+      1053213754
+    ],
+    "duration": 0.4629,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "4e748808e7ed4e370e9fdacc6d1b9ff66248108919d20c9331c8d5bf8babc3d5",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_xinzhao_xinzhaopassivecritattack_oncast_r2.wav",
+    "event": "Play_sfx_XinZhao_XinZhaoPassiveCritAttack_OnCast",
+    "event_id": 3010709727,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/event_wav/Play_sfx_XinZhao_XinZhaoPassiveCritAttack_OnCast {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/txtp/Play_sfx_XinZhao_XinZhaoPassiveCritAttack_OnCast {r2}.txtp",
+    "media_ids": [
+      122943645,
+      449517073,
+      1053213754
+    ],
+    "duration": 0.4629,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "3e897bbcac1ccceada0371d90af0da4b5d5cca6d184a8c4b450e3d360273c2d4",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_xinzhao_xinzhaopassivecritattack_oncast_r3.wav",
+    "event": "Play_sfx_XinZhao_XinZhaoPassiveCritAttack_OnCast",
+    "event_id": 3010709727,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/event_wav/Play_sfx_XinZhao_XinZhaoPassiveCritAttack_OnCast {r3}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/txtp/Play_sfx_XinZhao_XinZhaoPassiveCritAttack_OnCast {r3}.txtp",
+    "media_ids": [
+      122943645,
+      449517073,
+      1053213754
+    ],
+    "duration": 0.4629,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "ed94e5e7011b47584226795f079c13dc37b725237e2a04c179452d4a5607f801",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_xinzhao_xinzhaobasicattack_onhit_1559186049_1153642577_r1_d.wav",
+    "event": "Play_sfx_XinZhao_XinZhaoBasicAttack_OnHit",
+    "event_id": 1081592464,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/event_wav/Play_sfx_XinZhao_XinZhaoBasicAttack_OnHit [1559186049=1153642577] {r1} {d}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/txtp/Play_sfx_XinZhao_XinZhaoBasicAttack_OnHit [1559186049=1153642577] {r1} {d}.txtp",
+    "media_ids": [
+      240682552,
+      240807403,
+      248519204
+    ],
+    "duration": 0.7606,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "4f5aff70df518d6b1704843d99be805a9afe390eb74dde3e0479393e9d6c156c",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_xinzhao_xinzhaobasicattack_onhit_1559186049_1153642577_r2_d.wav",
+    "event": "Play_sfx_XinZhao_XinZhaoBasicAttack_OnHit",
+    "event_id": 1081592464,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/event_wav/Play_sfx_XinZhao_XinZhaoBasicAttack_OnHit [1559186049=1153642577] {r2} {d}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/txtp/Play_sfx_XinZhao_XinZhaoBasicAttack_OnHit [1559186049=1153642577] {r2} {d}.txtp",
+    "media_ids": [
+      240682552,
+      240807403,
+      248519204
+    ],
+    "duration": 0.8785,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "831b7b607b0eb3f2ff61bdc5e80c4d56e20f912a5485b3d2ddfb20d3e31ae16e",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_xinzhao_xinzhaobasicattack_onhit_1559186049_1153642577_r3_d.wav",
+    "event": "Play_sfx_XinZhao_XinZhaoBasicAttack_OnHit",
+    "event_id": 1081592464,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/event_wav/Play_sfx_XinZhao_XinZhaoBasicAttack_OnHit [1559186049=1153642577] {r3} {d}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/txtp/Play_sfx_XinZhao_XinZhaoBasicAttack_OnHit [1559186049=1153642577] {r3} {d}.txtp",
+    "media_ids": [
+      240682552,
+      240807403,
+      248519204
+    ],
+    "duration": 0.7823,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "f69be73e47e422df1950a8a58ec380a4d270cecb480f7bb4a32bee28b803c33b",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_xinzhao_xinzhaobasicattack2_onhit_1559186049_1153642577_r1.wav",
+    "event": "Play_sfx_XinZhao_XinZhaoBasicAttack2_OnHit",
+    "event_id": 4200707504,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/event_wav/Play_sfx_XinZhao_XinZhaoBasicAttack2_OnHit [1559186049=1153642577] {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/txtp/Play_sfx_XinZhao_XinZhaoBasicAttack2_OnHit [1559186049=1153642577] {r1}.txtp",
+    "media_ids": [
+      240682552,
+      240807403,
+      248519204
+    ],
+    "duration": 0.7606,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "4f5aff70df518d6b1704843d99be805a9afe390eb74dde3e0479393e9d6c156c",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_xinzhao_xinzhaobasicattack2_onhit_1559186049_1153642577_r2.wav",
+    "event": "Play_sfx_XinZhao_XinZhaoBasicAttack2_OnHit",
+    "event_id": 4200707504,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/event_wav/Play_sfx_XinZhao_XinZhaoBasicAttack2_OnHit [1559186049=1153642577] {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/txtp/Play_sfx_XinZhao_XinZhaoBasicAttack2_OnHit [1559186049=1153642577] {r2}.txtp",
+    "media_ids": [
+      240682552,
+      240807403,
+      248519204
+    ],
+    "duration": 0.8785,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "831b7b607b0eb3f2ff61bdc5e80c4d56e20f912a5485b3d2ddfb20d3e31ae16e",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_xinzhao_xinzhaobasicattack2_onhit_1559186049_1153642577_r3.wav",
+    "event": "Play_sfx_XinZhao_XinZhaoBasicAttack2_OnHit",
+    "event_id": 4200707504,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/event_wav/Play_sfx_XinZhao_XinZhaoBasicAttack2_OnHit [1559186049=1153642577] {r3}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/txtp/Play_sfx_XinZhao_XinZhaoBasicAttack2_OnHit [1559186049=1153642577] {r3}.txtp",
+    "media_ids": [
+      240682552,
+      240807403,
+      248519204
+    ],
+    "duration": 0.7823,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "f69be73e47e422df1950a8a58ec380a4d270cecb480f7bb4a32bee28b803c33b",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_xinzhao_xinzhaopassivecritattack_onhit_r1.wav",
+    "event": "Play_sfx_XinZhao_XinZhaoPassiveCritAttack_OnHit",
+    "event_id": 3887163085,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/event_wav/Play_sfx_XinZhao_XinZhaoPassiveCritAttack_OnHit {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/txtp/Play_sfx_XinZhao_XinZhaoPassiveCritAttack_OnHit {r1}.txtp",
+    "media_ids": [
+      290937526,
+      653179355,
+      1046013832
+    ],
+    "duration": 1.0178,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "7621e2345c7993f80dcba6b4392a81e8efa343e51027781e73feb30bbc3fa745",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_xinzhao_xinzhaopassivecritattack_onhit_r2.wav",
+    "event": "Play_sfx_XinZhao_XinZhaoPassiveCritAttack_OnHit",
+    "event_id": 3887163085,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/event_wav/Play_sfx_XinZhao_XinZhaoPassiveCritAttack_OnHit {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/txtp/Play_sfx_XinZhao_XinZhaoPassiveCritAttack_OnHit {r2}.txtp",
+    "media_ids": [
+      290937526,
+      653179355,
+      1046013832
+    ],
+    "duration": 1.0241,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "78f28a7b29a005a3aaa36d236e5736e3e64c189e979e678dc683f4d2dd2f4673",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_xinzhao_xinzhaopassivecritattack_onhit_r3.wav",
+    "event": "Play_sfx_XinZhao_XinZhaoPassiveCritAttack_OnHit",
+    "event_id": 3887163085,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/event_wav/Play_sfx_XinZhao_XinZhaoPassiveCritAttack_OnHit {r3}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/txtp/Play_sfx_XinZhao_XinZhaoPassiveCritAttack_OnHit {r3}.txtp",
+    "media_ids": [
+      290937526,
+      653179355,
+      1046013832
+    ],
+    "duration": 1.0216,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "c5e221237e2fb36c396f3dbe9c22c5c3973a0743399f9ab9d0b2319c736e47c8",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_vo_xinzhao_death3d_r1_zh_cn.wav",
+    "event": "Play_vo_XinZhao_Death3D",
+    "event_id": 3628370327,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao_vo/event_wav/Play_vo_XinZhao_Death3D {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao_vo/txtp/Play_vo_XinZhao_Death3D {r1}.txtp",
+    "media_ids": [
+      586298165,
+      615789791,
+      620007753,
+      1026349766
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "75613d928dc1374adf8818ef145d121cefd520a4ece56657d180c6802f0e35fa",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 3.1646938775510205,
+      "source_sha256": "8459bba72d6dd52bf0c6f44ef45e017318d786c07d17059428c127bd6f14df57",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_vo_xinzhao_death3d_r2_zh_cn.wav",
+    "event": "Play_vo_XinZhao_Death3D",
+    "event_id": 3628370327,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao_vo/event_wav/Play_vo_XinZhao_Death3D {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao_vo/txtp/Play_vo_XinZhao_Death3D {r2}.txtp",
+    "media_ids": [
+      586298165,
+      615789791,
+      620007753,
+      1026349766
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "fffaa7efae26c550919a2251a8e06caedf7be9ee72ce690e710d023d0111d37e",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 4.951383219954648,
+      "source_sha256": "9f04dea1e05fc4726ebac7748d9f2aed569620a58a685786b5bb12e0d020f3a0",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_vo_xinzhao_death3d_r3_zh_cn.wav",
+    "event": "Play_vo_XinZhao_Death3D",
+    "event_id": 3628370327,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao_vo/event_wav/Play_vo_XinZhao_Death3D {r3}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao_vo/txtp/Play_vo_XinZhao_Death3D {r3}.txtp",
+    "media_ids": [
+      586298165,
+      615789791,
+      620007753,
+      1026349766
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "cd617525209ae8ceade6f93d795a2842a381d77fd0b592ceb5f808d737234967",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 5.4367120181405895,
+      "source_sha256": "0a4a5b49f5336ba9fbad5914ca13a5a6b0ee9ccd487a858440f36c70165de3b3",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_sfx_xinzhao_xinzhaor_hitlocation_knockback_r1.wav",
+    "event": "Play_sfx_XinZhao_XinZhaoR_hitlocation_knockback",
+    "event_id": 1470247456,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/txtp/Play_sfx_XinZhao_XinZhaoR_hitlocation_knockback {r1}.txtp",
+    "media_ids": [
+      651931985,
+      684632494
+    ],
+    "duration": 3.1477,
+    "processing": "vgmstream-cli -i; original event layers and gain retained",
+    "sha256": "ce2b9dbf3074618752637ce992f232937b709abf471f21b488476d30c64be9fb"
+  },
+  {
+    "file": "play_sfx_xinzhao_xinzhaor_hitlocation_knockback_r2.wav",
+    "event": "Play_sfx_XinZhao_XinZhaoR_hitlocation_knockback",
+    "event_id": 1470247456,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/txtp/Play_sfx_XinZhao_XinZhaoR_hitlocation_knockback {r2}.txtp",
+    "media_ids": [
+      651931985,
+      684632494
+    ],
+    "duration": 3.2069,
+    "processing": "vgmstream-cli -i; original event layers and gain retained",
+    "sha256": "7bbacbdcad41e0926e2f8cfa589bba4ad715f66d076b22a681e75aaedcf928b6"
+  },
+  {
+    "file": "play_sfx_xinzhao_xinzhaor_oncast.wav",
+    "event": "Play_sfx_XinZhao_XinZhaoR_OnCast",
+    "event_id": 489959008,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/txtp/Play_sfx_XinZhao_XinZhaoR_OnCast.txtp",
+    "media_ids": [
+      51886756,
+      457923771
+    ],
+    "duration": 2.5086,
+    "processing": "vgmstream-cli -i; original event layers and gain retained",
+    "sha256": "acbb2fc5b23097a5f651e91b9166cc433d0918475ddbdb46406e632a3ca871a8"
+  },
+  {
+    "file": "play_sfx_xinzhao_xinzhaopassive_heal_buffactivate_r1.wav",
+    "event": "Play_sfx_XinZhao_XinZhaoPassive_heal_buffactivate",
+    "event_id": 193554630,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/txtp/Play_sfx_XinZhao_XinZhaoPassive_heal_buffactivate {r1}.txtp",
+    "media_ids": [
+      87430659,
+      420277824,
+      622087300
+    ],
+    "duration": 1.3518,
+    "processing": "vgmstream-cli -i; original event layers and gain retained",
+    "sha256": "2c548d14428622aa5b6e24034f290b44268b63cbd552ec714480c727c274a987"
+  },
+  {
+    "file": "play_sfx_xinzhao_xinzhaopassive_heal_buffactivate_r2.wav",
+    "event": "Play_sfx_XinZhao_XinZhaoPassive_heal_buffactivate",
+    "event_id": 193554630,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/txtp/Play_sfx_XinZhao_XinZhaoPassive_heal_buffactivate {r2}.txtp",
+    "media_ids": [
+      87430659,
+      420277824,
+      622087300
+    ],
+    "duration": 1.3518,
+    "processing": "vgmstream-cli -i; original event layers and gain retained",
+    "sha256": "d2ac85b023280776517e6d91228a28cd32072f16432c87ecb77ade0eb3fd2953"
+  },
+  {
+    "file": "play_sfx_xinzhao_xinzhaopassive_heal_buffactivate_r3.wav",
+    "event": "Play_sfx_XinZhao_XinZhaoPassive_heal_buffactivate",
+    "event_id": 193554630,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/txtp/Play_sfx_XinZhao_XinZhaoPassive_heal_buffactivate {r3}.txtp",
+    "media_ids": [
+      87430659,
+      420277824,
+      622087300
+    ],
+    "duration": 1.3518,
+    "processing": "vgmstream-cli -i; original event layers and gain retained",
+    "sha256": "ae66a0ae5a33163036b4a44428ac5111da9af40e0e62ed27417be0fa483e27de"
+  },
+  {
+    "file": "play_sfx_xinzhao_xinzhaor_oncast_sweep.wav",
+    "event": "Play_sfx_XinZhao_XinZhaoR_OnCast",
+    "event_id": 489959008,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/event_wav/Play_sfx_XinZhao_XinZhaoR_OnCast.wav",
+    "source_sha256": "acbb2fc5b23097a5f651e91b9166cc433d0918475ddbdb46406e632a3ca871a8",
+    "media_ids": [
+      51886756,
+      457923771
+    ],
+    "duration": 0.65,
+    "processing": "Keep combined event onset 0–0.65s; linear amplitude fade 0.55–0.65s. Initial sweep only; omit remaining tail. No normalization.",
+    "sha256": "6609f9cdad8ded41710280b0074a2cf229679bcbc48d53d990d547632d24bc5d"
+  },
+  {
+    "file": "play_vo_xinzhao_xinzhaor_cast3d_r1_zh_cn.wav",
+    "event": "Play_vo_XinZhao_XinZhaoR_cast3D",
+    "event_id": 1678827506,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/xin_r_review/Play_vo_XinZhao_XinZhaoR_cast3D {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/xin_r_review/Play_vo_XinZhao_XinZhaoR_cast3D {r1}.txtp",
+    "media_ids": [
+      375886638
+    ],
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/XinZhao.zh_CN.wad.client",
+    "duration": 1.5807256235827665,
+    "processing": "wwiser event TXTP selected random variant, vgmstream-cli -i; source event mix retained; no cut or normalization",
+    "sha256": "8af30412db7c601e85cd3af5e92322dac52d2c01c53435defd99f5c7c2b16b78"
+  },
+  {
+    "file": "play_vo_xinzhao_xinzhaor_cast3d_r2_zh_cn.wav",
+    "event": "Play_vo_XinZhao_XinZhaoR_cast3D",
+    "event_id": 1678827506,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/xin_r_review/Play_vo_XinZhao_XinZhaoR_cast3D {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/xin_r_review/Play_vo_XinZhao_XinZhaoR_cast3D {r2}.txtp",
+    "media_ids": [
+      1010102839
+    ],
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/XinZhao.zh_CN.wad.client",
+    "duration": 1.5060544217687075,
+    "processing": "wwiser event TXTP selected random variant, vgmstream-cli -i; source event mix retained; no cut or normalization",
+    "sha256": "ae299cfdc7c6a8675416eca51d98034838a0dc0fdbb18618ff5368256e5aba54"
+  },
+  {
+    "file": "play_vo_xinzhao_xinzhaor_cast3d_r3_zh_cn.wav",
+    "event": "Play_vo_XinZhao_XinZhaoR_cast3D",
+    "event_id": 1678827506,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/xin_r_review/Play_vo_XinZhao_XinZhaoR_cast3D {r3}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/xin_r_review/Play_vo_XinZhao_XinZhaoR_cast3D {r3}.txtp",
+    "media_ids": [
+      947326890
+    ],
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/XinZhao.zh_CN.wad.client",
+    "duration": 0.9300453514739229,
+    "processing": "wwiser event TXTP selected random variant, vgmstream-cli -i; source event mix retained; no cut or normalization",
+    "sha256": "8b4a96a5f340bae5bfcfe576698acca4e9d40d36cf4e21f39921c095a5bffc10"
+  },
+  {
+    "file": "play_vo_xinzhao_xinzhaor_cast3d_r4_zh_cn.wav",
+    "event": "Play_vo_XinZhao_XinZhaoR_cast3D",
+    "event_id": 1678827506,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/xin_r_review/Play_vo_XinZhao_XinZhaoR_cast3D {r4}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/xin_r_review/Play_vo_XinZhao_XinZhaoR_cast3D {r4}.txtp",
+    "media_ids": [
+      855580588
+    ],
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/XinZhao.zh_CN.wad.client",
+    "duration": 0.9460544217687075,
+    "processing": "wwiser event TXTP selected random variant, vgmstream-cli -i; source event mix retained; no cut or normalization",
+    "sha256": "08254d2fd4dc7b8c1a9f057b5fa48c4bbd4690278c2b8cbaf5a3984cd3860588"
+  }
+]

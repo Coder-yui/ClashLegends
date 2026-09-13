@@ -1060,52 +1060,142 @@
     "file": "play_vo_missfortune_death3d_r1_zh_cn.wav",
     "event": "Play_vo_MissFortune_Death3D",
     "event_id": 1154046355,
-    "source_preview": "txtp/Play_vo_MissFortune_Death3D {r1}.txtp",
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/verification/missfortune_vo_zh/event_wav/play_vo_missfortune_death3d_r1_zh_cn.wav",
     "media_ids": [
       342264711,
       1290892025,
       1867586122,
       2069817053
     ],
-    "source_package": "MissFortune.zh_CN.wad.client"
+    "source_package": "MissFortune.zh_CN.wad.client",
+    "duration": 1.5,
+    "sha256": "67b10d9f959b7ad4ac2cf83ab8d418d6284ba6d6cd6877c52f4f47e8d2925577",
+    "death_envelope": {
+      "source_duration": 3.8545124716553287,
+      "source_sha256": "50cc0eae150a54e2604bba832b3c160c04d4ff9bbae480c48b9161b952aeb258",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    },
+    "processing": "source PCM gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/verification/missfortune_vo_zh/txtp/Play_vo_MissFortune_Death3D {r1}.txtp"
   },
   {
     "file": "play_vo_missfortune_death3d_r2_zh_cn.wav",
     "event": "Play_vo_MissFortune_Death3D",
     "event_id": 1154046355,
-    "source_preview": "txtp/Play_vo_MissFortune_Death3D {r2}.txtp",
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/verification/missfortune_vo_zh/event_wav/play_vo_missfortune_death3d_r2_zh_cn.wav",
     "media_ids": [
       342264711,
       1290892025,
       1867586122,
       2069817053
     ],
-    "source_package": "MissFortune.zh_CN.wad.client"
+    "source_package": "MissFortune.zh_CN.wad.client",
+    "duration": 1.5,
+    "sha256": "51de4a026228b91a3bf4e87eb1bb62e96899335bde354f7f99fe8c20934d5102",
+    "death_envelope": {
+      "source_duration": 3.274013605442177,
+      "source_sha256": "b1df97c82eeca72e82dd2dcb17a60f066d1d97053d58229b392cc9a8933c6c02",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    },
+    "processing": "source PCM gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/verification/missfortune_vo_zh/txtp/Play_vo_MissFortune_Death3D {r2}.txtp"
   },
   {
     "file": "play_vo_missfortune_death3d_r3_zh_cn.wav",
     "event": "Play_vo_MissFortune_Death3D",
     "event_id": 1154046355,
-    "source_preview": "txtp/Play_vo_MissFortune_Death3D {r3}.txtp",
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/verification/missfortune_vo_zh/event_wav/play_vo_missfortune_death3d_r3_zh_cn.wav",
     "media_ids": [
       342264711,
       1290892025,
       1867586122,
       2069817053
     ],
-    "source_package": "MissFortune.zh_CN.wad.client"
+    "source_package": "MissFortune.zh_CN.wad.client",
+    "duration": 1.5,
+    "sha256": "85bf4c5d4e2f985477d83356da68899b4db5fbbef53587e2c8a0e14600ee3816",
+    "death_envelope": {
+      "source_duration": 3.575873015873016,
+      "source_sha256": "f060b285918d1f5fbd3e69acfd98dded3313f9dc69ed9caaf88df3a42c5078cf",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    },
+    "processing": "source PCM gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/verification/missfortune_vo_zh/txtp/Play_vo_MissFortune_Death3D {r3}.txtp"
   },
   {
     "file": "play_vo_missfortune_death3d_r4_zh_cn.wav",
     "event": "Play_vo_MissFortune_Death3D",
     "event_id": 1154046355,
-    "source_preview": "txtp/Play_vo_MissFortune_Death3D {r4}.txtp",
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/verification/missfortune_vo_zh/event_wav/play_vo_missfortune_death3d_r4_zh_cn.wav",
     "media_ids": [
       342264711,
       1290892025,
       1867586122,
       2069817053
     ],
-    "source_package": "MissFortune.zh_CN.wad.client"
+    "source_package": "MissFortune.zh_CN.wad.client",
+    "duration": 1.5,
+    "sha256": "fcbe6a36df492c47d40bf5bc52268ef885e53252ede82c7c753b3ba112307997",
+    "death_envelope": {
+      "source_duration": 2.948934240362812,
+      "source_sha256": "90d022e3a588adcfa58f0605742e089f1fb1e5dd0f6c18b122f393c0e9bd6098",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    },
+    "processing": "source PCM gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/verification/missfortune_vo_zh/txtp/Play_vo_MissFortune_Death3D {r4}.txtp"
+  },
+  {
+    "file": "play_sfx_missfortune_missfortunebasicattack_onmissilecast_r1_d.wav",
+    "event": "Play_sfx_MissFortune_MissFortuneBasicAttack_OnMissileCast",
+    "event_id": 1341971386,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/verification/missfortune/txtp/Play_sfx_MissFortune_MissFortuneBasicAttack_OnMissileCast {r1} {d}.txtp",
+    "media_ids": [
+      32038653,
+      359615028,
+      365748403
+    ],
+    "duration": 2.0323,
+    "processing": "vgmstream-cli -i; original event layers and gain retained",
+    "sha256": "c07d20a74bc8814c08e572f8ed46491669dc5a2e6b3b8175b728990bbe8cb607"
+  },
+  {
+    "file": "play_sfx_missfortune_missfortunebasicattack_onmissilecast_r2_d.wav",
+    "event": "Play_sfx_MissFortune_MissFortuneBasicAttack_OnMissileCast",
+    "event_id": 1341971386,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/verification/missfortune/txtp/Play_sfx_MissFortune_MissFortuneBasicAttack_OnMissileCast {r2} {d}.txtp",
+    "media_ids": [
+      32038653,
+      359615028,
+      365748403
+    ],
+    "duration": 2.174,
+    "processing": "vgmstream-cli -i; original event layers and gain retained",
+    "sha256": "ead0906fb50f4eb8d3f760cb14ce10bb8eb1a4cfd12f502f2f299d3e3909f7b7"
+  },
+  {
+    "file": "play_sfx_missfortune_missfortunebasicattack_onmissilecast_r3_d.wav",
+    "event": "Play_sfx_MissFortune_MissFortuneBasicAttack_OnMissileCast",
+    "event_id": 1341971386,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/verification/missfortune/txtp/Play_sfx_MissFortune_MissFortuneBasicAttack_OnMissileCast {r3} {d}.txtp",
+    "media_ids": [
+      32038653,
+      359615028,
+      365748403
+    ],
+    "duration": 2.056,
+    "processing": "vgmstream-cli -i; original event layers and gain retained",
+    "sha256": "9c283d5e58e6d927a75e90b9c4afb91ae9155092b744baf4a1dd41dd84ae8e93"
   }
 ]

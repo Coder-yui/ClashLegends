@@ -1,0 +1,350 @@
+[
+  {
+    "file": "assets/audio/units/ranged_minion/order/play_sfx_sru_orderminionranged_sru_orderminionrangedbasicattack_oncast_r1.wav",
+    "event": "Play_sfx_SRU_OrderMinionRanged_SRU_OrderMinionRangedBasicAttack_OnCast",
+    "event_id": 23741212,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_orderrange_sfx_events-0012-event {r1}.txtp",
+    "duration": 1.7096371882086168,
+    "media_ids": [
+      298276329,
+      864552853,
+      1026653325
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "f7480cadfb92ac2bdae13c917441bd3195155a5e384cafc33fc37a920dd7dda8"
+  },
+  {
+    "file": "assets/audio/units/ranged_minion/order/play_sfx_sru_orderminionranged_sru_orderminionrangedbasicattack_oncast_r2.wav",
+    "event": "Play_sfx_SRU_OrderMinionRanged_SRU_OrderMinionRangedBasicAttack_OnCast",
+    "event_id": 23741212,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_orderrange_sfx_events-0012-event {r2}.txtp",
+    "duration": 1.6226757369614513,
+    "media_ids": [
+      298276329,
+      864552853,
+      1026653325
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "2594065e2a2908261edbf41a7c0625caf53f7ecdf5588655753b96bc03e8e71c"
+  },
+  {
+    "file": "assets/audio/units/ranged_minion/order/play_sfx_sru_orderminionranged_sru_orderminionrangedbasicattack_oncast_r3.wav",
+    "event": "Play_sfx_SRU_OrderMinionRanged_SRU_OrderMinionRangedBasicAttack_OnCast",
+    "event_id": 23741212,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_orderrange_sfx_events-0012-event {r3}.txtp",
+    "duration": 1.570702947845805,
+    "media_ids": [
+      298276329,
+      864552853,
+      1026653325
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "468b287c9a3c6e12af0587c9f811c32ff246ef6a3260d0ae20bc918d219fb6f6"
+  },
+  {
+    "file": "assets/audio/units/ranged_minion/order/play_sfx_sru_orderminionranged_sru_orderminionrangedbasicattack_onhit_r1.wav",
+    "event": "Play_sfx_SRU_OrderMinionRanged_SRU_OrderMinionRangedBasicAttack_OnHit",
+    "event_id": 2828113780,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_orderrange_sfx_events-0026-event {r1} {d}.txtp",
+    "duration": 1.0649206349206348,
+    "media_ids": [
+      234939643,
+      672380233,
+      933238084,
+      942773674
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "d6adaeb533088af67e4e6d9ab054f171c2f470ae5302a51fb7a396e1c99f94ca"
+  },
+  {
+    "file": "assets/audio/units/ranged_minion/order/play_sfx_sru_orderminionranged_sru_orderminionrangedbasicattack_onhit_r2.wav",
+    "event": "Play_sfx_SRU_OrderMinionRanged_SRU_OrderMinionRangedBasicAttack_OnHit",
+    "event_id": 2828113780,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_orderrange_sfx_events-0026-event {r2} {d}.txtp",
+    "duration": 0.9229251700680272,
+    "media_ids": [
+      234939643,
+      672380233,
+      933238084,
+      942773674
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "28b28409af3d71b992973cd7b963acd9ab37b8300736d89633520a5fa694bfff"
+  },
+  {
+    "file": "assets/audio/units/ranged_minion/order/play_sfx_sru_orderminionranged_sru_orderminionrangedbasicattack_onhit_r3.wav",
+    "event": "Play_sfx_SRU_OrderMinionRanged_SRU_OrderMinionRangedBasicAttack_OnHit",
+    "event_id": 2828113780,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_orderrange_sfx_events-0026-event {r3} {d}.txtp",
+    "duration": 0.9073922902494331,
+    "media_ids": [
+      234939643,
+      672380233,
+      933238084,
+      942773674
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "96dc48ae1c8aa2cc98eb096721ffb370547437bd8d6eb71d523ad1fd45a8c871"
+  },
+  {
+    "file": "assets/audio/units/ranged_minion/order/play_sfx_sru_orderminionranged_sru_orderminionrangedbasicattack2_oncast_r1.wav",
+    "event": "Play_sfx_SRU_OrderMinionRanged_SRU_OrderMinionRangedBasicAttack2_OnCast",
+    "event_id": 2863652004,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_orderrange_sfx_events-0028-event {r1} {d}.txtp",
+    "duration": 1.7096371882086168,
+    "media_ids": [
+      298276329,
+      864552853,
+      1026653325
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "f7480cadfb92ac2bdae13c917441bd3195155a5e384cafc33fc37a920dd7dda8"
+  },
+  {
+    "file": "assets/audio/units/ranged_minion/order/play_sfx_sru_orderminionranged_sru_orderminionrangedbasicattack2_oncast_r2.wav",
+    "event": "Play_sfx_SRU_OrderMinionRanged_SRU_OrderMinionRangedBasicAttack2_OnCast",
+    "event_id": 2863652004,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_orderrange_sfx_events-0028-event {r2} {d}.txtp",
+    "duration": 1.6226757369614513,
+    "media_ids": [
+      298276329,
+      864552853,
+      1026653325
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "2594065e2a2908261edbf41a7c0625caf53f7ecdf5588655753b96bc03e8e71c"
+  },
+  {
+    "file": "assets/audio/units/ranged_minion/order/play_sfx_sru_orderminionranged_sru_orderminionrangedbasicattack2_oncast_r3.wav",
+    "event": "Play_sfx_SRU_OrderMinionRanged_SRU_OrderMinionRangedBasicAttack2_OnCast",
+    "event_id": 2863652004,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_orderrange_sfx_events-0028-event {r3} {d}.txtp",
+    "duration": 1.570702947845805,
+    "media_ids": [
+      298276329,
+      864552853,
+      1026653325
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "468b287c9a3c6e12af0587c9f811c32ff246ef6a3260d0ae20bc918d219fb6f6"
+  },
+  {
+    "file": "assets/audio/units/ranged_minion/order/play_sfx_sru_orderminionranged_sru_orderminionrangedbasicattack2_onhit_r1.wav",
+    "event": "Play_sfx_SRU_OrderMinionRanged_SRU_OrderMinionRangedBasicAttack2_OnHit",
+    "event_id": 2516427340,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_orderrange_sfx_events-0024-event {r1} {d}.txtp",
+    "duration": 1.0649206349206348,
+    "media_ids": [
+      234939643,
+      672380233,
+      933238084,
+      942773674
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "d6adaeb533088af67e4e6d9ab054f171c2f470ae5302a51fb7a396e1c99f94ca"
+  },
+  {
+    "file": "assets/audio/units/ranged_minion/order/play_sfx_sru_orderminionranged_sru_orderminionrangedbasicattack2_onhit_r2.wav",
+    "event": "Play_sfx_SRU_OrderMinionRanged_SRU_OrderMinionRangedBasicAttack2_OnHit",
+    "event_id": 2516427340,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_orderrange_sfx_events-0024-event {r2} {d}.txtp",
+    "duration": 0.9229251700680272,
+    "media_ids": [
+      234939643,
+      672380233,
+      933238084,
+      942773674
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "28b28409af3d71b992973cd7b963acd9ab37b8300736d89633520a5fa694bfff"
+  },
+  {
+    "file": "assets/audio/units/ranged_minion/order/play_sfx_sru_orderminionranged_sru_orderminionrangedbasicattack2_onhit_r3.wav",
+    "event": "Play_sfx_SRU_OrderMinionRanged_SRU_OrderMinionRangedBasicAttack2_OnHit",
+    "event_id": 2516427340,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_orderrange_sfx_events-0024-event {r3} {d}.txtp",
+    "duration": 0.9073922902494331,
+    "media_ids": [
+      234939643,
+      672380233,
+      933238084,
+      942773674
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "96dc48ae1c8aa2cc98eb096721ffb370547437bd8d6eb71d523ad1fd45a8c871"
+  },
+  {
+    "file": "assets/audio/units/ranged_minion/chaos/play_sfx_sru_chaosminionranged_sru_chaosminionrangedbasicattack_oncast_r1.wav",
+    "event": "Play_sfx_SRU_ChaosMinionRanged_SRU_ChaosMinionRangedBasicAttack_OnCast",
+    "event_id": 3532837044,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaosrange_sfx_events-0040-event {r1} {d}.txtp",
+    "duration": 1.3128798185941044,
+    "media_ids": [
+      205813774,
+      516414628,
+      684869467
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "1cd39f115b221f2b1b6f24f229db12d9669c8369f0467360085862b7b4770825"
+  },
+  {
+    "file": "assets/audio/units/ranged_minion/chaos/play_sfx_sru_chaosminionranged_sru_chaosminionrangedbasicattack_oncast_r2.wav",
+    "event": "Play_sfx_SRU_ChaosMinionRanged_SRU_ChaosMinionRangedBasicAttack_OnCast",
+    "event_id": 3532837044,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaosrange_sfx_events-0040-event {r2} {d}.txtp",
+    "duration": 1.3740362811791382,
+    "media_ids": [
+      205813774,
+      516414628,
+      684869467
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "36ec6036dad12da78098cd779a88cb4fbb4e6ae4bdea7bd40b5ca5def7a97ec3"
+  },
+  {
+    "file": "assets/audio/units/ranged_minion/chaos/play_sfx_sru_chaosminionranged_sru_chaosminionrangedbasicattack_oncast_r3.wav",
+    "event": "Play_sfx_SRU_ChaosMinionRanged_SRU_ChaosMinionRangedBasicAttack_OnCast",
+    "event_id": 3532837044,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaosrange_sfx_events-0040-event {r3} {d}.txtp",
+    "duration": 1.4667120181405895,
+    "media_ids": [
+      205813774,
+      516414628,
+      684869467
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "360c7170fb211c17060b1ab9d7ba13d3bc6f75e496c57bb65b4bef60aa868f20"
+  },
+  {
+    "file": "assets/audio/units/ranged_minion/chaos/play_sfx_sru_chaosminionranged_sru_chaosminionrangedbasicattack_onhit_r1.wav",
+    "event": "Play_sfx_SRU_ChaosMinionRanged_SRU_ChaosMinionRangedBasicAttack_OnHit",
+    "event_id": 2607933148,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaosrange_sfx_events-0028-event {r1} {d}.txtp",
+    "duration": 1.0565759637188208,
+    "media_ids": [
+      676519336,
+      692437932,
+      819822025,
+      1008854294
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "f96ce0412164079da4777de4d0a26c677a602fc141f4a2556533c2765ba31550"
+  },
+  {
+    "file": "assets/audio/units/ranged_minion/chaos/play_sfx_sru_chaosminionranged_sru_chaosminionrangedbasicattack_onhit_r2.wav",
+    "event": "Play_sfx_SRU_ChaosMinionRanged_SRU_ChaosMinionRangedBasicAttack_OnHit",
+    "event_id": 2607933148,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaosrange_sfx_events-0028-event {r2} {d}.txtp",
+    "duration": 0.9225396825396825,
+    "media_ids": [
+      676519336,
+      692437932,
+      819822025,
+      1008854294
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "025764e37f743e8b0c8e6f7bdf71909f46ab4ddcb0f5ee4564f7a53f617af4c2"
+  },
+  {
+    "file": "assets/audio/units/ranged_minion/chaos/play_sfx_sru_chaosminionranged_sru_chaosminionrangedbasicattack_onhit_r3.wav",
+    "event": "Play_sfx_SRU_ChaosMinionRanged_SRU_ChaosMinionRangedBasicAttack_OnHit",
+    "event_id": 2607933148,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaosrange_sfx_events-0028-event {r3} {d}.txtp",
+    "duration": 0.7402721088435374,
+    "media_ids": [
+      676519336,
+      692437932,
+      819822025,
+      1008854294
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "5ab6593646ccb403e82e436264b68b155c3ca66cb7956bb5d8d4cbab98b23af9"
+  },
+  {
+    "file": "assets/audio/units/ranged_minion/chaos/play_sfx_sru_chaosminionranged_sru_chaosminionrangedbasicattack2_oncast_r1.wav",
+    "event": "Play_sfx_SRU_ChaosMinionRanged_SRU_ChaosMinionRangedBasicAttack2_OnCast",
+    "event_id": 3881201356,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaosrange_sfx_events-0042-event {r1} {d}.txtp",
+    "duration": 1.3128798185941044,
+    "media_ids": [
+      205813774,
+      516414628,
+      684869467
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "1cd39f115b221f2b1b6f24f229db12d9669c8369f0467360085862b7b4770825"
+  },
+  {
+    "file": "assets/audio/units/ranged_minion/chaos/play_sfx_sru_chaosminionranged_sru_chaosminionrangedbasicattack2_oncast_r2.wav",
+    "event": "Play_sfx_SRU_ChaosMinionRanged_SRU_ChaosMinionRangedBasicAttack2_OnCast",
+    "event_id": 3881201356,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaosrange_sfx_events-0042-event {r2} {d}.txtp",
+    "duration": 1.3740362811791382,
+    "media_ids": [
+      205813774,
+      516414628,
+      684869467
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "36ec6036dad12da78098cd779a88cb4fbb4e6ae4bdea7bd40b5ca5def7a97ec3"
+  },
+  {
+    "file": "assets/audio/units/ranged_minion/chaos/play_sfx_sru_chaosminionranged_sru_chaosminionrangedbasicattack2_oncast_r3.wav",
+    "event": "Play_sfx_SRU_ChaosMinionRanged_SRU_ChaosMinionRangedBasicAttack2_OnCast",
+    "event_id": 3881201356,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaosrange_sfx_events-0042-event {r3} {d}.txtp",
+    "duration": 1.4667120181405895,
+    "media_ids": [
+      205813774,
+      516414628,
+      684869467
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "360c7170fb211c17060b1ab9d7ba13d3bc6f75e496c57bb65b4bef60aa868f20"
+  },
+  {
+    "file": "assets/audio/units/ranged_minion/chaos/play_sfx_sru_chaosminionranged_sru_chaosminionrangedbasicattack2_onhit_r1.wav",
+    "event": "Play_sfx_SRU_ChaosMinionRanged_SRU_ChaosMinionRangedBasicAttack2_OnHit",
+    "event_id": 2396066020,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaosrange_sfx_events-0024-event {r1} {d}.txtp",
+    "duration": 1.0565759637188208,
+    "media_ids": [
+      676519336,
+      692437932,
+      819822025,
+      1008854294
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "f96ce0412164079da4777de4d0a26c677a602fc141f4a2556533c2765ba31550"
+  },
+  {
+    "file": "assets/audio/units/ranged_minion/chaos/play_sfx_sru_chaosminionranged_sru_chaosminionrangedbasicattack2_onhit_r2.wav",
+    "event": "Play_sfx_SRU_ChaosMinionRanged_SRU_ChaosMinionRangedBasicAttack2_OnHit",
+    "event_id": 2396066020,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaosrange_sfx_events-0024-event {r2} {d}.txtp",
+    "duration": 0.9225396825396825,
+    "media_ids": [
+      676519336,
+      692437932,
+      819822025,
+      1008854294
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "025764e37f743e8b0c8e6f7bdf71909f46ab4ddcb0f5ee4564f7a53f617af4c2"
+  },
+  {
+    "file": "assets/audio/units/ranged_minion/chaos/play_sfx_sru_chaosminionranged_sru_chaosminionrangedbasicattack2_onhit_r3.wav",
+    "event": "Play_sfx_SRU_ChaosMinionRanged_SRU_ChaosMinionRangedBasicAttack2_OnHit",
+    "event_id": 2396066020,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaosrange_sfx_events-0024-event {r3} {d}.txtp",
+    "duration": 0.7402721088435374,
+    "media_ids": [
+      676519336,
+      692437932,
+      819822025,
+      1008854294
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "5ab6593646ccb403e82e436264b68b155c3ca66cb7956bb5d8d4cbab98b23af9"
+  }
+]

@@ -1,0 +1,335 @@
+[
+  {
+    "file": "play_sfx_gnar_gnarbasicattack_oncast_r1_d.wav",
+    "event": "Play_sfx_Gnar_GnarBasicAttack_OnCast",
+    "event_id": 2579313966,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gnar/event_wav/Play_sfx_Gnar_GnarBasicAttack_OnCast {r1} {d}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gnar/txtp/Play_sfx_Gnar_GnarBasicAttack_OnCast {r1} {d}.txtp",
+    "media_ids": [
+      4616537,
+      389917797,
+      546524826,
+      626948813,
+      838840626
+    ],
+    "duration": 0.8206,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "25a70e21f9491f9dbd3ba3a7679ae129a6a46896ac9887561aaa1cf370695bc7",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_gnar_gnarbasicattack_oncast_r2_d.wav",
+    "event": "Play_sfx_Gnar_GnarBasicAttack_OnCast",
+    "event_id": 2579313966,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gnar/event_wav/Play_sfx_Gnar_GnarBasicAttack_OnCast {r2} {d}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gnar/txtp/Play_sfx_Gnar_GnarBasicAttack_OnCast {r2} {d}.txtp",
+    "media_ids": [
+      4616537,
+      389917797,
+      546524826,
+      626948813,
+      838840626
+    ],
+    "duration": 0.812,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "326a6ce0c06765a838f19647a694b9bd3e126ade55d35715a41fc4a7ec5da194",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_gnar_gnarbasicattack_oncast_r3_d.wav",
+    "event": "Play_sfx_Gnar_GnarBasicAttack_OnCast",
+    "event_id": 2579313966,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gnar/event_wav/Play_sfx_Gnar_GnarBasicAttack_OnCast {r3} {d}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gnar/txtp/Play_sfx_Gnar_GnarBasicAttack_OnCast {r3} {d}.txtp",
+    "media_ids": [
+      4616537,
+      389917797,
+      546524826,
+      626948813,
+      838840626
+    ],
+    "duration": 0.854,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "4a5d85727d76cc9c48bdb807ce90d114f8c4d2b82096c206daa262a69a79f5ab",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_gnar_gnarbasicattack2_oncast_r1.wav",
+    "event": "Play_sfx_Gnar_GnarBasicAttack2_OnCast",
+    "event_id": 299327990,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gnar/event_wav/Play_sfx_Gnar_GnarBasicAttack2_OnCast {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gnar/txtp/Play_sfx_Gnar_GnarBasicAttack2_OnCast {r1}.txtp",
+    "media_ids": [
+      4616537,
+      389917797,
+      546524826,
+      626948813,
+      838840626
+    ],
+    "duration": 0.8206,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "25a70e21f9491f9dbd3ba3a7679ae129a6a46896ac9887561aaa1cf370695bc7",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_gnar_gnarbasicattack2_oncast_r2.wav",
+    "event": "Play_sfx_Gnar_GnarBasicAttack2_OnCast",
+    "event_id": 299327990,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gnar/event_wav/Play_sfx_Gnar_GnarBasicAttack2_OnCast {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gnar/txtp/Play_sfx_Gnar_GnarBasicAttack2_OnCast {r2}.txtp",
+    "media_ids": [
+      4616537,
+      389917797,
+      546524826,
+      626948813,
+      838840626
+    ],
+    "duration": 0.812,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "326a6ce0c06765a838f19647a694b9bd3e126ade55d35715a41fc4a7ec5da194",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_gnar_gnarbasicattack2_oncast_r3.wav",
+    "event": "Play_sfx_Gnar_GnarBasicAttack2_OnCast",
+    "event_id": 299327990,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gnar/event_wav/Play_sfx_Gnar_GnarBasicAttack2_OnCast {r3}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gnar/txtp/Play_sfx_Gnar_GnarBasicAttack2_OnCast {r3}.txtp",
+    "media_ids": [
+      4616537,
+      389917797,
+      546524826,
+      626948813,
+      838840626
+    ],
+    "duration": 0.854,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "4a5d85727d76cc9c48bdb807ce90d114f8c4d2b82096c206daa262a69a79f5ab",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_gnar_gnarbasicattack_onhit_r1_d.wav",
+    "event": "Play_sfx_Gnar_GnarBasicAttack_OnHit",
+    "event_id": 1820153338,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gnar/event_wav/Play_sfx_Gnar_GnarBasicAttack_OnHit {r1} {d}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gnar/txtp/Play_sfx_Gnar_GnarBasicAttack_OnHit {r1} {d}.txtp",
+    "media_ids": [
+      59235623,
+      99117323,
+      130452586,
+      172452322,
+      196385076
+    ],
+    "duration": 0.7848,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "d315d691e577f814099e4c78377b9f6235bd18bf97479aa12f905afc39ce146f",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_gnar_gnarbasicattack_onhit_r2_d.wav",
+    "event": "Play_sfx_Gnar_GnarBasicAttack_OnHit",
+    "event_id": 1820153338,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gnar/event_wav/Play_sfx_Gnar_GnarBasicAttack_OnHit {r2} {d}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gnar/txtp/Play_sfx_Gnar_GnarBasicAttack_OnHit {r2} {d}.txtp",
+    "media_ids": [
+      59235623,
+      99117323,
+      130452586,
+      172452322,
+      196385076
+    ],
+    "duration": 0.8082,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "3fa0f0b2e1fedb4afc65acde18aad5039258dc4c7ffde4a6fe6b5f52ccc2275f",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_gnar_gnarbasicattack_onhit_r3_d.wav",
+    "event": "Play_sfx_Gnar_GnarBasicAttack_OnHit",
+    "event_id": 1820153338,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gnar/event_wav/Play_sfx_Gnar_GnarBasicAttack_OnHit {r3} {d}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gnar/txtp/Play_sfx_Gnar_GnarBasicAttack_OnHit {r3} {d}.txtp",
+    "media_ids": [
+      59235623,
+      99117323,
+      130452586,
+      172452322,
+      196385076
+    ],
+    "duration": 0.7991,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "ea39ebfe4b220fc83e7e594147a4d959df0da61c9b938da1bec06be8d0b3ca15",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_gnar_gnarbasicattack_onmissilelaunch_r1_d.wav",
+    "event": "Play_sfx_Gnar_GnarBasicAttack_OnMissileLaunch",
+    "event_id": 434358616,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gnar/event_wav/Play_sfx_Gnar_GnarBasicAttack_OnMissileLaunch {r1} {d}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gnar/txtp/Play_sfx_Gnar_GnarBasicAttack_OnMissileLaunch {r1} {d}.txtp",
+    "media_ids": [
+      251648092,
+      334488815,
+      547471093
+    ],
+    "duration": 2.305,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "2a7286d3bdbeb647ef3bb002978eb7d63f2d631ea2fadd3edead756598337988",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_gnar_gnarbasicattack_onmissilelaunch_r2_d.wav",
+    "event": "Play_sfx_Gnar_GnarBasicAttack_OnMissileLaunch",
+    "event_id": 434358616,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gnar/event_wav/Play_sfx_Gnar_GnarBasicAttack_OnMissileLaunch {r2} {d}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gnar/txtp/Play_sfx_Gnar_GnarBasicAttack_OnMissileLaunch {r2} {d}.txtp",
+    "media_ids": [
+      251648092,
+      334488815,
+      547471093
+    ],
+    "duration": 2.4197,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "868ddc3f62d35b5a2f20425ed08e964805c6e190c91193955d20aace6bd9cfe1",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_gnar_gnarbasicattack_onmissilelaunch_r3_d.wav",
+    "event": "Play_sfx_Gnar_GnarBasicAttack_OnMissileLaunch",
+    "event_id": 434358616,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gnar/event_wav/Play_sfx_Gnar_GnarBasicAttack_OnMissileLaunch {r3} {d}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gnar/txtp/Play_sfx_Gnar_GnarBasicAttack_OnMissileLaunch {r3} {d}.txtp",
+    "media_ids": [
+      251648092,
+      334488815,
+      547471093
+    ],
+    "duration": 2.2586,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "87da2c59f685d62333d81152fc77a8dad1f0f555f086af31bc27ce18ea0d626d",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_gnar_gnartransformback_buffactivate_r1.wav",
+    "event": "Play_sfx_Gnar_GnarTransformBack_buffactivate",
+    "event_id": 4207756101,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gnar/event_wav/Play_sfx_Gnar_GnarTransformBack_buffactivate {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gnar/txtp/Play_sfx_Gnar_GnarTransformBack_buffactivate {r1}.txtp",
+    "media_ids": [
+      157704472,
+      435171143,
+      607483571
+    ],
+    "duration": 1.8189,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "e10c92499616fa85eabd72d7281eba44348a88f203eeab6e795b3670dcfdfb81",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_gnar_gnartransformback_buffactivate_r2.wav",
+    "event": "Play_sfx_Gnar_GnarTransformBack_buffactivate",
+    "event_id": 4207756101,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gnar/event_wav/Play_sfx_Gnar_GnarTransformBack_buffactivate {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gnar/txtp/Play_sfx_Gnar_GnarTransformBack_buffactivate {r2}.txtp",
+    "media_ids": [
+      157704472,
+      435171143,
+      607483571
+    ],
+    "duration": 1.6189,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "3fb2f7b1acf5cc3353036fedfb43ad7109e318efbd7cd6b637855889b87cc8d2",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_gnar_gnartransformback_buffactivate_r3.wav",
+    "event": "Play_sfx_Gnar_GnarTransformBack_buffactivate",
+    "event_id": 4207756101,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gnar/event_wav/Play_sfx_Gnar_GnarTransformBack_buffactivate {r3}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gnar/txtp/Play_sfx_Gnar_GnarTransformBack_buffactivate {r3}.txtp",
+    "media_ids": [
+      157704472,
+      435171143,
+      607483571
+    ],
+    "duration": 1.8698,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "f189879cdd972304e143dec80f6eb02c5f61a411eb127681b9b3f1107960b9fb",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_vo_gnar_death3d_r1_zh_cn.wav",
+    "event": "Play_vo_Gnar_Death3D",
+    "event_id": 3557695126,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gnar_vo/event_wav/Play_vo_Gnar_Death3D {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gnar_vo/txtp/Play_vo_Gnar_Death3D {r1}.txtp",
+    "media_ids": [
+      487389421,
+      491298538,
+      1793957321,
+      1944555343
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "f885c8f9dab933a633c20da6082d37808c10f02c79f3c889ebb831503a707dad",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 3.457891156462585,
+      "source_sha256": "77a25a7b4b269eb90be36871e22b797936865453c5087ed06dbc0c99be2bd40f",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_vo_gnar_death3d_r2_zh_cn.wav",
+    "event": "Play_vo_Gnar_Death3D",
+    "event_id": 3557695126,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gnar_vo/event_wav/Play_vo_Gnar_Death3D {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gnar_vo/txtp/Play_vo_Gnar_Death3D {r2}.txtp",
+    "media_ids": [
+      487389421,
+      491298538,
+      1793957321,
+      1944555343
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "c7397874aafec4152ef7bd86e0cf19ee61806b20f71663afcf81d5b144f369c8",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 3.0491156462585036,
+      "source_sha256": "f0903367534c3cc26b45d24b5a83225c6c652ee7d06abe9ce579bfbcef9ed58c",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_vo_gnar_death3d_r3_zh_cn.wav",
+    "event": "Play_vo_Gnar_Death3D",
+    "event_id": 3557695126,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gnar_vo/event_wav/Play_vo_Gnar_Death3D {r3}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gnar_vo/txtp/Play_vo_Gnar_Death3D {r3}.txtp",
+    "media_ids": [
+      487389421,
+      491298538,
+      1793957321,
+      1944555343
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "945661b7bd89e541b8a962e5c30562cbefdbcd6c6d56ac106bc996c016dc86ed",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 3.6853514739229025,
+      "source_sha256": "8f5888a14d3a812f0bd3c8dc19f2274ef645a18d8a3e4b5ec339d51be1f969de",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  }
+]

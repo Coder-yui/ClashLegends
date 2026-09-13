@@ -1,0 +1,243 @@
+[
+  {
+    "file": "assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_hit_r1.wav",
+    "event": "Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_hit",
+    "event_id": 1256783657,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_hit {r1}.txtp",
+    "duration": 1.8681179138321995,
+    "media_ids": [
+      432513021,
+      672706197,
+      835745104,
+      972133402
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "6f6674641a9c087f2feb58cd27060e9ca5383acfc2f9d98a6ca4de8aea42cbe8"
+  },
+  {
+    "file": "assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_hit_r2.wav",
+    "event": "Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_hit",
+    "event_id": 1256783657,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_hit {r2}.txtp",
+    "duration": 2.0768480725623584,
+    "media_ids": [
+      432513021,
+      672706197,
+      835745104,
+      972133402
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "1aa3a78b0ec25aaec900db1b6a140873ee99316d76aef6335b3dfa00455d1c35"
+  },
+  {
+    "file": "assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_hit_r3.wav",
+    "event": "Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_hit",
+    "event_id": 1256783657,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_hit {r3}.txtp",
+    "duration": 1.9726757369614512,
+    "media_ids": [
+      432513021,
+      672706197,
+      835745104,
+      972133402
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "4701bdcb4e93df5a1d414f2ffdcada8b44dc35d95bca43e27ccbd22d0ed94c98"
+  },
+  {
+    "file": "assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_hit_r4.wav",
+    "event": "Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_hit",
+    "event_id": 1256783657,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_hit {r4}.txtp",
+    "duration": 2.0241043083900228,
+    "media_ids": [
+      432513021,
+      672706197,
+      835745104,
+      972133402
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "bd34cff50a0255534d09b4ca1b826d57c99b122341b9fb290b56685e0fd5b390"
+  },
+  {
+    "file": "assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_cast_r1.wav",
+    "event": "Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_cast",
+    "event_id": 352283651,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/env_global_buildings_sfx_events-0267-event {r1}.txtp",
+    "duration": 2.951678004535147,
+    "media_ids": [
+      263691814,
+      343061489,
+      564057191,
+      701703878
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "2ee888984cc72db8854c17b54cc7ae9164f1b89851357f5c44b4e567690c5ca9"
+  },
+  {
+    "file": "assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_cast_r2.wav",
+    "event": "Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_cast",
+    "event_id": 352283651,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/env_global_buildings_sfx_events-0267-event {r2}.txtp",
+    "duration": 2.86,
+    "media_ids": [
+      263691814,
+      343061489,
+      564057191,
+      701703878
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "1c19b5c36d9796a0d7f4e96b904ab5c9af05da9d31028dafbe121f53a528b793"
+  },
+  {
+    "file": "assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_cast_r3.wav",
+    "event": "Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_cast",
+    "event_id": 352283651,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/env_global_buildings_sfx_events-0267-event {r3}.txtp",
+    "duration": 2.7586848072562358,
+    "media_ids": [
+      263691814,
+      343061489,
+      564057191,
+      701703878
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "5cad8cf1030bc18b851e1dbdbb709e4abe9b7309fc8c0070e054f47a3db4f532"
+  },
+  {
+    "file": "assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_missilelaunch_r1.wav",
+    "event": "Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_missilelaunch",
+    "event_id": 3600744219,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_missilelaunch {r1}.txtp",
+    "duration": 1.8391836734693878,
+    "media_ids": [
+      201534931,
+      446045041,
+      504466497,
+      988665057
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "fb35983570cdfeced001c6a92e5e6c692112f34ae17035ca064c5de11067e3dd"
+  },
+  {
+    "file": "assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_missilelaunch_r2.wav",
+    "event": "Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_missilelaunch",
+    "event_id": 3600744219,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_missilelaunch {r2}.txtp",
+    "duration": 1.8123356009070295,
+    "media_ids": [
+      201534931,
+      446045041,
+      504466497,
+      988665057
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "e43e01d3136cbfa5e40386baaa53101ed7f1cabd6aab2b8c549203ddf6a53fe7"
+  },
+  {
+    "file": "assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_missilelaunch_r3.wav",
+    "event": "Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_missilelaunch",
+    "event_id": 3600744219,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_missilelaunch {r3}.txtp",
+    "duration": 2.054671201814059,
+    "media_ids": [
+      201534931,
+      446045041,
+      504466497,
+      988665057
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "2d57720364956f1f25b1e94ab4ed6f68f188bb31a879969fce65be66a79af067"
+  },
+  {
+    "file": "assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_missilelaunch_r4.wav",
+    "event": "Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_missilelaunch",
+    "event_id": 3600744219,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_missilelaunch {r4}.txtp",
+    "duration": 2.0058503401360546,
+    "media_ids": [
+      201534931,
+      446045041,
+      504466497,
+      988665057
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "648e28f81acb7ffe26637ca3ca1a964534449afc82dd3f764fb731126cde24f5"
+  },
+  {
+    "file": "assets/audio/world/chaos/play_sfx_env_chaosturret_break01_r1.wav",
+    "event": "Play_sfx_ENV_ChaosTurret_break01",
+    "event_id": 2620890673,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_ENV_ChaosTurret_break01.txtp",
+    "duration": 4.343015873015873,
+    "media_ids": [
+      414857462
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "a0b03a0ff1a427c18cb2e5750e69b411a29ad545d4bc9dd68d21e5f2501218ea"
+  },
+  {
+    "file": "assets/audio/world/chaos/play_sfx_env_chaosturret_break02_r1.wav",
+    "event": "Play_sfx_ENV_ChaosTurret_break02",
+    "event_id": 2620890674,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_ENV_ChaosTurret_break02.txtp",
+    "duration": 4.625283446712018,
+    "media_ids": [
+      809986825
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "0b12eeabe93721813bbe431dc95b0ddf7ece86688ec330f35ef9482b4d782394"
+  },
+  {
+    "file": "assets/audio/world/chaos/play_sfx_env_chaosturret_break03_r1.wav",
+    "event": "Play_sfx_ENV_ChaosTurret_break03",
+    "event_id": 2620890675,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_ENV_ChaosTurret_break03.txtp",
+    "duration": 7.691609977324263,
+    "media_ids": [
+      24265824
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "e3300c2b967f41d97229e0c28cf0bc0faba4f19b963d2337070c423737859a4a"
+  },
+  {
+    "file": "assets/audio/world/chaos/play_sfx_env_sruap_chaos_nexus_spawn_r1.wav",
+    "event": "Play_sfx_Env_sruap_chaos_nexus_spawn",
+    "event_id": 700336752,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_Env_sruap_chaos_nexus_spawn.txtp",
+    "duration": 13.716009070294785,
+    "media_ids": [
+      581850485
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "01e8751c3ac421a32d997cda5847808fdcf894e50250b84de4c7f0bd255dd956"
+  },
+  {
+    "file": "assets/audio/world/chaos/play_sfx_env_sruap_chaos_nexus_alive_loop_r1.wav",
+    "event": "Play_sfx_Env_sruap_chaos_nexus_alive_loop",
+    "event_id": 719870219,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_Env_sruap_chaos_nexus_alive_loop.txtp",
+    "duration": 6.166938775510204,
+    "media_ids": [
+      278249387
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "f0ddff2208ae79140f048e2a219193601ae5976ddbbb71f9fe2c7dd1ec0ace5b"
+  },
+  {
+    "file": "assets/audio/world/chaos/play_sfx_env_global_eog_chaosnexus_death_cast_r1.wav",
+    "event": "Play_sfx_Env_Global_EoG_ChaosNexus_death_cast",
+    "event_id": 1773150868,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_Env_Global_EoG_ChaosNexus_death_cast.txtp",
+    "duration": 11.76546485260771,
+    "media_ids": [
+      334071054,
+      485014584,
+      523028056,
+      754004643,
+      848214419
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "580d9e2335450d8c9a56c4d243e19c9f694999e81746e96151b4c9f85a229aec"
+  }
+]

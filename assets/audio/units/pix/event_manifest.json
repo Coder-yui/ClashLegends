@@ -1,0 +1,98 @@
+[
+  {
+    "file": "play_sfx_lulu_lulupassivemissile_hit_r1.wav",
+    "event": "Play_sfx_Lulu_LuluPassiveMissile_hit",
+    "event_id": 4243641310,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/lulu/event_wav/Play_sfx_Lulu_LuluPassiveMissile_hit {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/lulu/txtp/Play_sfx_Lulu_LuluPassiveMissile_hit {r1}.txtp",
+    "media_ids": [
+      230453275,
+      654372768,
+      858324871
+    ],
+    "duration": 0.4905,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "e85f7eac8cc4bbf8557f11ebc0253a6255817abff0886304e2a5865cf25ca908",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_lulu_lulupassivemissile_hit_r2.wav",
+    "event": "Play_sfx_Lulu_LuluPassiveMissile_hit",
+    "event_id": 4243641310,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/lulu/event_wav/Play_sfx_Lulu_LuluPassiveMissile_hit {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/lulu/txtp/Play_sfx_Lulu_LuluPassiveMissile_hit {r2}.txtp",
+    "media_ids": [
+      230453275,
+      654372768,
+      858324871
+    ],
+    "duration": 0.4847,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "1bb3bc7fb7cabf2bf627b6d63aa1fcf1dcda9412aae98f26c170d54df0c5aed1",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_lulu_lulupassivemissile_hit_r3.wav",
+    "event": "Play_sfx_Lulu_LuluPassiveMissile_hit",
+    "event_id": 4243641310,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/lulu/event_wav/Play_sfx_Lulu_LuluPassiveMissile_hit {r3}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/lulu/txtp/Play_sfx_Lulu_LuluPassiveMissile_hit {r3}.txtp",
+    "media_ids": [
+      230453275,
+      654372768,
+      858324871
+    ],
+    "duration": 0.4704,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "2afca56a81cbca0093d62c4fb7fbf1d47aeb91bb4347d9c621d40cabbe06263b",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_lulu_lulupassivemissilecontroller_onmissilecast_r1.wav",
+    "event": "Play_sfx_Lulu_LuluPassiveMissileController_OnMissileCast",
+    "event_id": 3034225045,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/lulu/event_wav/Play_sfx_Lulu_LuluPassiveMissileController_OnMissileCast {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/lulu/txtp/Play_sfx_Lulu_LuluPassiveMissileController_OnMissileCast {r1}.txtp",
+    "media_ids": [
+      83153764,
+      334092298,
+      963968063
+    ],
+    "duration": 0.4575,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "0684269a8bf1396ab4ccd3a0466a197a50cabd8f57e1803a779c7028a70a49d0",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_lulu_lulupassivemissilecontroller_onmissilecast_r2.wav",
+    "event": "Play_sfx_Lulu_LuluPassiveMissileController_OnMissileCast",
+    "event_id": 3034225045,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/lulu/event_wav/Play_sfx_Lulu_LuluPassiveMissileController_OnMissileCast {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/lulu/txtp/Play_sfx_Lulu_LuluPassiveMissileController_OnMissileCast {r2}.txtp",
+    "media_ids": [
+      83153764,
+      334092298,
+      963968063
+    ],
+    "duration": 0.4597,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "31d3ecf8efe863088bd222fa84f1af12857ee7fa4429977ffe5377db611f2f8f",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_lulu_lulupassivemissilecontroller_onmissilecast_r3.wav",
+    "event": "Play_sfx_Lulu_LuluPassiveMissileController_OnMissileCast",
+    "event_id": 3034225045,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/lulu/event_wav/Play_sfx_Lulu_LuluPassiveMissileController_OnMissileCast {r3}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/lulu/txtp/Play_sfx_Lulu_LuluPassiveMissileController_OnMissileCast {r3}.txtp",
+    "media_ids": [
+      83153764,
+      334092298,
+      963968063
+    ],
+    "duration": 0.6423,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "9e4026eb72131d8a3072da39de9240c616954d1ff8a6ed5434ef84dc8d341335",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  }
+]

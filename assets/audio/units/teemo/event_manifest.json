@@ -1,0 +1,230 @@
+[
+  {
+    "file": "play_sfx_teemo_teemobasicattack_oncast_r1.wav",
+    "event": "Play_sfx_Teemo_TeemoBasicAttack_OnCast",
+    "event_id": 1400011736,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/teemo/event_wav/Play_sfx_Teemo_TeemoBasicAttack_OnCast {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/teemo/txtp/Play_sfx_Teemo_TeemoBasicAttack_OnCast {r1}.txtp",
+    "media_ids": [
+      349029602,
+      721159118
+    ],
+    "duration": 0.4843,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "95998c773c37494176d07dbb7d3ecf8b4e3122d0ef7aa1dfe1228cab960fbd10",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_teemo_teemobasicattack_oncast_r2.wav",
+    "event": "Play_sfx_Teemo_TeemoBasicAttack_OnCast",
+    "event_id": 1400011736,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/teemo/event_wav/Play_sfx_Teemo_TeemoBasicAttack_OnCast {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/teemo/txtp/Play_sfx_Teemo_TeemoBasicAttack_OnCast {r2}.txtp",
+    "media_ids": [
+      349029602,
+      721159118
+    ],
+    "duration": 0.5437,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "df4cf8d284c785b606ec402117031ed1c1ae725513a339140b685c939e0117b4",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_teemo_teemobasicattack_onhit_r1.wav",
+    "event": "Play_sfx_Teemo_TeemoBasicAttack_OnHit",
+    "event_id": 1478120,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/teemo/event_wav/Play_sfx_Teemo_TeemoBasicAttack_OnHit {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/teemo/txtp/Play_sfx_Teemo_TeemoBasicAttack_OnHit {r1}.txtp",
+    "media_ids": [
+      303141121,
+      607382600
+    ],
+    "duration": 0.4949,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "8a5d3ce0ef883bbe1bdf64b96cd8c703ba94861bd3a54faf36801f9f545a7aa4",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_teemo_teemobasicattack_onhit_r2.wav",
+    "event": "Play_sfx_Teemo_TeemoBasicAttack_OnHit",
+    "event_id": 1478120,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/teemo/event_wav/Play_sfx_Teemo_TeemoBasicAttack_OnHit {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/teemo/txtp/Play_sfx_Teemo_TeemoBasicAttack_OnHit {r2}.txtp",
+    "media_ids": [
+      303141121,
+      607382600
+    ],
+    "duration": 0.529,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "5e9c2547e76781f6c46844752a3e9d4bcb81213a19c075d4d1d06bf1358540b4",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_teemo_teemoq_onhit_r1.wav",
+    "event": "Play_sfx_Teemo_TeemoQ_OnHit",
+    "event_id": 4091846019,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/teemo/event_wav/Play_sfx_Teemo_TeemoQ_OnHit {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/teemo/txtp/Play_sfx_Teemo_TeemoQ_OnHit {r1}.txtp",
+    "media_ids": [
+      41272196,
+      63286599
+    ],
+    "duration": 1.9875,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "9b7f470b659031121636591609bfcb5f160ec84f48e24c9de978aca947a15d39",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_teemo_teemoq_onhit_r2.wav",
+    "event": "Play_sfx_Teemo_TeemoQ_OnHit",
+    "event_id": 4091846019,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/teemo/event_wav/Play_sfx_Teemo_TeemoQ_OnHit {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/teemo/txtp/Play_sfx_Teemo_TeemoQ_OnHit {r2}.txtp",
+    "media_ids": [
+      41272196,
+      63286599
+    ],
+    "duration": 1.9542,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "5b36bc8ba23f091a264fe6e537c491fe0e4f89cf21465b6be40442704387f5e7",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_teemo_teemoq_oncast.wav",
+    "event": "Play_sfx_Teemo_TeemoQ_OnCast",
+    "event_id": 1713748153,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/teemo/event_wav/Play_sfx_Teemo_TeemoQ_OnCast.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/teemo/txtp/Play_sfx_Teemo_TeemoQ_OnCast.txtp",
+    "media_ids": [
+      4691174
+    ],
+    "duration": 0.6326,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "7ff3b2e0800485c3dc1dc4cd99eeefa5cbc1a970ffba1dd15bd38880489f77a1",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_vo_teemo_death3d_r1_zh_cn.wav",
+    "event": "Play_vo_Teemo_Death3D",
+    "event_id": 277640722,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/teemo_vo/event_wav/Play_vo_Teemo_Death3D {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/teemo_vo/txtp/Play_vo_Teemo_Death3D {r1}.txtp",
+    "media_ids": [
+      185126813,
+      913981307,
+      1436824049
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "172a386f0d5625322d23d2ff82d30ef8ed1f4c9d56bdbf9ac2b8a75c784491a7",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 3.7746938775510204,
+      "source_sha256": "e60f836524c74bcb58372c2a752357badb835814a298d116864baf5824770ec7",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_vo_teemo_death3d_r2_zh_cn.wav",
+    "event": "Play_vo_Teemo_Death3D",
+    "event_id": 277640722,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/teemo_vo/event_wav/Play_vo_Teemo_Death3D {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/teemo_vo/txtp/Play_vo_Teemo_Death3D {r2}.txtp",
+    "media_ids": [
+      185126813,
+      913981307,
+      1436824049
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "f4fa9c68b9806d26084f76ba145c8b47edecb5e2958efbe6dccc5b765e71df67",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 1.5507256235827664,
+      "source_sha256": "65ad5fb7598bdf8869768d5b73dabc4c708c19ba1c12042b90abd0e016e49c7d",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_vo_teemo_death3d_r3_zh_cn.wav",
+    "event": "Play_vo_Teemo_Death3D",
+    "event_id": 277640722,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/teemo_vo/event_wav/Play_vo_Teemo_Death3D {r3}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/teemo_vo/txtp/Play_vo_Teemo_Death3D {r3}.txtp",
+    "media_ids": [
+      185126813,
+      913981307,
+      1436824049
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "581e995937841059737c8e5b0c378acb8a1bb95de2fdbeb13e60dbb3354e1355",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 2.782721088435374,
+      "source_sha256": "c269f416d38c2fbe6bfa57dcb0baeb2d93d2b46f1fa92e57b87f77d6bddbd6b1",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_sfx_teemo_teemobasicattack_onmissilelaunch_r1.wav",
+    "event": "Play_sfx_Teemo_TeemoBasicAttack_OnMissileLaunch",
+    "event_id": 2333251846,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/teemo/txtp/Play_sfx_Teemo_TeemoBasicAttack_OnMissileLaunch {r1}.txtp",
+    "media_ids": [
+      27483388,
+      593182911
+    ],
+    "duration": 0.7607,
+    "processing": "vgmstream-cli -i; original event layers and gain retained",
+    "sha256": "a78034a66a365d268030335e78e62f19be14bcf68a2a85fe79a1424fbd68ee9b"
+  },
+  {
+    "file": "play_sfx_teemo_teemobasicattack_onmissilelaunch_r2.wav",
+    "event": "Play_sfx_Teemo_TeemoBasicAttack_OnMissileLaunch",
+    "event_id": 2333251846,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/teemo/txtp/Play_sfx_Teemo_TeemoBasicAttack_OnMissileLaunch {r2}.txtp",
+    "media_ids": [
+      27483388,
+      593182911
+    ],
+    "duration": 0.7263,
+    "processing": "vgmstream-cli -i; original event layers and gain retained",
+    "sha256": "e9b395cf8faabb49af5f7447537cc0c6e21b8970d03efab777929d47b764f267"
+  },
+  {
+    "file": "play_sfx_teemo_teemoq_onmissilelaunch_r1.wav",
+    "event": "Play_sfx_Teemo_TeemoQ_OnMissileLaunch",
+    "event_id": 1987439021,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/teemo/txtp/Play_sfx_Teemo_TeemoQ_OnMissileLaunch {r1}.txtp",
+    "media_ids": [
+      814203979,
+      1030668168
+    ],
+    "duration": 1.4085,
+    "processing": "vgmstream-cli -i; original event layers and gain retained",
+    "sha256": "add5e2e6b2262344a110d7b738e54466253f397dc6fa479db236913c542c3a13"
+  },
+  {
+    "file": "play_sfx_teemo_teemoq_onmissilelaunch_r2.wav",
+    "event": "Play_sfx_Teemo_TeemoQ_OnMissileLaunch",
+    "event_id": 1987439021,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/teemo/txtp/Play_sfx_Teemo_TeemoQ_OnMissileLaunch {r2}.txtp",
+    "media_ids": [
+      814203979,
+      1030668168
+    ],
+    "duration": 1.4167,
+    "processing": "vgmstream-cli -i; original event layers and gain retained",
+    "sha256": "ede060460d1395cbd726424d7e8b4916b6c9ffea05c6233c8a03522950a069ac"
+  }
+]

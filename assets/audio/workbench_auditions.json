@@ -1,0 +1,46 @@
+{
+  "twisted_fate": {
+    "R1·Destiny 施放": {
+      "pool": [
+        "res://assets/audio/auditions/twisted_fate/play_sfx_twistedfate_destiny_oncast_r1.wav",
+        "res://assets/audio/auditions/twisted_fate/play_sfx_twistedfate_destiny_oncast_r2.wav"
+      ],
+      "volume_db": 0.0,
+      "bus": "Combat"
+    },
+    "R1·Destiny 生效": {
+      "pool": [
+        "res://assets/audio/auditions/twisted_fate/play_sfx_twistedfate_destiny_onbuffactivate_r1.wav"
+      ],
+      "volume_db": 0.0,
+      "bus": "Combat"
+    },
+    "R1·Destiny 结束": {
+      "pool": [
+        "res://assets/audio/auditions/twisted_fate/play_sfx_twistedfate_destiny_onbuffdeactivate_r1.wav",
+        "res://assets/audio/auditions/twisted_fate/play_sfx_twistedfate_destiny_onbuffdeactivate_r2.wav",
+        "res://assets/audio/auditions/twisted_fate/play_sfx_twistedfate_destiny_onbuffdeactivate_r3.wav"
+      ],
+      "volume_db": 0.0,
+      "bus": "Combat"
+    },
+    "R2·Gate 引导": {
+      "pool": [
+        "res://assets/audio/auditions/twisted_fate/play_sfx_twistedfate_gate_onbuffactivate_r1.wav",
+        "res://assets/audio/auditions/twisted_fate/play_sfx_twistedfate_gate_onbuffactivate_r2.wav",
+        "res://assets/audio/auditions/twisted_fate/play_sfx_twistedfate_gate_onbuffactivate_r3.wav"
+      ],
+      "volume_db": 0.0,
+      "bus": "Combat"
+    },
+    "R2·Gate 落点（完整原声）": {
+      "pool": [
+        "res://assets/audio/auditions/twisted_fate/play_sfx_twistedfate_gate_marker_r1.wav",
+        "res://assets/audio/auditions/twisted_fate/play_sfx_twistedfate_gate_marker_r2.wav",
+        "res://assets/audio/auditions/twisted_fate/play_sfx_twistedfate_gate_marker_r3.wav"
+      ],
+      "volume_db": 0.0,
+      "bus": "Combat"
+    }
+  }
+}

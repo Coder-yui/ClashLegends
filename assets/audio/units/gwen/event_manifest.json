@@ -1,0 +1,745 @@
+[
+  {
+    "file": "play_sfx_gwen_gwenbasicattack_swipe_cast_r1.wav",
+    "event": "Play_sfx_Gwen_GwenBasicAttack_Swipe_cast",
+    "event_id": 4188707306,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenBasicAttack_Swipe_cast {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenBasicAttack_Swipe_cast {r1}.txtp",
+    "media_ids": [
+      502470164,
+      541742055,
+      611764951,
+      869530993
+    ],
+    "duration": 0.9969,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "1613c0fb0e4559391d6a2b8a0f7a01d80dd5925097148c364b4914a03f244f2c",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_gwen_gwenbasicattack_swipe_cast_r2.wav",
+    "event": "Play_sfx_Gwen_GwenBasicAttack_Swipe_cast",
+    "event_id": 4188707306,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenBasicAttack_Swipe_cast {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenBasicAttack_Swipe_cast {r2}.txtp",
+    "media_ids": [
+      502470164,
+      541742055,
+      611764951,
+      869530993
+    ],
+    "duration": 0.9969,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "01327997cf483fef2654a4b7b9d80697604e728a7fe92f58b177adad102dc0df",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_gwen_gwenbasicattack_swipe_cast_r3.wav",
+    "event": "Play_sfx_Gwen_GwenBasicAttack_Swipe_cast",
+    "event_id": 4188707306,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenBasicAttack_Swipe_cast {r3}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenBasicAttack_Swipe_cast {r3}.txtp",
+    "media_ids": [
+      502470164,
+      541742055,
+      611764951,
+      869530993
+    ],
+    "duration": 0.9969,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "7e8db099c411e5730aa092f036a328fee17d58c5ef0c6e8de906f845ea64fd04",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_gwen_gwenbasicattack_stab_cast_r1.wav",
+    "event": "Play_sfx_Gwen_GwenBasicAttack_Stab_cast",
+    "event_id": 3760145488,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenBasicAttack_Stab_cast {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenBasicAttack_Stab_cast {r1}.txtp",
+    "media_ids": [
+      148656732,
+      313949284,
+      690571695
+    ],
+    "duration": 0.9145,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "fa7b1f2365220a9b29e8fe9ae80c582dd79224b7caabf60fbf3e02ddaaca6795",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_gwen_gwenbasicattack_stab_cast_r2.wav",
+    "event": "Play_sfx_Gwen_GwenBasicAttack_Stab_cast",
+    "event_id": 3760145488,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenBasicAttack_Stab_cast {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenBasicAttack_Stab_cast {r2}.txtp",
+    "media_ids": [
+      148656732,
+      313949284,
+      690571695
+    ],
+    "duration": 0.9145,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "0822ff9721d2d38c2a5ef97e05244995d0f189f4a2d763db91237a8ddb37595e",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_gwen_gwenbasicattack_stab_cast_r3.wav",
+    "event": "Play_sfx_Gwen_GwenBasicAttack_Stab_cast",
+    "event_id": 3760145488,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenBasicAttack_Stab_cast {r3}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenBasicAttack_Stab_cast {r3}.txtp",
+    "media_ids": [
+      148656732,
+      313949284,
+      690571695
+    ],
+    "duration": 0.9145,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "7ce8905797cab054a303fd45313b0285b7b51a03e87ff4f1a23330837ae8d928",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_gwen_gwenbasicattack_swipe_hit_r1.wav",
+    "event": "Play_sfx_Gwen_GwenBasicAttack_Swipe_hit",
+    "event_id": 3715259742,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenBasicAttack_Swipe_hit {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenBasicAttack_Swipe_hit {r1}.txtp",
+    "media_ids": [
+      38300093,
+      803256852,
+      817087734,
+      843161985
+    ],
+    "duration": 1.0187,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "5725b2b71cddc524800eb02430d25006a344c95fbcded0ba5ffb37ab71251588",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_gwen_gwenbasicattack_swipe_hit_r2.wav",
+    "event": "Play_sfx_Gwen_GwenBasicAttack_Swipe_hit",
+    "event_id": 3715259742,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenBasicAttack_Swipe_hit {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenBasicAttack_Swipe_hit {r2}.txtp",
+    "media_ids": [
+      38300093,
+      803256852,
+      817087734,
+      843161985
+    ],
+    "duration": 1.0187,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "ae8540af81b88235bc5cc7b6ee547e26f99924b18ce752472d625d3314add3da",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_gwen_gwenbasicattack_swipe_hit_r3.wav",
+    "event": "Play_sfx_Gwen_GwenBasicAttack_Swipe_hit",
+    "event_id": 3715259742,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenBasicAttack_Swipe_hit {r3}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenBasicAttack_Swipe_hit {r3}.txtp",
+    "media_ids": [
+      38300093,
+      803256852,
+      817087734,
+      843161985
+    ],
+    "duration": 1.0187,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "333005e19deff6ed6ad84f16506eaeb0db50073ed63d7c87bdd0e5502df80053",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_gwen_gwenbasicattack_stab_hit_r1.wav",
+    "event": "Play_sfx_Gwen_GwenBasicAttack_Stab_hit",
+    "event_id": 48960016,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenBasicAttack_Stab_hit {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenBasicAttack_Stab_hit {r1}.txtp",
+    "media_ids": [
+      397982840,
+      819503653,
+      1070466832
+    ],
+    "duration": 1.1857,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "29ab4f584276f1d67281d64f8a747c73544907cff61b4fb0d6518cd0eab192a6",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_gwen_gwenbasicattack_stab_hit_r2.wav",
+    "event": "Play_sfx_Gwen_GwenBasicAttack_Stab_hit",
+    "event_id": 48960016,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenBasicAttack_Stab_hit {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenBasicAttack_Stab_hit {r2}.txtp",
+    "media_ids": [
+      397982840,
+      819503653,
+      1070466832
+    ],
+    "duration": 1.1857,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "61fa7923cffd8c405e9d742dfde54452c34c3ebdadddefcce6ffb4dfe6aaeabd",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_gwen_gwenbasicattack_stab_hit_r3.wav",
+    "event": "Play_sfx_Gwen_GwenBasicAttack_Stab_hit",
+    "event_id": 48960016,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenBasicAttack_Stab_hit {r3}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenBasicAttack_Stab_hit {r3}.txtp",
+    "media_ids": [
+      397982840,
+      819503653,
+      1070466832
+    ],
+    "duration": 1.1857,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "62967e25df01903fb5d67c29c14cdce850787a8da6203bb3c81c0f2fcf3176f0",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_vo_gwen_death3d_r1_zh_cn.wav",
+    "event": "Play_vo_Gwen_Death3D",
+    "event_id": 1475155975,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen_vo/event_wav/Play_vo_Gwen_Death3D {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen_vo/txtp/Play_vo_Gwen_Death3D {r1}.txtp",
+    "media_ids": [
+      24922094,
+      474938432,
+      495451885,
+      734971829,
+      930693594,
+      1987674222
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "f0a7250105870655e2de544d4b475c9ccb3492a27d832aa474df965e24e6e4f8",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 4.467097505668934,
+      "source_sha256": "aa1665243e65e057ec77edeac9c11fc43985991b31994ad8f5001840adcd5b9f",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_vo_gwen_death3d_r2_zh_cn.wav",
+    "event": "Play_vo_Gwen_Death3D",
+    "event_id": 1475155975,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen_vo/event_wav/Play_vo_Gwen_Death3D {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen_vo/txtp/Play_vo_Gwen_Death3D {r2}.txtp",
+    "media_ids": [
+      24922094,
+      474938432,
+      495451885,
+      734971829,
+      930693594,
+      1987674222
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "54a45693bb3fbab828fc5a1fcfaeb3eead3f3d06240c0ed1fb324ac1517e8ab7",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 3.608548752834467,
+      "source_sha256": "26084e0758f69954b4fbd3dae8bb595f18e155f1b5309197a4d970be267a2c1e",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_vo_gwen_death3d_r3_zh_cn.wav",
+    "event": "Play_vo_Gwen_Death3D",
+    "event_id": 1475155975,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen_vo/event_wav/Play_vo_Gwen_Death3D {r3}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen_vo/txtp/Play_vo_Gwen_Death3D {r3}.txtp",
+    "media_ids": [
+      24922094,
+      474938432,
+      495451885,
+      734971829,
+      930693594,
+      1987674222
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "40fd5d7a3bf8eeea786664693d5a22a8d7ada97eb9298f1f4a1e0126832371c5",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 3.412403628117914,
+      "source_sha256": "d26bae7f6ae21b7f1093cb1b56cf79bc21798339d45f45bc8da880e5f0ef32f2",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_sfx_gwen_gwenqfirst_cast_r.wav",
+    "event": "Play_sfx_Gwen_GwenQFirst_cast",
+    "event_id": 1117487748,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenQFirst_cast {r}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenQFirst_cast {r}.txtp",
+    "media_ids": [
+      53754217,
+      164825511,
+      303928842,
+      429688416,
+      568890440,
+      657779899,
+      719286715,
+      857225752
+    ],
+    "duration": 1.0564,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "b9e37daa8e0de07bb3597a78330fdd5a7ed8c72b6861fc35c945bf4eb205eab2",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_gwen_gwenqlast_cast_r.wav",
+    "event": "Play_sfx_Gwen_GwenQLast_cast",
+    "event_id": 2146811922,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenQLast_cast {r}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenQLast_cast {r}.txtp",
+    "media_ids": [
+      164825511,
+      429688416,
+      526051698,
+      657779899,
+      676912506,
+      719286715,
+      820524486,
+      904584095
+    ],
+    "duration": 2.0329,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "80d2f6b3f8caa32e47489b79d078b0a666d548d9a4663b1fd2fab3f946109e2e",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "gwen_q_active_0.wav",
+    "event": "Play_sfx_Gwen_GwenQFirst_cast + Play_sfx_Gwen_GwenQLast_cast",
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/event_wav/gwen_q_active_0.wav",
+    "sequence": [
+      {
+        "event": "Play_sfx_Gwen_GwenQFirst_cast",
+        "time": 0.0949367
+      },
+      {
+        "event": "Play_sfx_Gwen_GwenQLast_cast",
+        "time": 1.0443036
+      }
+    ],
+    "processing": "ffmpeg adelay ms; amix normalize=0; 1.5 s with final 20 ms fade; 44.1k mono PCM16",
+    "sha256": "702eabd85efa7907a9e239061fbcb940fae6c05536015ea78620fc59932552be"
+  },
+  {
+    "file": "play_sfx_gwen_gwenqmiddle_1stack_cast_r1.wav",
+    "event": "Play_sfx_Gwen_GwenQMiddle_1stack_cast",
+    "event_id": 268254909,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenQMiddle_1stack_cast {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenQMiddle_1stack_cast {r1}.txtp",
+    "media_ids": [
+      164825511,
+      429688416,
+      657779899,
+      719286715
+    ],
+    "duration": 0.2294,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "1955d1f01d15371eb6ee33f9ded88d9f6e427608c12d10f37eafef40f1505fbd",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_gwen_gwenqmiddle_1stack_cast_r2.wav",
+    "event": "Play_sfx_Gwen_GwenQMiddle_1stack_cast",
+    "event_id": 268254909,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenQMiddle_1stack_cast {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenQMiddle_1stack_cast {r2}.txtp",
+    "media_ids": [
+      164825511,
+      429688416,
+      657779899,
+      719286715
+    ],
+    "duration": 0.2294,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "a6f0d549bd183cfd68b8bc6dc2ff284b4624a5671ddef1eefd7e5f6d527a9c86",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_gwen_gwenqmiddle_1stack_cast_r3.wav",
+    "event": "Play_sfx_Gwen_GwenQMiddle_1stack_cast",
+    "event_id": 268254909,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenQMiddle_1stack_cast {r3}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenQMiddle_1stack_cast {r3}.txtp",
+    "media_ids": [
+      164825511,
+      429688416,
+      657779899,
+      719286715
+    ],
+    "duration": 0.2294,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "02e3d2b59e3cbb1ff267cf819edbeed051d24a5704b71f778bf88fcac857dae8",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "gwen_q_active_1.wav",
+    "event": "Play_sfx_Gwen_GwenQFirst_cast + Play_sfx_Gwen_GwenQMiddle_1stack_cast + Play_sfx_Gwen_GwenQLast_cast",
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/event_wav/gwen_q_active_1.wav",
+    "sequence": [
+      {
+        "event": "Play_sfx_Gwen_GwenQFirst_cast",
+        "time": 0.0949367
+      },
+      {
+        "event": "Play_sfx_Gwen_GwenQMiddle_1stack_cast",
+        "time": 0.9493669
+      },
+      {
+        "event": "Play_sfx_Gwen_GwenQLast_cast",
+        "time": 1.0443036
+      }
+    ],
+    "processing": "ffmpeg adelay ms; amix normalize=0; 1.5 s with final 20 ms fade; 44.1k mono PCM16",
+    "sha256": "f2cef6e31864ec8a4d7d863467095768469beb59307346e982fce9ce1604fc35"
+  },
+  {
+    "file": "gwen_q_active_2.wav",
+    "event": "Play_sfx_Gwen_GwenQFirst_cast + Play_sfx_Gwen_GwenQMiddle_1stack_cast + Play_sfx_Gwen_GwenQMiddle_1stack_cast + Play_sfx_Gwen_GwenQLast_cast",
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/event_wav/gwen_q_active_2.wav",
+    "sequence": [
+      {
+        "event": "Play_sfx_Gwen_GwenQFirst_cast",
+        "time": 0.0949367
+      },
+      {
+        "event": "Play_sfx_Gwen_GwenQMiddle_1stack_cast",
+        "time": 0.7827002
+      },
+      {
+        "event": "Play_sfx_Gwen_GwenQMiddle_1stack_cast",
+        "time": 0.9493669
+      },
+      {
+        "event": "Play_sfx_Gwen_GwenQLast_cast",
+        "time": 1.0443036
+      }
+    ],
+    "processing": "ffmpeg adelay ms; amix normalize=0; 1.5 s with final 20 ms fade; 44.1k mono PCM16",
+    "sha256": "7139c389617fce0d1bd932f28c3f6952c2da0bf9dc5d771f4c63b9f2662a2d73"
+  },
+  {
+    "file": "gwen_q_active_3.wav",
+    "event": "Play_sfx_Gwen_GwenQFirst_cast + Play_sfx_Gwen_GwenQMiddle_1stack_cast + Play_sfx_Gwen_GwenQMiddle_1stack_cast + Play_sfx_Gwen_GwenQMiddle_1stack_cast + Play_sfx_Gwen_GwenQLast_cast",
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/event_wav/gwen_q_active_3.wav",
+    "sequence": [
+      {
+        "event": "Play_sfx_Gwen_GwenQFirst_cast",
+        "time": 0.0949367
+      },
+      {
+        "event": "Play_sfx_Gwen_GwenQMiddle_1stack_cast",
+        "time": 0.6160335
+      },
+      {
+        "event": "Play_sfx_Gwen_GwenQMiddle_1stack_cast",
+        "time": 0.7827002
+      },
+      {
+        "event": "Play_sfx_Gwen_GwenQMiddle_1stack_cast",
+        "time": 0.9493669
+      },
+      {
+        "event": "Play_sfx_Gwen_GwenQLast_cast",
+        "time": 1.0443036
+      }
+    ],
+    "processing": "ffmpeg adelay ms; amix normalize=0; 1.5 s with final 20 ms fade; 44.1k mono PCM16",
+    "sha256": "73378578ac1f0c54d2da3c93372c37f25c2cd8156c27a4fdd4b4a96e6f326a5e"
+  },
+  {
+    "file": "play_sfx_gwen_gwenqfirst_hit_r1.wav",
+    "event": "Play_sfx_Gwen_GwenQFirst_hit",
+    "event_id": 88848300,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenQFirst_hit {r1}.txtp",
+    "media_ids": [
+      74812377,
+      115397365,
+      531174420,
+      887902542
+    ],
+    "duration": 0.5803,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "560556925a3025d6972ceb062e06a68b9ede59ed6b5e21be007ae92070d29862"
+  },
+  {
+    "file": "play_sfx_gwen_gwenqfirst_hit_r2.wav",
+    "event": "Play_sfx_Gwen_GwenQFirst_hit",
+    "event_id": 88848300,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenQFirst_hit {r2}.txtp",
+    "media_ids": [
+      74812377,
+      115397365,
+      531174420,
+      887902542
+    ],
+    "duration": 0.5803,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "d0e1eb00c02a27312e99ab783a193c634cfdcad5a5656c9604f1a448af2cf5aa"
+  },
+  {
+    "file": "play_sfx_gwen_gwenqfirst_hit_r3.wav",
+    "event": "Play_sfx_Gwen_GwenQFirst_hit",
+    "event_id": 88848300,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenQFirst_hit {r3}.txtp",
+    "media_ids": [
+      74812377,
+      115397365,
+      531174420,
+      887902542
+    ],
+    "duration": 0.5803,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "7cc735de9943c08cbc28b125c8ece828bf239da8b50f3714b39f86f770932b66"
+  },
+  {
+    "file": "play_sfx_gwen_gwenqmiddle_hit_r1.wav",
+    "event": "Play_sfx_Gwen_GwenQMiddle_hit",
+    "event_id": 606706469,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenQMiddle_hit {r1}.txtp",
+    "media_ids": [
+      253101884,
+      497484892,
+      927225298,
+      1064256902
+    ],
+    "duration": 0.1256,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "ef46cde42c52888bd82a70bdff45019abc37524e81636b3831c54edf41868a3a"
+  },
+  {
+    "file": "play_sfx_gwen_gwenqmiddle_hit_r2.wav",
+    "event": "Play_sfx_Gwen_GwenQMiddle_hit",
+    "event_id": 606706469,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenQMiddle_hit {r2}.txtp",
+    "media_ids": [
+      253101884,
+      497484892,
+      927225298,
+      1064256902
+    ],
+    "duration": 0.1256,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "a882664f9ed8238cbd08c8bcb590158eb0dc9a80dda9c70b1df47046ba755342"
+  },
+  {
+    "file": "play_sfx_gwen_gwenqmiddle_hit_r3.wav",
+    "event": "Play_sfx_Gwen_GwenQMiddle_hit",
+    "event_id": 606706469,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenQMiddle_hit {r3}.txtp",
+    "media_ids": [
+      253101884,
+      497484892,
+      927225298,
+      1064256902
+    ],
+    "duration": 0.1256,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "a9dba70fcebde605d98b54ff3f436d92254a2278824f0c104de4ba7ef59db5c6"
+  },
+  {
+    "file": "play_sfx_gwen_gwenqlast_hit_r1.wav",
+    "event": "Play_sfx_Gwen_GwenQLast_hit",
+    "event_id": 1022951862,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenQLast_hit {r1}.txtp",
+    "media_ids": [
+      74812377,
+      115397365,
+      531174420,
+      887902542
+    ],
+    "duration": 0.5803,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "2427eb42a1c4a1fdbee993c64a5ceb724dc8829d2ea80eff540558606ec8887d"
+  },
+  {
+    "file": "play_sfx_gwen_gwenqlast_hit_r2.wav",
+    "event": "Play_sfx_Gwen_GwenQLast_hit",
+    "event_id": 1022951862,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenQLast_hit {r2}.txtp",
+    "media_ids": [
+      74812377,
+      115397365,
+      531174420,
+      887902542
+    ],
+    "duration": 0.5803,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "9f5503b459af27828fb9af3a2c2923f5414eb157cdd7a43a1173aef5cd6980ca"
+  },
+  {
+    "file": "play_sfx_gwen_gwenqlast_hit_r3.wav",
+    "event": "Play_sfx_Gwen_GwenQLast_hit",
+    "event_id": 1022951862,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenQLast_hit {r3}.txtp",
+    "media_ids": [
+      74812377,
+      115397365,
+      531174420,
+      887902542
+    ],
+    "duration": 0.5803,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "b0a8cac8cdb885bbfdccc2c7e0d5291a9da0d955d3bb806fbcce80a14e349488"
+  },
+  {
+    "file": "play_sfx_gwen_gwenw_cast_r1.wav",
+    "event": "Play_sfx_Gwen_GwenW_cast",
+    "event_id": 3236859832,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenW_cast {r1}.txtp",
+    "media_ids": [
+      188850940,
+      258981711,
+      293766443
+    ],
+    "duration": 1.132,
+    "processing": "vgmstream-cli -i; original event layers and gain retained",
+    "sha256": "e5dc003ce459f273f7b2d651a402f3639794af0c78645147fa22f4acbc40cf29"
+  },
+  {
+    "file": "play_sfx_gwen_gwenw_cast_r2.wav",
+    "event": "Play_sfx_Gwen_GwenW_cast",
+    "event_id": 3236859832,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenW_cast {r2}.txtp",
+    "media_ids": [
+      188850940,
+      258981711,
+      293766443
+    ],
+    "duration": 1.132,
+    "processing": "vgmstream-cli -i; original event layers and gain retained",
+    "sha256": "1907c81017e3f96e62748dbd75763089679530b9903c13e4452f0aca74fa46af"
+  },
+  {
+    "file": "play_sfx_gwen_gwenw_cast_r3.wav",
+    "event": "Play_sfx_Gwen_GwenW_cast",
+    "event_id": 3236859832,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenW_cast {r3}.txtp",
+    "media_ids": [
+      188850940,
+      258981711,
+      293766443
+    ],
+    "duration": 1.132,
+    "processing": "vgmstream-cli -i; original event layers and gain retained",
+    "sha256": "c5a054f17e325dc22115fa298a92987dd40ca93d291270b4b94e34c9a7fccebe"
+  },
+  {
+    "file": "play_sfx_gwen_gwenw_buffactivate_r_m.wav",
+    "event": "Play_sfx_Gwen_GwenW_buffactivate",
+    "event_id": 3882395433,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenW_buffactivate {r} {m}.txtp",
+    "media_ids": [
+      515185330,
+      574607003,
+      712039398,
+      854509046
+    ],
+    "duration": 18.4582,
+    "processing": "vgmstream-cli -i; original event layers and gain retained",
+    "sha256": "4d452d024ff0def68914f44aa511e496da8ed7c3c50076155a94715ad0026a86"
+  },
+  {
+    "file": "play_sfx_gwen_gwenw_buffdeactivate_r1.wav",
+    "event": "Play_sfx_Gwen_GwenW_buffdeactivate",
+    "event_id": 3057272456,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenW_buffdeactivate {r1}.txtp",
+    "media_ids": [
+      250909294,
+      370391358
+    ],
+    "duration": 3.1312,
+    "processing": "vgmstream-cli -i; original event layers and gain retained",
+    "sha256": "bb191cb4ac382f89745fe5b3cb56fe3036dcada4fa83e9bb0a73520d86f08b8e"
+  },
+  {
+    "file": "play_sfx_gwen_gwenw_buffdeactivate_r2.wav",
+    "event": "Play_sfx_Gwen_GwenW_buffdeactivate",
+    "event_id": 3057272456,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenW_buffdeactivate {r2}.txtp",
+    "media_ids": [
+      250909294,
+      370391358
+    ],
+    "duration": 2.9671,
+    "processing": "vgmstream-cli -i; original event layers and gain retained",
+    "sha256": "be87c9f8b39f4d41678fcce165f3a75c1424809ba30802da54f2fb440521e50f"
+  },
+  {
+    "file": "play_sfx_gwen_gwenq_max_stacks_buffactivate_r1.wav",
+    "event": "Play_sfx_Gwen_GwenQ_max_stacks_buffactivate",
+    "event_id": 3094126528,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenQ_max_stacks_buffactivate {r1}.txtp",
+    "media_ids": [
+      545613006,
+      880053733,
+      892809311
+    ],
+    "duration": 2.006031746031746,
+    "sha256": "4aa81c47cfe2ac170467ef017d0cec0b2e17cd9327bf0b3e8da40ccbac1f4e37",
+    "processing": "vgmstream-cli -i; source event gain retained"
+  },
+  {
+    "file": "play_sfx_gwen_gwenq_max_stacks_buffactivate_r2.wav",
+    "event": "Play_sfx_Gwen_GwenQ_max_stacks_buffactivate",
+    "event_id": 3094126528,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenQ_max_stacks_buffactivate {r2}.txtp",
+    "media_ids": [
+      545613006,
+      880053733,
+      892809311
+    ],
+    "duration": 2.006031746031746,
+    "sha256": "64e357f22f06952c7e10cfd3e5b2f484f055238d8db4df7564263106805f0f29",
+    "processing": "vgmstream-cli -i; source event gain retained"
+  },
+  {
+    "file": "play_sfx_gwen_gwenq_max_stacks_buffactivate_r3.wav",
+    "event": "Play_sfx_Gwen_GwenQ_max_stacks_buffactivate",
+    "event_id": 3094126528,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenQ_max_stacks_buffactivate {r3}.txtp",
+    "media_ids": [
+      545613006,
+      880053733,
+      892809311
+    ],
+    "duration": 1.8037868480725623,
+    "sha256": "cc7229f0df2c2fea2d45022ce9a215eff1b2b659d4e75915474a7c21a62caf17",
+    "processing": "vgmstream-cli -i; source event gain retained"
+  },
+  {
+    "file": "play_sfx_gwen_gwenqlast_hit_center_r.wav",
+    "event": "Play_sfx_Gwen_GwenQLast_hit_center",
+    "event_id": 4278009390,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenQLast_hit_center {r}.txtp",
+    "media_ids": [
+      253101884,
+      309821044,
+      396871256,
+      497484892,
+      923563128,
+      927225298,
+      1064256902,
+      1071995365
+    ],
+    "duration": 2.0329478458049888,
+    "sha256": "e68fc9da33605fa7a03a89c1a1fa4737cdcda14f9bd09f7d518c4f972de6923b",
+    "processing": "vgmstream-cli -i; original center-hit layers/gain"
+  }
+]

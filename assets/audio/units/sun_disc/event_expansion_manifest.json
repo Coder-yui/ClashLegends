@@ -1,0 +1,27 @@
+[
+  {
+    "file": "assets/audio/units/sun_disc/play_sfx_3190active_oncast_r1.wav",
+    "event": "Play_sfx_3190Active_OnCast",
+    "event_id": 2210307500,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/items_global_events-1270-event.txtp",
+    "duration": 2.3146031746031746,
+    "media_ids": [
+      87343910
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "e833ed6e89f1fd59289095176f4ae1a9d8bcc217926fa120bdcb9e7d9f192444"
+  },
+  {
+    "file": "assets/audio/units/sun_disc/play_sfx_3190shield_onbuffactivate_r1.wav",
+    "event": "Play_sfx_3190Shield_OnBuffActivate",
+    "event_id": 3467612698,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/items_global_events-1511-event.txtp",
+    "duration": 3.8271201814058955,
+    "media_ids": [
+      420581881,
+      986578957
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "7380057f3c6c3d6b1d15bbcd9252bf7f1e482875ca97971cf51973d8fc70f4ab"
+  }
+]

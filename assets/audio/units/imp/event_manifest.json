@@ -1,0 +1,127 @@
+[
+  {
+    "file": "play_sfx_yorick_yorickq_ghoulattack_jump_r1.wav",
+    "event": "Play_sfx_Yorick_YorickQ_GhoulAttack_jump",
+    "event_id": 4148888401,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/event_wav/Play_sfx_Yorick_YorickQ_GhoulAttack_jump {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_GhoulAttack_jump {r1}.txtp",
+    "media_ids": [
+      66795960,
+      604639212,
+      1039655103
+    ],
+    "duration": 0.4695,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "f1f9e865e120de0c406327ae3bb9bfd347f3f31b1743d435eb0c107999e6380d",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_yorick_yorickq_ghoulattack_jump_r2.wav",
+    "event": "Play_sfx_Yorick_YorickQ_GhoulAttack_jump",
+    "event_id": 4148888401,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/event_wav/Play_sfx_Yorick_YorickQ_GhoulAttack_jump {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_GhoulAttack_jump {r2}.txtp",
+    "media_ids": [
+      66795960,
+      604639212,
+      1039655103
+    ],
+    "duration": 0.5341,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "ee08eb3d759f8f0ae8e79ec9ac9680bb26bd7aac3340bfe4baadb732d178af88",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_yorick_yorickq_ghoulattack_jump_r3.wav",
+    "event": "Play_sfx_Yorick_YorickQ_GhoulAttack_jump",
+    "event_id": 4148888401,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/event_wav/Play_sfx_Yorick_YorickQ_GhoulAttack_jump {r3}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_GhoulAttack_jump {r3}.txtp",
+    "media_ids": [
+      66795960,
+      604639212,
+      1039655103
+    ],
+    "duration": 0.6618,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "0c54a21f65b3fa2d0456170590a6a86d36bc79f379b145d3496cc1b329d5d716",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_yorick_yorickq_ghoul_death_r1.wav",
+    "event": "Play_sfx_Yorick_YorickQ_ghoul_death",
+    "event_id": 3971829909,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/event_wav/Play_sfx_Yorick_YorickQ_ghoul_death {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_ghoul_death {r1}.txtp",
+    "media_ids": [
+      339205711,
+      427211440,
+      916401884
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "7ed222bbc68116d194f2f72073a69ef3198abb487d680fb3304f4bd6fb05ab06",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 1.5720634920634922,
+      "source_sha256": "36f365c2568a1133b50442b044139b9c759014acc73d982dc48557661aa7edcf",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_sfx_yorick_yorickq_ghoul_death_r2.wav",
+    "event": "Play_sfx_Yorick_YorickQ_ghoul_death",
+    "event_id": 3971829909,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/event_wav/Play_sfx_Yorick_YorickQ_ghoul_death {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_ghoul_death {r2}.txtp",
+    "media_ids": [
+      339205711,
+      427211440,
+      916401884
+    ],
+    "duration": 1.2967,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "50dd8ed76e10ce713f7557d23a5a457ec49d05cd5c6daeb67a4f3cca0b5f620b",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_yorick_yorickq_ghoul_death_r3.wav",
+    "event": "Play_sfx_Yorick_YorickQ_ghoul_death",
+    "event_id": 3971829909,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/event_wav/Play_sfx_Yorick_YorickQ_ghoul_death {r3}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_ghoul_death {r3}.txtp",
+    "media_ids": [
+      339205711,
+      427211440,
+      916401884
+    ],
+    "duration": 1.4571,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "abc19b2f3458808f97c95e029ccbfaeeb8bb4a0019d126e7f48f6ea3527b9e3e",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_yorick_yorickq_ghoulattack_cast_r1.wav",
+    "event": "Play_sfx_Yorick_YorickQ_GhoulAttack_cast",
+    "event_id": 198729928,
+    "source_preview": "/Users/czh/Projects/Clash Legends/assets/audio/units/imp/play_sfx_yorick_yorickq_ghoulattack_cast_r1.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_GhoulAttack_cast [4030904392=3118032683] {r}.txtp",
+    "media_ids": [
+      471691804,
+      561749991,
+      421134608,
+      386437218,
+      517555783,
+      219789193,
+      730807442,
+      146764526
+    ],
+    "duration": 0.8753061224489795,
+    "processing": "vgmstream-cli -i; event -25dB retained; render duplicates removed",
+    "sha256": "eff10bf52844e41c21f232fbe52278735cf67552f4693cade3cd6180080da1dc",
+    "selection_note": "未知 Switch 4030904392=3118032683；media_ids 为可达候选集合，未穷举组合。三套普通攻击使用相同原始 cast 事件。"
+  }
+]

@@ -1,0 +1,723 @@
+[
+  {
+    "file": "assets/audio/announcer/victory_r1.wav",
+    "event": "Play_vo_Announcer_Global_Female1_OnVictory",
+    "cue": "victory",
+    "label": "胜利 · 已接入结尾",
+    "duration": 3.1165079365079364,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Global_Female1_OnVictory.txtp",
+    "event_id": 179484193,
+    "media_ids": [
+      "349955032"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "ce41a74756f6f35a8a98a1d70c6ae565704a3da990283b9d8a8b9d82e410d2d6"
+  },
+  {
+    "file": "assets/audio/announcer/defeat_r1.wav",
+    "event": "Play_vo_Announcer_Global_Female1_OnDefeat",
+    "cue": "defeat",
+    "label": "失败 · 已接入结尾",
+    "duration": 3.0352380952380953,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Global_Female1_OnDefeat.txtp",
+    "event_id": 2224178004,
+    "media_ids": [
+      "52198965"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "49699c8e9d12c60ad9dd4a1c3780530f5ac343de49a16a6e04b56cba673a23da"
+  },
+  {
+    "file": "assets/audio/announcer/minions_spawn_r1.wav",
+    "event": "Play_vo_Announcer_Female1_MinionSpawn",
+    "cue": "minions_spawn",
+    "label": "全军出击 · 已接入第5秒首波兵线",
+    "duration": 2.9824943310657597,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_MinionSpawn.txtp",
+    "event_id": 3292132413,
+    "media_ids": [
+      "219151739"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "31c864045ccdb062152b7061dcfae50b27e2c5df7178a7c543520fc9c7bb2fc6"
+  },
+  {
+    "file": "assets/audio/announcer/welcome_r1.wav",
+    "event": "Play_vo_Announcer_Female1_StartGameMessage1Map11",
+    "cue": "welcome",
+    "label": "欢迎来到召唤师峡谷 · 仅试听",
+    "duration": 2.676485260770975,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_StartGameMessage1Map11.txtp",
+    "event_id": 3013702846,
+    "media_ids": [
+      "137670506"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "f55f567d0cf8a117976e20ceba3c824da58337b905ec9e06620abed9f363e213"
+  },
+  {
+    "file": "assets/audio/announcer/start_warning_r1.wav",
+    "event": "Play_vo_Announcer_Female1_StartGameMessage2Map11",
+    "cue": "start_warning",
+    "label": "开局准备提示 · 仅试听",
+    "duration": 4.780702947845805,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_StartGameMessage2Map11.txtp",
+    "event_id": 1254053619,
+    "media_ids": [
+      "15938219"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "eacf95d45219c5600ebab4b17fc4978cd5e73a35ef0f8a01597f1bad760e706f"
+  },
+  {
+    "file": "assets/audio/announcer/first_blood_r1.wav",
+    "event": "Play_vo_Announcer_Female1_FirstBloodYouYourTeam",
+    "cue": "first_blood",
+    "label": "第一滴血 · 仅试听",
+    "duration": 3.6317913832199546,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_FirstBloodYouYourTeam {d}.txtp",
+    "event_id": 1941092771,
+    "media_ids": [
+      "476762637"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "20df2477280274a9a15502d6126ea7369ce3ef21b5eec51bb77027e35e36b67c"
+  },
+  {
+    "file": "assets/audio/announcer/ally_kill_r1.wav",
+    "event": "Play_vo_Announcer_Female1_KillChampionHeroHeroYourTeam",
+    "cue": "ally_kill",
+    "label": "友方击杀 · 仅试听",
+    "duration": 4.005827664399093,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_KillChampionHeroHeroYourTeam {r1}.txtp",
+    "event_id": 460953157,
+    "media_ids": [
+      "899579368",
+      "197937115",
+      "867093869"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "67610a97da1642d7937600cbf91b891b9d65b9384ab8b6ac39723baeb022b72a"
+  },
+  {
+    "file": "assets/audio/announcer/ally_kill_r2.wav",
+    "event": "Play_vo_Announcer_Female1_KillChampionHeroHeroYourTeam",
+    "cue": "ally_kill",
+    "label": "友方击杀 · 仅试听",
+    "duration": 3.9988662131519273,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_KillChampionHeroHeroYourTeam {r2}.txtp",
+    "event_id": 460953157,
+    "media_ids": [
+      "899579368",
+      "197937115",
+      "867093869"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "93c88d114c293f9e7c6c9a2d8991d191ef2243053c01fce23ad00a5c5fd55ed2"
+  },
+  {
+    "file": "assets/audio/announcer/ally_kill_r3.wav",
+    "event": "Play_vo_Announcer_Female1_KillChampionHeroHeroYourTeam",
+    "cue": "ally_kill",
+    "label": "友方击杀 · 仅试听",
+    "duration": 3.9640362811791383,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_KillChampionHeroHeroYourTeam {r3}.txtp",
+    "event_id": 460953157,
+    "media_ids": [
+      "899579368",
+      "197937115",
+      "867093869"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "c3d8c2fe7ac55552c378d85720c9680cd0997142244b72a62d4b53014bc11a93"
+  },
+  {
+    "file": "assets/audio/announcer/enemy_kill_r1.wav",
+    "event": "Play_vo_Announcer_Female1_KillChampionHeroHeroEnemyTeam",
+    "cue": "enemy_kill",
+    "label": "敌方击杀 · 仅试听",
+    "duration": 4.335555555555556,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_KillChampionHeroHeroEnemyTeam {r1}.txtp",
+    "event_id": 359704250,
+    "media_ids": [
+      "1059485385",
+      "819209537"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "6a5c397063e2c9e36fd13136cb12ff25008c670f1e28255887559ec078be8849"
+  },
+  {
+    "file": "assets/audio/announcer/enemy_kill_r2.wav",
+    "event": "Play_vo_Announcer_Female1_KillChampionHeroHeroEnemyTeam",
+    "cue": "enemy_kill",
+    "label": "敌方击杀 · 仅试听",
+    "duration": 3.9582312925170067,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_KillChampionHeroHeroEnemyTeam {r2}.txtp",
+    "event_id": 359704250,
+    "media_ids": [
+      "1059485385",
+      "819209537"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "9eb6c0c4eeb935f248454297f0ff4d12ecbe8218184bf87bc31675b28b894354"
+  },
+  {
+    "file": "assets/audio/announcer/double_kill_r1.wav",
+    "event": "Play_vo_Announcer_Female1_DoubleKillYouYourTeam",
+    "cue": "double_kill",
+    "label": "双杀 · 仅试听",
+    "duration": 3.1687528344671203,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_DoubleKillYouYourTeam {r1} {d}.txtp",
+    "event_id": 3743703056,
+    "media_ids": [
+      "61826407",
+      "339824295",
+      "370077710"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "40de6b97fc0c41fbb91a0da9b8e0a1470e68ae49c570c17b8a072421ab6f550b"
+  },
+  {
+    "file": "assets/audio/announcer/double_kill_r2.wav",
+    "event": "Play_vo_Announcer_Female1_DoubleKillYouYourTeam",
+    "cue": "double_kill",
+    "label": "双杀 · 仅试听",
+    "duration": 3.1048979591836736,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_DoubleKillYouYourTeam {r2} {d}.txtp",
+    "event_id": 3743703056,
+    "media_ids": [
+      "61826407",
+      "339824295",
+      "370077710"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "ed36a81e607ba0abf79827cba97ba3ed4b5474ec147c09c7f4da9274bdee3550"
+  },
+  {
+    "file": "assets/audio/announcer/double_kill_r3.wav",
+    "event": "Play_vo_Announcer_Female1_DoubleKillYouYourTeam",
+    "cue": "double_kill",
+    "label": "双杀 · 仅试听",
+    "duration": 3.180362811791383,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_DoubleKillYouYourTeam {r3} {d}.txtp",
+    "event_id": 3743703056,
+    "media_ids": [
+      "61826407",
+      "339824295",
+      "370077710"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "645962f8b7634f234c1addeaca4450874e1d04ca88c93bcad2ace350883d7b97"
+  },
+  {
+    "file": "assets/audio/announcer/triple_kill_r1.wav",
+    "event": "Play_vo_Announcer_Female1_TripleKillYouYourTeam",
+    "cue": "triple_kill",
+    "label": "三杀 · 仅试听",
+    "duration": 3.371927437641723,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_TripleKillYouYourTeam {r1} {d}.txtp",
+    "event_id": 627773033,
+    "media_ids": [
+      "626949528",
+      "412826571"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "510fe84a9fe7cd73dc15af036ce2a889cba0175ad44892c01b57ac6cb4b77067"
+  },
+  {
+    "file": "assets/audio/announcer/triple_kill_r2.wav",
+    "event": "Play_vo_Announcer_Female1_TripleKillYouYourTeam",
+    "cue": "triple_kill",
+    "label": "三杀 · 仅试听",
+    "duration": 3.0954421768707485,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_TripleKillYouYourTeam {r2} {d}.txtp",
+    "event_id": 627773033,
+    "media_ids": [
+      "626949528",
+      "412826571"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "34c59f21fed2dac5558a7e28b74134452cd297b76ce6e2d11577a4c3250cfe22"
+  },
+  {
+    "file": "assets/audio/announcer/quadra_kill_r1.wav",
+    "event": "Play_vo_Announcer_Female1_QuadraKillYouYourTeam",
+    "cue": "quadra_kill",
+    "label": "四杀 · 仅试听",
+    "duration": 3.7434467120181405,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_QuadraKillYouYourTeam {r1} {d}.txtp",
+    "event_id": 3159104195,
+    "media_ids": [
+      "773276672",
+      "1047104878"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "40326adbdedc43f2f097ad3a11941402206e2fba1a77e970e22ce314fcef5b70"
+  },
+  {
+    "file": "assets/audio/announcer/quadra_kill_r2.wav",
+    "event": "Play_vo_Announcer_Female1_QuadraKillYouYourTeam",
+    "cue": "quadra_kill",
+    "label": "四杀 · 仅试听",
+    "duration": 3.70281179138322,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_QuadraKillYouYourTeam {r2} {d}.txtp",
+    "event_id": 3159104195,
+    "media_ids": [
+      "773276672",
+      "1047104878"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "765874933262542ceaab382e076e9307d5ea579c5a9c1cb1905483b6cf15f71b"
+  },
+  {
+    "file": "assets/audio/announcer/penta_kill_r1.wav",
+    "event": "Play_vo_Announcer_Female1_PentaKillYouYourTeam",
+    "cue": "penta_kill",
+    "label": "五杀 · 仅试听",
+    "duration": 3.801496598639456,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_PentaKillYouYourTeam {r1} {d}.txtp",
+    "event_id": 2402155913,
+    "media_ids": [
+      "456667103",
+      "445966792"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "87cd8d58aba4cea4c01eb54539d5f0ba0a80e9f5676c7f3a1cba25d509dcc671"
+  },
+  {
+    "file": "assets/audio/announcer/penta_kill_r2.wav",
+    "event": "Play_vo_Announcer_Female1_PentaKillYouYourTeam",
+    "cue": "penta_kill",
+    "label": "五杀 · 仅试听",
+    "duration": 3.7550566893424038,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_PentaKillYouYourTeam {r2} {d}.txtp",
+    "event_id": 2402155913,
+    "media_ids": [
+      "456667103",
+      "445966792"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "02714f75b282f1b389f87bfd2323ee01af556f603f3fc404390ff1ac8c3b89c8"
+  },
+  {
+    "file": "assets/audio/announcer/killing_spree_r1.wav",
+    "event": "Play_vo_Announcer_Female1_KillingSpreeYouYourTeam",
+    "cue": "killing_spree",
+    "label": "大杀特杀 · 仅试听",
+    "duration": 3.5983219954648527,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_KillingSpreeYouYourTeam {r1} {d}.txtp",
+    "event_id": 459905612,
+    "media_ids": [
+      "410213708",
+      "17517337"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "9b0014abd81cb9f5e7ed3e1c2bf4d8e70201eaece4fba884c43d1e7130cbf34a"
+  },
+  {
+    "file": "assets/audio/announcer/killing_spree_r2.wav",
+    "event": "Play_vo_Announcer_Female1_KillingSpreeYouYourTeam",
+    "cue": "killing_spree",
+    "label": "大杀特杀 · 仅试听",
+    "duration": 3.644761904761905,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_KillingSpreeYouYourTeam {r2} {d}.txtp",
+    "event_id": 459905612,
+    "media_ids": [
+      "410213708",
+      "17517337"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "9d2d3541b387b159d4b5abce78f819bf317f4a837fdbd9618351a41a81e341bc"
+  },
+  {
+    "file": "assets/audio/announcer/rampage_r1.wav",
+    "event": "Play_vo_Announcer_Female1_RampageYouYourTeam",
+    "cue": "rampage",
+    "label": "暴走 · 仅试听",
+    "duration": 3.31968253968254,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_RampageYouYourTeam {r1} {d}.txtp",
+    "event_id": 326680934,
+    "media_ids": [
+      "8711389",
+      "617523934"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "bf9e43c3011ffe041ea9b6e491df07d51d0de1ee4e11aba4a015517b15f568b6"
+  },
+  {
+    "file": "assets/audio/announcer/rampage_r2.wav",
+    "event": "Play_vo_Announcer_Female1_RampageYouYourTeam",
+    "cue": "rampage",
+    "label": "暴走 · 仅试听",
+    "duration": 3.3370975056689343,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_RampageYouYourTeam {r2} {d}.txtp",
+    "event_id": 326680934,
+    "media_ids": [
+      "8711389",
+      "617523934"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "2f26b31ac46af924298421e12c9a9a694a80f9d67c6b5918d6950f74681c5cec"
+  },
+  {
+    "file": "assets/audio/announcer/unstoppable_r1.wav",
+    "event": "Play_vo_Announcer_Female1_UnstoppableYouYourTeam",
+    "cue": "unstoppable",
+    "label": "无人能挡 · 仅试听",
+    "duration": 3.546077097505669,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_UnstoppableYouYourTeam {d}.txtp",
+    "event_id": 2881557072,
+    "media_ids": [
+      "368724426"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "aabd4b0719797886339241a1ce7555fdf659e0ccdb90b275e2a1f5bc0f88d28c"
+  },
+  {
+    "file": "assets/audio/announcer/dominating_r1.wav",
+    "event": "Play_vo_Announcer_Female1_DominatingYouYourTeam",
+    "cue": "dominating",
+    "label": "主宰比赛 · 仅试听",
+    "duration": 3.2848526077097504,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_DominatingYouYourTeam {d}.txtp",
+    "event_id": 3839768079,
+    "media_ids": [
+      "34282060"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "cc88f7d58f4113c59fc807c4beb6e8d9eb520fa990ca24fd61c594e9a0dc62ae"
+  },
+  {
+    "file": "assets/audio/announcer/godlike_r1.wav",
+    "event": "Play_vo_Announcer_Female1_GodlikeYouYourTeam",
+    "cue": "godlike",
+    "label": "接近神 · 仅试听",
+    "duration": 3.0700680272108842,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_GodlikeYouYourTeam {r1} {d}.txtp",
+    "event_id": 740646976,
+    "media_ids": [
+      "53276979",
+      "386134202"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "93569c76b5a9f4ea7993c551baa3476002786be79bf16178b9de6dcf234f16cc"
+  },
+  {
+    "file": "assets/audio/announcer/godlike_r2.wav",
+    "event": "Play_vo_Announcer_Female1_GodlikeYouYourTeam",
+    "cue": "godlike",
+    "label": "接近神 · 仅试听",
+    "duration": 3.424172335600907,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_GodlikeYouYourTeam {r2} {d}.txtp",
+    "event_id": 740646976,
+    "media_ids": [
+      "53276979",
+      "386134202"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "2d6c7a19c486c5e309b5f83b1f39ebdc9d0d45778bf9798c0263c72cc6685eae"
+  },
+  {
+    "file": "assets/audio/announcer/legendary_r1.wav",
+    "event": "Play_vo_Announcer_Female1_LegendaryYouYourTeam",
+    "cue": "legendary",
+    "label": "超神 · 仅试听",
+    "duration": 3.546077097505669,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_LegendaryYouYourTeam {r1} {d}.txtp",
+    "event_id": 3247948104,
+    "media_ids": [
+      "393899697",
+      "173281278",
+      "116387504"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "39e5178e27841407bbdfbf7b277033c908efa8ad7c2e2a293c7faeb28fcb6972"
+  },
+  {
+    "file": "assets/audio/announcer/legendary_r2.wav",
+    "event": "Play_vo_Announcer_Female1_LegendaryYouYourTeam",
+    "cue": "legendary",
+    "label": "超神 · 仅试听",
+    "duration": 3.2268027210884354,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_LegendaryYouYourTeam {r2} {d}.txtp",
+    "event_id": 3247948104,
+    "media_ids": [
+      "393899697",
+      "173281278",
+      "116387504"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "8d994da1d9b8883babcc879ba80653d1a4c447790e8f1b69d8c5fa4f01cf496c"
+  },
+  {
+    "file": "assets/audio/announcer/legendary_r3.wav",
+    "event": "Play_vo_Announcer_Female1_LegendaryYouYourTeam",
+    "cue": "legendary",
+    "label": "超神 · 仅试听",
+    "duration": 3.505442176870748,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_LegendaryYouYourTeam {r3} {d}.txtp",
+    "event_id": 3247948104,
+    "media_ids": [
+      "393899697",
+      "173281278",
+      "116387504"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "21f2d640a04538147cec86173f10ef2eb2f89909e9d3a02bc5a391356be420dd"
+  },
+  {
+    "file": "assets/audio/announcer/shutdown_r1.wav",
+    "event": "Play_vo_Announcer_Female1_ShutdownYouYourTeam",
+    "cue": "shutdown",
+    "label": "终结 · 仅试听",
+    "duration": 3.1281179138321997,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_ShutdownYouYourTeam {r1} {d}.txtp",
+    "event_id": 2636930455,
+    "media_ids": [
+      "177224421",
+      "183997896"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "7e8389bb92c8164bcf13fe8e22578b830abe373061dca8d0bf8c9cac9ee5df59"
+  },
+  {
+    "file": "assets/audio/announcer/shutdown_r2.wav",
+    "event": "Play_vo_Announcer_Female1_ShutdownYouYourTeam",
+    "cue": "shutdown",
+    "label": "终结 · 仅试听",
+    "duration": 3.8051020408163265,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_ShutdownYouYourTeam {r2} {d}.txtp",
+    "event_id": 2636930455,
+    "media_ids": [
+      "177224421",
+      "183997896"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "135f2f66b4ac8af8e6571600baafb7327f062b4da4d5da4228473dc244c389b2"
+  },
+  {
+    "file": "assets/audio/announcer/ace_enemy_r1.wav",
+    "event": "Play_vo_Announcer_Female1_AceEnemyTeam",
+    "cue": "ace_enemy",
+    "label": "敌方团灭 · 仅试听",
+    "duration": 2.855283446712018,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_AceEnemyTeam {r1}.txtp",
+    "event_id": 799847546,
+    "media_ids": [
+      "482688019",
+      "365934627"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "2aa41b38b7d53468d2555d5b694eae7f014469856db50c29544be1ba5f913ba9"
+  },
+  {
+    "file": "assets/audio/announcer/ace_enemy_r2.wav",
+    "event": "Play_vo_Announcer_Female1_AceEnemyTeam",
+    "cue": "ace_enemy",
+    "label": "敌方团灭 · 仅试听",
+    "duration": 2.936553287981859,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_AceEnemyTeam {r2}.txtp",
+    "event_id": 799847546,
+    "media_ids": [
+      "482688019",
+      "365934627"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "bed7710330ccfe3a57600a3a18ef0e709b237fd088deddddb4644ba5c2cbe182"
+  },
+  {
+    "file": "assets/audio/announcer/ace_ally_r1.wav",
+    "event": "Play_vo_Announcer_Female1_AceYourTeam",
+    "cue": "ace_ally",
+    "label": "我方团灭 · 仅试听",
+    "duration": 2.855283446712018,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_AceYourTeam {r1} {d}.txtp",
+    "event_id": 3533407237,
+    "media_ids": [
+      "482688019",
+      "365934627"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "2aa41b38b7d53468d2555d5b694eae7f014469856db50c29544be1ba5f913ba9"
+  },
+  {
+    "file": "assets/audio/announcer/ace_ally_r2.wav",
+    "event": "Play_vo_Announcer_Female1_AceYourTeam",
+    "cue": "ace_ally",
+    "label": "我方团灭 · 仅试听",
+    "duration": 2.936553287981859,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_AceYourTeam {r2} {d}.txtp",
+    "event_id": 3533407237,
+    "media_ids": [
+      "482688019",
+      "365934627"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "bed7710330ccfe3a57600a3a18ef0e709b237fd088deddddb4644ba5c2cbe182"
+  },
+  {
+    "file": "assets/audio/announcer/tower_enemy_r1.wav",
+    "event": "Play_vo_Announcer_Female1_TurretLostEnemyTeam",
+    "cue": "tower_enemy",
+    "label": "敌方防御塔被摧毁 · 仅试听",
+    "duration": 4.395510204081632,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_TurretLostEnemyTeam.txtp",
+    "event_id": 1676036981,
+    "media_ids": [
+      "19868007"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "c2c46fc7800b9b8aa3c796cf005f5d4e57e34839d77501cf99dc6a3bdbf0976e"
+  },
+  {
+    "file": "assets/audio/announcer/tower_ally_r1.wav",
+    "event": "Play_vo_Announcer_Female1_TurretLostYourTeam",
+    "cue": "tower_ally",
+    "label": "我方防御塔被摧毁 · 仅试听",
+    "duration": 4.051111111111111,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_TurretLostYourTeam {r1} {d}.txtp",
+    "event_id": 3029811332,
+    "media_ids": [
+      "577832331",
+      "41707268"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "e34bcbeb40426da9b24c6c360b9dbf5a5426df722df40aa28bab867077c35e84"
+  },
+  {
+    "file": "assets/audio/announcer/tower_ally_r2.wav",
+    "event": "Play_vo_Announcer_Female1_TurretLostYourTeam",
+    "cue": "tower_ally",
+    "label": "我方防御塔被摧毁 · 仅试听",
+    "duration": 4.051111111111111,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_TurretLostYourTeam {r1}.txtp",
+    "event_id": 3029811332,
+    "media_ids": [
+      "577832331",
+      "41707268"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "e34bcbeb40426da9b24c6c360b9dbf5a5426df722df40aa28bab867077c35e84"
+  },
+  {
+    "file": "assets/audio/announcer/tower_ally_r3.wav",
+    "event": "Play_vo_Announcer_Female1_TurretLostYourTeam",
+    "cue": "tower_ally",
+    "label": "我方防御塔被摧毁 · 仅试听",
+    "duration": 3.946621315192744,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_TurretLostYourTeam {r2} {d}.txtp",
+    "event_id": 3029811332,
+    "media_ids": [
+      "577832331",
+      "41707268"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "af1dab99534c1e5ef9397b23168f7f7cf723f48af68399261c854655a0015749"
+  },
+  {
+    "file": "assets/audio/announcer/inhibitor_r1.wav",
+    "event": "Play_vo_Announcer_Female1_InhibitorRespawnYourTeam",
+    "cue": "inhibitor",
+    "label": "水晶兵营重生 · 仅试听",
+    "duration": 4.248480725623582,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_InhibitorRespawnYourTeam.txtp",
+    "event_id": 2568035574,
+    "media_ids": [
+      "456673349"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "e3eaaaa29c133fc6fa5240f21b5053b91dab2104866821cb4b8ae7d5ccbd839f"
+  },
+  {
+    "file": "assets/audio/announcer/disconnect_r1.wav",
+    "event": "Play_vo_Announcer_Female1_PlayerDisconnectYourTeam",
+    "cue": "disconnect",
+    "label": "友方掉线 · 仅试听",
+    "duration": 3.912925170068027,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_PlayerDisconnectYourTeam.txtp",
+    "event_id": 2739193941,
+    "media_ids": [
+      "382345251"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "bed2ef92bc9aa016f9c799e318ca99da6db427cdac22e4b4169229e8137da9ac"
+  },
+  {
+    "file": "assets/audio/announcer/reconnect_r1.wav",
+    "event": "Play_vo_Announcer_Female1_PlayerReconnectYourTeam",
+    "cue": "reconnect",
+    "label": "友方重连 · 仅试听",
+    "duration": 4.1033560090702945,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_PlayerReconnectYourTeam {r1}.txtp",
+    "event_id": 1813998222,
+    "media_ids": [
+      "668395019",
+      "74691771"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "99a7785ab3e1de5292f6ee526c7c3ae2110442d17155b34c2f03b1203f15ed7d"
+  },
+  {
+    "file": "assets/audio/announcer/reconnect_r2.wav",
+    "event": "Play_vo_Announcer_Female1_PlayerReconnectYourTeam",
+    "cue": "reconnect",
+    "label": "友方重连 · 仅试听",
+    "duration": 4.1033560090702945,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_PlayerReconnectYourTeam {r2}.txtp",
+    "event_id": 1813998222,
+    "media_ids": [
+      "668395019",
+      "74691771"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "454bee806c8e568d859a7a7aa96aca6cbd6455d75e37914e04fe2ff8808808b9"
+  },
+  {
+    "file": "assets/audio/units/minion_shared/spawn_r1.wav",
+    "event": "Play_sfx_SRU_Spawn_MinionsSpawn_cast",
+    "cue": "spawn:start",
+    "label": "小兵生成 · 兵线/部署共用",
+    "duration": 1.763514739229025,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/minion_spawn_review/txtp/Play_sfx_SRU_Spawn_MinionsSpawn_cast {r1}.txtp",
+    "event_id": 546694519,
+    "media_ids": [
+      "691552716",
+      "716449542",
+      "146970335"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "785389fe6af79722f2b1d09271b43e6cc9adb4c45750027ba11edd4d6a16f475"
+  },
+  {
+    "file": "assets/audio/units/minion_shared/spawn_r2.wav",
+    "event": "Play_sfx_SRU_Spawn_MinionsSpawn_cast",
+    "cue": "spawn:start",
+    "label": "小兵生成 · 兵线/部署共用",
+    "duration": 1.6336507936507936,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/minion_spawn_review/txtp/Play_sfx_SRU_Spawn_MinionsSpawn_cast {r2}.txtp",
+    "event_id": 546694519,
+    "media_ids": [
+      "691552716",
+      "716449542",
+      "146970335"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "a3e74c7ed24f0e0d75e3338ce5ad905283bf722a3667585f1b6f45d1f5710e85"
+  },
+  {
+    "file": "assets/audio/units/minion_shared/spawn_r3.wav",
+    "event": "Play_sfx_SRU_Spawn_MinionsSpawn_cast",
+    "cue": "spawn:start",
+    "label": "小兵生成 · 兵线/部署共用",
+    "duration": 1.9058049886621315,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/minion_spawn_review/txtp/Play_sfx_SRU_Spawn_MinionsSpawn_cast {r3}.txtp",
+    "event_id": 546694519,
+    "media_ids": [
+      "691552716",
+      "716449542",
+      "146970335"
+    ],
+    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
+    "sha256": "f9f8ffe832342cd5b9f2917cbb0b2322c57279845fdb468ff8113dde957ab5d4"
+  }
+]

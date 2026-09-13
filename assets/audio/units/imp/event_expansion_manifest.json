@@ -1,0 +1,82 @@
+[
+  {
+    "file": "assets/audio/units/imp/play_sfx_yorick_yorickq_summon_r1.wav",
+    "event": "Play_sfx_Yorick_YorickQ_summon",
+    "event_id": 3732154062,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_summon {r1}.txtp",
+    "duration": 3.250793650793651,
+    "media_ids": [
+      63271389,
+      89506106,
+      511329757,
+      677912814,
+      750927905
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "d6b33380d57b0074bbe4a0bb34f6203ba8e81dd0243f04da298abbf60865d922"
+  },
+  {
+    "file": "assets/audio/units/imp/play_sfx_yorick_yorickq_summon_r2.wav",
+    "event": "Play_sfx_Yorick_YorickQ_summon",
+    "event_id": 3732154062,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_summon {r2}.txtp",
+    "duration": 3.813877551020408,
+    "media_ids": [
+      63271389,
+      89506106,
+      511329757,
+      677912814,
+      750927905
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "600e32fefe9ed77196d87e5cc55258a38e875f7b757727d3dbfbe1bac1dcf799"
+  },
+  {
+    "file": "assets/audio/units/imp/play_sfx_yorick_yorickq_summon_r3.wav",
+    "event": "Play_sfx_Yorick_YorickQ_summon",
+    "event_id": 3732154062,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_summon {r3}.txtp",
+    "duration": 4.057687074829932,
+    "media_ids": [
+      63271389,
+      89506106,
+      511329757,
+      677912814,
+      750927905
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "4dcb8852348a7f68dd7776c56e254057f297a72516ea6eaa75815910eca083fa"
+  },
+  {
+    "file": "assets/audio/units/imp/play_sfx_yorick_yorickq_summon_r4.wav",
+    "event": "Play_sfx_Yorick_YorickQ_summon",
+    "event_id": 3732154062,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_summon {r4}.txtp",
+    "duration": 3.6281179138321997,
+    "media_ids": [
+      63271389,
+      89506106,
+      511329757,
+      677912814,
+      750927905
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "3561fd1365f4298f65a6781b4fcb50f64f1a903b1860471fbee9f5971f6d66d2"
+  },
+  {
+    "file": "assets/audio/units/imp/play_sfx_yorick_yorickq_summon_r5.wav",
+    "event": "Play_sfx_Yorick_YorickQ_summon",
+    "event_id": 3732154062,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_summon {r5}.txtp",
+    "duration": 3.8312925170068026,
+    "media_ids": [
+      63271389,
+      89506106,
+      511329757,
+      677912814,
+      750927905
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "28564706c0a67fcbbcff33d1f99aa017cff460a77c0146c5201416f20a7e4e37"
+  }
+]

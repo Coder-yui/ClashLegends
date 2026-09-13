@@ -1,0 +1,923 @@
+[
+  {
+    "file": "play_sfx_twistedfate_twistedfatebasicattack_oncast_r1_d.wav",
+    "event": "Play_sfx_TwistedFate_TwistedFateBasicAttack_OnCast",
+    "event_id": 3571714004,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/event_wav/Play_sfx_TwistedFate_TwistedFateBasicAttack_OnCast {r1} {d}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_TwistedFateBasicAttack_OnCast {r1} {d}.txtp",
+    "media_ids": [
+      193139396,
+      271048699,
+      426373685,
+      508755464
+    ],
+    "duration": 0.6992,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "d653742babee0b55cbcd27fd233e0b8aa40c7eca0ae3faa1d8d09b88847e4f5b",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_twistedfate_twistedfatebasicattack_oncast_r2_d.wav",
+    "event": "Play_sfx_TwistedFate_TwistedFateBasicAttack_OnCast",
+    "event_id": 3571714004,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/event_wav/Play_sfx_TwistedFate_TwistedFateBasicAttack_OnCast {r2} {d}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_TwistedFateBasicAttack_OnCast {r2} {d}.txtp",
+    "media_ids": [
+      193139396,
+      271048699,
+      426373685,
+      508755464
+    ],
+    "duration": 0.7414,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "5cdb61ca9610ac6e2f297627f45f1e0273b0af1df7e17fb9a94ba8c5fb9409d0",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_twistedfate_twistedfatebasicattack_oncast_r3_d.wav",
+    "event": "Play_sfx_TwistedFate_TwistedFateBasicAttack_OnCast",
+    "event_id": 3571714004,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/event_wav/Play_sfx_TwistedFate_TwistedFateBasicAttack_OnCast {r3} {d}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_TwistedFateBasicAttack_OnCast {r3} {d}.txtp",
+    "media_ids": [
+      193139396,
+      271048699,
+      426373685,
+      508755464
+    ],
+    "duration": 0.6858,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "18ed7d61d0c1ace5f261e044a857ac77c2dc08fc90130fbd5d415e5011c80054",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_twistedfate_twistedfatebasicattack2_oncast_r1.wav",
+    "event": "Play_sfx_TwistedFate_TwistedFateBasicAttack2_OnCast",
+    "event_id": 2897896684,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/event_wav/Play_sfx_TwistedFate_TwistedFateBasicAttack2_OnCast {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_TwistedFateBasicAttack2_OnCast {r1}.txtp",
+    "media_ids": [
+      193139396,
+      271048699,
+      426373685,
+      508755464
+    ],
+    "duration": 0.6992,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "d653742babee0b55cbcd27fd233e0b8aa40c7eca0ae3faa1d8d09b88847e4f5b",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_twistedfate_twistedfatebasicattack2_oncast_r2.wav",
+    "event": "Play_sfx_TwistedFate_TwistedFateBasicAttack2_OnCast",
+    "event_id": 2897896684,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/event_wav/Play_sfx_TwistedFate_TwistedFateBasicAttack2_OnCast {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_TwistedFateBasicAttack2_OnCast {r2}.txtp",
+    "media_ids": [
+      193139396,
+      271048699,
+      426373685,
+      508755464
+    ],
+    "duration": 0.7414,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "5cdb61ca9610ac6e2f297627f45f1e0273b0af1df7e17fb9a94ba8c5fb9409d0",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_twistedfate_twistedfatebasicattack2_oncast_r3.wav",
+    "event": "Play_sfx_TwistedFate_TwistedFateBasicAttack2_OnCast",
+    "event_id": 2897896684,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/event_wav/Play_sfx_TwistedFate_TwistedFateBasicAttack2_OnCast {r3}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_TwistedFateBasicAttack2_OnCast {r3}.txtp",
+    "media_ids": [
+      193139396,
+      271048699,
+      426373685,
+      508755464
+    ],
+    "duration": 0.6858,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "18ed7d61d0c1ace5f261e044a857ac77c2dc08fc90130fbd5d415e5011c80054",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_twistedfate_twistedfatebasicattack3_oncast_r1_d.wav",
+    "event": "Play_sfx_TwistedFate_TwistedFateBasicAttack3_OnCast",
+    "event_id": 2549684911,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/event_wav/Play_sfx_TwistedFate_TwistedFateBasicAttack3_OnCast {r1} {d}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_TwistedFateBasicAttack3_OnCast {r1} {d}.txtp",
+    "media_ids": [
+      193139396,
+      271048699,
+      426373685,
+      508755464
+    ],
+    "duration": 0.6992,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "d653742babee0b55cbcd27fd233e0b8aa40c7eca0ae3faa1d8d09b88847e4f5b",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_twistedfate_twistedfatebasicattack3_oncast_r2_d.wav",
+    "event": "Play_sfx_TwistedFate_TwistedFateBasicAttack3_OnCast",
+    "event_id": 2549684911,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/event_wav/Play_sfx_TwistedFate_TwistedFateBasicAttack3_OnCast {r2} {d}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_TwistedFateBasicAttack3_OnCast {r2} {d}.txtp",
+    "media_ids": [
+      193139396,
+      271048699,
+      426373685,
+      508755464
+    ],
+    "duration": 0.7414,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "5cdb61ca9610ac6e2f297627f45f1e0273b0af1df7e17fb9a94ba8c5fb9409d0",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_twistedfate_twistedfatebasicattack3_oncast_r3_d.wav",
+    "event": "Play_sfx_TwistedFate_TwistedFateBasicAttack3_OnCast",
+    "event_id": 2549684911,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/event_wav/Play_sfx_TwistedFate_TwistedFateBasicAttack3_OnCast {r3} {d}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_TwistedFateBasicAttack3_OnCast {r3} {d}.txtp",
+    "media_ids": [
+      193139396,
+      271048699,
+      426373685,
+      508755464
+    ],
+    "duration": 0.6858,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "18ed7d61d0c1ace5f261e044a857ac77c2dc08fc90130fbd5d415e5011c80054",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_twistedfate_twistedfatebasicattack4_oncast_r1_d.wav",
+    "event": "Play_sfx_TwistedFate_TwistedFateBasicAttack4_OnCast",
+    "event_id": 1885110286,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/event_wav/Play_sfx_TwistedFate_TwistedFateBasicAttack4_OnCast {r1} {d}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_TwistedFateBasicAttack4_OnCast {r1} {d}.txtp",
+    "media_ids": [
+      193139396,
+      271048699,
+      426373685,
+      508755464
+    ],
+    "duration": 0.6992,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "d653742babee0b55cbcd27fd233e0b8aa40c7eca0ae3faa1d8d09b88847e4f5b",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_twistedfate_twistedfatebasicattack4_oncast_r2_d.wav",
+    "event": "Play_sfx_TwistedFate_TwistedFateBasicAttack4_OnCast",
+    "event_id": 1885110286,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/event_wav/Play_sfx_TwistedFate_TwistedFateBasicAttack4_OnCast {r2} {d}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_TwistedFateBasicAttack4_OnCast {r2} {d}.txtp",
+    "media_ids": [
+      193139396,
+      271048699,
+      426373685,
+      508755464
+    ],
+    "duration": 0.7414,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "5cdb61ca9610ac6e2f297627f45f1e0273b0af1df7e17fb9a94ba8c5fb9409d0",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_twistedfate_twistedfatebasicattack4_oncast_r3_d.wav",
+    "event": "Play_sfx_TwistedFate_TwistedFateBasicAttack4_OnCast",
+    "event_id": 1885110286,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/event_wav/Play_sfx_TwistedFate_TwistedFateBasicAttack4_OnCast {r3} {d}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_TwistedFateBasicAttack4_OnCast {r3} {d}.txtp",
+    "media_ids": [
+      193139396,
+      271048699,
+      426373685,
+      508755464
+    ],
+    "duration": 0.6858,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "18ed7d61d0c1ace5f261e044a857ac77c2dc08fc90130fbd5d415e5011c80054",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_twistedfate_cardmasterstack_cast_r1.wav",
+    "event": "Play_sfx_TwistedFate_CardmasterStack_cast",
+    "event_id": 3315226659,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/event_wav/Play_sfx_TwistedFate_CardmasterStack_cast {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_CardmasterStack_cast {r1}.txtp",
+    "media_ids": [
+      758726205,
+      838885562
+    ],
+    "duration": 0.6495,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "4ae79918f029a32ff57911965fe9a7d5d0c7018a5b8af97df489ce057ee8c9f1",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_twistedfate_cardmasterstack_cast_r2.wav",
+    "event": "Play_sfx_TwistedFate_CardmasterStack_cast",
+    "event_id": 3315226659,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/event_wav/Play_sfx_TwistedFate_CardmasterStack_cast {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_CardmasterStack_cast {r2}.txtp",
+    "media_ids": [
+      758726205,
+      838885562
+    ],
+    "duration": 0.718,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "9bbc4d5feebd4dfbad792445bb16a231beec604b075249caa9b46b6c16ca8f67",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_twistedfate_twistedfatebasicattack_onhit_r1_d.wav",
+    "event": "Play_sfx_TwistedFate_TwistedFateBasicAttack_OnHit",
+    "event_id": 1706242940,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/event_wav/Play_sfx_TwistedFate_TwistedFateBasicAttack_OnHit {r1} {d}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_TwistedFateBasicAttack_OnHit {r1} {d}.txtp",
+    "media_ids": [
+      59766754,
+      297237050,
+      355828276,
+      709096571
+    ],
+    "duration": 1.0849,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "06abb87f90252f87c43c02c9b457dbcee2c2aff289287620f80096f7d5578105",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_twistedfate_twistedfatebasicattack_onhit_r2_d.wav",
+    "event": "Play_sfx_TwistedFate_TwistedFateBasicAttack_OnHit",
+    "event_id": 1706242940,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/event_wav/Play_sfx_TwistedFate_TwistedFateBasicAttack_OnHit {r2} {d}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_TwistedFateBasicAttack_OnHit {r2} {d}.txtp",
+    "media_ids": [
+      59766754,
+      297237050,
+      355828276,
+      709096571
+    ],
+    "duration": 1.2234,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "d2fa9e67aa439387aa869a9d0700491684e78a7de9fd3cdaf97aa5e312ff3c8d",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_twistedfate_twistedfatebasicattack_onhit_r3_d.wav",
+    "event": "Play_sfx_TwistedFate_TwistedFateBasicAttack_OnHit",
+    "event_id": 1706242940,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/event_wav/Play_sfx_TwistedFate_TwistedFateBasicAttack_OnHit {r3} {d}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_TwistedFateBasicAttack_OnHit {r3} {d}.txtp",
+    "media_ids": [
+      59766754,
+      297237050,
+      355828276,
+      709096571
+    ],
+    "duration": 0.8202,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "9386e5ac8bee21c213d6047d222d729d09b4aa854cc1abf7c88e42aac1f36a9c",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_twistedfate_twistedfatebasicattack2_onhit_r1.wav",
+    "event": "Play_sfx_TwistedFate_TwistedFateBasicAttack2_OnHit",
+    "event_id": 3559288708,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/event_wav/Play_sfx_TwistedFate_TwistedFateBasicAttack2_OnHit {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_TwistedFateBasicAttack2_OnHit {r1}.txtp",
+    "media_ids": [
+      59766754,
+      297237050,
+      355828276,
+      709096571
+    ],
+    "duration": 1.0849,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "06abb87f90252f87c43c02c9b457dbcee2c2aff289287620f80096f7d5578105",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_twistedfate_twistedfatebasicattack2_onhit_r2.wav",
+    "event": "Play_sfx_TwistedFate_TwistedFateBasicAttack2_OnHit",
+    "event_id": 3559288708,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/event_wav/Play_sfx_TwistedFate_TwistedFateBasicAttack2_OnHit {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_TwistedFateBasicAttack2_OnHit {r2}.txtp",
+    "media_ids": [
+      59766754,
+      297237050,
+      355828276,
+      709096571
+    ],
+    "duration": 1.2234,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "d2fa9e67aa439387aa869a9d0700491684e78a7de9fd3cdaf97aa5e312ff3c8d",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_twistedfate_twistedfatebasicattack2_onhit_r3.wav",
+    "event": "Play_sfx_TwistedFate_TwistedFateBasicAttack2_OnHit",
+    "event_id": 3559288708,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/event_wav/Play_sfx_TwistedFate_TwistedFateBasicAttack2_OnHit {r3}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_TwistedFateBasicAttack2_OnHit {r3}.txtp",
+    "media_ids": [
+      59766754,
+      297237050,
+      355828276,
+      709096571
+    ],
+    "duration": 0.8202,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "9386e5ac8bee21c213d6047d222d729d09b4aa854cc1abf7c88e42aac1f36a9c",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_twistedfate_twistedfatebasicattack3_onhit_r1_d.wav",
+    "event": "Play_sfx_TwistedFate_TwistedFateBasicAttack3_OnHit",
+    "event_id": 4085206557,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/event_wav/Play_sfx_TwistedFate_TwistedFateBasicAttack3_OnHit {r1} {d}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_TwistedFateBasicAttack3_OnHit {r1} {d}.txtp",
+    "media_ids": [
+      59766754,
+      297237050,
+      355828276,
+      709096571
+    ],
+    "duration": 1.0849,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "06abb87f90252f87c43c02c9b457dbcee2c2aff289287620f80096f7d5578105",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_twistedfate_twistedfatebasicattack3_onhit_r2_d.wav",
+    "event": "Play_sfx_TwistedFate_TwistedFateBasicAttack3_OnHit",
+    "event_id": 4085206557,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/event_wav/Play_sfx_TwistedFate_TwistedFateBasicAttack3_OnHit {r2} {d}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_TwistedFateBasicAttack3_OnHit {r2} {d}.txtp",
+    "media_ids": [
+      59766754,
+      297237050,
+      355828276,
+      709096571
+    ],
+    "duration": 1.2234,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "d2fa9e67aa439387aa869a9d0700491684e78a7de9fd3cdaf97aa5e312ff3c8d",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_twistedfate_twistedfatebasicattack3_onhit_r3_d.wav",
+    "event": "Play_sfx_TwistedFate_TwistedFateBasicAttack3_OnHit",
+    "event_id": 4085206557,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/event_wav/Play_sfx_TwistedFate_TwistedFateBasicAttack3_OnHit {r3} {d}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_TwistedFateBasicAttack3_OnHit {r3} {d}.txtp",
+    "media_ids": [
+      59766754,
+      297237050,
+      355828276,
+      709096571
+    ],
+    "duration": 0.8202,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "9386e5ac8bee21c213d6047d222d729d09b4aa854cc1abf7c88e42aac1f36a9c",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_twistedfate_twistedfatebasicattack4_onhit_r1_d.wav",
+    "event": "Play_sfx_TwistedFate_TwistedFateBasicAttack4_OnHit",
+    "event_id": 375673434,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/event_wav/Play_sfx_TwistedFate_TwistedFateBasicAttack4_OnHit {r1} {d}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_TwistedFateBasicAttack4_OnHit {r1} {d}.txtp",
+    "media_ids": [
+      59766754,
+      297237050,
+      355828276,
+      709096571
+    ],
+    "duration": 1.0849,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "06abb87f90252f87c43c02c9b457dbcee2c2aff289287620f80096f7d5578105",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_twistedfate_twistedfatebasicattack4_onhit_r2_d.wav",
+    "event": "Play_sfx_TwistedFate_TwistedFateBasicAttack4_OnHit",
+    "event_id": 375673434,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/event_wav/Play_sfx_TwistedFate_TwistedFateBasicAttack4_OnHit {r2} {d}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_TwistedFateBasicAttack4_OnHit {r2} {d}.txtp",
+    "media_ids": [
+      59766754,
+      297237050,
+      355828276,
+      709096571
+    ],
+    "duration": 1.2234,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "d2fa9e67aa439387aa869a9d0700491684e78a7de9fd3cdaf97aa5e312ff3c8d",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_twistedfate_twistedfatebasicattack4_onhit_r3_d.wav",
+    "event": "Play_sfx_TwistedFate_TwistedFateBasicAttack4_OnHit",
+    "event_id": 375673434,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/event_wav/Play_sfx_TwistedFate_TwistedFateBasicAttack4_OnHit {r3} {d}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_TwistedFateBasicAttack4_OnHit {r3} {d}.txtp",
+    "media_ids": [
+      59766754,
+      297237050,
+      355828276,
+      709096571
+    ],
+    "duration": 0.8202,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "9386e5ac8bee21c213d6047d222d729d09b4aa854cc1abf7c88e42aac1f36a9c",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_twistedfate_cardmasterstack_hit_r1.wav",
+    "event": "Play_sfx_TwistedFate_CardmasterStack_hit",
+    "event_id": 2078101449,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/event_wav/Play_sfx_TwistedFate_CardmasterStack_hit {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_CardmasterStack_hit {r1}.txtp",
+    "media_ids": [
+      238778749,
+      617748014,
+      753668092
+    ],
+    "duration": 1.7522,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "fa6011cfcefcc34e458d6b1698a4fa338584f2dbae4fd36ab05da0a880eb5396",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_twistedfate_cardmasterstack_hit_r2.wav",
+    "event": "Play_sfx_TwistedFate_CardmasterStack_hit",
+    "event_id": 2078101449,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/event_wav/Play_sfx_TwistedFate_CardmasterStack_hit {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_CardmasterStack_hit {r2}.txtp",
+    "media_ids": [
+      238778749,
+      617748014,
+      753668092
+    ],
+    "duration": 1.6212,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "06462c99af9ab23ff7450931105ecd1cda24d6bb91e29433d5a0cbfe8fde0249",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_twistedfate_cardmasterstack_hit_r3.wav",
+    "event": "Play_sfx_TwistedFate_CardmasterStack_hit",
+    "event_id": 2078101449,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/event_wav/Play_sfx_TwistedFate_CardmasterStack_hit {r3}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_CardmasterStack_hit {r3}.txtp",
+    "media_ids": [
+      238778749,
+      617748014,
+      753668092
+    ],
+    "duration": 1.5902,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "e58aac75b3b078ff3242efcd73706a3d6a5d4797077cfa2a563c7c60b8608cc3",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_twistedfate_wildcards_oncast_r1.wav",
+    "event": "Play_sfx_TwistedFate_WildCards_OnCast",
+    "event_id": 820718595,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/event_wav/Play_sfx_TwistedFate_WildCards_OnCast {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_WildCards_OnCast {r1}.txtp",
+    "media_ids": [
+      45363947,
+      112955870,
+      126228379,
+      705558182
+    ],
+    "duration": 1.0277,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "3d8a99a45190fd29d0fcd442f08bc25966049cce432d435fd5cc69e67b14b5f0",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_twistedfate_wildcards_oncast_r2.wav",
+    "event": "Play_sfx_TwistedFate_WildCards_OnCast",
+    "event_id": 820718595,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/event_wav/Play_sfx_TwistedFate_WildCards_OnCast {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_WildCards_OnCast {r2}.txtp",
+    "media_ids": [
+      45363947,
+      112955870,
+      126228379,
+      705558182
+    ],
+    "duration": 1.1568,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "03e3228bfde8abcdd386920ffae06b5781619e88dd3a7587cb9f4d048a961c52",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_twistedfate_wildcards_oncast_r3.wav",
+    "event": "Play_sfx_TwistedFate_WildCards_OnCast",
+    "event_id": 820718595,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/event_wav/Play_sfx_TwistedFate_WildCards_OnCast {r3}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_WildCards_OnCast {r3}.txtp",
+    "media_ids": [
+      45363947,
+      112955870,
+      126228379,
+      705558182
+    ],
+    "duration": 1.2967,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "f348bc1e53af0f111674b4f41fd8a290805b32236b5c7312222c7058b4dc5eda",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_vo_twistedfate_death3d_r1_zh_cn.wav",
+    "event": "Play_vo_TwistedFate_Death3D",
+    "event_id": 2077959696,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate_vo/event_wav/Play_vo_TwistedFate_Death3D {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate_vo/txtp/Play_vo_TwistedFate_Death3D {r1}.txtp",
+    "media_ids": [
+      497299854,
+      1182911399,
+      1414245796,
+      1505903503
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "293a79a254d78899a6d09d75121a660558ecfd37b0e03d02cdc8a8c8ec5be6a9",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 2.124625850340136,
+      "source_sha256": "f5069930dceaf1040502a21f3540dad139ce2818859955891bc2865fecd7e259",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_vo_twistedfate_death3d_r2_zh_cn.wav",
+    "event": "Play_vo_TwistedFate_Death3D",
+    "event_id": 2077959696,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate_vo/event_wav/Play_vo_TwistedFate_Death3D {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate_vo/txtp/Play_vo_TwistedFate_Death3D {r2}.txtp",
+    "media_ids": [
+      497299854,
+      1182911399,
+      1414245796,
+      1505903503
+    ],
+    "duration": 1.4861,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "8e155268d4b768fd299b596c271e44a0f1ae82908fa94877f26033e5bfafd7d7",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_vo_twistedfate_death3d_r3_zh_cn.wav",
+    "event": "Play_vo_TwistedFate_Death3D",
+    "event_id": 2077959696,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate_vo/event_wav/Play_vo_TwistedFate_Death3D {r3}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate_vo/txtp/Play_vo_TwistedFate_Death3D {r3}.txtp",
+    "media_ids": [
+      497299854,
+      1182911399,
+      1414245796,
+      1505903503
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "8e6a8eef7af7abf51f7fe86ccb4bc890fb2b539c432e1a54a4d3b65c8ffeb934",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 3.036394557823129,
+      "source_sha256": "e9c836a6620307ca719c8440ba0326baf8a550107d12d6fdb44c41c54dca1654",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_sfx_twistedfate_gate_marker_r1_last_1s.wav",
+    "event": "Play_sfx_TwistedFate_Gate_marker",
+    "event_id": 306882109,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/event_wav/Play_sfx_TwistedFate_Gate_marker {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Gate_marker {r1}.txtp",
+    "media_ids": [
+      16348301
+    ],
+    "duration": 1.0,
+    "source_duration": 3.7486167800453516,
+    "trim_start": 2.7486167800453516,
+    "processing": "vgmstream-cli -i; retain source gain; final 1 second, 5 ms fade-in at cut; no added event delay",
+    "sha256": "a876952d8332b02c6a2bbe21afe399a9204fbf3f1662bcbe4f32a762c25f2188"
+  },
+  {
+    "file": "play_sfx_twistedfate_gate_marker_r2_last_1s.wav",
+    "event": "Play_sfx_TwistedFate_Gate_marker",
+    "event_id": 306882109,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/event_wav/Play_sfx_TwistedFate_Gate_marker {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Gate_marker {r2}.txtp",
+    "media_ids": [
+      537911484
+    ],
+    "duration": 1.0,
+    "source_duration": 3.7825850340136054,
+    "trim_start": 2.7825850340136054,
+    "processing": "vgmstream-cli -i; retain source gain; final 1 second, 5 ms fade-in at cut; no added event delay",
+    "sha256": "a5a62f712604f9496b2f8b68a51b5c722f28bfcb4b79c0e173bde93e80ce5607"
+  },
+  {
+    "file": "play_sfx_twistedfate_gate_marker_r3_last_1s.wav",
+    "event": "Play_sfx_TwistedFate_Gate_marker",
+    "event_id": 306882109,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/event_wav/Play_sfx_TwistedFate_Gate_marker {r3}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Gate_marker {r3}.txtp",
+    "media_ids": [
+      916178773
+    ],
+    "duration": 1.0,
+    "source_duration": 3.8517233560090705,
+    "trim_start": 2.8517233560090705,
+    "processing": "vgmstream-cli -i; retain source gain; final 1 second, 5 ms fade-in at cut; no added event delay",
+    "sha256": "0b30ac9c9785fb9871b12960e69c716a47ccaee77c43f954ae7cd02412ae5a8b"
+  },
+  {
+    "file": "play_sfx_twistedfate_twistedfatebasicattack_onmissilelaunch_r1_d.wav",
+    "event": "Play_sfx_TwistedFate_TwistedFateBasicAttack_OnMissileLaunch",
+    "event_id": 1032675330,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_TwistedFateBasicAttack_OnMissileLaunch {r1} {d}.txtp",
+    "media_ids": [
+      339795354,
+      443517749,
+      666914420,
+      797539944
+    ],
+    "duration": 0.6772,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "d6f05d05a85a56156919187a3fbd8a7616e3022ee52df654c84b6035cae0a637"
+  },
+  {
+    "file": "play_sfx_twistedfate_twistedfatebasicattack_onmissilelaunch_r2_d.wav",
+    "event": "Play_sfx_TwistedFate_TwistedFateBasicAttack_OnMissileLaunch",
+    "event_id": 1032675330,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_TwistedFateBasicAttack_OnMissileLaunch {r2} {d}.txtp",
+    "media_ids": [
+      339795354,
+      443517749,
+      666914420,
+      797539944
+    ],
+    "duration": 0.675,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "d353594354c15282b3e77304c61990702f30248584074c66321898c63c3dfc83"
+  },
+  {
+    "file": "play_sfx_twistedfate_twistedfatebasicattack_onmissilelaunch_r3_d.wav",
+    "event": "Play_sfx_TwistedFate_TwistedFateBasicAttack_OnMissileLaunch",
+    "event_id": 1032675330,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_TwistedFateBasicAttack_OnMissileLaunch {r3} {d}.txtp",
+    "media_ids": [
+      339795354,
+      443517749,
+      666914420,
+      797539944
+    ],
+    "duration": 0.702,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "3f8589795037299ea6433440d55194d3a9e63b1fdb9aaa3d6c63491f40f24011"
+  },
+  {
+    "file": "play_sfx_twistedfate_twistedfatebasicattack_onmissilelaunch_r4_d.wav",
+    "event": "Play_sfx_TwistedFate_TwistedFateBasicAttack_OnMissileLaunch",
+    "event_id": 1032675330,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_TwistedFateBasicAttack_OnMissileLaunch {r4} {d}.txtp",
+    "media_ids": [
+      339795354,
+      443517749,
+      666914420,
+      797539944
+    ],
+    "duration": 0.7675,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "804122166cb1904c778f1c4257091354e9867b78e7b722dd2448dab3dce7221c"
+  },
+  {
+    "file": "play_sfx_twistedfate_cardmasterstack_missilelaunch_r1.wav",
+    "event": "Play_sfx_TwistedFate_CardmasterStack_missilelaunch",
+    "event_id": 2868187323,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_CardmasterStack_missilelaunch {r1}.txtp",
+    "media_ids": [
+      176588659,
+      444840894,
+      779110814
+    ],
+    "duration": 1.1194,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "6679d6474bb2094e4d34102b8c5b42841af01c7a33455321541df383923864ce"
+  },
+  {
+    "file": "play_sfx_twistedfate_cardmasterstack_missilelaunch_r2.wav",
+    "event": "Play_sfx_TwistedFate_CardmasterStack_missilelaunch",
+    "event_id": 2868187323,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_CardmasterStack_missilelaunch {r2}.txtp",
+    "media_ids": [
+      176588659,
+      444840894,
+      779110814
+    ],
+    "duration": 1.0593,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "7efa36209787be18d323ea18d56e88f99fa87b343c0b1598f3c2ef1db1465990"
+  },
+  {
+    "file": "play_sfx_twistedfate_cardmasterstack_missilelaunch_r3.wav",
+    "event": "Play_sfx_TwistedFate_CardmasterStack_missilelaunch",
+    "event_id": 2868187323,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_CardmasterStack_missilelaunch {r3}.txtp",
+    "media_ids": [
+      176588659,
+      444840894,
+      779110814
+    ],
+    "duration": 0.8912,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "0335dd6fbbd79fd934db96093f867a5b995dc18900b0854436601d30f9650b2e"
+  },
+  {
+    "file": "play_sfx_twistedfate_sealfatemissile_onmissilelaunch_r1.wav",
+    "event": "Play_sfx_TwistedFate_SealFateMissile_OnMissileLaunch",
+    "event_id": 2472741441,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_SealFateMissile_OnMissileLaunch {r1}.txtp",
+    "media_ids": [
+      216627811,
+      503852353,
+      593349300,
+      897353650
+    ],
+    "duration": 1.9795,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "3a294dab89abb99effb0dfaf8b7d1803c3fcab76caabdf1d60b6e2e534bdbca2"
+  },
+  {
+    "file": "play_sfx_twistedfate_sealfatemissile_onmissilelaunch_r2.wav",
+    "event": "Play_sfx_TwistedFate_SealFateMissile_OnMissileLaunch",
+    "event_id": 2472741441,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_SealFateMissile_OnMissileLaunch {r2}.txtp",
+    "media_ids": [
+      216627811,
+      503852353,
+      593349300,
+      897353650
+    ],
+    "duration": 2.0028,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "c1576b7381051dfa846d1a55c99f2c4e80077d1a72e903089d851ca698fa00a7"
+  },
+  {
+    "file": "play_sfx_twistedfate_sealfatemissile_onmissilelaunch_r3.wav",
+    "event": "Play_sfx_TwistedFate_SealFateMissile_OnMissileLaunch",
+    "event_id": 2472741441,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_SealFateMissile_OnMissileLaunch {r3}.txtp",
+    "media_ids": [
+      216627811,
+      503852353,
+      593349300,
+      897353650
+    ],
+    "duration": 2.3241,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "85907b06d8788e02934949ae952e5c9a9e3720c135b537b0e705749e08da6553"
+  },
+  {
+    "file": "play_sfx_twistedfate_sealfatemissile_onmissilelaunch_r4.wav",
+    "event": "Play_sfx_TwistedFate_SealFateMissile_OnMissileLaunch",
+    "event_id": 2472741441,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_SealFateMissile_OnMissileLaunch {r4}.txtp",
+    "media_ids": [
+      216627811,
+      503852353,
+      593349300,
+      897353650
+    ],
+    "duration": 2.1685,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "96b73af941bb5ca63d0d58a2d73cd6fc77f7bc72e902d05a3bc40e05a4362742"
+  },
+  {
+    "file": "play_sfx_twistedfate_sealfatemissile_onhit_r.wav",
+    "event": "Play_sfx_TwistedFate_SealFateMissile_OnHit",
+    "event_id": 546443887,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_SealFateMissile_OnHit {r}.txtp",
+    "media_ids": [
+      200866603,
+      206670743,
+      326922904,
+      709225770,
+      766908834,
+      852194350,
+      874508020,
+      1018677556
+    ],
+    "duration": 1.1494,
+    "processing": "vgmstream-cli -i; both source event layers and gains retained",
+    "selection_note": "Two random layers rendered together using the original TXTP selected first variant in each layer; not an exhaustive random combination pool.",
+    "sha256": "04b21c1e8fce040595930b3689c42ca0c9f2837949d8a1e4272705a9be608e96"
+  },
+  {
+    "file": "play_sfx_twistedfate_gate_marker_r1_full_1_75s.wav",
+    "event": "Play_sfx_TwistedFate_Gate_marker",
+    "event_id": 306882109,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/event_wav/Play_sfx_TwistedFate_Gate_marker {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Gate_marker {r1}.txtp",
+    "media_ids": [
+      16348301
+    ],
+    "source_duration": 3.7486167800453516,
+    "duration": 1.75,
+    "source_sha256": "111c92c78a6e16c4e67554bafbce488fde15149f021cfb923357f6866cc10493",
+    "processing": "Complete source event, no segment selection; pitch-preserving ffmpeg atempo 1.463580107631 twice, pad/trim filter output to exactly 77175 samples. Original event gain retained, no added event delay or normalization.",
+    "sha256": "47558a90861bb1cbdbafb6b2cd98c6ef8551a0ccddc0bc95de579b72508cec0d"
+  },
+  {
+    "file": "play_sfx_twistedfate_gate_marker_r2_full_1_75s.wav",
+    "event": "Play_sfx_TwistedFate_Gate_marker",
+    "event_id": 306882109,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/event_wav/Play_sfx_TwistedFate_Gate_marker {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Gate_marker {r2}.txtp",
+    "media_ids": [
+      537911484
+    ],
+    "source_duration": 3.7825850340136054,
+    "duration": 1.75,
+    "source_sha256": "5c19edee5b747522da0caeecd8e2e8e5fcca9f2484680c4fa634dd0608fd3746",
+    "processing": "Complete source event, no segment selection; pitch-preserving ffmpeg atempo 1.470196300598 twice, pad/trim filter output to exactly 77175 samples. Original event gain retained, no added event delay or normalization.",
+    "sha256": "3c3644f6a5f0a83f8a8dfd212f183ca1b9a4dc0906b8b216642ca62eea45d358"
+  },
+  {
+    "file": "play_sfx_twistedfate_gate_marker_r3_full_1_75s.wav",
+    "event": "Play_sfx_TwistedFate_Gate_marker",
+    "event_id": 306882109,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/event_wav/Play_sfx_TwistedFate_Gate_marker {r3}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Gate_marker {r3}.txtp",
+    "media_ids": [
+      916178773
+    ],
+    "source_duration": 3.8517233560090705,
+    "duration": 1.75,
+    "source_sha256": "e7ee7054773802800057ef0f8a3e5c74f098070cf5767339045b714555b582c0",
+    "processing": "Complete source event, no segment selection; pitch-preserving ffmpeg atempo 1.483571627817 twice, pad/trim filter output to exactly 77175 samples. Original event gain retained, no added event delay or normalization.",
+    "sha256": "14944203e430ca51838611f0d3324a6a28ceeda0f05d9188ea5d799fd89977a1"
+  },
+  {
+    "file": "play_sfx_twistedfate_gate_marker_r1_first_1_75s.wav",
+    "event": "Play_sfx_TwistedFate_Gate_marker",
+    "event_id": 306882109,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/event_wav/Play_sfx_TwistedFate_Gate_marker {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Gate_marker {r1}.txtp",
+    "media_ids": [
+      16348301
+    ],
+    "source_duration": 3.7486167800453516,
+    "duration": 1.75,
+    "source_sha256": "111c92c78a6e16c4e67554bafbce488fde15149f021cfb923357f6866cc10493",
+    "processing": "First 1.75 seconds of original event, no time compression, no normalization, original gain retained.",
+    "sha256": "c0116e7dd8f57dd1e78812d51f8f9494624d520f71837ad10eddcb3a994e31e8"
+  },
+  {
+    "file": "play_sfx_twistedfate_gate_marker_r2_first_1_75s.wav",
+    "event": "Play_sfx_TwistedFate_Gate_marker",
+    "event_id": 306882109,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/event_wav/Play_sfx_TwistedFate_Gate_marker {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Gate_marker {r2}.txtp",
+    "media_ids": [
+      537911484
+    ],
+    "source_duration": 3.7825850340136054,
+    "duration": 1.75,
+    "source_sha256": "5c19edee5b747522da0caeecd8e2e8e5fcca9f2484680c4fa634dd0608fd3746",
+    "processing": "First 1.75 seconds of original event, no time compression, no normalization, original gain retained.",
+    "sha256": "b661c2963babe20a08653fd3c6ed57c1dae97a0c35aceeaac8e7c08d7b65afdf"
+  },
+  {
+    "file": "play_sfx_twistedfate_gate_marker_r3_first_1_75s.wav",
+    "event": "Play_sfx_TwistedFate_Gate_marker",
+    "event_id": 306882109,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/event_wav/Play_sfx_TwistedFate_Gate_marker {r3}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Gate_marker {r3}.txtp",
+    "media_ids": [
+      916178773
+    ],
+    "source_duration": 3.8517233560090705,
+    "duration": 1.75,
+    "source_sha256": "e7ee7054773802800057ef0f8a3e5c74f098070cf5767339045b714555b582c0",
+    "processing": "First 1.75 seconds of original event, no time compression, no normalization, original gain retained.",
+    "sha256": "3bbd8be6ee994bcd4c47797e6c51a9b2f9ec1f5898d8ffe1d96cf3208cf0a997"
+  }
+]

@@ -1,0 +1,301 @@
+[
+  {
+    "file": "play_sfx_heimertblue_heimertbluebasicattack_oncast_r1.wav",
+    "event": "Play_sfx_HeimerTBlue_HeimerTBlueBasicAttack_OnCast",
+    "event_id": 1325637216,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/heimerdinger/event_wav/Play_sfx_HeimerTBlue_HeimerTBlueBasicAttack_OnCast {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTBlue_HeimerTBlueBasicAttack_OnCast {r1}.txtp",
+    "media_ids": [
+      123488026,
+      333558636,
+      1041810913
+    ],
+    "duration": 0.4649,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "c45dc949f43de831c7030a3e68c7a39d24ee40c2091bc90cd349b34d533222ac",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_heimertblue_heimertbluebasicattack_oncast_r2.wav",
+    "event": "Play_sfx_HeimerTBlue_HeimerTBlueBasicAttack_OnCast",
+    "event_id": 1325637216,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/heimerdinger/event_wav/Play_sfx_HeimerTBlue_HeimerTBlueBasicAttack_OnCast {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTBlue_HeimerTBlueBasicAttack_OnCast {r2}.txtp",
+    "media_ids": [
+      123488026,
+      333558636,
+      1041810913
+    ],
+    "duration": 0.3598,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "efaecab7de3e1a0f14c9ad748afeea033397c395b5b1567e2a1e916db7ecc256",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_heimertblue_heimertbluebasicattack_oncast_r3.wav",
+    "event": "Play_sfx_HeimerTBlue_HeimerTBlueBasicAttack_OnCast",
+    "event_id": 1325637216,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/heimerdinger/event_wav/Play_sfx_HeimerTBlue_HeimerTBlueBasicAttack_OnCast {r3}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTBlue_HeimerTBlueBasicAttack_OnCast {r3}.txtp",
+    "media_ids": [
+      123488026,
+      333558636,
+      1041810913
+    ],
+    "duration": 0.452,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "34300b6e6d76b59077d38fa2c8c7abeb60d1ce339e03f6f7f4de9c6362800216",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_heimertblue_heimertbluebasicattack_onhit_r1.wav",
+    "event": "Play_sfx_HeimerTBlue_HeimerTBlueBasicAttack_OnHit",
+    "event_id": 1297172320,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/heimerdinger/event_wav/Play_sfx_HeimerTBlue_HeimerTBlueBasicAttack_OnHit {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTBlue_HeimerTBlueBasicAttack_OnHit {r1}.txtp",
+    "media_ids": [
+      262804252,
+      343540703,
+      864232872
+    ],
+    "duration": 0.8577,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "f6eb5bfc0bee191a56f3282965b68b4919fc0408491ea6a055ac3991fdb5a982",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_heimertblue_heimertbluebasicattack_onhit_r2.wav",
+    "event": "Play_sfx_HeimerTBlue_HeimerTBlueBasicAttack_OnHit",
+    "event_id": 1297172320,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/heimerdinger/event_wav/Play_sfx_HeimerTBlue_HeimerTBlueBasicAttack_OnHit {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTBlue_HeimerTBlueBasicAttack_OnHit {r2}.txtp",
+    "media_ids": [
+      262804252,
+      343540703,
+      864232872
+    ],
+    "duration": 0.8479,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "a8a0e3ba1b42a5828a2425ca00a12e4a154eba252d8cb47fcd282e65cfe28106",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_heimertblue_heimertbluebasicattack_onhit_r3.wav",
+    "event": "Play_sfx_HeimerTBlue_HeimerTBlueBasicAttack_OnHit",
+    "event_id": 1297172320,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/heimerdinger/event_wav/Play_sfx_HeimerTBlue_HeimerTBlueBasicAttack_OnHit {r3}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTBlue_HeimerTBlueBasicAttack_OnHit {r3}.txtp",
+    "media_ids": [
+      262804252,
+      343540703,
+      864232872
+    ],
+    "duration": 0.85,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "7178c2726eb8d2e7bd7c1f1532b7c41343add2f7e515809c814b55ccfa419e44",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_heimertblue_heimertbluebasicattack_onmissilelaunch_r1.wav",
+    "event": "Play_sfx_HeimerTBlue_HeimerTBlueBasicAttack_OnMissileLaunch",
+    "event_id": 4217860750,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/heimerdinger/event_wav/Play_sfx_HeimerTBlue_HeimerTBlueBasicAttack_OnMissileLaunch {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTBlue_HeimerTBlueBasicAttack_OnMissileLaunch {r1}.txtp",
+    "media_ids": [
+      690409167,
+      811032722,
+      1010324953
+    ],
+    "duration": 1.7332,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "c0ffb5b1d120869dcdbf94752dfc93b16ce0118ee9f2a962766b6e9ba034062d",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_heimertblue_heimertbluebasicattack_onmissilelaunch_r2.wav",
+    "event": "Play_sfx_HeimerTBlue_HeimerTBlueBasicAttack_OnMissileLaunch",
+    "event_id": 4217860750,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/heimerdinger/event_wav/Play_sfx_HeimerTBlue_HeimerTBlueBasicAttack_OnMissileLaunch {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTBlue_HeimerTBlueBasicAttack_OnMissileLaunch {r2}.txtp",
+    "media_ids": [
+      690409167,
+      811032722,
+      1010324953
+    ],
+    "duration": 1.4778,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "3946f3e83da91eefc99705095f5add106c3d8e83abfd05fc7432bb5d8588d299",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_heimertblue_heimertbluebasicattack_onmissilelaunch_r3.wav",
+    "event": "Play_sfx_HeimerTBlue_HeimerTBlueBasicAttack_OnMissileLaunch",
+    "event_id": 4217860750,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/heimerdinger/event_wav/Play_sfx_HeimerTBlue_HeimerTBlueBasicAttack_OnMissileLaunch {r3}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTBlue_HeimerTBlueBasicAttack_OnMissileLaunch {r3}.txtp",
+    "media_ids": [
+      690409167,
+      811032722,
+      1010324953
+    ],
+    "duration": 1.5336,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "e7914220d3b7618fcdb9d436db4d4b40f6a60534b9604b97a2c8d3e5617970df",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_heimertblue_heimerdingerturretbigenergyblast_oncast.wav",
+    "event": "Play_sfx_HeimerTBlue_HeimerdingerTurretBigEnergyBlast_OnCast",
+    "event_id": 400172507,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/heimerdinger/event_wav/Play_sfx_HeimerTBlue_HeimerdingerTurretBigEnergyBlast_OnCast.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTBlue_HeimerdingerTurretBigEnergyBlast_OnCast.txtp",
+    "media_ids": [
+      399013180
+    ],
+    "duration": 1.428,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "bb4d6efcc7d51c97652ac7b5873f9bbb600c400dbb26bbd0f54b00cd18fb09e4",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_heimertblue_heimerdingerturretbigenergyblast_onhit.wav",
+    "event": "Play_sfx_HeimerTBlue_HeimerdingerTurretBigEnergyBlast_OnHit",
+    "event_id": 2765171825,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/heimerdinger/event_wav/Play_sfx_HeimerTBlue_HeimerdingerTurretBigEnergyBlast_OnHit.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTBlue_HeimerdingerTurretBigEnergyBlast_OnHit.txtp",
+    "media_ids": [
+      6555657
+    ],
+    "duration": 1.2507,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "00bc62674b2890cb1cbaf04eb5c0bccf302a7a2bb51039f27f45b0d5939bdd15",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_heimertblue_heimerdingerturretbigenergyblast_onmissilelaunch.wav",
+    "event": "Play_sfx_HeimerTBlue_HeimerdingerTurretBigEnergyBlast_OnMissileLaunch",
+    "event_id": 2132922771,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTBlue_HeimerdingerTurretBigEnergyBlast_OnMissileLaunch.txtp",
+    "media_ids": [
+      448058728
+    ],
+    "duration": 1.1877,
+    "processing": "vgmstream-cli -i; original event layers and gain retained",
+    "sha256": "cf4815b31a1abfa850d825208b01661786e6d0e251ff7bad98fc3805a7d0c923"
+  },
+  {
+    "file": "play_sfx_heimertblue_heimerdingerrqengineaudio_onbuffactivate.wav",
+    "event": "Play_sfx_HeimerTBlue_HeimerdingerRQEngineAudio_OnBuffActivate",
+    "event_id": 3496710179,
+    "media_ids": [
+      912715458
+    ],
+    "duration": 11.999977324263039,
+    "sha256": "fd98cf243e650abfd1271bd67775e13fbda1c15e1916660fdfffa635f8b580c3",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTBlue_HeimerdingerRQEngineAudio_OnBuffActivate.txtp",
+    "processing": "vgmstream-cli -i, original -26 dB event gain retained; single nonlooping deployment playback"
+  },
+  {
+    "file": "play_sfx_heimertyellow_heimerdingerqspawndestroyaudio_onbuffactivate_r1.wav",
+    "event": "Play_sfx_HeimerTYellow_HeimerdingerQSpawnDestroyAudio_OnBuffActivate",
+    "event_id": 4008859642,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerdingerQSpawnDestroyAudio_OnBuffActivate {r1} {d}.txtp",
+    "media_ids": [
+      5681745,
+      266734436,
+      14511344
+    ],
+    "duration": 1.0051927437641723,
+    "processing": "Q turret spawn event, selected random variant; vgmstream-cli -i, original -9 dB event gain, no normalization",
+    "selection_note": "Q (HeimerTYellow) turret spawn reused for big turret; no dedicated RQ spawn event verified. Media IDs list event-reachable sources.",
+    "sha256": "e09f8be388de436ca5e079166537acceb3efd72def66c6a07530c227c4a126c7"
+  },
+  {
+    "file": "play_sfx_heimertyellow_heimerdingerqspawndestroyaudio_onbuffactivate_r2.wav",
+    "event": "Play_sfx_HeimerTYellow_HeimerdingerQSpawnDestroyAudio_OnBuffActivate",
+    "event_id": 4008859642,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerdingerQSpawnDestroyAudio_OnBuffActivate {r2} {d}.txtp",
+    "media_ids": [
+      5681745,
+      266734436,
+      14511344
+    ],
+    "duration": 1.122517006802721,
+    "processing": "Q turret spawn event, selected random variant; vgmstream-cli -i, original -9 dB event gain, no normalization",
+    "selection_note": "Q (HeimerTYellow) turret spawn reused for big turret; no dedicated RQ spawn event verified. Media IDs list event-reachable sources.",
+    "sha256": "8f6088a57bc724ad0008269935b15c9d7e9bfe6ee80a09db655865d414c73b8a"
+  },
+  {
+    "file": "play_sfx_heimertyellow_heimerdingerqspawndestroyaudio_onbuffactivate_r3.wav",
+    "event": "Play_sfx_HeimerTYellow_HeimerdingerQSpawnDestroyAudio_OnBuffActivate",
+    "event_id": 4008859642,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerdingerQSpawnDestroyAudio_OnBuffActivate {r3} {d}.txtp",
+    "media_ids": [
+      5681745,
+      266734436,
+      14511344
+    ],
+    "duration": 1.0496825396825398,
+    "processing": "Q turret spawn event, selected random variant; vgmstream-cli -i, original -9 dB event gain, no normalization",
+    "selection_note": "Q (HeimerTYellow) turret spawn reused for big turret; no dedicated RQ spawn event verified. Media IDs list event-reachable sources.",
+    "sha256": "a0be40e217d8c40ea8100647a6edcaa2a004c5432a2eb9d629036fd0e2596dee"
+  },
+  {
+    "file": "play_sfx_heimertyellow_heimerdingerqspawndestroyaudio_onbuffdeactivate_r1.wav",
+    "event": "Play_sfx_HeimerTYellow_HeimerdingerQSpawnDestroyAudio_OnBuffDeactivate",
+    "event_id": 3652533003,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerdingerQSpawnDestroyAudio_OnBuffDeactivate {r1}.txtp",
+    "duration": 1.5,
+    "media_ids": [
+      703650768,
+      281129591,
+      998471615
+    ],
+    "processing": "Q turret destroy event, selected random variant; vgmstream-cli -i, original -21 dB event gain, no normalization; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "95f6c5a965e9ad28ad88417de367846a7d72018d85f0176cd7d25d83861bd578",
+    "death_envelope": {
+      "source_duration": 1.553718820861678,
+      "source_sha256": "46b871e1d6d0c0142ca25e672e30a449807ed56ce913f569d19cd627d838fe9a",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_sfx_heimertyellow_heimerdingerqspawndestroyaudio_onbuffdeactivate_r2.wav",
+    "event": "Play_sfx_HeimerTYellow_HeimerdingerQSpawnDestroyAudio_OnBuffDeactivate",
+    "event_id": 3652533003,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerdingerQSpawnDestroyAudio_OnBuffDeactivate {r2}.txtp",
+    "duration": 1.3254421768707483,
+    "media_ids": [
+      703650768,
+      281129591,
+      998471615
+    ],
+    "processing": "Q turret destroy event, selected random variant; vgmstream-cli -i, original -21 dB event gain, no normalization",
+    "sha256": "9185b5f520160299692e3e91bcb36f678fa094445bed2761914b894a7f636875"
+  },
+  {
+    "file": "play_sfx_heimertyellow_heimerdingerqspawndestroyaudio_onbuffdeactivate_r3.wav",
+    "event": "Play_sfx_HeimerTYellow_HeimerdingerQSpawnDestroyAudio_OnBuffDeactivate",
+    "event_id": 3652533003,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/heimerdinger/txtp/Play_sfx_HeimerTYellow_HeimerdingerQSpawnDestroyAudio_OnBuffDeactivate {r3}.txtp",
+    "duration": 1.5,
+    "media_ids": [
+      703650768,
+      281129591,
+      998471615
+    ],
+    "processing": "Q turret destroy event, selected random variant; vgmstream-cli -i, original -21 dB event gain, no normalization; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "77a3e0e8068d17ccca677c412de123f5c71734893c7877f5413515765267be24",
+    "death_envelope": {
+      "source_duration": 1.522312925170068,
+      "source_sha256": "2411ee3c967b307ac9190b1e0e12f8a798f04a9c01becb46dd999e453555fd46",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  }
+]

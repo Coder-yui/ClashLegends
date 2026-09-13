@@ -1,0 +1,194 @@
+[
+  {
+    "file": "assets/audio/units/siege_minion/order/play_sfx_sru_orderminionsiege_sru_orderminionsiegebasicattack_oncast_r1.wav",
+    "event": "Play_sfx_SRU_OrderMinionSiege_SRU_OrderMinionSiegeBasicAttack_OnCast",
+    "event_id": 1828033034,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_ordersiege_sfx_events-0017-event {r1}.txtp",
+    "duration": 2.4884353741496597,
+    "media_ids": [
+      102902881,
+      478530291,
+      645432613,
+      959602084
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "deb7346c34e9de543da67edd5a6d215563348666da7fa4fa92946a45471f943a"
+  },
+  {
+    "file": "assets/audio/units/siege_minion/order/play_sfx_sru_orderminionsiege_sru_orderminionsiegebasicattack_oncast_r2.wav",
+    "event": "Play_sfx_SRU_OrderMinionSiege_SRU_OrderMinionSiegeBasicAttack_OnCast",
+    "event_id": 1828033034,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_ordersiege_sfx_events-0017-event {r2}.txtp",
+    "duration": 2.4506349206349207,
+    "media_ids": [
+      102902881,
+      478530291,
+      645432613,
+      959602084
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "b9e03a7a71a8a26794213609e297bcb83c63890338045ee774d54001bec0b928"
+  },
+  {
+    "file": "assets/audio/units/siege_minion/order/play_sfx_sru_orderminionsiege_sru_orderminionsiegebasicattack_oncast_r3.wav",
+    "event": "Play_sfx_SRU_OrderMinionSiege_SRU_OrderMinionSiegeBasicAttack_OnCast",
+    "event_id": 1828033034,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_ordersiege_sfx_events-0017-event {r3}.txtp",
+    "duration": 2.2688208616780043,
+    "media_ids": [
+      102902881,
+      478530291,
+      645432613,
+      959602084
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "5de5197a85244d9d4381de70919a710f1d8237ef2d44a6bfa4adf68422807916"
+  },
+  {
+    "file": "assets/audio/units/siege_minion/order/play_sfx_sru_orderminionsiege_sru_orderminionsiegebasicattack_onhit_r1.wav",
+    "event": "Play_sfx_SRU_OrderMinionSiege_SRU_OrderMinionSiegeBasicAttack_OnHit",
+    "event_id": 2658307326,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_ordersiege_sfx_events-0021-event {r1}.txtp",
+    "duration": 1.633061224489796,
+    "media_ids": [
+      127103123,
+      177876208,
+      181874499,
+      254508219,
+      357458628,
+      375781608,
+      555363738,
+      904299398
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "de8705b4bd0d51598c1b566182db20d847f32252e2b3e6b4c803267bf84a58c3"
+  },
+  {
+    "file": "assets/audio/units/siege_minion/order/play_sfx_sru_orderminionsiege_sru_orderminionsiegebasicattack_onhit_r2.wav",
+    "event": "Play_sfx_SRU_OrderMinionSiege_SRU_OrderMinionSiegeBasicAttack_OnHit",
+    "event_id": 2658307326,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_ordersiege_sfx_events-0021-event {r2}.txtp",
+    "duration": 1.3475510204081633,
+    "media_ids": [
+      127103123,
+      177876208,
+      181874499,
+      254508219,
+      357458628,
+      375781608,
+      555363738,
+      904299398
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "0ca737f940baece39b4d0dbb510f49a776b4705b8949d1a29801127911083a85"
+  },
+  {
+    "file": "assets/audio/units/siege_minion/order/play_sfx_sru_orderminionsiege_sru_orderminionsiegebasicattack_onhit_r3.wav",
+    "event": "Play_sfx_SRU_OrderMinionSiege_SRU_OrderMinionSiegeBasicAttack_OnHit",
+    "event_id": 2658307326,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_ordersiege_sfx_events-0021-event {r3}.txtp",
+    "duration": 1.578639455782313,
+    "media_ids": [
+      127103123,
+      177876208,
+      181874499,
+      254508219,
+      357458628,
+      375781608,
+      555363738,
+      904299398
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "fe4af6a78f0f5562d45cb5a75f10fbc5ed92005012d75dfdbae71d2f23608d7d"
+  },
+  {
+    "file": "assets/audio/units/siege_minion/chaos/play_sfx_sru_chaosminionsiege_sru_chaosminionsiegebasicattack_onmissilecast_r1.wav",
+    "event": "Play_sfx_SRU_ChaosMinionSiege_SRU_ChaosMinionSiegeBasicAttack_OnMissileCast",
+    "event_id": 2858937692,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaossiege_sfx_events-0019-event {r1}.txtp",
+    "duration": 1.2183673469387755,
+    "media_ids": [
+      265319268,
+      339112310,
+      513282067,
+      701531219
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "96e2d91d774e8d0a2bc3ce02700ab212737b9c8ab13dbe1f06630f0c206711a4"
+  },
+  {
+    "file": "assets/audio/units/siege_minion/chaos/play_sfx_sru_chaosminionsiege_sru_chaosminionsiegebasicattack_onmissilecast_r2.wav",
+    "event": "Play_sfx_SRU_ChaosMinionSiege_SRU_ChaosMinionSiegeBasicAttack_OnMissileCast",
+    "event_id": 2858937692,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaossiege_sfx_events-0019-event {r2}.txtp",
+    "duration": 1.5973242630385487,
+    "media_ids": [
+      265319268,
+      339112310,
+      513282067,
+      701531219
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "f6742053c6f73da87deb88f0977c0308491e0d90704e8a6015c21097c4efddf6"
+  },
+  {
+    "file": "assets/audio/units/siege_minion/chaos/play_sfx_sru_chaosminionsiege_sru_chaosminionsiegebasicattack_onmissilecast_r3.wav",
+    "event": "Play_sfx_SRU_ChaosMinionSiege_SRU_ChaosMinionSiegeBasicAttack_OnMissileCast",
+    "event_id": 2858937692,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaossiege_sfx_events-0019-event {r3}.txtp",
+    "duration": 1.7741950113378684,
+    "media_ids": [
+      265319268,
+      339112310,
+      513282067,
+      701531219
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "411d6101bfc402b5247c5dd5ff99b64968bdd0fb67a4fd16a3eff03ab2b03986"
+  },
+  {
+    "file": "assets/audio/units/siege_minion/chaos/play_sfx_sru_chaosminionsiege_sru_chaosminionsiegebasicattack_onhit_r1.wav",
+    "event": "Play_sfx_SRU_ChaosMinionSiege_SRU_ChaosMinionSiegeBasicAttack_OnHit",
+    "event_id": 2998416022,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaossiege_sfx_events-0021-event {r1} {d}.txtp",
+    "duration": 0.8940136054421769,
+    "media_ids": [
+      264301615,
+      811444941,
+      928248863,
+      986079880
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "fc3722dae98e98f31b927faa7ea3c39074188c851eec1d59d62ac9889bc57a36"
+  },
+  {
+    "file": "assets/audio/units/siege_minion/chaos/play_sfx_sru_chaosminionsiege_sru_chaosminionsiegebasicattack_onhit_r2.wav",
+    "event": "Play_sfx_SRU_ChaosMinionSiege_SRU_ChaosMinionSiegeBasicAttack_OnHit",
+    "event_id": 2998416022,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaossiege_sfx_events-0021-event {r2} {d}.txtp",
+    "duration": 1.121609977324263,
+    "media_ids": [
+      264301615,
+      811444941,
+      928248863,
+      986079880
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "b5a15751a66aee232358248d92a17cca1eec997f0c3babbb5a505dd27e1c8da3"
+  },
+  {
+    "file": "assets/audio/units/siege_minion/chaos/play_sfx_sru_chaosminionsiege_sru_chaosminionsiegebasicattack_onhit_r3.wav",
+    "event": "Play_sfx_SRU_ChaosMinionSiege_SRU_ChaosMinionSiegeBasicAttack_OnHit",
+    "event_id": 2998416022,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaossiege_sfx_events-0021-event {r3} {d}.txtp",
+    "duration": 1.167142857142857,
+    "media_ids": [
+      264301615,
+      811444941,
+      928248863,
+      986079880
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "bdec49cd21befb5a7645c734473ffbece17e600b4aa486675e7119ead8bb6edf"
+  }
+]

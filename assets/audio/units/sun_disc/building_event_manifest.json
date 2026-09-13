@@ -1,0 +1,205 @@
+[
+  {
+    "file": "assets/audio/units/sun_disc/play_sfx_azir_azirobelisksound_onbuffcast_r1.wav",
+    "event": "Play_sfx_Azir_AzirObeliskSound_OnBuffCast",
+    "event_id": 283966749,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/azir/txtp/Play_sfx_Azir_AzirObeliskSound_OnBuffCast {r}.txtp",
+    "duration": 5.819387755102041,
+    "media_ids": [
+      "1014960885",
+      "133971770",
+      "224742912",
+      "500711240"
+    ],
+    "processing": "vgmstream-cli -i; source event gain retained; no normalization; loop rendered as one cycle; no death truncation; native Spawn first 4.9666667s fitted to 1s with pitch-preserving atempo; remaining tail uncompressed",
+    "sha256": "6cec833a42dee68e00cdeb2640a47bbb90958179fd3f302e3f61fcd55febb388"
+  },
+  {
+    "file": "assets/audio/units/sun_disc/play_sfx_azir_azirobelisksound_onbuffdeactivate_r1.wav",
+    "event": "Play_sfx_Azir_AzirObeliskSound_OnBuffDeactivate",
+    "event_id": 1906471914,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/azir/txtp/Play_sfx_Azir_AzirObeliskSound_OnBuffDeactivate {r1}.txtp",
+    "duration": 1.5,
+    "media_ids": [
+      "1023804576",
+      "527385256"
+    ],
+    "processing": "vgmstream-cli -i; source event gain retained; no normalization; loop rendered as one cycle; no death truncation; first 2s only, pitch-preserving compression to exactly 1.5s; no death fade envelope",
+    "sha256": "c9243162a3374267b0ab38c504c6c86903046934ef6db9df9560c98ce79bad3b"
+  },
+  {
+    "file": "assets/audio/units/sun_disc/play_sfx_azir_azirobelisksound_onbuffdeactivate_r2.wav",
+    "event": "Play_sfx_Azir_AzirObeliskSound_OnBuffDeactivate",
+    "event_id": 1906471914,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/azir/txtp/Play_sfx_Azir_AzirObeliskSound_OnBuffDeactivate {r2}.txtp",
+    "duration": 1.5,
+    "media_ids": [
+      "1023804576",
+      "527385256"
+    ],
+    "processing": "vgmstream-cli -i; source event gain retained; no normalization; loop rendered as one cycle; no death truncation; first 2s only, pitch-preserving compression to exactly 1.5s; no death fade envelope",
+    "sha256": "fb71ff7fe417070b57ff7ce21477f8d0893fd2650ffe1df6c23d4f1cb29dbef5"
+  },
+  {
+    "file": "assets/audio/units/sun_disc/play_sfx_env_turretbasicattack_missilelaunch_r1.wav",
+    "event": "Play_sfx_Env_TurretBasicAttack_missilelaunch",
+    "event_id": 744952030,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/txtp/env_global_buildings_sfx_events-0279-event {r1}.txtp",
+    "duration": 1.0815646258503402,
+    "media_ids": [
+      "210891309",
+      "328729016",
+      "977967237"
+    ],
+    "processing": "vgmstream-cli -i; source event gain retained; no normalization; loop rendered as one cycle; no death truncation",
+    "sha256": "98f004e478f52003f0f8e448020d29ba0aced6482d4082d3a33eaf85aae18779"
+  },
+  {
+    "file": "assets/audio/units/sun_disc/play_sfx_env_turretbasicattack_missilelaunch_r2.wav",
+    "event": "Play_sfx_Env_TurretBasicAttack_missilelaunch",
+    "event_id": 744952030,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/txtp/env_global_buildings_sfx_events-0279-event {r2}.txtp",
+    "duration": 1.0889115646258503,
+    "media_ids": [
+      "210891309",
+      "328729016",
+      "977967237"
+    ],
+    "processing": "vgmstream-cli -i; source event gain retained; no normalization; loop rendered as one cycle; no death truncation",
+    "sha256": "81097f4f1a57476f5bd147fcc523328651183ae5b00974c8a90930d0defdcc63"
+  },
+  {
+    "file": "assets/audio/units/sun_disc/play_sfx_env_turretbasicattack_missilelaunch_r3.wav",
+    "event": "Play_sfx_Env_TurretBasicAttack_missilelaunch",
+    "event_id": 744952030,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/txtp/env_global_buildings_sfx_events-0279-event {r3}.txtp",
+    "duration": 1.0889115646258503,
+    "media_ids": [
+      "210891309",
+      "328729016",
+      "977967237"
+    ],
+    "processing": "vgmstream-cli -i; source event gain retained; no normalization; loop rendered as one cycle; no death truncation",
+    "sha256": "d275d23d674740918b95a328ec7f451a6142cb61e90fcae907dfa79a88294304"
+  },
+  {
+    "file": "assets/audio/units/sun_disc/play_sfx_env_map11_chaosturretchampionbasicattack_cast_r1.wav",
+    "event": "Play_sfx_Env_map11_ChaosTurretChampionBasicAttack_cast",
+    "event_id": 1865484908,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/txtp/env_global_buildings_sfx_events-0314-event {r1} {d}.txtp",
+    "duration": 2.951678004535147,
+    "media_ids": [
+      "263691814",
+      "343061489",
+      "564057191",
+      "701703878"
+    ],
+    "processing": "vgmstream-cli -i; source event gain retained; no normalization; loop rendered as one cycle; no death truncation",
+    "sha256": "60803d409e0780734fd792bdc00c287b42a13d235d01c98fcad47782324dcd19"
+  },
+  {
+    "file": "assets/audio/units/sun_disc/play_sfx_env_map11_chaosturretchampionbasicattack_cast_r2.wav",
+    "event": "Play_sfx_Env_map11_ChaosTurretChampionBasicAttack_cast",
+    "event_id": 1865484908,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/txtp/env_global_buildings_sfx_events-0314-event {r2} {d}.txtp",
+    "duration": 2.86,
+    "media_ids": [
+      "263691814",
+      "343061489",
+      "564057191",
+      "701703878"
+    ],
+    "processing": "vgmstream-cli -i; source event gain retained; no normalization; loop rendered as one cycle; no death truncation",
+    "sha256": "0945f9f9edfc44cb887f8e9cd4067eca34a8dcc9fac69d71bab736f79a6ae471"
+  },
+  {
+    "file": "assets/audio/units/sun_disc/play_sfx_env_map11_chaosturretchampionbasicattack_cast_r3.wav",
+    "event": "Play_sfx_Env_map11_ChaosTurretChampionBasicAttack_cast",
+    "event_id": 1865484908,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/txtp/env_global_buildings_sfx_events-0314-event {r3} {d}.txtp",
+    "duration": 2.7586848072562358,
+    "media_ids": [
+      "263691814",
+      "343061489",
+      "564057191",
+      "701703878"
+    ],
+    "processing": "vgmstream-cli -i; source event gain retained; no normalization; loop rendered as one cycle; no death truncation",
+    "sha256": "61a31a6134aaf5bdfe4722345fa56eb4eedb68aa3468f27b993157307373fb06"
+  },
+  {
+    "file": "assets/audio/units/sun_disc/play_sfx_env_map11_chaosturretchampionbasicattack_cast_r4.wav",
+    "event": "Play_sfx_Env_map11_ChaosTurretChampionBasicAttack_cast",
+    "event_id": 1865484908,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/txtp/env_global_buildings_sfx_events-0314-event {r4} {d}.txtp",
+    "duration": 2.555646258503401,
+    "media_ids": [
+      "263691814",
+      "343061489",
+      "564057191",
+      "701703878"
+    ],
+    "processing": "vgmstream-cli -i; source event gain retained; no normalization; loop rendered as one cycle; no death truncation",
+    "sha256": "7eb45e2b1f849313b21659ccad4d2ac91285b88b56f1800acdd1c6527ffa7ef5"
+  },
+  {
+    "file": "assets/audio/units/sun_disc/play_sfx_env_turretbasicattack_hit_r1.wav",
+    "event": "Play_sfx_Env_TurretBasicAttack_hit",
+    "event_id": 1363510128,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/txtp/env_global_buildings_sfx_events-0300-event {r1}.txtp",
+    "duration": 0.8272335600907029,
+    "media_ids": [
+      "282793997",
+      "366587089",
+      "423508747",
+      "846463976"
+    ],
+    "processing": "vgmstream-cli -i; source event gain retained; no normalization; loop rendered as one cycle; no death truncation",
+    "sha256": "1cd06160259f4bebf289bd8f04d93b02d063acb628a2567559e207d152a92d98"
+  },
+  {
+    "file": "assets/audio/units/sun_disc/play_sfx_env_turretbasicattack_hit_r2.wav",
+    "event": "Play_sfx_Env_TurretBasicAttack_hit",
+    "event_id": 1363510128,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/txtp/env_global_buildings_sfx_events-0300-event {r2}.txtp",
+    "duration": 0.846530612244898,
+    "media_ids": [
+      "282793997",
+      "366587089",
+      "423508747",
+      "846463976"
+    ],
+    "processing": "vgmstream-cli -i; source event gain retained; no normalization; loop rendered as one cycle; no death truncation",
+    "sha256": "f78f6993d8b44653ab495ed1bfed6da4a706dd06950503bb7344f7db0950ef63"
+  },
+  {
+    "file": "assets/audio/units/sun_disc/play_sfx_env_turretbasicattack_hit_r3.wav",
+    "event": "Play_sfx_Env_TurretBasicAttack_hit",
+    "event_id": 1363510128,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/txtp/env_global_buildings_sfx_events-0300-event {r3}.txtp",
+    "duration": 0.8411337868480726,
+    "media_ids": [
+      "282793997",
+      "366587089",
+      "423508747",
+      "846463976"
+    ],
+    "processing": "vgmstream-cli -i; source event gain retained; no normalization; loop rendered as one cycle; no death truncation",
+    "sha256": "b5fcb82ac37c63ad1ef786a497593ad7a96c0327682bdf41167ae424c90fdf69"
+  },
+  {
+    "file": "assets/audio/units/sun_disc/play_sfx_env_turretbasicattack_hit_r4.wav",
+    "event": "Play_sfx_Env_TurretBasicAttack_hit",
+    "event_id": 1363510128,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/txtp/env_global_buildings_sfx_events-0300-event {r4}.txtp",
+    "duration": 0.8186621315192744,
+    "media_ids": [
+      "282793997",
+      "366587089",
+      "423508747",
+      "846463976"
+    ],
+    "processing": "vgmstream-cli -i; source event gain retained; no normalization; loop rendered as one cycle; no death truncation",
+    "sha256": "23aa2263ee3b297fb8a078e9e25e6650f2b41e6e29ead1c857c35675bfc78f80"
+  }
+]

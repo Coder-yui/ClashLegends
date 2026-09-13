@@ -1,0 +1,126 @@
+[
+  {
+    "file": "assets/audio/units/tombstone/play_sfx_yorick_yorickw_onhitlocation_r1.wav",
+    "event": "Play_sfx_Yorick_YorickW_OnHitLocation",
+    "event_id": 1115269652,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickW_OnHitLocation {r}.txtp",
+    "duration": 3.474285714285714,
+    "media_ids": [
+      101263959,
+      244296846,
+      244580579,
+      450950991,
+      698825636
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "6423f9d1d888bb7eda1fd6deadabdde2d124f359931a4985d71b2b96f15b9071"
+  },
+  {
+    "file": "assets/audio/units/tombstone/play_sfx_yorick_yorickw_onhitlocation_r2.wav",
+    "event": "Play_sfx_Yorick_YorickW_OnHitLocation",
+    "event_id": 1115269652,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/yorick_base_sfx_events-0263-event {r}.txtp",
+    "duration": 3.474285714285714,
+    "media_ids": [
+      101263959,
+      244296846,
+      244580579,
+      450950991,
+      698825636
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "45f386449169e9164594cb8ebc701b9736554010181565f29489cc9dec630622"
+  },
+  {
+    "file": "assets/audio/units/tombstone/play_sfx_yorick_yorickw_death_r1.wav",
+    "event": "Play_sfx_Yorick_YorickW_death",
+    "event_id": 715497681,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickW_death {r1}.txtp",
+    "duration": 1.5,
+    "media_ids": [
+      528204500,
+      583358077,
+      797856535,
+      939177491
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "f2817ad7ab577d3cdf02a7e313b4258f5db3355b0d55b76f4f8aa33c2e56ac49",
+    "death_envelope": {
+      "source_duration": 2.5852154195011336,
+      "source_sha256": "4757a51859243ec63ae1d963a7c84dc065f2a116a091228fed75b50f2e05fcdb",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "assets/audio/units/tombstone/play_sfx_yorick_yorickw_death_r2.wav",
+    "event": "Play_sfx_Yorick_YorickW_death",
+    "event_id": 715497681,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickW_death {r2}.txtp",
+    "duration": 1.5,
+    "media_ids": [
+      528204500,
+      583358077,
+      797856535,
+      939177491
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "22354dcf39f26ba072555165607c3649fcfbee919efec5f05dcf7fbfecf85cdf",
+    "death_envelope": {
+      "source_duration": 2.118095238095238,
+      "source_sha256": "af4e415a1c26de51de456631285e9c8e1672f45674dbe60da9676046ba50e1e4",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "assets/audio/units/tombstone/play_sfx_yorick_yorickw_death_r3.wav",
+    "event": "Play_sfx_Yorick_YorickW_death",
+    "event_id": 715497681,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickW_death {r3}.txtp",
+    "duration": 1.5,
+    "media_ids": [
+      528204500,
+      583358077,
+      797856535,
+      939177491
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "f63c30c4fe8bd8f243ff520d7c23727e68cbade75bdb68e936ae352c931289d5",
+    "death_envelope": {
+      "source_duration": 2.7239909297052156,
+      "source_sha256": "e07b8ddb2679aa9a1d6f45b678b885fdd388a599e50c45d4f5903cf3d52cceff",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "assets/audio/units/tombstone/play_sfx_yorick_yorickw_death_r4.wav",
+    "event": "Play_sfx_Yorick_YorickW_death",
+    "event_id": 715497681,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickW_death {r4}.txtp",
+    "duration": 1.5,
+    "media_ids": [
+      528204500,
+      583358077,
+      797856535,
+      939177491
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "9655a732f22d81b3861c96ff16d0cff5c50d0a419a5881f4f77fdbfaab07efd3",
+    "death_envelope": {
+      "source_duration": 2.2320181405895694,
+      "source_sha256": "0887fbc3c3b428eeb6417bedecacfb4cbbd8d82fa63fcceb7d41ac0a81f82d29",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  }
+]

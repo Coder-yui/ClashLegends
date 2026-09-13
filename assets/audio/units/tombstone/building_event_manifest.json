@@ -1,0 +1,18 @@
+[
+  {
+    "file": "assets/audio/units/tombstone/play_sfx_yorick_yorickwwalllife_onbuffactivate_r1.wav",
+    "event": "Play_sfx_Yorick_YorickWWallLife_OnBuffActivate",
+    "event_id": 3320850004,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickWWallLife_OnBuffActivate {m}.txtp",
+    "duration": 23.408367346938775,
+    "media_ids": [
+      "534399200",
+      "540068812",
+      "629060980",
+      "683936781",
+      "835980414"
+    ],
+    "processing": "vgmstream-cli -i; source event gain retained; no normalization; loop rendered as one cycle; no death truncation",
+    "sha256": "2401b05e98b7f0d524b120077206854b194e24fc9d4757fada191a8562d6e206"
+  }
+]

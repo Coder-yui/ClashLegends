@@ -9,7 +9,18 @@
       2639712284
     ],
     "source_preview": "/Users/czh/Tools/lol-asset-tools/ashe_death_zh_audio/event_wav/Play_vo_Ashe_Death3D {r1}.wav",
-    "source_package": "Ashe.zh_CN.wad.client"
+    "source_package": "Ashe.zh_CN.wad.client",
+    "duration": 1.5,
+    "sha256": "c3ac045e908519d286a32a83f9cfe68c789c41d346eb0437a277779f4eb3bcab",
+    "death_envelope": {
+      "source_duration": 3.1811337868480725,
+      "source_sha256": "de5244b609859636f65212b00616ce6de35fceab21454807d167c35cf163bcdc",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    },
+    "processing": "source PCM gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s"
   },
   {
     "file": "play_vo_ashe_death3d_r2_zh_cn.wav",
@@ -21,7 +32,18 @@
       2639712284
     ],
     "source_preview": "/Users/czh/Tools/lol-asset-tools/ashe_death_zh_audio/event_wav/Play_vo_Ashe_Death3D {r2}.wav",
-    "source_package": "Ashe.zh_CN.wad.client"
+    "source_package": "Ashe.zh_CN.wad.client",
+    "duration": 1.5,
+    "sha256": "ab7cb541dde0931a947203c49b53b72423669d37933171ef1ae1594b1ba26740",
+    "death_envelope": {
+      "source_duration": 2.972154195011338,
+      "source_sha256": "66028dba2da3bf7c2901537dc06104075413c5565f9973e0c59f0391a1fae146",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    },
+    "processing": "source PCM gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s"
   },
   {
     "file": "play_vo_ashe_death3d_r3_zh_cn.wav",
@@ -33,6 +55,17 @@
       2639712284
     ],
     "source_preview": "/Users/czh/Tools/lol-asset-tools/ashe_death_zh_audio/event_wav/Play_vo_Ashe_Death3D {r3}.wav",
-    "source_package": "Ashe.zh_CN.wad.client"
+    "source_package": "Ashe.zh_CN.wad.client",
+    "duration": 1.5,
+    "sha256": "aa819251f4bb98ae20ad448309d34d921d131fa6803b164486a9d42358f5afd9",
+    "death_envelope": {
+      "source_duration": 2.716734693877551,
+      "source_sha256": "3585f239f3387894471caa841673984dd24173051ad84454a76c56c47c352a0a",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    },
+    "processing": "source PCM gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s"
   }
 ]

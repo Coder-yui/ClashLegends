@@ -1,0 +1,359 @@
+[
+  {
+    "file": "play_sfx_aurelionsol_aurelionsolq_oncast.wav",
+    "event": "Play_sfx_AurelionSol_AurelionSolQ_OnCast",
+    "event_id": 3095077577,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/event_wav/Play_sfx_AurelionSol_AurelionSolQ_OnCast.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolQ_OnCast.txtp",
+    "media_ids": [
+      213042414
+    ],
+    "duration": 1.8907,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "a08af84f57eec6fc0adc714ba5d476424669247c858edfadb1f02b53c3f25bf5",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_aurelionsol_aurelionsolq_missilelaunch.wav",
+    "event": "Play_sfx_AurelionSol_AurelionSolQ_missilelaunch",
+    "event_id": 3477141528,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/event_wav/Play_sfx_AurelionSol_AurelionSolQ_missilelaunch.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolQ_missilelaunch.txtp",
+    "media_ids": [
+      977507558
+    ],
+    "duration": 5.6217,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "3ba4e21375ab24e8a5f8ba7cf92d4e9808ab370ef22850348003f63cf93f30cb",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_aurelionsol_aurelionsolq_buffdeactivate_r1.wav",
+    "event": "Play_sfx_AurelionSol_AurelionSolQ_buffdeactivate",
+    "event_id": 2470934330,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/event_wav/Play_sfx_AurelionSol_AurelionSolQ_buffdeactivate {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolQ_buffdeactivate {r1}.txtp",
+    "media_ids": [
+      272519467,
+      434511164,
+      689099185,
+      1036976884
+    ],
+    "duration": 0.8418,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "3ba167684c142ccd011662494c3344c56e9909ce735c7bc079f95f0481171d9d",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_aurelionsol_aurelionsolq_buffdeactivate_r2.wav",
+    "event": "Play_sfx_AurelionSol_AurelionSolQ_buffdeactivate",
+    "event_id": 2470934330,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/event_wav/Play_sfx_AurelionSol_AurelionSolQ_buffdeactivate {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolQ_buffdeactivate {r2}.txtp",
+    "media_ids": [
+      272519467,
+      434511164,
+      689099185,
+      1036976884
+    ],
+    "duration": 0.8844,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "01f2f89200a1c671843b784786f95667f11053e2175e69fa422a8502d0f643c0",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_aurelionsol_aurelionsolq_buffdeactivate_r3.wav",
+    "event": "Play_sfx_AurelionSol_AurelionSolQ_buffdeactivate",
+    "event_id": 2470934330,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/event_wav/Play_sfx_AurelionSol_AurelionSolQ_buffdeactivate {r3}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolQ_buffdeactivate {r3}.txtp",
+    "media_ids": [
+      272519467,
+      434511164,
+      689099185,
+      1036976884
+    ],
+    "duration": 0.8497,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "3b78f5ca1f4d07c5f706ef1b3311e73fb07ac69243a906f64fa432eb1baff536",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_aurelionsol_aurelionsolr_oncast.wav",
+    "event": "Play_sfx_AurelionSol_AurelionSolR_OnCast",
+    "event_id": 4162034424,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/event_wav/Play_sfx_AurelionSol_AurelionSolR_OnCast.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolR_OnCast.txtp",
+    "media_ids": [
+      1037831232
+    ],
+    "duration": 1.5798,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "1c8adc8ebb793b9f526d391a49a9a547ae194a76e98bb9ffb6f3b3400d968c0a",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_aurelionsol_aurelionsolr2_oncast.wav",
+    "event": "Play_sfx_AurelionSol_AurelionSolR2_OnCast",
+    "event_id": 3803278248,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/event_wav/Play_sfx_AurelionSol_AurelionSolR2_OnCast.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolR2_OnCast.txtp",
+    "media_ids": [
+      987858008
+    ],
+    "duration": 1.5798,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "42def426885bea382c32b79509270d808f3851dbffde1c967e3056ca758ea9d8",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_vo_aurelionsol_death3d_r1_zh_cn.wav",
+    "event": "Play_vo_AurelionSol_Death3D",
+    "event_id": 2928834675,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol_vo/event_wav/Play_vo_AurelionSol_Death3D {r1}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol_vo/txtp/Play_vo_AurelionSol_Death3D {r1}.txtp",
+    "media_ids": [
+      3685532,
+      90902781,
+      92898027,
+      315910329,
+      1593803882,
+      1772161433,
+      1857803624
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "e42e29d22c1360982d86352c854ba14b9703b0475160ee76a01000ad23572e21",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 3.0073015873015874,
+      "source_sha256": "b8aa7bf8b39c546eef042936575c56520704d206444f1651c06534b9fb7c06dd",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_vo_aurelionsol_death3d_r2_zh_cn.wav",
+    "event": "Play_vo_AurelionSol_Death3D",
+    "event_id": 2928834675,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol_vo/event_wav/Play_vo_AurelionSol_Death3D {r2}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol_vo/txtp/Play_vo_AurelionSol_Death3D {r2}.txtp",
+    "media_ids": [
+      3685532,
+      90902781,
+      92898027,
+      315910329,
+      1593803882,
+      1772161433,
+      1857803624
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "7ff49c64046b1464f6745166edf611e141360c72cbfa6bfc175a3e289b8e7d29",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 2.86734693877551,
+      "source_sha256": "5a35d27e07d07139f1f3013eabac0e15c0d2e2e6da5957451aa448d937ae2d17",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_vo_aurelionsol_death3d_r3_zh_cn.wav",
+    "event": "Play_vo_AurelionSol_Death3D",
+    "event_id": 2928834675,
+    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol_vo/event_wav/Play_vo_AurelionSol_Death3D {r3}.wav",
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol_vo/txtp/Play_vo_AurelionSol_Death3D {r3}.txtp",
+    "media_ids": [
+      3685532,
+      90902781,
+      92898027,
+      315910329,
+      1593803882,
+      1772161433,
+      1857803624
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "7ce5094a159201f234d018e9fdc34d78d225e434960c4ec9a3189f519b72cdf1",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 3.120907029478458,
+      "source_sha256": "5739742d1e5ef1433403b205644138f9430c5d6e90e59e9d1456112b62940d09",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_sfx_aurelionsol_aurelionsolq_missilecast_r1.wav",
+    "event": "Play_sfx_AurelionSol_AurelionSolQ_missilecast",
+    "event_id": 398105608,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolQ_missilecast {r1}.txtp",
+    "media_ids": [
+      336070000,
+      402341783,
+      506729953
+    ],
+    "duration": 2.92,
+    "processing": "vgmstream-cli -i; original event layers and gain retained",
+    "sha256": "281db3fb5dcff8dd10ca709c30c600a5d14c839c9bacdc757e4036023e77e6cc"
+  },
+  {
+    "file": "play_sfx_aurelionsol_aurelionsolq_missilecast_r2.wav",
+    "event": "Play_sfx_AurelionSol_AurelionSolQ_missilecast",
+    "event_id": 398105608,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolQ_missilecast {r2}.txtp",
+    "media_ids": [
+      336070000,
+      402341783,
+      506729953
+    ],
+    "duration": 2.92,
+    "processing": "vgmstream-cli -i; original event layers and gain retained",
+    "sha256": "54a180639db1005f9b478763a9db6e3f569f1e0db58d410729304572a6dfe325"
+  },
+  {
+    "file": "play_sfx_aurelionsol_aurelionsolq_missilecast_r3.wav",
+    "event": "Play_sfx_AurelionSol_AurelionSolQ_missilecast",
+    "event_id": 398105608,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolQ_missilecast {r3}.txtp",
+    "media_ids": [
+      336070000,
+      402341783,
+      506729953
+    ],
+    "duration": 2.92,
+    "processing": "vgmstream-cli -i; original event layers and gain retained",
+    "sha256": "a6e78246a5769f8806b58c6f92471e0d0ae623468071ab5ffd318b0c90f3dc93"
+  },
+  {
+    "file": "play_sfx_aurelionsol_aurelionsolrmissile_missilelaunch.wav",
+    "event": "Play_sfx_AurelionSol_AurelionSolRMissile_missilelaunch",
+    "event_id": 2553594109,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolRMissile_missilelaunch.txtp",
+    "media_ids": [
+      603027560
+    ],
+    "duration": 2.0101,
+    "processing": "vgmstream-cli -i; original event layers and gain retained",
+    "sha256": "c75c3915130cd8142c087f0cdddd5331b3224df5d82c7f6d503d01b397913297"
+  },
+  {
+    "file": "play_sfx_aurelionsol_aurelionsolrmissile_hit_r1.wav",
+    "event": "Play_sfx_AurelionSol_AurelionSolRMissile_hit",
+    "event_id": 361331667,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolRMissile_hit {r1}.txtp",
+    "media_ids": [
+      348958784,
+      597444599,
+      773751231
+    ],
+    "duration": 4.1034,
+    "processing": "vgmstream-cli -i; original event layers and gain retained",
+    "sha256": "1d72ec4e1ec39933ab907523504ad5f5f5300dbc156585fbae9741b6fd2269a9"
+  },
+  {
+    "file": "play_sfx_aurelionsol_aurelionsolrmissile_hit_r2.wav",
+    "event": "Play_sfx_AurelionSol_AurelionSolRMissile_hit",
+    "event_id": 361331667,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolRMissile_hit {r2}.txtp",
+    "media_ids": [
+      348958784,
+      597444599,
+      773751231
+    ],
+    "duration": 3.8202,
+    "processing": "vgmstream-cli -i; original event layers and gain retained",
+    "sha256": "61a0a6715a83f7e469e8f984509dca43a91484bc9b271bb4e8d936ea3d9d8150"
+  },
+  {
+    "file": "play_sfx_aurelionsol_aurelionsolrmissile_hit_r3.wav",
+    "event": "Play_sfx_AurelionSol_AurelionSolRMissile_hit",
+    "event_id": 361331667,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolRMissile_hit {r3}.txtp",
+    "media_ids": [
+      348958784,
+      597444599,
+      773751231
+    ],
+    "duration": 3.82,
+    "processing": "vgmstream-cli -i; original event layers and gain retained",
+    "sha256": "6075f1ee5e5c256dd98bae89f28638eda9000ce225cb9b3f459581188660ae28"
+  },
+  {
+    "file": "play_sfx_aurelionsol_aurelionsolr2missile_missilelaunch_super.wav",
+    "event": "Play_sfx_AurelionSol_AurelionSolR2Missile_missilelaunch_super",
+    "event_id": 2309761105,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolR2Missile_missilelaunch_super.txtp",
+    "media_ids": [
+      1027810183
+    ],
+    "duration": 2.179,
+    "processing": "vgmstream-cli -i; original event layers and gain retained",
+    "sha256": "168a1114bb33114c8ccaca7144fe93eeb83a0c028d4a4ec82b6a3999ce090d97"
+  },
+  {
+    "file": "play_sfx_aurelionsol_aurelionsolr2missile_hit_super_s.wav",
+    "event": "Play_sfx_AurelionSol_AurelionSolR2Missile_hit_super",
+    "event_id": 3692241899,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolR2Missile_hit_super {s}.txtp",
+    "media_ids": [
+      18582862,
+      920317002
+    ],
+    "duration": 12.4385,
+    "processing": "vgmstream-cli -i; original event layers and gain retained",
+    "sha256": "8300090e5d7e4ebb399be1c902f566398482d9a714a03adae9920429cb4cdabb"
+  },
+  {
+    "file": "play_sfx_aurelionsol_aurelionsolr_hit_shockwave_r1.wav",
+    "event": "Play_sfx_AurelionSol_AurelionSolR_hit_shockwave",
+    "event_id": 2637623209,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolR_hit_shockwave {r1}.txtp",
+    "media_ids": [
+      767382225,
+      948852579,
+      970291862,
+      1054539665
+    ],
+    "duration": 2.9,
+    "processing": "vgmstream-cli -i; original event layers and gain retained",
+    "sha256": "2d43d95dc406fb9f3037bdc124c8a178d298782b890c37e107aa592fcf9e2c66"
+  },
+  {
+    "file": "play_sfx_aurelionsol_aurelionsolr_hit_shockwave_r2.wav",
+    "event": "Play_sfx_AurelionSol_AurelionSolR_hit_shockwave",
+    "event_id": 2637623209,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolR_hit_shockwave {r2}.txtp",
+    "media_ids": [
+      767382225,
+      948852579,
+      970291862,
+      1054539665
+    ],
+    "duration": 2.9388,
+    "processing": "vgmstream-cli -i; original event layers and gain retained",
+    "sha256": "9564b3dc2eb7566383f5c0a0b082294e609fbec94ce7c22ece13c9b6876be0e2"
+  },
+  {
+    "file": "play_sfx_aurelionsol_aurelionsolr_hit_shockwave_r3.wav",
+    "event": "Play_sfx_AurelionSol_AurelionSolR_hit_shockwave",
+    "event_id": 2637623209,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolR_hit_shockwave {r3}.txtp",
+    "media_ids": [
+      767382225,
+      948852579,
+      970291862,
+      1054539665
+    ],
+    "duration": 3.0537,
+    "processing": "vgmstream-cli -i; original event layers and gain retained",
+    "sha256": "4f259abbb1306ffaba885855ac4554c10366504decb1496e8e87312f0d094711"
+  }
+]

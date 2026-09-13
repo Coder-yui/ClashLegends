@@ -1,0 +1,44 @@
+[
+  {
+    "file": "assets/audio/spells/heal/play_sfx_summonerheal_oncast_r1.wav",
+    "event": "Play_sfx_SummonerHeal_OnCast",
+    "event_id": 4193126161,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_SummonerHeal_OnCast {r1}.txtp",
+    "duration": 4.679637188208617,
+    "media_ids": [
+      273299281,
+      379910541,
+      960674905
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "2f66291596322fd78c94edceeea22464296b1a946d03883418ba650295d983a4"
+  },
+  {
+    "file": "assets/audio/spells/heal/play_sfx_summonerheal_oncast_r2.wav",
+    "event": "Play_sfx_SummonerHeal_OnCast",
+    "event_id": 4193126161,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_SummonerHeal_OnCast {r2}.txtp",
+    "duration": 4.685079365079365,
+    "media_ids": [
+      273299281,
+      379910541,
+      960674905
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "88ef9409e37f8f526c85cea24e1de7fbe2def494bf1a1f2c26c163aaa6250601"
+  },
+  {
+    "file": "assets/audio/spells/heal/play_sfx_summonerheal_oncast_r3.wav",
+    "event": "Play_sfx_SummonerHeal_OnCast",
+    "event_id": 4193126161,
+    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_SummonerHeal_OnCast {r3}.txtp",
+    "duration": 4.56079365079365,
+    "media_ids": [
+      273299281,
+      379910541,
+      960674905
+    ],
+    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
+    "sha256": "86082b641a0d38e77f5254b9e97a5f18c3004868ed79e9d63973cac3cbaced03"
+  }
+]
