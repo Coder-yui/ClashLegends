@@ -13,7 +13,7 @@ func _capture() -> void:
 	await process_frame
 	main._start_local()
 	main.set_process(false)
-	main._ai.set_process(false)
+	main._ai.enabled = false
 	main._minion_waves_enabled = false
 	for _i in range(24):
 		await process_frame

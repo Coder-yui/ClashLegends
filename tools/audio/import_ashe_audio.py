@@ -4,22 +4,19 @@ import re
 import shutil
 from pathlib import Path
 
-SOURCE = Path('/Users/czh/Tools/lol-asset-tools/masteryi_base_audio')
-DEST = Path(__file__).resolve().parents[1] / 'assets/audio/units/masteryi'
+SOURCE = Path('/Users/czh/Tools/lol-asset-tools/ashe_base_audio')
+DEST = Path(__file__).resolve().parents[2] / 'assets/audio/units/ashe'
 EVENTS = [
-    'MasterYiBasicAttack_OnCast', 'MasterYiBasicAttack2_OnCast',
-    'MasterYiDoubleStrike_OnCast', 'MasterYiBasicAttack_OnHit',
-    'Highlander_OnBuffActivate', 'Highlander_OnBuffDeactivate',
-    'Highlander_trail', 'Death3D_cast',
+    'AsheBasicAttack_OnCast', 'AsheBasicAttack_OnMissileLaunch', 'AsheBasicAttack_OnHit',
+    'Volley_OnCast', 'VolleyAttackWithSound_OnMissileLaunch', 'VolleyAttack_OnHit',
 ]
-
 
 def main():
     data = json.loads((SOURCE / 'event_map.json').read_text())
     DEST.mkdir(parents=True, exist_ok=True)
     manifest = []
     for suffix in EVENTS:
-        event = next(e for e in data['events'] if e['name'] == 'Play_sfx_MasterYi_' + suffix)
+        event = next(e for e in data['events'] if e['name'] == 'Play_sfx_Ashe_' + suffix)
         for relative in event['event_wav']:
             source = SOURCE / relative
             name = re.sub(r'[^a-z0-9]+', '_', source.stem.lower()).strip('_') + '.wav'
@@ -28,7 +25,6 @@ def main():
                              'source_preview': relative, 'media_ids': event['media_ids']})
     (DEST / 'event_manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n')
     print(f'Copied {len(manifest)} event WAVs; original source unchanged.')
-
 
 if __name__ == '__main__':
     main()

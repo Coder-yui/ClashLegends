@@ -27,7 +27,7 @@ func _ready() -> void:
 	# 冻结战斗模拟（金币/AI/单位），只保留表现层：镜头内只有演示塔和脚本伤害。
 	_main.set_process(false)
 	if _main._ai != null:
-		_main._ai.set_process(false)
+		_main._ai.enabled = false
 	_build_overlay()
 	_run_sequence()
 

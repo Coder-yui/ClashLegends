@@ -1,9 +1,41 @@
 # 开发工具
 
-- `capture/`：没有现成卡面资源时使用的卡面与宣传素材摄影脚本，不参与运行时；四类兵线和墓碑使用各自脚本。已有 CommunityDragon 或其他正式卡面时不需要运行摄影脚本。
-- `demos/`：需要实际渲染和人工观察的演示场景。
-- `arena/build_rift_arena.py`：通过 Blender 重建峡谷竞技场的可编辑源文件与运行时 GLB；规格和参考见 `assets/arena/rift_arena/README.md`。
-- `capture/capture_rift_arena.gd`：使用实际游戏渲染器验证当前旧背景的 gameplay 画面，并单独输出候选 3D 地图的斜视角模型预览。
-- `run_local_multiplayer.sh`：macOS 本地主机/客户端双端冒烟；可用 `GODOT_BIN` 覆盖 Godot 路径。
+从项目根目录执行以下命令。日常优先用统一入口 `python3 tools/dev.py`；`--help` 查看各工具参数。工具不参与游戏权威模拟。
 
-所有 Godot 命令都从项目根目录运行，具体参数见各脚本顶部注释。
+## 按任务找工具
+
+| 想做什么 | 入口 | 说明 |
+| --- | --- | --- |
+| 检查本机依赖 | `python3 tools/dev.py doctor` | 检查源库、Godot 与转换工具，不安装软件 |
+| 从 LoL 源库找素材 | `python3 tools/dev.py source` | [素材提取与转换](assets/README.md)：模型、动画、纹理、音频、特效定义、卡面 |
+| 临时看模型、动作 | `python3 tools/dev.py model` | [模型展台](viewers/README.md)：项目单位或外部 glTF；播放、暂停、拖动时间、旋转、缩放 |
+| 没有卡面时拍摄 | `python3 tools/dev.py model --capture …` | 同一个展台拍透明 PNG；先预览候选，已有卡面不覆盖 |
+| 临时听一批声音 | `python3 tools/dev.py audio` | [声音展台](audio_review/README.md)：目录或 manifest；筛选、波形、选段循环 |
+| 准备或导入声音 | `audio-prepare` / `audio-import` | [音频工具](audio/README.md)，原始声音与游戏事件需明确对应 |
+| 看技能、特效与实战 | `python3 tools/dev.py workbench` | [开发工作台](../docs/DEVELOPMENT_WORKBENCH.md) |
+| 查项目资源和文档 | `python3 tools/dev.py audit` | 只读审计；重复文件和无字面引用只是人工检查线索 |
+
+## 目录职责
+
+- `lib/`：外部工具定位与子进程调用。可用 `LOL_TOOLS_BIN` 指定转换工具目录，`GODOT_BIN` 指定 Godot。
+- `assets/`、`audio/`：素材准备与加工；通用入口和专门配方的区别见各目录说明。
+- `viewers/`、`audio_review/`：可复用的临时展台。
+- `capture/`：已有卡面的固定构图配方、地图及宣传拍摄，见 [索引](capture/README.md)。
+- `demos/`：具体问题的复现场景，见 [索引](demos/README.md)；不是通用展台，也不是第二套自动测试。
+- `arena/`：候选地图的源素材准备、Blender 构建和共用材质处理。
+- `maintenance/`：仓库审计；`tests/`：通用工具的自动检查。
+- `run_local_multiplayer.sh`：本机 host/join 双终端启动。
+
+游戏运行代码在 [scripts](../scripts/README.md)，不要把离线提取、摄影或批量加工塞进运行时。新工具先复用上述入口；只有不同职责才新增脚本。
+
+## 产物与验证
+
+原始共享库只读；提取和转换输出到 `builds/` 或外部临时目录，并保存来源清单。正式接入按 [新卡清单](../docs/NEW_CARD_CHECKLIST.md) 执行。用户指定的待开发队列素材仍按该清单**移动**，不能与共享源库混淆。
+
+卡面优先使用原版素材；没有时才摄影。模型转换不等于完成材质、动画、特效或实战验收；试听原声也不等于游戏混音完成。
+
+```sh
+python3 -m unittest discover -s tools/tests
+python3 -m unittest discover -s tools/maintenance -p 'test_*.py'
+python3 tools/dev.py audit
+```

@@ -27,7 +27,7 @@ func _run() -> void:
 		return
 	main._start_local()
 	main.set_process(false)
-	main._ai.set_process(false)
+	main._ai.enabled = false
 	main._minion_waves_enabled = false
 	var record := AudioEffectRecord.new()
 	var master := AudioServer.get_bus_index("Master")

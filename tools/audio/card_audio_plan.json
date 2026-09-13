@@ -1,0 +1,335 @@
+{
+  "anivia": {
+    "source": "anivia",
+    "attack": [
+      "Play_sfx_Anivia_AniviaBasicAttack_OnCast",
+      "Play_sfx_Anivia_AniviaBasicAttack_OnCast"
+    ],
+    "hit": "Play_sfx_Anivia_AniviaBasicAttack_OnHit",
+    "events": {
+      "attack_launch": "Play_sfx_Anivia_AniviaBasicAttack_OnMissileLaunch",
+      "frost_storm:start": "Play_sfx_Anivia_GlacialStorm_buffactivate",
+      "death": "Play_vo_Anivia_Death3D",
+      "frost_storm:zone_end": "Play_sfx_Anivia_GlacialStorm_OnBuffDeactivate",
+      "frost_storm:zone_sustain": "Play_sfx_Anivia_GlacialStorm_buffactivate"
+    },
+    "notes": "Attack1/2 共用基础出手；GlacialStorm 原事件含 10.469s 风暴，裁取前 0.72s 为施法起音，尾部淡出。固定区域长音缺独立所有权入口，未接；复生/蛋转生缺入口。 2026-09-13 全面复核见 docs/archive/2026-09-13/research/hero_audio_completeness_audit.md；当前定义与逐事件清单为准。",
+    "trim_events": {
+      "Play_sfx_Anivia_GlacialStorm_buffactivate": 0.72
+    },
+    "audio_overrides": {
+      "attack_swing_lead_time": 0.075
+    }
+  },
+  "aurelionsol": {
+    "source": "aurelionsol",
+    "attack": [],
+    "hit": null,
+    "events": {
+      "continuous_attack:start": "Play_sfx_AurelionSol_AurelionSolQ_OnCast",
+      "continuous_attack:sustain": "Play_sfx_AurelionSol_AurelionSolQ_missilelaunch",
+      "continuous_attack:end": "Play_sfx_AurelionSol_AurelionSolQ_buffdeactivate",
+      "active:sustain": "Play_sfx_AurelionSol_AurelionSolR_OnCast",
+      "active_strong:sustain": "Play_sfx_AurelionSol_AurelionSolR2_OnCast",
+      "death": "Play_vo_AurelionSol_Death3D",
+      "active:impact": "Play_sfx_AurelionSol_AurelionSolRMissile_hit",
+      "active:start": "Play_sfx_AurelionSol_AurelionSolRMissile_missilelaunch",
+      "active_strong:impact": "Play_sfx_AurelionSol_AurelionSolR2Missile_hit_super",
+      "active_strong:start": "Play_sfx_AurelionSol_AurelionSolR2Missile_missilelaunch_super",
+      "active_strong:wave_hit": "Play_sfx_AurelionSol_AurelionSolR_hit_shockwave",
+      "continuous_attack:release": "Play_sfx_AurelionSol_AurelionSolQ_missilecast"
+    },
+    "notes": "普攻为 Spell1 吐息，全部使用 Q；星落/天瀑使用 R/R2。首次落点/冲击波独立命中尚缺入口。 2026-09-13 全面复核见 docs/archive/2026-09-13/research/hero_audio_completeness_audit.md；当前定义与逐事件清单为准。"
+  },
+  "sett": {
+    "source": "sett",
+    "attack": [
+      "Play_sfx_Sett_SettBasicAttack_cast",
+      "Play_sfx_Sett_SettBasicAttack2_cast",
+      "Play_sfx_Sett_SettBasicAttack_cast",
+      "Play_sfx_Sett_SettBasicAttack2_cast"
+    ],
+    "hit": "Play_sfx_Sett_SettBasicAttack_OnHit",
+    "events": {
+      "active:sustain": "Play_sfx_Sett_SettW_cast",
+      "active:hit": "Play_sfx_Sett_SettW_hit",
+      "active_strong:sustain": "Play_sfx_Sett_SettW_maxed_cast",
+      "active_strong:hit": "Play_sfx_Sett_SettW_maxed_hit",
+      "death": "Play_vo_Sett_Death3D",
+      "active:hit_center": "Play_sfx_Sett_SettW_hit_center_sweetener",
+      "active_strong:hit_center": "Play_sfx_Sett_SettW_maxed_hit_center_sweetener",
+      "deploy:start": "Play_sfx_Sett_Respawn3D_buffactivate"
+    },
+    "notes": "四段左/右拳使用 BasicAttack/BasicAttack2 出手，命中按 BasicAttack/2/3/4 排列；普通/满豪意 W 分开。 2026-09-13 全面复核见 docs/archive/2026-09-13/research/hero_audio_completeness_audit.md；当前定义与逐事件清单为准。",
+    "hit_segments": [
+      "Play_sfx_Sett_SettBasicAttack_OnHit",
+      "Play_sfx_Sett_SettBasicAttack2_OnHit",
+      "Play_sfx_Sett_SettBasicAttack3_OnHit",
+      "Play_sfx_Sett_SettBasicAttack4_OnHit"
+    ]
+  },
+  "gwen": {
+    "source": "gwen",
+    "attack": [
+      "Play_sfx_Gwen_GwenBasicAttack_Swipe_cast",
+      "Play_sfx_Gwen_GwenBasicAttack_Stab_cast",
+      "Play_sfx_Gwen_GwenBasicAttack_Swipe_cast"
+    ],
+    "hit": "Play_sfx_Gwen_GwenBasicAttack_Swipe_hit",
+    "events": {
+      "death": "Play_vo_Gwen_Death3D",
+      "active_0:hit_first": "Play_sfx_Gwen_GwenQFirst_hit",
+      "active_1:hit_first": "Play_sfx_Gwen_GwenQFirst_hit",
+      "active_2:hit_first": "Play_sfx_Gwen_GwenQFirst_hit",
+      "active_3:hit_first": "Play_sfx_Gwen_GwenQFirst_hit",
+      "active_1:hit_middle": "Play_sfx_Gwen_GwenQMiddle_hit",
+      "active_2:hit_middle": "Play_sfx_Gwen_GwenQMiddle_hit",
+      "active_3:hit_middle": "Play_sfx_Gwen_GwenQMiddle_hit",
+      "active_0:hit_last": "Play_sfx_Gwen_GwenQLast_hit",
+      "active_1:hit_last": "Play_sfx_Gwen_GwenQLast_hit",
+      "active_2:hit_last": "Play_sfx_Gwen_GwenQLast_hit",
+      "active_3:hit_last": "Play_sfx_Gwen_GwenQLast_hit",
+      "active_0:hit_first_center": "Play_sfx_Gwen_GwenQFirst_hit",
+      "active_0:hit_last_center": "Play_sfx_Gwen_GwenQLast_hit_center",
+      "active_1:hit_first_center": "Play_sfx_Gwen_GwenQFirst_hit",
+      "active_1:hit_last_center": "Play_sfx_Gwen_GwenQLast_hit_center",
+      "active_1:hit_middle_center": "Play_sfx_Gwen_GwenQMiddle_hit",
+      "active_2:hit_first_center": "Play_sfx_Gwen_GwenQFirst_hit",
+      "active_2:hit_last_center": "Play_sfx_Gwen_GwenQLast_hit_center",
+      "active_2:hit_middle_center": "Play_sfx_Gwen_GwenQMiddle_hit",
+      "active_3:hit_first_center": "Play_sfx_Gwen_GwenQFirst_hit",
+      "active_3:hit_last_center": "Play_sfx_Gwen_GwenQLast_hit_center",
+      "active_3:hit_middle_center": "Play_sfx_Gwen_GwenQMiddle_hit",
+      "resource_full": "Play_sfx_Gwen_GwenQ_max_stacks_buffactivate"
+    },
+    "notes": "原始动画图 SoundEventData 确认 Attack1=Swipe、Attack2=Stab、Attack3=Swipe，出手与命中分别映射。Q 四档按真实剪切时间合成可中断出手音轨；缠流缺被动状态音频入口。 2026-09-13 全面复核见 docs/archive/2026-09-13/research/hero_audio_completeness_audit.md；当前定义与逐事件清单为准。",
+    "sequences": {
+      "active_0:sustain": [
+        {
+          "event": "Play_sfx_Gwen_GwenQFirst_cast",
+          "time": 0.0949367
+        },
+        {
+          "event": "Play_sfx_Gwen_GwenQLast_cast",
+          "time": 1.0443036
+        }
+      ],
+      "active_1:sustain": [
+        {
+          "event": "Play_sfx_Gwen_GwenQFirst_cast",
+          "time": 0.0949367
+        },
+        {
+          "event": "Play_sfx_Gwen_GwenQMiddle_1stack_cast",
+          "time": 0.9493669
+        },
+        {
+          "event": "Play_sfx_Gwen_GwenQLast_cast",
+          "time": 1.0443036
+        }
+      ],
+      "active_2:sustain": [
+        {
+          "event": "Play_sfx_Gwen_GwenQFirst_cast",
+          "time": 0.0949367
+        },
+        {
+          "event": "Play_sfx_Gwen_GwenQMiddle_1stack_cast",
+          "time": 0.7827002
+        },
+        {
+          "event": "Play_sfx_Gwen_GwenQMiddle_1stack_cast",
+          "time": 0.9493669
+        },
+        {
+          "event": "Play_sfx_Gwen_GwenQLast_cast",
+          "time": 1.0443036
+        }
+      ],
+      "active_3:sustain": [
+        {
+          "event": "Play_sfx_Gwen_GwenQFirst_cast",
+          "time": 0.0949367
+        },
+        {
+          "event": "Play_sfx_Gwen_GwenQMiddle_1stack_cast",
+          "time": 0.6160335
+        },
+        {
+          "event": "Play_sfx_Gwen_GwenQMiddle_1stack_cast",
+          "time": 0.7827002
+        },
+        {
+          "event": "Play_sfx_Gwen_GwenQMiddle_1stack_cast",
+          "time": 0.9493669
+        },
+        {
+          "event": "Play_sfx_Gwen_GwenQLast_cast",
+          "time": 1.0443036
+        }
+      ]
+    },
+    "hit_segments": [
+      "Play_sfx_Gwen_GwenBasicAttack_Swipe_hit",
+      "Play_sfx_Gwen_GwenBasicAttack_Stab_hit",
+      "Play_sfx_Gwen_GwenBasicAttack_Swipe_hit"
+    ],
+    "event_volume_db": {
+      "active_0:hit_first_center": 3.0,
+      "active_1:hit_first_center": 3.0,
+      "active_1:hit_middle_center": 3.0,
+      "active_2:hit_first_center": 3.0,
+      "active_2:hit_middle_center": 3.0,
+      "active_3:hit_first_center": 3.0,
+      "active_3:hit_middle_center": 3.0
+    }
+  },
+  "teemo": {
+    "source": "teemo",
+    "attack": [
+      "Play_sfx_Teemo_TeemoBasicAttack_OnCast"
+    ],
+    "hit": "Play_sfx_Teemo_TeemoBasicAttack_OnHit",
+    "events": {
+      "empowered_swing": "Play_sfx_Teemo_TeemoQ_OnCast",
+      "death": "Play_vo_Teemo_Death3D",
+      "attack_launch": "Play_sfx_Teemo_TeemoBasicAttack_OnMissileLaunch",
+      "empowered_launch": "Play_sfx_Teemo_TeemoQ_OnMissileLaunch"
+    },
+    "notes": "Attack1 普攻出手/命中；Spell1 强化出手/真实命中分别使用 Q OnCast/OnHit。在途弹体保存强化标记，死亡后命中仍正确。未单独叠加 missilelaunch，避免普通发射层叠在 Q 上。 2026-09-13 全面复核见 docs/archive/2026-09-13/research/hero_audio_completeness_audit.md；当前定义与逐事件清单为准。",
+    "empowered_hit": "Play_sfx_Teemo_TeemoQ_OnHit"
+  },
+  "twisted_fate": {
+    "source": "twistedfate",
+    "attack": [
+      "Play_sfx_TwistedFate_TwistedFateBasicAttack_OnCast",
+      "Play_sfx_TwistedFate_TwistedFateBasicAttack2_OnCast",
+      "Play_sfx_TwistedFate_TwistedFateBasicAttack3_OnCast",
+      "Play_sfx_TwistedFate_TwistedFateBasicAttack4_OnCast",
+      "Play_sfx_TwistedFate_CardmasterStack_cast"
+    ],
+    "hit": "Play_sfx_TwistedFate_TwistedFateBasicAttack_OnHit",
+    "events": {
+      "wild_cards:sustain": "Play_sfx_TwistedFate_WildCards_OnCast",
+      "death": "Play_vo_TwistedFate_Death3D",
+      "wild_cards:release": "Play_sfx_TwistedFate_SealFateMissile_OnMissileLaunch",
+      "wild_cards:hit": "Play_sfx_TwistedFate_SealFateMissile_OnHit",
+      "pre_deploy:start": "Play_sfx_TwistedFate_Gate_marker"
+    },
+    "notes": "Attack1/2/3/4 → Spell3，第五击使用 E CardmasterStack，出手与命中均分段。万能牌出手使用 WildCards_OnCast，0.25 秒 release 使用 SealFateMissile_OnMissileLaunch；原 spell 数据的 Q_Mis/Q_Tar 确认其归属，OnHit 已接入成功伤害事件，保留双层混合。 2026-09-13 全面复核见 docs/archive/2026-09-13/research/hero_audio_completeness_audit.md；当前定义与逐事件清单为准。 通用导入后运行 tools/audio/import_twisted_fate_deploy_audio.py，使用 Gate_marker 原声前 1.75 秒，不变速。",
+    "hit_segments": [
+      "Play_sfx_TwistedFate_TwistedFateBasicAttack_OnHit",
+      "Play_sfx_TwistedFate_TwistedFateBasicAttack2_OnHit",
+      "Play_sfx_TwistedFate_TwistedFateBasicAttack3_OnHit",
+      "Play_sfx_TwistedFate_TwistedFateBasicAttack4_OnHit",
+      "Play_sfx_TwistedFate_CardmasterStack_hit"
+    ],
+    "launch_segments": [
+      "Play_sfx_TwistedFate_TwistedFateBasicAttack_OnMissileLaunch",
+      "Play_sfx_TwistedFate_TwistedFateBasicAttack_OnMissileLaunch",
+      "Play_sfx_TwistedFate_TwistedFateBasicAttack_OnMissileLaunch",
+      "Play_sfx_TwistedFate_TwistedFateBasicAttack_OnMissileLaunch",
+      "Play_sfx_TwistedFate_CardmasterStack_missilelaunch"
+    ],
+    "event_variant_limits": {
+      "Play_sfx_TwistedFate_TwistedFateBasicAttack_OnMissileLaunch": 4,
+      "Play_sfx_TwistedFate_SealFateMissile_OnMissileLaunch": 4
+    }
+  },
+  "xin": {
+    "source": "xinzhao",
+    "attack": [
+      "Play_sfx_XinZhao_XinZhaoBasicAttack_OnCast",
+      "Play_sfx_XinZhao_XinZhaoBasicAttack2_OnCast",
+      "Play_sfx_XinZhao_XinZhaoPassiveCritAttack_OnCast"
+    ],
+    "hit": "Play_sfx_XinZhao_XinZhaoBasicAttack_OnHit",
+    "events": {
+      "active:sustain": "Play_sfx_XinZhao_XinZhaoR_OnCast",
+      "death": "Play_vo_XinZhao_Death3D",
+      "active:hit": "Play_sfx_XinZhao_XinZhaoR_hitlocation_knockback",
+      "deploy:hit": "Play_sfx_XinZhao_XinZhaoR_hitlocation_knockback",
+      "deploy:start": "Play_sfx_XinZhao_XinZhaoR_OnCast",
+      "passive_heal": "Play_sfx_XinZhao_XinZhaoPassive_heal_buffactivate"
+    },
+    "notes": "Attack1_Hit / Attack3_Hit / Passive_AA；第三段为被动攻击，出手与命中分别映射。部署 R 与主动同动作，但部署缺 cue；回血和 nova 命中缺入口。 2026-09-13 全面复核见 docs/archive/2026-09-13/research/hero_audio_completeness_audit.md；当前定义与逐事件清单为准。 R起手横扫和中文喊声由 tools/audio/import_xin_sweep_audio.py 在通用导入后应用；不接持续护卫音。",
+    "hit_segments": [
+      "Play_sfx_XinZhao_XinZhaoBasicAttack_OnHit",
+      "Play_sfx_XinZhao_XinZhaoBasicAttack2_OnHit",
+      "Play_sfx_XinZhao_XinZhaoPassiveCritAttack_OnHit"
+    ]
+  },
+  "gnar": {
+    "source": "gnar",
+    "attack": [
+      "Play_sfx_Gnar_GnarBasicAttack_OnCast",
+      "Play_sfx_Gnar_GnarBasicAttack2_OnCast"
+    ],
+    "hit": "Play_sfx_Gnar_GnarBasicAttack_OnHit",
+    "events": {
+      "attack_launch": "Play_sfx_Gnar_GnarBasicAttack_OnMissileLaunch",
+      "revert:sustain": "Play_sfx_Gnar_GnarTransformBack_buffactivate",
+      "death": "Play_vo_Gnar_Death3D"
+    },
+    "notes": "小纳尔双段普攻；变小播放 TransformBack。 2026-09-13 全面复核见 docs/archive/2026-09-13/research/hero_audio_completeness_audit.md；当前定义与逐事件清单为准。 小纳尔 launch 由每枚普通弹体持有，命中或失效停止；不修改 WAV 增益与时长。",
+    "audio_overrides": {
+      "attack_launch_until_impact": true
+    }
+  },
+  "gnar_mega": {
+    "source": "gnar",
+    "attack": [
+      "Play_sfx_Gnar_GnarBigBasicAttack_OnCast",
+      "Play_sfx_Gnar_GnarBigBasicAttack2_OnCast"
+    ],
+    "hit": "Play_sfx_Gnar_GnarBigBasicAttack_OnHit",
+    "events": {
+      "transform:sustain": "Play_sfx_Gnar_GnarTransform_OnBuffActivate",
+      "transform_active:sustain": "Play_sfx_Gnar_GnarBigW_OnCast",
+      "active:sustain": "Play_sfx_Gnar_GnarBigW_OnCast",
+      "death": "Play_vo_Gnar_Death3D",
+      "active:hit": "Play_sfx_Gnar_GnarBigW_hit2",
+      "transform_active:hit": "Play_sfx_Gnar_GnarBigW_hit2"
+    },
+    "notes": "大纳尔双段普攻与 W；主动变大优先 W 出手。建筑攻击暂复用大形态普攻，dual_form 命中缺入口。 2026-09-13 全面复核见 docs/archive/2026-09-13/research/hero_audio_completeness_audit.md；当前定义与逐事件清单为准。"
+  },
+  "apex_turret": {
+    "source": "heimerdinger",
+    "attack": [
+      "Play_sfx_HeimerTBlue_HeimerTBlueBasicAttack_OnCast"
+    ],
+    "hit": "Play_sfx_HeimerTBlue_HeimerTBlueBasicAttack_OnHit",
+    "events": {
+      "attack_launch": "Play_sfx_HeimerTBlue_HeimerTBlueBasicAttack_OnMissileLaunch",
+      "laser:sustain": "Play_sfx_HeimerTBlue_HeimerdingerTurretBigEnergyBlast_OnCast",
+      "laser:hit": "Play_sfx_HeimerTBlue_HeimerdingerTurretBigEnergyBlast_OnHit",
+      "laser:release": "Play_sfx_HeimerTBlue_HeimerdingerTurretBigEnergyBlast_OnMissileLaunch",
+      "idle:sustain": "Play_sfx_HeimerTBlue_HeimerdingerRQEngineAudio_OnBuffActivate",
+      "deploy:start": "Play_sfx_HeimerTYellow_HeimerdingerQSpawnDestroyAudio_OnBuffActivate",
+      "death": "Play_sfx_HeimerTYellow_HeimerdingerQSpawnDestroyAudio_OnBuffDeactivate"
+    },
+    "notes": "HeimerTBlue 普攻/激光与待机引擎；部署、死亡按用户确认采用 Q 炮台 QSpawnDestroyAudio Activate/Deactivate，不接英雄 QUlt 语音。激光为真实穿透弹体，命中逐目标播放。"
+  },
+  "imp": {
+    "source": "yorick",
+    "attack": [
+      "Play_sfx_Yorick_YorickQ_GhoulAttack_cast",
+      "Play_sfx_Yorick_YorickQ_GhoulAttack_cast",
+      "Play_sfx_Yorick_YorickQ_GhoulAttack_cast"
+    ],
+    "hit": null,
+    "events": {
+      "death": "Play_sfx_Yorick_YorickQ_ghoul_death"
+    },
+    "notes": "普通攻击 Attack1/2/3 共用原动画图 GhoulAttack_cast；Leap 的 jump 事件不用于普通攻击，无独立命中素材。 2026-09-13 全面复核见 docs/archive/2026-09-13/research/hero_audio_completeness_audit.md；当前定义与逐事件清单为准。"
+  },
+  "pix": {
+    "source": "lulu",
+    "attack": [],
+    "hit": "Play_sfx_Lulu_LuluPassiveMissile_hit",
+    "events": {
+      "attack_launch": "Play_sfx_Lulu_LuluPassiveMissileController_OnMissileCast"
+    },
+    "notes": "皮克斯是露露被动发射者，权威弹体创建使用 PassiveMissileController，命中使用 PassiveMissile_hit。仙灵汲取是项目机制，无对应原生素材；死亡静音。 2026-09-13 全面复核见 docs/archive/2026-09-13/research/hero_audio_completeness_audit.md；当前定义与逐事件清单为准。"
+  }
+}

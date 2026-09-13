@@ -1,12 +1,14 @@
 """Copy the selected, already rendered Miss Fortune base-skin events."""
+from audio_manifest_merge import merge_audio_manifest
 import json
 import shutil
 from pathlib import Path
+from death_audio_envelope import apply_death_envelope
 
 
 SOURCE = Path("/Users/czh/Tools/lol-asset-tools/verification/missfortune")
 DEATH_SOURCE = Path("/Users/czh/Tools/lol-asset-tools/verification/missfortune_vo_zh")
-DEST = Path(__file__).resolve().parents[1] / "assets/audio/units/missfortune"
+DEST = Path(__file__).resolve().parents[2] / "assets/audio/units/missfortune"
 EVENTS = [
     "Play_sfx_MissFortune_MissFortuneBasicAttack_OnCast",
     "Play_sfx_MissFortune_MissFortuneBasicAttack2_OnCast",
@@ -128,12 +130,15 @@ def main() -> None:
                 "file": destination.name,
                 "event": item["event"],
                 "event_id": item["event_id"],
-                "source_preview": item["source_preview"],
+                "source_preview": str(source),
+                "source_txtp": str((DEATH_SOURCE / item["source_preview"]).resolve()),
                 "media_ids": item["media_ids"],
                 "source_package": item["source_package"],
             }
         )
+        apply_death_envelope(destination, selected[-1])
 
+    selected = merge_audio_manifest(DEST / 'event_manifest.json', selected)
     (DEST / "event_manifest.json").write_text(json.dumps(selected, ensure_ascii=False, indent=2) + "\n")
     print(f"Copied {len(selected)} selected Miss Fortune event WAVs; source banks remain outside the project.")
 

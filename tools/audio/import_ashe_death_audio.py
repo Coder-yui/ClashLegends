@@ -6,12 +6,13 @@ import subprocess
 import shutil
 from pathlib import Path
 import xml.etree.ElementTree as ET
+from death_audio_envelope import apply_death_envelope
 
 TOOLS = Path('/Users/czh/Tools/lol-asset-tools')
 SOURCE = TOOLS / 'verification/ashe_vo_zh'
 BANK = SOURCE / 'assets/sounds/wwise2016/vo/en_us/characters/ashe/skins/base'
 OUT = TOOLS / 'ashe_death_zh_audio'
-DEST = Path(__file__).resolve().parents[1] / 'assets/audio/units/ashe'
+DEST = Path(__file__).resolve().parents[2] / 'assets/audio/units/ashe'
 EVENT = 'Play_vo_Ashe_Death3D'
 
 def main():
@@ -68,6 +69,7 @@ def main():
         shutil.copy2(wav, DEST/name)
         manifest.append(dict(file=name, event=EVENT, event_id=event_id, media_ids=sorted(media),
                              source_preview=str(wav), source_package='Ashe.zh_CN.wad.client'))
+        apply_death_envelope(DEST/name, manifest[-1])
     assert len(manifest) == 3
     (DEST/'death_event_manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2)+'\n')
     print('Imported 3 verified death variants from zh_CN package.')

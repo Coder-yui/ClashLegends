@@ -4,7 +4,8 @@
 .venv/
 # 导出产物
 export_presets.cfg
-builds/
+/builds/*
+!/builds/.gdignore
 # macOS
 .DS_Store
 
@@ -13,3 +14,7 @@ builds/
 !/ClashLegends-promo-materials/.gdignore
 /待开发卡牌美术素材/**
 !/待开发卡牌美术素材/.gdignore
+
+# 可再生的 Python 缓存
+__pycache__/
+*.py[cod]
