@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dp3k35m76u20a"
-path="res://.godot/imported/rift_surface_atlas.png-df08ca1040b87cf41c7e4fecd35910c7.ctex"
+uid="uid://f37xspjfxv4f"
+path="res://.godot/imported/brush_grass.png-7eb688b62ad81a5d4d0bd524b256daa2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/arena/rift_arena/rift_surface_atlas.png"
-dest_files=["res://.godot/imported/rift_surface_atlas.png-df08ca1040b87cf41c7e4fecd35910c7.ctex"]
+source_file="res://assets/arena/rift_arena/textures/brush_grass.png"
+dest_files=["res://.godot/imported/brush_grass.png-7eb688b62ad81a5d4d0bd524b256daa2.ctex"]
 
 [params]
 

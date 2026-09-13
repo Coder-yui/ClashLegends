@@ -1,0 +1,208 @@
+{
+  "source": "Local League of Legends asset archive / Riot Games",
+  "extracted_on": "2026-09-12",
+  "source_wad": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Map11.wad.client",
+  "source_wad_size": 2519230464,
+  "source_wad_sha256": "c9582fcff1178abee0ff25fd42e9b581f133faa943815bd2445fdb985004421d",
+  "source_policy": "Original archive read only. Selected files decoded; no original moved or edited.",
+  "usage": "Textures for individual 3D surfaces. No map image used as arena background.",
+  "note": "Color and alpha remain original. Brightness and UV selection belong to arena materials.",
+  "tools": {
+    "wadtools": "wadtools 0.5.7",
+    "ltk-tex-utils": "ltk-tex-utils 0.3.0"
+  },
+  "textures": [
+    {
+      "id": "grass_primary",
+      "source_path": "assets/maps/kitpieces/srx/base/textures/terrain_midlane_ground_a.tex",
+      "wad_path_hash": "8c2ba9495399f184",
+      "source_tex_sha256": "313d50600328835cb471e51a292be50b35f2a90e868a481d93a2b626b6aef46d",
+      "png_path": "assets/arena/rift_arena/textures/grass_primary.png",
+      "png_sha256": "e2f08c474e64afa741cafccfeb0d223288730a20f35a893d4b0d239d2615c1c8",
+      "dimensions": [
+        2048,
+        2048
+      ],
+      "source_format": "Riot TEX",
+      "processing": "ltk-tex-utils decode mip 0 to PNG; no image edits",
+      "layout": "authored UV atlas; not seamless",
+      "intended_use": "Grass, warm dirt and broken gray stone of mid lane; use selected surface UVs."
+    },
+    {
+      "id": "grass_secondary",
+      "source_path": "assets/maps/kitpieces/summoners_rift/textures/grnd_terrain_l.tex",
+      "wad_path_hash": "d514bbca54c035cc",
+      "source_tex_sha256": "b74308b6707322488f220c49829dd3c660470c42b40f7ff7d83ee7c46efc3d8a",
+      "png_path": "assets/arena/rift_arena/textures/grass_secondary.png",
+      "png_sha256": "150fe19476c396d078222b63af5e4bcb0aa0f3064611e79e2c00b28b3a9ef3b0",
+      "dimensions": [
+        2048,
+        2048
+      ],
+      "source_format": "Riot TEX",
+      "processing": "ltk-tex-utils decode mip 0 to PNG; no image edits",
+      "layout": "authored UV atlas; not seamless",
+      "intended_use": "Jungle grass, branching paths and cool gray camp stone; selected UVs only."
+    },
+    {
+      "id": "stone_paving",
+      "source_path": "assets/maps/kitpieces/srx/base/textures/terrain_base_south_ground_b.tex",
+      "wad_path_hash": "d92f5b58fa5a2d0e",
+      "source_tex_sha256": "5873f2c1b622f7ee4c69c7bcbcfe658241a672538b0289565ba036d693af7e9f",
+      "png_path": "assets/arena/rift_arena/textures/stone_paving.png",
+      "png_sha256": "765290aa254f65746d63d1176977d6a8e7c8c0ec154fb14033d7b9a0729d1a64",
+      "dimensions": [
+        2048,
+        2048
+      ],
+      "source_format": "Riot TEX",
+      "processing": "ltk-tex-utils decode mip 0 to PNG; no image edits",
+      "layout": "authored UV atlas; not seamless",
+      "intended_use": "Order base broad cut-stone courtyard, grassy verge and warm path."
+    },
+    {
+      "id": "rock_cliff",
+      "source_path": "assets/maps/kitpieces/summoners_rift/textures/_chunk_jungle_north_island_a_alpha_3dcuv_atlas_color_1bitalpha.tex",
+      "wad_path_hash": "827eba6fc7ebda8d",
+      "source_tex_sha256": "e2f956a452d8002ebfe21305f259592a2bf547931e6135a14b4b6c97870bd5b6",
+      "png_path": "assets/arena/rift_arena/textures/rock_cliff.png",
+      "png_sha256": "857139d0d3ea620cd871771897b91155acbc0b2c9d0028d2f3df54ce33245a69",
+      "dimensions": [
+        2048,
+        2048
+      ],
+      "source_format": "Riot TEX",
+      "processing": "ltk-tex-utils decode mip 0 to PNG; no image edits",
+      "layout": "authored UV atlas; not seamless",
+      "intended_use": "Layered mossy cliff, carved ruin and column islands, with small blue plants."
+    },
+    {
+      "id": "rock_woodland",
+      "source_path": "assets/maps/kitpieces/summoners_rift/textures/_chunk_jungle_north_island_d_alpha_3dcuv_atlas_color_1bitalpha.tex",
+      "wad_path_hash": "c949619b24346489",
+      "source_tex_sha256": "4f2186dd5c5809d3f338b3346e492ae8d58042f9a069d134d5de29a6f5cda3f6",
+      "png_path": "assets/arena/rift_arena/textures/rock_woodland.png",
+      "png_sha256": "5e62c13aa256577d19e180a7b07d1c974f27a0d51c6c487a315d1b9d25b5aa90",
+      "dimensions": [
+        2048,
+        2048
+      ],
+      "source_format": "Riot TEX",
+      "processing": "ltk-tex-utils decode mip 0 to PNG; no image edits",
+      "layout": "authored UV atlas; not seamless",
+      "intended_use": "Different rock faces, cut trunks, low foliage and wooden details."
+    },
+    {
+      "id": "rock_crystal",
+      "source_path": "assets/maps/kitpieces/summoners_rift/textures/_chunk_jungle_north_island_c_alpha_3dcuv_atlas_color_1bitalpha.tex",
+      "wad_path_hash": "791ab162aac13d83",
+      "source_tex_sha256": "dfcbee1bdedd91ba65d873ecb411dd1b8cd1cab03f342de4e6bca0621d1effa1",
+      "png_path": "assets/arena/rift_arena/textures/rock_crystal.png",
+      "png_sha256": "29758f617773c9b8e92af2d80853dab730d95d3fd32251e273bb9ad090a98b45",
+      "dimensions": [
+        2048,
+        2048
+      ],
+      "source_format": "Riot TEX",
+      "processing": "ltk-tex-utils decode mip 0 to PNG; no image edits",
+      "layout": "authored UV atlas; not seamless",
+      "intended_use": "Cool rocky outcrops and crystal faces with bark, plants and needle foliage."
+    },
+    {
+      "id": "canopy_foliage",
+      "source_path": "assets/maps/kitpieces/summoners_rift/textures/base_south_foliage_1bitalpha.tex",
+      "wad_path_hash": "9973799858b82123",
+      "source_tex_sha256": "b1249eff52f6b9691718bc4cb092d70ada4db3a7ccb2f800777cee526887de37",
+      "png_path": "assets/arena/rift_arena/textures/canopy_foliage.png",
+      "png_sha256": "f3e14192ee8fa16ee49b7474af07700b7e47ca78fd2ecfdfb30354b0866d4bc5",
+      "dimensions": [
+        2048,
+        2048
+      ],
+      "source_format": "Riot TEX",
+      "processing": "ltk-tex-utils decode mip 0 to PNG; no image edits",
+      "layout": "authored UV atlas; not seamless",
+      "intended_use": "Several hand-painted needle-canopy shapes and bare branches with cutout alpha."
+    },
+    {
+      "id": "forest_south",
+      "source_path": "assets/maps/kitpieces/summoners_rift/textures/_chunk_jungle_south_island_c_alpha_3dcuv_atlas_color_1bitalpha.tex",
+      "wad_path_hash": "58fa0a7298ba6255",
+      "source_tex_sha256": "c6fabb7f39a0e801c6dcf0e25250429e6b14b9e6e00370a932c6f9bc52a8a8c8",
+      "png_path": "assets/arena/rift_arena/textures/forest_south.png",
+      "png_sha256": "0165fe509e067a32a1dc5929afbe4b41585bb54b5e75dd0eb491090252f66e67",
+      "dimensions": [
+        2048,
+        2048
+      ],
+      "source_format": "Riot TEX",
+      "processing": "ltk-tex-utils decode mip 0 to PNG; no image edits",
+      "layout": "authored UV atlas; not seamless",
+      "intended_use": "Moss-covered woodland rocks, trunks and multiple separate foliage islands."
+    },
+    {
+      "id": "brush_grass",
+      "source_path": "assets/maps/kitpieces/srx/textures/sru_brush.tex",
+      "wad_path_hash": "0d2e492c5aecdd55",
+      "source_tex_sha256": "14c120f621945e3acbb123d8df9965273fcd4ae08d2f90018cd464013e790177",
+      "png_path": "assets/arena/rift_arena/textures/brush_grass.png",
+      "png_sha256": "0a5eecb0e11ee413990ddfbdc2a0203a2928155c87c2b45a849aaf8342445b28",
+      "dimensions": [
+        256,
+        256
+      ],
+      "source_format": "Riot TEX",
+      "processing": "ltk-tex-utils decode mip 0 to PNG; no image edits",
+      "layout": "authored UV atlas; not seamless",
+      "intended_use": "Broad wind-combed brush strokes; authored UV layout, not a plain grass tile."
+    },
+    {
+      "id": "river_waterlily",
+      "source_path": "assets/maps/kitpieces/srx/textures/ocean_waterlily_a.tex",
+      "wad_path_hash": "79c85f56462ba1f3",
+      "source_tex_sha256": "b06eaa173bb6bc03aa2d21db9fb5889ca0f6bf825055dd6de9ab0ac0656dad3d",
+      "png_path": "assets/arena/rift_arena/textures/river_waterlily.png",
+      "png_sha256": "38490143164e2fbe732da038aae4fd540f72d7897b4abe283a7d1837e106ad93",
+      "dimensions": [
+        256,
+        256
+      ],
+      "source_format": "Riot TEX",
+      "processing": "ltk-tex-utils decode mip 0 to PNG; no image edits",
+      "layout": "authored UV atlas; not seamless",
+      "intended_use": "Pink flowers, lily leaves and curled bank vegetation; cutout UV islands."
+    },
+    {
+      "id": "ruin_wall",
+      "source_path": "assets/maps/kitpieces/summoners_rift/textures/_chunk_base_north_walls_b_alpha_3dcuv_atlas_color_1bitalpha.tex",
+      "wad_path_hash": "0b0848d1afee2f55",
+      "source_tex_sha256": "7a12f58b07c4c1bd871c595e79072631ceded80823518532d7acb2827a82f33b",
+      "png_path": "assets/arena/rift_arena/textures/ruin_wall.png",
+      "png_sha256": "aa255ec7d9e68496858d0bb2c5db6e634ec1f681c1b45a94eb3fbeee0442ed2b",
+      "dimensions": [
+        2048,
+        2048
+      ],
+      "source_format": "Riot TEX",
+      "processing": "ltk-tex-utils decode mip 0 to PNG; no image edits",
+      "layout": "authored UV atlas; not seamless",
+      "intended_use": "Distinct carved base-wall and architectural stone atlas."
+    },
+    {
+      "id": "base_platform",
+      "source_path": "assets/maps/kitpieces/summoners_rift/textures/pally_platform_1bitalpha.tex",
+      "wad_path_hash": "a4ca78b56e0aa646",
+      "source_tex_sha256": "a6640ffe62d9768b7e99074e3ea71286114a767c632988e7417c58673cbd147a",
+      "png_path": "assets/arena/rift_arena/textures/base_platform.png",
+      "png_sha256": "e9fe66e56b164b20e80c0b9ee64496d0f9424d37698e665272d2d6852b9b9d3c",
+      "dimensions": [
+        2048,
+        2048
+      ],
+      "source_format": "Riot TEX",
+      "processing": "ltk-tex-utils decode mip 0 to PNG; no image edits",
+      "layout": "authored UV atlas; not seamless",
+      "intended_use": "Order platform stone and circular construction trim atlas."
+    }
+  ]
+}

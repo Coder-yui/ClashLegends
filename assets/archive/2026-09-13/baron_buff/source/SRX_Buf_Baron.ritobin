@@ -1,0 +1,220 @@
+    "Maps/Shipping/Map11/Particles/Default/SRX_Buf_Baron" = VfxSystemDefinitionData {
+        complexEmitterDefinitionData: list[pointer] = {
+            VfxEmitterDefinitionData {
+                rate: embed = ValueFloat {
+                    constantValue: f32 = 0.7
+                }
+                emitterName: string = "card-ground"
+                bindWeight: embed = ValueFloat {
+                    constantValue: f32 = 1
+                }
+                FlexShapeDefinition: pointer = VfxFlexShapeDefinitionData {
+                    scaleBirthScaleByBoundObjectSize: f32 = 0.005
+                }
+                primitive: pointer = VfxPrimitiveArbitraryQuad { }
+                blendMode: u8 = 1
+                birthColor: embed = ValueColor {
+                    constantValue: vec4 = { 0.41568628, 0.03137255, 0.5137255, 1 }
+                }
+                Color: embed = ValueColor {
+                    dynamics: pointer = VfxAnimatedColorVariableData {
+                        times: list[f32] = { 0, 0.2, 1, }
+                        values: list[vec4] = { { 0, 0, 0, 0 }, { 1, 1, 1, 1 }, { 0, 0, 0, 0 }, }
+                    }
+                }
+                colorLookUpTypeY: u8 = 2
+                colorLookUpScales: vec2 = { 1, 0.1 }
+                colorLookUpOffsets: vec2 = { 0, 0.9 }
+                depthBiasFactors: vec2 = { -1, -5 }
+                isGroundLayer: flag = true
+                useNavmeshMask: flag = true
+                birthRotation0: embed = ValueVector3 {
+                    constantValue: vec3 = { 90, 0, 90 }
+                }
+                birthScale0: embed = ValueVector3 {
+                    constantValue: vec3 = { 60, 60, 0 }
+                }
+                scale0: embed = ValueVector3 {
+                    dynamics: pointer = VfxAnimatedVector3fVariableData {
+                        times: list[f32] = { 0, 1, }
+                        values: list[vec3] = { { 1, 1, 1 }, { 0.5, 0.5, 0.5 }, }
+                    }
+                }
+                texture: string = "ASSETS/Shared/Particles/Ring_Soft_02.tex"
+            }
+            VfxEmitterDefinitionData {
+                timeBeforeFirstEmission: f32 = 0.5
+                rate: embed = ValueFloat {
+                    constantValue: f32 = 1
+                }
+                particleLifetime: embed = ValueFloat {
+                    constantValue: f32 = -1
+                }
+                lifetime: option[f32] = { 1 }
+                isSingleParticle: flag = true
+                emitterName: string = "Decal_Persist"
+                bindWeight: embed = ValueFloat {
+                    constantValue: f32 = 1
+                }
+                FlexShapeDefinition: pointer = VfxFlexShapeDefinitionData {
+                    scaleBirthScaleByBoundObjectSize: f32 = 0.005
+                }
+                primitive: pointer = VfxPrimitiveArbitraryQuad { }
+                particleColorTexture: string = "ASSETS/Shared/Particles/color-hold_2.tex"
+                blendMode: u8 = 4
+                birthColor: embed = ValueColor {
+                    constantValue: vec4 = { 0.9372549, 0.43137255, 0.8980392, 1 }
+                }
+                pass: i16 = 3
+                depthBiasFactors: vec2 = { -1, -10 }
+                isUniformScale: flag = true
+                isGroundLayer: flag = true
+                useNavmeshMask: flag = true
+                birthRotation0: embed = ValueVector3 {
+                    constantValue: vec3 = { -90, 0, -90 }
+                }
+                birthRotationalVelocity0: embed = ValueVector3 {
+                    constantValue: vec3 = { 0, -40, 0 }
+                }
+                birthScale0: embed = ValueVector3 {
+                    constantValue: vec3 = { 50, 0, 0 }
+                }
+                texture: string = "ASSETS/Maps/Particles/SR/Jungle_Buff_Baron.tex"
+                textureMult: pointer = VfxTextureMultDefinitionData {
+                    textureMult: string = "ASSETS/Shared/Particles/Base_shield_Mult.tex"
+                    birthUvRotateRateMult: embed = ValueFloat {
+                        constantValue: f32 = -45
+                    }
+                }
+            }
+            VfxEmitterDefinitionData {
+                rate: embed = ValueFloat {
+                    constantValue: f32 = 1
+                }
+                particleLifetime: embed = ValueFloat {
+                    constantValue: f32 = 0.5
+                }
+                particleLinger: option[f32] = { 1 }
+                lifetime: option[f32] = { 1 }
+                isSingleParticle: flag = true
+                emitterName: string = "Decal_Proc"
+                bindWeight: embed = ValueFloat {
+                    constantValue: f32 = 1
+                }
+                FlexShapeDefinition: pointer = VfxFlexShapeDefinitionData {
+                    scaleBirthScaleByBoundObjectSize: f32 = 0.005
+                }
+                primitive: pointer = VfxPrimitiveArbitraryQuad { }
+                particleColorTexture: string = "ASSETS/Shared/Particles/color-hold_2.tex"
+                blendMode: u8 = 4
+                birthColor: embed = ValueColor {
+                    constantValue: vec4 = { 1, 0.80784315, 1, 1 }
+                }
+                Color: embed = ValueColor {
+                    dynamics: pointer = VfxAnimatedColorVariableData {
+                        times: list[f32] = { 0, 0.5, 1, }
+                        values: list[vec4] = { { 0.19215687, 0.015686275, 0.27058825, 0 }, { 1, 1, 1, 1 }, {
+                                0.7882353
+                                0.49019608
+                                1
+                                1
+                            }, }
+                    }
+                }
+                pass: i16 = 4
+                depthBiasFactors: vec2 = { -1, -10 }
+                isUniformScale: flag = true
+                isGroundLayer: flag = true
+                useNavmeshMask: flag = true
+                birthRotation0: embed = ValueVector3 {
+                    constantValue: vec3 = { -90, 0, 45 }
+                }
+                birthRotationalVelocity0: embed = ValueVector3 {
+                    constantValue: vec3 = { 0, -300, 0 }
+                    dynamics: pointer = VfxAnimatedVector3fVariableData {
+                        times: list[f32] = { 0, 0.2, 1, }
+                        values: list[vec3] = { { 0, -300, 0 }, { 0, -360, 0 }, { 0, -150, 0 }, }
+                    }
+                }
+                birthScale0: embed = ValueVector3 {
+                    constantValue: vec3 = { 50, 1, 1 }
+                }
+                scale0: embed = ValueVector3 {
+                    dynamics: pointer = VfxAnimatedVector3fVariableData {
+                        times: list[f32] = { 0, 0.2, 1, }
+                        values: list[vec3] = { { 1.6, 1.6, 1.6 }, { 2.25, 2.25, 2.25 }, { 1, 1, 1 }, }
+                    }
+                }
+                texture: string = "ASSETS/Maps/Particles/SR/Jungle_Buff_Baron.tex"
+            }
+            VfxEmitterDefinitionData {
+                rate: embed = ValueFloat {
+                    constantValue: f32 = 1
+                }
+                particleLifetime: embed = ValueFloat {
+                    constantValue: f32 = -1
+                }
+                lifetime: option[f32] = { 1 }
+                isSingleParticle: flag = true
+                childParticleSetDefinition: pointer = VfxChildParticleSetDefinitionData {
+                    childrenIdentifiers: list[embed] = {
+                        VfxChildIdentifier {
+                            effect: link = "Maps/Shipping/Map11/Particles/Default/SRX_Buf_Baron_Child"
+                        }
+                        }
+                }
+                emitterName: string = "Wispies_Parent"
+                bindWeight: embed = ValueFloat {
+                    constantValue: f32 = 1
+                }
+                SpawnShape: pointer = VfxShapeLegacy {
+                    emitRotationAngles: list[embed] = {
+                        ValueFloat {
+                            constantValue: f32 = 1
+                            dynamics: pointer = VfxAnimatedFloatVariableData {
+                                probabilityTables: list[pointer] = {
+                                    VfxProbabilityTableData {
+                                        keyTimes: list[f32] = { 0, 1, }
+                                        keyValues: list[f32] = { 0, 360, }
+                                    }
+                                    }
+                                times: list[f32] = { 0, }
+                                values: list[f32] = { 1, }
+                            }
+                        }
+                        ValueFloat {
+                            constantValue: f32 = 1
+                            dynamics: pointer = VfxAnimatedFloatVariableData {
+                                probabilityTables: list[pointer] = {
+                                    VfxProbabilityTableData {
+                                        keyTimes: list[f32] = { 0, 1, }
+                                        keyValues: list[f32] = { 0, 360, }
+                                    }
+                                    }
+                                times: list[f32] = { 0, }
+                                values: list[f32] = { 1, }
+                            }
+                        }
+                        }
+                    emitRotationAxes: list[vec3] = { { 1.0000001, 0, 0 }, { 0, 1.0000001, 0 }, }
+                }
+                FlexShapeDefinition: pointer = VfxFlexShapeDefinitionData {
+                    scaleBirthScaleByBoundObjectSize: f32 = 0.005
+                }
+                blendMode: u8 = 1
+                birthColor: embed = ValueColor {
+                    constantValue: vec4 = { 1, 1, 1, 0 }
+                }
+                birthRotation0: embed = ValueVector3 {
+                    constantValue: vec3 = { 0, 45, 0 }
+                }
+                birthRotationalVelocity0: embed = ValueVector3 {
+                    constantValue: vec3 = { 0, -40, 0 }
+                }
+                texture: string = "ASSETS/Shared/Particles/disc32.tex"
+            }
+        }
+        particleName: string = "SRX_Buf_Baron"
+        particlePath: string = "Maps/Shipping/Map11/Particles/Default/SRX_Buf_Baron"
+        objectPath: hash = "Maps/Shipping/Map11/Particles/Default/SRX_Buf_Baron"
+    }
