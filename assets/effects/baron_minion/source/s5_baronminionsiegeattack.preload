@@ -1,0 +1,3 @@
+PreLoadBuildingBlocks = {
+{Function=BBPreloadParticle, Params={Name="DATA/Particles/SRU_JungleBuff_Baron_SiegeMin_Tar.troy", SkinID="-1"}}, 
+}

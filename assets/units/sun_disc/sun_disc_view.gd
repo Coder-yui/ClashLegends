@@ -108,3 +108,24 @@ func finish_visual_death() -> void:
 	if ruin_root != null and not _built_on_tower_ruin:
 		# 废墟没有死亡片段，在圆盘 Death 的最后一帧直接移除。
 		ruin_root.hide()
+
+
+## 原 AzirSunDisc Disk 遮罩只启用第 11/12 号骨骼。
+## 复制实例动画后裁掉静态基座轨道，两个攻击片段只驱动圆盘上部。
+func prepare_visual_animations() -> void:
+	var players := get_node("DiscModel").find_children("*", "AnimationPlayer", true, false)
+	if players.is_empty():
+		return
+	var player := players[0] as AnimationPlayer
+	for library_name in player.get_animation_library_list():
+		var library := player.get_animation_library(library_name).duplicate(true) as AnimationLibrary
+		for clip_name in ["Attack1_BASE", "Attack2_BASE"]:
+			if not library.has_animation(clip_name):
+				continue
+			var clip := library.get_animation(clip_name)
+			for track in range(clip.get_track_count() - 1, -1, -1):
+				var bone := String(clip.track_get_path(track).get_concatenated_subnames())
+				if bone not in ["C_Buffbone_Glb_Chest_Loc", "Buffbone_Cstm_Obelisk_Tip"]:
+					clip.remove_track(track)
+		player.remove_animation_library(library_name)
+		player.add_animation_library(library_name, library)

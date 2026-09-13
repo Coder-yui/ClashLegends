@@ -1,0 +1,10 @@
+PreLoadBuildingBlocks = {
+{Function=BBPreloadParticle, Params={Name="data/particles/sru_junglebuff_baron_meleemin_shield.troy", SkinID="-1"}}, 
+{Function=BBPreloadParticle, Params={Name="data/particles/exalted_buf.troy", SkinID="-1"}}, 
+{Function=BBPreloadParticle, Params={Name="data/particles/exalted_buf_order.troy", SkinID="-1"}}, 
+{Function=BBPreloadParticle, Params={Name="data/particles/exalted_buf_siege.troy", SkinID="-1"}}, 
+{Function=BBPreloadSpell, Params={Name="s5_baronminionsiegeattack"}}, 
+{Function=BBPreloadParticle, Params={Name="data/particles/sru_junglebuff_baron_siegemin_cas.troy", SkinID="-1"}}, 
+{Function=BBPreloadParticle, Params={Name="data/particles/sru_junglebuff_baron_meleemin_shield_hit.troy", SkinID="-1"}}, 
+{Function=BBPreloadSpell, Params={Name="srt_2025_atakhan_bloodyreward"}}, 
+}

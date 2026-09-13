@@ -1,0 +1,42 @@
+[HitBubble]
+e-color-modulate=2 2 2 1
+e-life=-1
+e-linger=0
+e-local-orient=0
+e-rate=3
+p-backfaceon=1
+p-bindtoemitter=1 1
+p-flexoffset=0.004999999888241291
+p-flexscale=0.004999999888241291
+p-life=1
+p-linger=0
+p-local-orient=1
+p-mesh="DATA/Particles/sru_junglebuff_baron_rangedmin_glow.scb"
+p-meshtex="DATA/Particles/SRU_JungleBuff_Baron_MeleeMin_Shield.dds"
+p-offset=-1.0 -2.0 -0.5
+p-quadrot=90 1 0
+p-quadrotYP1=0.0 0.0
+p-quadrotYP2=1.0 360.0
+p-quadrotZP1=0.0 0.0
+p-quadrotZP2=1.0
+p-scale=0.3400000035762787 0.3400000035762787 0.5
+p-texdiv=3 1
+p-type=3
+p-uvscroll-no-alpha=1
+p-uvscroll-rgb=0.2 -1.0
+p-uvscroll-rgbXP1=0 -1
+p-uvscroll-rgbXP2=1 1
+p-uvscroll-rgbYP1=0.0 0.5
+p-uvscroll-rgbYP2=1 1
+p-xrgba=1 1 1 1
+p-xrgba1=0 1 1 1 0
+p-xrgba2=0.25 1.0 1.0 1.0 1.0
+p-xrgba3=1 1 1 1 0
+p-xscale1=0.0 1.0 1.0 1.0
+p-xscale2=1.0 1.1 1.1 1.0
+rendermode=1
+
+[System]
+GroupPart1="HitBubble"
+SimulateEveryFrame=1
+

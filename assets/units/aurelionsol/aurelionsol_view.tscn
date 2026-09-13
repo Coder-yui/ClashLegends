@@ -1,8 +1,11 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="PackedScene" path="res://assets/units/aurelionsol/source/aurelionsol.glb" id="1_aurelionsol"]
 
+[ext_resource type="Script" path="res://assets/units/aurelionsol/aurelionsol_view.gd" id="2_anchor"]
+
 [node name="AurelionSolView" type="Node3D"]
+script = ExtResource("2_anchor")
 
 [node name="Model" parent="." instance=ExtResource("1_aurelionsol")]
 position = Vector3(0, 2.2, 0)

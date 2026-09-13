@@ -1,0 +1,85 @@
+{
+  "wad": "DATA.wad.client",
+  "files": [
+    {
+      "path": "data/particles/ball32_02.dds",
+      "sha256": "1023205b9fec804af711812a021cb013cc025a652abd943cc1fa9682a5be6593"
+    },
+    {
+      "path": "data/particles/color-hold.dds",
+      "sha256": "3860afa00c25245d4a8dd0893089b7ba67d2bb16b8ca83cb96103617932abdef"
+    },
+    {
+      "path": "data/particles/color-purpleflame.dds",
+      "sha256": "39056490fb70e276c427074a1f4cd823c3e419ce173d14353c71bae5e3d37865"
+    },
+    {
+      "path": "data/particles/color-rampdown.dds",
+      "sha256": "bea684974077d4c497a72e9ac57ae2a9004c1640936fa825f36bf95cd03c62e6"
+    },
+    {
+      "path": "data/particles/sru_junglebuff_baron_meleemin_avataroverlay.dds",
+      "sha256": "3ebc095f91e45ee7fa07182c690eac62b1c0363fe453c36f74240d7e36799351"
+    },
+    {
+      "path": "data/particles/sru_junglebuff_baron_meleemin_shield.dds",
+      "sha256": "635edf5c85a95c488282f528f7be166629c1f4b02c99f4d3e805305d56709515"
+    },
+    {
+      "path": "data/particles/sru_junglebuff_baron_meleemin_shield.scb",
+      "sha256": "ad5f7e000283c84e42e4e955614a5bf19718a677953fa1c3968806247096c4a0"
+    },
+    {
+      "path": "data/particles/sru_junglebuff_baron_meleemin_shield_mult.dds",
+      "sha256": "7d1da357a88c242764d7a938733173457b331454679f6ad85b0737294696b4a0"
+    },
+    {
+      "path": "data/particles/sru_junglebuff_baron_minionlines.dds",
+      "sha256": "d20678475f3d062f3cf0dfea91e6560c8a92986094ced33b8bdbb728a06659ce"
+    },
+    {
+      "path": "data/particles/sru_junglebuff_baron_rangedmin_glow.scb",
+      "sha256": "9509fb55eb8c9259382d33f839d00fd15f423cecda26d05bffe98f606971c826"
+    },
+    {
+      "path": "data/particles/sru_junglebuff_baron_siegemin_mis_bolt.dds",
+      "sha256": "9b8899712137a61376716d56029abc6f0d61c703017bf907d6f8ca22f640a0ac"
+    },
+    {
+      "path": "data/particles/sru_junglebuff_baron_siegemin_mis_voidswirl.dds",
+      "sha256": "0d763aaccda32ccb13fd5a6a094f05afd6cc177b18e677554a6032b29429753a"
+    },
+    {
+      "path": "data/particles/sru_junglebuff_baron_siegemin_tar_praxiswave.dds",
+      "sha256": "406bfe61f066a4b868c6ba5e317a3643fe122e44cb0181a7878546135df5e2e4"
+    },
+    {
+      "path": "data/particles/sru_junglebuff_baron_siegemin_tar_praxiswave.scb",
+      "sha256": "7312a539bc14302cbf7835ea973147f7776b6bfbe2f1b0789e5a0cee5e53908c"
+    },
+    {
+      "path": "data/particles/sru_junglebuff_baron_siegemin_tar_voidboltmesh.scb",
+      "sha256": "65cc0dcf92495396e8f4f2bd4863f79b9cfcbeabe22ae4114170781c06d88fa3"
+    },
+    {
+      "path": "data/shared/particles/color-bellramp32.dds",
+      "sha256": "ae499a63f3e0ac0f4f5b5dafb5685f292018b3919a05be1f757fe517d1a6aa79"
+    },
+    {
+      "path": "data/shared/particles/color-hotshotpurple.dds",
+      "sha256": "4896a25c2d114e35da75d63c7f80921e5f55ae5587f79056008b8cc844aa4bbe"
+    },
+    {
+      "path": "data/shared/particles/glows.dds",
+      "sha256": "166ef9ee7926aec4dc9dbad08e12f1048f85a01ddab8032ac4e91d4a596a5f71"
+    },
+    {
+      "path": "data/shared/particles/sphere.scb",
+      "sha256": "9decb07b58ffc5d4dac135900b85898dd1c810988c29e0e3655d3bdd3af24e5c"
+    }
+  ],
+  "preload_evidence": [
+    "exaltedwithbaronnashorminion.preload",
+    "s5_baronminionsiegeattack.preload"
+  ]
+}
