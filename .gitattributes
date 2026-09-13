@@ -1,0 +1,3 @@
+# Preserve extracted source bytes and their provenance checksums.
+assets/effects/baron_minion/source/*.troy -text whitespace=-blank-at-eof
+assets/effects/baron_minion/source/*.preload -text whitespace=-blank-at-eol,cr-at-eol

@@ -22,4 +22,3 @@ static func draw_effect(canvas: CanvasItem, center: Vector2, direction: Vector2,
 	canvas.draw_circle(head, half_width, Color(0.08, 0.58, 1.0, 0.22))
 	canvas.draw_arc(head, half_width * 0.82, 0.0, TAU, 28, Color(0.54, 0.96, 1.0, 0.92), 2.2, true)
 	canvas.draw_circle(head, maxf(half_width * 0.25, 2.0), Color(0.94, 1.0, 1.0, 1.0))
-

@@ -179,4 +179,3 @@ func _check_artdev_workbench() -> void:
 	_main._art_dev_last_units = old_last_units
 	_main._art_dev_active_skill_choices = old_choices
 	panel.free()
-
