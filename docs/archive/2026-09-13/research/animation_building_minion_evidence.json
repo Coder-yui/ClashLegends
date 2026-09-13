@@ -1,0 +1,537 @@
+{
+  "melee_minion": {
+    "Run>Death": {
+      "value": 0.0,
+      "evidence": [
+        {
+          "value": 0.0,
+          "source": "/tmp/lol-all-animation-audit/minions/data/characters/sru_orderminionmelee/animations/skin0.ritobin",
+          "line": 198,
+          "key": "3084207952482581837"
+        },
+        {
+          "value": 0.0,
+          "source": "/tmp/lol-all-animation-audit/minions/data/characters/sru_chaosminionmelee/animations/skin0.ritobin",
+          "line": 123,
+          "key": "3084207952482581837"
+        }
+      ]
+    },
+    "Attack1>Death": {
+      "value": 0.0,
+      "evidence": [
+        {
+          "value": 0.0,
+          "source": "/tmp/lol-all-animation-audit/minions/data/characters/sru_orderminionmelee/animations/skin0.ritobin",
+          "line": 234,
+          "key": "6247030502141246797"
+        },
+        {
+          "value": 0.0,
+          "source": "/tmp/lol-all-animation-audit/minions/data/characters/sru_chaosminionmelee/animations/skin0.ritobin",
+          "line": 141,
+          "key": "6247030502141246797"
+        }
+      ]
+    },
+    "Attack2>Death": {
+      "value": 0.0,
+      "evidence": [
+        {
+          "value": 0.0,
+          "source": "/tmp/lol-all-animation-audit/minions/data/characters/sru_orderminionmelee/animations/skin0.ritobin",
+          "line": 249,
+          "key": "6463208476870491469"
+        },
+        {
+          "value": 0.0,
+          "source": "/tmp/lol-all-animation-audit/minions/data/characters/sru_chaosminionmelee/animations/skin0.ritobin",
+          "line": 150,
+          "key": "6463208476870491469"
+        }
+      ]
+    },
+    "Idle1>Death": {
+      "value": 0.0,
+      "evidence": [
+        {
+          "value": 0.0,
+          "source": "/tmp/lol-all-animation-audit/minions/data/characters/sru_orderminionmelee/animations/skin0.ritobin",
+          "line": 261,
+          "key": "11374364255402376525"
+        },
+        {
+          "value": 0.0,
+          "source": "/tmp/lol-all-animation-audit/minions/data/characters/sru_chaosminionmelee/animations/skin0.ritobin",
+          "line": 159,
+          "key": "11374364255402376525"
+        }
+      ]
+    }
+  },
+  "ranged_minion": {
+    "Run>Death": {
+      "value": 0.0,
+      "evidence": [
+        {
+          "value": 0.0,
+          "source": "/tmp/lol-all-animation-audit/minions/data/characters/sru_orderminionranged/animations/skin0.ritobin",
+          "line": 85,
+          "key": "3084207952482581837"
+        },
+        {
+          "value": 0.0,
+          "source": "/tmp/lol-all-animation-audit/minions/data/characters/sru_chaosminionranged/animations/skin0.ritobin",
+          "line": 83,
+          "key": "3084207952482581837"
+        }
+      ]
+    },
+    "Attack1>Death": {
+      "value": 0.0,
+      "evidence": [
+        {
+          "value": 0.0,
+          "source": "/tmp/lol-all-animation-audit/minions/data/characters/sru_orderminionranged/animations/skin0.ritobin",
+          "line": 94,
+          "key": "6247030502141246797"
+        },
+        {
+          "value": 0.0,
+          "source": "/tmp/lol-all-animation-audit/minions/data/characters/sru_chaosminionranged/animations/skin0.ritobin",
+          "line": 98,
+          "key": "6247030502141246797"
+        }
+      ]
+    },
+    "Attack2>Death": {
+      "value": 0.0,
+      "evidence": [
+        {
+          "value": 0.0,
+          "source": "/tmp/lol-all-animation-audit/minions/data/characters/sru_orderminionranged/animations/skin0.ritobin",
+          "line": 97,
+          "key": "6463208476870491469"
+        },
+        {
+          "value": 0.0,
+          "source": "/tmp/lol-all-animation-audit/minions/data/characters/sru_chaosminionranged/animations/skin0.ritobin",
+          "line": 101,
+          "key": "6463208476870491469"
+        }
+      ]
+    },
+    "Idle1>Death": {
+      "value": 0.0,
+      "evidence": [
+        {
+          "value": 0.0,
+          "source": "/tmp/lol-all-animation-audit/minions/data/characters/sru_orderminionranged/animations/skin0.ritobin",
+          "line": 100,
+          "key": "11374364255402376525"
+        },
+        {
+          "value": 0.0,
+          "source": "/tmp/lol-all-animation-audit/minions/data/characters/sru_chaosminionranged/animations/skin0.ritobin",
+          "line": 113,
+          "key": "11374364255402376525"
+        }
+      ]
+    }
+  },
+  "siege_minion": {
+    "Run>Death": {
+      "value": 0.0,
+      "evidence": [
+        {
+          "value": 0.0,
+          "source": "/tmp/lol-all-animation-audit/minions/data/characters/sru_orderminionsiege/animations/skin0.ritobin",
+          "line": 118,
+          "key": "3084207952482581837"
+        },
+        {
+          "value": 0.0,
+          "source": "/tmp/lol-all-animation-audit/minions/data/characters/sru_chaosminionsiege/animations/skin0.ritobin",
+          "line": 110,
+          "key": "3084207952482581837"
+        }
+      ]
+    },
+    "Attack2_BASE>Death": {
+      "value": 0.0,
+      "evidence": [
+        {
+          "value": 0.0,
+          "source": "/tmp/lol-all-animation-audit/minions/data/characters/sru_orderminionsiege/animations/skin0.ritobin",
+          "line": 136,
+          "key": "7893826271730777421"
+        },
+        {
+          "value": 0.0,
+          "source": "/tmp/lol-all-animation-audit/minions/data/characters/sru_chaosminionsiege/animations/skin0.ritobin",
+          "line": 128,
+          "key": "7893826271730777421"
+        }
+      ]
+    },
+    "Idle1>Death": {
+      "value": 0.0,
+      "evidence": [
+        {
+          "value": 0.0,
+          "source": "/tmp/lol-all-animation-audit/minions/data/characters/sru_orderminionsiege/animations/skin0.ritobin",
+          "line": 139,
+          "key": "11374364255402376525"
+        },
+        {
+          "value": 0.0,
+          "source": "/tmp/lol-all-animation-audit/minions/data/characters/sru_chaosminionsiege/animations/skin0.ritobin",
+          "line": 131,
+          "key": "11374364255402376525"
+        }
+      ]
+    },
+    "Attack1_BASE>Death": {
+      "value": 0.0,
+      "evidence": [
+        {
+          "value": 0.0,
+          "source": "/tmp/lol-all-animation-audit/minions/data/characters/sru_orderminionsiege/animations/skin0.ritobin",
+          "line": 148,
+          "key": "15553353716284833101"
+        },
+        {
+          "value": 0.0,
+          "source": "/tmp/lol-all-animation-audit/minions/data/characters/sru_chaosminionsiege/animations/skin0.ritobin",
+          "line": 140,
+          "key": "15553353716284833101"
+        }
+      ]
+    }
+  },
+  "super_minion": {
+    "Run>Death_Base": {
+      "value": 0.0,
+      "evidence": [
+        {
+          "value": 0.0,
+          "source": "/tmp/lol-all-animation-audit/minions/data/characters/sru_orderminionsuper/animations/skin0.ritobin",
+          "line": 126,
+          "key": "3084207953292860795"
+        },
+        {
+          "value": 0.0,
+          "source": "/tmp/lol-all-animation-audit/minions/data/characters/sru_chaosminionsuper/animations/skin0.ritobin",
+          "line": 120,
+          "key": "3084207953292860795"
+        }
+      ]
+    },
+    "Attack1>Death_Base": {
+      "value": 0.0,
+      "evidence": [
+        {
+          "value": 0.0,
+          "source": "/tmp/lol-all-animation-audit/minions/data/characters/sru_orderminionsuper/animations/skin0.ritobin",
+          "line": 135,
+          "key": "6247030502951525755"
+        },
+        {
+          "value": 0.0,
+          "source": "/tmp/lol-all-animation-audit/minions/data/characters/sru_chaosminionsuper/animations/skin0.ritobin",
+          "line": 129,
+          "key": "6247030502951525755"
+        }
+      ]
+    },
+    "Attack2>Death_Base": {
+      "value": 0.0,
+      "evidence": [
+        {
+          "value": 0.0,
+          "source": "/tmp/lol-all-animation-audit/minions/data/characters/sru_orderminionsuper/animations/skin0.ritobin",
+          "line": 138,
+          "key": "6463208477680770427"
+        },
+        {
+          "value": 0.0,
+          "source": "/tmp/lol-all-animation-audit/minions/data/characters/sru_chaosminionsuper/animations/skin0.ritobin",
+          "line": 132,
+          "key": "6463208477680770427"
+        }
+      ]
+    },
+    "Idle1>Death_Base": {
+      "value": 0.0,
+      "evidence": [
+        {
+          "value": 0.0,
+          "source": "/tmp/lol-all-animation-audit/minions/data/characters/sru_orderminionsuper/animations/skin0.ritobin",
+          "line": 144,
+          "key": "11374364256212655483"
+        },
+        {
+          "value": 0.0,
+          "source": "/tmp/lol-all-animation-audit/minions/data/characters/sru_chaosminionsuper/animations/skin0.ritobin",
+          "line": 138,
+          "key": "11374364256212655483"
+        }
+      ]
+    }
+  },
+  "tombstone": {
+    "Spawn>Idle1": {
+      "value": 0.0,
+      "evidence": [
+        {
+          "value": 0.0,
+          "source": "/tmp/lol-all-animation-audit/yorick/data/characters/yorickwghoul/animations/skin0.ritobin",
+          "line": 61,
+          "key": "4188995921286650886"
+        }
+      ]
+    }
+  },
+  "apex_turret": {
+    "Spawn>Death": {
+      "value": 0.0,
+      "evidence": [
+        {
+          "value": 0.0,
+          "source": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/heimerdinger/data/characters/heimertblue/animations/skin0.ritobin",
+          "line": 96,
+          "key": "4188995921811914061"
+        },
+        {
+          "value": 0.0,
+          "source": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/heimerdinger/data/characters/heimertyellow/animations/skin0.ritobin",
+          "line": 138,
+          "key": "4188995921811914061"
+        }
+      ]
+    },
+    "Attack1>Death": {
+      "value": 0.0,
+      "evidence": [
+        {
+          "value": 0.0,
+          "source": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/heimerdinger/data/characters/heimertblue/animations/skin0.ritobin",
+          "line": 99,
+          "key": "6247030502141246797"
+        },
+        {
+          "value": 0.0,
+          "source": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/heimerdinger/data/characters/heimertyellow/animations/skin0.ritobin",
+          "line": 144,
+          "key": "6247030502141246797"
+        }
+      ]
+    },
+    "Idle1>Death": {
+      "value": 0.0,
+      "evidence": [
+        {
+          "value": 0.0,
+          "source": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/heimerdinger/data/characters/heimertblue/animations/skin0.ritobin",
+          "line": 105,
+          "key": "11374364255402376525"
+        },
+        {
+          "value": 0.0,
+          "source": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/heimerdinger/data/characters/heimertyellow/animations/skin0.ritobin",
+          "line": 156,
+          "key": "11374364255402376525"
+        }
+      ]
+    }
+  },
+  "imp": {
+    "Attack1>Attack3": {
+      "value": 0.1,
+      "evidence": [
+        {
+          "value": 0.1,
+          "source": "/tmp/lol-all-animation-audit/yorick/data/characters/yorickghoulmelee/animations/skin0.ritobin",
+          "line": 183,
+          "key": "6247030500455738442"
+        }
+      ]
+    },
+    "Attack1>Attack2": {
+      "value": 0.1,
+      "evidence": [
+        {
+          "value": 0.1,
+          "source": "/tmp/lol-all-animation-audit/yorick/data/characters/yorickghoulmelee/animations/skin0.ritobin",
+          "line": 186,
+          "key": "6247030500472516061"
+        }
+      ]
+    },
+    "Attack1>Idle1": {
+      "value": 0.1,
+      "evidence": [
+        {
+          "value": 0.1,
+          "source": "/tmp/lol-all-animation-audit/yorick/data/characters/yorickghoulmelee/animations/skin0.ritobin",
+          "line": 189,
+          "key": "6247030501615983622"
+        }
+      ]
+    },
+    "Attack1>Death": {
+      "value": 0.0,
+      "evidence": [
+        {
+          "value": 0.0,
+          "source": "/tmp/lol-all-animation-audit/yorick/data/characters/yorickghoulmelee/animations/skin0.ritobin",
+          "line": 192,
+          "key": "6247030502141246797"
+        }
+      ]
+    },
+    "Attack3>Attack1": {
+      "value": 0.1,
+      "evidence": [
+        {
+          "value": 0.1,
+          "source": "/tmp/lol-all-animation-audit/yorick/data/characters/yorickghoulmelee/animations/skin0.ritobin",
+          "line": 195,
+          "key": "6391149150241679652"
+        }
+      ]
+    },
+    "Attack3>Attack2": {
+      "value": 0.1,
+      "evidence": [
+        {
+          "value": 0.1,
+          "source": "/tmp/lol-all-animation-audit/yorick/data/characters/yorickghoulmelee/animations/skin0.ritobin",
+          "line": 201,
+          "key": "6391149150292012509"
+        }
+      ]
+    },
+    "Attack3>Idle1": {
+      "value": 0.1,
+      "evidence": [
+        {
+          "value": 0.1,
+          "source": "/tmp/lol-all-animation-audit/yorick/data/characters/yorickghoulmelee/animations/skin0.ritobin",
+          "line": 204,
+          "key": "6391149151435480070"
+        }
+      ]
+    },
+    "Attack3>Death": {
+      "value": 0.0,
+      "evidence": [
+        {
+          "value": 0.0,
+          "source": "/tmp/lol-all-animation-audit/yorick/data/characters/yorickghoulmelee/animations/skin0.ritobin",
+          "line": 207,
+          "key": "6391149151960743245"
+        }
+      ]
+    },
+    "Attack2>Attack1": {
+      "value": 0.1,
+      "evidence": [
+        {
+          "value": 0.1,
+          "source": "/tmp/lol-all-animation-audit/yorick/data/characters/yorickghoulmelee/animations/skin0.ritobin",
+          "line": 210,
+          "key": "6463208475151427876"
+        }
+      ]
+    },
+    "Attack2>Attack3": {
+      "value": 0.1,
+      "evidence": [
+        {
+          "value": 0.1,
+          "source": "/tmp/lol-all-animation-audit/yorick/data/characters/yorickghoulmelee/animations/skin0.ritobin",
+          "line": 213,
+          "key": "6463208475184983114"
+        }
+      ]
+    },
+    "Attack2>Idle1": {
+      "value": 0.1,
+      "evidence": [
+        {
+          "value": 0.1,
+          "source": "/tmp/lol-all-animation-audit/yorick/data/characters/yorickghoulmelee/animations/skin0.ritobin",
+          "line": 219,
+          "key": "6463208476345228294"
+        }
+      ]
+    },
+    "Attack2>Death": {
+      "value": 0.0,
+      "evidence": [
+        {
+          "value": 0.0,
+          "source": "/tmp/lol-all-animation-audit/yorick/data/characters/yorickghoulmelee/animations/skin0.ritobin",
+          "line": 222,
+          "key": "6463208476870491469"
+        }
+      ]
+    },
+    "Run1>Death": {
+      "value": 0.0,
+      "evidence": [
+        {
+          "value": 0.0,
+          "source": "/tmp/lol-all-animation-audit/yorick/data/characters/yorickghoulmelee/animations/skin0.ritobin",
+          "line": 228,
+          "key": "6643747478697459021"
+        }
+      ]
+    },
+    "Idle1>Attack1": {
+      "value": 0.1,
+      "evidence": [
+        {
+          "value": 0.1,
+          "source": "/tmp/lol-all-animation-audit/yorick/data/characters/yorickghoulmelee/animations/skin0.ritobin",
+          "line": 234,
+          "key": "11374364253683312932"
+        }
+      ]
+    },
+    "Idle1>Attack3": {
+      "value": 0.1,
+      "evidence": [
+        {
+          "value": 0.1,
+          "source": "/tmp/lol-all-animation-audit/yorick/data/characters/yorickghoulmelee/animations/skin0.ritobin",
+          "line": 237,
+          "key": "11374364253716868170"
+        }
+      ]
+    },
+    "Idle1>Attack2": {
+      "value": 0.1,
+      "evidence": [
+        {
+          "value": 0.1,
+          "source": "/tmp/lol-all-animation-audit/yorick/data/characters/yorickghoulmelee/animations/skin0.ritobin",
+          "line": 240,
+          "key": "11374364253733645789"
+        }
+      ]
+    },
+    "Idle1>Death": {
+      "value": 0.0,
+      "evidence": [
+        {
+          "value": 0.0,
+          "source": "/tmp/lol-all-animation-audit/yorick/data/characters/yorickghoulmelee/animations/skin0.ritobin",
+          "line": 243,
+          "key": "11374364255402376525"
+        }
+      ]
+    }
+  }
+}

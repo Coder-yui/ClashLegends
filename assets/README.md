@@ -4,7 +4,11 @@
 
 ```text
 assets/
-  audio/units/<card_id>/                    单位攻击、技能等短音效
+  audio/units/<card_id>/                 单位攻击、技能等声音与来源清单
+  audio/spells/、world/、announcer/       法术、系统建筑和比赛播报
+  audio/auditions/                       工作台来源试听，不自动参与实战
+  effects/baron_minion/                  当前四兵 Buff 与强化炮弹表现
+  archive/                              退役实验源件（Godot 忽略）
   arena/arena_rift_v4.png                 当前 720×1400 运行时 2D 背景
   arena/rift_arena/rift_arena.tscn        候选 720×1280 3D 地图（暂不启用）
   arena/rift_arena/source/               Blender 可编辑源文件（不自动导入）
@@ -40,3 +44,9 @@ assets/
 短促、重复播放的战斗音效放在 `assets/audio/units/<card_id>/`，卡牌的音频池在 CardDB `audio` 中登记并由 `GameAudioManager` 消费。挥击声按攻击动画段配置，真实命中声只由权威伤害成功事件触发；音频不得反向驱动伤害或动画状态。背景音乐与 UI 音效分别使用 `Music`、`UI` 总线，战斗音效使用 `Combat` 总线。
 
 完整制作流程见 `docs/AUDIO_INTEGRATION.md`。只归档实际用到的 WAV；同目录放 `README.md`（cue/原始事件/来源/限制）和 `event_manifest.json`（文件映射）。文件使用英文 snake_case，保留可追溯的事件名、随机变体及未知条件 ID；原始包和整套未使用音频保留在项目外。不要手改 Godot 生成的 `.import`。待开发队列的迁移规则同样适用于音频，但外部共享原始库只读提取，不整包移入项目。
+
+## 素材维护
+
+新卡按 [接入清单](../docs/NEW_CARD_CHECKLIST.md) 记录源→目标和迁移状态。`source/` 内的 GLB 与外部纹理可能仍是运行时依赖，不能统一加入 `.gdignore`；只有明确离线的 Blender/原始 TEX/TROY 等源目录才忽略。当前候选地图的 source_props 纹理重复包含 GLB 相对依赖，不能只凭文件哈希合并。
+
+已退役素材见 [归档索引](archive/README.md)。工作台 auditions 和按原事件命名的 WAV 即使内容相同，也保留事件身份、随机池权重和溯源。可再生截图/录音在 builds 或 /tmp，不回写 assets；`audit_project.py --inventory` 提供只读核对清单，不自动删除。

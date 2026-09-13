@@ -1,0 +1,343 @@
+[
+  {
+    "name": "盖伦",
+    "files": [
+      {
+        "path": "res://assets/audio/units/garen/play_sfx_garen_death3d_cast.wav",
+        "seconds": 1.5
+      }
+    ]
+  },
+  {
+    "name": "赵信",
+    "files": [
+      {
+        "path": "res://assets/audio/units/xin/play_vo_xinzhao_death3d_r1_zh_cn.wav",
+        "seconds": 1.5
+      },
+      {
+        "path": "res://assets/audio/units/xin/play_vo_xinzhao_death3d_r2_zh_cn.wav",
+        "seconds": 1.5
+      },
+      {
+        "path": "res://assets/audio/units/xin/play_vo_xinzhao_death3d_r3_zh_cn.wav",
+        "seconds": 1.5
+      }
+    ]
+  },
+  {
+    "name": "艾希",
+    "files": [
+      {
+        "path": "res://assets/audio/units/ashe/play_vo_ashe_death3d_r1_zh_cn.wav",
+        "seconds": 1.5
+      },
+      {
+        "path": "res://assets/audio/units/ashe/play_vo_ashe_death3d_r2_zh_cn.wav",
+        "seconds": 1.5
+      },
+      {
+        "path": "res://assets/audio/units/ashe/play_vo_ashe_death3d_r3_zh_cn.wav",
+        "seconds": 1.5
+      }
+    ]
+  },
+  {
+    "name": "提莫",
+    "files": [
+      {
+        "path": "res://assets/audio/units/teemo/play_vo_teemo_death3d_r1_zh_cn.wav",
+        "seconds": 1.5
+      },
+      {
+        "path": "res://assets/audio/units/teemo/play_vo_teemo_death3d_r2_zh_cn.wav",
+        "seconds": 1.5
+      },
+      {
+        "path": "res://assets/audio/units/teemo/play_vo_teemo_death3d_r3_zh_cn.wav",
+        "seconds": 1.5
+      }
+    ]
+  },
+  {
+    "name": "纳尔",
+    "files": [
+      {
+        "path": "res://assets/audio/units/gnar/play_vo_gnar_death3d_r1_zh_cn.wav",
+        "seconds": 1.5
+      },
+      {
+        "path": "res://assets/audio/units/gnar/play_vo_gnar_death3d_r2_zh_cn.wav",
+        "seconds": 1.5
+      },
+      {
+        "path": "res://assets/audio/units/gnar/play_vo_gnar_death3d_r3_zh_cn.wav",
+        "seconds": 1.5
+      }
+    ]
+  },
+  {
+    "name": "近战兵",
+    "files": []
+  },
+  {
+    "name": "远程兵",
+    "files": []
+  },
+  {
+    "name": "炮车兵",
+    "files": []
+  },
+  {
+    "name": "超级兵",
+    "files": []
+  },
+  {
+    "name": "皮克斯",
+    "files": []
+  },
+  {
+    "name": "冰冻",
+    "files": []
+  },
+  {
+    "name": "治疗术",
+    "files": []
+  },
+  {
+    "name": "剑圣",
+    "files": [
+      {
+        "path": "res://assets/audio/units/masteryi/play_sfx_masteryi_death3d_cast.wav",
+        "seconds": 1.5
+      }
+    ]
+  },
+  {
+    "name": "卡牌大师",
+    "files": [
+      {
+        "path": "res://assets/audio/units/twisted_fate/play_vo_twistedfate_death3d_r1_zh_cn.wav",
+        "seconds": 1.5
+      },
+      {
+        "path": "res://assets/audio/units/twisted_fate/play_vo_twistedfate_death3d_r2_zh_cn.wav",
+        "seconds": 1.486077097505669
+      },
+      {
+        "path": "res://assets/audio/units/twisted_fate/play_vo_twistedfate_death3d_r3_zh_cn.wav",
+        "seconds": 1.5
+      }
+    ]
+  },
+  {
+    "name": "格温",
+    "files": [
+      {
+        "path": "res://assets/audio/units/gwen/play_vo_gwen_death3d_r1_zh_cn.wav",
+        "seconds": 1.5
+      },
+      {
+        "path": "res://assets/audio/units/gwen/play_vo_gwen_death3d_r2_zh_cn.wav",
+        "seconds": 1.5
+      },
+      {
+        "path": "res://assets/audio/units/gwen/play_vo_gwen_death3d_r3_zh_cn.wav",
+        "seconds": 1.5
+      }
+    ]
+  },
+  {
+    "name": "腕豪",
+    "files": [
+      {
+        "path": "res://assets/audio/units/sett/play_vo_sett_death3d_r10_zh_cn.wav",
+        "seconds": 1.5
+      },
+      {
+        "path": "res://assets/audio/units/sett/play_vo_sett_death3d_r11_zh_cn.wav",
+        "seconds": 1.5
+      },
+      {
+        "path": "res://assets/audio/units/sett/play_vo_sett_death3d_r1_zh_cn.wav",
+        "seconds": 1.5
+      }
+    ]
+  },
+  {
+    "name": "墓碑",
+    "files": [
+      {
+        "path": "res://assets/audio/units/tombstone/play_sfx_yorick_yorickw_death_r1.wav",
+        "seconds": 1.5
+      },
+      {
+        "path": "res://assets/audio/units/tombstone/play_sfx_yorick_yorickw_death_r2.wav",
+        "seconds": 1.5
+      },
+      {
+        "path": "res://assets/audio/units/tombstone/play_sfx_yorick_yorickw_death_r3.wav",
+        "seconds": 1.5
+      },
+      {
+        "path": "res://assets/audio/units/tombstone/play_sfx_yorick_yorickw_death_r4.wav",
+        "seconds": 1.5
+      }
+    ]
+  },
+  {
+    "name": "H-28Q尖端炮台",
+    "files": [
+      {
+        "path": "res://assets/audio/units/apex_turret/play_sfx_heimertyellow_heimerdingerqspawndestroyaudio_onbuffdeactivate_r1.wav",
+        "seconds": 1.5
+      },
+      {
+        "path": "res://assets/audio/units/apex_turret/play_sfx_heimertyellow_heimerdingerqspawndestroyaudio_onbuffdeactivate_r2.wav",
+        "seconds": 1.3254421768707483
+      },
+      {
+        "path": "res://assets/audio/units/apex_turret/play_sfx_heimertyellow_heimerdingerqspawndestroyaudio_onbuffdeactivate_r3.wav",
+        "seconds": 1.5
+      }
+    ]
+  },
+  {
+    "name": "太阳圆盘",
+    "files": [
+      {
+        "path": "res://assets/audio/units/sun_disc/play_sfx_azir_azirobelisksound_onbuffdeactivate_r1.wav",
+        "seconds": 1.5
+      },
+      {
+        "path": "res://assets/audio/units/sun_disc/play_sfx_azir_azirobelisksound_onbuffdeactivate_r2.wav",
+        "seconds": 1.5
+      }
+    ]
+  },
+  {
+    "name": "龙王",
+    "files": [
+      {
+        "path": "res://assets/audio/units/aurelionsol/play_vo_aurelionsol_death3d_r1_zh_cn.wav",
+        "seconds": 1.5
+      },
+      {
+        "path": "res://assets/audio/units/aurelionsol/play_vo_aurelionsol_death3d_r2_zh_cn.wav",
+        "seconds": 1.5
+      },
+      {
+        "path": "res://assets/audio/units/aurelionsol/play_vo_aurelionsol_death3d_r3_zh_cn.wav",
+        "seconds": 1.5
+      }
+    ]
+  },
+  {
+    "name": "艾尼维亚（冰晶凤凰）",
+    "files": [
+      {
+        "path": "res://assets/audio/units/anivia/play_vo_anivia_death3d_r1_zh_cn.wav",
+        "seconds": 1.4851700680272109
+      },
+      {
+        "path": "res://assets/audio/units/anivia/play_vo_anivia_death3d_r2_zh_cn.wav",
+        "seconds": 1.226485260770975
+      },
+      {
+        "path": "res://assets/audio/units/anivia/play_vo_anivia_death3d_r3_zh_cn.wav",
+        "seconds": 1.3804988662131519
+      }
+    ]
+  },
+  {
+    "name": "冰晶凤凰蛋",
+    "files": [
+      {
+        "path": "res://assets/audio/units/anivia/play_vo_anivia_death3d_r1_zh_cn.wav",
+        "seconds": 1.4851700680272109
+      },
+      {
+        "path": "res://assets/audio/units/anivia/play_vo_anivia_death3d_r2_zh_cn.wav",
+        "seconds": 1.226485260770975
+      },
+      {
+        "path": "res://assets/audio/units/anivia/play_vo_anivia_death3d_r3_zh_cn.wav",
+        "seconds": 1.3804988662131519
+      }
+    ]
+  },
+  {
+    "name": "赏金猎人",
+    "files": [
+      {
+        "path": "res://assets/audio/units/missfortune/play_vo_missfortune_death3d_r1_zh_cn.wav",
+        "seconds": 1.5
+      },
+      {
+        "path": "res://assets/audio/units/missfortune/play_vo_missfortune_death3d_r2_zh_cn.wav",
+        "seconds": 1.5
+      },
+      {
+        "path": "res://assets/audio/units/missfortune/play_vo_missfortune_death3d_r3_zh_cn.wav",
+        "seconds": 1.5
+      },
+      {
+        "path": "res://assets/audio/units/missfortune/play_vo_missfortune_death3d_r4_zh_cn.wav",
+        "seconds": 1.5
+      }
+    ]
+  },
+  {
+    "name": "小鬼",
+    "files": [
+      {
+        "path": "res://assets/audio/units/imp/play_sfx_yorick_yorickq_ghoul_death_r1.wav",
+        "seconds": 1.5
+      },
+      {
+        "path": "res://assets/audio/units/imp/play_sfx_yorick_yorickq_ghoul_death_r2.wav",
+        "seconds": 1.296689342403628
+      },
+      {
+        "path": "res://assets/audio/units/imp/play_sfx_yorick_yorickq_ghoul_death_r3.wav",
+        "seconds": 1.4570521541950114
+      }
+    ]
+  },
+  {
+    "name": "world_tower_order",
+    "files": [
+      {
+        "path": "res://assets/audio/world/order/play_sfx_env_orderturret_break03_r1.wav",
+        "seconds": 7.598571428571429
+      }
+    ]
+  },
+  {
+    "name": "world_nexus_order",
+    "files": [
+      {
+        "path": "res://assets/audio/world/order/play_sfx_env_global_eog_ordernexus_death_oc_r1.wav",
+        "seconds": 9.663786848072561
+      }
+    ]
+  },
+  {
+    "name": "world_tower_chaos",
+    "files": [
+      {
+        "path": "res://assets/audio/world/chaos/play_sfx_env_chaosturret_break03_r1.wav",
+        "seconds": 7.691609977324263
+      }
+    ]
+  },
+  {
+    "name": "world_nexus_chaos",
+    "files": [
+      {
+        "path": "res://assets/audio/world/chaos/play_sfx_env_global_eog_chaosnexus_death_cast_r1.wav",
+        "seconds": 11.76546485260771
+      }
+    ]
+  }
+]

@@ -1,0 +1,446 @@
+LoL local source, skin0 animation graph
+#PROP_text
+type: string = "PROP"
+version: u32 = 3
+linked: list[string] = { }
+entries: map[hash, embed] = {
+    "Characters/Nexus/Animations/Skin0" = AnimationGraphData {
+        mCascadeBlendValue: f32 = 0
+        mClipDataMap: map[hash, pointer] = {
+            "Death" = AtomicClipData {
+                mMaskDataName: hash = "Destroyed"
+                mTrackDataName: hash = "Default"
+                mEventDataMap: map[hash, pointer] = {
+                    "SubmeshSwap" = SubmeshVisibilityEventData {
+                        mName: hash = "SubmeshSwap"
+                        mShowSubmeshList: list[hash] = { "Destroyed", }
+                        mHideSubmeshList: list[hash] = { "SRUAP_OrderNexus_Mat", }
+                    }
+                    "Audio_Death" = ParticleEventData {
+                        mName: hash = "Audio_Death"
+                        mStartFrame: f32 = 1
+                        mEffectName: string = "DATA/Particles/SRUAP_Order_Nexus_Death_sound.troy"
+                        mParticleEventDataPairList: list[embed] = {
+                            ParticleEventDataPair { }
+                            }
+                    }
+                    "bone_cp15" = ParticleEventData {
+                        mName: hash = "bone_cp15"
+                        mStartFrame: f32 = 132
+                        mEffectName: string = "DATA/Particles/SRU_Order_nexus_swirlies.troy"
+                        mParticleEventDataPairList: list[embed] = {
+                            ParticleEventDataPair {
+                                mBoneName: hash = "bone_cp15"
+                            }
+                            }
+                        mIsLoop: bool = false
+                        mIsKillEvent: bool = false
+                    }
+                    "bone_cp12" = ParticleEventData {
+                        mName: hash = "bone_cp12"
+                        mStartFrame: f32 = 138
+                        mEffectName: string = "DATA/Particles/SRU_Order_nexus_swirlies.troy"
+                        mParticleEventDataPairList: list[embed] = {
+                            ParticleEventDataPair {
+                                mBoneName: hash = "bone_cp12"
+                            }
+                            }
+                        mIsLoop: bool = false
+                        mIsKillEvent: bool = false
+                    }
+                    "bone_cp8" = ParticleEventData {
+                        mName: hash = "bone_cp8"
+                        mStartFrame: f32 = 135
+                        mEffectName: string = "DATA/Particles/SRU_Order_nexus_swirlies.troy"
+                        mParticleEventDataPairList: list[embed] = {
+                            ParticleEventDataPair {
+                                mBoneName: hash = "bone_cp8"
+                            }
+                            }
+                        mIsLoop: bool = false
+                        mIsKillEvent: bool = false
+                    }
+                    "bone_cp10" = ParticleEventData {
+                        mName: hash = "bone_cp10"
+                        mStartFrame: f32 = 147
+                        mEffectName: string = "DATA/Particles/SRU_Order_nexus_swirlies.troy"
+                        mParticleEventDataPairList: list[embed] = {
+                            ParticleEventDataPair {
+                                mBoneName: hash = "bone_cp10"
+                            }
+                            }
+                        mIsLoop: bool = false
+                        mIsKillEvent: bool = false
+                    }
+                    "bone_cp2" = ParticleEventData {
+                        mName: hash = "bone_cp2"
+                        mStartFrame: f32 = 130
+                        mEndFrame: f32 = 160
+                        mEffectName: string = "DATA/Particles/SRU_Order_nexus_swirlies.troy"
+                        mParticleEventDataPairList: list[embed] = {
+                            ParticleEventDataPair {
+                                mBoneName: hash = "bone_cp2"
+                            }
+                            }
+                        mIsLoop: bool = false
+                        mIsKillEvent: bool = false
+                    }
+                    "DeathVfx" = ParticleEventData {
+                        mEffectKey: hash = "Nexus_Explosion"
+                        mParticleEventDataPairList: list[embed] = {
+                            ParticleEventDataPair { }
+                            }
+                    }
+                }
+                mAnimationResourceData: embed = AnimationResourceData {
+                    mAnimationFilePath: file = 0x72c73c8465310e64
+                }
+            }
+            "Idle1_Base" = AtomicClipData {
+                mFlags: u32 = 2
+                mMaskDataName: hash = "Base"
+                mTrackDataName: hash = "Default"
+                mEventDataMap: map[hash, pointer] = {
+                    "IdleVfx" = ParticleEventData {
+                        mEffectKey: hash = "Nexus_Idle"
+                        mParticleEventDataPairList: list[embed] = {
+                            ParticleEventDataPair { }
+                            }
+                    }
+                }
+                mTickDuration: f32 = 0.1
+                mAnimationResourceData: embed = AnimationResourceData {
+                    mAnimationFilePath: file = 0xff6c73918b312413
+                }
+            }
+            0xdd94ffb9 = AtomicClipData {
+                mFlags: u32 = 8
+                mMaskDataName: hash = "Base"
+                mTrackDataName: hash = "Default"
+                mEventDataMap: map[hash, pointer] = {
+                    "Audio_Spawn" = ParticleEventData {
+                        mName: hash = "Audio_Spawn"
+                        mEffectName: string = "DATA/Particles/SRUAP_Order_Nexus_Spawn_sound .troy"
+                        mParticleEventDataPairList: list[embed] = {
+                            ParticleEventDataPair { }
+                            }
+                        mIsKillEvent: bool = false
+                    }
+                    "Audio_Idle" = ParticleEventData {
+                        mName: hash = "Audio_Idle"
+                        mEffectName: string = "DATA/Particles/SRUAP_Order_Nexus_Idle1_sound .troy"
+                        mParticleEventDataPairList: list[embed] = {
+                            ParticleEventDataPair { }
+                            }
+                        mIsKillEvent: bool = false
+                    }
+                }
+                mTickDuration: f32 = 0.083333336
+                mAnimationResourceData: embed = AnimationResourceData {
+                    mAnimationFilePath: file = 0x224d06aaa1279081
+                }
+            }
+            "Idle1" = SequencerClipData {
+                mFlags: u32 = 2
+                mClipNameList: list[hash] = { 0x1115b967, 0xdd94ffb9, "Idle1_Base", }
+            }
+            0x1115b967 = AtomicClipData {
+                mFlags: u32 = 8
+                mMaskDataName: hash = "Base"
+                mTrackDataName: hash = "Default"
+                mTickDuration: f32 = 2.5
+                mAnimationResourceData: embed = AnimationResourceData {
+                    mAnimationFilePath: file = 0x71472d209d657a5d
+                }
+            }
+        }
+        mMaskDataMap: map[hash, embed] = {
+            "Destroyed" = MaskData {
+                mWeightList: list[f32] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, }
+            }
+            "Base" = MaskData {
+                mId: u32 = 1
+                mWeightList: list[f32] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, }
+            }
+        }
+        mTrackDataMap: map[hash, embed] = {
+            "Default" = TrackData { }
+        }
+        mBlendDataTable: map[u64, pointer] = {
+            1231093928362032461 = TimeBlendData {
+                mTime: f32 = 0
+            }
+            7794375147286900454 = TimeBlendData {
+                mTime: f32 = 0
+            }
+            7794375148645694797 = TimeBlendData {
+                mTime: f32 = 0
+            }
+            7794375149189660601 = TimeBlendData {
+                mTime: f32 = 0
+            }
+            11374364254877113350 = TimeBlendData {
+                mTime: f32 = 0
+            }
+            11374364255402376525 = TimeBlendData {
+                mTime: f32 = 0
+            }
+            13630352412461706982 = TimeBlendData {
+                mTime: f32 = 0
+            }
+            13630352413820501325 = TimeBlendData {
+                mTime: f32 = 0
+            }
+            13630352414364467129 = TimeBlendData {
+                mTime: f32 = 0
+            }
+            15966667750784052966 = TimeBlendData {
+                mTime: f32 = 0
+            }
+            15966667752142847309 = TimeBlendData {
+                mTime: f32 = 0
+            }
+            15966667752686813113 = TimeBlendData {
+                mTime: f32 = 0
+            }
+        }
+        objectPath: hash = "Characters/Nexus/Animations/Skin0"
+    }
+}
+Red reference skin3
+#PROP_text
+type: string = "PROP"
+version: u32 = 3
+linked: list[string] = { }
+entries: map[hash, embed] = {
+    "Characters/Nexus/Animations/Skin3" = AnimationGraphData {
+        mCascadeBlendValue: f32 = 0
+        mClipDataMap: map[hash, pointer] = {
+            "Death" = AtomicClipData {
+                mTrackDataName: hash = "Default"
+                mEventDataMap: map[hash, pointer] = {
+                    "Submesh" = SubmeshVisibilityEventData {
+                        mName: hash = "Submesh"
+                        mShowSubmeshList: list[hash] = { "Destroyed", }
+                        mHideSubmeshList: list[hash] = { "SRUAP_ChaosNexus_Mat", }
+                    }
+                    "bone_cp10" = ParticleEventData {
+                        mName: hash = "bone_cp10"
+                        mStartFrame: f32 = 148
+                        mEffectName: string = "DATA/Particles/SRU_Chaos_nexus_swirlies.troy"
+                        mParticleEventDataPairList: list[embed] = {
+                            ParticleEventDataPair {
+                                mBoneName: hash = "bone_cp10"
+                            }
+                            }
+                        mIsLoop: bool = false
+                    }
+                    "bone_cp16" = ParticleEventData {
+                        mName: hash = "bone_cp16"
+                        mStartFrame: f32 = 146
+                        mEffectName: string = "DATA/Particles/SRU_Chaos_nexus_swirlies.troy"
+                        mParticleEventDataPairList: list[embed] = {
+                            ParticleEventDataPair {
+                                mBoneName: hash = "bone_cp16"
+                            }
+                            }
+                        mIsLoop: bool = false
+                    }
+                    "bone_cp8" = ParticleEventData {
+                        mName: hash = "bone_cp8"
+                        mStartFrame: f32 = 143
+                        mEffectName: string = "DATA/Particles/SRU_Chaos_nexus_swirlies.troy"
+                        mParticleEventDataPairList: list[embed] = {
+                            ParticleEventDataPair {
+                                mBoneName: hash = "bone_cp8"
+                            }
+                            }
+                        mIsLoop: bool = false
+                        mIsKillEvent: bool = false
+                    }
+                    "bone_cp11" = ParticleEventData {
+                        mName: hash = "bone_cp11"
+                        mStartFrame: f32 = 141
+                        mEffectName: string = "DATA/Particles/SRU_Chaos_nexus_swirlies.troy"
+                        mParticleEventDataPairList: list[embed] = {
+                            ParticleEventDataPair {
+                                mBoneName: hash = "bone_cp11"
+                            }
+                            }
+                        mIsLoop: bool = false
+                        mIsKillEvent: bool = false
+                    }
+                    "bone_cp2" = ParticleEventData {
+                        mName: hash = "bone_cp2"
+                        mStartFrame: f32 = 140
+                        mEffectName: string = "DATA/Particles/SRU_Chaos_nexus_swirlies.troy"
+                        mParticleEventDataPairList: list[embed] = {
+                            ParticleEventDataPair {
+                                mBoneName: hash = "bone_cp2"
+                            }
+                            }
+                        mIsLoop: bool = false
+                        mIsKillEvent: bool = false
+                    }
+                    "Audio_Death" = ParticleEventData {
+                        mName: hash = "Audio_Death"
+                        mEffectName: string = "DATA/Particles/SRUAP_Chaos_Nexus_Death_sound.troy"
+                        mParticleEventDataPairList: list[embed] = {
+                            ParticleEventDataPair { }
+                            }
+                        mIsLoop: bool = false
+                    }
+                    "DeathVfx" = ParticleEventData {
+                        mEffectKey: hash = "Nexus_Explosion"
+                        mParticleEventDataPairList: list[embed] = {
+                            ParticleEventDataPair { }
+                            }
+                    }
+                }
+                mAnimationResourceData: embed = AnimationResourceData {
+                    mAnimationFilePath: file = 0x85524794cec15e05
+                }
+            }
+            "Idle1_Base" = AtomicClipData {
+                mFlags: u32 = 2
+                mTrackDataName: hash = "Default"
+                mEventDataMap: map[hash, pointer] = {
+                    0xbd5d7a8f = ParticleEventData {
+                        mName: hash = 0xbd5d7a8f
+                        mEffectName: string = "DATA/Particles/SRUAP_Chaos_Nexus_Idle1_sound.troy"
+                        mParticleEventDataPairList: list[embed] = {
+                            ParticleEventDataPair { }
+                            }
+                        mIsKillEvent: bool = false
+                    }
+                    "IdleVfx" = ParticleEventData {
+                        mEffectKey: hash = "Nexus_Idle"
+                        mParticleEventDataPairList: list[embed] = {
+                            ParticleEventDataPair { }
+                            }
+                    }
+                }
+                mTickDuration: f32 = 0.05
+                mAnimationResourceData: embed = AnimationResourceData {
+                    mAnimationFilePath: file = 0xdb99ca42d3d5e61
+                }
+            }
+            "Spawn_Hold" = AtomicClipData {
+                mFlags: u32 = 8
+                mTrackDataName: hash = "Default"
+                mTickDuration: f32 = 2.5
+                mAnimationResourceData: embed = AnimationResourceData {
+                    mAnimationFilePath: file = 0xdb3b6b18ab3d2eb7
+                }
+            }
+            "Spawn" = AtomicClipData {
+                mFlags: u32 = 8
+                mTrackDataName: hash = "Default"
+                mEventDataMap: map[hash, pointer] = {
+                    "Audio_Spawn" = ParticleEventData {
+                        mName: hash = "Audio_Spawn"
+                        mStartFrame: f32 = 1
+                        mEffectName: string = "DATA/Particles/SRUAP_Chaos_Nexus_Spawn_sound.troy"
+                        mParticleEventDataPairList: list[embed] = {
+                            ParticleEventDataPair { }
+                            }
+                        mIsLoop: bool = false
+                        mIsKillEvent: bool = false
+                    }
+                    0xbd5d7a8f = ParticleEventData {
+                        mName: hash = 0xbd5d7a8f
+                        mStartFrame: f32 = 35
+                        mEffectName: string = "DATA/Particles/SRUAP_Chaos_Nexus_Idle1_sound.troy"
+                        mParticleEventDataPairList: list[embed] = {
+                            ParticleEventDataPair { }
+                            }
+                        mIsKillEvent: bool = false
+                    }
+                }
+                mTickDuration: f32 = 0.1
+                mAnimationResourceData: embed = AnimationResourceData {
+                    mAnimationFilePath: file = 0x9061b27df19a7694
+                }
+            }
+            "Idle1" = SequencerClipData {
+                mClipNameList: list[hash] = { "Spawn_Hold", "Spawn", "IdleIn", "Idle1_Base", }
+            }
+            "IdleIn" = AtomicClipData {
+                mTrackDataName: hash = "Default"
+                mTickDuration: f32 = 0.05
+                mAnimationResourceData: embed = AnimationResourceData {
+                    mAnimationFilePath: file = 0x7cb451e846150b90
+                }
+            }
+        }
+        mTrackDataMap: map[hash, embed] = {
+            "Default" = TrackData { }
+        }
+        mBlendDataTable: map[u64, pointer] = {
+            4188995919613676952 = TimeBlendData {
+                mTime: f32 = 0
+            }
+            4188995920059483192 = TimeBlendData {
+                mTime: f32 = 0
+            }
+            4188995920453119718 = TimeBlendData {
+                mTime: f32 = 0
+            }
+            4188995922510738080 = TimeBlendData {
+                mTime: f32 = 0
+            }
+            6103719140766403992 = TimeBlendData {
+                mTime: f32 = 0
+            }
+            6103719141212210232 = TimeBlendData {
+                mTime: f32 = 0
+            }
+            6103719141605846758 = TimeBlendData {
+                mTime: f32 = 0
+            }
+            6103719143663465120 = TimeBlendData {
+                mTime: f32 = 0
+            }
+            7794375146447457688 = TimeBlendData {
+                mTime: f32 = 0
+            }
+            7794375146893263928 = TimeBlendData {
+                mTime: f32 = 0
+            }
+            7794375147286900454 = TimeBlendData {
+                mTime: f32 = 0
+            }
+            7794375149344518816 = TimeBlendData {
+                mTime: f32 = 0
+            }
+            11374364254877113350 = TimeBlendData {
+                mTime: f32 = 0
+            }
+            13630352411622264216 = TimeBlendData {
+                mTime: f32 = 0
+            }
+            13630352412068070456 = TimeBlendData {
+                mTime: f32 = 0
+            }
+            13630352412461706982 = TimeBlendData {
+                mTime: f32 = 0
+            }
+            13630352414519325344 = TimeBlendData {
+                mTime: f32 = 0
+            }
+            16631778718886546840 = TimeBlendData {
+                mTime: f32 = 0
+            }
+            16631778719332353080 = TimeBlendData {
+                mTime: f32 = 0
+            }
+            16631778719725989606 = TimeBlendData {
+                mTime: f32 = 0
+            }
+            16631778721783607968 = TimeBlendData {
+                mTime: f32 = 0
+            }
+        }
+        objectPath: hash = "Characters/Nexus/Animations/Skin3"
+    }
+}

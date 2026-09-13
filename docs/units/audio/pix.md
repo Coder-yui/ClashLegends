@@ -1,0 +1,30 @@
+# 皮克斯 · 音频接入
+
+[← 返回皮克斯总览](../pix.md) · [总索引](../README.md)
+
+## 目前能听到什么
+
+下表按发生时机列出已接入的声音。可以先点试听了解素材，再看它在实战中何时播放。
+
+## 声音与试听
+
+| 发生时机 | 已接变体 | 音量调整 | 试听示例 |
+| --- | --- | --- | --- |
+| 普通攻击命中 | 3 | -5 dB | [试听 1](../../../assets/audio/units/pix/play_sfx_lulu_lulupassivemissile_hit_r1.wav) · [试听 2](../../../assets/audio/units/pix/play_sfx_lulu_lulupassivemissile_hit_r2.wav) |
+| 普攻发射 | 3 | 0 dB | [试听 1](../../../assets/audio/units/pix/play_sfx_lulu_lulupassivemissilecontroller_onmissilecast_r1.wav) · [试听 2](../../../assets/audio/units/pix/play_sfx_lulu_lulupassivemissilecontroller_onmissilecast_r2.wav) |
+
+0 dB 表示不额外加减音量，不代表所有原声听起来一样响。表中给出代表性试听，完整原始素材仍保留在来源记录中。
+
+## 使用边界与待补项
+
+部署、死亡、吸血技能激活和吸血过程尚无独立声音，未确认匹配素材。普攻已有光弹创建声，没有另叠一声出手音。
+
+## 怎么听
+
+在开发工作台选中对象，先用上面的链接了解素材，再到实战页观察同一动作的出手与命中。持续声音还要检查中断、死亡和清场后是否及时停止；蓝红版本分别检查。
+
+## 素材来源
+
+- [来源与处理记录](../../../assets/audio/units/pix/README.md)
+
+[← 返回单位总览](../pix.md)

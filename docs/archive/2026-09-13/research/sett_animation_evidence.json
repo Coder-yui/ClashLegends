@@ -1,0 +1,439 @@
+{
+  "date": "2026-09-12",
+  "source": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/data/characters/sett/animations/skin0.ritobin",
+  "source_sha256": "f57cd7ccea101d13a287be4c6713fc0f5ca0f59e647796366d33789e4df94add",
+  "glb_sha256": "c82880a79e01120bc9c39eeab2026aacc653f02e8f4fb6b331375cb7b7433495",
+  "method": "Lowercase FNV-1a 32-bit; high/low halves matched to local graph nodes. Source=high, target=low is a structural interpretation corroborated by named transition routes, not verified against Riot runtime code. A blend-table entry does not authorize a gameplay transition.",
+  "node_count": 90,
+  "blend_count": 3534,
+  "both_halves_match_graph_nodes": 3534,
+  "selected_nodes": [
+    {
+      "hash": "56b1e924",
+      "name_interpretation": "Attack1",
+      "token": "\"Attack1\"",
+      "type": "SequencerClipData",
+      "line": 926,
+      "body": "mClipNameList: list[hash] = { \"Attack1_Start\", \"Attack1_Hit\", }"
+    },
+    {
+      "hash": "59b1eddd",
+      "name_interpretation": "Attack2",
+      "token": "\"Attack2\"",
+      "type": "SequencerClipData",
+      "line": 942,
+      "body": "mClipNameList: list[hash] = { \"Attack2_Start\", \"Attack2_Hit\", }"
+    },
+    {
+      "hash": "c90c37b2",
+      "name_interpretation": "Attack1_Passive",
+      "token": "0xc90c37b2",
+      "type": "SequencerClipData",
+      "line": 894,
+      "body": "mClipNameList: list[hash] = { \"Attack1_Passive_Start\", \"Attack1_Passive_Hit\", \"Attack1_Passive_Into_Idle\", }"
+    },
+    {
+      "hash": "33fba6d3",
+      "name_interpretation": "Attack2_Passive",
+      "token": "0x33fba6d3",
+      "type": "SequencerClipData",
+      "line": 910,
+      "body": "mClipNameList: list[hash] = { \"Attack2_Passive_Start\", 0xc39c9139, \"Attack2_Passive_Into_Idle\", }"
+    },
+    {
+      "hash": "c19f4bd3",
+      "name_interpretation": "Attack1_Start",
+      "token": "\"Attack1_Start\"",
+      "type": "AtomicClipData",
+      "line": 913,
+      "body": "mTrackDataName: hash = \"Default\"\n                mEventDataMap: map[hash, pointer] = {\n                    \"Audio\" = SoundEventData {\n                        mSoundName: string = \"Play_sfx_Sett_SettBasicAttack_cast\"\n                        mIsLoop: bool = false\n                        mIsKillEvent: bool = false\n                    }\n                }\n                mAnimationResourceData: embed = AnimationResourceData {\n                    mAnimationFilePath: file = 0xf0ac664f8d5ff010\n                }"
+    },
+    {
+      "hash": "17538da6",
+      "name_interpretation": "Attack2_Start",
+      "token": "\"Attack2_Start\"",
+      "type": "AtomicClipData",
+      "line": 929,
+      "body": "mTrackDataName: hash = \"Default\"\n                mEventDataMap: map[hash, pointer] = {\n                    \"Audio\" = SoundEventData {\n                        mSoundName: string = \"Play_sfx_Sett_SettBasicAttack_cast\"\n                        mIsLoop: bool = false\n                        mIsKillEvent: bool = false\n                    }\n                }\n                mAnimationResourceData: embed = AnimationResourceData {\n                    mAnimationFilePath: file = 0x36e44af9c00ae355\n                }"
+    },
+    {
+      "hash": "8471da16",
+      "name_interpretation": "Attack1_Hit",
+      "token": "\"Attack1_Hit\"",
+      "type": "AtomicClipData",
+      "line": 48,
+      "body": "mTrackDataName: hash = \"Default\"\n                mEventDataMap: map[hash, pointer] = {\n                    0xa4bb4b2f = ParticleEventData {\n                        mEndFrame: f32 = 60\n                        mEffectKey: hash = \"Sett_BA_Swipe_01\"\n                        mParticleEventDataPairList: list[embed] = {\n                            ParticleEventDataPair {\n                                mBoneName: hash = \"Buffbone_Cstm_HealthBar\"\n                            }\n                            }\n                        mIsKillEvent: bool = false\n                        mScalePlaySpeedWithAnimation: bool = true\n                    }\n                }\n                mAnimationResourceData: embed = AnimationResourceData {\n                    mAnimationFilePath: file = 0x9d9a319065410e09\n                }"
+    },
+    {
+      "hash": "8e47a597",
+      "name_interpretation": "Attack2_Hit",
+      "token": "\"Attack2_Hit\"",
+      "type": "AtomicClipData",
+      "line": 29,
+      "body": "mTrackDataName: hash = \"Default\"\n                mEventDataMap: map[hash, pointer] = {\n                    0xa4bb4b2f = ParticleEventData {\n                        mEndFrame: f32 = 60\n                        mEffectKey: hash = \"Sett_BA_Swipe_01\"\n                        mParticleEventDataPairList: list[embed] = {\n                            ParticleEventDataPair {\n                                mBoneName: hash = \"Buffbone_Cstm_HealthBar\"\n                            }\n                            }\n                        mIsKillEvent: bool = false\n                        mScalePlaySpeedWithAnimation: bool = true\n                    }\n                }\n                mAnimationResourceData: embed = AnimationResourceData {\n                    mAnimationFilePath: file = 0x4ad5d4d308469010\n                }"
+    },
+    {
+      "hash": "71752d9d",
+      "name_interpretation": "Attack1_Passive_Start",
+      "token": "\"Attack1_Passive_Start\"",
+      "type": "AtomicClipData",
+      "line": 881,
+      "body": "mTrackDataName: hash = \"Default\"\n                mEventDataMap: map[hash, pointer] = {\n                    \"Audio\" = SoundEventData {\n                        mSoundName: string = \"Play_sfx_Sett_SettBasicAttack2_cast\"\n                        mIsLoop: bool = false\n                        mIsKillEvent: bool = false\n                    }\n                }\n                mAnimationResourceData: embed = AnimationResourceData {\n                    mAnimationFilePath: file = 0x1eee9cc4c4d7f227\n                }"
+    },
+    {
+      "hash": "601ab068",
+      "name_interpretation": "Attack2_Passive_Start",
+      "token": "\"Attack2_Passive_Start\"",
+      "type": "AtomicClipData",
+      "line": 897,
+      "body": "mTrackDataName: hash = \"Default\"\n                mEventDataMap: map[hash, pointer] = {\n                    \"Audio\" = SoundEventData {\n                        mSoundName: string = \"Play_sfx_Sett_SettBasicAttack2_cast\"\n                        mIsLoop: bool = false\n                        mIsKillEvent: bool = false\n                    }\n                }\n                mAnimationResourceData: embed = AnimationResourceData {\n                    mAnimationFilePath: file = 0xfb17ffdcb1775eec\n                }"
+    },
+    {
+      "hash": "eb038ba8",
+      "name_interpretation": "Attack1_Passive_Hit",
+      "token": "\"Attack1_Passive_Hit\"",
+      "type": "AtomicClipData",
+      "line": 470,
+      "body": "mTrackDataName: hash = \"Default\"\n                mEventDataMap: map[hash, pointer] = {\n                    0xa4bb4b2f = ParticleEventData {\n                        mEndFrame: f32 = 60\n                        mEffectKey: hash = \"Sett_BA_Swipe_02\"\n                        mParticleEventDataPairList: list[embed] = {\n                            ParticleEventDataPair {\n                                mBoneName: hash = \"Buffbone_Cstm_HealthBar\"\n                            }\n                            }\n                        mIsKillEvent: bool = false\n                        mScalePlaySpeedWithAnimation: bool = true\n                    }\n                }\n                mAnimationResourceData: embed = AnimationResourceData {\n                    mAnimationFilePath: file = 0xb0eba0a24c327b3c\n                }"
+    },
+    {
+      "hash": "c39c9139",
+      "name_interpretation": "Attack2_Passive_Hit",
+      "token": "0xc39c9139",
+      "type": "AtomicClipData",
+      "line": 542,
+      "body": "mTrackDataName: hash = \"Default\"\n                mEventDataMap: map[hash, pointer] = {\n                    0xa4bb4b2f = ParticleEventData {\n                        mEndFrame: f32 = 60\n                        mEffectKey: hash = \"Sett_BA_Swipe_02\"\n                        mParticleEventDataPairList: list[embed] = {\n                            ParticleEventDataPair {\n                                mBoneName: hash = \"Buffbone_Cstm_HealthBar\"\n                            }\n                            }\n                        mIsKillEvent: bool = false\n                        mScalePlaySpeedWithAnimation: bool = true\n                    }\n                }\n                mAnimationResourceData: embed = AnimationResourceData {\n                    mAnimationFilePath: file = 0xbc28533968ab3aa0\n                }"
+    },
+    {
+      "hash": "cfeb91e8",
+      "name_interpretation": "Attack1_Passive_Into_Idle",
+      "token": "\"Attack1_Passive_Into_Idle\"",
+      "type": "AtomicClipData",
+      "line": 688,
+      "body": "mTrackDataName: hash = \"Default\"\n                mAnimationResourceData: embed = AnimationResourceData {\n                    mAnimationFilePath: file = 0x612d9ef33fffe1c9\n                }"
+    },
+    {
+      "hash": "d1ea8e81",
+      "name_interpretation": "Attack2_Passive_Into_Idle",
+      "token": "\"Attack2_Passive_Into_Idle\"",
+      "type": "AtomicClipData",
+      "line": 765,
+      "body": "mTrackDataName: hash = \"Default\"\n                mAnimationResourceData: embed = AnimationResourceData {\n                    mAnimationFilePath: file = 0xaf6ae65395087e1c\n                }"
+    },
+    {
+      "hash": "b5f63d21",
+      "name_interpretation": "Spell2",
+      "token": "\"Spell2\"",
+      "type": "ConditionFloatClipData",
+      "line": 753,
+      "body": "mConditionFloatPairDataList: list[embed] = {\n                    ConditionFloatPairData {\n                        mClipName: hash = \"Spell2_BASE\"\n                    }\n                    ConditionFloatPairData {\n                        mClipName: hash = \"Spell2_Strong\"\n                        mValue: f32 = 0.8\n                    }\n                    }\n                Updater: pointer = ParBarPercentParametricUpdater { }"
+    },
+    {
+      "hash": "7edfaad7",
+      "name_interpretation": "Spell2_BASE",
+      "token": "\"Spell2_BASE\"",
+      "type": "AtomicClipData",
+      "line": 150,
+      "body": "mTrackDataName: hash = \"Default\"\n                mEventDataMap: map[hash, pointer] = {\n                    0xa4bb4b2f = ParticleEventData {\n                        mEndFrame: f32 = 60\n                        mEffectKey: hash = 0x5b0f5975\n                        mParticleEventDataPairList: list[embed] = {\n                            ParticleEventDataPair {\n                                mBoneName: hash = \"R_Buffbone_Glb_Hand_Loc\"\n                            }\n                            }\n                        mScalePlaySpeedWithAnimation: bool = true\n                    }\n                    \"Audio\" = SoundEventData {\n                        mSoundName: string = \"Play_sfx_Sett_SettW_cast\"\n                        mIsLoop: bool = false\n                        mIsKillEvent: bool = false\n                    }\n                }\n                mAnimationResourceData: embed = AnimationResourceData {\n                    mAnimationFilePath: file = 0x5b9fce9af769233d\n                }"
+    },
+    {
+      "hash": "566d650d",
+      "name_interpretation": "Spell2_Strong",
+      "token": "\"Spell2_Strong\"",
+      "type": "AtomicClipData",
+      "line": 722,
+      "body": "mTrackDataName: hash = \"Default\"\n                mEventDataMap: map[hash, pointer] = {\n                    0xa4bb4b2f = ParticleEventData {\n                        mEndFrame: f32 = 243\n                        mEffectKey: hash = 0x4522be8b\n                        mParticleEventDataPairList: list[embed] = {\n                            ParticleEventDataPair {\n                                mBoneName: hash = \"R_Buffbone_Glb_Hand_Loc\"\n                            }\n                            }\n                        mScalePlaySpeedWithAnimation: bool = true\n                    }\n                    \"Audio\" = SoundEventData {\n                        mSoundName: string = \"Play_sfx_Sett_SettW_maxed_cast\"\n                        mIsLoop: bool = false\n                        mIsKillEvent: bool = false\n                    }\n                    \"BodyFX\" = ParticleEventData {\n                        mEffectKey: hash = 0x7afed70d\n                        mParticleEventDataPairList: list[embed] = {\n                            ParticleEventDataPair {\n                                mBoneName: hash = \"Buffbone_Cstm_HealthBar\"\n                            }\n                            }\n                    }\n                }\n                mAnimationResourceData: embed = AnimationResourceData {\n                    mAnimationFilePath: file = 0x1e898628d55eb582\n                }"
+    },
+    {
+      "hash": "02a52dae",
+      "name_interpretation": "Spell2_Into_Run",
+      "token": "\"Spell2_Into_Run\"",
+      "type": "ParametricClipData",
+      "line": 837,
+      "body": "mTrackDataName: hash = \"Default\"\n                Updater: pointer = LookAtSpellTargetAngleParametricUpdater { }\n                mParametricPairDataList: list[embed] = {\n                    ParametricPairData {\n                        mClipName: hash = \"Spell2_Into_Run_Left180\"\n                        mValue: f32 = -179\n                    }\n                    ParametricPairData {\n                        mClipName: hash = \"Spell2_Into_Run_Left\"\n                        mValue: f32 = -90\n                    }\n                    ParametricPairData {\n                        mClipName: hash = 0x6c5af74e\n                    }\n                    ParametricPairData {\n                        mClipName: hash = \"Spell2_Into_Run_Right\"\n                        mValue: f32 = 90\n                    }\n                    ParametricPairData {\n                        mClipName: hash = \"Spell2_Into_Run_Right180\"\n                        mValue: f32 = 179\n                    }\n                    }"
+    },
+    {
+      "hash": "6c5af74e",
+      "name_interpretation": "Spell2_Into_Run_Base",
+      "token": "0x6c5af74e",
+      "type": "AtomicClipData",
+      "line": 337,
+      "body": "mTrackDataName: hash = \"Default\"\n                mEventDataMap: map[hash, pointer] = {\n                    0x5c47ad5d = ConformToPathEventData {\n                        mStartFrame: f32 = 5\n                        mMaskDataName: hash = 0x70a6ab2d\n                        mBlendInTime: f32 = 0.1\n                        mBlendOutTime: f32 = 0.2\n                    }\n                }\n                mAnimationResourceData: embed = AnimationResourceData {\n                    mAnimationFilePath: file = 0x6a340326ead3cb77\n                }\n                mUpdaterResourceData: pointer = UpdaterResourceData {\n                    mUpdaterDataList: list[embed] = {\n                        UpdaterData {\n                            Input: pointer = MoveSpeedParametricUpdater { }\n                            mOutputType: u32 = 1\n                            mValueProcessorDataList: list[pointer] = {\n                                LinearTransformProcessorData {\n                                    mMultiplier: f32 = 0.004\n                                }\n                                }\n                        }\n                    }\n                }"
+    },
+    {
+      "hash": "554b8a37",
+      "name_interpretation": "Spell2_Into_Idle",
+      "token": "\"Spell2_Into_Idle\"",
+      "type": "AtomicClipData",
+      "line": 777,
+      "body": "mTrackDataName: hash = \"Default\"\n                mAnimationResourceData: embed = AnimationResourceData {\n                    mAnimationFilePath: file = 0x180d8722332b1a3e\n                }"
+    },
+    {
+      "hash": "d8358ac3",
+      "name_interpretation": "Spell2_Strong_Into_Idle",
+      "token": "\"Spell2_Strong_Into_Idle\"",
+      "type": "AtomicClipData",
+      "line": 952,
+      "body": "mTrackDataName: hash = \"Default\"\n                mAnimationResourceData: embed = AnimationResourceData {\n                    mAnimationFilePath: file = 0x99420882926b8e23\n                }"
+    },
+    {
+      "hash": "2acd4eca",
+      "name_interpretation": "Run",
+      "token": "\"Run\"",
+      "type": "ConditionBoolClipData",
+      "line": 771,
+      "body": "Updater: pointer = IsHomeguardParametricUpdater { }\n                mChangeAnimationMidPlay: bool = true\n                mTrueConditionClipName: hash = \"Run_Homeguard\"\n                mFalseConditionClipName: hash = \"Run_Normal\""
+    },
+    {
+      "hash": "ea90ebd8",
+      "name_interpretation": "Run_Normal",
+      "token": "\"Run_Normal\"",
+      "type": "ConditionFloatClipData",
+      "line": 128,
+      "body": "mConditionFloatPairDataList: list[embed] = {\n                    ConditionFloatPairData {\n                        mClipName: hash = \"Run_Slow\"\n                        mValue: f32 = 210\n                    }\n                    ConditionFloatPairData {\n                        mClipName: hash = 0xe3c3f9a5\n                        mValue: f32 = 300\n                    }\n                    ConditionFloatPairData {\n                        mClipName: hash = \"Run_Boots\"\n                        mValue: f32 = 370\n                    }\n                    ConditionFloatPairData {\n                        mClipName: hash = \"Run_Haste\"\n                        mValue: f32 = 480\n                    }\n                    }\n                Updater: pointer = MoveSpeedParametricUpdater { }\n                mChangeAnimationMidPlay: bool = true"
+    },
+    {
+      "hash": "e9553d50",
+      "name_interpretation": "Run_Passive",
+      "token": "\"Run_Passive\"",
+      "type": "AtomicClipData",
+      "line": 573,
+      "body": "mTrackDataName: hash = \"Default\"\n                mSyncGroupDataName: hash = \"Run\"\n                mEventDataMap: map[hash, pointer] = {\n                    0x5c47ad5d = ConformToPathEventData {\n                        mMaskDataName: hash = 0x5c47ad5d\n                        mBlendOutTime: f32 = 0.2\n                    }\n                }\n                mAnimationResourceData: embed = AnimationResourceData {\n                    mAnimationFilePath: file = 0xa4f25b0e7ef00cb3\n                }"
+    },
+    {
+      "hash": "b6c6f5b7",
+      "name_interpretation": "unresolved; resource sett_passive_into_run.anm",
+      "token": "0xb6c6f5b7",
+      "type": "AtomicClipData",
+      "line": 874,
+      "body": "mTrackDataName: hash = \"Default\"\n                mAnimationResourceData: embed = AnimationResourceData {\n                    mAnimationFilePath: file = 0x260e6dfa2fc6805d\n                }\n                mUpdaterResourceData: pointer = UpdaterResourceData { }"
+    }
+  ],
+  "selected_blends": [
+    {
+      "source_interpretation": "Attack1_Start",
+      "target_interpretation": "Attack1_Hit",
+      "packed_key_decimal": "13951953542449322518",
+      "high32": "c19f4bd3",
+      "low32": "8471da16",
+      "type": "TimeBlendData",
+      "body": "mTime: f32 = 0.02",
+      "line": 5978
+    },
+    {
+      "source_interpretation": "Attack1_Passive_Start",
+      "target_interpretation": "Attack1_Passive_Hit",
+      "packed_key_decimal": "8175490854836997032",
+      "high32": "71752d9d",
+      "low32": "eb038ba8",
+      "type": "TimeBlendData",
+      "body": "mTime: f32 = 0.04",
+      "line": 5633
+    },
+    {
+      "source_interpretation": "Attack2_Start",
+      "target_interpretation": "Attack2_Hit",
+      "packed_key_decimal": "1680842832430474647",
+      "high32": "17538da6",
+      "low32": "8e47a597",
+      "type": "TimeBlendData",
+      "body": "mTime: f32 = 0",
+      "line": 6062
+    },
+    {
+      "source_interpretation": "Attack2_Passive_Start",
+      "target_interpretation": "Attack2_Passive_Hit",
+      "packed_key_decimal": "6925041341040464185",
+      "high32": "601ab068",
+      "low32": "c39c9139",
+      "type": "TimeBlendData",
+      "body": "mTime: f32 = 0",
+      "line": 5891
+    },
+    {
+      "source_interpretation": "Attack1_Passive_Hit",
+      "target_interpretation": "Attack1_Passive_Into_Idle",
+      "packed_key_decimal": "16934532581002285544",
+      "high32": "eb038ba8",
+      "low32": "cfeb91e8",
+      "type": "TimeBlendData",
+      "body": "mTime: f32 = 0",
+      "line": 3209
+    },
+    {
+      "source_interpretation": "Attack2_Passive_Hit",
+      "target_interpretation": "Attack2_Passive_Into_Idle",
+      "packed_key_decimal": "14095300611283783297",
+      "high32": "c39c9139",
+      "low32": "d1ea8e81",
+      "type": "TimeBlendData",
+      "body": "mTime: f32 = 0",
+      "line": 12035
+    },
+    {
+      "source_interpretation": "Idle_Base",
+      "target_interpretation": "Attack1_Start",
+      "packed_key_decimal": "9668653431646014419",
+      "high32": "862df511",
+      "low32": "c19f4bd3",
+      "type": "TimeBlendData",
+      "body": "mTime: f32 = 0.1",
+      "line": 6578
+    },
+    {
+      "source_interpretation": "Run_Base",
+      "target_interpretation": "Attack1_Start",
+      "packed_key_decimal": "17371216860822850515",
+      "high32": "f112f5b2",
+      "low32": "c19f4bd3",
+      "type": "TimeBlendData",
+      "body": "mTime: f32 = 0.1",
+      "line": 6623
+    },
+    {
+      "source_interpretation": "Attack1_Passive_Into_Idle",
+      "target_interpretation": "Attack1_Start",
+      "packed_key_decimal": "14982229014244969427",
+      "high32": "cfeb91e8",
+      "low32": "c19f4bd3",
+      "type": "TimeBlendData",
+      "body": "mTime: f32 = 0.15",
+      "line": 6533
+    },
+    {
+      "source_interpretation": "Attack1_Passive_Hit",
+      "target_interpretation": "Run_Base",
+      "packed_key_decimal": "16934532581558515122",
+      "high32": "eb038ba8",
+      "low32": "f112f5b2",
+      "type": "TransitionClipBlendData",
+      "body": "mClipName: hash = 0xb6c6f5b7",
+      "line": 5597
+    },
+    {
+      "source_interpretation": "Attack2_Passive_Hit",
+      "target_interpretation": "Run_Base",
+      "packed_key_decimal": "14095300611806524850",
+      "high32": "c39c9139",
+      "low32": "f112f5b2",
+      "type": "TransitionClipBlendData",
+      "body": "mClipName: hash = 0xb6c6f5b7",
+      "line": 5609
+    },
+    {
+      "source_interpretation": "Spell2_BASE",
+      "target_interpretation": "Run_Base",
+      "packed_key_decimal": "9142213613024638386",
+      "high32": "7edfaad7",
+      "low32": "f112f5b2",
+      "type": "TransitionClipBlendData",
+      "body": "mClipName: hash = \"Spell2_Into_Run\"",
+      "line": 2309
+    },
+    {
+      "source_interpretation": "Spell2_Strong",
+      "target_interpretation": "Run_Base",
+      "packed_key_decimal": "6227744970276795826",
+      "high32": "566d650d",
+      "low32": "f112f5b2",
+      "type": "TransitionClipBlendData",
+      "body": "mClipName: hash = \"Spell2_Into_Run\"",
+      "line": 6308
+    },
+    {
+      "source_interpretation": "Spell2_BASE",
+      "target_interpretation": "IdleReady",
+      "packed_key_decimal": "9142213612647520698",
+      "high32": "7edfaad7",
+      "low32": "da9899ba",
+      "type": "TransitionClipBlendData",
+      "body": "mClipName: hash = \"Spell2_Into_Idle\"",
+      "line": 4712
+    },
+    {
+      "source_interpretation": "Spell2_Strong",
+      "target_interpretation": "IdleReady",
+      "packed_key_decimal": "6227744969899678138",
+      "high32": "566d650d",
+      "low32": "da9899ba",
+      "type": "TransitionClipBlendData",
+      "body": "mClipName: hash = \"Spell2_Strong_Into_Idle\"",
+      "line": 6233
+    },
+    {
+      "source_interpretation": "Run_Base",
+      "target_interpretation": "Spell2_BASE",
+      "packed_key_decimal": "17371216859702995671",
+      "high32": "f112f5b2",
+      "low32": "7edfaad7",
+      "type": "TimeBlendData",
+      "body": "mTime: f32 = 0.1",
+      "line": 3410
+    },
+    {
+      "source_interpretation": "Run_Base",
+      "target_interpretation": "Spell2_Strong",
+      "packed_key_decimal": "17371216859024418061",
+      "high32": "f112f5b2",
+      "low32": "566d650d",
+      "type": "TimeBlendData",
+      "body": "mTime: f32 = 0.04",
+      "line": 4580
+    },
+    {
+      "source_interpretation": "Spell2_BASE",
+      "target_interpretation": "Attack1_Start",
+      "packed_key_decimal": "9142213612228529107",
+      "high32": "7edfaad7",
+      "low32": "c19f4bd3",
+      "type": "TimeBlendData",
+      "body": "mTime: f32 = 0.1",
+      "line": 6659
+    },
+    {
+      "source_interpretation": "Spell2_Strong",
+      "target_interpretation": "Attack1_Start",
+      "packed_key_decimal": "6227744969480686547",
+      "high32": "566d650d",
+      "low32": "c19f4bd3",
+      "type": "TimeBlendData",
+      "body": "mTime: f32 = 0.1",
+      "line": 6677
+    },
+    {
+      "source_interpretation": "Run_Base",
+      "target_interpretation": "Idle_Base",
+      "packed_key_decimal": "17371216859825566993",
+      "high32": "f112f5b2",
+      "low32": "862df511",
+      "type": "TransitionClipBlendData",
+      "body": "mClipName: hash = \"IdleReady\"",
+      "line": 1706
+    }
+  ],
+  "glb_animation_durations_seconds": {
+    "Attack2_Hit": 2.333333,
+    "Attack1_Hit": 2.366667,
+    "Sett_spell2.anm": 1.566666,
+    "Sett_Spell2_INTO_Run.anm": 1.566667,
+    "Sett_Attack1_Passive.anm": 1.366667,
+    "Sett_Attack2_Passive.anm": 1.466667,
+    "Run_Passive": 1.066667,
+    "Attack1_Passive_Into_Idle": 1.333333,
+    "Spell2_Strong": 1.166667,
+    "Attack2_Passive_Into_Idle": 1.333333,
+    "Spell2_Into_Idle": 2.266667,
+    "Spell2_Into_Run_Left": 1.566667,
+    "Spell2_Into_Run_Right": 1.566667,
+    "Sett_Passive_INTO_Run.anm": 1.133334,
+    "Attack1_Passive_Start": 0.3,
+    "Attack2_Passive_Start": 0.3,
+    "Attack1_Start": 0.3,
+    "Attack2_Start": 0.333333,
+    "Spell2_Strong_Into_Idle": 2.5,
+    "Crit_Passive_Start": 1.466667,
+    "Spell2_Into_Run_Left180": 1.566667,
+    "Spell2_Into_Run_Right180": 1.566667,
+    "Crit_Passive_Hit": 1.533333
+  }
+}
