@@ -1,11 +1,5 @@
 class_name DeckBuilderSuite
-extends RefCounted
-
-var _harness: Object
-var _main: Node2D
-
-func _expect(condition: bool, message: String) -> void:
-	_harness._expect(condition, message)
+extends "res://tests/suites/battle_suite.gd"
 
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness

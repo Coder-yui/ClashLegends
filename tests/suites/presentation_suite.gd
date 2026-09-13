@@ -1,12 +1,6 @@
 class_name PresentationSuite
-extends RefCounted
+extends "res://tests/suites/battle_suite.gd"
 ## 表现层领域：建筑/单位 3D 代理、体型档位、血条、受击闪白与渲染插值契约。
-
-var _harness: Object
-var _main: Node2D
-
-func _expect(condition: bool, message: String) -> void:
-	_harness._expect(condition, message)
 
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
@@ -67,7 +61,7 @@ func _check_structure_art_integration() -> void:
 			for material_name in destroyed_names:
 				for material in view._surface_materials_by_name.get(String(material_name), []):
 					nexus_surfaces_ok = nexus_surfaces_ok and is_equal_approx(float(material.get_shader_parameter("surface_visible")), 0.0)
-			for animation_key in ["spawn", "idle", "destroy"]:
+			for animation_key in ["spawn_hold", "spawn", "idle", "destroy"]:
 				nexus_animations_ok = nexus_animations_ok and view._animation_player.has_animation(String(view._animations[animation_key]))
 	_expect(views_ok, "六座建筑都使用独立 3D 表现代理，并为地上/地下表面启用动态地面裁切")
 	_expect(orientation_ok, "蓝方塔朝向红方、红方塔朝向蓝方")
@@ -75,6 +69,16 @@ func _check_structure_art_integration() -> void:
 	_expect(stage_animations_ok, "公主塔摧毁动画与三段碎块片段均已注册到专用动画库")
 	_expect(nexus_surfaces_ok, "水晶存活时仅显示 startup 部件，隐藏 Rubble/Destroyed 部件")
 	_expect(nexus_animations_ok, "水晶的出生、待机和摧毁动画映射均存在")
+	for view in views:
+		if view._stage_mode:
+			continue
+		_expect(is_zero_approx(view._spawn_hold_remaining) and view._animation_player.is_playing(), "水晶进入场景立即开始上升，不停留在出生前姿势")
+		view._spawn_hold_remaining = 0.01
+		view._process(0.02)
+		_expect(view._active_one_shot == StringName(view._animations.spawn), "保持结束后进入出生动作")
+		view._on_animation_finished(StringName(view._animations.spawn))
+		_expect(view._animation_player.current_animation == String(view._animations.idle), "出生结束进入循环待机")
+
 
 	# 阶段推进回归：破 2/3 换 Stage1+Broken1 坠毁；破 1/3 换 Stage2+Broken2；
 	# 摧毁换 Stage3+Broken3，掉块演完隐藏残核并定格 Rubble。
@@ -96,10 +100,10 @@ func _check_structure_art_integration() -> void:
 		stage_flow_ok = stage_flow_ok and temp_view._visual_stage == 1
 		stage_flow_ok = stage_flow_ok and _surfaces_visible(temp_view, ["Base"], false)
 		stage_flow_ok = stage_flow_ok and _surfaces_visible(temp_view, ["Stage1", "Broken1"], true)
-		stage_flow_ok = stage_flow_ok and temp_view._animation_player.current_animation == "debris/debris1"
-		stage_flow_ok = stage_flow_ok and temp_view._animation_player.is_playing()
+		stage_flow_ok = stage_flow_ok and temp_view._debris_layers.size() == 1 and is_equal_approx(temp_view._debris_layers[0].player.get_animation("break").length, temp_view._animation_player.get_animation("NativeBreak1").length)
+		stage_flow_ok = stage_flow_ok and temp_view._debris_layers[0].player.is_playing()
 		# 掉块演完（2 秒）：碎块隐藏，塔体保持 Stage1。
-		temp_view._update_stage_flow(2.2)
+		temp_view._update_stage_flow(12.0)
 		stage_flow_ok = stage_flow_ok and _surfaces_visible(temp_view, ["Broken1"], false)
 		stage_flow_ok = stage_flow_ok and _surfaces_visible(temp_view, ["Stage1"], true)
 		# 破 1/3：Stage1 换 Stage2，Broken2 坠毁。
@@ -108,9 +112,9 @@ func _check_structure_art_integration() -> void:
 		stage_flow_ok = stage_flow_ok and temp_view._visual_stage == 2
 		stage_flow_ok = stage_flow_ok and _surfaces_visible(temp_view, ["Stage1"], false)
 		stage_flow_ok = stage_flow_ok and _surfaces_visible(temp_view, ["Stage2", "Broken2"], true)
-		stage_flow_ok = stage_flow_ok and temp_view._animation_player.current_animation == "debris/debris2"
-		stage_flow_ok = stage_flow_ok and temp_view._animation_player.is_playing()
-		temp_view._update_stage_flow(2.2)
+		stage_flow_ok = stage_flow_ok and temp_view._debris_layers.size() == 1 and is_equal_approx(temp_view._debris_layers[0].player.get_animation("break").length, temp_view._animation_player.get_animation("NativeBreak2").length)
+		stage_flow_ok = stage_flow_ok and temp_view._debris_layers[0].player.is_playing()
+		temp_view._update_stage_flow(12.0)
 		stage_flow_ok = stage_flow_ok and _surfaces_visible(temp_view, ["Broken2"], false)
 		# 摧毁：Stage2 换 Stage3+Broken3，掉块演完定格 Rubble；表现事件只触发一次。
 		var destroyed_events := [0]
@@ -118,11 +122,11 @@ func _check_structure_art_integration() -> void:
 		temp_tower.take_damage(temp_tower.max_hp + 1.0)
 		temp_tower.notify_visual_destroyed()
 		stage_flow_ok = stage_flow_ok and destroyed_events[0] == 1 and temp_view._destroyed
-		stage_flow_ok = stage_flow_ok and _surfaces_visible(temp_view, ["Stage2", "Rubble"], false)
-		stage_flow_ok = stage_flow_ok and _surfaces_visible(temp_view, ["Stage3", "Broken3"], true)
-		stage_flow_ok = stage_flow_ok and temp_view._animation_player.current_animation == "debris/debris3"
-		stage_flow_ok = stage_flow_ok and temp_view._animation_player.is_playing()
-		temp_view._update_stage_flow(2.2)
+		stage_flow_ok = stage_flow_ok and _surfaces_visible(temp_view, ["Stage2", "Stage3"], false)
+		stage_flow_ok = stage_flow_ok and _surfaces_visible(temp_view, ["Rubble", "Broken3"], true)
+		stage_flow_ok = stage_flow_ok and temp_view._debris_layers.size() == 1 and is_equal_approx(temp_view._debris_layers[0].player.get_animation("break").length, temp_view._animation_player.get_animation("NativeBreak3").length)
+		stage_flow_ok = stage_flow_ok and temp_view._debris_layers[0].player.is_playing()
+		temp_view._update_stage_flow(12.0)
 		stage_flow_ok = stage_flow_ok and _surfaces_visible(temp_view, ["Stage3", "Broken3"], false)
 		stage_flow_ok = stage_flow_ok and _surfaces_visible(temp_view, ["Rubble"], true)
 	_expect(stage_flow_ok, "公主塔按血量切换阶段表面，碎块坠毁，摧毁后定格 Rubble 废墟")
@@ -150,9 +154,9 @@ func _check_structure_art_integration() -> void:
 		burst_ok = burst_ok and burst_view._active_debris_surface == "Broken2"
 		burst_ok = burst_ok and _surfaces_visible(burst_view, ["Stage2", "Broken2"], true)
 		burst_ok = burst_ok and _surfaces_visible(burst_view, ["Base", "Stage1", "Broken1"], false)
-		burst_ok = burst_ok and burst_view._animation_player.current_animation == "debris/debris2"
-		burst_ok = burst_ok and burst_view._animation_player.is_playing()
-		burst_view._update_stage_flow(2.2)
+		burst_ok = burst_ok and burst_view._debris_layers.size() == 1
+		burst_ok = burst_ok and burst_view._debris_layers.back().player.is_playing()
+		burst_view._update_stage_flow(12.0)
 		burst_ok = burst_ok and burst_view._active_debris_surface.is_empty()
 		burst_ok = burst_ok and _surfaces_visible(burst_view, ["Stage2"], true)
 		burst_ok = burst_ok and _surfaces_visible(burst_view, ["Broken1", "Broken2"], false)
@@ -162,7 +166,7 @@ func _check_structure_art_integration() -> void:
 	burst_tower.free()
 
 	# 途中打断回归：Broken1 播到一半跌破下一阶段，直接切 Stage2 从头播 Broken2，
-	# Broken1 立即隐藏（不管它放没放完）。
+	# Broken1 按独立碎块生命周期继续播放。
 	var mid_tower := Tower.new()
 	mid_tower.setup(0, CardDB.PRINCESS_TOWER_STATS, false)
 	mid_tower.position = Vector2(360.0, 600.0)
@@ -184,14 +188,14 @@ func _check_structure_art_integration() -> void:
 		mid_ok = mid_ok and mid_view._visual_stage == 2
 		mid_ok = mid_ok and mid_view._active_debris_surface == "Broken2"
 		mid_ok = mid_ok and _surfaces_visible(mid_view, ["Stage2", "Broken2"], true)
-		mid_ok = mid_ok and _surfaces_visible(mid_view, ["Stage1", "Broken1"], false)
-		mid_ok = mid_ok and mid_view._animation_player.current_animation == "debris/debris2"
-		mid_ok = mid_ok and mid_view._animation_player.is_playing()
-		mid_ok = mid_ok and mid_view._animation_player.current_animation_position < 0.2
-		mid_view._update_stage_flow(2.2)
+		mid_ok = mid_ok and _surfaces_visible(mid_view, ["Stage1"], false) and _surfaces_visible(mid_view, ["Broken1"], true)
+		mid_ok = mid_ok and mid_view._debris_layers.size() == 2
+		mid_ok = mid_ok and mid_view._debris_layers.back().player.is_playing()
+		mid_ok = mid_ok and mid_view._debris_layers.back().player.current_animation_position < 0.2
+		mid_view._update_stage_flow(12.0)
 		mid_ok = mid_ok and mid_view._active_debris_surface.is_empty()
 		mid_ok = mid_ok and _surfaces_visible(mid_view, ["Stage2"], true)
-	_expect(mid_ok, "掉落途中跌破下一阶段时直接切第二块动画并隐藏第一块，不等待旧动画播完")
+	_expect(mid_ok, "掉落途中跌破下一阶段时立即播放第二块动画，第一块继续独立掉落")
 	if mid_view != null:
 		mid_view.free()
 	mid_tower.free()
@@ -218,10 +222,10 @@ func _check_structure_art_integration() -> void:
 		death_view._update_stage_flow(0.016)
 		death_ok = death_ok and death_view._destroyed and death_view._visual_stage == 3
 		death_ok = death_ok and death_view._active_debris_surface == "Broken3"
-		death_ok = death_ok and _surfaces_visible(death_view, ["Stage3", "Broken3"], true)
-		death_ok = death_ok and _surfaces_visible(death_view, ["Stage1", "Stage2", "Broken1", "Broken2", "Rubble"], false)
-		death_ok = death_ok and death_view._animation_player.current_animation == "debris/debris3"
-		death_view._update_stage_flow(2.2)
+		death_ok = death_ok and _surfaces_visible(death_view, ["Rubble", "Broken3"], true)
+		death_ok = death_ok and _surfaces_visible(death_view, ["Stage1", "Stage2", "Stage3", "Broken2"], false) and _surfaces_visible(death_view, ["Broken1"], true)
+		death_ok = death_ok and death_view._debris_layers.size() == 2 and death_view._debris_layers.back().player.is_playing()
+		death_view._update_stage_flow(12.0)
 		death_ok = death_ok and death_view._active_debris_surface.is_empty()
 		death_ok = death_ok and _surfaces_visible(death_view, ["Stage3", "Broken3"], false)
 		death_ok = death_ok and _surfaces_visible(death_view, ["Rubble"], true)
@@ -247,9 +251,9 @@ func _check_structure_art_integration() -> void:
 		instant_tower.notify_visual_destroyed()
 		instant_view._update_stage_flow(0.016)
 		instant_ok = instant_ok and instant_view._active_debris_surface == "Broken3"
-		instant_ok = instant_ok and _surfaces_visible(instant_view, ["Stage3", "Broken3"], true)
-		instant_ok = instant_ok and _surfaces_visible(instant_view, ["Base", "Broken1", "Broken2", "Rubble"], false)
-		instant_view._update_stage_flow(2.2)
+		instant_ok = instant_ok and _surfaces_visible(instant_view, ["Rubble", "Broken3"], true)
+		instant_ok = instant_ok and _surfaces_visible(instant_view, ["Base", "Stage3", "Broken1", "Broken2"], false)
+		instant_view._update_stage_flow(12.0)
 		instant_ok = instant_ok and instant_view._active_debris_surface.is_empty()
 		instant_ok = instant_ok and _surfaces_visible(instant_view, ["Stage3", "Broken3"], false)
 		instant_ok = instant_ok and _surfaces_visible(instant_view, ["Rubble"], true)
@@ -385,7 +389,7 @@ func _check_hit_flash_presentation() -> void:
 	var flash_is_subtle := flashed and view._hit_flash_timer <= 0.051 and is_equal_approx(view._hit_flash_material.albedo_color.a, 0.22)
 	if flashed:
 		for mesh_instance in view._flash_meshes:
-			flashed = flashed and mesh_instance.material_overlay == view._hit_flash_material
+			flashed = flashed and mesh_instance.material_overlay is StandardMaterial3D
 	view._update_hit_flash(0.05)
 	unit.take_damage(1.0)
 	var continuous_damage_throttled := view != null and view._hit_flash_timer <= 0.05
@@ -432,7 +436,7 @@ func _check_health_bar_team_anchor() -> void:
 	var blue_ok: bool = blue_attached and blue_view != null and is_equal_approx(blue_head.y - blue_bar.y, bar_gap)
 	var red_ok: bool = red_attached and red_view != null and is_equal_approx(red_head.y - red_bar.y, bar_gap)
 	var flip_camera := Camera2D.new()
-	flip_camera.position = Vector2(_main.FIELD_W * 0.5, _main.FIELD_H * 0.5)
+	flip_camera.position = Vector2(ArenaRules.FIELD_W * 0.5, ArenaRules.FIELD_H * 0.5)
 	flip_camera.rotation = PI
 	_main.add_child(flip_camera)
 	flip_camera.make_current()
@@ -467,14 +471,14 @@ func _check_shared_render_interpolation() -> void:
 	_main.add_child(unit)
 	unit._prev_pos = Vector2(300.0, 900.0)
 	unit.position = Vector2(300.0, 903.9)
-	var saved_accumulator: float = _main._sim_acc
-	_main._sim_acc = 0.0
+	var saved_accumulator: float = _main._simulation_clock.remainder
+	_main._simulation_clock.remainder = 0.0
 	var at_start := unit.get_visual_screen_position()
-	_main._sim_acc = _main.SIM_DT * 0.5
+	_main._simulation_clock.remainder = _main.SIM_DT * 0.5
 	var at_half := unit.get_visual_screen_position()
-	_main._sim_acc = _main.SIM_DT
+	_main._simulation_clock.remainder = _main.SIM_DT
 	var at_end := unit.get_visual_screen_position()
-	_main._sim_acc = saved_accumulator
+	_main._simulation_clock.remainder = saved_accumulator
 	var monotonic := at_start.y < at_half.y and at_half.y < at_end.y
 	var exact := is_equal_approx(at_start.y, 900.0) and is_equal_approx(at_half.y, 901.95) and is_equal_approx(at_end.y, 903.9)
 	_expect(monotonic and exact, "高速单位使用主模拟器统一 alpha 在前后状态间单调插值")
@@ -536,7 +540,7 @@ func _check_ashe_art_integration() -> void:
 	stats["deploy_time"] = 0.0
 	var anim_names: Dictionary = stats.visual_animations
 	_expect(anim_names.attack == ["Attack1", "Attack2"], "寒冰两套射箭动作按表现序号交替选择")
-	_expect(stats.projectile_visual == "arrow" and is_equal_approx(stats.first_hit / stats.interval, 0.45), "寒冰在攻击动画约 45% 的离弦姿态生成蓝色箭矢")
+	_expect(stats.projectile_visual == "arrow" and is_equal_approx(stats.first_hit / stats.interval, 0.14), "寒冰按原攻击动画 0.30 秒离弦点换算弹体生成前摇")
 	_expect(is_equal_approx(stats.projectile_visual_height, 45.0), "寒冰放大后箭矢绘制点同步抬到新的弓部高度")
 	var unit := Unit.new()
 	unit.position = Vector2(360.0, 900.0)
@@ -581,24 +585,24 @@ func _check_sett_art_integration() -> void:
 			staged_view._play_attack(2)
 			staged_view._update_attack_stages(unit.first_hit_time + 0.01)
 			var right_hit_ok: bool = staged_view._animation_player.current_animation == "Sett_Attack1_Passive_anm"
-			staged_view._update_attack_stages(float(anim_names.attack_recover_delay) + 0.01)
+			staged_view._update_attack_stages(staged_view._attack_recover_delay(1) + 0.01)
 			var recover_ok: bool = staged_view._animation_player.current_animation == "Attack1_Passive_Into_Idle"
 			unit._attacking = false
 			unit._move_intent = Vector2.UP * unit.move_speed
 			staged_view._update_attack_stages(1.0)
 			staged_view._sync_visual(false, 0.05)
-			var transition_to_move_ok: bool = (
-				staged_view._animation_player.current_animation == "Sett_Passive_INTO_Run_anm"
-				and is_equal_approx(staged_view._last_clip_blend_time, staged_view._transition_blend(&"sequence"))
-			)
+			var recovered_to_move_ok: bool = staged_view._animation_player.current_animation == "Run_Base"
+			unit._attacking = true
+			staged_view._play_attack(2)
+			staged_view._update_attack_stages(unit.first_hit_time)
+			unit._attacking = false
+			staged_view._sync_visual(false, 0.05)
+			var transition_to_move_ok: bool = staged_view._animation_player.current_animation == "Sett_Passive_INTO_Run_anm"
 			staged_view._on_animation_finished(&"Sett_Passive_INTO_Run_anm")
-			var move_after_transition_ok: bool = (
-				staged_view._animation_player.current_animation == "Run_Base"
-				and is_equal_approx(staged_view._last_clip_blend_time, staged_view._transition_blend(&"sequence"))
-			)
+			var move_after_transition_ok: bool = recovered_to_move_ok and staged_view._animation_player.current_animation == "Run_Base"
 			staged_attacks_ok = left_start_ok and left_hit_ok and right_hit_ok and recover_ok and transition_to_move_ok and move_after_transition_ok
 			break
-	_expect(staged_attacks_ok, "腕豪有下一次目标时右拳播放 Passive_Into_Idle，无目标时接 Sett Passive Into Run 再进入 Run Base")
+	_expect(staged_attacks_ok, "腕豪被动 Hit 转跑使用专用片段，已经收势后移动不重播被动转跑")
 	unit.take_damage(unit.max_hp + 1.0)
 	var death_view_found := false
 	for child in _main._battle_presentation._world_root.get_children():
@@ -618,7 +622,7 @@ func _check_teemo_art_integration() -> void:
 	_expect(stats.projectile_visual == "needle" and stats.projectile_speed > 0.0, "提莫射的是绿色短针弹体，且配有独立飞行速度")
 	_expect(is_equal_approx(stats.projectile_visual_height, 42.0), "提莫放大后绿色短针同步从新的吹管口高度出现")
 	_expect(is_equal_approx(stats.interval, 1.0) and is_equal_approx(stats.range, 160.0), "提莫降低攻速并保持 4 格攻击距离")
-	_expect(is_equal_approx(stats.visual_animations.attack_hit_duration, stats.interval - stats.first_hit), "提莫两段攻击后摇与降低后的攻速周期对齐")
+	_expect(is_equal_approx(stats.visual_animations.attack_reference_interval, stats.interval), "提莫参考间隔下收势保持原速并允许下一拳打断")
 	var unit := Unit.new()
 	unit.position = Vector2(260.0, 900.0)
 	unit.setup(0, stats, stats.name)

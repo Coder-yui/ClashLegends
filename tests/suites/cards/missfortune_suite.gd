@@ -1,12 +1,6 @@
 class_name MissFortuneSuite
-extends RefCounted
+extends "res://tests/suites/battle_suite.gd"
 ## 赏金猎人卡牌领域：先声夺人首击倍率（对每个目标的首次普攻）与大步流星 buff 配置。
-
-var _harness: Object
-var _main: Node2D
-
-func _expect(condition: bool, message: String) -> void:
-	_harness._expect(condition, message)
 
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
@@ -98,8 +92,8 @@ func _check_first_strike_damage() -> void:
 
 func _fire_once(unit: Unit) -> void:
 	unit._attacking = true
-	unit._attack_windup = 0.0
-	unit._attack_cd = 0.0
+	unit.attack_timeline.windup = 0.0
+	unit.attack_timeline.cooldown = 0.0
 	unit._attack_visual_pending = false
 	unit._attack(_main.SIM_DT)
 

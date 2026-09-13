@@ -1,12 +1,6 @@
 class_name AurelionSolSuite
-extends RefCounted
+extends "res://tests/suites/battle_suite.gd"
 ## 龙王卡牌领域：空中单位表现链路与持续吐息换目标。
-
-var _harness: Object
-var _main: Node2D
-
-func _expect(condition: bool, message: String) -> void:
-	_harness._expect(condition, message)
 
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
@@ -67,17 +61,25 @@ func _check_starfall_and_falling_sky() -> void:
 	var center_before := center.hp
 	var wave_before := wave.hp
 	var behind_before := behind.hp
-	_main._active_skill_effect_system.apply(dragon, prepared)
+	_main._queue_active_skill_impact(dragon, prepared, float(prepared.impact_delay))
+	_main._commands.tick_impacts(1.10)
+	_expect(center.hp == center_before and wave.hp == wave_before and _main._active_skill_effect_system.expanding_shockwaves.is_empty(), "龙王星辰未落地前不伤害也不生成冲击波")
+	_main._commands.tick_impacts(0.05)
 	var impact_ok := (
 		is_equal_approx(center_before - center.hp, float(skill.damage) * 1.5)
-		and is_equal_approx(center.stun_timer, float(skill.stun_duration) * 1.5)
+		and is_equal_approx(center.control.stun_timer, float(skill.stun_duration) * 1.5)
 		and is_equal_approx(wave.hp, wave_before) and is_equal_approx(behind.hp, behind_before)
 	)
-	_main._active_skill_effect_system._tick_expanding_shockwaves(float(skill.shockwave_duration))
+	_expect(is_equal_approx(float(skill.shockwave_duration), 2.8), "龙王全场冲击波改为 2.8 秒扩散，速度减半")
+	_main._active_skill_effect_system._tick_expanding_shockwaves(0.4)
+	_expect(wave.hp == wave_before and behind.hp == behind_before, "冲击波尚未扩散到目标身体前不提前伤害")
+	_main._active_skill_effect_system._tick_expanding_shockwaves(0.2)
+	_expect(wave.hp == wave_before - float(skill.shockwave_damage), "冲击波扩散到目标身体时结算一次伤害")
+	_main._active_skill_effect_system._tick_expanding_shockwaves(float(skill.shockwave_duration) - 0.6)
 	var wave_ok := (
 		is_equal_approx(wave_before - wave.hp, float(skill.shockwave_damage))
 		and is_equal_approx(behind_before - behind.hp, float(skill.shockwave_damage))
-		and is_equal_approx(wave.slow_timer, float(skill.shockwave_slow_duration))
+		and is_equal_approx(wave.control.slow_timer, float(skill.shockwave_slow_duration))
 		and is_equal_approx(center_before - center.hp, float(skill.damage) * 1.5)
 	)
 	_expect(
@@ -93,7 +95,7 @@ func _check_starfall_and_falling_sky() -> void:
 	dragon.active_skill_cast_locks.clear()
 	dragon._target = breath_target
 	dragon._attacking = true
-	dragon._attack_windup = 0.0
+	dragon.attack_timeline.windup = 0.0
 	var breath_before := breath_target.hp
 	dragon._attack(_main.SIM_DT)
 	_expect(is_zero_approx(dragon.first_hit_time) and breath_target.hp < breath_before, "龙王移除人为攻击前摇，进入攻击距离的第一个固定 tick 就开始造成持续吐息伤害")
@@ -194,7 +196,7 @@ func _check_aurelionsol_art_integration() -> void:
 		mouth_binding_ok = unit.continuous_beam_origin_tracks_model and not unit.continuous_beam_origin_world_position.is_zero_approx()
 		var entered_attack := (
 			view._animation_player.current_animation == "AurelionSol_Spell1_newtst_anm"
-			and is_equal_approx(view._last_clip_blend_time, view._transition_blend(&"action_in"))
+			and is_zero_approx(view._last_clip_blend_time)
 			and unit.continuous_beam_visible
 		)
 		view._on_animation_finished(&"AurelionSol_Spell1_newtst_anm")
@@ -231,7 +233,7 @@ func _check_aurelionsol_art_integration() -> void:
 		view._on_animation_finished(&"Spell1_2Run")
 		var run_b := (
 			view._animation_player.current_animation == "Run1B"
-			and is_equal_approx(view._last_clip_blend_time, view._transition_blend(&"sequence"))
+			and is_equal_approx(view._last_clip_blend_time, 0.6)
 		)
 		view._on_animation_finished(&"Run1B")
 		var run_c := view._animation_player.current_animation == "Run1C"
@@ -262,9 +264,18 @@ func _check_aurelionsol_art_integration() -> void:
 		unit._attacking = false
 		view._sync_visual(false, 0.05)
 		immediate_stop_ok = (
-			view._animation_player.current_animation == "Idle1_Base"
+			view._animation_player.current_animation == "Spell1_2Idle"
 			and not unit.continuous_beam_visible
 		)
+		view._on_animation_finished(&"Spell1_2Idle")
+		immediate_stop_ok = immediate_stop_ok and view._animation_player.current_animation == "Idle1_Base"
+		unit._attacking = true
+		view._sync_visual(false, 0.0)
+		unit._attacking = false
+		view._sync_visual(false, 0.0)
+		unit._move_intent = Vector2.UP * unit.move_speed
+		view._sync_visual(false, 0.0)
+		immediate_stop_ok = immediate_stop_ok and view._animation_player.current_animation == "RunIn" and not unit.continuous_beam_visible
 	_expect(attached and default_air_height_applied, "空军模型尺寸不变，实际模型底部统一平移到默认离地高度")
 	_expect(air_health_bar_follows_model, "空军血条以离地后的模型为基准定位，不再停留在权威地面附近")
 	_expect(attack_transition_ok, "龙王进入攻击距离立即开始吐息，newtst 与 loop 全程保持光柱")
@@ -274,7 +285,7 @@ func _check_aurelionsol_art_integration() -> void:
 	_expect(move_transition_ok, "龙王吐息后按 Spell1_2Run→Run1B 直接接入移动循环")
 	_expect(move_cycle_ok, "龙王移动按 Run1B→Run1C→Run1D→Run1A 循环")
 	_expect(continuous_generic_fallback_ok, "continuous attack 无专用转跑片段时仍使用 action_out generic crossfade")
-	_expect(immediate_stop_ok, "龙王退出攻击时立即打断吐息循环，不等待循环动画播完")
+	_expect(immediate_stop_ok, "龙王退出攻击立即关光柱并进入收势，收势能结束回待机或被移动打断")
 	unit.take_damage(unit.max_hp + 1.0)
 	var death_view_found := view != null and view._dying and view._animation_player.current_animation == "Death"
 	_expect(death_view_found, "龙王死亡时由独立 3D 代理播放 Death")

@@ -1,12 +1,6 @@
 class_name ArenaDeploymentSuite
-extends RefCounted
+extends "res://tests/suites/battle_suite.gd"
 ## 竞技场与部署领域：场地网格、部署规则、出牌/部署延迟与 pocket 解锁回归。
-
-var _harness: Object
-var _main: Node2D
-
-func _expect(condition: bool, message: String) -> void:
-	_harness._expect(condition, message)
 
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
@@ -19,15 +13,16 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_command_tick_estimation()
 	_check_card_play_delay()
 	_check_deploy_delay()
+	_check_deployment_unlocks_first_attack()
 	_check_pocket_deployment()
 
 func _check_official_arena_grid() -> void:
 	var dimensions_ok: bool = (
-		_main.ARENA_COLUMNS == 18
-		and _main.ARENA_ROWS == 32
-		and is_equal_approx(_main.TILE_SIZE, 40.0)
-		and is_equal_approx(_main.RIVER_HALF * 2.0, _main.TILE_SIZE * 2.0)
-		and is_equal_approx(_main.BRIDGE_HALF * 2.0, _main.TILE_SIZE * 3.0)
+		ArenaRules.ARENA_COLUMNS == 18
+		and ArenaRules.ARENA_ROWS == 32
+		and is_equal_approx(ArenaRules.TILE_SIZE, 40.0)
+		and is_equal_approx(ArenaRules.RIVER_HALF * 2.0, ArenaRules.TILE_SIZE * 2.0)
+		and is_equal_approx(ArenaRules.BRIDGE_HALF * 2.0, ArenaRules.TILE_SIZE * 3.0)
 	)
 	_expect(dimensions_ok, "竞技场使用 18x32 格、两格河道与三格桥")
 	var towers_ok: bool = (
@@ -82,7 +77,7 @@ func _check_official_arena_grid() -> void:
 	for column in range(6, 12):
 		full_back_row = full_back_row and _main.is_card_deploy_position_valid(0, "xin", Vector2(column * 40.0 + 20.0, 1260.0))
 	_expect(full_back_row, "国王塔后方中央 6 格组成完整可部署行")
-	_expect(int(ProjectSettings.get_setting("display/window/size/viewport_height")) > int(_main.FIELD_H), "手牌区位于战场之外，不遮挡最后一行")
+	_expect(int(ProjectSettings.get_setting("display/window/size/viewport_height")) > int(ArenaRules.FIELD_H), "手牌区位于战场之外，不遮挡最后一行")
 
 func _check_card_deployment_preview() -> void:
 	# 鼠标落在格子内部任意位置时，兵种预览和最终部署坐标都必须是该格格心。
@@ -144,8 +139,8 @@ func _check_landing_position_correction() -> void:
 func _check_tower_ingress_guards() -> void:
 	var king: Tower = _main._king_player
 	_expect(not _main.is_card_deploy_position_valid(0, "xin", king.position), "玩家与联机请求不能在存活国王塔上部署")
-	_expect(not _main.is_card_deploy_position_valid(1, "xin", Vector2(_main.BRIDGE_X_LEFT, 250.0)), "AI 的旧出兵坐标会被统一占位校验拒绝")
-	_expect(_main.is_card_deploy_position_valid(1, "xin", Vector2(_main.BRIDGE_X_LEFT, 460.0)), "AI 改用公主塔前方合法格出兵")
+	_expect(not _main.is_card_deploy_position_valid(1, "xin", Vector2(ArenaRules.BRIDGE_X_LEFT, 250.0)), "AI 的旧出兵坐标会被统一占位校验拒绝")
+	_expect(_main.is_card_deploy_position_valid(1, "xin", Vector2(ArenaRules.BRIDGE_X_LEFT, 460.0)), "AI 改用公主塔前方合法格出兵")
 	var tombstone: Unit = _main._spawn_unit(0, "tombstone", Vector2(480.0, 1080.0))
 	# 召唤偏移位于墓碑占地内时，生成前改到最近合法位置。
 	var desired_summon := tombstone.position + Vector2(-24.0, 0.0)
@@ -247,15 +242,15 @@ func _check_card_play_delay() -> void:
 	_main._deploy_card(0, "tombstone", Vector2(480.0, 1000.0))
 	_main._deploy_card(0, "freeze", target.position)
 	var command_buffer_contract: bool = (
-		_main._pending_card_deployments.size() == 3
-		and int(_main._pending_card_deployments[0].execute_tick) == _main._sim_tick_id + _main.COMMAND_DELAY_TICKS
-		and not _main._pending_card_deployments[0].has("time_left")
+		_main._commands.card_commands.size() == 3
+		and int(_main._commands.card_commands[0].execute_tick) == _main._sim_tick_id + _main.COMMAND_DELAY_TICKS
+		and not _main._commands.card_commands[0].has("time_left")
 	)
 	for _i in 9:
 		_main._sim_step(_main.SIM_DT)
 	_expect(
 		_main.get_tree().get_nodes_in_group("combatants").size() == combatants_before
-		and target.frozen_timer <= 0.0,
+		and target.control.frozen_timer <= 0.0,
 		"兵种、建筑和法术在目标执行 Tick 前仍未生成或生效"
 	)
 	_main._sim_step(_main.SIM_DT)
@@ -266,7 +261,7 @@ func _check_card_play_delay() -> void:
 	_expect(
 		command_buffer_contract
 		and _main.get_tree().get_nodes_in_group("combatants").size() == combatants_before + 2
-		and target.frozen_timer > 0.0,
+		and target.control.frozen_timer > 0.0,
 		"卡牌使用进入 10 Tick Command Buffer，并在主机权威执行 Tick 统一生效"
 	)
 	var spawned_with_default_deploy := false
@@ -277,7 +272,7 @@ func _check_card_play_delay() -> void:
 	for unit in spawned:
 		unit._die()
 	target.free()
-	_main._freeze_effects.clear()
+	_main._spell_system.freeze_effects.clear()
 
 func _check_deploy_delay() -> void:
 	var stats: Dictionary = CardDB.get_card("garen").duplicate()
@@ -303,7 +298,7 @@ func _check_deploy_delay() -> void:
 	var hp_before := unit.hp
 	unit.take_damage(25.0, attacker)
 	var overlap_before := attacker.position.distance_to(unit.position)
-	_main._resolve_unit_collisions(_main.SIM_DT)
+	_main._movement._resolve_unit_collisions(_main.SIM_DT, _main._movement._active_mobile_units())
 	_expect(attacker._target == unit and unit.hp < hp_before, "部署中的单位可以被敌方索敌并命中")
 	_expect(attacker.position.distance_to(unit.position) > overlap_before, "部署中的单位拥有实体碰撞并参与推挤")
 	attacker.free()
@@ -324,3 +319,29 @@ func _check_pocket_deployment() -> void:
 	if princess.nav_cells.is_empty() and not saved_nav_cells.is_empty():
 		princess.nav_cells = saved_nav_cells.duplicate()
 		_main.nav.set_cells_blocked(princess.nav_cells, true)
+
+func _check_deployment_unlocks_first_attack() -> void:
+	var unit := Unit.new()
+	unit.card_id = "twisted_fate"
+	unit.setup(0, CardDB.get_card("twisted_fate"), "卡牌大师")
+	unit.position = Vector2(360, 820)
+	var dummy := Unit.new()
+	dummy.setup(1, CardDB.training_dummy_stats(), "部署木桩")
+	dummy.position = Vector2(360, 760)
+	_main.add_child(unit)
+	_main.add_child(dummy)
+	for tick in roundi(unit.deploy_time / 0.05) - 1:
+		unit.sim_tick(0.05)
+	var locked := unit.get_attack_visual_serial() == 0 and not unit.is_deployed()
+	unit.sim_tick(0.05)
+	_expect(locked and unit.is_deployed() and unit.get_attack_visual_serial() == 1 and unit._attack_swing_count == 0 and unit.attack_timeline.windup > 0.0, "部署结束的 Tick 开始首击前摇，不跳过正常攻击前摇")
+	unit.free()
+	dummy.free()
+	var walker := Unit.new()
+	walker.setup(0, CardDB.get_card("twisted_fate"), "部署行军")
+	walker.position = Vector2(360, 820)
+	_main.add_child(walker)
+	for tick in maxi(roundi(walker.deploy_time / 0.05), 1):
+		walker.sim_tick(0.05)
+	_expect(walker.is_deployed() and walker._move_intent.length_squared() > 0.0, "部署结束后无近目标时产生移动意图")
+	walker.free()

@@ -1,12 +1,6 @@
 class_name GwenSuite
-extends RefCounted
-## 格温卡牌领域：丝缕缠流机制、推塔回归与美术接入。
-
-var _harness: Object
-var _main: Node2D
-
-func _expect(condition: bool, message: String) -> void:
-	_harness._expect(condition, message)
+extends "res://tests/suites/battle_suite.gd"
+## 格温卡牌领域：百分比被动、推塔回归与美术接入。
 
 func _view_for(unit: Unit) -> UnitModel3D:
 	for child in _main._battle_presentation._world_root.get_children():
@@ -41,7 +35,7 @@ func _check_gwen_snip_snip_skill() -> void:
 		charged_full and is_zero_approx(gwen.skill_resource_value)
 		and String(prepared_full.visual_action) == "active_3"
 		and is_equal_approx(float(prepared_full.cast_duration), 1.5)
-		and prepared_full.prepared_hit_damages == [40.0, 20.0, 20.0, 20.0, 60.0]
+		and prepared_full.prepared_hit_damages == [40, 20, 20, 20, 60]
 		and is_equal_approx(float(prepared_full.cast_end_heal), 100.0)
 	)
 	var partial := Unit.new()
@@ -63,10 +57,10 @@ func _check_gwen_snip_snip_skill() -> void:
 	_main.add_child(one)
 	var prepared_one: Dictionary = _main._active_skill_effect_system.prepare_cast(one, skill)
 	var all_tiers: bool = (
-		String(prepared_zero.visual_action) == "active_0" and prepared_zero.prepared_hit_damages == [40.0, 60.0]
-		and String(prepared_one.visual_action) == "active_1" and prepared_one.prepared_hit_damages == [40.0, 20.0, 60.0]
-		and String(prepared_partial.visual_action) == "active_2" and prepared_partial.prepared_hit_damages == [40.0, 20.0, 20.0, 60.0]
-		and String(prepared_full.visual_action) == "active_3" and prepared_full.prepared_hit_damages == [40.0, 20.0, 20.0, 20.0, 60.0]
+		String(prepared_zero.visual_action) == "active_0" and prepared_zero.prepared_hit_damages == [40, 60]
+		and String(prepared_one.visual_action) == "active_1" and prepared_one.prepared_hit_damages == [40, 20, 60]
+		and String(prepared_partial.visual_action) == "active_2" and prepared_partial.prepared_hit_damages == [40, 20, 20, 60]
+		and String(prepared_full.visual_action) == "active_3" and prepared_full.prepared_hit_damages == [40, 20, 20, 20, 60]
 	)
 	var visual_actions: Dictionary = stats.visual_animations.visual_actions
 	var spell_0_time_scale := float(visual_actions.active_0.durations[0]) / 1.6666667
@@ -93,7 +87,7 @@ func _check_gwen_snip_snip_skill() -> void:
 		and is_equal_approx(float(range_effect.arc_degrees), 78.0)
 		and is_equal_approx(float(range_effect.length), 135.0)
 		and is_equal_approx(float(range_effect.center_width), 30.0)
-		and is_equal_approx(float(range_effect.duration), 1.0443036)
+		and is_equal_approx(float(range_effect.duration), 1.04)
 	)
 	_main._active_skill_effect_system.frontal_effects.clear()
 	_expect(
@@ -119,25 +113,38 @@ func _check_gwen_snip_snip_skill() -> void:
 	var edge_before := edge.hp
 	var behind_before := behind.hp
 	var outside_arc_before := outside_arc.hp
+	gwen.card_id = "gwen"
+	_main._audio_manager.attach_unit(gwen, stats)
+	var hit_cues: Array = []
+	var on_hit_cue := func(card, cue, _position):
+		if card == "gwen" and ":hit_" in String(cue): hit_cues.append(String(cue))
+	_main._audio_manager.cue_played.connect(on_hit_cue)
 	_main._queue_active_skill_impact(gwen, prepared_full, float(prepared_full.impact_delay))
 	for _tick in 3:
-		_main._tick_pending_active_skill_impacts(0.05)
-	var first_cut := is_equal_approx(center_before - center.hp, 40.0 * 1.2)
+		_main._commands.tick_impacts(0.05)
+	var first_cut := is_equal_approx(center_before - center.hp, 40.0 * 1.2 + roundf(center.max_hp * 0.05))
 	for _tick in 25:
-		_main._tick_pending_active_skill_impacts(0.05)
+		_main._commands.tick_impacts(0.05)
 	var all_cuts := (
-		is_equal_approx(center_before - center.hp, 160.0 * 1.2)
-		and is_equal_approx(edge_before - edge.hp, 160.0)
+		is_equal_approx(center_before - center.hp, 160.0 * 1.2 + 5.0 * roundf(center.max_hp * 0.05))
+		and is_equal_approx(edge_before - edge.hp, 160.0 + 5.0 * roundf(edge.max_hp * 0.05))
 		and is_equal_approx(behind.hp, behind_before)
 		and is_equal_approx(outside_arc.hp, outside_arc_before)
 	)
 	for _tick in 12:
-		_main._tick_pending_active_skill_impacts(0.05)
+		_main._commands.tick_impacts(0.05)
 	_expect(
 		first_cut and all_cuts and is_equal_approx(gwen.hp, 400.0)
 		and gwen.is_active_skill_movement_locked() and gwen.is_active_skill_attack_locked() and gwen.is_active_skill_facing_locked(),
 		"格温按 40→20×3→60 分次剪切，恒宽中央长条逐次乘 1.2，圆弧扇区不误伤远端角落或身后；满层在 1.5 秒结束时回复 100 生命",
 	)
+	_expect(hit_cues == ["active_3:hit_first_center", "active_3:hit_middle_center", "active_3:hit_middle_center", "active_3:hit_middle_center", "active_3:hit_last_center"], "格温实际五剪命中分别播首/中/末音效，多目标同剪只播一次")
+	var empty_cut := prepared_full.duplicate(true)
+	empty_cut["hit_audio_phase"] = "last"
+	_main._active_skill_effect_system.apply_frontal(gwen, empty_cut, Vector2.RIGHT)
+	_expect(hit_cues.size() == 5, "格温空剪不播放命中声")
+	_main._audio_manager.cue_played.disconnect(on_hit_cue)
+	_main._audio_manager._detach_unit(gwen.get_instance_id())
 	_main._battle_presentation.attach_unit(gwen, stats)
 	var view: UnitModel3D = null
 	for child in _main._battle_presentation._world_root.get_children():
@@ -169,7 +176,7 @@ func _check_gwen_snip_snip_skill() -> void:
 		view._on_animation_finished(&"Spell1_C_to_Run_anm")
 		var transition_to_run_short := (
 			view._animation_player.current_animation == "Run_anm"
-			and is_equal_approx(view._last_clip_blend_time, view._transition_blend(&"sequence"))
+			and is_zero_approx(view._last_clip_blend_time)
 		)
 		animation_chain = clip_0 and clip_b_1 and clip_b_2 and clip_b_3 and clip_c and clip_c_no_blend and transition_entry_short and transition_to_run_short
 	_expect(animation_chain, "格温满层技能在 Spell1 0 的 1.5 秒总时槽内无混合直连 B×3→C，技能后移动直接衔接 Spell1 C ToRun")
@@ -178,112 +185,80 @@ func _check_gwen_snip_snip_skill() -> void:
 			unit.free()
 
 func _check_gwen_mechanic() -> void:
-	var gwen_stats: Dictionary = CardDB.get_card("gwen").duplicate(true)
-	var enemy_stats: Dictionary = CardDB.get_card("xin").duplicate(true)
-	gwen_stats["deploy_time"] = 0.0
-	gwen_stats["hp"] = 1000.0
-	enemy_stats["deploy_time"] = 0.0
+	var stats := CardDB.get_card("gwen").duplicate(true)
+	stats["deploy_time"] = 0.0
 	var gwen := Unit.new()
-	var foe := Unit.new()
-	gwen.position = Vector2(300.0, 800.0)
-	foe.position = Vector2(300.0, 760.0)
-	gwen.setup(0, gwen_stats, gwen_stats.name)
-	foe.setup(1, enemy_stats, enemy_stats.name)
+	gwen.setup(0, stats, stats.name)
 	_main.add_child(gwen)
-	_main.add_child(foe)
-	_expect(is_equal_approx(gwen.shroud_radius, 120.0), "格温缠流半径读取为 3 格（120px）")
-	# 未开启时：圈外敌方能看到她，攻击造成完整伤害
-	var far := Unit.new()
-	far.position = Vector2(300.0, 660.0)   # 距 gwen 140px > 120，属圈外
-	far.setup(1, enemy_stats, enemy_stats.name)
-	_main.add_child(far)
-	_expect(not gwen.is_hidden_from(far), "未开启时，圈外敌方能看到格温")
-	_expect(far._target_is_attackable(gwen), "未开启时，圈外敌方能把格温锁定为目标")
-	far.free()
-	# 首次普攻命中 → 开启丝缕缠流
-	var activated := false
-	for _i in 60:
-		_main._sim_step(_main.SIM_DT)
-		if gwen._shroud_active:
-			activated = true
-			break
-	_expect(activated, "格温首次普攻命中后开启丝缕缠流")
-	_expect(gwen._shroud_active, "锁定在攻中时，缠流处于开启状态")
-	# 开启后：圈外敌方/塔看不到她，无法锁定、不会攻击
-	far = Unit.new()
-	far.position = Vector2(300.0, 660.0)
-	far.setup(1, enemy_stats, enemy_stats.name)
-	_main.add_child(far)
-	_expect(gwen.is_hidden_from(far), "开启后，圈外敌方看不到格温")
-	_expect(not far._target_is_attackable(gwen), "开启后，圈外敌方不会把格温锁定为目标")
-	far._target = gwen
-	far._attacking = false
-	far._update_target()
-	_expect(far._target != gwen, "正在圈外追击的敌方会立即丢失格温并重新行动")
-	var tower := Tower.new()
-	tower.team = 1
-	tower.position = Vector2(300.0, 620.0)
-	_main.add_child(tower)
-	_expect(gwen.is_hidden_from(tower), "开启后，圈外塔也看不到格温")
-	tower.free()
-	# 圈内的敌方仍能看到并攻击
-	var near := Unit.new()
-	near.position = Vector2(300.0, 760.0)   # 距 40px < 100，属圈内
-	near.setup(1, enemy_stats, enemy_stats.name)
-	_main.add_child(near)
-	_expect(not gwen.is_hidden_from(near), "圈内敌方能看到格温")
-	var in_hp := gwen.hp
-	_main.launch_attack(near, gwen, 30.0, 0.0, 0.0, 0.0, near.color)
-	_expect(gwen.hp == in_hp - 30.0, "圈内敌方的攻击仍然生效")
-	# 弹体已在空中、格温随后开启缠流 → 圈外弹体立即失去目标并消散。
-	# 隔离：清掉圈内目标保证飞行期间 hp 只受这支弹体影响；foe 保留存活以维持格温攻击态。
-	near.free()
-	foe.damage = 0.0   # foe 只在圈内站桩，确保攻击态持续但不产生正常伤害
-	gwen._shroud_active = false
-	var inb_hp := gwen.hp
-	var shooter := Unit.new()
-	shooter.position = Vector2(300.0, 600.0)   # 距 200px，圈外射手
-	shooter.setup(1, enemy_stats, enemy_stats.name)
-	_main.add_child(shooter)
-	_main.launch_attack(shooter, gwen, 50.0, 600.0, 0.0, 0.0, shooter.color)
-	var launched_before_shroud: bool = not _main._projectiles.is_empty()
-	gwen.on_attack_landed()
-	_main._tick_projectiles(_main.SIM_DT)
-	_expect(launched_before_shroud and _main._projectiles.is_empty() and gwen.hp == inb_hp, "弹体飞行中开启缠流时，圈外弹体立即消散且不造成伤害")
-	# 攻击者在弹体飞行途中死亡，仍使用其最后位置判断，不能因来源节点释放而穿透缠流。
-	gwen._shroud_active = false
-	_main.launch_attack(shooter, gwen, 50.0, 600.0, 0.0, 0.0, shooter.color)
-	var launched_before_source_freed: bool = not _main._projectiles.is_empty()
-	shooter.free()
-	gwen.on_attack_landed()
-	_main._tick_projectiles(_main.SIM_DT)
-	_expect(launched_before_source_freed and _main._projectiles.is_empty() and gwen.hp == inb_hp, "攻击者死亡后，弹体仍按最后来源位置被缠流拦截")
-	# 缠流已经开启时，圈外来源不能创建新的弹体。
-	var blocked_shooter := Unit.new()
-	blocked_shooter.position = Vector2(300.0, 600.0)
-	blocked_shooter.setup(1, enemy_stats, enemy_stats.name)
-	_main.add_child(blocked_shooter)
-	_main.launch_attack(blocked_shooter, gwen, 50.0, 600.0, 0.0, 0.0, blocked_shooter.color)
-	_expect(_main._projectiles.is_empty(), "缠流开启后，圈外攻击者无法继续向格温发射弹体")
-	blocked_shooter.free()
-	# 目标死亡 → 退出攻击状态 → 关闭缠流，敌方又能看到并攻击
-	far.free()
-	foe.hp = 0.0
-	foe.queue_free()
-	for _i in 20:
-		_main._sim_step(_main.SIM_DT)
-	_expect(not gwen._shroud_active, "目标死亡、格温退出攻击状态后缠流关闭")
-	var observer := Unit.new()
-	observer.position = Vector2(300.0, 660.0)
-	observer.setup(1, enemy_stats, enemy_stats.name)
-	_main.add_child(observer)
-	_expect(not gwen.is_hidden_from(observer), "缠流关闭后，圈外敌方又能看到格温")
-	observer.free()
+	var target := Unit.new()
+	var target_stats := SuiteUtils.sweep_dummy_stats(CardDB.get_card("garen"))
+	target_stats["hp"] = 1010.0
+	target.setup(1, target_stats, "被动木桩")
+	_main.add_child(target)
+	_main.launch_attack(gwen, target, 62.0, 0.0, 0.0, 0.0, gwen.color)
+	_expect(target.hp == 897.0 and not gwen._shroud_active and gwen.shroud_radius == 0.0, "格温普攻 62 + 最大生命 5%（50.5 四舍五入为 51），不再开启缠流")
+	var before := target.hp
+	_main.launch_attack(gwen, target, 62.0 * 1.5, 0.0, 0.0, 0.0, gwen.color)
+	_expect(before - target.hp == 144.0, "强化倍率只影响普攻基础值，被动不放大")
+	for tower in [_main._towers[3], _main._king_enemy]:
+		before = tower.hp
+		_main.launch_attack(gwen, tower, 62.0, 0.0, 0.0, 0.0, gwen.color)
+		_expect(before - tower.hp == 82.0, "防御塔与水晶被动固定附加 20 点")
+		tower.hp = before
+	target.take_damage(10.49)
+	_expect(target.hp == 743.0, "普通伤害小于半点向下取整")
+	target.heal(10.5)
+	_expect(target.hp == 754.0, "治疗半点向上取整")
+	gwen.position = Vector2(360, 900)
+	gwen.hp = 300.0
+	gwen.configure_carried_active_skill(stats.active_skills[0])
+	gwen.add_skill_resource(3.0)
+	var skill: Dictionary = _main._active_skill_effect_system.prepare_cast(gwen, stats.active_skills[0])
+	skill["cast_forward"] = Vector2.UP
+	target.position = Vector2(600, 1100)
+	_main._queue_active_skill_impact(gwen, skill, float(skill.impact_delay))
+	for _tick in 35:
+		_main._commands.tick_impacts(0.05)
+	_expect(gwen.hp == 300.0, "满层技能完全空放不回血")
+	# 同一来源后续施法必须使用独立命中记录；命中被免疫拒绝也不回血。
+	target.position = Vector2(360, 790)
+	target.shroud_radius = 1.0
+	target._shroud_active = true
+	_main._queue_active_skill_impact(gwen, skill, float(skill.impact_delay))
+	for _tick in 35:
+		_main._commands.tick_impacts(0.05)
+	_expect(gwen.hp == 300.0, "满层所有剪切被免疫拒绝不算真实命中")
+	# 只在首剪击杀也算本次命中；结束后再空放不能继承上一轮命中。
+	target._shroud_active = false
+	target.hp = 1.0
+	_main._queue_active_skill_impact(gwen, skill, float(skill.impact_delay))
+	for _tick in 35:
+		_main._commands.tick_impacts(0.05)
+	_expect(gwen.hp == 400.0, "满层首剪击杀、后续空剪仍只回复一次 100")
+	_main._queue_active_skill_impact(gwen, skill, float(skill.impact_delay))
+	for _tick in 35:
+		_main._commands.tick_impacts(0.05)
+	_expect(gwen.hp == 400.0, "后续空放不会复用上一次施法命中记录")
+	var tower: Tower = _main._towers[3]
+	var tower_before := tower.hp
+	gwen.position = tower.position + Vector2.DOWN * 100.0
+	var tower_cut: Dictionary = stats.active_skills[0].duplicate(true)
+	_main._active_skill_effect_system.apply_frontal(gwen, tower_cut, Vector2.UP)
+	_expect(tower_before - tower.hp == 68.0, "剪切防御塔中央伤害为 40×1.2+20，固定被动不放大")
+	tower.hp = tower_before
+	gwen.add_shield(10.5, 1.0, true)
+	gwen._tick_active_statuses(0.05)
+	var hp_before := gwen.hp
+	gwen.take_damage(20.5)
+	_expect(gwen.hp == hp_before - 11.0 and gwen.hp == roundf(gwen.hp), "护盾量与衰减四舍五入，破盾后生命仍为整数")
+	var invalid_stats := stats.duplicate(true)
+	invalid_stats["on_hit_max_health_ratio"] = -0.05
+	var errors := PackedStringArray()
+	CardDB.VALIDATOR._validate_combat_stats("passive_probe", invalid_stats, true, errors)
+	_expect(not errors.is_empty(), "被动 schema 拒绝负百分比")
+	target.free()
 	gwen.free()
 
-## 缠流扩大到 3 格后的推塔回归：格温贴身攻击时，公主塔心距她 ≤ 54+18+30=102px、
-## 水晶心距她 ≤ 72+18+30=120px，都落在 120px 缠流圈内 → 塔和水晶能看见她并反击，
-## 锁定 100px 塔半径边界下的双向视野，防止圈外单向攻塔。
 func _check_gwen_tower_combat() -> void:
 	var gwen_stats: Dictionary = CardDB.get_card("gwen").duplicate(true)
 	gwen_stats["deploy_time"] = 0.0
@@ -300,9 +275,9 @@ func _check_gwen_tower_combat() -> void:
 	var gwen_hp := gwen.hp
 	for _tick in 100:
 		_main._sim_step(_main.SIM_DT)
-	_expect(gwen._shroud_active, "格温攻击公主塔首次命中后开启丝缕缠流")
+	_expect(not gwen._shroud_active, "格温攻击公主塔不再开启缠流")
 	_expect(tower.hp < tower_hp, "格温对公主塔持续输出")
-	_expect(gwen.hp < gwen_hp, "缠流开启后，贴身的公主塔仍在圈内，能看见并反击格温")
+	_expect(gwen.hp < gwen_hp, "公主塔能正常锁定并反击格温")
 	# 塔也接入受击闪白：3D 代理收到限频表现事件，且闪白强度已减淡。
 	var tower_view: TowerModel3D = null
 	for child in _main._battle_presentation._world_root.get_children():
@@ -329,7 +304,7 @@ func _check_gwen_tower_combat() -> void:
 	var attacker_hp := attacker.hp
 	for _tick in 100:
 		_main._sim_step(_main.SIM_DT)
-	_expect(attacker._shroud_active, "格温攻击水晶首次命中后开启丝缕缠流")
+	_expect(not attacker._shroud_active, "格温攻击水晶不再开启缠流")
 	_expect(king.hp < king_hp, "格温对水晶持续输出")
 	_expect(not king.activated, "水晶受到攻击后仍不激活攻击能力")
 	_expect(is_equal_approx(attacker.hp, attacker_hp), "水晶不索敌、不发射弹体也不造成伤害")
@@ -342,8 +317,8 @@ func _check_gwen_tower_combat() -> void:
 	_expect(king_view != null and king_view._hit_flash_timer > 0.0, "水晶受击后 3D 模型同步轻微闪白")
 	attacker.free()
 	# 还原现场：公主塔解冻、水晶回到初始血量与休眠状态，不影响后续测试。
-	left_princess.frozen_timer = 0.0
-	tower.frozen_timer = 0.0
+	left_princess.control.frozen_timer = 0.0
+	tower.control.frozen_timer = 0.0
 	king.hp = king_hp
 	king.activated = king_was_active
 
@@ -360,7 +335,7 @@ func _check_gwen_art_integration() -> void:
 	var attacks: Array = anim_names.attack
 	_expect(attacks == ["Attack1", "Attack2", "Attack3"], "格温三套攻击动作按表现序号交替选择")
 	var attack_to_move: Array = anim_names.attack_to_move
-	_expect(attack_to_move == ["Into_Run", "Into_Run", "INTO_Run_180_anm"], "格温前两段攻击接 Into_Run，第三段攻击接 180° 转跑动作")
+	_expect(attack_to_move == ["Into_Run", "INTO_Run_-90_anm", "INTO_Run_180_anm"], "格温三段攻击按原表零朝向分支分别接 Into_Run、-90°、180°转跑")
 	var unit := Unit.new()
 	unit.position = Vector2(360.0, 900.0)
 	unit.setup(0, stats, stats.name)
@@ -376,7 +351,7 @@ func _check_gwen_art_integration() -> void:
 			var expected_transition := StringName(attack_to_move[serial - 1])
 			attack_move_routes_ok = attack_move_routes_ok and model_view._animation_player.current_animation == expected_transition
 			model_view._on_animation_finished(expected_transition)
-	_expect(attack_move_routes_ok, "格温攻击 1/2/3 退出到移动时分别播放 Into_Run、Into_Run、INTO_Run_180_anm")
+	_expect(attack_move_routes_ok, "格温攻击 1/2/3 退出到移动时分别播放 Into_Run、INTO_Run_-90_anm、INTO_Run_180_anm")
 	unit.take_damage(unit.max_hp + 1.0)
 	var death_view_found := false
 	for child in _main._battle_presentation._world_root.get_children():

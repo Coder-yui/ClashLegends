@@ -1,12 +1,6 @@
 class_name AniviaSuite
-extends RefCounted
+extends "res://tests/suites/battle_suite.gd"
 ## 艾尼维亚领域回归：冰雪风暴固定落区、三秒持续伤害/减速、小冰锥弹体与蛋形态复生。
-
-var _harness: Object
-var _main: Node2D
-
-func _expect(condition: bool, message: String) -> void:
-	_harness._expect(condition, message)
 
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
@@ -29,15 +23,15 @@ func _check_card_config_and_visuals() -> void:
 		bool(stats.get("is_air", false))
 		and bool(stats.get("can_attack_air", false))
 		and is_equal_approx(float(stats.get("range", 0.0)), 190.0)
-		and is_equal_approx(float(stats.get("interval", 0.0)), 1.4)
+		and is_equal_approx(float(stats.get("interval", 0.0)), 1.7)
 		and StringName(stats.get("projectile_visual", "")) == &"ice_cone"
 		and CardArt.texture_for("anivia") != null,
 		"冰晶凤凰是远程空军、攻速较慢，并使用小冰锥普通攻击弹体且已有卡面",
 	)
 	_expect(
 		model_node != null
-		and is_equal_approx(model_node.scale.x, 0.009)
-		and is_equal_approx(model_node.scale.y, 0.009)
+		and is_equal_approx(model_node.scale.x, 0.011385)
+		and is_equal_approx(model_node.scale.y, 0.011385)
 		and String(animations.get("deploy", "")) == "Idle1"
 		and String(animations.get("idle", "")) == "Idle1"
 		and String(animations.get("move", "")) == "Run"
@@ -53,7 +47,7 @@ func _check_card_config_and_visuals() -> void:
 		and int(skill.get("max_uses", 0)) == 1
 		and skill.get("cast_locks", []) == ["movement", "attack", "facing"]
 		and is_equal_approx(float(skill.get("impact_delay", 0.0)), 0.72)
-		and is_equal_approx(float(skill.get("cast_duration", 0.0)), 1.166667)
+		and is_equal_approx(float(skill.get("cast_duration", 0.0)), 1.17)
 		and is_equal_approx(float(skill.get("zone_duration", 0.0)), 3.0)
 		and is_equal_approx(float(skill.get("zone_tick_interval", 0.0)), 1.0)
 		and int(stats.get("death_replacement_charges", 0)) == 1
@@ -81,10 +75,10 @@ func _check_frost_storm_zone() -> void:
 	var initial_damage := target_before - target.hp
 	var locked: bool = phoenix.is_active_skill_movement_locked() and phoenix.is_active_skill_attack_locked() and phoenix.is_active_skill_facing_locked()
 	var zone_created: bool = _main._active_skill_effect_system.continuous_area_effects.size() == 1
-	var initial_slow: bool = target.slow_timer > 0.0 and is_equal_approx(target.slow_multiplier, 0.65)
+	var initial_slow: bool = target.control.slow_timer > 0.0 and is_equal_approx(target.control.slow_multiplier, 0.65)
 	_expect(
 		locked and no_preimpact_star_visual and zone_created and is_equal_approx(initial_damage, 90.0) and initial_slow
-		and is_equal_approx(phoenix.get_visual_action_duration(), 1.166667),
+		and is_equal_approx(phoenix.get_visual_action_duration(), 1.17),
 		"冰雪风暴不提前播放星体落点特效，在 Spell4 期间锁定三项操作并于 Impact 直接生成区域",
 	)
 	var after_initial := target.hp

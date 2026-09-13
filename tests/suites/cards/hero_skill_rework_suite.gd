@@ -1,16 +1,6 @@
 class_name HeroSkillReworkSuite
-extends RefCounted
+extends "res://tests/suites/battle_suite.gd"
 ## 腕豪/寒冰/盖伦/提莫技能重做：定向命中、资源、强化普攻、致盲与专用动画链。
-
-var _harness: Object
-var _main: Node2D
-
-func _expect(condition: bool, message: String) -> void:
-	_harness._expect(condition, message)
-
-func _run_main_ticks(count: int) -> void:
-	for _tick in count:
-		_main._sim_step(_main.SIM_DT)
 
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
@@ -18,6 +8,8 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_sett_resource_and_frontal_damage()
 	_check_sett_shield_and_combat_decay()
 	_check_ashe_volley()
+	_check_ashe_arrow_collision()
+	_check_piercing_cards()
 	_check_empowered_attacks_and_blind()
 	_check_garen_judgment()
 	_check_masteryi_double_strike_and_highlander()
@@ -100,13 +92,14 @@ func _check_sett_shield_and_combat_decay() -> void:
 	var dummy := _spawn_dummy(Vector2(180.0, 1060.0))
 	sett._target = dummy
 	sett._attacking = true
-	sett._attack_windup = 0.0
-	sett._attack_cd = 0.0
+	sett.attack_timeline.windup = 0.0
+	sett.attack_timeline.cooldown = 0.0
 	sett._attack_visual_pending = true
 	sett._attack(_main.SIM_DT)
 	resource_from_attack = is_equal_approx(sett.skill_resource_value, 200.0)
 
 	var full_prepared: Dictionary = _main._active_skill_effect_system.prepare_cast(sett, skill)
+	_expect(is_equal_approx(float(zero_prepared.impact_delay), 0.8) and is_equal_approx(float(full_prepared.impact_delay), float(zero_prepared.impact_delay)), "腕豪普通与满豪意 W 使用相同的 0.8 秒权威命中延迟")
 	_main._active_skill_effect_system.apply_cast_start(sett, full_prepared)
 	var cast_start_shield := is_equal_approx(sett.shield_hp, 300.0) and is_zero_approx(sett.skill_resource_value)
 	sett._tick_active_statuses(1.0)
@@ -155,7 +148,7 @@ func _check_ashe_volley() -> void:
 	var behind := _spawn_dummy(Vector2(300.0, 1250.0))
 	var skill: Dictionary = CardDB.active_skills_for("ashe")[0]
 	var active_visual: Dictionary = CardDB.get_card("ashe").visual_animations.visual_actions.active
-	var animation_duration_ok: bool = active_visual.get("durations", []) == [1.0]
+	var animation_duration_ok: bool = active_visual.get("durations", []) == [1.0] and is_equal_approx(float(skill.cast_duration), 1.0) and is_equal_approx(ashe.attack_interval, 1.0) and is_equal_approx(float(skill.impact_delay), 0.16)
 	ashe.begin_active_skill_cast(float(skill.cast_duration), Vector2.UP, skill.cast_locks)
 	var front_before := front.hp
 	var behind_before := behind.hp
@@ -165,18 +158,23 @@ func _check_ashe_volley() -> void:
 		bool(skill.fan_inner_arc)
 		and bool(range_effect.fan_inner_arc)
 		and is_equal_approx(float(range_effect.source_radius), ashe.body_radius)
-		and is_equal_approx(float(range_effect.length), 190.0)
+		and is_equal_approx(float(range_effect.length), 210.0)
 		and is_equal_approx(float(range_effect.arc_degrees), 72.0)
+		and is_equal_approx(float(range_effect.projectile_launch_delay), float(skill.impact_delay))
+		and is_equal_approx(float(range_effect.projectile_flight_duration), 0.2)
+		and is_equal_approx(ashe.first_hit_time, 0.14)
 	)
 	_main._active_skill_effect_system.apply(ashe, skill)
+	var waits_for_flight := is_equal_approx(front.hp, front_before)
+	_main._tick_projectiles(0.25)
 	_expect(
 			int(skill.projectile_count) == 8 and String(skill.shape) == "fan" and String(skill.visual_action) == "active"
-			and animation_duration_ok
+			and waits_for_flight and animation_duration_ok
 			and ring_sector_shape
 			and is_equal_approx(front_before - front.hp, float(skill.damage))
-		and is_equal_approx(front.slow_timer, 1.0)
+		and is_equal_approx(front.control.slow_timer, 1.0)
 		and is_equal_approx(behind.hp, behind_before),
-		"寒冰 Spell2 万箭齐发动画为 1 秒，使用贴合人物体型内圆弧的 8 箭环形扇区，命中前方目标一次并减速，不命中身后",
+		"寒冰 Spell2 万箭齐发压至 1 秒，普攻/W 均按源 0.30 秒换算离弦节点，使用贴合人物体型内圆弧的 8 箭环形扇区，命中前方目标一次并减速，不命中身后",
 	)
 	_main._active_skill_effect_system.frontal_effects.clear()
 	for unit in [ashe, front, behind]:
@@ -188,17 +186,17 @@ func _check_empowered_attacks_and_blind() -> void:
 	var garen_skill: Dictionary = CardDB.active_skills_for("garen")[0]
 	garen._target = target
 	garen._attacking = true
-	garen._attack_windup = 0.2
-	garen._attack_cd = 0.6
+	garen.attack_timeline.windup = 0.2
+	garen.attack_timeline.cooldown = 0.6
 	garen._attack_visual_pending = false
-	var windup_before := garen._attack_windup
-	var cooldown_before := garen._attack_cd
+	var windup_before := garen.attack_timeline.windup
+	var cooldown_before := garen.attack_timeline.cooldown
 	_main._active_skill_effect_system.apply(garen, garen_skill)
-	var cadence_preserved := is_equal_approx(garen._attack_windup, windup_before) and is_equal_approx(garen._attack_cd, cooldown_before)
+	var cadence_preserved := is_equal_approx(garen.attack_timeline.windup, windup_before) and is_equal_approx(garen.attack_timeline.cooldown, cooldown_before)
 	var no_mid_attack_speed_boost := is_equal_approx(garen.empowered_attack_speed_multiplier, 1.0)
 	var target_before := target.hp
-	garen._attack_windup = 0.0
-	garen._attack_cd = 0.0
+	garen.attack_timeline.windup = 0.0
+	garen.attack_timeline.cooldown = 0.0
 	garen._attack(_main.SIM_DT)
 	var empowered_damage := target_before - target.hp
 	_expect(
@@ -220,8 +218,8 @@ func _check_empowered_attacks_and_blind() -> void:
 	_main._active_skill_effect_system.apply(teemo, CardDB.active_skills_for("teemo")[0])
 	teemo._target = blinded
 	teemo._attacking = true
-	teemo._attack_windup = 0.0
-	teemo._attack_cd = 0.0
+	teemo.attack_timeline.windup = 0.0
+	teemo.attack_timeline.cooldown = 0.0
 	teemo._attack_visual_pending = true
 	teemo._attack(_main.SIM_DT)
 	for _tick in range(10):
@@ -235,13 +233,13 @@ func _check_empowered_attacks_and_blind() -> void:
 	_main._active_skill_effect_system.apply(blinded, garen_skill)
 	var victim_before := victim.hp
 	for _index in range(2):
-		blinded._attack_windup = 0.0
-		blinded._attack_cd = 0.0
+		blinded.attack_timeline.windup = 0.0
+		blinded.attack_timeline.cooldown = 0.0
 		blinded._attack_visual_pending = true
 		blinded._attack(_main.SIM_DT)
 	var first_two_missed := is_equal_approx(victim.hp, victim_before) and blinded.blind_attack_charges == 0 and not blinded.empowered_attack_ready
-	blinded._attack_windup = 0.0
-	blinded._attack_cd = 0.0
+	blinded.attack_timeline.windup = 0.0
+	blinded.attack_timeline.cooldown = 0.0
 	blinded._attack_visual_pending = true
 	blinded._attack(_main.SIM_DT)
 	_expect(
@@ -283,7 +281,7 @@ func _check_garen_judgment() -> void:
 	# 主动施法锁定攻击但不锁移动：实际走一次统一移动应用，确认窗口内仍可位移。
 	var position_before_move := garen.position
 	garen._move_intent = Vector2.RIGHT * garen.move_speed
-	_main._apply_unit_movement(_main.SIM_DT)
+	_main._movement._apply_unit_movement(_main.SIM_DT, _main._movement._active_mobile_units())
 	var moved_during_cast := garen.position.distance_to(position_before_move) > 0.001
 	var target_before := target.hp
 	var outside_before := outside.hp
@@ -331,8 +329,8 @@ func _check_masteryi_double_strike_and_highlander() -> void:
 	yi._target = target
 	yi._attacking = true
 	yi._attack_hit_index = 2
-	yi._attack_windup = 0.0
-	yi._attack_cd = 0.0
+	yi.attack_timeline.windup = 0.0
+	yi.attack_timeline.cooldown = 0.0
 	yi._attack_visual_pending = true
 	var hp_before := target.hp
 	yi._attack(_main.SIM_DT)
@@ -345,28 +343,28 @@ func _check_masteryi_double_strike_and_highlander() -> void:
 		"剑圣第三段 2013 Passive 算两次普通攻击，第二刀在固定延迟后造成普通攻击 50% 伤害",
 	)
 	var skill: Dictionary = CardDB.active_skills_for("masteryi")[0]
-	yi._attack_cd = 0.7
-	yi._attack_windup = 0.18
+	yi.attack_timeline.cooldown = 0.7
+	yi.attack_timeline.windup = 0.18
 	yi.apply_slow(2.0, 0.5)
 	yi.apply_attack_speed_slow(2.0, 0.5)
-	var slow_preexisting := yi.slow_timer > 0.0 and yi.attack_speed_slow_timer > 0.0
+	var slow_preexisting := yi.control.slow_timer > 0.0 and yi.control.attack_speed_slow_timer > 0.0
 	_main._active_skill_effect_system.apply(yi, skill)
 	var haste_mechanics := (
 		is_equal_approx(yi.attack_interval, 0.7)
 		and is_equal_approx(yi.active_speed_multiplier, 1.5)
 		and is_equal_approx(yi.active_attack_speed_multiplier, 1.4)
-		and is_equal_approx(yi._attack_cd, 0.7 / 1.4)
-		and is_equal_approx(yi._attack_windup, 0.18 / 1.4)
+		and is_equal_approx(yi.attack_timeline.cooldown, 0.7 / 1.4)
+		and is_equal_approx(yi.attack_timeline.windup, 0.18 / 1.4)
 		and is_equal_approx(yi._next_attack_gap(), 0.5)
 	)
-	var slow_timer_before_refresh := yi.slow_timer
-	var attack_speed_slow_timer_before_refresh := yi.attack_speed_slow_timer
+	var slow_timer_before_refresh := yi.control.slow_timer
+	var attack_speed_slow_timer_before_refresh := yi.control.attack_speed_slow_timer
 	yi.apply_slow(2.0, 0.5)
 	yi.apply_attack_speed_slow(2.0, 0.5)
 	var slow_ignored := (
 		slow_preexisting
-		and is_equal_approx(yi.slow_timer, slow_timer_before_refresh)
-		and is_equal_approx(yi.attack_speed_slow_timer, attack_speed_slow_timer_before_refresh)
+		and is_equal_approx(yi.control.slow_timer, slow_timer_before_refresh)
+		and is_equal_approx(yi.control.attack_speed_slow_timer, attack_speed_slow_timer_before_refresh)
 	)
 	yi._prepare_movement(Vector2.UP, 0.05)
 	slow_ignored = slow_ignored and is_equal_approx(yi._move_intent.length(), yi.move_speed * 1.5)
@@ -419,7 +417,10 @@ func _check_animation_routes() -> void:
 			sett_view._animation_player.current_animation == "Run_Passive"
 			and is_equal_approx(sett_view._last_clip_blend_time, sett_view._transition_blend(&"action_out"))
 		)
+		sett._attacking = true
 		sett_view._play_attack(2)
+		sett_view._update_attack_stages(sett.first_hit_time)
+		sett._attacking = false
 		sett_view._transition_to_basic_state(2, -1.0, &"attack")
 		var second_transition := (
 			sett_view._animation_player.current_animation == "Sett_Passive_INTO_Run_anm"
@@ -436,21 +437,19 @@ func _check_animation_routes() -> void:
 
 		sett.play_visual_action(&"active", 1.4)
 		sett_view._sync_visual(false, 0.05)
-		var skill_uses_global_action_in: bool = (
-			is_equal_approx(sett_view._last_clip_blend_time, sett_view._transition_blend(&"action_in"))
-			and not CardDB.get_card("sett").visual_animations.visual_actions.active.has("blend_in")
-			and not CardDB.get_card("sett").visual_animations.visual_actions.active.has("blend_out")
-		)
+		var skill_entry_ok: bool = is_equal_approx(sett_view._last_clip_blend_time, 0.1)
 		sett._move_intent = Vector2.UP * sett.move_speed
 		sett_view._on_animation_finished(&"Sett_spell2_anm")
+		sett_view._on_animation_finished(&"Sett_spell2_anm")
 		sett_skill_route = (
-			skill_uses_global_action_in
-			and sett_view._animation_player.current_animation == "Run_Base"
-			and is_equal_approx(sett_view._last_clip_blend_time, sett_view._transition_blend(&"action_out"))
-			and not CardDB.get_card("sett").visual_animations.get("transitions", {}).has("skill>move")
+			skill_entry_ok
+			and sett_view._animation_player.current_animation == "Sett_Spell2_INTO_Run_anm"
+			and is_equal_approx(sett_view._animation_player.current_animation_position, 0.4)
 		)
+		sett_view._on_animation_finished(&"Sett_Spell2_INTO_Run_anm")
+		sett_skill_route = sett_skill_route and sett_view._animation_player.current_animation == "Run_Base"
 	_expect(sett_routes, "腕豪第二拳无下一目标时先接 Sett Passive Into Run 再进入 Run Base，第一拳直接接 Run Passive")
-	_expect(sett_skill_route, "腕豪蓄意轰拳不再使用 Spell2 IntoRun；技能结束按 action_out 直接进入 Run Base")
+	_expect(sett_skill_route, "腕豪普通 W 结束从匹配站姿的 ToRun 起点衔接，然后进入 Run Base")
 
 	var garen := _spawn_test_unit("garen", 0, Vector2(260.0, 900.0))
 	_main._battle_presentation.attach_unit(garen, CardDB.get_card("garen"))
@@ -495,3 +494,79 @@ func _check_animation_routes() -> void:
 	_expect(teemo_routes, "提莫进入移动使用 Run In；强化攻击 Spell1 后继续攻击接长 Spell1 ToIdle，改为移动则可中断并接 Spell1 ToRun")
 	for unit in [sett, garen, teemo]:
 		unit.free()
+
+func _check_ashe_arrow_collision() -> void:
+	var skill: Dictionary = CardDB.active_skills_for("ashe")[0]
+	for team in [0, 1]:
+		var forward := Vector2.UP if team == 0 else Vector2.DOWN
+		var source := _spawn_test_unit("ashe", team, Vector2(360, 850 if team == 0 else 430))
+		var front := _spawn_dummy(source.position + forward * 80.0, 1 - team)
+		var rear := _spawn_dummy(source.position + forward * 150.0, 1 - team)
+		var side := _spawn_dummy(source.position + forward.rotated(deg_to_rad(23.65)) * 150.0, 1 - team)
+		front.body_radius = 24.0
+		rear.body_radius = 10.0
+		side.body_radius = 10.0
+		var hp := front.hp
+		var hit_count := source._attack_swing_count
+		_main._active_skill_effect_system.apply_frontal(source, skill, forward)
+		var no_instant_hit := front.hp == hp and rear.hp == hp and side.hp == hp
+		# 单 Tick 跨过所有对象仍必须取沿路径最近碰撞，不能穿透前排。
+		_main._tick_projectiles(0.25)
+		_expect(no_instant_hit and front.hp == hp - 70.0 and rear.hp == hp and side.hp == hp - 70.0 and source._attack_swing_count == hit_count, "阵营 %d：W 飞行后前排挡住后排，多箭命中仅伤害一次，未受阻侧箭仍可命中且不计普攻" % team)
+		_main._active_skill_effect_system.apply_frontal(source, skill, forward)
+		_main._tick_projectiles(0.25)
+		_expect(front.hp == hp - 140.0 and rear.hp == hp, "下一次 W 有独立命中记录，前排仍持续阻挡")
+		front.free()
+		rear.free()
+		side.free()
+		# 单箭精确检查新增射程和到达上限后的清理。
+		var single := skill.duplicate(true)
+		single.projectile_count = 1
+		var far := _spawn_dummy(source.position + forward * (source.body_radius + 205.0), 1 - team)
+		far.body_radius = 2.0
+		_main._active_skill_effect_system.apply_frontal(source, single, forward)
+		source.free() # 已飞出的技能仍能碰撞、伤害和按固化来源发声。
+		_main._tick_projectiles(0.25)
+		_expect(far.hp == hp - 70.0, "阵营 %d：210 射程能命中旧 190 射程外目标，施法者销毁不取消在途箭" % team)
+		far.free()
+	var invalid := CardDB.get_card("ashe").duplicate(true)
+	invalid.active_skills[0].projectile_flight_duration = 0.0
+	var errors := PackedStringArray()
+	CardDB.VALIDATOR._validate_active_skills("arrow_probe", invalid, errors)
+	_expect("projectile_stop_on_hit" in "\n".join(errors), "非穿透扇形弹体要求有效飞行时长，非法配置由 validator 拒绝")
+
+func _check_piercing_cards() -> void:
+	var skill: Dictionary = CardDB.active_skills_for("twisted_fate")[0]
+	for team in [0, 1]:
+		_main._projectile_system.clear_all()
+		var forward := Vector2.UP if team == 0 else Vector2.DOWN
+		var source := _spawn_test_unit("twisted_fate", team, Vector2(360, 850 if team == 0 else 430))
+		var front := _spawn_dummy(source.position + forward * 75.0, 1 - team)
+		var rear := _spawn_dummy(source.position + forward * 160.0, 1 - team)
+		var gap := _spawn_dummy(source.position + forward.rotated(deg_to_rad(12.0)) * 150.0, 1 - team)
+		var friend := _spawn_dummy(source.position + forward * 50.0, team)
+		front.body_radius = 30.0 # 三张牌可能重叠，整次施法仍只伤害一次。
+		rear.body_radius = 5.0
+		gap.body_radius = 2.0
+		friend.body_radius = 5.0
+		var hp := front.hp
+		var hits: Array = []
+		var on_hit := func(_source, action, position):
+			if action == "wild_cards": hits.append(position)
+		_main._projectile_system.skill_hit.connect(on_hit)
+		_main._active_skill_effect_system.apply_frontal(source, skill, forward)
+		var launched: bool = _main._projectiles.size() == 3 and front.hp == hp and hits.is_empty()
+		for projectile in _main._projectiles.values():
+			launched = launched and projectile.visual == &"card"
+		_main._tick_projectiles(0.2)
+		_expect(launched and front.hp == hp - 100.0 and rear.hp == hp and hits.size() == 1, "阵营 %d：卡牌 Q 发射不扣血，飞到前排才伤害并发声，重叠三牌不重复伤害" % team)
+		source.free()
+		_main._tick_projectiles(1.0) # 跨过后排和射程末端，验证扫掠与来源独立。
+		_expect(rear.hp == hp - 100.0 and front.hp == hp - 100.0 and gap.hp == hp and friend.hp == hp and hits.size() == 2 and _main._projectiles.is_empty(), "阵营 %d：穿透前排继续命中后排，空隙/友军不受伤，死后在途仍有效且到射程清理" % team)
+		_main._projectile_system.skill_hit.disconnect(on_hit)
+		for unit in [front, rear, gap, friend]: unit.free()
+	var invalid := CardDB.get_card("twisted_fate").duplicate(true)
+	invalid.active_skills[0].projectile_stop_on_hit = true
+	var errors := PackedStringArray()
+	CardDB.VALIDATOR._validate_active_skills("pierce_probe", invalid, errors)
+	_expect(not errors.is_empty(), "穿透与命中停止互斥，validator 拒绝冲突配置")

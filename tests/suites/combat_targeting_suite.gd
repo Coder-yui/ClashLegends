@@ -1,12 +1,6 @@
 class_name CombatTargetingSuite
-extends RefCounted
+extends "res://tests/suites/battle_suite.gd"
 ## 战斗索敌领域：目标锁定、攻击状态机、射程脱锁与塔目标规则。
-
-var _harness: Object
-var _main: Node2D
-
-func _expect(condition: bool, message: String) -> void:
-	_harness._expect(condition, message)
 
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
@@ -18,6 +12,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_attack_target_lock()
 	_check_attack_direct_retarget()
 	_check_attack_hit_recovery_commitment()
+	_check_first_attack_and_reentry_timing()
 	_check_basic_attack_has_no_knockback()
 	_check_freed_target_cleanup()
 	_check_tower_loses_out_of_range_target()
@@ -191,7 +186,7 @@ func _check_attack_direct_retarget() -> void:
 		chain_targets.append(target)
 	chain_attacker._target = chain_targets[0]
 	chain_attacker._attacking = true
-	chain_attacker._attack_cd = 0.0
+	chain_attacker.attack_timeline.cooldown = 0.0
 	chain_attacker._attack_visual_pending = false
 	var chain_kept := true
 	for _tick in 160:
@@ -230,9 +225,8 @@ func _check_attack_direct_retarget() -> void:
 		_main.add_child(unit)
 	leave_attacker._target = leaving_target
 	leave_attacker._attacking = true
-	leave_attacker._attack_windup = 0.18
-	leave_attacker._attack_cd = 0.41
-	leave_attacker._attack_load = 0.12
+	leave_attacker.attack_timeline.windup = 0.18
+	leave_attacker.attack_timeline.cooldown = 0.41
 	leave_attacker._move_intent = Vector2.RIGHT * leave_attacker.move_speed
 	leaving_target.position = Vector2(360.0, 480.0)
 	leave_attacker._update_target()
@@ -240,9 +234,8 @@ func _check_attack_direct_retarget() -> void:
 		leave_attacker._target == nearer_target
 		and leave_attacker._attacking
 		and leave_attacker._move_intent.is_zero_approx()
-		and is_equal_approx(leave_attacker._attack_windup, 0.18)
-		and is_equal_approx(leave_attacker._attack_cd, 0.41)
-		and is_equal_approx(leave_attacker._attack_load, 0.12),
+		and is_equal_approx(leave_attacker.attack_timeline.windup, 0.18)
+		and is_equal_approx(leave_attacker.attack_timeline.cooldown, 0.41),
 		"场景 B：当前目标离圈时直接换打圈内最近合法目标，不追旧目标且不清空攻击进度",
 	)
 	for unit in [leave_attacker, leaving_target, nearer_target, farther_target]:
@@ -260,7 +253,7 @@ func _check_attack_direct_retarget() -> void:
 	_main.add_child(chase_target)
 	chase_attacker._target = chase_target
 	chase_attacker._attacking = true
-	chase_attacker._attack_windup = 0.2
+	chase_attacker.attack_timeline.windup = 0.2
 	chase_attacker.sim_tick(_main.SIM_DT)
 	_expect(
 		chase_attacker._target == chase_target
@@ -286,7 +279,7 @@ func _check_attack_direct_retarget() -> void:
 	defeated_target.hp = 0.0
 	cadence_attacker._target = defeated_target
 	cadence_attacker._attacking = true
-	cadence_attacker._attack_cd = cadence_attacker.first_hit_time
+	cadence_attacker.attack_timeline.cooldown = cadence_attacker.first_hit_time
 	cadence_attacker._attack_visual_pending = true
 	var cadence_hp_before := cadence_target.hp
 	var elapsed := 0.0
@@ -320,11 +313,11 @@ func _check_attack_hit_recovery_commitment() -> void:
 	# 目标在命中节点所在的固定 tick 刚越出射程：本次挥击依然成立。
 	attacker._target = target
 	attacker._attacking = true
-	attacker._attack_windup = _main.SIM_DT
+	attacker.attack_timeline.windup = _main.SIM_DT
 	attacker._attack_visual_pending = false
 	var hp_before := target.hp
 	attacker.sim_tick(_main.SIM_DT)
-	var recovery_after_hit := attacker._attack_recovery_timer
+	var recovery_after_hit := attacker.attack_timeline.recovery
 	_expect(target.hp < hp_before, "目标在命中节点刚越出射程时，本次攻击仍然命中")
 	_expect(attacker._attacking and recovery_after_hit > 0.0 and attacker._move_intent.is_zero_approx(), "攻击命中后进入后摇锁定，不会立刻追击")
 	# 后摇中目标保持在射程外：不能补第二次伤害，也不能切到 Move。
@@ -332,13 +325,13 @@ func _check_attack_hit_recovery_commitment() -> void:
 	_expect(target.hp < hp_before and attacker._attacking and attacker._move_intent.is_zero_approx(), "后摇期间保持 Attack 状态且不重复结算伤害")
 	# 收招完成后才解除锁定，重新追向仍然存活的移动目标。
 	attacker.sim_tick(recovery_after_hit)
-	_expect(not attacker._attacking and attacker._attack_recovery_timer <= 0.0 and not attacker._move_intent.is_zero_approx(), "完整播放后摇后才恢复追击")
+	_expect(not attacker._attacking and attacker.attack_timeline.recovery <= 0.0 and not attacker._move_intent.is_zero_approx(), "完整播放后摇后才恢复追击")
 	# 尚未到命中节点就提前脱离射程，仍可取消前摇，避免整段攻击无条件锁定。
 	attacker._move_intent = Vector2.ZERO
 	attacker._target = target
 	attacker._attacking = true
-	attacker._attack_windup = _main.SIM_DT * 2.0
-	attacker._attack_recovery_timer = 0.0
+	attacker.attack_timeline.windup = _main.SIM_DT * 2.0
+	attacker.attack_timeline.recovery = 0.0
 	attacker._attack_visual_pending = false
 	var hp_before_cancel := target.hp
 	attacker.sim_tick(_main.SIM_DT)
@@ -422,7 +415,7 @@ func _check_landing_body_push_retargets_attacker() -> void:
 	enemy._target = tower
 	enemy._attacking = true
 	# 仍处于命中节点之前；若已经命中则新规则要求先完整播放后摇，不能立即转火。
-	enemy._attack_windup = _main.SIM_DT * 3.0
+	enemy.attack_timeline.windup = _main.SIM_DT * 3.0
 	enemy._attack_visual_pending = true
 	var before_distance := enemy.position.distance_to(tower.position)
 	var overlap_deploy_allowed: bool = _main.is_card_deploy_position_valid(0, "garen", landing_pos)
@@ -473,7 +466,7 @@ func _check_unit_reaches_and_damages_tower() -> void:
 	_main.add_child(unit)
 	unit._target = tower
 	var hp_before := tower.hp
-	tower.frozen_timer = 5.0
+	tower.control.frozen_timer = 5.0
 	for _tick in 60:
 		_main._sim_step(_main.SIM_DT)
 	_expect(tower.hp < hp_before, "攻城单位会补齐 A* 末端距离并对塔造成伤害")
@@ -483,19 +476,19 @@ func _check_unit_reaches_and_damages_tower() -> void:
 	var attack_animations: Array = stats.visual_animations.attack
 	_expect(attack_animations == ["Attack1", "Attack2"], "盖伦两套攻击动作按表现序号交替选择")
 	tower.hp = hp_before
-	tower.frozen_timer = 0.0
+	tower.control.frozen_timer = 0.0
 	if is_instance_valid(unit):
 		unit.free()
 
-## 腕豪连招节奏：快速两拳(0.28)→停顿(1.05)→快速两拳(0.28)→停顿(1.05) 循环。
+## 腕豪连招节奏：左右拳(0.6)→停顿(1.4)→左右拳(0.6)→停顿(1.4) 循环。
 func _check_sett_attack_rhythm() -> void:
 	var stats: Dictionary = CardDB.get_card("sett").duplicate(true)
 	stats["deploy_time"] = 0.0
-	_expect(stats.attack_pattern == [0.28, 1.05, 0.28, 1.05], "腕豪配置了 两拳→停顿→两拳→停顿 的连招节奏")
+	_expect(stats.attack_pattern == [0.6, 1.4, 0.6, 1.4], "腕豪配置了 两拳→停顿→两拳→停顿 的连招节奏")
 	var unit := Unit.new()
 	unit.setup(0, stats, stats.name)
 	# 逐个取出连招间距，验证节奏确实按数组循环
-	var expected: Array = [0.28, 1.05, 0.28, 1.05]
+	var expected: Array = [0.6, 1.4, 0.6, 1.4]
 	var rhythm_ok := true
 	for i in range(8):
 		var gap: float = unit._next_attack_gap()
@@ -522,12 +515,12 @@ func _check_sett_recovery_without_target() -> void:
 	_main.add_child(target)
 	sett._target = target
 	sett._attacking = true
-	sett._attack_recovery_timer = 0.5
-	sett._attack_cd = 0.5
+	sett.attack_timeline.recovery = 0.5
+	sett.attack_timeline.cooldown = 0.5
 	sett.sim_tick(_main.SIM_DT)
 	var no_target_moves_immediately := (
 		not sett._attacking
-		and is_zero_approx(sett._attack_recovery_timer)
+		and is_zero_approx(sett.attack_timeline.recovery)
 		and not sett._move_intent.is_zero_approx()
 	)
 
@@ -541,12 +534,12 @@ func _check_sett_recovery_without_target() -> void:
 	_main.add_child(held_target)
 	held_sett._target = held_target
 	held_sett._attacking = true
-	held_sett._attack_recovery_timer = 0.5
-	held_sett._attack_cd = 0.5
+	held_sett.attack_timeline.recovery = 0.5
+	held_sett.attack_timeline.cooldown = 0.5
 	held_sett.sim_tick(_main.SIM_DT)
 	var target_keeps_recovery := (
 		held_sett._attacking
-		and held_sett._attack_recovery_timer > 0.0
+		and held_sett.attack_timeline.recovery > 0.0
 		and held_sett._move_intent.is_zero_approx()
 	)
 	_expect(no_target_moves_immediately and target_keeps_recovery, "腕豪没有下一次攻击目标时跳过 Into_Idle 立即移动，有目标时保留连招后摇")
@@ -566,3 +559,62 @@ func _check_king_activation() -> void:
 	if princess.nav_cells.is_empty() and not saved_nav_cells.is_empty():
 		princess.nav_cells = saved_nav_cells.duplicate()
 		_main.nav.set_cells_blocked(princess.nav_cells, true)
+
+## 进入射程不需要“走够时间”；只有真实上一击留下的冷却能推迟下一击。
+func _check_first_attack_and_reentry_timing() -> void:
+	for rate in [0.5, 1.0, 2.0]:
+		var stats := CardDB.get_card("twisted_fate").duplicate(true)
+		stats["deploy_time"] = 0.0
+		stats["projectile_speed"] = 0.0
+		var unit := Unit.new()
+		var dummy := Unit.new()
+		unit.setup(0, stats, "首击与追击时序")
+		dummy.setup(1, CardDB.training_dummy_stats(), "时序木桩")
+		unit.position = Vector2(360, 820)
+		dummy.position = Vector2(360, 760)
+		_main.add_child(unit)
+		_main.add_child(dummy)
+		unit.active_attack_speed_multiplier = rate
+		unit.sim_tick(0.05)
+		var first_starts := unit.get_attack_visual_serial() == 1 and unit._attack_swing_count == 0
+		# 首次前摇未出手就失去目标；重新进圈仍没有历史冷却。
+		dummy.position = Vector2(360, 300)
+		unit.sim_tick(0.05)
+		dummy.position = Vector2(360, 760)
+		unit.sim_tick(0.05)
+		var retry_starts := unit.get_attack_visual_serial() == 2 and unit._attack_swing_count == 0
+		for tick in 20:
+			if unit._attack_swing_count > 0:
+				break
+			unit.sim_tick(0.05)
+		var first_fired := unit._attack_swing_count == 1
+		# 默认完整后摇结束才追击，短暂移动后再次进圈应立即正常前摇。
+		dummy.position = Vector2(360, 300)
+		for tick in 80:
+			unit.sim_tick(0.05)
+			if unit.attack_timeline.recovery <= 0.0:
+				break
+		var serial := unit.get_attack_visual_serial()
+		dummy.position = Vector2(360, 760)
+		unit.sim_tick(0.05)
+		var full_recovery_ready := unit.get_attack_visual_serial() > serial
+		_expect(first_starts and retry_starts and first_fired and full_recovery_ready, "%.1fx 攻速：首击、未出手取消后重试、完整后摇后短暂追击均立即开始前摇" % rate)
+		# 等这一击出手，再提前取消后摇并快速返回；不能缩短真实命中间隔。
+		for tick in 30:
+			if unit._attack_swing_count >= 2:
+				break
+			unit.sim_tick(0.05)
+		unit.cancel_attack_recovery_without_target = true
+		dummy.position = Vector2(360, 300)
+		unit.sim_tick(0.05)
+		dummy.position = Vector2(360, 760)
+		var elapsed := 0.05
+		for tick in 100:
+			unit.sim_tick(0.05)
+			elapsed += 0.05
+			if unit._attack_swing_count >= 3:
+				break
+		var gap: float = unit.attack_interval / rate
+		_expect(unit._attack_swing_count == 3 and elapsed + 0.0001 >= gap and elapsed <= gap + 0.1, "%.1fx 攻速：提前取消后摇并返回只等真实剩余冷却，连续出手间隔不缩短也不多等一轮" % rate)
+		unit.free()
+		dummy.free()

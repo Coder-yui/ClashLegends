@@ -1,15 +1,5 @@
 class_name ActiveSkillSuite
-extends RefCounted
-
-var _harness: Object
-var _main: Node2D
-
-func _expect(condition: bool, message: String) -> void:
-	_harness._expect(condition, message)
-
-func _run_main_ticks(count: int) -> void:
-	for _tick in count:
-		_main._sim_step(_main.SIM_DT)
+extends "res://tests/suites/battle_suite.gd"
 
 func _reset_local_elixir() -> void:
 	_main._elixir.elixir = ElixirManager.MAX_ELIXIR
@@ -27,8 +17,6 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_pending_active_skill_revalidation()
 	_check_pending_control_revalidation()
 	_check_cast_impact_recovery_timeline()
-	_check_artdev_active_skill_timeline()
-	_check_artdev_workbench()
 	_check_cast_control_pause_and_death_cancel()
 	_check_authoritative_hand_cycle()
 	_check_network_hand_confirmation()
@@ -50,7 +38,7 @@ func _check_active_skill_loadout_rule() -> void:
 	var left_position: Vector2 = ActiveSkillBar.LEFT_SLOT_POSITION
 	var right_position: Vector2 = ActiveSkillBar.RIGHT_SLOT_POSITION
 	_expect(
-		is_equal_approx(left_position.x + right_position.x + ActiveSkillBar.BUTTON_SIZE.x, _main.FIELD_W)
+		is_equal_approx(left_position.x + right_position.x + ActiveSkillBar.BUTTON_SIZE.x, ArenaRules.FIELD_W)
 		and is_equal_approx(left_position.y, right_position.y),
 		"主动槽 2 圆位以战场中线严格镜像主动槽 1"
 	)
@@ -195,7 +183,7 @@ func _check_active_skill_activation() -> void:
 	var hp_before := enemy.hp
 	var queued: bool = not _main._queue_active_skill(first_ability_id, 0, 0) and _main._queue_active_skill(ability_id, 0, 0)
 	var expected_execute_tick: int = _main._sim_tick_id + _main.COMMAND_DELAY_TICKS
-	var command_tick_contract: bool = not _main._pending_active_skill_activations.is_empty() and int(_main._pending_active_skill_activations[0].execute_tick) == expected_execute_tick
+	var command_tick_contract: bool = not _main._commands.skill_commands.is_empty() and int(_main._commands.skill_commands[0].execute_tick) == expected_execute_tick
 	_main._active_skill_bar.set_pending(ability_id, true)
 	_run_main_ticks(_main.COMMAND_DELAY_TICKS - 1)
 	_expect(
@@ -296,7 +284,7 @@ func _check_pending_active_skill_revalidation() -> void:
 		queued_before_death
 		and is_equal_approx(enemy.hp, hp_before_death_reject)
 		and not _main._active_skills.has(dead_ability_id)
-		and _main._pending_active_skill_activations.is_empty()
+		and _main._commands.skill_commands.is_empty()
 		and not _main._active_skill_bar.is_slot_visible(0),
 		"主动 pending 期间单位死亡会取消释放，不产生效果并清理对应按钮",
 	)
@@ -307,7 +295,7 @@ func _check_pending_active_skill_revalidation() -> void:
 	var gnar_ability_id := gnar.active_ability_id
 	var queued_before_transform: bool = _main._queue_active_skill(gnar_ability_id, 0, 0)
 	_main._active_skill_bar.set_pending(gnar_ability_id, true)
-	var pending_impacts_before: int = _main._pending_active_skill_impacts.size()
+	var pending_impacts_before: int = _main._commands.impacts.size()
 	var transformed_after_click := gnar.transform_to_mega()
 	var transform_action_serial := gnar.get_visual_action_serial()
 	_run_main_ticks(_main.COMMAND_DELAY_TICKS)
@@ -315,7 +303,7 @@ func _check_pending_active_skill_revalidation() -> void:
 		queued_before_transform
 		and transformed_after_click
 		and _main._active_skills.has(gnar_ability_id)
-		and _main._pending_active_skill_impacts.size() == pending_impacts_before
+		and _main._commands.impacts.size() == pending_impacts_before
 		and gnar.get_visual_action_serial() == transform_action_serial
 		and not _main._active_skill_bar._buttons[0].disabled,
 		"主动 pending 到期时若已进入 transform，会拒绝效果/技能动作并恢复按钮",
@@ -444,149 +432,6 @@ func _check_cast_impact_recovery_timeline() -> void:
 	source.free()
 	_main._deck = old_deck
 
-func _check_artdev_active_skill_timeline() -> void:
-	var old_deck: Array = _main._deck.duplicate()
-	_main._deck = ["garen", "xin", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
-	var source: Unit = _main._spawn_unit(0, "garen", Vector2(260.0, 680.0), 0.0, 0)
-	var ability_id: int = source.active_ability_id
-	var skill: Dictionary = {
-		"name": "ArtDev 时间轴",
-		"kind": "buff",
-		"duration": 2.0,
-		"cast_duration": 1.0,
-		"impact_delay": 0.4,
-		"shield": 100.0,
-		"shield_duration": 2.0,
-		"cast_locks": ["movement", "attack", "facing"],
-	}
-	var pending_before: int = _main._pending_active_skill_impacts.size()
-	var previewed: bool = _main.preview_active_skill(source, skill)
-	var command_buffer_skipped: bool = (
-		previewed
-		and _main._pending_active_skill_activations.is_empty()
-		and _main._pending_active_skill_impacts.size() == pending_before + 1
-		and source.active_skill_cast_timer > 0.0
-		and is_zero_approx(source.shield_hp)
-	)
-	_run_main_ticks(7)
-	var no_early_impact: bool = is_zero_approx(source.shield_hp)
-	_run_main_ticks(1)
-	var impact_after_delay: bool = source.shield_hp > 0.0
-	_expect(command_buffer_skipped and no_early_impact and impact_after_delay, "ArtDev 只跳过 Command Buffer，普通主动仍按 Cast Start→impact_delay→Gameplay Impact 结算")
-	_main._on_active_skill_unit_died(ability_id)
-	source.free()
-	_main._deck = old_deck
-
-func _check_artdev_workbench() -> void:
-	var old_panel: ArtDevPanel = _main._art_dev_panel
-	var old_selection: String = _main._art_dev_selection
-	var old_team: int = _main._art_dev_team
-	var old_last_units: Dictionary = _main._art_dev_last_units.duplicate()
-	var old_choices: Dictionary = _main._art_dev_active_skill_choices.duplicate(true)
-	var panel := ArtDevPanel.new()
-	_main.add_child(panel)
-	var initial_cards: Array[String] = [
-		"garen", "xin", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol", "freeze",
-	]
-	panel.setup(CardDB.all(), initial_cards)
-	_main._art_dev_panel = panel
-	panel.item_selected.connect(_main._set_art_dev_selection)
-	panel.team_changed.connect(_main._set_art_dev_team)
-	panel.active_skill_selected.connect(_main._on_art_dev_active_skill_selected)
-	panel.active_skill_requested.connect(_main._use_art_dev_active_skill)
-	panel.skill_resource_requested.connect(_main._set_art_dev_skill_resource)
-
-	var fixed_loadout_ok := panel.get_test_card_ids() == initial_cards and panel._loadout_buttons.size() == ArtDevPanel.LOADOUT_SIZE
-	panel._toggle_card_picker()
-	var full_pool_opened := panel.is_card_picker_open() and panel._pool_buttons.size() == CardDB.all().size()
-	panel._toggle_pool_card("garen")
-	panel._toggle_pool_card("gwen")
-	panel._close_card_picker()
-	var swapped_and_reusable := (
-		not panel.is_card_picker_open()
-		and panel.get_test_card_ids().size() == ArtDevPanel.LOADOUT_SIZE
-		and "garen" not in panel.get_test_card_ids()
-		and "gwen" in panel.get_test_card_ids()
-	)
-	_expect(
-		fixed_loadout_ok and full_pool_opened and swapped_and_reusable,
-		"ArtDev 底栏固定 8 张测试卡，按需展开完整卡池并可移除旧卡、换入新卡后继续测试",
-	)
-
-	panel._select_item("garen")
-	panel._on_skill_option_selected(1)
-	var skill_switch_ok := (
-		panel._skill_option.item_count == 2
-		and panel.selected_skill_index() == 1
-		and int(_main._art_dev_active_skill_choices.get("garen", -1)) == 1
-	)
-	_expect(skill_switch_ok, "ArtDev 可在同一英雄的多个主动技能候选之间切换")
-
-	panel._select_item("gwen")
-	var gwen_stats: Dictionary = CardDB.get_card("gwen").duplicate(true)
-	gwen_stats["deploy_time"] = 0.0
-	var gwen := Unit.new()
-	gwen.position = Vector2(260.0, 720.0)
-	gwen.setup(0, gwen_stats, gwen_stats.name)
-	gwen.card_id = "gwen"
-	_main.add_child(gwen)
-	_main._art_dev_last_units[_main._art_dev_unit_key("gwen", 0)] = weakref(gwen)
-	panel._on_team_toggled(false)
-	_main._configure_art_dev_unit_skill(gwen)
-	gwen.add_skill_resource(2.0)
-	_main._sync_art_dev_panel_state()
-	var gwen_resource_visible := (
-		gwen.is_skill_resource_visible()
-		and gwen.get_skill_resource_segment_count() == 3
-		and panel._resource_controls.visible
-		and is_equal_approx(panel._resource_slider.value, 2.0)
-		and is_equal_approx(panel._resource_slider.max_value, 3.0)
-	)
-	panel._request_resource_value(3.0)
-	panel._on_active_skill_pressed()
-	var gwen_full_cast_ok := (
-		is_zero_approx(gwen.skill_resource_value)
-		and gwen.get_visual_action_name() == &"active_3"
-		and gwen.is_active_skill_casting()
-	)
-	_expect(
-		gwen_resource_visible and gwen_full_cast_ok,
-		"ArtDev 放置格温后显示 3 段资源条，可调满并用满层资源播放对应强化技能动作",
-	)
-
-	panel._select_item("sett")
-	var sett_stats: Dictionary = CardDB.get_card("sett").duplicate(true)
-	sett_stats["deploy_time"] = 0.0
-	var sett := Unit.new()
-	sett.position = Vector2(460.0, 720.0)
-	sett.setup(0, sett_stats, sett_stats.name)
-	sett.card_id = "sett"
-	_main.add_child(sett)
-	_main._art_dev_last_units[_main._art_dev_unit_key("sett", 0)] = weakref(sett)
-	_main._configure_art_dev_unit_skill(sett)
-	_main._sync_art_dev_panel_state()
-	panel._request_resource_value(125.0)
-	var sett_resource_visible := (
-		sett.is_skill_resource_visible()
-		and sett.get_skill_resource_segment_count() == 0
-		and is_equal_approx(sett.skill_resource_value, 125.0)
-		and is_equal_approx(panel._resource_slider.max_value, 200.0)
-	)
-	_expect(sett_resource_visible, "ArtDev 腕豪显示 0–200 连续豪意条并允许直接调整测试值")
-
-	_main._pending_active_skill_impacts.clear()
-	_main._active_skill_effect_system.clear()
-	if is_instance_valid(gwen):
-		gwen.free()
-	if is_instance_valid(sett):
-		sett.free()
-	_main._art_dev_panel = old_panel
-	_main._art_dev_selection = old_selection
-	_main._art_dev_team = old_team
-	_main._art_dev_last_units = old_last_units
-	_main._art_dev_active_skill_choices = old_choices
-	panel.free()
-
 func _check_cast_control_pause_and_death_cancel() -> void:
 	_reset_local_elixir()
 	var old_deck: Array = _main._deck.duplicate()
@@ -609,12 +454,12 @@ func _check_cast_control_pause_and_death_cancel() -> void:
 	_run_main_ticks(_main.COMMAND_DELAY_TICKS)
 	_run_main_ticks(4)
 	var freeze_cast_before: float = freeze_source.active_skill_cast_timer
-	var freeze_impact_before: float = float(_main._pending_active_skill_impacts[0].time_left)
+	var freeze_impact_before: float = float(_main._commands.impacts[0].time_left)
 	freeze_source.freeze(0.3)
 	_run_main_ticks(6)
 	var freeze_paused: bool = (
 		is_zero_approx(freeze_source.active_skill_cast_timer - freeze_cast_before)
-		and is_zero_approx(float(_main._pending_active_skill_impacts[0].time_left) - freeze_impact_before)
+		and is_zero_approx(float(_main._commands.impacts[0].time_left) - freeze_impact_before)
 		and is_zero_approx(freeze_source.shield_hp)
 	)
 	_run_main_ticks(7)
@@ -632,12 +477,12 @@ func _check_cast_control_pause_and_death_cancel() -> void:
 	_run_main_ticks(_main.COMMAND_DELAY_TICKS)
 	_run_main_ticks(4)
 	var stun_cast_before: float = stun_source.active_skill_cast_timer
-	var stun_impact_before: float = float(_main._pending_active_skill_impacts[0].time_left)
+	var stun_impact_before: float = float(_main._commands.impacts[0].time_left)
 	stun_source.stun(0.3)
 	_run_main_ticks(6)
 	var stun_paused: bool = (
 		is_zero_approx(stun_source.active_skill_cast_timer - stun_cast_before)
-		and is_zero_approx(float(_main._pending_active_skill_impacts[0].time_left) - stun_impact_before)
+		and is_zero_approx(float(_main._commands.impacts[0].time_left) - stun_impact_before)
 		and is_zero_approx(stun_source.shield_hp)
 	)
 	_run_main_ticks(7)
@@ -655,7 +500,7 @@ func _check_cast_control_pause_and_death_cancel() -> void:
 	_run_main_ticks(3)
 	death_source.take_damage(death_source.hp + 1.0)
 	_run_main_ticks(12)
-	var death_cancelled: bool = is_zero_approx(death_source.shield_hp) and _main._pending_active_skill_impacts.is_empty()
+	var death_cancelled: bool = is_zero_approx(death_source.shield_hp) and _main._commands.impacts.is_empty()
 	_expect(
 		freeze_queued and freeze_paused and freeze_still_waiting and freeze_resumed
 		and stun_queued and stun_paused and stun_still_waiting and stun_resumed
@@ -668,7 +513,7 @@ func _check_cast_control_pause_and_death_cancel() -> void:
 	freeze_source.free()
 	stun_source.free()
 	death_source.free()
-	_main._pending_active_skill_impacts.clear()
+	_main._commands.impacts.clear()
 	_main._deck = old_deck
 
 func _check_authoritative_hand_cycle() -> void:
@@ -700,7 +545,7 @@ func _check_authoritative_hand_cycle() -> void:
 		and deck_card_not_in_hand_rejected,
 		"权威手牌只接受当前 hand，成功后一次性扣费/轮换，重复、缺牌和金币不足均不改变状态",
 	)
-	_main._pending_card_deployments.clear()
+	_main._commands.card_commands.clear()
 	_main._elixir.elixir = ElixirManager.MAX_ELIXIR
 	_main._deck = old_deck
 	_main._initialize_authoritative_card_cycle(0, old_deck)
@@ -728,7 +573,7 @@ func _check_network_hand_confirmation() -> void:
 	var host_accepted_hand: Array = _main.get_authoritative_hand(1)
 	var host_accepted_queue: Array = _main.get_authoritative_queue(1)
 	var host_elixir_after_accept: float = network_elixir.elixir
-	var host_pending_after_accept: int = _main._pending_card_deployments.size()
+	var host_pending_after_accept: int = _main._commands.card_commands.size()
 	var host_hand_before_reject: Array = host_accepted_hand.duplicate()
 	var host_queue_before_reject: Array = host_accepted_queue.duplicate()
 	var host_elixir_before_reject: float = network_elixir.elixir
@@ -737,19 +582,19 @@ func _check_network_hand_confirmation() -> void:
 		_main.get_authoritative_hand(1) == host_hand_before_reject
 		and _main.get_authoritative_queue(1) == host_queue_before_reject
 		and is_equal_approx(network_elixir.elixir, host_elixir_before_reject)
-		and _main._pending_card_deployments.size() == host_pending_after_accept
+		and _main._commands.card_commands.size() == host_pending_after_accept
 	)
 	_main._sim_tick_id = 110
 	var host_hand_before_late: Array = _main.get_authoritative_hand(1)
 	var host_queue_before_late: Array = _main.get_authoritative_queue(1)
 	var host_elixir_before_late: float = network_elixir.elixir
-	var host_pending_before_late: int = _main._pending_card_deployments.size()
+	var host_pending_before_late: int = _main._commands.card_commands.size()
 	_main._rpc_deploy_request("xin", Vector2(300.0, 580.0), 100)
 	var host_late_reject_kept_state: bool = (
 		_main.get_authoritative_hand(1) == host_hand_before_late
 		and _main.get_authoritative_queue(1) == host_queue_before_late
 		and is_equal_approx(network_elixir.elixir, host_elixir_before_late)
-		and _main._pending_card_deployments.size() == host_pending_before_late
+		and _main._commands.card_commands.size() == host_pending_before_late
 	)
 	var host_accept_once: bool = (
 		host_initial_hand == ["garen", "xin", "freeze", "ashe"]
@@ -800,7 +645,7 @@ func _check_network_hand_confirmation() -> void:
 	)
 	_expect(host_accept_once and host_reject_kept_state and host_late_reject_kept_state and client_pending_request and client_accept_synced and client_reject_kept_state, "联机出牌 accepted 同步手牌/队列，late/rejected 不扣费不轮换且仅恢复 pending UI")
 
-	_main._pending_card_deployments.clear()
+	_main._commands.card_commands.clear()
 	_main.mode = old_mode
 	_main._deck = old_deck
 	_main._remote_deck = old_remote_deck
@@ -821,16 +666,16 @@ func _check_empowered_freeze_slow_zone() -> void:
 	_main.add_child(enemy)
 	_main._apply_freeze(enemy.position, 110.0, 3.0, 0, 2.0, 0.5)
 	_main._tick_slow_zones(2.95)
-	var delayed_ok := enemy.slow_timer <= 0.0
+	var delayed_ok := enemy.control.slow_timer <= 0.0
 	_main._tick_slow_zones(0.05)
 	_main._tick_slow_zones(_main.SIM_DT)
 	enemy._prepare_movement(Vector2.UP, _main.SIM_DT)
-	var slowed_ok := enemy.slow_timer > 0.0 and is_equal_approx(enemy._move_intent.length(), enemy.move_speed * 0.5)
+	var slowed_ok := enemy.control.slow_timer > 0.0 and is_equal_approx(enemy._move_intent.length(), enemy.move_speed * 0.5)
 	_main._tick_slow_zones(2.0)
 	_expect(delayed_ok and slowed_ok, "主动版冰冻在 3 秒冻结结束后才开启区域减速")
-	_expect(_main._slow_zones.is_empty(), "强化冰冻减速区域持续 2 秒后由权威模拟移除")
-	_main._freeze_effects.clear()
-	_main._slow_effects.clear()
+	_expect(_main._spell_system.slow_zones.is_empty(), "强化冰冻减速区域持续 2 秒后由权威模拟移除")
+	_main._spell_system.freeze_effects.clear()
+	_main._spell_system.slow_effects.clear()
 	enemy.free()
 
 func _check_heal_spell() -> void:
@@ -874,7 +719,7 @@ func _check_heal_spell() -> void:
 		and hurt.shield_hp <= 0.0
 	)
 	_expect(base_healed and base_skips_structures, "普通治疗术回复范围内友军单位且不超过最大生命值，对建筑卡/防御塔无治疗无护盾")
-	_main._heal_effects.clear()
+	_main._spell_system.heal_effects.clear()
 
 	# 重新压低生命后释放强化治疗：全图单位按提高后的数值回复，范围内友军（含建筑）获得护盾。
 	hurt.hp = hurt_before
@@ -896,8 +741,8 @@ func _check_heal_spell() -> void:
 		and is_equal_approx(tower.hp, tower_before)
 	)
 	_expect(enhanced_global_heal and enhanced_shield_scope, "强化治疗全图友军单位按提高后数值回复且不溢出，范围内友军（含建筑卡/防御塔）获得护盾但生命不变")
-	_expect(_main._heal_effects.size() > 0 and bool(_main._heal_effects[0].get("enhanced", false)), "治疗术淡黄光效进入表现队列并标记强化版")
-	_main._heal_effects.clear()
+	_expect(_main._spell_system.heal_effects.size() > 0 and bool(_main._spell_system.heal_effects[0].get("enhanced", false)), "治疗术淡黄光效进入表现队列并标记强化版")
+	_main._spell_system.heal_effects.clear()
 
 	for unit in [hurt, nearly_full, distant, building]:
 		(unit as Unit).shield_hp = 0.0
@@ -920,19 +765,19 @@ func _check_heal_spell() -> void:
 	_main._elixir.elixir = 6.0
 	var played: bool = _main.play_card(0, "heal", cast_pos, {"elixir": _main._elixir, "immediate": true})
 	var active_cost_charged: bool = played and is_equal_approx(_main._elixir.elixir, 2.0)
-	_main._heal_effects.clear()
+	_main._spell_system.heal_effects.clear()
 	_main._deck = ["garen", "heal", "xin", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
 	_reset_local_elixir()
 	_main._elixir.elixir = 6.0
 	played = _main.play_card(0, "heal", cast_pos, {"elixir": _main._elixir, "immediate": true})
 	var second_slot_cost_charged: bool = played and is_equal_approx(_main._elixir.elixir, 2.0)
-	_main._heal_effects.clear()
+	_main._spell_system.heal_effects.clear()
 	_main._deck = ["garen", "xin", "heal", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
 	_reset_local_elixir()
 	_main._elixir.elixir = 6.0
 	played = _main.play_card(0, "heal", cast_pos, {"elixir": _main._elixir, "immediate": true})
 	var normal_cost_charged: bool = played and is_equal_approx(_main._elixir.elixir, 3.0)
-	_main._heal_effects.clear()
+	_main._spell_system.heal_effects.clear()
 	_expect(active_cost_charged and second_slot_cost_charged and normal_cost_charged, "治疗术位于主动槽（前两个卡位）施放费用 +1，在普通卡位保持原费用")
 	_main._deck = old_deck
 	_main._elixir.elixir = old_elixir

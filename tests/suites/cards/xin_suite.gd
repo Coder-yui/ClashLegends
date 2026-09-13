@@ -1,12 +1,6 @@
 class_name XinSuite
-extends RefCounted
+extends "res://tests/suites/battle_suite.gd"
 ## 赵信卡牌领域：部署/主动新月护卫、三段普攻转跑与回血循环。
-
-var _harness: Object
-var _main: Node2D
-
-func _expect(condition: bool, message: String) -> void:
-	_harness._expect(condition, message)
 
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
@@ -81,13 +75,16 @@ func _check_xin_deploy_sweep() -> void:
 	_expect(is_equal_approx(heavy_requested_push, 45.0), "质量 8 的单位按 0.5 质量倍率击退 45px")
 	_expect(xin._sweep_fx_timer > 0.0, "部署版新月护卫触发短暂扇形冲击特效")
 	var xin_start := xin.global_position
-	# 跑完整段部署；赵信自身不行动，受击单位的权威击退照常推进。
+	# 部署未结束时赵信自身不行动；结束 Tick 允许立即行军。
+	var stayed_during_deploy := true
 	for _i in 20:
 		for u in [xin, light, heavy, far, air, building]:
 			u.sim_tick(_main.SIM_DT)
-		_main._apply_unit_movement(_main.SIM_DT)
+		_main._movement._apply_unit_movement(_main.SIM_DT, _main._movement._active_mobile_units())
+		if not xin.is_deployed():
+			stayed_during_deploy = stayed_during_deploy and xin.global_position.distance_to(xin_start) < 0.01
 	_expect(xin.is_deployed(), "Spell4 的 1 秒部署演出结束后赵信解锁行动")
-	_expect(xin.global_position.distance_to(xin_start) < 0.01, "赵信在出场演出期间没有自主移动")
+	_expect(stayed_during_deploy, "赵信在出场演出期间没有自主移动")
 	var light_push := light.global_position.distance_to(light_start)
 	var heavy_push := heavy.global_position.distance_to(heavy_start)
 	var far_push := far.global_position.distance_to(far_start)
@@ -111,9 +108,22 @@ func _check_xin_art_integration() -> void:
 		anim_names.attack.size() == 3
 		and anim_names.attack_hit.size() == 3
 		and anim_names.attack[2] == "Passive_AA_01_XinZhaoRework_anm"
-		and anim_names.attack_hit[2] == "",
-		"赵信第三段普攻只使用 Passive AA 01，不再播放前置 hit 动画",
+		and anim_names.attack_hit[2] == anim_names.attack[2]
+		and anim_names.attack_clip_ranges[2] == [0.0, 0.3]
+		and anim_names.attack_hit_clip_ranges[2] == [0.3, 3.0],
+		"赵信第三击从同一个完整 Passive 连续取 0–0.3/0.3–3.0 秒，避免异源端点跳变",
 	)
+	var cancel_probe := Unit.new()
+	cancel_probe.setup(0, stats, stats.name)
+	for attempt in 3:
+		cancel_probe._attack_visual_pending = true
+		cancel_probe._try_start_attack_visual(0.3)
+		_expect((cancel_probe._attack_visual_serial - 1) % 3 == 0, "取消前摇不占用赵信第三击被动动画段")
+	cancel_probe._attack_swing_count = 2
+	cancel_probe._attack_visual_pending = true
+	cancel_probe._try_start_attack_visual(0.3)
+	_expect((cancel_probe._attack_visual_serial - 1) % 3 == 2, "前两次已出手后下一次使用被动攻击段，声音序号同步")
+	cancel_probe.free()
 	# 第三击回血：站桩木桩不还手，赵信只应在第 3/6/9…次命中时回复 heal_amount。
 	var combat_stats: Dictionary = stats.duplicate()
 	combat_stats["deploy_time"] = 0.0
@@ -224,15 +234,18 @@ func _check_xin_animation_routes_and_active() -> void:
 		view._transition_to_basic_state(2, 0.0, &"attack")
 		var second_to_run_in := view._animation_player.current_animation == "RunIn"
 		view._play_attack(3)
-		var passive_uses_single_clip := (
+		var passive_uses_full_clip := (
 			view._animation_player.current_animation == "Passive_AA_01_XinZhaoRework_anm"
-			and not view._attack_hit_pending
+			and view._attack_hit_pending
+			and is_equal_approx(view._current_clip_speed, 1.0)
 		)
+		view._align_attack_progress(0.45)
+		_expect(not view._attack_hit_pending and is_equal_approx(view._attack_clip_start, 0.3) and is_equal_approx(view._animation_player.current_animation_position, 0.975), "赵信被动先原速出枪，命中后连续衔接同源收势；晚到进度包含源片段起点")
 		view._transition_to_basic_state(2, 0.0, &"attack")
 		var passive_to_run := view._animation_player.current_animation == "PassiveAA_to_Run_XinZhaoRework_anm"
 		view._on_animation_finished(&"PassiveAA_to_Run_XinZhaoRework_anm")
 		var passive_reached_run := view._animation_player.current_animation == "RunBase"
-		attack_routes_ok = first_to_run_in and first_reached_run and second_to_run_in and passive_uses_single_clip and passive_to_run and passive_reached_run
+		attack_routes_ok = first_to_run_in and first_reached_run and second_to_run_in and passive_uses_full_clip and passive_to_run and passive_reached_run
 
 		xin._attacking = false
 		xin._target = null

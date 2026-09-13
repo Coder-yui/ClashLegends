@@ -6,6 +6,13 @@ func run(harness: Object) -> void:
 	harness._expect(errors.is_empty(), "CardDB 当前全部卡牌通过字段、体型、弹体、资源、动画、建筑、双形态与主动技能校验%s" % (
 		"" if errors.is_empty() else "：" + "；".join(errors)
 	))
+	var custom := CardDB.get_card("anivia").duplicate(true)
+	var radius_errors := PackedStringArray()
+	CardDB.VALIDATOR._validate_combat_stats("custom", custom, true, radius_errors)
+	var custom_ok := radius_errors.is_empty() and is_equal_approx(float(custom.radius), 20.0)
+	custom.erase("custom_radius")
+	CardDB.VALIDATOR._validate_combat_stats("standard", custom, true, radius_errors)
+	harness._expect(custom_ok and not radius_errors.is_empty(), "显式自定义半径允许冰鸟 0.5 格，未声明的体型半径偏差仍拒绝")
 	var access_api_ok := true
 	for card_id in CardDB.selectable_ids():
 		access_api_ok = access_api_ok and CardDB.has_card(card_id) and not CardDB.get_card(card_id).is_empty()
@@ -16,7 +23,7 @@ func run(harness: Object) -> void:
 		and (garen_audio.get("attack_hit", []) as Array).size() == 16
 	)
 	var audio_schema_errors := PackedStringArray()
-	CardDB._validate_audio_config("audio_probe", {
+	CardDB.VALIDATOR._validate_audio_config("audio_probe", {
 		"visual_animations": {"attack": ["Attack1", "Attack2"]},
 		"audio": {
 			"attack_swing": [["res://missing.wav"]],
@@ -43,7 +50,7 @@ func run(harness: Object) -> void:
 	)
 	harness._expect(masteryi_audio_ok, "CardDB 登记剑圣三段挥击、命中、高原血统起止/持续与死亡音频事件")
 	var animation_schema_errors := PackedStringArray()
-	CardDB._validate_visual_config("animation_schema_probe", {
+	CardDB.VALIDATOR._validate_visual_config("animation_schema_probe", {
 		"visual_animations": {
 			"visual_actions": {"active": "Spell"},
 			"visual_action_durations": {"active": 1.0},
@@ -53,7 +60,7 @@ func run(harness: Object) -> void:
 	}, animation_schema_errors)
 	harness._expect(animation_schema_errors.is_empty(), "CardDB validator 登记 visual_action_durations、动作描述与逐边 transition blend 字段")
 	var active_schema_errors := PackedStringArray()
-	CardDB._validate_active_skills("timeline_probe", {
+	CardDB.VALIDATOR._validate_active_skills("timeline_probe", {
 		"visual_animations": {"visual_actions": {"active": {"animation": ["A", "B"], "durations": [1.0], "kind": "skill"}}},
 		"active_skills": [{
 			"name": "时间轴探针", "kind": "buff", "duration": 1.0,
@@ -61,11 +68,11 @@ func run(harness: Object) -> void:
 			"visual_action": "active", "cast_locks": ["movement"],
 		}],
 	}, active_schema_errors)
-	CardDB._validate_visual_config("timeline_probe", {
+	CardDB.VALIDATOR._validate_visual_config("timeline_probe", {
 		"visual_animations": {"visual_actions": {"active": {"animation": ["A", "B"], "durations": [1.0], "kind": "skill"}}},
 	}, active_schema_errors)
 	var unknown_field_errors := PackedStringArray()
-	CardDB._validate_known_fields("probe", {"future_field": true}, [], unknown_field_errors)
+	CardDB.VALIDATOR._validate_known_fields("probe", {"future_field": true}, [], unknown_field_errors)
 	var has_impact_error := false
 	var has_duration_error := false
 	var has_lock_error := false
@@ -74,7 +81,7 @@ func run(harness: Object) -> void:
 		has_duration_error = has_duration_error or "durations" in error
 		has_lock_error = has_lock_error or "cast_locks" in error
 	var transform_timing_errors := PackedStringArray()
-	CardDB._validate_active_skills("transform_timing_probe", {
+	CardDB.VALIDATOR._validate_active_skills("transform_timing_probe", {
 		"active_skills": [{
 			"name": "变形时间轴探针", "kind": "dual_form",
 			"length": 1.0, "width": 1.0, "damage": 1.0,
@@ -92,12 +99,12 @@ func run(harness: Object) -> void:
 		"CardDB validator 校验主动动作映射、动作时长数组、Impact/施法关系、全身动作攻击锁和统一未知字段提示",
 	)
 	var spell_errors := PackedStringArray()
-	CardDB._validate_card("spell_probe", {
+	CardDB.VALIDATOR._validate_card("spell_probe", {
 		"name": "探针", "cost": 1, "type": "spell", "description": "测试",
 		"radius": 10.0, "duration": 1.0, "spell_kind": "missing", "color": Color.WHITE,
 	}, spell_errors)
 	var reference_errors := PackedStringArray()
-	CardDB._validate_references("reference_probe", {
+	CardDB.VALIDATOR._validate_references("reference_probe", {
 		"spawn_id": "missing_unit",
 		"active_skills": [{"kind": "summon", "spawn_id": "missing_active_unit"}],
 	}, CardDB.all(), reference_errors)
@@ -107,7 +114,7 @@ func run(harness: Object) -> void:
 		"CardDB 在运行前拒绝未实现法术和失效的周期/主动召唤引用",
 	)
 	var hero_rework_errors := PackedStringArray()
-	CardDB._validate_combat_stats("resource_probe", {
+	CardDB.VALIDATOR._validate_combat_stats("resource_probe", {
 		"hp": 100.0, "damage": 10.0, "range": 10.0, "speed": 10.0, "interval": 1.0,
 		"first_hit": 0.2, "is_air": false, "building_only": false, "can_attack_air": false,
 		"size_tier": "medium", "mass": 1.0, "sight": 100.0, "visual_radius": 20.0,
@@ -116,13 +123,13 @@ func run(harness: Object) -> void:
 		"deploy_sweep_radius": 90.0, "deploy_sweep_damage": -1.0, "deploy_sweep_knockback": 90.0,
 		"deploy_sweep_duration": 0.0, "deploy_sweep_mass_factor_max": 0.0,
 	}, true, hero_rework_errors)
-	CardDB._validate_visual_config("attack_route_probe", {
+	CardDB.VALIDATOR._validate_visual_config("attack_route_probe", {
 		"visual_animations": {
 			"attack": ["Attack1", "Attack2"],
 			"attack_to_move": ["Attack1_ToRun"],
 		},
 	}, hero_rework_errors)
-	CardDB._validate_active_skills("frontal_probe", {
+	CardDB.VALIDATOR._validate_active_skills("frontal_probe", {
 		"active_skills": [{
 			"name": "非法扇形", "kind": "frontal", "shape": "fan",
 			"length": 0.0, "damage": -1.0, "arc_degrees": 180.0, "projectile_count": -1, "center_width": -1.0,
@@ -131,24 +138,24 @@ func run(harness: Object) -> void:
 		}],
 	}, hero_rework_errors)
 	var projectile_visual_errors := PackedStringArray()
-	CardDB._validate_projectile("projectile_visual_probe", {
+	CardDB.VALIDATOR._validate_projectile("projectile_visual_probe", {
 		"projectile_speed": 100.0, "projectile_visual": "orb",
 		"projectile_visual_scale": 0.0, "projectile_impact_visual": "unknown",
 	}, projectile_visual_errors)
-	CardDB._validate_active_skills("nova_probe", {
+	CardDB.VALIDATOR._validate_active_skills("nova_probe", {
 		"active_skills": [{
 			"name": "非法范围击退", "kind": "nova", "radius": 90.0, "damage": 90.0,
 			"knockback": 90.0, "knockback_duration": 0.0, "knockback_mass_factor_max": 0.0,
 		}],
 	}, hero_rework_errors)
-	CardDB._validate_active_skills("empowered_probe", {
+	CardDB.VALIDATOR._validate_active_skills("empowered_probe", {
 		"active_skills": [{
 			"name": "非法强化普攻", "kind": "empowered_attack",
 			"empowered_damage_multiplier": 0.0, "empowered_speed_multiplier": 0.5,
 			"blind_charges": -1,
 		}],
 	}, hero_rework_errors)
-	CardDB._validate_active_skills("forward_area_probe", {
+	CardDB.VALIDATOR._validate_active_skills("forward_area_probe", {
 		"active_skills": [{
 			"name": "非法落星", "kind": "forward_area", "uses_skill_resource": true,
 			"forward_distance": 0.0, "radius": 0.0, "damage": -1.0, "stun_duration": -1.0,
@@ -156,14 +163,14 @@ func run(harness: Object) -> void:
 			"shockwave_damage": -1.0, "shockwave_duration": 0.0, "shockwave_end_radius": 0.0,
 		}],
 	}, hero_rework_errors)
-	CardDB._validate_active_skills("continuous_area_probe", {
+	CardDB.VALIDATOR._validate_active_skills("continuous_area_probe", {
 		"active_skills": [{
 			"name": "非法持续范围", "kind": "continuous_area",
 			"radius": 0.0, "damage": -1.0, "duration": 4.0, "tick_interval": 0.0,
 			"cast_duration": 3.0,
 		}],
 	}, hero_rework_errors)
-	CardDB._validate_combat_stats("extra_hit_probe", {
+	CardDB.VALIDATOR._validate_combat_stats("extra_hit_probe", {
 		"hp": 100.0, "damage": 10.0, "range": 10.0, "speed": 10.0, "interval": 1.0,
 		"first_hit": 0.2, "is_air": false, "building_only": false, "can_attack_air": false,
 		"size_tier": "medium", "mass": 1.0, "sight": 100.0, "visual_radius": 20.0,

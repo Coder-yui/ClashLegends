@@ -9,8 +9,6 @@ func run(harness: Object) -> void:
 		var stats: Dictionary = CardDB.get_card(card_id)
 		if StringName(stats.get("type", "")) != &"spell":
 			errors.append_array(SuiteUtils.visual_contract_errors(card_id, stats))
-	for error in SuiteUtils.visual_contract_errors("imp", CardDB.get_unit_stats("imp")):
-		errors.append(error)
 	harness._expect(
 		errors.is_empty(),
 		"全部单位/建筑卡的包装场景与动画映射通过通用内容契约%s" % ("" if errors.is_empty() else "：" + "；".join(errors)),

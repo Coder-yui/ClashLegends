@@ -1,12 +1,6 @@
 class_name BuildingMinionSuite
-extends RefCounted
+extends "res://tests/suites/battle_suite.gd"
 ## 建筑卡与兵线领域：墓碑占地/生成周期、小鬼与四类兵线单位机制。
-
-var _harness: Object
-var _main: Node2D
-
-func _expect(condition: bool, message: String) -> void:
-	_harness._expect(condition, message)
 
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
@@ -15,6 +9,8 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_apex_turret()
 	_check_sun_disc()
 	_check_minion_line_mechanism()
+	_check_baron_buff_visual()
+	_check_baron_projectile()
 	_check_death_animation_durations()
 	_check_tombstone_footprint()
 	_check_tombstone_does_not_push_air_units()
@@ -55,9 +51,7 @@ func _check_apex_turret() -> void:
 		and is_equal_approx(float(skill.projectile_visual_width), 28.8),
 		"H-28Q 穿透技能费用 1、可用 2 次、冷却 2 秒，路径和电磁波光弹均加宽 20% 至 28.8",
 	)
-	var deck_builder := DeckBuilder.new()
-	var turret_attributes: Array[Dictionary] = deck_builder._card_attributes(stats)
-	deck_builder.free()
+	var turret_attributes: Array[Dictionary] = CardDetails.attributes(stats)
 	var turret_attribute_names: Array[String] = []
 	for attribute in turret_attributes:
 		turret_attribute_names.append(String(attribute.get("name", "")))
@@ -124,39 +118,34 @@ func _check_apex_turret() -> void:
 		"off": ground_off_path.hp,
 		"air": air_on_path.hp,
 	}
-	_main._active_skill_effect_system.begin_frontal_visual(source, skill, Vector2.UP)
-	var laser_effect: Dictionary = _main._active_skill_effect_system.frontal_effects.back()
-	var laser_launch_position: Vector2 = _main._frontal_projectile_visual_position(
-		laser_effect, source.position, Vector2.UP, source.body_radius,
-		float(skill.near_width) * 0.5, float(skill.far_width) * 0.5, 0.5, 0.0,
-	)
-	var expected_laser_launch := (
-		source.position
-		+ Vector2.UP * float(skill.projectile_visual_forward_offset)
-		+ Vector2.UP * float(skill.projectile_visual_height)
-	)
-	var laser_visual_origin_ok := (
-		is_equal_approx(float(laser_effect.projectile_visual_forward_offset), 46.75)
-		and is_equal_approx(float(laser_effect.projectile_visual_height), 46.75)
-		and is_equal_approx(float(laser_effect.projectile_visual_width), 28.8)
-		and laser_launch_position.is_equal_approx(expected_laser_launch)
-	)
-	_main._active_skill_effect_system.frontal_effects.clear()
 	_main._active_skill_effect_system.apply_frontal(source, skill, Vector2.UP)
-	_expect(
-		laser_visual_origin_ok
-		and ground_near.hp < float(hp_before.near)
-		and ground_far.hp < float(hp_before.far)
-		and is_equal_approx(ground_off_path.hp, float(hp_before.off))
-		and is_equal_approx(air_on_path.hp, float(hp_before.air)),
-		"H-28Q 激光从放大后炮口显示，权威路径仍一次穿透命中多个地面敌人且不伤害路径外或空中敌人",
-	)
+	var laser: Dictionary = _main._projectile_system.projectiles.values().back()
+	var laser_visual_origin_ok: bool = _main._projectile_system._visual_position(laser).is_equal_approx(source.position + Vector2.UP * (46.75 + 46.75))
+	_expect(laser_visual_origin_ok and ground_near.hp == float(hp_before.near) and ground_far.hp == float(hp_before.far), "H-28Q 激光在炮口创建真实穿透弹体，出膛不提前伤害")
+	_main._projectile_system.tick(0.05)
+	_expect(ground_near.hp < float(hp_before.near) and ground_far.hp == float(hp_before.far), "H-28Q 激光先命中近处目标，远处目标等待弹体到达")
+	_main._projectile_system.tick(0.20)
+	_expect(ground_far.hp < float(hp_before.far) and ground_off_path.hp == float(hp_before.off) and air_on_path.hp == float(hp_before.air), "H-28Q 激光穿透前排后击中远处地面目标，不伤路径外或空中目标")
+	var near_after := ground_near.hp
+	var far_after := ground_far.hp
+	_main._projectile_system.tick(0.1)
+	_expect(ground_near.hp == near_after and ground_far.hp == far_after and _main._projectile_system.projectiles.is_empty(), "H-28Q 激光每个目标一次，飞完射程销毁")
+
+	# 发射后以当前位置碰撞；炮台消失不抹掉已经飞出的弹体。
+	_main._active_skill_effect_system.apply_frontal(source, skill, Vector2.UP)
+	ground_near.position.x += 100.0
+	var source_hp := source.hp
+	source.hp = 0.0
+	_main._projectile_system.tick(0.30)
+	_expect(ground_near.hp == near_after and ground_far.hp < far_after, "H-28Q 激光允许移出路径躲避，炮台死亡后已出膛弹体继续穿透命中")
+	source.hp = source_hp
+	ground_near.position.x -= 100.0
 
 	var splash_air := _make_apex_turret_test_unit(CardDB.get_card("aurelionsol"), 1, ground_near.position + Vector2(8.0, 0.0), true)
 	var splash_air_hp := splash_air.hp
 	var ground_hp := ground_near.hp
 	var projectiles_before: Array = _main._projectiles.keys()
-	# 静止建筑没有行军预装填，首次炮击需要走完一个完整攻击周期。
+	# 覆盖首次炮击和后续周期；静止建筑的首击同样只需前摇。
 	for _tick in range(36):
 		source.sim_tick(_main.SIM_DT)
 	var projectile_carries_ground_only := false
@@ -251,7 +240,7 @@ func _check_sun_disc() -> void:
 		var player := SuiteUtils.find_anim_player(sample) if sample != null else null
 		animation_and_ruin_ok = animation_and_ruin_ok and player != null
 		animation_and_ruin_ok = animation_and_ruin_ok and sample != null and sample.get_node("DiscModel").scale.is_equal_approx(Vector3(0.0172, 0.0172, 0.0172))
-		for animation_name in [&"Spawn", &"Idle1_Base", &"Idle2_Base", &"Attack1_BASE", &"Death"]:
+		for animation_name in [&"Spawn", &"Idle1_Base", &"Idle2_Base", &"Attack1_BASE", &"Attack2_BASE", &"Death"]:
 			animation_and_ruin_ok = animation_and_ruin_ok and player != null and player.has_animation(animation_name)
 		var ruin_meshes: Array[Node] = sample.get_node("RuinBase").find_children("*", "MeshInstance3D", true, false) if sample != null else []
 		var static_rubble_only := ruin_meshes.size() == 1
@@ -266,8 +255,8 @@ func _check_sun_disc() -> void:
 			sample.free()
 	_expect(animation_and_ruin_ok, "太阳圆盘双方包装将主体放大至略宽于废墟，只显示对应阵营防御塔 Rubble，并包含部署、双待机、普攻与死亡动画")
 	_expect(
-		(stats.visual_animations.idle_cycle as Array) == ["Idle1_Base", "Idle1_Base", "Idle2_Base"],
-		"太阳圆盘待机严格按 Idle1、Idle1、Idle2 的三段序列循环",
+		(stats.visual_animations.idle_cycle as Array).count("Idle1_Base") == 7 and (stats.visual_animations.idle_cycle as Array).count("Idle2_Base") == 2,
+		"太阳圆盘待机按原表三次简单分支、两次 Base→Idle2→Base 分支确定循环",
 	)
 
 	# 组合包装的废墟固定朝向；Spawn 保持正常深度遮挡；自带废墟只在 Death 末帧隐藏。
@@ -351,12 +340,17 @@ func _check_sun_disc() -> void:
 	var idle_cycle_runtime_ok := normal_view != null and normal_view._animation_player.current_animation == "Idle1_Base"
 	if normal_view != null:
 		normal_view._current_state = 1
-		normal_view._on_animation_finished(&"Idle1_Base")
-		idle_cycle_runtime_ok = idle_cycle_runtime_ok and normal_view._idle_cycle_index == 1 and normal_view._animation_player.current_animation == "Idle1_Base"
-		normal_view._on_animation_finished(&"Idle1_Base")
-		idle_cycle_runtime_ok = idle_cycle_runtime_ok and normal_view._idle_cycle_index == 2 and normal_view._animation_player.current_animation == "Idle2_Base"
-		normal_view._on_animation_finished(&"Idle2_Base")
-		idle_cycle_runtime_ok = idle_cycle_runtime_ok and normal_view._idle_cycle_index == 0 and normal_view._animation_player.current_animation == "Idle1_Base"
+		var cycle: Array = stats.visual_animations.idle_cycle
+		for index in range(cycle.size()):
+			normal_view._on_animation_finished(StringName(cycle[index]))
+			var next := (index + 1) % cycle.size()
+			idle_cycle_runtime_ok = idle_cycle_runtime_ok and normal_view._idle_cycle_index == next and normal_view._animation_player.current_animation == cycle[next]
+		for name in ["Attack1_BASE", "Attack2_BASE"]:
+			var clip := normal_view._animation_player.get_animation(name)
+			idle_cycle_runtime_ok = idle_cycle_runtime_ok and clip.get_track_count() > 0
+			for track in range(clip.get_track_count()):
+				idle_cycle_runtime_ok = idle_cycle_runtime_ok and String(clip.track_get_path(track).get_concatenated_subnames()) in ["C_Buffbone_Glb_Chest_Loc", "Buffbone_Cstm_Obelisk_Tip"]
+
 	_expect(
 		ruined_spawn.built_on_tower_ruin
 		and is_zero_approx(ruined_spawn.lifespan)
@@ -457,12 +451,12 @@ func _check_tombstone_art_integration() -> void:
 	if health_anchor_ok:
 		var anchor = tombstone_sample.call("get_health_bar_anchor_local")
 		health_anchor_ok = anchor is Vector3 and (anchor as Vector3).y > 1.0
-	var imp_animation_mapping_ok: bool = String(imp_stats.visual_animations.move) == "Run1" and imp_stats.visual_animations.attack == ["Yorick_ghoul_leapWindup_anm"]
+	var imp_animation_mapping_ok: bool = String(imp_stats.visual_animations.move) == "Run1" and imp_stats.visual_animations.attack == ["Attack1", "Attack2", "Attack3"]
 	var tombstone_visual_scale_ok := tombstone_sample != null and tombstone_sample.scale.is_equal_approx(Vector3.ONE * 1.25)
 	_expect(tombstone_packed != null and tombstone_player != null and fog_ok and tombstone_visual_scale_ok, "墓碑包装场景放大 1.25 倍，并使用五层独立流动黑雾覆盖地面与模型内部")
 	_expect(fog_death_ok, "墓碑死亡时每座墓碑的黑雾独立随 Death 动画扩散并淡出")
 	_expect(health_anchor_ok, "墓碑使用稳定的模型顶部锚点定位血条")
-	_expect(imp_packed != null and imp_player != null and imp_animation_mapping_ok, "小鬼移动循环 Run1，攻击使用 leapWindup")
+	_expect(imp_packed != null and imp_player != null and imp_animation_mapping_ok, "小鬼移动循环 Run1，普通攻击使用原表 Attack1/2/3")
 	if tombstone_sample != null:
 		tombstone_sample.free()
 	if imp_sample != null:
@@ -533,8 +527,8 @@ func _check_minion_line_mechanism() -> void:
 	_main._pending_lane_minions.clear()
 	_main._battle_elapsed = 124.95
 	_main._next_minion_wave_time = 140.0
-	_main._match_timer = _main.MATCH_TIME
-	_main._overtime = false
+	_main._match_rules.time_left = _main.MATCH_TIME
+	_main._match_rules.overtime = false
 	_main._tick_minion_waves(0.05)
 	var double_start_front := _minion_test_units()
 	var double_start_front_ok := double_start_front.size() == 4
@@ -547,27 +541,27 @@ func _check_minion_line_mechanism() -> void:
 	_expect(next_double_wave_ok, "双倍金币阶段从 2:05 起按 30 秒间隔继续生成炮车线")
 
 	_main._battle_elapsed = 0.0
-	_main._match_timer = _main.MATCH_TIME
-	_main._overtime = false
+	_main._match_rules.time_left = _main.MATCH_TIME
+	_main._match_rules.overtime = false
 	_main._update_elixir_rate()
 	var one_x_at_start := is_equal_approx(_main._elixir.regen_multiplier, 1.0)
 	_main._battle_elapsed = 124.95
-	_main._match_timer = _main.DOUBLE_ELIXIR_TIME + 0.05
+	_main._match_rules.time_left = _main.DOUBLE_ELIXIR_TIME + 0.05
 	_main._update_elixir_rate()
 	var one_x_before_double := is_equal_approx(_main._elixir.regen_multiplier, 1.0)
 	_main._battle_elapsed = 125.0
-	_main._match_timer = _main.DOUBLE_ELIXIR_TIME
+	_main._match_rules.time_left = _main.DOUBLE_ELIXIR_TIME
 	_main._update_elixir_rate()
 	var two_x_at_double_start := is_equal_approx(_main._elixir.regen_multiplier, 2.0)
 	_main._battle_elapsed = 130.0
-	_main._match_timer = 55.0
+	_main._match_rules.time_left = 55.0
 	_main._update_elixir_rate()
 	var two_x_after_double_start := is_equal_approx(_main._elixir.regen_multiplier, 2.0)
-	_main._overtime = true
-	_main._match_timer = _main.OVERTIME_TIME
+	_main._match_rules.overtime = true
+	_main._match_rules.time_left = _main.OVERTIME_TIME
 	_main._update_elixir_rate()
 	var two_x_in_overtime: bool = is_equal_approx(_main._elixir.regen_multiplier, 2.0)
-	_main._match_timer = _main.OVERTIME_TRIPLE_ELIXIR_TIME
+	_main._match_rules.time_left = _main.OVERTIME_TRIPLE_ELIXIR_TIME
 	_main._update_elixir_rate()
 	var three_x_at_overtime_last_minute: bool = is_equal_approx(_main._elixir.regen_multiplier, 3.0)
 	_expect(one_x_at_start and one_x_before_double, "正赛 0:00~2:05 金币倍率为 1x")
@@ -577,28 +571,30 @@ func _check_minion_line_mechanism() -> void:
 	var tower_hps: Array[float] = []
 	for tower in _main._towers:
 		tower_hps.append(tower.hp)
-	_main._overtime = false
-	_main._match_timer = 0.0
+	_main._match_rules.overtime = false
+	_main._match_rules.time_left = 0.0
 	_main._battle_elapsed = 185.0
 	_main._next_minion_wave_time = 185.0
 	_main._towers[0].hp = 0.0
 	_main.game_over = false
-	_main._sim_acc = 0.0
+	_main._match_rules.finished = false
+	_main._simulation_clock.remainder = 0.0
 	_clear_minion_test_units()
 	_main._pending_lane_minions.clear()
-	_main._process(0.0)
-	_expect(_main.game_over and not _main._overtime and _minion_test_units().is_empty(), "3:05 若正赛已分出胜负则直接结束，不生成 3:05 兵线")
+	_main._tick_match_rules(0.0)
+	_expect(_main.game_over and not _main._match_rules.overtime and _minion_test_units().is_empty(), "3:05 若正赛已分出胜负则直接结束，不生成 3:05 兵线")
 	for index in _main._towers.size():
 		_main._towers[index].hp = tower_hps[index]
 
-	_main._overtime = false
-	_main._match_timer = 0.0
+	_main._match_rules.overtime = false
+	_main._match_rules.time_left = 0.0
 	_main._battle_elapsed = 185.0
 	_main._next_minion_wave_time = 185.0
 	_main.game_over = false
-	_main._sim_acc = 0.0
-	_main._process(0.0)
-	var overtime_front_ok: bool = _main._overtime and not _main.game_over and _minion_test_units().size() == 4
+	_main._match_rules.finished = false
+	_main._simulation_clock.remainder = 0.0
+	_main._tick_match_rules(0.0)
+	var overtime_front_ok: bool = _main._match_rules.overtime and not _main.game_over and _minion_test_units().size() == 4
 	for minion in _minion_test_units():
 		overtime_front_ok = overtime_front_ok and minion.card_id == "melee_minion"
 	_main._tick_minion_waves(0.5)
@@ -613,13 +609,14 @@ func _check_minion_line_mechanism() -> void:
 
 	_clear_minion_test_units()
 	_main._pending_lane_minions.clear()
-	_main._overtime = true
-	_main._match_timer = 0.0
+	_main._match_rules.overtime = true
+	_main._match_rules.time_left = 0.0
 	_main._battle_elapsed = 305.0
 	_main._next_minion_wave_time = 305.0
 	_main.game_over = false
-	_main._sim_acc = 0.0
-	_main._process(0.0)
+	_main._match_rules.finished = false
+	_main._simulation_clock.remainder = 0.0
+	_main._tick_match_rules(0.0)
 	_expect(_main.game_over and _minion_test_units().is_empty(), "5:05 加时结束，不生成理论上的下一波兵线")
 
 	for index in _main._towers.size():
@@ -634,9 +631,9 @@ func _check_minion_line_mechanism() -> void:
 	var upgraded_front_ok := false
 	var untouched_front_ok := false
 	for minion in _minion_test_units():
-		if minion.team == 0 and minion.position.x < _main.FIELD_W * 0.5:
+		if minion.team == 0 and minion.position.x < ArenaRules.FIELD_W * 0.5:
 			upgraded_front_ok = minion.card_id == "super_minion"
-		elif minion.team == 0 and minion.position.x > _main.FIELD_W * 0.5:
+		elif minion.team == 0 and minion.position.x > ArenaRules.FIELD_W * 0.5:
 			untouched_front_ok = minion.card_id == "melee_minion"
 	_expect(upgraded_front_ok and untouched_front_ok, "推掉敌方左塔后，仅己方左路后续近战兵替换为超级兵")
 	_main._towers[2].hp = enemy_left_hp
@@ -644,10 +641,11 @@ func _check_minion_line_mechanism() -> void:
 	_main._pending_lane_minions.clear()
 	_main._battle_elapsed = 0.0
 	_main._next_minion_wave_time = _main.FIRST_MINION_WAVE_TIME
-	_main._match_timer = _main.MATCH_TIME
-	_main._overtime = false
+	_main._match_rules.time_left = _main.MATCH_TIME
+	_main._match_rules.overtime = false
 	_main.game_over = false
-	_main._sim_acc = 0.0
+	_main._match_rules.finished = false
+	_main._simulation_clock.remainder = 0.0
 	_main._minion_waves_enabled = old_waves_enabled
 
 func _run_scheduled_wave(elapsed_before: float, wave_time: float, wave_type: String, overtime: bool = false) -> bool:
@@ -655,8 +653,8 @@ func _run_scheduled_wave(elapsed_before: float, wave_time: float, wave_type: Str
 	_main._pending_lane_minions.clear()
 	_main._battle_elapsed = elapsed_before
 	_main._next_minion_wave_time = wave_time
-	_main._match_timer = _main.OVERTIME_TIME if overtime else _main.MATCH_TIME
-	_main._overtime = overtime
+	_main._match_rules.time_left = _main.OVERTIME_TIME if overtime else _main.MATCH_TIME
+	_main._match_rules.overtime = overtime
 	_main._tick_minion_waves(0.05)
 	var front_only_ok := _minion_test_units().size() == 4
 	for minion in _minion_test_units():
@@ -681,14 +679,14 @@ func _wave_cards_ok(front_card: String, rear_card: String) -> bool:
 
 func _check_death_animation_durations() -> void:
 	var cards := CardDB.all()
-	var hero_ids := ["garen", "xin", "ashe", "teemo", "masteryi", "gwen", "sett", "aurelionsol"]
+	var hero_ids := ["garen", "xin", "ashe", "teemo", "masteryi", "gwen", "aurelionsol"]
 	var minion_ids := ["melee_minion", "ranged_minion", "siege_minion", "super_minion"]
 	var durations_ok := true
 	for card_id in hero_ids:
 		durations_ok = durations_ok and is_equal_approx(float(cards[card_id].visual_animations.get("death_duration", 0.0)), 0.8)
 	for card_id in minion_ids:
 		durations_ok = durations_ok and is_equal_approx(float(cards[card_id].visual_animations.get("death_duration", 0.0)), 0.5)
-	_expect(durations_ok, "全部英雄死亡动画统一为 0.8 秒，四类小兵统一为 0.5 秒")
+	_expect(durations_ok, "未指定原速死亡的英雄保持 0.8 秒，四类小兵保持 0.5 秒")
 	_expect(
 		_runtime_death_speed_matches("garen", 0.8)
 		and _runtime_death_speed_matches("melee_minion", 0.5),
@@ -733,8 +731,8 @@ func _clear_minion_test_units() -> void:
 func _check_tombstone_footprint() -> void:
 	var snapped: Vector2 = _main._snap_card_position("tombstone", Vector2(467.0, 873.0))
 	_expect(
-		is_equal_approx(fmod(snapped.x, _main.TILE_SIZE), _main.TILE_SIZE * 0.5)
-		and is_equal_approx(fmod(snapped.y, _main.TILE_SIZE), _main.TILE_SIZE * 0.5),
+		is_equal_approx(fmod(snapped.x, ArenaRules.TILE_SIZE), ArenaRules.TILE_SIZE * 0.5)
+		and is_equal_approx(fmod(snapped.y, ArenaRules.TILE_SIZE), ArenaRules.TILE_SIZE * 0.5),
 		"3x3 墓碑中心吸附在中央格格心",
 	)
 	# 故意让测试建筑的圆柱半径远小于 3x3 占地，确保两个概念不会因当前数值相近而误测为同一个。
@@ -749,16 +747,16 @@ func _check_tombstone_footprint() -> void:
 	_main.add_child(tombstone)
 	_main._register_dynamic_building(tombstone)
 	var footprint_ok := tombstone.footprint_tiles == Vector2i(3, 3)
-	var first: Vector2 = snapped - Vector2.ONE * _main.TILE_SIZE
+	var first: Vector2 = snapped - Vector2.ONE * ArenaRules.TILE_SIZE
 	var footprint_blocks_deployment := true
 	var footprint_outer_tiles_remain_walkable := true
 	for y in range(3):
 		for x in range(3):
-			var occupied_center: Vector2 = first + Vector2(x, y) * _main.TILE_SIZE
+			var occupied_center: Vector2 = first + Vector2(x, y) * ArenaRules.TILE_SIZE
 			footprint_blocks_deployment = footprint_blocks_deployment and not _main.is_card_deploy_position_valid(0, "xin", occupied_center)
 			if x != 1 or y != 1:
 				footprint_outer_tiles_remain_walkable = footprint_outer_tiles_remain_walkable and _main.is_ground_position_walkable(occupied_center, 0.0)
-	var adjacent_center: Vector2 = first + Vector2.LEFT * _main.TILE_SIZE
+	var adjacent_center: Vector2 = first + Vector2.LEFT * ArenaRules.TILE_SIZE
 	var adjacent_deployment_allowed: bool = _main.is_card_deploy_position_valid(0, "xin", adjacent_center)
 	_expect(
 		footprint_ok
@@ -773,10 +771,10 @@ func _check_tombstone_footprint() -> void:
 
 	var expected_nav_cells: Array = _main.nav.cells_for_circle(
 		tombstone.position,
-		tombstone.body_radius + _main.NAV_CLEARANCE,
+		tombstone.body_radius + ArenaRules.NAV_CLEARANCE,
 	)
 	var footprint_nav_cells: Array = _main.nav.cells_for_rect(
-		_main._structure_deployment_rect(tombstone).grow(_main.NAV_CLEARANCE),
+		_main._structure_deployment_rect(tombstone).grow(ArenaRules.NAV_CLEARANCE),
 	)
 	var footprint_only_corner_found := false
 	for cell in footprint_nav_cells:
@@ -890,3 +888,91 @@ func _imp_units() -> Array[Unit]:
 		if combatant is Unit and (combatant as Unit).card_id == "imp":
 			result.append(combatant as Unit)
 	return result
+
+
+func _check_baron_buff_visual() -> void:
+	for card_id in ["melee_minion", "ranged_minion", "siege_minion", "super_minion"]:
+		for team in [0, 1]:
+			var stats: Dictionary = CardDB.get_card(card_id).duplicate(true)
+			stats["deploy_time"] = 0.0
+			var unit := Unit.new()
+			unit.card_id = card_id
+			unit.position = Vector2(360, 850)
+			unit.setup(team, stats, stats.name)
+			_main.add_child(unit)
+			_main._battle_presentation.attach_unit(unit, stats)
+			var view: UnitModel3D
+			for child in _main._battle_presentation._world_root.get_children():
+				if child is UnitModel3D and child._source == unit:
+					view = child
+			var skill: Dictionary = stats.active_skills[0]
+			var radius := unit.body_radius
+			var hp := unit.hp
+			var position := unit.position
+			var starts_hidden: bool = view != null and not view._active_buff_visual.visible
+			_main._active_skill_effect_system.apply(unit, skill)
+			view._process(0.3)
+			var active_ok: bool = view._active_buff_visual.active and view._active_buff_visual.visible
+			var mesh := view._flash_meshes[0]
+			var buff_overlay: Material = mesh.material_overlay
+			unit.freeze(0.5)
+			view._process(0.01)
+			var frozen_ok: bool = mesh.material_overlay != buff_overlay and mesh.material_overlay.next_pass == buff_overlay
+			unit.control.frozen_timer = 0.0
+			view._process(0.01)
+			view._on_source_visual_hit()
+			var hit_ok: bool = mesh.material_overlay.next_pass == buff_overlay
+			view._process(0.06)
+			hit_ok = hit_ok and mesh.material_overlay == buff_overlay
+			var payload: Array = _main._snapshot_system._unit_snapshot_payload(123, unit)
+			var snapshot_ok := int(payload[NetworkSnapshotSystem.U_ACTIVE_BUFF_ACTIVE]) == 1
+			var unchanged := unit.body_radius == radius and unit.hp == hp and unit.position == position
+			unit._tick_active_statuses(float(skill.duration) + 0.1)
+			view._process(0.3)
+			payload = _main._snapshot_system._unit_snapshot_payload(123, unit)
+			var expired_ok: bool = not view._active_buff_visual.visible and mesh.material_overlay == view._original_overlays[0] and int(payload[NetworkSnapshotSystem.U_ACTIVE_BUFF_ACTIVE]) == 0
+			_main._active_skill_effect_system.apply(unit, skill)
+			view._process(0.3)
+			unit.take_damage(99999.0)
+			view._process(0.3)
+			var death_ok: bool = not view._active_buff_visual.visible and not view._last_buff_visible
+			_expect(starts_hidden and active_ok and frozen_ok and hit_ok and snapshot_ok and unchanged and expired_ok and death_ok,
+				"%s 阵营 %d 男爵特效：Buff/快照启停、控制与闪白恢复、到期/死亡清理，视觉不改位置/半径/生命" % [card_id, team])
+			view.free()
+			if is_instance_valid(unit): unit.free()
+	var errors := PackedStringArray()
+	preload("res://scripts/data/card_validator.gd")._validate_visual_config("bad_buff", {"visual_active_buff_scene": "res://assets/units/melee_minion/melee_minion_order_view.tscn"}, errors)
+	_expect(not errors.is_empty(), "持续 Buff 表现场景拒绝不实现 ActiveBuffVisual3D 的根节点")
+
+
+func _check_baron_projectile() -> void:
+	var source := Unit.new()
+	source.card_id = "siege_minion"
+	source.setup(0, CardDB.get_card("siege_minion"), "炮车兵")
+	source.position = Vector2(100, 900)
+	_main.add_child(source)
+	var target := Unit.new()
+	target.card_id = "super_minion"
+	target.setup(1, CardDB.get_card("super_minion"), "超级兵")
+	target.position = Vector2(100, 600)
+	_main.add_child(target)
+	var system: ProjectileSystem = _main._projectile_system
+	system.clear_all()
+	system.launch(source, target, 10, 300, 0, 0, Color.WHITE)
+	var normal: Dictionary = system.projectiles.values()[0].duplicate()
+	system.clear_all()
+	source.active_buff_timer = 1.0
+	var hp := target.hp
+	system.launch(source, target, 10, 300, 0, 0, Color.WHITE)
+	var projectile: Dictionary = system.projectiles.values()[0]
+	var payload: Array = _main._snapshot_system._projectile_snapshot_payload(1, projectile)
+	_expect(projectile.visual == &"baron_siege" and payload[NetworkSnapshotSystem.P_VISUAL] == "baron_siege" and projectile.radius == normal.radius and projectile.speed == normal.speed and target.hp == hp and system.impact_effects[0].visual == &"baron_siege_cast", "强化炮弹使用独立外观和快照，出膛不结算伤害且不改速度/碰撞半径")
+	source.active_buff_timer = 0.0
+	system.tick(1.0)
+	_expect(is_equal_approx(target.hp, hp - 10) and system.projectiles.is_empty() and system.impact_effects[-1].visual == &"baron_siege_hit", "已出膛强化炮弹不随 Buff 到期变色，命中只结算一次并播放原始命中特效")
+	system.clear_all()
+	system.launch(source, target, 10, 300, 0, 0, Color.WHITE)
+	_expect(system.projectiles.values()[0].visual == normal.visual, "强化到期后的新炮弹恢复普通外观")
+	system.clear_all()
+	source.free()
+	target.free()

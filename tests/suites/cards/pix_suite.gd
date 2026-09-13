@@ -1,8 +1,5 @@
 class_name PixSuite
-extends RefCounted
-
-var _harness: Object
-var _main: Node2D
+extends "res://tests/suites/battle_suite.gd"
 
 
 func run(harness: Object, main: Node2D) -> void:
@@ -11,9 +8,6 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_card_data_and_art()
 	_check_group_deployment_and_shared_skill()
 
-
-func _expect(condition: bool, message: String) -> void:
-	_harness._expect(condition, message)
 
 
 func _check_card_data_and_art() -> void:
@@ -66,10 +60,10 @@ func _check_card_data_and_art() -> void:
 func _check_group_deployment_and_shared_skill() -> void:
 	var old_deck: Array = _main._deck.duplicate()
 	_main._deck = ["pix", "garen", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
-	var pending_before: int = _main._pending_card_deployments.size()
+	var pending_before: int = _main._commands.card_commands.size()
 	var scheduled_tick: int = _main._deploy_card(0, "pix", Vector2(360.0, 1050.0), _main._sim_tick_id)
-	var one_pending_circle: bool = scheduled_tick >= 0 and _main._pending_card_deployments.size() == pending_before + 1
-	_main._pending_card_deployments.pop_back()
+	var one_pending_circle: bool = scheduled_tick >= 0 and _main._commands.card_commands.size() == pending_before + 1
+	_main._commands.card_commands.pop_back()
 	var group: Array[Unit] = _main._spawn_card_units(0, "pix", Vector2(360.0, 1050.0), 0.0, 0)
 	var other_group: Array[Unit] = _main._spawn_card_units(0, "pix", Vector2(500.0, 1050.0), 0.0)
 	var positions := {}
@@ -105,16 +99,16 @@ func _check_group_deployment_and_shared_skill() -> void:
 		member.on_attack_landed(-1, member.damage)
 		member.on_attack_landed(-1, member.damage)
 	var healed_repeatedly: bool = survivors.all(func(member):
-		return is_equal_approx(member.hp, member.max_hp * 1.5) and is_equal_approx(member.attack_lifesteal_ratio, 0.25)
+		return is_equal_approx(member.hp, roundf(member.max_hp * 1.5)) and is_equal_approx(member.attack_lifesteal_ratio, 0.25)
 	)
 	var cap_probe := survivors[0]
 	cap_probe.hp = cap_probe.max_hp * 1.45
 	cap_probe.on_attack_landed(-1, cap_probe.damage)
 	_expect(
 		healed_repeatedly
-		and is_equal_approx(cap_probe.hp, cap_probe.max_hp * 1.5)
+		and is_equal_approx(cap_probe.hp, roundf(cap_probe.max_hp * 1.5))
 		and is_equal_approx(cap_probe.attack_lifesteal_ratio, 0.25),
-		"每名存活皮克斯的每次真实攻击命中都会回复该击伤害25%，效果不消耗且溢出生命不超过150%",
+		"每名存活皮克斯的每次真实攻击命中都会回复该击伤害25%（四舍五入），效果不消耗且溢出上限按150%四舍五入",
 	)
 
 	# 同一卡槽再次部署只替换主动资格；旧编队已经获得的持续吸血不得被清除或转移。
@@ -128,7 +122,7 @@ func _check_group_deployment_and_shared_skill() -> void:
 	var new_group_starts_clean: bool = new_group.all(func(member): return is_zero_approx(member.attack_lifesteal_ratio))
 	cap_probe.hp = cap_probe.max_hp
 	cap_probe.on_attack_landed(-1, cap_probe.damage)
-	old_effect_survives_redeploy = old_effect_survives_redeploy and is_equal_approx(cap_probe.hp, cap_probe.max_hp + cap_probe.damage * 0.25)
+	old_effect_survives_redeploy = old_effect_survives_redeploy and is_equal_approx(cap_probe.hp, cap_probe.max_hp + roundf(cap_probe.damage * 0.25))
 	var new_activated: bool = new_ability_id != ability_id and _main._activate_active_skill(new_ability_id, 0)
 	var isolated_new_activation: bool = new_group.all(func(member): return is_equal_approx(member.attack_lifesteal_ratio, 0.25))
 	isolated_new_activation = isolated_new_activation and survivors.all(func(member): return is_equal_approx(member.attack_lifesteal_ratio, 0.25))

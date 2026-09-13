@@ -1,15 +1,14 @@
 class_name ProjectileSuite
-extends RefCounted
+extends "res://tests/suites/battle_suite.gd"
 
-var _harness: Object
-var _main: Node2D
-
-func _init(harness: Object, main: Node2D) -> void:
+func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
-
-func _expect(condition: bool, message: String) -> void:
-	_harness._expect(condition, message)
+	_check_projectile_travel()
+	_check_tower_projectile_visual()
+	_check_projectile_visual_snapshot()
+	_check_imp_tower_damage()
+	_check_splash_and_knockback()
 
 func _check_projectile_travel() -> void:
 	var attacker_stats: Dictionary = CardDB.get_card("ashe").duplicate()
@@ -157,7 +156,7 @@ func _check_splash_and_knockback() -> void:
 	_expect(primary.hp < primary_hp and secondary.hp < secondary_hp, "范围攻击按命中点和碰撞圆伤害多个目标")
 	var before_push := primary.position.x
 	primary.sim_tick(_main.SIM_DT)
-	_main._apply_unit_movement(_main.SIM_DT)
+	_main._movement._apply_unit_movement(_main.SIM_DT, _main._movement._active_mobile_units())
 	_expect(primary.position.x > before_push, "击退方向远离攻击来源并按固定模拟移动")
 	attacker.free()
 	primary.free()

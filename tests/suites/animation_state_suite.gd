@@ -1,19 +1,16 @@
 class_name AnimationStateSuite
-extends RefCounted
+extends "res://tests/suites/battle_suite.gd"
 ## locomotion + action 动画通道、任意 Pose 打断、施法权限与网络载荷回归。
-
-var _harness: Object
-var _main: Node2D
-
-func _expect(condition: bool, message: String) -> void:
-	_harness._expect(condition, message)
 
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
+	_check_egg_death_model()
 	_check_locomotion_attack_interrupts()
+	_check_repeated_attack_restart()
 	_check_skill_recovery_routes()
 	_check_dedicated_move_transition_blends()
+	_check_finished_source_idle_transition()
 	_check_cast_policies_and_snapshot()
 
 func _view_for(unit: Unit) -> UnitModel3D:
@@ -216,7 +213,7 @@ func _check_dedicated_move_transition_blends() -> void:
 		indexed_attack_route_ok = (
 			indexed_entry_short
 			and xin_view._animation_player.current_animation == "RunBase"
-			and is_equal_approx(xin_view._last_clip_blend_time, sequence_blend)
+			and is_equal_approx(xin_view._last_clip_blend_time, 0.1)
 		)
 
 		# 前两段没有专用 attack_to_move，统一复用 move_enter RunIn，首尾同样是 sequence。
@@ -253,7 +250,7 @@ func _check_dedicated_move_transition_blends() -> void:
 	_expect(deploy_route_ok, "transitions[deploy>move] 进入专用片段及其进入 Run 均使用 sequence blend")
 	_expect(skill_route_ok, "transitions[skill>move] 忽略上层 action_out，专用片段首尾均使用 sequence blend")
 	_expect(transform_route_ok, "transitions[transform>move] 的专用片段首尾均使用 sequence blend")
-	_expect(indexed_attack_route_ok, "按段 attack_to_move 专用片段与空项回退通用 RunIn 都遵循 sequence 规则")
+	_expect(indexed_attack_route_ok, "按段转跑保留 sequence 入口及原表0.1出口，空项回退通用 RunIn 混合")
 	_expect(empowered_route_ok, "empowered_attack_to_move 进入专用片段时使用 sequence blend")
 	if xin_view != null:
 		xin_view.free()
@@ -261,6 +258,48 @@ func _check_dedicated_move_transition_blends() -> void:
 		teemo_view.free()
 	xin.free()
 	teemo.free()
+
+## 自然结束后 current_animation 为空，但末帧姿态仍属于 assigned_animation。
+## 用真正完成的普攻触发退出，防止源名称读取变化使收势被跳过或反复重播。
+func _check_finished_source_idle_transition() -> void:
+	var stats := CardDB.get_card("gwen").duplicate(true)
+	stats["deploy_time"] = 0.0
+	var unit := Unit.new()
+	unit.position = Vector2(450.0, 900.0)
+	unit.setup(0, stats, stats.name)
+	_main.add_child(unit)
+	_main._battle_presentation.attach_unit(unit, stats)
+	var view := _view_for(unit)
+	var finished_source_routes := false
+	if view != null:
+		view.set_process(false)
+		unit._attacking = true
+		unit._attack_visual_serial = 1
+		view._sync_visual(false, 0.0)
+		var player := view._animation_player
+		player.advance(unit.attack_interval + 0.01)
+		var held_source := (
+			not player.is_playing() and player.current_animation == ""
+			and player.assigned_animation == "Attack1" and view._holding_attack_pose
+		)
+		unit._attacking = false
+		unit._move_intent = Vector2.ZERO
+		view._sync_visual(false, 0.0)
+		var entered := player.current_animation == "Attack1_To_Idle"
+		player.advance(player.get_animation("Attack1_To_Idle").length + 0.01)
+		var completed := player.current_animation == "Idle_anm" and view._idle_transition_animation == &""
+		player.advance(0.2)
+		var idle_position := player.current_animation_position
+		view._sync_visual(false, 0.0)
+		finished_source_routes = (
+			held_source and entered and completed and idle_position > 0.1
+			and player.current_animation == "Idle_anm"
+			and is_equal_approx(player.current_animation_position, idle_position)
+		)
+	_expect(finished_source_routes, "自然结束的普攻保留 assigned_animation，退出时接收势、完成回待机且后续同步不重播")
+	if view != null:
+		view.free()
+	unit.free()
 
 func _check_cast_policies_and_snapshot() -> void:
 	var stats: Dictionary = CardDB.get_card("gnar").get("transformed_stats", {}).duplicate(true)
@@ -323,7 +362,7 @@ func _check_cast_policies_and_snapshot() -> void:
 	}
 	var payload := NetworkSnapshotSystem.new(_main)._unit_snapshot_payload(77, stationary)
 	var snapshot_system := NetworkSnapshotSystem.new(_main)
-	var snapshot_packet := snapshot_system._snapshot_packet([], [], [], 0.0, _main._match_timer, _main._overtime)
+	var snapshot_packet := snapshot_system._snapshot_packet([], [], [], 0.0, _main._match_rules.time_left, _main._match_rules.overtime)
 	var snapshot_contract: bool = (
 		payload.size() == NetworkSnapshotSystem.UNIT_PAYLOAD_SIZE
 		and int(payload[NetworkSnapshotSystem.U_ACTION_SERIAL]) == stationary.get_visual_action_serial()
@@ -353,3 +392,47 @@ func _check_cast_policies_and_snapshot() -> void:
 		if is_instance_valid(unit):
 			unit.free()
 	_main._active_skills.erase(9001)
+
+func _check_repeated_attack_restart() -> void:
+	var stats: Dictionary = CardDB.get_card("gnar").transformed_stats.duplicate(true)
+	stats["deploy_time"] = 0.0
+	var unit := Unit.new()
+	var dummy := Unit.new()
+	unit.setup(0, stats, "大纳尔")
+	dummy.setup(1, CardDB.training_dummy_stats(), "木桩")
+	unit.position = Vector2(360, 900)
+	dummy.position = Vector2(360, 850)
+	_main.add_child(unit)
+	_main.add_child(dummy)
+	_main._battle_presentation.attach_unit(unit, stats)
+	var view := _view_for(unit)
+	var restarted := view != null
+	if view != null:
+		unit._target = dummy
+		unit._attacking = true
+		unit._attack_visual_serial = 1
+		view._sync_visual(false, 0.0)
+		var player := view._animation_player
+		var clip := player.get_animation(player.current_animation)
+		player.seek(clip.length - 0.01, true)
+		unit._attack_visual_serial = 2
+		unit.attack_timeline.visual_elapsed = 0.0
+		view._sync_visual(false, 0.0)
+		player.advance(1.0 / 30.0)
+		restarted = player.is_playing() and player.current_animation_position < 0.15 and not view._holding_attack_pose
+		view.free()
+	unit.free()
+	dummy.free()
+	_expect(restarted, "连续攻击木桩复用同名动画时，新攻击从零开始而非沿上一轮末帧冻结")
+
+func _check_egg_death_model() -> void:
+	var stats := CardDB.get_card("anivia_egg")
+	var unit := Unit.new()
+	unit.card_id = "anivia_egg"
+	unit.setup(0, stats, stats.name)
+	_main.add_child(unit)
+	_main._battle_presentation.attach_unit(unit, stats)
+	var view := _view_for(unit)
+	unit.take_damage(100000.0, null, 1)
+	_expect(view != null and view._death_followup_started and view._model_root.scene_file_path == "res://assets/units/anivia/anivia_view.tscn" and view._animation_player.current_animation == "Death", "凤凰蛋被击破直接切凤凰模型 Death，跳过蛋死亡片段")
+	if view != null: view.queue_free()

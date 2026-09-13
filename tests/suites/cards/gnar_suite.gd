@@ -1,12 +1,6 @@
 class_name GnarSuite
-extends RefCounted
+extends "res://tests/suites/battle_suite.gd"
 ## 纳尔卡牌领域：循环双形态机制与双形态美术接入。
-
-var _harness: Object
-var _main: Node2D
-
-func _expect(condition: bool, message: String) -> void:
-	_harness._expect(condition, message)
 
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
@@ -76,7 +70,7 @@ func _check_gnar_mechanic() -> void:
 	var transition_moves := gnar.form_transition_timer > 0.0 and not gnar._attacking and gnar._move_intent.length_squared() > 0.01
 	dummy.position = gnar.position + Vector2(0.0, -65.0)
 	gnar.sim_tick(_main.SIM_DT)
-	var transition_waits_in_range := not gnar._attacking and gnar._move_intent.is_zero_approx() and gnar._attack_load > 0.0
+	var transition_waits_in_range := not gnar._attacking and gnar._move_intent.is_zero_approx()
 	var attack_serial_before := gnar.get_attack_visual_serial()
 	while gnar.form_transition_timer > 0.0:
 		gnar.sim_tick(_main.SIM_DT)
@@ -106,7 +100,7 @@ func _check_gnar_mechanic() -> void:
 
 	# 小半径合法但大半径压入河岸的位置，变大后应被确定性修正到新体积合法点。
 	var resize_gnar := Unit.new()
-	resize_gnar.position = Vector2(360.0, _main.RIVER_Y + _main.RIVER_HALF + CardDB.RADIUS_SMALL)
+	resize_gnar.position = Vector2(360.0, ArenaRules.RIVER_Y + ArenaRules.RIVER_HALF + CardDB.RADIUS_SMALL)
 	resize_gnar.setup(0, stats, stats.name)
 	_main.add_child(resize_gnar)
 	var resize_origin := resize_gnar.position
@@ -133,15 +127,15 @@ func _check_gnar_mechanic() -> void:
 	for neighbor in crowded_neighbors:
 		crowded_origins.append(neighbor.position)
 	crowded_gnar.transform_to_mega()
-	_main._resolve_unit_collisions(_main.SIM_DT)
+	_main._movement._resolve_unit_collisions(_main.SIM_DT, _main._movement._active_mobile_units())
 	var pushed_on_resize_tick := false
 	for neighbor_index in crowded_neighbors.size():
 		pushed_on_resize_tick = pushed_on_resize_tick or crowded_neighbors[neighbor_index].position != crowded_origins[neighbor_index]
 	for _tick in 40:
-		_main._resolve_unit_collisions(_main.SIM_DT)
+		_main._movement._resolve_unit_collisions(_main.SIM_DT, _main._movement._active_mobile_units())
 	var crowd_separated := true
 	for neighbor in crowded_neighbors:
-		var required_gap: float = crowded_gnar.body_radius + neighbor.body_radius - _main.COLLISION_SLOP - 0.1
+		var required_gap: float = crowded_gnar.body_radius + neighbor.body_radius - ArenaRules.COLLISION_SLOP - 0.1
 		crowd_separated = (
 			crowd_separated
 			and crowded_gnar.position.distance_to(neighbor.position) >= required_gap
@@ -159,9 +153,9 @@ func _check_gnar_mechanic() -> void:
 	edge_neighbor._just_deployed = false
 	edge_gnar.transform_to_mega()
 	for _tick in 40:
-		_main._resolve_unit_collisions(_main.SIM_DT)
+		_main._movement._resolve_unit_collisions(_main.SIM_DT, _main._movement._active_mobile_units())
 	var edge_separated: bool = (
-		edge_gnar.position.distance_to(edge_neighbor.position) >= edge_gnar.body_radius + edge_neighbor.body_radius - _main.COLLISION_SLOP - 0.1
+		edge_gnar.position.distance_to(edge_neighbor.position) >= edge_gnar.body_radius + edge_neighbor.body_radius - ArenaRules.COLLISION_SLOP - 0.1
 		and _main.is_ground_position_walkable(edge_gnar.position, edge_gnar.body_radius, edge_gnar)
 		and _main.is_ground_position_walkable(edge_neighbor.position, edge_neighbor.body_radius, edge_neighbor)
 	)
@@ -211,15 +205,15 @@ func _check_gnar_mechanic() -> void:
 	)
 	var telegraph_queued: bool = (
 		front.hp == front_hp
-		and is_zero_approx(front.stun_timer)
-		and _main._pending_active_skill_impacts.size() == 1
+		and is_zero_approx(front.control.stun_timer)
+		and _main._commands.impacts.size() == 1
 		and _main._active_skill_effect_system.frontal_effects.size() == 1
 	)
-	_main._tick_pending_active_skill_impacts(float(skill.transform_impact_delay) - 0.05)
-	var waits_for_hand_impact := front.hp == front_hp and is_zero_approx(front.stun_timer)
-	_main._tick_pending_active_skill_impacts(0.05)
-	var frontal_hit_ok := front.hp == front_hp - float(skill.damage) and is_equal_approx(front.stun_timer, 1.0)
-	var filtering_ok := back.hp == back_hp and is_zero_approx(back.stun_timer) and air.hp == air_hp and is_zero_approx(air.stun_timer)
+	_main._commands.tick_impacts(float(skill.transform_impact_delay) - 0.05)
+	var waits_for_hand_impact := front.hp == front_hp and is_zero_approx(front.control.stun_timer)
+	_main._commands.tick_impacts(0.05)
+	var frontal_hit_ok := front.hp == front_hp - float(skill.damage) and is_equal_approx(front.control.stun_timer, 1.0)
+	var filtering_ok := back.hp == back_hp and is_zero_approx(back.control.stun_timer) and air.hp == air_hp and is_zero_approx(air.control.stun_timer)
 	var frozen_position := front.position
 	front._move_intent = Vector2.DOWN * front.move_speed
 	front.sim_tick(_main.SIM_DT)
@@ -231,11 +225,11 @@ func _check_gnar_mechanic() -> void:
 	_main.preview_active_skill(active_small, skill)
 	var mega_waits_for_impact: bool = (
 		active_small.get_visual_action_name() == &"active"
-		and _main._pending_active_skill_impacts.size() == 1
+		and _main._commands.impacts.size() == 1
 		and is_equal_approx(active_small.active_skill_cast_timer, float(skill.cast_duration))
 	)
 	_expect(mega_waits_for_impact, "大纳尔主动固定方向并锁定行动，直接播放 Spell2 后延迟到 0.8 秒手掌触地时结算")
-	_main._pending_active_skill_impacts.clear()
+	_main._commands.impacts.clear()
 	_main._active_skill_effect_system.frontal_effects.clear()
 	active_small.active_skill_cast_timer = 0.0
 	active_small.active_skill_cast_facing = Vector2.ZERO
@@ -251,19 +245,17 @@ func _check_gnar_art_integration() -> void:
 	if small_packed == null or mega_packed == null:
 		return
 	_expect(stats.visual_animations.attack == ["Gnar_Attack1_anm", "Gnar_Attack2_anm"], "小纳尔普通攻击使用非 Fast 版 Attack1/Attack2")
-	var art_panel := ArtDevPanel.new()
+	var art_panel := DevelopmentWorkbench.new()
 	_main.add_child(art_panel)
 	art_panel.setup(CardDB.all())
 	art_panel._select_item("gnar")
 	_expect(
 		art_panel._skill_option.item_count == 1 and art_panel.selected_skill_index() == 0
 		and art_panel._skill_button.disabled,
-		"美术开发面板选择纳尔后列出主动技能，并在放置单位前保持播放按钮禁用",
+		"开发工作台选择纳尔后列出主动技能，并在放置单位前保持播放按钮禁用",
 	)
 	art_panel.free()
-	var deck_builder := DeckBuilder.new()
-	var mega_attributes: Array[Dictionary] = deck_builder._card_attributes(mega_stats)
-	deck_builder.free()
+	var mega_attributes: Array[Dictionary] = CardDetails.attributes(mega_stats)
 	var mega_hp_shown := false
 	var mega_damage_shown := false
 	for attribute in mega_attributes:
@@ -494,5 +486,5 @@ func _check_gnar_art_integration() -> void:
 	if is_instance_valid(unit):
 		unit.free()
 	# 清理待结算主动技能现场，避免污染后续领域 suite。
-	_main._pending_active_skill_impacts.clear()
+	_main._commands.impacts.clear()
 	_main._active_skill_effect_system.frontal_effects.clear()

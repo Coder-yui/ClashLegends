@@ -60,6 +60,16 @@ static func _validate_visual_stats(label: String, stats: Dictionary, errors: Pac
 			for animation_name in animation_names:
 				if not player.has_animation(animation_name):
 					errors.append("%s: %s 缺少动画 %s" % [label, scene_path, animation_name])
+			if animations.has("death_clip_end") and player.has_animation(StringName(animations.get("death", ""))):
+				if float(animations.death_clip_end) > player.get_animation(StringName(animations.death)).length:
+					errors.append("%s: 死亡裁剪终点超出动画长度" % label)
+			for edge in animations.get("transitions", {}):
+				var descriptor = animations.transitions[edge]
+				if descriptor is Dictionary and descriptor.has("start_time"):
+					var clips: Array = descriptor.animation if descriptor.animation is Array else [descriptor.animation]
+					for clip in clips:
+						if player.has_animation(clip) and float(descriptor.start_time) >= player.get_animation(clip).length:
+							errors.append("%s: %s 转场起点超出动画长度" % [label, edge])
 		sample.free()
 	var followup_path := String(animations.get("death_followup_scene_path", ""))
 	var followup_animation := StringName(animations.get("death_followup_animation", ""))
@@ -85,10 +95,20 @@ static func _configured_animation_names(animations: Dictionary) -> Array[StringN
 		_append_animation_names(names, animations.get(key))
 	var transitions = animations.get("transitions")
 	if transitions is Dictionary:
+		for edge in transitions:
+			var source := String(edge).get_slice(">", 0)
+			if source not in ["attack", "skill", "deploy", "transform", "idle", "move", "locomotion"]:
+				_append_animation_names(names, source)
 		for value in (transitions as Dictionary).values():
 			if value is Dictionary:
 				value = (value as Dictionary).get("animation")
 			_append_animation_names(names, value)
+	var blends = animations.get("clip_blends")
+	if blends is Dictionary:
+		for edge in blends:
+			for clip in String(edge).split(">"):
+				if clip != "*":
+					_append_animation_names(names, clip)
 	var actions = animations.get("visual_actions")
 	if actions is Dictionary:
 		for configured in (actions as Dictionary).values():
