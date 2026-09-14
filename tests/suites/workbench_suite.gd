@@ -77,15 +77,12 @@ func _check_artdev_workbench() -> void:
 	panel.show_workspace(2)
 	panel._play_audio(0)
 	var audio_started := panel._audio_player.playing and panel._audio_player.stream != null
-	panel.show_workspace(3)
+	panel.show_workspace(0)
 	var audio_stopped := not panel._audio_player.playing and panel._audio_player.stream == null
-	panel._notes.text = "待检查命中声音"
-	panel._checks[3].select(2)
 	panel._select_item("freeze")
-	var optional_assets := panel._preview.model == null and panel._audio_entries.is_empty() and panel._notes.text.is_empty()
+	var optional_assets := panel._preview.model == null and panel._audio_entries.is_empty()
 	panel._select_item("garen")
 	_expect(audio_started and audio_stopped and optional_assets, "工作台试听切页清理，法术无模型与可选静音正常显示")
-	_expect(panel._notes.text == "待检查命中声音" and panel.review_markdown().contains("音频触发 / 中断 / 清理：需修复"), "验收记录按卡隔离，导出保留人工结论与复现备注")
 	var old_dev_mode: bool = _main._art_dev_mode
 	var original_zones: int = _main._spell_system.slow_zones.size()
 	_main._art_dev_mode = true

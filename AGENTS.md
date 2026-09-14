@@ -11,6 +11,10 @@ Clash Legends 是 Godot 4.x 标准版（GDScript）的 1v1 卡牌即时对战学
 5. 美术任务还必须在实际渲染中目视验收。
 6. 完整新卡按“2D 权威逻辑 → 3D 模型/动画 → 卡面 → 音频 → 联合验收”推进；音频按 `docs/AUDIO_INTEGRATION.md` 执行并在实际运行中试听。缺素材或未支持的事件必须记录，不得默认为已完成。
 
+## 任务交付
+
+每个任务完成后，按 [交付合同模板](docs/templates/delivery.md) 在 `docs/deliveries/` 填写简洁交付报告，最终回复给出链接。问题文档放 `docs/issues/`；没有文档时直接依据用户对话处理。工作台只作预览器，不承担验收记录或报告导出。具体流程见 [任务导航](docs/AGENT_WORKFLOW.md)。
+
 ## 必须保持的边界
 
 - 主机/单机固定 20Hz 权威模拟；客户端只请求操作、接收 Snapshot 和表现事件。

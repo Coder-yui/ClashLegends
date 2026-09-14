@@ -1,6 +1,6 @@
 class_name DevelopmentWorkbench
 extends CanvasLayer
-## 四个工作区共享卡牌选择；素材预览与真实战斗分离。
+## 三个工作区共享卡牌选择；素材预览与真实战斗分离。
 signal item_selected(item_id: String)
 signal team_changed(team: int)
 signal active_skill_selected(item_id: String, skill_index: int)
@@ -16,7 +16,6 @@ const SCENARIOS := preload("res://scripts/ui/workbench/battle_scenarios.gd")
 var _scenario_option: OptionButton
 var _scenario_hint: Label
 
-const CHECKS := ["模型比例 / 朝向 / 双阵营", "动作与转场 / 控制 / 死亡", "技能范围 / 命中 / 形态", "音频触发 / 中断 / 清理", "卡面 / 锚点 / 遮挡"]
 var _cards: Dictionary
 var _selected_id := "garen"
 var _team := 0
@@ -57,11 +56,6 @@ var _audition_catalog: Dictionary = {}
 var _audio_player: AudioStreamPlayer
 var _audio_status: Label
 var _audio_timeline: HSlider
-var _diagnostics: Label
-var _notes: TextEdit
-var _checks: Array[OptionButton] = []
-var _records: Dictionary = {}
-var _export_status: Label
 var _rotation: HSlider
 var _zoom: HSlider
 
@@ -168,7 +162,7 @@ func _build_ui() -> void:
 	_form_option.item_selected.connect(func(index): _form = index; _refresh_assets())
 	summary.add_child(_form_option)
 	var tabs := _row(layout)
-	var names := ["01 模型·动作", "02 实战·技能", "03 音频", "04 验收记录"]
+	var names := ["01 模型·动作", "02 实战·技能", "03 音频"]
 	for i in names.size():
 		var button := _button(tabs, names[i], show_workspace.bind(i))
 		button.toggle_mode = true
@@ -177,7 +171,7 @@ func _build_ui() -> void:
 	content.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	content.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	layout.add_child(content)
-	for i in 4:
+	for i in names.size():
 		var page := VBoxContainer.new()
 		page.set_anchors_preset(Control.PRESET_FULL_RECT)
 		page.add_theme_constant_override("separation", 12)
@@ -187,7 +181,6 @@ func _build_ui() -> void:
 	_build_model_page(_pages[0])
 	_build_battle_page(_pages[1])
 	_build_audio_page(_pages[2])
-	_build_review_page(_pages[3])
 	_audio_player = AudioStreamPlayer.new()
 	add_child(_audio_player)
 	_audio_player.finished.connect(func(): _audio_status.text = "播放结束 · 可选择其他变体")
@@ -271,12 +264,13 @@ func _build_battle_page(page: Control) -> void:
 	_skill_button = _button(skills, "释放所选技能", _on_active_skill_pressed)
 	_skill_button.size_flags_horizontal = Control.SIZE_SHRINK_END
 	_resource_controls = _row(box)
-	_label(_resource_controls, "技能资源", true)
+	_label(_resource_controls, "技能资源", true).autowrap_mode = TextServer.AUTOWRAP_OFF
 	_resource_slider = HSlider.new()
 	_resource_slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_resource_slider.value_changed.connect(_on_resource_value_changed)
 	_resource_controls.add_child(_resource_slider)
 	_resource_value_label = _label(_resource_controls, "", true)
+	_resource_value_label.autowrap_mode = TextServer.AUTOWRAP_OFF
 	_button(_resource_controls, "清零", func(): _request_resource_value(0)).size_flags_horizontal = Control.SIZE_SHRINK_END
 	_button(_resource_controls, "充满", func(): _request_resource_value(_resource_max)).size_flags_horizontal = Control.SIZE_SHRINK_END
 	var control := _row(box)
@@ -314,24 +308,6 @@ func _build_audio_page(page: Control) -> void:
 	transport.add_child(_audio_timeline)
 	_audio_status = _label(transport, "选择一条声音；双击直接播放。", true)
 
-func _build_review_page(page: Control) -> void:
-	_label(page, "逐卡验收 · 手动结论与备注")
-	_diagnostics = _label(page, "", true)
-	for title in CHECKS:
-		var row := _row(page)
-		var label := _label(row, title)
-		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		var option := OptionButton.new()
-		for state in ["未验证", "通过", "需修复", "不适用"]: option.add_item(state)
-		row.add_child(option)
-		_checks.append(option)
-	_notes = TextEdit.new()
-	_notes.placeholder_text = "记录复现步骤、缺素材、缺事件入口或有意静音的原因……"
-	_notes.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	page.add_child(_notes)
-	_button(page, "导出本卡验收 Markdown", _export_review)
-	_export_status = _label(page, "结论由你确认；文件存在不等于动画或声音验收通过。", true)
-
 func _filter_cards(query: String) -> void:
 	_card_option.clear()
 	var ids: Array = _cards.keys()
@@ -351,15 +327,8 @@ func _filter_cards(query: String) -> void:
 			if String(_card_option.get_item_metadata(index)) == _selected_id: found = true
 		if not found: _card_option.select(-1)
 
-func _save_record() -> void:
-	if _notes == null: return
-	var states: Array[int] = []
-	for option in _checks: states.append(option.selected)
-	_records[_selected_id] = {"states": states, "notes": _notes.text}
-
 func _select_item(item_id: String) -> void:
 	if item_id != "training_dummy" and not _cards.has(item_id): return
-	_save_record()
 	_selected_id = item_id
 	_form = 0
 	_spell_active.set_pressed_no_signal(false)
@@ -379,10 +348,6 @@ func _select_item(item_id: String) -> void:
 	_skill_option.get_parent().visible = not is_spell
 	_control_buttons[0].get_parent().visible = not is_spell
 	_refresh_assets()
-	var record: Dictionary = _records.get(item_id, {})
-	for i in _checks.size(): _checks[i].select(int(record.get("states", [0,0,0,0,0])[i]))
-	_notes.text = String(record.get("notes", ""))
-	_export_status.text = "本次会话保留各卡备注；离开前导出需要保存的记录。"
 	item_selected.emit(item_id)
 
 func _refresh_assets() -> void:
@@ -409,8 +374,6 @@ func _refresh_assets() -> void:
 		_animation_option.select(index)
 		_play_animation(index)
 	_refresh_audio(PresentationConfig.audio_for(stats, _team))
-	var texture := CardArt.texture_for(_selected_id)
-	_diagnostics.text = "模型：%s\n卡面：%s\n音频：%d 个已配置文件变体\n定义：scripts/data/cards/%s.gd" % [PresentationConfig.scene_path(stats, _team) if _preview.model != null else "不适用 / 未接入", texture.resource_path if texture != null else "未接入 / 系统对象", _audio_entries.size(), _selected_id]
 	_preview.set_preview_active(_workspace == 0)
 
 func _collect_mappings(value: Variant, path: String, output: Dictionary) -> void:
@@ -454,7 +417,7 @@ func _refresh_audio(audio: Dictionary) -> void:
 	for cue in cues: _audio_cue.add_item(cue)
 	_audio_cue.disabled = cues.is_empty()
 	_filter_audio(0)
-	_audio_status.text = "未配置音频 · 请在验收备注区分缺素材、有意静音或不适用。" if _audio_entries.is_empty() else "%d 个文件变体 · 选择后播放" % _audio_entries.size()
+	_audio_status.text = "未配置音频 · 当前对象没有可试听的声音。" if _audio_entries.is_empty() else "%d 个文件变体 · 选择后播放" % _audio_entries.size()
 
 func _add_audio(cue: String, path: String, volume: float, bus: String) -> void:
 	_audio_entries.append({"cue": cue, "path": path, "volume": volume, "bus": bus})
@@ -497,7 +460,7 @@ func accepts_battle_input() -> bool:
 	return _workspace == 1
 
 func show_workspace(index: int) -> void:
-	_workspace = clampi(index, 0, 3)
+	_workspace = clampi(index, 0, _pages.size() - 1)
 	for i in _pages.size():
 		_pages[i].visible = i == _workspace
 		_tabs[i].set_pressed_no_signal(i == _workspace)
@@ -507,7 +470,7 @@ func show_workspace(index: int) -> void:
 	_preview.set_preview_active(_workspace == 0)
 	_stop_audio()
 	if _workspace == 2:
-		_audio_status.text = "未配置音频 · 请记录缺素材 / 有意静音 / 不适用" if _audio_entries.is_empty() else "%d 个文件变体 · 按事件筛选，双击试听" % _audio_entries.size()
+		_audio_status.text = "未配置音频 · 当前对象没有可试听的声音。" if _audio_entries.is_empty() else "%d 个文件变体 · 按事件筛选，双击试听" % _audio_entries.size()
 	workspace_changed.emit(_workspace == 1)
 
 func _process(_delta: float) -> void:
@@ -517,24 +480,6 @@ func _process(_delta: float) -> void:
 		_time_label.text = "%.2f / %.2f s · 拖动时间轴暂停定位" % [position, _timeline.max_value]
 	if _audio_player.playing:
 		_audio_timeline.set_value_no_signal(_audio_player.get_playback_position())
-
-func review_markdown() -> String:
-	_save_record()
-	var text := "# %s 开发验收\n\n日期：%s\n\n%s\n\n" % [_selected_id, Time.get_datetime_string_from_system(), _diagnostics.text]
-	for i in CHECKS.size(): text += "- %s：%s\n" % [CHECKS[i], _checks[i].get_item_text(_checks[i].selected)]
-	return text + "\n## 备注\n\n" + _notes.text + "\n"
-
-func _export_review() -> void:
-	var text := review_markdown()
-	var directory := "user://workbench_reviews"
-	DirAccess.make_dir_recursive_absolute(directory)
-	var path := directory + "/" + _selected_id + "_" + str(Time.get_unix_time_from_system()).replace(".", "_") + ".md"
-	var file := FileAccess.open(path, FileAccess.WRITE)
-	if file == null:
-		_export_status.text = "导出失败：" + error_string(FileAccess.get_open_error())
-		return
-	file.store_string(text)
-	_export_status.text = "已导出：" + ProjectSettings.globalize_path(path)
 
 func _refresh_skill_controls() -> void:
 	var skills: Array[Dictionary] = []

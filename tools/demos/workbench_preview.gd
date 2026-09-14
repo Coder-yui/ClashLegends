@@ -25,9 +25,6 @@ func _run() -> void:
 		return
 	print("[工作台验证] 切离实战暂停权威 Tick")
 	await _capture("audio")
-	panel.show_workspace(3)
-	await create_timer(0.3).timeout
-	await _capture("review")
 	panel._select_item("freeze")
 	panel.show_workspace(0)
 	await create_timer(0.3).timeout
