@@ -86,6 +86,8 @@ static func definition() -> Dictionary:
 			"attack_swing_volume_db": 0.0,
 			"attack_hit_volume_db": 0.0,
 			"events": {
+				# 用户指定：部署动作使用赏金猎人 Move2DStandard 短语音。
+				"deploy:voice": {"pool": ["res://assets/audio/units/missfortune/play_vo_missfortune_move2dstandard_r1_zh_cn.wav"], "volume_db": 0.0, "bus": "Voice"},
 				"attack_missile_cast": {"pool": ["res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onmissilecast_r1_d.wav", "res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onmissilecast_r2_d.wav", "res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onmissilecast_r3_d.wav"], "volume_db": 0.0, "bus": "Combat"},
 
 				"attack_launch": {"pool": [

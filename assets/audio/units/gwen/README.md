@@ -10,10 +10,14 @@
 
 | 形态/阵营 | 配置的事件与声音池 |
 | --- | --- |
-| 基础 | `active_0:hit_first`、`active_0:hit_first_center`、`active_0:hit_last`、`active_0:hit_last_center`、`active_0:sustain`、`active_1:hit_first`、`active_1:hit_first_center`、`active_1:hit_last`、`active_1:hit_last_center`、`active_1:hit_middle`、`active_1:hit_middle_center`、`active_1:sustain`、`active_2:hit_first`、`active_2:hit_first_center`、`active_2:hit_last`、`active_2:hit_last_center`、`active_2:hit_middle`、`active_2:hit_middle_center`、`active_2:sustain`、`active_3:hit_first`、`active_3:hit_first_center`、`active_3:hit_last`、`active_3:hit_last_center`、`active_3:hit_middle`、`active_3:hit_middle_center`、`active_3:sustain`、`death`、`resource_full`、`attack_swing`、`attack_hit`、`attack_hit_by_segment` |
+| 基础 | `deploy:voice`、 `active_0:hit_first`、`active_0:hit_first_center`、`active_0:hit_last`、`active_0:hit_last_center`、`active_0:sustain`、`active_1:hit_first`、`active_1:hit_first_center`、`active_1:hit_last`、`active_1:hit_last_center`、`active_1:hit_middle`、`active_1:hit_middle_center`、`active_1:sustain`、`active_2:hit_first`、`active_2:hit_first_center`、`active_2:hit_last`、`active_2:hit_last_center`、`active_2:hit_middle`、`active_2:hit_middle_center`、`active_2:sustain`、`active_3:hit_first`、`active_3:hit_first_center`、`active_3:hit_last`、`active_3:hit_last_center`、`active_3:hit_middle`、`active_3:hit_middle_center`、`active_3:sustain`、`death`、`resource_full`、`attack_swing`、`attack_hit`、`attack_hit_by_segment` |
 
 ## 源文件与加工证据
 
 - [event_manifest.json](event_manifest.json)：文件/变体、原始事件与加工来源。
+
+部署时从英雄专属锁定音效、“你要找裁缝吗？”、“剪刀飞快”中等权随机播放一个，避免连续重复；仅接入部署事件，不在行走或普攻时另播这些台词。
+
+新增来源：共享原始库中的中文英雄 WAD、客户端 game-data 选择语音及专属锁定音效；只读提取，未使用网站音频作为运行资源。具体台词、单变体媒体 ID、哈希及校验依据见清单。
 
 早期映射、试听决定及撤回方案见 [历史记录](../../../../docs/archive/2026-09-13/audio/gwen.md)。原始模型和声音属于 Riot 素材，本项目用于学习；离线 WAV 不声称完整复现 Wwise 的实时条件和随机系统。

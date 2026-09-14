@@ -8,7 +8,7 @@
 
 | 形态/阵营 | 配置的事件与声音池 |
 | --- | --- |
-| 基础 | `attack_launch`、`death`、`empowered_launch`、`empowered_swing`、`attack_swing`、`attack_hit`、`empowered_hit` |
+| 基础 | `attack_launch`、`death`、`deploy:start`、`empowered_launch`、`empowered_swing`、`attack_swing`、`attack_hit`、`empowered_hit` |
 
 ## 源文件与加工证据
 

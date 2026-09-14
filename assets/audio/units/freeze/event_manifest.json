@@ -1,0 +1,15 @@
+[
+  {
+    "file": "play_sfx_cr_freeze_spell_cast_first3s.wav",
+    "event": "User-provided Clash Royale Freeze SFX (first 3 seconds)",
+    "source_file": "/Users/czh/Downloads/部落冲突 皇室战争-交互音效-攻击音效-冰冻法术-冻结_爱给网_aigei_com.wav",
+    "source_duration": 3.862857,
+    "duration": 3.0,
+    "sample_rate": 22050,
+    "channels": 1,
+    "source_sha256": "5efbdf87e9789e813b17ffcfebe7475542c13ffc9dce8d07ccec964aa5c6233f",
+    "sha256": "1ee13665da02de6694527bc2c501597f5dcaed3b3056a4261fba3fe02065b8ee",
+    "processing": "trim first 3.000 seconds; convert ADPCM IMA WAV to PCM 16-bit WAV; no normalization or time-stretch",
+    "selection_note": "正式配置到 freeze 的 spell:cast；冻结持续、结束和强化减速暂不另接声音。"
+  }
+]

@@ -4,13 +4,13 @@
 
 素材来自外部 LoL 原始音库的已选事件，只读提取后归档 WAV；本次整理未从待开发队列迁移音频。保留原事件层叠与源增益，额外裁剪、变速、混音和哈希以清单中的 processing/来源字段为准，不批量归一化。
 
-W 持续声走 idle:sustain，部署完成后待机续播，控制暂停，死亡/清场停止；小鬼生成声由小鬼自己播放。
+W 持续声走 idle:sustain，部署完成后待机续播，控制暂停，死亡/清场停止；小鬼生成声由小鬼自己播放。主动“亡者集结”在 Cast Start 播放 `YorickW_OnCast`。
 
 ## 当前事件入口
 
 | 形态/阵营 | 配置的事件与声音池 |
 | --- | --- |
-| 基础 | `death`、`deploy:start`、`idle:sustain` |
+| 基础 | `death`、`deploy:start`、`idle:sustain`、`active:cast` |
 
 ## 源文件与加工证据
 

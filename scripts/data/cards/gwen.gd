@@ -77,6 +77,12 @@ static func definition() -> Dictionary:
 		# BEGIN IMPORTED AUDIO gwen
 		"audio": {
 			"events": {
+				# 用户指定的三段部署候选共用一个池，每次生成只播放其中一个。
+				"deploy:voice": {"pool": [
+					"res://assets/audio/units/gwen/champion_lockin_sfx_887.wav",
+					"res://assets/audio/units/gwen/play_vo_gwen_attack2dgeneral_r17_zh_cn.wav",
+					"res://assets/audio/units/gwen/play_vo_gwen_attack2dgeneral_r20_zh_cn.wav",
+				], "volume_db": 0.0, "bus": "Voice"},
 				"active_0:hit_first_center": {"bus": "Combat", "pool": ["res://assets/audio/units/gwen/play_sfx_gwen_gwenqfirst_hit_r1.wav", "res://assets/audio/units/gwen/play_sfx_gwen_gwenqfirst_hit_r2.wav", "res://assets/audio/units/gwen/play_sfx_gwen_gwenqfirst_hit_r3.wav"], "volume_db": 3.0},
 				"active_0:hit_last_center": {"pool": ["res://assets/audio/units/gwen/play_sfx_gwen_gwenqlast_hit_center_r.wav"], "volume_db": 0.0},
 				"active_1:hit_first_center": {"bus": "Combat", "pool": ["res://assets/audio/units/gwen/play_sfx_gwen_gwenqfirst_hit_r1.wav", "res://assets/audio/units/gwen/play_sfx_gwen_gwenqfirst_hit_r2.wav", "res://assets/audio/units/gwen/play_sfx_gwen_gwenqfirst_hit_r3.wav"], "volume_db": 3.0},

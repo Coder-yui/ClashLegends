@@ -678,7 +678,7 @@
     "file": "play_sfx_garen_death3d_cast.wav",
     "event": "Play_sfx_Garen_Death3D_cast",
     "event_id": 3199914363,
-    "source_preview": "/Users/czh/Tools/lol-asset-tools/garen_base_audio/event_wav/Play_sfx_Garen_Death3D_cast.wav",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/garen_base_audio/event_wav/Play_sfx_Garen_Death3D_cast.wav",
     "media_ids": [
       98921429
     ],
@@ -698,7 +698,7 @@
     "file": "play_sfx_garen_garenq_onbuffactivate_r1.wav",
     "event": "Play_sfx_Garen_GarenQ_OnBuffActivate",
     "event_id": 973509384,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/garen_base_audio/txtp/Play_sfx_Garen_GarenQ_OnBuffActivate {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/garen_base_audio/txtp/Play_sfx_Garen_GarenQ_OnBuffActivate {r1}.txtp",
     "media_ids": [
       751448935,
       789676183
@@ -711,7 +711,7 @@
     "file": "play_sfx_garen_garenq_onbuffactivate_r2.wav",
     "event": "Play_sfx_Garen_GarenQ_OnBuffActivate",
     "event_id": 973509384,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/garen_base_audio/txtp/Play_sfx_Garen_GarenQ_OnBuffActivate {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/garen_base_audio/txtp/Play_sfx_Garen_GarenQ_OnBuffActivate {r2}.txtp",
     "media_ids": [
       751448935,
       789676183
@@ -724,12 +724,97 @@
     "file": "play_sfx_garen_garenq_onbuffdeactivate.wav",
     "event": "Play_sfx_Garen_GarenQ_OnBuffDeactivate",
     "event_id": 2402624281,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/garen_base_audio/txtp/Play_sfx_Garen_GarenQ_OnBuffDeactivate.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/garen_base_audio/txtp/Play_sfx_Garen_GarenQ_OnBuffDeactivate.txtp",
     "media_ids": [
       548854456
     ],
     "duration": 3.3333,
     "processing": "vgmstream-cli -i; original event layers and gain retained",
     "sha256": "c9f9f8e63b859edc183cb5256ffba0a8241b879d90ffbc57605d7203cbd5810b"
+  },
+  {
+    "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/garen/play_vo_garen_attack2dgeneral_r1_zh_cn.wav",
+    "event": "Play_vo_Garen_Attack2DGeneral",
+    "event_id": 2975547734,
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/garen_select_review_20260914/txtp/Play_vo_Garen_Attack2DGeneral {r1}.txtp",
+    "media_ids": [
+      235912900,
+      1821508110,
+      796134684,
+      897848674,
+      1901433293,
+      1452095758,
+      1301557556,
+      1998660323,
+      386312966,
+      1456236906,
+      1010478385
+    ],
+    "source_package": "Garen.zh_CN.wad.client",
+    "duration": 1.582517,
+    "sha256": "06f1fa066c21d12a54ffedb3d081562ceb7ac75da6eeb39f97ea6e02caee77ab",
+    "processing": "vgmstream-cli -i; source VO gain retained",
+    "selection_note": "曾按用户指定的英雄选择阶段“人在塔在”尝试映射；中文 WAD 中没有独立 Select/Choose 事件名，按该包的 Attack2DGeneral r1 组取样。当前映射已撤回，文件仅保留为来源审计，不进入正式配置。"
+  },
+  {
+    "file": "champion_choose_86_zh_cn.wav",
+    "event": "Champion_Choose",
+    "transcript": "人在塔在",
+    "language": "zh_CN",
+    "skin": "base",
+    "reference_page": "https://voice.buguoguo.cn/#/voice/86",
+    "source_package": "LeagueClient/Plugins/rcp-be-lol-game-data/zh_CN-assets.wad",
+    "source_path": "plugins/rcp-be-lol-game-data/global/zh_cn/v1/champion-choose-vo/86.ogg",
+    "source_sha256": "49efbbf663616a592789da5a4762032eedfb17318b9b9716ccfe2bf90cc4a757",
+    "processing": "ffmpeg decode Ogg to PCM16 WAV; original sample rate, channels and gain retained; no trim or normalization",
+    "verification": "独立英雄 ID 对应的选择语音/英雄专属锁定音效；不是通用 UI 音效",
+    "duration": 1.2906875,
+    "sample_rate": 48000,
+    "channels": 1,
+    "sha256": "d30ad2d1e977aecd35cfb4d5556237868a2343c540643acfa1c89d78a2300f72"
+  },
+  {
+    "file": "play_vo_garen_move2dstandard_r16_zh_cn.wav",
+    "event": "Play_vo_Garen_Move2DStandard",
+    "transcript": "勇往直前",
+    "language": "zh_CN",
+    "skin": "base",
+    "reference_page": "https://voice.buguoguo.cn/#/voice/86",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/garen_select_review_20260914/txtp/Play_vo_Garen_Move2DStandard {r16}.txtp",
+    "media_ids": [
+      1596323918
+    ],
+    "source_media_sha256": "6dfa36452abed5f731c8ec9165d9c6d7adac271b1e8d0731a2eff17851fd9a8b",
+    "source_package": "Garen.zh_CN.wad.client",
+    "variant": 16,
+    "reference_voice_id": "CB14D624",
+    "processing": "vgmstream-cli -i; selected single random branch; source event gain retained; no trim, normalization or time stretch",
+    "verification": "网站台词索引与本地中文语音转录核对",
+    "duration": 1.10281179138322,
+    "sample_rate": 44100,
+    "channels": 1,
+    "sha256": "11a8d492b7c6bc4a6ec1ce57bb7e639b668a36f75d27072b2feeec0b3e4daa93"
+  },
+  {
+    "file": "play_vo_garen_move2dstandard_r11_zh_cn.wav",
+    "event": "Play_vo_Garen_Move2DStandard",
+    "transcript": "保家卫国",
+    "language": "zh_CN",
+    "skin": "base",
+    "reference_page": "https://voice.buguoguo.cn/#/voice/86",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/garen_select_review_20260914/txtp/Play_vo_Garen_Move2DStandard {r11}.txtp",
+    "media_ids": [
+      59551050
+    ],
+    "source_media_sha256": "d1d9a67cdf06f99c724016bbe93f4b9211f2f160a6f7b0795f7f28295e744a48",
+    "source_package": "Garen.zh_CN.wad.client",
+    "variant": 11,
+    "reference_voice_id": "5CE8B449",
+    "processing": "vgmstream-cli -i; selected single random branch; source event gain retained; no trim, normalization or time stretch",
+    "verification": "网站台词索引与本地中文语音转录核对",
+    "duration": 1.1934013605442177,
+    "sample_rate": 44100,
+    "channels": 1,
+    "sha256": "0de0fc5a9a5cf858368e3db1643ef97ffdc4bf69ad08c1e7e9a37ec0284848cb"
   }
 ]

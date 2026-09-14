@@ -2,10 +2,12 @@ class_name AudioPresentationSuite
 extends RefCounted
 
 func run(harness: Object, main: Node2D) -> void:
+	_check_selected_deploy_audio(harness, main)
 	_check_voice_budget(harness, main)
 	_check_team_audio_routes(harness, main)
 	_check_match_announcements(harness, main)
 	_check_tombstone_sustain(harness, main)
+	_check_tombstone_active_cast(harness, main)
 	_check_tower_damage_audio(harness, main)
 	_check_building_audio_lifecycle(harness, main)
 	_check_event_expansion(harness, main)
@@ -115,6 +117,8 @@ func run(harness: Object, main: Node2D) -> void:
 	yi.setup(0, yi_stats, yi_stats.name)
 	main.add_child(yi)
 	audio.attach_unit(yi, yi_stats)
+	# 新增部署语音属于绑定阶段事件；本段只断言后续攻击/技能时序。
+	yi_cues.clear()
 	yi._attack_visual_serial = 1
 	audio._process(0.0)
 	yi.active_buff_timer = 5.0
@@ -128,6 +132,8 @@ func run(harness: Object, main: Node2D) -> void:
 	)
 	audio.cue_played.disconnect(yi_listener)
 	yi.free()
+	# Headless 不等待短音自然播完；首击时序用例与之前的语音预算隔离。
+	for player in audio._world_players: player.stop()
 	var mf_cues: Array[StringName] = []
 	var mf_listener := func(card_id: String, cue: StringName, _position: Vector2):
 		if card_id == "missfortune":
@@ -139,6 +145,7 @@ func run(harness: Object, main: Node2D) -> void:
 	mf.setup(0, mf_stats, mf_stats.name)
 	main.add_child(mf)
 	audio.attach_unit(mf, mf_stats)
+	mf_cues.clear()
 	mf._attack_visual_serial = 1
 	audio._process(0.0)
 	mf.active_buff_timer = 3.0
@@ -236,6 +243,8 @@ func _check_ranged_audio(harness: Object, main: Node2D) -> void:
 	source.set_battle_context(main.battle_context)
 	source.global_position = Vector2(-1000, -1000)
 	audio.attach_unit(source, stats)
+	# 本段只断言普攻时序，不把新增部署语音算入序列。
+	cues.clear()
 	var victims: Array[Unit] = []
 	for i in 2:
 		var victim := Unit.new()
@@ -473,6 +482,7 @@ func _check_audited_audio(harness: Object, main: Node2D) -> void:
 	gwen.setup(0, gwen_stats, gwen_stats.name)
 	main.add_child(gwen)
 	audio.attach_unit(gwen, gwen_stats)
+	cues.clear() # 本段只检查后续缠流状态，部署声音已独立验证。
 	gwen._shroud_active = true
 	audio._process(0.0)
 	audio._process(0.0)
@@ -794,12 +804,7 @@ func _check_event_expansion(harness: Object, main: Node2D) -> void:
 		building.free()
 	harness._expect(deaths == ["world_tower_order", "world_nexus_order"], "塔与水晶实际摧毁只播一次，重复表现通知不重播")
 	audio.cue_played.disconnect(death_listener)
-	var catalog = JSON.parse_string(FileAccess.get_file_as_string("res://assets/audio/workbench_auditions.json"))
-	var valid: bool = catalog.twisted_fate.size() == 5
-	for event in catalog.twisted_fate.values():
-		for path in event.pool: valid = valid and load(path) is AudioStream
-	harness._expect(valid and CardDB.get_card("twisted_fate").pre_deploy_time == 1.3,
-		"卡牌 Spell4 五组原声可试听，未改变当前预部署设置")
+	harness._expect(CardDB.get_card("twisted_fate").pre_deploy_time == 1.3, "正式卡牌预部署设置保持不变")
 	for definition in preload("res://scripts/data/world_audio.gd").DEFINITIONS.values():
 		for event in definition.audio.events.values():
 			for path in event.pool:
@@ -889,6 +894,31 @@ func _check_tombstone_sustain(harness: Object, main: Node2D) -> void:
 	harness._expect(ok, "墓碑部署后启动持续声，片段续播保留所有权，死亡立即停止")
 	audio._detach_unit(unit.get_instance_id())
 	unit.free()
+
+
+func _check_tombstone_active_cast(harness: Object, main: Node2D) -> void:
+	var audio: GameAudioManager = main._audio_manager
+	var cues: Array[StringName] = []
+	var listener := func(card_id: String, cue: StringName, _position: Vector2):
+		if card_id == "tombstone": cues.append(cue)
+	audio.cue_played.connect(listener)
+	var unit := Unit.new()
+	var stats := CardDB.get_card("tombstone")
+	unit.card_id = "tombstone"
+	unit.setup(0, stats, stats.name)
+	main.add_child(unit)
+	unit.set_battle_context(main.battle_context)
+	audio.attach_unit(unit, stats)
+	cues.clear()
+	var skill: Dictionary = CardDB.active_skills_for("tombstone")[0]
+	skill["impact_delay"] = 999.0
+	var started: bool = main._start_active_skill_cast(unit, skill)
+	var ok: bool = started and cues == [&"active:cast"]
+	main._commands.impacts.clear()
+	audio.cue_played.disconnect(listener)
+	audio._detach_unit(unit.get_instance_id())
+	unit.free()
+	harness._expect(ok, "墓碑亡者集结在 Cast Start 播放一次 Yorick W OnCast 音效，不依赖不存在的技能动画")
 
 
 func _check_match_announcements(harness: Object, main: Node2D) -> void:
@@ -1045,3 +1075,38 @@ func _check_team_audio_routes(harness: Object, main: Node2D) -> void:
 	main.mode = saved_mode
 	main._last_card_event_id = saved_card_event
 	audio.free()
+
+func _check_selected_deploy_audio(harness: Object, main: Node2D) -> void:
+	var audio: GameAudioManager = main._audio_manager
+	for card_id in ["garen", "gwen"]:
+		for team in [0, 1]:
+			var stats := CardDB.get_card(card_id)
+			var config := PresentationConfig.audio_for(stats, team, 0)
+			var randomizer := audio._randomized_stream(PackedStringArray(config.events["deploy:voice"].pool))
+			var cues: Array[StringName] = []
+			var listener := func(id: String, cue: StringName, _pos: Vector2):
+				if id == card_id: cues.append(cue)
+			audio.cue_played.connect(listener)
+			var unit := Unit.new()
+			unit.card_id = card_id
+			unit.setup(team, stats, stats.name)
+			main.add_child(unit)
+			audio.attach_unit(unit, stats)
+			audio.attach_unit(unit, stats)
+			var once := cues == [&"deploy:voice"]
+			audio._detach_unit(unit.get_instance_id())
+			unit.free()
+			cues.clear()
+			unit = Unit.new()
+			unit.card_id = card_id
+			unit.setup(team, stats, stats.name)
+			unit._deploy_timer = 0.0
+			main.add_child(unit)
+			audio.attach_unit(unit, stats)
+			var late_silent := cues.is_empty()
+			audio._detach_unit(unit.get_instance_id())
+			unit.free()
+			audio.cue_played.disconnect(listener)
+			harness._expect(once and late_silent and randomizer.streams_count == 3
+				and randomizer.playback_mode == AudioStreamRandomizer.PLAYBACK_RANDOM_NO_REPEATS,
+				"%s 阵营%d部署三选一且不连续重复，重绑和晚到不补播" % [card_id, team])

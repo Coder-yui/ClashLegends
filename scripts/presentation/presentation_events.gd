@@ -5,6 +5,10 @@ static func supports(stats: Dictionary, cue: String) -> bool:
 	var spell := String(stats.get("type", "")) == "spell"
 	if spell:
 		return cue == "spell:cast"
+	if cue == "active:cast":
+		# 没有独立 visual_action 的瞬时主动技能也需要一个稳定的 Cast Start 音频入口。
+		var active_skills: Variant = stats.get("active_skills", [])
+		return active_skills is Array and not (active_skills as Array).is_empty()
 	var attacks := float(stats.get("damage", 0.0)) > 0.0
 	if cue in ["continuous_attack:start", "continuous_attack:sustain", "continuous_attack:end", "continuous_attack:release"]:
 		return attacks and bool(stats.get("is_continuous_attack", false))

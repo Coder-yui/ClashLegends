@@ -91,6 +91,12 @@ static func definition() -> Dictionary:
 			"attack_swing_volume_db": 0.0,
 			"attack_hit_volume_db": 0.0,
 			"events": {
+				# 用户指定的三段部署候选共用一个池，每次生成只播放其中一个。
+				"deploy:voice": {"pool": [
+					"res://assets/audio/units/garen/champion_choose_86_zh_cn.wav",
+					"res://assets/audio/units/garen/play_vo_garen_move2dstandard_r16_zh_cn.wav",
+					"res://assets/audio/units/garen/play_vo_garen_move2dstandard_r11_zh_cn.wav",
+				], "volume_db": 0.0, "bus": "Voice"},
 				"empowered_buff:start": {"pool": ["res://assets/audio/units/garen/play_sfx_garen_garenq_onbuffactivate_r1.wav", "res://assets/audio/units/garen/play_sfx_garen_garenq_onbuffactivate_r2.wav"], "volume_db": 0.0, "bus": "Combat"},
 				"empowered_buff:end": {"pool": ["res://assets/audio/units/garen/play_sfx_garen_garenq_onbuffdeactivate.wav"], "volume_db": 0.0, "bus": "Combat"},
 

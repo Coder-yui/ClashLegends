@@ -1,9 +1,23 @@
 [
   {
+    "file": "assets/audio/units/tombstone/play_sfx_yorick_yorickw_oncast_r1.wav",
+    "event": "Play_sfx_Yorick_YorickW_OnCast",
+    "event_id": 4251127411,
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickW_OnCast {r1}.txtp",
+    "duration": 1.1729478458049887,
+    "media_ids": [
+      982505050,
+      347307958
+    ],
+    "processing": "Original event layers and gain; selected r1 outer random variant; vgmstream-cli -i, no normalization",
+    "sha256": "7684a41da75159c7f3c1d7d393129e64c992560b86ab946c59388273dfdb0df1",
+    "selection_note": "用户指定用于墓碑‘亡者集结’主动技能 Cast Start；不是掘墓人实体技能动画复用。"
+  },
+  {
     "file": "assets/audio/units/tombstone/play_sfx_yorick_yorickw_onhitlocation_r1.wav",
     "event": "Play_sfx_Yorick_YorickW_OnHitLocation",
     "event_id": 1115269652,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickW_OnHitLocation {r}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickW_OnHitLocation {r}.txtp",
     "duration": 3.474285714285714,
     "media_ids": [
       101263959,
@@ -19,7 +33,7 @@
     "file": "assets/audio/units/tombstone/play_sfx_yorick_yorickw_onhitlocation_r2.wav",
     "event": "Play_sfx_Yorick_YorickW_OnHitLocation",
     "event_id": 1115269652,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/yorick_base_sfx_events-0263-event {r}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/txtp/yorick_base_sfx_events-0263-event {r}.txtp",
     "duration": 3.474285714285714,
     "media_ids": [
       101263959,
@@ -35,7 +49,7 @@
     "file": "assets/audio/units/tombstone/play_sfx_yorick_yorickw_death_r1.wav",
     "event": "Play_sfx_Yorick_YorickW_death",
     "event_id": 715497681,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickW_death {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickW_death {r1}.txtp",
     "duration": 1.5,
     "media_ids": [
       528204500,
@@ -58,7 +72,7 @@
     "file": "assets/audio/units/tombstone/play_sfx_yorick_yorickw_death_r2.wav",
     "event": "Play_sfx_Yorick_YorickW_death",
     "event_id": 715497681,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickW_death {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickW_death {r2}.txtp",
     "duration": 1.5,
     "media_ids": [
       528204500,
@@ -81,7 +95,7 @@
     "file": "assets/audio/units/tombstone/play_sfx_yorick_yorickw_death_r3.wav",
     "event": "Play_sfx_Yorick_YorickW_death",
     "event_id": 715497681,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickW_death {r3}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickW_death {r3}.txtp",
     "duration": 1.5,
     "media_ids": [
       528204500,
@@ -104,7 +118,7 @@
     "file": "assets/audio/units/tombstone/play_sfx_yorick_yorickw_death_r4.wav",
     "event": "Play_sfx_Yorick_YorickW_death",
     "event_id": 715497681,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickW_death {r4}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickW_death {r4}.txtp",
     "duration": 1.5,
     "media_ids": [
       528204500,

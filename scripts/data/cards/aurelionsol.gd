@@ -89,6 +89,7 @@ static func definition() -> Dictionary:
 		# BEGIN IMPORTED AUDIO aurelionsol
 		"audio": {
 			"events": {
+				"deploy:start": {"pool": ["res://assets/audio/units/aurelionsol/play_sfx_aurelionsol_respawn3d_buffactivate.wav"], "volume_db": 0.0, "bus": "Combat"},
 				"continuous_attack:release": {"pool": ["res://assets/audio/units/aurelionsol/play_sfx_aurelionsol_aurelionsolq_missilecast_r1.wav", "res://assets/audio/units/aurelionsol/play_sfx_aurelionsol_aurelionsolq_missilecast_r2.wav", "res://assets/audio/units/aurelionsol/play_sfx_aurelionsol_aurelionsolq_missilecast_r3.wav"], "volume_db": 0.0, "bus": "Combat"},
 				"active:start": {"pool": ["res://assets/audio/units/aurelionsol/play_sfx_aurelionsol_aurelionsolrmissile_missilelaunch.wav"], "volume_db": 0.0, "bus": "Combat"},
 				"active:impact": {"pool": ["res://assets/audio/units/aurelionsol/play_sfx_aurelionsol_aurelionsolrmissile_hit_r1.wav", "res://assets/audio/units/aurelionsol/play_sfx_aurelionsol_aurelionsolrmissile_hit_r2.wav", "res://assets/audio/units/aurelionsol/play_sfx_aurelionsol_aurelionsolrmissile_hit_r3.wav"], "volume_db": 0.0, "bus": "Combat"},

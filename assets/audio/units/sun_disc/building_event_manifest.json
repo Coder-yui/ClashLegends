@@ -3,7 +3,7 @@
     "file": "assets/audio/units/sun_disc/play_sfx_azir_azirobelisksound_onbuffcast_r1.wav",
     "event": "Play_sfx_Azir_AzirObeliskSound_OnBuffCast",
     "event_id": 283966749,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/azir/txtp/Play_sfx_Azir_AzirObeliskSound_OnBuffCast {r}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/azir/txtp/Play_sfx_Azir_AzirObeliskSound_OnBuffCast {r}.txtp",
     "duration": 5.819387755102041,
     "media_ids": [
       "1014960885",
@@ -18,7 +18,7 @@
     "file": "assets/audio/units/sun_disc/play_sfx_azir_azirobelisksound_onbuffdeactivate_r1.wav",
     "event": "Play_sfx_Azir_AzirObeliskSound_OnBuffDeactivate",
     "event_id": 1906471914,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/azir/txtp/Play_sfx_Azir_AzirObeliskSound_OnBuffDeactivate {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/azir/txtp/Play_sfx_Azir_AzirObeliskSound_OnBuffDeactivate {r1}.txtp",
     "duration": 1.5,
     "media_ids": [
       "1023804576",
@@ -31,7 +31,7 @@
     "file": "assets/audio/units/sun_disc/play_sfx_azir_azirobelisksound_onbuffdeactivate_r2.wav",
     "event": "Play_sfx_Azir_AzirObeliskSound_OnBuffDeactivate",
     "event_id": 1906471914,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/azir/txtp/Play_sfx_Azir_AzirObeliskSound_OnBuffDeactivate {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/azir/txtp/Play_sfx_Azir_AzirObeliskSound_OnBuffDeactivate {r2}.txtp",
     "duration": 1.5,
     "media_ids": [
       "1023804576",
@@ -44,7 +44,7 @@
     "file": "assets/audio/units/sun_disc/play_sfx_env_turretbasicattack_missilelaunch_r1.wav",
     "event": "Play_sfx_Env_TurretBasicAttack_missilelaunch",
     "event_id": 744952030,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/txtp/env_global_buildings_sfx_events-0279-event {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/txtp/env_global_buildings_sfx_events-0279-event {r1}.txtp",
     "duration": 1.0815646258503402,
     "media_ids": [
       "210891309",
@@ -58,7 +58,7 @@
     "file": "assets/audio/units/sun_disc/play_sfx_env_turretbasicattack_missilelaunch_r2.wav",
     "event": "Play_sfx_Env_TurretBasicAttack_missilelaunch",
     "event_id": 744952030,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/txtp/env_global_buildings_sfx_events-0279-event {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/txtp/env_global_buildings_sfx_events-0279-event {r2}.txtp",
     "duration": 1.0889115646258503,
     "media_ids": [
       "210891309",
@@ -72,7 +72,7 @@
     "file": "assets/audio/units/sun_disc/play_sfx_env_turretbasicattack_missilelaunch_r3.wav",
     "event": "Play_sfx_Env_TurretBasicAttack_missilelaunch",
     "event_id": 744952030,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/txtp/env_global_buildings_sfx_events-0279-event {r3}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/txtp/env_global_buildings_sfx_events-0279-event {r3}.txtp",
     "duration": 1.0889115646258503,
     "media_ids": [
       "210891309",
@@ -86,7 +86,7 @@
     "file": "assets/audio/units/sun_disc/play_sfx_env_map11_chaosturretchampionbasicattack_cast_r1.wav",
     "event": "Play_sfx_Env_map11_ChaosTurretChampionBasicAttack_cast",
     "event_id": 1865484908,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/txtp/env_global_buildings_sfx_events-0314-event {r1} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/txtp/env_global_buildings_sfx_events-0314-event {r1} {d}.txtp",
     "duration": 2.951678004535147,
     "media_ids": [
       "263691814",
@@ -101,7 +101,7 @@
     "file": "assets/audio/units/sun_disc/play_sfx_env_map11_chaosturretchampionbasicattack_cast_r2.wav",
     "event": "Play_sfx_Env_map11_ChaosTurretChampionBasicAttack_cast",
     "event_id": 1865484908,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/txtp/env_global_buildings_sfx_events-0314-event {r2} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/txtp/env_global_buildings_sfx_events-0314-event {r2} {d}.txtp",
     "duration": 2.86,
     "media_ids": [
       "263691814",
@@ -116,7 +116,7 @@
     "file": "assets/audio/units/sun_disc/play_sfx_env_map11_chaosturretchampionbasicattack_cast_r3.wav",
     "event": "Play_sfx_Env_map11_ChaosTurretChampionBasicAttack_cast",
     "event_id": 1865484908,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/txtp/env_global_buildings_sfx_events-0314-event {r3} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/txtp/env_global_buildings_sfx_events-0314-event {r3} {d}.txtp",
     "duration": 2.7586848072562358,
     "media_ids": [
       "263691814",
@@ -131,7 +131,7 @@
     "file": "assets/audio/units/sun_disc/play_sfx_env_map11_chaosturretchampionbasicattack_cast_r4.wav",
     "event": "Play_sfx_Env_map11_ChaosTurretChampionBasicAttack_cast",
     "event_id": 1865484908,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/txtp/env_global_buildings_sfx_events-0314-event {r4} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/txtp/env_global_buildings_sfx_events-0314-event {r4} {d}.txtp",
     "duration": 2.555646258503401,
     "media_ids": [
       "263691814",
@@ -146,7 +146,7 @@
     "file": "assets/audio/units/sun_disc/play_sfx_env_turretbasicattack_hit_r1.wav",
     "event": "Play_sfx_Env_TurretBasicAttack_hit",
     "event_id": 1363510128,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/txtp/env_global_buildings_sfx_events-0300-event {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/txtp/env_global_buildings_sfx_events-0300-event {r1}.txtp",
     "duration": 0.8272335600907029,
     "media_ids": [
       "282793997",
@@ -161,7 +161,7 @@
     "file": "assets/audio/units/sun_disc/play_sfx_env_turretbasicattack_hit_r2.wav",
     "event": "Play_sfx_Env_TurretBasicAttack_hit",
     "event_id": 1363510128,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/txtp/env_global_buildings_sfx_events-0300-event {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/txtp/env_global_buildings_sfx_events-0300-event {r2}.txtp",
     "duration": 0.846530612244898,
     "media_ids": [
       "282793997",
@@ -176,7 +176,7 @@
     "file": "assets/audio/units/sun_disc/play_sfx_env_turretbasicattack_hit_r3.wav",
     "event": "Play_sfx_Env_TurretBasicAttack_hit",
     "event_id": 1363510128,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/txtp/env_global_buildings_sfx_events-0300-event {r3}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/txtp/env_global_buildings_sfx_events-0300-event {r3}.txtp",
     "duration": 0.8411337868480726,
     "media_ids": [
       "282793997",
@@ -191,7 +191,7 @@
     "file": "assets/audio/units/sun_disc/play_sfx_env_turretbasicattack_hit_r4.wav",
     "event": "Play_sfx_Env_TurretBasicAttack_hit",
     "event_id": 1363510128,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/txtp/env_global_buildings_sfx_events-0300-event {r4}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/txtp/env_global_buildings_sfx_events-0300-event {r4}.txtp",
     "duration": 0.8186621315192744,
     "media_ids": [
       "282793997",

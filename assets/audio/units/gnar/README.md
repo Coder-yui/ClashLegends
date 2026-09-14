@@ -10,7 +10,7 @@
 
 | 形态/阵营 | 配置的事件与声音池 |
 | --- | --- |
-| 基础 | `attack_launch`、`death`、`revert:sustain`、`attack_swing`、`attack_hit` |
+| 基础 | `attack_launch`、`death`、`deploy:voice`、`revert:sustain`、`attack_swing`、`attack_hit` |
 | 大形态 | `active:hit`、`active:sustain`、`death`、`transform:sustain`、`transform_active:hit`、`transform_active:sustain`、`attack_swing`、`attack_hit` |
 
 ## 源文件与加工证据

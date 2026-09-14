@@ -1197,5 +1197,26 @@
     "duration": 2.056,
     "processing": "vgmstream-cli -i; original event layers and gain retained",
     "sha256": "9c283d5e58e6d927a75e90b9c4afb91ae9155092b744baf4a1dd41dd84ae8e93"
+  },
+  {
+    "file": "play_vo_missfortune_move2dstandard_r1_zh_cn.wav",
+    "event": "Play_vo_MissFortune_Move2DStandard",
+    "event_id": 514315002,
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/deployment_audio_review/voice_candidates_all_20260914/missfortune/txtp/Play_vo_MissFortune_Move2DStandard {r1}.txtp",
+    "media_ids": [
+      160731317,
+      32017411,
+      44329885,
+      350930955,
+      696947368,
+      1347321038,
+      647691487,
+      441669498
+    ],
+    "source_package": "MissFortune.zh_CN.wad.client",
+    "duration": 1.671837,
+    "sha256": "f6bd64d97b87ba7114910a28cf85f470db3d71544ac1f57201011e9bf52cabc2",
+    "processing": "vgmstream-cli -i; source VO gain retained",
+    "selection_note": "按用户指定的 Play_vo_MissFortune_Move2DStandard 作为部署语音，取 r1 变体。"
   }
 ]

@@ -1,10 +1,10 @@
 [
   {
-    "file": "play_sfx_yorick_yorickq_ghoulattack_jump_r1.wav",
+    "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/imp/play_sfx_yorick_yorickq_ghoulattack_jump_r1.wav",
     "event": "Play_sfx_Yorick_YorickQ_GhoulAttack_jump",
     "event_id": 4148888401,
-    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/event_wav/Play_sfx_Yorick_YorickQ_GhoulAttack_jump {r1}.wav",
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_GhoulAttack_jump {r1}.txtp",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/event_wav/Play_sfx_Yorick_YorickQ_GhoulAttack_jump {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_GhoulAttack_jump {r1}.txtp",
     "media_ids": [
       66795960,
       604639212,
@@ -16,11 +16,11 @@
     "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
   },
   {
-    "file": "play_sfx_yorick_yorickq_ghoulattack_jump_r2.wav",
+    "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/imp/play_sfx_yorick_yorickq_ghoulattack_jump_r2.wav",
     "event": "Play_sfx_Yorick_YorickQ_GhoulAttack_jump",
     "event_id": 4148888401,
-    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/event_wav/Play_sfx_Yorick_YorickQ_GhoulAttack_jump {r2}.wav",
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_GhoulAttack_jump {r2}.txtp",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/event_wav/Play_sfx_Yorick_YorickQ_GhoulAttack_jump {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_GhoulAttack_jump {r2}.txtp",
     "media_ids": [
       66795960,
       604639212,
@@ -32,11 +32,11 @@
     "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
   },
   {
-    "file": "play_sfx_yorick_yorickq_ghoulattack_jump_r3.wav",
+    "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/imp/play_sfx_yorick_yorickq_ghoulattack_jump_r3.wav",
     "event": "Play_sfx_Yorick_YorickQ_GhoulAttack_jump",
     "event_id": 4148888401,
-    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/event_wav/Play_sfx_Yorick_YorickQ_GhoulAttack_jump {r3}.wav",
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_GhoulAttack_jump {r3}.txtp",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/event_wav/Play_sfx_Yorick_YorickQ_GhoulAttack_jump {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_GhoulAttack_jump {r3}.txtp",
     "media_ids": [
       66795960,
       604639212,
@@ -51,8 +51,8 @@
     "file": "play_sfx_yorick_yorickq_ghoul_death_r1.wav",
     "event": "Play_sfx_Yorick_YorickQ_ghoul_death",
     "event_id": 3971829909,
-    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/event_wav/Play_sfx_Yorick_YorickQ_ghoul_death {r1}.wav",
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_ghoul_death {r1}.txtp",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/event_wav/Play_sfx_Yorick_YorickQ_ghoul_death {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_ghoul_death {r1}.txtp",
     "media_ids": [
       339205711,
       427211440,
@@ -75,8 +75,8 @@
     "file": "play_sfx_yorick_yorickq_ghoul_death_r2.wav",
     "event": "Play_sfx_Yorick_YorickQ_ghoul_death",
     "event_id": 3971829909,
-    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/event_wav/Play_sfx_Yorick_YorickQ_ghoul_death {r2}.wav",
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_ghoul_death {r2}.txtp",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/event_wav/Play_sfx_Yorick_YorickQ_ghoul_death {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_ghoul_death {r2}.txtp",
     "media_ids": [
       339205711,
       427211440,
@@ -91,8 +91,8 @@
     "file": "play_sfx_yorick_yorickq_ghoul_death_r3.wav",
     "event": "Play_sfx_Yorick_YorickQ_ghoul_death",
     "event_id": 3971829909,
-    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/event_wav/Play_sfx_Yorick_YorickQ_ghoul_death {r3}.wav",
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_ghoul_death {r3}.txtp",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/event_wav/Play_sfx_Yorick_YorickQ_ghoul_death {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_ghoul_death {r3}.txtp",
     "media_ids": [
       339205711,
       427211440,
@@ -108,7 +108,7 @@
     "event": "Play_sfx_Yorick_YorickQ_GhoulAttack_cast",
     "event_id": 198729928,
     "source_preview": "/Users/czh/Projects/Clash Legends/assets/audio/units/imp/play_sfx_yorick_yorickq_ghoulattack_cast_r1.wav",
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_GhoulAttack_cast [4030904392=3118032683] {r}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_GhoulAttack_cast [4030904392=3118032683] {r}.txtp",
     "media_ids": [
       471691804,
       561749991,

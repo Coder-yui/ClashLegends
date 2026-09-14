@@ -18,5 +18,16 @@ static func definition() -> Dictionary:
 		"visual": {
 			"color": Color(0.40, 0.70, 1.00),
 		},
+		# BEGIN EVENT AUDIO freeze
+		"audio": {
+			"events": {
+				"spell:cast": {
+					"pool": ["res://assets/audio/units/freeze/play_sfx_cr_freeze_spell_cast_first3s.wav"],
+					"volume_db": 0.0,
+					"bus": "Combat"
+				}
+			},
+		},
+		# END EVENT AUDIO freeze
 		"card_art": {},
 	}

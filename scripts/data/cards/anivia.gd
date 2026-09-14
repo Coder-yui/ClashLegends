@@ -51,6 +51,15 @@ static func definition() -> Dictionary:
 			# 原片长 1.133333s → 攻击周期 1.7s：0.4s 挥翼映射到 0.6s，0.45s 出弹映射到 0.675s。
 			"attack_swing_lead_time": 0.075,
 			"events": {
+				# 部署动画与待机共用 Idle1；使用两段短英雄语音随机补充部署声。
+				"deploy:voice": {
+					"pool": [
+						"res://assets/audio/units/anivia/play_vo_anivia_attack2dgeneral_r2_en_us.wav",
+						"res://assets/audio/units/anivia/play_vo_anivia_laugh3dgeneral_r1_en_us.wav"
+					],
+					"volume_db": 0.0,
+					"bus": "Voice"
+				},
 				"frost_storm:zone_sustain": {"pool": ["res://assets/audio/units/anivia/play_sfx_anivia_glacialstorm_zone_sustain.wav"], "volume_db": 0.0},
 				"frost_storm:zone_end": {"pool": ["res://assets/audio/units/anivia/play_sfx_anivia_glacialstorm_onbuffdeactivate.wav"], "volume_db": 0.0},
 				"attack_launch": {

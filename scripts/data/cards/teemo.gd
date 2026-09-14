@@ -64,6 +64,7 @@ static func definition() -> Dictionary:
 		# BEGIN IMPORTED AUDIO teemo
 		"audio": {
 			"events": {
+				"deploy:start": {"pool": ["res://assets/audio/units/teemo/play_sfx_teemo_respawn3d_buffactivate.wav"], "volume_db": 0.0, "bus": "Combat"},
 				"attack_launch": {"pool": ["res://assets/audio/units/teemo/play_sfx_teemo_teemobasicattack_onmissilelaunch_r1.wav", "res://assets/audio/units/teemo/play_sfx_teemo_teemobasicattack_onmissilelaunch_r2.wav"], "volume_db": 0.0, "bus": "Combat"},
 				"empowered_launch": {"pool": ["res://assets/audio/units/teemo/play_sfx_teemo_teemoq_onmissilelaunch_r1.wav", "res://assets/audio/units/teemo/play_sfx_teemo_teemoq_onmissilelaunch_r2.wav"], "volume_db": 0.0, "bus": "Combat"},
 

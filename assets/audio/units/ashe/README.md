@@ -8,7 +8,7 @@
 
 | 形态/阵营 | 配置的事件与声音池 |
 | --- | --- |
-| 基础 | `active:hit`、`active:release`、`active:start`、`attack_launch`、`death`、`attack_swing`、`attack_hit` |
+| 基础 | `active:hit`、`active:release`、`active:start`、`attack_launch`、`death`、`deploy:voice`、`attack_swing`、`attack_hit` |
 
 ## 源文件与加工证据
 

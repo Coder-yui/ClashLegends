@@ -82,6 +82,8 @@ static func definition() -> Dictionary:
 			],
 			"attack_swing_volume_db": 0.0, "attack_hit_volume_db": 0.0,
 			"events": {
+				# 原始部署对应事件 Play_vo_MasterYi_Attack2DGeneral；项目保留其一段渲染，不压缩。
+				"deploy:voice": {"pool": ["res://assets/audio/units/masteryi/play_vo_masteryi_attack2dgeneral_r2_en_us.wav"], "volume_db": 0.0, "bus": "Voice"},
 				"active_buff:start": {"pool": ["res://assets/audio/units/masteryi/play_sfx_masteryi_highlander_onbuffactivate.wav"]},
 				"active_buff:sustain": {"pool": ["res://assets/audio/units/masteryi/play_sfx_masteryi_highlander_trail.wav"]},
 				"active_buff:end": {"pool": ["res://assets/audio/units/masteryi/play_sfx_masteryi_highlander_onbuffdeactivate.wav"]},

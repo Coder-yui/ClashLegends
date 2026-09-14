@@ -560,7 +560,7 @@
     "file": "play_sfx_masteryi_death3d_cast.wav",
     "event": "Play_sfx_MasterYi_Death3D_cast",
     "event_id": 846545954,
-    "source_preview": "/Users/czh/Tools/lol-asset-tools/masteryi_base_audio/event_wav/Play_sfx_MasterYi_Death3D_cast.wav",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/masteryi_base_audio/event_wav/Play_sfx_MasterYi_Death3D_cast.wav",
     "media_ids": [
       778800605
     ],
@@ -579,7 +579,7 @@
   {
     "file": "play_sfx_masteryi_masteryidoublestrike_onhit_1559186049_1153642577_r.wav",
     "event": "Play_sfx_MasterYi_MasterYiDoubleStrike_OnHit",
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/masteryi_base_audio/txtp/Play_sfx_MasterYi_MasterYiDoubleStrike_OnHit [1559186049=1153642577] {r}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/masteryi_base_audio/txtp/Play_sfx_MasterYi_MasterYiDoubleStrike_OnHit [1559186049=1153642577] {r}.txtp",
     "event_id": 2349492419,
     "media_ids": [
       7394909,
@@ -590,5 +590,15 @@
     "duration": 0.7687074829931972,
     "sha256": "97732c8ed302ed5c7194a149ce6d800f10a9b88115fed61b32ec616676a9de09",
     "processing": "vgmstream-cli -i; first explicit material branch, nested layers retained"
+  }
+  ,{
+    "file": "play_vo_masteryi_attack2dgeneral_r2_en_us.wav",
+    "event": "Play_vo_MasterYi_Attack2DGeneral",
+    "event_id": 724533109,
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/deployment_audio_review/voice_candidates_all_20260914/masteryi/txtp/Play_vo_MasterYi_Attack2DGeneral {r2}.txtp",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/deployment_audio_review/voice_candidates_all_20260914/masteryi/wav/Play_vo_MasterYi_Attack2DGeneral_r2_.wav",
+    "duration": 1.83127,
+    "sha256": "b99fcca85d2c6713e8d05009be75e9f40a1351dead8654638add3336f00dd4b5",
+    "processing": "vgmstream-cli 原始 Play_vo_MasterYi_Attack2DGeneral 事件渲染；保留 en_us 原增益，不裁剪、不变速；用于 deploy:voice。"
   }
 ]

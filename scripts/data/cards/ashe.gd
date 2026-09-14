@@ -66,6 +66,11 @@ static func definition() -> Dictionary:
 			"attack_swing_volume_db": 0.0,
 			"attack_hit_volume_db": 0.0,
 			"events": {
+				# 部署动画与待机共用 Idle1；使用两段短英雄语音随机补充部署声。
+				"deploy:voice": {"pool": [
+						"res://assets/audio/units/ashe/play_vo_ashe_attack2dgeneral_r10_en_us.wav",
+						"res://assets/audio/units/ashe/play_vo_ashe_move2dstandard_r3_en_us.wav",
+					], "volume_db": 0.0, "bus": "Voice"},
 				"attack_launch": {"pool": [
 						"res://assets/audio/units/ashe/play_sfx_ashe_ashebasicattack_onmissilelaunch_r1_d.wav",
 						"res://assets/audio/units/ashe/play_sfx_ashe_ashebasicattack_onmissilelaunch_r2_d.wav",

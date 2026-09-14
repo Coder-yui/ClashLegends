@@ -8,7 +8,7 @@
 
 | 形态/阵营 | 配置的事件与声音池 |
 | --- | --- |
-| 基础 | `active:impact`、`active:start`、`active:sustain`、`active_strong:impact`、`active_strong:start`、`active_strong:sustain`、`active_strong:wave_hit`、`continuous_attack:end`、`continuous_attack:release`、`continuous_attack:start`、`continuous_attack:sustain`、`death` |
+| 基础 | `active:impact`、`active:start`、`active:sustain`、`active_strong:impact`、`active_strong:start`、`active_strong:sustain`、`active_strong:wave_hit`、`continuous_attack:end`、`continuous_attack:release`、`continuous_attack:start`、`continuous_attack:sustain`、`death`、`deploy:start` |
 
 ## 源文件与加工证据
 

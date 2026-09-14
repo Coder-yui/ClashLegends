@@ -3,7 +3,7 @@
     "file": "assets/audio/units/tombstone/play_sfx_yorick_yorickwwalllife_onbuffactivate_r1.wav",
     "event": "Play_sfx_Yorick_YorickWWallLife_OnBuffActivate",
     "event_id": 3320850004,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickWWallLife_OnBuffActivate {m}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickWWallLife_OnBuffActivate {m}.txtp",
     "duration": 23.408367346938775,
     "media_ids": [
       "534399200",

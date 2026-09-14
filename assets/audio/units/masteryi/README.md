@@ -8,7 +8,7 @@
 
 | 形态/阵营 | 配置的事件与声音池 |
 | --- | --- |
-| 基础 | `active_buff:end`、`active_buff:start`、`active_buff:sustain`、`death`、`attack_swing`、`attack_hit`、`attack_hit_by_segment` |
+| 基础 | `active_buff:end`、`active_buff:start`、`active_buff:sustain`、`death`、`deploy:voice`、`attack_swing`、`attack_hit`、`attack_hit_by_segment` |
 
 ## 源文件与加工证据
 

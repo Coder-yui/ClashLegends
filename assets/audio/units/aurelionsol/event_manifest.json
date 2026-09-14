@@ -1,10 +1,24 @@
 [
   {
+    "file": "play_sfx_aurelionsol_respawn3d_buffactivate.wav",
+    "event": "Play_sfx_AurelionSol_Respawn3D_buffactivate",
+    "event_id": 2229428896,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/event_wav/Play_sfx_AurelionSol_Respawn3D_buffactivate.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_Respawn3D_buffactivate.txtp",
+    "media_ids": [
+      127942819
+    ],
+    "duration": 2.4254,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "a19ea8cc994cfb7f0d3cb79fd7671d86dfe11a90b5121176defcc2d49f02957a",
+    "selection_note": "与卡牌 visual_animations.deploy=Respawn 对应；先不裁剪、不变速，按部署事件一次播放。"
+  },
+  {
     "file": "play_sfx_aurelionsol_aurelionsolq_oncast.wav",
     "event": "Play_sfx_AurelionSol_AurelionSolQ_OnCast",
     "event_id": 3095077577,
-    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/event_wav/Play_sfx_AurelionSol_AurelionSolQ_OnCast.wav",
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolQ_OnCast.txtp",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/event_wav/Play_sfx_AurelionSol_AurelionSolQ_OnCast.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolQ_OnCast.txtp",
     "media_ids": [
       213042414
     ],
@@ -17,8 +31,8 @@
     "file": "play_sfx_aurelionsol_aurelionsolq_missilelaunch.wav",
     "event": "Play_sfx_AurelionSol_AurelionSolQ_missilelaunch",
     "event_id": 3477141528,
-    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/event_wav/Play_sfx_AurelionSol_AurelionSolQ_missilelaunch.wav",
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolQ_missilelaunch.txtp",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/event_wav/Play_sfx_AurelionSol_AurelionSolQ_missilelaunch.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolQ_missilelaunch.txtp",
     "media_ids": [
       977507558
     ],
@@ -31,8 +45,8 @@
     "file": "play_sfx_aurelionsol_aurelionsolq_buffdeactivate_r1.wav",
     "event": "Play_sfx_AurelionSol_AurelionSolQ_buffdeactivate",
     "event_id": 2470934330,
-    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/event_wav/Play_sfx_AurelionSol_AurelionSolQ_buffdeactivate {r1}.wav",
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolQ_buffdeactivate {r1}.txtp",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/event_wav/Play_sfx_AurelionSol_AurelionSolQ_buffdeactivate {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolQ_buffdeactivate {r1}.txtp",
     "media_ids": [
       272519467,
       434511164,
@@ -48,8 +62,8 @@
     "file": "play_sfx_aurelionsol_aurelionsolq_buffdeactivate_r2.wav",
     "event": "Play_sfx_AurelionSol_AurelionSolQ_buffdeactivate",
     "event_id": 2470934330,
-    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/event_wav/Play_sfx_AurelionSol_AurelionSolQ_buffdeactivate {r2}.wav",
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolQ_buffdeactivate {r2}.txtp",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/event_wav/Play_sfx_AurelionSol_AurelionSolQ_buffdeactivate {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolQ_buffdeactivate {r2}.txtp",
     "media_ids": [
       272519467,
       434511164,
@@ -65,8 +79,8 @@
     "file": "play_sfx_aurelionsol_aurelionsolq_buffdeactivate_r3.wav",
     "event": "Play_sfx_AurelionSol_AurelionSolQ_buffdeactivate",
     "event_id": 2470934330,
-    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/event_wav/Play_sfx_AurelionSol_AurelionSolQ_buffdeactivate {r3}.wav",
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolQ_buffdeactivate {r3}.txtp",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/event_wav/Play_sfx_AurelionSol_AurelionSolQ_buffdeactivate {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolQ_buffdeactivate {r3}.txtp",
     "media_ids": [
       272519467,
       434511164,
@@ -82,8 +96,8 @@
     "file": "play_sfx_aurelionsol_aurelionsolr_oncast.wav",
     "event": "Play_sfx_AurelionSol_AurelionSolR_OnCast",
     "event_id": 4162034424,
-    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/event_wav/Play_sfx_AurelionSol_AurelionSolR_OnCast.wav",
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolR_OnCast.txtp",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/event_wav/Play_sfx_AurelionSol_AurelionSolR_OnCast.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolR_OnCast.txtp",
     "media_ids": [
       1037831232
     ],
@@ -96,8 +110,8 @@
     "file": "play_sfx_aurelionsol_aurelionsolr2_oncast.wav",
     "event": "Play_sfx_AurelionSol_AurelionSolR2_OnCast",
     "event_id": 3803278248,
-    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/event_wav/Play_sfx_AurelionSol_AurelionSolR2_OnCast.wav",
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolR2_OnCast.txtp",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/event_wav/Play_sfx_AurelionSol_AurelionSolR2_OnCast.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolR2_OnCast.txtp",
     "media_ids": [
       987858008
     ],
@@ -110,8 +124,8 @@
     "file": "play_vo_aurelionsol_death3d_r1_zh_cn.wav",
     "event": "Play_vo_AurelionSol_Death3D",
     "event_id": 2928834675,
-    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol_vo/event_wav/Play_vo_AurelionSol_Death3D {r1}.wav",
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol_vo/txtp/Play_vo_AurelionSol_Death3D {r1}.txtp",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol_vo/event_wav/Play_vo_AurelionSol_Death3D {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol_vo/txtp/Play_vo_AurelionSol_Death3D {r1}.txtp",
     "media_ids": [
       3685532,
       90902781,
@@ -138,8 +152,8 @@
     "file": "play_vo_aurelionsol_death3d_r2_zh_cn.wav",
     "event": "Play_vo_AurelionSol_Death3D",
     "event_id": 2928834675,
-    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol_vo/event_wav/Play_vo_AurelionSol_Death3D {r2}.wav",
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol_vo/txtp/Play_vo_AurelionSol_Death3D {r2}.txtp",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol_vo/event_wav/Play_vo_AurelionSol_Death3D {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol_vo/txtp/Play_vo_AurelionSol_Death3D {r2}.txtp",
     "media_ids": [
       3685532,
       90902781,
@@ -166,8 +180,8 @@
     "file": "play_vo_aurelionsol_death3d_r3_zh_cn.wav",
     "event": "Play_vo_AurelionSol_Death3D",
     "event_id": 2928834675,
-    "source_preview": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol_vo/event_wav/Play_vo_AurelionSol_Death3D {r3}.wav",
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol_vo/txtp/Play_vo_AurelionSol_Death3D {r3}.txtp",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol_vo/event_wav/Play_vo_AurelionSol_Death3D {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol_vo/txtp/Play_vo_AurelionSol_Death3D {r3}.txtp",
     "media_ids": [
       3685532,
       90902781,
@@ -194,7 +208,7 @@
     "file": "play_sfx_aurelionsol_aurelionsolq_missilecast_r1.wav",
     "event": "Play_sfx_AurelionSol_AurelionSolQ_missilecast",
     "event_id": 398105608,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolQ_missilecast {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolQ_missilecast {r1}.txtp",
     "media_ids": [
       336070000,
       402341783,
@@ -208,7 +222,7 @@
     "file": "play_sfx_aurelionsol_aurelionsolq_missilecast_r2.wav",
     "event": "Play_sfx_AurelionSol_AurelionSolQ_missilecast",
     "event_id": 398105608,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolQ_missilecast {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolQ_missilecast {r2}.txtp",
     "media_ids": [
       336070000,
       402341783,
@@ -222,7 +236,7 @@
     "file": "play_sfx_aurelionsol_aurelionsolq_missilecast_r3.wav",
     "event": "Play_sfx_AurelionSol_AurelionSolQ_missilecast",
     "event_id": 398105608,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolQ_missilecast {r3}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolQ_missilecast {r3}.txtp",
     "media_ids": [
       336070000,
       402341783,
@@ -236,7 +250,7 @@
     "file": "play_sfx_aurelionsol_aurelionsolrmissile_missilelaunch.wav",
     "event": "Play_sfx_AurelionSol_AurelionSolRMissile_missilelaunch",
     "event_id": 2553594109,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolRMissile_missilelaunch.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolRMissile_missilelaunch.txtp",
     "media_ids": [
       603027560
     ],
@@ -248,7 +262,7 @@
     "file": "play_sfx_aurelionsol_aurelionsolrmissile_hit_r1.wav",
     "event": "Play_sfx_AurelionSol_AurelionSolRMissile_hit",
     "event_id": 361331667,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolRMissile_hit {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolRMissile_hit {r1}.txtp",
     "media_ids": [
       348958784,
       597444599,
@@ -262,7 +276,7 @@
     "file": "play_sfx_aurelionsol_aurelionsolrmissile_hit_r2.wav",
     "event": "Play_sfx_AurelionSol_AurelionSolRMissile_hit",
     "event_id": 361331667,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolRMissile_hit {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolRMissile_hit {r2}.txtp",
     "media_ids": [
       348958784,
       597444599,
@@ -276,7 +290,7 @@
     "file": "play_sfx_aurelionsol_aurelionsolrmissile_hit_r3.wav",
     "event": "Play_sfx_AurelionSol_AurelionSolRMissile_hit",
     "event_id": 361331667,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolRMissile_hit {r3}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolRMissile_hit {r3}.txtp",
     "media_ids": [
       348958784,
       597444599,
@@ -290,7 +304,7 @@
     "file": "play_sfx_aurelionsol_aurelionsolr2missile_missilelaunch_super.wav",
     "event": "Play_sfx_AurelionSol_AurelionSolR2Missile_missilelaunch_super",
     "event_id": 2309761105,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolR2Missile_missilelaunch_super.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolR2Missile_missilelaunch_super.txtp",
     "media_ids": [
       1027810183
     ],
@@ -302,7 +316,7 @@
     "file": "play_sfx_aurelionsol_aurelionsolr2missile_hit_super_s.wav",
     "event": "Play_sfx_AurelionSol_AurelionSolR2Missile_hit_super",
     "event_id": 3692241899,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolR2Missile_hit_super {s}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolR2Missile_hit_super {s}.txtp",
     "media_ids": [
       18582862,
       920317002
@@ -315,7 +329,7 @@
     "file": "play_sfx_aurelionsol_aurelionsolr_hit_shockwave_r1.wav",
     "event": "Play_sfx_AurelionSol_AurelionSolR_hit_shockwave",
     "event_id": 2637623209,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolR_hit_shockwave {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolR_hit_shockwave {r1}.txtp",
     "media_ids": [
       767382225,
       948852579,
@@ -330,7 +344,7 @@
     "file": "play_sfx_aurelionsol_aurelionsolr_hit_shockwave_r2.wav",
     "event": "Play_sfx_AurelionSol_AurelionSolR_hit_shockwave",
     "event_id": 2637623209,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolR_hit_shockwave {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolR_hit_shockwave {r2}.txtp",
     "media_ids": [
       767382225,
       948852579,
@@ -345,7 +359,7 @@
     "file": "play_sfx_aurelionsol_aurelionsolr_hit_shockwave_r3.wav",
     "event": "Play_sfx_AurelionSol_AurelionSolR_hit_shockwave",
     "event_id": 2637623209,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolR_hit_shockwave {r3}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolR_hit_shockwave {r3}.txtp",
     "media_ids": [
       767382225,
       948852579,

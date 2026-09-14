@@ -113,6 +113,15 @@ static func definition() -> Dictionary:
 		"audio": {
 			"attack_launch_until_impact": true,
 			"events": {
+				# 小纳尔部署动画为 Respawn；使用两段短英雄语音随机补充部署声。
+				"deploy:voice": {
+					"pool": [
+						"res://assets/audio/units/gnar/play_vo_gnar_attack2dgeneral_r1_en_us.wav",
+						"res://assets/audio/units/gnar/play_vo_gnar_laugh3dgeneral_r2_en_us.wav"
+					],
+					"volume_db": 0.0,
+					"bus": "Voice"
+				},
 				"attack_launch": {
 					"pool": [
 						"res://assets/audio/units/gnar/play_sfx_gnar_gnarbasicattack_onmissilelaunch_r1_d.wav",

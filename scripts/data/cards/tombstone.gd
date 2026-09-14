@@ -40,6 +40,7 @@ static func definition() -> Dictionary:
 		# BEGIN EVENT AUDIO tombstone
 		"audio": {
 			"events": {
+				"active:cast": {"pool": ["res://assets/audio/units/tombstone/play_sfx_yorick_yorickw_oncast_r1.wav"], "volume_db": 0.0, "bus": "Combat"},
 				# BEGIN BUILDING AUDIO tombstone
 				"idle:sustain": {"pool": ["res://assets/audio/units/tombstone/play_sfx_yorick_yorickwwalllife_onbuffactivate_r1.wav"], "volume_db": 0.0, "bus": "Combat"},
 				# END BUILDING AUDIO tombstone

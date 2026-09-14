@@ -147,4 +147,24 @@
       572389194
     ]
   }
+  ,{
+    "file": "play_vo_ashe_attack2dgeneral_r10_en_us.wav",
+    "event": "Play_vo_Ashe_Attack2DGeneral",
+    "event_id": 280466704,
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/deployment_audio_review/voice_candidates_all_20260914/ashe/txtp/Play_vo_Ashe_Attack2DGeneral {r10}.txtp",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/deployment_audio_review/voice_candidates_all_20260914/ashe/wav/Play_vo_Ashe_Attack2DGeneral_r10_.wav",
+    "duration": 1.718277,
+    "sha256": "15fcfec3b7a268d61b0ab28f4c6f5011119c03e8dc011218ffc62e6d21adef4a",
+    "processing": "vgmstream-cli 原始事件渲染；保留 en_us 原增益，不裁剪、不变速；作为 deploy:voice 两段随机池之一。"
+  },
+  {
+    "file": "play_vo_ashe_move2dstandard_r3_en_us.wav",
+    "event": "Play_vo_Ashe_Move2DStandard",
+    "event_id": 1557547372,
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/deployment_audio_review/voice_candidates_all_20260914/ashe/txtp/Play_vo_Ashe_Move2DStandard {r3}.txtp",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/deployment_audio_review/voice_candidates_all_20260914/ashe/wav/Play_vo_Ashe_Move2DStandard_r3_.wav",
+    "duration": 1.416417,
+    "sha256": "2ed7d4d1f332d60f7e8ca5c1d4b352371c462df7c54c96b34193cb07b7652633",
+    "processing": "vgmstream-cli 原始事件渲染；保留 en_us 原增益，不裁剪、不变速；作为 deploy:voice 两段随机池之一。"
+  }
 ]
