@@ -208,5 +208,11 @@
     "script": "res://tests/suites/terminal_audio_suite.gd",
     "method": "run",
     "scene": "battle"
+  },
+  {
+    "id": "BuildingExpiryBoundarySuite",
+    "script": "res://tests/suites/building_expiry_boundary_suite.gd",
+    "method": "run",
+    "scene": "battle"
   }
 ]

@@ -22,7 +22,7 @@ static func hit(target: Node2D, amount: float, source: Node2D, team: int, positi
 	var health_lost := quantity(hp_before - float(target.hp)) if landed else 0
 	var shield_absorbed := quantity(shield_before - float(target.get("shield_hp"))) if landed else 0
 	return {
-		"landed": landed, "damage": requested,
+		"accepted": landed, "landed": landed, "damage": requested,
 		"health_lost": health_lost, "shield_absorbed": shield_absorbed,
 		"overkill": maxi(requested - health_lost - shield_absorbed, 0) if landed else 0,
 	}
@@ -41,6 +41,6 @@ class DamageStream extends RefCounted:
 		var total := maxf(amount, 0.0) + remainder
 		var base_damage := BattleNumbers.quantity(total)
 		var result := BattleNumbers.hit(target, base_damage + bonus, source, team, position)
-		if result.landed:
+		if result.get("accepted", result.landed):
 			_targets[id] = {"target": weakref(target), "remainder": total - base_damage}
 		return result

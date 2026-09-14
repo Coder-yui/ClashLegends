@@ -2202,9 +2202,15 @@ func _sim_step(dt: float) -> void:
 	_combat.commit_batch()
 	if not _art_dev_mode and _minion_waves_enabled:
 		_tick_minion_waves(dt)
+	# 固定本阶段参与者；自然到期退出及死亡生成不能回头加入预处理或行动批次。
+	var combatants := get_tree().get_nodes_in_group("combatants")
+	for c in combatants:
+		if c is Unit: c.prepare_natural_lifecycle(dt)
 	_combat.begin_batch(_sim_tick_id, "combatants")
-	for c in get_tree().get_nodes_in_group("combatants"):
-		if c.has_method("sim_tick"):
+	for c in combatants:
+		if c is Unit:
+			c.sim_tick(dt, true)
+		elif c.has_method("sim_tick"):
 			c.sim_tick(dt)
 	_combat.commit_batch()
 	# 预部署在本 Tick 边界完成；新单位从下一 Tick 推进实际部署，避免两阶段共用一个 Tick。

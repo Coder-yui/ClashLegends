@@ -881,7 +881,7 @@ func set_continuous_beam_origin_world_position(world_position: Vector2) -> void:
 	queue_redraw()
 
 ## 固定 tick 模拟入口，由 main._sim_step 以 SIM_DT 驱动
-func sim_tick(dt: float) -> void:
+func sim_tick(dt: float, natural_lifecycle_prepared: bool = false) -> void:
 	if hp <= 0.0:
 		return
 	_tick_timed_revival(dt)
@@ -940,7 +940,7 @@ func sim_tick(dt: float) -> void:
 		attack_timeline.advance_visual(dt, _effective_attack_speed_multiplier())
 	_tick_pending_extra_attacks(dt)
 	if is_building:
-		_building_tick(dt)
+		_building_tick(dt, natural_lifecycle_prepared)
 		# 建筑也必须继续进入通用索敌/攻击状态机；这里只在寿命耗尽死亡后结束。
 		# 位移仍由 _chase() 的建筑保护拦截，建筑不会因为圈外目标开始行军。
 		if hp <= 0.0 or is_queued_for_deletion():
@@ -1125,7 +1125,16 @@ func surface_gap_to_circle(center: Vector2, radius: float) -> float:
 	# 建筑的规则方格占地不参与攻击距离、寻路或防穿模计算。
 	return maxf(0.0, center.distance_to(global_position) - body_radius - radius)
 
-func _building_tick(dt: float) -> void:
+## 仅预处理自然寿命；不推进部署、控制、召唤或攻击计时。
+## 判断与 sim_tick 到达 _building_tick 的门禁一致，包括部署最后一个 Tick。
+func prepare_natural_lifecycle(dt: float) -> void:
+	if not is_building or hp <= 0.0 or is_queued_for_deletion(): return
+	if _deploy_timer > 0.0:
+		if maxf(_deploy_timer - dt, 0.0) >= 0.000001 or _knockback_timer > 0.0: return
+	if control.frozen_timer > 0.0 or control.stun_timer > 0.0: return
+	_tick_building_lifetime(dt)
+
+func _tick_building_lifetime(dt: float) -> void:
 	if lifespan > 0.0:
 		var lifetime_step := minf(dt, _lifespan_left)
 		_lifespan_left -= lifetime_step
@@ -1142,6 +1151,11 @@ func _building_tick(dt: float) -> void:
 			hp = 0.0
 			_die()
 			return
+
+func _building_tick(dt: float, natural_lifecycle_prepared: bool = false) -> void:
+	if not natural_lifecycle_prepared:
+		_tick_building_lifetime(dt)
+	if hp <= 0.0 or is_queued_for_deletion(): return
 	if not _initial_summons_spawned:
 		_spawn_initial_summons()
 	if spawn_interval > 0.0:
@@ -1812,7 +1826,7 @@ func heal(amount: float) -> void:
 
 func take_damage(amount: float, from: Node2D = null, source_team: int = -1, source_position: Vector2 = Vector2(INF, INF)) -> bool:
 	if battle_context != null and battle_context.damage_batch().collecting:
-		return bool(battle_context.damage_batch().submit_damage(self, amount, from, source_team, source_position).landed)
+		return bool(battle_context.damage_batch().submit_damage(self, amount, from, source_team, source_position).accepted)
 	if hp <= 0.0:
 		return false
 	if _is_shroud_blocked(from, source_team, source_position):

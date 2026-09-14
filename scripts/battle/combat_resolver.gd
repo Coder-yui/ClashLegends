@@ -101,7 +101,7 @@ func submit_damage(target: Node2D, amount: float, source: Node2D, team: int, pos
 	var accepted: bool = is_instance_valid(target) and target.hp > 0.0
 	if accepted and target is Unit:
 		accepted = not target._is_shroud_blocked(source, team, position)
-	var result := {"landed": accepted, "damage": BattleNumbers.quantity(amount), "health_lost": 0.0, "shield_absorbed": 0.0, "overkill": 0.0}
+	var result := {"accepted": accepted, "landed": false, "damage": BattleNumbers.quantity(amount), "health_lost": 0.0, "shield_absorbed": 0.0, "overkill": 0.0}
 	if accepted:
 		_hits.append({"target": target, "source": source, "result": result})
 		_record("hit_submit", source, target, result.damage)
@@ -121,6 +121,9 @@ func commit_batch() -> void:
 	var groups := {}
 	for hit in _hits:
 		var target: Node2D = hit.target
+		# 在任何本批扣血之前冻结最终资格，不能逐刀用实时 hp 撤回同刻命中。
+		hit.result.landed = is_instance_valid(target) and not target.is_queued_for_deletion() and target.hp > 0.0
+		if not hit.result.landed: continue
 		if not groups.has(target): groups[target] = []
 		groups[target].append(hit)
 	# 独立盾层仍由 ShieldState 消耗。每刀保留记录与回调；同批盾量和实际掉血
@@ -163,6 +166,7 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 		effects.presentation_source = PresentationConfig.attack_source(from)
 	var targets: Array = [primary] if radius <= 0.0 else get_tree().get_nodes_in_group("combatants")
 	var landed := false
+	var hit_results: Array[Dictionary] = []
 	var impact := primary.global_position
 	var swing: int = from._attack_swing_count if from is Unit else 0
 	for target in targets:
@@ -172,14 +176,17 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 		var hit_amount := float(BattleNumbers.quantity(amount))
 		if counts_as_attack and from is Unit: hit_amount += from.on_hit_passive_damage(target)
 		var result := _hit(target, hit_amount, amount, from, p_team, source_position, effects)
-		if not result.landed: continue
+		if not result.accepted: continue
+		hit_results.append(result)
 		landed = true
 		var fixed_target: Node2D = target
 		defer_effect(func():
+			if not result.landed: return
 			_apply_attack_hit_effects(fixed_target, effects)
 			if knockback > 0.0 and fixed_target is Unit and fixed_target.hp > 0.0:
 				fixed_target.apply_knockback(origin, knockback))
 		defer_benefit(func():
+			if not result.landed: return
 			if not is_instance_valid(from) or not from is Unit or from.hp <= 0.0: return
 			if counts_as_attack and radius <= 0.0:
 				from.on_attack_landed(source_form_index, float(result.health_lost), swing)
@@ -192,8 +199,10 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 	if landed:
 		if counts_as_attack and radius > 0.0:
 			defer_benefit(func():
-				if is_instance_valid(from) and from is Unit and from.hp > 0.0:
+				if hit_results.any(func(result): return result.landed) and is_instance_valid(from) and from is Unit and from.hp > 0.0:
 					from.on_attack_landed(source_form_index, 0.0, swing))
 		if counts_as_attack:
-			defer_effect(func(): attack_hit.emit(effects.get("presentation_source", {}), impact, bool(effects.get("first_strike", false))))
+			defer_effect(func():
+				if hit_results.any(func(result): return result.landed):
+					attack_hit.emit(effects.get("presentation_source", {}), impact, bool(effects.get("first_strike", false))))
 	return landed

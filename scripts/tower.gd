@@ -191,7 +191,7 @@ func _find_enemy_in_range() -> Node2D:
 
 func take_damage(amount: float, _from: Node2D = null, _source_team: int = -1, _source_position: Vector2 = Vector2(INF, INF)) -> bool:
 	if battle_context != null and battle_context.damage_batch().collecting:
-		return bool(battle_context.damage_batch().submit_damage(self, amount, _from, _source_team, _source_position).landed)
+		return bool(battle_context.damage_batch().submit_damage(self, amount, _from, _source_team, _source_position).accepted)
 	if hp <= 0.0:
 		return false
 	var was_alive := hp > 0.0
