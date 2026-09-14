@@ -61,4 +61,4 @@ AttackTimeline 拥有攻击间隔、前摇、后摇与基础攻速表现时间�
 
 ProjectileSystem 独占客户端弹体目标与插值位置，快照写入和外部读取均不暴露内部字典别名；网络适配显式注入该系统，跨局统一清除客户端弹体。Main 拥有实体和技能注册索引及元数据组合，MatchRules 拥有计时/结束状态，Tower 拥有副本到死亡表现与导航释放的转换。网络只解码并请求相应入口，RPC 保留在 Node。
 
-CombatResolver 持有阶段内命中记录、附带效果、存活收益和死亡提交队列；BattleContext 暴露该服务，BattleNumbers 与 Unit/Tower 的直接伤害入口在收集期间转交记录。每批完成后清空所有队列；可选 trace 仅用于测试记录 Tick、阶段、来源、目标、段和死亡提交。规则变化提升 MatchSession.PROTOCOL_VERSION 至 20，快照载荷形状不变。
+CombatResolver 持有阶段内命中记录、附带效果、存活收益和死亡提交队列；BattleContext 暴露该服务，BattleNumbers 与 Unit/Tower 的直接伤害入口在收集期间转交记录。每批完成后清空所有队列；可选 trace 仅用于测试记录 Tick、阶段、来源、目标、段和死亡提交。规则版本 MatchSession.PROTOCOL_VERSION 当前为 21，快照载荷版本仍为 20、形状不变。建筑自然生命周期在 combatants 收集之前单独预处理，固定参与者快照。CombatResolver 同时持有本阶段强制位移请求，按出生身份、来源事件序号和子序号排序后提交；身份在出生接入分配，不能在遍历攻击者时分配。

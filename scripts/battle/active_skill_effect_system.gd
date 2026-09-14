@@ -189,6 +189,9 @@ func _skill_target_units(source: Unit, skill: Dictionary) -> Array[Unit]:
 
 
 func activate_nova(source: Unit, skill: Dictionary) -> void:
+	var displacement_order: Array = skill.get("displacement_order", [])
+	if displacement_order.is_empty():
+		displacement_order = _controller._combat.next_displacement_order(source)
 	var radius := float(skill.get("radius", 0.0))
 	var amount := float(skill.get("damage", 0.0))
 	var knockback := float(skill.get("knockback", 0.0))
@@ -209,7 +212,7 @@ func activate_nova(source: Unit, skill: Dictionary) -> void:
 			any_landed = _damage_combatant(source, combatant, amount, source.global_position) or any_landed
 		if combatant is Unit and is_instance_valid(combatant) and combatant.hp > 0.0:
 			if knockback > 0.0:
-				(combatant as Unit).apply_knockback(source.global_position, knockback, knockback_duration, knockback_mass_factor_max)
+				(combatant as Unit).apply_knockback(source.global_position, knockback, knockback_duration, knockback_mass_factor_max, displacement_order)
 			if slow_duration > 0.0:
 				(combatant as Unit).apply_slow(slow_duration, slow_multiplier)
 	if not bool(skill.get("shield_on_cast_start", false)):

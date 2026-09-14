@@ -114,3 +114,6 @@ Godot 原始入口使用 `-- --suite=ProjectileSuite`，未知名称退出 2；�
 `TerminalAudioSuite` 使用短 WAV 替代混音输入，验证真实播放器自然 finished、双轨等待、实例复用、重复/跨局回调和缺资源兜底；不作为听感认证。双进程 `--network` 还等待本地真实水晶音轨，验证本地胜败播报；使用 `CLASH_TEST_DOUBLE_NEXUS=1 python3 tools/verify.py --network` 验证双向真实弹体在同 Tick 摧毁两水晶和主客平局一致（环境开关只由测试套件读取）。
 
 实际画面/混音复核：`Godot --path . --script tools/demos/combat_terminal_review.gd`，输出 `/tmp/clash-combat-terminal/` 的镜像死亡、第三/六/九次连击、立即终局截图及 `explosion-victory.wav`。需另行试听录音，日志不能替代听感。
+
+
+`BuildingExpiryBoundarySuite` 从正常索敌前摇推进到建筑到期 Tick，交换阵营、出生、节点和集合排列，并比较攻击段、间隔、目标与收益；另测衰减、部署/控制、召唤边界、失效请求和全盾合法命中。`KnockbackBoundarySuite` 检查真实位移、接管速度/方向/时长、暂停恢复及固定事件身份的逆序收集。两者通过统一入口 `--suite=...` 可独立执行；不是工作台验收记录。

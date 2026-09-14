@@ -145,6 +145,7 @@ func commit_batch() -> void:
 			hit.result.overkill = maxf(float(hit.result.damage) - (lost + absorbed) * share, 0.0)
 	# 先固定全批存活状态，再施加控制和发放存活收益。
 	for callback in _effects: callback.call()
+	_commit_knockbacks()
 	# 回调本身可调用资源入口；退出 committing 后才执行，避免二次排队。
 	committing = false
 	for callback in _benefits: callback.call()
@@ -164,6 +165,9 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 	effects = effects.duplicate(true)
 	if not effects.has("presentation_source") and is_instance_valid(from):
 		effects.presentation_source = PresentationConfig.attack_source(from)
+	var displacement_order: Array = effects.get("displacement_order", [])
+	if knockback > 0.0 and displacement_order.is_empty():
+		displacement_order = next_displacement_order(from)
 	var targets: Array = [primary] if radius <= 0.0 else get_tree().get_nodes_in_group("combatants")
 	var landed := false
 	var hit_results: Array[Dictionary] = []
@@ -182,9 +186,9 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 		var fixed_target: Node2D = target
 		defer_effect(func():
 			if not result.landed: return
-			_apply_attack_hit_effects(fixed_target, effects)
-			if knockback > 0.0 and fixed_target is Unit and fixed_target.hp > 0.0:
-				fixed_target.apply_knockback(origin, knockback))
+			_apply_attack_hit_effects(fixed_target, effects))
+		if knockback > 0.0 and fixed_target is Unit:
+			submit_knockback(fixed_target, origin, knockback, 0.2, 1.4, displacement_order, result)
 		defer_benefit(func():
 			if not result.landed: return
 			if not is_instance_valid(from) or not from is Unit or from.hp <= 0.0: return
@@ -206,3 +210,38 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 				if hit_results.any(func(result): return result.landed):
 					attack_hit.emit(effects.get("presentation_source", {}), impact, bool(effects.get("first_strike", false))))
 	return landed
+
+
+# 来源身份在出生注册时确定；来源内事件序号在出手/技能排队时分配并随弹体保存。
+var _next_source_id := 1
+var _source_event_sequences: Dictionary = {}
+var _knockbacks: Array[Dictionary] = []
+
+func register_source(source: Node2D) -> void:
+	if source.combat_source_id > 0: return
+	source.combat_source_id = _next_source_id
+	_next_source_id += 1
+
+func next_displacement_order(source: Node2D) -> Array:
+	assert(is_instance_valid(source) and source.combat_source_id > 0)
+	var id := int(source.combat_source_id)
+	var sequence := int(_source_event_sequences.get(id, 0)) + 1
+	_source_event_sequences[id] = sequence
+	return [id, sequence, 0]
+
+func submit_knockback(target: Unit, origin: Vector2, distance: float, duration: float, mass_factor_max: float, order: Array, hit_result: Dictionary = {}) -> void:
+	if not target.can_receive_knockback(origin, distance, duration, mass_factor_max): return
+	assert(order.size() == 3 and int(order[0]) > 0 and int(order[1]) > 0 and int(order[2]) >= 0)
+	_knockbacks.append({"target": target, "origin": origin, "distance": distance,
+		"duration": duration, "mass_factor_max": mass_factor_max, "order": order.duplicate(), "hit_result": hit_result})
+
+func _commit_knockbacks() -> void:
+	_knockbacks.sort_custom(func(a, b):
+		for index in 3:
+			if a.order[index] != b.order[index]: return a.order[index] < b.order[index]
+		return false)
+	for event in _knockbacks:
+		if not event.hit_result.is_empty() and not event.hit_result.landed: continue
+		if is_instance_valid(event.target):
+			event.target.apply_knockback(event.origin, event.distance, event.duration, event.mass_factor_max)
+	_knockbacks.clear()

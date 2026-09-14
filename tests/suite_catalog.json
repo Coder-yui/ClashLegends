@@ -214,5 +214,11 @@
     "script": "res://tests/suites/building_expiry_boundary_suite.gd",
     "method": "run",
     "scene": "battle"
+  },
+  {
+    "id": "KnockbackBoundarySuite",
+    "script": "res://tests/suites/knockback_boundary_suite.gd",
+    "method": "run",
+    "scene": "battle"
   }
 ]

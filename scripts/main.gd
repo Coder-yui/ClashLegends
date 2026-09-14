@@ -212,6 +212,8 @@ func _exit_tree() -> void:
 			multiplayer.multiplayer_peer = null
 
 func _provide_battle_context(node: Node) -> void:
+	if node is Unit or node is Tower:
+		_combat.register_source(node)
 	if node is Unit:
 		(node as Unit).set_battle_context(battle_context)
 	elif node is Tower:
@@ -700,7 +702,7 @@ func _active_card_slot_for_team(p_team: int, card_id: String) -> int:
 			return slot_index
 	return -1
 
-## 法术卡位于主动槽时的实际施放费用：基础费用 + active_cost_bonus（强化治疗 +1）。
+## 法术卡位于主动槽时的实际施放费用：基础费用 + active_cost_bonus（过量治疗 +1）。
 ## 单位卡与不在主动槽的法术卡返回原费用；出牌扣费、客户端预检和 UI 角标共用这一口径。
 func card_cost_for_team(p_team: int, card_id: String) -> int:
 	var stats := CardDB.get_card(card_id)
@@ -1463,7 +1465,7 @@ func play_card(p_team: int, card_id: String, pos: Vector2, options: Dictionary =
 	var elixir = options.get("elixir")
 	if options.has("elixir") and elixir == null:
 		return false
-	# 强化法术（如主动槽治疗术）的实际费用含 active_cost_bonus；扣费、预检与回滚共用。
+	# 强化法术（如主动槽过量治疗）的实际费用含 active_cost_bonus；扣费、预检与回滚共用。
 	var card_cost := card_cost_for_team(p_team, card_id)
 	if bool(options.get("client_request", false)):
 		if mode != "client" or immediate or elixir == null or not elixir.can_afford(card_cost):
@@ -1950,6 +1952,7 @@ func get_active_skill_snapshot(ability_id: int) -> Dictionary:
 ## 并在施法者被冻结/眩晕时与 Unit 的 cast timer 同步暂停。
 func _queue_active_skill_impact(source: Unit, skill: Dictionary, impact_delay: float) -> void:
 	skill = skill.duplicate(true)
+	skill["displacement_order"] = _combat.next_displacement_order(source)
 	skill["cast_hit_state"] = ActiveSkillEffectSystem.CastHitState.new()
 	var hit_damages = skill.get("prepared_hit_damages", [])
 	var hit_delays = skill.get("prepared_hit_delays", [])
@@ -1957,6 +1960,7 @@ func _queue_active_skill_impact(source: Unit, skill: Dictionary, impact_delay: f
 		var hit_count := mini((hit_damages as Array).size(), (hit_delays as Array).size())
 		for hit_index in hit_count:
 			var hit_skill := skill.duplicate(true)
+			hit_skill.displacement_order[2] = hit_index
 			hit_skill.erase("prepared_hit_damages")
 			hit_skill.erase("prepared_hit_delays")
 			hit_skill["hit_audio_phase"] = "first" if hit_index == 0 else ("last" if hit_index == hit_count - 1 else "middle")

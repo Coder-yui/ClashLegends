@@ -46,6 +46,8 @@ func launch(attacker: Node2D, target: Node2D, amount: float, projectile_speed: f
 	if target is Unit and (target as Unit).is_hidden_from(attacker):
 		return
 	effects = effects.duplicate(true)
+	if knockback > 0.0 and not effects.has("displacement_order"):
+		effects.displacement_order = _context.damage_batch().next_displacement_order(attacker)
 	if (attacker is Unit or attacker is Tower) and not effects.has("presentation_source"):
 		effects["presentation_source"] = PresentationConfig.attack_source(attacker)
 	var source_form_index := (attacker as Unit).form_index if attacker is Unit else -1

@@ -1,5 +1,8 @@
 extends Node2D
 class_name Unit
+
+# 战场注册时分配的出生身份；不使用对象地址或场景树位置排序。
+var combat_source_id := 0
 ## 通用战斗单位：近战/远程/空中/建筑卡。
 ## 目标优先级对齐皇室战争：视野内选择最近的合法单位/建筑，塔作为无仇恨时的行军目标；
 ## 行军途中出现的建筑可重新拉走部队，远处建筑不会隔着全场产生仇恨。
@@ -1069,6 +1072,7 @@ func _perform_deploy_sweep() -> void:
 		return
 	_sweep_fx_timer = SWEEP_FX_DURATION
 	var any_landed := false
+	var displacement_order: Array = battle_context.damage_batch().next_displacement_order(self) if battle_context != null else []
 	for c in get_tree().get_nodes_in_group("combatants"):
 		if c == self or not is_instance_valid(c) or c.team == team or c.hp <= 0.0:
 			continue
@@ -1083,18 +1087,23 @@ func _perform_deploy_sweep() -> void:
 		if was_alive and c.hp <= 0.0:
 			on_enemy_killed(c)
 		if c is Unit and is_instance_valid(c) and c.hp > 0.0 and deploy_sweep_knockback > 0.0:
-			(c as Unit).apply_knockback(global_position, deploy_sweep_knockback, deploy_sweep_duration, deploy_sweep_mass_factor_max)
+			(c as Unit).apply_knockback(global_position, deploy_sweep_knockback, deploy_sweep_duration, deploy_sweep_mass_factor_max, displacement_order)
 
 	if any_landed and battle_context != null:
 		battle_context.notify_unit_audio_event(self, &"deploy:hit", global_position)
 
-func apply_knockback(origin: Vector2, distance: float, duration: float = 0.2, mass_factor_max: float = 1.4) -> void:
+func can_receive_knockback(origin: Vector2, distance: float, duration: float, mass_factor_max: float) -> bool:
+	return hp > 0.0 and not is_queued_for_deletion() and not is_building and origin.is_finite() and is_finite(distance) and distance > 0.0 and is_finite(duration) and is_finite(mass_factor_max)
+
+func apply_knockback(origin: Vector2, distance: float, duration: float = 0.2, mass_factor_max: float = 1.4, displacement_order: Array = []) -> void:
+	# 必须先校验再替换；拒绝的请求不得破坏旧位移。
+	if not can_receive_knockback(origin, distance, duration, mass_factor_max): return
 	if battle_context != null and battle_context.damage_batch().collecting:
-		battle_context.damage_batch().defer_effect(func():
-			if hp > 0.0: apply_knockback(origin, distance, duration, mass_factor_max))
+		battle_context.damage_batch().submit_knockback(self, origin, distance, duration, mass_factor_max, displacement_order)
 		return
-	if is_building or distance <= 0.0:
-		return
+	# 当前没有异步位移完成回调。只替换状态，清掉旧 Tick 尚未消费的移动意图。
+	_move_intent = Vector2.ZERO
+	_forced_movement = false
 	var direction := origin.direction_to(global_position)
 	if direction.length_squared() < 0.001:
 		direction = Vector2.DOWN if team == 0 else Vector2.UP

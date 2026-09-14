@@ -9,6 +9,9 @@ func run(harness: SceneTree) -> void:
 	main._audio_manager.cue_played.connect(func(card, cue, _pos):
 		if card == "match" and cue in [&"victory", &"defeat"]: result_cues.append(cue))
 	var start := Time.get_ticks_msec()
+	var boundary_unit: Unit
+	var expired_id := -1
+	var takeover_applied := false
 	var fired := false
 	var sent_requests := false
 	var sent_skill := false
@@ -60,6 +63,20 @@ func run(harness: SceneTree) -> void:
 			var before: int = main.get_child_count()
 			main._on_peer_connected(main._session.opponent_id)
 			stable_callback = main.get_child_count() == before and main._towers.size() == 6 and main._session.phase == MatchSession.Phase.RUNNING
+		if main.mode == "host" and main._match_started and main._sim_tick_id >= 40 and expired_id < 0:
+			var building: Unit = main._spawn_unit(0, "tombstone", Vector2(500, 950), 0)
+			building.spawn_interval = 0
+			building._lifespan_left = 0.05
+			expired_id = building.net_id
+			boundary_unit = main._spawn_unit(0, "masteryi", Vector2(480, 850), 0)
+			boundary_unit.apply_knockback(Vector2(400, 850), 40, 0.4)
+		if main.mode == "host" and main._sim_tick_id >= 42 and not takeover_applied and is_instance_valid(boundary_unit):
+			takeover_applied = true
+			main._combat.begin_batch(main._sim_tick_id, "network_boundary_takeover")
+			# 高序号先收集，低序号后收集；终态位置由正式快照/RPC 对比。
+			boundary_unit.apply_knockback(Vector2(600, 850), 10, 0.1, 1.4, [boundary_unit.combat_source_id, 2, 0])
+			boundary_unit.apply_knockback(Vector2(400, 850), 30, 0.4, 1.4, [boundary_unit.combat_source_id, 1, 0])
+			main._combat.commit_batch()
 		if main.mode == "host" and main._match_started and main._sim_tick_id >= 85 and not fired:
 			fired = true
 			# 使用真实普攻弹体致胜，覆盖“上一快照刚发出”的终局路径。
@@ -94,6 +111,8 @@ func run(harness: SceneTree) -> void:
 		session_guards = session_guards and result.remote_elixir == 1.0
 		result["session_guards"] = session_guards
 		if main.mode == "host":
+			result["passed"] = result.passed and takeover_applied and not main._net_units.has(expired_id)
+			result["boundary_lifecycle"] = takeover_applied and not main._net_units.has(expired_id)
 			result["request_sequence"] = main._session.last_request_id
 			result["outsider_rejected"] = outsider_rejected
 			result["callback_stable"] = stable_callback
