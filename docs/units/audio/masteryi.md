@@ -17,12 +17,13 @@
 | 增益开始 | 1 | 0 dB | [试听 1](../../../assets/audio/units/masteryi/play_sfx_masteryi_highlander_onbuffactivate.wav) |
 | 增益持续 | 1 | 0 dB | [试听 1](../../../assets/audio/units/masteryi/play_sfx_masteryi_highlander_trail.wav) |
 | 死亡 | 1 | 0 dB | [试听 1](../../../assets/audio/units/masteryi/play_sfx_masteryi_death3d_cast.wav) |
+| 部署语音 | 1 | 0 dB / Voice | [Play_vo_MasterYi_Attack2DGeneral](../../../assets/audio/units/masteryi/play_vo_masteryi_attack2dgeneral_r2_en_us.wav) |
 
 0 dB 表示不额外加减音量，不代表所有原声听起来一样响。表中给出代表性试听，完整原始素材仍保留在来源记录中。
 
 ## 使用边界与待补项
 
-没有独立部署声。
+部署动画为 `Respawn`，使用原始 `Play_vo_MasterYi_Attack2DGeneral` 事件的一段未压缩渲染。
 
 ## 怎么听
 

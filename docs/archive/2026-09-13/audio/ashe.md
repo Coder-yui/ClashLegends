@@ -29,7 +29,7 @@ BasicAttack 与 BasicAttack2 的三类事件分别指向相同的媒体集合；
 - 原包（只读）：`/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Ashe.wad.client`。
 - 提取路径：`assets/sounds/wwise2016/sfx/characters/ashe/skins/base/ashe_base_sfx_audio.bnk`、`ashe_base_sfx_events.bnk`，以及 `data/characters/ashe/skins/skin0.bin`。
 - 共用 init.bnk 使用先前从同一来源 Bootstrap.windows.wad.client 提取的文件；本次没有重新安装工具。
-- 工作目录：`/Users/czh/Tools/lol-asset-tools/verification/ashe/`；完整离线解析库：`/Users/czh/Tools/lol-asset-tools/ashe_base_audio/`。
+- 工作目录：`/Users/czh/Tools/lol-asset-tools/verification/ashe/`；完整离线解析库：`/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/ashe_base_audio/`。
 - wadtools 0.5.7、ritobin-tools 0.1.0、bnkextr、wwiser v20260909、vgmstream r2117；处理脚本为外部 `process_ashe_audio.py`。wwiser 使用 `-gra -gd -gv 0dB` 保留分支，vgmstream 使用 `-i` 单次导出；TXTP 的媒体路径改为相对 banks。
 - 41 个 SFX 事件名经 ShortID 校验（33 播放、8 停止）；44 个原始媒体全部解析，可达媒体无缺失/未归类，生成 60 份事件预览。4 个未使用事件引用本银行缺失节点，无法生成预览：AsheCritChanceReady_OnBuffActivate → 125783175，FrostArrow OnCast → 9057、OnHit → 9055、OnMissileLaunch → 9056。不能将它们当作已完整解析的静音事件；本次所选 6 个事件均无缺失节点或媒体。
 - 项目选择脚本：`python3 tools/audio/import_ashe_audio.py`，只复制白名单 14 WAV 并生成 `event_manifest.json`，原始包和完整解析库不变。该脚本有固定本机路径，重跑会覆盖同名选定产物。
@@ -40,7 +40,7 @@ manifest 的 media_ids 是整个事件候选媒体集合，不代表每个变体
 
 死亡来源：Ashe.zh_CN.wad.client 内原皮 `ashe_base_vo_events.bnk` 与 `ashe_base_vo_audio.wpk`。包内路径仍标作 vo/en_us，来源语言以 WAD 包为准，不按内部路径误认成英文包。Death3D ShortID 为 1632532837，可达 WEM 为 2639712284、2320440732、2413345029；小型 Audio BNK 不含实际语音，WPK 才是媒体来源。提取器按 r3d2/v1 索引校验范围及 RIFF 文件头，只取三个已验证媒体。
 
-重现脚本 `tools/audio/import_ashe_death_audio.py`；外部源/事件 XML 在 `/Users/czh/Tools/lol-asset-tools/verification/ashe_vo_zh/`，TXTP 与 WAV 在 `/Users/czh/Tools/lol-asset-tools/ashe_death_zh_audio/`。映射独立存于 `death_event_manifest.json`，原来的 event_manifest.json 保留 14 份 SFX；两者合计覆盖 17 个文件。Voice 增益额外为 0 dB，保留原事件层级增益。
+重现脚本 `tools/audio/import_ashe_death_audio.py`；外部源/事件 XML 在 `/Users/czh/Tools/lol-asset-tools/verification/ashe_vo_zh/`，TXTP 与 WAV 在 `/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/ashe_death_zh_audio/`。映射独立存于 `death_event_manifest.json`，原来的 event_manifest.json 保留 14 份 SFX；两者合计覆盖 17 个文件。Voice 增益额外为 0 dB，保留原事件层级增益。
 
 空转审判与寒冰死亡联合演示：`Godot --path . --script tools/demos/sustained_audio_demo.gd`；实际混音录音输出至 `/tmp/clash_sustained_audio.wav`。
 

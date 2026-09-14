@@ -29,7 +29,7 @@
 - `OnBuffActivate` 原片段约 6 秒，作为项目一次性持有音层使用；项目 Buff 当前持续 3 秒，结束时由通用音频生命周期停止，不实现 Wwise 无限循环或淡出。
 - 被动接入 `PassiveAttack_OnCast` → `OnMissileCast` → `OnMissileLaunch` → `OnHit` + `OnHitLocation` 完整链条，各阶段先保留两个已验证自然变体（命中位置层为单一事件）；`PassiveAttack2` 与 `PassiveAttackCrit` 未接入，避免把攻击段或暴击语义误播到当前玩法。
 - `StrutStacks_OnBuffCast` 是 W 的被动层数事件，不是“先声夺人”首次命中事件，因此未接入；同样没有导入 `BulletTime`、被动弹射、R 大招或其他皮肤事件。
-- 原始 WAD、BNK、WPK 和完整解析库均保留在项目外；素材仅供学习原型使用，其他用途需核实相应权限。
+- 原始 WAD、BNK、WPK 和完整解析库均保留在开发素材库内；素材仅供学习原型使用，其他用途需核实相应权限。
 
 ## 重现
 
@@ -37,7 +37,7 @@
 python3 tools/audio/import_missfortune_audio.py
 ```
 
-脚本只从项目外已经解析好的白名单事件复制 WAV 并重建 `event_manifest.json`，不会修改原始 WAD 或外部解析库。
+脚本只从开发素材库内已经解析好的白名单事件复制 WAV 并重建 `event_manifest.json`，不会修改原始 WAD 或外部解析库。
 
 2026-09-13：死亡声音超过 1.5 秒时，只保留前 1.5 秒：前 1 秒保持原音量，1–1.5 秒按振幅线性淡出；不超过 1.5 秒的素材不变。 外部原始 WAV 保留，处理前时长/哈希与输出哈希见 manifest。
 

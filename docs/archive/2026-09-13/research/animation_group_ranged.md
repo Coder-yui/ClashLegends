@@ -20,9 +20,9 @@ WAD 根目录：`/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions
   - 文本 SHA-256：`e9786115ac1c47bf53498da182539ed6bc1fbcfd82e93edccd9353bfa748107f`。
 - `missfortune`：`/tmp/lol-ranged-animation/missfortune/data/characters/missfortune/animations/skin0.rito`；30 个图节点、45 条混合表项。
   - 文本 SHA-256：`f86bbb5e039cc4d3f46a4d5cc2347ab2e7ffc374cbaf25b88079b9c3a5b82d83`。
-- `teemo`：`/Users/czh/Tools/lol-asset-tools/card_audio_batch/teemo/data/characters/teemo/animations/skin0.ritobin`；71 个图节点、293 条混合表项。
+- `teemo`：`/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/teemo/data/characters/teemo/animations/skin0.ritobin`；71 个图节点、293 条混合表项。
   - 文本 SHA-256：`c169f0f3ab859652b2498251cb7106abc42b2e374da06ef7932bd84e682b3816`。
-- `twistedfate`：`/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/data/characters/twistedfate/animations/skin0.ritobin`；39 个图节点、34 条混合表项。
+- `twistedfate`：`/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/twistedfate/data/characters/twistedfate/animations/skin0.ritobin`；39 个图节点、34 条混合表项。
   - 文本 SHA-256：`20aaf81e9d1656fada4ba2ab8e3bfa0d7e453c2c3738228b64d03da959942f2b`。
 
 Ashe/MissFortune 文本是本轮在 `/tmp/lol-ranged-animation/` 中由对应 `data/characters/<id>/animations/skin0.bin` 转换所得；原 WAD 不变。Teemo/TwistedFate 使用既有 card_audio_batch 只读提取结果。

@@ -8,11 +8,11 @@
 
 以下缩写对应本地原始图，表内 L 为对应图的一基行号：
 
-- **A**：`/Users/czh/Tools/lol-asset-tools/card_audio_batch/anivia/data/characters/anivia/animations/skin0.ritobin`
-- **E**：`/Users/czh/Tools/lol-asset-tools/card_audio_batch/anivia/data/characters/aniviaegg/animations/skin0.ritobin`
-- **S**：`/Users/czh/Tools/lol-asset-tools/card_audio_batch/aurelionsol/data/characters/aurelionsol/animations/skin0.ritobin`
-- **G**：`/Users/czh/Tools/lol-asset-tools/card_audio_batch/gnar/data/characters/gnar/animations/skin0.ritobin`
-- **B**：`/Users/czh/Tools/lol-asset-tools/card_audio_batch/gnar/data/characters/gnarbig/animations/skin0.ritobin`
+- **A**：`/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/anivia/data/characters/anivia/animations/skin0.ritobin`
+- **E**：`/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/anivia/data/characters/aniviaegg/animations/skin0.ritobin`
+- **S**：`/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/data/characters/aurelionsol/animations/skin0.ritobin`
+- **G**：`/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gnar/data/characters/gnar/animations/skin0.ritobin`
+- **B**：`/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gnar/data/characters/gnarbig/animations/skin0.ritobin`
 
 WAD 均来自 `/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/`，分别是 `Anivia.wad.client`、`AurelionSol.wad.client`、`Gnar.wad.client`。用本地 `wadtools list --hash … -F json` 核对图内资源哈希到原始 `.anm` 路径，再通过 Godot 实际加载五个包装场景核对导入名称。
 

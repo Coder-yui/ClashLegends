@@ -10,6 +10,7 @@
 
 | 发生时机 | 已接变体 | 音量调整 | 试听示例 |
 | --- | --- | --- | --- |
+| 部署 | 3 | 0 dB | [人在塔在](../../../assets/audio/units/garen/champion_choose_86_zh_cn.wav) · [勇往直前](../../../assets/audio/units/garen/play_vo_garen_move2dstandard_r16_zh_cn.wav) · [保家卫国](../../../assets/audio/units/garen/play_vo_garen_move2dstandard_r11_zh_cn.wav) |
 | 普通攻击出手 | 8 | 0 dB | [试听 1](../../../assets/audio/units/garen/play_sfx_garen_garenbasicattack2_oncast_r1.wav) · [试听 2](../../../assets/audio/units/garen/play_sfx_garen_garenbasicattack2_oncast_r2.wav) |
 | 普通攻击命中 | 16 | 0 dB | [试听 1](../../../assets/audio/units/garen/play_sfx_garen_garenbasicattack_onhit_1559186049_1153642577_r1_d.wav) · [试听 2](../../../assets/audio/units/garen/play_sfx_garen_garenbasicattack_onhit_1559186049_1153642577_r2_d.wav) |
 | 死亡 | 1 | 0 dB | [试听 1](../../../assets/audio/units/garen/play_sfx_garen_death3d_cast.wav) |
@@ -26,7 +27,7 @@
 
 ## 使用边界与待补项
 
-没有独立部署声；强化攻击命中复用普通命中声。
+部署时从“人在塔在”“勇往直前”“保家卫国”中等权随机播放一个，避免连续重复；仅接入部署事件，不在行走或普攻时另播这些台词。强化攻击命中复用普通命中声。
 
 ## 怎么听
 

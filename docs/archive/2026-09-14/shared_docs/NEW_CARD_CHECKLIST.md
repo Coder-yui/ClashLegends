@@ -22,7 +22,7 @@
 
 ## 音频工具的使用范围
 
-通用音频工具在 `tools/audio/`。`prepare_lol_card_audio.py` 只准备项目外只读来源的解码工作目录；`import_card_audio.py` 只导入明确指定的卡牌计划，先预览：
+通用音频工具在 `tools/audio/`。`prepare_lol_card_audio.py` 只准备开发素材库内只读来源的解码工作目录；`import_card_audio.py` 只导入明确指定的卡牌计划，先预览：
 
 ```sh
 python3 tools/audio/import_card_audio.py --source /absolute/path/to/prepared_library --cards <card_id> --dry-run

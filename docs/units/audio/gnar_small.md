@@ -15,12 +15,13 @@
 | 普攻发射 | 3 | 0 dB | [试听 1](../../../assets/audio/units/gnar/play_sfx_gnar_gnarbasicattack_onmissilelaunch_r1_d.wav) · [试听 2](../../../assets/audio/units/gnar/play_sfx_gnar_gnarbasicattack_onmissilelaunch_r2_d.wav) |
 | 死亡 | 3 | 0 dB | [试听 1](../../../assets/audio/units/gnar/play_vo_gnar_death3d_r1_zh_cn.wav) · [试听 2](../../../assets/audio/units/gnar/play_vo_gnar_death3d_r2_zh_cn.wav) |
 | 还原小纳尔 | 3 | 0 dB | [试听 1](../../../assets/audio/units/gnar/play_sfx_gnar_gnartransformback_buffactivate_r1.wav) · [试听 2](../../../assets/audio/units/gnar/play_sfx_gnar_gnartransformback_buffactivate_r2.wav) |
+| 部署语音（随机二选一） | 2 | 0 dB / Voice | [Attack2DGeneral](../../../assets/audio/units/gnar/play_vo_gnar_attack2dgeneral_r1_en_us.wav) · [Laugh3DGeneral](../../../assets/audio/units/gnar/play_vo_gnar_laugh3dgeneral_r2_en_us.wav) |
 
 0 dB 表示不额外加减音量，不代表所有原声听起来一样响。表中给出代表性试听，完整原始素材仍保留在来源记录中。
 
 ## 使用边界与待补项
 
-没有独立部署声；原版怒气临界提示与本项目的命中变形规则不同，不作为必补项。
+当前部署动画为 `Respawn`，使用两段未压缩的 LoL 英雄短语音随机补足；原版怒气临界提示与本项目的命中变形规则不同，不作为必补项。
 
 ## 怎么听
 

@@ -18,8 +18,8 @@
 ## 来源与限制
 
 - 原包（只读）：`/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/MasterYi.wad.client`。
-- 提取路径：原皮 `assets/sounds/wwise2016/sfx/characters/masteryi/skins/base/masteryi_base_sfx_audio.bnk`、`masteryi_base_sfx_events.bnk` 与 `data/characters/masteryi/skins/skin0.bin`；共用 `init.bnk` 使用已验证的项目外提取副本。
-- 工作目录：`/Users/czh/Tools/lol-asset-tools/verification/masteryi/`；完整离线解析库：`/Users/czh/Tools/lol-asset-tools/masteryi_base_audio/`。
+- 提取路径：原皮 `assets/sounds/wwise2016/sfx/characters/masteryi/skins/base/masteryi_base_sfx_audio.bnk`、`masteryi_base_sfx_events.bnk` 与 `data/characters/masteryi/skins/skin0.bin`；共用 `init.bnk` 使用已验证的开发素材库内提取副本。
+- 工作目录：`/Users/czh/Tools/lol-asset-tools/verification/masteryi/`；完整离线解析库：`/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/masteryi_base_audio/`。
 - 使用 wadtools、ritobin-tools、bnkextr、wwiser v20260909、vgmstream；wwiser 使用 `-gra -gd -gv 0dB` 保留事件随机分支，vgmstream 使用 `-i` 单次导出。完整事件映射在外部解析库的 `event_map.json`，项目白名单映射在本目录的 `event_manifest.json`。
 - `Highlander_trail` 是一次播放的持有式音层，不实现 Wwise 无限循环；技能结束或死亡会停止它。项目当前没有独立的技能表现动作，因此使用通用 `active_buff:*` 入口。
 - 普攻命中入口当前按“所有真实普通攻击刀次共享一个 `attack_hit` 池”消费，因此没有把原始 `MasterYiDoubleStrike_OnHit` 混入普通攻击命中池；不会让音频影响双重打击伤害。
@@ -31,7 +31,7 @@
 python3 tools/audio/import_masteryi_audio.py
 ```
 
-该脚本只从项目外已经解析好的白名单事件复制 WAV 并重建 `event_manifest.json`，不会修改原始 WAD 或外部解析库。
+该脚本只从开发素材库内已经解析好的白名单事件复制 WAV 并重建 `event_manifest.json`，不会修改原始 WAD 或外部解析库。
 
 2026-09-13：死亡声音超过 1.5 秒时，只保留前 1.5 秒：前 1 秒保持原音量，1–1.5 秒按振幅线性淡出；不超过 1.5 秒的素材不变。 外部原始 WAV 保留，处理前时长/哈希与输出哈希见 manifest。
 

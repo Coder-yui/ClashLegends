@@ -10,6 +10,7 @@
 
 | 发生时机 | 已接变体 | 音量调整 | 试听示例 |
 | --- | --- | --- | --- |
+| 部署（`Respawn3D`） | 1 | 0 dB | [试听](../../../assets/audio/units/aurelionsol/play_sfx_aurelionsol_respawn3d_buffactivate.wav) |
 | 星落/天瀑 · 落地 | 3 | 0 dB | [试听 1](../../../assets/audio/units/aurelionsol/play_sfx_aurelionsol_aurelionsolrmissile_hit_r1.wav) · [试听 2](../../../assets/audio/units/aurelionsol/play_sfx_aurelionsol_aurelionsolrmissile_hit_r2.wav) |
 | 星落/天瀑 · 起手 | 1 | 0 dB | [试听 1](../../../assets/audio/units/aurelionsol/play_sfx_aurelionsol_aurelionsolrmissile_missilelaunch.wav) |
 | 星落/天瀑 · 持续过程 | 1 | 0 dB | [试听 1](../../../assets/audio/units/aurelionsol/play_sfx_aurelionsol_aurelionsolr_oncast.wav) |
@@ -27,7 +28,7 @@
 
 ## 使用边界与待补项
 
-没有独立部署声。本项目没有原版吐息蓄满爆发机制，因此不播放对应爆发声音。
+部署音使用 LoL 原始 `Play_sfx_AurelionSol_Respawn3D_buffactivate`；本项目没有原版吐息蓄满爆发机制，因此不播放对应爆发声音。
 
 ## 怎么听
 

@@ -13,6 +13,6 @@
 
 临时试听板读取 assets/audio/match_event_manifest.json，含26种事件45条播报样例，另有3条共享小兵生成 SFX。除上述3种播报外都只用于试听：欢迎/开局提示、击杀、第一滴血、双杀到五杀、连杀等级、终结、双方团灭、双方破塔、水晶兵营重生、掉线/重连。项目没有 LoL 水晶兵营重生、连杀等规则，不自行绑定这些候选。每条显示事件名、当前用途、时长，并保留拖动/选段时间标识。
 
-来源：/Users/czh/Tools/lol-asset-tools/announcer_review 中 Map11 原表与中文 Female1 BNK/WPK，WPK媒体按索引解包；wwiser -gv 0dB 导出，不做自动master增益；vgmstream保留原事件增益和完整时长。媒体ID、事件ID、hash及TXTP见 match_event_manifest.json。导入器 tools/audio/import_match_audio.py；共享初始事件导入完成后会重新执行后续接入，避免覆盖四兵生成配置。
+来源：/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review 中 Map11 原表与中文 Female1 BNK/WPK，WPK媒体按索引解包；wwiser -gv 0dB 导出，不做自动master增益；vgmstream保留原事件增益和完整时长。媒体ID、事件ID、hash及TXTP见 match_event_manifest.json。导入器 tools/audio/import_match_audio.py；共享初始事件导入完成后会重新执行后续接入，避免覆盖四兵生成配置。
 
 验证：完整 mechanics 通过，覆盖4.95秒无首波播报、5.00秒恰好一次、可靠事件去重、客户端胜负反转，以及四兵双阵营3变体配置。tools/demos/match_audio_review.gd 本机主机/客户端通过：双方各收到一次 minions_spawn，主机 victory、客户端 defeat。实机录音与截图输出 /tmp/clash-match-audio；事件日志不冒充主观听感验收。

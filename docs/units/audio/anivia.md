@@ -14,6 +14,7 @@
 | 普通攻击命中 | 3 | -5 dB | [试听 1](../../../assets/audio/units/anivia/play_sfx_anivia_aniviabasicattack_onhit_r1_d.wav) · [试听 2](../../../assets/audio/units/anivia/play_sfx_anivia_aniviabasicattack_onhit_r2_d.wav) |
 | 普攻发射 | 3 | 0 dB | [试听 1](../../../assets/audio/units/anivia/play_sfx_anivia_aniviabasicattack_onmissilelaunch_r1_d.wav) · [试听 2](../../../assets/audio/units/anivia/play_sfx_anivia_aniviabasicattack_onmissilelaunch_r2_d.wav) |
 | 死亡 | 3 | 0 dB | [试听 1](../../../assets/audio/units/anivia/play_vo_anivia_death3d_r1_zh_cn.wav) · [试听 2](../../../assets/audio/units/anivia/play_vo_anivia_death3d_r2_zh_cn.wav) |
+| 部署语音（随机二选一） | 2 | 0 dB / Voice | [Attack2DGeneral](../../../assets/audio/units/anivia/play_vo_anivia_attack2dgeneral_r2_en_us.wav) · [Laugh3DGeneral](../../../assets/audio/units/anivia/play_vo_anivia_laugh3dgeneral_r1_en_us.wav) |
 | 冰雪风暴 · 起手 | 1 | 0 dB | [试听 1](../../../assets/audio/units/anivia/play_sfx_anivia_glacialstorm_buffactivate_m_onset.wav) |
 | 冰雪风暴 · 区域消散 | 1 | 0 dB | [试听 1](../../../assets/audio/units/anivia/play_sfx_anivia_glacialstorm_onbuffdeactivate.wav) |
 | 冰雪风暴 · 区域持续 | 1 | 0 dB | [试听 1](../../../assets/audio/units/anivia/play_sfx_anivia_glacialstorm_zone_sustain.wav) |
@@ -22,7 +23,7 @@
 
 ## 使用边界与待补项
 
-没有独立部署声。化蛋后的孵化声音由蛋持有，并不是复活过程静音。
+部署动画与待机共用 `Idle1`，当前用两段未压缩的 LoL 英雄短语音随机补足。化蛋后的孵化声音由蛋持有，并不是复活过程静音。
 
 ## 怎么听
 

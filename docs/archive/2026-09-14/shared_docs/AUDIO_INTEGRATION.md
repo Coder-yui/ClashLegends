@@ -68,17 +68,17 @@ ProjectileSystem 在出手时保存 card_id、form、serial、first_strike 来�
 - `by_event/`：事件可达的组成声音，不保证每个文件都是完整事件。
 - `raw_wav/<id>.wav`：原始媒体解码；数字 ID 不是动作名称。
 
-盖伦本次来源位于 `/Users/czh/Tools/lol-asset-tools/garen_base_audio/`；这是本机已准备的实例，不是其他环境或其他英雄的默认可用来源。先检查存在性，缺失时报告所需素材。
+盖伦本次来源位于 `/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/garen_base_audio/`；这是本机已准备的实例，不是其他环境或其他英雄的默认可用来源。先检查存在性，缺失时报告所需素材。
 
 ### 只有 LOL WAD / Wwise BNK 时
 
-在项目外独立工作目录提取，原始 `LOL_Asset_Source` 只读：
+在开发素材库内独立工作目录提取，原始 `LOL_Asset_Source` 只读：
 
 1. 用 wadtools 的已安装版本与哈希表定位目标英雄、皮肤的 Audio BNK / Events BNK、皮肤 BIN 和对应共享 init.bnk；VO 语言包与 SFX 分开，不混入其他皮肤。
 2. 用 ritobin-tools 解析皮肤 BIN 中的事件名，wwiser 解析 Events/Audio/Init 的层级。恢复名称时校验 Wwise ShortID，不将猜测标签冒充原名。
 3. 关系沿 Event → Action → 容器 → Sound → 媒体 ID 解析；保留随机、层叠与 Switch 条件。记录缺失节点、缺失媒体和未归类媒体，不能悄悄忽略。
 4. 用 wwiser 生成事件 TXTP，再用 vgmstream 解码/渲染为 WAV；裸 WEM 可用 vgmstream 解码。bnkextr 仅用于需要的媒体提取，不能替代事件图解析。FFmpeg 可检查/转码已能识别的音频，不假定它能直接处理所有 WEM 编码。
-5. 保留 TXTP、映射、工具版本和转换参数在项目外来源库。检查循环渲染策略、随机分支覆盖、增益与媒体路径；每个导出失败都要有说明。
+5. 保留 TXTP、映射、工具版本和转换参数在开发素材库内来源库。检查循环渲染策略、随机分支覆盖、增益与媒体路径；每个导出失败都要有说明。
 
 本机工具线索：`/Users/czh/Tools/lol-asset-tools/README.md`、同目录 `bin/` 与 `process_garen_audio.py`。执行前读脚本并检查当前版本的 `--help`；盖伦脚本包含英雄/路径假设，不是通用任意英雄解包器。工具缺失时先检查 PATH/Homebrew 和本机安装说明，需安装或升级时遵循当前任务授权，不为了接已有 WAV 重新装整套工具。
 

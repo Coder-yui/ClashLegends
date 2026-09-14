@@ -17,12 +17,13 @@
 | 万箭齐发 · 起手 | 2 | 0 dB | [试听 1](../../../assets/audio/units/ashe/play_sfx_ashe_volley_oncast_r1_d.wav) · [试听 2](../../../assets/audio/units/ashe/play_sfx_ashe_volley_oncast_r2_d.wav) |
 | 普攻发射 | 3 | 0 dB | [试听 1](../../../assets/audio/units/ashe/play_sfx_ashe_ashebasicattack_onmissilelaunch_r1_d.wav) · [试听 2](../../../assets/audio/units/ashe/play_sfx_ashe_ashebasicattack_onmissilelaunch_r2_d.wav) |
 | 死亡 | 3 | 0 dB | [试听 1](../../../assets/audio/units/ashe/play_vo_ashe_death3d_r1_zh_cn.wav) · [试听 2](../../../assets/audio/units/ashe/play_vo_ashe_death3d_r2_zh_cn.wav) |
+| 部署语音（随机二选一） | 2 | 0 dB / Voice | [Attack2DGeneral](../../../assets/audio/units/ashe/play_vo_ashe_attack2dgeneral_r10_en_us.wav) · [Move2DStandard](../../../assets/audio/units/ashe/play_vo_ashe_move2dstandard_r3_en_us.wav) |
 
 0 dB 表示不额外加减音量，不代表所有原声听起来一样响。表中给出代表性试听，完整原始素材仍保留在来源记录中。
 
 ## 使用边界与待补项
 
-没有独立部署声。
+部署动画与待机共用 `Idle1`，当前用两段未压缩的 LoL 英雄短语音随机补足。
 
 ## 怎么听
 

@@ -27,7 +27,7 @@ Unit/Tower 通过 BattleContext 使用战场服务，不探测 `current_scene` �
 - **普通新卡：**定义、注册、素材和文档。不要加入英雄名分支。
 - **新战斗规则：**对应领域系统、字段校验与测试；需要客户端显示时同步快照或事件。
 - **新表现：**只读当前状态或真实事件；确实缺事件入口时先补派发、消费与去重。
-- **工作台：**UI 在 `scripts/ui/development_workbench.gd`，模型预览和场景配方在 `scripts/ui/workbench/`；仍复用正式出牌/技能接口。
+- **工作台：**UI 在 `scripts/ui/development_workbench.gd`，模型预览和场景配方在 `scripts/ui/workbench/`；仍复用正式出牌/技能接口。WorkbenchAudioCatalog 只负责把当前形态/阵营的正式音频配置展开为试听条目，UI 保留播放与筛选；离线候选不混入正式清单。
 
 ## 需要保留的语义
 
@@ -35,13 +35,13 @@ Unit/Tower 通过 BattleContext 使用战场服务，不探测 `current_scene` �
 
 在途弹体保存出手时来源与形态，来源死亡后仍可命中，但不给死者回血或技能资源。音频与模型不驱动伤害、移动或联网状态。
 
-快照版本与固定载荷必须同时维护读写端；当前版本 20，单位载荷 40 项（含出生描述与部署剩余时间），顶层含会话标识与生命周期序号，修改协议需提升版本。晚到表现按进度对齐，重复序号不重播。NetworkEntityLifecycle 拥有出生描述、销毁标记和快照屏障；同 Tick 由生命周期序号区分，快照可以恢复未知实体，旧局生成/销毁/快照不能污染新局。
+快照版本与固定载荷必须同时维护读写端；当前版本 23（与 MatchSession.PROTOCOL_VERSION 共用），单位载荷 40 项（含出生描述与部署剩余时间），顶层含会话标识与生命周期序号，修改协议需提升版本。晚到表现按进度对齐，重复序号不重播。NetworkEntityLifecycle 拥有出生描述、销毁标记和快照屏障；同 Tick 由生命周期序号区分，快照可以恢复未知实体，旧局生成/销毁/快照不能污染新局。
 
 ## 维护与已知限制
 
 核心测试由 `tests/mechanics_check.gd` 和 `tests/suite_catalog.json` 统一编排；每套件重建并释放自己的场景，支持选跑与反序，检查战斗对象和根节点无遗留。维护审计检查资源、链接、注册和孤立 UID，不能替代运行回归。
 
-离线加工放 `tools/`，已退役素材放受 Godot 忽略的 `assets/archive/`，已结束研究放 `docs/archive/`。不因内容相同就合并不同音频事件，不能删除模型外部纹理或可编辑源件。
+离线加工放 `tools/`，已退役素材放项目根目录素材库 `04-中间产物/`，已结束研究放 `docs/archive/`。不因内容相同就合并不同音频事件，不能删除模型外部纹理或可编辑源件。
 
 目前仍有 Main 与领域系统的耦合；资源预留也不消除实例化成本。性能和设备验证的缺口见 [开发状态](DEV_PLAN.md)，历史测量见 [结构验收](archive/2026-09-11/maintenance_validation.md)。
 
@@ -61,4 +61,6 @@ AttackTimeline 拥有攻击间隔、前摇、后摇与基础攻速表现时间�
 
 ProjectileSystem 独占客户端弹体目标与插值位置，快照写入和外部读取均不暴露内部字典别名；网络适配显式注入该系统，跨局统一清除客户端弹体。Main 拥有实体和技能注册索引及元数据组合，MatchRules 拥有计时/结束状态，Tower 拥有副本到死亡表现与导航释放的转换。网络只解码并请求相应入口，RPC 保留在 Node。
 
-CombatResolver 持有阶段内命中记录、附带效果、存活收益和死亡提交队列；BattleContext 暴露该服务，BattleNumbers 与 Unit/Tower 的直接伤害入口在收集期间转交记录。每批完成后清空所有队列；可选 trace 仅用于测试记录 Tick、阶段、来源、目标、段和死亡提交。规则版本 MatchSession.PROTOCOL_VERSION 当前为 21，快照载荷版本仍为 20、形状不变。建筑自然生命周期在 combatants 收集之前单独预处理，固定参与者快照。CombatResolver 同时持有本阶段强制位移请求，按出生身份、来源事件序号和子序号排序后提交；身份在出生接入分配，不能在遍历攻击者时分配。
+CombatResolver 持有阶段内命中记录、附带效果、存活收益和死亡提交队列；BattleContext 暴露该服务，BattleNumbers 与 Unit/Tower 的直接伤害入口在收集期间转交记录。每批完成后清空所有队列；可选 trace 仅用于测试记录 Tick、阶段、来源、目标、段和死亡提交。规则版本 MatchSession.PROTOCOL_VERSION 当前为 23，Snapshot 版本同步为 23、载荷形状不变。建筑自然生命周期在 combatants 收集之前单独预处理，固定参与者快照。CombatResolver 同时持有本阶段强制位移请求，按出生身份、来源事件序号和子序号排序后提交；身份在出生接入分配，不能在遍历攻击者时分配。
+
+恢复护盾到期资格由 ShieldState 随层保存；tick 返回本次有效自然到期结果，Unit 消费一次，死亡和清除不能恢复。横排编队沿用同次部署身份与技能资格转交。

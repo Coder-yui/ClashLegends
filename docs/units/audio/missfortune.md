@@ -12,6 +12,7 @@
 | --- | --- | --- | --- |
 | 普通攻击出手 | 6 | 0 dB | [试听 1](../../../assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack2_oncast_r1.wav) · [试听 2](../../../assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack2_oncast_r2.wav) |
 | 普通攻击命中 | 24 | 0 dB | [试听 1](../../../assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1153642577_r1_d.wav) · [试听 2](../../../assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1153642577_r2_d.wav) |
+| 部署语音 | 1 | 0 dB | [试听](../../../assets/audio/units/missfortune/play_vo_missfortune_move2dstandard_r1_zh_cn.wav) |
 | 增益结束 | 2 | 0 dB | [试听 1](../../../assets/audio/units/missfortune/play_sfx_missfortune_missfortuneviciousstrikes_onbuffdeactivate_r1.wav) · [试听 2](../../../assets/audio/units/missfortune/play_sfx_missfortune_missfortuneviciousstrikes_onbuffdeactivate_r2.wav) |
 | 增益开始 | 2 | 0 dB | [试听 1](../../../assets/audio/units/missfortune/play_sfx_missfortune_missfortuneviciousstrikes_oncast_r1.wav) · [试听 2](../../../assets/audio/units/missfortune/play_sfx_missfortune_missfortuneviciousstrikes_oncast_r2.wav) |
 | 增益持续 | 2 | 0 dB | [试听 1](../../../assets/audio/units/missfortune/play_sfx_missfortune_missfortuneviciousstrikes_onbuffactivate_r1.wav) · [试听 2](../../../assets/audio/units/missfortune/play_sfx_missfortune_missfortuneviciousstrikes_onbuffactivate_r2.wav) |
@@ -27,7 +28,7 @@
 
 ## 使用边界与待补项
 
-没有独立部署声。
+部署时播放用户指定的 `Play_vo_MissFortune_Move2DStandard` r1 短语音。
 
 ## 怎么听
 

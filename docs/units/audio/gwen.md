@@ -10,6 +10,7 @@
 
 | 发生时机 | 已接变体 | 音量调整 | 试听示例 |
 | --- | --- | --- | --- |
+| 部署 | 3 | 0 dB | [英雄锁定音效](../../../assets/audio/units/gwen/champion_lockin_sfx_887.wav) · [你要找裁缝吗？](../../../assets/audio/units/gwen/play_vo_gwen_attack2dgeneral_r17_zh_cn.wav) · [剪刀飞快](../../../assets/audio/units/gwen/play_vo_gwen_attack2dgeneral_r20_zh_cn.wav) |
 | 普通攻击出手 | 6 | -3 dB | [试听 1](../../../assets/audio/units/gwen/play_sfx_gwen_gwenbasicattack_stab_cast_r1.wav) · [试听 2](../../../assets/audio/units/gwen/play_sfx_gwen_gwenbasicattack_stab_cast_r2.wav) |
 | 普通攻击命中 | 3 | -5 dB | [试听 1](../../../assets/audio/units/gwen/play_sfx_gwen_gwenbasicattack_swipe_hit_r1.wav) · [试听 2](../../../assets/audio/units/gwen/play_sfx_gwen_gwenbasicattack_swipe_hit_r2.wav) |
 | 普通攻击分段命中 | 6 | -5 dB | [试听 1](../../../assets/audio/units/gwen/play_sfx_gwen_gwenbasicattack_stab_hit_r1.wav) · [试听 2](../../../assets/audio/units/gwen/play_sfx_gwen_gwenbasicattack_stab_hit_r2.wav) |
@@ -27,7 +28,7 @@
 
 ## 使用边界与待补项
 
-没有独立部署声。被动附加伤害与满层回血没有单独加一层声音，跟随普攻和剪切播放；丝缕缠流未启用。
+部署时从英雄专属锁定音效、“你要找裁缝吗？”、“剪刀飞快”中等权随机播放一个，避免连续重复；仅接入部署事件，不在行走或普攻时另播这些台词。被动附加伤害与满层回血没有单独加一层声音，跟随普攻和剪切播放；丝缕缠流未启用。
 
 ## 怎么听
 

@@ -13,7 +13,7 @@
 
 ## 格温
 
-来源 Gwen.wad.client → data/characters/gwen/animations/skin0.bin（本机对应 `/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/animations.ritobin`），以及角色 gwen.bin 的 GwenQ SpellObject。
+来源 Gwen.wad.client → data/characters/gwen/animations/skin0.bin（本机对应 `/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/animations.ritobin`），以及角色 gwen.bin 的 GwenQ SpellObject。
 
 原图节点：`Spell1` 是方向参数图，正前方分支 `Spell1_0`；中间 `Spell1_B`；最后 `Spell1_C` 也是方向参数图，正前方对应本项目 `Spell1_C_anm`。最后一剪后另有 ToIdle / ToRun 收势片段，本项目已配置这些出口。
 

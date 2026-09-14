@@ -26,3 +26,5 @@ Godot --headless --path . --script tests/mechanics_check.gd
 - [当前待办](docs/DEV_PLAN.md)与[历史归档](docs/archive/README.md)。
 
 普通卡复用通用 Unit；出牌统一经过 `play_card()`，新增机制扩展共享系统。素材和动画不能决定伤害、移动、碰撞或技能时刻。协作边界见 [AGENTS.md](AGENTS.md)。
+
+素材与迭代：正式资源在 `assets/`；候选、制作中版本和产物统一在项目根目录的 `ClashLegends-开发素材库/`。宣传素材独立在项目根目录的 `ClashLegends-promo-materials/`。分类与展台流程见 [任务导航](docs/AGENT_WORKFLOW.md)。

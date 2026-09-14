@@ -37,27 +37,27 @@
 
 以下每项导出一个选定事件样例，不穷尽随机组合。源增益保留，未归一化；部分渲染到达 PCM 峰值上限，需要选定后检查并处理混音，不能当作最终接入成品。循环只作单次试听渲染。
 
-- **太阳圆盘生成**：[试听 9.79 秒](/Users/czh/Tools/lol-asset-tools/missing_audio_review/auditions/Play_sfx_Azir_AzirObeliskSound_OnBuffCast.wav) — `Play_sfx_Azir_AzirObeliskSound_OnBuffCast`
-- **太阳圆盘消失**：[试听 4.97 秒](/Users/czh/Tools/lol-asset-tools/missing_audio_review/auditions/Play_sfx_Azir_AzirObeliskSound_OnBuffDeactivate.wav) — `Play_sfx_Azir_AzirObeliskSound_OnBuffDeactivate`
-- **太阳圆盘出手**：[试听 2.95 秒](/Users/czh/Tools/lol-asset-tools/missing_audio_review/auditions/Play_sfx_Env_map11_ChaosTurretChampionBasicAttack_cast.wav) — `Play_sfx_Env_map11_ChaosTurretChampionBasicAttack_cast`
-- **太阳圆盘发射**：[试听 1.08 秒](/Users/czh/Tools/lol-asset-tools/missing_audio_review/auditions/Play_sfx_Env_TurretBasicAttack_missilelaunch.wav) — `Play_sfx_Env_TurretBasicAttack_missilelaunch`
-- **太阳圆盘命中**：[试听 0.83 秒](/Users/czh/Tools/lol-asset-tools/missing_audio_review/auditions/Play_sfx_Env_TurretBasicAttack_hit.wav) — `Play_sfx_Env_TurretBasicAttack_hit`
-- **墓碑持续**：[试听 23.41 秒](/Users/czh/Tools/lol-asset-tools/missing_audio_review/auditions/Play_sfx_Yorick_YorickWWallLife_OnBuffActivate.wav) — `Play_sfx_Yorick_YorickWWallLife_OnBuffActivate`
-- **冰冻候选施放**：[试听 2.67 秒](/Users/czh/Tools/lol-asset-tools/missing_audio_review/auditions/Play_sfx_Lissandra_LissandraW_OnCast.wav) — `Play_sfx_Lissandra_LissandraW_OnCast`
-- **冰冻候选生效**：[试听 0.63 秒](/Users/czh/Tools/lol-asset-tools/missing_audio_review/auditions/Play_sfx_Lissandra_LissandraWFrozen_OnBuffActivate.wav) — `Play_sfx_Lissandra_LissandraWFrozen_OnBuffActivate`
-- **冰冻候选消散**：[试听 1.67 秒](/Users/czh/Tools/lol-asset-tools/missing_audio_review/auditions/Play_sfx_Lissandra_LissandraWShards_buffdeactivate.wav) — `Play_sfx_Lissandra_LissandraWShards_buffdeactivate`
-- **汲取候选施放**：[试听 3.78 秒](/Users/czh/Tools/lol-asset-tools/missing_audio_review/auditions/Play_sfx_Vladimir_VladimirQ_OnCast.wav) — `Play_sfx_Vladimir_VladimirQ_OnCast`
-- **汲取候选回血**：[试听 4.75 秒](/Users/czh/Tools/lol-asset-tools/missing_audio_review/auditions/Play_sfx_Vladimir_VladimirTransfusionHeal_OnHit.wav) — `Play_sfx_Vladimir_VladimirTransfusionHeal_OnHit`
-- **冲锋候选施放**：[试听 3.54 秒](/Users/czh/Tools/lol-asset-tools/missing_audio_review/auditions/Play_sfx_Sivir_SivirR_OnCast.wav) — `Play_sfx_Sivir_SivirR_OnCast`
-- **冲锋候选持续**：[试听 5.00 秒](/Users/czh/Tools/lol-asset-tools/missing_audio_review/auditions/Play_sfx_Sivir_SivirR_OnBuffActivate.wav) — `Play_sfx_Sivir_SivirR_OnBuffActivate`
-- **冲锋候选结束**：[试听 1.93 秒](/Users/czh/Tools/lol-asset-tools/missing_audio_review/auditions/Play_sfx_Sivir_SivirR_OnBuffDeactivate.wav) — `Play_sfx_Sivir_SivirR_OnBuffDeactivate`
-- **炮击候选爆炸**：[试听 2.13 秒](/Users/czh/Tools/lol-asset-tools/missing_audio_review/auditions/Play_sfx_Ziggs_ZiggsQ_hit.wav) — `Play_sfx_Ziggs_ZiggsQ_hit`
-- **齐射候选魔法命中**：[试听 0.83 秒](/Users/czh/Tools/lol-asset-tools/missing_audio_review/auditions/Play_sfx_Env_TurretBasicAttack_hit.wav) — `Play_sfx_Env_TurretBasicAttack_hit`
+- **太阳圆盘生成**：[试听 9.79 秒](/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/missing_audio_review/auditions/Play_sfx_Azir_AzirObeliskSound_OnBuffCast.wav) — `Play_sfx_Azir_AzirObeliskSound_OnBuffCast`
+- **太阳圆盘消失**：[试听 4.97 秒](/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/missing_audio_review/auditions/Play_sfx_Azir_AzirObeliskSound_OnBuffDeactivate.wav) — `Play_sfx_Azir_AzirObeliskSound_OnBuffDeactivate`
+- **太阳圆盘出手**：[试听 2.95 秒](/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/missing_audio_review/auditions/Play_sfx_Env_map11_ChaosTurretChampionBasicAttack_cast.wav) — `Play_sfx_Env_map11_ChaosTurretChampionBasicAttack_cast`
+- **太阳圆盘发射**：[试听 1.08 秒](/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/missing_audio_review/auditions/Play_sfx_Env_TurretBasicAttack_missilelaunch.wav) — `Play_sfx_Env_TurretBasicAttack_missilelaunch`
+- **太阳圆盘命中**：[试听 0.83 秒](/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/missing_audio_review/auditions/Play_sfx_Env_TurretBasicAttack_hit.wav) — `Play_sfx_Env_TurretBasicAttack_hit`
+- **墓碑持续**：[试听 23.41 秒](/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/missing_audio_review/auditions/Play_sfx_Yorick_YorickWWallLife_OnBuffActivate.wav) — `Play_sfx_Yorick_YorickWWallLife_OnBuffActivate`
+- **冰冻候选施放**：[试听 2.67 秒](/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/missing_audio_review/auditions/Play_sfx_Lissandra_LissandraW_OnCast.wav) — `Play_sfx_Lissandra_LissandraW_OnCast`
+- **冰冻候选生效**：[试听 0.63 秒](/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/missing_audio_review/auditions/Play_sfx_Lissandra_LissandraWFrozen_OnBuffActivate.wav) — `Play_sfx_Lissandra_LissandraWFrozen_OnBuffActivate`
+- **冰冻候选消散**：[试听 1.67 秒](/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/missing_audio_review/auditions/Play_sfx_Lissandra_LissandraWShards_buffdeactivate.wav) — `Play_sfx_Lissandra_LissandraWShards_buffdeactivate`
+- **汲取候选施放**：[试听 3.78 秒](/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/missing_audio_review/auditions/Play_sfx_Vladimir_VladimirQ_OnCast.wav) — `Play_sfx_Vladimir_VladimirQ_OnCast`
+- **汲取候选回血**：[试听 4.75 秒](/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/missing_audio_review/auditions/Play_sfx_Vladimir_VladimirTransfusionHeal_OnHit.wav) — `Play_sfx_Vladimir_VladimirTransfusionHeal_OnHit`
+- **冲锋候选施放**：[试听 3.54 秒](/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/missing_audio_review/auditions/Play_sfx_Sivir_SivirR_OnCast.wav) — `Play_sfx_Sivir_SivirR_OnCast`
+- **冲锋候选持续**：[试听 5.00 秒](/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/missing_audio_review/auditions/Play_sfx_Sivir_SivirR_OnBuffActivate.wav) — `Play_sfx_Sivir_SivirR_OnBuffActivate`
+- **冲锋候选结束**：[试听 1.93 秒](/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/missing_audio_review/auditions/Play_sfx_Sivir_SivirR_OnBuffDeactivate.wav) — `Play_sfx_Sivir_SivirR_OnBuffDeactivate`
+- **炮击候选爆炸**：[试听 2.13 秒](/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/missing_audio_review/auditions/Play_sfx_Ziggs_ZiggsQ_hit.wav) — `Play_sfx_Ziggs_ZiggsQ_hit`
+- **齐射候选魔法命中**：[试听 0.83 秒](/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/missing_audio_review/auditions/Play_sfx_Env_TurretBasicAttack_hit.wav) — `Play_sfx_Env_TurretBasicAttack_hit`
 
 ## 证据与复现
 
 - 本机只读来源：`/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/` 下 Azir、Yorick、Lulu、Lissandra、Vladimir、Sivir、Ziggs 与 Map11/Common。
-- 太阳圆盘 Spawn/Death 动画表：`/Users/czh/Tools/lol-asset-tools/missing_audio_review/data/characters/azirsundisc/animations/skin0.rito`；普攻粒子同目录的 skins/skin0.rito。
+- 太阳圆盘 Spawn/Death 动画表：`/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/missing_audio_review/data/characters/azirsundisc/animations/skin0.rito`；普攻粒子同目录的 skins/skin0.rito。
 - 对应事件图：`card_audio_batch/azir/txtp`、`card_audio_batch/yorick/txtp`、`shared_audio_review/txtp` 以及 `missing_audio_review/candidates/*/txtp`，均位于上述工具目录。
-- 导出清单：[manifest.json](/Users/czh/Tools/lol-asset-tools/missing_audio_review/auditions/manifest.json)，含原 TXTP、事件 ID、候选媒体、时长、峰值和 SHA-256。导出脚本保存在同级上层 `export_candidates.py`。
+- 导出清单：[manifest.json](/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/missing_audio_review/auditions/manifest.json)，含原 TXTP、事件 ID、候选媒体、时长、峰值和 SHA-256。导出脚本保存在同级上层 `export_candidates.py`。
 - 本轮只做素材查找与试听样例导出，没有更改游戏文件中的 audio 域、声音时序或玩法；没有宣称完成实战听感验收。

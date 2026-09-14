@@ -60,7 +60,7 @@
 - 被动“先声夺人”按 `MissFortunePassiveAttack_OnCast` → `OnMissileCast` → `OnMissileLaunch` → `OnHit` + `OnHitLocation` 接入；攻击表现序号开始时就确定首击变体，命中尾段仍只在权威伤害结算成功后播放，并通过快照/RPC同步客户端。
 - 首击弹体携带纯表现 `first_strike` 标记，绘制为紫色弹体外包一层橙红火光；火光不改变弹体半径、飞行速度、射程或命中判定。
 - 普攻 `BasicAttack2_OnHit` 与 `BasicAttack_OnHit` 使用同一套事件图和候选媒体，因此由共享 `attack_hit` 池消费，不重复导入一份相同素材。
-- 素材来源：原皮 SFX 来自 `MissFortune.wad.client`；死亡语音来自 `MissFortune.zh_CN.wad.client`。原包仅在项目外解析，项目内只保留 52 份已选 WAV；被动各阶段保留两个已验证的自然变体，命中位置层为单一事件。
+- 素材来源：原皮 SFX 来自 `MissFortune.wad.client`；死亡语音来自 `MissFortune.zh_CN.wad.client`。原包仅在开发素材库内解析，项目内只保留 52 份已选 WAV；被动各阶段保留两个已验证的自然变体，命中位置层为单一事件。
 - 导入：`python3 tools/audio/import_missfortune_audio.py`。素材仅供学习原型使用，其他用途需核实相应权限。
 - 验证：`Godot --headless --path . --script tests/mechanics_check.gd` 全部通过；F5 场景启动无错误；`Godot --path . --script tools/demos/missfortune_audio_demo.gd` 实际触发普攻、离弦、命中、W 起手/持续/结束和死亡事件，并生成 `/tmp/clash_missfortune_audio.wav`。
 

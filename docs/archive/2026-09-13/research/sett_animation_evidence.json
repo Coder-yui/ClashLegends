@@ -1,6 +1,6 @@
 {
   "date": "2026-09-12",
-  "source": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/data/characters/sett/animations/skin0.ritobin",
+  "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/sett/data/characters/sett/animations/skin0.ritobin",
   "source_sha256": "f57cd7ccea101d13a287be4c6713fc0f5ca0f59e647796366d33789e4df94add",
   "glb_sha256": "c82880a79e01120bc9c39eeab2026aacc653f02e8f4fb6b331375cb7b7433495",
   "method": "Lowercase FNV-1a 32-bit; high/low halves matched to local graph nodes. Source=high, target=low is a structural interpretation corroborated by named transition routes, not verified against Riot runtime code. A blend-table entry does not authorize a gameplay transition.",

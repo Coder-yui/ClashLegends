@@ -10,6 +10,7 @@
 
 | 发生时机 | 已接变体 | 音量调整 | 试听示例 |
 | --- | --- | --- | --- |
+| 部署（`Respawn3D`） | 1 | 0 dB | [试听](../../../assets/audio/units/teemo/play_sfx_teemo_respawn3d_buffactivate.wav) |
 | 普通攻击出手 | 2 | -3 dB | [试听 1](../../../assets/audio/units/teemo/play_sfx_teemo_teemobasicattack_oncast_r1.wav) · [试听 2](../../../assets/audio/units/teemo/play_sfx_teemo_teemobasicattack_oncast_r2.wav) |
 | 普通攻击命中 | 2 | -5 dB | [试听 1](../../../assets/audio/units/teemo/play_sfx_teemo_teemobasicattack_onhit_r1.wav) · [试听 2](../../../assets/audio/units/teemo/play_sfx_teemo_teemobasicattack_onhit_r2.wav) |
 | 普攻发射 | 2 | 0 dB | [试听 1](../../../assets/audio/units/teemo/play_sfx_teemo_teemobasicattack_onmissilelaunch_r1.wav) · [试听 2](../../../assets/audio/units/teemo/play_sfx_teemo_teemobasicattack_onmissilelaunch_r2.wav) |
@@ -21,7 +22,7 @@
 
 ## 使用边界与待补项
 
-没有独立部署声。
+部署音使用 LoL 原始 `Play_sfx_Teemo_Respawn3D_buffactivate`。
 
 ## 怎么听
 

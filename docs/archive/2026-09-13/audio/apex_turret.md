@@ -18,7 +18,7 @@
 
 待机引擎不再配置到 deploy:start。仅在部署结束、无攻击和无技能动作的待机状态播放；离开待机、死亡、销毁与换场停止，冻结/眩晕暂停。返回待机重新启动片段；不承诺 Wwise 样本级无缝循环。所有状态读取权威 Unit 或客户端 Snapshot，声音不驱动战斗。
 
-来源：本机 LOL_Asset_Source 的 Heimerdinger.wad.client SFX 与 炮台基础皮肤事件；原包只读，外部选定成品复制到 assets，非待开发队列迁移。内部 en_US 路径来自中文 WAD 内命名，不代表英文音轨。wwiser v20260909 + 共享 init.bnk，vgmstream-cli -i 解码 PCM16 WAV，保留事件层与源增益，不归一化。生成/销毁原始 TXTP 位于 /Users/czh/Tools/lol-asset-tools/card_audio_batch/heimerdinger/txtp；tools/audio/import_apex_spawn_audio.py 可重导选定 6 个变体。此前选入的 QUlt 英雄语音已移除。
+来源：本机 LOL_Asset_Source 的 Heimerdinger.wad.client SFX 与 炮台基础皮肤事件；原包只读，外部选定成品复制到 assets，非待开发队列迁移。内部 en_US 路径来自中文 WAD 内命名，不代表英文音轨。wwiser v20260909 + 共享 init.bnk，vgmstream-cli -i 解码 PCM16 WAV，保留事件层与源增益，不归一化。生成/销毁原始 TXTP 位于 /Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp；tools/audio/import_apex_spawn_audio.py 可重导选定 6 个变体。此前选入的 QUlt 英雄语音已移除。
 
 未发现独立命名的 RQ Spawn/Destroy，按用户确认复用 Q 炮台生成/销毁音；引擎仍使用 RQ 专属事件。死亡按项目既有规则处理：超过 1.5 秒保留前 1.5 秒，末 0.5 秒淡出；原始 TXTP / WAD 不改。未完整复现 Wwise 实时 RTPC、滤波与嵌套随机。素材版权属于 Riot，仅作本项目学习用途。
 

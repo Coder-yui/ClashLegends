@@ -11,7 +11,7 @@
 | `presentation/` | 只读权威状态的模型、动画、特效表现 |
 | `audio/` | 只读表现事件的音频播放与共用播放器创建 |
 | `ui/` | 主界面、备战和开发工作台 |
-| `ui/workbench/` | 工作台内的模型预览等组件；独立摄影展台复用 `model_preview.gd` |
+| `ui/workbench/` | 工作台模型预览、实战配方与正式音频清单；`audio_catalog.gd` 只展开配置，`model_preview.gd` 供独立摄影复用 |
 
 新增卡牌先读 [新卡清单](../docs/NEW_CARD_CHECKLIST.md)；结构修改读 [维护架构](../docs/MAINTENANCE_ARCHITECTURE.md)。共享组件留在所属领域，离线工具通过公开入口复用，避免复制整套摄影棚或把工具逻辑塞入 Main。
 

@@ -2,7 +2,7 @@
 
 # 盖伦原皮：当前玩法音频
 
-已移除旧的 24 份实验 WAV 及其导入文件；现在使用本次解析的事件组合 WAV，共 42 份。原始完整素材库保留在项目外，不会整包导入。
+已移除旧的 24 份实验 WAV 及其导入文件；现在使用本次解析的事件组合 WAV，共 42 份。原始完整素材库保留在开发素材库内，不会整包导入。
 
 | 游戏触发 | 原始事件（省略 Play_sfx_Garen_） | 变体数 |
 | --- | --- | --- |
@@ -29,7 +29,7 @@
 
 ## 来源与重现
 
-源目录：`/Users/czh/Tools/lol-asset-tools/garen_base_audio/event_wav/`。
+源目录：`/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/garen_base_audio/event_wav/`。
 源包：LOL_Asset_Source 的 Garen.wad.client 原皮 SFX Audio/Events BNK，结合 skin0.bin 事件名及 init.bnk。
 工具：wadtools、wwiser、vgmstream；导出保留可解析事件层级，不能完整复现 Wwise 运行时滤波、动态音高及全部嵌套随机组合。
 

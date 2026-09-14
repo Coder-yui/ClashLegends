@@ -14,8 +14,8 @@
 | --- | --- | --- |
 | Garen | `/tmp/clash-original-animation/garen.ritobin` | `Garen.wad.client` → `data/characters/garen/animations/skin0.bin` |
 | MasterYi | `/tmp/clash-original-animation/masteryi.ritobin` | `/Users/czh/Tools/lol-asset-tools/verification/masteryi/data/characters/masteryi/animations/skin0.bin` |
-| Gwen | `/Users/czh/Tools/lol-asset-tools/card_audio_batch/gwen/data/characters/gwen/animations/skin0.ritobin` | `Gwen.wad.client` → `data/characters/gwen/animations/skin0.bin` |
-| XinZhao | `/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/data/characters/xinzhao/animations/skin0.ritobin` | `XinZhao.wad.client` → `data/characters/xinzhao/animations/skin0.bin` |
+| Gwen | `/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/data/characters/gwen/animations/skin0.ritobin` | `Gwen.wad.client` → `data/characters/gwen/animations/skin0.bin` |
+| XinZhao | `/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/xinzhao/data/characters/xinzhao/animations/skin0.ritobin` | `XinZhao.wad.client` → `data/characters/xinzhao/animations/skin0.bin` |
 
 下文行号均指此表。Garen/Yi 的临时文本可用现有 `/Users/czh/Tools/lol-asset-tools/bin/wadtools extract` 只提取上述 `.bin` 至临时目录，再用 `ritobin-tools convert` 重建；文件 hash 的名字用 `wadtools paths -x 'animations/.*\.anm$'` 从相同 WAD 只读获得。无新模型/纹理/音频资源导入。
 

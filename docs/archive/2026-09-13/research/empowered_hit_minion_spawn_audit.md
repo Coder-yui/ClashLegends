@@ -10,7 +10,7 @@
 
 项目 Q 攻击文件与已解码的原版完整组合文件逐字节相同；真实命中仍复用普通命中池。结论：保持现有配置，不再额外加一个假定的 Q hit，更不使用 R 或暴击代替。这是对当前基础素材的结论，不断言所有皮肤/历史版本都无独立事件。
 
-来源：/Users/czh/Tools/lol-asset-tools/garen_base_audio/wwnames.txt 与 txtp/Play_sfx_Garen_GarenQAttack_OnCast {r}.txtp；项目 scripts/data/cards/garen.gd。
+来源：/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/garen_base_audio/wwnames.txt 与 txtp/Play_sfx_Garen_GarenQAttack_OnCast {r}.txtp；项目 scripts/data/cards/garen.gd。
 
 ## 提莫
 
@@ -28,8 +28,8 @@
 
 重新用 wwiser -gv 0dB 生成 TXTP，关闭自动 master 音量补偿；vgmstream 解码为原增益 WAV，未归一化、未截短。已导出以下三个可听样例，暂未接入游戏：
 
-- [变体 1 · 1.764 秒](</Users/czh/Tools/lol-asset-tools/minion_spawn_review/Play_sfx_SRU_Spawn_MinionsSpawn_cast {r1}.wav>)
-- [变体 2 · 1.634 秒](</Users/czh/Tools/lol-asset-tools/minion_spawn_review/Play_sfx_SRU_Spawn_MinionsSpawn_cast {r2}.wav>)
-- [变体 3 · 1.906 秒](</Users/czh/Tools/lol-asset-tools/minion_spawn_review/Play_sfx_SRU_Spawn_MinionsSpawn_cast {r3}.wav>)
+- [变体 1 · 1.764 秒](</Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/minion_spawn_review/Play_sfx_SRU_Spawn_MinionsSpawn_cast {r1}.wav>)
+- [变体 2 · 1.634 秒](</Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/minion_spawn_review/Play_sfx_SRU_Spawn_MinionsSpawn_cast {r2}.wav>)
+- [变体 3 · 1.906 秒](</Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/minion_spawn_review/Play_sfx_SRU_Spawn_MinionsSpawn_cast {r3}.wav>)
 
-来源证据：/Users/czh/Tools/lol-asset-tools/missing_audio_review/common.rito 第 2853 / 2866 行；生成清单和哈希在 /Users/czh/Tools/lol-asset-tools/minion_spawn_review/manifest.json。此前“没找到小兵出生素材”的范围结论由此次找到共享兵线生成事件补充，不再列为完全缺素材。
+来源证据：/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/missing_audio_review/common.rito 第 2853 / 2866 行；生成清单和哈希在 /Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/minion_spawn_review/manifest.json。此前“没找到小兵出生素材”的范围结论由此次找到共享兵线生成事件补充，不再列为完全缺素材。

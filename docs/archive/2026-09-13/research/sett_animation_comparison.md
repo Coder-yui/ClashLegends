@@ -14,7 +14,7 @@
 
 ## 证据与还原方法
 
-- 原始图：`/Users/czh/Tools/lol-asset-tools/card_audio_batch/sett/data/characters/sett/animations/skin0.ritobin`。下文的“原图 L…”均指这个文件。
+- 原始图：`/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/sett/data/characters/sett/animations/skin0.ritobin`。下文的“原图 L…”均指这个文件。
 - 原始包：`/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Sett.wad.client`。用现有 `wadtools list --hash … -F json` 只读核对动画资源哈希对应的真实路径。
 - 项目定义：[sett.gd](../../../../scripts/data/cards/sett.gd)；播放实现：[unit_model_3d.gd](../../../../scripts/presentation/unit_model_3d.gd)；玩法时序：[unit.gd](../../../../scripts/unit.gd)。
 - [证据摘录 JSON](sett_animation_evidence.json) 保存原图节点、选定混合条目的原始键/字段/行号、GLB 动画时长和源文件 SHA-256。结论只针对这份本地素材版本，不宣称代表所有 LoL 版本。

@@ -57,7 +57,7 @@
 
 - 已接入原皮普攻三段出手、普通攻击命中、高原血统起止/持续层和死亡声。
 - 映射真相来源：[音频说明](../../../../assets/audio/units/masteryi/README.md)；白名单事件与来源媒体见同目录 `event_manifest.json`。
-- 项目外源文件没有移动或复制到素材队列；只复制已经解析的选定 WAV 到 `assets/audio/units/masteryi/`。
+- 开发素材库内源文件没有移动或复制到素材队列；只复制已经解析的选定 WAV 到 `assets/audio/units/masteryi/`。
 
 ## 音频接入（2026-09-11）
 

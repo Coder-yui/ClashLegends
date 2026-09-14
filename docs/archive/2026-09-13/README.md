@@ -32,4 +32,4 @@
 - [逐卡修订](cards/)：完整保存旧数值表、讨论过程和后续覆盖说明；当前规则在 docs/cards/。
 - [音频素材说明](audio/)：保留旧 README 的原事件表和试听决定；当前文件/加工哈希仍在 assets/audio 的 manifest。
 
-旧生成地图和第一版男爵素材见 [素材归档](../../../assets/archive/README.md)；这些文件由 Godot 忽略。
+旧生成地图和第一版男爵素材见 [素材归档](../../../ClashLegends-开发素材库/04-中间产物/工程整理/旧归档说明/README.md)；这些文件由 Godot 忽略。

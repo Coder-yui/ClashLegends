@@ -19,6 +19,7 @@
 | `attack_launch / attack_missile_cast / empowered_launch` | 实际弹体创建；强化发射替代普通池，不叠加 |
 | `first_strike:*` | 首击的出手、弹体起手/发射、真实命中；需对应机制 |
 | `empowered_ready / empowered_swing / empowered_buff:*` | 强化待击就绪、出手与状态起止 |
+| `active:cast` | 单位主动技能成功开始施放时派发一次；支持没有 visual_action 的瞬时技能；不等于效果命中 |
 | `active_buff:* / resource_full / passive_heal` | 实际增益、进入满资源、实际回血 |
 | `action:start/sustain/end/voice` | 已携带动作的窗口与语音，按序号去重 |
 | `action:release` | 实际发射；直接范围技能按其真实入口处理 |

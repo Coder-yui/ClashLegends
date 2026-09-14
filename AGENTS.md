@@ -25,8 +25,9 @@ Clash Legends 是 Godot 4.x 标准版（GDScript）的 1v1 卡牌即时对战学
 - 每卡定义位于 `scripts/data/cards/<card_id>.gd` 的 gameplay / visual / card_art / audio 域，CardDB 统一注册查询；共享定义递归只读，运行实例持有自己的状态。新增字段须有读取方、schema/validator 与回归。
 - `radius` 是权威半径；`visual_radius` 与模型缩放只影响表现。
 - 战斗对象加入 `combatants`，提供 `team`、`hp`、`body_radius`、`take_damage(...)`。
-- `ClashLegends-promo-materials/` 是宣传视频素材目录，`待开发卡牌美术素材/` 是尚未立项卡牌的本地素材队列；两者均不是 Godot 资源，不能从中直接建立 `res://` 引用。
-- 开发新卡若用户指定待开发队列中的素材，必须把素材（以及模型所需的同组纹理/依赖）迁移到项目 `assets/` 对应目录，而不是复制；确认目标文件可用后，源文件必须从待开发队列消失，并在卡牌文档记录“已移动”。
+- `assets/` 仅放已接入资源及运行依赖，不存候选、失败版本或归档。素材与产物统一放项目根目录的 `ClashLegends-开发素材库/`，按待开发、候选讨论、制作中、中间产物分类；宣传素材独立放项目根目录的 `ClashLegends-promo-materials/`。
+- 找素材先归档到开发素材库内，复用 `tools/dev.py model` / `audio` 展示；仅正式接入后进入卡牌开发工作台。不得为每次讨论重写展台或将候选塞入正式配置。
+- 实战试接入用 `tools/dev.py stage` 创建素材库内副本，完成验证后同步最终改动与依赖；当前制作中地图使用 `stage --arena --open`。输出路径、素材阶段迁移与备份边界见 [任务导航](docs/AGENT_WORKFLOW.md)。
 
 ## 代码入口
 
