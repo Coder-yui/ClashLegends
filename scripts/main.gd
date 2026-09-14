@@ -783,7 +783,10 @@ func _on_world_building_destroyed(audio_id: String, tower_ref: WeakRef) -> void:
 	var tower = tower_ref.get_ref()
 	if is_instance_valid(tower) and _audio_manager != null:
 		_audio_manager.stop_building_audio(tower.get_instance_id())
-		_audio_manager.play_card_event(audio_id, "death", tower.global_position, 0, tower.team)
+		if tower.is_king:
+			_audio_manager.play_nexus_destruction(tower)
+		else:
+			_audio_manager.play_card_event(audio_id, "death", tower.global_position, 0, tower.team)
 
 ## 构建导航网格：河道（除两座桥）与所有防御塔为障碍
 func _build_nav() -> void:
@@ -2184,21 +2187,33 @@ func _sim_step(dt: float) -> void:
 				_ai.sim_tick(dt)
 	# 已存在的施法时间线先推进；本 Tick 新执行的命令从当前 Tick 边界开始计时。
 	_tick_active_skill_cooldowns(dt)
+	_combat.begin_batch(_sim_tick_id, "skill_impacts")
 	_commands.tick_impacts(dt)
+	_combat.commit_batch()
+	_combat.begin_batch(_sim_tick_id, "skill_effects")
 	_active_skill_effect_system.tick_effects(dt)
+	_combat.commit_batch()
 	_tick_pending_card_deployments(dt)
+	_combat.begin_batch(_sim_tick_id, "skill_commands")
 	_tick_pending_active_skills(dt)
+	_combat.commit_batch()
+	_combat.begin_batch(_sim_tick_id, "spell_zones")
 	_tick_slow_zones(dt)
+	_combat.commit_batch()
 	if not _art_dev_mode and _minion_waves_enabled:
 		_tick_minion_waves(dt)
+	_combat.begin_batch(_sim_tick_id, "combatants")
 	for c in get_tree().get_nodes_in_group("combatants"):
 		if c.has_method("sim_tick"):
 			c.sim_tick(dt)
+	_combat.commit_batch()
 	# 预部署在本 Tick 边界完成；新单位从下一 Tick 推进实际部署，避免两阶段共用一个 Tick。
 	_tick_pending_card_pre_deployments(dt)
 	_sync_active_skill_deployment_readiness()
 	_movement.tick(dt)
+	_combat.begin_batch(_sim_tick_id, "projectiles")
 	_tick_projectiles(dt)
+	_combat.commit_batch()
 	# 己方任一公主塔被摧毁 → 国王塔参战。
 	for king in [_king_player, _king_enemy]:
 		if not king.can_attack or king.activated or king.hp <= 0.0:
@@ -2374,9 +2389,12 @@ func _end_game(winner_team: int, reason: String) -> void:
 	if _active_skill_bar != null:
 		_active_skill_bar.hide()
 	if _audio_manager != null:
-		_audio_manager.end_battle()
-		if winner_team >= 0:
-			_audio_manager.play_match_event("victory" if _is_local_player_team(winner_team) else "defeat")
+		var destroyed_nexuses: Array = []
+		if reason == "nexus":
+			for tower in [_king_player, _king_enemy]:
+				if tower.hp <= 0.0: destroyed_nexuses.append(tower)
+		var result_cue := ("victory" if _is_local_player_team(winner_team) else "defeat") if winner_team >= 0 else ""
+		_audio_manager.finish_match_audio(result_cue, destroyed_nexuses)
 	var overlay := CanvasLayer.new()
 	overlay.name = "MatchResult"
 	overlay.layer = 100

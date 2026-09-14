@@ -3,7 +3,7 @@ extends Node2D
 ## 真实命中、溅射、附带效果与存活来源收益；表现事件只传值。
 signal attack_hit(source: Dictionary, position: Vector2, first_strike: bool)
 
-func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: float, radius: float, knockback: float, from: Node2D = null, source_position: Vector2 = Vector2(INF, INF), source_form_index: int = -1, effects: Dictionary = {}, counts_as_attack: bool = true) -> bool:
+func _resolve_immediate_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: float, radius: float, knockback: float, from: Node2D = null, source_position: Vector2 = Vector2(INF, INF), source_form_index: int = -1, effects: Dictionary = {}, counts_as_attack: bool = true) -> bool:
 	if not effects.has("presentation_source") and is_instance_valid(from) and (from is Unit or from is Tower):
 		effects = effects.duplicate(true)
 		effects["presentation_source"] = PresentationConfig.attack_source(from)
@@ -68,3 +68,132 @@ func _hit(target: Node2D, hit_amount: float, raw_amount: float, source: Node2D, 
 	if bool(effects.get("continuous_damage", false)) and is_instance_valid(source) and source is Unit:
 		return source._continuous_damage_stream.hit(target, raw_amount, source, team, position, hit_amount - BattleNumbers.quantity(raw_amount))
 	return BattleNumbers.hit(target, hit_amount, source, team, position)
+
+## 一个明确模拟阶段的事务；不跨 Tick，也不跨技能/单位/弹体阶段。
+var collecting := false
+var committing := false
+var _hits: Array[Dictionary] = []
+var _effects: Array[Callable] = []
+var _benefits: Array[Callable] = []
+var _deaths: Dictionary = {}
+var _kill_awards: Dictionary = {}
+var trace_enabled := false
+var trace: Array[Dictionary] = []
+var _tick := 0
+var _phase := ""
+
+func begin_batch(tick: int, phase: String) -> void:
+	assert(not collecting and not committing)
+	_tick = tick
+	_phase = phase
+	collecting = true
+
+func defer_effect(callback: Callable) -> void:
+	_effects.append(callback)
+
+func defer_benefit(callback: Callable) -> void:
+	_benefits.append(callback)
+
+func defer_death(unit: Unit, trigger: bool) -> void:
+	_deaths[unit] = trigger
+
+func submit_damage(target: Node2D, amount: float, source: Node2D, team: int, position: Vector2) -> Dictionary:
+	var accepted: bool = is_instance_valid(target) and target.hp > 0.0
+	if accepted and target is Unit:
+		accepted = not target._is_shroud_blocked(source, team, position)
+	var result := {"landed": accepted, "damage": BattleNumbers.quantity(amount), "health_lost": 0.0, "shield_absorbed": 0.0, "overkill": 0.0}
+	if accepted:
+		_hits.append({"target": target, "source": source, "result": result})
+		_record("hit_submit", source, target, result.damage)
+	return result
+
+func _record(event: String, source: Node2D, target: Node2D, amount: float = 0.0) -> void:
+	if not trace_enabled: return
+	trace.append({"tick": _tick, "phase": _phase, "event": event,
+		"source": source.get_instance_id() if is_instance_valid(source) else -1,
+		"target": target.get_instance_id() if is_instance_valid(target) else -1,
+		"segment": source._attack_hit_index - 1 if source is Unit else -1, "amount": amount})
+
+func commit_batch() -> void:
+	assert(collecting)
+	collecting = false
+	committing = true
+	var groups := {}
+	for hit in _hits:
+		var target: Node2D = hit.target
+		if not groups.has(target): groups[target] = []
+		groups[target].append(hit)
+	# 独立盾层仍由 ShieldState 消耗。每刀保留记录与回调；同批盾量和实际掉血
+	# 按各刀有效伤害比例归属（不取整），无尾刀优先或重复掉血归属。
+	for target in groups:
+		var total := 0.0
+		for hit in groups[target]: total += float(hit.result.damage)
+		var before_hp := float(target.hp)
+		var before_shield := float(target.shield_hp)
+		for hit in groups[target]:
+			# 逐刀消耗独立盾层与伤害入口；已致死后仍保留本批其余命中记录。
+			target.take_damage(float(hit.result.damage))
+		var lost := maxf(before_hp - float(target.hp), 0.0)
+		var absorbed := maxf(before_shield - float(target.shield_hp), 0.0)
+		for hit in groups[target]:
+			var share := float(hit.result.damage) / total if total > 0.0 else 0.0
+			hit.result.health_lost = lost * share
+			hit.result.shield_absorbed = absorbed * share
+			hit.result.overkill = maxf(float(hit.result.damage) - (lost + absorbed) * share, 0.0)
+	# 先固定全批存活状态，再施加控制和发放存活收益。
+	for callback in _effects: callback.call()
+	# 回调本身可调用资源入口；退出 committing 后才执行，避免二次排队。
+	committing = false
+	for callback in _benefits: callback.call()
+	for unit in _deaths:
+		_record("death_commit", null, unit)
+		unit._die(bool(_deaths[unit]))
+	_hits.clear()
+	_effects.clear()
+	_benefits.clear()
+	_deaths.clear()
+	_kill_awards.clear()
+
+func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: float, radius: float, knockback: float, from: Node2D = null, source_position: Vector2 = Vector2(INF, INF), source_form_index: int = -1, effects: Dictionary = {}, counts_as_attack: bool = true) -> bool:
+	if not collecting:
+		return _resolve_immediate_attack_hit(p_team, origin, primary, amount, radius, knockback, from, source_position, source_form_index, effects, counts_as_attack)
+	if not is_instance_valid(primary) or primary.hp <= 0.0: return false
+	effects = effects.duplicate(true)
+	if not effects.has("presentation_source") and is_instance_valid(from):
+		effects.presentation_source = PresentationConfig.attack_source(from)
+	var targets: Array = [primary] if radius <= 0.0 else get_tree().get_nodes_in_group("combatants")
+	var landed := false
+	var impact := primary.global_position
+	var swing: int = from._attack_swing_count if from is Unit else 0
+	for target in targets:
+		if not is_instance_valid(target) or target.hp <= 0.0: continue
+		if radius > 0.0 and (target.team == p_team or target.global_position.distance_to(impact) > radius + target.body_radius): continue
+		if bool(effects.get("ground_only", false)) and target is Unit and target.is_air: continue
+		var hit_amount := float(BattleNumbers.quantity(amount))
+		if counts_as_attack and from is Unit: hit_amount += from.on_hit_passive_damage(target)
+		var result := _hit(target, hit_amount, amount, from, p_team, source_position, effects)
+		if not result.landed: continue
+		landed = true
+		var fixed_target: Node2D = target
+		defer_effect(func():
+			_apply_attack_hit_effects(fixed_target, effects)
+			if knockback > 0.0 and fixed_target is Unit and fixed_target.hp > 0.0:
+				fixed_target.apply_knockback(origin, knockback))
+		defer_benefit(func():
+			if not is_instance_valid(from) or not from is Unit or from.hp <= 0.0: return
+			if counts_as_attack and radius <= 0.0:
+				from.on_attack_landed(source_form_index, float(result.health_lost), swing)
+			# 同批多人共同致死只给存活参与者一次自己的击杀收益，不按遍历挑尾刀。
+			if fixed_target.hp <= 0.0 and float(result.health_lost) > 0.0:
+				var key := "%s:%s" % [from.get_instance_id(), fixed_target.get_instance_id()]
+				if not _kill_awards.has(key):
+					_kill_awards[key] = true
+					from.on_enemy_killed(fixed_target))
+	if landed:
+		if counts_as_attack and radius > 0.0:
+			defer_benefit(func():
+				if is_instance_valid(from) and from is Unit and from.hp > 0.0:
+					from.on_attack_landed(source_form_index, 0.0, swing))
+		if counts_as_attack:
+			defer_effect(func(): attack_hit.emit(effects.get("presentation_source", {}), impact, bool(effects.get("first_strike", false))))
+	return landed

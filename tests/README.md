@@ -107,3 +107,10 @@ Python 审计工具自身的边界验证：`python3 -m unittest discover -s tool
 - 反序检查：`python3 tools/verify.py --reverse-suites --timeout 180`
 
 Godot 原始入口使用 `-- --suite=ProjectileSuite`，未知名称退出 2；统一执行器核对所选套件完成清单，不能用选跑结果冒充全量通过。默认不加筛选仍运行全部套件，联网验证维持独立双进程入口。
+
+
+`CombatBatchSuite` 覆盖正常连续镜像互换、阵营/创建/节点/集合排列、真实早一 Tick、三轮追加刀、取消前摇、攻速/免疫变化、硬控暂停、施法/击退、逐刀致盲、护盾/吸血归属、死亡生成与持续/技能阶段互换。日志 `FAIRNESS_TRACE` / `EXTRA_FAIRNESS_TRACE` 记录提交与死亡阶段。
+
+`TerminalAudioSuite` 使用短 WAV 替代混音输入，验证真实播放器自然 finished、双轨等待、实例复用、重复/跨局回调和缺资源兜底；不作为听感认证。双进程 `--network` 还等待本地真实水晶音轨，验证本地胜败播报；使用 `CLASH_TEST_DOUBLE_NEXUS=1 python3 tools/verify.py --network` 验证双向真实弹体在同 Tick 摧毁两水晶和主客平局一致（环境开关只由测试套件读取）。
+
+实际画面/混音复核：`Godot --path . --script tools/demos/combat_terminal_review.gd`，输出 `/tmp/clash-combat-terminal/` 的镜像死亡、第三/六/九次连击、立即终局截图及 `explosion-victory.wav`。需另行试听录音，日志不能替代听感。

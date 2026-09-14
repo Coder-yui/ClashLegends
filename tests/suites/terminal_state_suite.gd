@@ -46,7 +46,14 @@ func run(harness: Object) -> void:
 	var terminal: Dictionary = bytes_to_var(var_to_bytes(host._terminal_result))
 	client._rpc_end(terminal)
 	harness._expect(client.game_over and client._king_enemy.hp == host._king_enemy.hp and client._king_enemy.nav_cells.is_empty(), "可靠终态在结束 UI 前应用最终生命与塔摧毁/导航状态")
-	harness._expect(terminal.winner_team == 0 and terminal.reason == "nexus" and terminal.final_tick == 101 and cues == [&"defeat"], "结果使用队伍/原因/最终 Tick，客户端语义为失败且只播一次")
+	harness._expect(terminal.winner_team == 0 and terminal.reason == "nexus" and terminal.final_tick == 101 and cues.is_empty(), "结果使用队伍/原因/最终 Tick，客户端爆炸未结束前不播失败")
+	for main in [host, client]:
+		harness._expect(main._audio_manager._nexus_players.size() == 1, "主客各自保留本地水晶爆炸实例")
+		var player: AudioStreamPlayer2D = main._audio_manager._nexus_players.values()[0]
+		harness._expect(player.playing, "终局清理不停止当前水晶爆炸")
+		player.finished.emit() # 生命周期单元测试：自然结束信号，真实混音另测。
+		player.finished.emit()
+	harness._expect(cues == [&"defeat"], "自然结束只触发一次本地阵营失败播报")
 	var child_count: int = client.get_child_count()
 	client._rpc_end(terminal)
 	client._rpc_snapshot(before)

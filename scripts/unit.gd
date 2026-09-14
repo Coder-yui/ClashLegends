@@ -662,6 +662,10 @@ func clear_carried_active_skill_resource() -> void:
 	queue_redraw()
 
 func add_skill_resource(amount: float) -> void:
+	if battle_context != null and (battle_context.damage_batch().collecting or battle_context.damage_batch().committing):
+		battle_context.damage_batch().defer_benefit(func():
+			if hp > 0.0: add_skill_resource(amount))
+		return
 	if skill_resource_max <= 0.0 or amount <= 0.0:
 		return
 	skill_resource_value = minf(skill_resource_value + amount, skill_resource_max)
@@ -706,6 +710,10 @@ func apply_attack_lifesteal(heal_ratio: float, max_health_ratio: float = 1.0) ->
 	queue_redraw()
 
 func apply_blind(attacks: int) -> void:
+	if battle_context != null and battle_context.damage_batch().collecting:
+		battle_context.damage_batch().defer_effect(func():
+			if hp > 0.0: apply_blind(attacks))
+		return
 	blind_attack_charges = maxi(blind_attack_charges, maxi(attacks, 0))
 	queue_redraw()
 
@@ -879,6 +887,7 @@ func sim_tick(dt: float) -> void:
 	_tick_timed_revival(dt)
 	if hp <= 0.0 or is_queued_for_deletion():
 		return
+	_prune_pending_extra_attacks()
 	_tick_active_statuses(dt)
 	_hit_flash_event_cooldown = maxf(0.0, _hit_flash_event_cooldown - dt)
 	_prev_pos = position
@@ -1080,6 +1089,10 @@ func _perform_deploy_sweep() -> void:
 		battle_context.notify_unit_audio_event(self, &"deploy:hit", global_position)
 
 func apply_knockback(origin: Vector2, distance: float, duration: float = 0.2, mass_factor_max: float = 1.4) -> void:
+	if battle_context != null and battle_context.damage_batch().collecting:
+		battle_context.damage_batch().defer_effect(func():
+			if hp > 0.0: apply_knockback(origin, distance, duration, mass_factor_max))
+		return
 	if is_building or distance <= 0.0:
 		return
 	var direction := origin.direction_to(global_position)
@@ -1548,6 +1561,8 @@ func _try_start_attack_visual(time_until_hit: float) -> void:
 	# 序号仍严格递增（快照/声音去重不变），余数对齐尚未结算的权威拳段。
 	if not attack_pattern.is_empty():
 		_attack_visual_serial += posmod(_attack_hit_index - (_attack_visual_serial - 1), attack_pattern.size())
+	elif not attack_extra_hit_damage_multipliers.is_empty():
+		_attack_visual_serial += posmod(_attack_hit_index - (_attack_visual_serial - 1), attack_extra_hit_damage_multipliers.size())
 	elif heal_every_hits > 0:
 		# 命中计数被动与已出手次数对齐；取消的前摇不占用被动攻击段。
 		_attack_visual_serial += posmod(_attack_swing_count - (_attack_visual_serial - 1), heal_every_hits)
@@ -1607,11 +1622,12 @@ func _perform_attack_strike(target: Node2D, amount: float, effects: Dictionary =
 	_deal_attack_damage_to(target, amount, effects)
 
 func _queue_extra_attack_hits(hit_index: int, base_hit_damage: float, target: Node2D) -> void:
-	if hit_index < 0 or hit_index >= attack_extra_hit_damage_multipliers.size():
+	if hit_index < 0 or attack_extra_hit_damage_multipliers.is_empty():
 		return
-	var configured_multipliers = attack_extra_hit_damage_multipliers[hit_index]
+	var segment := hit_index % attack_extra_hit_damage_multipliers.size()
+	var configured_multipliers = attack_extra_hit_damage_multipliers[segment]
 	var multipliers: Array = configured_multipliers if configured_multipliers is Array else [configured_multipliers]
-	var configured_delays = attack_extra_hit_delays[hit_index] if hit_index < attack_extra_hit_delays.size() else []
+	var configured_delays = attack_extra_hit_delays[segment] if segment < attack_extra_hit_delays.size() else []
 	var delays: Array = configured_delays if configured_delays is Array else [configured_delays]
 	for index in multipliers.size():
 		var multiplier := maxf(float(multipliers[index]), 0.0)
@@ -1622,10 +1638,20 @@ func _queue_extra_attack_hits(hit_index: int, base_hit_damage: float, target: No
 			"target_ref": weakref(target),
 			"presentation_source": PresentationConfig.attack_source(self),
 			"damage": base_hit_damage * multiplier,
-			"time_left": maxf(delay / maxf(active_attack_speed_multiplier, 1.0), 0.0),
+			"time_left": maxf(delay / _effective_attack_speed_multiplier(), 0.0),
 		})
 
+func _prune_pending_extra_attacks() -> void:
+	if _pending_extra_attacks.is_empty(): return
+	_pending_extra_attacks.assign(_pending_extra_attacks.filter(func(pending):
+		var target = (pending.target_ref as WeakRef).get_ref()
+		return is_instance_valid(target) and target.hp > 0.0 and not target.is_queued_for_deletion()))
+
 func _tick_pending_extra_attacks(dt: float) -> void:
+	if hp <= 0.0:
+		_pending_extra_attacks.clear()
+		return
+	_prune_pending_extra_attacks()
 	var waiting: Array[Dictionary] = []
 	for pending in _pending_extra_attacks:
 		pending.time_left = maxf(float(pending.time_left) - dt, 0.0)
@@ -1643,7 +1669,7 @@ func _tick_pending_extra_attacks(dt: float) -> void:
 
 ## 主机在伤害真正落到目标后调用。格温由此精确地在首次普攻命中而非出手时开启缠流；
 ## 赵信等配置了命中回血的单位也在这里结算，未真正造成伤害的挥击不触发回复。
-func on_attack_landed(attack_form_index: int = -1, landed_damage: float = 0.0) -> void:
+func on_attack_landed(attack_form_index: int = -1, landed_damage: float = 0.0, submitted_swing: int = -1) -> void:
 	# 远程弹体可以在攻击者死亡后抵达；此时只保留已经结算给目标的伤害，
 	# 不再给已退出战斗的攻击者计层、回血、充能或触发形态切换。
 	if hp <= 0.0:
@@ -1664,7 +1690,7 @@ func on_attack_landed(attack_form_index: int = -1, landed_damage: float = 0.0) -
 		_shroud_active = true
 		queue_redraw()
 	add_skill_resource(skill_resource_hit_gain)
-	_try_heal_on_hit()
+	_try_heal_on_hit(submitted_swing)
 	_try_attack_lifesteal(landed_damage)
 
 func on_enemy_killed(target: Node2D) -> void:
@@ -1674,10 +1700,10 @@ func on_enemy_killed(target: Node2D) -> void:
 
 ## 命中回血：每 heal_every_hits 次挥击中的命中回复 heal_amount 生命。
 ## 挥击序号与三段普攻动画循环对齐——第三击（Passive_AA_01）命中时回复。
-func _try_heal_on_hit() -> void:
+func _try_heal_on_hit(submitted_swing: int = -1) -> void:
 	if heal_every_hits <= 0 or heal_amount <= 0.0:
 		return
-	if _attack_swing_count % heal_every_hits != 0:
+	if (submitted_swing if submitted_swing >= 0 else _attack_swing_count) % heal_every_hits != 0:
 		return
 	var hp_before_heal := hp
 	hp = maxf(hp, minf(hp + BattleNumbers.quantity(heal_amount), max_hp))
@@ -1693,14 +1719,23 @@ func _try_attack_lifesteal(landed_damage: float) -> void:
 	queue_redraw()
 
 func freeze(duration: float) -> void:
+	if battle_context != null and battle_context.damage_batch().collecting:
+		battle_context.damage_batch().defer_effect(func(): freeze(duration))
+		return
 	control.refresh_freeze(duration)
 	queue_redraw()
 
 func stun(duration: float) -> void:
+	if battle_context != null and battle_context.damage_batch().collecting:
+		battle_context.damage_batch().defer_effect(func(): stun(duration))
+		return
 	control.refresh_stun(duration)
 	queue_redraw()
 
 func apply_slow(duration: float, multiplier: float) -> void:
+	if battle_context != null and battle_context.damage_batch().collecting:
+		battle_context.damage_batch().defer_effect(func(): apply_slow(duration, multiplier))
+		return
 	if active_buff_ignores_movement_slow:
 		return
 	control.refresh_slow(duration, multiplier)
@@ -1708,6 +1743,9 @@ func apply_slow(duration: float, multiplier: float) -> void:
 
 ## 预留给后续控制效果的减攻速入口；它与减速一样只改战斗计时，不改变动画权威。
 func apply_attack_speed_slow(duration: float, multiplier: float) -> void:
+	if battle_context != null and battle_context.damage_batch().collecting:
+		battle_context.damage_batch().defer_effect(func(): apply_attack_speed_slow(duration, multiplier))
+		return
 	if active_buff_ignores_attack_speed_slow:
 		return
 	var previous_speed := _effective_attack_speed_multiplier()
@@ -1753,6 +1791,8 @@ func _tick_active_statuses(dt: float) -> void:
 ## 将剩余时间转换到新有效速率，归一化阶段进度不变。
 func _rescale_attack_phase(previous_speed: float) -> void:
 	attack_timeline.rescale(previous_speed, _effective_attack_speed_multiplier())
+	for pending in _pending_extra_attacks:
+		pending.time_left = float(pending.time_left) * previous_speed / _effective_attack_speed_multiplier()
 
 func is_frozen() -> bool:
 	return control.frozen_timer > 0.0
@@ -1761,6 +1801,9 @@ func is_stunned() -> bool:
 	return control.stun_timer > 0.0
 
 func heal(amount: float) -> void:
+	if battle_context != null and battle_context.damage_batch().collecting:
+		battle_context.damage_batch().defer_benefit(func(): heal(amount))
+		return
 	if hp <= 0.0 or amount <= 0.0:
 		return
 	# 普通治疗不能突破基础上限，也不能把已经存在的溢出生命反向截回基础上限。
@@ -1768,6 +1811,8 @@ func heal(amount: float) -> void:
 	queue_redraw()
 
 func take_damage(amount: float, from: Node2D = null, source_team: int = -1, source_position: Vector2 = Vector2(INF, INF)) -> bool:
+	if battle_context != null and battle_context.damage_batch().collecting:
+		return bool(battle_context.damage_batch().submit_damage(self, amount, from, source_team, source_position).landed)
 	if hp <= 0.0:
 		return false
 	if _is_shroud_blocked(from, source_team, source_position):
@@ -1845,6 +1890,12 @@ func _in_client_mode() -> bool:
 	return battle_context != null and battle_context.is_net_client()
 
 func _die(trigger_death_effect: bool = false) -> void:
+	if battle_context != null and (battle_context.damage_batch().collecting or battle_context.damage_batch().committing):
+		hp = 0.0
+		battle_context.damage_batch().defer_death(self, trigger_death_effect)
+		return
+	if is_queued_for_deletion(): return
+	_pending_extra_attacks.clear()
 	var has_death_replacement := not death_replacement_id.is_empty() and death_replacement_charges > 0
 	var play_death_visual := not _skip_death_visual and not has_death_replacement
 	_skip_death_visual = false

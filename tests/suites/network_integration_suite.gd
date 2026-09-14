@@ -4,6 +4,10 @@ func run(harness: SceneTree) -> void:
 	var main = load("res://scenes/main.tscn").instantiate()
 	harness.root.add_child(main)
 	harness.current_scene = main
+	var double_nexus := OS.get_environment("CLASH_TEST_DOUBLE_NEXUS") == "1"
+	var result_cues: Array[StringName] = []
+	main._audio_manager.cue_played.connect(func(card, cue, _pos):
+		if card == "match" and cue in [&"victory", &"defeat"]: result_cues.append(cue))
 	var start := Time.get_ticks_msec()
 	var fired := false
 	var sent_requests := false
@@ -60,6 +64,8 @@ func run(harness: SceneTree) -> void:
 			fired = true
 			# 使用真实普攻弹体致胜，覆盖“上一快照刚发出”的终局路径。
 			main.launch_attack(main._towers[0], main._king_enemy, 100000.0, 100000.0, 0.0, 0.0, Color.WHITE)
+			if double_nexus:
+				main.launch_attack(main._towers[2], main._king_player, 100000.0, 100000.0, 0.0, 0.0, Color.WHITE)
 		if main.game_over:
 			break
 	if outsider != null:
@@ -82,7 +88,7 @@ func run(harness: SceneTree) -> void:
 			var pos := unit.net_target_pos if main.mode == "client" else unit.global_position
 			units.append([id, unit.card_id, unit.hp, snappedf(pos.x, 0.01), snappedf(pos.y, 0.01), snappedf(unit.get_shield_ratio(), 0.000001), snappedf(unit.get_shield_capacity_ratio(), 0.000001)])
 		result["units"] = units
-		result["passed"] = result.audio_stopped and result.winner_team == 0 and main._king_enemy.hp == 0.0 and not result.session_id.is_empty()
+		result["passed"] = result.audio_stopped and result.winner_team == (-1 if double_nexus else 0) and main._king_enemy.hp == 0.0 and not result.session_id.is_empty()
 		var session_guards: bool = sent_requests and sent_skill if main.mode == "client" else outsider_rejected and stable_callback and main._session.last_request_id == 2 and main.get_authoritative_queue(1).back() == "garen" and interrupted_skill
 		result["remote_elixir"] = main._elixir.elixir if main.mode == "client" else main._elixir_p1.elixir
 		session_guards = session_guards and result.remote_elixir == 1.0
@@ -100,6 +106,18 @@ func run(harness: SceneTree) -> void:
 				DirAccess.make_dir_recursive_absolute(directory)
 				await RenderingServer.frame_post_draw
 				harness.root.get_texture().get_image().save_png(directory.path_join(main.mode + ".png"))
+	if main.game_over:
+		var silent_before_finish := result_cues.is_empty()
+		var expected_tracks := 2 if double_nexus else 1
+		var preserved: bool = main._audio_manager._nexus_players.size() == expected_tracks
+		var audio_deadline := Time.get_ticks_msec() + 20000
+		while main._audio_manager._terminal_audio_pending and Time.get_ticks_msec() < audio_deadline:
+			await harness.process_frame
+		var expected: Array = [] if double_nexus else ([&"defeat"] if main.mode == "client" else [&"victory"])
+		result["audio_sequence"] = silent_before_finish and preserved and not main._audio_manager._terminal_audio_pending and result_cues == expected
+		result["result_cues"] = result_cues
+		result["double_nexus"] = double_nexus
+		result["passed"] = result.passed and result.audio_sequence
 	print("[NETWORK_RESULT] " + JSON.stringify(result))
 	# 留出可靠结果送达和音频线程释放的窗口，然后关闭自己的 ENet peer。
 	await harness.create_timer(0.5).timeout

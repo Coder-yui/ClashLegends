@@ -51,3 +51,5 @@ python3 tools/audio/import_card_audio.py --source /absolute/path/to/prepared_lib
 `GameAudioManager.budget_snapshot()` 返回各类当前占用、上限、峰值、成功开始数、预算丢弃数和预算打断数；正常结束、死亡清理不计入预算打断。`begin_battle()` 重置本局计数，`end_battle()` 保留诊断并清空占用。未配置/不可用事件不算预算丢弃。
 
 单次、持续、在途命中/发射、区域与卡牌事件统一先选择形态再应用阵营覆盖；区域和卡牌 RPC 携带来源阵营（协议 19）。覆盖 `events` 时按当前浅合并契约替换整个事件表，不能假设自动逐事件继承。听感仍需结合实际对局试听判断，预算断言不能替代混音验收。
+
+水晶终局序列通过 GameAudioManager.finish_match_audio 管理本局独占爆炸实例，可靠终态应用后按最终塔血量补足触发并去重。end_battle 默认清理全部声音；终局内部显式保留该次爆炸，等待 finished 自然通知后播报，不使用音长定时器。begin_battle、菜单退出及场景释放使旧代次回调失效。battle_audio_stopped 只检查常规战斗层，水晶尾音由独立序列验证；正常主动停止不等于自然完成。

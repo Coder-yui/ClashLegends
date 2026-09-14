@@ -921,6 +921,7 @@ func _check_match_announcements(harness: Object, main: Node2D) -> void:
 	harness._expect(cues.count(&"defeat") == 1 and cues.count(&"victory") == 0, "主机胜利时客户端只播一次失败")
 	main.mode = "local"
 	main.game_over = false
+	main._audio_manager.begin_battle()
 	main._end_game(0, "nexus")
 	harness._expect(cues.count(&"victory") == 1, "本地胜利播放胜利播报")
 	for child in main.get_children():

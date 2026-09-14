@@ -14,8 +14,10 @@ func advance(dt: float, team0_king_hp: float, team1_king_hp: float, team0_lost: 
 		return {}
 	time_left = maxf(0.0, time_left - dt)
 	var result := {}
-	# 保持原先同 Tick 双水晶归零时先判 team1 水晶的规则。
-	if team1_king_hp <= 0.0:
+	# 本 Tick 所有结算阶段完成后统一检查双方水晶。
+	if team0_king_hp <= 0.0 and team1_king_hp <= 0.0:
+		result = {"winner_team": -1, "reason": "nexus"}
+	elif team1_king_hp <= 0.0:
 		result = {"winner_team": 0, "reason": "nexus"}
 	elif team0_king_hp <= 0.0:
 		result = {"winner_team": 1, "reason": "nexus"}

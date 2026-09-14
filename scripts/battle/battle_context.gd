@@ -64,3 +64,6 @@ func notify_unit_died(net_id: int, play_death_visual: bool = true) -> void:
 
 func notify_tower_hit(tower: Tower) -> void:
 	_controller.on_tower_hit(tower)
+
+func damage_batch() -> CombatResolver:
+	return _controller._combat

@@ -13,6 +13,8 @@ static func format_value(value: float) -> String:
 
 ## 保留 take_damage 的命中/免疫契约，收益只读取这次实际生命损失。
 static func hit(target: Node2D, amount: float, source: Node2D, team: int, position: Vector2) -> Dictionary:
+	if target.battle_context != null and target.battle_context.damage_batch().collecting:
+		return target.battle_context.damage_batch().submit_damage(target, amount, source, team, position)
 	var requested := quantity(amount)
 	var hp_before := float(target.hp)
 	var shield_before := float(target.get("shield_hp"))

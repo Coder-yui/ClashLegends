@@ -196,5 +196,17 @@
     "script": "res://tests/suites/terminal_state_suite.gd",
     "method": "run",
     "scene": "none"
+  },
+  {
+    "id": "CombatBatchSuite",
+    "script": "res://tests/suites/combat_batch_suite.gd",
+    "method": "run",
+    "scene": "battle"
+  },
+  {
+    "id": "TerminalAudioSuite",
+    "script": "res://tests/suites/terminal_audio_suite.gd",
+    "method": "run",
+    "scene": "battle"
   }
 ]

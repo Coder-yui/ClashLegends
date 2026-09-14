@@ -38,7 +38,9 @@ var _played_attack_groups: Dictionary = {}
 
 ## 终局停止全部战斗层（含建筑待机和飞行声），结果播报另由 Main 调用。
 ## 保留节点到菜单退出也不会被轮询或迟到事件重新启动声音。
-func end_battle() -> void:
+func end_battle(preserve_nexus: bool = false) -> void:
+	if not preserve_nexus:
+		_cancel_terminal_audio()
 	_battle_ended = true
 	clear_zone_audio()
 	clear_projectile_launch_audio()
@@ -90,6 +92,7 @@ func battle_audio_stopped() -> bool:
 	return true
 
 func _exit_tree() -> void:
+	_cancel_terminal_audio()
 	if is_instance_valid(_announcer):
 		_announcer.stop()
 		_announcer.stream = null
@@ -614,6 +617,9 @@ func _randomized_stream(paths: PackedStringArray) -> AudioStreamRandomizer:
 	var randomizer := AudioStreamRandomizer.new()
 	randomizer.playback_mode = AudioStreamRandomizer.PLAYBACK_RANDOM_NO_REPEATS
 	for path in paths:
+		if not ResourceLoader.exists(path):
+			push_warning("音频资源不可用：" + path)
+			continue
 		var stream := load(path) as AudioStream
 		if stream != null:
 			randomizer.add_stream(-1, stream, 1.0)
@@ -830,3 +836,76 @@ func budget_snapshot() -> Dictionary:
 		"limits": {"short": WORLD_PLAYER_COUNT, "important_short_reserve": IMPORTANT_WORLD_RESERVE,
 			"sustain": SUSTAIN_PLAYER_COUNT, "zone": SUSTAIN_PLAYER_COUNT,
 			"projectile": WORLD_PLAYER_COUNT, "building": SUSTAIN_PLAYER_COUNT, "announcer": 1}}
+
+
+# 本局水晶摧毁实例独占音轨，既不被短音预算抢占，也不被终局清场截断。
+var _nexus_players: Dictionary = {}
+var _nexus_seen: Dictionary = {}
+var _terminal_audio_generation := 0
+var _terminal_audio_pending := false
+var _terminal_audio_started := false
+var _terminal_audio_cue := ""
+
+func play_nexus_destruction(tower: Tower) -> void:
+	var id := tower.get_instance_id()
+	if _nexus_seen.has(id) or _battle_ended: return
+	_nexus_seen[id] = true
+	var card_id := PresentationConfig.world_card_id(tower)
+	var event: Dictionary = _card_audio(card_id, tower.team).get("events", {}).get("death", {})
+	var paths := PackedStringArray(event.get("pool", []))
+	if paths.is_empty():
+		push_warning("水晶终局音频缺失：" + card_id)
+		return
+	var stream := _randomized_stream(paths)
+	if stream == null:
+		push_warning("水晶终局音频加载失败：" + card_id)
+		return
+	var player := _new_world_player()
+	add_child(player)
+	player.global_position = tower.global_position
+	player.stream = stream
+	player.volume_db = float(event.get("volume_db", 0.0))
+	player.finished.connect(_on_nexus_finished.bind(id, player, _terminal_audio_generation))
+	_nexus_players[id] = player
+	player.play()
+	if not player.playing:
+		_nexus_players.erase(id)
+		player.queue_free()
+		push_warning("水晶终局音频无法启动：" + card_id)
+		return
+	cue_played.emit(card_id, &"death", tower.global_position)
+
+func finish_match_audio(cue: String, destroyed_nexuses: Array) -> void:
+	if _terminal_audio_started: return
+	_terminal_audio_started = true
+	# 可靠终态已应用塔血量；补足丢失快照/死亡事件，已播放实例不会重启。
+	for tower in destroyed_nexuses:
+		play_nexus_destruction(tower)
+	_terminal_audio_cue = cue
+	_terminal_audio_pending = true
+	end_battle(true)
+	_finish_terminal_audio_if_ready()
+
+func _on_nexus_finished(id: int, player: AudioStreamPlayer2D, generation: int) -> void:
+	if generation != _terminal_audio_generation or _nexus_players.get(id) != player: return
+	_nexus_players.erase(id)
+	player.stream = null
+	player.queue_free()
+	_finish_terminal_audio_if_ready()
+
+func _finish_terminal_audio_if_ready() -> void:
+	if not _terminal_audio_pending or not _nexus_players.is_empty(): return
+	_terminal_audio_pending = false
+	if not _terminal_audio_cue.is_empty(): play_match_event(_terminal_audio_cue)
+
+func _cancel_terminal_audio() -> void:
+	_terminal_audio_generation += 1
+	_terminal_audio_pending = false
+	_terminal_audio_started = false
+	_terminal_audio_cue = ""
+	for player in _nexus_players.values():
+		player.stop()
+		player.stream = null
+		player.queue_free()
+	_nexus_players.clear()
+	_nexus_seen.clear()
