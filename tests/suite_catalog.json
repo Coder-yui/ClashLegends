@@ -1,0 +1,200 @@
+[
+  {
+    "id": "maintenance_suite",
+    "script": "res://tests/suites/maintenance_suite.gd",
+    "method": "run",
+    "scene": "none"
+  },
+  {
+    "id": "CardDBValidationSuite",
+    "script": "res://tests/suites/card_db_validation_suite.gd",
+    "method": "run",
+    "scene": "none"
+  },
+  {
+    "id": "ContentContractSuite",
+    "script": "res://tests/suites/content_contract_suite.gd",
+    "method": "run",
+    "scene": "none"
+  },
+  {
+    "id": "DeckBuilderSuite",
+    "script": "res://tests/suites/deck_builder_suite.gd",
+    "method": "run",
+    "scene": "menu"
+  },
+  {
+    "id": "maintenance_contracts",
+    "script": "res://tests/suites/maintenance_suite.gd",
+    "method": "check_contracts",
+    "scene": "battle"
+  },
+  {
+    "id": "numeric_system_suite",
+    "script": "res://tests/suites/numeric_system_suite.gd",
+    "method": "run",
+    "scene": "battle"
+  },
+  {
+    "id": "ArenaDeploymentSuite",
+    "script": "res://tests/suites/arena_deployment_suite.gd",
+    "method": "run",
+    "scene": "battle"
+  },
+  {
+    "id": "AUDIO_PRESENTATION_SUITE_SCRIPT",
+    "script": "res://tests/suites/audio_presentation_suite.gd",
+    "method": "run",
+    "scene": "battle"
+  },
+  {
+    "id": "PresentationSuite",
+    "script": "res://tests/suites/presentation_suite.gd",
+    "method": "run",
+    "scene": "battle"
+  },
+  {
+    "id": "BuildingMinionSuite",
+    "script": "res://tests/suites/building_minion_suite.gd",
+    "method": "run",
+    "scene": "battle"
+  },
+  {
+    "id": "NavigationCollisionSuite",
+    "script": "res://tests/suites/navigation_collision_suite.gd",
+    "method": "run",
+    "scene": "battle"
+  },
+  {
+    "id": "ActiveSkillSuite",
+    "script": "res://tests/suites/active_skill_suite.gd",
+    "method": "run",
+    "scene": "battle"
+  },
+  {
+    "id": "workbench_suite",
+    "script": "res://tests/suites/workbench_suite.gd",
+    "method": "run",
+    "scene": "battle"
+  },
+  {
+    "id": "AnimationStateSuite",
+    "script": "res://tests/suites/animation_state_suite.gd",
+    "method": "run",
+    "scene": "battle"
+  },
+  {
+    "id": "cards/sett_animation_suite",
+    "script": "res://tests/suites/cards/sett_animation_suite.gd",
+    "method": "run",
+    "scene": "battle"
+  },
+  {
+    "id": "HeroSkillReworkSuite",
+    "script": "res://tests/suites/cards/hero_skill_rework_suite.gd",
+    "method": "run",
+    "scene": "battle"
+  },
+  {
+    "id": "CombatTargetingSuite",
+    "script": "res://tests/suites/combat_targeting_suite.gd",
+    "method": "run",
+    "scene": "battle"
+  },
+  {
+    "id": "GnarSuite",
+    "script": "res://tests/suites/cards/gnar_suite.gd",
+    "method": "run",
+    "scene": "battle"
+  },
+  {
+    "id": "XinSuite",
+    "script": "res://tests/suites/cards/xin_suite.gd",
+    "method": "run",
+    "scene": "battle"
+  },
+  {
+    "id": "GwenSuite",
+    "script": "res://tests/suites/cards/gwen_suite.gd",
+    "method": "run",
+    "scene": "battle"
+  },
+  {
+    "id": "TwistedFateSuite",
+    "script": "res://tests/suites/cards/twisted_fate_suite.gd",
+    "method": "run",
+    "scene": "battle"
+  },
+  {
+    "id": "AurelionSolSuite",
+    "script": "res://tests/suites/cards/aurelionsol_suite.gd",
+    "method": "run",
+    "scene": "battle"
+  },
+  {
+    "id": "MissFortuneSuite",
+    "script": "res://tests/suites/cards/missfortune_suite.gd",
+    "method": "run",
+    "scene": "battle"
+  },
+  {
+    "id": "PixSuite",
+    "script": "res://tests/suites/cards/pix_suite.gd",
+    "method": "run",
+    "scene": "battle"
+  },
+  {
+    "id": "ANIVIA_SUITE_SCRIPT",
+    "script": "res://tests/suites/cards/anivia_suite.gd",
+    "method": "run",
+    "scene": "battle"
+  },
+  {
+    "id": "ProjectileSuite",
+    "script": "res://tests/suites/projectile_suite.gd",
+    "method": "run",
+    "scene": "battle"
+  },
+  {
+    "id": "network_lifecycle_suite",
+    "script": "res://tests/suites/network_lifecycle_suite.gd",
+    "method": "run",
+    "scene": "battle"
+  },
+  {
+    "id": "workbench_scenario_suite",
+    "script": "res://tests/suites/workbench_scenario_suite.gd",
+    "method": "run",
+    "scene": "battle"
+  },
+  {
+    "id": "building_placement_suite",
+    "script": "res://tests/suites/building_placement_suite.gd",
+    "method": "run",
+    "scene": "none"
+  },
+  {
+    "id": "payment_suite",
+    "script": "res://tests/suites/payment_suite.gd",
+    "method": "run",
+    "scene": "none"
+  },
+  {
+    "id": "shield_suite",
+    "script": "res://tests/suites/shield_suite.gd",
+    "method": "run",
+    "scene": "none"
+  },
+  {
+    "id": "session_suite",
+    "script": "res://tests/suites/session_suite.gd",
+    "method": "run",
+    "scene": "none"
+  },
+  {
+    "id": "terminal_state_suite",
+    "script": "res://tests/suites/terminal_state_suite.gd",
+    "method": "run",
+    "scene": "none"
+  }
+]

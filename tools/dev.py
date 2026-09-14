@@ -15,6 +15,7 @@ COMMANDS = {
     'audio': ('python', 'tools/audio_review/serve.py', '目录或清单驱动的声音试听台'),
     'audio-prepare': ('python', 'tools/audio/prepare_lol_card_audio.py', '准备英雄原始音频事件工作目录'),
     'audio-import': ('python', 'tools/audio/import_card_audio.py', '按选定计划导入声音（先用 --dry-run）'),
+    'verify': ('python', 'tools/verify.py', '可追溯自动验证：审计、导入、机制、日志与版本'),
     'audit': ('python', 'tools/maintenance/audit_project.py', '项目资源、文档、注册审计'),
     'workbench': ('workbench', '', '完整实战与技能审查'),
 }

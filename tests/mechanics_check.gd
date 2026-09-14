@@ -1,105 +1,96 @@
 extends SceneTree
-## 核心机制回归编排入口：初始化测试场景 → 调用各领域 suite → 汇总失败 → 清理 → quit。
-## 领域测试实现位于 tests/suites/，统一运行命令保持不变：
-## Godot --headless --path . --script tests/mechanics_check.gd
-
-const ANIVIA_SUITE_SCRIPT := preload("res://tests/suites/cards/anivia_suite.gd")
-const AUDIO_PRESENTATION_SUITE_SCRIPT := preload("res://tests/suites/audio_presentation_suite.gd")
-
+## 每个套件拥有独立场景与固定种子；完成标记只在套件返回及清理检查后写出。
+const CATALOG_PATH := "res://tests/suite_catalog.json"
+var _completed_suites: Array[String] = []
 var _failed := 0
 var _checks := 0
 var _verbose := "--verbose-checks" in OS.get_cmdline_user_args()
 var _main: Node2D
+var _suite_root_ids: Array = []
 
 func _initialize() -> void:
 	call_deferred("_run")
 
 func _run() -> void:
-	var scene := load("res://scenes/main.tscn") as PackedScene
-	_main = scene.instantiate()
-	root.add_child(_main)
-	current_scene = _main
-	await process_frame
-	print("[套件] maintenance_suite")
-	preload("res://tests/suites/maintenance_suite.gd").new().run(self)
-	print("[套件] CardDBValidationSuite")
-	CardDBValidationSuite.new().run(self)
-	print("[套件] ContentContractSuite")
-	ContentContractSuite.new().run(self)
-	print("[套件] DeckBuilderSuite")
-	await DeckBuilderSuite.new().run(self, _main)
-	_main._start_local()
-	_main.set_process(false)
-	_main._ai.enabled = false
-	# 常规机制用例手动推进大量固定 tick，关闭自动兵线避免跨用例污染；兵线有独立回归。
-	_main._minion_waves_enabled = false
-
-	preload("res://tests/suites/maintenance_suite.gd").new().check_contracts(self, _main)
-	print("[套件] numeric_system_suite")
-	preload("res://tests/suites/numeric_system_suite.gd").new().run(self, _main)
-	print("[套件] ArenaDeploymentSuite")
-	ArenaDeploymentSuite.new().run(self, _main)
-	print("[套件] AUDIO_PRESENTATION_SUITE_SCRIPT")
-	await AUDIO_PRESENTATION_SUITE_SCRIPT.new().run(self, _main)
-	print("[套件] PresentationSuite")
-	PresentationSuite.new().run(self, _main)
-	print("[套件] BuildingMinionSuite")
-	BuildingMinionSuite.new().run(self, _main)
-	print("[套件] NavigationCollisionSuite")
-	NavigationCollisionSuite.new().run(self, _main)
-	print("[套件] ActiveSkillSuite")
-	ActiveSkillSuite.new().run(self, _main)
-	print("[套件] workbench_suite")
-	preload("res://tests/suites/workbench_suite.gd").new().run(self, _main)
-	print("[套件] AnimationStateSuite")
-	AnimationStateSuite.new().run(self, _main)
-	print("[套件] cards/sett_animation_suite")
-	preload("res://tests/suites/cards/sett_animation_suite.gd").new().run(self, _main)
-	print("[套件] HeroSkillReworkSuite")
-	HeroSkillReworkSuite.new().run(self, _main)
-	print("[套件] CombatTargetingSuite")
-	CombatTargetingSuite.new().run(self, _main)
-	print("[套件] GnarSuite")
-	GnarSuite.new().run(self, _main)
-	print("[套件] XinSuite")
-	XinSuite.new().run(self, _main)
-	print("[套件] GwenSuite")
-	GwenSuite.new().run(self, _main)
-	print("[套件] TwistedFateSuite")
-	TwistedFateSuite.new().run(self, _main)
-	print("[套件] AurelionSolSuite")
-	AurelionSolSuite.new().run(self, _main)
-	print("[套件] MissFortuneSuite")
-	MissFortuneSuite.new().run(self, _main)
-	print("[套件] PixSuite")
-	PixSuite.new().run(self, _main)
-	print("[套件] ANIVIA_SUITE_SCRIPT")
-	ANIVIA_SUITE_SCRIPT.new().run(self, _main)
-	print("[套件] ProjectileSuite")
-	ProjectileSuite.new().run(self, _main)
-
-	print("[套件] workbench_scenario_suite")
-	await preload("res://tests/suites/workbench_scenario_suite.gd").new().run(self, _main)
-
+	for argument in OS.get_cmdline_user_args():
+		if argument.begins_with("--network-case="):
+			await preload("res://tests/suites/network_boundary_suite.gd").new().run(self, argument.trim_prefix("--network-case="))
+			return
+	if "--network-smoke" in OS.get_cmdline_user_args():
+		await preload("res://tests/suites/network_integration_suite.gd").new().run(self)
+		return
+	var catalog: Array = JSON.parse_string(FileAccess.get_file_as_string(CATALOG_PATH))
+	var selected: Array[String] = []
+	for argument in OS.get_cmdline_user_args():
+		if argument.begins_with("--suite="):
+			selected.append(argument.trim_prefix("--suite="))
+	var ids: Array = catalog.map(func(entry): return entry.id)
+	if "--list-suites" in OS.get_cmdline_user_args():
+		for id in ids: print(id)
+		quit(0)
+		return
+	for id in selected:
+		if not ids.has(id):
+			push_error("未知套件：" + id)
+			quit(2)
+			return
+	if "--reverse-suites" in OS.get_cmdline_user_args(): catalog.reverse()
+	for entry in catalog:
+		if not selected.is_empty() and not selected.has(entry.id): continue
+		seed(12345)
+		await _prepare_suite(entry.scene)
+		print("[套件] " + entry.id)
+		var script = load(entry.script)
+		if script == null or not script.can_instantiate():
+			_expect(false, "套件脚本无法实例化：" + entry.id)
+			await _clear_suite()
+			continue
+		var suite = script.new()
+		if entry.scene == "none":
+			await suite.call(entry.method, self)
+		else:
+			await suite.call(entry.method, self, _main)
+		await _clear_suite()
+		_completed_suites.append(entry.id)
 	if "--profile-maintenance" in OS.get_cmdline_user_args():
+		await _prepare_suite("battle")
 		preload("res://tests/suites/maintenance_suite.gd").new().profile(self, _main)
-
+		await _clear_suite()
 	if _failed == 0:
 		print("[机制检查] 全部通过（%d 项断言）" % _checks)
 	else:
 		push_error("[机制检查] %d 项失败" % _failed)
-	var result := _failed
-	_main.free()
-	_main = null
-	# 快速 headless 回归须给音频混音线程时间释放刚停止的流，单个渲染帧不足以完成清理。
 	await create_timer(0.25).timeout
-	quit(result)
+	print("[MECHANICS_RESULT] " + JSON.stringify({"schema": 1, "checks": _checks, "failed": _failed, "completed_suites": _completed_suites}))
+	quit(_failed)
+
+func _prepare_suite(scene_kind: String) -> void:
+	_suite_root_ids = root.get_children().map(func(node): return node.get_instance_id())
+	_expect(get_nodes_in_group("combatants").is_empty(), "套件起点没有上一套件遗留的战斗对象")
+	if scene_kind == "none": return
+	_main = load("res://scenes/main.tscn").instantiate()
+	root.add_child(_main)
+	current_scene = _main
+	await process_frame
+	# Main._ready 调用了 randomize；场景创建后重新固定套件初始化的随机流。
+	seed(12345)
+	if scene_kind == "battle":
+		_main._start_local()
+		_main.set_process(false)
+		_main._ai.enabled = false
+		_main._minion_waves_enabled = false
+
+func _clear_suite() -> void:
+	if is_instance_valid(_main): _main.free()
+	_main = null
+	await process_frame
+	_expect(get_nodes_in_group("combatants").is_empty(), "套件结束释放所有战斗对象及其场景")
+	_expect(root.get_children().map(func(node): return node.get_instance_id()) == _suite_root_ids, "套件未遗留根节点、音频管理器或额外场景")
 
 func _expect(condition: bool, message: String) -> void:
 	_checks += 1
 	if condition:
-		if _verbose:
-			print("[通过] ", message)
+		if _verbose: print("[通过] ", message)
 	else:
 		_failed += 1
 		push_error("[失败] " + message)
