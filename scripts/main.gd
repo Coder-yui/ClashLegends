@@ -702,7 +702,7 @@ func _active_card_slot_for_team(p_team: int, card_id: String) -> int:
 			return slot_index
 	return -1
 
-## 法术卡位于主动槽时的实际施放费用：基础费用 + active_cost_bonus（过量治疗 +1）。
+## 法术卡位于主动槽时的实际施放费用：基础费用 + active_cost_bonus（治疗术主动选项 +1）。
 ## 单位卡与不在主动槽的法术卡返回原费用；出牌扣费、客户端预检和 UI 角标共用这一口径。
 func card_cost_for_team(p_team: int, card_id: String) -> int:
 	var stats := CardDB.get_card(card_id)
@@ -1465,7 +1465,7 @@ func play_card(p_team: int, card_id: String, pos: Vector2, options: Dictionary =
 	var elixir = options.get("elixir")
 	if options.has("elixir") and elixir == null:
 		return false
-	# 强化法术（如主动槽过量治疗）的实际费用含 active_cost_bonus；扣费、预检与回滚共用。
+	# 主动槽法术（如治疗术的主动选项）的实际费用含 active_cost_bonus；扣费、预检与回滚共用。
 	var card_cost := card_cost_for_team(p_team, card_id)
 	if bool(options.get("client_request", false)):
 		if mode != "client" or immediate or elixir == null or not elixir.can_afford(card_cost):
@@ -1480,7 +1480,9 @@ func play_card(p_team: int, card_id: String, pos: Vector2, options: Dictionary =
 	if immediate:
 		var type := String(stats.get("type", "unit"))
 		if type == "spell":
-			_cast_spell(p_team, card_id, pos, _art_dev_mode and bool(options.get("preview_active_spell", false)))
+			var active_enabled := _art_dev_mode and bool(options.get("preview_active_spell", false))
+			var active_skill_index := int(_art_dev_active_skill_choices.get(card_id, 0)) if active_enabled else 0
+			_cast_spell(p_team, card_id, pos, active_enabled, active_skill_index)
 		elif type == "building" or float(stats.get("pre_deploy_time", 0.0)) > 0.0:
 			_execute_card_deployment(p_team, card_id, pos)
 		else:
@@ -1547,7 +1549,8 @@ func _execute_card_deployment(p_team: int, card_id: String, pos: Vector2) -> voi
 		return
 	match type:
 		"spell":
-			_cast_spell(p_team, card_id, pos, active_slot >= 0)
+			var active_skill_index := _active_skill_choice_for_team(p_team, card_id, CardDB.active_skills_for(card_id).size()) if active_slot >= 0 else 0
+			_cast_spell(p_team, card_id, pos, active_slot >= 0, active_skill_index)
 		_:
 			_spawn_card_units(p_team, card_id, pos, -1.0, active_slot)
 
@@ -1633,8 +1636,8 @@ func _rpc_unit_audio_event(epoch: String, net_id: int, cue: String, position: Ve
 	if unit != null and is_instance_valid(unit):
 		_audio_manager.play_event(unit, StringName(cue), position, attack_serial)
 
-func _cast_spell(p_team: int, card_id: String, pos: Vector2, active_enabled: bool = false) -> bool:
-	var cast: bool = _spell_system.cast(p_team, CardDB.get_card(card_id), pos, active_enabled)
+func _cast_spell(p_team: int, card_id: String, pos: Vector2, active_enabled: bool = false, active_skill_index: int = 0) -> bool:
+	var cast: bool = _spell_system.cast(p_team, CardDB.get_card(card_id), pos, active_enabled, active_skill_index)
 	if cast:
 		_presentation_event_id += 1
 		_play_card_event(_presentation_event_id, card_id, "spell:cast", pos, 0, p_team)
@@ -2756,12 +2759,12 @@ func _rpc_freeze_fx(epoch: String, pos: Vector2, radius: float, duration: float,
 
 ## 主机 → 客户端：治疗法术视觉。治疗数值由主机权威结算，客户端只显示淡黄光效。
 @rpc("authority", "call_remote", "reliable")
-func _rpc_heal_fx(epoch: String, pos: Vector2, radius: float, duration: float, enhanced: bool = false) -> void:
+func _rpc_heal_fx(epoch: String, pos: Vector2, radius: float, duration: float, enhanced: bool = false, global_heal: bool = false) -> void:
 	if not _session.accepts(1, epoch, MatchSession.Phase.RUNNING) or game_over:
 		return
 	if mode != "client" or game_over:
 		return
-	_spell_system.show_heal(pos, radius, duration, enhanced)
+	_spell_system.show_heal(pos, radius, duration, enhanced, global_heal)
 
 ## 主机 → 客户端：定向技能蓄力范围。客户端只画表现，伤害与状态仍由主机快照体现。
 @rpc("authority", "call_remote", "reliable")

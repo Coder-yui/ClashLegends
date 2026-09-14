@@ -4,20 +4,29 @@ extends "res://scripts/data/card_schema.gd"
 static func definition() -> Dictionary:
 	return {
 		"gameplay": {
-			"name": "治疗术", "cost": 3, "type": "spell",
+			"name": "治疗术", "cost": 2, "type": "spell",
 			"spell_kind": "heal",
 			"deploy_zone": "global", "deploy_ignore_structures": true,
 			"description": "范围治疗法术，立刻回复范围内友军单位的生命值；对建筑卡、防御塔和水晶无效。",
-			"active_name": "强化治疗",
 			# 法术卡：不生成单位，点击位置范围内友军单位立刻回复生命。
 			"radius": 110.0,    # 影响范围半径
 			"duration": 1.2,    # 治疗光效持续时间（治疗本身立即结算）
-			"heal_amount": 300,
-			# 强化治疗（主动槽）：费用 +1；全图友军单位获得略提高的治疗，范围内友军额外获得护盾（含建筑）。
+			"heal_amount": 200,
+			# 两个主动槽选项均额外消耗 1 金币；强化治疗全图治疗，范围内提高 50%；过量治疗只治疗范围内单位并将溢出转盾。
 			"active_cost_bonus": 1,
-			"active_heal_multiplier": 1.25,
-			"active_shield": 240,
-			"active_shield_duration": 3.0,
+			"active_skills": [
+				{
+					"name": "强化治疗", "kind": "spell_heal", "cost": 1, "max_uses": 1, "cooldown": 0.0,
+					"heal_multiplier": 1.50, "global_heal": true,
+					"description": "全图友军普通单位获得治疗；落点范围内治疗量提高50%，不再额外获得护盾。",
+				},
+				{
+					"name": "过量治疗", "kind": "spell_heal", "cost": 1, "max_uses": 1, "cooldown": 0.0,
+					"heal_multiplier": 1.50, "global_heal": false,
+					"overheal_shield_ratio": 0.50, "shield_duration": 3.0,
+					"description": "范围内治疗量提高50%；溢出的治疗量按50%转为护盾，持续3秒。",
+				},
+			],
 		},
 		"visual": {
 			"color": Color(1.00, 0.93, 0.60),

@@ -33,7 +33,7 @@ func sim_tick(delta: float) -> void:
 	var candidate_ids: Array = _main.get_authoritative_hand(1)
 	for card_id in candidate_ids:
 		var stats: Dictionary = CardDB.get_card(card_id)
-		# 主动槽强化法术（治疗术）按提升后的费用判定是否打得起。
+		# 主动槽法术（包括治疗术的两个主动选项）按提升后的费用判定是否打得起。
 		if _elixir.can_afford(_main.card_cost_for_team(1, card_id)):
 			affordable.append(card_id)
 	if affordable.is_empty():

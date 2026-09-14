@@ -20,7 +20,8 @@ static func attributes(stats: Dictionary, quantity_override: String = "") -> Arr
 	var card_type := String(stats.get("type", "unit"))
 	if card_type == "spell":
 		result.append({"name": "类型", "value": type_name(card_type, stats)})
-		result.append({"name": "目标", "value": "敌方单位"})
+		var target := "友方单位" if StringName(stats.get("spell_kind", "")) == &"heal" else "敌方单位"
+		result.append({"name": "目标", "value": target})
 		result.append({"name": "作用范围", "value": "%s（%.2f格）" % [format_number(float(stats.get("radius", 0.0))), float(stats.get("radius", 0.0)) / TILE_SIZE]})
 		result.append({"name": "持续时间", "value": "%s秒" % format_number(float(stats.get("duration", 0.0)))})
 		return result
@@ -179,15 +180,8 @@ static func active_choice_description(card_id: String, selected_index: int = 0) 
 			var radius := float(stats.get("radius", 0.0))
 			match StringName(stats.get("spell_kind", "")):
 				&"heal":
-					var heal_amount := float(stats.get("heal_amount", 0.0))
-					var enhanced_heal := heal_amount * maxf(float(stats.get("active_heal_multiplier", 1.0)), 1.0)
-					var shield := float(stats.get("active_shield", 0.0))
-					var shield_duration := float(stats.get("active_shield_duration", 0.0))
-					var cost_bonus := maxi(int(stats.get("active_cost_bonus", 0)), 0)
-					var bonus_text := "" if cost_bonus <= 0 else "，主动槽强化额外花费 +%d 金币" % cost_bonus
-					return "回复半径%s（%.2f格）内友军单位%s生命（不作用于建筑）；强化后全图友军单位回复%s生命，范围内友军（含建筑卡、防御塔与水晶）额外获得%s护盾，持续%s秒%s。" % [
-						format_number(radius), radius / TILE_SIZE, format_number(heal_amount),
-						format_number(enhanced_heal), format_number(shield), format_number(shield_duration), bonus_text,
+					return "回复半径%s（%.2f格）内友军单位%s生命（不作用于建筑）。" % [
+						format_number(radius), radius / TILE_SIZE, format_number(float(stats.get("heal_amount", 0.0))),
 					]
 				_:
 					var duration := float(stats.get("duration", 0.0))
@@ -242,6 +236,15 @@ static func active_skill_description(skill: Dictionary) -> String:
 				])
 			if float(skill.get("duration", 0.0)) > 0.0:
 				parts.append("持续 %s 秒并跟随移动" % format_number(float(skill.get("duration", 0.0))))
+		"spell_heal":
+			var heal_multiplier := maxf(float(skill.get("heal_multiplier", 1.0)), 1.0)
+			var scope := "全图普通单位" if bool(skill.get("global_heal", false)) else "范围内普通单位"
+			parts.append("%s治疗量 ×%.2f" % [scope, heal_multiplier])
+			if bool(skill.get("global_heal", false)):
+				parts.append("落点范围内额外提高治疗量")
+			var shield_ratio := clampf(float(skill.get("overheal_shield_ratio", 0.0)), 0.0, 1.0)
+			if shield_ratio > 0.0:
+				parts.append("溢出治疗量的 %.0f%% 转为护盾，持续 %s 秒" % [shield_ratio * 100.0, format_number(float(skill.get("shield_duration", 0.0)))])
 	if float(skill.get("shield", 0.0)) > 0.0:
 		parts.append("获得 %s 点护盾，持续 %s 秒" % [format_number(float(skill.shield)), format_number(float(skill.get("shield_duration", 0.0)))])
 	return "%s：%s。" % [String(skill.get("name", "主动技能")), "；".join(parts)]

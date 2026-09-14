@@ -78,13 +78,6 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 						errors.append("%s.heal_amount: 治疗法术必须配置 > 0 的治疗量" % card_id)
 					if stats.has("active_cost_bonus") and int(stats.active_cost_bonus) < 0:
 						errors.append("%s.active_cost_bonus: 必须是 >= 0 的整数" % card_id)
-					if stats.has("active_heal_multiplier") and float(stats.active_heal_multiplier) < 1.0:
-						errors.append("%s.active_heal_multiplier: 强化治疗倍率必须 >= 1" % card_id)
-					if stats.has("active_shield"):
-						if float(stats.active_shield) <= 0.0:
-							errors.append("%s.active_shield: 强化护盾必须 > 0" % card_id)
-						elif float(stats.get("active_shield_duration", 0.0)) <= 0.0:
-							errors.append("%s.active_shield_duration: 配置强化护盾时必须 > 0" % card_id)
 	var art = stats.get("card_art", {})
 	if not art is Dictionary:
 		errors.append("%s.card_art: 必须是 Dictionary" % card_id)
@@ -712,6 +705,18 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 					errors.append("%s.heal_ratio: 必须 > 0" % label)
 				if float(skill.get("max_health_ratio", 0.0)) < 1.0:
 					errors.append("%s.max_health_ratio: 必须 >= 1" % label)
+			&"spell_heal":
+				if StringName(stats.get("type", "")) != &"spell" or StringName(stats.get("spell_kind", "")) != &"heal":
+					errors.append("%s.kind: spell_heal 只能用于治疗法术" % label)
+				_require_fields(label, skill, [&"heal_multiplier", &"global_heal"], errors)
+				if float(skill.get("heal_multiplier", 0.0)) < 1.0:
+					errors.append("%s.heal_multiplier: 治疗倍率必须 >= 1" % label)
+				if skill.has("overheal_shield_ratio"):
+					var overheal_shield_ratio := float(skill.get("overheal_shield_ratio", 0.0))
+					if overheal_shield_ratio < 0.0 or overheal_shield_ratio > 1.0:
+						errors.append("%s.overheal_shield_ratio: 溢出治疗转盾比例必须在 0 到 1 之间" % label)
+					elif overheal_shield_ratio > 0.0 and float(skill.get("shield_duration", 0.0)) <= 0.0:
+						errors.append("%s.shield_duration: 配置溢出治疗转盾时必须 > 0" % label)
 		var target_scope := StringName(skill.get("target_scope", "self"))
 		if target_scope not in ACTIVE_SKILL_TARGET_SCOPES:
 			errors.append("%s.target_scope: 只支持 self/deployment_group" % label)

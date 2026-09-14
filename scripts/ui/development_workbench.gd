@@ -332,7 +332,9 @@ func _select_item(item_id: String) -> void:
 	_selected_id = item_id
 	_form = 0
 	_spell_active.set_pressed_no_signal(false)
-	_spell_active.visible = String(_cards.get(item_id, {}).get("type", "")) == "spell" and _cards.get(item_id, {}).has("active_name")
+	var is_spell := String(_cards.get(item_id, {}).get("type", "")) == "spell"
+	var has_spell_choices := is_spell and not CardDB.active_skills_for(item_id).is_empty()
+	_spell_active.visible = is_spell and not has_spell_choices and _cards.get(item_id, {}).has("active_name")
 	_spell_active.text = String(_cards.get(item_id, {}).get("active_name", "强化法术"))
 	_form_option.select(0)
 	_form_option.disabled = _workspace == 1 or not _cards.get(item_id, {}).has("transformed_stats")
@@ -344,8 +346,8 @@ func _select_item(item_id: String) -> void:
 	_unit_deployed = false
 	_unit_casting = false
 	_refresh_skill_controls()
-	var is_spell := String(_cards.get(item_id, {}).get("type", "")) == "spell"
-	_skill_option.get_parent().visible = not is_spell
+	_skill_option.get_parent().visible = not is_spell or has_spell_choices
+	_skill_button.visible = not is_spell
 	_control_buttons[0].get_parent().visible = not is_spell
 	_refresh_assets()
 	item_selected.emit(item_id)

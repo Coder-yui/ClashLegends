@@ -254,7 +254,7 @@ func _refresh(_value: float) -> void:
 		CardArt.set_selected(b, card_id == _selected and not pending)
 		b.disabled = pending or (not affordable and card_id != _selected)
 
-## 主动槽法术卡按 active_cost_bonus 提升显示费用（强化治疗 +1）；其余卡返回原费用。
+## 主动槽法术卡按 active_cost_bonus 提升显示费用（治疗术主动选项 +1）；其余卡返回原费用。
 func _display_cost(card_id: String, stats: Dictionary) -> int:
 	var cost := int(stats.get("cost", 0))
 	if _active_skill_cards.has(card_id) and StringName(stats.get("type", "")) == &"spell":

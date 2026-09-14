@@ -32,16 +32,17 @@ func _draw() -> void:
 		var slow_alpha: float = clampf(float(effect.timer) / maxf(float(effect.duration), 0.001), 0.0, 1.0)
 		draw_circle(effect.pos, effect.radius, Color(0.20, 0.48, 0.92, 0.12 * slow_alpha))
 		draw_arc(effect.pos, effect.radius, 0.0, TAU, 48, Color(0.38, 0.70, 1.0, 0.72 * slow_alpha), 3.0, true)
-	# 治疗术区域效果：淡黄光圈 + 上升的十字光点；强化版额外扩散全图金圈。
+	# 治疗术区域效果：淡黄光圈 + 上升的十字光点；过量治疗额外强调同一范围。
 	for effect in spells.heal_effects:
 		var heal_progress := 1.0 - clampf(float(effect.timer) / maxf(float(effect.duration), 0.001), 0.0, 1.0)
 		var heal_remaining := clampf(float(effect.timer) / maxf(float(effect.duration), 0.001), 0.0, 1.0)
 		var heal_pos: Vector2 = effect.pos
 		var heal_radius := float(effect.radius)
 		if bool(effect.get("enhanced", false)):
-			# 强化治疗是全图生效，用快速扩散的金圈提示全图友军都被治疗。
+			# 强化治疗的全图选项扩散到全场；过量治疗只强调落点范围。
 			var wave_progress := clampf(heal_progress * 2.2, 0.0, 1.0)
-			var wave_radius := lerpf(heal_radius * 0.6, 1180.0, wave_progress)
+			var wave_target_radius := 1180.0 if bool(effect.get("global_heal", false)) else heal_radius
+			var wave_radius := lerpf(heal_radius * 0.35, wave_target_radius, wave_progress)
 			var wave_alpha := 0.5 * maxf(1.0 - wave_progress * 1.3, 0.0)
 			draw_arc(heal_pos, wave_radius, 0.0, TAU, 64, Color(1.0, 0.93, 0.60, wave_alpha), 4.0, true)
 			draw_arc(heal_pos, wave_radius * 0.92, 0.0, TAU, 64, Color(1.0, 0.97, 0.75, wave_alpha * 0.6), 2.0, true)

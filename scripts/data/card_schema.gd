@@ -98,7 +98,7 @@ const SIZE_RADII := {
 const PROJECTILE_VISUALS := [&"orb", &"arrow", &"needle", &"boomerang", &"ice_cone"]
 const VISUAL_SPAWN_TRANSITIONS := [&"drop", &"rebirth"]
 const SPELL_KINDS := [&"freeze", &"heal"]
-const ACTIVE_SKILL_KINDS := [&"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"continuous_area", &"empowered_attack", &"attack_lifesteal", &"area_shield"]
+const ACTIVE_SKILL_KINDS := [&"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"continuous_area", &"empowered_attack", &"attack_lifesteal", &"area_shield", &"spell_heal"]
 const ACTIVE_SKILL_TARGET_SCOPES := [&"self", &"deployment_group"]
 const CAST_LOCKS := [&"movement", &"attack", &"facing"]
 const VISUAL_ACTION_KINDS := [&"deploy", &"transform", &"skill"]
@@ -134,7 +134,7 @@ const CARD_FIELDS := [
 	&"attack_interval_display", &"transform_after_hits", &"revert_after_hits",
 	&"transform_duration", &"active_transform_duration", &"revert_duration", &"transformed_stats",
 	&"spell_kind", &"duration", &"active_name", &"active_slow_duration", &"active_slow_multiplier", &"active_skills",
-	&"heal_amount", &"active_heal_multiplier", &"active_shield", &"active_shield_duration", &"active_cost_bonus",
+	&"heal_amount", &"active_cost_bonus",
 	&"visual_active_buff_scene", &"visual_scene_path", &"visual_scene_paths", &"visual_forward_yaw", &"visual_animations", &"audio",
 ]
 const AUDIO_FIELDS := [&"team_overrides", &"attack_launch_until_impact", &"attack_hit_once_by_segment", &"attack_swing_lead_time", &"attack_swing", &"attack_hit", &"attack_launch_by_segment", &"attack_hit_by_segment", &"empowered_hit", &"first_strike_hit", &"attack_swing_volume_db", &"attack_hit_volume_db", &"events"]
@@ -166,14 +166,14 @@ const ACTIVE_SKILL_FIELDS := [
 	&"zone_duration", &"zone_tick_interval", &"zone_damage", &"zone_slow_duration", &"zone_slow_multiplier",
 	&"tick_interval",
 	&"empowered_damage_multiplier", &"empowered_speed_multiplier", &"blind_charges",
-	&"target_scope", &"heal_ratio", &"max_health_ratio",
+	&"target_scope", &"heal_ratio", &"max_health_ratio", &"heal_multiplier", &"overheal_shield_ratio", &"global_heal",
 ]
 ## building_only: true 时只攻击建筑（塔+建筑卡），无视普通单位
 ## can_attack_air: false 时无法选中/攻击空中单位（近战地面单位通常不能对空）
 ## is_continuous_attack: true 时持续伤害（DPS模式，每固定Tick累计 damage*dt，按目标保留余量扣整数）
 
 ## 数量字段含嵌套数组；其他玩法数值最多两位，比例按百分数最多两位。
-const INTEGER_NUMBER_FIELDS := ["hp", "damage", "heal_amount", "on_hit_tower_damage", "deploy_sweep_damage", "shield", "active_shield", "resource_shield_max", "full_resource_cast_end_heal", "shockwave_damage", "zone_damage", "resource_damage_by_stacks", "resource_hit_damage_sequences", "cost", "active_cost_bonus", "spawn_count", "death_spawn_count", "deployment_count", "max_uses", "blind_charges", "heal_every_hits", "transform_after_hits", "revert_after_hits", "death_replacement_charges", "timed_revival_death_replacement_charges", "projectile_count"]
+const INTEGER_NUMBER_FIELDS := ["hp", "damage", "heal_amount", "on_hit_tower_damage", "deploy_sweep_damage", "shield", "resource_shield_max", "full_resource_cast_end_heal", "shockwave_damage", "zone_damage", "resource_damage_by_stacks", "resource_hit_damage_sequences", "cost", "active_cost_bonus", "spawn_count", "death_spawn_count", "deployment_count", "max_uses", "blind_charges", "heal_every_hits", "transform_after_hits", "revert_after_hits", "death_replacement_charges", "timed_revival_death_replacement_charges", "projectile_count"]
 
 ## 原始定义域归属；共享容器由 CardDefinitionCompiler 递归检查。
 const CARD_VISUAL_FIELDS := ["active_buff_projectile_visual", "attack_interval_display", "color", "continuous_beam_color", "continuous_beam_end_width", "continuous_beam_forward_offset", "continuous_beam_origin_height", "continuous_beam_start_width", "death_replacement_visual_transition", "projectile_colors", "projectile_impact_visual", "projectile_visual", "projectile_visual_forward_offset", "projectile_visual_height", "projectile_visual_scale", "show_team_ring", "skill_resource_full_color", "timed_revival_visual_transition", "visual_active_buff_scene", "visual_animations", "visual_forward_yaw", "visual_radius", "visual_scene_path", "visual_scene_paths"]

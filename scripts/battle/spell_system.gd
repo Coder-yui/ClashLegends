@@ -6,7 +6,7 @@ extends RefCounted
 var freeze_effects: Array[Dictionary] = []
 var slow_zones: Array[Dictionary] = []
 var slow_effects: Array[Dictionary] = []
-## 治疗术表现区域：淡黄光圈；强化版额外带全图扩散波纹。
+## 治疗术表现区域：淡黄光圈；全图强化治疗额外带全图扩散波纹。
 var heal_effects: Array[Dictionary] = []
 
 var _controller: Node2D
@@ -20,7 +20,7 @@ static func supports(kind: StringName) -> bool:
 	return kind in CardDB.SPELL_KINDS
 
 
-func cast(team: int, stats: Dictionary, position: Vector2, active_enabled: bool = false) -> bool:
+func cast(team: int, stats: Dictionary, position: Vector2, active_enabled: bool = false, active_skill_index: int = 0) -> bool:
 	match StringName(stats.get("spell_kind", "")):
 		&"freeze":
 			var radius := float(stats.get("radius", 0.0))
@@ -34,13 +34,21 @@ func cast(team: int, stats: Dictionary, position: Vector2, active_enabled: bool 
 		&"heal":
 			var heal_radius := float(stats.get("radius", 0.0))
 			var fx_duration := float(stats.get("duration", 1.2))
-			apply_heal(position, heal_radius, team, stats, active_enabled)
+			var active_skill: Dictionary = _active_heal_skill(stats, active_skill_index) if active_enabled else {}
+			apply_heal(position, heal_radius, team, stats, active_enabled, active_skill)
 			if _controller.mode == "host":
-				_controller._rpc_heal_fx.rpc_id(_controller.network_opponent_id(), _controller.network_session_id(), position, heal_radius, fx_duration, active_enabled)
+				_controller._rpc_heal_fx.rpc_id(_controller.network_opponent_id(), _controller.network_session_id(), position, heal_radius, fx_duration, active_enabled, bool(active_skill.get("global_heal", false)))
 			return true
 		_:
 			push_error("未实现的 spell_kind：%s" % String(stats.get("spell_kind", "")))
 			return false
+
+
+func _active_heal_skill(stats: Dictionary, skill_index: int) -> Dictionary:
+	var skills: Array = stats.get("active_skills", [])
+	if skill_index < 0 or skill_index >= skills.size() or not skills[skill_index] is Dictionary:
+		return {}
+	return skills[skill_index] as Dictionary
 
 
 func apply_freeze(position: Vector2, radius: float, duration: float, team: int, slow_duration: float = 0.0, slow_multiplier: float = 1.0) -> void:
@@ -60,22 +68,31 @@ func apply_freeze(position: Vector2, radius: float, duration: float, team: int, 
 
 ## 治疗术权威结算。治疗只作用于普通单位（Unit 且非建筑卡），统一走 Unit.heal()，
 ## 不会超过单位最大生命值；建筑卡、防御塔与水晶不吃治疗。
-## 强化版（卡牌位于主动槽）：全图友军单位获得 active_heal_multiplier 倍治疗，
-## 范围内所有友方战斗对象（含建筑卡、防御塔、水晶）额外获得护盾。
-func apply_heal(position: Vector2, radius: float, team: int, stats: Dictionary, active_enabled: bool = false) -> void:
+## 治疗法术主动选项：强化治疗可全图治疗但只在落点范围内提高倍率；过量治疗只治疗范围内单位，
+## 并将实际未恢复的部分按 overheal_shield_ratio 转为限时护盾；建筑卡、防御塔与水晶不受治疗影响。
+func apply_heal(position: Vector2, radius: float, team: int, stats: Dictionary, active_enabled: bool = false, active_skill: Dictionary = {}) -> void:
 	var heal_amount := maxf(float(stats.get("heal_amount", 0.0)), 0.0)
-	var heal_multiplier := maxf(float(stats.get("active_heal_multiplier", 1.0)), 1.0) if active_enabled else 1.0
-	var shield_amount := maxf(float(stats.get("active_shield", 0.0)), 0.0) if active_enabled else 0.0
-	var shield_duration := maxf(float(stats.get("active_shield_duration", 0.0)), 0.0)
-	show_heal(position, radius, float(stats.get("duration", 1.2)), active_enabled)
+	var heal_multiplier := maxf(float(active_skill.get("heal_multiplier", 1.0)), 1.0) if active_enabled else 1.0
+	var global_heal := active_enabled and bool(active_skill.get("global_heal", false))
+	var overheal_shield_ratio := clampf(float(active_skill.get("overheal_shield_ratio", 0.0)), 0.0, 1.0) if active_enabled else 0.0
+	var shield_duration := maxf(float(active_skill.get("shield_duration", 0.0)), 0.0) if active_enabled else 0.0
+	show_heal(position, radius, float(stats.get("duration", 1.2)), active_enabled, global_heal)
 	for combatant in _controller.get_tree().get_nodes_in_group("combatants"):
 		if not is_instance_valid(combatant) or combatant.team != team or combatant.hp <= 0.0:
 			continue
 		var in_range: bool = combatant.global_position.distance_to(position) <= radius + combatant.body_radius
-		if combatant is Unit and not (combatant as Unit).is_building and (active_enabled or in_range):
-			(combatant as Unit).heal(heal_amount * heal_multiplier)
-		if shield_amount > 0.0 and shield_duration > 0.0 and in_range and combatant.has_method("add_shield"):
-			combatant.add_shield(shield_amount, shield_duration)
+		if combatant is Unit and not (combatant as Unit).is_building and (in_range or global_heal):
+			var requested_heal := heal_amount * heal_multiplier
+			if global_heal and not in_range:
+				requested_heal = heal_amount
+			var hp_before := float(combatant.hp)
+			(combatant as Unit).heal(requested_heal)
+			if overheal_shield_ratio > 0.0 and shield_duration > 0.0 and combatant.has_method("add_shield"):
+				var actual_heal := maxf(float(combatant.hp) - hp_before, 0.0)
+				var overheal := maxf(requested_heal - actual_heal, 0.0)
+				var shield_amount := BattleNumbers.quantity(overheal * overheal_shield_ratio)
+				if shield_amount > 0:
+					combatant.add_shield(shield_amount, shield_duration)
 
 
 ## 主机结算和客户端 RPC 共用表现创建入口，副本不创建权威区域。
@@ -84,8 +101,8 @@ func show_freeze(position: Vector2, radius: float, duration: float, slow_duratio
 	if slow_duration > 0.0:
 		slow_effects.append({"pos": position, "radius": radius, "delay": duration, "timer": slow_duration, "duration": slow_duration})
 
-func show_heal(position: Vector2, radius: float, duration: float, enhanced: bool = false) -> void:
-	heal_effects.append({"pos": position, "radius": radius, "timer": duration, "duration": duration, "enhanced": enhanced})
+func show_heal(position: Vector2, radius: float, duration: float, enhanced: bool = false, global_heal: bool = false) -> void:
+	heal_effects.append({"pos": position, "radius": radius, "timer": duration, "duration": duration, "enhanced": enhanced, "global_heal": global_heal})
 
 func tick(dt: float) -> void:
 	var alive: Array[Dictionary] = []
