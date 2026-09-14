@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://ddu60wv2sceex"
 path.s3tc="res://.godot/imported/imp_Ghouls_MAT.png-ed8ca35b7b2e829d495a93ff88191a7b.s3tc.ctex"
+path.etc2="res://.godot/imported/imp_Ghouls_MAT.png-ed8ca35b7b2e829d495a93ff88191a7b.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/units/imp/source/imp_Ghouls_MAT.png"
-dest_files=["res://.godot/imported/imp_Ghouls_MAT.png-ed8ca35b7b2e829d495a93ff88191a7b.s3tc.ctex"]
+dest_files=["res://.godot/imported/imp_Ghouls_MAT.png-ed8ca35b7b2e829d495a93ff88191a7b.s3tc.ctex", "res://.godot/imported/imp_Ghouls_MAT.png-ed8ca35b7b2e829d495a93ff88191a7b.etc2.ctex"]
 
 [params]
 

@@ -4,8 +4,9 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://cylsijb2t5vt5"
 path.s3tc="res://.godot/imported/princess_tower_ruin_blue_Rubble.png-076de3df992d845c03b866305dcd0fd7.s3tc.ctex"
+path.etc2="res://.godot/imported/princess_tower_ruin_blue_Rubble.png-076de3df992d845c03b866305dcd0fd7.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 generator_parameters={
@@ -15,7 +16,7 @@ generator_parameters={
 [deps]
 
 source_file="res://assets/units/sun_disc/source/princess_tower_ruin_blue_Rubble.png"
-dest_files=["res://.godot/imported/princess_tower_ruin_blue_Rubble.png-076de3df992d845c03b866305dcd0fd7.s3tc.ctex"]
+dest_files=["res://.godot/imported/princess_tower_ruin_blue_Rubble.png-076de3df992d845c03b866305dcd0fd7.s3tc.ctex", "res://.godot/imported/princess_tower_ruin_blue_Rubble.png-076de3df992d845c03b866305dcd0fd7.etc2.ctex"]
 
 [params]
 

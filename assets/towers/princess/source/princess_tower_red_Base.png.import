@@ -4,8 +4,9 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://l75pf4vxkaw4"
 path.s3tc="res://.godot/imported/princess_tower_red_Base.png-3606e6dda0fafe7052b1d167097ecde1.s3tc.ctex"
+path.etc2="res://.godot/imported/princess_tower_red_Base.png-3606e6dda0fafe7052b1d167097ecde1.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 generator_parameters={
@@ -15,7 +16,7 @@ generator_parameters={
 [deps]
 
 source_file="res://assets/towers/princess/source/princess_tower_red_Base.png"
-dest_files=["res://.godot/imported/princess_tower_red_Base.png-3606e6dda0fafe7052b1d167097ecde1.s3tc.ctex"]
+dest_files=["res://.godot/imported/princess_tower_red_Base.png-3606e6dda0fafe7052b1d167097ecde1.s3tc.ctex", "res://.godot/imported/princess_tower_red_Base.png-3606e6dda0fafe7052b1d167097ecde1.etc2.ctex"]
 
 [params]
 

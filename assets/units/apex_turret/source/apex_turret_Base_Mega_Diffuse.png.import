@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://olr2bt8cnl6y"
 path.s3tc="res://.godot/imported/apex_turret_Base_Mega_Diffuse.png-c3cd9fdda1a1b1862883c1974888687b.s3tc.ctex"
+path.etc2="res://.godot/imported/apex_turret_Base_Mega_Diffuse.png-c3cd9fdda1a1b1862883c1974888687b.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/units/apex_turret/source/apex_turret_Base_Mega_Diffuse.png"
-dest_files=["res://.godot/imported/apex_turret_Base_Mega_Diffuse.png-c3cd9fdda1a1b1862883c1974888687b.s3tc.ctex"]
+dest_files=["res://.godot/imported/apex_turret_Base_Mega_Diffuse.png-c3cd9fdda1a1b1862883c1974888687b.s3tc.ctex", "res://.godot/imported/apex_turret_Base_Mega_Diffuse.png-c3cd9fdda1a1b1862883c1974888687b.etc2.ctex"]
 
 [params]
 

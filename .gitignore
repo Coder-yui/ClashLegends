@@ -3,7 +3,6 @@
 # 本地 Python 工具环境
 .venv/
 # 导出产物
-export_presets.cfg
 /builds/*
 !/builds/.gdignore
 # macOS

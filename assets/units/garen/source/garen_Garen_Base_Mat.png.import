@@ -4,8 +4,9 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://dudv6y6pgmcue"
 path.s3tc="res://.godot/imported/garen_Garen_Base_Mat.png-644cd12f15a406fd8b1cc335d77b774e.s3tc.ctex"
+path.etc2="res://.godot/imported/garen_Garen_Base_Mat.png-644cd12f15a406fd8b1cc335d77b774e.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 generator_parameters={
@@ -15,7 +16,7 @@ generator_parameters={
 [deps]
 
 source_file="res://assets/units/garen/source/garen_Garen_Base_Mat.png"
-dest_files=["res://.godot/imported/garen_Garen_Base_Mat.png-644cd12f15a406fd8b1cc335d77b774e.s3tc.ctex"]
+dest_files=["res://.godot/imported/garen_Garen_Base_Mat.png-644cd12f15a406fd8b1cc335d77b774e.s3tc.ctex", "res://.godot/imported/garen_Garen_Base_Mat.png-644cd12f15a406fd8b1cc335d77b774e.etc2.ctex"]
 
 [params]
 

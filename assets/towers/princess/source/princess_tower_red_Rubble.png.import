@@ -4,8 +4,9 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://ndexafyr84dl"
 path.s3tc="res://.godot/imported/princess_tower_red_Rubble.png-75bfb2f9ecc4dc6b9908eccd278de449.s3tc.ctex"
+path.etc2="res://.godot/imported/princess_tower_red_Rubble.png-75bfb2f9ecc4dc6b9908eccd278de449.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 generator_parameters={
@@ -15,7 +16,7 @@ generator_parameters={
 [deps]
 
 source_file="res://assets/towers/princess/source/princess_tower_red_Rubble.png"
-dest_files=["res://.godot/imported/princess_tower_red_Rubble.png-75bfb2f9ecc4dc6b9908eccd278de449.s3tc.ctex"]
+dest_files=["res://.godot/imported/princess_tower_red_Rubble.png-75bfb2f9ecc4dc6b9908eccd278de449.s3tc.ctex", "res://.godot/imported/princess_tower_red_Rubble.png-75bfb2f9ecc4dc6b9908eccd278de449.etc2.ctex"]
 
 [params]
 
