@@ -39,7 +39,7 @@
 
 ## 时间与进度
 
-- `cast_duration / impact_delay` 是权威总窗口与命中延迟；全身动作要求 `cast_locks` 包含 attack。锁可组合 movement、attack、facing，默认全锁。
+- `cast_duration / impact_delay` 是权威总窗口与效果执行延迟；全身动作要求 `cast_locks` 包含 attack。锁可组合 movement、attack、facing，默认全锁。
 - 普攻 Start 对齐 first_hit。配置 `attack_reference_interval` 后，Hit/Recover 按实际基础间隔与参考间隔之比缩放；不要同时设置手工 Hit/Recover 时长。未配置时沿用 attack_hit_duration / attack_recover_delay。
 - 中途攻速变化同步剩余阶段与基础速率进度，不重置动作序号；恢复或晚到定位包含源片裁剪起点。技能、移动、部署和死亡不受普攻倍率影响。
 - 持续攻击首次起手用 action_in，后续换目标/序列/循环用 sequence。退出时立即停止持续效果，收势不延长伤害。

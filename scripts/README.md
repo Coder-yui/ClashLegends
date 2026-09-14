@@ -14,3 +14,5 @@
 | `ui/workbench/` | 工作台内的模型预览等组件；独立摄影展台复用 `model_preview.gd` |
 
 新增卡牌先读 [新卡清单](../docs/NEW_CARD_CHECKLIST.md)；结构修改读 [维护架构](../docs/MAINTENANCE_ARCHITECTURE.md)。共享组件留在所属领域，离线工具通过公开入口复用，避免复制整套摄影棚或把工具逻辑塞入 Main。
+
+`diagnostics/release_smoke.gd` 是仅由专用命令行参数启动的发布包探针，验证真实开局、命令和终局；不进入正常菜单流程。
