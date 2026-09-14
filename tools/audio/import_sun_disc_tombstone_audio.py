@@ -2,7 +2,7 @@
 from pathlib import Path
 import hashlib,json,re,subprocess,wave,tempfile
 ROOT=Path(__file__).resolve().parents[2]
-LIB=Path('/Users/czh/Tools/lol-asset-tools')
+LIB=Path('/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工')
 INDEX={}
 for folder in [LIB/'card_audio_batch/azir/txtp',LIB/'card_audio_batch/yorick/txtp',LIB/'shared_audio_review/txtp']:
  for p in sorted(folder.glob('*.txtp')):

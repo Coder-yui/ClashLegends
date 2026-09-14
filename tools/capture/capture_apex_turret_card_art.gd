@@ -44,7 +44,7 @@ func _capture() -> void:
 		await process_frame
 	var image := viewport.get_texture().get_image()
 	image.resize(OUTPUT_SIZE.x, OUTPUT_SIZE.y, Image.INTERPOLATE_LANCZOS)
-	var output_path := ProjectSettings.globalize_path("res://assets/cards/apex_turret_loading.png")
+	var output_path := ProjectSettings.globalize_path(preload("res://tools/lib/development_paths.gd").output("card_art/apex_turret_loading.png"))
 	var error := image.save_png(output_path)
 	if error == OK:
 		print("[卡面摄影] 已保存 res://assets/cards/apex_turret_loading.png")

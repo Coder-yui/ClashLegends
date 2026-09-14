@@ -1,5 +1,5 @@
 extends SceneTree
-## 实际工作台双阵营部署/主动横扫截图；输出 /tmp/clash-xin-sweep-review。
+## 实际工作台双阵营部署/主动横扫截图；输出 /Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/预览与验证/clash-xin-sweep-review。
 func _initialize() -> void:
 	_run.call_deferred()
 
@@ -9,7 +9,7 @@ func _run() -> void:
 	current_scene = main
 	main._start_art_dev()
 	main._art_dev_panel.show_workspace(1)
-	DirAccess.make_dir_recursive_absolute("/tmp/clash-xin-sweep-review")
+	DirAccess.make_dir_recursive_absolute(preload("res://tools/lib/development_paths.gd").output("clash-xin-sweep-review"))
 	for team in [0, 1]:
 		main._clear_art_dev_units()
 		await process_frame
@@ -29,4 +29,4 @@ func _capture(label: String) -> void:
 	for index in range(3):
 		await create_timer(0.10).timeout
 		await RenderingServer.frame_post_draw
-		root.get_texture().get_image().save_png("/tmp/clash-xin-sweep-review/%s_%d.png" % [label, index])
+		root.get_texture().get_image().save_png(preload("res://tools/lib/development_paths.gd").output("clash-xin-sweep-review/%s_%d.png") % [label, index])

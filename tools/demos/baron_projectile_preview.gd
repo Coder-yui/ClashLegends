@@ -20,11 +20,11 @@ func _run() -> void:
 	target.move_speed = 0
 	main.preview_active_skill(source, CardDB.active_skills_for("siege_minion")[0])
 	main._projectile_system.launch(source, target, 1.0, source.projectile_speed, 0.0, 0.0, source.color)
-	DirAccess.make_dir_recursive_absolute("/tmp/clash-baron-cannon")
+	DirAccess.make_dir_recursive_absolute(preload("res://tools/lib/development_paths.gd").output("clash-baron-cannon"))
 	for i in range(12):
 		await create_timer(0.07).timeout
 		await RenderingServer.frame_post_draw
-		root.get_texture().get_image().save_png("/tmp/clash-baron-cannon/%02d.png" % i)
+		root.get_texture().get_image().save_png(preload("res://tools/lib/development_paths.gd").output("clash-baron-cannon/%02d.png") % i)
 	main.free()
 	await process_frame
 	quit()

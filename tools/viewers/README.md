@@ -16,7 +16,7 @@ python3 tools/dev.py model --card garen --list
 
 ```sh
 python3 tools/dev.py model --card garen --animation Attack1 --time 0.4 --yaw 20 --zoom 1.2
-python3 tools/dev.py model --card garen --animation Attack1 --time 0.4 --capture builds/garen-candidate.png --size 308x560
+python3 tools/dev.py model --card garen --animation Attack1 --time 0.4 --capture ClashLegends-开发素材库/04-中间产物/构建与验证/garen-candidate.png --size 308x560
 ```
 
 摄影需要实际渲染，不能加 `--headless`。默认透明背景、308×560，双倍渲染后按可见轮廓居中，保留边距并缩小；动作与角度可重新指定，输出不会覆盖。通用取景按模型包围盒适配，特殊构图可参考 [既有拍摄配方](../capture/README.md)。

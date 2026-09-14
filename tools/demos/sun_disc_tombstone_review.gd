@@ -1,5 +1,5 @@
 extends SceneTree
-const OUTPUT := "/tmp/clash-sun-disc-tombstone"
+var OUTPUT := preload("res://tools/lib/development_paths.gd").output("clash-sun-disc-tombstone")
 func _initialize() -> void:
 	_run.call_deferred()
 func _capture(name: String) -> void:

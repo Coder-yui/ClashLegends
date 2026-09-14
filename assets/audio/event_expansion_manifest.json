@@ -3,7 +3,7 @@
     "file": "assets/audio/auditions/twisted_fate/play_sfx_twistedfate_destiny_oncast_r1.wav",
     "event": "Play_sfx_TwistedFate_Destiny_OnCast",
     "event_id": 3466689298,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Destiny_OnCast {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Destiny_OnCast {r1}.txtp",
     "duration": 3.494988662131519,
     "media_ids": [
       349208112,
@@ -16,7 +16,7 @@
     "file": "assets/audio/auditions/twisted_fate/play_sfx_twistedfate_destiny_oncast_r2.wav",
     "event": "Play_sfx_TwistedFate_Destiny_OnCast",
     "event_id": 3466689298,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Destiny_OnCast {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Destiny_OnCast {r2}.txtp",
     "duration": 3.641655328798186,
     "media_ids": [
       349208112,
@@ -29,7 +29,7 @@
     "file": "assets/audio/auditions/twisted_fate/play_sfx_twistedfate_destiny_onbuffactivate_r1.wav",
     "event": "Play_sfx_TwistedFate_Destiny_OnBuffActivate",
     "event_id": 423395175,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Destiny_OnBuffActivate {r} {m}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Destiny_OnBuffActivate {r} {m}.txtp",
     "duration": 5.029319727891156,
     "media_ids": [
       9393280,
@@ -45,7 +45,7 @@
     "file": "assets/audio/auditions/twisted_fate/play_sfx_twistedfate_destiny_onbuffdeactivate_r1.wav",
     "event": "Play_sfx_TwistedFate_Destiny_OnBuffDeactivate",
     "event_id": 2406561102,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Destiny_OnBuffDeactivate {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Destiny_OnBuffDeactivate {r1}.txtp",
     "duration": 0.7126530612244898,
     "media_ids": [
       27411234,
@@ -59,7 +59,7 @@
     "file": "assets/audio/auditions/twisted_fate/play_sfx_twistedfate_destiny_onbuffdeactivate_r2.wav",
     "event": "Play_sfx_TwistedFate_Destiny_OnBuffDeactivate",
     "event_id": 2406561102,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Destiny_OnBuffDeactivate {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Destiny_OnBuffDeactivate {r2}.txtp",
     "duration": 0.8214965986394558,
     "media_ids": [
       27411234,
@@ -73,7 +73,7 @@
     "file": "assets/audio/auditions/twisted_fate/play_sfx_twistedfate_destiny_onbuffdeactivate_r3.wav",
     "event": "Play_sfx_TwistedFate_Destiny_OnBuffDeactivate",
     "event_id": 2406561102,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Destiny_OnBuffDeactivate {r3}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Destiny_OnBuffDeactivate {r3}.txtp",
     "duration": 0.9709977324263038,
     "media_ids": [
       27411234,
@@ -87,7 +87,7 @@
     "file": "assets/audio/auditions/twisted_fate/play_sfx_twistedfate_gate_onbuffactivate_r1.wav",
     "event": "Play_sfx_TwistedFate_Gate_OnBuffActivate",
     "event_id": 1984802836,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Gate_OnBuffActivate {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Gate_OnBuffActivate {r1}.txtp",
     "duration": 1.8906575963718821,
     "media_ids": [
       136098865,
@@ -101,7 +101,7 @@
     "file": "assets/audio/auditions/twisted_fate/play_sfx_twistedfate_gate_onbuffactivate_r2.wav",
     "event": "Play_sfx_TwistedFate_Gate_OnBuffActivate",
     "event_id": 1984802836,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Gate_OnBuffActivate {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Gate_OnBuffActivate {r2}.txtp",
     "duration": 1.9289795918367347,
     "media_ids": [
       136098865,
@@ -115,7 +115,7 @@
     "file": "assets/audio/auditions/twisted_fate/play_sfx_twistedfate_gate_onbuffactivate_r3.wav",
     "event": "Play_sfx_TwistedFate_Gate_OnBuffActivate",
     "event_id": 1984802836,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Gate_OnBuffActivate {r3}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Gate_OnBuffActivate {r3}.txtp",
     "duration": 1.7533333333333334,
     "media_ids": [
       136098865,
@@ -129,7 +129,7 @@
     "file": "assets/audio/auditions/twisted_fate/play_sfx_twistedfate_gate_marker_r1.wav",
     "event": "Play_sfx_TwistedFate_Gate_marker",
     "event_id": 306882109,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Gate_marker {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Gate_marker {r1}.txtp",
     "duration": 3.7486167800453516,
     "media_ids": [
       16348301,
@@ -143,7 +143,7 @@
     "file": "assets/audio/auditions/twisted_fate/play_sfx_twistedfate_gate_marker_r2.wav",
     "event": "Play_sfx_TwistedFate_Gate_marker",
     "event_id": 306882109,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Gate_marker {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Gate_marker {r2}.txtp",
     "duration": 3.7825850340136054,
     "media_ids": [
       16348301,
@@ -157,7 +157,7 @@
     "file": "assets/audio/auditions/twisted_fate/play_sfx_twistedfate_gate_marker_r3.wav",
     "event": "Play_sfx_TwistedFate_Gate_marker",
     "event_id": 306882109,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Gate_marker {r3}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Gate_marker {r3}.txtp",
     "duration": 3.8517233560090705,
     "media_ids": [
       16348301,
@@ -171,7 +171,7 @@
     "file": "assets/audio/units/imp/play_sfx_yorick_yorickq_summon_r1.wav",
     "event": "Play_sfx_Yorick_YorickQ_summon",
     "event_id": 3732154062,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_summon {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_summon {r1}.txtp",
     "duration": 3.250793650793651,
     "media_ids": [
       63271389,
@@ -187,7 +187,7 @@
     "file": "assets/audio/units/imp/play_sfx_yorick_yorickq_summon_r2.wav",
     "event": "Play_sfx_Yorick_YorickQ_summon",
     "event_id": 3732154062,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_summon {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_summon {r2}.txtp",
     "duration": 3.813877551020408,
     "media_ids": [
       63271389,
@@ -203,7 +203,7 @@
     "file": "assets/audio/units/imp/play_sfx_yorick_yorickq_summon_r3.wav",
     "event": "Play_sfx_Yorick_YorickQ_summon",
     "event_id": 3732154062,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_summon {r3}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_summon {r3}.txtp",
     "duration": 4.057687074829932,
     "media_ids": [
       63271389,
@@ -219,7 +219,7 @@
     "file": "assets/audio/units/imp/play_sfx_yorick_yorickq_summon_r4.wav",
     "event": "Play_sfx_Yorick_YorickQ_summon",
     "event_id": 3732154062,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_summon {r4}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_summon {r4}.txtp",
     "duration": 3.6281179138321997,
     "media_ids": [
       63271389,
@@ -235,7 +235,7 @@
     "file": "assets/audio/units/imp/play_sfx_yorick_yorickq_summon_r5.wav",
     "event": "Play_sfx_Yorick_YorickQ_summon",
     "event_id": 3732154062,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_summon {r5}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_summon {r5}.txtp",
     "duration": 3.8312925170068026,
     "media_ids": [
       63271389,
@@ -251,7 +251,7 @@
     "file": "assets/audio/units/tombstone/play_sfx_yorick_yorickw_onhitlocation_r1.wav",
     "event": "Play_sfx_Yorick_YorickW_OnHitLocation",
     "event_id": 1115269652,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickW_OnHitLocation {r}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickW_OnHitLocation {r}.txtp",
     "duration": 3.474285714285714,
     "media_ids": [
       101263959,
@@ -267,7 +267,7 @@
     "file": "assets/audio/units/tombstone/play_sfx_yorick_yorickw_onhitlocation_r2.wav",
     "event": "Play_sfx_Yorick_YorickW_OnHitLocation",
     "event_id": 1115269652,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/yorick_base_sfx_events-0263-event {r}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/txtp/yorick_base_sfx_events-0263-event {r}.txtp",
     "duration": 3.474285714285714,
     "media_ids": [
       101263959,
@@ -283,7 +283,7 @@
     "file": "assets/audio/units/tombstone/play_sfx_yorick_yorickw_death_r1.wav",
     "event": "Play_sfx_Yorick_YorickW_death",
     "event_id": 715497681,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickW_death {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickW_death {r1}.txtp",
     "duration": 1.5,
     "media_ids": [
       528204500,
@@ -306,7 +306,7 @@
     "file": "assets/audio/units/tombstone/play_sfx_yorick_yorickw_death_r2.wav",
     "event": "Play_sfx_Yorick_YorickW_death",
     "event_id": 715497681,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickW_death {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickW_death {r2}.txtp",
     "duration": 1.5,
     "media_ids": [
       528204500,
@@ -329,7 +329,7 @@
     "file": "assets/audio/units/tombstone/play_sfx_yorick_yorickw_death_r3.wav",
     "event": "Play_sfx_Yorick_YorickW_death",
     "event_id": 715497681,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickW_death {r3}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickW_death {r3}.txtp",
     "duration": 1.5,
     "media_ids": [
       528204500,
@@ -352,7 +352,7 @@
     "file": "assets/audio/units/tombstone/play_sfx_yorick_yorickw_death_r4.wav",
     "event": "Play_sfx_Yorick_YorickW_death",
     "event_id": 715497681,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickW_death {r4}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickW_death {r4}.txtp",
     "duration": 1.5,
     "media_ids": [
       528204500,
@@ -375,7 +375,7 @@
     "file": "assets/audio/spells/heal/play_sfx_summonerheal_oncast_r1.wav",
     "event": "Play_sfx_SummonerHeal_OnCast",
     "event_id": 4193126161,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_SummonerHeal_OnCast {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/Play_sfx_SummonerHeal_OnCast {r1}.txtp",
     "duration": 4.679637188208617,
     "media_ids": [
       273299281,
@@ -389,7 +389,7 @@
     "file": "assets/audio/spells/heal/play_sfx_summonerheal_oncast_r2.wav",
     "event": "Play_sfx_SummonerHeal_OnCast",
     "event_id": 4193126161,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_SummonerHeal_OnCast {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/Play_sfx_SummonerHeal_OnCast {r2}.txtp",
     "duration": 4.685079365079365,
     "media_ids": [
       273299281,
@@ -403,7 +403,7 @@
     "file": "assets/audio/spells/heal/play_sfx_summonerheal_oncast_r3.wav",
     "event": "Play_sfx_SummonerHeal_OnCast",
     "event_id": 4193126161,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_SummonerHeal_OnCast {r3}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/Play_sfx_SummonerHeal_OnCast {r3}.txtp",
     "duration": 4.56079365079365,
     "media_ids": [
       273299281,
@@ -417,7 +417,7 @@
     "file": "assets/audio/units/sun_disc/play_sfx_3190active_oncast_r1.wav",
     "event": "Play_sfx_3190Active_OnCast",
     "event_id": 2210307500,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/items_global_events-1270-event.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/items_global_events-1270-event.txtp",
     "duration": 2.3146031746031746,
     "media_ids": [
       87343910
@@ -429,7 +429,7 @@
     "file": "assets/audio/units/melee_minion/order/play_sfx_sru_orderminionmelee_sru_orderminionmeleebasicattack_oncast_r1.wav",
     "event": "Play_sfx_SRU_OrderMinionMelee_SRU_OrderMinionMeleeBasicAttack_OnCast",
     "event_id": 2999831236,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_ordermelee_sfx_events-0038-event {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordermelee_sfx_events-0038-event {r1}.txtp",
     "duration": 0.61,
     "media_ids": [
       20244531,
@@ -444,7 +444,7 @@
     "file": "assets/audio/units/melee_minion/order/play_sfx_sru_orderminionmelee_sru_orderminionmeleebasicattack_oncast_r2.wav",
     "event": "Play_sfx_SRU_OrderMinionMelee_SRU_OrderMinionMeleeBasicAttack_OnCast",
     "event_id": 2999831236,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_ordermelee_sfx_events-0038-event {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordermelee_sfx_events-0038-event {r2}.txtp",
     "duration": 0.6037414965986394,
     "media_ids": [
       20244531,
@@ -459,7 +459,7 @@
     "file": "assets/audio/units/melee_minion/order/play_sfx_sru_orderminionmelee_sru_orderminionmeleebasicattack_oncast_r3.wav",
     "event": "Play_sfx_SRU_OrderMinionMelee_SRU_OrderMinionMeleeBasicAttack_OnCast",
     "event_id": 2999831236,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_ordermelee_sfx_events-0038-event {r3}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordermelee_sfx_events-0038-event {r3}.txtp",
     "duration": 0.5849433106575964,
     "media_ids": [
       20244531,
@@ -474,7 +474,7 @@
     "file": "assets/audio/units/melee_minion/order/play_sfx_sru_orderminionmelee_sru_orderminionmeleebasicattack_onhit_r1.wav",
     "event": "Play_sfx_SRU_OrderMinionMelee_SRU_OrderMinionMeleeBasicAttack_OnHit",
     "event_id": 3351942892,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_ordermelee_sfx_events-0044-event {r1} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordermelee_sfx_events-0044-event {r1} {d}.txtp",
     "duration": 0.8302947845804989,
     "media_ids": [
       455556863,
@@ -489,7 +489,7 @@
     "file": "assets/audio/units/melee_minion/order/play_sfx_sru_orderminionmelee_sru_orderminionmeleebasicattack_onhit_r2.wav",
     "event": "Play_sfx_SRU_OrderMinionMelee_SRU_OrderMinionMeleeBasicAttack_OnHit",
     "event_id": 3351942892,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_ordermelee_sfx_events-0044-event {r2} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordermelee_sfx_events-0044-event {r2} {d}.txtp",
     "duration": 0.7792290249433107,
     "media_ids": [
       455556863,
@@ -504,7 +504,7 @@
     "file": "assets/audio/units/melee_minion/order/play_sfx_sru_orderminionmelee_sru_orderminionmeleebasicattack_onhit_r3.wav",
     "event": "Play_sfx_SRU_OrderMinionMelee_SRU_OrderMinionMeleeBasicAttack_OnHit",
     "event_id": 3351942892,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_ordermelee_sfx_events-0044-event {r3} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordermelee_sfx_events-0044-event {r3} {d}.txtp",
     "duration": 0.616031746031746,
     "media_ids": [
       455556863,
@@ -519,7 +519,7 @@
     "file": "assets/audio/units/melee_minion/order/play_sfx_sru_orderminionmelee_sru_orderminionmeleebasicattack2_oncast_r1.wav",
     "event": "Play_sfx_SRU_OrderMinionMelee_SRU_OrderMinionMeleeBasicAttack2_OnCast",
     "event_id": 1729807580,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_ordermelee_sfx_events-0034-event {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordermelee_sfx_events-0034-event {r1}.txtp",
     "duration": 0.5591156462585034,
     "media_ids": [
       209883648,
@@ -534,7 +534,7 @@
     "file": "assets/audio/units/melee_minion/order/play_sfx_sru_orderminionmelee_sru_orderminionmeleebasicattack2_oncast_r2.wav",
     "event": "Play_sfx_SRU_OrderMinionMelee_SRU_OrderMinionMeleeBasicAttack2_OnCast",
     "event_id": 1729807580,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_ordermelee_sfx_events-0034-event {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordermelee_sfx_events-0034-event {r2}.txtp",
     "duration": 0.5242630385487528,
     "media_ids": [
       209883648,
@@ -549,7 +549,7 @@
     "file": "assets/audio/units/melee_minion/order/play_sfx_sru_orderminionmelee_sru_orderminionmeleebasicattack2_oncast_r3.wav",
     "event": "Play_sfx_SRU_OrderMinionMelee_SRU_OrderMinionMeleeBasicAttack2_OnCast",
     "event_id": 1729807580,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_ordermelee_sfx_events-0034-event {r3}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordermelee_sfx_events-0034-event {r3}.txtp",
     "duration": 0.5282086167800454,
     "media_ids": [
       209883648,
@@ -564,7 +564,7 @@
     "file": "assets/audio/units/melee_minion/order/play_sfx_sru_orderminionmelee_sru_orderminionmeleebasicattack2_onhit_r1.wav",
     "event": "Play_sfx_SRU_OrderMinionMelee_SRU_OrderMinionMeleeBasicAttack2_OnHit",
     "event_id": 532994356,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_ordermelee_sfx_events-0030-event {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordermelee_sfx_events-0030-event {r1}.txtp",
     "duration": 0.8302947845804989,
     "media_ids": [
       455556863,
@@ -579,7 +579,7 @@
     "file": "assets/audio/units/melee_minion/order/play_sfx_sru_orderminionmelee_sru_orderminionmeleebasicattack2_onhit_r2.wav",
     "event": "Play_sfx_SRU_OrderMinionMelee_SRU_OrderMinionMeleeBasicAttack2_OnHit",
     "event_id": 532994356,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_ordermelee_sfx_events-0030-event {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordermelee_sfx_events-0030-event {r2}.txtp",
     "duration": 0.7792290249433107,
     "media_ids": [
       455556863,
@@ -594,7 +594,7 @@
     "file": "assets/audio/units/melee_minion/order/play_sfx_sru_orderminionmelee_sru_orderminionmeleebasicattack2_onhit_r3.wav",
     "event": "Play_sfx_SRU_OrderMinionMelee_SRU_OrderMinionMeleeBasicAttack2_OnHit",
     "event_id": 532994356,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_ordermelee_sfx_events-0030-event {r3}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordermelee_sfx_events-0030-event {r3}.txtp",
     "duration": 0.616031746031746,
     "media_ids": [
       455556863,
@@ -609,7 +609,7 @@
     "file": "assets/audio/units/melee_minion/chaos/play_sfx_sru_chaosminionmelee_sru_chaosminionmeleebasicattack_oncast_r1.wav",
     "event": "Play_sfx_SRU_ChaosMinionMelee_SRU_ChaosMinionMeleeBasicAttack_OnCast",
     "event_id": 2456298340,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaosmelee_sfx_events-0042-event {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaosmelee_sfx_events-0042-event {r1}.txtp",
     "duration": 0.8480045351473923,
     "media_ids": [
       416699710,
@@ -624,7 +624,7 @@
     "file": "assets/audio/units/melee_minion/chaos/play_sfx_sru_chaosminionmelee_sru_chaosminionmeleebasicattack_oncast_r2.wav",
     "event": "Play_sfx_SRU_ChaosMinionMelee_SRU_ChaosMinionMeleeBasicAttack_OnCast",
     "event_id": 2456298340,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaosmelee_sfx_events-0042-event {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaosmelee_sfx_events-0042-event {r2}.txtp",
     "duration": 0.6317460317460317,
     "media_ids": [
       416699710,
@@ -639,7 +639,7 @@
     "file": "assets/audio/units/melee_minion/chaos/play_sfx_sru_chaosminionmelee_sru_chaosminionmeleebasicattack_oncast_r3.wav",
     "event": "Play_sfx_SRU_ChaosMinionMelee_SRU_ChaosMinionMeleeBasicAttack_OnCast",
     "event_id": 2456298340,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaosmelee_sfx_events-0042-event {r3}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaosmelee_sfx_events-0042-event {r3}.txtp",
     "duration": 0.7618140589569161,
     "media_ids": [
       416699710,
@@ -654,7 +654,7 @@
     "file": "assets/audio/units/melee_minion/chaos/play_sfx_sru_chaosminionmelee_sru_chaosminionmeleebasicattack_onhit_r1.wav",
     "event": "Play_sfx_SRU_ChaosMinionMelee_SRU_ChaosMinionMeleeBasicAttack_OnHit",
     "event_id": 3828951820,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaosmelee_sfx_events-0048-event {r1} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaosmelee_sfx_events-0048-event {r1} {d}.txtp",
     "duration": 0.47374149659863946,
     "media_ids": [
       239995408,
@@ -669,7 +669,7 @@
     "file": "assets/audio/units/melee_minion/chaos/play_sfx_sru_chaosminionmelee_sru_chaosminionmeleebasicattack_onhit_r2.wav",
     "event": "Play_sfx_SRU_ChaosMinionMelee_SRU_ChaosMinionMeleeBasicAttack_OnHit",
     "event_id": 3828951820,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaosmelee_sfx_events-0048-event {r2} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaosmelee_sfx_events-0048-event {r2} {d}.txtp",
     "duration": 0.40210884353741494,
     "media_ids": [
       239995408,
@@ -684,7 +684,7 @@
     "file": "assets/audio/units/melee_minion/chaos/play_sfx_sru_chaosminionmelee_sru_chaosminionmeleebasicattack_onhit_r3.wav",
     "event": "Play_sfx_SRU_ChaosMinionMelee_SRU_ChaosMinionMeleeBasicAttack_OnHit",
     "event_id": 3828951820,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaosmelee_sfx_events-0048-event {r3} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaosmelee_sfx_events-0048-event {r3} {d}.txtp",
     "duration": 0.424875283446712,
     "media_ids": [
       239995408,
@@ -699,7 +699,7 @@
     "file": "assets/audio/units/melee_minion/chaos/play_sfx_sru_chaosminionmelee_sru_chaosminionmeleebasicattack2_oncast_r1.wav",
     "event": "Play_sfx_SRU_ChaosMinionMelee_SRU_ChaosMinionMeleeBasicAttack2_OnCast",
     "event_id": 3950242428,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaosmelee_sfx_events-0050-event {r1} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaosmelee_sfx_events-0050-event {r1} {d}.txtp",
     "duration": 0.881859410430839,
     "media_ids": [
       81705707,
@@ -714,7 +714,7 @@
     "file": "assets/audio/units/melee_minion/chaos/play_sfx_sru_chaosminionmelee_sru_chaosminionmeleebasicattack2_oncast_r2.wav",
     "event": "Play_sfx_SRU_ChaosMinionMelee_SRU_ChaosMinionMeleeBasicAttack2_OnCast",
     "event_id": 3950242428,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaosmelee_sfx_events-0050-event {r2} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaosmelee_sfx_events-0050-event {r2} {d}.txtp",
     "duration": 0.6890022675736961,
     "media_ids": [
       81705707,
@@ -729,7 +729,7 @@
     "file": "assets/audio/units/melee_minion/chaos/play_sfx_sru_chaosminionmelee_sru_chaosminionmeleebasicattack2_oncast_r3.wav",
     "event": "Play_sfx_SRU_ChaosMinionMelee_SRU_ChaosMinionMeleeBasicAttack2_OnCast",
     "event_id": 3950242428,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaosmelee_sfx_events-0050-event {r3} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaosmelee_sfx_events-0050-event {r3} {d}.txtp",
     "duration": 0.7082766439909297,
     "media_ids": [
       81705707,
@@ -744,7 +744,7 @@
     "file": "assets/audio/units/melee_minion/chaos/play_sfx_sru_chaosminionmelee_sru_chaosminionmeleebasicattack2_onhit_r1.wav",
     "event": "Play_sfx_SRU_ChaosMinionMelee_SRU_ChaosMinionMeleeBasicAttack2_OnHit",
     "event_id": 2519567700,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaosmelee_sfx_events-0044-event {r1} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaosmelee_sfx_events-0044-event {r1} {d}.txtp",
     "duration": 0.47374149659863946,
     "media_ids": [
       239995408,
@@ -759,7 +759,7 @@
     "file": "assets/audio/units/melee_minion/chaos/play_sfx_sru_chaosminionmelee_sru_chaosminionmeleebasicattack2_onhit_r2.wav",
     "event": "Play_sfx_SRU_ChaosMinionMelee_SRU_ChaosMinionMeleeBasicAttack2_OnHit",
     "event_id": 2519567700,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaosmelee_sfx_events-0044-event {r2} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaosmelee_sfx_events-0044-event {r2} {d}.txtp",
     "duration": 0.40210884353741494,
     "media_ids": [
       239995408,
@@ -774,7 +774,7 @@
     "file": "assets/audio/units/melee_minion/chaos/play_sfx_sru_chaosminionmelee_sru_chaosminionmeleebasicattack2_onhit_r3.wav",
     "event": "Play_sfx_SRU_ChaosMinionMelee_SRU_ChaosMinionMeleeBasicAttack2_OnHit",
     "event_id": 2519567700,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaosmelee_sfx_events-0044-event {r3} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaosmelee_sfx_events-0044-event {r3} {d}.txtp",
     "duration": 0.424875283446712,
     "media_ids": [
       239995408,
@@ -789,7 +789,7 @@
     "file": "assets/audio/units/ranged_minion/order/play_sfx_sru_orderminionranged_sru_orderminionrangedbasicattack_oncast_r1.wav",
     "event": "Play_sfx_SRU_OrderMinionRanged_SRU_OrderMinionRangedBasicAttack_OnCast",
     "event_id": 23741212,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_orderrange_sfx_events-0012-event {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_orderrange_sfx_events-0012-event {r1}.txtp",
     "duration": 1.7096371882086168,
     "media_ids": [
       298276329,
@@ -803,7 +803,7 @@
     "file": "assets/audio/units/ranged_minion/order/play_sfx_sru_orderminionranged_sru_orderminionrangedbasicattack_oncast_r2.wav",
     "event": "Play_sfx_SRU_OrderMinionRanged_SRU_OrderMinionRangedBasicAttack_OnCast",
     "event_id": 23741212,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_orderrange_sfx_events-0012-event {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_orderrange_sfx_events-0012-event {r2}.txtp",
     "duration": 1.6226757369614513,
     "media_ids": [
       298276329,
@@ -817,7 +817,7 @@
     "file": "assets/audio/units/ranged_minion/order/play_sfx_sru_orderminionranged_sru_orderminionrangedbasicattack_oncast_r3.wav",
     "event": "Play_sfx_SRU_OrderMinionRanged_SRU_OrderMinionRangedBasicAttack_OnCast",
     "event_id": 23741212,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_orderrange_sfx_events-0012-event {r3}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_orderrange_sfx_events-0012-event {r3}.txtp",
     "duration": 1.570702947845805,
     "media_ids": [
       298276329,
@@ -831,7 +831,7 @@
     "file": "assets/audio/units/ranged_minion/order/play_sfx_sru_orderminionranged_sru_orderminionrangedbasicattack_onhit_r1.wav",
     "event": "Play_sfx_SRU_OrderMinionRanged_SRU_OrderMinionRangedBasicAttack_OnHit",
     "event_id": 2828113780,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_orderrange_sfx_events-0026-event {r1} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_orderrange_sfx_events-0026-event {r1} {d}.txtp",
     "duration": 1.0649206349206348,
     "media_ids": [
       234939643,
@@ -846,7 +846,7 @@
     "file": "assets/audio/units/ranged_minion/order/play_sfx_sru_orderminionranged_sru_orderminionrangedbasicattack_onhit_r2.wav",
     "event": "Play_sfx_SRU_OrderMinionRanged_SRU_OrderMinionRangedBasicAttack_OnHit",
     "event_id": 2828113780,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_orderrange_sfx_events-0026-event {r2} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_orderrange_sfx_events-0026-event {r2} {d}.txtp",
     "duration": 0.9229251700680272,
     "media_ids": [
       234939643,
@@ -861,7 +861,7 @@
     "file": "assets/audio/units/ranged_minion/order/play_sfx_sru_orderminionranged_sru_orderminionrangedbasicattack_onhit_r3.wav",
     "event": "Play_sfx_SRU_OrderMinionRanged_SRU_OrderMinionRangedBasicAttack_OnHit",
     "event_id": 2828113780,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_orderrange_sfx_events-0026-event {r3} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_orderrange_sfx_events-0026-event {r3} {d}.txtp",
     "duration": 0.9073922902494331,
     "media_ids": [
       234939643,
@@ -876,7 +876,7 @@
     "file": "assets/audio/units/ranged_minion/order/play_sfx_sru_orderminionranged_sru_orderminionrangedbasicattack2_oncast_r1.wav",
     "event": "Play_sfx_SRU_OrderMinionRanged_SRU_OrderMinionRangedBasicAttack2_OnCast",
     "event_id": 2863652004,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_orderrange_sfx_events-0028-event {r1} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_orderrange_sfx_events-0028-event {r1} {d}.txtp",
     "duration": 1.7096371882086168,
     "media_ids": [
       298276329,
@@ -890,7 +890,7 @@
     "file": "assets/audio/units/ranged_minion/order/play_sfx_sru_orderminionranged_sru_orderminionrangedbasicattack2_oncast_r2.wav",
     "event": "Play_sfx_SRU_OrderMinionRanged_SRU_OrderMinionRangedBasicAttack2_OnCast",
     "event_id": 2863652004,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_orderrange_sfx_events-0028-event {r2} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_orderrange_sfx_events-0028-event {r2} {d}.txtp",
     "duration": 1.6226757369614513,
     "media_ids": [
       298276329,
@@ -904,7 +904,7 @@
     "file": "assets/audio/units/ranged_minion/order/play_sfx_sru_orderminionranged_sru_orderminionrangedbasicattack2_oncast_r3.wav",
     "event": "Play_sfx_SRU_OrderMinionRanged_SRU_OrderMinionRangedBasicAttack2_OnCast",
     "event_id": 2863652004,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_orderrange_sfx_events-0028-event {r3} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_orderrange_sfx_events-0028-event {r3} {d}.txtp",
     "duration": 1.570702947845805,
     "media_ids": [
       298276329,
@@ -918,7 +918,7 @@
     "file": "assets/audio/units/ranged_minion/order/play_sfx_sru_orderminionranged_sru_orderminionrangedbasicattack2_onhit_r1.wav",
     "event": "Play_sfx_SRU_OrderMinionRanged_SRU_OrderMinionRangedBasicAttack2_OnHit",
     "event_id": 2516427340,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_orderrange_sfx_events-0024-event {r1} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_orderrange_sfx_events-0024-event {r1} {d}.txtp",
     "duration": 1.0649206349206348,
     "media_ids": [
       234939643,
@@ -933,7 +933,7 @@
     "file": "assets/audio/units/ranged_minion/order/play_sfx_sru_orderminionranged_sru_orderminionrangedbasicattack2_onhit_r2.wav",
     "event": "Play_sfx_SRU_OrderMinionRanged_SRU_OrderMinionRangedBasicAttack2_OnHit",
     "event_id": 2516427340,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_orderrange_sfx_events-0024-event {r2} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_orderrange_sfx_events-0024-event {r2} {d}.txtp",
     "duration": 0.9229251700680272,
     "media_ids": [
       234939643,
@@ -948,7 +948,7 @@
     "file": "assets/audio/units/ranged_minion/order/play_sfx_sru_orderminionranged_sru_orderminionrangedbasicattack2_onhit_r3.wav",
     "event": "Play_sfx_SRU_OrderMinionRanged_SRU_OrderMinionRangedBasicAttack2_OnHit",
     "event_id": 2516427340,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_orderrange_sfx_events-0024-event {r3} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_orderrange_sfx_events-0024-event {r3} {d}.txtp",
     "duration": 0.9073922902494331,
     "media_ids": [
       234939643,
@@ -963,7 +963,7 @@
     "file": "assets/audio/units/ranged_minion/chaos/play_sfx_sru_chaosminionranged_sru_chaosminionrangedbasicattack_oncast_r1.wav",
     "event": "Play_sfx_SRU_ChaosMinionRanged_SRU_ChaosMinionRangedBasicAttack_OnCast",
     "event_id": 3532837044,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaosrange_sfx_events-0040-event {r1} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaosrange_sfx_events-0040-event {r1} {d}.txtp",
     "duration": 1.3128798185941044,
     "media_ids": [
       205813774,
@@ -977,7 +977,7 @@
     "file": "assets/audio/units/ranged_minion/chaos/play_sfx_sru_chaosminionranged_sru_chaosminionrangedbasicattack_oncast_r2.wav",
     "event": "Play_sfx_SRU_ChaosMinionRanged_SRU_ChaosMinionRangedBasicAttack_OnCast",
     "event_id": 3532837044,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaosrange_sfx_events-0040-event {r2} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaosrange_sfx_events-0040-event {r2} {d}.txtp",
     "duration": 1.3740362811791382,
     "media_ids": [
       205813774,
@@ -991,7 +991,7 @@
     "file": "assets/audio/units/ranged_minion/chaos/play_sfx_sru_chaosminionranged_sru_chaosminionrangedbasicattack_oncast_r3.wav",
     "event": "Play_sfx_SRU_ChaosMinionRanged_SRU_ChaosMinionRangedBasicAttack_OnCast",
     "event_id": 3532837044,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaosrange_sfx_events-0040-event {r3} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaosrange_sfx_events-0040-event {r3} {d}.txtp",
     "duration": 1.4667120181405895,
     "media_ids": [
       205813774,
@@ -1005,7 +1005,7 @@
     "file": "assets/audio/units/ranged_minion/chaos/play_sfx_sru_chaosminionranged_sru_chaosminionrangedbasicattack_onhit_r1.wav",
     "event": "Play_sfx_SRU_ChaosMinionRanged_SRU_ChaosMinionRangedBasicAttack_OnHit",
     "event_id": 2607933148,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaosrange_sfx_events-0028-event {r1} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaosrange_sfx_events-0028-event {r1} {d}.txtp",
     "duration": 1.0565759637188208,
     "media_ids": [
       676519336,
@@ -1020,7 +1020,7 @@
     "file": "assets/audio/units/ranged_minion/chaos/play_sfx_sru_chaosminionranged_sru_chaosminionrangedbasicattack_onhit_r2.wav",
     "event": "Play_sfx_SRU_ChaosMinionRanged_SRU_ChaosMinionRangedBasicAttack_OnHit",
     "event_id": 2607933148,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaosrange_sfx_events-0028-event {r2} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaosrange_sfx_events-0028-event {r2} {d}.txtp",
     "duration": 0.9225396825396825,
     "media_ids": [
       676519336,
@@ -1035,7 +1035,7 @@
     "file": "assets/audio/units/ranged_minion/chaos/play_sfx_sru_chaosminionranged_sru_chaosminionrangedbasicattack_onhit_r3.wav",
     "event": "Play_sfx_SRU_ChaosMinionRanged_SRU_ChaosMinionRangedBasicAttack_OnHit",
     "event_id": 2607933148,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaosrange_sfx_events-0028-event {r3} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaosrange_sfx_events-0028-event {r3} {d}.txtp",
     "duration": 0.7402721088435374,
     "media_ids": [
       676519336,
@@ -1050,7 +1050,7 @@
     "file": "assets/audio/units/ranged_minion/chaos/play_sfx_sru_chaosminionranged_sru_chaosminionrangedbasicattack2_oncast_r1.wav",
     "event": "Play_sfx_SRU_ChaosMinionRanged_SRU_ChaosMinionRangedBasicAttack2_OnCast",
     "event_id": 3881201356,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaosrange_sfx_events-0042-event {r1} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaosrange_sfx_events-0042-event {r1} {d}.txtp",
     "duration": 1.3128798185941044,
     "media_ids": [
       205813774,
@@ -1064,7 +1064,7 @@
     "file": "assets/audio/units/ranged_minion/chaos/play_sfx_sru_chaosminionranged_sru_chaosminionrangedbasicattack2_oncast_r2.wav",
     "event": "Play_sfx_SRU_ChaosMinionRanged_SRU_ChaosMinionRangedBasicAttack2_OnCast",
     "event_id": 3881201356,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaosrange_sfx_events-0042-event {r2} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaosrange_sfx_events-0042-event {r2} {d}.txtp",
     "duration": 1.3740362811791382,
     "media_ids": [
       205813774,
@@ -1078,7 +1078,7 @@
     "file": "assets/audio/units/ranged_minion/chaos/play_sfx_sru_chaosminionranged_sru_chaosminionrangedbasicattack2_oncast_r3.wav",
     "event": "Play_sfx_SRU_ChaosMinionRanged_SRU_ChaosMinionRangedBasicAttack2_OnCast",
     "event_id": 3881201356,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaosrange_sfx_events-0042-event {r3} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaosrange_sfx_events-0042-event {r3} {d}.txtp",
     "duration": 1.4667120181405895,
     "media_ids": [
       205813774,
@@ -1092,7 +1092,7 @@
     "file": "assets/audio/units/ranged_minion/chaos/play_sfx_sru_chaosminionranged_sru_chaosminionrangedbasicattack2_onhit_r1.wav",
     "event": "Play_sfx_SRU_ChaosMinionRanged_SRU_ChaosMinionRangedBasicAttack2_OnHit",
     "event_id": 2396066020,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaosrange_sfx_events-0024-event {r1} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaosrange_sfx_events-0024-event {r1} {d}.txtp",
     "duration": 1.0565759637188208,
     "media_ids": [
       676519336,
@@ -1107,7 +1107,7 @@
     "file": "assets/audio/units/ranged_minion/chaos/play_sfx_sru_chaosminionranged_sru_chaosminionrangedbasicattack2_onhit_r2.wav",
     "event": "Play_sfx_SRU_ChaosMinionRanged_SRU_ChaosMinionRangedBasicAttack2_OnHit",
     "event_id": 2396066020,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaosrange_sfx_events-0024-event {r2} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaosrange_sfx_events-0024-event {r2} {d}.txtp",
     "duration": 0.9225396825396825,
     "media_ids": [
       676519336,
@@ -1122,7 +1122,7 @@
     "file": "assets/audio/units/ranged_minion/chaos/play_sfx_sru_chaosminionranged_sru_chaosminionrangedbasicattack2_onhit_r3.wav",
     "event": "Play_sfx_SRU_ChaosMinionRanged_SRU_ChaosMinionRangedBasicAttack2_OnHit",
     "event_id": 2396066020,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaosrange_sfx_events-0024-event {r3} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaosrange_sfx_events-0024-event {r3} {d}.txtp",
     "duration": 0.7402721088435374,
     "media_ids": [
       676519336,
@@ -1137,7 +1137,7 @@
     "file": "assets/audio/units/siege_minion/order/play_sfx_sru_orderminionsiege_sru_orderminionsiegebasicattack_oncast_r1.wav",
     "event": "Play_sfx_SRU_OrderMinionSiege_SRU_OrderMinionSiegeBasicAttack_OnCast",
     "event_id": 1828033034,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_ordersiege_sfx_events-0017-event {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordersiege_sfx_events-0017-event {r1}.txtp",
     "duration": 2.4884353741496597,
     "media_ids": [
       102902881,
@@ -1152,7 +1152,7 @@
     "file": "assets/audio/units/siege_minion/order/play_sfx_sru_orderminionsiege_sru_orderminionsiegebasicattack_oncast_r2.wav",
     "event": "Play_sfx_SRU_OrderMinionSiege_SRU_OrderMinionSiegeBasicAttack_OnCast",
     "event_id": 1828033034,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_ordersiege_sfx_events-0017-event {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordersiege_sfx_events-0017-event {r2}.txtp",
     "duration": 2.4506349206349207,
     "media_ids": [
       102902881,
@@ -1167,7 +1167,7 @@
     "file": "assets/audio/units/siege_minion/order/play_sfx_sru_orderminionsiege_sru_orderminionsiegebasicattack_oncast_r3.wav",
     "event": "Play_sfx_SRU_OrderMinionSiege_SRU_OrderMinionSiegeBasicAttack_OnCast",
     "event_id": 1828033034,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_ordersiege_sfx_events-0017-event {r3}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordersiege_sfx_events-0017-event {r3}.txtp",
     "duration": 2.2688208616780043,
     "media_ids": [
       102902881,
@@ -1182,7 +1182,7 @@
     "file": "assets/audio/units/siege_minion/order/play_sfx_sru_orderminionsiege_sru_orderminionsiegebasicattack_onhit_r1.wav",
     "event": "Play_sfx_SRU_OrderMinionSiege_SRU_OrderMinionSiegeBasicAttack_OnHit",
     "event_id": 2658307326,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_ordersiege_sfx_events-0021-event {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordersiege_sfx_events-0021-event {r1}.txtp",
     "duration": 1.633061224489796,
     "media_ids": [
       127103123,
@@ -1201,7 +1201,7 @@
     "file": "assets/audio/units/siege_minion/order/play_sfx_sru_orderminionsiege_sru_orderminionsiegebasicattack_onhit_r2.wav",
     "event": "Play_sfx_SRU_OrderMinionSiege_SRU_OrderMinionSiegeBasicAttack_OnHit",
     "event_id": 2658307326,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_ordersiege_sfx_events-0021-event {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordersiege_sfx_events-0021-event {r2}.txtp",
     "duration": 1.3475510204081633,
     "media_ids": [
       127103123,
@@ -1220,7 +1220,7 @@
     "file": "assets/audio/units/siege_minion/order/play_sfx_sru_orderminionsiege_sru_orderminionsiegebasicattack_onhit_r3.wav",
     "event": "Play_sfx_SRU_OrderMinionSiege_SRU_OrderMinionSiegeBasicAttack_OnHit",
     "event_id": 2658307326,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_ordersiege_sfx_events-0021-event {r3}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordersiege_sfx_events-0021-event {r3}.txtp",
     "duration": 1.578639455782313,
     "media_ids": [
       127103123,
@@ -1239,7 +1239,7 @@
     "file": "assets/audio/units/siege_minion/chaos/play_sfx_sru_chaosminionsiege_sru_chaosminionsiegebasicattack_onmissilecast_r1.wav",
     "event": "Play_sfx_SRU_ChaosMinionSiege_SRU_ChaosMinionSiegeBasicAttack_OnMissileCast",
     "event_id": 2858937692,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaossiege_sfx_events-0019-event {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaossiege_sfx_events-0019-event {r1}.txtp",
     "duration": 1.2183673469387755,
     "media_ids": [
       265319268,
@@ -1254,7 +1254,7 @@
     "file": "assets/audio/units/siege_minion/chaos/play_sfx_sru_chaosminionsiege_sru_chaosminionsiegebasicattack_onmissilecast_r2.wav",
     "event": "Play_sfx_SRU_ChaosMinionSiege_SRU_ChaosMinionSiegeBasicAttack_OnMissileCast",
     "event_id": 2858937692,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaossiege_sfx_events-0019-event {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaossiege_sfx_events-0019-event {r2}.txtp",
     "duration": 1.5973242630385487,
     "media_ids": [
       265319268,
@@ -1269,7 +1269,7 @@
     "file": "assets/audio/units/siege_minion/chaos/play_sfx_sru_chaosminionsiege_sru_chaosminionsiegebasicattack_onmissilecast_r3.wav",
     "event": "Play_sfx_SRU_ChaosMinionSiege_SRU_ChaosMinionSiegeBasicAttack_OnMissileCast",
     "event_id": 2858937692,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaossiege_sfx_events-0019-event {r3}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaossiege_sfx_events-0019-event {r3}.txtp",
     "duration": 1.7741950113378684,
     "media_ids": [
       265319268,
@@ -1284,7 +1284,7 @@
     "file": "assets/audio/units/siege_minion/chaos/play_sfx_sru_chaosminionsiege_sru_chaosminionsiegebasicattack_onhit_r1.wav",
     "event": "Play_sfx_SRU_ChaosMinionSiege_SRU_ChaosMinionSiegeBasicAttack_OnHit",
     "event_id": 2998416022,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaossiege_sfx_events-0021-event {r1} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaossiege_sfx_events-0021-event {r1} {d}.txtp",
     "duration": 0.8940136054421769,
     "media_ids": [
       264301615,
@@ -1299,7 +1299,7 @@
     "file": "assets/audio/units/siege_minion/chaos/play_sfx_sru_chaosminionsiege_sru_chaosminionsiegebasicattack_onhit_r2.wav",
     "event": "Play_sfx_SRU_ChaosMinionSiege_SRU_ChaosMinionSiegeBasicAttack_OnHit",
     "event_id": 2998416022,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaossiege_sfx_events-0021-event {r2} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaossiege_sfx_events-0021-event {r2} {d}.txtp",
     "duration": 1.121609977324263,
     "media_ids": [
       264301615,
@@ -1314,7 +1314,7 @@
     "file": "assets/audio/units/siege_minion/chaos/play_sfx_sru_chaosminionsiege_sru_chaosminionsiegebasicattack_onhit_r3.wav",
     "event": "Play_sfx_SRU_ChaosMinionSiege_SRU_ChaosMinionSiegeBasicAttack_OnHit",
     "event_id": 2998416022,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaossiege_sfx_events-0021-event {r3} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaossiege_sfx_events-0021-event {r3} {d}.txtp",
     "duration": 1.167142857142857,
     "media_ids": [
       264301615,
@@ -1329,7 +1329,7 @@
     "file": "assets/audio/units/super_minion/order/play_sfx_sru_orderminionsuper_sru_orderminionsuperbasicattack_oncast_r1.wav",
     "event": "Play_sfx_SRU_OrderMinionSuper_SRU_OrderMinionSuperBasicAttack_OnCast",
     "event_id": 4287046350,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_ordersuper_sfx_events-0041-event {r1} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordersuper_sfx_events-0041-event {r1} {d}.txtp",
     "duration": 0.7303854875283446,
     "media_ids": [
       296206528,
@@ -1344,7 +1344,7 @@
     "file": "assets/audio/units/super_minion/order/play_sfx_sru_orderminionsuper_sru_orderminionsuperbasicattack_oncast_r2.wav",
     "event": "Play_sfx_SRU_OrderMinionSuper_SRU_OrderMinionSuperBasicAttack_OnCast",
     "event_id": 4287046350,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_ordersuper_sfx_events-0041-event {r2} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordersuper_sfx_events-0041-event {r2} {d}.txtp",
     "duration": 0.7662811791383219,
     "media_ids": [
       296206528,
@@ -1359,7 +1359,7 @@
     "file": "assets/audio/units/super_minion/order/play_sfx_sru_orderminionsuper_sru_orderminionsuperbasicattack_oncast_r3.wav",
     "event": "Play_sfx_SRU_OrderMinionSuper_SRU_OrderMinionSuperBasicAttack_OnCast",
     "event_id": 4287046350,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_ordersuper_sfx_events-0041-event {r3} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordersuper_sfx_events-0041-event {r3} {d}.txtp",
     "duration": 0.7672562358276644,
     "media_ids": [
       296206528,
@@ -1374,7 +1374,7 @@
     "file": "assets/audio/units/super_minion/order/play_sfx_sru_orderminionsuper_sru_orderminionsuperbasicattack_onhit_r1.wav",
     "event": "Play_sfx_SRU_OrderMinionSuper_SRU_OrderMinionSuperBasicAttack_OnHit",
     "event_id": 927726618,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_ordersuper_sfx_events-0023-event {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordersuper_sfx_events-0023-event {r1}.txtp",
     "duration": 1.4167120181405897,
     "media_ids": [
       59568009,
@@ -1389,7 +1389,7 @@
     "file": "assets/audio/units/super_minion/order/play_sfx_sru_orderminionsuper_sru_orderminionsuperbasicattack_onhit_r2.wav",
     "event": "Play_sfx_SRU_OrderMinionSuper_SRU_OrderMinionSuperBasicAttack_OnHit",
     "event_id": 927726618,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_ordersuper_sfx_events-0023-event {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordersuper_sfx_events-0023-event {r2}.txtp",
     "duration": 1.4720408163265306,
     "media_ids": [
       59568009,
@@ -1404,7 +1404,7 @@
     "file": "assets/audio/units/super_minion/order/play_sfx_sru_orderminionsuper_sru_orderminionsuperbasicattack_onhit_r3.wav",
     "event": "Play_sfx_SRU_OrderMinionSuper_SRU_OrderMinionSuperBasicAttack_OnHit",
     "event_id": 927726618,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_ordersuper_sfx_events-0023-event {r3}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordersuper_sfx_events-0023-event {r3}.txtp",
     "duration": 1.3344671201814058,
     "media_ids": [
       59568009,
@@ -1419,7 +1419,7 @@
     "file": "assets/audio/units/super_minion/order/play_sfx_sru_orderminionsuper_sru_orderminionsuperbasicattack2_oncast_r1.wav",
     "event": "Play_sfx_SRU_OrderMinionSuper_SRU_OrderMinionSuperBasicAttack2_OnCast",
     "event_id": 521526550,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_ordersuper_sfx_events-0019-event {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordersuper_sfx_events-0019-event {r1}.txtp",
     "duration": 2.5627437641723354,
     "media_ids": [
       255122525,
@@ -1434,7 +1434,7 @@
     "file": "assets/audio/units/super_minion/order/play_sfx_sru_orderminionsuper_sru_orderminionsuperbasicattack2_oncast_r2.wav",
     "event": "Play_sfx_SRU_OrderMinionSuper_SRU_OrderMinionSuperBasicAttack2_OnCast",
     "event_id": 521526550,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_ordersuper_sfx_events-0019-event {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordersuper_sfx_events-0019-event {r2}.txtp",
     "duration": 2.5777551020408165,
     "media_ids": [
       255122525,
@@ -1449,7 +1449,7 @@
     "file": "assets/audio/units/super_minion/order/play_sfx_sru_orderminionsuper_sru_orderminionsuperbasicattack2_oncast_r3.wav",
     "event": "Play_sfx_SRU_OrderMinionSuper_SRU_OrderMinionSuperBasicAttack2_OnCast",
     "event_id": 521526550,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_ordersuper_sfx_events-0019-event {r3}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordersuper_sfx_events-0019-event {r3}.txtp",
     "duration": 2.5056009070294785,
     "media_ids": [
       255122525,
@@ -1464,7 +1464,7 @@
     "file": "assets/audio/units/super_minion/order/play_sfx_sru_orderminionsuper_sru_orderminionsuperbasicattack2_onhit_r1.wav",
     "event": "Play_sfx_SRU_OrderMinionSuper_SRU_OrderMinionSuperBasicAttack2_OnHit",
     "event_id": 3537132338,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_ordersuper_sfx_events-0033-event {r1} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordersuper_sfx_events-0033-event {r1} {d}.txtp",
     "duration": 1.4167120181405897,
     "media_ids": [
       59568009,
@@ -1479,7 +1479,7 @@
     "file": "assets/audio/units/super_minion/order/play_sfx_sru_orderminionsuper_sru_orderminionsuperbasicattack2_onhit_r2.wav",
     "event": "Play_sfx_SRU_OrderMinionSuper_SRU_OrderMinionSuperBasicAttack2_OnHit",
     "event_id": 3537132338,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_ordersuper_sfx_events-0033-event {r2} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordersuper_sfx_events-0033-event {r2} {d}.txtp",
     "duration": 1.4720408163265306,
     "media_ids": [
       59568009,
@@ -1494,7 +1494,7 @@
     "file": "assets/audio/units/super_minion/order/play_sfx_sru_orderminionsuper_sru_orderminionsuperbasicattack2_onhit_r3.wav",
     "event": "Play_sfx_SRU_OrderMinionSuper_SRU_OrderMinionSuperBasicAttack2_OnHit",
     "event_id": 3537132338,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_ordersuper_sfx_events-0033-event {r3} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordersuper_sfx_events-0033-event {r3} {d}.txtp",
     "duration": 1.3344671201814058,
     "media_ids": [
       59568009,
@@ -1509,7 +1509,7 @@
     "file": "assets/audio/units/super_minion/chaos/play_sfx_sru_chaosminionsuper_sru_chaosminionsuperbasicattack_oncast_r1.wav",
     "event": "Play_sfx_SRU_ChaosMinionSuper_SRU_ChaosMinionSuperBasicAttack_OnCast",
     "event_id": 2342324534,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaossuper_sfx_events-0027-event {r1} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaossuper_sfx_events-0027-event {r1} {d}.txtp",
     "duration": 0.8357596371882087,
     "media_ids": [
       102090040,
@@ -1524,7 +1524,7 @@
     "file": "assets/audio/units/super_minion/chaos/play_sfx_sru_chaosminionsuper_sru_chaosminionsuperbasicattack_oncast_r2.wav",
     "event": "Play_sfx_SRU_ChaosMinionSuper_SRU_ChaosMinionSuperBasicAttack_OnCast",
     "event_id": 2342324534,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaossuper_sfx_events-0027-event {r2} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaossuper_sfx_events-0027-event {r2} {d}.txtp",
     "duration": 0.9024489795918368,
     "media_ids": [
       102090040,
@@ -1539,7 +1539,7 @@
     "file": "assets/audio/units/super_minion/chaos/play_sfx_sru_chaosminionsuper_sru_chaosminionsuperbasicattack_oncast_r3.wav",
     "event": "Play_sfx_SRU_ChaosMinionSuper_SRU_ChaosMinionSuperBasicAttack_OnCast",
     "event_id": 2342324534,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaossuper_sfx_events-0027-event {r3} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaossuper_sfx_events-0027-event {r3} {d}.txtp",
     "duration": 0.9557596371882087,
     "media_ids": [
       102090040,
@@ -1554,7 +1554,7 @@
     "file": "assets/audio/units/super_minion/chaos/play_sfx_sru_chaosminionsuper_sru_chaosminionsuperbasicattack_onhit_r1.wav",
     "event": "Play_sfx_SRU_ChaosMinionSuper_SRU_ChaosMinionSuperBasicAttack_OnHit",
     "event_id": 2362665938,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaossuper_sfx_events-0029-event {r1} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaossuper_sfx_events-0029-event {r1} {d}.txtp",
     "duration": 1.4586621315192745,
     "media_ids": [
       665034686,
@@ -1569,7 +1569,7 @@
     "file": "assets/audio/units/super_minion/chaos/play_sfx_sru_chaosminionsuper_sru_chaosminionsuperbasicattack_onhit_r2.wav",
     "event": "Play_sfx_SRU_ChaosMinionSuper_SRU_ChaosMinionSuperBasicAttack_OnHit",
     "event_id": 2362665938,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaossuper_sfx_events-0029-event {r2} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaossuper_sfx_events-0029-event {r2} {d}.txtp",
     "duration": 1.123628117913832,
     "media_ids": [
       665034686,
@@ -1584,7 +1584,7 @@
     "file": "assets/audio/units/super_minion/chaos/play_sfx_sru_chaosminionsuper_sru_chaosminionsuperbasicattack_onhit_r3.wav",
     "event": "Play_sfx_SRU_ChaosMinionSuper_SRU_ChaosMinionSuperBasicAttack_OnHit",
     "event_id": 2362665938,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaossuper_sfx_events-0029-event {r3} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaossuper_sfx_events-0029-event {r3} {d}.txtp",
     "duration": 1.2017913832199547,
     "media_ids": [
       665034686,
@@ -1599,7 +1599,7 @@
     "file": "assets/audio/units/super_minion/chaos/play_sfx_sru_chaosminionsuper_sru_chaosminionsuperbasicattack2_oncast_r1.wav",
     "event": "Play_sfx_SRU_ChaosMinionSuper_SRU_ChaosMinionSuperBasicAttack2_OnCast",
     "event_id": 1347524046,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaossuper_sfx_events-0019-event {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaossuper_sfx_events-0019-event {r1}.txtp",
     "duration": 1.4482312925170069,
     "media_ids": [
       634067554,
@@ -1614,7 +1614,7 @@
     "file": "assets/audio/units/super_minion/chaos/play_sfx_sru_chaosminionsuper_sru_chaosminionsuperbasicattack2_oncast_r2.wav",
     "event": "Play_sfx_SRU_ChaosMinionSuper_SRU_ChaosMinionSuperBasicAttack2_OnCast",
     "event_id": 1347524046,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaossuper_sfx_events-0019-event {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaossuper_sfx_events-0019-event {r2}.txtp",
     "duration": 1.3275283446712018,
     "media_ids": [
       634067554,
@@ -1629,7 +1629,7 @@
     "file": "assets/audio/units/super_minion/chaos/play_sfx_sru_chaosminionsuper_sru_chaosminionsuperbasicattack2_oncast_r3.wav",
     "event": "Play_sfx_SRU_ChaosMinionSuper_SRU_ChaosMinionSuperBasicAttack2_OnCast",
     "event_id": 1347524046,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaossuper_sfx_events-0019-event {r3}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaossuper_sfx_events-0019-event {r3}.txtp",
     "duration": 1.079591836734694,
     "media_ids": [
       634067554,
@@ -1644,7 +1644,7 @@
     "file": "assets/audio/units/super_minion/chaos/play_sfx_sru_chaosminionsuper_sru_chaosminionsuperbasicattack2_onhit_r1.wav",
     "event": "Play_sfx_SRU_ChaosMinionSuper_SRU_ChaosMinionSuperBasicAttack2_OnHit",
     "event_id": 4234911002,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaossuper_sfx_events-0041-event {r1} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaossuper_sfx_events-0041-event {r1} {d}.txtp",
     "duration": 1.4586621315192745,
     "media_ids": [
       665034686,
@@ -1659,7 +1659,7 @@
     "file": "assets/audio/units/super_minion/chaos/play_sfx_sru_chaosminionsuper_sru_chaosminionsuperbasicattack2_onhit_r2.wav",
     "event": "Play_sfx_SRU_ChaosMinionSuper_SRU_ChaosMinionSuperBasicAttack2_OnHit",
     "event_id": 4234911002,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaossuper_sfx_events-0041-event {r2} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaossuper_sfx_events-0041-event {r2} {d}.txtp",
     "duration": 1.123628117913832,
     "media_ids": [
       665034686,
@@ -1674,7 +1674,7 @@
     "file": "assets/audio/units/super_minion/chaos/play_sfx_sru_chaosminionsuper_sru_chaosminionsuperbasicattack2_onhit_r3.wav",
     "event": "Play_sfx_SRU_ChaosMinionSuper_SRU_ChaosMinionSuperBasicAttack2_OnHit",
     "event_id": 4234911002,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/npc_global_minions_chaossuper_sfx_events-0041-event {r3} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaossuper_sfx_events-0041-event {r3} {d}.txtp",
     "duration": 1.2017913832199547,
     "media_ids": [
       665034686,
@@ -1689,7 +1689,7 @@
     "file": "assets/audio/world/order/play_sfx_env_map11_orderturretminionbasicattack_hit_r1.wav",
     "event": "Play_sfx_Env_map11_OrderTurretMinionBasicAttack_hit",
     "event_id": 3381914753,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_Env_map11_OrderTurretMinionBasicAttack_hit {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/Play_sfx_Env_map11_OrderTurretMinionBasicAttack_hit {r1}.txtp",
     "duration": 1.2703628117913832,
     "media_ids": [
       321369288,
@@ -1702,7 +1702,7 @@
     "file": "assets/audio/world/order/play_sfx_env_map11_orderturretminionbasicattack_hit_r2.wav",
     "event": "Play_sfx_Env_map11_OrderTurretMinionBasicAttack_hit",
     "event_id": 3381914753,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_Env_map11_OrderTurretMinionBasicAttack_hit {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/Play_sfx_Env_map11_OrderTurretMinionBasicAttack_hit {r2}.txtp",
     "duration": 1.3471201814058957,
     "media_ids": [
       321369288,
@@ -1715,7 +1715,7 @@
     "file": "assets/audio/world/order/play_sfx_env_map11_orderturretminionbasicattack_cast_r1.wav",
     "event": "Play_sfx_Env_map11_OrderTurretMinionBasicAttack_cast",
     "event_id": 107904683,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/env_global_buildings_sfx_events-0259-event {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/env_global_buildings_sfx_events-0259-event {r1}.txtp",
     "duration": 2.2032199546485263,
     "media_ids": [
       239389260,
@@ -1730,7 +1730,7 @@
     "file": "assets/audio/world/order/play_sfx_env_map11_orderturretminionbasicattack_cast_r2.wav",
     "event": "Play_sfx_Env_map11_OrderTurretMinionBasicAttack_cast",
     "event_id": 107904683,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/env_global_buildings_sfx_events-0259-event {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/env_global_buildings_sfx_events-0259-event {r2}.txtp",
     "duration": 2.085011337868481,
     "media_ids": [
       239389260,
@@ -1745,7 +1745,7 @@
     "file": "assets/audio/world/order/play_sfx_env_map11_orderturretminionbasicattack_cast_r3.wav",
     "event": "Play_sfx_Env_map11_OrderTurretMinionBasicAttack_cast",
     "event_id": 107904683,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/env_global_buildings_sfx_events-0259-event {r3}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/env_global_buildings_sfx_events-0259-event {r3}.txtp",
     "duration": 2.123219954648526,
     "media_ids": [
       239389260,
@@ -1760,7 +1760,7 @@
     "file": "assets/audio/world/order/play_sfx_env_map11_orderturretminionbasicattack_missilelaunch_r1.wav",
     "event": "Play_sfx_Env_map11_OrderTurretMinionBasicAttack_missilelaunch",
     "event_id": 2427351139,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_Env_map11_OrderTurretMinionBasicAttack_missilelaunch {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/Play_sfx_Env_map11_OrderTurretMinionBasicAttack_missilelaunch {r1}.txtp",
     "duration": 1.5462131519274376,
     "media_ids": [
       398859396,
@@ -1774,7 +1774,7 @@
     "file": "assets/audio/world/order/play_sfx_env_map11_orderturretminionbasicattack_missilelaunch_r2.wav",
     "event": "Play_sfx_Env_map11_OrderTurretMinionBasicAttack_missilelaunch",
     "event_id": 2427351139,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_Env_map11_OrderTurretMinionBasicAttack_missilelaunch {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/Play_sfx_Env_map11_OrderTurretMinionBasicAttack_missilelaunch {r2}.txtp",
     "duration": 1.9661678004535148,
     "media_ids": [
       398859396,
@@ -1788,7 +1788,7 @@
     "file": "assets/audio/world/order/play_sfx_env_map11_orderturretminionbasicattack_missilelaunch_r3.wav",
     "event": "Play_sfx_Env_map11_OrderTurretMinionBasicAttack_missilelaunch",
     "event_id": 2427351139,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_Env_map11_OrderTurretMinionBasicAttack_missilelaunch {r3}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/Play_sfx_Env_map11_OrderTurretMinionBasicAttack_missilelaunch {r3}.txtp",
     "duration": 1.561814058956916,
     "media_ids": [
       398859396,
@@ -1802,7 +1802,7 @@
     "file": "assets/audio/world/order/play_sfx_env_orderturret_break01_r1.wav",
     "event": "Play_sfx_ENV_OrderTurret_break01",
     "event_id": 3905909009,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_ENV_OrderTurret_break01.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/Play_sfx_ENV_OrderTurret_break01.txtp",
     "duration": 4.278095238095238,
     "media_ids": [
       277766611
@@ -1814,7 +1814,7 @@
     "file": "assets/audio/world/order/play_sfx_env_orderturret_break02_r1.wav",
     "event": "Play_sfx_ENV_OrderTurret_break02",
     "event_id": 3905909010,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_ENV_OrderTurret_break02.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/Play_sfx_ENV_OrderTurret_break02.txtp",
     "duration": 4.274965986394558,
     "media_ids": [
       595052768
@@ -1826,7 +1826,7 @@
     "file": "assets/audio/world/order/play_sfx_env_orderturret_break03_r1.wav",
     "event": "Play_sfx_ENV_OrderTurret_break03",
     "event_id": 3905909011,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_ENV_OrderTurret_break03.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/Play_sfx_ENV_OrderTurret_break03.txtp",
     "duration": 7.598571428571429,
     "media_ids": [
       472890284
@@ -1838,7 +1838,7 @@
     "file": "assets/audio/world/order/play_sfx_env_sruap_order_nexus_spawn_r1.wav",
     "event": "Play_sfx_Env_sruap_order_nexus_spawn",
     "event_id": 2817262864,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_Env_sruap_order_nexus_spawn.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/Play_sfx_Env_sruap_order_nexus_spawn.txtp",
     "duration": 19.276485260770976,
     "media_ids": [
       714406518
@@ -1850,7 +1850,7 @@
     "file": "assets/audio/world/order/play_sfx_env_sruap_order_nexus_alive_loop_r1.wav",
     "event": "Play_sfx_Env_sruap_order_nexus_alive_loop",
     "event_id": 2400685163,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_Env_sruap_order_nexus_alive_loop.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/Play_sfx_Env_sruap_order_nexus_alive_loop.txtp",
     "duration": 5.644353741496599,
     "media_ids": [
       714346081
@@ -1862,7 +1862,7 @@
     "file": "assets/audio/world/order/play_sfx_env_global_eog_ordernexus_death_oc_r1.wav",
     "event": "Play_sfx_Env_Global_EoG_OrderNexus_death_oc",
     "event_id": 854049063,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_Env_Global_EoG_OrderNexus_death_oc.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/Play_sfx_Env_Global_EoG_OrderNexus_death_oc.txtp",
     "duration": 9.663786848072561,
     "media_ids": [
       535900553,
@@ -1878,7 +1878,7 @@
     "file": "assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_hit_r1.wav",
     "event": "Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_hit",
     "event_id": 1256783657,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_hit {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_hit {r1}.txtp",
     "duration": 1.8681179138321995,
     "media_ids": [
       432513021,
@@ -1893,7 +1893,7 @@
     "file": "assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_hit_r2.wav",
     "event": "Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_hit",
     "event_id": 1256783657,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_hit {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_hit {r2}.txtp",
     "duration": 2.0768480725623584,
     "media_ids": [
       432513021,
@@ -1908,7 +1908,7 @@
     "file": "assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_hit_r3.wav",
     "event": "Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_hit",
     "event_id": 1256783657,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_hit {r3}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_hit {r3}.txtp",
     "duration": 1.9726757369614512,
     "media_ids": [
       432513021,
@@ -1923,7 +1923,7 @@
     "file": "assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_hit_r4.wav",
     "event": "Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_hit",
     "event_id": 1256783657,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_hit {r4}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_hit {r4}.txtp",
     "duration": 2.0241043083900228,
     "media_ids": [
       432513021,
@@ -1938,7 +1938,7 @@
     "file": "assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_cast_r1.wav",
     "event": "Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_cast",
     "event_id": 352283651,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/env_global_buildings_sfx_events-0267-event {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/env_global_buildings_sfx_events-0267-event {r1}.txtp",
     "duration": 2.951678004535147,
     "media_ids": [
       263691814,
@@ -1953,7 +1953,7 @@
     "file": "assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_cast_r2.wav",
     "event": "Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_cast",
     "event_id": 352283651,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/env_global_buildings_sfx_events-0267-event {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/env_global_buildings_sfx_events-0267-event {r2}.txtp",
     "duration": 2.86,
     "media_ids": [
       263691814,
@@ -1968,7 +1968,7 @@
     "file": "assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_cast_r3.wav",
     "event": "Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_cast",
     "event_id": 352283651,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/env_global_buildings_sfx_events-0267-event {r3}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/env_global_buildings_sfx_events-0267-event {r3}.txtp",
     "duration": 2.7586848072562358,
     "media_ids": [
       263691814,
@@ -1983,7 +1983,7 @@
     "file": "assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_missilelaunch_r1.wav",
     "event": "Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_missilelaunch",
     "event_id": 3600744219,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_missilelaunch {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_missilelaunch {r1}.txtp",
     "duration": 1.8391836734693878,
     "media_ids": [
       201534931,
@@ -1998,7 +1998,7 @@
     "file": "assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_missilelaunch_r2.wav",
     "event": "Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_missilelaunch",
     "event_id": 3600744219,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_missilelaunch {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_missilelaunch {r2}.txtp",
     "duration": 1.8123356009070295,
     "media_ids": [
       201534931,
@@ -2013,7 +2013,7 @@
     "file": "assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_missilelaunch_r3.wav",
     "event": "Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_missilelaunch",
     "event_id": 3600744219,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_missilelaunch {r3}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_missilelaunch {r3}.txtp",
     "duration": 2.054671201814059,
     "media_ids": [
       201534931,
@@ -2028,7 +2028,7 @@
     "file": "assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_missilelaunch_r4.wav",
     "event": "Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_missilelaunch",
     "event_id": 3600744219,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_missilelaunch {r4}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_missilelaunch {r4}.txtp",
     "duration": 2.0058503401360546,
     "media_ids": [
       201534931,
@@ -2043,7 +2043,7 @@
     "file": "assets/audio/world/chaos/play_sfx_env_chaosturret_break01_r1.wav",
     "event": "Play_sfx_ENV_ChaosTurret_break01",
     "event_id": 2620890673,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_ENV_ChaosTurret_break01.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/Play_sfx_ENV_ChaosTurret_break01.txtp",
     "duration": 4.343015873015873,
     "media_ids": [
       414857462
@@ -2055,7 +2055,7 @@
     "file": "assets/audio/world/chaos/play_sfx_env_chaosturret_break02_r1.wav",
     "event": "Play_sfx_ENV_ChaosTurret_break02",
     "event_id": 2620890674,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_ENV_ChaosTurret_break02.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/Play_sfx_ENV_ChaosTurret_break02.txtp",
     "duration": 4.625283446712018,
     "media_ids": [
       809986825
@@ -2067,7 +2067,7 @@
     "file": "assets/audio/world/chaos/play_sfx_env_chaosturret_break03_r1.wav",
     "event": "Play_sfx_ENV_ChaosTurret_break03",
     "event_id": 2620890675,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_ENV_ChaosTurret_break03.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/Play_sfx_ENV_ChaosTurret_break03.txtp",
     "duration": 7.691609977324263,
     "media_ids": [
       24265824
@@ -2079,7 +2079,7 @@
     "file": "assets/audio/world/chaos/play_sfx_env_sruap_chaos_nexus_spawn_r1.wav",
     "event": "Play_sfx_Env_sruap_chaos_nexus_spawn",
     "event_id": 700336752,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_Env_sruap_chaos_nexus_spawn.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/Play_sfx_Env_sruap_chaos_nexus_spawn.txtp",
     "duration": 13.716009070294785,
     "media_ids": [
       581850485
@@ -2091,7 +2091,7 @@
     "file": "assets/audio/world/chaos/play_sfx_env_sruap_chaos_nexus_alive_loop_r1.wav",
     "event": "Play_sfx_Env_sruap_chaos_nexus_alive_loop",
     "event_id": 719870219,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_Env_sruap_chaos_nexus_alive_loop.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/Play_sfx_Env_sruap_chaos_nexus_alive_loop.txtp",
     "duration": 6.166938775510204,
     "media_ids": [
       278249387
@@ -2103,7 +2103,7 @@
     "file": "assets/audio/world/chaos/play_sfx_env_global_eog_chaosnexus_death_cast_r1.wav",
     "event": "Play_sfx_Env_Global_EoG_ChaosNexus_death_cast",
     "event_id": 1773150868,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_Env_Global_EoG_ChaosNexus_death_cast.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/Play_sfx_Env_Global_EoG_ChaosNexus_death_cast.txtp",
     "duration": 11.76546485260771,
     "media_ids": [
       334071054,

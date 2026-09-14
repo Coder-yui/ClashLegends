@@ -4,7 +4,7 @@ import re
 import shutil
 from pathlib import Path
 
-SOURCE = Path('/Users/czh/Tools/lol-asset-tools/ashe_base_audio')
+SOURCE = Path('/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/ashe_base_audio')
 DEST = Path(__file__).resolve().parents[2] / 'assets/audio/units/ashe'
 EVENTS = [
     'AsheBasicAttack_OnCast', 'AsheBasicAttack_OnMissileLaunch', 'AsheBasicAttack_OnHit',

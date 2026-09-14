@@ -11,7 +11,7 @@ from death_audio_envelope import apply_death_envelope
 TOOLS = Path('/Users/czh/Tools/lol-asset-tools')
 SOURCE = TOOLS / 'verification/ashe_vo_zh'
 BANK = SOURCE / 'assets/sounds/wwise2016/vo/en_us/characters/ashe/skins/base'
-OUT = TOOLS / 'ashe_death_zh_audio'
+OUT = Path('/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/ashe_death_zh_audio')
 DEST = Path(__file__).resolve().parents[2] / 'assets/audio/units/ashe'
 EVENT = 'Play_vo_Ashe_Death3D'
 

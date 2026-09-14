@@ -15,7 +15,7 @@ python3 tools/dev.py source inspect --package Garen --kind audio
 `--kind` 是路径筛选提示，不保证包内具有该类内容。语音可能在语言包，卡面可能在客户端游戏数据包；先 `packages --query` 找对应包。`--package` 可填唯一包名或源库内相对路径。
 
 ```sh
-python3 tools/dev.py source extract --package Garen --pattern 'assets/characters/garen/skins/base/' --output builds/garen-source
+python3 tools/dev.py source extract --package Garen --pattern 'assets/characters/garen/skins/base/' --output ClashLegends-开发素材库/04-中间产物/构建与验证/garen-source
 # 核对输出清单后，添加 --write 才会实际提取。
 ```
 
@@ -26,10 +26,10 @@ python3 tools/dev.py source extract --package Garen --pattern 'assets/characters
 以下路径是输入占位示例，按提取清单替换；输出必须是新文件。
 
 ```sh
-python3 tools/dev.py source convert --format texture --input /tmp/source/body.tex --output builds/body.png
-python3 tools/dev.py source convert --format model --input /tmp/source/body.skn --skeleton /tmp/source/body.skl --animations /tmp/source/animations --texture Body=builds/body.png --output builds/body.glb
-python3 tools/dev.py source convert --format bin --input /tmp/source/skin0.bin --output builds/skin0.ritobin
-python3 tools/dev.py source convert --format audio --input /tmp/source/voice.wem --output builds/voice.wav
+python3 tools/dev.py source convert --format texture --input /Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/预览与验证/source/body.tex --output ClashLegends-开发素材库/04-中间产物/构建与验证/body.png
+python3 tools/dev.py source convert --format model --input /Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/预览与验证/source/body.skn --skeleton /Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/预览与验证/source/body.skl --animations /Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/预览与验证/source/animations --texture Body=ClashLegends-开发素材库/04-中间产物/构建与验证/body.png --output ClashLegends-开发素材库/04-中间产物/构建与验证/body.glb
+python3 tools/dev.py source convert --format bin --input /Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/预览与验证/source/skin0.bin --output ClashLegends-开发素材库/04-中间产物/构建与验证/skin0.ritobin
+python3 tools/dev.py source convert --format audio --input /Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/预览与验证/source/voice.wem --output ClashLegends-开发素材库/04-中间产物/构建与验证/voice.wav
 ```
 
 材质名必须与模型匹配；多材质重复 `--texture 名称=纹理路径`。每个转换结果附 `.source.json` 来源记录。模型用 `lol2gltf`，纹理用 `ltk-tex-utils`，定义用 `ritobin-tools`，声音用 `vgmstream-cli`。

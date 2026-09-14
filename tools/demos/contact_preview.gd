@@ -1,7 +1,7 @@
 extends SceneTree
 ## 接触/桥口实际渲染验收。保留卡牌定义，仅对演示实例设置快慢行军。
 ## Godot --path . --script tools/demos/contact_preview.gd
-const OUTPUT := "/tmp/clash-contact-render"
+var OUTPUT := preload("res://tools/lib/development_paths.gd").output("clash-contact-render")
 var main: Node2D
 var trace: Array = []
 

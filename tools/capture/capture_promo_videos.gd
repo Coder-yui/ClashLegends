@@ -1,8 +1,8 @@
 extends SceneTree
 ## 宣传片素材摄影脚本：只创建表现层，不修改正式战斗场景。
 ## 用法：
-##   Godot --path . --script tools/capture/capture_promo_videos.gd --write-movie /tmp/shot.avi --fixed-fps 30 --resolution 1280x720 --quit-after 360 -- --shot=tower
-##   Godot --path . --script tools/capture/capture_promo_videos.gd --write-movie /tmp/shot.avi --fixed-fps 30 --resolution 1280x720 --quit-after 360 -- --shot=crystal
+##   Godot --path . --script tools/capture/capture_promo_videos.gd --write-movie /Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/预览与验证/shot.avi --fixed-fps 30 --resolution 1280x720 --quit-after 360 -- --shot=tower
+##   Godot --path . --script tools/capture/capture_promo_videos.gd --write-movie /Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/预览与验证/shot.avi --fixed-fps 30 --resolution 1280x720 --quit-after 360 -- --shot=crystal
 
 const OUTPUT_SIZE := Vector2i(1280, 720)
 const FPS := 30.0

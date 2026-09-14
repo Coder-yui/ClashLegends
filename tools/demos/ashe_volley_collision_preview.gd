@@ -1,6 +1,6 @@
 extends SceneTree
-## 实际渲染非穿透 W：前排挡后排、侧箭继续。固定模拟，输出 /tmp/clash-ashe-volley-collision。
-const OUTPUT := "/tmp/clash-ashe-volley-collision"
+## 实际渲染非穿透 W：前排挡后排、侧箭继续。固定模拟，输出 /Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/预览与验证/clash-ashe-volley-collision。
+var OUTPUT := preload("res://tools/lib/development_paths.gd").output("clash-ashe-volley-collision")
 func _initialize() -> void:
 	_run.call_deferred()
 func _run() -> void:

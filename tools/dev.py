@@ -10,6 +10,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from lib.tool_paths import PROJECT, DEFAULT_SOURCE, executable, godot
 
 COMMANDS = {
+    'stage': ('python', 'tools/development_workspace.py', '在开发素材库内建立联调副本；--arena --open 预览制作中地图'),
     'source': ('python', 'tools/assets/lol_source.py', '原始素材：找包、筛选、提取、转换'),
     'model': ('godot', 'tools/viewers/model_studio.gd', '模型动作展台与卡面摄影'),
     'audio': ('python', 'tools/audio_review/serve.py', '目录或清单驱动的声音试听台'),

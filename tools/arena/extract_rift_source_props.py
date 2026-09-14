@@ -22,7 +22,7 @@ from mathutils import Vector
 
 
 ROOT = Path(__file__).resolve().parents[2]
-ARENA = ROOT / "assets/arena/rift_arena"
+ARENA = ROOT / "ClashLegends-开发素材库/03-制作中/3D地图"
 DESTINATION = ARENA / "source_props"
 SOURCE_WAD = Path("/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Map11.wad.client")
 MAP_PATH = "data/maps/mapgeometry/map11/base.mapgeo"
@@ -274,7 +274,7 @@ def main():
             "props": props,
         }
         (DESTINATION / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
-        render_contact(objects, ROOT / "builds/arena_preview/source_props_contact.png")
+        render_contact(objects, ROOT / "ClashLegends-开发素材库/04-中间产物/构建与验证/arena_preview/source_props_contact.png")
         print("SOURCE_PROPS_COMPLETE", json.dumps(props), flush=True)
 
 

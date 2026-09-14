@@ -11,3 +11,5 @@
 | `capture_sun_disc_battle_qa.gd` | 圆盘的实战表现验收 |
 
 Godot 脚本使用 `Godot --path . --script tools/capture/脚本.gd`。摄影需要图形渲染；先读文件顶部参数、输出与退出方式。卡面以原版优先，不因重放历史配方覆盖已有原版素材。
+
+固定卡面配方现在只输出候选图片到素材库按次生成的批次目录，不覆盖 `assets/cards/`。预览和选定后再接入正式卡面。

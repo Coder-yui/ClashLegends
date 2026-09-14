@@ -1,7 +1,7 @@
 extends SceneTree
 ## 实际工作台模拟 + 同一 3D 世界的近景相机。用 --fixed-fps 30 生成可复查的连续帧。
 ## Godot --path . --fixed-fps 30 --script tools/demos/sett_animation_preview.gd
-const OUTPUT := "/tmp/clash-sett-animation"
+var OUTPUT := preload("res://tools/lib/development_paths.gd").output("clash-sett-animation")
 var main: Node2D
 var focus_camera: Camera3D
 var label: Label

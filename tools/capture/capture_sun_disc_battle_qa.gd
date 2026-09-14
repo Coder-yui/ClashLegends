@@ -26,10 +26,10 @@ func _capture() -> void:
 	var projectile_target: Unit = main._spawn_unit(0, "melee_minion", Vector2(580.0, 620.0), 0.0)
 	for _frame in range(12):
 		await process_frame
-	_save_viewport("/tmp/sun_disc_spawn_early_qa.png")
+	_save_viewport(preload("res://tools/lib/development_paths.gd").output("sun_disc_spawn_early_qa.png"))
 	for _frame in range(24):
 		await process_frame
-	_save_viewport("/tmp/sun_disc_spawn_mid_qa.png")
+	_save_viewport(preload("res://tools/lib/development_paths.gd").output("sun_disc_spawn_mid_qa.png"))
 
 	normal_disc._deploy_timer = 0.0
 	await create_timer(0.15).timeout
@@ -38,18 +38,18 @@ func _capture() -> void:
 		0.0, 0.0, normal_disc.projectile_color
 	)
 	await process_frame
-	_save_viewport("/tmp/sun_disc_projectile_origin_qa.png")
+	_save_viewport(preload("res://tools/lib/development_paths.gd").output("sun_disc_projectile_origin_qa.png"))
 	for _frame in range(40):
 		await process_frame
-	_save_viewport("/tmp/sun_disc_battle_qa.png")
+	_save_viewport(preload("res://tools/lib/development_paths.gd").output("sun_disc_battle_qa.png"))
 
 	normal_disc.take_damage(normal_disc.max_hp + 1.0)
 	await create_timer(0.08).timeout
-	_save_viewport("/tmp/sun_disc_death_start_qa.png")
+	_save_viewport(preload("res://tools/lib/development_paths.gd").output("sun_disc_death_start_qa.png"))
 	await create_timer(0.72).timeout
-	_save_viewport("/tmp/sun_disc_death_late_qa.png")
+	_save_viewport(preload("res://tools/lib/development_paths.gd").output("sun_disc_death_late_qa.png"))
 	await create_timer(0.35).timeout
-	_save_viewport("/tmp/sun_disc_death_end_qa.png")
+	_save_viewport(preload("res://tools/lib/development_paths.gd").output("sun_disc_death_end_qa.png"))
 	# 塔墟圆盘仍在场，证明普通圆盘死亡没有影响真实塔墟。
 	assert(is_instance_valid(ruined_disc) and ruined_disc.hp > 0.0)
 	quit()

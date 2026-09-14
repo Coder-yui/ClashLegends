@@ -26,7 +26,7 @@ func _run() -> void:
 			await create_timer(0.05).timeout
 			if tick == 35:
 				RenderingServer.force_draw()
-				root.get_texture().get_image().save_png("/tmp/clash_garen_audio_%d.png" % choice)
+				root.get_texture().get_image().save_png(preload("res://tools/lib/development_paths.gd").output("clash_garen_audio_%d.png") % choice)
 		if is_instance_valid(garen):
 			garen.notify_visual_death()
 		await create_timer(1.5).timeout

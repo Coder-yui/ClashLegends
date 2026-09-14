@@ -4,7 +4,7 @@ extends SceneTree
 ## --forms=base,mega（仅纳尔） --all-exits（每个攻击/技能都检查两个出口）
 ## --transition-frames（每个出口 0/33/67/100/180/350 ms 六帧） --validate-only（无渲染）
 ## --transition-horizon=1.0（可选补 0.4/0.7/1.0 秒，检查较长收势和混合）
-const OUTPUT := "/tmp/clash-original-animation-review"
+var OUTPUT := preload("res://tools/lib/development_paths.gd").output("clash-original-animation-review")
 const STEP := 1.0 / 60.0
 var main: Node2D
 var unit: Unit

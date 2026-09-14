@@ -1,6 +1,6 @@
 extends SceneTree
 ## 四类兵/双阵营使用正式 play_card/技能窗口，记录强化、控制、到期与死亡。
-const OUTPUT := "/tmp/clash-baron-minions"
+var OUTPUT := preload("res://tools/lib/development_paths.gd").output("clash-baron-minions")
 const CARDS := ["melee_minion", "ranged_minion", "siege_minion", "super_minion"]
 var _main: Node2D
 var _units: Array[Unit] = []

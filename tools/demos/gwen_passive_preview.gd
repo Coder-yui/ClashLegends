@@ -1,6 +1,6 @@
 extends SceneTree
 ## 真实运行格温新被动与万能牌轨迹提示；输出渲染与主混音供复核。
-const OUTPUT := "/tmp/clash-gwen-passive"
+var OUTPUT := preload("res://tools/lib/development_paths.gd").output("clash-gwen-passive")
 func _initialize() -> void:
 	_run.call_deferred()
 func _run() -> void:

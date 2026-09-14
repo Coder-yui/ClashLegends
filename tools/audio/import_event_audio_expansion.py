@@ -1,10 +1,10 @@
-"""Import verified event variants and workbench-only Spell4 auditions from local source banks."""
+"""Import verified event variants and candidate-only Spell4 auditions from local source banks."""
 from pathlib import Path
 import hashlib,json,re,subprocess,os
 from death_audio_envelope import apply_death_envelope
 ROOT=Path(__file__).resolve().parents[2]
-BASE=Path('/Users/czh/Tools/lol-asset-tools/card_audio_batch')
-SHARED=Path('/Users/czh/Tools/lol-asset-tools/shared_audio_review')
+BASE=Path('/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch')
+SHARED=Path('/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review')
 def event_hash(s):
  h=2166136261
  for c in s.lower().encode():h=((h*16777619)^c)&0xffffffff
@@ -20,7 +20,7 @@ def pool(event,folder,death=False,limit=3):
  if not files:print('MISSING',event,flush=True);return []
  paths=[]
  for i,txtp in enumerate(files[:limit],1):
-  dest=ROOT/'assets/audio'/folder;dest.mkdir(parents=True,exist_ok=True)
+  dest=(ROOT/'ClashLegends-开发素材库/02-候选讨论/音频'/folder.removeprefix('auditions/')) if folder.startswith('auditions/') else ROOT/'assets/audio'/folder;dest.mkdir(parents=True,exist_ok=True)
   output=dest/(event.lower()+f'_r{i}.wav')
   # Keep source bank relative paths usable for vgmstream, without editing source TXTP.
   converted=SHARED/'decode';converted.mkdir(exist_ok=True)
@@ -35,7 +35,7 @@ def pool(event,folder,death=False,limit=3):
   with wave.open(str(output)) as w:duration=w.getnframes()/w.getframerate()
   entry={'file':str(output.relative_to(ROOT)),'event':event,'event_id':event_hash(event),'source_txtp':str(txtp),'duration':duration,'media_ids':sorted(set(map(int,re.findall(r'Source (\d+)',text)))),'processing':'Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization','sha256':hashlib.sha256(output.read_bytes()).hexdigest()}
   if death:apply_death_envelope(output,entry)
-  manifest.append(entry);paths.append('res://'+str(output.relative_to(ROOT)))
+  manifest.append(entry);paths.append(str(output) if folder.startswith('auditions/') else 'res://'+str(output.relative_to(ROOT)))
  return paths
 def event(paths):return {'pool':paths,'volume_db':0.0,'bus':'Combat'}
 def set_audio(card,audio,merge=False):
@@ -53,7 +53,7 @@ def set_audio(card,audio,merge=False):
 auditions={}
 for label,name in [('R1·Destiny 施放','Destiny_OnCast'),('R1·Destiny 生效','Destiny_OnBuffActivate'),('R1·Destiny 结束','Destiny_OnBuffDeactivate'),('R2·Gate 引导','Gate_OnBuffActivate'),('R2·Gate 落点（完整原声）','Gate_marker')]:
  auditions[label]=event(pool('Play_sfx_TwistedFate_'+name,'auditions/twisted_fate',limit=20))
-p=ROOT/'assets/audio/workbench_auditions.json';p.write_text(json.dumps({'twisted_fate':auditions},ensure_ascii=False,indent=2)+'\n')
+p=ROOT/'ClashLegends-开发素材库/02-候选讨论/音频/twisted_fate/试听清单.json';p.write_text(json.dumps([{'file':file,'cue':cue,'group':'twisted_fate'} for cue,event in auditions.items() for file in event['pool']],ensure_ascii=False,indent=2)+'\n')
 set_audio('imp',{'events':{'spawn:start':event(pool('Play_sfx_Yorick_YorickQ_summon','units/imp',limit=5))}},True)
 set_audio('tombstone',{'events':{'deploy:start':event(pool('Play_sfx_Yorick_YorickW_OnHitLocation','units/tombstone')),'death':event(pool('Play_sfx_Yorick_YorickW_death','units/tombstone',True,4))}})
 set_audio('heal',{'events':{'spell:cast':event(pool('Play_sfx_SummonerHeal_OnCast','spells/heal'))}})

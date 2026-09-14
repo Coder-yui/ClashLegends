@@ -152,5 +152,5 @@ func _tick() -> void:
 			auto_step += 1
 func _capture(name: String) -> void:
 	await RenderingServer.frame_post_draw
-	DirAccess.make_dir_recursive_absolute("/tmp/structure-showcase")
-	root.get_texture().get_image().save_png("/tmp/structure-showcase/"+name+".png")
+	DirAccess.make_dir_recursive_absolute(preload("res://tools/lib/development_paths.gd").output("structure-showcase"))
+	root.get_texture().get_image().save_png(preload("res://tools/lib/development_paths.gd").output("structure-showcase/")+name+".png")

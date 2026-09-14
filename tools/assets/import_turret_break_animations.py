@@ -2,7 +2,7 @@
 import json,struct,copy,hashlib
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2]
-SOURCE=Path('/Users/czh/Tools/lol-asset-tools/turret_native_review/breaks.glb')
+SOURCE=Path('/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/turret_native_review/breaks.glb')
 def read(path):
  b=path.read_bytes();size=struct.unpack_from('<I',b,12)[0];j=json.loads(b[20:20+size]);offset=20+size;length=struct.unpack_from('<I',b,offset)[0];return j,b[offset+8:offset+8+length]
 src,raw=read(SOURCE)

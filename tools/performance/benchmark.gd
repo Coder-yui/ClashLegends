@@ -22,7 +22,7 @@ func run() -> void:
 	var duration := float(option("--perf-seconds", "12"))
 	var rendered := DisplayServer.get_name() != "headless"
 	var audio_enabled := option("--perf-audio", "on") == "on"
-	var output := option("--perf-output", "res://builds/performance")
+	var output := option("--perf-output", preload("res://tools/lib/development_paths.gd").output("performance"))
 	DirAccess.make_dir_recursive_absolute(output)
 	if rendered: root.always_on_top = true
 	Engine.max_fps = 60 if rendered else 0

@@ -16,11 +16,14 @@ from urllib.parse import unquote
 ROOT = Path(__file__).resolve().parents[2]
 TEXT_SUFFIXES = {'.gd', '.tscn', '.tres', '.gdshader', '.py', '.md', '.json', '.txt', '.godot'}
 RESOURCE_SUFFIXES = {'.gd', '.tscn', '.tres', '.gdshader', '.png', '.jpg', '.webp', '.glb', '.wav', '.ogg', '.ttf', '.json'}
-EXTERNAL = ('ClashLegends-promo-materials', '待开发卡牌美术素材')
+EXTERNAL = ('ClashLegends-promo-materials', 'ClashLegends-开发素材库')
 
 
 def audit(root: Path, inventory: bool = False) -> dict:
     errors = []
+    for forbidden in ['assets/archive', 'assets/audio/auditions', 'assets/audio/workbench_auditions.json', 'assets/arena/rift_arena', '待开发卡牌美术素材', 'builds']:
+        if (root / forbidden).exists():
+            errors.append(f'{forbidden}: development content belongs in ClashLegends-开发素材库')
     files = [p for folder in ('scripts', 'scenes', 'tests', 'tools', 'docs', 'assets')
              for p in (root / folder).rglob('*') if p.is_file() and '__pycache__' not in p.parts]
     files += [p for name in ('README.md', 'AGENTS.md', 'project.godot') if (p := root / name).exists()]
@@ -52,6 +55,8 @@ def audit(root: Path, inventory: bool = False) -> dict:
                 errors.append(f'{relative}: non-runtime resource: {target}')
             if relative.startswith('tests/') and target == 'missing.wav':
                 continue  # Intentional invalid-resource fixture in validator tests.
+            if relative.startswith('tools/capture/') and target == 'assets/arena/rift_arena/rift_arena.tscn':
+                continue  # Available only in the external integration preview created by tools/dev.py stage.
             if not (root / target).exists():
                 # Capture tools intentionally write new images under builds/ and res://.
                 lines = [line for line in text.splitlines() if 'res://' + target in line]
@@ -75,8 +80,7 @@ def audit(root: Path, inventory: bool = False) -> dict:
         base = root / folder
         if base.exists() and not (base / '.gdignore').exists():
             errors.append(f'{folder}: missing .gdignore')
-        for path in base.rglob('*.import'):
-            errors.append(f'{path.relative_to(root)}: external queue import sidecar')
+        # Ignored development projects may own import sidecars; production must not reference them.
     report = {'errors': sorted(set(errors)), 'cards': len(ids), 'files': len(files),
               'literal_resource_references': len(references),
               'files_by_area': dict(sorted(Counter(p.relative_to(root).parts[0] for p in files).items()))}

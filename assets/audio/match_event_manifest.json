@@ -5,7 +5,7 @@
     "cue": "victory",
     "label": "胜利 · 已接入结尾",
     "duration": 3.1165079365079364,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Global_Female1_OnVictory.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Global_Female1_OnVictory.txtp",
     "event_id": 179484193,
     "media_ids": [
       "349955032"
@@ -19,7 +19,7 @@
     "cue": "defeat",
     "label": "失败 · 已接入结尾",
     "duration": 3.0352380952380953,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Global_Female1_OnDefeat.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Global_Female1_OnDefeat.txtp",
     "event_id": 2224178004,
     "media_ids": [
       "52198965"
@@ -33,7 +33,7 @@
     "cue": "minions_spawn",
     "label": "全军出击 · 已接入第5秒首波兵线",
     "duration": 2.9824943310657597,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_MinionSpawn.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_MinionSpawn.txtp",
     "event_id": 3292132413,
     "media_ids": [
       "219151739"
@@ -47,7 +47,7 @@
     "cue": "welcome",
     "label": "欢迎来到召唤师峡谷 · 仅试听",
     "duration": 2.676485260770975,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_StartGameMessage1Map11.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_StartGameMessage1Map11.txtp",
     "event_id": 3013702846,
     "media_ids": [
       "137670506"
@@ -61,7 +61,7 @@
     "cue": "start_warning",
     "label": "开局准备提示 · 仅试听",
     "duration": 4.780702947845805,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_StartGameMessage2Map11.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_StartGameMessage2Map11.txtp",
     "event_id": 1254053619,
     "media_ids": [
       "15938219"
@@ -75,7 +75,7 @@
     "cue": "first_blood",
     "label": "第一滴血 · 仅试听",
     "duration": 3.6317913832199546,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_FirstBloodYouYourTeam {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_FirstBloodYouYourTeam {d}.txtp",
     "event_id": 1941092771,
     "media_ids": [
       "476762637"
@@ -89,7 +89,7 @@
     "cue": "ally_kill",
     "label": "友方击杀 · 仅试听",
     "duration": 4.005827664399093,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_KillChampionHeroHeroYourTeam {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_KillChampionHeroHeroYourTeam {r1}.txtp",
     "event_id": 460953157,
     "media_ids": [
       "899579368",
@@ -105,7 +105,7 @@
     "cue": "ally_kill",
     "label": "友方击杀 · 仅试听",
     "duration": 3.9988662131519273,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_KillChampionHeroHeroYourTeam {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_KillChampionHeroHeroYourTeam {r2}.txtp",
     "event_id": 460953157,
     "media_ids": [
       "899579368",
@@ -121,7 +121,7 @@
     "cue": "ally_kill",
     "label": "友方击杀 · 仅试听",
     "duration": 3.9640362811791383,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_KillChampionHeroHeroYourTeam {r3}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_KillChampionHeroHeroYourTeam {r3}.txtp",
     "event_id": 460953157,
     "media_ids": [
       "899579368",
@@ -137,7 +137,7 @@
     "cue": "enemy_kill",
     "label": "敌方击杀 · 仅试听",
     "duration": 4.335555555555556,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_KillChampionHeroHeroEnemyTeam {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_KillChampionHeroHeroEnemyTeam {r1}.txtp",
     "event_id": 359704250,
     "media_ids": [
       "1059485385",
@@ -152,7 +152,7 @@
     "cue": "enemy_kill",
     "label": "敌方击杀 · 仅试听",
     "duration": 3.9582312925170067,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_KillChampionHeroHeroEnemyTeam {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_KillChampionHeroHeroEnemyTeam {r2}.txtp",
     "event_id": 359704250,
     "media_ids": [
       "1059485385",
@@ -167,7 +167,7 @@
     "cue": "double_kill",
     "label": "双杀 · 仅试听",
     "duration": 3.1687528344671203,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_DoubleKillYouYourTeam {r1} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_DoubleKillYouYourTeam {r1} {d}.txtp",
     "event_id": 3743703056,
     "media_ids": [
       "61826407",
@@ -183,7 +183,7 @@
     "cue": "double_kill",
     "label": "双杀 · 仅试听",
     "duration": 3.1048979591836736,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_DoubleKillYouYourTeam {r2} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_DoubleKillYouYourTeam {r2} {d}.txtp",
     "event_id": 3743703056,
     "media_ids": [
       "61826407",
@@ -199,7 +199,7 @@
     "cue": "double_kill",
     "label": "双杀 · 仅试听",
     "duration": 3.180362811791383,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_DoubleKillYouYourTeam {r3} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_DoubleKillYouYourTeam {r3} {d}.txtp",
     "event_id": 3743703056,
     "media_ids": [
       "61826407",
@@ -215,7 +215,7 @@
     "cue": "triple_kill",
     "label": "三杀 · 仅试听",
     "duration": 3.371927437641723,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_TripleKillYouYourTeam {r1} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_TripleKillYouYourTeam {r1} {d}.txtp",
     "event_id": 627773033,
     "media_ids": [
       "626949528",
@@ -230,7 +230,7 @@
     "cue": "triple_kill",
     "label": "三杀 · 仅试听",
     "duration": 3.0954421768707485,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_TripleKillYouYourTeam {r2} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_TripleKillYouYourTeam {r2} {d}.txtp",
     "event_id": 627773033,
     "media_ids": [
       "626949528",
@@ -245,7 +245,7 @@
     "cue": "quadra_kill",
     "label": "四杀 · 仅试听",
     "duration": 3.7434467120181405,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_QuadraKillYouYourTeam {r1} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_QuadraKillYouYourTeam {r1} {d}.txtp",
     "event_id": 3159104195,
     "media_ids": [
       "773276672",
@@ -260,7 +260,7 @@
     "cue": "quadra_kill",
     "label": "四杀 · 仅试听",
     "duration": 3.70281179138322,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_QuadraKillYouYourTeam {r2} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_QuadraKillYouYourTeam {r2} {d}.txtp",
     "event_id": 3159104195,
     "media_ids": [
       "773276672",
@@ -275,7 +275,7 @@
     "cue": "penta_kill",
     "label": "五杀 · 仅试听",
     "duration": 3.801496598639456,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_PentaKillYouYourTeam {r1} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_PentaKillYouYourTeam {r1} {d}.txtp",
     "event_id": 2402155913,
     "media_ids": [
       "456667103",
@@ -290,7 +290,7 @@
     "cue": "penta_kill",
     "label": "五杀 · 仅试听",
     "duration": 3.7550566893424038,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_PentaKillYouYourTeam {r2} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_PentaKillYouYourTeam {r2} {d}.txtp",
     "event_id": 2402155913,
     "media_ids": [
       "456667103",
@@ -305,7 +305,7 @@
     "cue": "killing_spree",
     "label": "大杀特杀 · 仅试听",
     "duration": 3.5983219954648527,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_KillingSpreeYouYourTeam {r1} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_KillingSpreeYouYourTeam {r1} {d}.txtp",
     "event_id": 459905612,
     "media_ids": [
       "410213708",
@@ -320,7 +320,7 @@
     "cue": "killing_spree",
     "label": "大杀特杀 · 仅试听",
     "duration": 3.644761904761905,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_KillingSpreeYouYourTeam {r2} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_KillingSpreeYouYourTeam {r2} {d}.txtp",
     "event_id": 459905612,
     "media_ids": [
       "410213708",
@@ -335,7 +335,7 @@
     "cue": "rampage",
     "label": "暴走 · 仅试听",
     "duration": 3.31968253968254,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_RampageYouYourTeam {r1} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_RampageYouYourTeam {r1} {d}.txtp",
     "event_id": 326680934,
     "media_ids": [
       "8711389",
@@ -350,7 +350,7 @@
     "cue": "rampage",
     "label": "暴走 · 仅试听",
     "duration": 3.3370975056689343,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_RampageYouYourTeam {r2} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_RampageYouYourTeam {r2} {d}.txtp",
     "event_id": 326680934,
     "media_ids": [
       "8711389",
@@ -365,7 +365,7 @@
     "cue": "unstoppable",
     "label": "无人能挡 · 仅试听",
     "duration": 3.546077097505669,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_UnstoppableYouYourTeam {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_UnstoppableYouYourTeam {d}.txtp",
     "event_id": 2881557072,
     "media_ids": [
       "368724426"
@@ -379,7 +379,7 @@
     "cue": "dominating",
     "label": "主宰比赛 · 仅试听",
     "duration": 3.2848526077097504,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_DominatingYouYourTeam {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_DominatingYouYourTeam {d}.txtp",
     "event_id": 3839768079,
     "media_ids": [
       "34282060"
@@ -393,7 +393,7 @@
     "cue": "godlike",
     "label": "接近神 · 仅试听",
     "duration": 3.0700680272108842,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_GodlikeYouYourTeam {r1} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_GodlikeYouYourTeam {r1} {d}.txtp",
     "event_id": 740646976,
     "media_ids": [
       "53276979",
@@ -408,7 +408,7 @@
     "cue": "godlike",
     "label": "接近神 · 仅试听",
     "duration": 3.424172335600907,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_GodlikeYouYourTeam {r2} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_GodlikeYouYourTeam {r2} {d}.txtp",
     "event_id": 740646976,
     "media_ids": [
       "53276979",
@@ -423,7 +423,7 @@
     "cue": "legendary",
     "label": "超神 · 仅试听",
     "duration": 3.546077097505669,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_LegendaryYouYourTeam {r1} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_LegendaryYouYourTeam {r1} {d}.txtp",
     "event_id": 3247948104,
     "media_ids": [
       "393899697",
@@ -439,7 +439,7 @@
     "cue": "legendary",
     "label": "超神 · 仅试听",
     "duration": 3.2268027210884354,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_LegendaryYouYourTeam {r2} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_LegendaryYouYourTeam {r2} {d}.txtp",
     "event_id": 3247948104,
     "media_ids": [
       "393899697",
@@ -455,7 +455,7 @@
     "cue": "legendary",
     "label": "超神 · 仅试听",
     "duration": 3.505442176870748,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_LegendaryYouYourTeam {r3} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_LegendaryYouYourTeam {r3} {d}.txtp",
     "event_id": 3247948104,
     "media_ids": [
       "393899697",
@@ -471,7 +471,7 @@
     "cue": "shutdown",
     "label": "终结 · 仅试听",
     "duration": 3.1281179138321997,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_ShutdownYouYourTeam {r1} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_ShutdownYouYourTeam {r1} {d}.txtp",
     "event_id": 2636930455,
     "media_ids": [
       "177224421",
@@ -486,7 +486,7 @@
     "cue": "shutdown",
     "label": "终结 · 仅试听",
     "duration": 3.8051020408163265,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_ShutdownYouYourTeam {r2} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_ShutdownYouYourTeam {r2} {d}.txtp",
     "event_id": 2636930455,
     "media_ids": [
       "177224421",
@@ -501,7 +501,7 @@
     "cue": "ace_enemy",
     "label": "敌方团灭 · 仅试听",
     "duration": 2.855283446712018,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_AceEnemyTeam {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_AceEnemyTeam {r1}.txtp",
     "event_id": 799847546,
     "media_ids": [
       "482688019",
@@ -516,7 +516,7 @@
     "cue": "ace_enemy",
     "label": "敌方团灭 · 仅试听",
     "duration": 2.936553287981859,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_AceEnemyTeam {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_AceEnemyTeam {r2}.txtp",
     "event_id": 799847546,
     "media_ids": [
       "482688019",
@@ -531,7 +531,7 @@
     "cue": "ace_ally",
     "label": "我方团灭 · 仅试听",
     "duration": 2.855283446712018,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_AceYourTeam {r1} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_AceYourTeam {r1} {d}.txtp",
     "event_id": 3533407237,
     "media_ids": [
       "482688019",
@@ -546,7 +546,7 @@
     "cue": "ace_ally",
     "label": "我方团灭 · 仅试听",
     "duration": 2.936553287981859,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_AceYourTeam {r2} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_AceYourTeam {r2} {d}.txtp",
     "event_id": 3533407237,
     "media_ids": [
       "482688019",
@@ -561,7 +561,7 @@
     "cue": "tower_enemy",
     "label": "敌方防御塔被摧毁 · 仅试听",
     "duration": 4.395510204081632,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_TurretLostEnemyTeam.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_TurretLostEnemyTeam.txtp",
     "event_id": 1676036981,
     "media_ids": [
       "19868007"
@@ -575,7 +575,7 @@
     "cue": "tower_ally",
     "label": "我方防御塔被摧毁 · 仅试听",
     "duration": 4.051111111111111,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_TurretLostYourTeam {r1} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_TurretLostYourTeam {r1} {d}.txtp",
     "event_id": 3029811332,
     "media_ids": [
       "577832331",
@@ -590,7 +590,7 @@
     "cue": "tower_ally",
     "label": "我方防御塔被摧毁 · 仅试听",
     "duration": 4.051111111111111,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_TurretLostYourTeam {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_TurretLostYourTeam {r1}.txtp",
     "event_id": 3029811332,
     "media_ids": [
       "577832331",
@@ -605,7 +605,7 @@
     "cue": "tower_ally",
     "label": "我方防御塔被摧毁 · 仅试听",
     "duration": 3.946621315192744,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_TurretLostYourTeam {r2} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_TurretLostYourTeam {r2} {d}.txtp",
     "event_id": 3029811332,
     "media_ids": [
       "577832331",
@@ -620,7 +620,7 @@
     "cue": "inhibitor",
     "label": "水晶兵营重生 · 仅试听",
     "duration": 4.248480725623582,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_InhibitorRespawnYourTeam.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_InhibitorRespawnYourTeam.txtp",
     "event_id": 2568035574,
     "media_ids": [
       "456673349"
@@ -634,7 +634,7 @@
     "cue": "disconnect",
     "label": "友方掉线 · 仅试听",
     "duration": 3.912925170068027,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_PlayerDisconnectYourTeam.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_PlayerDisconnectYourTeam.txtp",
     "event_id": 2739193941,
     "media_ids": [
       "382345251"
@@ -648,7 +648,7 @@
     "cue": "reconnect",
     "label": "友方重连 · 仅试听",
     "duration": 4.1033560090702945,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_PlayerReconnectYourTeam {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_PlayerReconnectYourTeam {r1}.txtp",
     "event_id": 1813998222,
     "media_ids": [
       "668395019",
@@ -663,7 +663,7 @@
     "cue": "reconnect",
     "label": "友方重连 · 仅试听",
     "duration": 4.1033560090702945,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/announcer_review/txtp/Play_vo_Announcer_Female1_PlayerReconnectYourTeam {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_PlayerReconnectYourTeam {r2}.txtp",
     "event_id": 1813998222,
     "media_ids": [
       "668395019",
@@ -678,7 +678,7 @@
     "cue": "spawn:start",
     "label": "小兵生成 · 兵线/部署共用",
     "duration": 1.763514739229025,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/minion_spawn_review/txtp/Play_sfx_SRU_Spawn_MinionsSpawn_cast {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/minion_spawn_review/txtp/Play_sfx_SRU_Spawn_MinionsSpawn_cast {r1}.txtp",
     "event_id": 546694519,
     "media_ids": [
       "691552716",
@@ -694,7 +694,7 @@
     "cue": "spawn:start",
     "label": "小兵生成 · 兵线/部署共用",
     "duration": 1.6336507936507936,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/minion_spawn_review/txtp/Play_sfx_SRU_Spawn_MinionsSpawn_cast {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/minion_spawn_review/txtp/Play_sfx_SRU_Spawn_MinionsSpawn_cast {r2}.txtp",
     "event_id": 546694519,
     "media_ids": [
       "691552716",
@@ -710,7 +710,7 @@
     "cue": "spawn:start",
     "label": "小兵生成 · 兵线/部署共用",
     "duration": 1.9058049886621315,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/minion_spawn_review/txtp/Play_sfx_SRU_Spawn_MinionsSpawn_cast {r3}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/minion_spawn_review/txtp/Play_sfx_SRU_Spawn_MinionsSpawn_cast {r3}.txtp",
     "event_id": 546694519,
     "media_ids": [
       "691552716",

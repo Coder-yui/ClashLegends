@@ -1,6 +1,6 @@
 extends SceneTree
 ## 双阵营 1.3 秒预部署 + 0.45 秒部署、原声前 1.75 秒录音截图；可传 --mode=host / --mode=join。
-const OUTPUT := "/tmp/clash-tf-deploy-175"
+var OUTPUT := preload("res://tools/lib/development_paths.gd").output("clash-tf-deploy-175")
 func _initialize() -> void:
 	_run.call_deferred()
 func _run() -> void:

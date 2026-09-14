@@ -45,7 +45,7 @@ def main():
         parser.error('counts must be 1..256 and seconds positive')
     if args.case == 'burst' and args.seconds < 12:
         parser.error('burst requires at least 12 seconds')
-    out = ROOT / 'builds/performance' / datetime.now().strftime('%Y%m%d-%H%M%S-%f')
+    out = ROOT / 'ClashLegends-开发素材库/04-中间产物/构建与验证/performance' / datetime.now().strftime('%Y%m%d-%H%M%S-%f')
     out.mkdir(parents=True)
     report = {'schema': 1, 'identity_before': verify.identity(ROOT), 'runs': [],
               'engine': subprocess.check_output([args.godot, '--version'], text=True).strip(),

@@ -2,7 +2,7 @@
 from pathlib import Path
 import hashlib, json, subprocess, wave
 ROOT = Path(__file__).resolve().parents[2]
-SOURCE = Path('/Users/czh/Tools/lol-asset-tools/card_audio_batch/twistedfate/event_wav')
+SOURCE = Path('/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/twistedfate/event_wav')
 DEST = ROOT / 'assets/audio/units/twisted_fate'
 manifest_path = DEST/'event_manifest.json'
 manifest = json.loads(manifest_path.read_text())

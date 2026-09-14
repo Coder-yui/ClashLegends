@@ -80,9 +80,18 @@ func _check_artdev_workbench() -> void:
 	panel.show_workspace(0)
 	var audio_stopped := not panel._audio_player.playing and panel._audio_player.stream == null
 	panel._select_item("freeze")
-	var optional_assets := panel._preview.model == null and panel._audio_entries.is_empty()
+	var formal_audio_only := panel._preview.model == null and not panel._audio_entries.is_empty() \
+		and panel._audio_entries.any(func(entry): return String(entry.cue) == "spell:cast") \
+		and panel._audio_entries.all(func(entry): return not String(entry.cue).begins_with("仅试听"))
+	var catalog_ok := true
+	for card_id in ["garen", "gwen"]:
+		panel._select_item(card_id)
+		var voice_entries := panel._audio_entries.filter(func(entry): return entry.cue == "deploy:voice")
+		catalog_ok = catalog_ok and voice_entries.size() == 3 \
+			and voice_entries.all(func(entry): return entry.bus == "Voice" and is_zero_approx(entry.volume))
+	_expect(catalog_ok, "工作台列出盖伦和格温的全部部署变体并保留 Voice 总线和音量")
 	panel._select_item("garen")
-	_expect(audio_started and audio_stopped and optional_assets, "工作台试听切页清理，法术无模型与可选静音正常显示")
+	_expect(audio_started and audio_stopped and formal_audio_only, "工作台试听切页清理，法术显示正式音频且不混入未接候选")
 	var old_dev_mode: bool = _main._art_dev_mode
 	var original_zones: int = _main._spell_system.slow_zones.size()
 	_main._art_dev_mode = true

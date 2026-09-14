@@ -1,6 +1,6 @@
 extends SceneTree
 ## 实战声音与时间戳；可传 --mode=host / --mode=join 做同场联机复核。
-const OUTPUT := "/tmp/clash-apex-audio"
+var OUTPUT := preload("res://tools/lib/development_paths.gd").output("clash-apex-audio")
 func _initialize() -> void:
 	_run.call_deferred()
 func _run() -> void:

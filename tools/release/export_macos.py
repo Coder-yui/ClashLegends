@@ -26,7 +26,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--godot', default='/Applications/Godot.app/Contents/MacOS/Godot')
     args = parser.parse_args()
-    output = ROOT / 'builds/macos' / datetime.now().strftime('%Y%m%d-%H%M%S-%f')
+    output = ROOT / 'ClashLegends-开发素材库/04-中间产物/构建与验证/macos' / datetime.now().strftime('%Y%m%d-%H%M%S-%f')
     output.mkdir(parents=True)
     app = output / 'Clash Legends.app'
     report = {'schema': 1, 'identity_before': verify.identity(ROOT), 'steps': [],

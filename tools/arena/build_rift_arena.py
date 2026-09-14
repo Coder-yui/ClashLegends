@@ -10,7 +10,7 @@ from pathlib import Path
 from mathutils import Vector, Matrix
 
 ROOT = Path(__file__).resolve().parents[2]
-OUT = ROOT / 'assets/arena/rift_arena'
+OUT = ROOT / 'ClashLegends-开发素材库/03-制作中/3D地图'
 RNG = random.Random(20260912)
 SQ = math.sqrt(2)
 bpy.ops.object.select_all(action='SELECT')

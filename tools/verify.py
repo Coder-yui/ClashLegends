@@ -252,7 +252,7 @@ def main() -> int:
     godot = args.godot or shutil.which('godot') or shutil.which('Godot')
     if not godot and Path('/Applications/Godot.app/Contents/MacOS/Godot').exists():
         godot = '/Applications/Godot.app/Contents/MacOS/Godot'
-    output = (args.output or ROOT / 'builds/verification' / datetime.now().strftime('%Y%m%d-%H%M%S-%f')).resolve()
+    output = (args.output or ROOT / 'ClashLegends-开发素材库/04-中间产物/构建与验证/verification' / datetime.now().strftime('%Y%m%d-%H%M%S-%f')).resolve()
     output.mkdir(parents=True, exist_ok=False)
     report = {'schema': 1, 'started_at': datetime.now(timezone.utc).isoformat(), 'workspace': str(ROOT),
               'identity_before': identity(ROOT), 'steps': [], 'manual_acceptance': 'Not performed'}

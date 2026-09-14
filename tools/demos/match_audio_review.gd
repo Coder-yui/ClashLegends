@@ -1,5 +1,5 @@
 extends SceneTree
-const OUTPUT := "/tmp/clash-match-audio"
+var OUTPUT := preload("res://tools/lib/development_paths.gd").output("clash-match-audio")
 func _initialize() -> void: _run.call_deferred()
 func _run() -> void:
 	DirAccess.make_dir_recursive_absolute(OUTPUT)

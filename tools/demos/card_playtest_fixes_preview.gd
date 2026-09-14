@@ -1,8 +1,8 @@
 extends SceneTree
 ## 实际运行冰风暴起止音并录制主混音；同时观察盖伦正式下卡绕出水晶。
 ## Godot --path . --script tools/demos/card_playtest_fixes_preview.gd
-## 输出 /tmp/clash-card-playtest-fixes/；记录仅用于人工验收，不驱动任何结算。
-const OUTPUT := "/tmp/clash-card-playtest-fixes"
+## 输出 /Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/预览与验证/clash-card-playtest-fixes/；记录仅用于人工验收，不驱动任何结算。
+var OUTPUT := preload("res://tools/lib/development_paths.gd").output("clash-card-playtest-fixes")
 func _initialize() -> void:
 	_run.call_deferred()
 

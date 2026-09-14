@@ -52,7 +52,6 @@ var _unit_casting := false
 var _audio_cue: OptionButton
 var _audio_list: ItemList
 var _audio_entries: Array[Dictionary] = []
-var _audition_catalog: Dictionary = {}
 var _audio_player: AudioStreamPlayer
 var _audio_status: Label
 var _audio_timeline: HSlider
@@ -62,8 +61,6 @@ var _zoom: HSlider
 func setup(cards: Dictionary) -> void:
 	layer = 30
 	_cards = cards
-	var catalog = JSON.parse_string(FileAccess.get_file_as_string("res://assets/audio/workbench_auditions.json"))
-	if catalog is Dictionary: _audition_catalog = catalog
 	_build_ui()
 	_filter_cards("")
 	_select_item(_selected_id)
@@ -400,17 +397,7 @@ func _reset_camera() -> void:
 func _refresh_audio(audio: Dictionary) -> void:
 	_audio_entries.clear()
 	_audio_list.clear()
-	for cue in ["attack_swing", "attack_hit", "attack_launch_by_segment", "attack_hit_by_segment", "empowered_hit", "first_strike_hit"]:
-		var pools: Array = audio.get(cue, [])
-		for i in pools.size():
-			var paths: Array = pools[i] if pools[i] is Array else [pools[i]]
-			for path in paths: _add_audio(cue + "[%d]" % (i + 1) if cue in ["attack_swing", "attack_launch_by_segment", "attack_hit_by_segment"] else cue, String(path), (0.0 if cue == "attack_launch_by_segment" else float(audio.get("attack_swing_volume_db" if cue == "attack_swing" else "attack_hit_volume_db", -5.0 if cue == "attack_swing" else -4.0))), "Combat")
-	for cue in audio.get("events", {}):
-		var event: Dictionary = audio.events[cue]
-		for path in event.get("pool", []): _add_audio(String(cue), String(path), float(event.get("volume_db", 0)), String(event.get("bus", "Combat")))
-	for label in _audition_catalog.get(_selected_id, {}):
-		var event: Dictionary = _audition_catalog[_selected_id][label]
-		for path in event.get("pool", []): _add_audio("仅试听 · " + String(label), String(path), float(event.get("volume_db", 0.0)), String(event.get("bus", "Combat")))
+	_audio_entries.assign(WorkbenchAudioCatalog.collect(audio))
 	_audio_cue.clear()
 	_audio_cue.add_item("全部事件")
 	var cues: Array[String] = []
@@ -421,8 +408,6 @@ func _refresh_audio(audio: Dictionary) -> void:
 	_filter_audio(0)
 	_audio_status.text = "未配置音频 · 当前对象没有可试听的声音。" if _audio_entries.is_empty() else "%d 个文件变体 · 选择后播放" % _audio_entries.size()
 
-func _add_audio(cue: String, path: String, volume: float, bus: String) -> void:
-	_audio_entries.append({"cue": cue, "path": path, "volume": volume, "bus": bus})
 
 func _filter_audio(index: int) -> void:
 	_audio_list.clear()

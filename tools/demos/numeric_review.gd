@@ -1,6 +1,6 @@
 extends SceneTree
 ## 非 headless：查看实际卡牌详情和塔生命整数；输出卡牌数值清单供后续平衡使用。
-const OUTPUT := "/tmp/clash-numeric-review"
+var OUTPUT := preload("res://tools/lib/development_paths.gd").output("clash-numeric-review")
 func _initialize() -> void:
 	_run.call_deferred()
 func _run() -> void:

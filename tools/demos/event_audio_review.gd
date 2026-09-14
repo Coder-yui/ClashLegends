@@ -1,6 +1,6 @@
 extends SceneTree
 ## 实际渲染与混音录音；工作台 Spell4 试听、范围护盾及基础单位攻击。
-const OUTPUT := "/tmp/clash-event-audio"
+var OUTPUT := preload("res://tools/lib/development_paths.gd").output("clash-event-audio")
 func _initialize() -> void:
 	_run.call_deferred()
 func _run() -> void:

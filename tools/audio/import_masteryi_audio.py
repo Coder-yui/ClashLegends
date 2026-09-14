@@ -6,7 +6,7 @@ import shutil
 from pathlib import Path
 from death_audio_envelope import apply_death_envelope
 
-SOURCE = Path('/Users/czh/Tools/lol-asset-tools/masteryi_base_audio')
+SOURCE = Path('/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/masteryi_base_audio')
 DEST = Path(__file__).resolve().parents[2] / 'assets/audio/units/masteryi'
 EVENTS = [
     'MasterYiBasicAttack_OnCast', 'MasterYiBasicAttack2_OnCast',

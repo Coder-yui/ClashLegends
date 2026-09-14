@@ -18,7 +18,7 @@ func _capture() -> void:
 	for _i in range(24):
 		await process_frame
 	await RenderingServer.frame_post_draw
-	var out := ProjectSettings.globalize_path("res://builds/arena_preview")
+	var out := ProjectSettings.globalize_path(preload("res://tools/lib/development_paths.gd").output("arena_preview"))
 	DirAccess.make_dir_recursive_absolute(out)
 	main._battle_presentation._viewport.get_texture().get_image().save_png(out + "/rift_arena_clean.png")
 	# Exercise the shared entry point, both teams and both lanes; no authority bypass.

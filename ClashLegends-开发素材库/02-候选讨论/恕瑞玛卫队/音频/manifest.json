@@ -1,0 +1,205 @@
+[
+  {
+    "file": "/Users/czh/Projects/Clash Legends/assets/audio/units/shurima_guard/play_sfx_azir_azirbasicattacksoldier_cast1_r1.wav",
+    "group": "恕瑞玛卫队",
+    "cue": "普攻1出手",
+    "event": "Play_sfx_Azir_AzirBasicAttackSoldier_cast1 {r1}",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/azir/txtp/Play_sfx_Azir_AzirBasicAttackSoldier_cast1 {r1}.txtp",
+    "duration": 0.7576417233560091,
+    "sha256": "9fd5d23634a3e3d59fd661e194c318f9110029e36112bbe00f3616d950dc474e",
+    "processing": "原事件层与增益；vgmstream -i，不归一化",
+    "status": "已接入"
+  },
+  {
+    "file": "/Users/czh/Projects/Clash Legends/assets/audio/units/shurima_guard/play_sfx_azir_azirbasicattacksoldier_cast1_r2.wav",
+    "group": "恕瑞玛卫队",
+    "cue": "普攻1出手",
+    "event": "Play_sfx_Azir_AzirBasicAttackSoldier_cast1 {r2}",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/azir/txtp/Play_sfx_Azir_AzirBasicAttackSoldier_cast1 {r2}.txtp",
+    "duration": 0.623718820861678,
+    "sha256": "11d266131e85fdc3ebafc1e0380be577f512116a05b855152a4151cebc376109",
+    "processing": "原事件层与增益；vgmstream -i，不归一化",
+    "status": "已接入"
+  },
+  {
+    "file": "/Users/czh/Projects/Clash Legends/assets/audio/units/shurima_guard/play_sfx_azir_azirbasicattacksoldier_cast2_r1.wav",
+    "group": "恕瑞玛卫队",
+    "cue": "普攻2出手",
+    "event": "Play_sfx_Azir_AzirBasicAttackSoldier_cast2 {r1}",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/azir/txtp/Play_sfx_Azir_AzirBasicAttackSoldier_cast2 {r1}.txtp",
+    "duration": 0.5994331065759637,
+    "sha256": "e0241b50e9dce1468763035fb17ad82f35cd2c792d497440bea4eadcb4acdb75",
+    "processing": "原事件层与增益；vgmstream -i，不归一化",
+    "status": "已接入"
+  },
+  {
+    "file": "/Users/czh/Projects/Clash Legends/assets/audio/units/shurima_guard/play_sfx_azir_azirbasicattacksoldier_cast2_r2.wav",
+    "group": "恕瑞玛卫队",
+    "cue": "普攻2出手",
+    "event": "Play_sfx_Azir_AzirBasicAttackSoldier_cast2 {r2}",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/azir/txtp/Play_sfx_Azir_AzirBasicAttackSoldier_cast2 {r2}.txtp",
+    "duration": 0.5354195011337869,
+    "sha256": "e2113d1e911722ccf45eee4b920d0ac97783e26fe31b2528b0962befedfb754a",
+    "processing": "原事件层与增益；vgmstream -i，不归一化",
+    "status": "已接入"
+  },
+  {
+    "file": "/Users/czh/Projects/Clash Legends/assets/audio/units/shurima_guard/play_sfx_azir_azirbasicattacksoldier_cast3_r1.wav",
+    "group": "恕瑞玛卫队",
+    "cue": "普攻3出手",
+    "event": "Play_sfx_Azir_AzirBasicAttackSoldier_cast3 {r1} {d}",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/azir/txtp/Play_sfx_Azir_AzirBasicAttackSoldier_cast3 {r1} {d}.txtp",
+    "duration": 0.5994331065759637,
+    "sha256": "e0241b50e9dce1468763035fb17ad82f35cd2c792d497440bea4eadcb4acdb75",
+    "processing": "原事件层与增益；vgmstream -i，不归一化",
+    "status": "已接入"
+  },
+  {
+    "file": "/Users/czh/Projects/Clash Legends/assets/audio/units/shurima_guard/play_sfx_azir_azirbasicattacksoldier_cast3_r2.wav",
+    "group": "恕瑞玛卫队",
+    "cue": "普攻3出手",
+    "event": "Play_sfx_Azir_AzirBasicAttackSoldier_cast3 {r2} {d}",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/azir/txtp/Play_sfx_Azir_AzirBasicAttackSoldier_cast3 {r2} {d}.txtp",
+    "duration": 0.5354195011337869,
+    "sha256": "e2113d1e911722ccf45eee4b920d0ac97783e26fe31b2528b0962befedfb754a",
+    "processing": "原事件层与增益；vgmstream -i，不归一化",
+    "status": "已接入"
+  },
+  {
+    "file": "/Users/czh/Projects/Clash Legends/assets/audio/units/shurima_guard/play_sfx_azir_azirbasicattacksoldier_onhit_r1.wav",
+    "group": "恕瑞玛卫队",
+    "cue": "士兵命中",
+    "event": "Play_sfx_Azir_AzirBasicAttackSoldier_OnHit [1559186049=1153642577] {r1}",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/azir/txtp/Play_sfx_Azir_AzirBasicAttackSoldier_OnHit [1559186049=1153642577] {r1}.txtp",
+    "duration": 1.6082993197278912,
+    "sha256": "f5454a322d5196b192b02f99b3d17634e3603054c5b59ec0ae96ba9f7e76bea3",
+    "processing": "原事件层与增益；vgmstream -i，不归一化",
+    "status": "已接入"
+  },
+  {
+    "file": "/Users/czh/Projects/Clash Legends/assets/audio/units/shurima_guard/play_sfx_azir_azirbasicattacksoldier_onhit_r2.wav",
+    "group": "恕瑞玛卫队",
+    "cue": "士兵命中",
+    "event": "Play_sfx_Azir_AzirBasicAttackSoldier_OnHit [1559186049=1153642577] {r2}",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/azir/txtp/Play_sfx_Azir_AzirBasicAttackSoldier_OnHit [1559186049=1153642577] {r2}.txtp",
+    "duration": 1.613061224489796,
+    "sha256": "73444b33096fe9a24f3b44d9abf31f2ea280cc22ee8424fa06ebd8fa377d7b14",
+    "processing": "原事件层与增益；vgmstream -i，不归一化",
+    "status": "已接入"
+  },
+  {
+    "file": "/Users/czh/Projects/Clash Legends/assets/audio/units/shurima_guard/play_sfx_azir_azirwspawnsound_onbuffcast_r1.wav",
+    "group": "恕瑞玛卫队",
+    "cue": "召唤出场",
+    "event": "Play_sfx_Azir_AzirWSpawnSound_OnBuffCast {r1}",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/azir/txtp/Play_sfx_Azir_AzirWSpawnSound_OnBuffCast {r1}.txtp",
+    "duration": 2.1904761904761907,
+    "sha256": "ca6e4eb3f41b32a55e88cf4a437d18fdc78df69cca2d24601611882fd366c941",
+    "processing": "原事件层与增益；vgmstream -i，不归一化",
+    "status": "已接入"
+  },
+  {
+    "file": "/Users/czh/Projects/Clash Legends/assets/audio/units/shurima_guard/play_sfx_azir_azirwspawnsound_onbuffcast_r2.wav",
+    "group": "恕瑞玛卫队",
+    "cue": "召唤出场",
+    "event": "Play_sfx_Azir_AzirWSpawnSound_OnBuffCast {r2}",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/azir/txtp/Play_sfx_Azir_AzirWSpawnSound_OnBuffCast {r2}.txtp",
+    "duration": 2.4285714285714284,
+    "sha256": "3307209ef840e137d721f9847fd00a50a1b69499cb69f1d1e00596fbd7895bc5",
+    "processing": "原事件层与增益；vgmstream -i，不归一化",
+    "status": "已接入"
+  },
+  {
+    "file": "/Users/czh/Projects/Clash Legends/assets/audio/units/shurima_guard/play_sfx_azir_azirwspawnsound_onbuffdeactivate_r1.wav",
+    "group": "恕瑞玛卫队",
+    "cue": "消散死亡",
+    "event": "Play_sfx_Azir_AzirWSpawnSound_OnBuffDeactivate {r1}",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/azir/txtp/Play_sfx_Azir_AzirWSpawnSound_OnBuffDeactivate {r1}.txtp",
+    "duration": 1.5,
+    "sha256": "3618be8e68ba7990089971f4149c5360a163dd354c3df7869b1ee66203ae5800",
+    "processing": "原事件层与增益；vgmstream -i，不归一化; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "status": "已接入",
+    "death_envelope": {
+      "source_duration": 2.455374149659864,
+      "source_sha256": "1b42b68bc063b0ae04a859fcbe71d43141d2289a84581f329f53a787b390cd08",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "/Users/czh/Projects/Clash Legends/assets/audio/units/shurima_guard/play_sfx_azir_azirwspawnsound_onbuffdeactivate_r2.wav",
+    "group": "恕瑞玛卫队",
+    "cue": "消散死亡",
+    "event": "Play_sfx_Azir_AzirWSpawnSound_OnBuffDeactivate {r2}",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/azir/txtp/Play_sfx_Azir_AzirWSpawnSound_OnBuffDeactivate {r2}.txtp",
+    "duration": 1.5,
+    "sha256": "94fb099651d5311f55b19211237eccf5025a61cd874d2bdc36351685b12df0ca",
+    "processing": "原事件层与增益；vgmstream -i，不归一化; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "status": "已接入",
+    "death_envelope": {
+      "source_duration": 2.9397278911564624,
+      "source_sha256": "eb3d3b6a7bc53c21b3f8d0c57495bb382d7fdc2252fe3cb3914a9eac8268a9d5",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "/Users/czh/Projects/Clash Legends/assets/audio/units/shurima_guard/play_sfx_azir_azireshield_onbuffcast_r1.wav",
+    "group": "恕瑞玛卫队",
+    "cue": "护盾施放",
+    "event": "Play_sfx_Azir_AzirEShield_OnBuffCast {r1}",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/azir/txtp/Play_sfx_Azir_AzirEShield_OnBuffCast {r1}.txtp",
+    "duration": 1.3435827664399094,
+    "sha256": "d62a0e06907dec7da86a41e1262aebcb6b5a14b99ca310943365dfa91f0571a4",
+    "processing": "原事件层与增益；vgmstream -i，不归一化",
+    "status": "已接入"
+  },
+  {
+    "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/恕瑞玛卫队/20260915-调整未采用/play_sfx_azir_azireshield_onbuffcast_r2.wav",
+    "group": "恕瑞玛卫队",
+    "cue": "技能施放 r2（已停用，仅存档）",
+    "event": "Play_sfx_Azir_AzirEShield_OnBuffCast {r2}",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/azir/txtp/Play_sfx_Azir_AzirEShield_OnBuffCast {r2}.txtp",
+    "duration": 1.6559410430839003,
+    "sha256": "e9dd97705b181933d714278c4eb13405aded661af3b110024793df9a14a09a87",
+    "processing": "原事件层与增益；vgmstream -i，不归一化",
+    "status": "未采用"
+  },
+  {
+    "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/恕瑞玛卫队/音频/play_sfx_azir_azireshield_onbuffactivate_r1.wav",
+    "group": "恕瑞玛卫队",
+    "cue": "护盾生效",
+    "event": "Play_sfx_Azir_AzirEShield_OnBuffActivate {r1}",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/azir/txtp/Play_sfx_Azir_AzirEShield_OnBuffActivate {r1}.txtp",
+    "duration": 2.3000226757369613,
+    "sha256": "b595ec7b88ae86cc2e007a0a216d86b161b58c85b5d931e925bdf1122d257650",
+    "processing": "原事件层与增益；vgmstream -i，不归一化",
+    "status": "候选，未接入"
+  },
+  {
+    "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/恕瑞玛卫队/音频/play_sfx_azir_azireshield_onbuffactivate_r2.wav",
+    "group": "恕瑞玛卫队",
+    "cue": "护盾生效",
+    "event": "Play_sfx_Azir_AzirEShield_OnBuffActivate {r2}",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/azir/txtp/Play_sfx_Azir_AzirEShield_OnBuffActivate {r2}.txtp",
+    "duration": 2.7,
+    "sha256": "a286d7bd85949862cc58b5aced1503e3ec9ea7013619b571a1392bdb015001fc",
+    "processing": "原事件层与增益；vgmstream -i，不归一化",
+    "status": "候选，未接入"
+  },
+  {
+    "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/恕瑞玛卫队/音频/play_sfx_azir_azireshield_onbuffdeactivate_r1.wav",
+    "group": "恕瑞玛卫队",
+    "cue": "护盾结束",
+    "event": "Play_sfx_Azir_AzirEShield_OnBuffDeactivate",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/azir/txtp/Play_sfx_Azir_AzirEShield_OnBuffDeactivate.txtp",
+    "duration": 4.262607709750567,
+    "sha256": "c428ed8bc2ed915d68112c8ad32e2dea18f4e011fcbe6d204f270fdf323f2289",
+    "processing": "原事件层与增益；vgmstream -i，不归一化",
+    "status": "候选，未接入"
+  }
+]

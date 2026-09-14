@@ -1,6 +1,6 @@
 extends SceneTree
 ## 实际渲染与混音审查。截图/录音只供人工复核，不自动声明听感通过。
-const OUTPUT := "/tmp/clash-combat-terminal"
+var OUTPUT := preload("res://tools/lib/development_paths.gd").output("clash-combat-terminal")
 func _initialize() -> void: _run.call_deferred()
 func _capture(name: String) -> void:
 	await RenderingServer.frame_post_draw

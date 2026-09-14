@@ -44,15 +44,15 @@ class AuditTests(unittest.TestCase):
         (self.root / 'docs/units/gnar_mega.md').unlink()
         self.assertEqual(audit(self.root)['errors'], ['card registry/document mismatch: gnar_mega'])
 
-    def test_archived_source_paths_ignored_but_external_pollution_detected(self):
+    def test_development_library_is_ignored_but_runtime_references_fail(self):
+        self.write('ClashLegends-开发素材库/.gdignore', '')
+        self.write('ClashLegends-开发素材库/03-制作中/model.png', 'candidate')
+        self.write('ClashLegends-开发素材库/04-中间产物/preview/model.png.import', 'local cache')
+        self.assertEqual(audit(self.root)['errors'], [])
+        self.write('scripts/invalid.gd', 'var image = "res://ClashLegends-开发素材库/03-制作中/model.png"')
+        self.assertTrue(any('non-runtime resource' in error for error in audit(self.root)['errors']))
         self.write('assets/archive/old.gd', 'var source = "res://retired.png"')
-        self.write('待开发卡牌美术素材/.gdignore', '')
-        self.write('待开发卡牌美术素材/example.png.import', 'old cache')
-        self.write('scripts/invalid.gd', 'var image = "res://待开发卡牌美术素材/example.png"')
-        errors = audit(self.root)['errors']
-        self.assertTrue(any('non-runtime resource' in error for error in errors))
-        self.assertTrue(any('external queue import sidecar' in error for error in errors))
-        self.assertFalse(any('retired.png' in error for error in errors))
+        self.assertTrue(any('assets/archive: development content' in error for error in audit(self.root)['errors']))
 
 
 if __name__ == '__main__':

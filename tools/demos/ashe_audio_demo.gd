@@ -37,7 +37,7 @@ func _run() -> void:
 			await create_timer(0.05).timeout
 			if tick in [20, 54]:
 				RenderingServer.force_draw()
-				root.get_texture().get_image().save_png("/tmp/clash_ashe_audio_%d.png" % tick)
+				root.get_texture().get_image().save_png(preload("res://tools/lib/development_paths.gd").output("clash_ashe_audio_%d.png") % tick)
 	main.queue_free()
 	await process_frame
 	await process_frame

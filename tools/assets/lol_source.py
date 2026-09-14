@@ -36,12 +36,8 @@ def staging_path(path, source):
     path = path.expanduser().resolve()
     if path == source or path.is_relative_to(source):
         raise ValueError('Output must not be inside the read-only source library.')
-    for folder in ['assets', 'scripts', 'scenes', 'docs', 'tests', 'tools', '.git', '.godot']:
-        protected = PROJECT / folder
-        if path == protected or path.is_relative_to(protected):
-            raise ValueError('Use builds/ or an external staging directory; do not overwrite project content.')
-    if path == PROJECT:
-        raise ValueError('Use a dedicated staging directory.')
+    if (path == PROJECT or path.is_relative_to(PROJECT)) and not path.is_relative_to(PROJECT / "ClashLegends-开发素材库"):
+        raise ValueError('Use ClashLegends-开发素材库, not runtime directories.')
     if path.exists():
         raise ValueError(f'Output already exists; choose a new output: {path}')
     return path

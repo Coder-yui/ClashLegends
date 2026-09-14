@@ -4,7 +4,7 @@ extends SceneTree
 ## Captures are actual Godot frames, including the existing six tower proxies.
 
 const CANDIDATE_PATH := "res://assets/arena/rift_arena/rift_arena.tscn"
-const OUTPUT_PATH := "res://builds/arena_preview_v2"
+var OUTPUT_PATH := preload("res://tools/lib/development_paths.gd").output("arena_preview_v2")
 const STUDIO_BACKGROUND := Color("173c42")
 
 # Override only this instantiated preview's background draw. Inherited gameplay,

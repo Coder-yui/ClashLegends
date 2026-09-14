@@ -47,11 +47,11 @@ func _run() -> void:
 		await create_timer(0.05).timeout
 		if tick == 40:
 			RenderingServer.force_draw()
-			root.get_texture().get_image().save_png("/tmp/clash_sustained_audio.png")
+			root.get_texture().get_image().save_png(preload("res://tools/lib/development_paths.gd").output("clash_sustained_audio.png"))
 	record.set_recording_active(false)
 	var recording := record.get_recording()
 	if recording != null:
-		recording.save_to_wav("/tmp/clash_sustained_audio.wav")
+		recording.save_to_wav(preload("res://tools/lib/development_paths.gd").output("clash_sustained_audio.wav"))
 	AudioServer.remove_bus_effect(master, AudioServer.get_bus_effect_count(master) - 1)
 	main.queue_free()
 	await process_frame

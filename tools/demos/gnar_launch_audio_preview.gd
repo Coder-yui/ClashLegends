@@ -1,6 +1,6 @@
 extends SceneTree
 ## 默认真实渲染/录音；也支持 -- --mode=host 或 --mode=join 核对可靠启停。
-const OUTPUT := "/tmp/clash-gnar-launch"
+var OUTPUT := preload("res://tools/lib/development_paths.gd").output("clash-gnar-launch")
 func _initialize() -> void:
 	_run.call_deferred()
 func _run() -> void:

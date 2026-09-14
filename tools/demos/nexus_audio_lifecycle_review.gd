@@ -1,5 +1,5 @@
 extends SceneTree
-const OUTPUT := "/tmp/clash-nexus-audio"
+var OUTPUT := preload("res://tools/lib/development_paths.gd").output("clash-nexus-audio")
 func _initialize() -> void:
 	_run.call_deferred()
 func _run() -> void:

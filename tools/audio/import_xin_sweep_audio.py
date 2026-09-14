@@ -2,7 +2,7 @@
 from pathlib import Path
 import array, hashlib, json, shutil, wave
 ROOT = Path(__file__).resolve().parents[2]
-SOURCE = Path('/Users/czh/Tools/lol-asset-tools/xin_r_review')
+SOURCE = Path('/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/xin_r_review')
 DEST = ROOT / 'assets/audio/units/xin'
 MANIFEST = DEST / 'event_manifest.json'
 manifest = json.loads(MANIFEST.read_text())
@@ -11,7 +11,7 @@ def register(entry):
     global manifest
     manifest = [x for x in manifest if x['file'] != entry['file']] + [entry]
 # Use the verified combined OnCast onset; do not guess names for its two anonymous media layers.
-original = Path('/Users/czh/Tools/lol-asset-tools/card_audio_batch/xinzhao/event_wav/Play_sfx_XinZhao_XinZhaoR_OnCast.wav')
+original = Path('/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/xinzhao/event_wav/Play_sfx_XinZhao_XinZhaoR_OnCast.wav')
 output = DEST / 'play_sfx_xinzhao_xinzhaor_oncast_sweep.wav'
 with wave.open(str(original)) as reader:
     params = reader.getparams()

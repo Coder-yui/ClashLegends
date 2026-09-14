@@ -1,5 +1,5 @@
 extends SceneTree
-## 正式工作台出牌/技能事件的可复现录音；输出到 /tmp/clash-card-audio。
+## 正式工作台出牌/技能事件的可复现录音；输出到 /Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/预览与验证/clash-card-audio。
 const CARDS := ["aurelionsol", "sett", "gwen", "teemo", "twisted_fate", "xin", "gnar", "anivia", "apex_turret", "pix", "imp"]
 func _initialize() -> void:
 	_run.call_deferred()
@@ -26,7 +26,7 @@ func _run() -> void:
 		await create_timer(0.25).timeout
 		quit()
 		return
-	DirAccess.make_dir_recursive_absolute("/tmp/clash-card-audio")
+	DirAccess.make_dir_recursive_absolute(preload("res://tools/lib/development_paths.gd").output("clash-card-audio"))
 	main._start_art_dev()
 	main._art_dev_panel.show_workspace(1)
 	var master := AudioServer.get_bus_index("Master")
@@ -46,7 +46,7 @@ func _run() -> void:
 		main._run_workbench_scenario("target")
 		await create_timer(3.0).timeout
 		await RenderingServer.frame_post_draw
-		root.get_texture().get_image().save_png("/tmp/clash-card-audio/"+id+".png")
+		root.get_texture().get_image().save_png(preload("res://tools/lib/development_paths.gd").output("clash-card-audio/")+id+".png")
 		main._set_art_dev_skill_resource(0.0)
 		main._use_art_dev_active_skill()
 		await create_timer(2.0).timeout
@@ -59,7 +59,7 @@ func _run() -> void:
 		await create_timer(1.5).timeout
 		record.set_recording_active(false)
 		var recording := record.get_recording()
-		if recording != null: recording.save_to_wav("/tmp/clash-card-audio/"+id+".wav")
+		if recording != null: recording.save_to_wav(preload("res://tools/lib/development_paths.gd").output("clash-card-audio/")+id+".wav")
 		print("[batch recording] ", id)
 	AudioServer.remove_bus_effect(master, AudioServer.get_bus_effect_count(master)-1)
 	main.queue_free()

@@ -2,7 +2,7 @@
 from pathlib import Path
 import hashlib, json, re, subprocess, wave
 ROOT = Path(__file__).resolve().parents[2]
-SOURCE = Path('/Users/czh/Tools/lol-asset-tools/card_audio_batch/heimerdinger/txtp')
+SOURCE = Path('/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp')
 DEST = ROOT / 'assets/audio/units/apex_turret'
 EVENT = 'Play_sfx_HeimerTYellow_HeimerdingerQSpawnDestroyAudio_OnBuffActivate'
 manifest_path = DEST/'event_manifest.json'

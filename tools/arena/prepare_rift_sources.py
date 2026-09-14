@@ -17,7 +17,7 @@ import tempfile
 
 
 ROOT = Path(__file__).resolve().parents[2]
-ARENA = ROOT / "assets/arena/rift_arena"
+ARENA = ROOT / "ClashLegends-开发素材库/03-制作中/3D地图"
 DEFAULT_WAD = Path(
     "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Map11.wad.client"
 )
@@ -100,7 +100,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--wad", type=Path, default=DEFAULT_WAD)
     parser.add_argument("--contact-sheet", type=Path,
-                        default=ROOT / "builds/arena_preview/source_texture_contact.jpg")
+                        default=ROOT / "ClashLegends-开发素材库/04-中间产物/构建与验证/arena_preview/source_texture_contact.jpg")
     args = parser.parse_args()
     wad = args.wad.resolve(strict=True)
     wad_stat = wad.stat()

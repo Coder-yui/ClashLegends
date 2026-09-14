@@ -36,6 +36,9 @@ def main():
     parser.add_argument('--voices', action='store_true', help='Also prepare verified Death3D from zh_CN')
     args = parser.parse_args()
     args.wads, args.output, args.init = args.wads.resolve(), args.output.resolve(), args.init.resolve()
+    library = Path(__file__).resolve().parents[2] / 'ClashLegends-开发素材库'
+    if not args.output.is_relative_to(library):
+        parser.error('--output must be inside ClashLegends-开发素材库')
     assert args.init.is_file()
     for champion in args.champions:
         output = (args.output/champion.lower()).resolve()

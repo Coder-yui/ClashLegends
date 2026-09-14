@@ -4,7 +4,7 @@
 
 | 可复用入口 | 用途 |
 | --- | --- |
-| `prepare_lol_card_audio.py --help` | 给定 WAD、Init 音频库、英雄和外部输出目录，准备原始事件素材；需要外部转换工具 |
+| `prepare_lol_card_audio.py --help` | 给定 WAD、Init 音频库、英雄和素材库输出目录，准备原始事件素材；需要外部转换工具 |
 | `import_card_audio.py --help` | 按明确计划与 `--cards` 选择导入；先 `--dry-run` 核对目标 |
 | `audio_manifest_merge.py` | 多个导入器共用的来源清单合并 |
 | `death_audio_envelope.py` | 普通单位死亡声时长和淡出加工 |

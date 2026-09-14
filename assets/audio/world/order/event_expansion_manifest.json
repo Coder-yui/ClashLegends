@@ -3,7 +3,7 @@
     "file": "assets/audio/world/order/play_sfx_env_map11_orderturretminionbasicattack_hit_r1.wav",
     "event": "Play_sfx_Env_map11_OrderTurretMinionBasicAttack_hit",
     "event_id": 3381914753,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_Env_map11_OrderTurretMinionBasicAttack_hit {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/Play_sfx_Env_map11_OrderTurretMinionBasicAttack_hit {r1}.txtp",
     "duration": 1.2703628117913832,
     "media_ids": [
       321369288,
@@ -16,7 +16,7 @@
     "file": "assets/audio/world/order/play_sfx_env_map11_orderturretminionbasicattack_hit_r2.wav",
     "event": "Play_sfx_Env_map11_OrderTurretMinionBasicAttack_hit",
     "event_id": 3381914753,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_Env_map11_OrderTurretMinionBasicAttack_hit {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/Play_sfx_Env_map11_OrderTurretMinionBasicAttack_hit {r2}.txtp",
     "duration": 1.3471201814058957,
     "media_ids": [
       321369288,
@@ -29,7 +29,7 @@
     "file": "assets/audio/world/order/play_sfx_env_map11_orderturretminionbasicattack_cast_r1.wav",
     "event": "Play_sfx_Env_map11_OrderTurretMinionBasicAttack_cast",
     "event_id": 107904683,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/env_global_buildings_sfx_events-0259-event {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/env_global_buildings_sfx_events-0259-event {r1}.txtp",
     "duration": 2.2032199546485263,
     "media_ids": [
       239389260,
@@ -44,7 +44,7 @@
     "file": "assets/audio/world/order/play_sfx_env_map11_orderturretminionbasicattack_cast_r2.wav",
     "event": "Play_sfx_Env_map11_OrderTurretMinionBasicAttack_cast",
     "event_id": 107904683,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/env_global_buildings_sfx_events-0259-event {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/env_global_buildings_sfx_events-0259-event {r2}.txtp",
     "duration": 2.085011337868481,
     "media_ids": [
       239389260,
@@ -59,7 +59,7 @@
     "file": "assets/audio/world/order/play_sfx_env_map11_orderturretminionbasicattack_cast_r3.wav",
     "event": "Play_sfx_Env_map11_OrderTurretMinionBasicAttack_cast",
     "event_id": 107904683,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/env_global_buildings_sfx_events-0259-event {r3}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/env_global_buildings_sfx_events-0259-event {r3}.txtp",
     "duration": 2.123219954648526,
     "media_ids": [
       239389260,
@@ -74,7 +74,7 @@
     "file": "assets/audio/world/order/play_sfx_env_map11_orderturretminionbasicattack_missilelaunch_r1.wav",
     "event": "Play_sfx_Env_map11_OrderTurretMinionBasicAttack_missilelaunch",
     "event_id": 2427351139,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_Env_map11_OrderTurretMinionBasicAttack_missilelaunch {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/Play_sfx_Env_map11_OrderTurretMinionBasicAttack_missilelaunch {r1}.txtp",
     "duration": 1.5462131519274376,
     "media_ids": [
       398859396,
@@ -88,7 +88,7 @@
     "file": "assets/audio/world/order/play_sfx_env_map11_orderturretminionbasicattack_missilelaunch_r2.wav",
     "event": "Play_sfx_Env_map11_OrderTurretMinionBasicAttack_missilelaunch",
     "event_id": 2427351139,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_Env_map11_OrderTurretMinionBasicAttack_missilelaunch {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/Play_sfx_Env_map11_OrderTurretMinionBasicAttack_missilelaunch {r2}.txtp",
     "duration": 1.9661678004535148,
     "media_ids": [
       398859396,
@@ -102,7 +102,7 @@
     "file": "assets/audio/world/order/play_sfx_env_map11_orderturretminionbasicattack_missilelaunch_r3.wav",
     "event": "Play_sfx_Env_map11_OrderTurretMinionBasicAttack_missilelaunch",
     "event_id": 2427351139,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_Env_map11_OrderTurretMinionBasicAttack_missilelaunch {r3}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/Play_sfx_Env_map11_OrderTurretMinionBasicAttack_missilelaunch {r3}.txtp",
     "duration": 1.561814058956916,
     "media_ids": [
       398859396,
@@ -116,7 +116,7 @@
     "file": "assets/audio/world/order/play_sfx_env_orderturret_break01_r1.wav",
     "event": "Play_sfx_ENV_OrderTurret_break01",
     "event_id": 3905909009,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_ENV_OrderTurret_break01.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/Play_sfx_ENV_OrderTurret_break01.txtp",
     "duration": 4.278095238095238,
     "media_ids": [
       277766611
@@ -128,7 +128,7 @@
     "file": "assets/audio/world/order/play_sfx_env_orderturret_break02_r1.wav",
     "event": "Play_sfx_ENV_OrderTurret_break02",
     "event_id": 3905909010,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_ENV_OrderTurret_break02.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/Play_sfx_ENV_OrderTurret_break02.txtp",
     "duration": 4.274965986394558,
     "media_ids": [
       595052768
@@ -140,7 +140,7 @@
     "file": "assets/audio/world/order/play_sfx_env_orderturret_break03_r1.wav",
     "event": "Play_sfx_ENV_OrderTurret_break03",
     "event_id": 3905909011,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_ENV_OrderTurret_break03.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/Play_sfx_ENV_OrderTurret_break03.txtp",
     "duration": 7.598571428571429,
     "media_ids": [
       472890284
@@ -152,7 +152,7 @@
     "file": "assets/audio/world/order/play_sfx_env_sruap_order_nexus_spawn_r1.wav",
     "event": "Play_sfx_Env_sruap_order_nexus_spawn",
     "event_id": 2817262864,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_Env_sruap_order_nexus_spawn.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/Play_sfx_Env_sruap_order_nexus_spawn.txtp",
     "duration": 19.276485260770976,
     "media_ids": [
       714406518
@@ -164,7 +164,7 @@
     "file": "assets/audio/world/order/play_sfx_env_sruap_order_nexus_alive_loop_r1.wav",
     "event": "Play_sfx_Env_sruap_order_nexus_alive_loop",
     "event_id": 2400685163,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_Env_sruap_order_nexus_alive_loop.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/Play_sfx_Env_sruap_order_nexus_alive_loop.txtp",
     "duration": 5.644353741496599,
     "media_ids": [
       714346081
@@ -176,7 +176,7 @@
     "file": "assets/audio/world/order/play_sfx_env_global_eog_ordernexus_death_oc_r1.wav",
     "event": "Play_sfx_Env_Global_EoG_OrderNexus_death_oc",
     "event_id": 854049063,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/shared_audio_review/named_txtp/Play_sfx_Env_Global_EoG_OrderNexus_death_oc.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/Play_sfx_Env_Global_EoG_OrderNexus_death_oc.txtp",
     "duration": 9.663786848072561,
     "media_ids": [
       535900553,

@@ -1,7 +1,7 @@
 extends SceneTree
 ## 从皮克斯 3D 包装场景拍摄多单位卡面。
 ## 运行：Godot --path . --script tools/capture/capture_pix_card_art.gd
-## 动作选片：追加 -- --inspect-attacks，输出 /tmp/pix_attack_contact_sheet.png。
+## 动作选片：追加 -- --inspect-attacks，输出 /Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/预览与验证/pix_attack_contact_sheet.png。
 
 const PIX_SCENE := "res://assets/units/pix/pix_view.tscn"
 const RENDER_SIZE := Vector2i(616, 1120)
@@ -105,7 +105,7 @@ func _capture_card_art() -> void:
 		await process_frame
 	var image := _viewport.get_texture().get_image()
 	image.resize(OUTPUT_SIZE.x, OUTPUT_SIZE.y, Image.INTERPOLATE_LANCZOS)
-	var output_path := "res://assets/cards/pix_loading.png"
+	var output_path := preload("res://tools/lib/development_paths.gd").output("card_art/pix_loading.png")
 	var error := image.save_png(ProjectSettings.globalize_path(output_path))
 	if error == OK:
 		print("[卡面摄影] 已保存 ", output_path)
@@ -130,7 +130,7 @@ func _capture_attack_contact_sheet() -> void:
 			var frame := _viewport.get_texture().get_image()
 			sheet.blit_rect(frame, Rect2i(Vector2i.ZERO, INSPECT_CELL), Vector2i(column * INSPECT_CELL.x, row * INSPECT_CELL.y))
 			model.free()
-	var output_path := "/tmp/pix_attack_contact_sheet.png"
+	var output_path := preload("res://tools/lib/development_paths.gd").output("pix_attack_contact_sheet.png")
 	var error := sheet.save_png(output_path)
 	if error == OK:
 		print("[动作选片] 已保存 ", output_path)

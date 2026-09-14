@@ -1,6 +1,6 @@
 extends SceneTree
 ## 双阵营真实预部署/落地录音截图；可传 --mode=host / --mode=join。
-const OUTPUT := "/tmp/clash-event-network"
+var OUTPUT := preload("res://tools/lib/development_paths.gd").output("clash-event-network")
 func _initialize() -> void:
 	_run.call_deferred()
 func _run() -> void:

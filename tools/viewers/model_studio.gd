@@ -224,7 +224,7 @@ func _capture() -> void:
 		var id := String(_options.card)
 		for extension in ["png", "jpg", "jpeg", "webp"]:
 			if FileAccess.file_exists("res://assets/cards/%s_loading.%s" % [id, extension]):
-				_fail("Existing card art is protected; capture a candidate to builds/ instead")
+				_fail("Existing card art is protected; capture to the ClashLegends development library instead")
 				return
 		output = "res://assets/cards/%s_loading.png" % id
 	elif not output.is_absolute_path():
@@ -234,10 +234,9 @@ func _capture() -> void:
 		_fail("Choose a new .png output; existing files are never overwritten")
 		return
 	if not _options.has("install-missing-art"):
-		for folder in ["assets", "scripts", "scenes", "docs", "tests", "tools", ".godot", ".git"]:
-			if output.begins_with(ProjectSettings.globalize_path("res://" + folder + "/")):
-				_fail("Capture candidates to builds/ or a temporary directory")
-				return
+		if output.begins_with(ProjectSettings.globalize_path("res://")) and not output.begins_with(ProjectSettings.globalize_path("res://ClashLegends-开发素材库/")):
+			_fail("Capture candidates to the ClashLegends development library")
+			return
 		if output.begins_with("/Users/czh/Downloads/LOL_Asset_Source/"):
 			_fail("The source library is read-only")
 			return

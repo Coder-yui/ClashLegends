@@ -152,7 +152,7 @@ func _capture_portrait(portrait: Dictionary) -> void:
 		await process_frame
 	var image := _viewport.get_texture().get_image()
 	image.resize(OUTPUT_SIZE.x, OUTPUT_SIZE.y, Image.INTERPOLATE_LANCZOS)
-	var output_path := "res://assets/cards/%s_loading.png" % portrait.id
+	var output_path := preload("res://tools/lib/development_paths.gd").output("card_art/%s_loading.png") % portrait.id
 	var error := image.save_png(ProjectSettings.globalize_path(output_path))
 	if error == OK:
 		print("[卡面摄影] 已保存 ", output_path)

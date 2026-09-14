@@ -17,7 +17,7 @@ func _run() -> void:
 		await create_timer(10.0 if index == 1 else 1.3).timeout
 		print("[场景验收] 截图 ", index)
 		await RenderingServer.frame_post_draw
-		root.get_texture().get_image().save_png("/tmp/workbench-scenario-%d.png" % index)
+		root.get_texture().get_image().save_png(preload("res://tools/lib/development_paths.gd").output("workbench-scenario-%d.png") % index)
 		_check_controls(panel)
 	panel._on_team_toggled(true)
 	panel._scenario_option.select(0)
@@ -25,7 +25,7 @@ func _run() -> void:
 	await main._load_workbench_preset("surrounded")
 	await create_timer(1.3).timeout
 	await RenderingServer.frame_post_draw
-	root.get_texture().get_image().save_png("/tmp/workbench-scenario-red.png")
+	root.get_texture().get_image().save_png(preload("res://tools/lib/development_paths.gd").output("workbench-scenario-red.png"))
 	print("[场景验收] 四种预设与红方镜像已实际渲染")
 	quit()
 func _check_controls(node: Node) -> void:
