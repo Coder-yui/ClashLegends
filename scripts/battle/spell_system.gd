@@ -29,14 +29,14 @@ func cast(team: int, stats: Dictionary, position: Vector2, active_enabled: bool 
 			var slow_multiplier := float(stats.get("active_slow_multiplier", 1.0))
 			apply_freeze(position, radius, duration, team, slow_duration, slow_multiplier)
 			if _controller.mode == "host":
-				_controller._rpc_freeze_fx.rpc(position, radius, duration, slow_duration, slow_multiplier)
+				_controller._rpc_freeze_fx.rpc_id(_controller.network_opponent_id(), _controller.network_session_id(), position, radius, duration, slow_duration, slow_multiplier)
 			return true
 		&"heal":
 			var heal_radius := float(stats.get("radius", 0.0))
 			var fx_duration := float(stats.get("duration", 1.2))
 			apply_heal(position, heal_radius, team, stats, active_enabled)
 			if _controller.mode == "host":
-				_controller._rpc_heal_fx.rpc(position, heal_radius, fx_duration, active_enabled)
+				_controller._rpc_heal_fx.rpc_id(_controller.network_opponent_id(), _controller.network_session_id(), position, heal_radius, fx_duration, active_enabled)
 			return true
 		_:
 			push_error("未实现的 spell_kind：%s" % String(stats.get("spell_kind", "")))
@@ -44,10 +44,9 @@ func cast(team: int, stats: Dictionary, position: Vector2, active_enabled: bool 
 
 
 func apply_freeze(position: Vector2, radius: float, duration: float, team: int, slow_duration: float = 0.0, slow_multiplier: float = 1.0) -> void:
-	freeze_effects.append({"pos": position, "timer": duration, "duration": duration, "radius": radius})
+	show_freeze(position, radius, duration, slow_duration)
 	if slow_duration > 0.0:
 		slow_zones.append({"pos": position, "radius": radius, "delay": duration, "timer": slow_duration, "team": team, "multiplier": slow_multiplier})
-		slow_effects.append({"pos": position, "radius": radius, "delay": duration, "timer": slow_duration, "duration": slow_duration})
 	for combatant in _controller.get_tree().get_nodes_in_group("combatants"):
 		if not is_instance_valid(combatant) or combatant.team == team or combatant.hp <= 0.0:
 			continue
@@ -68,7 +67,7 @@ func apply_heal(position: Vector2, radius: float, team: int, stats: Dictionary, 
 	var heal_multiplier := maxf(float(stats.get("active_heal_multiplier", 1.0)), 1.0) if active_enabled else 1.0
 	var shield_amount := maxf(float(stats.get("active_shield", 0.0)), 0.0) if active_enabled else 0.0
 	var shield_duration := maxf(float(stats.get("active_shield_duration", 0.0)), 0.0)
-	heal_effects.append({"pos": position, "radius": radius, "timer": float(stats.get("duration", 1.2)), "duration": float(stats.get("duration", 1.2)), "enhanced": active_enabled})
+	show_heal(position, radius, float(stats.get("duration", 1.2)), active_enabled)
 	for combatant in _controller.get_tree().get_nodes_in_group("combatants"):
 		if not is_instance_valid(combatant) or combatant.team != team or combatant.hp <= 0.0:
 			continue
@@ -78,6 +77,15 @@ func apply_heal(position: Vector2, radius: float, team: int, stats: Dictionary, 
 		if shield_amount > 0.0 and shield_duration > 0.0 and in_range and combatant.has_method("add_shield"):
 			combatant.add_shield(shield_amount, shield_duration)
 
+
+## 主机结算和客户端 RPC 共用表现创建入口，副本不创建权威区域。
+func show_freeze(position: Vector2, radius: float, duration: float, slow_duration: float = 0.0) -> void:
+	freeze_effects.append({"pos": position, "timer": duration, "duration": duration, "radius": radius})
+	if slow_duration > 0.0:
+		slow_effects.append({"pos": position, "radius": radius, "delay": duration, "timer": slow_duration, "duration": slow_duration})
+
+func show_heal(position: Vector2, radius: float, duration: float, enhanced: bool = false) -> void:
+	heal_effects.append({"pos": position, "radius": radius, "timer": duration, "duration": duration, "enhanced": enhanced})
 
 func tick(dt: float) -> void:
 	var alive: Array[Dictionary] = []

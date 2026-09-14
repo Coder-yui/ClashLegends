@@ -2,7 +2,7 @@ class_name NetworkSnapshotSystem
 extends RefCounted
 ## 20Hz 单位/塔/弹体快照的序列化与客户端应用。RPC 端点仍保留在 Main。
 
-const SNAPSHOT_PROTOCOL_VERSION := 13
+const SNAPSHOT_PROTOCOL_VERSION := MatchSession.PROTOCOL_VERSION
 const S_VERSION := 0
 const S_SERVER_TICK := 1
 const S_UNITS := 2
@@ -11,7 +11,9 @@ const S_TOWERS := 4
 const S_CLIENT_ELIXIR := 5
 const S_MATCH_TIMER := 6
 const S_OVERTIME := 7
-const SNAPSHOT_PACKET_SIZE := 8
+const S_SESSION := 8
+const S_LIFECYCLE_REVISION := 9
+const SNAPSHOT_PACKET_SIZE := 10
 
 ## 当前版本使用固定长度载荷；协议变更必须同步提高 SNAPSHOT_PROTOCOL_VERSION。
 const U_ID := 0
@@ -52,7 +54,9 @@ const U_ATTACK_FIRST_STRIKE := 34
 const U_ATTACK_ELAPSED := 35
 const U_MOVEMENT_RATE := 36
 const U_ACTION_PERMISSIONS := 37
-const UNIT_PAYLOAD_SIZE := 38
+const U_SPAWN := 38
+const U_DEPLOY_LEFT := 39
+const UNIT_PAYLOAD_SIZE := 40
 
 const P_ID := 0
 const P_X := 1
@@ -76,53 +80,122 @@ const T_SHIELD_RATIO := 3
 const T_SHIELD_CAPACITY_RATIO := 4
 const TOWER_PAYLOAD_SIZE := 5
 
+var terminal_applied := false
+var lifecycle := NetworkEntityLifecycle.new()
 var _controller: Node2D
+var _projectile_system: ProjectileSystem
 
 
-func _init(controller: Node2D) -> void:
+func _init(controller: Node2D, projectile_system: ProjectileSystem) -> void:
 	_controller = controller
+	_projectile_system = projectile_system
 
 
-func apply(snapshot_bytes: PackedByteArray) -> void:
-	if _controller.mode != "client":
+func reset_session(session_id: String) -> void:
+	for id in _controller.client_unit_ids():
+		_controller.remove_network_unit(id, false)
+	_projectile_system.clear_client()
+	terminal_applied = false
+	lifecycle.reset(session_id)
+	_controller.reset_network_clock()
+
+func register_spawn(args: Array) -> Dictionary:
+	lifecycle.host_spawn(int(args[3]), _controller.get_authoritative_server_tick(), args)
+	return lifecycle.spawns[int(args[3])]
+
+func receive_spawn(session_id: String, descriptor: Dictionary, snapshot_payload: Array = []) -> void:
+	if _controller.mode != "client" or terminal_applied or _controller.game_over or not lifecycle.accepts_session(session_id) or not _valid_spawn(descriptor):
 		return
+	var args: Array = descriptor.args.duplicate(true)
+	var id := int(args[3])
+	var birth := int(descriptor.birth_tick)
+	var birth_revision := int(descriptor.birth_revision)
+	if not lifecycle.accepts_spawn(id, birth_revision):
+		return
+	var existing = _controller.find_client_unit(id)
+	if is_instance_valid(existing):
+		return
+	lifecycle.register_spawn(id, birth, birth_revision, args)
+	if not snapshot_payload.is_empty():
+		args[2] = Vector2(snapshot_payload[U_X], snapshot_payload[U_Y])
+		args[4] = float(snapshot_payload[U_DEPLOY_LEFT])
+	_controller.create_network_unit.callv(args)
+
+func receive_death(session_id: String, id: int, tick: int, play_death_visual: bool) -> void:
+	if _controller.mode != "client" or terminal_applied or _controller.game_over or not lifecycle.accepts_session(session_id) or tick < 0:
+		return
+	lifecycle.mark_destroyed(id, tick)
+	_controller.remove_network_unit(id, play_death_visual)
+
+func _valid_spawn(descriptor: Dictionary) -> bool:
+	if not descriptor.get("birth_tick") is int or int(descriptor.birth_tick) < 0:
+		return false
+	if not descriptor.get("birth_revision") is int or int(descriptor.birth_revision) < 0:
+		return false
+	var args = descriptor.get("args")
+	if not args is Array or args.size() != 12:
+		return false
+	if not args[0] is String or CardDB.get_unit_stats(args[0]).is_empty():
+		return false
+	for index in [1, 3, 5, 6, 7, 8, 10]:
+		if not args[index] is int:
+			return false
+	if args[1] not in [0, 1] or int(args[3]) < 0 or not args[2] is Vector2 or not args[2].is_finite():
+		return false
+	return typeof(args[4]) in [TYPE_INT, TYPE_FLOAT] and is_finite(float(args[4])) and args[9] is String and args[11] is bool
+
+
+func apply(snapshot_bytes: PackedByteArray, terminal: bool = false, expected_tick: int = -1) -> bool:
+	if _controller.mode != "client" or terminal_applied or _controller.game_over:
+		return false
 	var raw_bytes := snapshot_bytes.decompress_dynamic(1024 * 1024, FileAccess.COMPRESSION_DEFLATE)
 	if raw_bytes.is_empty():
-		return
+		return false
 	var decoded = bytes_to_var(raw_bytes)
 	if not decoded is Array or decoded.size() != SNAPSHOT_PACKET_SIZE:
-		return
+		return false
 	if not decoded[S_VERSION] is int or int(decoded[S_VERSION]) != SNAPSHOT_PROTOCOL_VERSION:
-		return
-	if not decoded[S_SERVER_TICK] is int:
-		return
+		return false
+	if not decoded[S_SESSION] is String or not lifecycle.accepts_session(decoded[S_SESSION]):
+		return false
+	if not decoded[S_SERVER_TICK] is int or not decoded[S_LIFECYCLE_REVISION] is int or int(decoded[S_LIFECYCLE_REVISION]) < 0:
+		return false
 	if not decoded[S_UNITS] is Array or not decoded[S_PROJECTILES] is Array or not decoded[S_TOWERS] is Array:
-		return
+		return false
+	if terminal and int(decoded[S_SERVER_TICK]) != expected_tick:
+		return false
 	var units_data: Array = decoded[S_UNITS]
 	var projectiles_data: Array = decoded[S_PROJECTILES]
 	var towers_data: Array = decoded[S_TOWERS]
 	if not _payloads_have_size(units_data, UNIT_PAYLOAD_SIZE):
-		return
+		return false
 	if not _payloads_have_size(projectiles_data, PROJECTILE_PAYLOAD_SIZE):
-		return
+		return false
 	if not _payloads_have_size(towers_data, TOWER_PAYLOAD_SIZE):
-		return
+		return false
+	var ids := {}
+	for payload: Array in units_data:
+		if not payload[U_ID] is int or ids.has(payload[U_ID]) or not payload[U_SPAWN] is Dictionary or not _valid_spawn(payload[U_SPAWN]):
+			return false
+		if int(payload[U_SPAWN].args[3]) != int(payload[U_ID]) or int(payload[U_SPAWN].birth_tick) > int(decoded[S_SERVER_TICK]) or int(payload[U_SPAWN].birth_revision) > int(decoded[S_LIFECYCLE_REVISION]):
+			return false
+		ids[payload[U_ID]] = true
+	if not terminal and not lifecycle.snapshot_is_new(int(decoded[S_SERVER_TICK]), int(decoded[S_LIFECYCLE_REVISION])):
+		return false
+	if terminal and (int(decoded[S_SERVER_TICK]) < lifecycle.snapshot_tick or int(decoded[S_LIFECYCLE_REVISION]) < lifecycle.snapshot_revision):
+		return false
 	# 可靠 RPC 仍可能在不同发送周期交错到达；较早 tick 不能回拨客户端命令时钟。
 	if not _controller._accept_authoritative_server_tick(int(decoded[S_SERVER_TICK])):
-		return
+		return false
 
+	lifecycle.accept_snapshot(int(decoded[S_SERVER_TICK]), int(decoded[S_LIFECYCLE_REVISION]), ids)
 	_apply_units(units_data)
 	_apply_projectiles(projectiles_data)
 	_apply_towers(towers_data)
-	_controller._elixir.elixir = float(decoded[S_CLIENT_ELIXIR])
-	_controller._match_rules.time_left = float(decoded[S_MATCH_TIMER])
-	_controller._match_rules.overtime = bool(decoded[S_OVERTIME])
-	_controller._update_timer_label()
-	_controller._update_elixir_rate()
-	_controller._snapshots_received += 1
-	if _controller._auto_test and _controller._snapshots_received % 40 == 0:
-		print("[测试] 客户端已收快照 ", _controller._snapshots_received, " 份，单位数=", _controller._client_units.size(), " 弹道数=", _controller._client_projectiles.size())
+	_controller.apply_network_match_snapshot(float(decoded[S_CLIENT_ELIXIR]), float(decoded[S_MATCH_TIMER]), bool(decoded[S_OVERTIME]))
 
+	terminal_applied = terminal
+	return true
 
 func _payloads_have_size(payloads: Array, expected_size: int) -> bool:
 	for payload in payloads:
@@ -135,13 +208,19 @@ func _apply_units(units_data: Array) -> void:
 	var seen := {}
 	for d: Array in units_data:
 		seen[d[U_ID]] = true
-		var u: Unit = _controller._client_units.get(d[U_ID])
-		if u == null or not is_instance_valid(u):
+		if lifecycle.destroyed.has(d[U_ID]):
 			continue
+		var u = _controller.find_client_unit(d[U_ID])
+		if not is_instance_valid(u):
+			receive_spawn(lifecycle.session_id, d[U_SPAWN], d)
+			u = _controller.find_client_unit(d[U_ID])
+		if not is_instance_valid(u):
+			continue
+		u._deploy_timer = maxf(float(d[U_DEPLOY_LEFT]), 0.0)
+		_controller.sync_network_unit_skill(u, int(d[U_SPAWN].args[5]), int(d[U_SPAWN].args[6]))
 		u.net_target_pos = Vector2(d[U_X], d[U_Y])
 		u.sync_network_form(int(d[U_FORM]), int(d[U_FORM_CHANGE_SERIAL]))
 		u.hp = BattleNumbers.quantity(float(d[U_HP]))
-		u.control.frozen_timer = 0.15 if int(d[U_FROZEN]) == 1 else 0.0
 		u.net_visual_state = int(d[U_VISUAL_STATE])
 		u.net_attack_visual_serial = int(d[U_ATTACK_SERIAL])
 		u.net_attack_visual_first_strike = int(d[U_ATTACK_FIRST_STRIKE]) == 1
@@ -153,7 +232,7 @@ func _apply_units(units_data: Array) -> void:
 			print("[测试] 客户端已收到持续吐息目标端点")
 		u.net_slow_active = int(d[U_SLOW]) == 1
 		u.net_stun_active = int(d[U_STUN]) == 1
-		u.control.stun_timer = 0.15 if u.net_stun_active else 0.0
+		u.control.apply_replica_flags(int(d[U_FROZEN]) == 1, u.net_stun_active)
 		var action_serial := int(d[U_ACTION_SERIAL])
 		if action_serial >= u.net_visual_action_serial:
 			u.net_visual_action_serial = action_serial
@@ -174,11 +253,7 @@ func _apply_units(units_data: Array) -> void:
 		u.net_action_permissions = int(d[U_ACTION_PERMISSIONS])
 		u.net_movement_rate = maxf(float(d[U_MOVEMENT_RATE]), 0.01)
 		u.net_active_buff_active = int(d[U_ACTIVE_BUFF_ACTIVE]) == 1
-		if _controller._active_skills.has(u.active_ability_id):
-			var active_entry: Dictionary = _controller._active_skills[u.active_ability_id]
-			active_entry["uses_remaining"] = maxi(int(d[U_ACTIVE_SKILL_USES_REMAINING]), 0)
-			active_entry["cooldown_left"] = maxf(float(d[U_ACTIVE_SKILL_COOLDOWN]), 0.0)
-			_controller._active_skills[u.active_ability_id] = active_entry
+		_controller.apply_network_skill_state(u, int(d[U_ACTIVE_SKILL_USES_REMAINING]), float(d[U_ACTIVE_SKILL_COOLDOWN]))
 		u.net_shield_ratio = clampf(float(d[U_SHIELD_RATIO]), 0.0, 1.0)
 		u.net_shield_capacity_ratio = maxf(float(d[U_SHIELD_CAPACITY_RATIO]), 0.0)
 		if (
@@ -198,87 +273,51 @@ func _apply_units(units_data: Array) -> void:
 		u.queue_redraw()
 
 	var gone := []
-	for id in _controller._client_units:
-		if not seen.has(id):
+	for id in _controller.client_unit_ids():
+		if not seen.has(id) and lifecycle.snapshot_can_remove(id):
 			gone.append(id)
 	for id in gone:
-		var u: Unit = _controller._client_units[id]
-		if is_instance_valid(u):
-			if u.is_building and not u.nav_cells.is_empty():
-				_controller.unblock_nav_cells(u.nav_cells)
-				u.nav_cells = []
-			u.notify_visual_death()
-			u.queue_free()
-		_controller._client_units.erase(id)
+		lifecycle.mark_destroyed(id, lifecycle.snapshot_tick)
+		_controller.remove_network_unit(id, true)
 
 
 func _apply_projectiles(projectiles_data: Array) -> void:
-	var seen := {}
+	var targets := {}
 	if _controller._auto_test and not _controller._auto_projectile_seen and not projectiles_data.is_empty():
 		_controller._auto_projectile_seen = true
 		print("[测试] 客户端已收到弹道快照")
 	for d: Array in projectiles_data:
-		seen[d[P_ID]] = true
-		var projectile: Dictionary = _controller._client_projectiles.get(d[P_ID], {
+		targets[d[P_ID]] = {
 			"pos": Vector2(d[P_X], d[P_Y]),
 			"target_pos": Vector2(d[P_X], d[P_Y]),
-			"color": d[P_COLOR],
-			"radius": d[P_RADIUS],
-			"visual": StringName(d[P_VISUAL]),
+			"color": d[P_COLOR], "radius": d[P_RADIUS], "visual": StringName(d[P_VISUAL]),
 			"direction": Vector2(d[P_DIRECTION_X], d[P_DIRECTION_Y]),
 			"visual_height": float(d[P_VISUAL_HEIGHT]),
 			"visual_offset": Vector2(d[P_VISUAL_OFFSET_X], d[P_VISUAL_OFFSET_Y]),
 			"target_visual_offset": Vector2(d[P_VISUAL_OFFSET_X], d[P_VISUAL_OFFSET_Y]),
-			"visual_scale": float(d[P_VISUAL_SCALE]),
-			"first_strike": int(d[P_FIRST_STRIKE]) == 1,
-		})
-		projectile.target_pos = Vector2(d[P_X], d[P_Y])
-		projectile.color = d[P_COLOR]
-		projectile.radius = d[P_RADIUS]
-		projectile.visual = StringName(d[P_VISUAL])
-		projectile.direction = Vector2(d[P_DIRECTION_X], d[P_DIRECTION_Y])
-		projectile.visual_height = float(d[P_VISUAL_HEIGHT])
-		projectile.target_visual_offset = Vector2(d[P_VISUAL_OFFSET_X], d[P_VISUAL_OFFSET_Y])
-		projectile.visual_scale = float(d[P_VISUAL_SCALE])
-		projectile.first_strike = int(d[P_FIRST_STRIKE]) == 1
-		_controller._client_projectiles[d[P_ID]] = projectile
-	var gone := []
-	for id in _controller._client_projectiles:
-		if not seen.has(id):
-			gone.append(id)
-	for id in gone:
-		_controller._client_projectiles.erase(id)
-
+			"visual_scale": float(d[P_VISUAL_SCALE]), "first_strike": int(d[P_FIRST_STRIKE]) == 1,
+		}
+	_projectile_system.apply_client_targets(targets)
 
 func _apply_towers(towers_data: Array) -> void:
 	for i in range(mini(towers_data.size(), _controller._towers.size())):
 		var tower_data: Array = towers_data[i]
-		var tower_was_alive: bool = _controller._towers[i].hp > 0.0
-		_controller._towers[i].hp = BattleNumbers.quantity(float(tower_data[T_HP]))
-		_controller._towers[i].activated = int(tower_data[T_ACTIVATED]) == 1
-		_controller._towers[i].control.stun_timer = 0.15 if int(tower_data[T_STUNNED]) == 1 else 0.0
-		var shield_ratio := clampf(float(tower_data[T_SHIELD_RATIO]), 0.0, 1.0)
-		var shield_capacity_ratio := maxf(float(tower_data[T_SHIELD_CAPACITY_RATIO]), 0.0)
-		_controller._towers[i].shield_max_hp = BattleNumbers.quantity(shield_capacity_ratio * _controller._towers[i].max_hp)
-		_controller._towers[i].shield_hp = BattleNumbers.quantity(shield_ratio * _controller._towers[i].shield_max_hp)
-		_controller._towers[i].shield_timer = 0.15 if _controller._towers[i].shield_hp > 0.0 else 0.0
-		_controller._towers[i].shield_decay_rate = 0.0
-		if tower_was_alive and _controller._towers[i].hp <= 0.0:
-			_controller._towers[i].notify_visual_destroyed()
-		if _controller._towers[i].hp <= 0.0 and not _controller._towers[i].nav_cells.is_empty():
-			_controller.unblock_nav_cells(_controller._towers[i].nav_cells)
-			_controller._towers[i].nav_cells = []
-		_controller._towers[i].queue_redraw()
+		_controller._towers[i].apply_network_state(
+			float(tower_data[T_HP]), int(tower_data[T_ACTIVATED]) == 1,
+			int(tower_data[T_STUNNED]) == 1, float(tower_data[T_SHIELD_RATIO]),
+			float(tower_data[T_SHIELD_CAPACITY_RATIO]))
 
 
 func send() -> void:
+	_controller._rpc_snapshot.rpc_id(_controller.network_opponent_id(), capture())
+
+func capture() -> PackedByteArray:
 	var units_data := []
-	var dead := []
-	for id in _controller._net_units:
+	var units: Dictionary = _controller.authoritative_units_snapshot()
+	for id in units:
 		# 非类型化读取：单位可能已 queue_free，类型化赋值会先于有效性检查报错。
-		var u = _controller._net_units.get(id)
+		var u = units.get(id)
 		if u == null or not is_instance_valid(u) or u.hp <= 0.0:
-			dead.append(id)
 			continue
 		units_data.append(_unit_snapshot_payload(
 			id,
@@ -287,26 +326,26 @@ func send() -> void:
 			u.get_continuous_visual_target_position(),
 			u.get_visual_facing_direction(),
 		))
-	for id in dead:
-		_controller._net_units.erase(id)
 
 	var projectiles_data := []
-	for id in _controller._projectiles:
-		var projectile: Dictionary = _controller._projectiles[id]
+	var authoritative_projectiles := _projectile_system.authoritative_snapshot()
+	for id in authoritative_projectiles:
+		var projectile: Dictionary = authoritative_projectiles[id]
 		projectiles_data.append(_projectile_snapshot_payload(id, projectile))
 
 	var towers_data := []
 	for tower in _controller._towers:
 		towers_data.append(_tower_snapshot_payload(tower))
+	var match_state: Dictionary = _controller.network_match_snapshot()
 	var snapshot_bytes := var_to_bytes(_snapshot_packet(
 		units_data,
 		projectiles_data,
 		towers_data,
-		_controller._elixir_p1.elixir,
-		_controller._match_rules.time_left,
-		_controller._match_rules.overtime,
+		match_state.elixir,
+		match_state.time_left,
+		match_state.overtime,
 	)).compress(FileAccess.COMPRESSION_DEFLATE)
-	_controller._rpc_snapshot.rpc(snapshot_bytes)
+	return snapshot_bytes
 
 
 func _snapshot_packet(units_data: Array, projectiles_data: Array, towers_data: Array, client_elixir: float, match_timer: float, overtime: bool) -> Array:
@@ -319,6 +358,8 @@ func _snapshot_packet(units_data: Array, projectiles_data: Array, towers_data: A
 		client_elixir,
 		match_timer,
 		overtime,
+		lifecycle.session_id,
+		lifecycle.revision,
 	]
 
 
@@ -350,6 +391,11 @@ func _unit_snapshot_payload(id: int, u: Unit, has_continuous_target: bool = fals
 	if facing_direction.is_zero_approx():
 		facing_direction = u.get_visual_facing_direction()
 	var active_skill_state: Dictionary = _controller.get_active_skill_snapshot(u.active_ability_id)
+	var descriptor: Dictionary = lifecycle.spawns.get(id, {"birth_tick": 0, "birth_revision": 0, "args": [u.card_id, u.team, u.global_position, id, u.deploy_time, u.active_ability_id, u.active_ability_slot, -1, u.deployment_group_id, String(u.visual_spawn_transition), u.death_replacement_charges, u.built_on_tower_ruin]}).duplicate(true)
+	# 主动资格会转交/被新部署替换；重建必须使用当前资格而非原始出生资格。
+	descriptor.args[5] = u.active_ability_id
+	descriptor.args[6] = u.active_ability_slot
+	descriptor.args[10] = u.death_replacement_charges
 	return [
 		id, u.global_position.x, u.global_position.y, u.hp,
 		1 if u.control.frozen_timer > 0.0 else 0,
@@ -373,4 +419,6 @@ func _unit_snapshot_payload(id: int, u: Unit, has_continuous_target: bool = fals
 		1 if u.active_buff_timer > 0.0 else 0,
 		1 if u.is_attack_visual_first_strike() else 0,
 		u.get_attack_elapsed_visual(), u.get_effective_movement_rate_visual(), u.get_action_permissions_visual(),
+		descriptor,
+		u._deploy_timer,
 	]

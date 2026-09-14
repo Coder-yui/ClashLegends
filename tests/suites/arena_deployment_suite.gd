@@ -5,6 +5,7 @@ extends "res://tests/suites/battle_suite.gd"
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
+	_check_structure_query_membership()
 	_check_official_arena_grid()
 	_check_card_deployment_preview()
 	_check_large_unit_front_row_exit()
@@ -180,10 +181,10 @@ func _check_command_tick_estimation() -> void:
 	_main._advance_estimated_server_tick(0.23)
 	var estimated_after_gap: int = _main.get_estimated_server_tick()
 	var client_target_after_gap: int = _main._resolve_command_execute_tick(_main._input_tick_for_new_command())
-	var snapshot_system := NetworkSnapshotSystem.new(_main)
+	var snapshot_system := NetworkSnapshotSystem.new(_main, _main._projectile_system)
 	var newer_but_behind_estimate := [
 		NetworkSnapshotSystem.SNAPSHOT_PROTOCOL_VERSION, 102,
-		[], [], [], 0.0, 180.0, false,
+		[], [], [], 0.0, 180.0, false, _main._snapshot_system.lifecycle.session_id, 0,
 	]
 	snapshot_system.apply(var_to_bytes(newer_but_behind_estimate).compress(FileAccess.COMPRESSION_DEFLATE))
 	var estimate_survives_stale_snapshot: bool = (
@@ -192,13 +193,13 @@ func _check_command_tick_estimation() -> void:
 	)
 	var incompatible_version_packet := [
 		NetworkSnapshotSystem.SNAPSHOT_PROTOCOL_VERSION - 1, 103,
-		[], [], [], 0.0, 180.0, false,
+		[], [], [], 0.0, 180.0, false, _main._snapshot_system.lifecycle.session_id, 0,
 	]
 	snapshot_system.apply(var_to_bytes(incompatible_version_packet).compress(FileAccess.COMPRESSION_DEFLATE))
 	var incompatible_version_rejected: bool = _main._authoritative_server_tick == 102
 	var stale_packet := [
 		NetworkSnapshotSystem.SNAPSHOT_PROTOCOL_VERSION, 101,
-		[], [], [], 0.0, 180.0, false,
+		[], [], [], 0.0, 180.0, false, _main._snapshot_system.lifecycle.session_id, 0,
 	]
 	snapshot_system.apply(var_to_bytes(stale_packet).compress(FileAccess.COMPRESSION_DEFLATE))
 	var stale_snapshot_rejected: bool = _main._authoritative_server_tick == 102
@@ -345,3 +346,25 @@ func _check_deployment_unlocks_first_attack() -> void:
 		walker.sim_tick(0.05)
 	_expect(walker.is_deployed() and walker._move_intent.length_squared() > 0.0, "部署结束后无近目标时产生移动意图")
 	walker.free()
+
+func _check_structure_query_membership() -> void:
+	var building := Unit.new()
+	building.setup(0, CardDB.get_card("tombstone"), "建筑索引")
+	_main.add_child(building)
+	building.position = Vector2(360, 900)
+	var ordinary := Unit.new()
+	ordinary.setup(0, CardDB.get_card("garen"), "普通单位")
+	_main.add_child(ordinary)
+	ordinary.position = Vector2(440, 900)
+	var oracle := _main.get_tree().get_nodes_in_group("combatants").filter(func(c): return c is Tower or (c is Unit and c.is_building))
+	var indexed := _main.get_tree().get_nodes_in_group("combat_structures")
+	_expect(oracle.size() == indexed.size() and oracle.all(func(c): return indexed.has(c)), "建筑查询索引包含全部塔与建筑，排除普通单位")
+	_expect(not _main.is_ground_position_walkable(building.position, 10.0) and _main.is_ground_position_walkable(ordinary.position, 10.0), "结构查询只阻挡建筑，不把普通单位当静态障碍")
+	building.is_building = false
+	ordinary.is_building = true
+	_expect(not building.is_in_group("combat_structures") and ordinary.is_in_group("combat_structures") and not _main.is_ground_position_walkable(ordinary.position, 10.0), "运行实例建筑状态变化同步查询索引")
+	ordinary.hp = 0.0
+	_expect(_main.is_ground_position_walkable(ordinary.position, 10.0), "死亡建筑立即不阻挡，即使节点尚未释放")
+	building.free()
+	ordinary.free()
+	_expect(_main.get_tree().get_nodes_in_group("combat_structures").size() == indexed.size() - 1, "释放建筑不会留下结构索引项")

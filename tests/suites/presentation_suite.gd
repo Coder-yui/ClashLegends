@@ -5,6 +5,8 @@ extends "res://tests/suites/battle_suite.gd"
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
+	_check_model_resources_owner()
+	_check_action_sequence_owner()
 	_check_structure_art_integration()
 	_check_unit_size_tiers()
 	_check_visual_state_contract()
@@ -384,11 +386,11 @@ func _check_hit_flash_presentation() -> void:
 			view = child as UnitModel3D
 			break
 	unit.take_damage(1.0)
-	var flashed := attached and view != null and view._hit_flash_timer > 0.0 and not view._flash_meshes.is_empty()
+	var flashed := attached and view != null and view._hit_flash_timer > 0.0 and not view._model_resources.meshes().is_empty()
 	var health_bar_above_head := view != null and unit._health_bar_center.y < -unit.visual_radius - Unit.HEALTH_BAR_HEAD_GAP
-	var flash_is_subtle := flashed and view._hit_flash_timer <= 0.051 and is_equal_approx(view._hit_flash_material.albedo_color.a, 0.22)
+	var flash_is_subtle := flashed and view._hit_flash_timer <= 0.051 and is_equal_approx(view._model_resources.meshes()[0].material_overlay.albedo_color.a, 0.22)
 	if flashed:
-		for mesh_instance in view._flash_meshes:
+		for mesh_instance in view._model_resources.meshes():
 			flashed = flashed and mesh_instance.material_overlay is StandardMaterial3D
 	view._update_hit_flash(0.05)
 	unit.take_damage(1.0)
@@ -396,8 +398,8 @@ func _check_hit_flash_presentation() -> void:
 	view._update_hit_flash(0.1)
 	var restored := view != null and view._hit_flash_timer <= 0.0
 	if restored:
-		for i in range(view._flash_meshes.size()):
-			restored = restored and view._flash_meshes[i].material_overlay == view._original_overlays[i]
+		for i in range(view._model_resources.meshes().size()):
+			restored = restored and view._model_resources.meshes()[i].material_overlay == view._model_resources.original_overlay(i)
 	_expect(flashed and flash_is_subtle and restored and continuous_damage_throttled and _main.has_method("_rpc_unit_hit"), "单位受击短暂轻微泛白后恢复，持续伤害限频且联机使用可靠表现事件")
 	_expect(health_bar_above_head, "3D 单位血条按模型投影顶部定位在人物头顶上方")
 	if view != null:
@@ -435,11 +437,25 @@ func _check_health_bar_team_anchor() -> void:
 	var red_bar := red.get_health_bar_screen_center()
 	var blue_ok: bool = blue_attached and blue_view != null and is_equal_approx(blue_head.y - blue_bar.y, bar_gap)
 	var red_ok: bool = red_attached and red_view != null and is_equal_approx(red_head.y - red_bar.y, bar_gap)
-	var flip_camera := Camera2D.new()
-	flip_camera.position = Vector2(ArenaRules.FIELD_W * 0.5, ArenaRules.FIELD_H * 0.5)
-	flip_camera.rotation = PI
-	_main.add_child(flip_camera)
-	flip_camera.make_current()
+	var previous_canvas := _main.get_viewport().canvas_transform
+	_main._flip_camera()
+	var flip_camera: Camera2D = _main.get_viewport().get_camera_2d()
+	flip_camera.force_update_scroll()
+	var canvas := _main.get_canvas_transform()
+	_expect((canvas * Vector2.ZERO).distance_to(Vector2(720, 1280)) < 0.01 and (canvas * Vector2(720, 1280)).length() < 0.01, "客户端把 1280 高战场准确翻转到原范围，不产生顶部 120px 空白")
+	var click_position := Vector2(210, 900)
+	_expect((canvas.affine_inverse() * (canvas * click_position)).is_equal_approx(click_position), "客户端屏幕点击可逆映射到权威落点")
+	var client_view := BattlePresentation3D.new()
+	_main.add_child(client_view)
+	client_view.setup(Vector2(720, 1280), 40.0, true)
+	var camera := client_view._camera
+	var ray_origin := camera.project_ray_origin(Vector2(360, 900))
+	var ray_direction := camera.project_ray_normal(Vector2(360, 900))
+	var ground := ray_origin + ray_direction * (-ray_origin.y / ray_direction.y)
+	var screen_feet := canvas * camera.unproject_position(ground)
+	var screen_head := canvas * camera.unproject_position(ground + Vector3.UP)
+	_expect(screen_head.y < screen_feet.y, "3D 相机配合翻转画布后模型头部仍高于脚底")
+	client_view.free()
 	if blue_view != null:
 		blue_view._update_health_bar_anchor()
 	if red_view != null:
@@ -455,6 +471,7 @@ func _check_health_bar_team_anchor() -> void:
 	var colors_ok: bool = blue.get_health_bar_fill_color() == Color(0.2, 0.9, 0.2) and red.get_health_bar_fill_color() == Color(0.95, 0.25, 0.25)
 	_expect(blue_ok and red_ok and flipped_ok and colors_ok, "红蓝双方血条统一贴在头顶上方，敌方血条显示为红色")
 	flip_camera.free()
+	_main.get_viewport().canvas_transform = previous_canvas
 	if blue_view != null:
 		blue_view.free()
 	if red_view != null:
@@ -639,3 +656,56 @@ func _check_teemo_art_integration() -> void:
 	_expect(attached and death_view_found, "提莫死亡时由独立 3D 代理播放 Death")
 	if is_instance_valid(unit):
 		unit.free()
+
+func _check_action_sequence_owner() -> void:
+	var sequence := VisualActionSequence.new()
+	var configured := sequence.configure(["missing", "A", "B"], [], [[], [1.0, 3.0], [0.0, 1.0]], {&"A": 4.0, &"B": 2.0}, 6.0)
+	_expect(configured and sequence.current().name == &"A" and sequence.current().duration == 4.0, "动作序列过滤缺失素材并按裁剪长度分配权威窗口")
+	_expect(sequence.seek(4.0) == 0.0 and sequence.index == 1, "晚到恰好跨段时从下一段开头对齐")
+	_expect(is_equal_approx(sequence.seek(5.0), 0.5) and sequence.current().name == &"B", "晚到动作按目标时长映射素材进度")
+	_expect(sequence.seek(100.0) == 1.0 and sequence.index == 1, "超过窗口保持末段末帧，不重新播放序列")
+	var copy := sequence.current()
+	copy.range = Vector2.ZERO
+	_expect(sequence.current().range == Vector2(0, 1), "外部读取的片段描述不修改序列内部状态")
+	sequence.configure(["A", "B"], [1.0, 3.0], [], {&"A": 4.0, &"B": 2.0}, 99.0)
+	_expect(sequence.current().speed == 4.0 and sequence.advance() and is_equal_approx(sequence.current().speed, 2.0 / 3.0), "显式逐段时长不被权威窗口覆盖，完成事件推进到下一段")
+	_expect(not sequence.advance() and sequence.current().is_empty(), "最后一段完成后不再提供可播放片段")
+	sequence.clear()
+	_expect(sequence.index == 0 and sequence.current().is_empty(), "换模型/结束/死亡可清空序列及游标")
+
+func _check_model_resources_owner() -> void:
+	var original := StandardMaterial3D.new()
+	var animation := Animation.new()
+	animation.length = 1.0
+	var library := AnimationLibrary.new()
+	library.add_animation(&"probe", animation)
+	var roots: Array[Node3D] = []
+	var owners: Array[ModelVisualResources] = []
+	var players: Array[AnimationPlayer] = []
+	for index in 2:
+		var root := Node3D.new()
+		var mesh := MeshInstance3D.new()
+		mesh.material_overlay = original
+		root.add_child(mesh)
+		var fx := MeshInstance3D.new()
+		fx.add_to_group("presentation_fx")
+		root.add_child(fx)
+		var player := AnimationPlayer.new()
+		player.add_animation_library(&"", library)
+		root.add_child(player)
+		var owner := ModelVisualResources.new()
+		players.append(owner.bind_model(root))
+		owners.append(owner)
+		roots.append(root)
+	players[0].get_animation(&"probe").length = 2.0
+	_expect(players[1].get_animation(&"probe").length == 1.0 and animation.length == 1.0, "模型资源为每个实例深复制动画库，不污染源或另一实例")
+	_expect(owners[0].meshes().size() == 1, "效果网格不进入人物材质覆盖或血条边界集合")
+	owners[0].apply_overlays(true, false, false)
+	_expect(owners[0].meshes()[0].material_overlay != original and owners[1].meshes()[0].material_overlay == original, "受击叠加只修改对应模型实例")
+	var mesh := owners[0].meshes()[0]
+	owners[0].clear()
+	_expect(mesh.material_overlay == original and owners[0].meshes().is_empty(), "释放资源恢复原始覆盖并清空模型引用")
+	owners[0].bind_model(roots[1])
+	_expect(owners[0].meshes().size() == 1 and owners[0].original_overlay(0) == original, "重新绑定只保留新模型材质状态")
+	for owner in owners: owner.clear()
+	for root in roots: root.free()

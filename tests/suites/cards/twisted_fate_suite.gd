@@ -155,7 +155,7 @@ func _check_wild_cards_visual() -> void:
 	_main._projectile_system.launch_skill_fan(caster, skill, Vector2.UP)
 	var paths_match := true
 	var index := 0
-	for projectile in _main._projectiles.values():
+	for projectile in _main._projectile_system.projectiles.values():
 		var direction := ProjectileSystem.skill_fan_direction(Vector2.UP, float(effect.arc_degrees), int(effect.projectile_count), index)
 		paths_match = paths_match and (projectile.pos as Vector2).is_equal_approx(caster.position + direction * float(effect.source_radius))
 		paths_match = paths_match and (projectile.direction as Vector2).is_equal_approx(direction) and is_equal_approx(float(projectile.remaining), float(effect.length))
@@ -163,7 +163,7 @@ func _check_wild_cards_visual() -> void:
 	_expect(paths_match and index == 3, "万能牌提示与三条真实弹体共用方向，逐条起点和长度一致")
 	var old_mode: String = _main.mode
 	_main.mode = "client"
-	_main._rpc_frontal_skill_fx(-1, caster.position, Vector2.DOWN, caster.body_radius, float(effect.length), 0.0, float(effect.duration), 1, String(effect.shape), 0.0, 0.0, float(effect.arc_degrees), int(effect.projectile_count))
+	preload("res://tests/suites/network_fixture.gd").deliver(_main, "_rpc_frontal_skill_fx", [-1, caster.position, Vector2.DOWN, caster.body_radius, float(effect.length), 0.0, float(effect.duration), 1, String(effect.shape), 0.0, 0.0, float(effect.arc_degrees), int(effect.projectile_count)])
 	var replay: Dictionary = _main._active_skill_effect_system.frontal_effects.back()
 	_expect(replay.shape == "projectile_fan" and replay.projectile_count == 3 and replay.forward == Vector2.DOWN, "客户端范围 RPC 保留三条穿透路径参数和红方朝向")
 	_main.mode = old_mode
@@ -192,7 +192,7 @@ func _check_attack_release_and_skill_lock() -> void:
 	var target_hp_before := target.hp
 	attacker.sim_tick(_main.SIM_DT)
 	_expect(
-		not _main._projectiles.is_empty()
+		not _main._projectile_system.projectiles.is_empty()
 		and is_equal_approx(target.hp, target_hp_before)
 		and attacker.get_attack_visual_serial() > 0,
 		"卡牌大师普攻在 first_hit 出手 tick 生成远程弹体，飞行期间不提前扣血",
@@ -254,7 +254,7 @@ func _check_passive_single_projectile() -> void:
 		# 不推进弹体，继续跨过原来的 0.12 秒追加攻击窗口。
 		for tick in 4:
 			attacker.sim_tick(0.05)
-		counts.append(_main._projectiles.size())
+		counts.append(_main._projectile_system.projectiles.size())
 		for tick in 20:
 			_main._projectile_system.tick(0.05)
 		amounts.append(before - target.hp)

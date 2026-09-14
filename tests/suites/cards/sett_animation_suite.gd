@@ -45,7 +45,7 @@ func _check_w_timing(harness: Object, main: Node2D) -> void:
 		# advance 真实越过 section 结束回调，不能只检查 seek 后的配置值。
 		player.advance(0.401)
 		seamless_and_authoritative = seamless_and_authoritative and (
-			view._visual_action_sequence_index == 1
+			view._action_sequence.index == 1
 			and is_zero_approx(view._last_clip_blend_time)
 			and is_equal_approx(player.get_section_start_time(), 0.8)
 			and StringName(prepared.visual_action) == action
@@ -55,7 +55,7 @@ func _check_w_timing(harness: Object, main: Node2D) -> void:
 			and is_equal_approx(unit.active_skill_cast_timer, 1.4)
 		)
 		view._seek_visual_action(0.8)
-		aligned = aligned and view._visual_action_sequence_index == 1 and absf(player.current_animation_position - 0.8) < 0.001
+		aligned = aligned and view._action_sequence.index == 1 and absf(player.current_animation_position - 0.8) < 0.001
 		var end := player.get_animation(player.current_animation).length
 		view._seek_visual_action(1.1)
 		aligned = aligned and absf(player.current_animation_position - (0.8 + (end - 0.8) * 0.5)) < 0.001

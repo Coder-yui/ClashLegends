@@ -11,10 +11,7 @@ static func definition() -> Dictionary:
 			"size_tier": SIZE_SMALL, "radius": RADIUS_SMALL,
 			"mass": 2.0, "sight": 210.0,
 			"projectile_speed": 380.0,
-			"projectile_visual": "needle",
-			# 提莫身形较矮，吹箭从约 28px 高的吹管口出现；暂用短绿色线段代替正式毒针素材。
-			"projectile_visual_height": 28.0 * CHARACTER_SCALE_MULTIPLIER,
-			"color": Color(0.60, 0.80, 0.30),
+			"projectile_spawn_at_edge": true, "projectile_spawn_offset": 7.5, "projectile_collision_radius": 4.0,
 			"is_air": false, "building_only": false, "can_attack_air": true,
 			"active_skills": [{
 					"name": "致盲", "kind": "empowered_attack",
@@ -59,6 +56,10 @@ static func definition() -> Dictionary:
 				},
 				"death": "Death", "death_duration": 0.8,
 			},
+			"projectile_visual": "needle",
+			# 提莫身形较矮，吹箭从约 28px 高的吹管口出现；暂用短绿色线段代替正式毒针素材。
+			"projectile_visual_height": 28.0 * CHARACTER_SCALE_MULTIPLIER,
+			"color": Color(0.60, 0.80, 0.30),
 		},
 		# BEGIN IMPORTED AUDIO teemo
 		"audio": {
@@ -98,8 +99,8 @@ static func definition() -> Dictionary:
 			"empowered_hit": [
 				"res://assets/audio/units/teemo/play_sfx_teemo_teemoq_onhit_r1.wav",
 				"res://assets/audio/units/teemo/play_sfx_teemo_teemoq_onhit_r2.wav"
-			]
+			],
 		},
 		# END IMPORTED AUDIO teemo
-		"card_art": {}, # 默认 assets/cards/<card_id>_loading.*
+		"card_art": {},
 	}

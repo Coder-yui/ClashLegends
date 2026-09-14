@@ -10,10 +10,10 @@ static func definition() -> Dictionary:
 			"speed": SPEED_EXTREMELY_SLOW, "interval": 1.7, "first_hit": 0.68,
 			"size_tier": SIZE_SLIGHTLY_LARGE, "radius": 20.0, "custom_radius": true,
 			"mass": 5.0, "sight": 270.0,
-			"projectile_speed": 420.0, "projectile_visual": "ice_cone", "projectile_visual_height": 62.0,
-			"color": Color(0.45, 0.82, 1.0),
+			"projectile_speed": 420.0,
+			"projectile_spawn_at_edge": true, "projectile_spawn_offset": 7.5, "projectile_collision_radius": 4.0,
 			"is_air": true, "building_only": false, "can_attack_air": true,
-			"death_replacement_id": "anivia_egg", "death_replacement_charges": 1, "death_replacement_visual_transition": "drop",
+			"death_replacement_id": "anivia_egg", "death_replacement_charges": 1,
 			"active_skills": [{
 					"name": "冰雪风暴", "kind": "forward_area",
 					"cost": 2, "max_uses": 1, "cooldown": 10.0,
@@ -23,7 +23,7 @@ static func definition() -> Dictionary:
 					"zone_duration": 3.0, "zone_tick_interval": 1.0, "zone_damage": 42,
 					"zone_slow_duration": 1.1, "zone_slow_multiplier": 0.60,
 					"impact_delay": 0.72, "cast_duration": 1.17,
-					"cast_locks": ["movement", "attack", "facing"], "visual_action": "frost_storm",
+					"cast_locks": ["movement", "attack", "facing"],
 				}],
 		},
 		"visual": { "visual_radius": (RADIUS_SLIGHTLY_LARGE + VISUAL_RADIUS_PADDING) * 1.15,
@@ -41,7 +41,10 @@ static func definition() -> Dictionary:
 					"frost_storm": {"animation": "Spell4", "durations": [1.166667], "kind": "skill"},
 				},
 				"death": "Death", "death_duration": 2.4,
-			},
+			}, "projectile_visual": "ice_cone", "projectile_visual_height": 62.0,
+			"color": Color(0.45, 0.82, 1.0), "death_replacement_visual_transition": "drop",
+			"active_skills": [{ "visual_action": "frost_storm",
+				}],
 		},
 		# BEGIN IMPORTED AUDIO anivia
 		"audio": {
@@ -90,8 +93,8 @@ static func definition() -> Dictionary:
 				"res://assets/audio/units/anivia/play_sfx_anivia_aniviabasicattack_onhit_r2_d.wav",
 				"res://assets/audio/units/anivia/play_sfx_anivia_aniviabasicattack_onhit_r3_d.wav"
 			],
-			"attack_hit_volume_db": -5.0
+			"attack_hit_volume_db": -5.0,
 		},
 		# END IMPORTED AUDIO anivia
-		"card_art": {}, # 默认 assets/cards/<card_id>_loading.*
+		"card_art": {},
 	}

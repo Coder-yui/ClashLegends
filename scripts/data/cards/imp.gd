@@ -12,7 +12,6 @@ static func definition() -> Dictionary:
 			"deploy_time": 0.0,
 			"size_tier": SIZE_EXTREMELY_SMALL, "radius": RADIUS_EXTREMELY_SMALL,
 			"mass": 1.0, "sight": 180.0,
-			"color": Color(0.55, 0.45, 0.80),
 			"is_air": false, "building_only": false, "can_attack_air": false,
 		},
 		"visual": {
@@ -44,6 +43,7 @@ static func definition() -> Dictionary:
 				"attack": ["Attack1", "Attack2", "Attack3"],
 				"death": "Death", "death_duration": 0.5,
 			},
+			"color": Color(0.55, 0.45, 0.80),
 		},
 		# BEGIN IMPORTED AUDIO imp
 		"audio": {
@@ -64,8 +64,8 @@ static func definition() -> Dictionary:
 				["res://assets/audio/units/imp/play_sfx_yorick_yorickq_ghoulattack_cast_r1.wav"],
 				["res://assets/audio/units/imp/play_sfx_yorick_yorickq_ghoulattack_cast_r1.wav"],
 			],
-			"attack_swing_volume_db": -3.0
+			"attack_swing_volume_db": -3.0,
 		},
 		# END IMPORTED AUDIO imp
-		"card_art": {}, # 默认 assets/cards/<card_id>_loading.*
+		"card_art": {},
 	}

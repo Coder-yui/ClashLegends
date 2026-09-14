@@ -6,11 +6,18 @@ signal cue_played(card_id: String, cue: StringName, position: Vector2)
 
 const COMBAT_BUS := &"Combat"
 const WORLD_PLAYER_COUNT := 24
+const IMPORTANT_WORLD_RESERVE := 4
 const SUSTAIN_PLAYER_COUNT := 24
 const WORLD_MAX_DISTANCE := 1100.0
 const WORLD_ATTENUATION := 0.55
 const WORLD_PANNING_STRENGTH := 0.35
 
+## 卡牌/系统建筑共用查询依赖；测试可注入完整形态与阵营定义。
+var definition_lookup: Callable = PresentationConfig.audio_stats
+
+var _battle_ended := false
+var _battle_paused := false
+var _paused_players: Dictionary = {}
 var _announcer: AudioStreamPlayer
 var _building_audio: Dictionary = {}
 var _building_damage_audio: Dictionary = {}
@@ -23,10 +30,64 @@ var _unit_entries: Dictionary = {}
 var _stream_pool_cache: Dictionary = {}
 var _preview_hit_queue: Array[Dictionary] = []
 var _preview_serials: Dictionary = {}
-var _recycle_cursor := 0
+var _voice_serial := 0
+var _budget_counters: Dictionary = {}
 var _zone_players: Dictionary = {}
 var _last_zone_event_id := -1
 var _played_attack_groups: Dictionary = {}
+
+## 终局停止全部战斗层（含建筑待机和飞行声），结果播报另由 Main 调用。
+## 保留节点到菜单退出也不会被轮询或迟到事件重新启动声音。
+func end_battle() -> void:
+	_battle_ended = true
+	clear_zone_audio()
+	clear_projectile_launch_audio()
+	for key in _sustain_players.keys():
+		_stop_sustain_key(key)
+	for id in _building_audio.keys():
+		stop_building_audio(id)
+	for player in _world_players:
+		player.stop()
+		player.stream = null
+	_preview_hit_queue.clear()
+	if is_instance_valid(_announcer):
+		_announcer.stop()
+
+func begin_battle() -> void:
+	end_battle()
+	_unit_entries.clear()
+	_building_damage_audio.clear()
+	_played_attack_groups.clear()
+	_preview_serials.clear()
+	_last_projectile_launch_id = -1
+	_last_zone_event_id = -1
+	_battle_ended = false
+	_budget_counters.clear()
+
+## 工作台暂停由声音所有者处理，并保留控制状态导致的独立暂停。
+func set_battle_paused(paused: bool) -> void:
+	if _battle_paused == paused:
+		return
+	_battle_paused = paused
+	for child in get_children():
+		if not child is AudioStreamPlayer2D and not child is AudioStreamPlayer:
+			continue
+		var id := child.get_instance_id()
+		if paused:
+			_paused_players[id] = bool(child.stream_paused)
+			child.stream_paused = true
+		else:
+			child.stream_paused = bool(_paused_players.get(id, false))
+	if not paused:
+		_paused_players.clear()
+
+func battle_audio_stopped() -> bool:
+	if not _sustain_players.is_empty() or not _zone_players.is_empty() or not _projectile_launch_players.is_empty() or not _building_audio.is_empty() or not _preview_hit_queue.is_empty():
+		return false
+	for player in _world_players:
+		if player.playing:
+			return false
+	return true
 
 func _exit_tree() -> void:
 	if is_instance_valid(_announcer):
@@ -108,6 +169,9 @@ func attach_unit(unit: Unit, stats: Dictionary) -> void:
 		_start_sustain(unit, _unit_entries[unit.get_instance_id()], &"revival", &"revival")
 
 func _process(delta: float) -> void:
+	if _battle_ended or _battle_paused:
+		return
+	_tick_zone_audio(delta)
 	_tick_building_damage_audio()
 	_tick_building_audio(delta)
 	_tick_attached_units()
@@ -115,17 +179,20 @@ func _process(delta: float) -> void:
 
 ## 固定落地区域拥有自己的声音，施法者死亡/受控不终止已经生成的区域。
 ## 带 ID 的可靠通知只创建一次；生命周期与表现区域一样按秒推进。
-func start_zone_audio(event_id: int, card_id: String, form: int, action: String, position: Vector2, duration: float) -> void:
+func start_zone_audio(event_id: int, card_id: String, form: int, action: String, position: Vector2, duration: float, team: int = 0) -> void:
+	if _battle_ended or _battle_paused:
+		return
 	if event_id <= _last_zone_event_id:
 		return
 	_last_zone_event_id = event_id
-	var events: Dictionary = PresentationConfig.for_form(PresentationConfig.audio_stats(card_id), form).get("audio", {}).get("events", {})
+	var events: Dictionary = _card_audio(card_id, team, form).get("events", {})
 	var cue := StringName(action + ":zone_sustain")
 	var event: Dictionary = events.get(String(cue), {})
 	var ending: Dictionary = events.get(action + ":zone_end", {})
 	if duration <= 0.0 or (event.is_empty() and ending.is_empty()):
 		return
 	if _zone_players.size() >= SUSTAIN_PLAYER_COUNT:
+		_record_budget("zone", "interrupted")
 		_stop_zone_audio(_zone_players.keys()[0], false)
 	var player := _new_world_player()
 	player.bus = StringName(event.get("bus", "Combat"))
@@ -141,6 +208,7 @@ func start_zone_audio(event_id: int, card_id: String, form: int, action: String,
 		)
 		player.play()
 		cue_played.emit(card_id, cue, position)
+		_record_budget("zone", "played")
 
 func _tick_zone_audio(delta: float) -> void:
 	for id in _zone_players.keys():
@@ -276,13 +344,24 @@ func _tick_attached_units() -> void:
 
 ## 每单位 action/buff/attack 独立长音层；只有持续普攻片段结束后续播。
 func _start_sustain(unit: Unit, entry: Dictionary, action: StringName, layer: StringName = &"action") -> void:
+	if _battle_ended or _battle_paused:
+		return
 	var cue := StringName(String(action) + ":sustain")
 	var event: Dictionary = entry.audio.get("events", {}).get(String(cue), {})
 	if event.is_empty():
 		return
 	_stop_sustain(unit.get_instance_id(), layer)
+	var priority := 0 if layer == &"idle" else (1 if layer in [&"attack", &"shroud"] else 2)
 	if _sustain_players.size() >= SUSTAIN_PLAYER_COUNT:
-		_stop_sustain_key(_sustain_players.keys()[0])
+		var victim: String = _sustain_players.keys()[0]
+		for candidate in _sustain_players:
+			if int(_sustain_players[candidate].get_meta("audio_priority", 0)) < int(_sustain_players[victim].get_meta("audio_priority", 0)):
+				victim = candidate
+		if int(_sustain_players[victim].get_meta("audio_priority", 0)) > priority:
+			_record_budget("sustain", "dropped")
+			return
+		_record_budget("sustain", "interrupted")
+		_stop_sustain_key(victim)
 	var player := _new_world_player()
 	player.bus = StringName(event.get("bus", "Combat"))
 	player.volume_db = float(event.get("volume_db", 0.0))
@@ -290,10 +369,12 @@ func _start_sustain(unit: Unit, entry: Dictionary, action: StringName, layer: St
 	add_child(player)
 	player.global_position = unit.get_visual_screen_position()
 	var key := _sustain_key(unit.get_instance_id(), layer)
+	player.set_meta("audio_priority", priority)
 	_sustain_players[key] = player
 	player.finished.connect(_on_sustain_finished.bind(key, player))
 	player.play()
 	cue_played.emit(String(entry.card_id), cue, player.global_position)
+	_record_budget("sustain", "played")
 
 func _sustain_key(instance_id: int, layer: StringName = &"action") -> String:
 	return "%d:%s" % [instance_id, layer]
@@ -364,8 +445,7 @@ func play_attack_hit(unit: Unit, position: Vector2, first_strike: bool = false) 
 
 func play_attack_source(source: Dictionary, position: Vector2, first_strike: bool = false) -> bool:
 	var card_id := String(source.get("card_id", ""))
-	var stats := PresentationConfig.for_form(PresentationConfig.audio_stats(card_id), int(source.get("form", 0)))
-	var audio: Dictionary = PresentationConfig.audio_for(stats, int(source.get("team", 0)))
+	var audio := _card_audio(card_id, int(source.get("team", 0)), int(source.get("form", 0)))
 	var cue := &"attack_hit"
 	var configured = audio.get("attack_hit", [])
 	var segments: Array = audio.get("attack_hit_by_segment", [])
@@ -395,8 +475,9 @@ func play_attack_source(source: Dictionary, position: Vector2, first_strike: boo
 	return played
 
 ## 开发面板专用试听：复用正式随机池与 first_hit 时序，但不创建攻击或伤害。
-func preview_attack(card_id: String, stats: Dictionary, position: Vector2) -> bool:
-	var audio = stats.get("audio", {})
+func preview_attack(card_id: String, stats: Dictionary, position: Vector2, team: int = 0, form: int = 0) -> bool:
+	var audio := PresentationConfig.audio_for(stats, team, form)
+	stats = PresentationConfig.for_form(stats, form)
 	if not audio is Dictionary or (audio as Dictionary).is_empty():
 		return false
 	var serial := int(_preview_serials.get(card_id, 0)) + 1
@@ -459,12 +540,14 @@ func _play_attack_swing(card_id: String, audio: Dictionary, position: Vector2, s
 
 ## 弹体独占播放器，不占用/回收短音池，命中一枚只停止该枚的发射尾音。
 func start_projectile_launch(id: int, source: Dictionary, position: Vector2) -> void:
+	if _battle_ended or _battle_paused:
+		return
 	# 主机的弹体 ID 单调递增；可靠同通道保证开始/结束顺序，不依赖来源单位仍存活。
 	if id <= _last_projectile_launch_id:
 		return
 	_last_projectile_launch_id = id
 	var card_id := String(source.get("card_id", ""))
-	var audio: Dictionary = PresentationConfig.for_form(PresentationConfig.audio_stats(card_id), int(source.get("form", 0))).get("audio", {})
+	var audio: Dictionary = _card_audio(card_id, int(source.get("team", 0)), int(source.get("form", 0)))
 	if not bool(audio.get("attack_launch_until_impact", false)):
 		return
 	var event: Dictionary = audio.get("events", {}).get("attack_launch", {})
@@ -475,6 +558,7 @@ func start_projectile_launch(id: int, source: Dictionary, position: Vector2) -> 
 	if pool.is_empty():
 		return
 	if _projectile_launch_players.size() >= WORLD_PLAYER_COUNT:
+		_record_budget("projectile", "interrupted")
 		stop_projectile_launch(int(_projectile_launch_players.keys()[0]))
 	var player := _new_world_player()
 	player.bus = StringName(event.get("bus", COMBAT_BUS))
@@ -486,6 +570,7 @@ func start_projectile_launch(id: int, source: Dictionary, position: Vector2) -> 
 	player.finished.connect(stop_projectile_launch.bind(id))
 	player.play()
 	cue_played.emit(card_id, &"attack_launch", position)
+	_record_budget("projectile", "played")
 
 func stop_projectile_launch(id: int) -> void:
 	var player = _projectile_launch_players.get(id)
@@ -500,6 +585,8 @@ func clear_projectile_launch_audio() -> void:
 		stop_projectile_launch(int(id))
 
 func _play_pool(card_id: String, cue: StringName, configured: Variant, position: Vector2, volume_db: float, bus: StringName = COMBAT_BUS) -> bool:
+	if _battle_ended or _battle_paused:
+		return false
 	if not configured is Array or (configured as Array).is_empty():
 		return false
 	var paths := PackedStringArray()
@@ -508,7 +595,7 @@ func _play_pool(card_id: String, cue: StringName, configured: Variant, position:
 	var stream := _randomized_stream(paths)
 	if stream == null:
 		return false
-	var player := _available_world_player()
+	var player := _available_world_player(_cue_priority(cue, bus))
 	if player == null:
 		return false
 	player.global_position = position
@@ -517,6 +604,7 @@ func _play_pool(card_id: String, cue: StringName, configured: Variant, position:
 	player.stream = stream
 	player.play()
 	cue_played.emit(card_id, cue, position)
+	_record_budget("short", "played")
 	return true
 
 func _randomized_stream(paths: PackedStringArray) -> AudioStreamRandomizer:
@@ -534,19 +622,42 @@ func _randomized_stream(paths: PackedStringArray) -> AudioStreamRandomizer:
 	_stream_pool_cache[cache_key] = randomizer
 	return randomizer
 
-func _available_world_player() -> AudioStreamPlayer2D:
-	for player in _world_players:
+## 4 个短音位为技能/死亡/语音保留；重要事件可替换最低优先级的最早声音。
+func _available_world_player(priority: int = 0) -> AudioStreamPlayer2D:
+	var candidates: Array[AudioStreamPlayer2D] = []
+	for index in _world_players.size():
+		if priority < 2 and index >= WORLD_PLAYER_COUNT - IMPORTANT_WORLD_RESERVE: continue
+		var player := _world_players[index]
 		if not player.playing:
+			_mark_world_player(player, priority)
 			return player
-	if _world_players.is_empty():
+		candidates.append(player)
+	candidates.sort_custom(func(a, b):
+		var a_priority := int(a.get_meta("audio_priority", 0))
+		var b_priority := int(b.get_meta("audio_priority", 0))
+		return a_priority < b_priority if a_priority != b_priority else int(a.get_meta("audio_serial", 0)) < int(b.get_meta("audio_serial", 0)))
+	if candidates.is_empty() or int(candidates[0].get_meta("audio_priority", 0)) > priority:
+		_record_budget("short", "dropped")
 		return null
-	var player := _world_players[_recycle_cursor % _world_players.size()]
-	_recycle_cursor = (_recycle_cursor + 1) % _world_players.size()
+	var player := candidates[0]
 	player.stop()
+	_record_budget("short", "interrupted")
+	_mark_world_player(player, priority)
 	return player
 
-func play_card_event(card_id: String, cue: String, position: Vector2, form: int = 0) -> bool:
-	var event: Dictionary = PresentationConfig.for_form(PresentationConfig.audio_stats(card_id), form).get("audio", {}).get("events", {}).get(cue, {})
+func _mark_world_player(player: AudioStreamPlayer2D, priority: int) -> void:
+	_voice_serial += 1
+	player.set_meta("audio_priority", priority)
+	player.set_meta("audio_serial", _voice_serial)
+
+static func _cue_priority(cue: StringName, bus: StringName) -> int:
+	if bus == &"Voice" or cue == &"death": return 3
+	if ":" in String(cue) and not String(cue).begins_with("first_strike:"): return 2
+	if "hit" in String(cue) or String(cue).begins_with("empowered"): return 1
+	return 0
+
+func play_card_event(card_id: String, cue: String, position: Vector2, form: int = 0, team: int = 0) -> bool:
+	var event: Dictionary = _card_audio(card_id, team, form).get("events", {}).get(cue, {})
 	return _play_pool(card_id, StringName(cue), event.get("pool", []), position, float(event.get("volume_db", 0.0)), StringName(event.get("bus", "Combat")))
 
 func _on_sustain_finished(key: String, player: AudioStreamPlayer2D) -> void:
@@ -559,17 +670,20 @@ func _on_sustain_finished(key: String, player: AudioStreamPlayer2D) -> void:
 
 ## 系统建筑的出生/待机独占播放器。时长与模型读取同一表现配置，不参与战斗模拟。
 func attach_building_audio(tower: Tower, visual_config: Dictionary) -> void:
+	if _battle_ended or _battle_paused:
+		return
 	var id := tower.get_instance_id()
 	if _building_audio.has(id) or tower.hp <= 0.0:
 		return
 	var card_id := PresentationConfig.world_card_id(tower)
-	var events: Dictionary = PresentationConfig.audio_stats(card_id).get("audio", {}).get("events", {})
+	var events: Dictionary = _card_audio(card_id, tower.team).get("events", {})
 	if events.has("damage:stage1") and not _building_damage_audio.has(id):
 		_building_damage_audio[id] = {"source": weakref(tower), "card_id": card_id, "stage": PresentationConfig.structure_damage_stage(tower.hp, tower.max_hp)}
 		tower.tree_exiting.connect(_detach_building_damage_audio.bind(id))
 	if not events.has("spawn:start") and not events.has("idle:sustain"):
 		return
 	if _building_audio.size() >= SUSTAIN_PLAYER_COUNT:
+		_record_budget("building", "dropped")
 		return
 	var player := _new_world_player()
 	add_child(player)
@@ -577,6 +691,7 @@ func attach_building_audio(tower: Tower, visual_config: Dictionary) -> void:
 		"remaining": float(visual_config.get("animations", {}).get("spawn_duration", 0.0)),
 		"hold": float(visual_config.get("animations", {}).get("spawn_hold_duration", 0.0)), "idle": false, "fade": 0.0, "tail": null}
 	_building_audio[id] = entry
+	_record_budget("building", "played")
 	tower.tree_exiting.connect(stop_building_audio.bind(id))
 	if float(entry.hold) <= 0.0:
 		_play_building_phase(entry, &"spawn:start")
@@ -662,7 +777,7 @@ func _tick_building_damage_audio() -> void:
 		var stage := PresentationConfig.structure_damage_stage(source.hp, source.max_hp)
 		if stage > int(entry.stage):
 			entry.stage = stage
-			play_card_event(entry.card_id, "damage:stage%d" % stage, source.global_position)
+			play_card_event(entry.card_id, "damage:stage%d" % stage, source.global_position, 0, source.team)
 
 func _detach_building_damage_audio(id: int) -> void:
 	_building_damage_audio.erase(id)
@@ -676,11 +791,13 @@ func play_match_event(cue: String) -> void:
 		_announcer = AudioStreamPlayer.new()
 		_announcer.bus = &"Voice"
 		add_child(_announcer)
+	if _announcer.playing: _record_budget("announcer", "interrupted")
 	_announcer.stop()
 	_announcer.stream = _randomized_stream(PackedStringArray(event.pool))
 	_announcer.volume_db = float(event.get("volume_db", 0.0))
 	_announcer.play()
 	cue_played.emit("match", StringName(cue), Vector2.ZERO)
+	_record_budget("announcer", "played")
 
 ## 所有空间声音共用相同衰减；调用方继续拥有播放器的挂载与生命周期。
 func _new_world_player() -> AudioStreamPlayer2D:
@@ -690,3 +807,26 @@ func _new_world_player() -> AudioStreamPlayer2D:
 	player.attenuation = WORLD_ATTENUATION
 	player.panning_strength = WORLD_PANNING_STRENGTH
 	return player
+
+func _card_audio(card_id: String, team: int = 0, form: int = 0) -> Dictionary:
+	return PresentationConfig.audio_for(definition_lookup.call(card_id), team, form)
+
+func _record_budget(category: String, event: String) -> void:
+	if not _budget_counters.has(category):
+		_budget_counters[category] = {"played": 0, "dropped": 0, "interrupted": 0, "peak": 0}
+	_budget_counters[category][event] += 1
+	_budget_counters[category].peak = maxi(int(_budget_counters[category].peak), int(_active_voice_counts().get(category, 0)))
+
+func _active_voice_counts() -> Dictionary:
+	var short_count := 0
+	for player in _world_players:
+		if player.playing: short_count += 1
+	return {"short": short_count, "sustain": _sustain_players.size(), "zone": _zone_players.size(),
+		"projectile": _projectile_launch_players.size(), "building": _building_audio.size(),
+		"announcer": 1 if is_instance_valid(_announcer) and _announcer.playing else 0}
+
+func budget_snapshot() -> Dictionary:
+	return {"counters": _budget_counters.duplicate(true), "active": _active_voice_counts(),
+		"limits": {"short": WORLD_PLAYER_COUNT, "important_short_reserve": IMPORTANT_WORLD_RESERVE,
+			"sustain": SUSTAIN_PLAYER_COUNT, "zone": SUSTAIN_PLAYER_COUNT,
+			"projectile": WORLD_PLAYER_COUNT, "building": SUSTAIN_PLAYER_COUNT, "announcer": 1}}

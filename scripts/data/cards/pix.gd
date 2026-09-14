@@ -14,12 +14,8 @@ static func definition() -> Dictionary:
 			"size_tier": SIZE_EXTREMELY_SMALL, "radius": RADIUS_EXTREMELY_SMALL,
 			"mass": 1.0, "sight": 180.0,
 			"deployment_count": 5, "deployment_spacing": 36.0,
-			"projectile_speed": 360.0, "projectile_visual": "orb",
-			# 统一悬空后的施法手位约在权威地面点上方 84px；只影响紫色光弹绘制起点。
-			"projectile_visual_height": 84.0,
-			"projectile_visual_forward_offset": 4.0,
-			"projectile_colors": [Color(0.72, 0.24, 1.0), Color(0.72, 0.24, 1.0)],
-			"color": Color(0.72, 0.24, 1.0),
+			"projectile_speed": 360.0,
+			"projectile_spawn_at_edge": false, "projectile_spawn_offset": 0.0, "projectile_collision_radius": 4.0,
 			"is_air": true, "building_only": false, "can_attack_air": true,
 			"active_skills": [{
 					"name": "仙灵汲取", "kind": "attack_lifesteal",
@@ -36,7 +32,12 @@ static func definition() -> Dictionary:
 			"visual_animations": {
 				"deploy": "Idle1", "idle": "Idle1", "move": "Run",
 				"attack": ["Attack1", "Attack2"],
-			},
+			}, "projectile_visual": "orb",
+			# 统一悬空后的施法手位约在权威地面点上方 84px；只影响紫色光弹绘制起点。
+			"projectile_visual_height": 84.0,
+			"projectile_visual_forward_offset": 4.0,
+			"projectile_colors": [Color(0.72, 0.24, 1.0), Color(0.72, 0.24, 1.0)],
+			"color": Color(0.72, 0.24, 1.0),
 		},
 		# BEGIN IMPORTED AUDIO pix
 		"audio": {
@@ -56,8 +57,8 @@ static func definition() -> Dictionary:
 				"res://assets/audio/units/pix/play_sfx_lulu_lulupassivemissile_hit_r2.wav",
 				"res://assets/audio/units/pix/play_sfx_lulu_lulupassivemissile_hit_r3.wav"
 			],
-			"attack_hit_volume_db": -5.0
+			"attack_hit_volume_db": -5.0,
 		},
 		# END IMPORTED AUDIO pix
-		"card_art": {}, # 默认 assets/cards/<card_id>_loading.*
+		"card_art": {},
 	}

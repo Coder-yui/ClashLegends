@@ -12,10 +12,7 @@ static func definition() -> Dictionary:
 			"size_tier": SIZE_MEDIUM, "radius": RADIUS_MEDIUM,
 			"mass": 3.0, "sight": 240.0,
 			"projectile_speed": 480.0,
-			"projectile_visual": "arrow",
-			# 只影响弹体绘制高度：寒冰离弦时弓位于地面原点上方约 30px。
-			"projectile_visual_height": 30.0 * CHARACTER_SCALE_MULTIPLIER,
-			"color": Color(0.50, 0.85, 0.95),
+			"projectile_spawn_at_edge": true, "projectile_spawn_offset": 7.5, "projectile_collision_radius": 3.0,
 			"is_air": false, "building_only": false, "can_attack_air": true,
 			"active_skills": [{
 					"name": "万箭齐发", "kind": "frontal", "shape": "fan",
@@ -25,12 +22,15 @@ static func definition() -> Dictionary:
 					"projectile_stop_on_hit": true,
 					"damage": 70, "slow_duration": 1.0, "slow_multiplier": 0.55,
 					"impact_delay": 0.16, "cast_duration": 1.0,
-					"cast_locks": ["movement", "attack", "facing"], "visual_action": "active",
+					"cast_locks": ["movement", "attack", "facing"],
 					# 箭矢表现也等待源离弦点；保留既有约 0.2 秒的飞行表现。
 					"projectile_launch_delay": 0.16, "projectile_flight_duration": 0.20,
 				}],
 		},
 		"visual": { "visual_radius": RADIUS_MEDIUM + VISUAL_RADIUS_PADDING,
+			"projectile_visual": "arrow",
+			# 只影响弹体绘制高度：弓位于地面原点上方约 30px。
+			"projectile_visual_height": 30.0 * CHARACTER_SCALE_MULTIPLIER,
 			"visual_scene_path": "res://assets/units/ashe/ashe_view.tscn",
 			"visual_forward_yaw": 0.0,
 			"visual_animations": {
@@ -42,6 +42,9 @@ static func definition() -> Dictionary:
 				},
 				"death": "Death", "death_duration": 0.8,
 			},
+			"color": Color(0.50, 0.85, 0.95),
+			"active_skills": [{ "visual_action": "active",
+				}],
 		},
 		"card_art": {}, # 默认 assets/cards/<card_id>_loading.*
 		"audio": {

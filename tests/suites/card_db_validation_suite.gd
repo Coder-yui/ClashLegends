@@ -2,6 +2,64 @@ class_name CardDBValidationSuite
 extends RefCounted
 
 func run(harness: Object) -> void:
+	for invalid_registry in [{42: {}}, {"broken": 42}, {"broken": null}, {"broken": []}]:
+		harness._expect(not CardDB.VALIDATOR.validate_all(invalid_registry).is_empty(), "注册表错误键或值返回内容错误")
+	for id in ["gnar", "gwen", "ashe"]:
+		var base := CardDB.get_card(id)
+		var paths: Array = []
+		_collect_leaf_paths(base, [], paths)
+		for path in paths:
+			var broken := base.duplicate(true)
+			var parent: Variant = broken
+			var field_path: String = id
+			for index in path.size():
+				field_path += ("[%d]" % path[index]) if path[index] is int else "." + str(path[index])
+				if index < path.size() - 1: parent = parent[path[index]]
+			parent[path[-1]] = null
+			var errors: PackedStringArray = CardDB.VALIDATOR.validate_all({id: broken})
+			harness._expect(not errors.is_empty() and field_path in "；".join(errors), "类型阶段定位异常叶子：" + field_path)
+	var compiler = CardDB.DEFINITION_COMPILER
+	for script in CardDB.DEFINITIONS:
+		var id: String = script.resource_path.get_file().get_basename()
+		harness._expect(compiler.validate(id, script.definition()).is_empty(), "%s 原始四域、技能与变形归属通过" % id)
+	for malformed in [null, 42, [], "bad"]:
+		var raw_errors: PackedStringArray = compiler.validate("broken", malformed)
+		harness._expect(not raw_errors.is_empty() and "broken" in raw_errors[0] and "Dictionary" in raw_errors[0], "原始定义错误类型返回路径和期望类型")
+	for domain in ["gameplay", "visual", "audio", "card_art"]:
+		var raw_errors: PackedStringArray = compiler.validate("broken", {domain: 42})
+		harness._expect(not raw_errors.is_empty() and ("broken." + domain) in raw_errors[0], "定义域容器先检查类型")
+	var rejected_definitions := [
+		{"gameplay": {"hp": 10}, "visual": {"hp": 20}},
+		{"gameplay": {"color": Color.RED}},
+		{"visual": {"projectile_collision_radius": 9}},
+		{"audio": {"hp": 10}},
+		{"gameplay": {"transformed_stats": {"hp": 20}}, "visual": {"transformed_stats": {"hp": 30}}},
+		{"gameplay": {"active_skills": [{"damage": 10}]}, "visual": {"active_skills": [{"damage": 20}]}},
+		{"gameplay": {"active_skills": [{}]}, "visual": {"active_skills": []}},
+		{"gameplay": {"active_skills": [42]}},
+		{"gameplay": {"active_skills": []}, "visual": {"active_skills": 42}},
+	]
+	for definition in rejected_definitions:
+		harness._expect(not compiler.validate("broken", definition).is_empty() and CardDB.compile_definition(definition).is_empty(), "错域、重复或形状错误不进入平铺编译")
+	var raw := {"gameplay": {"hp": 10, "active_skills": [{"damage": 2}], "transformed_stats": {"hp": 30}},
+		"visual": {"color": Color.RED, "active_skills": [{"visual_action": "cast"}], "transformed_stats": {"color": Color.BLUE}},
+		"audio": {"transformed_stats": {"attack_hit": ["probe.wav"]}}, "card_art": {"path": "probe.png"}}
+	var compiled := CardDB.compile_definition(raw)
+	harness._expect(compiled.active_skills[0] == {"damage": 2, "visual_action": "cast"}
+		and compiled.transformed_stats == {"hp": 30, "color": Color.BLUE, "audio": {"attack_hit": ["probe.wav"]}}, "技能按索引、变形按域合并为原有平铺运行格式")
+	compiled.active_skills[0].damage = 99
+	compiled.transformed_stats.audio.attack_hit[0] = "changed.wav"
+	harness._expect(raw.gameplay.active_skills[0].damage == 2 and raw.audio.transformed_stats.attack_hit[0] == "probe.wav", "编译结果深复制，不污染原始定义")
+	for field in ["events", "attack_launch_by_segment", "attack_hit_once_by_segment", "team_overrides"]:
+		for malformed in [42, true, null, "invalid"]:
+			var probe := CardDB.get_card("gnar").duplicate(true)
+			probe.audio[field] = malformed
+			var shape_errors := PackedStringArray()
+			CardDB.VALIDATOR._validate_audio_config("shape_probe", probe, shape_errors)
+			harness._expect("shape_probe.audio." + field in "；".join(shape_errors), "音频坏容器返回字段路径错误而不抛脚本异常：" + field)
+	var path_errors := PackedStringArray()
+	CardDB.VALIDATOR._validate_audio_path_pool("path_probe.audio.attack_hit", [42, null, {}], path_errors)
+	harness._expect(path_errors.size() == 3 and "String" in "；".join(path_errors), "声音池非字符串元素在加载资源前报告类型错误")
 	var errors := CardDB.validate_all()
 	harness._expect(errors.is_empty(), "CardDB 当前全部卡牌通过字段、体型、弹体、资源、动画、建筑、双形态与主动技能校验%s" % (
 		"" if errors.is_empty() else "：" + "；".join(errors)
@@ -194,3 +252,21 @@ func run(harness: Object) -> void:
 		and "uses_skill_resource" in hero_error_text and "attack_extra_hit_delays" in hero_error_text,
 		"CardDB 在运行前拒绝非法豪意、部署/主动击退、攻击转移动路线、前方/落点范围、追加刀和强化普攻配置",
 	)
+
+	for field in ["projectile_spawn_offset", "projectile_collision_radius", "projectile_speed"]:
+		for value in ["bad", [], {}, NAN, INF, -1.0]:
+			var errors_geometry := PackedStringArray()
+			CardDB.VALIDATOR._validate_projectile("geometry", {field: value}, errors_geometry)
+			harness._expect(not errors_geometry.is_empty() and field in "；".join(errors_geometry), "弹体权威字段 %s 拒绝错误类型、非有限和负值" % field)
+	var edge_errors := PackedStringArray()
+	CardDB.VALIDATOR._validate_projectile("geometry", {"projectile_spawn_at_edge": "true"}, edge_errors)
+	CardDB.VALIDATOR._validate_projectile("geometry", {"projectile_collision_radius": 0.0}, edge_errors)
+	harness._expect(edge_errors.size() == 2, "弹体边缘开关必须为布尔且碰撞半径严格大于零")
+
+func _collect_leaf_paths(value: Variant, path: Array, result: Array) -> void:
+	if value is Dictionary:
+		for key in value: _collect_leaf_paths(value[key], path + [key], result)
+	elif value is Array:
+		for index in value.size(): _collect_leaf_paths(value[index], path + [index], result)
+	else:
+		result.append(path)

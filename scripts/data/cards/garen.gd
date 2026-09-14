@@ -11,27 +11,23 @@ static func definition() -> Dictionary:
 			"speed": SPEED_SLOW, "interval": 1.1, "first_hit": 0.38,
 			"size_tier": SIZE_LARGE, "radius": RADIUS_LARGE,
 			"mass": 8.0, "sight": 220.0,
-			"color": Color(0.35, 0.55, 0.90),
 			"is_air": false, "building_only": true, "can_attack_air": false,
-			"active_skills": [
-				{
+			"active_skills": [{
 					"name": "致命打击", "kind": "empowered_attack",
 					"cost": 1, "max_uses": 2, "cooldown": 6.0,
 					"description": "强化下一次普通攻击，使其造成双倍伤害；强化尚未打出时移动速度提高两档。技能不会重置或延后当前攻击节奏。",
 					"empowered_damage_multiplier": 2.0,
 					# 盖伦基础为“慢”，提高两档后达到“中等”。强化攻击出手后立即失去加速。
 					"empowered_speed_multiplier": 1.3636,
-				},
-				{
+				},{
 					"name": "审判", "kind": "continuous_area",
 					"cost": 2, "max_uses": 1, "cooldown": 10.0,
 					"description": "旋转 3 秒，对当前身边的地面敌人每秒造成 60 点伤害；施放期间只锁定攻击，仍可移动和改变朝向。",
 					"radius": 90.0, "damage": 60, "ground_only": true,
 					"duration": 3.0, "tick_interval": 1.0,
 					"impact_delay": 0.0, "cast_duration": 3.0,
-					"cast_locks": ["attack"], "visual_action": "judgment",
-				},
-			],
+					"cast_locks": ["attack"],
+				}],
 		},
 		"visual": { "visual_radius": RADIUS_LARGE + VISUAL_RADIUS_PADDING,
 			"visual_scene_path": "res://assets/units/garen/garen_view.tscn",
@@ -53,6 +49,10 @@ static func definition() -> Dictionary:
 				},
 				"death": "Death", "death_duration": 0.8,
 			},
+			"color": Color(0.35, 0.55, 0.90),
+			"active_skills": [{
+				},{ "visual_action": "judgment",
+				}],
 		},
 		"card_art": {}, # 默认 assets/cards/<card_id>_loading.*
 		"audio": {

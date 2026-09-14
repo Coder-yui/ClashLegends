@@ -31,7 +31,7 @@ func _check_gnar_mechanic() -> void:
 	dummy.max_hp = 5000.0
 	var dummy_hp_before := dummy.hp
 	_main.launch_attack(gnar, dummy, gnar.damage, gnar.projectile_speed, 0.0, 0.0, gnar.color)
-	var delayed_projectile_ok: bool = dummy.hp == dummy_hp_before and gnar.transform_hit_count == 0 and not _main._projectiles.is_empty()
+	var delayed_projectile_ok: bool = dummy.hp == dummy_hp_before and gnar.transform_hit_count == 0 and not _main._projectile_system.projectiles.is_empty()
 	for _tick in 10:
 		_main._tick_projectiles(_main.SIM_DT)
 	for _hit_index in range(4):

@@ -41,6 +41,7 @@ const PRINCESS_TOWER_STATS := {
 	"footprint_tiles": Vector2i(3, 3),
 	"radius": 54.0, "visual_radius": 60.0,
 	"first_hit": 0.2, "projectile_speed": 420.0,
+	"projectile_spawn_at_edge": false, "projectile_spawn_offset": 0.0, "projectile_collision_radius": 7.0,
 	"projectile_visual_offset": PRINCESS_TOWER_PROJECTILE_VISUAL_OFFSET,
 }
 const NEXUS_STATS := {
@@ -116,6 +117,7 @@ const CARD_FIELDS := [
 	&"deployment_count", &"deployment_spacing",
 	&"spawn_id", &"spawn_interval", &"spawn_count", &"spawn_side", &"death_spawn_id", &"death_spawn_count",
 	&"death_replacement_id", &"death_replacement_charges", &"death_replacement_visual_transition", &"timed_revival_id", &"timed_revival_delay", &"timed_revival_death_replacement_charges", &"timed_revival_visual_transition",
+	&"projectile_spawn_at_edge", &"projectile_spawn_offset", &"projectile_collision_radius",
 	&"active_buff_projectile_visual", &"projectile_speed", &"projectile_visual", &"projectile_visual_height",
 	&"projectile_visual_forward_offset", &"projectile_visual_scale", &"projectile_impact_visual",
 	&"projectile_colors", &"splash_radius", &"knockback",
@@ -172,3 +174,7 @@ const ACTIVE_SKILL_FIELDS := [
 
 ## 数量字段含嵌套数组；其他玩法数值最多两位，比例按百分数最多两位。
 const INTEGER_NUMBER_FIELDS := ["hp", "damage", "heal_amount", "on_hit_tower_damage", "deploy_sweep_damage", "shield", "active_shield", "resource_shield_max", "full_resource_cast_end_heal", "shockwave_damage", "zone_damage", "resource_damage_by_stacks", "resource_hit_damage_sequences", "cost", "active_cost_bonus", "spawn_count", "death_spawn_count", "deployment_count", "max_uses", "blind_charges", "heal_every_hits", "transform_after_hits", "revert_after_hits", "death_replacement_charges", "timed_revival_death_replacement_charges", "projectile_count"]
+
+## 原始定义域归属；共享容器由 CardDefinitionCompiler 递归检查。
+const CARD_VISUAL_FIELDS := ["active_buff_projectile_visual", "attack_interval_display", "color", "continuous_beam_color", "continuous_beam_end_width", "continuous_beam_forward_offset", "continuous_beam_origin_height", "continuous_beam_start_width", "death_replacement_visual_transition", "projectile_colors", "projectile_impact_visual", "projectile_visual", "projectile_visual_forward_offset", "projectile_visual_height", "projectile_visual_scale", "show_team_ring", "skill_resource_full_color", "timed_revival_visual_transition", "visual_active_buff_scene", "visual_animations", "visual_forward_yaw", "visual_radius", "visual_scene_path", "visual_scene_paths"]
+const SKILL_VISUAL_FIELDS := ["full_resource_visual_action", "projectile_visual", "projectile_visual_forward_offset", "projectile_visual_height", "projectile_visual_width", "resource_visual_actions", "visual_action"]

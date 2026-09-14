@@ -1,0 +1,108 @@
+extends RefCounted
+## 由唯一机制入口 --network-smoke 启动，Python 执行器负责双进程和日志比对。
+func run(harness: SceneTree) -> void:
+	var main = load("res://scenes/main.tscn").instantiate()
+	harness.root.add_child(main)
+	harness.current_scene = main
+	var start := Time.get_ticks_msec()
+	var fired := false
+	var sent_requests := false
+	var sent_skill := false
+	var interrupted_skill := false
+	var shields_added := false
+	var outsider: ENetMultiplayerPeer
+	var outsider_started := false
+	var outsider_rejected := false
+	var outsider_disconnected: Array[bool] = [false]
+	var stable_callback := false
+	while Time.get_ticks_msec() - start < 20000:
+		await harness.process_frame
+		if main.mode == "host" and main._match_started and not shields_added:
+			main._towers[0].add_shield(300, 2, true)
+			main._towers[0].add_shield(300, 8)
+			shields_added = true
+		if main.mode == "client" and main._match_started and main.get_estimated_server_tick() >= 5 and not sent_requests:
+			sent_requests = true
+			var epoch: String = main._session.session_id
+			main._rpc_register_deck.rpc_id(1, main._deck, main._active_skill_choices, epoch, MatchSession.PROTOCOL_VERSION, MatchSession.content_fingerprint())
+			var input_tick: int = main.get_authoritative_server_tick()
+			main._rpc_deploy_request.rpc_id(1, "garen", Vector2(300, 580), input_tick, epoch, 1)
+			main._rpc_deploy_request.rpc_id(1, "garen", Vector2(300, 580), input_tick, epoch, 1)
+			main._rpc_active_skill_request.rpc_id(1, 999, input_tick, "old-session", 100)
+		if main.mode == "client" and main._match_started and main.get_authoritative_server_tick() >= 57 and not sent_skill:
+			for ability in main._active_skills:
+				var entry: Dictionary = main._active_skills[ability]
+				if entry.card_id == "garen" and entry.team == 1 and main._elixir.elixir >= float(entry.skill.cost):
+					main._rpc_active_skill_request.rpc_id(1, ability, main.get_authoritative_server_tick(), main._session.session_id, 2)
+					sent_skill = true
+					break
+		if main.mode == "host" and not main._commands.skill_commands.is_empty() and not interrupted_skill:
+			var ability: int = main._commands.skill_commands[0].ability_id
+			var unit: Unit = main._active_skills[ability].unit
+			unit.add_shield(300, 2, true)
+			unit.add_shield(200, 6)
+			unit.stun(2.0)
+			interrupted_skill = true
+		if main.mode == "host" and main._match_started and main._sim_tick_id >= 20 and not outsider_started:
+			outsider_started = true
+			outsider = ENetMultiplayerPeer.new()
+			outsider.peer_disconnected.connect(func(_id): outsider_disconnected[0] = true)
+			outsider.create_client("127.0.0.1", main._network_port)
+		if outsider != null:
+			if outsider.get_connection_status() != MultiplayerPeer.CONNECTION_DISCONNECTED:
+				outsider.poll()
+			outsider_rejected = outsider_disconnected[0] or outsider.get_connection_status() == MultiplayerPeer.CONNECTION_DISCONNECTED
+		if main.mode == "host" and main._sim_tick_id >= 55 and not stable_callback:
+			var before: int = main.get_child_count()
+			main._on_peer_connected(main._session.opponent_id)
+			stable_callback = main.get_child_count() == before and main._towers.size() == 6 and main._session.phase == MatchSession.Phase.RUNNING
+		if main.mode == "host" and main._match_started and main._sim_tick_id >= 85 and not fired:
+			fired = true
+			# 使用真实普攻弹体致胜，覆盖“上一快照刚发出”的终局路径。
+			main.launch_attack(main._towers[0], main._king_enemy, 100000.0, 100000.0, 0.0, 0.0, Color.WHITE)
+		if main.game_over:
+			break
+	if outsider != null:
+		outsider.close()
+	var result := {"schema": 1, "role": main.mode, "passed": main.game_over}
+	if main.game_over:
+		result["session_id"] = main._terminal_result.session_id
+		result["final_tick"] = main._terminal_result.final_tick
+		result["winner_team"] = main._terminal_result.winner_team
+		result["reason"] = main._terminal_result.reason
+		result["tower_hp"] = main._towers.map(func(t): return t.hp)
+		result["tower_shields"] = main._towers.map(func(t): return [snappedf(t.get_shield_ratio(), 0.000001), snappedf(t.get_shield_capacity_ratio(), 0.000001)])
+		result["audio_stopped"] = main._audio_manager.battle_audio_stopped()
+		var units: Array = []
+		var registry: Dictionary = main._client_units if main.mode == "client" else main._net_units
+		var ids: Array = registry.keys()
+		ids.sort()
+		for id in ids:
+			var unit: Unit = registry[id]
+			var pos := unit.net_target_pos if main.mode == "client" else unit.global_position
+			units.append([id, unit.card_id, unit.hp, snappedf(pos.x, 0.01), snappedf(pos.y, 0.01), snappedf(unit.get_shield_ratio(), 0.000001), snappedf(unit.get_shield_capacity_ratio(), 0.000001)])
+		result["units"] = units
+		result["passed"] = result.audio_stopped and result.winner_team == 0 and main._king_enemy.hp == 0.0 and not result.session_id.is_empty()
+		var session_guards: bool = sent_requests and sent_skill if main.mode == "client" else outsider_rejected and stable_callback and main._session.last_request_id == 2 and main.get_authoritative_queue(1).back() == "garen" and interrupted_skill
+		result["remote_elixir"] = main._elixir.elixir if main.mode == "client" else main._elixir_p1.elixir
+		session_guards = session_guards and result.remote_elixir == 1.0
+		result["session_guards"] = session_guards
+		if main.mode == "host":
+			result["request_sequence"] = main._session.last_request_id
+			result["outsider_rejected"] = outsider_rejected
+			result["callback_stable"] = stable_callback
+			result["remote_queue"] = main.get_authoritative_queue(1)
+		result["passed"] = result.passed and session_guards
+		# 有 GPU 的执行可以保存终局画面；不作为听感确认。
+		for arg in OS.get_cmdline_user_args():
+			if arg.begins_with("--network-render-dir="):
+				var directory := arg.trim_prefix("--network-render-dir=")
+				DirAccess.make_dir_recursive_absolute(directory)
+				await RenderingServer.frame_post_draw
+				harness.root.get_texture().get_image().save_png(directory.path_join(main.mode + ".png"))
+	print("[NETWORK_RESULT] " + JSON.stringify(result))
+	# 留出可靠结果送达和音频线程释放的窗口，然后关闭自己的 ENet peer。
+	await harness.create_timer(0.5).timeout
+	main.free()
+	await harness.create_timer(0.25).timeout
+	harness.quit(0 if result.passed else 1)

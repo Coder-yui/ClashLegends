@@ -13,10 +13,8 @@ static func definition() -> Dictionary:
 			"first_strike_damage_multiplier": 1.5,
 			"size_tier": SIZE_MEDIUM, "radius": RADIUS_MEDIUM,
 			"mass": 3.0, "sight": 230.0,
-			"projectile_speed": 500.0, "projectile_visual": "orb",
-			# 双枪枪口约在身高中段偏上；高度只影响弹体绘制起点，不参与权威判定。
-			"projectile_visual_height": 52.0,
-			"color": Color(0.80, 0.35, 0.60),
+			"projectile_speed": 500.0,
+			"projectile_spawn_at_edge": false, "projectile_spawn_offset": 0.0, "projectile_collision_radius": 4.0,
 			"is_air": false, "building_only": false, "can_attack_air": true,
 			"active_skills": [{
 					"name": "大步流星", "kind": "buff", "cost": 0, "max_uses": 1, "cooldown": 5.0,
@@ -34,7 +32,10 @@ static func definition() -> Dictionary:
 				# 原图 Run_Base / Run2 → Idle1_Base 均经过 Idle_In；导入资源 Run 对应 Run_Base。
 				"transitions": {"Run>idle": "Idle_In", "Run2>idle": "Idle_In"},
 				"death": "Death", "death_duration": 0.8,
-			},
+			}, "projectile_visual": "orb",
+			# 双枪枪口约在身高中段偏上；高度只影响弹体绘制起点，不参与权威判定。
+			"projectile_visual_height": 52.0,
+			"color": Color(0.80, 0.35, 0.60),
 		},
 		"card_art": {}, # 默认 assets/cards/<card_id>_loading.*
 		"audio": {

@@ -7,6 +7,8 @@ var _units: Array[Unit] = []
 func run(harness: Object, main: Node2D) -> void:
 	_h = harness
 	_main = main
+	_check_attack_timeline_owner()
+	_check_control_owner()
 	_check_configuration()
 	_check_lifesteal()
 	_check_continuous()
@@ -119,3 +121,38 @@ func _check_decay() -> void:
 	for tick in range(20):
 		unit._tick_active_statuses(0.05)
 	_h._expect(unit.shield_hp == 50, "101点衰减护盾一秒累计扣51，保留剩余50")
+
+func _check_control_owner() -> void:
+	var state := ControlState.new()
+	state.refresh_freeze(0.1)
+	state.refresh_stun(0.2)
+	state.tick_hard_controls(0.05)
+	_h._expect(is_equal_approx(state.frozen_timer, 0.05) and is_equal_approx(state.stun_timer, 0.15), "控制所有者同时推进冻结与眩晕")
+	state.apply_replica_flags(false, true)
+	_h._expect(state.frozen_timer == 0 and state.stun_timer == 0.15, "副本状态替换旧冻结，不把快照当叠加")
+	state.apply_replica_flags(false, false)
+	_h._expect(state.frozen_timer == 0 and state.stun_timer == 0, "副本控制解除清除两种状态")
+	var tower := Tower.new()
+	tower.freeze(0.123)
+	tower.stun(0.234)
+	tower.control.tick_hard_controls(0.05)
+	_h._expect(is_equal_approx(tower.frozen_timer, 0.073) and is_equal_approx(tower.control.stun_timer, 0.184), "防御塔控制由同一对象持有，并保留原有秒数精度")
+	tower.free()
+
+func _check_attack_timeline_owner() -> void:
+	var timeline := AttackTimeline.new()
+	timeline.commit_hit(0.8)
+	timeline.begin_windup(0.3, 1.0)
+	timeline.begin_recovery(0.8, 0.3, 1.0)
+	timeline.cancel()
+	_h._expect(timeline.cooldown == 0.8 and timeline.windup == 0 and timeline.recovery == 0, "丢失目标取消挥击但保留已出手间隔")
+	timeline.begin_windup(0.3, 1.0)
+	_h._expect(timeline.windup == 0.8, "重入射程前摇与剩余间隔重叠，不能额外叠加等待")
+	timeline.rescale(1.0, 2.0)
+	timeline.tick_cooldown(0.05)
+	timeline.tick_windup(0.05)
+	_h._expect(is_equal_approx(timeline.cooldown, 0.35) and is_equal_approx(timeline.windup, 0.35), "攻速缩放和固定步推进由攻击时间线统一处理")
+	timeline.align_visual(0.3, 0.1, 2.0)
+	_h._expect(is_equal_approx(timeline.visual_elapsed, 0.1), "表现进度对齐保持基础攻速秒数")
+	timeline.cancel(true)
+	_h._expect(timeline.cooldown == 0 and timeline.windup == 0 and timeline.recovery == 0, "施法或变形显式重置全部攻击计时")

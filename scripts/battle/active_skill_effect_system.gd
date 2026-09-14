@@ -1,6 +1,6 @@
 class_name ActiveSkillEffectSystem
 extends RefCounted
-## 主动技能 Gameplay Impact 执行器。
+## 主动技能 EffectExecution 执行器。
 ## 技能资格、Command Buffer 与 Cast 时间线仍由 Main 编排；具体效果集中在这里扩展。
 
 var frontal_effects: Array[Dictionary] = []
@@ -83,7 +83,7 @@ func prepare_dual_form_cast(source: Unit, skill: Dictionary) -> Dictionary:
 	return prepared
 
 
-## Cast Start 的效果必须在施法窗口开始时发生；它不依赖动画，也不等待 Gameplay Impact。
+## Cast Start 的效果必须在施法窗口开始时发生；它不依赖动画，也不等待 EffectExecution。
 func apply_cast_start(source: Unit, skill: Dictionary) -> void:
 	if not bool(skill.get("shield_on_cast_start", false)):
 		return
@@ -434,7 +434,7 @@ func apply_forward_area(source: Unit, skill: Dictionary, forward: Vector2 = Vect
 		add_fixed_area_effect(center, radius, radius, zone_duration, source.team, &"frost_storm")
 		_controller.present_zone_audio(source, String(skill.get("visual_action", "")), center, zone_duration)
 		if _controller.mode == "host":
-			_controller._rpc_frontal_skill_fx.rpc(
+			_controller._rpc_frontal_skill_fx.rpc_id(_controller.network_opponent_id(), _controller.network_session_id(),
 				-1, center, Vector2.UP, 0.0, radius, radius, zone_duration, source.team, "frost_storm"
 			)
 	var shockwave_duration := maxf(float(skill.get("shockwave_duration", 0.0)), 0.0)
@@ -456,7 +456,7 @@ func apply_forward_area(source: Unit, skill: Dictionary, forward: Vector2 = Vect
 	})
 	add_fixed_area_effect(center, radius, end_radius, shockwave_duration, source.team, &"shockwave")
 	if _controller.mode == "host":
-		_controller._rpc_frontal_skill_fx.rpc(
+		_controller._rpc_frontal_skill_fx.rpc_id(_controller.network_opponent_id(), _controller.network_session_id(),
 			-1, center, Vector2.UP, 0.0, end_radius, radius, shockwave_duration, source.team, "shockwave"
 		)
 
@@ -472,7 +472,7 @@ func begin_forward_area_visual(source: Unit, skill: Dictionary, cast_forward: Ve
 	var radius := maxf(float(skill.get("radius", 0.0)), 0.0)
 	add_fixed_area_effect(center, radius, radius, duration, source.team, &"target_circle")
 	if _controller.mode == "host":
-		_controller._rpc_frontal_skill_fx.rpc(
+		_controller._rpc_frontal_skill_fx.rpc_id(_controller.network_opponent_id(), _controller.network_session_id(),
 			-1, center, Vector2.UP, 0.0, radius, 0.0, duration, source.team, "target_circle"
 		)
 
@@ -520,7 +520,7 @@ func begin_frontal_visual(source: Unit, skill: Dictionary, cast_forward: Vector2
 		return
 	add_frontal_effect(source, skill, duration, cast_forward)
 	if _controller.mode == "host":
-		_controller._rpc_frontal_skill_fx.rpc(
+		_controller._rpc_frontal_skill_fx.rpc_id(_controller.network_opponent_id(), _controller.network_session_id(),
 			source.net_id, source.global_position, cast_forward, source.body_radius,
 			float(skill.get("length", 0.0)), float(skill.get("width", skill.get("far_width", 0.0))),
 			duration, source.team, String(skill.get("shape", "rectangle")),
@@ -685,19 +685,22 @@ func begin_continuous_area_visual(source: Unit, skill: Dictionary) -> void:
 		"team": source.team,
 	})
 	if _controller.mode == "host":
-		_controller._rpc_frontal_skill_fx.rpc(
+		_controller._rpc_frontal_skill_fx.rpc_id(_controller.network_opponent_id(), _controller.network_session_id(),
 			source.net_id, source.global_position, Vector2.UP, source.body_radius,
 			radius, radius, duration, source.team, "continuous_area"
 		)
 
 
+## RPC 只递交本次表现载荷，集合及其更新/清理仍由本系统持有。
+func show_network_frontal(payload: Dictionary) -> void:
+	var effect := payload.duplicate(true)
+	effect.source_ref = null
+	frontal_effects.append(effect)
+
 func tick_visuals(delta: float) -> void:
 	for index in range(shield_effects.size() - 1, -1, -1):
 		shield_effects[index].timer = maxf(0.0, float(shield_effects[index].timer) - delta)
 		if shield_effects[index].timer <= 0.0: shield_effects.remove_at(index)
-	# 和固定区域表现共用时钟，工作台暂停时不单独耗尽音频生命周期。
-	if _controller._audio_manager != null:
-		_controller._audio_manager._tick_zone_audio(delta)
 	var alive: Array[Dictionary] = []
 	for effect in frontal_effects:
 		var source = effect_source(effect)
@@ -718,15 +721,13 @@ func effect_source(effect: Dictionary):
 			return source
 	var net_id := int(effect.get("net_id", -1))
 	if net_id >= 0:
-		var client_source = _controller._client_units.get(net_id)
+		var client_source = _controller.find_client_unit(net_id)
 		if client_source is Unit and is_instance_valid(client_source):
 			return client_source
 	return null
 
 
 func clear() -> void:
-	if _controller._audio_manager != null:
-		_controller._audio_manager.clear_zone_audio()
 	shield_effects.clear()
 	frontal_effects.clear()
 	expanding_shockwaves.clear()

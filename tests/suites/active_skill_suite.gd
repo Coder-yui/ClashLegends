@@ -569,7 +569,7 @@ func _check_network_hand_confirmation() -> void:
 	network_elixir.elixir = ElixirManager.MAX_ELIXIR
 	var host_initial_hand: Array = _main.get_authoritative_hand(1)
 	var host_initial_queue: Array = _main.get_authoritative_queue(1)
-	_main._rpc_deploy_request("garen", Vector2(300.0, 580.0), 100)
+	_main.play_card(1, "garen", Vector2(300.0, 580.0), {"elixir": network_elixir, "require_team_deck": true, "input_tick": 100})
 	var host_accepted_hand: Array = _main.get_authoritative_hand(1)
 	var host_accepted_queue: Array = _main.get_authoritative_queue(1)
 	var host_elixir_after_accept: float = network_elixir.elixir
@@ -577,7 +577,7 @@ func _check_network_hand_confirmation() -> void:
 	var host_hand_before_reject: Array = host_accepted_hand.duplicate()
 	var host_queue_before_reject: Array = host_accepted_queue.duplicate()
 	var host_elixir_before_reject: float = network_elixir.elixir
-	_main._rpc_deploy_request("garen", Vector2(300.0, 580.0), 100)
+	_main.play_card(1, "garen", Vector2(300.0, 580.0), {"elixir": network_elixir, "require_team_deck": true, "input_tick": 100})
 	var host_reject_kept_state: bool = (
 		_main.get_authoritative_hand(1) == host_hand_before_reject
 		and _main.get_authoritative_queue(1) == host_queue_before_reject
@@ -589,7 +589,7 @@ func _check_network_hand_confirmation() -> void:
 	var host_queue_before_late: Array = _main.get_authoritative_queue(1)
 	var host_elixir_before_late: float = network_elixir.elixir
 	var host_pending_before_late: int = _main._commands.card_commands.size()
-	_main._rpc_deploy_request("xin", Vector2(300.0, 580.0), 100)
+	_main.play_card(1, "xin", Vector2(300.0, 580.0), {"elixir": network_elixir, "require_team_deck": true, "input_tick": 100})
 	var host_late_reject_kept_state: bool = (
 		_main.get_authoritative_hand(1) == host_hand_before_late
 		and _main.get_authoritative_queue(1) == host_queue_before_late
@@ -622,7 +622,7 @@ func _check_network_hand_confirmation() -> void:
 		and _main.get_authoritative_queue(1) == client_initial_queue
 		and is_equal_approx(_main._elixir.elixir, client_elixir_before_request)
 	)
-	_main._rpc_deploy_accepted("garen", _main.get_estimated_server_tick() + _main.COMMAND_DELAY_TICKS, host_accepted_hand, host_accepted_queue)
+	preload("res://tests/suites/network_fixture.gd").deliver(_main, "_rpc_deploy_accepted", ["garen", _main.get_estimated_server_tick() + _main.COMMAND_DELAY_TICKS, host_accepted_hand, host_accepted_queue])
 	var client_after_accept_hand: Array = _main.get_authoritative_hand(1)
 	var client_after_accept_queue: Array = _main.get_authoritative_queue(1)
 	var client_accept_synced: bool = (
@@ -636,7 +636,7 @@ func _check_network_hand_confirmation() -> void:
 	var client_queue_before_reject: Array = client_after_accept_queue.duplicate()
 	var client_elixir_before_reject: float = _main._elixir.elixir
 	_main._hand.set_card_pending("xin", true)
-	_main._rpc_deploy_rejected("xin")
+	preload("res://tests/suites/network_fixture.gd").deliver(_main, "_rpc_deploy_rejected", ["xin"])
 	var client_reject_kept_state: bool = (
 		_main.get_authoritative_hand(1) == client_hand_before_reject
 		and _main.get_authoritative_queue(1) == client_queue_before_reject
@@ -745,15 +745,11 @@ func _check_heal_spell() -> void:
 	_main._spell_system.heal_effects.clear()
 
 	for unit in [hurt, nearly_full, distant, building]:
-		(unit as Unit).shield_hp = 0.0
-		(unit as Unit).shield_max_hp = 0.0
-		(unit as Unit).shield_timer = 0.0
+		(unit as Unit).clear_shields()
 		if is_instance_valid(unit):
 			unit.free()
 	if is_instance_id_valid(tower_id) and is_instance_valid(tower):
-		tower.shield_hp = 0.0
-		tower.shield_max_hp = 0.0
-		tower.shield_timer = 0.0
+		tower.clear_shields()
 		tower.hp = tower.max_hp
 		tower.queue_redraw()
 

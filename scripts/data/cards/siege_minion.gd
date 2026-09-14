@@ -10,14 +10,11 @@ static func definition() -> Dictionary:
 			"speed": SPEED_MEDIUM, "interval": 1.65, "first_hit": 0.55,
 			"size_tier": SIZE_SLIGHTLY_SMALL, "radius": RADIUS_SLIGHTLY_SMALL,
 			"mass": 4.5, "sight": 230.0,
-			"projectile_speed": 310.0, "projectile_visual": "orb",
-			# 黑色小炮弹从炮口高度、炮身前方出现；这些仍是纯表现偏移。
-			"projectile_visual_height": 28.0,
-			"projectile_visual_forward_offset": 24.0,
-			"projectile_colors": [Color(0.055, 0.055, 0.06), Color(0.055, 0.055, 0.06)],
-			"color": Color(0.38, 0.40, 0.44),
+			"projectile_speed": 310.0,
+			"projectile_spawn_at_edge": false, "projectile_spawn_offset": 0.0, "projectile_collision_radius": 4.0,
 			"is_air": false, "building_only": false, "can_attack_air": true,
-			"active_skills": [{"name": "男爵之力", "kind": "buff", "cost": 1, "max_uses": 2, "cooldown": 8.0, "duration": 5.0, "damage_multiplier": 1.5}],
+			"active_skills": [{"name": "男爵之力", "kind": "buff", "cost": 1, "max_uses": 2, "cooldown": 8.0, "duration": 5.0, "damage_multiplier": 1.5,
+				}],
 		},
 		"visual": {
 			"active_buff_projectile_visual": "baron_siege",
@@ -38,14 +35,19 @@ static func definition() -> Dictionary:
 				},
 				"deploy": "Idle1", "idle": "Idle1", "move": "Run",
 				"attack": ["Attack1_BASE", "Attack2_BASE"], "death": "Death", "death_duration": 0.5,
-			},
+			}, "projectile_visual": "orb",
+			# 黑色小炮弹从炮口高度、炮身前方出现；这些仍是纯表现偏移。
+			"projectile_visual_height": 28.0,
+			"projectile_visual_forward_offset": 24.0,
+			"projectile_colors": [Color(0.055, 0.055, 0.06), Color(0.055, 0.055, 0.06)],
+			"color": Color(0.38, 0.40, 0.44),
 		},
 		# BEGIN EVENT AUDIO siege_minion
 		"audio": {
 			"team_overrides": [
 				{
 					"events": {"spawn:start": {"pool": ["res://assets/audio/units/minion_shared/spawn_r1.wav", "res://assets/audio/units/minion_shared/spawn_r2.wav", "res://assets/audio/units/minion_shared/spawn_r3.wav"], "volume_db": 0.0, "bus": "Combat"}},
-				"attack_hit_by_segment": [
+					"attack_hit_by_segment": [
 						[
 							"res://assets/audio/units/siege_minion/order/play_sfx_sru_orderminionsiege_sru_orderminionsiegebasicattack_onhit_r1.wav",
 							"res://assets/audio/units/siege_minion/order/play_sfx_sru_orderminionsiege_sru_orderminionsiegebasicattack_onhit_r2.wav",
@@ -99,8 +101,8 @@ static func definition() -> Dictionary:
 						}
 					}
 				}
-			]
+			],
 		},
 		# END EVENT AUDIO siege_minion
-		"card_art": {}, # 默认 assets/cards/<card_id>_loading.*
+		"card_art": {},
 	}

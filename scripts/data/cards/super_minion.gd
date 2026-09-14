@@ -10,9 +10,9 @@ static func definition() -> Dictionary:
 			"speed": SPEED_MEDIUM, "interval": 1.15, "first_hit": 0.38,
 			"size_tier": SIZE_MEDIUM, "radius": RADIUS_MEDIUM,
 			"mass": 6.0, "sight": 200.0,
-			"color": Color(0.52, 0.55, 0.62),
 			"is_air": false, "building_only": false, "can_attack_air": false,
-			"active_skills": [{"name": "男爵之力", "kind": "buff", "cost": 2, "max_uses": 1, "cooldown": 7.0, "duration": 5.0, "speed_multiplier": 1.35, "damage_multiplier": 1.35, "shield": 140, "shield_duration": 5.0}],
+			"active_skills": [{"name": "男爵之力", "kind": "buff", "cost": 2, "max_uses": 1, "cooldown": 7.0, "duration": 5.0, "speed_multiplier": 1.35, "damage_multiplier": 1.35, "shield": 140, "shield_duration": 5.0,
+				}],
 		},
 		"visual": {
 			"visual_active_buff_scene": "res://assets/effects/baron_minion/super_minion.tscn",
@@ -33,13 +33,14 @@ static func definition() -> Dictionary:
 				"deploy": "Idle1", "idle": "Idle1", "move": "Run",
 				"attack": ["Attack1", "Attack2"], "death": "Death_Base", "death_duration": 0.5,
 			},
+			"color": Color(0.52, 0.55, 0.62),
 		},
 		# BEGIN EVENT AUDIO super_minion
 		"audio": {
 			"team_overrides": [
 				{
 					"events": {"spawn:start": {"pool": ["res://assets/audio/units/minion_shared/spawn_r1.wav", "res://assets/audio/units/minion_shared/spawn_r2.wav", "res://assets/audio/units/minion_shared/spawn_r3.wav"], "volume_db": 0.0, "bus": "Combat"}},
-				"attack_hit_by_segment": [
+					"attack_hit_by_segment": [
 						[
 							"res://assets/audio/units/super_minion/order/play_sfx_sru_orderminionsuper_sru_orderminionsuperbasicattack_onhit_r1.wav",
 							"res://assets/audio/units/super_minion/order/play_sfx_sru_orderminionsuper_sru_orderminionsuperbasicattack_onhit_r2.wav",
@@ -68,7 +69,7 @@ static func definition() -> Dictionary:
 				},
 				{
 					"events": {"spawn:start": {"pool": ["res://assets/audio/units/minion_shared/spawn_r1.wav", "res://assets/audio/units/minion_shared/spawn_r2.wav", "res://assets/audio/units/minion_shared/spawn_r3.wav"], "volume_db": 0.0, "bus": "Combat"}},
-				"attack_hit_by_segment": [
+					"attack_hit_by_segment": [
 						[
 							"res://assets/audio/units/super_minion/chaos/play_sfx_sru_chaosminionsuper_sru_chaosminionsuperbasicattack_onhit_r1.wav",
 							"res://assets/audio/units/super_minion/chaos/play_sfx_sru_chaosminionsuper_sru_chaosminionsuperbasicattack_onhit_r2.wav",
@@ -95,8 +96,8 @@ static func definition() -> Dictionary:
 						]
 					]
 				}
-			]
+			],
 		},
 		# END EVENT AUDIO super_minion
-		"card_art": {}, # 默认 assets/cards/<card_id>_loading.*
+		"card_art": {},
 	}

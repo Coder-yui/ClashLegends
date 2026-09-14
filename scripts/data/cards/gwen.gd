@@ -13,8 +13,6 @@ static func definition() -> Dictionary:
 			"mass": 4.0, "sight": 210.0,
 			"on_hit_max_health_ratio": 0.05, "on_hit_tower_damage": 20,
 			"skill_resource_max": 3.0, "skill_resource_hit_gain": 1.0,
-			"skill_resource_full_color": Color(0.28, 0.72, 1.0, 0.96),
-			"color": Color(0.95, 0.75, 0.85),
 			"is_air": false, "building_only": false, "can_attack_air": false,
 			"active_skills": [{
 					"name": "快刀乱剪", "kind": "frontal", "shape": "fan",
@@ -28,7 +26,6 @@ static func definition() -> Dictionary:
 					"resource_hit_delay_sequences": [[0.09, 1.04], [0.09, 0.95, 1.04], [0.09, 0.78, 0.95, 1.04], [0.09, 0.62, 0.78, 0.95, 1.04]],
 					"impact_delay": 0.09, "cast_duration": 1.5,
 					"cast_locks": ["movement", "attack", "facing"],
-					"visual_action": "active_0", "resource_visual_actions": ["active_0", "active_1", "active_2", "active_3"],
 					"full_resource_cast_end_heal": 100, "cast_end_heal_requires_hit": true,
 					"applies_on_hit_passive": true,
 					"ground_only": true,
@@ -71,6 +68,11 @@ static func definition() -> Dictionary:
 					"Spell1_C_anm>idle": "Spell1_C_to_Idle_anm",
 				},
 			},
+			"skill_resource_full_color": Color(0.28, 0.72, 1.0, 0.96),
+			"color": Color(0.95, 0.75, 0.85),
+			"active_skills": [{
+					"visual_action": "active_0", "resource_visual_actions": ["active_0", "active_1", "active_2", "active_3"],
+				}],
 		},
 		# BEGIN IMPORTED AUDIO gwen
 		"audio": {
@@ -176,8 +178,8 @@ static func definition() -> Dictionary:
 					"res://assets/audio/units/gwen/play_sfx_gwen_gwenbasicattack_swipe_hit_r2.wav",
 					"res://assets/audio/units/gwen/play_sfx_gwen_gwenbasicattack_swipe_hit_r3.wav"
 				]
-			]
+			],
 		},
 		# END IMPORTED AUDIO gwen
-		"card_art": {}, # 默认 assets/cards/<card_id>_loading.*
+		"card_art": {},
 	}

@@ -1,13 +1,22 @@
 extends "res://scripts/data/card_schema.gd"
+const SHAPES = preload("res://scripts/data/card_shape_validator.gd")
 
 ## 返回当前全部配置错误。空数组表示 CardDB 可以安全进入运行时。
 static func validate_all(cards: Dictionary) -> PackedStringArray:
 	var errors := PackedStringArray()
 	_validate_numbers("princess_tower", PRINCESS_TOWER_STATS, errors)
+	_validate_projectile("princess_tower", PRINCESS_TOWER_STATS, errors)
 	_validate_numbers("nexus", NEXUS_STATS, errors)
 	for raw_card_id in cards:
+		if not raw_card_id is String and not raw_card_id is StringName:
+			errors.append("card_id: 期望 String，实际 %s（%s）" % [type_string(typeof(raw_card_id)), str(raw_card_id)])
+			continue
 		var card_id := String(raw_card_id)
+		if not cards[raw_card_id] is Dictionary:
+			errors.append("%s: 期望 Dictionary，实际 %s（%s）" % [card_id, type_string(typeof(cards[raw_card_id])), str(cards[raw_card_id])])
+			continue
 		var stats: Dictionary = cards[raw_card_id]
+		if not SHAPES.validate(card_id, stats, errors): continue
 		_validate_card_id(card_id, errors)
 		_validate_known_fields(card_id, stats, CARD_FIELDS, errors)
 		_validate_numbers(card_id, stats, errors)
@@ -20,6 +29,7 @@ static func _validate_card_id(card_id: String, errors: PackedStringArray) -> voi
 		errors.append("%s: card_id 必须是非空英文 snake_case" % card_id)
 
 static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStringArray) -> void:
+	if not SHAPES.validate(card_id, stats, errors): return
 	_require_fields(card_id, stats, [&"name", &"cost", &"type", &"description", &"radius", &"color"], errors)
 	var card_type := StringName(stats.get("type", ""))
 	if card_type not in CARD_TYPES:
@@ -99,6 +109,7 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 				_validate_audio_config("%s.transformed_stats" % card_id, capabilities, errors)
 
 static func _validate_audio_config(label: String, stats: Dictionary, errors: PackedStringArray) -> void:
+	if not SHAPES.validate(label, stats, errors): return
 	if not stats.has("audio"):
 		return
 	var audio = stats.get("audio")
@@ -106,6 +117,18 @@ static func _validate_audio_config(label: String, stats: Dictionary, errors: Pac
 		errors.append("%s.audio: 必须是 Dictionary" % label)
 		return
 	_validate_known_fields("%s.audio" % label, audio as Dictionary, AUDIO_FIELDS, errors)
+	# 先确认容器形状，再执行事件能力、段数及跨字段规则，不能让校验器先崩溃。
+	var malformed := false
+	for field in ["events", "team_overrides", "attack_swing", "attack_hit", "attack_launch_by_segment", "attack_hit_by_segment", "attack_hit_once_by_segment", "empowered_hit", "first_strike_hit"]:
+		if not audio.has(field):
+			continue
+		var expected := TYPE_DICTIONARY if field == "events" else TYPE_ARRAY
+		if typeof(audio[field]) != expected:
+			errors.append("%s.audio.%s: 期望 %s，实际 %s（%s）" % [label, field, type_string(expected), type_string(typeof(audio[field])), str(audio[field])])
+			malformed = true
+	if malformed:
+		return
+
 	if audio.has("team_overrides"):
 		var teams = audio.team_overrides
 		if not teams is Array or teams.size() != 2:
@@ -128,6 +151,9 @@ static func _validate_audio_config(label: String, stats: Dictionary, errors: Pac
 		errors.append("%s.audio.events: 必须是 Dictionary" % label)
 	else:
 		for cue in events:
+			if not cue is String and not cue is StringName:
+				errors.append("%s.audio.events: 事件名称必须为 String，实际 %s" % [label, type_string(typeof(cue))])
+				continue
 			if not PresentationEvents.supports(stats, String(cue)):
 				errors.append("%s.audio.events.%s: 未绑定的表现事件或机制无派发能力" % [label, cue])
 			var event = events[cue]
@@ -138,15 +164,16 @@ static func _validate_audio_config(label: String, stats: Dictionary, errors: Pac
 			if event.get("bus", "Combat") not in ["Combat", "Voice"]:
 				errors.append("%s.audio.events.%s.bus: 只支持 Combat / Voice" % [label, cue])
 			_validate_audio_path_pool("%s.audio.events.%s.pool" % [label, cue], event.get("pool", []), errors)
-			if typeof(event.get("volume_db", 0.0)) not in [TYPE_INT, TYPE_FLOAT]:
-				errors.append("%s.audio.events.%s.volume_db: 必须是分贝数值" % [label, cue])
+			if typeof(event.get("volume_db", 0.0)) not in [TYPE_INT, TYPE_FLOAT] or not is_finite(float(event.get("volume_db", 0.0))):
+				errors.append("%s.audio.events.%s.volume_db: 必须是有限分贝数值" % [label, cue])
 	if audio.has("attack_swing_lead_time"):
 		var lead = audio.attack_swing_lead_time
 		if typeof(lead) not in [TYPE_INT, TYPE_FLOAT] or float(lead) < 0.0 or float(stats.get("damage", 0.0)) <= 0.0:
 			errors.append("%s.audio.attack_swing_lead_time: 必须是有普攻单位的非负秒数" % label)
 	if audio.has("attack_hit_once_by_segment"):
 		var grouped = audio.attack_hit_once_by_segment
-		var attack_clips = stats.get("visual_animations", {}).get("attack", [])
+		var animation_config = stats.get("visual_animations", {})
+		var attack_clips = animation_config.get("attack", []) if animation_config is Dictionary else []
 		var count: int = attack_clips.size() if attack_clips is Array else 1
 		if not grouped is Array or grouped.size() != count:
 			errors.append("%s.audio.attack_hit_once_by_segment: 必须与普攻段数一致" % label)
@@ -188,7 +215,11 @@ static func _validate_audio_path_pool(label: String, configured: Variant, errors
 		errors.append("%s: 必须是非空资源路径数组" % label)
 		return
 	for index in (configured as Array).size():
-		var path := String((configured as Array)[index])
+		var raw_path = (configured as Array)[index]
+		if not raw_path is String:
+			errors.append("%s[%d]: 期望 String 资源路径，实际 %s（%s）" % [label, index, type_string(typeof(raw_path)), str(raw_path)])
+			continue
+		var path: String = raw_path
 		if path.is_empty() or not path.begins_with("res://"):
 			errors.append("%s[%d]: 必须是 res:// 音频资源路径" % [label, index])
 		elif not ResourceLoader.exists(path):
@@ -197,6 +228,7 @@ static func _validate_audio_path_pool(label: String, configured: Variant, errors
 			errors.append("%s[%d]: 资源不是 AudioStream" % [label, index])
 
 static func _validate_combat_stats(label: String, stats: Dictionary, require_size_tier: bool, errors: PackedStringArray) -> void:
+	if not SHAPES.validate(label, stats, errors): return
 	for field in [&"on_hit_max_health_ratio", &"on_hit_tower_damage"]:
 		if stats.has(field) and (not (stats[field] is float or stats[field] is int) or not is_finite(float(stats[field])) or float(stats[field]) < 0.0):
 			errors.append("%s.%s: 必须为非负有限数值" % [label, field])
@@ -279,6 +311,18 @@ static func _validate_combat_stats(label: String, stats: Dictionary, require_siz
 						errors.append("%s.attack_extra_hit_delays[%d]: 延迟必须 >= 0" % [label, index])
 
 static func _validate_projectile(label: String, stats: Dictionary, errors: PackedStringArray) -> void:
+	if not SHAPES.validate(label, stats, errors): return
+	if stats.has("projectile_spawn_at_edge") and not stats.projectile_spawn_at_edge is bool:
+		errors.append("%s.projectile_spawn_at_edge: 必须是 bool" % label)
+	for field in ["projectile_spawn_offset", "projectile_collision_radius", "projectile_speed"]:
+		if not stats.has(field):
+			continue
+		var value = stats[field]
+		if typeof(value) not in [TYPE_INT, TYPE_FLOAT]:
+			errors.append("%s.%s: 必须是有限数值" % [label, field])
+			return
+		if not is_finite(float(value)) or float(value) < 0.0 or (field == "projectile_collision_radius" and float(value) <= 0.0):
+			errors.append("%s.%s: 必须是有限%s数值" % [label, field, "正" if field == "projectile_collision_radius" else "非负"])
 	var speed := float(stats.get("projectile_speed", 0.0))
 	if speed < 0.0:
 		errors.append("%s.projectile_speed: 必须 >= 0" % label)
@@ -342,11 +386,12 @@ static func _validate_references(card_id: String, stats: Dictionary, cards: Dict
 
 
 static func _unit_reference_exists(card_id: String, cards: Dictionary) -> bool:
-	if not cards.has(card_id):
+	if not cards.has(card_id) or not cards[card_id] is Dictionary:
 		return false
-	return StringName((cards[card_id] as Dictionary).get("type", "")) in [&"unit", &"building"]
+	return cards[card_id].get("type", "") in [&"unit", &"building"]
 
 static func _validate_visual_config(label: String, stats: Dictionary, errors: PackedStringArray) -> void:
+	if not SHAPES.validate(label, stats, errors): return
 	for path_field in [&"visual_scene_path"]:
 		var path := String(stats.get(path_field, ""))
 		if not path.is_empty() and not ResourceLoader.exists(path):
@@ -561,6 +606,7 @@ static func _validate_positive_number_or_array(label: String, value: Variant, er
 			return
 
 static func _validate_active_skills(card_id: String, stats: Dictionary, errors: PackedStringArray) -> void:
+	if not SHAPES.validate(card_id, stats, errors): return
 	var skills: Array = []
 	if stats.has("active_skills"):
 		if not stats.active_skills is Array:
@@ -836,7 +882,7 @@ static func _require_fields(label: String, data: Dictionary, fields: Array, erro
 
 static func _validate_known_fields(label: String, data: Dictionary, known_fields: Array, errors: PackedStringArray) -> void:
 	for field in data:
-		if StringName(field) not in known_fields:
+		if (not field is String and not field is StringName) or field not in known_fields:
 			errors.append("%s.%s: 未知或未登记字段" % [label, field])
 
 ## 开发工作台专用木桩，不进入正式卡牌池。
@@ -844,7 +890,7 @@ static func _validate_known_fields(label: String, data: Dictionary, known_fields
 ## 只遍历玩法结构；动画裁剪、音频排程和表现坐标不受数值精度限制。
 static func _validate_numbers(label: String, data: Dictionary, errors: PackedStringArray) -> void:
 	for raw_key in data:
-		var key := String(raw_key)
+		var key := str(raw_key)
 		if key.begins_with("visual_") or key.begins_with("projectile_visual_") or key.begins_with("continuous_beam_") or key in ["audio", "card_art"]:
 			continue
 		var value = data[raw_key]

@@ -18,9 +18,9 @@ static func definition() -> Dictionary:
 			"active_heal_multiplier": 1.25,
 			"active_shield": 240,
 			"active_shield_duration": 3.0,
-			"color": Color(1.00, 0.93, 0.60),
 		},
 		"visual": {
+			"color": Color(1.00, 0.93, 0.60),
 		},
 		# BEGIN EVENT AUDIO heal
 		"audio": {
@@ -34,8 +34,8 @@ static func definition() -> Dictionary:
 					"volume_db": 0.0,
 					"bus": "Combat"
 				}
-			}
+			},
 		},
 		# END EVENT AUDIO heal
-		"card_art": {}, # 默认 assets/cards/<card_id>_loading.*
+		"card_art": {},
 	}

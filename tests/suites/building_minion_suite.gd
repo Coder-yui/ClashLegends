@@ -144,7 +144,7 @@ func _check_apex_turret() -> void:
 	var splash_air := _make_apex_turret_test_unit(CardDB.get_card("aurelionsol"), 1, ground_near.position + Vector2(8.0, 0.0), true)
 	var splash_air_hp := splash_air.hp
 	var ground_hp := ground_near.hp
-	var projectiles_before: Array = _main._projectiles.keys()
+	var projectiles_before: Array = _main._projectile_system.projectiles.keys()
 	# 覆盖首次炮击和后续周期；静止建筑的首击同样只需前摇。
 	for _tick in range(36):
 		source.sim_tick(_main.SIM_DT)
@@ -152,8 +152,8 @@ func _check_apex_turret() -> void:
 	var projectile_visual_origin_ok := false
 	var projectile_visual_style_ok := false
 	var source_projectile_id := -1
-	for projectile_id in _main._projectiles:
-		var projectile: Dictionary = _main._projectiles[projectile_id]
+	for projectile_id in _main._projectile_system.projectiles:
+		var projectile: Dictionary = _main._projectile_system.projectiles[projectile_id]
 		if not projectiles_before.has(projectile_id) and projectile.get("attacker") == source:
 			projectile_carries_ground_only = bool((projectile.get("effects", {}) as Dictionary).get("ground_only", false))
 			var authority_position: Vector2 = projectile.pos
@@ -297,8 +297,8 @@ func _check_sun_disc() -> void:
 	visual_wrapper.free()
 	visual_source.free()
 
-	# 活塔仍按原 3x3 阻挡。塔毁后，太阳圆盘中心落在九格中的任意格都合法；
-	# 自身占地只擦到废墟但中心在九格外时仍非法。
+	# 活塔仍按原 3x3 阻挡。塔毁后，太阳圆盘仅精确塔中心合法；
+	# 普通卡牌把塔墟视为地面，太阳圆盘偏离中心的重叠均非法。
 	var own_tower: Tower = _main._towers[0]
 	var enemy_tower: Tower = _main._towers[2]
 	var own_hp := own_tower.hp
@@ -309,16 +309,20 @@ func _check_sun_disc() -> void:
 	enemy_tower.hp = 0.0
 	var all_own_ruin_centers_valid := true
 	for tile in own_ruin_tiles:
-		all_own_ruin_centers_valid = all_own_ruin_centers_valid and _main.is_card_deploy_position_valid(0, "sun_disc", _main._arena_tile_center(tile))
+		all_own_ruin_centers_valid = all_own_ruin_centers_valid and (_main.is_card_deploy_position_valid(0, "sun_disc", _main._arena_tile_center(tile)) == _main._arena_tile_center(tile).is_equal_approx(own_tower.position))
 	var all_enemy_ruin_centers_valid := true
 	for tile in _main._structure_deployment_tiles(enemy_tower):
-		all_enemy_ruin_centers_valid = all_enemy_ruin_centers_valid and _main.is_card_deploy_position_valid(0, "sun_disc", _main._arena_tile_center(tile))
+		all_enemy_ruin_centers_valid = all_enemy_ruin_centers_valid and (_main.is_card_deploy_position_valid(0, "sun_disc", _main._arena_tile_center(tile)) == _main._arena_tile_center(tile).is_equal_approx(enemy_tower.position))
 	var edge_overlap_center: Vector2 = _main._arena_tile_center(Vector2i(own_ruin_tiles[0].x - 1, own_ruin_tiles[0].y + 1))
 	var ruin_edge_overlap_blocked: bool = not _main.is_card_deploy_position_valid(0, "sun_disc", edge_overlap_center)
 	_expect(
 		alive_tower_blocked and all_own_ruin_centers_valid and all_enemy_ruin_centers_valid and ruin_edge_overlap_blocked,
-		"活塔继续阻挡太阳圆盘；塔毁后九格任意中心（含敌方 pocket 外塔位）可建，3x3 仅擦边但中心不在塔墟时拒绝",
+		"活塔继续阻挡太阳圆盘；塔毁后只有精确中心（含敌方 pocket 外塔位）可重建，偏离中心重叠拒绝",
 	)
+
+	_expect(_main.is_card_deploy_position_valid(0, "tombstone", own_tower.position)
+		and _main.is_card_deploy_position_valid(0, "garen", own_tower.position),
+		"非太阳圆盘建筑与兵种可在己方塔墟正常下牌")
 
 	# 由卡牌生成入口固化塔墟状态；禁用 nav 仅避免专项测试改写主场景共享网格。
 	var saved_nav = _main.nav
@@ -381,12 +385,12 @@ func _check_sun_disc() -> void:
 	var friendly_crystal: Tower = _main._king_player
 	var enemy_tower_outside: Tower = _main._towers[2]
 	for structure in [friendly_tower, friendly_crystal, enemy_tower_outside]:
-		structure._clear_shield()
+		structure.clear_shields()
 	_main._active_skill_effect_system.apply_area_shield(source, skill)
 	var tower_hp_before := friendly_tower.hp
 	friendly_tower.take_damage(100.0)
 	var tower_shield_absorbs_first := is_equal_approx(friendly_tower.hp, tower_hp_before) and is_equal_approx(friendly_tower.shield_hp, float(skill.shield) - 100.0)
-	var tower_payload := NetworkSnapshotSystem.new(_main)._tower_snapshot_payload(friendly_tower)
+	var tower_payload := NetworkSnapshotSystem.new(_main, _main._projectile_system)._tower_snapshot_payload(friendly_tower)
 	var tower_shield_snapshot_ok := (
 		tower_payload.size() == NetworkSnapshotSystem.TOWER_PAYLOAD_SIZE
 		and is_equal_approx(float(tower_payload[NetworkSnapshotSystem.T_SHIELD_RATIO]), friendly_tower.get_shield_ratio())
@@ -409,7 +413,7 @@ func _check_sun_disc() -> void:
 		"日耀庇护覆盖范围内单位、建筑、防御塔和水晶并优先承伤；寿命衰减仍直接耗尽建筑生命，范围外与敌方不受影响",
 	)
 	for structure in [friendly_tower, friendly_crystal, enemy_tower_outside]:
-		structure._clear_shield()
+		structure.clear_shields()
 	for unit in [source, building_inside, ground_inside, air_inside, ground_outside, enemy_inside, decaying_building]:
 		if is_instance_valid(unit):
 			unit.free()
@@ -463,6 +467,7 @@ func _check_tombstone_art_integration() -> void:
 		imp_sample.free()
 
 func _check_minion_line_mechanism() -> void:
+	var original_children: Array = _main.get_children()
 	var cards := CardDB.all()
 	var minion_ids := ["melee_minion", "ranged_minion", "siege_minion", "super_minion"]
 	var data_ok := true
@@ -647,6 +652,13 @@ func _check_minion_line_mechanism() -> void:
 	_main._match_rules.finished = false
 	_main._simulation_clock.remainder = 0.0
 	_main._minion_waves_enabled = old_waves_enabled
+	_main._audio_manager.begin_battle()
+	_main._hand.show()
+	_main._active_skill_bar.show()
+	_main._terminal_result.clear()
+	for child in _main.get_children():
+		if child is CanvasLayer and child not in original_children:
+			child.free()
 
 func _run_scheduled_wave(elapsed_before: float, wave_time: float, wave_type: String, overtime: bool = false) -> bool:
 	_clear_minion_test_units()
@@ -913,7 +925,7 @@ func _check_baron_buff_visual() -> void:
 			_main._active_skill_effect_system.apply(unit, skill)
 			view._process(0.3)
 			var active_ok: bool = view._active_buff_visual.active and view._active_buff_visual.visible
-			var mesh := view._flash_meshes[0]
+			var mesh := view._model_resources.meshes()[0]
 			var buff_overlay: Material = mesh.material_overlay
 			unit.freeze(0.5)
 			view._process(0.01)
@@ -930,7 +942,7 @@ func _check_baron_buff_visual() -> void:
 			unit._tick_active_statuses(float(skill.duration) + 0.1)
 			view._process(0.3)
 			payload = _main._snapshot_system._unit_snapshot_payload(123, unit)
-			var expired_ok: bool = not view._active_buff_visual.visible and mesh.material_overlay == view._original_overlays[0] and int(payload[NetworkSnapshotSystem.U_ACTIVE_BUFF_ACTIVE]) == 0
+			var expired_ok: bool = not view._active_buff_visual.visible and mesh.material_overlay == view._model_resources.original_overlay(0) and int(payload[NetworkSnapshotSystem.U_ACTIVE_BUFF_ACTIVE]) == 0
 			_main._active_skill_effect_system.apply(unit, skill)
 			view._process(0.3)
 			unit.take_damage(99999.0)

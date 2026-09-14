@@ -14,9 +14,9 @@ static func definition() -> Dictionary:
 			"duration": 3.0,    # 冰冻持续时间
 			"active_slow_duration": 2.0,
 			"active_slow_multiplier": 0.50,
-			"color": Color(0.40, 0.70, 1.00),
 		},
 		"visual": {
+			"color": Color(0.40, 0.70, 1.00),
 		},
-		"card_art": {}, # 默认 assets/cards/<card_id>_loading.*
+		"card_art": {},
 	}

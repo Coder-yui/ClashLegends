@@ -57,3 +57,27 @@ func tick_impacts(dt: float) -> void:
 		else:
 			impact.call(unit, pending.skill)
 	impacts = waiting
+
+func cancel_skill(ability_id: int, refund: bool) -> void:
+	var waiting: Array[Dictionary] = []
+	for pending in skill_commands:
+		if int(pending.ability_id) == ability_id:
+			settle_skill(pending, refund)
+		else:
+			waiting.append(pending)
+	skill_commands = waiting
+
+func settle_skill(pending: Dictionary, refund: bool) -> void:
+	var payment = pending.get("payment")
+	if payment is CommandPayment:
+		payment.settle(refund)
+
+## 终局/清场经济关闭，未执行收据作废；不再向已结束对局退费。
+
+func clear() -> void:
+	for pending in skill_commands:
+		settle_skill(pending, false)
+	card_commands.clear()
+	skill_commands.clear()
+	pre_deployments.clear()
+	impacts.clear()

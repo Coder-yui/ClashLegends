@@ -6,7 +6,7 @@ static func definition() -> Dictionary:
 		"gameplay": {
 			"name": "太阳圆盘", "cost": 4, "type": "building",
 			"description": "建立在防御塔废墟之上的远程建筑，可攻击空中与地面目标。主动为攻击范围内的友军提供护盾；建于塔墟时不再随时间失去生命。",
-			# 普通地面部署时使用 40 秒建筑寿命；中心落在已毁防御塔九格内时，
+			# 普通地面部署时使用 40 秒建筑寿命；中心对齐已毁公主塔正中心时，
 			# tower_ruin_foundation 会保留完整生命且取消寿命倒计时。
 			"hp": 1200, "damage": 105, "range": 220.0,
 			"speed": 0.0, "interval": 1.4, "first_hit": 0.5,
@@ -14,14 +14,10 @@ static func definition() -> Dictionary:
 			"footprint_tiles": Vector2i(3, 3),
 			"lifespan": 40.0, "lifespan_hp_decay": true,
 			"tower_ruin_foundation": true,
-			"projectile_speed": 440.0, "projectile_visual": "orb",
-			# 圆盘中心约在权威地面点上方 154px；不沿目标方向偏移，保证双方镜像一致。
-			"projectile_visual_height": 154.0, "projectile_visual_forward_offset": 0.0,
-			"projectile_visual_scale": 1.65,
-			"projectile_colors": [Color(1.0, 0.78, 0.18), Color(1.0, 0.52, 0.10)],
-			"color": Color(0.96, 0.72, 0.16),
+			"projectile_speed": 440.0,
+			"projectile_spawn_at_edge": false, "projectile_spawn_offset": 0.0, "projectile_collision_radius": 4.0,
 			"is_air": false, "building_only": false, "can_attack_air": true,
-			"is_building": true, "show_team_ring": false,
+			"is_building": true,
 			"active_skills": [{
 					"name": "日耀庇护", "kind": "area_shield",
 					"cost": 1, "max_uses": 1, "cooldown": 0.0,
@@ -42,7 +38,12 @@ static func definition() -> Dictionary:
 				"clip_blends": {"Spawn>Idle1_Base": 0.0, "Spawn>Attack1_BASE": 0.0, "Idle1_Base>Idle2_Base": 0.0, "Idle2_Base>Idle1_Base": 0.0, "Idle1_Base>Attack1_BASE": 0.0, "Idle1_Base>Attack2_BASE": 0.0, "Attack1_BASE>Idle1_Base": 0.0, "Attack2_BASE>Idle1_Base": 0.0, "Attack1_BASE>Attack2_BASE": 0.0, "Attack2_BASE>Attack1_BASE": 0.0},
 				"attack": ["Attack1_BASE", "Attack2_BASE"],
 				"death": "Death", "death_duration": 0.8, "death_clip_end": 2.0,
-			},
+			}, "projectile_visual": "orb",
+			# 圆盘中心约在权威地面点上方 154px；不沿目标方向偏移，保证双方镜像一致。
+			"projectile_visual_height": 154.0, "projectile_visual_forward_offset": 0.0,
+			"projectile_visual_scale": 1.65,
+			"projectile_colors": [Color(1.0, 0.78, 0.18), Color(1.0, 0.52, 0.10)],
+			"color": Color(0.96, 0.72, 0.16), "show_team_ring": false,
 		},
 		# BEGIN EVENT AUDIO sun_disc
 		"audio": {
@@ -65,8 +66,8 @@ static func definition() -> Dictionary:
 					"volume_db": 0.0,
 					"bus": "Combat"
 				}
-			}
+			},
 		},
 		# END EVENT AUDIO sun_disc
-		"card_art": {}, # 默认 assets/cards/<card_id>_loading.*
+		"card_art": {},
 	}

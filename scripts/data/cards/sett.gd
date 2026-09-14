@@ -21,9 +21,6 @@ static func definition() -> Dictionary:
 			# 豪意为通用技能资源：受实际生命伤害按 1:1、每次挥拳按固定值积攒；脱战后延迟衰减。
 			"skill_resource_max": 200.0, "skill_resource_attack_gain": 20.0, "skill_resource_damage_gain_multiplier": 1.0,
 			"skill_resource_decay_delay": 1.0, "skill_resource_decay_rate": 100.0,
-			"skill_resource_full_color": Color(1.0, 0.82, 0.24, 0.96),
-			"attack_interval_display": BASE_ATTACK_INTERVAL, # 完整左右拳循环的平均每拳间隔
-			"color": Color(0.85, 0.55, 0.25),
 			"is_air": false, "building_only": false, "can_attack_air": false,
 			"active_skills": [{
 					"name": "蓄意轰拳", "kind": "frontal", "shape": "trapezoid",
@@ -36,7 +33,6 @@ static func definition() -> Dictionary:
 					"uses_skill_resource": true,
 					"impact_delay": 0.8, "cast_duration": 1.4,
 					"cast_locks": ["movement", "attack", "facing"],
-					"visual_action": "active", "full_resource_visual_action": "active_strong",
 					"ground_only": true,
 				}],
 		},
@@ -82,6 +78,12 @@ static func definition() -> Dictionary:
 				},
 				"death": "Death", "death_clip_end": 1.7, "death_duration": 0.8, # 只播放倒地前段
 			},
+			"skill_resource_full_color": Color(1.0, 0.82, 0.24, 0.96),
+			"attack_interval_display": BASE_ATTACK_INTERVAL, # 完整左右拳循环的平均每拳间隔
+			"color": Color(0.85, 0.55, 0.25),
+			"active_skills": [{
+					"visual_action": "active", "full_resource_visual_action": "active_strong",
+				}],
 		},
 		# BEGIN IMPORTED AUDIO sett
 		"audio": {
@@ -181,8 +183,8 @@ static func definition() -> Dictionary:
 					"res://assets/audio/units/sett/play_sfx_sett_settbasicattack4_onhit_1559186049_1153642577_r2_d.wav",
 					"res://assets/audio/units/sett/play_sfx_sett_settbasicattack4_onhit_1559186049_1153642577_r3_d.wav"
 				]
-			]
+			],
 		},
 		# END IMPORTED AUDIO sett
-		"card_art": {}, # 默认 assets/cards/<card_id>_loading.*
+		"card_art": {},
 	}

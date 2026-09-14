@@ -39,7 +39,7 @@ func _run() -> void:
 			await RenderingServer.frame_post_draw
 			if frame in [5, 11, 14, 17, 21]:
 				root.get_texture().get_image().save_png(OUTPUT + "/team%d_frame%02d.png" % [team, frame])
-		print("[W 实测] team=", team, " hp=", targets.map(func(u): return u.hp), " arrows=", main._projectiles.size())
+		print("[W 实测] team=", team, " hp=", targets.map(func(u): return u.hp), " arrows=", main._projectile_system.projectiles.size())
 	main.queue_free()
 	await process_frame
 	quit()

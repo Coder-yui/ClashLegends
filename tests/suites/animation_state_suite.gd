@@ -351,17 +351,16 @@ func _check_cast_policies_and_snapshot() -> void:
 	stationary.skill_resource_value = 150.0
 	stationary.skill_resource_enabled = true
 	stationary.blind_attack_charges = 2
-	stationary.shield_max_hp = 200.0
-	stationary.shield_hp = 125.0
-	stationary.shield_timer = 1.0
+	stationary.add_shield(200.0, 1.0)
+	stationary.shields.absorb(75.0)
 	stationary.active_speed_multiplier = 1.5
 	stationary.active_attack_speed_multiplier = 1.4
 	stationary.active_ability_id = 9001
 	_main._active_skills[stationary.active_ability_id] = {
 		"unit": stationary, "uses_remaining": 2, "cooldown_left": 1.25,
 	}
-	var payload := NetworkSnapshotSystem.new(_main)._unit_snapshot_payload(77, stationary)
-	var snapshot_system := NetworkSnapshotSystem.new(_main)
+	var payload := NetworkSnapshotSystem.new(_main, _main._projectile_system)._unit_snapshot_payload(77, stationary)
+	var snapshot_system := NetworkSnapshotSystem.new(_main, _main._projectile_system)
 	var snapshot_packet := snapshot_system._snapshot_packet([], [], [], 0.0, _main._match_rules.time_left, _main._match_rules.overtime)
 	var snapshot_contract: bool = (
 		payload.size() == NetworkSnapshotSystem.UNIT_PAYLOAD_SIZE

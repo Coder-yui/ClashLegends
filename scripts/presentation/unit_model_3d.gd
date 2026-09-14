@@ -23,7 +23,7 @@ const TRANSITION_DEFAULTS := {
 }
 
 var _active_buff_visual: ActiveBuffVisual3D
-var _active_buff_overlays: Array[Material] = []
+var _model_resources := ModelVisualResources.new()
 var _last_buff_visible := false
 
 var _state: UnitPresentationState
@@ -49,10 +49,7 @@ var _pending_attack_serial := 0
 var _last_visual_action_serial := 0
 var _playing_visual_action := false
 var _active_visual_action := &""
-var _visual_action_sequence: Array = []
-var _visual_action_clip_durations: Array = []
-var _visual_action_clip_ranges: Array[Vector2] = []
-var _visual_action_sequence_index := 0
+var _action_sequence := VisualActionSequence.new()
 var _active_action_name := &""
 var _active_action_kind := &"locomotion"
 var _active_action_priority := 0
@@ -108,9 +105,6 @@ var _death_animation := &""
 var _dying := false
 var _death_followup_started := false
 var _hit_flash_timer := 0.0
-var _hit_flash_material: StandardMaterial3D
-var _flash_meshes: Array[MeshInstance3D] = []
-var _original_overlays: Array[Material] = []
 var _spawn_transition_kind: StringName = &""
 var _spawn_transition_initialized := false
 var _spawn_transition_active := false
@@ -155,8 +149,7 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 	_forward_yaw = forward_yaw
 	_attack_duration = maxf(_source.attack_interval, 0.05)
 	_animation_player = null
-	_flash_meshes.clear()
-	_original_overlays.clear()
+	_model_resources.clear()
 	_current_state = -1
 	_pending_attack_serial = 0
 	_playing_attack = false
@@ -164,10 +157,7 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 	_holding_attack_pose = false
 	_playing_visual_action = false
 	_active_visual_action = &""
-	_visual_action_sequence.clear()
-	_visual_action_clip_durations.clear()
-	_visual_action_clip_ranges.clear()
-	_visual_action_sequence_index = 0
+	_action_sequence.clear()
 	_active_action_name = &""
 	_active_action_kind = &"locomotion"
 	_active_action_priority = 0
@@ -196,19 +186,13 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 		_model_root.call("prepare_visual_animations")
 	if _model_root.has_method("configure_unit_visual"):
 		_model_root.call("configure_unit_visual", _source)
-	_animation_player = _find_animation_player(_model_root)
+	_animation_player = _model_resources.bind_model(_model_root)
 	_stable_head_offset = NAN
 	_control_stage = &""
-	if _animation_player != null:
-		for library_name in _animation_player.get_animation_library_list():
-			var library := _animation_player.get_animation_library(library_name).duplicate(true) as AnimationLibrary
-			_animation_player.remove_animation_library(library_name)
-			_animation_player.add_animation_library(library_name, library)
 	if _animation_player == null:
 		push_warning("单位 3D 模型中未找到 AnimationPlayer")
 	else:
 		_animation_player.animation_finished.connect(_on_animation_finished)
-	_prepare_hit_flash()
 	_replace_active_buff_visual(buff_scene_path)
 	_configure_looping_animations()
 	_recreate_team_ring()
@@ -368,45 +352,16 @@ func _play_visual_action(action_name: StringName) -> void:
 	var duration_candidates: Array = configured_durations if configured_durations is Array else [configured_durations]
 	var configured_ranges = descriptor.get("clip_ranges", [])
 	var range_candidates: Array = configured_ranges if configured_ranges is Array else []
-	_visual_action_sequence.clear()
-	_visual_action_clip_durations.clear()
-	_visual_action_clip_ranges.clear()
-	for candidate_index in candidates.size():
-		var value = candidates[candidate_index]
-		var animation_name := StringName(value)
+	var lengths := {}
+	for candidate in candidates:
+		var animation_name := StringName(candidate)
 		if animation_name != &"" and _animation_player.has_animation(animation_name):
 			var animation := _animation_player.get_animation(animation_name)
-			if animation == null:
-				continue
-			_visual_action_sequence.append(animation_name)
-			var target_duration := 0.0
-			if candidate_index < duration_candidates.size():
-				target_duration = maxf(float(duration_candidates[candidate_index]), 0.0)
-			_visual_action_clip_durations.append(target_duration)
-			var clip_range := Vector2(0.0, animation.length)
-			if candidate_index < range_candidates.size():
-				var configured_range = range_candidates[candidate_index]
-				if configured_range is Array and (configured_range as Array).size() == 2:
-					clip_range.x = clampf(float(configured_range[0]), 0.0, animation.length)
-					clip_range.y = clampf(float(configured_range[1]), clip_range.x, animation.length)
-			_visual_action_clip_ranges.append(clip_range)
-	if _visual_action_sequence.is_empty():
-		return
-	# 若 CardDB 没逐段写时长，使用权威动作窗口按素材长度等比分配；这只校准表现速度。
+			if animation != null: lengths[animation_name] = animation.length
 	var authoritative_duration := _source.get_visual_action_duration()
-	var configured_total := 0.0
-	for target_duration in _visual_action_clip_durations:
-		configured_total += float(target_duration)
-	if configured_total <= 0.001 and authoritative_duration > 0.001:
-		var source_total := 0.0
-		for clip_range in _visual_action_clip_ranges:
-			source_total += maxf(clip_range.y - clip_range.x, 0.0)
-		if source_total > 0.001:
-			for index in _visual_action_sequence.size():
-				var clip_range := _visual_action_clip_ranges[index]
-				_visual_action_clip_durations[index] = authoritative_duration * (clip_range.y - clip_range.x) / source_total
+	if not _action_sequence.configure(candidates, duration_candidates, range_candidates, lengths, authoritative_duration):
+		return
 	_playing_visual_action = true
-	_visual_action_sequence_index = 0
 	_active_action_name = action_name
 	_active_action_kind = action_kind
 	_active_action_priority = action_priority
@@ -419,7 +374,7 @@ func _play_visual_action(action_name: StringName) -> void:
 	_attack_recover_pending = false
 	_move_sequence_active = false
 	_move_active_animation = &""
-	_play_visual_action_clip(StringName(_visual_action_sequence[0]))
+	_play_visual_action_clip(StringName(_action_sequence.current().name))
 	# 晚到客户端从权威时间轴对应位置开始，不会把已过去的 Spell2 从头补播。
 	if authoritative_duration > 0.001:
 		_seek_visual_action(maxf(authoritative_duration - _source.get_visual_action_time_left(), 0.0))
@@ -430,17 +385,11 @@ func _play_visual_action_clip(animation_name: StringName) -> void:
 		return
 	animation.loop_mode = Animation.LOOP_NONE
 	_active_visual_action = animation_name
-	var target_duration := 0.0
-	if _visual_action_sequence_index < _visual_action_clip_durations.size():
-		target_duration = float(_visual_action_clip_durations[_visual_action_sequence_index])
-	var clip_range := Vector2(0.0, animation.length)
-	if _visual_action_sequence_index < _visual_action_clip_ranges.size():
-		clip_range = _visual_action_clip_ranges[_visual_action_sequence_index]
-	var playback_speed := 1.0
-	if target_duration > 0.001:
-		playback_speed = maxf((clip_range.y - clip_range.x) / target_duration, 0.01)
+	var clip := _action_sequence.current()
+	var clip_range: Vector2 = clip.range
+	var playback_speed: float = clip.speed
 	_set_model_visual_clip(animation_name)
-	var first_clip := _visual_action_sequence_index == 0
+	var first_clip := _action_sequence.index == 0
 	var blend_override := _active_action_blend_in if first_clip else _active_action_sequence_blend
 	var transition_kind := &"action_in" if first_clip else &"sequence"
 	var blend_time := _resolve_clip_blend(animation_name, transition_kind, blend_override)
@@ -449,26 +398,11 @@ func _play_visual_action_clip(animation_name: StringName) -> void:
 	_animation_player.play_section(animation_name, clip_range.x, clip_range.y, blend_time, playback_speed)
 
 func _seek_visual_action(elapsed: float) -> void:
-	if elapsed <= 0.001 or _visual_action_sequence.is_empty():
+	if elapsed <= 0.001 or _action_sequence.current().is_empty():
 		return
-	var remaining := elapsed
-	for index in _visual_action_sequence.size():
-		var animation_name := StringName(_visual_action_sequence[index])
-		var animation := _animation_player.get_animation(animation_name)
-		if animation == null:
-			continue
-		var target_duration := float(_visual_action_clip_durations[index])
-		var clip_range := _visual_action_clip_ranges[index] if index < _visual_action_clip_ranges.size() else Vector2(0.0, animation.length)
-		if target_duration <= 0.001:
-			target_duration = clip_range.y - clip_range.x
-		if remaining >= target_duration and index + 1 < _visual_action_sequence.size():
-			remaining -= target_duration
-			continue
-		_visual_action_sequence_index = index
-		_play_visual_action_clip(animation_name)
-		var playback_speed := (clip_range.y - clip_range.x) / maxf(target_duration, 0.001)
-		_animation_player.seek(clampf(clip_range.x + remaining * playback_speed, clip_range.x, clip_range.y), true)
-		return
+	var position := _action_sequence.seek(elapsed)
+	_play_visual_action_clip(StringName(_action_sequence.current().name))
+	_animation_player.seek(position, true)
 
 func _default_action_kind(action_name: StringName) -> StringName:
 	return &"transform" if String(action_name).contains("transform") or action_name == &"revert" else &"skill"
@@ -789,7 +723,7 @@ func _visual_bounds_bottom_y() -> float:
 
 ## 用包装场景中全部网格的实际投影顶部定位血条；模型缩放或脚底校正后无需再手填像素偏移。
 func _update_health_bar_anchor() -> void:
-	if _source == null or _camera == null or _flash_meshes.is_empty():
+	if _source == null or _camera == null or _model_resources.meshes().is_empty():
 		return
 	var ground_screen := _camera.unproject_position(global_position)
 	# 建筑等横向展开模型可由包装场景提供稳定的 3D 顶端锚点；仍只影响 UI 投影。
@@ -808,9 +742,10 @@ func _update_health_bar_anchor() -> void:
 	if not is_nan(_stable_head_offset):
 		_source.set_visual_head_world_position(Vector2(ground_screen.x, ground_screen.y + _stable_head_offset))
 		return
-	var top_screen_y := ground_screen.y
+	var screen_sign := -1.0 if bool(_camera.get_meta("canvas_flipped", false)) else 1.0
+	var top_screen_y := ground_screen.y * screen_sign
 	var found_visible_point := false
-	for mesh_instance in _flash_meshes:
+	for mesh_instance in _model_resources.meshes():
 		if mesh_instance == null or not is_instance_valid(mesh_instance):
 			continue
 		var bounds := mesh_instance.get_aabb()
@@ -823,21 +758,21 @@ func _update_health_bar_anchor() -> void:
 			var world_corner := mesh_instance.to_global(corner)
 			if _camera.is_position_behind(world_corner):
 				continue
-			top_screen_y = minf(top_screen_y, _camera.unproject_position(world_corner).y)
+			top_screen_y = minf(top_screen_y, _camera.unproject_position(world_corner).y * screen_sign)
 			found_visible_point = true
 	if found_visible_point:
 		# 武器/披风等网格也在 AABB 内，直接取最顶点会把血条拉离头部；
 		# 以体型半径给人物头顶设合理上限。空军从统一离地平面而非权威地面计算，
 		# 让血条随模型一起上移，同时避免红蓝朝向或动作造成大幅漂移。
 		var max_head_height := _source.visual_radius * 3.25
-		var visual_base_screen_y := ground_screen.y
+		var visual_base_screen_y := ground_screen.y * screen_sign
 		if _source.is_air:
 			var air_base_world := global_position + Vector3.UP * CardDB.AIR_VISUAL_ELEVATION
 			if not _camera.is_position_behind(air_base_world):
-				visual_base_screen_y = _camera.unproject_position(air_base_world).y
+				visual_base_screen_y = _camera.unproject_position(air_base_world).y * screen_sign
 		top_screen_y = maxf(top_screen_y, visual_base_screen_y - max_head_height)
-		_stable_head_offset = top_screen_y - ground_screen.y
-		_source.set_visual_head_world_position(Vector2(ground_screen.x, top_screen_y))
+		_stable_head_offset = top_screen_y * screen_sign - ground_screen.y
+		_source.set_visual_head_world_position(Vector2(ground_screen.x, top_screen_y * screen_sign))
 
 func _play_state(state: int, blend_time: float = -1.0) -> void:
 	_idle_transition_animation = &""
@@ -1219,9 +1154,8 @@ func _on_animation_finished(animation_name: StringName) -> void:
 		return
 	if _playing_visual_action:
 		if animation_name == _active_visual_action:
-			_visual_action_sequence_index += 1
-			if _visual_action_sequence_index < _visual_action_sequence.size():
-				_play_visual_action_clip(StringName(_visual_action_sequence[_visual_action_sequence_index]))
+			if _action_sequence.advance():
+				_play_visual_action_clip(StringName(_action_sequence.current().name))
 			else:
 				_finish_visual_action()
 		return
@@ -1277,9 +1211,7 @@ func _finish_visual_action() -> void:
 	var blend_out := _transition_blend(&"action_out") if _active_action_blend_out < 0.0 else _active_action_blend_out
 	_playing_visual_action = false
 	_active_visual_action = &""
-	_visual_action_sequence.clear()
-	_visual_action_clip_durations.clear()
-	_visual_action_clip_ranges.clear()
+	_action_sequence.clear()
 	_active_action_name = &""
 	_active_action_kind = &"locomotion"
 	_active_action_sequence_blend = -1.0
@@ -1329,9 +1261,7 @@ func _on_source_died() -> void:
 	_playing_visual_action = false
 	_idle_cycle_active_animation = &""
 	_active_visual_action = &""
-	_visual_action_sequence.clear()
-	_visual_action_clip_durations.clear()
-	_visual_action_clip_ranges.clear()
+	_action_sequence.clear()
 	_active_action_name = &""
 	_active_action_kind = &"death"
 	_active_action_priority = int(ACTION_PRIORITY.get(&"death", 100))
@@ -1405,14 +1335,9 @@ func _start_death_followup() -> bool:
 		_model_root.queue_free()
 	_model_root = instance as Node3D
 	add_child(_model_root)
-	_animation_player = _find_animation_player(_model_root)
+	_animation_player = _model_resources.bind_model(_model_root)
 	_stable_head_offset = NAN
 	_control_stage = &""
-	if _animation_player != null:
-		for library_name in _animation_player.get_animation_library_list():
-			var library := _animation_player.get_animation_library(library_name).duplicate(true) as AnimationLibrary
-			_animation_player.remove_animation_library(library_name)
-			_animation_player.add_animation_library(library_name, library)
 	if _animation_player == null or not _animation_player.has_animation(followup_name):
 		return false
 	_animation_player.animation_finished.connect(_on_animation_finished)
@@ -1429,16 +1354,6 @@ func _start_death_followup() -> bool:
 	_play_clip(followup_name, &"model_swap", playback_speed)
 	return true
 
-func _find_animation_player(node: Node) -> AnimationPlayer:
-	if node is AnimationPlayer:
-		return node as AnimationPlayer
-	for child in node.get_children():
-		var found := _find_animation_player(child)
-		if found != null:
-			return found
-	return null
-
-## 包装接口或稳定 Marker 挂点，骨骼解剖映射只在对应包装内。
 func _update_continuous_beam_origin() -> void:
 	if _model_root == null or _camera == null:
 		return
@@ -1482,23 +1397,6 @@ func _recreate_team_ring() -> void:
 	_team_ring = null
 	_create_team_ring()
 
-func _prepare_hit_flash() -> void:
-	_hit_flash_material = StandardMaterial3D.new()
-	_hit_flash_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	# LoL 风格的轻微泛白：保留原材质和角色辨识度，不做整模型纯白剪影。
-	_hit_flash_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	_hit_flash_material.albedo_color = Color(1.0, 1.0, 1.0, 0.22)
-	_collect_flash_meshes(_model_root)
-
-func _collect_flash_meshes(node: Node) -> void:
-	# 雾、光环、弹体等效果材质不参与人物闪白，也不应影响模型 AABB 血条定位。
-	if node is MeshInstance3D and not node.is_in_group("presentation_fx"):
-		var mesh_instance := node as MeshInstance3D
-		_flash_meshes.append(mesh_instance)
-		_original_overlays.append(mesh_instance.material_overlay)
-	for child in node.get_children():
-		_collect_flash_meshes(child)
-
 func _on_source_visual_hit() -> void:
 	if _dying:
 		return
@@ -1518,20 +1416,7 @@ func _update_hit_flash(delta: float) -> void:
 		_set_hit_flash(false)
 
 func _set_hit_flash(enabled: bool) -> void:
-	for i in range(_flash_meshes.size()):
-		var mesh_instance := _flash_meshes[i]
-		if mesh_instance == null or not is_instance_valid(mesh_instance):
-			continue
-		var base_overlay := _original_overlays[i]
-		if _last_buff_visible and i < _active_buff_overlays.size():
-			base_overlay = _active_buff_overlays[i]
-		if enabled or (_state.frozen and not _dying):
-			var overlay := _hit_flash_material.duplicate() as StandardMaterial3D
-			overlay.albedo_color = Color(1.0, 1.0, 1.0, 0.22) if enabled else Color(0.3, 0.7, 1.0, 0.28)
-			overlay.next_pass = base_overlay
-			mesh_instance.material_overlay = overlay
-		else:
-			mesh_instance.material_overlay = base_overlay
+	_model_resources.apply_overlays(enabled, _state.frozen and not _dying, _last_buff_visible)
 
 ## 冰冻优先保持当前姿态；眩晕片段自身播放。无素材明确回退为保持姿态。
 func _sync_control_override() -> bool:
@@ -1605,7 +1490,7 @@ func _replace_active_buff_visual(scene_path: String) -> void:
 		_active_buff_visual.hide()
 		_active_buff_visual.queue_free()
 	_active_buff_visual = null
-	_active_buff_overlays.clear()
+	_model_resources.configure_buff()
 	_last_buff_visible = false
 	if scene_path.is_empty():
 		return
@@ -1617,8 +1502,7 @@ func _replace_active_buff_visual(scene_path: String) -> void:
 		return
 	add_child(_active_buff_visual)
 	_active_buff_visual.configure(_source.visual_radius, _source.team)
-	for original in _original_overlays:
-		_active_buff_overlays.append(_active_buff_visual.make_overlay(original))
+	_model_resources.configure_buff(_active_buff_visual.make_overlay)
 	_update_active_buff_visual(0.0)
 
 
@@ -1631,3 +1515,6 @@ func _update_active_buff_visual(delta: float) -> void:
 	if shown != _last_buff_visible:
 		_last_buff_visible = shown
 		_set_hit_flash(_hit_flash_timer > 0.0)
+
+func _exit_tree() -> void:
+	_model_resources.clear()

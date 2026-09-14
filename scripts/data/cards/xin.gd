@@ -22,7 +22,6 @@ static func definition() -> Dictionary:
 			"deploy_sweep_mass_factor_max": 1.0,
 			# 无畏战吼：三段普攻循环中的第三击（Passive_AA_01）命中时回复少许生命值。
 			"heal_every_hits": 3, "heal_amount": 60,
-			"color": Color(0.85, 0.30, 0.25),
 			"is_air": false, "building_only": false, "can_attack_air": false,
 			"active_skills": [{
 					"name": "新月护卫", "kind": "nova",
@@ -33,7 +32,6 @@ static func definition() -> Dictionary:
 					"ground_only": true,
 					"impact_delay": 0.0, "cast_duration": 1.0,
 					"cast_locks": ["movement", "attack", "facing"],
-					"visual_action": "active",
 				}],
 		},
 		"visual": { "visual_radius": RADIUS_MEDIUM + VISUAL_RADIUS_PADDING,
@@ -68,6 +66,10 @@ static func definition() -> Dictionary:
 				},
 				"death": "Death", "death_duration": 0.8,
 			},
+			"color": Color(0.85, 0.30, 0.25),
+			"active_skills": [{
+					"visual_action": "active",
+				}],
 		},
 		# BEGIN IMPORTED AUDIO xin
 		"audio": {
@@ -136,8 +138,8 @@ static func definition() -> Dictionary:
 					"res://assets/audio/units/xin/play_sfx_xinzhao_xinzhaopassivecritattack_onhit_r2.wav",
 					"res://assets/audio/units/xin/play_sfx_xinzhao_xinzhaopassivecritattack_onhit_r3.wav"
 				]
-			]
+			],
 		},
 		# END IMPORTED AUDIO xin
-		"card_art": {}, # 默认 assets/cards/<card_id>_loading.*
+		"card_art": {},
 	}

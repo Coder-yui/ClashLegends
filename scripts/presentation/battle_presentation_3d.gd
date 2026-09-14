@@ -7,7 +7,7 @@ var _viewport: SubViewport
 var _world_root: Node3D
 var _camera: Camera3D
 
-func setup(field_size: Vector2, tile_size: float) -> void:
+func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void:
 	_viewport = SubViewport.new()
 	_viewport.name = "UnitViewport3D"
 	_viewport.size = Vector2i(roundi(field_size.x), roundi(field_size.y))
@@ -22,6 +22,10 @@ func setup(field_size: Vector2, tile_size: float) -> void:
 
 	_create_environment()
 	_create_camera(field_size.y / tile_size)
+	# 画布翻转场地；3D 相机反向滚转，让人物保持直立，射线投影仍对应权威场地坐标。
+	if flipped:
+		_camera.rotate_object_local(Vector3.BACK, PI)
+		_camera.set_meta("canvas_flipped", true)
 
 	# 透明视口作为普通 2D 画布叠在灰盒地图之上；后添加的单位血条仍会画在它上面。
 	var overlay := Sprite2D.new()

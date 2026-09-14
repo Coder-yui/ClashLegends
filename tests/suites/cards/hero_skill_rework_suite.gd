@@ -7,6 +7,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_main = main
 	_check_sett_resource_and_frontal_damage()
 	_check_sett_shield_and_combat_decay()
+	_check_ashe_release_vs_collision()
 	_check_ashe_volley()
 	_check_ashe_arrow_collision()
 	_check_piercing_cards()
@@ -224,7 +225,7 @@ func _check_empowered_attacks_and_blind() -> void:
 	teemo._attack(_main.SIM_DT)
 	for _tick in range(10):
 		_main._tick_projectiles(_main.SIM_DT)
-		if _main._projectiles.is_empty():
+		if _main._projectile_system.projectiles.is_empty():
 			break
 	var blind_applied := blinded.blind_attack_charges == 2
 	var victim := _spawn_dummy(Vector2(600.0, 1020.0), 0)
@@ -555,14 +556,14 @@ func _check_piercing_cards() -> void:
 			if action == "wild_cards": hits.append(position)
 		_main._projectile_system.skill_hit.connect(on_hit)
 		_main._active_skill_effect_system.apply_frontal(source, skill, forward)
-		var launched: bool = _main._projectiles.size() == 3 and front.hp == hp and hits.is_empty()
-		for projectile in _main._projectiles.values():
+		var launched: bool = _main._projectile_system.projectiles.size() == 3 and front.hp == hp and hits.is_empty()
+		for projectile in _main._projectile_system.projectiles.values():
 			launched = launched and projectile.visual == &"card"
 		_main._tick_projectiles(0.2)
 		_expect(launched and front.hp == hp - 100.0 and rear.hp == hp and hits.size() == 1, "阵营 %d：卡牌 Q 发射不扣血，飞到前排才伤害并发声，重叠三牌不重复伤害" % team)
 		source.free()
 		_main._tick_projectiles(1.0) # 跨过后排和射程末端，验证扫掠与来源独立。
-		_expect(rear.hp == hp - 100.0 and front.hp == hp - 100.0 and gap.hp == hp and friend.hp == hp and hits.size() == 2 and _main._projectiles.is_empty(), "阵营 %d：穿透前排继续命中后排，空隙/友军不受伤，死后在途仍有效且到射程清理" % team)
+		_expect(rear.hp == hp - 100.0 and front.hp == hp - 100.0 and gap.hp == hp and friend.hp == hp and hits.size() == 2 and _main._projectile_system.projectiles.is_empty(), "阵营 %d：穿透前排继续命中后排，空隙/友军不受伤，死后在途仍有效且到射程清理" % team)
 		_main._projectile_system.skill_hit.disconnect(on_hit)
 		for unit in [front, rear, gap, friend]: unit.free()
 	var invalid := CardDB.get_card("twisted_fate").duplicate(true)
@@ -570,3 +571,32 @@ func _check_piercing_cards() -> void:
 	var errors := PackedStringArray()
 	CardDB.VALIDATOR._validate_active_skills("pierce_probe", invalid, errors)
 	_expect(not errors.is_empty(), "穿透与命中停止互斥，validator 拒绝冲突配置")
+
+## 固定 Tick 上重放施法开始→效果执行/发射→碰撞，不能把 impact_delay 当目标扣血时刻。
+func _check_ashe_release_vs_collision() -> void:
+	for distance in [80.0, 180.0]:
+		_main._projectile_system.clear_all()
+		_main._commands.impacts.clear()
+		var source := _spawn_test_unit("ashe", 0, Vector2(360, 1000))
+		source.damage = 0.0
+		source.move_speed = 0.0
+		var target := _spawn_dummy(source.position + Vector2.UP * distance)
+		target.body_radius = 24.0
+		var skill: Dictionary = CardDB.active_skills_for("ashe")[0]
+		var initial_hp := target.hp
+		var cast_tick: int = _main._sim_tick_id
+		_expect(_main._start_active_skill_cast(source, skill), "艾希时序夹具通过正式 CastStart 入口开始")
+		var release_tick := -1
+		var collision_tick := -1
+		for step in range(1, 9):
+			_main._sim_step(_main.SIM_DT)
+			if release_tick < 0 and not _main._projectile_system.projectiles.is_empty(): release_tick = _main._sim_tick_id - cast_tick
+			if collision_tick < 0 and target.hp < initial_hp: collision_tick = _main._sim_tick_id - cast_tick
+		_expect(release_tick == 4, "0.16 秒效果延迟在 CastStart 后第 4 Tick（0.20 秒）发射")
+		_expect(collision_tick == (4 if distance == 80.0 else 6), "碰撞时刻取决于目标距离：近目标可在发射 Tick 命中，远目标要继续飞行")
+		_expect(target.hp == initial_hp - 70.0, "同次箭阵碰撞只对目标结算一次伤害")
+		print("[SKILL_TIMING] distance=%s release_tick=%d collision_tick=%d" % [distance, release_tick, collision_tick])
+		source.free()
+		target.free()
+	_main._projectile_system.clear_all()
+	_main._commands.impacts.clear()

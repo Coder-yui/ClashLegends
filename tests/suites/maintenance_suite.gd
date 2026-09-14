@@ -1,6 +1,7 @@
 extends RefCounted
 
 func run(harness: Object) -> void:
+	_check_clock_budget(harness)
 	var unit := Unit.new()
 	unit.setup(0, CardDB.get_unit_stats("garen"), "probe")
 	unit.attack_timeline.windup = 0.4
@@ -40,8 +41,8 @@ func check_contracts(harness: Object, main: Node2D) -> void:
 	skills[0]["cost"] = 99
 	harness._expect(is_same(definitions, CardDB.all()) and original.is_read_only() and original.audio.is_read_only() and original.audio.attack_swing.is_read_only() and CardDB.active_skills_for("garen")[0].cost != 99, "定义只构建一次且递归只读，技能运行副本不污染定义")
 	var fixture := CardDB.compile_definition({
-		"gameplay": {"name": "接入夹具", "type": "unit", "cost": 1, "description": "不进入正式注册表", "hp": 100.0, "damage": 10.0, "range": 32.0, "speed": 44.0, "interval": 1.0, "first_hit": 0.3, "radius": CardDB.RADIUS_SMALL, "visual_radius": CardDB.RADIUS_SMALL + CardDB.VISUAL_RADIUS_PADDING, "size_tier": CardDB.SIZE_SMALL, "mass": 2.0, "sight": 200.0, "is_air": false, "building_only": false, "can_attack_air": false, "color": Color.BLUE},
-		"visual": {"visual_scene_path": original.visual_scene_path, "visual_animations": original.visual_animations},
+		"gameplay": {"name": "接入夹具", "type": "unit", "cost": 1, "description": "不进入正式注册表", "hp": 100.0, "damage": 10.0, "range": 32.0, "speed": 44.0, "interval": 1.0, "first_hit": 0.3, "radius": CardDB.RADIUS_SMALL, "size_tier": CardDB.SIZE_SMALL, "mass": 2.0, "sight": 200.0, "is_air": false, "building_only": false, "can_attack_air": false},
+		"visual": {"color": Color.BLUE, "visual_radius": CardDB.RADIUS_SMALL + CardDB.VISUAL_RADIUS_PADDING, "visual_scene_path": original.visual_scene_path, "visual_animations": original.visual_animations},
 		"card_art": {"path": CardArt.texture_for("garen").resource_path},
 		"audio": {"events": {"death": original.audio.events.death}},
 	})
@@ -189,7 +190,7 @@ func _check_control_and_isolation(harness: Object, main: Node2D) -> void:
 	var stun_plays := view._animation_player.speed_scale == 1.0 and view._control_stage == &"loop"
 	var independent := view._animation_player.get_animation("Idle1_Base") != views[1]._animation_player.get_animation("Idle1_Base")
 	view._on_source_visual_hit()
-	independent = independent and view._flash_meshes[0].material_overlay != views[1]._flash_meshes[0].material_overlay
+	independent = independent and view._model_resources.meshes()[0].material_overlay != views[1]._model_resources.meshes()[0].material_overlay
 	unit.hp = 0.0
 	unit.notify_visual_death()
 	harness._expect(paused and ice_holds and stun_plays and view._dying and view._animation_player.speed_scale > 0.0, "前摇中冰冻/眩晕重叠保持权威阶段，眩晕片段可播放，死亡正常接管")
@@ -276,3 +277,21 @@ func _check_network_presentation(harness: Object, main: Node2D) -> void:
 	harness._expect(seen == [&"death"], "可靠重要事件按 ID 拒绝重复与晚到重放")
 	main._audio_manager.cue_played.disconnect(callback)
 	main._last_card_event_id = old_event
+
+func _check_clock_budget(harness: Object) -> void:
+	var clock := FixedStepClock.new()
+	clock.max_ticks_per_advance = 4
+	clock.running = func(): return true
+	var applied: Array[float] = []
+	clock.step = func(dt): applied.append(dt)
+	clock.advance(0.525)
+	harness._expect(clock.ticks == 4 and is_equal_approx(clock.remainder, 0.325), "赶步达到数量预算时保留全部积压及小数余量")
+	clock.advance(0.0)
+	clock.advance(0.0)
+	harness._expect(clock.ticks == 10 and is_equal_approx(clock.remainder, 0.025) and applied.all(func(dt): return dt == 0.05), "后续渲染帧无新增时间仍按顺序补完全部固定步，不丢 Tick")
+	clock.max_ticks_per_advance = 0
+	clock.max_work_usec = 1000
+	clock.step = func(_dt): OS.delay_usec(2000)
+	clock.advance(0.2)
+	harness._expect(clock.ticks == 11 and is_equal_approx(clock.remainder, 0.175), "单 Tick 超出时间预算后停止继续赶步，当前 Tick 完整执行")
+	clock.step = Callable()

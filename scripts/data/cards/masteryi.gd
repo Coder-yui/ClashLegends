@@ -11,7 +11,6 @@ static func definition() -> Dictionary:
 			"speed": SPEED_EXTREMELY_FAST, "interval": 0.7, "first_hit": 0.2,
 			"size_tier": SIZE_MEDIUM, "radius": RADIUS_MEDIUM,
 			"mass": 4.0, "sight": 200.0,
-			"color": Color(0.20, 0.80, 0.50),
 			# 双重打击：第三段被动动作在首刀后追加一次 50% 伤害的普通攻击判定。
 			"attack_extra_hit_damage_multipliers": [[], [], [0.5]],
 			"attack_extra_hit_delays": [[], [], [0.12]],
@@ -37,6 +36,7 @@ static func definition() -> Dictionary:
 				},
 				"death": "Death", "death_duration": 0.8,
 			},
+			"color": Color(0.20, 0.80, 0.50),
 		},
 		"card_art": {}, # 默认 assets/cards/<card_id>_loading.*
 		"audio": {

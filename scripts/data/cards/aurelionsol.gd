@@ -13,15 +13,6 @@ static func definition() -> Dictionary:
 			"mass": 5.0, "sight": 250.0,
 			"splash_radius": 34.0,
 			"skill_resource_max": 5.0, "skill_resource_kill_gain": 1.0,
-			"skill_resource_full_color": Color(0.58, 0.42, 1.0, 0.96),
-			"color": Color(0.95, 0.75, 0.25),
-			# 正式吐息素材接入前，用嘴部窄、目标端宽的半透明浅蓝梯形光柱占位。
-			# 这些字段只控制 2D 表现，不参与持续伤害、范围或命中判定。
-			"continuous_beam_color": Color(0.42, 0.84, 1.0, 0.70),
-			"continuous_beam_start_width": 4.0,
-			"continuous_beam_end_width": 14.0,
-			"continuous_beam_origin_height": 78.0,
-			"continuous_beam_forward_offset": 20.0,
 			"is_air": true, "building_only": false, "can_attack_air": true,
 			"is_continuous_attack": true,  # 持续伤害：固定Tick累计 damage*dt，按目标保留余量
 			"active_skills": [{
@@ -37,7 +28,6 @@ static func definition() -> Dictionary:
 					"impact_delay": 1.15, "cast_duration": 1.93,
 					"full_resource_impact_delay": 1.12, "full_resource_cast_duration": 1.90,
 					"cast_locks": ["movement", "attack", "facing"],
-					"visual_action": "active", "full_resource_visual_action": "active_strong",
 				}],
 		},
 		"visual": { "visual_radius": RADIUS_SLIGHTLY_LARGE + VISUAL_RADIUS_PADDING,
@@ -83,6 +73,18 @@ static func definition() -> Dictionary:
 				},
 				"death": "Death", "death_duration": 0.8,
 			},
+			"skill_resource_full_color": Color(0.58, 0.42, 1.0, 0.96),
+			"color": Color(0.95, 0.75, 0.25),
+			# 正式吐息素材接入前，用嘴部窄、目标端宽的半透明浅蓝梯形光柱占位。
+			# 这些字段只控制 2D 表现，不参与持续伤害、范围或命中判定。
+			"continuous_beam_color": Color(0.42, 0.84, 1.0, 0.70),
+			"continuous_beam_start_width": 4.0,
+			"continuous_beam_end_width": 14.0,
+			"continuous_beam_origin_height": 78.0,
+			"continuous_beam_forward_offset": 20.0,
+			"active_skills": [{
+					"visual_action": "active", "full_resource_visual_action": "active_strong",
+				}],
 		},
 		# BEGIN IMPORTED AUDIO aurelionsol
 		"audio": {
@@ -140,8 +142,8 @@ static func definition() -> Dictionary:
 					"volume_db": 0.0,
 					"bus": "Voice"
 				}
-			}
+			},
 		},
 		# END IMPORTED AUDIO aurelionsol
-		"card_art": {}, # 默认 assets/cards/<card_id>_loading.*
+		"card_art": {},
 	}

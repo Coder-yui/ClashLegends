@@ -11,7 +11,6 @@ static func definition() -> Dictionary:
 			"hp": 400, "damage": 0, "range": 0.0,
 			"speed": 0.0, "interval": 1.0, "radius": 40.0,
 			"footprint_tiles": Vector2i(3, 3),
-			"color": Color(0.45, 0.40, 0.35),
 			"is_air": false, "building_only": false, "can_attack_air": false,
 			"is_building": true,
 			"lifespan": 10.0,       # 存活时间（秒），到时自动消失
@@ -21,8 +20,8 @@ static func definition() -> Dictionary:
 			"spawn_side": "map_side",
 			"death_spawn_id": "imp",
 			"death_spawn_count": 2,
-			"show_team_ring": false,
-			"active_skills": [{"name": "亡者集结", "kind": "summon", "cost": 1, "max_uses": 1, "cooldown": 10.0, "spawn_id": "imp", "spawn_count": 4}],
+			"active_skills": [{"name": "亡者集结", "kind": "summon", "cost": 1, "max_uses": 1, "cooldown": 10.0, "spawn_id": "imp", "spawn_count": 4,
+				}],
 		},
 		"visual": {
 			"visual_radius": 50.0,
@@ -35,6 +34,8 @@ static func definition() -> Dictionary:
 				},
 				"deploy": "Spawn", "idle": "Idle1", "death": "Death", "death_duration": 0.8,
 			},
+			"color": Color(0.45, 0.40, 0.35),
+			"show_team_ring": false,
 		},
 		# BEGIN EVENT AUDIO tombstone
 		"audio": {
@@ -60,8 +61,8 @@ static func definition() -> Dictionary:
 					"volume_db": 0.0,
 					"bus": "Combat"
 				}
-			}
+			},
 		},
 		# END EVENT AUDIO tombstone
-		"card_art": {}, # 默认 assets/cards/<card_id>_loading.*
+		"card_art": {},
 	}

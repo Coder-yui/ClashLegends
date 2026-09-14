@@ -68,7 +68,10 @@ var visual_radius := 14.0
 var mass := 4.0
 var sight_range := DEFAULT_SIGHT_RANGE
 var is_air := false
-var is_building := false
+var is_building := false:
+	set(value):
+		is_building = value
+		_sync_structure_group()
 var building_only := false
 var can_attack_air := true
 var continuous_attack := false
@@ -78,6 +81,10 @@ var show_team_ring := true
 var deploy_time := 1.0
 var first_hit_time := 0.2
 var projectile_speed := 0.0
+# 权威弹体几何；与 projectile_visual_* 完全独立。
+var projectile_spawn_at_edge := false
+var projectile_spawn_offset := 0.0
+var projectile_collision_radius := 4.0
 var active_buff_projectile_visual := &""
 var projectile_visual := &"orb"
 var projectile_visual_height := 0.0
@@ -164,11 +171,13 @@ var active_skill_cast_facing := Vector2.ZERO
 var active_skill_cast_locks: Array[StringName] = []
 
 ## 预留的减攻速控制状态；高原血统在 Buff 期间会忽略它。
-var shield_hp := 0.0
-var shield_max_hp := 0.0
-var _shield_decay_remainder := 0.0
-var shield_timer := 0.0
-var shield_decay_rate := 0.0
+var shields := ShieldState.new()
+var shield_hp: float:
+	get: return shields.total_hp()
+var shield_max_hp: float:
+	get: return shields.total_capacity()
+var shield_timer: float:
+	get: return shields.longest_remaining()
 var active_buff_timer := 0.0
 var active_speed_multiplier := 1.0
 var active_damage_multiplier := 1.0
@@ -341,6 +350,9 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	deploy_time = stats.get("deploy_time", 1.0)
 	first_hit_time = stats.get("first_hit", minf(attack_interval * 0.5, 0.4))
 	projectile_speed = stats.get("projectile_speed", 0.0)
+	projectile_spawn_at_edge = bool(stats.get("projectile_spawn_at_edge", false))
+	projectile_spawn_offset = float(stats.get("projectile_spawn_offset", 0.0))
+	projectile_collision_radius = float(stats.get("projectile_collision_radius", 4.0))
 	active_buff_projectile_visual = StringName(stats.get("active_buff_projectile_visual", ""))
 	projectile_visual = StringName(stats.get("projectile_visual", "orb"))
 	projectile_visual_height = stats.get("projectile_visual_height", 0.0)
@@ -388,10 +400,7 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	skill_resource_decay_delay = 0.0
 	skill_resource_decay_rate = 0.0
 	skill_resource_enabled = false
-	shield_hp = 0.0
-	shield_max_hp = 0.0
-	shield_timer = 0.0
-	shield_decay_rate = 0.0
+	shields.clear()
 	transform_after_hits = maxi(int(stats.get("transform_after_hits", 0)), 0)
 	revert_after_hits = maxi(int(stats.get("revert_after_hits", 0)), 0)
 	transform_duration = maxf(float(stats.get("transform_duration", 0.0)), 0.0)
@@ -426,8 +435,16 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	_prev_pos = global_position
 	_update_fallback_health_bar_anchor()
 
+func _sync_structure_group() -> void:
+	if not is_inside_tree(): return
+	if is_building:
+		add_to_group("combat_structures")
+	else:
+		remove_from_group("combat_structures")
+
 func _ready() -> void:
 	add_to_group("combatants")
+	_sync_structure_group()
 	_update_fallback_health_bar_anchor()
 	# 赵信的新月护卫就是部署动作本身：生成当帧结算一次，不等待部署锁定结束，
 	# 也不让动画帧反向驱动权威效果。客户端仅显示同帧特效。
@@ -678,7 +695,7 @@ func prepare_empowered_attack(damage_multiplier: float, speed_multiplier: float 
 	# 若技能在当前攻击前摇中落地，立即从当前 Pose 改播强化动作，但仍沿用原命中时刻。
 	if _attacking and not _attack_visual_pending and (attack_timeline.windup > 0.0 or attack_timeline.cooldown <= 0.0):
 		_attack_visual_serial += 1
-		attack_timeline.visual_elapsed = 0.0
+		attack_timeline.restart_visual()
 		_empowered_attack_visual_serial = _attack_visual_serial
 	queue_redraw()
 
@@ -703,9 +720,7 @@ func is_active_skill_facing_locked() -> bool:
 
 func _cancel_attack_for_cast() -> void:
 	_attacking = false
-	attack_timeline.cooldown = 0.0
-	attack_timeline.windup = 0.0
-	attack_timeline.recovery = 0.0
+	attack_timeline.cancel(true)
 	_attack_visual_pending = false
 	_attack_visual_first_strike = false
 	_continuous_visual_target_id = 0
@@ -768,6 +783,9 @@ func _apply_form(next_form_index: int, grant_max_hp_increase: bool, advance_form
 	building_only = bool(next_stats.get("building_only", building_only))
 	can_attack_air = bool(next_stats.get("can_attack_air", can_attack_air))
 	projectile_speed = float(next_stats.get("projectile_speed", projectile_speed))
+	projectile_spawn_at_edge = bool(next_stats.get("projectile_spawn_at_edge", false))
+	projectile_spawn_offset = float(next_stats.get("projectile_spawn_offset", 0.0))
+	projectile_collision_radius = float(next_stats.get("projectile_collision_radius", 4.0))
 	active_buff_projectile_visual = StringName(next_stats.get("active_buff_projectile_visual", ""))
 	projectile_visual = StringName(next_stats.get("projectile_visual", projectile_visual))
 	projectile_visual_height = float(next_stats.get("projectile_visual_height", projectile_visual_height))
@@ -787,9 +805,7 @@ func _apply_form(next_form_index: int, grant_max_hp_increase: bool, advance_form
 	# 攻击形态和射程已经改变，旧前摇/后摇不能带入新形态；在途远程弹体仍由主机独立推进。
 	_target = null
 	_attacking = false
-	attack_timeline.cooldown = 0.0
-	attack_timeline.windup = 0.0
-	attack_timeline.recovery = 0.0
+	attack_timeline.cancel(true)
 	_attack_visual_pending = false
 	_attack_visual_first_strike = false
 	_path = PackedVector2Array()
@@ -892,8 +908,7 @@ func sim_tick(dt: float) -> void:
 			_deploy_timer = 0.0
 		# 冰冻时长从命中当帧开始消耗；不会在部署结束后再额外补一整段冻结。
 		if _deploy_timer > 0.0:
-			control.frozen_timer = maxf(0.0, control.frozen_timer - dt)
-			control.stun_timer = maxf(0.0, control.stun_timer - dt)
+			control.tick_hard_controls(dt)
 		# “不能移动”只锁自主行军；碰撞与击退等外力仍可改变位置，保证部署实体
 		# 被命中后的附带效果不会延迟到部署结束才突然补播。
 		if _knockback_timer > 0.0:
@@ -906,15 +921,14 @@ func sim_tick(dt: float) -> void:
 		if _deploy_timer > 0.0 or _forced_movement:
 			return
 	if control.frozen_timer > 0.0 or control.stun_timer > 0.0:
-		control.frozen_timer = maxf(0.0, control.frozen_timer - dt)
-		control.stun_timer = maxf(0.0, control.stun_timer - dt)
+		control.tick_hard_controls(dt)
 		if control.frozen_timer <= 0.0 and control.stun_timer <= 0.0:
 			queue_redraw()
 		_charge_timer = 0.0
 		_charged = false
 		return
 	if _attacking and _attack_visual_serial > 0:
-		attack_timeline.visual_elapsed += dt * _effective_attack_speed_multiplier()
+		attack_timeline.advance_visual(dt, _effective_attack_speed_multiplier())
 	_tick_pending_extra_attacks(dt)
 	if is_building:
 		_building_tick(dt)
@@ -938,7 +952,7 @@ func sim_tick(dt: float) -> void:
 		if form_transition_timer > 0.0:
 			_tick_form_transition_movement(dt)
 			return
-	attack_timeline.cooldown = maxf(0.0, attack_timeline.cooldown - dt)
+	attack_timeline.tick_cooldown(dt)
 	# 默认命中后必须完整收招。部分卡牌（当前为腕豪）若已经没有攻击范围内目标，
 	# 则提前解除后摇并追击；冻结会在上方提前 return，因此同样会暂停后摇计时。
 	if attack_timeline.recovery > 0.0:
@@ -954,15 +968,15 @@ func sim_tick(dt: float) -> void:
 				and _target_gap(_target) <= attack_range
 			)
 			if not has_next_attack_target:
-				attack_timeline.recovery = 0.0
+				attack_timeline.cancel_recovery()
 				_attacking = false
 			else:
-				attack_timeline.recovery = maxf(0.0, attack_timeline.recovery - dt)
+				attack_timeline.tick_recovery(dt)
 				_attacking = true
 				if attack_timeline.recovery > 0.0:
 					return
 		else:
-			attack_timeline.recovery = maxf(0.0, attack_timeline.recovery - dt)
+			attack_timeline.tick_recovery(dt)
 			_attacking = true
 			if attack_timeline.recovery > 0.0:
 				return
@@ -977,11 +991,11 @@ func sim_tick(dt: float) -> void:
 				if continuous_target_id != _continuous_visual_target_id:
 					_continuous_visual_target_id = continuous_target_id
 					_attack_visual_serial += 1
-					attack_timeline.visual_elapsed = 0.0
+					attack_timeline.restart_visual()
 			if not _attacking:
 				# 首击没有历史冷却；重入射程只等待上次出手的剩余间隔。
 				# 前摇与剩余冷却重叠，不能在完整后摇后再额外等待一个周期。
-				attack_timeline.windup = maxf(first_hit_time / _effective_attack_speed_multiplier(), attack_timeline.cooldown)
+				attack_timeline.begin_windup(first_hit_time, _effective_attack_speed_multiplier())
 				_attack_visual_pending = true
 			_attacking = true
 			_path = PackedVector2Array()
@@ -991,8 +1005,7 @@ func sim_tick(dt: float) -> void:
 	# 退出攻击状态（目标丢失/脱离攻击圈，回到行军）→ 关闭丝缕缠流。
 	_attacking = false
 	_continuous_visual_target_id = 0
-	attack_timeline.windup = 0.0
-	attack_timeline.recovery = 0.0
+	attack_timeline.cancel()
 	_shroud_active = false
 	if is_active_skill_movement_locked():
 		return
@@ -1012,8 +1025,7 @@ func _tick_attack_locked_cast_movement(dt: float) -> void:
 ## 变形期间用新形态的视野/射程立即决策：圈外继续移动，圈内等待但不开始攻击。
 func _tick_form_transition_movement(dt: float) -> void:
 	_attacking = false
-	attack_timeline.windup = 0.0
-	attack_timeline.recovery = 0.0
+	attack_timeline.cancel()
 	_attack_visual_pending = false
 	_update_target(false)
 	if _target != null and is_instance_valid(_target) and _target_gap(_target) <= attack_range:
@@ -1076,8 +1088,7 @@ func apply_knockback(origin: Vector2, distance: float, duration: float = 0.2, ma
 	var mass_factor := clampf(4.0 / maxf(mass, 1.0), 0.35, maxf(mass_factor_max, 0.35))
 	_knockback_timer = maxf(duration, SIM_DT)
 	_knockback_velocity = direction * distance * mass_factor / _knockback_timer
-	attack_timeline.windup = 0.0
-	attack_timeline.recovery = 0.0
+	attack_timeline.cancel()
 	_attacking = false
 	_shroud_active = false
 	cancel_charge()
@@ -1180,8 +1191,7 @@ func _update_target(allow_out_of_range_hit: bool = false) -> void:
 			return
 		_target = null
 		_attacking = false
-		attack_timeline.windup = 0.0
-		attack_timeline.recovery = 0.0
+		attack_timeline.cancel()
 		_shroud_active = false
 		_path = PackedVector2Array()
 		_path_index = 0
@@ -1189,8 +1199,7 @@ func _update_target(allow_out_of_range_hit: bool = false) -> void:
 	if not is_instance_valid(_target):
 		_target = null
 		_attacking = false
-		attack_timeline.windup = 0.0
-		attack_timeline.recovery = 0.0
+		attack_timeline.cancel()
 		_shroud_active = false
 		_path = PackedVector2Array()
 		_path_index = 0
@@ -1209,8 +1218,7 @@ func _update_target(allow_out_of_range_hit: bool = false) -> void:
 		if drop:
 			_target = null
 			_attacking = false
-			attack_timeline.windup = 0.0
-			attack_timeline.recovery = 0.0
+			attack_timeline.cancel()
 			_shroud_active = false
 			_path = PackedVector2Array()
 			_path_index = 0
@@ -1222,8 +1230,7 @@ func _update_target(allow_out_of_range_hit: bool = false) -> void:
 		if nearer_tower != null and nearer_tower != _target and _target_gap(nearer_tower) + 0.01 < _target_gap(_target):
 			_target = nearer_tower
 			_attacking = false
-			attack_timeline.windup = 0.0
-			attack_timeline.recovery = 0.0
+			attack_timeline.cancel()
 			_shroud_active = false
 			_path = PackedVector2Array()
 			_path_index = 0
@@ -1232,8 +1239,7 @@ func _update_target(allow_out_of_range_hit: bool = false) -> void:
 		if distraction != null:
 			_target = distraction
 			_attacking = false
-			attack_timeline.windup = 0.0
-			attack_timeline.recovery = 0.0
+			attack_timeline.cancel()
 			_shroud_active = false
 			_path = PackedVector2Array()
 			_path_index = 0
@@ -1446,7 +1452,7 @@ func _attack(dt: float) -> void:
 		return
 	if attack_timeline.windup > 0.0:
 		_try_start_attack_visual(maxf(attack_timeline.windup - dt, 0.0))
-		attack_timeline.windup = maxf(0.0, attack_timeline.windup - dt)
+		attack_timeline.tick_windup(dt)
 		if attack_timeline.windup > 0.0:
 			return
 	if continuous_attack:
@@ -1457,7 +1463,7 @@ func _attack(dt: float) -> void:
 		# 连招节奏：若配置了 attack_pattern，则按本次命中后的间隔取值；否则固定为 attack_interval。
 		var hit_index := _attack_hit_index
 		var next_attack_gap := _next_attack_gap()
-		attack_timeline.cooldown = next_attack_gap
+		attack_timeline.commit_hit(next_attack_gap)
 		var base_hit_damage := damage * _attack_damage_multiplier(hit_index) * active_damage_multiplier * (charge_damage_multiplier if _charged else 1.0)
 		var hit_damage := base_hit_damage
 		var first_strike := _attack_visual_first_strike and first_strike_damage_multiplier != 1.0
@@ -1495,7 +1501,7 @@ func _attack(dt: float) -> void:
 			return
 		# 从命中点锁定到下一次攻击动作应当开始的时刻，即当前动作的后摇段。
 		# 若目标仍在射程内，计时结束后无缝开始下一次前摇；若已离开，则此时才追击。
-		attack_timeline.recovery = maxf(next_attack_gap - first_hit_time / _effective_attack_speed_multiplier(), 0.0)
+		attack_timeline.begin_recovery(next_attack_gap, first_hit_time, _effective_attack_speed_multiplier())
 		_attack_visual_pending = true
 		cancel_charge()
 
@@ -1546,7 +1552,7 @@ func _try_start_attack_visual(time_until_hit: float) -> void:
 		# 命中计数被动与已出手次数对齐；取消的前摇不占用被动攻击段。
 		_attack_visual_serial += posmod(_attack_swing_count - (_attack_visual_serial - 1), heal_every_hits)
 	# 固定 Tick 跨过前摇起点时保留已流逝部分；客户端按同一个基础速率进度 seek。
-	attack_timeline.visual_elapsed = maxf(first_hit_time - maxf(time_until_hit, 0.0) * _effective_attack_speed_multiplier(), 0.0)
+	attack_timeline.align_visual(first_hit_time, time_until_hit, _effective_attack_speed_multiplier())
 	if empowered_attack_ready:
 		_empowered_attack_visual_serial = _attack_visual_serial
 
@@ -1721,31 +1727,18 @@ func apply_active_buff(duration: float, speed_multiplier: float, damage_multipli
 	queue_redraw()
 
 func add_shield(amount: float, duration: float, decays: bool = false) -> void:
-	amount = BattleNumbers.quantity(maxf(amount, 0.0))
-	duration = maxf(BattleNumbers.decimal(duration), 0.0)
-	if amount <= 0.0 or duration <= 0.0:
-		return
-	shield_hp += amount
-	shield_max_hp += amount
-	shield_timer = maxf(shield_timer, duration)
-	shield_decay_rate = amount / duration if decays else 0.0
-	_shield_decay_remainder = 0.0
+	if hp > 0.0:
+		shields.add(amount, duration, decays)
+		queue_redraw()
+
+func clear_shields() -> void:
+	shields.clear()
 	queue_redraw()
 
 func _tick_active_statuses(dt: float) -> void:
 	var previous_speed := _effective_attack_speed_multiplier()
 	control.tick_slows(dt)
-	if shield_timer > 0.0:
-		shield_timer = maxf(0.0, shield_timer - dt)
-		if shield_decay_rate > 0.0:
-			_shield_decay_remainder += shield_decay_rate * dt
-			var decay := roundf(_shield_decay_remainder)
-			_shield_decay_remainder -= decay
-			shield_hp = maxf(0.0, shield_hp - decay)
-		if shield_timer <= 0.0:
-			shield_hp = 0.0
-			shield_max_hp = 0.0
-			shield_decay_rate = 0.0
+	shields.tick(dt)
 	if active_buff_timer > 0.0:
 		active_buff_timer = maxf(0.0, active_buff_timer - dt)
 		if active_buff_timer <= 0.0:
@@ -1782,14 +1775,7 @@ func take_damage(amount: float, from: Node2D = null, source_team: int = -1, sour
 	if amount > 0.0:
 		mark_skill_resource_combat_activity()
 	var remaining_damage := BattleNumbers.quantity(maxf(amount, 0.0))
-	if shield_hp > 0.0 and shield_timer > 0.0:
-		var absorbed := minf(roundf(shield_hp), remaining_damage)
-		shield_hp -= absorbed
-		remaining_damage -= absorbed
-		if shield_hp <= 0.0:
-			shield_timer = 0.0
-			shield_max_hp = 0.0
-			shield_decay_rate = 0.0
+	remaining_damage = shields.absorb(remaining_damage)
 	var hp_before := hp
 	hp = maxf(roundf(hp - remaining_damage), 0.0)
 	add_skill_resource(minf(maxf(hp_before, 0.0), remaining_damage) * skill_resource_damage_gain_multiplier)
@@ -1962,7 +1948,7 @@ func get_health_bar_fill_color() -> Color:
 
 func _update_fallback_health_bar_anchor() -> void:
 	if is_inside_tree():
-		set_visual_head_world_position(get_visual_screen_position() + Vector2(0.0, -visual_radius))
+		set_visual_head_world_position(get_visual_screen_position() + Vector2(0.0, -visual_radius).rotated(-get_canvas_transform().get_rotation()))
 
 func _draw() -> void:
 	draw_set_transform(_vis_offset, 0.0, Vector2.ONE)
@@ -1986,6 +1972,9 @@ func _draw() -> void:
 	if _sweep_fx_timer > 0.0 and deploy_sweep_radius > 0.0:
 		_draw_sweep_fx()
 	_draw_active_sweep_fx()
+	# 血条和资源条绕其屏幕锚点反向旋转，填充方向与上下关系不随场地倒转。
+	var ui_rotation := -get_global_transform_with_canvas().get_rotation()
+	draw_set_transform(_vis_offset + _health_bar_center - _health_bar_center.rotated(ui_rotation), ui_rotation, Vector2.ONE)
 	var raw_hp_ratio := maxf(hp / maxf(max_hp, 0.001), 0.0)
 	var hp_ratio := minf(raw_hp_ratio, 1.0)
 	var overheal_ratio := maxf(raw_hp_ratio - 1.0, 0.0)
@@ -2033,6 +2022,7 @@ func _draw() -> void:
 			var resource_rect := Rect2(Vector2(-resource_w * 0.5, resource_y), Vector2(resource_w, SKILL_RESOURCE_BAR_HEIGHT))
 			draw_rect(resource_rect, Color(0.10, 0.10, 0.12, 0.9))
 			draw_rect(Rect2(resource_rect.position, Vector2(resource_w * get_skill_resource_ratio(), SKILL_RESOURCE_BAR_HEIGHT)), get_skill_resource_fill_color())
+	draw_set_transform(_vis_offset, 0.0, Vector2.ONE)
 	if control.frozen_timer > 0.0:
 		draw_circle(Vector2.ZERO, visual_radius + 4.0, Color(0.4, 0.8, 1.0, 0.3))
 	var stunned_visible := net_stun_active if _in_client_mode() else control.stun_timer > 0.0

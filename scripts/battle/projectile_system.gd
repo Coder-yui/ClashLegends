@@ -8,16 +8,37 @@ signal launch_audio_cleared()
 signal impact_added(position: Vector2, radius: float, color: Color, visual: StringName)
 signal visuals_cleared()
 
-const MUZZLE_FORWARD_GAP := 5.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
-
 var projectiles: Dictionary = {}
-var client_projectiles: Dictionary = {}
+var _client_projectiles: Dictionary = {}
 var impact_effects: Array[Dictionary] = []
 var _next_id := 1
 var _context: BattleContext
 
 func setup(context: BattleContext) -> void:
 	_context = context
+
+## 快照提供目标状态；当前插值位置由本系统保留，调用者不能持有内部字典别名。
+func apply_client_targets(targets: Dictionary) -> void:
+	var next := {}
+	for id in targets:
+		var entry: Dictionary = targets[id].duplicate(true)
+		if _client_projectiles.has(id):
+			entry.pos = _client_projectiles[id].pos
+			entry.visual_offset = _client_projectiles[id].visual_offset
+		next[id] = entry
+	_client_projectiles = next
+
+func client_snapshot() -> Dictionary:
+	return _client_projectiles.duplicate(true)
+
+func authoritative_snapshot() -> Dictionary:
+	return projectiles.duplicate(true)
+
+func visible_snapshot() -> Dictionary:
+	return client_snapshot() if _context != null and _context.is_net_client() else authoritative_snapshot()
+
+func clear_client() -> void:
+	_client_projectiles.clear()
 
 func launch(attacker: Node2D, target: Node2D, amount: float, projectile_speed: float, splash_radius: float, knockback: float, projectile_color: Color, effects: Dictionary = {}) -> void:
 	if target == null or not is_instance_valid(target) or target.hp <= 0.0:
@@ -60,8 +81,8 @@ func launch(attacker: Node2D, target: Node2D, amount: float, projectile_speed: f
 		visual_offset = (attacker as Tower).projectile_visual_offset
 		visual_offset_follows_trajectory = visual_offset.length_squared() > 0.001
 	var start_position := attacker.global_position
-	if projectile_visual in [&"arrow", &"needle", &"boomerang", &"ice_cone"]:
-		start_position += direction * (attacker.body_radius + MUZZLE_FORWARD_GAP)
+	# 出生点与碰撞半径只读权威配置，换模型、外观或增益弹体不改命中。
+	start_position += direction * (attacker.projectile_spawn_offset + (attacker.body_radius if attacker.projectile_spawn_at_edge else 0.0))
 	var id := _next_id
 	_next_id += 1
 	projectiles[id] = {
@@ -71,7 +92,7 @@ func launch(attacker: Node2D, target: Node2D, amount: float, projectile_speed: f
 		"effects": effects.duplicate(true),
 		"first_strike": first_strike,
 		"splash": splash_radius, "knockback": knockback, "color": projectile_color,
-		"radius": 7.0 if projectile_visual == &"tower_orb" else (3.0 if projectile_visual == &"arrow" else 4.0),
+		"radius": attacker.projectile_collision_radius,
 		"visual": projectile_visual, "visual_height": projectile_visual_height,
 		"visual_scale": projectile_visual_scale, "impact_visual": projectile_impact_visual,
 		"visual_offset": visual_offset, "visual_origin_offset": visual_offset,
@@ -83,7 +104,7 @@ func launch(attacker: Node2D, target: Node2D, amount: float, projectile_speed: f
 	if attacker is Unit:
 		var cue := &"first_strike:missile_launch" if first_strike else (&"empowered_launch" if bool(effects.get("presentation_source", {}).get("empowered", false)) else &"attack_launch")
 		var source: Dictionary = effects.get("presentation_source", {})
-		var audio: Dictionary = PresentationConfig.for_form(CardDB.get_card(String(source.get("card_id", ""))), source_form_index).get("audio", {})
+		var audio: Dictionary = PresentationConfig.audio_for(CardDB.get_card(String(source.get("card_id", ""))), int(source.get("team", 0)), source_form_index)
 		if cue == &"attack_launch" and bool(audio.get("attack_launch_until_impact", false)):
 			projectiles[id]["owned_launch_audio"] = true
 			launch_audio_started.emit(id, source, attacker.global_position)
@@ -230,13 +251,13 @@ func _tick_skill_arrow(projectile: Dictionary, dt: float, colliders: Array) -> b
 	return float(projectile.remaining) <= 0.0001
 
 func tick_client_interpolation(delta: float) -> void:
-	for id in client_projectiles:
-		var projectile: Dictionary = client_projectiles[id]
+	for id in _client_projectiles:
+		var projectile: Dictionary = _client_projectiles[id]
 		projectile.pos = (projectile.pos as Vector2).lerp(projectile.target_pos, minf(delta * 14.0, 1.0))
 		var visual_offset: Vector2 = projectile.get("visual_offset", Vector2.ZERO)
 		var target_visual_offset: Vector2 = projectile.get("target_visual_offset", Vector2.ZERO)
 		projectile.visual_offset = visual_offset.lerp(target_visual_offset, minf(delta * 14.0, 1.0))
-		client_projectiles[id] = projectile
+		_client_projectiles[id] = projectile
 	queue_redraw()
 
 func tick_visuals(delta: float) -> void:
@@ -266,12 +287,12 @@ func clear_all() -> void:
 		if bool(projectiles[id].get("owned_launch_audio", false)):
 			launch_audio_stopped.emit(id)
 	projectiles.clear()
-	client_projectiles.clear()
+	_client_projectiles.clear()
 	impact_effects.clear()
 	queue_redraw()
 
 func _draw() -> void:
-	var visible := client_projectiles if _context != null and _context.is_net_client() else projectiles
+	var visible := _client_projectiles if _context != null and _context.is_net_client() else projectiles
 	for id in visible:
 		var projectile: Dictionary = visible[id]
 		match StringName(projectile.get("visual", &"orb")):

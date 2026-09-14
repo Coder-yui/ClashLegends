@@ -1,6 +1,7 @@
 class_name CardDB
 extends "res://scripts/data/card_schema.gd"
 ## 共享定义递归只读；单位运行状态归 Unit，技能实例使用独立副本。
+const DEFINITION_COMPILER = preload("res://scripts/data/card_definition_compiler.gd")
 const VALIDATOR = preload("res://scripts/data/card_validator.gd")
 const DEFINITIONS = [
 	preload("res://scripts/data/cards/garen.gd"),
@@ -36,9 +37,7 @@ static func all() -> Dictionary:
 		for definition_script in DEFINITIONS:
 			var id := String(definition_script.resource_path).get_file().get_basename()
 			var definition: Dictionary = definition_script.definition()
-			for domain in definition:
-				if domain not in ["gameplay", "visual", "card_art", "audio"] or not definition[domain] is Dictionary:
-					_definition_errors.append("%s.%s: 未知定义域或不是 Dictionary" % [id, domain])
+			_definition_errors.append_array(DEFINITION_COMPILER.validate(id, definition))
 			_cards[id] = compile_definition(definition)
 		_freeze(_cards)
 	return _cards
@@ -133,11 +132,7 @@ static func size_tier_name(size_tier: StringName) -> String:
 
 ## 新卡/测试夹具共用编译入口；仅内容构建时合并一次，运行查询零复制。
 static func compile_definition(definition: Dictionary) -> Dictionary:
-	if not definition.get("gameplay", {}) is Dictionary or not definition.get("visual", {}) is Dictionary:
-		return {}
-	var stats: Dictionary = definition.get("gameplay", {}).duplicate(true)
-	stats.merge(definition.get("visual", {}), false)
-	stats["card_art"] = definition.get("card_art", {})
-	if definition.has("audio"):
-		stats["audio"] = definition.audio
+	var stats: Dictionary = DEFINITION_COMPILER.compile(definition)
+	if not stats.is_empty() and not stats.has("card_art"):
+		stats.card_art = {}
 	return stats

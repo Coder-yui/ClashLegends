@@ -1,27 +1,29 @@
 class_name MatchRules
 extends RefCounted
-## 比赛时间与胜负的唯一所有者。Main 提供本 Tick 的塔状态，UI 只读取结果。
+## 比赛时间与胜负的唯一所有者。结果使用队伍与原因，中文文案留给显示层。
 signal overtime_started
 const REGULATION_TIME := 185.0
 const OVERTIME_TIME := 120.0
+const END_REASONS := ["nexus", "towers", "draw", "disconnect"]
 var time_left := REGULATION_TIME
 var overtime := false
 var finished := false
 
-func advance(dt: float, my_king_hp: float, enemy_king_hp: float, my_lost: int, enemy_lost: int) -> String:
+func advance(dt: float, team0_king_hp: float, team1_king_hp: float, team0_lost: int, team1_lost: int) -> Dictionary:
 	if finished:
-		return ""
+		return {}
 	time_left = maxf(0.0, time_left - dt)
-	var result := ""
-	if enemy_king_hp <= 0.0:
-		result = "胜利！敌方国王塔已被摧毁"
-	elif my_king_hp <= 0.0:
-		result = "失败……我方国王塔被摧毁"
-	elif (overtime or time_left <= 0.000001) and my_lost != enemy_lost:
-		result = ("胜利！破塔 %d:%d" if enemy_lost > my_lost else "失败……破塔 %d:%d") % [enemy_lost, my_lost]
+	var result := {}
+	# 保持原先同 Tick 双水晶归零时先判 team1 水晶的规则。
+	if team1_king_hp <= 0.0:
+		result = {"winner_team": 0, "reason": "nexus"}
+	elif team0_king_hp <= 0.0:
+		result = {"winner_team": 1, "reason": "nexus"}
+	elif (overtime or time_left <= 0.000001) and team0_lost != team1_lost:
+		result = {"winner_team": 0 if team1_lost > team0_lost else 1, "reason": "towers"}
 	elif time_left <= 0.000001:
 		if overtime:
-			result = "平局！双方战成 %d:%d" % [enemy_lost, my_lost]
+			result = {"winner_team": -1, "reason": "draw"}
 		else:
 			enter_overtime()
 	finished = not result.is_empty()
@@ -33,3 +35,13 @@ func enter_overtime() -> void:
 	overtime = true
 	time_left = OVERTIME_TIME
 	overtime_started.emit()
+
+func apply_replica(remaining: float, extra_time: bool) -> void:
+	time_left = remaining
+	overtime = extra_time
+
+func snapshot() -> Dictionary:
+	return {"time_left": time_left, "overtime": overtime}
+
+func finish() -> void:
+	finished = true

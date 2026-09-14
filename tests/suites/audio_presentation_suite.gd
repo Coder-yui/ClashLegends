@@ -2,6 +2,8 @@ class_name AudioPresentationSuite
 extends RefCounted
 
 func run(harness: Object, main: Node2D) -> void:
+	_check_voice_budget(harness, main)
+	_check_team_audio_routes(harness, main)
 	_check_match_announcements(harness, main)
 	_check_tombstone_sustain(harness, main)
 	_check_tower_damage_audio(harness, main)
@@ -219,6 +221,8 @@ func run(harness: Object, main: Node2D) -> void:
 
 func _check_ranged_audio(harness: Object, main: Node2D) -> void:
 	var audio: GameAudioManager = main._audio_manager
+	# 本用例验证事件顺序；此前套件的未播完短音不参与这里的拥挤竞争。
+	for player in audio._world_players: player.stop()
 	var cues: Array[StringName] = []
 	var listener := func(card_id: String, cue: StringName, _position: Vector2):
 		if card_id == "ashe":
@@ -273,9 +277,9 @@ func _check_ranged_audio(harness: Object, main: Node2D) -> void:
 	var previous_mode: String = main.mode
 	main.mode = "client"
 	main._client_units[987654] = source
-	main._rpc_unit_audio_event(987654, "attack_launch", source.global_position)
-	main._rpc_unit_audio_event(987654, "active:release", source.global_position)
-	main._rpc_unit_audio_event(987654, "active:hit", source.global_position)
+	preload("res://tests/suites/network_fixture.gd").deliver(main, "_rpc_unit_audio_event", [987654, "attack_launch", source.global_position])
+	preload("res://tests/suites/network_fixture.gd").deliver(main, "_rpc_unit_audio_event", [987654, "active:release", source.global_position])
+	preload("res://tests/suites/network_fixture.gd").deliver(main, "_rpc_unit_audio_event", [987654, "active:hit", source.global_position])
 	harness._expect(cues == [&"attack_launch", &"active:release", &"active:hit"] and is_equal_approx(victims[0].hp, hp_a - 70.0), "客户端重放寒冰离弦和技能事件，不重复结算伤害")
 	main._client_units.erase(987654)
 	main.mode = previous_mode
@@ -318,6 +322,9 @@ func _check_batch_audio(harness: Object, main: Node2D) -> void:
 	dragon.control.frozen_timer = 1.0
 	audio._process(0.0)
 	harness._expect(player.stream_paused and audio._sustain_players.get(key) == player, "吐息控制期间暂停并保留单个持续播放器")
+	audio.set_battle_paused(true)
+	audio.set_battle_paused(false)
+	harness._expect(player.stream_paused, "工作台恢复保留冻结导致的独立声音暂停")
 	dragon.control.frozen_timer = 0.0
 	audio._process(0.0)
 	audio._on_sustain_finished(key, player)
@@ -376,15 +383,20 @@ func _check_zone_audio(harness: Object, main: Node2D) -> void:
 	var fixed_position: Vector2 = entry.get("position", Vector2.ZERO)
 	audio.start_zone_audio(event_id, "anivia", 0, "frost_storm", fixed_position, 3.0)
 	unit.free()
+	audio.set_battle_paused(true)
+	audio.set_battle_paused(true)
 	audio._process(0.5)
 	var paused_with_world := is_equal_approx(float(audio._zone_players[event_id].time_left), 3.0)
-	main._active_skill_effect_system.tick_visuals(2.9)
+	main._active_skill_effect_system.tick_visuals(1.0)
+	harness._expect(is_equal_approx(float(audio._zone_players[event_id].time_left), 3.0), "技能效果更新不再修改声音生命周期")
+	audio.set_battle_paused(false)
+	audio._process(2.9)
 	var persists := audio._zone_players.has(event_id) and cues.count(&"frost_storm:zone_sustain") == 1
-	main._active_skill_effect_system.tick_visuals(0.1)
+	audio._process(0.1)
 	var ended_once := not audio._zone_players.has(event_id) and cues.count(&"frost_storm:zone_end") == 1
 	main._presentation_event_id += 1
 	audio.start_zone_audio(main._presentation_event_id, "anivia", 0, "frost_storm", fixed_position, 3.0)
-	main._active_skill_effect_system.clear()
+	audio.begin_battle()
 	harness._expect(paused_with_world and persists and ended_once and audio._zone_players.is_empty() and cues.count(&"frost_storm:zone_end") == 1, "冰风暴区域音频去重、独立于施法者销毁、满 3 秒结束一次，场景清理不补结束声")
 	audio.cue_played.disconnect(on_cue)
 
@@ -592,16 +604,16 @@ func _check_projectile_launch_lifetime(harness: Object, main: Node2D) -> void:
 	var remote_id := projectiles._next_id
 	projectiles._next_id += 1
 	var saved_source := {"card_id": "gnar", "form": 0, "serial": 1}
-	main._rpc_projectile_launch_audio(remote_id, saved_source, Vector2.ZERO, true)
+	preload("res://tests/suites/network_fixture.gd").deliver(main, "_rpc_projectile_launch_audio", [remote_id, saved_source, Vector2.ZERO, true])
 	var remote_player = audio._projectile_launch_players.get(remote_id)
-	main._rpc_projectile_launch_audio(remote_id, saved_source, Vector2.ZERO, true)
+	preload("res://tests/suites/network_fixture.gd").deliver(main, "_rpc_projectile_launch_audio", [remote_id, saved_source, Vector2.ZERO, true])
 	var once: bool = audio._projectile_launch_players.size() == 1 and audio._projectile_launch_players.get(remote_id) == remote_player
-	main._rpc_projectile_launch_audio(remote_id, {}, Vector2.ZERO, false)
-	main._rpc_projectile_launch_audio(remote_id, saved_source, Vector2.ZERO, true)
+	preload("res://tests/suites/network_fixture.gd").deliver(main, "_rpc_projectile_launch_audio", [remote_id, {}, Vector2.ZERO, false])
+	preload("res://tests/suites/network_fixture.gd").deliver(main, "_rpc_projectile_launch_audio", [remote_id, saved_source, Vector2.ZERO, true])
 	harness._expect(once and audio._projectile_launch_players.is_empty(), "客户端开始/命中停止按弹体 ID 重放，重复及结束后的旧开始不重播")
 	remote_id = projectiles._next_id
 	projectiles._next_id += 1
-	main._rpc_projectile_launch_audio(remote_id, saved_source, Vector2.ZERO, true)
+	preload("res://tests/suites/network_fixture.gd").deliver(main, "_rpc_projectile_launch_audio", [remote_id, saved_source, Vector2.ZERO, true])
 	projectiles.clear_all()
 	harness._expect(audio._projectile_launch_players.is_empty(), "客户端清场清理所有弹体持有的发射声")
 	main.mode = previous_mode
@@ -889,6 +901,7 @@ func _check_match_announcements(harness: Object, main: Node2D) -> void:
 	var saved_pending: Array = main._pending_lane_minions.duplicate(true)
 	var saved_mode: String = main.mode
 	var saved_over: bool = main.game_over
+	var saved_finished: bool = main._match_rules.finished
 	var old_children: Array = main.get_children()
 	main.mode = "local"
 	main.game_over = false
@@ -901,14 +914,14 @@ func _check_match_announcements(harness: Object, main: Node2D) -> void:
 	main._tick_minion_waves(0.05)
 	harness._expect(cues == [&"minions_spawn"], "第5秒首波兵线只播一次全军出击")
 	main.mode = "client"
-	main._rpc_card_event(main._last_card_event_id, "match", "minions_spawn", Vector2.ZERO)
+	preload("res://tests/suites/network_fixture.gd").deliver(main, "_rpc_card_event", [main._last_card_event_id, "match", "minions_spawn", Vector2.ZERO])
 	harness._expect(cues.size() == 1, "可靠首波播报重放按事件ID去重")
-	main._rpc_end("胜利！敌方国王塔已被摧毁")
-	main._rpc_end("胜利！敌方国王塔已被摧毁")
+	main._end_game(0, "nexus")
+	main._end_game(0, "nexus")
 	harness._expect(cues.count(&"defeat") == 1 and cues.count(&"victory") == 0, "主机胜利时客户端只播一次失败")
 	main.mode = "local"
 	main.game_over = false
-	main._end_game("胜利！")
+	main._end_game(0, "nexus")
 	harness._expect(cues.count(&"victory") == 1, "本地胜利播放胜利播报")
 	for child in main.get_children():
 		if child not in old_children: child.free()
@@ -917,8 +930,117 @@ func _check_match_announcements(harness: Object, main: Node2D) -> void:
 	main._pending_lane_minions.assign(saved_pending)
 	main.mode = saved_mode
 	main.game_over = saved_over
+	main._match_rules.finished = saved_finished
+	main._audio_manager.begin_battle()
+	main._hand.show()
+	main._active_skill_bar.show()
 	main._audio_manager.cue_played.disconnect(listener)
 	for id in ["melee_minion", "ranged_minion", "siege_minion", "super_minion"]:
 		for team in range(2):
 			var audio := PresentationConfig.audio_for(CardDB.get_card(id), team)
 			harness._expect(audio.events["spawn:start"].pool.size() == 3, "%s 阵营%d兵线与部署共用三个生成变体" % [id,team])
+
+func _check_voice_budget(harness: Object, main: Node2D) -> void:
+	var audio := GameAudioManager.new()
+	main.add_child(audio)
+	audio.set_process(false)
+	var pool: Array = CardDB.get_card("ashe").audio.events["active:release"].pool
+	for index in 20:
+		harness._expect(audio._play_pool("ashe", &"attack_swing", pool, Vector2.ZERO, -80.0), "常规短音使用普通预算位")
+	var ordinary := audio.budget_snapshot()
+	harness._expect(ordinary.active.short == 20 and audio._world_players.slice(20).all(func(p): return not p.playing), "普通攻击不能占用 4 个重要短音保留位")
+	for index in 4:
+		harness._expect(audio._play_pool("ashe", &"active:release", pool, Vector2.ZERO, -80.0), "拥挤时技能使用保留位")
+	harness._expect(audio.budget_snapshot().active.short == 24, "短音同时播放总数保持 24")
+	audio._play_pool("ashe", &"death", pool, Vector2.ZERO, -80.0, &"Voice")
+	harness._expect(audio.budget_snapshot().counters.short.interrupted == 1 and audio._world_players[0].bus == &"Voice", "满池死亡声替换最早的最低优先级声音")
+	for index in 23: audio._play_pool("ashe", &"death", pool, Vector2.ZERO, -80.0, &"Voice")
+	var before := audio.budget_snapshot()
+	harness._expect(not audio._play_pool("ashe", &"attack_swing", pool, Vector2.ZERO, -80.0) and audio.budget_snapshot().counters.short.dropped == 1, "普通声不打断满池重要声音，丢弃可观测")
+	audio.play_match_event("minions_spawn")
+	harness._expect(is_instance_valid(audio._announcer) and audio.budget_snapshot().active.short == 24, "播报使用独立播放器，不争抢战斗短音位")
+	before.counters.short.dropped = 999
+	harness._expect(audio.budget_snapshot().counters.short.dropped == 1, "音频预算诊断返回独立副本")
+	var sources: Array[Unit] = []
+	for index in 25:
+		var source := Unit.new()
+		main.add_child(source)
+		sources.append(source)
+		if index < 24:
+			audio._start_sustain(source, {"card_id": "gnar", "audio": _team_audio_fixture(-80.0)}, &"probe", &"action")
+	audio._start_sustain(sources.back(), {"card_id": "gnar", "audio": _team_audio_fixture(-80.0)}, &"probe", &"idle")
+	harness._expect(audio._sustain_players.size() == 24 and audio.budget_snapshot().counters.sustain.dropped == 1, "持续声满池时待机不能挤掉技能，计数保持上限")
+	for source in sources: source.free()
+	audio.end_battle()
+	harness._expect(audio.budget_snapshot().active.values().all(func(count): return count == 0), "终局释放所有预算占用")
+	audio.free()
+
+func _team_audio_fixture(volume: float) -> Dictionary:
+	var pool: Array = CardDB.get_card("ashe").audio.events["active:release"].pool
+	var events := {}
+	for cue in ["probe:start", "probe:sustain", "attack_launch", "pulse:zone_sustain", "pulse:zone_end", "spawn:start", "idle:sustain", "damage:stage1", "death"]:
+		events[cue] = {"pool": pool, "volume_db": volume}
+	return {"events": events, "attack_swing": [pool], "attack_swing_volume_db": volume,
+		"attack_hit": pool, "attack_hit_volume_db": volume, "attack_launch_until_impact": true}
+
+func _check_team_audio_routes(harness: Object, main: Node2D) -> void:
+	var fixture := CardDB.get_card("gnar").duplicate(true)
+	fixture.audio = _team_audio_fixture(-10.0)
+	fixture.audio.team_overrides = [_team_audio_fixture(-10.0), _team_audio_fixture(-20.0)]
+	fixture.transformed_stats.audio = _team_audio_fixture(-30.0)
+	fixture.transformed_stats.audio.team_overrides = [_team_audio_fixture(-30.0), _team_audio_fixture(-40.0)]
+	var audio := GameAudioManager.new()
+	audio.definition_lookup = func(_card): return fixture
+	main.add_child(audio)
+	audio.set_process(false)
+	var event_id := 0
+	for form in [0, 1]:
+		for team in [0, 1]:
+			var expected: float = -10.0 - team * 10.0 - form * 20.0
+			for player in audio._world_players: player.stop()
+			harness._expect(audio.play_card_event("gnar", "probe:start", Vector2.ZERO, form, team) and audio._world_players[0].volume_db == expected, "卡牌事件同时选择阵营与形态音频")
+			for player in audio._world_players: player.stop()
+			harness._expect(audio.play_attack_source({"card_id": "gnar", "team": team, "form": form}, Vector2.ZERO) and audio._world_players[0].volume_db == expected, "在途来源命中音保留阵营与原形态")
+			event_id += 1
+			audio.start_projectile_launch(event_id, {"card_id": "gnar", "team": team, "form": form}, Vector2.ZERO)
+			harness._expect(audio._projectile_launch_players[event_id].volume_db == expected, "独占飞行声遵守阵营与形态覆盖")
+			audio.start_zone_audio(event_id, "gnar", form, "pulse", Vector2.ZERO, 1.0, team)
+			harness._expect(audio._zone_players[event_id].player.volume_db == expected and audio._zone_players[event_id].ending.volume_db == expected, "固定区域保存正确阵营形态的持续和结束声")
+			var unit := Unit.new()
+			unit.card_id = "gnar"
+			unit.setup(team, CardDB.get_card("gnar"), "音频路由")
+			unit.form_index = form
+			main.add_child(unit)
+			audio.attach_unit(unit, fixture)
+			for player in audio._world_players: player.stop()
+			harness._expect(audio.play_event(unit, &"probe:start", Vector2.ZERO) and audio._world_players[0].volume_db == expected, "挂载单位语义事件选择对应阵营形态")
+			audio._start_sustain(unit, audio._unit_entries[unit.get_instance_id()], &"probe")
+			harness._expect(audio._sustain_players[audio._sustain_key(unit.get_instance_id())].volume_db == expected, "单位持续声与单次事件使用同一覆盖配置")
+			for player in audio._world_players: player.stop()
+			audio.preview_attack("gnar", fixture, Vector2.ZERO, team, form)
+			harness._expect(audio._world_players[0].volume_db == expected, "预览攻击也按选择的阵营形态发声")
+			unit.free()
+			audio.clear_zone_audio()
+			audio.clear_projectile_launch_audio()
+	for team in [0, 1]:
+		var tower := Tower.new()
+		tower.setup(team, CardDB.PRINCESS_TOWER_STATS, false)
+		main.add_child(tower)
+		audio.attach_building_audio(tower, {})
+		harness._expect(audio._building_audio[tower.get_instance_id()].player.volume_db == -10.0 - team * 10.0, "系统建筑出生与持续配置也选择实际阵营")
+		tower.free()
+	# 真正的客户端 RPC 解码参数包含阵营；用可区分的红方形态配置观察最终播放器。
+	var saved_audio: GameAudioManager = main._audio_manager
+	var saved_mode: String = main.mode
+	var saved_card_event: int = main._last_card_event_id
+	main._audio_manager = audio
+	main.mode = "client"
+	for player in audio._world_players: player.stop()
+	preload("res://tests/suites/network_fixture.gd").deliver(main, &"_rpc_card_event", [saved_card_event + 1, "gnar", "probe:start", Vector2.ZERO, 1, 1])
+	harness._expect(audio._world_players[0].volume_db == -40.0, "卡牌 RPC 从红方大形态一路传到音频选择入口")
+	preload("res://tests/suites/network_fixture.gd").deliver(main, &"_rpc_zone_audio", [100, "gnar", 1, "pulse", Vector2.ZERO, 1.0, 1])
+	harness._expect(audio._zone_players[100].player.volume_db == -40.0, "区域 RPC 保存红方大形态来源")
+	main._audio_manager = saved_audio
+	main.mode = saved_mode
+	main._last_card_event_id = saved_card_event
+	audio.free()

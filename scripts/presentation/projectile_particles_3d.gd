@@ -19,7 +19,7 @@ func _process(delta: float) -> void:
 	if not is_instance_valid(_system):
 		queue_free()
 		return
-	var visible_projectiles := _system.client_projectiles if _system._context.is_net_client() else _system.projectiles
+	var visible_projectiles := _system.visible_snapshot()
 	var seen := {}
 	for id in visible_projectiles:
 		var p: Dictionary = visible_projectiles[id]

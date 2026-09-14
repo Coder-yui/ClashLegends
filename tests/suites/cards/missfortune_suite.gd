@@ -100,5 +100,5 @@ func _fire_once(unit: Unit) -> void:
 func _flush_projectiles() -> void:
 	for _tick in range(10):
 		_main._tick_projectiles(_main.SIM_DT)
-		if _main._projectiles.is_empty():
+		if _main._projectile_system.projectiles.is_empty():
 			return

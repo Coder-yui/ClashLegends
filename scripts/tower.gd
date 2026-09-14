@@ -21,11 +21,16 @@ var team := 0  # 0 = 玩家（下方），1 = 敌方（上方）
 var battle_context: BattleContext
 var max_hp := 2000.0
 var hp := 2000.0
-var shield_hp := 0.0
-var shield_max_hp := 0.0
-var _shield_decay_remainder := 0.0
-var shield_timer := 0.0
-var shield_decay_rate := 0.0
+var shields := ShieldState.new()
+var _net_shield_hp := 0.0
+var _net_shield_capacity := 0.0
+var _shield_is_replica := false
+var shield_hp: float:
+	get: return _net_shield_hp if _shield_is_replica else shields.total_hp()
+var shield_max_hp: float:
+	get: return _net_shield_capacity if _shield_is_replica else shields.total_capacity()
+var shield_timer: float:
+	get: return (1.0 if _net_shield_hp > 0.0 else 0.0) if _shield_is_replica else shields.longest_remaining()
 var damage := 50.0
 var attack_range := 300.0
 var attack_interval := 0.8
@@ -36,6 +41,10 @@ var footprint_tiles := Vector2i(3, 3)
 var visual_radius := 34.0
 var first_hit_time := 0.2
 var projectile_speed := 400.0
+# 权威弹体几何；与 projectile_visual_* 完全独立。
+var projectile_spawn_at_edge := false
+var projectile_spawn_offset := 0.0
+var projectile_collision_radius := 7.0
 ## 仅用于弹体绘制的晶石起点偏移；权威发射位置仍是塔心。
 var projectile_visual_offset := Vector2.ZERO
 var splash_radius := 0.0
@@ -50,7 +59,8 @@ var nav_cells: Array = []
 var _cooldown := 0.0
 var _lock_windup := 0.0
 var _target: Node2D = null
-var frozen_timer := 0.0
+var frozen_timer: float:
+	get: return control.frozen_timer
 var control := ControlState.new()
 var _destroyed_visual_emitted := false
 var _hit_flash_event_cooldown := 0.0
@@ -63,10 +73,10 @@ func setup(p_team: int, stats: Dictionary, p_is_king: bool) -> void:
 	is_king = p_is_king
 	max_hp = BattleNumbers.quantity(stats.hp)
 	hp = max_hp
-	shield_hp = 0.0
-	shield_max_hp = 0.0
-	shield_timer = 0.0
-	shield_decay_rate = 0.0
+	shields.clear()
+	_shield_is_replica = false
+	_net_shield_hp = 0.0
+	_net_shield_capacity = 0.0
 	damage = BattleNumbers.quantity(stats.damage)
 	attack_range = stats.range
 	attack_interval = snappedf(stats.interval, 0.01)
@@ -75,6 +85,9 @@ func setup(p_team: int, stats: Dictionary, p_is_king: bool) -> void:
 	visual_radius = stats.get("visual_radius", body_radius)
 	first_hit_time = stats.get("first_hit", 0.2)
 	projectile_speed = stats.get("projectile_speed", 400.0)
+	projectile_spawn_at_edge = bool(stats.get("projectile_spawn_at_edge", false))
+	projectile_spawn_offset = float(stats.get("projectile_spawn_offset", 0.0))
+	projectile_collision_radius = float(stats.get("projectile_collision_radius", 7.0))
 	var configured_projectile_offset: Vector2 = stats.get("projectile_visual_offset", Vector2.ZERO)
 	# 蓝/红塔素材在表现层相差 180°，权杖晶石的水平偏移随阵营镜像。
 	projectile_visual_offset = Vector2(configured_projectile_offset.x if team == 0 else -configured_projectile_offset.x, configured_projectile_offset.y)
@@ -92,15 +105,16 @@ func activate() -> void:
 	queue_redraw()
 
 func freeze(duration: float) -> void:
-	frozen_timer = maxf(frozen_timer, duration)
+	control.refresh_freeze(duration, false)
 	queue_redraw()
 
 func stun(duration: float) -> void:
-	control.stun_timer = maxf(control.stun_timer, duration)
+	control.refresh_stun(duration, false)
 	queue_redraw()
 
 func _ready() -> void:
 	add_to_group("combatants")
+	add_to_group("combat_structures")
 
 func sim_tick(dt: float) -> void:
 	# 已被摧毁：不再攻击
@@ -110,8 +124,7 @@ func sim_tick(dt: float) -> void:
 	# 冰冻计时不因国王塔休眠而暂停。
 	_hit_flash_event_cooldown = maxf(0.0, _hit_flash_event_cooldown - dt)
 	if frozen_timer > 0.0 or control.stun_timer > 0.0:
-		frozen_timer = maxf(0.0, frozen_timer - dt)
-		control.stun_timer = maxf(0.0, control.stun_timer - dt)
+		control.tick_hard_controls(dt)
 		queue_redraw()
 		return
 	if not can_attack:
@@ -181,12 +194,7 @@ func take_damage(amount: float, _from: Node2D = null, _source_team: int = -1, _s
 		return false
 	var was_alive := hp > 0.0
 	var remaining_damage := BattleNumbers.quantity(maxf(amount, 0.0))
-	if shield_hp > 0.0 and shield_timer > 0.0:
-		var absorbed := minf(roundf(shield_hp), remaining_damage)
-		shield_hp -= absorbed
-		remaining_damage -= absorbed
-		if shield_hp <= 0.0:
-			_clear_shield()
+	remaining_damage = shields.absorb(remaining_damage)
 	hp = maxf(hp - remaining_damage, 0.0)
 	# CR 规则：国王塔受到伤害即激活
 	if is_king and can_attack and not activated and hp > 0.0:
@@ -204,37 +212,29 @@ func take_damage(amount: float, _from: Node2D = null, _source_team: int = -1, _s
 
 
 func add_shield(amount: float, duration: float, decays: bool = false) -> void:
-	amount = BattleNumbers.quantity(maxf(amount, 0.0))
-	duration = maxf(BattleNumbers.decimal(duration), 0.0)
-	if hp <= 0.0 or amount <= 0.0 or duration <= 0.0:
-		return
-	shield_hp += amount
-	shield_max_hp += amount
-	shield_timer = maxf(shield_timer, duration)
-	shield_decay_rate = amount / duration if decays else 0.0
-	_shield_decay_remainder = 0.0
-	queue_redraw()
+	if hp > 0.0:
+		_shield_is_replica = false
+		shields.add(amount, duration, decays)
+		queue_redraw()
 
+func clear_shields() -> void:
+	_shield_is_replica = false
+	_net_shield_hp = 0.0
+	_net_shield_capacity = 0.0
+	shields.clear()
+	queue_redraw()
 
 func _tick_shield(dt: float) -> void:
-	if shield_timer <= 0.0:
-		return
-	shield_timer = maxf(0.0, shield_timer - dt)
-	if shield_decay_rate > 0.0:
-		_shield_decay_remainder += shield_decay_rate * dt
-		var decay := roundf(_shield_decay_remainder)
-		_shield_decay_remainder -= decay
-		shield_hp = maxf(0.0, shield_hp - decay)
-	if shield_timer <= 0.0 or shield_hp <= 0.0:
-		_clear_shield()
+	shields.tick(dt)
 	queue_redraw()
 
-
-func _clear_shield() -> void:
-	shield_hp = 0.0
-	shield_max_hp = 0.0
-	shield_timer = 0.0
-	shield_decay_rate = 0.0
+## 快照只写表现值，不创建或推进客户端权威护盾层。
+func apply_shield_snapshot(ratio: float, capacity_ratio: float) -> void:
+	shields.clear()
+	_shield_is_replica = true
+	_net_shield_capacity = BattleNumbers.quantity(maxf(capacity_ratio, 0.0) * max_hp)
+	_net_shield_hp = BattleNumbers.quantity(clampf(ratio, 0.0, 1.0) * _net_shield_capacity)
+	queue_redraw()
 
 
 func get_shield_ratio() -> float:
@@ -249,6 +249,20 @@ func get_shield_capacity_ratio() -> float:
 
 func get_shield_health_ratio() -> float:
 	return get_shield_ratio() * get_shield_capacity_ratio()
+
+## 网络只传递解码后的值；塔拥有副本更新、死亡表现与导航释放的完整转换。
+func apply_network_state(health: float, active: bool, stunned: bool, shield_ratio: float, capacity_ratio: float) -> void:
+	var was_alive := hp > 0.0
+	hp = BattleNumbers.quantity(health)
+	activated = active
+	control.apply_replica_stun(stunned)
+	apply_shield_snapshot(shield_ratio, capacity_ratio)
+	if was_alive and hp <= 0.0:
+		notify_visual_destroyed()
+	if hp <= 0.0 and not nav_cells.is_empty() and battle_context != null:
+		battle_context.unblock_nav_cells(nav_cells)
+		nav_cells = []
+	queue_redraw()
 
 ## 塔不会像单位一样立即释放，因此血量快照本身可反复兜底这个一次性表现事件。
 ## 幂等标记确保本地伤害与客户端快照不会重复播放摧毁动画。
@@ -288,17 +302,19 @@ func _draw() -> void:
 		draw_circle(Vector2(0, -visual_radius * 0.4), visual_radius * 0.35, crown_color)
 	# 血条：塔3格、水晶4格（每格40px）。敌方红条在建筑上方；
 	# 己方塔绿条在塔身中央，己方水晶绿条贴着水晶底座下方。
+	draw_set_transform(Vector2.ZERO, -get_global_transform_with_canvas().get_rotation(), Vector2.ONE)
+	var local_team := 1 if battle_context != null and battle_context.is_net_client() else 0
 	var bar_w := KING_HEALTH_BAR_WIDTH if is_king else PRINCESS_HEALTH_BAR_WIDTH
 	var bar_h := HEALTH_BAR_HEIGHT
 	var ratio := maxf(hp / max_hp, 0.0)
 	var shield_health_ratio := get_shield_health_ratio()
 	var shield_capacity_ratio := get_shield_capacity_ratio()
 	var bar_center_y := -visual_radius - 16.0  # 敌方塔：塔上方；敌方水晶：水晶上方
-	if is_king and team == 0:
+	if is_king and team == local_team:
 		bar_center_y = 84.0                    # 己方水晶：上移至血条顶边贴住最近的网格线(y=1240)
 	elif is_king:
 		bar_center_y = -visual_radius          # 敌方水晶：稍下移，贴在水晶顶部上方
-	elif team == 0:
+	elif team == local_team:
 		bar_center_y = -visual_radius * 2.0 + 80.0    # 己方塔：塔身中央再下放两格（每格40px）
 	var bar_color := Color(0.95, 0.28, 0.26) if team == 1 else Color(0.28, 0.88, 0.28)
 	var bar_rect := Rect2(Vector2(-bar_w / 2.0, bar_center_y - bar_h / 2.0), Vector2(bar_w, bar_h))
