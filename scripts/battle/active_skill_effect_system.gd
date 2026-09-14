@@ -143,6 +143,9 @@ func apply(source: Unit, skill: Dictionary) -> bool:
 					float(skill.get("heal_ratio", 0.0)),
 					float(skill.get("max_health_ratio", 1.0))
 				)
+		&"restoration_shield":
+			for target in _skill_target_units(source, skill):
+				target.add_restoration_shield(float(skill.get("shield", 0.0)), float(skill.get("shield_duration", 0.0)))
 		&"area_shield":
 			apply_area_shield(source, skill)
 		_:

@@ -1,13 +1,19 @@
 extends SceneTree
-## 非 headless 运行；生成 /tmp/clash-workbench-*.png，并核对工作区暂停边界。
+## 非 headless 运行；生成 /Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/预览与验证/clash-workbench-*.png，并核对工作区暂停边界。
 func _initialize() -> void:
 	call_deferred("_run")
 func _run() -> void:
+	if "--deployment-review" in OS.get_cmdline_user_args():
+		await _review_deployment()
+		return
 	var main = load("res://scenes/main.tscn").instantiate()
 	root.add_child(main)
 	current_scene = main
 	main._start_art_dev()
 	var panel = main._art_dev_panel
+	for argument in OS.get_cmdline_user_args():
+		if argument.begins_with("--card="):
+			panel._select_item(argument.trim_prefix("--card="))
 	await create_timer(1).timeout
 	await _capture("model")
 	panel.show_workspace(1)
@@ -52,7 +58,7 @@ func _capture(id: String) -> void:
 	await process_frame
 	await RenderingServer.frame_post_draw
 	_check_controls(current_scene._art_dev_panel)
-	root.get_texture().get_image().save_png("/tmp/clash-workbench-" + id + ".png")
+	root.get_texture().get_image().save_png(preload("res://tools/lib/development_paths.gd").output("clash-workbench-") + id + ".png")
 	print("[工作台截图] ", id)
 
 func _check_controls(node: Node) -> void:
@@ -61,3 +67,50 @@ func _check_controls(node: Node) -> void:
 			push_error("工作台控件超出窗口：" + node.text)
 	for child in node.get_children():
 		_check_controls(child)
+
+## 复用正式下牌入口检查横排、后场寻路与恢复表现，避免另建卡牌展台。
+func _review_deployment() -> void:
+	var card := "shurima_guard"
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--card="): card = arg.trim_prefix("--card=")
+	for x in [260, 300, 340, 380, 420, 460]:
+		var main = load("res://scenes/main.tscn").instantiate()
+		root.add_child(main)
+		current_scene = main
+		main._deck = [card, "garen", "ashe", "teemo", "freeze", "masteryi", "tombstone", "aurelionsol"]
+		main._start_local()
+		main._ai.enabled = false
+		main.set_process(false)
+		main.set_physics_process(false)
+		main._elixir.elixir = 10
+		if not main.play_card(0, card, Vector2(x, 1260)):
+			push_error("正式下牌失败")
+			quit(1)
+			return
+		for tick in 32: main._sim_step(0.05)
+		var soldiers: Array[Unit] = []
+		for node in get_nodes_in_group("combatants"):
+			if node is Unit and node.card_id == card: soldiers.append(node)
+		await process_frame
+		await RenderingServer.frame_post_draw
+		root.get_texture().get_image().save_png(preload("res://tools/lib/development_paths.gd").output("deployment-") + str(x) + ".png")
+		for tick in 220: main._sim_step(0.05)
+		var left := 0
+		for unit in soldiers:
+			if unit.position.x < 360: left += 1
+		print("[实际寻路] x=", x, " left=", left, " right=", soldiers.size() - left)
+		if left != {260: 4, 300: 4, 340: 3, 380: 3, 420: 2, 460: 2}[x]:
+			push_error("实际后场分兵不符")
+			quit(1)
+			return
+		if x == 340:
+			for unit in soldiers:
+				unit.hp = 100
+				unit.add_restoration_shield(180, 0.05)
+				unit._tick_active_statuses(0.05)
+			await create_timer(0.3).timeout
+			await RenderingServer.frame_post_draw
+			root.get_texture().get_image().save_png(preload("res://tools/lib/development_paths.gd").output("restoration-") + "heal.png")
+		main.free()
+		await process_frame
+	quit()

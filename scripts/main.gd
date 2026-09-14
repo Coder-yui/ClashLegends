@@ -1245,6 +1245,11 @@ func is_card_deploy_position_valid(p_team: int, card_id: String, pos: Vector2) -
 		return false
 	pos = _snap_card_position(card_id, pos, p_team)
 	var stats: Dictionary = CardDB.get_card(card_id)
+	# 横排中心跨度须留在场内；边缘身体在生成时逐兵挤回合法位置。
+	if String(stats.get("deployment_formation", "ring")) == "line":
+		var margin := (int(stats.get("deployment_count", 1)) - 1) * float(stats.get("deployment_spacing", 0.0)) * 0.5
+		if pos.x < margin or pos.x > ArenaRules.FIELD_W - margin:
+			return false
 	var deploy_zone: String = String(stats.get("deploy_zone", "own_side"))
 	var ignore_structures: bool = bool(stats.get("deploy_ignore_structures", false))
 	var footprint: Vector2i = stats.get("footprint_tiles", Vector2i.ONE)
@@ -1677,7 +1682,8 @@ func _spawn_card_units(team: int, card_id: String, pos: Vector2, deploy_time_ove
 	if count > 1:
 		group_id = _next_deployment_group_id
 		_next_deployment_group_id += 1
-	var offsets := _deployment_formation_offsets(count, spacing, team)
+	var formation := String(stats.get("deployment_formation", "ring"))
+	var offsets := _deployment_formation_offsets(count, spacing, team, formation)
 	var spawned: Array[Unit] = []
 	for index in range(count):
 		var member_slot := active_slot if index == 0 else -1
@@ -1693,10 +1699,14 @@ func _spawn_card_units(team: int, card_id: String, pos: Vector2, deploy_time_ove
 
 ## 奇数编队保留中心成员，其余成员围绕点击格心均匀排列；队伍方向只旋转阵型，
 ## 不影响中心和成员间距。部署 UI 仍只显示点击格心的一个读条圈。
-func _deployment_formation_offsets(count: int, spacing: float, team: int) -> Array[Vector2]:
+func _deployment_formation_offsets(count: int, spacing: float, team: int, formation: String = "ring") -> Array[Vector2]:
 	var offsets: Array[Vector2] = []
 	if count <= 1:
 		offsets.append(Vector2.ZERO)
+		return offsets
+	if formation == "line":
+		for index in range(count):
+			offsets.append(Vector2((index - (count - 1) * 0.5) * spacing * (1.0 if team == 0 else -1.0), 0.0))
 		return offsets
 	var ring_count := count
 	if count % 2 == 1:
@@ -2048,6 +2058,11 @@ func _start_active_skill_cast(unit: Unit, skill: Dictionary) -> bool:
 		return false
 	# 先发布 Cast Start，再按 impact_delay 进入固定 Tick 队列；动画回调不参与结算。
 	_active_skill_effect_system.apply_cast_start(unit, prepared_skill)
+	# 瞬时主动技能可能没有 visual_action，不能依赖表现动作序号触发起手声。
+	var configured_audio := PresentationConfig.audio_for(CardDB.get_card(unit.card_id), unit.team, unit.form_index)
+	var configured_events: Variant = configured_audio.get("events", {})
+	if configured_events is Dictionary and configured_events.has("active:cast"):
+		_notify_unit_audio_event(unit, &"active:cast", unit.get_visual_screen_position())
 	_begin_configured_active_skill_cast(unit, prepared_skill)
 	_queue_active_skill_impact(unit, prepared_skill, maxf(float(prepared_skill.get("impact_delay", 0.0)), 0.0))
 	return true
@@ -2965,3 +2980,17 @@ func _present_match_announcement(cue: String) -> void:
 	_play_card_event(_presentation_event_id, "match", cue, Vector2.ZERO)
 	if mode == "host":
 		_rpc_card_event.rpc_id(_session.opponent_id, _session.session_id, _presentation_event_id, "match", cue, Vector2.ZERO)
+
+## 权威治疗完成后派发跟随单位的纯表现；可靠消息不依赖客户端猜测血量变化。
+func present_restoration_heal(unit: Unit) -> void:
+	unit.show_restoration_heal()
+	if mode == "host" and unit.net_id >= 0:
+		_rpc_restoration_heal.rpc_id(_session.opponent_id, _session.session_id, unit.net_id)
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_restoration_heal(epoch: String, net_id: int) -> void:
+	if mode != "client" or not _session.accepts(1, epoch, MatchSession.Phase.RUNNING) or game_over:
+		return
+	var unit: Unit = _client_units.get(net_id)
+	if is_instance_valid(unit) and unit.hp > 0.0:
+		unit.show_restoration_heal()

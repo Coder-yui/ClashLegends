@@ -67,3 +67,6 @@ func notify_tower_hit(tower: Tower) -> void:
 
 func damage_batch() -> CombatResolver:
 	return _controller._combat
+
+func present_restoration_heal(unit: Unit) -> void:
+	_controller.present_restoration_heal(unit)

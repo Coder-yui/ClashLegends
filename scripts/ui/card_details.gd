@@ -236,6 +236,8 @@ static func active_skill_description(skill: Dictionary) -> String:
 				])
 			if float(skill.get("duration", 0.0)) > 0.0:
 				parts.append("持续 %s 秒并跟随移动" % format_number(float(skill.get("duration", 0.0))))
+		"restoration_shield":
+			parts.append("同次部署的存活成员各自获得护盾；到期仍未破盾的成员回复至满血")
 		"spell_heal":
 			var heal_multiplier := maxf(float(skill.get("heal_multiplier", 1.0)), 1.0)
 			var scope := "全图普通单位" if bool(skill.get("global_heal", false)) else "范围内普通单位"

@@ -5,7 +5,7 @@ extends RefCounted
 var _layers: Array[Dictionary] = []
 var _next_id := 1
 
-func add(amount: float, duration: float, decays: bool = false) -> int:
+func add(amount: float, duration: float, decays: bool = false, restore_on_expiry: bool = false) -> int:
 	if not is_finite(amount) or not is_finite(duration):
 		return -1
 	amount = BattleNumbers.quantity(maxf(amount, 0.0))
@@ -15,12 +15,13 @@ func add(amount: float, duration: float, decays: bool = false) -> int:
 	var id := _next_id
 	_next_id += 1
 	_layers.append({"id": id, "hp": amount, "capacity": amount, "left": duration,
-		"rate": amount / duration if decays else 0.0, "remainder": 0.0})
+		"restore_on_expiry": restore_on_expiry, "rate": amount / duration if decays else 0.0, "remainder": 0.0})
 	return id
 
-func tick(dt: float) -> void:
+func tick(dt: float) -> bool:
 	if dt <= 0.0 or not is_finite(dt):
-		return
+		return false
+	var restore := false
 	for layer in _layers:
 		var elapsed := minf(dt, float(layer.left))
 		layer.left = maxf(0.0, float(layer.left) - dt)
@@ -28,7 +29,10 @@ func tick(dt: float) -> void:
 		var decay := roundf(total)
 		layer.remainder = total - decay
 		layer.hp = maxf(0.0, float(layer.hp) - decay)
+		if float(layer.left) <= 0.000001 and float(layer.hp) > 0.0 and bool(layer.get("restore_on_expiry", false)):
+			restore = true
 	_prune()
+	return restore
 
 ## 返回未被吸收的伤害；结算边界使用整数，衰减的零头归各层自己持有。
 func absorb(amount: float) -> float:

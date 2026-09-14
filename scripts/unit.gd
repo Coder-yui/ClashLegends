@@ -174,6 +174,7 @@ var active_skill_cast_facing := Vector2.ZERO
 var active_skill_cast_locks: Array[StringName] = []
 
 ## 预留的减攻速控制状态；高原血统在 Buff 期间会忽略它。
+var restoration_fx_timer := 0.0 # 纯表现秒数，不进入权威快照
 var shields := ShieldState.new()
 var shield_hp: float:
 	get: return shields.total_hp()
@@ -458,6 +459,7 @@ func _ready() -> void:
 			_perform_deploy_sweep()
 
 func _process(delta: float) -> void:
+	restoration_fx_timer = maxf(0.0, restoration_fx_timer - delta)
 	_sweep_fx_timer = maxf(0.0, _sweep_fx_timer - delta)
 	if _in_client_mode():
 		# 客户端：朝快照目标位置平滑插值，血量/冰冻由 main 快照直接写入
@@ -1792,6 +1794,27 @@ func add_shield(amount: float, duration: float, decays: bool = false) -> void:
 		shields.add(amount, duration, decays)
 		queue_redraw()
 
+func add_restoration_shield(amount: float, duration: float) -> void:
+	if hp > 0.0:
+		shields.add(amount, duration, false, true)
+		queue_redraw()
+
+func _restore_shield_health() -> void:
+	if battle_context != null and battle_context.damage_batch().collecting:
+		battle_context.damage_batch().defer_benefit(_restore_shield_health)
+		return
+	var before := hp
+	heal(maxf(max_hp - hp, 0.0))
+	if hp > before:
+		if battle_context != null:
+			battle_context.present_restoration_heal(self)
+		else:
+			show_restoration_heal()
+
+func show_restoration_heal() -> void:
+	restoration_fx_timer = 0.9
+	queue_redraw()
+
 func clear_shields() -> void:
 	shields.clear()
 	queue_redraw()
@@ -1799,7 +1822,8 @@ func clear_shields() -> void:
 func _tick_active_statuses(dt: float) -> void:
 	var previous_speed := _effective_attack_speed_multiplier()
 	control.tick_slows(dt)
-	shields.tick(dt)
+	if shields.tick(dt) and hp > 0.0:
+		_restore_shield_health()
 	if active_buff_timer > 0.0:
 		active_buff_timer = maxf(0.0, active_buff_timer - dt)
 		if active_buff_timer <= 0.0:
@@ -2026,6 +2050,8 @@ func _update_fallback_health_bar_anchor() -> void:
 
 func _draw() -> void:
 	draw_set_transform(_vis_offset, 0.0, Vector2.ONE)
+	if restoration_fx_timer > 0.0 and hp > 0.0:
+		preload("res://scripts/presentation/restoration_heal_effect.gd").draw_effect(self, 1.0 - restoration_fx_timer / 0.9)
 	var shroud_visible := net_shroud_active if _in_client_mode() else _shroud_active
 	if shroud_visible and shroud_radius > 0.0:
 		draw_circle(Vector2.ZERO, shroud_radius, Color(0.34, 0.76, 0.92, 0.08))
@@ -2097,6 +2123,8 @@ func _draw() -> void:
 			draw_rect(resource_rect, Color(0.10, 0.10, 0.12, 0.9))
 			draw_rect(Rect2(resource_rect.position, Vector2(resource_w * get_skill_resource_ratio(), SKILL_RESOURCE_BAR_HEIGHT)), get_skill_resource_fill_color())
 	draw_set_transform(_vis_offset, 0.0, Vector2.ONE)
+	if restoration_fx_timer > 0.0 and hp > 0.0:
+		preload("res://scripts/presentation/restoration_heal_effect.gd").draw_effect(self, 1.0 - restoration_fx_timer / 0.9)
 	if control.frozen_timer > 0.0:
 		draw_circle(Vector2.ZERO, visual_radius + 4.0, Color(0.4, 0.8, 1.0, 0.3))
 	var stunned_visible := net_stun_active if _in_client_mode() else control.stun_timer > 0.0

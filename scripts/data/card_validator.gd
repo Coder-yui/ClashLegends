@@ -51,6 +51,10 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 		errors.append("%s.pre_deploy_time: 必须 >= 0" % card_id)
 	if float(stats.get("pre_deploy_time", 0.0)) > 0.0 and card_type == &"spell":
 		errors.append("%s.pre_deploy_time: 法术不能使用单位预部署阶段" % card_id)
+	if String(stats.get("deployment_formation", "ring")) not in ["ring", "line"]:
+		errors.append("%s.deployment_formation: 仅支持 ring/line" % card_id)
+	if String(stats.get("deployment_formation", "ring")) == "line" and (int(stats.get("deployment_count", 1)) - 1) * float(stats.get("deployment_spacing", 0.0)) + 2.0 * float(stats.get("radius", 0.0)) > ArenaRules.FIELD_W:
+		errors.append("%s: 横排宽度不能超过战场" % card_id)
 	if stats.has("deployment_count"):
 		if card_type != &"unit":
 			errors.append("%s.deployment_count: 只有单位卡可以编队部署" % card_id)
@@ -629,6 +633,10 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 		match kind:
 			&"nova": _require_fields(label, skill, [&"radius", &"damage"], errors)
 			&"buff": _require_fields(label, skill, [&"duration"], errors)
+			&"restoration_shield":
+				_require_fields(label, skill, [&"shield", &"shield_duration"], errors)
+				if float(skill.get("shield", 0.0)) <= 0.0 or float(skill.get("shield_duration", 0.0)) <= 0.0:
+					errors.append("%s: 恢复护盾值与持续时间必须 > 0" % label)
 			&"area_shield":
 				_require_fields(label, skill, [&"radius", &"shield", &"shield_duration"], errors)
 				for positive_field in [&"radius", &"shield", &"shield_duration"]:

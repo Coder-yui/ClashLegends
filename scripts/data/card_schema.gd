@@ -98,7 +98,7 @@ const SIZE_RADII := {
 const PROJECTILE_VISUALS := [&"orb", &"arrow", &"needle", &"boomerang", &"ice_cone"]
 const VISUAL_SPAWN_TRANSITIONS := [&"drop", &"rebirth"]
 const SPELL_KINDS := [&"freeze", &"heal"]
-const ACTIVE_SKILL_KINDS := [&"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"continuous_area", &"empowered_attack", &"attack_lifesteal", &"area_shield", &"spell_heal"]
+const ACTIVE_SKILL_KINDS := [&"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"continuous_area", &"empowered_attack", &"attack_lifesteal", &"area_shield", &"restoration_shield", &"spell_heal"]
 const ACTIVE_SKILL_TARGET_SCOPES := [&"self", &"deployment_group"]
 const CAST_LOCKS := [&"movement", &"attack", &"facing"]
 const VISUAL_ACTION_KINDS := [&"deploy", &"transform", &"skill"]
@@ -114,7 +114,7 @@ const CARD_FIELDS := [
 	&"size_tier", &"custom_radius", &"radius", &"visual_radius", &"mass", &"sight", &"color",
 	&"is_air", &"is_building", &"building_only", &"can_attack_air", &"is_continuous_attack",
 	&"deploy_time", &"pre_deploy_time", &"deploy_zone", &"deploy_ignore_structures", &"show_team_ring", &"footprint_tiles", &"lifespan", &"lifespan_hp_decay", &"tower_ruin_foundation",
-	&"deployment_count", &"deployment_spacing",
+	&"deployment_count", &"deployment_spacing", &"deployment_formation",
 	&"spawn_id", &"spawn_interval", &"spawn_count", &"spawn_side", &"death_spawn_id", &"death_spawn_count",
 	&"death_replacement_id", &"death_replacement_charges", &"death_replacement_visual_transition", &"timed_revival_id", &"timed_revival_delay", &"timed_revival_death_replacement_charges", &"timed_revival_visual_transition",
 	&"projectile_spawn_at_edge", &"projectile_spawn_offset", &"projectile_collision_radius",

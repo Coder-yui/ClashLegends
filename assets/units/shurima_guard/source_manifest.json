@@ -1,0 +1,23 @@
+{
+  "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/01-待开发/卡牌模型/沙漠皇帝 (1).glb",
+  "current": "assets/units/shurima_guard/source/shurima_guard.glb",
+  "status": "已正式接入；模型内嵌纹理",
+  "animations": [
+    "Run",
+    "AzirSoldier_Spawn.anm",
+    "Idle1_Base",
+    "AzirSoldier_Inactive.anm",
+    "Idle2_Base",
+    "Attack1_BASE",
+    "AzirSoldier_Dash_Exit.anm",
+    "Inactive_Loop",
+    "AzirSoldier_Spawn3.anm",
+    "Death",
+    "Attack2_BASE",
+    "AzirSoldier_Reactivate.anm",
+    "AzirSoldier_Attack3.anm",
+    "AzirSoldier_Idle3.anm",
+    "Dance_Windup",
+    "Dance_Loop"
+  ]
+}

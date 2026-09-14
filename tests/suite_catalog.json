@@ -220,5 +220,11 @@
     "script": "res://tests/suites/knockback_boundary_suite.gd",
     "method": "run",
     "scene": "battle"
+  },
+  {
+    "id": "ShurimaGuardSuite",
+    "script": "res://tests/suites/cards/shurima_guard_suite.gd",
+    "method": "run",
+    "scene": "battle"
   }
 ]
