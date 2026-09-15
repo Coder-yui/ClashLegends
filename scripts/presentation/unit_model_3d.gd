@@ -115,6 +115,8 @@ var _spawn_transition_base_position := Vector3.ZERO
 var _spawn_transition_start_scale := Vector3.ONE
 var _spawn_transition_base_scale := Vector3.ONE
 
+var model_factory: Callable
+
 func setup(unit: Unit, packed: PackedScene, camera: Camera3D, animations: Dictionary, forward_yaw: float, buff_scene_path: String = "") -> bool:
 	# 客户端 Unit 会在默认优先级更新快照插值；3D 代理随后读取最终位置。
 	process_priority = 10
@@ -135,7 +137,7 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 	# form_changed，也不能替换掉死亡动画并留下一个永不再同步的静止模型。
 	if _dying:
 		return false
-	var instance := packed.instantiate()
+	var instance: Node = model_factory.call(packed) if model_factory.is_valid() else packed.instantiate()
 	if not instance is Node3D:
 		push_warning("单位 3D 表现场景的根节点必须是 Node3D")
 		instance.queue_free()
@@ -182,11 +184,17 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 	if _source.is_air:
 		_align_air_visual_elevation()
 	_start_spawn_transition_if_needed()
-	if _model_root.has_method("prepare_visual_animations"):
+	if _model_root.has_method("prepare_visual_animations") and not _model_root.has_meta("prepared_model_resources"):
 		_model_root.call("prepare_visual_animations")
 	if _model_root.has_method("configure_unit_visual"):
 		_model_root.call("configure_unit_visual", _source)
-	_animation_player = _model_resources.bind_model(_model_root)
+	if _model_root.has_meta("prepared_model_resources"):
+		_model_resources = _model_root.get_meta("prepared_model_resources")
+		_animation_player = _model_root.get_meta("prepared_animation_player")
+		_model_root.remove_meta("prepared_model_resources")
+		_model_root.remove_meta("prepared_animation_player")
+	else:
+		_animation_player = _model_resources.bind_model(_model_root)
 	_stable_head_offset = NAN
 	_control_stage = &""
 	if _animation_player == null:
@@ -1326,7 +1334,7 @@ func _start_death_followup() -> bool:
 	var packed := load(scene_path) as PackedScene
 	if packed == null:
 		return false
-	var instance := packed.instantiate()
+	var instance: Node = model_factory.call(packed) if model_factory.is_valid() else packed.instantiate()
 	if not instance is Node3D:
 		instance.queue_free()
 		return false
@@ -1335,7 +1343,14 @@ func _start_death_followup() -> bool:
 		_model_root.queue_free()
 	_model_root = instance as Node3D
 	add_child(_model_root)
-	_animation_player = _model_resources.bind_model(_model_root)
+	_model_resources.clear()
+	if _model_root.has_meta("prepared_model_resources"):
+		_model_resources = _model_root.get_meta("prepared_model_resources")
+		_animation_player = _model_root.get_meta("prepared_animation_player")
+		_model_root.remove_meta("prepared_model_resources")
+		_model_root.remove_meta("prepared_animation_player")
+	else:
+		_animation_player = _model_resources.bind_model(_model_root)
 	_stable_head_offset = NAN
 	_control_stage = &""
 	if _animation_player == null or not _animation_player.has_animation(followup_name):
@@ -1497,7 +1512,7 @@ func _replace_active_buff_visual(scene_path: String) -> void:
 	var packed := load(scene_path) as PackedScene
 	if packed == null:
 		return
-	_active_buff_visual = packed.instantiate() as ActiveBuffVisual3D
+	_active_buff_visual = (model_factory.call(packed) if model_factory.is_valid() else packed.instantiate()) as ActiveBuffVisual3D
 	if _active_buff_visual == null:
 		return
 	add_child(_active_buff_visual)

@@ -4,6 +4,7 @@ extends Node3D
 const ROOT := "res://assets/effects/baron_minion/"
 static var _systems: Dictionary = {}
 static var _meshes: Dictionary = {}
+static var _materials: Dictionary = {}
 var _emitters: Array[Dictionary] = []
 var _particles: Array[Dictionary] = []
 var _rng := RandomNumberGenerator.new()
@@ -11,6 +12,21 @@ var _time := 0.0
 var _factor := 0.0072
 var _loop := false
 var _stopped := false
+
+static func system_names() -> Array:
+	if _systems.is_empty():
+		_systems = JSON.parse_string(FileAccess.get_file_as_string(ROOT + "systems.json"))
+	return _systems.keys()
+
+static func dependency_paths() -> Array:
+	system_names()
+	var paths := {ROOT + "particle_add.gdshader": true, ROOT + "particle_mix.gdshader": true}
+	for sections in _systems.values():
+		for config in sections.values():
+			if not config is Dictionary: continue
+			for key in ["p-mesh", "p-meshtex", "p-texture", "p-meshtex-mult", "p-rgba"]:
+				if config.has(key): paths[_asset(config[key], "glb" if key == "p-mesh" else "png")] = true
+	return paths.keys()
 
 func setup(system_name: String, factor: float = 0.0072, looping: bool = false) -> void:
 	if _systems.is_empty():
@@ -79,6 +95,24 @@ func _spawn(c: Dictionary, birth: float) -> void:
 		var quad := QuadMesh.new()
 		quad.size = Vector2.ONE * 2.0
 		node.mesh = quad
+	var material := _material_template(c).duplicate() as ShaderMaterial
+	node.material_override = material
+	add_child(node)
+	var base_scale := _vec3(c, "p-scale", Vector3.ONE)
+	var rotation_degrees := _vec3(c, "p-quadrot", Vector3.ZERO)
+	for axis in range(3):
+		var suffix: String = ["X", "Y", "Z"][axis]
+		base_scale[axis] *= _probability(c, "p-scale" + suffix, 1.0)
+		rotation_degrees[axis] *= _probability(c, "p-quadrot" + suffix, 1.0)
+	var offset := _vec3(c, "p-offset", Vector3.ZERO)
+	var origin := global_transform
+	_particles.append({"node": node, "config": c, "material": material, "birth": birth, "life": life,
+		"scale": base_scale, "rotation": rotation_degrees, "offset": offset, "origin": origin,
+		"mesh": is_mesh, "frame": _rng.randi_range(0, maxi(int(_number(c, "p-numframes", 1)) - 1, 0))})
+
+static func _material_template(c: Dictionary) -> ShaderMaterial:
+	var key := hash(c)
+	if _materials.has(key): return _materials[key]
 	var material := ShaderMaterial.new()
 	material.shader = load(ROOT + ("particle_add.gdshader" if int(_number(c, "rendermode", 0)) in [0, 4] else "particle_mix.gdshader"))
 	material.render_priority = clampi(int(_number(c, "pass", 0)), -10, 10)
@@ -93,19 +127,8 @@ func _spawn(c: Dictionary, birth: float) -> void:
 	if c.has("p-rgba"):
 		material.set_shader_parameter("has_ramp", true)
 		material.set_shader_parameter("ramp_texture", load(_asset(c["p-rgba"], "png")))
-	node.material_override = material
-	add_child(node)
-	var base_scale := _vec3(c, "p-scale", Vector3.ONE)
-	var rotation_degrees := _vec3(c, "p-quadrot", Vector3.ZERO)
-	for axis in range(3):
-		var suffix: String = ["X", "Y", "Z"][axis]
-		base_scale[axis] *= _probability(c, "p-scale" + suffix, 1.0)
-		rotation_degrees[axis] *= _probability(c, "p-quadrot" + suffix, 1.0)
-	var offset := _vec3(c, "p-offset", Vector3.ZERO)
-	var origin := global_transform
-	_particles.append({"node": node, "config": c, "material": material, "birth": birth, "life": life,
-		"scale": base_scale, "rotation": rotation_degrees, "offset": offset, "origin": origin,
-		"mesh": is_mesh, "frame": _rng.randi_range(0, maxi(int(_number(c, "p-numframes", 1)) - 1, 0))})
+	_materials[key] = material
+	return material
 
 func _update_particle(p: Dictionary, age: float) -> void:
 	var c: Dictionary = p.config

@@ -257,7 +257,7 @@ func _show_menu() -> void:
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(title)
 	var btn_solo := _make_menu_button("单机对战 AI")
-	btn_solo.pressed.connect(func(): _pick_deck_ui(_start_local))
+	btn_solo.pressed.connect(func(): _pick_deck_ui(_start_local_with_loading))
 	vbox.add_child(btn_solo)
 	var btn_art_dev := _make_menu_button("卡牌开发工作台")
 	btn_art_dev.pressed.connect(_start_art_dev)
@@ -306,6 +306,83 @@ func _hide_menu() -> void:
 # ============================================================
 #  三种开局
 # ============================================================
+
+var _battle_loading := false
+
+func _start_local_with_loading() -> void:
+	await _load_battle(_start_local)
+
+func _load_battle(start_battle: Callable, network: bool = false) -> void:
+	if _battle_loading or _match_started:
+		return
+	_battle_loading = true
+	var tree := get_tree()
+	var loading := CanvasLayer.new()
+	loading.layer = 100
+	loading.process_mode = Node.PROCESS_MODE_ALWAYS
+	add_child(loading)
+	var background := TextureRect.new()
+	background.texture = preload("res://assets/arena/arena_rift_v4.png")
+	background.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	background.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	background.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	loading.add_child(background)
+	var shade := ColorRect.new()
+	shade.color = Color(0.0, 0.0, 0.0, 0.55)
+	shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	loading.add_child(shade)
+	var label := Label.new()
+	label.text = "正在加载对局…"
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.add_theme_font_size_override("font_size", 32)
+	label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	loading.add_child(label)
+	# 先绘制加载页，再建立战场；暂停树同时冻结模拟、动画与音频播放器。
+	tree.paused = true
+	await tree.process_frame
+	await tree.process_frame
+	if network and _session.phase != MatchSession.Phase.LOADING:
+		loading.queue_free()
+		_battle_loading = false
+		tree.paused = false
+		return
+	var started := Time.get_ticks_msec()
+	start_battle.call()
+	await _prepare_match_assets()
+	await tree.process_frame
+	await tree.process_frame
+	var remaining := maxf(1.0 - float(Time.get_ticks_msec() - started) / 1000.0, 0.0)
+	if remaining > 0.0:
+		await tree.create_timer(remaining, true, false, true).timeout
+	if network and _session.phase == MatchSession.Phase.LOADING:
+		_session.local_ready = true
+		_network_loading_started = Time.get_ticks_msec()
+		if mode == "host":
+			_rpc_start.rpc_id(_session.opponent_id, _session.session_id)
+		else:
+			_session.deck_confirmed = true
+			_rpc_loaded.rpc_id(1, _session.session_id)
+		label.text = "等待对方加载完成…"
+		while _session.phase == MatchSession.Phase.LOADING:
+			if Time.get_ticks_msec() - _network_loading_started > 30000:
+				_network_failed("等待对方加载超时")
+				break
+			await tree.process_frame
+	if network and _session.phase == MatchSession.Phase.DISCONNECTED and not game_over:
+		_end_game(-1, "disconnect")
+	loading.hide()
+	loading.queue_free()
+	_battle_loading = false
+	tree.paused = false
+
+func _prepare_match_assets() -> void:
+	_resources.prepare(_deck + _remote_deck + ["melee_minion", "ranged_minion", "siege_minion", "super_minion"])
+	for id in _resources.cards:
+		_audio_manager.prepare_audio(CardDB.get_card(String(id)).get("audio", {}))
+	_audio_manager.prepare_audio(preload("res://scripts/data/world_audio.gd").DEFINITIONS)
+	_audio_manager.prepare_audio(preload("res://scripts/data/match_audio.gd").EVENTS)
+	await _battle_presentation.model_pool.prepare(_resources.resources, _battle_presentation._world_root, _battle_presentation._camera, _resources.cards)
 
 func _start_local() -> void:
 	# CLI/直接启动没有备战页：先确定同一份默认卡组，再创建显示与权威循环。
@@ -478,9 +555,12 @@ func _begin_net_match_host() -> void:
 ## 客户端收到主机开局通知
 @rpc("authority", "call_remote", "reliable")
 func _rpc_start(session_id: String) -> void:
-	if mode != "client" or _match_started or _session.local_ready or not _session.accepts(1, session_id, MatchSession.Phase.LOADING):
+	if mode != "client" or _match_started or _battle_loading or _session.local_ready or not _session.accepts(1, session_id, MatchSession.Phase.LOADING):
 		return
 	_snapshot_system.reset_session(session_id)
+	await _load_battle(_begin_net_match_client, true)
+
+func _begin_net_match_client() -> void:
 	_audio_manager.begin_battle()
 	print("[联机] 客户端：收到开局通知")
 	queue_redraw()
@@ -491,10 +571,6 @@ func _rpc_start(session_id: String) -> void:
 	_create_towers()
 	_build_nav()
 	_create_timer_ui()
-
-	_session.deck_confirmed = true
-	_session.local_ready = true
-	_rpc_loaded.rpc_id(1, session_id)
 
 @rpc("any_peer", "call_remote", "reliable")
 func _rpc_loaded(epoch: String) -> void:
@@ -2469,9 +2545,7 @@ func _rpc_register_deck(deck: Array, active_skill_choices: Dictionary = {}, epoc
 	if not _accept_remote_deck(sender, epoch, deck, active_skill_choices):
 		_network_failed("对方卡组或技能选择无效")
 		return
-	_begin_net_match_host()
-	_session.local_ready = true
-	_rpc_start.rpc_id(sender, epoch)
+	await _load_battle(_begin_net_match_host, true)
 
 func _accept_remote_deck(sender: int, epoch: String, deck: Array, choices: Dictionary) -> bool:
 	if not MatchSession.valid_deck(deck, choices) or not _session.accepts(sender, epoch, MatchSession.Phase.LOADING) or _session.deck_confirmed:

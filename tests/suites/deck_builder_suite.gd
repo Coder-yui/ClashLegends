@@ -84,3 +84,33 @@ func run(harness: Object, main: Node2D) -> void:
 			_expect(choice >= 0 and choice < maxi(skills.size(), 1), "随机主动槽使用该卡合法技能索引")
 	builder._clear_deck_ui()
 	await _main.get_tree().process_frame
+
+	var loading_match = load("res://scenes/main.tscn").instantiate()
+	_main.get_tree().root.add_child(loading_match)
+	loading_match._deck = ["tombstone", "gnar", "garen", "ashe", "pix", "xin", "heal", "freeze"]
+	var started := Time.get_ticks_msec()
+	loading_match._start_local_with_loading()
+	loading_match._start_local_with_loading()
+	await _main.get_tree().create_timer(0.2, true).timeout
+	_expect(_main.get_tree().paused and loading_match._battle_loading and not loading_match._audio_manager.can_process(), "加载阶段暂停战斗与音频，重复点击不重复开局")
+	while loading_match._battle_loading:
+		await _main.get_tree().process_frame
+	_expect(Time.get_ticks_msec() - started >= 1000 and not _main.get_tree().paused and loading_match._towers.size() == 6, "加载至少一秒后恢复对局且只创建一份战场")
+	_expect(loading_match._resources.cards.has("imp") and loading_match._resources.cards.has("super_minion"), "本场资源准备递归包含召唤物和后续超级兵")
+	var transformed := PresentationConfig.for_form(CardDB.get_card("gnar"), 1)
+	_expect(loading_match._resources.resources.has(PresentationConfig.scene_path(transformed, 1)), "本场资源覆盖对方模型与变身形态")
+	var event: Dictionary = PresentationConfig.audio_stats("world_nexus_order").audio.events.death
+	_expect(loading_match._audio_manager._stream_pool_cache.has("\n".join(PackedStringArray(event.pool))), "水晶爆炸音轨在开局前已建立缓存")
+	var path := PresentationConfig.scene_path(CardDB.get_card("melee_minion"), 0)
+	var pool: MatchModelPool = loading_match._battle_presentation.model_pool
+	_expect(pool.warmed_particle_systems.size() == LolParticleEffect3D.system_names().size(), "原生强化/弹体/命中粒子在加载阶段全部预热")
+	var dependencies_ok := true
+	for dependency in LolParticleEffect3D.dependency_paths():
+		dependencies_ok = dependencies_ok and loading_match._resources.resources.has(dependency)
+	_expect(dependencies_ok and not LolParticleEffect3D._materials.is_empty() and not LolParticleEffect3D._meshes.is_empty(), "动态粒子纹理、网格和材质模板提前保留，首次技能不再读取资源")
+	var prepared_count: int = pool.instances[path].size()
+	var source_count := _main.get_tree().get_nodes_in_group("combatants").size()
+	var unit = loading_match._spawn_unit(0, "melee_minion", Vector2(300, 800), 0.0)
+	_expect(pool.instances[path].size() == prepared_count - 1 and unit != null, "正式小兵领取预建模型，避免首次登场实例化与动画库复制")
+	_expect(_main.get_tree().get_nodes_in_group("combatants").size() == source_count + 1, "预热样本不进入权威单位列表")
+	loading_match.free()

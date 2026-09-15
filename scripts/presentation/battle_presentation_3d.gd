@@ -6,6 +6,7 @@ extends Node
 var _viewport: SubViewport
 var _world_root: Node3D
 var _camera: Camera3D
+var model_pool := MatchModelPool.new()
 
 func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void:
 	_viewport = SubViewport.new()
@@ -47,6 +48,7 @@ func attach_unit(unit: Unit, stats: Dictionary) -> bool:
 		push_warning("无法加载单位 3D 表现：%s" % scene_path)
 		return false
 	var view := UnitModel3D.new()
+	view.model_factory = model_pool.take
 	_world_root.add_child(view)
 	var animations: Dictionary = visual_stats.get("visual_animations", {})
 	var forward_yaw: float = visual_stats.get("visual_forward_yaw", 0.0)
@@ -139,3 +141,6 @@ func attach_projectile_system(system: ProjectileSystem) -> void:
 	var particles := ProjectileParticles3D.new()
 	_world_root.add_child(particles)
 	particles.setup(system, _camera)
+
+func _exit_tree() -> void:
+	model_pool.release_sources()

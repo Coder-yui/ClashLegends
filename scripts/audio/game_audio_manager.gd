@@ -618,6 +618,17 @@ func _play_pool(card_id: String, cue: StringName, configured: Variant, position:
 	_record_budget("short", "played")
 	return true
 
+## 加载阶段只创建音轨资源，不启动播放器、事件或计数。
+func prepare_audio(value: Variant, looping: bool = false) -> void:
+	if value is Dictionary:
+		if value.has("pool"):
+			var paths := PackedStringArray(value.pool)
+			_randomized_stream(paths)
+			if looping: _randomized_stream(paths, true)
+		for key in value: prepare_audio(value[key], String(key) == "idle:sustain")
+	elif value is Array:
+		for child in value: prepare_audio(child)
+
 func _randomized_stream(paths: PackedStringArray, looping: bool = false) -> AudioStreamRandomizer:
 	var cache_key := ("loop:" if looping else "") + "\n".join(paths)
 	if _stream_pool_cache.has(cache_key):
