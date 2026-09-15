@@ -30,7 +30,7 @@
 | `action:zone_sustain/zone_end` | 已生成的固定区域，独立于施法者 |
 | `continuous_attack:start/release/sustain/end` | 持续攻击状态，独立层 |
 | `pre_deploy:start / deploy:start / spawn:start` | 预部署 / 有部署窗口的生成 / 零部署出生 |
-| `deploy:hit / deploy:voice / death` | 部署真实命中、部署语音、死亡一次 |
+| `deploy:hit / deploy:voice / death / death:voice` | 部署真实命中、部署语音、死亡音效与独立死亡语音各一次 |
 | `replacement:start / revival:sustain/end` | 死亡替身、孵化过程、真实成功复生 |
 | `idle:sustain / shroud:*` | 既有待机或缠流状态；机制支持不表示当前卡已启用 |
 | `spell:cast / shield:cast/applied` | 成功施法 / 范围护盾施放及目标实际获盾 |
@@ -56,3 +56,5 @@
 有部署窗口的首次附着仅在刚开始的 0.1 秒内播放 deploy:start，晚到不补；零部署的 spawn:start 在首次附着可播放，重绑不重播。系统塔破损按生命阶段单调推进，跨阶段只播目标阶段，初次附着不补历史破损。
 
 全局播报配置在 match_audio，系统建筑在 world_audio，当前缺项见 [覆盖表](../AUDIO_CARD_MAP.md)。
+
+`form:refresh`在存活单位的限时形态因击杀实际刷新时派发，可复用开启声音；它不重播变形动画、不重新增加最大生命。

@@ -113,6 +113,14 @@ CardValidator 检查字段、类型、时序、资源、召唤与动作关系；
 
 跨 Tick/阶段按既有先后；同阶段击退在 CombatResolver 内按 `[combat_source_id, 来源内事件序号, 效果子序号]` 升序提交，最后合法事件接管。`combat_source_id` 是战场接入时分配的单调出生身份（单机与塔也有身份），不取场景树排序或对象地址；来源内序号在普攻出手/弹体发射、技能排队或部署横扫开始时确定，多段技能使用段子序号，弹体保留原身份。相同权威身份下容器或回调排列不影响结果；改变出生身份或事件序号属于改变权威事件，而非排列测试。此为项目内部平手约定，不宣称复刻 LoL 服务器算法。客户端不重算排序，只接收权威位置和可靠实体生命周期，无新增网络确认。
 
-## 横排编队与恢复护盾（规则协议23）
+## 横排编队与恢复护盾
 
 `deployment_formation` 支持 ring（默认）与 line；line 按相邻中心间距横排，正常下牌校验横排中心跨度，边缘身体在生成时逐兵限制到合法位置，不平移整排、不修改行走逻辑。`restoration_shield` 使用现有 shield / shield_duration / target_scope 字段。ShieldState 独立保存每层是否具备自然到期恢复资格；破裂或清除不发放恢复，Unit 只在权威存活时回复缺失生命。此盾计时沿用普通护盾，不因硬控延长，其他盾层不替代判断。
+
+## 限时形态与分段吸血
+
+`timed_form`主动效果切换到transformed_stats；基础定义的form_lifetime控制持续时间，form_refresh_on_kill决定敌方Unit击杀是否刷新。形态结束恢复基础数值并将溢出当前生命截到基础上限；飞行转地面时修正非法落点。
+
+attack_passive_multipliers与attack_lifesteal_ratios分别定义每段独立百分比附伤倍率和实际生命伤害吸血比例。它们与攻击动画等长；当前消费者限定无追加刀、无溅射的单体近战。已出手推进段，取消前摇不推进；进入/退出限时形态和刷新击杀按配置循环起点重置。
+
+`form_lifetime_after_transition`可让寿命从启动窗口结束后开始计时；`form_speed_boost_duration`与`form_speed_boost_multiplier`复用主动Buff移动倍率，开启及有效击杀刷新时发放。转换窗口只锁攻击，仍允许移动；持续阶段不因硬控延长。当前网络版本统一见MatchSession。

@@ -8,6 +8,7 @@
 | --- | --- |
 | `deploy / idle / move / attack / death` | 基础状态与动作映射，使用区分大小写的真实片段名 |
 | `idle_cycle / move_cycle / move_enter` | 固定轮播与进入移动片段；轮播可重复名称 |
+| `initial_move` | 部署后尚未攻击或变形时的循环移动；读取已有攻击及形态序号（含客户端快照），任一发生后不再使用 |
 | `attack_structure` | 攻击建筑时的专用动作 |
 | `attack_hit / attack_recover` | 按普攻段对应命中与恢复片段 |
 | `attack_move / attack_to_move` | 拳间移动或按段转跑；空字符串表示无专用片段 |
@@ -56,3 +57,5 @@
 `visual_active_buff_scene` 须继承 ActiveBuffVisual3D，提供 configure/advance 接口；只读增益状态，结束恢复材质，换形重建。强化弹体外观在发射时固化，不改变伤害和碰撞。
 
 具体裁剪与片段选择以 [单位动画页](../units/README.md) 为准，勿重复维护一份逐卡配置表。
+
+`empowered_idle` 与 `empowered_move` 使用只读的下一击强化/循环被动就绪状态选择待机和移动片段。字段只影响表现；实际出手后切回基础姿态，取消前摇不消耗就绪状态。
