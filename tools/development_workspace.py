@@ -20,7 +20,7 @@ def stage(arena=False):
                         ignore=shutil.ignore_patterns('__pycache__', '.DS_Store', '*.import'))
     for name in ['project.godot', 'default_bus_layout.tres', 'godot-version.txt', 'README.md', 'AGENTS.md']:
         shutil.copy2(PROJECT / name, output / name)
-    if arena:
+    if arena and not (output / "assets/arena/rift_arena/rift_arena.tscn").exists():
         source = LIBRARY / '03-制作中/3D地图'
         shutil.copytree(source, output / 'assets/arena/rift_arena',
                         ignore=shutil.ignore_patterns('.godot', '.DS_Store', '*.import'))

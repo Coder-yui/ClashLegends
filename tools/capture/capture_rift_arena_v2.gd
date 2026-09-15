@@ -1,5 +1,5 @@
 extends SceneTree
-## Candidate-only rendering QA. F5 and the production 2D background are unchanged.
+## Rendering QA and free-camera inspection for the production 3D arena.
 ## Godot --path . --script tools/capture/capture_rift_arena_v2.gd [-- --hold|--inspect]
 ## Captures are actual Godot frames, including the existing six tower proxies.
 
@@ -73,13 +73,12 @@ func _capture() -> void:
 	_main._ai.enabled = false
 	_main._minion_waves_enabled = false
 	_presentation = _main._battle_presentation
-	_candidate = (load(CANDIDATE_PATH) as PackedScene).instantiate()
+	_candidate = _presentation._world_root.get_node("RiftArena")
 	if _candidate.get_script() == null or not _candidate.get_script().can_instantiate():
 		push_error("Arena v2 materials did not load. Import current arena assets before capture.")
 		_candidate.free()
 		quit(1)
 		return
-	_presentation._world_root.add_child(_candidate)
 	_set_background()
 	# Main's preview-only _draw retains the existing hint renderer above the
 	# candidate viewport. Runtime files and authority rules are unchanged.

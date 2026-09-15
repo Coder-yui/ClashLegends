@@ -1,7 +1,7 @@
 class_name BattlePresentation3D
 extends Node
 ## 战场的 3D 表现容器。模拟、碰撞与联机仍在 Node2D 中运行；
-## 本节点只把单位、塔与基地水晶镜像到透明 3D 视口。
+## 本节点承载正式 3D 地图，并把单位、塔与基地水晶镜像到同一视口。
 
 var _viewport: SubViewport
 var _world_root: Node3D
@@ -11,7 +11,7 @@ func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void
 	_viewport = SubViewport.new()
 	_viewport.name = "UnitViewport3D"
 	_viewport.size = Vector2i(roundi(field_size.x), roundi(field_size.y))
-	_viewport.transparent_bg = true
+	_viewport.transparent_bg = false
 	_viewport.own_world_3d = true
 	_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	add_child(_viewport)
@@ -21,19 +21,20 @@ func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void
 	_viewport.add_child(_world_root)
 
 	_create_environment()
+	_world_root.add_child(preload("res://assets/arena/rift_arena/rift_arena.tscn").instantiate())
 	_create_camera(field_size.y / tile_size)
 	# 画布翻转场地；3D 相机反向滚转，让人物保持直立，射线投影仍对应权威场地坐标。
 	if flipped:
 		_camera.rotate_object_local(Vector3.BACK, PI)
 		_camera.set_meta("canvas_flipped", true)
 
-	# 透明视口作为普通 2D 画布叠在灰盒地图之上；后添加的单位血条仍会画在它上面。
+	# 地图与模型共享深度；2D 部署提示、脚下标记与血条绘制在视口上方。
 	var overlay := Sprite2D.new()
 	overlay.name = "UnitOverlay3D"
 	overlay.centered = false
 	overlay.texture = _viewport.get_texture()
-	# 3D 模型与水晶槽底覆盖 2D 背景；凹槽遮挡在 3D 内完成。
-	overlay.z_index = 5
+	# 地形裁切水晶开口，凹槽遮挡在 3D 内完成。
+	overlay.z_index = -1
 	add_child(overlay)
 
 func attach_unit(unit: Unit, stats: Dictionary) -> bool:
@@ -109,10 +110,10 @@ func _create_camera(field_rows: float) -> void:
 func _create_environment() -> void:
 	var environment := Environment.new()
 	environment.background_mode = Environment.BG_COLOR
-	environment.background_color = Color(0.0, 0.0, 0.0, 0.0)
+	environment.background_color = Color("173c42")
 	environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	environment.ambient_light_color = Color(0.72, 0.76, 0.86)
-	environment.ambient_light_energy = 1.1
+	environment.ambient_light_energy = 0.95
 
 	var world_environment := WorldEnvironment.new()
 	world_environment.name = "UnitEnvironment3D"
@@ -123,8 +124,14 @@ func _create_environment() -> void:
 	light.name = "UnitKeyLight3D"
 	light.rotation_degrees = Vector3(-55.0, -35.0, 0.0)
 	light.light_color = Color(1.0, 0.93, 0.82)
-	light.light_energy = 1.35
-	light.shadow_enabled = false
+	light.light_energy = 0.90
+	light.shadow_enabled = true
+	light.directional_shadow_mode = DirectionalLight3D.SHADOW_PARALLEL_4_SPLITS
+	light.directional_shadow_max_distance = 100.0
+	light.directional_shadow_blend_splits = true
+	light.shadow_bias = 0.03
+	light.shadow_normal_bias = 0.5
+	light.shadow_opacity = 0.70
 	_world_root.add_child(light)
 
 

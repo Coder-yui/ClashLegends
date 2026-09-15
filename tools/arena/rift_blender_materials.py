@@ -11,7 +11,10 @@ def configure_materials(directory):
     images={}
     def image(name):
         if name not in images:
-            images[name]=bpy.data.images.load(str(directory/'textures'/name),check_existing=True)
+            texture = directory/'textures'/name
+            if not texture.exists():
+                texture = Path(__file__).resolve().parents[2]/'assets/arena/rift_arena/textures'/name
+            images[name]=bpy.data.images.load(str(texture),check_existing=True)
             images[name].pack()
         return images[name]
     for material in bpy.data.materials:

@@ -70,11 +70,19 @@ func _check_group_deployment_and_shared_skill() -> void:
 	var group_id := group[0].deployment_group_id
 	for member in group:
 		positions[member.global_position] = true
+	for team in [0, 1]:
+		var offsets: Array[Vector2] = _main._deployment_formation_offsets(5, 36.0, team, "polygon")
+		var centroid := Vector2.ZERO
+		for index in range(5):
+			centroid += offsets[index]
+			_expect(is_equal_approx(offsets[index].length(), 36.0), "五个顶点到中心等距，无中心成员")
+			_expect(is_equal_approx(offsets[index].distance_to(offsets[(index + 1) % 5]), 72.0 * sin(PI / 5.0)), "五边形相邻边等长")
+		_expect(centroid.length() < 0.001, "双方五边形重心保持部署中心")
 	var lead: Unit = group[0]
 	var ability_id := lead.active_ability_id
 	_expect(
 		one_pending_circle and group.size() == 5 and positions.size() == 5 and group.all(func(member): return member.deployment_group_id == group_id),
-		"一次格心部署只排入一个读条圈，并按确定性中心+四周阵型生成5个独立皮克斯",
+		"一次格心部署只排入一个读条圈，并按确定性正五边形阵型生成5个独立皮克斯",
 	)
 
 	# 主动持有者死亡后，编队资格必须交给存活成员，而不是让整队技能随第一只消失。

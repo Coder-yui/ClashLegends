@@ -18,7 +18,9 @@ vec3 grass_sample(vec2 p) {
     return mix(a,b,.38+noise(p*.4)*.18);
 }
 void vertex() { world_position=(MODEL_MATRIX*vec4(VERTEX,1.0)).xyz; }
+#include "res://assets/arena/rift_arena/nexus_aperture.gdshaderinc"
 void fragment() {
+    clip_nexus_well(world_position, INV_VIEW_MATRIX[2].xyz);
     vec2 tile=vec2(world_position.x+9.0,world_position.z/sqrt(2.0)+16.0);
     float broad=noise(tile*.24);
     float spread=5.5;

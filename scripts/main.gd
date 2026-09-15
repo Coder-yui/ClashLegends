@@ -731,6 +731,7 @@ func _setup_battle_presentation() -> void:
 	add_child(_battle_presentation)
 	_battle_presentation.setup(Vector2(ArenaRules.FIELD_W, ArenaRules.FIELD_H), ArenaRules.TILE_SIZE, mode == "client")
 	_battle_presentation.attach_projectile_system(_projectile_system)
+	_arena_background_sprite.hide()
 
 ## 顶部右侧的比赛计时器
 func _create_timer_ui() -> void:
@@ -1709,7 +1710,7 @@ func _deployment_formation_offsets(count: int, spacing: float, team: int, format
 			offsets.append(Vector2((index - (count - 1) * 0.5) * spacing * (1.0 if team == 0 else -1.0), 0.0))
 		return offsets
 	var ring_count := count
-	if count % 2 == 1:
+	if count % 2 == 1 and formation != "polygon":
 		offsets.append(Vector2.ZERO)
 		ring_count -= 1
 	var rotation := 0.0 if team == 0 else PI
@@ -2841,7 +2842,7 @@ func _send_snapshot() -> void:
 	_snapshot_system.send()
 
 func _draw() -> void:
-	# 完整 720x1400 地图（含手牌区后方场外风景）；3D 表现视口继续透明叠加。
+	# 正式 3D 地图在下层视口绘制；此处只画部署提示。
 	# 选中卡牌时高亮可部署区域
 	if _selected_card != "":
 		var sel_stats: Dictionary = CardDB.get_card(_selected_card)
@@ -2868,6 +2869,7 @@ func _setup_arena_background() -> void:
 	_arena_background_sprite = Sprite2D.new()
 	_arena_background_sprite.name = "ArenaBackground2D"
 	_arena_background_sprite.texture = ARENA_BACKGROUND_TEXTURE
+	_arena_background_sprite.visible = true
 	_arena_background_sprite.centered = false
 	_arena_background_sprite.position = Vector2.ZERO
 	_arena_background_sprite.z_index = -100

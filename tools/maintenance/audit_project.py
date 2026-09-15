@@ -21,7 +21,7 @@ EXTERNAL = ('ClashLegends-promo-materials', 'ClashLegends-开发素材库')
 
 def audit(root: Path, inventory: bool = False) -> dict:
     errors = []
-    for forbidden in ['assets/archive', 'assets/audio/auditions', 'assets/audio/workbench_auditions.json', 'assets/arena/rift_arena', '待开发卡牌美术素材', 'builds']:
+    for forbidden in ['assets/archive', 'assets/audio/auditions', 'assets/audio/workbench_auditions.json', '待开发卡牌美术素材', 'builds']:
         if (root / forbidden).exists():
             errors.append(f'{forbidden}: development content belongs in ClashLegends-开发素材库')
     files = [p for folder in ('scripts', 'scenes', 'tests', 'tools', 'docs', 'assets')

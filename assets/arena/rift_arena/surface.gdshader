@@ -15,7 +15,9 @@ void vertex() {
     world_position=(MODEL_MATRIX*vec4(VERTEX,1.0)).xyz;
     world_normal=normalize(MODEL_NORMAL_MATRIX*NORMAL);
 }
+#include "res://assets/arena/rift_arena/nexus_aperture.gdshaderinc"
 void fragment() {
+    clip_nexus_well(world_position, INV_VIEW_MATRIX[2].xyz);
     vec3 p=world_position*texture_scale;
     vec3 blend=pow(abs(world_normal),vec3(4));
     blend/=max(dot(blend,vec3(1)),.001);

@@ -13,7 +13,7 @@ static func definition() -> Dictionary:
 			"speed": SPEED_FAST, "interval": 1.0, "first_hit": 0.40,
 			"size_tier": SIZE_EXTREMELY_SMALL, "radius": RADIUS_EXTREMELY_SMALL,
 			"mass": 1.0, "sight": 180.0,
-			"deployment_count": 5, "deployment_spacing": 36.0,
+			"deployment_count": 5, "deployment_spacing": 36.0, "deployment_formation": "polygon",
 			"projectile_speed": 360.0,
 			"projectile_spawn_at_edge": false, "projectile_spawn_offset": 0.0, "projectile_collision_radius": 4.0,
 			"is_air": true, "building_only": false, "can_attack_air": true,
