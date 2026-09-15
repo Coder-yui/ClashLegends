@@ -1,0 +1,114 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+[套件] maintenance_suite
+[套件] CardDBValidationSuite
+[套件] ContentContractSuite
+[套件] DeckBuilderSuite
+[套件] maintenance_contracts
+[套件] numeric_system_suite
+[套件] ArenaDeploymentSuite
+[套件] AUDIO_PRESENTATION_SUITE_SCRIPT
+[套件] PresentationSuite
+[套件] BuildingMinionSuite
+[套件] NavigationCollisionSuite
+[套件] ActiveSkillSuite
+[套件] workbench_suite
+[套件] AnimationStateSuite
+[套件] cards/sett_animation_suite
+[套件] HeroSkillReworkSuite
+[SKILL_TIMING] distance=80.0 release_tick=4 collision_tick=4
+[SKILL_TIMING] distance=180.0 release_tick=4 collision_tick=6
+[套件] CombatTargetingSuite
+[套件] GnarSuite
+[套件] XinSuite
+[套件] GwenSuite
+[套件] TwistedFateSuite
+[套件] AurelionSolSuite
+[套件] MissFortuneSuite
+[套件] PixSuite
+[套件] ANIVIA_SUITE_SCRIPT
+[套件] ProjectileSuite
+[套件] network_lifecycle_suite
+[套件] workbench_scenario_suite
+[套件] building_placement_suite
+[套件] payment_suite
+[套件] shield_suite
+[套件] session_suite
+[联机] 连接失败
+[联机] 等待对方加载超时
+[套件] terminal_state_suite
+[套件] CombatBatchSuite
+FAIRNESS tick=133 a=0.0 b=0.0 stages=1/1
+FAIRNESS_TRACE [{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":0,"source":8707576432460,"target":8709254155574,"tick":133},{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":0,"source":8709254155574,"target":8707576432460,"tick":133},{"amount":0.0,"event":"death_commit","phase":"combatants","segment":-1,"source":-1,"target":8709254155574,"tick":133},{"amount":0.0,"event":"death_commit","phase":"combatants","segment":-1,"source":-1,"target":8707576432460,"tick":133}]
+FAIRNESS tick=138 a=0.0 b=0.0 stages=1/1
+FAIRNESS_TRACE [{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":0,"source":8711267421494,"target":8712945141740,"tick":138},{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":0,"source":8712945141740,"target":8711267421494,"tick":138},{"amount":0.0,"event":"death_commit","phase":"combatants","segment":-1,"source":-1,"target":8712945141740,"tick":138},{"amount":0.0,"event":"death_commit","phase":"combatants","segment":-1,"source":-1,"target":8711267421494,"tick":138}]
+FAIRNESS tick=143 a=0.0 b=0.0 stages=1/1
+FAIRNESS_TRACE [{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":0,"source":8716434805940,"target":8714757081068,"tick":143},{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":0,"source":8714757081068,"target":8716434805940,"tick":143},{"amount":0.0,"event":"death_commit","phase":"combatants","segment":-1,"source":-1,"target":8714757081068,"tick":143},{"amount":0.0,"event":"death_commit","phase":"combatants","segment":-1,"source":-1,"target":8716434805940,"tick":143}]
+FAIRNESS tick=148 a=0.0 b=0.0 stages=1/1
+FAIRNESS_TRACE [{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":0,"source":8719924467909,"target":8718246745268,"tick":148},{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":0,"source":8718246745268,"target":8719924467909,"tick":148},{"amount":0.0,"event":"death_commit","phase":"combatants","segment":-1,"source":-1,"target":8718246745268,"tick":148},{"amount":0.0,"event":"death_commit","phase":"combatants","segment":-1,"source":-1,"target":8719924467909,"tick":148}]
+FAIRNESS tick=153 a=0.0 b=0.0 stages=1/1
+FAIRNESS_TRACE [{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":0,"source":8721736407237,"target":8723414124456,"tick":153},{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":0,"source":8723414124456,"target":8721736407237,"tick":153},{"amount":0.0,"event":"death_commit","phase":"combatants","segment":-1,"source":-1,"target":8723414124456,"tick":153},{"amount":0.0,"event":"death_commit","phase":"combatants","segment":-1,"source":-1,"target":8721736407237,"tick":153}]
+FAIRNESS tick=158 a=0.0 b=0.0 stages=1/1
+FAIRNESS_TRACE [{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":0,"source":8725226063784,"target":8726903787869,"tick":158},{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":0,"source":8726903787869,"target":8725226063784,"tick":158},{"amount":0.0,"event":"death_commit","phase":"combatants","segment":-1,"source":-1,"target":8726903787869,"tick":158},{"amount":0.0,"event":"death_commit","phase":"combatants","segment":-1,"source":-1,"target":8725226063784,"tick":158}]
+FAIRNESS tick=163 a=0.0 b=0.0 stages=1/1
+FAIRNESS_TRACE [{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":0,"source":8730393450643,"target":8728715727197,"tick":163},{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":0,"source":8728715727197,"target":8730393450643,"tick":163},{"amount":0.0,"event":"death_commit","phase":"combatants","segment":-1,"source":-1,"target":8728715727197,"tick":163},{"amount":0.0,"event":"death_commit","phase":"combatants","segment":-1,"source":-1,"target":8730393450643,"tick":163}]
+FAIRNESS tick=168 a=0.0 b=0.0 stages=1/1
+FAIRNESS_TRACE [{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":0,"source":8733883111605,"target":8732205389971,"tick":168},{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":0,"source":8732205389971,"target":8733883111605,"tick":168},{"amount":0.0,"event":"death_commit","phase":"combatants","segment":-1,"source":-1,"target":8732205389971,"tick":168},{"amount":0.0,"event":"death_commit","phase":"combatants","segment":-1,"source":-1,"target":8733883111605,"tick":168}]
+FAIRNESS tick=173 a=0.0 b=0.0 stages=1/1
+FAIRNESS_TRACE [{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":0,"source":8737892866229,"target":8739570587223,"tick":173},{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":0,"source":8739570587223,"target":8737892866229,"tick":173},{"amount":0.0,"event":"death_commit","phase":"combatants","segment":-1,"source":-1,"target":8739570587223,"tick":173},{"amount":0.0,"event":"death_commit","phase":"combatants","segment":-1,"source":-1,"target":8737892866229,"tick":173}]
+FAIRNESS tick=178 a=0.0 b=0.0 stages=1/1
+FAIRNESS_TRACE [{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":0,"source":8741382527157,"target":8743060248958,"tick":178},{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":0,"source":8743060248958,"target":8741382527157,"tick":178},{"amount":0.0,"event":"death_commit","phase":"combatants","segment":-1,"source":-1,"target":8743060248958,"tick":178},{"amount":0.0,"event":"death_commit","phase":"combatants","segment":-1,"source":-1,"target":8741382527157,"tick":178}]
+FAIRNESS tick=183 a=0.0 b=0.0 stages=1/1
+FAIRNESS_TRACE [{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":0,"source":8746549908058,"target":8744872188085,"tick":183},{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":0,"source":8744872188085,"target":8746549908058,"tick":183},{"amount":0.0,"event":"death_commit","phase":"combatants","segment":-1,"source":-1,"target":8744872188085,"tick":183},{"amount":0.0,"event":"death_commit","phase":"combatants","segment":-1,"source":-1,"target":8746549908058,"tick":183}]
+FAIRNESS tick=188 a=0.0 b=0.0 stages=1/1
+FAIRNESS_TRACE [{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":0,"source":8750039566086,"target":8748361849013,"tick":188},{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":0,"source":8748361849013,"target":8750039566086,"tick":188},{"amount":0.0,"event":"death_commit","phase":"combatants","segment":-1,"source":-1,"target":8748361849013,"tick":188},{"amount":0.0,"event":"death_commit","phase":"combatants","segment":-1,"source":-1,"target":8750039566086,"tick":188}]
+FAIRNESS tick=193 a=0.0 b=0.0 stages=1/1
+FAIRNESS_TRACE [{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":0,"source":8751851509941,"target":8753529229374,"tick":193},{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":0,"source":8753529229374,"target":8751851509941,"tick":193},{"amount":0.0,"event":"death_commit","phase":"combatants","segment":-1,"source":-1,"target":8753529229374,"tick":193},{"amount":0.0,"event":"death_commit","phase":"combatants","segment":-1,"source":-1,"target":8751851509941,"tick":193}]
+FAIRNESS tick=198 a=0.0 b=0.0 stages=1/1
+FAIRNESS_TRACE [{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":0,"source":8755274062005,"target":8756951782438,"tick":198},{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":0,"source":8756951782438,"target":8755274062005,"tick":198},{"amount":0.0,"event":"death_commit","phase":"combatants","segment":-1,"source":-1,"target":8756951782438,"tick":198},{"amount":0.0,"event":"death_commit","phase":"combatants","segment":-1,"source":-1,"target":8755274062005,"tick":198}]
+FAIRNESS tick=203 a=0.0 b=0.0 stages=1/1
+FAIRNESS_TRACE [{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":0,"source":8760374332938,"target":8758696614069,"tick":203},{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":0,"source":8758696614069,"target":8760374332938,"tick":203},{"amount":0.0,"event":"death_commit","phase":"combatants","segment":-1,"source":-1,"target":8758696614069,"tick":203},{"amount":0.0,"event":"death_commit","phase":"combatants","segment":-1,"source":-1,"target":8760374332938,"tick":203}]
+FAIRNESS tick=208 a=0.0 b=0.0 stages=1/1
+FAIRNESS_TRACE [{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":0,"source":8763796884924,"target":8762119166133,"tick":208},{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":0,"source":8762119166133,"target":8763796884924,"tick":208},{"amount":0.0,"event":"death_commit","phase":"combatants","segment":-1,"source":-1,"target":8762119166133,"tick":208},{"amount":0.0,"event":"death_commit","phase":"combatants","segment":-1,"source":-1,"target":8763796884924,"tick":208}]
+EXTRA_FAIRNESS_TRACE [{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":0,"source":8824782068118,"target":8826459789943,"tick":867},{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":0,"source":8826459789943,"target":8824782068118,"tick":867},{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":1,"source":8824782068118,"target":8826459789943,"tick":882},{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":1,"source":8826459789943,"target":8824782068118,"tick":882},{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":2,"source":8824782068118,"target":8826459789943,"tick":897},{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":2,"source":8826459789943,"target":8824782068118,"tick":897},{"amount":26.0,"event":"hit_submit","phase":"combatants","segment":2,"source":8824782068118,"target":8826459789943,"tick":900},{"amount":26.0,"event":"hit_submit","phase":"combatants","segment":2,"source":8826459789943,"target":8824782068118,"tick":900},{"amount":0.0,"event":"death_commit","phase":"combatants","segment":-1,"source":-1,"target":8826459789943,"tick":900},{"amount":0.0,"event":"death_commit","phase":"combatants","segment":-1,"source":-1,"target":8824782068118,"tick":900}]
+EXTRA_FAIRNESS_TRACE [{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":0,"source":8831794944631,"target":8833472666428,"tick":905},{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":0,"source":8833472666428,"target":8831794944631,"tick":905},{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":1,"source":8831794944631,"target":8833472666428,"tick":920},{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":1,"source":8833472666428,"target":8831794944631,"tick":920},{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":2,"source":8831794944631,"target":8833472666428,"tick":935},{"amount":52.0,"event":"hit_submit","phase":"combatants","segment":2,"source":8833472666428,"target":8831794944631,"tick":935},{"amount":26.0,"event":"hit_submit","phase":"combatants","segment":2,"source":8831794944631,"target":8833472666428,"tick":938},{"amount":26.0,"event":"hit_submit","phase":"combatants","segment":2,"source":8833472666428,"target":8831794944631,"tick":938},{"amount":0.0,"event":"death_commit","phase":"combatants","segment":-1,"source":-1,"target":8833472666428,"tick":938},{"amount":0.0,"event":"death_commit","phase":"combatants","segment":-1,"source":-1,"target":8831794944631,"tick":938}]
+[套件] TerminalAudioSuite
+WARNING: 水晶终局音频缺失：world_nexus_chaos
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] play_nexus_destruction (res://scripts/audio/game_audio_manager.gd:853)
+         [1] finish_match_audio (res://scripts/audio/game_audio_manager.gd:879)
+         [2] run (res://tests/suites/terminal_audio_suite.gd:46)
+WARNING: 水晶终局音频缺失：world_nexus_order
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] play_nexus_destruction (res://scripts/audio/game_audio_manager.gd:853)
+         [1] finish_match_audio (res://scripts/audio/game_audio_manager.gd:879)
+         [2] run (res://tests/suites/terminal_audio_suite.gd:50)
+WARNING: 水晶终局音频缺失：world_nexus_chaos
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] play_nexus_destruction (res://scripts/audio/game_audio_manager.gd:853)
+         [1] finish_match_audio (res://scripts/audio/game_audio_manager.gd:879)
+         [2] run (res://tests/suites/terminal_audio_suite.gd:50)
+[套件] BuildingExpiryBoundarySuite
+EXPIRY_BOUNDARY permutation=0 tick=5 state=[0, 0.0, 100.0, 0.0, true]
+EXPIRY_BOUNDARY permutation=1 tick=10 state=[0, 0.0, 100.0, 0.0, true]
+EXPIRY_BOUNDARY permutation=2 tick=15 state=[0, 0.0, 100.0, 0.0, true]
+EXPIRY_BOUNDARY permutation=3 tick=20 state=[0, 0.0, 100.0, 0.0, true]
+EXPIRY_BOUNDARY permutation=4 tick=25 state=[0, 0.0, 100.0, 0.0, true]
+EXPIRY_BOUNDARY permutation=5 tick=30 state=[0, 0.0, 100.0, 0.0, true]
+EXPIRY_BOUNDARY permutation=6 tick=35 state=[0, 0.0, 100.0, 0.0, true]
+EXPIRY_BOUNDARY permutation=7 tick=40 state=[0, 0.0, 100.0, 0.0, true]
+EXPIRY_BOUNDARY permutation=8 tick=45 state=[0, 0.0, 100.0, 0.0, true]
+EXPIRY_BOUNDARY permutation=9 tick=50 state=[0, 0.0, 100.0, 0.0, true]
+EXPIRY_BOUNDARY permutation=10 tick=55 state=[0, 0.0, 100.0, 0.0, true]
+EXPIRY_BOUNDARY permutation=11 tick=60 state=[0, 0.0, 100.0, 0.0, true]
+EXPIRY_BOUNDARY permutation=12 tick=65 state=[0, 0.0, 100.0, 0.0, true]
+EXPIRY_BOUNDARY permutation=13 tick=70 state=[0, 0.0, 100.0, 0.0, true]
+EXPIRY_BOUNDARY permutation=14 tick=75 state=[0, 0.0, 100.0, 0.0, true]
+EXPIRY_BOUNDARY permutation=15 tick=80 state=[0, 0.0, 100.0, 0.0, true]
+[套件] KnockbackBoundarySuite
+[套件] ShurimaGuardSuite
+[机制检查] 全部通过（3558 项断言）
+[MECHANICS_RESULT] {"checks":3558,"completed_suites":["maintenance_suite","CardDBValidationSuite","ContentContractSuite","DeckBuilderSuite","maintenance_contracts","numeric_system_suite","ArenaDeploymentSuite","AUDIO_PRESENTATION_SUITE_SCRIPT","PresentationSuite","BuildingMinionSuite","NavigationCollisionSuite","ActiveSkillSuite","workbench_suite","AnimationStateSuite","cards/sett_animation_suite","HeroSkillReworkSuite","CombatTargetingSuite","GnarSuite","XinSuite","GwenSuite","TwistedFateSuite","AurelionSolSuite","MissFortuneSuite","PixSuite","ANIVIA_SUITE_SCRIPT","ProjectileSuite","network_lifecycle_suite","workbench_scenario_suite","building_placement_suite","payment_suite","shield_suite","session_suite","terminal_state_suite","CombatBatchSuite","TerminalAudioSuite","BuildingExpiryBoundarySuite","KnockbackBoundarySuite","ShurimaGuardSuite"],"failed":0,"schema":1}

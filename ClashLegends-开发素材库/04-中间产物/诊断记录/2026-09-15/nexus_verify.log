@@ -1,0 +1,7 @@
+[audit] PASS — /Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/构建与验证/verification/20260915-141218-997085/audit.log
+[verifier-tests] PASS — /Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/构建与验证/verification/20260915-141218-997085/verifier-tests.log
+[import] PASS — /Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/构建与验证/verification/20260915-141218-997085/import.log
+[mechanics] PASS — /Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/构建与验证/verification/20260915-141218-997085/mechanics.log
+[diff-check] PASS — /Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/构建与验证/verification/20260915-141218-997085/diff-check.log
+[network] PASS — /Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/构建与验证/verification/20260915-141218-997085
+FAIL: /Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/构建与验证/verification/20260915-141218-997085/result.json

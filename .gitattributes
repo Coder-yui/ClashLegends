@@ -1,3 +1,6 @@
 # Preserve extracted source bytes and their provenance checksums.
 assets/effects/baron_minion/source/*.troy -text whitespace=-blank-at-eof
 assets/effects/baron_minion/source/*.preload -text whitespace=-blank-at-eol,cr-at-eol
+
+# Preserve decoded native audio-event source files in the diagnostic archive.
+ClashLegends-开发素材库/04-中间产物/诊断记录/2026-09-15/*.troy -text whitespace=-blank-at-eof,cr-at-eol

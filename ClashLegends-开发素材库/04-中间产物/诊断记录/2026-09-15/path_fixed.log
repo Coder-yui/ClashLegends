@@ -1,0 +1,14 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PATH_START ashe x=140.0 target=(140.0, 260.0) goal=(inf, inf) path=[]
+PATH_EXIT ashe x=140.0 pos=(140.0, 577.603) goal=(inf, inf) next=(inf, inf)
+PATH_ATTACK ashe x=140.0 pos=(140.0, 499.6036) target=(140.0, 260.0)
+PATH_START ashe x=300.0 target=(140.0, 260.0) goal=(197.2384, 488.9536) path=[(300.0, 900.0), (170.0, 690.0), (150.0, 630.0), (190.0, 490.0)]
+PATH_EXIT ashe x=300.0 pos=(168.6163, 578.1384) goal=(inf, inf) next=(inf, inf)
+PATH_ATTACK ashe x=300.0 pos=(161.6285, 500.4522) target=(140.0, 260.0)
+PATH_START garen x=140.0 target=(140.0, 260.0) goal=(inf, inf) path=[]
+PATH_EXIT garen x=140.0 pos=(140.0, 578.7982) goal=(inf, inf) next=(inf, inf)
+PATH_ATTACK garen x=140.0 pos=(140.0, 369.7971) target=(140.0, 260.0)
+PATH_START garen x=300.0 target=(140.0, 260.0) goal=(165.2237, 360.8948) path=[(300.0, 900.0), (170.0, 690.0), (150.0, 630.0), (170.0, 370.0)]
+PATH_EXIT garen x=300.0 pos=(164.37, 579.5292) goal=(inf, inf) next=(inf, inf)
+PATH_ATTACK garen x=300.0 pos=(148.3088, 368.9412) target=(140.0, 260.0)
