@@ -1,0 +1,13 @@
+{
+  "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Aatrox.wad.client",
+  "package_sha256": "a7ad2720a9d8a7d4b326d119bed8ca74b2c26a12982cc149507281e75ae7d4df",
+  "files": [
+    {
+      "path": "assets/characters/aatrox/skins/base/aatroxloadscreen.tex",
+      "wad_hash": "b7a434886d1ce5e6",
+      "size": 86252,
+      "sha256": "1dbf7c62cb788b9aeda020a3f64d624767bab65680ceba4e293f856957b1d702"
+    }
+  ],
+  "note": "Staged source assets only. Model materials and particle dependencies must be verified before project integration."
+}

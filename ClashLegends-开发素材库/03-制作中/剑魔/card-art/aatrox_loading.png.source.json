@@ -1,0 +1,16 @@
+{
+  "tool": "ltk-tex-utils",
+  "arguments": [
+    "decode",
+    "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/剑魔/card-art/assets/characters/aatrox/skins/base/aatroxloadscreen.tex",
+    "-o"
+  ],
+  "inputs": [
+    {
+      "path": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/剑魔/card-art/assets/characters/aatrox/skins/base/aatroxloadscreen.tex",
+      "sha256": "1dbf7c62cb788b9aeda020a3f64d624767bab65680ceba4e293f856957b1d702"
+    }
+  ],
+  "output": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/剑魔/card-art/aatrox_loading.png",
+  "sha256": "c114a228cee8819800859b12c3a62332cd15b02d6b48f86f1b251da40459d292"
+}

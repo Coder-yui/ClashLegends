@@ -424,6 +424,8 @@ func _on_unit_death(instance_id: int) -> void:
 	var unit = (entry.unit_ref as WeakRef).get_ref()
 	if unit is Unit and is_instance_valid(unit):
 		play_event(unit, &"death", unit.get_visual_screen_position())
+		# 音效与语音独立选池、同时播放；未配置语音的旧卡保持原样。
+		play_event(unit, &"death:voice", unit.get_visual_screen_position())
 	# 死亡不补播技能结束声；已释放单位也不会遗留轮询项。
 	_unit_entries.erase(instance_id)
 

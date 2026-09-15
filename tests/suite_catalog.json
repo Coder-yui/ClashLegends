@@ -226,5 +226,11 @@
     "script": "res://tests/suites/cards/shurima_guard_suite.gd",
     "method": "run",
     "scene": "battle"
+  },
+  {
+    "id": "TimedFormCycleSuite",
+    "script": "res://tests/suites/timed_form_cycle_suite.gd",
+    "method": "run",
+    "scene": "battle"
   }
 ]

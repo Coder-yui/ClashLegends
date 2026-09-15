@@ -58,6 +58,14 @@ var card_id := ""
 var team := 0
 var hp := 100.0
 var max_hp := 100.0
+var attack_passive_multipliers: Array = []
+var attack_lifesteal_ratios: Array = []
+var form_lifetime := 0.0
+var form_lifetime_left := 0.0
+var form_lifetime_after_transition := false
+var form_speed_boost_duration := 0.0
+var form_speed_boost_multiplier := 1.0
+var form_refresh_on_kill := false
 var on_hit_max_health_ratio := 0.0
 var on_hit_tower_damage := 0.0
 var _lifespan_decay_remainder := 0.0
@@ -323,6 +331,13 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	team = p_team
 	hp = BattleNumbers.quantity(stats.hp)
 	max_hp = hp
+	attack_passive_multipliers = stats.get("attack_passive_multipliers", []).duplicate()
+	attack_lifesteal_ratios = stats.get("attack_lifesteal_ratios", []).duplicate()
+	form_lifetime = float(stats.get("form_lifetime", 0.0))
+	form_lifetime_after_transition = bool(stats.get("form_lifetime_after_transition", false))
+	form_speed_boost_duration = float(stats.get("form_speed_boost_duration", 0.0))
+	form_speed_boost_multiplier = float(stats.get("form_speed_boost_multiplier", 1.0))
+	form_refresh_on_kill = bool(stats.get("form_refresh_on_kill", false))
 	on_hit_max_health_ratio = float(stats.get("on_hit_max_health_ratio", 0.0))
 	on_hit_tower_damage = BattleNumbers.quantity(float(stats.get("on_hit_tower_damage", 0.0)))
 	_lifespan_decay_remainder = 0.0
@@ -505,7 +520,7 @@ func get_action_permissions_visual() -> int:
 		return net_action_permissions
 	if hp <= 0.0 or is_frozen() or is_stunned() or not is_deployed():
 		return 0
-	return (0 if is_active_skill_movement_locked() else 1) | (0 if is_active_skill_attack_locked() else 2)
+	return (0 if is_active_skill_movement_locked() else 1) | (0 if is_active_skill_attack_locked() or is_form_transitioning() else 2)
 
 func presentation_state() -> UnitPresentationState:
 	if _presentation_state == null:
@@ -548,7 +563,11 @@ func get_empowered_attack_visual_serial() -> int:
 	return net_empowered_attack_visual_serial if _in_client_mode() else _empowered_attack_visual_serial
 
 func is_empowered_attack_ready_visual() -> bool:
-	return net_empowered_attack_ready if _in_client_mode() else empowered_attack_ready
+	if _in_client_mode():
+		return net_empowered_attack_ready
+	if not attack_passive_multipliers.is_empty():
+		return float(attack_passive_multipliers[posmod(_attack_swing_count, attack_passive_multipliers.size())]) > 0.0
+	return empowered_attack_ready
 
 func get_skill_resource_ratio() -> float:
 	if _in_client_mode():
@@ -758,6 +777,8 @@ func transform_to_mega(active_cast: bool = false) -> bool:
 	if hp <= 0.0 or form_index != 0 or transformed_stats.is_empty():
 		return false
 	_apply_form(1, true)
+	form_lifetime_left = form_lifetime
+	_refresh_form_speed_boost()
 	form_transition_timer = active_transform_duration if active_cast else transform_duration
 	play_visual_action(&"transform_active" if active_cast else &"transform", form_transition_timer)
 	return true
@@ -766,6 +787,7 @@ func transform_to_small() -> bool:
 	if hp <= 0.0 or form_index != 1:
 		return false
 	_apply_form(0, false)
+	form_lifetime_left = 0.0
 	form_transition_timer = revert_duration
 	play_visual_action(&"revert", form_transition_timer)
 	return true
@@ -776,12 +798,18 @@ func _apply_form(next_form_index: int, grant_max_hp_increase: bool, advance_form
 		return
 	var old_max_hp := max_hp
 	var old_body_radius := body_radius
+	var was_air := is_air
 	max_hp = BattleNumbers.quantity(float(next_stats.get("hp", max_hp)))
 	if grant_max_hp_increase:
 		hp = minf(hp + maxf(max_hp - old_max_hp, 0.0), max_hp)
 	else:
 		hp = minf(hp, max_hp)
 	damage = BattleNumbers.quantity(float(next_stats.get("damage", damage)))
+	attack_passive_multipliers = next_stats.get("attack_passive_multipliers", []).duplicate()
+	attack_lifesteal_ratios = next_stats.get("attack_lifesteal_ratios", []).duplicate()
+	if not attack_passive_multipliers.is_empty():
+		_attack_hit_index = 0
+		_attack_swing_count = 0
 	on_hit_max_health_ratio = float(next_stats.get("on_hit_max_health_ratio", 0.0))
 	on_hit_tower_damage = BattleNumbers.quantity(float(next_stats.get("on_hit_tower_damage", 0.0)))
 	attack_range = float(next_stats.get("range", attack_range))
@@ -827,7 +855,7 @@ func _apply_form(next_form_index: int, grant_max_hp_increase: bool, advance_form
 	_health_bar_center = Vector2(0.0, -visual_radius - HEALTH_BAR_HEAD_GAP - HEALTH_BAR_HEIGHT * 0.5)
 	form_changed.emit(form_index)
 	# 放大碰撞半径后立即做一次地形/建筑安全修正；单位间重叠仍交给本 tick 的统一推挤。
-	if body_radius > old_body_radius and not _in_client_mode() and battle_context != null:
+	if (body_radius > old_body_radius or (was_air and not is_air)) and not _in_client_mode() and battle_context != null:
 		battle_context.ensure_unit_form_resize_safe(self)
 	queue_redraw()
 
@@ -894,6 +922,11 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false) -> void:
 		return
 	_prune_pending_extra_attacks()
 	_tick_active_statuses(dt)
+	# 限时形态按权威时间到期，硬控不延长增益；转场动作仍沿用硬控暂停规则。
+	if form_index == 1 and form_lifetime_left > 0.0 and not (form_lifetime_after_transition and form_transition_timer > 0.0):
+		form_lifetime_left = maxf(0.0, form_lifetime_left - dt)
+		if form_lifetime_left <= 0.000001:
+			transform_to_small()
 	_hit_flash_event_cooldown = maxf(0.0, _hit_flash_event_cooldown - dt)
 	_prev_pos = position
 	_move_intent = Vector2.ZERO
@@ -1572,7 +1605,9 @@ func _try_start_attack_visual(time_until_hit: float) -> void:
 	_attack_visual_serial += 1
 	# 可取消的连招以前用每次尝试的序号选片，取消一拳会令动作与伤害/间隔错位。
 	# 序号仍严格递增（快照/声音去重不变），余数对齐尚未结算的权威拳段。
-	if not attack_pattern.is_empty():
+	if not attack_passive_multipliers.is_empty():
+		_attack_visual_serial += posmod(_attack_swing_count - (_attack_visual_serial - 1), attack_passive_multipliers.size())
+	elif not attack_pattern.is_empty():
 		_attack_visual_serial += posmod(_attack_hit_index - (_attack_visual_serial - 1), attack_pattern.size())
 	elif not attack_extra_hit_damage_multipliers.is_empty():
 		_attack_visual_serial += posmod(_attack_hit_index - (_attack_visual_serial - 1), attack_extra_hit_damage_multipliers.size())
@@ -1588,9 +1623,12 @@ func _try_start_attack_visual(time_until_hit: float) -> void:
 func on_hit_passive_damage(target: Node2D) -> float:
 	if on_hit_max_health_ratio <= 0.0:
 		return 0.0
+	var multiplier := 1.0
+	if not attack_passive_multipliers.is_empty():
+		multiplier = float(attack_passive_multipliers[posmod(_attack_swing_count - 1, attack_passive_multipliers.size())])
 	if target is Tower:
-		return on_hit_tower_damage
-	return BattleNumbers.quantity(maxf(float(target.max_hp), 0.0) * on_hit_max_health_ratio)
+		return BattleNumbers.quantity(on_hit_tower_damage * multiplier)
+	return BattleNumbers.quantity(maxf(float(target.max_hp), 0.0) * on_hit_max_health_ratio * multiplier)
 
 func _deal_attack_damage(amount: float, effects: Dictionary = {}) -> void:
 	if _target == null or not is_instance_valid(_target):
@@ -1704,12 +1742,28 @@ func on_attack_landed(attack_form_index: int = -1, landed_damage: float = 0.0, s
 		queue_redraw()
 	add_skill_resource(skill_resource_hit_gain)
 	_try_heal_on_hit(submitted_swing)
-	_try_attack_lifesteal(landed_damage)
+	var cycle_ratio := 0.0
+	if not attack_lifesteal_ratios.is_empty():
+		var swing := submitted_swing if submitted_swing >= 0 else _attack_swing_count
+		cycle_ratio = float(attack_lifesteal_ratios[posmod(swing - 1, attack_lifesteal_ratios.size())])
+	_try_attack_lifesteal(landed_damage, cycle_ratio)
+
+func _refresh_form_speed_boost() -> void:
+	if form_speed_boost_duration > 0.0:
+		apply_active_buff(form_speed_boost_duration, form_speed_boost_multiplier, 1.0, 1.0)
 
 func on_enemy_killed(target: Node2D) -> void:
 	# 与 on_attack_landed 同理，在途弹体可以晚于攻击者死亡完成击杀。
 	if hp > 0.0 and target is Unit and target.team != team:
 		add_skill_resource(skill_resource_kill_gain)
+		if form_index == 1 and form_refresh_on_kill and form_lifetime_left > 0.0:
+			form_lifetime_left = form_lifetime
+			_refresh_form_speed_boost()
+			if battle_context != null:
+				battle_context.notify_unit_audio_event(self, &"form:refresh", get_visual_screen_position())
+			_attack_swing_count = 0
+			_attack_hit_index = 0
+			_attack_visual_pending = true
 
 ## 命中回血：每 heal_every_hits 次挥击中的命中回复 heal_amount 生命。
 ## 挥击序号与三段普攻动画循环对齐——第三击（Passive_AA_01）命中时回复。
@@ -1724,11 +1778,12 @@ func _try_heal_on_hit(submitted_swing: int = -1) -> void:
 		battle_context.notify_unit_audio_event(self, &"passive_heal", global_position)
 	queue_redraw()
 
-func _try_attack_lifesteal(landed_damage: float) -> void:
-	if attack_lifesteal_ratio <= 0.0 or landed_damage <= 0.0:
+func _try_attack_lifesteal(landed_damage: float, cycle_ratio: float = 0.0) -> void:
+	var ratio := attack_lifesteal_ratio + cycle_ratio
+	if ratio <= 0.0 or landed_damage <= 0.0:
 		return
 	var health_cap := BattleNumbers.quantity(max_hp * attack_lifesteal_max_health_ratio)
-	hp = minf(hp + BattleNumbers.quantity(landed_damage * attack_lifesteal_ratio), health_cap)
+	hp = minf(hp + BattleNumbers.quantity(landed_damage * ratio), health_cap)
 	queue_redraw()
 
 func freeze(duration: float) -> void:

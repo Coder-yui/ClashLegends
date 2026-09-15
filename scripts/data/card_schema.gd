@@ -98,7 +98,7 @@ const SIZE_RADII := {
 const PROJECTILE_VISUALS := [&"orb", &"arrow", &"needle", &"boomerang", &"ice_cone"]
 const VISUAL_SPAWN_TRANSITIONS := [&"drop", &"rebirth"]
 const SPELL_KINDS := [&"freeze", &"heal"]
-const ACTIVE_SKILL_KINDS := [&"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"continuous_area", &"empowered_attack", &"attack_lifesteal", &"area_shield", &"restoration_shield", &"spell_heal"]
+const ACTIVE_SKILL_KINDS := [&"timed_form", &"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"continuous_area", &"empowered_attack", &"attack_lifesteal", &"area_shield", &"restoration_shield", &"spell_heal"]
 const ACTIVE_SKILL_TARGET_SCOPES := [&"self", &"deployment_group"]
 const CAST_LOCKS := [&"movement", &"attack", &"facing"]
 const VISUAL_ACTION_KINDS := [&"deploy", &"transform", &"skill"]
@@ -128,6 +128,7 @@ const CARD_FIELDS := [
 	&"heal_every_hits", &"heal_amount", &"charge_time", &"charge_speed_multiplier",
 	&"on_hit_max_health_ratio", &"on_hit_tower_damage", &"charge_damage_multiplier", &"shroud_radius", &"attack_pattern", &"attack_damage_multipliers", &"first_strike_damage_multiplier",
 	&"attack_extra_hit_damage_multipliers", &"attack_extra_hit_delays",
+	&"attack_passive_multipliers", &"attack_lifesteal_ratios", &"form_lifetime", &"form_lifetime_after_transition", &"form_speed_boost_duration", &"form_speed_boost_multiplier", &"form_refresh_on_kill",
 	&"cancel_attack_recovery_without_target",
 	&"skill_resource_max", &"skill_resource_attack_gain", &"skill_resource_hit_gain", &"skill_resource_kill_gain", &"skill_resource_full_color",
 	&"skill_resource_damage_gain_multiplier", &"skill_resource_decay_delay", &"skill_resource_decay_rate",
@@ -142,8 +143,8 @@ const VISUAL_ANIMATION_FIELDS := [
 	&"stun_enter", &"stun_loop", &"stun_exit", &"deploy", &"deploy_durations", &"deploy_clip_ratio", &"idle", &"idle_cycle", &"move", &"move_enter", &"haste_move",
 	&"move_cycle", &"attack", &"attack_enter", &"attack_retarget_enter", &"attack_loop",
 	&"attack_clip_ranges", &"attack_hit_clip_ranges", &"attack_hit", &"attack_hit_duration", &"attack_recover", &"attack_recover_delay", &"attack_reference_interval",
-	&"attack_structure", &"attack_move", &"attack_to_move",
-	&"empowered_move", &"empowered_attack", &"empowered_attack_hit", &"empowered_attack_recover",
+	&"initial_move", &"attack_structure", &"attack_move", &"attack_to_move",
+	&"empowered_idle", &"empowered_move", &"empowered_attack", &"empowered_attack_hit", &"empowered_attack_recover",
 	&"empowered_attack_to_move", &"death", &"death_duration", &"death_clip_end",
 	&"death_followup_immediate", &"death_followup_scene_path", &"death_followup_animation", &"death_followup_duration", &"visual_actions",
 	&"visual_action_durations", &"transitions", &"transition_blends", &"clip_blends",

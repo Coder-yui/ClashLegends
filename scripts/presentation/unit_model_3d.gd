@@ -115,6 +115,14 @@ var _spawn_transition_base_position := Vector3.ZERO
 var _spawn_transition_start_scale := Vector3.ONE
 var _spawn_transition_base_scale := Vector3.ONE
 
+var _visual_air := false
+var _model_ground_height := 0.0
+var _model_air_height := 0.0
+var _height_transition := false
+var _height_from := 0.0
+var _height_to := 0.0
+var _height_elapsed := 0.0
+var _height_duration := -1.0
 var model_factory: Callable
 
 func setup(unit: Unit, packed: PackedScene, camera: Camera3D, animations: Dictionary, forward_yaw: float, buff_scene_path: String = "") -> bool:
@@ -131,27 +139,32 @@ func setup(unit: Unit, packed: PackedScene, camera: Camera3D, animations: Dictio
 	_attack_duration = maxf(unit.attack_interval, 0.05)
 	return replace_visual(packed, animations, forward_yaw, buff_scene_path)
 
-## 形态改变时只替换表现模型和动画映射；Unit 的权威位置、血量、碰撞与 net_id 不变。
+## 形态改变更新映射；支持原位换形的包装保留模型/播放器，其他单位仍替换模型。
 func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: float, buff_scene_path: String = "") -> bool:
 	# 死亡代理独立持有当前模型直到 Death 播完。即使权威层发生同帧晚到的
 	# form_changed，也不能替换掉死亡动画并留下一个永不再同步的静止模型。
 	if _dying:
 		return false
-	var instance: Node = model_factory.call(packed) if model_factory.is_valid() else packed.instantiate()
-	if not instance is Node3D:
-		push_warning("单位 3D 表现场景的根节点必须是 Node3D")
-		instance.queue_free()
-		return false
-	if _model_root != null and is_instance_valid(_model_root):
-		_model_root.hide()
-		_model_root.queue_free()
-	_model_root = instance as Node3D
+	var had_model := _model_root != null and is_instance_valid(_model_root)
+	var reuse := had_model and _model_root.has_method("set_visual_form") and _model_root.has_method("can_reuse_visual") and bool(_model_root.call("can_reuse_visual", packed.resource_path))
+	var previous_height := _model_root.position.y if had_model else 0.0
+	var air_changed := had_model and _visual_air != _source.is_air
+	if not reuse:
+		var instance: Node = model_factory.call(packed) if model_factory.is_valid() else packed.instantiate()
+		if not instance is Node3D:
+			instance.queue_free()
+			return false
+		if had_model:
+			_model_root.hide()
+			_model_root.queue_free()
+		_model_root = instance as Node3D
 	_animation_names = animations.duplicate(true)
 	_idle_transition_animation = &""
 	_forward_yaw = forward_yaw
 	_attack_duration = maxf(_source.attack_interval, 0.05)
-	_animation_player = null
-	_model_resources.clear()
+	if not reuse:
+		_animation_player = null
+		_model_resources.clear()
 	_current_state = -1
 	_pending_attack_serial = 0
 	_playing_attack = false
@@ -179,16 +192,30 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 	_last_clip_blend_time = 0.0
 	_last_empowered_ready = _source.is_empowered_attack_ready_visual()
 	_last_haste_active = _source.get_active_speed_multiplier_visual() > 1.001
-	add_child(_model_root)
-	# 空军统一把模型实际底部平移到默认离地高度；只改位置，不改变包装场景的任何缩放。
-	if _source.is_air:
+	if not reuse:
+		add_child(_model_root)
+		_model_ground_height = _model_root.position.y
 		_align_air_visual_elevation()
+		_model_air_height = _model_root.position.y
+	_model_root.position.y = _model_air_height if _source.is_air else _model_ground_height
+	if _model_root.has_method("set_visual_form"):
+		_model_root.call("set_visual_form", _source.get_form_index())
+	_visual_air = _source.is_air
+	_height_transition = air_changed
+	if air_changed:
+		_height_from = previous_height
+		_height_to = _model_root.position.y
+		_height_elapsed = 0.0
+		_height_duration = -1.0
+		_model_root.position.y = _height_from
 	_start_spawn_transition_if_needed()
 	if _model_root.has_method("prepare_visual_animations") and not _model_root.has_meta("prepared_model_resources"):
 		_model_root.call("prepare_visual_animations")
 	if _model_root.has_method("configure_unit_visual"):
 		_model_root.call("configure_unit_visual", _source)
-	if _model_root.has_meta("prepared_model_resources"):
+	if reuse:
+		pass # 保留播放器、骨骼姿势与混合历史。
+	elif _model_root.has_meta("prepared_model_resources"):
 		_model_resources = _model_root.get_meta("prepared_model_resources")
 		_animation_player = _model_root.get_meta("prepared_animation_player")
 		_model_root.remove_meta("prepared_model_resources")
@@ -200,11 +227,13 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 	if _animation_player == null:
 		push_warning("单位 3D 模型中未找到 AnimationPlayer")
 	else:
-		_animation_player.animation_finished.connect(_on_animation_finished)
+		if not _animation_player.animation_finished.is_connected(_on_animation_finished):
+			_animation_player.animation_finished.connect(_on_animation_finished)
 	_replace_active_buff_visual(buff_scene_path)
 	_configure_looping_animations()
 	_recreate_team_ring()
-	_sync_visual(true, 0.0)
+	if not reuse:
+		_sync_visual(true, 0.0)
 	_update_health_bar_anchor()
 	return true
 
@@ -216,6 +245,7 @@ func _process(delta: float) -> void:
 	if _source == null or not is_instance_valid(_source):
 		queue_free()
 		return
+	_tick_form_elevation(delta)
 	_tick_spawn_transition(delta)
 	if _sync_control_override():
 		_sync_transform(false, delta)
@@ -265,6 +295,26 @@ func _tick_spawn_transition(delta: float) -> void:
 		_model_root.scale = _spawn_transition_base_scale
 		_spawn_transition_active = false
 
+## 换形时继承正在显示的高度。属性已由权威层切换；升降只覆盖模型根偏移。
+func _tick_form_elevation(delta: float) -> void:
+	if not _height_transition:
+		return
+	if _height_duration < 0.0:
+		_height_duration = _source.get_visual_action_time_left()
+		# 本帧 delta 可能包含换形发生前的时间，首帧保留原高度。
+		delta = 0.0
+	if _height_duration <= 0.001:
+		_model_root.position.y = _height_to
+		_height_transition = false
+		return
+	if _state.frozen or _state.stunned:
+		return
+	_height_elapsed = minf(_height_elapsed + delta, _height_duration)
+	_model_root.position.y = lerpf(_height_from, _height_to, _height_elapsed / _height_duration)
+	if _height_elapsed >= _height_duration or _source.get_visual_action_time_left() <= 0.0:
+		_model_root.position.y = _height_to
+		_height_transition = false
+
 func _sync_transform(force: bool, delta: float) -> void:
 	var screen_position := _source.get_visual_screen_position()
 	var ground_position := _screen_to_ground(screen_position)
@@ -303,9 +353,9 @@ func _sync_visual(force: bool, delta: float) -> void:
 	var empowered_ready := _source.is_empowered_attack_ready_visual()
 	if empowered_ready != _last_empowered_ready:
 		_last_empowered_ready = empowered_ready
-		# 盖伦在移动中开启强化后同帧从普通 Run 切到 Spell1 Run；只换表现，不改位移。
-		if not _playing_visual_action and not _playing_attack and locomotion_state == 2:
-			_transition_to_basic_state(2, _transition_blend(&"locomotion"))
+		# 强化或循环被动就绪时，同步基础姿态；只换表现，不改位移。
+		if not _playing_visual_action and not _playing_attack and locomotion_state in [1, 2]:
+			_transition_to_basic_state(locomotion_state, _transition_blend(&"locomotion"))
 	var haste_active := _source.get_active_speed_multiplier_visual() > 1.001
 	if haste_active != _last_haste_active:
 		_last_haste_active = haste_active
@@ -409,7 +459,9 @@ func _seek_visual_action(elapsed: float) -> void:
 	if elapsed <= 0.001 or _action_sequence.current().is_empty():
 		return
 	var position := _action_sequence.seek(elapsed)
-	_play_visual_action_clip(StringName(_action_sequence.current().name))
+	var clip_name := StringName(_action_sequence.current().name)
+	if _active_visual_action != clip_name:
+		_play_visual_action_clip(clip_name)
 	_animation_player.seek(position, true)
 
 func _default_action_kind(action_name: StringName) -> StringName:
@@ -628,6 +680,10 @@ func _move_route_entry_blend(from_action: StringName, has_transition_clip: bool,
 	return _transition_blend(&"locomotion")
 
 func _move_animation_for_route(from_action: StringName) -> StringName:
+	if _source.get_attack_visual_serial() == 0 and maxi(_source.form_change_serial, _source.net_form_change_serial) == 0:
+		var initial_move := _first_valid_animation("initial_move")
+		if initial_move != &"":
+			return initial_move
 	if _source.get_active_speed_multiplier_visual() > 1.001:
 		var haste_move := _first_valid_animation("haste_move")
 		if haste_move != &"":
@@ -795,6 +851,10 @@ func _play_state(state: int, blend_time: float = -1.0) -> void:
 	if state != 2:
 		_move_override_animation = &""
 	var configured = _move_override_animation if state == 2 and _move_override_animation != &"" else _animation_names.get(String(key), "")
+	if state == 1 and _source.is_empowered_attack_ready_visual():
+		var empowered_idle := _first_valid_animation("empowered_idle")
+		if empowered_idle != &"":
+			configured = empowered_idle
 	if state == 2 and _source.get_active_speed_multiplier_visual() > 1.001:
 		var haste_move := _first_valid_animation("haste_move")
 		if haste_move != &"":
@@ -1101,7 +1161,7 @@ func _configure_looping_animations() -> void:
 			var move_animation := _animation_player.get_animation(move_name)
 			if move_animation != null:
 				move_animation.loop_mode = Animation.LOOP_LINEAR
-	for key in ["attack_move", "empowered_move", "haste_move"]:
+	for key in ["initial_move", "attack_move", "empowered_idle", "empowered_move", "haste_move"]:
 		for value in _animation_list(key):
 			var routed_move := StringName(value)
 			if routed_move != &"" and _animation_player.has_animation(routed_move):

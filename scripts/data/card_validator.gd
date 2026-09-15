@@ -226,6 +226,23 @@ static func _validate_audio_path_pool(label: String, configured: Variant, errors
 
 static func _validate_combat_stats(label: String, stats: Dictionary, require_size_tier: bool, errors: PackedStringArray) -> void:
 	if not SHAPES.validate(label, stats, errors): return
+	for field in ["attack_passive_multipliers", "attack_lifesteal_ratios"]:
+		if not stats.has(field): continue
+		var values: Array = stats[field]
+		if values.is_empty() or values.any(func(value): return float(value) < 0.0 or float(value) > 1.0):
+			errors.append("%s.%s: 需要非空的 0..1 比例数组" % [label, field])
+		if float(stats.get("projectile_speed", 0.0)) > 0.0 or float(stats.get("splash_radius", 0.0)) > 0.0 or bool(stats.get("is_continuous_attack", false)) or not stats.get("attack_extra_hit_damage_multipliers", []).is_empty():
+			errors.append("%s.%s: 当前仅支持无追加刀的单体近战" % [label, field])
+	if stats.has("attack_lifesteal_ratios") and stats.get("attack_lifesteal_ratios", []).size() != stats.get("attack_passive_multipliers", []).size():
+		errors.append("%s.attack_lifesteal_ratios: 必须与被动循环等长" % label)
+	var cycle_animations = stats.get("visual_animations", {}).get("attack", [])
+	var cycle_animation_count: int = cycle_animations.size() if cycle_animations is Array else 1
+	if stats.has("attack_passive_multipliers") and cycle_animation_count != stats.attack_passive_multipliers.size():
+		errors.append("%s.attack_passive_multipliers: 必须与攻击动作等长" % label)
+	if float(stats.get("form_speed_boost_duration", 0.0)) < 0.0 or float(stats.get("form_speed_boost_multiplier", 1.0)) < 1.0:
+		errors.append("%s: 形态加速时长必须非负，倍率至少为1" % label)
+	if float(stats.get("form_lifetime", 0.0)) < 0.0 or (bool(stats.get("form_refresh_on_kill", false)) and float(stats.get("form_lifetime", 0.0)) <= 0.0):
+		errors.append("%s.form_lifetime: 刷新形态需要正数持续时间" % label)
 	for field in [&"on_hit_max_health_ratio", &"on_hit_tower_damage"]:
 		if stats.has(field) and (not (stats[field] is float or stats[field] is int) or not is_finite(float(stats[field])) or float(stats[field]) < 0.0):
 			errors.append("%s.%s: 必须为非负有限数值" % [label, field])
@@ -462,7 +479,7 @@ static func _validate_visual_config(label: String, stats: Dictionary, errors: Pa
 					errors.append("%s.visual_animations.clip_blends.%s: 必须是有限非负秒数" % [label, edge])
 	for state in [
 		&"deploy", &"idle", &"idle_cycle", &"move", &"move_enter", &"haste_move", &"move_cycle", &"attack", &"attack_hit", &"attack_recover",
-		&"attack_structure", &"attack_move", &"attack_to_move", &"empowered_move", &"empowered_attack",
+		&"initial_move", &"attack_structure", &"attack_move", &"attack_to_move", &"empowered_idle", &"empowered_move", &"empowered_attack",
 		&"empowered_attack_hit", &"empowered_attack_recover", &"empowered_attack_to_move",
 	]:
 		if not animations.has(state):
@@ -632,6 +649,9 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 			errors.append("%s.cooldown: 必须 >= 0" % label)
 		match kind:
 			&"nova": _require_fields(label, skill, [&"radius", &"damage"], errors)
+			&"timed_form":
+				if stats.get("transformed_stats", {}).is_empty() or float(stats.get("form_lifetime", 0.0)) <= 0.0:
+					errors.append("%s: 限时变形需要 transformed_stats 与正数 form_lifetime" % label)
 			&"buff": _require_fields(label, skill, [&"duration"], errors)
 			&"restoration_shield":
 				_require_fields(label, skill, [&"shield", &"shield_duration"], errors)

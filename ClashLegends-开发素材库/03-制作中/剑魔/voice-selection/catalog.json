@@ -1,0 +1,1739 @@
+{
+  "metadata_sources": [
+    "https://api.buguoguo.cn/lol-voice/v1/champions/266",
+    "https://api.buguoguo.cn/lol-voice/v1/champions/266/000?GameVersion=latest"
+  ],
+  "info": {
+    "info": {
+      "id": "266",
+      "alias": "Aatrox",
+      "name": "暗裔剑魔",
+      "title": "亚托克斯"
+    },
+    "select": {
+      "choose": "聆听灭绝的死寂吧！",
+      "ban": "让我带来终结。"
+    },
+    "version": [
+      "latest",
+      "8.12"
+    ],
+    "skins": [
+      "266000",
+      "266001",
+      "266002",
+      "266011",
+      "266021",
+      "266033"
+    ],
+    "netdisk": [
+      "https://pan.baidu.com",
+      "https://pan.quark.cn"
+    ]
+  },
+  "skin": {
+    "info": {
+      "id": "266",
+      "skin": "000",
+      "version": "latest",
+      "language": "zh-CN",
+      "updatateTime": "1754124266"
+    },
+    "events": {
+      "Play_vo_Aatrox_FirstEncounter3DTargon": {
+        "name": "初遇:",
+        "voices": [
+          "95C43DB4"
+        ]
+      },
+      "Play_vo_Aatrox_Kill3DMorgana": {
+        "name": "击杀:英雄:莫甘娜",
+        "voices": [
+          "CE9E70F5"
+        ]
+      },
+      "Play_vo_Aatrox_Kill3DAnivia": {
+        "name": "击杀:英雄:艾尼维亚",
+        "voices": [
+          "F1C9C3F1"
+        ]
+      },
+      "Play_vo_Aatrox_FirstEncounter3DVoid": {
+        "name": "初遇:地区:虚空",
+        "voices": [
+          "5C4BAF65"
+        ]
+      },
+      "Play_vo_Aatrox_Kill3DNautilus": {
+        "name": "击杀:英雄:诺提勒斯",
+        "voices": [
+          "EF0B9A3C"
+        ]
+      },
+      "Play_vo_Aatrox_FirstEncounter3DRiven": {
+        "name": "初遇:英雄:锐雯",
+        "voices": [
+          "77EB352C"
+        ]
+      },
+      "Play_vo_Aatrox_AatroxW_cast3D": {
+        "name": "使用:W恶火束链",
+        "voices": [
+          "8EDE2EFF",
+          "EA52F33B",
+          "48CE0323"
+        ]
+      },
+      "Play_vo_Aatrox_FirstEncounter3DZoe": {
+        "name": "初遇:英雄:佐伊",
+        "voices": [
+          "D88C1EDA"
+        ]
+      },
+      "Play_vo_Aatrox_FirstEncounter3DNasus": {
+        "name": "初遇:英雄:内瑟斯",
+        "voices": [
+          "E553620E"
+        ]
+      },
+      "Play_vo_Aatrox_Kill3DGangplank": {
+        "name": "击杀:英雄:普朗克",
+        "voices": [
+          "F3F68A30"
+        ]
+      },
+      "Play_vo_Aatrox_Kill3DAatrox": {
+        "name": "击杀:英雄:亚托克斯",
+        "voices": [
+          "1D59D9A8"
+        ]
+      },
+      "Play_vo_Aatrox_FirstEncounter3DMaokai": {
+        "name": "初遇:英雄:茂凯",
+        "voices": [
+          "5C097BE1"
+        ]
+      },
+      "Play_vo_Aatrox_FirstEncounter3DGaren": {
+        "name": "初遇:英雄:盖伦",
+        "voices": [
+          "3803D113"
+        ]
+      },
+      "Play_vo_Aatrox_FirstEncounter3DMundo": {
+        "name": "初遇:",
+        "voices": [
+          "BC2DD88C"
+        ]
+      },
+      "Play_vo_Aatrox_FirstEncounter3DKennen": {
+        "name": "初遇:英雄:凯南",
+        "voices": [
+          "4A22C585"
+        ]
+      },
+      "Play_vo_Aatrox_FirstEncounter3DMorgana": {
+        "name": "初遇:英雄:莫甘娜",
+        "voices": [
+          "8E973A0E"
+        ]
+      },
+      "Play_vo_Aatrox_FirstEncounter3DYorick": {
+        "name": "初遇:英雄:约里克",
+        "voices": [
+          "17338116"
+        ]
+      },
+      "Play_vo_Aatrox_FirstEncounter3DFiora": {
+        "name": "初遇:英雄:菲奥娜",
+        "voices": [
+          "63D78B84"
+        ]
+      },
+      "Play_vo_Aatrox_Kill3DFiora": {
+        "name": "击杀:英雄:菲奥娜",
+        "voices": [
+          "DCDE0F13"
+        ]
+      },
+      "Play_vo_Aatrox_FirstEncounter3DTeemo": {
+        "name": "初遇:英雄:提莫",
+        "voices": [
+          "AB397F0F"
+        ]
+      },
+      "Play_vo_Aatrox_Laugh3DGeneral": {
+        "name": "大笑",
+        "voices": [
+          "7B778F27",
+          "50D8CDE2",
+          "87DD0D3E"
+        ]
+      },
+      "Play_vo_Aatrox_FirstEncounter3DIllaoi": {
+        "name": "初遇:英雄:俄洛伊",
+        "voices": [
+          "FF6F0908"
+        ]
+      },
+      "Play_vo_Aatrox_Kill3DCamille": {
+        "name": "击杀:英雄:卡蜜尔",
+        "voices": [
+          "7BB11044"
+        ]
+      },
+      "Play_vo_Aatrox_FirstEncounter3DGalio": {
+        "name": "初遇:英雄:加里奥",
+        "voices": [
+          "84C81862"
+        ]
+      },
+      "Play_vo_Aatrox_AatroxR_cast3D": {
+        "name": "使用:R大灭",
+        "voices": [
+          "23A62D02",
+          "CE03EC2C",
+          "347BCCA6",
+          "86D1CE5E",
+          "0CDC0CC3",
+          "12195D77",
+          "305EDFCE",
+          "0711D480"
+        ]
+      },
+      "Play_vo_Aatrox_FirstEncounter3DVarus": {
+        "name": "初遇:英雄:韦鲁斯",
+        "voices": [
+          "FD5915C5",
+          "14943D88",
+          "D55ECCD4"
+        ]
+      },
+      "Play_vo_Aatrox_Attack2DZoe": {
+        "name": "攻击:英雄:佐伊",
+        "voices": [
+          "86667F25",
+          "DC3088AB"
+        ]
+      },
+      "Play_vo_Aatrox_FirstEncounter3DCamille": {
+        "name": "初遇:英雄:卡蜜尔",
+        "voices": [
+          "79BC6EAD"
+        ]
+      },
+      "Play_vo_Aatrox_Kill3DMaokai": {
+        "name": "击杀:英雄:茂凯",
+        "voices": [
+          "DFF22344"
+        ]
+      },
+      "Play_vo_Aatrox_Kill3DOrnn": {
+        "name": "击杀:英雄:奥恩",
+        "voices": [
+          "80CB8CFB"
+        ]
+      },
+      "Play_vo_Aatrox_FirstEncounter3DTaric": {
+        "name": "初遇:英雄:塔里克",
+        "voices": [
+          "497CF06C"
+        ]
+      },
+      "Play_vo_Aatrox_Move2DStandard": {
+        "name": "移动",
+        "voices": [
+          "7BC4FA8D",
+          "D8193C23",
+          "4887D96E",
+          "52A18EF7",
+          "C9330AC4",
+          "9B53E946",
+          "7071817D",
+          "F1257E70",
+          "E2B05820",
+          "620D23F0",
+          "9E5EABD5",
+          "D5FAD397",
+          "3FDDE517",
+          "A61C3107",
+          "8D8AA7E9",
+          "ECF4E604",
+          "FA98E0D9",
+          "35F352AF",
+          "A75C1D13",
+          "0015E0AE",
+          "E525C771",
+          "C7941D8D",
+          "EB32542E",
+          "6BEAB32D",
+          "E99794A9",
+          "A06C13B3",
+          "99908EBF",
+          "94ED2872",
+          "9A5F6B9A",
+          "57E76ABD",
+          "D283D6E8",
+          "0409BAC0",
+          "6342EC07",
+          "448DFA7B"
+        ]
+      },
+      "Play_vo_Aatrox_FirstEncounter3DTryndamere": {
+        "name": "初遇:英雄:泰达米尔",
+        "voices": [
+          "6AFC9551",
+          "EF72D5D2",
+          "05025BC9",
+          "774D4B2C"
+        ]
+      },
+      "Play_vo_Aatrox_FirstEncounter3DRumble": {
+        "name": "初遇:英雄:兰博",
+        "voices": [
+          "A41D4153"
+        ]
+      },
+      "Play_vo_Aatrox_FirstEncounter3DAkali": {
+        "name": "初遇:英雄:阿卡丽",
+        "voices": [
+          "26E98B75"
+        ]
+      },
+      "Play_vo_Aatrox_Attack2DTryndamere": {
+        "name": "攻击:英雄:泰达米尔",
+        "voices": [
+          "B9E382F2",
+          "3146B3B4"
+        ]
+      },
+      "Play_vo_Aatrox_Kill3DTaric": {
+        "name": "击杀:英雄:塔里克",
+        "voices": [
+          "76D2649F"
+        ]
+      },
+      "Play_vo_Aatrox_Kill3DDarius": {
+        "name": "击杀:英雄:德莱厄斯",
+        "voices": [
+          "C50D7362"
+        ]
+      },
+      "Play_vo_Aatrox_FirstEncounter3DMalphite": {
+        "name": "初遇:英雄:墨菲特",
+        "voices": [
+          "2DD573CF"
+        ]
+      },
+      "Play_vo_Aatrox_Kill3DIllaoi": {
+        "name": "击杀:英雄:俄洛伊",
+        "voices": [
+          "05DF4521"
+        ]
+      },
+      "Play_vo_Aatrox_AatroxE_cast3D": {
+        "name": "使用:E暗影冲决",
+        "voices": [
+          "B085CBB2",
+          "3273BF7D"
+        ]
+      },
+      "Play_vo_Aatrox_Kill3DTryndamere": {
+        "name": "击杀:英雄:泰达米尔",
+        "voices": [
+          "0B7732A3"
+        ]
+      },
+      "Play_vo_Aatrox_UseItem3DGuardianAngelR": {
+        "name": "使用:道具:英雄:黛安娜:",
+        "voices": [
+          "0240B1A3",
+          "70A70D4A",
+          "E3D9FD45",
+          "E4434444",
+          "D01F9AE1",
+          "4B8F874C",
+          "BB94B8F5",
+          "63824C5D",
+          "14A13E7B",
+          "140BCBEF",
+          "EAE20AE4",
+          "52D8F951",
+          "CE5FCFD3",
+          "AE5BEBBB",
+          "DD0ACA9F",
+          "FF1B7EEB"
+        ]
+      },
+      "Play_vo_Aatrox_FirstEncounter3DOrnn": {
+        "name": "初遇:英雄:奥恩",
+        "voices": [
+          "0250FE28"
+        ]
+      },
+      "Play_vo_Aatrox_Attack2DPantheon": {
+        "name": "攻击:英雄:潘森",
+        "voices": [
+          "23376011",
+          "65ACBC5C"
+        ]
+      },
+      "Play_vo_Aatrox_Move2DFirstPantheon": {
+        "name": "移动:初次:英雄:潘森",
+        "voices": [
+          "F29CF105",
+          "794DBF73",
+          "CD3553B2"
+        ]
+      },
+      "Play_vo_Aatrox_FirstEncounter3DKaisa": {
+        "name": "初遇:英雄:卡莎",
+        "voices": [
+          "0A5A74EF"
+        ]
+      },
+      "Play_vo_Aatrox_AatroxQ2_cast3D": {
+        "name": "使用:Q暗裔利刃",
+        "voices": [
+          "150A933B",
+          "3AEC6B5F",
+          "3FA39BBF",
+          "38F2C468",
+          "E314D784",
+          "0E299008"
+        ]
+      },
+      "Play_vo_Aatrox_Kill3DPantheon": {
+        "name": "击杀:英雄:潘森",
+        "voices": [
+          "E7D1BCC5"
+        ]
+      },
+      "Play_vo_Aatrox_FirstEncounter3DNautilus": {
+        "name": "初遇:英雄:诺提勒斯",
+        "voices": [
+          "04566D40"
+        ]
+      },
+      "Play_vo_Aatrox_FirstEncounter3DShen": {
+        "name": "初遇:英雄:慎",
+        "voices": [
+          "9FF3D633"
+        ]
+      },
+      "Play_vo_Aatrox_Move2DLong": {
+        "name": "移动:长途",
+        "voices": [
+          "3D692F66",
+          "651CE426",
+          "71131F72",
+          "EA0BE3E6",
+          "11313A7C",
+          "66AB6FF5",
+          "14E59488",
+          "3F2BBEC0",
+          "A846AE92",
+          "740CC0FB",
+          "29E08C02",
+          "40564C04",
+          "E92E2C7C",
+          "AD4A29C7",
+          "0DD7840A",
+          "EFF6873D",
+          "757ADDEF",
+          "9538A2C0",
+          "6429FB8E",
+          "D5E7D70E",
+          "D0D9CD67",
+          "79E8638B",
+          "D90CBB8E",
+          "77E229FD",
+          "C5FC7A2E"
+        ]
+      },
+      "Play_vo_Aatrox_Attack2DGeneral": {
+        "name": "攻击:英雄",
+        "voices": [
+          "A00C1F66",
+          "AF7BFC8C",
+          "17E429C5",
+          "92A18DF2",
+          "43B96257",
+          "CC857C1A",
+          "D73F4947",
+          "28F3AA9D",
+          "88215700",
+          "5FCB3485",
+          "2459CC63",
+          "05BC363D",
+          "44531F4F",
+          "0CD93D2C",
+          "CAC1CDB8",
+          "1787DD71",
+          "2E8201D5",
+          "08435F76",
+          "C04B919E",
+          "D16675A1",
+          "9DC20613"
+        ]
+      },
+      "Play_vo_Aatrox_FirstEncounter3DGangplank": {
+        "name": "初遇:英雄:普朗克",
+        "voices": [
+          "2B124811"
+        ]
+      },
+      "Play_vo_Aatrox_Kill3DRiven": {
+        "name": "击杀:英雄:锐雯",
+        "voices": [
+          "E05E6F90"
+        ]
+      },
+      "Play_vo_Aatrox_FirstEncounter3DSion": {
+        "name": "初遇:英雄:赛恩",
+        "voices": [
+          "AB2AF452"
+        ]
+      },
+      "Play_vo_Aatrox_Kill3DKayn": {
+        "name": "击杀:英雄:凯隐",
+        "voices": [
+          "2F040162"
+        ]
+      },
+      "Play_vo_Aatrox_FirstEncounter3DAnivia": {
+        "name": "初遇:英雄:艾尼维亚",
+        "voices": [
+          "4F766770"
+        ]
+      },
+      "Play_vo_Aatrox_FirstEncounter3DKayle": {
+        "name": "初遇:英雄:凯尔",
+        "voices": [
+          "31ECBEF7"
+        ]
+      },
+      "Play_vo_Aatrox_MasteryResponse3DGeneral": {
+        "name": "回应:",
+        "voices": [
+          "EEE9E3A2",
+          "9830E618",
+          "99C6AAA5",
+          "1017CF8E",
+          "A9019FAF"
+        ]
+      },
+      "Play_vo_Aatrox_Move2DRReady": {
+        "name": "移动:",
+        "voices": [
+          "682F2DD1",
+          "E82B5246",
+          "ED5C76BD",
+          "539BD8EF",
+          "122BB4D4",
+          "E9B5265E",
+          "B5619CCF",
+          "1D949C13",
+          "3CD8BB29",
+          "252D573C",
+          "EBCC84CB",
+          "42AD1754",
+          "55D77BBB",
+          "B32EE1DE"
+        ]
+      },
+      "Play_vo_Aatrox_FirstEncounter3DDarius": {
+        "name": "初遇:英雄:德莱厄斯",
+        "voices": [
+          "9BAB0F21"
+        ]
+      },
+      "Play_vo_Aatrox_Kill3DZoe": {
+        "name": "击杀:英雄:佐伊",
+        "voices": [
+          "EA6BEB7A"
+        ]
+      },
+      "Play_vo_Aatrox_Kill3DKaisa": {
+        "name": "击杀:英雄:卡莎",
+        "voices": [
+          "CF4ECE1C"
+        ]
+      },
+      "Play_vo_Aatrox_Taunt3DGeneral": {
+        "name": "嘲讽",
+        "voices": [
+          "9A9D043C",
+          "36CC23C9",
+          "C4C5A2CF"
+        ]
+      },
+      "Play_vo_Aatrox_Kill3DVarus": {
+        "name": "击杀:英雄:韦鲁斯",
+        "voices": [
+          "0312CFBE",
+          "60796788"
+        ]
+      },
+      "Play_vo_Aatrox_Joke3DGeneral": {
+        "name": "玩笑",
+        "voices": [
+          "AB4DF8BB",
+          "E98FD1CF",
+          "6077206A"
+        ]
+      },
+      "Play_vo_Aatrox_AatroxQ3_cast3D": {
+        "name": "使用:Q暗裔利刃",
+        "voices": [
+          "150A933B",
+          "3AEC6B5F",
+          "3FA39BBF",
+          "38F2C468",
+          "E314D784",
+          "0E299008"
+        ]
+      },
+      "Play_vo_Aatrox_Kill3DKled": {
+        "name": "击杀:英雄:克烈",
+        "voices": [
+          "9DACEDA5"
+        ]
+      },
+      "Play_vo_Aatrox_Kill3DNasus": {
+        "name": "击杀:英雄:内瑟斯",
+        "voices": [
+          "5148A1C5"
+        ]
+      },
+      "Play_vo_Aatrox_Kill3DGaren": {
+        "name": "击杀:英雄:盖伦",
+        "voices": [
+          "7C1FB74E"
+        ]
+      },
+      "Play_vo_Aatrox_Kill3DKayle": {
+        "name": "击杀:英雄:凯尔",
+        "voices": [
+          "FC929559"
+        ]
+      },
+      "Play_vo_Aatrox_FirstEncounter3DPantheon": {
+        "name": "初遇:英雄:潘森",
+        "voices": [
+          "B68F979C",
+          "44DB484E",
+          "AAE4826F"
+        ]
+      },
+      "Play_vo_Aatrox_FirstEncounter3DGeneral": {
+        "name": "初遇:英雄",
+        "voices": [
+          "6B40099D",
+          "877E13EC",
+          "BEE8E091",
+          "48BAB71D",
+          "2A639934",
+          "BDF71D15"
+        ]
+      },
+      "Play_vo_Aatrox_FirstEncounter3DQuinn": {
+        "name": "初遇:英雄:奎因",
+        "voices": [
+          "BB9FBB33"
+        ]
+      },
+      "Play_vo_Aatrox_Kill3DSion": {
+        "name": "击杀:英雄:赛恩",
+        "voices": [
+          "E8C106A3"
+        ]
+      },
+      "Play_vo_Aatrox_Death3D": {
+        "name": "阵亡",
+        "voices": [
+          "5765CE25",
+          "5B101198",
+          "C6823024"
+        ]
+      },
+      "Play_vo_Aatrox_Kill3DGeneral": {
+        "name": "击杀:英雄",
+        "voices": [
+          "3250BDDD",
+          "A2E7D466",
+          "9AF260C0",
+          "A2563727",
+          "45CF464F",
+          "409DF62F",
+          "2490830E",
+          "80535C03",
+          "8769BC5F",
+          "F0737A13",
+          "CF1DCEBB",
+          "75297382"
+        ]
+      },
+      "Play_vo_Aatrox_Kill3DMalphite": {
+        "name": "击杀:英雄:墨菲特",
+        "voices": [
+          "737B81EF"
+        ]
+      },
+      "Play_vo_Aatrox_Kill3DTeemo": {
+        "name": "击杀:英雄:提莫",
+        "voices": [
+          "4036852C"
+        ]
+      },
+      "Play_vo_Aatrox_AatroxQ_cast3D": {
+        "name": "使用:Q暗裔利刃",
+        "voices": [
+          "150A933B",
+          "3AEC6B5F",
+          "3FA39BBF",
+          "38F2C468",
+          "E314D784",
+          "0E299008"
+        ]
+      },
+      "Play_vo_Aatrox_FirstEncounter3DTrundle": {
+        "name": "初遇:英雄:特朗德尔",
+        "voices": [
+          "80A03933"
+        ]
+      },
+      "Play_vo_Aatrox_Kill3DShen": {
+        "name": "击杀:英雄:慎",
+        "voices": [
+          "36D0AC25"
+        ]
+      },
+      "Play_vo_Aatrox_FirstEncounter3DJax": {
+        "name": "初遇:英雄:贾克斯",
+        "voices": [
+          "E12CFC49"
+        ]
+      },
+      "Play_vo_Aatrox_FirstEncounter3DKled": {
+        "name": "初遇:英雄:克烈",
+        "voices": [
+          "6D665453"
+        ]
+      },
+      "Play_vo_Aatrox_FirstEncounter3DKayn": {
+        "name": "初遇:英雄:凯隐",
+        "voices": [
+          "481D7D49",
+          "697A07EA",
+          "AA5F0C1D",
+          "8F2FF1C4"
+        ]
+      },
+      "Play_vo_Aatrox_FirstEncounter3DRenekton": {
+        "name": "初遇:英雄:雷克顿",
+        "voices": [
+          "8D94EEDD"
+        ]
+      }
+    },
+    "transcript": {
+      "17338116": {
+        "text": "我送你的不是死亡约里克，我带来的是万物，归于虚无。",
+        "checked": true
+      },
+      "23376011": {
+        "text": "星灵的力量，浪费在蠢货身上。",
+        "checked": true
+      },
+      "60796788": {
+        "text": "回到你的牢笼中吧韦鲁斯，忏悔你的无能。",
+        "checked": true
+      },
+      "75297382": {
+        "text": "新仇旧恨，一起算。",
+        "checked": true
+      },
+      "88215700": {
+        "text": "来！啊！命运在等待。",
+        "checked": true
+      },
+      "0015E0AE": {
+        "text": "我的心中存有黑暗，比任何黑影都更深邃。",
+        "checked": true
+      },
+      "0240B1A3": {
+        "text": "我！不~死！",
+        "checked": true
+      },
+      "0250FE28": {
+        "text": "伟大的奥恩，火焰与锻造之神（亚托克斯 大笑）我是亚托克斯，我是弑神者。",
+        "checked": true
+      },
+      "0312CFBE": {
+        "text": "说真的，一把弓和两个小伙子，你打算做什么韦鲁斯？",
+        "checked": true
+      },
+      "0409BAC0": {
+        "text": "那些视我为敌的人，来者不拒。",
+        "checked": true
+      },
+      "04566D40": {
+        "text": "你的高尚目标让我发笑诺提勒斯，和我战斗，见证真正的死亡。",
+        "checked": true
+      },
+      "05025BC9": {
+        "text": "记住你族人的惨叫声吧，泰达米尔，他们将陪伴你倒在我的脚下。",
+        "checked": true
+      },
+      "05BC363D": {
+        "text": "你想对抗我？来，我让你见识地狱。",
+        "checked": true
+      },
+      "05DF4521": {
+        "text": "迟早有一天，俄洛伊，即使是你的神，也能被我杀死。",
+        "checked": true
+      },
+      "0711D480": {
+        "text": "我给你带来胜利。",
+        "checked": true
+      },
+      "08435F76": {
+        "text": "暴力，能让我暂时忘记这枷锁。",
+        "checked": true
+      },
+      "0A5A74EF": {
+        "text": "你要冲到我面前吗？卡莎。多么愚蠢的战术，来，开始吧。",
+        "checked": true
+      },
+      "0B7732A3": {
+        "text": "我原打算把你当做下一个宿主，泰达米尔，可惜你连奴隶都不配做。",
+        "checked": true
+      },
+      "0CD93D2C": {
+        "text": "曾经我求死不得，如今我赐死不懈。",
+        "checked": true
+      },
+      "0CDC0CC3": {
+        "text": "（亚托克斯 怒吼）",
+        "checked": true
+      },
+      "0DD7840A": {
+        "text": "我曾触摸过星辰，曾见证过数千个太阳的光芒，而如今我被这优雅蒙蔽了双眼，所以我的目标怎可能不黑暗？",
+        "checked": true
+      },
+      "0E299008": {
+        "text": "（亚托克斯 暗裔利刃语气）",
+        "checked": true
+      },
+      "1017CF8E": {
+        "text": "不知为何，我怀疑你是自卑能力的大师。",
+        "checked": true
+      },
+      "11313A7C": {
+        "text": "那些天堂，那些无穷无尽、层层套叠的天空，他们在哪里？",
+        "checked": true
+      },
+      "122BB4D4": {
+        "text": "一群蛆虫，世界的终结者已经降临。",
+        "checked": true
+      },
+      "140BCBEF": {
+        "text": "我，是不朽者。",
+        "checked": true
+      },
+      "14943D88": {
+        "text": "你用以终结世界的，是一张弓？",
+        "checked": true
+      },
+      "14A13E7B": {
+        "text": "你认为你能杀掉我吗？",
+        "checked": true
+      },
+      "14E59488": {
+        "text": "被诡计陷害到这般模样，被困在无尽寿命中的肮脏奴隶。我要成为吞噬毁灭的野兽，让他们用挽歌，纪念我邪恶的降生。",
+        "checked": true
+      },
+      "1787DD71": {
+        "text": "来，我让你见识黑暗。",
+        "checked": true
+      },
+      "17E429C5": {
+        "text": "战斗吧，与我相会于死地。",
+        "checked": true
+      },
+      "1D59D9A8": {
+        "text": "我不需要炫耀我的技艺，一切不言自明。",
+        "checked": true
+      },
+      "1D949C13": {
+        "text": "一切都得死！世界的终结者在等待。",
+        "checked": true
+      },
+      "23A62D02": {
+        "text": "化身为！憎恨！",
+        "checked": true
+      },
+      "2459CC63": {
+        "text": "我要把你这肮脏的躯体砍断！切开！剁碎！",
+        "checked": true
+      },
+      "2490830E": {
+        "text": "我要的只是安静。",
+        "checked": true
+      },
+      "252D573C": {
+        "text": "杀戮，憎恨，是的，我是世界的终结者。",
+        "checked": true
+      },
+      "26E98B75": {
+        "text": "耍花招吗？阿卡丽，你是躲不掉的，接受毁灭吧。",
+        "checked": true
+      },
+      "28F3AA9D": {
+        "text": "杀戮。",
+        "checked": true
+      },
+      "29E08C02": {
+        "text": "我原本最出众的形态被彻底抹除，用这些粗糙的材料拙劣的重构，但这丑恶的肉身足以用于我的杀人意图。",
+        "checked": true
+      },
+      "2A639934": {
+        "text": "来，和我战斗。",
+        "checked": true
+      },
+      "2B124811": {
+        "text": "火枪和柑橘？你是老古董还是开玩笑？来吧，战斗，受死。",
+        "checked": true
+      },
+      "2DD573CF": {
+        "text": "你的头在哪儿？我要砍的脖子在哪儿？",
+        "checked": true
+      },
+      "2F040162": {
+        "text": "我拒绝与不敌之人称兄道弟。",
+        "checked": true
+      },
+      "305EDFCE": {
+        "text": "（亚托克斯 怒吼）",
+        "checked": true
+      },
+      "3146B3B4": {
+        "text": "我屠光了你的部族，现在去找他们吧。",
+        "checked": true
+      },
+      "31ECBEF7": {
+        "text": "让我告诉你错在哪儿，凯尔，你不配飞升，你甚至不配为蛆虫。",
+        "checked": true
+      },
+      "3250BDDD": {
+        "text": "你死的好蠢。",
+        "checked": true
+      },
+      "3273BF7D": {
+        "text": "（亚托克斯 语气）",
+        "checked": true
+      },
+      "347BCCA6": {
+        "text": "战斗！否则就被遗忘！",
+        "checked": true
+      },
+      "35F352AF": {
+        "text": "跪下你们这些凡人，让我剔干净你的脊梁。",
+        "checked": true
+      },
+      "36CC23C9": {
+        "text": "我是暗裔，我不死！",
+        "checked": true
+      },
+      "36D0AC25": {
+        "text": "死吧慎，暮光之眼已被戳瞎挖空。",
+        "checked": true
+      },
+      "3803D113": {
+        "text": "再喊最后一次德玛西亚，盖伦。然后，我就将你和它一起碾碎。",
+        "checked": true
+      },
+      "38F2C468": {
+        "text": "（亚托克斯 暗裔利刃语气）",
+        "checked": true
+      },
+      "3AEC6B5F": {
+        "text": "（亚托克斯 暗裔利刃语气）",
+        "checked": true
+      },
+      "3CD8BB29": {
+        "text": "现在，我就是世界的终结者。",
+        "checked": true
+      },
+      "3D692F66": {
+        "text": "但愿，今天我能遇到些许挑战，让我可以掏出他们的心脏，但愿我能看着他们死去，让他们在临死前知道自己，正中我的下怀。",
+        "checked": true
+      },
+      "3F2BBEC0": {
+        "text": "我从不服从，我从不倒下，我！将成为一切的终结！",
+        "checked": true
+      },
+      "3FA39BBF": {
+        "text": "（亚托克斯 暗裔利刃语气）",
+        "checked": true
+      },
+      "3FDDE517": {
+        "text": "（亚托克斯 轻蔑的笑）他们的挽歌应该唱我的名字。",
+        "checked": true
+      },
+      "4036852C": {
+        "text": "懦弱的东西，我嘲笑你的诡计和蘑菇。",
+        "checked": true
+      },
+      "40564C04": {
+        "text": "我要扯断他们的四肢，我将收割他们的挚爱。我将剥离他们的生存意志，是的，这就是我的目的。",
+        "checked": true
+      },
+      "409DF62F": {
+        "text": "从现在开始，到时间的尽头，我将杀你一遍又一遍。",
+        "checked": true
+      },
+      "42AD1754": {
+        "text": "肃静，世界的终结者来了。",
+        "checked": true
+      },
+      "43B96257": {
+        "text": "这副被诅咒的躯体正在歌唱。",
+        "checked": true
+      },
+      "44531F4F": {
+        "text": "你的毁灭在召唤。",
+        "checked": true
+      },
+      "448DFA7B": {
+        "text": "要想听到我锋刃的真实声音，首先要懂得痛恨重生。",
+        "checked": true
+      },
+      "44DB484E": {
+        "text": "伟大的潘森，多么自视崇高，自命不凡，过来，背叛者，邪魔。",
+        "checked": true
+      },
+      "45CF464F": {
+        "text": "你残破的躯体是失败的证明。",
+        "checked": true
+      },
+      "481D7D49": {
+        "text": "我选择的是剑，最高贵的武器，拉亚斯特你……老实讲，我不明白，你是被困在了花园里了吗？",
+        "checked": true
+      },
+      "4887D96E": {
+        "text": "我的黑暗并非由心而生，而是被我的牢笼铸成。",
+        "checked": true
+      },
+      "48BAB71D": {
+        "text": "看到我的剑刃了吗？死亡在等你。",
+        "checked": true
+      },
+      "497CF06C": {
+        "text": "伟大的保护者，伟大的塔里克，瓦洛兰之……嗯~~你去把头发剪了好吗？！",
+        "checked": true
+      },
+      "4A22C585": {
+        "text": "闪电松鼠？（亚托克斯 大笑）谢谢你，你的死会让我感到愉悦。",
+        "checked": true
+      },
+      "4B8F874C": {
+        "text": "（亚托克斯 语气）",
+        "checked": true
+      },
+      "4F766770": {
+        "text": "又一个愚蠢的神，即使是凤凰，也有终结。",
+        "checked": true
+      },
+      "50D8CDE2": {
+        "text": "（亚托克斯 大笑）",
+        "checked": true
+      },
+      "5148A1C5": {
+        "text": "是的，恕瑞玛注定陨落内瑟斯，你也一样。",
+        "checked": true
+      },
+      "52A18EF7": {
+        "text": "我曾经有另一个名字，如今我们是暗裔。",
+        "checked": true
+      },
+      "52D8F951": {
+        "text": "你无法摧毁我。",
+        "checked": true
+      },
+      "539BD8EF": {
+        "text": "跪下，你们这群蠕虫，跪拜世界的终结者。",
+        "checked": true
+      },
+      "55D77BBB": {
+        "text": "我即将成为世界的终结者。",
+        "checked": true
+      },
+      "5765CE25": {
+        "text": "（亚托克斯 死亡呻吟）",
+        "checked": true
+      },
+      "57E76ABD": {
+        "text": "我迈向死亡，多么希望是我自己的死亡。",
+        "checked": true
+      },
+      "5B101198": {
+        "text": "（亚托克斯 死亡呻吟）",
+        "checked": true
+      },
+      "5C097BE1": {
+        "text": "一棵树来挑战我？很好，我要把你做成柴堆。",
+        "checked": true
+      },
+      "5C4BAF65": {
+        "text": "我和你很像吗？丑恶的化身，你的躯壳不是我的终点，不是吧，你是不是不会说话呀？（亚托克斯 叹气）",
+        "checked": true
+      },
+      "5FCB3485": {
+        "text": "我并不想与你为敌，我是要与世界为敌。",
+        "checked": true
+      },
+      "6077206A": {
+        "text": "我像个恶魔，不过比较尖酸，是吗？你也知道，毕竟我是一把剑呢。",
+        "checked": true
+      },
+      "620D23F0": {
+        "text": "我不是王，我不是神，我是，更可怕的对手。",
+        "checked": true
+      },
+      "6342EC07": {
+        "text": "我将扑灭光明，制造永恒的黑暗。",
+        "checked": true
+      },
+      "63824C5D": {
+        "text": "虫豸，你们觉得能杀死我吗？见证我的诅咒吧。",
+        "checked": true
+      },
+      "63D78B84": {
+        "text": "我听说过你菲奥娜，这场决斗你赢不了。",
+        "checked": true
+      },
+      "6429FB8E": {
+        "text": "向着战争亚托克斯，他们不会夺走我们的高贵。我们要屹立不倒，向永世折磨我们的人们，吐出毒液。",
+        "checked": true
+      },
+      "651CE426": {
+        "text": "在那曾经的高贵战场上，我的战吼划破寂静，我的光明抵御黑暗。如今我侍奉新的主人，湮灭。",
+        "checked": true
+      },
+      "65ACBC5C": {
+        "text": "我来找你了，潘森。",
+        "checked": true
+      },
+      "66AB6FF5": {
+        "text": "我们迈向战场，让我割裂皮肉，让我沐浴鲜血，让我躲进他们的尸堆，让我逃离这痛苦的折磨。",
+        "checked": true
+      },
+      "682F2DD1": {
+        "text": "时间到了，世界的终结者来了。",
+        "checked": true
+      },
+      "697A07EA": {
+        "text": "一把镰刀，一把镰刀？你的对手是一大片麦田吗？",
+        "checked": true
+      },
+      "6AFC9551": {
+        "text": "我等你泰达米尔，来，给你复仇的机会。",
+        "checked": true
+      },
+      "6B40099D": {
+        "text": "决斗开始。",
+        "checked": true
+      },
+      "6BEAB32D": {
+        "text": "我是湮灭，我是破坏，我是末日。",
+        "checked": true
+      },
+      "6D665453": {
+        "text": "你就是个玩笑吧，聒噪的东西，我要杀了，和你的坐骑。",
+        "checked": true
+      },
+      "7071817D": {
+        "text": "只要这副肉身还活着，我的惩戒就不会停止。",
+        "checked": true
+      },
+      "70A70D4A": {
+        "text": "（亚托克斯 怪叫）",
+        "checked": true
+      },
+      "71131F72": {
+        "text": "我来剔除他们身上的血肉，我来打碎他们的灵魂，还要杀死他们的梦。",
+        "checked": true
+      },
+      "737B81EF": {
+        "text": "我能杀死群山，墨菲特，而你只是一堆石块儿。",
+        "checked": true
+      },
+      "740CC0FB": {
+        "text": "每个梦，都是等我扑灭的蜡烛，我，是黑暗。",
+        "checked": true
+      },
+      "757ADDEF": {
+        "text": "从村庄到城镇，我将斩骨切肉，直到我成为邪魔之神。",
+        "checked": true
+      },
+      "76D2649F": {
+        "text": "星光之王，长发之王，我践踏你的尸体，塔里克，我唾弃你心灵的意志。",
+        "checked": true
+      },
+      "774D4B2C": {
+        "text": "愤怒，你只是待宰的牲畜泰达米尔。",
+        "checked": true
+      },
+      "77E229FD": {
+        "text": "我的身上不剩下任何良知，他被夺走了，被偷走了。如今我是一切生命的死敌。",
+        "checked": true
+      },
+      "77EB352C": {
+        "text": "锐雯！起舞吧孩子，那把断剑，不是我的对手。",
+        "checked": true
+      },
+      "794DBF73": {
+        "text": "潘森，我看到你了，像七鳃鳗一样贴在宿主身上，我将把你从这副凡人躯壳上剥离，把你们的五脏六腑通通掏空。",
+        "checked": true
+      },
+      "79BC6EAD": {
+        "text": "剪刀当腿？好吧，我还以为我已经见惯了蠢事，（亚托克斯 轻哼）行了，开始吧。",
+        "checked": true
+      },
+      "79E8638B": {
+        "text": "我只是邪恶的生命复制品是对自由的亵渎，是残酷的背叛，造就了我，让我与原本高尚的理想诀别。",
+        "checked": true
+      },
+      "7BB11044": {
+        "text": "什么样的愚蠢计划才能造就你这样的人，卡蜜尔，你是个白痴造出来的拙劣品。",
+        "checked": true
+      },
+      "7BC4FA8D": {
+        "text": "你们的账，都由我来清算。",
+        "checked": true
+      },
+      "7C1FB74E": {
+        "text": "德玛西亚？（亚托克斯 轻笑）不知道德玛西亚是什么东西。不过下一个就杀他。",
+        "checked": true
+      },
+      "80535C03": {
+        "text": "杀戮，是我最后的乐趣。",
+        "checked": true
+      },
+      "80A03933": {
+        "text": "巨魔之王？来守护你的王位吧，巨魔之王。",
+        "checked": true
+      },
+      "80CB8CFB": {
+        "text": "奥恩，你和其他神一样，令我失望。",
+        "checked": true
+      },
+      "84C81862": {
+        "text": "一尊雕像？石头和骨头一样易碎，来吧。",
+        "checked": true
+      },
+      "86667F25": {
+        "text": "暮 光 星 灵，你~该~死~了！",
+        "checked": true
+      },
+      "86D1CE5E": {
+        "text": "让鲜血！为我们神圣洗礼！",
+        "checked": true
+      },
+      "8769BC5F": {
+        "text": "这是我给凡人的礼物。",
+        "checked": true
+      },
+      "877E13EC": {
+        "text": "暴力必定让人愉悦。",
+        "checked": true
+      },
+      "87DD0D3E": {
+        "text": "（亚托克斯 大笑）",
+        "checked": true
+      },
+      "8D8AA7E9": {
+        "text": "那么多生命都将被我终结。",
+        "checked": true
+      },
+      "8D94EEDD": {
+        "text": "雷克顿，陷入疯狂的你理解我的痛苦，然而我要终结你的痛苦。",
+        "checked": true
+      },
+      "8E973A0E": {
+        "text": "你要将自己禁锢在此地？很好，我来送你入土。",
+        "checked": true
+      },
+      "8EDE2EFF": {
+        "text": "（亚托克斯 怒吼）",
+        "checked": true
+      },
+      "8F2FF1C4": {
+        "text": "哦，这不是暗影武士吗？真华丽。",
+        "checked": true
+      },
+      "92A18DF2": {
+        "text": "我是弑神者。",
+        "checked": true
+      },
+      "94ED2872": {
+        "text": "原始人崇拜我，向我祈求怜悯，我要赐给他们死亡。",
+        "checked": true
+      },
+      "9538A2C0": {
+        "text": "今日我将行黑暗之举，但我依然无法抛弃从前的骄傲准则。",
+        "checked": true
+      },
+      "95C43DB4": {
+        "text": "我将用尽浑身解数摧毁天堂，揭露你们恶灵的面目，当然还不到时候。",
+        "checked": true
+      },
+      "9830E618": {
+        "text": "大师级的技艺？那我一定要恭喜你了，显然你的父母从来都不怎么看重你。",
+        "checked": true
+      },
+      "99908EBF": {
+        "text": "我将用鲜血的海洋，淹没他们。",
+        "checked": true
+      },
+      "99C6AAA5": {
+        "text": "是的，你是大师中的大师，我在和一个弱智打架。",
+        "checked": true
+      },
+      "9A5F6B9A": {
+        "text": "这扭曲的躯壳，这残酷的腐化，血肉，我痛恨血肉。",
+        "checked": true
+      },
+      "9A9D043C": {
+        "text": "见证不朽吧。",
+        "checked": true
+      },
+      "9AF260C0": {
+        "text": "我带给你最真实的赠礼，我带给你死亡。",
+        "checked": true
+      },
+      "9B53E946": {
+        "text": "迈向复仇，用鲜血淹没这个世界。",
+        "checked": true
+      },
+      "9BAB0F21": {
+        "text": "看看你这高贵的勇气德莱厄斯，让我来教教你绝望。",
+        "checked": true
+      },
+      "9DACEDA5": {
+        "text": "这是谁的地界？为什么？这只死仓鼠要我离开？",
+        "checked": true
+      },
+      "9DC20613": {
+        "text": "我将切断你的四肢，我将刺入你的灵魂。",
+        "checked": true
+      },
+      "9E5EABD5": {
+        "text": "我是深渊，还是那个凝视深渊的人？",
+        "checked": true
+      },
+      "9FF3D633": {
+        "text": "魂刃吗？慎大师。与我交锋，我来打碎你的幻象。",
+        "checked": true
+      },
+      "A00C1F66": {
+        "text": "我也会微笑，而且一边微笑，一边杀人。",
+        "checked": true
+      },
+      "A06C13B3": {
+        "text": "我的痛苦，我将让他绽放。",
+        "checked": true
+      },
+      "A2563727": {
+        "text": "复活吧，归来吧，让我再杀你一遍。",
+        "checked": true
+      },
+      "A2E7D466": {
+        "text": "我要让世界静下来。",
+        "checked": true
+      },
+      "A41D4153": {
+        "text": "你要坐在机器里挑战我吗？你可真是个怪东西，兰博。",
+        "checked": true
+      },
+      "A61C3107": {
+        "text": "我！是末日。",
+        "checked": true
+      },
+      "A75C1D13": {
+        "text": "他们以为我已被击溃、被束缚，但我从不屈服，这是一场崇高的屠戮。",
+        "checked": true
+      },
+      "A846AE92": {
+        "text": "我会把他们的哭喊，当成是等待鞭笞的叫驴，戴好了嚼子",
+        "checked": true
+      },
+      "A9019FAF": {
+        "text": "啊，大师级的记忆，不错，百无一用的大师。",
+        "checked": true
+      },
+      "AA5F0C1D": {
+        "text": "我没想到自己的同族如此弱小，拉亚斯特，你让我很失望。",
+        "checked": true
+      },
+      "AAE4826F": {
+        "text": "伟大的潘森，仔细看好，变成武器的我，仔细看好你的毁灭。",
+        "checked": true
+      },
+      "AB2AF452": {
+        "text": "是的，赛恩，即使是不死的东西，也能被我杀掉，我终结一切。",
+        "checked": true
+      },
+      "AB397F0F": {
+        "text": "懦弱的东西，你太讨厌了，我会细细品尝你的死，提莫。",
+        "checked": true
+      },
+      "AB4DF8BB": {
+        "text": "嗯啊，你好，我是亚托克斯，我是超凡的天界存在，被困在一把刀里，你贵姓？",
+        "checked": true
+      },
+      "AD4A29C7": {
+        "text": "斩破他们，亚托克斯，碾碎他们的头颅，砍断他们的肋骨，掏空他们的灵魂，我们的复仇触手可及。",
+        "checked": true
+      },
+      "AE5BEBBB": {
+        "text": "只要生命还存在，只要时间还有意义，我就不会罢休。",
+        "checked": true
+      },
+      "AF7BFC8C": {
+        "text": "杀戮是我的手段。",
+        "checked": true
+      },
+      "B085CBB2": {
+        "text": "（亚托克斯 语气）",
+        "checked": true
+      },
+      "B32EE1DE": {
+        "text": "夺走他们的一切，成为世界的终结者。",
+        "checked": true
+      },
+      "B5619CCF": {
+        "text": "看，世界的终结者在此。",
+        "checked": true
+      },
+      "B68F979C": {
+        "text": "伟大的潘森，让我听到你对友谊的呼唤，让我听到你对兄弟的嘶嚎。",
+        "checked": true
+      },
+      "B9E382F2": {
+        "text": "泰达米尔，这是你的宿命。",
+        "checked": true
+      },
+      "BB94B8F5": {
+        "text": "（亚托克斯 语气）",
+        "checked": true
+      },
+      "BB9FBB33": {
+        "text": "一只鸟？你带了一只鸟来挑战我？哈哈哈，来吧。",
+        "checked": true
+      },
+      "BC2DD88C": {
+        "text": "没人爱你，蒙多，现在接受审判吧。",
+        "checked": true
+      },
+      "BDF71D15": {
+        "text": "走近点儿，我来让你见识黑暗。",
+        "checked": true
+      },
+      "BEE8E091": {
+        "text": "祈祷吧，蠢货，你面对的是暗裔。",
+        "checked": true
+      },
+      "C04B919E": {
+        "text": "悲伤的味道，我来让你品尝。",
+        "checked": true
+      },
+      "C4C5A2CF": {
+        "text": "我的意志超越死亡。",
+        "checked": true
+      },
+      "C50D7362": {
+        "text": "斧子很适合你，德莱厄斯，傻子的武器。",
+        "checked": true
+      },
+      "C5FC7A2E": {
+        "text": "我的落差有多大？从神明变为囚徒。",
+        "checked": true
+      },
+      "C6823024": {
+        "text": "（亚托克斯 死亡呻吟）",
+        "checked": true
+      },
+      "C7941D8D": {
+        "text": "我不能死去，除非所有生命全部终结。",
+        "checked": true
+      },
+      "C9330AC4": {
+        "text": "他们将称我为弑神者。",
+        "checked": true
+      },
+      "CAC1CDB8": {
+        "text": "我是，暗裔，你的神惧怕我。",
+        "checked": true
+      },
+      "CC857C1A": {
+        "text": "你的死亡在等待。",
+        "checked": true
+      },
+      "CD3553B2": {
+        "text": "潘森，我将碾碎你的神格，我将掏空你的心智，甚至你的记忆，也将被我践踏。",
+        "checked": true
+      },
+      "CE03EC2C": {
+        "text": "随我一同冲入毁灭吧！",
+        "checked": true
+      },
+      "CE9E70F5": {
+        "text": "你让我恶心莫甘娜，在你肮脏的血肉禁锢中受死吧。",
+        "checked": true
+      },
+      "CF1DCEBB": {
+        "text": "这是你的赦免。",
+        "checked": true
+      },
+      "CF4ECE1C": {
+        "text": "我不知道自己是否被虚空腐化，但至少我的选择没有你那么蠢。",
+        "checked": true
+      },
+      "D01F9AE1": {
+        "text": "（亚托克斯 怪笑）",
+        "checked": true
+      },
+      "D0D9CD67": {
+        "text": "前进，我的身躯，向他们前进，我们还有恐惧，没有播种，还有生命，没有收割，我来让他们后悔，为自由后悔。",
+        "checked": true
+      },
+      "D16675A1": {
+        "text": "（亚托克斯 语气）",
+        "checked": true
+      },
+      "D283D6E8": {
+        "text": "我曾经抵抗虚空，如今，我欢迎他。",
+        "checked": true
+      },
+      "D55ECCD4": {
+        "text": "我们不是都记得吗？要有亚字韦鲁斯，要有亚字。",
+        "checked": true
+      },
+      "D5E7D70E": {
+        "text": "他们歌颂爱，希望与神明，这些东西，让他们渴望活下去。所以，我要先让这歌声静下来。",
+        "checked": true
+      },
+      "D5FAD397": {
+        "text": "神与凡人，他们全都该死。",
+        "checked": true
+      },
+      "D73F4947": {
+        "text": "感受我的痛苦吧。",
+        "checked": true
+      },
+      "D8193C23": {
+        "text": "耐心亚托克斯，要耐心，你的自由会来的。",
+        "checked": true
+      },
+      "D88C1EDA": {
+        "text": "我知道是你干的欺诈者，他们禁锢我的工具是你给的！来！让我杀你一！千！遍！也不够！",
+        "checked": true
+      },
+      "D90CBB8E": {
+        "text": "我不要亲吻土地，也不要成为别人手中的工具。我受到了诅咒，但我将以自己的黑暗形象，重塑，这个世界。",
+        "checked": true
+      },
+      "DC3088AB": {
+        "text": "我要掏出你的肠子，把你撕成碎片，欺诈者。",
+        "checked": true
+      },
+      "DCDE0F13": {
+        "text": "我以为你很灵活呢菲奥娜，切碎你的骨头太轻松了。",
+        "checked": true
+      },
+      "DD0ACA9F": {
+        "text": "（亚托克斯 语气）",
+        "checked": true
+      },
+      "DFF22344": {
+        "text": "听好了，树精，你只是柴薪，而我将烧光你的森林。",
+        "checked": true
+      },
+      "E05E6F90": {
+        "text": "你和你的剑刃很配锐雯，你们一样残破而无能。",
+        "checked": true
+      },
+      "E12CFC49": {
+        "text": "一副有资格的躯壳，来，贾克斯。",
+        "checked": true
+      },
+      "E2B05820": {
+        "text": "囚禁我的人们，将付出痛苦的代价。",
+        "checked": true
+      },
+      "E314D784": {
+        "text": "（亚托克斯 暗裔利刃语气）",
+        "checked": true
+      },
+      "E3D9FD45": {
+        "text": "我回来了。",
+        "checked": true
+      },
+      "E4434444": {
+        "text": "你觉得你能，杀死我？！",
+        "checked": true
+      },
+      "E525C771": {
+        "text": "他们称我为恶人，来，我要赢得他们的憎恨，这一次永远都不忘记。",
+        "checked": true
+      },
+      "E553620E": {
+        "text": "内瑟斯，渊博如你，是否知道了自己的宿命？我！是你的死神。",
+        "checked": true
+      },
+      "E7D1BCC5": {
+        "text": "潘森，你就像一只爬行的蠕虫，准备好，再次被捏死了吗？",
+        "checked": true
+      },
+      "E82B5246": {
+        "text": "来瞻仰世界的终结者吧。",
+        "checked": true
+      },
+      "E8C106A3": {
+        "text": "你战斗是为了活着，赛恩，而现在活着的是我，听上去多好笑啊。",
+        "checked": true
+      },
+      "E92E2C7C": {
+        "text": "再凶狠的野兽也懂得一丝怜悯。然而我不懂怜悯，因此我并不是野兽。（亚托克斯 轻笑）",
+        "checked": true
+      },
+      "E98FD1CF": {
+        "text": "嗯，你这个世界挺漂亮，我想毁了他，所以和你提前打声招呼。",
+        "checked": true
+      },
+      "E99794A9": {
+        "text": "我所追寻的唯一平静，是死亡。",
+        "checked": true
+      },
+      "E9B5265E": {
+        "text": "我是亚托克斯，我是世界的终结者。",
+        "checked": true
+      },
+      "EA0BE3E6": {
+        "text": "看看我们被变成了多么原始的野兽，血肉之躯，只能靠这肮脏的鲜血和身体维持。",
+        "checked": true
+      },
+      "EA52F33B": {
+        "text": "（亚托克斯 怒吼）",
+        "checked": true
+      },
+      "EA6BEB7A": {
+        "text": "我憎恨你的自由欺诈者，我对你的复仇将持续到时间尽头。",
+        "checked": true
+      },
+      "EAE20AE4": {
+        "text": "（亚托克斯 愤怒语气）没有什么，能杀死我。",
+        "checked": true
+      },
+      "EB32542E": {
+        "text": "他们的惨叫声，将如同黄昏时分悠悠的虫鸣。",
+        "checked": true
+      },
+      "EBCC84CB": {
+        "text": "没有什么能逃过世界的终结者。",
+        "checked": true
+      },
+      "ECF4E604": {
+        "text": "挑战我吧，凡人，我就在这儿。",
+        "checked": true
+      },
+      "ED5C76BD": {
+        "text": "我制造死寂，我！是世界的终结者。",
+        "checked": true
+      },
+      "EEE9E3A2": {
+        "text": "大师级的技艺？我太崇拜你了。不过我觉得你的武器有点儿软绵绵。",
+        "checked": true
+      },
+      "EF0B9A3C": {
+        "text": "回到深渊去吧。",
+        "checked": true
+      },
+      "EF72D5D2": {
+        "text": "（亚托克斯 大笑）是的，泰达米尔，你的痛苦全是因为我，来试试，你能不能让我血债血偿？",
+        "checked": true
+      },
+      "EFF6873D": {
+        "text": "我在牢笼之中，又被枷所束缚，但这副肮脏的躯壳时刻提醒着我的目标。",
+        "checked": true
+      },
+      "F0737A13": {
+        "text": "你的死亡是我的歌声。",
+        "checked": true
+      },
+      "F1257E70": {
+        "text": "我将让这些凡人变得和我一样。",
+        "checked": true
+      },
+      "F1C9C3F1": {
+        "text": "复活，无尽的生命循环，一只死鸟。",
+        "checked": true
+      },
+      "F29CF105": {
+        "text": "巨神派来了星灵对付我？准备好了潘森，我将终结你的全部希望！",
+        "checked": true
+      },
+      "F3F68A30": {
+        "text": "呦吼普朗克，呦吼。",
+        "checked": true
+      },
+      "FA98E0D9": {
+        "text": "我必须连同希望一起毁坏。",
+        "checked": true
+      },
+      "FC929559": {
+        "text": "死吧凯尔，你永远都不能瞑目。",
+        "checked": true
+      },
+      "FD5915C5": {
+        "text": "韦鲁斯，韦鲁斯，你的名字应该有个亚字，你怎么忘了韦鲁斯，你怎么忘了？",
+        "checked": true
+      },
+      "FF1B7EEB": {
+        "text": "（亚托克斯 轻笑）是的，与我战斗。",
+        "checked": true
+      },
+      "FF6F0908": {
+        "text": "我是弑神者，而你只是祭司，继续和我打吧，直到一切停止运动。",
+        "checked": true
+      },
+      "CE5FCFD3": {
+        "text": "（亚托克斯 语气）",
+        "checked": true
+      },
+      "7B778F27": {
+        "text": "（亚托克斯 大笑）",
+        "checked": true
+      },
+      "48CE0323": {
+        "text": "（亚托克斯 怒吼）",
+        "checked": true
+      },
+      "2E8201D5": {
+        "text": "（亚托克斯 语气）",
+        "checked": true
+      },
+      "150A933B": {
+        "text": "（亚托克斯 暗裔利刃语气）",
+        "checked": true
+      },
+      "12195D77": {
+        "text": "（亚托克斯 怒吼）",
+        "checked": true
+      }
+    }
+  }
+}

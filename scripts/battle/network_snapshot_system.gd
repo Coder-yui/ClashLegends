@@ -410,7 +410,7 @@ func _unit_snapshot_payload(id: int, u: Unit, has_continuous_target: bool = fals
 		u.form_change_serial,
 		u.get_visual_action_duration(), u.get_visual_action_time_left(),
 		u.get_locomotion_visual_state_code(),
-		1 if u.empowered_attack_ready else 0, u.get_empowered_attack_visual_serial(),
+		1 if u.is_empowered_attack_ready_visual() else 0, u.get_empowered_attack_visual_serial(),
 		u.get_skill_resource_ratio(),
 		1 if u.skill_resource_enabled else 0, u.active_speed_multiplier, u.get_active_attack_speed_multiplier_visual(),
 		active_skill_state.get("uses_remaining", 0), active_skill_state.get("cooldown_left", 0.0),

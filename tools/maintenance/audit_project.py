@@ -72,6 +72,8 @@ def audit(root: Path, inventory: bool = False) -> dict:
     definitions = {p.stem for p in (root / 'scripts/data/cards').glob('*.gd')}
     docs = {p.stem for p in (root / 'docs/units').glob('*.md')} - {'README', 'arena', 'nexus', 'princess_tower', 'training_dummy'}
     expected_docs = (ids - {'gnar'}) | ({'gnar_small', 'gnar_mega'} if 'gnar' in ids else set())
+    if 'aatrox' in ids:
+        expected_docs.add('aatrox_ultimate')
     for card_id in sorted(ids ^ definitions):
         errors.append(f'card registry/definition mismatch: {card_id}')
     for card_id in sorted(expected_docs ^ docs):

@@ -9,6 +9,8 @@ static func supports(stats: Dictionary, cue: String) -> bool:
 		# 没有独立 visual_action 的瞬时主动技能也需要一个稳定的 Cast Start 音频入口。
 		var active_skills: Variant = stats.get("active_skills", [])
 		return active_skills is Array and not (active_skills as Array).is_empty()
+	if cue == "form:refresh":
+		return bool(stats.get("form_refresh_on_kill", false)) and float(stats.get("form_lifetime", 0.0)) > 0.0
 	var attacks := float(stats.get("damage", 0.0)) > 0.0
 	if cue in ["continuous_attack:start", "continuous_attack:sustain", "continuous_attack:end", "continuous_attack:release"]:
 		return attacks and bool(stats.get("is_continuous_attack", false))
@@ -22,7 +24,7 @@ static func supports(stats: Dictionary, cue: String) -> bool:
 		return (stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "area_shield")
 	if cue == "idle:sustain":
 		return not spell
-	if cue == "death":
+	if cue in ["death", "death:voice"]:
 		return true
 	if cue == "pre_deploy:start":
 		return float(stats.get("pre_deploy_time", 0.0)) > 0.0
@@ -48,11 +50,11 @@ static func supports(stats: Dictionary, cue: String) -> bool:
 	if lifecycle.size() == 2 and lifecycle[1] in ["start", "end", "sustain"] and stats.get("visual_animations", {}).get("visual_actions", {}).has(lifecycle[0]):
 		if lifecycle[0] == "transform" and int(stats.get("transform_after_hits", 0)) > 0 and float(stats.get("transform_duration", 0.0)) > 0.0:
 			return true
-		if lifecycle[0] == "revert" and int(stats.get("revert_after_hits", 0)) > 0 and float(stats.get("revert_duration", 0.0)) > 0.0:
+		if lifecycle[0] == "revert" and (int(stats.get("revert_after_hits", 0)) > 0 or float(stats.get("form_lifetime", 0.0)) > 0.0) and float(stats.get("revert_duration", 0.0)) > 0.0:
 			return true
 	for skill in stats.get("active_skills", []):
 		var kind := String(skill.get("kind", ""))
-		if kind == "dual_form" and lifecycle.size() == 2 and lifecycle[0] == "transform_active" and lifecycle[1] in ["start", "end", "sustain", "hit"]:
+		if kind in ["dual_form", "timed_form"] and lifecycle.size() == 2 and lifecycle[0] == "transform_active" and lifecycle[1] in ["start", "end", "sustain", "hit"]:
 			return float(stats.get("active_transform_duration", stats.get("transform_duration", 0.0))) > 0.0
 		if cue in ["empowered_ready", "empowered_swing"] and kind == "empowered_attack":
 			return true

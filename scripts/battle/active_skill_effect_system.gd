@@ -108,6 +108,8 @@ func apply_cast_end(source: Unit, skill: Dictionary) -> void:
 
 func apply(source: Unit, skill: Dictionary) -> bool:
 	match StringName(skill.get("kind", "")):
+		&"timed_form":
+			return source.transform_to_mega(true)
 		&"buff":
 			source.apply_active_buff(
 				float(skill.get("duration", 0.0)),

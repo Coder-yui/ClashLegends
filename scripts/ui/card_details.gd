@@ -220,6 +220,8 @@ static func active_skill_description(skill: Dictionary) -> String:
 			var spawn_id := String(skill.get("spawn_id", ""))
 			var spawn_stats := CardDB.get_unit_stats(spawn_id)
 			parts.append("在自身周围立即召唤 %d 个%s" % [int(skill.get("spawn_count", 1)), String(spawn_stats.get("name", spawn_id))])
+		"timed_form":
+			parts.append("切换为限时强化形态；击杀敌方单位刷新持续时间与攻击循环")
 		"dual_form":
 			parts.append("变形并朝前方 %s×%s 区域造成 %s 伤害，眩晕 %s 秒" % [
 				format_number(float(skill.get("width", 0.0))),

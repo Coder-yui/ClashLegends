@@ -20,3 +20,11 @@ __pycache__/
 # 防止旧工具误写产物进入版本库；审计会报错
 /builds/
 /待开发卡牌美术素材/
+
+# 剑魔的批量提取与试听副本可从本地源库/正式资产再生成；来源记录仍提交
+/ClashLegends-开发素材库/03-制作中/剑魔/audio-source/**
+!/ClashLegends-开发素材库/03-制作中/剑魔/audio-source/README.md
+/ClashLegends-开发素材库/03-制作中/剑魔/audio-preview/*.wav
+/ClashLegends-开发素材库/03-制作中/剑魔/voice-selection/candidates/
+/ClashLegends-开发素材库/03-制作中/剑魔/voice-selection/client/
+/ClashLegends-开发素材库/03-制作中/剑魔/**/*.log

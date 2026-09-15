@@ -1,0 +1,410 @@
+[
+  {
+    "file": "Play_sfx_Aatrox_AatroxBasicAttack2_OnCast {r1}.wav",
+    "seconds": 0.9304761904761905,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 19165,
+    "sha256": "cb93ea1d345db04735757c44890e612e1c4b1064159e7ca042e6af5629a935e9"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxBasicAttack2_OnCast {r2}.wav",
+    "seconds": 0.7790702947845805,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 19508,
+    "sha256": "7e700055debd91ce50e67492b638445e77f12719a915422cf3e23cc89c869775"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxBasicAttack2_OnCast {r3}.wav",
+    "seconds": 0.8177324263038549,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 19124,
+    "sha256": "3e7de6769eeb115d1803930c5e668fa5c7800723482cbd7d398737c9c9053bfb"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxBasicAttack2_OnCast {r4}.wav",
+    "seconds": 0.9736961451247166,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 19621,
+    "sha256": "f5c9c4a5f10eb618034350799f1fc7695daba2efdcb364d8a6ff5dda62cfa229"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxBasicAttack2_OnCast {r5}.wav",
+    "seconds": 0.8741269841269841,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 18769,
+    "sha256": "e850c12289a30a7f0d251fc1c75384c8fdf3b6c3557c6ca81188909dfd17e59b"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxBasicAttack2_OnHit [1559186049=1153642577] {r1}.wav",
+    "seconds": 0.5362358276643991,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 18892,
+    "sha256": "ce23be7761ac130d61278a4bec58412258d130d8a2f9aa347a46dcb0dd261af5"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxBasicAttack2_OnHit [1559186049=1153642577] {r2}.wav",
+    "seconds": 1.0612244897959184,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 17273,
+    "sha256": "aea6d582d38cdcba66906e5651daa757566ec9d0026b08d473878cc770f8f07e"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxBasicAttack2_OnHit [1559186049=1153642577] {r3}.wav",
+    "seconds": 0.8636281179138322,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 17424,
+    "sha256": "53667386d3a2b325c36923f734450645bd4c30a0ea4cbc3763e345a77a2fa327"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxBasicAttack3_OnCast {r1} {d}.wav",
+    "seconds": 0.9304761904761905,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 19165,
+    "sha256": "cb93ea1d345db04735757c44890e612e1c4b1064159e7ca042e6af5629a935e9"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxBasicAttack3_OnCast {r2} {d}.wav",
+    "seconds": 0.7790702947845805,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 19508,
+    "sha256": "7e700055debd91ce50e67492b638445e77f12719a915422cf3e23cc89c869775"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxBasicAttack3_OnCast {r3} {d}.wav",
+    "seconds": 0.8177324263038549,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 19124,
+    "sha256": "3e7de6769eeb115d1803930c5e668fa5c7800723482cbd7d398737c9c9053bfb"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxBasicAttack3_OnCast {r4} {d}.wav",
+    "seconds": 0.9736961451247166,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 19621,
+    "sha256": "f5c9c4a5f10eb618034350799f1fc7695daba2efdcb364d8a6ff5dda62cfa229"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxBasicAttack3_OnCast {r5} {d}.wav",
+    "seconds": 0.8741269841269841,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 18769,
+    "sha256": "e850c12289a30a7f0d251fc1c75384c8fdf3b6c3557c6ca81188909dfd17e59b"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxBasicAttack3_OnHit [1559186049=1153642577] {r1} {d}.wav",
+    "seconds": 0.5362358276643991,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 18892,
+    "sha256": "ce23be7761ac130d61278a4bec58412258d130d8a2f9aa347a46dcb0dd261af5"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxBasicAttack3_OnHit [1559186049=1153642577] {r2} {d}.wav",
+    "seconds": 1.0612244897959184,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 17273,
+    "sha256": "aea6d582d38cdcba66906e5651daa757566ec9d0026b08d473878cc770f8f07e"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxBasicAttack3_OnHit [1559186049=1153642577] {r3} {d}.wav",
+    "seconds": 0.8636281179138322,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 17424,
+    "sha256": "53667386d3a2b325c36923f734450645bd4c30a0ea4cbc3763e345a77a2fa327"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxBasicAttack_OnCast {r1} {d}.wav",
+    "seconds": 0.9304761904761905,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 19165,
+    "sha256": "cb93ea1d345db04735757c44890e612e1c4b1064159e7ca042e6af5629a935e9"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxBasicAttack_OnCast {r2} {d}.wav",
+    "seconds": 0.7790702947845805,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 19508,
+    "sha256": "7e700055debd91ce50e67492b638445e77f12719a915422cf3e23cc89c869775"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxBasicAttack_OnCast {r3} {d}.wav",
+    "seconds": 0.8177324263038549,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 19124,
+    "sha256": "3e7de6769eeb115d1803930c5e668fa5c7800723482cbd7d398737c9c9053bfb"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxBasicAttack_OnCast {r4} {d}.wav",
+    "seconds": 0.9736961451247166,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 19621,
+    "sha256": "f5c9c4a5f10eb618034350799f1fc7695daba2efdcb364d8a6ff5dda62cfa229"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxBasicAttack_OnCast {r5} {d}.wav",
+    "seconds": 0.8741269841269841,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 18769,
+    "sha256": "e850c12289a30a7f0d251fc1c75384c8fdf3b6c3557c6ca81188909dfd17e59b"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxBasicAttack_OnHit [1559186049=1153642577] {r1} {d}.wav",
+    "seconds": 0.5362358276643991,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 18892,
+    "sha256": "ce23be7761ac130d61278a4bec58412258d130d8a2f9aa347a46dcb0dd261af5"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxBasicAttack_OnHit [1559186049=1153642577] {r2} {d}.wav",
+    "seconds": 1.0612244897959184,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 17273,
+    "sha256": "aea6d582d38cdcba66906e5651daa757566ec9d0026b08d473878cc770f8f07e"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxBasicAttack_OnHit [1559186049=1153642577] {r3} {d}.wav",
+    "seconds": 0.8636281179138322,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 17424,
+    "sha256": "53667386d3a2b325c36923f734450645bd4c30a0ea4cbc3763e345a77a2fa327"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxPassiveAttack_OnCast.wav",
+    "seconds": 0.9863265306122448,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 18936,
+    "sha256": "5e6a199d3df048cc3ad13c4ae88d6a8a237a5a845ee31d4da6c4f381266367f5"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxPassiveAttack_OnHit [1559186049=1153642577] {r}.wav",
+    "seconds": 1.1563945578231292,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 22870,
+    "sha256": "b1637b58f7bb2bd502562aa5096e582e472e1ad34c9d2c240128874e56e965f2"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxRAttack1_OnCast {r1} {d}.wav",
+    "seconds": 0.9304761904761905,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 19165,
+    "sha256": "cb93ea1d345db04735757c44890e612e1c4b1064159e7ca042e6af5629a935e9"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxRAttack1_OnCast {r2} {d}.wav",
+    "seconds": 0.7790702947845805,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 19508,
+    "sha256": "7e700055debd91ce50e67492b638445e77f12719a915422cf3e23cc89c869775"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxRAttack1_OnCast {r3} {d}.wav",
+    "seconds": 0.8177324263038549,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 19124,
+    "sha256": "3e7de6769eeb115d1803930c5e668fa5c7800723482cbd7d398737c9c9053bfb"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxRAttack1_OnCast {r4} {d}.wav",
+    "seconds": 0.9736961451247166,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 19621,
+    "sha256": "f5c9c4a5f10eb618034350799f1fc7695daba2efdcb364d8a6ff5dda62cfa229"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxRAttack1_OnCast {r5} {d}.wav",
+    "seconds": 0.8741269841269841,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 18769,
+    "sha256": "e850c12289a30a7f0d251fc1c75384c8fdf3b6c3557c6ca81188909dfd17e59b"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxRAttack1_OnHit [1559186049=1153642577] {r1} {d}.wav",
+    "seconds": 0.5362358276643991,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 18892,
+    "sha256": "ce23be7761ac130d61278a4bec58412258d130d8a2f9aa347a46dcb0dd261af5"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxRAttack1_OnHit [1559186049=1153642577] {r2} {d}.wav",
+    "seconds": 1.0612244897959184,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 17273,
+    "sha256": "aea6d582d38cdcba66906e5651daa757566ec9d0026b08d473878cc770f8f07e"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxRAttack1_OnHit [1559186049=1153642577] {r3} {d}.wav",
+    "seconds": 0.8636281179138322,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 17424,
+    "sha256": "53667386d3a2b325c36923f734450645bd4c30a0ea4cbc3763e345a77a2fa327"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxRAttack2_OnCast {r1} {d}.wav",
+    "seconds": 0.9304761904761905,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 19165,
+    "sha256": "cb93ea1d345db04735757c44890e612e1c4b1064159e7ca042e6af5629a935e9"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxRAttack2_OnCast {r2} {d}.wav",
+    "seconds": 0.7790702947845805,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 19508,
+    "sha256": "7e700055debd91ce50e67492b638445e77f12719a915422cf3e23cc89c869775"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxRAttack2_OnCast {r3} {d}.wav",
+    "seconds": 0.8177324263038549,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 19124,
+    "sha256": "3e7de6769eeb115d1803930c5e668fa5c7800723482cbd7d398737c9c9053bfb"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxRAttack2_OnCast {r4} {d}.wav",
+    "seconds": 0.9736961451247166,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 19621,
+    "sha256": "f5c9c4a5f10eb618034350799f1fc7695daba2efdcb364d8a6ff5dda62cfa229"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxRAttack2_OnCast {r5} {d}.wav",
+    "seconds": 0.8741269841269841,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 18769,
+    "sha256": "e850c12289a30a7f0d251fc1c75384c8fdf3b6c3557c6ca81188909dfd17e59b"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxRAttack2_OnHit [1559186049=1153642577] {r1} {d}.wav",
+    "seconds": 0.5362358276643991,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 18892,
+    "sha256": "ce23be7761ac130d61278a4bec58412258d130d8a2f9aa347a46dcb0dd261af5"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxRAttack2_OnHit [1559186049=1153642577] {r2} {d}.wav",
+    "seconds": 1.0612244897959184,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 17273,
+    "sha256": "aea6d582d38cdcba66906e5651daa757566ec9d0026b08d473878cc770f8f07e"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxRAttack2_OnHit [1559186049=1153642577] {r3} {d}.wav",
+    "seconds": 0.8636281179138322,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 17424,
+    "sha256": "53667386d3a2b325c36923f734450645bd4c30a0ea4cbc3763e345a77a2fa327"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxR_OnBuffActivate_all {r}.wav",
+    "seconds": 2.0,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 20438,
+    "sha256": "9f44f4dce8bc470310ce23856b1f1952c2be45a79bb34264147fe90205390b6b"
+  },
+  {
+    "file": "Play_sfx_Aatrox_AatroxR_buffdeactivate.wav",
+    "seconds": 2.072857142857143,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 4944,
+    "sha256": "d6565466cac23d57ea82a2909eab387300daad728a82dc8ce105cae5bb107d13"
+  },
+  {
+    "file": "Play_sfx_Aatrox_Death3D_cast.wav",
+    "seconds": 1.1372335600907029,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 18009,
+    "sha256": "0bdc731a8ce39e2d92fac2f7941cfed94db4729edc3a5e36914aca64772eb2d5"
+  },
+  {
+    "file": "Play_vo_Aatrox_Death3D {r1}.wav",
+    "seconds": 1.5,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 17789,
+    "sha256": "b102e4f1b17e067cc6722068700c355f76ade83c3bfd618e153207cdd8e95265"
+  },
+  {
+    "file": "Play_vo_Aatrox_Death3D {r2}.wav",
+    "seconds": 1.5,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 16428,
+    "sha256": "8678548d8e572f3f9ba4d72b258637344040f10ccbbb170de7ee5d5a5342a807"
+  },
+  {
+    "file": "Play_vo_Aatrox_Death3D {r3}.wav",
+    "seconds": 1.5,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 17394,
+    "sha256": "eff3d14ec8a835fb839f4a54d0cb357ea165ef907ca442fd67c08f1b0043f075"
+  },
+  {
+    "file": "部署语音_1_让我带来终结。.wav",
+    "seconds": 5.944761904761905,
+    "channels": 2,
+    "sample_rate": 44100,
+    "peak": 11797,
+    "sha256": "320452aa51bad7b4f21be8ec2d13c1a9464c16198a1cc128d4359f583e2abcff"
+  },
+  {
+    "file": "部署语音_2_我回来了。.wav",
+    "seconds": 2.452403628117914,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 16923,
+    "sha256": "b6959456b138d5c0f16ba61629ad7223e3c3ec93556fdd45b75ca21100316bdd"
+  },
+  {
+    "file": "部署语音_3_你无法摧毁我。.wav",
+    "seconds": 3.014875283446712,
+    "channels": 1,
+    "sample_rate": 44100,
+    "peak": 15942,
+    "sha256": "ec304450b0de6849b069472417ffbafe5b4ec9176111b051dd04d398908e39ab"
+  }
+]
