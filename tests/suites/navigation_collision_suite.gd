@@ -5,6 +5,7 @@ extends "res://tests/suites/battle_suite.gd"
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
+	_check_direct_approach_after_bridge()
 	_check_lane_weight_field()
 	_check_bridge_path()
 	_check_bridge_contact_stays_on_land()
@@ -584,3 +585,20 @@ func _check_formal_back_row_spawn() -> void:
 			all_escaped = all_escaped and absf(unit.position.y - start.y) > 100.0 and unit.is_walkable_at(unit.position)
 			unit.free()
 	_expect(all_escaped, "正式下卡在双方水晶后方两格均能绕出，出生钳制不再引向不可达边界格心")
+
+func _check_direct_approach_after_bridge() -> void:
+	for team in [0, 1]:
+		for right_lane in [false, true]:
+			var x := 553.0 if right_lane else 167.0
+			var pos := Vector2(x, 580.0 if team == 0 else 700.0)
+			var unit: Unit = _main._spawn_unit(team, "ashe", pos, 0.0)
+			unit._target = unit._find_nearest_tower()
+			unit._path = PackedVector2Array([pos, Vector2(530.0 if right_lane else 190.0, 490.0 if team == 0 else 790.0)])
+			unit._path_index = 1
+			unit._move_direction = Vector2.ZERO
+			unit._chase(0.05)
+			var expected: Vector2 = pos.direction_to(unit._target.position)
+			_expect(unit._move_intent.normalized().dot(expected) > 0.999 and unit._path.is_empty(), "双方左右桥出口直接朝塔接近，不追赶旧攻击站位")
+			unit.position = Vector2(300.0 if not right_lane else 420.0, 760.0 if team == 0 else 520.0)
+			_expect(not unit._try_direct_approach(0.05), "直接接近段穿过河岸时仍保留寻路")
+			unit.free()

@@ -258,14 +258,6 @@ func _check_garen_judgment() -> void:
 	var outside := _spawn_dummy(Vector2(550.0, 500.0))
 	var air := _spawn_dummy(Vector2(360.0, 420.0))
 	air.is_air = true
-	# 盖伦的规则是攻城行军；放一个不入树的同阵营 Tower 锚点，避免测试脉冲时被场景塔的
-	# 固定推进目标带走，移动能力单独用统一移动应用验证。
-	var movement_anchor := Tower.new()
-	movement_anchor.team = 0
-	movement_anchor.hp = 100000.0
-	movement_anchor.body_radius = 54.0
-	movement_anchor.position = garen.position
-	garen._target = movement_anchor
 	_main._battle_presentation.attach_unit(garen, CardDB.get_card("garen"))
 	var garen_view := _view_for(garen)
 	_main._begin_configured_active_skill_cast(garen, skill)
@@ -284,6 +276,8 @@ func _check_garen_judgment() -> void:
 	garen._move_intent = Vector2.RIGHT * garen.move_speed
 	_main._movement._apply_unit_movement(_main.SIM_DT, _main._movement._active_mobile_units())
 	var moved_during_cast := garen.position.distance_to(position_before_move) > 0.001
+	# 移动能力已单独验证；脉冲夹具固定速度，隔离真实索敌造成的位置变化。
+	garen.move_speed = 0.0
 	var target_before := target.hp
 	var outside_before := outside.hp
 	var air_before := air.hp
@@ -298,7 +292,6 @@ func _check_garen_judgment() -> void:
 	)
 	# 把施法者移到原本圈外的目标附近；下一次脉冲必须读取新位置，而不是固定 Cast Start 坐标。
 	garen.position = Vector2(470.0, 500.0)
-	movement_anchor.position = garen.position
 	_run_main_ticks(20)
 	var follows_caster := is_equal_approx(outside_before - outside.hp, float(skill.damage))
 	_run_main_ticks(20)
@@ -319,7 +312,6 @@ func _check_garen_judgment() -> void:
 	)
 	_main._active_skill_effect_system.continuous_area_effects.clear()
 	_main._active_skill_effect_system.frontal_effects.clear()
-	movement_anchor.free()
 	for unit in [garen, target, outside, air]:
 		if is_instance_valid(unit):
 			unit.free()

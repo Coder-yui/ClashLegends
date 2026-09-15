@@ -5,6 +5,7 @@ extends "res://tests/suites/battle_suite.gd"
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
+	_check_tower_competes_with_units()
 	_check_building_pulls_tower_target()
 	_check_nearest_unit_or_building_target()
 	_check_crystal_target_and_nearest_attack_target()
@@ -618,3 +619,36 @@ func _check_first_attack_and_reentry_timing() -> void:
 		_expect(unit._attack_swing_count == 3 and elapsed + 0.0001 >= gap and elapsed <= gap + 0.1, "%.1fx 攻速：提前取消后摇并返回只等真实剩余冷却，连续出手间隔不缩短也不多等一轮" % rate)
 		unit.free()
 		dummy.free()
+
+func _check_tower_competes_with_units() -> void:
+	for team in [0, 1]:
+		var stats: Dictionary = CardDB.get_card("ashe").duplicate()
+		stats["deploy_time"] = 0.0
+		var attacker := Unit.new()
+		attacker.setup(team, stats, "索敌比较")
+		_main.add_child(attacker)
+		var target_stats: Dictionary = CardDB.get_card("garen").duplicate()
+		var enemy := Unit.new()
+		enemy.setup(1-team, target_stats, "塔边敌人")
+		_main.add_child(enemy)
+		for tower in _main._towers:
+			if tower.team == team:
+				continue
+			var toward := Vector2.DOWN if team == 0 else Vector2.UP
+			attacker.position = tower.position + toward * 170.0
+			# 敌人中心更近，但塔的半径更大，塔的边缘先被扩圈碰到。
+			enemy.body_radius = 9.0
+			enemy.position = attacker.position + Vector2.RIGHT * 150.0
+			attacker._target = enemy
+			attacker._attacking = false
+			attacker._update_target()
+			_expect(attacker._target == tower, "塔/水晶中心更远但边缘更近时，统一比较后选择塔/水晶")
+			enemy.position = attacker.position + Vector2.RIGHT * 70.0
+			attacker._update_target()
+			_expect(attacker._target == enemy, "未攻击时更近的敌人能拉走追塔单位")
+			attacker._target = tower
+			attacker._attacking = true
+			attacker._update_target()
+			_expect(attacker._target == tower, "已攻击塔时更近敌人不打断锁定")
+		attacker.free()
+		enemy.free()

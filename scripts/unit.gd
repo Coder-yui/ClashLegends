@@ -1260,43 +1260,20 @@ func _update_target(allow_out_of_range_hit: bool = false) -> void:
 			_shroud_active = false
 			_path = PackedVector2Array()
 			_path_index = 0
-	# 塔只是没有仇恨目标时的行军目标；途中进入视野的合法单位/建筑应能拉走部队。
-	if is_instance_valid(_target) and _target is Tower:
-		# 水晶不是“公主塔全灭后才存在”的特殊目标：只要进入任意敌方塔的攻击范围，
-		# 就按实际表面距离重新比较，包括仍未激活的敌方水晶。
-		var nearer_tower := _find_nearest_tower()
-		if nearer_tower != null and nearer_tower != _target and _target_gap(nearer_tower) + 0.01 < _target_gap(_target):
-			_target = nearer_tower
-			_attacking = false
-			attack_timeline.cancel()
-			_shroud_active = false
-			_path = PackedVector2Array()
-			_path_index = 0
-			_repath_cd = 0.0
-		var distraction := _find_nearest_distraction()
-		if distraction != null:
-			_target = distraction
-			_attacking = false
-			attack_timeline.cancel()
-			_shroud_active = false
-			_path = PackedVector2Array()
-			_path_index = 0
-			_repath_cd = 0.0
-	# 还在追击、尚未进入攻击状态时，视野内出现更近的合法兵种/建筑可以转移仇恨。
-	# 一旦进入攻击前摇，函数会在上方提前 return，仍保持攻击锁定规则。
-	elif is_instance_valid(_target):
-		var nearer := _find_nearest_distraction()
-		if nearer != null and nearer != _target and _target_gap(nearer) + 0.01 < _target_gap(_target):
-			_target = nearer
-			_path = PackedVector2Array()
-			_path_index = 0
-			_repath_cd = 0.0
-	if _target == null:
-		_target = _find_nearest_distraction()
-		if _target == null:
-			_target = _find_nearest_tower()
-		if _target != null:
-			_repath_cd = 0.0
+	# 非攻击状态：视野内所有合法战斗对象统一按表面距离排序。
+	# 没有视野目标时才回退到同路推塔，不让较远的小兵抢走更近的塔。
+	var nearest := _find_nearest_distraction()
+	if nearest == null:
+		nearest = _find_nearest_tower()
+	elif is_instance_valid(_target) and _target_is_attackable(_target) and _target_gap(_target) <= sight_range:
+		# 同距保留当前目标，避免枚举顺序或浮点噪声导致来回转向。
+		if _target_gap(_target) <= _target_gap(nearest) + 0.01:
+			nearest = _target
+	if nearest != _target:
+		_target = nearest
+		_path = PackedVector2Array()
+		_path_index = 0
+		_repath_cd = 0.0
 
 func _target_is_attackable(target) -> bool:
 	if target == null or not is_instance_valid(target) or target.hp <= 0.0:
@@ -1334,19 +1311,9 @@ func _find_nearest_distraction() -> Node2D:
 	var best: Node2D = null
 	var best_dist := sight_range
 	for c in get_tree().get_nodes_in_group("combatants"):
-		if not c is Unit or c == self or c.team == team or c.hp <= 0.0:
-			continue
-		var u := c as Unit
-		if u.is_air and not can_attack_air:
-			continue
-		# 丝缕缠流：目标开启但我方在圈外 → 看不到它，照常做自己的事。
-		if u.is_hidden_from(self):
-			continue
-		if building_only and not u.is_building:
+		if not c is Node2D or not _target_is_attackable(c):
 			continue
 		var dist := _target_gap(c)
-		# 普通单位对敌方兵种和建筑一视同仁，统一按碰撞表面距离选最近目标。
-		# building_only 单位在上方已经过滤掉普通兵种。
 		if dist <= best_dist:
 			best = c
 			best_dist = dist
@@ -1406,12 +1373,33 @@ func _chase(dt: float) -> void:
 	if is_air:
 		_prepare_movement((_target.global_position - global_position).normalized(), dt)
 		return
+	# 绕过障碍后按当前位置接近射程边缘，不再追赶出发时计算的旧站位。
+	if _try_direct_approach(dt):
+		return
 	# 没有视野仇恨时，塔只是推进方向。地面单位在宽松的低成本路线场上
 	# 计算一次推进路径，并不持续跑 A*；只有目标或动态障碍改变才重算。
 	if _target is Tower:
 		_chase_march(dt)
 		return
 	_chase_target(dt)
+
+func _try_direct_approach(dt: float) -> bool:
+	if battle_context == null:
+		return false
+	var toward := _target.global_position - global_position
+	if toward.length_squared() < 0.001:
+		return false
+	# 只检测到攻击站位；目标本身仍参与碰撞检查，不检测到其中心。
+	var stop_distance: float = attack_range + body_radius + _target.body_radius
+	var goal := _target.global_position - toward.normalized() * maxf(stop_distance - 0.01, 0.0)
+	if not battle_context.is_ground_segment_walkable(global_position, goal, body_radius, self):
+		return false
+	_path = PackedVector2Array()
+	_path_index = 0
+	_path_goal = Vector2(INF, INF)
+	_repath_cd = 0.0
+	_prepare_movement(toward.normalized(), dt)
+	return true
 
 func _chase_march(dt: float) -> void:
 	_repath_cd -= dt
