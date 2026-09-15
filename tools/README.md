@@ -11,6 +11,7 @@
 | 临时看模型、动作 | `python3 tools/dev.py model` | [模型展台](viewers/README.md)：项目单位或外部 glTF；播放、暂停、拖动时间、旋转、缩放 |
 | 没有卡面时拍摄 | `python3 tools/dev.py model --capture …` | 同一个展台拍透明 PNG；先预览候选，已有卡面不覆盖 |
 | 临时听一批声音 | `python3 tools/dev.py audio` | [声音展台](audio_review/README.md)：目录或 manifest；筛选、波形、选段循环 |
+| 按中文台词找本地语音 | `python3 tools/audio/find_lol_voice.py --help` | [目录、事件解码与本地转写](audio/README.md) |
 | 准备或导入声音 | `audio-prepare` / `audio-import` | [音频工具](audio/README.md)，原始声音与游戏事件需明确对应 |
 | 看技能、特效与实战 | `python3 tools/dev.py workbench` | [开发工作台](../docs/DEVELOPMENT_WORKBENCH.md) |
 | 执行可追溯自动验证 | `python3 tools/dev.py verify` | 审计、导入、机制、超时清理与版本/日志归档；见 [测试手册](../tests/README.md) |
