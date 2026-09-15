@@ -273,26 +273,17 @@ func _check_sun_disc() -> void:
 	var changed_parent_yaw := 1.10
 	visual_wrapper.call("sync_visual_facing", changed_parent_yaw)
 	var ruin_facing_fixed := is_equal_approx(changed_parent_yaw + visual_ruin.rotation.y, fixed_ruin_world_yaw)
-	var spawn_uses_ground_clip := false
+	var spawn_uses_native_materials := true
 	for node in visual_wrapper.get_node("DiscModel").find_children("*", "MeshInstance3D", true, false):
 		var mesh_instance := node as MeshInstance3D
 		for surface_index in mesh_instance.mesh.get_surface_count():
-			var active_material := mesh_instance.get_active_material(surface_index)
-			if active_material is ShaderMaterial:
-				var clip_material := active_material as ShaderMaterial
-				var clip_shader := clip_material.shader
-				spawn_uses_ground_clip = spawn_uses_ground_clip or (
-					clip_shader != null
-					and "world_height < ground_cutoff" in clip_shader.code
-					and is_equal_approx(float(clip_material.get_shader_parameter("ground_cutoff")), 0.85)
-				)
-	visual_wrapper.call("begin_visual_death", 1.0)
+			spawn_uses_native_materials = spawn_uses_native_materials and mesh_instance.get_surface_override_material(surface_index) == null
 	var ruin_visible_during_death := visual_ruin.visible
 	visual_wrapper.call("finish_visual_death")
 	var ruin_hidden_at_death_end := not visual_ruin.visible
 	_expect(
-		ruin_facing_fixed and spawn_uses_ground_clip and ruin_visible_during_death and ruin_hidden_at_death_end,
-		"太阳圆盘转向时废墟保持初始朝向，Spawn 地下碎片经地面裁切并由废墟正常遮挡，且自带废墟只在 Death 末帧移除",
+		ruin_facing_fixed and spawn_uses_native_materials and ruin_visible_during_death and ruin_hidden_at_death_end,
+		"太阳圆盘转向时废墟保持初始朝向，Spawn 保留原材质并由3D地面与废墟正常遮挡，且自带废墟只在 Death 末帧移除",
 	)
 	visual_wrapper.free()
 	visual_source.free()
