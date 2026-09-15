@@ -71,5 +71,16 @@ func run(harness: Object, main: Node2D) -> void:
 	builder._on_deck_slot_pressed(0)
 	builder._perform_deck_context_action()
 	_expect(builder._deck_selected.is_empty(), "卡槽的移除操作移除选中卡牌")
+	for trial in range(12):
+		builder._randomize_deck()
+		var unique := {}
+		for id in builder._deck_selected:
+			unique[id] = true
+		_expect(builder._deck_selected.size() == 8 and unique.size() == 8 and not builder._deck_confirm.disabled, "随机卡组填满八个不重复卡位并可进入游戏")
+		for index in range(2):
+			var id := String(builder._deck_selected[index])
+			var skills := CardDB.active_skills_for(id)
+			var choice := int(builder._active_skill_choices.get(id, -1))
+			_expect(choice >= 0 and choice < maxi(skills.size(), 1), "随机主动槽使用该卡合法技能索引")
 	builder._clear_deck_ui()
 	await _main.get_tree().process_frame

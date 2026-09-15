@@ -166,6 +166,11 @@ func _pick_deck_ui(after_start: Callable) -> void:
 	_deck_average_label.add_theme_font_size_override("font_size", 16)
 	_deck_average_label.add_theme_color_override("font_color", Color(0.94, 0.48, 1.0))
 	deck_header.add_child(_deck_average_label)
+	var random_button := _make_deck_action_button("随机卡组", Color(0.08, 0.43, 0.72), Color(0.36, 0.78, 1.0))
+	random_button.name = "RandomDeck"
+	random_button.tooltip_text = "重新随机选择 8 张卡牌，主动槽随机选择可用技能"
+	random_button.pressed.connect(_randomize_deck)
+	deck_header.add_child(random_button)
 	var deck_panel := PanelContainer.new()
 	deck_panel.custom_minimum_size = Vector2(0.0, 352.0)
 	deck_panel.add_theme_stylebox_override("panel", _deck_style(Color(0.025, 0.09, 0.17, 0.97), Color(0.10, 0.42, 0.70), 2))
@@ -269,6 +274,20 @@ func _pick_deck_ui(after_start: Callable) -> void:
 	_deck_confirm.pressed.connect(func(): _confirm_deck(after_start))
 	btn_row.add_child(_deck_confirm)
 	_create_deck_context_popup(root)
+	_update_deck_ui()
+
+func _randomize_deck() -> void:
+	var pool := CardDB.selectable_ids().duplicate()
+	pool.shuffle()
+	_deck_selected = pool.slice(0, 8)
+	for index in range(mini(2, _deck_selected.size())):
+		var card_id := String(_deck_selected[index])
+		var skills := CardDB.active_skills_for(card_id)
+		_active_skill_choices[card_id] = randi_range(0, skills.size() - 1) if not skills.is_empty() else 0
+	_deck_pending_slot = -1
+	_hide_deck_context()
+	_close_card_info()
+	_refresh_deck_pool()
 	_update_deck_ui()
 
 func _create_deck_context_popup(root: Control) -> void:
