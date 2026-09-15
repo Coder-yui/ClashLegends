@@ -821,12 +821,14 @@ func _check_building_audio_lifecycle(harness: Object, main: Node2D) -> void:
 	var player: AudioStreamPlayer2D = entry.player
 	audio.attach_building_audio(tower, CardDB.NEXUS_VISUAL_CONFIG)
 	harness._expect(audio._building_audio[id].player == player, "水晶重复附着不重播出生声音")
-	audio._tick_building_audio(4.9666667)
-	harness._expect(not entry.idle and is_zero_approx(player.volume_db), "水晶出生声保持原增益直到进入衔接窗口")
-	audio._tick_building_audio(0.2)
-	harness._expect(entry.idle and entry.tail == player and entry.player != player, "水晶出生结束后双播放器交叉淡化，不硬切尾音")
-	audio._tick_building_audio(1.5)
-	harness._expect(is_equal_approx(entry.player.volume_db, 0.0) and entry.tail == null, "待机音量平滑衔接到额外 0 dB，出生尾音释放")
+	harness._expect(entry.idle and entry.tail != null and entry.tail.playing and player.playing, "原生出生节点同时启动出生声与持续运转声")
+	var loop_pool := player.stream as AudioStreamRandomizer
+	var loop_wav := loop_pool.get_stream(0) as AudioStreamWAV
+	harness._expect(loop_wav.loop_mode == AudioStreamWAV.LOOP_FORWARD and loop_wav.loop_end > 0, "运转声在音频流内部连续循环，不等待画面帧重启")
+	var tail: AudioStreamPlayer2D = entry.tail
+	tail.stop()
+	audio._tick_building_audio(0.1)
+	harness._expect(entry.tail == null and player.playing and is_equal_approx(player.volume_db, 0.0), "出生尾声结束只释放一次性层，持续层不切换")
 	player = entry.player
 	var hp_before := tower.hp
 	player.stop()

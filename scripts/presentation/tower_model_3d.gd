@@ -87,6 +87,8 @@ func setup(tower: Tower, packed: PackedScene, camera: Camera3D, config: Dictiona
 	if _stage_mode:
 		_setup_stage_mode()
 	else:
+		if _animation_player != null:
+			_animation_player.callback_mode_process = AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_MANUAL
 		_show_alive_surfaces()
 		if tower.hp <= 0.0:
 			_show_final_ruin()
@@ -103,14 +105,36 @@ func _process(delta: float) -> void:
 	if _source == null or not is_instance_valid(_source):
 		queue_free()
 		return
+	var animation_delta := delta
 	if _spawn_hold_remaining > 0.0 and not _destroyed:
-		_spawn_hold_remaining = maxf(0.0, _spawn_hold_remaining - delta)
+		var held := minf(_spawn_hold_remaining, animation_delta)
+		_spawn_hold_remaining -= held
+		animation_delta -= held
 		if _spawn_hold_remaining <= 0.000001:
 			_spawn_hold_remaining = 0.0
 			_play_spawn_or_idle()
+	if not _stage_mode:
+		_advance_nexus_animation(animation_delta)
 	_update_hit_flash(delta)
 	_update_stage_flow(delta)
 	_sync_position()
+
+## 原图零混合 Sequencer：跨片段帧的剩余时间继续推进下一片段，不能在首帧停一拍。
+func _advance_nexus_animation(delta: float) -> void:
+	if _animation_player == null or not _animation_player.is_playing() or delta <= 0.0:
+		return
+	if _active_one_shot != &"":
+		var clip := _animation_player.get_animation(_active_one_shot)
+		var speed := maxf(_animation_player.get_playing_speed(), 0.001)
+		var remaining := maxf(clip.length - _animation_player.current_animation_position, 0.0) / speed
+		if delta >= remaining:
+			var finished := _active_one_shot
+			_animation_player.seek(clip.length, true)
+			_on_animation_finished(finished)
+			if _animation_player.is_playing():
+				_animation_player.advance(maxf(delta - remaining, 0.0))
+			return
+	_animation_player.advance(delta)
 
 func _sync_position() -> void:
 	if _source == null or _camera == null:

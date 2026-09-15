@@ -1,0 +1,14 @@
+[
+  {
+    "file": "/Users/czh/Projects/Clash Legends/assets/audio/world/order/play_sfx_env_global_eog_ordernexus_death_oc_r1.wav",
+    "group": "水晶爆炸与结算时机",
+    "cue": "蓝方水晶被摧毁：请记录希望播报胜负的秒数",
+    "event": "play_sfx_env_global_eog_ordernexus_death_oc_r1"
+  },
+  {
+    "file": "/Users/czh/Projects/Clash Legends/assets/audio/world/chaos/play_sfx_env_global_eog_chaosnexus_death_cast_r1.wav",
+    "group": "水晶爆炸与结算时机",
+    "cue": "红方水晶被摧毁：请记录希望播报胜负的秒数",
+    "event": "play_sfx_env_global_eog_chaosnexus_death_cast_r1"
+  }
+]

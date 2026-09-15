@@ -78,6 +78,13 @@ func _check_structure_art_integration() -> void:
 		view._spawn_hold_remaining = 0.01
 		view._process(0.02)
 		_expect(view._active_one_shot == StringName(view._animations.spawn), "保持结束后进入出生动作")
+		for fps in [30.0, 60.0, 120.0]:
+			view._play_spawn_or_idle()
+			view._animation_player.seek(0.0, true)
+			var duration: float = view._animations.spawn_duration
+			view._advance_nexus_animation(duration - 0.5 / fps)
+			view._advance_nexus_animation(1.0 / fps)
+			_expect(view._animation_player.current_animation == String(view._animations.idle) and absf(view._animation_player.current_animation_position - 0.5 / fps) < 0.0001, "水晶出生跨帧时间传给待机，30/60/120FPS无边界停帧")
 		view._on_animation_finished(StringName(view._animations.spawn))
 		_expect(view._animation_player.current_animation == String(view._animations.idle), "出生结束进入循环待机")
 

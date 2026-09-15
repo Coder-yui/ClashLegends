@@ -3,6 +3,7 @@ extends Node2D
 ## 纯表现音频入口：轮询权威/快照中的动作序号并播放声音，但绝不参与模拟。
 
 signal cue_played(card_id: String, cue: StringName, position: Vector2)
+signal terminal_audio_finished
 
 const COMBAT_BUS := &"Combat"
 const WORLD_PLAYER_COUNT := 24
@@ -171,7 +172,14 @@ func attach_unit(unit: Unit, stats: Dictionary) -> void:
 	if not already_attached and unit.hp > 0.0 and not unit.timed_revival_id.is_empty():
 		_start_sustain(unit, _unit_entries[unit.get_instance_id()], &"revival", &"revival")
 
+var _audio_clock_usec := 0
+
 func _process(delta: float) -> void:
+	var now := Time.get_ticks_usec()
+	var audio_delta := float(now - _audio_clock_usec) / 1000000.0 if _audio_clock_usec > 0 else delta
+	_audio_clock_usec = now
+	if not _battle_paused:
+		_tick_terminal_audio(audio_delta, true)
 	if _battle_ended or _battle_paused:
 		return
 	_tick_zone_audio(delta)
@@ -610,8 +618,8 @@ func _play_pool(card_id: String, cue: StringName, configured: Variant, position:
 	_record_budget("short", "played")
 	return true
 
-func _randomized_stream(paths: PackedStringArray) -> AudioStreamRandomizer:
-	var cache_key := "\n".join(paths)
+func _randomized_stream(paths: PackedStringArray, looping: bool = false) -> AudioStreamRandomizer:
+	var cache_key := ("loop:" if looping else "") + "\n".join(paths)
 	if _stream_pool_cache.has(cache_key):
 		return _stream_pool_cache[cache_key] as AudioStreamRandomizer
 	var randomizer := AudioStreamRandomizer.new()
@@ -621,6 +629,12 @@ func _randomized_stream(paths: PackedStringArray) -> AudioStreamRandomizer:
 			push_warning("音频资源不可用：" + path)
 			continue
 		var stream := load(path) as AudioStream
+		if looping and stream is AudioStreamWAV:
+			stream = stream.duplicate() as AudioStreamWAV
+			var wav := stream as AudioStreamWAV
+			wav.loop_begin = 0
+			wav.loop_end = roundi(wav.get_length() * wav.mix_rate)
+			wav.loop_mode = AudioStreamWAV.LOOP_FORWARD
 		if stream != null:
 			randomizer.add_stream(-1, stream, 1.0)
 	if randomizer.streams_count == 0:
@@ -694,13 +708,21 @@ func attach_building_audio(tower: Tower, visual_config: Dictionary) -> void:
 	var player := _new_world_player()
 	add_child(player)
 	var entry := {"source": weakref(tower), "player": player, "card_id": card_id, "events": events,
-		"remaining": float(visual_config.get("animations", {}).get("spawn_duration", 0.0)),
-		"hold": float(visual_config.get("animations", {}).get("spawn_hold_duration", 0.0)), "idle": false, "fade": 0.0, "tail": null}
+		"hold": float(visual_config.get("animations", {}).get("spawn_hold_duration", 0.0)), "idle": false, "tail": null}
 	_building_audio[id] = entry
 	_record_budget("building", "played")
 	tower.tree_exiting.connect(stop_building_audio.bind(id))
 	if float(entry.hold) <= 0.0:
-		_play_building_phase(entry, &"spawn:start")
+		_start_building_layers(entry)
+
+func _start_building_layers(entry: Dictionary) -> void:
+	# LoL 出生节点同时触发 Audio_Spawn 和 Audio_Idle；出生声自然结束，运转声持续。
+	_play_building_phase(entry, &"spawn:start")
+	entry.tail = entry.player
+	entry.player = _new_world_player()
+	add_child(entry.player)
+	entry.idle = true
+	_play_building_phase(entry, &"idle:sustain")
 
 func _play_building_phase(entry: Dictionary, cue: StringName) -> void:
 	var player: AudioStreamPlayer2D = entry.player
@@ -709,7 +731,7 @@ func _play_building_phase(entry: Dictionary, cue: StringName) -> void:
 	var paths := PackedStringArray(event.get("pool", []))
 	if paths.is_empty():
 		return
-	player.stream = _randomized_stream(paths)
+	player.stream = _randomized_stream(paths, cue == &"idle:sustain")
 	player.volume_db = float(event.get("volume_db", 0.0))
 	player.global_position = entry.source.get_ref().global_position
 	player.play()
@@ -724,40 +746,21 @@ func _tick_building_audio(delta: float) -> void:
 			continue
 		if float(entry.hold) > 0.0:
 			entry.hold = maxf(0.0, float(entry.hold) - delta)
-			if float(entry.hold) <= 0.000001:
+			if entry.hold <= 0.000001:
 				entry.hold = 0.0
-				_play_building_phase(entry, &"spawn:start")
+				_start_building_layers(entry)
 			continue
 		var player: AudioStreamPlayer2D = entry.player
 		player.global_position = source.global_position
-		if not entry.idle:
-			entry.remaining = maxf(0.0, float(entry.remaining) - delta)
-			if entry.remaining <= 0.000001:
-				entry.idle = true
-				entry.tail = entry.player
-				var incoming := _new_world_player()
-				add_child(incoming)
-				entry.player = incoming
-				entry.fade = 1.5
-				_play_building_phase(entry, &"idle:sustain")
-				incoming.volume_db = -80.0
-		elif not player.playing and entry.events.has("idle:sustain"):
+		if entry.idle and not player.playing and entry.events.has("idle:sustain"):
 			_play_building_phase(entry, &"idle:sustain")
-
-		if entry.idle and float(entry.fade) > 0.0:
-			entry.fade = maxf(0.0, float(entry.fade) - delta)
-			var progress := 1.0 - float(entry.fade) / 1.5
-			var incoming: AudioStreamPlayer2D = entry.player
-			var target_db := float(entry.events.get("idle:sustain", {}).get("volume_db", 0.0))
-			incoming.volume_db = lerpf(0.0, target_db, progress) + linear_to_db(maxf(minf(progress * 6.0, 1.0), 0.0001))
-			var tail: AudioStreamPlayer2D = entry.tail
-			if is_instance_valid(tail):
-				tail.volume_db = float(entry.events.get("spawn:start", {}).get("volume_db", 0.0)) + linear_to_db(maxf(1.0 - progress, 0.0001))
-				if entry.fade <= 0.000001:
-					tail.stop()
-					tail.stream = null
-					tail.queue_free()
-					entry.tail = null
+		var tail = entry.tail
+		if is_instance_valid(tail):
+			tail.global_position = source.global_position
+			if not tail.playing:
+				tail.stream = null
+				tail.queue_free()
+				entry.tail = null
 
 func stop_building_audio(id: int) -> void:
 	if not _building_audio.has(id):
@@ -845,6 +848,14 @@ var _terminal_audio_generation := 0
 var _terminal_audio_pending := false
 var _terminal_audio_started := false
 var _terminal_audio_cue := ""
+const NEXUS_RESULT_DELAY := 5.0
+const TERMINAL_FADE_DURATION := 1.0
+var _terminal_phase := ""
+var _terminal_wait_remaining := 0.0
+var _terminal_fade_remaining := 0.0
+var _nexus_elapsed: Dictionary = {}
+var _terminal_fade_players: Dictionary = {}
+var _terminal_result_callback: Callable
 
 func play_nexus_destruction(tower: Tower) -> void:
 	var id := tower.get_instance_id()
@@ -867,6 +878,7 @@ func play_nexus_destruction(tower: Tower) -> void:
 	player.volume_db = float(event.get("volume_db", 0.0))
 	player.finished.connect(_on_nexus_finished.bind(id, player, _terminal_audio_generation))
 	_nexus_players[id] = player
+	_nexus_elapsed[id] = 0.0
 	player.play()
 	if not player.playing:
 		_nexus_players.erase(id)
@@ -878,12 +890,16 @@ func play_nexus_destruction(tower: Tower) -> void:
 func finish_match_audio(cue: String, destroyed_nexuses: Array) -> void:
 	if _terminal_audio_started: return
 	_terminal_audio_started = true
-	# 可靠终态已应用塔血量；补足丢失快照/死亡事件，已播放实例不会重启。
 	for tower in destroyed_nexuses:
 		play_nexus_destruction(tower)
 	_terminal_audio_cue = cue
 	_terminal_audio_pending = true
 	end_battle(true)
+	_terminal_phase = "waiting"
+	var elapsed := 0.0
+	for value in _nexus_elapsed.values():
+		elapsed = maxf(elapsed, float(value))
+	_terminal_wait_remaining = maxf(NEXUS_RESULT_DELAY - elapsed, 0.0) if not _nexus_players.is_empty() else 0.0
 	_finish_terminal_audio_if_ready()
 
 func _on_nexus_finished(id: int, player: AudioStreamPlayer2D, generation: int) -> void:
@@ -893,16 +909,84 @@ func _on_nexus_finished(id: int, player: AudioStreamPlayer2D, generation: int) -
 	player.queue_free()
 	_finish_terminal_audio_if_ready()
 
+func _tick_terminal_audio(delta: float, use_playback_clock: bool = false) -> void:
+	var elapsed := 0.0
+	for id in _nexus_players:
+		var position := float(_nexus_elapsed.get(id, 0.0)) + delta
+		if use_playback_clock:
+			var player: AudioStreamPlayer2D = _nexus_players[id]
+			position = maxf(player.get_playback_position() + AudioServer.get_time_since_last_mix() - AudioServer.get_output_latency(), 0.0)
+		_nexus_elapsed[id] = position
+		elapsed = maxf(elapsed, position)
+	if not _terminal_audio_pending: return
+	if _terminal_phase == "waiting":
+		if use_playback_clock and not _nexus_players.is_empty():
+			_terminal_wait_remaining = maxf(NEXUS_RESULT_DELAY - elapsed, 0.0)
+		else:
+			_terminal_wait_remaining = maxf(_terminal_wait_remaining - delta, 0.0)
+		_finish_terminal_audio_if_ready()
+	elif _terminal_phase == "fading":
+		_terminal_fade_remaining = maxf(_terminal_fade_remaining - delta, 0.0)
+		var gain := _terminal_fade_remaining / TERMINAL_FADE_DURATION
+		for player in _terminal_fade_players:
+			if is_instance_valid(player):
+				player.volume_db = float(_terminal_fade_players[player]) + linear_to_db(maxf(gain, 0.0001))
+		if _terminal_fade_remaining <= 0.000001:
+			_complete_terminal_audio()
+
 func _finish_terminal_audio_if_ready() -> void:
-	if not _terminal_audio_pending or not _nexus_players.is_empty(): return
+	if not _terminal_audio_pending or _terminal_phase != "waiting": return
+	if _terminal_audio_cue.is_empty():
+		# 平局保留原有爆炸尾音，不伪造胜利或失败。
+		if _nexus_players.is_empty(): _complete_terminal_audio()
+		return
+	if _terminal_wait_remaining > 0.000001: return
+	_terminal_phase = "announcing"
+	play_match_event(_terminal_audio_cue)
+	if is_instance_valid(_announcer) and _announcer.playing:
+		if _terminal_result_callback.is_valid() and _announcer.finished.is_connected(_terminal_result_callback):
+			_announcer.finished.disconnect(_terminal_result_callback)
+		_terminal_result_callback = _on_result_announcement_finished.bind(_terminal_audio_generation)
+		_announcer.finished.connect(_terminal_result_callback, CONNECT_ONE_SHOT)
+	else:
+		_on_result_announcement_finished(_terminal_audio_generation)
+
+func _on_result_announcement_finished(generation: int) -> void:
+	if generation != _terminal_audio_generation or _terminal_phase != "announcing": return
+	_terminal_phase = "fading"
+	_terminal_fade_remaining = TERMINAL_FADE_DURATION
+	_terminal_fade_players.clear()
+	# 只淡出本局播放器，不修改全局总线，防止影响新一局或其他预览。
+	for player in get_children():
+		if (player is AudioStreamPlayer or player is AudioStreamPlayer2D) and player.playing:
+			_terminal_fade_players[player] = player.volume_db
+
+func _complete_terminal_audio() -> void:
+	end_battle(true)
+	for player in _nexus_players.values():
+		player.stop()
+		player.stream = null
+		player.queue_free()
+	_nexus_players.clear()
+	_nexus_elapsed.clear()
+	_terminal_fade_players.clear()
 	_terminal_audio_pending = false
-	if not _terminal_audio_cue.is_empty(): play_match_event(_terminal_audio_cue)
+	_terminal_phase = "done"
+	terminal_audio_finished.emit()
 
 func _cancel_terminal_audio() -> void:
+	if is_instance_valid(_announcer) and _terminal_result_callback.is_valid() and _announcer.finished.is_connected(_terminal_result_callback):
+		_announcer.finished.disconnect(_terminal_result_callback)
+	_terminal_result_callback = Callable()
 	_terminal_audio_generation += 1
 	_terminal_audio_pending = false
 	_terminal_audio_started = false
 	_terminal_audio_cue = ""
+	_terminal_phase = ""
+	_terminal_wait_remaining = 0.0
+	_terminal_fade_remaining = 0.0
+	_terminal_fade_players.clear()
+	_nexus_elapsed.clear()
 	for player in _nexus_players.values():
 		player.stop()
 		player.stream = null
