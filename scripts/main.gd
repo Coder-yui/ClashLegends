@@ -103,6 +103,7 @@ var _towers: Array[Tower] = []
 var _battle_presentation: BattlePresentation3D
 var _audio_manager: GameAudioManager
 var _art_dev_mode := false
+var _art_dev_form := 0
 var _art_dev_selection := "training_dummy"
 var _art_dev_team := 1
 var _art_dev_spell_active := false
@@ -419,6 +420,7 @@ func _start_art_dev() -> void:
 	_art_dev_panel.setup(CardDB.all())
 	_art_dev_panel.item_selected.connect(_set_art_dev_selection)
 	_art_dev_panel.team_changed.connect(_set_art_dev_team)
+	_art_dev_panel.form_selected.connect(func(form): _art_dev_form = form)
 	_art_dev_panel.active_skill_selected.connect(_on_art_dev_active_skill_selected)
 	_art_dev_panel.active_skill_requested.connect(_use_art_dev_active_skill)
 	_art_dev_panel.scenario_requested.connect(_run_workbench_scenario)
@@ -971,6 +973,8 @@ func _place_art_dev_item(pos: Vector2) -> void:
 	if play_card(_art_dev_team, _art_dev_selection, pos, {"immediate": true, "validate_position": false, "preview_active_spell": _art_dev_spell_active}):
 		var unit := _latest_unit_for_card(_art_dev_selection, _art_dev_team)
 		if unit != null:
+			if _art_dev_form == 1:
+				unit.transform_to_mega(true)
 			_art_dev_last_units[_art_dev_unit_key(_art_dev_selection, _art_dev_team)] = weakref(unit)
 			_configure_art_dev_unit_skill(unit)
 			_sync_art_dev_panel_state()
@@ -994,6 +998,7 @@ func _art_dev_unit_key(card_id: String, p_team: int) -> String:
 
 func _set_art_dev_selection(item_id: String) -> void:
 	_art_dev_selection = item_id
+	_art_dev_form = 0
 	_art_dev_spell_active = false
 	_sync_art_dev_panel_state()
 
@@ -1102,11 +1107,14 @@ func _load_workbench_preset(id: String) -> void:
 	await get_tree().process_frame
 	_create_towers()
 	_build_nav()
+	var selected_form := _art_dev_form
 	for entry in recipe:
+		_art_dev_form = selected_form if entry.card == selection else 0
 		_art_dev_selection = entry.card
 		_art_dev_team = entry.team
 		_place_art_dev_item(entry.pos)
 	_art_dev_selection = selection
+	_art_dev_form = selected_form
 	_art_dev_team = selected_team
 	_art_dev_spell_active = enhanced
 	_workbench_preset_loading = false

@@ -3,6 +3,7 @@ extends CanvasLayer
 ## 三个工作区共享卡牌选择；素材预览与真实战斗分离。
 signal item_selected(item_id: String)
 signal team_changed(team: int)
+signal form_selected(form: int)
 signal active_skill_selected(item_id: String, skill_index: int)
 signal active_skill_requested(skill_index: int)
 signal skill_resource_requested(value: float)
@@ -32,7 +33,7 @@ var _form_option: OptionButton
 var _selection_label: Label
 var _art: TextureRect
 var _preview: WorkbenchModelPreview
-var _animation_option: OptionButton
+var _animation_option: Button
 var _timeline: HSlider
 var _time_label: Label
 var _model_hint: Label
@@ -155,8 +156,8 @@ func _build_ui() -> void:
 	_selection_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_form_option = OptionButton.new()
 	_form_option.add_item("基础形态")
-	_form_option.add_item("变形素材")
-	_form_option.item_selected.connect(func(index): _form = index; _refresh_assets())
+	_form_option.add_item("变形形态")
+	_form_option.item_selected.connect(func(index): _select_item(_selected_id + (":1" if index == 1 else "")))
 	summary.add_child(_form_option)
 	var tabs := _row(layout)
 	var names := ["01 模型·动作", "02 实战·技能", "03 音频"]
@@ -189,8 +190,7 @@ func _build_model_page(page: Control) -> void:
 	_preview.custom_minimum_size.y = 250
 	page.add_child(_preview)
 	var controls := _panel(page)
-	_animation_option = OptionButton.new()
-	_animation_option.fit_to_longest_item = false
+	_animation_option = preload("res://scripts/ui/workbench/animation_picker.gd").new()
 	_animation_option.clip_text = true
 	_animation_option.custom_minimum_size.y = 44
 	_animation_option.item_selected.connect(_play_animation)
@@ -309,36 +309,43 @@ func _filter_cards(query: String) -> void:
 	_card_option.clear()
 	var ids: Array = _cards.keys()
 	ids.sort()
+	for base_id in _cards:
+		if _cards[base_id].has("transformed_stats"):
+			ids.append(String(base_id) + ":1")
 	ids.push_front("training_dummy")
 	for id in ids:
-		var title := "训练木桩" if id == "training_dummy" else String(_cards[id].get("name", id))
+		var base_id := String(id).get_slice(":", 0)
+		var stats: Dictionary = PresentationConfig.for_form(_cards.get(base_id, {}), 1 if String(id).ends_with(":1") else 0)
+		var title := "训练木桩" if id == "training_dummy" else String(stats.get("name", id))
 		if not query.is_empty() and not (title + " " + String(id)).to_lower().contains(query.to_lower()): continue
 		_card_option.add_item(title + " · " + String(id))
 		var index := _card_option.item_count - 1
 		_card_option.set_item_metadata(index, id)
-		if id == _selected_id: _card_option.select(index)
+		if id == _selected_id + (":1" if _form == 1 else ""): _card_option.select(index)
 	_card_option.disabled = _card_option.item_count == 0
 	if _card_option.item_count > 0:
 		var found := false
 		for index in _card_option.item_count:
-			if String(_card_option.get_item_metadata(index)) == _selected_id: found = true
+			if String(_card_option.get_item_metadata(index)) == _selected_id + (":1" if _form == 1 else ""): found = true
 		if not found: _card_option.select(-1)
 
 func _select_item(item_id: String) -> void:
+	var requested_form := 1 if item_id.ends_with(":1") else 0
+	item_id = item_id.get_slice(":", 0)
 	if item_id != "training_dummy" and not _cards.has(item_id): return
 	_selected_id = item_id
-	_form = 0
+	_form = requested_form
 	_spell_active.set_pressed_no_signal(false)
 	var is_spell := String(_cards.get(item_id, {}).get("type", "")) == "spell"
 	var has_spell_choices := is_spell and not CardDB.active_skills_for(item_id).is_empty()
 	_spell_active.visible = is_spell and not has_spell_choices and _cards.get(item_id, {}).has("active_name")
 	_spell_active.text = String(_cards.get(item_id, {}).get("active_name", "强化法术"))
-	_form_option.select(0)
-	_form_option.disabled = _workspace == 1 or not _cards.get(item_id, {}).has("transformed_stats")
-	_selection_label.text = "%s\n%s" % [String(_cards.get(item_id, {}).get("name", "训练木桩")), item_id]
+	_form_option.select(_form)
+	_form_option.disabled = not _cards.get(item_id, {}).has("transformed_stats")
+	_selection_label.text = "%s\n%s" % [String(PresentationConfig.for_form(_cards.get(item_id, {}), _form).get("name", "训练木桩")), item_id]
 	_art.texture = CardArt.texture_for(item_id)
 	for index in _card_option.item_count:
-		if String(_card_option.get_item_metadata(index)) == item_id: _card_option.select(index)
+		if String(_card_option.get_item_metadata(index)) == item_id + (":1" if _form == 1 else ""): _card_option.select(index)
 	_unit_available = false
 	_unit_deployed = false
 	_unit_casting = false
@@ -348,6 +355,7 @@ func _select_item(item_id: String) -> void:
 	_control_buttons[0].get_parent().visible = not is_spell
 	_refresh_assets()
 	item_selected.emit(item_id)
+	form_selected.emit(_form)
 
 func _refresh_assets() -> void:
 	_stop_audio()
@@ -360,6 +368,7 @@ func _refresh_assets() -> void:
 	for clip in clips:
 		_animation_option.add_item("%s  ·  %s" % [clip, String(mappings.get(String(clip), "未映射片段"))])
 		_animation_option.set_item_metadata(_animation_option.item_count - 1, clip)
+		_animation_option.set_item_mapped(_animation_option.item_count - 1, mappings.has(String(clip)))
 	_animation_option.disabled = clips.is_empty()
 	_model_hint.text = "无 3D 模型 · 法术请在实战区检查效果" if _preview.model == null else "独立素材观察 · %d 个片段 · 真实衔接请到实战区" % clips.size()
 	_reset_camera()
@@ -452,7 +461,7 @@ func show_workspace(index: int) -> void:
 		_pages[i].visible = i == _workspace
 		_tabs[i].set_pressed_no_signal(i == _workspace)
 	_background.visible = _workspace != 1
-	_form_option.visible = _workspace != 1
+	_form_option.visible = true
 	_form_option.disabled = not _cards.get(_selected_id, {}).has("transformed_stats")
 	_preview.set_preview_active(_workspace == 0)
 	_stop_audio()

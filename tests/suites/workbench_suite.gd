@@ -60,12 +60,17 @@ func _check_artdev_workbench() -> void:
 	var search_ok := panel._card_option.item_count == 1 and String(panel._card_option.get_item_metadata(0)) == "gwen"
 	panel._filter_cards("")
 	panel._select_item("pix")
-	var all_cards := panel._card_option.item_count == CardDB.all().size() + 1 and panel._selected_id == "pix"
+	var extra_forms := CardDB.all().values().filter(func(card): return card.has("transformed_stats")).size()
+	var all_cards := panel._card_option.item_count == CardDB.all().size() + 1 + extra_forms and panel._selected_id == "pix"
 	panel.show_workspace(1)
 	var battle_input := panel.accepts_battle_input()
 	panel.show_workspace(0)
 	_expect(search_ok and all_cards and battle_input and not panel.accepts_battle_input(), "开发工作台可搜索全部卡及系统对象，仅实战页接受战场放置，无八卡槽限制")
 
+	for choice in ["aatrox:1", "gnar:1"]:
+		panel._select_item(choice)
+		_expect(panel._form == 1 and panel._preview.model != null and panel._selection_label.text.contains("大"), "工作台独立形态入口：" + choice)
+	panel._select_item("pix")
 	panel._filter_cards("does-not-exist")
 	_expect(panel._card_option.disabled and panel._selected_id == "pix", "搜索无结果不会悄悄改换当前审查卡牌")
 	panel._filter_cards("")
