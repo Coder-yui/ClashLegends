@@ -28,3 +28,9 @@ __pycache__/
 /ClashLegends-开发素材库/03-制作中/剑魔/voice-selection/candidates/
 /ClashLegends-开发素材库/03-制作中/剑魔/voice-selection/client/
 /ClashLegends-开发素材库/03-制作中/剑魔/**/*.log
+
+# 峡谷先锋批量提取与加工副本保留本地；清单、映射及正式试听候选提交
+/ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/assets/
+/ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/data/
+/ClashLegends-开发素材库/03-制作中/峡谷先锋/audio/
+/ClashLegends-开发素材库/03-制作中/峡谷先锋/**/*.log

@@ -1,0 +1,24 @@
+{
+  "attack": {
+    "native_total": 2,
+    "native_cast": 0.5,
+    "ratio": 0.25,
+    "new_total": 2,
+    "new_cast": 0.5,
+    "new_recovery": 1.5
+  },
+  "spin": {
+    "native_animation_frames": 107,
+    "fps": 30,
+    "new_total": 3,
+    "vox_frame": 11,
+    "vox_time": 0.31,
+    "cast_audio_frame": 31,
+    "cast_audio_time": 0.87,
+    "contact_vfx_frame": 56,
+    "mapped_hit_time": 1.57,
+    "server_script_verified": false
+  },
+  "spawn_reference": "https://www.leagueoflegends.com/en-gb/news/game-updates/patch-14-1-notes/",
+  "spawn_geometry": "project adaptation: compact impact origin, outward fan; Riot notes confirm collision trigger but do not specify scatter coordinates"
+}
