@@ -6,4 +6,4 @@
 
 [node name="Model" parent="." instance=ExtResource("1_imp")]
 position = Vector3(0, 0.012, 0)
-scale = Vector3(0.007, 0.007, 0.007)
+scale = Vector3(0.009333333, 0.009333333, 0.009333333)

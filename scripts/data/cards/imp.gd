@@ -10,12 +10,12 @@ static func definition() -> Dictionary:
 			"hp": PRINCESS_TOWER_STATS.damage, "damage": PRINCESS_TOWER_STATS.damage, "range": MELEE_RANGE_MIN,
 			"speed": SPEED_SLIGHTLY_FAST, "interval": 0.7, "first_hit": 0.25,
 			"deploy_time": 0.0,
-			"size_tier": SIZE_EXTREMELY_SMALL, "radius": RADIUS_EXTREMELY_SMALL,
+			"size_tier": SIZE_SMALL, "radius": RADIUS_SMALL,
 			"mass": 1.0, "sight": 180.0,
 			"is_air": false, "building_only": false, "can_attack_air": false,
 		},
 		"visual": {
-			"visual_radius": RADIUS_EXTREMELY_SMALL + VISUAL_RADIUS_PADDING,
+			"visual_radius": RADIUS_SMALL + VISUAL_RADIUS_PADDING,
 			"visual_scene_path": "res://assets/units/imp/imp_view.tscn",
 			"visual_forward_yaw": 0.0,
 			"visual_animations": {

@@ -302,8 +302,8 @@ func _check_unit_size_tiers() -> void:
 		var spec: Array = expected[card_id]
 		tiers_ok = tiers_ok and stats.size_tier == spec[0] and is_equal_approx(stats.radius, spec[1])
 	var imp := CardDB.get_unit_stats("imp")
-	tiers_ok = tiers_ok and imp.size_tier == CardDB.SIZE_EXTREMELY_SMALL
-	tiers_ok = tiers_ok and is_equal_approx(imp.radius, CardDB.RADIUS_EXTREMELY_SMALL)
+	tiers_ok = tiers_ok and imp.size_tier == CardDB.SIZE_SMALL
+	tiers_ok = tiers_ok and is_equal_approx(imp.radius, CardDB.RADIUS_SMALL)
 	tiers_ok = tiers_ok and [
 		CardDB.RADIUS_EXTREMELY_SMALL,
 		CardDB.RADIUS_SMALL,
@@ -321,7 +321,7 @@ func _check_unit_size_tiers() -> void:
 	tiny.setup(0, imp, imp.name)
 	_expect(
 		is_equal_approx(large.body_radius, CardDB.RADIUS_LARGE)
-		and is_equal_approx(tiny.body_radius, CardDB.RADIUS_EXTREMELY_SMALL)
+		and is_equal_approx(tiny.body_radius, CardDB.RADIUS_SMALL)
 		and large.body_radius > tiny.body_radius
 		and is_equal_approx(CardDB.CHARACTER_SCALE_MULTIPLIER, 1.5)
 		and Unit.COLLISION_SHAPE == &"cylinder",
