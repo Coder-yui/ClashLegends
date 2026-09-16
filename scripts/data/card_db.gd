@@ -30,6 +30,8 @@ const DEFINITIONS = [
 	preload("res://scripts/data/cards/missfortune.gd"),
 	preload("res://scripts/data/cards/imp.gd"),
 	preload("res://scripts/data/cards/aatrox.gd"),
+	preload("res://scripts/data/cards/rift_herald.gd"),
+	preload("res://scripts/data/cards/voidmite.gd"),
 ]
 static var _cards: Dictionary = {}
 static var _definition_errors := PackedStringArray()

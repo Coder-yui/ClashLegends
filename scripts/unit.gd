@@ -126,6 +126,7 @@ var deploy_sweep_mass_factor_max := 1.4
 # 命中回血：每 heal_every_hits 次普攻命中回复 heal_amount 生命（赵信三段循环的第三击）。
 var heal_every_hits := 0
 var heal_amount := 0.0
+var structure_rush := StructureRushState.new()
 var charge_time := 0.0
 var charge_speed_multiplier := 1.0
 var charge_damage_multiplier := 1.0
@@ -394,6 +395,7 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	deploy_sweep_mass_factor_max = stats.get("deploy_sweep_mass_factor_max", 1.4)
 	heal_every_hits = stats.get("heal_every_hits", 0)
 	heal_amount = stats.get("heal_amount", 0.0)
+	structure_rush.configure(stats)
 	charge_time = stats.get("charge_time", 0.0)
 	charge_speed_multiplier = stats.get("charge_speed_multiplier", 1.0)
 	charge_damage_multiplier = stats.get("charge_damage_multiplier", 1.0)
@@ -736,6 +738,7 @@ func apply_attack_lifesteal(heal_ratio: float, max_health_ratio: float = 1.0) ->
 	queue_redraw()
 
 func apply_blind(attacks: int) -> void:
+	if structure_rush.control_immune(): return
 	if battle_context != null and battle_context.damage_batch().collecting:
 		battle_context.damage_batch().defer_effect(func():
 			if hp > 0.0: apply_blind(attacks))
@@ -865,6 +868,11 @@ func _apply_form(next_form_index: int, grant_max_hp_increase: bool, advance_form
 func is_form_transitioning() -> bool:
 	return form_transition_timer > 0.0
 
+func is_structure_rushing() -> bool:
+	if _in_client_mode():
+		return get_visual_action_time_left() > 0.0 and get_visual_action_name() in [&"rush_prepare", &"rush_dash", &"rush_hit"]
+	return structure_rush.locked()
+
 func is_active_skill_casting() -> bool:
 	return active_skill_cast_timer > 0.0
 
@@ -878,6 +886,8 @@ func get_visual_facing_direction() -> Vector2:
 		if net_facing_direction.length_squared() > 0.001:
 			return net_facing_direction.normalized()
 		return Vector2.UP if team == 0 else Vector2.DOWN
+	if structure_rush.locked() and structure_rush.direction.length_squared() > 0.001:
+		return structure_rush.direction
 	if is_active_skill_facing_locked() and active_skill_cast_facing.length_squared() > 0.001:
 		return active_skill_cast_facing
 	if _attacking and _target != null and is_instance_valid(_target):
@@ -1002,6 +1012,8 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false) -> void:
 		if form_transition_timer > 0.0:
 			_tick_form_transition_movement(dt)
 			return
+	if structure_rush.tick(self, dt):
+		return
 	attack_timeline.tick_cooldown(dt)
 	# 默认命中后必须完整收招。部分卡牌（当前为腕豪）若已经没有攻击范围内目标，
 	# 则提前解除后摇并追击；冻结会在上方提前 return，因此同样会暂停后摇计时。
@@ -1131,7 +1143,7 @@ func _perform_deploy_sweep() -> void:
 		battle_context.notify_unit_audio_event(self, &"deploy:hit", global_position)
 
 func can_receive_knockback(origin: Vector2, distance: float, duration: float, mass_factor_max: float) -> bool:
-	return hp > 0.0 and not is_queued_for_deletion() and not is_building and origin.is_finite() and is_finite(distance) and distance > 0.0 and is_finite(duration) and is_finite(mass_factor_max)
+	return hp > 0.0 and not structure_rush.control_immune() and not is_queued_for_deletion() and not is_building and origin.is_finite() and is_finite(distance) and distance > 0.0 and is_finite(duration) and is_finite(mass_factor_max)
 
 func apply_knockback(origin: Vector2, distance: float, duration: float = 0.2, mass_factor_max: float = 1.4, displacement_order: Array = []) -> void:
 	# 必须先校验再替换；拒绝的请求不得破坏旧位移。
@@ -1139,6 +1151,7 @@ func apply_knockback(origin: Vector2, distance: float, duration: float = 0.2, ma
 	if battle_context != null and battle_context.damage_batch().collecting:
 		battle_context.damage_batch().submit_knockback(self, origin, distance, duration, mass_factor_max, displacement_order)
 		return
+	structure_rush.interrupt_preparation(self)
 	# 当前没有异步位移完成回调。只替换状态，清掉旧 Tick 尚未消费的移动意图。
 	_move_intent = Vector2.ZERO
 	_forced_movement = false
@@ -1806,20 +1819,25 @@ func _try_attack_lifesteal(landed_damage: float, cycle_ratio: float = 0.0) -> vo
 	queue_redraw()
 
 func freeze(duration: float) -> void:
+	if structure_rush.control_immune(): return
 	if battle_context != null and battle_context.damage_batch().collecting:
 		battle_context.damage_batch().defer_effect(func(): freeze(duration))
 		return
 	control.refresh_freeze(duration)
+	if duration > 0.0: structure_rush.interrupt_preparation(self)
 	queue_redraw()
 
 func stun(duration: float) -> void:
+	if structure_rush.control_immune(): return
 	if battle_context != null and battle_context.damage_batch().collecting:
 		battle_context.damage_batch().defer_effect(func(): stun(duration))
 		return
 	control.refresh_stun(duration)
+	if duration > 0.0: structure_rush.interrupt_preparation(self)
 	queue_redraw()
 
 func apply_slow(duration: float, multiplier: float) -> void:
+	if structure_rush.control_immune(): return
 	if battle_context != null and battle_context.damage_batch().collecting:
 		battle_context.damage_batch().defer_effect(func(): apply_slow(duration, multiplier))
 		return
@@ -1830,6 +1848,7 @@ func apply_slow(duration: float, multiplier: float) -> void:
 
 ## 预留给后续控制效果的减攻速入口；它与减速一样只改战斗计时，不改变动画权威。
 func apply_attack_speed_slow(duration: float, multiplier: float) -> void:
+	if structure_rush.control_immune(): return
 	if battle_context != null and battle_context.damage_batch().collecting:
 		battle_context.damage_batch().defer_effect(func(): apply_attack_speed_slow(duration, multiplier))
 		return

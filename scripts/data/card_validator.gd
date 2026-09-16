@@ -157,7 +157,15 @@ static func _validate_audio_config(label: String, stats: Dictionary, errors: Pac
 			if not event is Dictionary:
 				errors.append("%s.audio.events.%s: 必须是 Dictionary" % [label, cue])
 				continue
-			_validate_known_fields("%s.audio.events.%s" % [label, cue], event, [&"pool", &"volume_db", &"bus"], errors)
+			_validate_known_fields("%s.audio.events.%s" % [label, cue], event, [&"pool", &"volume_db", &"bus", &"action_time"], errors)
+			if event.has("action_time"):
+				var action := String(cue).get_slice(":", 0)
+				var suffix := String(cue).get_slice(":", 1)
+				var window := 0.0
+				for skill in stats.get("active_skills", []):
+					if String(skill.get("visual_action", "")) == action: window = maxf(window, float(skill.get("cast_duration", 0.0)))
+				if typeof(event.action_time) not in [TYPE_INT, TYPE_FLOAT] or not is_finite(float(event.action_time)) or float(event.action_time) < 0.0 or float(event.action_time) >= window or suffix not in ["start", "voice", "release"]:
+					errors.append("%s.audio.events.%s.action_time: 必须是主动动作窗口内的非负 start/voice/release 秒数，命中声音只能由真实命中触发" % [label, cue])
 			if event.get("bus", "Combat") not in ["Combat", "Voice"]:
 				errors.append("%s.audio.events.%s.bus: 只支持 Combat / Voice" % [label, cue])
 			_validate_audio_path_pool("%s.audio.events.%s.pool" % [label, cue], event.get("pool", []), errors)
@@ -388,8 +396,19 @@ static func _validate_building(card_id: String, stats: Dictionary, errors: Packe
 		errors.append("%s.death_spawn_id: 亡语召唤数量大于 0 时不能为空" % card_id)
 
 
+static func _validate_rush(card_id: String, stats: Dictionary, errors: PackedStringArray) -> void:
+	if not stats.keys().any(func(key): return String(key).begins_with("rush_")): return
+	if not bool(stats.get("building_only", false)) or bool(stats.get("is_air", false)) or bool(stats.get("is_building", false)):
+		errors.append("%s.rush_distance: 冲撞只支持建筑索敌的地面普通单位" % card_id)
+	for field in ["rush_distance", "rush_prepare_time", "rush_speed", "rush_path_damage", "rush_building_damage", "rush_push_distance", "rush_recovery_time", "rush_spawn_count", "rush_spawn_spread"]:
+		if float(stats.get(field, 0.0)) <= 0.0: errors.append("%s.%s: 必须 > 0" % [card_id, field])
+	if float(stats.get("rush_self_health_ratio", 0.0)) <= 0.0 or float(stats.get("rush_self_health_ratio", 0.0)) >= 1.0:
+		errors.append("%s.rush_self_health_ratio: 必须 > 0 且 < 1" % card_id)
+	if String(stats.get("rush_spawn_id", "")).is_empty(): errors.append("%s.rush_spawn_id: 不能为空" % card_id)
+
 static func _validate_references(card_id: String, stats: Dictionary, cards: Dictionary, errors: PackedStringArray) -> void:
-	for field in [&"spawn_id", &"death_spawn_id", &"death_replacement_id", &"timed_revival_id"]:
+	_validate_rush(card_id, stats, errors)
+	for field in [&"spawn_id", &"death_spawn_id", &"death_replacement_id", &"timed_revival_id", &"rush_spawn_id"]:
 		var referenced_id := String(stats.get(field, ""))
 		if not referenced_id.is_empty() and not _unit_reference_exists(referenced_id, cards):
 			errors.append("%s.%s: 引用了不存在或不可生成的单位 %s" % [card_id, field, referenced_id])
@@ -678,8 +697,8 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 				if shape == &"fan":
 					_require_fields(label, skill, [&"arc_degrees"], errors)
 					var arc_degrees := float(skill.get("arc_degrees", 0.0))
-					if arc_degrees <= 0.0 or arc_degrees >= 180.0:
-						errors.append("%s.arc_degrees: 必须在 0 到 180 之间" % label)
+					if arc_degrees <= 0.0 or arc_degrees > 180.0:
+						errors.append("%s.arc_degrees: 必须 > 0 且 <= 180" % label)
 					if int(skill.get("projectile_count", 0)) < 0:
 						errors.append("%s.projectile_count: 必须 >= 0" % label)
 				elif shape == &"trapezoid":

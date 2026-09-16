@@ -190,7 +190,7 @@ func run(harness: Object) -> void:
 	CardDB.VALIDATOR._validate_active_skills("frontal_probe", {
 		"active_skills": [{
 			"name": "非法扇形", "kind": "frontal", "shape": "fan",
-			"length": 0.0, "damage": -1.0, "arc_degrees": 180.0, "projectile_count": -1, "center_width": -1.0,
+			"length": 0.0, "damage": -1.0, "arc_degrees": 181.0, "projectile_count": -1, "center_width": -1.0,
 			"projectile_visual_height": -1.0, "projectile_visual_forward_offset": -1.0, "projectile_visual_width": 0.0,
 			"impact_delay": 0.2, "cast_duration": 0.3,
 		}],

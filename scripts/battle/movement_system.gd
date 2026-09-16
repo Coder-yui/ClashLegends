@@ -24,6 +24,11 @@ func _apply_unit_movement(dt: float, units: Array[Unit]) -> void:
 	last_collision_usec = Time.get_ticks_usec() - contact_started
 	for unit in units:
 		var autonomous: Vector2 = velocities[_unit_order_key(unit)]
+		if unit.structure_rush.displacement_immune():
+			# 冲撞只能沿已验证直线推进，准备期也不接受接触推挤。
+			if unit.structure_rush.control_immune() and unit.battle_context.is_ground_segment_walkable(unit.global_position, unit.global_position + autonomous * dt, unit.body_radius, unit):
+				unit.global_position += autonomous * dt
+			continue
 		var velocity: Vector2 = autonomous + contacts[_unit_order_key(unit)] / maxf(dt, 0.0001)
 		if velocity.length_squared() < 0.001:
 			unit.on_movement_applied(0.0, dt)
@@ -198,6 +203,7 @@ func _collect_unit_contacts(units: Array[Unit]) -> Dictionary:
 		var a := units[i]
 		for j in range(i + 1, units.size()):
 			var b := units[j]
+			if a.structure_rush.control_immune() or b.structure_rush.control_immune(): continue
 			if a.is_air != b.is_air:
 				continue
 			var delta := a.global_position - b.global_position
@@ -241,6 +247,7 @@ func _resolve_unit_collisions(dt: float, units: Array[Unit]) -> void:
 		unit._just_deployed = false
 
 func _apply_contact_displacement(unit: Unit, correction: Vector2, dt: float) -> void:
+	if unit.structure_rush.displacement_immune(): return
 	if correction.length_squared() < 0.000001:
 		return
 	var velocity := correction / maxf(dt, 0.0001)

@@ -31,6 +31,7 @@
 | [original_animation_review.gd](original_animation_review.gd) | 原表调整的表现 fixture：正式 play_card 生成、正式 UnitModel3D 消费，固定步长且不运行战斗。 |
 | [sett_animation_preview.gd](sett_animation_preview.gd) | 实际工作台模拟 + 同一 3D 世界的近景相机。用 --fixed-fps 30 生成可复查的连续帧。 |
 | [stage_debris_demo.gd](stage_debris_demo.gd) | 临时演示：慢放复现公主塔阶段掉块演出（跳播语义）。 |
+| [structure_rush_review.gd](structure_rush_review.gd) | 峡谷先锋双阵营冲撞、准备打断、旋转重拳与蠕虫爆出，保存渲染帧与混音。 |
 | [structure_showcase.gd](structure_showcase.gd) | 塔、水晶的交互模型和声音展台 |
 | [sun_disc_tombstone_review.gd](sun_disc_tombstone_review.gd) | 圆盘与墓碑的实战声音和表现 |
 | [sustained_audio_demo.gd](sustained_audio_demo.gd) | 空转审判 → 死亡中断审判 → 寒冰死亡；同时录制实际 Master 混音供试听。 |

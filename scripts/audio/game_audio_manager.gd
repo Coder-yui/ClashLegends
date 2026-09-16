@@ -151,6 +151,7 @@ func attach_unit(unit: Unit, stats: Dictionary) -> void:
 		"empowered_ready": unit.is_empowered_attack_ready_visual(),
 		"action_serial": unit.get_visual_action_serial(),
 		"active_action": &"",
+		"action_audio_elapsed": maxf(0.0, unit.get_visual_action_duration() - unit.get_visual_action_time_left()) if unit.get_visual_action_time_left() > 0.0 else -0.001,
 		"active_buff": unit.get_active_buff_active_visual(),
 		"continuous_active": false,
 		"idle_active": false,
@@ -292,7 +293,7 @@ func _tick_attached_units() -> void:
 			play_event(unit, &"empowered_buff:start" if ready else &"empowered_buff:end", unit.get_visual_screen_position())
 		entry.empowered_ready = ready
 		var swing_lead := float(entry.audio.get("attack_swing_lead_time", -1.0))
-		var swing_delay := maxf(unit.first_hit_time - swing_lead, 0.0) if swing_lead >= 0.0 else 0.0
+		var swing_delay := maxf(unit.get_attack_first_hit_time_visual() - swing_lead, 0.0) if swing_lead >= 0.0 else 0.0
 		var swing_due := state.attack_elapsed + 0.001 >= swing_delay
 		if swing_delay > 0.0 and (state.dead or state.action_time_left > 0.0 or (state.behavior != 3 and not controlled)):
 			entry.last_swing_serial = serial
@@ -318,10 +319,22 @@ func _tick_attached_units() -> void:
 			play_event(unit, StringName(String(entry.active_action) + ":end"), unit.get_visual_screen_position())
 			entry.active_action = &""
 		if action_serial != int(entry.action_serial) and active:
+			# 晚到快照不补播已经过去的声音节点；本地起手从零开始。
+			var elapsed := maxf(0.0, unit.get_visual_action_duration() - state.action_time_left)
+			entry.action_audio_elapsed = elapsed if elapsed > Unit.SIM_DT else -0.001
 			play_event(unit, StringName(String(action) + ":start"), unit.get_visual_screen_position())
 			play_event(unit, StringName(String(action) + ":voice"), unit.get_visual_screen_position())
 			_start_sustain(unit, entry, action)
 			entry.active_action = action
+		if active and not controlled:
+			var elapsed := maxf(0.0, unit.get_visual_action_duration() - state.action_time_left)
+			for cue in entry.audio.get("events", {}):
+				var event: Dictionary = entry.audio.events[cue]
+				if String(cue).get_slice(":", 0) != String(action) or not event.has("action_time"): continue
+				var due := float(event.action_time)
+				if due > float(entry.action_audio_elapsed) and due <= elapsed + 0.00001:
+					play_event(unit, StringName(cue), unit.get_visual_screen_position(), -1, true)
+			entry.action_audio_elapsed = maxf(float(entry.action_audio_elapsed), elapsed)
 		var active_buff := state.active_buff
 		if active_buff and not bool(entry.active_buff):
 			play_event(unit, &"active_buff:start", unit.get_visual_screen_position())
@@ -430,7 +443,7 @@ func _on_unit_death(instance_id: int) -> void:
 	_unit_entries.erase(instance_id)
 
 ## 通用纯表现事件入口；未配置的事件保持静音，不猜测或替代技能素材。
-func play_event(unit: Unit, cue: StringName, position: Vector2, attack_serial: int = -1) -> bool:
+func play_event(unit: Unit, cue: StringName, position: Vector2, attack_serial: int = -1, action_timed: bool = false) -> bool:
 	if unit == null or not is_instance_valid(unit):
 		return false
 	var entry: Dictionary = _unit_entries.get(unit.get_instance_id(), {})
@@ -438,6 +451,8 @@ func play_event(unit: Unit, cue: StringName, position: Vector2, attack_serial: i
 		return false
 	var current_audio: Dictionary = PresentationConfig.audio_for(entry.stats, unit.team, unit.get_form_index())
 	var event: Dictionary = current_audio.get("events", {}).get(String(cue), {})
+	# 定时动作音由只读动作进度派发，忽略起手/伤害 RPC 的同名通知，避免双播。
+	if event.has("action_time") and not action_timed: return false
 	if event.is_empty() and String(cue).ends_with("_center"):
 		event = current_audio.get("events", {}).get(String(cue).trim_suffix("_center"), {})
 	if event.is_empty() and String(cue).trim_suffix("_center").get_slice(":", 1) in ["hit_first", "hit_middle", "hit_last"]:

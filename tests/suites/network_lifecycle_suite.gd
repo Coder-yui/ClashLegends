@@ -92,6 +92,25 @@ func run(harness: Object, main: Node2D) -> void:
 	_expect(_system.lifecycle.snapshot_revision == 2 and main._client_units.has(70004), "同 Tick 较新生命周期全量快照仍可接受")
 	_deliver(10, [], "", 1)
 	_expect(main._client_units.has(70004), "同 Tick 较旧生命周期快照不能覆盖新集合")
+	_system.reset_session("structure_rush")
+	var herald := _payload("rift_herald", 71000, 1)
+	herald[SNAP.U_DEPLOY_LEFT] = 0.0
+	herald[SNAP.U_ACTION_SERIAL] = 3
+	herald[SNAP.U_ACTION_NAME] = "rush_dash"
+	herald[SNAP.U_ACTION_DURATION] = 0.5
+	herald[SNAP.U_ACTION_TIME_LEFT] = 0.3
+	_deliver(2, [herald])
+	var replica: Unit = main._client_units[71000]
+	_expect(replica.get_visual_action_name() == &"rush_dash" and is_equal_approx(replica.get_visual_action_time_left(), 0.3) and replica.is_structure_rushing(), "先锋客户端只读冲撞窗口并锁住主动技能")
+	var collision: Array = [herald.duplicate(true)]
+	collision[0][SNAP.U_HP] = 1260
+	collision[0][SNAP.U_ACTION_SERIAL] = 4
+	collision[0][SNAP.U_ACTION_NAME] = "rush_hit"
+	for index in 6: collision.append(_payload("voidmite", 71001 + index, 3))
+	_deliver(4, collision)
+	_deliver(4, collision)
+	_spawn(collision[1])
+	_expect(main._client_units.size() == 7 and replica.hp == 1260 and replica.get_visual_action_serial() == 4, "撞击快照恢复先锋自伤和六只蠕虫，重复快照/出生不重复召唤")
 	_system.reset_session("")
 	main._snapshot_system = saved_system
 	main.mode = saved_mode

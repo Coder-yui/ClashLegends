@@ -232,5 +232,11 @@
     "script": "res://tests/suites/timed_form_cycle_suite.gd",
     "method": "run",
     "scene": "battle"
+  },
+  {
+    "id": "StructureRushSuite",
+    "script": "res://tests/suites/cards/structure_rush_suite.gd",
+    "method": "run",
+    "scene": "battle"
   }
 ]

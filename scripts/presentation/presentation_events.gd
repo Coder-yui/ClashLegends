@@ -2,6 +2,8 @@ class_name PresentationEvents
 extends RefCounted
 ## 当前实际派发能力表；新增 cue 必须同时实现权威派发与消费者。
 static func supports(stats: Dictionary, cue: String) -> bool:
+	if cue in ["rush_prepare:sustain", "rush:start", "rush:path_hit", "rush:hit"]:
+		return float(stats.get("rush_distance", 0.0)) > 0.0
 	var spell := String(stats.get("type", "")) == "spell"
 	if spell:
 		return cue == "spell:cast"

@@ -4,7 +4,7 @@ extends RefCounted
 var resources: Dictionary = {}
 var cards: Dictionary = {}
 var preparation_usec := 0
-const REFERENCES := ["spawn_id", "death_spawn_id", "death_replacement_id", "timed_revival_id"]
+const REFERENCES := ["spawn_id", "death_spawn_id", "death_replacement_id", "timed_revival_id", "rush_spawn_id"]
 
 func prepare(card_ids: Array) -> void:
 	var started := Time.get_ticks_usec()

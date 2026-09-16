@@ -1,0 +1,341 @@
+{
+  "card_id": "rift_herald",
+  "entries": [
+    {
+      "file": "attack_swing_1_1.wav",
+      "event": "Play_sfx_SRU_RiftHeraldBasicAttack_OnCast",
+      "cue": "attack_swing_1",
+      "duration": 1.5043310657596372,
+      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/txtp-original-gain/Play_sfx_SRU_RiftHeraldBasicAttack_OnCast {r}.txtp",
+      "event_id": 3188161369,
+      "media_ids": [
+        "69759241",
+        "803053261",
+        "485775631",
+        "155093913",
+        "8894421",
+        "369093888"
+      ],
+      "processing": "wwiser -gv 0dB, vgmstream-cli -i; original event gain and layers; no normalization",
+      "sha256": "fd189d3710389d8988f48dade43c0f89b12c13b454f2c624355010bd972cf4fb"
+    },
+    {
+      "file": "attack_swing_2_1.wav",
+      "event": "Play_sfx_SRU_RiftHeraldBasicAttack2_OnCast",
+      "cue": "attack_swing_2",
+      "duration": 1.442108843537415,
+      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/txtp-original-gain/Play_sfx_SRU_RiftHeraldBasicAttack2_OnCast {r}.txtp",
+      "event_id": 2954009891,
+      "media_ids": [
+        "467874364",
+        "1039231085",
+        "155093913",
+        "8894421",
+        "369093888"
+      ],
+      "processing": "wwiser -gv 0dB, vgmstream-cli -i; original event gain and layers; no normalization",
+      "sha256": "085c22fc4bbb6d544b6d4cdbe3d6df2c21a5f176db1b194407a8ec0c98e9621f"
+    },
+    {
+      "file": "attack_hit_1_1.wav",
+      "event": "Play_sfx_SRU_RiftHeraldBasicAttack_OnHit",
+      "cue": "attack_hit_1",
+      "duration": 1.9457596371882087,
+      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/txtp-original-gain/Play_sfx_SRU_RiftHeraldBasicAttack_OnHit {r1}.txtp",
+      "event_id": 1941463203,
+      "media_ids": [
+        "741527545",
+        "1020779596"
+      ],
+      "processing": "wwiser -gv 0dB, vgmstream-cli -i; original event gain and layers; no normalization",
+      "sha256": "e06e847bde3cf69a5e971bc2ccfe037908cb34cba6d938de647bdfb7a170767f"
+    },
+    {
+      "file": "attack_hit_1_2.wav",
+      "event": "Play_sfx_SRU_RiftHeraldBasicAttack_OnHit",
+      "cue": "attack_hit_1",
+      "duration": 2.863219954648526,
+      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/txtp-original-gain/Play_sfx_SRU_RiftHeraldBasicAttack_OnHit {r2}.txtp",
+      "event_id": 1941463203,
+      "media_ids": [
+        "741527545",
+        "1020779596"
+      ],
+      "processing": "wwiser -gv 0dB, vgmstream-cli -i; original event gain and layers; no normalization",
+      "sha256": "66a3add3c3860306490e24b7f94f017102b5ea17fdd0e1e7573ed64761b7dd8f"
+    },
+    {
+      "file": "attack_hit_2_1.wav",
+      "event": "Play_sfx_SRU_RiftHeraldBasicAttack2_OnHit",
+      "cue": "attack_hit_2",
+      "duration": 1.4288888888888889,
+      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/txtp-original-gain/Play_sfx_SRU_RiftHeraldBasicAttack2_OnHit {r1}.txtp",
+      "event_id": 1896027849,
+      "media_ids": [
+        "641280885",
+        "194828825"
+      ],
+      "processing": "wwiser -gv 0dB, vgmstream-cli -i; original event gain and layers; no normalization",
+      "sha256": "b560879152ec1e298e21add117875e1722c86e9d507808a9cbf781241b5f8b65"
+    },
+    {
+      "file": "attack_hit_2_2.wav",
+      "event": "Play_sfx_SRU_RiftHeraldBasicAttack2_OnHit",
+      "cue": "attack_hit_2",
+      "duration": 1.4975736961451247,
+      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/txtp-original-gain/Play_sfx_SRU_RiftHeraldBasicAttack2_OnHit {r2}.txtp",
+      "event_id": 1896027849,
+      "media_ids": [
+        "641280885",
+        "194828825"
+      ],
+      "processing": "wwiser -gv 0dB, vgmstream-cli -i; original event gain and layers; no normalization",
+      "sha256": "97524f16506b029fae5b8581e8f6c0d455fedb9ea840bee1a36cef20542dee85"
+    },
+    {
+      "file": "deploy_start_1.wav",
+      "event": "Play_sfx_SRU_RiftHerald_Spawn",
+      "cue": "deploy:start",
+      "duration": 3.138707482993197,
+      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/txtp-original-gain/Play_sfx_SRU_RiftHerald_Spawn.txtp",
+      "event_id": 2342154126,
+      "media_ids": [
+        "250218266"
+      ],
+      "processing": "wwiser -gv 0dB, vgmstream-cli -i; original event gain and layers; no normalization",
+      "sha256": "97f2e54b40a75ae74d1dacdb756e0b53d07fcd78b63810d1633d0635dd894a05"
+    },
+    {
+      "file": "rush_prepare_1.wav",
+      "event": "Play_sfx_SRU_RiftHerald_dash_windup_vox",
+      "cue": "rush_prepare:sustain",
+      "duration": 4.816780045351474,
+      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/txtp-original-gain/Play_sfx_SRU_RiftHerald_dash_windup_vox.txtp",
+      "event_id": 3216828295,
+      "media_ids": [
+        "440305675",
+        "243419620"
+      ],
+      "processing": "wwiser -gv 0dB, vgmstream-cli -i; original event gain and layers; no normalization",
+      "sha256": "4533ae61377b288c5577cdcecf7a7f8527d3ac1a75cfe6793908c73d2ca5e64a"
+    },
+    {
+      "file": "rush_start_1.wav",
+      "event": "Play_sfx_SRU_RiftHerald_dash_sonicboom",
+      "cue": "rush:start",
+      "duration": 1.4999773242630385,
+      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/txtp-original-gain/Play_sfx_SRU_RiftHerald_dash_sonicboom.txtp",
+      "event_id": 2703155241,
+      "media_ids": [
+        "122518713"
+      ],
+      "processing": "wwiser -gv 0dB, vgmstream-cli -i; original event gain and layers; no normalization",
+      "sha256": "c437ff3318b5b421f97c317302bc6df10bcf0289283699d21962dace1615912d"
+    },
+    {
+      "file": "rush_hit_1.wav",
+      "event": "Play_sfx_SRU_RiftHerald_dash_hit",
+      "cue": "rush:hit",
+      "duration": 3.065578231292517,
+      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/txtp-original-gain/Play_sfx_SRU_RiftHerald_dash_hit {r1}.txtp",
+      "event_id": 1304078675,
+      "media_ids": [
+        "168920450",
+        "352792633",
+        "559099630",
+        "813595593"
+      ],
+      "processing": "wwiser -gv 0dB, vgmstream-cli -i; original event gain and layers; no normalization",
+      "sha256": "2f79b858caea4b1edd22ccef1cc7ad460ead58b7fdade9087785129543a61057"
+    },
+    {
+      "file": "rush_hit_2.wav",
+      "event": "Play_sfx_SRU_RiftHerald_dash_hit",
+      "cue": "rush:hit",
+      "duration": 2.2489342403628116,
+      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/txtp-original-gain/Play_sfx_SRU_RiftHerald_dash_hit {r2}.txtp",
+      "event_id": 1304078675,
+      "media_ids": [
+        "168920450",
+        "352792633",
+        "559099630",
+        "813595593"
+      ],
+      "processing": "wwiser -gv 0dB, vgmstream-cli -i; original event gain and layers; no normalization",
+      "sha256": "c47abd0a747c27d3f0c8f4312e88315ebb922b3946cb814b35d9fff024dd8f0b"
+    },
+    {
+      "file": "rush_hit_3.wav",
+      "event": "Play_sfx_SRU_RiftHerald_dash_hit",
+      "cue": "rush:hit",
+      "duration": 2.4859410430839004,
+      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/txtp-original-gain/Play_sfx_SRU_RiftHerald_dash_hit {r3}.txtp",
+      "event_id": 1304078675,
+      "media_ids": [
+        "168920450",
+        "352792633",
+        "559099630",
+        "813595593"
+      ],
+      "processing": "wwiser -gv 0dB, vgmstream-cli -i; original event gain and layers; no normalization",
+      "sha256": "7c897212115f8462286774a7143cfbb9f685115b40f467c61adad7fc8f435c5e"
+    },
+    {
+      "file": "rush_hit_4.wav",
+      "event": "Play_sfx_SRU_RiftHerald_dash_hit",
+      "cue": "rush:hit",
+      "duration": 2.8484126984126985,
+      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/txtp-original-gain/Play_sfx_SRU_RiftHerald_dash_hit {r4}.txtp",
+      "event_id": 1304078675,
+      "media_ids": [
+        "168920450",
+        "352792633",
+        "559099630",
+        "813595593"
+      ],
+      "processing": "wwiser -gv 0dB, vgmstream-cli -i; original event gain and layers; no normalization",
+      "sha256": "3567e69cd3cbc11e70f9b7a733db37dc7081f9020fae3c7c4068d00bef5b20d6"
+    },
+    {
+      "file": "rush_path_hit_1.wav",
+      "event": "Play_sfx_SRU_RiftHerald_charge_hit_minion",
+      "cue": "rush:path_hit",
+      "duration": 1.9666666666666666,
+      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/txtp-original-gain/Play_sfx_SRU_RiftHerald_charge_hit_minion {r1}.txtp",
+      "event_id": 635121564,
+      "media_ids": [
+        "816696460",
+        "955496193",
+        "449553040",
+        "696025361"
+      ],
+      "processing": "wwiser -gv 0dB, vgmstream-cli -i; original event gain and layers; no normalization",
+      "sha256": "37a9380013a3793b8ca83e3dc97277a0d4e68dee82874e49c2871a064755f3e1"
+    },
+    {
+      "file": "rush_path_hit_2.wav",
+      "event": "Play_sfx_SRU_RiftHerald_charge_hit_minion",
+      "cue": "rush:path_hit",
+      "duration": 1.9666666666666666,
+      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/txtp-original-gain/Play_sfx_SRU_RiftHerald_charge_hit_minion {r2}.txtp",
+      "event_id": 635121564,
+      "media_ids": [
+        "816696460",
+        "955496193",
+        "449553040",
+        "696025361"
+      ],
+      "processing": "wwiser -gv 0dB, vgmstream-cli -i; original event gain and layers; no normalization",
+      "sha256": "2107fa2aabe6ef437cc61f725a01c65c549437ec07c43243038c244d511643af"
+    },
+    {
+      "file": "rush_path_hit_3.wav",
+      "event": "Play_sfx_SRU_RiftHerald_charge_hit_minion",
+      "cue": "rush:path_hit",
+      "duration": 1.9666666666666666,
+      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/txtp-original-gain/Play_sfx_SRU_RiftHerald_charge_hit_minion {r3}.txtp",
+      "event_id": 635121564,
+      "media_ids": [
+        "816696460",
+        "955496193",
+        "449553040",
+        "696025361"
+      ],
+      "processing": "wwiser -gv 0dB, vgmstream-cli -i; original event gain and layers; no normalization",
+      "sha256": "6c73117b3d1e7a9ab873660ca868b7cdeb85a552ffeb7134a88d9cd184c4e637"
+    },
+    {
+      "file": "rush_path_hit_4.wav",
+      "event": "Play_sfx_SRU_RiftHerald_charge_hit_minion",
+      "cue": "rush:path_hit",
+      "duration": 1.9666666666666666,
+      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/txtp-original-gain/Play_sfx_SRU_RiftHerald_charge_hit_minion {r4}.txtp",
+      "event_id": 635121564,
+      "media_ids": [
+        "816696460",
+        "955496193",
+        "449553040",
+        "696025361"
+      ],
+      "processing": "wwiser -gv 0dB, vgmstream-cli -i; original event gain and layers; no normalization",
+      "sha256": "10dff25451103dba19b0c078cd0c24a71d7a77a5c364509240f32ef80ac7cda6"
+    },
+    {
+      "file": "spinning_punch_start_1.wav",
+      "event": "Play_sfx_SRU_RiftHerald_SpinAttack_vox",
+      "cue": "spinning_punch:start",
+      "duration": 3.4199773242630385,
+      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/txtp-original-gain/Play_sfx_SRU_RiftHerald_SpinAttack_vox.txtp",
+      "event_id": 610679339,
+      "media_ids": [
+        "712471504",
+        "790264279"
+      ],
+      "processing": "wwiser -gv 0dB, vgmstream-cli -i; original event gain and layers; no normalization",
+      "sha256": "981a323a82ab9f847388aef4845570c188e5db55c208e32ca9c13c18afbba19a"
+    },
+    {
+      "file": "spinning_punch_hit_1.wav",
+      "event": "Play_sfx_SRU_RiftHerald_SpinAttack_hit",
+      "cue": "spinning_punch:hit",
+      "duration": 1.4288888888888889,
+      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/txtp-original-gain/Play_sfx_SRU_RiftHerald_SpinAttack_hit {r1} {d}.txtp",
+      "event_id": 640688907,
+      "media_ids": [
+        "641280885",
+        "194828825"
+      ],
+      "processing": "wwiser -gv 0dB, vgmstream-cli -i; original event gain and layers; no normalization",
+      "sha256": "b560879152ec1e298e21add117875e1722c86e9d507808a9cbf781241b5f8b65"
+    },
+    {
+      "file": "spinning_punch_hit_2.wav",
+      "event": "Play_sfx_SRU_RiftHerald_SpinAttack_hit",
+      "cue": "spinning_punch:hit",
+      "duration": 1.4975736961451247,
+      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/txtp-original-gain/Play_sfx_SRU_RiftHerald_SpinAttack_hit {r2} {d}.txtp",
+      "event_id": 640688907,
+      "media_ids": [
+        "641280885",
+        "194828825"
+      ],
+      "processing": "wwiser -gv 0dB, vgmstream-cli -i; original event gain and layers; no normalization",
+      "sha256": "97524f16506b029fae5b8581e8f6c0d455fedb9ea840bee1a36cef20542dee85"
+    },
+    {
+      "file": "death_1.wav",
+      "event": "Play_sfx_SRU_RiftHerald_death",
+      "cue": "death",
+      "duration": 1.5,
+      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/txtp-original-gain/Play_sfx_SRU_RiftHerald_death.txtp",
+      "event_id": 3133251585,
+      "media_ids": [
+        "65657948",
+        "336682633"
+      ],
+      "processing": "wwiser -gv 0dB, vgmstream-cli -i; original event gain and layers; no normalization; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+      "sha256": "7b1d997bf470beef7227c196fdf51f3d99122eb1453e3d178d0e36225ddb2b29",
+      "death_envelope": {
+        "source_duration": 3.4911791383219954,
+        "source_sha256": "2cb2d63b38198445fa3fc5940bcca6a778724e80664653ce64ae677e61c135cc",
+        "keep_seconds": 1.5,
+        "fade_start_seconds": 1.0,
+        "fade_seconds": 0.5,
+        "curve": "linear_amplitude"
+      }
+    },
+    {
+      "file": "spinning_punch_release_1.wav",
+      "event": "Play_sfx_SRU_RiftHerald_SpinAttack_cast",
+      "cue": "spinning_punch:release",
+      "duration": 2.0549433106575963,
+      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/txtp-original-gain/Play_sfx_SRU_RiftHerald_SpinAttack_cast.txtp",
+      "event_id": 3330446321,
+      "media_ids": [
+        "396551198"
+      ],
+      "processing": "wwiser -gv 0dB, vgmstream-cli -i; original event gain and layers; no normalization",
+      "sha256": "71849cde5f0ed23787f513a2f768a4d2c9808564f63f5a93311d4a63c7dd90d2"
+    }
+  ]
+}

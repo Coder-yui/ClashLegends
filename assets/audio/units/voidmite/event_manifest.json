@@ -1,0 +1,251 @@
+{
+  "card_id": "voidmite",
+  "entries": [
+    {
+      "file": "attack_swing_1_1.wav",
+      "event": "Play_sfx_SRU_Horde_Mini_BasicAttack_cast",
+      "cue": "attack_swing_1",
+      "duration": 0.28346938775510205,
+      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/txtp-original-gain/Play_sfx_SRU_Horde_Mini_BasicAttack_cast {r1}.txtp",
+      "event_id": 1836174592,
+      "media_ids": [
+        "6038170",
+        "242445588",
+        "686993552",
+        "539000738",
+        "290987933"
+      ],
+      "processing": "wwiser -gv 0dB, vgmstream-cli -i; original event gain and layers; no normalization",
+      "sha256": "c31453a9434eaf996b81d05eccb456b41301338174570811864296f74849c94d"
+    },
+    {
+      "file": "attack_swing_1_2.wav",
+      "event": "Play_sfx_SRU_Horde_Mini_BasicAttack_cast",
+      "cue": "attack_swing_1",
+      "duration": 0.28346938775510205,
+      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/txtp-original-gain/Play_sfx_SRU_Horde_Mini_BasicAttack_cast {r2}.txtp",
+      "event_id": 1836174592,
+      "media_ids": [
+        "6038170",
+        "242445588",
+        "686993552",
+        "539000738",
+        "290987933"
+      ],
+      "processing": "wwiser -gv 0dB, vgmstream-cli -i; original event gain and layers; no normalization",
+      "sha256": "6ad41d72186f8d0cf7d0bae50fdef655c6c0691379f8b9e18456aa0484bbced5"
+    },
+    {
+      "file": "attack_swing_1_3.wav",
+      "event": "Play_sfx_SRU_Horde_Mini_BasicAttack_cast",
+      "cue": "attack_swing_1",
+      "duration": 0.36210884353741496,
+      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/txtp-original-gain/Play_sfx_SRU_Horde_Mini_BasicAttack_cast {r3}.txtp",
+      "event_id": 1836174592,
+      "media_ids": [
+        "6038170",
+        "242445588",
+        "686993552",
+        "539000738",
+        "290987933"
+      ],
+      "processing": "wwiser -gv 0dB, vgmstream-cli -i; original event gain and layers; no normalization",
+      "sha256": "d0e0e2125162c83714fbc61aa2c3c6fa8be80894e9ada99b98477f60562b9137"
+    },
+    {
+      "file": "attack_swing_1_4.wav",
+      "event": "Play_sfx_SRU_Horde_Mini_BasicAttack_cast",
+      "cue": "attack_swing_1",
+      "duration": 0.3496825396825397,
+      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/txtp-original-gain/Play_sfx_SRU_Horde_Mini_BasicAttack_cast {r4}.txtp",
+      "event_id": 1836174592,
+      "media_ids": [
+        "6038170",
+        "242445588",
+        "686993552",
+        "539000738",
+        "290987933"
+      ],
+      "processing": "wwiser -gv 0dB, vgmstream-cli -i; original event gain and layers; no normalization",
+      "sha256": "bae503f5ec27a1b956b64ab6794136825eadfe59775e1603d4f3b3e456fee681"
+    },
+    {
+      "file": "attack_swing_1_5.wav",
+      "event": "Play_sfx_SRU_Horde_Mini_BasicAttack_cast",
+      "cue": "attack_swing_1",
+      "duration": 0.33521541950113376,
+      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/txtp-original-gain/Play_sfx_SRU_Horde_Mini_BasicAttack_cast {r5}.txtp",
+      "event_id": 1836174592,
+      "media_ids": [
+        "6038170",
+        "242445588",
+        "686993552",
+        "539000738",
+        "290987933"
+      ],
+      "processing": "wwiser -gv 0dB, vgmstream-cli -i; original event gain and layers; no normalization",
+      "sha256": "9c630ccd3da6a5faa7179cb2a53b6c2ced657dbe1765c3a28a697b24485cc593"
+    },
+    {
+      "file": "attack_hit_1_1.wav",
+      "event": "Play_sfx_SRU_Horde_Mini_BasicAttack_hit",
+      "cue": "attack_hit_1",
+      "duration": 0.3521541950113379,
+      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/txtp-original-gain/Play_sfx_SRU_Horde_Mini_BasicAttack_hit {r1}.txtp",
+      "event_id": 3172824448,
+      "media_ids": [
+        "805212806",
+        "436370437",
+        "1000102190",
+        "658570675"
+      ],
+      "processing": "wwiser -gv 0dB, vgmstream-cli -i; original event gain and layers; no normalization",
+      "sha256": "2da65b50ab85794e64b91ae4ef4019c40871b5590da7a5b253ba7cab3e11f197"
+    },
+    {
+      "file": "attack_hit_1_2.wav",
+      "event": "Play_sfx_SRU_Horde_Mini_BasicAttack_hit",
+      "cue": "attack_hit_1",
+      "duration": 0.260702947845805,
+      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/txtp-original-gain/Play_sfx_SRU_Horde_Mini_BasicAttack_hit {r2}.txtp",
+      "event_id": 3172824448,
+      "media_ids": [
+        "805212806",
+        "436370437",
+        "1000102190",
+        "658570675"
+      ],
+      "processing": "wwiser -gv 0dB, vgmstream-cli -i; original event gain and layers; no normalization",
+      "sha256": "0b0be945990b30b2733850b807b0392d758a5cc503930b02873885f5a0ada87c"
+    },
+    {
+      "file": "attack_hit_1_3.wav",
+      "event": "Play_sfx_SRU_Horde_Mini_BasicAttack_hit",
+      "cue": "attack_hit_1",
+      "duration": 0.34975056689342404,
+      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/txtp-original-gain/Play_sfx_SRU_Horde_Mini_BasicAttack_hit {r3}.txtp",
+      "event_id": 3172824448,
+      "media_ids": [
+        "805212806",
+        "436370437",
+        "1000102190",
+        "658570675"
+      ],
+      "processing": "wwiser -gv 0dB, vgmstream-cli -i; original event gain and layers; no normalization",
+      "sha256": "5133d24753f33d339a9501ab5965fa87b416fca6754b1416bdb82f83ac716a83"
+    },
+    {
+      "file": "attack_hit_1_4.wav",
+      "event": "Play_sfx_SRU_Horde_Mini_BasicAttack_hit",
+      "cue": "attack_hit_1",
+      "duration": 0.3373922902494331,
+      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/txtp-original-gain/Play_sfx_SRU_Horde_Mini_BasicAttack_hit {r4}.txtp",
+      "event_id": 3172824448,
+      "media_ids": [
+        "805212806",
+        "436370437",
+        "1000102190",
+        "658570675"
+      ],
+      "processing": "wwiser -gv 0dB, vgmstream-cli -i; original event gain and layers; no normalization",
+      "sha256": "1f0729fbccf77788a1b2cddd00f5d2a4afd0aec2613a45f72809e54c371850a7"
+    },
+    {
+      "file": "death_1.wav",
+      "event": "Play_sfx_SRU_Horde_Mini_Death_cast",
+      "cue": "death",
+      "duration": 0.46750566893424034,
+      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/txtp-original-gain/Play_sfx_SRU_Horde_Mini_Death_cast {r1}.txtp",
+      "event_id": 1060160016,
+      "media_ids": [
+        "149550729",
+        "526251285",
+        "1004915346",
+        "1047246668"
+      ],
+      "processing": "wwiser -gv 0dB, vgmstream-cli -i; original event gain and layers; no normalization",
+      "sha256": "2a0e2ee4213831b2da0a2676cf10724e34f47c17be08201be7b0de395b9767e7"
+    },
+    {
+      "file": "death_2.wav",
+      "event": "Play_sfx_SRU_Horde_Mini_Death_cast",
+      "cue": "death",
+      "duration": 0.5116780045351474,
+      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/txtp-original-gain/Play_sfx_SRU_Horde_Mini_Death_cast {r2}.txtp",
+      "event_id": 1060160016,
+      "media_ids": [
+        "149550729",
+        "526251285",
+        "1004915346",
+        "1047246668"
+      ],
+      "processing": "wwiser -gv 0dB, vgmstream-cli -i; original event gain and layers; no normalization",
+      "sha256": "a7f0fd58b215374409d84bc1ddb34f9ac344d242bd77c21376b8ffe755cb03cf"
+    },
+    {
+      "file": "death_3.wav",
+      "event": "Play_sfx_SRU_Horde_Mini_Death_cast",
+      "cue": "death",
+      "duration": 0.4223356009070295,
+      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/txtp-original-gain/Play_sfx_SRU_Horde_Mini_Death_cast {r3}.txtp",
+      "event_id": 1060160016,
+      "media_ids": [
+        "149550729",
+        "526251285",
+        "1004915346",
+        "1047246668"
+      ],
+      "processing": "wwiser -gv 0dB, vgmstream-cli -i; original event gain and layers; no normalization",
+      "sha256": "c8dbb4d4f529e86c5599fd0867432924ed38da9686d47cbb06bc5e8324414bfa"
+    },
+    {
+      "file": "death_4.wav",
+      "event": "Play_sfx_SRU_Horde_Mini_Death_cast",
+      "cue": "death",
+      "duration": 0.45113378684807254,
+      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/txtp-original-gain/Play_sfx_SRU_Horde_Mini_Death_cast {r4}.txtp",
+      "event_id": 1060160016,
+      "media_ids": [
+        "149550729",
+        "526251285",
+        "1004915346",
+        "1047246668"
+      ],
+      "processing": "wwiser -gv 0dB, vgmstream-cli -i; original event gain and layers; no normalization",
+      "sha256": "d54b15d41a60f3eb87b7047fe8294a8f094e93264e1d1dde08d67ac55bcce5cf"
+    },
+    {
+      "file": "deploy_start_1.wav",
+      "group": "虚空蠕虫",
+      "cue": "deploy:start",
+      "event": "Play_sfx_SRU_Horde_Mini_Buff_cast",
+      "duration": 1.383718820861678,
+      "source_txtp": "ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/txtp-all-original-gain/Play_sfx_SRU_Horde_Mini_Buff_cast {r1}.txtp",
+      "sha256": "e90ca9542683629c8093c35e8a83c83731f4be0d940f89fa950e032f438a0085",
+      "processing": "Wwise original event layers/gain; vgmstream -i; full length, no normalization or death trimming",
+      "event_id": 777822187
+    },
+    {
+      "file": "deploy_start_2.wav",
+      "group": "虚空蠕虫",
+      "cue": "deploy:start",
+      "event": "Play_sfx_SRU_Horde_Mini_Buff_cast",
+      "duration": 1.2954875283446712,
+      "source_txtp": "ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/txtp-all-original-gain/Play_sfx_SRU_Horde_Mini_Buff_cast {r2}.txtp",
+      "sha256": "b607d76463bbccfbd6da30966c0ea9727d1f56a1bf25e2dd7dd14e60be93d508",
+      "processing": "Wwise original event layers/gain; vgmstream -i; full length, no normalization or death trimming",
+      "event_id": 777822187
+    },
+    {
+      "file": "deploy_start_3.wav",
+      "group": "虚空蠕虫",
+      "cue": "deploy:start",
+      "event": "Play_sfx_SRU_Horde_Mini_Buff_cast",
+      "duration": 1.533718820861678,
+      "source_txtp": "ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/txtp-all-original-gain/Play_sfx_SRU_Horde_Mini_Buff_cast {r3}.txtp",
+      "sha256": "50b2f07d02599f2ff6257c25631f561fbf068cec507958a9fb3ccf2357c7758e",
+      "processing": "Wwise original event layers/gain; vgmstream -i; full length, no normalization or death trimming",
+      "event_id": 777822187
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+[gd_scene load_steps=2 format=3]
+[ext_resource type="PackedScene" path="res://assets/units/rift_herald/source/rift_herald.glb" id="1"]
+[node name="ModelView" type="Node3D"]
+[node name="Model" parent="." instance=ExtResource("1")]
+scale = Vector3(0.9, 0.9, 0.9)

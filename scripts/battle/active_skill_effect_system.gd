@@ -321,7 +321,7 @@ func apply_frontal(source: Unit, skill: Dictionary, forward: Vector2 = Vector2.Z
 		var damage_multiplier := 1.0
 		var in_center := false
 		if shape == &"fan":
-			var half_angle := deg_to_rad(clampf(float(skill.get("arc_degrees", 0.0)), 0.0, 179.0) * 0.5)
+			var half_angle := deg_to_rad(clampf(float(skill.get("arc_degrees", 0.0)), 0.0, 180.0) * 0.5)
 			var fan_inner_arc := bool(skill.get("fan_inner_arc", false))
 			# 普通扇形以施法者前缘为圆心；环形扇区则以内外同心圆弧贴合施法者体型。
 			var inner_radius := source.body_radius if fan_inner_arc else 0.0

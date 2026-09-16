@@ -119,3 +119,5 @@ Godot 原始入口使用 `-- --suite=ProjectileSuite`，未知名称退出 2；�
 `BuildingExpiryBoundarySuite` 从正常索敌前摇推进到建筑到期 Tick，交换阵营、出生、节点和集合排列，并比较攻击段、间隔、目标与收益；另测衰减、部署/控制、召唤边界、失效请求和全盾合法命中。`KnockbackBoundarySuite` 检查真实位移、接管速度/方向/时长、暂停恢复及固定事件身份的逆序收集。两者通过统一入口 `--suite=...` 可独立执行；不是工作台验收记录。
 
 `ShurimaGuardSuite` 覆盖六人横排、贴边整体平移、同次部署筛选、逐人破盾/清除/死亡/自然到期恢复、其他护盾隔离、队长死亡转交和技能2费限1次。
+
+`StructureRushSuite`覆盖建筑冲撞、免控与准备重置、桥面允许/水域禁止、绕行后启动、路径单次伤害和侧推、当前生命代价、六只蠕虫及180°技能。实机配方：`tools/demos/structure_rush_review.gd`，生成双方阶段截图与混音录音。

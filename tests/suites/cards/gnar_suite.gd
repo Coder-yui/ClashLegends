@@ -62,7 +62,7 @@ func _check_gnar_mechanic() -> void:
 			largest_other_unit_radius = maxf(largest_other_unit_radius, float(other_stats.get("radius", 0.0)))
 	_expect(small_contract and delayed_projectile_ok and five_hits_still_small, "小纳尔为小体型远程单位，回旋镖抵达才造成伤害/计层且前5次命中不会提前变身")
 	_expect(transformed_contract, "小纳尔第6次真实命中立即切换大形态数值，当前生命增加两形态上限差值且在途回旋镖不串层")
-	_expect(gnar.body_radius > largest_other_unit_radius, "大纳尔使用当前可移动单位唯一且最大的极大体型档位")
+	_expect(gnar.body_radius >= largest_other_unit_radius, "大纳尔使用最大的极大体型档位，允许新单位共享该档位")
 
 	# 变大演出期间先用大纳尔视野/射程决定追击或待攻；移动不被锁，攻击必须等固定演出结束。
 	dummy.position = gnar.position + Vector2(0.0, -120.0)

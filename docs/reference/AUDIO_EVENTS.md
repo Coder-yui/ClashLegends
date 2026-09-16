@@ -58,3 +58,7 @@
 全局播报配置在 match_audio，系统建筑在 world_audio，当前缺项见 [覆盖表](../AUDIO_CARD_MAP.md)。
 
 `form:refresh`在存活单位的限时形态因击杀实际刷新时派发，可复用开启声音；它不重播变形动画、不重新增加最大生命。
+
+## 动作进度音频节点
+
+`audio.events.<action>:start/voice/release.action_time`可声明主动动作内的非负秒数，必须小于该技能cast_duration。仅用于声音起点，不能绑定hit/sustain/end，更不能驱动伤害。GameAudioManager读取权威/快照动作进度派发，忽略同名普通事件/RPC通知以免重播；同序号回退不重放，取消/死亡不留下定时任务，控制随动作进度暂停。未配置action_time的声音行为不变。字段同时有形状、语义校验与生命周期回归。
