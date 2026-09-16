@@ -87,7 +87,7 @@ func run(harness: Object, main: Node2D) -> void:
 	replica.hp = 100
 	replica.sync_network_form(1, 1)
 	_h._expect(replica.hp == 100 and replica.max_hp == 1350 and replica.is_air, "客户端形态快照更新属性但不自行发放增量治疗")
-	for field in ["attack_passive_multipliers", "attack_lifesteal_ratios", "form_lifetime", "form_refresh_on_kill", "form_lifetime_after_transition", "form_speed_boost_duration", "form_speed_boost_multiplier"]:
+	for field in ["passive_first_hit", "attack_passive_multipliers", "attack_lifesteal_ratios", "form_lifetime", "form_refresh_on_kill", "form_lifetime_after_transition", "form_speed_boost_duration", "form_speed_boost_multiplier"]:
 		for bad in [null, "bad", {}]:
 			var invalid := CardDB.get_card("aatrox").duplicate(true)
 			invalid[field] = bad
@@ -103,6 +103,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_h._expect(is_equal_approx(timed.form_lifetime_left, 4.95), "动画结束下一模拟步开始5秒倒计时")
 	timed.on_enemy_killed(target)
 	_h._expect(is_equal_approx(timed.form_lifetime_left, 5.0) and is_equal_approx(timed.active_speed_multiplier, 1.3), "击杀同时刷新5秒持续及30%移速")
+	_check_passive_windup()
 	_check_animation_revision()
 	_check_audio_revision()
 	for unit in _units:
@@ -202,9 +203,10 @@ func _check_animation_revision() -> void:
 		_h._expect(view._animation_player.current_animation == "Attack_INTO_Run" and is_equal_approx(view._last_clip_blend_time, 0.03), "二刀转跑使用原版动作和0.03入口混合")
 		view._on_animation_finished(&"Attack_INTO_Run")
 		_h._expect(view._animation_player.current_animation == "Run_Base" and is_equal_approx(view._last_clip_blend_time, 0.1), "转跑结束0.1秒接普通跑")
+		unit._attack_swing_count = 3
 		view._animation_player.play("Attack3")
 		view._transition_to_basic_state(2, -1.0, &"attack")
-		_h._expect(view._animation_player.current_animation == "Attack_INTO_Run" and is_equal_approx(view._last_clip_blend_time, 0.03), "三刀转跑使用原版动作和0.03入口混合")
+		_h._expect(view._animation_player.current_animation == "Passive_Run" and is_equal_approx(view._last_clip_blend_time, 0.15) and not view._move_sequence_active, "第三刀直接0.15秒混到被动移动，不经过转跑")
 		_h._expect(is_equal_approx(view._transition_blend(&"action_out"), 0.1), "部署退出等通用动作混合0.1秒")
 		view._animation_player.play("Run_Base")
 		_h._expect(view._resolve_clip_blend(&"Spell4", &"action_in") == 0.0, "原表普通跑到Spell4零混合")
@@ -246,3 +248,51 @@ func _check_animation_revision() -> void:
 		_h._expect((unit.get_action_permissions_visual() & 2) != 0, "完整收翼窗口结束后恢复攻击")
 		view.free()
 		break
+
+func _check_passive_windup() -> void:
+	for form in 2:
+		for rate in [0.5, 1.0, 2.0]:
+			var source := _unit("aatrox", 0)
+			var target := _unit("garen", 1)
+			source.position = Vector2(300, 420)
+			target.position = Vector2(300, 370)
+			target.hp = 100000
+			target.max_hp = 100000
+			source._deploy_timer = 0.0
+			if form == 1:
+				source.transform_to_mega()
+				source.form_transition_timer = 0.0
+				source.form_lifetime_left = 100.0
+			source.active_buff_timer = 100.0
+			if rate < 1.0:
+				source.apply_attack_speed_slow(100.0, rate)
+			else:
+				source.active_attack_speed_multiplier = rate
+			source._target = target
+			var previous_hp := target.hp
+			var previous_hit := -1.0
+			var hits := 0
+			for tick in 500:
+				source.sim_tick(0.05)
+				if target.hp >= previous_hp: continue
+				var segment := hits % (4 if form == 0 else 3)
+				var expected := 0.4 if segment == (3 if form == 0 else 0) else 0.25
+				_h._expect(is_equal_approx(source.get_attack_first_hit_time_visual(), expected), "命中后表现仍读取本刀前摇，不提前读取下一刀")
+				_h._expect(absf(source.get_attack_elapsed_visual() - expected) <= 0.051 * rate, "普通0.25/被动0.4秒前摇随攻速缩放且在伤害提交时对齐")
+				if previous_hit >= 0.0:
+					_h._expect(absf(tick * 0.05 - previous_hit - 1.1 / rate) <= 0.051, "切换普通/被动仍保持1.1秒基础命中间隔")
+				previous_hit = tick * 0.05
+				previous_hp = target.hp
+				hits += 1
+				if hits == 6: break
+			_h._expect(hits == 6, "双形态和攻速场景完成连续六次攻击")
+			if form == 1:
+				source.on_enemy_killed(target)
+				_h._expect(is_equal_approx(source._next_attack_first_hit_time(), 0.4), "击杀刷新下一刀使用被动0.4秒前摇")
+				_h._expect(is_equal_approx(source.attack_timeline.recovery, maxf(source.attack_timeline.cooldown - 0.4 / rate, 0.0)), "击杀刷新重算待攻窗口，不延长下一命中冷却")
+			source.free()
+			target.free()
+	for bad in [-0.1, 0.0, 1.1, INF, NAN]:
+		var invalid := CardDB.get_card("aatrox").duplicate(true)
+		invalid.passive_first_hit = bad
+		_h._expect(not CardDB.VALIDATOR.validate_all({"aatrox": invalid}).is_empty(), "拒绝非法被动前摇")

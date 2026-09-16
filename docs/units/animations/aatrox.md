@@ -10,7 +10,8 @@
 | 部署后尚未攻击或变形的移动 | Aatrox_sheath_run01_anm（原表Sheathe_Run_Slow） |
 | 普通移动 / 下一击被动的待机、移动 | Run_Base / Passive_Idle、Passive_Run |
 | 普通攻击循环 | Attack1 → Attack2 → Attack3 → Passive_Attack |
-| 二、三刀转跑 | Attack_INTO_Run → Run_Base |
+| 第二刀转跑 | Attack_INTO_Run → Run_Base |
+| 第三刀转被动跑 | Attack3直接混合0.15秒至Passive_Run |
 | 被动转待机或移动 | Passive_Attack_out → 对应基础动作 |
 | 大灭开启 | Spell4源片段0–1秒 |
 | 大灭待机 / 移动 | Aatrox_ULT_Idle_anm / Run_Ult |
@@ -19,9 +20,13 @@
 
 攻击或使用大灭后永久退出背剑跑阶段。被动就绪读取权威循环状态，取消前摇不跳段；客户端使用已有攻击、形态序号与就绪快照位。
 
+## 命中时间
+
+普通攻击前摇0.25秒，被动攻击（两形态）前摇0.4秒；连续命中间隔维持1.1秒。局内攻速按比例缩放，由20Hz模拟步结算。待攻窗口按下一刀的前摇安排；击杀刷新被动时同步重算，不额外增加攻击冷却。动画保持原有整段播放速度，不做片段裁剪或分段变速。
+
 ## 衔接与形态
 
-部署转背剑跑、普通入口/退出、连续攻击的默认混合为0.1秒。LoL原表明确的片段对覆盖默认值：Attack2/3→Attack_INTO_Run为0.03秒、普通跑→Spell4为0、Spell4→Run_Ult为0.25秒。未明确的边界采用0.1秒。原表在制作素材的animation-source/skin0.ritobin；历史对照不代表当前配置。
+部署转背剑跑、普通入口/退出、连续攻击的默认混合为0.1秒。LoL原表明确的片段对覆盖默认值：Attack2→Attack_INTO_Run为0.03秒、普通跑→Spell4为0、Spell4→Run_Ult为0.25秒。第三刀不经转跑动作，直接以0.15秒混合到被动跑；其他未明确边界采用0.1秒。原表在制作素材的animation-source/skin0.ritobin；历史对照不代表当前配置。
 
 两形态复用同一模型、骨骼和播放器，靠动作与翅膀显隐转换。普通显示Body/Shoulder/Sword；收翼0至11/32秒显示Wings并隐藏Shoulder，随后恢复普通部件。两个包装场景仅供初次装配与独立预览。Weapon→Weapon_World挂点由包装修饰器处理。
 

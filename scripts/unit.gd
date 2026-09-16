@@ -91,6 +91,7 @@ var has_model_art := false
 var show_team_ring := true
 var deploy_time := 1.0
 var first_hit_time := 0.2
+var passive_first_hit_time := -1.0
 var projectile_speed := 0.0
 # 权威弹体几何；与 projectile_visual_* 完全独立。
 var projectile_spawn_at_edge := false
@@ -368,6 +369,7 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	continuous_attack = stats.get("is_continuous_attack", false)
 	deploy_time = stats.get("deploy_time", 1.0)
 	first_hit_time = stats.get("first_hit", minf(attack_interval * 0.5, 0.4))
+	passive_first_hit_time = float(stats.get("passive_first_hit", -1.0))
 	projectile_speed = stats.get("projectile_speed", 0.0)
 	projectile_spawn_at_edge = bool(stats.get("projectile_spawn_at_edge", false))
 	projectile_spawn_offset = float(stats.get("projectile_spawn_offset", 0.0))
@@ -815,6 +817,7 @@ func _apply_form(next_form_index: int, grant_max_hp_increase: bool, advance_form
 	attack_range = float(next_stats.get("range", attack_range))
 	attack_interval = snappedf(float(next_stats.get("interval", attack_interval)), 0.01)
 	first_hit_time = float(next_stats.get("first_hit", first_hit_time))
+	passive_first_hit_time = float(next_stats.get("passive_first_hit", -1.0))
 	move_speed = snappedf(float(next_stats.get("speed", move_speed)), 0.01)
 	body_radius = float(next_stats.get("radius", body_radius))
 	visual_radius = float(next_stats.get("visual_radius", body_radius))
@@ -1042,7 +1045,7 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false) -> void:
 			if not _attacking:
 				# 首击没有历史冷却；重入射程只等待上次出手的剩余间隔。
 				# 前摇与剩余冷却重叠，不能在完整后摇后再额外等待一个周期。
-				attack_timeline.begin_windup(first_hit_time, _effective_attack_speed_multiplier())
+				attack_timeline.begin_windup(_next_attack_first_hit_time(), _effective_attack_speed_multiplier())
 				_attack_visual_pending = true
 			_attacking = true
 			_path = PackedVector2Array()
@@ -1560,7 +1563,7 @@ func _attack(dt: float) -> void:
 			return
 		# 从命中点锁定到下一次攻击动作应当开始的时刻，即当前动作的后摇段。
 		# 若目标仍在射程内，计时结束后无缝开始下一次前摇；若已离开，则此时才追击。
-		attack_timeline.begin_recovery(next_attack_gap, first_hit_time, _effective_attack_speed_multiplier())
+		attack_timeline.begin_recovery(next_attack_gap, _next_attack_first_hit_time(), _effective_attack_speed_multiplier())
 		_attack_visual_pending = true
 		cancel_charge()
 
@@ -1588,6 +1591,19 @@ func _effective_attack_speed_multiplier() -> float:
 		multiplier *= control.attack_speed_slow_multiplier
 	return maxf(multiplier, 0.01)
 
+## 前摇按尚未出手的循环段选取；命中间隔仍由 attack_interval 决定。
+func _next_attack_first_hit_time() -> float:
+	return _attack_first_hit_for_segment(_attack_swing_count)
+
+func _attack_first_hit_for_segment(segment: int) -> float:
+	if passive_first_hit_time >= 0.0 and not attack_passive_multipliers.is_empty() and float(attack_passive_multipliers[posmod(segment, attack_passive_multipliers.size())]) > 0.0:
+		return passive_first_hit_time
+	return first_hit_time
+
+## 表现读取已发布的攻击序号，不能用命中后已经前进的循环计数。
+func get_attack_first_hit_time_visual() -> float:
+	return _attack_first_hit_for_segment(maxi(get_attack_visual_serial() - 1, 0))
+
 func _attack_damage_multiplier(hit_index: int) -> float:
 	if attack_damage_multipliers.is_empty():
 		return 1.0
@@ -1596,7 +1612,8 @@ func _attack_damage_multiplier(hit_index: int) -> float:
 ## 每次攻击在命中前 first_hit_time 发出一次表现序号；对远程单位，这个时刻就是出手/离弦点。
 ## 表现层可以据此播放完整动作，但权威弹体仍只在下面的固定 tick 出手逻辑中生成。
 func _try_start_attack_visual(time_until_hit: float) -> void:
-	if continuous_attack or not _attack_visual_pending or time_until_hit > first_hit_time / _effective_attack_speed_multiplier() + 0.001:
+	var hit_delay := _next_attack_first_hit_time()
+	if continuous_attack or not _attack_visual_pending or time_until_hit > hit_delay / _effective_attack_speed_multiplier() + 0.001:
 		return
 	_attack_visual_pending = false
 	_attack_visual_first_strike = false
@@ -1615,7 +1632,7 @@ func _try_start_attack_visual(time_until_hit: float) -> void:
 		# 命中计数被动与已出手次数对齐；取消的前摇不占用被动攻击段。
 		_attack_visual_serial += posmod(_attack_swing_count - (_attack_visual_serial - 1), heal_every_hits)
 	# 固定 Tick 跨过前摇起点时保留已流逝部分；客户端按同一个基础速率进度 seek。
-	attack_timeline.align_visual(first_hit_time, time_until_hit, _effective_attack_speed_multiplier())
+	attack_timeline.align_visual(hit_delay, time_until_hit, _effective_attack_speed_multiplier())
 	if empowered_attack_ready:
 		_empowered_attack_visual_serial = _attack_visual_serial
 
@@ -1764,6 +1781,8 @@ func on_enemy_killed(target: Node2D) -> void:
 			_attack_swing_count = 0
 			_attack_hit_index = 0
 			_attack_visual_pending = true
+			if passive_first_hit_time >= 0.0 and attack_timeline.recovery > 0.0:
+				attack_timeline.begin_recovery(attack_timeline.cooldown, _next_attack_first_hit_time(), _effective_attack_speed_multiplier())
 
 ## 命中回血：每 heal_every_hits 次挥击中的命中回复 heal_amount 生命。
 ## 挥击序号与三段普攻动画循环对齐——第三击（Passive_AA_01）命中时回复。

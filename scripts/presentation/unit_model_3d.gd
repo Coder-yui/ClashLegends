@@ -1008,7 +1008,7 @@ func _play_attack(serial: int, blend_override: float = -1.0) -> void:
 	if _active_attack_index < hit_animations.size() and StringName(hit_animations[_active_attack_index]) != &"":
 		# 分段普攻只影响表现：Start 在权威 first_hit 窗口内播放，计时到点切到 Hit。
 		_attack_hit_pending = true
-		_attack_hit_timer = maxf(_source.first_hit_time, 0.01)
+		_attack_hit_timer = maxf(_source.get_attack_first_hit_time_visual(), 0.01)
 		_play_attack_clip(animation_name, _attack_hit_timer, entry_transition_kind, blend_override, _attack_section("attack_clip_ranges"))
 	else:
 		_play_attack_clip(animation_name, _attack_duration, entry_transition_kind, blend_override, _attack_section("attack_clip_ranges"))
@@ -1551,7 +1551,7 @@ func _align_attack_progress(elapsed: float) -> void:
 	var clip_elapsed := elapsed
 	var hits := _active_attack_animation_list("attack_hit")
 	if _active_attack_index < hits.size() and StringName(hits[_active_attack_index]) != &"" and not _attack_hit_pending:
-		clip_elapsed = maxf(elapsed - _source.first_hit_time, 0.0)
+		clip_elapsed = maxf(elapsed - _source.get_attack_first_hit_time_visual(), 0.0)
 		var recovers := _active_attack_animation_list("attack_recover")
 		if _active_attack_index < recovers.size() and StringName(recovers[_active_attack_index]) != &"" and not _attack_recover_pending:
 			clip_elapsed = maxf(clip_elapsed - _attack_recover_delay(_active_attack_index), 0.0)

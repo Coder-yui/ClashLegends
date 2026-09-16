@@ -233,6 +233,10 @@ static func _validate_combat_stats(label: String, stats: Dictionary, require_siz
 			errors.append("%s.%s: 需要非空的 0..1 比例数组" % [label, field])
 		if float(stats.get("projectile_speed", 0.0)) > 0.0 or float(stats.get("splash_radius", 0.0)) > 0.0 or bool(stats.get("is_continuous_attack", false)) or not stats.get("attack_extra_hit_damage_multipliers", []).is_empty():
 			errors.append("%s.%s: 当前仅支持无追加刀的单体近战" % [label, field])
+	if stats.has("passive_first_hit"):
+		var passive_delay := float(stats.passive_first_hit)
+		if passive_delay <= 0.0 or passive_delay >= float(stats.get("interval", 0.0)) or stats.get("attack_passive_multipliers", []).is_empty():
+			errors.append("%s.passive_first_hit: 需要被动攻击循环，且 0 < 前摇 < 攻击间隔" % label)
 	if stats.has("attack_lifesteal_ratios") and stats.get("attack_lifesteal_ratios", []).size() != stats.get("attack_passive_multipliers", []).size():
 		errors.append("%s.attack_lifesteal_ratios: 必须与被动循环等长" % label)
 	var cycle_animations = stats.get("visual_animations", {}).get("attack", [])
