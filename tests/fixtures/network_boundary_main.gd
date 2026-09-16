@@ -32,3 +32,10 @@ func _rpc_start(epoch: String) -> void:
 		await get_tree().create_timer(1.0).timeout
 		loading_wait_observed = loading_wait_observed and not _match_started and _sim_tick_id == 0
 	super._rpc_start(epoch)
+
+func _prepare_match_assets() -> void:
+	if boundary_case() == "slow_host" and mode == "host":
+		loading_wait_observed = _sim_tick_id == 0 and not _session.local_ready
+		await get_tree().create_timer(1.0, true).timeout
+		loading_wait_observed = loading_wait_observed and _sim_tick_id == 0
+	await super._prepare_match_assets()

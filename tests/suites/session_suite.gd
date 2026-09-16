@@ -1,6 +1,12 @@
 extends RefCounted
 
 func run(harness: Object) -> void:
+	var early := MatchSession.new()
+	early.bind_opponent(42, "parallel")
+	early.confirm_deck(42, "parallel")
+	harness._expect(early.mark_remote_ready(42, "parallel") and not early.mark_remote_ready(42, "parallel") and not early.start(), "对手先准备完成时记住就绪，重复消息不提前开战")
+	early.local_ready = true
+	harness._expect(early.start() and not early.start(), "本机随后完成时复用已记录的远端就绪，只开战一次")
 	var session := MatchSession.new()
 	harness._expect(session.bind_opponent(42, "epoch") and not session.bind_opponent(42, "epoch"), "会话绑定唯一对手；重复连接回调幂等")
 	harness._expect(not session.bind_opponent(43, "other") and session.opponent_id == 42 and session.session_id == "epoch", "第三个连接不改变对手或会话")

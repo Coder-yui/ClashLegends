@@ -52,8 +52,8 @@ static func _freeze(value: Variant) -> void:
 			_freeze(child)
 		value.make_read_only()
 
-static func validate_all() -> PackedStringArray:
-	var errors: PackedStringArray = VALIDATOR.validate_all(all())
+static func validate_all(inspect_resources: bool = true) -> PackedStringArray:
+	var errors: PackedStringArray = VALIDATOR.validate_all(all(), inspect_resources)
 	errors.append_array(_definition_errors)
 	return errors
 

@@ -87,7 +87,7 @@ func run(harness: Object, main: Node2D) -> void:
 
 	var loading_match = load("res://scenes/main.tscn").instantiate()
 	_main.get_tree().root.add_child(loading_match)
-	loading_match._deck = ["tombstone", "gnar", "garen", "ashe", "pix", "xin", "heal", "freeze"]
+	loading_match._deck = ["tombstone", "gnar", "aatrox", "ashe", "aurelionsol", "rift_herald", "heal", "freeze"]
 	var started := Time.get_ticks_msec()
 	loading_match._start_local_with_loading()
 	loading_match._start_local_with_loading()
@@ -113,4 +113,63 @@ func run(harness: Object, main: Node2D) -> void:
 	var unit = loading_match._spawn_unit(0, "melee_minion", Vector2(300, 800), 0.0)
 	_expect(pool.instances[path].size() == prepared_count - 1 and unit != null, "正式小兵领取预建模型，避免首次登场实例化与动画库复制")
 	_expect(_main.get_tree().get_nodes_in_group("combatants").size() == source_count + 1, "预热样本不进入权威单位列表")
+	var invalid_pool := MatchModelPool.new()
+	var invalid_scene := PackedScene.new()
+	var invalid_root := Node2D.new()
+	invalid_scene.pack(invalid_root)
+	invalid_root.free()
+	await invalid_pool.prepare({"res://assets/units/voidmite/voidmite_view.tscn": invalid_scene}, loading_match._battle_presentation._world_root, loading_match._battle_presentation._camera, {})
+	_expect(invalid_pool.errors.size() == 1 and invalid_pool.instances.is_empty(), "错误模型根节点明确报告准备失败，不计为完成")
+	var invalid_resources := MatchResources.new()
+	invalid_resources._collect("res://assets/units/voidmite/voidmite_view.tscn", &"AudioStream")
+	_expect(invalid_resources.errors.size() == 1, "本局加载保留实际资源类型检查")
+	var mite_path := PresentationConfig.scene_path(CardDB.get_card("voidmite"), 0)
+	_expect(pool.instances[mite_path].size() == 24, "双方各两只先锋共24只蠕虫的合理并发已预建")
+	for id in ["tombstone", "gnar", "aatrox", "aurelionsol"]:
+		var model_path := PresentationConfig.scene_path(CardDB.get_card(id), 0)
+		var model_scene: PackedScene = loading_match._resources.resources[model_path]
+		var model := pool.take(model_scene) as Node3D
+		loading_match._battle_presentation._world_root.add_child(model)
+		var owner: ModelVisualResources = model.get_meta("prepared_model_resources")
+		var player: AnimationPlayer = model.get_meta("prepared_animation_player")
+		var original_transform := model.transform
+		model.position += Vector3.ONE
+		owner.apply_overlays(true, true, false)
+		if model.has_method("begin_visual_death"): model.call("begin_visual_death", 1.0)
+		if model.has_method("set_visual_form"): model.call("set_visual_form", 1)
+		_expect(pool.recycle(model, owner, player), "已审计包装可安全回收：" + id)
+		var next := pool.take(model_scene) as Node3D
+		loading_match._battle_presentation._world_root.add_child(next)
+		_expect(next == model and next.transform == original_transform and not player.is_playing(), "包装复用保留模型身份，清空位移和播放状态：" + id)
+		if id == "tombstone": _expect(not next._dying and next._age == 0.0, "墓碑回收清空死亡雾气状态")
+		if id == "aatrox": _expect(not next.ultimate_form, "剑魔回收恢复初始形态")
+		pool.recycle(next, owner, player)
+	var initial_stock: int = pool.instances[mite_path].size()
+	var packed: PackedScene = loading_match._resources.resources[mite_path]
+	for round_index in 5:
+		var views: Array[UnitModel3D] = []
+		var sources: Array[Unit] = []
+		for index in 12:
+			var source := Unit.new()
+			source.setup(index % 2, CardDB.get_card("voidmite"), "voidmite")
+			sources.append(source)
+			var view := UnitModel3D.new()
+			view.model_factory = pool.take
+			view.model_recycler = pool.recycle
+			loading_match._battle_presentation._world_root.add_child(view)
+			view.setup(source, packed, loading_match._battle_presentation._camera, CardDB.get_card("voidmite").get("visual_animations", {}), 0.0)
+			view._model_resources.apply_overlays(true, true, true)
+			views.append(view)
+		for view in views: view._retire()
+		for source in sources: source.free()
+		_expect(pool.instances[mite_path].size() == initial_stock, "双方爆发第%d轮完成表现后归还模型库存" % round_index)
+	_expect(pool.metrics[mite_path].misses == 0 and pool.metrics[mite_path].hits == 60 and pool.metrics[mite_path].recycled == 60, "超过初始库存的60次领取均复用，无即时实例化")
 	loading_match.free()
+	await _main.get_tree().process_frame
+	var cancelled = load("res://scenes/main.tscn").instantiate()
+	_main.get_tree().root.add_child(cancelled)
+	cancelled._start_local_with_loading()
+	for frame in 5: await _main.get_tree().process_frame
+	cancelled.free()
+	for frame in 3: await _main.get_tree().process_frame
+	_expect(not _main.get_tree().paused, "加载中退出释放暂停状态，旧准备任务不能继续访问场景")

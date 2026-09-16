@@ -21,3 +21,6 @@ func _find_skeleton(node: Node) -> Skeleton3D:
 		if found != null:
 			return found
 	return null
+
+func reset_pool_visual() -> void:
+	pass # 只缓存本实例骨骼/骨骼索引，没有来源或播放状态；骨骼由模型池重置。

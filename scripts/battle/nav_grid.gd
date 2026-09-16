@@ -8,6 +8,8 @@ class_name NavGrid
 ## 路径即可穿过原塔位（对齐 CR 摧毁后塔位可通行的规则）。
 ## 寻路与渲染解耦，不依赖帧率，保证联机两端行为一致。
 
+var revision := 0
+
 const CELL_SIZE := ArenaRules.TILE_SIZE * 0.5
 const LANE_HALF_TILE := CELL_SIZE
 const ROAD_COST := 5
@@ -189,6 +191,7 @@ func cells_for_rect(rect: Rect2) -> Array:
 
 ## 动态阻挡：引用计数，多个来源重叠占用同一格时不会误解除
 func set_cells_blocked(cells: Array, blocked: bool) -> void:
+	if not cells.is_empty(): revision += 1
 	if _costs.is_empty():
 		return
 	for cell in cells:

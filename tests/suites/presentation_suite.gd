@@ -5,7 +5,9 @@ extends "res://tests/suites/battle_suite.gd"
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
+	_check_warm_geometry()
 	_check_model_resources_owner()
+	_check_particle_compilation()
 	_check_action_sequence_owner()
 	_check_structure_art_integration()
 	_check_unit_size_tiers()
@@ -710,9 +712,47 @@ func _check_model_resources_owner() -> void:
 	owners[0].apply_overlays(true, false, false)
 	_expect(owners[0].meshes()[0].material_overlay != original and owners[1].meshes()[0].material_overlay == original, "受击叠加只修改对应模型实例")
 	var mesh := owners[0].meshes()[0]
+	var first_overlay := mesh.material_overlay
+	owners[0].apply_overlays(false, true, false)
+	owners[0].apply_overlays(true, false, false)
+	_expect(mesh.material_overlay == first_overlay, "有限材质组合重复切换复用同一实例资源")
 	owners[0].clear()
 	_expect(mesh.material_overlay == original and owners[0].meshes().is_empty(), "释放资源恢复原始覆盖并清空模型引用")
 	owners[0].bind_model(roots[1])
 	_expect(owners[0].meshes().size() == 1 and owners[0].original_overlay(0) == original, "重新绑定只保留新模型材质状态")
 	for owner in owners: owner.clear()
 	for root in roots: root.free()
+
+func _check_particle_compilation() -> void:
+	var raw := {"p-vel": "1 2 3", "p-life": "0.123456789123", "p-xscale1": "0.5 2 3 4", "p-xscale2": "1 4 5 6", "p-xrgba": "1 0.5 0.25 1", "p-xrgba1": "1 0 0 0 0", "p-lifeP1": "0 0.5", "p-lifeP2": "1 1.5"}
+	LolParticleEffect3D._compile(raw)
+	_expect(LolParticleEffect3D._number(raw, "p-life", 0.0) == float("0.123456789123"), "预编译标量保留原float精度")
+	_expect(LolParticleEffect3D._vec3(raw, "p-vel", Vector3.ZERO) == Vector3(1, 2, 3), "预编译速度/加速度向量保持分量")
+	_expect(LolParticleEffect3D._curve3(raw, "p-xscale", 0.25, Vector3.ONE) == Vector3(1.5, 2, 2.5), "缩放曲线保留默认起点和区间线性插值")
+	_expect(LolParticleEffect3D._curve4(raw, "p-xrgba", 0.5, Vector4.ONE) == Vector4(0.5, 0.25, 0.125, 0.5), "颜色曲线保留初值与透明度插值")
+	var effect := LolParticleEffect3D.new()
+	var random := RandomNumberGenerator.new()
+	effect._rng.seed = 77
+	random.seed = 77
+	for index in 32:
+		_expect(is_equal_approx(effect._probability(raw, "p-life", 1.0), 0.5 + random.randf()), "编译概率表保持随机调用数和分布")
+	effect.free()
+	_expect(LolParticleEffect3D.dependencies_for({"garen": true}).is_empty(), "无原生粒子依赖的纯英雄集合不无条件扫描全部系统")
+	_expect(not LolParticleEffect3D.dependencies_for({"siege_minion": true}).is_empty(), "全局强化及动态炮弹粒子纳入小兵依赖")
+
+func _check_warm_geometry() -> void:
+	var mesh := MeshInstance3D.new()
+	mesh.mesh = BoxMesh.new()
+	_main.add_child(mesh)
+	var original := MatchModelPool.mesh_configuration([mesh])
+	mesh.position = Vector3.ONE
+	_expect(MatchModelPool.mesh_configuration([mesh]) == original, "预热不因普通动作位移重复绘制")
+	mesh.mesh = SphereMesh.new()
+	_expect(MatchModelPool.mesh_configuration([mesh]) != original, "预热保留包装切换网格的绘制")
+	original = MatchModelPool.mesh_configuration([mesh])
+	mesh.material_overlay = StandardMaterial3D.new()
+	_expect(MatchModelPool.mesh_configuration([mesh]) != original, "预热区分控制叠加材质")
+	original = MatchModelPool.mesh_configuration([mesh])
+	mesh.hide()
+	_expect(MatchModelPool.mesh_configuration([mesh]) != original, "预热区分部件显示与隐藏")
+	mesh.free()

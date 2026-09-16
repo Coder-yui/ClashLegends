@@ -121,3 +121,5 @@ Godot 原始入口使用 `-- --suite=ProjectileSuite`，未知名称退出 2；�
 `ShurimaGuardSuite` 覆盖六人横排、贴边整体平移、同次部署筛选、逐人破盾/清除/死亡/自然到期恢复、其他护盾隔离、队长死亡转交和技能2费限1次。
 
 `StructureRushSuite`覆盖建筑冲撞、免控与准备重置、桥面允许/水域禁止、绕行后启动、路径单次伤害和侧推、当前生命代价、六只蠕虫及180°技能。实机配方：`tools/demos/structure_rush_review.gd`，生成双方阶段截图与混音录音。
+
+2026-09-16性能准备回归：DeckBuilderSuite覆盖双方先锋六只、五轮60次模型领取/回收、包装重置与加载中退出；PresentationSuite验证有限材质复用、编译曲线/概率表及粒子依赖范围；StructureRushSuite验证失败搜索冷却、换目标、建筑变化与恢复。`--network-boundaries`另含slow_host、load_disconnect和load_timeout，超时用例只在测试中推进截止时间，实际清理由正式入口执行。

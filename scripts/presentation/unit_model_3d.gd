@@ -124,6 +124,7 @@ var _height_to := 0.0
 var _height_elapsed := 0.0
 var _height_duration := -1.0
 var model_factory: Callable
+var model_recycler: Callable
 
 func setup(unit: Unit, packed: PackedScene, camera: Camera3D, animations: Dictionary, forward_yaw: float, buff_scene_path: String = "") -> bool:
 	# 客户端 Unit 会在默认优先级更新快照插值；3D 代理随后读取最终位置。
@@ -155,8 +156,7 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 			instance.queue_free()
 			return false
 		if had_model:
-			_model_root.hide()
-			_model_root.queue_free()
+			_release_model()
 		_model_root = instance as Node3D
 	_animation_names = animations.duplicate(true)
 	_idle_transition_animation = &""
@@ -243,7 +243,7 @@ func _process(delta: float) -> void:
 	if _dying:
 		return
 	if _source == null or not is_instance_valid(_source):
-		queue_free()
+		_retire()
 		return
 	_tick_form_elevation(delta)
 	_tick_spawn_transition(delta)
@@ -787,7 +787,7 @@ func _visual_bounds_bottom_y() -> float:
 
 ## 用包装场景中全部网格的实际投影顶部定位血条；模型缩放或脚底校正后无需再手填像素偏移。
 func _update_health_bar_anchor() -> void:
-	if _source == null or _camera == null or _model_resources.meshes().is_empty():
+	if _source == null or _camera == null or not _model_resources.has_meshes():
 		return
 	var ground_screen := _camera.unproject_position(global_position)
 	# 建筑等横向展开模型可由包装场景提供稳定的 3D 顶端锚点；仍只影响 UI 投影。
@@ -1218,7 +1218,7 @@ func _on_animation_finished(animation_name: StringName) -> void:
 		if animation_name == _death_animation:
 			if not _start_death_followup():
 				_finish_model_visual_death()
-				queue_free()
+				_retire()
 		return
 	if _playing_visual_action:
 		if animation_name == _active_visual_action:
@@ -1347,14 +1347,14 @@ func _on_source_died() -> void:
 		_team_ring.hide()
 	if _animation_player == null:
 		_finish_model_visual_death()
-		queue_free()
+		_retire()
 		return
 	if bool(_animation_names.get("death_followup_immediate", false)) and _start_death_followup():
 		return
 	_death_animation = StringName(_animation_names.get("death", ""))
 	if _death_animation == &"" or not _animation_player.has_animation(_death_animation):
 		_finish_model_visual_death()
-		queue_free()
+		_retire()
 		return
 	var animation := _animation_player.get_animation(_death_animation)
 	var death_playback_speed := 1.0
@@ -1399,8 +1399,7 @@ func _start_death_followup() -> bool:
 		instance.queue_free()
 		return false
 	if _model_root != null and is_instance_valid(_model_root):
-		_model_root.hide()
-		_model_root.queue_free()
+		_release_model()
 	_model_root = instance as Node3D
 	add_child(_model_root)
 	_model_resources.clear()
@@ -1593,3 +1592,25 @@ func _update_active_buff_visual(delta: float) -> void:
 
 func _exit_tree() -> void:
 	_model_resources.clear()
+
+## 完成死亡片段或换模型后才移交；代理、源信号和附属效果不进入模型池。
+func _release_model() -> void:
+	if not is_instance_valid(_model_root): return
+	if _animation_player != null and _animation_player.animation_finished.is_connected(_on_animation_finished):
+		_animation_player.animation_finished.disconnect(_on_animation_finished)
+	var recycled := model_recycler.is_valid() and bool(model_recycler.call(_model_root, _model_resources, _animation_player))
+	if not recycled:
+		_model_resources.clear()
+		_model_root.hide()
+		_model_root.queue_free()
+	_model_resources = ModelVisualResources.new()
+	_model_root = null
+	_animation_player = null
+
+func _retire() -> void:
+	if is_instance_valid(_source):
+		if _source.died.is_connected(_on_source_died): _source.died.disconnect(_on_source_died)
+		if _source.visual_hit.is_connected(_on_source_visual_hit): _source.visual_hit.disconnect(_on_source_visual_hit)
+	_source = null
+	_release_model()
+	queue_free()

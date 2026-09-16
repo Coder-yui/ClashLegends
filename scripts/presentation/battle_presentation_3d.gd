@@ -49,6 +49,7 @@ func attach_unit(unit: Unit, stats: Dictionary) -> bool:
 		return false
 	var view := UnitModel3D.new()
 	view.model_factory = model_pool.take
+	view.model_recycler = model_pool.recycle
 	_world_root.add_child(view)
 	var animations: Dictionary = visual_stats.get("visual_animations", {})
 	var forward_yaw: float = visual_stats.get("visual_forward_yaw", 0.0)

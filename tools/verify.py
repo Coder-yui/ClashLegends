@@ -283,7 +283,7 @@ def main() -> int:
             report['steps'].append(network)
             report['passed'] = network['passed']
         if report['passed'] and args.network_boundaries:
-            for scenario in ['protocol', 'content', 'slow', 'disconnect', 'restart', 'buildings']:
+            for scenario in ['protocol', 'content', 'slow', 'slow_host', 'load_disconnect', 'load_timeout', 'disconnect', 'restart', 'buildings']:
                 case_output = output / scenario
                 case_output.mkdir()
                 network = run_network(godot, case_output, args.timeout, scenario=scenario)

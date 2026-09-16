@@ -50,3 +50,7 @@ func prepare_visual_animations() -> void:
 					clip.remove_track(track)
 		player.remove_animation_library(library_name)
 		player.add_animation_library(library_name, library)
+
+func reset_pool_visual() -> void:
+	_built_on_tower_ruin = false
+	_ruin_world_yaw = INF

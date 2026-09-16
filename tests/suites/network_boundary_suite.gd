@@ -27,11 +27,19 @@ func run(harness: SceneTree, scenario: String) -> void:
 				buildings_sent = true
 				main._rpc_deploy_request.rpc_id(1, "tombstone", Vector2(300, 440), main.get_authoritative_server_tick(), main._session.session_id, 1)
 				main._rpc_deploy_request.rpc_id(1, "sun_disc", Vector2(300, 440), main.get_authoritative_server_tick(), main._session.session_id, 2)
+		if scenario == "load_disconnect" and main.mode == "client" and main._battle_loading and is_instance_valid(main._battle_presentation) and not acted:
+			acted = true
+			main._network_peer.close()
+			main._on_server_disconnected()
+		if scenario == "load_timeout" and main.mode == "host" and main._battle_loading and not acted:
+			acted = true
+			# 只跳过等待时间，仍由正式暂停树下的超时观察器执行失败与清理。
+			main._network_loading_started = Time.get_ticks_msec() - 30001
 		if scenario == "disconnect" and main.mode == "client" and main.get_authoritative_server_tick() >= 20 and not acted:
 			acted = true
 			main._network_peer.close()
 			main._on_server_disconnected()
-		if scenario in ["slow", "restart", "buildings"] and main.mode == "host" and main._sim_tick_id >= 20 and not acted:
+		if scenario in ["slow", "slow_host", "restart", "buildings"] and main.mode == "host" and main._sim_tick_id >= 20 and not acted:
 			acted = true
 			main._end_game(-1, "draw")
 		if scenario == "restart" and main.game_over and not restarted:
@@ -47,6 +55,7 @@ func run(harness: SceneTree, scenario: String) -> void:
 			restart_clean = not main.game_over and main._commands.card_commands.is_empty() and main._session.last_request_id == 0 and not main.has_node("MatchResult")
 			continue
 		if main._session.phase in [MatchSession.Phase.FINISHED, MatchSession.Phase.DISCONNECTED]:
+			while main._battle_loading: await harness.process_frame
 			break
 	var result := {"schema": 1, "case": scenario, "role": main.mode, "session_id": main._session.session_id,
 		"phase": main._session.phase, "tick": main._sim_tick_id, "passed": false}
@@ -54,6 +63,10 @@ func run(harness: SceneTree, scenario: String) -> void:
 		result.passed = main._session.phase == MatchSession.Phase.DISCONNECTED and main._sim_tick_id == 0 and main._towers.is_empty() and main._commands.card_commands.is_empty() and main._authoritative_card_cycles.is_empty()
 	elif scenario == "disconnect":
 		result.passed = main.game_over and main._session.phase == MatchSession.Phase.DISCONNECTED and main._commands.card_commands.is_empty() and main._commands.skill_commands.is_empty() and main._audio_manager.battle_audio_stopped() and main.has_node("MatchResult")
+	elif scenario in ["load_disconnect", "load_timeout"]:
+		result.passed = main._session.phase == MatchSession.Phase.DISCONNECTED and main._sim_tick_id == 0 and not main._battle_loading and not harness.paused and main._network_peer == null
+	elif scenario == "slow_host":
+		result.passed = waiting and observed_loading and main.game_over and (main.mode == "client" or main.loading_wait_observed)
 	elif scenario == "slow":
 		result.passed = waiting and observed_loading and main.game_over and main._session.phase == MatchSession.Phase.FINISHED and (main.mode == "host" or main.loading_wait_observed)
 	elif scenario == "restart":

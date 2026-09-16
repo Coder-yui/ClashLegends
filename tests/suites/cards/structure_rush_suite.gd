@@ -2,6 +2,15 @@ extends "res://tests/suites/battle_suite.gd"
 ## 权威冲撞边界：不靠动画帧推进，也不只测试字段存在。
 var units: Array[Unit] = []
 
+class LaunchContext extends BattleContext:
+	var blocked := true
+	func is_ground_position_walkable(_position: Vector2, _radius: float, _excluded: Node = null) -> bool:
+		return not blocked
+	func is_ground_segment_walkable(_from: Vector2, _to: Vector2, _radius: float, _excluded: Node = null) -> bool:
+		return not blocked
+	func find_ground_path(_from: Vector2, goal: Vector2, _target: Node2D, _radius: float) -> PackedVector2Array:
+		return PackedVector2Array([goal]) if not blocked else PackedVector2Array()
+
 func spawn(id: String, team: int, point: Vector2) -> Unit:
 	var unit: Unit = _main._spawn_unit(team, id, point, 0.0)
 	units.append(unit)
@@ -31,6 +40,7 @@ func clear_units() -> void:
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
+	_check_failed_launch_search()
 	for tower in main._towers: tower.can_attack = false
 	var deployed: Unit = main._spawn_unit(0, "rift_herald", Vector2(360, 1050), 3.0)
 	units.append(deployed)
@@ -256,3 +266,26 @@ func run(harness: Object, main: Node2D) -> void:
 	invalid = CardDB.all().duplicate(true)
 	invalid.rift_herald.audio.events["spinning_punch:hit"].action_time = 1.0
 	_expect(not CardDB.VALIDATOR.validate_all(invalid).is_empty(), "真实命中声不能改为定时伪命中")
+
+func _check_failed_launch_search() -> void:
+	var source := spawn("rift_herald", 0, Vector2(360, 950))
+	var goal := structure(Vector2(360, 760))
+	var context := LaunchContext.new(_main)
+	source.battle_context = context
+	var rush := source.structure_rush
+	rush.target = goal
+	source._path = PackedVector2Array([Vector2(100, 100)])
+	for tick in 80: rush._approach_launch_point(source, 0.05)
+	_expect(rush.search_count == 10 and source._path.is_empty(), "失败起点搜索4秒只执行10次，清除旧路径")
+	var replacement := structure(Vector2(400, 760))
+	rush.target = replacement
+	rush._approach_launch_point(source, 0.05)
+	_expect(rush.search_count == 11, "更换目标立即重新判断，不受失败冷却阻挡")
+	context.blocked = false
+	_main.nav.set_cells_blocked([Vector2i(0, 0)], true)
+	rush._approach_launch_point(source, 0.05)
+	_expect(rush.search_count == 12 and not source._path.is_empty() and source._path_target == replacement, "建筑阻挡变化立即重搜，恢复可达后持有新目标路线")
+	_main.nav.set_cells_blocked([Vector2i(0, 0)], false)
+	rush._approach_launch_point(source, 0.05)
+	_expect(rush.search_count == 13, "建筑移除也使失败/成功结果失效")
+	clear_units()

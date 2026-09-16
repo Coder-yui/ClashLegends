@@ -183,7 +183,7 @@ func _ready() -> void:
 	add_child(_audio_manager)
 	_projectile_system.launch_audio_cleared.connect(_audio_manager.clear_projectile_launch_audio)
 	randomize()
-	var card_errors := CardDB.validate_all()
+	var card_errors := CardDB.validate_all(false)
 	if not card_errors.is_empty():
 		for error in card_errors:
 			push_error("[CardDB] " + error)
@@ -207,6 +207,9 @@ func _ready() -> void:
 		preload("res://scripts/diagnostics/release_smoke.gd").run(self, cli.release_smoke == "menu")
 
 func _exit_tree() -> void:
+	if _battle_loading:
+		get_tree().paused = false
+		if is_instance_valid(_battle_presentation): _battle_presentation.model_pool.cancelled = true
 	if _network_peer != null:
 		_network_peer.close()
 		if multiplayer.multiplayer_peer == _network_peer:
@@ -309,6 +312,7 @@ func _hide_menu() -> void:
 # ============================================================
 
 var _battle_loading := false
+var preparation_metrics := {}
 
 func _start_local_with_loading() -> void:
 	await _load_battle(_start_local)
@@ -317,6 +321,9 @@ func _load_battle(start_battle: Callable, network: bool = false) -> void:
 	if _battle_loading or _match_started:
 		return
 	_battle_loading = true
+	if network:
+		_network_loading_started = Time.get_ticks_msec()
+		_watch_network_loading(_session.session_id)
 	var tree := get_tree()
 	var loading := CanvasLayer.new()
 	loading.layer = 100
@@ -349,18 +356,26 @@ func _load_battle(start_battle: Callable, network: bool = false) -> void:
 		tree.paused = false
 		return
 	var started := Time.get_ticks_msec()
+	var stage_start := Time.get_ticks_usec()
 	start_battle.call()
+	preparation_metrics.scene_usec = Time.get_ticks_usec() - stage_start
+	stage_start = Time.get_ticks_usec()
 	await _prepare_match_assets()
+	preparation_metrics.assets_usec = Time.get_ticks_usec() - stage_start
+	preparation_metrics.resources_usec = _resources.preparation_usec
+	preparation_metrics.memory_loaded = OS.get_static_memory_usage()
+	preparation_metrics.objects_loaded = Performance.get_monitor(Performance.OBJECT_COUNT)
 	await tree.process_frame
 	await tree.process_frame
 	var remaining := maxf(1.0 - float(Time.get_ticks_msec() - started) / 1000.0, 0.0)
+	preparation_metrics.display_padding_ms = remaining * 1000.0
 	if remaining > 0.0:
 		await tree.create_timer(remaining, true, false, true).timeout
+	stage_start = Time.get_ticks_usec()
 	if network and _session.phase == MatchSession.Phase.LOADING:
 		_session.local_ready = true
-		_network_loading_started = Time.get_ticks_msec()
 		if mode == "host":
-			_rpc_start.rpc_id(_session.opponent_id, _session.session_id)
+			_try_start_network_match()
 		else:
 			_session.deck_confirmed = true
 			_rpc_loaded.rpc_id(1, _session.session_id)
@@ -372,18 +387,38 @@ func _load_battle(start_battle: Callable, network: bool = false) -> void:
 			await tree.process_frame
 	if network and _session.phase == MatchSession.Phase.DISCONNECTED and not game_over:
 		_end_game(-1, "disconnect")
+	preparation_metrics.opponent_wait_usec = Time.get_ticks_usec() - stage_start
 	loading.hide()
 	loading.queue_free()
 	_battle_loading = false
 	tree.paused = false
 
+## SceneTree 暂停时仍检查加载超时；准备和等待对手共用同一截止时间。
+func _watch_network_loading(epoch: String) -> void:
+	var tree := get_tree()
+	while _battle_loading and _session.session_id == epoch and _session.phase == MatchSession.Phase.LOADING:
+		if Time.get_ticks_msec() - _network_loading_started > 30000:
+			_network_failed("对局加载超时")
+			return
+		await tree.process_frame
+
 func _prepare_match_assets() -> void:
-	_resources.prepare(_deck + _remote_deck + ["melee_minion", "ranged_minion", "siege_minion", "super_minion"])
+	_resources.prepare(_deck + _remote_deck + MatchResources.SYSTEM_UNIT_BUDGET.keys())
+	if not _resources.errors.is_empty():
+		_fail_preparation(_resources.errors)
+		return
 	for id in _resources.cards:
 		_audio_manager.prepare_audio(CardDB.get_card(String(id)).get("audio", {}))
 	_audio_manager.prepare_audio(preload("res://scripts/data/world_audio.gd").DEFINITIONS)
 	_audio_manager.prepare_audio(preload("res://scripts/data/match_audio.gd").EVENTS)
+	if not is_instance_valid(_battle_presentation): return
 	await _battle_presentation.model_pool.prepare(_resources.resources, _battle_presentation._world_root, _battle_presentation._camera, _resources.cards)
+	if is_instance_valid(_battle_presentation) and not _battle_presentation.model_pool.errors.is_empty(): _fail_preparation(_battle_presentation.model_pool.errors)
+
+func _fail_preparation(errors: PackedStringArray) -> void:
+	for message in errors: push_error(message)
+	if mode in ["host", "client"]: _network_failed("本局资源准备失败")
+	else: _end_game(-1, "resource_error")
 
 func _start_local() -> void:
 	# CLI/直接启动没有备战页：先确定同一份默认卡组，再创建显示与权威循环。
@@ -474,6 +509,7 @@ func _network_failed(message: String) -> void:
 	if _session.phase in [MatchSession.Phase.FINISHED, MatchSession.Phase.DISCONNECTED]:
 		return
 	_session.finish(true)
+	if _battle_loading and is_instance_valid(_battle_presentation): _battle_presentation.model_pool.cancelled = true
 	print("[联机] " + message)
 	if _match_started or _session.local_ready:
 		_end_game(-1, "disconnect")
@@ -578,9 +614,12 @@ func _begin_net_match_client() -> void:
 func _rpc_loaded(epoch: String) -> void:
 	if mode != "host" or not _session.mark_remote_ready(multiplayer.get_remote_sender_id(), epoch):
 		return
+	_try_start_network_match()
+
+func _try_start_network_match() -> void:
 	if _session.start():
 		_match_started = true
-		_rpc_running.rpc_id(_session.opponent_id, epoch)
+		_rpc_running.rpc_id(_session.opponent_id, _session.session_id)
 
 @rpc("authority", "call_remote", "reliable")
 func _rpc_running(epoch: String) -> void:
@@ -603,7 +642,7 @@ func _flip_camera() -> void:
 
 func _setup_player_ui() -> void:
 	_resources.prepare(CardDB.selectable_ids() if _deck.is_empty() else _deck)
-	_resources.prepare(_remote_deck + ["melee_minion", "ranged_minion", "siege_minion", "super_minion"])
+	_resources.prepare(_remote_deck + MatchResources.SYSTEM_UNIT_BUDGET.keys())
 	_elixir = ElixirManager.new()
 	add_child(_elixir)
 	_hand = CardHand.new()
@@ -2524,7 +2563,7 @@ func _end_game(winner_team: int, reason: String) -> void:
 	back.size = Vector2(200, 70)
 	back.pressed.connect(func(): get_tree().reload_current_scene())
 	overlay.add_child(back)
-	if mode == "host" and not multiplayer.get_peers().is_empty():
+	if mode == "host" and _network_peer != null and multiplayer.get_peers().has(_session.opponent_id):
 		_rpc_end.rpc_id(_session.opponent_id, _terminal_result)
 
 func _match_result_text(winner_team: int, reason: String) -> String:
@@ -2554,6 +2593,7 @@ func _rpc_register_deck(deck: Array, active_skill_choices: Dictionary = {}, epoc
 	if not _accept_remote_deck(sender, epoch, deck, active_skill_choices):
 		_network_failed("对方卡组或技能选择无效")
 		return
+	_rpc_start.rpc_id(_session.opponent_id, _session.session_id)
 	await _load_battle(_begin_net_match_host, true)
 
 func _accept_remote_deck(sender: int, epoch: String, deck: Array, choices: Dictionary) -> bool:

@@ -10,3 +10,6 @@ func _process_modification() -> void:
 	var anchor := skeleton.find_bone("Weapon_World")
 	if weapon >= 0 and anchor >= 0:
 		skeleton.set_bone_global_pose(weapon, skeleton.get_bone_global_pose(anchor))
+
+func reset_pool_visual() -> void:
+	pass # player 始终属于本模型；这里只读片段名，不持有来源、形态或时钟。

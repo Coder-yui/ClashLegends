@@ -3,6 +3,7 @@ extends Node3D
 @export var ultimate_form := false
 ## 120个等间隔样本，低侧Foot_end均值：Ult 0.979366，Idle -0.019225（包装缩放0.013）。
 const NATIVE_AIR_LIFT := 0.998591
+var _initial_ultimate_form := false
 var _mesh: MeshInstance3D
 var _player: AnimationPlayer
 var _normal_mesh: ArrayMesh
@@ -10,6 +11,7 @@ var _wing_mesh: ArrayMesh
 var _full_mesh: ArrayMesh
 
 func _ready() -> void:
+	_initial_ultimate_form = ultimate_form
 	prepare_visual_animations()
 
 func prepare_visual_animations() -> void:
@@ -84,3 +86,7 @@ func set_visual_form(form_index: int) -> void:
 
 func can_reuse_visual(scene_path: String) -> bool:
 	return scene_path in ["res://assets/units/aatrox/normal_view.tscn", "res://assets/units/aatrox/ultimate_view.tscn"]
+
+func reset_pool_visual() -> void:
+	ultimate_form = _initial_ultimate_form
+	if _mesh != null: _mesh.mesh = _full_mesh if ultimate_form else _normal_mesh

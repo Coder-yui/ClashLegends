@@ -2,7 +2,7 @@ extends "res://scripts/data/card_schema.gd"
 const SHAPES = preload("res://scripts/data/card_shape_validator.gd")
 
 ## 返回当前全部配置错误。空数组表示 CardDB 可以安全进入运行时。
-static func validate_all(cards: Dictionary) -> PackedStringArray:
+static func validate_all(cards: Dictionary, inspect_resources: bool = true) -> PackedStringArray:
 	var errors := PackedStringArray()
 	_validate_numbers("princess_tower", PRINCESS_TOWER_STATS, errors)
 	_validate_projectile("princess_tower", PRINCESS_TOWER_STATS, errors)
@@ -20,7 +20,7 @@ static func validate_all(cards: Dictionary) -> PackedStringArray:
 		_validate_card_id(card_id, errors)
 		_validate_known_fields(card_id, stats, CARD_FIELDS, errors)
 		_validate_numbers(card_id, stats, errors)
-		_validate_card(card_id, stats, errors)
+		_validate_card(card_id, stats, errors, inspect_resources)
 		_validate_references(card_id, stats, cards, errors)
 	return errors
 
@@ -28,7 +28,7 @@ static func _validate_card_id(card_id: String, errors: PackedStringArray) -> voi
 	if card_id.is_empty() or card_id != card_id.to_snake_case() or card_id.to_lower() != card_id:
 		errors.append("%s: card_id 必须是非空英文 snake_case" % card_id)
 
-static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStringArray) -> void:
+static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStringArray, inspect_resources: bool = true) -> void:
 	if not SHAPES.validate(card_id, stats, errors): return
 	_require_fields(card_id, stats, [&"name", &"cost", &"type", &"description", &"radius", &"color"], errors)
 	var card_type := StringName(stats.get("type", ""))
@@ -87,10 +87,10 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 		errors.append("%s.card_art: 必须是 Dictionary" % card_id)
 	else:
 		_validate_known_fields(card_id + ".card_art", art, ["path"], errors)
-		if art.has("path") and (not ResourceLoader.exists(String(art.path)) or not load(String(art.path)) is Texture2D):
+		if art.has("path") and (not ResourceLoader.exists(String(art.path)) or (inspect_resources and not load(String(art.path)) is Texture2D)):
 			errors.append("%s.card_art.path: 必须是存在的 Texture2D" % card_id)
-	_validate_visual_config(card_id, stats, errors)
-	_validate_audio_config(card_id, stats, errors)
+	_validate_visual_config(card_id, stats, errors, inspect_resources)
+	_validate_audio_config(card_id, stats, errors, inspect_resources)
 	_validate_active_skills(card_id, stats, errors)
 	if stats.has("transformed_stats"):
 		var transformed = stats.get("transformed_stats")
@@ -99,13 +99,13 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 		else:
 			_validate_known_fields("%s.transformed_stats" % card_id, transformed, CARD_FIELDS, errors)
 			_validate_combat_stats("%s.transformed_stats" % card_id, transformed, true, errors)
-			_validate_visual_config("%s.transformed_stats" % card_id, transformed, errors)
+			_validate_visual_config("%s.transformed_stats" % card_id, transformed, errors, inspect_resources)
 			if transformed.has("audio"):
 				var capabilities := stats.duplicate()
 				capabilities.merge(transformed, true)
-				_validate_audio_config("%s.transformed_stats" % card_id, capabilities, errors)
+				_validate_audio_config("%s.transformed_stats" % card_id, capabilities, errors, inspect_resources)
 
-static func _validate_audio_config(label: String, stats: Dictionary, errors: PackedStringArray) -> void:
+static func _validate_audio_config(label: String, stats: Dictionary, errors: PackedStringArray, inspect_resources: bool = true) -> void:
 	if not SHAPES.validate(label, stats, errors): return
 	if not stats.has("audio"):
 		return
@@ -137,7 +137,7 @@ static func _validate_audio_config(label: String, stats: Dictionary, errors: Pac
 					continue
 				var selected := stats.duplicate(true)
 				selected.audio = PresentationConfig.audio_for(stats, team)
-				_validate_audio_config("%s.team%d" % [label, team], selected, errors)
+				_validate_audio_config("%s.team%d" % [label, team], selected, errors, inspect_resources)
 	if audio.has("attack_launch_until_impact"):
 		if typeof(audio.attack_launch_until_impact) != TYPE_BOOL:
 			errors.append("%s.audio.attack_launch_until_impact: 必须为布尔值" % label)
@@ -168,7 +168,7 @@ static func _validate_audio_config(label: String, stats: Dictionary, errors: Pac
 					errors.append("%s.audio.events.%s.action_time: 必须是主动动作窗口内的非负 start/voice/release 秒数，命中声音只能由真实命中触发" % [label, cue])
 			if event.get("bus", "Combat") not in ["Combat", "Voice"]:
 				errors.append("%s.audio.events.%s.bus: 只支持 Combat / Voice" % [label, cue])
-			_validate_audio_path_pool("%s.audio.events.%s.pool" % [label, cue], event.get("pool", []), errors)
+			_validate_audio_path_pool("%s.audio.events.%s.pool" % [label, cue], event.get("pool", []), errors, inspect_resources)
 			if typeof(event.get("volume_db", 0.0)) not in [TYPE_INT, TYPE_FLOAT] or not is_finite(float(event.get("volume_db", 0.0))):
 				errors.append("%s.audio.events.%s.volume_db: 必须是有限分贝数值" % [label, cue])
 	if audio.has("attack_swing_lead_time"):
@@ -200,22 +200,22 @@ static func _validate_audio_config(label: String, stats: Dictionary, errors: Pac
 			if attack_count > 0 and attack_count != (swing as Array).size():
 				errors.append("%s.audio.%s: 声音池数量必须与 visual_animations.attack 数量一致" % [label, field])
 			for index in (swing as Array).size():
-				_validate_audio_path_pool("%s.audio.%s[%d]" % [label, field, index], (swing as Array)[index], errors)
+				_validate_audio_path_pool("%s.audio.%s[%d]" % [label, field, index], (swing as Array)[index], errors, inspect_resources)
 	if audio.has("attack_hit"):
-		_validate_audio_path_pool("%s.audio.attack_hit" % label, audio.attack_hit, errors)
+		_validate_audio_path_pool("%s.audio.attack_hit" % label, audio.attack_hit, errors, inspect_resources)
 	if audio.has("empowered_hit"):
 		if not PresentationEvents.supports(stats, "empowered_swing"):
 			errors.append("%s.audio.empowered_hit: 无强化普攻机制" % label)
-		_validate_audio_path_pool("%s.audio.empowered_hit" % label, audio.empowered_hit, errors)
+		_validate_audio_path_pool("%s.audio.empowered_hit" % label, audio.empowered_hit, errors, inspect_resources)
 	if (audio as Dictionary).has("first_strike_hit"):
 		if float(stats.get("first_strike_damage_multiplier", 1.0)) == 1.0 or bool(stats.get("is_continuous_attack", false)):
 			errors.append("%s.audio.first_strike_hit: 无首击机制" % label)
-		_validate_audio_path_pool("%s.audio.first_strike_hit" % label, (audio as Dictionary).get("first_strike_hit", []), errors)
+		_validate_audio_path_pool("%s.audio.first_strike_hit" % label, (audio as Dictionary).get("first_strike_hit", []), errors, inspect_resources)
 	for volume_field in [&"attack_swing_volume_db", &"attack_hit_volume_db"]:
 		if (audio as Dictionary).has(volume_field) and typeof((audio as Dictionary)[volume_field]) not in [TYPE_INT, TYPE_FLOAT]:
 			errors.append("%s.audio.%s: 必须是分贝数值" % [label, volume_field])
 
-static func _validate_audio_path_pool(label: String, configured: Variant, errors: PackedStringArray) -> void:
+static func _validate_audio_path_pool(label: String, configured: Variant, errors: PackedStringArray, inspect_resources: bool = true) -> void:
 	if not configured is Array or (configured as Array).is_empty():
 		errors.append("%s: 必须是非空资源路径数组" % label)
 		return
@@ -229,7 +229,7 @@ static func _validate_audio_path_pool(label: String, configured: Variant, errors
 			errors.append("%s[%d]: 必须是 res:// 音频资源路径" % [label, index])
 		elif not ResourceLoader.exists(path):
 			errors.append("%s[%d]: 资源不存在 %s" % [label, index, path])
-		elif not load(path) is AudioStream:
+		elif inspect_resources and not load(path) is AudioStream:
 			errors.append("%s[%d]: 资源不是 AudioStream" % [label, index])
 
 static func _validate_combat_stats(label: String, stats: Dictionary, require_size_tier: bool, errors: PackedStringArray) -> void:
@@ -427,7 +427,7 @@ static func _unit_reference_exists(card_id: String, cards: Dictionary) -> bool:
 		return false
 	return cards[card_id].get("type", "") in [&"unit", &"building"]
 
-static func _validate_visual_config(label: String, stats: Dictionary, errors: PackedStringArray) -> void:
+static func _validate_visual_config(label: String, stats: Dictionary, errors: PackedStringArray, inspect_resources: bool = true) -> void:
 	if not SHAPES.validate(label, stats, errors): return
 	for path_field in [&"visual_scene_path"]:
 		var path := String(stats.get(path_field, ""))
@@ -437,7 +437,7 @@ static func _validate_visual_config(label: String, stats: Dictionary, errors: Pa
 		var effect_path = stats.visual_active_buff_scene
 		if not effect_path is String or not ResourceLoader.exists(effect_path):
 			errors.append("%s.visual_active_buff_scene: 必须是存在的场景路径" % label)
-		else:
+		elif inspect_resources:
 			var packed = load(effect_path)
 			if not packed is PackedScene:
 				errors.append("%s.visual_active_buff_scene: 必须是 PackedScene" % label)

@@ -57,3 +57,15 @@ func begin_visual_death(duration: float) -> void:
 ## 墓碑形体横向展开且动画 AABB 变化较大，使用稳定的模型顶端锚点放置血条。
 func get_health_bar_anchor_local() -> Vector3:
 	return Vector3(0.0, 1.34, 0.0)
+
+func reset_pool_visual() -> void:
+	_age = 0.0
+	_death_elapsed = 0.0
+	_death_duration = 0.0
+	_dying = false
+	for index in _fog_layers.size():
+		var fog := _fog_layers[index]
+		fog.scale = _base_scales[index]
+		var material := fog.material_override as ShaderMaterial
+		material.set_shader_parameter("fog_visibility", 0.0)
+		material.set_shader_parameter("disperse", 0.0)

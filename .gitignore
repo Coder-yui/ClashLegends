@@ -34,3 +34,6 @@ __pycache__/
 /ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/data/
 /ClashLegends-开发素材库/03-制作中/峡谷先锋/audio/
 /ClashLegends-开发素材库/03-制作中/峡谷先锋/**/*.log
+
+# 用户个人开发思路，仅保留本地，不属于 agent 工作资料
+/需求文档/

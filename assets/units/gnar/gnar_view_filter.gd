@@ -231,3 +231,6 @@ func _filter_bone_triangles(arrays: Array, hidden_bind_index: int) -> Array:
 			kept_indices.append(indices[triangle_start + 2])
 	arrays[Mesh.ARRAY_INDEX] = kept_indices
 	return arrays
+
+func reset_pool_visual() -> void:
+	if _mesh_instance != null: _mesh_instance.mesh = _original_mesh

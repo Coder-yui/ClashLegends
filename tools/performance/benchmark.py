@@ -30,7 +30,10 @@ def stop(process):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--case', choices=['load', 'burst', 'match', 'effects'], default='load')
+    parser.add_argument('--case', choices=['load', 'burst', 'match', 'effects', 'herald'], default='load')
+    parser.add_argument('--prepare', choices=['menu', 'none'], default='menu')
+    parser.add_argument('--entry', choices=['fresh', 'repeat'], default='fresh')
+    parser.add_argument('--repeat', type=int, default=1)
     parser.add_argument('--counts', default='32,64,128')
     parser.add_argument('--seconds', type=float, default=12)
     parser.add_argument('--render', action='store_true')
@@ -41,7 +44,7 @@ def main():
     parser.add_argument('--godot', default='/Applications/Godot.app/Contents/MacOS/Godot')
     args = parser.parse_args()
     counts = [int(n) for n in args.counts.split(',')]
-    if any(n <= 0 or n > 256 for n in counts) or args.seconds <= 0:
+    if any(n <= 0 or n > 256 for n in counts) or args.seconds <= 0 or args.repeat < 1:
         parser.error('counts must be 1..256 and seconds positive')
     if args.case == 'burst' and args.seconds < 12:
         parser.error('burst requires at least 12 seconds')
@@ -55,12 +58,12 @@ def main():
         report[key] = subprocess.check_output(['sysctl', '-n', key], text=True).strip()
     process = None
     try:
-        for count in counts:
-            folder = out / str(count)
+        for run_index, count in enumerate(counts * args.repeat):
+            folder = out / (str(count) + "-" + str(run_index + 1))
             folder.mkdir()
             command = [args.godot, *([] if args.render else ['--headless']), '--path', str(ROOT),
                        '--script', 'tools/performance/benchmark.gd', '--', '--perf-case=' + args.case,
-                       '--perf-count=' + str(count), '--perf-seconds=' + str(args.seconds),
+                       '--perf-entry=' + args.entry, '--perf-prepare=' + args.prepare, '--perf-count=' + str(count), '--perf-seconds=' + str(args.seconds),
                        '--perf-visual=' + args.visual, '--perf-audio=' + args.audio,
                        '--perf-output=' + str(folder), *(['--perf-record'] if args.record_audio else [])]
             started = time.monotonic()

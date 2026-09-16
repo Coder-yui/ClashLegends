@@ -9,9 +9,20 @@ var direction := Vector2.ZERO
 var endpoint := Vector2.ZERO
 var hit_ids := {}
 var config: Dictionary = {}
+var _launch_target_id := 0
+var _launch_nav_revision := -1
+var _launch_target_position := Vector2.INF
+var _launch_retry := 0.0
+# 累积计数供测试/性能采样读取；不逐 Tick 输出。
+var search_count := 0
+var candidate_count := 0
+var path_count := 0
+var search_usec := 0
 
 func configure(stats: Dictionary) -> void:
 	config = stats
+	_launch_target_id = 0
+	_launch_retry = 0.0
 	phase = Phase.READY if float(stats.get("rush_distance", 0.0)) > 0.0 else Phase.SPENT
 
 func locked() -> bool:
@@ -204,22 +215,41 @@ func _audio(unit: Unit, cue: StringName) -> void:
 
 ## 找最近可达的发起点：桥面可用，水域与建筑仍按整段圆柱检查。
 func _approach_launch_point(unit: Unit, dt: float) -> void:
-	unit._repath_cd -= dt
-	if unit._repath_cd <= 0.0 or unit._path.is_empty():
+	_launch_retry -= dt
+	var nav := unit.battle_context.navigation()
+	var revision := nav.revision if nav != null else -1
+	var invalid_path := unit._path_index < unit._path.size() and not unit.battle_context.is_ground_segment_walkable(unit.global_position, unit._path[unit._path_index], unit.body_radius, unit)
+	if _launch_retry <= 0.000001 or _launch_target_id != target.get_instance_id() or _launch_nav_revision != revision or _launch_target_position != target.global_position or invalid_path:
+		var started := Time.get_ticks_usec()
+		search_count += 1
+		_launch_target_id = target.get_instance_id()
+		_launch_nav_revision = revision
+		_launch_target_position = target.global_position
+		# 失败也覆盖旧路线，不能向旧目标继续移动。
+		unit._path = PackedVector2Array()
+		unit._path_index = 0
+		unit._path_target = target
+		unit._path_goal = Vector2.INF
 		var goal := Vector2.INF
 		var best := INF
 		var best_path := PackedVector2Array()
 		# 以导航格心与目标周围候选点搜索，按实际步行路线长度选最近点。
-		for row in ArenaRules.ARENA_ROWS:
-			for column in ArenaRules.ARENA_COLUMNS:
+		var clearance: float = unit.body_radius + target.body_radius + ArenaRules.STRUCTURE_SEPARATION + 0.1
+		var reach: float = float(config.rush_distance) + unit.body_radius + target.body_radius
+		var center := target.global_position
+		var tile := float(ArenaRules.TILE_SIZE)
+		# 保留原行列顺序和全部圆内候选，仅跳过必然不合法的外接矩形外格心。
+		for row in range(maxi(0, ceili((center.y - reach) / tile - 0.5)), mini(ArenaRules.ARENA_ROWS, floori((center.y + reach) / tile - 0.5) + 1)):
+			for column in range(maxi(0, ceili((center.x - reach) / tile - 0.5)), mini(ArenaRules.ARENA_COLUMNS, floori((center.x + reach) / tile - 0.5) + 1)):
+				candidate_count += 1
 				var candidate := Vector2((column + 0.5) * ArenaRules.TILE_SIZE, (row + 0.5) * ArenaRules.TILE_SIZE)
-				var clearance: float = unit.body_radius + target.body_radius + ArenaRules.STRUCTURE_SEPARATION + 0.1
 				var distance: float = candidate.distance_to(target.global_position)
 				if distance <= clearance or distance - unit.body_radius - target.body_radius > float(config.rush_distance): continue
+				if unit.global_position.distance_to(candidate) >= best: continue
 				if not unit.battle_context.is_ground_position_walkable(candidate, unit.body_radius, unit): continue
 				var landing: Vector2 = target.global_position + target.global_position.direction_to(candidate) * clearance
 				if not unit.battle_context.is_ground_segment_walkable(candidate, landing, unit.body_radius, unit): continue
-				if unit.global_position.distance_to(candidate) >= best: continue
+				path_count += 1
 				var path := unit.battle_context.find_ground_path(unit.global_position, candidate, target, unit.body_radius)
 				if path.is_empty(): continue
 				if not unit.battle_context.is_ground_segment_walkable(path[-1], candidate, unit.body_radius, unit): continue
@@ -239,5 +269,6 @@ func _approach_launch_point(unit: Unit, dt: float) -> void:
 			unit._path_index = 0
 			unit._path_target = target
 			unit._path_goal = goal
-		unit._repath_cd = 0.4
-	unit._follow_current_path(dt)
+		_launch_retry = 0.4
+		search_usec += Time.get_ticks_usec() - started
+	if not unit._path.is_empty(): unit._follow_current_path(dt)

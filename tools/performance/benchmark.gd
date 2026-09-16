@@ -6,6 +6,9 @@ var spawn_ms: Array[float] = []
 var transform_ms: Array[float] = []
 var memory_bytes: Array[float] = []
 var main: Node2D
+var events: Array = []
+var slow_frames: Array = []
+var objects: Array[float] = []
 
 func option(key: String, fallback: String) -> String:
 	for argument in OS.get_cmdline_user_args():
@@ -28,17 +31,35 @@ func run() -> void:
 	Engine.max_fps = 60 if rendered else 0
 	main = load("res://scenes/main.tscn").instantiate()
 	main.set_script(preload("res://tools/performance/benchmark_main.gd"))
-	main._deck = ["garen", "ashe", "xin", "gnar", "teemo", "masteryi", "tombstone", "anivia"]
+	var deck := ["garen", "ashe", "xin", "gnar", "teemo", "masteryi", "tombstone", "anivia"]
+	if case == "herald": deck[2] = "rift_herald"
+	main._deck = deck.duplicate()
 	root.add_child(main)
 	current_scene = main
 	main.set_process(false)
 	await process_frame
+	var first_exit := {}
+	if option("--perf-entry", "fresh") == "repeat":
+		await main._start_local_with_loading()
+		main.free()
+		await create_timer(0.25).timeout
+		first_exit = {"memory": OS.get_static_memory_usage(), "objects": Performance.get_monitor(Performance.OBJECT_COUNT)}
+		main = load("res://scenes/main.tscn").instantiate()
+		main.set_script(preload("res://tools/performance/benchmark_main.gd"))
+		main._deck = deck.duplicate()
+		root.add_child(main)
+		current_scene = main
+		main.set_process(false)
+		await process_frame
 	# Main._ready 会 randomize；在初始化完成后再固定本次实验的种子。
 	seed(12345)
 	var setup_start := Time.get_ticks_usec()
 	main.silent = not audio_enabled
 	print("[PERF_STAGE] start local")
-	main._start_local()
+	if option("--perf-prepare", "menu") == "menu":
+		await main._start_local_with_loading()
+	else:
+		main._start_local()
 	main.set_process(false)
 	main._ai.enabled = false
 	main._minion_waves_enabled = case == "match"
@@ -54,7 +75,6 @@ func run() -> void:
 	var frames := 0
 	var spawned := false
 	var transformed := false
-	var sampled_image := false
 	var record: AudioEffectRecord
 	var record_index := AudioServer.get_bus_effect_count(0)
 	if "--perf-record" in OS.get_cmdline_user_args():
@@ -66,17 +86,30 @@ func run() -> void:
 		var now := Time.get_ticks_usec()
 		var elapsed := (now - started) / 1000000.0
 		frame_ms.append((now - last_frame) / 1000.0)
+		if frame_ms.back() > 16.67: slow_frames.append({"frame": frames, "tick": main._sim_tick_id, "ms": frame_ms.back()})
 		var dt: float = (now - last_frame) / 1000000.0 if rendered else 0.05
 		last_frame = now
 		if case == "burst" and frames == 60:
+			events.append({"frame": frames, "event": "spawn", "count": count})
 			units = spawn_load(count, true)
 			spawned = true
 		if case == "burst" and frames == 180:
+			events.append({"frame": frames, "event": "transform", "count": count})
 			var before := Time.get_ticks_usec()
 			for unit in units:
 				if is_instance_valid(unit): unit.transform_to_mega()
 			transform_ms.append((Time.get_ticks_usec() - before) / 1000.0)
 			transformed = true
+		if case == "herald" and frames % 180 == 60:
+			events.append({"frame": frames, "event": "both_heralds_summon", "count": 12})
+			for unit in get_nodes_in_group("combatants"):
+				if unit is Unit: unit.take_damage(10000000)
+			for team in [0, 1]:
+				var source: Unit = main._spawn_unit(team, "rift_herald", Vector2(360, 850 if team == 0 else 430), 0.0)
+				source.structure_rush.target = main._towers[2 if team == 0 else 0]
+				source.structure_rush.direction = Vector2.UP if team == 0 else Vector2.DOWN
+				source.structure_rush.target.hp = 10000000
+				source.structure_rush._impact(source)
 		if case == "effects" and frames % 120 == 0:
 			for index in 8:
 				main.play_card(index % 2, "freeze" if index % 2 == 0 else "heal", Vector2(130 + index % 4 * 150, 640), {"immediate": true, "validate_position": false})
@@ -84,12 +117,9 @@ func run() -> void:
 		main._process(dt)
 		main_process_ms.append((Time.get_ticks_usec() - before) / 1000.0)
 		backlog_ms.append(main._simulation_clock.remainder * 1000.0)
+		objects.append(Performance.get_monitor(Performance.OBJECT_COUNT))
 		memory_bytes.append(float(OS.get_static_memory_usage()))
 		frames += 1
-		if rendered and not sampled_image and frames >= 300:
-			RenderingServer.force_draw()
-			root.get_texture().get_image().save_png(output.path_join("sample.png"))
-			sampled_image = true
 		if case == "match":
 			if main.game_over: break
 			if main._sim_tick_id > 6120 or elapsed > 420.0:
@@ -107,7 +137,11 @@ func run() -> void:
 		var wav := record.get_recording()
 		if wav != null: wav.save_to_wav(output.path_join("master-mix.wav"))
 		AudioServer.remove_bus_effect(0, record_index)
-	var result := {"schema": 1, "case": case, "count": count, "seed": 12345, "rendered": rendered,
+	var result := {"schema": 1, "capture_policy": "after_measurement", "case": case, "count": count, "seed": 12345, "rendered": rendered,
+		"preparation": option("--perf-prepare", "menu"), "entry": option("--perf-entry", "fresh"), "first_exit": first_exit,
+		"loading_stages": main.get("preparation_metrics"), "pool": main._battle_presentation.model_pool.get("metrics") if is_instance_valid(main._battle_presentation) else {},
+		"pool_preparation": main._battle_presentation.model_pool.get("preparation_times") if is_instance_valid(main._battle_presentation) else {},
+		"events": events, "slow_frames": slow_frames, "objects": distribution(objects),
 		"visual": option("--perf-visual", "on"), "audio": audio_enabled,
 		"engine": Engine.get_version_info().string, "renderer": RenderingServer.get_current_rendering_method(),
 		"recorded_audio": record != null, "backlog_final_ms": main._simulation_clock.remainder * 1000.0, "frames": frames, "ticks": main._sim_tick_id, "setup_ms": setup_ms,
@@ -121,10 +155,12 @@ func run() -> void:
 		"audio_budget": main._audio_manager.budget_snapshot(), "commands": main.commands,
 		"game_over": main.game_over, "terminal": main._terminal_result.get("reason", ""),
 		"completed": main.game_over if case == "match" else (spawned and transformed if case == "burst" else true)}
-	FileAccess.open(output.path_join("metrics.json"), FileAccess.WRITE).store_string(JSON.stringify(result, "\t"))
-	print("[PERF_RESULT] " + JSON.stringify(result))
 	main.free()
 	await create_timer(0.25).timeout
+	result.memory_after_exit = OS.get_static_memory_usage()
+	result.objects_after_exit = Performance.get_monitor(Performance.OBJECT_COUNT)
+	FileAccess.open(output.path_join("metrics.json"), FileAccess.WRITE).store_string(JSON.stringify(result, "\t"))
+	print("[PERF_RESULT] " + JSON.stringify(result))
 	quit(0 if result.completed else 1)
 
 func spawn_load(count: int, heavy: bool) -> Array[Unit]:
