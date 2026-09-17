@@ -27,6 +27,15 @@ static func attributes(stats: Dictionary, quantity_override: String = "") -> Arr
 		return result
 
 	var quantity := quantity_override if not quantity_override.is_empty() else str(maxi(int(stats.get("deployment_count", 1)), 1))
+	if card_type == "unit" and stats.has("deployment_member_ids"):
+		var member_ids: Array = stats.get("deployment_member_ids", [])
+		var unique_members := {}
+		for member_id in member_ids:
+			unique_members[String(member_id)] = true
+		result.append({"name": "类型", "value": "混合地面编队" if unique_members.size() > 1 else "地面编队"})
+		result.append({"name": "成员", "value": deployment_member_summary(stats)})
+		result.append({"name": "站位", "value": deployment_formation_name(stats)})
+		return result
 	result.append({"name": "生命", "value": format_number(roundf(float(stats.get("hp", 0.0))))})
 	result.append({"name": "类型", "value": type_name(card_type, stats)})
 	if card_type == "building":
@@ -104,6 +113,34 @@ static func target_name(stats: Dictionary) -> String:
 	if bool(stats.get("building_only", false)):
 		return "建筑"
 	return "空中和地面" if bool(stats.get("can_attack_air", false)) else "地面"
+
+static func deployment_member_summary(stats: Dictionary) -> String:
+	var counts := {}
+	var order: Array[String] = []
+	for raw_id in stats.get("deployment_member_ids", []):
+		var id := String(raw_id)
+		if not counts.has(id):
+			counts[id] = 0
+			order.append(id)
+		counts[id] += 1
+	var parts: Array[String] = []
+	for id in order:
+		var member_stats := CardDB.get_card(id)
+		parts.append("%s×%d" % [String(member_stats.get("name", id)), int(counts[id])])
+	return "、".join(parts)
+
+static func deployment_formation_name(stats: Dictionary) -> String:
+	var count := maxi(int(stats.get("deployment_count", stats.get("deployment_member_ids", []).size())), 1)
+	match StringName(stats.get("deployment_formation", "ring")):
+		&"polygon":
+			if count == 3:
+				return "三角形三个顶点"
+			if count == 6:
+				return "六边形六个顶点"
+			return "正多边形%d个顶点" % count
+		&"square": return "正方形四个顶点"
+		&"line": return "横排%d名" % count
+		_: return "环形%d名" % count
 
 static func volume_name(stats: Dictionary) -> String:
 	if stats.has("footprint_tiles"):

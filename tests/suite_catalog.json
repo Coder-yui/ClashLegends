@@ -144,6 +144,24 @@
     "scene": "battle"
   },
   {
+    "id": "MinionSquadSuite",
+    "script": "res://tests/suites/cards/minion_squad_suite.gd",
+    "method": "run",
+    "scene": "battle"
+  },
+  {
+    "id": "MeleeMinionSquadSuite",
+    "script": "res://tests/suites/cards/melee_minion_squad_suite.gd",
+    "method": "run",
+    "scene": "battle"
+  },
+  {
+    "id": "RangedMinionSquadSuite",
+    "script": "res://tests/suites/cards/ranged_minion_squad_suite.gd",
+    "method": "run",
+    "scene": "battle"
+  },
+  {
     "id": "ANIVIA_SUITE_SCRIPT",
     "script": "res://tests/suites/cards/anivia_suite.gd",
     "method": "run",
