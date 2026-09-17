@@ -51,8 +51,10 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 		errors.append("%s.pre_deploy_time: 必须 >= 0" % card_id)
 	if float(stats.get("pre_deploy_time", 0.0)) > 0.0 and card_type == &"spell":
 		errors.append("%s.pre_deploy_time: 法术不能使用单位预部署阶段" % card_id)
-	if String(stats.get("deployment_formation", "ring")) not in ["ring", "line", "polygon"]:
-		errors.append("%s.deployment_formation: 仅支持 ring/line/polygon" % card_id)
+	if String(stats.get("deployment_formation", "ring")) not in ["ring", "line", "polygon", "square"]:
+		errors.append("%s.deployment_formation: 仅支持 ring/line/polygon/square" % card_id)
+	if String(stats.get("deployment_formation", "ring")) == "square" and int(stats.get("deployment_count", 0)) != 4:
+		errors.append("%s.deployment_formation: square 必须搭配4名成员" % card_id)
 	if String(stats.get("deployment_formation", "ring")) == "line" and (int(stats.get("deployment_count", 1)) - 1) * float(stats.get("deployment_spacing", 0.0)) + 2.0 * float(stats.get("radius", 0.0)) > ArenaRules.FIELD_W:
 		errors.append("%s: 横排宽度不能超过战场" % card_id)
 	if stats.has("deployment_count"):
@@ -63,6 +65,14 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 			errors.append("%s.deployment_count: 必须 > 0" % card_id)
 		if deployment_count > 1 and float(stats.get("deployment_spacing", 0.0)) <= 0.0:
 			errors.append("%s.deployment_spacing: 编队数量大于 1 时必须 > 0" % card_id)
+	if stats.has("deployment_member_ids"):
+		var member_ids = stats.get("deployment_member_ids")
+		if card_type != &"unit":
+			errors.append("%s.deployment_member_ids: 只有单位卡可以使用异构编队" % card_id)
+		elif not member_ids is Array or (member_ids as Array).is_empty():
+			errors.append("%s.deployment_member_ids: 必须是非空成员卡 ID 数组" % card_id)
+		elif stats.has("deployment_count") and int(stats.get("deployment_count", 0)) != (member_ids as Array).size():
+			errors.append("%s.deployment_member_ids: 成员数量必须与 deployment_count 一致" % card_id)
 	match card_type:
 		&"unit":
 			_validate_combat_stats(card_id, stats, true, errors)
@@ -412,6 +422,12 @@ static func _validate_references(card_id: String, stats: Dictionary, cards: Dict
 		var referenced_id := String(stats.get(field, ""))
 		if not referenced_id.is_empty() and not _unit_reference_exists(referenced_id, cards):
 			errors.append("%s.%s: 引用了不存在或不可生成的单位 %s" % [card_id, field, referenced_id])
+	var deployment_members: Variant = stats.get("deployment_member_ids", [])
+	if deployment_members is Array:
+		for index in range((deployment_members as Array).size()):
+			var member_id := String((deployment_members as Array)[index])
+			if not _unit_reference_exists(member_id, cards):
+				errors.append("%s.deployment_member_ids[%d]: 引用了不存在或不可生成的单位 %s" % [card_id, index, member_id])
 	var skills: Array = stats.get("active_skills", []) if stats.get("active_skills", []) is Array else []
 	for index in range(skills.size()):
 		var skill = skills[index]
@@ -675,7 +691,10 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 			&"timed_form":
 				if stats.get("transformed_stats", {}).is_empty() or float(stats.get("form_lifetime", 0.0)) <= 0.0:
 					errors.append("%s: 限时变形需要 transformed_stats 与正数 form_lifetime" % label)
-			&"buff": _require_fields(label, skill, [&"duration"], errors)
+			&"buff":
+				_require_fields(label, skill, [&"duration"], errors)
+				if bool(skill.get("copy_member_buff", false)) and StringName(skill.get("target_scope", "self")) != &"deployment_group":
+					errors.append("%s.copy_member_buff: 仅可用于 deployment_group 范围的 buff" % label)
 			&"restoration_shield":
 				_require_fields(label, skill, [&"shield", &"shield_duration"], errors)
 				if float(skill.get("shield", 0.0)) <= 0.0 or float(skill.get("shield_duration", 0.0)) <= 0.0:
@@ -947,7 +966,7 @@ static func _validate_known_fields(label: String, data: Dictionary, known_fields
 static func _validate_numbers(label: String, data: Dictionary, errors: PackedStringArray) -> void:
 	for raw_key in data:
 		var key := str(raw_key)
-		if key.begins_with("visual_") or key.begins_with("projectile_visual_") or key.begins_with("continuous_beam_") or key in ["audio", "card_art"]:
+		if key.begins_with("visual_") or key.begins_with("projectile_visual_") or key.begins_with("continuous_beam_") or key in ["audio", "card_art", "deployment_member_ids"]:
 			continue
 		var value = data[raw_key]
 		if key == "transformed_stats" and value is Dictionary:

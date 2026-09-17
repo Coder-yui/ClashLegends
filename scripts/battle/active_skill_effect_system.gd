@@ -111,16 +111,18 @@ func apply(source: Unit, skill: Dictionary) -> bool:
 		&"timed_form":
 			return source.transform_to_mega(true)
 		&"buff":
-			source.apply_active_buff(
-				float(skill.get("duration", 0.0)),
-				float(skill.get("speed_multiplier", 1.0)),
-				float(skill.get("damage_multiplier", 1.0)),
-				float(skill.get("attack_speed_multiplier", 1.0)),
-				bool(skill.get("ignore_movement_slow", false)),
-				bool(skill.get("ignore_attack_speed_slow", false))
-			)
-			if not bool(skill.get("shield_on_cast_start", false)):
-				source.add_shield(float(skill.get("shield", 0.0)), float(skill.get("shield_duration", skill.get("duration", 0.0))), bool(skill.get("shield_decay", false)))
+			for target in _skill_target_units(source, skill):
+				var target_skill := _member_buff_skill(target, skill)
+				target.apply_active_buff(
+					float(target_skill.get("duration", 0.0)),
+					float(target_skill.get("speed_multiplier", 1.0)),
+					float(target_skill.get("damage_multiplier", 1.0)),
+					float(target_skill.get("attack_speed_multiplier", 1.0)),
+					bool(target_skill.get("ignore_movement_slow", false)),
+					bool(target_skill.get("ignore_attack_speed_slow", false))
+				)
+				if not bool(target_skill.get("shield_on_cast_start", false)):
+					target.add_shield(float(target_skill.get("shield", 0.0)), float(target_skill.get("shield_duration", target_skill.get("duration", 0.0))), bool(target_skill.get("shield_decay", false)))
 		&"nova":
 			activate_nova(source, skill)
 		&"summon":
@@ -191,6 +193,23 @@ func _skill_target_units(source: Unit, skill: Dictionary) -> Array[Unit]:
 		if member.team == source.team and member.deployment_group_id == source.deployment_group_id:
 			targets.append(member)
 	return targets
+
+
+## 异构编队的主动技能可声明复用成员自己的同名 buff；这样近战兵和远程兵
+## 保留各自的持续时间、移速/攻速倍率与表现特效，技能资格仍由编队持有者统一管理。
+func _member_buff_skill(target: Unit, fallback: Dictionary) -> Dictionary:
+	if not bool(fallback.get("copy_member_buff", false)):
+		return fallback
+	var member_stats := CardDB.get_card(target.card_id)
+	var skill_name := StringName(fallback.get("name", ""))
+	for candidate in member_stats.get("active_skills", []):
+		if (
+			candidate is Dictionary
+			and StringName(candidate.get("kind", "")) == &"buff"
+			and (skill_name.is_empty() or StringName(candidate.get("name", "")) == skill_name)
+		):
+			return candidate
+	return fallback
 
 
 func activate_nova(source: Unit, skill: Dictionary) -> void:

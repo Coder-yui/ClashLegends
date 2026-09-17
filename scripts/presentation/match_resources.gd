@@ -40,6 +40,9 @@ func _collect(value: Variant, expected: StringName = &"") -> void:
 		for key in value:
 			if key in REFERENCES:
 				_prepare_card(String(value[key]))
+			elif key == "deployment_member_ids" and value[key] is Array:
+				for member_id in value[key]:
+					_prepare_card(String(member_id))
 			var child_type := expected
 			if key == "audio": child_type = &"AudioStream"
 			elif key == "card_art": child_type = &"Texture2D"

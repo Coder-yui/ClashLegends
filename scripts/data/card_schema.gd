@@ -115,7 +115,7 @@ const CARD_FIELDS := [
 	&"size_tier", &"custom_radius", &"radius", &"visual_radius", &"mass", &"sight", &"color",
 	&"is_air", &"is_building", &"building_only", &"can_attack_air", &"is_continuous_attack",
 	&"deploy_time", &"pre_deploy_time", &"deploy_zone", &"deploy_ignore_structures", &"show_team_ring", &"footprint_tiles", &"lifespan", &"lifespan_hp_decay", &"tower_ruin_foundation",
-	&"deployment_count", &"deployment_spacing", &"deployment_formation",
+	&"deployment_count", &"deployment_spacing", &"deployment_formation", &"deployment_member_ids",
 	&"spawn_id", &"spawn_interval", &"spawn_count", &"spawn_side", &"death_spawn_id", &"death_spawn_count",
 	&"death_replacement_id", &"death_replacement_charges", &"death_replacement_visual_transition", &"timed_revival_id", &"timed_revival_delay", &"timed_revival_death_replacement_charges", &"timed_revival_visual_transition",
 	&"projectile_spawn_at_edge", &"projectile_spawn_offset", &"projectile_collision_radius",
@@ -168,7 +168,7 @@ const ACTIVE_SKILL_FIELDS := [
 	&"zone_duration", &"zone_tick_interval", &"zone_damage", &"zone_slow_duration", &"zone_slow_multiplier",
 	&"tick_interval",
 	&"empowered_damage_multiplier", &"empowered_speed_multiplier", &"blind_charges",
-	&"target_scope", &"heal_ratio", &"max_health_ratio", &"heal_multiplier", &"overheal_shield_ratio", &"global_heal",
+	&"target_scope", &"heal_ratio", &"max_health_ratio", &"heal_multiplier", &"overheal_shield_ratio", &"global_heal", &"copy_member_buff",
 ]
 ## building_only: true 时只攻击建筑（塔+建筑卡），无视普通单位
 ## can_attack_air: false 时无法选中/攻击空中单位（近战地面单位通常不能对空）

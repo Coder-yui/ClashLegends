@@ -2,7 +2,7 @@ class_name MatchSession
 extends RefCounted
 ## 一场 1v1 会话的身份、阶段与请求去重；不持有场景、RPC 或战斗对象。
 enum Phase { LOBBY, LOADING, RUNNING, FINISHED, DISCONNECTED }
-const PROTOCOL_VERSION := 35
+const PROTOCOL_VERSION := 36
 var phase := Phase.LOBBY
 var session_id := ""
 var opponent_id := 0

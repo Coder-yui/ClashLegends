@@ -52,6 +52,8 @@ var battle_context: BattleContext
 var active_ability_id := -1
 ## 0/1 分别对应备战卡组的第 1/2 主动槽；同槽新实例会覆盖旧实例资格。
 var active_ability_slot := -1
+## 携带的主动技能来源卡；异构编队的成员仍使用自己的单位卡做表现，但主动资格来自编队卡。
+var active_skill_card_id := ""
 ## 同一次卡牌命令展开出的编队共享此 id；单体与召唤物为 -1。
 var deployment_group_id := -1
 var card_id := ""

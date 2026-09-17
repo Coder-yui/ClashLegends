@@ -133,7 +133,7 @@ func _valid_spawn(descriptor: Dictionary) -> bool:
 	if not descriptor.get("birth_revision") is int or int(descriptor.birth_revision) < 0:
 		return false
 	var args = descriptor.get("args")
-	if not args is Array or args.size() != 12:
+	if not args is Array or args.size() != 13:
 		return false
 	if not args[0] is String or CardDB.get_unit_stats(args[0]).is_empty():
 		return false
@@ -142,7 +142,7 @@ func _valid_spawn(descriptor: Dictionary) -> bool:
 			return false
 	if args[1] not in [0, 1] or int(args[3]) < 0 or not args[2] is Vector2 or not args[2].is_finite():
 		return false
-	return typeof(args[4]) in [TYPE_INT, TYPE_FLOAT] and is_finite(float(args[4])) and args[9] is String and args[11] is bool
+	return typeof(args[4]) in [TYPE_INT, TYPE_FLOAT] and is_finite(float(args[4])) and args[9] is String and args[11] is bool and args[12] is String and CardDB.has_card(args[12])
 
 
 func apply(snapshot_bytes: PackedByteArray, terminal: bool = false, expected_tick: int = -1) -> bool:
@@ -390,12 +390,17 @@ func _projectile_snapshot_payload(id: int, projectile: Dictionary) -> Array:
 func _unit_snapshot_payload(id: int, u: Unit, has_continuous_target: bool = false, continuous_target_pos: Vector2 = Vector2.ZERO, facing_direction: Vector2 = Vector2.ZERO) -> Array:
 	if facing_direction.is_zero_approx():
 		facing_direction = u.get_visual_facing_direction()
+	var skill_card_id := u.active_skill_card_id if not u.active_skill_card_id.is_empty() else u.card_id
 	var active_skill_state: Dictionary = _controller.get_active_skill_snapshot(u.active_ability_id)
-	var descriptor: Dictionary = lifecycle.spawns.get(id, {"birth_tick": 0, "birth_revision": 0, "args": [u.card_id, u.team, u.global_position, id, u.deploy_time, u.active_ability_id, u.active_ability_slot, -1, u.deployment_group_id, String(u.visual_spawn_transition), u.death_replacement_charges, u.built_on_tower_ruin]}).duplicate(true)
+	var descriptor: Dictionary = lifecycle.spawns.get(id, {"birth_tick": 0, "birth_revision": 0, "args": [u.card_id, u.team, u.global_position, id, u.deploy_time, u.active_ability_id, u.active_ability_slot, -1, u.deployment_group_id, String(u.visual_spawn_transition), u.death_replacement_charges, u.built_on_tower_ruin, skill_card_id]}).duplicate(true)
 	# 主动资格会转交/被新部署替换；重建必须使用当前资格而非原始出生资格。
 	descriptor.args[5] = u.active_ability_id
 	descriptor.args[6] = u.active_ability_slot
 	descriptor.args[10] = u.death_replacement_charges
+	if descriptor.args.size() <= 12:
+		descriptor.args.append(skill_card_id)
+	else:
+		descriptor.args[12] = skill_card_id
 	return [
 		id, u.global_position.x, u.global_position.y, u.hp,
 		1 if u.control.frozen_timer > 0.0 else 0,
