@@ -1,5 +1,5 @@
 extends SceneTree
-## 从项目内 Order 阵营 3D 模型拍摄四张小兵卡面。
+## 从项目内 Order 阵营 3D 模型拍摄小兵卡面。
 ## 运行：Godot --path . --script tools/capture/capture_minion_card_art.gd
 
 const RENDER_SIZE := Vector2i(616, 1120)
@@ -36,6 +36,44 @@ const PORTRAITS := [
 		"pose_time": 0.35,
 		"camera": Vector3(0.0, 1.35, 4.0),
 		"target": Vector3(0.0, 0.92, 0.0),
+	},
+	{
+		"id": "minion_squad",
+		"squad": true,
+		"camera": Vector3(0.0, 1.55, 4.45),
+		"target": Vector3(0.0, 0.72, 0.0),
+	},
+	{
+		"id": "melee_minion_squad",
+		"squad": true,
+		"member_scenes": [
+			"res://assets/units/melee_minion/melee_minion_order_view.tscn",
+			"res://assets/units/melee_minion/melee_minion_order_view.tscn",
+			"res://assets/units/melee_minion/melee_minion_order_view.tscn",
+			"res://assets/units/melee_minion/melee_minion_order_view.tscn",
+		],
+		"positions": [
+			Vector3(-0.34, 0.0, 0.18), Vector3(0.34, 0.0, 0.18),
+			Vector3(-0.34, 0.0, -0.18), Vector3(0.34, 0.0, -0.18),
+		],
+		"camera": Vector3(0.0, 1.34, 4.35),
+		"target": Vector3(0.0, 0.70, 0.0),
+	},
+	{
+		"id": "ranged_minion_squad",
+		"squad": true,
+		"member_scenes": [
+			"res://assets/units/ranged_minion/ranged_minion_order_view.tscn",
+			"res://assets/units/ranged_minion/ranged_minion_order_view.tscn",
+			"res://assets/units/ranged_minion/ranged_minion_order_view.tscn",
+		],
+		# 镜头方向对应战场：一只在前，左右两只在后，位置保持紧凑。
+		"positions": [
+			Vector3(0.0, 0.0, 0.20),
+			Vector3(-0.34, 0.0, -0.16), Vector3(0.34, 0.0, -0.16),
+		],
+		"camera": Vector3(0.0, 1.28, 4.05),
+		"target": Vector3(0.0, 0.66, 0.0),
 	},
 ]
 
@@ -131,6 +169,9 @@ func _build_studio() -> void:
 	_camera.current = true
 
 func _capture_portrait(portrait: Dictionary) -> void:
+	if bool(portrait.get("squad", false)):
+		await _capture_squad_portrait(portrait)
+		return
 	var packed := load(String(portrait.scene)) as PackedScene
 	if packed == null:
 		push_error("无法加载卡面模型：%s" % portrait.scene)
@@ -159,6 +200,55 @@ func _capture_portrait(portrait: Dictionary) -> void:
 	else:
 		push_error("卡面保存失败：%s" % output_path)
 	model.queue_free()
+	await process_frame
+
+
+func _capture_squad_portrait(portrait: Dictionary) -> void:
+	var default_member_scenes := [
+		"res://assets/units/melee_minion/melee_minion_order_view.tscn",
+		"res://assets/units/melee_minion/melee_minion_order_view.tscn",
+		"res://assets/units/melee_minion/melee_minion_order_view.tscn",
+		"res://assets/units/ranged_minion/ranged_minion_order_view.tscn",
+		"res://assets/units/ranged_minion/ranged_minion_order_view.tscn",
+		"res://assets/units/ranged_minion/ranged_minion_order_view.tscn",
+	]
+	var member_scenes: Array = portrait.get("member_scenes", default_member_scenes)
+	# 默认构图让近战兵在镜头较近的前排，远程兵在后排；其他编队可提供自己的位置。
+	var default_positions := [
+		Vector3(-0.72, 0.0, 0.34), Vector3(0.0, 0.0, 0.48), Vector3(0.72, 0.0, 0.34),
+		Vector3(-0.72, 0.0, -0.36), Vector3(0.0, 0.0, -0.48), Vector3(0.72, 0.0, -0.36),
+	]
+	var positions: Array = portrait.get("positions", default_positions)
+	var models: Array[Node3D] = []
+	for index in member_scenes.size():
+		var packed := load(String(member_scenes[index])) as PackedScene
+		if packed == null:
+			push_error("无法加载小兵分队卡面模型：%s" % member_scenes[index])
+			continue
+		var model := packed.instantiate() as Node3D
+		model.name = "SquadMember%d" % index
+		model.position = positions[index]
+		model.rotation_degrees.y = -18.0
+		_stage.add_child(model)
+		var animation_player := _find_animation_player(model)
+		if animation_player != null and animation_player.has_animation(&"Idle1"):
+			animation_player.play(&"Idle1")
+			animation_player.advance(0.35)
+		models.append(model)
+	_camera.position = portrait.camera
+	_camera.look_at(portrait.target, Vector3.UP)
+	for i in range(8):
+		await process_frame
+	var image := _viewport.get_texture().get_image()
+	image.resize(OUTPUT_SIZE.x, OUTPUT_SIZE.y, Image.INTERPOLATE_LANCZOS)
+	var output_path := preload("res://tools/lib/development_paths.gd").output("card_art/%s_loading.png") % portrait.id
+	var error := image.save_png(ProjectSettings.globalize_path(output_path))
+	if error == OK:
+		print("[卡面摄影] 已保存 ", output_path)
+	else:
+		push_error("卡面保存失败：%s" % output_path)
+	for model in models:
+		model.queue_free()
 	await process_frame
 
 func _find_animation_player(node: Node) -> AnimationPlayer:
