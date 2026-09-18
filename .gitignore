@@ -5,35 +5,13 @@
 __pycache__/
 *.py[cod]
 
-# 待开发大包、批量提取与可再生产物保持本地；制作源件和轻量候选保留版本管理
-/ClashLegends-开发素材库/01-待开发/**
-/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/**
-/ClashLegends-开发素材库/04-中间产物/*
-!/ClashLegends-开发素材库/04-中间产物/3D地图/
-!/ClashLegends-开发素材库/04-中间产物/男爵强化/
-!/ClashLegends-开发素材库/04-中间产物/音频/
-
-# 宣传视频素材仍为本地内容
-/ClashLegends-promo-materials/**
-!/ClashLegends-promo-materials/.gdignore
+# 开发素材与宣传素材只作为本地工作区，不进入版本库
+/ClashLegends-开发素材库/
+/ClashLegends-promo-materials/
 
 # 防止旧工具误写产物进入版本库；审计会报错
 /builds/
 /待开发卡牌美术素材/
-
-# 剑魔的批量提取与试听副本可从本地源库/正式资产再生成；来源记录仍提交
-/ClashLegends-开发素材库/03-制作中/剑魔/audio-source/**
-!/ClashLegends-开发素材库/03-制作中/剑魔/audio-source/README.md
-/ClashLegends-开发素材库/03-制作中/剑魔/audio-preview/*.wav
-/ClashLegends-开发素材库/03-制作中/剑魔/voice-selection/candidates/
-/ClashLegends-开发素材库/03-制作中/剑魔/voice-selection/client/
-/ClashLegends-开发素材库/03-制作中/剑魔/**/*.log
-
-# 峡谷先锋批量提取与加工副本保留本地；清单、映射及正式试听候选提交
-/ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/assets/
-/ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/data/
-/ClashLegends-开发素材库/03-制作中/峡谷先锋/audio/
-/ClashLegends-开发素材库/03-制作中/峡谷先锋/**/*.log
 
 # 用户个人开发思路，仅保留本地，不属于 agent 工作资料
 /需求文档/
