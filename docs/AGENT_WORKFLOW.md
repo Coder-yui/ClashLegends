@@ -8,7 +8,7 @@
 | 卡面 | [美术接入](ART_PIPELINE.md)、[素材目录](../assets/README.md) |
 | 近战 / 远程模型 | [美术接入](ART_PIPELINE.md) → [近战](MELEE_3D_INTEGRATION.md) / [远程](RANGED_3D_INTEGRATION.md) → [部署](UNIT_DEPLOYMENT.md) |
 | 建筑 / 特殊形态 | 通用美术说明 + [对应单位](units/README.md)动画页和素材目录 README |
-| 地图 | [竞技场](units/arena.md)、[候选地图说明](../ClashLegends-开发素材库/03-制作中/3D地图/README.md) |
+| 地图 | [竞技场](units/arena.md)、本地制作源件见 `ClashLegends-开发素材库/03-制作中/3D地图/` |
 | 音频 | [音频流程](AUDIO_INTEGRATION.md)、对应单位音频页 |
 | 工作台 | [工作台](DEVELOPMENT_WORKBENCH.md)、[测试手册](../tests/README.md) |
 | 新机制 / 结构 / 联网 | [维护架构](MAINTENANCE_ARCHITECTURE.md)、[卡牌机制](CARD_DESIGN.md)、受影响专项说明及测试手册 |
@@ -30,7 +30,7 @@
 
 候选查看优先复用 `python3 tools/dev.py model` 和 `audio`，用文件路径、清单和参数组织每次展示；缺能力时扩展通用工具，不为每次讨论重写展台。卡牌开发工作台只检查正式配置及实战表现，不加载候选清单。需要实战联调时用 `python3 tools/dev.py stage` 建立开发素材库内副本；`stage --arena --open` 复用现有地图预览。试接入完成并验证后再将最终改动同步正式工程，不把整个副本搬回。
 
-失败或被替代的版本进入中间产物，并注明内容、日期与原因；不在 `assets/` 设置归档。宣传视频素材单独位于项目根目录的 `ClashLegends-promo-materials/`，不属于开发素材库。两个目录用 `.gdignore` 排除 Godot 导入。制作源件、轻量候选与迁移的旧素材继续保留版本管理；待开发大包、批量提取、构建预览和宣传视频保持本地，不混入代码提交。
+失败或被替代的版本进入中间产物，并注明内容、日期与原因；不在 `assets/` 设置归档。宣传视频素材单独位于项目根目录的 `ClashLegends-promo-materials/`，不属于开发素材库。两个目录是本地工作区，已整体加入 `.gitignore`，并用 `.gdignore` 排除 Godot 导入；它们不会上传到 GitHub。制作源件、轻量候选与迁移的旧素材仍按分类保留在本机，正式运行依赖必须同步到 `assets/`，来源、迁移和验收结论保留在仓库文档中。历史交付文档中的素材库路径是本地验证产物路径，不代表仓库内有对应文件。
 
 ## 文档与交付
 

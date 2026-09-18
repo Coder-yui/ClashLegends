@@ -10,7 +10,7 @@ python3 tools/release/export_macos.py
 
 `export_presets.cfg` 可入版本控制，未放密钥、密码或本机绝对路径。Godot 的 `.godot/export_credentials.cfg` 由 `.godot/` 忽略规则保护。预设使用内建 ad-hoc 签名，仅本机测试，不是已公证的公开发行包。使用 universal 模板需同时导入 S3TC/BPTC 和 ETC2/ASTC；官方模板只有 universal，单独 arm64 预设会报告缺少二进制。
 
-官方来源：[4.7.1 模板与校验清单](https://github.com/godotengine/godot-ClashLegends-开发素材库/04-中间产物/构建与验证/releases/tag/4.7.1-stable)、[Mac 导出说明](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_macos.html)。本轮下载的标准版模板 tpz SHA512：
+官方来源：[4.7.1 模板与校验清单](https://github.com/godotengine/godot/releases/tag/4.7.1-stable)、[Mac 导出说明](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_macos.html)。本轮下载的标准版模板 tpz SHA512：
 
 ```text
 afcc83d8d3d298038f19c58744a0d660fa75dd4baa33cb55d1011bb2565a2a8c2381728924564cb909e37c205a23f21b521b23bd057993afd43ae4da0b2f9d47
