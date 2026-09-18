@@ -11,9 +11,9 @@ func run(harness: Object, main: Node2D) -> void:
 		stats.cost == 6
 		and member_ids == ["super_minion", "super_minion"]
 		and stats.deployment_count == 2
-		and is_equal_approx(float(stats.deployment_spacing), 60.0)
+		and is_equal_approx(float(stats.deployment_spacing), 100.0)
 		and stats.deployment_formation == &"line",
-		"攻城部队为6费、两只超级兵并排且间隔1.5格",
+		"攻城部队为6费、两只超级兵并排且间隔2.5格",
 	)
 	_expect(
 		skill.name == &"男爵之力"
@@ -32,14 +32,14 @@ func run(harness: Object, main: Node2D) -> void:
 	main._active_skill_choices["super_minion_squad"] = 0
 	var group: Array[Unit] = main._spawn_card_units(0, "super_minion_squad", Vector2(360, 1020), 0.0, 0)
 	var group_id := group[0].deployment_group_id if not group.is_empty() else -1
-	var offsets: Array[Vector2] = main._deployment_formation_offsets(2, 60.0, 0, "line")
+	var offsets: Array[Vector2] = main._deployment_formation_offsets(2, 100.0, 0, "line")
 	var expected_positions := {}
 	for offset in offsets:
 		expected_positions[Vector2(360, 1020) + offset] = true
 	var positions_match := group.size() == 2 and group.all(func(member): return expected_positions.has(member.position))
 	var same_group := group.size() == 2 and group.all(func(member): return member.deployment_group_id == group_id)
-	var parallel := offsets.size() == 2 and is_equal_approx(offsets[0].y, 0.0) and is_equal_approx(offsets[1].y, 0.0) and is_equal_approx(offsets[0].distance_to(offsets[1]), 60.0)
-	_expect(positions_match and same_group and parallel, "两只超级兵横向并排、中心间隔60像素并共享编队身份")
+	var parallel := offsets.size() == 2 and is_equal_approx(offsets[0].y, 0.0) and is_equal_approx(offsets[1].y, 0.0) and is_equal_approx(offsets[0].distance_to(offsets[1]), 100.0)
+	_expect(positions_match and same_group and parallel, "两只超级兵横向并排、中心间隔100像素并共享编队身份")
 	_expect(group.size() == 2 and group.all(func(member): return member.card_id == "super_minion"), "编队成员继续使用超级兵战斗数据")
 
 	main._active_skill_effect_system.apply(group[0], skill)
