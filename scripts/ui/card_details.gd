@@ -140,6 +140,7 @@ static func deployment_formation_name(stats: Dictionary) -> String:
 			return "正多边形%d个顶点" % count
 		&"square": return "正方形四个顶点"
 		&"line": return "横排%d名" % count
+		&"depth_line": return "前后纵列%d名" % count
 		_: return "环形%d名" % count
 
 static func volume_name(stats: Dictionary) -> String:

@@ -1851,6 +1851,10 @@ func _deployment_formation_offsets(count: int, spacing: float, team: int, format
 		for index in range(count):
 			offsets.append(Vector2((index - (count - 1) * 0.5) * spacing * (1.0 if team == 0 else -1.0), 0.0))
 		return offsets
+	if formation == "depth_line":
+		for index in range(count):
+			offsets.append(Vector2(0.0, (index - (count - 1) * 0.5) * spacing * (1.0 if team == 0 else -1.0)))
+		return offsets
 	var ring_count := count
 	if count % 2 == 1 and formation != "polygon":
 		offsets.append(Vector2.ZERO)

@@ -51,10 +51,12 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 		errors.append("%s.pre_deploy_time: 必须 >= 0" % card_id)
 	if float(stats.get("pre_deploy_time", 0.0)) > 0.0 and card_type == &"spell":
 		errors.append("%s.pre_deploy_time: 法术不能使用单位预部署阶段" % card_id)
-	if String(stats.get("deployment_formation", "ring")) not in ["ring", "line", "polygon", "square"]:
-		errors.append("%s.deployment_formation: 仅支持 ring/line/polygon/square" % card_id)
+	if String(stats.get("deployment_formation", "ring")) not in ["ring", "line", "polygon", "square", "depth_line"]:
+		errors.append("%s.deployment_formation: 仅支持 ring/line/polygon/square/depth_line" % card_id)
 	if String(stats.get("deployment_formation", "ring")) == "square" and int(stats.get("deployment_count", 0)) != 4:
 		errors.append("%s.deployment_formation: square 必须搭配4名成员" % card_id)
+	if String(stats.get("deployment_formation", "ring")) == "depth_line" and int(stats.get("deployment_count", 0)) != 2:
+		errors.append("%s.deployment_formation: depth_line 必须搭配2名成员" % card_id)
 	if String(stats.get("deployment_formation", "ring")) == "line" and (int(stats.get("deployment_count", 1)) - 1) * float(stats.get("deployment_spacing", 0.0)) + 2.0 * float(stats.get("radius", 0.0)) > ArenaRules.FIELD_W:
 		errors.append("%s: 横排宽度不能超过战场" % card_id)
 	if stats.has("deployment_count"):
