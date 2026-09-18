@@ -6,6 +6,7 @@
 | --- | --- |
 | `capture_*_card_art.gd` | 冰鸟、炮台、士兵、皮克斯、圆盘、墓碑的专用构图；固定路径，可能写正式卡面，先核对输出，不批量运行 |
 | `capture_promo_videos.gd` | 宣传场景拍摄 |
+| `capture_cover_combat.gd` | 对战封面抓拍（复用 BattlePresentation3D + Tower 搭场景），支持 `--ratio=9x16\|16x9` `--out=<路径>` |
 | `capture_rift_arena.gd` | 正式 2D 战场与候选地图斜视角 |
 | `capture_rift_arena_v2.gd` | 候选 3D 地图单独预览，支持 `-- --hold` / `-- --inspect` |
 | `capture_sun_disc_battle_qa.gd` | 圆盘的实战表现验收 |
