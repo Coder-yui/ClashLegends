@@ -82,7 +82,7 @@ const PORTRAITS := [
 			"res://assets/units/super_minion/super_minion_order_view.tscn",
 			"res://assets/units/super_minion/super_minion_order_view.tscn",
 		],
-		# 两只超级兵并排，保留横向1.5格中心间距的可读性。
+		# 两只超级兵并排，卡面构图保持现有版本，不因战场间距调整重拍。
 		"positions": [Vector3(-0.46, 0.0, 0.0), Vector3(0.46, 0.0, 0.0)],
 		"camera": Vector3(0.0, 1.55, 5.80),
 		"target": Vector3(0.0, 0.82, 0.0),

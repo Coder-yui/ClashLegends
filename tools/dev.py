@@ -13,6 +13,7 @@ COMMANDS = {
     'stage': ('python', 'tools/development_workspace.py', '在开发素材库内建立联调副本；--arena --open 预览制作中地图'),
     'source': ('python', 'tools/assets/lol_source.py', '原始素材：找包、筛选、提取、转换'),
     'model': ('godot', 'tools/viewers/model_studio.gd', '模型动作展台与卡面摄影'),
+    'studio': ('godot', 'tools/viewers/camera_studio.gd', '可调相机、灯光、背景并拍摄卡面的 3D 摄影棚'),
     'audio': ('python', 'tools/audio_review/serve.py', '目录或清单驱动的声音试听台'),
     'audio-prepare': ('python', 'tools/audio/prepare_lol_card_audio.py', '准备英雄原始音频事件工作目录'),
     'audio-import': ('python', 'tools/audio/import_card_audio.py', '按选定计划导入声音（先用 --dry-run）'),
