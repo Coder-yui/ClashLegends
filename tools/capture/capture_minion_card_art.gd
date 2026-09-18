@@ -75,6 +75,49 @@ const PORTRAITS := [
 		"camera": Vector3(0.0, 1.28, 4.05),
 		"target": Vector3(0.0, 0.66, 0.0),
 	},
+	{
+		"id": "super_minion_squad",
+		"squad": true,
+		"member_scenes": [
+			"res://assets/units/super_minion/super_minion_order_view.tscn",
+			"res://assets/units/super_minion/super_minion_order_view.tscn",
+		],
+		# 两只超级兵并排，保留横向1.5格中心间距的可读性。
+		"positions": [Vector3(-0.46, 0.0, 0.0), Vector3(0.46, 0.0, 0.0)],
+		"camera": Vector3(0.0, 1.55, 5.80),
+		"target": Vector3(0.0, 0.82, 0.0),
+	},
+	{
+		"id": "siege_minion_squad",
+		"squad": true,
+		"member_scenes": [
+			"res://assets/units/siege_minion/siege_minion_order_view.tscn",
+			"res://assets/units/siege_minion/siege_minion_order_view.tscn",
+			"res://assets/units/siege_minion/siege_minion_order_view.tscn",
+		],
+		# 三角形卡面构图与战场方向一致：一只在前、两只在后。
+		"positions": [
+			Vector3(0.0, 0.0, 0.48),
+			Vector3(-0.52, 0.0, -0.30), Vector3(0.52, 0.0, -0.30),
+		],
+		"camera": Vector3(0.0, 1.82, 7.10),
+		"target": Vector3(0.0, 0.88, 0.0),
+	},
+	{
+		"id": "heavy_minion_squad",
+		"squad": true,
+		"member_scenes": [
+			"res://assets/units/super_minion/super_minion_order_view.tscn",
+			"res://assets/units/siege_minion/siege_minion_order_view.tscn",
+		],
+		# 首版构图遮住了后排炮车兵；本次补拍用横向错位和更远镜头确保两名成员完整入镜。
+		"positions": [
+			Vector3(-1.40, 0.0, 0.50), Vector3(1.40, 0.0, -0.50),
+		],
+		# 从前方右侧约45度斜拍，保留超级兵前置、炮车兵后置的纵深关系。
+		"camera": Vector3(11.50, 1.60, 11.50),
+		"target": Vector3(0.0, 0.88, 0.0),
+	},
 ]
 
 var _viewport: SubViewport
