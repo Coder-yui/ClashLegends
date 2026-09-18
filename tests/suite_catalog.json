@@ -162,6 +162,24 @@
     "scene": "battle"
   },
   {
+    "id": "HeavyMinionSquadSuite",
+    "script": "res://tests/suites/cards/heavy_minion_squad_suite.gd",
+    "method": "run",
+    "scene": "battle"
+  },
+  {
+    "id": "SuperMinionSquadSuite",
+    "script": "res://tests/suites/cards/super_minion_squad_suite.gd",
+    "method": "run",
+    "scene": "battle"
+  },
+  {
+    "id": "SiegeMinionSquadSuite",
+    "script": "res://tests/suites/cards/siege_minion_squad_suite.gd",
+    "method": "run",
+    "scene": "battle"
+  },
+  {
     "id": "ANIVIA_SUITE_SCRIPT",
     "script": "res://tests/suites/cards/anivia_suite.gd",
     "method": "run",
