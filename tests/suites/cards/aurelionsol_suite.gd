@@ -8,6 +8,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_aurelionsol_art_integration()
 	_check_aurelionsol_direct_retarget()
 	_check_starfall_and_falling_sky()
+	_check_star_visual_lifecycle()
 
 func _check_starfall_and_falling_sky() -> void:
 	_main._active_skill_effect_system.clear()
@@ -335,3 +336,32 @@ func _check_aurelionsol_direct_retarget() -> void:
 	for unit in [dragon, first_dummy, second_dummy]:
 		if is_instance_valid(unit):
 			unit.free()
+
+func _check_star_visual_lifecycle() -> void:
+	var system = _main._active_skill_effect_system
+	system.clear()
+	var source: Unit = _main._spawn_unit(0, "aurelionsol", Vector2(360, 1000), 0.0)
+	var skill: Dictionary = CardDB.active_skills_for("aurelionsol")[0].duplicate(true)
+	skill["full_resource"] = true
+	system.begin_forward_area_visual(source, skill, Vector2.UP)
+	_expect(system.frontal_effects.size() == 1 and system.frontal_effects[0].shape == "target_circle_strong", "满层天瀑采用独立强化星核预警")
+	var time_left: float = system.frontal_effects[0].timer
+	source.stun(0.5)
+	system.tick_visuals(0.2)
+	_expect(system.frontal_effects[0].timer == time_left, "眩晕暂停坠落预警，与尚未执行的技能同步")
+	source.take_damage(100000)
+	system.tick_visuals(0.05)
+	_expect(system.frontal_effects.is_empty(), "施法者死亡撤销预警，不能伪造落地爆闪")
+	source.free()
+	for strong in [false, true]:
+		system.clear()
+		source = _main._spawn_unit(0, "aurelionsol", Vector2(360, 1000), 0.0)
+		skill["full_resource"] = strong
+		system.apply_forward_area(source, skill, Vector2.UP)
+		var shape := "star_impact_strong" if strong else "star_impact"
+		_expect(system.frontal_effects.any(func(effect): return effect.shape == shape), "真实效果执行触发对应星辰爆闪")
+		_expect(system.frontal_effects.any(func(effect): return effect.shape == "shockwave") == strong, "只有满层真实命中阶段生成全场扩散波")
+		system.tick_visuals(3.0)
+		_expect(system.frontal_effects.is_empty(), "落地与冲击波表现自动消散")
+		source.free()
+	system.clear()

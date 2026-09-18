@@ -123,3 +123,5 @@ Godot 原始入口使用 `-- --suite=ProjectileSuite`，未知名称退出 2；�
 `StructureRushSuite`覆盖建筑冲撞、免控与准备重置、桥面允许/水域禁止、绕行后启动、路径单次伤害和侧推、当前生命代价、六只蠕虫及180°技能。实机配方：`tools/demos/structure_rush_review.gd`，生成双方阶段截图与混音录音。
 
 2026-09-16性能准备回归：DeckBuilderSuite覆盖双方先锋六只、五轮60次模型领取/回收、包装重置与加载中退出；PresentationSuite验证有限材质复用、编译曲线/概率表及粒子依赖范围；StructureRushSuite验证失败搜索冷却、换目标、建筑变化与恢复。`--network-boundaries`另含slow_host、load_disconnect和load_timeout，超时用例只在测试中推进截止时间，实际清理由正式入口执行。
+
+`DeploymentSkillSuite` 覆盖七张多单位主动卡的工作台成员死亡/释放、批次与阵营隔离、全灭禁止回退、正式请求期间连续转交、费用次数保留和延迟效果的存活筛选。`network_lifecycle_suite` 验证转交快照按编队来源卡恢复技能。

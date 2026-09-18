@@ -186,13 +186,7 @@ func _skill_target_units(source: Unit, skill: Dictionary) -> Array[Unit]:
 	if StringName(skill.get("target_scope", "self")) != &"deployment_group" or source.deployment_group_id < 0:
 		targets.append(source)
 		return targets
-	for combatant in _controller.get_tree().get_nodes_in_group("combatants"):
-		if not combatant is Unit or not is_instance_valid(combatant) or combatant.hp <= 0.0:
-			continue
-		var member := combatant as Unit
-		if member.team == source.team and member.deployment_group_id == source.deployment_group_id:
-			targets.append(member)
-	return targets
+	return _controller.living_deployment_members(source.deployment_group_id, source.team)
 
 
 ## 异构编队的主动技能可声明复用成员自己的同名 buff；这样近战兵和远程兵
@@ -464,6 +458,13 @@ func apply_forward_area(source: Unit, skill: Dictionary, forward: Vector2 = Vect
 			_controller._rpc_frontal_skill_fx.rpc_id(_controller.network_opponent_id(), _controller.network_session_id(),
 				-1, center, Vector2.UP, 0.0, radius, radius, zone_duration, source.team, "frost_storm"
 			)
+	# 落地爆闪由真实效果节点触发；预警自行结束不能伪造命中。
+	if float(skill.get("shockwave_duration", 0.0)) > 0.0:
+		var impact_shape := &"star_impact_strong" if bool(skill.get("full_resource", false)) else &"star_impact"
+		add_fixed_area_effect(center, radius, radius, 0.65, source.team, impact_shape)
+		if _controller.mode == "host":
+			_controller._rpc_frontal_skill_fx.rpc_id(_controller.network_opponent_id(), _controller.network_session_id(),
+				-1, center, Vector2.UP, 0.0, radius, radius, 0.65, source.team, String(impact_shape))
 	var shockwave_duration := maxf(float(skill.get("shockwave_duration", 0.0)), 0.0)
 	if bool(skill.get("shockwave_full_only", false)) and not bool(skill.get("full_resource", false)):
 		shockwave_duration = 0.0
@@ -497,10 +498,13 @@ func begin_forward_area_visual(source: Unit, skill: Dictionary, cast_forward: Ve
 		return
 	var center := source.global_position + cast_forward.normalized() * maxf(float(skill.get("forward_distance", 0.0)), 0.0)
 	var radius := maxf(float(skill.get("radius", 0.0)), 0.0)
-	add_fixed_area_effect(center, radius, radius, duration, source.team, &"target_circle")
+	var shape := &"target_circle_strong" if bool(skill.get("full_resource", false)) else &"target_circle"
+	add_fixed_area_effect(center, radius, radius, duration, source.team, shape)
+	frontal_effects.back()["source_ref"] = weakref(source)
+	frontal_effects.back()["net_id"] = source.net_id
 	if _controller.mode == "host":
 		_controller._rpc_frontal_skill_fx.rpc_id(_controller.network_opponent_id(), _controller.network_session_id(),
-			-1, center, Vector2.UP, 0.0, radius, 0.0, duration, source.team, "target_circle"
+			source.net_id, center, Vector2.UP, 0.0, radius, 0.0, duration, source.team, String(shape)
 		)
 
 
@@ -731,6 +735,8 @@ func tick_visuals(delta: float) -> void:
 	var alive: Array[Dictionary] = []
 	for effect in frontal_effects:
 		var source = effect_source(effect)
+		if String(effect.get("shape", "")) in ["target_circle", "target_circle_strong"] and (source == null or source.hp <= 0.0 or source.is_queued_for_deletion()):
+			continue
 		if source is Unit and (source.control.frozen_timer > 0.0 or source.control.stun_timer > 0.0):
 			alive.append(effect)
 			continue

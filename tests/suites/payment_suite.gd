@@ -41,7 +41,39 @@ func run(harness: Object) -> void:
 		harness._expect(main._elixir.elixir == expected, "重复取消或已释放后的退款请求幂等：" + scenario)
 		if is_instance_valid(unit): unit.free()
 		if is_instance_valid(replacement): replacement.free()
+	# 真实先锋在入队后的第一个 Tick 自主进入准备，第十 Tick 取消技能。
+	main._deck[0] = "rift_herald"
+	for phase in [StructureRushState.Phase.PREPARING, StructureRushState.Phase.DASHING, StructureRushState.Phase.RECOVERY]:
+		main._commands.clear()
+		main._sim_tick_id = 0
+		main._elixir.elixir = 10
+		var herald: Unit = main._spawn_unit(0, "rift_herald", Vector2(140, 800), 0.0, 0)
+		var building: Unit = main._spawn_unit(1, "tombstone", Vector2(140, 600), 0.0)
+		var ability: int = herald.active_ability_id
+		var before: Dictionary = main.get_active_skill_snapshot(ability)
+		harness._expect(main.use_active_skill(ability, 0), "先锋未冲撞时请求被接受")
+		var receipt: CommandPayment = main._commands.skill_commands[0].payment
+		herald.structure_rush.tick(herald, 0.05)
+		harness._expect(herald.structure_rush.phase == StructureRushState.Phase.PREPARING, "先锋等待请求期间真实进入冲撞准备")
+		# 准备阶段由真实 tick 进入，其余两个门禁阶段在此覆盖同一资格谓词。
+		herald.structure_rush.phase = phase
+		main._sim_tick_id = main.COMMAND_DELAY_TICKS - 1
+		main._tick_pending_active_skills(0.05)
+		harness._expect(not receipt.is_settled(), "0.45秒还未提前执行或取消")
+		main._elixir.elixir += 1 # 等待时自然回复/其他收入，退款不得越过上限。
+		main._sim_tick_id += 1
+		main._tick_pending_active_skills(0.05)
+		harness._expect(receipt.is_settled() and main._elixir.elixir == 10 and main.get_active_skill_snapshot(ability) == before and main._commands.skill_commands.is_empty(), "0.5秒冲撞门禁取消：退费封顶10、次数冷却保持")
+		receipt.settle(true)
+		harness._expect(main._elixir.elixir == 10 and not herald.is_active_skill_casting(), "重复结算不重复返还，也不进入施法")
+		herald.free()
+		building.free()
 	var payer := ElixirManager.new()
+	payer.elixir = 9
+	payer.elixir += 5
+	harness._expect(payer.elixir == 10, "任意金币增加共用10点上限")
+	payer.elixir = 100
+	harness._expect(payer.elixir == 10, "直接赋值也不能绕过金币上限")
 	payer.elixir = 8
 	var receipt := CommandPayment.charge(payer, 3)
 	var other := ElixirManager.new()

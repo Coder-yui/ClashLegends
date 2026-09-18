@@ -217,6 +217,7 @@ func _apply_units(units_data: Array) -> void:
 		if not is_instance_valid(u):
 			continue
 		u._deploy_timer = maxf(float(d[U_DEPLOY_LEFT]), 0.0)
+		u.active_skill_card_id = String(d[U_SPAWN].args[12])
 		_controller.sync_network_unit_skill(u, int(d[U_SPAWN].args[5]), int(d[U_SPAWN].args[6]))
 		u.net_target_pos = Vector2(d[U_X], d[U_Y])
 		u.sync_network_form(int(d[U_FORM]), int(d[U_FORM_CHANGE_SERIAL]))

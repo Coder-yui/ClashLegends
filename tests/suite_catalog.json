@@ -274,5 +274,11 @@
     "script": "res://tests/suites/cards/structure_rush_suite.gd",
     "method": "run",
     "scene": "battle"
+  },
+  {
+    "id": "DeploymentSkillSuite",
+    "script": "res://tests/suites/deployment_skill_suite.gd",
+    "method": "run",
+    "scene": "battle"
   }
 ]

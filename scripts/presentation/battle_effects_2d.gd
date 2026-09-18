@@ -114,24 +114,8 @@ func _draw_frontal_skill_effect(effect: Dictionary) -> void:
 			draw_line(flake_center - flake_direction * flake_size, flake_center + flake_direction * flake_size, Color(0.88, 0.98, 1.0, 0.72 * remaining_ratio), 1.5, true)
 			draw_line(flake_center - flake_direction.rotated(PI * 0.5) * flake_size, flake_center + flake_direction.rotated(PI * 0.5) * flake_size, Color(0.70, 0.92, 1.0, 0.58 * remaining_ratio), 1.0, true)
 		return
-	if shape == &"target_circle":
-		var radius := length
-		# 星落/天瀑的落点需要清晰可辨，但不能用大面积色块遮住圈内人物。
-		# 填充最高仅 6% 不透明度，边缘单独保留适中的亮度用于读范围。
-		var area_fill_alpha := 0.025 + 0.035 * remaining_ratio
-		var area_line_color := Color(line_color.r, line_color.g, line_color.b, 0.52)
-		draw_circle(center, radius, Color(line_color.r, line_color.g, line_color.b, area_fill_alpha))
-		draw_arc(center, radius, 0.0, TAU, 64, area_line_color, 3.0, true)
-		var star_height := radius * lerpf(2.2, 0.0, progress)
-		var star_pos := center + Vector2(0.0, -star_height)
-		draw_circle(star_pos, 9.0 + 5.0 * progress, Color(1.0, 0.90, 0.48, 0.96))
-		draw_line(star_pos + Vector2(0.0, -34.0), star_pos, Color(0.72, 0.90, 1.0, 0.65), 5.0, true)
-		return
-	if shape == &"shockwave":
-		var wave_radius := lerpf(maxf(float(effect.get("width", 0.0)), 0.0), length, progress)
-		var wave_alpha := 0.92 * remaining_ratio
-		draw_arc(center, wave_radius, 0.0, TAU, 96, Color(0.72, 0.90, 1.0, wave_alpha), 7.0, true)
-		draw_arc(center, wave_radius + 7.0, 0.0, TAU, 96, Color(1.0, 0.84, 0.42, wave_alpha * 0.65), 3.0, true)
+	if shape in [&"target_circle", &"target_circle_strong", &"star_impact", &"star_impact_strong", &"shockwave"]:
+		preload("res://scripts/presentation/starfall_visual.gd").draw_effect(self, effect)
 		return
 	if shape == &"projectile_fan":
 		# 与权威弹体共用夹角；宽 6px 表示半径 3px 的扫掠路径，目标自身半径由碰撞处理。

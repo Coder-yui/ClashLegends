@@ -109,6 +109,7 @@ var _art_dev_team := 1
 var _art_dev_spell_active := false
 var _art_dev_panel: DevelopmentWorkbench
 var _art_dev_last_units: Dictionary = {}
+var _art_dev_last_groups: Dictionary = {}
 var _workbench_preset_loading := false
 var _art_dev_active_skill_choices: Dictionary = {}
 
@@ -1015,36 +1016,39 @@ func _place_art_dev_item(pos: Vector2) -> void:
 			if _art_dev_form == 1:
 				unit.transform_to_mega(true)
 			_art_dev_last_units[_art_dev_unit_key(_art_dev_selection, _art_dev_team)] = weakref(unit)
+			_art_dev_last_groups[_art_dev_unit_key(_art_dev_selection, _art_dev_team)] = unit.deployment_group_id
 			_configure_art_dev_unit_skill(unit)
 			_sync_art_dev_panel_state()
 
 func _latest_unit_for_card(card_id: String, p_team: int) -> Unit:
-	var card_stats := CardDB.get_card(card_id)
-	var member_ids: Array = card_stats.get("deployment_member_ids", [])
-	if not member_ids.is_empty():
-		var member_id_set := {}
-		for member_id in member_ids:
-			member_id_set[String(member_id)] = true
-		var latest_group_id := -1
-		for combatant in get_tree().get_nodes_in_group("combatants"):
-			if combatant is Unit and combatant.team == p_team and member_id_set.has(combatant.card_id) and combatant.deployment_group_id > latest_group_id:
-				latest_group_id = combatant.deployment_group_id
-		if latest_group_id >= 0:
-			for combatant in get_tree().get_nodes_in_group("combatants"):
-				if combatant is Unit and combatant.team == p_team and combatant.deployment_group_id == latest_group_id and member_id_set.has(combatant.card_id):
-					return combatant as Unit
-		return null
 	var latest: Unit = null
 	for combatant in get_tree().get_nodes_in_group("combatants"):
-		if combatant is Unit and combatant.card_id == card_id and combatant.team == p_team:
-			latest = combatant as Unit
+		if combatant is Unit and combatant.hp > 0.0 and not combatant.is_queued_for_deletion() and combatant.team == p_team:
+			if combatant.active_skill_card_id == card_id:
+				latest = combatant as Unit
 	return latest
+
+## 部署编号是一次下牌的身份；不同卡牌、旧批次与敌军不能互相借用成员。
+func living_deployment_members(group_id: int, p_team: int) -> Array[Unit]:
+	var members: Array[Unit] = []
+	if group_id < 0:
+		return members
+	for combatant in get_tree().get_nodes_in_group("combatants"):
+		if combatant is Unit and combatant.hp > 0.0 and not combatant.is_queued_for_deletion():
+			if combatant.deployment_group_id == group_id and combatant.team == p_team:
+				members.append(combatant)
+	return members
 
 func _art_dev_selected_unit() -> Unit:
 	var candidate_ref = _art_dev_last_units.get(_art_dev_unit_key(_art_dev_selection, _art_dev_team))
 	var candidate = (candidate_ref as WeakRef).get_ref() if candidate_ref is WeakRef else null
 	if candidate is Unit and is_instance_valid(candidate) and candidate.hp > 0.0:
 		return candidate as Unit
+	var group_id := int(_art_dev_last_groups.get(_art_dev_unit_key(_art_dev_selection, _art_dev_team), -1))
+	var members := living_deployment_members(group_id, _art_dev_team)
+	if not members.is_empty():
+		_art_dev_last_units[_art_dev_unit_key(_art_dev_selection, _art_dev_team)] = weakref(members[0])
+		return members[0]
 	return null
 
 func _art_dev_unit_key(card_id: String, p_team: int) -> String:
@@ -1072,7 +1076,7 @@ func _art_dev_selected_skill(card_id: String = "", requested_index: int = -1) ->
 	return skills[selected_index]
 
 func _configure_art_dev_unit_skill(unit: Unit) -> void:
-	var skill := _art_dev_selected_skill(unit.card_id)
+	var skill := _art_dev_selected_skill(unit.active_skill_card_id if not unit.active_skill_card_id.is_empty() else unit.card_id)
 	if skill.is_empty():
 		unit.clear_carried_active_skill_resource()
 	else:
@@ -1213,6 +1217,7 @@ func _register_dynamic_building(unit: Unit) -> void:
 
 func _clear_art_dev_units() -> void:
 	_art_dev_last_units.clear()
+	_art_dev_last_groups.clear()
 	_commands.clear()
 	for combatant in get_tree().get_nodes_in_group("combatants"):
 		if not combatant is Unit:
@@ -1833,7 +1838,7 @@ func _spawn_card_units(team: int, card_id: String, pos: Vector2, deploy_time_ove
 		var member_radius := float(member_stats.get("radius", stats.get("radius", 14.0)))
 		member_pos.x = clampf(member_pos.x, member_radius, ArenaRules.FIELD_W - member_radius)
 		member_pos.y = clampf(member_pos.y, member_radius, ArenaRules.FIELD_H - member_radius)
-		var skill_source_card_id := card_id if member_slot >= 0 else ""
+		var skill_source_card_id := card_id
 		var member := _spawn_unit(team, member_card_id, member_pos, deploy_time_override, member_slot, pre_deploy_id, group_id, "", -1, built_on_tower_ruin, skill_source_card_id)
 		if member != null:
 			spawned.append(member)
@@ -1957,6 +1962,7 @@ func _register_active_skill(unit: Unit, card_id: String, p_team: int) -> void:
 			_active_skill_bar.remove_skill(replaced_id)
 	_active_skills[ability_id] = {
 		"unit": unit,
+		"deployment_group_id": unit.deployment_group_id,
 		"card_id": card_id,
 		"team": p_team,
 		"slot": active_slot,
@@ -1981,11 +1987,8 @@ func _sync_active_skill_deployment_readiness() -> void:
 		var ability_id := int(ability_value)
 		var entry: Dictionary = _active_skills[ability_id]
 		var unit = entry.get("unit")
-		if not is_instance_valid(unit) or not unit is Unit:
-			_active_skills.erase(ability_id)
-			_cancel_pending_active_skill(ability_id, false)
-			if _active_skill_bar != null:
-				_active_skill_bar.remove_skill(ability_id)
+		if not is_instance_valid(unit) or not unit is Unit or unit.hp <= 0.0:
+			_on_active_skill_unit_died(ability_id)
 			continue
 		var valid_unit := unit as Unit
 		var deployed := valid_unit.is_deployed() and not valid_unit.is_structure_rushing()
@@ -2002,16 +2005,9 @@ func _sync_active_skill_deployment_readiness() -> void:
 func _on_active_skill_unit_died(ability_id: int) -> void:
 	if _active_skills.has(ability_id):
 		var entry: Dictionary = _active_skills[ability_id]
-		var dead_unit = entry.get("unit")
 		var skill: Dictionary = entry.get("skill", {})
-		if dead_unit is Unit and StringName(skill.get("target_scope", "self")) == &"deployment_group":
-			var group_id := (dead_unit as Unit).deployment_group_id
-			for combatant in get_tree().get_nodes_in_group("combatants"):
-				if not combatant is Unit or not is_instance_valid(combatant) or combatant.hp <= 0.0:
-					continue
-				var replacement := combatant as Unit
-				if replacement.deployment_group_id != group_id or replacement.team != int(entry.team):
-					continue
+		if StringName(skill.get("target_scope", "self")) == &"deployment_group":
+			for replacement in living_deployment_members(int(entry.get("deployment_group_id", -1)), int(entry.team)):
 				replacement.active_ability_id = ability_id
 				replacement.active_ability_slot = int(entry.slot)
 				replacement.active_skill_card_id = String(entry.get("card_id", replacement.card_id))
@@ -2947,7 +2943,7 @@ func _rpc_frontal_skill_fx(epoch: String, net_id: int, pos: Vector2, forward: Ve
 	_active_skill_effect_system.show_network_frontal({
 		"source_ref": null,
 		"net_id": net_id,
-		"fixed_position": shape in ["target_circle", "shockwave", "frost_storm"],
+		"fixed_position": shape in ["target_circle", "target_circle_strong", "star_impact", "star_impact_strong", "shockwave", "frost_storm"],
 		"pos": pos,
 		"forward": forward.normalized(),
 		"source_radius": source_radius,

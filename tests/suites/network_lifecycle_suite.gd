@@ -111,6 +111,18 @@ func run(harness: Object, main: Node2D) -> void:
 	_deliver(4, collision)
 	_spawn(collision[1])
 	_expect(main._client_units.size() == 7 and replica.hp == 1260 and replica.get_visual_action_serial() == 4, "撞击快照恢复先锋自伤和六只蠕虫，重复快照/出生不重复召唤")
+	# 已有成员接过编队技能时，快照必须先更新来源卡，再注册技能。
+	_system.reset_session("deployment-skill")
+	var member := _payload("melee_minion", 72001, 1)
+	member[SNAP.U_SPAWN].args[8] = 55
+	_deliver(2, [member])
+	member[SNAP.U_SPAWN].args[5] = 72000
+	member[SNAP.U_SPAWN].args[6] = 0
+	member[SNAP.U_SPAWN].args[12] = "minion_squad"
+	member[SNAP.U_ACTIVE_SKILL_USES_REMAINING] = 1
+	_deliver(3, [member])
+	var group_entry: Dictionary = main._active_skills.get(72000, {})
+	_expect(group_entry.get("card_id") == "minion_squad" and group_entry.get("skill", {}).get("target_scope") == &"deployment_group", "快照转交使用编队技能而非成员自身技能")
 	_system.reset_session("")
 	main._snapshot_system = saved_system
 	main.mode = saved_mode
