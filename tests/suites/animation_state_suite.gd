@@ -12,12 +12,139 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_dedicated_move_transition_blends()
 	_check_finished_source_idle_transition()
 	_check_cast_policies_and_snapshot()
+	_check_control_interruptions()
 
 func _view_for(unit: Unit) -> UnitModel3D:
 	for child in _main._battle_presentation._world_root.get_children():
 		if child is UnitModel3D and child._source == unit:
 			return child as UnitModel3D
 	return null
+
+func _check_control_interruptions() -> void:
+	# 眩晕会经过 UnitModel3D 的控制覆盖恢复路径；冻结则走动作重新对齐路径。
+	# 两者都必须保留多段动作的 section 和当前播放倍率，不能恢复成整条源动画。
+	var sett_stats: Dictionary = CardDB.get_card("sett").duplicate(true)
+	sett_stats["deploy_time"] = 0.0
+	var sett := Unit.new()
+	sett.setup(0, sett_stats, sett_stats.name)
+	_main.add_child(sett)
+	_main._battle_presentation.attach_unit(sett, sett_stats)
+	var sett_view := _view_for(sett)
+	var sett_ok := sett_view != null
+	if sett_view != null:
+		sett.play_visual_action(&"active", 1.4)
+		sett_view._sync_visual(false, 0.0)
+		var player := sett_view._animation_player
+		player.advance(0.3)
+		var before := player.current_animation_position
+		sett.stun(0.2)
+		sett_view._process(0.0)
+		var paused := is_zero_approx(player.speed_scale) and is_equal_approx(player.current_animation_position, before)
+		sett.control.stun_timer = 0.0
+		sett_view._process(0.0)
+		var first_section_restored := (
+			player.current_animation == "Sett_spell2_anm"
+			and is_equal_approx(player.get_section_start_time(), 0.0)
+			and is_equal_approx(player.get_section_end_time(), 0.8)
+			and is_equal_approx(player.current_animation_position, before)
+			and sett_view._last_clip_transition_kind == &"action_out"
+			and is_equal_approx(sett_view._last_clip_blend_time, 0.1)
+		)
+		player.advance(0.1)
+		var first_section_resumed := is_equal_approx(player.current_animation_position, before + 0.1)
+		sett_ok = paused and first_section_restored and first_section_resumed
+		# 第二段使用与第一段相同的源动画，但必须恢复到 0.8 秒后的 section 和倍率。
+		sett.play_visual_action(&"active", 1.4)
+		sett_view._sync_visual(false, 0.0)
+		player.advance(0.9)
+		var second_before := player.current_animation_position
+		var second_speed := player.get_playing_speed()
+		sett.stun(0.2)
+		sett_view._process(0.0)
+		sett.control.stun_timer = 0.0
+		sett_view._process(0.0)
+		var second_section_restored := (
+			player.current_animation == "Sett_spell2_anm"
+			and is_equal_approx(player.get_section_start_time(), 0.8)
+			and is_equal_approx(player.get_section_end_time(), 1.5666666)
+			and is_equal_approx(player.current_animation_position, second_before)
+			and is_equal_approx(player.get_playing_speed(), second_speed)
+			and sett_view._last_clip_transition_kind == &"action_out"
+			and is_equal_approx(sett_view._last_clip_blend_time, 0.1)
+		)
+		sett_ok = sett_ok and second_section_restored
+		# 工作台的 2 秒眩晕会把 W 的权威时间一起暂停；恢复后若播放器先停而
+		# animation_finished 漏到，动作窗口归零也必须主动回到基础姿态。
+		sett._visual_action_time_left = 0.0
+		player.stop()
+		sett_view._process(0.0)
+		var finished_pose_released := not sett_view._playing_visual_action and player.current_animation == "Spell2_Into_Idle"
+		sett_ok = sett_ok and finished_pose_released
+	if sett_view != null:
+		sett_view.free()
+	sett.free()
+	_harness._expect(sett_ok, "腕豪 W 被眩晕打断后按原 section/倍率恢复，第一段不会越界播放整条源动画")
+
+	var gwen_stats: Dictionary = CardDB.get_card("gwen").duplicate(true)
+	gwen_stats["deploy_time"] = 0.0
+	var gwen := Unit.new()
+	gwen.setup(0, gwen_stats, gwen_stats.name)
+	_main.add_child(gwen)
+	_main._battle_presentation.attach_unit(gwen, gwen_stats)
+	var gwen_view := _view_for(gwen)
+	var gwen_ok := gwen_view != null
+	if gwen_view != null:
+		gwen.play_visual_action(&"active_3", 1.5)
+		gwen_view._sync_visual(false, 0.0)
+		var player := gwen_view._animation_player
+		player.advance(0.2)
+		var before := player.current_animation_position
+		var speed := player.get_playing_speed()
+		gwen.freeze(0.2)
+		gwen_view._process(0.0)
+		gwen._visual_action_time_left = 1.3
+		gwen.control.frozen_timer = 0.0
+		gwen_view._process(0.0)
+		gwen_ok = (
+			player.current_animation == "Spell1_0"
+			and is_equal_approx(player.get_section_end_time(), 0.7888886)
+			and is_equal_approx(player.current_animation_position, before)
+			and is_equal_approx(player.get_playing_speed(), speed)
+		)
+	if gwen_view != null:
+		gwen_view.free()
+	gwen.free()
+	_harness._expect(gwen_ok, "格温多段快刀乱剪被冻结后按权威剩余时间恢复当前裁剪段，不跳到整段源动作")
+
+	var xin_stats: Dictionary = CardDB.get_card("xin").duplicate(true)
+	xin_stats["deploy_time"] = 0.0
+	var xin := Unit.new()
+	xin.setup(0, xin_stats, xin_stats.name)
+	xin._attacking = true
+	xin._attack_visual_serial = 3
+	_main.add_child(xin)
+	_main._battle_presentation.attach_unit(xin, xin_stats)
+	var xin_view := _view_for(xin)
+	var xin_ok := xin_view != null
+	if xin_view != null:
+		xin_view._sync_visual(false, 0.0)
+		var player := xin_view._animation_player
+		player.advance(0.1)
+		var before := player.current_animation_position
+		xin.stun(0.2)
+		xin_view._process(0.0)
+		xin.control.stun_timer = 0.0
+		xin_view._process(0.0)
+		xin_ok = (
+			player.current_animation == "Passive_AA_01_XinZhaoRework_anm"
+			and is_equal_approx(player.get_section_start_time(), 0.0)
+			and is_equal_approx(player.get_section_end_time(), 0.3)
+			and is_equal_approx(player.current_animation_position, before)
+		)
+	if xin_view != null:
+		xin_view.free()
+	xin.free()
+	_harness._expect(xin_ok, "赵信第三击被眩晕打断后保留 0–0.3 秒前段 section，不恢复整条 Passive 动作")
 
 func _check_locomotion_attack_interrupts() -> void:
 	var stats := CardDB.get_card("gnar").duplicate(true)

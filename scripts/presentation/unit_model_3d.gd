@@ -31,8 +31,13 @@ var _control_stage := &""
 var _saved_control_clip := &""
 var _saved_control_position := 0.0
 var _saved_control_speed := 1.0
+var _saved_control_section := Vector2(-1.0, -1.0)
+var _saved_control_loop_mode := Animation.LOOP_NONE
 var _saved_control_action_serial := -1
 var _saved_control_action_name := &""
+var _saved_control_attack_serial := -1
+var _saved_control_state := -1
+var _saved_control_locomotion_state := -1
 var _current_clip_speed := 1.0
 var _stable_head_offset := NAN
 var _last_frozen_overlay := false
@@ -350,6 +355,11 @@ func _sync_visual(force: bool, delta: float) -> void:
 				_pending_attack_serial = attack_serial
 			else:
 				_play_attack(attack_serial)
+	# 控制恢复后的 play_section 在部分 AnimationPlayer 时序下会先清空
+	# current_animation，再错过 animation_finished 回调；权威动作窗口已结束且
+	# 播放器已停止时，必须主动交还给基础状态，不能把最后一帧出拳姿态留住。
+	if _playing_visual_action and _source.get_visual_action_time_left() <= 0.0 and not _animation_player.is_playing():
+		_finish_visual_action()
 	var state := _source.get_visual_state_code()
 	var locomotion_state := _source.get_locomotion_visual_state_code()
 	var empowered_ready := _source.is_empowered_attack_ready_visual()
@@ -456,6 +466,7 @@ func _play_visual_action_clip(animation_name: StringName) -> void:
 	var clip := _action_sequence.current()
 	var clip_range: Vector2 = clip.range
 	var playback_speed: float = clip.speed
+	_current_clip_speed = playback_speed
 	_set_model_visual_clip(animation_name)
 	var first_clip := _action_sequence.index == 0
 	var blend_override := _active_action_blend_in if first_clip else _active_action_sequence_blend
@@ -499,8 +510,13 @@ func _invalidate_control_restore() -> void:
 	_saved_control_clip = &""
 	_saved_control_position = 0.0
 	_saved_control_speed = 1.0
+	_saved_control_section = Vector2(-1.0, -1.0)
+	_saved_control_loop_mode = Animation.LOOP_NONE
 	_saved_control_action_serial = -1
 	_saved_control_action_name = &""
+	_saved_control_attack_serial = -1
+	_saved_control_state = -1
+	_saved_control_locomotion_state = -1
 
 func _default_action_kind(action_name: StringName) -> StringName:
 	return &"transform" if String(action_name).contains("transform") or action_name == &"revert" else &"skill"
@@ -1545,11 +1561,25 @@ func _sync_control_override() -> bool:
 	if _state.stunned:
 		_was_controlled = true
 		if _control_stage == &"":
+			# current_animation 在非循环片段自然结束后可能为空，但 assigned_animation
+			# 仍保留末帧来源；控制解除后必须能从该姿态继续或交给状态机收势。
 			_saved_control_clip = _animation_player.current_animation
+			if _saved_control_clip == &"":
+				_saved_control_clip = _animation_player.assigned_animation
 			_saved_control_position = _animation_player.current_animation_position
-			_saved_control_speed = _current_clip_speed
+			_saved_control_speed = _animation_player.get_playing_speed()
+			if _saved_control_speed <= 0.001:
+				_saved_control_speed = _current_clip_speed
+			_saved_control_section = Vector2(_animation_player.get_section_start_time(), _animation_player.get_section_end_time())
+			_saved_control_loop_mode = Animation.LOOP_NONE
+			var saved_animation := _animation_player.get_animation(_saved_control_clip)
+			if saved_animation != null:
+				_saved_control_loop_mode = saved_animation.loop_mode
 			_saved_control_action_serial = _source.get_visual_action_serial()
 			_saved_control_action_name = _source.get_visual_action_name()
+			_saved_control_attack_serial = _source.get_attack_visual_serial()
+			_saved_control_state = _source.get_visual_state_code()
+			_saved_control_locomotion_state = _source.get_locomotion_visual_state_code()
 			_play_control_clip("stun_enter", &"enter")
 		_animation_player.speed_scale = 0.0 if _control_stage == &"hold" else 1.0
 		return true
@@ -1562,8 +1592,11 @@ func _sync_control_override() -> bool:
 		return _control_stage != &""
 	if _was_controlled:
 		_was_controlled = false
-		if _playing_visual_action:
+		if _playing_visual_action and _source.get_visual_action_time_left() > 0.0:
 			_play_visual_action(_source.get_visual_action_name())
+		elif _playing_visual_action:
+			# 控制期间权威动作可能已经走完；不能把过期动作重新从末帧接回。
+			_finish_visual_action()
 		elif _playing_attack:
 			_play_attack(_state.attack_serial)
 	return false
@@ -1593,9 +1626,32 @@ func _restore_control_pose() -> void:
 		and _source.get_visual_action_name() == _saved_control_action_name
 		and _saved_control_action_name != &""
 	)
-	if action_still_valid and _saved_control_clip != &"" and _animation_player.has_animation(_saved_control_clip):
-		_play_clip(_saved_control_clip, &"action_out", _saved_control_speed)
-		_animation_player.seek(_saved_control_position, true)
+	var non_action_context_still_valid := (
+		_saved_control_action_name == &""
+		and _source.get_visual_action_serial() == _saved_control_action_serial
+		and _source.get_attack_visual_serial() == _saved_control_attack_serial
+		and _source.get_visual_state_code() == _saved_control_state
+		and _source.get_locomotion_visual_state_code() == _saved_control_locomotion_state
+	)
+	var restore_context_valid := action_still_valid or non_action_context_still_valid
+	if restore_context_valid and _saved_control_clip != &"" and _animation_player.has_animation(_saved_control_clip):
+		var saved_animation := _animation_player.get_animation(_saved_control_clip)
+		if saved_animation != null:
+			saved_animation.loop_mode = _saved_control_loop_mode
+		_set_model_visual_clip(_saved_control_clip)
+		_current_clip_speed = _saved_control_speed
+		var section := _saved_control_section
+		var has_saved_section := section.y > section.x + 0.0001
+		if has_saved_section:
+			var restore_blend_fallback := _active_action_blend_out if action_still_valid else -1.0
+			var blend := _resolve_clip_blend(_saved_control_clip, &"action_out", restore_blend_fallback)
+			_last_clip_transition_kind = &"action_out"
+			_last_clip_blend_time = blend
+			_animation_player.play_section(_saved_control_clip, section.x, section.y, blend, _saved_control_speed)
+			_animation_player.seek(clampf(_saved_control_position, section.x, section.y), true)
+		else:
+			_play_clip(_saved_control_clip, &"action_out", _saved_control_speed)
+			_animation_player.seek(_saved_control_position, true)
 	else:
 		_invalidate_control_restore()
 		# 取消或新序号替换了旧动作时，不恢复旧 Pose；新动作由权威剩余时间对齐。

@@ -24,7 +24,10 @@ func _run() -> void:
 	_spawn_pair(0)
 	var trace := FileAccess.open(OUTPUT + "/trace.jsonl", FileAccess.WRITE)
 	var lifecycle_only := "--lifecycle-only" in OS.get_cmdline_user_args()
-	for frame in (180 if lifecycle_only else 1290):
+	var control_only := "--control-only" in OS.get_cmdline_user_args()
+	if control_only:
+		unit._deploy_timer = 0.0
+	for frame in (150 if control_only else (180 if lifecycle_only else 1290)):
 		if lifecycle_only:
 			if frame in [60, 150]:
 				phase = "death / source 0-1.7s in 0.8s"
@@ -33,6 +36,13 @@ func _run() -> void:
 				main._clear_art_dev_units()
 				_spawn_pair(1)
 				phase = "red deploy / Respawn first 1s"
+		if control_only:
+			if frame == 20:
+				phase = "normal W / 2s stun / resume"
+				main._set_art_dev_skill_resource(0.0)
+				main._use_art_dev_active_skill()
+			if frame == 30:
+				main._run_workbench_scenario("stun")
 		match frame:
 			210:
 				phase = "attack speed 2x (expires in 3s)"
@@ -83,17 +93,18 @@ func _run() -> void:
 		main._process(1.0 / 30.0)
 		await process_frame
 		var view := _view()
-		if is_instance_valid(view):
-			view._process(1.0 / 30.0)
-			view._animation_player.advance(1.0 / 30.0)
-			for mesh in view.find_children("*", "VisualInstance3D", true, false):
-				mesh.set_layer_mask_value(20, true)
-			var target := view.global_position + Vector3.UP * 1.1
-			focus_camera.global_position = target + Vector3(3, 2.6, 5.5)
-			focus_camera.look_at(target)
+		if is_instance_valid(view) and is_instance_valid(view._animation_player):
 			var player := view._animation_player
-			label.text = "SETT | %s\n%s | clip %.2f | speed %.2fx" % [phase, player.current_animation, player.current_animation_position, player.get_playing_speed()]
-			trace.store_line(JSON.stringify({"frame": frame, "phase": phase, "clip": player.current_animation, "position": player.current_animation_position, "playback_speed": player.get_playing_speed(), "serial": unit.get_attack_visual_serial() if is_instance_valid(unit) else -1}))
+			view._process(1.0 / 30.0)
+			if is_instance_valid(player) and is_instance_valid(view._animation_player):
+				player.advance(1.0 / 30.0)
+				for mesh in view.find_children("*", "VisualInstance3D", true, false):
+					mesh.set_layer_mask_value(20, true)
+				var target := view.global_position + Vector3.UP * 1.1
+				focus_camera.global_position = target + Vector3(3, 2.6, 5.5)
+				focus_camera.look_at(target)
+				label.text = "SETT | %s\n%s | clip %.2f | speed %.2fx" % [phase, player.current_animation, player.current_animation_position, player.get_playing_speed()]
+				trace.store_line(JSON.stringify({"frame": frame, "phase": phase, "clip": player.current_animation, "position": player.current_animation_position, "playback_speed": player.get_playing_speed(), "serial": unit.get_attack_visual_serial() if is_instance_valid(unit) else -1}))
 		await RenderingServer.frame_post_draw
 		if frame % 2 == 0:
 			root.get_texture().get_image().save_png(OUTPUT + "/frames/%04d.png" % (frame / 2))
