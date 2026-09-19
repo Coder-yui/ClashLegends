@@ -4,6 +4,9 @@ extends RefCounted
 enum Phase { READY, PREPARING, DASHING, RECOVERY, SPENT }
 var phase := Phase.READY
 var remaining := 0.0
+## 准备被硬控/击退打断后，直到下一次冲撞决策明确失败前仍属于本轮尝试。
+## 仅影响先锋主动技能资格，不改变 READY 的寻路与索敌语义。
+var awaiting_reprepare := false
 var target: Node2D
 var direction := Vector2.ZERO
 var endpoint := Vector2.ZERO
@@ -23,10 +26,14 @@ func configure(stats: Dictionary) -> void:
 	config = stats
 	_launch_target_id = 0
 	_launch_retry = 0.0
+	awaiting_reprepare = false
 	phase = Phase.READY if float(stats.get("rush_distance", 0.0)) > 0.0 else Phase.SPENT
 
 func locked() -> bool:
 	return phase in [Phase.PREPARING, Phase.DASHING, Phase.RECOVERY]
+
+func skill_locked() -> bool:
+	return locked() or awaiting_reprepare
 
 func displacement_immune() -> bool:
 	return phase in [Phase.PREPARING, Phase.DASHING]
@@ -37,6 +44,7 @@ func control_immune() -> bool:
 func interrupt_preparation(unit: Unit) -> void:
 	if phase != Phase.PREPARING: return
 	remaining = float(config.rush_prepare_time)
+	awaiting_reprepare = true
 	phase = Phase.READY
 	unit.play_visual_action(&"", 0.0)
 
@@ -49,17 +57,22 @@ func tick(unit: Unit, dt: float) -> bool:
 	if phase == Phase.READY:
 		unit._update_target(false)
 		target = unit._target
-		if not _valid_target(unit): return false
+		if not _valid_target(unit):
+			awaiting_reprepare = false
+			return false
 		if unit._target_gap(target) > float(config.rush_distance):
+			awaiting_reprepare = false
 			unit._chase(dt)
 			return true
 		direction = unit.global_position.direction_to(target.global_position)
 		endpoint = target.global_position - direction * (unit.body_radius + target.body_radius + ArenaRules.STRUCTURE_SEPARATION + 0.1)
 		# 整段圆柱必须能行走：不会跨水、切桥角或穿越其他建筑。
 		if not unit.battle_context.is_ground_segment_walkable(unit.global_position, endpoint, unit.body_radius, unit):
+			awaiting_reprepare = false
 			_approach_launch_point(unit, dt)
 			return true
 		phase = Phase.PREPARING
+		awaiting_reprepare = false
 		remaining = float(config.rush_prepare_time)
 		unit._knockback_timer = 0.0
 		unit.attack_timeline.cancel()
@@ -70,6 +83,7 @@ func tick(unit: Unit, dt: float) -> bool:
 	if phase == Phase.PREPARING:
 		if not _valid_target(unit):
 			phase = Phase.READY
+			awaiting_reprepare = false
 			unit.play_visual_action(&"", 0.0)
 			return true
 		remaining = maxf(0.0, remaining - dt)
@@ -77,6 +91,7 @@ func tick(unit: Unit, dt: float) -> bool:
 		# 准备期间出现建筑也必须重新验证，不能沿过时路线冲过去。
 		if not unit.battle_context.is_ground_segment_walkable(unit.global_position, endpoint, unit.body_radius, unit):
 			phase = Phase.READY
+			awaiting_reprepare = false
 			unit.play_visual_action(&"", 0.0)
 			return true
 		phase = Phase.DASHING

@@ -16,6 +16,14 @@ func spawn(id: String, team: int, point: Vector2) -> Unit:
 	units.append(unit)
 	return unit
 
+func view_for(unit: Unit) -> UnitModel3D:
+	if _main._battle_presentation == null:
+		return null
+	for child in _main._battle_presentation._world_root.get_children():
+		if child is UnitModel3D and child._source == unit:
+			return child as UnitModel3D
+	return null
+
 func structure(point: Vector2) -> Unit:
 	var unit := Unit.new()
 	unit.setup(1, CardDB.training_dummy_stats(), "dummy")
@@ -50,6 +58,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_expect(deployed._deploy_timer <= 0.00001 and deployed.deploy_time == 3.0, "先锋部署3秒结束")
 	clear_units()
 	var source := spawn("rift_herald", 0, Vector2(360, 950))
+	_expect(not source.is_active_skill_rush_locked() and (source.get_action_permissions_visual() & 2) != 0, "首次进入准备前的普通 READY 保留先锋主动技能权限")
 	var building := structure(Vector2(360, 760))
 	var enemy_left := spawn("melee_minion", 1, Vector2(345, 850))
 	var enemy_right := spawn("melee_minion", 1, Vector2(375, 850))
@@ -57,6 +66,18 @@ func run(harness: Object, main: Node2D) -> void:
 	var air := spawn("pix", 1, Vector2(360, 865))
 	step(source)
 	_expect(source.structure_rush.phase == StructureRushState.Phase.PREPARING, "进入建筑冲撞范围先停下准备")
+	var rush_view := view_for(source)
+	var preparation_visual_started := false
+	var preparation_visual_cancelled := false
+	var preparation_visual_restarted := false
+	var no_rift_herald_stun_visual := false
+	if rush_view != null:
+		rush_view._sync_visual(false, 0.0)
+		preparation_visual_started = (
+			rush_view._animation_player.current_animation == "Dash_Windup"
+			and is_zero_approx(rush_view._animation_player.current_animation_position)
+		)
+		rush_view._animation_player.advance(0.7)
 	var start := source.position
 	var audio: GameAudioManager = main._audio_manager
 	var cues: Array[StringName] = []
@@ -68,10 +89,25 @@ func run(harness: Object, main: Node2D) -> void:
 	_expect(audio._sustain_players.has(audio_key), "准备动作启动准备持续声")
 	source.apply_knockback(start + Vector2.UP, 40, 0.2)
 	audio._process(0.0)
-	_expect(source.structure_rush.phase == StructureRushState.Phase.READY and source.get_visual_action_time_left() == 0.0 and not audio._sustain_players.has(audio_key), "击退立即打断准备动作和声音且保留冲撞机会")
+	if rush_view != null:
+		rush_view._process(0.0)
+		preparation_visual_cancelled = (
+			not rush_view._playing_visual_action
+			and rush_view._action_sequence.current().is_empty()
+			and rush_view._active_visual_action == &""
+		)
+	_expect(source.structure_rush.phase == StructureRushState.Phase.READY and source.structure_rush.awaiting_reprepare and source.is_active_skill_rush_locked() and source.get_visual_action_time_left() == 0.0 and not audio._sustain_players.has(audio_key), "击退立即打断准备动作和声音，保留冲撞机会但继续锁定主动技能")
 	step(source, 5)
 	_expect(source.position.y > start.y and source._knockback_timer <= 0.00001, "准备中的先锋实际接受击退位移")
 	step(source)
+	if rush_view != null:
+		rush_view._sync_visual(false, 0.0)
+		preparation_visual_restarted = (
+			rush_view._animation_player.current_animation == "Dash_Windup"
+			and is_zero_approx(rush_view._animation_player.current_animation_position)
+			and rush_view._action_sequence.index == 0
+		)
+	_expect(preparation_visual_started and preparation_visual_cancelled and preparation_visual_restarted, "准备取消清理旧序列，新一轮同名动作按 Dash_Windup 片段起点重播")
 	audio._process(0.0)
 	_expect(source.structure_rush.phase == StructureRushState.Phase.PREPARING and source.structure_rush.remaining == 2.5 and audio._sustain_players.has(audio_key), "击退结束按新位置重新完整准备和重播音频")
 	source.freeze(0.15)
@@ -83,13 +119,35 @@ func run(harness: Object, main: Node2D) -> void:
 	_expect(audio._sustain_players.has(audio_key), "冰冻解除后的准备声音从头重播")
 	source.stun(0.1)
 	audio._process(0.0)
-	_expect(not audio._sustain_players.has(audio_key) and source.get_visual_action_time_left() == 0.0, "眩晕立即清除准备音频与动作")
+	var control_restart_audio := false
+	if rush_view != null:
+		rush_view._process(0.0)
+		no_rift_herald_stun_visual = rush_view._first_valid_animation("stun_loop") == &""
+		# 只让表现层看到新的同名动作序号，跳过中间取消快照；控制覆盖仍保持当前姿势。
+		var prepare_sustain_cues_before_restart := cues.count(&"rush_prepare:sustain")
+		source.play_visual_action(&"", 0.0)
+		source.play_visual_action(&"rush_prepare", 2.5)
+		audio._process(0.0)
+		rush_view._process(0.0)
+		source.control.stun_timer = 0.0
+		rush_view._process(0.0)
+		var restart_audio_started := audio._sustain_players.has(audio_key) and cues.count(&"rush_prepare:sustain") == prepare_sustain_cues_before_restart + 1
+		control_restart_audio = restart_audio_started
+	var control_restart_visual := rush_view != null and (
+		rush_view._animation_player.current_animation == "Dash_Windup"
+		and is_zero_approx(rush_view._animation_player.current_animation_position)
+		and rush_view._action_sequence.index == 0
+		and rush_view._saved_control_action_serial == -1
+	)
+	_expect(audio._sustain_players.has(audio_key) and source.get_visual_action_time_left() > 0.0 and control_restart_visual and control_restart_audio and no_rift_herald_stun_visual, "先锋眩晕无专用 Stun 映射；取消旧动作后即使跳过取消帧也不恢复旧序列，准备从起点重启且准备音按新序号重播")
+	# 让权威模拟保留原有“控制结束边界”Tick；上面的 0 只用于表现层断帧验证。
+	source.control.stun_timer = Unit.SIM_DT * 2.0
 	step(source, 3)
 	_expect(source.structure_rush.remaining >= 2.4, "眩晕同样重置准备时间")
 	step(source, 49)
 	_expect(source.structure_rush.phase == StructureRushState.Phase.PREPARING, "准备不能提前进入冲撞")
 	step(source)
-	_expect(source.structure_rush.phase == StructureRushState.Phase.DASHING, "准备满2.5秒开始冲撞")
+	_expect(source.structure_rush.phase == StructureRushState.Phase.DASHING and source.is_active_skill_rush_locked() and source.get_action_permissions_visual() == 0, "准备满2.5秒开始冲撞且主动技能继续锁定")
 	source.freeze(5); source.stun(5); source.apply_slow(5, 0.2); source.apply_attack_speed_slow(5, 0.2); source.apply_blind(2)
 	source.apply_knockback(source.position + Vector2.UP, 100, 0.3)
 	_expect(not source.is_frozen() and not source.is_stunned() and source.control.slow_timer == 0 and source.control.attack_speed_slow_timer == 0 and source.blind_attack_charges == 0 and source._knockback_timer == 0, "冲撞期间拒绝全部现有控制")
@@ -98,6 +156,7 @@ func run(harness: Object, main: Node2D) -> void:
 	source.add_shield(200, 10)
 	step(source, 12)
 	_expect(cues.count(&"rush:hit") == 1 and not cues.has(&"attack_hit") and not cues.has(&"spinning_punch:hit"), "建筑冲撞只发一次冲撞命中声，不串普攻或技能")
+	_expect(source.structure_rush.phase == StructureRushState.Phase.RECOVERY and source.is_active_skill_rush_locked() and source.get_visual_action_name() == &"rush_hit" and is_equal_approx(source.get_visual_action_duration(), 0.65), "成功撞击继续使用 Dash_Hit，0.65秒恢复仍锁定先锋主动技能")
 	_expect(building.hp == before - 500, "冲撞建筑只结算一次500点伤害")
 	_expect(source.hp == 700 and source.shield_hp == 200, "撞击扣当前生命30%，护盾不能抵消")
 	_expect(enemy_left.hp == 110 and enemy_right.hp == 110, "路径上的每只地面敌军只受一次100伤害")
@@ -165,12 +224,13 @@ func run(harness: Object, main: Node2D) -> void:
 	step(source)
 	building.hp = 0
 	step(source)
-	_expect(source.structure_rush.phase == StructureRushState.Phase.READY, "准备中目标死亡允许重新索敌准备")
+	_expect(source.structure_rush.phase == StructureRushState.Phase.READY and not source.structure_rush.awaiting_reprepare and not source.is_active_skill_rush_locked(), "准备中目标失效退出本轮等待并恢复普通 READY 权限")
 	building.hp = 10000
 	step(source, 51)
 	building.hp = 0
 	step(source)
 	_expect(source.structure_rush.phase == StructureRushState.Phase.RECOVERY, "冲撞中目标死亡取消且消耗首次机会")
+	_expect(source.is_active_skill_rush_locked(), "空撞进入恢复时同样锁定先锋主动技能")
 	_expect(main.get_tree().get_nodes_in_group("combatants").filter(func(c): return c is Unit and c.card_id == "voidmite").is_empty(), "没有撞中建筑不召唤")
 	clear_units()
 	for simultaneous in [false, true]:

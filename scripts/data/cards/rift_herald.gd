@@ -16,7 +16,7 @@ static func definition() -> Dictionary:
 			"rush_spawn_id": "voidmite", "rush_spawn_count": 6, "rush_spawn_spread": 48.0,
 			"active_skills": [{
 				"name": "旋转重拳", "kind": "frontal", "shape": "fan",
-				"description": "对前方半圆内的地面敌军和建筑造成210点伤害。准备及冲撞期间不可施放。",
+				"description": "对前方半圆内的地面敌军和建筑造成210点伤害。准备、冲撞及撞后收势期间不可施放。",
 				"cost": 1, "max_uses": 2, "cooldown": 6.0,
 				"length": 100.0, "arc_degrees": 180.0, "projectile_count": 0,
 				"damage": 210, "ground_only": true,
@@ -37,7 +37,6 @@ static func definition() -> Dictionary:
     "Attack1",
     "Attack2"
   ],
-  "stun_loop": "Stun",
   "death": "Death",
   "death_duration": 1.0,
   "clip_blends": {

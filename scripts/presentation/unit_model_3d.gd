@@ -31,6 +31,8 @@ var _control_stage := &""
 var _saved_control_clip := &""
 var _saved_control_position := 0.0
 var _saved_control_speed := 1.0
+var _saved_control_action_serial := -1
+var _saved_control_action_name := &""
 var _current_clip_speed := 1.0
 var _stable_head_offset := NAN
 var _last_frozen_overlay := false
@@ -390,9 +392,14 @@ func _sync_visual(force: bool, delta: float) -> void:
 		var playback_scale := _state.attack_rate if _playing_attack else (_state.movement_rate if _current_state == 2 and not _playing_visual_action else 1.0)
 		_animation_player.speed_scale = 0.0 if _state.frozen or _state.stunned else playback_scale
 
-func _play_visual_action(action_name: StringName) -> void:
+func _play_visual_action(action_name: StringName, preserve_visual_pose: bool = false) -> void:
 	_idle_transition_animation = &""
-	if _animation_player == null or action_name == &"":
+	if action_name == &"":
+		if _control_stage != &"":
+			_invalidate_control_restore()
+		_clear_visual_action_state()
+		return
+	if _animation_player == null:
 		return
 	var actions: Dictionary = _animation_names.get("visual_actions", {})
 	var configured = actions.get(String(action_name), [])
@@ -426,15 +433,18 @@ func _play_visual_action(action_name: StringName) -> void:
 	_active_action_blend_in = float(descriptor.get("blend_in", -1.0))
 	_active_action_blend_out = float(descriptor.get("blend_out", -1.0))
 	_active_action_sequence_blend = float(descriptor.get("sequence_blend", -1.0))
+	if preserve_visual_pose:
+		_invalidate_control_restore()
 	_playing_attack = false
 	_holding_attack_pose = false
 	_attack_hit_pending = false
 	_attack_recover_pending = false
 	_move_sequence_active = false
 	_move_active_animation = &""
-	_play_visual_action_clip(StringName(_action_sequence.current().name))
+	if not preserve_visual_pose:
+		_play_visual_action_clip(StringName(_action_sequence.current().name))
 	# 晚到客户端从权威时间轴对应位置开始，不会把已过去的 Spell2 从头补播。
-	if authoritative_duration > 0.001:
+	if not preserve_visual_pose and authoritative_duration > 0.001:
 		_seek_visual_action(maxf(authoritative_duration - _source.get_visual_action_time_left(), 0.0))
 
 func _play_visual_action_clip(animation_name: StringName) -> void:
@@ -456,13 +466,41 @@ func _play_visual_action_clip(animation_name: StringName) -> void:
 	_animation_player.play_section(animation_name, clip_range.x, clip_range.y, blend_time, playback_speed)
 
 func _seek_visual_action(elapsed: float) -> void:
-	if elapsed <= 0.001 or _action_sequence.current().is_empty():
+	if _action_sequence.current().is_empty():
 		return
-	var position := _action_sequence.seek(elapsed)
+	# elapsed==0 也要通过序列求值；clip_ranges 的起点可能不是素材零秒。
+	var position := _action_sequence.seek(maxf(elapsed, 0.0))
 	var clip_name := StringName(_action_sequence.current().name)
 	if _active_visual_action != clip_name:
 		_play_visual_action_clip(clip_name)
 	_animation_player.seek(position, true)
+
+func _clear_visual_action_state() -> void:
+	# 取消只清理动作所有权与续播资格，保留当前 AnimationPlayer 姿势；控制覆盖
+	# 会继续暂停它，之后由基础状态通道决定自然衔接。
+	_playing_visual_action = false
+	_active_visual_action = &""
+	_action_sequence.clear()
+	_active_action_name = &""
+	_active_action_kind = &"locomotion"
+	_active_action_priority = 0
+	_active_action_blend_in = -1.0
+	_active_action_blend_out = -1.0
+	_active_action_sequence_blend = -1.0
+	_pending_attack_serial = 0
+	_move_sequence_active = false
+	_move_active_animation = &""
+	_playing_attack = false
+	_holding_attack_pose = false
+	_attack_hit_pending = false
+	_attack_recover_pending = false
+
+func _invalidate_control_restore() -> void:
+	_saved_control_clip = &""
+	_saved_control_position = 0.0
+	_saved_control_speed = 1.0
+	_saved_control_action_serial = -1
+	_saved_control_action_name = &""
 
 func _default_action_kind(action_name: StringName) -> StringName:
 	return &"transform" if String(action_name).contains("transform") or action_name == &"revert" else &"skill"
@@ -1496,6 +1534,10 @@ func _set_hit_flash(enabled: bool) -> void:
 func _sync_control_override() -> bool:
 	if _animation_player == null:
 		return false
+	# 控制期间也要消费权威动作序号。取消只失效旧动作，新的同名序号
+	# 只登记新序列并保持当前骨骼姿势，不能让旧序列留到解除控制后续播。
+	if _state.frozen or _state.stunned or _control_stage != &"":
+		_sync_visual_action_while_controlled()
 	if _state.frozen:
 		_was_controlled = true
 		_animation_player.speed_scale = 0.0
@@ -1506,6 +1548,8 @@ func _sync_control_override() -> bool:
 			_saved_control_clip = _animation_player.current_animation
 			_saved_control_position = _animation_player.current_animation_position
 			_saved_control_speed = _current_clip_speed
+			_saved_control_action_serial = _source.get_visual_action_serial()
+			_saved_control_action_name = _source.get_visual_action_name()
 			_play_control_clip("stun_enter", &"enter")
 		_animation_player.speed_scale = 0.0 if _control_stage == &"hold" else 1.0
 		return true
@@ -1524,6 +1568,13 @@ func _sync_control_override() -> bool:
 			_play_attack(_state.attack_serial)
 	return false
 
+func _sync_visual_action_while_controlled() -> void:
+	var serial := _source.get_visual_action_serial()
+	if serial == _last_visual_action_serial:
+		return
+	_last_visual_action_serial = serial
+	_play_visual_action(_source.get_visual_action_name(), true)
+
 func _play_control_clip(key: String, stage: StringName) -> void:
 	var clip := _first_valid_animation(key)
 	if clip == &"" and stage == &"enter":
@@ -1536,9 +1587,20 @@ func _play_control_clip(key: String, stage: StringName) -> void:
 
 func _restore_control_pose() -> void:
 	_control_stage = &""
-	if _saved_control_clip != &"" and _animation_player.has_animation(_saved_control_clip):
+	var action_still_valid := (
+		_saved_control_action_serial >= 0
+		and _source.get_visual_action_serial() == _saved_control_action_serial
+		and _source.get_visual_action_name() == _saved_control_action_name
+		and _saved_control_action_name != &""
+	)
+	if action_still_valid and _saved_control_clip != &"" and _animation_player.has_animation(_saved_control_clip):
 		_play_clip(_saved_control_clip, &"action_out", _saved_control_speed)
 		_animation_player.seek(_saved_control_position, true)
+	else:
+		_invalidate_control_restore()
+		# 取消或新序号替换了旧动作时，不恢复旧 Pose；新动作由权威剩余时间对齐。
+		if _source.get_visual_action_name() != &"" and _source.get_visual_action_time_left() > 0.0:
+			_play_visual_action(_source.get_visual_action_name())
 	_animation_player.speed_scale = 1.0
 
 ## 晚到的普攻序号从权威已流逝阶段开始；分段计时仍纯表现，不触发命中。

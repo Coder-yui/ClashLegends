@@ -1096,7 +1096,7 @@ func _on_art_dev_active_skill_selected(item_id: String, skill_index: int) -> voi
 ## 美术面板不消耗正式主动资格，允许对最后放置的同卡单位反复检查技能演出。
 func _use_art_dev_active_skill(skill_index: int = -1) -> void:
 	var unit := _art_dev_selected_unit()
-	if unit == null or not unit.is_deployed() or unit.is_structure_rushing() or unit.is_form_transitioning() or unit.is_active_skill_casting():
+	if unit == null or not unit.is_deployed() or unit.is_active_skill_rush_locked() or unit.is_form_transitioning() or unit.is_active_skill_casting():
 		return
 	var skill := _art_dev_selected_skill(_art_dev_selection, skill_index)
 	if skill.is_empty():
@@ -1195,7 +1195,7 @@ func _sync_art_dev_panel_state() -> void:
 	_art_dev_panel.update_selected_unit_state(
 		unit != null,
 		unit != null and unit.is_deployed(),
-		unit != null and (unit.is_structure_rushing() or unit.is_form_transitioning() or unit.is_active_skill_casting()),
+		unit != null and (unit.is_active_skill_rush_locked() or unit.is_form_transitioning() or unit.is_active_skill_casting()),
 		unit != null and unit.is_skill_resource_visible(),
 		unit.skill_resource_value if unit != null else 0.0,
 		unit.skill_resource_max if unit != null else 0.0,
@@ -1991,7 +1991,7 @@ func _sync_active_skill_deployment_readiness() -> void:
 			_on_active_skill_unit_died(ability_id)
 			continue
 		var valid_unit := unit as Unit
-		var deployed := valid_unit.is_deployed() and not valid_unit.is_structure_rushing()
+		var deployed := valid_unit.is_deployed() and not valid_unit.is_active_skill_rush_locked()
 		if _is_local_player_team(int(entry.team)) and _active_skill_bar != null:
 			_active_skill_bar.update_skill_state(
 				ability_id,
@@ -2174,7 +2174,7 @@ func _active_skill_is_legal(ability_id: int, expected_team: int = -1) -> bool:
 	if valid_unit.is_frozen() or valid_unit.is_stunned():
 		return false
 	# deploy/transform/skill 都高于普通攻击；高优先级窗口内拒绝新技能并保留按钮。
-	return valid_unit.is_deployed() and not valid_unit.is_structure_rushing() and not valid_unit.is_form_transitioning() and not valid_unit.is_active_skill_casting()
+	return valid_unit.is_deployed() and not valid_unit.is_active_skill_rush_locked() and not valid_unit.is_form_transitioning() and not valid_unit.is_active_skill_casting()
 
 func _activate_active_skill(ability_id: int, expected_team: int = -1) -> bool:
 	if not _active_skill_is_legal(ability_id, expected_team):
@@ -2201,7 +2201,7 @@ func _activate_active_skill(ability_id: int, expected_team: int = -1) -> bool:
 	return true
 
 func _start_active_skill_cast(unit: Unit, skill: Dictionary) -> bool:
-	if unit != null and unit.is_structure_rushing(): return false
+	if unit != null and unit.is_active_skill_rush_locked(): return false
 	var prepared_skill: Dictionary = _active_skill_effect_system.prepare_cast(unit, skill)
 	if StringName(prepared_skill.get("kind", "")) == &"dual_form":
 		prepared_skill = _active_skill_effect_system.prepare_dual_form_cast(unit, prepared_skill)

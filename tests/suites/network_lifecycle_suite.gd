@@ -99,9 +99,10 @@ func run(harness: Object, main: Node2D) -> void:
 	herald[SNAP.U_ACTION_NAME] = "rush_dash"
 	herald[SNAP.U_ACTION_DURATION] = 0.5
 	herald[SNAP.U_ACTION_TIME_LEFT] = 0.3
+	herald[SNAP.U_ACTION_PERMISSIONS] = 0
 	_deliver(2, [herald])
 	var replica: Unit = main._client_units[71000]
-	_expect(replica.get_visual_action_name() == &"rush_dash" and is_equal_approx(replica.get_visual_action_time_left(), 0.3) and replica.is_structure_rushing(), "先锋客户端只读冲撞窗口并锁住主动技能")
+	_expect(replica.get_visual_action_name() == &"rush_dash" and is_equal_approx(replica.get_visual_action_time_left(), 0.3) and replica.is_structure_rushing() and replica.is_active_skill_rush_locked(), "先锋客户端只读冲撞窗口并锁住主动技能")
 	var collision: Array = [herald.duplicate(true)]
 	collision[0][SNAP.U_HP] = 1260
 	collision[0][SNAP.U_ACTION_SERIAL] = 4
@@ -111,6 +112,21 @@ func run(harness: Object, main: Node2D) -> void:
 	_deliver(4, collision)
 	_spawn(collision[1])
 	_expect(main._client_units.size() == 7 and replica.hp == 1260 and replica.get_visual_action_serial() == 4, "撞击快照恢复先锋自伤和六只蠕虫，重复快照/出生不重复召唤")
+	var awaiting_reprepare: Array = collision[0].duplicate(true)
+	awaiting_reprepare[SNAP.U_ACTION_SERIAL] = 5
+	awaiting_reprepare[SNAP.U_ACTION_NAME] = ""
+	awaiting_reprepare[SNAP.U_ACTION_DURATION] = 0.0
+	awaiting_reprepare[SNAP.U_ACTION_TIME_LEFT] = 0.0
+	awaiting_reprepare[SNAP.U_ACTION_PERMISSIONS] = 0
+	_deliver(5, [awaiting_reprepare])
+	_expect(not replica.is_structure_rushing() and replica.is_active_skill_rush_locked(), "客户端跳过准备取消帧时仍按主机权限锁定等待重备")
+	var restarted: Array = awaiting_reprepare.duplicate(true)
+	restarted[SNAP.U_ACTION_SERIAL] = 6
+	restarted[SNAP.U_ACTION_NAME] = "rush_prepare"
+	restarted[SNAP.U_ACTION_DURATION] = 2.5
+	restarted[SNAP.U_ACTION_TIME_LEFT] = 2.5
+	_deliver(6, [restarted])
+	_expect(replica.is_structure_rushing() and replica.is_active_skill_rush_locked(), "客户端收到新序号的同名准备后重新识别冲撞锁")
 	# 已有成员接过编队技能时，快照必须先更新来源卡，再注册技能。
 	_system.reset_session("deployment-skill")
 	var member := _payload("melee_minion", 72001, 1)

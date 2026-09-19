@@ -526,6 +526,8 @@ func get_action_permissions_visual() -> int:
 		return net_action_permissions
 	if hp <= 0.0 or is_frozen() or is_stunned() or not is_deployed():
 		return 0
+	if structure_rush.skill_locked():
+		return 0
 	return (0 if is_active_skill_movement_locked() else 1) | (0 if is_active_skill_attack_locked() or is_form_transitioning() else 2)
 
 func presentation_state() -> UnitPresentationState:
@@ -874,6 +876,15 @@ func is_structure_rushing() -> bool:
 	if _in_client_mode():
 		return get_visual_action_time_left() > 0.0 and get_visual_action_name() in [&"rush_prepare", &"rush_dash", &"rush_hit"]
 	return structure_rush.locked()
+
+## 主动技能入口使用这一谓词；客户端只读主机同步的权限位，不从当前动画
+## 另跑冲撞状态机。普通 READY 的权限位仍由主机原样同步。
+func is_active_skill_rush_locked() -> bool:
+	if _in_client_mode():
+		if float(structure_rush.config.get("rush_distance", 0.0)) <= 0.0:
+			return false
+		return is_deployed() and not is_frozen() and not is_stunned() and get_action_permissions_visual() == 0
+	return structure_rush.skill_locked()
 
 func is_active_skill_casting() -> bool:
 	return active_skill_cast_timer > 0.0
