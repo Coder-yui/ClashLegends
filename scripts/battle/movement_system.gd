@@ -160,17 +160,21 @@ func _adjust_unit_velocity(unit: Unit, units: Array[Unit], dt: float) -> Vector2
 	if desired.length_squared() > 0.001:
 		var direction := desired.normalized()
 		var side := Vector2(-direction.y, direction.x)
-		var query_center := unit.global_position + direction * ArenaRules.AVOID_QUERY_OFFSET
-		var query_radius := minf(unit.body_radius, ArenaRules.TILE_SIZE * 0.5)
 		for other in units:
-			if other == unit or other.is_air != unit.is_air or other.team != unit.team:
+			if other == unit or other.is_air != unit.is_air:
+				continue
+			# 敌军仅为互不索敌、迎面接触的建筑目标单位解除僵持。
+			# 防守者（包括已停步攻击者）不触发推进单位主动避让。
+			if other.team != unit.team and not (unit.building_only and other.building_only
+					and not other._forced_movement and desired.dot(other._move_intent) < 0.0):
 				continue
 			# ContactA 对同向行军不请求侧移；冲锋且质量更大的单位也能继续推行。
 			if not other._forced_movement and desired.dot(other._move_intent) > 0.0:
 				continue
 			if unit._charged and unit.mass > other.mass:
 				continue
-			if query_center.distance_squared_to(other.global_position) > pow(query_radius + other.body_radius, 2.0):
+			# 只在身体受阻后侧挤，不提前选择空位或改变寻路目标。
+			if unit.global_position.distance_squared_to(other.global_position) > pow(unit.body_radius + other.body_radius, 2.0):
 				continue
 			var relative := other.global_position - unit.global_position
 			if relative.dot(direction) <= 0.0:
@@ -179,7 +183,7 @@ func _adjust_unit_velocity(unit: Unit, units: Array[Unit], dt: float) -> Vector2
 				var signed_side := relative.dot(side)
 				var side_sign := signf(-signed_side)
 				if absf(signed_side) < 0.001:
-					side_sign = -1.0 if _unit_order_key(unit) < _unit_order_key(other) else 1.0
+					side_sign = 1.0 if other.team != unit.team else (-1.0 if _unit_order_key(unit) < _unit_order_key(other) else 1.0)
 				unit._avoidance_turn = side_sign * ArenaRules.AVOID_TURN
 	# 原生转向量每 Tick 向零衰减 10/256；它只控制方向，不保存接触速度。
 	unit._avoidance_turn = move_toward(unit._avoidance_turn, 0.0, ArenaRules.AVOID_TURN_DECAY * dt)

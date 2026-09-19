@@ -19,9 +19,8 @@ const BRIDGE_X_RIGHT := 14.5 * TILE_SIZE
 ## 连续碰撞仍按每个单位自己的档位半径精确判定。
 const NAV_CLEARANCE := CardDB.RADIUS_EXTREMELY_LARGE
 const STRUCTURE_SEPARATION := 1.0 * CardDB.CHARACTER_SCALE_MULTIPLIER
-## 原生 ContactA：向前查询 256 原生坐标；初始偏转 200/256，
+## 原生 ContactA 的初始偏转 200/256；本项目在实际接触后触发，
 ## 每个 50ms Tick 衰减 10/256，应用时重新归一化以保持自主步幅。
-const AVOID_QUERY_OFFSET := TILE_SIZE * 0.256
 const AVOID_TURN := 200.0 / 256.0
 const AVOID_TURN_DECAY := (10.0 / 256.0) * 20.0
 ## 原生接触算法的长度常量按 1000 原生坐标 = 1 地图格转换。

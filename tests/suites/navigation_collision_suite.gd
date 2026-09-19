@@ -21,6 +21,10 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_bridge_queue()
 	_check_tower_follower_splits_quickly()
 	_check_rear_contact_push()
+	_check_contact_avoidance_boundaries()
+	_check_garen_defender()
+	_check_opposing_march()
+	_check_unit_follower()
 	_check_pair_collision()
 	_check_mass_weighting()
 	_check_lane_stress()
@@ -602,3 +606,94 @@ func _check_direct_approach_after_bridge() -> void:
 			unit.position = Vector2(300.0 if not right_lane else 420.0, 760.0 if team == 0 else 520.0)
 			_expect(not unit._try_direct_approach(0.05), "直接接近段穿过河岸时仍保留寻路")
 			unit.free()
+
+## 固定移动意图隔离“迎面经过”与索敌停步；真实交战另在跟随用例覆盖。
+func _check_opposing_march() -> void:
+	for reverse_ids in [false, true]:
+		var a: Unit = _main._spawn_unit(0, "garen", Vector2(320, 880), 0)
+		var b: Unit = _main._spawn_unit(1, "garen", Vector2(320, 800), 0)
+		if reverse_ids:
+			var saved := a.net_id
+			a.net_id = b.net_id
+			b.net_id = saved
+		a._move_intent = Vector2.UP * a.move_speed
+		b._move_intent = Vector2.DOWN * b.move_speed
+		var units: Array[Unit] = [a, b]
+		var min_distance := INF
+		var crossed_tick := -1
+		for tick in 60:
+			_main._movement._apply_unit_movement(_main.SIM_DT, units)
+			min_distance = minf(min_distance, a.position.distance_to(b.position))
+			if a.position.y < b.position.y:
+				crossed_tick = tick + 1
+				break
+		_expect(crossed_tick > 0 and crossed_tick <= 40 and min_distance >= a.body_radius + b.body_radius - 8.0,
+			"敌对盖伦迎面行军在2秒内错开且不穿身（tick=%d，最近=%.1f）" % [crossed_tick, min_distance])
+		a.free()
+		b.free()
+
+func _check_unit_follower() -> void:
+	for team in [0, 1]:
+		var forward := Vector2.UP if team == 0 else Vector2.DOWN
+		var target: Unit = _main._spawn_unit(1 - team, "garen", Vector2(360, 850), 0)
+		target.hp = 100000
+		target.freeze(100)
+		var front: Unit = _main._spawn_unit(team, "sett", target.position - forward * 75.0, 0)
+		var rear: Unit = _main._spawn_unit(team, "sett", front.position - forward * 56.0, 0)
+		front._target = target
+		rear._target = target
+		var hit_tick := -1
+		for tick in 80:
+			_main._sim_step(_main.SIM_DT)
+			if rear._attack_hit_index > 0:
+				hit_tick = tick + 1
+				break
+		_expect(hit_tick > 0 and hit_tick <= 60 and absf(rear.position.x - front.position.x) > front.body_radius,
+			"后排腕豪绕过攻击中的队友并真正命中同一敌军（team=%d，tick=%d）" % [team, hit_tick])
+		front.free()
+		rear.free()
+		target.free()
+
+func _check_contact_avoidance_boundaries() -> void:
+	var a: Unit = _main._spawn_unit(0, "garen", Vector2(320, 880), 0)
+	var b: Unit = _main._spawn_unit(0, "garen", Vector2(320, 800), 0)
+	var units: Array[Unit] = [a, b]
+	a._move_intent = Vector2.UP * a.move_speed
+	b._move_intent = Vector2.ZERO
+	b.position = a.position + Vector2.UP * (a.body_radius + b.body_radius + 0.1)
+	var velocity: Vector2 = _main._movement._adjust_unit_velocity(a, units, _main.SIM_DT)
+	_expect(velocity == a._move_intent and a._avoidance_turn == 0.0, "未接触站定友军时不提前寻找旁边空位")
+	b.position.y += 0.2
+	velocity = _main._movement._adjust_unit_velocity(a, units, _main.SIM_DT)
+	_expect(absf(velocity.x) > 0.1, "身体接触站定友军后才触发侧挤")
+	var turn := absf(a._avoidance_turn)
+	_main._movement._adjust_unit_velocity(a, units, _main.SIM_DT)
+	_expect(absf(a._avoidance_turn) < turn, "持续接触时沿用CR移动邻居分支的自然衰减，不刷新满转向")
+	a._avoidance_turn = 0.0
+	b.team = 1
+	velocity = _main._movement._adjust_unit_velocity(a, units, _main.SIM_DT)
+	_expect(velocity == a._move_intent, "站定敌军即使也只攻击建筑仍不触发侧向避让")
+	b._move_intent = Vector2.DOWN * b.move_speed
+	b.building_only = false
+	velocity = _main._movement._adjust_unit_velocity(a, units, _main.SIM_DT)
+	_expect(velocity == a._move_intent, "正在迎面接敌的防守单位也不让推塔者主动避让")
+	a.free()
+	b.free()
+
+func _check_garen_defender() -> void:
+	for team in [0, 1]:
+		var direction := Vector2.UP if team == 0 else Vector2.DOWN
+		var tower: Tower = _main._towers[2 if team == 0 else 0]
+		var garen: Unit = _main._spawn_unit(team, "garen", tower.position - direction * 180.0, 0)
+		var defender: Unit = _main._spawn_unit(1 - team, "masteryi", garen.position + direction * 45.0, 0)
+		garen.hp = 100000
+		garen._target = tower
+		defender._target = garen
+		var no_avoidance := true
+		for tick in 60:
+			_main._sim_step(_main.SIM_DT)
+			no_avoidance = no_avoidance and garen._avoidance_turn == 0.0 and garen._target == tower
+		_expect(no_avoidance and defender._attack_hit_index > 0,
+			"盖伦继续锁定防御塔，剑圣实际防守攻击期间不触发敌军避让（team=%d）" % team)
+		garen.free()
+		defender.free()
