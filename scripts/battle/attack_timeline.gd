@@ -29,9 +29,6 @@ func commit_hit(next_gap: float) -> void:
 func begin_recovery(next_gap: float, base_first_hit: float, attack_speed: float) -> void:
 	recovery = maxf(next_gap - base_first_hit / attack_speed, 0.0)
 
-func cancel_recovery() -> void:
-	recovery = 0.0
-
 func tick_cooldown(dt: float) -> void:
 	cooldown = maxf(0.0, cooldown - dt)
 

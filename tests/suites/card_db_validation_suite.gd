@@ -2,6 +2,10 @@ class_name CardDBValidationSuite
 extends RefCounted
 
 func run(harness: Object) -> void:
+	for invalid in [-1, 1.5, true, "2"]:
+		var broken := CardDB.get_card("sett").duplicate(true)
+		broken["attack_recovery_cancel_every_hits"] = invalid
+		harness._expect(not CardDB.VALIDATOR.validate_all({"sett": broken}, false).is_empty(), "提前转走拳数必须是非负整数")
 	for invalid_registry in [{42: {}}, {"broken": 42}, {"broken": null}, {"broken": []}]:
 		harness._expect(not CardDB.VALIDATOR.validate_all(invalid_registry).is_empty(), "注册表错误键或值返回内容错误")
 	for id in ["gnar", "gwen", "ashe"]:

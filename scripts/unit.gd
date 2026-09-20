@@ -146,8 +146,8 @@ var _first_strike_hit_target_ids := {}
 ## 某一段普通攻击可在权威延迟后追加额外刀数；内层数组与 attack 动画段一一对应。
 var attack_extra_hit_damage_multipliers: Array = []
 var attack_extra_hit_delays: Array = []
-## 配置为 true 时，攻击后摇期间若已没有攻击范围内目标，立即解除后摇并追击。
-var cancel_attack_recovery_without_target := false
+## 每N次命中后可在没有圈内目标时提前转走并清除间隔；0禁用。
+var attack_recovery_cancel_every_hits := 0
 ## 可复用的主动技能资源。当前腕豪用它表达豪意；权威值不由白条或动画反推。
 var skill_resource_max := 0.0
 var skill_resource_value := 0.0
@@ -407,7 +407,7 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	first_strike_damage_multiplier = maxf(float(stats.get("first_strike_damage_multiplier", 1.0)), 0.0)
 	attack_extra_hit_damage_multipliers = stats.get("attack_extra_hit_damage_multipliers", [])
 	attack_extra_hit_delays = stats.get("attack_extra_hit_delays", [])
-	cancel_attack_recovery_without_target = bool(stats.get("cancel_attack_recovery_without_target", false))
+	attack_recovery_cancel_every_hits = int(stats.get("attack_recovery_cancel_every_hits", 0))
 	_configured_skill_resource_max = maxf(float(stats.get("skill_resource_max", 0.0)), 0.0)
 	_configured_skill_resource_attack_gain = maxf(float(stats.get("skill_resource_attack_gain", 0.0)), 0.0)
 	_configured_skill_resource_hit_gain = maxf(float(stats.get("skill_resource_hit_gain", 0.0)), 0.0)
@@ -1028,10 +1028,10 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false) -> void:
 	if structure_rush.tick(self, dt):
 		return
 	attack_timeline.tick_cooldown(dt)
-	# 默认命中后必须完整收招。部分卡牌（当前为腕豪）若已经没有攻击范围内目标，
-	# 则提前解除后摇并追击；冻结会在上方提前 return，因此同样会暂停后摇计时。
+	# 默认命中后必须完整收招；配置允许的连招段结束且没有圈内目标时可提前转走。
+	# 冻结会在上方提前 return，因此同样会暂停后摇计时。
 	if attack_timeline.recovery > 0.0:
-		if cancel_attack_recovery_without_target:
+		if attack_recovery_cancel_every_hits > 0 and _attack_hit_index > 0 and _attack_hit_index % attack_recovery_cancel_every_hits == 0:
 			# 复用权威索敌规则：目标死亡/离圈时优先换打圈内目标；完全没有
 			# 下一次攻击目标时才解除 Attack，避免表现层提前猜测目标状态。
 			_update_target(false)
@@ -1043,7 +1043,7 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false) -> void:
 				and _target_gap(_target) <= attack_range
 			)
 			if not has_next_attack_target:
-				attack_timeline.cancel_recovery()
+				attack_timeline.cancel(true)
 				_attacking = false
 			else:
 				attack_timeline.tick_recovery(dt)
@@ -1055,12 +1055,12 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false) -> void:
 			_attacking = true
 			if attack_timeline.recovery > 0.0:
 				return
-	# 正好到达权威命中节点的这个 tick 不再做距离取消。这样目标在最后一刻跨出
-	# 攻击圈时，本次挥击仍会命中；更早脱离则仍会取消前摇并继续追击。
-	var reaches_hit_this_tick := _reaches_attack_hit_this_tick(dt)
-	_update_target(reaches_hit_this_tick)
+	# 已起手的一击保持前摇；普通射程只用于起手，宽限只在命中节点检查。
+	var committed_attack := _attacking and not continuous_attack and (attack_timeline.windup > 0.0 or not _attack_visual_pending)
+	_update_target(committed_attack)
+	committed_attack = committed_attack and _attacking and _target_is_attackable(_target)
 	if _target != null:
-		if _target_gap(_target) <= attack_range or reaches_hit_this_tick:
+		if _target_gap(_target) <= attack_range or committed_attack:
 			if continuous_attack:
 				var continuous_target_id := int(_target.get_instance_id())
 				if continuous_target_id != _continuous_visual_target_id:
@@ -1068,8 +1068,8 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false) -> void:
 					_attack_visual_serial += 1
 					attack_timeline.restart_visual()
 			if not _attacking:
-				# 首击没有历史冷却；重入射程只等待上次出手的剩余间隔。
-				# 前摇与剩余冷却重叠，不能在完整后摇后再额外等待一个周期。
+				# 行军已清除旧间隔；重新进入正常射程从本刀前摇开始。
+				# 原地转火等未进入行军的路径仍保留已有攻击节奏。
 				attack_timeline.begin_windup(_next_attack_first_hit_time(), _effective_attack_speed_multiplier())
 				_attack_visual_pending = true
 			_attacking = true
@@ -1077,14 +1077,16 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false) -> void:
 			_path_index = 0
 			_attack(dt)
 			return
-	# 退出攻击状态（目标丢失/脱离攻击圈，回到行军）→ 关闭丝缕缠流。
+	_cancel_attack_and_chase(dt)
+
+func _cancel_attack_and_chase(dt: float) -> void:
 	_attacking = false
 	_continuous_visual_target_id = 0
-	attack_timeline.cancel()
+	attack_timeline.cancel(true)
+	_attack_visual_pending = true
 	_shroud_active = false
-	if is_active_skill_movement_locked():
-		return
-	_chase(dt)
+	if not is_active_skill_movement_locked():
+		_chase(dt)
 
 ## 施法期间禁止普攻时仍可按策略移动。进入攻击范围后只停在待攻位置，
 ## 让 cast 窗口结束的同一权威 tick 可以立即开始普通攻击。
@@ -1273,11 +1275,11 @@ func _spawn_batch() -> void:
 
 ## 目标管理：攻击中的目标失效/超距时优先原地换打射程内最近合法目标；
 ## 只有没有替代目标时才退出 Attack 并按视野规则重新索敌/追击。
-func _update_target(allow_out_of_range_hit: bool = false) -> void:
-	# 一旦挥出攻击/进入攻击前摇，就锁定当前目标。只有目标死亡、失效或真正离开
-	# 攻击范围才解除锁定；不会因为旁边出现更近单位而中途转火。
+func _update_target(keep_windup_target: bool = false) -> void:
+	# 前摇期间保留有效目标，距离留到命中节点判定；其他阶段按正常射程索敌。
+	# 死亡、失效仍沿用原有替换目标规则。
 	if _attacking:
-		if _target_is_attackable(_target) and (_target_gap(_target) <= attack_range or allow_out_of_range_hit):
+		if _target_is_attackable(_target) and (_target_gap(_target) <= attack_range or keep_windup_target):
 			return
 		var in_range_retarget := _find_nearest_attackable_in_range()
 		if in_range_retarget != null:
@@ -1548,6 +1550,10 @@ func _attack(dt: float) -> void:
 		return
 	_try_start_attack_visual(attack_timeline.cooldown)
 	if attack_timeline.cooldown <= 0.0:
+		# 只在命中节点检查宽限；超距取消本次挥击，不伤害、不进入后摇。
+		if _target_gap(_target) > attack_range + ArenaRules.ATTACK_RANGE_TOLERANCE:
+			_cancel_attack_and_chase(dt)
+			return
 		# 连招节奏：若配置了 attack_pattern，则按本次命中后的间隔取值；否则固定为 attack_interval。
 		var hit_index := _attack_hit_index
 		var next_attack_gap := _next_attack_gap()
@@ -1592,15 +1598,6 @@ func _attack(dt: float) -> void:
 		attack_timeline.begin_recovery(next_attack_gap, _next_attack_first_hit_time(), _effective_attack_speed_multiplier())
 		_attack_visual_pending = true
 		cancel_charge()
-
-## 当前固定 tick 是否正好跨过一次攻击命中节点。
-## 命中节点之外仍严格检查射程，避免把整个前摇都变成不可取消的攻击锁定。
-func _reaches_attack_hit_this_tick(dt: float) -> bool:
-	if not _attacking or continuous_attack or not _target_is_attackable(_target):
-		return false
-	if attack_timeline.windup > 0.0:
-		return attack_timeline.windup <= dt + 0.0001
-	return not _attack_visual_pending and attack_timeline.cooldown <= dt + 0.0001
 
 ## 连招间距：attack_pattern 为每次命中后到下一次命中的间隔，按数组顺序循环。
 func _next_attack_gap() -> float:

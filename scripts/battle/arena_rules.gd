@@ -5,6 +5,8 @@ extends RefCounted
 const ARENA_COLUMNS := 18
 const ARENA_ROWS := 32
 const TILE_SIZE := 40.0
+## 普通攻击只在命中节点使用；起手仍严格检查卡牌射程。
+const ATTACK_RANGE_TOLERANCE := TILE_SIZE * 0.5
 const FIELD_W := ARENA_COLUMNS * TILE_SIZE
 const FIELD_H := ARENA_ROWS * TILE_SIZE
 const RIVER_TOP_ROW := 15

@@ -63,6 +63,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_h._expect(posmod(source._attack_visual_serial - 1, 3) == next_segment, "前摇取消重播仍对齐同一未出手段")
 	var tower := Tower.new()
 	tower.setup(1, CardDB.PRINCESS_TOWER_STATS, false)
+	tower.position = source.position + Vector2.RIGHT * 80.0
 	_main.add_child(tower)
 	source._attack_swing_count = 0
 	var tower_before := tower.hp

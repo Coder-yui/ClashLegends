@@ -13,6 +13,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_attack_target_lock()
 	_check_attack_direct_retarget()
 	_check_attack_hit_recovery_commitment()
+	_check_attack_tolerance_and_chase()
 	_check_first_attack_and_reentry_timing()
 	_check_basic_attack_has_no_knockback()
 	_check_freed_target_cleanup()
@@ -248,13 +249,13 @@ func _check_attack_direct_retarget() -> void:
 	chase_attacker.position = Vector2(360.0, 760.0)
 	chase_attacker.setup(0, attacker_stats, attacker_stats.name)
 	chase_target.setup(1, target_stats, target_stats.name)
-	var chase_distance := chase_attacker.body_radius + chase_target.body_radius + chase_attacker.attack_range + 20.0
+	var chase_distance := chase_attacker.body_radius + chase_target.body_radius + chase_attacker.attack_range + ArenaRules.ATTACK_RANGE_TOLERANCE + 1.0
 	chase_target.position = chase_attacker.position + Vector2.RIGHT * chase_distance
 	_main.add_child(chase_attacker)
 	_main.add_child(chase_target)
 	chase_attacker._target = chase_target
 	chase_attacker._attacking = true
-	chase_attacker.attack_timeline.windup = 0.2
+	chase_attacker.attack_timeline.windup = _main.SIM_DT
 	chase_attacker.sim_tick(_main.SIM_DT)
 	_expect(
 		chase_attacker._target == chase_target
@@ -327,16 +328,20 @@ func _check_attack_hit_recovery_commitment() -> void:
 	# 收招完成后才解除锁定，重新追向仍然存活的移动目标。
 	attacker.sim_tick(recovery_after_hit)
 	_expect(not attacker._attacking and attacker.attack_timeline.recovery <= 0.0 and not attacker._move_intent.is_zero_approx(), "完整播放后摇后才恢复追击")
-	# 尚未到命中节点就提前脱离射程，仍可取消前摇，避免整段攻击无条件锁定。
+	# 前摇期间即使超出宽限也先保留，命中节点才取消。
 	attacker._move_intent = Vector2.ZERO
 	attacker._target = target
 	attacker._attacking = true
+	target.position = attacker.position + Vector2.RIGHT * (attacker.body_radius + target.body_radius + attacker.attack_range + ArenaRules.ATTACK_RANGE_TOLERANCE + 1.0)
+	attacker.attack_timeline.cooldown = 0.0
 	attacker.attack_timeline.windup = _main.SIM_DT * 2.0
 	attacker.attack_timeline.recovery = 0.0
 	attacker._attack_visual_pending = false
 	var hp_before_cancel := target.hp
 	attacker.sim_tick(_main.SIM_DT)
-	_expect(is_equal_approx(target.hp, hp_before_cancel) and not attacker._attacking and not attacker._move_intent.is_zero_approx(), "目标在命中节点前脱离射程时仍会取消前摇并追击")
+	_expect(is_equal_approx(target.hp, hp_before_cancel) and attacker._attacking and attacker._move_intent.is_zero_approx(), "前摇期间越过宽限也不提前打断，等待命中节点")
+	attacker.sim_tick(_main.SIM_DT)
+	_expect(is_equal_approx(target.hp, hp_before_cancel) and not attacker._attacking and not attacker._move_intent.is_zero_approx() and attacker.attack_timeline.recovery == 0.0, "命中节点超出宽限：取消出手、不伤害、不读后摇并追击")
 	attacker.free()
 	target.free()
 
@@ -426,7 +431,15 @@ func _check_landing_body_push_retargets_attacker() -> void:
 	_main._sim_step(_main.SIM_DT)
 	_expect(overlap_deploy_allowed, "部署校验允许在塔前已有可移动单位下方落兵")
 	_expect(pushed_from_tower and no_fake_knockback, "大体积单位落地会通过体积/质量把塔前小单位挤开，不伪造击退状态")
-	_expect(enemy._target == defender, "攻塔单位被挤出射程后会解锁塔并改为攻击新落地单位")
+	_expect(enemy._target == tower and enemy._attacking, "落地推挤越出普通射程不提前取消已经开始的攻塔前摇")
+	# 在命中节点前让塔明确超出宽限；取消后才按现有规则转向近处防守者。
+	enemy.position = tower.position + Vector2.UP * (tower.body_radius + enemy.body_radius + enemy.attack_range + ArenaRules.ATTACK_RANGE_TOLERANCE + 1.0)
+	defender.position = enemy.position + Vector2.RIGHT * (enemy.body_radius + defender.body_radius + 5.0)
+	enemy.attack_timeline.windup = _main.SIM_DT
+	enemy.sim_tick(_main.SIM_DT)
+	_expect(not enemy._attacking and enemy.attack_timeline.recovery == 0.0, "攻塔命中节点超宽限才取消")
+	enemy.sim_tick(_main.SIM_DT)
+	_expect(enemy._target == defender, "攻塔前摇取消后重新索敌，改打近处防守者")
 	enemy.free()
 	defender.free()
 
@@ -516,12 +529,14 @@ func _check_sett_recovery_without_target() -> void:
 	_main.add_child(target)
 	sett._target = target
 	sett._attacking = true
+	sett._attack_hit_index = 2
 	sett.attack_timeline.recovery = 0.5
 	sett.attack_timeline.cooldown = 0.5
 	sett.sim_tick(_main.SIM_DT)
 	var no_target_moves_immediately := (
 		not sett._attacking
 		and is_zero_approx(sett.attack_timeline.recovery)
+		and is_zero_approx(sett.attack_timeline.cooldown)
 		and not sett._move_intent.is_zero_approx()
 	)
 
@@ -535,6 +550,7 @@ func _check_sett_recovery_without_target() -> void:
 	_main.add_child(held_target)
 	held_sett._target = held_target
 	held_sett._attacking = true
+	held_sett._attack_hit_index = 2
 	held_sett.attack_timeline.recovery = 0.5
 	held_sett.attack_timeline.cooldown = 0.5
 	held_sett.sim_tick(_main.SIM_DT)
@@ -544,6 +560,15 @@ func _check_sett_recovery_without_target() -> void:
 		and held_sett._move_intent.is_zero_approx()
 	)
 	_expect(no_target_moves_immediately and target_keeps_recovery, "腕豪没有下一次攻击目标时跳过 Into_Idle 立即移动，有目标时保留连招后摇")
+	# 第二拳转走后，目标重新进圈立即开始正常前摇，无旧冷却。
+	target.position = sett.position + Vector2.UP * 50.0
+	sett.sim_tick(_main.SIM_DT)
+	_expect(sett._attacking and is_equal_approx(sett.attack_timeline.windup, sett.first_hit_time - _main.SIM_DT), "腕豪第二拳垫步回来立即读正常前摇，不等待上次间隔")
+	held_sett._attack_hit_index = 1
+	held_sett.attack_timeline.recovery = 0.3
+	held_target.position = held_sett.position + Vector2.DOWN * 180.0
+	held_sett.sim_tick(_main.SIM_DT)
+	_expect(held_sett._attacking and held_sett.attack_timeline.recovery > 0.0 and held_sett._move_intent.is_zero_approx(), "腕豪第一拳后目标出圈仍完成后摇，提前转走只发生在双拳结束")
 	for unit in [sett, target, held_sett, held_target]:
 		unit.free()
 
@@ -580,7 +605,9 @@ func _check_first_attack_and_reentry_timing() -> void:
 		var first_starts := unit.get_attack_visual_serial() == 1 and unit._attack_swing_count == 0
 		# 首次前摇未出手就失去目标；重新进圈仍没有历史冷却。
 		dummy.position = Vector2(360, 300)
-		unit.sim_tick(0.05)
+		for tick in 40:
+			unit.sim_tick(0.05)
+			if not unit._attacking: break
 		dummy.position = Vector2(360, 760)
 		unit.sim_tick(0.05)
 		var retry_starts := unit.get_attack_visual_serial() == 2 and unit._attack_swing_count == 0
@@ -600,23 +627,6 @@ func _check_first_attack_and_reentry_timing() -> void:
 		unit.sim_tick(0.05)
 		var full_recovery_ready := unit.get_attack_visual_serial() > serial
 		_expect(first_starts and retry_starts and first_fired and full_recovery_ready, "%.1fx 攻速：首击、未出手取消后重试、完整后摇后短暂追击均立即开始前摇" % rate)
-		# 等这一击出手，再提前取消后摇并快速返回；不能缩短真实命中间隔。
-		for tick in 30:
-			if unit._attack_swing_count >= 2:
-				break
-			unit.sim_tick(0.05)
-		unit.cancel_attack_recovery_without_target = true
-		dummy.position = Vector2(360, 300)
-		unit.sim_tick(0.05)
-		dummy.position = Vector2(360, 760)
-		var elapsed := 0.05
-		for tick in 100:
-			unit.sim_tick(0.05)
-			elapsed += 0.05
-			if unit._attack_swing_count >= 3:
-				break
-		var gap: float = unit.attack_interval / rate
-		_expect(unit._attack_swing_count == 3 and elapsed + 0.0001 >= gap and elapsed <= gap + 0.1, "%.1fx 攻速：提前取消后摇并返回只等真实剩余冷却，连续出手间隔不缩短也不多等一轮" % rate)
 		unit.free()
 		dummy.free()
 
@@ -652,3 +662,49 @@ func _check_tower_competes_with_units() -> void:
 			_expect(attacker._target == tower, "已攻击塔时更近敌人不打断锁定")
 		attacker.free()
 		enemy.free()
+
+func _check_attack_tolerance_and_chase() -> void:
+	for card in ["aatrox", "ashe"]:
+		for extra in [0.0, ArenaRules.ATTACK_RANGE_TOLERANCE, ArenaRules.ATTACK_RANGE_TOLERANCE + 0.1]:
+			var stats := CardDB.get_card(card).duplicate(true)
+			stats["deploy_time"] = 0.0
+			stats["projectile_speed"] = 0.0
+			var unit := Unit.new()
+			var target := Unit.new()
+			unit.setup(0, stats, card)
+			target.setup(1, CardDB.training_dummy_stats(), "宽限靶")
+			_main.add_child(unit)
+			_main.add_child(target)
+			unit.position = Vector2(360, 850)
+			var radius := unit.body_radius + target.body_radius
+			target.position = unit.position + Vector2.UP * (radius + unit.attack_range + 1.0)
+			unit._target = target
+			unit.sim_tick(0.05)
+			_expect(not unit._attacking and unit._attack_swing_count == 0, card + " 宽限不能用于提前起手")
+			target.position = unit.position + Vector2.UP * (radius + unit.attack_range)
+			unit.sim_tick(0.05)
+			_expect(unit._attacking, card + " 正常射程边界允许起手")
+			target.position = unit.position + Vector2.UP * (radius + unit.attack_range + extra)
+			for tick in 30:
+				unit.sim_tick(0.05)
+				if unit._attack_swing_count > 0 or not unit._attacking: break
+			_expect((unit._attack_swing_count == 1) == (extra <= ArenaRules.ATTACK_RANGE_TOLERANCE), "%s 命中宽限边界 extra=%.1f" % [card, extra])
+			unit.free()
+			target.free()
+	# 用正式速度和0.4秒强化前摇验证追逃；盖伦保持直线推进。
+	for team in [0, 1]:
+		var forward := Vector2.UP if team == 0 else Vector2.DOWN
+		var runner: Unit = _main._spawn_unit(1 - team, "garen", Vector2(180, 800 if team == 0 else 480), 0)
+		var chaser: Unit = _main._spawn_unit(team, "aatrox", runner.position - forward * 118.0, 0)
+		runner.hp = 100000
+		chaser._attack_swing_count = 3
+		chaser._target = runner
+		var units: Array[Unit] = [runner, chaser]
+		for tick in 100:
+			chaser.sim_tick(0.05)
+			runner._move_intent = forward * runner.move_speed
+			_main._movement._apply_unit_movement(0.05, units)
+			if chaser._attack_hit_index > 0: break
+		_expect(chaser._attack_hit_index > 0 and runner.hp < 100000, "剑魔强化前摇追击盖伦可以命中，team=%d" % team)
+		chaser.free()
+		runner.free()

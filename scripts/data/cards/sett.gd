@@ -17,7 +17,7 @@ static func definition() -> Dictionary:
 			"attack_pattern": [BASE_ATTACK_INTERVAL * 0.6, BASE_ATTACK_INTERVAL * 1.4, BASE_ATTACK_INTERVAL * 0.6, BASE_ATTACK_INTERVAL * 1.4],
 			"attack_damage_multipliers": [1.0, 1.5, 1.0, 1.5],  # 左拳基础伤害，右拳为左拳的1.5倍
 			# 两拳结束后没有下一次可攻击目标时立即追击，不播放被动段 Into_Idle 收势。
-			"cancel_attack_recovery_without_target": true,
+			"attack_recovery_cancel_every_hits": 2,
 			# 豪意为通用技能资源：受实际生命伤害按 1:1、每次挥拳按固定值积攒；脱战后延迟衰减。
 			"skill_resource_max": 200.0, "skill_resource_attack_gain": 20.0, "skill_resource_damage_gain_multiplier": 1.0,
 			"skill_resource_decay_delay": 1.0, "skill_resource_decay_rate": 100.0,
