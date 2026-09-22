@@ -99,8 +99,6 @@ func defer_death(unit: Unit, trigger: bool) -> void:
 
 func submit_damage(target: Node2D, amount: float, source: Node2D, team: int, position: Vector2) -> Dictionary:
 	var accepted: bool = is_instance_valid(target) and not target.is_queued_for_deletion() and target.hp > 0.0
-	if accepted and target is Unit:
-		accepted = not target._is_shroud_blocked(source, team, position)
 	var result := {"accepted": accepted, "landed": false, "damage": BattleNumbers.quantity(amount), "health_lost": 0.0, "shield_absorbed": 0.0, "overkill": 0.0}
 	if accepted:
 		_hits.append({"target": target, "source": source, "result": result})

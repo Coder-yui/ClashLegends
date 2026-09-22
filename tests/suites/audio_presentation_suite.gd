@@ -66,7 +66,7 @@ func run(harness: Object, main: Node2D) -> void:
 	unit.stun(1.0)
 	audio._process(0.0)
 	var follows_and_pauses := sustained != null and sustained.global_position.is_equal_approx(unit.get_visual_screen_position()) and not sustained.stream_paused
-	unit.control.stun_timer = 0.0
+	SuiteUtils.set_control_window(unit.control, &"stun", 0.0)
 	audio._process(0.0)
 	harness._expect(follows_and_pauses and not sustained.stream_paused and cues.count(&"judgment:sustain") == 1, "审判空转有独立持续音，跟随角色、眩晕正常推进且重复帧不重启")
 	unit._visual_action_time_left = 0.0
@@ -125,9 +125,9 @@ func run(harness: Object, main: Node2D) -> void:
 	yi_cues.clear()
 	yi._attack_visual_serial = 1
 	audio._process(0.0)
-	yi.active_buff_timer = 5.0
+	SuiteUtils.set_buff_window(yi, 5.0)
 	audio._process(0.0)
-	yi.active_buff_timer = 0.0
+	SuiteUtils.set_buff_window(yi, 0.0)
 	audio._process(0.0)
 	harness._expect(
 		yi_cues == [&"attack_swing", &"active_buff:start", &"active_buff:sustain", &"active_buff:end"]
@@ -152,10 +152,10 @@ func run(harness: Object, main: Node2D) -> void:
 	mf_cues.clear()
 	mf._attack_visual_serial = 1
 	audio._process(0.0)
-	mf.active_buff_timer = 3.0
+	SuiteUtils.set_buff_window(mf, 3.0)
 	audio._process(0.0)
 	var mf_sustain: AudioStreamPlayer2D = audio._sustain_players.get(audio._sustain_key(mf.get_instance_id(), &"buff"))
-	mf.active_buff_timer = 0.0
+	SuiteUtils.set_buff_window(mf, 0.0)
 	audio._process(0.0)
 	harness._expect(
 		mf_cues == [&"attack_swing", &"active_buff:start", &"active_buff:sustain", &"active_buff:end"]
@@ -332,14 +332,14 @@ func _check_batch_audio(harness: Object, main: Node2D) -> void:
 	harness._expect(player != null and cues == [&"continuous_attack:start", &"continuous_attack:release", &"continuous_attack:sustain"], "龙王 Q 吐息随快照开始一次，不调用 LoL 普攻池")
 	await main.get_tree().physics_frame
 	await main.get_tree().process_frame
-	dragon.control.frozen_timer = 1.0
+	SuiteUtils.set_control_window(dragon.control, &"freeze", 1.0)
 	dragon.apply_action_cancellation({"serial": 1, "reason": "freeze", "attack": 0, "action": 0, "form": 0})
 	audio._process(0.0)
 	harness._expect(not audio._sustain_players.has(key), "吐息被冰冻后停止旧持续播放器")
 	audio.set_battle_paused(true)
 	audio.set_battle_paused(false)
 	harness._expect(not audio._sustain_players.has(key), "全局暂停恢复不能复活已取消吐息")
-	dragon.control.frozen_timer = 0.0
+	SuiteUtils.set_control_window(dragon.control, &"freeze", 0.0)
 	dragon.net_attack_visual_serial = 1
 	audio._process(0.0)
 	player = audio._sustain_players.get(key)
@@ -471,7 +471,7 @@ func _check_audited_audio(harness: Object, main: Node2D) -> void:
 	unit.attack_timeline.visual_elapsed = 0.61
 	audio._process(0.0)
 	var paused := cues.is_empty()
-	unit.control.frozen_timer = 0.0
+	SuiteUtils.set_control_window(unit.control, &"freeze", 0.0)
 	audio._process(0.0)
 	var no_resume := cues.is_empty()
 	unit._attacking = true
@@ -498,23 +498,6 @@ func _check_audited_audio(harness: Object, main: Node2D) -> void:
 	audio._tick_preview_hits(0.5)
 	harness._expect(preview_launch and cues.back() == "attack_hit", "远程普攻试听包含真实对应发射池，按示例飞行时间加入命中而不等待音频结束")
 	cues.clear()
-	var gwen := Unit.new()
-	var gwen_stats := CardDB.get_card("gwen")
-	gwen.card_id = "gwen"
-	gwen.setup(0, gwen_stats, gwen_stats.name)
-	main.add_child(gwen)
-	audio.attach_unit(gwen, gwen_stats)
-	cues.clear() # 本段只检查后续缠流状态，部署声音已独立验证。
-	gwen._shroud_active = true
-	audio._process(0.0)
-	audio._process(0.0)
-	var key := audio._sustain_key(gwen.get_instance_id(), &"shroud")
-	var silent := cues.is_empty() and not audio._sustain_players.has(key)
-	gwen._shroud_active = false
-	audio._process(0.0)
-	audio._detach_unit(gwen.get_instance_id())
-	harness._expect(silent and cues.is_empty(), "格温移除缠流音频，即使旧状态出现也不发声")
-	gwen.free()
 	audio.cue_played.disconnect(listener)
 	var lifecycle: Array = []
 	var on_lifecycle := func(card, cue, _pos):
@@ -678,10 +661,10 @@ func _check_apex_audio_timing(harness: Object, main: Node2D) -> void:
 	harness._expect(audio._sustain_players.get(idle_key) == idle_player and cues.count(&"idle:sustain") == 1, "引擎片段播完续播，不重复触发事件")
 	await main.get_tree().physics_frame
 	await main.get_tree().process_frame
-	source.control.frozen_timer = 1.0
+	SuiteUtils.set_control_window(source.control, &"freeze", 1.0)
 	audio._process(0.0)
 	harness._expect(not idle_player.stream_paused, "冻结不暂停独立待机引擎")
-	source.control.frozen_timer = 0.0
+	SuiteUtils.set_control_window(source.control, &"freeze", 0.0)
 	source._attacking = true
 	audio._process(0.0)
 	harness._expect(not audio._sustain_players.has(idle_key), "进入普攻停止待机引擎")
@@ -707,8 +690,8 @@ func _check_apex_audio_timing(harness: Object, main: Node2D) -> void:
 	main._commands.tick_impacts(0.40)
 	source.freeze(1.0)
 	main._commands.tick_impacts(0.5)
-	harness._expect(cues == [&"laser:sustain"] and victim.hp == hp_before and main._commands.impacts.is_empty(), "激光出膛前冻结取消发射与伤害排程")
-	source.control.frozen_timer = 0.0
+	harness._expect(cues == [&"laser:sustain"] and victim.hp == hp_before and main._commands.inspect_impacts().is_empty(), "激光出膛前冻结取消发射与伤害排程")
+	SuiteUtils.set_control_window(source.control, &"freeze", 0.0)
 	main._commands.tick_impacts(0.05)
 	harness._expect(victim.hp == hp_before and main._projectile_system.projectiles.is_empty(), "解冻不迟发已取消激光")
 	cues.clear()
@@ -943,7 +926,7 @@ func _check_tombstone_active_cast(harness: Object, main: Node2D) -> void:
 	skill["impact_delay"] = 999.0
 	var started: bool = main._start_active_skill_cast(unit, skill)
 	var ok: bool = started and cues == [&"active:cast"]
-	main._commands.impacts.clear()
+	main._commands.clear_impacts()
 	audio.cue_played.disconnect(listener)
 	audio._detach_unit(unit.get_instance_id())
 	unit.free()
@@ -1163,5 +1146,5 @@ func _check_independent_creation_audio(harness: Object, main: Node2D) -> void:
 		harness._expect(not flights.is_empty() and flights.all(func(player): return player.playing and player.get_meta("action_owner", {}).is_empty()), "普通与满层星辰的已创建飞出声不随来源冻结或销毁停止")
 		for player in flights: player.stop()
 		audio.cue_played.disconnect(callback)
-		main._commands.impacts.clear()
+		main._commands.clear_impacts()
 		main._active_skill_effect_system.clear()

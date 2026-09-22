@@ -22,12 +22,12 @@ func _check_artdev_active_skill_timeline() -> void:
 		"shield_duration": 2.0,
 		"cast_locks": ["movement", "attack", "facing"],
 	}
-	var pending_before: int = _main._commands.impacts.size()
+	var pending_before: int = _main._commands.inspect_impacts().size()
 	var previewed: bool = _main.preview_active_skill(source, skill)
 	var command_buffer_skipped: bool = (
 		previewed
-		and _main._commands.skill_commands.is_empty()
-		and _main._commands.impacts.size() == pending_before + 1
+		and _main._commands.inspect_skills().is_empty()
+		and _main._commands.inspect_impacts().size() == pending_before + 1
 		and source.active_skill_cast_timer > 0.0
 		and is_zero_approx(source.shield_hp)
 	)
@@ -42,10 +42,10 @@ func _check_artdev_active_skill_timeline() -> void:
 
 func _check_artdev_workbench() -> void:
 	var old_panel: DevelopmentWorkbench = _main._art_dev_panel
-	var old_selection: String = _main._art_dev_selection
-	var old_team: int = _main._art_dev_team
-	var old_last_units: Dictionary = _main._art_dev_last_units.duplicate()
-	var old_choices: Dictionary = _main._art_dev_active_skill_choices.duplicate(true)
+	var old_selection: String = _main._workbench.selection
+	var old_team: int = _main._workbench.team
+	var old_last_units: Dictionary = _main._workbench.last_units.duplicate()
+	var old_choices: Dictionary = _main._workbench.skill_choices.duplicate(true)
 	var panel := DevelopmentWorkbench.new()
 	_main.add_child(panel)
 	panel.setup(CardDB.all())
@@ -97,19 +97,19 @@ func _check_artdev_workbench() -> void:
 	_expect(catalog_ok, "工作台列出盖伦和格温的全部部署变体并保留 Voice 总线和音量")
 	panel._select_item("garen")
 	_expect(audio_started and audio_stopped and formal_audio_only, "工作台试听切页清理，法术显示正式音频且不混入未接候选")
-	var old_dev_mode: bool = _main._art_dev_mode
+	var old_dev_mode: bool = _main._workbench.enabled
 	var original_zones: int = _main._spell_system.slow_zones.size()
-	_main._art_dev_mode = true
+	_main._workbench.enabled = true
 	_main.play_card(0, "freeze", Vector2.ZERO, {"immediate": true, "validate_position": false, "preview_active_spell": true})
 	var enhanced_preview: bool = _main._spell_system.slow_zones.size() == original_zones + 1
-	_main._art_dev_mode = false
+	_main._workbench.enabled = false
 	_main.play_card(0, "freeze", Vector2.ZERO, {"immediate": true, "validate_position": false, "preview_active_spell": true})
 	_expect(enhanced_preview and _main._spell_system.slow_zones.size() == original_zones + 1, "工作台强化法术仍经统一出牌链，正式对战不接受开发强化开关")
 	_main._spell_system.slow_zones.pop_back()
 	_main._spell_system.slow_effects.pop_back()
 	_main._spell_system.freeze_effects.pop_back()
 	_main._spell_system.freeze_effects.pop_back()
-	_main._art_dev_mode = old_dev_mode
+	_main._workbench.enabled = old_dev_mode
 
 	panel._select_item("gnar")
 	panel._form = 1
@@ -122,7 +122,7 @@ func _check_artdev_workbench() -> void:
 	var skill_switch_ok := (
 		panel._skill_option.item_count == 2
 		and panel.selected_skill_index() == 1
-		and int(_main._art_dev_active_skill_choices.get("garen", -1)) == 1
+		and int(_main._workbench.skill_choices.get("garen", -1)) == 1
 	)
 	_expect(skill_switch_ok, "ArtDev 可在同一英雄的多个主动技能候选之间切换")
 
@@ -134,7 +134,7 @@ func _check_artdev_workbench() -> void:
 	gwen.setup(0, gwen_stats, gwen_stats.name)
 	gwen.card_id = "gwen"
 	_main.add_child(gwen)
-	_main._art_dev_last_units[_main._art_dev_unit_key("gwen", 0)] = weakref(gwen)
+	_main._workbench.last_units[_main._art_dev_unit_key("gwen", 0)] = weakref(gwen)
 	panel._on_team_toggled(false)
 	_main._configure_art_dev_unit_skill(gwen)
 	gwen.add_skill_resource(2.0)
@@ -166,7 +166,7 @@ func _check_artdev_workbench() -> void:
 	sett.setup(0, sett_stats, sett_stats.name)
 	sett.card_id = "sett"
 	_main.add_child(sett)
-	_main._art_dev_last_units[_main._art_dev_unit_key("sett", 0)] = weakref(sett)
+	_main._workbench.last_units[_main._art_dev_unit_key("sett", 0)] = weakref(sett)
 	_main._configure_art_dev_unit_skill(sett)
 	_main._sync_art_dev_panel_state()
 	panel._request_resource_value(125.0)
@@ -178,15 +178,15 @@ func _check_artdev_workbench() -> void:
 	)
 	_expect(sett_resource_visible, "ArtDev 腕豪显示 0–200 连续豪意条并允许直接调整测试值")
 
-	_main._commands.impacts.clear()
+	_main._commands.clear_impacts()
 	_main._active_skill_effect_system.clear()
 	if is_instance_valid(gwen):
 		gwen.free()
 	if is_instance_valid(sett):
 		sett.free()
 	_main._art_dev_panel = old_panel
-	_main._art_dev_selection = old_selection
-	_main._art_dev_team = old_team
-	_main._art_dev_last_units = old_last_units
-	_main._art_dev_active_skill_choices = old_choices
+	_main._workbench.selection = old_selection
+	_main._workbench.team = old_team
+	_main._workbench.last_units = old_last_units
+	_main._workbench.skill_choices = old_choices
 	panel.free()

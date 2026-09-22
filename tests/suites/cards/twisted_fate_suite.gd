@@ -83,7 +83,7 @@ func _check_global_ground_deployment() -> void:
 	)
 
 func _check_two_stage_deployment() -> void:
-	_main._commands.pre_deployments.clear()
+	_main._commands.clear_deployments()
 	var desired := Vector2(60.0, 100.0)
 	var before_count := 0
 	for combatant in _main.get_tree().get_nodes_in_group("combatants"):
@@ -97,7 +97,7 @@ func _check_two_stage_deployment() -> void:
 	_main.play_card(0, "twisted_fate", desired, {"immediate": true, "validate_position": false})
 	_main._play_card_event(_main._presentation_event_id, "twisted_fate", "pre_deploy:start", desired)
 	_expect(cues.size() == 1, "预部署开始播放一次 Gate_marker，重复可靠事件 ID 不重播")
-	var scheduled: bool = _main._commands.pre_deployments.size() == 1
+	var scheduled: bool = _main._commands.inspect_deployments().size() == 1
 	var no_unit_during_pre_stage := true
 	for combatant in _main.get_tree().get_nodes_in_group("combatants"):
 		if combatant is Unit and (combatant as Unit).card_id == "twisted_fate":
@@ -105,11 +105,11 @@ func _check_two_stage_deployment() -> void:
 	_expect(scheduled and no_unit_during_pre_stage and before_count == 0, "1.3 秒预部署只显示卡牌落点提示，不生成卡牌大师")
 	for _tick in range(25):
 		_main._sim_step(_main.SIM_DT)
-	var still_waiting: bool = _main._commands.pre_deployments.size() == 1
+	var still_waiting: bool = _main._commands.inspect_deployments().size() == 1
 	var unit_before_second_stage: bool = _latest_twisted_fate() == null
 	_main._sim_step(_main.SIM_DT)
 	var unit := _latest_twisted_fate()
-	var spawned_after_pre_deploy: bool = unit != null and _main._commands.pre_deployments.is_empty()
+	var spawned_after_pre_deploy: bool = unit != null and _main._commands.inspect_deployments().is_empty()
 	var unit_locked: bool = unit != null and not unit.is_deployed() and is_equal_approx(unit._deploy_timer, 0.45)
 	for _tick in range(8):
 		_main._sim_step(_main.SIM_DT)
@@ -125,7 +125,7 @@ func _check_two_stage_deployment() -> void:
 	_main._audio_manager.cue_played.disconnect(listener)
 	if unit != null and is_instance_valid(unit):
 		unit.free()
-	_main._commands.pre_deployments.clear()
+	_main._commands.clear_deployments()
 
 func _latest_twisted_fate() -> Unit:
 	var latest: Unit = null

@@ -112,7 +112,7 @@ func freeze(duration: float, source: StringName = &"legacy") -> void:
 	if battle_context != null and battle_context.damage_batch().collecting:
 		battle_context.damage_batch().defer_effect(func(): freeze(duration, source))
 		return
-	if control.refresh_freeze(duration, false, source):
+	if control.refresh_freeze(duration, source):
 		_target = null
 		_lock_windup = 0.0
 		_cooldown = 0.0
@@ -123,7 +123,7 @@ func stun(duration: float, source: StringName = &"legacy") -> void:
 	if battle_context != null and battle_context.damage_batch().collecting:
 		battle_context.damage_batch().defer_effect(func(): stun(duration, source))
 		return
-	if control.refresh_stun(duration, false, source):
+	if control.refresh_stun(duration, source):
 		_target = null
 		_lock_windup = 0.0
 		_cooldown = 0.0
@@ -181,9 +181,6 @@ func _target_is_valid(target) -> bool:
 	if not target is Unit or target.team == team:
 		return false
 	var unit := target as Unit
-	# 丝缕缠流：目标开启且塔在圈外 → 看不到它，解锁目标。
-	if unit.is_hidden_from(self):
-		return false
 	return _target_gap(unit) <= attack_range
 
 func _target_gap(target: Node2D) -> float:
@@ -201,9 +198,6 @@ func _find_enemy_in_range() -> Node2D:
 		if not c is Unit or c.team == team or c.hp <= 0.0:
 			continue
 		var unit := c as Unit
-		# 丝缕缠流：目标开启且塔在圈外 → 看不到它，不锁定。
-		if unit.is_hidden_from(self):
-			continue
 		var gap := _target_gap(unit)
 		if gap <= attack_range and gap < best_gap:
 			best_gap = gap

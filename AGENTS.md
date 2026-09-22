@@ -4,7 +4,7 @@ Clash Legends 是 Godot 4.x 标准版（GDScript）的 1v1 卡牌即时对战学
 
 ## 开始与验证
 
-1. 先读 `docs/AGENT_WORKFLOW.md`，按任务类型继续读专项文档；不要默认通读全部美术教程。
+1. 先读 `docs/AGENT_WORKFLOW.md`，按任务类型选择最少当前专项资料；历史归档和交付仅在追溯或用户指定时定向读取，问题档案按具体任务读取。
 2. 先看 `git status --short --branch`，不得覆盖用户已有修改。
 3. F5 运行 `scenes/main.tscn`；内容审查进入“卡牌开发工作台”，用法见 `docs/DEVELOPMENT_WORKBENCH.md`。
 4. 核心回归：`Godot --headless --path . --script tests/mechanics_check.gd`。

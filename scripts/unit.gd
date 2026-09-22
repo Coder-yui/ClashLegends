@@ -138,8 +138,6 @@ var structure_rush := StructureRushState.new()
 var charge_time := 0.0
 var charge_speed_multiplier := 1.0
 var charge_damage_multiplier := 1.0
-# 丝缕缠流：开启后，离开自身 shroud_radius（px）的敌方看不到她、不会把她当目标，攻击对其无效；0 表示未启用。
-var shroud_radius := 0.0
 ## 连招攻击节奏：每次命中后到下一次命中的间隔（秒），按数组循环；空数组表示每个周期间隔固定为 attack_interval。
 ## 例如 [0.28, 1.05, 0.28, 1.05] 表示快速两拳后停顿、再快速两拳后停顿。
 var attack_pattern: Array = []
@@ -206,9 +204,6 @@ var shield_timer: float:
 var buffs := StatusInstances.new()
 var active_buff_timer: float:
 	get: return buffs.remaining(&"buff")
-	set(value):
-		buffs.clear_family(&"buff")
-		buffs.apply(&"buff", &"fixture", value, {})
 var active_speed_multiplier: float:
 	get: return buffs.strongest(&"buff", &"speed", 1.0)
 var active_damage_multiplier: float:
@@ -299,8 +294,11 @@ var _move_intent := Vector2.ZERO
 var _move_direction := Vector2.ZERO
 var _avoidance_turn := 0.0
 var _forced_movement := false
-var _knockback_velocity := Vector2.ZERO
-var _knockback_timer := 0.0
+var forced_movement := ForcedMovementState.new()
+var _knockback_velocity: Vector2:
+	get: return forced_movement.velocity
+var _knockback_timer: float:
+	get: return forced_movement.remaining
 var _charge_timer := 0.0
 var _charged := false
 var _skill_resource_combat_timer := 0.0
@@ -308,7 +306,6 @@ var _just_deployed := false
 var net_visual_state := 1
 var net_attack_visual_serial := 0
 var net_attack_visual_first_strike := false
-var net_shroud_active := false
 var net_shield_ratio := 0.0
 var net_shield_capacity_ratio := 0.0
 var net_slow_active := false
@@ -334,7 +331,6 @@ var net_has_continuous_target := false
 var net_continuous_target_pos := Vector2.ZERO
 ## 仅由表现代理切换：进入吐息循环后显示，进入动画和退出攻击时隐藏。
 var continuous_beam_visible := false
-var _shroud_active := false
 var _visual_action_serial := 0
 var _visual_action_name := &""
 var _visual_action_duration := 0.0
@@ -422,7 +418,6 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	charge_time = stats.get("charge_time", 0.0)
 	charge_speed_multiplier = stats.get("charge_speed_multiplier", 1.0)
 	charge_damage_multiplier = stats.get("charge_damage_multiplier", 1.0)
-	shroud_radius = stats.get("shroud_radius", 0.0)
 	attack_pattern = stats.get("attack_pattern", [])
 	attack_damage_multipliers = stats.get("attack_damage_multipliers", [])
 	first_strike_damage_multiplier = maxf(float(stats.get("first_strike_damage_multiplier", 1.0)), 0.0)
@@ -1102,7 +1097,6 @@ func _cancel_attack_and_chase(dt: float) -> void:
 	_continuous_visual_target_id = 0
 	attack_timeline.cancel(true)
 	_attack_visual_pending = true
-	_shroud_active = false
 	if not is_active_skill_movement_locked():
 		_chase(dt)
 
@@ -1192,16 +1186,12 @@ func apply_knockback(origin: Vector2, distance: float, duration: float = 0.2, ma
 	if direction.length_squared() < 0.001:
 		direction = Vector2.DOWN if team == 0 else Vector2.UP
 	var mass_factor := clampf(4.0 / maxf(mass, 1.0), 0.35, maxf(mass_factor_max, 0.35))
-	_knockback_timer = maxf(duration, SIM_DT)
-	_knockback_velocity = direction * distance * mass_factor / _knockback_timer
+	forced_movement.replace(direction, distance * mass_factor, duration)
 	cancel_basic_attack(&"knockback")
-	_shroud_active = false
 
 func _tick_knockback_movement(dt: float) -> void:
 	# 最后一 Tick 只结算剩余时长，避免浮点余量让 0.25s 击退多走一个完整 20Hz Tick。
-	var movement_time := minf(_knockback_timer, dt)
-	_knockback_timer = maxf(0.0, _knockback_timer - dt)
-	_move_intent = _knockback_velocity * movement_time / maxf(dt, 0.0001)
+	_move_intent = forced_movement.advance(dt)
 	_forced_movement = true
 
 func _target_gap(target: Node2D) -> float:
@@ -1340,7 +1330,6 @@ func _update_target(keep_windup_target: bool = false) -> void:
 		_target = null
 		_attacking = false
 		attack_timeline.cancel()
-		_shroud_active = false
 		_path = PackedVector2Array()
 		_path_index = 0
 	# Godot 的已释放对象引用不等同于普通 null，任何 `is Type` 判断前都必须先清理。
@@ -1348,7 +1337,6 @@ func _update_target(keep_windup_target: bool = false) -> void:
 		_target = null
 		_attacking = false
 		attack_timeline.cancel()
-		_shroud_active = false
 		_path = PackedVector2Array()
 		_path_index = 0
 	if _target != null:
@@ -1359,15 +1347,12 @@ func _update_target(keep_windup_target: bool = false) -> void:
 			drop = true
 		elif not can_attack_air and _target is Unit and (_target as Unit).is_air:
 			drop = true
-		elif _target is Unit and (_target as Unit).is_hidden_from(self):
-			drop = true
 		elif not _target is Tower and _target_gap(_target) > sight_range:
 			drop = true
 		if drop:
 			_target = null
 			_attacking = false
 			attack_timeline.cancel()
-			_shroud_active = false
 			_path = PackedVector2Array()
 			_path_index = 0
 	# 非攻击状态：视野内所有合法战斗对象统一按表面距离排序。
@@ -1394,12 +1379,9 @@ func _target_is_attackable(target) -> bool:
 		return false
 	if not can_attack_air and target is Unit and (target as Unit).is_air:
 		return false
-	# 丝缕缠流：目标开启且我方在圈外 → 视为无法看到，不锁定。
-	if target is Unit and (target as Unit).is_hidden_from(self):
-		return false
 	return true
 
-## 攻击态无缝换目标专用：只限定距离，所有 team/hp/攻城/空中/隐身规则统一复用
+## 攻击态无缝换目标专用：只限定距离，所有 team/hp/攻城/空中规则统一复用
 ## _target_is_attackable()，避免与常规索敌逐渐形成两套合法性判断。
 func _find_nearest_attackable_in_range() -> Node2D:
 	var best: Node2D = null
@@ -1584,7 +1566,6 @@ func _recompute_path_to(goal: Vector2) -> void:
 func _attack(dt: float) -> void:
 	if _target == null or not is_instance_valid(_target):
 		_attacking = false
-		_shroud_active = false
 		return
 	if attack_timeline.windup > 0.0:
 		_try_start_attack_visual(maxf(attack_timeline.windup - dt, 0.0))
@@ -1827,7 +1808,7 @@ func _tick_pending_extra_attacks(dt: float) -> void:
 			_attack_swing_count = maxi(_attack_swing_count - 1, 0)
 	_pending_extra_attacks.assign(waiting)
 
-## 主机在伤害真正落到目标后调用。格温由此精确地在首次普攻命中而非出手时开启缠流；
+## 主机在伤害真正落到目标后调用，统一提交命中资源、形态计数与存活收益；
 ## 赵信等配置了命中回血的单位也在这里结算，未真正造成伤害的挥击不触发回复。
 func on_attack_landed(attack_form_index: int = -1, landed_damage: float = 0.0, submitted_swing: int = -1, source_generation: int = -1) -> void:
 	# 远程弹体可以在攻击者死亡后抵达；此时只保留已经结算给目标的伤害，
@@ -1848,9 +1829,6 @@ func on_attack_landed(attack_form_index: int = -1, landed_damage: float = 0.0, s
 		if transform_hit_count >= revert_after_hits:
 			if is_frozen(): pending_form_generation = form_change_serial
 			else: transform_to_small()
-	if shroud_radius > 0.0 and not _shroud_active:
-		_shroud_active = true
-		queue_redraw()
 	add_skill_resource(skill_resource_hit_gain)
 	_try_heal_on_hit(submitted_swing)
 	var cycle_ratio := 0.0
@@ -1976,7 +1954,7 @@ func freeze(duration: float, source: StringName = &"legacy") -> void:
 func _receive_freeze(duration: float, source: StringName) -> void:
 	if hp <= 0.0: return
 	get_visual_facing_direction()
-	if control.refresh_freeze(duration, true, source):
+	if control.refresh_freeze(duration, source):
 		cancel_basic_attack(&"freeze")
 		cancel_skill_cast()
 	if duration > 0.0: structure_rush.interrupt_preparation(self)
@@ -1992,7 +1970,7 @@ func stun(duration: float, source: StringName = &"legacy") -> void:
 func _receive_stun(duration: float, source: StringName) -> void:
 	if hp <= 0.0: return
 	get_visual_facing_direction()
-	if control.refresh_stun(duration, true, source):
+	if control.refresh_stun(duration, source):
 		cancel_basic_attack(&"stun")
 	if duration > 0.0: structure_rush.interrupt_preparation(self)
 	queue_redraw()
@@ -2120,8 +2098,6 @@ func take_damage(amount: float, from: Node2D = null, source_team: int = -1, sour
 		return bool(battle_context.damage_batch().submit_damage(self, amount, from, source_team, source_position).accepted)
 	if hp <= 0.0:
 		return false
-	if _is_shroud_blocked(from, source_team, source_position):
-		return false
 	if amount > 0.0:
 		mark_skill_resource_combat_activity()
 	var remaining_damage := BattleNumbers.quantity(maxf(amount, 0.0))
@@ -2144,38 +2120,6 @@ func take_damage(amount: float, from: Node2D = null, source_team: int = -1, sour
 ## 只触发表现，不参与血量或硬直；主机通过可靠 RPC 在客户端重放同一次闪白。
 func notify_visual_hit() -> void:
 	visual_hit.emit()
-
-## 丝缕缠流：开启后，距离 viewer 超过 shroud_radius 的敌方看到她但无法锁定/命中，
-## 视她为不存在。用于敌方索敌时跳过格温，让其照常做自己的事。
-## viewer 为试图攻击/索敌的敌方（单位或塔），距离按两中心点计算。
-func is_hidden_from(viewer: Node2D) -> bool:
-	if viewer == null or not is_instance_valid(viewer):
-		return false
-	return is_hidden_from_position(viewer.team, viewer.global_position)
-
-## 弹体保留攻击者最后的有效位置；即使攻击者在飞行途中死亡，也能正确判断圈外攻击。
-func is_hidden_from_position(viewer_team: int, viewer_position: Vector2) -> bool:
-	if not _shroud_active or shroud_radius <= 0.0 or viewer_team == team:
-		return false
-	return global_position.distance_to(viewer_position) > shroud_radius
-
-## 丝缕缠流：开启后，伤害来源离开自身 shroud_radius 时整次伤害失效。
-## from 由 main 在近战/弹道命中时透传攻击者（单位或塔），仅主机结算。
-## main 会优先让在途弹体消散；这里继续兜底同一 tick 的竞态或其他直接伤害入口，
-## 确保圈外伤害和击退都不能穿透，而敌方能看见的圈内攻击仍正常生效。
-func _is_shroud_blocked(from: Node2D, source_team: int = -1, source_position: Vector2 = Vector2(INF, INF)) -> bool:
-	if not _shroud_active or shroud_radius <= 0.0:
-		return false
-	var resolved_team := source_team
-	var resolved_position := source_position
-	if from != null and is_instance_valid(from):
-		resolved_team = from.team
-		resolved_position = from.global_position
-	if resolved_team < 0 or resolved_position.x == INF or resolved_position.y == INF:
-		return false
-	if resolved_team == team:
-		return false
-	return global_position.distance_to(resolved_position) > shroud_radius
 
 ## 供 main 的推挤逻辑调用：该位置对当前单位是否可行走
 func is_walkable_at(pos: Vector2) -> bool:
@@ -2311,10 +2255,7 @@ func _draw() -> void:
 	draw_set_transform(_vis_offset, 0.0, Vector2.ONE)
 	if restoration_fx_timer > 0.0 and hp > 0.0:
 		preload("res://scripts/presentation/restoration_heal_effect.gd").draw_effect(self, 1.0 - restoration_fx_timer / 0.9)
-	var shroud_visible := net_shroud_active if _in_client_mode() else _shroud_active
-	if shroud_visible and shroud_radius > 0.0:
-		draw_circle(Vector2.ZERO, shroud_radius, Color(0.34, 0.76, 0.92, 0.08))
-		draw_arc(Vector2.ZERO, shroud_radius, 0.0, TAU, 72, Color(0.55, 0.88, 1.0, 0.58), 2.0, true)
+
 	if continuous_beam_visible and has_continuous_visual_target():
 		_draw_continuous_beam()
 	if is_building and not has_model_art:

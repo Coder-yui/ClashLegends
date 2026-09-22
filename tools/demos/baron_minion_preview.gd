@@ -35,8 +35,8 @@ func _run() -> void:
 	await create_timer(0.8).timeout
 	await _capture("03_sustain")
 	for unit in _units:
-		_main._art_dev_selection = "training_dummy"
-		_main._art_dev_team = 1 - unit.team
+		_main._workbench.selection = "training_dummy"
+		_main._workbench.team = 1 - unit.team
 		_main._place_art_dev_item(unit.global_position + Vector2(0, -70 if unit.team == 0 else 70))
 		unit.move_speed = 60.0
 	await create_timer(0.45).timeout

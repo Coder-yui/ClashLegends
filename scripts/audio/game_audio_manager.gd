@@ -145,7 +145,6 @@ func attach_unit(unit: Unit, stats: Dictionary) -> void:
 		"form": unit.get_form_index(),
 		"last_attack_serial": unit.get_attack_visual_serial(),
 		"last_swing_serial": unit.get_attack_visual_serial(),
-		"shroud_active": false,
 		"resource_full": unit.is_skill_resource_visible() and unit.get_skill_resource_ratio() >= 0.999,
 		"last_empowered_serial": unit.get_empowered_attack_visual_serial(),
 		"empowered_ready": unit.is_empowered_attack_ready_visual(),
@@ -348,16 +347,7 @@ func _tick_attached_units() -> void:
 		if full and not bool(entry.resource_full):
 			play_event(unit, &"resource_full", unit.get_visual_screen_position())
 		entry.resource_full = full
-		var shroud := state.shroud_active
-		shroud = shroud and not state.dead
-		if shroud and not bool(entry.shroud_active):
-			play_event(unit, &"shroud:start", unit.get_visual_screen_position())
-			_start_sustain(unit, entry, &"shroud", &"shroud")
-		elif not shroud and bool(entry.shroud_active):
-			_stop_sustain(instance_id, &"shroud")
-			play_event(unit, &"shroud:end", unit.get_visual_screen_position())
-		entry.shroud_active = shroud
-		for layer in [&"action", &"buff", &"attack", &"shroud", &"revival", &"idle"]:
+		for layer in [&"action", &"buff", &"attack", &"revival", &"idle"]:
 			var sustained: AudioStreamPlayer2D = _sustain_players.get(_sustain_key(instance_id, layer))
 			if sustained != null:
 				sustained.global_position = unit.get_visual_screen_position()
@@ -377,7 +367,7 @@ func _start_sustain(unit: Unit, entry: Dictionary, action: StringName, layer: St
 	if event.is_empty():
 		return
 	_stop_sustain(unit.get_instance_id(), layer)
-	var priority := 0 if layer == &"idle" else (1 if layer in [&"attack", &"shroud"] else 2)
+	var priority := 0 if layer == &"idle" else (1 if layer in [&"attack"] else 2)
 	if _sustain_players.size() >= SUSTAIN_PLAYER_COUNT:
 		var victim: String = _sustain_players.keys()[0]
 		for candidate in _sustain_players:
@@ -406,7 +396,7 @@ func _sustain_key(instance_id: int, layer: StringName = &"action") -> String:
 	return "%d:%s" % [instance_id, layer]
 
 func _stop_sustain(instance_id: int, layer: StringName = &"") -> void:
-	for candidate in [&"action", &"buff", &"attack", &"shroud", &"revival", &"idle"] if layer == &"" else [layer]:
+	for candidate in [&"action", &"buff", &"attack", &"revival", &"idle"] if layer == &"" else [layer]:
 		_stop_sustain_key(_sustain_key(instance_id, candidate))
 
 func _stop_sustain_key(key: String) -> void:
@@ -433,7 +423,7 @@ func _event_owner(unit: Unit, cue: StringName) -> Dictionary:
 	if cue in [&"empowered_swing", &"first_strike:cast", &"attack_swing", &"continuous_attack:start", &"continuous_attack:release"]:
 		return {"unit": unit.get_instance_id(), "kind": "attack", "serial": unit.get_attack_visual_serial()}
 	var phase := name.get_slice(":", 1)
-	if name.get_slice(":", 0) in ["active_buff", "empowered_buff", "shroud", "revival"] or cue in [&"empowered_ready", &"resource_full", &"passive_heal", &"active:cast"]:
+	if name.get_slice(":", 0) in ["active_buff", "empowered_buff", "revival"] or cue in [&"empowered_ready", &"resource_full", &"passive_heal", &"active:cast"]:
 		return {}
 	if phase in ["start", "voice", "sustain", "release", "end"] and not name.begins_with("continuous_attack"):
 		return {"unit": unit.get_instance_id(), "kind": "action", "serial": unit.get_visual_action_serial()}
@@ -756,7 +746,7 @@ func play_card_event(card_id: String, cue: String, position: Vector2, form: int 
 func _on_sustain_finished(key: String, player: AudioStreamPlayer2D) -> void:
 	if _sustain_players.get(key) == player:
 		# 持续普攻是无固定总时长的状态；重放完整循环片段，仍由状态退出清理。
-		if key.ends_with(":attack") or key.ends_with(":shroud") or key.ends_with(":idle"):
+		if key.ends_with(":attack") or key.ends_with(":idle"):
 			player.play()
 			return
 		_stop_sustain_key(key)

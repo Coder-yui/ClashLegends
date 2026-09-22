@@ -480,7 +480,7 @@ func _check_unit_reaches_and_damages_tower() -> void:
 	_main.add_child(unit)
 	unit._target = tower
 	var hp_before := tower.hp
-	tower.control.frozen_timer = 5.0
+	SuiteUtils.set_control_window(tower.control, &"freeze", 5.0)
 	for _tick in 60:
 		_main._sim_step(_main.SIM_DT)
 	_expect(tower.hp < hp_before, "攻城单位会补齐 A* 末端距离并对塔造成伤害")
@@ -490,7 +490,7 @@ func _check_unit_reaches_and_damages_tower() -> void:
 	var attack_animations: Array = stats.visual_animations.attack
 	_expect(attack_animations == ["Attack1", "Attack2"], "盖伦两套攻击动作按表现序号交替选择")
 	tower.hp = hp_before
-	tower.control.frozen_timer = 0.0
+	SuiteUtils.set_control_window(tower.control, &"freeze", 0.0)
 	if is_instance_valid(unit):
 		unit.free()
 

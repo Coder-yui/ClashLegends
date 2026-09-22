@@ -11,6 +11,7 @@ func _view_for(unit: Unit) -> UnitModel3D:
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
+	_check_gwen_target_and_damage()
 	_check_gwen_mechanic()
 	_check_gwen_tower_combat()
 	_check_gwen_snip_snip_skill()
@@ -196,7 +197,7 @@ func _check_gwen_mechanic() -> void:
 	target.setup(1, target_stats, "被动木桩")
 	_main.add_child(target)
 	_main.launch_attack(gwen, target, 62.0, 0.0, 0.0, 0.0, gwen.color)
-	_expect(target.hp == 897.0 and not gwen._shroud_active and gwen.shroud_radius == 0.0, "格温普攻 62 + 最大生命 5%（50.5 四舍五入为 51），不再开启缠流")
+	_expect(target.hp == 897.0, "格温普攻 62 + 最大生命 5%（50.5 四舍五入为 51）")
 	var before := target.hp
 	_main.launch_attack(gwen, target, 62.0 * 1.5, 0.0, 0.0, 0.0, gwen.color)
 	_expect(before - target.hp == 144.0, "强化倍率只影响普攻基础值，被动不放大")
@@ -220,16 +221,8 @@ func _check_gwen_mechanic() -> void:
 	for _tick in 35:
 		_main._commands.tick_impacts(0.05)
 	_expect(gwen.hp == 300.0, "满层技能完全空放不回血")
-	# 同一来源后续施法必须使用独立命中记录；命中被免疫拒绝也不回血。
+	# 只在首剪击杀也算本次命中；结束后空放不能继承上一轮命中。
 	target.position = Vector2(360, 790)
-	target.shroud_radius = 1.0
-	target._shroud_active = true
-	_main._queue_active_skill_impact(gwen, skill, float(skill.impact_delay))
-	for _tick in 35:
-		_main._commands.tick_impacts(0.05)
-	_expect(gwen.hp == 300.0, "满层所有剪切被免疫拒绝不算真实命中")
-	# 只在首剪击杀也算本次命中；结束后再空放不能继承上一轮命中。
-	target._shroud_active = false
 	target.hp = 1.0
 	_main._queue_active_skill_impact(gwen, skill, float(skill.impact_delay))
 	for _tick in 35:
@@ -275,7 +268,6 @@ func _check_gwen_tower_combat() -> void:
 	var gwen_hp := gwen.hp
 	for _tick in 100:
 		_main._sim_step(_main.SIM_DT)
-	_expect(not gwen._shroud_active, "格温攻击公主塔不再开启缠流")
 	_expect(tower.hp < tower_hp, "格温对公主塔持续输出")
 	_expect(gwen.hp < gwen_hp, "公主塔能正常锁定并反击格温")
 	# 塔也接入受击闪白：3D 代理收到限频表现事件，且闪白强度已减淡。
@@ -304,7 +296,6 @@ func _check_gwen_tower_combat() -> void:
 	var attacker_hp := attacker.hp
 	for _tick in 100:
 		_main._sim_step(_main.SIM_DT)
-	_expect(not attacker._shroud_active, "格温攻击水晶不再开启缠流")
 	_expect(king.hp < king_hp, "格温对水晶持续输出")
 	_expect(not king.activated, "水晶受到攻击后仍不激活攻击能力")
 	_expect(is_equal_approx(attacker.hp, attacker_hp), "水晶不索敌、不发射弹体也不造成伤害")
@@ -317,8 +308,8 @@ func _check_gwen_tower_combat() -> void:
 	_expect(king_view != null and king_view._hit_flash_timer > 0.0, "水晶受击后 3D 模型同步轻微闪白")
 	attacker.free()
 	# 还原现场：公主塔解冻、水晶回到初始血量与休眠状态，不影响后续测试。
-	left_princess.control.frozen_timer = 0.0
-	tower.control.frozen_timer = 0.0
+	SuiteUtils.set_control_window(left_princess.control, &"freeze", 0.0)
+	SuiteUtils.set_control_window(tower.control, &"freeze", 0.0)
 	king.hp = king_hp
 	king.activated = king_was_active
 
@@ -365,3 +356,32 @@ func _check_gwen_art_integration() -> void:
 		unit.free()
 	if sample != null:
 		sample.free()
+
+func _check_gwen_target_and_damage() -> void:
+	var gwen := Unit.new()
+	gwen.setup(0, CardDB.get_card("gwen"), "格温")
+	gwen.position = Vector2(360, 700)
+	_main.add_child(gwen)
+	var attacker := Unit.new()
+	attacker.setup(1, SuiteUtils.sweep_dummy_stats(CardDB.get_card("garen")), "攻击者")
+	attacker.building_only = false
+	attacker.position = Vector2(360, 950)
+	_main.add_child(attacker)
+	gwen.on_attack_landed()
+	_expect(attacker._target_is_attackable(gwen) and gwen._target_is_attackable(attacker), "格温出手后仍与敌军互为合法目标")
+	var hp := gwen.hp
+	_expect(_main.launch_attack(attacker, gwen, 10.0, 0.0, 0.0, 0.0, Color.WHITE) and gwen.hp == hp - 10.0, "格温正常承受已释放近战")
+	hp = gwen.hp
+	_main.launch_attack(attacker, gwen, 10.0, 10000.0, 0.0, 0.0, Color.WHITE)
+	_main._projectile_system.tick(0.05)
+	_expect(gwen.hp == hp - 10.0, "格温正常承受远程弹体")
+	hp = gwen.hp
+	_main.combat_service().resolve_attack_hit(1, attacker.position, gwen, 10.0, 100.0, 0.0, attacker)
+	_expect(gwen.hp == hp - 10.0, "格温正常承受范围命中")
+	var tower: Tower = _main._towers[2]
+	var pos := gwen.position
+	gwen.position = tower.position + Vector2.DOWN * 100.0
+	_expect(tower._target_is_valid(gwen), "敌塔正常选中格温")
+	gwen.position = pos
+	gwen.free()
+	attacker.free()

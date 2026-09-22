@@ -17,7 +17,7 @@ Godot --headless --path . --script tests/mechanics_check.gd
 git diff --check
 ```
 
-本机 Godot 为 `/Applications/Godot.app/Contents/MacOS/Godot`。必须看到最终“全部通过”并检查 `SCRIPT ERROR`、资源错误；退出码不能单独证明测试执行完成。回归结束先释放场景，再给音频线程短暂清理时间，避免高速 headless 退出时音频流仍被混音线程持有。
+通过 `python3 tools/dev.py doctor` 查询本机 Godot，或用 verify 的 `--godot` 指定。必须看到最终“全部通过”并检查 `SCRIPT ERROR`、资源错误；退出码不能单独证明测试执行完成。回归结束先释放场景，再给音频线程短暂清理时间，避免高速 headless 退出时音频流仍被混音线程持有。
 
 | 领域 | 套件与边界 |
 | --- | --- |
@@ -54,23 +54,23 @@ Godot --headless --path . -- --mode=join --ip=127.0.0.1 --auto-test
 
 | 脚本（tools/demos/） | 检查范围 / 主要输出 |
 | --- | --- |
-| `maintenance_preview` | 双方攻击、控制、变形、死亡、恢复；`/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/预览与验证/clash-maintenance-render/` |
+| `maintenance_preview` | 双方攻击、控制、变形、死亡、恢复；`ClashLegends-开发素材库/04-中间产物/预览与验证/clash-maintenance-render/` |
 | `workbench_preview`、`workbench_scenarios_preview` | 三页交互与四种经典场景、红方镜像 |
 | `original_animation_review` | 全部非法术卡、双方/形态；`-- --cards=gwen,xin --all-exits --transition-frames`；`--validate-only` 只检查表现路径 |
-| `sett_animation_preview` | 四拳、多倍率、W 出口、死亡；可加 `--fixed-fps 30`；`/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/预览与验证/clash-sett-animation/` |
+| `sett_animation_preview` | 四拳、多倍率、W 出口、死亡；可加 `--fixed-fps 30`；`ClashLegends-开发素材库/04-中间产物/预览与验证/clash-sett-animation/` |
 | `card_playtest_fixes_preview`、`contact_preview` | 首击/追击、边界与接触问题复现 |
-| `gwen_passive_preview` | 剪切与被动双阵营画面、主混音；`/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/预览与验证/clash-gwen-passive/` |
+| `gwen_passive_preview` | 剪切与被动双阵营画面、主混音；`ClashLegends-开发素材库/04-中间产物/预览与验证/clash-gwen-passive/` |
 | `ashe_volley_collision_preview` | 万箭齐发阻挡、真实碰撞与提示 |
-| `gnar_launch_audio_preview` | 独占发射尾音；支持 `-- --mode=host` / `--mode=join`；`/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/预览与验证/clash-gnar-launch/` |
+| `gnar_launch_audio_preview` | 独占发射尾音；支持 `-- --mode=host` / `--mode=join`；`ClashLegends-开发素材库/04-中间产物/预览与验证/clash-gnar-launch/` |
 | `xin_sweep_effect_review`、`demo_xin_sweep.tscn` | 正式工作台横扫各阶段；交互式横扫演示 |
-| `apex_audio_review` | 炮台创建、引擎、普攻和穿透激光；支持 host/join；`/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/预览与验证/clash-apex-audio/` |
-| `twisted_fate_deploy_review` | 26+9 Tick 部署与单次原声前段，支持 host/join；`/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/预览与验证/clash-tf-deploy-175/` |
+| `apex_audio_review` | 炮台创建、引擎、普攻和穿透激光；支持 host/join；`ClashLegends-开发素材库/04-中间产物/预览与验证/clash-apex-audio/` |
+| `twisted_fate_deploy_review` | 26+9 Tick 部署与单次原声前段，支持 host/join；`ClashLegends-开发素材库/04-中间产物/预览与验证/clash-tf-deploy-175/` |
 | `sun_disc_tombstone_review` | 圆盘双攻击、护盾扩散波、消失及墓碑持续声 |
 | `event_audio_review`、`event_audio_network_review` | 范围护盾、兵线、塔/水晶事件；后者支持 headless host/join |
 | `match_audio_review`、`nexus_audio_lifecycle_review` | 比赛播报；水晶出生/待机交叉淡化/死亡与原生深井显示 |
 | `baron_minion_preview`、`baron_projectile_preview` | 四兵双方八阶段；强化炮弹逐帧截图 |
 | `baron_minion_network` | host/join 八单位 on/off、强化炮弹 Snapshot 和出膛/命中事件 |
-| `numeric_review` | 卡牌详情数值 UI；`/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/预览与验证/clash-numeric-review/` |
+| `numeric_review` | 卡牌详情数值 UI；`ClashLegends-开发素材库/04-中间产物/预览与验证/clash-numeric-review/` |
 | `card_audio_batch_demo` | 正式工作台事件录音/截图；`-- --network` 做网络音频冒烟 |
 | `ashe_audio_demo`、`garen_audio_demo`、`missfortune_audio_demo`、`sustained_audio_demo` | 分卡或持续音场景，用于人工听感和生命周期复核 |
 | `stage_debris_demo.tscn`、`structure_showcase` | 建筑破碎、废墟与结构展示；参数见相邻脚本及说明 |
@@ -113,7 +113,7 @@ Godot 原始入口使用 `-- --suite=ProjectileSuite`，未知名称退出 2；�
 
 `TerminalAudioSuite` 使用短 WAV 替代混音输入，验证真实播放器自然 finished、双轨等待、实例复用、重复/跨局回调和缺资源兜底；不作为听感认证。双进程 `--network` 还等待本地真实水晶音轨，验证本地胜败播报；使用 `CLASH_TEST_DOUBLE_NEXUS=1 python3 tools/verify.py --network` 验证双向真实弹体在同 Tick 摧毁两水晶和主客平局一致（环境开关只由测试套件读取）。
 
-实际画面/混音复核：`Godot --path . --script tools/demos/combat_terminal_review.gd`，输出 `/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/预览与验证/clash-combat-terminal/` 的镜像死亡、第三/六/九次连击、立即终局截图及 `explosion-victory.wav`。需另行试听录音，日志不能替代听感。
+实际画面/混音复核：`Godot --path . --script tools/demos/combat_terminal_review.gd`，输出 `ClashLegends-开发素材库/04-中间产物/预览与验证/clash-combat-terminal/` 的镜像死亡、第三/六/九次连击、立即终局截图及 `explosion-victory.wav`。需另行试听录音，日志不能替代听感。
 
 
 `BuildingExpiryBoundarySuite` 从正常索敌前摇推进到建筑到期 Tick，交换阵营、出生、节点和集合排列，并比较攻击段、间隔、目标与收益；另测衰减、部署/控制、召唤边界、失效请求和全盾合法命中。`KnockbackBoundarySuite` 检查真实位移、接管速度/方向/时长、暂停恢复及固定事件身份的逆序收集。两者通过统一入口 `--suite=...` 可独立执行；不是工作台验收记录。
@@ -127,3 +127,5 @@ Godot 原始入口使用 `-- --suite=ProjectileSuite`，未知名称退出 2；�
 `DeploymentSkillSuite` 覆盖七张多单位主动卡的工作台成员死亡/释放、批次与阵营隔离、全灭禁止回退、正式请求期间连续转交、费用次数保留和延迟效果的存活筛选。`network_lifecycle_suite` 验证转交快照按编队来源卡恢复技能。
 
 `StatusBoundarySuite` 从正式请求覆盖解冻待变形、退款、转换结束边界、技能各段/完成回血精确 Tick、凤凰蛋排列互换、旧弹体及冻结朝向。`network_lifecycle_suite` 覆盖六位权限校验与首次同时收到技能/眩晕；双端终态另比较权限、身体方向及技能剩余次数。实际渲染复用 `maintenance_preview.gd -- --status-boundaries --cards=sett,gnar,gwen,aurelionsol,garen,anivia_egg`。
+
+维护审计同时检查本地章节锚点、导航可达性、默认必读不能指向历史、显式当前协议事实、卡牌/形态文档映射；包括历史区域链接。导航声明在 [navigation.json](../docs/navigation.json)，审计夹具通过 `python3 -m unittest discover -s tools/maintenance -p 'test_*.py'` 执行。

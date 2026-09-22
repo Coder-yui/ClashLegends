@@ -921,7 +921,7 @@ func _check_baron_buff_visual() -> void:
 			unit.freeze(0.5)
 			view._process(0.01)
 			var frozen_ok: bool = mesh.material_overlay != buff_overlay and mesh.material_overlay.next_pass == buff_overlay
-			unit.control.frozen_timer = 0.0
+			SuiteUtils.set_control_window(unit.control, &"freeze", 0.0)
 			view._process(0.01)
 			view._on_source_visual_hit()
 			var hit_ok: bool = mesh.material_overlay.next_pass == buff_overlay
@@ -964,13 +964,13 @@ func _check_baron_projectile() -> void:
 	system.launch(source, target, 10, 300, 0, 0, Color.WHITE)
 	var normal: Dictionary = system.projectiles.values()[0].duplicate()
 	system.clear_all()
-	source.active_buff_timer = 1.0
+	SuiteUtils.set_buff_window(source, 1.0)
 	var hp := target.hp
 	system.launch(source, target, 10, 300, 0, 0, Color.WHITE)
 	var projectile: Dictionary = system.projectiles.values()[0]
 	var payload: Array = _main._snapshot_system._projectile_snapshot_payload(1, projectile)
 	_expect(projectile.visual == &"baron_siege" and payload[NetworkSnapshotSystem.P_VISUAL] == "baron_siege" and projectile.radius == normal.radius and projectile.speed == normal.speed and target.hp == hp and system.impact_effects[0].visual == &"baron_siege_cast", "强化炮弹使用独立外观和快照，出膛不结算伤害且不改速度/碰撞半径")
-	source.active_buff_timer = 0.0
+	SuiteUtils.set_buff_window(source, 0.0)
 	system.tick(1.0)
 	_expect(is_equal_approx(target.hp, hp - 10) and system.projectiles.is_empty() and system.impact_effects[-1].visual == &"baron_siege_hit", "已出膛强化炮弹不随 Buff 到期变色，命中只结算一次并播放原始命中特效")
 	system.clear_all()

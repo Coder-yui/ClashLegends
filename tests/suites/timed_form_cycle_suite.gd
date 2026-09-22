@@ -264,7 +264,7 @@ func _check_passive_windup() -> void:
 				source.transform_to_mega()
 				source.form_transition_timer = 0.0
 				source.form_lifetime_left = 100.0
-			source.active_buff_timer = 100.0
+			SuiteUtils.set_buff_window(source, 100.0)
 			if rate < 1.0:
 				source.apply_attack_speed_slow(100.0, rate)
 			else:

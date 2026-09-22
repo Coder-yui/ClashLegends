@@ -1,6 +1,7 @@
 extends RefCounted
 
 func run(harness: Object) -> void:
+	_check_state_ownership(harness)
 	_check_clock_budget(harness)
 	_check_status_instances(harness)
 	var unit := Unit.new()
@@ -150,7 +151,7 @@ func _check_layers(harness: Object, main: Node2D) -> void:
 	main.add_child(unit)
 	audio.attach_unit(unit, stats)
 	unit.play_visual_action(&"judgment", 3.0)
-	unit.active_buff_timer = 4.0
+	SuiteUtils.set_buff_window(unit, 4.0)
 	audio._process(0.0)
 	var id := unit.get_instance_id()
 	var both := audio._sustain_players.has(audio._sustain_key(id, &"action")) and audio._sustain_players.has(audio._sustain_key(id, &"buff"))
@@ -186,7 +187,7 @@ func _check_control_and_isolation(harness: Object, main: Node2D) -> void:
 	var cancelled := unit.attack_timeline.windup == 0 and unit.attack_timeline.cooldown == 0
 	view._process(0.0)
 	var ice_holds := view._animation_player.speed_scale == 0.0
-	unit.control.frozen_timer = 0.0
+	SuiteUtils.set_control_window(unit.control, &"freeze", 0.0)
 	view._process(0.0)
 	var stun_plays := view._animation_player.speed_scale == 1.0 and view._current_state == 1
 	var independent := view._animation_player.get_animation("Idle1_Base") != views[1]._animation_player.get_animation("Idle1_Base")
@@ -324,3 +325,24 @@ func _check_status_instances(harness: Object) -> void:
 	unit.stun(-1)
 	harness._expect(not unit.is_frozen() and not unit.is_stunned(), "零负时长不创建控制")
 	unit.free()
+
+func _check_state_ownership(harness: Object) -> void:
+	var deck: Array = ["a", "b", "c", "d", "e", "f", "g", "h"]
+	var cycle := CardCycle.new(deck)
+	deck[0] = "changed"
+	harness._expect(cycle.hand() == ["a", "b", "c", "d"] and cycle.queue() == ["e", "f", "g", "h"], "手牌初始顺序与输入隔离")
+	var view := cycle.hand()
+	view.clear()
+	harness._expect(cycle.consume("b") and cycle.hand() == ["a", "e", "c", "d"] and cycle.queue() == ["f", "g", "h", "b"] and not cycle.consume("missing"), "轮换只替换原槽，拒绝无效牌且视图不修改状态")
+	cycle.replace_replica(["h", "g", "f", "e"], ["d", "c", "b", "a"])
+	harness._expect(cycle.hand() == ["h", "g", "f", "e"], "客户端仅按确认替换循环")
+	var schedule := CommandSchedule.new()
+	var command := {"execute_tick": 10, "card_id": "garen", "team": 0, "pos": Vector2.ZERO}
+	schedule.enqueue_card(command.team, command.card_id, command.pos, command.execute_tick)
+	command.execute_tick = 1
+	var cards := schedule.inspect_cards()
+	cards[0].execute_tick = 2
+	harness._expect(schedule.take_card_commands(9).is_empty() and schedule.take_card_commands(10).size() == 1 and schedule.take_card_commands(10).is_empty(), "入队与查询无可变别名，到期只取出一次")
+	harness._expect(schedule.enqueue_skill(4, 0, 10, null, 0) and not schedule.enqueue_skill(4, 0, 11, null, 0), "排程所有者拒绝重复技能")
+	schedule.cancel_skill(4, false)
+	harness._expect(not schedule.has_pending_skill(4), "取消解除等待身份")

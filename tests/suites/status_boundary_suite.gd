@@ -22,7 +22,7 @@ func _check_thaw_command() -> void:
 	var unit: Unit = _main._spawn_unit(0, "gnar", Vector2(160, 1000), 0.0, 0)
 	var id := unit.active_ability_id
 	_expect(_main.use_active_skill(id, 0), "纳尔正式请求合法入队")
-	var request: Dictionary = _main._commands.skill_commands.back()
+	var request: Dictionary = _main._commands.inspect_skills().back()
 	var due := int(request.execute_tick)
 	unit.freeze((due - _main._sim_tick_id) * _main.SIM_DT)
 	unit.transform_hit_count = 5
@@ -33,7 +33,7 @@ func _check_thaw_command() -> void:
 	_expect(unit.pending_form_generation == unit.form_change_serial, "冻结中第六枚真实弹体记录同代待变形")
 	_run_main_ticks(due - _main._sim_tick_id)
 	_expect(unit.form_index == 1 and unit.is_form_transitioning() and unit.active_skill_cast_serial == 0, "解冻边界先兑现被动变形，拒绝新施法")
-	_expect(_main._active_skills[id].uses_remaining == _main._active_skills[id].max_uses and _main._active_skills[id].cooldown_left == 0.0, "拒绝请求不消费次数或启动冷却")
+	_expect(_main._active_skills.entry(id).uses_remaining == _main._active_skills.entry(id).max_uses and _main._active_skills.entry(id).cooldown_left == 0.0, "拒绝请求不消费次数或启动冷却")
 	_expect(is_equal_approx(_main._elixir.elixir, 10.0), "变形拒绝经原收据退款")
 	_main._elixir.elixir = 4.0
 	_main._commands.settle_skill(request, true)
@@ -50,9 +50,9 @@ func _check_command_clock() -> void:
 	var unit: Unit = _main._spawn_unit(0, "sett", Vector2(160, 1000), 0.0, 0)
 	var id := unit.active_ability_id
 	_expect(_main.use_active_skill(id, 0), "计时回归从正式请求开始")
-	var due := int(_main._commands.skill_commands.back().execute_tick)
+	var due := int(_main._commands.inspect_skills().back().execute_tick)
 	_run_main_ticks(due - _main._sim_tick_id)
-	var duration := float(_main._active_skills[id].skill.cast_duration)
+	var duration := float(_main._active_skills.entry(id).skill.cast_duration)
 	_expect(is_equal_approx(unit.active_skill_cast_timer, duration) and is_equal_approx(unit.get_visual_action_time_left(), duration), "Cast Start 创建边界不扣施法锁或动作窗口")
 	_run_main_ticks(int(ceil(duration / _main.SIM_DT)) - 1)
 	_expect(unit.is_active_skill_casting(), "结束前一 Tick 仍锁定")
@@ -166,7 +166,7 @@ func _check_formal_skill_ticks() -> void:
 	var choices: Dictionary = _main._active_skill_choices.duplicate()
 	for card in ["gwen", "garen", "aurelionsol"]:
 		for control_kind in ["none", "stun", "freeze_before", "freeze_after"]:
-			_main._commands.impacts.clear()
+			_main._commands.clear_impacts()
 			_main._active_skill_effect_system.clear()
 			_main._projectile_system.clear_all()
 			_main._deck[0] = card
@@ -185,14 +185,14 @@ func _check_formal_skill_ticks() -> void:
 			unit.first_hit_time = 100.0
 			var id := unit.active_ability_id
 			_expect(_main.use_active_skill(id, 0), "%s 正式命令入队" % card)
-			var start := int(_main._commands.skill_commands.back().execute_tick)
+			var start := int(_main._commands.inspect_skills().back().execute_tick)
 			_run_main_ticks(start - _main._sim_tick_id)
 			var duration := unit.active_skill_cast_timer
 			var end_tick := int(ceil(duration / _main.SIM_DT - 0.000001))
 			var expected: Array = [2, 13, 16, 19, 21] if card == "gwen" else ([20, 40, 60] if card == "garen" else [])
 			# Derive independent star boundary from its actual queued definition, not visual frames.
 			if card == "aurelionsol":
-				for impact in _main._commands.impacts:
+				for impact in _main._commands.inspect_impacts():
 					if impact.skill.has("independent_result"): expected.append(int(ceil(float(impact.time_left) / _main.SIM_DT - 0.000001)))
 			var first := int(expected[0])
 			var observed: Array = []
@@ -232,7 +232,7 @@ func _check_gnar_transition_edges() -> void:
 		var unit: Unit = _main._spawn_unit(0, "gnar", Vector2(360, 1000), 0.0, 0)
 		var id := unit.active_ability_id
 		_expect(_main.use_active_skill(id, 0), "变形边界请求先合法入队")
-		var due := int(_main._commands.skill_commands.back().execute_tick)
+		var due := int(_main._commands.inspect_skills().back().execute_tick)
 		_run_main_ticks(due - _main._sim_tick_id - 1)
 		unit.transform_to_mega()
 		unit.form_transition_timer = remaining
@@ -241,7 +241,7 @@ func _check_gnar_transition_edges() -> void:
 		_run_main_ticks(1)
 		_expect((unit.active_skill_cast_serial > 0) == (remaining == 0.05), "转换到期边界先推进旧窗口再判断请求")
 		if remaining > 0.05:
-			_expect(unit.get_visual_action_serial() == serial and _main._active_skills[id].uses_remaining == _main._active_skills[id].max_uses, "转换中拒绝不发布主动动作或增加次数")
+			_expect(unit.get_visual_action_serial() == serial and _main._active_skills.entry(id).uses_remaining == _main._active_skills.entry(id).max_uses, "转换中拒绝不发布主动动作或增加次数")
 		_main._on_active_skill_unit_died(id)
 		unit.free()
 	_main._elixir.elixir = 10.0
@@ -249,7 +249,7 @@ func _check_gnar_transition_edges() -> void:
 	var id := unit.active_ability_id
 	_expect(_main.use_active_skill(id, 0), "无待变形的小纳尔正式主动请求合法")
 	_run_main_ticks(_main.COMMAND_DELAY_TICKS)
-	_expect(unit.form_index == 1 and unit.active_skill_cast_serial == 1 and _main._active_skills[id].uses_remaining == _main._active_skills[id].max_uses - 1, "合法主动变大属于同次施法，不自我拒绝退款")
+	_expect(unit.form_index == 1 and unit.active_skill_cast_serial == 1 and _main._active_skills.entry(id).uses_remaining == _main._active_skills.entry(id).max_uses - 1, "合法主动变大属于同次施法，不自我拒绝退款")
 	_main._on_active_skill_unit_died(id)
 	unit.free()
 	unit = _main._spawn_unit(0, "gnar", Vector2(360, 1000), 0.0)
@@ -296,7 +296,7 @@ func _check_submission_boundary() -> void:
 			_main._elixir.elixir = initial
 			var unit: Unit = _main._spawn_unit(0, "gnar", Vector2(160, 1000), 0.0, 0)
 			var id := unit.active_ability_id
-			var uses: int = _main._active_skills[id].uses_remaining
+			var uses: int = _main._active_skills.entry(id).uses_remaining
 			var duration := 0.1 if expires else 1.0
 			match kind:
 				"stun": unit.stun(duration)
@@ -312,22 +312,22 @@ func _check_submission_boundary() -> void:
 			_main._sync_active_skill_deployment_readiness()
 			_expect(not _main._active_skill_bar._buttons[0].disabled and _main._can_submit_active_skill(id, 0) and not _main._active_skill_is_legal(id, 0), "临时状态只阻止执行、不阻止按钮或提交 " + kind)
 			_main._active_skill_bar._on_slot_pressed(0)
-			_expect(_main._commands.skill_commands.size() == 1 and _main._active_skill_bar._buttons[0].disabled, "真实按钮点击入队后禁重复请求 " + kind)
-			if _main._commands.skill_commands.is_empty():
+			_expect(_main._commands.inspect_skills().size() == 1 and _main._active_skill_bar._buttons[0].disabled, "真实按钮点击入队后禁重复请求 " + kind)
+			if _main._commands.inspect_skills().is_empty():
 				_main._on_active_skill_unit_died(id)
 				unit.free()
 				continue
-			var request: Dictionary = _main._commands.skill_commands.back()
+			var request: Dictionary = _main._commands.inspect_skills().back()
 			var paid: float = initial - _main._elixir.elixir
 			_expect(paid > 0.0 and not _main.use_active_skill(id, 0) and _main._elixir.elixir == initial - paid, "基础去重不二次扣费 " + kind)
 			_run_main_ticks(int(request.execute_tick) - _main._sim_tick_id)
-			print("SUBMIT_BOUNDARY ", [kind, expires, _main._active_skills[id].uses_remaining, uses, _main._elixir.elixir, paid, unit.hp, unit.action_permissions(), unit.active_skill_cast_serial])
-			_expect(_main._active_skills[id].uses_remaining == uses - (1 if expires else 0) and is_equal_approx(_main._elixir.elixir, initial - (paid if expires else 0.0)), "执行时解锁则成功，仍锁则退费不耗次数 %s/%s" % [kind, expires])
-			_expect(_main._commands.skill_commands.is_empty() and request.payment.is_settled(), "拒绝不延迟重试，原收据已结算 " + kind)
+			print("SUBMIT_BOUNDARY ", [kind, expires, _main._active_skills.entry(id).uses_remaining, uses, _main._elixir.elixir, paid, unit.hp, unit.action_permissions(), unit.active_skill_cast_serial])
+			_expect(_main._active_skills.entry(id).uses_remaining == uses - (1 if expires else 0) and is_equal_approx(_main._elixir.elixir, initial - (paid if expires else 0.0)), "执行时解锁则成功，仍锁则退费不耗次数 %s/%s" % [kind, expires])
+			_expect(_main._commands.inspect_skills().is_empty() and request.payment.is_settled(), "拒绝不延迟重试，原收据已结算 " + kind)
 			_main._elixir.elixir = 4.0
 			_main._commands.settle_skill(request, true)
 			_expect(_main._elixir.elixir == 4.0, "重复结算不重复退款 " + kind)
 			_main._on_active_skill_unit_died(id)
-			_main._commands.impacts.clear()
+			_main._commands.clear_impacts()
 			unit.free()
 	_main._deck = deck

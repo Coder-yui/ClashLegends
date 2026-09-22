@@ -173,8 +173,6 @@ static func passives(stats: Dictionary) -> Array[Dictionary]:
 		result.append({"name": "无畏战吼", "description": "每第%d次普通攻击命中回复%s点生命。" % [int(stats.get("heal_every_hits", 0)), format_number(roundf(float(stats.get("heal_amount", 0.0)))) ]})
 	if float(stats.get("on_hit_max_health_ratio", 0.0)) > 0.0:
 		result.append({"name": "千穿百孔", "description": "普攻与每次剪切附加目标最大生命值%s%%的伤害（四舍五入）；对防御塔和水晶固定附加%d点，附加伤害不受中央倍率加成。" % [format_number(float(stats.on_hit_max_health_ratio) * 100.0), roundi(float(stats.get("on_hit_tower_damage", 0.0)))]})
-	if stats.has("shroud_radius"):
-		result.append({"name": "丝缕缠流", "description": "首次普攻命中后，%s半径外的敌人无法看见或锁定她。" % format_number(float(stats.get("shroud_radius", 0.0)))})
 	if stats.has("first_strike_damage_multiplier"):
 		result.append({"name": "先声夺人", "description": "对每个敌方目标的首次普通攻击造成%s倍伤害。" % format_number(float(stats.get("first_strike_damage_multiplier", 0.0)))})
 	if int(stats.get("transform_after_hits", 0)) > 0:

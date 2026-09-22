@@ -243,9 +243,9 @@ func _check_card_play_delay() -> void:
 	_main._deploy_card(0, "tombstone", Vector2(480.0, 1000.0))
 	_main._deploy_card(0, "freeze", target.position)
 	var command_buffer_contract: bool = (
-		_main._commands.card_commands.size() == 3
-		and int(_main._commands.card_commands[0].execute_tick) == _main._sim_tick_id + _main.COMMAND_DELAY_TICKS
-		and not _main._commands.card_commands[0].has("time_left")
+		_main._commands.inspect_cards().size() == 3
+		and int(_main._commands.inspect_cards()[0].execute_tick) == _main._sim_tick_id + _main.COMMAND_DELAY_TICKS
+		and not _main._commands.inspect_cards()[0].has("time_left")
 	)
 	for _i in 9:
 		_main._sim_step(_main.SIM_DT)

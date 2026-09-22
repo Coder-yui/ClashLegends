@@ -53,7 +53,7 @@ func run(harness: SceneTree) -> void:
 			if main._sim_tick_id >= 48 and not status_checked:
 				status_checked = true
 				status_passed = status_pending_seen and gnar.form_index == 1 and gnar.is_stunned() and gnar.pending_form_generation == -1
-				status_passed = status_passed and gnar.active_skill_cast_serial == 0 and main._active_skills[gnar.active_ability_id].uses_remaining == main._active_skills[gnar.active_ability_id].max_uses and status_case.payment.is_settled()
+				status_passed = status_passed and gnar.active_skill_cast_serial == 0 and main._active_skills.entry(gnar.active_ability_id).uses_remaining == main._active_skills.entry(gnar.active_ability_id).max_uses and status_case.payment.is_settled()
 				status_passed = status_passed and status_case.star_target.hp == status_case.star_target.max_hp - 120 and status_case.frozen_target.hp == status_case.frozen_target.max_hp and status_case.stunned_target.hp < status_case.stunned_target.max_hp
 				print("[NETWORK_STATUS] ", {"passed": status_passed, "pending_seen": status_pending_seen, "form": gnar.form_index, "star_hp": status_case.star_target.hp, "frozen_hp": status_case.frozen_target.hp, "stunned_hp": status_case.stunned_target.hp})
 		if main.mode == "client" and main._match_started and main.get_estimated_server_tick() >= 5 and not sent_requests:
@@ -65,15 +65,15 @@ func run(harness: SceneTree) -> void:
 			main._rpc_deploy_request.rpc_id(1, "garen", Vector2(300, 580), input_tick, epoch, 1)
 			main._rpc_active_skill_request.rpc_id(1, 999, input_tick, "old-session", 100)
 		if main.mode == "client" and main._match_started and main.get_authoritative_server_tick() >= 57 and not sent_skill:
-			for ability in main._active_skills:
-				var entry: Dictionary = main._active_skills[ability]
+			for ability in main._active_skills.ids():
+				var entry: Dictionary = main._active_skills.entry(ability)
 				if entry.card_id == "garen" and entry.team == 1 and main._elixir.elixir >= float(entry.skill.cost):
 					main._rpc_active_skill_request.rpc_id(1, ability, main.get_authoritative_server_tick(), main._session.session_id, 2)
 					sent_skill = true
 					break
-		if main.mode == "host" and not main._commands.skill_commands.is_empty() and not interrupted_skill and int(main._commands.skill_commands[0].team) == 1:
-			var ability: int = main._commands.skill_commands[0].ability_id
-			var unit: Unit = main._active_skills[ability].unit
+		if main.mode == "host" and not main._commands.inspect_skills().is_empty() and not interrupted_skill and int(main._commands.inspect_skills()[0].team) == 1:
+			var ability: int = main._commands.inspect_skills()[0].ability_id
+			var unit: Unit = main._active_skills.entry(ability).unit
 			unit.add_shield(300, 2, true)
 			unit.add_shield(200, 6)
 			unit.stun(2.0)
@@ -199,7 +199,7 @@ func _begin_status_case(main: Node2D) -> Dictionary:
 	var gnar: Unit = main._spawn_unit(0, "gnar", Vector2(80, 1000), 0, 1)
 	var queued: bool = main.use_active_skill(gnar.active_ability_id, 0)
 	assert(queued)
-	var payment: CommandPayment = main._commands.skill_commands.back().payment
+	var payment: CommandPayment = main._commands.inspect_skills().back().payment
 	var gnar_target := _status_target(main, 1, Vector2(80, 900))
 	gnar.freeze(0.5)
 	gnar.stun(10)

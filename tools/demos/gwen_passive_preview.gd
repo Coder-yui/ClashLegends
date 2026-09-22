@@ -5,6 +5,7 @@ func _initialize() -> void:
 	_run.call_deferred()
 func _run() -> void:
 	DirAccess.make_dir_recursive_absolute(OUTPUT)
+	print("[输出] ", OUTPUT)
 	var main = load("res://scenes/main.tscn").instantiate()
 	root.add_child(main)
 	current_scene = main
@@ -23,7 +24,7 @@ func _run() -> void:
 		var caster_pos := Vector2(360, 950) if team == 0 else Vector2(360, 350)
 		var forward := Vector2.UP if team == 0 else Vector2.DOWN
 		main.play_card(team, "twisted_fate", caster_pos, {"immediate": true, "validate_position": false})
-		await create_timer(1.2).timeout
+		await create_timer(float(CardDB.get_card("twisted_fate").pre_deploy_time) + 0.6).timeout
 		var caster: Unit = main._latest_unit_for_card("twisted_fate", team)
 		caster.move_speed = 0.0
 		main.preview_active_skill(caster, CardDB.active_skills_for("twisted_fate")[0])
@@ -41,8 +42,8 @@ func _run() -> void:
 		var skill := CardDB.active_skills_for("gwen")[0]
 		gwen.configure_carried_active_skill(skill)
 		gwen.add_skill_resource(3.0)
-		main._art_dev_selection = "training_dummy"
-		main._art_dev_team = 1 - team
+		main._workbench.selection = "training_dummy"
+		main._workbench.team = 1 - team
 		main._place_art_dev_item(gwen.global_position + forward * 100.0)
 		main.preview_active_skill(gwen, skill)
 		await create_timer(0.15).timeout
@@ -52,7 +53,7 @@ func _run() -> void:
 		await create_timer(0.37).timeout
 		await _capture("gwen_%d_last" % team)
 		await create_timer(0.50).timeout
-		print("[格温实战] 阵营=", team, " 技能后生命=", gwen.hp, " 缠流=", gwen._shroud_active)
+		print("[格温实战] 阵营=", team, " 技能后生命=", gwen.hp)
 	record.set_recording_active(false)
 	var recording := record.get_recording()
 	if recording != null:
@@ -62,5 +63,6 @@ func _run() -> void:
 	await process_frame
 	quit()
 func _capture(label: String) -> void:
-	await RenderingServer.frame_post_draw
+	await process_frame
+	RenderingServer.force_draw(false)
 	root.get_texture().get_image().save_png(OUTPUT + "/" + label + ".png")

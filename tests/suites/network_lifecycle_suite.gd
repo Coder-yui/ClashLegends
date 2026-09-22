@@ -23,6 +23,7 @@ func run(harness: Object, main: Node2D) -> void:
 	main._battle_presentation = null
 	_system = SNAP.new(main, main._projectile_system)
 	main._snapshot_system = _system
+	_check_payload_contract()
 	main._projectile_system.apply_client_targets({1: {"pos": Vector2.ZERO, "visual_offset": Vector2.ZERO}})
 	_system.reset_session("one")
 	_expect(main._projectile_system.client_snapshot().is_empty(), "新会话由弹体所有者清除上一局客户端状态")
@@ -137,7 +138,7 @@ func run(harness: Object, main: Node2D) -> void:
 	member[SNAP.U_SPAWN].args[12] = "minion_squad"
 	member[SNAP.U_ACTIVE_SKILL_USES_REMAINING] = 1
 	_deliver(3, [member])
-	var group_entry: Dictionary = main._active_skills.get(72000, {})
+	var group_entry: Dictionary = main._active_skills.entry(72000)
 	_expect(group_entry.get("card_id") == "minion_squad" and group_entry.get("skill", {}).get("target_scope") == &"deployment_group", "快照转交使用编队技能而非成员自身技能")
 	_system.reset_session("cancellation")
 	var cancelled := _payload("garen", 73000, 1)
@@ -291,3 +292,26 @@ func _check_permission_projection() -> void:
 	_deliver(tick - 2, [invalid])
 	_expect((_main._client_units[73500].action_permissions() & ControlState.START_SKILL) != 0, "旧快照不能回拨已解除技能权限")
 	_main._deck = deck
+
+func _check_payload_contract() -> void:
+	_system.reset_session("payload-contract")
+	var data := _payload("gwen", 79000, 1)
+	data[SNAP.U_HP] = 321.0
+	data[SNAP.U_STUN] = 1
+	data[SNAP.U_DEPLOY_LEFT] = 0.2
+	data[SNAP.U_SKILL_RESOURCE_RATIO] = 0.5
+	var packet := _system._snapshot_packet([data], [], [], 5.0, 180.0, false)
+	packet[SNAP.S_SERVER_TICK] = 2
+	packet[SNAP.S_LIFECYCLE_REVISION] = 2
+	for delta in [-1, 1]:
+		var malformed := packet.duplicate(true)
+		if delta < 0: malformed[SNAP.S_UNITS][0].pop_back()
+		else: malformed[SNAP.S_UNITS][0].insert(7, 0)
+		_expect(not _system.apply(var_to_bytes(malformed).compress(FileAccess.COMPRESSION_DEFLATE)) and _main._client_units.is_empty(), "单位载荷增减字段均拒绝，不产生错位实体")
+	var old := packet.duplicate(true)
+	old[SNAP.S_VERSION] = MatchSession.PROTOCOL_VERSION - 1
+	_expect(not _system.apply(var_to_bytes(old).compress(FileAccess.COMPRESSION_DEFLATE)), "旧版快照不解码；双进程另验握手拒绝")
+	_expect(_system.apply(var_to_bytes(packet).compress(FileAccess.COMPRESSION_DEFLATE)) and data.size() == SNAP.UNIT_PAYLOAD_SIZE, "新载荷压缩编码、解码与未知格温重建成功")
+	var replica: Unit = _main._client_units[79000]
+	_expect(replica.hp == 321.0 and replica.is_stunned() and is_equal_approx(replica._deploy_timer, 0.2) and is_equal_approx(replica.net_skill_resource_ratio, 0.5), "移除旧字段后控制、部署、资源索引仍往返一致")
+	_system.reset_session("")

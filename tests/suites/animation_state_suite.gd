@@ -40,7 +40,7 @@ func _check_control_interruptions() -> void:
 		sett.stun(0.2)
 		sett_view._process(0.0)
 		var continues := player.speed_scale > 0.0 and is_equal_approx(player.current_animation_position, before)
-		sett.control.stun_timer = 0.0
+		SuiteUtils.set_control_window(sett.control, &"stun", 0.0)
 		sett_view._process(0.0)
 		var first_section_restored := (
 			player.current_animation == "Sett_spell2_anm"
@@ -59,7 +59,7 @@ func _check_control_interruptions() -> void:
 		var second_speed := player.get_playing_speed()
 		sett.stun(0.2)
 		sett_view._process(0.0)
-		sett.control.stun_timer = 0.0
+		SuiteUtils.set_control_window(sett.control, &"stun", 0.0)
 		sett_view._process(0.0)
 		var second_section_restored := (
 			player.current_animation == "Sett_spell2_anm"
@@ -99,7 +99,7 @@ func _check_control_interruptions() -> void:
 		gwen_view._process(0.0)
 		var frozen_pose := is_equal_approx(player.current_animation_position, before) and player.speed_scale == 0
 		gwen._visual_action_time_left = 0.0
-		gwen.control.frozen_timer = 0.0
+		SuiteUtils.set_control_window(gwen.control, &"freeze", 0.0)
 		gwen_view._process(0.0)
 		gwen_ok = frozen_pose and not gwen_view._playing_visual_action and player.current_animation != "Spell1_0"
 
@@ -125,7 +125,7 @@ func _check_control_interruptions() -> void:
 		var before := player.current_animation_position
 		xin.stun(0.2)
 		xin_view._process(0.0)
-		xin.control.stun_timer = 0.0
+		SuiteUtils.set_control_window(xin.control, &"stun", 0.0)
 		xin_view._process(0.0)
 		xin_ok = not xin_view._playing_attack and player.current_animation != "Passive_AA_01_XinZhaoRework_anm" and xin.attack_timeline.windup == 0
 
@@ -470,9 +470,8 @@ func _check_cast_policies_and_snapshot() -> void:
 	stationary.shields.absorb(75.0)
 	stationary.apply_active_buff(100.0, 1.5, 1.0, 1.4)
 	stationary.active_ability_id = 9001
-	_main._active_skills[stationary.active_ability_id] = {
-		"unit": stationary, "uses_remaining": 2, "cooldown_left": 1.25,
-	}
+	_main._active_skills.register(stationary, stationary.card_id, stationary.team, {"max_uses": 2})
+	_main._active_skills.replace_replica(stationary.active_ability_id, 2, 1.25)
 	var payload := NetworkSnapshotSystem.new(_main, _main._projectile_system)._unit_snapshot_payload(77, stationary)
 	var snapshot_system := NetworkSnapshotSystem.new(_main, _main._projectile_system)
 	var snapshot_packet := snapshot_system._snapshot_packet([], [], [], 0.0, _main._match_rules.time_left, _main._match_rules.overtime)
@@ -504,7 +503,7 @@ func _check_cast_policies_and_snapshot() -> void:
 	for unit in [stationary, mobile, unrestricted, near_dummy, far_dummy]:
 		if is_instance_valid(unit):
 			unit.free()
-	_main._active_skills.erase(9001)
+	_main._active_skills.remove(9001)
 
 func _check_repeated_attack_restart() -> void:
 	var stats: Dictionary = CardDB.get_card("gnar").transformed_stats.duplicate(true)

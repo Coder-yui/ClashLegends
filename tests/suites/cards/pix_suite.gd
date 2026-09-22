@@ -60,10 +60,10 @@ func _check_card_data_and_art() -> void:
 func _check_group_deployment_and_shared_skill() -> void:
 	var old_deck: Array = _main._deck.duplicate()
 	_main._deck = ["pix", "garen", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
-	var pending_before: int = _main._commands.card_commands.size()
+	var pending_before: int = _main._commands.inspect_cards().size()
 	var scheduled_tick: int = _main._deploy_card(0, "pix", Vector2(360.0, 1050.0), _main._sim_tick_id)
-	var one_pending_circle: bool = scheduled_tick >= 0 and _main._commands.card_commands.size() == pending_before + 1
-	_main._commands.card_commands.pop_back()
+	var one_pending_circle: bool = scheduled_tick >= 0 and _main._commands.inspect_cards().size() == pending_before + 1
+	_main._commands.cancel_last_card()
 	var group: Array[Unit] = _main._spawn_card_units(0, "pix", Vector2(360.0, 1050.0), 0.0, 0)
 	var other_group: Array[Unit] = _main._spawn_card_units(0, "pix", Vector2(500.0, 1050.0), 0.0)
 	var positions := {}
@@ -88,7 +88,7 @@ func _check_group_deployment_and_shared_skill() -> void:
 	# 主动持有者死亡后，编队资格必须交给存活成员，而不是让整队技能随第一只消失。
 	lead.take_damage(lead.hp + 1.0)
 	var transferred: bool = _main._active_skills.has(ability_id)
-	var replacement: Unit = _main._active_skills[ability_id].unit if transferred else null
+	var replacement: Unit = _main._active_skills.entry(ability_id).unit if transferred else null
 	transferred = transferred and replacement != null and replacement != lead and replacement.deployment_group_id == group_id
 	var activated: bool = transferred and _main._activate_active_skill(ability_id, 0)
 	var survivors: Array[Unit] = []
@@ -98,7 +98,7 @@ func _check_group_deployment_and_shared_skill() -> void:
 	var armed_only_this_group := survivors.all(func(member): return is_equal_approx(member.attack_lifesteal_ratio, 0.25))
 	armed_only_this_group = armed_only_this_group and other_group.all(func(member): return is_zero_approx(member.attack_lifesteal_ratio))
 	_expect(
-		transferred and activated and int(_main._active_skills[ability_id].uses_remaining) == 0 and armed_only_this_group,
+		transferred and activated and int(_main._active_skills.entry(ability_id).uses_remaining) == 0 and armed_only_this_group,
 		"编队主动在首成员死亡后仍由存活成员持有，释放时只强化本次部署中仍存活的皮克斯",
 	)
 
@@ -138,12 +138,12 @@ func _check_group_deployment_and_shared_skill() -> void:
 		old_effect_survives_redeploy
 		and new_group_starts_clean
 		and new_activated
-		and int(_main._active_skills[new_ability_id].uses_remaining) == 0
+		and int(_main._active_skills.entry(new_ability_id).uses_remaining) == 0
 		and isolated_new_activation,
 		"再次部署只把主动按钮交给新编队：旧编队永久吸血保留，新编队不会继承且新技能只作用于新编队",
 	)
 
-	_main._active_skills.erase(new_ability_id)
+	_main._active_skills.remove(new_ability_id)
 	_main._active_skill_bar.remove_skill(new_ability_id)
 	for member in group + other_group + new_group:
 		if is_instance_valid(member):

@@ -40,8 +40,6 @@ static func supports(stats: Dictionary, cue: String) -> bool:
 		return attacks and float(stats.get("projectile_speed", 0.0)) > 0.0 and supports(stats, "empowered_swing")
 	if cue in ["empowered_buff:start", "empowered_buff:end"]:
 		return supports(stats, "empowered_ready")
-	if cue in ["shroud:start", "shroud:sustain", "shroud:end"]:
-		return float(stats.get("shroud_radius", 0.0)) > 0.0
 	if cue == "resource_full":
 		return float(stats.get("skill_resource_max", 0.0)) > 0.0
 	if cue == "passive_heal":

@@ -23,41 +23,40 @@ const U_HP := 3
 const U_FROZEN := 4
 const U_VISUAL_STATE := 5
 const U_ATTACK_SERIAL := 6
-const U_SHROUD := 7
-const U_HAS_CONTINUOUS_TARGET := 8
-const U_CONTINUOUS_X := 9
-const U_CONTINUOUS_Y := 10
-const U_SLOW := 11
-const U_FORM := 12
-const U_STUN := 13
-const U_ACTION_SERIAL := 14
-const U_ACTION_NAME := 15
-const U_FACING_DIRECTION_X := 16
-const U_FACING_DIRECTION_Y := 17
-const U_ATTACKING_STRUCTURE := 18
-const U_FORM_CHANGE_SERIAL := 19
-const U_ACTION_DURATION := 20
-const U_ACTION_TIME_LEFT := 21
-const U_LOCOMOTION := 22
-const U_EMPOWERED_READY := 23
-const U_EMPOWERED_ATTACK_SERIAL := 24
-const U_SKILL_RESOURCE_RATIO := 25
-const U_SKILL_RESOURCE_ENABLED := 26
-const U_ACTIVE_SPEED_MULTIPLIER := 27
-const U_ACTIVE_ATTACK_SPEED_MULTIPLIER := 28
-const U_ACTIVE_SKILL_USES_REMAINING := 29
-const U_ACTIVE_SKILL_COOLDOWN := 30
-const U_SHIELD_RATIO := 31
-const U_SHIELD_CAPACITY_RATIO := 32
-const U_ACTIVE_BUFF_ACTIVE := 33
-const U_ATTACK_FIRST_STRIKE := 34
-const U_ATTACK_ELAPSED := 35
-const U_MOVEMENT_RATE := 36
-const U_ACTION_PERMISSIONS := 37
-const U_SPAWN := 38
-const U_DEPLOY_LEFT := 39
-const U_CANCELLATION := 40
-const UNIT_PAYLOAD_SIZE := 41
+const U_HAS_CONTINUOUS_TARGET := 7
+const U_CONTINUOUS_X := 8
+const U_CONTINUOUS_Y := 9
+const U_SLOW := 10
+const U_FORM := 11
+const U_STUN := 12
+const U_ACTION_SERIAL := 13
+const U_ACTION_NAME := 14
+const U_FACING_DIRECTION_X := 15
+const U_FACING_DIRECTION_Y := 16
+const U_ATTACKING_STRUCTURE := 17
+const U_FORM_CHANGE_SERIAL := 18
+const U_ACTION_DURATION := 19
+const U_ACTION_TIME_LEFT := 20
+const U_LOCOMOTION := 21
+const U_EMPOWERED_READY := 22
+const U_EMPOWERED_ATTACK_SERIAL := 23
+const U_SKILL_RESOURCE_RATIO := 24
+const U_SKILL_RESOURCE_ENABLED := 25
+const U_ACTIVE_SPEED_MULTIPLIER := 26
+const U_ACTIVE_ATTACK_SPEED_MULTIPLIER := 27
+const U_ACTIVE_SKILL_USES_REMAINING := 28
+const U_ACTIVE_SKILL_COOLDOWN := 29
+const U_SHIELD_RATIO := 30
+const U_SHIELD_CAPACITY_RATIO := 31
+const U_ACTIVE_BUFF_ACTIVE := 32
+const U_ATTACK_FIRST_STRIKE := 33
+const U_ATTACK_ELAPSED := 34
+const U_MOVEMENT_RATE := 35
+const U_ACTION_PERMISSIONS := 36
+const U_SPAWN := 37
+const U_DEPLOY_LEFT := 38
+const U_CANCELLATION := 39
+const UNIT_PAYLOAD_SIZE := 40
 
 const P_ID := 0
 const P_X := 1
@@ -232,7 +231,6 @@ func _apply_units(units_data: Array) -> void:
 		u.net_visual_state = int(d[U_VISUAL_STATE])
 		u.net_attack_visual_serial = int(d[U_ATTACK_SERIAL])
 		u.net_attack_visual_first_strike = int(d[U_ATTACK_FIRST_STRIKE]) == 1
-		u.net_shroud_active = int(d[U_SHROUD]) == 1
 		u.net_has_continuous_target = int(d[U_HAS_CONTINUOUS_TARGET]) == 1
 		u.net_continuous_target_pos = Vector2(d[U_CONTINUOUS_X], d[U_CONTINUOUS_Y])
 		if _controller._auto_test and not _controller._auto_continuous_target_seen and u.net_has_continuous_target:
@@ -422,7 +420,6 @@ func _unit_snapshot_payload(id: int, u: Unit, has_continuous_target: bool = fals
 		id, u.global_position.x, u.global_position.y, u.hp,
 		1 if u.control.frozen_timer > 0.0 else 0,
 		u.get_visual_state_code(), u.get_attack_visual_serial(),
-		1 if u._shroud_active else 0,
 		1 if has_continuous_target else 0, continuous_target_pos.x, continuous_target_pos.y,
 		1 if u.control.slow_timer > 0.0 else 0,
 		u.form_index, 1 if u.control.stun_timer > 0.0 else 0,

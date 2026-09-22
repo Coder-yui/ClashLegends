@@ -43,8 +43,6 @@ func clear_client() -> void:
 func launch(attacker: Node2D, target: Node2D, amount: float, projectile_speed: float, splash_radius: float, knockback: float, projectile_color: Color, effects: Dictionary = {}) -> bool:
 	if target == null or not is_instance_valid(target) or target.hp <= 0.0:
 		return false
-	if target is Unit and (target as Unit).is_hidden_from(attacker):
-		return false
 	effects = effects.duplicate(true)
 	if attacker is Unit:
 		effects["source_generation"] = attacker.form_change_serial
@@ -139,9 +137,6 @@ func tick(dt: float) -> void:
 		var attacker = projectile.get("attacker")
 		if attacker != null and is_instance_valid(attacker):
 			projectile.source_pos = attacker.global_position
-		if target is Unit and (target as Unit).is_hidden_from_position(projectile.team, projectile.source_pos):
-			finished.append(id)
-			continue
 		var target_pos: Vector2 = target.global_position
 		var pos: Vector2 = projectile.pos
 		projectile.direction = pos.direction_to(target_pos)
@@ -212,8 +207,6 @@ func _tick_skill_arrow(projectile: Dictionary, dt: float, colliders: Array) -> b
 			continue
 		if candidate is Unit:
 			if bool(projectile.skill.get("ground_only", false)) and candidate.is_air:
-				continue
-			if candidate.is_hidden_from_position(projectile.team, projectile.source_pos):
 				continue
 		var offset: Vector2 = collider[1] - origin
 		var radius := float(collider[2]) + float(projectile.radius)

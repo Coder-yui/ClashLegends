@@ -124,3 +124,18 @@ static func _append_animation_names(names: Array[StringName], configured: Varian
 		var animation_name := StringName(value)
 		if animation_name != &"" and animation_name not in names:
 			names.append(animation_name)
+
+static func set_buff_window(unit: Unit, seconds: float) -> void:
+	unit.buffs.clear_family(&"buff")
+	unit.buffs.apply(&"buff", &"fixture", seconds, {})
+
+static func replace_carried_skill(roster: ActiveSkillRoster, id: int, skill: Dictionary) -> void:
+	var old := roster.entry(id)
+	# 使用注册与副本替换入口构造定制动作；不开放内部集合写入。
+	roster.remove(id)
+	roster.register(old.unit, old.card_id, old.team, skill)
+	roster.replace_replica(id, int(old.uses_remaining), float(old.cooldown_left))
+
+static func set_control_window(control: ControlState, family: StringName, seconds: float) -> void:
+	control.hard.clear_family(family)
+	control.hard.apply(family, &"fixture", seconds, {})

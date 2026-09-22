@@ -29,16 +29,14 @@ func cast(team: int, stats: Dictionary, position: Vector2, active_enabled: bool 
 			var slow_duration := float(stats.get("active_slow_duration", 0.0)) if active_enabled else 0.0
 			var slow_multiplier := float(stats.get("active_slow_multiplier", 1.0))
 			apply_freeze(position, radius, duration, team, slow_duration, slow_multiplier)
-			if _controller.mode == "host":
-				_controller._rpc_freeze_fx.rpc_id(_controller.network_opponent_id(), _controller.network_session_id(), position, radius, duration, slow_duration, slow_multiplier)
+			_controller.present_freeze_spell(position, radius, duration, slow_duration, slow_multiplier)
 			return true
 		&"heal":
 			var heal_radius := float(stats.get("radius", 0.0))
 			var fx_duration := float(stats.get("duration", 1.2))
 			var active_skill: Dictionary = _active_heal_skill(stats, active_skill_index) if active_enabled else {}
 			apply_heal(position, heal_radius, team, stats, active_enabled, active_skill)
-			if _controller.mode == "host":
-				_controller._rpc_heal_fx.rpc_id(_controller.network_opponent_id(), _controller.network_session_id(), position, heal_radius, fx_duration, active_enabled, bool(active_skill.get("global_heal", false)))
+			_controller.present_heal_spell(position, heal_radius, fx_duration, active_enabled, bool(active_skill.get("global_heal", false)))
 			return true
 		_:
 			push_error("未实现的 spell_kind：%s" % String(stats.get("spell_kind", "")))
@@ -57,7 +55,7 @@ func apply_freeze(position: Vector2, radius: float, duration: float, team: int, 
 	var source := StringName("spell:%d:%d" % [team, _effect_serial])
 	show_freeze(position, radius, duration, slow_duration)
 	if slow_duration > 0.0:
-		slow_zones.append({"created_tick": _controller._sim_tick_id if _controller._sim_step_active else -1, "pos": position, "radius": radius, "delay": duration, "timer": slow_duration, "team": team, "multiplier": slow_multiplier, "status_source": source})
+		slow_zones.append({"created_tick": _controller.get_authoritative_server_tick() if _controller.simulation_step_active() else -1, "pos": position, "radius": radius, "delay": duration, "timer": slow_duration, "team": team, "multiplier": slow_multiplier, "status_source": source})
 	for combatant in _controller.get_tree().get_nodes_in_group("combatants"):
 		if not is_instance_valid(combatant) or combatant.team == team or combatant.hp <= 0.0:
 			continue
@@ -109,7 +107,7 @@ func show_heal(position: Vector2, radius: float, duration: float, enhanced: bool
 func tick(dt: float) -> void:
 	var alive: Array[Dictionary] = []
 	for zone in slow_zones:
-		if _controller._sim_step_active and int(zone.get("created_tick", -1)) == _controller._sim_tick_id:
+		if _controller.simulation_step_active() and int(zone.get("created_tick", -1)) == _controller.get_authoritative_server_tick():
 			alive.append(zone)
 			continue
 		var activating := float(zone.delay) > 0.0
@@ -125,7 +123,7 @@ func tick(dt: float) -> void:
 			if not combatant is Unit or not is_instance_valid(combatant) or combatant.team == int(zone.team) or combatant.hp <= 0.0:
 				continue
 			if combatant.global_position.distance_to(zone.pos) <= float(zone.radius) + combatant.body_radius:
-				(combatant as Unit).apply_slow(dt + _controller.SIM_DT, float(zone.multiplier), zone.status_source)
+				(combatant as Unit).apply_slow(dt + FixedStepClock.STEP, float(zone.multiplier), zone.status_source)
 		if float(zone.timer) > 0.0:
 			alive.append(zone)
 	slow_zones.assign(alive)

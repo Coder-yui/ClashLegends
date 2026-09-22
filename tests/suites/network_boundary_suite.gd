@@ -52,7 +52,7 @@ func run(harness: SceneTree, scenario: String) -> void:
 			while harness.current_scene == null or harness.current_scene == main:
 				await harness.process_frame
 			main = harness.current_scene
-			restart_clean = not main.game_over and main._commands.card_commands.is_empty() and main._session.last_request_id == 0 and not main.has_node("MatchResult")
+			restart_clean = not main.game_over and main._commands.inspect_cards().is_empty() and main._session.last_request_id == 0 and not main.has_node("MatchResult")
 			continue
 		if main._session.phase in [MatchSession.Phase.FINISHED, MatchSession.Phase.DISCONNECTED]:
 			while main._battle_loading: await harness.process_frame
@@ -60,9 +60,9 @@ func run(harness: SceneTree, scenario: String) -> void:
 	var result := {"schema": 1, "case": scenario, "role": main.mode, "session_id": main._session.session_id,
 		"phase": main._session.phase, "tick": main._sim_tick_id, "passed": false}
 	if scenario in ["protocol", "content"]:
-		result.passed = main._session.phase == MatchSession.Phase.DISCONNECTED and main._sim_tick_id == 0 and main._towers.is_empty() and main._commands.card_commands.is_empty() and main._authoritative_card_cycles.is_empty()
+		result.passed = main._session.phase == MatchSession.Phase.DISCONNECTED and main._sim_tick_id == 0 and main._towers.is_empty() and main._commands.inspect_cards().is_empty() and main._authoritative_card_cycles.is_empty()
 	elif scenario == "disconnect":
-		result.passed = main.game_over and main._session.phase == MatchSession.Phase.DISCONNECTED and main._commands.card_commands.is_empty() and main._commands.skill_commands.is_empty() and main._audio_manager.battle_audio_stopped() and main.has_node("MatchResult")
+		result.passed = main.game_over and main._session.phase == MatchSession.Phase.DISCONNECTED and main._commands.inspect_cards().is_empty() and main._commands.inspect_skills().is_empty() and main._audio_manager.battle_audio_stopped() and main.has_node("MatchResult")
 	elif scenario in ["load_disconnect", "load_timeout"]:
 		result.passed = main._session.phase == MatchSession.Phase.DISCONNECTED and main._sim_tick_id == 0 and not main._battle_loading and not harness.paused and main._network_peer == null
 	elif scenario == "slow_host":

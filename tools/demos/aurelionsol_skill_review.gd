@@ -18,7 +18,7 @@ func _run() -> void:
 	for team in [0, 1]:
 		for strong in [false, true]:
 			main._clear_art_dev_units()
-			main._art_dev_team = team
+			main._workbench.team = team
 			main._place_art_dev_item(Vector2(360, 850 if team == 0 else 450))
 			var source: Unit = main._art_dev_selected_unit()
 			source._deploy_timer = 0

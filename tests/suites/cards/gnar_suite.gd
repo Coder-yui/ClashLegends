@@ -207,7 +207,7 @@ func _check_gnar_mechanic() -> void:
 	var telegraph_queued: bool = (
 		front.hp == front_hp
 		and is_zero_approx(front.control.stun_timer)
-		and _main._commands.impacts.size() == 1
+		and _main._commands.inspect_impacts().size() == 1
 		and _main._active_skill_effect_system.frontal_effects.size() == 1
 	)
 	_main._commands.tick_impacts(float(skill.transform_impact_delay) - 0.05)
@@ -226,11 +226,11 @@ func _check_gnar_mechanic() -> void:
 	_main.preview_active_skill(active_small, skill)
 	var mega_waits_for_impact: bool = (
 		active_small.get_visual_action_name() == &"active"
-		and _main._commands.impacts.size() == 1
+		and _main._commands.inspect_impacts().size() == 1
 		and is_equal_approx(active_small.active_skill_cast_timer, float(skill.cast_duration))
 	)
 	_expect(mega_waits_for_impact, "大纳尔主动固定方向并锁定行动，直接播放 Spell2 后延迟到 0.8 秒手掌触地时结算")
-	_main._commands.impacts.clear()
+	_main._commands.clear_impacts()
 	_main._active_skill_effect_system.frontal_effects.clear()
 	active_small.active_skill_cast_timer = 0.0
 	active_small.active_skill_cast_facing = Vector2.ZERO
@@ -487,7 +487,7 @@ func _check_gnar_art_integration() -> void:
 	if is_instance_valid(unit):
 		unit.free()
 	# 清理待结算主动技能现场，避免污染后续领域 suite。
-	_main._commands.impacts.clear()
+	_main._commands.clear_impacts()
 	_main._active_skill_effect_system.frontal_effects.clear()
 
 func _check_frozen_pending_generation() -> void:

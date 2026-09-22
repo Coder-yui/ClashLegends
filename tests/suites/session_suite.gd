@@ -30,20 +30,20 @@ func run(harness: Object) -> void:
 	harness._expect(not main._accept_remote_deck(0, "deck", deck, {}) and main._authoritative_card_cycles.is_empty(), "原 CL-04：未绑定调用者不能创建手牌循环")
 	harness._expect(not main._accept_remote_deck(42, "deck", [null], {}) and not main._session.deck_confirmed, "坏卡组不会占用一次性确认")
 	harness._expect(main._accept_remote_deck(42, "deck", deck, {}), "合法绑定对手可以确认卡组")
-	main._authoritative_card_cycles[1].hand.pop_front()
+	main._consume_authoritative_card(1, String(main.get_authoritative_hand(1)[0]))
 	main._session.phase = MatchSession.Phase.RUNNING
-	var before: Dictionary = main._authoritative_card_cycles.duplicate(true)
-	harness._expect(not main._accept_remote_deck(42, "deck", deck, {}) and main._authoritative_card_cycles == before, "原 CL-04：局中相同卡组重注册不重置手牌")
+	var before: Array = [main.get_authoritative_hand(1), main.get_authoritative_queue(1)]
+	harness._expect(not main._accept_remote_deck(42, "deck", deck, {}) and [main.get_authoritative_hand(1), main.get_authoritative_queue(1)] == before, "原 CL-04：局中相同卡组重注册不重置手牌")
 	main._rpc_deploy_request("garen", Vector2(300, 580), 0, "deck", 1)
 	main._rpc_active_skill_request(1, 0, "deck", 2)
-	harness._expect(main._commands.card_commands.is_empty() and main._commands.skill_commands.is_empty() and main._session.last_request_id == 0, "实际 RPC 入口拒绝非参与者，不入队、不改变序号")
+	harness._expect(main._commands.inspect_cards().is_empty() and main._commands.inspect_skills().is_empty() and main._session.last_request_id == 0, "实际 RPC 入口拒绝非参与者，不入队、不改变序号")
 	main.mode = "client"
 	main._session = MatchSession.new()
 	main._session.join("new")
 	main._session.phase = MatchSession.Phase.RUNNING
 	main._rpc_card_pre_deploy_started("old", 77, "tombstone", 1, Vector2.ZERO, 2.0)
 	main._rpc_projectile_launch_audio("old", 77, {"card_id": "gnar", "form": 0}, Vector2.ZERO, true)
-	harness._expect(main._commands.pre_deployments.is_empty() and main._audio_manager._projectile_launch_players.is_empty(), "旧局表现事件不能创建新局部署标记或飞行声")
+	harness._expect(main._commands.inspect_deployments().is_empty() and main._audio_manager._projectile_launch_players.is_empty(), "旧局表现事件不能创建新局部署标记或飞行声")
 	main._session = MatchSession.new()
 	main._on_connection_failed()
 	harness._expect(main._session.phase == MatchSession.Phase.DISCONNECTED and main._network_peer == null and main._menu_status.text.contains("连接失败"), "连接失败有明确提示且可留在菜单重新选择")

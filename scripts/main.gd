@@ -41,6 +41,7 @@ var _network_loading_started := 0
 var _presentation_event_id := 0
 var _last_card_event_id := -1
 var _commands := CommandSchedule.new()
+var _deployment_rules := DeploymentRules.new()
 var _effects_view: BattleEffects2D
 var _resources := MatchResources.new()
 var _combat: CombatResolver
@@ -63,7 +64,7 @@ var _hand: CardHand
 var _active_skill_bar: ActiveSkillBar
 var _arena_background_sprite: Sprite2D
 ## ability_id -> {unit, card_id, team, skill, uses_remaining, cooldown_left}；按钮只是这份权威状态的视图。
-var _active_skills: Dictionary = {}
+var _active_skills := ActiveSkillRoster.new()
 var _next_active_ability_id := 1
 ## 一次卡牌部署生成的单位共享同一编队 id；单体卡保持 -1。
 var _next_deployment_group_id := 1
@@ -102,16 +103,8 @@ var _king_enemy: Tower
 var _towers: Array[Tower] = []
 var _battle_presentation: BattlePresentation3D
 var _audio_manager: GameAudioManager
-var _art_dev_mode := false
-var _art_dev_form := 0
-var _art_dev_selection := "training_dummy"
-var _art_dev_team := 1
-var _art_dev_spell_active := false
+var _workbench := WorkbenchSession.new()
 var _art_dev_panel: DevelopmentWorkbench
-var _art_dev_last_units: Dictionary = {}
-var _art_dev_last_groups: Dictionary = {}
-var _workbench_preset_loading := false
-var _art_dev_active_skill_choices: Dictionary = {}
 
 # 主菜单
 var _menu_layer: CanvasLayer
@@ -163,6 +156,15 @@ func _ready() -> void:
 	_movement.terrain_walkable = _is_ground_terrain_walkable
 	_movement.structure_gap = _structure_gap_to_circle
 	add_child(_movement)
+	_deployment_rules.combatants = func(): return get_tree().get_nodes_in_group("combatants")
+	_deployment_rules.towers = func(): return _towers
+	_deployment_rules.ground_walkable = is_ground_position_walkable
+	_workbench.place = _place_art_dev_item
+	_workbench.clear_battle = clear_preview_battle
+	_workbench.rebuild_arena = _rebuild_workbench_arena
+	_workbench.selected_unit = _art_dev_selected_unit
+	_workbench.sync_view = _sync_art_dev_panel_state
+	_workbench.pause_battle = _pause_workbench_battle
 	battle_context = BattleContext.new(self)
 	_spell_system = SPELL_SYSTEM_SCRIPT.new(self)
 	_active_skill_effect_system = ACTIVE_SKILL_EFFECT_SYSTEM_SCRIPT.new(self)
@@ -175,7 +177,7 @@ func _ready() -> void:
 	child_entered_tree.connect(_provide_battle_context)
 	_projectile_system = ProjectileSystem.new()
 	_projectile_system.setup(battle_context)
-	_projectile_system.skill_hit.connect(_on_skill_projectile_hit)
+	_projectile_system.skill_hit.connect(present_skill_projectile_hit)
 	_projectile_system.launch_audio_started.connect(_on_projectile_launch_audio_started)
 	_projectile_system.launch_audio_stopped.connect(_on_projectile_launch_audio_stopped)
 	add_child(_projectile_system)
@@ -446,7 +448,7 @@ func _start_art_dev() -> void:
 	mode = "local"
 	_match_started = true
 	queue_redraw()
-	_art_dev_mode = true
+	_workbench.enabled = true
 	_hide_menu()
 	_setup_battle_presentation()
 	_create_towers()
@@ -456,11 +458,11 @@ func _start_art_dev() -> void:
 	_art_dev_panel.setup(CardDB.all())
 	_art_dev_panel.item_selected.connect(_set_art_dev_selection)
 	_art_dev_panel.team_changed.connect(_set_art_dev_team)
-	_art_dev_panel.form_selected.connect(func(form): _art_dev_form = form)
+	_art_dev_panel.form_selected.connect(func(form): _workbench.form = form)
 	_art_dev_panel.active_skill_selected.connect(_on_art_dev_active_skill_selected)
 	_art_dev_panel.active_skill_requested.connect(_use_art_dev_active_skill)
 	_art_dev_panel.scenario_requested.connect(_run_workbench_scenario)
-	_art_dev_panel.spell_active_changed.connect(func(enabled): _art_dev_spell_active = enabled)
+	_art_dev_panel.spell_active_changed.connect(func(enabled): _workbench.spell_active = enabled)
 	_art_dev_panel.workspace_changed.connect(_set_workbench_battle_active)
 	_art_dev_panel.skill_resource_requested.connect(_set_art_dev_skill_resource)
 	_art_dev_panel.clear_requested.connect(_clear_art_dev_units)
@@ -674,62 +676,38 @@ func _initialize_authoritative_card_cycle(p_team: int, deck: Array) -> bool:
 	if deck.size() != 8:
 		_authoritative_card_cycles.erase(p_team)
 		return false
-	var normalized: Array = []
-	for raw_card_id in deck:
-		normalized.append(String(raw_card_id))
-	var cycle := {
-		"deck": normalized.duplicate(),
-		"hand": normalized.slice(0, 4),
-		"queue": normalized.slice(4, 8),
-	}
-	_authoritative_card_cycles[p_team] = cycle
-	if _hand != null and _is_local_player_team(p_team):
-		_hand.set_cycle_state(cycle.hand, cycle.queue)
+	_authoritative_card_cycles[p_team] = CardCycle.new(deck)
+	_sync_card_cycle_ui(p_team)
 	return true
 
+func _sync_card_cycle_ui(p_team: int) -> void:
+	if _hand != null and _is_local_player_team(p_team):
+		var cycle: CardCycle = _authoritative_card_cycles[p_team]
+		_hand.set_cycle_state(cycle.hand(), cycle.queue())
+
 func _ensure_authoritative_card_cycle(p_team: int) -> bool:
-	var team_deck := _team_deck(p_team)
-	if team_deck.size() != 8:
-		return false
-	var cycle: Dictionary = _authoritative_card_cycles.get(p_team, {})
-	var normalized: Array = []
-	for raw_card_id in team_deck:
-		normalized.append(String(raw_card_id))
-	if cycle.is_empty() or cycle.get("deck", []) != normalized:
-		return _initialize_authoritative_card_cycle(p_team, normalized)
+	var deck := _team_deck(p_team)
+	if deck.size() != 8: return false
+	var cycle: CardCycle = _authoritative_card_cycles.get(p_team)
+	if cycle == null or not cycle.matches(deck):
+		return _initialize_authoritative_card_cycle(p_team, deck)
 	return true
 
 func get_authoritative_hand(p_team: int) -> Array:
-	if not _ensure_authoritative_card_cycle(p_team):
-		return []
-	var cycle: Dictionary = _authoritative_card_cycles[p_team]
-	return cycle.hand.duplicate()
+	if not _ensure_authoritative_card_cycle(p_team): return []
+	return (_authoritative_card_cycles[p_team] as CardCycle).hand()
 
 func get_authoritative_queue(p_team: int) -> Array:
-	if not _ensure_authoritative_card_cycle(p_team):
-		return []
-	var cycle: Dictionary = _authoritative_card_cycles[p_team]
-	return cycle.queue.duplicate()
+	if not _ensure_authoritative_card_cycle(p_team): return []
+	return (_authoritative_card_cycles[p_team] as CardCycle).queue()
 
 func _authoritative_card_in_hand(p_team: int, card_id: String) -> bool:
 	return card_id in get_authoritative_hand(p_team)
 
 func _consume_authoritative_card(p_team: int, card_id: String) -> bool:
-	if not _ensure_authoritative_card_cycle(p_team):
-		return false
-	var cycle: Dictionary = _authoritative_card_cycles[p_team]
-	var hand: Array = cycle.hand
-	var queue: Array = cycle.queue
-	var hand_index := hand.find(card_id)
-	if hand_index < 0 or queue.is_empty():
-		return false
-	hand[hand_index] = queue.pop_front()
-	queue.push_back(card_id)
-	cycle.hand = hand
-	cycle.queue = queue
-	_authoritative_card_cycles[p_team] = cycle
-	if _hand != null and _is_local_player_team(p_team):
-		_hand.set_cycle_state(hand, queue)
+	if not _ensure_authoritative_card_cycle(p_team): return false
+	if not (_authoritative_card_cycles[p_team] as CardCycle).consume(card_id): return false
+	_sync_card_cycle_ui(p_team)
 	return true
 
 ## 客户端只用本地时间估计服务器 Tick；这里不调用 _sim_step，也不触碰任何战斗状态。
@@ -961,7 +939,7 @@ func _update_deployment_preview(pointer_pos: Vector2) -> void:
 	queue_redraw()
 
 func _unhandled_input(event: InputEvent) -> void:
-	if _art_dev_mode:
+	if _workbench.enabled:
 		if _art_dev_panel != null and not _art_dev_panel.accepts_battle_input():
 			return
 		if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
@@ -996,28 +974,28 @@ func _unhandled_input(event: InputEvent) -> void:
 		queue_redraw()
 
 func _place_art_dev_item(pos: Vector2) -> void:
-	if _art_dev_selection == "training_dummy":
+	if _workbench.selection == "training_dummy":
 		pos = _snap_to_tile_center(pos)
 		var stats := CardDB.training_dummy_stats()
 		var dummy := Unit.new()
 		dummy.position = pos
-		dummy.setup(_art_dev_team, stats, stats.name)
+		dummy.setup(_workbench.team, stats, stats.name)
 		dummy.card_id = "training_dummy"
 		add_child(dummy)
 		_register_dynamic_building(dummy)
-		_art_dev_last_units[_art_dev_unit_key("training_dummy", _art_dev_team)] = weakref(dummy)
+		_workbench.last_units[_art_dev_unit_key("training_dummy", _workbench.team)] = weakref(dummy)
 		_sync_art_dev_panel_state()
 		return
-	if not CardDB.has_card(_art_dev_selection):
+	if not CardDB.has_card(_workbench.selection):
 		return
-	pos = _snap_card_position(_art_dev_selection, pos, _art_dev_team)
-	if play_card(_art_dev_team, _art_dev_selection, pos, {"immediate": true, "validate_position": false, "preview_active_spell": _art_dev_spell_active}):
-		var unit := _latest_unit_for_card(_art_dev_selection, _art_dev_team)
+	pos = _snap_card_position(_workbench.selection, pos, _workbench.team)
+	if play_card(_workbench.team, _workbench.selection, pos, {"immediate": true, "validate_position": false, "preview_active_spell": _workbench.spell_active}):
+		var unit := _latest_unit_for_card(_workbench.selection, _workbench.team)
 		if unit != null:
-			if _art_dev_form == 1:
+			if _workbench.form == 1:
 				unit.transform_to_mega(true)
-			_art_dev_last_units[_art_dev_unit_key(_art_dev_selection, _art_dev_team)] = weakref(unit)
-			_art_dev_last_groups[_art_dev_unit_key(_art_dev_selection, _art_dev_team)] = unit.deployment_group_id
+			_workbench.last_units[_art_dev_unit_key(_workbench.selection, _workbench.team)] = weakref(unit)
+			_workbench.last_groups[_art_dev_unit_key(_workbench.selection, _workbench.team)] = unit.deployment_group_id
 			_configure_art_dev_unit_skill(unit)
 			_sync_art_dev_panel_state()
 
@@ -1041,14 +1019,14 @@ func living_deployment_members(group_id: int, p_team: int) -> Array[Unit]:
 	return members
 
 func _art_dev_selected_unit() -> Unit:
-	var candidate_ref = _art_dev_last_units.get(_art_dev_unit_key(_art_dev_selection, _art_dev_team))
+	var candidate_ref = _workbench.last_units.get(_art_dev_unit_key(_workbench.selection, _workbench.team))
 	var candidate = (candidate_ref as WeakRef).get_ref() if candidate_ref is WeakRef else null
 	if candidate is Unit and is_instance_valid(candidate) and candidate.hp > 0.0:
 		return candidate as Unit
-	var group_id := int(_art_dev_last_groups.get(_art_dev_unit_key(_art_dev_selection, _art_dev_team), -1))
-	var members := living_deployment_members(group_id, _art_dev_team)
+	var group_id := int(_workbench.last_groups.get(_art_dev_unit_key(_workbench.selection, _workbench.team), -1))
+	var members := living_deployment_members(group_id, _workbench.team)
 	if not members.is_empty():
-		_art_dev_last_units[_art_dev_unit_key(_art_dev_selection, _art_dev_team)] = weakref(members[0])
+		_workbench.last_units[_art_dev_unit_key(_workbench.selection, _workbench.team)] = weakref(members[0])
 		return members[0]
 	return null
 
@@ -1056,23 +1034,19 @@ func _art_dev_unit_key(card_id: String, p_team: int) -> String:
 	return "%s:%d" % [card_id, p_team]
 
 func _set_art_dev_selection(item_id: String) -> void:
-	_art_dev_selection = item_id
-	_art_dev_form = 0
-	_art_dev_spell_active = false
-	_sync_art_dev_panel_state()
+	_workbench.select(item_id)
 
 func _set_art_dev_team(team: int) -> void:
-	_art_dev_team = team
-	_sync_art_dev_panel_state()
+	_workbench.set_team(team)
 
 func _art_dev_selected_skill(card_id: String = "", requested_index: int = -1) -> Dictionary:
-	var resolved_card_id := _art_dev_selection if card_id.is_empty() else card_id
+	var resolved_card_id := _workbench.selection if card_id.is_empty() else card_id
 	var skills := CardDB.active_skills_for(resolved_card_id)
 	if skills.is_empty():
 		return {}
 	var selected_index := requested_index
 	if selected_index < 0:
-		selected_index = int(_art_dev_active_skill_choices.get(resolved_card_id, 0))
+		selected_index = int(_workbench.skill_choices.get(resolved_card_id, 0))
 	selected_index = clampi(selected_index, 0, skills.size() - 1)
 	return skills[selected_index]
 
@@ -1087,8 +1061,8 @@ func _on_art_dev_active_skill_selected(item_id: String, skill_index: int) -> voi
 	var skills := CardDB.active_skills_for(item_id)
 	if skills.is_empty():
 		return
-	_art_dev_active_skill_choices[item_id] = clampi(skill_index, 0, skills.size() - 1)
-	if item_id == _art_dev_selection:
+	_workbench.skill_choices[item_id] = clampi(skill_index, 0, skills.size() - 1)
+	if item_id == _workbench.selection:
 		var unit := _art_dev_selected_unit()
 		if unit != null:
 			_configure_art_dev_unit_skill(unit)
@@ -1099,10 +1073,10 @@ func _use_art_dev_active_skill(skill_index: int = -1) -> void:
 	var unit := _art_dev_selected_unit()
 	if unit == null or not unit.is_deployed() or unit.is_active_skill_rush_locked() or unit.is_form_transitioning() or unit.is_active_skill_casting():
 		return
-	var skill := _art_dev_selected_skill(_art_dev_selection, skill_index)
+	var skill := _art_dev_selected_skill(_workbench.selection, skill_index)
 	if skill.is_empty():
 		return
-	_art_dev_active_skill_choices[_art_dev_selection] = clampi(skill_index, 0, CardDB.active_skills_for(_art_dev_selection).size() - 1) if skill_index >= 0 else int(_art_dev_active_skill_choices.get(_art_dev_selection, 0))
+	_workbench.skill_choices[_workbench.selection] = clampi(skill_index, 0, CardDB.active_skills_for(_workbench.selection).size() - 1) if skill_index >= 0 else int(_workbench.skill_choices.get(_workbench.selection, 0))
 	unit.configure_carried_active_skill(skill)
 	preview_active_skill(unit, skill)
 	_sync_art_dev_panel_state()
@@ -1118,76 +1092,26 @@ func _set_art_dev_skill_resource(value: float) -> void:
 
 ## 开发场景操作使用现有单位/出牌接口，不能进入正式比赛。
 func _run_workbench_scenario(action: String) -> void:
-	if not _art_dev_mode:
-		return
-	if action.begins_with("preset:"):
-		_load_workbench_preset(action.trim_prefix("preset:"))
-		return
-	var unit := _art_dev_selected_unit()
-	match action:
-		"spawn":
-			_place_art_dev_item(Vector2(300, 780) if _art_dev_team == 0 else Vector2(300, 500))
-		"target":
-			var old_selection := _art_dev_selection
-			var old_team := _art_dev_team
-			_art_dev_selection = "training_dummy"
-			_art_dev_team = 1 - old_team
-			var origin := unit.position if unit != null else Vector2(300, 780 if old_team == 0 else 500)
-			_place_art_dev_item(origin + Vector2(0, -100 if old_team == 0 else 100))
-			_art_dev_selection = old_selection
-			_art_dev_team = old_team
-		"freeze":
-			if unit != null: unit.freeze(2.0)
-		"stun":
-			if unit != null: unit.stun(2.0)
-		"slow":
-			if unit != null: unit.apply_slow(3.0, 0.5)
-		"attack_slow":
-			if unit != null: unit.apply_attack_speed_slow(3.0, 0.5)
-		"death":
-			if unit != null: unit.take_damage(unit.max_hp * 100.0)
-	_sync_art_dev_panel_state()
+	_workbench.run_scenario(action)
 
 func _load_workbench_preset(id: String) -> void:
-	if not _art_dev_mode or _workbench_preset_loading:
-		return
-	var recipe := preload("res://scripts/ui/workbench/battle_scenarios.gd").placements(id, _art_dev_selection, _art_dev_team)
-	if recipe.is_empty():
-		return
-	_workbench_preset_loading = true
-	var selection := _art_dev_selection
-	var selected_team := _art_dev_team
-	var enhanced := _art_dev_spell_active
-	_clear_art_dev_units()
-	for tower in _towers:
-		tower.queue_free()
+	await _workbench.load_preset(id)
+
+func _rebuild_workbench_arena() -> void:
+	for tower in _towers: tower.queue_free()
 	_towers.clear()
-	# 清空使用 queue_free；等旧对象退场后再布置，避免部署效果命中旧对象。
 	await get_tree().process_frame
 	_create_towers()
 	_build_nav()
-	var selected_form := _art_dev_form
-	for entry in recipe:
-		_art_dev_form = selected_form if entry.card == selection else 0
-		_art_dev_selection = entry.card
-		_art_dev_team = entry.team
-		_place_art_dev_item(entry.pos)
-	_art_dev_selection = selection
-	_art_dev_form = selected_form
-	_art_dev_team = selected_team
-	_art_dev_spell_active = enhanced
-	_workbench_preset_loading = false
-	_sync_art_dev_panel_state()
 
 func _set_workbench_battle_active(active: bool) -> void:
-	# 检查素材时暂停整个实战分支（包括 3D 代理和声音），防止后台攻击干扰试听。
-	if not _art_dev_mode:
-		return
+	_workbench.set_battle_active(active)
+
+func _pause_workbench_battle(paused: bool) -> void:
 	for child in get_children():
 		if child != _art_dev_panel:
-			child.process_mode = Node.PROCESS_MODE_INHERIT if active else Node.PROCESS_MODE_DISABLED
-	if _audio_manager != null:
-		_audio_manager.set_battle_paused(not active)
+			child.process_mode = Node.PROCESS_MODE_DISABLED if paused else Node.PROCESS_MODE_INHERIT
+	if _audio_manager != null: _audio_manager.set_battle_paused(paused)
 
 func _sync_art_dev_panel_state() -> void:
 	if _art_dev_panel == null:
@@ -1217,8 +1141,9 @@ func _register_dynamic_building(unit: Unit) -> void:
 	nav.set_cells_blocked(unit.nav_cells, true)
 
 func _clear_art_dev_units() -> void:
-	_art_dev_last_units.clear()
-	_art_dev_last_groups.clear()
+	_workbench.clear()
+
+func clear_preview_battle() -> void:
 	_commands.clear()
 	for combatant in get_tree().get_nodes_in_group("combatants"):
 		if not combatant is Unit:
@@ -1237,222 +1162,52 @@ func _clear_art_dev_units() -> void:
 	queue_redraw()
 
 func _world_to_arena_tile(pos: Vector2) -> Vector2i:
-	return Vector2i(floori(pos.x / ArenaRules.TILE_SIZE), floori(pos.y / ArenaRules.TILE_SIZE))
+	return _deployment_rules.world_to_arena_tile(pos)
 
 func _arena_tile_center(tile: Vector2i) -> Vector2:
-	return Vector2(tile) * ArenaRules.TILE_SIZE + Vector2.ONE * ArenaRules.TILE_SIZE * 0.5
+	return _deployment_rules.arena_tile_center(tile)
 
 func _snap_to_tile_center(pos: Vector2) -> Vector2:
-	var tile := _world_to_arena_tile(pos)
-	tile.x = clampi(tile.x, 0, ArenaRules.ARENA_COLUMNS - 1)
-	tile.y = clampi(tile.y, 0, ArenaRules.ARENA_ROWS - 1)
-	return _arena_tile_center(tile)
+	return _deployment_rules.snap_to_tile_center(pos)
 
-## 单格单位和奇数格建筑落在格心；偶数格建筑落在格线交点，确保规则占地对齐完整格子。
 func _snap_card_position(card_id: String, pos: Vector2, p_team: int = -1) -> Vector2:
-	if not CardDB.has_card(card_id):
-		return _snap_to_tile_center(pos)
-	var stats: Dictionary = CardDB.get_card(card_id)
-	var footprint: Vector2i = stats.get("footprint_tiles", Vector2i.ONE)
-	if stats.get("type", "unit") != "building" or footprint == Vector2i.ONE:
-		# 单位严格落在鼠标所在格的格心。若该格因河岸、塔或边界不合法，
-		# 由预览显示红色并拒绝部署，不能通过微调中心偷偷换到别的位置。
-		return _snap_to_tile_center(pos)
-	var half_size := Vector2(footprint) * ArenaRules.TILE_SIZE * 0.5
-	var snapped := Vector2(
-		roundf(pos.x / ArenaRules.TILE_SIZE) * ArenaRules.TILE_SIZE if footprint.x % 2 == 0 else floorf(pos.x / ArenaRules.TILE_SIZE) * ArenaRules.TILE_SIZE + ArenaRules.TILE_SIZE * 0.5,
-		roundf(pos.y / ArenaRules.TILE_SIZE) * ArenaRules.TILE_SIZE if footprint.y % 2 == 0 else floorf(pos.y / ArenaRules.TILE_SIZE) * ArenaRules.TILE_SIZE + ArenaRules.TILE_SIZE * 0.5
-	)
-	snapped.x = clampf(snapped.x, half_size.x, ArenaRules.FIELD_W - half_size.x)
-	snapped.y = clampf(snapped.y, half_size.y, ArenaRules.FIELD_H - half_size.y)
-	return snapped
+	return _deployment_rules.snap_card_position(card_id, pos, p_team)
 
-## 部署区域按 CR 格子掩码判断：法术全场，单位/建筑为己方 15 行及已解锁 pocket。
 func _pos_in_deploy_zone(pos: Vector2, p_team: int, is_spell: bool) -> bool:
-	if pos.x < 0.0 or pos.x >= ArenaRules.FIELD_W or pos.y < 0.0 or pos.y >= ArenaRules.FIELD_H:
-		return false
-	if is_spell:
-		return true
-	return _tile_in_ground_deploy_zone(_world_to_arena_tile(pos), p_team)
+	return _deployment_rules.pos_in_deploy_zone(pos, p_team, is_spell)
 
-## 防御塔、水晶和建筑卡的部署禁区使用规则占地格，而不是物理圆。
-## 矩形边界按格子归属取样，避免刚好贴边时误封锁相邻格。
 func _arena_tiles_for_rect(rect: Rect2) -> Array[Vector2i]:
-	var tiles: Array[Vector2i] = []
-	var min_tile := _world_to_arena_tile(rect.position + Vector2.ONE * 0.001)
-	var max_tile := _world_to_arena_tile(rect.end - Vector2.ONE * 0.001)
-	for y in range(min_tile.y, max_tile.y + 1):
-		for x in range(min_tile.x, max_tile.x + 1):
-			var tile := Vector2i(x, y)
-			if tile.x >= 0 and tile.x < ArenaRules.ARENA_COLUMNS and tile.y >= 0 and tile.y < ArenaRules.ARENA_ROWS:
-				tiles.append(tile)
-	return tiles
+	return _deployment_rules.arena_tiles_for_rect(rect)
 
 func _structure_deployment_rect(structure: Node2D) -> Rect2:
-	var footprint := Vector2i.ONE
-	if structure is Tower:
-		footprint = (structure as Tower).footprint_tiles
-	elif structure is Unit and (structure as Unit).is_building:
-		footprint = (structure as Unit).footprint_tiles
-	var size := Vector2(footprint) * ArenaRules.TILE_SIZE
-	return Rect2(structure.global_position - size * 0.5, size)
+	return _deployment_rules.structure_deployment_rect(structure)
 
 func _structure_deployment_tiles(structure: Node2D) -> Array[Vector2i]:
-	return _arena_tiles_for_rect(_structure_deployment_rect(structure))
+	return _deployment_rules.structure_deployment_tiles(structure)
 
-## 已毁公主塔仍为太阳圆盘保留 3x3 塔墟语义；国王水晶废墟不属于该被动。
-## Tower 的 hp 与 footprint_tiles 是唯一权威来源，3D Rubble 表面不参与判定。
 func _destroyed_princess_tower_for_tile(tile: Vector2i) -> Tower:
-	for tower in _towers:
-		if not is_instance_valid(tower) or tower.is_king or tower.hp > 0.0:
-			continue
-		if tile in _structure_deployment_tiles(tower):
-			return tower
-	return null
+	return _deployment_rules.destroyed_princess_tower_for_tile(tile)
 
 func _destroyed_princess_tower_at_card_center(pos: Vector2) -> Tower:
-	var tower := _destroyed_princess_tower_for_tile(_world_to_arena_tile(pos))
-	return tower if tower != null and pos.is_equal_approx(tower.global_position) else null
+	return _deployment_rules.destroyed_princess_tower_at_card_center(pos)
 
 func _is_structure_deployment_tile_blocked(tile: Vector2i) -> bool:
-	for c in get_tree().get_nodes_in_group("combatants"):
-		if not is_instance_valid(c) or c.hp <= 0.0:
-			continue
-		var is_structure: bool = c is Tower or (c is Unit and (c as Unit).is_building)
-		if not is_structure:
-			continue
-		if tile in _structure_deployment_tiles(c):
-			return true
-	return false
+	return _deployment_rules.is_structure_deployment_tile_blocked(tile)
 
 func _tile_in_ground_deploy_zone(tile: Vector2i, p_team: int) -> bool:
-	if tile.x < 0 or tile.x >= ArenaRules.ARENA_COLUMNS or tile.y < 0 or tile.y >= ArenaRules.ARENA_ROWS:
-		return false
-	var local_row := tile.y if p_team == 0 else ArenaRules.ARENA_ROWS - 1 - tile.y
-	# 自己半场包含靠河第一行的左右角；最后一行只保留国王塔正后方中央 6 格。
-	if local_row >= ArenaRules.TEAM_0_FIRST_ROW and local_row <= ArenaRules.TEAM_0_LAST_ROW:
-		if local_row == ArenaRules.TEAM_0_LAST_ROW and (tile.x < ArenaRules.BACK_CENTER_MIN_COLUMN or tile.x > ArenaRules.BACK_CENTER_MAX_COLUMN):
-			return false
-		return true
-	# 摧毁某一路公主塔后，只解锁该路塔后至河岸的 6 行 pocket。
-	if local_row < ArenaRules.POCKET_FIRST_ROW or local_row > ArenaRules.POCKET_LAST_ROW:
-		return false
-	if local_row == ArenaRules.POCKET_LAST_ROW and (tile.x == 0 or tile.x == ArenaRules.ARENA_COLUMNS - 1):
-		return false
-	var is_left := tile.x < ArenaRules.ARENA_COLUMNS / 2
-	return _pocket_unlocked(p_team, is_left)
+	return _deployment_rules.tile_in_ground_deploy_zone(tile, p_team)
 
-## 全图卡牌允许落在河道外的地面格 + 两座桥面三格；敌我双方区域都合法，但塔/水晶占地格
-## 仍由 is_card_deploy_position_valid() 单独拦截。除桥面外，河道其余两行保持不可部署。
 func _tile_in_global_ground_deploy_zone(tile: Vector2i) -> bool:
-	if tile.x < 0 or tile.x >= ArenaRules.ARENA_COLUMNS or tile.y < 0 or tile.y >= ArenaRules.ARENA_ROWS:
-		return false
-	var in_river: bool = tile.y >= ArenaRules.RIVER_TOP_ROW and tile.y < ArenaRules.RIVER_BOTTOM_ROW
-	if not in_river:
-		return true
-	# 河道中：只允许左右桥的三格宽列通过
-	var colf: float = float(tile.x)
-	var on_left_bridge: bool = abs(colf - ArenaRules.BRIDGE_X_LEFT / ArenaRules.TILE_SIZE) <= 1.5
-	var on_right_bridge: bool = abs(colf - ArenaRules.BRIDGE_X_RIGHT / ArenaRules.TILE_SIZE) <= 1.5
-	return on_left_bridge or on_right_bridge
+	return _deployment_rules.tile_in_global_ground_deploy_zone(tile)
 
 func _pocket_unlocked(p_team: int, is_left: bool) -> bool:
-	if _towers.size() < 4:
-		return false
-	var tower_index: int
-	if p_team == 0:
-		tower_index = 2 if is_left else 3
-	else:
-		tower_index = 0 if is_left else 1
-	return _towers[tower_index].hp <= 0.0
+	return _deployment_rules.pocket_unlocked(p_team, is_left)
 
-## 占位检查：候选卡的规则占地不得与存活塔/水晶/建筑卡的规则占地重叠。
-## 兵种生成后的真实半径只交给移动、碰撞和挤压系统处理；建筑卡即使是 1x1，
-## 部署资格也只按 footprint_tiles 与地面格规则判断，不读取圆柱碰撞半径。
 func _can_deploy_at(pos: Vector2, radius: float, is_air: bool = false, footprint: Vector2i = Vector2i.ONE, is_building_card: bool = false) -> bool:
-	if not is_air and not is_building_card and not is_ground_position_walkable(pos, radius, null, true, true):
-		return false
-	var deploy_rect := Rect2(pos - Vector2(footprint) * ArenaRules.TILE_SIZE * 0.5, Vector2(footprint) * ArenaRules.TILE_SIZE)
-	for c in get_tree().get_nodes_in_group("combatants"):
-		if not is_instance_valid(c) or c.hp <= 0.0:
-			continue
-		var is_static: bool = c is Tower or (c is Unit and (c as Unit).is_building)
-		if not is_static:
-			continue
-		# 共边不算重叠，相邻部署格必须保持可用。
-		if _structure_deployment_rect(c).intersects(deploy_rect, false):
-			return false
-	return true
+	return _deployment_rules.can_deploy_at(pos, radius, is_air, footprint, is_building_card)
 
-## 所有正常卡牌部署入口（玩家、客户端请求、AI）共享同一套区域与占位校验。
 func is_card_deploy_position_valid(p_team: int, card_id: String, pos: Vector2) -> bool:
-	if not CardDB.has_card(card_id):
-		return false
-	pos = _snap_card_position(card_id, pos, p_team)
-	var stats: Dictionary = CardDB.get_card(card_id)
-	# 横排中心跨度须留在场内；边缘身体在生成时逐兵挤回合法位置。
-	if String(stats.get("deployment_formation", "ring")) == "line":
-		var margin := (int(stats.get("deployment_count", 1)) - 1) * float(stats.get("deployment_spacing", 0.0)) * 0.5
-		if pos.x < margin or pos.x > ArenaRules.FIELD_W - margin:
-			return false
-	var deploy_zone: String = String(stats.get("deploy_zone", "own_side"))
-	var ignore_structures: bool = bool(stats.get("deploy_ignore_structures", false))
-	var footprint: Vector2i = stats.get("footprint_tiles", Vector2i.ONE)
-	var card_type: String = String(stats.get("type", "unit"))
-	var uses_tower_ruin_foundation := bool(stats.get("tower_ruin_foundation", false))
-	var foundation_tower := _destroyed_princess_tower_at_card_center(pos) if uses_tower_ruin_foundation else null
-
-	# 1. 部署区域：从 CardDB 独立读取 deploy_zone。只有 own_side / global 两态；
-	#    「河道非桥面不可下」统一放在下一段占位层里（和塔/水晶/建筑同开关），不重复耦合到区域分类。
-	# 塔墟被动仅允许在已毁公主塔的精确中心重建；该位置可能在普通 pocket
-	# 部署区之外。中心未对齐塔墟时仍严格执行原部署区域。
-	match deploy_zone if foundation_tower == null else "tower_ruin":
-		"global":
-			if pos.x < 0.0 or pos.x >= ArenaRules.FIELD_W or pos.y < 0.0 or pos.y >= ArenaRules.FIELD_H:
-				return false
-		"tower_ruin":
-			pass
-		_:  # own_side
-			var first_tile := Vector2i(
-				roundi(pos.x / ArenaRules.TILE_SIZE - float(footprint.x) * 0.5),
-				roundi(pos.y / ArenaRules.TILE_SIZE - float(footprint.y) * 0.5))
-			for y in range(first_tile.y, first_tile.y + footprint.y):
-				for x in range(first_tile.x, first_tile.x + footprint.x):
-					var tile := Vector2i(x, y)
-					if not _tile_in_ground_deploy_zone(tile, p_team):
-						return false
-
-	# 2. 占位：独立开关；河流非桥面及塔/水晶/建筑卡占地格统一由 deploy_ignore_structures 控制。
-	#    用户语义：河流非桥面占位等同于水晶/防御塔/建筑；桥面可通过。ignore=true 时（如冰冻）全部跳过。
-	if not ignore_structures:
-		var first_tile := Vector2i(
-			roundi(pos.x / ArenaRules.TILE_SIZE - float(footprint.x) * 0.5),
-			roundi(pos.y / ArenaRules.TILE_SIZE - float(footprint.y) * 0.5))
-		for y in range(first_tile.y, first_tile.y + footprint.y):
-			for x in range(first_tile.x, first_tile.x + footprint.x):
-				var tile := Vector2i(x, y)
-				# 太阳圆盘的 3x3 只要擦到塔墟就被阻挡；唯一例外是建筑中心
-				# 本身对齐该塔墟中心，此时只豁免这一个已毁公主塔。
-				if uses_tower_ruin_foundation:
-					var ruined_tower := _destroyed_princess_tower_for_tile(tile)
-					if ruined_tower != null and ruined_tower != foundation_tower:
-						return false
-				# 河流：非桥面三格的列一律当作占位阻挡
-				var tile_in_river: bool = tile.y >= ArenaRules.RIVER_TOP_ROW and tile.y < ArenaRules.RIVER_BOTTOM_ROW
-				if tile_in_river:
-					var colf: float = float(tile.x)
-					var on_left_bridge: bool = abs(colf - ArenaRules.BRIDGE_X_LEFT / ArenaRules.TILE_SIZE) <= 1.5
-					var on_right_bridge: bool = abs(colf - ArenaRules.BRIDGE_X_RIGHT / ArenaRules.TILE_SIZE) <= 1.5
-					if not on_left_bridge and not on_right_bridge:
-						return false
-				if _is_structure_deployment_tile_blocked(tile):
-					return false
-		if card_type != "spell":
-			# 单格兵种共用同一套部署位置。不要因为盖伦等大体型兵种的真实半径较大，
-			# 把本来属于部署区的格子判成非法；真实体积从生成后才参与战斗碰撞。
-			var placement_radius := 0.0
-			return _can_deploy_at(pos, placement_radius, stats.get("is_air", false), footprint, card_type == "building")
-	return true
+	return _deployment_rules.is_card_deploy_position_valid(p_team, card_id, pos)
 
 func _structure_gap_to_circle(c: Node2D, center: Vector2, radius: float) -> float:
 	if c.has_method("surface_gap_to_circle"):
@@ -1558,20 +1313,7 @@ func ensure_unit_form_resize_safe(unit: Unit) -> void:
 
 ## 只看已落地结构；最近距离优先，同距按己方视角行、列排序，双端使用主机结果。
 func _nearest_valid_building_spawn(team: int, card_id: String, requested: Vector2) -> Vector2:
-	var origin := _snap_card_position(card_id, requested, team)
-	if is_card_deploy_position_valid(team, card_id, origin):
-		return origin
-	var best := Vector2.INF
-	var best_distance := INF
-	for row in ArenaRules.ARENA_ROWS:
-		for column in ArenaRules.ARENA_COLUMNS:
-			var tile := Vector2i(column, row) if team == 0 else Vector2i(ArenaRules.ARENA_COLUMNS - 1 - column, ArenaRules.ARENA_ROWS - 1 - row)
-			var candidate := _snap_card_position(card_id, _arena_tile_center(tile), team)
-			var distance := candidate.distance_squared_to(origin)
-			if distance < best_distance and is_card_deploy_position_valid(team, card_id, candidate):
-				best = candidate
-				best_distance = distance
-	return best
+	return _deployment_rules.nearest_valid_building_spawn(team, card_id, requested)
 
 func _deploy_card(p_team: int, card_id: String, pos: Vector2, input_tick: int = -1) -> int:
 	# 玩家、AI 与联机请求统一从 input_tick 进入 10 Tick 权威队列；召唤物不受此延迟影响。
@@ -1579,12 +1321,7 @@ func _deploy_card(p_team: int, card_id: String, pos: Vector2, input_tick: int = 
 	var resolved_execute_tick := _resolve_command_execute_tick(input_tick)
 	if resolved_execute_tick < 0:
 		return -1
-	_commands.card_commands.append({
-		"team": p_team,
-		"card_id": card_id,
-		"pos": pos,
-		"execute_tick": resolved_execute_tick,
-	})
+	_commands.enqueue_card(p_team, card_id, pos, resolved_execute_tick)
 	return resolved_execute_tick
 
 ## 玩家、AI、联机 RPC 与 DevelopmentWorkbench 共用的出牌命令入口。
@@ -1630,8 +1367,8 @@ func play_card(p_team: int, card_id: String, pos: Vector2, options: Dictionary =
 	if immediate:
 		var type := String(stats.get("type", "unit"))
 		if type == "spell":
-			var active_enabled := _art_dev_mode and bool(options.get("preview_active_spell", false))
-			var active_skill_index := int(_art_dev_active_skill_choices.get(card_id, 0)) if active_enabled else 0
+			var active_enabled := _workbench.enabled and bool(options.get("preview_active_spell", false))
+			var active_skill_index := int(_workbench.skill_choices.get(card_id, 0)) if active_enabled else 0
 			_cast_spell(p_team, card_id, pos, active_enabled, active_skill_index)
 		elif type == "building" or float(stats.get("pre_deploy_time", 0.0)) > 0.0:
 			_execute_card_deployment(p_team, card_id, pos)
@@ -1679,17 +1416,8 @@ func _execute_card_deployment(p_team: int, card_id: String, pos: Vector2) -> voi
 	var active_slot := _active_card_slot_for_team(p_team, card_id)
 	var pre_deploy_time := maxf(float(stats.get("pre_deploy_time", 0.0)), 0.0)
 	if pre_deploy_time > 0.0 and type != "spell":
-		var pre_deploy_id := _commands.next_pre_deploy_id
-		_commands.next_pre_deploy_id += 1
-		_commands.pre_deployments.append({
-			"id": pre_deploy_id,
-			"team": p_team,
-			"card_id": card_id,
-			"pos": pos,
-			"active_slot": active_slot,
-			"time_left": pre_deploy_time,
-			"duration": pre_deploy_time,
-		})
+		var pre_deploy_id := _commands.allocate_deployment_id()
+		_commands.enqueue_deployment(p_team, card_id, pos, pre_deploy_time, active_slot, pre_deploy_id, pre_deploy_time)
 		if mode == "host":
 			_rpc_card_pre_deploy_started.rpc_id(_session.opponent_id, _session.session_id, pre_deploy_id, card_id, p_team, pos, pre_deploy_time)
 		_presentation_event_id += 1
@@ -1708,8 +1436,8 @@ func launch_attack(attacker: Node2D, target: Node2D, amount: float, projectile_s
 	var launched := _projectile_system.launch(attacker, target, amount, projectile_speed, splash_radius, knockback, projectile_color, effects)
 	if launched and attacker is Tower and is_instance_valid(target) and target.hp > 0.0:
 		var source := PresentationConfig.attack_source(attacker)
-		_on_skill_projectile_hit(source, "attack", attacker.global_position, "cast")
-		_on_skill_projectile_hit(source, "attack", attacker.global_position, "launch")
+		present_skill_projectile_hit(source, "attack", attacker.global_position, "cast")
+		present_skill_projectile_hit(source, "attack", attacker.global_position, "launch")
 	return launched
 
 ## 弹体命中表现与伤害结算分离；半径只用于绘制对应的权威溅射范围。
@@ -1719,7 +1447,7 @@ func show_projectile_impact(position: Vector2, radius: float, color: Color, visu
 		_rpc_projectile_impact_fx.rpc_id(_session.opponent_id, _session.session_id, position, radius, color, String(visual))
 
 ## 持续伤害（龙王吐息、审判等）共用的战斗层入口。调用方决定脉冲频率和命中目标，
-## 这里统一处理攻击来源、护盾/隐匿、受击表现、击杀以及可选的普攻击中回调。
+## 这里统一处理攻击来源、护盾、受击表现、击杀以及可选的普攻击中回调。
 func apply_damage_pulse(source: Node2D, target: Node2D, amount: float, splash_radius: float = 0.0, origin: Vector2 = Vector2(INF, INF), counts_as_attack: bool = false, source_form_index: int = -1, effects: Dictionary = {}) -> bool:
 	if source == null or not is_instance_valid(source) or target == null or not is_instance_valid(target):
 		return false
@@ -1764,13 +1492,13 @@ func _rpc_projectile_launch_audio(epoch: String, id: int, source: Dictionary, po
 	else:
 		_audio_manager.stop_projectile_launch(id)
 
-func _notify_unit_audio_event(unit: Unit, cue: StringName, position: Vector2) -> void:
+func notify_unit_audio_event(unit: Unit, cue: StringName, position: Vector2) -> void:
 	if unit == null or not is_instance_valid(unit):
 		return
 	if cue == &"revival:end" and _audio_manager != null:
 		_audio_manager.complete_revival(unit)
 	if cue in [&"deploy:hit", &"replacement:start", &"revival:end", &"shield:cast", &"shield:applied"]:
-		_on_skill_projectile_hit(PresentationConfig.attack_source(unit), String(cue).get_slice(":", 0), position, String(cue).get_slice(":", 1))
+		present_skill_projectile_hit(PresentationConfig.attack_source(unit), String(cue).get_slice(":", 0), position, String(cue).get_slice(":", 1))
 		return
 	if _audio_manager != null:
 		_audio_manager.play_event(unit, cue, position)
@@ -1813,8 +1541,7 @@ func _spawn_card_units(team: int, card_id: String, pos: Vector2, deploy_time_ove
 		var resolved := _nearest_valid_building_spawn(team, card_id, pos)
 		if not resolved.is_finite():
 			# 全场没有合法占地时保留已付费命令，下个 Tick 再试，绝不丢牌。
-			_commands.pre_deployments.append({"team": team, "card_id": card_id, "pos": pos,
-				"active_slot": active_slot, "id": pre_deploy_id, "time_left": FixedStepClock.STEP})
+			_commands.enqueue_deployment(team, card_id, pos, FixedStepClock.STEP, active_slot, pre_deploy_id, -1.0)
 			return []
 		pos = resolved
 		_push_units_around(pos, float(stats.get("radius", 14.0)))
@@ -1944,36 +1671,10 @@ func _register_active_skill(unit: Unit, card_id: String, p_team: int) -> void:
 	var ability_id := unit.active_ability_id
 	var active_slot := unit.active_ability_slot
 	var max_uses := maxi(int(carried_skill.get("max_uses", 1)), 1)
-	# 每个主动槽始终只控制最近部署的实例。新实例落地时，旧实例的未用资格立即作废。
-	var replaced_id := -1
-	for existing_id in _active_skills:
-		var existing: Dictionary = _active_skills[existing_id]
-		if int(existing.team) == p_team and int(existing.slot) == active_slot:
-			replaced_id = int(existing_id)
-			break
+	var replaced_id := _active_skills.register(unit, card_id, p_team, carried_skill)
 	if replaced_id >= 0:
-		var replaced: Dictionary = _active_skills[replaced_id]
-		var replaced_unit = replaced.get("unit")
-		if is_instance_valid(replaced_unit) and replaced_unit is Unit:
-			var valid_replaced_unit := replaced_unit as Unit
-			valid_replaced_unit.active_ability_id = -1
-			valid_replaced_unit.active_ability_slot = -1
-			valid_replaced_unit.clear_carried_active_skill_resource()
-		_active_skills.erase(replaced_id)
 		_cancel_pending_active_skill(replaced_id)
-		if _active_skill_bar != null:
-			_active_skill_bar.remove_skill(replaced_id)
-	_active_skills[ability_id] = {
-		"unit": unit,
-		"deployment_group_id": unit.deployment_group_id,
-		"card_id": card_id,
-		"team": p_team,
-		"slot": active_slot,
-		"skill": carried_skill,
-		"max_uses": max_uses,
-		"uses_remaining": max_uses,
-		"cooldown_left": 0.0,
-	}
+		if _active_skill_bar != null: _active_skill_bar.remove_skill(replaced_id)
 	unit.died.connect(_on_active_skill_unit_died.bind(ability_id), CONNECT_ONE_SHOT)
 	if _is_local_player_team(p_team) and _active_skill_bar != null:
 		_active_skill_bar.show_skill(
@@ -1986,9 +1687,9 @@ func _register_active_skill(unit: Unit, card_id: String, p_team: int) -> void:
 
 ## 部署期间技能按钮保持不可点击；部署计时归零后只同步可用表现，不改变权威技能判定。
 func _sync_active_skill_deployment_readiness() -> void:
-	for ability_value in _active_skills.keys():
+	for ability_value in _active_skills.ids():
 		var ability_id := int(ability_value)
-		var entry: Dictionary = _active_skills[ability_id]
+		var entry: Dictionary = _active_skills.entry(ability_id)
 		var unit = entry.get("unit")
 		if not is_instance_valid(unit) or not unit is Unit or unit.hp <= 0.0:
 			_on_active_skill_unit_died(ability_id)
@@ -2006,23 +1707,13 @@ func _sync_active_skill_deployment_readiness() -> void:
 			)
 
 func _on_active_skill_unit_died(ability_id: int) -> void:
-	if _active_skills.has(ability_id):
-		var entry: Dictionary = _active_skills[ability_id]
-		var skill: Dictionary = entry.get("skill", {})
-		if StringName(skill.get("target_scope", "self")) == &"deployment_group":
-			for replacement in living_deployment_members(int(entry.get("deployment_group_id", -1)), int(entry.team)):
-				replacement.active_ability_id = ability_id
-				replacement.active_ability_slot = int(entry.slot)
-				replacement.active_skill_card_id = String(entry.get("card_id", replacement.card_id))
-				replacement.configure_carried_active_skill(skill)
-				entry["unit"] = replacement
-				_active_skills[ability_id] = entry
-				replacement.died.connect(_on_active_skill_unit_died.bind(ability_id), CONNECT_ONE_SHOT)
-				return
-	_active_skills.erase(ability_id)
+	var replacement := _active_skills.transfer(ability_id, living_deployment_members)
+	if replacement != null:
+		replacement.died.connect(_on_active_skill_unit_died.bind(ability_id), CONNECT_ONE_SHOT)
+		return
+	_active_skills.remove(ability_id)
 	_cancel_pending_active_skill(ability_id, false)
-	if _active_skill_bar != null:
-		_active_skill_bar.remove_skill(ability_id)
+	if _active_skill_bar != null: _active_skill_bar.remove_skill(ability_id)
 
 func _on_active_skill_pressed(ability_id: int) -> void:
 	use_active_skill(ability_id, 0, 0, mode == "client")
@@ -2043,7 +1734,7 @@ func use_active_skill(ability_id: int, expected_team: int = -1, requester_peer_i
 func _queue_active_skill(ability_id: int, expected_team: int = -1, requester_peer_id: int = 0, input_tick: int = -1) -> bool:
 	if not _can_submit_active_skill(ability_id, expected_team):
 		return false
-	var entry: Dictionary = _active_skills[ability_id]
+	var entry: Dictionary = _active_skills.entry(ability_id)
 	var p_team := int(entry.team)
 	var execute_tick := _resolve_command_execute_tick(input_tick)
 	if execute_tick < 0:
@@ -2052,13 +1743,7 @@ func _queue_active_skill(ability_id: int, expected_team: int = -1, requester_pee
 	var payment := CommandPayment.charge(_elixir_for_team(p_team), maxf(float(skill.get("cost", 0.0)), 0.0))
 	if payment == null:
 		return false
-	_commands.skill_commands.append({
-		"payment": payment,
-		"ability_id": ability_id,
-		"team": p_team,
-		"requester_peer_id": requester_peer_id,
-		"execute_tick": execute_tick,
-	})
+	_commands.enqueue_skill(ability_id, p_team, execute_tick, payment, requester_peer_id)
 	if _active_skill_bar != null and _is_local_player_team(p_team):
 		_active_skill_bar.set_pending(ability_id, true)
 	return true
@@ -2067,7 +1752,7 @@ func _tick_pending_active_skills(_dt: float) -> void:
 	var ready := _commands.take_skill_commands(_sim_tick_id)
 	for pending in ready:
 		var ability_id := int(pending.ability_id)
-		var entry: Dictionary = _active_skills.get(ability_id, {})
+		var entry: Dictionary = _active_skills.entry(ability_id)
 		var unit = entry.get("unit")
 		var alive: bool = is_instance_valid(unit) and unit is Unit and unit.hp > 0.0
 		if _activate_active_skill(ability_id, int(pending.team)):
@@ -2084,11 +1769,7 @@ func _cancel_pending_active_skill(ability_id: int, refund: bool = true) -> void:
 	_commands.cancel_skill(ability_id, refund)
 
 func _tick_active_skill_cooldowns(dt: float) -> void:
-	for ability_value in _active_skills.keys():
-		var ability_id := int(ability_value)
-		var entry: Dictionary = _active_skills[ability_id]
-		entry["cooldown_left"] = maxf(float(entry.get("cooldown_left", 0.0)) - dt, 0.0)
-		_active_skills[ability_id] = entry
+	_active_skills.tick(dt)
 
 func _elixir_for_team(p_team: int) -> ElixirManager:
 	if _is_local_player_team(p_team):
@@ -2102,7 +1783,7 @@ func _elixir_for_team(p_team: int) -> ElixirManager:
 func get_active_skill_snapshot(ability_id: int) -> Dictionary:
 	if not _active_skills.has(ability_id):
 		return {}
-	var entry: Dictionary = _active_skills[ability_id]
+	var entry: Dictionary = _active_skills.entry(ability_id)
 	return {
 		"uses_remaining": int(entry.get("uses_remaining", entry.get("max_uses", 1))),
 		"cooldown_left": maxf(float(entry.get("cooldown_left", 0.0)), 0.0),
@@ -2111,72 +1792,19 @@ func get_active_skill_snapshot(ability_id: int) -> Dictionary:
 ## Cast Start 后的通用 EffectExecution 队列。计时在固定 Tick 中推进，
 ## 与动作锁共享边界；眩晕继续，冰冻取消未释放后段。
 func _queue_active_skill_impact(source: Unit, skill: Dictionary, impact_delay: float) -> void:
-	skill = skill.duplicate(true)
-	skill["cast_forward"] = source.active_skill_cast_facing if not source.active_skill_cast_facing.is_zero_approx() else source.get_visual_facing_direction()
-	skill["displacement_order"] = _combat.next_displacement_order(source)
-	skill["cast_hit_state"] = ActiveSkillEffectSystem.CastHitState.new()
-	var hit_damages = skill.get("prepared_hit_damages", [])
-	var hit_delays = skill.get("prepared_hit_delays", [])
-	if hit_damages is Array and hit_delays is Array and not (hit_damages as Array).is_empty():
-		var hit_count := mini((hit_damages as Array).size(), (hit_delays as Array).size())
-		for hit_index in hit_count:
-			var hit_skill := skill.duplicate(true)
-			hit_skill.displacement_order[2] = hit_index
-			hit_skill.erase("prepared_hit_damages")
-			hit_skill.erase("prepared_hit_delays")
-			hit_skill["hit_audio_phase"] = "first" if hit_index == 0 else ("last" if hit_index == hit_count - 1 else "middle")
-			hit_skill["damage"] = maxf(float((hit_damages as Array)[hit_index]), 0.0)
-			_queue_single_active_skill_impact(source, hit_skill, maxf(float((hit_delays as Array)[hit_index]), 0.0))
-	else:
-		_queue_single_active_skill_impact(source, skill, impact_delay)
-	var cast_end_heal := maxf(float(skill.get("cast_end_heal", 0.0)), 0.0)
-	if cast_end_heal > 0.0:
-		_commands.impacts.append({
-			"source_ref": weakref(source), "cast_serial": source.active_skill_cast_serial,
-			"skill": {"cast_end_heal": cast_end_heal, "cast_end_heal_requires_hit": bool(skill.get("cast_end_heal_requires_hit", false)), "cast_hit_state": skill.cast_hit_state},
-			"time_left": maxf(float(skill.get("cast_duration", 0.0)), 0.0),
-			"phase": &"cast_end",
-		})
-
-func _queue_single_active_skill_impact(source: Unit, skill: Dictionary, impact_delay: float) -> void:
-	if impact_delay <= 0.0:
-		_active_skill_effect_system.apply(source, skill)
-		return
-	_commands.impacts.append({
-		"source_ref": weakref(source), "cast_serial": source.active_skill_cast_serial,
-		"skill": skill.duplicate(true),
-		"time_left": impact_delay,
-		"phase": &"impact",
-	})
-
+	_commands.schedule_cast(source, skill, impact_delay, _combat.next_displacement_order(source))
 
 ## 两阶段共用技能资格；临时战斗状态不阻止提交请求。
 func _active_skill_has_qualification(ability_id: int, expected_team: int = -1) -> bool:
-	if game_over or not _active_skills.has(ability_id):
-		return false
-	var entry: Dictionary = _active_skills[ability_id]
-	var unit = entry.get("unit")
-	var p_team := int(entry.team)
-	if not is_instance_valid(unit) or not unit is Unit or unit.hp <= 0.0:
-		return false
-	if expected_team >= 0 and p_team != expected_team:
-		return false
-	if int(entry.get("uses_remaining", entry.get("max_uses", 1))) <= 0:
-		return false
-	if float(entry.get("cooldown_left", 0.0)) > 0.001:
-		return false
-	if not _card_has_active_for_team(p_team, String(entry.card_id)):
-		return false
-	return (unit as Unit).is_deployed()
+	return not game_over and _active_skills.qualified(ability_id, expected_team, _card_has_active_for_team)
 
 ## 按钮与玩家/AI/RPC入队共用此判定。客户端只读取已同步的资格、部署和经济。
 func _can_submit_active_skill(ability_id: int, expected_team: int = -1) -> bool:
 	if _network_peer != null and _session.phase != MatchSession.Phase.RUNNING: return false
 	if not _active_skill_has_qualification(ability_id, expected_team): return false
-	for pending in _commands.skill_commands:
-		if int(pending.ability_id) == ability_id: return false
+	if _commands.has_pending_skill(ability_id): return false
 	if _active_skill_bar != null and _active_skill_bar.is_pending(ability_id): return false
-	var entry: Dictionary = _active_skills[ability_id]
+	var entry: Dictionary = _active_skills.entry(ability_id)
 	var payer := _elixir_for_team(int(entry.team))
 	var cost := maxf(float(entry.skill.get("cost", 0.0)), 0.0)
 	return cost <= 0.0 or (payer != null and payer.elixir >= cost)
@@ -2184,25 +1812,24 @@ func _can_submit_active_skill(ability_id: int, expected_team: int = -1) -> bool:
 ## 执行时费用已经预扣，不能再次以余额/本请求pending阻挡；重新检查当前权威行动权限。
 func _active_skill_is_legal(ability_id: int, expected_team: int = -1) -> bool:
 	if not _active_skill_has_qualification(ability_id, expected_team): return false
-	return ((_active_skills[ability_id].unit as Unit).action_permissions() & ControlState.START_SKILL) != 0
+	return ((_active_skills.entry(ability_id).unit as Unit).action_permissions() & ControlState.START_SKILL) != 0
 
 func _activate_active_skill(ability_id: int, expected_team: int = -1) -> bool:
 	if not _active_skill_is_legal(ability_id, expected_team):
 		# 正常死亡会由 died 信号立即清理；这里保留对失效引用/直接调用的兜底。
 		if _active_skills.has(ability_id):
-			var stale_entry: Dictionary = _active_skills[ability_id]
+			var stale_entry: Dictionary = _active_skills.entry(ability_id)
 			var stale_unit = stale_entry.get("unit")
 			if not is_instance_valid(stale_unit) or not stale_unit is Unit or stale_unit.hp <= 0.0:
 				_on_active_skill_unit_died(ability_id)
 		return false
-	var entry: Dictionary = _active_skills[ability_id]
+	var entry: Dictionary = _active_skills.entry(ability_id)
 	var unit: Unit = entry.unit
 	var skill: Dictionary = entry.skill
 	if not _start_active_skill_cast(unit, skill):
 		return false
-	entry["uses_remaining"] = maxi(int(entry.get("uses_remaining", entry.get("max_uses", 1))) - 1, 0)
-	entry["cooldown_left"] = maxf(float(skill.get("cooldown", 0.0)), 0.0)
-	_active_skills[ability_id] = entry
+	_active_skills.consume(ability_id)
+	entry = _active_skills.entry(ability_id)
 	if _active_skill_bar != null:
 		_active_skill_bar.set_pending(ability_id, false)
 		_sync_active_skill_deployment_readiness()
@@ -2224,7 +1851,7 @@ func _start_active_skill_cast(unit: Unit, skill: Dictionary) -> bool:
 	var configured_audio := PresentationConfig.audio_for(CardDB.get_card(audio_card_id), unit.team, unit.form_index)
 	var configured_events: Variant = configured_audio.get("events", {})
 	if configured_events is Dictionary and configured_events.has("active:cast"):
-		_notify_unit_audio_event(unit, &"active:cast", unit.get_visual_screen_position())
+		notify_unit_audio_event(unit, &"active:cast", unit.get_visual_screen_position())
 	_begin_configured_active_skill_cast(unit, prepared_skill)
 	_queue_active_skill_impact(unit, prepared_skill, maxf(float(prepared_skill.get("impact_delay", 0.0)), 0.0))
 	return true
@@ -2363,7 +1990,7 @@ func _sim_step(dt: float) -> void:
 		return
 	_sim_tick_id += 1
 	_sim_step_active = true
-	if _match_started and not _art_dev_mode:
+	if _match_started and not _workbench.enabled:
 		_update_elixir_rate()
 		_elixir.sim_tick(dt)
 		if _elixir_p1 != null:
@@ -2395,7 +2022,7 @@ func _sim_step(dt: float) -> void:
 	_combat.begin_batch(_sim_tick_id, "spell_zones")
 	_tick_slow_zones(dt)
 	_combat.commit_batch()
-	if not _art_dev_mode and _minion_waves_enabled:
+	if not _workbench.enabled and _minion_waves_enabled:
 		_tick_minion_waves(dt)
 	# 固定本阶段参与者；自然到期退出及死亡生成不能回头加入预处理或行动批次。
 	var combatants := get_tree().get_nodes_in_group("combatants")
@@ -2446,7 +2073,7 @@ func _sim_step(dt: float) -> void:
 			_auto_gnar_revert_unit = auto_gnar
 			_auto_gnar_revert_timer = 2.4
 
-	if _match_started and not _art_dev_mode:
+	if _match_started and not _workbench.enabled:
 		_tick_match_rules(dt)
 
 	_sim_step_active = false
@@ -2468,7 +2095,7 @@ func _process(delta: float) -> void:
 		_active_skill_effect_system.tick_visuals(delta)
 		queue_redraw()
 		return
-	if _art_dev_mode:
+	if _workbench.enabled:
 		if _art_dev_panel != null and not _art_dev_panel.accepts_battle_input():
 			return
 		_tick_slow_effect_visuals(delta)
@@ -2502,7 +2129,7 @@ func _tick_match_rules(dt: float) -> void:
 func _on_overtime_started() -> void:
 	_battle_elapsed = maxf(_battle_elapsed, MATCH_TIME)
 	_next_minion_wave_time = MATCH_TIME + DOUBLE_MINION_WAVE_INTERVAL
-	if _minion_waves_enabled and not _art_dev_mode:
+	if _minion_waves_enabled and not _workbench.enabled:
 		_spawn_minion_wave(MINION_WAVE_SIEGE)
 	_update_timer_label()
 	_update_elixir_rate()
@@ -2683,21 +2310,10 @@ func _rpc_active_skill_request(ability_id: int, input_tick: int = -1, epoch: Str
 		_rpc_active_skill_rejected.rpc_id(sender, _session.session_id, ability_id)
 
 func _tick_card_pre_deploy_visuals(delta: float) -> void:
-	var alive: Array[Dictionary] = []
-	for deployment in _commands.pre_deployments:
-		deployment.time_left = maxf(float(deployment.get("time_left", 0.0)) - delta, 0.0)
-		if float(deployment.time_left) > 0.001:
-			alive.append(deployment)
-	_commands.pre_deployments = alive
+	_commands.tick_deployment_visuals(delta)
 
 func _remove_card_pre_deploy_visual(pre_deploy_id: int) -> void:
-	if pre_deploy_id < 0:
-		return
-	var alive: Array[Dictionary] = []
-	for deployment in _commands.pre_deployments:
-		if int(deployment.get("id", -1)) != pre_deploy_id:
-			alive.append(deployment)
-	_commands.pre_deployments = alive
+	_commands.remove_deployment(pre_deploy_id)
 
 @rpc("authority", "call_remote", "reliable")
 func _rpc_active_skill_used(epoch: String, ability_id: int, uses_remaining: int = 0, cooldown_left: float = 0.0) -> void:
@@ -2706,10 +2322,8 @@ func _rpc_active_skill_used(epoch: String, ability_id: int, uses_remaining: int 
 	if mode != "client" or game_over:
 		return
 	if _active_skills.has(ability_id):
-		var entry: Dictionary = _active_skills[ability_id]
-		entry["uses_remaining"] = maxi(uses_remaining, 0)
-		entry["cooldown_left"] = maxf(cooldown_left, 0.0)
-		_active_skills[ability_id] = entry
+		var entry: Dictionary = _active_skills.entry(ability_id)
+		_active_skills.replace_replica(ability_id, uses_remaining, cooldown_left)
 		if _active_skill_bar != null: _active_skill_bar.set_pending(ability_id, false)
 		_sync_active_skill_deployment_readiness()
 
@@ -2747,11 +2361,9 @@ func _rpc_deploy_accepted(epoch: String, card_id: String, execute_tick: int, han
 	if _hand != null:
 		_hand.set_card_pending(card_id, false)
 		_hand.set_cycle_state(hand, queue)
-	_authoritative_card_cycles[1] = {
-		"deck": _deck.duplicate(),
-		"hand": hand.duplicate(),
-		"queue": queue.duplicate(),
-	}
+	var cycle := CardCycle.new(_deck)
+	cycle.replace_replica(hand, queue)
+	_authoritative_card_cycles[1] = cycle
 
 ## 主机 → 客户端：拒绝不改变权威手牌；只恢复对应卡牌按钮。
 @rpc("authority", "call_remote", "reliable")
@@ -2813,14 +2425,7 @@ func _rpc_card_pre_deploy_started(epoch: String, pre_deploy_id: int, card_id: St
 	if mode != "client" or game_over:
 		return
 	_remove_card_pre_deploy_visual(pre_deploy_id)
-	_commands.pre_deployments.append({
-		"id": pre_deploy_id,
-		"card_id": card_id,
-		"team": p_team,
-		"pos": pos,
-		"time_left": maxf(duration, 0.0),
-		"duration": maxf(duration, 0.0),
-	})
+	_commands.enqueue_deployment(p_team, card_id, pos, maxf(duration, 0.0), -1, pre_deploy_id, maxf(duration, 0.0))
 	queue_redraw()
 
 ## 主机 → 客户端：可靠触发一次短暂闪白，不依赖不可靠血量快照是否刚好采到该帧。
@@ -2888,12 +2493,9 @@ func authoritative_units_snapshot() -> Dictionary:
 	return _net_units.duplicate()
 
 func apply_network_skill_state(unit: Unit, uses: int, cooldown_left: float) -> void:
-	if _active_skills.get(unit.active_ability_id, {}).get("unit") != unit:
+	if _active_skills.entry(unit.active_ability_id).get("unit") != unit:
 		return
-	var entry: Dictionary = _active_skills[unit.active_ability_id]
-	entry.uses_remaining = maxi(uses, 0)
-	entry.cooldown_left = maxf(cooldown_left, 0.0)
-	_active_skills[unit.active_ability_id] = entry
+	_active_skills.replace_replica(unit.active_ability_id, uses, cooldown_left)
 
 ## 网络实体清理只有这一处拥有导航、复生音轨与死亡表现收尾。
 func remove_network_unit(net_id: int, play_death_visual: bool = true) -> void:
@@ -2916,8 +2518,8 @@ func remove_network_unit(net_id: int, play_death_visual: bool = true) -> void:
 
 func clear_network_unit_skill(unit: Unit) -> void:
 	var id := unit.active_ability_id
-	if _active_skills.get(id, {}).get("unit") == unit:
-		_active_skills.erase(id)
+	if _active_skills.entry(id).get("unit") == unit:
+		_active_skills.remove(id)
 		if _active_skill_bar != null:
 			_active_skill_bar.remove_skill(id)
 	unit.active_ability_id = -1
@@ -3037,8 +2639,7 @@ func _draw() -> void:
 							draw_rect(Rect2(Vector2(tile) * ArenaRules.TILE_SIZE, Vector2.ONE * ArenaRules.TILE_SIZE), Color(0.40, 0.70, 1.00, 0.15))
 		_draw_deployment_preview(sel_stats)
 	# 两段式部署的第一段只显示一个落点卡牌标记，不创建单位或战斗碰撞体。
-	for pre_deployment in _commands.pre_deployments:
-		_draw_card_pre_deploy_indicator(pre_deployment)
+	_commands.draw_deployments(_draw_card_pre_deploy_indicator)
 
 func _setup_arena_background() -> void:
 	_arena_background_sprite = Sprite2D.new()
@@ -3120,7 +2721,7 @@ func _play_card_event(event_id: int, card_id: String, cue: String, pos: Vector2,
 	if _audio_manager != null:
 		_audio_manager.play_card_event(card_id, cue, pos, form, team)
 
-func _on_skill_projectile_hit(source: Dictionary, action: String, pos: Vector2, phase: String = "hit") -> void:
+func present_skill_projectile_hit(source: Dictionary, action: String, pos: Vector2, phase: String = "hit") -> void:
 	if action.is_empty():
 		return
 	_presentation_event_id += 1
@@ -3185,6 +2786,7 @@ func _rpc_action_cancelled(epoch: String, net_id: int, payload: Dictionary) -> v
 		unit.apply_action_cancellation(payload)
 
 func publish_skill_fx(payload: Dictionary) -> void:
+	if mode != "host": return
 	payload = payload.duplicate(true)
 	payload.erase("source_ref")
 	_presentation_event_id += 1
@@ -3197,3 +2799,20 @@ func _rpc_skill_fx(epoch: String, event_id: int, payload: Dictionary) -> void:
 	if _auto_test and not _auto_gnar_skill_fx_seen:
 		_auto_gnar_skill_fx_seen = true
 		print("[测试] 客户端已收到固定方向技能范围表现")
+
+func simulation_step_active() -> bool:
+	return _sim_step_active
+
+func combat_service() -> CombatResolver:
+	return _combat
+
+func projectile_service() -> ProjectileSystem:
+	return _projectile_system
+
+func present_freeze_spell(pos: Vector2, radius: float, duration: float, slow_duration: float, slow_multiplier: float) -> void:
+	if mode == "host":
+		_rpc_freeze_fx.rpc_id(network_opponent_id(), network_session_id(), pos, radius, duration, slow_duration, slow_multiplier)
+
+func present_heal_spell(pos: Vector2, radius: float, duration: float, enhanced: bool, global_heal: bool) -> void:
+	if mode == "host":
+		_rpc_heal_fx.rpc_id(network_opponent_id(), network_session_id(), pos, radius, duration, enhanced, global_heal)

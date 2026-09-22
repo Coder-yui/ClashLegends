@@ -12,10 +12,8 @@ var hard := StatusInstances.new()
 var modifiers := StatusInstances.new()
 var frozen_timer: float:
 	get: return hard.remaining(&"freeze")
-	set(value): _replace_hard(&"freeze", value)
 var stun_timer: float:
 	get: return hard.remaining(&"stun")
-	set(value): _replace_hard(&"stun", value)
 var slow_timer: float:
 	get: return modifiers.remaining(&"slow")
 var slow_multiplier: float:
@@ -29,10 +27,10 @@ func _replace_hard(family: StringName, duration: float) -> void:
 	hard.clear_family(family)
 	hard.apply(family, &"replica", duration, {})
 
-func refresh_freeze(duration: float, _quantize: bool = true, source: StringName = &"legacy") -> bool:
+func refresh_freeze(duration: float, source: StringName = &"legacy") -> bool:
 	return hard.apply(&"freeze", source, duration, {})
 
-func refresh_stun(duration: float, _quantize: bool = true, source: StringName = &"legacy") -> bool:
+func refresh_stun(duration: float, source: StringName = &"legacy") -> bool:
 	return hard.apply(&"stun", source, duration, {})
 
 func refresh_slow(duration: float, multiplier: float, source: StringName = &"legacy") -> bool:
@@ -48,11 +46,11 @@ func tick_hard_controls(dt: float) -> void:
 	hard.advance(dt)
 
 func apply_replica_flags(frozen: bool, stunned: bool) -> void:
-	frozen_timer = 0.15 if frozen else 0.0
-	stun_timer = 0.15 if stunned else 0.0
+	_replace_hard(&"freeze", 0.15 if frozen else 0.0)
+	_replace_hard(&"stun", 0.15 if stunned else 0.0)
 
 func apply_replica_stun(stunned: bool) -> void:
-	stun_timer = 0.15 if stunned else 0.0
+	_replace_hard(&"stun", 0.15 if stunned else 0.0)
 
 func permissions() -> int:
 	var allowed := ALL_PERMISSIONS

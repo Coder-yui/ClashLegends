@@ -57,16 +57,16 @@ func run(harness: Object, main: Node2D) -> void:
 
 	var ability_id := group[0].active_ability_id
 	group[0].take_damage(10000.0)
-	var transferred: bool = main._active_skills.has(ability_id) and main._active_skills[ability_id].unit != group[0]
-	var replacement: Unit = main._active_skills[ability_id].unit if transferred else null
+	var transferred: bool = main._active_skills.has(ability_id) and main._active_skills.entry(ability_id).unit != group[0]
+	var replacement: Unit = main._active_skills.entry(ability_id).unit if transferred else null
 	transferred = transferred and replacement.card_id == "siege_minion" and replacement.active_skill_card_id == "heavy_minion_squad"
 	_expect(transferred, "主动资格在超级兵阵亡后转交给炮车兵")
 	var activated: bool = transferred and main._activate_active_skill(ability_id, 0)
-	var exhausted: bool = activated and int(main._active_skills[ability_id].uses_remaining) == 0 and is_equal_approx(float(main._active_skills[ability_id].cooldown_left), 7.0) and not main._activate_active_skill(ability_id, 0)
+	var exhausted: bool = activated and int(main._active_skills.entry(ability_id).uses_remaining) == 0 and is_equal_approx(float(main._active_skills.entry(ability_id).cooldown_left), 7.0) and not main._activate_active_skill(ability_id, 0)
 	_expect(exhausted, "重装部队男爵之力使用1次后进入7秒冷却并耗尽次数")
 
 	if main._active_skills.has(ability_id):
-		main._active_skills.erase(ability_id)
+		main._active_skills.remove(ability_id)
 		if main._active_skill_bar != null:
 			main._active_skill_bar.remove_skill(ability_id)
 	for member in group:

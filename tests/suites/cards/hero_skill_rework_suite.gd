@@ -568,7 +568,7 @@ func _check_piercing_cards() -> void:
 func _check_ashe_release_vs_collision() -> void:
 	for distance in [80.0, 180.0]:
 		_main._projectile_system.clear_all()
-		_main._commands.impacts.clear()
+		_main._commands.clear_impacts()
 		var source := _spawn_test_unit("ashe", 0, Vector2(360, 1000))
 		source.damage = 0.0
 		source.move_speed = 0.0
@@ -591,4 +591,4 @@ func _check_ashe_release_vs_collision() -> void:
 		source.free()
 		target.free()
 	_main._projectile_system.clear_all()
-	_main._commands.impacts.clear()
+	_main._commands.clear_impacts()

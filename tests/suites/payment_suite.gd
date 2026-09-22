@@ -14,10 +14,10 @@ func run(harness: Object) -> void:
 		main._elixir.elixir = 10
 		var unit: Unit = main._spawn_unit(0, "garen", Vector2(300, 800), 0, 0)
 		var ability: int = unit.active_ability_id
-		var entry: Dictionary = main._active_skills[ability]
+		var entry: Dictionary = main._active_skills.entry(ability)
 		var cost: float = entry.skill.cost
 		var queued: bool = main._queue_active_skill(ability, 0)
-		var receipt: CommandPayment = main._commands.skill_commands[0].payment
+		var receipt: CommandPayment = main._commands.inspect_skills()[0].payment
 		harness._expect(queued and main._elixir.elixir == 10 - cost, "技能入队只扣一次实际费用：" + scenario)
 		var replacement: Unit
 		match scenario:
@@ -30,13 +30,15 @@ func run(harness: Object) -> void:
 				main._elixir.elixir = 10
 				main._cancel_pending_active_skill(ability)
 			"fee_changed":
-				entry.skill.cost = cost + 5
+				var revised_skill: Dictionary = entry.skill.duplicate(true)
+				revised_skill.cost = cost + 5
+				SuiteUtils.replace_carried_skill(main._active_skills, ability, revised_skill)
 				main._cancel_pending_active_skill(ability)
 		main._sim_tick_id = main.COMMAND_DELAY_TICKS
 		main._tick_pending_active_skills(0.05)
 		var should_refund: bool = scenario not in ["death", "release"]
 		var expected: float = 10 if should_refund else 10 - cost
-		harness._expect(main._elixir.elixir == expected and receipt.is_settled() and main._commands.skill_commands.is_empty(), "取消按原因结算：" + scenario)
+		harness._expect(main._elixir.elixir == expected and receipt.is_settled() and main._commands.inspect_skills().is_empty(), "取消按原因结算：" + scenario)
 		receipt.settle(true)
 		harness._expect(main._elixir.elixir == expected, "重复取消或已释放后的退款请求幂等：" + scenario)
 		if is_instance_valid(unit): unit.free()
@@ -52,7 +54,7 @@ func run(harness: Object) -> void:
 		var ability: int = herald.active_ability_id
 		var before: Dictionary = main.get_active_skill_snapshot(ability)
 		harness._expect(main.use_active_skill(ability, 0), "先锋未冲撞时请求被接受")
-		var receipt: CommandPayment = main._commands.skill_commands[0].payment
+		var receipt: CommandPayment = main._commands.inspect_skills()[0].payment
 		herald.structure_rush.tick(herald, 0.05)
 		harness._expect(herald.structure_rush.phase == StructureRushState.Phase.PREPARING, "先锋等待请求期间真实进入冲撞准备")
 		# 准备阶段由真实 tick 进入，其余两个门禁阶段在此覆盖同一资格谓词。
@@ -63,7 +65,7 @@ func run(harness: Object) -> void:
 		main._elixir.elixir += 1 # 等待时自然回复/其他收入，退款不得越过上限。
 		main._sim_tick_id += 1
 		main._tick_pending_active_skills(0.05)
-		harness._expect(receipt.is_settled() and main._elixir.elixir == 10 and main.get_active_skill_snapshot(ability) == before and main._commands.skill_commands.is_empty(), "0.5秒冲撞门禁取消：退费封顶10、次数冷却保持")
+		harness._expect(receipt.is_settled() and main._elixir.elixir == 10 and main.get_active_skill_snapshot(ability) == before and main._commands.inspect_skills().is_empty(), "0.5秒冲撞门禁取消：退费封顶10、次数冷却保持")
 		receipt.settle(true)
 		harness._expect(main._elixir.elixir == 10 and not herald.is_active_skill_casting(), "重复结算不重复返还，也不进入施法")
 		herald.free()
@@ -83,7 +85,7 @@ func run(harness: Object) -> void:
 	var failed := CommandPayment.charge(payer, 9)
 	harness._expect(failed == null and payer.elixir == 8, "余额不足不能创建可退款收据")
 	var discarded := CommandPayment.charge(payer, 2)
-	main._commands.skill_commands.append({"ability_id": 999, "payment": discarded})
+	main._commands.enqueue_skill(999, 0, 0, discarded, 0)
 	main._commands.clear()
 	discarded.settle(true)
 	harness._expect(payer.elixir == 6 and discarded.is_settled(), "终局关闭经济并结清收据，不在清场后生成退款")

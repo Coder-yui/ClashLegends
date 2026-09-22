@@ -6,8 +6,8 @@ func run(harness: Object, main: Node2D) -> void:
 	var old_deck: Array = main._deck.duplicate()
 	for card_id in ["minion_squad", "shurima_guard", "heavy_minion_squad", "siege_minion_squad", "melee_minion_squad", "ranged_minion_squad", "super_minion_squad"]:
 		main._deck[0] = card_id
-		main._art_dev_selection = card_id
-		main._art_dev_team = 0
+		main._workbench.selection = card_id
+		main._workbench.team = 0
 		# 走工作台真实放牌入口，保留一批旧兵和一批敌兵检查隔离。
 		var old: Array[Unit] = main._spawn_card_units(0, card_id, Vector2(360, 1100), 0.0)
 		var enemy: Array[Unit] = main._spawn_card_units(1, card_id, Vector2(360, 200), 0.0)
@@ -36,10 +36,10 @@ func run(harness: Object, main: Node2D) -> void:
 		_expect(main.use_active_skill(old_ability, 0), card_id + " 旧批技能先入队")
 		var newest: Array[Unit] = main._spawn_card_units(0, card_id, Vector2(360, 1000), 0.0, 0)
 		var new_ability := newest[0].active_ability_id
-		_expect(not main.use_active_skill(old_ability, 0) and main._elixir.elixir == 10 and main._commands.skill_commands.is_empty(), card_id + " 新批替换旧资格并取消退款")
+		_expect(not main.use_active_skill(old_ability, 0) and main._elixir.elixir == 10 and main._commands.inspect_skills().is_empty(), card_id + " 新批替换旧资格并取消退款")
 		previous[0].take_damage(100000)
 		newest[0].take_damage(100000)
-		_expect(main._active_skills.has(new_ability) and main._active_skills[new_ability].unit in newest and not main._active_skills.has(old_ability), card_id + " 新旧队长死亡只转交最新批次")
+		_expect(main._active_skills.has(new_ability) and main._active_skills.entry(new_ability).unit in newest and not main._active_skills.has(old_ability), card_id + " 新旧队长死亡只转交最新批次")
 		for member in newest:
 			if member.hp > 0: member.take_damage(100000)
 		_expect(not main.use_active_skill(old_ability, 0) and not main._active_skills.has(new_ability), card_id + " 最新批全灭也不恢复旧批资格")
@@ -55,7 +55,7 @@ func run(harness: Object, main: Node2D) -> void:
 		main._tick_pending_active_skills(0.05)
 		var last := paid.back() as Unit
 		_expect(last.active_buff_timer > 0 or last.shield_hp > 0, card_id + " 等待期间连续死亡后最后成员仍施放")
-		_expect(main._elixir.elixir == balance and main._active_skills[ability].uses_remaining == main._active_skills[ability].max_uses - 1, card_id + " 转交不重复收费不重置次数")
+		_expect(main._elixir.elixir == balance and main._active_skills.entry(ability).uses_remaining == main._active_skills.entry(ability).max_uses - 1, card_id + " 转交不重复收费不重置次数")
 		last.take_damage(100000)
 		_expect(not main._active_skills.has(ability), card_id + " 全灭清除正式资格")
 		for member in old + enemy + paid:
@@ -73,5 +73,5 @@ func run(harness: Object, main: Node2D) -> void:
 	_expect(mixed[1].active_buff_timer == 0 and mixed[2].active_buff_timer > 0 and melee[0].active_buff_timer == 0, "效果落地时剔除期间死亡的成员并隔离共享成员卡")
 	for member in mixed + melee: member.free()
 	main._deck = old_deck
-	main._art_dev_last_units.clear()
-	main._art_dev_last_groups.clear()
+	main._workbench.last_units.clear()
+	main._workbench.last_groups.clear()

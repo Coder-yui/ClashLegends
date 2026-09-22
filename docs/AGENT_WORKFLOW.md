@@ -12,9 +12,15 @@
 | 音频 | [音频流程](AUDIO_INTEGRATION.md)、对应单位音频页 |
 | 工作台 | [工作台](DEVELOPMENT_WORKBENCH.md)、[测试手册](../tests/README.md) |
 | 控制 / 增益 / 减益 / 特殊状态设计 | [状态规则总览](status/README.md) → 共通规则与对应分类；实现前核对落地现状 |
-| 新机制 / 结构 / 联网 | [维护架构](MAINTENANCE_ARCHITECTURE.md)、[卡牌机制](CARD_DESIGN.md)、受影响专项说明及测试手册 |
+| 结构整理 | [维护架构](MAINTENANCE_ARCHITECTURE.md)、[测试手册](../tests/README.md)；只读受影响规则 |
+| 联网 | [维护架构](MAINTENANCE_ARCHITECTURE.md)、[协议契约](reference/NETWORK_PROTOCOL.md)、[测试手册](../tests/README.md) |
+| 新机制 | [卡牌机制](CARD_DESIGN.md)、[落地现状](status/IMPLEMENTATION.md)、对应状态正文和测试手册 |
 
 常用素材提取、模型摄影、动作预览和声音试听先查 [工具索引](../tools/README.md)，运行代码职责见 [scripts 导航](../scripts/README.md)。
+
+默认路线只读当前资料。`docs/archive/`、历史交付不是常规必读；需要追溯或用户明确指定问题/交付时才定向读取。`docs/issues/` 仍可能有有效任务。本轮任务若限制历史目录编辑，遵从用户范围，只新增最终交付，不更新受保护索引。
+
+[导航声明](navigation.json) 记录审计所需当前入口、精简路线和卡牌形态文档例外；它不参与战斗运行。文档职责：本页选读、架构写所有者、状态正文写规则、IMPLEMENTATION 写支持能力、单位页写中文玩法、reference 写精确契约、tests 写验证。禁止以历史验收代替当前验证。
 
 ## 素材与迭代边界
 

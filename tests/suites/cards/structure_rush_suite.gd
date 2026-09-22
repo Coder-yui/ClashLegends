@@ -131,7 +131,7 @@ func run(harness: Object, main: Node2D) -> void:
 		source.play_visual_action(&"rush_prepare", 2.5)
 		audio._process(0.0)
 		rush_view._process(0.0)
-		source.control.stun_timer = 0.0
+		SuiteUtils.set_control_window(source.control, &"stun", 0.0)
 		rush_view._process(0.0)
 		var restart_audio_started := audio._sustain_players.has(audio_key) and cues.count(&"rush_prepare:sustain") == prepare_sustain_cues_before_restart + 1
 		control_restart_audio = restart_audio_started
@@ -143,7 +143,7 @@ func run(harness: Object, main: Node2D) -> void:
 	)
 	_expect(audio._sustain_players.has(audio_key) and source.get_visual_action_time_left() > 0.0 and control_restart_visual and control_restart_audio and no_rift_herald_stun_visual, "先锋眩晕无专用 Stun 映射；取消旧动作后即使跳过取消帧也不恢复旧序列，准备从起点重启且准备音按新序号重播")
 	# 让权威模拟保留原有“控制结束边界”Tick；上面的 0 只用于表现层断帧验证。
-	source.control.stun_timer = Unit.SIM_DT * 2.0
+	SuiteUtils.set_control_window(source.control, &"stun", Unit.SIM_DT * 2.0)
 	step(source, 3)
 	_expect(source.structure_rush.remaining >= 2.4, "眩晕同样重置准备时间")
 	step(source, 48)
@@ -284,7 +284,7 @@ func run(harness: Object, main: Node2D) -> void:
 	source.freeze(0.5)
 	audio._process(0.0)
 	_expect(cues.is_empty(), "控制期间不启动动作定时音")
-	source.control.frozen_timer = 0.0
+	SuiteUtils.set_control_window(source.control, &"freeze", 0.0)
 	audio._process(0.0)
 	_expect(cues.is_empty(), "冰冻取消动作后解控不补播定时声音")
 	source._visual_action_time_left = 2.75
@@ -365,15 +365,16 @@ func _check_recovery_boundary() -> void:
 				_main._elixir.elixir = 10.0
 				var source: Unit = _main._spawn_unit(0, "rift_herald", Vector2(360, 950), 0.0, 0)
 				var id := source.active_ability_id
-				var uses: int = _main._active_skills[id].uses_remaining
+				var uses: int = _main._active_skills.entry(id).uses_remaining
 				var request: Dictionary = {}
 				var cost := 0.0
 				if queued:
 					_expect(_main.use_active_skill(id, 0), "恢复夹具：READY 时正式请求合法入队")
-					request = _main._commands.skill_commands.back()
+					request = _main._commands.take_skill_commands(_main._sim_tick_id + _main.COMMAND_DELAY_TICKS).back()
 					cost = 10.0 - _main._elixir.elixir
 					# 模拟先合法入队、排程在撞击后第13边界执行；仍由正式命令入口结算。
 					request.execute_tick = _main._sim_tick_id + 14
+					_main._commands.enqueue_skill(request.ability_id, request.team, request.execute_tick, request.payment, request.requester_peer_id)
 				var building := structure(Vector2(360, 900))
 				source.structure_rush.target = building
 				source.structure_rush.direction = Vector2.UP
@@ -399,13 +400,13 @@ func _check_recovery_boundary() -> void:
 				var accepted: bool = queued and control_ticks <= 13
 				_expect(first_cast == (13 if accepted else -1), "正式技能实际Cast Start边界 %s/%s/%d" % [queued, control_kind, control_ticks])
 				_expect(first_attack == (-1 if accepted else maxi(13, control_ticks)), "普攻实际起手在全部锁到期边界 %s/%s/%d" % [queued, control_kind, control_ticks])
-				_expect(_main._active_skills[id].uses_remaining == uses - (1 if accepted else 0) and is_equal_approx(_main._elixir.elixir, 10.0 - (cost if accepted else 0.0)), "恢复边界技能成功才消费次数/费用，受控拒绝按原收据退款")
+				_expect(_main._active_skills.entry(id).uses_remaining == uses - (1 if accepted else 0) and is_equal_approx(_main._elixir.elixir, 10.0 - (cost if accepted else 0.0)), "恢复边界技能成功才消费次数/费用，受控拒绝按原收据退款")
 				if queued:
 					_main._elixir.elixir = 4.0
 					_main._commands.settle_skill(request, true)
 					_expect(_main._elixir.elixir == 4.0, "恢复边界已结算收据重复取消不退款")
 				_main._on_active_skill_unit_died(id)
-				_main._commands.impacts.clear()
+				_main._commands.clear_impacts()
 	clear_units()
 	_main._deck = deck
 
@@ -418,7 +419,7 @@ func _check_rush_submission() -> void:
 		_main._elixir.elixir = 10.0
 		var source: Unit = _main._spawn_unit(0, "rift_herald", Vector2(360, 950), 0.0, 0)
 		var id := source.active_ability_id
-		var uses: int = _main._active_skills[id].uses_remaining
+		var uses: int = _main._active_skills.entry(id).uses_remaining
 		var target := structure(Vector2(360, 900))
 		source.structure_rush.target = target
 		source.structure_rush.endpoint = source.position
@@ -428,9 +429,9 @@ func _check_rush_submission() -> void:
 		_main._sync_active_skill_deployment_readiness()
 		_expect(not _main._active_skill_bar._buttons[0].disabled and _main._can_submit_active_skill(id, 0), "先锋准备/冲撞允许提交技能请求")
 		_main._active_skill_bar._on_slot_pressed(0)
-		_expect(_main._commands.skill_commands.size() == 1 and _main._elixir.elixir < 10.0, "先锋准备/冲撞点击真实预扣并入队")
+		_expect(_main._commands.inspect_skills().size() == 1 and _main._elixir.elixir < 10.0, "先锋准备/冲撞点击真实预扣并入队")
 		_run_main_ticks(_main.COMMAND_DELAY_TICKS)
-		_expect(source.structure_rush.phase == StructureRushState.Phase.RECOVERY and source.active_skill_cast_serial == 0 and _main._active_skills[id].uses_remaining == uses and _main._elixir.elixir == 10.0, "执行时仍处于撞后恢复则退费，不消费次数或Cast Start")
+		_expect(source.structure_rush.phase == StructureRushState.Phase.RECOVERY and source.active_skill_cast_serial == 0 and _main._active_skills.entry(id).uses_remaining == uses and _main._elixir.elixir == 10.0, "执行时仍处于撞后恢复则退费，不消费次数或Cast Start")
 		_expect(not _main._active_skill_bar._buttons[0].disabled, "先锋拒绝后仍能提交，不能因恢复禁用按钮")
 		_main._on_active_skill_unit_died(id)
 		clear_units()

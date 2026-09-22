@@ -2,6 +2,12 @@ class_name CardDBValidationSuite
 extends RefCounted
 
 func run(harness: Object) -> void:
+	var retired := CardDB.get_card("gwen").duplicate(true)
+	retired["shroud_radius"] = 100.0
+	harness._expect("shroud_radius" in "；".join(CardDB.VALIDATOR.validate_all({"gwen": retired}, false)), "退役字段作为未知配置明确拒绝")
+	harness._expect(not CardDB.DEFINITION_COMPILER.validate("gwen", {"gameplay": {"shroud_radius": 100.0}}).is_empty(), "原始四域定义拒绝退役字段")
+	for cue in ["shroud:start", "shroud:sustain", "shroud:end"]:
+		harness._expect(not PresentationEvents.supports(CardDB.get_card("gwen"), cue), "退役声音事件无生产能力：" + cue)
 	for invalid in [-1, 1.5, true, "2"]:
 		var broken := CardDB.get_card("sett").duplicate(true)
 		broken["attack_recovery_cancel_every_hits"] = invalid

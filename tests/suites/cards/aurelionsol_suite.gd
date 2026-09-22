@@ -371,7 +371,7 @@ func _check_star_visual_lifecycle() -> void:
 func _check_independent_star_result() -> void:
 	for team in [0, 1]:
 		for remove_source in [false, true]:
-			_main._commands.impacts.clear()
+			_main._commands.clear_impacts()
 			_main._active_skill_effect_system.clear()
 			var source: Unit = _main._spawn_unit(team, "aurelionsol", Vector2(360, 1000), 0)
 			var target: Unit = _main._spawn_unit(1 - team, "garen", Vector2(360, 825), 0)
@@ -380,7 +380,7 @@ func _check_independent_star_result() -> void:
 			var skill: Dictionary = CardDB.active_skills_for("aurelionsol")[0].duplicate(true)
 			skill["cast_forward"] = Vector2.UP
 			_main._start_active_skill_cast(source, skill)
-			var pending: Dictionary = _main._commands.impacts[0].duplicate(true)
+			var pending: Dictionary = _main._commands.inspect_impacts()[0].duplicate(true)
 			source.freeze(2.0)
 			source.position += Vector2(250, 0)
 			if remove_source: source.free()
@@ -388,7 +388,7 @@ func _check_independent_star_result() -> void:
 			_expect(target.hp == 10000, "独立星辰释放前一个Tick不提前伤害")
 			_main._commands.tick_impacts(0.05)
 			_expect(target.hp == 9880 and target.is_stunned(), "星辰创建后来源冻结/位移/销毁，固定落点仍恰好结算一次")
-			_main._commands.impacts.append(pending)
+			_main._commands.enqueue_impact((pending.source_ref as WeakRef).get_ref(), pending.skill, pending.time_left, pending.phase, pending.cast_serial)
 			_main._commands.tick_impacts(2.0)
 			_expect(target.hp == 9880, "独立结果身份阻止重复落地伤害")
 			if is_instance_valid(source): source.free()

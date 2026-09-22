@@ -33,9 +33,9 @@ func run(harness: Object) -> void:
 		main._audio_manager.start_zone_audio(100, "anivia", 0, "frost_storm", Vector2(360, 640), 30.0)
 		main._audio_manager.start_projectile_launch(100, {"card_id": "gnar", "form": 0, "serial": 1}, Vector2(360, 640))
 		main._active_skill_effect_system.frontal_effects.append({"timer": 30.0})
-		main._commands.card_commands.append({"team": 0, "card_id": "garen", "pos": Vector2(300, 800), "execute_tick": 1000})
-		main._commands.pre_deployments.append({"time_left": 10.0})
-		main._commands.impacts.append({"time_left": 10.0})
+		main._commands.enqueue_card(0, "garen", Vector2(300, 800), 1000)
+		main._commands.enqueue_deployment(0, "", Vector2.ZERO, 10.0, -1, -1, -1.0)
+		main._commands.enqueue_impact(unit, {}, 10.0, &"impact", -1)
 		harness._expect(not main._audio_manager._sustain_players.is_empty() and not main._audio_manager._zone_players.is_empty() and not main._audio_manager._projectile_launch_players.is_empty(), "终局测试开始时确实同时存在 Buff、区域和飞行音轨")
 	# 快照刚发出后，下一 Tick 的真实弹体击杀水晶。
 	host._sim_tick_id = 101
@@ -61,7 +61,7 @@ func run(harness: Object) -> void:
 	client._sim_step(0.05)
 	harness._expect(client.get_child_count() == child_count and cues.size() == 1 and client._king_enemy.hp == 0.0 and client.get_authoritative_server_tick() == 101, "重复终局与旧快照不重复 UI/声音、不复活塔、不推进模拟")
 	for main in [host, client]:
-		harness._expect(main._commands.card_commands.is_empty() and main._commands.pre_deployments.is_empty() and main._commands.impacts.is_empty() and main._projectile_system.projectiles.is_empty() and main._projectile_system.client_snapshot().is_empty() and main._active_skill_effect_system.frontal_effects.is_empty(), "终局清理所有待执行命令、区域和在途弹体")
+		harness._expect(main._commands.inspect_cards().is_empty() and main._commands.inspect_deployments().is_empty() and main._commands.inspect_impacts().is_empty() and main._projectile_system.projectiles.is_empty() and main._projectile_system.client_snapshot().is_empty() and main._active_skill_effect_system.frontal_effects.is_empty(), "终局清理所有待执行命令、区域和在途弹体")
 		main._audio_manager._process(1.0)
 		main._audio_manager.start_zone_audio(101, "anivia", 0, "frost_storm", Vector2.ZERO, 30.0)
 		main._audio_manager.start_projectile_launch(101, {"card_id": "gnar", "form": 0, "serial": 1}, Vector2.ZERO)

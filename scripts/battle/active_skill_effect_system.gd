@@ -166,7 +166,7 @@ func apply(source: Unit, skill: Dictionary) -> bool:
 ## 可以填同一数值，大小不同的友军也会在与索敌一致的边界上获得护盾。
 ## combatants 中的 Unit、建筑、防御塔与水晶统一提供 add_shield()，都可成为目标。
 func apply_area_shield(source: Unit, skill: Dictionary) -> void:
-	_controller._notify_unit_audio_event(source, &"shield:cast", source.global_position)
+	_controller.notify_unit_audio_event(source, &"shield:cast", source.global_position)
 	var radius := maxf(float(skill.get("radius", 0.0)), 0.0)
 	var amount := maxf(float(skill.get("shield", 0.0)), 0.0)
 	var duration := maxf(float(skill.get("shield_duration", 0.0)), 0.0)
@@ -181,7 +181,7 @@ func apply_area_shield(source: Unit, skill: Dictionary) -> void:
 		if source.surface_gap_to_circle(ally.global_position, ally.body_radius) > radius:
 			continue
 		ally.add_shield(amount, duration, bool(skill.get("shield_decay", false)), source.status_source("shield"))
-		_controller._notify_unit_audio_event(source, &"shield:applied", ally.global_position)
+		_controller.notify_unit_audio_event(source, &"shield:applied", ally.global_position)
 
 
 ## 主动效果默认只作用于施法者；deployment_group 会选中同一次卡牌部署中仍存活的成员。
@@ -213,7 +213,7 @@ func _member_buff_skill(target: Unit, fallback: Dictionary) -> Dictionary:
 func activate_nova(source: Unit, skill: Dictionary) -> void:
 	var displacement_order: Array = skill.get("displacement_order", [])
 	if displacement_order.is_empty():
-		displacement_order = _controller._combat.next_displacement_order(source)
+		displacement_order = _controller.combat_service().next_displacement_order(source)
 	var radius := float(skill.get("radius", 0.0))
 	var amount := float(skill.get("damage", 0.0))
 	var knockback := float(skill.get("knockback", 0.0))
@@ -245,7 +245,7 @@ func activate_nova(source: Unit, skill: Dictionary) -> void:
 ## 首次伤害在第一个 tick_interval 到达时结算，持续 duration 秒，避免把施法
 ## 起始帧重复算成额外伤害。技能窗口可只锁 attack，让施法者继续移动/转向。
 	if any_landed:
-		_controller._notify_unit_audio_event(source, StringName(String(skill.get("visual_action", "")) + ":hit"), source.global_position)
+		_controller.notify_unit_audio_event(source, StringName(String(skill.get("visual_action", "")) + ":hit"), source.global_position)
 
 func activate_continuous_area(source: Unit, skill: Dictionary) -> void:
 	var duration := maxf(float(skill.get("duration", skill.get("cast_duration", 0.0))), 0.0)
@@ -255,7 +255,7 @@ func activate_continuous_area(source: Unit, skill: Dictionary) -> void:
 	if duration <= 0.0 or radius <= 0.0 or amount <= 0.0:
 		return
 	continuous_area_effects.append({
-		"created_tick": _controller._sim_tick_id if _controller._sim_step_active else -1,
+		"created_tick": _controller.get_authoritative_server_tick() if _controller.simulation_step_active() else -1,
 		"status_source": source.status_source("skill_area"), "cast_serial": source.active_skill_cast_serial, "action_serial": source.get_visual_action_serial(),
 		"source_ref": weakref(source),
 		"visual_action": String(skill.get("visual_action", "")),
@@ -294,7 +294,7 @@ func _apply_continuous_area_pulse(source: Unit, effect: Dictionary) -> void:
 			(combatant as Unit).apply_slow(float(effect.get("slow_duration", 0.0)), float(effect.get("slow_multiplier", 1.0)), effect.status_source)
 	var action := String(effect.get("visual_action", ""))
 	if any_landed and not action.is_empty():
-		_controller._notify_unit_audio_event(source, StringName(action + ":hit"), center)
+		_controller.notify_unit_audio_event(source, StringName(action + ":hit"), center)
 
 
 func activate_summon(source: Unit, skill: Dictionary) -> void:
@@ -316,9 +316,9 @@ func activate_summon(source: Unit, skill: Dictionary) -> void:
 func apply_frontal(source: Unit, skill: Dictionary, forward: Vector2 = Vector2.ZERO) -> void:
 	var action := String(skill.get("visual_action", ""))
 	if not action.is_empty():
-		_controller._notify_unit_audio_event(source, StringName(action + ":release"), source.global_position)
+		_controller.notify_unit_audio_event(source, StringName(action + ":release"), source.global_position)
 	if bool(skill.get("projectile_stop_on_hit", false)) or bool(skill.get("projectile_piercing", false)):
-		_controller._projectile_system.launch_skill_fan(source, skill, frontal_forward(source) if forward.length_squared() < 0.001 else forward.normalized())
+		_controller.projectile_service().launch_skill_fan(source, skill, frontal_forward(source) if forward.length_squared() < 0.001 else forward.normalized())
 		return
 	var any_landed := false
 	var center_landed := false
@@ -416,12 +416,12 @@ func apply_frontal(source: Unit, skill: Dictionary, forward: Vector2 = Vector2.Z
 			cue += "_" + String(skill.hit_audio_phase)
 			if center_landed:
 				cue += "_center"
-		_controller._notify_unit_audio_event(source, StringName(cue), source.global_position)
+		_controller.notify_unit_audio_event(source, StringName(cue), source.global_position)
 
 
 ## 向施法开始时锁定方向的前方圆形区域落下一颗星；冲击波由固定 tick 独立扩散。
 	if center_landed and not action.is_empty():
-		_controller._notify_unit_audio_event(source, StringName(action + ":hit_center"), source.global_position)
+		_controller.notify_unit_audio_event(source, StringName(action + ":hit_center"), source.global_position)
 
 func apply_forward_area(source: Unit, skill: Dictionary, forward: Vector2 = Vector2.ZERO) -> void:
 	var context: Dictionary = skill.get("independent_result", {})
@@ -436,7 +436,7 @@ func apply_forward_area(source: Unit, skill: Dictionary, forward: Vector2 = Vect
 			"status_source": source.status_source("skill_area"), "audio_source": PresentationConfig.attack_source(source)}
 	var center: Vector2 = context.center
 	var source_team := int(context.team)
-	_controller._on_skill_projectile_hit(context.audio_source, String(skill.get("visual_action", "")), center, "impact")
+	_controller.present_skill_projectile_hit(context.audio_source, String(skill.get("visual_action", "")), center, "impact")
 	var radius := maxf(float(skill.get("radius", 0.0)), 0.0)
 	var amount := maxf(float(skill.get("damage", 0.0)), 0.0)
 	var stun_duration := maxf(float(skill.get("stun_duration", 0.0)), 0.0)
@@ -458,7 +458,7 @@ func apply_forward_area(source: Unit, skill: Dictionary, forward: Vector2 = Vect
 	if zone_duration > 0.0:
 		# 固定落点区域独立于施法者存活状态，创造后完整维持 zone_duration。
 		continuous_area_effects.append({
-		"created_tick": _controller._sim_tick_id if _controller._sim_step_active else -1,
+		"created_tick": _controller.get_authoritative_server_tick() if _controller.simulation_step_active() else -1,
 			"status_source": context.status_source,
 		"source_ref": context.source_ref, "team": source_team,
 			"fixed_position": true, "center": center,
@@ -472,14 +472,12 @@ func apply_forward_area(source: Unit, skill: Dictionary, forward: Vector2 = Vect
 		})
 		add_fixed_area_effect(center, radius, radius, zone_duration, source_team, &"frost_storm")
 		_controller.present_zone_audio(source, String(skill.get("visual_action", "")), center, zone_duration)
-		if _controller.mode == "host":
-			_controller.publish_skill_fx(frontal_effects.back())
+		_controller.publish_skill_fx(frontal_effects.back())
 	# 落地爆闪由真实效果节点触发；预警自行结束不能伪造命中。
 	if float(skill.get("shockwave_duration", 0.0)) > 0.0:
 		var impact_shape := &"star_impact_strong" if bool(skill.get("full_resource", false)) else &"star_impact"
 		add_fixed_area_effect(center, radius, radius, 0.65, source_team, impact_shape)
-		if _controller.mode == "host":
-			_controller.publish_skill_fx(frontal_effects.back())
+		_controller.publish_skill_fx(frontal_effects.back())
 	var shockwave_duration := maxf(float(skill.get("shockwave_duration", 0.0)), 0.0)
 	if bool(skill.get("shockwave_full_only", false)) and not bool(skill.get("full_resource", false)):
 		shockwave_duration = 0.0
@@ -487,7 +485,7 @@ func apply_forward_area(source: Unit, skill: Dictionary, forward: Vector2 = Vect
 		return
 	var end_radius := maxf(float(skill.get("shockwave_end_radius", radius)), radius)
 	expanding_shockwaves.append({
-		"created_tick": _controller._sim_tick_id if _controller._sim_step_active else -1,
+		"created_tick": _controller.get_authoritative_server_tick() if _controller.simulation_step_active() else -1,
 		"status_source": context.status_source,
 		"source_ref": context.source_ref, "team": source_team, "center": center,
 		"start_radius": radius, "end_radius": end_radius,
@@ -500,8 +498,7 @@ func apply_forward_area(source: Unit, skill: Dictionary, forward: Vector2 = Vect
 		"visual_action": String(skill.get("visual_action", "")),
 	})
 	add_fixed_area_effect(center, radius, end_radius, shockwave_duration, source_team, &"shockwave")
-	if _controller.mode == "host":
-		_controller.publish_skill_fx(frontal_effects.back())
+	_controller.publish_skill_fx(frontal_effects.back())
 
 
 func begin_forward_area_visual(source: Unit, skill: Dictionary, cast_forward: Vector2) -> void:
@@ -517,14 +514,13 @@ func begin_forward_area_visual(source: Unit, skill: Dictionary, cast_forward: Ve
 		skill["independent_result"] = {"result_id": _next_result_id, "center": center, "team": source.team,
 			"source_ref": weakref(source), "form": source.form_index,
 			"status_source": source.status_source("skill_area"), "audio_source": PresentationConfig.attack_source(source)}
-		_controller._on_skill_projectile_hit(skill.independent_result.audio_source, String(skill.get("visual_action", "")), center, "start")
+		_controller.present_skill_projectile_hit(skill.independent_result.audio_source, String(skill.get("visual_action", "")), center, "start")
 	var radius := maxf(float(skill.get("radius", 0.0)), 0.0)
 	_next_result_id += 1
 	var shape := &"target_circle_strong" if bool(skill.get("full_resource", false)) else &"target_circle"
 	add_fixed_area_effect(center, radius, radius, duration, source.team, shape)
 	# 固定结果预警不依赖施法者的动作、位移或存活。
-	if _controller.mode == "host":
-		_controller.publish_skill_fx(frontal_effects.back())
+	_controller.publish_skill_fx(frontal_effects.back())
 
 
 func add_fixed_area_effect(center: Vector2, start_radius: float, end_radius: float, duration: float, p_team: int, shape: StringName) -> void:
@@ -537,7 +533,7 @@ func add_fixed_area_effect(center: Vector2, start_radius: float, end_radius: flo
 
 
 func _damage_result(source: Unit, target: Node2D, amount: float, context: Dictionary) -> bool:
-	return _controller._combat.resolve_attack_hit(int(context.team), context.center, target, amount, 0.0, 0.0,
+	return _controller.combat_service().resolve_attack_hit(int(context.team), context.center, target, amount, 0.0, 0.0,
 		source if is_instance_valid(source) else null, context.center, int(context.form),
 		{"presentation_source": context.audio_source}, false)
 
@@ -575,8 +571,7 @@ func begin_frontal_visual(source: Unit, skill: Dictionary, cast_forward: Vector2
 	if duration <= 0.0:
 		return
 	add_frontal_effect(source, skill, duration, cast_forward)
-	if _controller.mode == "host":
-		_controller.publish_skill_fx(frontal_effects.back())
+	_controller.publish_skill_fx(frontal_effects.back())
 
 
 func tick_effects(dt: float) -> void:
@@ -587,7 +582,7 @@ func tick_effects(dt: float) -> void:
 func _tick_continuous_area_effects(dt: float) -> void:
 	var alive: Array[Dictionary] = []
 	for effect in continuous_area_effects:
-		if _controller._sim_step_active and int(effect.get("created_tick", -1)) == _controller._sim_tick_id:
+		if _controller.simulation_step_active() and int(effect.get("created_tick", -1)) == _controller.get_authoritative_server_tick():
 			alive.append(effect)
 			continue
 		var source = (effect.source_ref as WeakRef).get_ref()
@@ -613,7 +608,7 @@ func _tick_continuous_area_effects(dt: float) -> void:
 func _tick_expanding_shockwaves(dt: float) -> void:
 	var alive: Array[Dictionary] = []
 	for shockwave in expanding_shockwaves:
-		if _controller._sim_step_active and int(shockwave.get("created_tick", -1)) == _controller._sim_tick_id:
+		if _controller.simulation_step_active() and int(shockwave.get("created_tick", -1)) == _controller.get_authoritative_server_tick():
 			alive.append(shockwave)
 			continue
 		shockwave.timer = maxf(float(shockwave.timer) - dt, 0.0)
@@ -635,7 +630,7 @@ func _tick_expanding_shockwaves(dt: float) -> void:
 			else:
 				landed = combatant.take_damage(float(shockwave.damage), null, int(shockwave.team), shockwave.center)
 			if landed:
-				_controller._on_skill_projectile_hit(shockwave.get("audio_source", {}), String(shockwave.get("visual_action", "")), combatant.global_position, "wave_hit")
+				_controller.present_skill_projectile_hit(shockwave.get("audio_source", {}), String(shockwave.get("visual_action", "")), combatant.global_position, "wave_hit")
 			if combatant is Unit and is_instance_valid(combatant) and combatant.hp > 0.0 and float(shockwave.slow_duration) > 0.0:
 				(combatant as Unit).apply_slow(float(shockwave.slow_duration), float(shockwave.slow_multiplier), shockwave.status_source)
 		shockwave.previous_radius = current_radius
@@ -675,7 +670,7 @@ func apply_frontal_stun(source: Unit, skill: Dictionary, forward: Vector2) -> vo
 		var action := String(skill.get("visual_action", "active"))
 		if action.is_empty():
 			action = "transform_active"
-		_controller._notify_unit_audio_event(source, StringName(action + ":hit"), source.global_position)
+		_controller.notify_unit_audio_event(source, StringName(action + ":hit"), source.global_position)
 
 func frontal_forward(source: Unit) -> Vector2:
 	var forward := source.get_visual_facing_direction()
@@ -735,8 +730,7 @@ func begin_continuous_area_visual(source: Unit, skill: Dictionary) -> void:
 		"duration": duration,
 		"team": source.team,
 	})
-	if _controller.mode == "host":
-		_controller.publish_skill_fx(frontal_effects.back())
+	_controller.publish_skill_fx(frontal_effects.back())
 
 
 ## RPC 只递交本次表现载荷，集合及其更新/清理仍由本系统持有。

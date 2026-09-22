@@ -34,6 +34,3 @@ var can_move: bool:
 	get: return not dead and (_unit.get_action_permissions_visual() & 1) != 0
 var can_attack: bool:
 	get: return not dead and (_unit.get_action_permissions_visual() & 2) != 0
-
-var shroud_active: bool:
-	get: return _unit.net_shroud_active if _unit._in_client_mode() else _unit._shroud_active

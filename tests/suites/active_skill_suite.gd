@@ -80,7 +80,7 @@ func _check_multiple_skill_selection() -> void:
 	_main._deck = ["garen", "xin", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
 	_main._active_skill_choices["garen"] = 1
 	var source: Unit = _main._spawn_unit(0, "garen", Vector2(360.0, 1000.0), 0.0, 0)
-	var carried_skill: Dictionary = _main._active_skills[source.active_ability_id].skill
+	var carried_skill: Dictionary = _main._active_skills.entry(source.active_ability_id).skill
 	var selected_judgment := (
 		String(carried_skill.get("name", "")) == "审判"
 		and StringName(carried_skill.get("kind", "")) == &"continuous_area"
@@ -186,7 +186,7 @@ func _check_active_skill_activation() -> void:
 	var hp_before := enemy.hp
 	var queued: bool = not _main._queue_active_skill(first_ability_id, 0, 0) and _main._queue_active_skill(ability_id, 0, 0)
 	var expected_execute_tick: int = _main._sim_tick_id + _main.COMMAND_DELAY_TICKS
-	var command_tick_contract: bool = not _main._commands.skill_commands.is_empty() and int(_main._commands.skill_commands[0].execute_tick) == expected_execute_tick
+	var command_tick_contract: bool = not _main._commands.inspect_skills().is_empty() and int(_main._commands.inspect_skills()[0].execute_tick) == expected_execute_tick
 	_main._active_skill_bar.set_pending(ability_id, true)
 	_run_main_ticks(_main.COMMAND_DELAY_TICKS - 1)
 	_expect(
@@ -198,8 +198,8 @@ func _check_active_skill_activation() -> void:
 	_expect(command_tick_contract and is_equal_approx(enemy.hp, hp_before) and source.empowered_attack_ready, "主动技能与卡牌共用 input_tick→execute_tick 解析，Host 本地输入保持 10 Tick 后由权威逻辑结算")
 	_expect(
 		_main._active_skills.has(ability_id)
-		and int(_main._active_skills[ability_id].uses_remaining) == 1
-		and float(_main._active_skills[ability_id].cooldown_left) > 0.0
+		and int(_main._active_skills.entry(ability_id).uses_remaining) == 1
+		and float(_main._active_skills.entry(ability_id).cooldown_left) > 0.0
 		and not _main._activate_active_skill(ability_id, 0)
 		and _main._active_skill_bar.is_slot_visible(0),
 		"主动技能结算后保留单位资格，扣除一次使用次数并进入技能 CD"
@@ -234,7 +234,7 @@ func _check_active_skill_cost_uses_and_refresh() -> void:
 	var queued_first: bool = _main._queue_active_skill(ability_id, 0, 0)
 	var paid_on_queue: bool = is_equal_approx(_main._elixir.elixir, initial_elixir - 1.0)
 	_run_main_ticks(_main.COMMAND_DELAY_TICKS)
-	var first_entry: Dictionary = _main._active_skills[ability_id]
+	var first_entry: Dictionary = _main._active_skills.entry(ability_id)
 	var first_use_state: bool = int(first_entry.uses_remaining) == 1 and float(first_entry.cooldown_left) > 0.0
 	var blocked_during_cooldown: bool = not _main._queue_active_skill(ability_id, 0, 0) and is_equal_approx(_main._elixir.elixir, initial_elixir - 1.0)
 	_main._tick_active_skill_cooldowns(6.0)
@@ -242,13 +242,13 @@ func _check_active_skill_cost_uses_and_refresh() -> void:
 	_run_main_ticks(_main.COMMAND_DELAY_TICKS)
 	_main._tick_active_skill_cooldowns(6.0)
 	var queued_third: bool = not _main._queue_active_skill(ability_id, 0, 0)
-	var exhausted_entry: Dictionary = _main._active_skills[ability_id]
+	var exhausted_entry: Dictionary = _main._active_skills.entry(ability_id)
 	var uses_exhausted: bool = int(exhausted_entry.uses_remaining) == 0
 	var spent_twice: bool = is_equal_approx(_main._elixir.elixir, initial_elixir - 2.0)
 
 	var refreshed: Unit = _main._spawn_unit(0, "garen", Vector2(320.0, 760.0), 0.0, 0)
 	var refreshed_id := refreshed.active_ability_id
-	var refreshed_entry: Dictionary = _main._active_skills[refreshed_id]
+	var refreshed_entry: Dictionary = _main._active_skills.entry(refreshed_id)
 	var redeploy_resets_uses: bool = refreshed_id != ability_id and int(refreshed_entry.uses_remaining) == 2 and is_equal_approx(float(refreshed_entry.cooldown_left), 0.0)
 	var refreshed_queue_paid: bool = _main._queue_active_skill(refreshed_id, 0, 0) and is_equal_approx(_main._elixir.elixir, initial_elixir - 3.0)
 	_expect(
@@ -287,7 +287,7 @@ func _check_pending_active_skill_revalidation() -> void:
 		queued_before_death
 		and is_equal_approx(enemy.hp, hp_before_death_reject)
 		and not _main._active_skills.has(dead_ability_id)
-		and _main._commands.skill_commands.is_empty()
+		and _main._commands.inspect_skills().is_empty()
 		and not _main._active_skill_bar.is_slot_visible(0),
 		"主动 pending 期间单位死亡会取消释放，不产生效果并清理对应按钮",
 	)
@@ -298,7 +298,7 @@ func _check_pending_active_skill_revalidation() -> void:
 	var gnar_ability_id := gnar.active_ability_id
 	var queued_before_transform: bool = _main._queue_active_skill(gnar_ability_id, 0, 0)
 	_main._active_skill_bar.set_pending(gnar_ability_id, true)
-	var pending_impacts_before: int = _main._commands.impacts.size()
+	var pending_impacts_before: int = _main._commands.inspect_impacts().size()
 	var transformed_after_click := gnar.transform_to_mega()
 	var transform_action_serial := gnar.get_visual_action_serial()
 	_run_main_ticks(_main.COMMAND_DELAY_TICKS)
@@ -306,7 +306,7 @@ func _check_pending_active_skill_revalidation() -> void:
 		queued_before_transform
 		and transformed_after_click
 		and _main._active_skills.has(gnar_ability_id)
-		and _main._commands.impacts.size() == pending_impacts_before
+		and _main._commands.inspect_impacts().size() == pending_impacts_before
 		and gnar.get_visual_action_serial() == transform_action_serial
 		and not _main._active_skill_bar._buttons[0].disabled,
 		"主动 pending 到期时若已进入 transform，会拒绝效果/技能动作且按钮恢复提交资格",
@@ -341,8 +341,8 @@ func _check_pending_active_skill_revalidation() -> void:
 	_expect(
 		queued_after_cast and (casting_source.empowered_attack_ready or casting_source.get_empowered_attack_visual_serial() > 0)
 		and _main._active_skills.has(casting_ability_id)
-		and int(_main._active_skills[casting_ability_id].uses_remaining) == 1
-		and float(_main._active_skills[casting_ability_id].cooldown_left) > 0.0,
+		and int(_main._active_skills.entry(casting_ability_id).uses_remaining) == 1
+		and float(_main._active_skills.entry(casting_ability_id).cooldown_left) > 0.0,
 		"pending 期间权威状态始终合法时，主动技能仍在 0.5 秒后正常释放并进入 CD",
 	)
 	casting_source.free()
@@ -415,9 +415,7 @@ func _check_cast_impact_recovery_timeline() -> void:
 		"shield_duration": 2.0,
 		"cast_locks": ["movement", "attack", "facing"],
 	}
-	var timeline_entry: Dictionary = _main._active_skills[ability_id]
-	timeline_entry["skill"] = timeline_skill
-	_main._active_skills[ability_id] = timeline_entry
+	SuiteUtils.replace_carried_skill(_main._active_skills, ability_id, timeline_skill)
 	var queued: bool = _main._queue_active_skill(ability_id, 0, 0)
 	_main._active_skill_bar.set_pending(ability_id, true)
 	_run_main_ticks(_main.COMMAND_DELAY_TICKS)
@@ -450,24 +448,20 @@ func _check_cast_control_pause_and_death_cancel() -> void:
 		"shield_duration": 2.0,
 		"cast_locks": ["movement", "attack", "facing"],
 	}
-	var freeze_entry: Dictionary = _main._active_skills[freeze_source.active_ability_id]
-	freeze_entry["skill"] = freeze_skill
-	_main._active_skills[freeze_source.active_ability_id] = freeze_entry
+	SuiteUtils.replace_carried_skill(_main._active_skills, freeze_source.active_ability_id, freeze_skill)
 	var freeze_queued: bool = _main._queue_active_skill(freeze_source.active_ability_id, 0, 0)
 	_run_main_ticks(_main.COMMAND_DELAY_TICKS)
 	_run_main_ticks(4)
 	freeze_source.freeze(0.3)
 	_run_main_ticks(6)
-	var freeze_cancelled: bool = freeze_source.active_skill_cast_timer == 0 and _main._commands.impacts.is_empty() and freeze_source.shield_hp == 0
+	var freeze_cancelled: bool = freeze_source.active_skill_cast_timer == 0 and _main._commands.inspect_impacts().is_empty() and freeze_source.shield_hp == 0
 	_run_main_ticks(20)
 	var freeze_no_resume: bool = freeze_source.shield_hp == 0
 
 	var stun_source: Unit = _main._spawn_unit(0, "xin", Vector2(260.0, 900.0), 0.0, 1)
 	var stun_skill: Dictionary = freeze_skill.duplicate(true)
 	stun_skill["name"] = "眩晕施法"
-	var stun_entry: Dictionary = _main._active_skills[stun_source.active_ability_id]
-	stun_entry["skill"] = stun_skill
-	_main._active_skills[stun_source.active_ability_id] = stun_entry
+	SuiteUtils.replace_carried_skill(_main._active_skills, stun_source.active_ability_id, stun_skill)
 	var stun_queued: bool = _main._queue_active_skill(stun_source.active_ability_id, 0, 0)
 	_run_main_ticks(_main.COMMAND_DELAY_TICKS)
 	_run_main_ticks(4)
@@ -482,15 +476,13 @@ func _check_cast_control_pause_and_death_cancel() -> void:
 
 	var death_source: Unit = _main._spawn_unit(0, "garen", Vector2(520.0, 680.0), 0.0, 0)
 	var death_ability_id: int = death_source.active_ability_id
-	var death_entry: Dictionary = _main._active_skills[death_ability_id]
-	death_entry["skill"] = freeze_skill
-	_main._active_skills[death_ability_id] = death_entry
+	SuiteUtils.replace_carried_skill(_main._active_skills, death_ability_id, freeze_skill)
 	var death_queued: bool = _main._queue_active_skill(death_ability_id, 0, 0)
 	_run_main_ticks(_main.COMMAND_DELAY_TICKS)
 	_run_main_ticks(3)
 	death_source.take_damage(death_source.hp + 1.0)
 	_run_main_ticks(12)
-	var death_cancelled: bool = is_zero_approx(death_source.shield_hp) and _main._commands.impacts.is_empty()
+	var death_cancelled: bool = is_zero_approx(death_source.shield_hp) and _main._commands.inspect_impacts().is_empty()
 	_expect(
 		freeze_queued and freeze_cancelled and freeze_no_resume
 		and stun_queued and stun_advanced and stun_released and stun_completed
@@ -503,7 +495,7 @@ func _check_cast_control_pause_and_death_cancel() -> void:
 	freeze_source.free()
 	stun_source.free()
 	death_source.free()
-	_main._commands.impacts.clear()
+	_main._commands.clear_impacts()
 	_main._deck = old_deck
 
 func _check_authoritative_hand_cycle() -> void:
@@ -535,7 +527,7 @@ func _check_authoritative_hand_cycle() -> void:
 		and deck_card_not_in_hand_rejected,
 		"权威手牌只接受当前 hand，成功后一次性扣费/轮换，重复、缺牌和金币不足均不改变状态",
 	)
-	_main._commands.card_commands.clear()
+	_main._commands.clear_cards()
 	_main._elixir.elixir = ElixirManager.MAX_ELIXIR
 	_main._deck = old_deck
 	_main._initialize_authoritative_card_cycle(0, old_deck)
@@ -563,7 +555,7 @@ func _check_network_hand_confirmation() -> void:
 	var host_accepted_hand: Array = _main.get_authoritative_hand(1)
 	var host_accepted_queue: Array = _main.get_authoritative_queue(1)
 	var host_elixir_after_accept: float = network_elixir.elixir
-	var host_pending_after_accept: int = _main._commands.card_commands.size()
+	var host_pending_after_accept: int = _main._commands.inspect_cards().size()
 	var host_hand_before_reject: Array = host_accepted_hand.duplicate()
 	var host_queue_before_reject: Array = host_accepted_queue.duplicate()
 	var host_elixir_before_reject: float = network_elixir.elixir
@@ -572,19 +564,19 @@ func _check_network_hand_confirmation() -> void:
 		_main.get_authoritative_hand(1) == host_hand_before_reject
 		and _main.get_authoritative_queue(1) == host_queue_before_reject
 		and is_equal_approx(network_elixir.elixir, host_elixir_before_reject)
-		and _main._commands.card_commands.size() == host_pending_after_accept
+		and _main._commands.inspect_cards().size() == host_pending_after_accept
 	)
 	_main._sim_tick_id = 110
 	var host_hand_before_late: Array = _main.get_authoritative_hand(1)
 	var host_queue_before_late: Array = _main.get_authoritative_queue(1)
 	var host_elixir_before_late: float = network_elixir.elixir
-	var host_pending_before_late: int = _main._commands.card_commands.size()
+	var host_pending_before_late: int = _main._commands.inspect_cards().size()
 	_main.play_card(1, "xin", Vector2(300.0, 580.0), {"elixir": network_elixir, "require_team_deck": true, "input_tick": 100})
 	var host_late_reject_kept_state: bool = (
 		_main.get_authoritative_hand(1) == host_hand_before_late
 		and _main.get_authoritative_queue(1) == host_queue_before_late
 		and is_equal_approx(network_elixir.elixir, host_elixir_before_late)
-		and _main._commands.card_commands.size() == host_pending_before_late
+		and _main._commands.inspect_cards().size() == host_pending_before_late
 	)
 	var host_accept_once: bool = (
 		host_initial_hand == ["garen", "xin", "freeze", "ashe"]
@@ -635,7 +627,7 @@ func _check_network_hand_confirmation() -> void:
 	)
 	_expect(host_accept_once and host_reject_kept_state and host_late_reject_kept_state and client_pending_request and client_accept_synced and client_reject_kept_state, "联机出牌 accepted 同步手牌/队列，late/rejected 不扣费不轮换且仅恢复 pending UI")
 
-	_main._commands.card_commands.clear()
+	_main._commands.clear_cards()
 	_main.mode = old_mode
 	_main._deck = old_deck
 	_main._remote_deck = old_remote_deck
@@ -827,7 +819,7 @@ func _check_control_release_matrix() -> void:
 				_expect(frozen.pending == 0 and stunned.pending == 0 and knocked.pending == 0, "%s 控制后排程最终清空" % card)
 
 func _sample_skill_control(card: String, boundary: float, kind: StringName, skill_index: int = 0) -> Dictionary:
-	_main._commands.impacts.clear()
+	_main._commands.clear_impacts()
 	_main._active_skill_effect_system.clear()
 	_main._projectile_system.clear_all()
 	var source: Unit = _main._spawn_unit(0, card, Vector2(360, 1000), 0)
@@ -866,17 +858,17 @@ func _sample_skill_control(card: String, boundary: float, kind: StringName, skil
 		if boundary >= float(skill.get("impact_delay", 0.0)):
 			committed = 100000 - target.hp
 	var result := {"damage": 100000 - target.hp, "committed": committed, "health": source.hp,
-		"health_at_control": health_at_control, "pending": _main._commands.impacts.size()}
+		"health_at_control": health_at_control, "pending": _main._commands.inspect_impacts().size()}
 	source.free()
 	target.free()
-	_main._commands.impacts.clear()
+	_main._commands.clear_impacts()
 	_main._active_skill_effect_system.clear()
 	_main._projectile_system.clear_all()
 	return result
 
 func _check_displaced_skill_range() -> void:
 	for card in ["sett", "gwen"]:
-		_main._commands.impacts.clear()
+		_main._commands.clear_impacts()
 		_main._active_skill_effect_system.clear()
 		var source: Unit = _main._spawn_unit(0, card, Vector2(200, 900), 0)
 		# 固定质量隔离技能位置归属；质量对击退距离的影响由 KnockbackBoundarySuite 覆盖。
@@ -903,5 +895,5 @@ func _check_displaced_skill_range() -> void:
 			_main._combat.commit_batch()
 		_expect(old_target.hp == old_hp and new_target.hp < new_hp, "%s 未释放技能按被推后位置结算：旧范围不命中，新范围命中" % card)
 		for unit in [source, old_target, new_target]: unit.free()
-		_main._commands.impacts.clear()
+		_main._commands.clear_impacts()
 		_main._active_skill_effect_system.clear()

@@ -63,8 +63,8 @@ func run(harness: Object, main: Node2D) -> void:
 	main._active_skill_choices["shurima_guard"] = 0
 	var paid: Array[Unit] = main._spawn_card_units(0, "shurima_guard", Vector2(360, 1000), 0.0, 0)
 	var ability := -1
-	for key in main._active_skills:
-		if main._active_skills[key].unit == paid[0]: ability = key
+	for key in main._active_skills.ids():
+		if main._active_skills.entry(key).unit == paid[0]: ability = key
 	main._elixir.elixir = 10
 	_expect(ability >= 0 and main.use_active_skill(ability, 0), "正式技能请求被接受")
 	_expect(main._elixir.elixir == 8, "一次技能扣2金币")

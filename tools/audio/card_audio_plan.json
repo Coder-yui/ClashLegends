@@ -102,7 +102,7 @@
       "active_3:hit_middle_center": "Play_sfx_Gwen_GwenQMiddle_hit",
       "resource_full": "Play_sfx_Gwen_GwenQ_max_stacks_buffactivate"
     },
-    "notes": "原始动画图 SoundEventData 确认 Attack1=Swipe、Attack2=Stab、Attack3=Swipe，出手与命中分别映射。Q 四档按真实剪切时间合成可中断出手音轨；缠流缺被动状态音频入口。 2026-09-13 全面复核见 docs/archive/2026-09-13/research/hero_audio_completeness_audit.md；当前定义与逐事件清单为准。",
+    "notes": "原始动画图 SoundEventData 确认 Attack1=Swipe、Attack2=Stab、Attack3=Swipe，出手与命中分别映射。Q 四档按真实剪切时间合成可中断出手音轨。 2026-09-13 全面复核见 docs/archive/2026-09-13/research/hero_audio_completeness_audit.md；当前定义与逐事件清单为准。",
     "sequences": {
       "active_0:sustain": [
         {

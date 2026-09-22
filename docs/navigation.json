@@ -1,0 +1,15 @@
+{
+  "entry": "AGENTS.md",
+  "current": ["docs/AGENT_WORKFLOW.md", "docs/MAINTENANCE_ARCHITECTURE.md", "docs/status/IMPLEMENTATION.md", "docs/reference/NETWORK_PROTOCOL.md", "scripts/README.md", "tests/README.md", "tools/README.md", "docs/units/README.md"],
+  "routes": {
+    "structure": ["docs/MAINTENANCE_ARCHITECTURE.md", "tests/README.md"],
+    "control": ["docs/status/IMPLEMENTATION.md", "docs/status/CORE.md", "docs/status/ACTIONS.md"],
+    "network": ["docs/MAINTENANCE_ARCHITECTURE.md", "docs/reference/NETWORK_PROTOCOL.md", "tests/README.md"],
+    "workbench": ["docs/DEVELOPMENT_WORKBENCH.md", "tests/README.md"],
+    "new_card": ["docs/NEW_CARD_CHECKLIST.md", "docs/CARD_DESIGN.md"]
+  },
+  "card_documents": {
+    "gnar": ["gnar_small", "gnar_mega"],
+    "aatrox": ["aatrox", "aatrox_ultimate"]
+  }
+}
