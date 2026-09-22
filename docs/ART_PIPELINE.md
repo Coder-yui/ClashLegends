@@ -15,6 +15,7 @@
 | 原模型与同组纹理 | `assets/units/<id>/source/` |
 | 模型包装场景 | `assets/units/<id>/` |
 | 卡面 | `assets/cards/<id>_loading.jpg/png/webp` |
+| 主动技能图标与来源清单 | `assets/skills/` |
 | 音频与来源清单 | `assets/audio/units/<id>/` |
 | 系统建筑 / 地图 | `assets/towers/` / `assets/arena/` |
 
@@ -30,6 +31,17 @@
 地面模型以脚底为基准。空军仍保留各自缩放，由表现层将实际网格底部抬到统一飞行高度；血条一起抬高，战斗坐标不变。
 
 只有组合动作、网格过滤、特殊挂点或模型切换需要时才增加包装脚本，说明放对应素材 README。具体流程见 [近战](MELEE_3D_INTEGRATION.md)、[远程](RANGED_3D_INTEGRATION.md)、[动画系统](ANIMATION_STATE_SYSTEM.md)。
+
+## 主动技能图标
+
+英雄主动技能有对应 LoL 原版图标素材时直接接入；没有素材时保留现有文字占位。按技能本身及其形态核对图标，不凭英雄名称或文件名相似度替代。
+
+1. 用 [源素材工具](../tools/assets/README.md) 查本地 LoL 库；先提取到开发素材库并记录源包与原路径。
+2. 解码为 PNG，保持原画；仅将选定图标接入 `assets/skills/`，补充 [来源清单](../assets/skills/source_manifest.json)。
+3. 在逐卡 `visual.active_skills[].icon_path` 登记资源路径，与玩法技能索引一致。缺素材省略字段，继续文字占位。
+4. 跑内容校验及核心回归，实际查看信息面板主动技能名称前和对战按钮，检查技能切换、待释放、禁用及占位。缺素材项写入交付。
+
+完整新卡检查见 [新卡清单](NEW_CARD_CHECKLIST.md#主动技能图标)。
 
 ## 卡面与地图
 

@@ -2,6 +2,7 @@ extends "res://tests/suites/battle_suite.gd"
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
+	_check_two_tower_deployment()
 	var stats := CardDB.get_unit_stats("shurima_guard")
 	var skill: Dictionary = stats.active_skills[0]
 	_expect(stats.cost == 7 and stats.hp == 420 and stats.damage == 60 and stats.interval == 1.6 and stats.range == 72.0, "卫队确认数值")
@@ -82,3 +83,66 @@ func run(harness: Object, main: Node2D) -> void:
 	var invalid := CardDB.all().duplicate(true)
 	invalid.shurima_guard.deployment_formation = "unknown"
 	_expect(not preload("res://scripts/data/card_validator.gd").validate_all(invalid).is_empty(), "拒绝未知编队类型")
+
+func _check_two_tower_deployment() -> void:
+	var old_deck: Array = _main._deck.duplicate()
+	var old_cycles: Dictionary = _main._authoritative_card_cycles.duplicate()
+	var old_elixir: float = _main._elixir.elixir
+	_main._deck = ["shurima_guard", "garen", "ashe", "heal", "xin", "teemo", "freeze", "pix"]
+	for team in [0, 1]:
+		var left: Tower = _main._towers[2 if team == 0 else 0]
+		var right: Tower = _main._towers[3 if team == 0 else 1]
+		var hp := Vector2(left.hp, right.hp)
+		var baseline: Array[bool] = []
+		for row in ArenaRules.ARENA_ROWS:
+			for column in ArenaRules.ARENA_COLUMNS:
+				baseline.append(_main.is_card_deploy_position_valid(team, "shurima_guard", _main._arena_tile_center(Vector2i(column, row))))
+		var enemy_y := 500.0 if team == 0 else 780.0
+		var target := Vector2(340, enemy_y)
+		for side in [0, 1]:
+			left.hp = 0.0 if side == 0 else hp.x
+			right.hp = 0.0 if side == 1 else hp.y
+			var unchanged := true
+			for row in ArenaRules.ARENA_ROWS:
+				for column in ArenaRules.ARENA_COLUMNS:
+					var pos: Vector2 = _main._arena_tile_center(Vector2i(column, row))
+					unchanged = unchanged and _main.is_card_deploy_position_valid(team, "shurima_guard", pos) == baseline[row * ArenaRules.ARENA_COLUMNS + column]
+			_expect(unchanged, "卫队单路破塔与未破塔全场合法格完全一致：阵营%d/路%d" % [team, side])
+			var lane_pos := Vector2(300 if side == 0 else 420, enemy_y)
+			_expect(_main.is_card_deploy_position_valid(team, "garen", lane_pos), "普通卡继续单路解锁")
+			_expect(not _main._tile_in_ground_deploy_zone(_main._world_to_arena_tile(lane_pos), team, true), "卫队区域高亮同样禁止单路解锁")
+			_main._elixir.elixir = 10
+			var hand: Array = _main.get_authoritative_hand(team)
+			var commands: int = _main._commands.inspect_cards().size()
+			var accepted: bool = _main.play_card(team, "shurima_guard", lane_pos, {"elixir": _main._elixir})
+			_expect(not accepted and _main._elixir.elixir == 10 and _main.get_authoritative_hand(team) == hand and _main._commands.inspect_cards().size() == commands, "单路非法出牌不扣费、不轮换、不入队")
+			if team == 0:
+				_main._on_card_selected("shurima_guard")
+				_main._update_deployment_preview(lane_pos)
+				_expect(not _main._deployment_preview_valid, "卫队单路破塔落点预览为非法")
+		left.hp = 0
+		right.hp = 0
+		_expect(_main.is_card_deploy_position_valid(team, "shurima_guard", target) and _main.is_card_deploy_position_valid(team, "shurima_guard", Vector2(420, enemy_y)), "双路破塔后卫队两侧合法区域均开放")
+		_expect(not _main.is_card_deploy_position_valid(team, "shurima_guard", Vector2(20, enemy_y)) and not _main.is_card_deploy_position_valid(team, "shurima_guard", Vector2(340, 620)) and not _main.is_card_deploy_position_valid(team, "shurima_guard", Vector2(340, 180 if team == 0 else 1100)), "双破仍遵守横排边界、河道及敌方深处区域限制")
+		var blocker: Unit = _main._spawn_unit(team, "tombstone", target, 0.0)
+		_expect(not _main.is_card_deploy_position_valid(team, "shurima_guard", target), "双破仍拒绝存活建筑占地")
+		blocker.free()
+		if team == 0:
+			_main._update_deployment_preview(target)
+			_expect(_main._deployment_preview_valid, "卫队双路破塔落点预览变为合法")
+		_main._elixir.elixir = 10
+		_expect(_main.play_card(team, "shurima_guard", target, {"elixir": _main._elixir}) and _main._elixir.elixir == 3 and "shurima_guard" not in _main.get_authoritative_hand(team) and _main._commands.inspect_cards().size() == 1, "双破正式出牌扣7金币、轮换并进入部署队列")
+		_main._commands.clear_cards()
+		left.hp = hp.x
+		right.hp = hp.y
+	_main._on_card_selected("")
+	_main._deck = old_deck
+	_main._authoritative_card_cycles = old_cycles
+	_main._elixir.elixir = old_elixir
+	var stats := CardDB.get_card("shurima_guard").duplicate(true)
+	for invalid in [null, 1, "true"]:
+		stats.deploy_pocket_requires_both_towers = invalid
+		_expect("deploy_pocket_requires_both_towers" in "；".join(CardDB.VALIDATOR.validate_all({"shurima_guard": stats}, false)), "双塔部署开关拒绝非布尔值")
+	stats.deploy_pocket_requires_both_towers = true
+	stats.deploy_zone = "global"
+	_expect("deploy_pocket_requires_both_towers" in "；".join(CardDB.VALIDATOR.validate_all({"shurima_guard": stats}, false)), "双塔部署开关拒绝无效的全图搭配")

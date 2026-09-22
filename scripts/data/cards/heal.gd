@@ -29,6 +29,7 @@ static func definition() -> Dictionary:
 			],
 		},
 		"visual": {
+			"active_skills": [{"icon_path": "res://assets/skills/heal_0.png"}, {"icon_path": "res://assets/skills/heal_1.png"}],
 			"color": Color(1.00, 0.93, 0.60),
 		},
 		# BEGIN EVENT AUDIO heal

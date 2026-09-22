@@ -43,7 +43,7 @@ static func definition() -> Dictionary:
 				"death": "Death", "death_duration": 0.8,
 			},
 			"color": Color(0.50, 0.85, 0.95),
-			"active_skills": [{ "visual_action": "active",
+			"active_skills": [{ "icon_path": "res://assets/skills/ashe_0.png", "visual_action": "active",
 				}],
 		},
 		"card_art": {}, # 默认 assets/cards/<card_id>_loading.*

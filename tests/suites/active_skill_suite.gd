@@ -7,6 +7,7 @@ func _reset_local_elixir() -> void:
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
+	_check_skill_icon_reuse()
 	_check_active_skill_loadout_rule()
 	_check_multiple_skill_selection()
 	_check_deployment_skill_gate()
@@ -897,3 +898,17 @@ func _check_displaced_skill_range() -> void:
 		for unit in [source, old_target, new_target]: unit.free()
 		_main._commands.clear_impacts()
 		_main._active_skill_effect_system.clear()
+
+func _check_skill_icon_reuse() -> void:
+	var bar := ActiveSkillBar.new()
+	_main.add_child(bar)
+	bar.can_submit = func(_id: int) -> bool: return true
+	var skill := CardDB.active_skills_for("garen")[1]
+	bar.show_skill(0, 901, skill.name, Color.BLUE, 2, 1, 1, 0, true, CardArt.skill_icon(skill))
+	_expect(bar._icons[0].texture == CardArt.skill_icon(skill) and bar._buttons[0].text.is_empty(), "战斗按钮显示携带技能图标")
+	bar.set_pending(901, true)
+	_expect(bar._pending_labels[0].visible and bar._icons[0].texture != null, "待释放覆盖提示并保留技能图标")
+	bar.remove_skill(901)
+	bar.show_skill(0, 902, "仙灵汲取", Color.GREEN)
+	_expect(bar._icons[0].texture == null and bar._buttons[0].text == "仙" and not bar._pending_labels[0].visible, "复用槽位时清除旧图标与待释放状态，恢复文字占位")
+	bar.free()

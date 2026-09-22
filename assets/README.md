@@ -5,6 +5,7 @@
 | 目录 | 内容 |
 | --- | --- |
 | `cards/` | 卡面；CardArt 按 `<card_id>_loading.jpg/png/webp` 自动发现 |
+| `skills/` | 主动技能图标；来源与技能映射见 [素材记录](skills/README.md) |
 | `units/<card_id>/` | 单位包装场景、模型、动画和纹理 |
 | `towers/` | 双方防御塔与水晶的包装场景和素材 |
 | `arena/arena_rift_v4.png` | 当前启用的 2D 战场背景 |

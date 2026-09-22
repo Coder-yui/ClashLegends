@@ -106,7 +106,7 @@ static func definition() -> Dictionary:
 					},
 				},
 			},
-			"active_skills": [{ "visual_action": "active",
+			"active_skills": [{ "icon_path": "res://assets/skills/gnar_0.png", "visual_action": "active",
 				}],
 		},
 		# BEGIN IMPORTED AUDIO gnar

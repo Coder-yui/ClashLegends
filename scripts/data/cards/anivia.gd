@@ -43,7 +43,7 @@ static func definition() -> Dictionary:
 				"death": "Death", "death_duration": 2.4,
 			}, "projectile_visual": "ice_cone", "projectile_visual_height": 62.0,
 			"color": Color(0.45, 0.82, 1.0), "death_replacement_visual_transition": "drop",
-			"active_skills": [{ "visual_action": "frost_storm",
+			"active_skills": [{ "icon_path": "res://assets/skills/anivia_0.png", "visual_action": "frost_storm",
 				}],
 		},
 		# BEGIN IMPORTED AUDIO anivia

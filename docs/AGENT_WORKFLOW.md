@@ -5,7 +5,7 @@
 | 任务 | 必读 |
 | --- | --- |
 | 完整新卡 | [新卡清单](NEW_CARD_CHECKLIST.md)、[卡牌机制](CARD_DESIGN.md)，再按素材类型阅读 |
-| 卡面 | [美术接入](ART_PIPELINE.md)、[素材目录](../assets/README.md) |
+| 卡面 / 主动技能图标 | [美术接入](ART_PIPELINE.md)、[素材目录](../assets/README.md) |
 | 近战 / 远程模型 | [美术接入](ART_PIPELINE.md) → [近战](MELEE_3D_INTEGRATION.md) / [远程](RANGED_3D_INTEGRATION.md) → [部署](UNIT_DEPLOYMENT.md) |
 | 建筑 / 特殊形态 | 通用美术说明 + [对应单位](units/README.md)动画页和素材目录 README |
 | 地图 | [竞技场](units/arena.md)、本地制作源件见 `ClashLegends-开发素材库/03-制作中/3D地图/` |

@@ -37,6 +37,13 @@ static func texture_for(card_id: String) -> Texture2D:
 	_textures[card_id] = null
 	return null
 
+## 缺省图标返回 null，由 UI 保留既有文字占位。
+static func skill_icon(skill: Dictionary) -> Texture2D:
+	var path := String(skill.get("icon_path", ""))
+	if path.is_empty() or not ResourceLoader.exists(path):
+		return null
+	return load(path) as Texture2D
+
 static func frame_size_for_height(height: float) -> Vector2:
 	return Vector2(roundf(height * CARD_FRAME_ASPECT), height)
 

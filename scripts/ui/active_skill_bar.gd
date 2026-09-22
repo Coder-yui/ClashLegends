@@ -15,6 +15,9 @@ const SLOT_POSITIONS := [LEFT_SLOT_POSITION, RIGHT_SLOT_POSITION]
 var can_submit: Callable
 
 var _buttons: Array[Button] = []
+var _icons: Array[TextureRect] = []
+var _pending_labels: Array[Label] = []
+var _skill_names: Array[String] = ["", ""]
 var _ability_ids: Array[int] = [-1, -1]
 var _base_labels: Array[String] = ["", ""]
 var _deployment_ready: Array[bool] = [false, false]
@@ -51,9 +54,33 @@ func _ready() -> void:
 		button.visible = false
 		root.add_child(button)
 		_buttons.append(button)
+		var icon := TextureRect.new()
+		icon.position = Vector2(4.0, 4.0)
+		icon.size = BUTTON_SIZE - Vector2(8.0, 8.0)
+		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		var material := ShaderMaterial.new()
+		material.shader = preload("res://scripts/ui/skill_icon_circle.gdshader")
+		icon.material = material
+		button.add_child(icon)
+		_icons.append(icon)
+		var pending_label := Label.new()
+		pending_label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		pending_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		pending_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		pending_label.add_theme_font_override("font", CardArt.ui_font())
+		pending_label.add_theme_font_size_override("font_size", 24)
+		pending_label.add_theme_color_override("font_outline_color", Color.BLACK)
+		pending_label.add_theme_constant_override("outline_size", 5)
+		pending_label.text = "…"
+		pending_label.visible = false
+		pending_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		button.add_child(pending_label)
+		_pending_labels.append(pending_label)
 		var rule_label := Label.new()
-		rule_label.position = SLOT_POSITIONS[slot_index] + Vector2(-12.0, BUTTON_SIZE.y + 2.0)
-		rule_label.size = Vector2(BUTTON_SIZE.x + 24.0, 20.0)
+		rule_label.position = Vector2(clampf(SLOT_POSITIONS[slot_index].x + BUTTON_SIZE.x * 0.5 - 60.0, 4.0, DESIGN_WIDTH - 124.0), SLOT_POSITIONS[slot_index].y + BUTTON_SIZE.y + 2.0)
+		rule_label.size = Vector2(120.0, 20.0)
 		rule_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		rule_label.add_theme_font_override("font", CardArt.ui_font())
 		rule_label.add_theme_font_size_override("font_size", 12)
@@ -66,12 +93,15 @@ func _ready() -> void:
 		_rule_labels.append(rule_label)
 
 
-func show_skill(slot_index: int, ability_id: int, skill_name: String, accent: Color, skill_cost: float = 0.0, max_uses: int = 1, uses_remaining: int = 1, cooldown: float = 0.0, deployment_ready: bool = true) -> void:
+func show_skill(slot_index: int, ability_id: int, skill_name: String, accent: Color, skill_cost: float = 0.0, max_uses: int = 1, uses_remaining: int = 1, cooldown: float = 0.0, deployment_ready: bool = true, icon: Texture2D = null) -> void:
 	if slot_index < 0 or slot_index >= _buttons.size():
 		return
 	var button := _buttons[slot_index]
 	_ability_ids[slot_index] = ability_id
-	_base_labels[slot_index] = skill_name.left(1)
+	_skill_names[slot_index] = skill_name
+	_icons[slot_index].texture = icon
+	_icons[slot_index].visible = icon != null
+	_base_labels[slot_index] = skill_name.left(1) if icon == null else ""
 	_deployment_ready[slot_index] = deployment_ready
 	_pending[slot_index] = false
 	_skill_costs[slot_index] = maxf(skill_cost, 0.0)
@@ -107,6 +137,10 @@ func remove_skill(ability_id: int) -> void:
 		return
 	_ability_ids[slot_index] = -1
 	_base_labels[slot_index] = ""
+	_skill_names[slot_index] = ""
+	_icons[slot_index].texture = null
+	_icons[slot_index].visible = false
+	_pending_labels[slot_index].visible = false
 	_deployment_ready[slot_index] = false
 	_pending[slot_index] = false
 	_skill_costs[slot_index] = 0.0
@@ -163,7 +197,9 @@ func _refresh_slot(slot_index: int) -> void:
 	var uses_remaining := _uses_remaining[slot_index]
 	var skill_cost := _skill_costs[slot_index]
 	button.disabled = not can_submit.is_valid() or not can_submit.call(_ability_ids[slot_index])
-	button.text = "…" if _pending[slot_index] else _base_labels[slot_index]
+	button.text = "" if _pending[slot_index] else _base_labels[slot_index]
+	_pending_labels[slot_index].visible = _pending[slot_index]
+	_icons[slot_index].modulate = Color(0.42, 0.42, 0.42) if button.disabled or _pending[slot_index] else Color.WHITE
 	if slot_index < _rule_labels.size():
 		var rule_label := _rule_labels[slot_index]
 		rule_label.visible = button.visible
@@ -179,7 +215,7 @@ func _refresh_slot(slot_index: int) -> void:
 		state = "冷却 %s秒" % BattleNumbers.format_value(cooldown)
 	elif _elixir < skill_cost:
 		state = "金币不足"
-	button.tooltip_text = "主动槽 %d\n消耗 %s 金币 · 剩余 %d/%d 次 · 冷却 %s 秒\n%s" % [slot_index + 1, BattleNumbers.format_value(skill_cost), uses_remaining, _max_uses[slot_index], BattleNumbers.format_value(cooldown), state]
+	button.tooltip_text = "%s · 主动槽 %d\n消耗 %s 金币 · 剩余 %d/%d 次 · 冷却 %s 秒\n%s" % [_skill_names[slot_index], slot_index + 1, BattleNumbers.format_value(skill_cost), uses_remaining, _max_uses[slot_index], BattleNumbers.format_value(cooldown), state]
 
 
 func _format_number(value: float) -> String:

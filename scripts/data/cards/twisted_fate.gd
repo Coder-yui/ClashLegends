@@ -41,7 +41,7 @@ static func definition() -> Dictionary:
 				"death": "Death", "death_duration": 0.8,
 			}, "projectile_visual": "orb", "projectile_visual_height": 60.0,
 			"color": Color(0.34, 0.56, 0.92),
-			"active_skills": [{ "projectile_visual": "card", "visual_action": "wild_cards",
+			"active_skills": [{ "icon_path": "res://assets/skills/twisted_fate_0.png", "projectile_visual": "card", "visual_action": "wild_cards",
 				}],
 		},
 		# BEGIN IMPORTED AUDIO twisted_fate

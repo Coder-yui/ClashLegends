@@ -25,7 +25,9 @@ static func definition() -> Dictionary:
 					"description": "立即为太阳圆盘攻击范围内的所有存活友军、友方建筑、防御塔与水晶提供 180 点护盾，持续 6 秒。每个圆盘只能使用 1 次。",
 				}],
 		},
-		"visual": { "visual_radius": 60.0,
+		"visual": {
+			"active_skills": [{"icon_path": "res://assets/skills/sun_disc_0.png"}],
+			"visual_radius": 60.0,
 			"visual_scene_paths": [
 				"res://assets/units/sun_disc/sun_disc_blue_view.tscn",
 				"res://assets/units/sun_disc/sun_disc_red_view.tscn",

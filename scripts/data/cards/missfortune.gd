@@ -21,7 +21,9 @@ static func definition() -> Dictionary:
 					"duration": 3.0, "speed_multiplier": 1.5, "damage_multiplier": 1.0, "attack_speed_multiplier": 1.3,
 				}],
 		},
-		"visual": { "visual_radius": RADIUS_MEDIUM + VISUAL_RADIUS_PADDING,
+		"visual": {
+			"active_skills": [{"icon_path": "res://assets/skills/missfortune_0.png"}],
+			"visual_radius": RADIUS_MEDIUM + VISUAL_RADIUS_PADDING,
 			"visual_scene_path": "res://assets/units/missfortune/missfortune_view.tscn",
 			"visual_forward_yaw": 0.0,
 			"visual_animations": {

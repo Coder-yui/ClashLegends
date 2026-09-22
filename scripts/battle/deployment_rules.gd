@@ -94,7 +94,7 @@ func is_structure_deployment_tile_blocked(tile: Vector2i) -> bool:
 			return true
 	return false
 
-func tile_in_ground_deploy_zone(tile: Vector2i, p_team: int) -> bool:
+func tile_in_ground_deploy_zone(tile: Vector2i, p_team: int, require_both_towers: bool = false) -> bool:
 	if tile.x < 0 or tile.x >= ArenaRules.ARENA_COLUMNS or tile.y < 0 or tile.y >= ArenaRules.ARENA_ROWS:
 		return false
 	var local_row := tile.y if p_team == 0 else ArenaRules.ARENA_ROWS - 1 - tile.y
@@ -107,6 +107,8 @@ func tile_in_ground_deploy_zone(tile: Vector2i, p_team: int) -> bool:
 	if local_row < ArenaRules.POCKET_FIRST_ROW or local_row > ArenaRules.POCKET_LAST_ROW:
 		return false
 	if local_row == ArenaRules.POCKET_LAST_ROW and (tile.x == 0 or tile.x == ArenaRules.ARENA_COLUMNS - 1):
+		return false
+	if require_both_towers and not (pocket_unlocked(p_team, true) and pocket_unlocked(p_team, false)):
 		return false
 	var is_left := tile.x < ArenaRules.ARENA_COLUMNS / 2
 	return pocket_unlocked(p_team, is_left)
@@ -188,7 +190,7 @@ func is_card_deploy_position_valid(p_team: int, card_id: String, pos: Vector2) -
 			for y in range(first_tile.y, first_tile.y + footprint.y):
 				for x in range(first_tile.x, first_tile.x + footprint.x):
 					var tile := Vector2i(x, y)
-					if not tile_in_ground_deploy_zone(tile, p_team):
+					if not tile_in_ground_deploy_zone(tile, p_team, bool(stats.get("deploy_pocket_requires_both_towers", false))):
 						return false
 
 	# 2. 占位：独立开关；河流非桥面及塔/水晶/建筑卡占地格统一由 deploy_ignore_structures 控制。

@@ -70,7 +70,7 @@ static func definition() -> Dictionary:
 			},
 			"skill_resource_full_color": Color(0.28, 0.72, 1.0, 0.96),
 			"color": Color(0.95, 0.75, 0.85),
-			"active_skills": [{
+			"active_skills": [{ "icon_path": "res://assets/skills/gwen_0.png",
 					"visual_action": "active_0", "resource_visual_actions": ["active_0", "active_1", "active_2", "active_3"],
 				}],
 		},

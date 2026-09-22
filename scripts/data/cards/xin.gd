@@ -67,7 +67,7 @@ static func definition() -> Dictionary:
 				"death": "Death", "death_duration": 0.8,
 			},
 			"color": Color(0.85, 0.30, 0.25),
-			"active_skills": [{
+			"active_skills": [{ "icon_path": "res://assets/skills/xin_0.png",
 					"visual_action": "active",
 				}],
 		},

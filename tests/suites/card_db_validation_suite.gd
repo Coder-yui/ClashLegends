@@ -2,6 +2,14 @@ class_name CardDBValidationSuite
 extends RefCounted
 
 func run(harness: Object) -> void:
+	for invalid_icon in [42, "res://assets/skills/" + "missing.png", "res://scripts/ui/card_art.gd", ""]:
+		var broken_icon := CardDB.get_card("garen").duplicate(true)
+		broken_icon.active_skills[0].icon_path = invalid_icon
+		harness._expect("garen.active_skills[0].icon_path" in "；".join(CardDB.VALIDATOR.validate_all({"garen": broken_icon})), "技能图标拒绝错误类型、缺失和非纹理资源")
+	for card_id in CardDB.all():
+		for skill in CardDB.active_skills_for(card_id):
+			if skill.has("icon_path"):
+				harness._expect(CardArt.skill_icon(skill) is Texture2D, "正式技能图标可加载：" + card_id)
 	var retired := CardDB.get_card("gwen").duplicate(true)
 	retired["shroud_radius"] = 100.0
 	harness._expect("shroud_radius" in "；".join(CardDB.VALIDATOR.validate_all({"gwen": retired}, false)), "退役字段作为未知配置明确拒绝")

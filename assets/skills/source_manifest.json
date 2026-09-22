@@ -1,0 +1,153 @@
+[
+  {
+    "card": "garen",
+    "skill_index": 0,
+    "path": "res://assets/skills/garen_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Garen.wad.client",
+    "source_path": "assets/characters/garen/hud/icons2d/garen_q.dds",
+    "source_sha256": "c7cff81444ebe3e8ac875caebe0ed8256e0f979ead6155d33cebbaf6475c99d6",
+    "sha256": "9ea94c450dd2679a799b2b4d89016cf9551e019af7ae5b198c2f041f72222d98"
+  },
+  {
+    "card": "garen",
+    "skill_index": 1,
+    "path": "res://assets/skills/garen_1.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Garen.wad.client",
+    "source_path": "assets/characters/garen/hud/icons2d/garen_e1.dds",
+    "source_sha256": "97c127b8fe794bdcb0bef8b73c8953f11fbf47f10334eed9220bbded0e922ded",
+    "sha256": "f8e028f54a970fc89442f752e761a23f8b961506074f4bce727609a4371c78c3"
+  },
+  {
+    "card": "ashe",
+    "skill_index": 0,
+    "path": "res://assets/skills/ashe_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Ashe.wad.client",
+    "source_path": "assets/characters/ashe/hud/icons2d/ashe_w.dds",
+    "source_sha256": "56de81bb6964ef54f23fb253ac0ac1f3de02bc6eae96b7bb2bae5ff7d41f5b9a",
+    "sha256": "18155583e3fa86d5f71c43f6c1d4c015a38c64a657f4e5cc1aa900a16a22ec72"
+  },
+  {
+    "card": "sett",
+    "skill_index": 0,
+    "path": "res://assets/skills/sett_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Sett.wad.client",
+    "source_path": "assets/characters/sett/hud/icons2d/sett_w.dds",
+    "source_sha256": "db72d24d51d72db5fdfa8a049bb4da74cb1b650055c60af426705d9152e58067",
+    "sha256": "a0f96690eb5f3ff7c89f7f6ba48e8aff7e449909e0c80d2e936e4aa76153ec66"
+  },
+  {
+    "card": "gwen",
+    "skill_index": 0,
+    "path": "res://assets/skills/gwen_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Gwen.wad.client",
+    "source_path": "assets/characters/gwen/hud/icons2d/gwen_q.dds",
+    "source_sha256": "63c19f297af07dcaaf8086beb3a9de3980f58f99b02db6d89f859a25ce93d887",
+    "sha256": "05e71b8e2ed53eb07c60908149963ac0d4dbd44c1452b4be32ff26ec179e6499"
+  },
+  {
+    "card": "gnar",
+    "skill_index": 0,
+    "path": "res://assets/skills/gnar_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Gnar.wad.client",
+    "source_path": "assets/characters/gnar/hud/icons2d/gnarbig_w.dds",
+    "source_sha256": "cd9de0b879d4e53ab42fac058868979df8982d4deeae9518ebe5774322bef6e4",
+    "sha256": "3342a0a812585be1d20b2902b20b778a8656441517ccc9711da683352f48e023"
+  },
+  {
+    "card": "anivia",
+    "skill_index": 0,
+    "path": "res://assets/skills/anivia_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Anivia.wad.client",
+    "source_path": "assets/characters/anivia/hud/icons2d/anivia_r.dds",
+    "source_sha256": "fa6a982e7a1e38c6ab40fe9e7d364f1915b3f9e2c37d8283669d88ebc54b2939",
+    "sha256": "67d7cae98c512fe4b4e51f867e16b4f0ff1f0bb5fd04df0ae6fe20c2393f7892"
+  },
+  {
+    "card": "aurelionsol",
+    "skill_index": 0,
+    "path": "res://assets/skills/aurelionsol_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/AurelionSol.wad.client",
+    "source_path": "assets/characters/aurelionsol/hud/icons2d/aurelionsolr1.dds",
+    "source_sha256": "8d5f8994170764d4950d2ba4b9c1635dec73a9e82e375b3a089176552671857e",
+    "sha256": "ecdefbb3132a1db5de005c827f36251baaba14d03af4c84d860f561c8338113f"
+  },
+  {
+    "card": "xin",
+    "skill_index": 0,
+    "path": "res://assets/skills/xin_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/XinZhao.wad.client",
+    "source_path": "assets/characters/xinzhao/hud/icons2d/xinzhaoreworkr.dds",
+    "source_sha256": "30856c09cd7036d6c1f08da1010b55aacc6f0f646a0a986bf21b246cd49ee914",
+    "sha256": "65145ba0e79a4e6569fa315d6a61f9a440e102389e9559191026f8a5aa69f374"
+  },
+  {
+    "card": "twisted_fate",
+    "skill_index": 0,
+    "path": "res://assets/skills/twisted_fate_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/TwistedFate.wad.client",
+    "source_path": "assets/characters/twistedfate/hud/icons2d/cardmaster_powercard.dds",
+    "source_sha256": "d2b8d583c498f78599f8e7f731a45c109e8125b11b105403a70478fa2deca146",
+    "sha256": "ffad5822061d60d119b05fef8e12b055e200868d654970f7e7217348805bfed3"
+  },
+  {
+    "card": "masteryi",
+    "skill_index": 0,
+    "path": "res://assets/skills/masteryi_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/MasterYi.wad.client",
+    "source_path": "assets/characters/masteryi/hud/icons2d/masteryi_r.dds",
+    "source_sha256": "afadb30814a850837179ead70f06b60a7776e8bfe565e6cc97a1901995890f64",
+    "sha256": "b8c6060c12272c64d4f52d9045e3150721160af4cb1b6d8e48790a7437f93c1e"
+  },
+  {
+    "card": "missfortune",
+    "skill_index": 0,
+    "path": "res://assets/skills/missfortune_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/MissFortune.wad.client",
+    "source_path": "assets/characters/missfortune/hud/icons2d/missfortune_w.dds",
+    "source_sha256": "a38c35cd59e4f185d0faeb975f371a08bed8a2be1d4ad7012c5cfb2efaf0f1ff",
+    "sha256": "8d91ea30573de5a625c3ef77413fbe91659ae6434a48896236fadd98ead6e26e"
+  },
+  {
+    "card": "teemo",
+    "skill_index": 0,
+    "path": "res://assets/skills/teemo_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Teemo.wad.client",
+    "source_path": "assets/characters/teemo/hud/icons2d/teemoq.dds",
+    "source_sha256": "87cbbaa2062160e76b14260c67b2ba14e77e9309505e977301aca2351bba8a40",
+    "sha256": "59c1c725c12a4785bc1bca94201383b03be099d59f3e857302669bbc610627d0"
+  },
+  {
+    "card": "sun_disc",
+    "skill_index": 0,
+    "path": "res://assets/skills/sun_disc_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/LeagueClient/Plugins/rcp-be-lol-game-data/default-assets2.wad",
+    "source_path": "plugins/rcp-be-lol-game-data/global/default/assets/items/icons2d/3190_enchanter_t4_locketofironsolari.png",
+    "source_sha256": "c4db34bc5eac5723f688b2830c45fe0a1c23249bb865a6782634639ae3fd9401",
+    "sha256": "c4db34bc5eac5723f688b2830c45fe0a1c23249bb865a6782634639ae3fd9401"
+  },
+  {
+    "card": "heal",
+    "skill_index": 0,
+    "path": "res://assets/skills/heal_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/LeagueClient/Plugins/rcp-be-lol-game-data/default-assets2.wad",
+    "source_path": "plugins/rcp-be-lol-game-data/global/default/data/spells/icons2d/summoner_heal.png",
+    "source_sha256": "ccebc4b0554572a041b2b5014f25a84d7265c371e97448a516765aaad651dc55",
+    "sha256": "ccebc4b0554572a041b2b5014f25a84d7265c371e97448a516765aaad651dc55"
+  },
+  {
+    "card": "heal",
+    "skill_index": 1,
+    "path": "res://assets/skills/heal_1.png",
+    "source_url": "https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/Precision/Overheal.png",
+    "sha256": "91cde8bf56eb5e14620956ad7a5e3a0bf381cd3b8077149dde2a6b513830cfdd"
+  },
+  {
+    "card": "aatrox",
+    "skill_index": 0,
+    "path": "res://assets/skills/aatrox_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Aatrox.wad.client",
+    "source_path": "assets/characters/aatrox/hud/icons2d/aatrox_r.dds",
+    "source_sha256": "686a826415f237b786402a44f043f1f6cfe74febae15af8e38e2bd237dfc29f3",
+    "sha256": "829f9ae642de731766e96081c32d57eba773b8633122da16be432daa3ebae6d5"
+  }
+]

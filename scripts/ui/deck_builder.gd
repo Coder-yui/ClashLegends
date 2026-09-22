@@ -609,6 +609,9 @@ func _open_card_info(card_id: String) -> void:
 	_deck_info_active_option.custom_minimum_size = Vector2(0.0, 46.0)
 	_deck_info_active_option.add_theme_font_override("font", CardArt.ui_font())
 	_deck_info_active_option.add_theme_font_size_override("font_size", 17)
+	_deck_info_active_option.add_theme_constant_override("icon_max_width", 32)
+	_deck_info_active_option.add_theme_color_override("icon_disabled_color", Color.WHITE)
+	_deck_info_active_option.get_popup().add_theme_constant_override("icon_max_width", 32)
 	if skills.is_empty():
 		if String(stats.get("type", "unit")) == "spell":
 			_deck_info_active_option.add_item(String(stats.get("active_name", "强化" + String(stats.get("name", "法术")))))
@@ -617,7 +620,7 @@ func _open_card_info(card_id: String) -> void:
 		_deck_info_active_option.disabled = true
 	else:
 		for skill in skills:
-			_deck_info_active_option.add_item(String(skill.get("name", "未命名技能")))
+			_deck_info_active_option.add_icon_item(CardArt.skill_icon(skill), String(skill.get("name", "未命名技能")))
 		var selected_skill := clampi(int(_active_skill_choices.get(card_id, 0)), 0, skills.size() - 1)
 		_active_skill_choices[card_id] = selected_skill
 		_deck_info_active_option.select(selected_skill)

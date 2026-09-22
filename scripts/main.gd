@@ -1194,8 +1194,8 @@ func _destroyed_princess_tower_at_card_center(pos: Vector2) -> Tower:
 func _is_structure_deployment_tile_blocked(tile: Vector2i) -> bool:
 	return _deployment_rules.is_structure_deployment_tile_blocked(tile)
 
-func _tile_in_ground_deploy_zone(tile: Vector2i, p_team: int) -> bool:
-	return _deployment_rules.tile_in_ground_deploy_zone(tile, p_team)
+func _tile_in_ground_deploy_zone(tile: Vector2i, p_team: int, require_both_towers: bool = false) -> bool:
+	return _deployment_rules.tile_in_ground_deploy_zone(tile, p_team, require_both_towers)
 
 func _tile_in_global_ground_deploy_zone(tile: Vector2i) -> bool:
 	return _deployment_rules.tile_in_global_ground_deploy_zone(tile)
@@ -1679,7 +1679,7 @@ func _register_active_skill(unit: Unit, card_id: String, p_team: int) -> void:
 	if _is_local_player_team(p_team) and _active_skill_bar != null:
 		_active_skill_bar.show_skill(
 			active_slot, ability_id, String(carried_skill.name), stats.get("color", CardArt.DEFAULT_ACCENT),
-			float(carried_skill.get("cost", 0.0)), max_uses, max_uses, float(carried_skill.get("cooldown", 0.0)), unit.is_deployed()
+			float(carried_skill.get("cost", 0.0)), max_uses, max_uses, float(carried_skill.get("cooldown", 0.0)), unit.is_deployed(), CardArt.skill_icon(carried_skill)
 		)
 	# 单机 AI 也携带卡组前两槽的技能；占位 AI 同样经过 0.5 秒待释放窗口。
 	if mode == "local" and p_team == 1:
@@ -2635,7 +2635,7 @@ func _draw() -> void:
 				for row in ArenaRules.ARENA_ROWS:
 					for column in ArenaRules.ARENA_COLUMNS:
 						var tile := Vector2i(column, row)
-						if _tile_in_ground_deploy_zone(tile, deploy_team):
+						if _tile_in_ground_deploy_zone(tile, deploy_team, bool(sel_stats.get("deploy_pocket_requires_both_towers", false))):
 							draw_rect(Rect2(Vector2(tile) * ArenaRules.TILE_SIZE, Vector2.ONE * ArenaRules.TILE_SIZE), Color(0.40, 0.70, 1.00, 0.15))
 		_draw_deployment_preview(sel_stats)
 	# 两段式部署的第一段只显示一个落点卡牌标记，不创建单位或战斗碰撞体。

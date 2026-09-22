@@ -67,6 +67,13 @@ func run(harness: Object, main: Node2D) -> void:
 		and builder._skin_choices.get("garen", "") == "default",
 		"信息页展示主动技能选择、金币消耗、单位次数、冷却与默认原皮入口"
 	)
+	var first_icon := builder._deck_info_active_option.get_item_icon(0)
+	var second_icon := builder._deck_info_active_option.get_item_icon(1)
+	_expect(first_icon != null and second_icon != null and first_icon != second_icon, "信息面板为盖伦两个技能分别显示图标")
+	builder._deck_info_active_option.select(1)
+	_expect(builder._deck_info_active_option.icon == second_icon, "切换主动技能时名称前图标同步切换")
+	builder._open_card_info("pix")
+	_expect(builder._deck_info_active_option.get_item_icon(0) == null, "无素材技能保留文字选项")
 	builder._close_card_info()
 	builder._on_deck_slot_pressed(0)
 	builder._perform_deck_context_action()

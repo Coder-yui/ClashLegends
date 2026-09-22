@@ -88,6 +88,7 @@ static func definition() -> Dictionary:
 			]
 		},
 		"visual": {
+			"active_skills": [{"icon_path": "res://assets/skills/aatrox_0.png"}],
 		"color": Color(0.65, 0.12, 0.12),
 			"visual_radius": 25.5,
 			"visual_scene_path": "res://assets/units/aatrox/normal_view.tscn",

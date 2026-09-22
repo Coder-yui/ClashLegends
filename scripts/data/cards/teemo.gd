@@ -20,7 +20,9 @@ static func definition() -> Dictionary:
 					"empowered_damage_multiplier": 1.0, "blind_charges": 2,
 				}],
 		},
-		"visual": { "visual_radius": RADIUS_SMALL + VISUAL_RADIUS_PADDING,
+		"visual": {
+			"active_skills": [{"icon_path": "res://assets/skills/teemo_0.png"}],
+			"visual_radius": RADIUS_SMALL + VISUAL_RADIUS_PADDING,
 			"visual_scene_path": "res://assets/units/teemo/teemo_view.tscn",
 			"visual_forward_yaw": 0.0,
 			"visual_animations": {

@@ -82,7 +82,7 @@ static func definition() -> Dictionary:
 			"continuous_beam_end_width": 14.0,
 			"continuous_beam_origin_height": 78.0,
 			"continuous_beam_forward_offset": 20.0,
-			"active_skills": [{
+			"active_skills": [{ "icon_path": "res://assets/skills/aurelionsol_0.png",
 					"visual_action": "active", "full_resource_visual_action": "active_strong",
 				}],
 		},

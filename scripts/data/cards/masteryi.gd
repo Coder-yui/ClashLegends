@@ -21,7 +21,9 @@ static func definition() -> Dictionary:
 					"ignore_movement_slow": true, "ignore_attack_speed_slow": true,
 				}],
 		},
-		"visual": { "visual_radius": RADIUS_MEDIUM + VISUAL_RADIUS_PADDING,
+		"visual": {
+			"active_skills": [{"icon_path": "res://assets/skills/masteryi_0.png"}],
+			"visual_radius": RADIUS_MEDIUM + VISUAL_RADIUS_PADDING,
 			"visual_scene_path": "res://assets/units/masteryi/masteryi_view.tscn",
 			"visual_forward_yaw": 0.0,
 			"visual_animations": {

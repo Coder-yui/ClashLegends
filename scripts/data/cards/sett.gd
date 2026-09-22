@@ -81,7 +81,7 @@ static func definition() -> Dictionary:
 			"skill_resource_full_color": Color(1.0, 0.82, 0.24, 0.96),
 			"attack_interval_display": BASE_ATTACK_INTERVAL, # 完整左右拳循环的平均每拳间隔
 			"color": Color(0.85, 0.55, 0.25),
-			"active_skills": [{
+			"active_skills": [{ "icon_path": "res://assets/skills/sett_0.png",
 					"visual_action": "active", "full_resource_visual_action": "active_strong",
 				}],
 		},

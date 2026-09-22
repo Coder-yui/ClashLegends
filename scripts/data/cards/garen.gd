@@ -50,8 +50,8 @@ static func definition() -> Dictionary:
 				"death": "Death", "death_duration": 0.8,
 			},
 			"color": Color(0.35, 0.55, 0.90),
-			"active_skills": [{
-				},{ "visual_action": "judgment",
+			"active_skills": [{ "icon_path": "res://assets/skills/garen_0.png",
+				},{ "icon_path": "res://assets/skills/garen_1.png", "visual_action": "judgment",
 				}],
 		},
 		"card_art": {}, # 默认 assets/cards/<card_id>_loading.*

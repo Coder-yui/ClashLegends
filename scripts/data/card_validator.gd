@@ -45,6 +45,8 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 		var dz := StringName(stats.get("deploy_zone", ""))
 		if dz not in DEPLOY_ZONES:
 			errors.append("%s.deploy_zone: 必须是 DEPLOY_ZONES 之一 (%s)" % [card_id, "、".join(DEPLOY_ZONES)])
+	if bool(stats.get("deploy_pocket_requires_both_towers", false)) and (String(stats.get("deploy_zone", "own_side")) != "own_side" or card_type == &"spell"):
+		errors.append("%s.deploy_pocket_requires_both_towers: 仅支持 own_side 单位或建筑" % card_id)
 	if stats.has("deploy_ignore_structures") and typeof(stats.deploy_ignore_structures) != TYPE_BOOL:
 		errors.append("%s.deploy_ignore_structures: 必须是 bool" % card_id)
 	if stats.has("pre_deploy_time") and float(stats.get("pre_deploy_time", 0.0)) < 0.0:
@@ -103,7 +105,7 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 			errors.append("%s.card_art.path: 必须是存在的 Texture2D" % card_id)
 	_validate_visual_config(card_id, stats, errors, inspect_resources)
 	_validate_audio_config(card_id, stats, errors, inspect_resources)
-	_validate_active_skills(card_id, stats, errors)
+	_validate_active_skills(card_id, stats, errors, inspect_resources)
 	if stats.has("transformed_stats"):
 		var transformed = stats.get("transformed_stats")
 		if not transformed is Dictionary or (transformed as Dictionary).is_empty():
@@ -666,7 +668,7 @@ static func _validate_positive_number_or_array(label: String, value: Variant, er
 			errors.append("%s: 必须是正数或正数数组" % label)
 			return
 
-static func _validate_active_skills(card_id: String, stats: Dictionary, errors: PackedStringArray) -> void:
+static func _validate_active_skills(card_id: String, stats: Dictionary, errors: PackedStringArray, inspect_resources: bool = true) -> void:
 	if not SHAPES.validate(card_id, stats, errors): return
 	var skills: Array = []
 	if stats.has("active_skills"):
@@ -681,6 +683,10 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 			errors.append("%s: 必须是 Dictionary" % label)
 			continue
 		_validate_known_fields(label, skill, ACTIVE_SKILL_FIELDS, errors)
+		if skill.has("icon_path"):
+			var path := String(skill.icon_path)
+			if not path.begins_with("res://assets/") or not ResourceLoader.exists(path) or (inspect_resources and not load(path) is Texture2D):
+				errors.append("%s.icon_path: 必须指向 assets 内有效的 Texture2D" % label)
 		_require_fields(label, skill, [&"name", &"kind", &"cost", &"max_uses", &"cooldown"], errors)
 		var kind := StringName(skill.get("kind", ""))
 		if kind not in ACTIVE_SKILL_KINDS:

@@ -3,12 +3,13 @@ static func definition() -> Dictionary:
 	return {
 		"gameplay": {
 			"name": "恕瑞玛卫队", "cost": 7, "type": "unit",
-			"description": "六名黄沙士兵横排部署，以长矛轮流刺击地面敌人。",
+			"description": "六名黄沙士兵横排部署，以长矛轮流刺击地面敌人。敌方两路防御塔均被摧毁后，才能在对方半场的合法区域部署。",
 			"hp": 420, "damage": 60, "range": 72.0,
 			"speed": SPEED_SLOW, "interval": 1.6, "first_hit": 0.4,
 			"attack_pattern": [1.6, 1.6, 1.6],
 			"size_tier": SIZE_MEDIUM, "radius": RADIUS_MEDIUM,
 			"mass": 4.0, "sight": 220.0,
+			"deploy_pocket_requires_both_towers": true,
 			"deployment_count": 6, "deployment_spacing": 100.0, "deployment_formation": "line",
 			"is_air": false, "building_only": false, "can_attack_air": false,
 			"active_skills": [{"name": "黄沙庇护", "kind": "restoration_shield",
