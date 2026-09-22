@@ -1002,9 +1002,6 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prep
 	_forced_movement = false
 	if _knockback_timer > 0.0:
 		_tick_knockback_movement(dt)
-	var recovering_rush := structure_rush.phase == StructureRushState.Phase.RECOVERY
-	if recovering_rush:
-		structure_rush.tick(self, dt)
 	# 卡牌生成后进入部署时间：自身不索敌、不移动、不攻击，但实体已经存在，
 	# 会参与碰撞，也能被敌方索敌、命中、受伤和施加状态。
 	if _deploy_timer > 0.0:
@@ -1046,7 +1043,7 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prep
 	if form_transition_timer > 0.0:
 		_tick_form_transition_movement(dt)
 		return
-	if recovering_rush or structure_rush.tick(self, dt):
+	if structure_rush.phase == StructureRushState.Phase.RECOVERY or structure_rush.tick(self, dt):
 		return
 	attack_timeline.tick_cooldown(dt)
 	# 默认命中后必须完整收招；配置允许的连招段结束且没有圈内目标时可提前转走。
@@ -1221,6 +1218,9 @@ func surface_gap_to_circle(center: Vector2, radius: float) -> float:
 
 ## 旧动作窗口在命令执行前推进一次；本边界新动作从下个边界开始推进。
 func prepare_action_clocks(dt: float) -> void:
+	# 仅推进旧恢复锁；新撞击仍在后续行动阶段创建，下个边界才首次扣时。
+	if structure_rush.phase == StructureRushState.Phase.RECOVERY:
+		structure_rush.tick(self, dt)
 	var age_form := form_index == 1 and form_lifetime_left > 0.0 and not (form_lifetime_after_transition and form_transition_timer > 0.0)
 	# 生命周期与普通技能时钟不因硬控暂停。冰冻在施加入口取消施法。
 	if _visual_action_time_left > 0.0:

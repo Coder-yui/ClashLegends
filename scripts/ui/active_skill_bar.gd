@@ -11,6 +11,9 @@ const LEFT_SLOT_POSITION := Vector2(23.0, 1195.0)
 const RIGHT_SLOT_POSITION := Vector2(DESIGN_WIDTH - LEFT_SLOT_POSITION.x - BUTTON_SIZE.x, LEFT_SLOT_POSITION.y)
 const SLOT_POSITIONS := [LEFT_SLOT_POSITION, RIGHT_SLOT_POSITION]
 
+## 按钮只读取 Main 的统一提交资格，不自行维护战斗或经济门禁。
+var can_submit: Callable
+
 var _buttons: Array[Button] = []
 var _ability_ids: Array[int] = [-1, -1]
 var _base_labels: Array[String] = ["", ""]
@@ -85,6 +88,11 @@ func show_skill(slot_index: int, ability_id: int, skill_name: String, accent: Co
 	_refresh_slot(slot_index)
 
 
+func is_pending(ability_id: int) -> bool:
+	var slot := _ability_ids.find(ability_id)
+	return slot >= 0 and _pending[slot]
+
+
 func set_pending(ability_id: int, pending: bool) -> void:
 	var slot_index := _ability_ids.find(ability_id)
 	if slot_index < 0:
@@ -144,7 +152,6 @@ func _on_slot_pressed(slot_index: int) -> void:
 	var ability_id := current_ability_id(slot_index)
 	if ability_id < 0:
 		return
-	set_pending(ability_id, true)
 	skill_pressed.emit(ability_id)
 
 
@@ -155,7 +162,7 @@ func _refresh_slot(slot_index: int) -> void:
 	var cooldown := _cooldowns[slot_index]
 	var uses_remaining := _uses_remaining[slot_index]
 	var skill_cost := _skill_costs[slot_index]
-	button.disabled = _pending[slot_index] or not _deployment_ready[slot_index] or uses_remaining <= 0 or cooldown > 0.001 or _elixir < skill_cost
+	button.disabled = not can_submit.is_valid() or not can_submit.call(_ability_ids[slot_index])
 	button.text = "…" if _pending[slot_index] else _base_labels[slot_index]
 	if slot_index < _rule_labels.size():
 		var rule_label := _rule_labels[slot_index]

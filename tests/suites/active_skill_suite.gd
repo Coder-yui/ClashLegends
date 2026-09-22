@@ -308,8 +308,8 @@ func _check_pending_active_skill_revalidation() -> void:
 		and _main._active_skills.has(gnar_ability_id)
 		and _main._commands.impacts.size() == pending_impacts_before
 		and gnar.get_visual_action_serial() == transform_action_serial
-		and _main._active_skill_bar._buttons[0].disabled,
-		"主动 pending 到期时若已进入 transform，会拒绝效果/技能动作且按钮继续受当前权限限制",
+		and not _main._active_skill_bar._buttons[0].disabled,
+		"主动 pending 到期时若已进入 transform，会拒绝效果/技能动作且按钮恢复提交资格",
 	)
 	_main._on_active_skill_unit_died(gnar_ability_id)
 	gnar.free()
@@ -330,14 +330,14 @@ func _check_pending_active_skill_revalidation() -> void:
 		and is_zero_approx(casting_source.shield_hp)
 		and casting_source.get_visual_action_serial() == cast_action_serial
 		and _main._active_skills.has(casting_ability_id)
-		and _main._active_skill_bar._buttons[0].disabled
+		and not _main._active_skill_bar._buttons[0].disabled
 	)
 	casting_source.active_skill_cast_timer = 0.0
 	casting_source.active_skill_cast_locks.clear()
 	var queued_after_cast: bool = _main._queue_active_skill(casting_ability_id, 0, 0)
 	_main._active_skill_bar.set_pending(casting_ability_id, true)
 	_run_main_ticks(_main.COMMAND_DELAY_TICKS)
-	_expect(rejected_during_cast, "主动 pending 到期时若已进入另一段 active cast，会拒绝效果/技能动作且按钮继续受当前权限限制")
+	_expect(rejected_during_cast, "主动 pending 到期时若已进入另一段 active cast，会拒绝效果/技能动作且按钮恢复提交资格")
 	_expect(
 		queued_after_cast and (casting_source.empowered_attack_ready or casting_source.get_empowered_attack_visual_serial() > 0)
 		and _main._active_skills.has(casting_ability_id)
@@ -374,7 +374,7 @@ func _check_pending_control_revalidation() -> void:
 		frozen_queued
 		and is_equal_approx(enemy.hp, frozen_hp)
 		and _main._active_skills.has(frozen_ability_id)
-		and _main._active_skill_bar._buttons[0].disabled
+		and not _main._active_skill_bar._buttons[0].disabled
 	)
 
 	var stunned_source: Unit = _main._spawn_unit(0, "xin", Vector2(300.0, 900.0), 0.0, 1)
@@ -389,7 +389,7 @@ func _check_pending_control_revalidation() -> void:
 		stunned_queued
 		and is_equal_approx(enemy.hp, stunned_hp)
 		and _main._active_skills.has(stunned_ability_id)
-		and _main._active_skill_bar._buttons[1].disabled
+		and not _main._active_skill_bar._buttons[1].disabled
 	)
 	_expect(frozen_rejected and stunned_rejected, "主动技能执行 Tick 重新校验 Freeze/Stun，拒绝释放且保留 ability/UI")
 	_main._on_active_skill_unit_died(frozen_ability_id)

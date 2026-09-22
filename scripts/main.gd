@@ -656,6 +656,7 @@ func _setup_player_ui() -> void:
 	if mode == "local":
 		_initialize_authoritative_card_cycle(1, _deck)
 	_active_skill_bar = ACTIVE_SKILL_BAR_SCRIPT.new()
+	_active_skill_bar.can_submit = _can_submit_active_skill
 	add_child(_active_skill_bar)
 	_active_skill_bar.skill_pressed.connect(_on_active_skill_pressed)
 	_active_skill_bar.set_elixir(_elixir.elixir)
@@ -1993,7 +1994,7 @@ func _sync_active_skill_deployment_readiness() -> void:
 			_on_active_skill_unit_died(ability_id)
 			continue
 		var valid_unit := unit as Unit
-		var deployed := (valid_unit.action_permissions() & ControlState.START_SKILL) != 0
+		var deployed := valid_unit.is_deployed()
 		if _is_local_player_team(int(entry.team)) and _active_skill_bar != null:
 			_active_skill_bar.update_skill_state(
 				ability_id,
@@ -2024,31 +2025,23 @@ func _on_active_skill_unit_died(ability_id: int) -> void:
 		_active_skill_bar.remove_skill(ability_id)
 
 func _on_active_skill_pressed(ability_id: int) -> void:
-	if not use_active_skill(ability_id, 0, 0, mode == "client") and _active_skill_bar != null:
-		_active_skill_bar.set_pending(ability_id, false)
+	use_active_skill(ability_id, 0, 0, mode == "client")
 
 ## 玩家、AI 和联机 RPC 共用的主动技能请求入口；客户端提交 input_tick，Host 统一计算 10 Tick 目标。
 func use_active_skill(ability_id: int, expected_team: int = -1, requester_peer_id: int = 0, client_request: bool = false, input_tick: int = -1) -> bool:
 	if _network_peer != null and _session.phase != MatchSession.Phase.RUNNING:
 		return false
 	if client_request:
-		if mode != "client" or not _active_skill_is_legal(ability_id, 1):
+		if mode != "client" or not _can_submit_active_skill(ability_id, 1):
 			return false
-		var client_entry: Dictionary = _active_skills[ability_id]
-		var client_skill: Dictionary = client_entry.skill
-		var client_elixir := _elixir_for_team(1)
-		if client_elixir == null or client_elixir.elixir < maxf(float(client_skill.get("cost", 0.0)), 0.0):
-			return false
+		if _active_skill_bar != null: _active_skill_bar.set_pending(ability_id, true)
 		_network_request_id += 1
 		_rpc_active_skill_request.rpc_id(1, ability_id, _input_tick_for_new_command(), _session.session_id, _network_request_id)
 		return true
 	return _queue_active_skill(ability_id, expected_team, requester_peer_id, input_tick)
 
 func _queue_active_skill(ability_id: int, expected_team: int = -1, requester_peer_id: int = 0, input_tick: int = -1) -> bool:
-	for pending in _commands.skill_commands:
-		if int(pending.ability_id) == ability_id:
-			return false
-	if not _active_skill_is_legal(ability_id, expected_team):
+	if not _can_submit_active_skill(ability_id, expected_team):
 		return false
 	var entry: Dictionary = _active_skills[ability_id]
 	var p_team := int(entry.team)
@@ -2066,6 +2059,8 @@ func _queue_active_skill(ability_id: int, expected_team: int = -1, requester_pee
 		"requester_peer_id": requester_peer_id,
 		"execute_tick": execute_tick,
 	})
+	if _active_skill_bar != null and _is_local_player_team(p_team):
+		_active_skill_bar.set_pending(ability_id, true)
 	return true
 
 func _tick_pending_active_skills(_dt: float) -> void:
@@ -2155,9 +2150,8 @@ func _queue_single_active_skill_impact(source: Unit, skill: Dictionary, impact_d
 	})
 
 
-## 点击只决定请求能否进入 pending；队列到期时必须用同一谓词重新读取权威状态。
-## pending 占用检查刻意留在 _queue_active_skill()，否则队列中的请求永远无法落地。
-func _active_skill_is_legal(ability_id: int, expected_team: int = -1) -> bool:
+## 两阶段共用技能资格；临时战斗状态不阻止提交请求。
+func _active_skill_has_qualification(ability_id: int, expected_team: int = -1) -> bool:
 	if game_over or not _active_skills.has(ability_id):
 		return false
 	var entry: Dictionary = _active_skills[ability_id]
@@ -2173,7 +2167,24 @@ func _active_skill_is_legal(ability_id: int, expected_team: int = -1) -> bool:
 		return false
 	if not _card_has_active_for_team(p_team, String(entry.card_id)):
 		return false
-	return ((unit as Unit).action_permissions() & ControlState.START_SKILL) != 0
+	return (unit as Unit).is_deployed()
+
+## 按钮与玩家/AI/RPC入队共用此判定。客户端只读取已同步的资格、部署和经济。
+func _can_submit_active_skill(ability_id: int, expected_team: int = -1) -> bool:
+	if _network_peer != null and _session.phase != MatchSession.Phase.RUNNING: return false
+	if not _active_skill_has_qualification(ability_id, expected_team): return false
+	for pending in _commands.skill_commands:
+		if int(pending.ability_id) == ability_id: return false
+	if _active_skill_bar != null and _active_skill_bar.is_pending(ability_id): return false
+	var entry: Dictionary = _active_skills[ability_id]
+	var payer := _elixir_for_team(int(entry.team))
+	var cost := maxf(float(entry.skill.get("cost", 0.0)), 0.0)
+	return cost <= 0.0 or (payer != null and payer.elixir >= cost)
+
+## 执行时费用已经预扣，不能再次以余额/本请求pending阻挡；重新检查当前权威行动权限。
+func _active_skill_is_legal(ability_id: int, expected_team: int = -1) -> bool:
+	if not _active_skill_has_qualification(ability_id, expected_team): return false
+	return ((_active_skills[ability_id].unit as Unit).action_permissions() & ControlState.START_SKILL) != 0
 
 func _activate_active_skill(ability_id: int, expected_team: int = -1) -> bool:
 	if not _active_skill_is_legal(ability_id, expected_team):
@@ -2699,6 +2710,7 @@ func _rpc_active_skill_used(epoch: String, ability_id: int, uses_remaining: int 
 		entry["uses_remaining"] = maxi(uses_remaining, 0)
 		entry["cooldown_left"] = maxf(cooldown_left, 0.0)
 		_active_skills[ability_id] = entry
+		if _active_skill_bar != null: _active_skill_bar.set_pending(ability_id, false)
 		_sync_active_skill_deployment_readiness()
 
 @rpc("authority", "call_remote", "reliable")

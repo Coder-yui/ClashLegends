@@ -48,6 +48,8 @@ func clear_units() -> void:
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
+	_check_rush_submission()
+	_check_recovery_boundary()
 	_check_failed_launch_search()
 	for tower in main._towers: tower.can_attack = false
 	var deployed: Unit = main._spawn_unit(0, "rift_herald", Vector2(360, 1050), 3.0)
@@ -349,3 +351,87 @@ func _check_failed_launch_search() -> void:
 	rush._approach_launch_point(source, 0.05)
 	_expect(rush.search_count == 13, "建筑移除也使失败/成功结果失效")
 	clear_units()
+
+## 正式 Main 边界：碰撞仍在行动阶段，只有旧 RECOVERY 时钟提前推进。
+func _check_recovery_boundary() -> void:
+	for tower in _main._towers: tower.can_attack = false
+	var deck: Array = _main._deck.duplicate()
+	_main._deck[0] = "rift_herald"
+	for queued in [false, true]:
+		for control_kind in ["none", "stun", "freeze"]:
+			for control_ticks in ([0] if control_kind == "none" else [12, 13, 14]):
+				clear_units()
+				_main._elixir._timer = 0.0
+				_main._elixir.elixir = 10.0
+				var source: Unit = _main._spawn_unit(0, "rift_herald", Vector2(360, 950), 0.0, 0)
+				var id := source.active_ability_id
+				var uses: int = _main._active_skills[id].uses_remaining
+				var request: Dictionary = {}
+				var cost := 0.0
+				if queued:
+					_expect(_main.use_active_skill(id, 0), "恢复夹具：READY 时正式请求合法入队")
+					request = _main._commands.skill_commands.back()
+					cost = 10.0 - _main._elixir.elixir
+					# 模拟先合法入队、排程在撞击后第13边界执行；仍由正式命令入口结算。
+					request.execute_tick = _main._sim_tick_id + 14
+				var building := structure(Vector2(360, 900))
+				source.structure_rush.target = building
+				source.structure_rush.direction = Vector2.UP
+				source.structure_rush.endpoint = source.position
+				source.structure_rush.phase = StructureRushState.Phase.DASHING
+				var hp := building.hp
+				_run_main_ticks(1)
+				var impact_tick: int = _main._sim_tick_id
+				_expect(building.hp == hp - 500 and source.structure_rush.phase == StructureRushState.Phase.RECOVERY and is_equal_approx(source.structure_rush.remaining, 0.65), "K实际撞击，新恢复当Tick不扣时")
+				if control_kind == "stun": source.stun(control_ticks * 0.05)
+				if control_kind == "freeze": source.freeze(control_ticks * 0.05)
+				var first_attack := -1
+				var first_cast := -1
+				for elapsed in range(1, 16):
+					_run_main_ticks(1)
+					if source._attacking and first_attack < 0: first_attack = _main._sim_tick_id - impact_tick
+					if source.active_skill_cast_serial > 0 and first_cast < 0: first_cast = _main._sim_tick_id - impact_tick
+					if elapsed in [12, 13, 14]:
+						_expect((source.structure_rush.phase == StructureRushState.Phase.RECOVERY) == (elapsed < 13), "恢复阶段精确边界 %s/%s K+%d" % [queued, control_kind, elapsed])
+						if elapsed == 12:
+							_expect(first_attack == -1 and first_cast == -1 and is_equal_approx(source.structure_rush.remaining, 0.05), "K+12无提前行动且没有重复扣恢复时间")
+				print("RUSH_BOUNDARY ", [queued, control_kind, control_ticks, first_attack, first_cast, source._target_gap(building), source.attack_range])
+				var accepted: bool = queued and control_ticks <= 13
+				_expect(first_cast == (13 if accepted else -1), "正式技能实际Cast Start边界 %s/%s/%d" % [queued, control_kind, control_ticks])
+				_expect(first_attack == (-1 if accepted else maxi(13, control_ticks)), "普攻实际起手在全部锁到期边界 %s/%s/%d" % [queued, control_kind, control_ticks])
+				_expect(_main._active_skills[id].uses_remaining == uses - (1 if accepted else 0) and is_equal_approx(_main._elixir.elixir, 10.0 - (cost if accepted else 0.0)), "恢复边界技能成功才消费次数/费用，受控拒绝按原收据退款")
+				if queued:
+					_main._elixir.elixir = 4.0
+					_main._commands.settle_skill(request, true)
+					_expect(_main._elixir.elixir == 4.0, "恢复边界已结算收据重复取消不退款")
+				_main._on_active_skill_unit_died(id)
+				_main._commands.impacts.clear()
+	clear_units()
+	_main._deck = deck
+
+func _check_rush_submission() -> void:
+	var deck: Array = _main._deck.duplicate()
+	_main._deck[0] = "rift_herald"
+	for tower in _main._towers: tower.can_attack = false
+	for phase in [StructureRushState.Phase.PREPARING, StructureRushState.Phase.DASHING]:
+		_main._elixir._timer = 0.0
+		_main._elixir.elixir = 10.0
+		var source: Unit = _main._spawn_unit(0, "rift_herald", Vector2(360, 950), 0.0, 0)
+		var id := source.active_ability_id
+		var uses: int = _main._active_skills[id].uses_remaining
+		var target := structure(Vector2(360, 900))
+		source.structure_rush.target = target
+		source.structure_rush.endpoint = source.position
+		source.structure_rush.direction = Vector2.UP
+		source.structure_rush.phase = phase
+		source.structure_rush.remaining = 0.1
+		_main._sync_active_skill_deployment_readiness()
+		_expect(not _main._active_skill_bar._buttons[0].disabled and _main._can_submit_active_skill(id, 0), "先锋准备/冲撞允许提交技能请求")
+		_main._active_skill_bar._on_slot_pressed(0)
+		_expect(_main._commands.skill_commands.size() == 1 and _main._elixir.elixir < 10.0, "先锋准备/冲撞点击真实预扣并入队")
+		_run_main_ticks(_main.COMMAND_DELAY_TICKS)
+		_expect(source.structure_rush.phase == StructureRushState.Phase.RECOVERY and source.active_skill_cast_serial == 0 and _main._active_skills[id].uses_remaining == uses and _main._elixir.elixir == 10.0, "执行时仍处于撞后恢复则退费，不消费次数或Cast Start")
+		_expect(not _main._active_skill_bar._buttons[0].disabled, "先锋拒绝后仍能提交，不能因恢复禁用按钮")
+		_main._on_active_skill_unit_died(id)
+		clear_units()
+	_main._deck = deck

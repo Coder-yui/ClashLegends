@@ -268,9 +268,22 @@ func _check_permission_projection() -> void:
 		unit.active_skill_cast_timer = 100.0 if phase == "ready" else 0.0
 		unit.form_transition_timer = 100.0 if phase == "ready" else 0.0
 		_main._sync_active_skill_deployment_readiness()
-		_expect(_main._active_skill_is_legal(73500, 1) == (phase == "ready") and _main._active_skill_bar._buttons[0].disabled == (phase != "ready"), "客户端按钮与请求共用快照资格 " + phase)
+		_expect(_main._can_submit_active_skill(73500, 1) == (phase != "deploy") and _main._active_skill_bar._buttons[0].disabled == (phase == "deploy"), "客户端按钮/提交只读基础资格，临时权限不阻止入队 " + phase)
 		_expect(((unit.action_permissions() & ControlState.START_SKILL) != 0) == (phase == "ready"), "快照权限投影 " + phase)
 		tick += 1
+	var saved_session: MatchSession = _main._session
+	_main._session = MatchSession.new()
+	_main._session.opponent_id = 1
+	_main._session.session_id = "skill-receipts"
+	_main._session.phase = MatchSession.Phase.RUNNING
+	_main._active_skill_bar.set_pending(73500, true)
+	_expect(not _main._can_submit_active_skill(73500, 1), "客户端等待回执时不可重复提交")
+	_main._rpc_active_skill_used(_main._session.session_id, 73500, 1, 0.0)
+	_expect(not _main._active_skill_bar.is_pending(73500) and _main._can_submit_active_skill(73500, 1), "客户端成功回执解除pending，不遗留永久禁用")
+	_main._active_skill_bar.set_pending(73500, true)
+	_main._rpc_active_skill_rejected(_main._session.session_id, 73500)
+	_expect(not _main._active_skill_bar.is_pending(73500) and _main._can_submit_active_skill(73500, 1), "客户端拒绝回执恢复提交资格")
+	_main._session = saved_session
 	var invalid := projected.duplicate(true)
 	invalid[SNAP.U_ACTION_PERMISSIONS] = 64
 	_deliver(tick, [invalid])

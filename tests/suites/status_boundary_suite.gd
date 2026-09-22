@@ -13,6 +13,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_formal_skill_ticks()
 	_check_gnar_transition_edges()
 	_check_region_birth()
+	_check_submission_boundary()
 
 func _check_thaw_command() -> void:
 	var deck: Array = _main._deck.duplicate()
@@ -236,7 +237,7 @@ func _check_gnar_transition_edges() -> void:
 		unit.transform_to_mega()
 		unit.form_transition_timer = remaining
 		var serial := unit.get_visual_action_serial()
-		_expect(not _main.use_active_skill(id, 0), "真实转换窗口中的新请求直接拒绝")
+		_expect(not _main.use_active_skill(id, 0), "已有待执行请求时拒绝重复提交，不因变形改变去重")
 		_run_main_ticks(1)
 		_expect((unit.active_skill_cast_serial > 0) == (remaining == 0.05), "转换到期边界先推进旧窗口再判断请求")
 		if remaining > 0.05:
@@ -284,3 +285,49 @@ func _check_region_birth() -> void:
 	_expect(not target.is_frozen() and target.control.slow_timer > 0.0 and is_equal_approx(_main._spell_system.slow_zones.back().timer, 0.2), "冰冻结束边界启动完整减速区，没有空缺或首次重复扣时")
 	target.free()
 	_main._spell_system.clear()
+
+func _check_submission_boundary() -> void:
+	var deck: Array = _main._deck.duplicate()
+	_main._deck[0] = "gnar"
+	for kind in ["stun", "freeze", "form", "cast", "knockback", "recovery"]:
+		for expires in [true, false]:
+			var initial := 2.0 if expires else 10.0
+			_main._elixir._timer = 0.0
+			_main._elixir.elixir = initial
+			var unit: Unit = _main._spawn_unit(0, "gnar", Vector2(160, 1000), 0.0, 0)
+			var id := unit.active_ability_id
+			var uses: int = _main._active_skills[id].uses_remaining
+			var duration := 0.1 if expires else 1.0
+			match kind:
+				"stun": unit.stun(duration)
+				"freeze": unit.freeze(duration)
+				"form":
+					unit.transform_to_mega()
+					unit.form_transition_timer = duration
+				"cast": unit.begin_active_skill_cast(duration, Vector2.UP)
+				"knockback": unit.apply_knockback(unit.position + Vector2.UP, 5.0, duration)
+				"recovery":
+					unit.structure_rush.phase = StructureRushState.Phase.RECOVERY
+					unit.structure_rush.remaining = duration
+			_main._sync_active_skill_deployment_readiness()
+			_expect(not _main._active_skill_bar._buttons[0].disabled and _main._can_submit_active_skill(id, 0) and not _main._active_skill_is_legal(id, 0), "临时状态只阻止执行、不阻止按钮或提交 " + kind)
+			_main._active_skill_bar._on_slot_pressed(0)
+			_expect(_main._commands.skill_commands.size() == 1 and _main._active_skill_bar._buttons[0].disabled, "真实按钮点击入队后禁重复请求 " + kind)
+			if _main._commands.skill_commands.is_empty():
+				_main._on_active_skill_unit_died(id)
+				unit.free()
+				continue
+			var request: Dictionary = _main._commands.skill_commands.back()
+			var paid: float = initial - _main._elixir.elixir
+			_expect(paid > 0.0 and not _main.use_active_skill(id, 0) and _main._elixir.elixir == initial - paid, "基础去重不二次扣费 " + kind)
+			_run_main_ticks(int(request.execute_tick) - _main._sim_tick_id)
+			print("SUBMIT_BOUNDARY ", [kind, expires, _main._active_skills[id].uses_remaining, uses, _main._elixir.elixir, paid, unit.hp, unit.action_permissions(), unit.active_skill_cast_serial])
+			_expect(_main._active_skills[id].uses_remaining == uses - (1 if expires else 0) and is_equal_approx(_main._elixir.elixir, initial - (paid if expires else 0.0)), "执行时解锁则成功，仍锁则退费不耗次数 %s/%s" % [kind, expires])
+			_expect(_main._commands.skill_commands.is_empty() and request.payment.is_settled(), "拒绝不延迟重试，原收据已结算 " + kind)
+			_main._elixir.elixir = 4.0
+			_main._commands.settle_skill(request, true)
+			_expect(_main._elixir.elixir == 4.0, "重复结算不重复退款 " + kind)
+			_main._on_active_skill_unit_died(id)
+			_main._commands.impacts.clear()
+			unit.free()
+	_main._deck = deck
