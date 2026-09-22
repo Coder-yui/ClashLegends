@@ -22,7 +22,7 @@ func _resolve_immediate_attack_hit(p_team: int, origin: Vector2, primary: Node2D
 		if landed:
 			_apply_attack_hit_effects(primary, effects)
 		if landed and counts_as_attack and from is Unit and is_instance_valid(from) and from.hp > 0.0:
-			(from as Unit).on_attack_landed(source_form_index, float(result.health_lost))
+			(from as Unit).on_attack_landed(source_form_index, float(result.health_lost), -1, int(effects.get("source_generation", -1)))
 		if landed and counts_as_attack:
 			attack_hit.emit(effects.get("presentation_source", {}), primary.global_position, bool(effects.get("first_strike", false)))
 		if landed and was_alive and primary.hp <= 0.0 and from is Unit and is_instance_valid(from) and from.hp > 0.0:
@@ -52,7 +52,7 @@ func _resolve_immediate_attack_hit(p_team: int, origin: Vector2, primary: Node2D
 			if landed and knockback > 0.0 and c is Unit and is_instance_valid(c) and c.hp > 0.0:
 				(c as Unit).apply_knockback(origin, knockback)
 	if any_landed and counts_as_attack and from is Unit and is_instance_valid(from) and from.hp > 0.0:
-		(from as Unit).on_attack_landed(source_form_index, 0.0) # 范围吸血尚未设计，不把名义伤害作为掉血。
+		(from as Unit).on_attack_landed(source_form_index, 0.0, -1, int(effects.get("source_generation", -1))) # 范围吸血尚未设计，不把名义伤害作为掉血。
 	if any_landed and counts_as_attack:
 		attack_hit.emit(effects.get("presentation_source", {}), impact_pos, bool(effects.get("first_strike", false)))
 	return any_landed
@@ -193,7 +193,7 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 			if not result.landed: return
 			if not is_instance_valid(from) or not from is Unit or from.hp <= 0.0: return
 			if counts_as_attack and radius <= 0.0:
-				from.on_attack_landed(source_form_index, float(result.health_lost), swing)
+				from.on_attack_landed(source_form_index, float(result.health_lost), swing, int(effects.get("source_generation", -1)))
 			# 同批多人共同致死只给存活参与者一次自己的击杀收益，不按遍历挑尾刀。
 			if fixed_target.hp <= 0.0 and float(result.health_lost) > 0.0:
 				var key := "%s:%s" % [from.get_instance_id(), fixed_target.get_instance_id()]
@@ -204,7 +204,7 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 		if counts_as_attack and radius > 0.0:
 			defer_benefit(func():
 				if hit_results.any(func(result): return result.landed) and is_instance_valid(from) and from is Unit and from.hp > 0.0:
-					from.on_attack_landed(source_form_index, 0.0, swing))
+					from.on_attack_landed(source_form_index, 0.0, swing, int(effects.get("source_generation", -1))))
 		if counts_as_attack:
 			defer_effect(func():
 				if hit_results.any(func(result): return result.landed):

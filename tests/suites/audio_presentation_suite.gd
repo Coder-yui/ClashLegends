@@ -18,6 +18,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_audited_audio(harness, main)
 	await _check_batch_audio(harness, main)
 	_check_zone_audio(harness, main)
+	_check_independent_creation_audio(harness, main)
 	var audio: GameAudioManager = main._audio_manager
 	var cues: Array[StringName] = []
 	var on_cue := func(card_id: String, cue: StringName, _position: Vector2):
@@ -62,18 +63,21 @@ func run(harness: Object, main: Node2D) -> void:
 	await main.get_tree().process_frame
 	unit.global_position = Vector2(250, 700)
 	unit._prev_pos = unit.global_position
-	unit.control.frozen_timer = 1.0
+	unit.stun(1.0)
 	audio._process(0.0)
-	var follows_and_pauses := sustained != null and sustained.global_position.is_equal_approx(unit.get_visual_screen_position()) and sustained.stream_paused
-	unit.control.frozen_timer = 0.0
+	var follows_and_pauses := sustained != null and sustained.global_position.is_equal_approx(unit.get_visual_screen_position()) and not sustained.stream_paused
+	unit.control.stun_timer = 0.0
 	audio._process(0.0)
-	harness._expect(follows_and_pauses and not sustained.stream_paused and cues.count(&"judgment:sustain") == 1, "审判空转有独立持续音，跟随角色、控制暂停/恢复且重复帧不重启")
+	harness._expect(follows_and_pauses and not sustained.stream_paused and cues.count(&"judgment:sustain") == 1, "审判空转有独立持续音，跟随角色、眩晕正常推进且重复帧不重启")
 	unit._visual_action_time_left = 0.0
 	audio._process(0.0)
 	harness._expect(cues == [&"judgment:start", &"judgment:sustain", &"judgment:end"] and not audio._sustain_players.has(audio._sustain_key(unit.get_instance_id())), "审判随动作起止播放，结束停止持续音，空挥没有命中声")
 	cues.clear()
 	unit.play_visual_action(&"judgment", 3.0)
 	audio._process(0.0)
+	unit.freeze(0.2)
+	audio._process(0.0)
+	harness._expect(not audio._sustain_players.has(audio._sustain_key(unit.get_instance_id())), "冰冻立即取消技能持续音且不发正常结束声")
 	unit.notify_visual_death()
 	unit.notify_visual_death()
 	unit._visual_action_time_left = 0.0
@@ -329,15 +333,19 @@ func _check_batch_audio(harness: Object, main: Node2D) -> void:
 	await main.get_tree().physics_frame
 	await main.get_tree().process_frame
 	dragon.control.frozen_timer = 1.0
+	dragon.apply_action_cancellation({"serial": 1, "reason": "freeze", "attack": 0, "action": 0, "form": 0})
 	audio._process(0.0)
-	harness._expect(player.stream_paused and audio._sustain_players.get(key) == player, "吐息控制期间暂停并保留单个持续播放器")
+	harness._expect(not audio._sustain_players.has(key), "吐息被冰冻后停止旧持续播放器")
 	audio.set_battle_paused(true)
 	audio.set_battle_paused(false)
-	harness._expect(player.stream_paused, "工作台恢复保留冻结导致的独立声音暂停")
+	harness._expect(not audio._sustain_players.has(key), "全局暂停恢复不能复活已取消吐息")
 	dragon.control.frozen_timer = 0.0
+	dragon.net_attack_visual_serial = 1
 	audio._process(0.0)
+	player = audio._sustain_players.get(key)
+	var restarted_count := cues.size()
 	audio._on_sustain_finished(key, player)
-	harness._expect(audio._sustain_players.get(key) == player and cues.size() == 3, "吐息片段结束续播但不重发开始事件")
+	harness._expect(audio._sustain_players.get(key) == player and cues.size() == restarted_count, "新吐息片段续播但不重复开始事件")
 	dragon.net_has_continuous_target = false
 	audio._process(0.0)
 	harness._expect(not audio._sustain_players.has(key) and cues.back() == &"continuous_attack:end", "丢失吐息目标停止持续层并只播放一次收尾")
@@ -391,7 +399,17 @@ func _check_zone_audio(harness: Object, main: Node2D) -> void:
 	var entry: Dictionary = audio._zone_players.get(event_id, {})
 	var fixed_position: Vector2 = entry.get("position", Vector2.ZERO)
 	audio.start_zone_audio(event_id, "anivia", 0, "frost_storm", fixed_position, 3.0)
+	var zone_player: AudioStreamPlayer2D = entry.player
+	audio.attach_unit(unit, CardDB.get_card("anivia"))
+	unit.stun(1.0)
+	unit.freeze(1.0)
+	unit.apply_knockback(unit.position + Vector2.DOWN, 45.0, 0.4)
+	unit.position += Vector2.RIGHT * 100.0
+	audio._process(0.0)
+	harness._expect(audio._zone_players[event_id].player == zone_player and zone_player.playing and not zone_player.stream_paused and zone_player.global_position == fixed_position, "艾尼维亚区域创建后眩晕、冰冻、击退及来源移动不打断或移动同一音频播放器")
 	unit.free()
+	audio._process(0.0)
+	harness._expect(zone_player.playing and not zone_player.stream_paused, "艾尼维亚来源销毁后区域声音继续播放")
 	audio.set_battle_paused(true)
 	audio.set_battle_paused(true)
 	audio._process(0.5)
@@ -449,14 +467,18 @@ func _check_audited_audio(harness: Object, main: Node2D) -> void:
 	unit.attack_timeline.visual_elapsed = 0.59
 	audio._process(0.0)
 	var delayed := cues.is_empty()
-	unit.control.frozen_timer = 1.0
+	unit.freeze(1.0)
 	unit.attack_timeline.visual_elapsed = 0.61
 	audio._process(0.0)
 	var paused := cues.is_empty()
 	unit.control.frozen_timer = 0.0
 	audio._process(0.0)
+	var no_resume := cues.is_empty()
+	unit._attacking = true
+	unit._attack_visual_serial = 2
 	audio._process(0.0)
-	var once := cues == ["attack_swing"]
+	audio._process(0.0)
+	var once := no_resume and cues == ["attack_swing"]
 	var playing_before := 0
 	for player in audio._world_players:
 		if player.playing: playing_before += 1
@@ -464,7 +486,7 @@ func _check_audited_audio(harness: Object, main: Node2D) -> void:
 	var playing_after := 0
 	for player in audio._world_players:
 		if player.playing: playing_after += 1
-	harness._expect(delayed and paused and once and playing_after > playing_before and cues.back() == "attack_launch" and is_equal_approx(unit.first_hit_time, 0.68), "冰鸟 0.60 秒挥翼声、0.68 秒权威出弹，冻结等待/不重播且发射声独立重叠")
+	harness._expect(delayed and paused and once and playing_after > playing_before and cues.back() == "attack_launch" and is_equal_approx(unit.first_hit_time, 0.68), "冰鸟 0.60 秒挥翼声、0.68 秒权威出弹，冻结取消旧挥翼，新的攻击出声且发射声独立重叠")
 	audio._detach_unit(unit.get_instance_id())
 	unit.free()
 	cues.clear()
@@ -658,7 +680,7 @@ func _check_apex_audio_timing(harness: Object, main: Node2D) -> void:
 	await main.get_tree().process_frame
 	source.control.frozen_timer = 1.0
 	audio._process(0.0)
-	harness._expect(idle_player.stream_paused, "冻结暂停待机引擎，保留播放器")
+	harness._expect(not idle_player.stream_paused, "冻结不暂停独立待机引擎")
 	source.control.frozen_timer = 0.0
 	source._attacking = true
 	audio._process(0.0)
@@ -683,12 +705,17 @@ func _check_apex_audio_timing(harness: Object, main: Node2D) -> void:
 	hp_before = victim.hp
 	harness._expect(cues == [&"laser:sustain"], "大炮台激光先播 OnCast 蓄能，不提前发射或命中")
 	main._commands.tick_impacts(0.40)
-	source.control.frozen_timer = 1.0
+	source.freeze(1.0)
 	main._commands.tick_impacts(0.5)
-	harness._expect(cues == [&"laser:sustain"] and victim.hp == hp_before, "激光出膛前冻结同时暂停发射声与伤害排程")
+	harness._expect(cues == [&"laser:sustain"] and victim.hp == hp_before and main._commands.impacts.is_empty(), "激光出膛前冻结取消发射与伤害排程")
 	source.control.frozen_timer = 0.0
 	main._commands.tick_impacts(0.05)
-	harness._expect(cues == [&"laser:sustain", &"laser:release"] and victim.hp == hp_before, "激光 0.45 秒出膛发射声，飞行尚未伤害")
+	harness._expect(victim.hp == hp_before and main._projectile_system.projectiles.is_empty(), "解冻不迟发已取消激光")
+	cues.clear()
+	main._start_active_skill_cast(source, skill)
+	audio._process(0.0)
+	main._commands.tick_impacts(0.45)
+	harness._expect(cues == [&"laser:sustain", &"laser:release"] and victim.hp == hp_before, "新激光0.45秒出膛，未接触目标无伤害")
 	main._projectile_system.tick(0.04)
 	harness._expect(victim.hp == hp_before and cues.back() == &"laser:release", "激光离开炮口但未接触目标时无伤害和命中音")
 	main._projectile_system.tick(0.26)
@@ -1112,3 +1139,29 @@ func _check_selected_deploy_audio(harness: Object, main: Node2D) -> void:
 			harness._expect(once and late_silent and randomizer.streams_count == 3
 				and randomizer.playback_mode == AudioStreamRandomizer.PLAYBACK_RANDOM_NO_REPEATS,
 				"%s 阵营%d部署三选一且不连续重复，重绑和晚到不补播" % [card_id, team])
+
+func _check_independent_creation_audio(harness: Object, main: Node2D) -> void:
+	var audio: GameAudioManager = main._audio_manager
+	for full in [false, true]:
+		var cues: Array[StringName] = []
+		var callback := func(card, cue, _pos):
+			if card == "aurelionsol": cues.append(cue)
+		audio.cue_played.connect(callback)
+		var source: Unit = main._spawn_unit(0, "aurelionsol", Vector2(360, 1000), 0)
+		var skill: Dictionary = CardDB.active_skills_for("aurelionsol")[0].duplicate(true)
+		source.configure_carried_active_skill(skill)
+		source.skill_resource_value = source.skill_resource_max if full else 0
+		skill["cast_forward"] = Vector2.UP
+		var cue: StringName = &"active_strong:start" if full else &"active:start"
+		for player in audio._world_players: player.stop()
+		main._start_active_skill_cast(source, skill)
+		var flights: Array = audio._world_players.filter(func(player): return player.playing)
+		audio._process(0.0)
+		harness._expect(cues.count(cue) == 1 and not flights.is_empty(), "星辰创建即播放一次独立飞出声，动作观察不重复启动")
+		source.freeze(2)
+		source.free()
+		harness._expect(not flights.is_empty() and flights.all(func(player): return player.playing and player.get_meta("action_owner", {}).is_empty()), "普通与满层星辰的已创建飞出声不随来源冻结或销毁停止")
+		for player in flights: player.stop()
+		audio.cue_played.disconnect(callback)
+		main._commands.impacts.clear()
+		main._active_skill_effect_system.clear()

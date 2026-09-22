@@ -42,12 +42,13 @@ func tick_impacts(dt: float) -> void:
 	var waiting: Array[Dictionary] = []
 	for pending in impacts:
 		var source = (pending.source_ref as WeakRef).get_ref()
-		if not source is Unit or not is_instance_valid(source) or source.hp <= 0.0:
-			continue
+		var independent := (pending.skill as Dictionary).has("independent_result")
 		var unit := source as Unit
-		if unit.is_frozen() or unit.is_stunned():
-			waiting.append(pending)
-			continue
+		if not independent:
+			if not is_instance_valid(unit) or unit.hp <= 0.0:
+				continue
+			if unit.is_frozen() or int(pending.get("cast_serial", unit.active_skill_cast_serial)) <= unit.cancelled_skill_cast_serial:
+				continue
 		pending.time_left = maxf(0.0, float(pending.time_left) - dt)
 		if float(pending.time_left) > 0.001:
 			waiting.append(pending)

@@ -142,6 +142,7 @@ func setup(unit: Unit, packed: PackedScene, camera: Camera3D, animations: Dictio
 	_spawn_transition_initialized = false
 	_source.died.connect(_on_source_died)
 	_source.visual_hit.connect(_on_source_visual_hit)
+	_source.action_cancelled.connect(_on_action_cancelled)
 	_camera = camera
 	# 一套完整挥剑（前摇、命中、后摇）占满一个攻击周期；动画长度不改变战斗计时。
 	_attack_duration = maxf(unit.attack_interval, 0.05)
@@ -314,7 +315,7 @@ func _tick_form_elevation(delta: float) -> void:
 		_model_root.position.y = _height_to
 		_height_transition = false
 		return
-	if _state.frozen or _state.stunned:
+	if _state.frozen:
 		return
 	_height_elapsed = minf(_height_elapsed + delta, _height_duration)
 	_model_root.position.y = lerpf(_height_from, _height_to, _height_elapsed / _height_duration)
@@ -400,7 +401,7 @@ func _sync_visual(force: bool, delta: float) -> void:
 		_play_state(1)
 	if _animation_player != null:
 		var playback_scale := _state.attack_rate if _playing_attack else (_state.movement_rate if _current_state == 2 and not _playing_visual_action else 1.0)
-		_animation_player.speed_scale = 0.0 if _state.frozen or _state.stunned else playback_scale
+		_animation_player.speed_scale = 0.0 if _state.frozen else playback_scale
 
 func _play_visual_action(action_name: StringName, preserve_visual_pose: bool = false) -> void:
 	_idle_transition_animation = &""
@@ -950,7 +951,7 @@ func _update_deploy_sequence_lifecycle() -> void:
 	var deploy_names = _animation_names.get("deploy", "")
 	var has_sequence: bool = deploy_names is Array and not (deploy_names as Array).is_empty()
 	var deploying := _source._deploy_timer > 0.0
-	if has_sequence and deploying and not _deploy_sequence_started:
+	if has_sequence and deploying and not _deploy_sequence_started and not _source.cancelled_deployment:
 		_deploy_sequence_started = true
 		_start_deploy_sequence(deploy_names as Array)
 	# 权威部署已结束（解锁移动/攻击）而序列尚未播完：立即让位给基础状态机。
@@ -1547,58 +1548,58 @@ func _set_hit_flash(enabled: bool) -> void:
 	_model_resources.apply_overlays(enabled, _state.frozen and not _dying, _last_buff_visible)
 
 ## 冰冻优先保持当前姿态；眩晕片段自身播放。无素材明确回退为保持姿态。
+func _on_action_cancelled(payload: Dictionary) -> void:
+	if _dying or _animation_player == null:
+		return
+	if int(payload.get("form", 0)) < maxi(_source.form_change_serial, _source.net_form_change_serial): return
+	var cancel_attack := _last_attack_serial <= int(payload.get("attack", 0))
+	var freeze_pose := String(payload.get("reason", "")) == "freeze" and _last_visual_action_serial <= int(payload.get("action", 0))
+	if not cancel_attack and not freeze_pose: return
+	if cancel_attack:
+		_last_attack_serial = maxi(_last_attack_serial, int(payload.get("attack", 0)))
+		_pending_attack_serial = 0
+		_playing_attack = false
+		_holding_attack_pose = false
+		_attack_hit_pending = false
+		_continuous_attack_active = false
+		_continuous_attack_sequence.clear()
+		_source.set_continuous_beam_visible(false)
+	if freeze_pose:
+		# 清理调度但不 play/seek，当前已经绘制的骨骼姿势原地保留。
+		_playing_visual_action = false
+		_playing_deploy_sequence = false
+		_deploy_sequence_started = true
+		_action_sequence.clear()
+		_active_visual_action = &""
+		_active_action_priority = 0
+		_last_visual_action_serial = maxi(_last_visual_action_serial, int(payload.get("action", 0)))
+		_animation_player.speed_scale = 0.0
+		_was_controlled = true
+	elif cancel_attack and not _state.frozen and not _playing_visual_action and not _playing_deploy_sequence:
+		_transition_to_basic_state(1, 0.1)
+
 func _sync_control_override() -> bool:
 	if _animation_player == null:
 		return false
-	# 控制期间也要消费权威动作序号。取消只失效旧动作，新的同名序号
-	# 只登记新序列并保持当前骨骼姿势，不能让旧序列留到解除控制后续播。
-	if _state.frozen or _state.stunned or _control_stage != &"":
-		_sync_visual_action_while_controlled()
 	if _state.frozen:
 		_was_controlled = true
 		_animation_player.speed_scale = 0.0
+		# 冻结期间可能换形，消费新模型动作身份，不补播转换。
+		_last_visual_action_serial = _source.get_visual_action_serial()
 		return true
-	if _state.stunned:
-		_was_controlled = true
-		if _control_stage == &"":
-			# current_animation 在非循环片段自然结束后可能为空，但 assigned_animation
-			# 仍保留末帧来源；控制解除后必须能从该姿态继续或交给状态机收势。
-			_saved_control_clip = _animation_player.current_animation
-			if _saved_control_clip == &"":
-				_saved_control_clip = _animation_player.assigned_animation
-			_saved_control_position = _animation_player.current_animation_position
-			_saved_control_speed = _animation_player.get_playing_speed()
-			if _saved_control_speed <= 0.001:
-				_saved_control_speed = _current_clip_speed
-			_saved_control_section = Vector2(_animation_player.get_section_start_time(), _animation_player.get_section_end_time())
-			_saved_control_loop_mode = Animation.LOOP_NONE
-			var saved_animation := _animation_player.get_animation(_saved_control_clip)
-			if saved_animation != null:
-				_saved_control_loop_mode = saved_animation.loop_mode
-			_saved_control_action_serial = _source.get_visual_action_serial()
-			_saved_control_action_name = _source.get_visual_action_name()
-			_saved_control_attack_serial = _source.get_attack_visual_serial()
-			_saved_control_state = _source.get_visual_state_code()
-			_saved_control_locomotion_state = _source.get_locomotion_visual_state_code()
-			_play_control_clip("stun_enter", &"enter")
-		_animation_player.speed_scale = 0.0 if _control_stage == &"hold" else 1.0
-		return true
-	if _control_stage != &"":
-		if _control_stage != &"exit":
-			if _first_valid_animation("stun_exit") != &"":
-				_play_control_clip("stun_exit", &"exit")
-			else:
-				_restore_control_pose()
-		return _control_stage != &""
 	if _was_controlled:
 		_was_controlled = false
-		if _playing_visual_action and _source.get_visual_action_time_left() > 0.0:
-			_play_visual_action(_source.get_visual_action_name())
-		elif _playing_visual_action:
-			# 控制期间权威动作可能已经走完；不能把过期动作重新从末帧接回。
-			_finish_visual_action()
-		elif _playing_attack:
-			_play_attack(_state.attack_serial)
+		_animation_player.speed_scale = 1.0
+		_playing_attack = false
+		_playing_visual_action = false
+		_playing_deploy_sequence = false
+		_action_sequence.clear()
+		_transition_to_basic_state(1, 0.1)
+	# 眩晕保留已开始的技能/部署/转换；普通动作由取消事件切到 Idle。
+	if _state.stunned and not _playing_visual_action and not _playing_deploy_sequence and _source._deploy_timer <= 0.0:
+		if _current_state != 1:
+			_transition_to_basic_state(1, 0.1)
+		return true
 	return false
 
 func _sync_visual_action_while_controlled() -> void:
@@ -1729,6 +1730,7 @@ func _retire() -> void:
 	if is_instance_valid(_source):
 		if _source.died.is_connected(_on_source_died): _source.died.disconnect(_on_source_died)
 		if _source.visual_hit.is_connected(_on_source_visual_hit): _source.visual_hit.disconnect(_on_source_visual_hit)
+		if _source.action_cancelled.is_connected(_on_action_cancelled): _source.action_cancelled.disconnect(_on_action_cancelled)
 	_source = null
 	_release_model()
 	queue_free()

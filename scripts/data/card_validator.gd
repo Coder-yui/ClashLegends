@@ -169,7 +169,13 @@ static func _validate_audio_config(label: String, stats: Dictionary, errors: Pac
 			if not event is Dictionary:
 				errors.append("%s.audio.events.%s: 必须是 Dictionary" % [label, cue])
 				continue
-			_validate_known_fields("%s.audio.events.%s" % [label, cue], event, [&"pool", &"volume_db", &"bus", &"action_time"], errors)
+			_validate_known_fields("%s.audio.events.%s" % [label, cue], event, [&"pool", &"volume_db", &"bus", &"action_time", &"owner"], errors)
+			if event.has("owner"):
+				var independent := false
+				for skill in stats.get("active_skills", []):
+					if bool(skill.get("independent_on_creation", false)) and String(cue).get_slice(":", 0) in [String(skill.get("visual_action", "")), String(skill.get("full_resource_visual_action", ""))]: independent = true
+				if event.owner != "result" or not independent or not String(cue).ends_with(":start") or event.has("action_time"):
+					errors.append("%s.audio.events.%s.owner: result 仅用于独立结果创建声，不绑定动作时间" % [label, cue])
 			if event.has("action_time"):
 				var action := String(cue).get_slice(":", 0)
 				var suffix := String(cue).get_slice(":", 1)
@@ -845,6 +851,8 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 				errors.append("%s.resource_shield_max: 必须 >= 0" % label)
 			if not bool(skill.get("uses_skill_resource", false)):
 				errors.append("%s.resource_shield_max: 必须搭配 uses_skill_resource" % label)
+		if bool(skill.get("independent_on_creation", false)) and (String(skill.get("kind", "")) != "forward_area" or float(skill.get("zone_duration", 0.0)) > 0.0 or float(skill.get("impact_delay", 0.0)) <= 0.0):
+			errors.append("%s.independent_on_creation: 仅支持有创建预警与正落地延迟的 forward_area" % label)
 		if bool(skill.get("shield_on_cast_start", false)):
 			if float(skill.get("shield_duration", 0.0)) <= 0.0:
 				errors.append("%s.shield_on_cast_start: 必须配置正数 shield_duration" % label)

@@ -14,6 +14,12 @@ var combat_source_id := 0
 
 signal died
 signal visual_hit
+signal action_cancelled(payload: Dictionary)
+var action_cancel_serial := 0
+var cancelled_visual_serial := -1
+var cancelled_deployment := false
+var basic_attack_sequence := 0
+var last_action_cancellation: Dictionary = {}
 ## 权威形态改变后通知 3D 表现替换模型；表现层不能反向修改形态。
 signal form_changed(form_index: int)
 
@@ -179,8 +185,11 @@ var transform_duration := 0.0
 var active_transform_duration := 0.0
 var revert_duration := 0.0
 var form_change_serial := 0
+var pending_form_generation := -1
 ## 主动技能施放窗口与权限分离。默认锁移动/普攻/朝向；技能可用 cast_locks
 ## 独立放开任一权限，避免把“正在施法”硬编码成一种互斥战斗状态。
+var active_skill_cast_serial := 0
+var cancelled_skill_cast_serial := -1
 var active_skill_cast_timer := 0.0
 var active_skill_cast_facing := Vector2.ZERO
 var active_skill_cast_locks: Array[StringName] = []
@@ -194,12 +203,22 @@ var shield_max_hp: float:
 	get: return shields.total_capacity()
 var shield_timer: float:
 	get: return shields.longest_remaining()
-var active_buff_timer := 0.0
-var active_speed_multiplier := 1.0
-var active_damage_multiplier := 1.0
-var active_attack_speed_multiplier := 1.0
-var active_buff_ignores_movement_slow := false
-var active_buff_ignores_attack_speed_slow := false
+var buffs := StatusInstances.new()
+var active_buff_timer: float:
+	get: return buffs.remaining(&"buff")
+	set(value):
+		buffs.clear_family(&"buff")
+		buffs.apply(&"buff", &"fixture", value, {})
+var active_speed_multiplier: float:
+	get: return buffs.strongest(&"buff", &"speed", 1.0)
+var active_damage_multiplier: float:
+	get: return buffs.strongest(&"buff", &"damage", 1.0)
+var active_attack_speed_multiplier: float:
+	get: return buffs.strongest(&"buff", &"attack_speed", 1.0)
+var active_buff_ignores_movement_slow: bool:
+	get: return buffs.any_flag(&"buff", &"ignore_movement_slow")
+var active_buff_ignores_attack_speed_slow: bool:
+	get: return buffs.any_flag(&"buff", &"ignore_attack_speed_slow")
 ## 强化下一次普攻不另起攻击计时，只在原本的下一次命中节点消费。
 var empowered_attack_ready := false
 var empowered_attack_damage_multiplier := 1.0
@@ -476,7 +495,7 @@ func _ready() -> void:
 	if deploy_time > 0.0 and deploy_sweep_radius > 0.0 and (deploy_sweep_damage > 0.0 or deploy_sweep_knockback > 0.0):
 		if _in_client_mode():
 			_sweep_fx_timer = SWEEP_FX_DURATION
-		else:
+		elif not is_frozen():
 			_perform_deploy_sweep()
 
 func _process(delta: float) -> void:
@@ -505,7 +524,7 @@ func get_visual_state_code() -> int:
 	if _in_client_mode():
 		return net_visual_state
 	if _deploy_timer > 0.0:
-		return 0
+		return 1 if cancelled_deployment else 0
 	if _attacking:
 		return 3
 	return get_locomotion_visual_state_code()
@@ -515,20 +534,35 @@ func get_locomotion_visual_state_code() -> int:
 	if _in_client_mode():
 		return net_locomotion_state
 	if _deploy_timer > 0.0:
-		return 0
+		return 1 if cancelled_deployment else 0
+	if _forced_movement or _knockback_timer > 0.0:
+		return 1
 	if _move_intent.length_squared() > 0.01:
 		return 2
 	return 1
 
 ## 3D 与 2D 表现都直接读取同一个最终渲染位置，不依赖彼此的 _process 执行顺序。
+func action_permissions() -> int:
+	if hp <= 0.0: return 0
+	var allowed := control.permissions()
+	if not is_deployed() or structure_rush.skill_locked():
+		allowed &= ~(ControlState.MOVE | ControlState.BASIC_ATTACK | ControlState.START_SKILL | ControlState.TURN)
+	if is_form_transitioning() or is_active_skill_casting():
+		allowed &= ~ControlState.START_SKILL
+	if is_form_transitioning() or is_active_skill_attack_locked():
+		allowed &= ~ControlState.BASIC_ATTACK
+	if is_active_skill_movement_locked() or is_building:
+		allowed &= ~ControlState.MOVE
+	if is_active_skill_facing_locked():
+		allowed &= ~ControlState.TURN
+	if _knockback_timer > 0.0:
+		allowed &= ~(ControlState.MOVE | ControlState.BASIC_ATTACK | ControlState.START_SKILL | ControlState.TURN)
+	if is_building or structure_rush.control_immune():
+		allowed &= ~ControlState.EXTERNAL_MOTION
+	return allowed
+
 func get_action_permissions_visual() -> int:
-	if _in_client_mode():
-		return net_action_permissions
-	if hp <= 0.0 or is_frozen() or is_stunned() or not is_deployed():
-		return 0
-	if structure_rush.skill_locked():
-		return 0
-	return (0 if is_active_skill_movement_locked() else 1) | (0 if is_active_skill_attack_locked() or is_form_transitioning() else 2)
+	return net_action_permissions if _in_client_mode() else action_permissions() & (ControlState.MOVE | ControlState.BASIC_ATTACK)
 
 func presentation_state() -> UnitPresentationState:
 	if _presentation_state == null:
@@ -626,6 +660,7 @@ func play_visual_action(action_name: StringName, duration: float = 0.0) -> void:
 	_visual_action_serial += 1
 
 func begin_active_skill_cast(duration: float, facing: Vector2, cast_locks: Array = DEFAULT_CAST_LOCKS) -> void:
+	active_skill_cast_serial += 1
 	active_skill_cast_timer = maxf(duration, 0.0)
 	active_skill_cast_locks.clear()
 	for configured_lock in cast_locks:
@@ -742,7 +777,8 @@ func apply_attack_lifesteal(heal_ratio: float, max_health_ratio: float = 1.0) ->
 	queue_redraw()
 
 func apply_blind(attacks: int) -> void:
-	if structure_rush.control_immune(): return
+	# 持续输出能力没有离散出手，致盲对此类攻击无作用。
+	if hp <= 0.0 or continuous_attack or structure_rush.control_immune(): return
 	if battle_context != null and battle_context.damage_batch().collecting:
 		battle_context.damage_batch().defer_effect(func():
 			if hp > 0.0: apply_blind(attacks))
@@ -802,6 +838,8 @@ func transform_to_small() -> bool:
 	return true
 
 func _apply_form(next_form_index: int, grant_max_hp_increase: bool, advance_form_serial: bool = true) -> void:
+	pending_form_generation = -1
+	_pending_extra_attacks.clear()
 	var next_stats: Dictionary = transformed_stats if next_form_index == 1 else _base_form_stats
 	if next_stats.is_empty():
 		return
@@ -940,14 +978,16 @@ func set_continuous_beam_origin_world_position(world_position: Vector2) -> void:
 	queue_redraw()
 
 ## 固定 tick 模拟入口，由 main._sim_step 以 SIM_DT 驱动
-func sim_tick(dt: float, natural_lifecycle_prepared: bool = false) -> void:
+func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prepared: bool = false) -> void:
 	if hp <= 0.0:
 		return
 	_tick_timed_revival(dt)
 	if hp <= 0.0 or is_queued_for_deletion():
 		return
 	_prune_pending_extra_attacks()
-	_tick_active_statuses(dt)
+	if not statuses_prepared:
+		_tick_active_statuses(dt)
+	_apply_pending_form()
 	# 限时形态按权威时间到期，硬控不延长增益；转场动作仍沿用硬控暂停规则。
 	if form_index == 1 and form_lifetime_left > 0.0 and not (form_lifetime_after_transition and form_transition_timer > 0.0):
 		form_lifetime_left = maxf(0.0, form_lifetime_left - dt)
@@ -957,22 +997,23 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false) -> void:
 	_prev_pos = position
 	_move_intent = Vector2.ZERO
 	_forced_movement = false
-	var active_skill_cast_ticked := false
-	# 表现动作进度只镜像权威窗口，绝不回调战斗效果；冰冻/眩晕时与模型一起暂停。
-	if _visual_action_time_left > 0.0 and control.frozen_timer <= 0.0 and control.stun_timer <= 0.0:
+	if _knockback_timer > 0.0:
+		_tick_knockback_movement(dt)
+	var recovering_rush := structure_rush.phase == StructureRushState.Phase.RECOVERY
+	if recovering_rush:
+		structure_rush.tick(self, dt)
+	# 生命周期与普通技能时钟不因硬控暂停。冰冻在施加入口取消施法。
+	if _visual_action_time_left > 0.0:
 		_visual_action_time_left = maxf(0.0, _visual_action_time_left - dt)
-	# 技能动作被冰冻/眩晕时表现层也会暂停，因此施放窗口和变形锁必须一起暂停。
+	if form_transition_timer > 0.0:
+		form_transition_timer = maxf(0.0, form_transition_timer - dt)
 	if active_skill_cast_timer > 0.0:
 		if is_active_skill_attack_locked():
 			_cancel_attack_for_cast()
-		if control.frozen_timer <= 0.0 and control.stun_timer <= 0.0:
-			active_skill_cast_ticked = true
-			active_skill_cast_timer = maxf(0.0, active_skill_cast_timer - dt)
-			if form_transition_timer > 0.0:
-				form_transition_timer = maxf(0.0, form_transition_timer - dt)
-			if active_skill_cast_timer <= 0.0:
-				active_skill_cast_facing = Vector2.ZERO
-				active_skill_cast_locks.clear()
+		active_skill_cast_timer = maxf(0.0, active_skill_cast_timer - dt)
+		if active_skill_cast_timer <= 0.0:
+			active_skill_cast_facing = Vector2.ZERO
+			active_skill_cast_locks.clear()
 	# 卡牌生成后进入部署时间：自身不索敌、不移动、不攻击，但实体已经存在，
 	# 会参与碰撞，也能被敌方索敌、命中、受伤和施加状态。
 	if _deploy_timer > 0.0:
@@ -980,21 +1021,20 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false) -> void:
 		if _deploy_timer < 0.000001:
 			_deploy_timer = 0.0
 		# 冰冻时长从命中当帧开始消耗；不会在部署结束后再额外补一整段冻结。
-		if _deploy_timer > 0.0:
-			control.tick_hard_controls(dt)
 		# “不能移动”只锁自主行军；碰撞与击退等外力仍可改变位置，保证部署实体
 		# 被命中后的附带效果不会延迟到部署结束才突然补播。
-		if _knockback_timer > 0.0:
-			_tick_knockback_movement(dt)
 		if _deploy_timer <= 0.0:
 			_just_deployed = true
-			if is_building and control.frozen_timer <= 0.0:
+			if is_building:
 				_spawn_initial_summons()
 		queue_redraw()
 		if _deploy_timer > 0.0 or _forced_movement:
 			return
+	if is_building:
+		_building_tick(dt, natural_lifecycle_prepared)
+		if hp <= 0.0 or is_queued_for_deletion():
+			return
 	if control.frozen_timer > 0.0 or control.stun_timer > 0.0:
-		control.tick_hard_controls(dt)
 		if control.frozen_timer <= 0.0 and control.stun_timer <= 0.0:
 			queue_redraw()
 		_charge_timer = 0.0
@@ -1003,14 +1043,7 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false) -> void:
 	if _attacking and _attack_visual_serial > 0:
 		attack_timeline.advance_visual(dt, _effective_attack_speed_multiplier())
 	_tick_pending_extra_attacks(dt)
-	if is_building:
-		_building_tick(dt, natural_lifecycle_prepared)
-		# 建筑也必须继续进入通用索敌/攻击状态机；这里只在寿命耗尽死亡后结束。
-		# 位移仍由 _chase() 的建筑保护拦截，建筑不会因为圈外目标开始行军。
-		if hp <= 0.0 or is_queued_for_deletion():
-			return
-	elif _knockback_timer > 0.0:
-		_tick_knockback_movement(dt)
+	if _forced_movement:
 		_charge_timer = 0.0
 		_charged = false
 		return
@@ -1020,12 +1053,9 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false) -> void:
 		_tick_attack_locked_cast_movement(dt)
 		return
 	if form_transition_timer > 0.0:
-		if not active_skill_cast_ticked:
-			form_transition_timer = maxf(0.0, form_transition_timer - dt)
-		if form_transition_timer > 0.0:
-			_tick_form_transition_movement(dt)
-			return
-	if structure_rush.tick(self, dt):
+		_tick_form_transition_movement(dt)
+		return
+	if recovering_rush or structure_rush.tick(self, dt):
 		return
 	attack_timeline.tick_cooldown(dt)
 	# 默认命中后必须完整收招；配置允许的连招段结束且没有圈内目标时可提前转走。
@@ -1158,7 +1188,7 @@ func _perform_deploy_sweep() -> void:
 		battle_context.notify_unit_audio_event(self, &"deploy:hit", global_position)
 
 func can_receive_knockback(origin: Vector2, distance: float, duration: float, mass_factor_max: float) -> bool:
-	return hp > 0.0 and not structure_rush.control_immune() and not is_queued_for_deletion() and not is_building and origin.is_finite() and is_finite(distance) and distance > 0.0 and is_finite(duration) and is_finite(mass_factor_max)
+	return hp > 0.0 and not structure_rush.control_immune() and not is_queued_for_deletion() and not is_building and origin.is_finite() and is_finite(distance) and distance > 0.0 and is_finite(duration) and duration > 0.0 and is_finite(mass_factor_max)
 
 func apply_knockback(origin: Vector2, distance: float, duration: float = 0.2, mass_factor_max: float = 1.4, displacement_order: Array = []) -> void:
 	# 必须先校验再替换；拒绝的请求不得破坏旧位移。
@@ -1176,10 +1206,8 @@ func apply_knockback(origin: Vector2, distance: float, duration: float = 0.2, ma
 	var mass_factor := clampf(4.0 / maxf(mass, 1.0), 0.35, maxf(mass_factor_max, 0.35))
 	_knockback_timer = maxf(duration, SIM_DT)
 	_knockback_velocity = direction * distance * mass_factor / _knockback_timer
-	attack_timeline.cancel()
-	_attacking = false
+	cancel_basic_attack(&"knockback")
 	_shroud_active = false
-	cancel_charge()
 
 func _tick_knockback_movement(dt: float) -> void:
 	# 最后一 Tick 只结算剩余时长，避免浮点余量让 0.25s 击退多走一个完整 20Hz Tick。
@@ -1206,7 +1234,6 @@ func prepare_natural_lifecycle(dt: float) -> void:
 	if not is_building or hp <= 0.0 or is_queued_for_deletion(): return
 	if _deploy_timer > 0.0:
 		if maxf(_deploy_timer - dt, 0.0) >= 0.000001 or _knockback_timer > 0.0: return
-	if control.frozen_timer > 0.0 or control.stun_timer > 0.0: return
 	_tick_building_lifetime(dt)
 
 func _tick_building_lifetime(dt: float) -> void:
@@ -1237,13 +1264,15 @@ func _building_tick(dt: float, natural_lifecycle_prepared: bool = false) -> void
 		_spawn_timer -= dt
 		if _spawn_timer <= 0.0:
 			_spawn_timer += spawn_interval
-			_spawn_batch()
+			if not is_frozen() and not is_stunned():
+				_spawn_batch()
 
 func _spawn_initial_summons() -> void:
 	if _initial_summons_spawned or spawn_interval <= 0.0:
 		return
 	_initial_summons_spawned = true
-	_spawn_batch()
+	if not is_frozen() and not is_stunned():
+		_spawn_batch()
 
 func _spawn_batch() -> void:
 	if battle_context == null or spawn_id.is_empty():
@@ -1546,7 +1575,7 @@ func _attack(dt: float) -> void:
 		if attack_timeline.windup > 0.0:
 			return
 	if continuous_attack:
-		_deal_continuous_damage(damage * active_damage_multiplier * active_attack_speed_multiplier * dt)
+		_deal_continuous_damage(damage * active_damage_multiplier * _effective_attack_speed_multiplier() * dt)
 		return
 	_try_start_attack_visual(attack_timeline.cooldown)
 	if attack_timeline.cooldown <= 0.0:
@@ -1568,7 +1597,8 @@ func _attack(dt: float) -> void:
 				_first_strike_hit_target_ids[first_strike_target_id] = true
 				hit_damage *= first_strike_damage_multiplier
 				first_strike = true
-		var attack_effects: Dictionary = {}
+		basic_attack_sequence += 1
+		var attack_effects: Dictionary = {"attack_id": basic_attack_sequence, "cycle_id": _attack_visual_serial}
 		if first_strike:
 			# 效果随弹体携带到真实命中点；表现层不会在出手或预判 first_hit 时播放被动音。
 			attack_effects["first_strike"] = true
@@ -1588,8 +1618,12 @@ func _attack(dt: float) -> void:
 		mark_skill_resource_combat_activity()
 		add_skill_resource(skill_resource_attack_gain)
 		var attack_form_index := form_index
-		_perform_attack_strike(_target, hit_damage, attack_effects)
-		_queue_extra_attack_hits(hit_index, base_hit_damage, _target)
+		var completed := _perform_attack_strike(_target, hit_damage, attack_effects)
+		if completed:
+			_queue_extra_attack_hits(hit_index, base_hit_damage, _target)
+		else:
+			_attack_hit_index = hit_index
+			_attack_swing_count -= 1
 		# 这一击若触发形态变化，新形态已清空旧攻击状态；不能再写回旧形态的后摇。
 		if form_index != attack_form_index:
 			return
@@ -1687,11 +1721,11 @@ func _deal_continuous_damage(amount: float) -> void:
 	if result.landed:
 		on_attack_landed(form_index, 0.0)
 
-func _deal_attack_damage_to(target: Node2D, amount: float, effects: Dictionary = {}) -> void:
+func _deal_attack_damage_to(target: Node2D, amount: float, effects: Dictionary = {}) -> bool:
 	if target == null or not is_instance_valid(target) or target.hp <= 0.0:
-		return
+		return false
 	if battle_context != null:
-		battle_context.launch_attack(self, target, amount, projectile_speed, splash_radius, attack_knockback, projectile_color, effects)
+		return battle_context.launch_attack(self, target, amount, projectile_speed, splash_radius, attack_knockback, projectile_color, effects)
 	else:
 		var was_alive: bool = target.hp > 0.0
 		var result := BattleNumbers.hit(target, BattleNumbers.quantity(amount) + on_hit_passive_damage(target), self, team, global_position)
@@ -1703,14 +1737,16 @@ func _deal_attack_damage_to(target: Node2D, amount: float, effects: Dictionary =
 			if was_alive and target.hp <= 0.0:
 				on_enemy_killed(target)
 
+		return landed
+
 ## 每一刀都独立消费一次致盲。剑圣 Passive 的第二刀因此确实算作第二次普通攻击。
-func _perform_attack_strike(target: Node2D, amount: float, effects: Dictionary = {}) -> void:
+func _perform_attack_strike(target: Node2D, amount: float, effects: Dictionary = {}) -> bool:
 	if blind_attack_charges > 0:
 		blind_attack_charges -= 1
 		queue_redraw()
-		return
+		return true
 	# 远程单位在这里进入 BattleContext.launch_attack，弹体与出手 tick 同步；命中由弹体抵达后结算。
-	_deal_attack_damage_to(target, amount, effects)
+	return _deal_attack_damage_to(target, amount, effects)
 
 func _queue_extra_attack_hits(hit_index: int, base_hit_damage: float, target: Node2D) -> void:
 	if hit_index < 0 or attack_extra_hit_damage_multipliers.is_empty():
@@ -1726,7 +1762,7 @@ func _queue_extra_attack_hits(hit_index: int, base_hit_damage: float, target: No
 			continue
 		var delay := float(delays[index]) if index < delays.size() else 0.0
 		_pending_extra_attacks.append({
-			"target_ref": weakref(target),
+			"target_ref": weakref(target), "cycle_id": _attack_visual_serial, "form_generation": form_change_serial,
 			"presentation_source": PresentationConfig.attack_source(self),
 			"damage": base_hit_damage * multiplier,
 			"time_left": maxf(delay / _effective_attack_speed_multiplier(), 0.0),
@@ -1755,28 +1791,31 @@ func _tick_pending_extra_attacks(dt: float) -> void:
 		_attack_swing_count += 1
 		mark_skill_resource_combat_activity()
 		add_skill_resource(skill_resource_attack_gain)
-		_perform_attack_strike(target as Node2D, float(pending.damage), {"presentation_source": pending.presentation_source})
+		basic_attack_sequence += 1
+		_perform_attack_strike(target as Node2D, float(pending.damage), {"presentation_source": pending.presentation_source, "attack_id": basic_attack_sequence, "cycle_id": pending.get("cycle_id", _attack_visual_serial)})
 	_pending_extra_attacks.assign(waiting)
 
 ## 主机在伤害真正落到目标后调用。格温由此精确地在首次普攻命中而非出手时开启缠流；
 ## 赵信等配置了命中回血的单位也在这里结算，未真正造成伤害的挥击不触发回复。
-func on_attack_landed(attack_form_index: int = -1, landed_damage: float = 0.0, submitted_swing: int = -1) -> void:
+func on_attack_landed(attack_form_index: int = -1, landed_damage: float = 0.0, submitted_swing: int = -1, source_generation: int = -1) -> void:
 	# 远程弹体可以在攻击者死亡后抵达；此时只保留已经结算给目标的伤害，
 	# 不再给已退出战斗的攻击者计层、回血、充能或触发形态切换。
 	if hp <= 0.0:
 		return
 	var landed_form := form_index if attack_form_index < 0 else attack_form_index
 	# 在途小纳尔回旋镖不会在大形态下误算成大纳尔的 4 次近战命中。
-	if landed_form != form_index:
+	if landed_form != form_index or (source_generation >= 0 and source_generation != form_change_serial):
 		return
 	if transform_after_hits > 0 and form_index == 0:
 		transform_hit_count += 1
 		if transform_hit_count >= transform_after_hits:
-			transform_to_mega()
+			if is_frozen(): pending_form_generation = form_change_serial
+			else: transform_to_mega()
 	elif revert_after_hits > 0 and form_index == 1:
 		transform_hit_count += 1
 		if transform_hit_count >= revert_after_hits:
-			transform_to_small()
+			if is_frozen(): pending_form_generation = form_change_serial
+			else: transform_to_small()
 	if shroud_radius > 0.0 and not _shroud_active:
 		_shroud_active = true
 		queue_redraw()
@@ -1788,9 +1827,19 @@ func on_attack_landed(attack_form_index: int = -1, landed_damage: float = 0.0, s
 		cycle_ratio = float(attack_lifesteal_ratios[posmod(swing - 1, attack_lifesteal_ratios.size())])
 	_try_attack_lifesteal(landed_damage, cycle_ratio)
 
+func _apply_pending_form() -> void:
+	if pending_form_generation < 0 or is_frozen():
+		return
+	var valid := hp > 0.0 and pending_form_generation == form_change_serial
+	pending_form_generation = -1
+	if valid:
+		if form_index == 0: transform_to_mega()
+		else: transform_to_small()
+
+
 func _refresh_form_speed_boost() -> void:
 	if form_speed_boost_duration > 0.0:
-		apply_active_buff(form_speed_boost_duration, form_speed_boost_multiplier, 1.0, 1.0)
+		apply_active_buff(form_speed_boost_duration, form_speed_boost_multiplier, 1.0, 1.0, false, false, status_source("form_speed"))
 
 func on_enemy_killed(target: Node2D) -> void:
 	# 与 on_attack_landed 同理，在途弹体可以晚于攻击者死亡完成击杀。
@@ -1828,66 +1877,142 @@ func _try_attack_lifesteal(landed_damage: float, cycle_ratio: float = 0.0) -> vo
 	hp = minf(hp + BattleNumbers.quantity(landed_damage * ratio), health_cap)
 	queue_redraw()
 
-func freeze(duration: float) -> void:
-	if structure_rush.control_immune(): return
-	if battle_context != null and battle_context.damage_batch().collecting:
-		battle_context.damage_batch().defer_effect(func(): freeze(duration))
+func cancel_skill_cast() -> void:
+	cancelled_skill_cast_serial = active_skill_cast_serial
+	_visual_action_time_left = 0.0
+	_visual_action_name = &""
+	active_skill_cast_timer = 0.0
+	active_skill_cast_facing = Vector2.ZERO
+	active_skill_cast_locks.clear()
+
+func cancel_basic_attack(reason: StringName) -> void:
+	action_cancel_serial += 1
+	if reason == &"freeze":
+		cancelled_visual_serial = maxi(cancelled_visual_serial, get_visual_action_serial())
+		cancelled_deployment = cancelled_deployment or _deploy_timer > 0.0
+	last_action_cancellation = {"serial": action_cancel_serial, "reason": String(reason),
+		"attack": get_attack_visual_serial(), "action": get_visual_action_serial(), "form": form_change_serial,
+		"cancelled_action": cancelled_visual_serial, "cancelled_deployment": cancelled_deployment}
+	# 先通知表现捕获当前姿势，再清理动作逻辑。
+	action_cancelled.emit(last_action_cancellation)
+	if battle_context != null:
+		battle_context.notify_action_cancelled(self, last_action_cancellation)
+	# 只清理旧动作，循环段、强化与已提交的结果独立保留。
+	attack_timeline.cancel(true)
+	_attacking = false
+	_attack_visual_pending = true
+	_attack_visual_first_strike = false
+	_pending_extra_attacks.clear()
+	_continuous_visual_target_id = 0
+	set_continuous_beam_visible(false)
+	_path = PackedVector2Array()
+	_path_index = 0
+	_repath_cd = 0.0
+	cancel_charge()
+
+static func valid_action_cancellation(payload: Dictionary) -> bool:
+	if payload.is_empty(): return true
+	for key in ["serial", "attack", "action", "form"]:
+		if not payload.get(key) is int or int(payload[key]) < 0: return false
+	if payload.has("cancelled_action") and (not payload.cancelled_action is int or int(payload.cancelled_action) < -1): return false
+	if payload.has("cancelled_deployment") and not payload.cancelled_deployment is bool: return false
+	return payload.get("reason") is String and String(payload.reason) in ["freeze", "stun", "knockback"]
+
+func apply_action_cancellation(payload: Dictionary) -> void:
+	if not valid_action_cancellation(payload) or int(payload.get("serial", 0)) <= action_cancel_serial:
 		return
-	control.refresh_freeze(duration)
+	action_cancel_serial = int(payload.serial)
+	last_action_cancellation = payload.duplicate(true)
+	cancelled_deployment = cancelled_deployment or bool(payload.get("cancelled_deployment", false))
+	cancelled_visual_serial = maxi(cancelled_visual_serial, int(payload.get("cancelled_action", payload.action if String(payload.reason) == "freeze" else -1)))
+	action_cancelled.emit(last_action_cancellation)
+
+
+func status_source(effect: String = "") -> StringName:
+	return StringName("unit:%d:%s" % [combat_source_id, effect])
+
+func freeze(duration: float, source: StringName = &"legacy") -> void:
+	if hp <= 0.0 or not is_finite(duration) or duration <= 0.0 or structure_rush.control_immune(): return
+	if battle_context != null and battle_context.damage_batch().collecting:
+		battle_context.damage_batch().defer_effect(func(): _receive_freeze(duration, source))
+		return
+	_receive_freeze(duration, source)
+
+func _receive_freeze(duration: float, source: StringName) -> void:
+	if hp <= 0.0: return
+	if control.refresh_freeze(duration, true, source):
+		cancel_basic_attack(&"freeze")
+		cancel_skill_cast()
 	if duration > 0.0: structure_rush.interrupt_preparation(self)
 	queue_redraw()
 
-func stun(duration: float) -> void:
-	if structure_rush.control_immune(): return
+func stun(duration: float, source: StringName = &"legacy") -> void:
+	if hp <= 0.0 or not is_finite(duration) or duration <= 0.0 or structure_rush.control_immune(): return
 	if battle_context != null and battle_context.damage_batch().collecting:
-		battle_context.damage_batch().defer_effect(func(): stun(duration))
+		battle_context.damage_batch().defer_effect(func(): _receive_stun(duration, source))
 		return
-	control.refresh_stun(duration)
+	_receive_stun(duration, source)
+
+func _receive_stun(duration: float, source: StringName) -> void:
+	if hp <= 0.0: return
+	if control.refresh_stun(duration, true, source):
+		cancel_basic_attack(&"stun")
 	if duration > 0.0: structure_rush.interrupt_preparation(self)
 	queue_redraw()
 
-func apply_slow(duration: float, multiplier: float) -> void:
-	if structure_rush.control_immune(): return
+func apply_slow(duration: float, multiplier: float, source: StringName = &"legacy") -> void:
+	if hp <= 0.0 or not is_finite(duration) or duration <= 0.0 or not is_finite(multiplier) or structure_rush.control_immune() or active_buff_ignores_movement_slow: return
 	if battle_context != null and battle_context.damage_batch().collecting:
-		battle_context.damage_batch().defer_effect(func(): apply_slow(duration, multiplier))
+		battle_context.damage_batch().defer_effect(func(): _receive_apply_slow(duration, multiplier, source))
 		return
-	if active_buff_ignores_movement_slow:
-		return
-	control.refresh_slow(duration, multiplier)
+	_receive_apply_slow(duration, multiplier, source)
+
+func _receive_apply_slow(duration: float, multiplier: float, source: StringName) -> void:
+	if hp <= 0.0: return
+	control.refresh_slow(duration, multiplier, source)
 	queue_redraw()
 
 ## 预留给后续控制效果的减攻速入口；它与减速一样只改战斗计时，不改变动画权威。
-func apply_attack_speed_slow(duration: float, multiplier: float) -> void:
-	if structure_rush.control_immune(): return
+func apply_attack_speed_slow(duration: float, multiplier: float, source: StringName = &"legacy") -> void:
+	if hp <= 0.0 or not is_finite(duration) or duration <= 0.0 or not is_finite(multiplier) or structure_rush.control_immune() or active_buff_ignores_attack_speed_slow: return
 	if battle_context != null and battle_context.damage_batch().collecting:
-		battle_context.damage_batch().defer_effect(func(): apply_attack_speed_slow(duration, multiplier))
+		battle_context.damage_batch().defer_effect(func(): _receive_apply_attack_speed_slow(duration, multiplier, source))
 		return
-	if active_buff_ignores_attack_speed_slow:
-		return
+	_receive_apply_attack_speed_slow(duration, multiplier, source)
+
+func _receive_apply_attack_speed_slow(duration: float, multiplier: float, source: StringName) -> void:
+	if hp <= 0.0: return
 	var previous_speed := _effective_attack_speed_multiplier()
-	control.refresh_attack_slow(duration, multiplier)
+	control.refresh_attack_slow(duration, multiplier, source)
 	_rescale_attack_phase(previous_speed)
 	queue_redraw()
 
-func apply_active_buff(duration: float, speed_multiplier: float, damage_multiplier: float, attack_speed_multiplier: float, ignores_movement_slow: bool = false, ignores_attack_speed_slow: bool = false) -> void:
+func apply_active_buff(duration: float, speed_multiplier: float, damage_multiplier: float, attack_speed_multiplier: float, ignores_movement_slow: bool = false, ignores_attack_speed_slow: bool = false, source: StringName = &"legacy") -> void:
+	if hp <= 0.0: return
+	if battle_context != null and battle_context.damage_batch().collecting:
+		battle_context.damage_batch().defer_effect(func(): apply_active_buff(duration, speed_multiplier, damage_multiplier, attack_speed_multiplier, ignores_movement_slow, ignores_attack_speed_slow, source))
+		return
 	var previous_speed := _effective_attack_speed_multiplier()
-	active_buff_timer = maxf(active_buff_timer, BattleNumbers.decimal(duration))
-	active_speed_multiplier = maxf(active_speed_multiplier, speed_multiplier)
-	active_damage_multiplier = maxf(active_damage_multiplier, damage_multiplier)
-	active_attack_speed_multiplier = maxf(active_attack_speed_multiplier, attack_speed_multiplier)
-	active_buff_ignores_movement_slow = active_buff_ignores_movement_slow or ignores_movement_slow
-	active_buff_ignores_attack_speed_slow = active_buff_ignores_attack_speed_slow or ignores_attack_speed_slow
+	buffs.apply(&"buff", source, duration, {"speed": speed_multiplier, "damage": damage_multiplier,
+		"attack_speed": attack_speed_multiplier, "ignore_movement_slow": ignores_movement_slow,
+		"ignore_attack_speed_slow": ignores_attack_speed_slow})
 	_rescale_attack_phase(previous_speed)
 	queue_redraw()
 
-func add_shield(amount: float, duration: float, decays: bool = false) -> void:
+func add_shield(amount: float, duration: float, decays: bool = false, source: StringName = &"legacy") -> void:
+	if battle_context != null and battle_context.damage_batch().collecting:
+		battle_context.damage_batch().defer_effect(func(): add_shield(amount, duration, decays, source))
+		return
 	if hp > 0.0:
-		shields.add(amount, duration, decays)
+		shields.add(amount, duration, decays, false, source)
 		queue_redraw()
 
-func add_restoration_shield(amount: float, duration: float) -> void:
+func add_restoration_shield(amount: float, duration: float, source: StringName = &"legacy") -> void:
+	if battle_context != null and battle_context.damage_batch().collecting:
+		battle_context.damage_batch().defer_effect(func(): add_restoration_shield(amount, duration, source))
+		return
 	if hp > 0.0:
-		shields.add(amount, duration, false, true)
+		shields.add(amount, duration, false, true, source)
 		queue_redraw()
 
 func _restore_shield_health() -> void:
@@ -1912,17 +2037,11 @@ func clear_shields() -> void:
 
 func _tick_active_statuses(dt: float) -> void:
 	var previous_speed := _effective_attack_speed_multiplier()
+	control.tick_hard_controls(dt)
 	control.tick_slows(dt)
 	if shields.tick(dt) and hp > 0.0:
 		_restore_shield_health()
-	if active_buff_timer > 0.0:
-		active_buff_timer = maxf(0.0, active_buff_timer - dt)
-		if active_buff_timer <= 0.0:
-			active_speed_multiplier = 1.0
-			active_damage_multiplier = 1.0
-			active_attack_speed_multiplier = 1.0
-			active_buff_ignores_movement_slow = false
-			active_buff_ignores_attack_speed_slow = false
+	buffs.advance(dt)
 	_rescale_attack_phase(previous_speed)
 	_tick_skill_resource_decay(dt)
 
@@ -1937,6 +2056,17 @@ func is_frozen() -> bool:
 
 func is_stunned() -> bool:
 	return control.stun_timer > 0.0
+
+func heal_with_overflow(amount: float, shield_ratio: float, duration: float, source: StringName) -> void:
+	if battle_context != null and battle_context.damage_batch().collecting:
+		battle_context.damage_batch().defer_benefit(func(): heal_with_overflow(amount, shield_ratio, duration, source))
+		return
+	if hp <= 0.0 or amount <= 0.0: return
+	var before := hp
+	heal(amount)
+	var actual := maxf(hp - before, 0.0)
+	add_shield(BattleNumbers.quantity(maxf(amount - actual, 0.0) * shield_ratio), duration, false, source)
+
 
 func heal(amount: float) -> void:
 	if battle_context != null and battle_context.damage_batch().collecting:

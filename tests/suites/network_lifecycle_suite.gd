@@ -139,6 +139,45 @@ func run(harness: Object, main: Node2D) -> void:
 	_deliver(3, [member])
 	var group_entry: Dictionary = main._active_skills.get(72000, {})
 	_expect(group_entry.get("card_id") == "minion_squad" and group_entry.get("skill", {}).get("target_scope") == &"deployment_group", "快照转交使用编队技能而非成员自身技能")
+	_system.reset_session("cancellation")
+	var cancelled := _payload("garen", 73000, 1)
+	cancelled[SNAP.U_DEPLOY_LEFT] = 0.0
+	cancelled[SNAP.U_ATTACK_SERIAL] = 4
+	cancelled[SNAP.U_VISUAL_STATE] = 3
+	cancelled[SNAP.U_ACTION_SERIAL] = 7
+	cancelled[SNAP.U_ACTION_NAME] = "judgment"
+	cancelled[SNAP.U_ACTION_DURATION] = 3.0
+	cancelled[SNAP.U_ACTION_TIME_LEFT] = 2.0
+	cancelled[SNAP.U_CANCELLATION] = {"serial": 2, "reason": "stun", "attack": 4, "action": 7, "form": 0, "cancelled_action": 7}
+	var malformed: Dictionary = cancelled[SNAP.U_CANCELLATION].duplicate(true)
+	malformed["cancelled_action"] = {}
+	_expect(not Unit.valid_action_cancellation(malformed), "取消屏障拒绝非整数动作身份")
+	malformed["cancelled_action"] = 7
+	malformed["cancelled_deployment"] = "false"
+	_expect(not Unit.valid_action_cancellation(malformed), "取消屏障拒绝非布尔部署标记")
+	_deliver(2, [cancelled])
+	var stopped: Unit = main._client_units[73000]
+	_expect(stopped.get_visual_action_time_left() == 0 and stopped.get_visual_state_code() != 3 and stopped.action_cancel_serial == 2, "未知实体快照重建携带累计取消；短冰冻已结束也不能恢复旧攻击/技能")
+	var notifications := [0]
+	stopped.action_cancelled.connect(func(_payload): notifications[0] += 1)
+	stopped.apply_action_cancellation({"serial": 1, "reason": "freeze", "attack": 4, "action": 7, "form": 0})
+	stopped.apply_action_cancellation(cancelled[SNAP.U_CANCELLATION])
+	_expect(notifications[0] == 0, "重复和逆序动作取消不重播表现")
+	cancelled[SNAP.U_ATTACK_SERIAL] = 5
+	cancelled[SNAP.U_ACTION_SERIAL] = 8
+	_deliver(3, [cancelled])
+	_expect(stopped.get_attack_visual_serial() == 5 and stopped.get_visual_action_time_left() == 2, "取消屏障允许后续新身份动作")
+	var effects = main._active_skill_effect_system
+	effects.clear()
+	var star := {"fixed_position": true, "pos": Vector2(360, 600), "shape": "target_circle", "timer": 1.0, "duration": 1.0, "team": 0}
+	effects.show_skill_effect(100, star)
+	effects.show_skill_effect(100, star)
+	effects.tick_visuals(0.2)
+	_expect(effects.frontal_effects.size() == 1 and is_equal_approx(effects.frontal_effects[0].timer, 0.8), "独立星辰重复事件仅创建一次，来源不参与推进")
+	effects.clear()
+	effects.show_skill_effect(100, star)
+	_expect(effects.frontal_effects.size() == 1, "两局清场释放效果去重身份")
+	effects.clear()
 	_system.reset_session("")
 	main._snapshot_system = saved_system
 	main.mode = saved_mode

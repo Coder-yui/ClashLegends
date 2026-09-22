@@ -18,6 +18,8 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_pending_control_revalidation()
 	_check_cast_impact_recovery_timeline()
 	_check_cast_control_pause_and_death_cancel()
+	_check_control_release_matrix()
+	_check_displaced_skill_range()
 	_check_authoritative_hand_cycle()
 	_check_network_hand_confirmation()
 	_check_empowered_freeze_slow_zone()
@@ -454,19 +456,11 @@ func _check_cast_control_pause_and_death_cancel() -> void:
 	var freeze_queued: bool = _main._queue_active_skill(freeze_source.active_ability_id, 0, 0)
 	_run_main_ticks(_main.COMMAND_DELAY_TICKS)
 	_run_main_ticks(4)
-	var freeze_cast_before: float = freeze_source.active_skill_cast_timer
-	var freeze_impact_before: float = float(_main._commands.impacts[0].time_left)
 	freeze_source.freeze(0.3)
 	_run_main_ticks(6)
-	var freeze_paused: bool = (
-		is_zero_approx(freeze_source.active_skill_cast_timer - freeze_cast_before)
-		and is_zero_approx(float(_main._commands.impacts[0].time_left) - freeze_impact_before)
-		and is_zero_approx(freeze_source.shield_hp)
-	)
-	_run_main_ticks(7)
-	var freeze_still_waiting: bool = is_zero_approx(freeze_source.shield_hp)
-	_run_main_ticks(2)
-	var freeze_resumed: bool = freeze_source.shield_hp > 0.0
+	var freeze_cancelled: bool = freeze_source.active_skill_cast_timer == 0 and _main._commands.impacts.is_empty() and freeze_source.shield_hp == 0
+	_run_main_ticks(20)
+	var freeze_no_resume: bool = freeze_source.shield_hp == 0
 
 	var stun_source: Unit = _main._spawn_unit(0, "xin", Vector2(260.0, 900.0), 0.0, 1)
 	var stun_skill: Dictionary = freeze_skill.duplicate(true)
@@ -478,18 +472,13 @@ func _check_cast_control_pause_and_death_cancel() -> void:
 	_run_main_ticks(_main.COMMAND_DELAY_TICKS)
 	_run_main_ticks(4)
 	var stun_cast_before: float = stun_source.active_skill_cast_timer
-	var stun_impact_before: float = float(_main._commands.impacts[0].time_left)
 	stun_source.stun(0.3)
 	_run_main_ticks(6)
-	var stun_paused: bool = (
-		is_zero_approx(stun_source.active_skill_cast_timer - stun_cast_before)
-		and is_zero_approx(float(_main._commands.impacts[0].time_left) - stun_impact_before)
-		and is_zero_approx(stun_source.shield_hp)
-	)
-	_run_main_ticks(7)
-	var stun_still_waiting: bool = is_zero_approx(stun_source.shield_hp)
+	var stun_advanced: bool = stun_source.active_skill_cast_timer < stun_cast_before and stun_source.shield_hp == 0
 	_run_main_ticks(2)
-	var stun_resumed: bool = stun_source.shield_hp > 0.0
+	var stun_released: bool = stun_source.shield_hp > 0
+	_run_main_ticks(14)
+	var stun_completed: bool = stun_source.active_skill_cast_timer == 0
 
 	var death_source: Unit = _main._spawn_unit(0, "garen", Vector2(520.0, 680.0), 0.0, 0)
 	var death_ability_id: int = death_source.active_ability_id
@@ -503,10 +492,10 @@ func _check_cast_control_pause_and_death_cancel() -> void:
 	_run_main_ticks(12)
 	var death_cancelled: bool = is_zero_approx(death_source.shield_hp) and _main._commands.impacts.is_empty()
 	_expect(
-		freeze_queued and freeze_paused and freeze_still_waiting and freeze_resumed
-		and stun_queued and stun_paused and stun_still_waiting and stun_resumed
+		freeze_queued and freeze_cancelled and freeze_no_resume
+		and stun_queued and stun_advanced and stun_released and stun_completed
 		and death_queued and death_cancelled,
-		"Cast 中途 Freeze/Stun 暂停 cast/impact 并从剩余时间继续，施法者死亡取消未发生的 Impact",
+		"冰冻取消施法后段且不补发，眩晕期间按原时刻释放并结束，死亡取消尚未独立的结果",
 	)
 	_main._on_active_skill_unit_died(freeze_source.active_ability_id)
 	_main._on_active_skill_unit_died(stun_source.active_ability_id)
@@ -814,3 +803,105 @@ func _check_heal_spell() -> void:
 	_expect(active_cost_charged and second_slot_cost_charged and normal_cost_charged, "治疗术位于主动槽（前两个卡位）施放费用 +1，在普通卡位保持原费用")
 	_main._deck = old_deck
 	_main._elixir.elixir = old_elixir
+
+func _check_control_release_matrix() -> void:
+	for card in ["sett", "gwen", "garen", "ashe", "twisted_fate", "apex_turret", "xin", "rift_herald", "gnar"]:
+		var skills := CardDB.active_skills_for(card)
+		for skill_index in skills.size():
+			var skill: Dictionary = skills[skill_index]
+			var points: Array = [0.0, float(skill.get("impact_delay", 0.0)), float(skill.get("cast_duration", 0.0))]
+			for delays in skill.get("resource_hit_delay_sequences", []): points.append_array(delays)
+			for key in ["full_resource_impact_delay", "full_resource_cast_duration"]:
+				if skill.has(key): points.append(float(skill[key]))
+			var boundaries: Dictionary = {}
+			for point in points:
+				for offset in [-0.05, 0.0, 0.05]: boundaries[maxf(float(point) + offset, 0.0)] = true
+			for boundary in boundaries:
+				var normal := _sample_skill_control(card, boundary, &"", skill_index)
+				var stunned := _sample_skill_control(card, boundary, &"stun", skill_index)
+				var frozen := _sample_skill_control(card, boundary, &"freeze", skill_index)
+				var knocked := _sample_skill_control(card, boundary, &"knockback", skill_index)
+				_expect(stunned.damage == normal.damage and stunned.health == normal.health, "%s技能%d边界%.2f眩晕保留原伤害与完成奖励" % [card, skill_index, boundary])
+				_expect(knocked.damage == normal.damage and knocked.health == normal.health, "%s技能%d边界%.2f小幅击退保留范围内目标的原伤害与完成奖励" % [card, skill_index, boundary])
+				_expect(frozen.damage == frozen.committed and frozen.health == frozen.health_at_control, "%s技能%d边界%.2f冰冻只保留已提交结果，不补施法后段或完成奖励" % [card, skill_index, boundary])
+				_expect(frozen.pending == 0 and stunned.pending == 0 and knocked.pending == 0, "%s 控制后排程最终清空" % card)
+
+func _sample_skill_control(card: String, boundary: float, kind: StringName, skill_index: int = 0) -> Dictionary:
+	_main._commands.impacts.clear()
+	_main._active_skill_effect_system.clear()
+	_main._projectile_system.clear_all()
+	var source: Unit = _main._spawn_unit(0, card, Vector2(360, 1000), 0)
+	var moving_units: Array[Unit] = [source]
+	var target: Unit = _main._spawn_unit(1, "garen", Vector2(360, 910), 0)
+	target.max_hp = 100000
+	target.hp = 100000
+	target.freeze(100)
+	var skill: Dictionary = CardDB.active_skills_for(card)[skill_index].duplicate(true)
+	skill["cast_forward"] = Vector2.UP
+	source.configure_carried_active_skill(skill)
+	source.skill_resource_value = source.skill_resource_max
+	source.hp = minf(source.max_hp, 300)
+	_main._start_active_skill_cast(source, skill)
+	var applied := false
+	var committed := 100000 - target.hp
+	var health_at_control := source.hp
+	for tick in 100:
+		if not applied and tick * 0.05 + 0.000001 >= boundary:
+			applied = true
+			committed = 100000 - target.hp
+			health_at_control = source.hp
+			if kind == &"freeze": source.freeze(10)
+			elif kind == &"stun": source.stun(10)
+			elif kind == &"knockback": source.apply_knockback(source.position + Vector2.LEFT * 40, 1, 0.2, 1.0)
+		if source._knockback_timer > 0:
+			source._tick_knockback_movement(0.05)
+			_main._movement._apply_unit_movement(0.05, moving_units)
+		_main._combat.begin_batch(tick, "matrix_skill")
+		_main._commands.tick_impacts(0.05)
+		_main._active_skill_effect_system.tick_effects(0.05)
+		_main._combat.commit_batch()
+		_main._projectile_system.tick(0.05)
+	# 已生成弹体的命中独立；被冻前已释放时允许后续实际命中。
+	if bool(skill.get("projectile_stop_on_hit", false)) or bool(skill.get("projectile_piercing", false)):
+		if boundary >= float(skill.get("impact_delay", 0.0)):
+			committed = 100000 - target.hp
+	var result := {"damage": 100000 - target.hp, "committed": committed, "health": source.hp,
+		"health_at_control": health_at_control, "pending": _main._commands.impacts.size()}
+	source.free()
+	target.free()
+	_main._commands.impacts.clear()
+	_main._active_skill_effect_system.clear()
+	_main._projectile_system.clear_all()
+	return result
+
+func _check_displaced_skill_range() -> void:
+	for card in ["sett", "gwen"]:
+		_main._commands.impacts.clear()
+		_main._active_skill_effect_system.clear()
+		var source: Unit = _main._spawn_unit(0, card, Vector2(200, 900), 0)
+		# 固定质量隔离技能位置归属；质量对击退距离的影响由 KnockbackBoundarySuite 覆盖。
+		source.mass = 4.0
+		var old_target: Unit = _main._spawn_unit(1, "garen", Vector2(200, 810), 0)
+		var new_target: Unit = _main._spawn_unit(1, "garen", Vector2(360, 810), 0)
+		for target in [old_target, new_target]: target.freeze(10)
+		var old_hp := old_target.hp
+		var new_hp := new_target.hp
+		var skill: Dictionary = CardDB.active_skills_for(card)[0].duplicate(true)
+		skill["cast_forward"] = Vector2.UP
+		source.configure_carried_active_skill(skill)
+		source.skill_resource_value = source.skill_resource_max
+		_main._start_active_skill_cast(source, skill)
+		source.apply_knockback(Vector2(100, 900), 160, 0.05, 1)
+		source._tick_knockback_movement(0.05)
+		var moving: Array[Unit] = [source]
+		_main._movement._apply_unit_movement(0.05, moving)
+		_expect(source.position.distance_to(Vector2(360, 900)) < 0.01, "%s 技能期间成立击退通过正式移动系统到达新位置" % card)
+		for tick in 40:
+			_main._combat.begin_batch(tick, "displaced_skill")
+			_main._commands.tick_impacts(0.05)
+			_main._active_skill_effect_system.tick_effects(0.05)
+			_main._combat.commit_batch()
+		_expect(old_target.hp == old_hp and new_target.hp < new_hp, "%s 未释放技能按被推后位置结算：旧范围不命中，新范围命中" % card)
+		for unit in [source, old_target, new_target]: unit.free()
+		_main._commands.impacts.clear()
+		_main._active_skill_effect_system.clear()

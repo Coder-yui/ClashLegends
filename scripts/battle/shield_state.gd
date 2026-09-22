@@ -5,7 +5,7 @@ extends RefCounted
 var _layers: Array[Dictionary] = []
 var _next_id := 1
 
-func add(amount: float, duration: float, decays: bool = false, restore_on_expiry: bool = false) -> int:
+func add(amount: float, duration: float, decays: bool = false, restore_on_expiry: bool = false, source: StringName = &"legacy") -> int:
 	if not is_finite(amount) or not is_finite(duration):
 		return -1
 	amount = BattleNumbers.quantity(maxf(amount, 0.0))
@@ -14,7 +14,7 @@ func add(amount: float, duration: float, decays: bool = false, restore_on_expiry
 		return -1
 	var id := _next_id
 	_next_id += 1
-	_layers.append({"id": id, "hp": amount, "capacity": amount, "left": duration,
+	_layers.append({"id": id, "source": source, "hp": amount, "capacity": amount, "left": duration,
 		"restore_on_expiry": restore_on_expiry, "rate": amount / duration if decays else 0.0, "remainder": 0.0})
 	return id
 

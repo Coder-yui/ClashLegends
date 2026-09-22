@@ -56,7 +56,8 @@ const U_MOVEMENT_RATE := 36
 const U_ACTION_PERMISSIONS := 37
 const U_SPAWN := 38
 const U_DEPLOY_LEFT := 39
-const UNIT_PAYLOAD_SIZE := 40
+const U_CANCELLATION := 40
+const UNIT_PAYLOAD_SIZE := 41
 
 const P_ID := 0
 const P_X := 1
@@ -78,7 +79,8 @@ const T_ACTIVATED := 1
 const T_STUNNED := 2
 const T_SHIELD_RATIO := 3
 const T_SHIELD_CAPACITY_RATIO := 4
-const TOWER_PAYLOAD_SIZE := 5
+const T_FROZEN := 5
+const TOWER_PAYLOAD_SIZE := 6
 
 var terminal_applied := false
 var lifecycle := NetworkEntityLifecycle.new()
@@ -175,6 +177,8 @@ func apply(snapshot_bytes: PackedByteArray, terminal: bool = false, expected_tic
 		return false
 	var ids := {}
 	for payload: Array in units_data:
+		if not payload[U_CANCELLATION] is Dictionary or not Unit.valid_action_cancellation(payload[U_CANCELLATION]):
+			return false
 		if not payload[U_ID] is int or ids.has(payload[U_ID]) or not payload[U_SPAWN] is Dictionary or not _valid_spawn(payload[U_SPAWN]):
 			return false
 		if int(payload[U_SPAWN].args[3]) != int(payload[U_ID]) or int(payload[U_SPAWN].birth_tick) > int(decoded[S_SERVER_TICK]) or int(payload[U_SPAWN].birth_revision) > int(decoded[S_LIFECYCLE_REVISION]):
@@ -216,6 +220,7 @@ func _apply_units(units_data: Array) -> void:
 			u = _controller.find_client_unit(d[U_ID])
 		if not is_instance_valid(u):
 			continue
+		u.apply_action_cancellation(d[U_CANCELLATION])
 		u._deploy_timer = maxf(float(d[U_DEPLOY_LEFT]), 0.0)
 		u.active_skill_card_id = String(d[U_SPAWN].args[12])
 		_controller.sync_network_unit_skill(u, int(d[U_SPAWN].args[5]), int(d[U_SPAWN].args[6]))
@@ -243,6 +248,14 @@ func _apply_units(units_data: Array) -> void:
 		# 时长和剩余时间让晚到客户端从权威进度开始播放。
 		u.net_visual_action_duration = maxf(float(d[U_ACTION_DURATION]), 0.0)
 		u.net_visual_action_time_left = clampf(float(d[U_ACTION_TIME_LEFT]), 0.0, u.net_visual_action_duration)
+		if not u.last_action_cancellation.is_empty():
+			var cancelled: Dictionary = u.last_action_cancellation
+			if u.net_attack_visual_serial <= int(cancelled.attack):
+				u.net_has_continuous_target = false
+				if u.net_visual_state == 3: u.net_visual_state = 1
+			if action_serial <= u.cancelled_visual_serial:
+				u.net_visual_action_time_left = 0.0
+				u.net_visual_action_name = &""
 		u.net_locomotion_state = int(d[U_LOCOMOTION])
 		u.net_empowered_attack_ready = int(d[U_EMPOWERED_READY]) == 1
 		u.net_empowered_attack_visual_serial = int(d[U_EMPOWERED_ATTACK_SERIAL])
@@ -306,7 +319,7 @@ func _apply_towers(towers_data: Array) -> void:
 		_controller._towers[i].apply_network_state(
 			float(tower_data[T_HP]), int(tower_data[T_ACTIVATED]) == 1,
 			int(tower_data[T_STUNNED]) == 1, float(tower_data[T_SHIELD_RATIO]),
-			float(tower_data[T_SHIELD_CAPACITY_RATIO]))
+			float(tower_data[T_SHIELD_CAPACITY_RATIO]), int(tower_data[T_FROZEN]) == 1)
 
 
 func send() -> void:
@@ -371,6 +384,7 @@ func _tower_snapshot_payload(tower: Tower) -> Array:
 		1 if tower.control.stun_timer > 0.0 else 0,
 		tower.get_shield_ratio(),
 		tower.get_shield_capacity_ratio(),
+		1 if tower.frozen_timer > 0.0 else 0,
 	]
 
 
@@ -427,4 +441,5 @@ func _unit_snapshot_payload(id: int, u: Unit, has_continuous_target: bool = fals
 		u.get_attack_elapsed_visual(), u.get_effective_movement_rate_visual(), u.get_action_permissions_visual(),
 		descriptor,
 		u._deploy_timer,
+		u.last_action_cancellation.duplicate(true),
 	]

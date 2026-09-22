@@ -107,27 +107,45 @@ func activate() -> void:
 	activated = true
 	queue_redraw()
 
-func freeze(duration: float) -> void:
-	control.refresh_freeze(duration, false)
+func freeze(duration: float, source: StringName = &"legacy") -> void:
+	if hp <= 0.0 or not is_finite(duration) or duration <= 0.0: return
+	if battle_context != null and battle_context.damage_batch().collecting:
+		battle_context.damage_batch().defer_effect(func(): freeze(duration, source))
+		return
+	if control.refresh_freeze(duration, false, source):
+		_target = null
+		_lock_windup = 0.0
+		_cooldown = 0.0
 	queue_redraw()
 
-func stun(duration: float) -> void:
-	control.refresh_stun(duration, false)
+func stun(duration: float, source: StringName = &"legacy") -> void:
+	if hp <= 0.0 or not is_finite(duration) or duration <= 0.0: return
+	if battle_context != null and battle_context.damage_batch().collecting:
+		battle_context.damage_batch().defer_effect(func(): stun(duration, source))
+		return
+	if control.refresh_stun(duration, false, source):
+		_target = null
+		_lock_windup = 0.0
+		_cooldown = 0.0
 	queue_redraw()
 
 func _ready() -> void:
 	add_to_group("combatants")
 	add_to_group("combat_structures")
 
-func sim_tick(dt: float) -> void:
+func prepare_statuses(dt: float) -> void:
+	_tick_shield(dt)
+	control.tick_hard_controls(dt)
+
+func sim_tick(dt: float, statuses_prepared: bool = false) -> void:
 	# 已被摧毁：不再攻击
 	if hp <= 0.0:
 		return
-	_tick_shield(dt)
+	if not statuses_prepared:
+		prepare_statuses(dt)
 	# 冰冻计时不因国王塔休眠而暂停。
 	_hit_flash_event_cooldown = maxf(0.0, _hit_flash_event_cooldown - dt)
 	if frozen_timer > 0.0 or control.stun_timer > 0.0:
-		control.tick_hard_controls(dt)
 		queue_redraw()
 		return
 	if not can_attack:
@@ -219,10 +237,13 @@ func take_damage(amount: float, _from: Node2D = null, _source_team: int = -1, _s
 	return true
 
 
-func add_shield(amount: float, duration: float, decays: bool = false) -> void:
+func add_shield(amount: float, duration: float, decays: bool = false, source: StringName = &"legacy") -> void:
+	if battle_context != null and battle_context.damage_batch().collecting:
+		battle_context.damage_batch().defer_effect(func(): add_shield(amount, duration, decays, source))
+		return
 	if hp > 0.0:
 		_shield_is_replica = false
-		shields.add(amount, duration, decays)
+		shields.add(amount, duration, decays, false, source)
 		queue_redraw()
 
 func clear_shields() -> void:
@@ -259,11 +280,11 @@ func get_shield_health_ratio() -> float:
 	return get_shield_ratio() * get_shield_capacity_ratio()
 
 ## 网络只传递解码后的值；塔拥有副本更新、死亡表现与导航释放的完整转换。
-func apply_network_state(health: float, active: bool, stunned: bool, shield_ratio: float, capacity_ratio: float) -> void:
+func apply_network_state(health: float, active: bool, stunned: bool, shield_ratio: float, capacity_ratio: float, frozen: bool = false) -> void:
 	var was_alive := hp > 0.0
 	hp = BattleNumbers.quantity(health)
 	activated = active
-	control.apply_replica_stun(stunned)
+	control.apply_replica_flags(frozen, stunned)
 	apply_shield_snapshot(shield_ratio, capacity_ratio)
 	if was_alive and hp <= 0.0:
 		notify_visual_destroyed()

@@ -63,3 +63,16 @@ func run(harness: Object) -> void:
 	tower.clear_shields()
 	harness._expect(tower.shield_hp == 0 and tower.shield_max_hp == 0, "清场同步清空塔的表现护盾")
 	tower.free()
+
+	var controlled := Unit.new()
+	controlled.hp = 500
+	controlled.max_hp = 1000
+	controlled.add_shield(100, 1, true, &"decay")
+	controlled.add_restoration_shield(200, 1, &"restoration")
+	controlled.freeze(3)
+	controlled.stun(3)
+	controlled._tick_active_statuses(0.5)
+	harness._expect(controlled.shield_hp == 250 and controlled.shields.inspect_layers()[0].source == &"decay", "受控时盾层保存来源并独立衰减")
+	controlled._tick_active_statuses(0.5)
+	harness._expect(controlled.shield_hp == 0 and controlled.hp == 1000, "冻结眩晕不阻止恢复盾自然到期回血")
+	controlled.free()

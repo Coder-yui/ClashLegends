@@ -120,13 +120,13 @@ func _review_card(id: String, team: int, form: String) -> void:
 	_set_behavior(false, false)
 	await _capture_exit("move_exit_idle")
 	if animations.has("haste_move"):
-		unit.active_speed_multiplier = 1.5
+		unit.apply_active_buff(100.0, 1.5, 1.0, 1.0)
 		_set_behavior(false, true)
 		_advance(0.4)
 		await _capture("haste_move_mid")
 		_set_behavior(false, false)
 		await _capture_exit("haste_move_exit_idle")
-		unit.active_speed_multiplier = 1.0
+		unit.buffs.clear_family(&"buff")
 	var attacks := _list(animations.get("attack", []))
 	if String(animations.get("attack_loop", "")) != "":
 		attacks = [animations.attack_loop]

@@ -4,6 +4,18 @@ func run(harness: SceneTree) -> void:
 	var main = load("res://scenes/main.tscn").instantiate()
 	harness.root.add_child(main)
 	harness.current_scene = main
+	var capture_dir := ""
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--network-render-dir="): capture_dir = arg.trim_prefix("--network-render-dir=")
+	var recorder: AudioEffectRecord
+	var recording_slot := -1
+	var captured: Dictionary = {}
+	if not capture_dir.is_empty():
+		DirAccess.make_dir_recursive_absolute(capture_dir)
+		recorder = AudioEffectRecord.new()
+		recording_slot = AudioServer.get_bus_effect_count(0)
+		AudioServer.add_bus_effect(0, recorder)
+		recorder.set_recording_active(true)
 	var double_nexus := OS.get_environment("CLASH_TEST_DOUBLE_NEXUS") == "1"
 	var result_cues: Array[StringName] = []
 	main._audio_manager.cue_played.connect(func(card, cue, _pos):
@@ -22,12 +34,27 @@ func run(harness: SceneTree) -> void:
 	var outsider_rejected := false
 	var outsider_disconnected: Array[bool] = [false]
 	var stable_callback := false
+	var status_case: Dictionary = {}
+	var status_pending_seen := false
+	var status_checked := false
+	var status_passed := false
 	while Time.get_ticks_msec() - start < 20000:
 		await harness.process_frame
 		if main.mode == "host" and main._match_started and not shields_added:
 			main._towers[0].add_shield(300, 2, true)
 			main._towers[0].add_shield(300, 8)
 			shields_added = true
+		if main.mode == "host" and main._match_started and main._sim_tick_id >= 10 and status_case.is_empty():
+			status_case = _begin_status_case(main)
+		if main.mode == "host" and not status_case.is_empty():
+			var gnar: Unit = status_case.gnar
+			if gnar.is_frozen() and gnar.pending_form_generation == gnar.form_change_serial and gnar.transform_hit_count == 6:
+				status_pending_seen = true
+			if main._sim_tick_id >= 48 and not status_checked:
+				status_checked = true
+				status_passed = status_pending_seen and gnar.form_index == 1 and gnar.is_stunned() and gnar.pending_form_generation == -1
+				status_passed = status_passed and status_case.star_target.hp == status_case.star_target.max_hp - 120 and status_case.frozen_target.hp == status_case.frozen_target.max_hp and status_case.stunned_target.hp < status_case.stunned_target.max_hp
+				print("[NETWORK_STATUS] ", {"passed": status_passed, "pending_seen": status_pending_seen, "form": gnar.form_index, "star_hp": status_case.star_target.hp, "frozen_hp": status_case.frozen_target.hp, "stunned_hp": status_case.stunned_target.hp})
 		if main.mode == "client" and main._match_started and main.get_estimated_server_tick() >= 5 and not sent_requests:
 			sent_requests = true
 			var epoch: String = main._session.session_id
@@ -70,6 +97,7 @@ func run(harness: SceneTree) -> void:
 			expired_id = building.net_id
 			boundary_unit = main._spawn_unit(0, "masteryi", Vector2(480, 850), 0)
 			boundary_unit.apply_knockback(Vector2(400, 850), 40, 0.4)
+			boundary_unit.freeze(0.05)
 		if main.mode == "host" and main._sim_tick_id >= 42 and not takeover_applied and is_instance_valid(boundary_unit):
 			takeover_applied = true
 			main._combat.begin_batch(main._sim_tick_id, "network_boundary_takeover")
@@ -83,17 +111,31 @@ func run(harness: SceneTree) -> void:
 			main.launch_attack(main._towers[0], main._king_enemy, 100000.0, 100000.0, 0.0, 0.0, Color.WHITE)
 			if double_nexus:
 				main.launch_attack(main._towers[2], main._king_player, 100000.0, 100000.0, 0.0, 0.0, Color.WHITE)
+		if not capture_dir.is_empty() and main._match_started:
+			var tick: int = main.get_authoritative_server_tick()
+			for checkpoint in [12, 32, 50]:
+				if tick >= checkpoint and not captured.has(checkpoint):
+					captured[checkpoint] = tick
+					await RenderingServer.frame_post_draw
+					harness.root.get_texture().get_image().save_png(capture_dir.path_join("%s-status-%d.png" % [main.mode, checkpoint]))
 		if main.game_over:
 			break
 	if outsider != null:
 		outsider.close()
 	var result := {"schema": 1, "role": main.mode, "passed": main.game_over}
+	if recorder != null:
+		recorder.set_recording_active(false)
+		var wav := recorder.get_recording()
+		result["audio_recorded"] = wav != null and not wav.data.is_empty() and wav.save_to_wav(capture_dir.path_join(main.mode + "-status.wav")) == OK
+		result["capture_ticks"] = captured
+		AudioServer.remove_bus_effect(0, recording_slot)
 	if main.game_over:
 		result["session_id"] = main._terminal_result.session_id
 		result["final_tick"] = main._terminal_result.final_tick
 		result["winner_team"] = main._terminal_result.winner_team
 		result["reason"] = main._terminal_result.reason
 		result["tower_hp"] = main._towers.map(func(t): return t.hp)
+		result["tower_controls"] = main._towers.map(func(t): return [t.frozen_timer > 0, t.control.stun_timer > 0])
 		result["tower_shields"] = main._towers.map(func(t): return [snappedf(t.get_shield_ratio(), 0.000001), snappedf(t.get_shield_capacity_ratio(), 0.000001)])
 		result["audio_stopped"] = main._audio_manager.battle_audio_stopped()
 		var units: Array = []
@@ -103,7 +145,7 @@ func run(harness: SceneTree) -> void:
 		for id in ids:
 			var unit: Unit = registry[id]
 			var pos := unit.net_target_pos if main.mode == "client" else unit.global_position
-			units.append([id, unit.card_id, unit.hp, snappedf(pos.x, 0.01), snappedf(pos.y, 0.01), snappedf(unit.get_shield_ratio(), 0.000001), snappedf(unit.get_shield_capacity_ratio(), 0.000001)])
+			units.append([id, unit.card_id, unit.hp, snappedf(pos.x, 0.01), snappedf(pos.y, 0.01), snappedf(unit.get_shield_ratio(), 0.000001), snappedf(unit.get_shield_capacity_ratio(), 0.000001), unit.form_index, unit.net_form_change_serial if main.mode == "client" else unit.form_change_serial, unit.get_attack_visual_serial(), unit.action_cancel_serial, unit.cancelled_visual_serial])
 		result["units"] = units
 		result["passed"] = result.audio_stopped and result.winner_team == (-1 if double_nexus else 0) and main._king_enemy.hp == 0.0 and not result.session_id.is_empty()
 		var session_guards: bool = sent_requests and sent_skill if main.mode == "client" else outsider_rejected and stable_callback and main._session.last_request_id == 2 and main.get_authoritative_queue(1).back() == "garen" and interrupted_skill
@@ -111,7 +153,8 @@ func run(harness: SceneTree) -> void:
 		session_guards = session_guards and result.remote_elixir == 1.0
 		result["session_guards"] = session_guards
 		if main.mode == "host":
-			result["passed"] = result.passed and takeover_applied and not main._net_units.has(expired_id)
+			result["status_rules"] = status_checked and status_passed
+			result["passed"] = result.passed and status_checked and status_passed and takeover_applied and not main._net_units.has(expired_id)
 			result["boundary_lifecycle"] = takeover_applied and not main._net_units.has(expired_id)
 			result["request_sequence"] = main._session.last_request_id
 			result["outsider_rejected"] = outsider_rejected
@@ -137,9 +180,45 @@ func run(harness: SceneTree) -> void:
 		result["result_cues"] = result_cues
 		result["double_nexus"] = double_nexus
 		result["passed"] = result.passed and result.audio_sequence
+	if recorder != null: result["passed"] = result.passed and result.audio_recorded and captured.size() == 3
 	print("[NETWORK_RESULT] " + JSON.stringify(result))
 	# 留出可靠结果送达和音频线程释放的窗口，然后关闭自己的 ENet peer。
 	await harness.create_timer(0.5).timeout
 	main.free()
 	await harness.create_timer(0.25).timeout
 	harness.quit(0 if result.passed else 1)
+
+## 使用正式创建、弹体和技能排程；主机断言规则，终局单位列表由执行器逐项对比双端。
+func _begin_status_case(main: Node2D) -> Dictionary:
+	for tower in main._towers: tower.can_attack = false
+	main._towers[0].freeze(10)
+	main._towers[1].stun(10)
+	var gnar: Unit = main._spawn_unit(0, "gnar", Vector2(80, 1000), 0)
+	var gnar_target := _status_target(main, 1, Vector2(80, 900))
+	gnar.freeze(0.6)
+	gnar.stun(10)
+	for i in 6: main.launch_attack(gnar, gnar_target, 1, 1000, 0, 0, Color.WHITE)
+	var star: Unit = main._spawn_unit(0, "aurelionsol", Vector2(360, 1000), 0)
+	var star_target := _status_target(main, 1, Vector2(360, 825))
+	var star_skill: Dictionary = CardDB.active_skills_for("aurelionsol")[0].duplicate(true)
+	star_skill["cast_forward"] = Vector2.UP
+	main._start_active_skill_cast(star, star_skill)
+	star.freeze(10)
+	star.apply_knockback(star.position + Vector2.LEFT * 40, 100, 0.4)
+	var targets: Array[Unit] = []
+	for frozen in [false, true]:
+		var origin := Vector2(600, 1000 if not frozen else 300)
+		var caster: Unit = main._spawn_unit(0, "sett", origin, 0)
+		var target := _status_target(main, 1, origin + Vector2(0, -80))
+		var skill: Dictionary = CardDB.active_skills_for("sett")[0].duplicate(true)
+		skill["cast_forward"] = Vector2.UP
+		main._start_active_skill_cast(caster, skill)
+		if frozen: caster.freeze(10)
+		else: caster.stun(10)
+		targets.append(target)
+	return {"gnar": gnar, "star_target": star_target, "stunned_target": targets[0], "frozen_target": targets[1]}
+
+func _status_target(main: Node2D, team: int, position: Vector2) -> Unit:
+	var target: Unit = main._spawn_unit(team, "super_minion", position, 0)
+	target.freeze(10)
+	return target

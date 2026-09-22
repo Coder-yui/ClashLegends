@@ -35,8 +35,8 @@ func is_ground_segment_walkable(from: Vector2, to: Vector2, mover_radius: float,
 func find_ground_path(from: Vector2, goal: Vector2, target: Node2D, mover_radius: float) -> PackedVector2Array:
 	return _controller.find_ground_path(from, goal, target, mover_radius)
 
-func launch_attack(attacker: Node2D, target: Node2D, amount: float, projectile_speed: float, splash_radius: float, knockback: float, projectile_color: Color, effects: Dictionary = {}) -> void:
-	_controller.launch_attack(attacker, target, amount, projectile_speed, splash_radius, knockback, projectile_color, effects)
+func launch_attack(attacker: Node2D, target: Node2D, amount: float, projectile_speed: float, splash_radius: float, knockback: float, projectile_color: Color, effects: Dictionary = {}) -> bool:
+	return _controller.launch_attack(attacker, target, amount, projectile_speed, splash_radius, knockback, projectile_color, effects)
 
 ## 所有持续伤害共用的权威脉冲入口：目标筛选/计时由调用方负责，护盾、隐匿、死亡和命中回调由战场统一结算。
 ## counts_as_attack 仅供龙王吐息这类持续普攻使用；主动技能伤害传 false，避免给普攻资源或命中回血。
@@ -70,3 +70,6 @@ func damage_batch() -> CombatResolver:
 
 func present_restoration_heal(unit: Unit) -> void:
 	_controller.present_restoration_heal(unit)
+
+func notify_action_cancelled(unit: Unit, payload: Dictionary) -> void:
+	_controller.notify_action_cancelled(unit, payload)

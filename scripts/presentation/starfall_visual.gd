@@ -9,11 +9,15 @@ static func tint(color: Color, alpha: float) -> Color:
 	return Color(color.r, color.g, color.b, clampf(alpha, 0.0, 1.0))
 
 static func star(view: Node2D, pos: Vector2, size: float, color: Color) -> void:
+	# 淡入/淡出端点不提交重合或低于像素精度的多边形。
+	if size < 0.25 or color.a < 0.001: return
+	# 在单位坐标中剖分，避免微小星形叠加大世界坐标后的浮点消减。
+	view.draw_set_transform(pos, 0.0, Vector2(size, size))
 	view.draw_colored_polygon(PackedVector2Array([
-		pos + Vector2(0, -size), pos + Vector2(size * 0.18, -size * 0.18),
-		pos + Vector2(size * 0.65, 0), pos + Vector2(size * 0.18, size * 0.18),
-		pos + Vector2(0, size), pos + Vector2(-size * 0.18, size * 0.18),
-		pos + Vector2(-size * 0.65, 0), pos + Vector2(-size * 0.18, -size * 0.18)]), color)
+		Vector2(0, -1), Vector2(0.18, -0.18), Vector2(0.65, 0), Vector2(0.18, 0.18),
+		Vector2(0, 1), Vector2(-0.18, 0.18), Vector2(-0.65, 0), Vector2(-0.18, -0.18)]), color)
+	view.draw_set_transform(Vector2.ZERO)
+
 
 static func glow(view: Node2D, pos: Vector2, radius: float, color: Color, alpha: float) -> void:
 	for layer in range(6, 0, -1):
@@ -71,6 +75,7 @@ static func draw_effect(view: Node2D, effect: Dictionary) -> void:
 	var height := radius * 2.6 * (1.0 - fall)
 	var core := center + Vector2(0, -height)
 	var core_size := (18.0 if strong else 11.0) * appear
+	if core_size < 0.25: return
 	var tail := Vector2(-24, -110) * (0.25 + 0.75 * fall)
 	for layer in range(5, 0, -1):
 		var width := core_size * layer * 0.48

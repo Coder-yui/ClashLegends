@@ -156,6 +156,9 @@ func attach_unit(unit: Unit, stats: Dictionary) -> void:
 		"continuous_active": false,
 		"idle_active": false,
 	}
+	var cancel_callback := _on_action_cancelled.bind(unit.get_instance_id())
+	if not unit.action_cancelled.is_connected(cancel_callback):
+		unit.action_cancelled.connect(cancel_callback)
 	var death_callback := _on_unit_death.bind(unit.get_instance_id())
 	if not unit.died.is_connected(death_callback):
 		unit.died.connect(death_callback)
@@ -273,9 +276,7 @@ func _tick_attached_units() -> void:
 		# 和模型读取同一持续目标视图，客户端只消费现有快照。
 		# 控制期间保留音轨所有权并暂停；技能、丢失目标和死亡释放。
 		var controlled := state.frozen or state.stunned
-		var breathing: bool = unit.has_continuous_visual_target() and not controlled and not state.dead and state.action_time_left <= 0.0
-		if controlled and bool(entry.continuous_active) and not state.dead and state.action_time_left <= 0.0:
-			breathing = true
+		var breathing: bool = unit.has_continuous_visual_target() and not controlled and not state.dead and state.action_time_left <= 0.0 and state.attack_serial > int(unit.last_action_cancellation.get("attack", -1))
 		if breathing and not bool(entry.continuous_active):
 			play_event(unit, &"continuous_attack:start", unit.get_visual_screen_position())
 			play_event(unit, &"continuous_attack:release", unit.get_visual_screen_position())
@@ -285,6 +286,7 @@ func _tick_attached_units() -> void:
 			play_event(unit, &"continuous_attack:end", unit.get_visual_screen_position())
 		entry.continuous_active = breathing
 		var serial := state.attack_serial
+		var attack_cancelled := serial <= int(unit.last_action_cancellation.get("attack", -1))
 		var empowered_serial: int = unit.get_empowered_attack_visual_serial()
 		var ready: bool = unit.is_empowered_attack_ready_visual()
 		if ready and not bool(entry.empowered_ready):
@@ -298,22 +300,22 @@ func _tick_attached_units() -> void:
 		if swing_delay > 0.0 and (state.dead or state.action_time_left > 0.0 or (state.behavior != 3 and not controlled)):
 			entry.last_swing_serial = serial
 		# 技能可在当前攻击前摇中强化这一击；同一个攻击序号也需要切换声音。
-		if serial > 0 and empowered_serial == serial and empowered_serial != int(entry.last_empowered_serial):
+		if not attack_cancelled and serial > 0 and empowered_serial == serial and empowered_serial != int(entry.last_empowered_serial):
 			entry.last_swing_serial = serial
 			if not play_event(unit, &"empowered_swing", unit.get_visual_screen_position()):
-				_play_attack_swing(String(entry.card_id), entry.audio, unit.get_visual_screen_position(), serial)
-		elif serial > 0 and serial != int(entry.last_swing_serial) and swing_due and (swing_delay <= 0.0 or not controlled):
+				_play_attack_swing(String(entry.card_id), entry.audio, unit.get_visual_screen_position(), serial, {"unit": instance_id, "kind": "attack", "serial": serial})
+		elif not attack_cancelled and serial > 0 and serial != int(entry.last_swing_serial) and swing_due and (swing_delay <= 0.0 or not controlled):
 			entry.last_swing_serial = serial
 			if unit.is_attack_visual_first_strike():
 				if not play_event(unit, &"first_strike:cast", unit.get_visual_screen_position()):
-					_play_attack_swing(String(entry.card_id), entry.audio, unit.get_visual_screen_position(), serial)
+					_play_attack_swing(String(entry.card_id), entry.audio, unit.get_visual_screen_position(), serial, {"unit": instance_id, "kind": "attack", "serial": serial})
 			else:
-				_play_attack_swing(String(entry.card_id), entry.audio, unit.get_visual_screen_position(), serial)
+				_play_attack_swing(String(entry.card_id), entry.audio, unit.get_visual_screen_position(), serial, {"unit": instance_id, "kind": "attack", "serial": serial})
 		entry.last_attack_serial = serial
 		entry.last_empowered_serial = empowered_serial
 		var action_serial := state.action_serial
 		var action := state.action
-		var active := state.action_time_left > 0.0
+		var active := state.action_time_left > 0.0 and not state.frozen
 		if StringName(entry.active_action) != &"" and (not active or action_serial != int(entry.action_serial)):
 			_stop_sustain(instance_id, &"action")
 			play_event(unit, StringName(String(entry.active_action) + ":end"), unit.get_visual_screen_position())
@@ -326,7 +328,7 @@ func _tick_attached_units() -> void:
 			play_event(unit, StringName(String(action) + ":voice"), unit.get_visual_screen_position())
 			_start_sustain(unit, entry, action)
 			entry.active_action = action
-		if active and not controlled:
+		if active:
 			var elapsed := maxf(0.0, unit.get_visual_action_duration() - state.action_time_left)
 			for cue in entry.audio.get("events", {}):
 				var event: Dictionary = entry.audio.events[cue]
@@ -359,7 +361,7 @@ func _tick_attached_units() -> void:
 			var sustained: AudioStreamPlayer2D = _sustain_players.get(_sustain_key(instance_id, layer))
 			if sustained != null:
 				sustained.global_position = unit.get_visual_screen_position()
-				sustained.stream_paused = layer != &"revival" and (unit.is_frozen() or unit.is_stunned())
+				sustained.stream_paused = false
 		entry.active_buff = active_buff
 		entry.action_serial = action_serial
 		_unit_entries[instance_id] = entry
@@ -426,6 +428,40 @@ func complete_revival(unit: Unit) -> void:
 	_sustain_players[tail_key] = player
 	player.finished.connect(_on_sustain_finished.bind(tail_key, player))
 
+func _event_owner(unit: Unit, cue: StringName) -> Dictionary:
+	var name := String(cue)
+	if cue in [&"empowered_swing", &"first_strike:cast", &"attack_swing", &"continuous_attack:start", &"continuous_attack:release"]:
+		return {"unit": unit.get_instance_id(), "kind": "attack", "serial": unit.get_attack_visual_serial()}
+	var phase := name.get_slice(":", 1)
+	if name.get_slice(":", 0) in ["active_buff", "empowered_buff", "shroud", "revival"] or cue in [&"empowered_ready", &"resource_full", &"passive_heal", &"active:cast"]:
+		return {}
+	if phase in ["start", "voice", "sustain", "release", "end"] and not name.begins_with("continuous_attack"):
+		return {"unit": unit.get_instance_id(), "kind": "action", "serial": unit.get_visual_action_serial()}
+	return {}
+
+func _on_action_cancelled(payload: Dictionary, instance_id: int) -> void:
+	var freeze := String(payload.get("reason", "")) == "freeze"
+	for player in _world_players:
+		var owner: Dictionary = player.get_meta("action_owner", {})
+		if int(owner.get("unit", -1)) != instance_id:
+			continue
+		var kind := String(owner.get("kind", ""))
+		if (kind == "attack" or freeze) and int(owner.get("serial", 0)) <= int(payload.get(kind, 0)):
+			player.stop()
+			player.stream = null
+	if _unit_entries.has(instance_id):
+		var entry: Dictionary = _unit_entries[instance_id]
+		if int(entry.last_attack_serial) <= int(payload.get("attack", 0)):
+			_stop_sustain(instance_id, &"attack")
+			entry.continuous_active = false
+		entry.last_swing_serial = maxi(int(entry.last_swing_serial), int(payload.get("attack", 0)))
+		entry.last_empowered_serial = maxi(int(entry.last_empowered_serial), int(payload.get("attack", 0)))
+		if freeze and int(entry.action_serial) <= int(payload.get("action", 0)):
+			_stop_sustain(instance_id, &"action")
+			entry.active_action = &""
+			entry.action_serial = maxi(int(entry.action_serial), int(payload.get("action", 0)))
+
+
 func _detach_unit(instance_id: int) -> void:
 	_stop_sustain(instance_id)
 	_unit_entries.erase(instance_id)
@@ -463,7 +499,15 @@ func play_event(unit: Unit, cue: StringName, position: Vector2, attack_serial: i
 			var serial := unit.presentation_state().attack_serial if attack_serial < 0 else attack_serial
 			var index := posmod(maxi(serial, 1) - 1, segments.size())
 			return _play_pool(String(entry.card_id), cue, segments[index], position, 0.0, &"Combat")
-	return _play_pool(String(entry.card_id), cue, event.get("pool", []), position, float(event.get("volume_db", 0.0)), StringName(event.get("bus", "Combat")))
+	# 独立结果创建声由权威结果事件派发，不再随本体动作重复启动。
+	if event.get("owner", "") == "result": return false
+	var owner := _event_owner(unit, cue)
+	if not owner.is_empty():
+		var cancelled := unit.last_action_cancellation
+		var key := "attack" if owner.kind == "attack" else "action"
+		if not cancelled.is_empty() and ((key == "attack" and int(owner.serial) <= int(cancelled.attack)) or (key == "action" and int(owner.serial) <= unit.cancelled_visual_serial)):
+			return false
+	return _play_pool(String(entry.card_id), cue, event.get("pool", []), position, float(event.get("volume_db", 0.0)), StringName(event.get("bus", "Combat")), owner)
 ## 真实伤害结算成功后由 Main 调用。position 是命中点，来源单位只用于选择声音配置。
 ## first_strike 为权威攻击效果携带的首次命中标记；有专用素材时替换普通命中音。
 func play_attack_hit(unit: Unit, position: Vector2, first_strike: bool = false) -> bool:
@@ -552,7 +596,7 @@ func _tick_preview_hits(delta: float) -> void:
 		_play_pool(pending.card_id, pending.cue, pending.pool, pending.position, pending.volume)
 	_preview_hit_queue.assign(waiting)
 
-func _play_attack_swing(card_id: String, audio: Dictionary, position: Vector2, serial: int) -> bool:
+func _play_attack_swing(card_id: String, audio: Dictionary, position: Vector2, serial: int, owner: Dictionary = {}) -> bool:
 	var configured = audio.get("attack_swing", [])
 	if not configured is Array or (configured as Array).is_empty():
 		return false
@@ -563,7 +607,7 @@ func _play_attack_swing(card_id: String, audio: Dictionary, position: Vector2, s
 		&"attack_swing",
 		pool,
 		position,
-		float(audio.get("attack_swing_volume_db", -5.0))
+		float(audio.get("attack_swing_volume_db", -5.0)), COMBAT_BUS, owner
 	)
 
 ## 弹体独占播放器，不占用/回收短音池，命中一枚只停止该枚的发射尾音。
@@ -612,7 +656,7 @@ func clear_projectile_launch_audio() -> void:
 	for id in _projectile_launch_players.keys():
 		stop_projectile_launch(int(id))
 
-func _play_pool(card_id: String, cue: StringName, configured: Variant, position: Vector2, volume_db: float, bus: StringName = COMBAT_BUS) -> bool:
+func _play_pool(card_id: String, cue: StringName, configured: Variant, position: Vector2, volume_db: float, bus: StringName = COMBAT_BUS, owner: Dictionary = {}) -> bool:
 	if _battle_ended or _battle_paused:
 		return false
 	if not configured is Array or (configured as Array).is_empty():
@@ -630,6 +674,7 @@ func _play_pool(card_id: String, cue: StringName, configured: Variant, position:
 	player.bus = bus
 	player.volume_db = volume_db
 	player.stream = stream
+	player.set_meta("action_owner", owner)
 	player.play()
 	cue_played.emit(card_id, cue, position)
 	_record_budget("short", "played")

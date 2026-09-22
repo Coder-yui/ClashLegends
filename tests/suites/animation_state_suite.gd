@@ -39,7 +39,7 @@ func _check_control_interruptions() -> void:
 		var before := player.current_animation_position
 		sett.stun(0.2)
 		sett_view._process(0.0)
-		var paused := is_zero_approx(player.speed_scale) and is_equal_approx(player.current_animation_position, before)
+		var continues := player.speed_scale > 0.0 and is_equal_approx(player.current_animation_position, before)
 		sett.control.stun_timer = 0.0
 		sett_view._process(0.0)
 		var first_section_restored := (
@@ -47,12 +47,10 @@ func _check_control_interruptions() -> void:
 			and is_equal_approx(player.get_section_start_time(), 0.0)
 			and is_equal_approx(player.get_section_end_time(), 0.8)
 			and is_equal_approx(player.current_animation_position, before)
-			and sett_view._last_clip_transition_kind == &"action_out"
-			and is_equal_approx(sett_view._last_clip_blend_time, 0.1)
 		)
 		player.advance(0.1)
 		var first_section_resumed := is_equal_approx(player.current_animation_position, before + 0.1)
-		sett_ok = paused and first_section_restored and first_section_resumed
+		sett_ok = continues and first_section_restored and first_section_resumed
 		# 第二段使用与第一段相同的源动画，但必须恢复到 0.8 秒后的 section 和倍率。
 		sett.play_visual_action(&"active", 1.4)
 		sett_view._sync_visual(false, 0.0)
@@ -69,8 +67,6 @@ func _check_control_interruptions() -> void:
 			and is_equal_approx(player.get_section_end_time(), 1.5666666)
 			and is_equal_approx(player.current_animation_position, second_before)
 			and is_equal_approx(player.get_playing_speed(), second_speed)
-			and sett_view._last_clip_transition_kind == &"action_out"
-			and is_equal_approx(sett_view._last_clip_blend_time, 0.1)
 		)
 		sett_ok = sett_ok and second_section_restored
 		# 工作台的 2 秒眩晕会把 W 的权威时间一起暂停；恢复后若播放器先停而
@@ -83,7 +79,7 @@ func _check_control_interruptions() -> void:
 	if sett_view != null:
 		sett_view.free()
 	sett.free()
-	_harness._expect(sett_ok, "腕豪 W 被眩晕打断后按原 section/倍率恢复，第一段不会越界播放整条源动画")
+	_harness._expect(sett_ok, "腕豪W受晕持续播放原section与倍率，裁剪段不会越界且正常结束")
 
 	var gwen_stats: Dictionary = CardDB.get_card("gwen").duplicate(true)
 	gwen_stats["deploy_time"] = 0.0
@@ -99,22 +95,18 @@ func _check_control_interruptions() -> void:
 		var player := gwen_view._animation_player
 		player.advance(0.2)
 		var before := player.current_animation_position
-		var speed := player.get_playing_speed()
 		gwen.freeze(0.2)
 		gwen_view._process(0.0)
-		gwen._visual_action_time_left = 1.3
+		var frozen_pose := is_equal_approx(player.current_animation_position, before) and player.speed_scale == 0
+		gwen._visual_action_time_left = 0.0
 		gwen.control.frozen_timer = 0.0
 		gwen_view._process(0.0)
-		gwen_ok = (
-			player.current_animation == "Spell1_0"
-			and is_equal_approx(player.get_section_end_time(), 0.7888886)
-			and is_equal_approx(player.current_animation_position, before)
-			and is_equal_approx(player.get_playing_speed(), speed)
-		)
+		gwen_ok = frozen_pose and not gwen_view._playing_visual_action and player.current_animation != "Spell1_0"
+
 	if gwen_view != null:
 		gwen_view.free()
 	gwen.free()
-	_harness._expect(gwen_ok, "格温多段快刀乱剪被冻结后按权威剩余时间恢复当前裁剪段，不跳到整段源动作")
+	_harness._expect(gwen_ok, "格温施法冻结保持当前裁剪姿势，解除后进入合法待机不续剪击")
 
 	var xin_stats: Dictionary = CardDB.get_card("xin").duplicate(true)
 	xin_stats["deploy_time"] = 0.0
@@ -135,16 +127,12 @@ func _check_control_interruptions() -> void:
 		xin_view._process(0.0)
 		xin.control.stun_timer = 0.0
 		xin_view._process(0.0)
-		xin_ok = (
-			player.current_animation == "Passive_AA_01_XinZhaoRework_anm"
-			and is_equal_approx(player.get_section_start_time(), 0.0)
-			and is_equal_approx(player.get_section_end_time(), 0.3)
-			and is_equal_approx(player.current_animation_position, before)
-		)
+		xin_ok = not xin_view._playing_attack and player.current_animation != "Passive_AA_01_XinZhaoRework_anm" and xin.attack_timeline.windup == 0
+
 	if xin_view != null:
 		xin_view.free()
 	xin.free()
-	_harness._expect(xin_ok, "赵信第三击被眩晕打断后保留 0–0.3 秒前段 section，不恢复整条 Passive 动作")
+	_harness._expect(xin_ok, "赵信第三击前摇受晕后取消旧片段与计时，不续播被动挥击")
 
 func _check_locomotion_attack_interrupts() -> void:
 	var stats := CardDB.get_card("gnar").duplicate(true)
@@ -480,8 +468,7 @@ func _check_cast_policies_and_snapshot() -> void:
 	stationary.blind_attack_charges = 2
 	stationary.add_shield(200.0, 1.0)
 	stationary.shields.absorb(75.0)
-	stationary.active_speed_multiplier = 1.5
-	stationary.active_attack_speed_multiplier = 1.4
+	stationary.apply_active_buff(100.0, 1.5, 1.0, 1.4)
 	stationary.active_ability_id = 9001
 	_main._active_skills[stationary.active_ability_id] = {
 		"unit": stationary, "uses_remaining": 2, "cooldown_left": 1.25,

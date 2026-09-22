@@ -144,7 +144,7 @@ func run(harness: Object, main: Node2D) -> void:
 	source.control.stun_timer = Unit.SIM_DT * 2.0
 	step(source, 3)
 	_expect(source.structure_rush.remaining >= 2.4, "眩晕同样重置准备时间")
-	step(source, 49)
+	step(source, 48)
 	_expect(source.structure_rush.phase == StructureRushState.Phase.PREPARING, "准备不能提前进入冲撞")
 	step(source)
 	_expect(source.structure_rush.phase == StructureRushState.Phase.DASHING and source.is_active_skill_rush_locked() and source.get_action_permissions_visual() == 0, "准备满2.5秒开始冲撞且主动技能继续锁定")
@@ -284,12 +284,12 @@ func run(harness: Object, main: Node2D) -> void:
 	_expect(cues.is_empty(), "控制期间不启动动作定时音")
 	source.control.frozen_timer = 0.0
 	audio._process(0.0)
-	_expect(cues == [&"spinning_punch:start"], "控制解除后按动作进度启动声音")
+	_expect(cues.is_empty(), "冰冻取消动作后解控不补播定时声音")
 	source._visual_action_time_left = 2.75
 	audio._process(0.0)
 	source._visual_action_time_left = 2.69
 	audio._process(0.0)
-	_expect(cues.size() == 1, "同序号进度回调不重播已播放节点")
+	_expect(cues.is_empty(), "取消动作的旧进度回调不能恢复声音")
 	source.play_visual_action(&"spinning_punch", 3.0)
 	source._visual_action_time_left = 1.0
 	cues.clear()

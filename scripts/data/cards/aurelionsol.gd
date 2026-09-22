@@ -16,7 +16,7 @@ static func definition() -> Dictionary:
 			"is_air": true, "building_only": false, "can_attack_air": true,
 			"is_continuous_attack": true,  # 持续伤害：固定Tick累计 damage*dt，按目标保留余量
 			"active_skills": [{
-					"name": "星落/天瀑", "kind": "forward_area",
+					"name": "星落/天瀑", "kind": "forward_area", "independent_on_creation": true,
 					"cost": 2, "max_uses": 1, "cooldown": 10.0,
 					"description": "击杀敌方单位充能，最多 5 层。向前方圆形区域降下星辰并眩晕；满层升级为伤害和眩晕提高 50% 的天瀑，且只有天瀑落地后会产生扩散至全场的冲击波。",
 					"uses_skill_resource": true,
@@ -91,9 +91,9 @@ static func definition() -> Dictionary:
 			"events": {
 				"deploy:start": {"pool": ["res://assets/audio/units/aurelionsol/play_sfx_aurelionsol_respawn3d_buffactivate.wav"], "volume_db": 0.0, "bus": "Combat"},
 				"continuous_attack:release": {"pool": ["res://assets/audio/units/aurelionsol/play_sfx_aurelionsol_aurelionsolq_missilecast_r1.wav", "res://assets/audio/units/aurelionsol/play_sfx_aurelionsol_aurelionsolq_missilecast_r2.wav", "res://assets/audio/units/aurelionsol/play_sfx_aurelionsol_aurelionsolq_missilecast_r3.wav"], "volume_db": 0.0, "bus": "Combat"},
-				"active:start": {"pool": ["res://assets/audio/units/aurelionsol/play_sfx_aurelionsol_aurelionsolrmissile_missilelaunch.wav"], "volume_db": 0.0, "bus": "Combat"},
+				"active:start": {"owner": "result", "pool": ["res://assets/audio/units/aurelionsol/play_sfx_aurelionsol_aurelionsolrmissile_missilelaunch.wav"], "volume_db": 0.0, "bus": "Combat"},
 				"active:impact": {"pool": ["res://assets/audio/units/aurelionsol/play_sfx_aurelionsol_aurelionsolrmissile_hit_r1.wav", "res://assets/audio/units/aurelionsol/play_sfx_aurelionsol_aurelionsolrmissile_hit_r2.wav", "res://assets/audio/units/aurelionsol/play_sfx_aurelionsol_aurelionsolrmissile_hit_r3.wav"], "volume_db": 0.0, "bus": "Combat"},
-				"active_strong:start": {"pool": ["res://assets/audio/units/aurelionsol/play_sfx_aurelionsol_aurelionsolr2missile_missilelaunch_super.wav"], "volume_db": 0.0, "bus": "Combat"},
+				"active_strong:start": {"owner": "result", "pool": ["res://assets/audio/units/aurelionsol/play_sfx_aurelionsol_aurelionsolr2missile_missilelaunch_super.wav"], "volume_db": 0.0, "bus": "Combat"},
 				"active_strong:impact": {"pool": ["res://assets/audio/units/aurelionsol/play_sfx_aurelionsol_aurelionsolr2missile_hit_super_s.wav"], "volume_db": 0.0, "bus": "Combat"},
 				"active_strong:wave_hit": {"pool": ["res://assets/audio/units/aurelionsol/play_sfx_aurelionsol_aurelionsolr_hit_shockwave_r1.wav", "res://assets/audio/units/aurelionsol/play_sfx_aurelionsol_aurelionsolr_hit_shockwave_r2.wav", "res://assets/audio/units/aurelionsol/play_sfx_aurelionsol_aurelionsolr_hit_shockwave_r3.wav"], "volume_db": 0.0, "bus": "Combat"},
 

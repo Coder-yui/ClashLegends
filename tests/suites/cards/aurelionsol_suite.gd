@@ -9,6 +9,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_aurelionsol_direct_retarget()
 	_check_starfall_and_falling_sky()
 	_check_star_visual_lifecycle()
+	_check_independent_star_result()
 
 func _check_starfall_and_falling_sky() -> void:
 	_main._active_skill_effect_system.clear()
@@ -348,11 +349,12 @@ func _check_star_visual_lifecycle() -> void:
 	var time_left: float = system.frontal_effects[0].timer
 	source.stun(0.5)
 	system.tick_visuals(0.2)
-	_expect(system.frontal_effects[0].timer == time_left, "眩晕暂停坠落预警，与尚未执行的技能同步")
+	_expect(is_equal_approx(system.frontal_effects[0].timer, time_left - 0.2), "眩晕不暂停独立星辰坠落")
 	source.take_damage(100000)
 	system.tick_visuals(0.05)
-	_expect(system.frontal_effects.is_empty(), "施法者死亡撤销预警，不能伪造落地爆闪")
+	_expect(system.frontal_effects.size() == 1 and is_equal_approx(system.frontal_effects[0].timer, time_left - 0.25), "施法者死亡后已创建星辰继续坠落")
 	source.free()
+	skill.erase("independent_result")
 	for strong in [false, true]:
 		system.clear()
 		source = _main._spawn_unit(0, "aurelionsol", Vector2(360, 1000), 0.0)
@@ -365,3 +367,41 @@ func _check_star_visual_lifecycle() -> void:
 		_expect(system.frontal_effects.is_empty(), "落地与冲击波表现自动消散")
 		source.free()
 	system.clear()
+
+func _check_independent_star_result() -> void:
+	for team in [0, 1]:
+		for remove_source in [false, true]:
+			_main._commands.impacts.clear()
+			_main._active_skill_effect_system.clear()
+			var source: Unit = _main._spawn_unit(team, "aurelionsol", Vector2(360, 1000), 0)
+			var target: Unit = _main._spawn_unit(1 - team, "garen", Vector2(360, 825), 0)
+			target.max_hp = 10000
+			target.hp = 10000
+			var skill: Dictionary = CardDB.active_skills_for("aurelionsol")[0].duplicate(true)
+			skill["cast_forward"] = Vector2.UP
+			_main._start_active_skill_cast(source, skill)
+			var pending: Dictionary = _main._commands.impacts[0].duplicate(true)
+			source.freeze(2.0)
+			source.position += Vector2(250, 0)
+			if remove_source: source.free()
+			_main._commands.tick_impacts(1.1)
+			_expect(target.hp == 10000, "独立星辰释放前一个Tick不提前伤害")
+			_main._commands.tick_impacts(0.05)
+			_expect(target.hp == 9880 and target.is_stunned(), "星辰创建后来源冻结/位移/销毁，固定落点仍恰好结算一次")
+			_main._commands.impacts.append(pending)
+			_main._commands.tick_impacts(2.0)
+			_expect(target.hp == 9880, "独立结果身份阻止重复落地伤害")
+			if is_instance_valid(source): source.free()
+			target.free()
+	_main._active_skill_effect_system.clear()
+	for rate in [1.0, 0.5]:
+		var source: Unit = _main._spawn_unit(0, "aurelionsol", Vector2(360, 900), 0)
+		var target: Unit = _main._spawn_unit(1, "garen", Vector2(360, 800), 0)
+		target.hp = 1000
+		source._target = target
+		source.apply_blind(10)
+		if rate < 1: source.apply_attack_speed_slow(3.0, rate)
+		for i in 40: source._attack(0.05)
+		_expect(source.blind_attack_charges == 0 and target.hp == 1000 - roundf(110 * rate), "持续普攻拒绝无意义致盲并读取完整有效攻速、保留伤害余量")
+		source.free()
+		target.free()

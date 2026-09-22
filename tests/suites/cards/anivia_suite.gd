@@ -82,6 +82,10 @@ func _check_frost_storm_zone() -> void:
 		"冰雪风暴不提前播放星体落点特效，在 Spell4 期间锁定三项操作并于 Impact 直接生成区域",
 	)
 	var after_initial := target.hp
+	phoenix.stun(2.0)
+	phoenix.freeze(2.0)
+	phoenix.apply_knockback(phoenix.position + Vector2.DOWN, 45.0, 0.4)
+	phoenix.position += Vector2.RIGHT * 300.0
 	_main._active_skill_effect_system.tick_effects(1.0)
 	var pulse_damage := after_initial - target.hp
 	_main._active_skill_effect_system.tick_effects(1.0)
@@ -89,10 +93,11 @@ func _check_frost_storm_zone() -> void:
 	_expect(
 		is_equal_approx(pulse_damage, 42.0)
 		and _main._active_skill_effect_system.continuous_area_effects.is_empty(),
-		"冰雪风暴区域每秒造成一次持续伤害，累计维持 3 秒后消失",
+		"冰雪风暴创建后不受施法者眩晕、冰冻、击退与移动影响，固定落点每秒伤害并在 3 秒后消失",
 	)
 
 	# 区域是固定落点；凤凰死亡后，已经创造的冰雪风暴仍应完成剩余寿命。
+	phoenix.position = Vector2(360.0, 1000.0)
 	var second_target: Unit = _spawn_dummy(Vector2(360.0, 875.0), 1)
 	_main._active_skill_effect_system.apply_forward_area(phoenix, skill, Vector2.UP)
 	var phoenix_died_visual := false

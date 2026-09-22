@@ -1,7 +1,7 @@
 extends "res://scripts/data/card_schema.gd"
 ## 所有语义/资源校验之前的类型阶段。字段白名单仍由 CardSchema 管理。
 const TEXT_FIELDS := ["rush_spawn_id", "name", "type", "description", "size_tier", "deploy_zone", "spawn_id", "spawn_side", "death_spawn_id", "death_replacement_id", "death_replacement_visual_transition", "timed_revival_id", "timed_revival_visual_transition", "active_buff_projectile_visual", "projectile_visual", "projectile_impact_visual", "deploy_sweep_name", "spell_kind", "active_name", "visual_active_buff_scene", "visual_scene_path", "kind", "visual_action", "shape", "full_resource_visual_action", "target_scope", "deployment_formation"]
-const BOOL_FIELDS := ["form_lifetime_after_transition", "form_refresh_on_kill", "selectable", "custom_radius", "is_air", "is_building", "building_only", "can_attack_air", "is_continuous_attack", "deploy_ignore_structures", "show_team_ring", "lifespan_hp_decay", "tower_ruin_foundation", "projectile_spawn_at_edge", "shield_decay", "shield_on_cast_start", "ignore_movement_slow", "ignore_attack_speed_slow", "ground_only", "fan_inner_arc", "projectile_stop_on_hit", "projectile_piercing", "uses_skill_resource", "cast_end_heal_requires_hit", "applies_on_hit_passive", "shockwave_full_only", "global_heal", "copy_member_buff"]
+const BOOL_FIELDS := ["form_lifetime_after_transition", "form_refresh_on_kill", "selectable", "custom_radius", "is_air", "is_building", "building_only", "can_attack_air", "is_continuous_attack", "deploy_ignore_structures", "show_team_ring", "lifespan_hp_decay", "tower_ruin_foundation", "projectile_spawn_at_edge", "shield_decay", "shield_on_cast_start", "independent_on_creation", "ignore_movement_slow", "ignore_attack_speed_slow", "ground_only", "fan_inner_arc", "projectile_stop_on_hit", "projectile_piercing", "uses_skill_resource", "cast_end_heal_requires_hit", "applies_on_hit_passive", "shockwave_full_only", "global_heal", "copy_member_buff"]
 const NUMERIC_ARRAY_FIELDS := ["attack_passive_multipliers", "attack_lifesteal_ratios", "attack_pattern", "attack_damage_multipliers", "attack_extra_hit_damage_multipliers", "attack_extra_hit_delays", "resource_damage_by_stacks", "resource_hit_damage_sequences", "resource_hit_delay_sequences"]
 
 static func validate(label: String, stats: Dictionary, errors: PackedStringArray, skill: bool = false) -> bool:
@@ -63,6 +63,7 @@ static func _audio(path: String, value: Variant, errors: PackedStringArray) -> v
 					var event: Dictionary = value[key][cue]
 					if event.has("pool"): array(event_path + ".pool", event.pool, "text", errors)
 					if event.has("bus"): check(event_path + ".bus", event.bus, "text", errors)
+					if event.has("owner"): check(event_path + ".owner", event.owner, "text", errors)
 					if event.has("volume_db"): check(event_path + ".volume_db", event.volume_db, "number", errors)
 					if event.has("action_time"): check(event_path + ".action_time", event.action_time, "number", errors)
 			"attack_swing", "attack_launch_by_segment", "attack_hit_by_segment":

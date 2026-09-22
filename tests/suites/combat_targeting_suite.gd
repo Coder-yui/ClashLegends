@@ -600,7 +600,7 @@ func _check_first_attack_and_reentry_timing() -> void:
 		dummy.position = Vector2(360, 760)
 		_main.add_child(unit)
 		_main.add_child(dummy)
-		unit.active_attack_speed_multiplier = rate
+		unit.apply_active_buff(100.0, 1.0, 1.0, rate)
 		unit.sim_tick(0.05)
 		var first_starts := unit.get_attack_visual_serial() == 1 and unit._attack_swing_count == 0
 		# 首次前摇未出手就失去目标；重新进圈仍没有历史冷却。

@@ -2,6 +2,7 @@ extends RefCounted
 
 func run(harness: Object) -> void:
 	_check_clock_budget(harness)
+	_check_status_instances(harness)
 	var unit := Unit.new()
 	unit.setup(0, CardDB.get_unit_stats("garen"), "probe")
 	unit.attack_timeline.windup = 0.4
@@ -10,7 +11,7 @@ func run(harness: Object) -> void:
 	unit.apply_attack_speed_slow(2.0, 0.5)
 	harness._expect(is_equal_approx(unit.attack_timeline.windup, 0.8), "首次减攻速保留正常前摇缩放")
 	unit.apply_attack_speed_slow(3.0, 0.5)
-	unit.apply_attack_speed_slow(1.0, 0.8)
+	unit.apply_attack_speed_slow(1.0, 0.8, &"other")
 	harness._expect(is_equal_approx(unit.attack_timeline.windup, 0.8), "同倍率刷新与较弱减攻速不重复延长前摇")
 	unit._tick_active_statuses(3.0)
 	harness._expect(is_equal_approx(unit.attack_timeline.windup, 0.4), "减攻速到期恢复当前阶段进度")
@@ -182,18 +183,18 @@ func _check_control_and_isolation(harness: Object, main: Node2D) -> void:
 	unit.freeze(0.1)
 	unit.stun(0.2)
 	unit.sim_tick(0.05)
-	var paused := is_equal_approx(unit.attack_timeline.windup, 0.3)
+	var cancelled := unit.attack_timeline.windup == 0 and unit.attack_timeline.cooldown == 0
 	view._process(0.0)
 	var ice_holds := view._animation_player.speed_scale == 0.0
 	unit.control.frozen_timer = 0.0
 	view._process(0.0)
-	var stun_plays := view._animation_player.speed_scale == 1.0 and view._control_stage == &"loop"
+	var stun_plays := view._animation_player.speed_scale == 1.0 and view._current_state == 1
 	var independent := view._animation_player.get_animation("Idle1_Base") != views[1]._animation_player.get_animation("Idle1_Base")
 	view._on_source_visual_hit()
 	independent = independent and view._model_resources.meshes()[0].material_overlay != views[1]._model_resources.meshes()[0].material_overlay
 	unit.hp = 0.0
 	unit.notify_visual_death()
-	harness._expect(paused and ice_holds and stun_plays and view._dying and view._animation_player.speed_scale > 0.0, "前摇中冰冻/眩晕重叠保持权威阶段，眩晕片段可播放，死亡正常接管")
+	harness._expect(cancelled and ice_holds and stun_plays and view._dying and view._animation_player.speed_scale > 0.0, "前摇被硬控取消，冰冻定格后眩晕混合Idle，死亡正常接管")
 	harness._expect(independent, "同类单位独立持有动画与叠加材质，修改控制循环与闪白不污染另一实例")
 	for item in views: item.free()
 	for item in units: item.free()
@@ -295,3 +296,31 @@ func _check_clock_budget(harness: Object) -> void:
 	clock.advance(0.2)
 	harness._expect(clock.ticks == 11 and is_equal_approx(clock.remainder, 0.175), "单 Tick 超出时间预算后停止继续赶步，当前 Tick 完整执行")
 	clock.step = Callable()
+
+func _check_status_instances(harness: Object) -> void:
+	var unit := Unit.new()
+	unit.setup(0, CardDB.get_unit_stats("garen"), "status_probe")
+	unit.apply_slow(0.5, 0.3, &"strong")
+	unit.apply_slow(4.0, 0.8, &"weak")
+	harness._expect(is_equal_approx(unit.control.slow_multiplier, 0.3), "异源减速取当前最强")
+	unit._tick_active_statuses(0.5)
+	harness._expect(is_equal_approx(unit.control.slow_multiplier, 0.8), "短强减速到期不借用长弱窗口")
+	unit.apply_slow(0.051, 0.6, &"weak")
+	harness._expect(is_equal_approx(unit.control.slow_timer, 0.1), "同源改强度整体替换且正时长向上取整")
+	unit._tick_active_statuses(0.05)
+	harness._expect(unit.control.slow_timer > 0, "不足一 Tick 的余量继续贡献")
+	unit._tick_active_statuses(0.05)
+	harness._expect(unit.control.slow_timer == 0, "整数 Tick 边界恰好到期")
+	unit.apply_active_buff(2, 1, 1, 2, false, false, &"attack")
+	unit.apply_active_buff(8, 2, 1, 1, false, false, &"move")
+	unit._tick_active_statuses(2)
+	harness._expect(unit.active_attack_speed_multiplier == 1 and unit.active_speed_multiplier == 2, "攻速与移速增益独立到期")
+	unit.apply_slow(4, 0.5, &"old")
+	unit.apply_active_buff(1, 1, 1, 1, true, true, &"immune")
+	unit.apply_slow(8, 0.2, &"new")
+	unit._tick_active_statuses(1)
+	harness._expect(not unit.active_buff_ignores_movement_slow and unit.control.slow_multiplier == 0.5 and unit.control.slow_timer == 3, "免疫抑制旧减速且拒绝新减速，结束仅恢复剩余贡献")
+	unit.freeze(0)
+	unit.stun(-1)
+	harness._expect(not unit.is_frozen() and not unit.is_stunned(), "零负时长不创建控制")
+	unit.free()

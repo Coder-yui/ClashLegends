@@ -1703,12 +1703,13 @@ func _execute_card_deployment(p_team: int, card_id: String, pos: Vector2) -> voi
 		_:
 			_spawn_card_units(p_team, card_id, pos, -1.0, active_slot)
 
-func launch_attack(attacker: Node2D, target: Node2D, amount: float, projectile_speed: float, splash_radius: float, knockback: float, projectile_color: Color, effects: Dictionary = {}) -> void:
-	_projectile_system.launch(attacker, target, amount, projectile_speed, splash_radius, knockback, projectile_color, effects)
-	if attacker is Tower and is_instance_valid(target) and target.hp > 0.0:
+func launch_attack(attacker: Node2D, target: Node2D, amount: float, projectile_speed: float, splash_radius: float, knockback: float, projectile_color: Color, effects: Dictionary = {}) -> bool:
+	var launched := _projectile_system.launch(attacker, target, amount, projectile_speed, splash_radius, knockback, projectile_color, effects)
+	if launched and attacker is Tower and is_instance_valid(target) and target.hp > 0.0:
 		var source := PresentationConfig.attack_source(attacker)
 		_on_skill_projectile_hit(source, "attack", attacker.global_position, "cast")
 		_on_skill_projectile_hit(source, "attack", attacker.global_position, "launch")
+	return launched
 
 ## 弹体命中表现与伤害结算分离；半径只用于绘制对应的权威溅射范围。
 func show_projectile_impact(position: Vector2, radius: float, color: Color, visual: StringName) -> void:
@@ -2134,7 +2135,7 @@ func _queue_active_skill_impact(source: Unit, skill: Dictionary, impact_delay: f
 	var cast_end_heal := maxf(float(skill.get("cast_end_heal", 0.0)), 0.0)
 	if cast_end_heal > 0.0:
 		_commands.impacts.append({
-			"source_ref": weakref(source),
+			"source_ref": weakref(source), "cast_serial": source.active_skill_cast_serial,
 			"skill": {"cast_end_heal": cast_end_heal, "cast_end_heal_requires_hit": bool(skill.get("cast_end_heal_requires_hit", false)), "cast_hit_state": skill.cast_hit_state},
 			"time_left": maxf(float(skill.get("cast_duration", 0.0)), 0.0),
 			"phase": &"cast_end",
@@ -2145,7 +2146,7 @@ func _queue_single_active_skill_impact(source: Unit, skill: Dictionary, impact_d
 		_active_skill_effect_system.apply(source, skill)
 		return
 	_commands.impacts.append({
-		"source_ref": weakref(source),
+		"source_ref": weakref(source), "cast_serial": source.active_skill_cast_serial,
 		"skill": skill.duplicate(true),
 		"time_left": impact_delay,
 		"phase": &"impact",
@@ -2170,11 +2171,7 @@ func _active_skill_is_legal(ability_id: int, expected_team: int = -1) -> bool:
 		return false
 	if not _card_has_active_for_team(p_team, String(entry.card_id)):
 		return false
-	var valid_unit := unit as Unit
-	if valid_unit.is_frozen() or valid_unit.is_stunned():
-		return false
-	# deploy/transform/skill 都高于普通攻击；高优先级窗口内拒绝新技能并保留按钮。
-	return valid_unit.is_deployed() and not valid_unit.is_active_skill_rush_locked() and not valid_unit.is_form_transitioning() and not valid_unit.is_active_skill_casting()
+	return ((unit as Unit).action_permissions() & ControlState.START_SKILL) != 0
 
 func _activate_active_skill(ability_id: int, expected_team: int = -1) -> bool:
 	if not _active_skill_is_legal(ability_id, expected_team):
@@ -2359,6 +2356,11 @@ func _sim_step(dt: float) -> void:
 			_ai._elixir.sim_tick(dt)
 			if _ai.enabled:
 				_ai.sim_tick(dt)
+	# 在行动阶段前统一处理旧状态到期；本Tick新施加的状态不重复扣时。
+	for actor in get_tree().get_nodes_in_group("combatants"):
+		if actor.hp <= 0.0: continue
+		if actor is Unit: actor._tick_active_statuses(dt)
+		elif actor is Tower: actor.prepare_statuses(dt)
 	# 已存在的施法时间线先推进；本 Tick 新执行的命令从当前 Tick 边界开始计时。
 	_tick_active_skill_cooldowns(dt)
 	_combat.begin_batch(_sim_tick_id, "skill_impacts")
@@ -2383,9 +2385,9 @@ func _sim_step(dt: float) -> void:
 	_combat.begin_batch(_sim_tick_id, "combatants")
 	for c in combatants:
 		if c is Unit:
+			c.sim_tick(dt, true, true)
+		elif c is Tower:
 			c.sim_tick(dt, true)
-		elif c.has_method("sim_tick"):
-			c.sim_tick(dt)
 	_combat.commit_batch()
 	# 预部署在本 Tick 边界完成；新单位从下一 Tick 推进实际部署，避免两阶段共用一个 Tick。
 	_tick_pending_card_pre_deployments(dt)
@@ -3147,3 +3149,29 @@ func _rpc_restoration_heal(epoch: String, net_id: int) -> void:
 	var unit: Unit = _client_units.get(net_id)
 	if is_instance_valid(unit) and unit.hp > 0.0:
 		unit.show_restoration_heal()
+
+func notify_action_cancelled(unit: Unit, payload: Dictionary) -> void:
+	if mode == "host" and unit.net_id >= 0:
+		_rpc_action_cancelled.rpc_id(_session.opponent_id, _session.session_id, unit.net_id, payload)
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_action_cancelled(epoch: String, net_id: int, payload: Dictionary) -> void:
+	if not _session.accepts(1, epoch, MatchSession.Phase.RUNNING) or game_over or mode != "client":
+		return
+	var unit: Unit = _client_units.get(net_id)
+	if is_instance_valid(unit):
+		unit.apply_action_cancellation(payload)
+
+func publish_skill_fx(payload: Dictionary) -> void:
+	payload = payload.duplicate(true)
+	payload.erase("source_ref")
+	_presentation_event_id += 1
+	_rpc_skill_fx.rpc_id(_session.opponent_id, _session.session_id, _presentation_event_id, payload)
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_skill_fx(epoch: String, event_id: int, payload: Dictionary) -> void:
+	if not _session.accepts(1, epoch, MatchSession.Phase.RUNNING) or game_over or mode != "client": return
+	_active_skill_effect_system.show_skill_effect(event_id, payload)
+	if _auto_test and not _auto_gnar_skill_fx_seen:
+		_auto_gnar_skill_fx_seen = true
+		print("[测试] 客户端已收到固定方向技能范围表现")

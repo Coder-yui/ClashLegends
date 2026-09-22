@@ -136,7 +136,7 @@ func _check_control_owner() -> void:
 	tower.freeze(0.123)
 	tower.stun(0.234)
 	tower.control.tick_hard_controls(0.05)
-	_h._expect(is_equal_approx(tower.frozen_timer, 0.073) and is_equal_approx(tower.control.stun_timer, 0.184), "防御塔控制由同一对象持有，并保留原有秒数精度")
+	_h._expect(is_equal_approx(tower.frozen_timer, 0.1) and is_equal_approx(tower.control.stun_timer, 0.2), "防御塔与单位共用正时长向上取整的20Hz窗口")
 	tower.free()
 
 func _check_attack_timeline_owner() -> void:

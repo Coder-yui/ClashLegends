@@ -268,7 +268,7 @@ func _check_passive_windup() -> void:
 			if rate < 1.0:
 				source.apply_attack_speed_slow(100.0, rate)
 			else:
-				source.active_attack_speed_multiplier = rate
+				source.apply_active_buff(100.0, 1.0, 1.0, rate)
 			source._target = target
 			var previous_hp := target.hp
 			var previous_hit := -1.0

@@ -5,6 +5,7 @@ extends "res://tests/suites/battle_suite.gd"
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
+	_check_frozen_pending_generation()
 	_check_gnar_mechanic()
 	_check_gnar_art_integration()
 
@@ -488,3 +489,27 @@ func _check_gnar_art_integration() -> void:
 	# 清理待结算主动技能现场，避免污染后续领域 suite。
 	_main._commands.impacts.clear()
 	_main._active_skill_effect_system.frontal_effects.clear()
+
+func _check_frozen_pending_generation() -> void:
+	for team in [0, 1]:
+		var source: Unit = _main._spawn_unit(team, "gnar", Vector2(360, 900), 0)
+		var target: Unit = _main._spawn_unit(1 - team, "garen", Vector2(360, 800), 0)
+		target.max_hp = 100000
+		target.hp = 100000
+		for i in 5:
+			_main.launch_attack(source, target, 1, 1000, 0, 0, Color.WHITE)
+			_main._projectile_system.tick(0.2)
+		_main.launch_attack(source, target, 1, 1000, 0, 0, Color.WHITE)
+		source.freeze(0.2)
+		_main._projectile_system.tick(0.2)
+		_expect(source.form_index == 0 and source.transform_hit_count == 6 and source.pending_form_generation == source.form_change_serial, "第六枚真实弹体在冻结中命中，仅记录一次待变形")
+		source.stun(1.0)
+		for i in 4: source.sim_tick(0.05)
+		_expect(source.form_index == 1 and source.is_stunned() and source.pending_form_generation == -1, "冰冻到期时仍眩晕也先变形一次")
+		var generation := source.form_change_serial
+		source.on_attack_landed(1, 1, 1, generation - 1)
+		_expect(source.transform_hit_count == 0, "旧形态代次命中不能跨代累计")
+		source.sim_tick(0.05)
+		_expect(source.form_change_serial == generation, "待变形消费后不重复加血或换形")
+		source.free()
+		target.free()

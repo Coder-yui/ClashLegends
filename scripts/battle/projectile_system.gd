@@ -40,12 +40,14 @@ func visible_snapshot() -> Dictionary:
 func clear_client() -> void:
 	_client_projectiles.clear()
 
-func launch(attacker: Node2D, target: Node2D, amount: float, projectile_speed: float, splash_radius: float, knockback: float, projectile_color: Color, effects: Dictionary = {}) -> void:
+func launch(attacker: Node2D, target: Node2D, amount: float, projectile_speed: float, splash_radius: float, knockback: float, projectile_color: Color, effects: Dictionary = {}) -> bool:
 	if target == null or not is_instance_valid(target) or target.hp <= 0.0:
-		return
+		return false
 	if target is Unit and (target as Unit).is_hidden_from(attacker):
-		return
+		return false
 	effects = effects.duplicate(true)
+	if attacker is Unit:
+		effects["source_generation"] = attacker.form_change_serial
 	if knockback > 0.0 and not effects.has("displacement_order"):
 		effects.displacement_order = _context.damage_batch().next_displacement_order(attacker)
 	if (attacker is Unit or attacker is Tower) and not effects.has("presentation_source"):
@@ -57,8 +59,7 @@ func launch(attacker: Node2D, target: Node2D, amount: float, projectile_speed: f
 	if projectile_speed <= 0.0:
 		if first_strike and attacker is Unit:
 			_context.notify_unit_audio_event(attacker as Unit, &"first_strike:missile_launch", attacker.global_position)
-		_context.resolve_attack_hit(attacker.team, attacker.global_position, target, amount, splash_radius, knockback, attacker, attacker.global_position, source_form_index, effects)
-		return
+		return _context.resolve_attack_hit(attacker.team, attacker.global_position, target, amount, splash_radius, knockback, attacker, attacker.global_position, source_form_index, effects)
 	var direction := attacker.global_position.direction_to(target.global_position)
 	var projectile_visual := &"orb"
 	var projectile_visual_height := 0.0
@@ -113,6 +114,7 @@ func launch(attacker: Node2D, target: Node2D, amount: float, projectile_speed: f
 		else:
 			_context.notify_unit_audio_event(attacker as Unit, cue, attacker.global_position)
 	queue_redraw()
+	return true
 
 func tick(dt: float) -> void:
 	var finished := []
@@ -187,6 +189,7 @@ func launch_skill_fan(source: Unit, skill: Dictionary, forward: Vector2) -> void
 			"attacker": source, "source_pos": source.global_position,
 			"presentation_source": PresentationConfig.attack_source(source),
 			"team": source.team, "source_form_index": source.form_index,
+			"status_source": source.status_source("skill_projectile"),
 			"pos": pos, "direction": direction, "speed": length / flight,
 			"remaining": length, "damage": float(skill.get("damage", 0.0)),
 			"radius": radius, "visual": StringName(skill.get("projectile_visual", "arrow")), "color": source.color,
@@ -239,9 +242,9 @@ func _tick_skill_arrow(projectile: Dictionary, dt: float, colliders: Array) -> b
 				if target is Unit and is_instance_valid(target) and target.hp > 0.0:
 					var skill: Dictionary = projectile.skill
 					if float(skill.get("slow_duration", 0.0)) > 0.0:
-						target.apply_slow(float(skill.slow_duration), float(skill.get("slow_multiplier", 1.0)))
+						target.apply_slow(float(skill.slow_duration), float(skill.get("slow_multiplier", 1.0)), projectile.status_source)
 					if float(skill.get("stun_duration", 0.0)) > 0.0:
-						target.stun(float(skill.stun_duration))
+						target.stun(float(skill.stun_duration), projectile.status_source)
 				if piercing or not bool(projectile.cast.sound_played):
 					projectile.cast.sound_played = true
 					skill_hit.emit(projectile.presentation_source, String(projectile.skill.get("visual_action", "")), projectile.pos)

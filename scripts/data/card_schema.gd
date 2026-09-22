@@ -153,7 +153,7 @@ const VISUAL_ANIMATION_FIELDS := [
 const ACTIVE_SKILL_FIELDS := [
 	&"name", &"kind", &"cost", &"max_uses", &"cooldown", &"radius", &"damage", &"knockback", &"knockback_duration", &"knockback_mass_factor_max",
 	&"slow_duration", &"slow_multiplier",
-	&"shield", &"shield_duration", &"shield_decay", &"shield_on_cast_start", &"resource_shield_max", &"duration", &"speed_multiplier", &"damage_multiplier",
+	&"shield", &"shield_duration", &"shield_decay", &"shield_on_cast_start", &"independent_on_creation", &"resource_shield_max", &"duration", &"speed_multiplier", &"damage_multiplier",
 	&"attack_speed_multiplier", &"ignore_movement_slow", &"ignore_attack_speed_slow", &"spawn_id", &"spawn_count", &"length", &"width", &"impact_delay",
 	&"transform_impact_delay", &"cast_duration", &"transform_cast_duration", &"stun_duration", &"ground_only",
 	&"cast_locks", &"visual_action", &"description", &"shape", &"near_width", &"far_width", &"arc_degrees", &"fan_inner_arc",

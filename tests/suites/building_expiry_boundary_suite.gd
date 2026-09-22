@@ -72,9 +72,9 @@ func _check_lifecycle_edges() -> void:
 		elif mode == "stun": building.stun(0.05)
 		else: building._deploy_timer = 0.1
 		_main._sim_step(0.05)
-		_expect(is_equal_approx(building._lifespan_left, 0.1), mode + " 阻止自然寿命推进，控制/部署本身仅推进一次")
+		_expect(is_equal_approx(building._lifespan_left, 0.1 if mode == "deploy" else 0.05), mode + " 部署前不计寿命，受控生命周期正常推进")
 		_main._sim_step(0.05)
-		_expect(is_equal_approx(building._lifespan_left, 0.05), mode + " 解除后寿命只推进一个 Tick")
+		_expect(is_equal_approx(building._lifespan_left, 0.05 if mode == "deploy" else 0.0), mode + " 生命周期只推进一次，受控不延寿")
 		building.free()
 	var building := _building(1)
 	building.lifespan_hp_decay = true

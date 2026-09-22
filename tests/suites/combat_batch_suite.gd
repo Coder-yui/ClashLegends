@@ -8,6 +8,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_mirror()
 	_check_extra_boundaries()
 	_check_batch_effects()
+	_check_status_admission_and_heal()
 	_check_early_tick()
 	_check_cancelled_cycle()
 	_check_extra_exchange_and_deaths()
@@ -117,7 +118,7 @@ func _check_extra_boundaries() -> void:
 				if scenario == "freeze": yi.freeze(0.2)
 				else: yi.stun(0.2)
 				_run_main_ticks(3)
-				_expect(target.hp == before and is_equal_approx(yi._pending_extra_attacks[0].time_left, 0.12), "硬控暂停追加刀计时：" + scenario)
+				_expect(target.hp == before and yi._pending_extra_attacks.is_empty(), "硬控取消未释放追加刀：" + scenario)
 			"knockback": yi.apply_knockback(target.global_position, 20.0)
 			"cast": yi.begin_active_skill_cast(1.0, Vector2.UP, ["attack"])
 			"source_death": yi.take_damage(100000)
@@ -129,8 +130,8 @@ func _check_extra_boundaries() -> void:
 		if scenario not in ["source_death", "cast"]: yi.begin_active_skill_cast(1.0, Vector2.UP, ["attack"])
 		for tick in 8:
 			_main._sim_step(0.05)
-		if scenario == "source_death":
-			_expect(target.hp == before, "更早批次来源死亡取消未来追加刀")
+		if scenario in ["source_death", "freeze", "stun", "knockback"]:
+			_expect(target.hp == before and yi._pending_extra_attacks.is_empty(), "来源死亡或合法硬控取消未来追加刀：" + scenario)
 		elif scenario == "target_death":
 			_expect(yi._pending_extra_attacks.is_empty(), "目标死亡取消未提交追加刀")
 		elif scenario == "blind":
@@ -185,7 +186,7 @@ func _check_early_tick() -> void:
 	var b: Unit = _main._spawn_unit(1, "masteryi", Vector2(180, 725), 0)
 	a.hp = a.damage
 	b.hp = b.damage
-	b.freeze(0.05)
+	b.freeze(0.1)
 	for tick in 12:
 		_main._sim_step(0.05)
 		if a.hp <= 0 or b.hp <= 0: break
@@ -307,3 +308,49 @@ func _check_zero_damage_credit() -> void:
 	_main._combat.commit_batch()
 	_expect(a.skill_resource_value == 0 and b.skill_resource_value == 1, "零伤害脉冲不分走同批其他来源的击杀资源")
 	for unit in [a, b, target]: unit.free()
+
+func _check_status_admission_and_heal() -> void:
+	for reverse in [false, true]:
+		var target: Unit = _main._spawn_unit(0, "garen", Vector2(180, 760), 0)
+		target.hp = target.max_hp - 20
+		_main._combat.begin_batch(_main._sim_tick_id, "status_admission")
+		var shield := func(): target.add_shield(30, 2, false, &"batch")
+		var damage := func(): target.take_damage(40)
+		if reverse:
+			damage.call()
+			shield.call()
+		else:
+			shield.call()
+			damage.call()
+		target.heal_with_overflow(100, 0.5, 2, &"heal")
+		_expect(target.hp == target.max_hp - 20 and target.shield_hp == 0, "收集阶段不提前治疗或加盾")
+		_main._combat.commit_batch()
+		_expect(target.hp == target.max_hp and target.shield_hp == 50, "批次先承受40伤害，再治疗60，实际溢出40转20盾，另加30盾；反序一致")
+		_main._combat.begin_batch(_main._sim_tick_id, "immunity_admission")
+		var immunity := func(): target.apply_active_buff(0.1, 1, 1, 1, true, true, &"immune")
+		var slow := func(): target.apply_slow(1, 0.5, &"slow")
+		if reverse:
+			slow.call()
+			immunity.call()
+		else:
+			immunity.call()
+			slow.call()
+		_main._combat.commit_batch()
+		_expect(target.control.slow_timer > 0 and target.active_buff_ignores_movement_slow, "同阶段免疫与减速按批次开始时资格接收，旧减速被抑制")
+		target._tick_active_statuses(0.1)
+		_expect(target.control.slow_timer > 0 and not target.active_buff_ignores_movement_slow, "免疫到期后同批接收的减速仍保留剩余窗口")
+		target.free()
+
+	# 对死亡准入同时检查直接接口和同批死亡后的延迟提交。
+	for deferred in [false, true]:
+		var target: Unit = _main._spawn_unit(0, "garen", Vector2(180, 760), 0)
+		if deferred:
+			_main._combat.begin_batch(_main._sim_tick_id, "dead_status_admission")
+			target.take_damage(target.hp)
+		else:
+			target.hp = 0
+		target.apply_active_buff(2, 2, 2, 2, true, true)
+		target.apply_blind(3)
+		if deferred: _main._combat.commit_batch()
+		_expect(target.hp == 0 and target.active_buff_timer == 0 and target.blind_attack_charges == 0, "直接死亡或同批死亡的对象均不接收新增增益/致盲")
+		target.free()
