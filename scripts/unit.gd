@@ -268,6 +268,8 @@ var _attack_visual_serial := 0
 var net_attack_elapsed := 0.0
 var net_movement_rate := 1.0
 var net_action_permissions := 0
+var _body_facing_direction := Vector2.ZERO
+var lifecycle_birth_tick := -1
 var _presentation_state: UnitPresentationState
 ## 持续攻击的目标表现标识；原地换目标时推进序号，让两端播放换目标衔接。
 var _continuous_visual_target_id := 0
@@ -544,6 +546,7 @@ func get_locomotion_visual_state_code() -> int:
 ## 3D 与 2D 表现都直接读取同一个最终渲染位置，不依赖彼此的 _process 执行顺序。
 func action_permissions() -> int:
 	if hp <= 0.0: return 0
+	if _in_client_mode(): return net_action_permissions
 	var allowed := control.permissions()
 	if not is_deployed() or structure_rush.skill_locked():
 		allowed &= ~(ControlState.MOVE | ControlState.BASIC_ATTACK | ControlState.START_SKILL | ControlState.TURN)
@@ -562,7 +565,7 @@ func action_permissions() -> int:
 	return allowed
 
 func get_action_permissions_visual() -> int:
-	return net_action_permissions if _in_client_mode() else action_permissions() & (ControlState.MOVE | ControlState.BASIC_ATTACK)
+	return action_permissions()
 
 func presentation_state() -> UnitPresentationState:
 	if _presentation_state == null:
@@ -670,6 +673,8 @@ func begin_active_skill_cast(duration: float, facing: Vector2, cast_locks: Array
 	if facing.length_squared() < 0.001:
 		facing = Vector2.UP if team == 0 else Vector2.DOWN
 	active_skill_cast_facing = facing.normalized()
+	if (control.permissions() & ControlState.TURN) != 0:
+		_body_facing_direction = active_skill_cast_facing
 	if is_active_skill_attack_locked():
 		_cancel_attack_for_cast()
 	if is_active_skill_movement_locked():
@@ -921,7 +926,7 @@ func is_active_skill_rush_locked() -> bool:
 	if _in_client_mode():
 		if float(structure_rush.config.get("rush_distance", 0.0)) <= 0.0:
 			return false
-		return is_deployed() and not is_frozen() and not is_stunned() and get_action_permissions_visual() == 0
+		return is_deployed() and not is_frozen() and not is_stunned() and (get_action_permissions_visual() & (ControlState.MOVE | ControlState.BASIC_ATTACK)) == 0
 	return structure_rush.skill_locked()
 
 func is_active_skill_casting() -> bool:
@@ -929,14 +934,15 @@ func is_active_skill_casting() -> bool:
 
 ## 3D 表现使用完整方向；客户端读取主机快照，保证前方技能动作朝向与权威判定一致。
 func get_visual_facing_direction() -> Vector2:
+	if _body_facing_direction.is_zero_approx():
+		_body_facing_direction = Vector2.UP if team == 0 else Vector2.DOWN
 	if _in_client_mode():
-		if continuous_attack and net_visual_state == 3 and net_has_continuous_target:
-			var continuous_direction := global_position.direction_to(net_continuous_target_pos)
-			if continuous_direction.length_squared() > 0.001:
-				return continuous_direction
-		if net_facing_direction.length_squared() > 0.001:
-			return net_facing_direction.normalized()
-		return Vector2.UP if team == 0 else Vector2.DOWN
+		return net_facing_direction.normalized() if not net_facing_direction.is_zero_approx() else _body_facing_direction
+	if (action_permissions() & ControlState.TURN) != 0:
+		_body_facing_direction = _desired_facing_direction()
+	return _body_facing_direction
+
+func _desired_facing_direction() -> Vector2:
 	if structure_rush.locked() and structure_rush.direction.length_squared() > 0.001:
 		return structure_rush.direction
 	if is_active_skill_facing_locked() and active_skill_cast_facing.length_squared() > 0.001:
@@ -981,18 +987,15 @@ func set_continuous_beam_origin_world_position(world_position: Vector2) -> void:
 func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prepared: bool = false) -> void:
 	if hp <= 0.0:
 		return
-	_tick_timed_revival(dt)
+	if not natural_lifecycle_prepared:
+		prepare_natural_lifecycle(dt)
 	if hp <= 0.0 or is_queued_for_deletion():
 		return
 	_prune_pending_extra_attacks()
 	if not statuses_prepared:
 		_tick_active_statuses(dt)
-	_apply_pending_form()
-	# 限时形态按权威时间到期，硬控不延长增益；转场动作仍沿用硬控暂停规则。
-	if form_index == 1 and form_lifetime_left > 0.0 and not (form_lifetime_after_transition and form_transition_timer > 0.0):
-		form_lifetime_left = maxf(0.0, form_lifetime_left - dt)
-		if form_lifetime_left <= 0.000001:
-			transform_to_small()
+		prepare_action_clocks(dt)
+		_apply_pending_form()
 	_hit_flash_event_cooldown = maxf(0.0, _hit_flash_event_cooldown - dt)
 	_prev_pos = position
 	_move_intent = Vector2.ZERO
@@ -1002,18 +1005,6 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prep
 	var recovering_rush := structure_rush.phase == StructureRushState.Phase.RECOVERY
 	if recovering_rush:
 		structure_rush.tick(self, dt)
-	# 生命周期与普通技能时钟不因硬控暂停。冰冻在施加入口取消施法。
-	if _visual_action_time_left > 0.0:
-		_visual_action_time_left = maxf(0.0, _visual_action_time_left - dt)
-	if form_transition_timer > 0.0:
-		form_transition_timer = maxf(0.0, form_transition_timer - dt)
-	if active_skill_cast_timer > 0.0:
-		if is_active_skill_attack_locked():
-			_cancel_attack_for_cast()
-		active_skill_cast_timer = maxf(0.0, active_skill_cast_timer - dt)
-		if active_skill_cast_timer <= 0.0:
-			active_skill_cast_facing = Vector2.ZERO
-			active_skill_cast_locks.clear()
 	# 卡牌生成后进入部署时间：自身不索敌、不移动、不攻击，但实体已经存在，
 	# 会参与碰撞，也能被敌方索敌、命中、受伤和施加状态。
 	if _deploy_timer > 0.0:
@@ -1031,7 +1022,7 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prep
 		if _deploy_timer > 0.0 or _forced_movement:
 			return
 	if is_building:
-		_building_tick(dt, natural_lifecycle_prepared)
+		_building_tick(dt, true)
 		if hp <= 0.0 or is_queued_for_deletion():
 			return
 	if control.frozen_timer > 0.0 or control.stun_timer > 0.0:
@@ -1228,9 +1219,35 @@ func surface_gap_to_circle(center: Vector2, radius: float) -> float:
 	# 建筑的规则方格占地不参与攻击距离、寻路或防穿模计算。
 	return maxf(0.0, center.distance_to(global_position) - body_radius - radius)
 
-## 仅预处理自然寿命；不推进部署、控制、召唤或攻击计时。
+## 旧动作窗口在命令执行前推进一次；本边界新动作从下个边界开始推进。
+func prepare_action_clocks(dt: float) -> void:
+	var age_form := form_index == 1 and form_lifetime_left > 0.0 and not (form_lifetime_after_transition and form_transition_timer > 0.0)
+	# 生命周期与普通技能时钟不因硬控暂停。冰冻在施加入口取消施法。
+	if _visual_action_time_left > 0.0:
+		_visual_action_time_left = maxf(0.0, _visual_action_time_left - dt)
+	if form_transition_timer > 0.0:
+		form_transition_timer = maxf(0.0, form_transition_timer - dt)
+		if form_transition_timer < 0.000001: form_transition_timer = 0.0
+	if active_skill_cast_timer > 0.0:
+		if is_active_skill_attack_locked():
+			_cancel_attack_for_cast()
+		active_skill_cast_timer = maxf(0.0, active_skill_cast_timer - dt)
+		if active_skill_cast_timer < 0.000001:
+			active_skill_cast_timer = 0.0
+			active_skill_cast_facing = Vector2.ZERO
+			active_skill_cast_locks.clear()
+	# 限时形态按权威时间到期，硬控不延长增益或转换窗口。
+	if age_form:
+		form_lifetime_left = maxf(0.0, form_lifetime_left - dt)
+		if form_lifetime_left <= 0.000001:
+			transform_to_small()
+
+## 固定名单中的自然寿命与定时复生；不在行动收集内迁移实体。
 ## 判断与 sim_tick 到达 _building_tick 的门禁一致，包括部署最后一个 Tick。
 func prepare_natural_lifecycle(dt: float) -> void:
+	if hp <= 0.0 or is_queued_for_deletion(): return
+	if battle_context != null and lifecycle_birth_tick == battle_context.simulation_tick(): return
+	_tick_timed_revival(dt)
 	if not is_building or hp <= 0.0 or is_queued_for_deletion(): return
 	if _deploy_timer > 0.0:
 		if maxf(_deploy_timer - dt, 0.0) >= 0.000001 or _knockback_timer > 0.0: return
@@ -1618,6 +1635,8 @@ func _attack(dt: float) -> void:
 		mark_skill_resource_combat_activity()
 		add_skill_resource(skill_resource_attack_gain)
 		var attack_form_index := form_index
+		if projectile_speed <= 0.0 and battle_context != null and battle_context.damage_batch().collecting:
+			attack_effects["delivery_callback"] = _settle_melee_delivery.bind(form_change_serial, _attack_visual_serial, true)
 		var completed := _perform_attack_strike(_target, hit_damage, attack_effects)
 		if completed:
 			_queue_extra_attack_hits(hit_index, base_hit_damage, _target)
@@ -1739,6 +1758,15 @@ func _deal_attack_damage_to(target: Node2D, amount: float, effects: Dictionary =
 
 		return landed
 
+## 近战提交只是暂记段号；批次拒绝命中时撤回本段及依附追加刀。
+## 形态已换代时不写回旧循环；致盲正式出手不进入伤害回执，保留消费例外。
+func _settle_melee_delivery(delivered: bool, generation: int, cycle: int, advances_segment: bool) -> void:
+	if delivered or generation != form_change_serial: return
+	_attack_swing_count = maxi(_attack_swing_count - 1, 0)
+	if advances_segment:
+		_attack_hit_index = maxi(_attack_hit_index - 1, 0)
+		_pending_extra_attacks.assign(_pending_extra_attacks.filter(func(pending): return int(pending.cycle_id) != cycle))
+
 ## 每一刀都独立消费一次致盲。剑圣 Passive 的第二刀因此确实算作第二次普通攻击。
 func _perform_attack_strike(target: Node2D, amount: float, effects: Dictionary = {}) -> bool:
 	if blind_attack_charges > 0:
@@ -1792,7 +1820,11 @@ func _tick_pending_extra_attacks(dt: float) -> void:
 		mark_skill_resource_combat_activity()
 		add_skill_resource(skill_resource_attack_gain)
 		basic_attack_sequence += 1
-		_perform_attack_strike(target as Node2D, float(pending.damage), {"presentation_source": pending.presentation_source, "attack_id": basic_attack_sequence, "cycle_id": pending.get("cycle_id", _attack_visual_serial)})
+		var effects := {"presentation_source": pending.presentation_source, "attack_id": basic_attack_sequence, "cycle_id": pending.get("cycle_id", _attack_visual_serial)}
+		if projectile_speed <= 0.0 and battle_context != null and battle_context.damage_batch().collecting:
+			effects["delivery_callback"] = _settle_melee_delivery.bind(form_change_serial, int(effects.cycle_id), false)
+		if not _perform_attack_strike(target as Node2D, float(pending.damage), effects):
+			_attack_swing_count = maxi(_attack_swing_count - 1, 0)
 	_pending_extra_attacks.assign(waiting)
 
 ## 主机在伤害真正落到目标后调用。格温由此精确地在首次普攻命中而非出手时开启缠流；
@@ -1828,8 +1860,11 @@ func on_attack_landed(attack_form_index: int = -1, landed_damage: float = 0.0, s
 	_try_attack_lifesteal(landed_damage, cycle_ratio)
 
 func _apply_pending_form() -> void:
-	if pending_form_generation < 0 or is_frozen():
+	if pending_form_generation < 0: return
+	if hp <= 0.0 or pending_form_generation != form_change_serial:
+		pending_form_generation = -1
 		return
+	if is_frozen(): return
 	var valid := hp > 0.0 and pending_form_generation == form_change_serial
 	pending_form_generation = -1
 	if valid:
@@ -1940,6 +1975,7 @@ func freeze(duration: float, source: StringName = &"legacy") -> void:
 
 func _receive_freeze(duration: float, source: StringName) -> void:
 	if hp <= 0.0: return
+	get_visual_facing_direction()
 	if control.refresh_freeze(duration, true, source):
 		cancel_basic_attack(&"freeze")
 		cancel_skill_cast()
@@ -1955,6 +1991,7 @@ func stun(duration: float, source: StringName = &"legacy") -> void:
 
 func _receive_stun(duration: float, source: StringName) -> void:
 	if hp <= 0.0: return
+	get_visual_facing_direction()
 	if control.refresh_stun(duration, true, source):
 		cancel_basic_attack(&"stun")
 	if duration > 0.0: structure_rush.interrupt_preparation(self)
@@ -2158,8 +2195,9 @@ func _in_client_mode() -> bool:
 	return battle_context != null and battle_context.is_net_client()
 
 func _die(trigger_death_effect: bool = false) -> void:
+	hp = 0.0
+	pending_form_generation = -1
 	if battle_context != null and (battle_context.damage_batch().collecting or battle_context.damage_batch().committing):
-		hp = 0.0
 		battle_context.damage_batch().defer_death(self, trigger_death_effect)
 		return
 	if is_queued_for_deletion(): return

@@ -53,6 +53,7 @@ func run(harness: SceneTree) -> void:
 			if main._sim_tick_id >= 48 and not status_checked:
 				status_checked = true
 				status_passed = status_pending_seen and gnar.form_index == 1 and gnar.is_stunned() and gnar.pending_form_generation == -1
+				status_passed = status_passed and gnar.active_skill_cast_serial == 0 and main._active_skills[gnar.active_ability_id].uses_remaining == main._active_skills[gnar.active_ability_id].max_uses and status_case.payment.is_settled()
 				status_passed = status_passed and status_case.star_target.hp == status_case.star_target.max_hp - 120 and status_case.frozen_target.hp == status_case.frozen_target.max_hp and status_case.stunned_target.hp < status_case.stunned_target.max_hp
 				print("[NETWORK_STATUS] ", {"passed": status_passed, "pending_seen": status_pending_seen, "form": gnar.form_index, "star_hp": status_case.star_target.hp, "frozen_hp": status_case.frozen_target.hp, "stunned_hp": status_case.stunned_target.hp})
 		if main.mode == "client" and main._match_started and main.get_estimated_server_tick() >= 5 and not sent_requests:
@@ -70,7 +71,7 @@ func run(harness: SceneTree) -> void:
 					main._rpc_active_skill_request.rpc_id(1, ability, main.get_authoritative_server_tick(), main._session.session_id, 2)
 					sent_skill = true
 					break
-		if main.mode == "host" and not main._commands.skill_commands.is_empty() and not interrupted_skill:
+		if main.mode == "host" and not main._commands.skill_commands.is_empty() and not interrupted_skill and int(main._commands.skill_commands[0].team) == 1:
 			var ability: int = main._commands.skill_commands[0].ability_id
 			var unit: Unit = main._active_skills[ability].unit
 			unit.add_shield(300, 2, true)
@@ -116,7 +117,7 @@ func run(harness: SceneTree) -> void:
 			for checkpoint in [12, 32, 50]:
 				if tick >= checkpoint and not captured.has(checkpoint):
 					captured[checkpoint] = tick
-					await RenderingServer.frame_post_draw
+					RenderingServer.force_draw(false)
 					harness.root.get_texture().get_image().save_png(capture_dir.path_join("%s-status-%d.png" % [main.mode, checkpoint]))
 		if main.game_over:
 			break
@@ -145,7 +146,7 @@ func run(harness: SceneTree) -> void:
 		for id in ids:
 			var unit: Unit = registry[id]
 			var pos := unit.net_target_pos if main.mode == "client" else unit.global_position
-			units.append([id, unit.card_id, unit.hp, snappedf(pos.x, 0.01), snappedf(pos.y, 0.01), snappedf(unit.get_shield_ratio(), 0.000001), snappedf(unit.get_shield_capacity_ratio(), 0.000001), unit.form_index, unit.net_form_change_serial if main.mode == "client" else unit.form_change_serial, unit.get_attack_visual_serial(), unit.action_cancel_serial, unit.cancelled_visual_serial])
+			units.append([id, unit.card_id, unit.hp, snappedf(pos.x, 0.01), snappedf(pos.y, 0.01), snappedf(unit.get_shield_ratio(), 0.000001), snappedf(unit.get_shield_capacity_ratio(), 0.000001), unit.form_index, unit.net_form_change_serial if main.mode == "client" else unit.form_change_serial, unit.get_attack_visual_serial(), unit.action_cancel_serial, unit.cancelled_visual_serial, unit.action_permissions(), snappedf(unit.get_visual_facing_direction().x, 0.00001), snappedf(unit.get_visual_facing_direction().y, 0.00001), main.get_active_skill_snapshot(unit.active_ability_id)])
 		result["units"] = units
 		result["passed"] = result.audio_stopped and result.winner_team == (-1 if double_nexus else 0) and main._king_enemy.hp == 0.0 and not result.session_id.is_empty()
 		var session_guards: bool = sent_requests and sent_skill if main.mode == "client" else outsider_rejected and stable_callback and main._session.last_request_id == 2 and main.get_authoritative_queue(1).back() == "garen" and interrupted_skill
@@ -166,7 +167,7 @@ func run(harness: SceneTree) -> void:
 			if arg.begins_with("--network-render-dir="):
 				var directory := arg.trim_prefix("--network-render-dir=")
 				DirAccess.make_dir_recursive_absolute(directory)
-				await RenderingServer.frame_post_draw
+				RenderingServer.force_draw(false)
 				harness.root.get_texture().get_image().save_png(directory.path_join(main.mode + ".png"))
 	if main.game_over:
 		var silent_before_finish := result_cues.is_empty()
@@ -193,9 +194,14 @@ func _begin_status_case(main: Node2D) -> Dictionary:
 	for tower in main._towers: tower.can_attack = false
 	main._towers[0].freeze(10)
 	main._towers[1].stun(10)
-	var gnar: Unit = main._spawn_unit(0, "gnar", Vector2(80, 1000), 0)
+	main._deck[1] = "gnar"
+	main._elixir.elixir = 10.0
+	var gnar: Unit = main._spawn_unit(0, "gnar", Vector2(80, 1000), 0, 1)
+	var queued: bool = main.use_active_skill(gnar.active_ability_id, 0)
+	assert(queued)
+	var payment: CommandPayment = main._commands.skill_commands.back().payment
 	var gnar_target := _status_target(main, 1, Vector2(80, 900))
-	gnar.freeze(0.6)
+	gnar.freeze(0.5)
 	gnar.stun(10)
 	for i in 6: main.launch_attack(gnar, gnar_target, 1, 1000, 0, 0, Color.WHITE)
 	var star: Unit = main._spawn_unit(0, "aurelionsol", Vector2(360, 1000), 0)
@@ -216,7 +222,7 @@ func _begin_status_case(main: Node2D) -> Dictionary:
 		if frozen: caster.freeze(10)
 		else: caster.stun(10)
 		targets.append(target)
-	return {"gnar": gnar, "star_target": star_target, "stunned_target": targets[0], "frozen_target": targets[1]}
+	return {"gnar": gnar, "payment": payment, "star_target": star_target, "stunned_target": targets[0], "frozen_target": targets[1]}
 
 func _status_target(main: Node2D, team: int, position: Vector2) -> Unit:
 	var target: Unit = main._spawn_unit(team, "super_minion", position, 0)

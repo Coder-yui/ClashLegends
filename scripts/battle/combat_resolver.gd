@@ -98,7 +98,7 @@ func defer_death(unit: Unit, trigger: bool) -> void:
 	_deaths[unit] = trigger
 
 func submit_damage(target: Node2D, amount: float, source: Node2D, team: int, position: Vector2) -> Dictionary:
-	var accepted: bool = is_instance_valid(target) and target.hp > 0.0
+	var accepted: bool = is_instance_valid(target) and not target.is_queued_for_deletion() and target.hp > 0.0
 	if accepted and target is Unit:
 		accepted = not target._is_shroud_blocked(source, team, position)
 	var result := {"accepted": accepted, "landed": false, "damage": BattleNumbers.quantity(amount), "health_lost": 0.0, "shield_absorbed": 0.0, "overkill": 0.0}
@@ -120,9 +120,9 @@ func commit_batch() -> void:
 	committing = true
 	var groups := {}
 	for hit in _hits:
-		var target: Node2D = hit.target
+		var target = hit.target
 		# 在任何本批扣血之前冻结最终资格，不能逐刀用实时 hp 撤回同刻命中。
-		hit.result.landed = is_instance_valid(target) and not target.is_queued_for_deletion() and target.hp > 0.0
+		hit.result.landed = is_instance_valid(target) and not target.is_queued_for_deletion() and bool(hit.result.accepted)
 		if not hit.result.landed: continue
 		if not groups.has(target): groups[target] = []
 		groups[target].append(hit)
@@ -201,6 +201,9 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 					_kill_awards[key] = true
 					from.on_enemy_killed(fixed_target))
 	if landed:
+		var completion: Callable = effects.get("delivery_callback", Callable())
+		if completion.is_valid():
+			defer_effect(func(): completion.call(hit_results.any(func(result): return result.landed)))
 		if counts_as_attack and radius > 0.0:
 			defer_benefit(func():
 				if hit_results.any(func(result): return result.landed) and is_instance_valid(from) and from is Unit and from.hp > 0.0:

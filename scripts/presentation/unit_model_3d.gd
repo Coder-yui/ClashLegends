@@ -328,6 +328,8 @@ func _sync_transform(force: bool, delta: float) -> void:
 	var ground_position := _screen_to_ground(screen_position)
 	position = ground_position
 
+	# 控制保持已显示的根朝向；外部位移仍更新位置，不继续插值旋转。
+	if not force and (_source.is_frozen() or _source.is_stunned()): return
 	var facing_2d := _source.get_visual_facing_direction()
 	var facing_ground := _screen_to_ground(screen_position + facing_2d * 20.0)
 	var facing_3d := facing_ground - ground_position
@@ -346,7 +348,8 @@ func _sync_visual(force: bool, delta: float) -> void:
 	if visual_action_serial != _last_visual_action_serial:
 		_last_visual_action_serial = visual_action_serial
 		var action_name := _source.get_visual_action_name()
-		_play_visual_action(action_name)
+		if visual_action_serial > _source.cancelled_visual_serial and (_source.get_visual_action_duration() <= 0.0 or _source.get_visual_action_time_left() > 0.0):
+			_play_visual_action(action_name)
 	var attack_serial := _source.get_attack_visual_serial()
 	var attack_serial_changed := attack_serial != _last_attack_serial
 	if attack_serial_changed:
@@ -1575,8 +1578,10 @@ func _on_action_cancelled(payload: Dictionary) -> void:
 		_last_visual_action_serial = maxi(_last_visual_action_serial, int(payload.get("action", 0)))
 		_animation_player.speed_scale = 0.0
 		_was_controlled = true
-	elif cancel_attack and not _state.frozen and not _playing_visual_action and not _playing_deploy_sequence:
-		_transition_to_basic_state(1, 0.1)
+	elif cancel_attack and not _state.frozen:
+		_sync_visual_action_while_controlled()
+		if not _playing_visual_action and not _playing_deploy_sequence:
+			_transition_to_basic_state(1, 0.1)
 
 func _sync_control_override() -> bool:
 	if _animation_player == null:
@@ -1595,6 +1600,9 @@ func _sync_control_override() -> bool:
 		_playing_deploy_sequence = false
 		_action_sequence.clear()
 		_transition_to_basic_state(1, 0.1)
+	# 首次渲染前也可能已经 Cast Start；先消费有效权威动作，再决定 Idle。
+	if _state.stunned:
+		_sync_visual_action_while_controlled()
 	# 眩晕保留已开始的技能/部署/转换；普通动作由取消事件切到 Idle。
 	if _state.stunned and not _playing_visual_action and not _playing_deploy_sequence and _source._deploy_timer <= 0.0:
 		if _current_state != 1:
@@ -1607,7 +1615,10 @@ func _sync_visual_action_while_controlled() -> void:
 	if serial == _last_visual_action_serial:
 		return
 	_last_visual_action_serial = serial
-	_play_visual_action(_source.get_visual_action_name(), true)
+	if _source.get_visual_action_name() == &"":
+		_play_visual_action(&"")
+	elif serial > _source.cancelled_visual_serial and _source.get_visual_action_time_left() > 0.0:
+		_play_visual_action(_source.get_visual_action_name())
 
 func _play_control_clip(key: String, stage: StringName) -> void:
 	var clip := _first_valid_animation(key)

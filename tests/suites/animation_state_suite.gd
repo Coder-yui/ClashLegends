@@ -22,7 +22,7 @@ func _view_for(unit: Unit) -> UnitModel3D:
 
 func _check_control_interruptions() -> void:
 	# 眩晕会经过 UnitModel3D 的控制覆盖恢复路径；冻结则走动作重新对齐路径。
-	# 两者都必须保留多段动作的 section 和当前播放倍率，不能恢复成整条源动画。
+	# 眩晕保留多段动作 section 和倍率；冰冻取消旧动作且不续播。
 	var sett_stats: Dictionary = CardDB.get_card("sett").duplicate(true)
 	sett_stats["deploy_time"] = 0.0
 	var sett := Unit.new()
@@ -69,7 +69,7 @@ func _check_control_interruptions() -> void:
 			and is_equal_approx(player.get_playing_speed(), second_speed)
 		)
 		sett_ok = sett_ok and second_section_restored
-		# 工作台的 2 秒眩晕会把 W 的权威时间一起暂停；恢复后若播放器先停而
+		# 工作台眩晕不暂停 W 权威时间；若播放器先停而
 		# animation_finished 漏到，动作窗口归零也必须主动回到基础姿态。
 		sett._visual_action_time_left = 0.0
 		player.stop()

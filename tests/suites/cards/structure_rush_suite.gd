@@ -147,7 +147,7 @@ func run(harness: Object, main: Node2D) -> void:
 	step(source, 48)
 	_expect(source.structure_rush.phase == StructureRushState.Phase.PREPARING, "准备不能提前进入冲撞")
 	step(source)
-	_expect(source.structure_rush.phase == StructureRushState.Phase.DASHING and source.is_active_skill_rush_locked() and source.get_action_permissions_visual() == 0, "准备满2.5秒开始冲撞且主动技能继续锁定")
+	_expect(source.structure_rush.phase == StructureRushState.Phase.DASHING and source.is_active_skill_rush_locked() and (source.get_action_permissions_visual() & (ControlState.MOVE | ControlState.BASIC_ATTACK)) == 0, "准备满2.5秒开始冲撞且主动技能继续锁定")
 	source.freeze(5); source.stun(5); source.apply_slow(5, 0.2); source.apply_attack_speed_slow(5, 0.2); source.apply_blind(2)
 	source.apply_knockback(source.position + Vector2.UP, 100, 0.3)
 	_expect(not source.is_frozen() and not source.is_stunned() and source.control.slow_timer == 0 and source.control.attack_speed_slow_timer == 0 and source.blind_attack_charges == 0 and source._knockback_timer == 0, "冲撞期间拒绝全部现有控制")

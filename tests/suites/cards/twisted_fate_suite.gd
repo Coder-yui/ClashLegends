@@ -115,7 +115,7 @@ func _check_two_stage_deployment() -> void:
 		_main._sim_step(_main.SIM_DT)
 	var locked_until_final_tick: bool = unit != null and not unit.is_deployed()
 	_main._sim_step(_main.SIM_DT)
-	var unit_ready: bool = unit != null and unit.is_deployed() and is_zero_approx(unit._deploy_timer) and unit.get_action_permissions_visual() == 3
+	var unit_ready: bool = unit != null and unit.is_deployed() and is_zero_approx(unit._deploy_timer) and (unit.get_action_permissions_visual() & (ControlState.MOVE | ControlState.BASIC_ATTACK)) == 3
 	_expect(still_waiting and unit_before_second_stage and spawned_after_pre_deploy and unit_locked and locked_until_final_tick and unit_ready, "1.3 秒前不存在，出现后部署锁定 0.45 秒再允许移动攻击")
 	_expect(cues.size() == 1, "落地进入部署不重复播放预部署声音")
 	for path in CardDB.get_card("twisted_fate").audio.events["pre_deploy:start"].pool:

@@ -71,6 +71,7 @@ func tick(unit: Unit, dt: float) -> bool:
 			awaiting_reprepare = false
 			_approach_launch_point(unit, dt)
 			return true
+		unit._body_facing_direction = direction
 		phase = Phase.PREPARING
 		awaiting_reprepare = false
 		remaining = float(config.rush_prepare_time)

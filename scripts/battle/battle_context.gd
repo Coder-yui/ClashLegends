@@ -11,6 +11,9 @@ func _init(controller: Node2D) -> void:
 func is_net_client() -> bool:
 	return _controller.is_net_client()
 
+func simulation_tick() -> int:
+	return _controller._sim_tick_id
+
 func simulation_interpolation_alpha() -> float:
 	return _controller.get_sim_interpolation_alpha()
 

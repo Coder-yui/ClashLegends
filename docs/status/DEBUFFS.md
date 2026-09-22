@@ -1,6 +1,6 @@
 # 减益与软控制
 
-> **当前设计，尚未实施。**本文规定目标行为；当前代码支持情况见[实现现状与接入](IMPLEMENTATION.md)。
+> 本页定义目标规则，已实现子集见 [IMPLEMENTATION](IMPLEMENTATION.md)。
 
 [返回总览](README.md)
 

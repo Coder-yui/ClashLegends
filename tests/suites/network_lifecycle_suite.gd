@@ -178,6 +178,35 @@ func run(harness: Object, main: Node2D) -> void:
 	effects.show_skill_effect(100, star)
 	_expect(effects.frontal_effects.size() == 1, "两局清场释放效果去重身份")
 	effects.clear()
+	_check_permission_projection()
+	# 实际快照首次同时带技能和眩晕；代理尚未消费动作序号。
+	main._battle_presentation = saved_view
+	main._audio_manager = saved_audio
+	_system.reset_session("first-render-stun")
+	var first_action := _payload("sett", 74000, 1)
+	first_action[SNAP.U_DEPLOY_LEFT] = 0.0
+	first_action[SNAP.U_ACTION_SERIAL] = 1
+	first_action[SNAP.U_ACTION_NAME] = "active"
+	first_action[SNAP.U_ACTION_DURATION] = 1.4
+	first_action[SNAP.U_ACTION_TIME_LEFT] = 0.9
+	first_action[SNAP.U_STUN] = 1
+	first_action[SNAP.U_ACTION_PERMISSIONS] = ControlState.CONTINUE_SKILL | ControlState.EXTERNAL_MOTION
+	_deliver(2, [first_action])
+	var first_unit: Unit = main._client_units[74000]
+	var first_view: UnitModel3D
+	for child in saved_view._world_root.get_children():
+		if child is UnitModel3D and child._source == first_unit: first_view = child
+	first_view._process(0.0)
+	_expect(first_view._playing_visual_action and first_view._active_action_name == &"active" and first_view._animation_player.speed_scale > 0, "客户端首次技能快照同时眩晕，立即按已过0.5秒播放动作")
+	first_action[SNAP.U_CANCELLATION] = {"serial": 1, "reason": "freeze", "attack": 0, "action": 1, "form": 0, "cancelled_action": 1}
+	first_action[SNAP.U_FROZEN] = 1
+	_deliver(3, [first_action])
+	first_view._process(0.0)
+	_deliver(2, [first_action])
+	first_action[SNAP.U_FROZEN] = 0
+	_deliver(4, [first_action])
+	first_view._process(0.0)
+	_expect(not first_view._playing_visual_action and first_unit.get_visual_action_time_left() == 0, "冰冻取消与旧动作快照交错不恢复旧技能")
 	_system.reset_session("")
 	main._snapshot_system = saved_system
 	main.mode = saved_mode
@@ -219,3 +248,33 @@ func _deliver(tick: int, units: Array, session: String = "", revision: int = -1)
 	packet[SNAP.S_LIFECYCLE_REVISION] = tick if revision < 0 else revision
 	packet[SNAP.S_SESSION] = _system.lifecycle.session_id if session.is_empty() else session
 	_main._rpc_snapshot(var_to_bytes(packet).compress(FileAccess.COMPRESSION_DEFLATE))
+
+func _check_permission_projection() -> void:
+	_system.reset_session("permission-projection")
+	var projected := _payload("gnar", 73500, 1)
+	projected[SNAP.U_SPAWN].args[5] = 73500
+	projected[SNAP.U_SPAWN].args[6] = 0
+	projected[SNAP.U_ACTIVE_SKILL_USES_REMAINING] = 1
+	var deck: Array = _main._deck.duplicate()
+	_main._deck[0] = "gnar"
+	var tick := 2
+	for phase in ["deploy", "transform", "cast", "freeze", "stun", "rush", "recovery", "ready"]:
+		projected[SNAP.U_DEPLOY_LEFT] = 0.5 if phase == "deploy" else 0.0
+		projected[SNAP.U_FROZEN] = 1 if phase == "freeze" else 0
+		projected[SNAP.U_STUN] = 1 if phase == "stun" else 0
+		projected[SNAP.U_ACTION_PERMISSIONS] = ControlState.ALL_PERMISSIONS if phase == "ready" else ControlState.EXTERNAL_MOTION
+		_deliver(tick, [projected])
+		var unit: Unit = _main._client_units[73500]
+		unit.active_skill_cast_timer = 100.0 if phase == "ready" else 0.0
+		unit.form_transition_timer = 100.0 if phase == "ready" else 0.0
+		_main._sync_active_skill_deployment_readiness()
+		_expect(_main._active_skill_is_legal(73500, 1) == (phase == "ready") and _main._active_skill_bar._buttons[0].disabled == (phase != "ready"), "客户端按钮与请求共用快照资格 " + phase)
+		_expect(((unit.action_permissions() & ControlState.START_SKILL) != 0) == (phase == "ready"), "快照权限投影 " + phase)
+		tick += 1
+	var invalid := projected.duplicate(true)
+	invalid[SNAP.U_ACTION_PERMISSIONS] = 64
+	_deliver(tick, [invalid])
+	_expect(_system.lifecycle.snapshot_tick == tick - 1, "未知权限位拒绝整份快照")
+	_deliver(tick - 2, [invalid])
+	_expect((_main._client_units[73500].action_permissions() & ControlState.START_SKILL) != 0, "旧快照不能回拨已解除技能权限")
+	_main._deck = deck

@@ -280,5 +280,11 @@
     "script": "res://tests/suites/deployment_skill_suite.gd",
     "method": "run",
     "scene": "battle"
+  },
+  {
+    "id": "StatusBoundarySuite",
+    "script": "res://tests/suites/status_boundary_suite.gd",
+    "method": "run",
+    "scene": "battle"
   }
 ]

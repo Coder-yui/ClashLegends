@@ -57,7 +57,7 @@ func apply_freeze(position: Vector2, radius: float, duration: float, team: int, 
 	var source := StringName("spell:%d:%d" % [team, _effect_serial])
 	show_freeze(position, radius, duration, slow_duration)
 	if slow_duration > 0.0:
-		slow_zones.append({"pos": position, "radius": radius, "delay": duration, "timer": slow_duration, "team": team, "multiplier": slow_multiplier, "status_source": source})
+		slow_zones.append({"created_tick": _controller._sim_tick_id if _controller._sim_step_active else -1, "pos": position, "radius": radius, "delay": duration, "timer": slow_duration, "team": team, "multiplier": slow_multiplier, "status_source": source})
 	for combatant in _controller.get_tree().get_nodes_in_group("combatants"):
 		if not is_instance_valid(combatant) or combatant.team == team or combatant.hp <= 0.0:
 			continue
@@ -109,11 +109,18 @@ func show_heal(position: Vector2, radius: float, duration: float, enhanced: bool
 func tick(dt: float) -> void:
 	var alive: Array[Dictionary] = []
 	for zone in slow_zones:
-		if float(zone.delay) > 0.0:
-			zone.delay = maxf(0.0, float(zone.delay) - dt)
+		if _controller._sim_step_active and int(zone.get("created_tick", -1)) == _controller._sim_tick_id:
 			alive.append(zone)
 			continue
-		zone.timer = maxf(0.0, float(zone.timer) - dt)
+		var activating := float(zone.delay) > 0.0
+		if activating:
+			zone.delay = maxf(0.0, float(zone.delay) - dt)
+			if float(zone.delay) > 0.000001:
+				alive.append(zone)
+				continue
+		# 延迟结束边界立即生效，但不再消费新区域的首个完整 Tick。
+		else:
+			zone.timer = maxf(0.0, float(zone.timer) - dt)
 		for combatant in _controller.get_tree().get_nodes_in_group("combatants"):
 			if not combatant is Unit or not is_instance_valid(combatant) or combatant.team == int(zone.team) or combatant.hp <= 0.0:
 				continue

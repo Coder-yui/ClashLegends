@@ -4,7 +4,7 @@ func _initialize() -> void:
 	call_deferred("_run")
 
 func _run() -> void:
-	if "--status-migration" in OS.get_cmdline_user_args():
+	if "--status-migration" in OS.get_cmdline_user_args() or "--status-boundaries" in OS.get_cmdline_user_args():
 		await _status_migration()
 		return
 	DirAccess.make_dir_recursive_absolute(preload("res://tools/lib/development_paths.gd").output("clash-maintenance-render"))
@@ -42,7 +42,8 @@ func _capture(label: String) -> void:
 
 ## 正式战斗入口驱动状态改造的双方动作/混音配方，不复制伤害实现。
 func _status_migration() -> void:
-	var output := preload("res://tools/lib/development_paths.gd").output("status-migration")
+	var boundary_review := "--status-boundaries" in OS.get_cmdline_user_args()
+	var output := preload("res://tools/lib/development_paths.gd").output("status-boundaries" if boundary_review else "status-migration")
 	DirAccess.make_dir_recursive_absolute(output)
 	print("[STATUS_REVIEW_OUTPUT] ", output)
 	var main = load("res://scenes/main.tscn").instantiate()
@@ -92,6 +93,12 @@ func _status_migration() -> void:
 				source.skill_resource_value = source.skill_resource_max
 			recorder.set_recording_active(true)
 			if not skill.is_empty() and "--no-skill" not in OS.get_cmdline_user_args(): main._start_active_skill_cast(source, skill)
+			if boundary_review:
+				source.stun(0.6)
+				for proxy in main._battle_presentation._world_root.get_children():
+					if proxy is UnitModel3D and proxy._source == source:
+						proxy._process(0.0)
+						print("[FIRST_RENDER_STUN] ", card, " team=", team, " action=", proxy._active_action_name, " playing=", proxy._playing_visual_action)
 			var label := "%s-%s" % ["blue" if team == 0 else "red", card]
 			for tick in 62:
 				if tick == 5: source.stun(0.6)
@@ -102,7 +109,7 @@ func _status_migration() -> void:
 				main._active_skill_effect_system.tick_visuals(0.05)
 				main._effects_view.queue_redraw()
 				await create_timer(0.05).timeout
-				if tick in [4, 9, 12, 21, 40, 61]:
+				if tick in ([0, 4, 9, 12, 21, 40, 61] if boundary_review else [4, 9, 12, 21, 40, 61]):
 					await RenderingServer.frame_post_draw
 					root.get_texture().get_image().save_png(output.path_join(label + "-%02d.png" % tick))
 			print("[STATUS_MIX] active=", recorder.is_recording_active(), " last_mix=", AudioServer.get_time_since_last_mix(), " peak=", AudioServer.get_bus_peak_volume_left_db(0, 0))

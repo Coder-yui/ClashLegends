@@ -1902,6 +1902,7 @@ func _spawn_unit(team: int, card_id: String, pos: Vector2, deploy_time_override:
 	if deploy_time_override >= 0.0:
 		# 自动兵线不经过卡牌部署读条，生成当帧即可行动；仍标记为新落地单位供碰撞分离使用。
 		u._just_deployed = true
+	u.lifecycle_birth_tick = _sim_tick_id if _sim_step_active else -1
 	add_child(u)
 	if _battle_presentation != null:
 		_battle_presentation.attach_unit(u, stats)
@@ -1992,7 +1993,7 @@ func _sync_active_skill_deployment_readiness() -> void:
 			_on_active_skill_unit_died(ability_id)
 			continue
 		var valid_unit := unit as Unit
-		var deployed := valid_unit.is_deployed() and not valid_unit.is_active_skill_rush_locked()
+		var deployed := (valid_unit.action_permissions() & ControlState.START_SKILL) != 0
 		if _is_local_player_team(int(entry.team)) and _active_skill_bar != null:
 			_active_skill_bar.update_skill_state(
 				ability_id,
@@ -2113,9 +2114,10 @@ func get_active_skill_snapshot(ability_id: int) -> Dictionary:
 	}
 
 ## Cast Start 后的通用 EffectExecution 队列。计时在固定 Tick 中推进，
-## 并在施法者被冻结/眩晕时与 Unit 的 cast timer 同步暂停。
+## 与动作锁共享边界；眩晕继续，冰冻取消未释放后段。
 func _queue_active_skill_impact(source: Unit, skill: Dictionary, impact_delay: float) -> void:
 	skill = skill.duplicate(true)
+	skill["cast_forward"] = source.active_skill_cast_facing if not source.active_skill_cast_facing.is_zero_approx() else source.get_visual_facing_direction()
 	skill["displacement_order"] = _combat.next_displacement_order(source)
 	skill["cast_hit_state"] = ActiveSkillEffectSystem.CastHitState.new()
 	var hit_damages = skill.get("prepared_hit_damages", [])
@@ -2343,10 +2345,13 @@ func on_tower_hit(tower: Tower) -> void:
 
 ## 固定 20Hz 模拟步：驱动全部战斗单位与塔，处理国王塔激活与障碍移除。
 ## 帧率高低只影响每帧跑多少步，不改变战斗结果（联机两端行为一致）。
+var _sim_step_active := false
+
 func _sim_step(dt: float) -> void:
 	if game_over:
 		return
 	_sim_tick_id += 1
+	_sim_step_active = true
 	if _match_started and not _art_dev_mode:
 		_update_elixir_rate()
 		_elixir.sim_tick(dt)
@@ -2359,7 +2364,10 @@ func _sim_step(dt: float) -> void:
 	# 在行动阶段前统一处理旧状态到期；本Tick新施加的状态不重复扣时。
 	for actor in get_tree().get_nodes_in_group("combatants"):
 		if actor.hp <= 0.0: continue
-		if actor is Unit: actor._tick_active_statuses(dt)
+		if actor is Unit:
+			actor._tick_active_statuses(dt)
+			actor.prepare_action_clocks(dt)
+			actor._apply_pending_form()
 		elif actor is Tower: actor.prepare_statuses(dt)
 	# 已存在的施法时间线先推进；本 Tick 新执行的命令从当前 Tick 边界开始计时。
 	_tick_active_skill_cooldowns(dt)
@@ -2429,6 +2437,8 @@ func _sim_step(dt: float) -> void:
 
 	if _match_started and not _art_dev_mode:
 		_tick_match_rules(dt)
+
+	_sim_step_active = false
 
 func _process(delta: float) -> void:
 	if _session.phase == MatchSession.Phase.LOADING and Time.get_ticks_msec() - _network_loading_started > 30000:

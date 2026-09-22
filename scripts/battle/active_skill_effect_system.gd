@@ -132,11 +132,11 @@ func apply(source: Unit, skill: Dictionary) -> bool:
 		&"summon":
 			activate_summon(source, skill)
 		&"dual_form":
-			apply_frontal_stun(source, skill, source.active_skill_cast_facing)
+			apply_frontal_stun(source, skill, skill.get("cast_forward", source.active_skill_cast_facing))
 		&"frontal":
-			apply_frontal(source, skill, source.active_skill_cast_facing)
+			apply_frontal(source, skill, skill.get("cast_forward", source.active_skill_cast_facing))
 		&"forward_area":
-			apply_forward_area(source, skill, source.active_skill_cast_facing if is_instance_valid(source) else Vector2.ZERO)
+			apply_forward_area(source, skill, skill.get("cast_forward", source.active_skill_cast_facing if is_instance_valid(source) else Vector2.ZERO))
 		&"continuous_area":
 			activate_continuous_area(source, skill)
 		&"empowered_attack":
@@ -255,6 +255,7 @@ func activate_continuous_area(source: Unit, skill: Dictionary) -> void:
 	if duration <= 0.0 or radius <= 0.0 or amount <= 0.0:
 		return
 	continuous_area_effects.append({
+		"created_tick": _controller._sim_tick_id if _controller._sim_step_active else -1,
 		"status_source": source.status_source("skill_area"), "cast_serial": source.active_skill_cast_serial, "action_serial": source.get_visual_action_serial(),
 		"source_ref": weakref(source),
 		"visual_action": String(skill.get("visual_action", "")),
@@ -457,6 +458,7 @@ func apply_forward_area(source: Unit, skill: Dictionary, forward: Vector2 = Vect
 	if zone_duration > 0.0:
 		# 固定落点区域独立于施法者存活状态，创造后完整维持 zone_duration。
 		continuous_area_effects.append({
+		"created_tick": _controller._sim_tick_id if _controller._sim_step_active else -1,
 			"status_source": context.status_source,
 		"source_ref": context.source_ref, "team": source_team,
 			"fixed_position": true, "center": center,
@@ -485,6 +487,7 @@ func apply_forward_area(source: Unit, skill: Dictionary, forward: Vector2 = Vect
 		return
 	var end_radius := maxf(float(skill.get("shockwave_end_radius", radius)), radius)
 	expanding_shockwaves.append({
+		"created_tick": _controller._sim_tick_id if _controller._sim_step_active else -1,
 		"status_source": context.status_source,
 		"source_ref": context.source_ref, "team": source_team, "center": center,
 		"start_radius": radius, "end_radius": end_radius,
@@ -584,11 +587,14 @@ func tick_effects(dt: float) -> void:
 func _tick_continuous_area_effects(dt: float) -> void:
 	var alive: Array[Dictionary] = []
 	for effect in continuous_area_effects:
+		if _controller._sim_step_active and int(effect.get("created_tick", -1)) == _controller._sim_tick_id:
+			alive.append(effect)
+			continue
 		var source = (effect.source_ref as WeakRef).get_ref()
 		var fixed_position := bool(effect.get("fixed_position", false))
 		if not fixed_position and (not source is Unit or not is_instance_valid(source) or source.hp <= 0.0):
 			continue
-		# 跟随施法者的持续范围与施法者控制状态一起暂停；固定落点区域
+		# 跟随施法者的持续范围在冰冻取消后终止；固定落点区域
 		# 已经脱离施法动作，不因凤凰死亡或被控制而缩短 3 秒寿命。
 		if not fixed_position and source is Unit and (source.is_frozen() or int(effect.get("cast_serial", source.active_skill_cast_serial)) <= source.cancelled_skill_cast_serial or int(effect.get("action_serial", 2147483647)) <= source.cancelled_visual_serial):
 			continue
@@ -607,6 +613,9 @@ func _tick_continuous_area_effects(dt: float) -> void:
 func _tick_expanding_shockwaves(dt: float) -> void:
 	var alive: Array[Dictionary] = []
 	for shockwave in expanding_shockwaves:
+		if _controller._sim_step_active and int(shockwave.get("created_tick", -1)) == _controller._sim_tick_id:
+			alive.append(shockwave)
+			continue
 		shockwave.timer = maxf(float(shockwave.timer) - dt, 0.0)
 		var progress := 1.0 - float(shockwave.timer) / maxf(float(shockwave.duration), 0.001)
 		var current_radius := lerpf(float(shockwave.start_radius), float(shockwave.end_radius), progress)

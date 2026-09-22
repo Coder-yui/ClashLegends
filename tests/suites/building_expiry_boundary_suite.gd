@@ -56,13 +56,21 @@ func _check_stale_acceptance() -> void:
 	target._lifespan_left = 0.05
 	_main._combat.begin_batch(100, "stale_natural_exit")
 	var result: Dictionary = _main._combat.submit_damage(target, 10, source, 0, source.position)
-	_main._combat.resolve_attack_hit(0, source.position, target, 10, 0, 0, source, source.position, 0)
-	target._building_tick(0.05)
+	source.position = target.position + Vector2(0, 30)
+	source._target = target
+	source._attacking = true
+	source.attack_timeline.windup = 0.0
+	source.attack_timeline.cooldown = 0.0
+	source._attack_hit_index = 2
+	source._attack_swing_count = 2
+	source._attack(0.05)
+	# 故障注入：非生命周期边界的强制对象销毁，仍需失效回执；正式自然退休已在上面的固定边界验证。
+	target.queue_free()
 	_main._combat.commit_batch()
-	_expect(result.get("accepted", false) and not result.landed and result.health_lost == 0, "接受请求不等于最终合法命中：自然退出不产生 landed")
+	_expect(result.get("accepted", false) and not result.landed and result.health_lost == 0, "接受请求不等于最终合法命中：已销毁引用不产生 landed")
 	_expect(source.hp == 100 and source.skill_resource_value == 0, "最终非法目标不发放回血或命中资源")
+	_expect(source._attack_swing_count == 2 and source._attack_hit_index == 2 and source._pending_extra_attacks.is_empty(), "实际未命中时回收近战段推进及依附追加刀，致盲例外不走此分支")
 	source.free()
-	target.free()
 
 func _check_lifecycle_edges() -> void:
 	for mode in ["freeze", "stun", "deploy"]:

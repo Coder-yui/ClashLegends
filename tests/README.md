@@ -125,3 +125,5 @@ Godot 原始入口使用 `-- --suite=ProjectileSuite`，未知名称退出 2；�
 2026-09-16性能准备回归：DeckBuilderSuite覆盖双方先锋六只、五轮60次模型领取/回收、包装重置与加载中退出；PresentationSuite验证有限材质复用、编译曲线/概率表及粒子依赖范围；StructureRushSuite验证失败搜索冷却、换目标、建筑变化与恢复。`--network-boundaries`另含slow_host、load_disconnect和load_timeout，超时用例只在测试中推进截止时间，实际清理由正式入口执行。
 
 `DeploymentSkillSuite` 覆盖七张多单位主动卡的工作台成员死亡/释放、批次与阵营隔离、全灭禁止回退、正式请求期间连续转交、费用次数保留和延迟效果的存活筛选。`network_lifecycle_suite` 验证转交快照按编队来源卡恢复技能。
+
+`StatusBoundarySuite` 从正式请求覆盖解冻待变形、退款、转换结束边界、技能各段/完成回血精确 Tick、凤凰蛋排列互换、旧弹体及冻结朝向。`network_lifecycle_suite` 覆盖六位权限校验与首次同时收到技能/眩晕；双端终态另比较权限、身体方向及技能剩余次数。实际渲染复用 `maintenance_preview.gd -- --status-boundaries --cards=sett,gnar,gwen,aurelionsol,garen,anivia_egg`。

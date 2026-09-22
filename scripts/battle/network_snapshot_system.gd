@@ -177,6 +177,8 @@ func apply(snapshot_bytes: PackedByteArray, terminal: bool = false, expected_tic
 		return false
 	var ids := {}
 	for payload: Array in units_data:
+		if not payload[U_ACTION_PERMISSIONS] is int or int(payload[U_ACTION_PERMISSIONS]) < 0 or (int(payload[U_ACTION_PERMISSIONS]) & ~ControlState.ALL_PERMISSIONS) != 0:
+			return false
 		if not payload[U_CANCELLATION] is Dictionary or not Unit.valid_action_cancellation(payload[U_CANCELLATION]):
 			return false
 		if not payload[U_ID] is int or ids.has(payload[U_ID]) or not payload[U_SPAWN] is Dictionary or not _valid_spawn(payload[U_SPAWN]):
