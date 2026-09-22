@@ -75,7 +75,7 @@ func tick(unit: Unit, dt: float) -> bool:
 		phase = Phase.PREPARING
 		awaiting_reprepare = false
 		remaining = float(config.rush_prepare_time)
-		unit.forced_movement.cancel(&"structure_rush")
+		unit.knockback.cancel(&"structure_rush")
 		unit.attack_timeline.cancel()
 		unit._attacking = false
 		unit._move_direction = direction

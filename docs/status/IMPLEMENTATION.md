@@ -16,11 +16,11 @@
 | 攻击 | 普攻取消前后摇、间隔及未释放追加刀；保持循环段与未消费强化。持续普攻读取完整有效攻速，并声明致盲免疫能力 |
 | 技能 | CommandSchedule 绑定施法身份；眩晕继续普通技能，冰冻取消动作后段。龙王星辰在创建特效时建立独立结果，保留固定位置、阵营和归因 |
 | 边界修复 | Main 在请求前推进旧动作窗口并兑现解冻待变形；凤凰蛋在自然生命周期边界迁移；按钮和入队共用基础提交资格，临时权限只约束执行；模型首次受晕动作与朝向检查 |
-| 位移与生命周期 | 击退独立推进；建筑、部署、变形与限时形态不因普通硬控延寿；纳尔冻结中命中阈值暂存同代待变形 |
+| 位移与生命周期 | 普通击退独立推进、沿途碰撞，撞停保留剩余锁定；建筑、部署、变形与限时形态不因普通硬控延寿；纳尔冻结中命中阈值暂存同代待变形 |
 | 生命收益 | ShieldState 继续独占盾层计时与恢复资格，并保存来源；CombatResolver 批次后提交效果与存活收益，过量转盾在实际治疗后计算 |
 | 表现 | 动作取消事件关联攻击、动作和形态；模型冻结当前姿势，解冻不续旧动作；声音按动作归属取消，独立结果保留 |
 | 协议 | 版本与载荷唯一事实见[网络协议](../reference/NETWORK_PROTOCOL.md)；包含权限、动作身份、累计取消和未知实体恢复 |
-| 未实施 | 禁锢、沉默、嘲讽、凝滞、通用隐身、持续吸引、通用 DoT 等仍无完整执行链，本次不新增 |
+| 未实施 | 强制击退／强制位移（固定距离、条件穿越障碍）、禁锢、沉默、嘲讽、凝滞、通用隐身、持续吸引、通用 DoT 等仍无完整执行链，本次不新增 |
 
 现有换形生命上限、皮克斯溢出生命与先锋免控仍为专项能力。画面与听感须按每次实际验证分别记录。
 
@@ -45,7 +45,7 @@
 
 ## 当前职责与扩展边界
 
-当前所有者见[维护架构](../MAINTENANCE_ARCHITECTURE.md)：StatusInstances、ControlState、AttackTimeline、ShieldState、StructureRushState 继续复用；资格在 ActiveSkillRoster，效果排程在 CommandSchedule，位移轨迹在 ForcedMovementState。Unit 汇合权限并编排形态/技能资源，不再另造 StatusState。
+当前所有者见[维护架构](../MAINTENANCE_ARCHITECTURE.md)：StatusInstances、ControlState、AttackTimeline、ShieldState、StructureRushState 继续复用；资格在 ActiveSkillRoster，效果排程在 CommandSchedule，普通击退轨迹在 KnockbackState（不提供强制位移能力）。Unit 汇合权限并编排形态/技能资源，不再另造 StatusState。
 
 新增内容继续放四域定义，新增字段必须有读取方、类型/范围、能力校验及回归。未实现效果在加载时拒绝；正式施加用 freeze/stun/apply_* 等准入接口，网络使用显式副本接口。测试窗口构造在 SuiteUtils 中，不给 active_buff_timer 提供生产 setter。
 

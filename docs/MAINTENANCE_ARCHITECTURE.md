@@ -13,7 +13,7 @@
 | ActiveSkillRoster / CardCycle | 技能槽替换、资格、编队转交、次数/冷却；手牌初始顺序和轮换 |
 | DeploymentRules | 格心、奇偶占地、区域、结构/塔墟和最近合法建筑落点；只注入结构及地面查询 |
 | WorkbenchSession | 选择、预设、清场、暂停和工作模式；通过正式入口操作战场 |
-| Unit、ControlState、AttackTimeline、ShieldState / ForcedMovementState | 通用单位、控制聚合、普攻状态、独立护盾层和击退轨迹 |
+| Unit、ControlState、AttackTimeline、ShieldState / KnockbackState | 通用单位、控制聚合、普攻状态、独立护盾层和击退轨迹 |
 | MovementSystem、ArenaRules、路径搜索 | 移动、部署几何、局部避让、碰撞与寻路 |
 | CombatResolver / ProjectileSystem | 真实命中、弹体与命中收益 |
 | SpellSystem / ActiveSkillEffectSystem | 法术与技能区域及各自集合 |
@@ -68,7 +68,7 @@ AttackTimeline 拥有攻击间隔、前摇、后摇与基础攻速表现时间�
 
 ProjectileSystem 独占客户端弹体目标与插值位置，快照写入和外部读取均不暴露内部字典别名；网络适配显式注入该系统，跨局统一清除客户端弹体。Main 拥有网络实体索引；ActiveSkillRoster 拥有技能注册索引，MatchRules 拥有计时/结束状态，Tower 拥有副本到死亡表现与导航释放的转换。网络只解码并请求相应入口，RPC 保留在 Node。
 
-CombatResolver 持有阶段内命中记录、附带效果、存活收益和死亡提交队列；BattleContext 暴露该服务，BattleNumbers 与 Unit/Tower 的直接伤害入口在收集期间转交记录。每批完成后清空所有队列；可选 trace 仅用于测试记录 Tick、阶段、来源、目标、段和死亡提交。建筑自然生命周期在 combatants 收集之前单独预处理，固定参与者快照。CombatResolver 同时持有本阶段强制位移请求，按出生身份、来源事件序号和子序号排序后提交；身份在出生接入分配，不能在遍历攻击者时分配。
+CombatResolver 持有阶段内命中记录、附带效果、存活收益和死亡提交队列；BattleContext 暴露该服务，BattleNumbers 与 Unit/Tower 的直接伤害入口在收集期间转交记录。每批完成后清空所有队列；可选 trace 仅用于测试记录 Tick、阶段、来源、目标、段和死亡提交。建筑自然生命周期在 combatants 收集之前单独预处理，固定参与者快照。CombatResolver 同时持有本阶段普通击退请求，按出生身份、来源事件序号和子序号排序后提交；身份在出生接入分配，不能在遍历攻击者时分配。
 
 恢复护盾到期资格由 ShieldState 随层保存；tick 返回本次有效自然到期结果，Unit 消费一次，死亡和清除不能恢复。横排编队沿用同次部署身份与技能资格转交。
 
@@ -104,7 +104,7 @@ CommandSchedule 的集合不对调用方开放：enqueue_* 接收明确参数并
 
 ActiveSkillRoster.entry 提供单项只读视图，技能配置共享只读定义；权威消费走 consume，网络镜像走 replace_replica。CardCycle.consume 只变更牌序，Main 随后更新 UI；客户端只按可靠确认 replace_replica。
 
-ForcedMovementState 只持有轨迹、剩余时间与终止原因，Unit 先检查准入再替换；MovementSystem 继续做碰撞。形态切换、生命上限、待变形代次和技能资源目前在 Unit 的既有方法中统一拥有；未引入与其并行的状态实现。死亡替身/复生是新实体，不能和原位换形合并。
+KnockbackState 只持有普通击退轨迹、剩余锁定时间与终止原因（强制位移尚未实现），Unit 先检查准入再替换；MovementSystem 继续做碰撞。形态切换、生命上限、待变形代次和技能资源目前在 Unit 的既有方法中统一拥有；未引入与其并行的状态实现。死亡替身/复生是新实体，不能和原位换形合并。
 
 治疗、控制、护盾与位移继续使用各自准入入口；普通索敌与已释放命中分别检查，纯控制不以扣血成功为前提。不因删除旧过滤而创建新的隐身/不可选中系统。
 

@@ -22,14 +22,25 @@ func _apply_unit_movement(dt: float, units: Array[Unit]) -> void:
 	var contact_started := Time.get_ticks_usec()
 	var contacts := _collect_unit_contacts(units)
 	last_collision_usec = Time.get_ticks_usec() - contact_started
+	# 击退也是真实碰撞体。先基于同一位置快照裁剪相对扫掠，避免高速一步穿过单位。
+	var combined_velocities := {}
 	for unit in units:
-		var autonomous: Vector2 = velocities[_unit_order_key(unit)]
+		var key := _unit_order_key(unit)
+		combined_velocities[key] = velocities[key] + contacts[key] / maxf(dt, 0.0001)
+	_clip_knockback_contacts(units, combined_velocities, dt)
+	for unit in units:
+		var key := _unit_order_key(unit)
+		var autonomous: Vector2 = velocities[key]
 		if unit.structure_rush.displacement_immune():
 			# 冲撞只能沿已验证直线推进，准备期也不接受接触推挤。
 			if unit.structure_rush.control_immune() and unit.battle_context.is_ground_segment_walkable(unit.global_position, unit.global_position + autonomous * dt, unit.body_radius, unit):
 				unit.global_position += autonomous * dt
 			continue
-		var velocity: Vector2 = autonomous + contacts[_unit_order_key(unit)] / maxf(dt, 0.0001)
+		var velocity: Vector2 = combined_velocities[key]
+		if unit._forced_movement:
+			_apply_knockback_step(unit, velocity * dt)
+			unit.on_movement_applied(0.0, dt)
+			continue
 		if velocity.length_squared() < 0.001:
 			unit.on_movement_applied(0.0, dt)
 			continue
@@ -52,6 +63,64 @@ func _apply_unit_movement(dt: float, units: Array[Unit]) -> void:
 
 	for unit in units:
 		unit._just_deployed = false
+
+func _clip_knockback_contacts(units: Array[Unit], velocities: Dictionary, dt: float) -> void:
+	for i in units.size():
+		var a := units[i]
+		if not a._forced_movement or a.structure_rush.displacement_immune(): continue
+		for j in units.size():
+			var b := units[j]
+			if a == b or a.is_air != b.is_air or b.structure_rush.displacement_immune(): continue
+			if b._forced_movement and j < i: continue
+			var ka := _unit_order_key(a)
+			var kb := _unit_order_key(b)
+			var delta := a.global_position - b.global_position
+			var step: Vector2 = (velocities[ka] - velocities[kb]) * dt
+			var radius := maxf(a.body_radius + b.body_radius - ArenaRules.COLLISION_SLOP, 0.001)
+			var closing := delta.dot(step)
+			if closing >= 0.0 or step.length_squared() < 0.000001: continue
+			var c := delta.length_squared() - radius * radius
+			var fraction := 0.0
+			if c > 0.0:
+				var discriminant := closing * closing - step.length_squared() * c
+				if discriminant < 0.0: continue
+				fraction = (-closing - sqrt(discriminant)) / step.length_squared()
+				if fraction >= 1.0: continue
+			fraction = maxf(fraction, 0.0)
+			if b._forced_movement:
+				velocities[ka] *= fraction
+				velocities[kb] *= fraction
+			else:
+				# 保留被撞者本步的正常接触推挤，只裁剪击退者相对它的运动。
+				# 不能把双方一起归零，否则已有重叠会永远卡住。
+				velocities[ka] = velocities[kb] + (velocities[ka] - velocities[kb]) * fraction
+
+## 普通击退只沿原步进前进，不能调用桥角切线/单轴滑动，也不能只检查终点。
+func _apply_knockback_step(unit: Unit, displacement: Vector2) -> void:
+	if displacement.length_squared() < 0.000001: return
+	var start := unit.global_position
+	var samples := maxi(1, ceili(displacement.length() / 4.0))
+	var last := start
+	for i in range(1, samples + 1):
+		var candidate := start + displacement * (float(i) / samples)
+		if _knockback_position_legal(unit, candidate):
+			last = candidate
+			continue
+		# 定位第一段非法步进内的最后合法位置，撞停后仍保留行动锁。
+		var blocked := candidate
+		for iteration in 12:
+			var middle := (last + blocked) * 0.5
+			if _knockback_position_legal(unit, middle): last = middle
+			else: blocked = middle
+		unit.global_position = last
+		unit.knockback.stop_at_obstacle()
+		return
+	unit.global_position = last
+
+func _knockback_position_legal(unit: Unit, pos: Vector2) -> bool:
+	if pos.x < unit.body_radius or pos.x > ArenaRules.FIELD_W - unit.body_radius or pos.y < unit.body_radius or pos.y > ArenaRules.FIELD_H - unit.body_radius:
+		return false
+	return unit.is_walkable_at(pos) or _try_leave_deployment_river_overlap(unit, pos)
 
 func _try_apply_velocity(unit: Unit, velocity: Vector2, dt: float) -> bool:
 	if velocity.length_squared() < 0.001:

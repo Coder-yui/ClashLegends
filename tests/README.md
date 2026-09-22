@@ -58,7 +58,7 @@ Godot --headless --path . -- --mode=join --ip=127.0.0.1 --auto-test
 | `workbench_preview`、`workbench_scenarios_preview` | 三页交互与四种经典场景、红方镜像 |
 | `original_animation_review` | 全部非法术卡、双方/形态；`-- --cards=gwen,xin --all-exits --transition-frames`；`--validate-only` 只检查表现路径 |
 | `sett_animation_preview` | 四拳、多倍率、W 出口、死亡；可加 `--fixed-fps 30`；`ClashLegends-开发素材库/04-中间产物/预览与验证/clash-sett-animation/` |
-| `card_playtest_fixes_preview`、`contact_preview` | 首击/追击、边界与接触问题复现 |
+| `card_playtest_fixes_preview`、`contact_preview` | 首击/追击、边界与接触问题复现；`contact_preview -- --knockback` 检查普通击退撞岸与实体接触 |
 | `gwen_passive_preview` | 剪切与被动双阵营画面、主混音；`ClashLegends-开发素材库/04-中间产物/预览与验证/clash-gwen-passive/` |
 | `ashe_volley_collision_preview` | 万箭齐发阻挡、真实碰撞与提示 |
 | `gnar_launch_audio_preview` | 独占发射尾音；支持 `-- --mode=host` / `--mode=join`；`ClashLegends-开发素材库/04-中间产物/预览与验证/clash-gnar-launch/` |

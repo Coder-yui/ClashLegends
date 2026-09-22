@@ -17,6 +17,10 @@ func _run() -> void:
 	main.set_process(false)
 	main._ai.enabled = false
 	main._minion_waves_enabled = false
+	if "--knockback" in OS.get_cmdline_user_args():
+		await _review_knockback()
+		quit()
+		return
 	var front: Unit = main._spawn_unit(0, "garen", Vector2(140, 860), 0.0)
 	var rear: Unit = main._spawn_unit(0, "masteryi", Vector2(140, 930), 0.0)
 	front.move_speed = CardDB.SPEED_SLOW
@@ -42,5 +46,27 @@ func _run() -> void:
 
 func _capture(label: String) -> void:
 	await process_frame
-	await RenderingServer.frame_post_draw
+	RenderingServer.force_draw(false)
 	root.get_texture().get_image().save_png(OUTPUT + "/" + label + ".png")
+
+## 普通击退：一名撞岸、两名真实接触；不提供尚未实现的强制位移演示。
+func _review_knockback() -> void:
+	for tower in main._towers: tower.can_attack = false
+	var shore: Unit = main._spawn_unit(0, "masteryi", Vector2(360, 750), 0)
+	var mover: Unit = main._spawn_unit(0, "masteryi", Vector2(260, 850), 0)
+	var receiver: Unit = main._spawn_unit(1, "masteryi", Vector2(360, 850), 0)
+	for unit in [shore, mover, receiver]: unit.freeze(3.0)
+	await _capture("knockback_start")
+	shore.apply_knockback(Vector2(360, 850), 800, 0.5)
+	mover.apply_knockback(Vector2(160, 850), 800, 0.5)
+	for tick in 14:
+		main._sim_step(main.SIM_DT)
+		var row := {"tick": tick, "units": []}
+		for unit in [shore, mover, receiver]:
+			row.units.append({"position": [unit.position.x, unit.position.y], "lock": unit._knockback_timer, "reason": String(unit.knockback.end_reason), "legal": unit.is_walkable_at(unit.position)})
+		trace.append(row)
+		await create_timer(0.05).timeout
+		if tick in [0, 3, 8, 13]: await _capture("knockback_%02d" % tick)
+	var file := FileAccess.open(OUTPUT + "/knockback_trace.json", FileAccess.WRITE)
+	file.store_string(JSON.stringify(trace, "\t"))
+	print("[普通击退渲染] " + OUTPUT)

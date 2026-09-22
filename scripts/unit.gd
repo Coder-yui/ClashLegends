@@ -293,12 +293,13 @@ var _path_goal := Vector2(INF, INF)
 var _move_intent := Vector2.ZERO
 var _move_direction := Vector2.ZERO
 var _avoidance_turn := 0.0
+## 本 Tick 由击退或先锋自主冲撞接管意图；不是未实现的强制位移能力。
 var _forced_movement := false
-var forced_movement := ForcedMovementState.new()
+var knockback := KnockbackState.new()
 var _knockback_velocity: Vector2:
-	get: return forced_movement.velocity
+	get: return knockback.velocity
 var _knockback_timer: float:
-	get: return forced_movement.remaining
+	get: return knockback.remaining
 var _charge_timer := 0.0
 var _charged := false
 var _skill_resource_combat_timer := 0.0
@@ -1186,12 +1187,12 @@ func apply_knockback(origin: Vector2, distance: float, duration: float = 0.2, ma
 	if direction.length_squared() < 0.001:
 		direction = Vector2.DOWN if team == 0 else Vector2.UP
 	var mass_factor := clampf(4.0 / maxf(mass, 1.0), 0.35, maxf(mass_factor_max, 0.35))
-	forced_movement.replace(direction, distance * mass_factor, duration)
+	knockback.replace(direction, distance * mass_factor, duration)
 	cancel_basic_attack(&"knockback")
 
 func _tick_knockback_movement(dt: float) -> void:
 	# 最后一 Tick 只结算剩余时长，避免浮点余量让 0.25s 击退多走一个完整 20Hz Tick。
-	_move_intent = forced_movement.advance(dt)
+	_move_intent = knockback.advance(dt)
 	_forced_movement = true
 
 func _target_gap(target: Node2D) -> float:
