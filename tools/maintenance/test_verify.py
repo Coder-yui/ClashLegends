@@ -89,7 +89,7 @@ class VerifyTests(unittest.TestCase):
     def network_logs(self, **client_updates):
         state = dict(schema=1, passed=True, session_id='fixture', final_tick=65,
                      winner_team=0, reason='nexus', tower_hp=[3600, 0],
-                     units=[[1, 'gnar', 100, 50, 60]], audio_stopped=True, remote_elixir=1, tower_shields=[[1, 0.1], [0, 0]])
+                     units=[[1, 'gnar', 100, 50, 60]], audio_stopped=True, remote_elixir=1, tower_shields=[[1, 0.1], [0, 0]], tower_controls=[[False, False], [False, False]])
         return {role: '[NETWORK_RESULT] ' + json.dumps(dict(
             state, role=role, **(client_updates if role == 'client' else {})))
                 for role in ['host', 'client']}
@@ -99,7 +99,7 @@ class VerifyTests(unittest.TestCase):
 
     def test_network_mismatched_terminal_state(self):
         for field, value in [('final_tick', 64), ('session_id', 'old'),
-                             ('tower_hp', [3600, 10]), ('units', [])]:
+                             ('tower_hp', [3600, 10]), ('tower_controls', [[True, False], [False, False]]), ('units', [])]:
             self.assertTrue(verify.validate_network(self.network_logs(**{field: value}))[1])
 
     def test_network_missing_duplicate_or_failed_result(self):

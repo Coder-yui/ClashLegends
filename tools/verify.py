@@ -132,7 +132,7 @@ def validate_network(logs: dict[str, str]) -> tuple[dict, list[str]]:
             result = json.loads(markers[0])
             if not isinstance(result, dict) or result.get('schema') != 1 or result.get('passed') is not True or result.get('role') != role:
                 raise ValueError('invalid/failed result')
-            required = ['session_id', 'final_tick', 'winner_team', 'reason', 'tower_hp', 'units', 'audio_stopped', 'remote_elixir', 'tower_shields']
+            required = ['session_id', 'final_tick', 'winner_team', 'reason', 'tower_hp', 'units', 'audio_stopped', 'remote_elixir', 'tower_shields', 'tower_controls']
             if not all(field in result for field in required) or not result['session_id'] or result['audio_stopped'] is not True:
                 raise ValueError('incomplete terminal state')
             results[role] = result
