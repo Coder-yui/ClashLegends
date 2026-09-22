@@ -15,7 +15,7 @@
 | `attack_swing / attack_hit` | 普攻出手 / 真实伤害成功；空挥与免疫不伪造命中 |
 | `attack_hit_by_segment / attack_launch_by_segment` | 与普攻段对齐；分段发射替代普通发射池 |
 | `attack_hit_once_by_segment` | 单文件已含多刀时按出手去重，只影响声音 |
-| `attack_swing_lead_time` | 在 first_hit 减提前量处播放；控制暂停、取消不补播 |
+| `attack_swing_lead_time` | 在 first_hit 减提前量处播放；控制取消旧攻击时停声、后续不补播 |
 | `attack_launch / attack_missile_cast / empowered_launch` | 实际弹体创建；强化发射替代普通池，不叠加 |
 | `first_strike:*` | 首击的出手、弹体起手/发射、真实命中；需对应机制 |
 | `empowered_ready / empowered_swing / empowered_buff:*` | 强化待击就绪、出手与状态起止 |
@@ -41,7 +41,7 @@
 
 | 持有者 | 停止与恢复 |
 | --- | --- |
-| 单位动作、增益、吐息、缠流、待机 | 分层管理；控制按规则暂停，死亡/销毁/换场清理。待机离开状态即停 |
+| 单位动作、增益、吐息、缠流、待机 | 分层管理；普攻受控取消，普通技能眩晕继续、冰冻取消，增益/待机不因普通控制暂停；死亡/销毁/换场清理。待机离开状态即停 |
 | 固定技能区域 | 按区域自身时长；自然结束可播消散声，清场不补结束声 |
 | 普通弹体尾音 | 开启 attack_launch_until_impact 时，每枚弹体独占；命中、失效、清场或播完释放 |
 | 定时孵化 | 独占非循环过程，控制不暂停；死亡停止，成功可延续同一尾音 |
@@ -61,4 +61,6 @@
 
 ## 动作进度音频节点
 
-`audio.events.<action>:start/voice/release.action_time`可声明主动动作内的非负秒数，必须小于该技能cast_duration。仅用于声音起点，不能绑定hit/sustain/end，更不能驱动伤害。GameAudioManager读取权威/快照动作进度派发，忽略同名普通事件/RPC通知以免重播；同序号回退不重放，取消/死亡不留下定时任务，控制随动作进度暂停。未配置action_time的声音行为不变。字段同时有形状、语义校验与生命周期回归。
+`audio.events.<action>:start/voice/release.action_time`可声明主动动作内的非负秒数，必须小于该技能cast_duration。仅用于声音起点，不能绑定hit/sustain/end，更不能驱动伤害。GameAudioManager读取权威/快照动作进度派发，忽略同名普通事件/RPC通知以免重播；同序号回退不重放，取消/死亡不留下定时任务，普通技能眩晕时继续，冰冻取消剩余节点。未配置action_time的声音行为不变。字段同时有形状、语义校验与生命周期回归。
+
+独立结果创建声使用 `audio.events.<action>:start.owner: "result"`。仅支持已经声明 `independent_on_creation` 的普通/满层技能，不允许再绑定 `action_time`。权威创建事件同时提交结果和声音，单位动作观察不重复启动；冻结或来源销毁不切断已创建结果声。施法本体的 sustain 仍归动作。
