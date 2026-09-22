@@ -11,6 +11,7 @@
 | 地图 | [竞技场](units/arena.md)、本地制作源件见 `ClashLegends-开发素材库/03-制作中/3D地图/` |
 | 音频 | [音频流程](AUDIO_INTEGRATION.md)、对应单位音频页 |
 | 工作台 | [工作台](DEVELOPMENT_WORKBENCH.md)、[测试手册](../tests/README.md) |
+| 控制 / 增益 / 减益 / 特殊状态设计 | [状态规则总览](status/README.md) → 共通规则与对应分类；实现前核对落地现状 |
 | 新机制 / 结构 / 联网 | [维护架构](MAINTENANCE_ARCHITECTURE.md)、[卡牌机制](CARD_DESIGN.md)、受影响专项说明及测试手册 |
 
 常用素材提取、模型摄影、动作预览和声音试听先查 [工具索引](../tools/README.md)，运行代码职责见 [scripts 导航](../scripts/README.md)。
