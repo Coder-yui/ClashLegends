@@ -24,6 +24,11 @@ def stage(arena=False):
         source = LIBRARY / '03-制作中/3D地图'
         shutil.copytree(source, output / 'assets/arena/rift_arena',
                         ignore=shutil.ignore_patterns('.godot', '.DS_Store', '*.import'))
+    # Explicit arena staging previews the in-development package, never production.
+    candidate = LIBRARY / '03-制作中/3D地图/runtime'
+    if arena and candidate.is_dir():
+        shutil.copytree(candidate, output / 'assets/arena/rift_arena', dirs_exist_ok=True,
+                        ignore=shutil.ignore_patterns('.godot', '.gdignore', '*.import', '.DS_Store'))
     return output
 
 

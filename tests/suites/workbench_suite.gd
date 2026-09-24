@@ -6,6 +6,8 @@ func run(harness: Object, main: Node2D) -> void:
 	_main = main
 	_check_artdev_active_skill_timeline()
 	_check_artdev_workbench()
+	_check_desktop_camera()
+	_check_explicit_inspection()
 
 func _check_artdev_active_skill_timeline() -> void:
 	var old_deck: Array = _main._deck.duplicate()
@@ -57,29 +59,72 @@ func _check_artdev_workbench() -> void:
 	panel.skill_resource_requested.connect(_main._set_art_dev_skill_resource)
 
 	panel._filter_cards("gwen")
-	var search_ok := panel._card_option.item_count == 1 and String(panel._card_option.get_item_metadata(0)) == "gwen"
+	var search_ok: bool = panel._library.entries.size() == 1 and panel._library.entries[0].id == "gwen"
 	panel._filter_cards("")
 	panel._select_item("pix")
 	var extra_forms := CardDB.all().values().filter(func(card): return card.has("transformed_stats")).size()
-	var all_cards := panel._card_option.item_count == CardDB.all().size() + 1 + extra_forms and panel._selected_id == "pix"
+	var all_cards: bool = panel._library.entries.size() == CardDB.all().size() + extra_forms and panel._selected_id == "pix"
 	panel.show_workspace(1)
 	var battle_input := panel.accepts_battle_input()
 	panel.show_workspace(0)
-	_expect(search_ok and all_cards and battle_input and not panel.accepts_battle_input(), "开发工作台可搜索全部卡及系统对象，仅实战页接受战场放置，无八卡槽限制")
+	_expect(search_ok and all_cards and battle_input and not panel.accepts_battle_input(), "开发工作台可搜索全部卡及系统对象，仅实战页接受战场放置，牌库浏览不受快捷栏八槽限制")
 
 	for choice in ["aatrox:1", "gnar:1"]:
 		panel._select_item(choice)
 		_expect(panel._form == 1 and panel._preview.model != null and panel._selection_label.text.contains("大"), "工作台独立形态入口：" + choice)
 	panel._select_item("pix")
 	panel._filter_cards("does-not-exist")
-	_expect(panel._card_option.disabled and panel._selected_id == "pix", "搜索无结果不会悄悄改换当前审查卡牌")
+	_expect(panel._library.entries.is_empty() and panel._selected_id == "pix", "搜索无结果不会悄悄改换当前审查卡牌")
 	panel._filter_cards("")
+	panel.show_workspace(1)
+	panel.set_quick_cards(["garen", "garen", "unknown", "ashe", "freeze", "teemo", "xin", "gnar", "gwen", "sett", "aatrox"])
+	_expect(panel._quick_cards.size() == 8 and panel._quick_cards[0] == "garen" and "aatrox" not in panel._quick_cards, "工作台快捷栏去重、过滤失效定义并限制八张")
+	panel._select_item("garen")
+	_expect(panel.has_placeable_selection(), "快捷栏选中卡可部署")
+	panel.set_quick_cards([])
+	_expect(panel._quick_cards.is_empty() and not panel.has_placeable_selection(), "空快捷栏不会隐式部署上一张卡")
+	panel.set_quick_cards(["garen", "ashe"])
+	panel._select_item("ashe")
+	panel._on_team_toggled(true)
+	_expect(panel._quick_cards == ["garen", "ashe"] and panel.has_placeable_selection(), "切阵营保留共享实验快捷栏")
+	panel._on_team_toggled(false)
+	panel._select_item("garen")
+	var key := InputEventKey.new()
+	key.pressed = true
+	key.keycode = KEY_2
+	panel._input(key)
+	_expect(panel._selected_id == "ashe", "数字键切换快捷卡")
+	panel._show_library(true)
+	panel._search.grab_focus()
+	key.keycode = KEY_1
+	panel._input(key)
+	_expect(panel._selected_id == "ashe", "搜索输入数字不会误切卡")
+	panel._show_library(false)
+	panel._preferences_path = "user://workbench-regression.cfg"
+	panel._persist = true
+	panel.set_quick_cards(["ashe", "gnar:1"])
+	panel._persist = false
+	panel.set_quick_cards([])
+	panel._load_quick_cards()
+	_expect(panel._quick_cards == ["ashe", "gnar:1"], "快捷栏持久化保留顺序与独立形态")
+	panel._persist = true
+	panel.set_quick_cards([])
+	panel._persist = false
+	panel.set_quick_cards(["garen"])
+	panel._load_quick_cards()
+	_expect(panel._quick_cards.is_empty(), "空快捷栏也能持久化")
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(panel._preferences_path))
+	panel.set_quick_cards(["garen", "ashe"])
 	panel._select_item("garen")
 	var before_units := _main.get_tree().get_nodes_in_group("combatants").size()
 	panel._preview.seek_seconds(0.2)
 	var isolated_preview := panel._preview.player != null and not panel._preview.player.is_playing() and is_equal_approx(panel._preview.player.current_animation_position, 0.2)
 	_expect(isolated_preview and _main.get_tree().get_nodes_in_group("combatants").size() == before_units, "素材动画可暂停定位且不生成权威单位或攻击")
+	panel._preview.set_playing(true)
+	panel._preview.player.advance(0.1)
+	_expect(panel._preview.player.current_animation_position > 0.2, "模型拖动到任意时间后继续播放，不从头重播")
 	panel.show_workspace(2)
+	_expect(panel._audio_entries.all(func(entry): return float(entry.duration) > 0.0), "每个已接入音频变体均显示实际时长")
 	panel._play_audio(0)
 	var audio_started := panel._audio_player.playing and panel._audio_player.stream != null
 	panel.show_workspace(0)
@@ -189,4 +234,101 @@ func _check_artdev_workbench() -> void:
 	_main._workbench.team = old_team
 	_main._workbench.last_units = old_last_units
 	_main._workbench.skill_choices = old_choices
+	panel.free()
+
+func _check_desktop_camera() -> void:
+	var layout := preload("res://scripts/ui/workbench/desktop_layout.gd").new()
+	var window := _main.get_window()
+	var original_size := window.content_scale_size
+	var original_transform := window.canvas_transform
+	layout.install(window)
+	_expect(is_equal_approx(layout.zoom, 1.0), "开发战场默认完整地图100%")
+	layout.center(1.0)
+	var field_start := window.canvas_transform * Vector2.ZERO
+	var field_end := window.canvas_transform * Vector2(720, 1280)
+	_expect(field_start.x >= layout.FIELD_RECT.position.x and field_start.y >= layout.FIELD_RECT.position.y and field_end.x <= layout.FIELD_RECT.end.x and field_end.y <= layout.FIELD_RECT.end.y, "一键全图完整显示权威战场四角")
+	layout.zoom_at(2.0, layout.FIELD_RECT.get_center())
+	layout.pan(Vector2(10000, 10000))
+	_expect(window.canvas_transform.origin.is_equal_approx(layout.FIELD_RECT.position), "放大后拖动到边界可观察战场左上角且不会丢失地图")
+	layout.pan(Vector2(-20000, -20000))
+	field_end = window.canvas_transform * Vector2(720, 1280)
+	_expect(field_end.is_equal_approx(layout.FIELD_RECT.end), "放大后可拖至战场右下角")
+	layout.restore()
+	_expect(window.content_scale_size == original_size and window.canvas_transform == original_transform, "工作台退出恢复正式对局窗口与坐标变换")
+
+func _check_explicit_inspection() -> void:
+	var old_panel: DevelopmentWorkbench = _main._art_dev_panel
+	var old_enabled: bool = _main._workbench.enabled
+	var panel := DevelopmentWorkbench.new()
+	_main.add_child(panel)
+	panel.setup(CardDB.all())
+	_main._art_dev_panel = panel
+	_main._workbench.enabled = true
+	_main._workbench.inspect_enabled = true
+	panel.item_selected.connect(_main._set_art_dev_selection)
+	panel.team_changed.connect(_main._set_art_dev_team)
+	panel.active_skill_selected.connect(_main._on_art_dev_active_skill_selected)
+	panel.active_skill_requested.connect(_main._use_art_dev_active_skill)
+	panel.show_workspace(0)
+	_expect(not panel._shelf_panel.visible, "模型页没有实战快捷栏")
+	panel._show_library(true)
+	_expect(not panel._library.multiple and panel._library.models_only, "模型选择框只选择已接入模型，不编辑快捷栏")
+	panel.show_workspace(1)
+	panel._on_team_toggled(false)
+	panel.set_quick_cards(["garen"])
+	panel._select_item("garen")
+	_main._workbench_map_click(Vector2(200, 1000))
+	var first: Unit = _main._art_dev_selected_unit()
+	_expect(first != null and first.card_id == "garen", "快捷栏选卡后点击地图部署并选中")
+	panel.set_select_mode(true)
+	panel._select_item("ashe")
+	panel._on_team_toggled(true)
+	var count: int = _main.get_tree().get_nodes_in_group("combatants").size()
+	_main._workbench_map_click(Vector2(600, 700))
+	_expect(_main.get_tree().get_nodes_in_group("combatants").size() == count and _main._art_dev_selected_unit() == null, "选择模式点击空地只取消目标，不下牌")
+	_main._workbench_map_click(first.position)
+	_expect(_main._art_dev_selected_unit() == first and panel._skill_source() == "garen", "选中场上单位的技能来源不受待放置卡和阵营影响")
+	first.set_meta("workbench_no_skill", true)
+	_main._sync_art_dev_panel_state()
+	_expect(panel._skill_button.disabled, "普通镜像标记不会因显式选中获得预选技能")
+	first.remove_meta("workbench_no_skill")
+	panel._select_item("training_dummy")
+	_main._workbench_map_click(Vector2(500, 500))
+	_expect(_main.get_tree().get_nodes_in_group("combatants").size() == count and panel.is_select_mode(), "木桩不自动退出选择模式，也不隐式放置")
+	panel.set_select_mode(false)
+	_main._workbench_map_click(Vector2(500, 500))
+	var dummy: Unit = _main._art_dev_selected_unit()
+	_expect(dummy != null and dummy.card_id == "training_dummy" and dummy.team == 1, "木桩按当前阵营与鼠标落点放置")
+	panel.set_quick_cards([])
+	panel._select_item("garen")
+	count = _main.get_tree().get_nodes_in_group("combatants").size()
+	_main._workbench_map_click(Vector2(200, 1100))
+	_expect(_main.get_tree().get_nodes_in_group("combatants").size() == count and panel._inspection_controls.visible, "空栏不能部署，技能控制板保持可见")
+	panel._show_library(true)
+	_expect(panel._library.multiple and panel._library._shelf_grid.visible and not panel.accepts_battle_input(), "实战选择框上方选牌下方编辑槽位，遮罩期间不操作地图")
+	panel._library.toggled.emit("garen")
+	_expect(panel._quick_cards == ["garen"], "网格单击加入快捷栏")
+	panel._library._shelf_grid.get_child(0).pressed.emit()
+	_expect(panel._quick_cards.is_empty(), "编辑框点击槽位移除")
+	panel._show_library(false)
+	var group: Array[Unit] = _main._spawn_card_units(0, "minion_squad", Vector2(200, 850), 0.0)
+	var other: Array[Unit] = _main._spawn_card_units(0, "minion_squad", Vector2(500, 850), 0.0)
+	_main._workbench.inspect(group[1])
+	_main._sync_art_dev_panel_state()
+	_main._run_workbench_scenario("freeze")
+	_expect(group[1].presentation_state().frozen and not group[0].presentation_state().frozen, "控制只影响选中的编队成员")
+	_main._workbench.inspect(group[0])
+	_main._sync_art_dev_panel_state()
+	panel._select_item("ashe")
+	_expect(_main._art_dev_selected_unit() == group[0] and panel._skill_scope.text.contains("整组"), "切待放置卡不换技能目标，整组技能明确标识范围")
+	_main._use_art_dev_active_skill(0)
+	_expect(group.all(func(unit): return unit.active_buff_timer > 0) and other.all(func(unit): return unit.active_buff_timer == 0), "选中成员施放原卡整组技能，隔离其他部署")
+	group[0].take_damage(100000)
+	_main._sync_art_dev_panel_state()
+	_expect(_main._art_dev_selected_unit() == null and panel._skill_button.disabled, "选中成员死亡后禁止技能，不自动转移目标")
+	_main._clear_art_dev_units()
+	_expect(_main._workbench.target == null, "清场同时清除显式操作目标")
+	_main._workbench.inspect_enabled = false
+	_main._workbench.enabled = old_enabled
+	_main._art_dev_panel = old_panel
 	panel.free()

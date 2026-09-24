@@ -2,6 +2,31 @@ class_name WorkbenchSession
 extends RefCounted
 ## 工作台会话只保存选择与操作模式；战斗通过注入的正式入口执行。
 var enabled := false
+var inspect_enabled := false
+var target: WeakRef
+
+func inspected_unit() -> Unit:
+	var unit = target.get_ref() if target != null else null
+	return unit if is_instance_valid(unit) and unit is Unit and unit.hp > 0 and not unit.is_queued_for_deletion() else null
+
+func inspect(unit: Unit) -> void:
+	target = weakref(unit) if is_instance_valid(unit) else null
+
+func pick(units: Array, position: Vector2, canvas: Transform2D) -> void:
+	var closest: Unit
+	var best := INF
+	for node in units:
+		if not node is Unit or node.hp <= 0 or node.is_queued_for_deletion(): continue
+		var head: Vector2 = canvas.affine_inverse() * node.get_visual_head_screen_position()
+		var radius := maxf(node.body_radius, 24.0)
+		if head.distance_to(node.position) > maxf(node.visual_radius * 8, 240.0): head = node.position - Vector2(0, radius * 2)
+		var body := Rect2(Vector2(node.position.x - radius, minf(head.y, node.position.y - radius)), Vector2(radius * 2, absf(node.position.y - head.y) + radius))
+		var distance: float = position.distance_squared_to(node.position)
+		if (body.has_point(position) or distance <= radius * radius) and distance < best:
+			best = distance
+			closest = node
+	inspect(closest)
+
 var form := 0
 var selection := "training_dummy"
 var team := 1
@@ -29,6 +54,7 @@ func set_team(value: int) -> void:
 	sync_view.call()
 
 func clear() -> void:
+	target = null
 	last_units.clear()
 	last_groups.clear()
 	clear_battle.call()
