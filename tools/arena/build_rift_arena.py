@@ -415,6 +415,48 @@ for i,(x,r) in enumerate([(.18,3.4),(.18,9.7),(.2,12.8),(17.85,3.5),(17.8,7.3),(
 for x,r in [(7.2,9.8),(10.6,12.4),(6.8,20.5),(10.5,23),(8.8,7.8),(9.0,26.1)]:
     slab(x,r,.30,.18,RNG.random(),'Meadow buried fragment',top=-.012)
 
+# 2026-09: layered forest margins. A separate seed preserves the original layout.
+RNG = random.Random(20260923)
+# Taller rear trees frame clustered mid-height saplings; avoid a uniform hedge.
+for side in [0, 18]:
+    outward = -1 if side == 0 else 1
+    for index, row in enumerate([1.6, 5.1, 9.3, 12.7, 19.3, 23.2, 27.2, 30.7]):
+        x = side + outward * RNG.uniform(.45, 1.25)
+        source_prop(['pine_broad', 'pine_tall', 'pine_compact'][index % 3],
+                    x, row, 0, RNG.uniform(1.25, 1.7), RNG.uniform(-2.5, 2.5))
+        source_prop('pine_compact', side + outward * .05, row + .8,
+                    0, RNG.uniform(.62, .9), RNG.uniform(-2.5, 2.5))
+    # Low plants extend just inside the camera edge, with gaps by towers and bridges.
+    for index, row in enumerate([1.3, 3.9, 8.8, 10.7, 12.9, 18.5, 20.5, 22.7, 27.9, 30.2]):
+        x = side - outward * RNG.uniform(.25, .48)
+        source_prop('mossy_boulder', x + outward * .35, row, -.06,
+                    RNG.uniform(.34, .52), RNG.uniform(-2.5, 2.5), 'Source relics')
+        for j in range(5):
+            fern(x + RNG.uniform(-.24, .24), row + RNG.uniform(-.65, .65),
+                 RNG.uniform(.32, .54), j % 3 == 0)
+        # Roots connect stone and undergrowth rather than isolated decorative dots.
+        tube('Forest margin root', [(x + outward * .3, row, .12),
+             (x, row + .36, .06), (x - outward * .20, row + .62, .015)],
+             [.09, .05, .008], bark, 'Woodland')
+# Fallen timber and aged markers make the four perimeter pockets distinct.
+for asset, x, row, scale, yaw in [
+    ('hollow_log', -.20, 5.0, .64, -1.0),
+    ('hollow_log', 18.25, 23.4, .67, .8),
+    ('carved_runestone', -.15, 28.3, .46, .7),
+    ('mossy_boulder', 18.0, 5.8, .67, -.4)]:
+    source_prop(asset, x, row, .01, scale, yaw, 'Source relics')
+# Richer river pockets stay clear of both bridge decks and approach lanes.
+for x, row in [(.6, 14.86), (6.7, 14.86), (10.5, 17.12), (17.4, 17.14)]:
+    for j in range(5):
+        fern(x + RNG.uniform(-.36, .36), row + RNG.uniform(-.08, .08),
+             RNG.uniform(.25, .39), j == 0)
+# Low fern/stone groups on the end terraces keep the two central nexus wells open.
+for row in [-.7, 32.9]:
+    for x in [2.0, 4.8, 13.1, 16.2]:
+        source_prop('pine_compact', x, row, -.02, .85, RNG.uniform(-2, 2))
+        for j in range(4):
+            fern(x + RNG.uniform(-.5, .5), row + RNG.uniform(-.25, .25), .4, j == 0)
+
 # Useful Blender reference camera and lighting; neither is exported to the game.
 scene=bpy.context.scene
 scene.world.color=(.26,.32,.36)
@@ -426,7 +468,7 @@ scene.render.resolution_x=720;scene.render.resolution_y=1280;scene.render.resolu
 bpy.ops.object.light_add(type='SUN',location=(5,-8,20))
 sun=bpy.context.object;sun.name='Sunlit forest key';sun.rotation_euler=(.45,-.5,-.4);sun.data.energy=1.6
 scene['authoritative_grid']='18x32; river rows 15..17; bridges x 2..5 and 13..16; all walking surfaces <= 0.'
-scene['art_version']='2026-09-12 Sunlit Rift / unique perimeter vignettes / original SR surface textures'
+scene['art_version']='2026-09-23 Sunlit Rift / layered woodland margins / flowing river'
 scene['mapping']='Blender(tile_x-9,(16-tile_row)*sqrt(2),height) -> Godot(x,height,-Blender_y)'
 scene['purpose']='Presentation-only candidate; no collision/navigation/gameplay state.'
 OUT.joinpath('source').mkdir(parents=True,exist_ok=True)

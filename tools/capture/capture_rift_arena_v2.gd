@@ -1,6 +1,6 @@
 extends SceneTree
 ## Rendering QA and free-camera inspection for the production 3D arena.
-## Godot --path . --script tools/capture/capture_rift_arena_v2.gd [-- --hold|--inspect]
+## Godot --path . --script tools/capture/capture_rift_arena_v2.gd [-- --hold|--inspect|--motion]
 ## Captures are actual Godot frames, including the existing six tower proxies.
 
 const CANDIDATE_PATH := "res://assets/arena/rift_arena/rift_arena.tscn"
@@ -23,8 +23,7 @@ class CandidatePreviewMain extends "res://scripts/main.gd":
 							draw_rect(Rect2(Vector2(tile) * ArenaRules.TILE_SIZE,
 								Vector2.ONE * ArenaRules.TILE_SIZE), Color(0.40, 0.70, 1.00, 0.15))
 			_draw_deployment_preview(stats)
-		for deployment in _commands.pre_deployments:
-			_draw_card_pre_deploy_indicator(deployment)
+		_commands.draw_deployments(_draw_card_pre_deploy_indicator)
 
 class InspectionControls extends Node:
 	var handler: Callable
@@ -56,7 +55,7 @@ func _capture() -> void:
 		quit(1)
 		return
 	root.size = Vector2i(720, 1400)
-	root.title = "Clash Legends — Rift Arena v2 candidate"
+	root.title = "Clash Legends — Rift Arena"
 	RenderingServer.set_default_clear_color(STUDIO_BACKGROUND)
 	_output = ProjectSettings.globalize_path(OUTPUT_PATH)
 	if DirAccess.make_dir_recursive_absolute(_output) != OK:
@@ -91,6 +90,8 @@ func _capture() -> void:
 	await _settle_frames(12)
 	if not _save_viewport(_presentation._viewport, "rift_arena_clean.png"):
 		return
+	if OS.get_cmdline_user_args().has("--motion"):
+		await _capture_motion(_presentation._viewport, "gameplay_motion")
 	# All four units use the shared authoritative play_card entry point with its
 	# normal position validation. The immediate option is the existing dev flow.
 	for spec in [[0, "garen", Vector2(140, 760)], [1, "garen", Vector2(140, 520)],
@@ -124,6 +125,8 @@ func _capture() -> void:
 	await _settle_frames(12)
 	if not _save_viewport(_presentation._viewport, "rift_arena_river_detail.png"):
 		return
+	if OS.get_cmdline_user_args().has("--motion"):
+		await _capture_motion(_presentation._viewport, "river_motion")
 	print("[Arena v2 render] draw calls=", Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME),
 		" primitives=", Performance.get_monitor(Performance.RENDER_TOTAL_PRIMITIVES_IN_FRAME))
 	print("[Arena v2 capture] ", _output)
@@ -140,6 +143,32 @@ func _capture() -> void:
 		print("[Arena v2 capture] Holding candidate gameplay view; close the window to exit.")
 		return
 	quit()
+
+
+func _capture_motion(viewport: Viewport, prefix: String) -> void:
+	# Buffer real rendered images so PNG encoding does not stall sampled motion.
+	# Record actual times: this is a visual QA sequence, not a frame-rate benchmark.
+	var frames: Array[Image] = []
+	var times: Array[float] = []
+	var started := Time.get_ticks_usec()
+	for frame in range(36):
+		await create_timer(1.0 / 12.0).timeout
+		await RenderingServer.frame_post_draw
+		times.append(float(Time.get_ticks_usec() - started) / 1000000.0)
+		frames.append(viewport.get_texture().get_image())
+	for frame in frames.size():
+		var path := _output.path_join("%s_%03d.png" % [prefix, frame])
+		if frames[frame].save_png(path) != OK:
+			push_error("Unable to save motion frame: " + path)
+			quit(1)
+			return
+	var metadata := FileAccess.open(_output.path_join(prefix + ".json"), FileAccess.WRITE)
+	if metadata == null:
+		push_error("Unable to save motion timing: " + prefix)
+		quit(1)
+		return
+	metadata.store_string(JSON.stringify({"seconds": times}, "\t"))
+	print("[Arena motion] ", prefix, " frames=", frames.size(), " elapsed=", times[-1] - times[0])
 
 
 func _set_background() -> void:
