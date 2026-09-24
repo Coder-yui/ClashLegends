@@ -12,6 +12,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_ashe_arrow_collision()
 	_check_piercing_cards()
 	_check_empowered_attacks_and_blind()
+	_check_empowered_resets()
 	_check_garen_judgment()
 	_check_masteryi_double_strike_and_highlander()
 	_check_animation_routes()
@@ -190,10 +191,8 @@ func _check_empowered_attacks_and_blind() -> void:
 	garen.attack_timeline.windup = 0.2
 	garen.attack_timeline.cooldown = 0.6
 	garen._attack_visual_pending = false
-	var windup_before := garen.attack_timeline.windup
-	var cooldown_before := garen.attack_timeline.cooldown
 	_main._active_skill_effect_system.apply(garen, garen_skill)
-	var cadence_preserved := is_equal_approx(garen.attack_timeline.windup, windup_before) and is_equal_approx(garen.attack_timeline.cooldown, cooldown_before)
+	var cadence_reset := garen.attack_timeline.windup == 0.0 and garen.attack_timeline.cooldown == 0.0 and not garen._attacking and garen._attack_visual_pending
 	var no_mid_attack_speed_boost := is_equal_approx(garen.empowered_attack_speed_multiplier, 1.0)
 	var target_before := target.hp
 	garen.attack_timeline.windup = 0.0
@@ -201,9 +200,9 @@ func _check_empowered_attacks_and_blind() -> void:
 	garen._attack(_main.SIM_DT)
 	var empowered_damage := target_before - target.hp
 	_expect(
-		cadence_preserved and no_mid_attack_speed_boost and is_equal_approx(empowered_damage, garen.damage * 2.0)
+		cadence_reset and no_mid_attack_speed_boost and is_equal_approx(empowered_damage, garen.damage * 2.0)
 		and not garen.empowered_attack_ready,
-		"盖伦致命打击不重置攻击节奏；攻击中使用时不获得移速，当前强化命中造成 2 倍伤害后立即移除效果",
+		"盖伦致命打击刷新普攻；攻击中使用不获得移速，强化命中造成2倍伤害后移除效果",
 	)
 	garen._attacking = false
 	garen._move_direction = Vector2.ZERO
@@ -592,3 +591,38 @@ func _check_ashe_release_vs_collision() -> void:
 		target.free()
 	_main._projectile_system.clear_all()
 	_main._commands.clear_impacts()
+
+func _check_empowered_resets() -> void:
+	for card in ["garen", "teemo", "darius"]:
+		for phase in ["windup", "recovery"]:
+			var source := _spawn_test_unit(card, 0, Vector2(300, 900))
+			var target := _spawn_dummy(Vector2(300, 850))
+			source.building_only = false
+			source._target = target
+			source._attacking = true
+			source._attack_visual_serial = 1
+			source._attack_visual_pending = false
+			source.attack_timeline.windup = 0.1 if phase == "windup" else 0.0
+			source.attack_timeline.cooldown = 0.9
+			source.attack_timeline.recovery = 0.0 if phase == "windup" else 0.7
+			_main._battle_presentation.attach_unit(source, CardDB.get_card(card))
+			var view := _view_for(source)
+			view._play_attack(1)
+			var old_clip := view._animation_player.current_animation
+			var hp_before := target.hp
+			_main._active_skill_effect_system.apply(source, CardDB.active_skills_for(card)[0])
+			_expect(source.attack_timeline.cooldown == 0.0 and source.attack_timeline.recovery == 0.0 and source.attack_timeline.windup == 0.0 and target.hp == hp_before, card + phase + "刷新取消旧周期但不立即补伤害")
+			_expect(view._animation_player.current_animation == old_clip and Unit.valid_action_cancellation(source.last_action_cancellation), card + "刷新取消载荷合法，模型保持当前动作供混合")
+			var replica := Unit.new()
+			replica.apply_action_cancellation(source.last_action_cancellation)
+			_expect(replica.action_cancel_serial == source.action_cancel_serial, "客户端接受强化刷新取消事件")
+			replica.free()
+			source.sim_tick(0.05)
+			_expect(source.get_attack_visual_serial() > 1 and source.get_empowered_attack_visual_serial() == source.get_attack_visual_serial() and source.attack_timeline.windup > 0.0 and target.hp == hp_before, card + phase + "同Tick进入完整强化前摇，未沿用旧命中节点")
+			view._sync_visual(false, 0.0)
+			_expect(view._active_attack_empowered and view._last_clip_transition_kind == &"action_in" and view._last_clip_blend_time > 0.0, card + "普通攻击直接混合强化动作")
+			var attack_serial := source.get_attack_visual_serial()
+			view._play_attack(attack_serial + 1)
+			_expect(not view._active_attack_empowered and view._last_clip_transition_kind == &"action_in" and view._last_clip_blend_time > 0.0, card + "强化接回普通攻击使用姿态混合")
+			source.free()
+			target.free()

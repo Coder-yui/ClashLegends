@@ -15,7 +15,7 @@ static func definition() -> Dictionary:
 			"active_skills": [{
 					"name": "致命打击", "kind": "empowered_attack",
 					"cost": 1, "max_uses": 2, "cooldown": 6.0,
-					"description": "强化下一次普通攻击，使其造成双倍伤害；强化尚未打出时移动速度提高两档。技能不会重置或延后当前攻击节奏。",
+					"description": "强化下一次普通攻击，使其造成双倍伤害；强化尚未打出时移动速度提高两档。技能生效时刷新普攻，打断旧攻击并立即重新开始强化攻击前摇。",
 					"empowered_damage_multiplier": 2.0,
 					# 盖伦基础为“慢”，提高两档后达到“中等”。强化攻击出手后立即失去加速。
 					"empowered_speed_multiplier": 1.3636,
