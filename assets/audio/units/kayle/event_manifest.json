@@ -1,0 +1,297 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Kayle.wad.client",
+  "voice_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Kayle.zh_CN.wad.client",
+  "files": [
+    {
+      "path": "assets/audio/units/kayle/deploy_melee_1.wav",
+      "event": "Play_vo_Kayle_Attack2DGeneral",
+      "switch": 987635873,
+      "variant": 4,
+      "text": "正义绝不妥协。",
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/voice/attack/wav/Play_vo_Kayle_Attack2DGeneral [2782712965=987635873] {r4}.wav",
+      "sha256": "9023fc3259418a857da1712da2bdbe23b2bba5aed6e5a1d718fecfa77da544ed",
+      "verified_by_listening": false
+    },
+    {
+      "path": "assets/audio/units/kayle/deploy_melee_2.wav",
+      "event": "Play_vo_Kayle_Attack2DGeneral",
+      "switch": 987635873,
+      "variant": 3,
+      "text": "正义荣耀。",
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/voice/attack/wav/Play_vo_Kayle_Attack2DGeneral [2782712965=987635873] {r3}.wav",
+      "sha256": "42f1b7c138b30c45a3c9d6b9a23f94ef4c780321176b49cb26f4ec34d8a719cd",
+      "verified_by_listening": false
+    },
+    {
+      "path": "assets/audio/units/kayle/deploy_melee_3.wav",
+      "event": "Play_vo_Kayle_Attack2DGeneral",
+      "switch": 987635873,
+      "variant": 17,
+      "text": "我携来烈怒之光。",
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/voice/attack/wav/Play_vo_Kayle_Attack2DGeneral [2782712965=987635873] {r17}.wav",
+      "sha256": "265b41936c802e69699a3948981472aecce3fe4be69df95ceb02edb9d4ca0ec1",
+      "verified_by_listening": false
+    },
+    {
+      "path": "assets/audio/units/kayle/deploy_ranged_1.wav",
+      "event": "Play_vo_Kayle_Attack2DGeneral",
+      "switch": 1004413458,
+      "variant": 1,
+      "text": "卑琐之人，烈焰加身。",
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/voice/attack/wav/Play_vo_Kayle_Attack2DGeneral [2782712965=1004413458] {r1}.wav",
+      "sha256": "c63ba38a4d6fc746a6587c331feb05247d44449a17324d0266d74e9e7a7f205a",
+      "verified_by_listening": false
+    },
+    {
+      "path": "assets/audio/units/kayle/deploy_ranged_2.wav",
+      "event": "Play_vo_Kayle_Attack2DGeneral",
+      "switch": 1004413458,
+      "variant": 2,
+      "text": "尽情享受你的救赎。",
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/voice/attack/wav/Play_vo_Kayle_Attack2DGeneral [2782712965=1004413458] {r2}.wav",
+      "sha256": "fe5ebf0865c9dbffa2069fe929cb513b5a6a43cb0d0578f7b76a6c5cd56762d0",
+      "verified_by_listening": false
+    },
+    {
+      "path": "assets/audio/units/kayle/deploy_ranged_3.wav",
+      "event": "Play_vo_Kayle_Attack2DGeneral",
+      "switch": 1004413458,
+      "variant": 11,
+      "text": "光明与荣耀。",
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/voice/attack/wav/Play_vo_Kayle_Attack2DGeneral [2782712965=1004413458] {r11}.wav",
+      "sha256": "e48aeb5d7407e908264bf6d8ad3cf6a247658b9482dcc17472dd9872130a6995",
+      "verified_by_listening": false
+    },
+    {
+      "path": "assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack_oncast_r1_d.wav",
+      "event": "Play_sfx_Kayle_KayleBasicAttack_OnCast",
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/audio-prepared/kayle/txtp/Play_sfx_Kayle_KayleBasicAttack_OnCast {r1} {d}.txtp",
+      "sha256": "594dba641e5789726218bc9051f043e8ae01bd33eb61564e1326c971a280120b",
+      "processing": "vgmstream float32 decode; shared SFX gain -4 dB; PCM16 (no per-file normalization)"
+    },
+    {
+      "path": "assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack_oncast_r2_d.wav",
+      "event": "Play_sfx_Kayle_KayleBasicAttack_OnCast",
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/audio-prepared/kayle/txtp/Play_sfx_Kayle_KayleBasicAttack_OnCast {r2} {d}.txtp",
+      "sha256": "ef6c4e70e76bb70c5db49638a01c2f987d87a79ceec97d81dd76661ee0c86064",
+      "processing": "vgmstream float32 decode; shared SFX gain -4 dB; PCM16 (no per-file normalization)"
+    },
+    {
+      "path": "assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack_oncast_r3_d.wav",
+      "event": "Play_sfx_Kayle_KayleBasicAttack_OnCast",
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/audio-prepared/kayle/txtp/Play_sfx_Kayle_KayleBasicAttack_OnCast {r3} {d}.txtp",
+      "sha256": "a2d3d8b3d1ad4c3d279abf97530ed72e04e8b210b4ef3b3a3e9272c447065ca8",
+      "processing": "vgmstream float32 decode; shared SFX gain -4 dB; PCM16 (no per-file normalization)"
+    },
+    {
+      "path": "assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack_oncast_r4_d.wav",
+      "event": "Play_sfx_Kayle_KayleBasicAttack_OnCast",
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/audio-prepared/kayle/txtp/Play_sfx_Kayle_KayleBasicAttack_OnCast {r4} {d}.txtp",
+      "sha256": "4a9b9a0dd830187f3903ee95dc8b74a42290d0c9936462f4f11358a17b4cf91a",
+      "processing": "vgmstream float32 decode; shared SFX gain -4 dB; PCM16 (no per-file normalization)"
+    },
+    {
+      "path": "assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack2_oncast_r1.wav",
+      "event": "Play_sfx_Kayle_KayleBasicAttack2_OnCast",
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/audio-prepared/kayle/txtp/Play_sfx_Kayle_KayleBasicAttack2_OnCast {r1}.txtp",
+      "sha256": "594dba641e5789726218bc9051f043e8ae01bd33eb61564e1326c971a280120b",
+      "processing": "vgmstream float32 decode; shared SFX gain -4 dB; PCM16 (no per-file normalization)"
+    },
+    {
+      "path": "assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack2_oncast_r2.wav",
+      "event": "Play_sfx_Kayle_KayleBasicAttack2_OnCast",
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/audio-prepared/kayle/txtp/Play_sfx_Kayle_KayleBasicAttack2_OnCast {r2}.txtp",
+      "sha256": "ef6c4e70e76bb70c5db49638a01c2f987d87a79ceec97d81dd76661ee0c86064",
+      "processing": "vgmstream float32 decode; shared SFX gain -4 dB; PCM16 (no per-file normalization)"
+    },
+    {
+      "path": "assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack2_oncast_r3.wav",
+      "event": "Play_sfx_Kayle_KayleBasicAttack2_OnCast",
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/audio-prepared/kayle/txtp/Play_sfx_Kayle_KayleBasicAttack2_OnCast {r3}.txtp",
+      "sha256": "a2d3d8b3d1ad4c3d279abf97530ed72e04e8b210b4ef3b3a3e9272c447065ca8",
+      "processing": "vgmstream float32 decode; shared SFX gain -4 dB; PCM16 (no per-file normalization)"
+    },
+    {
+      "path": "assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack2_oncast_r4.wav",
+      "event": "Play_sfx_Kayle_KayleBasicAttack2_OnCast",
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/audio-prepared/kayle/txtp/Play_sfx_Kayle_KayleBasicAttack2_OnCast {r4}.txtp",
+      "sha256": "4a9b9a0dd830187f3903ee95dc8b74a42290d0c9936462f4f11358a17b4cf91a",
+      "processing": "vgmstream float32 decode; shared SFX gain -4 dB; PCM16 (no per-file normalization)"
+    },
+    {
+      "path": "assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack_onhit_r1_d.wav",
+      "event": "Play_sfx_Kayle_KayleBasicAttack_OnHit",
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/audio-prepared/kayle/txtp/Play_sfx_Kayle_KayleBasicAttack_OnHit {r1} {d}.txtp",
+      "sha256": "818da1d3239aa763e86e2390e09bc1f733147354a0df101d8570740e99b00594",
+      "processing": "vgmstream float32 decode; shared SFX gain -4 dB; PCM16 (no per-file normalization)"
+    },
+    {
+      "path": "assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack_onhit_r2_d.wav",
+      "event": "Play_sfx_Kayle_KayleBasicAttack_OnHit",
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/audio-prepared/kayle/txtp/Play_sfx_Kayle_KayleBasicAttack_OnHit {r2} {d}.txtp",
+      "sha256": "3e1eae63120fa619378b583caa4aabdf34ef3ea3b43b9efc9aaed6d938145b3e",
+      "processing": "vgmstream float32 decode; shared SFX gain -4 dB; PCM16 (no per-file normalization)"
+    },
+    {
+      "path": "assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack_onhit_r3_d.wav",
+      "event": "Play_sfx_Kayle_KayleBasicAttack_OnHit",
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/audio-prepared/kayle/txtp/Play_sfx_Kayle_KayleBasicAttack_OnHit {r3} {d}.txtp",
+      "sha256": "723810b102fc439e561ab042105b2b12778ba62bf30bfc8b8b32271f53e4267d",
+      "processing": "vgmstream float32 decode; shared SFX gain -4 dB; PCM16 (no per-file normalization)"
+    },
+    {
+      "path": "assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack_onhit_r4_d.wav",
+      "event": "Play_sfx_Kayle_KayleBasicAttack_OnHit",
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/audio-prepared/kayle/txtp/Play_sfx_Kayle_KayleBasicAttack_OnHit {r4} {d}.txtp",
+      "sha256": "2e38e0de0ad6d0f9a4003ed7fe37037d79402c004464aaf6acaa8488d06660cd",
+      "processing": "vgmstream float32 decode; shared SFX gain -4 dB; PCM16 (no per-file normalization)"
+    },
+    {
+      "path": "assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack2_onhit_r1.wav",
+      "event": "Play_sfx_Kayle_KayleBasicAttack2_OnHit",
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/audio-prepared/kayle/txtp/Play_sfx_Kayle_KayleBasicAttack2_OnHit {r1}.txtp",
+      "sha256": "818da1d3239aa763e86e2390e09bc1f733147354a0df101d8570740e99b00594",
+      "processing": "vgmstream float32 decode; shared SFX gain -4 dB; PCM16 (no per-file normalization)"
+    },
+    {
+      "path": "assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack2_onhit_r2.wav",
+      "event": "Play_sfx_Kayle_KayleBasicAttack2_OnHit",
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/audio-prepared/kayle/txtp/Play_sfx_Kayle_KayleBasicAttack2_OnHit {r2}.txtp",
+      "sha256": "3e1eae63120fa619378b583caa4aabdf34ef3ea3b43b9efc9aaed6d938145b3e",
+      "processing": "vgmstream float32 decode; shared SFX gain -4 dB; PCM16 (no per-file normalization)"
+    },
+    {
+      "path": "assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack2_onhit_r3.wav",
+      "event": "Play_sfx_Kayle_KayleBasicAttack2_OnHit",
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/audio-prepared/kayle/txtp/Play_sfx_Kayle_KayleBasicAttack2_OnHit {r3}.txtp",
+      "sha256": "723810b102fc439e561ab042105b2b12778ba62bf30bfc8b8b32271f53e4267d",
+      "processing": "vgmstream float32 decode; shared SFX gain -4 dB; PCM16 (no per-file normalization)"
+    },
+    {
+      "path": "assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack2_onhit_r4.wav",
+      "event": "Play_sfx_Kayle_KayleBasicAttack2_OnHit",
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/audio-prepared/kayle/txtp/Play_sfx_Kayle_KayleBasicAttack2_OnHit {r4}.txtp",
+      "sha256": "2e38e0de0ad6d0f9a4003ed7fe37037d79402c004464aaf6acaa8488d06660cd",
+      "processing": "vgmstream float32 decode; shared SFX gain -4 dB; PCM16 (no per-file normalization)"
+    },
+    {
+      "path": "assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack3_oncast_r1_d.wav",
+      "event": "Play_sfx_Kayle_KayleBasicAttack3_OnCast",
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/audio-prepared/kayle/txtp/Play_sfx_Kayle_KayleBasicAttack3_OnCast {r1} {d}.txtp",
+      "sha256": "594dba641e5789726218bc9051f043e8ae01bd33eb61564e1326c971a280120b",
+      "processing": "vgmstream float32 decode; shared SFX gain -4 dB; PCM16 (no per-file normalization)"
+    },
+    {
+      "path": "assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack3_oncast_r2_d.wav",
+      "event": "Play_sfx_Kayle_KayleBasicAttack3_OnCast",
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/audio-prepared/kayle/txtp/Play_sfx_Kayle_KayleBasicAttack3_OnCast {r2} {d}.txtp",
+      "sha256": "ef6c4e70e76bb70c5db49638a01c2f987d87a79ceec97d81dd76661ee0c86064",
+      "processing": "vgmstream float32 decode; shared SFX gain -4 dB; PCM16 (no per-file normalization)"
+    },
+    {
+      "path": "assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack3_oncast_r3_d.wav",
+      "event": "Play_sfx_Kayle_KayleBasicAttack3_OnCast",
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/audio-prepared/kayle/txtp/Play_sfx_Kayle_KayleBasicAttack3_OnCast {r3} {d}.txtp",
+      "sha256": "a2d3d8b3d1ad4c3d279abf97530ed72e04e8b210b4ef3b3a3e9272c447065ca8",
+      "processing": "vgmstream float32 decode; shared SFX gain -4 dB; PCM16 (no per-file normalization)"
+    },
+    {
+      "path": "assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack3_oncast_r4_d.wav",
+      "event": "Play_sfx_Kayle_KayleBasicAttack3_OnCast",
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/audio-prepared/kayle/txtp/Play_sfx_Kayle_KayleBasicAttack3_OnCast {r4} {d}.txtp",
+      "sha256": "4a9b9a0dd830187f3903ee95dc8b74a42290d0c9936462f4f11358a17b4cf91a",
+      "processing": "vgmstream float32 decode; shared SFX gain -4 dB; PCM16 (no per-file normalization)"
+    },
+    {
+      "path": "assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack4_oncast_r1_d.wav",
+      "event": "Play_sfx_Kayle_KayleBasicAttack4_OnCast",
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/audio-prepared/kayle/txtp/Play_sfx_Kayle_KayleBasicAttack4_OnCast {r1} {d}.txtp",
+      "sha256": "594dba641e5789726218bc9051f043e8ae01bd33eb61564e1326c971a280120b",
+      "processing": "vgmstream float32 decode; shared SFX gain -4 dB; PCM16 (no per-file normalization)"
+    },
+    {
+      "path": "assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack4_oncast_r2_d.wav",
+      "event": "Play_sfx_Kayle_KayleBasicAttack4_OnCast",
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/audio-prepared/kayle/txtp/Play_sfx_Kayle_KayleBasicAttack4_OnCast {r2} {d}.txtp",
+      "sha256": "ef6c4e70e76bb70c5db49638a01c2f987d87a79ceec97d81dd76661ee0c86064",
+      "processing": "vgmstream float32 decode; shared SFX gain -4 dB; PCM16 (no per-file normalization)"
+    },
+    {
+      "path": "assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack4_oncast_r3_d.wav",
+      "event": "Play_sfx_Kayle_KayleBasicAttack4_OnCast",
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/audio-prepared/kayle/txtp/Play_sfx_Kayle_KayleBasicAttack4_OnCast {r3} {d}.txtp",
+      "sha256": "a2d3d8b3d1ad4c3d279abf97530ed72e04e8b210b4ef3b3a3e9272c447065ca8",
+      "processing": "vgmstream float32 decode; shared SFX gain -4 dB; PCM16 (no per-file normalization)"
+    },
+    {
+      "path": "assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack4_oncast_r4_d.wav",
+      "event": "Play_sfx_Kayle_KayleBasicAttack4_OnCast",
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/audio-prepared/kayle/txtp/Play_sfx_Kayle_KayleBasicAttack4_OnCast {r4} {d}.txtp",
+      "sha256": "4a9b9a0dd830187f3903ee95dc8b74a42290d0c9936462f4f11358a17b4cf91a",
+      "processing": "vgmstream float32 decode; shared SFX gain -4 dB; PCM16 (no per-file normalization)"
+    },
+    {
+      "path": "assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack3_onmissilecast.wav",
+      "event": "Play_sfx_Kayle_KayleBasicAttack3_OnMissileCast",
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/audio-prepared/kayle/txtp/Play_sfx_Kayle_KayleBasicAttack3_OnMissileCast.txtp",
+      "sha256": "082fbfbb7068c625d5ef760291558f8270b4f9f350f32cf7a88b579d5ef62f23",
+      "processing": "vgmstream float32 decode; shared SFX gain -4 dB; PCM16 (no per-file normalization)"
+    },
+    {
+      "path": "assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack4_onmissilecast_d.wav",
+      "event": "Play_sfx_Kayle_KayleBasicAttack4_OnMissileCast",
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/audio-prepared/kayle/txtp/Play_sfx_Kayle_KayleBasicAttack4_OnMissileCast {d}.txtp",
+      "sha256": "082fbfbb7068c625d5ef760291558f8270b4f9f350f32cf7a88b579d5ef62f23",
+      "processing": "vgmstream float32 decode; shared SFX gain -4 dB; PCM16 (no per-file normalization)"
+    },
+    {
+      "path": "assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack3_onhit.wav",
+      "event": "Play_sfx_Kayle_KayleBasicAttack3_OnHit",
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/audio-prepared/kayle/txtp/Play_sfx_Kayle_KayleBasicAttack3_OnHit.txtp",
+      "sha256": "d62b82646e79b2cf4f28eaaa042b88eac22799617dd37240c9c75901f307f3df",
+      "processing": "vgmstream float32 decode; shared SFX gain -4 dB; PCM16 (no per-file normalization)"
+    },
+    {
+      "path": "assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack4_onhit_d.wav",
+      "event": "Play_sfx_Kayle_KayleBasicAttack4_OnHit",
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/audio-prepared/kayle/txtp/Play_sfx_Kayle_KayleBasicAttack4_OnHit {d}.txtp",
+      "sha256": "d62b82646e79b2cf4f28eaaa042b88eac22799617dd37240c9c75901f307f3df",
+      "processing": "vgmstream float32 decode; shared SFX gain -4 dB; PCM16 (no per-file normalization)"
+    },
+    {
+      "path": "assets/audio/units/kayle/play_sfx_kayle_kaylewheal_oncast_r1.wav",
+      "event": "Play_sfx_Kayle_KayleWHeal_OnCast",
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/audio-prepared/kayle/txtp/Play_sfx_Kayle_KayleWHeal_OnCast {r1}.txtp",
+      "sha256": "00cf86bd4a15bea96a18e1485dbb58d6c2a45365588facc0c95e6c4cc36e414f",
+      "processing": "vgmstream float32 decode; shared SFX gain -4 dB; PCM16 (no per-file normalization)"
+    },
+    {
+      "path": "assets/audio/units/kayle/play_sfx_kayle_kaylewheal_oncast_r2.wav",
+      "event": "Play_sfx_Kayle_KayleWHeal_OnCast",
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/audio-prepared/kayle/txtp/Play_sfx_Kayle_KayleWHeal_OnCast {r2}.txtp",
+      "sha256": "a276d378b6ce41f6efe608a98b29dae436dada1280637f7cb111df2d08be6f6c",
+      "processing": "vgmstream float32 decode; shared SFX gain -4 dB; PCM16 (no per-file normalization)"
+    },
+    {
+      "path": "assets/audio/units/kayle/play_sfx_kayle_kaylewheal_oncast_r3.wav",
+      "event": "Play_sfx_Kayle_KayleWHeal_OnCast",
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/audio-prepared/kayle/txtp/Play_sfx_Kayle_KayleWHeal_OnCast {r3}.txtp",
+      "sha256": "60fd09e3e3bea0a01da5ae0324459f84410c3d83ebe2c5fd4bb6586f1fafd1e7",
+      "processing": "vgmstream float32 decode; shared SFX gain -4 dB; PCM16 (no per-file normalization)"
+    },
+    {
+      "path": "assets/audio/units/kayle/play_sfx_kayle_kaylewheal_oncast_r4.wav",
+      "event": "Play_sfx_Kayle_KayleWHeal_OnCast",
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/audio-prepared/kayle/txtp/Play_sfx_Kayle_KayleWHeal_OnCast {r4}.txtp",
+      "sha256": "ec2567d3861cbe41d3a1e2d3fc44d30e03dccdaa74081a0449da0497ac18102f",
+      "processing": "vgmstream float32 decode; shared SFX gain -4 dB; PCM16 (no per-file normalization)"
+    },
+    {
+      "path": "assets/audio/units/kayle/play_sfx_kayle_death3d_cast.wav",
+      "event": "Play_sfx_Kayle_Death3D_cast",
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/audio-prepared/kayle/txtp/Play_sfx_Kayle_Death3D_cast.txtp",
+      "sha256": "1dc23f9cb3fe85f7749ea20d1ca48ea1db016e0e60ff964fa6583fbab29e0a66",
+      "processing": "vgmstream float32 decode; shared SFX gain -4 dB; PCM16 (no per-file normalization)"
+    }
+  ]
+}

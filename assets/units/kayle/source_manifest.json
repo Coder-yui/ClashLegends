@@ -1,0 +1,17 @@
+{
+  "model": "正义天使.glb",
+  "model_sha256": "d26233fc0391372f839ea53ebe59ac03e55d87d537c77a024a14630a9e4903c7",
+  "model_parts_reference": "Kayle.wad.client:data/characters/kayle/skins/skin0.bin and data/characters/kayle/animations/skin0.bin",
+  "card_art": {
+    "url": "https://ddragon.leagueoflegends.com/cdn/img/champion/loading/Kayle_0.jpg",
+    "sha256": "40ff65e29596bd5e3e26d2232fbe13fa2d0c1e0a44c6f2f07c568c86327d193b"
+  },
+  "exalted_body": {
+    "source": "正义天使 (1).glb embedded image[3]",
+    "sha256": "9a71a154348a7fdf0aeaa440c0525bc9d9232b6bfcd95c86694c4fb0e2682d86"
+  },
+  "wing_16_gradient": {
+    "source": "Kayle.wad.client:assets/characters/kayle/skins/base/kayle_base_wing_16_gradient.tex",
+    "sha256": "948e58a043443d7ea80c5c14cf8764828fe48ca7b860313a660fb54bf4aa2005"
+  }
+}
