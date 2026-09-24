@@ -29,6 +29,12 @@ static func definition() -> Dictionary:
 					"full_resource_cast_end_heal": 100, "cast_end_heal_requires_hit": true,
 					"applies_on_hit_passive": true,
 					"ground_only": true,
+				}, {
+					"name": "丝缕缠流", "kind": "sanctuary",
+					"cost": 1, "max_uses": 2, "cooldown": 8.0,
+					"radius": 120.0, "duration": 4.0,
+					"impact_delay": 0.0, "cast_duration": 0.8, "cast_locks": ["attack"],
+					"description": "召唤半径120（3格）的固定圣霭结界，持续4秒；格温中心离开结界即消失。圈外敌人不能选取格温或对她施加新效果；圈内敌人正常作用，已有状态继续生效。每次1金币，共2次，冷却8秒。",
 				}],
 		},
 		"visual": { "visual_radius": RADIUS_MEDIUM + VISUAL_RADIUS_PADDING,
@@ -49,9 +55,14 @@ static func definition() -> Dictionary:
 					"Attack3>INTO_Run_180_anm": 0.05,
 					"Spell1_C_anm>Spell1_C_to_Idle_anm": 0.0,
 					"Spell1_C_to_Run_anm>Run_anm": 0.0,
+					"Spell2_To_Run>Run_anm": 0.05,
+					"Spell2>Spell2_To_Idle": 0.0, "Spell2>Spell2_To_Run": 0.0,
+					"Stunned>Spell2": 0.05,
 				},
 				"death": "Death", "death_duration": 0.8,
 				"visual_actions": {
+					# 原表 Spell2 为35fps；原片28帧，项目窗口0.8秒。
+					"hallowed_mist": {"animation": "Spell2", "kind": "skill", "blend_in": 0.0},
 					# Spell1_B 保持素材原本的 0.1667 秒，并从 Spell1_0 尾部持姿区占用等量时间；四档总时长固定为 1.5 秒。
 					# 原表 Spell1_0→Spell1_B、B→B、B→Spell1_C 的 TimeBlend 均为 0；采用其分段与衔接。
 					# 原表未包含按层数调度的脚本；上述裁剪/时长是本项目固定 1.5 秒的适配，不是原版时间表。
@@ -61,6 +72,8 @@ static func definition() -> Dictionary:
 					"active_3": {"animation": ["Spell1_0", "Spell1_B", "Spell1_B", "Spell1_B", "Spell1_C_anm"], "durations": [0.4493668, 0.1666667, 0.1666667, 0.1666667, 0.5506331], "clip_ranges": [[0.0, 0.7888886], [0.0, 0.1666667], [0.0, 0.1666667], [0.0, 0.1666667], [0.0, 0.9666671]], "kind": "skill", "blend_in": 0.0, "sequence_blend": 0.0},
 				},
 				"transitions": {
+					"Spell2>idle": "Spell2_To_Idle",
+					"Spell2>move": "Spell2_To_Run",
 					"Attack1>idle": "Attack1_To_Idle",
 					"Attack2>idle": "Attack2_To_Idle",
 					"Attack3>idle": "Attack3_To_Idle",
@@ -72,11 +85,15 @@ static func definition() -> Dictionary:
 			"color": Color(0.95, 0.75, 0.85),
 			"active_skills": [{ "icon_path": "res://assets/skills/gwen_0.png",
 					"visual_action": "active_0", "resource_visual_actions": ["active_0", "active_1", "active_2", "active_3"],
-				}],
+				}, {"icon_path": "res://assets/skills/gwen_1.png", "visual_action": "hallowed_mist"}],
 		},
 		# BEGIN IMPORTED AUDIO gwen
 		"audio": {
 			"events": {
+				"hallowed_mist:start": {"pool": ["res://assets/audio/units/gwen/play_sfx_gwen_gwenw_cast_r1.wav", "res://assets/audio/units/gwen/play_sfx_gwen_gwenw_cast_r2.wav", "res://assets/audio/units/gwen/play_sfx_gwen_gwenw_cast_r3.wav"], "volume_db": 0.0, "bus": "Combat"},
+				"sanctuary:sustain": {"pool": ["res://assets/audio/units/gwen/gwen_w_sanctuary.wav"], "volume_db": 0.0, "bus": "Combat"},
+				"sanctuary:end": {"pool": ["res://assets/audio/units/gwen/play_sfx_gwen_gwenw_buffdeactivate_r1.wav", "res://assets/audio/units/gwen/play_sfx_gwen_gwenw_buffdeactivate_r2.wav"], "volume_db": 0.0, "bus": "Combat"},
+
 				# 用户指定的三段部署候选共用一个池，每次生成只播放其中一个。
 				"deploy:voice": {"pool": [
 					"res://assets/audio/units/gwen/champion_lockin_sfx_887.wav",

@@ -16,6 +16,9 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_gwen_tower_combat()
 	_check_gwen_snip_snip_skill()
 	_check_gwen_art_integration()
+	_check_hallowed_mist()
+	_check_mist_cost_and_cooldown()
+	_check_mist_audio_lifecycle()
 
 func _check_gwen_snip_snip_skill() -> void:
 	var stats: Dictionary = CardDB.get_card("gwen").duplicate(true)
@@ -385,3 +388,180 @@ func _check_gwen_target_and_damage() -> void:
 	gwen.position = pos
 	gwen.free()
 	attacker.free()
+
+func _check_hallowed_mist() -> void:
+	var skill: Dictionary = CardDB.active_skills_for("gwen")[1]
+	_expect(skill.kind == "sanctuary" and skill.radius == 120.0 and skill.duration == 4.0 and skill.max_uses == 2 and skill.cost == 1 and skill.cooldown == 8.0, "圣霭可选技能的费用、次数、半径和时长")
+	for side in [0, 1]:
+		var gwen: Unit = _main._spawn_unit(side, "gwen", Vector2(360, 900), 0.0)
+		var enemy: Unit = _main._spawn_unit(1 - side, "ashe", Vector2(520, 900), 0.0)
+		gwen.configure_carried_active_skill(skill)
+		gwen.stun(2.0, &"old_stun")
+		gwen.apply_slow(3.0, 0.5, &"old_slow")
+		gwen.apply_active_buff(3.0, 1.2, 1.0, 1.0)
+		gwen.add_shield(30, 3.0)
+		_main._active_skill_effect_system.apply(gwen, skill)
+		_expect(not gwen.skill_resource_enabled and gwen.is_stunned() and gwen.control.slow_timer > 0.0 and gwen.active_buff_timer > 0.0, "圣霭不启用Q充能、不清除已有控制减益增益")
+		_expect(not enemy._target_is_attackable(gwen), "圈外敌方不能新索敌")
+		enemy._target = gwen
+		enemy._update_target()
+		_expect(enemy._target != gwen, "已有索敌从圣霭目标脱离")
+		var hp := gwen.hp
+		var shield := gwen.shield_hp
+		_expect(not gwen.take_damage(50, enemy) and gwen.hp == hp and gwen.shield_hp == shield, "圈外直接伤害不扣血不耗盾")
+		_main._combat.begin_batch(1, "sanctuary")
+		var rejected := BattleNumbers.hit(gwen, 50, enemy, enemy.team, enemy.global_position)
+		_main._combat.commit_batch()
+		_expect(not rejected.accepted and not rejected.landed and gwen.hp == hp and gwen.shield_hp == shield, "批量伤害拒绝也没有命中收益")
+		var nova := {"kind": "nova", "radius": 220.0, "damage": 100, "knockback": 80.0, "slow_duration": 5.0, "slow_multiplier": 0.1}
+		_main._active_skill_effect_system.apply(enemy, nova)
+		_expect(gwen.hp == hp and gwen.shield_hp == shield and gwen._knockback_timer == 0.0 and gwen.control.slow_timer <= 3.0, "圈外圆形技能整组伤害、击退和减速均被阻止")
+		_main._active_skill_effect_system.apply_frontal_stun(enemy, {"length": 250.0, "width": 100.0, "damage": 100, "stun_duration": 5.0}, Vector2.LEFT)
+		_expect(gwen.hp == hp and gwen.shield_hp == shield and gwen.control.stun_timer <= 2.0, "圈外前方技能不能伤害或刷新控制")
+		var tower: Tower = _main._towers[0 if side == 1 else 2]
+		var old_tower_position := tower.position
+		var old_tower_team := tower.team
+		tower.team = 1 - side
+		tower.position = gwen.position + Vector2(150, 0)
+		_expect(not tower._target_is_valid(gwen), "圈外防御塔不能选取圣霭内格温")
+		tower.position = gwen.position + Vector2(120, 0)
+		_expect(tower._target_is_valid(gwen), "塔中心进入结界后正常选取")
+		tower.position = old_tower_position
+		tower.team = old_tower_team
+		var context := CombatInteraction.effect_context(enemy)
+		gwen.freeze(4.0, &"new_freeze", context)
+		gwen.stun(5.0, &"new_stun", context)
+		gwen.apply_slow(5.0, 0.1, &"new_slow", context)
+		gwen.apply_attack_speed_slow(5.0, 0.1, &"new_attack_slow", context)
+		gwen.apply_blind(2, context)
+		gwen.apply_knockback(enemy.global_position, 50.0, 0.2, 1.4, [], context)
+		_expect(not gwen.is_frozen() and gwen.control.stun_timer <= 2.0 and gwen.control.slow_timer <= 3.0 and gwen._knockback_timer == 0.0, "圈外新增控制与击退入口拒绝，已有计时不刷新")
+		# 已附着伤害保留来源并继续消耗现有盾；新的范围脉冲不能借用该标记。
+		_expect(gwen.take_damage(10, enemy, enemy.team, enemy.global_position, true) and gwen.shield_hp == 20, "既有附着效果在不可选取期间继续结算")
+		gwen.hp -= 40
+		gwen.heal(20, CombatInteraction.effect_context(null, side, Vector2.ZERO))
+		_expect(gwen.hp == hp - 20, "友方治疗不受不可选取影响")
+		gwen.heal(20, context)
+		_expect(gwen.hp == hp - 20, "圈外敌方即使提供治疗也不能新增效果")
+		enemy.global_position = Vector2(480, 900)
+		_expect(enemy._target_is_attackable(gwen) and gwen.take_damage(5, enemy), "敌方中心在120px边界属于圈内，正常选取和命中")
+		enemy.global_position.x += 0.01
+		_expect(not enemy._target_is_attackable(gwen), "半径外0.01px即受保护，不借用身体半径")
+		# 法术来源是水晶；即使落点在结界中心也不能绕过保护。
+		_main._spell_system.apply_freeze(Vector2(500, 900), 180.0, 1.0, enemy.team)
+		_expect(not gwen.is_frozen(), "圈外法术落点即使范围覆盖也不能新增控制")
+		_main._spell_system.apply_freeze(Vector2(360, 900), 20.0, 1.0, enemy.team)
+		_expect(not gwen.is_frozen() and gwen.target_protection.active(), "圈外水晶释放的圈内落点法术不能控制格温")
+		_main._spell_system.apply_freeze(gwen.position, 20.0, 0.0, enemy.team, 5.0, 0.1)
+		_main._spell_system.tick(0.05)
+		_expect(gwen.control.slow_timer <= 3.0, "圈内法术区域也不能新增或刷新减速")
+		var nexus: Tower = _main._king_player if enemy.team == 0 else _main._king_enemy
+		var nexus_position := nexus.position
+		nexus.position = gwen.position + Vector2(120, 0)
+		_main._spell_system.apply_freeze(gwen.position, 20.0, 1.0, enemy.team)
+		_expect(gwen.is_frozen(), "法术释放者水晶中心在结界内时正常施加控制")
+		nexus.position = nexus_position
+		_main._spell_system.clear()
+		gwen.prepare_action_clocks(3.95)
+		_expect(gwen.target_protection.active(), "圣霭第79Tick仍有效")
+		gwen.prepare_action_clocks(0.05)
+		_expect(not gwen.target_protection.active(), "圣霭第80Tick准确结束")
+		_main._active_skill_effect_system.apply(gwen, skill)
+		gwen.position.x += 60
+		gwen.target_protection.check_position(gwen.global_position)
+		_expect(gwen.target_protection.center == Vector2(360, 900) and gwen.target_protection.active(), "格温圈内移动不平移结界")
+		gwen.position.x = 481
+		gwen.on_movement_applied(61, 0.05)
+		gwen.position.x = 360
+		_expect(not gwen.target_protection.active(), "出圈立即消失，回圈不复活")
+		_main._projectile_system.clear_all()
+		gwen.target_protection.clear()
+		enemy.global_position = Vector2(520, 900)
+		_expect(_main._projectile_system.launch(enemy, gwen, 20, 100, 0, 0, Color.WHITE), "开启前能发射追踪弹体")
+		_main._active_skill_effect_system.apply(gwen, skill)
+		enemy.global_position.x = 420
+		_main._projectile_system.tick(0.05)
+		_expect(_main._projectile_system.projectiles.is_empty(), "开启后敌人同Tick入圈也不能恢复旧追踪弹体")
+		enemy.global_position.x = 420
+		_expect(_main._projectile_system.launch(enemy, gwen, 20, 100, 0, 0, Color.WHITE), "敌人进入结界后可发射新的弹体")
+		_main._projectile_system.tick(0.05)
+		_expect(not _main._projectile_system.projectiles.is_empty(), "圈内来源的在途弹体继续追踪")
+		_main._projectile_system.clear_all()
+		enemy.position = Vector2(520, 900)
+		var arrow := {"damage": 50, "length": 300.0, "projectile_count": 1, "projectile_flight_duration": 1.0, "arc_degrees": 0.0}
+		_main._projectile_system.launch_skill_fan(enemy, arrow, Vector2.LEFT)
+		var before_hp := gwen.hp
+		_main._projectile_system.tick(0.6)
+		_expect(gwen.hp == before_hp and not _main._projectile_system.projectiles.is_empty(), "非追踪弹体穿过不可命中目标，不碰撞爆炸或停住")
+		_main._projectile_system.clear_all()
+		gwen.take_damage(99999)
+		_expect(not gwen.target_protection.active(), "死亡清除结界")
+		gwen.free()
+		enemy.free()
+	_main._spell_system.clear()
+
+func _check_mist_cost_and_cooldown() -> void:
+	var deck: Array = _main._deck.duplicate()
+	_main._deck[0] = "gwen"
+	var choices: Dictionary = _main._active_skill_choices.duplicate(true)
+	_main._active_skill_choices["gwen"] = 1
+	var gwen: Unit = _main._spawn_unit(0, "gwen", Vector2(360, 1000), 0.0, 0)
+	var ability := gwen.active_ability_id
+	gwen.move_speed = 0.0
+	_main._elixir.elixir = 10
+	_expect(_main.use_active_skill(ability, 0) and _main._elixir.elixir == 9.0, "正式请求丝缕缠流扣1金币")
+	_main._sim_tick_id += 10
+	_main._tick_pending_active_skills(0.05)
+	_expect(gwen.target_protection.active() and _main._active_skills.entry(ability).uses_remaining == 1 and _main._active_skills.entry(ability).cooldown_left == 8.0, "开始时消费次数并启动8秒冷却")
+	_expect(not _main.use_active_skill(ability, 0) and _main._elixir.elixir == 9.0, "冷却中拒绝请求且不额外扣费")
+	gwen.prepare_action_clocks(4.0)
+	_main._tick_active_skill_cooldowns(4.0)
+	_expect(not gwen.target_protection.active() and not _main.use_active_skill(ability, 0) and _main._elixir.elixir == 9.0, "结界4秒结束时仍需等待4秒冷却且不扣费")
+	gwen.prepare_action_clocks(4.0)
+	_main._tick_active_skill_cooldowns(4.0)
+	_expect(_main.use_active_skill(ability, 0) and _main._elixir.elixir == 8.0, "冷却结束允许第二次且再扣1金币")
+	_main._sim_tick_id += 10
+	_main._tick_pending_active_skills(0.05)
+	_expect(_main._active_skills.entry(ability).uses_remaining == 0 and gwen.target_protection.active(), "第二次结界重新建立并耗尽次数")
+	gwen.prepare_action_clocks(4.0)
+	_main._tick_active_skill_cooldowns(4.0)
+	_main._tick_active_skill_cooldowns(4.0)
+	_expect(not _main.use_active_skill(ability, 0) and _main._elixir.elixir == 8.0, "两次后不可继续施放")
+	gwen.take_damage(99999)
+	gwen.free()
+	_main._active_skill_choices = choices
+	_main._deck = deck
+
+func _check_mist_audio_lifecycle() -> void:
+	var audio: GameAudioManager = _main._audio_manager
+	audio.begin_battle()
+	var cues: Array[StringName] = []
+	var callback := func(card: String, cue: StringName, _position: Vector2):
+		if card == "gwen": cues.append(cue)
+	audio.cue_played.connect(callback)
+	var gwen: Unit = _main._spawn_unit(0, "gwen", Vector2(360, 900), 0.0)
+	_main.preview_active_skill(gwen, CardDB.active_skills_for("gwen")[1])
+	audio._tick_attached_units()
+	var key := audio._sustain_key(gwen.get_instance_id(), &"sanctuary")
+	_expect(cues.count(&"hallowed_mist:start") == 1 and cues.count(&"sanctuary:sustain") == 1 and audio._sustain_players.has(key), "Spell2施放音与结界独立持续音各播放一次")
+	gwen.freeze(0.5)
+	gwen.position.x += 40
+	audio._tick_attached_units()
+	_expect(audio._sustain_players.has(key) and audio._sustain_players[key].global_position == Vector2(360, 900), "冻结施法与圈内移动不会停止或移动结界音轨")
+	gwen.position.x += 90
+	gwen.target_protection.check_position(gwen.position)
+	audio._tick_attached_units()
+	audio._tick_attached_units()
+	_expect(not audio._sustain_players.has(key) and cues.count(&"sanctuary:end") == 1, "出圈停止结界长音并只播放一次原版解除音")
+	_main._active_skill_effect_system.apply(gwen, CardDB.active_skills_for("gwen")[1])
+	audio._tick_attached_units()
+	gwen.prepare_action_clocks(4.0)
+	audio._tick_attached_units()
+	_expect(not audio._sustain_players.has(key) and cues.count(&"sanctuary:end") == 2, "自然到期停止结界音轨")
+	_main._active_skill_effect_system.apply(gwen, CardDB.active_skills_for("gwen")[1])
+	audio._tick_attached_units()
+	gwen.take_damage(99999)
+	_expect(not audio._sustain_players.has(key), "死亡同步清理结界音轨")
+	audio.cue_played.disconnect(callback)
+	gwen.free()
+	audio.begin_battle()

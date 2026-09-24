@@ -71,3 +71,9 @@
 - [当前模型场景](../../../assets/units/gwen/gwen_view.tscn)
 
 [← 返回单位总览](../gwen.md)
+
+## 丝缕缠流
+
+使用原片 `Spell2`；原动画表的 TickDuration 为 1/35，28帧动作按0.8秒播放。该窗口只锁普攻，允许移动和转向；圣霭在技能开始即生成，寿命独立于动作。
+
+原表使用 `Spell2 → Spell2_To_Idle`、`Spell2 → Spell2_To_Run` 两条过渡，均为0秒混合；转跑片段回普通Run使用0.05秒混合，Stunned进入Spell2保留0.05秒例外。其余常用入口为0秒。转换表依据本地 `Gwen.wad.client` 的 `data/characters/gwen/animations/skin0.bin`，不是从技能命中时间推导。

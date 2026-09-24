@@ -818,5 +818,94 @@
     "sample_rate": 44100,
     "channels": 2,
     "sha256": "0ed15874159cfc9a13cc43418ba841c926f551e4ebaf23bee29e4e3c3f9e2038"
+  },
+  {
+    "file": "play_sfx_gwen_gwenw_cast_r1.wav",
+    "event": "Play_sfx_Gwen_GwenW_cast",
+    "duration": 1.1320408163265305,
+    "processing": "Existing decoded LoL W event; copied without gain or timing changes",
+    "sha256": "e5dc003ce459f273f7b2d651a402f3639794af0c78645147fa22f4acbc40cf29",
+    "migrated_from": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenw_cast_r1.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenW_cast {r1}.txtp",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Gwen.wad.client",
+    "media_ids": [
+      188850940,
+      258981711,
+      293766443
+    ]
+  },
+  {
+    "file": "play_sfx_gwen_gwenw_cast_r2.wav",
+    "event": "Play_sfx_Gwen_GwenW_cast",
+    "duration": 1.1320408163265305,
+    "processing": "Existing decoded LoL W event; copied without gain or timing changes",
+    "sha256": "1907c81017e3f96e62748dbd75763089679530b9903c13e4452f0aca74fa46af",
+    "migrated_from": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenw_cast_r2.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenW_cast {r2}.txtp",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Gwen.wad.client",
+    "media_ids": [
+      188850940,
+      258981711,
+      293766443
+    ]
+  },
+  {
+    "file": "play_sfx_gwen_gwenw_cast_r3.wav",
+    "event": "Play_sfx_Gwen_GwenW_cast",
+    "duration": 1.1320408163265305,
+    "processing": "Existing decoded LoL W event; copied without gain or timing changes",
+    "sha256": "c5a054f17e325dc22115fa298a92987dd40ca93d291270b4b94e34c9a7fccebe",
+    "migrated_from": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenw_cast_r3.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenW_cast {r3}.txtp",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Gwen.wad.client",
+    "media_ids": [
+      188850940,
+      258981711,
+      293766443
+    ]
+  },
+  {
+    "file": "play_sfx_gwen_gwenw_buffdeactivate_r1.wav",
+    "event": "Play_sfx_Gwen_GwenW_buffdeactivate",
+    "duration": 3.131156462585034,
+    "processing": "Existing decoded LoL W event; copied without gain or timing changes",
+    "sha256": "bb191cb4ac382f89745fe5b3cb56fe3036dcada4fa83e9bb0a73520d86f08b8e",
+    "migrated_from": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenw_buffdeactivate_r1.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenW_buffdeactivate {r1}.txtp",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Gwen.wad.client",
+    "media_ids": [
+      250909294,
+      370391358
+    ]
+  },
+  {
+    "file": "play_sfx_gwen_gwenw_buffdeactivate_r2.wav",
+    "event": "Play_sfx_Gwen_GwenW_buffdeactivate",
+    "duration": 2.967097505668934,
+    "processing": "Existing decoded LoL W event; copied without gain or timing changes",
+    "sha256": "be87c9f8b39f4d41678fcce165f3a75c1424809ba30802da54f2fb440521e50f",
+    "migrated_from": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenw_buffdeactivate_r2.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenW_buffdeactivate {r2}.txtp",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Gwen.wad.client",
+    "media_ids": [
+      250909294,
+      370391358
+    ]
+  },
+  {
+    "file": "gwen_w_sanctuary.wav",
+    "event": "Play_sfx_Gwen_GwenW_buffactivate",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/格温圣霭/audio_source/play_sfx_gwen_gwenw_buffactivate_r_m.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenW_buffactivate {r} {m}.txtp",
+    "media_ids": [
+      574607003,
+      712039398,
+      515185330,
+      854509046
+    ],
+    "duration": 4.0,
+    "processing": "First 4.0 seconds of decoded activation/ambient layered event; original gains retained; state-owned stop on exit/death",
+    "sha256": "0b0d65fe9e86b3f167446e6ef9fa6d63d00a97594027547ec5f2198d64369ef9",
+    "source_sha256": "4d452d024ff0def68914f44aa511e496da8ed7c3c50076155a94715ad0026a86"
   }
 ]
