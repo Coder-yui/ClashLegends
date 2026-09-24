@@ -1,0 +1,571 @@
+[
+  {
+    "file": "play_sfx_pantheon_pantheonbasicattack_oncast_r1.wav",
+    "event": "Play_sfx_Pantheon_PantheonBasicAttack_OnCast",
+    "event_id": 773463044,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/event_wav/Play_sfx_Pantheon_PantheonBasicAttack_OnCast {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/txtp/Play_sfx_Pantheon_PantheonBasicAttack_OnCast {r1}.txtp",
+    "media_ids": [
+      608615584,
+      674109136,
+      678732111
+    ],
+    "duration": 0.9894,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "87d0a0169f1e45381a70045c4b6b4cfd7c92d908ff905c2965d5a1816bd78573",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_pantheon_pantheonbasicattack_oncast_r2.wav",
+    "event": "Play_sfx_Pantheon_PantheonBasicAttack_OnCast",
+    "event_id": 773463044,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/event_wav/Play_sfx_Pantheon_PantheonBasicAttack_OnCast {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/txtp/Play_sfx_Pantheon_PantheonBasicAttack_OnCast {r2}.txtp",
+    "media_ids": [
+      608615584,
+      674109136,
+      678732111
+    ],
+    "duration": 1.0559,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "67f90750c0bc051c8fedf37b372243da2c1142042e1749a21f09d1a644f8eb98",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_pantheon_pantheonbasicattack_oncast_r3.wav",
+    "event": "Play_sfx_Pantheon_PantheonBasicAttack_OnCast",
+    "event_id": 773463044,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/event_wav/Play_sfx_Pantheon_PantheonBasicAttack_OnCast {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/txtp/Play_sfx_Pantheon_PantheonBasicAttack_OnCast {r3}.txtp",
+    "media_ids": [
+      608615584,
+      674109136,
+      678732111
+    ],
+    "duration": 1.019,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "1220847575e7b11a816f7d82fae2792f5d7cdbc726b47bc2d11d39a51f465cfe",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_pantheon_pantheonbasicattack2_oncast_r1.wav",
+    "event": "Play_sfx_Pantheon_PantheonBasicAttack2_OnCast",
+    "event_id": 979311516,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/event_wav/Play_sfx_Pantheon_PantheonBasicAttack2_OnCast {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/txtp/Play_sfx_Pantheon_PantheonBasicAttack2_OnCast {r1}.txtp",
+    "media_ids": [
+      670184489,
+      679766162,
+      818947808
+    ],
+    "duration": 0.9499,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "feb828cf7ddf3aaa681a0acef4ff59e011a03b55c4d6fd36fa85f34ff57b54f5",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_pantheon_pantheonbasicattack2_oncast_r2.wav",
+    "event": "Play_sfx_Pantheon_PantheonBasicAttack2_OnCast",
+    "event_id": 979311516,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/event_wav/Play_sfx_Pantheon_PantheonBasicAttack2_OnCast {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/txtp/Play_sfx_Pantheon_PantheonBasicAttack2_OnCast {r2}.txtp",
+    "media_ids": [
+      670184489,
+      679766162,
+      818947808
+    ],
+    "duration": 0.8724,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "bba00c7e174852ae834017bc3e64f2a057fc5a1c42d4e775750be0295fcda214",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_pantheon_pantheonbasicattack2_oncast_r3.wav",
+    "event": "Play_sfx_Pantheon_PantheonBasicAttack2_OnCast",
+    "event_id": 979311516,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/event_wav/Play_sfx_Pantheon_PantheonBasicAttack2_OnCast {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/txtp/Play_sfx_Pantheon_PantheonBasicAttack2_OnCast {r3}.txtp",
+    "media_ids": [
+      670184489,
+      679766162,
+      818947808
+    ],
+    "duration": 0.9115,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "5e6788d4c0983aaa7e8be4fec66874d58203d61ad66b4910f4330546b5ff4b36",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_pantheon_pantheonbasicattack3_oncast_r1.wav",
+    "event": "Play_sfx_Pantheon_PantheonBasicAttack3_OnCast",
+    "event_id": 2411274207,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/event_wav/Play_sfx_Pantheon_PantheonBasicAttack3_OnCast {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/txtp/Play_sfx_Pantheon_PantheonBasicAttack3_OnCast {r1}.txtp",
+    "media_ids": [
+      271153528,
+      700740698,
+      925816583
+    ],
+    "duration": 1.0438,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "d42b35246b407238d66cc504336e25e47b7e703fb556e3616fc82d1a4fd6799d",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_pantheon_pantheonbasicattack3_oncast_r2.wav",
+    "event": "Play_sfx_Pantheon_PantheonBasicAttack3_OnCast",
+    "event_id": 2411274207,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/event_wav/Play_sfx_Pantheon_PantheonBasicAttack3_OnCast {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/txtp/Play_sfx_Pantheon_PantheonBasicAttack3_OnCast {r2}.txtp",
+    "media_ids": [
+      271153528,
+      700740698,
+      925816583
+    ],
+    "duration": 0.9247,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "45518313b975ed50eb1ee0d333abd21a260ae19c6a2802f37d7567ec65f25810",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_pantheon_pantheonbasicattack3_oncast_r3.wav",
+    "event": "Play_sfx_Pantheon_PantheonBasicAttack3_OnCast",
+    "event_id": 2411274207,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/event_wav/Play_sfx_Pantheon_PantheonBasicAttack3_OnCast {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/txtp/Play_sfx_Pantheon_PantheonBasicAttack3_OnCast {r3}.txtp",
+    "media_ids": [
+      271153528,
+      700740698,
+      925816583
+    ],
+    "duration": 0.9987,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "3f47063404cb74debb2c6922d6f590cc60d69887cfd6c136e3db634d109b574f",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_pantheon_pantheonbasicattack_onhit_1559186049_1153642577_r1.wav",
+    "event": "Play_sfx_Pantheon_PantheonBasicAttack_OnHit",
+    "event_id": 1169729580,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/event_wav/Play_sfx_Pantheon_PantheonBasicAttack_OnHit [1559186049=1153642577] {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/txtp/Play_sfx_Pantheon_PantheonBasicAttack_OnHit [1559186049=1153642577] {r1}.txtp",
+    "media_ids": [
+      53923318,
+      72523275,
+      76265310
+    ],
+    "duration": 0.8706,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "88251dd481f70340b68c6860bcd03e19994cddcf34b91fdf692c5c601c4033a7",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_pantheon_pantheonbasicattack_onhit_1559186049_1153642577_r2.wav",
+    "event": "Play_sfx_Pantheon_PantheonBasicAttack_OnHit",
+    "event_id": 1169729580,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/event_wav/Play_sfx_Pantheon_PantheonBasicAttack_OnHit [1559186049=1153642577] {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/txtp/Play_sfx_Pantheon_PantheonBasicAttack_OnHit [1559186049=1153642577] {r2}.txtp",
+    "media_ids": [
+      53923318,
+      72523275,
+      76265310
+    ],
+    "duration": 0.8405,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "428d275ed48347e6a2e686b5e2d3a38f9f4005b9cfb154ff6ab3ccc75b710ce7",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_pantheon_pantheonbasicattack_onhit_1559186049_1153642577_r3.wav",
+    "event": "Play_sfx_Pantheon_PantheonBasicAttack_OnHit",
+    "event_id": 1169729580,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/event_wav/Play_sfx_Pantheon_PantheonBasicAttack_OnHit [1559186049=1153642577] {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/txtp/Play_sfx_Pantheon_PantheonBasicAttack_OnHit [1559186049=1153642577] {r3}.txtp",
+    "media_ids": [
+      53923318,
+      72523275,
+      76265310
+    ],
+    "duration": 0.8959,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "e69d0f08be10477e64069323abf34ea3f7be98cd5deaea43d5d971637ef08331",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_pantheon_pantheonbasicattack2_onhit_1559186049_1153642577_r1.wav",
+    "event": "Play_sfx_Pantheon_PantheonBasicAttack2_OnHit",
+    "event_id": 2622663924,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/event_wav/Play_sfx_Pantheon_PantheonBasicAttack2_OnHit [1559186049=1153642577] {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/txtp/Play_sfx_Pantheon_PantheonBasicAttack2_OnHit [1559186049=1153642577] {r1}.txtp",
+    "media_ids": [
+      151472812,
+      154032094,
+      711924793
+    ],
+    "duration": 0.8914,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "50e114d3248dd3ca26d3b0096fc6748c87cf5ef1da7c591e14646fb3a74b40b8",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_pantheon_pantheonbasicattack2_onhit_1559186049_1153642577_r2.wav",
+    "event": "Play_sfx_Pantheon_PantheonBasicAttack2_OnHit",
+    "event_id": 2622663924,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/event_wav/Play_sfx_Pantheon_PantheonBasicAttack2_OnHit [1559186049=1153642577] {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/txtp/Play_sfx_Pantheon_PantheonBasicAttack2_OnHit [1559186049=1153642577] {r2}.txtp",
+    "media_ids": [
+      151472812,
+      154032094,
+      711924793
+    ],
+    "duration": 0.8491,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "09a3078dc5cf4f7227c6d02a1dae63bbf0e3dbf89acdbdd9ceb361c9fdc0ea0c",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_pantheon_pantheonbasicattack2_onhit_1559186049_1153642577_r3.wav",
+    "event": "Play_sfx_Pantheon_PantheonBasicAttack2_OnHit",
+    "event_id": 2622663924,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/event_wav/Play_sfx_Pantheon_PantheonBasicAttack2_OnHit [1559186049=1153642577] {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/txtp/Play_sfx_Pantheon_PantheonBasicAttack2_OnHit [1559186049=1153642577] {r3}.txtp",
+    "media_ids": [
+      151472812,
+      154032094,
+      711924793
+    ],
+    "duration": 0.8231,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "4adc56219aa223fb5dbae854ddf5b5895fe0a18fe0acc7e3baa867935bd37fb3",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_pantheon_pantheonbasicattack3_onhit_1559186049_1153642577_r1.wav",
+    "event": "Play_sfx_Pantheon_PantheonBasicAttack3_OnHit",
+    "event_id": 3033076685,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/event_wav/Play_sfx_Pantheon_PantheonBasicAttack3_OnHit [1559186049=1153642577] {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/txtp/Play_sfx_Pantheon_PantheonBasicAttack3_OnHit [1559186049=1153642577] {r1}.txtp",
+    "media_ids": [
+      53923318,
+      72523275,
+      76265310
+    ],
+    "duration": 0.8706,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "88251dd481f70340b68c6860bcd03e19994cddcf34b91fdf692c5c601c4033a7",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_pantheon_pantheonbasicattack3_onhit_1559186049_1153642577_r2.wav",
+    "event": "Play_sfx_Pantheon_PantheonBasicAttack3_OnHit",
+    "event_id": 3033076685,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/event_wav/Play_sfx_Pantheon_PantheonBasicAttack3_OnHit [1559186049=1153642577] {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/txtp/Play_sfx_Pantheon_PantheonBasicAttack3_OnHit [1559186049=1153642577] {r2}.txtp",
+    "media_ids": [
+      53923318,
+      72523275,
+      76265310
+    ],
+    "duration": 0.8959,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "e69d0f08be10477e64069323abf34ea3f7be98cd5deaea43d5d971637ef08331",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_pantheon_pantheonbasicattack3_onhit_1559186049_1153642577_r3.wav",
+    "event": "Play_sfx_Pantheon_PantheonBasicAttack3_OnHit",
+    "event_id": 3033076685,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/event_wav/Play_sfx_Pantheon_PantheonBasicAttack3_OnHit [1559186049=1153642577] {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/txtp/Play_sfx_Pantheon_PantheonBasicAttack3_OnHit [1559186049=1153642577] {r3}.txtp",
+    "media_ids": [
+      53923318,
+      72523275,
+      76265310
+    ],
+    "duration": 0.8405,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "428d275ed48347e6a2e686b5e2d3a38f9f4005b9cfb154ff6ab3ccc75b710ce7",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_pantheon_pantheonr_land_vfx.wav",
+    "event": "Play_sfx_Pantheon_PantheonR_land_vfx",
+    "event_id": 4066657256,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/event_wav/Play_sfx_Pantheon_PantheonR_land_vfx.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/txtp/Play_sfx_Pantheon_PantheonR_land_vfx.txtp",
+    "media_ids": [
+      931137241
+    ],
+    "duration": 1.9261,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "7b87a169e40b1ba0e55cc70a4617689bad0ed7cbd0add9839b9639b0e88036a0",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_pantheon_pantheonqtap_cast_lua_r1.wav",
+    "event": "Play_sfx_Pantheon_PantheonQTap_cast_lua",
+    "event_id": 2153414496,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/event_wav/Play_sfx_Pantheon_PantheonQTap_cast_lua {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/txtp/Play_sfx_Pantheon_PantheonQTap_cast_lua {r1}.txtp",
+    "media_ids": [
+      31367315,
+      179240518,
+      800651771
+    ],
+    "duration": 1.1691,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "2020a6773ca7180d382da6c1ec4bbfa4c647bbca267731aaf3b8a41fdcae3b3f",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_pantheon_pantheonqtap_cast_lua_r2.wav",
+    "event": "Play_sfx_Pantheon_PantheonQTap_cast_lua",
+    "event_id": 2153414496,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/event_wav/Play_sfx_Pantheon_PantheonQTap_cast_lua {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/txtp/Play_sfx_Pantheon_PantheonQTap_cast_lua {r2}.txtp",
+    "media_ids": [
+      31367315,
+      179240518,
+      800651771
+    ],
+    "duration": 1.1165,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "7a059be694fccf2b302d8cbf3baa75a454ab59d5b6ec13dd61ef52d5feb0785b",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_pantheon_pantheonqtap_cast_lua_r3.wav",
+    "event": "Play_sfx_Pantheon_PantheonQTap_cast_lua",
+    "event_id": 2153414496,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/event_wav/Play_sfx_Pantheon_PantheonQTap_cast_lua {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/txtp/Play_sfx_Pantheon_PantheonQTap_cast_lua {r3}.txtp",
+    "media_ids": [
+      31367315,
+      179240518,
+      800651771
+    ],
+    "duration": 1.1597,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "989bfda8df523828bdbf5a850544f8d80689f9c25b01336ab5741222cdf34181",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_pantheon_pantheonqtap_hit_vfx_r1.wav",
+    "event": "Play_sfx_Pantheon_PantheonQTap_hit_vfx",
+    "event_id": 3983065692,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/event_wav/Play_sfx_Pantheon_PantheonQTap_hit_vfx {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/txtp/Play_sfx_Pantheon_PantheonQTap_hit_vfx {r1}.txtp",
+    "media_ids": [
+      52321619,
+      113966397,
+      159441603,
+      209183813
+    ],
+    "duration": 1.468,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "8fba956e9dbd8d09fd9fb17ef9837e5e2c08db6424cbccce2d841fab60ef7806",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_pantheon_pantheonqtap_hit_vfx_r2.wav",
+    "event": "Play_sfx_Pantheon_PantheonQTap_hit_vfx",
+    "event_id": 3983065692,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/event_wav/Play_sfx_Pantheon_PantheonQTap_hit_vfx {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/txtp/Play_sfx_Pantheon_PantheonQTap_hit_vfx {r2}.txtp",
+    "media_ids": [
+      52321619,
+      113966397,
+      159441603,
+      209183813
+    ],
+    "duration": 1.5951,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "b6d9b07e5d65ce4ecd39709da683957c33638587e20702b2a7f8b6a045ad3f3e",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_pantheon_pantheonqtap_hit_vfx_r3.wav",
+    "event": "Play_sfx_Pantheon_PantheonQTap_hit_vfx",
+    "event_id": 3983065692,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/event_wav/Play_sfx_Pantheon_PantheonQTap_hit_vfx {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/txtp/Play_sfx_Pantheon_PantheonQTap_hit_vfx {r3}.txtp",
+    "media_ids": [
+      52321619,
+      113966397,
+      159441603,
+      209183813
+    ],
+    "duration": 1.569,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "63904af8c5c5075eb2b2174113d505aa9a4629906f14e54bd6d74baaf86b7aa6",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_pantheon_pantheonqtap_cast_empowered_lua_r1.wav",
+    "event": "Play_sfx_Pantheon_PantheonQTap_cast_empowered_lua",
+    "event_id": 4024736463,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/event_wav/Play_sfx_Pantheon_PantheonQTap_cast_empowered_lua {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/txtp/Play_sfx_Pantheon_PantheonQTap_cast_empowered_lua {r1}.txtp",
+    "media_ids": [
+      181528245,
+      798699582,
+      976934516
+    ],
+    "duration": 1.3476,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "3f5148a32460fff19267bdaba9770ba7451451baf1bc74233ee3c9f78460ae06",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_pantheon_pantheonqtap_cast_empowered_lua_r2.wav",
+    "event": "Play_sfx_Pantheon_PantheonQTap_cast_empowered_lua",
+    "event_id": 4024736463,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/event_wav/Play_sfx_Pantheon_PantheonQTap_cast_empowered_lua {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/txtp/Play_sfx_Pantheon_PantheonQTap_cast_empowered_lua {r2}.txtp",
+    "media_ids": [
+      181528245,
+      798699582,
+      976934516
+    ],
+    "duration": 1.4243,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "f6225112b330ad68100a44f8ab6773b55d9c8f398a9dcf178e76747597050438",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_pantheon_pantheonqtap_cast_empowered_lua_r3.wav",
+    "event": "Play_sfx_Pantheon_PantheonQTap_cast_empowered_lua",
+    "event_id": 4024736463,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/event_wav/Play_sfx_Pantheon_PantheonQTap_cast_empowered_lua {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/txtp/Play_sfx_Pantheon_PantheonQTap_cast_empowered_lua {r3}.txtp",
+    "media_ids": [
+      181528245,
+      798699582,
+      976934516
+    ],
+    "duration": 1.3133,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "6c68cf6d730a8be88bbb524a4e5c10c7612b68be19d2d507ec7e57b0f26ee979",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_pantheon_pantheonqtap_hit_empowered_vfx_r1.wav",
+    "event": "Play_sfx_Pantheon_PantheonQTap_hit_empowered_vfx",
+    "event_id": 412899155,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/event_wav/Play_sfx_Pantheon_PantheonQTap_hit_empowered_vfx {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/txtp/Play_sfx_Pantheon_PantheonQTap_hit_empowered_vfx {r1}.txtp",
+    "media_ids": [
+      28829235,
+      524410692,
+      1035332353
+    ],
+    "duration": 2.572,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "ac62731e00dd1002822819d7261228f7c738eef15fa310333933809f36b922df",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_pantheon_pantheonqtap_hit_empowered_vfx_r2.wav",
+    "event": "Play_sfx_Pantheon_PantheonQTap_hit_empowered_vfx",
+    "event_id": 412899155,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/event_wav/Play_sfx_Pantheon_PantheonQTap_hit_empowered_vfx {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/txtp/Play_sfx_Pantheon_PantheonQTap_hit_empowered_vfx {r2}.txtp",
+    "media_ids": [
+      28829235,
+      524410692,
+      1035332353
+    ],
+    "duration": 2.3812,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "9dcb254a3d1b891f1f95561a6f7f5659f3bbe8f483e68812513d2445c160374d",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_pantheon_pantheonqtap_hit_empowered_vfx_r3.wav",
+    "event": "Play_sfx_Pantheon_PantheonQTap_hit_empowered_vfx",
+    "event_id": 412899155,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/event_wav/Play_sfx_Pantheon_PantheonQTap_hit_empowered_vfx {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/txtp/Play_sfx_Pantheon_PantheonQTap_hit_empowered_vfx {r3}.txtp",
+    "media_ids": [
+      28829235,
+      524410692,
+      1035332353
+    ],
+    "duration": 2.5602,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "710f87a982c9274c679938fcd70210fab0725dad230ebc450508b38cfe0e706b",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_vo_pantheon_death3d_r1_zh_cn.wav",
+    "event": "Play_vo_Pantheon_Death3D",
+    "event_id": 3456290601,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon_vo/event_wav/Play_vo_Pantheon_Death3D {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon_vo/txtp/Play_vo_Pantheon_Death3D {r1}.txtp",
+    "media_ids": [
+      1167014067,
+      1689087463,
+      1960131028
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "944a7d89b2fed1d21c0779a3a72e28edcb816b14d071ca6aa14269ff36304b77",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 3.1146485260770973,
+      "source_sha256": "e11dcb9d1dd44384cf2bf183e97918cc05072d4602170374053cfeb682db8ac8",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_vo_pantheon_death3d_r2_zh_cn.wav",
+    "event": "Play_vo_Pantheon_Death3D",
+    "event_id": 3456290601,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon_vo/event_wav/Play_vo_Pantheon_Death3D {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon_vo/txtp/Play_vo_Pantheon_Death3D {r2}.txtp",
+    "media_ids": [
+      1167014067,
+      1689087463,
+      1960131028
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "b2c8f135a26939d51ca8330d89b05a628a4afae0ad7d72d94a2f3d41de2a5803",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 3.5946485260770977,
+      "source_sha256": "e0b58719a61be1b7fe90169aa1da4614c12c4758c8814f1d446933dc1877d17b",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_vo_pantheon_death3d_r3_zh_cn.wav",
+    "event": "Play_vo_Pantheon_Death3D",
+    "event_id": 3456290601,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon_vo/event_wav/Play_vo_Pantheon_Death3D {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon_vo/txtp/Play_vo_Pantheon_Death3D {r3}.txtp",
+    "media_ids": [
+      1167014067,
+      1689087463,
+      1960131028
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "bfce5c6f9e5766e6f9cc89da5bc613d95350a31296b32bb21929e37c1bcf4000",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 3.455986394557823,
+      "source_sha256": "e0cda559cc4758feb80710160f6cc5536b58d073f8633f9fa4ee05facb869f7a",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  }
+]

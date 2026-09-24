@@ -1,0 +1,6 @@
+{
+  "source": "用户指定：ClashLegends-开发素材库/01-待开发/卡牌模型/不屈之枪.glb",
+  "destination": "assets/units/pantheon/source/pantheon.glb",
+  "sha256": "39762ef790289c79fb528d926b3a9062d1d0b987d67153df3979cb0ff0d973bf",
+  "processing": "原GLB不修改；包装缩放0.015并按基础皮肤隐藏Head/Comet/Recall/Joke；原队列文件已迁移"
+}
