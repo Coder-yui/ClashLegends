@@ -238,7 +238,7 @@ static func apply_to_button(
 	cost_badge.offset_top = 1.0
 	cost_badge.offset_right = 1.0 + badge_size
 	cost_badge.offset_bottom = 1.0 + badge_size
-	cost_label.text = str(cost)
+	cost_label.text = "?" if CardPlayHistory.is_mirror(card_id) else str(cost)
 	cost_label.add_theme_font_size_override("font_size", 17 if compact else 22)
 
 	_apply_button_styles(button)
@@ -343,3 +343,20 @@ static func set_selected(button: Button, selected: bool, show_mark: bool = false
 	if mark != null:
 		mark.visible = show_mark and selected
 	_apply_button_styles(button)
+
+## 运行期玻璃纹与双框覆盖原画，不生成/缓存每个英雄的图片副本。
+static func set_mirror_overlay(button: Button, enabled: bool) -> void:
+	var glass := button.get_node_or_null("MirrorGlass") as ColorRect
+	if glass == null:
+		glass = ColorRect.new()
+		glass.name = "MirrorGlass"
+		glass.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		glass.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		var shader := preload("res://scripts/ui/mirror_card.gdshader")
+		var material := ShaderMaterial.new()
+		material.shader = shader
+		glass.material = material
+		button.add_child(glass)
+		# 卡名与费用仍覆盖在玻璃上方。
+		button.move_child(glass, mini(3, button.get_child_count() - 1))
+	glass.visible = enabled

@@ -26,6 +26,7 @@ var _skill_costs: Array[float] = [0.0, 0.0]
 var _max_uses: Array[int] = [1, 1]
 var _uses_remaining: Array[int] = [0, 0]
 var _cooldowns: Array[float] = [0.0, 0.0]
+var _free_recast: Array[bool] = [false, false]
 var _elixir := 0.0
 var _rule_labels: Array[Label] = []
 
@@ -104,6 +105,7 @@ func show_skill(slot_index: int, ability_id: int, skill_name: String, accent: Co
 	_base_labels[slot_index] = skill_name.left(1) if icon == null else ""
 	_deployment_ready[slot_index] = deployment_ready
 	_pending[slot_index] = false
+	_free_recast[slot_index] = false
 	_skill_costs[slot_index] = maxf(skill_cost, 0.0)
 	_max_uses[slot_index] = maxi(max_uses, 1)
 	_uses_remaining[slot_index] = clampi(uses_remaining, 0, _max_uses[slot_index])
@@ -143,6 +145,7 @@ func remove_skill(ability_id: int) -> void:
 	_pending_labels[slot_index].visible = false
 	_deployment_ready[slot_index] = false
 	_pending[slot_index] = false
+	_free_recast[slot_index] = false
 	_skill_costs[slot_index] = 0.0
 	_max_uses[slot_index] = 1
 	_uses_remaining[slot_index] = 0
@@ -164,12 +167,13 @@ func set_elixir(value: float) -> void:
 		_refresh_slot(slot_index)
 
 
-func update_skill_state(ability_id: int, uses_remaining: int, cooldown: float, deployment_ready: bool, skill_cost: float, max_uses: int) -> void:
+func update_skill_state(ability_id: int, uses_remaining: int, cooldown: float, deployment_ready: bool, skill_cost: float, max_uses: int, free_recast: bool = false) -> void:
 	var slot_index := _ability_ids.find(ability_id)
 	if slot_index < 0:
 		return
-	if _uses_remaining[slot_index] == clampi(uses_remaining, 0, maxi(max_uses, 1)) and _max_uses[slot_index] == maxi(max_uses, 1) and is_equal_approx(_cooldowns[slot_index], maxf(cooldown, 0.0)) and is_equal_approx(_skill_costs[slot_index], maxf(skill_cost, 0.0)) and _deployment_ready[slot_index] == deployment_ready:
+	if _free_recast[slot_index] == free_recast and _uses_remaining[slot_index] == clampi(uses_remaining, 0, maxi(max_uses, 1)) and _max_uses[slot_index] == maxi(max_uses, 1) and is_equal_approx(_cooldowns[slot_index], maxf(cooldown, 0.0)) and is_equal_approx(_skill_costs[slot_index], maxf(skill_cost, 0.0)) and _deployment_ready[slot_index] == deployment_ready:
 		return
+	_free_recast[slot_index] = free_recast
 	_uses_remaining[slot_index] = clampi(uses_remaining, 0, maxi(max_uses, 1))
 	_max_uses[slot_index] = maxi(max_uses, 1)
 	_cooldowns[slot_index] = maxf(cooldown, 0.0)
@@ -204,11 +208,14 @@ func _refresh_slot(slot_index: int) -> void:
 		var rule_label := _rule_labels[slot_index]
 		rule_label.visible = button.visible
 		rule_label.text = "金币 %s · 次数 %d/%d" % [_format_number(skill_cost), uses_remaining, _max_uses[slot_index]]
+		if _free_recast[slot_index]: rule_label.text = "免费追斩 · 付费余%d" % uses_remaining
 	var state := "可用"
 	if _pending[slot_index]:
 		state = "等待权威执行"
 	elif not _deployment_ready[slot_index]:
 		state = "部署中"
+	elif _free_recast[slot_index]:
+		state = "免费追斩可用（付费冷却独立计时）"
 	elif uses_remaining <= 0:
 		state = "次数已用尽"
 	elif cooldown > 0.001:

@@ -18,6 +18,8 @@ static func brief_description(stats: Dictionary) -> String:
 static func attributes(stats: Dictionary, quantity_override: String = "") -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
 	var card_type := String(stats.get("type", "unit"))
+	if String(stats.get("spell_kind", "")) == "mirror":
+		return [{"name": "费用", "value": "上一张卡本身费用"}, {"name": "复制目标", "value": "上一张成功使用的卡"}, {"name": "开局", "value": "仅进入后四张队列"}]
 	if card_type == "spell":
 		result.append({"name": "类型", "value": type_name(card_type, stats)})
 		var target := "友方单位" if StringName(stats.get("spell_kind", "")) == &"heal" else "敌方单位"
@@ -165,14 +167,15 @@ static func passives(stats: Dictionary) -> Array[Dictionary]:
 		result.append({
 			"name": String(stats.get("deploy_sweep_name", "部署横扫")),
 			"description": (
-				"部署时对%s半径内的地面敌人造成%s点伤害并击退。"
-				% [format_number(float(stats.get("deploy_sweep_radius", 0.0))), format_number(roundf(deploy_damage))]
+				"部署时对%s半径内的地面敌人造成%s点伤害%s。"
+				% [format_number(float(stats.get("deploy_sweep_radius", 0.0))), format_number(roundf(deploy_damage)), "并击退" if float(stats.get("deploy_sweep_knockback", 0.0)) > 0.0 else ""]
 			),
 		})
 	if stats.has("heal_every_hits"):
-		result.append({"name": "无畏战吼", "description": "每第%d次普通攻击命中回复%s点生命。" % [int(stats.get("heal_every_hits", 0)), format_number(roundf(float(stats.get("heal_amount", 0.0)))) ]})
+		result.append({"name": String(stats.get("heal_on_hit_name", "无畏战吼")), "description": "每第%d次普通攻击命中回复%s点生命。" % [int(stats.get("heal_every_hits", 0)), format_number(roundf(float(stats.get("heal_amount", 0.0)))) ]})
 	if float(stats.get("on_hit_max_health_ratio", 0.0)) > 0.0:
-		result.append({"name": "千穿百孔", "description": "普攻与每次剪切附加目标最大生命值%s%%的伤害（四舍五入）；对防御塔和水晶固定附加%d点，附加伤害不受中央倍率加成。" % [format_number(float(stats.on_hit_max_health_ratio) * 100.0), roundi(float(stats.get("on_hit_tower_damage", 0.0)))]})
+		var scope := "普攻与每次剪切" if (stats.get("active_skills", []) as Array).any(func(skill): return bool(skill.get("applies_on_hit_passive",false))) else "普通攻击命中"
+		result.append({"name": String(stats.get("on_hit_passive_name", "千穿百孔")), "description": "%s附加目标最大生命值%s%%的伤害（四舍五入）；对防御塔和水晶固定附加%d点。" % [scope, format_number(float(stats.on_hit_max_health_ratio) * 100.0), roundi(float(stats.get("on_hit_tower_damage", 0.0)))]})
 	if stats.has("first_strike_damage_multiplier"):
 		result.append({"name": "先声夺人", "description": "对每个敌方目标的首次普通攻击造成%s倍伤害。" % format_number(float(stats.get("first_strike_damage_multiplier", 0.0)))})
 	if int(stats.get("transform_after_hits", 0)) > 0:
@@ -218,6 +221,8 @@ static func active_choice_description(card_id: String, selected_index: int = 0) 
 		if String(stats.get("type", "unit")) == "spell":
 			var radius := float(stats.get("radius", 0.0))
 			match StringName(stats.get("spell_kind", "")):
+				&"mirror":
+					return "复制体携带备战选定的技能，无论原卡是否位于主动槽。技能占用镜像自己的槽；再次镜像替换旧资格，旧单位仍然存活。复制法术时启用其强化效果。技能费用、次数、冷却沿用原技能。"
 				&"heal":
 					return "回复半径%s（%.2f格）内友军单位%s生命（不作用于建筑）。" % [
 						format_number(radius), radius / TILE_SIZE, format_number(float(stats.get("heal_amount", 0.0))),
@@ -248,6 +253,8 @@ static func active_skill_description(skill: Dictionary) -> String:
 			if float(skill.get("slow_duration", 0.0)) > 0.0:
 				parts.append("减速至 %s%%，持续 %s 秒" % [format_number(float(skill.get("slow_multiplier", 1.0)) * 100.0), format_number(float(skill.slow_duration))])
 		"buff":
+			if float(skill.get("heal_amount", 0.0)) > 0:
+				parts.append("回复 %s 点生命" % format_number(float(skill.heal_amount)))
 			parts.append("持续 %s 秒" % format_number(float(skill.get("duration", 0.0))))
 			if float(skill.get("speed_multiplier", 1.0)) != 1.0:
 				parts.append("移速 ×%.2f" % float(skill.speed_multiplier))

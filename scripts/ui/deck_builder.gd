@@ -148,7 +148,7 @@ func _pick_deck_ui(after_start: Callable) -> void:
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	header_box.add_child(title)
 	var subtitle := Label.new()
-	subtitle.text = "选择 8 张卡牌；前两个卡位会把主动技能带进对局"
+	subtitle.text = "前两席携带主动；镜像在主动席时，也会复制其他席位预选的技能"
 	subtitle.add_theme_font_size_override("font_size", 14)
 	subtitle.add_theme_color_override("font_color", Color(0.68, 0.84, 1.0))
 	subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -564,7 +564,7 @@ func _open_card_info(card_id: String) -> void:
 	name_label.add_theme_constant_override("outline_size", 5)
 	identity.add_child(name_label)
 	var identity_line := Label.new()
-	identity_line.text = "%s　·　%d 费" % [CardDetails.type_name(String(stats.get("type", "unit")), stats), int(stats.cost)]
+	identity_line.text = "法术　·　动态费用（上一张卡本身费用）" if CardPlayHistory.is_mirror(card_id) else "%s　·　%d 费" % [CardDetails.type_name(String(stats.get("type", "unit")), stats), int(stats.cost)]
 	identity_line.add_theme_font_override("font", CardArt.ui_font())
 	identity_line.add_theme_font_size_override("font_size", 19)
 	identity_line.add_theme_color_override("font_color", Color(0.68, 0.86, 1.0))
@@ -589,6 +589,10 @@ func _open_card_info(card_id: String) -> void:
 	details.add_child(_make_card_info_body(CardDetails.brief_description(stats)))
 	details.add_child(_make_card_info_heading("属性"))
 	details.add_child(_make_card_attribute_grid(stats))
+	var upgrade_stats := CardDB.get_unit_stats(String(stats.get("deployment_upgrade_id", "")))
+	if not upgrade_stats.is_empty():
+		details.add_child(_make_card_info_subheading("%s（%d金币部署）" % [upgrade_stats.name, upgrade_stats.cost]))
+		details.add_child(_make_card_attribute_grid(upgrade_stats))
 	var transformed_stats: Dictionary = stats.get("transformed_stats", {})
 	if not transformed_stats.is_empty():
 		details.add_child(_make_card_info_subheading("%s（变形后）" % String(transformed_stats.get("name", "变形形态"))))
@@ -801,11 +805,13 @@ func _update_deck_ui() -> void:
 	else:
 		_deck_status.text = "已选择 %d / 8　·　点卡牌后选择信息或添加/移除　·　1、2 号为主动技能位" % selected_count
 	var total_cost := 0.0
+	var dynamic_cost := false
 	for selected_id in _deck_selected:
 		if not String(selected_id).is_empty():
 			total_cost += float(CardDB.get_card(String(selected_id)).cost)
+			dynamic_cost = dynamic_cost or CardPlayHistory.is_mirror(String(selected_id))
 	if _deck_average_label != null:
-		_deck_average_label.text = "平均金币  --" if selected_count == 0 else "平均金币  %.2f" % (total_cost / selected_count)
+		_deck_average_label.text = "平均金币  动态" if dynamic_cost else ("平均金币  --" if selected_count == 0 else "平均金币  %.2f" % (total_cost / selected_count))
 	for i in range(_deck_slot_buttons.size()):
 		var slot: Button = _deck_slot_buttons[i]
 		var card_id := String(_deck_selected[i]) if i < _deck_selected.size() else ""
@@ -827,7 +833,7 @@ func _update_deck_ui() -> void:
 		button.disabled = false
 		CardArt.set_selected(button, _deck_context_from_pool and _deck_context_card_id == id)
 		var stats := CardDB.get_card(String(id))
-		button.tooltip_text = "%s · %d 金币 · 点击查看信息" % [stats.name, int(stats.cost)]
+		button.tooltip_text = "镜像法术 · 上一张卡本身费用 · 点击查看信息" if String(stats.get("spell_kind", "")) == "mirror" else "%s · %d 金币 · 点击查看信息" % [stats.name, int(stats.cost)]
 	var ready := selected_count == 8
 	if _deck_confirm != null:
 		_deck_confirm.disabled = not ready
