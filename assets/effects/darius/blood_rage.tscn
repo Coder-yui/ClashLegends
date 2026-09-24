@@ -1,0 +1,5 @@
+[gd_scene load_steps=2 format=3]
+[ext_resource type="Script" path="res://assets/effects/darius/blood_rage.gd" id="1"]
+[node name="BloodRage" type="Node3D"]
+script = ExtResource("1")
+status_source = "blood_rage"
