@@ -8,6 +8,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_card_config_and_visuals()
 	_check_frost_storm_zone()
 	_check_rebirth_egg()
+	_check_frozen_replacement()
 
 func _check_card_config_and_visuals() -> void:
 	var stats := CardDB.get_unit_stats("anivia")
@@ -189,3 +190,32 @@ func _cleanup(units: Array) -> void:
 		if is_instance_valid(unit):
 			unit.free()
 	_main._active_skill_effect_system.continuous_area_effects.clear()
+
+func _check_frozen_replacement() -> void:
+	var phoenix: Unit = _main._spawn_unit(0, "anivia", Vector2(260, 1000), 0.0)
+	phoenix.hp = 1.0
+	phoenix.freeze(8.0)
+	var view: UnitModel3D
+	for child in _main._battle_presentation._world_root.get_children():
+		if child is UnitModel3D and child._source == phoenix: view = child
+	view._process(0.01)
+	_expect(is_zero_approx(view._animation_player.speed_scale), "凤凰第一条命致死前确实被冻结")
+	phoenix.take_damage(2.0)
+	var egg := _find_unit("anivia_egg", 0)
+	_expect(phoenix.is_queued_for_deletion() and not phoenix.is_frozen() and egg != null and not egg.is_frozen(), "凤凰冰冻中致死立即生蛋，旧冰冻不传给蛋")
+	var egg_view: UnitModel3D
+	for child in _main._battle_presentation._world_root.get_children():
+		if child is UnitModel3D and child._source == egg: egg_view = child
+	egg_view._process(0.1)
+	_expect(egg_view._spawn_transition_elapsed > 0.0 and egg_view._animation_player.speed_scale > 0.0, "变蛋落地过渡立即推进，不等旧冰冻结束")
+	# 新生命仍能受新冰冻；蛋被冻后击破的死亡后续模型也必须解除定格。
+	egg.freeze(8.0)
+	egg_view._process(0.01)
+	egg.take_damage(egg.hp + 1.0)
+	var player := egg_view._animation_player
+	player.advance(0.2)
+	_expect(egg_view._death_followup_started and player.speed_scale > 0.0 and player.current_animation_position > 0.0, "被冻结的蛋击破后凤凰死亡后续动画仍正常播放")
+	view.free()
+	egg_view.free()
+	phoenix.free()
+	egg.free()

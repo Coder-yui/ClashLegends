@@ -1,0 +1,394 @@
+[
+  {
+    "event": "Play_vo_Sion_Move2DFirst",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/voice_battle/wav/Play_vo_Sion_Move2DFirst {r2}.wav",
+    "source_sha256": "108a05876806110a3e2c50b3181a41e03478ad473b65fd32f06297842e338d93",
+    "path": "res://assets/audio/units/sion/deploy_battle.wav",
+    "sha256": "af821361c70e2763848d4463ade7bde87c98d145937cf505149927c711b47c0b",
+    "text": "战斗，爽。",
+    "verified_by_listening": false,
+    "processing": "float WAV to PCM16, no normalization"
+  },
+  {
+    "event": "Play_vo_Sion_SionQSoundAfterHalf_OnBuffDeactivate",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/voice_crush/wav/Play_vo_Sion_SionQSoundAfterHalf_OnBuffDeactivate {r4}.wav",
+    "source_sha256": "64d577616fc3d8bf1282c85906b4684062347efed81d6c1c2e8d67ab0d31cf9b",
+    "path": "res://assets/audio/units/sion/deploy_crush.wav",
+    "sha256": "4f012d1978436d63060f546d11e23562a27beac88699254b6dacbee9bfc80e54",
+    "text": "粉碎吧。",
+    "verified_by_listening": false,
+    "processing": "float WAV to PCM16, no normalization"
+  },
+  {
+    "event": "Play_vo_Sion_SionWSoundShield_OnBuffCast",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/voice_dying/wav/Play_vo_Sion_SionWSoundShield_OnBuffCast {r6}.wav",
+    "source_sha256": "89a229cbe16f1b232447991f6997a5ed4423f9daff0aa42ca8d48b2eebf746f6",
+    "path": "res://assets/audio/units/sion/deploy_dying.wav",
+    "sha256": "17a9990479d74022f747143972dc116b1932b4c9214799c2b68fd8db94e55807",
+    "text": "垂死之人的喧闹。",
+    "verified_by_listening": false,
+    "processing": "float WAV to PCM16, no normalization"
+  },
+  {
+    "event": "Play_sfx_Sion_SionWShieldStacks_OnBuffCast",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/audio/sion/txtp/Play_sfx_Sion_SionWShieldStacks_OnBuffCast {r1}.txtp",
+    "txtp_sha256": "8892439915030e5ee9094b816067ed182d41d5707048e452286da9fb627996e9",
+    "path": "res://assets/audio/units/sion/play_sfx_sion_sionwshieldstacks_onbuffcast_r1.wav",
+    "sha256": "60433a21825e6641f1a31a6cfa1db8002872ed2df33a00c0fe397ffdbf3c356e",
+    "processing": "vgmstream-cli -i PCM16; retained source event gain"
+  },
+  {
+    "event": "Play_sfx_Sion_SionWShieldStacks_OnBuffCast",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/audio/sion/txtp/Play_sfx_Sion_SionWShieldStacks_OnBuffCast {r2}.txtp",
+    "txtp_sha256": "0f9b42b2103ac95ecf39df5bc29e5aec8312160804f298375b4b6a543af55ecc",
+    "path": "res://assets/audio/units/sion/play_sfx_sion_sionwshieldstacks_onbuffcast_r2.wav",
+    "sha256": "0070deb6c2a9403cb9e115f0aae82961dcaaa1cd009dcb904b37a788f097567c",
+    "processing": "vgmstream-cli -i PCM16; retained source event gain"
+  },
+  {
+    "event": "Play_sfx_Sion_SionWShieldStacks_OnBuffCast",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/audio/sion/txtp/Play_sfx_Sion_SionWShieldStacks_OnBuffCast {r3}.txtp",
+    "txtp_sha256": "02e50423d51ff67487c6e7246b42cc355099871fdea16590755feaee074fa5b7",
+    "path": "res://assets/audio/units/sion/play_sfx_sion_sionwshieldstacks_onbuffcast_r3.wav",
+    "sha256": "0f03bbcfaebe6993308940a95aa71755a52ce178bb1b037f445da3e696da639d",
+    "processing": "vgmstream-cli -i PCM16; retained source event gain"
+  },
+  {
+    "event": "Play_sfx_Sion_SionWSoundHit_OnBuffCast",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/audio/sion/txtp/Play_sfx_Sion_SionWSoundHit_OnBuffCast {r1}.txtp",
+    "txtp_sha256": "cff118f77093b369ae869a14e4de2395712819487b94aced79e4e09da405554e",
+    "path": "res://assets/audio/units/sion/play_sfx_sion_sionwsoundhit_onbuffcast_r1.wav",
+    "sha256": "cbbc4d498aec10fb77f37add9ca2d6bf70809132dc962824ed7f9f8e5898fd1b",
+    "processing": "vgmstream-cli -i PCM16; retained source event gain"
+  },
+  {
+    "event": "Play_sfx_Sion_SionWSoundHit_OnBuffCast",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/audio/sion/txtp/Play_sfx_Sion_SionWSoundHit_OnBuffCast {r2}.txtp",
+    "txtp_sha256": "c82a7193d66bb57f4b20666a5d76969aa84ca813672c3adc5049f3cd44468a59",
+    "path": "res://assets/audio/units/sion/play_sfx_sion_sionwsoundhit_onbuffcast_r2.wav",
+    "sha256": "d282c3f204b1540169b9ccf14fcc2764bedc1182c92bb00c35ee3dc45d6cea37",
+    "processing": "vgmstream-cli -i PCM16; retained source event gain"
+  },
+  {
+    "event": "Play_sfx_Sion_SionWSoundHit_OnBuffCast",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/audio/sion/txtp/Play_sfx_Sion_SionWSoundHit_OnBuffCast {r3}.txtp",
+    "txtp_sha256": "fd58b879c3bd66033d37c00d198e2fc443de3414085d725b01e5fda3b7c3a204",
+    "path": "res://assets/audio/units/sion/play_sfx_sion_sionwsoundhit_onbuffcast_r3.wav",
+    "sha256": "879b9a77af7b31a8b401ceaeadcb40714933770f708e08d40464918f828def89",
+    "processing": "vgmstream-cli -i PCM16; retained source event gain"
+  },
+  {
+    "event": "Play_sfx_Sion_SionPassiveDelay_OnBuffCast",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/audio/sion/txtp/Play_sfx_Sion_SionPassiveDelay_OnBuffCast {r1}.txtp",
+    "txtp_sha256": "f073460ea9eccbd1d8eb9feb393393011cce9a6a80a0e2264c18566ee7f0b92a",
+    "path": "res://assets/audio/units/sion/play_sfx_sion_sionpassivedelay_onbuffcast_r1.wav",
+    "sha256": "7ffd741aea57d098b6a0c39c97933ab90ec5e073e290d1b15792357a62f349d7",
+    "processing": "vgmstream-cli -i PCM16; retained source event gain"
+  },
+  {
+    "event": "Play_sfx_Sion_SionPassiveDelay_OnBuffCast",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/audio/sion/txtp/Play_sfx_Sion_SionPassiveDelay_OnBuffCast {r2}.txtp",
+    "txtp_sha256": "1281a2dda5eeb14ba0853930c8971540e35881c1677c10ba0d1e463b52ed6777",
+    "path": "res://assets/audio/units/sion/play_sfx_sion_sionpassivedelay_onbuffcast_r2.wav",
+    "sha256": "df59763898f1a5ea302536a1fec0d424e5826821609d67f29f0e85a0a03167a8",
+    "processing": "vgmstream-cli -i PCM16; retained source event gain"
+  },
+  {
+    "event": "Play_sfx_Sion_SionPassiveDelay_OnBuffCast",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/audio/sion/txtp/Play_sfx_Sion_SionPassiveDelay_OnBuffCast {r3}.txtp",
+    "txtp_sha256": "65ad11979146acb3d5bef6fada1b6e9fa0bd98b244e16b73b45b9f10d0faf5ed",
+    "path": "res://assets/audio/units/sion/play_sfx_sion_sionpassivedelay_onbuffcast_r3.wav",
+    "sha256": "1689f3d962f306d090b2fbec87831512d40ff491c696a9ba0e252108309908ea",
+    "processing": "vgmstream-cli -i PCM16; retained source event gain"
+  },
+  {
+    "event": "Play_sfx_Sion_SionBasicAttackTower_OnCast",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/audio/sion/txtp/Play_sfx_Sion_SionBasicAttackTower_OnCast {r1}.txtp",
+    "txtp_sha256": "562f03b5b938e26ef7b5b1070231c3b5982686ea6a1527e4240ba257fbfd02e2",
+    "path": "res://assets/audio/units/sion/play_sfx_sion_sionbasicattacktower_oncast_r1.wav",
+    "sha256": "cac43f65c2d1f8fa630d014914147c43752f1439f554f670b1e69198883e876d",
+    "processing": "vgmstream-cli -i PCM16; retained source event gain"
+  },
+  {
+    "event": "Play_sfx_Sion_SionBasicAttackTower_OnCast",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/audio/sion/txtp/Play_sfx_Sion_SionBasicAttackTower_OnCast {r2}.txtp",
+    "txtp_sha256": "e7051a2ff586e93c6526f0f5da5aa0407590cd8983069812fd0e54c1aa19091e",
+    "path": "res://assets/audio/units/sion/play_sfx_sion_sionbasicattacktower_oncast_r2.wav",
+    "sha256": "7f0ec3807fc7e4c07921ab32f9b1410d710b50022e6266c11f1153785456e48d",
+    "processing": "vgmstream-cli -i PCM16; retained source event gain"
+  },
+  {
+    "event": "Play_sfx_Sion_SionBasicAttackTower_OnCast",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/audio/sion/txtp/Play_sfx_Sion_SionBasicAttackTower_OnCast {r3}.txtp",
+    "txtp_sha256": "300eafea89127e4e5baa8d1c1825ae60350a16598fc62e19f8e3607131328ea8",
+    "path": "res://assets/audio/units/sion/play_sfx_sion_sionbasicattacktower_oncast_r3.wav",
+    "sha256": "8a30f97eab6d25ff553d1c63bfc933f898384a9904b2d1cdef7990aaed025a99",
+    "processing": "vgmstream-cli -i PCM16; retained source event gain"
+  },
+  {
+    "event": "Play_sfx_Sion_SionBasicAttackTower2_OnCast",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/audio/sion/txtp/Play_sfx_Sion_SionBasicAttackTower2_OnCast {r1}.txtp",
+    "txtp_sha256": "19d23c556a32b2d36b1deee6a2b2b3adcf59cea25fa81348a07defb0dbcb5021",
+    "path": "res://assets/audio/units/sion/play_sfx_sion_sionbasicattacktower2_oncast_r1.wav",
+    "sha256": "b9ab4febff50b06fe08684fa9e07a90619312b81fcd5a65ae3cc5cbb54ffe61b",
+    "processing": "vgmstream-cli -i PCM16; retained source event gain"
+  },
+  {
+    "event": "Play_sfx_Sion_SionBasicAttackTower2_OnCast",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/audio/sion/txtp/Play_sfx_Sion_SionBasicAttackTower2_OnCast {r2}.txtp",
+    "txtp_sha256": "68f6118ee9f98d62f1e2f8e40db161ce382d6064627ff7d10be852c856b1cd78",
+    "path": "res://assets/audio/units/sion/play_sfx_sion_sionbasicattacktower2_oncast_r2.wav",
+    "sha256": "0048288bda35b9bfb4ffae88899e38881148b32437e5712ca8ea49740885fb46",
+    "processing": "vgmstream-cli -i PCM16; retained source event gain"
+  },
+  {
+    "event": "Play_sfx_Sion_SionBasicAttackTower2_OnCast",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/audio/sion/txtp/Play_sfx_Sion_SionBasicAttackTower2_OnCast {r3}.txtp",
+    "txtp_sha256": "3d80ba2a4b5085533c0daad842bf998e34138ee04fd83f0ca6ab29c7801ea660",
+    "path": "res://assets/audio/units/sion/play_sfx_sion_sionbasicattacktower2_oncast_r3.wav",
+    "sha256": "0b49682def34c9b5af45421a09dcb2c2a51d501615b268a05d95e7800293c477",
+    "processing": "vgmstream-cli -i PCM16; retained source event gain"
+  },
+  {
+    "event": "Play_sfx_Sion_SionBasicAttackTower_OnHit",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/audio/sion/txtp/Play_sfx_Sion_SionBasicAttackTower_OnHit {r1}.txtp",
+    "txtp_sha256": "bebb2856e96a80a9a5145c2f47b0d08937e6760f36dd7e2363cb33f7b836b7a6",
+    "path": "res://assets/audio/units/sion/play_sfx_sion_sionbasicattacktower_onhit_r1.wav",
+    "sha256": "adefc015d28a09fa8be790cbdc5d2406d97699f4846d497cd6512f4c66d6de88",
+    "processing": "vgmstream-cli -i PCM16; retained source event gain"
+  },
+  {
+    "event": "Play_sfx_Sion_SionBasicAttackTower_OnHit",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/audio/sion/txtp/Play_sfx_Sion_SionBasicAttackTower_OnHit {r2}.txtp",
+    "txtp_sha256": "57925d76daa9cd8664ce0ed52493cb9e619c103ec8e911643e60c523db8e643a",
+    "path": "res://assets/audio/units/sion/play_sfx_sion_sionbasicattacktower_onhit_r2.wav",
+    "sha256": "c05c062a8c4aded5f877a423ef1cd4c5aa996c19ccfa1a31ca46ea1049022c6b",
+    "processing": "vgmstream-cli -i PCM16; retained source event gain"
+  },
+  {
+    "event": "Play_sfx_Sion_SionBasicAttackTower_OnHit",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/audio/sion/txtp/Play_sfx_Sion_SionBasicAttackTower_OnHit {r3}.txtp",
+    "txtp_sha256": "661a150c2c8f90be026c56958196ce228bae9b35c3f2210d7c28581667379c1c",
+    "path": "res://assets/audio/units/sion/play_sfx_sion_sionbasicattacktower_onhit_r3.wav",
+    "sha256": "b7c7e0d5807a3044ac465e7b32cbf823a02c4e9bb87730daad5863d055ae4d57",
+    "processing": "vgmstream-cli -i PCM16; retained source event gain"
+  },
+  {
+    "event": "Play_sfx_Sion_SionBasicAttackTower2_OnHit",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/audio/sion/txtp/Play_sfx_Sion_SionBasicAttackTower2_OnHit {r1}.txtp",
+    "txtp_sha256": "c10c5ea40a9ca42d940a6d782774896dd6631cf471437c4949f50e42b1ddb2d7",
+    "path": "res://assets/audio/units/sion/play_sfx_sion_sionbasicattacktower2_onhit_r1.wav",
+    "sha256": "71931eb6dd1ccd64a9799114633aa6e52f3ce92ac0a37a9a9942017beeb10fba",
+    "processing": "vgmstream-cli -i PCM16; retained source event gain"
+  },
+  {
+    "event": "Play_sfx_Sion_SionBasicAttackTower2_OnHit",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/audio/sion/txtp/Play_sfx_Sion_SionBasicAttackTower2_OnHit {r2}.txtp",
+    "txtp_sha256": "e19cbadf03e965b654614e241a596ffbb15f4c135b41c632ea5e23569072542f",
+    "path": "res://assets/audio/units/sion/play_sfx_sion_sionbasicattacktower2_onhit_r2.wav",
+    "sha256": "e06b63f4f311734082f444da63c29f781ce14ace03cda3a2ca31524555c6a4b4",
+    "processing": "vgmstream-cli -i PCM16; retained source event gain"
+  },
+  {
+    "event": "Play_sfx_Sion_SionBasicAttackTower2_OnHit",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/audio/sion/txtp/Play_sfx_Sion_SionBasicAttackTower2_OnHit {r3}.txtp",
+    "txtp_sha256": "5c12ad65eece7a6832be1131a24c2d1e8009386b2a8b2e8cf1e29ddbf6d2fb51",
+    "path": "res://assets/audio/units/sion/play_sfx_sion_sionbasicattacktower2_onhit_r3.wav",
+    "sha256": "1abbea36ea5ee65c3c0cbf8288f1b22039cc518f99afc916278a53d0304b2791",
+    "processing": "vgmstream-cli -i PCM16; retained source event gain"
+  },
+  {
+    "event": "Play_sfx_Sion_SionPassiveZombie_OnBuffCast",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/audio/sion/txtp/Play_sfx_Sion_SionPassiveZombie_OnBuffCast {r1}.txtp",
+    "txtp_sha256": "00ec39068fb212133b15c71c9b2697ebaf5a0ef704c29e8e8568ebbe7f7d471b",
+    "path": "res://assets/audio/units/sion/play_sfx_sion_sionpassivezombie_onbuffcast_r1.wav",
+    "sha256": "ecd16dee6707009f7d0750a5423786a76633d50ac62e7430cd0babfa21b0646f",
+    "processing": "vgmstream-cli -i PCM16; retained source event gain"
+  },
+  {
+    "event": "Play_sfx_Sion_SionPassiveZombie_OnBuffCast",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/audio/sion/txtp/Play_sfx_Sion_SionPassiveZombie_OnBuffCast {r2}.txtp",
+    "txtp_sha256": "b9299ae65d29062cfb02f96afeb7f0ddcceaa07a690b0aa79bfc7e5a4aa2303b",
+    "path": "res://assets/audio/units/sion/play_sfx_sion_sionpassivezombie_onbuffcast_r2.wav",
+    "sha256": "03ae4e6b4fd722c870e1e6b4a9313278aa36697f95f13bbbdf30c601d59be7fb",
+    "processing": "vgmstream-cli -i PCM16; retained source event gain"
+  },
+  {
+    "event": "Play_sfx_Sion_SionPassiveZombie_OnBuffCast",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/audio/sion/txtp/Play_sfx_Sion_SionPassiveZombie_OnBuffCast {r3}.txtp",
+    "txtp_sha256": "7aa21c3d11003909f6c45c202c0fc72b91586167ddcaefaf4c5add39ec39a8bb",
+    "path": "res://assets/audio/units/sion/play_sfx_sion_sionpassivezombie_onbuffcast_r3.wav",
+    "sha256": "e703a6b6c5e825c42c21ad9c3b338cc3203f7d8e2cfc9202a2aca47c07779e53",
+    "processing": "vgmstream-cli -i PCM16; retained source event gain"
+  },
+  {
+    "event": "Play_sfx_Sion_SionBasicAttackPassive_OnCast",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/audio/sion/txtp/Play_sfx_Sion_SionBasicAttackPassive_OnCast {r1} {d}.txtp",
+    "txtp_sha256": "a1ab0d8481ec1a90ef1164a10febcbcd7031d1e704b3dc0fc9b7cc764651f03b",
+    "path": "res://assets/audio/units/sion/play_sfx_sion_sionbasicattackpassive_oncast_r1_d.wav",
+    "sha256": "cdacde42967ad7cb61bc22885a3781265f4258db813138503bcf6b446f7bae0b",
+    "processing": "vgmstream-cli -i PCM16; retained source event gain"
+  },
+  {
+    "event": "Play_sfx_Sion_SionBasicAttackPassive_OnCast",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/audio/sion/txtp/Play_sfx_Sion_SionBasicAttackPassive_OnCast {r2} {d}.txtp",
+    "txtp_sha256": "09216d8a7bbb346c2e3d48d6e945390069515911ad83710fe06c6f0d3a269292",
+    "path": "res://assets/audio/units/sion/play_sfx_sion_sionbasicattackpassive_oncast_r2_d.wav",
+    "sha256": "45e8f53f0a1e02734cbab795ffe6ee0f923d610613659b3da1cd477b057de83a",
+    "processing": "vgmstream-cli -i PCM16; retained source event gain"
+  },
+  {
+    "event": "Play_sfx_Sion_SionBasicAttackPassive_OnCast",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/audio/sion/txtp/Play_sfx_Sion_SionBasicAttackPassive_OnCast {r3} {d}.txtp",
+    "txtp_sha256": "26bd19d3c2c385f0d0ee618c022475d06ace542359e541fe55c681912a9750e5",
+    "path": "res://assets/audio/units/sion/play_sfx_sion_sionbasicattackpassive_oncast_r3_d.wav",
+    "sha256": "9cdad541c3ee482cc71c0416ec918726ef3fbb7b4ddada17ebd28612e4a45910",
+    "processing": "vgmstream-cli -i PCM16; retained source event gain"
+  },
+  {
+    "event": "Play_sfx_Sion_SionBasicAttackPassive2_OnCast",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/audio/sion/txtp/Play_sfx_Sion_SionBasicAttackPassive2_OnCast {r1}.txtp",
+    "txtp_sha256": "8e63b09e11064d7f9ee23f00bb8f6f88343b8a82702f64c0076f8c6f9bd25083",
+    "path": "res://assets/audio/units/sion/play_sfx_sion_sionbasicattackpassive2_oncast_r1.wav",
+    "sha256": "cdacde42967ad7cb61bc22885a3781265f4258db813138503bcf6b446f7bae0b",
+    "processing": "vgmstream-cli -i PCM16; retained source event gain"
+  },
+  {
+    "event": "Play_sfx_Sion_SionBasicAttackPassive2_OnCast",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/audio/sion/txtp/Play_sfx_Sion_SionBasicAttackPassive2_OnCast {r2}.txtp",
+    "txtp_sha256": "fb148e0c5b78a97792b24774ac54bfadf7491ad0bc585a1192a6edc71c0e9862",
+    "path": "res://assets/audio/units/sion/play_sfx_sion_sionbasicattackpassive2_oncast_r2.wav",
+    "sha256": "45e8f53f0a1e02734cbab795ffe6ee0f923d610613659b3da1cd477b057de83a",
+    "processing": "vgmstream-cli -i PCM16; retained source event gain"
+  },
+  {
+    "event": "Play_sfx_Sion_SionBasicAttackPassive2_OnCast",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/audio/sion/txtp/Play_sfx_Sion_SionBasicAttackPassive2_OnCast {r3}.txtp",
+    "txtp_sha256": "2dae39710c2be7a79b48ff2ee58804b81547122b66c5e199e4f144417cccc2cd",
+    "path": "res://assets/audio/units/sion/play_sfx_sion_sionbasicattackpassive2_oncast_r3.wav",
+    "sha256": "9cdad541c3ee482cc71c0416ec918726ef3fbb7b4ddada17ebd28612e4a45910",
+    "processing": "vgmstream-cli -i PCM16; retained source event gain"
+  },
+  {
+    "event": "Play_sfx_Sion_SionBasicAttackPassive_OnHit",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/audio/sion/txtp/Play_sfx_Sion_SionBasicAttackPassive_OnHit {r1} {d}.txtp",
+    "txtp_sha256": "fc7ac74771ab133397b9765b8b01f709adb84952efb8faba0095804b133bf941",
+    "path": "res://assets/audio/units/sion/play_sfx_sion_sionbasicattackpassive_onhit_r1_d.wav",
+    "sha256": "2e74d26a2a8b343c80cd45906daafa2a5832806d22c13770a2c053f9826bfba8",
+    "processing": "vgmstream-cli -i PCM16; retained source event gain"
+  },
+  {
+    "event": "Play_sfx_Sion_SionBasicAttackPassive_OnHit",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/audio/sion/txtp/Play_sfx_Sion_SionBasicAttackPassive_OnHit {r2} {d}.txtp",
+    "txtp_sha256": "afee4aed3fa0f46b241c8925e87b5d13a5b62daff0b4f7af4ff90368f826eeee",
+    "path": "res://assets/audio/units/sion/play_sfx_sion_sionbasicattackpassive_onhit_r2_d.wav",
+    "sha256": "431f82de3e370b39b055cecc25e2c8eeca8dffa56a5a66bc1d08ab83698869f8",
+    "processing": "vgmstream-cli -i PCM16; retained source event gain"
+  },
+  {
+    "event": "Play_sfx_Sion_SionBasicAttackPassive_OnHit",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/audio/sion/txtp/Play_sfx_Sion_SionBasicAttackPassive_OnHit {r3} {d}.txtp",
+    "txtp_sha256": "6d3a492dd0ad860b2c2942faa73bb0b15af93c6b6440042751b0b0d29a8fde43",
+    "path": "res://assets/audio/units/sion/play_sfx_sion_sionbasicattackpassive_onhit_r3_d.wav",
+    "sha256": "ff7e66af9b0d3f41261dc15ecdfc6fbe5ae3743da143807c6e344421d30c7559",
+    "processing": "vgmstream-cli -i PCM16; retained source event gain"
+  },
+  {
+    "event": "Play_sfx_Sion_SionBasicAttackPassive2_OnHit",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/audio/sion/txtp/Play_sfx_Sion_SionBasicAttackPassive2_OnHit {r1}.txtp",
+    "txtp_sha256": "2fd32b6721b4c9987e7f3f62132cb6f4fdf12a1c823263712b510a54152d8030",
+    "path": "res://assets/audio/units/sion/play_sfx_sion_sionbasicattackpassive2_onhit_r1.wav",
+    "sha256": "2e74d26a2a8b343c80cd45906daafa2a5832806d22c13770a2c053f9826bfba8",
+    "processing": "vgmstream-cli -i PCM16; retained source event gain"
+  },
+  {
+    "event": "Play_sfx_Sion_SionBasicAttackPassive2_OnHit",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/audio/sion/txtp/Play_sfx_Sion_SionBasicAttackPassive2_OnHit {r2}.txtp",
+    "txtp_sha256": "2615719680aec6e9a838b55f9906f632b7ef4fa8f5863299ffcc3e53a6ccd27b",
+    "path": "res://assets/audio/units/sion/play_sfx_sion_sionbasicattackpassive2_onhit_r2.wav",
+    "sha256": "431f82de3e370b39b055cecc25e2c8eeca8dffa56a5a66bc1d08ab83698869f8",
+    "processing": "vgmstream-cli -i PCM16; retained source event gain"
+  },
+  {
+    "event": "Play_sfx_Sion_SionBasicAttackPassive2_OnHit",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/audio/sion/txtp/Play_sfx_Sion_SionBasicAttackPassive2_OnHit {r3}.txtp",
+    "txtp_sha256": "c44e57879aa01e55e0e7b97bf7afee7763e4afda2775a51dacee8711adeda7bc",
+    "path": "res://assets/audio/units/sion/play_sfx_sion_sionbasicattackpassive2_onhit_r3.wav",
+    "sha256": "ff7e66af9b0d3f41261dc15ecdfc6fbe5ae3743da143807c6e344421d30c7559",
+    "processing": "vgmstream-cli -i PCM16; retained source event gain"
+  },
+  {
+    "event": "Play_vo_Sion_SionPassiveZombie_OnBuffDeactivate",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/passive_death_voice/wav/Play_vo_Sion_SionPassiveZombie_OnBuffDeactivate {r1}.wav",
+    "source_sha256": "51662c1c888240ba721f1ba25ed577a88f96053f0553493d148feff3b167f594",
+    "path": "res://assets/audio/units/sion/passive_death_0.wav",
+    "sha256": "c151761ff0df9a67c3f09e1035186c69d7bbe949ead241446a8068d8cfc5c28a",
+    "processing": "Original passive end voice; first 0.8s, last 0.2s fade; PCM16 no normalization"
+  },
+  {
+    "event": "Play_vo_Sion_SionPassiveZombie_OnBuffDeactivate",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/passive_death_voice/wav/Play_vo_Sion_SionPassiveZombie_OnBuffDeactivate {r2}.wav",
+    "source_sha256": "5c849c36a2ca9055155f1f6d32a7113ca61f70394c7c49e2fa7868bc72ee5eca",
+    "path": "res://assets/audio/units/sion/passive_death_1.wav",
+    "sha256": "8a41c3bd625fb1f79ad65df73e978bef103fd1c308cb81a623c6448ee02f7d72",
+    "processing": "Original passive end voice; first 0.8s, last 0.2s fade; PCM16 no normalization"
+  },
+  {
+    "event": "Play_vo_Sion_SionPassiveZombie_OnBuffDeactivate",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/passive_death_voice/wav/Play_vo_Sion_SionPassiveZombie_OnBuffDeactivate {r3}.wav",
+    "source_sha256": "46d71a3b28271876fa747228d669657f7f116567a47761309601fbfd0d448cf0",
+    "path": "res://assets/audio/units/sion/passive_death_2.wav",
+    "sha256": "a5231af8821abfa4e3b437f65b977c6fb28edbafda5e61b2016d21e225a4c997",
+    "processing": "Original passive end voice; first 0.8s, last 0.2s fade; PCM16 no normalization"
+  },
+  {
+    "event": "Play_sfx_Sion_SionWShieldStacks_OnBuffActivate",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/audio/sion/txtp/Play_sfx_Sion_SionWShieldStacks_OnBuffActivate.txtp",
+    "path": "res://assets/audio/units/sion/play_sfx_sion_sionwshieldstacks_onbuffactivate.wav",
+    "sha256": "7cee9b7ff816fe2d77e33c6f955e41b16b7ba4c6658dcabc6dd6752b28df4ef6",
+    "processing": "vgmstream -i PCM16; source event gain retained; sustain loops managed by actual state"
+  },
+  {
+    "event": "Play_sfx_Sion_SionWShieldStacks_OnBuffDeactivate",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/audio/sion/txtp/Play_sfx_Sion_SionWShieldStacks_OnBuffDeactivate {r1}.txtp",
+    "path": "res://assets/audio/units/sion/play_sfx_sion_sionwshieldstacks_onbuffdeactivate_r1.wav",
+    "sha256": "b467784b259c24966cc4e42d4c9c36f2c66fe81293f3fba5886e5176c92fa17b",
+    "processing": "vgmstream -i PCM16; source event gain retained; sustain loops managed by actual state"
+  },
+  {
+    "event": "Play_sfx_Sion_SionWShieldStacks_OnBuffDeactivate",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/audio/sion/txtp/Play_sfx_Sion_SionWShieldStacks_OnBuffDeactivate {r2}.txtp",
+    "path": "res://assets/audio/units/sion/play_sfx_sion_sionwshieldstacks_onbuffdeactivate_r2.wav",
+    "sha256": "1b3b447a36a1e47e0ff7af3c395be797baffaab2a4e3660bce8f32ad642cac1a",
+    "processing": "vgmstream -i PCM16; source event gain retained; sustain loops managed by actual state"
+  },
+  {
+    "event": "Play_sfx_Sion_SionWShieldStacks_OnBuffDeactivate",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/audio/sion/txtp/Play_sfx_Sion_SionWShieldStacks_OnBuffDeactivate {r3}.txtp",
+    "path": "res://assets/audio/units/sion/play_sfx_sion_sionwshieldstacks_onbuffdeactivate_r3.wav",
+    "sha256": "e3decb558de7d87562335484c1539b7d871dd2a42580d44b1f960e65df35e546",
+    "processing": "vgmstream -i PCM16; source event gain retained; sustain loops managed by actual state"
+  },
+  {
+    "event": "Play_sfx_Sion_SionPassiveZombie_OnBuffActivate",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/audio/sion/txtp/Play_sfx_Sion_SionPassiveZombie_OnBuffActivate.txtp",
+    "path": "res://assets/audio/units/sion/play_sfx_sion_sionpassivezombie_onbuffactivate.wav",
+    "sha256": "3d2ac0a4dbd1b33de57ae17c78f48cc098a02e93dd2a7e2b671ea622b98338d8",
+    "processing": "vgmstream -i PCM16; source event gain retained; sustain loops managed by actual state"
+  },
+  {
+    "event": "Play_sfx_Sion_Death3D_cast",
+    "path": "res://assets/audio/units/sion/death_sfx.wav",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/audio/sion/txtp/Play_sfx_Sion_Death3D_cast.txtp",
+    "sha256": "8dd66e13be68a39ad77dc5cbf88fc703667ed34bdf3ca53e5a67c384779fcd0f",
+    "processing": "Original Death animation audio event; first 2.5s time-compressed to 0.8s without pitch change, final 0.1s fade"
+  },
+  {
+    "event": "Play_vo_Sion_SionPassiveDelay_OnBuffCast",
+    "path": "res://assets/audio/units/sion/rebirth_voice.wav",
+    "source": "Sion.zh_CN.wad.client / 649009447.wem",
+    "sha256": "5618d6ced50c2bd498b7b479e3c1b4de57793f2f39739594c3941bf99d75a6d2",
+    "processing": "wwiser -gwd; vgmstream float decode, ffmpeg -1dB headroom then PCM16 (source float peak +0.141dB); full 2.890181s, no trimming or normalization",
+    "trigger": "rebirth:voice at first lethal, together with PassiveDelay SFX"
+  }
+]

@@ -1,0 +1,33 @@
+{
+  "source": "ClashLegends-开发素材库/03-制作中/赛恩/亡灵战神.glb",
+  "source_sha256": "6157491a5e3e50aa75157a7c743fc032a2985913ac8fdcdbcb91799184c238c0",
+  "variants": [
+    {
+      "path": "assets/units/sion/source/sion.glb",
+      "sha256": "6157491a5e3e50aa75157a7c743fc032a2985913ac8fdcdbcb91799184c238c0",
+      "processing": "Original GLB unchanged"
+    },
+    {
+      "path": "assets/units/sion/source/sion_passive.glb",
+      "sha256": "337484c04431dee46bc6711099e641598ab77b7c4de5a1bf38dfef374ec9d8c5",
+      "processing": "Remove primitives whose material is Weapon; retain skeleton, animations and remaining textures"
+    },
+    {
+      "path": "assets/cards/sion_loading.png",
+      "sha256": "33fb18af618a37578c7dada2bfffe10376971b2fba8fe4f1eef7a5f649b43256",
+      "processing": "Sion.wad.client assets/characters/sion/skins/base/sionloadscreen.tex decoded with ltk-tex-utils"
+    }
+  ],
+  "animation_reference": {
+    "package": "Sion.wad.client",
+    "paths": [
+      "data/characters/sion/animations/skin0.bin",
+      "data/characters/sion/sion.bin"
+    ],
+    "first_death": "Passive_Death full 2s; hide weapon at frame23/30",
+    "final_death": "Death [0,2.5] compressed to 0.8s",
+    "movement": "Run; Passive_Run sequencer references Run_In hash 5569eff313b2444b then Run hash 7692fa21c1060822; Passive_Dash is separate",
+    "attacks": "Original whole clips, castFrame=11 at 30fps; tower55 frames maps to 0.36s of1.8s; passive54/55 frames maps to0.12s at0.01s precision of0.6s",
+    "movement_override": "User request 2026-09-23: omit Passive_Run_In; enter Sion_Passive_Run_anm directly"
+  }
+}
