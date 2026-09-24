@@ -1,0 +1,41 @@
+{
+  "original_sha256": "53521247d4f2e77e1a83b11c5f5b20241d45434dac8639eb4f6b70e454a7139b",
+  "original_bytes": 10497424,
+  "runtime_bytes": 8627784,
+  "animations": [
+    "Attack1",
+    "Attack2",
+    "Attack3",
+    "Death",
+    "Idle1_Base",
+    "Idle1_Slayer",
+    "Kayn_Idle1_Assassin.anm",
+    "Run",
+    "Run_Assassin",
+    "Run_Slayer",
+    "Spell1_Circle",
+    "Spell1_Dash",
+    "Spell1_Exit_To_Run",
+    "Spell1_Stop",
+    "Spell3_Run",
+    "Transform_Assassin",
+    "Transform_Slayer"
+  ],
+  "visible_parts": {
+    "base": [
+      "Kayn_Base_Mat"
+    ],
+    "assassin": [
+      "Kayn_Base_Assassin_Mat",
+      "Kayn_Assassin_Hair_Mat"
+    ],
+    "slayer": [
+      "Kayn_Base_Slayer_Mat"
+    ]
+  },
+  "source_evidence": [
+    "data/characters/kayn/skins/skin0.bin: initialSubmeshToHide",
+    "data/characters/kayn/animations/skin0.bin: Transform_Assassin / Transform_Slayer SubmeshVisibilityEventData"
+  ],
+  "runtime_sha256": "e1b6a7b6e11ac65b74f1aef47803ad9f5d6a2ae6a65ee3650a912c88a20d56db"
+}

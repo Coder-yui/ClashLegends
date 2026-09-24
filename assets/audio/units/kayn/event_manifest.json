@@ -1,0 +1,281 @@
+{
+  "source": "Kayn.wad.client base SFX banks",
+  "form_switch_hash": "Wwise FNV-1 lowercase: assassin=1486053686; slayer=2491259115",
+  "hit_switch": "Flesh=1153642577; material group, not form",
+  "deploy_voice": "intentionally deferred by user",
+  "events": [
+    {
+      "output": "kayn_attack1_1.wav",
+      "event": "Play_sfx_Kayn_KaynBasicAttack_OnCast",
+      "txtp": "ClashLegends-开发素材库/03-制作中/凯隐/audio/kayn/txtp/Play_sfx_Kayn_KaynBasicAttack_OnCast [kayn=base] {r1} {d}.txtp",
+      "sha256": "ee670a9c252b4625e5d2c04d59f7f8cfa1a38a48eaac89502edeca9cb409a1aa",
+      "switch": "kayn=base"
+    },
+    {
+      "output": "kayn_attack1_2.wav",
+      "event": "Play_sfx_Kayn_KaynBasicAttack_OnCast",
+      "txtp": "ClashLegends-开发素材库/03-制作中/凯隐/audio/kayn/txtp/Play_sfx_Kayn_KaynBasicAttack_OnCast [kayn=base] {r2} {d}.txtp",
+      "sha256": "60ffd39d15a377bd11e25ec15b6160d576edf8510d6a41d33174aeba7d31f256",
+      "switch": "kayn=base"
+    },
+    {
+      "output": "kayn_attack2_1.wav",
+      "event": "Play_sfx_Kayn_KaynBasicAttack2_OnCast",
+      "txtp": "ClashLegends-开发素材库/03-制作中/凯隐/audio/kayn/txtp/Play_sfx_Kayn_KaynBasicAttack2_OnCast [kayn=base] {r1}.txtp",
+      "sha256": "ee670a9c252b4625e5d2c04d59f7f8cfa1a38a48eaac89502edeca9cb409a1aa",
+      "switch": "kayn=base"
+    },
+    {
+      "output": "kayn_attack2_2.wav",
+      "event": "Play_sfx_Kayn_KaynBasicAttack2_OnCast",
+      "txtp": "ClashLegends-开发素材库/03-制作中/凯隐/audio/kayn/txtp/Play_sfx_Kayn_KaynBasicAttack2_OnCast [kayn=base] {r2}.txtp",
+      "sha256": "60ffd39d15a377bd11e25ec15b6160d576edf8510d6a41d33174aeba7d31f256",
+      "switch": "kayn=base"
+    },
+    {
+      "output": "kayn_attack3_1.wav",
+      "event": "Play_sfx_Kayn_KaynBasicAttack3_OnCast",
+      "txtp": "ClashLegends-开发素材库/03-制作中/凯隐/audio/kayn/txtp/Play_sfx_Kayn_KaynBasicAttack3_OnCast [kayn=base] {r1}.txtp",
+      "sha256": "e1d3f57bec530eaac959496b9d3e77ff067c0291ff109063df50fbec36ca27ee",
+      "switch": "kayn=base"
+    },
+    {
+      "output": "kayn_attack3_2.wav",
+      "event": "Play_sfx_Kayn_KaynBasicAttack3_OnCast",
+      "txtp": "ClashLegends-开发素材库/03-制作中/凯隐/audio/kayn/txtp/Play_sfx_Kayn_KaynBasicAttack3_OnCast [kayn=base] {r2}.txtp",
+      "sha256": "305384d68700a905b22c05c5ab16a9e8fc8a10fb44f71e9df682ad28ba52ef8f",
+      "switch": "kayn=base"
+    },
+    {
+      "output": "kayn_attack_hit_1.wav",
+      "event": "Play_sfx_Kayn_KaynBasicAttack_OnHit",
+      "txtp": "ClashLegends-开发素材库/03-制作中/凯隐/audio/kayn/txtp/Play_sfx_Kayn_KaynBasicAttack_OnHit [1559186049=1153642577] {r1} {d}.txtp",
+      "sha256": "a691ee998ec6a03617d5f3cdf3c569ca82dfbdf264deccafad86f7badbbc247b",
+      "switch": "1559186049=1153642577"
+    },
+    {
+      "output": "kayn_attack_hit_2.wav",
+      "event": "Play_sfx_Kayn_KaynBasicAttack_OnHit",
+      "txtp": "ClashLegends-开发素材库/03-制作中/凯隐/audio/kayn/txtp/Play_sfx_Kayn_KaynBasicAttack_OnHit [1559186049=1153642577] {r2} {d}.txtp",
+      "sha256": "3cc8abde8e3ea41559264a3dc0125a74679b177c2a6068b7bcee9bbe48aca6ee",
+      "switch": "1559186049=1153642577"
+    },
+    {
+      "output": "kayn_q_cast_1.wav",
+      "event": "Play_sfx_Kayn_KaynQ_OnCast",
+      "txtp": "ClashLegends-开发素材库/03-制作中/凯隐/audio/kayn/txtp/Play_sfx_Kayn_KaynQ_OnCast [kayn=base].txtp",
+      "sha256": "745307d7a0adbb253854f5c96cd17af8f5202703797dd8befe7ab9f13507bbb2",
+      "switch": "kayn=base"
+    },
+    {
+      "output": "kayn_q_spin_1.wav",
+      "event": "Play_sfx_Kayn_KaynQ_spin",
+      "txtp": "ClashLegends-开发素材库/03-制作中/凯隐/audio/kayn/txtp/Play_sfx_Kayn_KaynQ_spin [kayn=base].txtp",
+      "sha256": "017c009f2f37eea842a3e62a4ec4bcc11b8f64e1bfa58160aa56c66a46a551bc",
+      "switch": "kayn=base"
+    },
+    {
+      "output": "kayn_q_hit_1.wav",
+      "event": "Play_sfx_Kayn_KaynQ_hit",
+      "txtp": "ClashLegends-开发素材库/03-制作中/凯隐/audio/kayn/txtp/Play_sfx_Kayn_KaynQ_hit [1559186049=1153642577] {r1}.txtp",
+      "sha256": "a691ee998ec6a03617d5f3cdf3c569ca82dfbdf264deccafad86f7badbbc247b",
+      "switch": "1559186049=1153642577"
+    },
+    {
+      "output": "kayn_terrain_1.wav",
+      "event": "Play_sfx_Kayn_KaynE_OnCast",
+      "txtp": "ClashLegends-开发素材库/03-制作中/凯隐/audio/kayn/txtp/Play_sfx_Kayn_KaynE_OnCast [kayn=base] {r1}.txtp",
+      "sha256": "9693f667571fbb2e8e231d2930ed7a2996ccad8a73847fe0f63941201b81f4de",
+      "switch": "kayn=base"
+    },
+    {
+      "output": "kayn_death_1.wav",
+      "event": "Play_sfx_Kayn_Death3D_buffactivate",
+      "txtp": "ClashLegends-开发素材库/03-制作中/凯隐/audio/kayn/txtp/Play_sfx_Kayn_Death3D_buffactivate.txtp",
+      "sha256": "6cef2bd8194264546deaf07af30f7c417253d2cc7791d23d7e23679967a22556",
+      "switch": ""
+    },
+    {
+      "output": "kayn_assassin_attack1_1.wav",
+      "event": "Play_sfx_Kayn_KaynBasicAttack_OnCast",
+      "txtp": "ClashLegends-开发素材库/03-制作中/凯隐/audio/kayn/txtp/Play_sfx_Kayn_KaynBasicAttack_OnCast [kayn=1486053686] {r1} {d}.txtp",
+      "sha256": "c32b58e64d61334c1e9c84e575e2e132f085302fc0b8d8aa05310e1ccd82b491",
+      "switch": "kayn=1486053686"
+    },
+    {
+      "output": "kayn_assassin_attack1_2.wav",
+      "event": "Play_sfx_Kayn_KaynBasicAttack_OnCast",
+      "txtp": "ClashLegends-开发素材库/03-制作中/凯隐/audio/kayn/txtp/Play_sfx_Kayn_KaynBasicAttack_OnCast [kayn=1486053686] {r2} {d}.txtp",
+      "sha256": "c32a609fe595b098b26f32b48081a7fa8c4b1b0d47a3b09de785b00f375bbf1f",
+      "switch": "kayn=1486053686"
+    },
+    {
+      "output": "kayn_assassin_attack2_1.wav",
+      "event": "Play_sfx_Kayn_KaynBasicAttack2_OnCast",
+      "txtp": "ClashLegends-开发素材库/03-制作中/凯隐/audio/kayn/txtp/Play_sfx_Kayn_KaynBasicAttack2_OnCast [kayn=1486053686] {r1}.txtp",
+      "sha256": "c32b58e64d61334c1e9c84e575e2e132f085302fc0b8d8aa05310e1ccd82b491",
+      "switch": "kayn=1486053686"
+    },
+    {
+      "output": "kayn_assassin_attack2_2.wav",
+      "event": "Play_sfx_Kayn_KaynBasicAttack2_OnCast",
+      "txtp": "ClashLegends-开发素材库/03-制作中/凯隐/audio/kayn/txtp/Play_sfx_Kayn_KaynBasicAttack2_OnCast [kayn=1486053686] {r2}.txtp",
+      "sha256": "c32a609fe595b098b26f32b48081a7fa8c4b1b0d47a3b09de785b00f375bbf1f",
+      "switch": "kayn=1486053686"
+    },
+    {
+      "output": "kayn_assassin_attack3_1.wav",
+      "event": "Play_sfx_Kayn_KaynBasicAttack3_OnCast",
+      "txtp": "ClashLegends-开发素材库/03-制作中/凯隐/audio/kayn/txtp/Play_sfx_Kayn_KaynBasicAttack3_OnCast [kayn=1486053686] {r1}.txtp",
+      "sha256": "e1d3f57bec530eaac959496b9d3e77ff067c0291ff109063df50fbec36ca27ee",
+      "switch": "kayn=1486053686"
+    },
+    {
+      "output": "kayn_assassin_attack3_2.wav",
+      "event": "Play_sfx_Kayn_KaynBasicAttack3_OnCast",
+      "txtp": "ClashLegends-开发素材库/03-制作中/凯隐/audio/kayn/txtp/Play_sfx_Kayn_KaynBasicAttack3_OnCast [kayn=1486053686] {r2}.txtp",
+      "sha256": "19d9c1aa77c967b8485081d65126329df57466cb1079abb4ccf09c1cbb810cbb",
+      "switch": "kayn=1486053686"
+    },
+    {
+      "output": "kayn_assassin_attack_hit_1.wav",
+      "event": "Play_sfx_Kayn_KaynBasicAttack_OnHit",
+      "txtp": "ClashLegends-开发素材库/03-制作中/凯隐/audio/kayn/txtp/Play_sfx_Kayn_KaynBasicAttack_OnHit [1559186049=1153642577] {r1} {d}.txtp",
+      "sha256": "a691ee998ec6a03617d5f3cdf3c569ca82dfbdf264deccafad86f7badbbc247b",
+      "switch": "1559186049=1153642577"
+    },
+    {
+      "output": "kayn_assassin_attack_hit_2.wav",
+      "event": "Play_sfx_Kayn_KaynBasicAttack_OnHit",
+      "txtp": "ClashLegends-开发素材库/03-制作中/凯隐/audio/kayn/txtp/Play_sfx_Kayn_KaynBasicAttack_OnHit [1559186049=1153642577] {r2} {d}.txtp",
+      "sha256": "3cc8abde8e3ea41559264a3dc0125a74679b177c2a6068b7bcee9bbe48aca6ee",
+      "switch": "1559186049=1153642577"
+    },
+    {
+      "output": "kayn_assassin_q_cast_1.wav",
+      "event": "Play_sfx_Kayn_KaynQ_OnCast",
+      "txtp": "ClashLegends-开发素材库/03-制作中/凯隐/audio/kayn/txtp/Play_sfx_Kayn_KaynQ_OnCast [kayn=1486053686].txtp",
+      "sha256": "f7228cb9413e65a82f1e31255d8212e2b74918ec3414543d86740c455767d4de",
+      "switch": "kayn=1486053686"
+    },
+    {
+      "output": "kayn_assassin_q_spin_1.wav",
+      "event": "Play_sfx_Kayn_KaynQ_spin",
+      "txtp": "ClashLegends-开发素材库/03-制作中/凯隐/audio/kayn/txtp/Play_sfx_Kayn_KaynQ_spin [kayn=1486053686].txtp",
+      "sha256": "804e55d421a9d56095140f92b55042083701116346f8e3a7c5481c34df8d9e47",
+      "switch": "kayn=1486053686"
+    },
+    {
+      "output": "kayn_assassin_q_hit_1.wav",
+      "event": "Play_sfx_Kayn_KaynQ_hit",
+      "txtp": "ClashLegends-开发素材库/03-制作中/凯隐/audio/kayn/txtp/Play_sfx_Kayn_KaynQ_hit [1559186049=1153642577] {r1}.txtp",
+      "sha256": "a691ee998ec6a03617d5f3cdf3c569ca82dfbdf264deccafad86f7badbbc247b",
+      "switch": "1559186049=1153642577"
+    },
+    {
+      "output": "kayn_assassin_terrain_1.wav",
+      "event": "Play_sfx_Kayn_KaynE_OnCast",
+      "txtp": "ClashLegends-开发素材库/03-制作中/凯隐/audio/kayn/txtp/Play_sfx_Kayn_KaynE_OnCast [kayn=1486053686] {r1}.txtp",
+      "sha256": "82dff366c1269d5cde48c5788a701f6a84d37ef20ab721c99bb740f24dbea54e",
+      "switch": "kayn=1486053686"
+    },
+    {
+      "output": "kayn_assassin_death_1.wav",
+      "event": "Play_sfx_Kayn_Death3D_buffactivate",
+      "txtp": "ClashLegends-开发素材库/03-制作中/凯隐/audio/kayn/txtp/Play_sfx_Kayn_Death3D_buffactivate.txtp",
+      "sha256": "6cef2bd8194264546deaf07af30f7c417253d2cc7791d23d7e23679967a22556",
+      "switch": ""
+    },
+    {
+      "output": "kayn_slayer_attack1_1.wav",
+      "event": "Play_sfx_Kayn_KaynBasicAttack_OnCast",
+      "txtp": "ClashLegends-开发素材库/03-制作中/凯隐/audio/kayn/txtp/Play_sfx_Kayn_KaynBasicAttack_OnCast [kayn=2491259115] {r1} {d}.txtp",
+      "sha256": "3d0e0d3bcd4d7e9ae65e13e82572c115a20abf86443d4c1a5ae2246a142566da",
+      "switch": "kayn=2491259115"
+    },
+    {
+      "output": "kayn_slayer_attack1_2.wav",
+      "event": "Play_sfx_Kayn_KaynBasicAttack_OnCast",
+      "txtp": "ClashLegends-开发素材库/03-制作中/凯隐/audio/kayn/txtp/Play_sfx_Kayn_KaynBasicAttack_OnCast [kayn=2491259115] {r2} {d}.txtp",
+      "sha256": "bb58f9ca7d1a70d1f37de3fdb7503c2be2c12126d1cfdbb8fbffb58e1b59bbc1",
+      "switch": "kayn=2491259115"
+    },
+    {
+      "output": "kayn_slayer_attack2_1.wav",
+      "event": "Play_sfx_Kayn_KaynBasicAttack2_OnCast",
+      "txtp": "ClashLegends-开发素材库/03-制作中/凯隐/audio/kayn/txtp/Play_sfx_Kayn_KaynBasicAttack2_OnCast [kayn=2491259115] {r1}.txtp",
+      "sha256": "3d0e0d3bcd4d7e9ae65e13e82572c115a20abf86443d4c1a5ae2246a142566da",
+      "switch": "kayn=2491259115"
+    },
+    {
+      "output": "kayn_slayer_attack2_2.wav",
+      "event": "Play_sfx_Kayn_KaynBasicAttack2_OnCast",
+      "txtp": "ClashLegends-开发素材库/03-制作中/凯隐/audio/kayn/txtp/Play_sfx_Kayn_KaynBasicAttack2_OnCast [kayn=2491259115] {r2}.txtp",
+      "sha256": "bb58f9ca7d1a70d1f37de3fdb7503c2be2c12126d1cfdbb8fbffb58e1b59bbc1",
+      "switch": "kayn=2491259115"
+    },
+    {
+      "output": "kayn_slayer_attack3_1.wav",
+      "event": "Play_sfx_Kayn_KaynBasicAttack3_OnCast",
+      "txtp": "ClashLegends-开发素材库/03-制作中/凯隐/audio/kayn/txtp/Play_sfx_Kayn_KaynBasicAttack3_OnCast [kayn=2491259115] {r1} {d}.txtp",
+      "sha256": "e1d3f57bec530eaac959496b9d3e77ff067c0291ff109063df50fbec36ca27ee",
+      "switch": "kayn=2491259115"
+    },
+    {
+      "output": "kayn_slayer_attack3_2.wav",
+      "event": "Play_sfx_Kayn_KaynBasicAttack3_OnCast",
+      "txtp": "ClashLegends-开发素材库/03-制作中/凯隐/audio/kayn/txtp/Play_sfx_Kayn_KaynBasicAttack3_OnCast [kayn=2491259115] {r2} {d}.txtp",
+      "sha256": "305384d68700a905b22c05c5ab16a9e8fc8a10fb44f71e9df682ad28ba52ef8f",
+      "switch": "kayn=2491259115"
+    },
+    {
+      "output": "kayn_slayer_attack_hit_1.wav",
+      "event": "Play_sfx_Kayn_KaynBasicAttack_OnHit",
+      "txtp": "ClashLegends-开发素材库/03-制作中/凯隐/audio/kayn/txtp/Play_sfx_Kayn_KaynBasicAttack_OnHit [1559186049=1153642577] {r1} {d}.txtp",
+      "sha256": "a691ee998ec6a03617d5f3cdf3c569ca82dfbdf264deccafad86f7badbbc247b",
+      "switch": "1559186049=1153642577"
+    },
+    {
+      "output": "kayn_slayer_attack_hit_2.wav",
+      "event": "Play_sfx_Kayn_KaynBasicAttack_OnHit",
+      "txtp": "ClashLegends-开发素材库/03-制作中/凯隐/audio/kayn/txtp/Play_sfx_Kayn_KaynBasicAttack_OnHit [1559186049=1153642577] {r2} {d}.txtp",
+      "sha256": "3cc8abde8e3ea41559264a3dc0125a74679b177c2a6068b7bcee9bbe48aca6ee",
+      "switch": "1559186049=1153642577"
+    },
+    {
+      "output": "kayn_slayer_q_cast_1.wav",
+      "event": "Play_sfx_Kayn_KaynQ_OnCast",
+      "txtp": "ClashLegends-开发素材库/03-制作中/凯隐/audio/kayn/txtp/Play_sfx_Kayn_KaynQ_OnCast [kayn=2491259115].txtp",
+      "sha256": "cec325678d6cd4557b4dcd83bdba41666ef3d6ad53ab92d6b437d5f16bec2382",
+      "switch": "kayn=2491259115"
+    },
+    {
+      "output": "kayn_slayer_q_spin_1.wav",
+      "event": "Play_sfx_Kayn_KaynQ_spin",
+      "txtp": "ClashLegends-开发素材库/03-制作中/凯隐/audio/kayn/txtp/Play_sfx_Kayn_KaynQ_spin [kayn=2491259115].txtp",
+      "sha256": "3a574421f1489d381251b818af61bf82e340346cd2646c1df3b1444cc4f3993e",
+      "switch": "kayn=2491259115"
+    },
+    {
+      "output": "kayn_slayer_q_hit_1.wav",
+      "event": "Play_sfx_Kayn_KaynQ_hit",
+      "txtp": "ClashLegends-开发素材库/03-制作中/凯隐/audio/kayn/txtp/Play_sfx_Kayn_KaynQ_hit [1559186049=1153642577] {r1}.txtp",
+      "sha256": "a691ee998ec6a03617d5f3cdf3c569ca82dfbdf264deccafad86f7badbbc247b",
+      "switch": "1559186049=1153642577"
+    },
+    {
+      "output": "kayn_slayer_terrain_1.wav",
+      "event": "Play_sfx_Kayn_KaynE_OnCast",
+      "txtp": "ClashLegends-开发素材库/03-制作中/凯隐/audio/kayn/txtp/Play_sfx_Kayn_KaynE_OnCast [kayn=2491259115] {r1}.txtp",
+      "sha256": "98ff45fb2c600765483b859c4c99cea31f6af490960728e70c1b403944eb5440",
+      "switch": "kayn=2491259115"
+    },
+    {
+      "output": "kayn_slayer_death_1.wav",
+      "event": "Play_sfx_Kayn_Death3D_buffactivate",
+      "txtp": "ClashLegends-开发素材库/03-制作中/凯隐/audio/kayn/txtp/Play_sfx_Kayn_Death3D_buffactivate.txtp",
+      "sha256": "6cef2bd8194264546deaf07af30f7c417253d2cc7791d23d7e23679967a22556",
+      "switch": ""
+    }
+  ]
+}
