@@ -5,10 +5,20 @@ var _deck: Array = []
 var _hand: Array = []
 var _queue: Array = []
 
-func _init(deck: Array = []) -> void:
+func _init(deck: Array = [], randomize_opening: bool = true) -> void:
 	for id in deck: _deck.append(String(id))
-	_hand = _deck.slice(0, 4)
-	_queue = _deck.slice(4, 8)
+	var order := _deck.duplicate()
+	if randomize_opening:
+		order.shuffle()
+		# 条件均匀分布：镜像落在前四时，与后四中的随机位置交换。
+		for index in mini(4, order.size()):
+			if CardPlayHistory.is_mirror(String(order[index])) and order.size() == 8:
+				var replacement := randi_range(4, 7)
+				var other = order[replacement]
+				order[replacement] = order[index]
+				order[index] = other
+	_hand = order.slice(0, 4)
+	_queue = order.slice(4, 8)
 
 func matches(deck: Array) -> bool:
 	return _deck == deck.map(func(id): return String(id))

@@ -43,6 +43,7 @@ func clear_client() -> void:
 func launch(attacker: Node2D, target: Node2D, amount: float, projectile_speed: float, splash_radius: float, knockback: float, projectile_color: Color, effects: Dictionary = {}) -> bool:
 	if target == null or not is_instance_valid(target) or target.hp <= 0.0:
 		return false
+	if not CombatInteraction.allows(target, attacker): return false
 	effects = effects.duplicate(true)
 	if attacker is Unit:
 		effects["source_generation"] = attacker.form_change_serial
@@ -114,6 +115,17 @@ func launch(attacker: Node2D, target: Node2D, amount: float, projectile_speed: f
 	queue_redraw()
 	return true
 
+## 保护建立时立即断开旧追踪；来源同Tick稍后入圈也不能救回这枚弹体。
+func invalidate_target_locks(target: Unit) -> void:
+	for id in projectiles.keys():
+		var projectile: Dictionary = projectiles[id]
+		if bool(projectile.get("skill_fan", false)) or projectile.get("target") != target: continue
+		var source = projectile.get("attacker")
+		if CombatInteraction.allows(target, source if is_instance_valid(source) else null, int(projectile.team), projectile.source_pos): continue
+		if bool(projectile.get("owned_launch_audio", false)): launch_audio_stopped.emit(id)
+		projectiles.erase(id)
+	queue_redraw()
+
 func tick(dt: float) -> void:
 	var finished := []
 	# 同 Tick 的箭共享开始时的碰撞对象，前箭击杀也不会让并排后箭穿过尸体打后排。
@@ -137,6 +149,9 @@ func tick(dt: float) -> void:
 		var attacker = projectile.get("attacker")
 		if attacker != null and is_instance_valid(attacker):
 			projectile.source_pos = attacker.global_position
+		if not CombatInteraction.allows(target, attacker if is_instance_valid(attacker) else null, int(projectile.team), projectile.source_pos):
+			finished.append(id)
+			continue
 		var target_pos: Vector2 = target.global_position
 		var pos: Vector2 = projectile.pos
 		projectile.direction = pos.direction_to(target_pos)
@@ -205,6 +220,7 @@ func _tick_skill_arrow(projectile: Dictionary, dt: float, colliders: Array) -> b
 		var candidate: Node2D = collider[0]
 		if not is_instance_valid(candidate) or candidate.team == int(projectile.team):
 			continue
+		if not CombatInteraction.allows(candidate, projectile.attacker if is_instance_valid(projectile.attacker) else null, int(projectile.team), projectile.source_pos): continue
 		if candidate is Unit:
 			if bool(projectile.skill.get("ground_only", false)) and candidate.is_air:
 				continue

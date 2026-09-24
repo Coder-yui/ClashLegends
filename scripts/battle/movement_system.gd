@@ -30,6 +30,7 @@ func _apply_unit_movement(dt: float, units: Array[Unit]) -> void:
 	_clip_knockback_contacts(units, combined_velocities, dt)
 	for unit in units:
 		var key := _unit_order_key(unit)
+		if unit.skill_dash_active: continue
 		var autonomous: Vector2 = velocities[key]
 		if unit.structure_rush.displacement_immune():
 			# 冲撞只能沿已验证直线推进，准备期也不接受接触推挤。
@@ -62,6 +63,7 @@ func _apply_unit_movement(dt: float, units: Array[Unit]) -> void:
 			unit.on_movement_applied(0.0, dt)
 
 	for unit in units:
+		unit.terrain_traversal.update(unit)
 		unit._just_deployed = false
 
 func _clip_knockback_contacts(units: Array[Unit], velocities: Dictionary, dt: float) -> void:
@@ -70,7 +72,7 @@ func _clip_knockback_contacts(units: Array[Unit], velocities: Dictionary, dt: fl
 		if not a._forced_movement or a.structure_rush.displacement_immune(): continue
 		for j in units.size():
 			var b := units[j]
-			if a == b or a.is_air != b.is_air or b.structure_rush.displacement_immune(): continue
+			if a == b or a.skill_dash_active or b.skill_dash_active or a.is_air != b.is_air or b.structure_rush.displacement_immune(): continue
 			if b._forced_movement and j < i: continue
 			var ka := _unit_order_key(a)
 			var kb := _unit_order_key(b)
@@ -230,7 +232,7 @@ func _adjust_unit_velocity(unit: Unit, units: Array[Unit], dt: float) -> Vector2
 		var direction := desired.normalized()
 		var side := Vector2(-direction.y, direction.x)
 		for other in units:
-			if other == unit or other.is_air != unit.is_air:
+			if other == unit or other.skill_dash_active or unit.skill_dash_active or other.is_air != unit.is_air:
 				continue
 			# 敌军仅为互不索敌、迎面接触的建筑目标单位解除僵持。
 			# 防守者（包括已停步攻击者）不触发推进单位主动避让。
@@ -276,7 +278,7 @@ func _collect_unit_contacts(units: Array[Unit]) -> Dictionary:
 		var a := units[i]
 		for j in range(i + 1, units.size()):
 			var b := units[j]
-			if a.structure_rush.control_immune() or b.structure_rush.control_immune(): continue
+			if a.skill_dash_active or b.skill_dash_active or a.structure_rush.control_immune() or b.structure_rush.control_immune(): continue
 			if a.is_air != b.is_air:
 				continue
 			var delta := a.global_position - b.global_position
@@ -317,6 +319,7 @@ func _resolve_unit_collisions(dt: float, units: Array[Unit]) -> void:
 	for unit in units:
 		var correction: Vector2 = contacts[_unit_order_key(unit)]
 		_apply_contact_displacement(unit, correction, dt)
+		unit.terrain_traversal.update(unit)
 		unit._just_deployed = false
 
 func _apply_contact_displacement(unit: Unit, correction: Vector2, dt: float) -> void:

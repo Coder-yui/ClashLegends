@@ -184,7 +184,7 @@ func _check_command_tick_estimation() -> void:
 	var snapshot_system := NetworkSnapshotSystem.new(_main, _main._projectile_system)
 	var newer_but_behind_estimate := [
 		NetworkSnapshotSystem.SNAPSHOT_PROTOCOL_VERSION, 102,
-		[], [], [], 0.0, 180.0, false, _main._snapshot_system.lifecycle.session_id, 0,
+		[], [], [], 0.0, 180.0, false, _main._snapshot_system.lifecycle.session_id, 0, {},
 	]
 	snapshot_system.apply(var_to_bytes(newer_but_behind_estimate).compress(FileAccess.COMPRESSION_DEFLATE))
 	var estimate_survives_stale_snapshot: bool = (
@@ -193,13 +193,13 @@ func _check_command_tick_estimation() -> void:
 	)
 	var incompatible_version_packet := [
 		NetworkSnapshotSystem.SNAPSHOT_PROTOCOL_VERSION - 1, 103,
-		[], [], [], 0.0, 180.0, false, _main._snapshot_system.lifecycle.session_id, 0,
+		[], [], [], 0.0, 180.0, false, _main._snapshot_system.lifecycle.session_id, 0, {},
 	]
 	snapshot_system.apply(var_to_bytes(incompatible_version_packet).compress(FileAccess.COMPRESSION_DEFLATE))
 	var incompatible_version_rejected: bool = _main._authoritative_server_tick == 102
 	var stale_packet := [
 		NetworkSnapshotSystem.SNAPSHOT_PROTOCOL_VERSION, 101,
-		[], [], [], 0.0, 180.0, false, _main._snapshot_system.lifecycle.session_id, 0,
+		[], [], [], 0.0, 180.0, false, _main._snapshot_system.lifecycle.session_id, 0, {},
 	]
 	snapshot_system.apply(var_to_bytes(stale_packet).compress(FileAccess.COMPRESSION_DEFLATE))
 	var stale_snapshot_rejected: bool = _main._authoritative_server_tick == 102

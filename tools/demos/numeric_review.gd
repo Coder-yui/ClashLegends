@@ -21,7 +21,10 @@ func _run() -> void:
 	var builder := DeckBuilder.new()
 	main.add_child(builder)
 	builder.open(["pix", "aurelionsol", "ashe", "garen", "gwen", "teemo", "freeze", "heal"], {}, {}, func(_a, _b, _c): pass)
-	for id in ["pix", "aurelionsol", "ashe"]:
+	var review_cards: Array = ["pix", "aurelionsol", "ashe"]
+	for argument in OS.get_cmdline_user_args():
+		if argument.begins_with("--cards="): review_cards.assign(argument.trim_prefix("--cards=").split(","))
+	for id in review_cards:
 		builder._open_card_info(id)
 		await create_timer(0.3).timeout
 		await _capture(id)
@@ -38,6 +41,8 @@ func _run() -> void:
 	await _capture("tower-health")
 	main.queue_free()
 	await process_frame
+	await process_frame
+	await create_timer(0.25).timeout
 	quit()
 func _row(label: String, stats: Dictionary) -> String:
 	return "| %s | %s | %s%s | %s | %s | %s |" % [label, BattleNumbers.format_value(float(stats.hp)), BattleNumbers.format_value(float(stats.damage)), " DPS" if bool(stats.get("is_continuous_attack", false)) else "", BattleNumbers.format_value(float(stats.interval)), BattleNumbers.format_value(float(stats.get("first_hit", 0))), BattleNumbers.format_value(float(stats.speed))]

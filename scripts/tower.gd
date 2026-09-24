@@ -24,6 +24,7 @@ var team := 0  # 0 = 玩家（下方），1 = 敌方（上方）
 var battle_context: BattleContext
 var max_hp := 2000.0
 var hp := 2000.0
+var bleeding := BleedState.new()
 var shields := ShieldState.new()
 var _net_shield_hp := 0.0
 var _net_shield_capacity := 0.0
@@ -76,6 +77,7 @@ func setup(p_team: int, stats: Dictionary, p_is_king: bool) -> void:
 	is_king = p_is_king
 	max_hp = BattleNumbers.quantity(stats.hp)
 	hp = max_hp
+	bleeding.clear()
 	shields.clear()
 	_shield_is_replica = false
 	_net_shield_hp = 0.0
@@ -172,7 +174,7 @@ func sim_tick(dt: float, statuses_prepared: bool = false) -> void:
 			var projectile_color := BLUE_PROJECTILE_COLOR if team == 0 else RED_PROJECTILE_COLOR
 			battle_context.launch_attack(self, _target, damage, projectile_speed, splash_radius, attack_knockback, projectile_color)
 		else:
-			_target.take_damage(damage)
+			_target.take_damage(damage, self, team, global_position)
 		_cooldown = attack_interval
 
 func _target_is_valid(target) -> bool:
@@ -180,6 +182,7 @@ func _target_is_valid(target) -> bool:
 		return false
 	if not target is Unit or target.team == team:
 		return false
+	if not CombatInteraction.allows(target, self): return false
 	var unit := target as Unit
 	return _target_gap(unit) <= attack_range
 
@@ -197,6 +200,7 @@ func _find_enemy_in_range() -> Node2D:
 		# 塔只打单位，不打塔
 		if not c is Unit or c.team == team or c.hp <= 0.0:
 			continue
+		if not CombatInteraction.allows(c, self): continue
 		var unit := c as Unit
 		var gap := _target_gap(unit)
 		if gap <= attack_range and gap < best_gap:
@@ -204,9 +208,9 @@ func _find_enemy_in_range() -> Node2D:
 			best = c
 	return best
 
-func take_damage(amount: float, _from: Node2D = null, _source_team: int = -1, _source_position: Vector2 = Vector2(INF, INF)) -> bool:
+func take_damage(amount: float, _from: Node2D = null, _source_team: int = -1, _source_position: Vector2 = Vector2(INF, INF), attached: bool = false) -> bool:
 	if battle_context != null and battle_context.damage_batch().collecting:
-		return bool(battle_context.damage_batch().submit_damage(self, amount, _from, _source_team, _source_position).accepted)
+		return bool(battle_context.damage_batch().submit_damage(self, amount, _from, _source_team, _source_position, attached).accepted)
 	if hp <= 0.0:
 		return false
 	var was_alive := hp > 0.0
@@ -223,6 +227,7 @@ func take_damage(amount: float, _from: Node2D = null, _source_team: int = -1, _s
 		if battle_context != null:
 			battle_context.notify_tower_hit(self)
 	if was_alive and hp <= 0.0:
+		bleeding.clear()
 		if battle_context != null and battle_context.damage_batch().committing:
 			battle_context.damage_batch().defer_effect(notify_visual_destroyed)
 		else:
@@ -281,6 +286,7 @@ func apply_network_state(health: float, active: bool, stunned: bool, shield_rati
 	control.apply_replica_flags(frozen, stunned)
 	apply_shield_snapshot(shield_ratio, capacity_ratio)
 	if was_alive and hp <= 0.0:
+		bleeding.clear()
 		notify_visual_destroyed()
 	if hp <= 0.0 and not nav_cells.is_empty() and battle_context != null:
 		battle_context.unblock_nav_cells(nav_cells)

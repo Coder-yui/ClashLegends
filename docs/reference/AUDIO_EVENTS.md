@@ -64,3 +64,17 @@
 `audio.events.<action>:start/voice/release.action_time`可声明主动动作内的非负秒数，必须小于该技能cast_duration。仅用于声音起点，不能绑定hit/sustain/end，更不能驱动伤害。GameAudioManager读取权威/快照动作进度派发，忽略同名普通事件/RPC通知以免重播；同序号回退不重放，取消/死亡不留下定时任务，普通技能眩晕时继续，冰冻取消剩余节点。未配置action_time的声音行为不变。字段同时有形状、语义校验与生命周期回归。
 
 独立结果创建声使用 `audio.events.<action>:start.owner: "result"`。仅支持已经声明 `independent_on_creation` 的普通/满层技能，不允许再绑定 `action_time`。权威创建事件同时提交结果和声音，单位动作观察不重复启动；冻结或来源销毁不切断已创建结果声。施法本体的 sustain 仍归动作。
+
+## 固定圣霭音频
+
+`sanctuary:sustain`和`sanctuary:end`仅对携带sanctuary候选技能的卡牌开放。GameAudioManager观察权威/快照结界实例，在独立sanctuary层播放固定位置持续声；动作取消不停止该层，真实到期/出圈停止并派发end，死亡/清场释放。施放音继续使用技能visual_action的`:start`入口。
+
+赛恩新增 `rebirth:begin` / `rebirth:ready`，由DeathFormState真实状态转换发布；`shield:explode`由独立盾层自然到期的范围爆炸发布。声明在PresentationEvents，音频形态选择仍经PresentationConfig。
+
+`explosive_shield:sustain`跟随独立爆炸盾层，破盾/清除/自然到期停止；`explosive_shield:break`仅在实际抵伤破盾时发布。`berserk:sustain`跟随复生完成后的狂暴状态，死亡/清场立即停止。两种循环均预热循环资源，不被普通硬控打断。
+
+德莱厄斯补充blood_rage:start（血怒真正获得）、blood_rage:sustain（独立Buff循环，到期/死亡/清场停止）、execute:kill（强化斩杀真实回执）。血怒刷新不重复开始音，控制不停止其独立音轨；普通/强化挥舞和命中继续复用现有事件。
+
+凯隐能力补充：`terrain:enter`仅在terrain_traversal完整进出后重新进入时派发；`active:spin`在dash_strike第二段执行时派发；`active:hit`沿用真实回执，在该段至少一次landed后派发。三者走已有单位声音可靠事件、音量/队伍与生命周期消费者。部署语音有意留空。
+
+持续音事件可配置 `fade_in` / `fade_out` 非负秒数（仅 `:sustain`）：按线性振幅渐变，默认0。状态自然结束/最终死亡可保留受预算管理的淡出尾音；替换、卸载和终局立即清理。工作台暂停冻结渐变。致死换形新增 `rebirth:voice`，与 `rebirth:begin` 同时由权威事件派发，独立Voice层且不绑定普攻取消。

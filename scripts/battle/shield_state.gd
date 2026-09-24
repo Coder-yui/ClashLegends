@@ -4,8 +4,10 @@ extends RefCounted
 ## 抵伤优先最早到期层；同刻到期按施加顺序，不依赖字典遍历顺序。
 var _layers: Array[Dictionary] = []
 var _next_id := 1
+var expired_effects: Array[Dictionary] = []
+var broken_effects: Array[Dictionary] = []
 
-func add(amount: float, duration: float, decays: bool = false, restore_on_expiry: bool = false, source: StringName = &"legacy") -> int:
+func add(amount: float, duration: float, decays: bool = false, restore_on_expiry: bool = false, source: StringName = &"legacy", expiry_effect: Dictionary = {}) -> int:
 	if not is_finite(amount) or not is_finite(duration):
 		return -1
 	amount = BattleNumbers.quantity(maxf(amount, 0.0))
@@ -15,7 +17,7 @@ func add(amount: float, duration: float, decays: bool = false, restore_on_expiry
 	var id := _next_id
 	_next_id += 1
 	_layers.append({"id": id, "source": source, "hp": amount, "capacity": amount, "left": duration,
-		"restore_on_expiry": restore_on_expiry, "rate": amount / duration if decays else 0.0, "remainder": 0.0})
+		"expiry_effect": expiry_effect.duplicate(true), "restore_on_expiry": restore_on_expiry, "rate": amount / duration if decays else 0.0, "remainder": 0.0})
 	return id
 
 func tick(dt: float) -> bool:
@@ -29,6 +31,8 @@ func tick(dt: float) -> bool:
 		var decay := roundf(total)
 		layer.remainder = total - decay
 		layer.hp = maxf(0.0, float(layer.hp) - decay)
+		if float(layer.left) <= 0.000001 and float(layer.hp) > 0.0 and not layer.get("expiry_effect", {}).is_empty():
+			expired_effects.append(layer.expiry_effect)
 		if float(layer.left) <= 0.000001 and float(layer.hp) > 0.0 and bool(layer.get("restore_on_expiry", false)):
 			restore = true
 	_prune()
@@ -44,6 +48,7 @@ func absorb(amount: float) -> float:
 	for layer in _layers:
 		var absorbed := minf(float(layer.hp), remaining)
 		layer.hp = float(layer.hp) - absorbed
+		if float(layer.hp) <= 0.0 and not layer.get("expiry_effect", {}).is_empty(): broken_effects.append(layer.expiry_effect)
 		remaining -= absorbed
 		if remaining <= 0.0:
 			break
@@ -51,8 +56,13 @@ func absorb(amount: float) -> float:
 	return remaining
 
 func clear() -> void:
+	expired_effects.clear()
+	broken_effects.clear()
 	_layers.clear()
 	_next_id = 1
+
+func has_expiry_effect() -> bool:
+	return _layers.any(func(layer): return not layer.get("expiry_effect", {}).is_empty())
 
 func total_hp() -> float:
 	var total := 0.0

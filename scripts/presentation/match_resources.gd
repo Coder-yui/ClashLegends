@@ -9,7 +9,7 @@ var _world_prepared := false
 var errors := PackedStringArray()
 # 系统兵线每种单位可占两路；准备两波重叠窗口，根集合与预算使用同一声明。
 const SYSTEM_UNIT_BUDGET := {"melee_minion": 4, "ranged_minion": 4, "siege_minion": 4, "super_minion": 4}
-const REFERENCES := ["spawn_id", "death_spawn_id", "death_replacement_id", "timed_revival_id", "rush_spawn_id"]
+const REFERENCES := ["growth_ranged_id", "growth_melee_id", "deployment_upgrade_id", "spawn_id", "death_spawn_id", "death_replacement_id", "timed_revival_id", "rush_spawn_id"]
 
 func prepare(card_ids: Array) -> void:
 	var started := Time.get_ticks_usec()

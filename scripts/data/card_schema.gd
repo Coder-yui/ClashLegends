@@ -97,8 +97,8 @@ const SIZE_RADII := {
 }
 const PROJECTILE_VISUALS := [&"orb", &"arrow", &"needle", &"boomerang", &"ice_cone"]
 const VISUAL_SPAWN_TRANSITIONS := [&"drop", &"rebirth"]
-const SPELL_KINDS := [&"freeze", &"heal"]
-const ACTIVE_SKILL_KINDS := [&"timed_form", &"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"continuous_area", &"empowered_attack", &"attack_lifesteal", &"area_shield", &"restoration_shield", &"spell_heal"]
+const SPELL_KINDS := [&"freeze", &"heal", &"mirror"]
+const ACTIVE_SKILL_KINDS := [&"dash_strike", &"bleeding_execute", &"explosive_shield", &"sanctuary", &"timed_form", &"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"continuous_area", &"empowered_attack", &"attack_lifesteal", &"area_shield", &"restoration_shield", &"spell_heal"]
 const ACTIVE_SKILL_TARGET_SCOPES := [&"self", &"deployment_group"]
 const CAST_LOCKS := [&"movement", &"attack", &"facing"]
 const VISUAL_ACTION_KINDS := [&"deploy", &"transform", &"skill"]
@@ -109,9 +109,14 @@ const TRANSITION_BLEND_FIELDS := [&"default", &"locomotion", &"action_in", &"act
 ## Validator 会检测未知或未登记字段。新增字段必须同时实现运行时读取逻辑、
 ## validator 登记和对应机制测试，防止只把配置写进 CardDB、却忘记接入权威模拟或表现层。
 const CARD_FIELDS := [
+	&"heal_on_hit_name", &"on_hit_passive_name",
+	&"terrain_traversal", &"terrain_entry_heal", &"terrain_entry_speed_multiplier", &"growth_ranged_id", &"growth_melee_id", &"growth_ranged_hits", &"growth_melee_hits",
+	&"bleed_damage_per_second", &"bleed_duration", &"bleed_max_stacks", &"blood_rage_duration", &"blood_rage_damage_multiplier",
+	&"death_form_delay", &"death_form_decay_duration",
+	&"deployment_upgrade_id",
 	&"rush_distance", &"rush_prepare_time", &"rush_speed", &"rush_path_damage", &"rush_building_damage", &"rush_push_distance", &"rush_self_health_ratio", &"rush_recovery_time", &"rush_spawn_id", &"rush_spawn_count", &"rush_spawn_spread",
 	&"card_art", &"name", &"cost", &"type", &"description", &"selectable",
-	&"hp", &"damage", &"range", &"speed", &"interval", &"first_hit", &"passive_first_hit",
+	&"hp", &"damage", &"range", &"speed", &"interval", &"first_hit", &"passive_first_hit", &"empowered_first_hit",
 	&"size_tier", &"custom_radius", &"radius", &"visual_radius", &"mass", &"sight", &"color",
 	&"is_air", &"is_building", &"building_only", &"can_attack_air", &"is_continuous_attack",
 	&"deploy_time", &"pre_deploy_time", &"deploy_zone", &"deploy_pocket_requires_both_towers", &"deploy_ignore_structures", &"show_team_ring", &"footprint_tiles", &"lifespan", &"lifespan_hp_decay", &"tower_ruin_foundation",
@@ -151,6 +156,9 @@ const VISUAL_ANIMATION_FIELDS := [
 	&"visual_action_durations", &"transitions", &"transition_blends", &"clip_blends",
 ]
 const ACTIVE_SKILL_FIELDS := [
+	&"dash_duration", &"spin_delay", &"hit_heal", &"on_hit_max_health_ratio", &"on_hit_tower_damage",
+	&"execute_damage_per_stack",
+	&"heal_amount",
 	&"icon_path",
 	&"name", &"kind", &"cost", &"max_uses", &"cooldown", &"radius", &"damage", &"knockback", &"knockback_duration", &"knockback_mass_factor_max",
 	&"slow_duration", &"slow_multiplier",
@@ -161,7 +169,7 @@ const ACTIVE_SKILL_FIELDS := [
 	&"projectile_count", &"projectile_visual", &"projectile_launch_delay", &"projectile_flight_duration", &"projectile_stop_on_hit", &"projectile_piercing",
 	&"projectile_visual_height", &"projectile_visual_forward_offset", &"projectile_visual_width",
 	&"center_ratio", &"center_width", &"center_damage_multiplier", &"resource_damage_scale_max",
-	&"uses_skill_resource", &"resource_damage_by_stacks", &"resource_full_damage_multiplier", &"resource_full_stun_multiplier",
+	&"resource_consume_only_full", &"resource_nonfull_cast_gain", &"uses_skill_resource", &"resource_damage_by_stacks", &"resource_full_damage_multiplier", &"resource_full_stun_multiplier",
 	&"resource_visual_actions", &"resource_hit_damage_sequences", &"resource_hit_delay_sequences",
 	&"full_resource_visual_action", &"full_resource_cast_duration", &"full_resource_impact_delay", &"full_resource_cast_end_heal", &"cast_end_heal_requires_hit", &"applies_on_hit_passive",
 	&"forward_distance", &"shockwave_damage", &"shockwave_duration", &"shockwave_end_radius",
@@ -177,6 +185,7 @@ const ACTIVE_SKILL_FIELDS := [
 
 ## 数量字段含嵌套数组；其他玩法数值最多两位，比例按百分数最多两位。
 const INTEGER_NUMBER_FIELDS := [
+	&"growth_ranged_hits", &"growth_melee_hits", &"terrain_entry_heal", &"hit_heal",
 	"attack_recovery_cancel_every_hits", "rush_path_damage", "rush_building_damage", "rush_spawn_count", "hp", "damage", "heal_amount", "on_hit_tower_damage", "deploy_sweep_damage", "shield", "resource_shield_max", "full_resource_cast_end_heal", "shockwave_damage", "zone_damage", "resource_damage_by_stacks", "resource_hit_damage_sequences", "cost", "active_cost_bonus", "spawn_count", "death_spawn_count", "deployment_count", "max_uses", "blind_charges", "heal_every_hits", "transform_after_hits", "revert_after_hits", "death_replacement_charges", "timed_revival_death_replacement_charges", "projectile_count"]
 
 ## 原始定义域归属；共享容器由 CardDefinitionCompiler 递归检查。

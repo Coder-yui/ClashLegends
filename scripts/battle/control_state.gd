@@ -52,6 +52,11 @@ func apply_replica_flags(frozen: bool, stunned: bool) -> void:
 func apply_replica_stun(stunned: bool) -> void:
 	_replace_hard(&"stun", 0.15 if stunned else 0.0)
 
+## 致死结算建立新的生命阶段，旧硬控不能阻塞死亡/复生表现或继承给下一条命。
+func clear_on_death() -> void:
+	hard.clear_family(&"freeze")
+	hard.clear_family(&"stun")
+
 func permissions() -> int:
 	var allowed := ALL_PERMISSIONS
 	if frozen_timer > 0.0 or stun_timer > 0.0:

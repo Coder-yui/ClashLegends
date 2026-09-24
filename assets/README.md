@@ -8,7 +8,8 @@
 | `skills/` | 主动技能图标；来源与技能映射见 [素材记录](skills/README.md) |
 | `units/<card_id>/` | 单位包装场景、模型、动画和纹理 |
 | `towers/` | 双方防御塔与水晶的包装场景和素材 |
-| `arena/arena_rift_v4.png` | 当前启用的 2D 战场背景 |
+| `arena/rift_arena/` | 正式晴昼峡谷 3D 地图（升级前版本）、材质及纹理 |
+| `arena/arena_rift_v4.png` | 保留的 2D 战场背景资源 |
 | `effects/baron_minion/` | 四兵强化与弹体特效 |
 | `audio/units/`、`spells/`、`world/`、`announcer/` | 正式单位、法术、系统建筑与比赛播报音频 |
 
@@ -16,6 +17,6 @@
 
 动画映射与音频事件放逐卡定义，由表现层读取，不驱动伤害、移动或网络状态。音频目录保留来源清单及加工说明；相同声音的不同事件身份不能仅凭哈希合并。卡面优先原生素材，其次复用模型展台摄影，已有卡面不自动覆盖。
 
-制作中的 3D 地图已移至项目根目录的本地工作区 `ClashLegends-开发素材库/03-制作中/3D地图/`，不是正式运行资源；该素材库已被 `.gitignore` 整体忽略。旧实验已移至素材库中间产物。复用地图预览：`python3 tools/dev.py stage --arena --open`。
+3D 地图的可编辑制作源位于项目根目录的本地工作区 `ClashLegends-开发素材库/03-制作中/3D地图/`；正式运行资源位于 `assets/arena/rift_arena/`。该素材库已被 `.gitignore` 整体忽略。旧实验已移至素材库中间产物。流水与林缘升级版暂存该目录的 `runtime/`，尚未接入游戏。复用开发版地图预览：`python3 tools/dev.py stage --arena --open`。
 
 特殊素材规则见各目录 README 和 [美术流程](../docs/ART_PIPELINE.md)；完整卡牌接入见 [新卡清单](../docs/NEW_CARD_CHECKLIST.md)。

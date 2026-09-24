@@ -50,19 +50,29 @@ func _active_heal_skill(stats: Dictionary, skill_index: int) -> Dictionary:
 	return skills[skill_index] as Dictionary
 
 
+## 法术卡由本方水晶释放；落点仅决定覆盖范围，不是效果来源。
+func _spell_context(team: int) -> Dictionary:
+	for combatant in _controller.get_tree().get_nodes_in_group("combatants"):
+		if combatant is Tower and combatant.is_king and combatant.team == team:
+			return CombatInteraction.effect_context(combatant, team, combatant.global_position)
+	return CombatInteraction.effect_context(null, team)
+
+
 func apply_freeze(position: Vector2, radius: float, duration: float, team: int, slow_duration: float = 0.0, slow_multiplier: float = 1.0) -> void:
 	_effect_serial += 1
 	var source := StringName("spell:%d:%d" % [team, _effect_serial])
+	var interaction := _spell_context(team)
 	show_freeze(position, radius, duration, slow_duration)
 	if slow_duration > 0.0:
 		slow_zones.append({"created_tick": _controller.get_authoritative_server_tick() if _controller.simulation_step_active() else -1, "pos": position, "radius": radius, "delay": duration, "timer": slow_duration, "team": team, "multiplier": slow_multiplier, "status_source": source})
 	for combatant in _controller.get_tree().get_nodes_in_group("combatants"):
 		if not is_instance_valid(combatant) or combatant.team == team or combatant.hp <= 0.0:
 			continue
+		if not CombatInteraction.allows_effect(combatant, interaction): continue
 		if combatant.global_position.distance_to(position) > radius + combatant.body_radius:
 			continue
 		if combatant is Unit:
-			(combatant as Unit).freeze(duration, source)
+			(combatant as Unit).freeze(duration, source, interaction)
 		elif combatant is Tower:
 			(combatant as Tower).freeze(duration, source)
 
@@ -74,6 +84,7 @@ func apply_freeze(position: Vector2, radius: float, duration: float, team: int, 
 func apply_heal(position: Vector2, radius: float, team: int, stats: Dictionary, active_enabled: bool = false, active_skill: Dictionary = {}) -> void:
 	_effect_serial += 1
 	var shield_source := StringName("heal:%d:%d" % [team, _effect_serial])
+	var interaction := _spell_context(team)
 	var heal_amount := maxf(float(stats.get("heal_amount", 0.0)), 0.0)
 	var heal_multiplier := maxf(float(active_skill.get("heal_multiplier", 1.0)), 1.0) if active_enabled else 1.0
 	var global_heal := active_enabled and bool(active_skill.get("global_heal", false))
@@ -89,9 +100,9 @@ func apply_heal(position: Vector2, radius: float, team: int, stats: Dictionary, 
 			if global_heal and not in_range:
 				requested_heal = heal_amount
 			if overheal_shield_ratio > 0.0 and shield_duration > 0.0:
-				(combatant as Unit).heal_with_overflow(requested_heal, overheal_shield_ratio, shield_duration, shield_source)
+				(combatant as Unit).heal_with_overflow(requested_heal, overheal_shield_ratio, shield_duration, shield_source, interaction)
 			else:
-				(combatant as Unit).heal(requested_heal)
+				(combatant as Unit).heal(requested_heal, interaction)
 
 
 
@@ -119,11 +130,13 @@ func tick(dt: float) -> void:
 		# 延迟结束边界立即生效，但不再消费新区域的首个完整 Tick。
 		else:
 			zone.timer = maxf(0.0, float(zone.timer) - dt)
+		var interaction := _spell_context(int(zone.team))
 		for combatant in _controller.get_tree().get_nodes_in_group("combatants"):
 			if not combatant is Unit or not is_instance_valid(combatant) or combatant.team == int(zone.team) or combatant.hp <= 0.0:
 				continue
+			if not CombatInteraction.allows_effect(combatant, interaction): continue
 			if combatant.global_position.distance_to(zone.pos) <= float(zone.radius) + combatant.body_radius:
-				(combatant as Unit).apply_slow(dt + FixedStepClock.STEP, float(zone.multiplier), zone.status_source)
+				(combatant as Unit).apply_slow(dt + FixedStepClock.STEP, float(zone.multiplier), zone.status_source, interaction)
 		if float(zone.timer) > 0.0:
 			alive.append(zone)
 	slow_zones.assign(alive)

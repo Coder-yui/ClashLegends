@@ -21,6 +21,9 @@ func _resolve_immediate_attack_hit(p_team: int, origin: Vector2, primary: Node2D
 		var landed: bool = result.landed
 		if landed:
 			_apply_attack_hit_effects(primary, effects)
+			if counts_as_attack and is_instance_valid(from) and from is Unit:
+				_settle_bleeding_attack(primary, from, effects, result)
+				if from.battle_context != null: from.battle_context.record_growth_hit(from, primary)
 		if landed and counts_as_attack and from is Unit and is_instance_valid(from) and from.hp > 0.0:
 			(from as Unit).on_attack_landed(source_form_index, float(result.health_lost), -1, int(effects.get("source_generation", -1)))
 		if landed and counts_as_attack:
@@ -56,6 +59,19 @@ func _resolve_immediate_attack_hit(p_team: int, origin: Vector2, primary: Node2D
 	if any_landed and counts_as_attack:
 		attack_hit.emit(effects.get("presentation_source", {}), impact_pos, bool(effects.get("first_strike", false)))
 	return any_landed
+
+func _settle_bleeding_attack(target: Node2D, source: Unit, effects: Dictionary, result: Dictionary) -> void:
+	if not effects.has("bleed_definition"): return
+	var definition: Dictionary = effects.bleed_definition
+	var stacks: int = target.bleeding.apply(target, source, definition, bool(effects.get("bleed_full", false)))
+	if source.hp <= 0.0: return
+	if source.buffs.remaining(&"blood_rage") > 0.0 or stacks >= int(definition.bleed_max_stacks):
+		source.refresh_blood_rage()
+	if bool(effects.get("execute_reset", false)) and target.hp <= 0.0 and float(result.health_lost) > 0.0:
+		source.refresh_blood_rage()
+		if source.battle_context != null:
+			source.battle_context.grant_skill_recast(source)
+			source.battle_context.notify_unit_audio_event(source, &"execute:kill", target.global_position)
 
 func _apply_attack_hit_effects(target: Node2D, effects: Dictionary) -> void:
 	if target is Unit and is_instance_valid(target) and target.hp > 0.0:
@@ -97,8 +113,8 @@ func defer_benefit(callback: Callable) -> void:
 func defer_death(unit: Unit, trigger: bool) -> void:
 	_deaths[unit] = trigger
 
-func submit_damage(target: Node2D, amount: float, source: Node2D, team: int, position: Vector2) -> Dictionary:
-	var accepted: bool = is_instance_valid(target) and not target.is_queued_for_deletion() and target.hp > 0.0
+func submit_damage(target: Node2D, amount: float, source: Node2D, team: int, position: Vector2, attached: bool = false) -> Dictionary:
+	var accepted: bool = is_instance_valid(target) and not target.is_queued_for_deletion() and target.hp > 0.0 and CombatInteraction.allows(target, source, team, position, attached)
 	var result := {"accepted": accepted, "landed": false, "damage": BattleNumbers.quantity(amount), "health_lost": 0.0, "shield_absorbed": 0.0, "overkill": 0.0}
 	if accepted:
 		_hits.append({"target": target, "source": source, "result": result})
@@ -184,7 +200,10 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 		var fixed_target: Node2D = target
 		defer_effect(func():
 			if not result.landed: return
-			_apply_attack_hit_effects(fixed_target, effects))
+			_apply_attack_hit_effects(fixed_target, effects)
+			if counts_as_attack and radius <= 0.0 and is_instance_valid(from) and from is Unit:
+				_settle_bleeding_attack(fixed_target, from, effects, result)
+				if from.battle_context != null: from.battle_context.record_growth_hit(from, fixed_target))
 		if knockback > 0.0 and fixed_target is Unit:
 			submit_knockback(fixed_target, origin, knockback, 0.2, 1.4, displacement_order, result)
 		defer_benefit(func():

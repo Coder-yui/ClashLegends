@@ -36,6 +36,7 @@ func register(unit: Unit, card_id: String, p_team: int, carried_skill: Dictionar
 		"max_uses": max_uses,
 		"uses_remaining": max_uses,
 		"cooldown_left": 0.0,
+		"free_recast": false,
 	}
 	return replaced_id
 
@@ -62,22 +63,37 @@ func tick(dt: float) -> void:
 
 func consume(id: int) -> void:
 	var entry: Dictionary = _entries[id]
+	if bool(entry.get("free_recast", false)):
+		entry.free_recast = false
+		return
 	entry.uses_remaining = maxi(int(entry.get("uses_remaining", entry.get("max_uses", 1))) - 1, 0)
 	entry.cooldown_left = maxf(float(entry.skill.get("cooldown", 0.0)), 0.0)
 
-func replace_replica(id: int, uses: int, cooldown: float) -> void:
+func grant_recast(id: int) -> void:
+	if _entries.has(id) and String(_entries[id].skill.get("kind", "")) == "bleeding_execute":
+		_entries[id].free_recast = true
+
+func cost(id: int) -> float:
+	if not _entries.has(id): return 0.0
+	return 0.0 if bool(_entries[id].get("free_recast", false)) else maxf(float(_entries[id].skill.get("cost", 0.0)), 0.0)
+
+func replace_replica(id: int, uses: int, cooldown: float, free_recast: bool = false) -> void:
 	if not _entries.has(id): return
 	_entries[id].uses_remaining = maxi(uses, 0)
 	_entries[id].cooldown_left = maxf(cooldown, 0.0)
+	_entries[id].free_recast = free_recast
 
 func qualified(id: int, expected_team: int, card_allowed: Callable) -> bool:
 	if not _entries.has(id): return false
 	var entry: Dictionary = _entries[id]
 	var unit = entry.get("unit")
 	if not is_instance_valid(unit) or not unit is Unit or unit.hp <= 0.0: return false
+	if unit.death_form.used: return false
 	if expected_team >= 0 and int(entry.team) != expected_team: return false
-	if int(entry.get("uses_remaining", entry.get("max_uses", 1))) <= 0: return false
-	if float(entry.get("cooldown_left", 0.0)) > 0.001: return false
+	if String(entry.skill.get("kind", "")) == "bleeding_execute" and unit.is_empowered_attack_ready_visual(): return false
+	if not bool(entry.get("free_recast", false)):
+		if int(entry.get("uses_remaining", entry.get("max_uses", 1))) <= 0: return false
+		if float(entry.get("cooldown_left", 0.0)) > 0.001: return false
 	return card_allowed.call(int(entry.team), String(entry.card_id)) and unit.is_deployed()
 
 func transfer(id: int, members: Callable) -> Unit:

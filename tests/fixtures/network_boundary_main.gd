@@ -39,3 +39,9 @@ func _prepare_match_assets() -> void:
 		await get_tree().create_timer(1.0, true).timeout
 		loading_wait_observed = loading_wait_observed and _sim_tick_id == 0
 	await super._prepare_match_assets()
+
+func _initialize_authoritative_card_cycle(team: int, deck: Array) -> bool:
+	if not super._initialize_authoritative_card_cycle(team, deck): return false
+	if boundary_case() == "buildings":
+		preload("res://tests/suites/network_fixture.gd").fixed_cycle(self, team, deck)
+	return true

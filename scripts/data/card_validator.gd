@@ -41,6 +41,13 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 		errors.append("%s.cost: 必须 >= 0" % card_id)
 	if float(stats.get("radius", 0.0)) <= 0.0:
 		errors.append("%s.radius: 必须 > 0" % card_id)
+	if bool(stats.get("terrain_traversal", false)) and (card_type != &"unit" or bool(stats.get("is_air", false))): errors.append("%s.terrain_traversal: 仅支持地面普通单位" % card_id)
+	if float(stats.get("terrain_entry_heal", 0.0)) < 0.0 or float(stats.get("terrain_entry_speed_multiplier", 1.0)) < 1.0: errors.append("%s: 地形回复必须非负，加速倍率至少1" % card_id)
+	if (stats.has("terrain_entry_heal") or stats.has("terrain_entry_speed_multiplier")) and not bool(stats.get("terrain_traversal", false)): errors.append("%s: 地形收益需要穿越能力" % card_id)
+	if stats.has("growth_ranged_id") or stats.has("growth_melee_id") or stats.has("growth_ranged_hits") or stats.has("growth_melee_hits"):
+		for kind in ["ranged", "melee"]:
+			if String(stats.get("growth_"+kind+"_id", "")).is_empty() or float(stats.get("growth_"+kind+"_hits",0)) <= 0.0: errors.append("%s: 成长需要两条完整的正整数阈值与形态引用" % card_id)
+		if card_type != &"unit" or float(stats.get("splash_radius",0.0)) > 0.0 or bool(stats.get("is_continuous_attack",false)): errors.append("%s: 成长目前只支持普通单体普攻" % card_id)
 	if stats.has("deploy_zone"):
 		var dz := StringName(stats.get("deploy_zone", ""))
 		if dz not in DEPLOY_ZONES:
@@ -88,7 +95,10 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 			var spell_kind := StringName(stats.get("spell_kind", ""))
 			if spell_kind not in SPELL_KINDS:
 				errors.append("%s.spell_kind: 系统不支持 %s" % [card_id, spell_kind])
-			if float(stats.get("duration", 0.0)) <= 0.0:
+			if spell_kind == &"mirror":
+				if float(stats.get("duration", 0.0)) != 0.0 or int(stats.get("cost", 0)) != 0:
+					errors.append("%s: 镜像使用动态费用且无独立持续时间" % card_id)
+			elif float(stats.get("duration", 0.0)) <= 0.0:
 				errors.append("%s.duration: 法术持续时间必须 > 0" % card_id)
 			match spell_kind:
 				&"heal":
@@ -96,6 +106,21 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 						errors.append("%s.heal_amount: 治疗法术必须配置 > 0 的治疗量" % card_id)
 					if stats.has("active_cost_bonus") and int(stats.active_cost_bonus) < 0:
 						errors.append("%s.active_cost_bonus: 必须是 >= 0 的整数" % card_id)
+	if stats.has("bleed_max_stacks"):
+		if String(stats.get("type", "")) != "unit": errors.append("%s: 流血被动只支持普通单位" % card_id)
+		for field in ["bleed_damage_per_second", "bleed_duration", "bleed_max_stacks", "blood_rage_duration", "blood_rage_damage_multiplier"]:
+			if float(stats.get(field, 0.0)) <= 0.0: errors.append("%s.%s: 必须 > 0" % [card_id, field])
+		if float(stats.get("blood_rage_damage_multiplier", 0.0)) < 1.0: errors.append("%s.blood_rage_damage_multiplier: 必须 >= 1" % card_id)
+		if float(stats.bleed_max_stacks) != int(stats.bleed_max_stacks): errors.append("%s.bleed_max_stacks: 必须是整数" % card_id)
+		if float(stats.get("projectile_speed", 0.0)) > 0.0 or float(stats.get("splash_radius", 0.0)) > 0.0 or bool(stats.get("is_continuous_attack", false)) or not (stats.get("attack_extra_hit_delays", []) as Array).is_empty():
+			errors.append("%s: 流血消费者限定单体近战" % card_id)
+	elif ["bleed_damage_per_second", "bleed_duration", "blood_rage_duration", "blood_rage_damage_multiplier"].any(func(field): return stats.has(field)):
+		errors.append("%s: 流血配置需要完整字段" % card_id)
+	if stats.has("death_form_delay") or stats.has("death_form_decay_duration"):
+		for field in ["death_form_delay", "death_form_decay_duration"]:
+			if float(stats.get(field, 0.0)) <= 0.0: errors.append("%s.%s: 必须 > 0" % [card_id, field])
+		if stats.get("transformed_stats", {}).is_empty() or String(stats.get("type", "")) != "unit":
+			errors.append("%s: 致死换形需要普通单位与 transformed_stats" % card_id)
 	var art = stats.get("card_art", {})
 	if not art is Dictionary:
 		errors.append("%s.card_art: 必须是 Dictionary" % card_id)
@@ -171,7 +196,10 @@ static func _validate_audio_config(label: String, stats: Dictionary, errors: Pac
 			if not event is Dictionary:
 				errors.append("%s.audio.events.%s: 必须是 Dictionary" % [label, cue])
 				continue
-			_validate_known_fields("%s.audio.events.%s" % [label, cue], event, [&"pool", &"volume_db", &"bus", &"action_time", &"owner"], errors)
+			_validate_known_fields("%s.audio.events.%s" % [label, cue], event, [&"pool", &"volume_db", &"bus", &"action_time", &"owner", &"fade_in", &"fade_out"], errors)
+			for fade in ["fade_in", "fade_out"]:
+				if event.has(fade) and (typeof(event[fade]) not in [TYPE_INT, TYPE_FLOAT] or not is_finite(float(event[fade])) or float(event[fade]) < 0.0 or not String(cue).ends_with(":sustain")):
+					errors.append("%s.audio.events.%s.%s: 仅持续音支持有限非负渐变秒数" % [label, cue, fade])
 			if event.has("owner"):
 				var independent := false
 				for skill in stats.get("active_skills", []):
@@ -261,6 +289,9 @@ static func _validate_combat_stats(label: String, stats: Dictionary, require_siz
 			errors.append("%s.%s: 需要非空的 0..1 比例数组" % [label, field])
 		if float(stats.get("projectile_speed", 0.0)) > 0.0 or float(stats.get("splash_radius", 0.0)) > 0.0 or bool(stats.get("is_continuous_attack", false)) or not stats.get("attack_extra_hit_damage_multipliers", []).is_empty():
 			errors.append("%s.%s: 当前仅支持无追加刀的单体近战" % [label, field])
+	if stats.has("empowered_first_hit"):
+		if float(stats.empowered_first_hit) <= 0.0 or float(stats.empowered_first_hit) >= float(stats.get("interval", 0.0)) or not stats.get("visual_animations", {}).has("empowered_attack"):
+			errors.append("%s.empowered_first_hit: 需要强化攻击动画及 0 < 前摇 < 攻击间隔" % label)
 	if stats.has("passive_first_hit"):
 		var passive_delay := float(stats.passive_first_hit)
 		if passive_delay <= 0.0 or passive_delay >= float(stats.get("interval", 0.0)) or stats.get("attack_passive_multipliers", []).is_empty():
@@ -428,10 +459,25 @@ static func _validate_rush(card_id: String, stats: Dictionary, errors: PackedStr
 
 static func _validate_references(card_id: String, stats: Dictionary, cards: Dictionary, errors: PackedStringArray) -> void:
 	_validate_rush(card_id, stats, errors)
-	for field in [&"spawn_id", &"death_spawn_id", &"death_replacement_id", &"timed_revival_id", &"rush_spawn_id"]:
+	for field in [&"growth_ranged_id", &"growth_melee_id", &"deployment_upgrade_id", &"spawn_id", &"death_spawn_id", &"death_replacement_id", &"timed_revival_id", &"rush_spawn_id"]:
 		var referenced_id := String(stats.get(field, ""))
 		if not referenced_id.is_empty() and not _unit_reference_exists(referenced_id, cards):
 			errors.append("%s.%s: 引用了不存在或不可生成的单位 %s" % [card_id, field, referenced_id])
+	for field in ["growth_ranged_id", "growth_melee_id"]:
+		var id := String(stats.get(field, ""))
+		if id.is_empty() or not cards.has(id): continue
+		var form: Dictionary = cards[id]
+		if form.get("type") != "unit" or bool(form.get("selectable", true)) or form.has("growth_ranged_id") or form.has("growth_melee_id"): errors.append("%s.%s: 成长形态须为不可选且不递归成长的单位" % [card_id,field])
+		for key in ["cost", "radius", "is_air", "deployment_count", "deployment_spacing", "deployment_formation", "deploy_zone"]:
+			if stats.get(key) != form.get(key): errors.append("%s.%s: 成长形态费用与部署几何必须一致 (%s)" % [card_id,field,key])
+	var upgrade_id := String(stats.get("deployment_upgrade_id", ""))
+	if not upgrade_id.is_empty() and _unit_reference_exists(upgrade_id, cards):
+		var upgrade: Dictionary = cards[upgrade_id]
+		if stats.get("type") != "unit" or upgrade.get("type") != "unit" or bool(upgrade.get("selectable", true)) or upgrade.has("deployment_upgrade_id") or float(upgrade.get("cost", 0)) <= float(stats.get("cost", 0)) or float(upgrade.get("cost", 0)) > 10:
+			errors.append("%s.deployment_upgrade_id: 必须引用更高费、至多10费、不可选且无升级链的单位" % card_id)
+		for key in ["is_air", "radius", "deploy_zone", "deployment_count", "deployment_member_ids", "pre_deploy_time"]:
+			if stats.get(key) != upgrade.get(key):
+				errors.append("%s.deployment_upgrade_id: 两形态部署几何与编队配置必须相同 (%s)" % [card_id, key])
 	var deployment_members: Variant = stats.get("deployment_member_ids", [])
 	if deployment_members is Array:
 		for index in range((deployment_members as Array).size()):
@@ -692,6 +738,8 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 		if kind not in ACTIVE_SKILL_KINDS:
 			errors.append("%s.kind: 系统不支持 %s" % [label, kind])
 			continue
+		if skill.has("heal_amount") and (String(skill.get("kind", "")) != "buff" or float(skill.heal_amount) <= 0):
+			errors.append("%s.active_skills[%d].heal_amount: 仅支持buff的正整数即时治疗" % [card_id, index])
 		var skill_cost := float(skill.get("cost", -1.0))
 		if skill_cost < 0.0:
 			errors.append("%s.cost: 必须 >= 0" % label)
@@ -701,6 +749,25 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 		if float(skill.get("cooldown", -1.0)) < 0.0:
 			errors.append("%s.cooldown: 必须 >= 0" % label)
 		match kind:
+			&"dash_strike":
+				if not bool(stats.get("terrain_traversal",false)): errors.append("%s: 当前突进效果要求穿地形能力" % label)
+				if float(skill.get("hit_heal",0.0)) < 0.0 or float(skill.get("on_hit_tower_damage",0.0)) < 0.0 or float(skill.get("on_hit_max_health_ratio",0.0)) < 0.0 or float(skill.get("on_hit_max_health_ratio",0.0)) > 1.0: errors.append("%s: 回复与塔伤非负，最大生命比例须在0至1之间" % label)
+				for field in ["dash_duration", "spin_delay", "length", "width", "radius", "damage"]:
+					if float(skill.get(field, 0.0)) <= 0.0: errors.append("%s.%s: 必须 > 0" % [label, field])
+				if float(skill.get("spin_delay", 0.0)) < float(skill.get("dash_duration", 0.0)) or float(skill.get("spin_delay", 0.0)) > float(skill.get("cast_duration", 0.0)): errors.append("%s: 旋转必须在突进结束后、施法结束前" % label)
+				if float(skill.get("impact_delay", 0.0)) != 0.0: errors.append("%s: 突进须在施法开始启动" % label)
+			&"bleeding_execute":
+				if float(skill.get("impact_delay", 0.0)) != 0.0 or float(skill.get("cast_duration", 0.0)) != 0.0: errors.append("%s: 下一击技能须即时武装" % label)
+				if float(skill.get("damage", 0.0)) <= 0.0 or float(skill.get("execute_damage_per_stack", -1.0)) < 0.0:
+					errors.append("%s: 断头台需要正伤害和非负每层增幅" % label)
+				if not stats.has("bleed_max_stacks"): errors.append("%s: 断头台需要流血被动" % label)
+			&"explosive_shield":
+				for field in ["shield", "shield_duration", "radius", "damage"]:
+					if float(skill.get(field, 0.0)) <= 0.0: errors.append("%s.%s: 必须 > 0" % [label, field])
+			&"sanctuary":
+				_require_fields(label, skill, [&"radius", &"duration"], errors)
+				for field in [&"radius", &"duration"]:
+					if float(skill.get(field, 0.0)) <= 0.0: errors.append("%s.%s: 必须 > 0" % [label, field])
 			&"nova": _require_fields(label, skill, [&"radius", &"damage"], errors)
 			&"timed_form":
 				if stats.get("transformed_stats", {}).is_empty() or float(stats.get("form_lifetime", 0.0)) <= 0.0:
@@ -850,6 +917,13 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 				errors.append("%s.resource_damage_scale_max: 必须 >= 1" % label)
 			if float(stats.get("skill_resource_max", 0.0)) <= 0.0:
 				errors.append("%s.resource_damage_scale_max: 卡牌必须配置正数 skill_resource_max" % label)
+		if skill.has("resource_consume_only_full") or skill.has("resource_nonfull_cast_gain"):
+			if not bool(skill.get("uses_skill_resource", false)):
+				errors.append("%s.resource_consume_only_full: 必须搭配 uses_skill_resource" % label)
+			if float(skill.get("resource_nonfull_cast_gain", 0.0)) < 0.0 or float(skill.get("resource_nonfull_cast_gain", 0.0)) > float(stats.get("skill_resource_max", 0.0)):
+				errors.append("%s.resource_nonfull_cast_gain: 必须在 0 与资源上限之间" % label)
+			if skill.has("resource_nonfull_cast_gain") and not bool(skill.get("resource_consume_only_full", false)):
+				errors.append("%s.resource_nonfull_cast_gain: 必须搭配 resource_consume_only_full" % label)
 		if bool(skill.get("uses_skill_resource", false)) and float(stats.get("skill_resource_max", 0.0)) <= 0.0:
 			errors.append("%s.uses_skill_resource: 卡牌必须配置正数 skill_resource_max" % label)
 		if skill.has("resource_shield_max"):

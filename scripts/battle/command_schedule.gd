@@ -97,8 +97,8 @@ func inspect_deployments() -> Array[Dictionary]:
 func inspect_impacts() -> Array[Dictionary]:
 	return _impacts.duplicate(true)
 
-func enqueue_card(team: int, card_id: String, pos: Vector2, execute_tick: int) -> void:
-	_card_commands.append({"team": team, "card_id": card_id, "pos": pos, "execute_tick": execute_tick})
+func enqueue_card(team: int, card_id: String, pos: Vector2, execute_tick: int, deployment_card_id: String = "", mirror_copy: Dictionary = {}) -> void:
+	_card_commands.append({"team": team, "card_id": card_id, "pos": pos, "execute_tick": execute_tick, "deployment_card_id": deployment_card_id, "mirror_copy": mirror_copy.duplicate(true)})
 
 func enqueue_skill(ability_id: int, team: int, execute_tick: int, payment: CommandPayment = null, requester_peer_id: int = 0) -> bool:
 	if has_pending_skill(ability_id): return false
@@ -110,9 +110,9 @@ func has_pending_skill(ability_id: int) -> bool:
 		if int(command.ability_id) == ability_id: return true
 	return false
 
-func enqueue_deployment(team: int, card_id: String, pos: Vector2, time_left: float, active_slot: int = -1, id: int = -1, duration: float = -1.0) -> void:
+func enqueue_deployment(team: int, card_id: String, pos: Vector2, time_left: float, active_slot: int = -1, id: int = -1, duration: float = -1.0, deployment_card_id: String = "", mirror_generation: int = -1) -> void:
 	_pre_deployments.append({"team": team, "card_id": card_id, "pos": pos, "time_left": time_left,
-		"active_slot": active_slot, "id": id, "duration": time_left if duration < 0.0 else duration})
+		"deployment_card_id": deployment_card_id, "mirror_generation": mirror_generation, "active_slot": active_slot, "id": id, "duration": time_left if duration < 0.0 else duration})
 
 func allocate_deployment_id() -> int:
 	var id := _next_pre_deploy_id

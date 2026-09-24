@@ -2,6 +2,7 @@ extends RefCounted
 ## 由唯一机制入口 --network-smoke 启动，Python 执行器负责双进程和日志比对。
 func run(harness: SceneTree) -> void:
 	var main = load("res://scenes/main.tscn").instantiate()
+	main.set_script(preload("res://tests/fixtures/network_integration_main.gd"))
 	harness.root.add_child(main)
 	harness.current_scene = main
 	var capture_dir := ""
@@ -38,6 +39,8 @@ func run(harness: SceneTree) -> void:
 	var status_pending_seen := false
 	var status_checked := false
 	var status_passed := false
+	var mist_seen := {}
+	var mist_exit_applied := false
 	while Time.get_ticks_msec() - start < 20000:
 		await harness.process_frame
 		if main.mode == "host" and main._match_started and not shields_added:
@@ -56,6 +59,14 @@ func run(harness: SceneTree) -> void:
 				status_passed = status_passed and gnar.active_skill_cast_serial == 0 and main._active_skills.entry(gnar.active_ability_id).uses_remaining == main._active_skills.entry(gnar.active_ability_id).max_uses and status_case.payment.is_settled()
 				status_passed = status_passed and status_case.star_target.hp == status_case.star_target.max_hp - 120 and status_case.frozen_target.hp == status_case.frozen_target.max_hp and status_case.stunned_target.hp < status_case.stunned_target.max_hp
 				print("[NETWORK_STATUS] ", {"passed": status_passed, "pending_seen": status_pending_seen, "form": gnar.form_index, "star_hp": status_case.star_target.hp, "frozen_hp": status_case.frozen_target.hp, "stunned_hp": status_case.stunned_target.hp})
+		if main.mode == "host" and not status_case.is_empty() and main._sim_tick_id >= 50 and not mist_exit_applied:
+			mist_exit_applied = true
+			var exiting: Unit = status_case.mist[1]
+			exiting.apply_knockback(exiting.position + Vector2.LEFT, 180.0, 0.2, 1.0)
+		var mist_registry: Dictionary = main._client_units if main.mode == "client" else main._net_units
+		for mist_id in mist_registry:
+			var mist_unit: Unit = mist_registry[mist_id]
+			if mist_unit.target_protection.active(): mist_seen[mist_id] = true
 		if main.mode == "client" and main._match_started and main.get_estimated_server_tick() >= 5 and not sent_requests:
 			sent_requests = true
 			var epoch: String = main._session.session_id
@@ -146,7 +157,7 @@ func run(harness: SceneTree) -> void:
 		for id in ids:
 			var unit: Unit = registry[id]
 			var pos := unit.net_target_pos if main.mode == "client" else unit.global_position
-			units.append([id, unit.card_id, unit.hp, snappedf(pos.x, 0.01), snappedf(pos.y, 0.01), snappedf(unit.get_shield_ratio(), 0.000001), snappedf(unit.get_shield_capacity_ratio(), 0.000001), unit.form_index, unit.net_form_change_serial if main.mode == "client" else unit.form_change_serial, unit.get_attack_visual_serial(), unit.action_cancel_serial, unit.cancelled_visual_serial, unit.action_permissions(), snappedf(unit.get_visual_facing_direction().x, 0.00001), snappedf(unit.get_visual_facing_direction().y, 0.00001), main.get_active_skill_snapshot(unit.active_ability_id)])
+			units.append([id, unit.card_id, unit.hp, snappedf(pos.x, 0.01), snappedf(pos.y, 0.01), snappedf(unit.get_shield_ratio(), 0.000001), snappedf(unit.get_shield_capacity_ratio(), 0.000001), unit.form_index, unit.net_form_change_serial if main.mode == "client" else unit.form_change_serial, unit.get_attack_visual_serial(), unit.action_cancel_serial, unit.cancelled_visual_serial, unit.action_permissions(), snappedf(unit.get_visual_facing_direction().x, 0.00001), snappedf(unit.get_visual_facing_direction().y, 0.00001), main.get_active_skill_snapshot(unit.active_ability_id), unit.target_protection.snapshot()])
 		result["units"] = units
 		result["passed"] = result.audio_stopped and result.winner_team == (-1 if double_nexus else 0) and main._king_enemy.hp == 0.0 and not result.session_id.is_empty()
 		var session_guards: bool = sent_requests and sent_skill if main.mode == "client" else outsider_rejected and stable_callback and main._session.last_request_id == 2 and main.get_authoritative_queue(1).back() == "garen" and interrupted_skill
@@ -161,7 +172,11 @@ func run(harness: SceneTree) -> void:
 			result["outsider_rejected"] = outsider_rejected
 			result["callback_stable"] = stable_callback
 			result["remote_queue"] = main.get_authoritative_queue(1)
-		result["passed"] = result.passed and session_guards
+		var active_mists := 0
+		for mist_id in mist_seen:
+			if registry.has(mist_id) and registry[mist_id].target_protection.active(): active_mists += 1
+		result["mist_replication"] = mist_seen.size() == 2 and active_mists == 1
+		result["passed"] = result.passed and session_guards and result.mist_replication
 		# 有 GPU 的执行可以保存终局画面；不作为听感确认。
 		for arg in OS.get_cmdline_user_args():
 			if arg.begins_with("--network-render-dir="):
@@ -222,7 +237,25 @@ func _begin_status_case(main: Node2D) -> Dictionary:
 		if frozen: caster.freeze(10)
 		else: caster.stun(10)
 		targets.append(target)
-	return {"gnar": gnar, "payment": payment, "star_target": star_target, "stunned_target": targets[0], "frozen_target": targets[1]}
+	# 金币门槛选择通过正式出牌入口，出生载荷携带实际形态和原卡资格。
+	for available in [3.0, 6.0]:
+		var wallet := ElixirManager.new()
+		wallet.elixir = available
+		assert(main.play_card(0, "kayle", Vector2(560 + available * 10, 1180), {"immediate": true, "validate_position": false, "elixir": wallet}))
+		var angel: Unit = main._latest_unit_for_card("kayle", 0)
+		assert(angel.card_id == ("kayle" if available < 6 else "kayle_ranged") and wallet.elixir == 0)
+		angel._deploy_timer = 0
+		angel.hp -= 160
+		main.preview_active_skill(angel, CardDB.active_skills_for("kayle")[0])
+		angel.stun(10)
+		wallet.free()
+	var mist_units: Array[Unit] = []
+	for position in [Vector2(65, 800), Vector2(360, 1100)]:
+		var mist: Unit = main._spawn_unit(0, "gwen", position, 0)
+		main.preview_active_skill(mist, CardDB.active_skills_for("gwen")[1])
+		mist.freeze(10)
+		mist_units.append(mist)
+	return {"mist": mist_units, "gnar": gnar, "payment": payment, "star_target": star_target, "stunned_target": targets[0], "frozen_target": targets[1]}
 
 func _status_target(main: Node2D, team: int, position: Vector2) -> Unit:
 	var target: Unit = main._spawn_unit(team, "super_minion", position, 0)

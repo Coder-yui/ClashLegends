@@ -13,7 +13,8 @@ const S_MATCH_TIMER := 6
 const S_OVERTIME := 7
 const S_SESSION := 8
 const S_LIFECYCLE_REVISION := 9
-const SNAPSHOT_PACKET_SIZE := 10
+const S_CARD_GROWTH := 10
+const SNAPSHOT_PACKET_SIZE := 11
 
 ## 当前版本使用固定长度载荷；协议变更必须同步提高 SNAPSHOT_PROTOCOL_VERSION。
 const U_ID := 0
@@ -56,7 +57,13 @@ const U_ACTION_PERMISSIONS := 36
 const U_SPAWN := 37
 const U_DEPLOY_LEFT := 38
 const U_CANCELLATION := 39
-const UNIT_PAYLOAD_SIZE := 40
+const U_TARGET_PROTECTION := 40
+const U_DEATH_FORM := 41
+const U_EXPLOSIVE_SHIELD := 42
+const U_FREE_RECAST := 43
+const U_BLEED_STACKS := 44
+const U_BLOOD_RAGE := 45
+const UNIT_PAYLOAD_SIZE := 46
 
 const P_ID := 0
 const P_X := 1
@@ -159,6 +166,7 @@ func apply(snapshot_bytes: PackedByteArray, terminal: bool = false, expected_tic
 		return false
 	if not decoded[S_SESSION] is String or not lifecycle.accepts_session(decoded[S_SESSION]):
 		return false
+	if not MatchCardGrowth.valid_snapshot(decoded[S_CARD_GROWTH]): return false
 	if not decoded[S_SERVER_TICK] is int or not decoded[S_LIFECYCLE_REVISION] is int or int(decoded[S_LIFECYCLE_REVISION]) < 0:
 		return false
 	if not decoded[S_UNITS] is Array or not decoded[S_PROJECTILES] is Array or not decoded[S_TOWERS] is Array:
@@ -176,6 +184,10 @@ func apply(snapshot_bytes: PackedByteArray, terminal: bool = false, expected_tic
 		return false
 	var ids := {}
 	for payload: Array in units_data:
+		if not payload[U_EXPLOSIVE_SHIELD] is bool: return false
+		if not DeathFormState.valid_snapshot(payload[U_DEATH_FORM]): return false
+		if not TargetProtectionState.valid_snapshot(payload[U_TARGET_PROTECTION]): return false
+		if not payload[U_FREE_RECAST] is bool or not payload[U_BLEED_STACKS] is int or int(payload[U_BLEED_STACKS]) < 0 or not (payload[U_BLOOD_RAGE] is float or payload[U_BLOOD_RAGE] is int) or not is_finite(float(payload[U_BLOOD_RAGE])) or float(payload[U_BLOOD_RAGE]) < 0.0: return false
 		if not payload[U_ACTION_PERMISSIONS] is int or int(payload[U_ACTION_PERMISSIONS]) < 0 or (int(payload[U_ACTION_PERMISSIONS]) & ~ControlState.ALL_PERMISSIONS) != 0:
 			return false
 		if not payload[U_CANCELLATION] is Dictionary or not Unit.valid_action_cancellation(payload[U_CANCELLATION]):
@@ -197,6 +209,7 @@ func apply(snapshot_bytes: PackedByteArray, terminal: bool = false, expected_tic
 	_apply_units(units_data)
 	_apply_projectiles(projectiles_data)
 	_apply_towers(towers_data)
+	_controller.apply_growth_snapshot(decoded[S_CARD_GROWTH])
 	_controller.apply_network_match_snapshot(float(decoded[S_CLIENT_ELIXIR]), float(decoded[S_MATCH_TIMER]), bool(decoded[S_OVERTIME]))
 
 	terminal_applied = terminal
@@ -265,9 +278,14 @@ func _apply_units(units_data: Array) -> void:
 		u.net_active_attack_speed_multiplier = maxf(float(d[U_ACTIVE_ATTACK_SPEED_MULTIPLIER]), 0.01)
 		u.net_attack_elapsed = maxf(float(d[U_ATTACK_ELAPSED]), 0.0)
 		u.net_action_permissions = int(d[U_ACTION_PERMISSIONS])
+		u.target_protection.apply_replica(d[U_TARGET_PROTECTION])
+		u.death_form.apply_replica(d[U_DEATH_FORM])
+		u.net_explosive_shield = d[U_EXPLOSIVE_SHIELD]
 		u.net_movement_rate = maxf(float(d[U_MOVEMENT_RATE]), 0.01)
 		u.net_active_buff_active = int(d[U_ACTIVE_BUFF_ACTIVE]) == 1
-		_controller.apply_network_skill_state(u, int(d[U_ACTIVE_SKILL_USES_REMAINING]), float(d[U_ACTIVE_SKILL_COOLDOWN]))
+		_controller.apply_network_skill_state(u, int(d[U_ACTIVE_SKILL_USES_REMAINING]), float(d[U_ACTIVE_SKILL_COOLDOWN]), bool(d[U_FREE_RECAST]))
+		u.bleeding.replica_stacks = int(d[U_BLEED_STACKS])
+		u.net_blood_rage = float(d[U_BLOOD_RAGE])
 		u.net_shield_ratio = clampf(float(d[U_SHIELD_RATIO]), 0.0, 1.0)
 		u.net_shield_capacity_ratio = maxf(float(d[U_SHIELD_CAPACITY_RATIO]), 0.0)
 		if (
@@ -331,7 +349,7 @@ func capture() -> PackedByteArray:
 	for id in units:
 		# 非类型化读取：单位可能已 queue_free，类型化赋值会先于有效性检查报错。
 		var u = units.get(id)
-		if u == null or not is_instance_valid(u) or u.hp <= 0.0:
+		if u == null or not is_instance_valid(u) or (u.hp <= 0.0 and not u.death_form.waiting()):
 			continue
 		units_data.append(_unit_snapshot_payload(
 			id,
@@ -374,6 +392,7 @@ func _snapshot_packet(units_data: Array, projectiles_data: Array, towers_data: A
 		overtime,
 		lifecycle.session_id,
 		lifecycle.revision,
+		_controller.growth_snapshot(),
 	]
 
 
@@ -441,4 +460,10 @@ func _unit_snapshot_payload(id: int, u: Unit, has_continuous_target: bool = fals
 		descriptor,
 		u._deploy_timer,
 		u.last_action_cancellation.duplicate(true),
+		u.target_protection.snapshot(),
+		u.death_form.snapshot(),
+		u.has_explosive_shield(),
+		bool(active_skill_state.get("free_recast", false)),
+		u.bleeding.total_stacks(),
+		u.buffs.remaining(&"blood_rage"),
 	]

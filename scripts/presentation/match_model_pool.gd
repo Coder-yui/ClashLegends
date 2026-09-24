@@ -31,6 +31,9 @@ static func build_specs(cards: Dictionary) -> Dictionary:
 			for child in per_form: per_source[child] = maxi(int(per_source.get(child, 0)), int(per_form[child]))
 		for child in per_source: summoned[child] = int(summoned.get(child, 0)) + int(per_source[child]) * int(base.get("deployment_count", 1))
 	for child in summoned: demand[child] = maxi(int(demand.get(child, 2)), mini(32, int(summoned[child]) * 2))
+	# 镜像是额外并发来源，复制闭包内任一卡及其召唤物均需库存。
+	if cards.has("mirror"):
+		for id in demand: demand[id] = mini(64, int(demand[id]) * 2)
 	var specs := {}
 	for id in cards:
 		var base := CardDB.get_card(String(id))

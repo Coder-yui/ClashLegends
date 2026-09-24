@@ -286,5 +286,41 @@
     "script": "res://tests/suites/status_boundary_suite.gd",
     "method": "run",
     "scene": "battle"
+  },
+  {
+    "id": "KayleSuite",
+    "script": "res://tests/suites/cards/kayle_suite.gd",
+    "method": "run",
+    "scene": "battle"
+  },
+  {
+    "id": "SionSuite",
+    "script": "res://tests/suites/cards/sion_suite.gd",
+    "method": "run",
+    "scene": "battle"
+  },
+  {
+    "id": "MirrorSuite",
+    "script": "res://tests/suites/cards/mirror_suite.gd",
+    "method": "run",
+    "scene": "battle"
+  },
+  {
+    "id": "DariusSuite",
+    "script": "res://tests/suites/cards/darius_suite.gd",
+    "method": "run",
+    "scene": "battle"
+  },
+  {
+    "id": "KaynSuite",
+    "script": "res://tests/suites/cards/kayn_suite.gd",
+    "method": "run",
+    "scene": "battle"
+  },
+  {
+    "id": "PantheonSuite",
+    "script": "res://tests/suites/cards/pantheon_suite.gd",
+    "method": "run",
+    "scene": "battle"
   }
 ]

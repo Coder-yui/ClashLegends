@@ -34,8 +34,9 @@ func _check_due_attack(permutation: int) -> void:
 	else:
 		attacker = _attacker(team)
 		building = _building(1 - team)
-	_run_main_ticks(4)
-	_expect(attacker._attack_hit_index == 0 and attacker._attacking, "到期夹具：正常索敌前摇，本 Tick 尚未出手")
+	# 0.20秒前摇第4Tick命中；在第3Tick后布置同帧自然到期，不依赖浮点尾差。
+	_run_main_ticks(3)
+	_expect(attacker._attack_hit_index == 0 and attacker._attacking and is_equal_approx(attacker.attack_timeline.windup, 0.05), "到期夹具：正常索敌前摇，本 Tick 尚未出手")
 	building._lifespan_left = 0.05
 	var backup: Unit = _main._spawn_unit(1 - team, "garen", Vector2(290, 760), 0)
 	backup.freeze(100)

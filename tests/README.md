@@ -131,3 +131,25 @@ Godot 原始入口使用 `-- --suite=ProjectileSuite`，未知名称退出 2；�
 `StatusBoundarySuite` 从正式请求覆盖解冻待变形、退款、转换结束边界、技能各段/完成回血精确 Tick、凤凰蛋排列互换、旧弹体及冻结朝向。`network_lifecycle_suite` 覆盖六位权限校验与首次同时收到技能/眩晕；双端终态另比较权限、身体方向及技能剩余次数。实际渲染复用 `maintenance_preview.gd -- --status-boundaries --cards=sett,gnar,gwen,aurelionsol,garen,anivia_egg`。
 
 维护审计同时检查本地章节锚点、导航可达性、默认必读不能指向历史、显式当前协议事实、卡牌/形态文档映射；包括历史区域链接。导航声明在 [navigation.json](../docs/navigation.json)，审计夹具通过 `python3 -m unittest discover -s tools/maintenance -p 'test_*.py'` 执行。
+
+`GwenSuite`覆盖丝缕缠流两次1金币/8秒冷却、双阵营圈内外准入、水晶法术来源与落点区分、控制/Buff保留、80Tick寿命、固定中心与出圈不恢复、追踪弹体失效和非追踪穿过、结界声音独立生命周期。`network_lifecycle_suite`覆盖结界载荷校验、未知实体恢复和客户端不自行到期。实机配方为`tools/demos/gwen_mist_review.gd`，输出双阵营Spell2衔接、固定圈、入圈、到期、出圈截图及battle_mix.wav。
+
+`KayleSuite`覆盖2.99/3/5.99/6/10金币边界、手牌费用、等待期间形态锁定、两形态主动资格、免费治疗/加速20Tick/6秒冷却/两次用尽，以及来源死亡后弹体溅射空地敌军与友方排除。
+
+赛恩：`-- --suite=SionSuite`覆盖20Tick双方隔离、同批多刀致死、满血换形、持续衰血与吸血、40Tick对空爆炸及破盾/清除不爆炸；network_lifecycle补充零血重建与迟到快照。`tools/demos/sion_review.gd`通过正式出牌与技能预览入口检查双阵营渲染和录音。
+
+赛恩双进程：两个进程运行 `--script tools/demos/sion_review.gd -- --network --mode=host --port=18291 --auto-test` 和相同参数的 `--mode=join --ip=127.0.0.1`，自动检查客户端护盾、零血等待与狂暴形态，并在约14秒后退出。
+
+`MirrorSuite`覆盖随机首手、费用与形态锁定、技能槽替换、普通席预选、法术强化、编队转交、可靠确认与资源库存。其他机制测试通过network_fixture.fixed_cycle显式安装固定手牌，不依赖随机首手。实际渲染配方：`tools/demos/mirror_review.gd`。
+
+镜像双进程：分别运行 `Godot --headless --path . --script tools/demos/mirror_network_review.gd -- --mode=host --port=18433` 与 `--mode=join --ip=127.0.0.1 --port=18433`，自动比对日志中的随机首手，执行客户端镜像出牌与技能请求；双方输出 `MIRROR_NETWORK`。普通终局/建筑边界测试使用明确的固定牌序夹具，不再假定正式开局未洗牌。
+
+德莱厄斯领域回归：DariusSuite验证叠层/刷新、逐步伤害、血怒、先伤害后叠层、付费与免费技能、同批死亡及持续音清理；network_lifecycle_suite验证新快照字段与免费资格投影。`tools/demos/darius_review.gd`记录双阵营实战；加`-- --network --mode=host`或`-- --network --mode=join --ip=127.0.0.1`做两进程同步检查。
+
+`KaynSuite`覆盖共享远程/近战成长、来源牌/实际形态、等待部署锁定、地形入边沿、出地形普攻、终点避让、两段去重/固定回血、空放/多人、冻结/眩晕/击退及新增字段校验。`tools/demos/kayn_review.gd`录制双方三形态实战与混音；`kayn_network_review.gd`以host/join双进程检查成长、旧普通实例、新蓝凯及Q动作同步。
+
+`PantheonSuite`覆盖双方红怒0到4层、三层释放不提前强化、上限、未携带与资格清理、短Q前后/空地/敌我过滤和落地伤害；实际渲染配方为`tools/demos/pantheon_review.gd`。
+
+工作台宽屏实验：`workbench_suite` 覆盖牌库搜索、快捷栏 0–8 张上限/去重/失效过滤、共享阵营、数字快捷键与搜索焦点隔离、空栏与形态顺序持久化，以及观察缩放、拖动边界和退出恢复窗口。`workbench_preview.gd` 输出牌库、100% 全图实战、一键全图、模型与音频页面，并检查切页暂停和退出恢复；截图仍需目视检查。
+
+工作台三页交互补充：`workbench_suite` 从工作台地图入口验证快捷槽选卡部署与空栏阻止部署、选择模式禁止下牌/木桩、目标与待放置卡/阵营隔离、网格加入与编辑槽移除、单成员控制/同批整组技能、目标死亡不转交、清场取消目标，以及任意动画时间续播和音频时长。模型与音频页不显示快捷栏，地图默认完整适配 100%。

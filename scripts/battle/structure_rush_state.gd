@@ -179,6 +179,7 @@ func _sweep(unit: Unit, next: Vector2) -> void:
 		if unit.battle_context.damage_batch().collecting:
 			unit.battle_context.damage_batch().submit_knockback(c, origin, float(config.rush_push_distance), 0.2, 1.0, order, result)
 		elif result.landed:
+			if not CombatInteraction.allows(c, unit): continue
 			c.apply_knockback(origin, float(config.rush_push_distance), 0.2, 1.0, order)
 		var apply_hit := func():
 			if not result.landed: return

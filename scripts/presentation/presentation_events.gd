@@ -2,11 +2,21 @@ class_name PresentationEvents
 extends RefCounted
 ## 当前实际派发能力表；新增 cue 必须同时实现权威派发与消费者。
 static func supports(stats: Dictionary, cue: String) -> bool:
+	if cue == "terrain:enter": return bool(stats.get("terrain_traversal", false))
+	if cue == "active:spin": return (stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "dash_strike")
+	if cue == "execute:kill": return (stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "bleeding_execute")
+	if cue in ["blood_rage:start", "blood_rage:sustain"]: return stats.has("bleed_max_stacks")
+	if cue in ["rebirth:begin", "rebirth:voice", "rebirth:ready", "berserk:sustain"]:
+		return float(stats.get("death_form_delay", 0.0)) > 0.0
+	if cue in ["shield:explode", "explosive_shield:sustain", "explosive_shield:break"]:
+		return (stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "explosive_shield")
 	if cue in ["rush_prepare:sustain", "rush:start", "rush:path_hit", "rush:hit"]:
 		return float(stats.get("rush_distance", 0.0)) > 0.0
 	var spell := String(stats.get("type", "")) == "spell"
 	if spell:
 		return cue == "spell:cast"
+	if cue in ["sanctuary:sustain", "sanctuary:end"]:
+		return (stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "sanctuary")
 	if cue == "active:cast":
 		# 没有独立 visual_action 的瞬时主动技能也需要一个稳定的 Cast Start 音频入口。
 		var active_skills: Variant = stats.get("active_skills", [])
@@ -56,7 +66,7 @@ static func supports(stats: Dictionary, cue: String) -> bool:
 		var kind := String(skill.get("kind", ""))
 		if kind in ["dual_form", "timed_form"] and lifecycle.size() == 2 and lifecycle[0] == "transform_active" and lifecycle[1] in ["start", "end", "sustain", "hit"]:
 			return float(stats.get("active_transform_duration", stats.get("transform_duration", 0.0))) > 0.0
-		if cue in ["empowered_ready", "empowered_swing"] and kind == "empowered_attack":
+		if cue in ["empowered_ready", "empowered_swing"] and kind in ["empowered_attack", "bleeding_execute"]:
 			return true
 		if cue in ["active_buff:start", "active_buff:end", "active_buff:sustain"] and kind == "buff":
 			return float(skill.get("duration", 0.0)) > 0.0
@@ -80,5 +90,5 @@ static func supports(stats: Dictionary, cue: String) -> bool:
 		if parts[1] == "hit_center":
 			return kind == "frontal" and (float(skill.get("center_ratio", 0.0)) > 0.0 or float(skill.get("center_width", 0.0)) > 0.0)
 		if parts[1] == "hit":
-			return kind in ["frontal", "continuous_area", "nova", "dual_form"] or (kind == "forward_area" and float(skill.get("zone_duration", 0.0)) > 0.0)
+			return kind in ["dash_strike", "frontal", "continuous_area", "nova", "dual_form"] or (kind == "forward_area" and float(skill.get("zone_duration", 0.0)) > 0.0)
 	return false

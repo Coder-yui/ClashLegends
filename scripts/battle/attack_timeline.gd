@@ -30,13 +30,13 @@ func begin_recovery(next_gap: float, base_first_hit: float, attack_speed: float)
 	recovery = maxf(next_gap - base_first_hit / attack_speed, 0.0)
 
 func tick_cooldown(dt: float) -> void:
-	cooldown = maxf(0.0, cooldown - dt)
+	cooldown = _tick_remaining(cooldown, dt)
 
 func tick_windup(dt: float) -> void:
-	windup = maxf(0.0, windup - dt)
+	windup = _tick_remaining(windup, dt)
 
 func tick_recovery(dt: float) -> void:
-	recovery = maxf(0.0, recovery - dt)
+	recovery = _tick_remaining(recovery, dt)
 
 func advance_visual(dt: float, attack_speed: float) -> void:
 	visual_elapsed += dt * attack_speed
@@ -46,3 +46,8 @@ func restart_visual() -> void:
 
 func align_visual(base_first_hit: float, time_until_hit: float, attack_speed: float) -> void:
 	visual_elapsed = maxf(base_first_hit - maxf(time_until_hit, 0.0) * attack_speed, 0.0)
+
+## 避免0.30连续减去0.05后的浮点尾差额外等待一个50ms Tick。
+func _tick_remaining(value: float, dt: float) -> float:
+	var remaining := maxf(0.0, value - dt)
+	return 0.0 if remaining < 0.000000001 else remaining

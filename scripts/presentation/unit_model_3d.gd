@@ -142,6 +142,7 @@ func setup(unit: Unit, packed: PackedScene, camera: Camera3D, animations: Dictio
 	_spawn_transition_initialized = false
 	_source.died.connect(_on_source_died)
 	_source.visual_hit.connect(_on_source_visual_hit)
+	_source.presentation_cue.connect(_on_presentation_cue)
 	_source.action_cancelled.connect(_on_action_cancelled)
 	_camera = camera
 	# 一套完整挥剑（前摇、命中、后摇）占满一个攻击周期；动画长度不改变战斗计时。
@@ -329,7 +330,7 @@ func _sync_transform(force: bool, delta: float) -> void:
 	position = ground_position
 
 	# 控制保持已显示的根朝向；外部位移仍更新位置，不继续插值旋转。
-	if not force and (_source.is_frozen() or _source.is_stunned()): return
+	if not force and (_state.frozen or _state.stunned): return
 	var facing_2d := _source.get_visual_facing_direction()
 	var facing_ground := _screen_to_ground(screen_position + facing_2d * 20.0)
 	var facing_3d := facing_ground - ground_position
@@ -406,7 +407,16 @@ func _sync_visual(force: bool, delta: float) -> void:
 		var playback_scale := _state.attack_rate if _playing_attack else (_state.movement_rate if _current_state == 2 and not _playing_visual_action else 1.0)
 		_animation_player.speed_scale = 0.0 if _state.frozen else playback_scale
 
-func _play_visual_action(action_name: StringName, preserve_visual_pose: bool = false) -> void:
+## 事件动作仅在空闲/移动时展示；攻击、控制、变形优先且不排队补播。
+func _on_presentation_cue(cue: StringName) -> void:
+	if _dying or _animation_player == null or not is_instance_valid(_source): return
+	if _state.dead or _state.frozen or _state.stunned or _state.behavior in [0, 3] or _source.death_form.waiting(): return
+	if _playing_attack or _holding_attack_pose or _playing_visual_action or _playing_deploy_sequence: return
+	var descriptor: Dictionary = _animation_names.get("visual_actions", {}).get(String(cue), {})
+	if descriptor.is_empty() or int(descriptor.get("priority", 40)) >= int(ACTION_PRIORITY[&"attack"]): return
+	_play_visual_action(cue, false, true)
+
+func _play_visual_action(action_name: StringName, preserve_visual_pose: bool = false, presentation_only: bool = false) -> void:
 	_idle_transition_animation = &""
 	if action_name == &"":
 		if _control_stage != &"":
@@ -437,7 +447,7 @@ func _play_visual_action(action_name: StringName, preserve_visual_pose: bool = f
 		if animation_name != &"" and _animation_player.has_animation(animation_name):
 			var animation := _animation_player.get_animation(animation_name)
 			if animation != null: lengths[animation_name] = animation.length
-	var authoritative_duration := _source.get_visual_action_duration()
+	var authoritative_duration := 0.0 if presentation_only else _source.get_visual_action_duration()
 	if not _action_sequence.configure(candidates, duration_candidates, range_candidates, lengths, authoritative_duration):
 		return
 	_playing_visual_action = true
@@ -1040,8 +1050,12 @@ func _play_attack(serial: int, blend_override: float = -1.0) -> void:
 	if _playing_visual_action and _active_action_priority > int(ACTION_PRIORITY.get(&"attack", 20)):
 		_pending_attack_serial = serial
 		return
-	var entry_transition_kind := &"sequence" if _current_state == 3 else &"action_in"
+	if _playing_visual_action:
+		_clear_visual_action_state() # 低优先级纯表现动作立即让位于普攻。
+	var was_empowered := _active_attack_empowered
 	_active_attack_empowered = serial == _source.get_empowered_attack_visual_serial()
+	# 普攻↔强化用完整动作混合，保留当前姿势，不经过Idle。
+	var entry_transition_kind := &"action_in" if _active_attack_empowered or was_empowered else (&"sequence" if _current_state == 3 else &"action_in")
 	var attack_key := "empowered_attack" if _active_attack_empowered else ("attack_structure" if _source.is_attacking_structure_visual() else "attack")
 	var configured = _animation_names.get(attack_key, _animation_names.get("attack", []))
 	var attacks: Array = configured if configured is Array else [configured]
@@ -1473,6 +1487,7 @@ func _start_death_followup() -> bool:
 	if _animation_player == null or not _animation_player.has_animation(followup_name):
 		return false
 	_animation_player.animation_finished.connect(_on_animation_finished)
+	_animation_player.speed_scale = 1.0
 	_death_followup_started = true
 	_death_animation = followup_name
 	var animation := _animation_player.get_animation(followup_name)
@@ -1567,6 +1582,17 @@ func _on_action_cancelled(payload: Dictionary) -> void:
 		_continuous_attack_active = false
 		_continuous_attack_sequence.clear()
 		_source.set_continuous_beam_visible(false)
+	if String(payload.get("reason", "")) == "empowered_reset":
+		# 不播放Idle或seek旧动画；新攻击序号到来时从当前姿势混合。
+		_attack_recover_pending = false
+		return
+	if String(payload.get("reason", "")) == "death_form":
+		# 致死动作直接接管当前冻结姿势，不先绕到Idle，也不恢复旧攻击。
+		_was_controlled = false
+		_control_stage = &""
+		_invalidate_control_restore()
+		_animation_player.speed_scale = 1.0
+		return
 	if freeze_pose:
 		# 清理调度但不 play/seek，当前已经绘制的骨骼姿势原地保留。
 		_playing_visual_action = false
@@ -1586,6 +1612,12 @@ func _on_action_cancelled(payload: Dictionary) -> void:
 func _sync_control_override() -> bool:
 	if _animation_player == null:
 		return false
+	if _source.death_form.waiting():
+		_was_controlled = false
+		_control_stage = &""
+		_invalidate_control_restore()
+		_animation_player.speed_scale = 1.0
+		return false
 	if _state.frozen:
 		_was_controlled = true
 		_animation_player.speed_scale = 0.0
@@ -1599,7 +1631,8 @@ func _sync_control_override() -> bool:
 		_playing_visual_action = false
 		_playing_deploy_sequence = false
 		_action_sequence.clear()
-		_transition_to_basic_state(1, 0.1)
+		# 保留冻结姿势，让本帧状态同步直接混合至实际下一动作，不先播放Idle。
+		_current_state = -1
 	# 首次渲染前也可能已经 Cast Start；先消费有效权威动作，再决定 Idle。
 	if _state.stunned:
 		_sync_visual_action_while_controlled()
@@ -1713,7 +1746,10 @@ func _replace_active_buff_visual(scene_path: String) -> void:
 func _update_active_buff_visual(delta: float) -> void:
 	if not is_instance_valid(_active_buff_visual):
 		return
-	var enabled := not _dying and is_instance_valid(_source) and _state.active_buff
+	var status_active := is_instance_valid(_source) and _state.active_buff
+	if _active_buff_visual.status_source == "blood_rage":
+		status_active = is_instance_valid(_source) and _source.blood_rage_time_left_visual() > 0.0
+	var enabled := not _dying and is_instance_valid(_source) and status_active
 	_active_buff_visual.advance(enabled, delta)
 	var shown := _active_buff_visual.visible
 	if shown != _last_buff_visible:

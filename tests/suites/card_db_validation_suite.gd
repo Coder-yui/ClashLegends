@@ -2,6 +2,11 @@ class_name CardDBValidationSuite
 extends RefCounted
 
 func run(harness: Object) -> void:
+	for field in ["radius", "duration"]:
+		for invalid in [-1.0, 0.0, INF, "wrong"]:
+			var mist: Dictionary = CardDB.get_card("gwen").duplicate(true)
+			mist.active_skills[1][field] = invalid
+			harness._expect(not CardDB.VALIDATOR.validate_all({"gwen": mist}, false).is_empty(), "固定圣霭拒绝非法" + field)
 	for invalid_icon in [42, "res://assets/skills/" + "missing.png", "res://scripts/ui/card_art.gd", ""]:
 		var broken_icon := CardDB.get_card("garen").duplicate(true)
 		broken_icon.active_skills[0].icon_path = invalid_icon

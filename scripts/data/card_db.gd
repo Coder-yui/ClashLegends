@@ -4,6 +4,10 @@ extends "res://scripts/data/card_schema.gd"
 const DEFINITION_COMPILER = preload("res://scripts/data/card_definition_compiler.gd")
 const VALIDATOR = preload("res://scripts/data/card_validator.gd")
 const DEFINITIONS = [
+	preload("res://scripts/data/cards/pantheon.gd"),
+	preload("res://scripts/data/cards/kayn.gd"),
+	preload("res://scripts/data/cards/kayn_assassin.gd"),
+	preload("res://scripts/data/cards/kayn_slayer.gd"),
 	preload("res://scripts/data/cards/shurima_guard.gd"),
 	preload("res://scripts/data/cards/garen.gd"),
 	preload("res://scripts/data/cards/xin.gd"),
@@ -23,6 +27,7 @@ const DEFINITIONS = [
 	preload("res://scripts/data/cards/pix.gd"),
 	preload("res://scripts/data/cards/freeze.gd"),
 	preload("res://scripts/data/cards/heal.gd"),
+	preload("res://scripts/data/cards/mirror.gd"),
 	preload("res://scripts/data/cards/masteryi.gd"),
 	preload("res://scripts/data/cards/twisted_fate.gd"),
 	preload("res://scripts/data/cards/gwen.gd"),
@@ -38,6 +43,10 @@ const DEFINITIONS = [
 	preload("res://scripts/data/cards/aatrox.gd"),
 	preload("res://scripts/data/cards/rift_herald.gd"),
 	preload("res://scripts/data/cards/voidmite.gd"),
+	preload("res://scripts/data/cards/kayle.gd"),
+	preload("res://scripts/data/cards/kayle_ranged.gd"),
+	preload("res://scripts/data/cards/sion.gd"),
+	preload("res://scripts/data/cards/darius.gd"),
 ]
 static var _cards: Dictionary = {}
 static var _definition_errors := PackedStringArray()
@@ -146,3 +155,13 @@ static func compile_definition(definition: Dictionary) -> Dictionary:
 	if not stats.is_empty() and not stats.has("card_art"):
 		stats.card_art = {}
 	return stats
+
+## 金币足够时选择配置的高费部署单位；只在提交前调用，排程保存结果。
+static func deployment_card_id(card_id: String, available: float) -> String:
+	var upgraded := String(get_card(card_id).get("deployment_upgrade_id", ""))
+	if not upgraded.is_empty() and available >= float(get_card(upgraded).get("cost", INF)):
+		return upgraded
+	return card_id
+
+static func deployment_cost(card_id: String, available: float) -> int:
+	return int(get_card(deployment_card_id(card_id, available)).get("cost", 0))

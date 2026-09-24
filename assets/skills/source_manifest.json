@@ -149,5 +149,77 @@
     "source_path": "assets/characters/aatrox/hud/icons2d/aatrox_r.dds",
     "source_sha256": "686a826415f237b786402a44f043f1f6cfe74febae15af8e38e2bd237dfc29f3",
     "sha256": "829f9ae642de731766e96081c32d57eba773b8633122da16be432daa3ebae6d5"
+  },
+  {
+    "card": "gwen",
+    "skill_index": 1,
+    "path": "res://assets/skills/gwen_1.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Gwen.wad.client",
+    "source_path": "assets/characters/gwen/hud/icons2d/gwen_w.dds",
+    "source_sha256": "677e60c5c9a2ded2ebd6d9935d53c862080fbca1a95c1354fa246e87333bf533",
+    "sha256": "62a5183b43adeb99cba3a6e4dc8d289882aed5e758030781d112e3c2b9704f88"
+  },
+  {
+    "card": "kayle",
+    "skill_index": 0,
+    "path": "res://assets/skills/kayle_w.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Kayle.wad.client",
+    "source_path": "assets/characters/kayle/hud/icons2d/kayle_w.dds",
+    "source_sha256": "6a74544764b4ba5ef3cac42af512acc8f931a6c8b0dd1b227734f2cb27f09068",
+    "sha256": "1faa387d259d2a6fac3e14a3ad5e2c071db51f64eaa39398835b8492452cc567"
+  },
+  {
+    "card": "sion",
+    "skill_index": 0,
+    "path": "res://assets/skills/sion_w.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Sion.wad.client",
+    "source_path": "assets/characters/sion/hud/icons2d/sion_w1.dds",
+    "source_sha256": "3604506abc9dfb84c0fd6a68a2ae07edc2476d241000afb18098a66ea32d0249",
+    "sha256": "a76a792b06d70eeec3549dc27fb2a0bc643cede7a68191836f3ef15893f61c83"
+  },
+  {
+    "card": "darius",
+    "skill_index": 0,
+    "path": "res://assets/skills/darius_r.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Darius.wad.client",
+    "source_path": "assets/characters/darius/hud/icons2d/darius_icon_sudden_death.dds",
+    "source_sha256": "11e03242b6a48d1fc0341f9d1b2b6a4387b18e972e20119fd3a269b9c2e1f969",
+    "sha256": "3140fc7118e88b740deb1212c816f9245e55d4708a770fd3f38bad78c19e4877"
+  },
+  {
+    "card": "kayn",
+    "skill_index": 0,
+    "path": "res://assets/skills/kayn_q_primary.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Kayn.wad.client",
+    "source_path": "assets/characters/kayn/hud/icons2d/kayn_q_primary.dds",
+    "source_sha256": "ee01f77de20b47293519e5183ec58c33ac73d8524d09c6643ce7d0a7401bf26c",
+    "sha256": "defb4d9ecb64bf32a08ef3aec7683f229b6fc55ce6679d3465e521a15fe5f87e"
+  },
+  {
+    "card": "kayn_assassin",
+    "skill_index": 0,
+    "path": "res://assets/skills/kayn_q_ass.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Kayn.wad.client",
+    "source_path": "assets/characters/kayn/hud/icons2d/kayn_q_ass.dds",
+    "source_sha256": "3a669971aa21d48bf03b01673801ff6814084b50bde11192622d7db7f62cf06d",
+    "sha256": "89251e450cc08ada64fe3274d65cea37db09533a0f56b4a6264b13199547a0cf"
+  },
+  {
+    "card": "kayn_slayer",
+    "skill_index": 0,
+    "path": "res://assets/skills/kayn_q_slay.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Kayn.wad.client",
+    "source_path": "assets/characters/kayn/hud/icons2d/kayn_q_slay.dds",
+    "source_sha256": "e88d4609ad30d34eb1122ff6bbf97b48ac1cac7d451b13f36f549c30ca8e30a9",
+    "sha256": "a87242a16d7ba6ab8c51a5e46b2ff8af06162cef236f79c3f0cc7da51d90ae9f"
+  },
+  {
+    "card": "pantheon",
+    "skill_index": 0,
+    "path": "res://assets/skills/pantheon_q.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Pantheon.wad.client",
+    "source_path": "assets/characters/pantheon/hud/icons2d/pantheon_q1.dds",
+    "source_sha256": "cdcd4ad301350adf145a8ee9fee31d5d50a3174bd276a276fcd2a30fc5dc19d8",
+    "sha256": "81becc79358f2e2ba68055612dc81cd53576b6f10092d29c7671d30928d6d995"
   }
 ]

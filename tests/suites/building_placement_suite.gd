@@ -5,6 +5,7 @@ func run(harness: Object) -> void:
 	harness.root.add_child(main)
 	main._deck = ["tombstone", "sun_disc", "apex_turret", "garen", "xin", "ashe", "freeze", "heal"]
 	main._start_local()
+	preload("res://tests/suites/network_fixture.gd").fixed_cycle(main, 0, main._deck)
 	main.set_process(false)
 	main._ai.enabled = false
 	main._elixir.elixir = 10

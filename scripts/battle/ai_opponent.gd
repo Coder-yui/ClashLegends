@@ -32,7 +32,7 @@ func sim_tick(delta: float) -> void:
 	# AI 也是玩家命令来源，候选牌必须来自主机维护的当前 4 张手牌。
 	var candidate_ids: Array = _main.get_authoritative_hand(1)
 	for card_id in candidate_ids:
-		var stats: Dictionary = CardDB.get_card(card_id)
+		var stats: Dictionary = CardDB.get_card(_main.resolved_card_for_team(1, card_id))
 		# 主动槽法术（包括治疗术的两个主动选项）按提升后的费用判定是否打得起。
 		if _elixir.can_afford(_main.card_cost_for_team(1, card_id)):
 			affordable.append(card_id)
@@ -40,7 +40,7 @@ func sim_tick(delta: float) -> void:
 		return
 	# 随机出一张
 	var card_id: String = affordable[randi() % affordable.size()]
-	var stats: Dictionary = CardDB.get_card(card_id)
+	var stats: Dictionary = CardDB.get_card(_main.resolved_card_for_team(1, card_id))
 	_play(card_id, stats)
 
 func _play(card_id: String, stats: Dictionary) -> void:

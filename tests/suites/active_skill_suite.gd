@@ -36,9 +36,9 @@ func _check_active_skill_loadout_rule() -> void:
 			data_ok = data_ok and ((card_id == "heal" and spell_skills.size() == 2) or (card_id != "heal" and spell_skills.is_empty()))
 		else:
 			var available_skills := CardDB.active_skills_for(card_id)
-			var expected_count := 2 if card_id == "garen" else 1
+			var expected_count := 2 if card_id in ["garen", "gwen"] else 1
 			data_ok = data_ok and available_skills.size() == expected_count and not String(available_skills[0].get("name", "")).is_empty()
-	_expect(data_ok, "当前每张可选单位/建筑卡至少有一个主动候选，盖伦和治疗术各有两个候选但每个实例只携带一个，法术卡不生成场上主动按钮")
+	_expect(data_ok, "当前每张可选单位/建筑卡至少有一个主动候选，盖伦、格温和治疗术各有两个候选但每个实例只携带一个，法术卡不生成场上主动按钮")
 	var left_position: Vector2 = ActiveSkillBar.LEFT_SLOT_POSITION
 	var right_position: Vector2 = ActiveSkillBar.RIGHT_SLOT_POSITION
 	_expect(
@@ -502,7 +502,7 @@ func _check_cast_control_pause_and_death_cancel() -> void:
 func _check_authoritative_hand_cycle() -> void:
 	var old_deck: Array = _main._deck.duplicate()
 	_main._deck = ["garen", "xin", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
-	_main._initialize_authoritative_card_cycle(0, _main._deck)
+	preload("res://tests/suites/network_fixture.gd").fixed_cycle(_main, 0, _main._deck)
 	_main._elixir.elixir = ElixirManager.MAX_ELIXIR
 	var hand_before: Array = _main.get_authoritative_hand(0)
 	var queue_before: Array = _main.get_authoritative_queue(0)
@@ -531,7 +531,7 @@ func _check_authoritative_hand_cycle() -> void:
 	_main._commands.clear_cards()
 	_main._elixir.elixir = ElixirManager.MAX_ELIXIR
 	_main._deck = old_deck
-	_main._initialize_authoritative_card_cycle(0, old_deck)
+	preload("res://tests/suites/network_fixture.gd").fixed_cycle(_main, 0, old_deck)
 
 func _check_network_hand_confirmation() -> void:
 	var old_mode: String = _main.mode
@@ -548,7 +548,7 @@ func _check_network_hand_confirmation() -> void:
 	_main._remote_deck = deck.duplicate()
 	_main.mode = "host"
 	_main._sim_tick_id = 103
-	_main._initialize_authoritative_card_cycle(1, deck)
+	preload("res://tests/suites/network_fixture.gd").fixed_cycle(_main, 1, deck)
 	network_elixir.elixir = ElixirManager.MAX_ELIXIR
 	var host_initial_hand: Array = _main.get_authoritative_hand(1)
 	var host_initial_queue: Array = _main.get_authoritative_queue(1)
@@ -590,7 +590,7 @@ func _check_network_hand_confirmation() -> void:
 
 	_main.mode = "client"
 	_main._deck = deck.duplicate()
-	_main._initialize_authoritative_card_cycle(1, deck)
+	preload("res://tests/suites/network_fixture.gd").fixed_cycle(_main, 1, deck)
 	_main._elixir.elixir = ElixirManager.MAX_ELIXIR
 	_main._hand.set_card_pending("garen", false)
 	_main._hand.set_card_pending("xin", false)
@@ -638,7 +638,7 @@ func _check_network_hand_confirmation() -> void:
 	_main._elixir.elixir = old_elixir_value
 	if is_instance_valid(network_elixir):
 		network_elixir.free()
-	_main._initialize_authoritative_card_cycle(0, old_deck)
+	preload("res://tests/suites/network_fixture.gd").fixed_cycle(_main, 0, old_deck)
 
 func _check_empowered_freeze_slow_zone() -> void:
 	var stats: Dictionary = CardDB.get_unit_stats("imp").duplicate()

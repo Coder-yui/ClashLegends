@@ -95,6 +95,8 @@ var _remote_deck: Array = []
 var _remote_active_skill_choices: Dictionary = {}
 ## team -> {deck, hand, queue}。主机同时维护双方；客户端只维护自己的本地镜像。
 var _authoritative_card_cycles: Dictionary = {}
+var _card_history := CardPlayHistory.new()
+var _card_growth := MatchCardGrowth.new()
 var _deck_builder: DeckBuilder
 var _match_rules := MatchRules.new()
 var _timer_label: Label
@@ -449,6 +451,7 @@ func _start_art_dev() -> void:
 	_match_started = true
 	queue_redraw()
 	_workbench.enabled = true
+	_workbench.inspect_enabled = true
 	_hide_menu()
 	_setup_battle_presentation()
 	_create_towers()
@@ -469,6 +472,7 @@ func _start_art_dev() -> void:
 	_set_art_dev_selection("garen")
 	_set_art_dev_team(0)
 	_set_workbench_battle_active(false)
+	_art_dev_panel.enable_desktop_layout()
 	_art_dev_panel.exit_requested.connect(func():
 		get_tree().reload_current_scene()
 	)
@@ -622,14 +626,17 @@ func _rpc_loaded(epoch: String) -> void:
 func _try_start_network_match() -> void:
 	if _session.start():
 		_match_started = true
-		_rpc_running.rpc_id(_session.opponent_id, _session.session_id)
+		_rpc_running.rpc_id(_session.opponent_id, _session.session_id, get_authoritative_hand(1), get_authoritative_queue(1))
 
 @rpc("authority", "call_remote", "reliable")
-func _rpc_running(epoch: String) -> void:
+func _rpc_running(epoch: String, hand: Array = [], queue: Array = []) -> void:
 	if mode != "client" or not _session.mark_remote_ready(1, epoch):
 		return
 	if _session.start():
 		_match_started = true
+		if hand.size() == 4 and queue.size() == 4:
+			(_authoritative_card_cycles[1] as CardCycle).replace_replica(hand, queue)
+			_sync_card_cycle_ui(1)
 
 
 ## 客户端是上方玩家：相机旋转 180°，让自己半场显示在屏幕下方
@@ -651,6 +658,9 @@ func _setup_player_ui() -> void:
 	_hand = CardHand.new()
 	add_child(_hand)
 	_hand.setup(_elixir, _deck)
+	_hand.growth_progress_query = func(id: String) -> Dictionary: return _card_growth.progress(1 if mode == "client" else 0, id)
+	_hand.visual_card_query = func(id: String) -> String: return _card_growth.resolved_id(1 if mode == "client" else 0, id)
+	_hand.cost_query = func(id: String) -> int: return card_cost_for_team(1 if mode == "client" else 0, id)
 	_hand.set_active_skill_cards(_deck.slice(0, 2))
 	_hand.card_selected.connect(_on_card_selected)
 	var local_team := 1 if mode == "client" else 0
@@ -668,7 +678,7 @@ func _is_local_player_team(p_team: int) -> bool:
 	return p_team == (1 if mode == "client" else 0)
 
 func _team_deck(p_team: int) -> Array:
-	if mode == "host" and p_team == 1:
+	if (mode == "host" and p_team == 1) or (mode == "client" and p_team == 0):
 		return _remote_deck
 	return _deck
 
@@ -778,7 +788,7 @@ func get_authoritative_server_tick() -> int:
 	return _authoritative_server_tick if mode == "client" else _sim_tick_id
 
 func _team_active_skill_choices(p_team: int) -> Dictionary:
-	if mode == "host" and p_team == 1:
+	if (mode == "host" and p_team == 1) or (mode == "client" and p_team == 0):
 		return _remote_active_skill_choices
 	return _active_skill_choices
 
@@ -802,8 +812,11 @@ func _active_card_slot_for_team(p_team: int, card_id: String) -> int:
 ## 法术卡位于主动槽时的实际施放费用：基础费用 + active_cost_bonus（治疗术主动选项 +1）。
 ## 单位卡与不在主动槽的法术卡返回原费用；出牌扣费、客户端预检和 UI 角标共用这一口径。
 func card_cost_for_team(p_team: int, card_id: String) -> int:
+	if CardPlayHistory.is_mirror(card_id):
+		return int(_card_history.get_last(p_team).get("cost", 99))
 	var stats := CardDB.get_card(card_id)
-	var cost := int(stats.get("cost", 0))
+	var payer := _elixir_for_team(p_team)
+	var cost := CardDB.deployment_cost(card_id, payer.elixir if payer != null else 0.0)
 	if StringName(stats.get("type", "")) != &"spell":
 		return cost
 	var cost_bonus := int(stats.get("active_cost_bonus", 0))
@@ -940,12 +953,9 @@ func _update_deployment_preview(pointer_pos: Vector2) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if _workbench.enabled:
-		if _art_dev_panel != null and not _art_dev_panel.accepts_battle_input():
-			return
+		if _art_dev_panel == null or not _art_dev_panel.accepts_battle_input(): return
 		if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-			var art_pos := get_global_mouse_position()
-			if art_pos.x >= 0.0 and art_pos.x < ArenaRules.FIELD_W and art_pos.y >= 0.0 and art_pos.y < ArenaRules.FIELD_H:
-				_place_art_dev_item(art_pos)
+			_workbench_map_click(get_viewport().canvas_transform.affine_inverse() * event.position)
 		return
 	if game_over or _selected_card == "":
 		return
@@ -973,6 +983,21 @@ func _unhandled_input(event: InputEvent) -> void:
 		_hand.clear_selection()
 		queue_redraw()
 
+func _workbench_map_click(position: Vector2) -> void:
+	if not _workbench.enabled or _art_dev_panel == null or not _art_dev_panel.accepts_battle_input(): return
+	if not Rect2(0, 0, ArenaRules.FIELD_W, ArenaRules.FIELD_H).has_point(position): return
+	if _art_dev_panel.is_select_mode():
+		_workbench.pick(get_tree().get_nodes_in_group("combatants"), position, get_viewport().canvas_transform)
+		_sync_art_dev_panel_state()
+		queue_redraw()
+	elif _art_dev_panel.has_placeable_selection():
+		_place_art_dev_item(position)
+
+func _art_dev_skill_source(unit: Unit) -> String:
+	if unit == null or bool(unit.get_meta("workbench_no_skill", false)): return ""
+	var source := unit.active_skill_card_id if not unit.active_skill_card_id.is_empty() else unit.card_id
+	return unit.card_id if CardDB.get_card(source).has("growth_ranged_id") else source
+
 func _place_art_dev_item(pos: Vector2) -> void:
 	if _workbench.selection == "training_dummy":
 		pos = _snap_to_tile_center(pos)
@@ -984,19 +1009,26 @@ func _place_art_dev_item(pos: Vector2) -> void:
 		add_child(dummy)
 		_register_dynamic_building(dummy)
 		_workbench.last_units[_art_dev_unit_key("training_dummy", _workbench.team)] = weakref(dummy)
+		if _workbench.inspect_enabled: _workbench.inspect(dummy)
 		_sync_art_dev_panel_state()
 		return
 	if not CardDB.has_card(_workbench.selection):
 		return
 	pos = _snap_card_position(_workbench.selection, pos, _workbench.team)
 	if play_card(_workbench.team, _workbench.selection, pos, {"immediate": true, "validate_position": false, "preview_active_spell": _workbench.spell_active}):
-		var unit := _latest_unit_for_card(_workbench.selection, _workbench.team)
+		var source_card := resolved_card_for_team(_workbench.team, _workbench.selection)
+		var unit := _latest_unit_for_card(source_card, _workbench.team)
+		if CardPlayHistory.is_mirror(_workbench.selection) and _workbench.spell_active:
+			for id in _active_skills.ids():
+				var entry := _active_skills.entry(int(id))
+				if int(entry.team) == _workbench.team and int(entry.slot) == 0: unit = entry.unit
 		if unit != null:
 			if _workbench.form == 1:
 				unit.transform_to_mega(true)
 			_workbench.last_units[_art_dev_unit_key(_workbench.selection, _workbench.team)] = weakref(unit)
 			_workbench.last_groups[_art_dev_unit_key(_workbench.selection, _workbench.team)] = unit.deployment_group_id
-			_configure_art_dev_unit_skill(unit)
+			if not CardPlayHistory.is_mirror(_workbench.selection) or _workbench.spell_active:
+				_configure_art_dev_unit_skill(unit)
 			_sync_art_dev_panel_state()
 
 func _latest_unit_for_card(card_id: String, p_team: int) -> Unit:
@@ -1019,6 +1051,7 @@ func living_deployment_members(group_id: int, p_team: int) -> Array[Unit]:
 	return members
 
 func _art_dev_selected_unit() -> Unit:
+	if _workbench.inspect_enabled: return _workbench.inspected_unit()
 	var candidate_ref = _workbench.last_units.get(_art_dev_unit_key(_workbench.selection, _workbench.team))
 	var candidate = (candidate_ref as WeakRef).get_ref() if candidate_ref is WeakRef else null
 	if candidate is Unit and is_instance_valid(candidate) and candidate.hp > 0.0:
@@ -1041,6 +1074,13 @@ func _set_art_dev_team(team: int) -> void:
 
 func _art_dev_selected_skill(card_id: String = "", requested_index: int = -1) -> Dictionary:
 	var resolved_card_id := _workbench.selection if card_id.is_empty() else card_id
+	if CardPlayHistory.is_mirror(resolved_card_id):
+		var unit := _art_dev_selected_unit()
+		if unit == null or unit.active_ability_id < 0: return {}
+		resolved_card_id = unit.active_skill_card_id
+	if CardDB.get_card(resolved_card_id).has("growth_ranged_id"):
+		var selected := _art_dev_selected_unit()
+		if selected != null: resolved_card_id = selected.card_id
 	var skills := CardDB.active_skills_for(resolved_card_id)
 	if skills.is_empty():
 		return {}
@@ -1062,21 +1102,22 @@ func _on_art_dev_active_skill_selected(item_id: String, skill_index: int) -> voi
 	if skills.is_empty():
 		return
 	_workbench.skill_choices[item_id] = clampi(skill_index, 0, skills.size() - 1)
-	if item_id == _workbench.selection:
-		var unit := _art_dev_selected_unit()
-		if unit != null:
-			_configure_art_dev_unit_skill(unit)
+	var unit := _art_dev_selected_unit()
+	if unit != null and item_id == (_art_dev_skill_source(unit) if _workbench.inspect_enabled else resolved_card_for_team(_workbench.team, _workbench.selection)):
+		_configure_art_dev_unit_skill(unit)
 	_sync_art_dev_panel_state()
 
-## 美术面板不消耗正式主动资格，允许对最后放置的同卡单位反复检查技能演出。
+## 工作台不消耗正式主动资格；技能取显式目标的来源卡，不取待放置卡。
 func _use_art_dev_active_skill(skill_index: int = -1) -> void:
 	var unit := _art_dev_selected_unit()
 	if unit == null or not unit.is_deployed() or unit.is_active_skill_rush_locked() or unit.is_form_transitioning() or unit.is_active_skill_casting():
 		return
-	var skill := _art_dev_selected_skill(_workbench.selection, skill_index)
+	if _workbench.inspect_enabled and _art_dev_skill_source(unit).is_empty(): return
+	var skill := _art_dev_selected_skill(_art_dev_skill_source(unit) if _workbench.inspect_enabled else _workbench.selection, skill_index)
 	if skill.is_empty():
 		return
-	_workbench.skill_choices[_workbench.selection] = clampi(skill_index, 0, CardDB.active_skills_for(_workbench.selection).size() - 1) if skill_index >= 0 else int(_workbench.skill_choices.get(_workbench.selection, 0))
+	var skill_source := _art_dev_skill_source(unit)
+	_workbench.skill_choices[skill_source] = clampi(skill_index, 0, CardDB.active_skills_for(skill_source).size() - 1) if skill_index >= 0 else int(_workbench.skill_choices.get(skill_source, 0))
 	unit.configure_carried_active_skill(skill)
 	preview_active_skill(unit, skill)
 	_sync_art_dev_panel_state()
@@ -1117,6 +1158,10 @@ func _sync_art_dev_panel_state() -> void:
 	if _art_dev_panel == null:
 		return
 	var unit := _art_dev_selected_unit()
+	if _workbench.inspect_enabled:
+		_art_dev_panel.bind_inspected_unit(unit, _art_dev_skill_source(unit))
+	elif CardPlayHistory.is_mirror(_workbench.selection):
+		_art_dev_panel.set_mirror_source(unit.active_skill_card_id if unit != null else resolved_card_for_team(_workbench.team, _workbench.selection), unit != null and unit.active_ability_id >= 0)
 	_art_dev_panel.update_selected_unit_state(
 		unit != null,
 		unit != null and unit.is_deployed(),
@@ -1142,10 +1187,15 @@ func _register_dynamic_building(unit: Unit) -> void:
 
 func _clear_art_dev_units() -> void:
 	_workbench.clear()
+	_card_history.clear()
+	_card_growth.clear()
 
 func clear_preview_battle() -> void:
+	_card_history.clear()
+	_card_growth.clear()
 	_commands.clear()
 	for combatant in get_tree().get_nodes_in_group("combatants"):
+		combatant.bleeding.clear()
 		if not combatant is Unit:
 			continue
 		var unit := combatant as Unit
@@ -1170,8 +1220,11 @@ func _arena_tile_center(tile: Vector2i) -> Vector2:
 func _snap_to_tile_center(pos: Vector2) -> Vector2:
 	return _deployment_rules.snap_to_tile_center(pos)
 
+func resolved_card_for_team(p_team: int, card_id: String) -> String:
+	return String(_card_history.get_last(p_team).get("card_id", card_id)) if CardPlayHistory.is_mirror(card_id) else card_id
+
 func _snap_card_position(card_id: String, pos: Vector2, p_team: int = -1) -> Vector2:
-	return _deployment_rules.snap_card_position(card_id, pos, p_team)
+	return _deployment_rules.snap_card_position(resolved_card_for_team(p_team, card_id), pos, p_team)
 
 func _pos_in_deploy_zone(pos: Vector2, p_team: int, is_spell: bool) -> bool:
 	return _deployment_rules.pos_in_deploy_zone(pos, p_team, is_spell)
@@ -1207,7 +1260,8 @@ func _can_deploy_at(pos: Vector2, radius: float, is_air: bool = false, footprint
 	return _deployment_rules.can_deploy_at(pos, radius, is_air, footprint, is_building_card)
 
 func is_card_deploy_position_valid(p_team: int, card_id: String, pos: Vector2) -> bool:
-	return _deployment_rules.is_card_deploy_position_valid(p_team, card_id, pos)
+	if CardPlayHistory.is_mirror(card_id) and _card_history.get_last(p_team).is_empty(): return false
+	return _deployment_rules.is_card_deploy_position_valid(p_team, resolved_card_for_team(p_team, card_id), pos)
 
 func _structure_gap_to_circle(c: Node2D, center: Vector2, radius: float) -> float:
 	if c.has_method("surface_gap_to_circle"):
@@ -1315,13 +1369,13 @@ func ensure_unit_form_resize_safe(unit: Unit) -> void:
 func _nearest_valid_building_spawn(team: int, card_id: String, requested: Vector2) -> Vector2:
 	return _deployment_rules.nearest_valid_building_spawn(team, card_id, requested)
 
-func _deploy_card(p_team: int, card_id: String, pos: Vector2, input_tick: int = -1) -> int:
+func _deploy_card(p_team: int, card_id: String, pos: Vector2, input_tick: int = -1, deployment_card_id: String = "", mirror_copy: Dictionary = {}) -> int:
 	# 玩家、AI 与联机请求统一从 input_tick 进入 10 Tick 权威队列；召唤物不受此延迟影响。
 	pos = _snap_card_position(card_id, pos, p_team)
 	var resolved_execute_tick := _resolve_command_execute_tick(input_tick)
 	if resolved_execute_tick < 0:
 		return -1
-	_commands.enqueue_card(p_team, card_id, pos, resolved_execute_tick)
+	_commands.enqueue_card(p_team, card_id, pos, resolved_execute_tick, deployment_card_id, mirror_copy)
 	return resolved_execute_tick
 
 ## 玩家、AI、联机 RPC 与 DevelopmentWorkbench 共用的出牌命令入口。
@@ -1331,6 +1385,8 @@ func play_card(p_team: int, card_id: String, pos: Vector2, options: Dictionary =
 		return false
 	if game_over or not pos.is_finite() or not CardDB.has_card(card_id):
 		return false
+	var mirror_copy := _card_history.get_last(p_team) if CardPlayHistory.is_mirror(card_id) else {}
+	if CardPlayHistory.is_mirror(card_id) and mirror_copy.is_empty(): return false
 	var stats := CardDB.get_card(card_id)
 	if StringName(stats.get("type", "unit")) == &"spell" and not SPELL_SYSTEM_SCRIPT.supports(StringName(stats.get("spell_kind", ""))):
 		return false
@@ -1353,7 +1409,9 @@ func play_card(p_team: int, card_id: String, pos: Vector2, options: Dictionary =
 	if options.has("elixir") and elixir == null:
 		return false
 	# 主动槽法术（如治疗术的主动选项）的实际费用含 active_cost_bonus；扣费、预检与回滚共用。
-	var card_cost := card_cost_for_team(p_team, card_id)
+	var payer = elixir if elixir != null else _elixir_for_team(p_team)
+	var deployment_card_id := _card_growth.resolved_id(p_team, CardDB.deployment_card_id(card_id, payer.elixir if payer != null else 0.0))
+	var card_cost := CardDB.deployment_cost(card_id, payer.elixir if payer != null else 0.0) if stats.has("deployment_upgrade_id") else card_cost_for_team(p_team, card_id)
 	if bool(options.get("client_request", false)):
 		if mode != "client" or immediate or elixir == null or not elixir.can_afford(card_cost):
 			return false
@@ -1365,15 +1423,22 @@ func play_card(p_team: int, card_id: String, pos: Vector2, options: Dictionary =
 	if elixir != null and not elixir.spend(card_cost):
 		return false
 	if immediate:
+		if not mirror_copy.is_empty():
+			mirror_copy["generation"] = _card_history.begin_mirror(p_team)
+			_cast_spell(p_team, card_id, pos, bool(options.get("preview_active_spell", false)), 0, mirror_copy)
+			_refresh_mirror_hand(p_team)
+			return true
+		_card_history.record(p_team, card_id, deployment_card_id, int(CardDB.get_card(deployment_card_id).get("cost", card_cost)))
+		_refresh_mirror_hand(p_team)
 		var type := String(stats.get("type", "unit"))
 		if type == "spell":
 			var active_enabled := _workbench.enabled and bool(options.get("preview_active_spell", false))
 			var active_skill_index := int(_workbench.skill_choices.get(card_id, 0)) if active_enabled else 0
 			_cast_spell(p_team, card_id, pos, active_enabled, active_skill_index)
 		elif type == "building" or float(stats.get("pre_deploy_time", 0.0)) > 0.0:
-			_execute_card_deployment(p_team, card_id, pos)
+			_execute_card_deployment(p_team, card_id, pos, deployment_card_id)
 		else:
-			_spawn_card_units(p_team, card_id, pos)
+			_spawn_card_units(p_team, card_id, pos, -1.0, -1, -1, deployment_card_id)
 		return true
 	# 只有命令已完成权威校验、扣费与手牌轮换后才向客户端确认。
 	if not _consume_authoritative_card(p_team, card_id):
@@ -1381,15 +1446,21 @@ func play_card(p_team: int, card_id: String, pos: Vector2, options: Dictionary =
 		if elixir != null:
 			elixir.elixir += float(card_cost)
 		return false
-	var execute_tick := _deploy_card(p_team, card_id, pos, input_tick)
+	if not mirror_copy.is_empty():
+		mirror_copy["generation"] = _card_history.begin_mirror(p_team)
+		_clear_active_slot(p_team, _active_card_slot_for_team(p_team, card_id))
+	var execute_tick := _deploy_card(p_team, card_id, pos, input_tick, deployment_card_id, mirror_copy)
 	if execute_tick < 0:
 		# 仅作为未来扩展的兜底；常规异常 Tick 已在扣费/轮换前被拒绝。
 		return false
+	if mirror_copy.is_empty():
+		_card_history.record(p_team, card_id, deployment_card_id, int(CardDB.get_card(deployment_card_id).get("cost", card_cost)))
+	_refresh_mirror_hand(p_team)
 	var requester_peer_id := int(options.get("requester_peer_id", 0))
 	if mode == "host" and requester_peer_id > 0:
 		_rpc_deploy_accepted.rpc_id(
 			requester_peer_id, _session.session_id, card_id, execute_tick,
-			get_authoritative_hand(p_team), get_authoritative_queue(p_team)
+			get_authoritative_hand(p_team), get_authoritative_queue(p_team), _card_history.get_last(p_team)
 		)
 	return true
 
@@ -1399,7 +1470,7 @@ func _tick_pending_card_deployments(_dt: float) -> void:
 		_execute_card_deployment(
 			int(deployment.team),
 			String(deployment.card_id),
-			deployment.pos as Vector2
+			deployment.pos as Vector2, String(deployment.get("deployment_card_id", "")), deployment.get("mirror_copy", {})
 		)
 
 func _tick_pending_card_pre_deployments(dt: float) -> void:
@@ -1407,17 +1478,20 @@ func _tick_pending_card_pre_deployments(dt: float) -> void:
 	for deployment in ready:
 		_spawn_card_units(
 			int(deployment.team), String(deployment.card_id), deployment.pos as Vector2,
-			-1.0, int(deployment.get("active_slot", -1)), int(deployment.get("id", -1))
+			-1.0, int(deployment.get("active_slot", -1)), int(deployment.get("id", -1)), String(deployment.get("deployment_card_id", "")), int(deployment.get("mirror_generation", -1))
 		)
 
-func _execute_card_deployment(p_team: int, card_id: String, pos: Vector2) -> void:
+func _execute_card_deployment(p_team: int, card_id: String, pos: Vector2, deployment_card_id: String = "", mirror_copy: Dictionary = {}, slot_override: int = -2, mirror_generation: int = -1) -> void:
+	if CardPlayHistory.is_mirror(card_id):
+		_cast_spell(p_team, card_id, pos, _card_has_active_for_team(p_team, card_id), 0, mirror_copy)
+		return
 	var stats: Dictionary = CardDB.get_card(card_id)
 	var type: String = stats.get("type", "unit")
-	var active_slot := _active_card_slot_for_team(p_team, card_id)
+	var active_slot := _active_card_slot_for_team(p_team, card_id) if slot_override == -2 else slot_override
 	var pre_deploy_time := maxf(float(stats.get("pre_deploy_time", 0.0)), 0.0)
 	if pre_deploy_time > 0.0 and type != "spell":
 		var pre_deploy_id := _commands.allocate_deployment_id()
-		_commands.enqueue_deployment(p_team, card_id, pos, pre_deploy_time, active_slot, pre_deploy_id, pre_deploy_time)
+		_commands.enqueue_deployment(p_team, card_id, pos, pre_deploy_time, active_slot, pre_deploy_id, pre_deploy_time, deployment_card_id, mirror_generation)
 		if mode == "host":
 			_rpc_card_pre_deploy_started.rpc_id(_session.opponent_id, _session.session_id, pre_deploy_id, card_id, p_team, pos, pre_deploy_time)
 		_presentation_event_id += 1
@@ -1428,9 +1502,10 @@ func _execute_card_deployment(p_team: int, card_id: String, pos: Vector2) -> voi
 	match type:
 		"spell":
 			var active_skill_index := _active_skill_choice_for_team(p_team, card_id, CardDB.active_skills_for(card_id).size()) if active_slot >= 0 else 0
+			if _workbench.enabled: active_skill_index = int(_workbench.skill_choices.get(card_id, 0))
 			_cast_spell(p_team, card_id, pos, active_slot >= 0, active_skill_index)
 		_:
-			_spawn_card_units(p_team, card_id, pos, -1.0, active_slot)
+			_spawn_card_units(p_team, card_id, pos, -1.0, active_slot, -1, deployment_card_id, mirror_generation)
 
 func launch_attack(attacker: Node2D, target: Node2D, amount: float, projectile_speed: float, splash_radius: float, knockback: float, projectile_color: Color, effects: Dictionary = {}) -> bool:
 	var launched := _projectile_system.launch(attacker, target, amount, projectile_speed, splash_radius, knockback, projectile_color, effects)
@@ -1495,6 +1570,7 @@ func _rpc_projectile_launch_audio(epoch: String, id: int, source: Dictionary, po
 func notify_unit_audio_event(unit: Unit, cue: StringName, position: Vector2) -> void:
 	if unit == null or not is_instance_valid(unit):
 		return
+	unit.presentation_cue.emit(cue)
 	if cue == &"revival:end" and _audio_manager != null:
 		_audio_manager.complete_revival(unit)
 	if cue in [&"deploy:hit", &"replacement:start", &"revival:end", &"shield:cast", &"shield:applied"]:
@@ -1509,13 +1585,24 @@ func notify_unit_audio_event(unit: Unit, cue: StringName, position: Vector2) -> 
 func _rpc_unit_audio_event(epoch: String, net_id: int, cue: String, position: Vector2, attack_serial: int = -1) -> void:
 	if not _session.accepts(1, epoch, MatchSession.Phase.RUNNING) or game_over:
 		return
-	if mode != "client" or _audio_manager == null:
+	if mode != "client":
 		return
 	var unit: Unit = _client_units.get(net_id)
 	if unit != null and is_instance_valid(unit):
-		_audio_manager.play_event(unit, StringName(cue), position, attack_serial)
+		unit.presentation_cue.emit(StringName(cue))
+		if _audio_manager != null:
+			_audio_manager.play_event(unit, StringName(cue), position, attack_serial)
 
-func _cast_spell(p_team: int, card_id: String, pos: Vector2, active_enabled: bool = false, active_skill_index: int = 0) -> bool:
+func _cast_spell(p_team: int, card_id: String, pos: Vector2, active_enabled: bool = false, active_skill_index: int = 0, mirror_copy: Dictionary = {}) -> bool:
+	if CardPlayHistory.is_mirror(card_id):
+		if mirror_copy.is_empty(): return false
+		var slot := _active_card_slot_for_team(p_team, card_id) if active_enabled else -1
+		if _workbench.enabled and active_enabled: slot = 0
+		var generation := int(mirror_copy.get("generation", -1))
+		if not _card_history.is_latest_mirror(p_team, generation): slot = -1
+		_clear_active_slot(p_team, slot)
+		_execute_card_deployment(p_team, String(mirror_copy.card_id), pos, String(mirror_copy.deployment_card_id), {}, slot, generation)
+		return true
 	var cast: bool = _spell_system.cast(p_team, CardDB.get_card(card_id), pos, active_enabled, active_skill_index)
 	if cast:
 		_presentation_event_id += 1
@@ -1535,13 +1622,15 @@ func _tick_slow_effect_visuals(delta: float) -> void:
 
 ## 手牌单位卡的生成入口。一条部署命令和一个落点提示可以展开为确定性编队；
 ## 每个成员仍是独立 Unit，碰撞、索敌、快照和死亡都沿用普通单位规则。
-func _spawn_card_units(team: int, card_id: String, pos: Vector2, deploy_time_override: float = -1.0, active_slot: int = -1, pre_deploy_id: int = -1) -> Array[Unit]:
-	var stats := CardDB.get_unit_stats(card_id)
+func _spawn_card_units(team: int, card_id: String, pos: Vector2, deploy_time_override: float = -1.0, active_slot: int = -1, pre_deploy_id: int = -1, deployment_card_id: String = "", mirror_generation: int = -1) -> Array[Unit]:
+	if not _card_history.is_latest_mirror(team, mirror_generation): active_slot = -1
+	var spawn_card_id := card_id if deployment_card_id.is_empty() else deployment_card_id
+	var stats := CardDB.get_unit_stats(spawn_card_id)
 	if String(stats.get("type", "unit")) == "building":
 		var resolved := _nearest_valid_building_spawn(team, card_id, pos)
 		if not resolved.is_finite():
 			# 全场没有合法占地时保留已付费命令，下个 Tick 再试，绝不丢牌。
-			_commands.enqueue_deployment(team, card_id, pos, FixedStepClock.STEP, active_slot, pre_deploy_id, -1.0)
+			_commands.enqueue_deployment(team, card_id, pos, FixedStepClock.STEP, active_slot, pre_deploy_id, -1.0, deployment_card_id, mirror_generation)
 			return []
 		pos = resolved
 		_push_units_around(pos, float(stats.get("radius", 14.0)))
@@ -1562,7 +1651,7 @@ func _spawn_card_units(team: int, card_id: String, pos: Vector2, deploy_time_ove
 	for index in range(count):
 		var member_slot := active_slot if index == 0 else -1
 		var member_pos := pos + offsets[index]
-		var member_card_id := card_id if member_ids.is_empty() else String(member_ids[index])
+		var member_card_id := spawn_card_id if member_ids.is_empty() else String(member_ids[index])
 		var member_stats := CardDB.get_unit_stats(member_card_id)
 		var member_radius := float(member_stats.get("radius", stats.get("radius", 14.0)))
 		member_pos.x = clampf(member_pos.x, member_radius, ArenaRules.FIELD_W - member_radius)
@@ -1570,7 +1659,10 @@ func _spawn_card_units(team: int, card_id: String, pos: Vector2, deploy_time_ove
 		var skill_source_card_id := card_id
 		var member := _spawn_unit(team, member_card_id, member_pos, deploy_time_override, member_slot, pre_deploy_id, group_id, "", -1, built_on_tower_ruin, skill_source_card_id)
 		if member != null:
+			if _workbench.enabled and mirror_generation >= 0: member.set_meta("workbench_no_skill", active_slot < 0)
 			spawned.append(member)
+	if _workbench.enabled and _workbench.inspect_enabled and not spawned.is_empty():
+		_workbench.inspect(spawned[0])
 	return spawned
 
 
@@ -1661,11 +1753,11 @@ func _register_active_skill(unit: Unit, card_id: String, p_team: int) -> void:
 	if unit.active_ability_id < 0 or unit.active_ability_slot < 0 or unit.active_ability_slot >= 2 or not CardDB.has_card(card_id):
 		return
 	var stats: Dictionary = CardDB.get_card(card_id)
-	var available_skills := CardDB.active_skills_for(card_id)
+	var available_skills := CardDB.active_skills_for(unit.card_id if CardDB.get_card(card_id).has("growth_ranged_id") else card_id)
 	if available_skills.is_empty():
 		return
 	# 备战信息页只允许从候选集合中携带一个；场上实例不会同时获得多个主动技能。
-	var chosen_skill_index := _active_skill_choice_for_team(p_team, card_id, available_skills.size())
+	var chosen_skill_index := int(_workbench.skill_choices.get(card_id, 0)) if _workbench.enabled else _active_skill_choice_for_team(p_team, card_id, available_skills.size())
 	var carried_skill: Dictionary = available_skills[chosen_skill_index]
 	unit.configure_carried_active_skill(carried_skill)
 	var ability_id := unit.active_ability_id
@@ -1691,19 +1783,20 @@ func _sync_active_skill_deployment_readiness() -> void:
 		var ability_id := int(ability_value)
 		var entry: Dictionary = _active_skills.entry(ability_id)
 		var unit = entry.get("unit")
-		if not is_instance_valid(unit) or not unit is Unit or unit.hp <= 0.0:
+		if not is_instance_valid(unit) or not unit is Unit or (unit.hp <= 0.0 and not unit.death_form.waiting()):
 			_on_active_skill_unit_died(ability_id)
 			continue
 		var valid_unit := unit as Unit
-		var deployed := valid_unit.is_deployed()
+		var deployed := valid_unit.is_deployed() and not valid_unit.death_form.used
 		if _is_local_player_team(int(entry.team)) and _active_skill_bar != null:
 			_active_skill_bar.update_skill_state(
 				ability_id,
 				int(entry.get("uses_remaining", entry.get("max_uses", 1))),
 				float(entry.get("cooldown_left", 0.0)),
 				deployed,
-				float((entry.get("skill", {}) as Dictionary).get("cost", 0.0)),
-				int(entry.get("max_uses", (entry.get("skill", {}) as Dictionary).get("max_uses", 1)))
+				_active_skills.cost(ability_id),
+				int(entry.get("max_uses", (entry.get("skill", {}) as Dictionary).get("max_uses", 1))),
+				bool(entry.get("free_recast", false))
 			)
 
 func _on_active_skill_unit_died(ability_id: int) -> void:
@@ -1739,8 +1832,7 @@ func _queue_active_skill(ability_id: int, expected_team: int = -1, requester_pee
 	var execute_tick := _resolve_command_execute_tick(input_tick)
 	if execute_tick < 0:
 		return false
-	var skill: Dictionary = entry.skill
-	var payment := CommandPayment.charge(_elixir_for_team(p_team), maxf(float(skill.get("cost", 0.0)), 0.0))
+	var payment := CommandPayment.charge(_elixir_for_team(p_team), _active_skills.cost(ability_id))
 	if payment == null:
 		return false
 	_commands.enqueue_skill(ability_id, p_team, execute_tick, payment, requester_peer_id)
@@ -1754,7 +1846,7 @@ func _tick_pending_active_skills(_dt: float) -> void:
 		var ability_id := int(pending.ability_id)
 		var entry: Dictionary = _active_skills.entry(ability_id)
 		var unit = entry.get("unit")
-		var alive: bool = is_instance_valid(unit) and unit is Unit and unit.hp > 0.0
+		var alive: bool = is_instance_valid(unit) and unit is Unit and (unit.hp > 0.0 or unit.death_form.waiting())
 		if _activate_active_skill(ability_id, int(pending.team)):
 			_commands.settle_skill(pending, false)
 			continue
@@ -1780,6 +1872,10 @@ func _elixir_for_team(p_team: int) -> ElixirManager:
 		return _ai._elixir
 	return null
 
+func grant_skill_recast(unit: Unit) -> void:
+	_active_skills.grant_recast(unit.active_ability_id)
+	_sync_active_skill_deployment_readiness()
+
 func get_active_skill_snapshot(ability_id: int) -> Dictionary:
 	if not _active_skills.has(ability_id):
 		return {}
@@ -1787,6 +1883,7 @@ func get_active_skill_snapshot(ability_id: int) -> Dictionary:
 	return {
 		"uses_remaining": int(entry.get("uses_remaining", entry.get("max_uses", 1))),
 		"cooldown_left": maxf(float(entry.get("cooldown_left", 0.0)), 0.0),
+		"free_recast": bool(entry.get("free_recast", false)),
 	}
 
 ## Cast Start 后的通用 EffectExecution 队列。计时在固定 Tick 中推进，
@@ -1796,7 +1893,13 @@ func _queue_active_skill_impact(source: Unit, skill: Dictionary, impact_delay: f
 
 ## 两阶段共用技能资格；临时战斗状态不阻止提交请求。
 func _active_skill_has_qualification(ability_id: int, expected_team: int = -1) -> bool:
-	return not game_over and _active_skills.qualified(ability_id, expected_team, _card_has_active_for_team)
+	if game_over or not _active_skills.has(ability_id): return false
+	var entry := _active_skills.entry(ability_id)
+	return _active_skills.qualified(ability_id, expected_team, func(team: int, source: String) -> bool:
+		var deck := _team_deck(team)
+		var slot := int(entry.slot)
+		return slot >= 0 and slot < mini(2, deck.size()) and (String(deck[slot]) == source or CardPlayHistory.is_mirror(String(deck[slot])))
+	)
 
 ## 按钮与玩家/AI/RPC入队共用此判定。客户端只读取已同步的资格、部署和经济。
 func _can_submit_active_skill(ability_id: int, expected_team: int = -1) -> bool:
@@ -1806,10 +1909,13 @@ func _can_submit_active_skill(ability_id: int, expected_team: int = -1) -> bool:
 	if _active_skill_bar != null and _active_skill_bar.is_pending(ability_id): return false
 	var entry: Dictionary = _active_skills.entry(ability_id)
 	var payer := _elixir_for_team(int(entry.team))
-	var cost := maxf(float(entry.skill.get("cost", 0.0)), 0.0)
+	var cost := _active_skills.cost(ability_id)
 	return cost <= 0.0 or (payer != null and payer.elixir >= cost)
 
 ## 执行时费用已经预扣，不能再次以余额/本请求pending阻挡；重新检查当前权威行动权限。
+func queue_shield_explosion(unit: Unit, skill: Dictionary) -> void:
+	_active_skill_effect_system.queue_shield_explosion(unit, skill)
+
 func _active_skill_is_legal(ability_id: int, expected_team: int = -1) -> bool:
 	if not _active_skill_has_qualification(ability_id, expected_team): return false
 	return ((_active_skills.entry(ability_id).unit as Unit).action_permissions() & ControlState.START_SKILL) != 0
@@ -1820,7 +1926,7 @@ func _activate_active_skill(ability_id: int, expected_team: int = -1) -> bool:
 		if _active_skills.has(ability_id):
 			var stale_entry: Dictionary = _active_skills.entry(ability_id)
 			var stale_unit = stale_entry.get("unit")
-			if not is_instance_valid(stale_unit) or not stale_unit is Unit or stale_unit.hp <= 0.0:
+			if not is_instance_valid(stale_unit) or not stale_unit is Unit or (stale_unit.hp <= 0.0 and not stale_unit.death_form.waiting()):
 				_on_active_skill_unit_died(ability_id)
 		return false
 	var entry: Dictionary = _active_skills.entry(ability_id)
@@ -1834,11 +1940,11 @@ func _activate_active_skill(ability_id: int, expected_team: int = -1) -> bool:
 		_active_skill_bar.set_pending(ability_id, false)
 		_sync_active_skill_deployment_readiness()
 	if mode == "host":
-		_rpc_active_skill_used.rpc_id(_session.opponent_id, _session.session_id, ability_id, int(entry["uses_remaining"]), float(entry["cooldown_left"]))
+		_rpc_active_skill_used.rpc_id(_session.opponent_id, _session.session_id, ability_id, int(entry["uses_remaining"]), float(entry["cooldown_left"]), bool(entry.get("free_recast", false)))
 	return true
 
 func _start_active_skill_cast(unit: Unit, skill: Dictionary) -> bool:
-	if unit != null and unit.is_active_skill_rush_locked(): return false
+	if unit != null and (unit.is_active_skill_rush_locked() or unit.death_form.used): return false
 	var prepared_skill: Dictionary = _active_skill_effect_system.prepare_cast(unit, skill)
 	if StringName(prepared_skill.get("kind", "")) == &"dual_form":
 		prepared_skill = _active_skill_effect_system.prepare_dual_form_cast(unit, prepared_skill)
@@ -2001,7 +2107,7 @@ func _sim_step(dt: float) -> void:
 				_ai.sim_tick(dt)
 	# 在行动阶段前统一处理旧状态到期；本Tick新施加的状态不重复扣时。
 	for actor in get_tree().get_nodes_in_group("combatants"):
-		if actor.hp <= 0.0: continue
+		if actor.hp <= 0.0 and not (actor is Unit and actor.death_form.waiting()): continue
 		if actor is Unit:
 			actor._tick_active_statuses(dt)
 			actor.prepare_action_clocks(dt)
@@ -2030,6 +2136,8 @@ func _sim_step(dt: float) -> void:
 		if c is Unit: c.prepare_natural_lifecycle(dt)
 	_combat.begin_batch(_sim_tick_id, "combatants")
 	for c in combatants:
+		c.bleeding.advance(c, dt)
+	for c in combatants:
 		if c is Unit:
 			c.sim_tick(dt, true, true)
 		elif c is Tower:
@@ -2039,6 +2147,8 @@ func _sim_step(dt: float) -> void:
 	_tick_pending_card_pre_deployments(dt)
 	_sync_active_skill_deployment_readiness()
 	_movement.tick(dt)
+	for actor in get_tree().get_nodes_in_group("combatants"):
+		if actor is Unit: actor.target_protection.check_position(actor.global_position)
 	_combat.begin_batch(_sim_tick_id, "projectiles")
 	_tick_projectiles(dt)
 	_combat.commit_batch()
@@ -2316,14 +2426,14 @@ func _remove_card_pre_deploy_visual(pre_deploy_id: int) -> void:
 	_commands.remove_deployment(pre_deploy_id)
 
 @rpc("authority", "call_remote", "reliable")
-func _rpc_active_skill_used(epoch: String, ability_id: int, uses_remaining: int = 0, cooldown_left: float = 0.0) -> void:
+func _rpc_active_skill_used(epoch: String, ability_id: int, uses_remaining: int = 0, cooldown_left: float = 0.0, free_recast: bool = false) -> void:
 	if not _session.accepts(1, epoch, MatchSession.Phase.RUNNING) or game_over:
 		return
 	if mode != "client" or game_over:
 		return
 	if _active_skills.has(ability_id):
 		var entry: Dictionary = _active_skills.entry(ability_id)
-		_active_skills.replace_replica(ability_id, uses_remaining, cooldown_left)
+		_active_skills.replace_replica(ability_id, uses_remaining, cooldown_left, free_recast)
 		if _active_skill_bar != null: _active_skill_bar.set_pending(ability_id, false)
 		_sync_active_skill_deployment_readiness()
 
@@ -2353,7 +2463,7 @@ func _rpc_deploy_request(card_id: String, pos: Vector2, input_tick: int = -1, ep
 
 ## 主机 → 客户端：仅在权威扣费、轮换手牌并排程成功后确认出牌。
 @rpc("authority", "call_remote", "reliable")
-func _rpc_deploy_accepted(epoch: String, card_id: String, execute_tick: int, hand: Array, queue: Array) -> void:
+func _rpc_deploy_accepted(epoch: String, card_id: String, execute_tick: int, hand: Array, queue: Array, last_play: Dictionary = {}) -> void:
 	if not _session.accepts(1, epoch, MatchSession.Phase.RUNNING) or game_over:
 		return
 	if mode != "client" or game_over:
@@ -2364,6 +2474,8 @@ func _rpc_deploy_accepted(epoch: String, card_id: String, execute_tick: int, han
 	var cycle := CardCycle.new(_deck)
 	cycle.replace_replica(hand, queue)
 	_authoritative_card_cycles[1] = cycle
+	_card_history.replace_replica(1, last_play)
+	_refresh_mirror_hand(1)
 
 ## 主机 → 客户端：拒绝不改变权威手牌；只恢复对应卡牌按钮。
 @rpc("authority", "call_remote", "reliable")
@@ -2488,14 +2600,14 @@ func find_client_unit(id: int) -> Unit:
 func authoritative_units_snapshot() -> Dictionary:
 	for id in _net_units.keys():
 		var unit = _net_units[id]
-		if not is_instance_valid(unit) or unit.hp <= 0.0:
+		if not is_instance_valid(unit) or (unit.hp <= 0.0 and not unit.death_form.waiting()):
 			_net_units.erase(id)
 	return _net_units.duplicate()
 
-func apply_network_skill_state(unit: Unit, uses: int, cooldown_left: float) -> void:
+func apply_network_skill_state(unit: Unit, uses: int, cooldown_left: float, free_recast: bool = false) -> void:
 	if _active_skills.entry(unit.active_ability_id).get("unit") != unit:
 		return
-	_active_skills.replace_replica(unit.active_ability_id, uses, cooldown_left)
+	_active_skills.replace_replica(unit.active_ability_id, uses, cooldown_left, free_recast)
 
 ## 网络实体清理只有这一处拥有导航、复生音轨与死亡表现收尾。
 func remove_network_unit(net_id: int, play_death_visual: bool = true) -> void:
@@ -2619,10 +2731,14 @@ func _send_snapshot() -> void:
 	_snapshot_system.send()
 
 func _draw() -> void:
+	if _workbench.enabled and _workbench.inspect_enabled:
+		var inspected := _workbench.inspected_unit()
+		if inspected != null:
+			draw_arc(inspected.position, maxf(inspected.body_radius, 20.0) + 7.0, 0, TAU, 48, Color("ffe27a"), 3.0, true)
 	# 正式 3D 地图在下层视口绘制；此处只画部署提示。
 	# 选中卡牌时高亮可部署区域
 	if _selected_card != "":
-		var sel_stats: Dictionary = CardDB.get_card(_selected_card)
+		var sel_stats: Dictionary = CardDB.get_card(resolved_card_for_team(1 if mode == "client" else 0, _selected_card))
 		var deploy_zone: String = String(sel_stats.get("deploy_zone", "own_side"))
 		match deploy_zone:
 			"global":
@@ -2816,3 +2932,34 @@ func present_freeze_spell(pos: Vector2, radius: float, duration: float, slow_dur
 func present_heal_spell(pos: Vector2, radius: float, duration: float, enhanced: bool, global_heal: bool) -> void:
 	if mode == "host":
 		_rpc_heal_fx.rpc_id(network_opponent_id(), network_session_id(), pos, radius, duration, enhanced, global_heal)
+
+func _refresh_mirror_hand(team: int) -> void:
+	if _hand != null and _is_local_player_team(team):
+		_hand.set_mirror_copy(_card_history.get_last(team))
+	queue_redraw()
+
+func _clear_active_slot(team: int, slot: int) -> void:
+	if slot < 0: return
+	for id in _active_skills.ids():
+		var entry := _active_skills.entry(int(id))
+		if int(entry.team) != team or int(entry.slot) != slot: continue
+		var unit = entry.get("unit")
+		if is_instance_valid(unit):
+			unit.active_ability_id = -1
+			unit.active_ability_slot = -1
+			unit.clear_carried_active_skill_resource()
+		_cancel_pending_active_skill(int(id))
+		_active_skills.remove(int(id))
+		if _active_skill_bar != null: _active_skill_bar.remove_skill(int(id))
+
+func record_growth_hit(unit: Unit, target: Node2D) -> void:
+	if not CardDB.get_card(unit.card_id).has("growth_ranged_id"): return
+	_card_growth.record_hit(unit, target)
+	if _hand != null: _hand._refresh(0.0)
+
+func growth_snapshot() -> Dictionary:
+	return _card_growth.snapshot()
+
+func apply_growth_snapshot(value: Dictionary) -> void:
+	_card_growth.replace_replica(value)
+	if _hand != null: _hand._refresh(0.0)

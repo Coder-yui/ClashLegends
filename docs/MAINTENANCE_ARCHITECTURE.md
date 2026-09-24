@@ -12,9 +12,10 @@
 | MatchRules / CommandSchedule | 比赛规则；排程内部集合、入队/去重、取消、到期取出和收据结算 |
 | ActiveSkillRoster / CardCycle | 技能槽替换、资格、编队转交、次数/冷却；手牌初始顺序和轮换 |
 | DeploymentRules | 格心、奇偶占地、区域、结构/塔墟和最近合法建筑落点；只注入结构及地面查询 |
-| WorkbenchSession | 选择、预设、清场、暂停和工作模式；通过正式入口操作战场 |
+| WorkbenchSession | 待放置对象、显式操作单位弱引用、预设、清场和暂停；UI 区分放置/选择，通过正式入口操作战场 |
 | Unit、ControlState、AttackTimeline、ShieldState / KnockbackState | 通用单位、控制聚合、普攻状态、独立护盾层和击退轨迹 |
 | MovementSystem、ArenaRules、路径搜索 | 移动、部署几何、局部避让、碰撞与寻路 |
+| CombatInteraction / TargetProtectionState | 按来源判断新目标/效果准入、固定圣霭的唯一状态窗口及只读副本 |
 | CombatResolver / ProjectileSystem | 真实命中、弹体与命中收益 |
 | SpellSystem / ActiveSkillEffectSystem | 法术与技能区域及各自集合 |
 | UnitPresentationState / PresentationConfig / PresentationEvents | 只读状态、统一形态选择、真实事件能力 |
@@ -111,3 +112,13 @@ KnockbackState 只持有普通击退轨迹、剩余锁定时间与终止原因�
 工作台会话不读取整个 Main：注入放置、选中单位、清场、重建竞技场、暂停和视图更新端口。Main 保留节点创建/销毁与正式 play_card/preview_active_skill，预设与选择状态只在会话中维护。
 
 整理前正文及历次版本描述仅作[历史证据](archive/2026-09-22/maintenance_architecture_before_cleanup.md)。新任务从[任务导航](AGENT_WORKFLOW.md)选择相关当前资料，无需先读交付记录。
+
+按金币部署的选择和费用由CardDB提供纯查询，Main付款前固定实际生成ID，CommandSchedule持有排程副本。原卡ID保持手牌/主动资格，衍生ID走既有生成和网络路径，不新增专用英雄Unit。
+
+DeathFormState持有一次性致死换形资格、等待Tick与衰血余量；Unit保持同一实体并在自然生命周期推进，零血等待者仍由快照保留。ShieldState独占爆炸盾到期资格；Unit将自然到期结果递交ActiveSkillEffectSystem，在原skill_effects批次消费，清场清空排队结果。
+
+CardPlayHistory独占最近成功出牌与镜像部署代次；CommandSchedule持有已付款镜像副本。原卡ID负责模型、音频与技能定义，技能槽负责操作资格，两者不可再通过卡ID相等推断。主机可靠下发随机首手，客户端只应用确认。
+
+BleedState由Unit/Tower各自持有，独占按来源的流血层数/窗口/余量；Main在combatants收集前段统一推进，CombatResolver依据实际命中施加流血并发放存活来源血怒及斩杀资格。血怒归StatusInstances，免费追斩归ActiveSkillRoster，与付费次数和冷却分别保存。
+
+MatchCardGrowth持有每阵营局内成长和只读快照，Main在接受部署时固定实际定义，CardCycle仍只轮换来源牌。TerrainTraversalState归Unit，负责地形进入收益与普攻出地形门禁。UnitLandingQuery只查询连续几何；DashStrikeState由ActiveSkillEffectSystem持有，在原skill_effects阶段推进可受伤的穿单位位移与两段伤害。MovementSystem跳过突进实例的普通推挤；客户端只读位置、动作、成长快照。

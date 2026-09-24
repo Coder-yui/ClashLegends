@@ -8,6 +8,22 @@ func _process(_delta: float) -> void:
 	queue_redraw()
 
 func _draw() -> void:
+	# 固定结界仅读取权威/快照状态；不使用渲染时间改变位置、半径或有效期。
+	for actor in get_tree().get_nodes_in_group("combatants"):
+		if not actor is Unit or actor.hp <= 0.0 or not actor.target_protection.active(): continue
+		var protection: TargetProtectionState = actor.target_protection
+		var center: Vector2 = protection.center
+		var radius: float = protection.radius
+		var edge := Color(0.35, 0.90, 1.0, 0.85) if actor.team == 0 else Color(0.88, 0.48, 0.95, 0.85)
+		draw_circle(center, radius, Color(0.24, 0.73, 0.87, 0.10))
+		draw_arc(center, radius - 5.0, 0.0, TAU, 96, Color(edge.r, edge.g, edge.b, 0.16), 12.0, true)
+		draw_arc(center, radius, 0.0, TAU, 96, edge, 2.4, true)
+		draw_arc(center, radius - 8.0, 0.0, TAU, 96, Color(0.88, 1.0, 1.0, 0.5), 1.0, true)
+		for index in 24:
+			var angle := TAU * float(index) / 24.0
+			var point := center + Vector2.from_angle(angle) * (radius - 4.0)
+			var tangent := Vector2.from_angle(angle + PI * 0.25) * 4.0
+			draw_line(point - tangent, point + tangent, Color(0.90, 1.0, 1.0, 0.65), 1.5, true)
 	for effect in skills.shield_effects:
 		var elapsed := float(effect.duration) - float(effect.timer)
 		var reach := clampf(elapsed / 0.28, 0.0, 1.0)
@@ -91,6 +107,28 @@ func _draw_frontal_skill_effect(effect: Dictionary) -> void:
 	var line_color := Color(0.28, 0.68, 1.0, 0.9) if int(effect.get("team", 0)) == 0 else Color(1.0, 0.34, 0.24, 0.9)
 	var fill_color := Color(line_color.r, line_color.g, line_color.b, 0.10 + 0.06 * remaining_ratio)
 	var shape := StringName(effect.get("shape", "rectangle"))
+	if shape == &"shield_explosion":
+		var reach := maxf(length, 1.0)
+		# 前80毫秒冲至外圈，随后只留下逐渐消散的余焰；不把伤害画成缓慢扩散波。
+		var elapsed := progress * float(effect.get("duration", 0.45))
+		var burst := 1.0 - pow(1.0 - clampf(elapsed / 0.08, 0.0, 1.0), 3.0)
+		var flash := pow(maxf(1.0 - elapsed / 0.10, 0.0), 2.0)
+		var tail := pow(remaining_ratio, 2.0)
+		var radius := reach * lerpf(0.25, 1.0, burst)
+		draw_circle(center, radius * 0.86, Color(0.34, 0.008, 0.035, 0.32 * tail))
+		draw_circle(center, radius * 0.65, Color(0.60, 0.018, 0.065, 0.7 * flash))
+		draw_circle(center, radius * 0.30, Color(0.88, 0.065, 0.14, flash))
+		# 用整片爆发与不规则余焰表达范围伤害，不绘制范围指示线。
+		for index in 18:
+			var angle := TAU * float(index) / 18.0 + 0.16 * sin(float(index) * 3.7)
+			var direction := Vector2.from_angle(angle)
+			var cloud_radius := reach * (0.18 + 0.06 * sin(float(index) * 2.3))
+			var distance := (reach - cloud_radius) * burst * (0.82 + 0.18 * sin(float(index) * 1.9))
+			var cloud_center := center + direction * distance
+			draw_circle(cloud_center, cloud_radius * (0.8 + 0.2 * progress), Color(0.36 + 0.12 * flash, 0.008, 0.04, 0.42 * tail))
+			draw_circle(cloud_center - direction * cloud_radius * 0.25, cloud_radius * 0.55, Color(0.66, 0.018, 0.075, 0.36 * tail))
+
+		return
 	if shape == &"continuous_area":
 		var radius := maxf(length, 0.0)
 		var pulse := 0.5 + 0.5 * sin(progress * TAU * 2.0)

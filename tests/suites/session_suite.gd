@@ -66,12 +66,14 @@ func _check_default_local_deck(harness: Object) -> void:
 	local._minion_waves_enabled = false
 	local._elixir.elixir = 10.0
 	var visible: Array = local._hand._hand.duplicate()
-	harness._expect(local._deck.size() == 8 and visible == local.get_authoritative_hand(0) and visible == local.get_authoritative_hand(1), "直接单机启动的默认卡组、显示手牌与双方权威循环一致")
+	harness._expect(local._deck.size() == 8 and visible == local.get_authoritative_hand(0) and local.get_authoritative_hand(1).size() == 4, "直接单机启动的默认卡组、显示手牌与本地权威循环一致，AI独立随机四张")
 	var card: String = visible[0]
 	var cost: float = local.card_cost_for_team(0, card)
 	var accepted: bool = local.play_card(0, card, Vector2(300, 900), {"elixir": local._elixir})
 	harness._expect(accepted and is_equal_approx(local._elixir.elixir, 10.0 - cost) and local._hand._hand != visible, "直接单机启动可以真实扣费出牌并轮换")
-	for tick in 11: local._sim_step(0.05)
+	# 默认手牌随机，潘森等卡还有预部署窗口；不能固定只等命令缓冲。
+	var wait_ticks := ceili((0.5 + float(CardDB.get_card(card).get("pre_deploy_time", 0.0))) / local.SIM_DT) + 1
+	for tick in wait_ticks: local._sim_step(local.SIM_DT)
 	var spawned := false
 	for unit in harness.get_nodes_in_group("combatants"):
 		if unit is Unit and unit.card_id == card and unit.team == 0: spawned = true

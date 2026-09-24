@@ -8,6 +8,15 @@ var _controller: Node2D
 func _init(controller: Node2D) -> void:
 	_controller = controller
 
+func queue_shield_explosion(unit: Unit, skill: Dictionary) -> void:
+	_controller.queue_shield_explosion(unit, skill)
+
+func find_unit_landing(unit: Unit, desired: Vector2, allow_terrain: bool) -> Vector2:
+	return UnitLandingQuery.find_position(unit, desired, allow_terrain)
+
+func record_growth_hit(unit: Unit, target: Node2D) -> void:
+	_controller.record_growth_hit(unit, target)
+
 func is_net_client() -> bool:
 	return _controller.is_net_client()
 
@@ -67,6 +76,9 @@ func notify_unit_died(net_id: int, play_death_visual: bool = true) -> void:
 
 func notify_tower_hit(tower: Tower) -> void:
 	_controller.on_tower_hit(tower)
+
+func grant_skill_recast(unit: Unit) -> void:
+	_controller.grant_skill_recast(unit)
 
 func damage_batch() -> CombatResolver:
 	return _controller.combat_service()

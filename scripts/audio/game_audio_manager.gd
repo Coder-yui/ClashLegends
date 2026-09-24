@@ -152,6 +152,7 @@ func attach_unit(unit: Unit, stats: Dictionary) -> void:
 		"active_action": &"",
 		"action_audio_elapsed": maxf(0.0, unit.get_visual_action_duration() - unit.get_visual_action_time_left()) if unit.get_visual_action_time_left() > 0.0 else -0.001,
 		"active_buff": unit.get_active_buff_active_visual(),
+		"sanctuary_active": false,
 		"continuous_active": false,
 		"idle_active": false,
 	}
@@ -185,6 +186,7 @@ func _process(delta: float) -> void:
 		_tick_terminal_audio(audio_delta, true)
 	if _battle_ended or _battle_paused:
 		return
+	_tick_sustain_fades(delta)
 	_tick_zone_audio(delta)
 	_tick_building_damage_audio()
 	_tick_building_audio(delta)
@@ -265,6 +267,20 @@ func _tick_attached_units() -> void:
 			entry.continuous_active = false
 			entry.idle_active = false
 		var state: UnitPresentationState = unit.presentation_state()
+		for layer: StringName in [&"explosive_shield", &"berserk", &"blood_rage"]:
+			var enabled: bool = (unit.has_explosive_shield() if layer == &"explosive_shield" else (unit.death_form.used and not unit.death_form.waiting() and unit.hp > 0.0))
+			if layer == &"blood_rage": enabled = unit.blood_rage_time_left_visual() > 0.0 and not state.dead
+			if enabled and not bool(entry.get(layer, false)): _start_sustain(unit, entry, layer, layer)
+			if not enabled and bool(entry.get(layer, false)): _stop_sustain(instance_id, layer, true)
+			entry[layer] = enabled
+		var sanctuary_active: bool = unit.target_protection.active() and not state.dead
+		if sanctuary_active and (not bool(entry.get("sanctuary_active", false)) or int(entry.get("sanctuary_serial", -1)) != unit.target_protection.serial):
+			_start_sustain(unit, entry, &"sanctuary", &"sanctuary")
+		if bool(entry.get("sanctuary_active", false)) and not sanctuary_active:
+			_stop_sustain(instance_id, &"sanctuary")
+			play_event(unit, &"sanctuary:end", unit.target_protection.center)
+		entry.sanctuary_active = sanctuary_active
+		entry.sanctuary_serial = unit.target_protection.serial
 		var idle := state.behavior == 1 and state.action_time_left <= 0.0 and not state.dead
 		if idle and not bool(entry.idle_active):
 			_start_sustain(unit, entry, &"idle", &"idle")
@@ -298,7 +314,7 @@ func _tick_attached_units() -> void:
 		var swing_due := state.attack_elapsed + 0.001 >= swing_delay
 		if swing_delay > 0.0 and (state.dead or state.action_time_left > 0.0 or (state.behavior != 3 and not controlled)):
 			entry.last_swing_serial = serial
-		# 技能可在当前攻击前摇中强化这一击；同一个攻击序号也需要切换声音。
+		# 强化刷新会取消旧挥击并发布新攻击序号，Buff声独立保留。
 		if not attack_cancelled and serial > 0 and empowered_serial == serial and empowered_serial != int(entry.last_empowered_serial):
 			entry.last_swing_serial = serial
 			if not play_event(unit, &"empowered_swing", unit.get_visual_screen_position()):
@@ -347,10 +363,10 @@ func _tick_attached_units() -> void:
 		if full and not bool(entry.resource_full):
 			play_event(unit, &"resource_full", unit.get_visual_screen_position())
 		entry.resource_full = full
-		for layer in [&"action", &"buff", &"attack", &"revival", &"idle"]:
+		for layer in [&"action", &"buff", &"attack", &"revival", &"idle", &"sanctuary", &"explosive_shield", &"berserk", &"blood_rage"]:
 			var sustained: AudioStreamPlayer2D = _sustain_players.get(_sustain_key(instance_id, layer))
 			if sustained != null:
-				sustained.global_position = unit.get_visual_screen_position()
+				sustained.global_position = unit.target_protection.center if layer == &"sanctuary" else unit.get_visual_screen_position()
 				sustained.stream_paused = false
 		entry.active_buff = active_buff
 		entry.action_serial = action_serial
@@ -381,27 +397,50 @@ func _start_sustain(unit: Unit, entry: Dictionary, action: StringName, layer: St
 	var player := _new_world_player()
 	player.bus = StringName(event.get("bus", "Combat"))
 	player.volume_db = float(event.get("volume_db", 0.0))
-	player.stream = _randomized_stream(PackedStringArray(event.get("pool", [])))
+	player.stream = _randomized_stream(PackedStringArray(event.get("pool", [])), layer in [&"explosive_shield", &"berserk", &"blood_rage"])
 	add_child(player)
-	player.global_position = unit.get_visual_screen_position()
+	player.global_position = unit.target_protection.center if layer == &"sanctuary" else unit.get_visual_screen_position()
 	var key := _sustain_key(unit.get_instance_id(), layer)
 	player.set_meta("audio_priority", priority)
 	_sustain_players[key] = player
 	player.finished.connect(_on_sustain_finished.bind(key, player))
+	player.set_meta("fade_out", float(event.get("fade_out", 0.0)))
+	var fade_in := float(event.get("fade_in", 0.0))
+	if fade_in > 0.0:
+		player.set_meta("sustain_fade", {"elapsed": 0.0, "duration": fade_in, "from": 0.0, "to": player.volume_linear, "stop": false})
+		player.volume_linear = 0.0
 	player.play()
 	cue_played.emit(String(entry.card_id), cue, player.global_position)
 	_record_budget("sustain", "played")
 
+## 线性振幅渐变只走表现时间；暂停冻结进度，终局直接清理所有尾音。
+func _tick_sustain_fades(delta: float) -> void:
+	for key in _sustain_players.keys():
+		var player: AudioStreamPlayer2D = _sustain_players[key]
+		if not player.has_meta("sustain_fade"): continue
+		var fade: Dictionary = player.get_meta("sustain_fade")
+		fade.elapsed = minf(float(fade.elapsed) + delta, float(fade.duration))
+		player.volume_linear = lerpf(float(fade.from), float(fade.to), float(fade.elapsed) / float(fade.duration))
+		if float(fade.elapsed) >= float(fade.duration):
+			if fade.stop: _stop_sustain_key(key)
+			else: player.remove_meta("sustain_fade")
+
 func _sustain_key(instance_id: int, layer: StringName = &"action") -> String:
 	return "%d:%s" % [instance_id, layer]
 
-func _stop_sustain(instance_id: int, layer: StringName = &"") -> void:
-	for candidate in [&"action", &"buff", &"attack", &"revival", &"idle"] if layer == &"" else [layer]:
-		_stop_sustain_key(_sustain_key(instance_id, candidate))
+func _stop_sustain(instance_id: int, layer: StringName = &"", fade: bool = false) -> void:
+	for candidate in [&"action", &"buff", &"attack", &"revival", &"idle", &"sanctuary", &"explosive_shield", &"berserk", &"blood_rage"] if layer == &"" else [layer]:
+		_stop_sustain_key(_sustain_key(instance_id, candidate), fade)
 
-func _stop_sustain_key(key: String) -> void:
+func _stop_sustain_key(key: String, fade: bool = false) -> void:
 	var player: AudioStreamPlayer2D = _sustain_players.get(key)
 	if player != null:
+		var duration := float(player.get_meta("fade_out", 0.0)) if fade else 0.0
+		if duration > 0.0:
+			_sustain_players.erase(key)
+			_sustain_players[key + ":tail"] = player
+			player.set_meta("sustain_fade", {"elapsed": 0.0, "duration": duration, "from": player.volume_linear, "to": 0.0, "stop": true})
+			return
 		player.stop()
 		player.queue_free()
 		_sustain_players.erase(key)
@@ -423,14 +462,14 @@ func _event_owner(unit: Unit, cue: StringName) -> Dictionary:
 	if cue in [&"empowered_swing", &"first_strike:cast", &"attack_swing", &"continuous_attack:start", &"continuous_attack:release"]:
 		return {"unit": unit.get_instance_id(), "kind": "attack", "serial": unit.get_attack_visual_serial()}
 	var phase := name.get_slice(":", 1)
-	if name.get_slice(":", 0) in ["active_buff", "empowered_buff", "revival"] or cue in [&"empowered_ready", &"resource_full", &"passive_heal", &"active:cast"]:
+	if name.get_slice(":", 0) in ["active_buff", "empowered_buff", "revival", "rebirth", "sanctuary", "blood_rage"] or cue in [&"empowered_ready", &"resource_full", &"passive_heal", &"active:cast"]:
 		return {}
 	if phase in ["start", "voice", "sustain", "release", "end"] and not name.begins_with("continuous_attack"):
 		return {"unit": unit.get_instance_id(), "kind": "action", "serial": unit.get_visual_action_serial()}
 	return {}
 
 func _on_action_cancelled(payload: Dictionary, instance_id: int) -> void:
-	var freeze := String(payload.get("reason", "")) == "freeze"
+	var freeze := String(payload.get("reason", "")) in ["freeze", "death_form"]
 	for player in _world_players:
 		var owner: Dictionary = player.get_meta("action_owner", {})
 		if int(owner.get("unit", -1)) != instance_id:
@@ -456,7 +495,7 @@ func _detach_unit(instance_id: int) -> void:
 	_stop_sustain(instance_id)
 	_unit_entries.erase(instance_id)
 func _on_unit_death(instance_id: int) -> void:
-	_stop_sustain(instance_id)
+	_stop_sustain(instance_id, &"", true)
 	var entry: Dictionary = _unit_entries.get(instance_id, {})
 	if entry.is_empty():
 		return
@@ -677,7 +716,7 @@ func prepare_audio(value: Variant, looping: bool = false) -> void:
 			var paths := PackedStringArray(value.pool)
 			_randomized_stream(paths)
 			if looping: _randomized_stream(paths, true)
-		for key in value: prepare_audio(value[key], String(key) == "idle:sustain")
+		for key in value: prepare_audio(value[key], String(key) in ["idle:sustain", "explosive_shield:sustain", "berserk:sustain", "blood_rage:sustain"])
 	elif value is Array:
 		for child in value: prepare_audio(child)
 

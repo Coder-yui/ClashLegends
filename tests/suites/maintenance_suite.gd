@@ -328,7 +328,7 @@ func _check_status_instances(harness: Object) -> void:
 
 func _check_state_ownership(harness: Object) -> void:
 	var deck: Array = ["a", "b", "c", "d", "e", "f", "g", "h"]
-	var cycle := CardCycle.new(deck)
+	var cycle := CardCycle.new(deck, false)
 	deck[0] = "changed"
 	harness._expect(cycle.hand() == ["a", "b", "c", "d"] and cycle.queue() == ["e", "f", "g", "h"], "手牌初始顺序与输入隔离")
 	var view := cycle.hand()

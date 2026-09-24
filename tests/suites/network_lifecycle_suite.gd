@@ -24,6 +24,36 @@ func run(harness: Object, main: Node2D) -> void:
 	_system = SNAP.new(main, main._projectile_system)
 	main._snapshot_system = _system
 	_check_payload_contract()
+	_check_bleeding_projection()
+	_system.reset_session("death-form")
+	var dormant := _payload("sion", 76000, 1)
+	dormant[SNAP.U_CANCELLATION] = {"serial": 1, "reason": "death_form", "attack": 0, "action": 0, "form": 0, "cancelled_action": 0, "cancelled_deployment": false}
+	dormant[SNAP.U_HP] = 0
+	dormant[SNAP.U_DEATH_FORM] = [true, 39]
+	dormant[SNAP.U_ACTION_PERMISSIONS] = 0
+	dormant[SNAP.U_ACTION_SERIAL] = 1
+	dormant[SNAP.U_ACTION_NAME] = "death_form"
+	dormant[SNAP.U_ACTION_DURATION] = 2.0
+	dormant[SNAP.U_ACTION_TIME_LEFT] = 1.95
+	_deliver(2, [dormant])
+	var resting: Unit = main._client_units[76000]
+	_expect(resting.hp == 0 and resting.death_form.waiting() and not resting.presentation_state().dead, "复生零血快照重建保留模型与同一实体")
+	var half_reborn: Array = dormant.duplicate(true)
+	half_reborn[SNAP.U_DEATH_FORM] = [true, 20]
+	half_reborn[SNAP.U_ACTION_TIME_LEFT] = 1.0
+	_deliver(20, [half_reborn])
+	resting.presentation_state().advance_health_bar(0.0)
+	_expect(resting.hp == 0 and is_equal_approx(resting.presentation_state().health_ratio, 0.5), "客户端按权威复生快照显示半血，真实生命仍为零")
+	var awakened: Array = dormant.duplicate(true)
+	awakened[SNAP.U_HP] = 2400
+	awakened[SNAP.U_FORM] = 1
+	awakened[SNAP.U_FORM_CHANGE_SERIAL] = 1
+	awakened[SNAP.U_DEATH_FORM] = [true, 0]
+	awakened[SNAP.U_ACTION_TIME_LEFT] = 0.0
+	awakened[SNAP.U_ACTION_PERMISSIONS] = ControlState.ALL_PERMISSIONS & ~ControlState.START_SKILL
+	_deliver(21, [awakened])
+	_deliver(2, [dormant])
+	_expect(main._client_units[76000] == resting and resting.hp == 2400 and resting.get_form_index() == 1 and not resting.death_form.waiting(), "复生形态快照保持身份，迟到零血快照不可回滚")
 	main._projectile_system.apply_client_targets({1: {"pos": Vector2.ZERO, "visual_offset": Vector2.ZERO}})
 	_system.reset_session("one")
 	_expect(main._projectile_system.client_snapshot().is_empty(), "新会话由弹体所有者清除上一局客户端状态")
@@ -296,6 +326,7 @@ func _check_permission_projection() -> void:
 func _check_payload_contract() -> void:
 	_system.reset_session("payload-contract")
 	var data := _payload("gwen", 79000, 1)
+	data[SNAP.U_TARGET_PROTECTION] = [Vector2(360, 900), 120.0, 3.5, 2]
 	data[SNAP.U_HP] = 321.0
 	data[SNAP.U_STUN] = 1
 	data[SNAP.U_DEPLOY_LEFT] = 0.2
@@ -308,10 +339,51 @@ func _check_payload_contract() -> void:
 		if delta < 0: malformed[SNAP.S_UNITS][0].pop_back()
 		else: malformed[SNAP.S_UNITS][0].insert(7, 0)
 		_expect(not _system.apply(var_to_bytes(malformed).compress(FileAccess.COMPRESSION_DEFLATE)) and _main._client_units.is_empty(), "单位载荷增减字段均拒绝，不产生错位实体")
+	for invalid_protection in [[Vector2(INF, 0), 120.0, 4.0, 1], [Vector2.ZERO, -1.0, 4.0, 1], [Vector2.ZERO, 120.0, "bad", 1], []]:
+		var invalid_packet := packet.duplicate(true)
+		invalid_packet[SNAP.S_UNITS][0][SNAP.U_TARGET_PROTECTION] = invalid_protection
+		_expect(not _system.apply(var_to_bytes(invalid_packet).compress(FileAccess.COMPRESSION_DEFLATE)), "非法圣霭载荷拒绝整份快照")
 	var old := packet.duplicate(true)
 	old[SNAP.S_VERSION] = MatchSession.PROTOCOL_VERSION - 1
 	_expect(not _system.apply(var_to_bytes(old).compress(FileAccess.COMPRESSION_DEFLATE)), "旧版快照不解码；双进程另验握手拒绝")
 	_expect(_system.apply(var_to_bytes(packet).compress(FileAccess.COMPRESSION_DEFLATE)) and data.size() == SNAP.UNIT_PAYLOAD_SIZE, "新载荷压缩编码、解码与未知格温重建成功")
 	var replica: Unit = _main._client_units[79000]
+	_expect(replica.target_protection.snapshot() == data[SNAP.U_TARGET_PROTECTION], "未知实体恢复完整结界中心、半径、寿命与代次")
+	replica.target_protection.advance(10.0, Vector2.ZERO)
+	_expect(replica.target_protection.active() and replica.target_protection.remaining() == 3.5, "客户端不能自行推进或因插值位置清除权威结界")
 	_expect(replica.hp == 321.0 and replica.is_stunned() and is_equal_approx(replica._deploy_timer, 0.2) and is_equal_approx(replica.net_skill_resource_ratio, 0.5), "移除旧字段后控制、部署、资源索引仍往返一致")
 	_system.reset_session("")
+
+func _check_bleeding_projection() -> void:
+	_system.reset_session("bleeding-projection")
+	var data := _payload("darius", 76003, 1)
+	data[SNAP.U_SPAWN].args[5] = 76003
+	data[SNAP.U_SPAWN].args[6] = 0
+	data[SNAP.U_DEPLOY_LEFT] = 0.0
+	data[SNAP.U_ACTIVE_SKILL_USES_REMAINING] = 0
+	data[SNAP.U_ACTIVE_SKILL_COOLDOWN] = 11.5
+	data[SNAP.U_FREE_RECAST] = true
+	data[SNAP.U_BLEED_STACKS] = 4
+	data[SNAP.U_BLOOD_RAGE] = 3.5
+	var deck: Array = _main._deck.duplicate()
+	_main._deck[0] = "darius"
+	_deliver(2, [data])
+	var unit: Unit = _main._client_units[76003]
+	_expect(unit.bleeding.total_stacks() == 4 and unit.blood_rage_time_left_visual() == 3.5, "客户端恢复流血层数及血怒剩余时间")
+	_expect(_main._active_skills.cost(76003) == 0.0 and _main._can_submit_active_skill(76003, 1), "客户端零付费次数/CD中免费追斩可用")
+	unit.sim_tick(2.0)
+	_expect(unit.bleeding.total_stacks() == 4 and unit.blood_rage_time_left_visual() == 3.5, "客户端不自行推进流血与血怒权威状态")
+	var bad: Array = data.duplicate(true)
+	bad[SNAP.U_BLEED_STACKS] = -1
+	_deliver(3, [bad])
+	_expect(_system.lifecycle.snapshot_tick == 2, "负流血层数快照被拒绝")
+	bad = data.duplicate(true)
+	bad[SNAP.U_FREE_RECAST] = 1
+	_deliver(3, [bad])
+	_expect(_system.lifecycle.snapshot_tick == 2, "非布尔免费资格快照被拒绝")
+	data[SNAP.U_BLOOD_RAGE] = 0.0
+	data[SNAP.U_BLEED_STACKS] = 0
+	data[SNAP.U_FREE_RECAST] = false
+	_deliver(4, [data])
+	_expect(unit.blood_rage_time_left_visual() == 0.0 and unit.bleeding.total_stacks() == 0 and not _main._can_submit_active_skill(76003, 1), "权威到期清除表现且免费资格消费后不可用")
+	_main._deck = deck

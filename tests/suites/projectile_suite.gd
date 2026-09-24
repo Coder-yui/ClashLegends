@@ -213,8 +213,8 @@ func _attack_trace(card_id: String, configured: Dictionary, team: int, lethal: b
 	_main.add_child(target)
 	_main.launch_attack(attacker, target, 50.0, attacker.projectile_speed, 0.0, 0.0, Color.WHITE)
 	var shot: Dictionary = _main._projectile_system.projectiles.values()[0]
-	# 基线取自审查提交的规则，独立于新增字段及变体外观。
-	var legacy_edge := card_id in ["ashe", "teemo", "gnar", "anivia"]
+	# 独立几何基线：旧卡保持迁移前规则；新远程天使采用身体边缘+7.5。
+	var legacy_edge := card_id in ["ashe", "teemo", "gnar", "anivia", "kayle_ranged"]
 	var expected_start := attacker.position + Vector2(attacker.body_radius + 7.5, 0) if legacy_edge else attacker.position
 	var expected_radius := 7.0 if card_id == "tower" else (3.0 if card_id == "ashe" else 4.0)
 	if not change_visual:
