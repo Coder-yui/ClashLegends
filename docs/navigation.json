@@ -10,6 +10,7 @@
   },
   "card_documents": {
     "gnar": ["gnar_small", "gnar_mega"],
-    "aatrox": ["aatrox", "aatrox_ultimate"]
+    "aatrox": ["aatrox", "aatrox_ultimate"],
+    "sion": ["sion", "sion_berserk"]
   }
 }

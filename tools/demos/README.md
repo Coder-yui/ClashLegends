@@ -39,3 +39,13 @@
 | [workbench_preview.gd](workbench_preview.gd) | 非 headless 运行；生成 /Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/预览与验证/clash-workbench-*.png，并核对工作区暂停边界。 |
 | [workbench_scenarios_preview.gd](workbench_scenarios_preview.gd) | 工作台场景与控件验收 |
 | [xin_sweep_effect_review.gd](xin_sweep_effect_review.gd) | 实际工作台双阵营部署/主动横扫截图；输出 /Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/预览与验证/clash-xin-sweep-review。 |
+
+- `darius_review.gd`：双阵营流血、血怒、断头台斩杀/免费技能、原生混音与卡面检查；`--network`模式验证主客机状态同步。
+
+- `kayn_review.gd`：正式出牌与技能预览入口，双方三形态普攻、Q、冻结、死亡截图及实战混音。
+- `kayn_network_review.gd`：配合 `-- --mode=host --auto-test` 和 `-- --mode=join --ip=127.0.0.1 --auto-test`，检查成长与Q主客同步。
+
+- `pantheon_review.gd`：潘森双方落地、短Q与满怒、普攻、死亡、详情和混音录制。
+
+- `mirror_review.gd` / `mirror_network_review.gd`：镜像卡部署、复制技能、网络资格同步及战斗表现复核。
+- `sion_review.gd`：双阵营赛恩部署、护盾、复生、普攻、死亡与录音复核。
