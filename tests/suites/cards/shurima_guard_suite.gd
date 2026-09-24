@@ -92,6 +92,7 @@ func _check_two_tower_deployment() -> void:
 	for team in [0, 1]:
 		var left: Tower = _main._towers[2 if team == 0 else 0]
 		var right: Tower = _main._towers[3 if team == 0 else 1]
+		preload("res://tests/suites/network_fixture.gd").fixed_cycle(_main, team, _main._deck)
 		var hp := Vector2(left.hp, right.hp)
 		var baseline: Array[bool] = []
 		for row in ArenaRules.ARENA_ROWS:
