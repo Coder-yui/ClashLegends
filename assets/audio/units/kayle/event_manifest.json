@@ -292,6 +292,81 @@
       "source": "ClashLegends-开发素材库/03-制作中/正义天使/audio-prepared/kayle/txtp/Play_sfx_Kayle_Death3D_cast.txtp",
       "sha256": "1dc23f9cb3fe85f7749ea20d1ca48ea1db016e0e60ff964fa6583fbab29e0a66",
       "processing": "vgmstream float32 decode; shared SFX gain -4 dB; PCM16 (no per-file normalization)"
+    },
+    {
+      "path": "assets/audio/units/kayle/wave_launch_r1.wav",
+      "event": "Play_sfx_Kayle_KayleEnrageConeMis_OnMissileCast",
+      "variant": 1,
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/audio-prepared/kayle/txtp/Play_sfx_Kayle_KayleEnrageConeMis_OnMissileCast {r1}.txtp",
+      "sha256": "f3634b5a1fd948a981bf36d2d5983833fb64680993f476c9a81d15ac7dd90d88",
+      "processing": "vgmstream float32 event branch; shared SFX -4 dB; PCM16; native 70ms Action delay rendered once",
+      "verified_by_listening": false,
+      "event_id": 3491543752,
+      "media_ids": [
+        503874140
+      ],
+      "native_delay_ms": 70,
+      "mapping_note": "Generic native EnrageConeMis wave event; Upgrade_cast condition unproven, not selected. Gameplay wave delay remains 0.1s; native audio delay occurs once after wave creation."
+    },
+    {
+      "path": "assets/audio/units/kayle/wave_launch_r2.wav",
+      "event": "Play_sfx_Kayle_KayleEnrageConeMis_OnMissileCast",
+      "variant": 2,
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/audio-prepared/kayle/txtp/Play_sfx_Kayle_KayleEnrageConeMis_OnMissileCast {r2}.txtp",
+      "sha256": "b37017ef231c84b2d66865fde2acaf58e498fdbab4fd39a28ed165477225e555",
+      "processing": "vgmstream float32 event branch; shared SFX -4 dB; PCM16; native 70ms Action delay rendered once",
+      "verified_by_listening": false,
+      "event_id": 3491543752,
+      "media_ids": [
+        354986336
+      ],
+      "native_delay_ms": 70,
+      "mapping_note": "Generic native EnrageConeMis wave event; Upgrade_cast condition unproven, not selected. Gameplay wave delay remains 0.1s; native audio delay occurs once after wave creation."
+    },
+    {
+      "path": "assets/audio/units/kayle/wave_launch_r3.wav",
+      "event": "Play_sfx_Kayle_KayleEnrageConeMis_OnMissileCast",
+      "variant": 3,
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/audio-prepared/kayle/txtp/Play_sfx_Kayle_KayleEnrageConeMis_OnMissileCast {r3}.txtp",
+      "sha256": "fb378ea10beccb614eb4550589683ea0e4d062dca1d03d93c14c4cfb510357e7",
+      "processing": "vgmstream float32 event branch; shared SFX -4 dB; PCM16; native 70ms Action delay rendered once",
+      "verified_by_listening": false,
+      "event_id": 3491543752,
+      "media_ids": [
+        540660147
+      ],
+      "native_delay_ms": 70,
+      "mapping_note": "Generic native EnrageConeMis wave event; Upgrade_cast condition unproven, not selected. Gameplay wave delay remains 0.1s; native audio delay occurs once after wave creation."
+    },
+    {
+      "path": "assets/audio/units/kayle/wave_launch_r4.wav",
+      "event": "Play_sfx_Kayle_KayleEnrageConeMis_OnMissileCast",
+      "variant": 4,
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/audio-prepared/kayle/txtp/Play_sfx_Kayle_KayleEnrageConeMis_OnMissileCast {r4}.txtp",
+      "sha256": "dad7781ea819f5b61c46c8e72bfa88f9ab94bad34e19d59c8ef21055c5ef7b6f",
+      "processing": "vgmstream float32 event branch; shared SFX -4 dB; PCM16; native 70ms Action delay rendered once",
+      "verified_by_listening": false,
+      "event_id": 3491543752,
+      "media_ids": [
+        713164411
+      ],
+      "native_delay_ms": 70,
+      "mapping_note": "Generic native EnrageConeMis wave event; Upgrade_cast condition unproven, not selected. Gameplay wave delay remains 0.1s; native audio delay occurs once after wave creation."
+    },
+    {
+      "path": "assets/audio/units/kayle/wave_hit.wav",
+      "event": "Play_sfx_Kayle_KayleEnrageConeMis_hit",
+      "variant": 1,
+      "source": "ClashLegends-开发素材库/03-制作中/正义天使/audio-prepared/kayle/txtp/Play_sfx_Kayle_KayleEnrageConeMis_hit.txtp",
+      "sha256": "287287993be73a18a901ef15fd433bc5dfea439544ba04787aade8646e7823ee",
+      "processing": "vgmstream float32 event branch; shared SFX -4 dB; PCM16; no added delay",
+      "verified_by_listening": false,
+      "event_id": 3585322935,
+      "media_ids": [
+        794209875
+      ],
+      "native_delay_ms": 0,
+      "mapping_note": "Generic native EnrageConeMis wave event; Upgrade_cast condition unproven, not selected. Gameplay wave delay remains 0.1s; native audio delay occurs once after wave creation."
     }
   ]
 }

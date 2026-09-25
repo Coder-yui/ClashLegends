@@ -54,6 +54,7 @@ func _check_artdev_workbench() -> void:
 	_main._art_dev_panel = panel
 	panel.item_selected.connect(_main._set_art_dev_selection)
 	panel.team_changed.connect(_main._set_art_dev_team)
+	panel.form_selected.connect(func(form): _main._workbench.form = form)
 	panel.active_skill_selected.connect(_main._on_art_dev_active_skill_selected)
 	panel.active_skill_requested.connect(_main._use_art_dev_active_skill)
 	panel.skill_resource_requested.connect(_main._set_art_dev_skill_resource)
@@ -72,6 +73,15 @@ func _check_artdev_workbench() -> void:
 	for choice in ["aatrox:1", "gnar:1"]:
 		panel._select_item(choice)
 		_expect(panel._form == 1 and panel._preview.model != null and panel._selection_label.text.contains("大"), "工作台独立形态入口：" + choice)
+	panel._select_item("kayle_ranged")
+	_expect(panel._selected_id == "kayle" and panel._form == 1 and not panel._form_option.disabled, "天使旧远程入口合并至同卡远程形态")
+	_expect(panel._form_option.get_item_text(0) == "近战形态" and panel._form_option.get_item_text(1) == "远程形态", "天使形态按钮使用近战/远程名称")
+	_expect(panel._preview.model != null and panel._preview.model.ranged, "远程选择显示双剑六翼包装")
+	_main._place_art_dev_item(Vector2(540, 1000))
+	var ranged_preview: Unit = _main._art_dev_selected_unit()
+	_expect(ranged_preview != null and ranged_preview.card_id == "kayle_ranged", "工作台远程形态通过play_card部署远程单位")
+	panel._select_item("kayle")
+	_expect(panel._preview.model != null and not panel._preview.model.ranged, "近战选择切回单剑包装")
 	panel._select_item("pix")
 	panel._filter_cards("does-not-exist")
 	_expect(panel._library.entries.is_empty() and panel._selected_id == "pix", "搜索无结果不会悄悄改换当前审查卡牌")

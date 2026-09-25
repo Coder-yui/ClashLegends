@@ -67,7 +67,8 @@ func setup(definitions: Dictionary) -> void:
 func filter(query: String) -> void:
 	entries = CATALOG.entries(cards, query, _category)
 	if models_only:
-		entries = entries.filter(func(entry): return not PresentationConfig.scene_path(PresentationConfig.for_form(cards.get(entry.base_id, {}), 1 if entry.id.ends_with(":1") else 0), 0).is_empty())
+		entries = entries.filter(func(entry): return not (entry.id.ends_with(":1") and cards.get(entry.base_id, {}).has("deployment_upgrade_id")))
+		entries = entries.filter(func(entry): return not PresentationConfig.scene_path(CATALOG.stats_for_form(cards.get(entry.base_id, {}), 1 if entry.id.ends_with(":1") else 0), 0).is_empty())
 	entries = entries.filter(func(entry): return entry.id != "training_dummy")
 	for child in _grid.get_children():
 		_grid.remove_child(child)
@@ -103,7 +104,7 @@ func filter(query: String) -> void:
 			_shelf_grid.add_child(slot)
 			if i < shelf.size():
 				var id := shelf[i]
-				var definition := PresentationConfig.for_form(cards.get(id.get_slice(":", 0), {}), 1 if id.ends_with(":1") else 0)
+				var definition := CATALOG.stats_for_form(cards.get(id.get_slice(":", 0), {}), 1 if id.ends_with(":1") else 0)
 				slot.text = "%d · %s ×" % [i + 1, definition.get("name", id)]
 				slot.pressed.connect(func(): toggled.emit(id))
 			else:

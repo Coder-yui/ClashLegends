@@ -31,6 +31,22 @@ static func _validate_card_id(card_id: String, errors: PackedStringArray) -> voi
 static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStringArray, inspect_resources: bool = true) -> void:
 	if not SHAPES.validate(card_id, stats, errors): return
 	_require_fields(card_id, stats, [&"name", &"cost", &"type", &"description", &"radius", &"color"], errors)
+	if ["hit_haste_max_stacks", "hit_haste_per_stack", "hit_haste_duration"].any(func(field): return stats.has(field)):
+		for field in ["hit_haste_max_stacks", "hit_haste_per_stack", "hit_haste_duration"]:
+			if float(stats.get(field, 0.0)) <= 0.0: errors.append("%s.%s: 必须为正数且成组配置" % [card_id, field])
+		var stacks := float(stats.get("hit_haste_max_stacks", 0.0))
+		if stacks != floorf(stacks): errors.append("%s.hit_haste_max_stacks: 必须为整数" % card_id)
+		if String(stats.get("type", "")) != "unit" or bool(stats.get("is_continuous_attack", false)):
+			errors.append("%s.hit_haste_max_stacks: 仅支持普通单位离散普攻" % card_id)
+	if ["attack_wave_damage", "attack_wave_delay", "attack_wave_tail_distance", "attack_wave_near_width", "attack_wave_max_scale", "attack_wave_speed", "attack_wave_visual", "attack_wave_visual_height"].any(func(field): return stats.has(field)):
+		for field in ["attack_wave_damage", "attack_wave_delay", "attack_wave_tail_distance", "attack_wave_near_width", "attack_wave_max_scale", "attack_wave_speed"]:
+			if float(stats.get(field, 0.0)) <= 0.0: errors.append("%s.%s: 焰浪须完整配置正数参数" % [card_id, field])
+		if String(stats.get("type", "")) != "unit" or float(stats.get("projectile_speed", 0.0)) <= 0.0 or bool(stats.get("is_continuous_attack", false)):
+			errors.append("%s.attack_wave_damage: 仅支持普通远程普攻" % card_id)
+		if float(stats.get("attack_wave_max_scale", 0.0)) < 1.0:
+			errors.append("%s.attack_wave_max_scale: 不可小于1" % card_id)
+		if String(stats.get("attack_wave_visual", "")) != "kayle_wave" or float(stats.get("attack_wave_visual_height", 0.0)) < 0.0:
+			errors.append("%s.attack_wave_visual: 需要已实现的kayle_wave及非负表现高度" % card_id)
 	var card_type := StringName(stats.get("type", ""))
 	if card_type not in CARD_TYPES:
 		errors.append("%s.type: 不支持的卡牌类型 %s" % [card_id, card_type])

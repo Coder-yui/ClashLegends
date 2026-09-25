@@ -111,8 +111,10 @@ func _review_card(id: String, team: int, form: String) -> void:
 	var deploy_left: float = unit._deploy_timer
 	_advance(deploy_left * 0.5)
 	await _capture("deploy_mid" if deploy_left > 0.0 else "spawn_idle")
+	if "--deploy-to-move" in OS.get_cmdline_user_args():
+		_set_behavior(false, true)
 	_advance(deploy_left * 0.5)
-	await _capture_exit("deploy_exit_idle", 0.15)
+	await _capture_exit("deploy_exit_move" if "--deploy-to-move" in OS.get_cmdline_user_args() else "deploy_exit_idle", 0.15)
 	_set_behavior(false, true)
 	_advance(0.22)
 	await _capture("move_entry")
@@ -381,11 +383,14 @@ func _fit_camera() -> void:
 	if has_bounds:
 		focus_offset = bounds.get_center() - view.global_position
 		camera.size = maxf(3.5, maxf(bounds.size.y * 3.0, maxf(bounds.size.x, bounds.size.z) * 2.0))
+	if float(_option("--camera-size", "0")) > 0.0:
+		camera.size = float(_option("--camera-size", "0"))
 	initial_camera_size = camera.size
 
 ## Rest AABB 不包含龙王抬头/死亡倒地等姿势变化；按当前骨骼再留上下余量。
 ## 每组镜头只允许放大取景范围，避免连续接缝图来回缩放；预留文字区 70 px。
 func _expand_camera_to_pose() -> void:
+	if float(_option("--camera-size", "0")) > 0.0: return
 	var scale_needed := 1.0
 	for candidate in view.find_children("*", "Skeleton3D", true, false):
 		var skeleton := candidate as Skeleton3D

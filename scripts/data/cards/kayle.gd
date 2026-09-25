@@ -1,13 +1,16 @@
 extends "res://scripts/data/card_schema.gd"
 
+const BASE_ATTACK_INTERVAL := 1.5
+
 static func definition() -> Dictionary:
 	return {
 		"gameplay": {
 			"name": "正义天使", "cost": 3, "type": "unit",
 			"description": "对地对空的飞行战士。金币不足6时花3金币部署近战形态；金币达到6时花6金币部署远程形态，弹体命中造成范围伤害。部署后形态固定。",
 			"deployment_upgrade_id": "kayle_ranged",
-			"hp": 520, "damage": 75, "range": MELEE_RANGE_MIN,
-			"speed": SPEED_MEDIUM, "interval": 1.1, "first_hit": 0.35,
+			"hp": 520, "damage": 75, "range": 56.0,
+			"speed": SPEED_MEDIUM, "interval": BASE_ATTACK_INTERVAL, "first_hit": snappedf(BASE_ATTACK_INTERVAL * (9.5 / 65.0), 0.01),
+			"hit_haste_max_stacks": 4, "hit_haste_per_stack": 0.1, "hit_haste_duration": 3.0,
 			"size_tier": SIZE_MEDIUM, "radius": RADIUS_MEDIUM, "mass": 4.0, "sight": 240.0,
 			"is_air": true, "building_only": false, "can_attack_air": true,
 			"active_skills": [{
@@ -24,6 +27,13 @@ static func definition() -> Dictionary:
 			"visual_animations": {
 				"deploy": "Respawn", "idle": "Idle1_Base", "move": "Run1",
 				"attack": ["kayle_attack1_anm", "kayle_attack2_anm"],
+				"transitions": {
+					"Respawn>move": {"animation": "Run_In", "blend_in": 0.1, "blend_out": 0.0},
+					"Idle1_Base>move": {"animation": "Run_In", "blend_in": 0.0, "blend_out": 0.0},
+					"Idle_In>move": {"animation": "Run_In", "blend_in": 0.0, "blend_out": 0.0},
+					"Run1>idle": {"animation": "Idle_In", "blend_in": 0.0, "blend_out": 0.1},
+					"Run_In>idle": {"animation": "Idle_In", "blend_in": 0.0, "blend_out": 0.1},
+				},
 				"death": "Death", "death_duration": 1.0,
 				"visual_actions": {"active": {"animation": "Spell2_0", "kind": "skill", "durations": [0.6], "blend_in": 0.06, "blend_out": 0.12}},
 			},

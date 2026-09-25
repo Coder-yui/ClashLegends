@@ -11,6 +11,6 @@
 
 台词依据用户指定的布锅锅目录匹配，从本地Kayle.zh_CN.wad.client提取；网站台词编号没有当作本地WEM编号使用。原版Attack2DGeneral状态分支987635873使用r4/r3/r17，1004413458使用r1/r2/r11。
 
-近战使用BasicAttack/BasicAttack2挥击和命中声；远程使用BasicAttack3/4出手、发射、实际命中声。范围命中不会按每个受伤对象叠加同一命中声。W随机使用KayleWHeal_OnCast的4个原版变体；死亡使用Death3D_cast。走路有意静音。
+近战使用BasicAttack/BasicAttack2挥击和命中声；远程使用BasicAttack3/4出手、发射、实际命中声。光剑命中声来自实际普攻结算；焰浪使用独立伤害结算，不触发这组声音。焰浪已接入原版 EnrageConeMis_OnMissileCast 的 4 个随机变体及 EnrageConeMis_hit：随波创建触发发射事件，保留原版声音内部 70ms 延迟；每道波首次有效命中时播放一次命中声，穿透后续目标不重复叠加。空波不播命中声，来源死亡不取消已出手焰浪的声音。Upgrade_cast 的原版使用条件尚未确认，未混入当前声音池。W随机使用KayleWHeal_OnCast的4个原版变体；死亡使用Death3D_cast。走路有意静音。
 
 素材来源与哈希见[声音清单](../../../assets/audio/units/kayle/event_manifest.json)。实机事件与主混音录制不等于用户听感确认，最终验收状态见对应交付。

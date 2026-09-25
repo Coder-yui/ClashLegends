@@ -180,3 +180,13 @@ bleeding_execute武装下一次普攻，以命中前本来源流血层数计算d
 命中回复/比例附伤说明可使用`heal_on_hit_name`与`on_hit_passive_name`提供卡牌自己的显示名称；均为可选文本，CardDetails读取并由CardShapeValidator校验，不影响结算。技能配置实际声明`applies_on_hit_passive`时，详情才把附伤范围描述为普攻与技能段，普通百分比普攻不冒用剪切文案。
 
 技能资源支持 `resource_consume_only_full`：只有满层才消费；`resource_nonfull_cast_gain` 在未满层施法开始时加层并封顶，强化判定始终读取增加前的层数。用于潘森，未配置的卡牌仍按原规则清空。
+
+## 命中叠层攻速
+
+`hit_haste_max_stacks / hit_haste_per_stack / hit_haste_duration`成组配置，仅支持离散普攻单位。CombatResolver真实命中后的存活来源收益调用Unit；StatusInstances持有hit_haste层数、倍率与结束Tick。同次溅射只回调一次，满层仍刷新整个窗口；无效命中、死亡来源不收益。与普通攻速Buff同类取最强，变化复用AttackTimeline归一化进度重算，快照沿用最终有效攻速字段，客户端不自行计层。天使配置4层、每层10%、60Tick。
+
+### 普攻伴随焰浪
+
+`attack_wave_damage / delay / tail_distance / near_width / max_scale / speed`成组配置，visual与visual_height属于表现域，仅支持离散远程单位。普攻成功创建时，记录光剑2D起点S和目标当时位置T；焰浪轴线为S→T，终点T+normalize(T-S)×tail_distance。权威延迟队列到期后在S生成，出手来源或目标后续移动/死亡不重算路径；不再关联光剑存续时长。清场同时移除队列。天使延迟0.1秒、延伸40像素、伤害55、起宽48像素、横向1→2线性扩宽，以最大合法射程含余波换算为标尺、速度420像素每秒。每Tick以起止宽度梯形扫掠身体，每对象一次，无普攻叠层收益。出手时锁定wave_air；空中主目标只产生对空焰浪，否则只对地（含建筑），目标后续变形不重设类别。最大波前行程=攻击范围+双方身体半径−光剑起点距来源中心距离+余波距离；当前宽度=起宽×(1+(max_scale−1)×已行进距离/最大行程)，限制在起宽与最大宽之间。攻击范围仍190像素，余波不是索敌范围扩展。
+
+弹体快照增加纯表现visual_path字典（固定起终点、来源/目标身份、进度）；主客端各自取模型胸部或可见网格中心锚点。光剑画面追踪当前目标模型，焰浪画面端点冻结并跟随权威固定路径；锚点、模型尺寸、朝向均不能影响伤害与行程。

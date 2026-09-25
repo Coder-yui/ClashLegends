@@ -155,6 +155,10 @@ static func volume_name(stats: Dictionary) -> String:
 
 static func passives(stats: Dictionary) -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
+	if float(stats.get("attack_wave_damage", 0.0)) > 0.0:
+		result.append({"name": "焰浪", "description": "每次远程普攻附带一道固定方向的穿透焰浪，光剑出手后延迟%s秒发出，按主目标锁定对空或对地，沿出手瞬间固定的轴线横向1→2倍线性扩宽（最大合法射程含余波为标尺），终点为当时目标位置后%s格；对同类别敌人造成%d伤害一次（对地包含塔和水晶），可与光剑伤害叠加。焰浪不额外叠加攻速被动。" % [format_number(float(stats.attack_wave_delay)), format_number(float(stats.attack_wave_tail_distance) / TILE_SIZE), int(stats.attack_wave_damage)]})
+	if int(stats.get("hit_haste_max_stacks", 0)) > 0:
+		result.append({"name": "登神之阶", "description": "每次普攻实际命中获得1层，每层提高%s%%攻速，最多%d层；每次命中刷新全部层数的%s秒持续时间，溅射多人只获得1层。" % [format_number(float(stats.hit_haste_per_stack) * 100.0), int(stats.hit_haste_max_stacks), format_number(float(stats.hit_haste_duration))]})
 	if float(stats.get("rush_distance", 0.0)) > 0.0:
 		result.append({"name": "虚空冲撞", "description": "一生一次：距建筑%s格内，在最近的合法位置准备%s秒后冲撞。准备免击退，冻结/眩晕后重新准备；冲撞免控，沿途地面敌军受到%d伤害并被挤向两旁。准备、冲撞及撞后收势期间不能施放其他主动技能。撞击建筑造成%d伤害，扣自身当前生命%s%%，爆发%d只虚空蠕虫。桥面可冲，不能穿过河水。" % [format_number(float(stats.rush_distance) / TILE_SIZE), format_number(float(stats.rush_prepare_time)), int(stats.rush_path_damage), int(stats.rush_building_damage), format_number(float(stats.rush_self_health_ratio) * 100), int(stats.rush_spawn_count)]})
 

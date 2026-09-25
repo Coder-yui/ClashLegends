@@ -1,5 +1,6 @@
 class_name DevelopmentWorkbench
 extends CanvasLayer
+const FORM_CATALOG := preload("res://scripts/ui/workbench/card_catalog.gd")
 ## 三个工作区共享卡牌选择；素材预览与真实战斗分离。
 signal item_selected(item_id: String)
 signal team_changed(team: int)
@@ -497,7 +498,7 @@ func _refresh_quick_cards() -> void:
 		else:
 			var id := _quick_cards[i]
 			var base_id := id.get_slice(":", 0)
-			var stats := PresentationConfig.for_form(_cards.get(base_id, {}), 1 if id.ends_with(":1") else 0)
+			var stats := FORM_CATALOG.stats_for_form(_cards.get(base_id, {}), 1 if id.ends_with(":1") else 0)
 			button.text = "%d  %s" % [i + 1, stats.get("name", "训练木桩")]
 			button.icon = CardArt.texture_for(base_id)
 			button.expand_icon = true
@@ -535,7 +536,7 @@ func is_select_mode() -> bool:
 
 func _refresh_mode_label() -> void:
 	if _mode_label == null: return
-	var title := String(PresentationConfig.for_form(_cards.get(_selected_id, {}), _form).get("name", "训练木桩"))
+	var title := String(FORM_CATALOG.stats_for_form(_cards.get(_selected_id, {}), _form).get("name", "训练木桩"))
 	_mode_label.text = ("选择模式" if _select_mode else "放置模式") + " · 待放置：" + title + (" · 蓝方" if _team == 0 else " · 红方")
 
 func _refresh_page_chrome() -> void:
@@ -578,6 +579,10 @@ func _set_battle_zoom(value: float) -> void:
 	_zoom_label.text = "%d%%" % roundi(_desktop.zoom * 100)
 
 func _select_item(item_id: String) -> void:
+	for base_id in _cards:
+		if String(_cards[base_id].get("deployment_upgrade_id", "")) == item_id:
+			item_id = String(base_id) + ":1"
+			break
 	var requested_form := 1 if item_id.ends_with(":1") else 0
 	item_id = item_id.get_slice(":", 0)
 	if item_id != "training_dummy" and not _cards.has(item_id): return
@@ -591,9 +596,11 @@ func _select_item(item_id: String) -> void:
 	_spell_choice.clear()
 	for skill in CardDB.active_skills_for(item_id): _spell_choice.add_item(String(skill.get("name", "强化法术")))
 	_spell_choice.visible = has_spell_choices
+	_form_option.set_item_text(0, "近战形态" if _cards.get(item_id, {}).has("deployment_upgrade_id") else "基础形态")
+	_form_option.set_item_text(1, "远程形态" if _cards.get(item_id, {}).has("deployment_upgrade_id") else "变形形态")
 	_form_option.select(_form)
-	_form_option.disabled = not _cards.get(item_id, {}).has("transformed_stats")
-	_selection_label.text = "%s\n%s" % [String(PresentationConfig.for_form(_cards.get(item_id, {}), _form).get("name", "训练木桩")), item_id]
+	_form_option.disabled = not FORM_CATALOG.has_forms(_cards.get(item_id, {}))
+	_selection_label.text = "%s\n%s" % [String(FORM_CATALOG.stats_for_form(_cards.get(item_id, {}), _form).get("name", "训练木桩")), item_id]
 	_art.texture = CardArt.texture_for(item_id)
 	_refresh_quick_cards()
 	_unit_available = false
@@ -609,10 +616,10 @@ func _select_item(item_id: String) -> void:
 	form_selected.emit(_form)
 
 func _refresh_assets() -> void:
-	_card_info.show_card(_selected_id, PresentationConfig.for_form(_cards.get(_selected_id, {}), _form))
+	_card_info.show_card(_selected_id, FORM_CATALOG.stats_for_form(_cards.get(_selected_id, {}), _form))
 	_stop_audio()
 	_form_option.select(_form)
-	var stats := PresentationConfig.for_form(_cards.get(_selected_id, {}), _form)
+	var stats := FORM_CATALOG.stats_for_form(_cards.get(_selected_id, {}), _form)
 	var clips := _preview.show_definition(stats, _team)
 	_animation_option.clear()
 	var mappings: Dictionary = {}
@@ -720,7 +727,7 @@ func show_workspace(index: int) -> void:
 	_background.visible = true
 	_show_library(false)
 	_form_option.visible = true
-	_form_option.disabled = not _cards.get(_selected_id, {}).has("transformed_stats")
+	_form_option.disabled = not FORM_CATALOG.has_forms(_cards.get(_selected_id, {}))
 	_preview.visible = _workspace == 0
 	_preview.set_preview_active(_workspace == 0)
 	_stop_audio()

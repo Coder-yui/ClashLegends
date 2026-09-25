@@ -95,7 +95,7 @@ const SIZE_RADII := {
 	SIZE_LARGE: RADIUS_LARGE,
 	SIZE_EXTREMELY_LARGE: RADIUS_EXTREMELY_LARGE,
 }
-const PROJECTILE_VISUALS := [&"orb", &"arrow", &"needle", &"boomerang", &"ice_cone"]
+const PROJECTILE_VISUALS := [&"kayle_sword", &"orb", &"arrow", &"needle", &"boomerang", &"ice_cone"]
 const VISUAL_SPAWN_TRANSITIONS := [&"drop", &"rebirth"]
 const SPELL_KINDS := [&"freeze", &"heal", &"mirror"]
 const ACTIVE_SKILL_KINDS := [&"dash_strike", &"bleeding_execute", &"explosive_shield", &"sanctuary", &"timed_form", &"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"continuous_area", &"empowered_attack", &"attack_lifesteal", &"area_shield", &"restoration_shield", &"spell_heal"]
@@ -111,6 +111,7 @@ const TRANSITION_BLEND_FIELDS := [&"default", &"locomotion", &"action_in", &"act
 const CARD_FIELDS := [
 	&"heal_on_hit_name", &"on_hit_passive_name",
 	&"terrain_traversal", &"terrain_entry_heal", &"terrain_entry_speed_multiplier", &"growth_ranged_id", &"growth_melee_id", &"growth_ranged_hits", &"growth_melee_hits",
+	&"hit_haste_max_stacks", &"hit_haste_per_stack", &"hit_haste_duration",
 	&"bleed_damage_per_second", &"bleed_duration", &"bleed_max_stacks", &"blood_rage_duration", &"blood_rage_damage_multiplier",
 	&"death_form_delay", &"death_form_decay_duration",
 	&"deployment_upgrade_id",
@@ -123,6 +124,7 @@ const CARD_FIELDS := [
 	&"deployment_count", &"deployment_spacing", &"deployment_formation", &"deployment_member_ids",
 	&"spawn_id", &"spawn_interval", &"spawn_count", &"spawn_side", &"death_spawn_id", &"death_spawn_count",
 	&"death_replacement_id", &"death_replacement_charges", &"death_replacement_visual_transition", &"timed_revival_id", &"timed_revival_delay", &"timed_revival_death_replacement_charges", &"timed_revival_visual_transition",
+	&"attack_wave_damage", &"attack_wave_delay", &"attack_wave_tail_distance", &"attack_wave_near_width", &"attack_wave_max_scale", &"attack_wave_speed", &"attack_wave_visual", &"attack_wave_visual_height",
 	&"projectile_spawn_at_edge", &"projectile_spawn_offset", &"projectile_collision_radius",
 	&"active_buff_projectile_visual", &"projectile_speed", &"projectile_visual", &"projectile_visual_height",
 	&"projectile_visual_forward_offset", &"projectile_visual_scale", &"projectile_impact_visual",
@@ -189,5 +191,5 @@ const INTEGER_NUMBER_FIELDS := [
 	"attack_recovery_cancel_every_hits", "rush_path_damage", "rush_building_damage", "rush_spawn_count", "hp", "damage", "heal_amount", "on_hit_tower_damage", "deploy_sweep_damage", "shield", "resource_shield_max", "full_resource_cast_end_heal", "shockwave_damage", "zone_damage", "resource_damage_by_stacks", "resource_hit_damage_sequences", "cost", "active_cost_bonus", "spawn_count", "death_spawn_count", "deployment_count", "max_uses", "blind_charges", "heal_every_hits", "transform_after_hits", "revert_after_hits", "death_replacement_charges", "timed_revival_death_replacement_charges", "projectile_count"]
 
 ## 原始定义域归属；共享容器由 CardDefinitionCompiler 递归检查。
-const CARD_VISUAL_FIELDS := ["active_buff_projectile_visual", "attack_interval_display", "color", "continuous_beam_color", "continuous_beam_end_width", "continuous_beam_forward_offset", "continuous_beam_origin_height", "continuous_beam_start_width", "death_replacement_visual_transition", "projectile_colors", "projectile_impact_visual", "projectile_visual", "projectile_visual_forward_offset", "projectile_visual_height", "projectile_visual_scale", "show_team_ring", "skill_resource_full_color", "timed_revival_visual_transition", "visual_active_buff_scene", "visual_animations", "visual_forward_yaw", "visual_radius", "visual_scene_path", "visual_scene_paths"]
+const CARD_VISUAL_FIELDS := ["attack_wave_visual", "attack_wave_visual_height", "active_buff_projectile_visual", "attack_interval_display", "color", "continuous_beam_color", "continuous_beam_end_width", "continuous_beam_forward_offset", "continuous_beam_origin_height", "continuous_beam_start_width", "death_replacement_visual_transition", "projectile_colors", "projectile_impact_visual", "projectile_visual", "projectile_visual_forward_offset", "projectile_visual_height", "projectile_visual_scale", "show_team_ring", "skill_resource_full_color", "timed_revival_visual_transition", "visual_active_buff_scene", "visual_animations", "visual_forward_yaw", "visual_radius", "visual_scene_path", "visual_scene_paths"]
 const SKILL_VISUAL_FIELDS := ["icon_path", "full_resource_visual_action", "projectile_visual", "projectile_visual_forward_offset", "projectile_visual_height", "projectile_visual_width", "resource_visual_actions", "visual_action"]

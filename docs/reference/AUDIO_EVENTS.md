@@ -12,6 +12,7 @@
 
 | 配置 / 事件 | 触发或限制 |
 | --- | --- |
+| `attack_wave:launch / attack_wave:hit` | 携带 attack_wave_damage 的单位；延迟波真正创建 / 每波首次真实有效命中，通过保存的出手来源走可靠卡牌事件；空波与清场不补播 |
 | `attack_swing / attack_hit` | 普攻出手 / 真实伤害成功；空挥与免疫不伪造命中 |
 | `attack_hit_by_segment / attack_launch_by_segment` | 与普攻段对齐；分段发射替代普通发射池 |
 | `attack_hit_once_by_segment` | 单文件已含多刀时按出手去重，只影响声音 |

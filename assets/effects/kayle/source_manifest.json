@@ -1,0 +1,103 @@
+{
+  "source": {
+    "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Kayle.wad.client",
+    "package_sha256": "649dad8ab65ce9db0fc300ad452ea6e572d116d352f3541db1be0c541bff8864",
+    "files": [
+      {
+        "path": "assets/characters/caitlyn/skins/skin11/particles/caitlyn_skin11_ba_bullet.tex",
+        "wad_hash": "eb606ab472ffcb53",
+        "size": 174812,
+        "sha256": "3232fcc69c55dc1f8ab1b6f42390cd900f271df766f69d9fa4895a3b0e74c10f"
+      },
+      {
+        "path": "assets/characters/kayle/skins/base/particles/beamswordshapes_orange.tex",
+        "wad_hash": "d699bc3f7b46c1c1",
+        "size": 43716,
+        "sha256": "5e7c79479c53523ab40a59e450c6e6931a24b9b8f5005bae044341d328f08206"
+      },
+      {
+        "path": "assets/characters/kayle/skins/base/particles/ezreal_base_q_mis2_glow.tex",
+        "wad_hash": "fe0121b180667b3c",
+        "size": 21884,
+        "sha256": "08cc876fa6be6466f44d3e59c96bb83387f38fafcaab2e0d7377e04a919105a3"
+      },
+      {
+        "path": "assets/characters/kayle/skins/base/particles/flame_trail_gradient.tex",
+        "wad_hash": "19cd08707e41d964",
+        "size": 11036,
+        "sha256": "cd483ba979e2214b0fd76bf41855b342d67b801a6fdcf0376ad9f9bf81414e1a"
+      },
+      {
+        "path": "assets/characters/kayle/skins/base/particles/global_ss_kayle_base_qv4_tar_glow-soft.tex",
+        "wad_hash": "25539785df369f30",
+        "size": 10948,
+        "sha256": "769ff90c61d2f763fffd604e6d6b8374c1df1e2e117c1b6f87ed26f786d9e69f"
+      },
+      {
+        "path": "assets/characters/kayle/skins/base/particles/kayle_base_ba_enraged_head.tex",
+        "wad_hash": "9be266ca3fa87d39",
+        "size": 10948,
+        "sha256": "bc5bfc13965d72a1c939379366f8347346dbfc2928278f32533ccfb5664a9eab"
+      },
+      {
+        "path": "assets/characters/kayle/skins/base/particles/kayle_base_ba_small_mote.tex",
+        "wad_hash": "8bb8c936e6abee5a",
+        "size": 10948,
+        "sha256": "f62504a8189b4bf5e069e7a4fec78ed9ff769f6c431d13ca80cf1a29fec1e326"
+      },
+      {
+        "path": "assets/characters/kayle/skins/base/particles/kayle_base_ba_trail.tex",
+        "wad_hash": "0ae24653891ba865",
+        "size": 540,
+        "sha256": "9220624e7593dc8c93f506158fd71d43b41e3fa877165b491d148ad0a9eb062b"
+      },
+      {
+        "path": "assets/characters/kayle/skins/base/particles/kayle_base_e_bigglow02.tex",
+        "wad_hash": "6893672012800f7e",
+        "size": 43716,
+        "sha256": "efdbbd590fdfad499215a68166157c870ec7272ea9268aa52ed2c091b9bab882"
+      },
+      {
+        "path": "assets/characters/kayle/skins/base/particles/kayle_base_e_wake_texture.tex",
+        "wad_hash": "ea4995ccb9858605",
+        "size": 87420,
+        "sha256": "6c65a969f5bec3ae0c397564b7ffe374491c6cc072c1f9b9f4a003016c5e93e8"
+      },
+      {
+        "path": "assets/characters/kayle/skins/base/particles/kayle_base_q_tar_wisps_4x1.tex",
+        "wad_hash": "7ee56b09b45f417e",
+        "size": 87420,
+        "sha256": "dc0ee4c3ce94af624b20901f82b66202121704e542eee8c0248355102d5d81ac"
+      },
+      {
+        "path": "assets/characters/kayle/skins/base/particles/kayle_base_wing_fire_gradient.tex",
+        "wad_hash": "b728a80289b4ec65",
+        "size": 2836,
+        "sha256": "1fbdc3ff0580d2a74da6751f95d788eac2b26f73f343a7eb35178d300e3439ac"
+      },
+      {
+        "path": "assets/characters/xerath/skins/skin04/particles/xerath_skin04_z_sandflecks.tex",
+        "wad_hash": "57027e58265796e2",
+        "size": 708,
+        "sha256": "82071c6410b0db20e2e32b9869ec73c901b41c19b18b86659cd33a2439de8e5a"
+      }
+    ],
+    "note": "Staged source assets only. Model materials and particle dependencies must be verified before project integration."
+  },
+  "used_pngs": [
+    "caitlyn_skin11_ba_bullet",
+    "kayle_base_ba_trail",
+    "kayle_base_ba_enraged_head",
+    "ezreal_base_q_mis2_glow",
+    "kayle_base_q_tar_wisps_4x1",
+    "kayle_base_e_wake_texture",
+    "kayle_base_wing_fire_gradient",
+    "flame_trail_gradient",
+    "kayle_base_e_bigglow02"
+  ],
+  "definitions": [
+    "Kayle_Base_BA_Ranged",
+    "Kayle_Base_P_Enraged_Mis_2"
+  ],
+  "adaptation": "原版纹理分层、渐变与UV滚动移植；Godot CanvasItem重建，不是完整LoL粒子运行时。"
+}
