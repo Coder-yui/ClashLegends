@@ -288,6 +288,24 @@ func _check_aurelionsol_art_integration() -> void:
 	_expect(move_cycle_ok, "龙王移动按 Run1B→Run1C→Run1D→Run1A 循环")
 	_expect(continuous_generic_fallback_ok, "continuous attack 无专用转跑片段时仍使用 action_out generic crossfade")
 	_expect(immediate_stop_ok, "龙王退出攻击立即关光柱并进入收势，收势能结束回待机或被移动打断")
+	unit._target = dummy
+	unit._attacking = true
+	dummy.is_air = true
+	dummy.net_id = 710
+	dummy.set_meta("projectile_model_offset", Vector2(0, -63))
+	var air_endpoint := unit.get_continuous_beam_endpoint_position()
+	_expect(air_endpoint == dummy.get_visual_screen_position() + Vector2(0, -63) and unit.get_continuous_visual_target_air_id() == 710, "龙王吐息攻击空中目标时终点贴合模型身体，并提供客户端目标身份")
+	dummy.is_air = false
+	_expect(unit.get_continuous_beam_endpoint_position() == dummy.get_visual_screen_position() and unit.get_continuous_visual_target_air_id() == -1, "龙王吐息攻击地面目标时保留原战场端点")
+	dummy.is_air = true
+	var old_mode: String = _main.mode
+	_main.mode = "client"
+	unit.net_visual_state = 3
+	unit.net_has_continuous_target = true
+	unit.net_continuous_target_pos = dummy.global_position
+	unit.net_continuous_target_air_id = 710
+	_expect(unit.get_continuous_beam_endpoint_position() == dummy.global_position + Vector2(0, -63), "客户端按快照目标 ID 找到本地空中模型锚点，不朝脚下吐息")
+	_main.mode = old_mode
 	unit.take_damage(unit.max_hp + 1.0)
 	var death_view_found := view != null and view._dying and view._animation_player.current_animation == "Death"
 	_expect(death_view_found, "龙王死亡时由独立 3D 代理播放 Death")

@@ -34,6 +34,17 @@ func _check_projectile_travel() -> void:
 	for _i in 12:
 		_main._tick_projectiles(_main.SIM_DT)
 	_expect(target.hp < hp_before and _main._projectile_system.projectiles.is_empty(), "弹道抵达目标碰撞圆后才结算伤害")
+	attacker.set_meta("projectile_model_offset", Vector2(5, -35))
+	target.set_meta("projectile_model_offset", Vector2(0, -80))
+	_main.launch_attack(attacker, target, 10.0, attacker.projectile_speed, 0.0, 0.0, attacker.color)
+	var anchored: Dictionary = _main._projectile_system.projectiles.values()[0]
+	var visual_start: Vector2 = _main._projectile_system._visual_position(anchored)
+	_expect(visual_start == attacker.position + Vector2(5, -35) and anchored.pos != visual_start, "远程弹体画面从模型锚点创建，权威出生点独立")
+	_main._tick_projectiles(_main.SIM_DT)
+	anchored = _main._projectile_system.projectiles.values()[0]
+	var visual_mid: Vector2 = _main._projectile_system._visual_position(anchored)
+	_expect(visual_mid.y < visual_start.y and _main._projectile_system._direction(anchored).y < 0.0, "远程弹体向目标模型锚点抬升并沿可见轨迹朝向")
+	_main._projectile_system.clear_all()
 	attacker.free()
 	target.free()
 	var teemo_stats: Dictionary = CardDB.get_card("teemo").duplicate()
@@ -49,6 +60,10 @@ func _check_projectile_travel() -> void:
 	_main.launch_attack(teemo, teemo_target, 10.0, teemo.projectile_speed, 0.0, 0.0, teemo.color)
 	var needle: Dictionary = _main._projectile_system.projectiles.values()[0]
 	_expect(needle.visual == &"needle" and needle.color.g > needle.color.r and is_equal_approx(needle.visual_height, 42.0), "提莫生成从放大后吹管口高度飞出的短绿色线条弹体")
+	_main._projectile_system.projectiles.clear()
+	_main.launch_attack(teemo, teemo_target, 10.0, teemo.projectile_speed, 0.0, 0.0, teemo.color, {"blind_charges": 2})
+	var blind_needle: Dictionary = _main._projectile_system.projectiles.values()[0]
+	_expect(blind_needle.visual == &"blind_needle" and blind_needle.effects.blind_charges == 2, "提莫致盲吹箭使用独立紫色表现类型，保留两次致盲权威效果")
 	_main._projectile_system.projectiles.clear()
 	teemo.free()
 	teemo_target.free()
@@ -175,6 +190,8 @@ func _check_authority_ignores_presentation() -> void:
 				var original := _attack_trace(card_id, stats, team, lethal, false)
 				var changed := _attack_trace(card_id, stats, team, lethal, true)
 				_expect(original == changed, "%s 阵营%d lethal=%s：仅换弹体/模型/音频配置，逐 Tick 权威轨迹与伤亡不变" % [card_id, team, lethal])
+	for team in 2:
+		_expect(_attack_trace("kayle_ranged", CardDB.get_unit_stats("kayle_ranged"), team, false, false, true) == _attack_trace("kayle_ranged", CardDB.get_unit_stats("kayle_ranged"), team, false, true, true), "光剑及伴随焰浪仅改表现不改变逐Tick伤亡")
 	# 防御塔与建筑卡走不同实体路径；两者都覆盖。
 	for team in 2:
 		_expect(_attack_trace("tower", CardDB.PRINCESS_TOWER_STATS, team, true, false) == _attack_trace("tower", CardDB.PRINCESS_TOWER_STATS, team, true, true), "防御塔阵营%d：纯表现偏移不改命中 Tick" % team)
@@ -182,13 +199,15 @@ func _check_authority_ignores_presentation() -> void:
 		for team in 2:
 			_expect(_fan_trace(card_id, team, false) == _fan_trace(card_id, team, true), "%s 阵营%d：扇形/穿透技能仅换外观不改逐 Tick 命中、生命和控制" % [card_id, team])
 
-func _attack_trace(card_id: String, configured: Dictionary, team: int, lethal: bool, change_visual: bool) -> Array:
+func _attack_trace(card_id: String, configured: Dictionary, team: int, lethal: bool, change_visual: bool, include_wave := false) -> Array:
 	seed(9014)
 	_main._projectile_system.clear_all()
 	var stats := configured.duplicate(true)
 	stats["deploy_time"] = 0.0
 	if change_visual:
 		stats["projectile_visual"] = "orb" if String(stats.get("projectile_visual", "orb")) != "orb" else "arrow"
+		stats["attack_wave_visual"] = "orb"
+		stats["attack_wave_visual_height"] = 190.0
 		stats["projectile_visual_height"] = 100.0
 		stats["projectile_visual_forward_offset"] = 70.0
 		stats["projectile_visual_offset"] = Vector2(25, -100)
@@ -203,6 +222,8 @@ func _attack_trace(card_id: String, configured: Dictionary, team: int, lethal: b
 		attacker.setup(team, stats, false)
 	else:
 		attacker.setup(team, stats, stats.name)
+		# 单弹体参考几何独立验证；伴随波另做完整轨迹比较。
+		if not include_wave: attacker.attack_wave.clear()
 	var target := Unit.new()
 	var target_stats := CardDB.training_dummy_stats()
 	target_stats["hp"] = 40 if lethal else 100
@@ -233,7 +254,7 @@ func _attack_trace(card_id: String, configured: Dictionary, team: int, lethal: b
 		_main._tick_projectiles(_main.SIM_DT)
 		var alive: bool = not _main._projectile_system.projectiles.is_empty()
 		trace.append([tick, target.hp, target.hp <= 0.0, _main._projectile_system.projectiles.values()[0].pos if alive else Vector2.ZERO])
-		if not change_visual:
+		if not change_visual and not include_wave:
 			_expect(target.hp == expected_hp and alive == reference_alive, "%s Tick%d：原始几何重放的命中/伤亡保持不变" % [card_id, tick])
 	_main._projectile_system.clear_all()
 	attacker.free()

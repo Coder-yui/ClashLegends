@@ -184,6 +184,7 @@ var transform_after_hits := 0
 var revert_after_hits := 0
 var transform_hit_count := 0
 var form_index := 0
+var attack_wave: Dictionary = {}
 var transformed_stats: Dictionary = {}
 var _base_form_stats: Dictionary = {}
 ## 形态数值在命中瞬间切换；这段固定计时只锁自主攻击，仍允许按新形态寻路移动。
@@ -222,7 +223,7 @@ var active_speed_multiplier: float:
 var active_damage_multiplier: float:
 	get: return buffs.strongest(&"buff", &"damage", 1.0) * buffs.strongest(&"blood_rage", &"damage", 1.0)
 var active_attack_speed_multiplier: float:
-	get: return buffs.strongest(&"buff", &"attack_speed", 1.0)
+	get: return maxf(buffs.strongest(&"buff", &"attack_speed", 1.0), buffs.strongest(&"hit_haste", &"attack_speed", 1.0))
 var active_buff_ignores_movement_slow: bool:
 	get: return buffs.any_flag(&"buff", &"ignore_movement_slow")
 var active_buff_ignores_attack_speed_slow: bool:
@@ -344,6 +345,7 @@ var net_facing_direction := Vector2.ZERO
 var net_attacking_structure := false
 var net_has_continuous_target := false
 var net_continuous_target_pos := Vector2.ZERO
+var net_continuous_target_air_id := -1
 ## 仅由表现代理切换：进入吐息循环后显示，进入动画和退出攻击时隐藏。
 var continuous_beam_visible := false
 var _visual_action_serial := 0
@@ -364,6 +366,10 @@ func set_battle_context(context: BattleContext) -> void:
 
 func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	_base_form_stats = stats.duplicate(true)
+	attack_wave.clear()
+	if stats.has("attack_wave_damage"):
+		for field in ["damage", "delay", "tail_distance", "near_width", "max_scale", "speed", "visual", "visual_height"]:
+			attack_wave[field] = stats.get("attack_wave_" + field, 0.0)
 	terrain_traversal.configure(stats)
 	team = p_team
 	hp = BattleNumbers.quantity(stats.hp)
@@ -991,6 +997,27 @@ func get_continuous_visual_target_position() -> Vector2:
 	if _target is Unit:
 		return (_target as Unit).get_visual_screen_position()
 	return _target.global_position
+
+func get_continuous_visual_target_air_id() -> int:
+	if not has_continuous_visual_target() or not (_target is Unit) or not _target.is_air:
+		return -1
+	return _target.net_id
+
+func get_continuous_beam_endpoint_position() -> Vector2:
+	var target_screen := get_continuous_visual_target_position()
+	var air_target: Unit
+	if _in_client_mode():
+		if net_continuous_target_air_id >= 0:
+			for body in get_tree().get_nodes_in_group("combatants"):
+				if body is Unit and body.net_id == net_continuous_target_air_id and body.is_air:
+					air_target = body
+					break
+	elif _target is Unit and is_instance_valid(_target) and _target.is_air:
+		air_target = _target
+	if air_target == null:
+		return target_screen
+	var fallback := Vector2(0.0, -air_target.visual_radius)
+	return air_target.get_visual_screen_position() + air_target.get_meta("projectile_model_offset", fallback)
 
 func set_continuous_beam_visible(visible: bool) -> void:
 	if continuous_beam_visible == visible:
@@ -1761,7 +1788,7 @@ func _deal_continuous_damage(amount: float) -> void:
 	if _target == null or not is_instance_valid(_target):
 		return
 	if battle_context != null:
-		battle_context.apply_damage_pulse(self, _target, amount, splash_radius, global_position, true, form_index, {"continuous_damage": true})
+		battle_context.apply_damage_pulse(self, _target, amount, splash_radius, global_position, true, form_index, {"continuous_damage": true, "splash_match_primary_air": card_id == "aurelionsol"})
 		return
 	var result := _continuous_damage_stream.hit(_target, amount, self, team, global_position)
 	if result.landed:
@@ -1875,6 +1902,14 @@ func on_attack_landed(attack_form_index: int = -1, landed_damage: float = 0.0, s
 		if transform_hit_count >= revert_after_hits:
 			if is_frozen(): pending_form_generation = form_change_serial
 			else: transform_to_small()
+	var definition := PresentationConfig.for_form(_base_form_stats, form_index)
+	var max_stacks := int(definition.get("hit_haste_max_stacks", 0))
+	if max_stacks > 0:
+		var previous_speed := _effective_attack_speed_multiplier()
+		var stacks := mini(int(buffs.strongest(&"hit_haste", &"stacks", 0.0)) + 1, max_stacks)
+		buffs.apply(&"hit_haste", &"attack", float(definition.hit_haste_duration), {
+			"stacks": stacks, "attack_speed": 1.0 + stacks * float(definition.hit_haste_per_stack)})
+		_rescale_attack_phase(previous_speed)
 	add_skill_resource(skill_resource_hit_gain)
 	_try_heal_on_hit(submitted_swing)
 	var cycle_ratio := 0.0
@@ -2441,7 +2476,7 @@ func get_shield_health_ratio() -> float:
 ## 光柱只读取已经确定的攻击目标，宽度与高度均不参与权威命中判定。
 func _draw_continuous_beam() -> void:
 	var source_screen := get_visual_screen_position()
-	var target_local := get_continuous_visual_target_position() - source_screen
+	var target_local := get_continuous_beam_endpoint_position() - source_screen
 	var mouth_local := continuous_beam_origin_world_position - source_screen if continuous_beam_origin_tracks_model else Vector2(0.0, -continuous_beam_origin_height)
 	var to_target := target_local - mouth_local
 	if to_target.length_squared() < 0.001:

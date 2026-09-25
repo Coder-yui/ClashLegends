@@ -5,7 +5,7 @@ static func definition() -> Dictionary:
 	return {
 		"gameplay": {
 			"name": "龙王", "cost": 4, "type": "unit",
-			"description": "空中持续输出单位，吐息能够同时压制目标及其周围敌人。",
+			"description": "空中持续输出单位，吐息只波及目标同层的附近敌人。",
 			# 空中远程单位：持续喷吐龙息（DPS模式）
 			"hp": 580, "damage": 55, "range": 130.0,
 			"speed": SPEED_EXTREMELY_SLOW, "interval": 0.0, "first_hit": 0.0,

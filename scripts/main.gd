@@ -180,6 +180,7 @@ func _ready() -> void:
 	_projectile_system = ProjectileSystem.new()
 	_projectile_system.setup(battle_context)
 	_projectile_system.skill_hit.connect(present_skill_projectile_hit)
+	_projectile_system.wave_audio.connect(present_skill_projectile_hit)
 	_projectile_system.launch_audio_started.connect(_on_projectile_launch_audio_started)
 	_projectile_system.launch_audio_stopped.connect(_on_projectile_launch_audio_stopped)
 	add_child(_projectile_system)
@@ -1014,16 +1015,17 @@ func _place_art_dev_item(pos: Vector2) -> void:
 		return
 	if not CardDB.has_card(_workbench.selection):
 		return
-	pos = _snap_card_position(_workbench.selection, pos, _workbench.team)
-	if play_card(_workbench.team, _workbench.selection, pos, {"immediate": true, "validate_position": false, "preview_active_spell": _workbench.spell_active}):
-		var source_card := resolved_card_for_team(_workbench.team, _workbench.selection)
+	var deployment_id := preload("res://scripts/ui/workbench/card_catalog.gd").deployment_id(_workbench.selection, _workbench.form)
+	pos = _snap_card_position(deployment_id, pos, _workbench.team)
+	if play_card(_workbench.team, deployment_id, pos, {"immediate": true, "validate_position": false, "preview_active_spell": _workbench.spell_active}):
+		var source_card := resolved_card_for_team(_workbench.team, deployment_id)
 		var unit := _latest_unit_for_card(source_card, _workbench.team)
 		if CardPlayHistory.is_mirror(_workbench.selection) and _workbench.spell_active:
 			for id in _active_skills.ids():
 				var entry := _active_skills.entry(int(id))
 				if int(entry.team) == _workbench.team and int(entry.slot) == 0: unit = entry.unit
 		if unit != null:
-			if _workbench.form == 1:
+			if _workbench.form == 1 and not CardDB.get_card(_workbench.selection).has("deployment_upgrade_id"):
 				unit.transform_to_mega(true)
 			_workbench.last_units[_art_dev_unit_key(_workbench.selection, _workbench.team)] = weakref(unit)
 			_workbench.last_groups[_art_dev_unit_key(_workbench.selection, _workbench.team)] = unit.deployment_group_id

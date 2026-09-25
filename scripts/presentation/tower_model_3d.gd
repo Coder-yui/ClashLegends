@@ -41,6 +41,7 @@ void fragment() {
 }
 """
 
+var _projectile_anchor: Node3D
 var _source: Tower
 var _camera: Camera3D
 var _model_root: Node3D
@@ -74,6 +75,7 @@ func setup(tower: Tower, packed: PackedScene, camera: Camera3D, config: Dictiona
 	_model_root = instance as Node3D
 	_animations = config.get("animations", {}).duplicate()
 	add_child(_model_root)
+	_projectile_anchor = preload("res://scripts/presentation/projectile_model_anchor.gd").create(_model_root)
 	_animation_player = _find_animation_player(_model_root)
 	if _animation_player == null:
 		push_warning("塔的 3D 模型中未找到 AnimationPlayer")
@@ -140,6 +142,8 @@ func _sync_position() -> void:
 	if _source == null or _camera == null:
 		return
 	position = _screen_to_ground(_source.global_position)
+	if is_instance_valid(_projectile_anchor):
+		_source.set_meta("projectile_model_offset", _camera.unproject_position(_projectile_anchor.global_position) - _camera.unproject_position(global_position))
 
 func _screen_to_ground(screen_position: Vector2) -> Vector3:
 	var origin := _camera.project_ray_origin(screen_position)

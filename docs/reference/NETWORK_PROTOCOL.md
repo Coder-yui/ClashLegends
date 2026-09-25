@@ -4,11 +4,11 @@
 
 | 契约 | 当前值 |
 | --- | --- |
-| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->53 |
+| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->59 |
 | 顶层快照项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd SNAPSHOT_PACKET_SIZE -->11 |
-| 单位载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd UNIT_PAYLOAD_SIZE -->46 |
+| 单位载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd UNIT_PAYLOAD_SIZE -->47 |
 | 塔载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd TOWER_PAYLOAD_SIZE -->6 |
-| 弹体载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd PROJECTILE_PAYLOAD_SIZE -->13 |
+| 弹体载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd PROJECTILE_PAYLOAD_SIZE -->14 |
 
 双方先核对版本、内容指纹和完整合法卡组，再准备本局资源并确认就绪；加载期间不推进模拟。版本不匹配在握手拒绝，不提供旧载荷兼容槽位。内容指纹包含统一协议版本与四域编译内容。规则算法或消息结构变化均须提升版本。
 
@@ -27,6 +27,8 @@ RPC 端点留在 Main，主客节点路径保持一致。运行请求只接受�
 随机首手由主机在可靠 running 消息携带 hand/queue 下发；accepted 消息同时携带本方最近成功卡牌的来源ID、已付费部署形态ID及基础费用。客户端据此显示镜像目标与费用，不能指定复制目标。镜像仍使用既有实体来源卡、技能槽和快照字段。
 
 单位载荷追加免费追斩布尔值、最高流血层数、血怒剩余秒数；客户端仅用于按钮/表现，付费次数与后台冷却继续保留。技能开始RPC携带消费后的免费资格。新增字段做类型和非负值验证，旧协议拒绝握手。
+
+持续吐息新增空中目标单位 ID；客户端用该 ID 找到本地 3D 模型锚点，绘制朝向空中目标身体的光柱。地面目标仍使用原战场位置；目标 ID 不参与索敌或伤害。
 
 顶层新增索引10 `card_growth`：按阵营→来源卡保存ranged/melee计数与unlocked实际定义。内容类型、阵营、计数上限与允许形态经MatchCardGrowth.valid_snapshot校验，非法包拒绝。客户端仅替换主机状态，旧Tick/旧会话沿用现有快照屏障；单位形态身份继续走出生描述card_id，旧普通实体不改变。规则版本提升至52。
 

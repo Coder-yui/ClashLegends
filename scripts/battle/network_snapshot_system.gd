@@ -63,7 +63,8 @@ const U_EXPLOSIVE_SHIELD := 42
 const U_FREE_RECAST := 43
 const U_BLEED_STACKS := 44
 const U_BLOOD_RAGE := 45
-const UNIT_PAYLOAD_SIZE := 46
+const U_CONTINUOUS_TARGET_AIR_ID := 46
+const UNIT_PAYLOAD_SIZE := 47
 
 const P_ID := 0
 const P_X := 1
@@ -78,7 +79,8 @@ const P_VISUAL_OFFSET_X := 9
 const P_VISUAL_OFFSET_Y := 10
 const P_VISUAL_SCALE := 11
 const P_FIRST_STRIKE := 12
-const PROJECTILE_PAYLOAD_SIZE := 13
+const P_VISUAL_PATH := 13
+const PROJECTILE_PAYLOAD_SIZE := 14
 
 const T_HP := 0
 const T_ACTIVATED := 1
@@ -188,6 +190,7 @@ func apply(snapshot_bytes: PackedByteArray, terminal: bool = false, expected_tic
 		if not DeathFormState.valid_snapshot(payload[U_DEATH_FORM]): return false
 		if not TargetProtectionState.valid_snapshot(payload[U_TARGET_PROTECTION]): return false
 		if not payload[U_FREE_RECAST] is bool or not payload[U_BLEED_STACKS] is int or int(payload[U_BLEED_STACKS]) < 0 or not (payload[U_BLOOD_RAGE] is float or payload[U_BLOOD_RAGE] is int) or not is_finite(float(payload[U_BLOOD_RAGE])) or float(payload[U_BLOOD_RAGE]) < 0.0: return false
+		if not payload[U_CONTINUOUS_TARGET_AIR_ID] is int or int(payload[U_CONTINUOUS_TARGET_AIR_ID]) < -1: return false
 		if not payload[U_ACTION_PERMISSIONS] is int or int(payload[U_ACTION_PERMISSIONS]) < 0 or (int(payload[U_ACTION_PERMISSIONS]) & ~ControlState.ALL_PERMISSIONS) != 0:
 			return false
 		if not payload[U_CANCELLATION] is Dictionary or not Unit.valid_action_cancellation(payload[U_CANCELLATION]):
@@ -246,6 +249,7 @@ func _apply_units(units_data: Array) -> void:
 		u.net_attack_visual_first_strike = int(d[U_ATTACK_FIRST_STRIKE]) == 1
 		u.net_has_continuous_target = int(d[U_HAS_CONTINUOUS_TARGET]) == 1
 		u.net_continuous_target_pos = Vector2(d[U_CONTINUOUS_X], d[U_CONTINUOUS_Y])
+		u.net_continuous_target_air_id = int(d[U_CONTINUOUS_TARGET_AIR_ID])
 		if _controller._auto_test and not _controller._auto_continuous_target_seen and u.net_has_continuous_target:
 			_controller._auto_continuous_target_seen = true
 			print("[测试] 客户端已收到持续吐息目标端点")
@@ -322,6 +326,7 @@ func _apply_projectiles(projectiles_data: Array) -> void:
 		targets[d[P_ID]] = {
 			"pos": Vector2(d[P_X], d[P_Y]),
 			"target_pos": Vector2(d[P_X], d[P_Y]),
+			"visual_path": d[P_VISUAL_PATH].duplicate(true),
 			"color": d[P_COLOR], "radius": d[P_RADIUS], "visual": StringName(d[P_VISUAL]),
 			"direction": Vector2(d[P_DIRECTION_X], d[P_DIRECTION_Y]),
 			"visual_height": float(d[P_VISUAL_HEIGHT]),
@@ -417,6 +422,7 @@ func _projectile_snapshot_payload(id: int, projectile: Dictionary) -> Array:
 		String(projectile.get("visual", &"orb")), direction.x, direction.y,
 		projectile.get("visual_height", 0.0), visual_offset.x, visual_offset.y,
 		projectile.get("visual_scale", 1.0), 1 if bool(projectile.get("effects", {}).get("first_strike", false)) else 0,
+		projectile.get("visual_path", {}).duplicate(true),
 	]
 
 
@@ -466,4 +472,5 @@ func _unit_snapshot_payload(id: int, u: Unit, has_continuous_target: bool = fals
 		bool(active_skill_state.get("free_recast", false)),
 		u.bleeding.total_stacks(),
 		u.buffs.remaining(&"blood_rage"),
+		u.get_continuous_visual_target_air_id(),
 	]

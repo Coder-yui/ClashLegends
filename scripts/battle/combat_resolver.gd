@@ -10,6 +10,8 @@ func _resolve_immediate_attack_hit(p_team: int, origin: Vector2, primary: Node2D
 	if primary == null or not is_instance_valid(primary) or primary.hp <= 0.0:
 		return false
 	var ground_only := bool(effects.get("ground_only", false))
+	var match_primary_air := bool(effects.get("splash_match_primary_air", false))
+	var primary_air: bool = primary is Unit and primary.is_air
 	if ground_only and primary is Unit and (primary as Unit).is_air:
 		return false
 	if radius <= 0.0:
@@ -39,6 +41,8 @@ func _resolve_immediate_attack_hit(p_team: int, origin: Vector2, primary: Node2D
 		if not is_instance_valid(c) or c.team == p_team or c.hp <= 0.0:
 			continue
 		if ground_only and c is Unit and (c as Unit).is_air:
+			continue
+		if match_primary_air and (c is Unit and c.is_air) != primary_air:
 			continue
 		if c.global_position.distance_to(impact_pos) <= radius + c.body_radius:
 			var was_alive: bool = c.hp > 0.0
@@ -191,6 +195,7 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 		if not is_instance_valid(target) or target.hp <= 0.0: continue
 		if radius > 0.0 and (target.team == p_team or target.global_position.distance_to(impact) > radius + target.body_radius): continue
 		if bool(effects.get("ground_only", false)) and target is Unit and target.is_air: continue
+		if bool(effects.get("splash_match_primary_air", false)) and (target is Unit and target.is_air) != (primary is Unit and primary.is_air): continue
 		var hit_amount := float(BattleNumbers.quantity(amount))
 		if counts_as_attack and from is Unit: hit_amount += from.on_hit_passive_damage(target)
 		var result := _hit(target, hit_amount, amount, from, p_team, source_position, effects)

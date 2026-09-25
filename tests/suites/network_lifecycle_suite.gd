@@ -381,6 +381,10 @@ func _check_bleeding_projection() -> void:
 	bad[SNAP.U_FREE_RECAST] = 1
 	_deliver(3, [bad])
 	_expect(_system.lifecycle.snapshot_tick == 2, "非布尔免费资格快照被拒绝")
+	bad = data.duplicate(true)
+	bad[SNAP.U_CONTINUOUS_TARGET_AIR_ID] = -2
+	_deliver(3, [bad])
+	_expect(_system.lifecycle.snapshot_tick == 2, "非法空中吐息目标 ID 快照被拒绝")
 	data[SNAP.U_BLOOD_RAGE] = 0.0
 	data[SNAP.U_BLEED_STACKS] = 0
 	data[SNAP.U_FREE_RECAST] = false

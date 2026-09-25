@@ -22,6 +22,8 @@ func prepare(card_ids: Array) -> void:
 		_collect(preload("res://scripts/data/match_audio.gd").EVENTS, &"AudioStream")
 		_collect("res://assets/arena/rift_arena/rift_arena.tscn")
 		_world_prepared = true
+	if cards.has("kayle_ranged"):
+		_collect(preload("res://scripts/presentation/kayle_projectile_visuals.gd").dependency_paths())
 	particle_systems = LolParticleEffect3D.dependencies_for(cards)
 	_collect(LolParticleEffect3D.dependency_paths(particle_systems))
 	preparation_usec += Time.get_ticks_usec() - started

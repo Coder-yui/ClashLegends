@@ -40,6 +40,7 @@ var _saved_control_state := -1
 var _saved_control_locomotion_state := -1
 var _current_clip_speed := 1.0
 var _stable_head_offset := NAN
+var _projectile_anchor: Node3D
 var _last_frozen_overlay := false
 var _was_controlled := false
 var _source: Unit
@@ -240,6 +241,8 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 			_animation_player.animation_finished.connect(_on_animation_finished)
 	_replace_active_buff_visual(buff_scene_path)
 	_configure_looping_animations()
+	if is_instance_valid(_projectile_anchor): _projectile_anchor.free()
+	_projectile_anchor = preload("res://scripts/presentation/projectile_model_anchor.gd").create(_model_root)
 	_recreate_team_ring()
 	if not reuse:
 		_sync_visual(true, 0.0)
@@ -858,6 +861,8 @@ func _update_health_bar_anchor() -> void:
 	if _source == null or _camera == null or not _model_resources.has_meshes():
 		return
 	var ground_screen := _camera.unproject_position(global_position)
+	if is_instance_valid(_projectile_anchor):
+		_source.set_meta("projectile_model_offset", _camera.unproject_position(_projectile_anchor.global_position) - ground_screen)
 	# 建筑等横向展开模型可由包装场景提供稳定的 3D 顶端锚点；仍只影响 UI 投影。
 	if _model_root != null and _model_root.has_method("get_health_bar_anchor_local"):
 		var local_anchor = _model_root.call("get_health_bar_anchor_local")

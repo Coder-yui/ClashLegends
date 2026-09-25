@@ -103,6 +103,28 @@ func _check_continuous() -> void:
 	for tick in range(20):
 		_main.apply_damage_pulse(source, target, 55.0 * 0.05, 35.0, source.position, true, 0, {"continuous_damage": true})
 	_h._expect(before_a - target.hp == 55 and before_b - splash.hp == 55, "持续溅射对每个实际覆盖目标分别累计55DPS")
+	var dragon := _unit("aurelionsol", 0)
+	dragon.card_id = "aurelionsol"
+	var ground_primary := _unit("garen")
+	var ground_near := _unit("garen")
+	var air_primary := _unit("aurelionsol")
+	var air_near := _unit("aurelionsol")
+	dragon.position = Vector2(10000, 10000)
+	ground_primary.position = Vector2(10100, 10000)
+	ground_near.position = ground_primary.position + Vector2(8, 0)
+	air_primary.position = ground_primary.position + Vector2(0, 8)
+	air_near.position = ground_primary.position + Vector2(8, 8)
+	dragon._target = ground_primary
+	var ground_before := ground_near.hp
+	var air_before := air_near.hp
+	for tick in 20: dragon._deal_continuous_damage(55.0 * 0.05)
+	_h._expect(ground_near.hp == ground_before - 55 and air_primary.hp == air_before and air_near.hp == air_before, "龙王吐息攻击地面时只溅射附近地面单位")
+	ground_before = ground_near.hp
+	var ground_primary_before := ground_primary.hp
+	air_before = air_near.hp
+	dragon._target = air_primary
+	for tick in 20: dragon._deal_continuous_damage(55.0 * 0.05)
+	_h._expect(air_near.hp == air_before - 55 and ground_primary.hp == ground_primary_before and ground_near.hp == ground_before, "龙王吐息攻击空中时只溅射附近空中单位")
 
 func _check_decay() -> void:
 	var building := _unit("apex_turret")
