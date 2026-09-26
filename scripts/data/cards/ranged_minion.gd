@@ -18,6 +18,7 @@ static func definition() -> Dictionary:
 				}],
 		},
 		"visual": {
+			"active_buff_projectile_visual": "baron_ranged",
 			"visual_active_buff_scene": "res://assets/effects/baron_minion/ranged_minion.tscn",
 			"visual_radius": RADIUS_SMALL + VISUAL_RADIUS_PADDING,
 			"visual_scene_paths": [

@@ -5,7 +5,6 @@ var instances: Dictionary = {}
 var rendered_paths: Dictionary = {}
 var _sample_sources: Array[Unit] = []
 var _warmed_materials: Array[Material] = []
-var warmed_particle_systems: Array[String] = []
 var capacity := {}
 var errors := PackedStringArray()
 var metrics := {}
@@ -169,22 +168,6 @@ func prepare(resources: Dictionary, world: Node3D, camera: Camera3D, cards: Dict
 				for library in player.get_animation_library_list(): player.remove_animation_library(library)
 			sample.hide()
 		instances[path] = batch
-
-	# 原生粒子在代码中按名称选择，不是卡牌字段里的场景引用。
-	# 预播全部已接入系统，加载纹理/网格并保留材质缓存；不接入战斗事件。
-	for system_name in LolParticleEffect3D.dependencies_for(cards):
-		if String(system_name) in warmed_particle_systems: continue
-		var effect := LolParticleEffect3D.new()
-		effect.process_mode = Node.PROCESS_MODE_DISABLED
-		world.add_child(effect)
-		effect.position = Vector3(0, 3, 0)
-		effect.setup(String(system_name))
-		effect.advance(0.1)
-		await tree.process_frame
-		if cancelled or not is_instance_valid(world): return
-		_draw_sample()
-		effect.hide()
-		warmed_particle_systems.append(String(system_name))
 
 func take(packed: PackedScene) -> Node:
 	var path := packed.resource_path

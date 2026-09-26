@@ -171,10 +171,5 @@ func _create_environment() -> void:
 	_world_root.add_child(light)
 
 
-func attach_projectile_system(system: ProjectileSystem) -> void:
-	var particles := ProjectileParticles3D.new()
-	_world_root.add_child(particles)
-	particles.setup(system, _camera)
-
 func _exit_tree() -> void:
 	model_pool.release_sources()

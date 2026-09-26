@@ -4,7 +4,6 @@ extends RefCounted
 var resources: Dictionary = {}
 var cards: Dictionary = {}
 var preparation_usec := 0
-var particle_systems: Array = []
 var _world_prepared := false
 var errors := PackedStringArray()
 # 系统兵线每种单位可占两路；准备两波重叠窗口，根集合与预算使用同一声明。
@@ -24,8 +23,6 @@ func prepare(card_ids: Array) -> void:
 		_world_prepared = true
 	if cards.has("kayle_ranged"):
 		_collect(preload("res://scripts/presentation/kayle_projectile_visuals.gd").dependency_paths())
-	particle_systems = LolParticleEffect3D.dependencies_for(cards)
-	_collect(LolParticleEffect3D.dependency_paths(particle_systems))
 	preparation_usec += Time.get_ticks_usec() - started
 
 func _prepare_card(id: String) -> void:
@@ -48,7 +45,7 @@ func _collect(value: Variant, expected: StringName = &"") -> void:
 			var child_type := expected
 			if key == "audio": child_type = &"AudioStream"
 			elif key == "card_art": child_type = &"Texture2D"
-			elif key in ["visual_scene_path", "visual_scene_paths", "visual_active_buff_scene", "death_followup_scene_path"]: child_type = &"PackedScene"
+			elif key in ["visual_scene_path", "visual_scene_paths", "visual_pre_deploy_scene", "visual_active_buff_scene", "death_followup_scene_path"]: child_type = &"PackedScene"
 			_collect(value[key], child_type)
 	elif value is Array or value is PackedStringArray:
 		for child in value:

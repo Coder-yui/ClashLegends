@@ -35,7 +35,7 @@ func _run() -> void:
 	main._projectile_system.clear_all()
 	source.move_speed = 0
 	target.move_speed = 0
-	if card == "siege_minion": main.preview_active_skill(source, CardDB.active_skills_for(card)[0])
+	if card in ["siege_minion", "ranged_minion"]: main.preview_active_skill(source, CardDB.active_skills_for(card)[0])
 	main._projectile_system.launch(source, target, 1.0, source.projectile_speed, 0.0, 0.0, source.color)
 	DirAccess.make_dir_recursive_absolute(preload("res://tools/lib/development_paths.gd").output("clash-projectile-" + card))
 	for i in range(24):

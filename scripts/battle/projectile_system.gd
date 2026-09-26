@@ -85,7 +85,7 @@ func launch(attacker: Node2D, target: Node2D, amount: float, projectile_speed: f
 		projectile_impact_visual = (attacker as Unit).projectile_impact_visual
 		if attacker.active_buff_timer > 0.0 and attacker.active_buff_projectile_visual != &"":
 			projectile_visual = attacker.active_buff_projectile_visual
-			projectile_impact_visual = &"baron_siege_hit"
+			projectile_impact_visual = StringName(String(projectile_visual) + "_hit")
 		var forward_offset := (attacker as Unit).projectile_visual_forward_offset
 		if forward_offset > 0.0:
 			visual_offset = direction * forward_offset
@@ -125,8 +125,8 @@ func launch(attacker: Node2D, target: Node2D, amount: float, projectile_speed: f
 		"contact_radius": target.body_radius + attacker.projectile_collision_radius,
 		"progress": 0.0, "wave": false,
 	}
-	if projectile_visual == &"baron_siege":
-		_context.show_projectile_impact(start_position + visual_offset - Vector2(0, projectile_visual_height), 1.0, projectile_color, &"baron_siege_cast")
+	if projectile_visual in [&"baron_siege", &"baron_ranged"]:
+		_context.show_projectile_impact(start_position + visual_offset - Vector2(0, projectile_visual_height), 1.0, projectile_color, StringName(String(projectile_visual) + "_cast"))
 	if attacker is Unit:
 		var cue := &"first_strike:missile_launch" if first_strike else (&"empowered_launch" if bool(effects.get("presentation_source", {}).get("empowered", false)) else &"attack_launch")
 		var source: Dictionary = effects.get("presentation_source", {})
@@ -236,8 +236,8 @@ func tick(dt: float) -> void:
 			projectile.visual_offset = visual_origin_offset * (1.0 - travel_ratio)
 		projectiles[id] = projectile
 		if next_pos.distance_to(target_pos) <= target.body_radius + projectile.radius:
-			if StringName(projectile.get("impact_visual", "")) == &"baron_siege_hit":
-				_context.show_projectile_impact(target_pos, 1.0, projectile.color, &"baron_siege_hit")
+			if StringName(projectile.get("impact_visual", "")) in [&"baron_siege_hit", &"baron_ranged_hit"]:
+				_context.show_projectile_impact(target_pos, 1.0, projectile.color, StringName(projectile.impact_visual))
 			elif projectile.splash > 0.0 and StringName(projectile.get("impact_visual", "")) != &"":
 				_context.show_projectile_impact(target_pos, projectile.splash, projectile.color, StringName(projectile.impact_visual))
 			var hit_from: Node2D = projectile.attacker if (projectile.attacker != null and is_instance_valid(projectile.attacker)) else null
@@ -410,7 +410,8 @@ func _draw() -> void:
 	for id in visible:
 		var projectile: Dictionary = visible[id]
 		match StringName(projectile.get("visual", &"orb")):
-			&"baron_siege", &"kayle_sword", &"kayle_wave": pass # 由独立表现代理绘制
+			&"baron_siege", &"baron_ranged": preload("res://scripts/presentation/baron_projectile_effect.gd").draw_flight(self, _visual_position(projectile), _direction(projectile), float(projectile.radius) * float(projectile.get("visual_scale", 1.0)), projectile.color)
+			&"kayle_sword", &"kayle_wave": pass # 由独立表现代理绘制
 			&"tower_orb": _draw_tower_orb(projectile)
 			&"arrow": _draw_arrow(projectile)
 			&"card": _draw_card(projectile)
@@ -457,6 +458,9 @@ func _draw_first_strike_orb(projectile: Dictionary) -> void:
 	draw_circle(pos - direction * radius * 0.20, radius * 0.54, Color(1.0, 0.98, 0.76, 1.0))
 
 func _draw_impact_effect(effect: Dictionary) -> void:
+	if String(effect.get("visual", "")).begins_with("baron_"):
+		preload("res://scripts/presentation/baron_projectile_effect.gd").draw_burst(self, effect)
+		return
 	if StringName(effect.get("visual", "")) != &"splash_wave":
 		return
 	var duration := maxf(float(effect.get("duration", 0.38)), 0.001)

@@ -110,11 +110,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_expect(loading_match._audio_manager._stream_pool_cache.has("\n".join(PackedStringArray(event.pool))), "水晶爆炸音轨在开局前已建立缓存")
 	var path := PresentationConfig.scene_path(CardDB.get_card("melee_minion"), 0)
 	var pool: MatchModelPool = loading_match._battle_presentation.model_pool
-	_expect(pool.warmed_particle_systems.size() == LolParticleEffect3D.system_names().size(), "原生强化/弹体/命中粒子在加载阶段全部预热")
-	var dependencies_ok := true
-	for dependency in LolParticleEffect3D.dependency_paths():
-		dependencies_ok = dependencies_ok and loading_match._resources.resources.has(dependency)
-	_expect(dependencies_ok and not LolParticleEffect3D._materials.is_empty() and not LolParticleEffect3D._meshes.is_empty(), "动态粒子纹理、网格和材质模板提前保留，首次技能不再读取资源")
+	_expect(loading_match._resources.resources.keys().all(func(resource_path): return String(resource_path).get_file() != "systems.json"), "男爵特效使用自制覆层，不再加载原版粒子资源")
 	var prepared_count: int = pool.instances[path].size()
 	var source_count := _main.get_tree().get_nodes_in_group("combatants").size()
 	var unit = loading_match._spawn_unit(0, "melee_minion", Vector2(300, 800), 0.0)

@@ -4,5 +4,3 @@
 
 [node name="BaronMinionBuff" type="Node3D"]
 script = ExtResource("1")
-aura_name = "exalted_buf_siege"
-aura_offset = Vector3(0, 0.3, 0)

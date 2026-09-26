@@ -949,9 +949,14 @@ func _check_baron_buff_visual() -> void:
 
 
 func _check_baron_projectile() -> void:
+	for card in ["siege_minion", "ranged_minion"]:
+		_check_baron_projectile_card(card)
+
+func _check_baron_projectile_card(card: String) -> void:
+	var visual := "baron_siege" if card == "siege_minion" else "baron_ranged"
 	var source := Unit.new()
-	source.card_id = "siege_minion"
-	source.setup(0, CardDB.get_card("siege_minion"), "炮车兵")
+	source.card_id = card
+	source.setup(0, CardDB.get_card(card), card)
 	source.position = Vector2(100, 900)
 	_main.add_child(source)
 	var target := Unit.new()
@@ -969,10 +974,10 @@ func _check_baron_projectile() -> void:
 	system.launch(source, target, 10, 300, 0, 0, Color.WHITE)
 	var projectile: Dictionary = system.projectiles.values()[0]
 	var payload: Array = _main._snapshot_system._projectile_snapshot_payload(1, projectile)
-	_expect(projectile.visual == &"baron_siege" and payload[NetworkSnapshotSystem.P_VISUAL] == "baron_siege" and projectile.radius == normal.radius and projectile.speed == normal.speed and target.hp == hp and system.impact_effects[0].visual == &"baron_siege_cast", "强化炮弹使用独立外观和快照，出膛不结算伤害且不改速度/碰撞半径")
+	_expect(projectile.visual == StringName(visual) and payload[NetworkSnapshotSystem.P_VISUAL] == visual and projectile.radius == normal.radius and projectile.speed == normal.speed and target.hp == hp and system.impact_effects[0].visual == StringName(visual + "_cast"), "强化炮弹使用独立外观和快照，出膛不结算伤害且不改速度/碰撞半径")
 	SuiteUtils.set_buff_window(source, 0.0)
 	system.tick(1.0)
-	_expect(is_equal_approx(target.hp, hp - 10) and system.projectiles.is_empty() and system.impact_effects[-1].visual == &"baron_siege_hit", "已出膛强化炮弹不随 Buff 到期变色，命中只结算一次并播放原始命中特效")
+	_expect(is_equal_approx(target.hp, hp - 10) and system.projectiles.is_empty() and system.impact_effects[-1].visual == StringName(visual + "_hit"), "已出膛强化炮弹不随 Buff 到期变色，命中只结算一次并播放自制命中特效")
 	system.clear_all()
 	system.launch(source, target, 10, 300, 0, 0, Color.WHITE)
 	_expect(system.projectiles.values()[0].visual == normal.visual, "强化到期后的新炮弹恢复普通外观")
