@@ -41,6 +41,7 @@ void fragment() {
 }
 """
 
+var _status_head_height := 0.0
 var _projectile_anchor: Node3D
 var _source: Tower
 var _camera: Camera3D
@@ -96,6 +97,7 @@ func setup(tower: Tower, packed: PackedScene, camera: Camera3D, config: Dictiona
 			_show_final_ruin()
 		else:
 			_begin_spawn_sequence()
+	_cache_status_head_height()
 	_source.destroyed.connect(_on_source_destroyed)
 	_source.visual_hit.connect(_on_source_visual_hit)
 	_sync_position()
@@ -142,8 +144,18 @@ func _sync_position() -> void:
 	if _source == null or _camera == null:
 		return
 	position = _screen_to_ground(_source.global_position)
+	_source.set_stun_head_world_position(_camera.unproject_position(to_global(Vector3(0, _status_head_height, 0))))
 	if is_instance_valid(_projectile_anchor):
 		_source.set_meta("projectile_model_offset", _camera.unproject_position(_projectile_anchor.global_position) - _camera.unproject_position(global_position))
+
+func _cache_status_head_height() -> void:
+	var meshes: Array[MeshInstance3D] = []
+	_collect_meshes(_model_root, meshes)
+	for mesh in meshes:
+		var bounds := mesh.get_aabb()
+		for i in 8:
+			var p := bounds.position + bounds.size * Vector3(i & 1, (i >> 1) & 1, (i >> 2) & 1)
+			_status_head_height = maxf(_status_head_height, to_local(mesh.to_global(p)).y)
 
 func _screen_to_ground(screen_position: Vector2) -> Vector3:
 	var origin := _camera.project_ray_origin(screen_position)

@@ -861,6 +861,13 @@ func _update_health_bar_anchor() -> void:
 	if _source == null or _camera == null or not _model_resources.has_meshes():
 		return
 	var ground_screen := _camera.unproject_position(global_position)
+	# 用实际升降进度投影附着平面，包含部署位移；不改权威坐标或碰撞。
+	var elevation := 0.0
+	var height_span := _model_air_height - _model_ground_height
+	if absf(height_span) > 0.001:
+		elevation = CardDB.AIR_VISUAL_ELEVATION * clampf((_model_root.position.y - _model_ground_height) / height_span, 0.0, 1.0)
+	_source.set_status_effect_world_position(_camera.unproject_position(global_position + Vector3.UP * elevation))
+
 	if is_instance_valid(_projectile_anchor):
 		_source.set_meta("projectile_model_offset", _camera.unproject_position(_projectile_anchor.global_position) - ground_screen)
 	# 建筑等横向展开模型可由包装场景提供稳定的 3D 顶端锚点；仍只影响 UI 投影。

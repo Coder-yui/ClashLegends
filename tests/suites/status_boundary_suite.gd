@@ -216,7 +216,7 @@ func _check_formal_skill_ticks() -> void:
 			if not control_kind.begins_with("freeze"):
 				_expect(unlock_tick == end_tick, "%s %s 行动锁与 Cast End 同边界" % [card, control_kind])
 			if card == "gwen":
-				_expect(heal_ticks == ([] if control_kind.begins_with("freeze") else [30]), "格温完成回血只在 K+30 且未取消时发生")
+				_expect(heal_ticks == ([] if control_kind == "freeze_before" else [2]), "格温首次命中在 K+2 回血，命中前冻结不回血，命中后冻结保留收益")
 			print("CAST_BOUNDARY ", {"card": card, "control": control_kind, "start": start, "impacts": observed, "unlock": unlock_tick, "heal": heal_ticks})
 			_main._on_active_skill_unit_died(id)
 			unit.free()

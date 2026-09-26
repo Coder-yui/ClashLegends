@@ -68,6 +68,10 @@ var frozen_timer: float:
 var control := ControlState.new()
 var _destroyed_visual_emitted := false
 var _hit_flash_event_cooldown := 0.0
+var _stun_visual_phase := 0.0
+var _stun_was_visible := false
+var _stun_head_local := Vector2.ZERO
+var _has_stun_head := false
 
 func set_battle_context(context: BattleContext) -> void:
 	battle_context = context
@@ -134,6 +138,16 @@ func stun(duration: float, source: StringName = &"legacy") -> void:
 func _ready() -> void:
 	add_to_group("combatants")
 	add_to_group("combat_structures")
+
+func _process(delta: float) -> void:
+	_stun_visual_phase = fposmod(_stun_visual_phase + delta, 2.0)
+	if control.stun_timer > 0.0 or _stun_was_visible:
+		queue_redraw()
+	_stun_was_visible = control.stun_timer > 0.0 and hp > 0.0
+
+func set_stun_head_world_position(world_point: Vector2) -> void:
+	_stun_head_local = to_local(world_point)
+	_has_stun_head = true
 
 func prepare_statuses(dt: float) -> void:
 	_tick_shield(dt)
@@ -324,7 +338,9 @@ func _draw() -> void:
 	if frozen_timer > 0.0:
 		draw_circle(Vector2.ZERO, visual_radius + 4.0, Color(0.40, 0.70, 1.00, 0.35))
 	if control.stun_timer > 0.0:
-		draw_arc(Vector2.ZERO, visual_radius + 5.0, 0.0, TAU, 28, Color(1.0, 0.78, 0.18, 0.95), 3.0, true)
+		var rotation := -get_global_transform_with_canvas().get_rotation()
+		var head := _stun_head_local if _has_stun_head else Vector2(0, -visual_radius).rotated(rotation)
+		preload("res://scripts/presentation/stun_effect.gd").draw_effect(self, head + Vector2(0, -17).rotated(rotation), _stun_visual_phase)
 	# 国王塔顶部标记：激活金色，休眠灰色
 	if is_king and not has_model_art:
 		var crown_color := Color(0.95, 0.80, 0.25) if activated else Color(0.5, 0.5, 0.5)

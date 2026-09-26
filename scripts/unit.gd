@@ -324,6 +324,7 @@ var net_attack_visual_first_strike := false
 var net_shield_ratio := 0.0
 var net_shield_capacity_ratio := 0.0
 var net_slow_active := false
+var net_attack_speed_slow_active := false
 var net_stun_active := false
 var net_form_index := 0
 var net_form_change_serial := 0
@@ -360,6 +361,10 @@ var _health_bar_head_screen := Vector2.ZERO
 # 渲染插值：sim 为 20Hz，渲染在上一模拟位置与当前位置间过渡
 var _prev_pos := Vector2.ZERO
 var _vis_offset := Vector2.ZERO
+var _status_effect_offset := Vector2.ZERO # 3D 代理投影的离地平面，仅用于附着表现
+var _status_effect_phase := 0.0
+var _status_last_position := Vector2(INF, INF)
+var _status_visual_velocity := Vector2.ZERO
 
 func set_battle_context(context: BattleContext) -> void:
 	battle_context = context
@@ -524,6 +529,10 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	presentation_state().advance_health_bar(delta)
+	_status_effect_phase = fposmod(_status_effect_phase + delta, preload("res://scripts/presentation/soft_control_effect.gd").LOOP_SECONDS)
+	_update_status_visual_motion(delta)
+	if movement_slow_visual() or attack_speed_slow_visual(): queue_redraw()
+	if restoration_fx_timer > 0.0: queue_redraw()
 	restoration_fx_timer = maxf(0.0, restoration_fx_timer - delta)
 	_sweep_fx_timer = maxf(0.0, _sweep_fx_timer - delta)
 	if _in_client_mode():
@@ -538,6 +547,7 @@ func _process(delta: float) -> void:
 	if death_form.waiting():
 		queue_redraw()
 	if is_building or hp <= 0.0:
+		queue_redraw() # 状态结束帧也清除建筑 / 死亡单位的附着提示。
 		return
 	# 主机/单机：使用 main 的统一模拟余量插值，不能让每个节点独立累计进度。
 	_vis_offset = get_visual_screen_position() - position
@@ -615,6 +625,45 @@ func _effective_movement_multiplier() -> float:
 	if control.slow_timer > 0.0 and not active_buff_ignores_movement_slow:
 		rate *= control.slow_multiplier
 	return rate
+
+## 表现读取有效减益本身，不从被增益抵消后的最终速率反推。
+func movement_slow_visual() -> bool:
+	if hp <= 0.0: return false
+	if _in_client_mode(): return net_slow_active
+	return control.slow_timer > 0.0 and control.slow_multiplier < 1.0 and not active_buff_ignores_movement_slow
+
+func attack_speed_slow_visual() -> bool:
+	if hp <= 0.0: return false
+	if _in_client_mode(): return net_attack_speed_slow_active
+	return control.attack_speed_slow_timer > 0.0 and control.attack_speed_slow_multiplier < 1.0 and not active_buff_ignores_attack_speed_slow
+
+## 只测量已发生的渲染位移；意图、站立抖动、模型振翅或出生位置不算移动。
+func _update_status_visual_motion(delta: float) -> void:
+	var current := get_visual_screen_position()
+	_status_visual_velocity = Vector2.ZERO
+	if _status_last_position.is_finite() and delta > 0.00001:
+		var displacement := current - _status_last_position
+		if displacement.length() <= maxf(16.0, move_speed * delta * 4.0):
+			_status_visual_velocity = displacement / delta
+	_status_last_position = current
+
+func movement_slow_effect_visible() -> bool:
+	return movement_slow_visual() and get_locomotion_visual_state_code() == 2 and (get_action_permissions_visual() & ControlState.MOVE) != 0 and _status_visual_velocity.length_squared() > 4.0
+
+func stun_visual() -> bool:
+	return hp > 0.0 and (net_stun_active if _in_client_mode() else control.stun_timer > 0.0)
+
+func stun_effect_origin() -> Vector2:
+	# 置于模型头顶及血条上方，避免漩涡压住生命信息。缩放与画布翻转一起考虑。
+	var transform_to_screen := get_global_transform_with_canvas()
+	var scale_y := transform_to_screen.y.length()
+	return transform_to_screen.affine_inverse() * (get_health_bar_screen_center() - Vector2(0.0, 13.0 * scale_y))
+
+func set_status_effect_world_position(world_point: Vector2) -> void:
+	_status_effect_offset = to_local(world_point) - _vis_offset
+
+func status_effect_origin() -> Vector2:
+	return _vis_offset + (_status_effect_offset if has_model_art else Vector2.ZERO)
 
 func get_visual_screen_position() -> Vector2:
 	if _in_client_mode():
@@ -1968,7 +2017,7 @@ func _try_heal_on_hit(submitted_swing: int = -1) -> void:
 	if (submitted_swing if submitted_swing >= 0 else _attack_swing_count) % heal_every_hits != 0:
 		return
 	var hp_before_heal := hp
-	hp = maxf(hp, minf(hp + BattleNumbers.quantity(heal_amount), max_hp))
+	heal(heal_amount)
 	if hp > hp_before_heal and battle_context != null:
 		battle_context.notify_unit_audio_event(self, &"passive_heal", global_position)
 	queue_redraw()
@@ -1977,8 +2026,10 @@ func _try_attack_lifesteal(landed_damage: float, cycle_ratio: float = 0.0) -> vo
 	var ratio := attack_lifesteal_ratio + cycle_ratio
 	if ratio <= 0.0 or landed_damage <= 0.0:
 		return
+	var hp_before_heal := hp
 	var health_cap := BattleNumbers.quantity(max_hp * attack_lifesteal_max_health_ratio)
 	hp = minf(hp + BattleNumbers.quantity(landed_damage * ratio), health_cap)
+	_present_heal_gain(hp_before_heal)
 	queue_redraw()
 
 func cancel_skill_cast() -> void:
@@ -2132,16 +2183,21 @@ func _restore_shield_health() -> void:
 	if battle_context != null and battle_context.damage_batch().collecting:
 		battle_context.damage_batch().defer_benefit(_restore_shield_health)
 		return
-	var before := hp
 	heal(maxf(max_hp - hp, 0.0))
-	if hp > before:
-		if battle_context != null:
-			battle_context.present_restoration_heal(self)
-		else:
-			show_restoration_heal()
+
+## 所有真实回血共用同一表现；保留旧 RPC / 方法名以兼容现有联网入口。
+func _present_heal_gain(previous_hp: float) -> void:
+	if hp <= previous_hp or hp <= 0.0 or restoration_fx_timer > 0.0:
+		return
+	if battle_context != null:
+		battle_context.present_restoration_heal(self)
+	else:
+		show_restoration_heal()
 
 func show_restoration_heal() -> void:
-	restoration_fx_timer = 0.9
+	# 高频吸血合并到当前脉冲，不重置动画，避免一直停在透明首帧。
+	if restoration_fx_timer > 0.0: return
+	restoration_fx_timer = preload("res://scripts/presentation/restoration_heal_effect.gd").DURATION
 	queue_redraw()
 
 
@@ -2197,7 +2253,9 @@ func heal(amount: float, interaction: Dictionary = {}) -> void:
 	if hp <= 0.0 or amount <= 0.0:
 		return
 	# 普通治疗不能突破基础上限，也不能把已经存在的溢出生命反向截回基础上限。
+	var hp_before_heal := hp
 	hp = maxf(hp, minf(hp + BattleNumbers.quantity(amount), max_hp))
+	_present_heal_gain(hp_before_heal)
 	queue_redraw()
 
 func take_damage(amount: float, from: Node2D = null, source_team: int = -1, source_position: Vector2 = Vector2(INF, INF), attached: bool = false) -> bool:
@@ -2369,8 +2427,6 @@ func _update_fallback_health_bar_anchor() -> void:
 
 func _draw() -> void:
 	draw_set_transform(_vis_offset, 0.0, Vector2.ONE)
-	if restoration_fx_timer > 0.0 and hp > 0.0:
-		preload("res://scripts/presentation/restoration_heal_effect.gd").draw_effect(self, 1.0 - restoration_fx_timer / 0.9)
 
 	if continuous_beam_visible and has_continuous_visual_target():
 		_draw_continuous_beam()
@@ -2442,15 +2498,13 @@ func _draw() -> void:
 		draw_circle(_health_bar_center + Vector2((stack - (bleeding.total_stacks() - 1) * 0.5) * 7.0, 11.0), 2.5, Color(0.95, 0.12, 0.18))
 	draw_set_transform(_vis_offset, 0.0, Vector2.ONE)
 	if restoration_fx_timer > 0.0 and hp > 0.0:
-		preload("res://scripts/presentation/restoration_heal_effect.gd").draw_effect(self, 1.0 - restoration_fx_timer / 0.9)
+		preload("res://scripts/presentation/restoration_heal_effect.gd").draw_effect(self, 1.0 - restoration_fx_timer / preload("res://scripts/presentation/restoration_heal_effect.gd").DURATION)
 	if control.frozen_timer > 0.0:
 		draw_circle(Vector2.ZERO, visual_radius + 4.0, Color(0.4, 0.8, 1.0, 0.3))
-	var stunned_visible := net_stun_active if _in_client_mode() else control.stun_timer > 0.0
-	if stunned_visible:
-		draw_arc(Vector2.ZERO, visual_radius + 5.0, 0.0, TAU, 24, Color(1.0, 0.78, 0.18, 0.95), 3.0, true)
-	var slow_visible := net_slow_active if _in_client_mode() else control.slow_timer > 0.0
-	if slow_visible:
-		draw_arc(Vector2.ZERO, visual_radius + 10.0, 0.0, TAU, 24, Color(0.45, 0.65, 1.0, 0.75), 2.0, true)
+	if stun_visual():
+		preload("res://scripts/presentation/stun_effect.gd").draw_effect(self, stun_effect_origin(), _status_effect_phase)
+	if hp > 0.0 and (movement_slow_effect_visible() or attack_speed_slow_visual()):
+		preload("res://scripts/presentation/soft_control_effect.gd").draw_effect(self, _status_effect_phase, movement_slow_effect_visible(), attack_speed_slow_visual())
 	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 
 func get_shield_ratio() -> float:

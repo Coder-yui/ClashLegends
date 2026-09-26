@@ -5,6 +5,8 @@ extends "res://tests/suites/battle_suite.gd"
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
+	_check_soft_control_visuals()
+	_check_control_effect_motion()
 	_check_warm_geometry()
 	_check_model_resources_owner()
 	_check_particle_compilation()
@@ -756,3 +758,50 @@ func _check_warm_geometry() -> void:
 	mesh.hide()
 	_expect(MatchModelPool.mesh_configuration([mesh]) != original, "预热区分部件显示与隐藏")
 	mesh.free()
+
+func _check_soft_control_visuals() -> void:
+	var unit := Unit.new()
+	unit.setup(0, CardDB.get_unit_stats("xin"), "xin")
+	unit.apply_slow(2.0, 0.6)
+	unit.apply_attack_speed_slow(3.0, 0.7)
+	unit.apply_active_buff(1.0, 2.0, 1.0, 2.0)
+	_expect(unit.movement_slow_visual() and unit.attack_speed_slow_visual(), "增益抵消最终倍率也保留两类有效减益提示")
+	unit.apply_active_buff(0.5, 1.0, 1.0, 1.0, true, true, &"immune")
+	_expect(not unit.movement_slow_visual() and not unit.attack_speed_slow_visual(), "免疫抑制已有减速与减攻速提示")
+	unit.buffs.advance(0.6)
+	_expect(unit.movement_slow_visual() and unit.attack_speed_slow_visual(), "免疫到期恢复仍有效的软控提示")
+	unit.control.tick_slows(2.1)
+	_expect(not unit.movement_slow_visual() and unit.attack_speed_slow_visual(), "移速减益先到期不清除减攻速提示")
+	unit.control.tick_slows(1.0)
+	_expect(not unit.movement_slow_visual() and not unit.attack_speed_slow_visual(), "软控到期无残留提示")
+	unit.apply_slow(1.0, 1.0)
+	unit.apply_attack_speed_slow(1.0, 1.0)
+	_expect(not unit.movement_slow_visual() and not unit.attack_speed_slow_visual(), "无实际减速的倍率不产生提示")
+	unit.free()
+
+func _check_control_effect_motion() -> void:
+	var unit := Unit.new()
+	unit.setup(0, CardDB.get_unit_stats("ashe"), "ashe")
+	_main.add_child(unit)
+	unit.set_battle_context(null) # 本用例显式移动渲染位置，不依赖主场景固定时钟余量。
+	unit._deploy_timer = 0.0
+	unit.apply_slow(10.0, 0.5)
+	unit.apply_attack_speed_slow(10.0, 0.5)
+	unit._move_intent = Vector2(10, 0)
+	unit._update_status_visual_motion(0.05)
+	_expect(not unit.movement_slow_effect_visible(), "出生首帧不伪造移动减速拖痕")
+	unit.position += Vector2(2, 0)
+	unit._update_status_visual_motion(0.05)
+	_expect(unit.movement_slow_effect_visible(), "实际自主移动显示减速拖痕")
+	unit._update_status_visual_motion(0.05)
+	_expect(not unit.movement_slow_effect_visible() and unit.attack_speed_slow_visual(), "有移动意图但被阻挡静止时不显示拖痕，减攻速仍持续")
+	unit.position += Vector2(2, 0)
+	unit._update_status_visual_motion(0.05)
+	unit.stun(0.5)
+	_expect(not unit.movement_slow_effect_visible() and unit.stun_visual() and unit.attack_speed_slow_visual(), "眩晕停步隐藏黄色拖痕，不停止减攻速提示")
+	unit.control.tick_hard_controls(0.6)
+	_expect(not unit.stun_visual(), "眩晕到期清除漩涡")
+	unit.hp = 0
+	unit.control.refresh_stun(1.0)
+	_expect(not unit.stun_visual() and not unit.movement_slow_effect_visible(), "死亡不保留控制特效")
+	unit.free()
