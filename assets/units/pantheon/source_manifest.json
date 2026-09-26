@@ -1,6 +1,46 @@
 {
-  "source": "用户指定：ClashLegends-开发素材库/01-待开发/卡牌模型/不屈之枪.glb",
-  "destination": "assets/units/pantheon/source/pantheon.glb",
-  "sha256": "39762ef790289c79fb528d926b3a9062d1d0b987d67153df3979cb0ff0d973bf",
-  "processing": "原GLB不修改；包装缩放0.015并按基础皮肤隐藏Head/Comet/Recall/Joke；原队列文件已迁移"
+  "model": {
+    "source": "用户指定待开发/卡牌模型/不屈之枪.glb（2026-09-26新版）",
+    "path": "source/pantheon.glb",
+    "sha256": "99815d1bb123968c1f162d663dd2f3ff59da960e113831335cec7022a61d7058",
+    "scale": 1.3
+  },
+  "effects": [
+    {
+      "path": "effects/pantheon_base_p_enrage_flare.png",
+      "source_package": "Pantheon.wad.client",
+      "source_path": "assets/characters/pantheon/skins/base/particles/pantheon_base_p_enrage_flare.tex",
+      "sha256": "69516f8e2ed8541769c51560b7f63860021465ef83bc8776bd2718b78f799a90"
+    },
+    {
+      "path": "effects/pantheon_base_p_weapons_glow.png",
+      "source_package": "Pantheon.wad.client",
+      "source_path": "assets/characters/pantheon/skins/base/particles/pantheon_base_p_weapons_glow.tex",
+      "sha256": "33c686228144230519c2b7e9aa07acb0c67a326d738bf6b7234bf2281cc8e4af"
+    },
+    {
+      "path": "effects/pantheon_base_q_nebula_streak_mult_vertical.png",
+      "source_package": "Pantheon.wad.client",
+      "source_path": "assets/characters/pantheon/skins/base/particles/pantheon_base_q_nebula_streak_mult_vertical.tex",
+      "sha256": "8f1e176d4f0dd96a0fb380f0d332bd6fb4d033b2461d6fd9f8c8b942e968bcc9"
+    }
+  ],
+  "animation_parts_audit": {
+    "date": "2026-09-26",
+    "death_head_frame": 77,
+    "fps": 30,
+    "hide": "HeadHelmet",
+    "show": "Head",
+    "joint_snap": [
+      "C_Helmet",
+      "C_Helmet_Snap"
+    ],
+    "unused_hidden": [
+      "Comet",
+      "Recall",
+      "Joke"
+    ],
+    "source": "data/characters/pantheon/animations/skin0.bin; GLB extras.submeshVisibilityEvents"
+  },
+  "original_r_manifest": "r_original/source_manifest.json"
 }

@@ -2,22 +2,20 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dxk06rtywqlym"
-path.s3tc="res://.godot/imported/pantheon_Joke.png-20592ff8b81b7c719b2876e4fbc552f0.s3tc.ctex"
-path.etc2="res://.godot/imported/pantheon_Joke.png-20592ff8b81b7c719b2876e4fbc552f0.etc2.ctex"
+uid="uid://lk86v82ejnm5"
+path="res://.godot/imported/pantheon_base_p_weapons_glow.png-34e516af3f7c1e98726fc4e50f3091c4.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc", "etc2_astc"],
-"vram_texture": true
+"vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/units/pantheon/source/pantheon_Joke.png"
-dest_files=["res://.godot/imported/pantheon_Joke.png-20592ff8b81b7c719b2876e4fbc552f0.s3tc.ctex", "res://.godot/imported/pantheon_Joke.png-20592ff8b81b7c719b2876e4fbc552f0.etc2.ctex"]
+source_file="res://assets/units/pantheon/effects/pantheon_base_p_weapons_glow.png"
+dest_files=["res://.godot/imported/pantheon_base_p_weapons_glow.png-34e516af3f7c1e98726fc4e50f3091c4.ctex"]
 
 [params]
 
-compress/mode=2
+compress/mode=0
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
@@ -25,7 +23,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""
@@ -39,4 +37,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=0
+detect_3d/compress_to=1
