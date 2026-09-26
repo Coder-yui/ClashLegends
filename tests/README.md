@@ -128,7 +128,7 @@ Godot 原始入口使用 `-- --suite=ProjectileSuite`，未知名称退出 2；�
 
 `DeploymentSkillSuite` 覆盖七张多单位主动卡的工作台成员死亡/释放、批次与阵营隔离、全灭禁止回退、正式请求期间连续转交、费用次数保留和延迟效果的存活筛选。`network_lifecycle_suite` 验证转交快照按编队来源卡恢复技能。
 
-`StatusBoundarySuite` 从正式请求覆盖解冻待变形、退款、转换结束边界、技能各段/完成回血精确 Tick、凤凰蛋排列互换、旧弹体及冻结朝向。`network_lifecycle_suite` 覆盖六位权限校验与首次同时收到技能/眩晕；双端终态另比较权限、身体方向及技能剩余次数。实际渲染复用 `maintenance_preview.gd -- --status-boundaries --cards=sett,gnar,gwen,aurelionsol,garen,anivia_egg`。
+`StatusBoundarySuite` 从正式请求覆盖解冻待变形、退款、转换结束边界、技能各段/首次命中回血精确 Tick、凤凰蛋排列互换、旧弹体及冻结朝向。`network_lifecycle_suite` 覆盖六位权限校验与首次同时收到技能/眩晕；双端终态另比较权限、身体方向及技能剩余次数。实际渲染复用 `maintenance_preview.gd -- --status-boundaries --cards=sett,gnar,gwen,aurelionsol,garen,anivia_egg`。
 
 维护审计同时检查本地章节锚点、导航可达性、默认必读不能指向历史、显式当前协议事实、卡牌/形态文档映射；包括历史区域链接。导航声明在 [navigation.json](../docs/navigation.json)，审计夹具通过 `python3 -m unittest discover -s tools/maintenance -p 'test_*.py'` 执行。
 
@@ -153,3 +153,11 @@ Godot 原始入口使用 `-- --suite=ProjectileSuite`，未知名称退出 2；�
 工作台宽屏实验：`workbench_suite` 覆盖牌库搜索、快捷栏 0–8 张上限/去重/失效过滤、共享阵营、数字快捷键与搜索焦点隔离、空栏与形态顺序持久化，以及观察缩放、拖动边界和退出恢复窗口。`workbench_preview.gd` 输出牌库、100% 全图实战、一键全图、模型与音频页面，并检查切页暂停和退出恢复；截图仍需目视检查。
 
 工作台三页交互补充：`workbench_suite` 从工作台地图入口验证快捷槽选卡部署与空栏阻止部署、选择模式禁止下牌/木桩、目标与待放置卡/阵营隔离、网格加入与编辑槽移除、单成员控制/同批整组技能、目标死亡不转交、清场取消目标，以及任意动画时间续播和音频时长。模型与音频页不显示快捷栏，地图默认完整适配 100%。
+
+天使命中攻速被动附着表现：`original_animation_review.gd -- --cards=kayle,kayle_ranged --teams=0,1 --hit-haste --camera-size=5.5` 记录未叠层、三层、满层、流动与到期图。相同脚本加 `--network-hit-haste --mode=host/--mode=join --port=<同一端口>` 可启动主客两进程验证双方两形态的满层位与模型强度、到期熄灭；fixture用命中回执推进叠层，正式快照同步状态，覆盖范围与真实战斗伤害回归分开。
+
+潘森2026-09-26重制：PantheonSuite新增4秒/3次消耗、全场双阵营部署范围与卡牌大师逐格一致、白条/深红条、两段落地、满怒材质启停和回收清理。`pantheon_review.gd`增加落地收势和满怒附着截图。
+
+潘森三格滑行：PantheonSuite覆盖双方长矛斜落方向、原版长矛斜插倾角保持、原版六组系统的运动轴、三维出生偏移与粒子清理、中体型模型和卡牌大师身高对齐、长矛与代理缩放、后方120像素着地、13Tick开始逐步扫掠、26Tick才生成、1秒实体部署锁定、沿途每目标一次、空地敌我过滤、跨Tick扫掠、独立出牌去重与建筑受伤、纯客户端计时不扣血及取消清理。
+
+潘森原版落地方向：验证双方收尾波粒子的实际前进位移、冻结落点与朝向、世界重力独立、地面四边形贴地、彗星尾部向后、收尾延后至实体部署及取消/池复用回收。`pantheon_review.gd -- --arrival-materials`在同一战场镜头逐组采样六组原版系统，`--clean-arrival`检查完整顺序。
