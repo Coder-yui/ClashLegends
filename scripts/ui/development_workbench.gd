@@ -202,7 +202,7 @@ func _build_ui() -> void:
 	_form_option = OptionButton.new()
 	_form_option.add_item("基础形态")
 	_form_option.add_item("变形形态")
-	_form_option.item_selected.connect(func(index): _select_item(_selected_id + (":1" if index == 1 else "")))
+	_form_option.item_selected.connect(func(index): _select_item(FORM_CATALOG.selection_id(_selected_id, index)))
 	summary.add_child(_form_option)
 	var shelf := _panel(layout)
 	_shelf_panel = shelf.get_parent().get_parent()
@@ -462,8 +462,10 @@ func set_quick_cards(ids: Array) -> void:
 	var allowed := {}
 	for entry in preload("res://scripts/ui/workbench/card_catalog.gd").entries(_cards):
 		if entry.id != "training_dummy": allowed[entry.id] = true
-	for id in ids:
-		if id is String and allowed.has(id) and id not in _quick_cards:
+	for raw_id in ids:
+		if not raw_id is String: continue
+		var id := FORM_CATALOG.canonical_id(raw_id, _cards)
+		if allowed.has(id) and id not in _quick_cards:
 			_quick_cards.append(id)
 		if _quick_cards.size() == 8: break
 	_refresh_quick_cards()
@@ -484,7 +486,7 @@ func _refresh_quick_cards() -> void:
 	for child in _quick_grid.get_children():
 		_quick_grid.remove_child(child)
 		child.queue_free()
-	var current := _selected_id + (":1" if _form == 1 else "")
+	var current := FORM_CATALOG.selection_id(_selected_id, _form)
 	_quick_hint.text = "实验快捷栏 %d/8 · 1–8 切卡 · 双方共用" % _quick_cards.size()
 	for i in 8:
 		var button := Button.new()
@@ -498,9 +500,9 @@ func _refresh_quick_cards() -> void:
 		else:
 			var id := _quick_cards[i]
 			var base_id := id.get_slice(":", 0)
-			var stats := FORM_CATALOG.stats_for_form(_cards.get(base_id, {}), 1 if id.ends_with(":1") else 0)
+			var stats := FORM_CATALOG.stats_for_form(_cards.get(base_id, {}), FORM_CATALOG.form_index(id))
 			button.text = "%d  %s" % [i + 1, stats.get("name", "训练木桩")]
-			button.icon = CardArt.texture_for(base_id)
+			button.icon = CardArt.texture_for(FORM_CATALOG.deployment_id(base_id, FORM_CATALOG.form_index(id)))
 			button.expand_icon = true
 			button.add_theme_constant_override("icon_max_width", 36)
 			button.toggle_mode = true
@@ -514,7 +516,7 @@ func _refresh_quick_cards() -> void:
 	_refresh_mode_label()
 
 func has_placeable_selection() -> bool:
-	return not _select_mode and (_selected_id == "training_dummy" or (_selected_id + (":1" if _form == 1 else "")) in _quick_cards)
+	return not _select_mode and (_selected_id == "training_dummy" or (FORM_CATALOG.selection_id(_selected_id, _form)) in _quick_cards)
 
 func _show_library(open: bool) -> void:
 	_library_open = open
@@ -579,15 +581,12 @@ func _set_battle_zoom(value: float) -> void:
 	_zoom_label.text = "%d%%" % roundi(_desktop.zoom * 100)
 
 func _select_item(item_id: String) -> void:
-	for base_id in _cards:
-		if String(_cards[base_id].get("deployment_upgrade_id", "")) == item_id:
-			item_id = String(base_id) + ":1"
-			break
-	var requested_form := 1 if item_id.ends_with(":1") else 0
+	item_id = FORM_CATALOG.canonical_id(item_id, _cards)
+	var requested_form := FORM_CATALOG.form_index(item_id)
 	item_id = item_id.get_slice(":", 0)
 	if item_id != "training_dummy" and not _cards.has(item_id): return
 	_selected_id = item_id
-	_form = requested_form
+	_form = clampi(requested_form, 0, FORM_CATALOG.form_labels(_cards.get(item_id, {})).size() - 1)
 	_spell_active.set_pressed_no_signal(false)
 	var is_spell := String(_cards.get(item_id, {}).get("type", "")) == "spell"
 	var has_spell_choices := is_spell and not CardDB.active_skills_for(item_id).is_empty()
@@ -596,12 +595,12 @@ func _select_item(item_id: String) -> void:
 	_spell_choice.clear()
 	for skill in CardDB.active_skills_for(item_id): _spell_choice.add_item(String(skill.get("name", "强化法术")))
 	_spell_choice.visible = has_spell_choices
-	_form_option.set_item_text(0, "近战形态" if _cards.get(item_id, {}).has("deployment_upgrade_id") else "基础形态")
-	_form_option.set_item_text(1, "远程形态" if _cards.get(item_id, {}).has("deployment_upgrade_id") else "变形形态")
+	_form_option.clear()
+	for label in FORM_CATALOG.form_labels(_cards.get(item_id, {})): _form_option.add_item(label)
 	_form_option.select(_form)
 	_form_option.disabled = not FORM_CATALOG.has_forms(_cards.get(item_id, {}))
 	_selection_label.text = "%s\n%s" % [String(FORM_CATALOG.stats_for_form(_cards.get(item_id, {}), _form).get("name", "训练木桩")), item_id]
-	_art.texture = CardArt.texture_for(item_id)
+	_art.texture = CardArt.texture_for(FORM_CATALOG.deployment_id(item_id, _form))
 	_refresh_quick_cards()
 	_unit_available = false
 	_unit_deployed = false
@@ -616,7 +615,7 @@ func _select_item(item_id: String) -> void:
 	form_selected.emit(_form)
 
 func _refresh_assets() -> void:
-	_card_info.show_card(_selected_id, FORM_CATALOG.stats_for_form(_cards.get(_selected_id, {}), _form))
+	_card_info.show_card(FORM_CATALOG.deployment_id(_selected_id, _form), FORM_CATALOG.stats_for_form(_cards.get(_selected_id, {}), _form))
 	_stop_audio()
 	_form_option.select(_form)
 	var stats := FORM_CATALOG.stats_for_form(_cards.get(_selected_id, {}), _form)

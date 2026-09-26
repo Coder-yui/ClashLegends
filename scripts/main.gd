@@ -1025,7 +1025,7 @@ func _place_art_dev_item(pos: Vector2) -> void:
 				var entry := _active_skills.entry(int(id))
 				if int(entry.team) == _workbench.team and int(entry.slot) == 0: unit = entry.unit
 		if unit != null:
-			if _workbench.form == 1 and not CardDB.get_card(_workbench.selection).has("deployment_upgrade_id"):
+			if _workbench.form == 1 and CardDB.get_card(_workbench.selection).has("transformed_stats"):
 				unit.transform_to_mega(true)
 			_workbench.last_units[_art_dev_unit_key(_workbench.selection, _workbench.team)] = weakref(unit)
 			_workbench.last_groups[_art_dev_unit_key(_workbench.selection, _workbench.team)] = unit.deployment_group_id

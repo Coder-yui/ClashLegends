@@ -18,6 +18,36 @@ func _run() -> void:
 	for argument in OS.get_cmdline_user_args():
 		if argument.begins_with("--card="):
 			panel._select_item(argument.trim_prefix("--card="))
+	if "--form-review" in OS.get_cmdline_user_args():
+		var catalog := preload("res://scripts/ui/workbench/card_catalog.gd")
+		var id: String = panel._selected_id
+		for form in catalog.form_labels(CardDB.get_card(id)).size():
+			panel._form_option.item_selected.emit(form)
+			await create_timer(0.3).timeout
+			await _capture(id + "_form_" + str(form))
+			if panel._form != form or main._workbench.form != form:
+				push_error("工作台形态选择不同步")
+				quit(1)
+				return
+			panel.show_workspace(2)
+			await _capture(id + "_form_info_" + str(form))
+			if panel._card_info.card_id != catalog.deployment_id(id, form):
+				push_error("形态信息卡面来源错误")
+				quit(1)
+				return
+			panel.show_workspace(1)
+			main._run_workbench_scenario("spawn")
+			var unit: Unit = main._art_dev_selected_unit()
+			if unit == null or unit.card_id != catalog.deployment_id(id, form):
+				push_error("工作台部署形态错误")
+				quit(1)
+				return
+			panel.show_workspace(0)
+		print("[工作台形态验证] ", id, " 全部通过")
+		main.queue_free()
+		await process_frame
+		quit()
+		return
 	await create_timer(1).timeout
 	await _capture("model")
 	panel._show_library(true)

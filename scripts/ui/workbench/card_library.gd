@@ -67,8 +67,8 @@ func setup(definitions: Dictionary) -> void:
 func filter(query: String) -> void:
 	entries = CATALOG.entries(cards, query, _category)
 	if models_only:
-		entries = entries.filter(func(entry): return not (entry.id.ends_with(":1") and cards.get(entry.base_id, {}).has("deployment_upgrade_id")))
-		entries = entries.filter(func(entry): return not PresentationConfig.scene_path(CATALOG.stats_for_form(cards.get(entry.base_id, {}), 1 if entry.id.ends_with(":1") else 0), 0).is_empty())
+		entries = entries.filter(func(entry): return not (CATALOG.form_index(entry.id) > 0 and (cards.get(entry.base_id, {}).has("deployment_upgrade_id") or cards.get(entry.base_id, {}).has("growth_ranged_id"))))
+		entries = entries.filter(func(entry): return not PresentationConfig.scene_path(CATALOG.stats_for_form(cards.get(entry.base_id, {}), CATALOG.form_index(entry.id)), 0).is_empty())
 	entries = entries.filter(func(entry): return entry.id != "training_dummy")
 	for child in _grid.get_children():
 		_grid.remove_child(child)
@@ -84,7 +84,7 @@ func filter(query: String) -> void:
 		card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		card.clip_text = true
 		cell.add_child(card)
-		CardArt.apply_to_button(card, entry.base_id, entry.name, int(cards.get(entry.base_id, {}).get("cost", 0)), true)
+		CardArt.apply_to_button(card, CATALOG.deployment_id(entry.base_id, CATALOG.form_index(entry.id)), entry.name, int(cards.get(entry.base_id, {}).get("cost", 0)), true)
 		card.tooltip_text = entry.name + " · " + entry.id
 		card.disabled = multiple and (entry.id in shelf or shelf.size() >= 8)
 		card.pressed.connect(func():
@@ -104,7 +104,7 @@ func filter(query: String) -> void:
 			_shelf_grid.add_child(slot)
 			if i < shelf.size():
 				var id := shelf[i]
-				var definition := CATALOG.stats_for_form(cards.get(id.get_slice(":", 0), {}), 1 if id.ends_with(":1") else 0)
+				var definition := CATALOG.stats_for_form(cards.get(id.get_slice(":", 0), {}), CATALOG.form_index(id))
 				slot.text = "%d · %s ×" % [i + 1, definition.get("name", id)]
 				slot.pressed.connect(func(): toggled.emit(id))
 			else:
