@@ -132,6 +132,8 @@ func show_packed_scene(packed: PackedScene) -> PackedStringArray:
 		for next in bounds.slice(1):
 			box = box.merge(next)
 	_target = box.get_center()
+	if not studio_mode and is_instance_valid(model) and model.has_method("get_preview_focus"):
+		_target = model.call("get_preview_focus", _target)
 	_fit_size = maxf(maxf(box.size.y, box.size.x), box.size.z) * (2.25 if studio_mode else 1.55)
 	_fit_size = maxf(_fit_size, 0.1)
 	if studio_mode:
@@ -229,6 +231,8 @@ func _recalculate_bounds(reset_camera: bool) -> void:
 	for next in bounds.slice(1):
 		box = box.merge(next)
 	_target = box.get_center()
+	if not studio_mode and is_instance_valid(model) and model.has_method("get_preview_focus"):
+		_target = model.call("get_preview_focus", _target)
 	_fit_size = maxf(maxf(box.size.y, box.size.x), box.size.z) * (2.25 if studio_mode else 1.55)
 	_fit_size = maxf(_fit_size, 0.1)
 	if studio_mode:
@@ -249,7 +253,7 @@ func _find_player(node: Node) -> void:
 		_find_player(child)
 
 func _collect_bounds(node: Node, output: Array[AABB]) -> void:
-	if node is MeshInstance3D and node.mesh != null:
+	if node is MeshInstance3D and node.mesh != null and node.is_visible_in_tree():
 		output.append(node.global_transform * node.get_aabb())
 	for child in node.get_children():
 		_collect_bounds(child, output)

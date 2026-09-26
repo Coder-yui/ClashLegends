@@ -1,25 +1,32 @@
 {
   "original_sha256": "53521247d4f2e77e1a83b11c5f5b20241d45434dac8639eb4f6b70e454a7139b",
   "original_bytes": 10497424,
-  "runtime_bytes": 8627784,
+  "runtime_bytes": 9887456,
   "animations": [
     "Attack1",
     "Attack2",
     "Attack3",
     "Death",
-    "Idle1_Base",
     "Idle1_Slayer",
+    "Idle1_Base",
     "Kayn_Idle1_Assassin.anm",
     "Run",
     "Run_Assassin",
     "Run_Slayer",
     "Spell1_Circle",
     "Spell1_Dash",
-    "Spell1_Exit_To_Run",
     "Spell1_Stop",
+    "Spell1_Exit_To_Run",
     "Spell3_Run",
     "Transform_Assassin",
-    "Transform_Slayer"
+    "Transform_Slayer",
+    "Idle1_In",
+    "Idle1_In_Assassin",
+    "Idle1_In_Slayer",
+    "Spell2_Slayer_Run",
+    "Deploy_Base",
+    "Deploy_Assassin",
+    "Deploy_Slayer"
   ],
   "visible_parts": {
     "base": [
@@ -35,7 +42,52 @@
   },
   "source_evidence": [
     "data/characters/kayn/skins/skin0.bin: initialSubmeshToHide",
-    "data/characters/kayn/animations/skin0.bin: Transform_Assassin / Transform_Slayer SubmeshVisibilityEventData"
+    "data/characters/kayn/animations/skin0.bin: Transform_Assassin / Transform_Slayer SubmeshVisibilityEventData",
+    "animations/skin0.bin: Spell1_Circle transition hashes -> Idle1_In / Idle1_In_Assassin / Idle1_In_Slayer; Run / Run_Assassin -> Spell1_Exit_To_Run; Run_Slayer -> Spell2_Slayer_Run"
   ],
-  "runtime_sha256": "e1b6a7b6e11ac65b74f1aef47803ad9f5d6a2ae6a65ee3650a912c88a20d56db"
+  "runtime_sha256": "76301b15d09d06d97e59f252fa8f2c68b61af550ebfe2e909fff65a94a0e2e4d",
+  "presentation_correction": {
+    "script": "assets/units/kayn/weapon_blend.gd",
+    "purpose": "Shortest-path weapon blending in model space during actual transition window; original GLB hierarchy and clips retained.",
+    "q_sequence": [
+      "Spell1_Dash",
+      "Spell1_Stop",
+      "Spell1_Circle"
+    ],
+    "q_durations": [
+      0.3,
+      0.1,
+      0.3
+    ],
+    "q_sequence_blend": 0.0
+  },
+  "deployment_clips": [
+    {
+      "source": "Idle1_In2",
+      "source_range_seconds": [
+        0,
+        1.9666666984558105
+      ],
+      "runtime_clip": "Deploy_Base",
+      "duration_seconds": 1
+    },
+    {
+      "source": "Idle1_In_Assassin",
+      "source_range_seconds": [
+        0,
+        2
+      ],
+      "runtime_clip": "Deploy_Assassin",
+      "duration_seconds": 1
+    },
+    {
+      "source": "Idle1_In_Slayer",
+      "source_range_seconds": [
+        1,
+        3
+      ],
+      "runtime_clip": "Deploy_Slayer",
+      "duration_seconds": 1
+    }
+  ]
 }

@@ -8,8 +8,9 @@ static func definition() -> Dictionary:
 	data.visual.color = Color(0.8, 0.15, 0.15)
 	data.visual.visual_scene_path = "res://assets/units/kayn/kayn_slayer_view.tscn"
 	data.visual.visual_animations.idle = "Idle1_Slayer"
-	data.visual.visual_animations.deploy = "Idle1_Slayer"
+	data.visual.visual_animations.deploy = "Deploy_Slayer"
 	data.visual.visual_animations.move = "Run_Slayer"
+	data.visual.visual_animations.transitions = {"Spell1_Circle>terrain_move": "Spell1_Exit_To_Run", "Spell1_Circle>move": "Spell2_Slayer_Run"}
 	data.visual.active_skills[0].icon_path = "res://assets/skills/kayn_q_slay.png"
 	data.audio = {
 		"events": {
