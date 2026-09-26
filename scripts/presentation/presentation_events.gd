@@ -3,7 +3,7 @@ extends RefCounted
 ## 当前实际派发能力表；新增 cue 必须同时实现权威派发与消费者。
 static func supports(stats: Dictionary, cue: String) -> bool:
 	if cue in ["attack_wave:launch", "attack_wave:hit"]: return float(stats.get("attack_wave_damage", 0.0)) > 0.0
-	if cue == "terrain:enter": return bool(stats.get("terrain_traversal", false))
+	if cue in ["terrain:enter", "terrain:sustain", "terrain:exit"]: return bool(stats.get("terrain_traversal", false))
 	if cue == "active:spin": return (stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "dash_strike")
 	if cue == "execute:kill": return (stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "bleeding_execute")
 	if cue in ["blood_rage:start", "blood_rage:sustain"]: return stats.has("bleed_max_stacks")

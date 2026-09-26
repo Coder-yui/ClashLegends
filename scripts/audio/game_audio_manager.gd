@@ -273,6 +273,13 @@ func _tick_attached_units() -> void:
 			if enabled and not bool(entry.get(layer, false)): _start_sustain(unit, entry, layer, layer)
 			if not enabled and bool(entry.get(layer, false)): _stop_sustain(instance_id, layer, true)
 			entry[layer] = enabled
+		# 客户端也按只读地形几何恢复持续音，不依赖未同步的inside状态。
+		var terrain_active: bool = unit.terrain_traversal.enabled and not state.dead and unit.battle_context != null and not unit.battle_context.is_ground_position_walkable(unit.global_position, unit.body_radius, unit)
+		if terrain_active and not bool(entry.get("terrain_active", false)):
+			_start_sustain(unit, entry, &"terrain", &"terrain")
+		elif not terrain_active and bool(entry.get("terrain_active", false)):
+			_stop_sustain(instance_id, &"terrain")
+		entry.terrain_active = terrain_active
 		var sanctuary_active: bool = unit.target_protection.active() and not state.dead
 		if sanctuary_active and (not bool(entry.get("sanctuary_active", false)) or int(entry.get("sanctuary_serial", -1)) != unit.target_protection.serial):
 			_start_sustain(unit, entry, &"sanctuary", &"sanctuary")
@@ -363,7 +370,7 @@ func _tick_attached_units() -> void:
 		if full and not bool(entry.resource_full):
 			play_event(unit, &"resource_full", unit.get_visual_screen_position())
 		entry.resource_full = full
-		for layer in [&"action", &"buff", &"attack", &"revival", &"idle", &"sanctuary", &"explosive_shield", &"berserk", &"blood_rage"]:
+		for layer in [&"action", &"buff", &"attack", &"revival", &"idle", &"sanctuary", &"terrain", &"explosive_shield", &"berserk", &"blood_rage"]:
 			var sustained: AudioStreamPlayer2D = _sustain_players.get(_sustain_key(instance_id, layer))
 			if sustained != null:
 				sustained.global_position = unit.target_protection.center if layer == &"sanctuary" else unit.get_visual_screen_position()
@@ -397,7 +404,7 @@ func _start_sustain(unit: Unit, entry: Dictionary, action: StringName, layer: St
 	var player := _new_world_player()
 	player.bus = StringName(event.get("bus", "Combat"))
 	player.volume_db = float(event.get("volume_db", 0.0))
-	player.stream = _randomized_stream(PackedStringArray(event.get("pool", [])), layer in [&"explosive_shield", &"berserk", &"blood_rage"])
+	player.stream = _randomized_stream(PackedStringArray(event.get("pool", [])), layer in [&"explosive_shield", &"berserk", &"blood_rage", &"terrain"])
 	add_child(player)
 	player.global_position = unit.target_protection.center if layer == &"sanctuary" else unit.get_visual_screen_position()
 	var key := _sustain_key(unit.get_instance_id(), layer)
@@ -429,7 +436,7 @@ func _sustain_key(instance_id: int, layer: StringName = &"action") -> String:
 	return "%d:%s" % [instance_id, layer]
 
 func _stop_sustain(instance_id: int, layer: StringName = &"", fade: bool = false) -> void:
-	for candidate in [&"action", &"buff", &"attack", &"revival", &"idle", &"sanctuary", &"explosive_shield", &"berserk", &"blood_rage"] if layer == &"" else [layer]:
+	for candidate in [&"action", &"buff", &"attack", &"revival", &"idle", &"sanctuary", &"terrain", &"explosive_shield", &"berserk", &"blood_rage"] if layer == &"" else [layer]:
 		_stop_sustain_key(_sustain_key(instance_id, candidate), fade)
 
 func _stop_sustain_key(key: String, fade: bool = false) -> void:
@@ -716,7 +723,7 @@ func prepare_audio(value: Variant, looping: bool = false) -> void:
 			var paths := PackedStringArray(value.pool)
 			_randomized_stream(paths)
 			if looping: _randomized_stream(paths, true)
-		for key in value: prepare_audio(value[key], String(key) in ["idle:sustain", "explosive_shield:sustain", "berserk:sustain", "blood_rage:sustain"])
+		for key in value: prepare_audio(value[key], String(key) in ["idle:sustain", "explosive_shield:sustain", "berserk:sustain", "blood_rage:sustain", "terrain:sustain"])
 	elif value is Array:
 		for child in value: prepare_audio(child)
 

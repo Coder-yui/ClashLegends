@@ -14,39 +14,42 @@ static func definition() -> Dictionary:
 	data.visual.active_skills[0].icon_path = "res://assets/skills/kayn_q_slay.png"
 	data.audio = {
 		"events": {
+				"deploy:voice": {"pool": ["res://assets/audio/units/kayn/kayn_slayer_deploy_voice_1.wav", "res://assets/audio/units/kayn/kayn_slayer_deploy_voice_2.wav", "res://assets/audio/units/kayn/kayn_slayer_deploy_voice_3.wav"], "volume_db": 3.0, "bus": "Voice"},
 			"active:cast": {
 				"pool": [
 					"res://assets/audio/units/kayn/kayn_slayer_q_cast_1.wav"
 				],
-				"volume_db": -4.0,
+				"volume_db": 2.0,
 				"bus": "Combat"
 			},
 			"active:spin": {
 				"pool": [
 					"res://assets/audio/units/kayn/kayn_slayer_q_spin_1.wav"
 				],
-				"volume_db": -4.0,
+				"volume_db": 2.0,
 				"bus": "Combat"
 			},
 			"active:hit": {
 				"pool": [
 					"res://assets/audio/units/kayn/kayn_slayer_q_hit_1.wav"
 				],
-				"volume_db": -4.0,
+				"volume_db": 2.0,
 				"bus": "Combat"
 			},
-			"terrain:enter": {
+			"terrain:sustain": {"pool": ["res://assets/audio/units/kayn/kayn_slayer_terrain_sustain.wav"], "volume_db": 2.0, "bus": "Combat"},
+				"terrain:exit": {"pool": ["res://assets/audio/units/kayn/kayn_slayer_terrain_exit.wav"], "volume_db": 2.0, "bus": "Combat"},
+				"terrain:enter": {
 				"pool": [
 					"res://assets/audio/units/kayn/kayn_slayer_terrain_1.wav"
 				],
-				"volume_db": -4.0,
+				"volume_db": 2.0,
 				"bus": "Combat"
 			},
 			"death": {
 				"pool": [
 					"res://assets/audio/units/kayn/kayn_slayer_death_1.wav"
 				],
-				"volume_db": -4.0,
+				"volume_db": 2.0,
 				"bus": "Combat"
 			}
 		},
@@ -64,8 +67,8 @@ static func definition() -> Dictionary:
 				"res://assets/audio/units/kayn/kayn_slayer_attack3_2.wav"
 			]
 		],
-		"attack_swing_volume_db": -5.0,
-		"attack_hit_volume_db": -5.0,
+		"attack_swing_volume_db": 1.0,
+		"attack_hit_volume_db": 1.0,
 		"attack_hit": [
 			"res://assets/audio/units/kayn/kayn_slayer_attack_hit_1.wav",
 			"res://assets/audio/units/kayn/kayn_slayer_attack_hit_2.wav"
