@@ -80,6 +80,11 @@ func set_card_pending(card_id: String, pending: bool) -> void:
 		_pending_cards.erase(card_id)
 	_refresh(_elixir.elixir if _elixir != null else 0.0)
 
+func has_pending_source_card() -> bool:
+	for id in _pending_cards:
+		if not CardPlayHistory.is_mirror(String(id)): return true
+	return false
+
 func is_card_pending(card_id: String) -> bool:
 	return bool(_pending_cards.get(card_id, false))
 
@@ -218,7 +223,7 @@ func _build_ui() -> void:
 
 func _on_slot_pressed(slot_idx: int) -> void:
 	var card_id := _hand[slot_idx]
-	if is_card_pending(card_id):
+	if is_card_pending(card_id) or (CardPlayHistory.is_mirror(card_id) and has_pending_source_card()):
 		return
 	if _selected == card_id:
 		clear_selection()
@@ -250,7 +255,7 @@ func _refresh(_value: float) -> void:
 		_apply_card(b, card_id, stats, accent)
 		CardArt.set_active_skill_card(b, _active_skill_cards.has(card_id))
 		var affordable := _elixir.can_afford(_display_cost(card_id, stats))
-		var pending := is_card_pending(card_id)
+		var pending := is_card_pending(card_id) or (CardPlayHistory.is_mirror(card_id) and has_pending_source_card())
 		CardArt.set_affordable(b, (affordable or card_id == _selected) and not pending)
 		CardArt.set_selected(b, card_id == _selected and not pending)
 		b.disabled = pending or (not affordable and card_id != _selected)
@@ -276,7 +281,7 @@ func _apply_card(button: Button, card_id: String, stats: Dictionary, accent: Col
 		stats = CardDB.get_card(actual_id)
 		accent = stats.get("color", accent)
 	var mirrored := CardPlayHistory.is_mirror(card_id)
-	var source := String(_mirror_copy.get("card_id", "")) if mirrored else ""
+	var source := String(_mirror_copy.get("deployment_card_id", "")) if mirrored else ""
 	var title := String(stats.name)
 	button.tooltip_text = String(stats.get("description", ""))
 	if growth_progress_query.is_valid() and CardDB.get_card(card_id).has("growth_ranged_id"):

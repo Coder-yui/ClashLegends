@@ -70,6 +70,7 @@ func run(harness: Object, main: Node2D) -> void:
 	captain.hp = 0
 	main._on_active_skill_unit_died(ability)
 	_expect(main._active_skills.has(ability) and main._active_skills.entry(ability).unit.deployment_group_id == group, "镜像队长死亡资格转交本批成员")
+	_check_queued_spell()
 	_check_delayed_replacement()
 	_check_building_and_rejections()
 	_check_replica()
@@ -104,9 +105,16 @@ func _check_replica() -> void:
 	var history := {"card_id": "kayle", "deployment_card_id": "kayle_ranged", "cost": 6}
 	FIXTURE.deliver(_main, "_rpc_deploy_accepted", ["kayle", 20, ["mirror", "ashe", "garen", "heal"], ["freeze", "kayle", "shurima_guard", "tombstone"], history])
 	_expect(_main.card_cost_for_team(1, "mirror") == 6 and _main.resolved_card_for_team(1, "mirror") == "kayle", "可靠确认同步镜像形态与费用")
-	_expect(_main._hand._button_slots[0].get_node("CardArtwork").texture == CardArt.texture_for("kayle") and _main._hand._button_slots[0].get_node("MirrorGlass").visible, "客户端镜像保留原卡画面并叠镜面标记")
+	_expect(_main._hand._button_slots[0].get_node("CardArtwork").texture == CardArt.texture_for("kayle_ranged") and _main._hand._button_slots[0].get_node("MirrorGlass").visible, "客户端镜像保留原卡画面并叠镜面标记")
+	_main._hand.set_card_pending("garen", true)
+	_expect(_main._hand._button_slots[0].disabled, "未确认原卡期间镜像禁止选择")
+	_expect(not _main.play_card(1, "mirror", Vector2(300, 300), {"elixir": _main._elixir, "client_request": true}), "未确认历史不能发送镜像请求")
+	_main._hand.set_card_pending("garen", false)
+	_expect(not _main._hand._button_slots[0].disabled, "原卡确认后镜像恢复")
 	FIXTURE.deliver(_main, "_rpc_deploy_rejected", ["mirror"])
 	_expect(_main._card_history.get_last(1) == history, "拒绝不覆盖镜像历史")
+	_main._hand.set_mirror_copy({"card_id": "kayn", "deployment_card_id": "kayn_assassin", "cost": 4})
+	_expect(_main._hand._button_slots[0].get_node("CardArtwork").texture == CardArt.texture_for("kayn_assassin"), "镜像展示锁定的进阶形态而非基础凯隐")
 	_main.mode = old_mode
 
 func _check_resources() -> void:
@@ -217,3 +225,17 @@ func _check_workbench() -> void:
 	_main._workbench.enabled = false
 	_main._workbench.last_units.clear()
 	_main._workbench.last_groups.clear()
+
+func _check_queued_spell() -> void:
+	_reset()
+	_main._deck = DECK.duplicate()
+	FIXTURE.fixed_cycle(_main, 0, _main._deck)
+	_expect(_play("garen") and _play("heal"), "准备连续镜像法术历史")
+	var patient := _latest("garen")
+	for index in 2:
+		_put_in_hand("mirror")
+		_main._elixir.elixir = 10
+		_expect(_main.play_card(0, "mirror", Vector2(300, 900) if index == 0 else Vector2(600, 1100), {"elixir": _main._elixir}), "连续镜像法术入队")
+	_main._sim_tick_id += 10
+	_main._tick_pending_card_deployments(0.05)
+	_expect(patient.shield_hp > 0, "较早镜像法术仍保留预选强化，不因新镜像入队失效")

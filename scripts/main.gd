@@ -1417,6 +1417,8 @@ func play_card(p_team: int, card_id: String, pos: Vector2, options: Dictionary =
 	if bool(options.get("client_request", false)):
 		if mode != "client" or immediate or elixir == null or not elixir.can_afford(card_cost):
 			return false
+		if CardPlayHistory.is_mirror(card_id) and _hand != null and _hand.has_pending_source_card():
+			return false
 		_network_request_id += 1
 		_rpc_deploy_request.rpc_id(1, card_id, pos, _input_tick_for_new_command(), _session.session_id, _network_request_id)
 		if _hand != null:
@@ -1603,6 +1605,12 @@ func _cast_spell(p_team: int, card_id: String, pos: Vector2, active_enabled: boo
 		var generation := int(mirror_copy.get("generation", -1))
 		if not _card_history.is_latest_mirror(p_team, generation): slot = -1
 		_clear_active_slot(p_team, slot)
+		var source := String(mirror_copy.card_id)
+		# 代次只撤销单位槽位资格；已付款的复制法术仍保留强化效果。
+		if String(CardDB.get_card(source).get("type", "")) == "spell":
+			var choice := _active_skill_choice_for_team(p_team, source, CardDB.active_skills_for(source).size()) if active_enabled else 0
+			if _workbench.enabled: choice = int(_workbench.skill_choices.get(source, 0))
+			return _cast_spell(p_team, source, pos, active_enabled, choice)
 		_execute_card_deployment(p_team, String(mirror_copy.card_id), pos, String(mirror_copy.deployment_card_id), {}, slot, generation)
 		return true
 	var cast: bool = _spell_system.cast(p_team, CardDB.get_card(card_id), pos, active_enabled, active_skill_index)
