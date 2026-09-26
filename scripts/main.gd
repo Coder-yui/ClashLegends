@@ -1478,7 +1478,9 @@ func _tick_pending_card_deployments(_dt: float) -> void:
 		)
 
 func _tick_pending_card_pre_deployments(dt: float) -> void:
-	var ready := _commands.take_pre_deployments(dt)
+	_combat.begin_batch(_sim_tick_id, "pre_deployment")
+	var ready := _commands.take_pre_deployments(dt, get_tree().get_nodes_in_group("combatants"))
+	_combat.commit_batch()
 	for deployment in ready:
 		_spawn_card_units(
 			int(deployment.team), String(deployment.card_id), deployment.pos as Vector2,
@@ -2779,6 +2781,7 @@ func _setup_arena_background() -> void:
 	move_child(_arena_background_sprite, 0)
 
 func _draw_card_pre_deploy_indicator(deployment: Dictionary) -> void:
+	if not String(CardDB.get_card(String(deployment.get("card_id", ""))).get("visual_pre_deploy_scene", "")).is_empty(): return
 	var center: Vector2 = deployment.get("pos", Vector2.ZERO)
 	var duration := maxf(float(deployment.get("duration", 1.0)), 0.001)
 	var remaining := clampf(float(deployment.get("time_left", duration)), 0.0, duration)

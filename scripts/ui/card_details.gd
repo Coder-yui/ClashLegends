@@ -166,6 +166,11 @@ static func passives(stats: Dictionary) -> Array[Dictionary]:
 		result.append({"name": "龙息", "description": "持续造成每秒%s伤害，并对目标周围%s范围造成伤害。" % [format_number(float(stats.get("damage", 0.0))), format_number(float(stats.get("splash_radius", 0.0)))]})
 	elif float(stats.get("splash_radius", 0.0)) > 0.0 and float(stats.get("damage", 0.0)) > 0.0:
 		result.append({"name": "范围炮击", "description": "普通攻击命中后，对目标周围%s（%.2f格）范围造成同等伤害。" % [format_number(float(stats.get("splash_radius", 0.0))), float(stats.get("splash_radius", 0.0)) / TILE_SIZE]})
+	if stats.has("pre_deploy_sweep_damage"):
+		result.append({
+			"name": "登场冲击波",
+			"description": "从落点后方%s格滑向落点，半径%s像素，波及地面敌人时造成%s点伤害；每个目标一次。到点后才生成单位。" % [format_number(float(stats.pre_deploy_sweep_distance) / ArenaRules.TILE_SIZE), format_number(float(stats.pre_deploy_sweep_radius)), format_number(float(stats.pre_deploy_sweep_damage))]
+		})
 	if stats.has("deploy_sweep_radius"):
 		var deploy_damage := float(stats.get("deploy_sweep_damage", 0.0))
 		result.append({

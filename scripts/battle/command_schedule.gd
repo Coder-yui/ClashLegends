@@ -26,11 +26,14 @@ func _take_due(queue: Array[Dictionary], tick: int) -> Array[Dictionary]:
 	queue.assign(waiting)
 	return ready
 
-func take_pre_deployments(dt: float) -> Array[Dictionary]:
+func take_pre_deployments(dt: float, combatants: Array = []) -> Array[Dictionary]:
 	var ready: Array[Dictionary] = []
 	var waiting: Array[Dictionary] = []
 	for entry in _pre_deployments:
+		var before := float(entry.duration) - float(entry.time_left)
 		entry.time_left = maxf(float(entry.get("time_left", 0.0)) - dt, 0.0)
+		if not combatants.is_empty():
+			preload("res://scripts/battle/pre_deployment_sweep.gd").advance(entry, before, float(entry.duration) - float(entry.time_left), combatants)
 		if float(entry.time_left) <= 0.001:
 			ready.append(entry)
 		else:
