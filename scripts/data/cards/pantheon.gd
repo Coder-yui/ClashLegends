@@ -18,7 +18,7 @@ static func definition() -> Dictionary:
 				"name": "贯星长枪", "kind": "frontal", "shape": "trapezoid",
 				"cost": 1, "cooldown": 4.0, "max_uses": 3,
 				"description": "快速向前刺击，造成120点地面伤害。普攻出手获得1层红怒，上限4层；未满层释放保留红怒并加1层，满层释放消耗全部红怒造成240点伤害。",
-				"length": 135.0, "near_width": 42.0, "far_width": 42.0,
+				"length": 120.0, "near_width": 40.0, "far_width": 40.0,
 				"damage": 120, "ground_only": true, "impact_delay": 0.3, "cast_duration": 0.4,
 				"cast_locks": ["movement", "attack", "facing"],
 				"uses_skill_resource": true, "resource_consume_only_full": true, "resource_nonfull_cast_gain": 1.0,
@@ -31,11 +31,11 @@ static func definition() -> Dictionary:
 			"visual_scene_path": "res://assets/units/pantheon/pantheon_view.tscn", "visual_forward_yaw": 0.0,
 			"color": Color(0.76, 0.55, 0.24), "skill_resource_full_color": Color(0.65, 0.045, 0.07, 1.0),
 			"visual_animations": {
-				"deploy": ["Spell4_Hit", "Spell4_Hit_ToIdle"], "deploy_durations": [0.3, 0.7], "idle": "Idle1", "move": "Run_Base",
+				"deploy": ["Spell4_Hit", "Spell4_Hit_ToIdle"], "deploy_durations": [0.3, 0.7], "idle": "Idle1", "move": "Run_Base", "full_resource_move": "Run_Passive",
 				"attack": ["Attack1", "Attack2", "Attack3", "Attack2"],
 				"attack_clip_ranges": [[0.0, 0.9], [0.0, 0.9], [0.0, 0.9], [0.0, 0.9]],
 				"death": "Death", "death_duration": 0.8,
-				"transitions": {"Spell1_Hit>idle": "Spell1_Hit_Toidle", "Spell1_Hit>move": "Spell1_Hit_Torun"},
+				"transitions": {"Spell1_Hit>idle": "Spell1_Hit_Toidle", "Spell1_Hit>move": "Spell1_Hit_Torun", "Spell1_Hit>full_resource_move": "Spell1_Hit_To_Passiverun", "Attack1>full_resource_move": "Attack1_To_PassiveRun", "Attack2>full_resource_move": "Attack2_To_PassiveRun", "Attack3>full_resource_move": "Attack3_To_PassiveRun"},
 				"visual_actions": {
 					"spear_tap": {"animation": "Spell1_Hit", "kind": "skill", "blend_in": 0.0},
 					"spear_tap_empowered": {"animation": "Spell1_Hit", "kind": "skill", "blend_in": 0.0},
