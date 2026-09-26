@@ -24,6 +24,8 @@ func run(harness: Object, main: Node2D) -> void:
 	_system = SNAP.new(main, main._projectile_system)
 	main._snapshot_system = _system
 	_check_payload_contract()
+	_check_hit_haste_visual_snapshot()
+	_check_soft_control_snapshot()
 	_check_bleeding_projection()
 	_system.reset_session("death-form")
 	var dormant := _payload("sion", 76000, 1)
@@ -391,3 +393,47 @@ func _check_bleeding_projection() -> void:
 	_deliver(4, [data])
 	_expect(unit.blood_rage_time_left_visual() == 0.0 and unit.bleeding.total_stacks() == 0 and not _main._can_submit_active_skill(76003, 1), "权威到期清除表现且免费资格消费后不可用")
 	_main._deck = deck
+
+func _check_hit_haste_visual_snapshot() -> void:
+	_system.reset_session("hit-haste-visual")
+	var data := _payload("kayle_ranged", 79101, 1)
+	data[SNAP.U_HIT_HASTE_FULL] = true
+	data[SNAP.U_ACTIVE_ATTACK_SPEED_MULTIPLIER] = 0.5
+	_deliver(1, [data])
+	var replica: Unit = _main._client_units[79101]
+	_expect(replica.hit_haste_full_visual(), "客户端以专属满层位点亮，减攻速不抹除满层")
+	replica.buffs.advance(20.0)
+	_expect(replica.hit_haste_full_visual(), "客户端不自行倒数被动特效")
+	var bad := data.duplicate(true)
+	bad[SNAP.U_HIT_HASTE_FULL] = 1
+	_deliver(2, [bad])
+	_expect(_system.lifecycle.snapshot_tick == 1, "非布尔满层状态拒绝整份快照")
+	data[SNAP.U_HIT_HASTE_FULL] = false
+	data[SNAP.U_ACTIVE_ATTACK_SPEED_MULTIPLIER] = 2.0
+	_deliver(3, [data])
+	_expect(not replica.hit_haste_full_visual(), "权威到期关闭特效，其他攻速不伪造满层")
+	data[SNAP.U_HIT_HASTE_FULL] = true
+	_deliver(2, [data])
+	_expect(not replica.hit_haste_full_visual(), "旧快照不重新点亮已到期被动")
+
+func _check_soft_control_snapshot() -> void:
+	_system.reset_session("soft-control-visual")
+	var data := _payload("anivia", 79102, 1)
+	data[SNAP.U_SLOW] = 1
+	data[SNAP.U_STUN] = 1
+	data[SNAP.U_ATTACK_SPEED_SLOW] = true
+	data[SNAP.U_ACTIVE_ATTACK_SPEED_MULTIPLIER] = 1.4
+	_deliver(2, [data])
+	var unit: Unit = _main._client_units[79102]
+	_expect(unit.movement_slow_visual() and unit.attack_speed_slow_visual(), "客户端独立恢复两种软控提示，不依赖最终攻速")
+	_expect(unit.stun_visual() and not unit.movement_slow_effect_visible(), "客户端眩晕显示漩涡且静止时隐藏减速拖痕")
+	var invalid := data.duplicate(true)
+	invalid[SNAP.U_ATTACK_SPEED_SLOW] = 1
+	_deliver(3, [invalid])
+	_expect(_system.lifecycle.snapshot_tick == 2, "非布尔减攻速表现载荷拒绝应用")
+	data[SNAP.U_SLOW] = 0
+	data[SNAP.U_STUN] = 0
+	data[SNAP.U_ATTACK_SPEED_SLOW] = false
+	_deliver(4, [data])
+	_expect(not unit.stun_visual() and not unit.movement_slow_visual() and not unit.attack_speed_slow_visual(), "新快照清除眩晕与两类软控提示")
+	_system.reset_session("")

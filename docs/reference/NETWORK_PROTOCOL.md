@@ -4,9 +4,9 @@
 
 | 契约 | 当前值 |
 | --- | --- |
-| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->59 |
+| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->67 |
 | 顶层快照项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd SNAPSHOT_PACKET_SIZE -->11 |
-| 单位载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd UNIT_PAYLOAD_SIZE -->47 |
+| 单位载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd UNIT_PAYLOAD_SIZE -->49 |
 | 塔载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd TOWER_PAYLOAD_SIZE -->6 |
 | 弹体载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd PROJECTILE_PAYLOAD_SIZE -->14 |
 
@@ -33,3 +33,9 @@ RPC 端点留在 Main，主客节点路径保持一致。运行请求只接受�
 顶层新增索引10 `card_growth`：按阵营→来源卡保存ranged/melee计数与unlocked实际定义。内容类型、阵营、计数上限与允许形态经MatchCardGrowth.valid_snapshot校验，非法包拒绝。客户端仅替换主机状态，旧Tick/旧会话沿用现有快照屏障；单位形态身份继续走出生描述card_id，旧普通实体不改变。规则版本提升至52。
 
 动作取消原因 `empowered_reset` 表示强化普攻刷新：取消旧挥击音与未完成攻击阶段，保留当前模型姿势供新强化动作混合。新攻击序号/进度仍由主机发布；晚到的取消不能覆盖更新的攻击。
+
+单位载荷追加命中攻速被动满层布尔值（U_HIT_HASTE_FULL），由权威状态直接提供；客户端只驱动附着表现，不用最终攻速反推层数。类型错误拒绝整份快照。
+
+单位载荷追加 `U_ATTACK_SPEED_SLOW` 布尔值，表示当前有效减攻速；`U_SLOW` 表示当前有效移速减益。两者考虑免疫/抑制，不从最终倍率反推。客户端只读显示附着特效，结束由新快照清除。
+
+潘森登场伤害改为预部署路径冲击波，规则版本67。既有预部署通知继续同步阵营、落点与时长，客户端由相同只读定义重建轨迹；命中去重集合只在主机排程内，伤害结果随既有HP快照同步，不增加载荷字段。

@@ -334,6 +334,7 @@ var net_visual_action_duration := 0.0
 var net_visual_action_time_left := 0.0
 var net_locomotion_state := 1
 var net_blood_rage := 0.0
+var net_hit_haste_full := false
 var net_empowered_attack_ready := false
 var net_empowered_attack_visual_serial := 0
 var net_skill_resource_ratio := 0.0
@@ -1983,6 +1984,13 @@ func _apply_pending_form() -> void:
 func _refresh_form_speed_boost() -> void:
 	if form_speed_boost_duration > 0.0:
 		apply_active_buff(form_speed_boost_duration, form_speed_boost_multiplier, 1.0, 1.0, false, false, status_source("form_speed"))
+
+## 满层附着表现使用专属状态，不能从受其他增益/减速影响的最终攻速反推。
+func hit_haste_full_visual() -> bool:
+	if hp <= 0.0: return false
+	if _in_client_mode(): return net_hit_haste_full
+	var maximum := int(PresentationConfig.for_form(_base_form_stats, form_index).get("hit_haste_max_stacks", 0))
+	return maximum > 0 and buffs.remaining(&"hit_haste") > 0.0 and int(buffs.strongest(&"hit_haste", &"stacks", 0.0)) >= maximum
 
 func blood_rage_time_left_visual() -> float:
 	return net_blood_rage if _in_client_mode() else buffs.remaining(&"blood_rage")

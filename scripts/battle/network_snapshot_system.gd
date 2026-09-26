@@ -64,7 +64,9 @@ const U_FREE_RECAST := 43
 const U_BLEED_STACKS := 44
 const U_BLOOD_RAGE := 45
 const U_CONTINUOUS_TARGET_AIR_ID := 46
-const UNIT_PAYLOAD_SIZE := 47
+const U_HIT_HASTE_FULL := 47
+const U_ATTACK_SPEED_SLOW := 48
+const UNIT_PAYLOAD_SIZE := 49
 
 const P_ID := 0
 const P_X := 1
@@ -186,6 +188,8 @@ func apply(snapshot_bytes: PackedByteArray, terminal: bool = false, expected_tic
 		return false
 	var ids := {}
 	for payload: Array in units_data:
+		if not payload[U_HIT_HASTE_FULL] is bool: return false
+		if not payload[U_ATTACK_SPEED_SLOW] is bool: return false
 		if not payload[U_EXPLOSIVE_SHIELD] is bool: return false
 		if not DeathFormState.valid_snapshot(payload[U_DEATH_FORM]): return false
 		if not TargetProtectionState.valid_snapshot(payload[U_TARGET_PROTECTION]): return false
@@ -254,6 +258,7 @@ func _apply_units(units_data: Array) -> void:
 			_controller._auto_continuous_target_seen = true
 			print("[测试] 客户端已收到持续吐息目标端点")
 		u.net_slow_active = int(d[U_SLOW]) == 1
+		u.net_attack_speed_slow_active = d[U_ATTACK_SPEED_SLOW]
 		u.net_stun_active = int(d[U_STUN]) == 1
 		u.control.apply_replica_flags(int(d[U_FROZEN]) == 1, u.net_stun_active)
 		var action_serial := int(d[U_ACTION_SERIAL])
@@ -290,6 +295,7 @@ func _apply_units(units_data: Array) -> void:
 		_controller.apply_network_skill_state(u, int(d[U_ACTIVE_SKILL_USES_REMAINING]), float(d[U_ACTIVE_SKILL_COOLDOWN]), bool(d[U_FREE_RECAST]))
 		u.bleeding.replica_stacks = int(d[U_BLEED_STACKS])
 		u.net_blood_rage = float(d[U_BLOOD_RAGE])
+		u.net_hit_haste_full = d[U_HIT_HASTE_FULL]
 		u.net_shield_ratio = clampf(float(d[U_SHIELD_RATIO]), 0.0, 1.0)
 		u.net_shield_capacity_ratio = maxf(float(d[U_SHIELD_CAPACITY_RATIO]), 0.0)
 		if (
@@ -446,7 +452,7 @@ func _unit_snapshot_payload(id: int, u: Unit, has_continuous_target: bool = fals
 		1 if u.control.frozen_timer > 0.0 else 0,
 		u.get_visual_state_code(), u.get_attack_visual_serial(),
 		1 if has_continuous_target else 0, continuous_target_pos.x, continuous_target_pos.y,
-		1 if u.control.slow_timer > 0.0 else 0,
+		1 if u.movement_slow_visual() else 0,
 		u.form_index, 1 if u.control.stun_timer > 0.0 else 0,
 		u.get_visual_action_serial(), String(u.get_visual_action_name()),
 		facing_direction.x, facing_direction.y,
@@ -473,4 +479,6 @@ func _unit_snapshot_payload(id: int, u: Unit, has_continuous_target: bool = fals
 		u.bleeding.total_stacks(),
 		u.buffs.remaining(&"blood_rage"),
 		u.get_continuous_visual_target_air_id(),
+		u.hit_haste_full_visual(),
+		u.attack_speed_slow_visual(),
 	]
