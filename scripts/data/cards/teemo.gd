@@ -8,7 +8,7 @@ static func definition() -> Dictionary:
 			"description": "灵活的远程射手，移速较快，擅长用毒针干扰敌人。",
 			"hp": 230, "damage": 38, "range": 160.0,
 			"speed": SPEED_FAST, "interval": 1.0, "first_hit": 0.25,
-			"size_tier": SIZE_SMALL, "radius": RADIUS_SMALL,
+			"size_tier": SIZE_SLIGHTLY_SMALL, "radius": RADIUS_SLIGHTLY_SMALL,
 			"mass": 2.0, "sight": 210.0,
 			"projectile_speed": 380.0,
 			"projectile_spawn_at_edge": true, "projectile_spawn_offset": 7.5, "projectile_collision_radius": 4.0,
@@ -22,7 +22,7 @@ static func definition() -> Dictionary:
 		},
 		"visual": {
 			"active_skills": [{"icon_path": "res://assets/skills/teemo_0.png"}],
-			"visual_radius": RADIUS_SMALL + VISUAL_RADIUS_PADDING,
+			"visual_radius": RADIUS_SLIGHTLY_SMALL + VISUAL_RADIUS_PADDING,
 			"visual_scene_path": "res://assets/units/teemo/teemo_view.tscn",
 			"visual_forward_yaw": 0.0,
 			"visual_animations": {

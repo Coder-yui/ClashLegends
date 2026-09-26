@@ -5,11 +5,11 @@ static func definition() -> Dictionary:
 	return {
 		"gameplay": {
 			"name": "纳尔", "cost": 4, "type": "unit",
-			"description": "循环双形态战士。小纳尔第6次命中变大，大纳尔第4次命中变小；小形态远程对空，大形态极大近战。",
+			"description": "循环双形态战士。小纳尔第6次命中变大，大纳尔第4次命中变小；小形态远程对空，大形态大体型近战。",
 			# 默认形态：小纳尔。投掷回旋镖的权威弹体抵达目标后才结算伤害和被动层数。
 			"hp": 430, "damage": 50, "range": 150.0,
 			"speed": SPEED_FAST, "interval": 0.85, "first_hit": 0.30,
-			"size_tier": SIZE_SMALL, "radius": RADIUS_SMALL,
+			"size_tier": SIZE_SLIGHTLY_SMALL, "radius": RADIUS_SLIGHTLY_SMALL,
 			"mass": 2.5, "sight": 230.0,
 			"projectile_speed": 420.0,
 			"projectile_spawn_at_edge": true, "projectile_spawn_offset": 7.5, "projectile_collision_radius": 4.0,
@@ -24,7 +24,7 @@ static func definition() -> Dictionary:
 				"name": "大纳尔",
 				"hp": 820, "damage": 85, "range": MELEE_RANGE_MIN,
 				"speed": SPEED_SLIGHTLY_SLOW, "interval": 1.15, "first_hit": 0.40,
-				"size_tier": SIZE_EXTREMELY_LARGE, "radius": RADIUS_EXTREMELY_LARGE,
+				"size_tier": SIZE_LARGE, "radius": RADIUS_LARGE,
 				"mass": 9.0, "sight": 210.0,
 				"projectile_speed": 0.0,
 				"projectile_spawn_at_edge": false, "projectile_spawn_offset": 0.0, "projectile_collision_radius": 4.0,
@@ -43,7 +43,7 @@ static func definition() -> Dictionary:
 				}],
 		},
 		"visual": {
-			"visual_radius": RADIUS_SMALL + VISUAL_RADIUS_PADDING,
+			"visual_radius": RADIUS_SLIGHTLY_SMALL + VISUAL_RADIUS_PADDING,
 			"visual_scene_path": "res://assets/units/gnar/gnar_small_view.tscn",
 			"visual_forward_yaw": 0.0,
 			"visual_animations": {
@@ -68,7 +68,7 @@ static func definition() -> Dictionary:
 			"projectile_visual_height": 30.0 * CHARACTER_SCALE_MULTIPLIER,
 			"color": Color(0.93, 0.58, 0.18),
 			"transformed_stats": {
-				"visual_radius": RADIUS_EXTREMELY_LARGE + VISUAL_RADIUS_PADDING, "projectile_visual": "orb",
+				"visual_radius": RADIUS_LARGE + VISUAL_RADIUS_PADDING, "projectile_visual": "orb",
 				"projectile_visual_height": 0.0,
 				# END IMPORTED AUDIO gnar_mega
 				"visual_scene_path": "res://assets/units/gnar/gnar_mega_view.tscn",

@@ -471,15 +471,15 @@ func _check_minion_line_mechanism() -> void:
 	_expect(
 		cards.melee_minion.size_tier == CardDB.SIZE_SMALL
 		and cards.ranged_minion.size_tier == CardDB.SIZE_SMALL
-		and cards.siege_minion.size_tier == CardDB.SIZE_SLIGHTLY_SMALL
-		and cards.super_minion.size_tier == CardDB.SIZE_MEDIUM
+		and cards.siege_minion.size_tier == CardDB.SIZE_MEDIUM
+		and cards.super_minion.size_tier == CardDB.SIZE_SLIGHTLY_LARGE
 		and is_equal_approx(cards.melee_minion.speed, CardDB.SPEED_MEDIUM)
 		and is_equal_approx(cards.ranged_minion.speed, CardDB.SPEED_MEDIUM)
 		and is_equal_approx(cards.siege_minion.speed, CardDB.SPEED_MEDIUM)
 		and is_equal_approx(cards.super_minion.speed, CardDB.SPEED_MEDIUM)
 		and cards.ranged_minion.can_attack_air
 		and cards.siege_minion.can_attack_air,
-		"四类小兵的权威体型统一下调一档，速度与对空能力保持原定义"
+		"近战/远程兵为小、炮车为中、超级兵为稍大，速度与对空能力保持原定义"
 	)
 
 	var ranged_blue := Unit.new()

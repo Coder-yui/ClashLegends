@@ -8,7 +8,7 @@ static func definition() -> Dictionary:
 			"description": "强化型近战单位，生命和伤害更高，适合在一路形成突破。",
 			"hp": 720, "damage": 72, "range": MELEE_RANGE_MIN,
 			"speed": SPEED_MEDIUM, "interval": 1.15, "first_hit": 0.38,
-			"size_tier": SIZE_MEDIUM, "radius": RADIUS_MEDIUM,
+			"size_tier": SIZE_SLIGHTLY_LARGE, "radius": RADIUS_SLIGHTLY_LARGE,
 			"mass": 6.0, "sight": 200.0,
 			"is_air": false, "building_only": false, "can_attack_air": false,
 			"active_skills": [{"name": "男爵之力", "kind": "buff", "cost": 2, "max_uses": 1, "cooldown": 7.0, "duration": 5.0, "speed_multiplier": 1.35, "damage_multiplier": 1.35, "shield": 140, "shield_duration": 5.0,
@@ -16,7 +16,7 @@ static func definition() -> Dictionary:
 		},
 		"visual": {
 			"visual_active_buff_scene": "res://assets/effects/baron_minion/super_minion.tscn",
-			"visual_radius": RADIUS_MEDIUM + VISUAL_RADIUS_PADDING,
+			"visual_radius": RADIUS_SLIGHTLY_LARGE + VISUAL_RADIUS_PADDING,
 			"visual_scene_paths": [
 				"res://assets/units/super_minion/super_minion_order_view.tscn",
 				"res://assets/units/super_minion/super_minion_chaos_view.tscn",

@@ -293,10 +293,10 @@ func _check_unit_size_tiers() -> void:
 		"masteryi": [CardDB.SIZE_MEDIUM, CardDB.RADIUS_MEDIUM],
 		"sett": [CardDB.SIZE_SLIGHTLY_LARGE, CardDB.RADIUS_SLIGHTLY_LARGE],
 		"ashe": [CardDB.SIZE_MEDIUM, CardDB.RADIUS_MEDIUM],
-		"teemo": [CardDB.SIZE_SMALL, CardDB.RADIUS_SMALL],
-		"gnar": [CardDB.SIZE_SMALL, CardDB.RADIUS_SMALL],
+		"teemo": [CardDB.SIZE_SLIGHTLY_SMALL, CardDB.RADIUS_SLIGHTLY_SMALL],
+		"gnar": [CardDB.SIZE_SLIGHTLY_SMALL, CardDB.RADIUS_SLIGHTLY_SMALL],
 		"xin": [CardDB.SIZE_MEDIUM, CardDB.RADIUS_MEDIUM],
-		"aurelionsol": [CardDB.SIZE_SLIGHTLY_LARGE, CardDB.RADIUS_SLIGHTLY_LARGE],
+		"aurelionsol": [CardDB.SIZE_MEDIUM, CardDB.RADIUS_MEDIUM],
 		"gwen": [CardDB.SIZE_MEDIUM, CardDB.RADIUS_MEDIUM],
 	}
 	var tiers_ok := true
@@ -339,7 +339,7 @@ func _check_unit_size_tiers() -> void:
 		"sett": 0.013125,
 		"ashe": 0.012,
 		"teemo": 0.01185,
-		"gwen": 0.00945,
+		"gwen": 0.012285,
 		"aurelionsol": 0.006,
 	}
 	var models_scaled := true
@@ -350,7 +350,7 @@ func _check_unit_size_tiers() -> void:
 		models_scaled = models_scaled and model != null and is_equal_approx(model.scale.x, model_scales[card_id])
 		if sample != null:
 			sample.free()
-	_expect(models_scaled, "所有已接入人物模型的包装场景均在当前尺寸基础上放大 1.5 倍")
+	_expect(models_scaled, "人物模型包装场景保持各自已校准的尺寸，格温匹配中体型")
 
 func _check_visual_state_contract() -> void:
 	var stats: Dictionary = CardDB.get_card("garen").duplicate()

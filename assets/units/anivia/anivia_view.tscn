@@ -5,4 +5,4 @@
 [node name="AniviaView" type="Node3D"]
 
 [node name="Model" parent="." instance=ExtResource("1_anivia")]
-scale = Vector3(0.011385, 0.011385, 0.011385)
+scale = Vector3(0.018216, 0.018216, 0.018216)

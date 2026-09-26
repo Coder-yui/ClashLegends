@@ -30,17 +30,18 @@ func run(harness: Object, main: Node2D) -> void:
 	var old_skill_choices: Dictionary = main._active_skill_choices.duplicate(true)
 	main._deck = ["heavy_minion_squad", "garen", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
 	main._active_skill_choices["heavy_minion_squad"] = 0
-	var group: Array[Unit] = main._spawn_card_units(0, "heavy_minion_squad", Vector2(360, 1020), 0.0, 0)
+	# 远离己方水晶；中体型炮车在旧后排点1070会触发合法出生避让。
+	var group: Array[Unit] = main._spawn_card_units(0, "heavy_minion_squad", Vector2(360, 940), 0.0, 0)
 	var group_id := group[0].deployment_group_id if not group.is_empty() else -1
 	var offsets: Array[Vector2] = main._deployment_formation_offsets(2, 100.0, 0, "depth_line")
 	var expected_positions := {}
 	for offset in offsets:
-		expected_positions[Vector2(360, 1020) + offset] = true
+		expected_positions[Vector2(360, 940) + offset] = true
 	var positions_match := group.size() == 2 and group.all(func(member): return expected_positions.has(member.position))
 	var same_group := group.size() == 2 and group.all(func(member): return member.deployment_group_id == group_id)
 	var front_back := offsets.size() == 2 and is_equal_approx(offsets[0].x, 0.0) and is_equal_approx(offsets[1].x, 0.0) and offsets[0].y < offsets[1].y
 	_expect(positions_match and same_group and front_back, "超级兵在前、炮车兵在后，沿纵向间隔2.5格并共享编队身份")
-	_expect(group.size() == 2 and group[0].card_id == "super_minion" and group[1].card_id == "siege_minion", "编队成员继续使用超级兵与炮车兵各自战斗数据")
+	_expect(group.size() == 2 and group[0].card_id == "super_minion" and group[1].card_id == "siege_minion" and is_equal_approx(group[0].body_radius, CardDB.RADIUS_SLIGHTLY_LARGE) and is_equal_approx(group[1].body_radius, CardDB.RADIUS_MEDIUM), "重装编队超级兵使用稍大半径21，炮车使用中体型半径18")
 
 	main._active_skill_effect_system.apply(group[0], skill)
 	var copied_effects := (

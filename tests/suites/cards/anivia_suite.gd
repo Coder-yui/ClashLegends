@@ -31,8 +31,8 @@ func _check_card_config_and_visuals() -> void:
 	)
 	_expect(
 		model_node != null
-		and is_equal_approx(model_node.scale.x, 0.011385)
-		and is_equal_approx(model_node.scale.y, 0.011385)
+		and is_equal_approx(model_node.scale.x, 0.018216)
+		and is_equal_approx(model_node.scale.y, 0.018216)
 		and String(animations.get("deploy", "")) == "Idle1"
 		and String(animations.get("idle", "")) == "Idle1"
 		and String(animations.get("move", "")) == "Run"

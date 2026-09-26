@@ -9,7 +9,7 @@ static func definition() -> Dictionary:
 			# 空中远程单位：持续喷吐龙息（DPS模式）
 			"hp": 580, "damage": 55, "range": 130.0,
 			"speed": SPEED_EXTREMELY_SLOW, "interval": 0.0, "first_hit": 0.0,
-			"size_tier": SIZE_SLIGHTLY_LARGE, "radius": RADIUS_SLIGHTLY_LARGE,
+			"size_tier": SIZE_MEDIUM, "radius": RADIUS_MEDIUM,
 			"mass": 5.0, "sight": 250.0,
 			"splash_radius": 34.0,
 			"skill_resource_max": 5.0, "skill_resource_kill_gain": 1.0,
@@ -30,7 +30,7 @@ static func definition() -> Dictionary:
 					"cast_locks": ["movement", "attack", "facing"],
 				}],
 		},
-		"visual": { "visual_radius": RADIUS_SLIGHTLY_LARGE + VISUAL_RADIUS_PADDING,
+		"visual": { "visual_radius": RADIUS_MEDIUM + VISUAL_RADIUS_PADDING,
 			"visual_scene_path": "res://assets/units/aurelionsol/aurelionsol_view.tscn",
 			"visual_forward_yaw": 0.0,
 			"visual_animations": {

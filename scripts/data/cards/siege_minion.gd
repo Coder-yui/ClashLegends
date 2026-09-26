@@ -8,7 +8,7 @@ static func definition() -> Dictionary:
 			"description": "远程炮击单位，攻击距离较远，适合从后方压制敌方建筑。",
 			"hp": 390, "damage": 58, "range": 170.0,
 			"speed": SPEED_MEDIUM, "interval": 1.65, "first_hit": 0.55,
-			"size_tier": SIZE_SLIGHTLY_SMALL, "radius": RADIUS_SLIGHTLY_SMALL,
+			"size_tier": SIZE_MEDIUM, "radius": RADIUS_MEDIUM,
 			"mass": 4.5, "sight": 230.0,
 			"projectile_speed": 310.0,
 			"projectile_spawn_at_edge": false, "projectile_spawn_offset": 0.0, "projectile_collision_radius": 4.0,
@@ -19,7 +19,7 @@ static func definition() -> Dictionary:
 		"visual": {
 			"active_buff_projectile_visual": "baron_siege",
 			"visual_active_buff_scene": "res://assets/effects/baron_minion/siege_minion.tscn",
-			"visual_radius": RADIUS_SLIGHTLY_SMALL + VISUAL_RADIUS_PADDING,
+			"visual_radius": RADIUS_MEDIUM + VISUAL_RADIUS_PADDING,
 			"visual_scene_paths": [
 				"res://assets/units/siege_minion/siege_minion_order_view.tscn",
 				"res://assets/units/siege_minion/siege_minion_chaos_view.tscn",

@@ -26,7 +26,7 @@ func _check_gnar_mechanic() -> void:
 		gnar.form_index == 0
 		and gnar.can_attack_air
 		and gnar.projectile_speed > 0.0
-		and gnar.body_radius == CardDB.RADIUS_SMALL
+		and gnar.body_radius == CardDB.RADIUS_SLIGHTLY_SMALL
 	)
 	dummy.hp = 5000.0
 	dummy.max_hp = 5000.0
@@ -48,22 +48,15 @@ func _check_gnar_mechanic() -> void:
 		gnar.form_index == 1
 		and not gnar.can_attack_air
 		and is_zero_approx(gnar.projectile_speed)
-		and gnar.body_radius == CardDB.RADIUS_EXTREMELY_LARGE
+		and gnar.body_radius == CardDB.RADIUS_LARGE
 		and is_equal_approx(gnar.max_hp, float(stats.transformed_stats.hp))
 		and is_equal_approx(gnar.hp, 300.0 + float(stats.transformed_stats.hp) - float(stats.hp))
 		and gnar.transform_hit_count == 0
 		and is_equal_approx(gnar.form_transition_timer, float(stats.transform_duration))
 	)
-	var largest_other_unit_radius := 0.0
-	for card_id in CardDB.all():
-		if card_id == "gnar":
-			continue
-		var other_stats: Dictionary = CardDB.get_card(card_id)
-		if other_stats.get("type", "unit") == "unit":
-			largest_other_unit_radius = maxf(largest_other_unit_radius, float(other_stats.get("radius", 0.0)))
-	_expect(small_contract and delayed_projectile_ok and five_hits_still_small, "小纳尔为小体型远程单位，回旋镖抵达才造成伤害/计层且前5次命中不会提前变身")
+	_expect(small_contract and delayed_projectile_ok and five_hits_still_small, "小纳尔为稍小体型远程单位，回旋镖抵达才造成伤害/计层且前5次命中不会提前变身")
 	_expect(transformed_contract, "小纳尔第6次真实命中立即切换大形态数值，当前生命增加两形态上限差值且在途回旋镖不串层")
-	_expect(gnar.body_radius >= largest_other_unit_radius, "大纳尔使用最大的极大体型档位，允许新单位共享该档位")
+	_expect(gnar.body_radius == CardDB.RADIUS_LARGE and stats.transformed_stats.size_tier == CardDB.SIZE_LARGE, "大纳尔变形后使用大体型半径24，模型保持既定尺寸")
 
 	# 变大演出期间先用大纳尔视野/射程决定追击或待攻；移动不被锁，攻击必须等固定演出结束。
 	dummy.position = gnar.position + Vector2(0.0, -120.0)
@@ -101,7 +94,7 @@ func _check_gnar_mechanic() -> void:
 
 	# 小半径合法但大半径压入河岸的位置，变大后应被确定性修正到新体积合法点。
 	var resize_gnar := Unit.new()
-	resize_gnar.position = Vector2(360.0, ArenaRules.RIVER_Y + ArenaRules.RIVER_HALF + CardDB.RADIUS_SMALL)
+	resize_gnar.position = Vector2(360.0, ArenaRules.RIVER_Y + ArenaRules.RIVER_HALF + CardDB.RADIUS_SLIGHTLY_SMALL)
 	resize_gnar.setup(0, stats, stats.name)
 	_main.add_child(resize_gnar)
 	var resize_origin := resize_gnar.position
@@ -116,7 +109,7 @@ func _check_gnar_mechanic() -> void:
 	_main.add_child(crowded_gnar)
 	crowded_gnar._just_deployed = false
 	var crowded_neighbors: Array[Unit] = []
-	var old_contact_distance := CardDB.RADIUS_SMALL + float(dummy_stats.radius) - 0.5
+	var old_contact_distance := CardDB.RADIUS_SLIGHTLY_SMALL + float(dummy_stats.radius) - 0.5
 	for direction in [Vector2.LEFT, Vector2.RIGHT, Vector2.UP, Vector2.DOWN]:
 		var neighbor := Unit.new()
 		neighbor.position = crowded_gnar.position + direction * old_contact_distance
@@ -144,7 +137,7 @@ func _check_gnar_mechanic() -> void:
 		)
 	var edge_gnar := Unit.new()
 	var edge_neighbor := Unit.new()
-	edge_gnar.position = Vector2(CardDB.RADIUS_EXTREMELY_LARGE, 760.0)
+	edge_gnar.position = Vector2(CardDB.RADIUS_LARGE, 760.0)
 	edge_neighbor.position = edge_gnar.position + Vector2.RIGHT * old_contact_distance
 	edge_gnar.setup(0, stats, stats.name)
 	edge_neighbor.setup(1, dummy_stats, "贴边推挤木桩")
@@ -275,7 +268,7 @@ func _check_gnar_art_integration() -> void:
 		and is_equal_approx(mega_model.scale.x, 0.00825)
 		and is_equal_approx(small_model.position.y, 0.5)
 		and mega_model.position.y < small_model.position.y,
-		"纳尔双模型分别按小/极大体型校准缩放与脚底偏移",
+		"纳尔双模型分别按稍小/大体型校准缩放与脚底偏移",
 	)
 	small_sample.free()
 	mega_sample.free()

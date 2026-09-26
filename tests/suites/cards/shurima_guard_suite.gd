@@ -40,7 +40,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_expect(first[3].hp == 100 and first[3].shield_hp == 500, "自身技能盾破裂，其他盾仍存也不回血")
 	_expect(first[4].hp == 100, "主动清除不算自然到期")
 	_expect(first[5].hp <= 0, "死亡不复活")
-	_expect(first[0].restoration_fx_timer > 0.0, "实际恢复触发黄色回复特效")
+	_expect(first[0].restoration_fx_timer > 0.0, "实际恢复触发通用回复特效")
 	for i in range(1, 6): _expect(first[i].restoration_fx_timer == 0.0, "破盾清除死亡不显示回复特效")
 	for team in [0, 1]:
 		for column in range(18):

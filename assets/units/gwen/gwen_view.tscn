@@ -5,5 +5,5 @@
 [node name="GwenView" type="Node3D"]
 
 [node name="Model" parent="." instance=ExtResource("1_gwen")]
-position = Vector3(0, -0.045, 0)
-scale = Vector3(0.00945, 0.00945, 0.00945)
+position = Vector3(0, -0.0585, 0)
+scale = Vector3(0.012285, 0.012285, 0.012285)

@@ -9,7 +9,7 @@ static func definition() -> Dictionary:
 			# 聚合卡提供完整单位字段以通过通用数据契约；真正生成时读取超级兵成员卡数据。
 			"hp": 720, "damage": 72, "range": MELEE_RANGE_MIN,
 			"speed": SPEED_MEDIUM, "interval": 1.15, "first_hit": 0.38,
-			"size_tier": SIZE_MEDIUM, "radius": RADIUS_MEDIUM,
+			"size_tier": SIZE_SLIGHTLY_LARGE, "radius": RADIUS_SLIGHTLY_LARGE,
 			"mass": 6.0, "sight": 200.0,
 			"deployment_count": 2, "deployment_spacing": 100.0, "deployment_formation": "line",
 			"deployment_member_ids": ["super_minion", "super_minion"],
@@ -24,7 +24,7 @@ static func definition() -> Dictionary:
 			}],
 		},
 		"visual": {
-			"visual_radius": RADIUS_MEDIUM + VISUAL_RADIUS_PADDING,
+			"visual_radius": RADIUS_SLIGHTLY_LARGE + VISUAL_RADIUS_PADDING,
 			"color": Color(0.52, 0.55, 0.62),
 		},
 		"card_art": {},

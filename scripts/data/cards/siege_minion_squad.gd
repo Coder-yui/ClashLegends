@@ -9,7 +9,7 @@ static func definition() -> Dictionary:
 			# polygon 的 deployment_spacing 是中心到顶点的半径；60 / √3 ≈ 34.64 才能得到60像素的三角形边长。
 			"hp": 390, "damage": 58, "range": 170.0,
 			"speed": SPEED_MEDIUM, "interval": 1.65, "first_hit": 0.55,
-			"size_tier": SIZE_SLIGHTLY_SMALL, "radius": RADIUS_SLIGHTLY_SMALL,
+			"size_tier": SIZE_MEDIUM, "radius": RADIUS_MEDIUM,
 			"mass": 4.5, "sight": 230.0,
 			"projectile_speed": 310.0,
 			"projectile_spawn_at_edge": false, "projectile_spawn_offset": 0.0, "projectile_collision_radius": 4.0,
@@ -25,7 +25,7 @@ static func definition() -> Dictionary:
 			}],
 		},
 		"visual": {
-			"visual_radius": RADIUS_SLIGHTLY_SMALL + VISUAL_RADIUS_PADDING,
+			"visual_radius": RADIUS_MEDIUM + VISUAL_RADIUS_PADDING,
 			"color": Color(0.38, 0.40, 0.44),
 		},
 		"card_art": {},

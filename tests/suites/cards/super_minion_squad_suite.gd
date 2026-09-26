@@ -40,7 +40,7 @@ func run(harness: Object, main: Node2D) -> void:
 	var same_group := group.size() == 2 and group.all(func(member): return member.deployment_group_id == group_id)
 	var parallel := offsets.size() == 2 and is_equal_approx(offsets[0].y, 0.0) and is_equal_approx(offsets[1].y, 0.0) and is_equal_approx(offsets[0].distance_to(offsets[1]), 100.0)
 	_expect(positions_match and same_group and parallel, "两只超级兵横向并排、中心间隔100像素并共享编队身份")
-	_expect(group.size() == 2 and group.all(func(member): return member.card_id == "super_minion"), "编队成员继续使用超级兵战斗数据")
+	_expect(group.size() == 2 and group.all(func(member): return member.card_id == "super_minion" and is_equal_approx(member.body_radius, CardDB.RADIUS_SLIGHTLY_LARGE)), "编队成员使用超级兵战斗数据和稍大碰撞半径21")
 
 	main._active_skill_effect_system.apply(group[0], skill)
 	var copied_effects := group.all(func(member):
