@@ -98,8 +98,10 @@ var _idle_transition_exit_blend := -1.0
 # 最近一次统一播放入口实际采用的策略与时长，供表现回归验证；不参与状态决策。
 var _last_clip_transition_kind := &""
 var _last_clip_blend_time := 0.0
+var _last_full_resource_move := false
 var _last_empowered_ready := false
 var _last_haste_active := false
+var _last_terrain_move_active := false
 # 出场技能序列：deploy 配置为数组时，从单位生成的部署阶段首帧开始依次播放；
 # 单段部署（如赵信 1 秒 Spell4）继续由基础状态通道按 deploy_time 缩放；
 # 部署结束前不被基础状态切换打断。
@@ -200,8 +202,10 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 	_idle_cycle_active_animation = &""
 	_last_clip_transition_kind = &""
 	_last_clip_blend_time = 0.0
+	_last_full_resource_move = false
 	_last_empowered_ready = _source.is_empowered_attack_ready_visual()
 	_last_haste_active = _source.get_active_speed_multiplier_visual() > 1.001
+	_last_terrain_move_active = false
 	if not reuse:
 		add_child(_model_root)
 		_model_ground_height = _model_root.position.y
@@ -243,6 +247,7 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 	_configure_looping_animations()
 	if is_instance_valid(_projectile_anchor): _projectile_anchor.free()
 	_projectile_anchor = preload("res://scripts/presentation/projectile_model_anchor.gd").create(_model_root)
+	_source.has_model_deployment_effect = _model_root.has_method("advance_deployment_visual")
 	_recreate_team_ring()
 	if not reuse:
 		_sync_visual(true, 0.0)
@@ -250,6 +255,12 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 	return true
 
 func _process(delta: float) -> void:
+	if is_instance_valid(_model_root) and _model_root.has_method("advance_hit_haste_visual"):
+		_model_root.call("advance_hit_haste_visual", not _dying and is_instance_valid(_source) and _source.hit_haste_full_visual(), delta)
+	if is_instance_valid(_model_root) and _model_root.has_method("advance_skill_resource_visual"):
+		_model_root.call("advance_skill_resource_visual", not _dying and is_instance_valid(_source) and _source.is_skill_resource_visible() and _source.get_skill_resource_ratio() >= 0.999, delta)
+	if is_instance_valid(_model_root) and _model_root.has_method("advance_deployment_visual") and is_instance_valid(_source):
+		_model_root.call("advance_deployment_visual", _source.deploy_time - _source._deploy_timer, _source.deploy_time, not _dying and not _source.cancelled_deployment)
 	_update_active_buff_visual(delta)
 	_update_hit_flash(delta)
 	if _dying:
@@ -376,10 +387,20 @@ func _sync_visual(force: bool, delta: float) -> void:
 		# 强化或循环被动就绪时，同步基础姿态；只换表现，不改位移。
 		if not _playing_visual_action and not _playing_attack and locomotion_state in [1, 2]:
 			_transition_to_basic_state(locomotion_state, _transition_blend(&"locomotion"))
+	var full_resource_move := _full_resource_move_animation() != &""
+	if full_resource_move != _last_full_resource_move:
+		_last_full_resource_move = full_resource_move
+		if not _playing_visual_action and not _playing_attack and not _playing_deploy_sequence and locomotion_state == 2:
+			_transition_to_basic_state(2, _transition_blend(&"locomotion"))
 	var haste_active := _source.get_active_speed_multiplier_visual() > 1.001
 	if haste_active != _last_haste_active:
 		_last_haste_active = haste_active
 		if not _playing_visual_action and not _playing_attack and locomotion_state == 2:
+			_transition_to_basic_state(2, _transition_blend(&"locomotion"))
+	var terrain_move_active := _terrain_move_animation() != &""
+	if terrain_move_active != _last_terrain_move_active:
+		_last_terrain_move_active = terrain_move_active
+		if not _playing_visual_action and not _playing_attack and not _playing_deploy_sequence and locomotion_state == 2:
 			_transition_to_basic_state(2, _transition_blend(&"locomotion"))
 	# 出场演出：单位生成首帧启动序列；部署结束后让位给基础状态机。
 	_update_deploy_sequence_lifecycle()
@@ -491,6 +512,7 @@ func _play_visual_action_clip(animation_name: StringName) -> void:
 	var blend_time := _resolve_clip_blend(animation_name, transition_kind, blend_override)
 	_last_clip_transition_kind = transition_kind
 	_last_clip_blend_time = blend_time
+	_notify_model_blend(animation_name, blend_time)
 	_animation_player.play_section(animation_name, clip_range.x, clip_range.y, blend_time, playback_speed)
 
 func _seek_visual_action(elapsed: float) -> void:
@@ -551,7 +573,12 @@ func _play_clip(animation_name: StringName, transition_kind: StringName = &"defa
 	var blend_time := _resolve_clip_blend(animation_name, transition_kind, blend_override)
 	_last_clip_transition_kind = transition_kind
 	_last_clip_blend_time = blend_time
+	_notify_model_blend(animation_name, blend_time)
 	_animation_player.play(animation_name, blend_time, playback_speed)
+
+func _notify_model_blend(clip: StringName, duration: float) -> void:
+	if is_instance_valid(_model_root) and _model_root.has_method("set_visual_blend"):
+		_model_root.call("set_visual_blend", clip, duration)
 
 ## 原始片段对的例外覆盖通用策略；目标通配只用于已核验的一组入口。
 func _resolve_clip_blend(target: StringName, kind: StringName, fallback: float = -1.0) -> float:
@@ -583,6 +610,12 @@ func _transition_clip(from_action: StringName, to_action: StringName) -> StringN
 
 func _transition_config(from_action: StringName, to_action: StringName) -> Variant:
 	var transitions: Dictionary = _animation_names.get("transitions", {})
+	if to_action == &"move" and _terrain_move_animation() != &"":
+		var terrain_edge := "%s>terrain_move" % _animation_player.assigned_animation
+		if transitions.has(terrain_edge): return transitions[terrain_edge]
+	if to_action == &"move" and _full_resource_move_animation() != &"":
+		var full_edge := "%s>full_resource_move" % _animation_player.assigned_animation
+		if transitions.has(full_edge): return transitions[full_edge]
 	var clip_edge := "%s>%s" % [_animation_player.assigned_animation, to_action]
 	return transitions.get(clip_edge, transitions.get("%s>%s" % [from_action, to_action], ""))
 
@@ -750,7 +783,22 @@ func _move_route_entry_blend(from_action: StringName, has_transition_clip: bool,
 		return _transition_blend(&"action_out")
 	return _transition_blend(&"locomotion")
 
+## 只读位置与地形几何；客户端同样可查询，不能推进穿地形状态或触发回血。
+func _terrain_move_animation() -> StringName:
+	if not is_instance_valid(_source) or not _source.terrain_traversal.enabled or _source.battle_context == null: return &""
+	var clip := _first_valid_animation("terrain_move")
+	if clip == &"" or _source.battle_context.is_ground_position_walkable(_source.global_position, _source.body_radius, _source): return &""
+	return clip
+
+func _full_resource_move_animation() -> StringName:
+	if not is_instance_valid(_source) or not _source.is_skill_resource_visible() or _source.get_skill_resource_ratio() < 0.999: return &""
+	return _first_valid_animation("full_resource_move")
+
 func _move_animation_for_route(from_action: StringName) -> StringName:
+	var terrain_move := _terrain_move_animation()
+	if terrain_move != &"": return terrain_move
+	var full_move := _full_resource_move_animation()
+	if full_move != &"": return full_move
 	if _source.get_attack_visual_serial() == 0 and maxi(_source.form_change_serial, _source.net_form_change_serial) == 0:
 		var initial_move := _first_valid_animation("initial_move")
 		if initial_move != &"":
@@ -939,6 +987,9 @@ func _play_state(state: int, blend_time: float = -1.0) -> void:
 		var haste_move := _first_valid_animation("haste_move")
 		if haste_move != &"":
 			configured = haste_move
+	if state == 2:
+		var terrain_move := _terrain_move_animation()
+		if terrain_move != &"": configured = terrain_move
 	# deploy 配置为数组时由部署序列生命周期单独处理。
 	if configured is Array:
 		configured = ""
@@ -1245,7 +1296,7 @@ func _configure_looping_animations() -> void:
 			var move_animation := _animation_player.get_animation(move_name)
 			if move_animation != null:
 				move_animation.loop_mode = Animation.LOOP_LINEAR
-	for key in ["initial_move", "attack_move", "empowered_idle", "empowered_move", "haste_move"]:
+	for key in ["initial_move", "attack_move", "empowered_idle", "empowered_move", "haste_move", "terrain_move", "full_resource_move"]:
 		for value in _animation_list(key):
 			var routed_move := StringName(value)
 			if routed_move != &"" and _animation_player.has_animation(routed_move):

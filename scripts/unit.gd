@@ -104,6 +104,7 @@ var can_attack_air := true
 var continuous_attack := false
 var color := Color.DIM_GRAY
 var has_model_art := false
+var has_model_deployment_effect := false
 var show_team_ring := true
 var deploy_time := 1.0
 var first_hit_time := 0.2
@@ -2449,7 +2450,7 @@ func _draw() -> void:
 		# 部署读条仍使用代码绘制，便于观察一秒落地窗口。
 		var deploy_ratio := 1.0 - _deploy_timer / maxf(deploy_time, 0.001)
 		draw_arc(Vector2.ZERO, visual_radius + 6.0, -PI / 2.0, -PI / 2.0 + TAU * deploy_ratio, 24, Color.WHITE, 3.0)
-	if _sweep_fx_timer > 0.0 and deploy_sweep_radius > 0.0:
+	if _sweep_fx_timer > 0.0 and deploy_sweep_radius > 0.0 and not has_model_deployment_effect:
 		_draw_sweep_fx()
 	_draw_active_sweep_fx()
 	# 血条和资源条绕其屏幕锚点反向旋转，填充方向与上下关系不随场地倒转。

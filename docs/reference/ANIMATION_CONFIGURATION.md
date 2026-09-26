@@ -12,6 +12,7 @@
 | `attack_structure` | 攻击建筑时的专用动作 |
 | `attack_hit / attack_recover` | 按普攻段对应命中与恢复片段 |
 | `attack_move / attack_to_move` | 拳间移动或按段转跑；空字符串表示无专用片段 |
+| `terrain_move` | 穿地形能力单位位于地形内的循环移动动作；只读几何查询，离开后恢复普通移动，不能触发回血 |
 | `empowered_* / haste_move` | 强化待击的移动/攻击/收势/转跑，或主动加速移动 |
 | `attack_enter / attack_retarget_enter / attack_loop` | 持续攻击起手、换目标和循环 |
 | `visual_actions` | 技能与变形动作；映射名需与技能所选动作一致 |
@@ -34,7 +35,7 @@
 
 `transition_blends` 可覆盖策略。`clip_blends` 精确的“源片段>目标片段”优先，其次通配目标，之后才回退动作/路线覆盖和全局策略；零值合法，不能把某卡值改为全局默认。
 
-`transitions` 先匹配实际来源片段到 move/idle，再匹配行为路线。转场描述可提供 `blend_in / blend_out` 和非负 `start_time`，起点必须小于原片长。
+`transitions` 先匹配实际来源片段到 move/idle，再匹配行为路线。地形内移动可优先配置 `来源片段>terrain_move`，随后接 `terrain_move` 循环。转场描述可提供 `blend_in / blend_out` 和非负 `start_time`，起点必须小于原片长。
 
 进入移动的来源优先级：专用 ToRun → 按段转跑 → 通用 move_enter。一条路线只选一种。使用过渡素材时首尾采用 sequence；完全没有时用 action_out。通用入跑用于部署/待机/攻击进入移动；技能与变形应选自身路线或直接混合。
 
@@ -51,7 +52,7 @@
 
 冰冻先定格当前姿势再取消旧动作，解除后混到合法新动作，不续播；眩晕取消普攻后短混合 Idle，已开始的普通技能、部署和变形继续。已有减速在免疫期间继续倒计时但被抑制，免疫结束后按剩余时间恢复；不按来源乘算。
 
-动画库按实例深复制。材质叠加由统一表现层合成，保留原覆盖层及受击/冰冻后续 pass。头顶优先包装提供的锚点，再用 HeadAnchor，最后在接入或换模型时缓存投影回退；发射点可由包装提供方法或 BeamOrigin，不假设通用骨骼名。
+动画库按实例深复制。包装可提供 `set_visual_blend(clip, duration)` 接收实际选定的混合时长，用于只读骨骼修饰；不得改权威动作时间。材质叠加由统一表现层合成，保留原覆盖层及受击/冰冻后续 pass。头顶优先包装提供的锚点，再用 HeadAnchor，最后在接入或换模型时缓存投影回退；发射点可由包装提供方法或 BeamOrigin，不假设通用骨骼名。
 
 `death_followup_scene_path / animation / duration` 配置后续模型；`death_followup_immediate` 为真时跳过原模型死亡，立即换后续模型。它只改变无碰撞死亡代理，成功复生不走死亡。
 
@@ -72,3 +73,9 @@
 伤害/离弦仍由固定20Hz权威模拟在跨过节点的第一个Tick结算，动画与命中音效只消费结果。验收须覆盖多种普攻、强化下一击、连续攻击、攻速变化、中途强化、取消/冻结及客户端进度；单位动画页记录来源、原片时长、节点、公式、公共近似值和Tick误差，不能把动画事件作为伤害驱动。
 
 持续特效场景可用ActiveBuffVisual3D.status_source选择active_buff（默认）或blood_rage；后者只读取血怒剩余时长，不受其他增益触发。
+
+模型包装可提供 `get_preview_focus(bounds_center: Vector3) -> Vector3`，覆盖工作台单模型观察的世界空间取景焦点；仅影响非摄影棚预览相机，不能移动战斗模型。隐藏网格不参与预览包围盒。
+
+模型包装可提供`advance_skill_resource_visual(full, delta)`消费已同步的满层技能资源，以及`advance_deployment_visual(elapsed, duration, enabled)`消费部署经过时间；均仅负责表现。具有部署特效的包装令Unit关闭默认横扫弧，权威部署伤害与范围不变，回收必须清理附属节点和材质。
+
+`full_resource_move` 在主动资源可见且满层时选择移动循环，资源变化时刷新移动姿态；专用过渡使用 `来源片段>full_resource_move`。只读资源，不等同于下一击强化状态。
