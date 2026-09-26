@@ -1,0 +1,404 @@
+[
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_q_hold_spear.scb",
+    "source_sha256": "4a785d88c753d4c9918e4258fce93e928700a37e4cb91b279e98f8837ab29f50",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_q_hold_spear.mesh.json",
+    "sha256": "5926f6475086cd02f9486ce1edaac82117dd237d2d75d1aede0d8e62363ddfb9"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/pantheon_base_tx_cm.tex",
+    "source_sha256": "b27944fbf2f394a3919ce68c292e9bce61abbd8732b98773b10c4e6eee984a5c",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_tx_cm.png",
+    "sha256": "bd84525f0a298f4dbc395f904a736a52eb9666ad79b825a07ecc097df3c30034"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_shield_nebula.tex",
+    "source_sha256": "04fd0215a746f3e843d95f6ca62dfc03ae225cf4d951a679c3a479bee39a8221",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_shield_nebula.png",
+    "sha256": "e6e3362722df6d79f39f19e2ecc42a045a5a78ca0c231827944f637bc45bd0b8"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_i_plume_head.tex",
+    "source_sha256": "2428437ccf14e52e81fe2f068528fe6943c886fa6be5082e9631138d98e49632",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_i_plume_head.png",
+    "sha256": "49c88b962f61cc4c8d9ca431aeb71a510eccdbddad32f63de50dd9fd59b7c1b0"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_q_nebula_streak_mult_vertical.tex",
+    "source_sha256": "85db8b6f06c4975cc7d298eb865081bec3652b1498ff8628b71c1cee8715bf55",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_q_nebula_streak_mult_vertical.png",
+    "sha256": "8f1e176d4f0dd96a0fb380f0d332bd6fb4d033b2461d6fd9f8c8b942e968bcc9"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_q_mis_cosmic_trail.tex",
+    "source_sha256": "087aa8d7297986c5b4eda73731a7afeb0a1c979b3808453b66962c4c6b6e3869",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_q_mis_cosmic_trail.png",
+    "sha256": "613b77bfdf215ff72003b78d065d9011b6e68d3114df7ab2d4710d183c1087fb"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/base_pantheon_q_air_trail_center.tex",
+    "source_sha256": "d493b594e3815806d85cdc0963bfb815181ffce55d8556786a3e378f68886193",
+    "output": "res://assets/units/pantheon/r_original/base_pantheon_q_air_trail_center.png",
+    "sha256": "06927071c866a5fb9c208b818a7bffec873d56d8e328c21847299b5172b9f104"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_q_cosmic_mult.tex",
+    "source_sha256": "b34fcd63ff3836264601d6a9340177e5cdf5b35cbb64f30072827bc1aa657544",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_q_cosmic_mult.png",
+    "sha256": "8b4c9e7ad71785a781ba713b928d419029cc397e0157df992a6fd1982432dacb"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_q_cross_stars.tex",
+    "source_sha256": "b13bf628cc75885a2537a6940f445874aa9e5c7c2e1e16a59fe3e7718f2ba43b",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_q_cross_stars.png",
+    "sha256": "daf59932ca84323f4234c4cce963427cd0c39b90445030a7f5c15f855fad947c"
+  },
+  {
+    "source": "assets/shared/particles/bigglow02_2.tex",
+    "source_sha256": "6a347f4c46ff7541c05bf2d175df0e6874ff4477fb0fd7f411bf9c20c0ab819a",
+    "output": "res://assets/units/pantheon/r_original/bigglow02_2.png",
+    "sha256": "92c792a0d6b1a3f9c9b15c7603698a7165f9597de3c994ced9fc0b285fcb69b2"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/aura_self.tex",
+    "source_sha256": "41241eafa700d7aa8a280bc7d943c090005324d146d33777a5b8b4bda3ab977b",
+    "output": "res://assets/units/pantheon/r_original/aura_self.png",
+    "sha256": "9d1c0afae3a4040376460a1809143487b39bafa5e0d59448ca4c22bcde7dadd9"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_q_nebula_streak_mult.tex",
+    "source_sha256": "79fc7ed2a0edda68ffb5dca6d1657d31dbc5b3b78d62c3a4cc6a0a51604b39b0",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_q_nebula_streak_mult.png",
+    "sha256": "25e0c6c4c19a7be3e765985f47fc969951021ed14b628813ad35d59777660ddf"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_q_stardust.tex",
+    "source_sha256": "625b4d71a67001ca78bc97a1c630f06a2e060d1a6daa11c37d343ea2f6ffbd60",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_q_stardust.png",
+    "sha256": "7d540a442a7dad93cda40d630fdf6ce8d6643f79d1bf08d111f0394b5f72497b"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_r_rocks_2x2.tex",
+    "source_sha256": "698002e24f8158dad3d8481b30833f0a31b9916e1bea5d63fb91398686194d6c",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_r_rocks_2x2.png",
+    "sha256": "74b457715384e453555b647c33bac263c7b5626de65dc3067d026c54e447834a"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_r_oilysmoke_2x2.tex",
+    "source_sha256": "183b47e20a4fdf0f5051465869be88a171a34a0a727c199c23d811e0258ff535",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_r_oilysmoke_2x2.png",
+    "sha256": "8a6e80b460d2f64f1d4e45291fc494468d54ae6a8717bfeed88fdcda0156ec7f"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_r_oilysmoke_erode.tex",
+    "source_sha256": "13c35a0d414da35a0b5f73bf966b2d19fd91584a1e922f49336156f876e0c793",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_r_oilysmoke_erode.png",
+    "sha256": "5fb13a09128ed84af06139d57e3501b0666772327014d5190366ac6a56119f0c"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_cape_nebula.tex",
+    "source_sha256": "8a41e1f26bc7fbfd00a0944244a7da6e3072fbc852eda194b9c953445847e6bb",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_cape_nebula.png",
+    "sha256": "84d926f4d1b940b98178f4a263810c35dcc45717f1b464663587ae71bee1bdbb"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_r_taurus.scb",
+    "source_sha256": "e610491ffaccf0acd956713d6a6661168e23b75b8657c3906be7b31f2d291a94",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_r_taurus.mesh.json",
+    "sha256": "ac9459a7f8c728d43000d0fb6c91c2eecc3e3d9c4ca5115fe75b344f35eed196"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_r_spear_impact_diust_burst.tex",
+    "source_sha256": "812ab03727462d3c63287851f6865e2f7a5fc95bd5cb07229f50f9115089346b",
+    "output": "res://assets/units/pantheon/r_original/pantheon_r_spear_impact_diust_burst.png",
+    "sha256": "f8cf7b835cbec29fe5606240ad9cd19995c983a09ccce2611409896ac92399bd"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_e_shield_inner_mult.tex",
+    "source_sha256": "08feaef031cc66482bf58eb8fb8d08247b897203852694e73c7d6b2ce04bb166",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_e_shield_inner_mult.png",
+    "sha256": "7cc851d5cc05f42ec1eab0382f1d5ac87f920ebd80982bb6cec5ebae70b313cd"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/base_pantheon_r_comet_impact_smoke.tex",
+    "source_sha256": "136224fa5e07a6dffed36281c7493935a4f0f816c79c7985dd9d26dce57935e3",
+    "output": "res://assets/units/pantheon/r_original/base_pantheon_r_comet_impact_smoke.png",
+    "sha256": "8ace366317b9ffcbe7ff72bcdd7deb010ee20553ccada0d4a8cb692b9ed239d1"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_r_aftershock_mesh.scb",
+    "source_sha256": "3004b8ddd5d907520aad1b9c18978cc7e682b8452e04cd3a00e25eb5a63c7988",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_r_aftershock_mesh.mesh.json",
+    "sha256": "482faded2d8d1da6cbe5a2d23b27cc046725ff2416894a1f1df38e85187539e7"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_e_ground_light.tex",
+    "source_sha256": "37b2e7520b78f78c6d56b9b294873e3b2c876b1f1d3dce8f9eb00e67ac4aeeea",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_e_ground_light.png",
+    "sha256": "db50a97511da6d64ae17ef7dde6403d8543d8f4682cc6a9af453f555f7778689"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_w_air_swoosh.tex",
+    "source_sha256": "a7ea9d4cd68a5d77f71cdd91d1053f134099aea40f57d1693229723629a9347c",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_w_air_swoosh.png",
+    "sha256": "10694bd26a4ecabc1f867b72728e2fb41e8454818be30c5f14c47dffb2021d0c"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_r_ground_crack_03.tex",
+    "source_sha256": "e365b464af4d6fe2fdf08148a8db1c7b75a037fc8c95ac6b407383907cb2f181",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_r_ground_crack_03.png",
+    "sha256": "9e7ce5adcaade526b5f204da8b19051fba4339d36bf9f2e8b9e4ac4c6e9701ab"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/bigglow02.tex",
+    "source_sha256": "f488a0f6ace851321b2262723084f12cc648d4899772096c61638cf952646d6f",
+    "output": "res://assets/units/pantheon/r_original/bigglow02.png",
+    "sha256": "51250743b54af3bed24754f10c71453880c0e3957099b6bbb6b2f21be8555459"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_r_cas_channel_mesh.scb",
+    "source_sha256": "3d7dad7a1a439e22854a80ca2134508692ad8a1c518bf4095f81389b81246952",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_r_cas_channel_mesh.mesh.json",
+    "sha256": "92d0eff09f9bb24cb94fd942862363ff7d1ebf2b6e478ad4a4847a1b716a7da5"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_r_wave_comet_mesh.scb",
+    "source_sha256": "02607fe3219e578f64cca2c535cc143758cc467a55c3738dd003937391dd4c2e",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_r_wave_comet_mesh.mesh.json",
+    "sha256": "b67079ae60418048a1196deda3bb9a6f5ec0d028baa595227820c37a4d8364a7"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_w_flare.tex",
+    "source_sha256": "faa4b93ac20ec08c13315b8a7dbc881d860227991f2bd877fbf60f84743f9f1c",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_w_flare.png",
+    "sha256": "cdbf108d35fdaaabebb46ea825ecf00a4d2049da38a6409ab88b3bb0c9c6bcb5"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_q_tap_spearhead_blur.tex",
+    "source_sha256": "e4c34178fad49e9288f27e5a143869fde5441221b9b487f5148d1083a63f6fda",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_q_tap_spearhead_blur.png",
+    "sha256": "3938ebb3ca7f6680d965135f82f3b88258488d5f8322c07222a20a7dfcb5dfb5"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_q_side_trails.tex",
+    "source_sha256": "50a0f5e6bf891ff8ad009182f0a665a8fa6a4816ca2e55f88364c35a62eef1e9",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_q_side_trails.png",
+    "sha256": "8903e64a37ef91d172ed495597a059053af8899e54da0422f1d71869683e752b"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_e_star_rays.tex",
+    "source_sha256": "0dc911e2cca21a7ec6ae52cca31076a8fbd6baad1106f7f2f246706288080df4",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_e_star_rays.png",
+    "sha256": "2985c3dfa7e3af5be9eb301296c336660368198da1f848cf6de306231b5d60f1"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/cirlcle_01.tex",
+    "source_sha256": "6ce600a5c83b9e3bc60659e2a6f5471d67c7e07557aa3790cfe11ef02871494a",
+    "output": "res://assets/units/pantheon/r_original/cirlcle_01.png",
+    "sha256": "f3ec3e532a7870e0459cfd55b33d42ba38fc7f81e436062716555d9746aa0812"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_e_shield_plane_mult.tex",
+    "source_sha256": "4acc5a2515877d8a93fd0e8bd2d58925200b04cf659c6c2c8a1887ed521b9561",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_e_shield_plane_mult.png",
+    "sha256": "81e1278be3be4ed30e82ac3fe9a69760f01727653cd3d846ff56b414dec6bc8d"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_e_shield_erode_out.tex",
+    "source_sha256": "f6db3a2510d902868a4f42b2fbfef4799eccb9d58d45bf7f5d03cc73cacce1f2",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_e_shield_erode_out.png",
+    "sha256": "e2267341713cdda105d3e2c6f8f8433d39144816b3ec5ec7f4f82a5f6efd12df"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_r_wave_comet_streaks.scb",
+    "source_sha256": "c9ffc8162e411ff0c8ce276b2639fa9b3ce2bd6314ea7a434b9c6f32e2443824",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_r_wave_comet_streaks.mesh.json",
+    "sha256": "eb58a3358996cf0a0bddbd79657dc7fe8f127537dd1a2d655625d77eace734e9"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_r_comet_streaks_mult.tex",
+    "source_sha256": "f55959b50d11a18b733dc023e8fa799a5b2df5eca5fbad5e7ee62623b85d3bf6",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_r_comet_streaks_mult.png",
+    "sha256": "fee2b0f717c1a2457713b5e1cab7a28ca966339d7b03c069ed7059c34315e9ed"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_q_mis_air_trail.tex",
+    "source_sha256": "10df91474ad8ccc741d07c80dbf2c307d526bed4a2d23eb4fb126813d3472a57",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_q_mis_air_trail.png",
+    "sha256": "d0f3fc8ce4a81eaeea05277762ab03f6013f304429467b35af4509ee407f217e"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_r_mis_trail.tex",
+    "source_sha256": "7ece863dfa1fb3a7b6e6002dd3de124329ea7ab6a819b58451d87e1c86f26fa3",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_r_mis_trail.png",
+    "sha256": "a9c95004db03d0199135586074c4af414520b30be1d61aeee32803630a5885df"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_r_crack_dissolve.tex",
+    "source_sha256": "58e4351736a0c1e4e73bd3a479eb22a255bcee45cde04db97777fad121607217",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_r_crack_dissolve.png",
+    "sha256": "957a64692f80fb8409788ade9ae826f2c7badf618ef534ac63989f7ce4f915a0"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_r_groundcracks_glow.tex",
+    "source_sha256": "d6df2de1682361d8ead8528d9bf893fadf3c665952e5a91d6e5e54bd79ceec50",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_r_groundcracks_glow.png",
+    "sha256": "f90b48bca6b148526917803692fc5b200724f3b8ffef74e624f7ae0b93c90c88"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_r_wave_mesh.scb",
+    "source_sha256": "a96e8219055cf653ef1b021c4edbb8510c298ad5e7adc4264d3bcbe284d82661",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_r_wave_mesh.mesh.json",
+    "sha256": "8add0e20ad52c9b0de85310e97b5780245171bbcaefb2ae8999f3aaabb5c9c54"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_r_wave_texture.tex",
+    "source_sha256": "b7328720ed7804e1e02ed8254f4f7d07a1ca9fb8a197b22782886cf4e9adbd18",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_r_wave_texture.png",
+    "sha256": "253fc5ea72844973c6bbcddff8c33f5cf23cf99110f8df0475843deb63e67bc1"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_r_nova_mult.tex",
+    "source_sha256": "d5b336bdc00cd4a15b7004b564125eae8f08e5980a04b8d7c96be0f3c13a4f20",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_r_nova_mult.png",
+    "sha256": "e9868b0c95bac2213adebe8cc341d84fde13ede0f5bb4c6424a3b3c8ab0460f0"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_r_wave_edge.tex",
+    "source_sha256": "c882ebbf2796588360dfa0146ca86f309ff66d79d7089c3c2576a790d8dd160f",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_r_wave_edge.png",
+    "sha256": "8bcc90221ae99719353dc1aecc25fe6051d542c7e96a25cf393c6a462d4ff1eb"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_r_debris.tex",
+    "source_sha256": "a92ea2b7095695382df761116f467f4a754f2a4696a3c8c2cf93a0eff18bfb52",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_r_debris.png",
+    "sha256": "e3c0e90e36a951837c7d69ef9a098c125f5065ed24fc2409e0d303a3214e2a14"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/common_color-bellcurve.tex",
+    "source_sha256": "e38f618b61b6a7f5da55e91310df9220ebad40028546ebe26ab388b37a18d03d",
+    "output": "res://assets/units/pantheon/r_original/common_color-bellcurve.png",
+    "sha256": "05d681d151cb0afafc2c9f0efc4ebfa4162b13fd35b87dba28eba1409ad70313"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_r_wave_dirt_mesh.scb",
+    "source_sha256": "fbaed4c17ff001c2fa479ae069a67ac7842ce8362ff65d4a34476e384346e324",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_r_wave_dirt_mesh.mesh.json",
+    "sha256": "546c92ce98327839c0827a05fa086ee4693a4e9dae7cd952ed77a3fa5a0c77a0"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_dirt_skirt_mult.tex",
+    "source_sha256": "479321b1ace2ab76a78ab44378353fc4a294c38b0995f01190cd7725f9b123fb",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_dirt_skirt_mult.png",
+    "sha256": "32b8c762511eb83fb3f8d251fee877d3a5e0f6d350d4ca1dade9e9500e33d12c"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_r_wave_split_uvs.scb",
+    "source_sha256": "d9c91e571cf338b4a2fbf28fbc8f2a74f6e1dd160fae8ec172811fe3d0def275",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_r_wave_split_uvs.mesh.json",
+    "sha256": "5a65adf88aa1720a8334c8fd9a2fafa88b38d0df12aeb223683ef38d5bc11a16"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_r_wave_rock_mult.tex",
+    "source_sha256": "c6eb135ec37c3e2e90b659eaa280a500423441574e5beddc1fec6d2ccf03c337",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_r_wave_rock_mult.png",
+    "sha256": "891271a478580682bb8ca08c2cd032f9a0a367bc7b3e7c7f9cb91d8d9d98cc9b"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_r_mis_air_streaks.scb",
+    "source_sha256": "9291d3a17e36ab177c6eab6ee7ef6881685ea39330b90ac5445b9096809874b4",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_r_mis_air_streaks.mesh.json",
+    "sha256": "91b5286fa4f4313f92e95a1272cb9dcb8239305e1fd54adbc86412af2c3e9640"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_r_mis_air_streaks_mult.tex",
+    "source_sha256": "b21a11d1596e86b1dd2089edc407df8e241d7909a846adf6def67264f644ff1d",
+    "output": "res://assets/units/pantheon/r_original/pantheon_r_mis_air_streaks_mult.png",
+    "sha256": "459fc0a9d3625f129b57165b4564f2d0d9a225b9ad13d1fda358a5ecbbcd2e83"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_q_air_streaks.tex",
+    "source_sha256": "0cec6cdf31556b10a9cf5de0d5e44cc49841fad02cb66cb6625691c8b7c14022",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_q_air_streaks.png",
+    "sha256": "731b532dca38aadd870edc8a3a8cd76f23723220e53aaf341d0b0399e9cfc2fa"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_r_ground_nova_trail.tex",
+    "source_sha256": "d74b98854c98f1ca959f8491b197a1f39fa78b17b8602420c6442096d0b19c2a",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_r_ground_nova_trail.png",
+    "sha256": "714e1b7029b29eab8aa58be47f72b22b1f2ee00094f402494fba415e91bac0f9"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_r_ground_trail_erode.tex",
+    "source_sha256": "c4680646e00e8161f8549ea10a0c4ec2087b8e004d700274b216b8ff10312c0d",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_r_ground_trail_erode.png",
+    "sha256": "365d13e7f8d8107937edc3b4dcf6d8a54296ac9f32bf1acf37c83f80cf7cadce"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_r_landing_burnmark.tex",
+    "source_sha256": "af58232da2981a055bc68a741a223c27b2ff9ed1637a104426442c2030d18b47",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_r_landing_burnmark.png",
+    "sha256": "cea0f1fb1d0208d4bbe555893b7a5da1cdc6fb0434a1934ace42401fec18073d"
+  },
+  {
+    "source": "assets/characters/veigar/skins/base/particles/veigar_w_cracks_light.tex",
+    "source_sha256": "f83cbb80bb834a5e07968b3167013d41c67efafb86da68f24b4fd1b231507b67",
+    "output": "res://assets/units/pantheon/r_original/veigar_w_cracks_light.png",
+    "sha256": "fcbc1d316a756d54cd2b374237b29a6e9a25b9f11857121c19dd572e84d94b06"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_r_crater_cracks.tex",
+    "source_sha256": "4c5d6f533ac13e60ec44c2bc887ccdb8b24fd391076a62d0784043cc5668b9e5",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_r_crater_cracks.png",
+    "sha256": "b5fec533b7b4b7785007f5d545a4e446f4c21e1a7f750cb99cfad804a50ece97"
+  },
+  {
+    "source": "assets/characters/veigar/skins/base/particles/veigar_w_cracks_erosion.tex",
+    "source_sha256": "8f5c79965caaaf8d1eeb98b8c05e2f5da0628cc73b565ddd3c9246e3d5693b04",
+    "output": "res://assets/units/pantheon/r_original/veigar_w_cracks_erosion.png",
+    "sha256": "b47c59d5ec87ce99e52f6ea2c59ff6009d9888f2a96ecef4385f4f86b1c89f14"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_e_shield_erode.tex",
+    "source_sha256": "5d6a2530308bd9c47b128a083af8567ce1b2df1ca79a46e71c941c345062a00f",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_e_shield_erode.png",
+    "sha256": "31950f1380184dbeb1ab2bc6e16ceb1a570fd669d5d52b72ebc367025ad61773"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_q_stars.tex",
+    "source_sha256": "625b4d71a67001ca78bc97a1c630f06a2e060d1a6daa11c37d343ea2f6ffbd60",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_q_stars.png",
+    "sha256": "7d540a442a7dad93cda40d630fdf6ce8d6643f79d1bf08d111f0394b5f72497b"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/kassadin_skin05_i_starrybackdrop.tex",
+    "source_sha256": "ef60da7e0ed9779aa8717a2849fe2728e0b41cea6de6a598e52995f4f0f53762",
+    "output": "res://assets/units/pantheon/r_original/kassadin_skin05_i_starrybackdrop.png",
+    "sha256": "659d70a176e49b4dfb5bd51dca06026d0cd40aaf29c0935bbcb9f5599214eb9b"
+  },
+  {
+    "source": "original Spell4 Slide SKN/SKL with fly/slide ANM; lol2gltf conversion",
+    "output": "res://assets/units/pantheon/r_original/pantheon_r_proxy.glb",
+    "source_record": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/大招落地研究/models/pantheon_r_proxy.glb.source.json",
+    "sha256": "c173913d6f2d11ad7b02e593683c46dd0821733ee4a08468bdf5b2f00a913e40",
+    "conversion_inputs": [
+      {
+        "path": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/大招落地研究/effects-source/assets/characters/pantheon/skins/base/particles/pantheon_base_spell4_slide.skn",
+        "sha256": "08950f6aedd94d4a55481313dcafa21e625ca996539a55d849c7665c0983469d"
+      },
+      {
+        "path": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/大招落地研究/effects-source/assets/characters/pantheon/skins/base/particles/pantheon_base_spell4_slide.skl",
+        "sha256": "0735ec420ad50b91a6905bee25391f5f5833613e2abb2c66560cde5ca1ee2a32"
+      },
+      {
+        "path": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/大招落地研究/model-animations/pantheon_spell4_fly.anm",
+        "sha256": "652bfee0b44cba980bcf117ae151d1597e56b873ff2a3fda5bdce1f88370d9c0"
+      },
+      {
+        "path": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/大招落地研究/model-animations/pantheon_spell4_slide.anm",
+        "sha256": "003542e3cd8245067cd5331c0139e9c60a94f8dbe4ed695c849858cf68e28528"
+      }
+    ]
+  }
+]
