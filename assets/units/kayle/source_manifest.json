@@ -13,5 +13,46 @@
   "wing_16_gradient": {
     "source": "Kayle.wad.client:assets/characters/kayle/skins/base/kayle_base_wing_16_gradient.tex",
     "sha256": "948e58a043443d7ea80c5c14cf8764828fe48ca7b860313a660fb54bf4aa2005"
+  },
+  "enrage_wings": {
+    "source": {
+      "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Kayle.wad.client",
+      "package_sha256": "649dad8ab65ce9db0fc300ad452ea6e572d116d352f3541db1be0c541bff8864",
+      "files": [
+        {
+          "path": "assets/characters/kayle/skins/base/kayle_base_wing_rage_gradient.tex",
+          "wad_hash": "78a8e6538eb7abca",
+          "size": 1044,
+          "sha256": "c215453b7c54d1082c0d00c3724593b9d860bb0cae9a437606640a7d268b45d5"
+        },
+        {
+          "path": "assets/characters/kayle/skins/base/particles/kayle_base_fire_tile.tex",
+          "wad_hash": "a2833d845eeae792",
+          "size": 10948,
+          "sha256": "436d33cc03131dba76aab8cbc6d274695126ffdcb7be90cf50c8dbfd3f21fc99"
+        }
+      ],
+      "note": "Staged source assets only. Model materials and particle dependencies must be verified before project integration."
+    },
+    "reference": "skin0.bin Kayle_Wings_inst dynamicMaterial KayleEnrage; P_Enrage_Buff is an empty VfxSystemDefinitionData",
+    "parameters": {
+      "Rage_Blend_on_seconds": 0.5,
+      "Rage_Blend_off_seconds": 0.5,
+      "Mask_Intensity": 0.8,
+      "Bloom_Intensity": 2,
+      "Scrolling_Scale": [
+        2,
+        2
+      ],
+      "Scrolling_Rate": [
+        -0.4,
+        0.25
+      ]
+    },
+    "adaptation": "Godot melee alpha-blended wing surface pass and ranged in-material color mix; native gradient and scrolling mask, bounded brightness instead of original Bloom=2 to avoid clipping. Both forms only at project hit_haste maximum. No claim of full Riot shader parity; no unrelated particle aura.",
+    "files": {
+      "rage_gradient": "ba3e560f710679efaa4ac5746a8e0646e69c0a190ac41cd2d188f64a90c3c463",
+      "fire_tile": "a6cc31e8d2ff81f7b7f20bdcba571a4fb81d2d2859f6391d0e56541b1d015e41"
+    }
   }
 }

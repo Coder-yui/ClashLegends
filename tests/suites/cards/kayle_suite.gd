@@ -81,6 +81,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_test_wave_category_and_scale()
 	_test_wave_audio()
 	_test_sword_facing()
+	_test_enrage_visual()
 
 func _test_hit_haste() -> void:
 	for id in ["kayle", "kayle_ranged"]:
@@ -346,3 +347,43 @@ func _test_sword_facing() -> void:
 		var angle: float = view.node.rotation
 		for i in 6: system.tick_visuals(0.008)
 		_expect(is_equal_approx(view.node.rotation, angle), "20Hz间静止渲染帧保持实际斜向轨迹，不退回水平")
+
+func _test_enrage_visual() -> void:
+	for id in ["kayle", "kayle_ranged"]:
+		_clear()
+		var unit: Unit = _main._spawn_unit(0, id, Vector2(300, 900), 0.0)
+		var twin: Unit = _main._spawn_unit(0, id, Vector2(400, 900), 0.0)
+		var view: UnitModel3D
+		var other: UnitModel3D
+		for candidate in _main._battle_presentation._world_root.get_children():
+			if candidate is UnitModel3D and candidate._source == unit: view = candidate
+			if candidate is UnitModel3D and candidate._source == twin: other = candidate
+		_expect(view != null and other != null, "两形态均通过正式模型代理挂载被动材质")
+		if view == null or other == null: continue
+		for i in 3: unit.on_attack_landed()
+		view._process(0.5)
+		_expect(not unit.hit_haste_full_visual() and view._model_root._enrage_strength == 0.0, "三层不亮且W不影响被动特效")
+		unit.apply_active_buff(5, 1.3, 1.0, 2.0)
+		_expect(not unit.hit_haste_full_visual(), "其他攻速增益不能伪造满层")
+		unit.on_attack_landed()
+		unit.control.slow_timer = 2.0
+		view._process(0.25)
+		_expect(unit.hit_haste_full_visual() and is_equal_approx(view._model_root._enrage_strength, 0.5), "真实四层触发原版半秒淡入，不依赖最终攻速")
+		view._process(0.25)
+		_expect(view._model_root._enrage_strength == 1.0 and other._model_root._enrage_strength == 0.0, "两只天使材质独立，满层不串色")
+		_expect(not view._model_root._enrage_materials.is_empty(), "满层特效附着可见翅膀表面")
+		unit.buffs.advance(2.0)
+		unit.on_attack_landed()
+		view._process(0.1)
+		_expect(view._model_root._enrage_strength == 1.0, "满层命中刷新寿命不重新闪烁")
+		unit.buffs.advance(3.05)
+		view._process(0.5)
+		_expect(not unit.hit_haste_full_visual() and view._model_root._enrage_strength == 0.0, "三秒到期后按原版半秒淡出")
+		for i in 4: unit.on_attack_landed()
+		view._process(0.5)
+		unit.hp = 0
+		view._process(0.5)
+		_expect(not unit.hit_haste_full_visual() and view._model_root._enrage_strength == 0.0, "死亡熄灭满层特效")
+		view._model_root.advance_hit_haste_visual(true, 0.5)
+		view._model_root.reset_pool_visual()
+		_expect(view._model_root._enrage_strength == 0.0, "模型回池重置怒焰强度与动画时钟")
