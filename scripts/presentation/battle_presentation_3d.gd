@@ -7,6 +7,39 @@ var _viewport: SubViewport
 var _world_root: Node3D
 var _camera: Camera3D
 var model_pool := MatchModelPool.new()
+var pending_deployments: Callable
+var _pre_deploy_views: Dictionary = {}
+
+func _process(delta: float) -> void:
+	if pending_deployments.is_valid():
+		sync_pre_deployments(pending_deployments.call(), delta)
+
+func sync_pre_deployments(deployments: Array, delta: float = 0.0) -> void:
+	var present: Dictionary = {}
+	for entry in deployments:
+		var path := String(CardDB.get_card(String(entry.card_id)).get("visual_pre_deploy_scene", ""))
+		if path.is_empty(): continue
+		var id := int(entry.id)
+		present[id] = true
+		var duration := maxf(float(entry.duration), 0.001)
+		var elapsed := duration - float(entry.time_left)
+		if not _pre_deploy_views.has(id):
+			var view := (load(path) as PackedScene).instantiate() as PreDeploymentVisual3D
+			_world_root.add_child(view)
+			view.setup(_camera, entry.pos, int(entry.team))
+			_pre_deploy_views[id] = {"view": view, "elapsed": elapsed, "sample": elapsed}
+		var state: Dictionary = _pre_deploy_views[id]
+		# 在20Hz快照之间插值，不能越过队列所确认的下一个Tick，也不能自行部署。
+		state.elapsed = elapsed if elapsed != float(state.sample) else minf(float(state.elapsed) + delta, elapsed + 0.05)
+		state.sample = elapsed
+		(state.view as PreDeploymentVisual3D).advance_visual(clampf(float(state.elapsed) / duration, 0.0, 1.0))
+	for id in _pre_deploy_views.keys():
+		if not present.has(id):
+			var view: Node3D = _pre_deploy_views[id].view
+			view.hide()
+			view.queue_free()
+			_pre_deploy_views.erase(id)
+
 
 func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void:
 	_viewport = SubViewport.new()

@@ -120,6 +120,7 @@ const CARD_FIELDS := [
 	&"hp", &"damage", &"range", &"speed", &"interval", &"first_hit", &"passive_first_hit", &"empowered_first_hit",
 	&"size_tier", &"custom_radius", &"radius", &"visual_radius", &"mass", &"sight", &"color",
 	&"is_air", &"is_building", &"building_only", &"can_attack_air", &"is_continuous_attack",
+	&"pre_deploy_sweep_start", &"pre_deploy_sweep_distance", &"pre_deploy_sweep_radius", &"pre_deploy_sweep_damage",
 	&"deploy_time", &"pre_deploy_time", &"deploy_zone", &"deploy_pocket_requires_both_towers", &"deploy_ignore_structures", &"show_team_ring", &"footprint_tiles", &"lifespan", &"lifespan_hp_decay", &"tower_ruin_foundation",
 	&"deployment_count", &"deployment_spacing", &"deployment_formation", &"deployment_member_ids",
 	&"spawn_id", &"spawn_interval", &"spawn_count", &"spawn_side", &"death_spawn_id", &"death_spawn_count",
@@ -144,11 +145,11 @@ const CARD_FIELDS := [
 	&"transform_duration", &"active_transform_duration", &"revert_duration", &"transformed_stats",
 	&"spell_kind", &"duration", &"active_name", &"active_slow_duration", &"active_slow_multiplier", &"active_skills",
 	&"heal_amount", &"active_cost_bonus",
-	&"visual_active_buff_scene", &"visual_scene_path", &"visual_scene_paths", &"visual_forward_yaw", &"visual_animations", &"audio",
+	&"visual_pre_deploy_scene", &"visual_active_buff_scene", &"visual_scene_path", &"visual_scene_paths", &"visual_forward_yaw", &"visual_animations", &"audio",
 ]
 const AUDIO_FIELDS := [&"team_overrides", &"attack_launch_until_impact", &"attack_hit_once_by_segment", &"attack_swing_lead_time", &"attack_swing", &"attack_hit", &"attack_launch_by_segment", &"attack_hit_by_segment", &"empowered_hit", &"first_strike_hit", &"attack_swing_volume_db", &"attack_hit_volume_db", &"events"]
 const VISUAL_ANIMATION_FIELDS := [
-	&"stun_enter", &"stun_loop", &"stun_exit", &"deploy", &"deploy_durations", &"deploy_clip_ratio", &"idle", &"idle_cycle", &"move", &"move_enter", &"haste_move",
+	&"stun_enter", &"stun_loop", &"stun_exit", &"deploy", &"deploy_durations", &"deploy_clip_ratio", &"idle", &"idle_cycle", &"move", &"move_enter", &"haste_move", &"terrain_move", &"full_resource_move",
 	&"move_cycle", &"attack", &"attack_enter", &"attack_retarget_enter", &"attack_loop",
 	&"attack_clip_ranges", &"attack_hit_clip_ranges", &"attack_hit", &"attack_hit_duration", &"attack_recover", &"attack_recover_delay", &"attack_reference_interval",
 	&"initial_move", &"attack_structure", &"attack_move", &"attack_to_move",
@@ -173,7 +174,7 @@ const ACTIVE_SKILL_FIELDS := [
 	&"center_ratio", &"center_width", &"center_damage_multiplier", &"resource_damage_scale_max",
 	&"resource_consume_only_full", &"resource_nonfull_cast_gain", &"uses_skill_resource", &"resource_damage_by_stacks", &"resource_full_damage_multiplier", &"resource_full_stun_multiplier",
 	&"resource_visual_actions", &"resource_hit_damage_sequences", &"resource_hit_delay_sequences",
-	&"full_resource_visual_action", &"full_resource_cast_duration", &"full_resource_impact_delay", &"full_resource_cast_end_heal", &"cast_end_heal_requires_hit", &"applies_on_hit_passive",
+	&"full_resource_visual_action", &"full_resource_cast_duration", &"full_resource_impact_delay", &"full_resource_first_hit_heal", &"full_resource_cast_end_heal", &"cast_end_heal_requires_hit", &"applies_on_hit_passive",
 	&"forward_distance", &"shockwave_damage", &"shockwave_duration", &"shockwave_end_radius",
 	&"shockwave_slow_duration", &"shockwave_slow_multiplier", &"shockwave_full_only",
 	&"zone_duration", &"zone_tick_interval", &"zone_damage", &"zone_slow_duration", &"zone_slow_multiplier",
@@ -188,8 +189,8 @@ const ACTIVE_SKILL_FIELDS := [
 ## 数量字段含嵌套数组；其他玩法数值最多两位，比例按百分数最多两位。
 const INTEGER_NUMBER_FIELDS := [
 	&"growth_ranged_hits", &"growth_melee_hits", &"terrain_entry_heal", &"hit_heal",
-	"attack_recovery_cancel_every_hits", "rush_path_damage", "rush_building_damage", "rush_spawn_count", "hp", "damage", "heal_amount", "on_hit_tower_damage", "deploy_sweep_damage", "shield", "resource_shield_max", "full_resource_cast_end_heal", "shockwave_damage", "zone_damage", "resource_damage_by_stacks", "resource_hit_damage_sequences", "cost", "active_cost_bonus", "spawn_count", "death_spawn_count", "deployment_count", "max_uses", "blind_charges", "heal_every_hits", "transform_after_hits", "revert_after_hits", "death_replacement_charges", "timed_revival_death_replacement_charges", "projectile_count"]
+	"attack_recovery_cancel_every_hits", "rush_path_damage", "rush_building_damage", "rush_spawn_count", "hp", "damage", "heal_amount", "on_hit_tower_damage", "deploy_sweep_damage", "shield", "resource_shield_max", "full_resource_first_hit_heal", "full_resource_cast_end_heal", "shockwave_damage", "zone_damage", "resource_damage_by_stacks", "resource_hit_damage_sequences", "cost", "active_cost_bonus", "spawn_count", "death_spawn_count", "deployment_count", "max_uses", "blind_charges", "heal_every_hits", "transform_after_hits", "revert_after_hits", "death_replacement_charges", "timed_revival_death_replacement_charges", "projectile_count"]
 
 ## 原始定义域归属；共享容器由 CardDefinitionCompiler 递归检查。
-const CARD_VISUAL_FIELDS := ["attack_wave_visual", "attack_wave_visual_height", "active_buff_projectile_visual", "attack_interval_display", "color", "continuous_beam_color", "continuous_beam_end_width", "continuous_beam_forward_offset", "continuous_beam_origin_height", "continuous_beam_start_width", "death_replacement_visual_transition", "projectile_colors", "projectile_impact_visual", "projectile_visual", "projectile_visual_forward_offset", "projectile_visual_height", "projectile_visual_scale", "show_team_ring", "skill_resource_full_color", "timed_revival_visual_transition", "visual_active_buff_scene", "visual_animations", "visual_forward_yaw", "visual_radius", "visual_scene_path", "visual_scene_paths"]
+const CARD_VISUAL_FIELDS := ["attack_wave_visual", "attack_wave_visual_height", "active_buff_projectile_visual", "attack_interval_display", "color", "continuous_beam_color", "continuous_beam_end_width", "continuous_beam_forward_offset", "continuous_beam_origin_height", "continuous_beam_start_width", "death_replacement_visual_transition", "projectile_colors", "projectile_impact_visual", "projectile_visual", "projectile_visual_forward_offset", "projectile_visual_height", "projectile_visual_scale", "show_team_ring", "skill_resource_full_color", "timed_revival_visual_transition", "visual_pre_deploy_scene", "visual_active_buff_scene", "visual_animations", "visual_forward_yaw", "visual_radius", "visual_scene_path", "visual_scene_paths"]
 const SKILL_VISUAL_FIELDS := ["icon_path", "full_resource_visual_action", "projectile_visual", "projectile_visual_forward_offset", "projectile_visual_height", "projectile_visual_width", "resource_visual_actions", "visual_action"]

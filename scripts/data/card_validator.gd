@@ -76,6 +76,17 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 		errors.append("%s.pre_deploy_time: 必须 >= 0" % card_id)
 	if float(stats.get("pre_deploy_time", 0.0)) > 0.0 and card_type == &"spell":
 		errors.append("%s.pre_deploy_time: 法术不能使用单位预部署阶段" % card_id)
+	var pre_sweep_fields := ["pre_deploy_sweep_start", "pre_deploy_sweep_distance", "pre_deploy_sweep_radius", "pre_deploy_sweep_damage"]
+	var has_pre_sweep := false
+	for field in pre_sweep_fields: has_pre_sweep = has_pre_sweep or stats.has(field)
+	if has_pre_sweep:
+		for field in pre_sweep_fields:
+			if not stats.has(field) or float(stats.get(field, -1.0)) <= 0.0:
+				errors.append("%s.%s: 预部署冲击波需要完整正数配置" % [card_id, field])
+		if card_type != &"unit" or float(stats.get("pre_deploy_sweep_start", 0.0)) >= float(stats.get("pre_deploy_time", 0.0)):
+			errors.append("%s: 预部署冲击波仅支持单位，起始时刻必须早于预部署结束" % card_id)
+		if float(stats.get("deploy_sweep_damage", 0.0)) > 0.0:
+			errors.append("%s: 预部署冲击波不可叠加生成瞬间横扫伤害" % card_id)
 	if String(stats.get("deployment_formation", "ring")) not in ["ring", "line", "polygon", "square", "depth_line"]:
 		errors.append("%s.deployment_formation: 仅支持 ring/line/polygon/square/depth_line" % card_id)
 	if String(stats.get("deployment_formation", "ring")) == "square" and int(stats.get("deployment_count", 0)) != 4:
@@ -420,8 +431,8 @@ static func _validate_projectile(label: String, stats: Dictionary, errors: Packe
 	if speed < 0.0:
 		errors.append("%s.projectile_speed: 必须 >= 0" % label)
 	if stats.has("active_buff_projectile_visual"):
-		if speed <= 0.0 or not (stats.active_buff_projectile_visual is String or stats.active_buff_projectile_visual is StringName) or StringName(stats.active_buff_projectile_visual) != &"baron_siege":
-			errors.append("%s.active_buff_projectile_visual: 需要远程弹体及已实现的 baron_siege" % label)
+		if speed <= 0.0 or not (stats.active_buff_projectile_visual is String or stats.active_buff_projectile_visual is StringName) or StringName(stats.active_buff_projectile_visual) not in [&"baron_siege", &"baron_ranged"]:
+			errors.append("%s.active_buff_projectile_visual: 需要远程弹体及已实现的 baron_siege / baron_ranged" % label)
 	if speed <= 0.0:
 		return
 	var visual := StringName(stats.get("projectile_visual", "orb"))
@@ -521,6 +532,21 @@ static func _validate_visual_config(label: String, stats: Dictionary, errors: Pa
 		var path := String(stats.get(path_field, ""))
 		if not path.is_empty() and not ResourceLoader.exists(path):
 			errors.append("%s.%s: 资源不存在 %s" % [label, path_field, path])
+	if stats.has("visual_pre_deploy_scene"):
+		var effect_path := String(stats.visual_pre_deploy_scene)
+		if float(stats.get("pre_deploy_time", 0.0)) <= 0.0:
+			errors.append("%s.visual_pre_deploy_scene: 需要正数预部署时长" % label)
+		if not ResourceLoader.exists(effect_path):
+			errors.append("%s.visual_pre_deploy_scene: 场景不存在" % label)
+		elif inspect_resources:
+			var packed = load(effect_path)
+			if not packed is PackedScene:
+				errors.append("%s.visual_pre_deploy_scene: 必须是 PackedScene" % label)
+			else:
+				var instance = packed.instantiate()
+				if not instance is PreDeploymentVisual3D:
+					errors.append("%s.visual_pre_deploy_scene: 根节点必须实现 PreDeploymentVisual3D" % label)
+				instance.free()
 	if stats.has("visual_active_buff_scene"):
 		var effect_path = stats.visual_active_buff_scene
 		if not effect_path is String or not ResourceLoader.exists(effect_path):
@@ -589,7 +615,7 @@ static func _validate_visual_config(label: String, stats: Dictionary, errors: Pa
 				if typeof(value) not in [TYPE_FLOAT, TYPE_INT] or not is_finite(float(value)) or float(value) < 0.0:
 					errors.append("%s.visual_animations.clip_blends.%s: 必须是有限非负秒数" % [label, edge])
 	for state in [
-		&"deploy", &"idle", &"idle_cycle", &"move", &"move_enter", &"haste_move", &"move_cycle", &"attack", &"attack_hit", &"attack_recover",
+		&"deploy", &"idle", &"idle_cycle", &"move", &"move_enter", &"haste_move", &"terrain_move", &"full_resource_move", &"move_cycle", &"attack", &"attack_hit", &"attack_recover",
 		&"initial_move", &"attack_structure", &"attack_move", &"attack_to_move", &"empowered_idle", &"empowered_move", &"empowered_attack",
 		&"empowered_attack_hit", &"empowered_attack_recover", &"empowered_attack_to_move",
 	]:
@@ -998,6 +1024,9 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 			errors.append("%s.applies_on_hit_passive: 仅支持直接结算的 frontal" % label)
 		if bool(skill.get("cast_end_heal_requires_hit", false)) and (String(skill.get("kind", "")) != "frontal" or int(skill.get("projectile_count", 0)) > 0 or float(skill.get("full_resource_cast_end_heal", 0.0)) <= 0.0):
 			errors.append("%s.cast_end_heal_requires_hit: 需要直接结算的 frontal 和正数满层结束治疗" % label)
+		if skill.has("full_resource_first_hit_heal"):
+			if float(skill.full_resource_first_hit_heal) <= 0.0 or not bool(skill.get("uses_skill_resource", false)) or String(skill.get("kind", "")) != "frontal" or int(skill.get("projectile_count", 0)) > 0 or bool(skill.get("projectile_stop_on_hit", false)) or bool(skill.get("projectile_piercing", false)):
+				errors.append("%s.full_resource_first_hit_heal: 需要资源充能、直接结算 frontal 和正数治疗量" % label)
 		if skill.has("full_resource_cast_end_heal") and float(skill.full_resource_cast_end_heal) < 0.0:
 			errors.append("%s.full_resource_cast_end_heal: 必须 >= 0" % label)
 		if skill.has("full_resource_cast_duration") and float(skill.full_resource_cast_duration) <= 0.0:
