@@ -1,6 +1,6 @@
 class_name DashStrikeState
 extends RefCounted
-## 依附施法的两段伤害；20Hz效果阶段推进，位置先修正再结算旋转。
+## 依附施法的两段伤害；20Hz效果阶段推进，突进后恢复通用碰撞，旋转按命中时当前位置结算。
 var source_ref: WeakRef
 var skill: Dictionary
 var serial := -1
@@ -44,12 +44,9 @@ func tick(dt: float) -> bool:
 	elapsed += dt
 	if stopped or elapsed + 0.000001 >= dash_duration:
 		stopped = true
-		if source.skill_dash_active:
-			var landing: Vector2 = source.battle_context.find_unit_landing(source, source.global_position, source.terrain_traversal.enabled)
-			if not landing.is_finite(): return true
-			source.global_position = landing
-			source.terrain_traversal.update(source)
-			source.skill_dash_active = false
+		# Stop/Circle 与普通单位一样参与接触分离；不瞬移找空位，
+		# 也不因为人堆拥堵延迟旋转伤害或保留穿单位权限。
+		source.skill_dash_active = false
 		if cancelled: return false
 	if elapsed + 0.000001 >= float(skill.spin_delay):
 		_hit(source, source.global_position, source.global_position, true)

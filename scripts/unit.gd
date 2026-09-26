@@ -1133,7 +1133,7 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prep
 		_charge_timer = 0.0
 		_charged = false
 		return
-	# 突进末端无合法空位时继续等待；不能在穿单位状态恢复普攻。
+	# 突进期间由技能效果推进位置；结束后仍由施法锁阻止普攻和自主移动。
 	if skill_dash_active: return
 	# 攻击锁和移动锁彼此独立：移动施法会继续追击/行军，但在技能窗口内绝不普攻；
 	# 只锁移动的技能仍可原地攻击。纯 Buff 可配置空 locks，完全不改变基础行为。

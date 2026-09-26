@@ -20,13 +20,16 @@ func update(unit: Unit) -> void:
 		if haste_multiplier > 1.0:
 			unit.apply_active_buff(1.0, haste_multiplier, 1.0, 1.0, false, false, unit.status_source("terrain_entry"))
 		unit.battle_context.notify_unit_audio_event(unit, &"terrain:enter", unit.global_position)
+	elif inside and not now_inside:
+		unit.battle_context.notify_unit_audio_event(unit, &"terrain:exit", unit.global_position)
 	inside = now_inside
 
 func leave_for_attack(unit: Unit) -> bool:
 	if not enabled or unit.battle_context == null: return true
 	update(unit)
 	if not inside: return true
-	var point := unit.battle_context.find_unit_landing(unit, unit.global_position, false)
+	var point := UnitLandingQuery.find_attack_exit(unit, unit._target)
+	if unit._attacking: unit.cancel_basic_attack(&"terrain_exit")
 	if not point.is_finite(): return false
 	unit.global_position = point
 	unit._prev_pos = point
@@ -35,5 +38,4 @@ func leave_for_attack(unit: Unit) -> bool:
 	unit._path_index = 0
 	unit._repath_cd = 0.0
 	update(unit)
-	unit.cancel_basic_attack(&"terrain_exit")
-	return false # 下一权威步重新索敌、射程和前摇，不在挪位当步出手。
+	return true # 目标仍在攻击范围内，当前步可开始正常普攻前摇。

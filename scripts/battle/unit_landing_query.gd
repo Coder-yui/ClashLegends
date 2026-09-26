@@ -52,6 +52,28 @@ static func find_position(unit: Unit, desired: Vector2, allow_terrain: bool) -> 
 		best_distance = distance
 	return best
 
+## 在目标攻击范围内检查3圈各16点，优先最小挤出距离，不产生自主移动。
+## 最远两格；无近处合法站位时不挤出，避免跳到远处或退回射程外。
+static func find_attack_exit(unit: Unit, target: Node2D) -> Vector2:
+	if not is_instance_valid(target) or target.hp <= 0.0: return Vector2(INF, INF)
+	var regions := _regions(unit.body_radius, false)
+	var circles := _circles(unit, false)
+	var inner: float = unit.body_radius + target.body_radius + ArenaRules.STRUCTURE_SEPARATION + 0.01
+	var outer: float = unit.body_radius + target.body_radius + unit.attack_range - 2.0
+	if outer < inner: return Vector2(INF, INF)
+	var direction := target.global_position.direction_to(unit.global_position)
+	if direction.is_zero_approx(): direction = Vector2.DOWN if unit.team == 0 else Vector2.UP
+	var best := Vector2(INF, INF)
+	var best_distance := pow(ArenaRules.TILE_SIZE * 2.0, 2.0) + 0.0001
+	for radius in [inner, (inner + outer) * 0.5, outer]:
+		for index in 16:
+			var point: Vector2 = target.global_position + direction.rotated(TAU * index / 16.0) * radius
+			var distance := unit.global_position.distance_squared_to(point)
+			if distance >= best_distance or not _legal(point, regions, circles): continue
+			best = point
+			best_distance = distance
+	return best
+
 static func legal(unit: Unit, point: Vector2, allow_terrain: bool) -> bool:
 	return _legal(point,_regions(unit.body_radius,allow_terrain),_circles(unit,allow_terrain))
 
