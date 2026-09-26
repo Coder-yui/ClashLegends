@@ -17,7 +17,7 @@ static func definition() -> Dictionary:
 			"active_skills": [{
 					"name": "快刀乱剪", "kind": "frontal", "shape": "fan",
 					"cost": 2, "max_uses": 1, "cooldown": 8.0,
-					"description": "普通攻击命中充能，最多 3 层；必定先剪 40 点、最后剪 60 点，每层充能在中间追加一次 20 点剪切。每剪附带被动，中央仅提升基础伤害；满层且本次技能实际命中时，结束回复 100 点生命值。",
+					"description": "普通攻击命中充能，最多 3 层；必定先剪 40 点、最后剪 60 点，每层充能在中间追加一次 20 点剪切。每剪附带被动，中央仅提升基础伤害；满层时首次实际命中立即回复 100 点生命值；每次施法只回复一次，未命中不回复。",
 					"uses_skill_resource": true,
 					"length": 135.0, "arc_degrees": 78.0, "projectile_count": 0,
 					"center_width": 30.0, "center_damage_multiplier": 1.2,
@@ -26,7 +26,7 @@ static func definition() -> Dictionary:
 					"resource_hit_delay_sequences": [[0.09, 1.04], [0.09, 0.95, 1.04], [0.09, 0.78, 0.95, 1.04], [0.09, 0.62, 0.78, 0.95, 1.04]],
 					"impact_delay": 0.09, "cast_duration": 1.5,
 					"cast_locks": ["movement", "attack", "facing"],
-					"full_resource_cast_end_heal": 100, "cast_end_heal_requires_hit": true,
+					"full_resource_first_hit_heal": 100,
 					"applies_on_hit_passive": true,
 					"ground_only": true,
 				}, {

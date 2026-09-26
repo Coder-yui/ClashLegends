@@ -67,6 +67,7 @@ func prepare_cast(source: Unit, skill: Dictionary) -> Dictionary:
 			prepared["cast_duration"] = float(prepared.get("full_resource_cast_duration", prepared.get("cast_duration", 0.0)))
 			prepared["impact_delay"] = float(prepared.get("full_resource_impact_delay", prepared.get("impact_delay", 0.0)))
 			prepared["full_resource"] = true
+			prepared["first_hit_heal"] = maxf(float(prepared.get("full_resource_first_hit_heal", 0.0)), 0.0)
 			prepared["cast_end_heal"] = maxf(float(prepared.get("full_resource_cast_end_heal", 0.0)), 0.0)
 		if prepared.has("resource_shield_max"):
 			prepared["shield"] = maxf(float(prepared.get("resource_shield_max", 0.0)), 0.0) * resource_ratio
@@ -428,7 +429,12 @@ func apply_frontal(source: Unit, skill: Dictionary, forward: Vector2 = Vector2.Z
 				hit_amount += source.on_hit_passive_damage(combatant)
 			var landed := _damage_combatant(source, combatant, hit_amount)
 			if landed and skill.get("cast_hit_state") is CastHitState:
-				skill.cast_hit_state.landed = true
+				var state: CastHitState = skill.cast_hit_state
+				if not state.landed:
+					state.landed = true
+					var heal_amount := float(skill.get("first_hit_heal", 0.0))
+					if heal_amount > 0.0:
+						source.heal(heal_amount)
 			any_landed = landed or any_landed
 			center_landed = (landed and in_center) or center_landed
 		if combatant is Unit and is_instance_valid(combatant) and combatant.hp > 0.0 and float(skill.get("slow_duration", 0.0)) > 0.0:

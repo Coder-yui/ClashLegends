@@ -40,7 +40,7 @@ func _check_gwen_snip_snip_skill() -> void:
 		and String(prepared_full.visual_action) == "active_3"
 		and is_equal_approx(float(prepared_full.cast_duration), 1.5)
 		and prepared_full.prepared_hit_damages == [40, 20, 20, 20, 60]
-		and is_equal_approx(float(prepared_full.cast_end_heal), 100.0)
+		and is_equal_approx(float(prepared_full.first_hit_heal), 100.0)
 	)
 	var partial := Unit.new()
 	partial.position = Vector2(560.0, 900.0)
@@ -126,7 +126,7 @@ func _check_gwen_snip_snip_skill() -> void:
 	_main._queue_active_skill_impact(gwen, prepared_full, float(prepared_full.impact_delay))
 	for _tick in 3:
 		_main._commands.tick_impacts(0.05)
-	var first_cut := is_equal_approx(center_before - center.hp, 40.0 * 1.2 + roundf(center.max_hp * 0.05))
+	var first_cut := is_equal_approx(gwen.hp, 400.0) and gwen.restoration_fx_timer > 0.0 and is_equal_approx(center_before - center.hp, 40.0 * 1.2 + roundf(center.max_hp * 0.05))
 	for _tick in 25:
 		_main._commands.tick_impacts(0.05)
 	var all_cuts := (
@@ -140,7 +140,7 @@ func _check_gwen_snip_snip_skill() -> void:
 	_expect(
 		first_cut and all_cuts and is_equal_approx(gwen.hp, 400.0)
 		and gwen.is_active_skill_movement_locked() and gwen.is_active_skill_attack_locked() and gwen.is_active_skill_facing_locked(),
-		"格温按 40→20×3→60 分次剪切，恒宽中央长条逐次乘 1.2，圆弧扇区不误伤远端角落或身后；满层在 1.5 秒结束时回复 100 生命",
+		"格温按 40→20×3→60 分次剪切，恒宽中央长条逐次乘 1.2，圆弧扇区不误伤远端角落或身后；满层首次命中立即回复 100 生命，多目标和后续剪击不重复回复",
 	)
 	_expect(hit_cues == ["active_3:hit_first_center", "active_3:hit_middle_center", "active_3:hit_middle_center", "active_3:hit_middle_center", "active_3:hit_last_center"], "格温实际五剪命中分别播首/中/末音效，多目标同剪只播一次")
 	var empty_cut := prepared_full.duplicate(true)
@@ -149,6 +149,28 @@ func _check_gwen_snip_snip_skill() -> void:
 	_expect(hit_cues.size() == 5, "格温空剪不播放命中声")
 	_main._audio_manager.cue_played.disconnect(on_hit_cue)
 	_main._audio_manager._detach_unit(gwen.get_instance_id())
+	# 通过真实逐剪排程验证空剪、延迟首次命中以及每次施法独立的去重状态。
+	var saved_position := gwen.position
+	gwen.position = Vector2(5000, 5000)
+	for scenario in ["miss", "late", "immune", "partial"]:
+		gwen.hp = 200.0
+		gwen.restoration_fx_timer = 0.0
+		center.position = Vector2(5000, 4890) if scenario in ["immune", "partial"] else Vector2(5500, 5000)
+		if scenario == "immune": center.target_protection.begin(center.position, 30.0, 2.0)
+		var cast: Dictionary = prepared_partial if scenario == "partial" else prepared_full
+		gwen.begin_active_skill_cast(1.5, Vector2.UP, cast.cast_locks)
+		_main._queue_active_skill_impact(gwen, cast, float(cast.impact_delay))
+		for tick in range(1, 32):
+			if scenario == "late" and tick == 4: center.position = Vector2(5000, 4890)
+			_main._commands.tick_impacts(0.05)
+			if scenario == "late" and tick == 3:
+				_expect(is_equal_approx(gwen.hp, 200.0), "格温满层首剪落空不提前回血")
+			if scenario == "late" and tick == 13:
+				_expect(is_equal_approx(gwen.hp, 300.0) and gwen.restoration_fx_timer > 0.0, "格温后续剪首次命中立即回血并触发通用特效")
+		_expect(is_equal_approx(gwen.hp, 300.0 if scenario == "late" else 200.0), "格温回血边界：%s；空剪、免疫和非满层无回血，满层只触发一次" % scenario)
+		if scenario == "immune": center.target_protection.clear()
+	gwen.position = saved_position
+	center.position = Vector2(360, 790)
 	_main._battle_presentation.attach_unit(gwen, stats)
 	var view: UnitModel3D = null
 	for child in _main._battle_presentation._world_root.get_children():
@@ -325,7 +347,7 @@ func _check_gwen_art_integration() -> void:
 	var anim_names: Dictionary = stats.visual_animations
 	var sample := packed.instantiate() as Node3D
 	var model_node := sample.get_node_or_null("Model") as Node3D
-	_expect(model_node != null and is_equal_approx(model_node.position.y, -0.045), "格温放大后脚底校正同步缩放，模型仍落在地面")
+	_expect(model_node != null and is_equal_approx(model_node.position.y, -0.0585), "格温放大后脚底校正同步缩放，模型仍落在地面")
 	var attacks: Array = anim_names.attack
 	_expect(attacks == ["Attack1", "Attack2", "Attack3"], "格温三套攻击动作按表现序号交替选择")
 	var attack_to_move: Array = anim_names.attack_to_move
