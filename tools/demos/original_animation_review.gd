@@ -54,6 +54,9 @@ func _run() -> void:
 	main = load("res://scenes/main.tscn").instantiate()
 	root.add_child(main)
 	current_scene = main
+	if "--network-hit-haste" in OS.get_cmdline_user_args():
+		await _review_network_hit_haste()
+		return
 	main._start_art_dev()
 	main.set_process(false)
 	_setup_closeup()
@@ -92,6 +95,8 @@ func _review_card(id: String, team: int, form: String) -> void:
 		_fail("play_card 生成失败")
 		trace.close()
 		return
+	# 预部署卡先推进正式生成队列，仍保留完整落地动作供后续采样。
+	main._tick_pending_card_pre_deployments(float(CardDB.get_card(id).get("pre_deploy_time", 0.0)) + Unit.SIM_DT)
 	unit = main._latest_unit_for_card(id, team)
 	if not is_instance_valid(unit):
 		_fail("生成后未找到 Unit")
@@ -109,15 +114,92 @@ func _review_card(id: String, team: int, form: String) -> void:
 	_fit_camera()
 	var animations: Dictionary = view._animation_names
 	var deploy_left: float = unit._deploy_timer
-	_advance(deploy_left * 0.5)
+	var deploy_sampled := 0.0
+	if "--deploy-frames" in OS.get_cmdline_user_args():
+		for moment in [0.0, 0.0167, 0.0333, 0.05, 0.1]:
+			_advance(moment - deploy_sampled)
+			deploy_sampled = moment
+			await _capture("deploy_%03d" % roundi(moment * 1000.0))
+	_advance(maxf(deploy_left * 0.5 - deploy_sampled, 0.0))
 	await _capture("deploy_mid" if deploy_left > 0.0 else "spawn_idle")
 	if "--deploy-to-move" in OS.get_cmdline_user_args():
 		_set_behavior(false, true)
-	_advance(deploy_left * 0.5)
+	if "--deploy-frames" in OS.get_cmdline_user_args():
+		_advance(deploy_left * 0.25)
+		await _capture("deploy_750")
+		_advance(deploy_left * 0.20)
+		await _capture("deploy_950")
+		_advance(deploy_left * 0.05)
+	else:
+		_advance(deploy_left * 0.5)
 	await _capture_exit("deploy_exit_move" if "--deploy-to-move" in OS.get_cmdline_user_args() else "deploy_exit_idle", 0.15)
+	if "--hit-haste" in OS.get_cmdline_user_args():
+		_set_behavior(false, false)
+		_advance(0.5)
+		await _capture("passive_zero")
+		for i in 3: unit.on_attack_landed()
+		_advance(0.5)
+		await _capture("passive_three")
+		unit.on_attack_landed()
+		_advance(0.5)
+		await _capture("passive_full")
+		_advance(0.5)
+		await _capture("passive_flow")
+		unit.buffs.advance(3.05)
+		_advance(0.5)
+		await _capture("passive_expired")
+	if "--locomotion-frames" in OS.get_cmdline_user_args():
+		await _capture("idle_before_move")
 	_set_behavior(false, true)
-	_advance(0.22)
+	if "--locomotion-frames" in OS.get_cmdline_user_args():
+		var previous := 0.0
+		for time in [0.0, 0.0167, 0.0333, 0.05, 0.0667, 0.1, 0.15]:
+			_advance(time - previous)
+			previous = time
+			await _capture("idle_to_move_%03d" % roundi(time * 1000))
+		_advance(0.07)
+	else:
+		_advance(0.22)
 	await _capture("move_entry")
+	if animations.has("terrain_move"):
+		_advance(float(_option("--terrain-entry-phase", "0")))
+		var ground_position := unit.position
+		unit.position = Vector2(360, ArenaRules.RIVER_Y)
+		unit._prev_pos = unit.position
+		if "--locomotion-frames" in OS.get_cmdline_user_args():
+			var previous := 0.0
+			for time in [0.0, 0.0167, 0.0333, 0.05, 0.0667, 0.1, 0.15]:
+				_advance(time - previous)
+				previous = time
+				await _capture("move_to_terrain_%03d" % roundi(time * 1000))
+			_advance(0.07)
+		else:
+			_advance(0.22)
+		await _capture("terrain_move_entry")
+		if view._animation_player.current_animation != String(animations.terrain_move): _fail("入地形未切换专用跑步")
+		_advance(1.5)
+		await _capture("terrain_move_loop")
+		_start_action(&"active", 0.7)
+		_set_behavior(false, true)
+		_advance(0.8)
+		await _capture("terrain_q_exit_move")
+		_advance(0.5)
+		await _capture("terrain_q_move_loop")
+		if view._animation_player.current_animation != String(animations.terrain_move): _fail("地形内Q结束未恢复专用跑步")
+		_advance(float(_option("--terrain-exit-phase", "0")))
+		unit.position = ground_position
+		unit._prev_pos = ground_position
+		if "--locomotion-frames" in OS.get_cmdline_user_args():
+			var previous := 0.0
+			for time in [0.0, 0.0167, 0.0333, 0.05, 0.0667, 0.1, 0.15]:
+				_advance(time - previous)
+				previous = time
+				await _capture("terrain_to_move_%03d" % roundi(time * 1000))
+			_advance(0.07)
+		else:
+			_advance(0.22)
+		await _capture("terrain_exit_move")
+		if view._animation_player.current_animation != String(animations.move): _fail("出地形未恢复本形态跑步")
 	_advance(1.5)
 	_set_behavior(false, false)
 	await _capture_exit("move_exit_idle")
@@ -172,6 +254,24 @@ func _review_card(id: String, team: int, form: String) -> void:
 		var descriptor: Dictionary = actions[action] if actions[action] is Dictionary else {}
 		var duration := _action_duration(String(action), descriptor)
 		_start_action(StringName(action), duration)
+		if "--sequence-frames" in OS.get_cmdline_user_args() and descriptor.get("durations", []).size() > 1:
+			var boundary := 0.0
+			var previous := 0.0
+			var durations: Array = descriptor.durations
+			for index in durations.size() - 1:
+				boundary += float(durations[index])
+				for offset in [-1.0 / 60.0, 0.0, 1.0 / 60.0]:
+					var time := maxf(previous, boundary + offset)
+					_advance(time - previous)
+					previous = time
+					await _capture("action_%s_seam_%03d" % [action, roundi(time * 1000)])
+			_start_action(StringName(action), duration)
+		if "--attack-hit-frame" in OS.get_cmdline_user_args() and action == "active" and unit.card_id.begins_with("kayn"):
+			_advance(0.45)
+			await _capture("q_before_spin_hit")
+			_advance(0.05)
+			await _capture("q_spin_hit_500")
+			_start_action(StringName(action), duration)
 		_advance(duration * 0.5)
 		await _capture("action_%s_mid" % action)
 		# 主动作消费同一权威窗口，结束后请求 Move；不直接指定某个转场片段。
@@ -241,6 +341,7 @@ func _advance_attack_sample() -> void:
 	_advance(0.2)
 
 func _attack_sample_time() -> float:
+	if "--attack-hit-frame" in OS.get_cmdline_user_args(): return unit.first_hit_time
 	# 分段攻击采到出手后 Hit；单片攻击采到命中附近，不强等整个后摇。
 	return maxf(unit.first_hit_time + 0.13, minf(unit.attack_interval * 0.5, 0.5))
 
@@ -324,6 +425,8 @@ func _capture(next_phase: String) -> void:
 	for visual in view.find_children("*", "VisualInstance3D", true, false):
 		visual.set_layer_mask_value(20, true)
 	var target := view.global_position + focus_offset
+	if "--hit-haste" in OS.get_cmdline_user_args() and is_instance_valid(view._projectile_anchor):
+		target = view._projectile_anchor.global_position
 	camera.global_position = target + Vector3(3.0, 2.6, 5.5)
 	camera.look_at(target)
 	_expand_camera_to_pose()
@@ -440,3 +543,60 @@ func _setup_closeup() -> void:
 	label.add_theme_constant_override("shadow_offset_x", 1)
 	label.add_theme_constant_override("shadow_offset_y", 1)
 	text_layer.add_child(label)
+
+## 专属状态的真实双进程验证；命中回执由fixture推进，联网仍走正式快照。
+func _review_network_hit_haste() -> void:
+	for attempt in 400:
+		if main._match_started: break
+		await create_timer(0.1).timeout
+	if not main._match_started:
+		push_error("HASTE_NETWORK match did not start")
+		quit(1)
+		return
+	main._minion_waves_enabled = false
+	if main._ai != null: main._ai.enabled = false
+	for tower in main._towers: tower.can_attack = false
+	var sources: Array[Unit] = []
+	if main.mode == "host":
+		for team in [0, 1]:
+			for card in ["kayle", "kayle_ranged"]:
+				main._elixir_for_team(team).elixir = 3.0
+				main.play_card(team, card, Vector2(280 if card == "kayle" else 460, 850 if team == 0 else 420), {"immediate": true, "validate_position": false})
+				var source: Unit = main._latest_unit_for_card(card, team)
+				if source == null:
+					push_error("HASTE_NETWORK missing " + card)
+					quit(1)
+					return
+				source.move_speed = 0.0
+				sources.append(source)
+	var shown := {}
+	var expired := {}
+	var malformed := false
+	var screen_saved := false
+	DirAccess.make_dir_recursive_absolute(OUTPUT)
+	for sample in 150:
+		if sample == 20 and main.mode == "host":
+			for source in sources:
+				for i in 4: source.on_attack_landed()
+		for candidate in main._battle_presentation._world_root.get_children():
+			if not candidate is UnitModel3D or not is_instance_valid(candidate._source): continue
+			var source: Unit = candidate._source
+			if source.card_id not in ["kayle", "kayle_ranged"]: continue
+			var key := source.card_id + str(source.team)
+			var strength: float = candidate._model_root._enrage_strength
+			if source.hit_haste_full_visual() and strength >= 0.99: shown[key] = true
+			if shown.has(key) and not source.hit_haste_full_visual() and strength <= 0.001: expired[key] = true
+			if source.hp <= 0: malformed = true
+		if shown.size() == 4 and not screen_saved:
+			screen_saved = true
+			if DisplayServer.get_name() != "headless":
+				await RenderingServer.frame_post_draw
+				root.get_texture().get_image().save_png(OUTPUT.path_join(main.mode + "-full.png"))
+		await create_timer(0.1).timeout
+	var success := shown.size() == 4 and expired.size() == 4 and not malformed
+	print("HASTE_NETWORK ", main.mode, " full=", shown.size(), " expired=", expired.size(), " success=", success, " output=", OUTPUT)
+	if main.multiplayer.multiplayer_peer != null: main.multiplayer.multiplayer_peer.close()
+	main.multiplayer.multiplayer_peer = null
+	main.queue_free()
+	await process_frame
+	quit(0 if success else 1)
