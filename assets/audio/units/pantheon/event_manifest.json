@@ -10,10 +10,12 @@
       674109136,
       678732111
     ],
-    "duration": 0.9894,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "87d0a0169f1e45381a70045c4b6b4cfd7c92d908ff905c2965d5a1816bd78573",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 0.9893877551020408,
+    "processing": "vgmstream-cli -i -W 4; float decoded source event; uniform SFX gain -2.320351 dB before PCM16; no per-file normalization",
+    "sha256": "f5339872e1ab63e2750ad9acaf6026c0c97e8faeddb0121d649c79539d7c4c60",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "source_float_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/潘森动作音频核对/20260926/play_sfx_pantheon_pantheonbasicattack_oncast_r1.wav.float.wav",
+    "source_peak": 1.10407292842865
   },
   {
     "file": "play_sfx_pantheon_pantheonbasicattack_oncast_r2.wav",
@@ -26,10 +28,12 @@
       674109136,
       678732111
     ],
-    "duration": 1.0559,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "67f90750c0bc051c8fedf37b372243da2c1142042e1749a21f09d1a644f8eb98",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 1.0559410430839002,
+    "processing": "vgmstream-cli -i -W 4; float decoded source event; uniform SFX gain -2.320351 dB before PCM16; no per-file normalization",
+    "sha256": "8e968e605fd9fa9965f0cf0a4a70c2039719794db7ed109d286a26761d0451f5",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "source_float_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/潘森动作音频核对/20260926/play_sfx_pantheon_pantheonbasicattack_oncast_r2.wav.float.wav",
+    "source_peak": 1.1141769886016846
   },
   {
     "file": "play_sfx_pantheon_pantheonbasicattack_oncast_r3.wav",
@@ -42,10 +46,12 @@
       674109136,
       678732111
     ],
-    "duration": 1.019,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "1220847575e7b11a816f7d82fae2792f5d7cdbc726b47bc2d11d39a51f465cfe",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 1.019047619047619,
+    "processing": "vgmstream-cli -i -W 4; float decoded source event; uniform SFX gain -2.320351 dB before PCM16; no per-file normalization",
+    "sha256": "ad71af980badca4ec439916e53ccdde02bd97d2f0ecc47cec8b0930f44f7df52",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "source_float_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/潘森动作音频核对/20260926/play_sfx_pantheon_pantheonbasicattack_oncast_r3.wav.float.wav",
+    "source_peak": 1.0532612800598145
   },
   {
     "file": "play_sfx_pantheon_pantheonbasicattack2_oncast_r1.wav",
@@ -58,10 +64,12 @@
       679766162,
       818947808
     ],
-    "duration": 0.9499,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "feb828cf7ddf3aaa681a0acef4ff59e011a03b55c4d6fd36fa85f34ff57b54f5",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 0.9499092970521542,
+    "processing": "vgmstream-cli -i -W 4; float decoded source event; uniform SFX gain -2.320351 dB before PCM16; no per-file normalization",
+    "sha256": "528f993bc736a607d8c9fd469fb7913036cb12fe527183d55edfca39a2a59f72",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "source_float_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/潘森动作音频核对/20260926/play_sfx_pantheon_pantheonbasicattack2_oncast_r1.wav.float.wav",
+    "source_peak": 1.0592237710952759
   },
   {
     "file": "play_sfx_pantheon_pantheonbasicattack2_oncast_r2.wav",
@@ -74,10 +82,12 @@
       679766162,
       818947808
     ],
-    "duration": 0.8724,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "bba00c7e174852ae834017bc3e64f2a057fc5a1c42d4e775750be0295fcda214",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 0.8723582766439909,
+    "processing": "vgmstream-cli -i -W 4; float decoded source event; uniform SFX gain -2.320351 dB before PCM16; no per-file normalization",
+    "sha256": "331c3c4695f2bc8883ea83c4c2a6884040fb6bbf295df9134d882be296419129",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "source_float_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/潘森动作音频核对/20260926/play_sfx_pantheon_pantheonbasicattack2_oncast_r2.wav.float.wav",
+    "source_peak": 1.0472437143325806
   },
   {
     "file": "play_sfx_pantheon_pantheonbasicattack2_oncast_r3.wav",
@@ -90,10 +100,12 @@
       679766162,
       818947808
     ],
-    "duration": 0.9115,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "5e6788d4c0983aaa7e8be4fec66874d58203d61ad66b4910f4330546b5ff4b36",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 0.9115192743764172,
+    "processing": "vgmstream-cli -i -W 4; float decoded source event; uniform SFX gain -2.320351 dB before PCM16; no per-file normalization",
+    "sha256": "b3a08a1a75b668404ab758f719a4faf6603c462bdc6e86f403f3284e13a6d670",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "source_float_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/潘森动作音频核对/20260926/play_sfx_pantheon_pantheonbasicattack2_oncast_r3.wav.float.wav",
+    "source_peak": 1.091567039489746
   },
   {
     "file": "play_sfx_pantheon_pantheonbasicattack3_oncast_r1.wav",
@@ -106,10 +118,12 @@
       700740698,
       925816583
     ],
-    "duration": 1.0438,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "d42b35246b407238d66cc504336e25e47b7e703fb556e3616fc82d1a4fd6799d",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 1.0438321995464852,
+    "processing": "vgmstream-cli -i -W 4; float decoded source event; uniform SFX gain -2.320351 dB before PCM16; no per-file normalization",
+    "sha256": "a41cd18391165ec9d47879a8e5ba7f3bdbe0b9a8d8609f1f3b3191d7ad794f53",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "source_float_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/潘森动作音频核对/20260926/play_sfx_pantheon_pantheonbasicattack3_oncast_r1.wav.float.wav",
+    "source_peak": 1.0892841815948486
   },
   {
     "file": "play_sfx_pantheon_pantheonbasicattack3_oncast_r2.wav",
@@ -122,10 +136,12 @@
       700740698,
       925816583
     ],
-    "duration": 0.9247,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "45518313b975ed50eb1ee0d333abd21a260ae19c6a2802f37d7567ec65f25810",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 0.9246938775510204,
+    "processing": "vgmstream-cli -i -W 4; float decoded source event; uniform SFX gain -2.320351 dB before PCM16; no per-file normalization",
+    "sha256": "196629ac7937836a32952493adb7bf8d4c7c6f0a803fc31c9a31a5e0d58c4fcf",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "source_float_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/潘森动作音频核对/20260926/play_sfx_pantheon_pantheonbasicattack3_oncast_r2.wav.float.wav",
+    "source_peak": 1.1233552694320679
   },
   {
     "file": "play_sfx_pantheon_pantheonbasicattack3_oncast_r3.wav",
@@ -138,10 +154,12 @@
       700740698,
       925816583
     ],
-    "duration": 0.9987,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "3f47063404cb74debb2c6922d6f590cc60d69887cfd6c136e3db634d109b574f",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 0.9986848072562359,
+    "processing": "vgmstream-cli -i -W 4; float decoded source event; uniform SFX gain -2.320351 dB before PCM16; no per-file normalization",
+    "sha256": "2c89395f9eb652735855fd9d84c76567e159ad7154483a2d668b74b74b2b3f21",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "source_float_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/潘森动作音频核对/20260926/play_sfx_pantheon_pantheonbasicattack3_oncast_r3.wav.float.wav",
+    "source_peak": 1.1517970561981201
   },
   {
     "file": "play_sfx_pantheon_pantheonbasicattack_onhit_1559186049_1153642577_r1.wav",
@@ -154,10 +172,12 @@
       72523275,
       76265310
     ],
-    "duration": 0.8706,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "88251dd481f70340b68c6860bcd03e19994cddcf34b91fdf692c5c601c4033a7",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 0.8706349206349207,
+    "processing": "vgmstream-cli -i -W 4; float decoded source event; uniform SFX gain -2.320351 dB before PCM16; no per-file normalization",
+    "sha256": "b59d23e10859b8a770d43ed81e5f6c055651ab058eff74b482f08504c374fe1a",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "source_float_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/潘森动作音频核对/20260926/play_sfx_pantheon_pantheonbasicattack_onhit_1559186049_1153642577_r1.wav.float.wav",
+    "source_peak": 1.1641731262207031
   },
   {
     "file": "play_sfx_pantheon_pantheonbasicattack_onhit_1559186049_1153642577_r2.wav",
@@ -170,10 +190,12 @@
       72523275,
       76265310
     ],
-    "duration": 0.8405,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "428d275ed48347e6a2e686b5e2d3a38f9f4005b9cfb154ff6ab3ccc75b710ce7",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 0.840453514739229,
+    "processing": "vgmstream-cli -i -W 4; float decoded source event; uniform SFX gain -2.320351 dB before PCM16; no per-file normalization",
+    "sha256": "82a53d38c25ff63a82d555474330b0aa281a9b284630500daa88c95a1ae7d616",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "source_float_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/潘森动作音频核对/20260926/play_sfx_pantheon_pantheonbasicattack_onhit_1559186049_1153642577_r2.wav.float.wav",
+    "source_peak": 1.1452012062072754
   },
   {
     "file": "play_sfx_pantheon_pantheonbasicattack_onhit_1559186049_1153642577_r3.wav",
@@ -186,10 +208,12 @@
       72523275,
       76265310
     ],
-    "duration": 0.8959,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "e69d0f08be10477e64069323abf34ea3f7be98cd5deaea43d5d971637ef08331",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 0.8958503401360545,
+    "processing": "vgmstream-cli -i -W 4; float decoded source event; uniform SFX gain -2.320351 dB before PCM16; no per-file normalization",
+    "sha256": "74cd3bebda65373a7be6a3ca8f55afa9b3aa3a23873ed82ad6433205ac4606ab",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "source_float_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/潘森动作音频核对/20260926/play_sfx_pantheon_pantheonbasicattack_onhit_1559186049_1153642577_r3.wav.float.wav",
+    "source_peak": 1.1154601573944092
   },
   {
     "file": "play_sfx_pantheon_pantheonbasicattack2_onhit_1559186049_1153642577_r1.wav",
@@ -202,10 +226,12 @@
       154032094,
       711924793
     ],
-    "duration": 0.8914,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "50e114d3248dd3ca26d3b0096fc6748c87cf5ef1da7c591e14646fb3a74b40b8",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 0.8914285714285715,
+    "processing": "vgmstream-cli -i -W 4; float decoded source event; uniform SFX gain -2.320351 dB before PCM16; no per-file normalization",
+    "sha256": "7b9f15954d2ee5180f4653bbde7b6d97fbec58dc0fd262528521eb47306252fc",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "source_float_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/潘森动作音频核对/20260926/play_sfx_pantheon_pantheonbasicattack2_onhit_1559186049_1153642577_r1.wav.float.wav",
+    "source_peak": 1.1069996356964111
   },
   {
     "file": "play_sfx_pantheon_pantheonbasicattack2_onhit_1559186049_1153642577_r2.wav",
@@ -218,10 +244,12 @@
       154032094,
       711924793
     ],
-    "duration": 0.8491,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "09a3078dc5cf4f7227c6d02a1dae63bbf0e3dbf89acdbdd9ceb361c9fdc0ea0c",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 0.8491156462585034,
+    "processing": "vgmstream-cli -i -W 4; float decoded source event; uniform SFX gain -2.320351 dB before PCM16; no per-file normalization",
+    "sha256": "ccec0019a4172740978003a4332515ec3bf7a1e226d78e657a820e32284fdd13",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "source_float_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/潘森动作音频核对/20260926/play_sfx_pantheon_pantheonbasicattack2_onhit_1559186049_1153642577_r2.wav.float.wav",
+    "source_peak": 1.162758708000183
   },
   {
     "file": "play_sfx_pantheon_pantheonbasicattack2_onhit_1559186049_1153642577_r3.wav",
@@ -234,10 +262,12 @@
       154032094,
       711924793
     ],
-    "duration": 0.8231,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "4adc56219aa223fb5dbae854ddf5b5895fe0a18fe0acc7e3baa867935bd37fb3",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 0.8230839002267574,
+    "processing": "vgmstream-cli -i -W 4; float decoded source event; uniform SFX gain -2.320351 dB before PCM16; no per-file normalization",
+    "sha256": "4e7ca48357ee155560832c4897ea59a853bdde718a36cadcf895746e585251be",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "source_float_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/潘森动作音频核对/20260926/play_sfx_pantheon_pantheonbasicattack2_onhit_1559186049_1153642577_r3.wav.float.wav",
+    "source_peak": 1.1405291557312012
   },
   {
     "file": "play_sfx_pantheon_pantheonbasicattack3_onhit_1559186049_1153642577_r1.wav",
@@ -250,10 +280,12 @@
       72523275,
       76265310
     ],
-    "duration": 0.8706,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "88251dd481f70340b68c6860bcd03e19994cddcf34b91fdf692c5c601c4033a7",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 0.8706349206349207,
+    "processing": "vgmstream-cli -i -W 4; float decoded source event; uniform SFX gain -2.320351 dB before PCM16; no per-file normalization",
+    "sha256": "b59d23e10859b8a770d43ed81e5f6c055651ab058eff74b482f08504c374fe1a",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "source_float_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/潘森动作音频核对/20260926/play_sfx_pantheon_pantheonbasicattack3_onhit_1559186049_1153642577_r1.wav.float.wav",
+    "source_peak": 1.1641731262207031
   },
   {
     "file": "play_sfx_pantheon_pantheonbasicattack3_onhit_1559186049_1153642577_r2.wav",
@@ -266,10 +298,12 @@
       72523275,
       76265310
     ],
-    "duration": 0.8959,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "e69d0f08be10477e64069323abf34ea3f7be98cd5deaea43d5d971637ef08331",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 0.8958503401360545,
+    "processing": "vgmstream-cli -i -W 4; float decoded source event; uniform SFX gain -2.320351 dB before PCM16; no per-file normalization",
+    "sha256": "74cd3bebda65373a7be6a3ca8f55afa9b3aa3a23873ed82ad6433205ac4606ab",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "source_float_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/潘森动作音频核对/20260926/play_sfx_pantheon_pantheonbasicattack3_onhit_1559186049_1153642577_r2.wav.float.wav",
+    "source_peak": 1.1154601573944092
   },
   {
     "file": "play_sfx_pantheon_pantheonbasicattack3_onhit_1559186049_1153642577_r3.wav",
@@ -282,24 +316,12 @@
       72523275,
       76265310
     ],
-    "duration": 0.8405,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "428d275ed48347e6a2e686b5e2d3a38f9f4005b9cfb154ff6ab3ccc75b710ce7",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
-  },
-  {
-    "file": "play_sfx_pantheon_pantheonr_land_vfx.wav",
-    "event": "Play_sfx_Pantheon_PantheonR_land_vfx",
-    "event_id": 4066657256,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/event_wav/Play_sfx_Pantheon_PantheonR_land_vfx.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/txtp/Play_sfx_Pantheon_PantheonR_land_vfx.txtp",
-    "media_ids": [
-      931137241
-    ],
-    "duration": 1.9261,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "7b87a169e40b1ba0e55cc70a4617689bad0ed7cbd0add9839b9639b0e88036a0",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 0.840453514739229,
+    "processing": "vgmstream-cli -i -W 4; float decoded source event; uniform SFX gain -2.320351 dB before PCM16; no per-file normalization",
+    "sha256": "82a53d38c25ff63a82d555474330b0aa281a9b284630500daa88c95a1ae7d616",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "source_float_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/潘森动作音频核对/20260926/play_sfx_pantheon_pantheonbasicattack3_onhit_1559186049_1153642577_r3.wav.float.wav",
+    "source_peak": 1.1452012062072754
   },
   {
     "file": "play_sfx_pantheon_pantheonqtap_cast_lua_r1.wav",
@@ -312,10 +334,12 @@
       179240518,
       800651771
     ],
-    "duration": 1.1691,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "2020a6773ca7180d382da6c1ec4bbfa4c647bbca267731aaf3b8a41fdcae3b3f",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 1.1691156462585035,
+    "processing": "vgmstream-cli -i -W 4; float decoded source event; uniform SFX gain -2.320351 dB before PCM16; no per-file normalization",
+    "sha256": "340b50e63b439b97a9807a138bdde1532bf7a2a2e7143eaca79b5d76a9c628c6",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "source_float_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/潘森动作音频核对/20260926/play_sfx_pantheon_pantheonqtap_cast_lua_r1.wav.float.wav",
+    "source_peak": 1.1462409496307373
   },
   {
     "file": "play_sfx_pantheon_pantheonqtap_cast_lua_r2.wav",
@@ -328,10 +352,12 @@
       179240518,
       800651771
     ],
-    "duration": 1.1165,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "7a059be694fccf2b302d8cbf3baa75a454ab59d5b6ec13dd61ef52d5feb0785b",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 1.1164625850340135,
+    "processing": "vgmstream-cli -i -W 4; float decoded source event; uniform SFX gain -2.320351 dB before PCM16; no per-file normalization",
+    "sha256": "fadfda33b7fb54c18c15dee26f616db7a22b6722c6beaca952501a8183fe9a02",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "source_float_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/潘森动作音频核对/20260926/play_sfx_pantheon_pantheonqtap_cast_lua_r2.wav.float.wav",
+    "source_peak": 1.058395266532898
   },
   {
     "file": "play_sfx_pantheon_pantheonqtap_cast_lua_r3.wav",
@@ -344,10 +370,12 @@
       179240518,
       800651771
     ],
-    "duration": 1.1597,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "989bfda8df523828bdbf5a850544f8d80689f9c25b01336ab5741222cdf34181",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 1.1597278911564626,
+    "processing": "vgmstream-cli -i -W 4; float decoded source event; uniform SFX gain -2.320351 dB before PCM16; no per-file normalization",
+    "sha256": "c1b8de2e32e9a90ff70f87a3d06ee25e036520ba8212203d7f178fc4fa10742e",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "source_float_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/潘森动作音频核对/20260926/play_sfx_pantheon_pantheonqtap_cast_lua_r3.wav.float.wav",
+    "source_peak": 1.0190595388412476
   },
   {
     "file": "play_sfx_pantheon_pantheonqtap_hit_vfx_r1.wav",
@@ -361,10 +389,12 @@
       159441603,
       209183813
     ],
-    "duration": 1.468,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "8fba956e9dbd8d09fd9fb17ef9837e5e2c08db6424cbccce2d841fab60ef7806",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 1.4680498866213152,
+    "processing": "vgmstream-cli -i -W 4; float decoded source event; uniform SFX gain -2.320351 dB before PCM16; no per-file normalization",
+    "sha256": "f4c6e52855b1daa033b42dc92cc6b38b6a8d9a5c596e43828c1680958563d4a8",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "source_float_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/潘森动作音频核对/20260926/play_sfx_pantheon_pantheonqtap_hit_vfx_r1.wav.float.wav",
+    "source_peak": 1.1123846769332886
   },
   {
     "file": "play_sfx_pantheon_pantheonqtap_hit_vfx_r2.wav",
@@ -378,10 +408,12 @@
       159441603,
       209183813
     ],
-    "duration": 1.5951,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "b6d9b07e5d65ce4ecd39709da683957c33638587e20702b2a7f8b6a045ad3f3e",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 1.595124716553288,
+    "processing": "vgmstream-cli -i -W 4; float decoded source event; uniform SFX gain -2.320351 dB before PCM16; no per-file normalization",
+    "sha256": "f5cb8a5930d0ea5a122ea173ea2bdcc4cfe5965a5f85d4576937edd1f8a90017",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "source_float_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/潘森动作音频核对/20260926/play_sfx_pantheon_pantheonqtap_hit_vfx_r2.wav.float.wav",
+    "source_peak": 1.0485979318618774
   },
   {
     "file": "play_sfx_pantheon_pantheonqtap_hit_vfx_r3.wav",
@@ -395,10 +427,12 @@
       159441603,
       209183813
     ],
-    "duration": 1.569,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "63904af8c5c5075eb2b2174113d505aa9a4629906f14e54bd6d74baaf86b7aa6",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 1.5690249433106576,
+    "processing": "vgmstream-cli -i -W 4; float decoded source event; uniform SFX gain -2.320351 dB before PCM16; no per-file normalization",
+    "sha256": "8bc917f49b424d5d108295a764f6ab81b592cbdb0210183859206ad1590d3f61",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "source_float_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/潘森动作音频核对/20260926/play_sfx_pantheon_pantheonqtap_hit_vfx_r3.wav.float.wav",
+    "source_peak": 1.0647450685501099
   },
   {
     "file": "play_sfx_pantheon_pantheonqtap_cast_empowered_lua_r1.wav",
@@ -411,10 +445,12 @@
       798699582,
       976934516
     ],
-    "duration": 1.3476,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "3f5148a32460fff19267bdaba9770ba7451451baf1bc74233ee3c9f78460ae06",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 1.3475736961451248,
+    "processing": "vgmstream-cli -i -W 4; float decoded source event; uniform SFX gain -2.320351 dB before PCM16; no per-file normalization",
+    "sha256": "6124daece6315737534d0c8ad74a98710630e783b6846de7ea90b0f99bc74c0e",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "source_float_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/潘森动作音频核对/20260926/play_sfx_pantheon_pantheonqtap_cast_empowered_lua_r1.wav.float.wav",
+    "source_peak": 1.013898253440857
   },
   {
     "file": "play_sfx_pantheon_pantheonqtap_cast_empowered_lua_r2.wav",
@@ -427,10 +463,12 @@
       798699582,
       976934516
     ],
-    "duration": 1.4243,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "f6225112b330ad68100a44f8ab6773b55d9c8f398a9dcf178e76747597050438",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 1.4243083900226758,
+    "processing": "vgmstream-cli -i -W 4; float decoded source event; uniform SFX gain -2.320351 dB before PCM16; no per-file normalization",
+    "sha256": "b5ba345a34f5ebf3effdbd2b9ed42ab5e81f531b2d12cddea3c2e57662f923d5",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "source_float_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/潘森动作音频核对/20260926/play_sfx_pantheon_pantheonqtap_cast_empowered_lua_r2.wav.float.wav",
+    "source_peak": 1.0522013902664185
   },
   {
     "file": "play_sfx_pantheon_pantheonqtap_cast_empowered_lua_r3.wav",
@@ -443,10 +481,12 @@
       798699582,
       976934516
     ],
-    "duration": 1.3133,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "6c68cf6d730a8be88bbb524a4e5c10c7612b68be19d2d507ec7e57b0f26ee979",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 1.3133333333333332,
+    "processing": "vgmstream-cli -i -W 4; float decoded source event; uniform SFX gain -2.320351 dB before PCM16; no per-file normalization",
+    "sha256": "244a9f38f956f783a7219ac591beb2e4d9705ffea8a4b294150db87db9c49ddb",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "source_float_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/潘森动作音频核对/20260926/play_sfx_pantheon_pantheonqtap_cast_empowered_lua_r3.wav.float.wav",
+    "source_peak": 1.1239526271820068
   },
   {
     "file": "play_sfx_pantheon_pantheonqtap_hit_empowered_vfx_r1.wav",
@@ -459,10 +499,12 @@
       524410692,
       1035332353
     ],
-    "duration": 2.572,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "ac62731e00dd1002822819d7261228f7c738eef15fa310333933809f36b922df",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 2.5719727891156463,
+    "processing": "vgmstream-cli -i -W 4; float decoded source event; uniform SFX gain -2.320351 dB before PCM16; no per-file normalization",
+    "sha256": "07f5d43b9b7af3e2bbfb029987391f8f792ee6dc8599f37e71d90df09cde6ed9",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "source_float_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/潘森动作音频核对/20260926/play_sfx_pantheon_pantheonqtap_hit_empowered_vfx_r1.wav.float.wav",
+    "source_peak": 0.9907423257827759
   },
   {
     "file": "play_sfx_pantheon_pantheonqtap_hit_empowered_vfx_r2.wav",
@@ -475,10 +517,12 @@
       524410692,
       1035332353
     ],
-    "duration": 2.3812,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "9dcb254a3d1b891f1f95561a6f7f5659f3bbe8f483e68812513d2445c160374d",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 2.3811791383219956,
+    "processing": "vgmstream-cli -i -W 4; float decoded source event; uniform SFX gain -2.320351 dB before PCM16; no per-file normalization",
+    "sha256": "bcb0a57c41b63e2a5cfb3fc186bbe802e2ca9285d7d98964541983f5948a192f",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "source_float_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/潘森动作音频核对/20260926/play_sfx_pantheon_pantheonqtap_hit_empowered_vfx_r2.wav.float.wav",
+    "source_peak": 1.1164872646331787
   },
   {
     "file": "play_sfx_pantheon_pantheonqtap_hit_empowered_vfx_r3.wav",
@@ -491,10 +535,12 @@
       524410692,
       1035332353
     ],
-    "duration": 2.5602,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "710f87a982c9274c679938fcd70210fab0725dad230ebc450508b38cfe0e706b",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 2.5601587301587303,
+    "processing": "vgmstream-cli -i -W 4; float decoded source event; uniform SFX gain -2.320351 dB before PCM16; no per-file normalization",
+    "sha256": "b3d9ab3fb56053a8d3a3638a381b0c213e18ade1e24107bc65cbbc1996d6578c",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "source_float_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/潘森动作音频核对/20260926/play_sfx_pantheon_pantheonqtap_hit_empowered_vfx_r3.wav.float.wav",
+    "source_peak": 1.1112773418426514
   },
   {
     "file": "play_vo_pantheon_death3d_r1_zh_cn.wav",
@@ -567,5 +613,105 @@
       "fade_seconds": 0.5,
       "curve": "linear_amplitude"
     }
+  },
+  {
+    "file": "play_sfx_pantheon_pantheonpassiveready_onbuffactivate.wav",
+    "event": "Play_sfx_Pantheon_PantheonPassiveReady_OnBuffActivate",
+    "event_id": 2975364901,
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/txtp/Play_sfx_Pantheon_PantheonPassiveReady_OnBuffActivate.txtp",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/event_wav/Play_sfx_Pantheon_PantheonPassiveReady_OnBuffActivate.wav",
+    "media_ids": [
+      1066137298
+    ],
+    "duration": 2.6789115646258503,
+    "processing": "vgmstream-cli -i -W 4; float decoded source event; uniform SFX gain -2.320351 dB before PCM16; no per-file normalization",
+    "sha256": "c3814b3ae3aa47853506783793f41d828b7df685212af75f5cd1bcf688f4cd21",
+    "source_float_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/潘森动作音频核对/20260926/play_sfx_pantheon_pantheonpassiveready_onbuffactivate.wav.float.wav",
+    "source_peak": 1.1382114887237549
+  },
+  {
+    "file": "play_sfx_pantheon_death3d.wav",
+    "event": "Play_sfx_Pantheon_Death3D",
+    "event_id": 1100365773,
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/txtp/Play_sfx_Pantheon_Death3D.txtp",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/event_wav/Play_sfx_Pantheon_Death3D.wav",
+    "media_ids": [
+      227748099
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i -W 4; float decoded source event; uniform SFX gain -2.320351 dB before PCM16; no per-file normalization; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "85ec33e0e86e5914908f6588774cd871cd074e80304f02e704fd5ed725a11a91",
+    "source_float_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/潘森动作音频核对/20260926/play_sfx_pantheon_death3d.wav.float.wav",
+    "source_peak": 1.131162405014038,
+    "death_envelope": {
+      "source_duration": 6.272925170068027,
+      "source_sha256": "13b8662129d912896f32f4a184bcd9f71e37e83798d925319d66a5e4ebc097eb",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "pantheon_r_arrival_original.wav",
+    "events": [
+      {
+        "start": 0,
+        "event": "Play_sfx_Pantheon_PantheonRMissile3_OnMissileLaunch",
+        "event_id": 3211695541,
+        "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/txtp/Play_sfx_Pantheon_PantheonRMissile3_OnMissileLaunch.txtp",
+        "media_ids": [
+          1013463044
+        ]
+      },
+      {
+        "start": 0.2,
+        "event": "Play_sfx_Pantheon_PantheonR_land_vfx",
+        "event_id": 4066657256,
+        "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/txtp/Play_sfx_Pantheon_PantheonR_land_vfx.txtp",
+        "media_ids": [
+          931137241
+        ]
+      },
+      {
+        "start": 0.2,
+        "event": "Play_sfx_Pantheon_PantheonRMissile_OnMissileLaunch",
+        "event_id": 1103856584,
+        "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/txtp/Play_sfx_Pantheon_PantheonRMissile_OnMissileLaunch.txtp",
+        "media_ids": [
+          67580815
+        ]
+      },
+      {
+        "start": 0.65,
+        "event": "Play_sfx_Pantheon_PantheonR_buffactivate_vfx",
+        "event_id": 3406968847,
+        "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/txtp/Play_sfx_Pantheon_PantheonR_buffactivate_vfx.txtp",
+        "media_ids": [
+          685244675
+        ]
+      },
+      {
+        "start": 0.65,
+        "event": "Play_sfx_Pantheon_PantheonR_impact_vfx",
+        "event_id": 2582728861,
+        "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/txtp/Play_sfx_Pantheon_PantheonR_impact_vfx.txtp",
+        "media_ids": [
+          427591306
+        ]
+      },
+      {
+        "start": 1.3,
+        "event": "Play_sfx_Pantheon_PantheonR_shockwave_vfx",
+        "event_id": 2664078150,
+        "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/audio/pantheon/txtp/Play_sfx_Pantheon_PantheonR_shockwave_vfx.txtp",
+        "media_ids": [
+          962091735
+        ]
+      }
+    ],
+    "duration": 3.45,
+    "processing": "Original TXTP stems; impact at rear touchdown 0.65s, ending shockwave at arrival 1.3s; no duplicate pickup impact; no pitch/time changes; group gain -4.797360dB; tail fade 0.12s",
+    "sha256": "58e11435c486ca321d8e763a099929ea2e097e39df9b0a895aa65ffa103d5681"
   }
 ]

@@ -46,13 +46,7 @@ static func definition() -> Dictionary:
 		# BEGIN IMPORTED AUDIO pantheon
 		"audio": {
 			"events": {
-				"deploy:start": {
-					"pool": [
-						"res://assets/audio/units/pantheon/play_sfx_pantheon_pantheonr_land_vfx.wav"
-					],
-					"volume_db": 0.0,
-					"bus": "Combat"
-				},
+				"pre_deploy:start": {"pool": ["res://assets/audio/units/pantheon/pantheon_r_arrival_original.wav"], "volume_db": 0.0, "bus": "Combat"},
 				"spear_tap:start": {
 					"pool": [
 						"res://assets/audio/units/pantheon/play_sfx_pantheon_pantheonqtap_cast_lua_r1.wav",
@@ -89,7 +83,7 @@ static func definition() -> Dictionary:
 					"volume_db": 0.0,
 					"bus": "Combat"
 				},
-				"death": {
+				"death:voice": {
 					"pool": [
 						"res://assets/audio/units/pantheon/play_vo_pantheon_death3d_r1_zh_cn.wav",
 						"res://assets/audio/units/pantheon/play_vo_pantheon_death3d_r2_zh_cn.wav",
@@ -97,6 +91,20 @@ static func definition() -> Dictionary:
 					],
 					"volume_db": 0.0,
 					"bus": "Voice"
+				},
+				"resource_full": {
+					"pool": [
+						"res://assets/audio/units/pantheon/play_sfx_pantheon_pantheonpassiveready_onbuffactivate.wav"
+					],
+					"volume_db": 0.0,
+					"bus": "Combat"
+				},
+				"death": {
+					"pool": [
+						"res://assets/audio/units/pantheon/play_sfx_pantheon_death3d.wav"
+					],
+					"volume_db": 0.0,
+					"bus": "Combat"
 				}
 			},
 			"attack_swing": [
@@ -114,6 +122,11 @@ static func definition() -> Dictionary:
 					"res://assets/audio/units/pantheon/play_sfx_pantheon_pantheonbasicattack3_oncast_r1.wav",
 					"res://assets/audio/units/pantheon/play_sfx_pantheon_pantheonbasicattack3_oncast_r2.wav",
 					"res://assets/audio/units/pantheon/play_sfx_pantheon_pantheonbasicattack3_oncast_r3.wav"
+				],
+				[
+					"res://assets/audio/units/pantheon/play_sfx_pantheon_pantheonbasicattack2_oncast_r1.wav",
+					"res://assets/audio/units/pantheon/play_sfx_pantheon_pantheonbasicattack2_oncast_r2.wav",
+					"res://assets/audio/units/pantheon/play_sfx_pantheon_pantheonbasicattack2_oncast_r3.wav"
 				]
 			],
 			"attack_swing_volume_db": -3.0,
@@ -138,6 +151,11 @@ static func definition() -> Dictionary:
 					"res://assets/audio/units/pantheon/play_sfx_pantheon_pantheonbasicattack3_onhit_1559186049_1153642577_r1.wav",
 					"res://assets/audio/units/pantheon/play_sfx_pantheon_pantheonbasicattack3_onhit_1559186049_1153642577_r2.wav",
 					"res://assets/audio/units/pantheon/play_sfx_pantheon_pantheonbasicattack3_onhit_1559186049_1153642577_r3.wav"
+				],
+				[
+					"res://assets/audio/units/pantheon/play_sfx_pantheon_pantheonbasicattack2_onhit_1559186049_1153642577_r1.wav",
+					"res://assets/audio/units/pantheon/play_sfx_pantheon_pantheonbasicattack2_onhit_1559186049_1153642577_r2.wav",
+					"res://assets/audio/units/pantheon/play_sfx_pantheon_pantheonbasicattack2_onhit_1559186049_1153642577_r3.wav"
 				]
 			]
 		},
