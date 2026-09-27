@@ -333,6 +333,18 @@
           0,
           0
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
       }
     },
     {
@@ -681,6 +693,18 @@
       "emitterPosition": {
         "base": [
           0,
+          0,
+          0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
           0,
           0
         ]
@@ -1107,6 +1131,18 @@
             "base": 1
           }
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
       }
     },
     {
@@ -1350,6 +1386,18 @@
           0,
           0
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
       }
     },
     {
@@ -1590,6 +1638,18 @@
       "emitterPosition": {
         "base": [
           0,
+          0,
+          0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
           0,
           0
         ]
@@ -1948,6 +2008,18 @@
       "emitterPosition": {
         "base": [
           0,
+          0,
+          0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
           0,
           0
         ]
@@ -2316,6 +2388,78 @@
           0,
           0
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0.0,
+          1.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              0.8,
+              1.0
+            ],
+            "values": [
+              0.4,
+              0.6,
+              1.0
+            ]
+          }
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          1.0,
+          1.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            1.0,
+            1.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              -1.0,
+              1.0
+            ]
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              -1.0,
+              1.0
+            ]
+          }
+        ]
       }
     },
     {
@@ -2667,6 +2811,18 @@
           0,
           0
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
       }
     },
     {
@@ -2904,6 +3060,18 @@
           0,
           0,
           0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0.0,
+          0.2
         ]
       }
     },
@@ -3198,6 +3366,18 @@
       "emitterPosition": {
         "base": [
           0,
+          0,
+          0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
           0,
           0
         ]
@@ -3552,6 +3732,18 @@
           0,
           0
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
       }
     },
     {
@@ -3785,6 +3977,18 @@
           0,
           0
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
       }
     },
     {
@@ -4015,6 +4219,18 @@
       "emitterPosition": {
         "base": [
           0,
+          0,
+          0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
           0,
           0
         ]
@@ -4391,6 +4607,78 @@
             "base": 1
           }
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0.0,
+          3.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            0.0,
+            3.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              0.8,
+              1.0
+            ],
+            "values": [
+              0.4,
+              0.6,
+              1.0
+            ]
+          }
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          1.0,
+          1.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            1.0,
+            1.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              -1.0,
+              1.0
+            ]
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              -1.0,
+              1.0
+            ]
+          }
+        ]
       }
     },
     {
@@ -4627,6 +4915,18 @@
           0,
           0
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
       }
     }
   ],
@@ -4858,6 +5158,18 @@
             "base": 1
           }
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
       }
     },
     {
@@ -5087,6 +5399,18 @@
             "base": 1
           }
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
       }
     },
     {
@@ -5315,6 +5639,18 @@
           {
             "base": 1
           }
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0.0,
+          -5.0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
         ]
       }
     },
@@ -5557,6 +5893,18 @@
             "base": 1
           }
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0.0,
+          -5.0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
       }
     },
     {
@@ -5798,6 +6146,18 @@
             "base": 1
           }
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0.0,
+          5.0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
       }
     },
     {
@@ -6038,6 +6398,18 @@
           {
             "base": 1
           }
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
         ]
       }
     },
@@ -6291,6 +6663,25 @@
             "base": 1
           }
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "trail_tiling": {
+        "base": [
+          1399.0,
+          0.0,
+          0.0
+        ]
       }
     },
     {
@@ -6510,6 +6901,18 @@
           0.0,
           40.0,
           0.0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
         ]
       }
     },
@@ -6731,6 +7134,18 @@
           -100.0,
           0.0
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
       }
     },
     {
@@ -6950,6 +7365,18 @@
           0.0,
           -100.0,
           0.0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
         ]
       }
     },
@@ -7202,6 +7629,25 @@
           {
             "base": 1
           }
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "trail_tiling": {
+        "base": [
+          1200.0,
+          0.0,
+          0.0
         ]
       }
     },
@@ -7460,6 +7906,25 @@
           {
             "base": 1
           }
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "trail_tiling": {
+        "base": [
+          1200.0,
+          0.0,
+          0.0
         ]
       }
     },
@@ -7870,6 +8335,18 @@
           {
             "base": 1
           }
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
         ]
       }
     },
@@ -8282,6 +8759,18 @@
             "base": 1
           }
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
       }
     },
     {
@@ -8693,6 +9182,18 @@
             "base": 1
           }
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
       }
     },
     {
@@ -9057,6 +9558,76 @@
           50.0,
           0.0
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0.0,
+          1.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              0.5,
+              1.0
+            ]
+          }
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          1.0,
+          1.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            1.0,
+            1.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              -1.0,
+              1.0
+            ]
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              -1.0,
+              1.0
+            ]
+          }
+        ]
       }
     },
     {
@@ -9309,6 +9880,25 @@
             "base": 1
           }
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "trail_tiling": {
+        "base": [
+          1399.0,
+          0.0,
+          0.0
+        ]
       }
     },
     {
@@ -9549,6 +10139,18 @@
           {
             "base": 1
           }
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0.0,
+          5.0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
         ]
       }
     }
@@ -9804,6 +10406,25 @@
             "base": 1
           }
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "trail_tiling": {
+        "base": [
+          700.0,
+          0.0,
+          0.0
+        ]
       }
     },
     {
@@ -10055,6 +10676,25 @@
           {
             "base": 1
           }
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "trail_tiling": {
+        "base": [
+          700.0,
+          0.0,
+          0.0
         ]
       }
     },
@@ -10326,6 +10966,18 @@
             "base": 1
           }
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
       }
     },
     {
@@ -10596,6 +11248,18 @@
             "base": 1
           }
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
       }
     },
     {
@@ -10836,6 +11500,18 @@
           {
             "base": 1
           }
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
         ]
       }
     },
@@ -11113,6 +11789,43 @@
             "base": 1
           }
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          1.0,
+          0.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            1.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              -1.0,
+              1.0
+            ]
+          },
+          {
+            "base": 1
+          }
+        ]
       }
     },
     {
@@ -11345,6 +12058,25 @@
           0.0,
           0.0
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "trail_tiling": {
+        "base": [
+          1200.0,
+          0.0,
+          0.0
+        ]
       }
     },
     {
@@ -11572,6 +12304,25 @@
           40.0,
           0.0
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "trail_tiling": {
+        "base": [
+          1200.0,
+          0.0,
+          0.0
+        ]
       }
     },
     {
@@ -11796,6 +12547,25 @@
       "emitterPosition": {
         "base": [
           -10.0,
+          0.0,
+          0.0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "trail_tiling": {
+        "base": [
+          1200.0,
           0.0,
           0.0
         ]
@@ -12029,6 +12799,25 @@
         "base": [
           80.0,
           40.0,
+          0.0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "trail_tiling": {
+        "base": [
+          1200.0,
+          0.0,
           0.0
         ]
       }
@@ -12289,6 +13078,18 @@
             "base": 1
           }
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
       }
     },
     {
@@ -12525,6 +13326,18 @@
             "base": 1
           }
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
       }
     },
     {
@@ -12753,6 +13566,18 @@
           {
             "base": 1
           }
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0.0,
+          -5.0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
         ]
       }
     },
@@ -12984,6 +13809,25 @@
           0,
           0
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "trail_tiling": {
+        "base": [
+          1300.0,
+          0.0,
+          0.0
+        ]
       }
     },
     {
@@ -13196,6 +14040,18 @@
           {
             "base": 1
           }
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
         ]
       }
     },
@@ -13432,6 +14288,18 @@
           {
             "base": 1
           }
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
         ]
       }
     },
@@ -13682,6 +14550,18 @@
             "base": 1
           }
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0.0,
+          1.0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
       }
     },
     {
@@ -13931,6 +14811,18 @@
             "base": 1
           }
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
       }
     },
     {
@@ -13950,7 +14842,7 @@
       "delay": 0,
       "texture": "res://assets/units/pantheon/r_original/pantheon_r_mis_air_streaks_mult.png",
       "offset": [
-        -125.0,
+        0,
         120.0,
         0.0
       ],
@@ -14199,7 +15091,7 @@
       "local_orientation": true,
       "birthOffset": {
         "base": [
-          -125.0,
+          0,
           120.0,
           0.0
         ]
@@ -14231,6 +15123,43 @@
             "base": 1
           }
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          1.0,
+          0.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            1.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              -1.0,
+              1.0
+            ]
+          },
+          {
+            "base": 1
+          }
+        ]
       }
     },
     {
@@ -14250,7 +15179,7 @@
       "delay": 0,
       "texture": "res://assets/units/pantheon/r_original/pantheon_r_mis_air_streaks_mult.png",
       "offset": [
-        125.0,
+        250,
         120.0,
         0.0
       ],
@@ -14499,7 +15428,7 @@
       "local_orientation": true,
       "birthOffset": {
         "base": [
-          125.0,
+          250,
           120.0,
           0.0
         ]
@@ -14526,6 +15455,43 @@
           },
           {
             "base": 1
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          1.0,
+          0.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            1.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              -1.0,
+              1.0
+            ]
           },
           {
             "base": 1
@@ -14872,6 +15838,18 @@
             "base": 1
           }
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
       }
     },
     {
@@ -15175,6 +16153,18 @@
           {
             "base": 1
           }
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
         ]
       }
     },
@@ -15480,6 +16470,18 @@
             "base": 1
           }
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
       }
     },
     {
@@ -15692,6 +16694,18 @@
           {
             "base": 1
           }
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          -5.0,
+          0.0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
         ]
       }
     },
@@ -16080,6 +17094,18 @@
             "base": 1
           }
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
       }
     },
     {
@@ -16298,6 +17324,25 @@
           0,
           0
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "trail_tiling": {
+        "base": [
+          1300.0,
+          0.0,
+          0.0
+        ]
       }
     },
     {
@@ -16515,6 +17560,25 @@
           0,
           0,
           0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "trail_tiling": {
+        "base": [
+          1300.0,
+          0.0,
+          0.0
         ]
       }
     },
@@ -16735,6 +17799,18 @@
           {
             "base": 1
           }
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
         ]
       }
     },
@@ -16971,6 +18047,18 @@
           {
             "base": 1
           }
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
         ]
       }
     }
@@ -17363,6 +18451,78 @@
           0,
           0,
           0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0.0,
+          1.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              0.8,
+              1.0
+            ],
+            "values": [
+              0.4,
+              0.6,
+              1.0
+            ]
+          }
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          1.0,
+          1.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            1.0,
+            1.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              -1.0,
+              1.0
+            ]
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              -1.0,
+              1.0
+            ]
+          }
         ]
       }
     },
@@ -17783,6 +18943,78 @@
             "base": 1
           }
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0.0,
+          1.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              0.8,
+              1.0
+            ],
+            "values": [
+              0.4,
+              0.6,
+              1.0
+            ]
+          }
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          1.0,
+          1.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            1.0,
+            1.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              -1.0,
+              1.0
+            ]
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              -1.0,
+              1.0
+            ]
+          }
+        ]
       }
     },
     {
@@ -18029,6 +19261,18 @@
       "emitterPosition": {
         "base": [
           0,
+          0,
+          0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
           0,
           0
         ]
@@ -18282,6 +19526,18 @@
           150.0,
           0.0
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
       }
     },
     {
@@ -18531,6 +19787,18 @@
           0,
           0
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
       }
     },
     {
@@ -18764,6 +20032,18 @@
           0,
           0
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0.0,
+          0.2
+        ]
       }
     },
     {
@@ -18977,6 +20257,18 @@
           0,
           0,
           0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0.0,
+          -8.0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0.0,
+          1.0
         ]
       }
     },
@@ -19320,6 +20612,18 @@
           {
             "base": 1
           }
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
         ]
       }
     },
@@ -19724,6 +21028,18 @@
             "base": 1
           }
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
       }
     },
     {
@@ -19956,6 +21272,18 @@
           0,
           0,
           0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0.0,
+          0.2
         ]
       }
     },
@@ -20365,6 +21693,18 @@
           {
             "base": 1
           }
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
         ]
       }
     },
@@ -20800,6 +22140,76 @@
             "base": 1
           }
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0.0,
+          1.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              0.8,
+              1.25
+            ]
+          }
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          1.0,
+          1.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            1.0,
+            1.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              -1.0,
+              1.0
+            ]
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              -1.0,
+              1.0
+            ]
+          }
+        ]
       }
     },
     {
@@ -21013,6 +22423,18 @@
           0,
           0,
           0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0.0,
+          -8.0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0.0,
+          1.0
         ]
       }
     },
@@ -21258,6 +22680,18 @@
       "emitterPosition": {
         "base": [
           0,
+          0,
+          0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
           0,
           0
         ]
@@ -21557,6 +22991,18 @@
           0,
           0
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
       }
     },
     {
@@ -21768,6 +23214,18 @@
       "emitterPosition": {
         "base": [
           0,
+          0,
+          0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
           0,
           0
         ]
@@ -21992,6 +23450,18 @@
       "emitterPosition": {
         "base": [
           0,
+          0,
+          0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
           0,
           0
         ]
@@ -22228,6 +23698,18 @@
           0,
           0
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
       }
     },
     {
@@ -22461,6 +23943,18 @@
           0,
           0
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
       }
     },
     {
@@ -22691,6 +24185,18 @@
       "emitterPosition": {
         "base": [
           0,
+          0,
+          0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
           0,
           0
         ]
@@ -23074,6 +24580,18 @@
             "base": 1
           }
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
       }
     },
     {
@@ -23307,6 +24825,18 @@
           0,
           0
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
       }
     }
   ],
@@ -23529,6 +25059,18 @@
           {
             "base": 1
           }
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0.0,
+          3.0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
         ]
       }
     },
@@ -23770,6 +25312,18 @@
             "base": 1
           }
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          2.0,
+          0.0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
       }
     },
     {
@@ -23990,6 +25544,18 @@
           {
             "base": 1
           }
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
         ]
       }
     },
@@ -24221,6 +25787,18 @@
             "base": 1
           }
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
       }
     },
     {
@@ -24433,6 +26011,18 @@
           {
             "base": 1
           }
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0.0,
+          3.0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
         ]
       }
     },
@@ -24669,6 +26259,18 @@
           {
             "base": 1
           }
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
         ]
       }
     },
@@ -24933,6 +26535,18 @@
             "base": 1
           }
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
       }
     },
     {
@@ -25168,6 +26782,18 @@
           {
             "base": 1
           }
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
         ]
       }
     },
@@ -25567,6 +27193,18 @@
           {
             "base": 1
           }
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
         ]
       }
     },
@@ -26093,6 +27731,18 @@
             "base": 1
           }
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
       }
     },
     {
@@ -26525,6 +28175,78 @@
           },
           {
             "base": 1
+          }
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0.0,
+          2.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            0.0,
+            2.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              0.8,
+              1.0
+            ],
+            "values": [
+              0.4,
+              0.6,
+              1.0
+            ]
+          }
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          1.0,
+          1.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            1.0,
+            1.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              -1.0,
+              1.0
+            ]
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              -1.0,
+              1.0
+            ]
           }
         ]
       }
@@ -26961,6 +28683,78 @@
             "base": 1
           }
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0.0,
+          2.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            0.0,
+            2.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              0.8,
+              1.0
+            ],
+            "values": [
+              0.4,
+              0.6,
+              1.0
+            ]
+          }
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          1.0,
+          1.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            1.0,
+            1.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              -1.0,
+              1.0
+            ]
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              -1.0,
+              1.0
+            ]
+          }
+        ]
       }
     },
     {
@@ -27206,6 +29000,18 @@
             "base": 1
           }
         ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
       }
     },
     {
@@ -27450,6 +29256,3786 @@
           {
             "base": 1
           }
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0.0,
+          4.0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      }
+    }
+  ],
+  "Spear_Landing": [
+    {
+      "name": "spear1",
+      "mesh": "res://assets/units/pantheon/r_original/pantheon_idle_plume_head.mesh.json",
+      "trail": false,
+      "ground": false,
+      "blend": 4,
+      "single": true,
+      "life": {
+        "base": 1.0
+      },
+      "rate": {
+        "base": 1.0
+      },
+      "duration": 0.6,
+      "delay": 0,
+      "texture": "res://assets/units/pantheon/r_original/pantheon_base_shield_nebula.png",
+      "offset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "bind": {
+        "base": 1.0
+      },
+      "frames": 1,
+      "tex_div": [
+        1.0,
+        1.0
+      ],
+      "pass": 5,
+      "birthScale0": {
+        "base": [
+          5.0,
+          25.0,
+          5.0
+        ]
+      },
+      "scale0": {
+        "base": [
+          1,
+          1,
+          1
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          1.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "Color": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          0.85,
+          1.0
+        ],
+        "values": [
+          [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0,
+            0.0
+          ]
+        ]
+      },
+      "uvScale": {
+        "base": [
+          2.0,
+          1.0
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          0.0,
+          -4.0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthOffset": {
+        "base": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "mult": "res://assets/units/pantheon/r_original/pantheon_base_trail_normal.png",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0
+      },
+      "distortion_texture": "",
+      "distortion_strength": 0,
+      "primitive": "VfxPrimitiveMesh",
+      "local_orientation": false,
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "name": "spear2",
+      "mesh": "res://assets/units/pantheon/r_original/pantheon_idle_plume_head.mesh.json",
+      "trail": false,
+      "ground": false,
+      "blend": 4,
+      "single": true,
+      "life": {
+        "base": 1.0
+      },
+      "rate": {
+        "base": 1.0
+      },
+      "duration": 0.6,
+      "delay": 0,
+      "texture": "res://assets/units/pantheon/r_original/pantheon_base_i_plume_head.png",
+      "offset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "bind": {
+        "base": 1.0
+      },
+      "frames": 1,
+      "tex_div": [
+        1.0,
+        1.0
+      ],
+      "pass": 6,
+      "birthScale0": {
+        "base": [
+          5.0,
+          20.0,
+          5.0
+        ]
+      },
+      "scale0": {
+        "base": [
+          1,
+          1,
+          1
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          1.0,
+          0.70980394,
+          0.29803923,
+          1.0
+        ]
+      },
+      "Color": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          0.85,
+          1.0
+        ],
+        "values": [
+          [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0,
+            0.0
+          ]
+        ]
+      },
+      "uvScale": {
+        "base": [
+          5.0,
+          1.0
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          0.0,
+          -4.0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthOffset": {
+        "base": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "mult": "res://assets/units/pantheon/r_original/pantheon_base_trail_normal.png",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0
+      },
+      "distortion_texture": "",
+      "distortion_strength": 0,
+      "primitive": "VfxPrimitiveMesh",
+      "local_orientation": false,
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "name": "spear3",
+      "mesh": "res://assets/units/pantheon/r_original/pantheon_idle_plume_head.mesh.json",
+      "trail": false,
+      "ground": false,
+      "blend": 0,
+      "single": true,
+      "life": {
+        "base": 1.0
+      },
+      "rate": {
+        "base": 1.0
+      },
+      "duration": 0.6,
+      "delay": 0,
+      "texture": "res://assets/units/pantheon/r_original/pantheon_base_q_nebula_streak_mult_vertical.png",
+      "offset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "bind": {
+        "base": 1.0
+      },
+      "frames": 1,
+      "tex_div": [
+        1.0,
+        1.0
+      ],
+      "pass": 7,
+      "birthScale0": {
+        "base": [
+          5.0,
+          25.0,
+          5.0
+        ]
+      },
+      "scale0": {
+        "base": [
+          1,
+          1,
+          1
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          1.0,
+          0.8745098,
+          0.49019608,
+          1.0
+        ]
+      },
+      "Color": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          0.85,
+          1.0
+        ],
+        "values": [
+          [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0,
+            0.0
+          ]
+        ]
+      },
+      "uvScale": {
+        "base": [
+          1.0,
+          2.0
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          0.0,
+          -4.0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthOffset": {
+        "base": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "mult": "res://assets/units/pantheon/r_original/pantheon_base_trail_normal.png",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0
+      },
+      "distortion_texture": "",
+      "distortion_strength": 0,
+      "primitive": "VfxPrimitiveMesh",
+      "local_orientation": false,
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0.0,
+          0.3
+        ]
+      }
+    },
+    {
+      "name": "spear4",
+      "mesh": "res://assets/units/pantheon/r_original/pantheon_idle_plume_head.mesh.json",
+      "trail": false,
+      "ground": false,
+      "blend": 1,
+      "single": true,
+      "life": {
+        "base": 1.0
+      },
+      "rate": {
+        "base": 1.0
+      },
+      "duration": 0.6,
+      "delay": 0,
+      "texture": "res://assets/units/pantheon/r_original/pantheon_base_q_nebula_streak_mult_vertical.png",
+      "offset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "bind": {
+        "base": 1.0
+      },
+      "frames": 1,
+      "tex_div": [
+        1.0,
+        1.0
+      ],
+      "pass": 4,
+      "birthScale0": {
+        "base": [
+          5.0,
+          25.0,
+          5.0
+        ]
+      },
+      "scale0": {
+        "base": [
+          1,
+          1,
+          1
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          0.6666667,
+          0.023529412,
+          0.023529412,
+          1.0
+        ]
+      },
+      "Color": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          0.85,
+          1.0
+        ],
+        "values": [
+          [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0,
+            0.0
+          ]
+        ]
+      },
+      "uvScale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          0.0,
+          -4.0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthOffset": {
+        "base": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "mult": "res://assets/units/pantheon/r_original/pantheon_base_trail_normal.png",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0
+      },
+      "distortion_texture": "",
+      "distortion_strength": 0,
+      "primitive": "VfxPrimitiveMesh",
+      "local_orientation": false,
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "name": "Pantheon",
+      "mesh": "",
+      "trail": true,
+      "ground": false,
+      "blend": 0,
+      "single": false,
+      "life": {
+        "base": 0.2
+      },
+      "rate": {
+        "base": 50.0
+      },
+      "duration": 0.6,
+      "delay": 0,
+      "texture": "res://assets/units/pantheon/r_original/pantheon_base_q_mis_cosmic_trail.png",
+      "offset": [
+        0.0,
+        40.0,
+        0.0
+      ],
+      "bind": {
+        "base": 0
+      },
+      "frames": 1,
+      "tex_div": [
+        1.0,
+        1.0
+      ],
+      "pass": 5,
+      "birthScale0": {
+        "base": [
+          80.0,
+          100.0,
+          0.0
+        ]
+      },
+      "scale0": {
+        "base": [
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          1.0
+        ],
+        "values": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.5,
+            0.0,
+            0.0
+          ]
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "Color": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          0.05,
+          0.1,
+          0.2,
+          0.8,
+          1.0
+        ],
+        "values": [
+          [
+            1.0,
+            0.9499962,
+            0.6200046,
+            0.0
+          ],
+          [
+            1.0,
+            0.85882354,
+            0.2784314,
+            1.0
+          ],
+          [
+            1.0,
+            0.5411765,
+            0.13725491,
+            1.0
+          ],
+          [
+            0.827451,
+            0.1254902,
+            0.03137255,
+            1.0
+          ],
+          [
+            0.22999924,
+            0.0,
+            0.059998475,
+            0.4500038
+          ],
+          [
+            0.16862746,
+            0.043137256,
+            0.007843138,
+            0.0
+          ]
+        ]
+      },
+      "uvScale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          2.0,
+          0.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            2.0,
+            0.0
+          ]
+        ]
+      },
+      "birthOffset": {
+        "base": [
+          0.0,
+          40.0,
+          0.0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0,
+          0,
+          0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "mult": "",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0
+      },
+      "distortion_texture": "",
+      "distortion_strength": 0,
+      "primitive": "VfxPrimitiveArbitraryTrail",
+      "local_orientation": false,
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "trail_tiling": {
+        "base": [
+          700.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "name": "Pantheon1",
+      "mesh": "",
+      "trail": true,
+      "ground": false,
+      "blend": 1,
+      "single": false,
+      "life": {
+        "base": 1.7
+      },
+      "rate": {
+        "base": 50.0
+      },
+      "duration": 0.6,
+      "delay": 0,
+      "texture": "res://assets/units/pantheon/r_original/base_pantheon_q_air_trail_center.png",
+      "offset": [
+        0.0,
+        20.0,
+        0.0
+      ],
+      "bind": {
+        "base": 0
+      },
+      "frames": 1,
+      "tex_div": [
+        1.0,
+        1.0
+      ],
+      "pass": -3,
+      "birthScale0": {
+        "base": [
+          200.0,
+          100.0,
+          0.0
+        ]
+      },
+      "scale0": {
+        "base": [
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          1.0
+        ],
+        "values": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.5,
+            0.0,
+            0.0
+          ]
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          0.7019608,
+          0.10980392,
+          0.14901961,
+          0.50980395
+        ]
+      },
+      "Color": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          0.15,
+          0.25,
+          0.4,
+          0.6,
+          1.0
+        ],
+        "values": [
+          [
+            1.0,
+            0.93000686,
+            0.5499962,
+            0.0
+          ],
+          [
+            1.0,
+            0.85882354,
+            0.2784314,
+            1.0
+          ],
+          [
+            1.0,
+            0.8980392,
+            0.30980393,
+            1.0
+          ],
+          [
+            0.827451,
+            0.1254902,
+            0.03137255,
+            1.0
+          ],
+          [
+            0.22999924,
+            0.0,
+            0.059998475,
+            0.28000304
+          ],
+          [
+            0.16862746,
+            0.043137256,
+            0.007843138,
+            0.0
+          ]
+        ]
+      },
+      "uvScale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          -1.0,
+          0.0
+        ],
+        "times": [
+          0.0,
+          0.1,
+          0.5
+        ],
+        "values": [
+          [
+            -2.0,
+            0.0
+          ],
+          [
+            -1.0,
+            0.0
+          ],
+          [
+            -0.2,
+            0.0
+          ]
+        ]
+      },
+      "birthOffset": {
+        "base": [
+          0.0,
+          20.0,
+          0.0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0,
+          0,
+          0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "mult": "res://assets/units/pantheon/r_original/pantheon_base_i_capebackground.png",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "res://assets/units/pantheon/r_original/pantheon_base_q_cosmic_mult.png",
+      "erosion_drive": {
+        "base": 0,
+        "times": [
+          0.0,
+          0.2,
+          1.0
+        ],
+        "values": [
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "distortion_texture": "",
+      "distortion_strength": 0,
+      "primitive": "VfxPrimitiveArbitraryTrail",
+      "local_orientation": false,
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "trail_tiling": {
+        "base": [
+          1200.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "name": "Basic",
+      "mesh": "",
+      "trail": false,
+      "ground": false,
+      "blend": 0,
+      "single": false,
+      "life": {
+        "base": 4.0,
+        "times": [
+          0.0
+        ],
+        "values": [
+          4.0
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              0.2,
+              1.0
+            ]
+          }
+        ]
+      },
+      "rate": {
+        "base": 100.0
+      },
+      "duration": 0.6,
+      "delay": 0,
+      "texture": "res://assets/units/pantheon/r_original/pantheon_base_q_cross_stars.png",
+      "offset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "bind": {
+        "base": 0
+      },
+      "frames": 1,
+      "tex_div": [
+        1.0,
+        1.0
+      ],
+      "pass": 0,
+      "birthScale0": {
+        "base": [
+          15.0,
+          10.0,
+          0.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            15.0,
+            10.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              0.25,
+              3.0
+            ]
+          },
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "scale0": {
+        "base": [
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          0.05,
+          0.13,
+          0.27764127,
+          0.37592137,
+          0.45085996,
+          0.5257985,
+          0.6289926,
+          0.7002457,
+          0.7764128,
+          0.8390663,
+          0.8918919,
+          0.92383295,
+          1.0
+        ],
+        "values": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            1.5,
+            0.0,
+            0.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            0.5677966,
+            0.83029735,
+            0.83029735
+          ],
+          [
+            0.84745765,
+            0.71733177,
+            0.71733177
+          ],
+          [
+            0.5084746,
+            0.6311954,
+            0.6311954
+          ],
+          [
+            0.31355932,
+            0.54505914,
+            0.54505914
+          ],
+          [
+            0.60169494,
+            0.42644525,
+            0.42644525
+          ],
+          [
+            0.2881356,
+            0.3445452,
+            0.3445452
+          ],
+          [
+            0.3898305,
+            0.2569968,
+            0.2569968
+          ],
+          [
+            0.12711865,
+            0.18498121,
+            0.18498121
+          ],
+          [
+            0.26271185,
+            0.12426219,
+            0.12426219
+          ],
+          [
+            0.118644066,
+            0.08754837,
+            0.08754837
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ]
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0.0,
+          800.0,
+          0.0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            0.0,
+            4.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              0.5,
+              1.0
+            ]
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "birthColor": {
+        "base": [
+          0.7019608,
+          1.0,
+          0.98039216,
+          1.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            0.7019608,
+            1.0,
+            0.98039216,
+            1.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              0.8,
+              1.0
+            ]
+          }
+        ]
+      },
+      "Color": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          0.2,
+          0.5,
+          1.0
+        ],
+        "values": [
+          [
+            0.8039216,
+            1.0,
+            0.9843137,
+            0.0
+          ],
+          [
+            0.69803923,
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            0.4509804,
+            0.38039216,
+            1.0
+          ],
+          [
+            0.34000152,
+            0.050003815,
+            0.020004578,
+            0.0
+          ]
+        ]
+      },
+      "uvScale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthOffset": {
+        "base": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0,
+          0,
+          0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "mult": "",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0
+      },
+      "distortion_texture": "",
+      "distortion_strength": 0,
+      "primitive": "",
+      "local_orientation": false,
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "name": "Basic1",
+      "mesh": "",
+      "trail": false,
+      "ground": false,
+      "blend": 0,
+      "single": false,
+      "life": {
+        "base": 1,
+        "times": [
+          0.0
+        ],
+        "values": [
+          3.0
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              0.2,
+              1.0
+            ]
+          }
+        ]
+      },
+      "rate": {
+        "base": 300.0
+      },
+      "duration": 0.6,
+      "delay": 0,
+      "texture": "res://assets/units/pantheon/r_original/pantheon_base_q_cross_stars.png",
+      "offset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "bind": {
+        "base": 0
+      },
+      "frames": 1,
+      "tex_div": [
+        1.0,
+        1.0
+      ],
+      "pass": 0,
+      "birthScale0": {
+        "base": [
+          15.0,
+          10.0,
+          0.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            15.0,
+            10.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              0.25,
+              3.0
+            ]
+          },
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "scale0": {
+        "base": [
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          0.05,
+          0.13,
+          0.27764127,
+          0.37592137,
+          0.45085996,
+          0.5257985,
+          0.6289926,
+          0.7002457,
+          0.7764128,
+          0.8390663,
+          0.8918919,
+          0.92383295,
+          1.0
+        ],
+        "values": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            1.5,
+            0.0,
+            0.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            0.5677966,
+            0.83029735,
+            0.83029735
+          ],
+          [
+            0.84745765,
+            0.71733177,
+            0.71733177
+          ],
+          [
+            0.5084746,
+            0.6311954,
+            0.6311954
+          ],
+          [
+            0.31355932,
+            0.54505914,
+            0.54505914
+          ],
+          [
+            0.60169494,
+            0.42644525,
+            0.42644525
+          ],
+          [
+            0.2881356,
+            0.3445452,
+            0.3445452
+          ],
+          [
+            0.3898305,
+            0.2569968,
+            0.2569968
+          ],
+          [
+            0.12711865,
+            0.18498121,
+            0.18498121
+          ],
+          [
+            0.26271185,
+            0.12426219,
+            0.12426219
+          ],
+          [
+            0.118644066,
+            0.08754837,
+            0.08754837
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ]
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0.0,
+          800.0,
+          0.0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            0.0,
+            4.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              0.5,
+              1.0
+            ]
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "birthColor": {
+        "base": [
+          1.0,
+          0.8627451,
+          0.58431375,
+          1.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            1.0,
+            0.8627451,
+            0.58431375,
+            1.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              0.8,
+              1.0
+            ]
+          }
+        ]
+      },
+      "Color": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          0.2,
+          0.5,
+          1.0
+        ],
+        "values": [
+          [
+            0.8039216,
+            1.0,
+            0.9843137,
+            0.0
+          ],
+          [
+            1.0,
+            0.8980392,
+            0.36862746,
+            1.0
+          ],
+          [
+            1.0,
+            0.16470589,
+            0.05490196,
+            1.0
+          ],
+          [
+            0.34000152,
+            0.050003815,
+            0.020004578,
+            0.0
+          ]
+        ]
+      },
+      "uvScale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthOffset": {
+        "base": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0,
+          0,
+          0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "mult": "",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0
+      },
+      "distortion_texture": "",
+      "distortion_strength": 0,
+      "primitive": "",
+      "local_orientation": false,
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "name": "Pantheon2",
+      "mesh": "",
+      "trail": true,
+      "ground": false,
+      "blend": 1,
+      "single": false,
+      "life": {
+        "base": 0.4
+      },
+      "rate": {
+        "base": 50.0
+      },
+      "duration": 0.6,
+      "delay": 0,
+      "texture": "res://assets/units/pantheon/r_original/base_pantheon_q_air_trail_center.png",
+      "offset": [
+        0.0,
+        20.0,
+        0.0
+      ],
+      "bind": {
+        "base": 0
+      },
+      "frames": 1,
+      "tex_div": [
+        1.0,
+        1.0
+      ],
+      "pass": 1,
+      "birthScale0": {
+        "base": [
+          130.0,
+          100.0,
+          0.0
+        ]
+      },
+      "scale0": {
+        "base": [
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          1.0
+        ],
+        "values": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.5,
+            0.0,
+            0.0
+          ]
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          0.20392157,
+          0.023529412,
+          0.09019608,
+          0.7411765
+        ]
+      },
+      "Color": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          0.15,
+          0.25,
+          0.4,
+          0.6,
+          1.0
+        ],
+        "values": [
+          [
+            1.0,
+            0.93000686,
+            0.5499962,
+            0.0
+          ],
+          [
+            1.0,
+            0.92941177,
+            0.36862746,
+            1.0
+          ],
+          [
+            1.0,
+            0.3372549,
+            0.13725491,
+            1.0
+          ],
+          [
+            0.5600061,
+            0.039993897,
+            0.039993897,
+            0.5000076
+          ],
+          [
+            0.4,
+            0.00999466,
+            0.17000076,
+            0.13000686
+          ],
+          [
+            0.047058824,
+            0.007843138,
+            0.16862746,
+            0.0
+          ]
+        ]
+      },
+      "uvScale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          -0.25,
+          0.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            -0.25,
+            0.0
+          ]
+        ]
+      },
+      "birthOffset": {
+        "base": [
+          0.0,
+          20.0,
+          0.0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0,
+          0,
+          0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "mult": "",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0
+      },
+      "distortion_texture": "",
+      "distortion_strength": 0,
+      "primitive": "VfxPrimitiveArbitraryTrail",
+      "local_orientation": false,
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "trail_tiling": {
+        "base": [
+          1200.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "name": "Temp_GroundGlow",
+      "mesh": "",
+      "trail": false,
+      "ground": false,
+      "blend": 4,
+      "single": true,
+      "life": {
+        "base": 0.25
+      },
+      "rate": {
+        "base": 1.0
+      },
+      "duration": 1.0,
+      "delay": 0,
+      "texture": "res://assets/units/pantheon/r_original/bigglow02_2.png",
+      "offset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "bind": {
+        "base": 1.0
+      },
+      "frames": 1,
+      "tex_div": [
+        1.0,
+        1.0
+      ],
+      "pass": 0,
+      "birthScale0": {
+        "base": [
+          80.0,
+          200.0,
+          50.0
+        ]
+      },
+      "scale0": {
+        "base": [
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          0.1,
+          1.0
+        ],
+        "values": [
+          [
+            0.5,
+            0.5,
+            0.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            1.2,
+            1.0,
+            1.0
+          ]
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          1.0,
+          1.0,
+          0.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            1.0,
+            1.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "Color": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          0.25,
+          0.75,
+          1.0
+        ],
+        "values": [
+          [
+            1.0,
+            0.96862745,
+            0.5803922,
+            0.0
+          ],
+          [
+            1.0,
+            0.9254902,
+            0.34117648,
+            1.0
+          ],
+          [
+            0.8,
+            0.03137255,
+            0.03137255,
+            1.0
+          ],
+          [
+            0.8235294,
+            0.023529412,
+            0.023529412,
+            0.0
+          ]
+        ]
+      },
+      "uvScale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthOffset": {
+        "base": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0.0,
+          -160.0,
+          0.0
+        ]
+      },
+      "mult": "",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0
+      },
+      "distortion_texture": "",
+      "distortion_strength": 0,
+      "primitive": "VfxPrimitiveArbitraryQuad",
+      "local_orientation": false,
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "name": "spear5",
+      "mesh": "res://assets/units/pantheon/r_original/pantheon_idle_plume_head.mesh.json",
+      "trail": false,
+      "ground": false,
+      "blend": 1,
+      "single": true,
+      "life": {
+        "base": 1.0
+      },
+      "rate": {
+        "base": 1.0
+      },
+      "duration": 0.6,
+      "delay": 0,
+      "texture": "res://assets/units/pantheon/r_original/pantheon_base_trail_normal.png",
+      "offset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "bind": {
+        "base": 1.0
+      },
+      "frames": 1,
+      "tex_div": [
+        1.0,
+        1.0
+      ],
+      "pass": 4,
+      "birthScale0": {
+        "base": [
+          5.0,
+          25.0,
+          5.0
+        ]
+      },
+      "scale0": {
+        "base": [
+          1,
+          1,
+          1
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          0.3019608,
+          0.007843138,
+          0.007843138,
+          1.0
+        ]
+      },
+      "Color": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          0.85,
+          1.0
+        ],
+        "values": [
+          [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0,
+            0.0
+          ]
+        ]
+      },
+      "uvScale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          0.0,
+          0.2
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthOffset": {
+        "base": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "mult": "",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0
+      },
+      "distortion_texture": "",
+      "distortion_strength": 0,
+      "primitive": "VfxPrimitiveMesh",
+      "local_orientation": false,
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "name": "Temp_GroundGlow1",
+      "mesh": "",
+      "trail": false,
+      "ground": false,
+      "blend": 1,
+      "single": true,
+      "life": {
+        "base": 0.25
+      },
+      "rate": {
+        "base": 1.0
+      },
+      "duration": 1.0,
+      "delay": 0,
+      "texture": "res://assets/units/pantheon/r_original/aura_self.png",
+      "offset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "bind": {
+        "base": 1.0
+      },
+      "frames": 1,
+      "tex_div": [
+        1.0,
+        1.0
+      ],
+      "pass": -5,
+      "birthScale0": {
+        "base": [
+          120.0,
+          250.0,
+          50.0
+        ]
+      },
+      "scale0": {
+        "base": [
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          0.1,
+          1.0
+        ],
+        "values": [
+          [
+            0.5,
+            0.5,
+            0.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            1.2,
+            1.0,
+            1.0
+          ]
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          1.0,
+          1.0,
+          0.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            1.0,
+            1.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0
+            ],
+            "values": [
+              0.0
+            ]
+          },
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          0.23137255,
+          0.039215688,
+          0.039215688,
+          1.0
+        ]
+      },
+      "Color": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          0.25,
+          0.75,
+          1.0
+        ],
+        "values": [
+          [
+            1.0,
+            0.96862745,
+            0.5803922,
+            0.0
+          ],
+          [
+            1.0,
+            0.9254902,
+            0.34117648,
+            1.0
+          ],
+          [
+            0.8,
+            0.03137255,
+            0.03137255,
+            1.0
+          ],
+          [
+            0.8235294,
+            0.023529412,
+            0.023529412,
+            0.0
+          ]
+        ]
+      },
+      "uvScale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthOffset": {
+        "base": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0.0,
+          -160.0,
+          0.0
+        ]
+      },
+      "mult": "",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0
+      },
+      "distortion_texture": "",
+      "distortion_strength": 0,
+      "primitive": "VfxPrimitiveArbitraryQuad",
+      "local_orientation": false,
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "name": "Temp_GroundGlow2",
+      "mesh": "",
+      "trail": false,
+      "ground": false,
+      "blend": 0,
+      "single": false,
+      "life": {
+        "base": 0.2
+      },
+      "rate": {
+        "base": 20.0
+      },
+      "duration": 1.0,
+      "delay": 0,
+      "texture": "res://assets/units/pantheon/r_original/pantheon_base_q_cross_stars.png",
+      "offset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "bind": {
+        "base": 1.0
+      },
+      "frames": 1,
+      "tex_div": [
+        1.0,
+        1.0
+      ],
+      "pass": 30,
+      "birthScale0": {
+        "base": [
+          700.0,
+          100.0,
+          50.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            700.0,
+            100.0,
+            50.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              0.89,
+              1.2
+            ]
+          },
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "scale0": {
+        "base": [
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          1.0
+        ],
+        "values": [
+          [
+            0.5,
+            0.5,
+            0.0
+          ],
+          [
+            1.5,
+            2.0,
+            1.0
+          ]
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          0.0,
+          0.0,
+          90.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            0.0,
+            0.0,
+            90.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0
+            ],
+            "values": [
+              90.0
+            ]
+          },
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          0.9900053,
+          0.86999315,
+          0.66999316,
+          1.0
+        ]
+      },
+      "Color": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          0.25,
+          0.75,
+          1.0
+        ],
+        "values": [
+          [
+            1.0,
+            1.0,
+            1.0,
+            0.0
+          ],
+          [
+            1.0,
+            0.92156863,
+            0.45490196,
+            1.0
+          ],
+          [
+            0.36862746,
+            0.03529412,
+            0.03529412,
+            1.0
+          ],
+          [
+            0.14509805,
+            0.003921569,
+            0.011764706,
+            0.0
+          ]
+        ]
+      },
+      "uvScale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthOffset": {
+        "base": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0,
+          0,
+          0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "mult": "",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0
+      },
+      "distortion_texture": "",
+      "distortion_strength": 0,
+      "primitive": "VfxPrimitiveArbitraryQuad",
+      "local_orientation": false,
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "name": "Pantheon4",
+      "mesh": "",
+      "trail": true,
+      "ground": false,
+      "blend": 0,
+      "single": false,
+      "life": {
+        "base": 0.2
+      },
+      "rate": {
+        "base": 50.0
+      },
+      "duration": 0.6,
+      "delay": 0,
+      "texture": "res://assets/units/pantheon/r_original/pantheon_base_q_mis_cosmic_trail.png",
+      "offset": [
+        0.0,
+        40.0,
+        0.0
+      ],
+      "bind": {
+        "base": 0
+      },
+      "frames": 1,
+      "tex_div": [
+        1.0,
+        1.0
+      ],
+      "pass": 5,
+      "birthScale0": {
+        "base": [
+          80.0,
+          100.0,
+          0.0
+        ]
+      },
+      "scale0": {
+        "base": [
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          1.0
+        ],
+        "values": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.5,
+            0.0,
+            0.0
+          ]
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "Color": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          0.05,
+          0.1,
+          0.2,
+          0.8,
+          1.0
+        ],
+        "values": [
+          [
+            1.0,
+            0.9499962,
+            0.6200046,
+            0.0
+          ],
+          [
+            1.0,
+            0.85882354,
+            0.2784314,
+            1.0
+          ],
+          [
+            1.0,
+            0.5411765,
+            0.13725491,
+            1.0
+          ],
+          [
+            0.827451,
+            0.1254902,
+            0.03137255,
+            1.0
+          ],
+          [
+            0.22999924,
+            0.0,
+            0.059998475,
+            0.4500038
+          ],
+          [
+            0.16862746,
+            0.043137256,
+            0.007843138,
+            0.0
+          ]
+        ]
+      },
+      "uvScale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          2.0,
+          0.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            2.0,
+            0.0
+          ]
+        ]
+      },
+      "birthOffset": {
+        "base": [
+          0.0,
+          40.0,
+          0.0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0,
+          0,
+          0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "mult": "res://assets/units/pantheon/r_original/pantheon_base_q_nebula_streak_mult.png",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0
+      },
+      "distortion_texture": "",
+      "distortion_strength": 0,
+      "primitive": "VfxPrimitiveArbitraryTrail",
+      "local_orientation": false,
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "trail_tiling": {
+        "base": [
+          700.0,
+          0.0,
+          0.0
         ]
       }
     }

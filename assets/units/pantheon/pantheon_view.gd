@@ -10,10 +10,15 @@ var _helmet_snap: SkeletonModifier3D
 var _rage_materials: Array[ShaderMaterial] = []
 var _rage_elapsed := 0.0
 var _rage_full := false
+var _ending_parent: Node3D
+var _ending_parent_age := 0.0
+var _ending_birth_elapsed := 0.0
 var _ending_wave: Node3D
 var _ending_elapsed := 0.0
+var _ending_tick := -1
 var _ending_started := false
-const ARRIVAL_PARTICLES := preload("res://assets/units/pantheon/r_original/particles.gd")
+const ARRIVAL_PROFILE := preload("res://assets/units/pantheon/arrival/profile.gd")
+const ARRIVAL_PARTICLES := preload("res://assets/units/pantheon/arrival/particle_player.gd")
 const VISUAL_METRICS := preload("res://assets/units/pantheon/visual_metrics.gd")
 
 func prepare_visual_animations() -> void:
@@ -86,6 +91,7 @@ func reset_pool_visual() -> void:
 	_clear_ending_wave()
 	_ending_started = false
 	_ending_elapsed = 0.0
+	_ending_tick = -1
 	update_animation_parts(&"", 0.0)
 	advance_skill_resource_visual(false, 0.0)
 	_rage_elapsed = 0.0
@@ -94,24 +100,51 @@ func reset_pool_visual() -> void:
 ## Freeze the endpoint/frame once: pushes and subsequent facing changes cannot
 ## drag the original on-death shockwave sideways. This never deals damage.
 func advance_deployment_visual(elapsed: float, duration: float, active: bool) -> void:
-	if not active or duration <= 0.0 or elapsed >= 0.9:
+	var cutoff := float(ARRIVAL_PROFILE.data().systems.Ending_Shockwave.stop) - float(CardDB.get_card("pantheon").pre_deploy_time)
+	if not active or duration <= 0.0 or elapsed >= cutoff:
 		_clear_ending_wave()
 		return
 	if not _ending_started:
 		_ending_started = true
-		_ending_wave = ARRIVAL_PARTICLES.new()
-		add_child(_ending_wave)
-		_ending_wave.top_level = true
+		var handoff: Dictionary = ARRIVAL_PROFILE.native_composition().handoff
+		_ending_parent_age = float(CardDB.get_card("pantheon").pre_deploy_time) - float(ARRIVAL_PROFILE.data().systems[handoff.system].start)
+		_ending_parent = ARRIVAL_PARTICLES.new()
+		add_child(_ending_parent)
+		_ending_parent.top_level = true
 		var forward := global_basis.z.normalized()
 		forward.y = 0.0
-		forward = forward.normalized()
-		_ending_wave.global_transform = Transform3D(Basis(forward, Vector3.UP, forward.cross(Vector3.UP)), global_position)
-		_ending_wave.setup("Ending_Shockwave", VISUAL_METRICS.PARTICLE_SCALE)
+		_ending_parent.global_transform = Transform3D(ARRIVAL_PROFILE.frame("slide", forward.normalized()), global_position)
+		_ending_parent.setup(handoff.system, VISUAL_METRICS.PARTICLE_SCALE, true, "", false, true)
+		_ending_parent.particle_died.connect(_on_arrival_parent_died)
+		_ending_parent.advance(_ending_parent_age)
 		_ending_elapsed = 0.0
-	if is_instance_valid(_ending_wave):
-		_ending_wave.advance(maxf(elapsed - _ending_elapsed, 0.0))
-		_ending_elapsed = maxf(elapsed, _ending_elapsed)
+		_ending_tick = -1
+	var hz := float(ARRIVAL_PROFILE.data().sample_hz)
+	var target := floori(elapsed * hz + 0.00001)
+	while _ending_tick < target:
+		_ending_tick += 1
+		var at := float(_ending_tick) / hz
+		_ending_parent.advance(maxf(at - _ending_elapsed, 0.0))
+		if is_instance_valid(_ending_wave):
+			var child_age := maxf(at - _ending_birth_elapsed, 0.0)
+			_ending_wave.advance(maxf(child_age - _ending_wave._time, 0.0))
+		_ending_elapsed = at
+	_ending_parent.present(_ending_parent_age + elapsed)
+	if is_instance_valid(_ending_wave): _ending_wave.present(maxf(elapsed - _ending_birth_elapsed, 0.0))
+
+func _on_arrival_parent_died(emitter: String, pose: Transform3D, death_age: float) -> void:
+	var handoff: Dictionary = ARRIVAL_PROFILE.native_composition().handoff
+	if emitter != handoff.emitter or is_instance_valid(_ending_wave): return
+	_ending_birth_elapsed = death_age - _ending_parent_age
+	_ending_wave = ARRIVAL_PARTICLES.new()
+	add_child(_ending_wave)
+	_ending_wave.top_level = true
+	# Native childEmitOnDeath inherits the dying particle's position and orientation.
+	_ending_wave.global_transform = pose
+	_ending_wave.setup(handoff.child, VISUAL_METRICS.PARTICLE_SCALE)
 
 func _clear_ending_wave() -> void:
+	if is_instance_valid(_ending_parent): _ending_parent.free()
+	_ending_parent = null
 	if is_instance_valid(_ending_wave): _ending_wave.free()
 	_ending_wave = null

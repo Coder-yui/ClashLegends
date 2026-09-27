@@ -1,8 +1,11 @@
+@static_unload
 extends Node3D
+signal particle_died(emitter: String, pose: Transform3D, death_age: float)
 ## 原始BIN导出的落地粒子子集。只进行表现采样，不派发游戏事件。
+const PROFILE := preload("res://assets/units/pantheon/arrival/profile.gd")
 const DATA_PATH := "res://assets/units/pantheon/r_original/systems.json"
-const ADD := preload("res://assets/units/pantheon/r_original/particle_add.gdshader")
-const MIX := preload("res://assets/units/pantheon/r_original/particle_mix.gdshader")
+const ADD := preload("res://assets/units/pantheon/arrival/particle_add.gdshader")
+const MIX := preload("res://assets/units/pantheon/arrival/particle_mix.gdshader")
 static var _data: Dictionary = {}
 static var _mesh_cache: Dictionary = {}
 static var _texture_cache: Dictionary = {}
@@ -14,7 +17,6 @@ var _factor := 0.0075
 var _emitting := true
 var _camera: Camera3D
 var _rng := RandomNumberGenerator.new()
-var _last_origin := Vector3.ZERO
 var _motion_frame := false
 var _system := ""
 const MAX_PARTICLES := 220
@@ -23,45 +25,57 @@ static func systems() -> Dictionary:
 	if _data.is_empty(): _data = JSON.parse_string(FileAccess.get_file_as_string(DATA_PATH))
 	return _data
 
-func setup(system: String, factor: float = 0.0075, motion_frame: bool = false) -> void:
+func setup(system: String, factor: float = 0.0075, motion_frame: bool = false, emitter_filter: String = "", include_disabled: bool = false, bound_single_only: bool = false) -> void:
 	_system = system
 	_motion_frame = motion_frame
 	_factor = factor
 	_rng.seed = 81271
 	_camera = get_viewport().get_camera_3d()
-	for c: Dictionary in systems()[system]:
+	for source: Dictionary in systems()[system]:
+		if not emitter_filter.is_empty() and source.name != emitter_filter: continue
+		if bound_single_only and (not source.single or float(sample(source.bind, 0.0)) < 1.0): continue
+		var c := source.duplicate(true)
+		c["adaptation"] = PROFILE.layer(system, c.name)
+		if not include_disabled and not c.adaptation.get("enabled", true): continue
+		if c.adaptation.has("offset_override"):
+			c.birthOffset = {"base": c.adaptation.offset_override}
 		var material := _material(c)
 		if bool(c.trail):
 			var node := _node(material)
 			_trails.append({"c": c, "node": node, "points": []})
 		else:
 			_emitters.append({"c": c, "next": float(c.delay), "count": 0, "material": material})
-	_last_origin = global_position
 
 func stop_emitting() -> void:
 	_emitting = false
 
 func advance(delta: float) -> void:
 	_time += maxf(delta, 0.0)
+	for i in range(_particles.size() - 1, -1, -1):
+		var p: Dictionary = _particles[i]
+		if _time - float(p.birth) >= float(p.life):
+			_update(p, float(p.life))
+			particle_died.emit(p.c.name, Transform3D(p.node.global_basis.orthonormalized(), p.node.global_position), float(p.birth) + float(p.life))
+			p.node.free()
+			_particles.remove_at(i)
 	for e: Dictionary in _emitters:
 		var c: Dictionary = e.c
 		var end := minf(_time, float(c.duration))
 		if not _emitting: continue
-		var step := 1.0 / maxf(float(sample(c.rate, _time)), 0.1)
-		while float(e.next) <= end and _particles.size() < MAX_PARTICLES:
+		while float(e.next) <= end + 0.000001:
 			if bool(c.single) and int(e.count) > 0: break
-			_spawn(c, float(e.next), e.material)
-			e.next += step
+			# Budget pressure drops this birth, never postpones it into a later burst.
+			if _particles.size() < MAX_PARTICLES: _spawn(c, float(e.next), e.material)
+			e.next += 1.0 / maxf(float(sample(c.rate, float(e.next))), 0.1)
 			e.count += 1
-	for i in range(_particles.size() - 1, -1, -1):
-		var p: Dictionary = _particles[i]
-		var age := _time - float(p.birth)
-		if age >= float(p.life):
-			p.node.free()
-			_particles.remove_at(i)
-		else: _update(p, age)
+	present(_time)
 	for trail: Dictionary in _trails: _update_trail(trail)
-	_last_origin = global_position
+
+func present(age: float) -> void:
+	for p: Dictionary in _particles:
+		var elapsed := maxf(age - float(p.birth), 0.0)
+		p.node.visible = elapsed < float(p.life)
+		_update(p, elapsed)
 
 func _node(material: ShaderMaterial) -> MeshInstance3D:
 	var node := MeshInstance3D.new()
@@ -84,9 +98,11 @@ func _spawn(c: Dictionary, birth: float, material: ShaderMaterial) -> void:
 	var color: Array = _birth_sample(c.birthColor, birth)
 	var rotation: Vector3 = vec3(_birth_sample(c.birthRotation0, birth))
 	_particles.append({"node": node, "c": c, "birth": birth, "life": life,
-		"origin": global_position, "rotation": rotation, "color": Color(color[0], color[1], color[2], color[3]),
+		"origin": global_position, "basis": global_basis, "rotation": rotation, "color": Color(color[0], color[1], color[2], color[3]),
 		"scale": vec3(_birth_sample(c.birthScale0, birth)), "velocity": vec3(_birth_sample(c.birthVelocity, birth)),
 		"offset": vec3(_birth_sample(c.get("birthOffset", {"base": c.offset}), birth)),
+		"mult_offset": vec2(_birth_sample(c.mult_birth_offset, birth)),
+		"mult_rate": vec2(_birth_sample(c.mult_birth_scroll, birth)),
 		"frame": _rng.randi_range(0, maxi(int(c.frames) - 1, 0))})
 
 func _update(p: Dictionary, age: float) -> void:
@@ -98,25 +114,23 @@ func _update(p: Dictionary, age: float) -> void:
 	var displacement := Vector3.ZERO
 	for axis in 3:
 		displacement[axis] = velocity[axis] * ((1.0 - exp(-drag[axis] * age)) / drag[axis] if drag[axis] > 0.001 else age)
-	var offset: Vector3 = p.offset + vec3(sample(c.get("emitterPosition", {"base": [0,0,0]}), _time)) + displacement + vec3(sample(c.birthAcceleration, 0.0)) * age * age * 0.5
+	var offset: Vector3 = p.offset + vec3(sample(c.get("emitterPosition", {"base": [0,0,0]}), float(p.birth) + age)) + displacement + vec3(sample(c.birthAcceleration, 0.0)) * age * age * 0.5
 	var bind := clampf(float(sample(c.bind, t)), 0.0, 1.0)
-	node.global_position = (p.origin as Vector3).lerp(global_position, bind) + (global_basis * offset + vec3(sample(c.worldAcceleration, t)) * age * age * 0.5) * _factor
+	var particle_basis: Basis = (p.basis as Basis).slerp(global_basis, bind)
+	node.global_position = (p.origin as Vector3).lerp(global_position, bind) + (particle_basis * offset + vec3(sample(c.worldAcceleration, t)) * age * age * 0.5) * _factor
 	var angles: Vector3 = (p.rotation + vec3(sample(c.birthRotationalVelocity0, 0.0)) * age) * PI / 180.0
 	if not String(c.mesh).is_empty() or String(c.get("primitive", "")) == "VfxPrimitiveArbitraryQuad":
-		node.global_basis = global_basis * Basis.from_euler(angles)
+		node.global_basis = particle_basis * Basis.from_euler(angles)
 	elif bool(c.ground):
 		node.global_basis = global_basis * Basis(Vector3.RIGHT, -PI / 2.0) * Basis(Vector3.BACK, angles.z)
 		node.global_position.y = maxf(node.global_position.y, 0.045)
 	elif is_instance_valid(_camera):
 		node.global_basis = _camera.global_basis * Basis(Vector3.BACK, angles.x)
-	# Static impact aftershock meshes are authored +X forward / +Y thickness.
-	# Unlike missile meshes they must not inherit missile's (0,90,90) rotation.
-	if _system in ["Spear_Impact", "Update_Impact"] and String(c.mesh).contains("aftershock_mesh"):
+	var adaptation: Dictionary = c.get("adaptation", {})
+	if adaptation.get("orientation", "authored") == "impact_front":
 		var forward := global_basis.z.normalized()
 		node.global_basis = Basis(forward, Vector3.UP, forward.cross(Vector3.UP))
-	# Ground markers stay on the battlefield plane even when their source uses
-	# ArbitraryQuad; ground was previously bypassed by the arbitrary-quad branch.
-	if bool(c.ground) and String(c.mesh).is_empty():
+	if adaptation.get("orientation", "authored") == "ground":
 		var across := node.global_basis.x
 		across.y = 0.0
 		if across.length_squared() < 0.0001: across = global_basis.x
@@ -124,16 +138,17 @@ func _update(p: Dictionary, age: float) -> void:
 		across = across.normalized()
 		node.global_basis = Basis(across, Vector3.UP.cross(across), Vector3.UP)
 		node.global_position.y = 0.045
-	# 原始长矛网格以枪尖为原点、枪柄朝-Y；Godot落地代理将枪柄校正到上方。
-	if String(c.mesh).contains("q_hold_spear"):
-		node.global_basis = node.global_basis * Basis(Vector3.RIGHT, PI)
-		node.global_position.y -= 2.0 * float(c.offset[1]) * _factor
+	if adaptation.get("orientation", "authored") in ["ground_front", "ground_exit"]:
+		var forward := PROFILE.path_forward(PROFILE.data().systems[_system].frame, global_basis)
+		if adaptation.orientation == "ground_exit": forward = -forward
+		node.global_basis = Basis(forward.cross(Vector3.UP), forward, Vector3.UP)
+		node.global_position.y = 0.045
 	var size := (p.scale as Vector3) * vec3(sample(c.scale0, t)) * _factor
 	for axis in 3: size[axis] = maxf(absf(size[axis]), 0.0001)
 	node.scale = size
-	# Original Air Streak pair was at lateral 0/+250; data now uses -125/+125.
+	# The original two streak layers share the central opening in this adaptation.
 	# Center its mesh cross-section too, without moving the authored forward tail.
-	if String(c.mesh).contains("mis_air_streaks"):
+	if bool(adaptation.get("center_mesh_z", false)):
 		node.global_position -= node.global_basis.z * node.mesh.get_aabb().get_center().z
 	var rgba: Array = sample(c.Color, t)
 	var tint := Color(rgba[0], rgba[1], rgba[2], rgba[3]) * (p.color as Color)
@@ -142,14 +157,19 @@ func _update(p: Dictionary, age: float) -> void:
 	node.material_override.set_shader_parameter("frame", float(p.frame))
 	node.material_override.set_shader_parameter("uv_scale", vec2(sample(c.uvScale, t)))
 	node.material_override.set_shader_parameter("erosion", float(sample(c.erosion_drive, t)))
+	_update_flow(node.material_override, c, age, float(p.life), false)
+	node.material_override.set_shader_parameter("mult_phase", integrated_flow(c.mult_scroll, age, float(p.life)) + (p.mult_rate as Vector2) * age + (p.mult_offset as Vector2))
 
 func _update_trail(trail: Dictionary) -> void:
 	var c: Dictionary = trail.c
 	var points: Array = trail.points
 	var life := maxf(float(sample(c.life, 0.0)), 0.1)
-	var point := global_position + global_basis * vec3(sample(c.get("birthOffset", {"base": c.offset}), _time)) * _factor
-	if _emitting and (points.is_empty() or point.distance_to(points.back().pos) > 0.05):
-		points.append({"pos": point, "time": _time})
+	var point := global_position + global_basis * (vec3(sample(c.get("birthOffset", {"base": c.offset}), _time)) + vec3(sample(c.emitterPosition, _time))) * _factor
+	if _emitting and _time >= float(c.delay) and _time <= float(c.duration) + 0.000001 and (points.is_empty() or point.distance_to(points.back().pos) > 0.05):
+		var distance := float(points.back().distance) + point.distance_to(points.back().pos) if not points.is_empty() else 0.0
+		points.append({"pos": point, "time": _time, "distance": distance,
+			"width": float(sample(c.birthScale0, _time)[0]) * _factor,
+			"color": _birth_sample(c.birthColor, _time)})
 	while not points.is_empty() and _time - float(points[0].time) > life: points.pop_front()
 	var node: MeshInstance3D = trail.node
 	node.visible = points.size() >= 2
@@ -158,18 +178,19 @@ func _update_trail(trail: Dictionary) -> void:
 	var colors := PackedColorArray()
 	var uvs := PackedVector2Array()
 	var indices := PackedInt32Array()
-	var base_width := float(sample(c.birthScale0, 0.0)[0]) * _factor
+	var tiling := maxf(float(sample(c.trail_tiling, 0.0)[0]) * _factor, 0.001)
 	for i in points.size():
 		var t := clampf((_time - float(points[i].time)) / life, 0, 1)
-		var width := base_width * float(sample(c.scale0, t)[0])
+		var width := float(points[i].width) * float(sample(c.scale0, t)[0])
 		var tangent: Vector3 = points[mini(i+1, points.size()-1)].pos - points[maxi(i-1, 0)].pos
 		var trail_normal := global_basis.z.normalized() if _motion_frame else Vector3.UP
 		var side := tangent.cross(trail_normal).normalized() * width
 		var rgba: Array = sample(c.Color, t)
 		for sign in [-1.0, 1.0]:
 			vertices.append(points[i].pos + side * sign + Vector3.UP * 0.05)
-			uvs.append(Vector2(0 if sign < 0 else 1, float(i) / maxf(points.size()-1, 1)))
-			colors.append(Color(rgba[0],rgba[1],rgba[2],rgba[3]))
+			uvs.append(Vector2(float(points[i].distance) / tiling, 0 if sign < 0 else 1))
+			var birth: Array = points[i].color
+			colors.append(Color(rgba[0]*birth[0],rgba[1]*birth[1],rgba[2]*birth[2],rgba[3]*birth[3]))
 		if i > 0: indices.append_array(PackedInt32Array([i*2-2,i*2-1,i*2,i*2-1,i*2+1,i*2]))
 	var arrays := []
 	arrays.resize(Mesh.ARRAY_MAX)
@@ -182,6 +203,7 @@ func _update_trail(trail: Dictionary) -> void:
 	node.mesh = mesh
 	node.global_transform = Transform3D.IDENTITY
 	node.material_override.set_shader_parameter("elapsed", _time)
+	_update_flow(node.material_override, c, _time, life, true)
 
 func _birth_sample(c: Dictionary, t: float) -> Variant:
 	var result = sample(c, t)
@@ -227,17 +249,17 @@ static func _texture(path: String) -> Texture2D:
 static func _material(c: Dictionary) -> ShaderMaterial:
 	var material := ShaderMaterial.new()
 	material.shader = ADD if int(c.blend) in [0, 4] else MIX
-	material.render_priority = clampi(int(c.pass), -20, 40)
+	material.render_priority = clampi(int(c.pass), -128, 127)
 	material.set_shader_parameter("source_texture", _texture(c.texture))
 	material.set_shader_parameter("uv_scale", vec2(sample(c.uvScale, 0.0)))
 	material.set_shader_parameter("uv_offset", vec2(sample(c.birthUVOffset, 0.0)))
-	material.set_shader_parameter("uv_scroll", vec2(sample(c.particleUVScrollRate, 0.0)) + vec2(sample(c.birthUvScrollRate, 0.0)))
+	material.set_shader_parameter("uv_phase", Vector2.ZERO)
 	material.set_shader_parameter("tex_div", vec2(c.tex_div))
 	if not String(c.mult).is_empty():
 		material.set_shader_parameter("has_mult", true)
 		material.set_shader_parameter("mult_texture", _texture(c.mult))
 		material.set_shader_parameter("mult_scale", vec2(sample(c.mult_scale, 0.0)))
-		material.set_shader_parameter("mult_scroll", vec2(sample(c.mult_scroll, 0.0)))
+		material.set_shader_parameter("mult_phase", Vector2.ZERO)
 	if not String(c.erosion).is_empty():
 		material.set_shader_parameter("has_erosion", true)
 		material.set_shader_parameter("erosion_texture", _texture(c.erosion))
@@ -258,3 +280,33 @@ static func _mesh(path: String) -> ArrayMesh:
 	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
 	_mesh_cache[path] = mesh
 	return mesh
+
+## Integrate authored rates, not age * current rate (which jumps/reverses when
+## the rate drops). Curves use normalized particle life, offsets use UV units.
+static func integrated_flow(curve: Dictionary, age: float, life: float) -> Vector2:
+	var end := maxf(age, 0.0) / maxf(life, 0.001)
+	var times: Array = curve.get("times", [])
+	var at := 0.0
+	var phase := Vector2.ZERO
+	for knot in times:
+		var next := minf(float(knot), end)
+		if next > at:
+			phase += (vec2(sample(curve, at)) + vec2(sample(curve, next))) * (next - at) * 0.5
+			at = next
+		if at >= end: break
+	if end > at: phase += (vec2(sample(curve, at)) + vec2(sample(curve, end))) * (end - at) * 0.5
+	return phase * life
+
+static func _update_flow(material: ShaderMaterial, c: Dictionary, age: float, life: float, trail: bool) -> void:
+	var phase := integrated_flow(c.particleUVScrollRate, age, life) + vec2(sample(c.birthUvScrollRate, 0.0)) * age
+	if trail:
+		# U follows oldest -> newest centerline points, V spans the width.
+		# Increasing sampled U moves the visible pattern toward the older wake.
+		phase = Vector2(absf(phase.x), 0.0)
+	material.set_shader_parameter("uv_phase", phase)
+	material.set_shader_parameter("mult_phase", integrated_flow(c.mult_scroll, age, life) + vec2(sample(c.mult_birth_scroll, 0.0)) * age + vec2(sample(c.mult_birth_offset, 0.0)))
+
+## Offline review teardown only; matches intentionally retain their warm cache.
+static func release_prepared_assets() -> void:
+	_mesh_cache.clear()
+	_texture_cache.clear()

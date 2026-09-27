@@ -1,0 +1,696 @@
+{
+  "version": 1,
+  "sample_hz": 120,
+  "systems": {
+    "Spear_Impact": {
+      "start": 0.2,
+      "stop": 1.3,
+      "anchor": "destination",
+      "frame": "ground",
+      "owner": "pre_deploy",
+      "enabled": false
+    },
+    "update_missile": {
+      "start": 0.2,
+      "stop": 0.65,
+      "anchor": "comet",
+      "frame": "flight",
+      "owner": "pre_deploy"
+    },
+    "Update_Impact": {
+      "start": 0.65,
+      "stop": 1.3,
+      "anchor": "landing",
+      "frame": "ground",
+      "owner": "pre_deploy"
+    },
+    "Sliding_Comet": {
+      "start": 0.65,
+      "stop": 1.3,
+      "anchor": "comet",
+      "frame": "slide",
+      "owner": "pre_deploy"
+    },
+    "Damage_Mis": {
+      "start": 0.65,
+      "stop": 1.3,
+      "anchor": "comet",
+      "frame": "slide",
+      "owner": "pre_deploy"
+    },
+    "Ending_Shockwave": {
+      "start": 1.35,
+      "stop": 2.25,
+      "anchor": "parent_death",
+      "frame": "ending",
+      "owner": "unit_deploy"
+    },
+    "Spear_Landing": {
+      "start": 0,
+      "stop": 0.2,
+      "anchor": "spear",
+      "frame": "spear",
+      "owner": "pre_deploy",
+      "enabled": false
+    }
+  },
+  "layers": {
+    "Spear_Impact/Hit": {
+      "role": "free",
+      "orientation": "authored",
+      "center_mesh_z": false,
+      "enabled": false
+    },
+    "Spear_Impact/Hit3": {
+      "role": "free",
+      "orientation": "authored",
+      "center_mesh_z": false,
+      "enabled": false
+    },
+    "Spear_Impact/Dustring4": {
+      "role": "free",
+      "orientation": "authored",
+      "center_mesh_z": false,
+      "enabled": false
+    },
+    "Spear_Impact/Temp_GroundGlow1": {
+      "role": "attached",
+      "orientation": "authored",
+      "center_mesh_z": false,
+      "enabled": false
+    },
+    "Spear_Impact/Temp_GroundGlow2": {
+      "role": "attached",
+      "orientation": "authored",
+      "center_mesh_z": false,
+      "enabled": false
+    },
+    "Spear_Impact/Hit4": {
+      "role": "free",
+      "orientation": "authored",
+      "center_mesh_z": false,
+      "enabled": false
+    },
+    "Spear_Impact/Hit5": {
+      "role": "free",
+      "orientation": "authored",
+      "center_mesh_z": false,
+      "enabled": false
+    },
+    "Spear_Impact/Small Forward Rocks": {
+      "role": "free",
+      "orientation": "authored",
+      "center_mesh_z": false,
+      "enabled": false
+    },
+    "Spear_Impact/Temp_Mesh1": {
+      "role": "attached",
+      "orientation": "authored",
+      "center_mesh_z": false,
+      "enabled": false
+    },
+    "Spear_Impact/Temp_Ray": {
+      "role": "free",
+      "orientation": "authored",
+      "center_mesh_z": false,
+      "enabled": false
+    },
+    "Spear_Impact/Backwards Rocks": {
+      "role": "free",
+      "orientation": "authored",
+      "center_mesh_z": false,
+      "enabled": false
+    },
+    "Spear_Impact/dustRing5": {
+      "role": "ground",
+      "orientation": "impact_front",
+      "center_mesh_z": false,
+      "enabled": false
+    },
+    "Spear_Impact/dustRing6": {
+      "role": "ground",
+      "orientation": "impact_front",
+      "center_mesh_z": false,
+      "enabled": false
+    },
+    "Spear_Impact/Dustring7": {
+      "role": "ground",
+      "orientation": "ground",
+      "center_mesh_z": false,
+      "enabled": false
+    },
+    "Spear_Impact/SpikeGroundLine1": {
+      "role": "ground",
+      "orientation": "ground",
+      "center_mesh_z": false,
+      "enabled": false
+    },
+    "update_missile/Aura": {
+      "role": "attached",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "update_missile/Aura1": {
+      "role": "attached",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "update_missile/Aura2": {
+      "role": "ground",
+      "orientation": "ground",
+      "center_mesh_z": false
+    },
+    "update_missile/Comet": {
+      "role": "attached",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "update_missile/Comet1": {
+      "role": "attached",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "update_missile/Comet2": {
+      "role": "attached",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "update_missile/Pantheon": {
+      "role": "wake",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "update_missile/Temp_GroundGlow": {
+      "role": "attached",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "update_missile/Temp_GroundGlow1": {
+      "role": "attached",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "update_missile/Temp_GroundGlow2": {
+      "role": "attached",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "update_missile/Pantheon2": {
+      "role": "wake",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "update_missile/Pantheon4": {
+      "role": "wake",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "update_missile/Basic": {
+      "role": "free",
+      "orientation": "authored",
+      "center_mesh_z": false,
+      "enabled": false
+    },
+    "update_missile/Basic1": {
+      "role": "free",
+      "orientation": "authored",
+      "center_mesh_z": false,
+      "enabled": false
+    },
+    "update_missile/Basic2": {
+      "role": "free",
+      "orientation": "authored",
+      "center_mesh_z": false,
+      "enabled": false
+    },
+    "update_missile/Temp_GroundGlow4": {
+      "role": "ground",
+      "orientation": "ground",
+      "center_mesh_z": false
+    },
+    "update_missile/Pantheon5": {
+      "role": "wake",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "update_missile/Comet3": {
+      "role": "attached",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "Sliding_Comet/Pantheon": {
+      "role": "wake",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "Sliding_Comet/Pantheon1": {
+      "role": "wake",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "Sliding_Comet/Comet": {
+      "role": "attached",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "Sliding_Comet/Comet1": {
+      "role": "attached",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "Sliding_Comet/Comet2": {
+      "role": "attached",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "Sliding_Comet/Temp_Mesh1": {
+      "role": "attached",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "Sliding_Comet/MakerTrench1": {
+      "role": "wake",
+      "orientation": "ground",
+      "center_mesh_z": false
+    },
+    "Sliding_Comet/MakerTrench2": {
+      "role": "wake",
+      "orientation": "ground",
+      "center_mesh_z": false
+    },
+    "Sliding_Comet/MakerTrench3": {
+      "role": "wake",
+      "orientation": "ground",
+      "center_mesh_z": false
+    },
+    "Sliding_Comet/MakerTrench4": {
+      "role": "wake",
+      "orientation": "ground",
+      "center_mesh_z": false
+    },
+    "Damage_Mis/Temp_Mesh1": {
+      "role": "attached",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "Damage_Mis/Temp_GroundGlow": {
+      "role": "ground",
+      "orientation": "ground",
+      "center_mesh_z": false
+    },
+    "Damage_Mis/Temp_GroundGlow1": {
+      "role": "ground",
+      "orientation": "ground_front",
+      "center_mesh_z": false
+    },
+    "Damage_Mis/Temp_Trail": {
+      "role": "wake",
+      "orientation": "ground",
+      "center_mesh_z": false,
+      "enabled": false
+    },
+    "Damage_Mis/Temp_Mesh5": {
+      "role": "ground",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "Damage_Mis/Dark ground wave'": {
+      "role": "ground",
+      "orientation": "ground_front",
+      "center_mesh_z": false
+    },
+    "Damage_Mis/Temp_Mesh8": {
+      "role": "attached",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "Damage_Mis/Temp_Mesh9": {
+      "role": "attached",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "Damage_Mis/Air Streak 2": {
+      "role": "attached",
+      "orientation": "authored",
+      "center_mesh_z": true,
+      "offset_override": [
+        -125,
+        120,
+        0
+      ]
+    },
+    "Damage_Mis/Air Streak 1": {
+      "role": "attached",
+      "orientation": "authored",
+      "center_mesh_z": true,
+      "offset_override": [
+        125,
+        120,
+        0
+      ]
+    },
+    "Damage_Mis/Center Rocks": {
+      "role": "free",
+      "orientation": "authored",
+      "center_mesh_z": false,
+      "enabled": false
+    },
+    "Damage_Mis/LEft Rocks": {
+      "role": "free",
+      "orientation": "authored",
+      "center_mesh_z": false,
+      "enabled": false
+    },
+    "Damage_Mis/Basic2": {
+      "role": "free",
+      "orientation": "authored",
+      "center_mesh_z": false,
+      "enabled": false
+    },
+    "Damage_Mis/Temp_Mesh14": {
+      "role": "attached",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "Damage_Mis/Center1": {
+      "role": "free",
+      "orientation": "authored",
+      "center_mesh_z": false,
+      "enabled": false
+    },
+    "Damage_Mis/Temp_Trail9": {
+      "role": "wake",
+      "orientation": "ground",
+      "center_mesh_z": false
+    },
+    "Damage_Mis/Temp_Trail10": {
+      "role": "wake",
+      "orientation": "ground",
+      "center_mesh_z": false
+    },
+    "Damage_Mis/Temp_Mesh15": {
+      "role": "attached",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "Damage_Mis/Temp_GroundGlow5": {
+      "role": "attached",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "Update_Impact/Dustring": {
+      "role": "free",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "Update_Impact/Dustring1": {
+      "role": "free",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "Update_Impact/Temp_GroundGlow": {
+      "role": "attached",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "Update_Impact/Temp_GroundGlow2": {
+      "role": "attached",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "Update_Impact/Temp_GroundGlow3": {
+      "role": "attached",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "Update_Impact/Temp_Mesh": {
+      "role": "free",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "Update_Impact/Temp_Mesh1": {
+      "role": "ground",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "Update_Impact/Basic": {
+      "role": "free",
+      "orientation": "authored",
+      "center_mesh_z": false,
+      "enabled": false
+    },
+    "Update_Impact/Forward Rocks": {
+      "role": "free",
+      "orientation": "authored",
+      "center_mesh_z": false,
+      "enabled": false
+    },
+    "Update_Impact/Temp_Mesh2": {
+      "role": "free",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "Update_Impact/Basic2": {
+      "role": "free",
+      "orientation": "authored",
+      "center_mesh_z": false,
+      "enabled": false
+    },
+    "Update_Impact/Dustring2": {
+      "role": "free",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "Update_Impact/Temp_Mesh3": {
+      "role": "ground",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "Update_Impact/Temp_GroundGlow6": {
+      "role": "attached",
+      "orientation": "authored",
+      "center_mesh_z": false,
+      "enabled": false
+    },
+    "Update_Impact/Temp_Ray": {
+      "role": "free",
+      "orientation": "authored",
+      "center_mesh_z": false,
+      "enabled": false
+    },
+    "Update_Impact/Groundhole_LIGHT": {
+      "role": "ground",
+      "orientation": "ground_exit",
+      "center_mesh_z": false
+    },
+    "Update_Impact/groundcrack": {
+      "role": "ground",
+      "orientation": "ground_exit",
+      "center_mesh_z": false
+    },
+    "Update_Impact/dustRing3": {
+      "role": "ground",
+      "orientation": "impact_front",
+      "center_mesh_z": false
+    },
+    "Update_Impact/dustRing4": {
+      "role": "ground",
+      "orientation": "impact_front",
+      "center_mesh_z": false
+    },
+    "Update_Impact/dustRing5": {
+      "role": "ground",
+      "orientation": "impact_front",
+      "center_mesh_z": false
+    },
+    "Update_Impact/Basic3": {
+      "role": "free",
+      "orientation": "authored",
+      "center_mesh_z": false,
+      "enabled": false
+    },
+    "Update_Impact/dustRing6": {
+      "role": "ground",
+      "orientation": "impact_front",
+      "center_mesh_z": false
+    },
+    "Ending_Shockwave/Temp_Mesh": {
+      "role": "attached",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "Ending_Shockwave/Temp_Mesh3": {
+      "role": "attached",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "Ending_Shockwave/Temp_Mesh6": {
+      "role": "attached",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "Ending_Shockwave/Temp_Mesh9": {
+      "role": "attached",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "Ending_Shockwave/Temp_Mesh10": {
+      "role": "attached",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "Ending_Shockwave/Temp_GroundGlow": {
+      "role": "ground",
+      "orientation": "ground_front",
+      "center_mesh_z": false
+    },
+    "Ending_Shockwave/Temp_GroundGlow1": {
+      "role": "ground",
+      "orientation": "ground_front",
+      "center_mesh_z": false
+    },
+    "Ending_Shockwave/Temp_GroundGlow2": {
+      "role": "ground",
+      "orientation": "ground_front",
+      "center_mesh_z": false
+    },
+    "Ending_Shockwave/Basic": {
+      "role": "free",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "Ending_Shockwave/Basic1": {
+      "role": "free",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "Ending_Shockwave/Dustring1": {
+      "role": "free",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "Ending_Shockwave/Dustring2": {
+      "role": "free",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "Ending_Shockwave/Temp_Mesh11": {
+      "role": "ground",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "Ending_Shockwave/Temp_Mesh12": {
+      "role": "ground",
+      "orientation": "authored",
+      "center_mesh_z": false
+    },
+    "Spear_Landing/spear1": {
+      "role": "attached",
+      "orientation": "authored",
+      "center_mesh_z": false,
+      "enabled": false
+    },
+    "Spear_Landing/spear2": {
+      "role": "attached",
+      "orientation": "authored",
+      "center_mesh_z": false,
+      "enabled": false
+    },
+    "Spear_Landing/spear3": {
+      "role": "attached",
+      "orientation": "authored",
+      "center_mesh_z": false,
+      "enabled": false
+    },
+    "Spear_Landing/spear4": {
+      "role": "attached",
+      "orientation": "authored",
+      "center_mesh_z": false,
+      "enabled": false
+    },
+    "Spear_Landing/Pantheon": {
+      "role": "wake",
+      "orientation": "authored",
+      "center_mesh_z": false,
+      "enabled": false
+    },
+    "Spear_Landing/Pantheon1": {
+      "role": "wake",
+      "orientation": "authored",
+      "center_mesh_z": false,
+      "enabled": false
+    },
+    "Spear_Landing/Basic": {
+      "role": "free",
+      "orientation": "authored",
+      "center_mesh_z": false,
+      "enabled": false
+    },
+    "Spear_Landing/Basic1": {
+      "role": "free",
+      "orientation": "authored",
+      "center_mesh_z": false,
+      "enabled": false
+    },
+    "Spear_Landing/Pantheon2": {
+      "role": "wake",
+      "orientation": "authored",
+      "center_mesh_z": false,
+      "enabled": false
+    },
+    "Spear_Landing/Temp_GroundGlow": {
+      "role": "attached",
+      "orientation": "authored",
+      "center_mesh_z": false,
+      "enabled": false
+    },
+    "Spear_Landing/spear5": {
+      "role": "attached",
+      "orientation": "authored",
+      "center_mesh_z": false,
+      "enabled": false
+    },
+    "Spear_Landing/Temp_GroundGlow1": {
+      "role": "attached",
+      "orientation": "authored",
+      "center_mesh_z": false,
+      "enabled": false
+    },
+    "Spear_Landing/Temp_GroundGlow2": {
+      "role": "attached",
+      "orientation": "authored",
+      "center_mesh_z": false,
+      "enabled": false
+    },
+    "Spear_Landing/Pantheon4": {
+      "role": "wake",
+      "orientation": "authored",
+      "center_mesh_z": false,
+      "enabled": false
+    }
+  },
+  "unsupported": [
+    "soft_depth",
+    "navigation_mask",
+    "flex_shape",
+    "distortion",
+    "native_texture_address_modes",
+    "animated_atlas",
+    "native_velocity_emission",
+    "general_child_effect_graph"
+  ],
+  "excluded": {
+    "distot_activate": "未实现原版折射，不用高光伪装；四项保留在本地原始定义",
+    "Spear_Landing/spear": "独立长矛网格已有同一枪身，避免重复；光焰与轨迹接入"
+  },
+  "scope": "landing_only",
+  "excluded_systems": {
+    "cas": "起跳前蓄力，仅本地源件保留",
+    "Cas_Shield_Slam": "起跳前砸盾，仅本地源件保留",
+    "Cas_Jump_Shockwave": "起跳冲击波，仅本地源件保留",
+    "Update_Indicator_Ally_PreJump": "起跳前提示，仅本地源件保留",
+    "Update_Indicator_Ally": "LoL远距离大招瞄准提示，项目不接入",
+    "Update_Indicator_Enemy": "LoL远距离大招瞄准提示，项目不接入",
+    "Tar": "原版目标效果，未纳入当前六系统编排"
+  }
+}

@@ -400,5 +400,23 @@
         "sha256": "003542e3cd8245067cd5331c0139e9c60a94f8dbe4ed695c849858cf68e28528"
       }
     ]
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_idle_plume_head.scb",
+    "source_sha256": "702afcbc5bf80e991c2cf9864f93b2bdddd02afa170edf716b06b74fd93adf9d",
+    "output": "res://assets/units/pantheon/r_original/pantheon_idle_plume_head.mesh.json",
+    "sha256": "d9f31842b7fe298ca9566945509ef85d1a05c553c021229f4a7159d45319f9af"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_trail_normal.tex",
+    "source_sha256": "349ef982ff2448876e3be495963ff362dbe50a483bc5112ceaa1440d14967cc2",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_trail_normal.png",
+    "sha256": "0e6ecd4b4220bd5276f72ecfb4a14489d5b1446fb61eefcde81b3f0b2f1d4618"
+  },
+  {
+    "source": "assets/characters/pantheon/skins/base/particles/pantheon_base_i_capebackground.tex",
+    "source_sha256": "88b311fae3bd279ac65436cad8275cb1ac981d0f3ed3c1b251b241a168c74a3a",
+    "output": "res://assets/units/pantheon/r_original/pantheon_base_i_capebackground.png",
+    "sha256": "097da76c74d265d53cbc6e53a04460d094d06fb55c9858699293fa242f680155"
   }
 ]

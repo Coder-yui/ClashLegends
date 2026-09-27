@@ -39,3 +39,7 @@ BNK/WPK 的完整事件还原用 [音频准备工具](../audio/README.md)。特�
 ## 专门配方
 
 `import_turret_break_animations.py` 是塔破碎动画加工；`export_princess_tower_ruin.py` 是 Blender 废墟导出。两者针对已有塔素材，运行前核对脚本内输入、输出和 [塔说明](../../docs/units/princess_tower.md)。不作为新单位的通用导入器。
+
+## 潘森落地转换数据
+
+`pantheon_arrival_catalog.py` 只读核对七系统112层登记、67项依赖与来源哈希，支持输出CSV；`pantheon_arrival_metadata.py` 从原定义补入乘色出生滚速/偏移与拖尾平铺长度，输入输出通过参数指定。运行方式与本地来源路径见[落地接入设计](../../docs/units/effects/pantheon_arrival_resources.md)。这些工具不依赖历史制作脚本，不改外部源库。
