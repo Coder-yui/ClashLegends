@@ -113,10 +113,23 @@ def audit_suite_catalog(root: Path, errors: list) -> None:
         errors.append(f'tests/suite_catalog.json: invalid catalog: {exc}')
 
 
+def audit_state_ownership(root: Path, errors: list) -> None:
+    """Small explicit guard for the state objects whose Unit writes were consolidated."""
+    for name in ('dash_strike_state', 'terrain_traversal_state', 'death_form_state'):
+        path = root / f'scripts/battle/{name}.gd'
+        if not path.exists():
+            continue
+        for number, line in enumerate(path.read_text().splitlines(), 1):
+            code = line.split('#', 1)[0]
+            if re.search(r'\b(?:unit|source)\.\w+\s*(?:=(?!=)|[+*/-]=)', code) or re.search(r'\b(?:unit|source)\.(?:_apply_form|_die)\(', code) or re.search(r'\b(?:unit|source)\.(?:active_skill_cast_locks|_path)\.(?:clear|append)\(', code):
+                errors.append(f'{path.relative_to(root)}:{number}: state bypasses Unit transition owner')
+
+
 def audit(root: Path, inventory: bool = False) -> dict:
     root = root.resolve()
     errors = []
     audit_suite_catalog(root, errors)
+    audit_state_ownership(root, errors)
     for forbidden in ['assets/archive', 'assets/audio/auditions', 'assets/audio/workbench_auditions.json', '待开发卡牌美术素材', 'builds']:
         if (root / forbidden).exists():
             errors.append(f'{forbidden}: development content belongs in ClashLegends-开发素材库')

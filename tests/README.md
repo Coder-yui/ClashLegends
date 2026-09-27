@@ -8,7 +8,7 @@
 python3 tools/dev.py verify
 ```
 
-依次执行项目审计、验证工具故障夹具、Godot 导入、机制回归与 `git diff --check`，失败即停。每步默认超时 600 秒并清理进程组；通过 `--godot /绝对路径/Godot`、`--timeout 900`、`--output /新的目录` 指定环境。`python3 tools/dev.py doctor` 查询本机依赖。
+依次执行项目审计、验证工具故障夹具、Godot 导入、编译卡牌数值导出与手册核对、机制回归与 `git diff --check`，失败即停。每步默认超时 600 秒并清理进程组；通过 `--godot /绝对路径/Godot`、`--timeout 900`、`--output /新的目录` 指定环境。`python3 tools/dev.py doctor` 查询本机依赖。
 
 证据默认在 `ClashLegends-开发素材库/04-中间产物/构建与验证/verification/<时间戳>/`。result.json 记录提交、脏工作区、文件摘要、引擎版本、命令、耗时与结果；运行中工作区变化判失败。输出目录必须尚不存在。
 
@@ -92,4 +92,4 @@ python3 -m unittest discover -s tools/maintenance -p 'test_*.py'
 python3 -m unittest discover -s tools/tests -p 'test_*.py'
 ```
 
-前者验证审计和执行器的失败路径，由 verify 自动执行；后者用于通用素材工具改动。静态链接/注册审计不能代替机制回归，也不能自动核实单位手册的数值与听感。历史长篇测试说明保留在[归档](../docs/archive/2026-09-26/tests_README.md)。
+前者验证审计和执行器的失败路径，由 verify 自动执行；后者用于通用素材工具改动。静态链接/注册审计不能代替机制回归。数值检查首批覆盖赛恩、凯隐、潘森的费用、生命、伤害、攻击间隔、实体部署锁定，以及主动费用、次数和冷却；未标记的数值、玩法解释和听感仍需人工核对。历史长篇测试说明保留在[归档](../docs/archive/2026-09-26/tests_README.md)。

@@ -282,6 +282,8 @@ def main() -> int:
             ('audit', [sys.executable, 'tools/maintenance/audit_project.py']),
             ('verifier-tests', [sys.executable, '-m', 'unittest', 'discover', '-s', 'tools/maintenance', '-p', 'test_*.py']),
             ('import', [godot, '--headless', '--path', '.', '--editor', '--import', '--quit']),
+            ('card-facts-export', [godot, '--headless', '--path', '.', '--script', 'tools/maintenance/export_card_facts.gd', '--', str(output / 'card-facts.json')]),
+            ('card-facts-check', [sys.executable, 'tools/maintenance/check_card_facts.py', str(output / 'card-facts.json')]),
             ('mechanics', [godot, '--headless', '--path', '.', '--script', 'tests/mechanics_check.gd', '--',
                            *['--suite=' + name for name in (args.suite or [])],
                            *(['--reverse-suites'] if args.reverse_suites else [])]),

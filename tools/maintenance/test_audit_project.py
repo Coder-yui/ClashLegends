@@ -21,6 +21,13 @@ class AuditTests(unittest.TestCase):
         self.write('tests/suites/combat/second_suite.gd', 'extends RefCounted\nfunc run(): pass\n')
         self.assertTrue(any('unregistered suite' in e for e in audit(self.root)['errors']))
 
+    def test_state_transition_ownership(self):
+        self.write('scripts/battle/dash_strike_state.gd', 'func finish(source):\n\tsource.finish_dash_cast(serial)\n')
+        self.assertEqual(audit(self.root)['errors'], [])
+        for write in ('source.active_skill_cast_timer = 0.0', 'source._die()', 'source.active_skill_cast_locks.clear()'):
+            self.write('scripts/battle/dash_strike_state.gd', 'func finish(source):\n\t' + write + '\n')
+            self.assertTrue(any('transition owner' in e for e in audit(self.root)['errors']))
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)

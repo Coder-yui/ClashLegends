@@ -16,7 +16,8 @@ static func validate_all(cards: Dictionary, inspect_resources: bool = true) -> P
 			errors.append("%s: 期望 Dictionary，实际 %s（%s）" % [card_id, type_string(typeof(cards[raw_card_id])), str(cards[raw_card_id])])
 			continue
 		var stats: Dictionary = cards[raw_card_id]
-		if not SHAPES.validate(card_id, stats, errors): continue
+		if not SHAPES.validate(card_id, stats, errors):
+			continue
 		_validate_card_id(card_id, errors)
 		_validate_known_fields(card_id, stats, CARD_FIELDS, errors)
 		_validate_numbers(card_id, stats, errors)
@@ -29,24 +30,11 @@ static func _validate_card_id(card_id: String, errors: PackedStringArray) -> voi
 		errors.append("%s: card_id 必须是非空英文 snake_case" % card_id)
 
 static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStringArray, inspect_resources: bool = true) -> void:
-	if not SHAPES.validate(card_id, stats, errors): return
+	if not SHAPES.validate(card_id, stats, errors):
+		return
 	_require_fields(card_id, stats, [&"name", &"cost", &"type", &"description", &"radius", &"color"], errors)
-	if ["hit_haste_max_stacks", "hit_haste_per_stack", "hit_haste_duration"].any(func(field): return stats.has(field)):
-		for field in ["hit_haste_max_stacks", "hit_haste_per_stack", "hit_haste_duration"]:
-			if float(stats.get(field, 0.0)) <= 0.0: errors.append("%s.%s: 必须为正数且成组配置" % [card_id, field])
-		var stacks := float(stats.get("hit_haste_max_stacks", 0.0))
-		if stacks != floorf(stacks): errors.append("%s.hit_haste_max_stacks: 必须为整数" % card_id)
-		if String(stats.get("type", "")) != "unit" or bool(stats.get("is_continuous_attack", false)):
-			errors.append("%s.hit_haste_max_stacks: 仅支持普通单位离散普攻" % card_id)
-	if ["attack_wave_damage", "attack_wave_delay", "attack_wave_tail_distance", "attack_wave_near_width", "attack_wave_max_scale", "attack_wave_speed", "attack_wave_visual", "attack_wave_visual_height"].any(func(field): return stats.has(field)):
-		for field in ["attack_wave_damage", "attack_wave_delay", "attack_wave_tail_distance", "attack_wave_near_width", "attack_wave_max_scale", "attack_wave_speed"]:
-			if float(stats.get(field, 0.0)) <= 0.0: errors.append("%s.%s: 焰浪须完整配置正数参数" % [card_id, field])
-		if String(stats.get("type", "")) != "unit" or float(stats.get("projectile_speed", 0.0)) <= 0.0 or bool(stats.get("is_continuous_attack", false)):
-			errors.append("%s.attack_wave_damage: 仅支持普通远程普攻" % card_id)
-		if float(stats.get("attack_wave_max_scale", 0.0)) < 1.0:
-			errors.append("%s.attack_wave_max_scale: 不可小于1" % card_id)
-		if String(stats.get("attack_wave_visual", "")) != "kayle_wave" or float(stats.get("attack_wave_visual_height", 0.0)) < 0.0:
-			errors.append("%s.attack_wave_visual: 需要已实现的kayle_wave及非负表现高度" % card_id)
+	_validate_hit_haste(card_id, stats, errors)
+	_validate_attack_wave(card_id, stats, errors)
 	var card_type := StringName(stats.get("type", ""))
 	if card_type not in CARD_TYPES:
 		errors.append("%s.type: 不支持的卡牌类型 %s" % [card_id, card_type])
@@ -57,60 +45,9 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 		errors.append("%s.cost: 必须 >= 0" % card_id)
 	if float(stats.get("radius", 0.0)) <= 0.0:
 		errors.append("%s.radius: 必须 > 0" % card_id)
-	if bool(stats.get("terrain_traversal", false)) and (card_type != &"unit" or bool(stats.get("is_air", false))): errors.append("%s.terrain_traversal: 仅支持地面普通单位" % card_id)
-	if float(stats.get("terrain_entry_heal", 0.0)) < 0.0 or float(stats.get("terrain_entry_speed_multiplier", 1.0)) < 1.0: errors.append("%s: 地形回复必须非负，加速倍率至少1" % card_id)
-	if (stats.has("terrain_entry_heal") or stats.has("terrain_entry_speed_multiplier")) and not bool(stats.get("terrain_traversal", false)): errors.append("%s: 地形收益需要穿越能力" % card_id)
-	if stats.has("growth_ranged_id") or stats.has("growth_melee_id") or stats.has("growth_ranged_hits") or stats.has("growth_melee_hits"):
-		for kind in ["ranged", "melee"]:
-			if String(stats.get("growth_"+kind+"_id", "")).is_empty() or float(stats.get("growth_"+kind+"_hits",0)) <= 0.0: errors.append("%s: 成长需要两条完整的正整数阈值与形态引用" % card_id)
-		if card_type != &"unit" or float(stats.get("splash_radius",0.0)) > 0.0 or bool(stats.get("is_continuous_attack",false)): errors.append("%s: 成长目前只支持普通单体普攻" % card_id)
-	if stats.has("deploy_zone"):
-		var dz := StringName(stats.get("deploy_zone", ""))
-		if dz not in DEPLOY_ZONES:
-			errors.append("%s.deploy_zone: 必须是 DEPLOY_ZONES 之一 (%s)" % [card_id, "、".join(DEPLOY_ZONES)])
-	if bool(stats.get("deploy_pocket_requires_both_towers", false)) and (String(stats.get("deploy_zone", "own_side")) != "own_side" or card_type == &"spell"):
-		errors.append("%s.deploy_pocket_requires_both_towers: 仅支持 own_side 单位或建筑" % card_id)
-	if stats.has("deploy_ignore_structures") and typeof(stats.deploy_ignore_structures) != TYPE_BOOL:
-		errors.append("%s.deploy_ignore_structures: 必须是 bool" % card_id)
-	if stats.has("pre_deploy_time") and float(stats.get("pre_deploy_time", 0.0)) < 0.0:
-		errors.append("%s.pre_deploy_time: 必须 >= 0" % card_id)
-	if float(stats.get("pre_deploy_time", 0.0)) > 0.0 and card_type == &"spell":
-		errors.append("%s.pre_deploy_time: 法术不能使用单位预部署阶段" % card_id)
-	var pre_sweep_fields := ["pre_deploy_sweep_start", "pre_deploy_sweep_distance", "pre_deploy_sweep_radius", "pre_deploy_sweep_damage"]
-	var has_pre_sweep := false
-	for field in pre_sweep_fields: has_pre_sweep = has_pre_sweep or stats.has(field)
-	if has_pre_sweep:
-		for field in pre_sweep_fields:
-			if not stats.has(field) or float(stats.get(field, -1.0)) <= 0.0:
-				errors.append("%s.%s: 预部署冲击波需要完整正数配置" % [card_id, field])
-		if card_type != &"unit" or float(stats.get("pre_deploy_sweep_start", 0.0)) >= float(stats.get("pre_deploy_time", 0.0)):
-			errors.append("%s: 预部署冲击波仅支持单位，起始时刻必须早于预部署结束" % card_id)
-		if float(stats.get("deploy_sweep_damage", 0.0)) > 0.0:
-			errors.append("%s: 预部署冲击波不可叠加生成瞬间横扫伤害" % card_id)
-	if String(stats.get("deployment_formation", "ring")) not in ["ring", "line", "polygon", "square", "depth_line"]:
-		errors.append("%s.deployment_formation: 仅支持 ring/line/polygon/square/depth_line" % card_id)
-	if String(stats.get("deployment_formation", "ring")) == "square" and int(stats.get("deployment_count", 0)) != 4:
-		errors.append("%s.deployment_formation: square 必须搭配4名成员" % card_id)
-	if String(stats.get("deployment_formation", "ring")) == "depth_line" and int(stats.get("deployment_count", 0)) != 2:
-		errors.append("%s.deployment_formation: depth_line 必须搭配2名成员" % card_id)
-	if String(stats.get("deployment_formation", "ring")) == "line" and (int(stats.get("deployment_count", 1)) - 1) * float(stats.get("deployment_spacing", 0.0)) + 2.0 * float(stats.get("radius", 0.0)) > ArenaRules.FIELD_W:
-		errors.append("%s: 横排宽度不能超过战场" % card_id)
-	if stats.has("deployment_count"):
-		if card_type != &"unit":
-			errors.append("%s.deployment_count: 只有单位卡可以编队部署" % card_id)
-		var deployment_count := int(stats.get("deployment_count", 0))
-		if deployment_count <= 0:
-			errors.append("%s.deployment_count: 必须 > 0" % card_id)
-		if deployment_count > 1 and float(stats.get("deployment_spacing", 0.0)) <= 0.0:
-			errors.append("%s.deployment_spacing: 编队数量大于 1 时必须 > 0" % card_id)
-	if stats.has("deployment_member_ids"):
-		var member_ids = stats.get("deployment_member_ids")
-		if card_type != &"unit":
-			errors.append("%s.deployment_member_ids: 只有单位卡可以使用异构编队" % card_id)
-		elif not member_ids is Array or (member_ids as Array).is_empty():
-			errors.append("%s.deployment_member_ids: 必须是非空成员卡 ID 数组" % card_id)
-		elif stats.has("deployment_count") and int(stats.get("deployment_count", 0)) != (member_ids as Array).size():
-			errors.append("%s.deployment_member_ids: 成员数量必须与 deployment_count 一致" % card_id)
+	_validate_terrain_traversal(card_id, stats, errors)
+	_validate_growth(card_id, stats, errors)
+	_validate_deployment(card_id, stats, errors)
 	match card_type:
 		&"unit":
 			_validate_combat_stats(card_id, stats, true, errors)
@@ -133,21 +70,8 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 						errors.append("%s.heal_amount: 治疗法术必须配置 > 0 的治疗量" % card_id)
 					if stats.has("active_cost_bonus") and int(stats.active_cost_bonus) < 0:
 						errors.append("%s.active_cost_bonus: 必须是 >= 0 的整数" % card_id)
-	if stats.has("bleed_max_stacks"):
-		if String(stats.get("type", "")) != "unit": errors.append("%s: 流血被动只支持普通单位" % card_id)
-		for field in ["bleed_damage_per_second", "bleed_duration", "bleed_max_stacks", "blood_rage_duration", "blood_rage_damage_multiplier"]:
-			if float(stats.get(field, 0.0)) <= 0.0: errors.append("%s.%s: 必须 > 0" % [card_id, field])
-		if float(stats.get("blood_rage_damage_multiplier", 0.0)) < 1.0: errors.append("%s.blood_rage_damage_multiplier: 必须 >= 1" % card_id)
-		if float(stats.bleed_max_stacks) != int(stats.bleed_max_stacks): errors.append("%s.bleed_max_stacks: 必须是整数" % card_id)
-		if float(stats.get("projectile_speed", 0.0)) > 0.0 or float(stats.get("splash_radius", 0.0)) > 0.0 or bool(stats.get("is_continuous_attack", false)) or not (stats.get("attack_extra_hit_delays", []) as Array).is_empty():
-			errors.append("%s: 流血消费者限定单体近战" % card_id)
-	elif ["bleed_damage_per_second", "bleed_duration", "blood_rage_duration", "blood_rage_damage_multiplier"].any(func(field): return stats.has(field)):
-		errors.append("%s: 流血配置需要完整字段" % card_id)
-	if stats.has("death_form_delay") or stats.has("death_form_decay_duration"):
-		for field in ["death_form_delay", "death_form_decay_duration"]:
-			if float(stats.get(field, 0.0)) <= 0.0: errors.append("%s.%s: 必须 > 0" % [card_id, field])
-		if stats.get("transformed_stats", {}).is_empty() or String(stats.get("type", "")) != "unit":
-			errors.append("%s: 致死换形需要普通单位与 transformed_stats" % card_id)
+	_validate_bleed(card_id, stats, errors)
+	_validate_death_form(card_id, stats, errors)
 	var art = stats.get("card_art", {})
 	if not art is Dictionary:
 		errors.append("%s.card_art: 必须是 Dictionary" % card_id)
@@ -172,7 +96,8 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 				_validate_audio_config("%s.transformed_stats" % card_id, capabilities, errors, inspect_resources)
 
 static func _validate_audio_config(label: String, stats: Dictionary, errors: PackedStringArray, inspect_resources: bool = true) -> void:
-	if not SHAPES.validate(label, stats, errors): return
+	if not SHAPES.validate(label, stats, errors):
+		return
 	if not stats.has("audio"):
 		return
 	var audio = stats.get("audio")
@@ -230,7 +155,8 @@ static func _validate_audio_config(label: String, stats: Dictionary, errors: Pac
 			if event.has("owner"):
 				var independent := false
 				for skill in stats.get("active_skills", []):
-					if bool(skill.get("independent_on_creation", false)) and String(cue).get_slice(":", 0) in [String(skill.get("visual_action", "")), String(skill.get("full_resource_visual_action", ""))]: independent = true
+					if bool(skill.get("independent_on_creation", false)) and String(cue).get_slice(":", 0) in [String(skill.get("visual_action", "")), String(skill.get("full_resource_visual_action", ""))]:
+						independent = true
 				if event.owner != "result" or not independent or not String(cue).ends_with(":start") or event.has("action_time"):
 					errors.append("%s.audio.events.%s.owner: result 仅用于独立结果创建声，不绑定动作时间" % [label, cue])
 			if event.has("action_time"):
@@ -238,7 +164,8 @@ static func _validate_audio_config(label: String, stats: Dictionary, errors: Pac
 				var suffix := String(cue).get_slice(":", 1)
 				var window := 0.0
 				for skill in stats.get("active_skills", []):
-					if String(skill.get("visual_action", "")) == action: window = maxf(window, float(skill.get("cast_duration", 0.0)))
+					if String(skill.get("visual_action", "")) == action:
+						window = maxf(window, float(skill.get("cast_duration", 0.0)))
 				if typeof(event.action_time) not in [TYPE_INT, TYPE_FLOAT] or not is_finite(float(event.action_time)) or float(event.action_time) < 0.0 or float(event.action_time) >= window or suffix not in ["start", "voice", "release"]:
 					errors.append("%s.audio.events.%s.action_time: 必须是主动动作窗口内的非负 start/voice/release 秒数，命中声音只能由真实命中触发" % [label, cue])
 			if event.get("bus", "Combat") not in ["Combat", "Voice"]:
@@ -308,9 +235,11 @@ static func _validate_audio_path_pool(label: String, configured: Variant, errors
 			errors.append("%s[%d]: 资源不是 AudioStream" % [label, index])
 
 static func _validate_combat_stats(label: String, stats: Dictionary, require_size_tier: bool, errors: PackedStringArray) -> void:
-	if not SHAPES.validate(label, stats, errors): return
+	if not SHAPES.validate(label, stats, errors):
+		return
 	for field in ["attack_passive_multipliers", "attack_lifesteal_ratios"]:
-		if not stats.has(field): continue
+		if not stats.has(field):
+			continue
 		var values: Array = stats[field]
 		if values.is_empty() or values.any(func(value): return float(value) < 0.0 or float(value) > 1.0):
 			errors.append("%s.%s: 需要非空的 0..1 比例数组" % [label, field])
@@ -415,7 +344,8 @@ static func _validate_combat_stats(label: String, stats: Dictionary, require_siz
 						errors.append("%s.attack_extra_hit_delays[%d]: 延迟必须 >= 0" % [label, index])
 
 static func _validate_projectile(label: String, stats: Dictionary, errors: PackedStringArray) -> void:
-	if not SHAPES.validate(label, stats, errors): return
+	if not SHAPES.validate(label, stats, errors):
+		return
 	if stats.has("projectile_spawn_at_edge") and not stats.projectile_spawn_at_edge is bool:
 		errors.append("%s.projectile_spawn_at_edge: 必须是 bool" % label)
 	for field in ["projectile_spawn_offset", "projectile_collision_radius", "projectile_speed"]:
@@ -475,14 +405,17 @@ static func _validate_building(card_id: String, stats: Dictionary, errors: Packe
 
 
 static func _validate_rush(card_id: String, stats: Dictionary, errors: PackedStringArray) -> void:
-	if not stats.keys().any(func(key): return String(key).begins_with("rush_")): return
+	if not stats.keys().any(func(key): return String(key).begins_with("rush_")):
+		return
 	if not bool(stats.get("building_only", false)) or bool(stats.get("is_air", false)) or bool(stats.get("is_building", false)):
 		errors.append("%s.rush_distance: 冲撞只支持建筑索敌的地面普通单位" % card_id)
 	for field in ["rush_distance", "rush_prepare_time", "rush_speed", "rush_path_damage", "rush_building_damage", "rush_push_distance", "rush_recovery_time", "rush_spawn_count", "rush_spawn_spread"]:
-		if float(stats.get(field, 0.0)) <= 0.0: errors.append("%s.%s: 必须 > 0" % [card_id, field])
+		if float(stats.get(field, 0.0)) <= 0.0:
+			errors.append("%s.%s: 必须 > 0" % [card_id, field])
 	if float(stats.get("rush_self_health_ratio", 0.0)) <= 0.0 or float(stats.get("rush_self_health_ratio", 0.0)) >= 1.0:
 		errors.append("%s.rush_self_health_ratio: 必须 > 0 且 < 1" % card_id)
-	if String(stats.get("rush_spawn_id", "")).is_empty(): errors.append("%s.rush_spawn_id: 不能为空" % card_id)
+	if String(stats.get("rush_spawn_id", "")).is_empty():
+		errors.append("%s.rush_spawn_id: 不能为空" % card_id)
 
 static func _validate_references(card_id: String, stats: Dictionary, cards: Dictionary, errors: PackedStringArray) -> void:
 	_validate_rush(card_id, stats, errors)
@@ -492,11 +425,14 @@ static func _validate_references(card_id: String, stats: Dictionary, cards: Dict
 			errors.append("%s.%s: 引用了不存在或不可生成的单位 %s" % [card_id, field, referenced_id])
 	for field in ["growth_ranged_id", "growth_melee_id"]:
 		var id := String(stats.get(field, ""))
-		if id.is_empty() or not cards.has(id): continue
+		if id.is_empty() or not cards.has(id):
+			continue
 		var form: Dictionary = cards[id]
-		if form.get("type") != "unit" or bool(form.get("selectable", true)) or form.has("growth_ranged_id") or form.has("growth_melee_id"): errors.append("%s.%s: 成长形态须为不可选且不递归成长的单位" % [card_id,field])
+		if form.get("type") != "unit" or bool(form.get("selectable", true)) or form.has("growth_ranged_id") or form.has("growth_melee_id"):
+			errors.append("%s.%s: 成长形态须为不可选且不递归成长的单位" % [card_id,field])
 		for key in ["cost", "radius", "is_air", "deployment_count", "deployment_spacing", "deployment_formation", "deploy_zone"]:
-			if stats.get(key) != form.get(key): errors.append("%s.%s: 成长形态费用与部署几何必须一致 (%s)" % [card_id,field,key])
+			if stats.get(key) != form.get(key):
+				errors.append("%s.%s: 成长形态费用与部署几何必须一致 (%s)" % [card_id,field,key])
 	var upgrade_id := String(stats.get("deployment_upgrade_id", ""))
 	if not upgrade_id.is_empty() and _unit_reference_exists(upgrade_id, cards):
 		var upgrade: Dictionary = cards[upgrade_id]
@@ -527,7 +463,8 @@ static func _unit_reference_exists(card_id: String, cards: Dictionary) -> bool:
 	return cards[card_id].get("type", "") in [&"unit", &"building"]
 
 static func _validate_visual_config(label: String, stats: Dictionary, errors: PackedStringArray, inspect_resources: bool = true) -> void:
-	if not SHAPES.validate(label, stats, errors): return
+	if not SHAPES.validate(label, stats, errors):
+		return
 	for path_field in [&"visual_scene_path"]:
 		var path := String(stats.get(path_field, ""))
 		if not path.is_empty() and not ResourceLoader.exists(path):
@@ -576,7 +513,8 @@ static func _validate_visual_config(label: String, stats: Dictionary, errors: Pa
 		return
 	_validate_known_fields("%s.visual_animations" % label, animations, VISUAL_ANIMATION_FIELDS, errors)
 	for field in ["attack_clip_ranges", "attack_hit_clip_ranges"]:
-		if not animations.has(field): continue
+		if not animations.has(field):
+			continue
 		var ranges = animations[field]
 		var clips = animations.get("attack" if field == "attack_clip_ranges" else "attack_hit", [])
 		if not ranges is Array or not clips is Array or ranges.size() != clips.size():
@@ -757,7 +695,8 @@ static func _validate_positive_number_or_array(label: String, value: Variant, er
 			return
 
 static func _validate_active_skills(card_id: String, stats: Dictionary, errors: PackedStringArray, inspect_resources: bool = true) -> void:
-	if not SHAPES.validate(card_id, stats, errors): return
+	if not SHAPES.validate(card_id, stats, errors):
+		return
 	var skills: Array = []
 	if stats.has("active_skills"):
 		if not stats.active_skills is Array:
@@ -792,24 +731,33 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 			errors.append("%s.cooldown: 必须 >= 0" % label)
 		match kind:
 			&"dash_strike":
-				if not bool(stats.get("terrain_traversal",false)): errors.append("%s: 当前突进效果要求穿地形能力" % label)
-				if float(skill.get("hit_heal",0.0)) < 0.0 or float(skill.get("on_hit_tower_damage",0.0)) < 0.0 or float(skill.get("on_hit_max_health_ratio",0.0)) < 0.0 or float(skill.get("on_hit_max_health_ratio",0.0)) > 1.0: errors.append("%s: 回复与塔伤非负，最大生命比例须在0至1之间" % label)
+				if not bool(stats.get("terrain_traversal",false)):
+					errors.append("%s: 当前突进效果要求穿地形能力" % label)
+				if float(skill.get("hit_heal",0.0)) < 0.0 or float(skill.get("on_hit_tower_damage",0.0)) < 0.0 or float(skill.get("on_hit_max_health_ratio",0.0)) < 0.0 or float(skill.get("on_hit_max_health_ratio",0.0)) > 1.0:
+					errors.append("%s: 回复与塔伤非负，最大生命比例须在0至1之间" % label)
 				for field in ["dash_duration", "dash_reference_speed", "spin_delay", "length", "width", "radius", "damage"]:
-					if float(skill.get(field, 0.0)) <= 0.0: errors.append("%s.%s: 必须 > 0" % [label, field])
-				if float(skill.get("spin_delay", 0.0)) < float(skill.get("dash_duration", 0.0)) or float(skill.get("spin_delay", 0.0)) > float(skill.get("cast_duration", 0.0)): errors.append("%s: 旋转必须在突进结束后、施法结束前" % label)
-				if float(skill.get("impact_delay", 0.0)) != 0.0: errors.append("%s: 突进须在施法开始启动" % label)
+					if float(skill.get(field, 0.0)) <= 0.0:
+						errors.append("%s.%s: 必须 > 0" % [label, field])
+				if float(skill.get("spin_delay", 0.0)) < float(skill.get("dash_duration", 0.0)) or float(skill.get("spin_delay", 0.0)) > float(skill.get("cast_duration", 0.0)):
+					errors.append("%s: 旋转必须在突进结束后、施法结束前" % label)
+				if float(skill.get("impact_delay", 0.0)) != 0.0:
+					errors.append("%s: 突进须在施法开始启动" % label)
 			&"bleeding_execute":
-				if float(skill.get("impact_delay", 0.0)) != 0.0 or float(skill.get("cast_duration", 0.0)) != 0.0: errors.append("%s: 下一击技能须即时武装" % label)
+				if float(skill.get("impact_delay", 0.0)) != 0.0 or float(skill.get("cast_duration", 0.0)) != 0.0:
+					errors.append("%s: 下一击技能须即时武装" % label)
 				if float(skill.get("damage", 0.0)) <= 0.0 or float(skill.get("execute_damage_per_stack", -1.0)) < 0.0:
 					errors.append("%s: 断头台需要正伤害和非负每层增幅" % label)
-				if not stats.has("bleed_max_stacks"): errors.append("%s: 断头台需要流血被动" % label)
+				if not stats.has("bleed_max_stacks"):
+					errors.append("%s: 断头台需要流血被动" % label)
 			&"explosive_shield":
 				for field in ["shield", "shield_duration", "radius", "damage"]:
-					if float(skill.get(field, 0.0)) <= 0.0: errors.append("%s.%s: 必须 > 0" % [label, field])
+					if float(skill.get(field, 0.0)) <= 0.0:
+						errors.append("%s.%s: 必须 > 0" % [label, field])
 			&"sanctuary":
 				_require_fields(label, skill, [&"radius", &"duration"], errors)
 				for field in [&"radius", &"duration"]:
-					if float(skill.get(field, 0.0)) <= 0.0: errors.append("%s.%s: 必须 > 0" % [label, field])
+					if float(skill.get(field, 0.0)) <= 0.0:
+						errors.append("%s.%s: 必须 > 0" % [label, field])
 			&"nova": _require_fields(label, skill, [&"radius", &"damage"], errors)
 			&"timed_form":
 				if stats.get("transformed_stats", {}).is_empty() or float(stats.get("form_lifetime", 0.0)) <= 0.0:
@@ -1125,3 +1073,125 @@ static func _validate_number_value(label: String, value: Variant, step: float, e
 			errors.append("%s: 数值必须有限且符合精度 %s" % [label, str(step)])
 	elif required_number:
 		errors.append("%s: 必须是整数数值" % label)
+
+static func _validate_hit_haste(card_id: String, stats: Dictionary, errors: PackedStringArray) -> void:
+	if ["hit_haste_max_stacks", "hit_haste_per_stack", "hit_haste_duration"].any(func(field): return stats.has(field)):
+		for field in ["hit_haste_max_stacks", "hit_haste_per_stack", "hit_haste_duration"]:
+			if float(stats.get(field, 0.0)) <= 0.0:
+				errors.append("%s.%s: 必须为正数且成组配置" % [card_id, field])
+		var stacks := float(stats.get("hit_haste_max_stacks", 0.0))
+		if stacks != floorf(stacks):
+			errors.append("%s.hit_haste_max_stacks: 必须为整数" % card_id)
+		if String(stats.get("type", "")) != "unit" or bool(stats.get("is_continuous_attack", false)):
+			errors.append("%s.hit_haste_max_stacks: 仅支持普通单位离散普攻" % card_id)
+
+
+static func _validate_attack_wave(card_id: String, stats: Dictionary, errors: PackedStringArray) -> void:
+	if ["attack_wave_damage", "attack_wave_delay", "attack_wave_tail_distance", "attack_wave_near_width", "attack_wave_max_scale", "attack_wave_speed", "attack_wave_visual", "attack_wave_visual_height"].any(func(field): return stats.has(field)):
+		for field in ["attack_wave_damage", "attack_wave_delay", "attack_wave_tail_distance", "attack_wave_near_width", "attack_wave_max_scale", "attack_wave_speed"]:
+			if float(stats.get(field, 0.0)) <= 0.0:
+				errors.append("%s.%s: 焰浪须完整配置正数参数" % [card_id, field])
+		if String(stats.get("type", "")) != "unit" or float(stats.get("projectile_speed", 0.0)) <= 0.0 or bool(stats.get("is_continuous_attack", false)):
+			errors.append("%s.attack_wave_damage: 仅支持普通远程普攻" % card_id)
+		if float(stats.get("attack_wave_max_scale", 0.0)) < 1.0:
+			errors.append("%s.attack_wave_max_scale: 不可小于1" % card_id)
+		if String(stats.get("attack_wave_visual", "")) != "kayle_wave" or float(stats.get("attack_wave_visual_height", 0.0)) < 0.0:
+			errors.append("%s.attack_wave_visual: 需要已实现的kayle_wave及非负表现高度" % card_id)
+
+
+static func _validate_terrain_traversal(card_id: String, stats: Dictionary, errors: PackedStringArray) -> void:
+	var card_type := StringName(stats.get("type", ""))
+	if bool(stats.get("terrain_traversal", false)) and (card_type != &"unit" or bool(stats.get("is_air", false))):
+		errors.append("%s.terrain_traversal: 仅支持地面普通单位" % card_id)
+	if float(stats.get("terrain_entry_heal", 0.0)) < 0.0 or float(stats.get("terrain_entry_speed_multiplier", 1.0)) < 1.0:
+		errors.append("%s: 地形回复必须非负，加速倍率至少1" % card_id)
+	if (stats.has("terrain_entry_heal") or stats.has("terrain_entry_speed_multiplier")) and not bool(stats.get("terrain_traversal", false)):
+		errors.append("%s: 地形收益需要穿越能力" % card_id)
+
+
+static func _validate_growth(card_id: String, stats: Dictionary, errors: PackedStringArray) -> void:
+	var card_type := StringName(stats.get("type", ""))
+	if stats.has("growth_ranged_id") or stats.has("growth_melee_id") or stats.has("growth_ranged_hits") or stats.has("growth_melee_hits"):
+		for kind in ["ranged", "melee"]:
+			if String(stats.get("growth_"+kind+"_id", "")).is_empty() or float(stats.get("growth_"+kind+"_hits",0)) <= 0.0:
+				errors.append("%s: 成长需要两条完整的正整数阈值与形态引用" % card_id)
+		if card_type != &"unit" or float(stats.get("splash_radius",0.0)) > 0.0 or bool(stats.get("is_continuous_attack",false)):
+			errors.append("%s: 成长目前只支持普通单体普攻" % card_id)
+
+
+static func _validate_deployment(card_id: String, stats: Dictionary, errors: PackedStringArray) -> void:
+	var card_type := StringName(stats.get("type", ""))
+	if stats.has("deploy_zone"):
+		var dz := StringName(stats.get("deploy_zone", ""))
+		if dz not in DEPLOY_ZONES:
+			errors.append("%s.deploy_zone: 必须是 DEPLOY_ZONES 之一 (%s)" % [card_id, "、".join(DEPLOY_ZONES)])
+	if bool(stats.get("deploy_pocket_requires_both_towers", false)) and (String(stats.get("deploy_zone", "own_side")) != "own_side" or card_type == &"spell"):
+		errors.append("%s.deploy_pocket_requires_both_towers: 仅支持 own_side 单位或建筑" % card_id)
+	if stats.has("deploy_ignore_structures") and typeof(stats.deploy_ignore_structures) != TYPE_BOOL:
+		errors.append("%s.deploy_ignore_structures: 必须是 bool" % card_id)
+	if stats.has("pre_deploy_time") and float(stats.get("pre_deploy_time", 0.0)) < 0.0:
+		errors.append("%s.pre_deploy_time: 必须 >= 0" % card_id)
+	if float(stats.get("pre_deploy_time", 0.0)) > 0.0 and card_type == &"spell":
+		errors.append("%s.pre_deploy_time: 法术不能使用单位预部署阶段" % card_id)
+	var pre_sweep_fields := ["pre_deploy_sweep_start", "pre_deploy_sweep_distance", "pre_deploy_sweep_radius", "pre_deploy_sweep_damage"]
+	var has_pre_sweep := false
+	for field in pre_sweep_fields:
+		has_pre_sweep = has_pre_sweep or stats.has(field)
+	if has_pre_sweep:
+		for field in pre_sweep_fields:
+			if not stats.has(field) or float(stats.get(field, -1.0)) <= 0.0:
+				errors.append("%s.%s: 预部署冲击波需要完整正数配置" % [card_id, field])
+		if card_type != &"unit" or float(stats.get("pre_deploy_sweep_start", 0.0)) >= float(stats.get("pre_deploy_time", 0.0)):
+			errors.append("%s: 预部署冲击波仅支持单位，起始时刻必须早于预部署结束" % card_id)
+		if float(stats.get("deploy_sweep_damage", 0.0)) > 0.0:
+			errors.append("%s: 预部署冲击波不可叠加生成瞬间横扫伤害" % card_id)
+	if String(stats.get("deployment_formation", "ring")) not in ["ring", "line", "polygon", "square", "depth_line"]:
+		errors.append("%s.deployment_formation: 仅支持 ring/line/polygon/square/depth_line" % card_id)
+	if String(stats.get("deployment_formation", "ring")) == "square" and int(stats.get("deployment_count", 0)) != 4:
+		errors.append("%s.deployment_formation: square 必须搭配4名成员" % card_id)
+	if String(stats.get("deployment_formation", "ring")) == "depth_line" and int(stats.get("deployment_count", 0)) != 2:
+		errors.append("%s.deployment_formation: depth_line 必须搭配2名成员" % card_id)
+	if String(stats.get("deployment_formation", "ring")) == "line" and (int(stats.get("deployment_count", 1)) - 1) * float(stats.get("deployment_spacing", 0.0)) + 2.0 * float(stats.get("radius", 0.0)) > ArenaRules.FIELD_W:
+		errors.append("%s: 横排宽度不能超过战场" % card_id)
+	if stats.has("deployment_count"):
+		if card_type != &"unit":
+			errors.append("%s.deployment_count: 只有单位卡可以编队部署" % card_id)
+		var deployment_count := int(stats.get("deployment_count", 0))
+		if deployment_count <= 0:
+			errors.append("%s.deployment_count: 必须 > 0" % card_id)
+		if deployment_count > 1 and float(stats.get("deployment_spacing", 0.0)) <= 0.0:
+			errors.append("%s.deployment_spacing: 编队数量大于 1 时必须 > 0" % card_id)
+	if stats.has("deployment_member_ids"):
+		var member_ids = stats.get("deployment_member_ids")
+		if card_type != &"unit":
+			errors.append("%s.deployment_member_ids: 只有单位卡可以使用异构编队" % card_id)
+		elif not member_ids is Array or (member_ids as Array).is_empty():
+			errors.append("%s.deployment_member_ids: 必须是非空成员卡 ID 数组" % card_id)
+		elif stats.has("deployment_count") and int(stats.get("deployment_count", 0)) != (member_ids as Array).size():
+			errors.append("%s.deployment_member_ids: 成员数量必须与 deployment_count 一致" % card_id)
+
+
+static func _validate_bleed(card_id: String, stats: Dictionary, errors: PackedStringArray) -> void:
+	if stats.has("bleed_max_stacks"):
+		if String(stats.get("type", "")) != "unit":
+			errors.append("%s: 流血被动只支持普通单位" % card_id)
+		for field in ["bleed_damage_per_second", "bleed_duration", "bleed_max_stacks", "blood_rage_duration", "blood_rage_damage_multiplier"]:
+			if float(stats.get(field, 0.0)) <= 0.0:
+				errors.append("%s.%s: 必须 > 0" % [card_id, field])
+		if float(stats.get("blood_rage_damage_multiplier", 0.0)) < 1.0:
+			errors.append("%s.blood_rage_damage_multiplier: 必须 >= 1" % card_id)
+		if float(stats.bleed_max_stacks) != int(stats.bleed_max_stacks):
+			errors.append("%s.bleed_max_stacks: 必须是整数" % card_id)
+		if float(stats.get("projectile_speed", 0.0)) > 0.0 or float(stats.get("splash_radius", 0.0)) > 0.0 or bool(stats.get("is_continuous_attack", false)) or not (stats.get("attack_extra_hit_delays", []) as Array).is_empty():
+			errors.append("%s: 流血消费者限定单体近战" % card_id)
+	elif ["bleed_damage_per_second", "bleed_duration", "blood_rage_duration", "blood_rage_damage_multiplier"].any(func(field): return stats.has(field)):
+		errors.append("%s: 流血配置需要完整字段" % card_id)
+
+
+static func _validate_death_form(card_id: String, stats: Dictionary, errors: PackedStringArray) -> void:
+	if stats.has("death_form_delay") or stats.has("death_form_decay_duration"):
+		for field in ["death_form_delay", "death_form_decay_duration"]:
+			if float(stats.get(field, 0.0)) <= 0.0:
+				errors.append("%s.%s: 必须 > 0" % [card_id, field])
+		if stats.get("transformed_stats", {}).is_empty() or String(stats.get("type", "")) != "unit":
+			errors.append("%s: 致死换形需要普通单位与 transformed_stats" % card_id)
