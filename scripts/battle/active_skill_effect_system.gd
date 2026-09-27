@@ -1,15 +1,11 @@
 class_name ActiveSkillEffectSystem
 extends RefCounted
 ## 主动技能 EffectExecution 执行器。
-## 技能资格、Command Buffer 与 Cast 时间线仍由 Main 编排；具体效果集中在这里扩展。
+## 资格归 ActiveSkillRoster，施法协调归 ActiveSkillLifecycle；这里只执行权威效果。
 
 var dash_strikes: Array[DashStrikeState] = []
-var frontal_effects: Array[Dictionary] = []
 var _next_result_id := 1
 var _resolved_results: Dictionary = {}
-var _seen_independent_fx: Dictionary = {}
-## 由可靠施法表现事件创建，纯视觉，不参与加盾结算。
-var shield_effects: Array[Dictionary] = []
 var _shield_explosions: Array[Dictionary] = []
 var expanding_shockwaves: Array[Dictionary] = []
 ## 施法者跟随型持续范围效果；每个 pulse 都读取施法者当前权威位置。
@@ -19,10 +15,12 @@ class CastHitState extends RefCounted:
 	var landed := false
 
 var _controller: Node2D
+var _presentation: SkillEffectPresentation
 
 
-func _init(controller: Node2D) -> void:
+func _init(controller: Node2D, presentation: SkillEffectPresentation) -> void:
 	_controller = controller
+	_presentation = presentation
 
 ## Cast Start 固化资源倍率和强/弱动作选择。返回值只进入本次权威时间线，
 ## 不回写 CardDB，也不会让动画决定伤害。
@@ -500,14 +498,14 @@ func apply_forward_area(source: Unit, skill: Dictionary, forward: Vector2 = Vect
 			"slow_duration": maxf(float(skill.get("zone_slow_duration", 0.0)), 0.0),
 			"slow_multiplier": clampf(float(skill.get("zone_slow_multiplier", 1.0)), 0.1, 1.0),
 		})
-		add_fixed_area_effect(center, radius, radius, zone_duration, source_team, &"frost_storm")
+		_presentation.present_fixed_area(center, radius, radius, zone_duration, source_team, &"frost_storm")
 		_controller.present_zone_audio(source, String(skill.get("visual_action", "")), center, zone_duration)
-		_controller.publish_skill_fx(frontal_effects.back())
+
 	# 落地爆闪由真实效果节点触发；预警自行结束不能伪造命中。
 	if float(skill.get("shockwave_duration", 0.0)) > 0.0:
 		var impact_shape := &"star_impact_strong" if bool(skill.get("full_resource", false)) else &"star_impact"
-		add_fixed_area_effect(center, radius, radius, 0.65, source_team, impact_shape)
-		_controller.publish_skill_fx(frontal_effects.back())
+		_presentation.present_fixed_area(center, radius, radius, 0.65, source_team, impact_shape)
+
 	var shockwave_duration := maxf(float(skill.get("shockwave_duration", 0.0)), 0.0)
 	if bool(skill.get("shockwave_full_only", false)) and not bool(skill.get("full_resource", false)):
 		shockwave_duration = 0.0
@@ -527,11 +525,11 @@ func apply_forward_area(source: Unit, skill: Dictionary, forward: Vector2 = Vect
 		"audio_source": context.audio_source,
 		"visual_action": String(skill.get("visual_action", "")),
 	})
-	add_fixed_area_effect(center, radius, end_radius, shockwave_duration, source_team, &"shockwave")
-	_controller.publish_skill_fx(frontal_effects.back())
+	_presentation.present_fixed_area(center, radius, end_radius, shockwave_duration, source_team, &"shockwave")
 
 
-func begin_forward_area_visual(source: Unit, skill: Dictionary, cast_forward: Vector2) -> void:
+
+func prepare_forward_area_result(source: Unit, skill: Dictionary, cast_forward: Vector2) -> void:
 	if skill.has("independent_result"): return
 	# 固定持续区域技能在 Impact 时直接生成正式区域；不提前绘制龙王式落点预警/星体。
 	if float(skill.get("zone_duration", 0.0)) > 0.0:
@@ -548,18 +546,9 @@ func begin_forward_area_visual(source: Unit, skill: Dictionary, cast_forward: Ve
 	var radius := maxf(float(skill.get("radius", 0.0)), 0.0)
 	_next_result_id += 1
 	var shape := &"target_circle_strong" if bool(skill.get("full_resource", false)) else &"target_circle"
-	add_fixed_area_effect(center, radius, radius, duration, source.team, shape)
+	_presentation.present_fixed_area(center, radius, radius, duration, source.team, shape)
 	# 固定结果预警不依赖施法者的动作、位移或存活。
-	_controller.publish_skill_fx(frontal_effects.back())
 
-
-func add_fixed_area_effect(center: Vector2, start_radius: float, end_radius: float, duration: float, p_team: int, shape: StringName) -> void:
-	frontal_effects.append({
-		"source_ref": null, "net_id": -1, "fixed_position": true,
-		"pos": center, "forward": Vector2.UP, "source_radius": 0.0,
-		"length": end_radius, "width": start_radius, "shape": String(shape),
-		"timer": duration, "duration": duration, "team": p_team,
-	})
 
 
 func _damage_result(source: Unit, target: Node2D, amount: float, context: Dictionary) -> bool:
@@ -581,29 +570,6 @@ func _damage_combatant(source: Unit, combatant: Node2D, amount: float, origin: V
 	return landed
 
 
-func begin_frontal_visual(source: Unit, skill: Dictionary, cast_forward: Vector2) -> void:
-	# 真实弹体通过 ProjectileSystem/快照绘制；这里只保留范围预警，避免重复画箭或卡牌。
-	if bool(skill.get("projectile_stop_on_hit", false)) or bool(skill.get("projectile_piercing", false)):
-		skill = skill.duplicate(true)
-		if bool(skill.get("projectile_piercing", false)) and String(skill.get("shape", "")) == "fan":
-			skill["shape"] = "projectile_fan"
-		else:
-			skill["projectile_count"] = 0
-	var duration := maxf(float(skill.get("impact_delay", 0.0)), 0.0)
-	var projectile_launch_delay := maxf(float(skill.get("projectile_launch_delay", 0.0)), 0.0)
-	var projectile_flight_duration := maxf(float(skill.get("projectile_flight_duration", 0.0)), 0.0)
-	var hit_delays = skill.get("prepared_hit_delays", [])
-	if hit_delays is Array:
-		for hit_delay in hit_delays:
-			duration = maxf(duration, float(hit_delay))
-	if projectile_flight_duration > 0.0:
-		duration = maxf(duration, projectile_launch_delay + projectile_flight_duration)
-	if duration <= 0.0:
-		return
-	add_frontal_effect(source, skill, duration, cast_forward)
-	_controller.publish_skill_fx(frontal_effects.back())
-
-
 func queue_shield_explosion(source: Unit, skill: Dictionary) -> void:
 	_shield_explosions.append({"source": weakref(source), "skill": skill})
 
@@ -618,9 +584,8 @@ func tick_effects(dt: float) -> void:
 		var explosion: Dictionary = pending.skill.duplicate(true)
 		explosion.erase("shield")
 		activate_nova(source, explosion)
-		add_frontal_effect(source, {"shape": "shield_explosion", "length": float(explosion.radius)}, 0.45, Vector2.UP)
-		frontal_effects.back()["fixed_position"] = true
-		_controller.publish_skill_fx(frontal_effects.back())
+		_presentation.present_shield_explosion(source, float(explosion.radius))
+
 		_controller.notify_unit_audio_event(source, &"shield:explode", source.global_position)
 	_shield_explosions.clear()
 	_tick_expanding_shockwaves(dt)
@@ -729,101 +694,6 @@ func frontal_forward(source: Unit) -> Vector2:
 	return forward.normalized()
 
 
-func add_frontal_effect(source: Unit, skill: Dictionary, duration: float, cast_forward: Vector2) -> void:
-	frontal_effects.append({
-		"status_source": source.status_source("skill_area"), "cast_serial": source.active_skill_cast_serial, "action_serial": source.get_visual_action_serial(),
-		"source_ref": weakref(source),
-		"net_id": source.net_id,
-		"pos": source.global_position,
-		"forward": cast_forward,
-		"source_radius": source.body_radius,
-		"length": maxf(float(skill.get("length", 0.0)), 0.0),
-		"width": maxf(float(skill.get("width", 0.0)), 0.0),
-		"shape": String(skill.get("shape", "rectangle")),
-		"near_width": maxf(float(skill.get("near_width", skill.get("width", 0.0))), 0.0),
-		"far_width": maxf(float(skill.get("far_width", skill.get("width", 0.0))), 0.0),
-		"arc_degrees": maxf(float(skill.get("arc_degrees", 0.0)), 0.0),
-		"projectile_count": maxi(int(skill.get("projectile_count", 0)), 0),
-		"projectile_visual": String(skill.get("projectile_visual", "arrow")),
-		"projectile_launch_delay": maxf(float(skill.get("projectile_launch_delay", 0.0)), 0.0),
-		"projectile_flight_duration": maxf(float(skill.get("projectile_flight_duration", 0.0)), 0.0),
-		"projectile_visual_height": maxf(float(skill.get("projectile_visual_height", 0.0)), 0.0),
-		"projectile_visual_forward_offset": maxf(float(skill.get("projectile_visual_forward_offset", source.body_radius)), 0.0),
-		"projectile_visual_width": maxf(float(skill.get("projectile_visual_width", 0.0)), 0.0),
-		"center_ratio": clampf(float(skill.get("center_ratio", 0.0)), 0.0, 1.0),
-		"center_width": maxf(float(skill.get("center_width", 0.0)), 0.0),
-		"fan_inner_arc": bool(skill.get("fan_inner_arc", false)),
-		"timer": duration,
-		"duration": duration,
-		"team": source.team,
-	})
-
-
-## 审判等持续范围技能的预警跟随施法者，只影响表现，不参与权威命中。
-func begin_continuous_area_visual(source: Unit, skill: Dictionary) -> void:
-	var duration := maxf(float(skill.get("cast_duration", skill.get("duration", 0.0))), 0.0)
-	var radius := maxf(float(skill.get("radius", 0.0)), 0.0)
-	if duration <= 0.0 or radius <= 0.0:
-		return
-	frontal_effects.append({
-		"status_source": source.status_source("skill_area"), "cast_serial": source.active_skill_cast_serial, "action_serial": source.get_visual_action_serial(),
-		"source_ref": weakref(source),
-		"net_id": source.net_id,
-		"fixed_position": false,
-		"pos": source.global_position,
-		"forward": Vector2.UP,
-		"source_radius": source.body_radius,
-		"length": radius,
-		"width": radius,
-		"shape": "continuous_area",
-		"timer": duration,
-		"duration": duration,
-		"team": source.team,
-	})
-	_controller.publish_skill_fx(frontal_effects.back())
-
-
-## RPC 只递交本次表现载荷，集合及其更新/清理仍由本系统持有。
-func show_skill_effect(event_id: int, payload: Dictionary) -> void:
-	if _seen_independent_fx.has(event_id): return
-	_seen_independent_fx[event_id] = true
-	show_network_frontal(payload)
-
-
-func show_network_frontal(payload: Dictionary) -> void:
-	var effect := payload.duplicate(true)
-	effect.source_ref = null
-	frontal_effects.append(effect)
-
-func tick_visuals(delta: float) -> void:
-	for index in range(shield_effects.size() - 1, -1, -1):
-		shield_effects[index].timer = maxf(0.0, float(shield_effects[index].timer) - delta)
-		if shield_effects[index].timer <= 0.0: shield_effects.remove_at(index)
-	var alive: Array[Dictionary] = []
-	for effect in frontal_effects:
-		var source = effect_source(effect)
-		if not bool(effect.get("fixed_position", false)) and source is Unit and (source.hp <= 0.0 or source.is_frozen() or int(effect.get("cast_serial", source.active_skill_cast_serial)) <= source.cancelled_skill_cast_serial or int(effect.get("action_serial", 2147483647)) <= source.cancelled_visual_serial):
-			continue
-		effect.timer = maxf(0.0, float(effect.timer) - delta)
-		if float(effect.timer) > 0.001:
-			alive.append(effect)
-	frontal_effects.assign(alive)
-
-
-func effect_source(effect: Dictionary):
-	var source_ref = effect.get("source_ref")
-	if source_ref is WeakRef:
-		var source = (source_ref as WeakRef).get_ref()
-		if source is Unit and is_instance_valid(source):
-			return source
-	var net_id := int(effect.get("net_id", -1))
-	if net_id >= 0:
-		var client_source = _controller.find_client_unit(net_id)
-		if client_source is Unit and is_instance_valid(client_source):
-			return client_source
-	return null
-
-
 func clear() -> void:
 	for dash in dash_strikes:
 		var source = dash.source_ref.get_ref()
@@ -831,20 +701,6 @@ func clear() -> void:
 	dash_strikes.clear()
 	_shield_explosions.clear()
 	_resolved_results.clear()
-	_seen_independent_fx.clear()
 	_next_result_id = 1
-	shield_effects.clear()
-	frontal_effects.clear()
 	expanding_shockwaves.clear()
 	continuous_area_effects.clear()
-
-
-func present_area_shield(card_id: String, form: int, position: Vector2) -> void:
-	var stats := PresentationConfig.for_form(CardDB.get_card(card_id), form)
-	for skill in stats.get("active_skills", []):
-		if String(skill.get("kind", "")) != "area_shield":
-			continue
-		# 射程从自身表面起算；波前到达自身半径 + 技能射程。
-		var radius := float(stats.get("radius", 0.0)) + float(skill.get("radius", 0.0))
-		shield_effects.append({"pos":position,"radius":radius,"duration":0.5,"timer":0.5})
-		return

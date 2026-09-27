@@ -29,7 +29,7 @@ func _run() -> void:
 			main._use_art_dev_active_skill()
 			for tick in 55:
 				main._sim_step(0.05)
-				main._active_skill_effect_system.tick_visuals(0.05)
+				main._skill_presentation.tick_visuals(0.05)
 				await create_timer(0.05).timeout
 				if tick in [4, 14, 20, 23, 27, 32, 42]:
 					await RenderingServer.frame_post_draw

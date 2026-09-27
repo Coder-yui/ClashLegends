@@ -13,6 +13,7 @@ func run(harness: Object, main: Node2D) -> void:
 
 func _check_starfall_and_falling_sky() -> void:
 	_main._active_skill_effect_system.clear()
+	_main._skill_presentation.clear()
 	var stats: Dictionary = CardDB.get_card("aurelionsol").duplicate(true)
 	stats["deploy_time"] = 0.0
 	var skill: Dictionary = stats.active_skills[0]
@@ -105,6 +106,7 @@ func _check_starfall_and_falling_sky() -> void:
 		if is_instance_valid(unit):
 			unit.free()
 	_main._active_skill_effect_system.clear()
+	_main._skill_presentation.clear()
 
 ## 龙王是首个空中 3D 单位：模型悬空，移动四段循环，吐息进入/循环与退出衔接均由表现状态驱动。
 func _check_aurelionsol_art_integration() -> void:
@@ -359,40 +361,44 @@ func _check_aurelionsol_direct_retarget() -> void:
 func _check_star_visual_lifecycle() -> void:
 	var system = _main._active_skill_effect_system
 	system.clear()
-	var source: Unit = _main._spawn_unit(0, "aurelionsol", Vector2(360, 1000), 0.0)
+	_main._skill_presentation.clear()
+	var source: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "aurelionsol", Vector2(360, 1000), {"deploy_time_override": 0.0}))
 	var skill: Dictionary = CardDB.active_skills_for("aurelionsol")[0].duplicate(true)
 	skill["full_resource"] = true
-	system.begin_forward_area_visual(source, skill, Vector2.UP)
-	_expect(system.frontal_effects.size() == 1 and system.frontal_effects[0].shape == "target_circle_strong", "满层天瀑采用独立强化星核预警")
-	var time_left: float = system.frontal_effects[0].timer
+	system.prepare_forward_area_result(source, skill, Vector2.UP)
+	_expect(_main._skill_presentation.frontal_effects.size() == 1 and _main._skill_presentation.frontal_effects[0].shape == "target_circle_strong", "满层天瀑采用独立强化星核预警")
+	var time_left: float = _main._skill_presentation.frontal_effects[0].timer
 	source.stun(0.5)
-	system.tick_visuals(0.2)
-	_expect(is_equal_approx(system.frontal_effects[0].timer, time_left - 0.2), "眩晕不暂停独立星辰坠落")
+	_main._skill_presentation.tick_visuals(0.2)
+	_expect(is_equal_approx(_main._skill_presentation.frontal_effects[0].timer, time_left - 0.2), "眩晕不暂停独立星辰坠落")
 	source.take_damage(100000)
-	system.tick_visuals(0.05)
-	_expect(system.frontal_effects.size() == 1 and is_equal_approx(system.frontal_effects[0].timer, time_left - 0.25), "施法者死亡后已创建星辰继续坠落")
+	_main._skill_presentation.tick_visuals(0.05)
+	_expect(_main._skill_presentation.frontal_effects.size() == 1 and is_equal_approx(_main._skill_presentation.frontal_effects[0].timer, time_left - 0.25), "施法者死亡后已创建星辰继续坠落")
 	source.free()
 	skill.erase("independent_result")
 	for strong in [false, true]:
 		system.clear()
-		source = _main._spawn_unit(0, "aurelionsol", Vector2(360, 1000), 0.0)
+		_main._skill_presentation.clear()
+		source = _main._spawn_unit(UnitSpawnRequest.new(0, "aurelionsol", Vector2(360, 1000), {"deploy_time_override": 0.0}))
 		skill["full_resource"] = strong
 		system.apply_forward_area(source, skill, Vector2.UP)
 		var shape := "star_impact_strong" if strong else "star_impact"
-		_expect(system.frontal_effects.any(func(effect): return effect.shape == shape), "真实效果执行触发对应星辰爆闪")
-		_expect(system.frontal_effects.any(func(effect): return effect.shape == "shockwave") == strong, "只有满层真实命中阶段生成全场扩散波")
-		system.tick_visuals(3.0)
-		_expect(system.frontal_effects.is_empty(), "落地与冲击波表现自动消散")
+		_expect(_main._skill_presentation.frontal_effects.any(func(effect): return effect.shape == shape), "真实效果执行触发对应星辰爆闪")
+		_expect(_main._skill_presentation.frontal_effects.any(func(effect): return effect.shape == "shockwave") == strong, "只有满层真实命中阶段生成全场扩散波")
+		_main._skill_presentation.tick_visuals(3.0)
+		_expect(_main._skill_presentation.frontal_effects.is_empty(), "落地与冲击波表现自动消散")
 		source.free()
 	system.clear()
+	_main._skill_presentation.clear()
 
 func _check_independent_star_result() -> void:
 	for team in [0, 1]:
 		for remove_source in [false, true]:
 			_main._commands.clear_impacts()
 			_main._active_skill_effect_system.clear()
-			var source: Unit = _main._spawn_unit(team, "aurelionsol", Vector2(360, 1000), 0)
-			var target: Unit = _main._spawn_unit(1 - team, "garen", Vector2(360, 825), 0)
+			_main._skill_presentation.clear()
+			var source: Unit = _main._spawn_unit(UnitSpawnRequest.new(team, "aurelionsol", Vector2(360, 1000), {"deploy_time_override": 0}))
+			var target: Unit = _main._spawn_unit(UnitSpawnRequest.new(1 - team, "garen", Vector2(360, 825), {"deploy_time_override": 0}))
 			target.max_hp = 10000
 			target.hp = 10000
 			var skill: Dictionary = CardDB.active_skills_for("aurelionsol")[0].duplicate(true)
@@ -412,9 +418,10 @@ func _check_independent_star_result() -> void:
 			if is_instance_valid(source): source.free()
 			target.free()
 	_main._active_skill_effect_system.clear()
+	_main._skill_presentation.clear()
 	for rate in [1.0, 0.5]:
-		var source: Unit = _main._spawn_unit(0, "aurelionsol", Vector2(360, 900), 0)
-		var target: Unit = _main._spawn_unit(1, "garen", Vector2(360, 800), 0)
+		var source: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "aurelionsol", Vector2(360, 900), {"deploy_time_override": 0}))
+		var target: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(360, 800), {"deploy_time_override": 0}))
 		target.hp = 1000
 		source._target = target
 		source.apply_blind(10)

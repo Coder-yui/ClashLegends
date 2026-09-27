@@ -15,8 +15,8 @@ func _run() -> void:
 	main._ai.enabled = false
 	main._minion_waves_enabled = false
 	for tower in main._towers: tower.can_attack = false
-	var a: Unit = main._spawn_unit(0, "garen", Vector2(320, 880), 0)
-	var b: Unit = main._spawn_unit(1, "garen", Vector2(320, 800), 0)
+	var a: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "garen", Vector2(320, 880), {"deploy_time_override": 0}))
+	var b: Unit = main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(320, 800), {"deploy_time_override": 0}))
 	var units: Array[Unit] = [a, b]
 	for tick in 60:
 		a._prev_pos = a.position
@@ -30,12 +30,12 @@ func _run() -> void:
 		if tick in [0, 15, 30, 59]: await _capture("opposing-%02d" % tick)
 	a.free()
 	b.free()
-	var target: Unit = main._spawn_unit(1, "garen", Vector2(360, 850), 0)
+	var target: Unit = main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(360, 850), {"deploy_time_override": 0}))
 	target.max_hp = 100000
 	target.hp = target.max_hp
 	target.freeze(100)
-	var front: Unit = main._spawn_unit(0, "sett", Vector2(360, 925), 0)
-	var rear: Unit = main._spawn_unit(0, "sett", Vector2(360, 981), 0)
+	var front: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "sett", Vector2(360, 925), {"deploy_time_override": 0}))
+	var rear: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "sett", Vector2(360, 981), {"deploy_time_override": 0}))
 	front._target = target
 	rear._target = target
 	for tick in 80:
@@ -47,8 +47,8 @@ func _run() -> void:
 	rear.free()
 	target.free()
 	var tower: Tower = main._towers[2]
-	var attacker: Unit = main._spawn_unit(0, "garen", tower.position + Vector2.DOWN * 180.0, 0)
-	var defender: Unit = main._spawn_unit(1, "masteryi", attacker.position + Vector2.UP * 45.0, 0)
+	var attacker: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "garen", tower.position + Vector2.DOWN * 180.0, {"deploy_time_override": 0}))
+	var defender: Unit = main._spawn_unit(UnitSpawnRequest.new(1, "masteryi", attacker.position + Vector2.UP * 45.0, {"deploy_time_override": 0}))
 	attacker._target = tower
 	defender._target = attacker
 	for tick in 60:

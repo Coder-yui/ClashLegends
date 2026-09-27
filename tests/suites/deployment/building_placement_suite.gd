@@ -37,7 +37,7 @@ func run(harness: Object) -> void:
 	harness._expect(buildings.size() == 3 and buildings[2].global_position != pos, "预部署结束也执行落地挪位")
 	# 全场被占满时保留命令，空间恢复后兑现，不丢卡。
 	for unit in buildings: unit.free()
-	var blocker: Unit = main._spawn_unit(0, "tombstone", Vector2(360, 640))
+	var blocker: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "tombstone", Vector2(360, 640)))
 	blocker.footprint_tiles = Vector2i(100, 100)
 	var waiting: Array = main._spawn_card_units(0, "sun_disc", pos)
 	harness._expect(waiting.is_empty() and main._commands.inspect_deployments().size() == 1, "全场无合法落点时保留命令等待")

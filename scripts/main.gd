@@ -22,13 +22,7 @@ const COMMAND_MAX_LATENCY_TICKS := COMMAND_DELAY_TICKS * 2
 ## 允许少量客户端时钟领先 Host；这只是校验窗口，不是客户端执行权。
 const COMMAND_CLOCK_FUTURE_TOLERANCE := 2
 ## 水晶兵线由主机固定 tick 驱动：普通阶段 5/50/95 秒，2:05 切换炮车并改为每 30 秒一波，第二只延迟 0.5 秒。
-const FIRST_MINION_WAVE_TIME := 5.0
-const NORMAL_MINION_WAVE_INTERVAL := 45.0
-const DOUBLE_MINION_WAVE_INTERVAL := 30.0
-const MINION_WAVE_STAGGER := 0.5
 const MINION_SPAWN_X_OFFSET := 3.0 * ArenaRules.TILE_SIZE
-const MINION_WAVE_NORMAL := "normal"
-const MINION_WAVE_SIEGE := "siege"
 
 # 联机
 const NET_PORT := 39152
@@ -56,6 +50,8 @@ var _match_started := false  # 比赛是否已开始（联机时主机需等对�
 ## 治疗术淡黄光效区域；治疗本身立即结算，这里只保存表现。
 var _spell_system: RefCounted
 ## 纳尔 Spell2：固定模拟延迟到手掌触地才结算；范围框是独立纯表现数据。
+var _skill_lifecycle: ActiveSkillLifecycle
+var _skill_presentation: SkillEffectPresentation
 var _active_skill_effect_system: RefCounted
 var _projectile_system: ProjectileSystem
 
@@ -81,9 +77,7 @@ var _deployment_preview_visible := false
 ## 两段式单位部署：第一段只有落点提示，第二段才生成单位并进入 Unit.deploy_time。
 ## 客户端也复用这份表现队列，直到收到权威生成 RPC 后移除标记。
 ## 兵线第二只单位的权威延迟队列；不经过手牌 0.5 秒部署队列，也不扣金币。
-var _pending_lane_minions: Array[Dictionary] = []
-var _battle_elapsed := 0.0
-var _next_minion_wave_time := FIRST_MINION_WAVE_TIME
+var _minion_waves := MinionWaveSchedule.new()
 var _minion_waves_enabled := true
 # 本次对战选定的 8 张卡组（空表示未指定，随机取）
 var _deck: Array = []
@@ -169,12 +163,14 @@ func _ready() -> void:
 	_workbench.pause_battle = _pause_workbench_battle
 	battle_context = BattleContext.new(self)
 	_spell_system = SPELL_SYSTEM_SCRIPT.new(self)
-	_active_skill_effect_system = ACTIVE_SKILL_EFFECT_SYSTEM_SCRIPT.new(self)
+	_skill_presentation = SkillEffectPresentation.new(self)
+	_active_skill_effect_system = ACTIVE_SKILL_EFFECT_SYSTEM_SCRIPT.new(self, _skill_presentation)
+	_skill_lifecycle = ActiveSkillLifecycle.new(_active_skill_effect_system, _skill_presentation, _commands, _combat)
 	_commands.impact = _active_skill_effect_system.apply
 	_commands.cast_end = _active_skill_effect_system.apply_cast_end
 	_effects_view = BattleEffects2D.new()
 	_effects_view.spells = _spell_system
-	_effects_view.skills = _active_skill_effect_system
+	_effects_view.skills = _skill_presentation
 	add_child(_effects_view)
 	child_entered_tree.connect(_provide_battle_context)
 	_projectile_system = ProjectileSystem.new()
@@ -1210,6 +1206,7 @@ func clear_preview_battle() -> void:
 	if _audio_manager != null:
 		_audio_manager.begin_battle()
 	_active_skill_effect_system.clear()
+	_skill_presentation.clear()
 	_sync_art_dev_panel_state()
 	queue_redraw()
 
@@ -1338,7 +1335,7 @@ func spawn_summoned(p_team: int, card_id: String, pos: Vector2, deploy_time_over
 		return null
 	if not stats.get("is_air", false):
 		pos = _nearest_valid_ground_spawn(pos, stats.get("radius", 14.0), p_team)
-	return _spawn_unit(p_team, card_id, pos, deploy_time_override, -1, -1, -1, visual_transition, death_replacement_charges_override)
+	return _spawn_unit(UnitSpawnRequest.new(p_team, card_id, pos, {"deploy_time_override": deploy_time_override, "visual_transition": visual_transition, "death_replacement_charges_override": death_replacement_charges_override}))
 
 func _nearest_valid_ground_spawn(desired: Vector2, radius: float, p_team: int) -> Vector2:
 	if is_ground_position_walkable(desired, radius):
@@ -1669,7 +1666,14 @@ func _spawn_card_units(team: int, card_id: String, pos: Vector2, deploy_time_ove
 		member_pos.x = clampf(member_pos.x, member_radius, ArenaRules.FIELD_W - member_radius)
 		member_pos.y = clampf(member_pos.y, member_radius, ArenaRules.FIELD_H - member_radius)
 		var skill_source_card_id := card_id
-		var member := _spawn_unit(team, member_card_id, member_pos, deploy_time_override, member_slot, pre_deploy_id, group_id, "", -1, built_on_tower_ruin, skill_source_card_id)
+		var member := _spawn_unit(UnitSpawnRequest.new(team, member_card_id, member_pos, {
+			"deploy_time_override": deploy_time_override,
+			"active_slot": member_slot,
+			"pre_deploy_id": pre_deploy_id,
+			"deployment_group_id": group_id,
+			"built_on_tower_ruin": built_on_tower_ruin,
+			"active_skill_card_id_override": skill_source_card_id,
+		}))
 		if member != null:
 			if _workbench.enabled and mirror_generation >= 0: member.set_meta("workbench_no_skill", active_slot < 0)
 			spawned.append(member)
@@ -1708,14 +1712,17 @@ func _deployment_formation_offsets(count: int, spacing: float, team: int, format
 	return offsets
 
 
-func _spawn_unit(team: int, card_id: String, pos: Vector2, deploy_time_override: float = -1.0, active_slot: int = -1, pre_deploy_id: int = -1, deployment_group_id: int = -1, visual_transition: String = "", death_replacement_charges_override: int = -1, built_on_tower_ruin: bool = false, active_skill_card_id_override: String = "") -> Unit:
+func _spawn_unit(request: UnitSpawnRequest) -> Unit:
+	var team := request.team
+	var card_id := request.card_id
+	var pos := request.position
 	var stats: Dictionary = CardDB.get_unit_stats(card_id)
 	if stats.is_empty():
 		push_error("尝试生成不存在的单位：%s" % card_id)
 		return null
-	if deploy_time_override >= 0.0:
+	if request.deploy_time_override >= 0.0:
 		stats = stats.duplicate()
-		stats["deploy_time"] = deploy_time_override
+		stats["deploy_time"] = request.deploy_time_override
 	# 部署资格按网格统一，但真实体积从落地开始生效。若格心与河岸、桥边、塔或水晶重叠，
 	# 先把地面移动单位推到最近的完整合法位置，再加入场景，避免第一帧就被静态碰撞锁死。
 	if not bool(stats.get("is_air", false)) and not bool(stats.get("is_building", false)):
@@ -1723,15 +1730,15 @@ func _spawn_unit(team: int, card_id: String, pos: Vector2, deploy_time_override:
 
 	var u := Unit.new()
 	u.card_id = card_id
-	u.active_skill_card_id = card_id if active_skill_card_id_override.is_empty() else active_skill_card_id_override
-	u.deployment_group_id = deployment_group_id
-	u.visual_spawn_transition = StringName(visual_transition)
-	u.built_on_tower_ruin = built_on_tower_ruin
+	u.active_skill_card_id = card_id if request.active_skill_card_id_override.is_empty() else request.active_skill_card_id_override
+	u.deployment_group_id = request.deployment_group_id
+	u.visual_spawn_transition = StringName(request.visual_transition)
+	u.built_on_tower_ruin = request.built_on_tower_ruin
 	u.position = pos
 	u.setup(team, stats, stats.name)
-	if death_replacement_charges_override >= 0:
-		u.death_replacement_charges = death_replacement_charges_override
-	if deploy_time_override >= 0.0:
+	if request.death_replacement_charges_override >= 0:
+		u.death_replacement_charges = request.death_replacement_charges_override
+	if request.deploy_time_override >= 0.0:
 		# 自动兵线不经过卡牌部署读条，生成当帧即可行动；仍标记为新落地单位供碰撞分离使用。
 		u._just_deployed = true
 	u.lifecycle_birth_tick = _sim_tick_id if _sim_step_active else -1
@@ -1749,16 +1756,16 @@ func _spawn_unit(team: int, card_id: String, pos: Vector2, deploy_time_override:
 		_next_net_id += 1
 		_net_units[u.net_id] = u
 	var skill_card_id := u.active_skill_card_id
-	if active_slot >= 0 and active_slot < 2 and not CardDB.active_skills_for(skill_card_id).is_empty():
+	if request.active_slot >= 0 and request.active_slot < 2 and not CardDB.active_skills_for(skill_card_id).is_empty():
 		u.active_ability_id = u.net_id if u.net_id >= 0 else _next_active_ability_id
-		u.active_ability_slot = active_slot
+		u.active_ability_slot = request.active_slot
 		if u.net_id < 0:
 			_next_active_ability_id += 1
 		_register_active_skill(u, skill_card_id, team)
 	if mode == "host":
-		var spawn_args := [card_id, team, pos, u.net_id, deploy_time_override, u.active_ability_id, u.active_ability_slot, pre_deploy_id, deployment_group_id, visual_transition, death_replacement_charges_override, built_on_tower_ruin, u.active_skill_card_id]
+		var spawn_args := [card_id, team, pos, u.net_id, request.deploy_time_override, u.active_ability_id, u.active_ability_slot, request.pre_deploy_id, request.deployment_group_id, request.visual_transition, request.death_replacement_charges_override, request.built_on_tower_ruin, u.active_skill_card_id]
 		_snapshot_system.register_spawn(spawn_args)
-		_rpc_spawn_unit.rpc_id(_session.opponent_id, card_id, team, pos, u.net_id, deploy_time_override, u.active_ability_id, u.active_ability_slot, pre_deploy_id, deployment_group_id, visual_transition, death_replacement_charges_override, built_on_tower_ruin, u.active_skill_card_id, _snapshot_system.lifecycle.session_id, _sim_tick_id, _snapshot_system.lifecycle.revision)
+		_rpc_spawn_unit.rpc_id(_session.opponent_id, card_id, team, pos, u.net_id, request.deploy_time_override, u.active_ability_id, u.active_ability_slot, request.pre_deploy_id, request.deployment_group_id, request.visual_transition, request.death_replacement_charges_override, request.built_on_tower_ruin, u.active_skill_card_id, _snapshot_system.lifecycle.session_id, _sim_tick_id, _snapshot_system.lifecycle.revision)
 	return u
 
 func _register_active_skill(unit: Unit, card_id: String, p_team: int) -> void:
@@ -1956,106 +1963,28 @@ func _activate_active_skill(ability_id: int, expected_team: int = -1) -> bool:
 	return true
 
 func _start_active_skill_cast(unit: Unit, skill: Dictionary) -> bool:
-	if unit != null and (unit.is_active_skill_rush_locked() or unit.death_form.used): return false
-	var prepared_skill: Dictionary = _active_skill_effect_system.prepare_cast(unit, skill)
-	if StringName(prepared_skill.get("kind", "")) == &"dual_form":
-		prepared_skill = _active_skill_effect_system.prepare_dual_form_cast(unit, prepared_skill)
-	if prepared_skill.is_empty():
-		return false
-	# 先发布 Cast Start，再按 impact_delay 进入固定 Tick 队列；动画回调不参与结算。
-	_active_skill_effect_system.apply_cast_start(unit, prepared_skill)
-	# 瞬时主动技能可能没有 visual_action，不能依赖表现动作序号触发起手声。
-	var audio_card_id := unit.active_skill_card_id if not unit.active_skill_card_id.is_empty() else unit.card_id
-	var configured_audio := PresentationConfig.audio_for(CardDB.get_card(audio_card_id), unit.team, unit.form_index)
-	var configured_events: Variant = configured_audio.get("events", {})
-	if configured_events is Dictionary and configured_events.has("active:cast"):
-		notify_unit_audio_event(unit, &"active:cast", unit.get_visual_screen_position())
-	_begin_configured_active_skill_cast(unit, prepared_skill)
-	_queue_active_skill_impact(unit, prepared_skill, maxf(float(prepared_skill.get("impact_delay", 0.0)), 0.0))
-	return true
-
-func _begin_configured_active_skill_cast(unit: Unit, skill: Dictionary) -> void:
-	var cast_duration := maxf(float(skill.get("cast_duration", 0.0)), 0.0)
-	var action_name := StringName(skill.get("visual_action", ""))
-	if cast_duration <= 0.0 and action_name == &"":
-		return
-	var cast_locks: Array = skill.get("cast_locks", Unit.DEFAULT_CAST_LOCKS)
-	var cast_facing: Vector2 = skill.get("cast_forward", unit.get_visual_facing_direction())
-	if cast_duration > 0.0:
-		unit.begin_active_skill_cast(cast_duration, cast_facing, cast_locks)
-	if action_name != &"":
-		unit.play_visual_action(action_name, cast_duration)
-	if StringName(skill.get("kind", "")) in [&"frontal", &"dual_form"]:
-		var cast_forward := unit.active_skill_cast_facing
-		if cast_forward.length_squared() < 0.001:
-			cast_forward = unit.get_visual_facing_direction()
-		_active_skill_effect_system.begin_frontal_visual(unit, skill, cast_forward)
-	elif StringName(skill.get("kind", "")) == &"forward_area":
-		var cast_forward := unit.active_skill_cast_facing
-		if cast_forward.length_squared() < 0.001:
-			cast_forward = unit.get_visual_facing_direction()
-		_active_skill_effect_system.begin_forward_area_visual(unit, skill, cast_forward)
-	elif StringName(skill.get("kind", "")) == &"continuous_area":
-		_active_skill_effect_system.begin_continuous_area_visual(unit, skill)
+	return _skill_lifecycle.start(unit, skill)
 
 ## 水晶兵线入口。只在单机/主机固定模拟调用，最终仍统一走 _spawn_unit 与现有 RPC。
 func _tick_minion_waves(dt: float) -> void:
-	var waiting: Array[Dictionary] = []
-	var ready: Array[Dictionary] = []
-	for minion in _pending_lane_minions:
-		var time_left := float(minion.time_left) - dt
-		if time_left > 0.001:
-			minion.time_left = time_left
-			waiting.append(minion)
+	_apply_minion_entries(_minion_waves.advance(dt, _match_rules.overtime, _enemy_lane_tower_destroyed))
+
+func _spawn_minion_wave(wave_type: String = MinionWaveSchedule.MINION_WAVE_NORMAL) -> void:
+	_apply_minion_entries(_minion_waves.wave(wave_type, _enemy_lane_tower_destroyed))
+
+func _apply_minion_entries(entries: Array[Dictionary]) -> void:
+	for entry in entries:
+		if entry.has("announcement"):
+			_present_match_announcement(entry.announcement)
 		else:
-			ready.append(minion)
-	_pending_lane_minions = waiting
-	for minion in ready:
-		_spawn_lane_minion(int(minion.team), int(minion.lane), String(minion.card_id))
-
-	_battle_elapsed += dt
-	while true:
-		# 双倍金币阶段是独立的兵线事件：取消普通阶段原本会落在 2:20 的下一波，
-		# 在 2:05 立即出炮车线，之后再从 2:05 以 30 秒为周期排程。
-		if not _match_rules.overtime and _battle_elapsed + 0.001 >= DOUBLE_ELIXIR_START_TIME \
-			and _next_minion_wave_time >= DOUBLE_ELIXIR_START_TIME \
-			and _next_minion_wave_time < DOUBLE_ELIXIR_START_TIME + DOUBLE_MINION_WAVE_INTERVAL:
-			_spawn_minion_wave(MINION_WAVE_SIEGE)
-			_next_minion_wave_time = DOUBLE_ELIXIR_START_TIME + DOUBLE_MINION_WAVE_INTERVAL
-			continue
-		if _battle_elapsed + 0.001 < _next_minion_wave_time:
-			break
-		# 正赛结束和加时结束都是硬边界：自动 scheduler 不能生成 3:05/5:05 兵线。
-		if not _match_rules.overtime and _next_minion_wave_time >= MATCH_TIME:
-			break
-		if _match_rules.overtime and _next_minion_wave_time >= MATCH_TIME + OVERTIME_TIME:
-			break
-		var wave_type := MINION_WAVE_SIEGE if _match_rules.overtime or _next_minion_wave_time >= DOUBLE_ELIXIR_START_TIME else MINION_WAVE_NORMAL
-		if is_equal_approx(_next_minion_wave_time, FIRST_MINION_WAVE_TIME):
-			_present_match_announcement("minions_spawn")
-		_spawn_minion_wave(wave_type)
-		_next_minion_wave_time += DOUBLE_MINION_WAVE_INTERVAL if wave_type == MINION_WAVE_SIEGE else NORMAL_MINION_WAVE_INTERVAL
-
-func _spawn_minion_wave(wave_type: String = MINION_WAVE_NORMAL) -> void:
-	var second_card := "siege_minion" if wave_type == MINION_WAVE_SIEGE else "ranged_minion"
-	# 固定顺序保证相同 tick 的出生与碰撞结果不依赖节点遍历或随机数。
-	for team in [0, 1]:
-		for lane in [0, 1]:
-			var front_card := "super_minion" if _enemy_lane_tower_destroyed(team, lane) else "melee_minion"
-			_spawn_lane_minion(team, lane, front_card)
-			_pending_lane_minions.append({
-				"team": team,
-				"lane": lane,
-				"card_id": second_card,
-				"time_left": MINION_WAVE_STAGGER,
-			})
+			_spawn_lane_minion(int(entry.team), int(entry.lane), String(entry.card_id))
 
 func _spawn_lane_minion(team: int, lane: int, card_id: String) -> Unit:
 	var x := ArenaRules.FIELD_W * 0.5 + (-MINION_SPAWN_X_OFFSET if lane == 0 else MINION_SPAWN_X_OFFSET)
 	var y := 29.0 * ArenaRules.TILE_SIZE if team == 0 else 3.0 * ArenaRules.TILE_SIZE
 	var stats: Dictionary = CardDB.get_card(card_id)
 	var pos := _nearest_valid_ground_spawn(Vector2(x, y), float(stats.radius), team)
-	return _spawn_unit(team, card_id, pos, 0.0)
+	return _spawn_unit(UnitSpawnRequest.new(team, card_id, pos, {"deploy_time_override": 0.0}))
 
 func _enemy_lane_tower_destroyed(team: int, lane: int) -> bool:
 	# _towers 顺序：蓝左、蓝右、红左、红右。己方对应路只看敌方同侧公主塔。
@@ -2064,8 +1993,8 @@ func _enemy_lane_tower_destroyed(team: int, lane: int) -> bool:
 	return tower_index >= 0 and tower_index < 4 and _towers[tower_index].hp <= 0.0
 
 func _is_double_elixir_phase() -> bool:
-	# 正赛 2:05 起双倍金币；加时全程保持双倍。match_timer 兼容客户端不推进 _battle_elapsed 的情况。
-	return _match_rules.overtime or _battle_elapsed + 0.001 >= DOUBLE_ELIXIR_START_TIME or _match_rules.time_left <= DOUBLE_ELIXIR_TIME + 0.001
+	# 正赛 2:05 起双倍金币；加时全程保持双倍。match_timer 兼容客户端不推进 _minion_waves.elapsed 的情况。
+	return _match_rules.overtime or _minion_waves.elapsed + 0.001 >= DOUBLE_ELIXIR_START_TIME or _match_rules.time_left <= DOUBLE_ELIXIR_TIME + 0.001
 
 ## 解除导航网格阻挡格（建筑卡死亡 / 塔被摧毁时调用）
 func unblock_nav_cells(cells: Array) -> void:
@@ -2190,7 +2119,7 @@ func _sim_step(dt: float) -> void:
 			_deploy_card(0, "ashe", Vector2(300, 700))
 			_deploy_card(0, "aurelionsol", Vector2(410, 700))
 			_deploy_card(1, "xin", Vector2(300, 580))
-			var auto_gnar := _spawn_unit(0, "gnar", Vector2(520, 760), 0.0)
+			var auto_gnar := _spawn_unit(UnitSpawnRequest.new(0, "gnar", Vector2(520, 760), {"deploy_time_override": 0.0}))
 			preview_active_skill(auto_gnar, CardDB.active_skills_for("gnar")[0])
 			_auto_gnar_revert_unit = auto_gnar
 			_auto_gnar_revert_timer = 2.4
@@ -2214,14 +2143,14 @@ func _process(delta: float) -> void:
 		_projectile_system.tick_client_interpolation(delta)
 		_tick_card_pre_deploy_visuals(delta)
 		_tick_slow_effect_visuals(delta)
-		_active_skill_effect_system.tick_visuals(delta)
+		_skill_presentation.tick_visuals(delta)
 		queue_redraw()
 		return
 	if _workbench.enabled:
 		if _art_dev_panel != null and not _art_dev_panel.accepts_battle_input():
 			return
 		_tick_slow_effect_visuals(delta)
-		_active_skill_effect_system.tick_visuals(delta)
+		_skill_presentation.tick_visuals(delta)
 		queue_redraw()
 		_simulation_clock.advance(delta)
 		_sync_art_dev_panel_state()
@@ -2230,7 +2159,7 @@ func _process(delta: float) -> void:
 		return
 	# 更新冰冻视觉效果
 	_tick_slow_effect_visuals(delta)
-	_active_skill_effect_system.tick_visuals(delta)
+	_skill_presentation.tick_visuals(delta)
 	queue_redraw()
 	# 主机：定时向客户端发送快照
 	if mode == "host":
@@ -2249,10 +2178,9 @@ func _tick_match_rules(dt: float) -> void:
 		_end_game(int(outcome.winner_team), String(outcome.reason))
 
 func _on_overtime_started() -> void:
-	_battle_elapsed = maxf(_battle_elapsed, MATCH_TIME)
-	_next_minion_wave_time = MATCH_TIME + DOUBLE_MINION_WAVE_INTERVAL
+	_minion_waves.begin_overtime()
 	if _minion_waves_enabled and not _workbench.enabled:
-		_spawn_minion_wave(MINION_WAVE_SIEGE)
+		_spawn_minion_wave(MinionWaveSchedule.MINION_WAVE_SIEGE)
 	_update_timer_label()
 	_update_elixir_rate()
 
@@ -2331,10 +2259,11 @@ func _end_game(winner_team: int, reason: String) -> void:
 	_session.finish(reason == "disconnect")
 	_match_rules.finish()
 	_commands.clear()
-	_pending_lane_minions.clear()
+	_minion_waves.clear()
 	_projectile_system.clear_all()
 	_spell_system.clear()
 	_active_skill_effect_system.clear()
+	_skill_presentation.clear()
 	_clear_deployment_preview()
 	if _hand != null:
 		_hand.hide()
@@ -2690,7 +2619,7 @@ func _rpc_frontal_skill_fx(epoch: String, net_id: int, pos: Vector2, forward: Ve
 		return
 	if mode != "client" or game_over:
 		return
-	_active_skill_effect_system.show_network_frontal({
+	_skill_presentation.show_network_frontal({
 		"source_ref": null,
 		"net_id": net_id,
 		"fixed_position": shape in ["target_circle", "target_circle_strong", "star_impact", "star_impact_strong", "shockwave", "frost_storm"],
@@ -2846,7 +2775,7 @@ func _play_card_event(event_id: int, card_id: String, cue: String, pos: Vector2,
 		if not game_over and _audio_manager != null: _audio_manager.play_match_event(cue)
 		return
 	if cue == "shield:cast":
-		_active_skill_effect_system.present_area_shield(card_id, form, pos)
+		_skill_presentation.present_area_shield(card_id, form, pos)
 	if _audio_manager != null:
 		_audio_manager.play_card_event(card_id, cue, pos, form, team)
 
@@ -2924,7 +2853,7 @@ func publish_skill_fx(payload: Dictionary) -> void:
 @rpc("authority", "call_remote", "reliable")
 func _rpc_skill_fx(epoch: String, event_id: int, payload: Dictionary) -> void:
 	if not _session.accepts(1, epoch, MatchSession.Phase.RUNNING) or game_over or mode != "client": return
-	_active_skill_effect_system.show_skill_effect(event_id, payload)
+	_skill_presentation.show_skill_effect(event_id, payload)
 	if _auto_test and not _auto_gnar_skill_fx_seen:
 		_auto_gnar_skill_fx_seen = true
 		print("[测试] 客户端已收到固定方向技能范围表现")

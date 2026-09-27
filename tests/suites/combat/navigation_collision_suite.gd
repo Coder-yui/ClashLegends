@@ -595,7 +595,7 @@ func _check_direct_approach_after_bridge() -> void:
 		for right_lane in [false, true]:
 			var x := 553.0 if right_lane else 167.0
 			var pos := Vector2(x, 580.0 if team == 0 else 700.0)
-			var unit: Unit = _main._spawn_unit(team, "ashe", pos, 0.0)
+			var unit: Unit = _main._spawn_unit(UnitSpawnRequest.new(team, "ashe", pos, {"deploy_time_override": 0.0}))
 			unit._target = unit._find_nearest_tower()
 			unit._path = PackedVector2Array([pos, Vector2(530.0 if right_lane else 190.0, 490.0 if team == 0 else 790.0)])
 			unit._path_index = 1
@@ -610,8 +610,8 @@ func _check_direct_approach_after_bridge() -> void:
 ## 固定移动意图隔离“迎面经过”与索敌停步；真实交战另在跟随用例覆盖。
 func _check_opposing_march() -> void:
 	for reverse_ids in [false, true]:
-		var a: Unit = _main._spawn_unit(0, "garen", Vector2(320, 880), 0)
-		var b: Unit = _main._spawn_unit(1, "garen", Vector2(320, 800), 0)
+		var a: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "garen", Vector2(320, 880), {"deploy_time_override": 0}))
+		var b: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(320, 800), {"deploy_time_override": 0}))
 		if reverse_ids:
 			var saved := a.net_id
 			a.net_id = b.net_id
@@ -635,11 +635,11 @@ func _check_opposing_march() -> void:
 func _check_unit_follower() -> void:
 	for team in [0, 1]:
 		var forward := Vector2.UP if team == 0 else Vector2.DOWN
-		var target: Unit = _main._spawn_unit(1 - team, "garen", Vector2(360, 850), 0)
+		var target: Unit = _main._spawn_unit(UnitSpawnRequest.new(1 - team, "garen", Vector2(360, 850), {"deploy_time_override": 0}))
 		target.hp = 100000
 		target.freeze(100)
-		var front: Unit = _main._spawn_unit(team, "sett", target.position - forward * 75.0, 0)
-		var rear: Unit = _main._spawn_unit(team, "sett", front.position - forward * 56.0, 0)
+		var front: Unit = _main._spawn_unit(UnitSpawnRequest.new(team, "sett", target.position - forward * 75.0, {"deploy_time_override": 0}))
+		var rear: Unit = _main._spawn_unit(UnitSpawnRequest.new(team, "sett", front.position - forward * 56.0, {"deploy_time_override": 0}))
 		front._target = target
 		rear._target = target
 		var hit_tick := -1
@@ -655,8 +655,8 @@ func _check_unit_follower() -> void:
 		target.free()
 
 func _check_contact_avoidance_boundaries() -> void:
-	var a: Unit = _main._spawn_unit(0, "garen", Vector2(320, 880), 0)
-	var b: Unit = _main._spawn_unit(0, "garen", Vector2(320, 800), 0)
+	var a: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "garen", Vector2(320, 880), {"deploy_time_override": 0}))
+	var b: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "garen", Vector2(320, 800), {"deploy_time_override": 0}))
 	var units: Array[Unit] = [a, b]
 	a._move_intent = Vector2.UP * a.move_speed
 	b._move_intent = Vector2.ZERO
@@ -684,8 +684,8 @@ func _check_garen_defender() -> void:
 	for team in [0, 1]:
 		var direction := Vector2.UP if team == 0 else Vector2.DOWN
 		var tower: Tower = _main._towers[2 if team == 0 else 0]
-		var garen: Unit = _main._spawn_unit(team, "garen", tower.position - direction * 180.0, 0)
-		var defender: Unit = _main._spawn_unit(1 - team, "masteryi", garen.position + direction * 45.0, 0)
+		var garen: Unit = _main._spawn_unit(UnitSpawnRequest.new(team, "garen", tower.position - direction * 180.0, {"deploy_time_override": 0}))
+		var defender: Unit = _main._spawn_unit(UnitSpawnRequest.new(1 - team, "masteryi", garen.position + direction * 45.0, {"deploy_time_override": 0}))
 		garen.hp = 100000
 		garen._target = tower
 		defender._target = garen

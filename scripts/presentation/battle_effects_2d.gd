@@ -1,6 +1,6 @@
 class_name BattleEffects2D
 extends Node2D
-## 只读表现数据绘制；SpellSystem/ActiveSkillEffectSystem 拥有状态。
+## 只读表现数据绘制；SpellSystem/SkillEffectPresentation 拥有状态。
 var spells: RefCounted
 var skills: RefCounted
 

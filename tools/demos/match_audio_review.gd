@@ -13,7 +13,7 @@ func _run() -> void:
 	main._audio_manager.cue_played.connect(func(id, cue, _pos):
 		if id == "match":
 			seen.append(String(cue))
-			print("[match audio] ",main.mode," ",cue," battle=",main._battle_elapsed))
+			print("[match audio] ",main.mode," ",cue," battle=",main._minion_waves.elapsed))
 	for _i in range(100):
 		if main._match_started: break
 		await create_timer(0.1).timeout

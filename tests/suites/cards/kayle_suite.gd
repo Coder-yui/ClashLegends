@@ -53,11 +53,11 @@ func run(harness: Object, main: Node2D) -> void:
 		main._tick_active_skill_cooldowns(6.0)
 		_expect(not main.use_active_skill(ability, 0), "两次耗尽后不能再用")
 	_clear()
-	var ranged: Unit = main._spawn_unit(0, "kayle_ranged", Vector2(300, 900), 0.0)
-	var target: Unit = main._spawn_unit(1, "garen", Vector2(300, 780), 0.0)
-	var air: Unit = main._spawn_unit(1, "anivia", Vector2(325, 780), 0.0)
-	var ally: Unit = main._spawn_unit(0, "garen", Vector2(285, 780), 0.0)
-	var far: Unit = main._spawn_unit(1, "garen", Vector2(450, 780), 0.0)
+	var ranged: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "kayle_ranged", Vector2(300, 900), {"deploy_time_override": 0.0}))
+	var target: Unit = main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(300, 780), {"deploy_time_override": 0.0}))
+	var air: Unit = main._spawn_unit(UnitSpawnRequest.new(1, "anivia", Vector2(325, 780), {"deploy_time_override": 0.0}))
+	var ally: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "garen", Vector2(285, 780), {"deploy_time_override": 0.0}))
+	var far: Unit = main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(450, 780), {"deploy_time_override": 0.0}))
 	var start := [target.hp, air.hp, ally.hp, far.hp]
 	_expect(main.launch_attack(ranged, target, ranged.damage, ranged.projectile_speed, ranged.splash_radius, 0, Color.YELLOW), "远程真实发射弹体")
 	_expect(target.hp == start[0] and air.hp == start[1], "出手不提前造成伤害")
@@ -86,9 +86,9 @@ func run(harness: Object, main: Node2D) -> void:
 func _test_hit_haste() -> void:
 	for id in ["kayle", "kayle_ranged"]:
 		_clear()
-		var source: Unit = _main._spawn_unit(0, id, Vector2(300, 900), 0.0)
-		var victim: Unit = _main._spawn_unit(1, "garen", Vector2(300, 820), 0.0)
-		var nearby: Unit = _main._spawn_unit(1, "garen", Vector2(320, 820), 0.0)
+		var source: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, id, Vector2(300, 900), {"deploy_time_override": 0.0}))
+		var victim: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(300, 820), {"deploy_time_override": 0.0}))
+		var nearby: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(320, 820), {"deploy_time_override": 0.0}))
 		_expect(is_equal_approx(source.attack_interval, 1.5), "两形态基础间隔降至1.5秒")
 		_expect(is_equal_approx(source.active_attack_speed_multiplier, 1.0), "未命中无层数")
 		_main._combat._resolve_immediate_attack_hit(0, source.position, victim, 1, source.splash_radius, 0, source)
@@ -116,8 +116,8 @@ func _test_hit_haste() -> void:
 		_expect(is_equal_approx(source.active_attack_speed_multiplier, 1.1), "死亡来源不能从在途命中获取新层")
 		_expect(nearby.hp > 0, "夹具目标存活")
 	_clear()
-	var archer: Unit = _main._spawn_unit(0, "kayle_ranged", Vector2(300, 900), 0.0)
-	var target: Unit = _main._spawn_unit(1, "garen", Vector2(300, 780), 0.0)
+	var archer: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "kayle_ranged", Vector2(300, 900), {"deploy_time_override": 0.0}))
+	var target: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(300, 780), {"deploy_time_override": 0.0}))
 	_main.launch_attack(archer, target, 1, archer.projectile_speed, archer.splash_radius, 0, Color.YELLOW)
 	_expect(is_equal_approx(archer.active_attack_speed_multiplier, 1.0), "远程创建弹体不提前叠层")
 	for i in 12: _main._tick_projectiles(0.05)
@@ -146,12 +146,12 @@ func _clear() -> void:
 
 func _test_wave() -> void:
 	_clear()
-	var caster: Unit = _main._spawn_unit(0, "kayle_ranged", Vector2(300, 900), 0.0)
-	var primary: Unit = _main._spawn_unit(1, "garen", Vector2(300, 800), 0.0)
-	var back: Unit = _main._spawn_unit(1, "garen", Vector2(300, 770), 0.0)
-	var side: Unit = _main._spawn_unit(1, "garen", Vector2(400, 740), 0.0)
-	var outside: Unit = _main._spawn_unit(1, "garen", Vector2(300, 550), 0.0)
-	var ally: Unit = _main._spawn_unit(0, "garen", Vector2(300, 720), 0.0)
+	var caster: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "kayle_ranged", Vector2(300, 900), {"deploy_time_override": 0.0}))
+	var primary: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(300, 800), {"deploy_time_override": 0.0}))
+	var back: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(300, 770), {"deploy_time_override": 0.0}))
+	var side: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(400, 740), {"deploy_time_override": 0.0}))
+	var outside: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(300, 550), {"deploy_time_override": 0.0}))
+	var ally: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "garen", Vector2(300, 720), {"deploy_time_override": 0.0}))
 	var before := [primary.hp, back.hp, side.hp, outside.hp, ally.hp]
 	_expect(_main.launch_attack(caster, primary, caster.damage, caster.projectile_speed, 0, 0, Color.YELLOW), "一次普攻创建光剑和焰浪")
 	_expect(_main._projectile_system.projectiles.size() == 1 and _main._projectile_system._pending_attack_waves.size() == 1, "光剑先创建，焰浪尚在延迟队列")
@@ -191,7 +191,7 @@ func _test_wave() -> void:
 		else:
 			_expect(projectile.direction.x > 0.0, "光剑仍追踪原目标")
 	_clear()
-	caster = _main._spawn_unit(0, "kayle_ranged", Vector2(300, 900), 0.0)
+	caster = _main._spawn_unit(UnitSpawnRequest.new(0, "kayle_ranged", Vector2(300, 900), {"deploy_time_override": 0.0}))
 	var enemy_tower: Tower = _main._king_enemy
 	var old_position := enemy_tower.position
 	var old_hp := enemy_tower.hp
@@ -216,8 +216,8 @@ func _test_wave() -> void:
 
 func _wave_lifecycle(distance: float, remove_target: bool) -> float:
 	_clear()
-	var caster: Unit = _main._spawn_unit(0, "kayle_ranged", Vector2(300, 1000), 0.0)
-	var target: Unit = _main._spawn_unit(1, "garen", Vector2(300, 1000 - distance), 0.0)
+	var caster: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "kayle_ranged", Vector2(300, 1000), {"deploy_time_override": 0.0}))
+	var target: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(300, 1000 - distance), {"deploy_time_override": 0.0}))
 	target.position = caster.position + Vector2.UP * distance
 	var target_at_launch := target.position
 	var system: ProjectileSystem = _main._projectile_system
@@ -243,7 +243,7 @@ func _wave_lifecycle(distance: float, remove_target: bool) -> float:
 	_expect(not system.projectiles.has(wave_id), "目标移动或死亡均不改变焰浪终点")
 	_expect((wave.pos as Vector2).is_equal_approx(target_at_launch + Vector2.UP * 40.0), "波前准确终止在旧目标位置后1格")
 	_expect(float(wave.radius) > initial_radius, "锁定路线仍随飞行逐渐扩宽")
-	var replacement: Unit = _main._spawn_unit(1, "garen", Vector2(300, 800), 0.0)
+	var replacement: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(300, 800), {"deploy_time_override": 0.0}))
 	_main.launch_attack(caster, replacement, 105, caster.projectile_speed, 0, 0, Color.YELLOW)
 	_expect(system._pending_attack_waves.size() == 1, "新一次出手存在独立待创建波")
 	system.clear_all()
@@ -253,12 +253,12 @@ func _wave_lifecycle(distance: float, remove_target: bool) -> float:
 func _test_wave_category_and_scale() -> void:
 	for air_mode in [false, true]:
 		_clear()
-		var source: Unit = _main._spawn_unit(0, "kayle_ranged", Vector2(300, 1000), 0)
-		var target: Unit = _main._spawn_unit(1, "anivia" if air_mode else "garen", Vector2(300, 800), 0)
+		var source: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "kayle_ranged", Vector2(300, 1000), {"deploy_time_override": 0}))
+		var target: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "anivia" if air_mode else "garen", Vector2(300, 800), {"deploy_time_override": 0}))
 		var max_center_distance := source.attack_range + source.body_radius + target.body_radius
 		target.position = source.position + Vector2.UP * max_center_distance
-		var air: Unit = _main._spawn_unit(1, "anivia", Vector2(325, target.position.y), 0)
-		var ground: Unit = _main._spawn_unit(1, "garen", Vector2(325, target.position.y), 0)
+		var air: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "anivia", Vector2(325, target.position.y), {"deploy_time_override": 0}))
+		var ground: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(325, target.position.y), {"deploy_time_override": 0}))
 		var air_hp := air.hp
 		var ground_hp := ground.hp
 		var system: ProjectileSystem = _main._projectile_system
@@ -297,9 +297,9 @@ func _test_wave_audio() -> void:
 	for miss in [false, true]:
 		_clear()
 		events.clear()
-		var caster: Unit = _main._spawn_unit(0, "kayle_ranged", Vector2(300, 900), 0.0)
-		var target: Unit = _main._spawn_unit(1, "garen", Vector2(300, 800), 0.0)
-		var rear: Unit = _main._spawn_unit(1, "garen", Vector2(300, 770), 0.0)
+		var caster: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "kayle_ranged", Vector2(300, 900), {"deploy_time_override": 0.0}))
+		var target: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(300, 800), {"deploy_time_override": 0.0}))
+		var rear: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(300, 770), {"deploy_time_override": 0.0}))
 		_main.launch_attack(caster, target, 105, caster.projectile_speed, 0, 0, Color.YELLOW)
 		_expect(events.is_empty(), "光剑创建不提前播放焰浪发射声")
 		caster.free()
@@ -316,8 +316,8 @@ func _test_wave_audio() -> void:
 		if not miss: _expect(events[1][2] == "hit", "真实焰浪伤害触发专属命中声")
 	_clear()
 	events.clear()
-	var caster: Unit = _main._spawn_unit(0, "kayle_ranged", Vector2(300, 900), 0.0)
-	var target: Unit = _main._spawn_unit(1, "garen", Vector2(300, 800), 0.0)
+	var caster: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "kayle_ranged", Vector2(300, 900), {"deploy_time_override": 0.0}))
+	var target: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(300, 800), {"deploy_time_override": 0.0}))
 	_main.launch_attack(caster, target, 105, caster.projectile_speed, 0, 0, Color.YELLOW)
 	system.clear_all()
 	system.tick(0.2)
@@ -327,8 +327,8 @@ func _test_wave_audio() -> void:
 func _test_sword_facing() -> void:
 	for side in [-1.0, 1.0]:
 		_clear()
-		var caster: Unit = _main._spawn_unit(0, "kayle_ranged", Vector2(300, 900), 0.0)
-		var target: Unit = _main._spawn_unit(1, "garen", Vector2(300 + side * 160, 900), 0.0)
+		var caster: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "kayle_ranged", Vector2(300, 900), {"deploy_time_override": 0.0}))
+		var target: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(300 + side * 160, 900), {"deploy_time_override": 0.0}))
 		caster.set_meta("projectile_model_offset", Vector2(0, -80))
 		target.set_meta("projectile_model_offset", Vector2(0, -30))
 		var system: ProjectileSystem = _main._projectile_system
@@ -351,8 +351,8 @@ func _test_sword_facing() -> void:
 func _test_enrage_visual() -> void:
 	for id in ["kayle", "kayle_ranged"]:
 		_clear()
-		var unit: Unit = _main._spawn_unit(0, id, Vector2(300, 900), 0.0)
-		var twin: Unit = _main._spawn_unit(0, id, Vector2(400, 900), 0.0)
+		var unit: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, id, Vector2(300, 900), {"deploy_time_override": 0.0}))
+		var twin: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, id, Vector2(400, 900), {"deploy_time_override": 0.0}))
 		var view: UnitModel3D
 		var other: UnitModel3D
 		for candidate in _main._battle_presentation._world_root.get_children():

@@ -136,6 +136,7 @@ func _latest_twisted_fate() -> Unit:
 
 func _check_wild_cards_visual() -> void:
 	_main._active_skill_effect_system.clear()
+	_main._skill_presentation.clear()
 	var stats: Dictionary = CardDB.get_card("twisted_fate").duplicate(true)
 	stats["deploy_time"] = 0.0
 	var skill: Dictionary = stats.active_skills[0]
@@ -143,8 +144,8 @@ func _check_wild_cards_visual() -> void:
 	caster.position = Vector2(360.0, 900.0)
 	caster.setup(0, stats, stats.name)
 	_main.add_child(caster)
-	_main._active_skill_effect_system.begin_frontal_visual(caster, skill, Vector2.UP)
-	var effect: Dictionary = _main._active_skill_effect_system.frontal_effects.back()
+	_main._skill_presentation.begin_frontal_visual(caster, skill, Vector2.UP)
+	var effect: Dictionary = _main._skill_presentation.frontal_effects.back()
 	_expect(
 		String(effect.get("shape", "")) == "projectile_fan"
 		and int(effect.get("projectile_count", 0)) == 3
@@ -164,11 +165,12 @@ func _check_wild_cards_visual() -> void:
 	var old_mode: String = _main.mode
 	_main.mode = "client"
 	preload("res://tests/fixtures/network_fixture.gd").deliver(_main, "_rpc_frontal_skill_fx", [-1, caster.position, Vector2.DOWN, caster.body_radius, float(effect.length), 0.0, float(effect.duration), 1, String(effect.shape), 0.0, 0.0, float(effect.arc_degrees), int(effect.projectile_count)])
-	var replay: Dictionary = _main._active_skill_effect_system.frontal_effects.back()
+	var replay: Dictionary = _main._skill_presentation.frontal_effects.back()
 	_expect(replay.shape == "projectile_fan" and replay.projectile_count == 3 and replay.forward == Vector2.DOWN, "客户端范围 RPC 保留三条穿透路径参数和红方朝向")
 	_main.mode = old_mode
 	_main._projectile_system.clear_all()
 	_main._active_skill_effect_system.clear()
+	_main._skill_presentation.clear()
 	caster.free()
 
 func _check_attack_release_and_skill_lock() -> void:
@@ -204,8 +206,8 @@ func _check_attack_release_and_skill_lock() -> void:
 	attacker._target = target
 	attacker._attacking = true
 	var position_before := attacker.position
-	_main._active_skill_effect_system.begin_frontal_visual(attacker, skill, cast_facing)
-	var effect: Dictionary = _main._active_skill_effect_system.frontal_effects.back()
+	_main._skill_presentation.begin_frontal_visual(attacker, skill, cast_facing)
+	var effect: Dictionary = _main._skill_presentation.frontal_effects.back()
 	var visual_timing_ok := (
 		is_equal_approx(float(effect.get("projectile_launch_delay", -1.0)), 0.25)
 		and is_equal_approx(float(effect.get("projectile_flight_duration", -1.0)), 0.72)
@@ -222,6 +224,7 @@ func _check_attack_release_and_skill_lock() -> void:
 		"万能牌施法期间锁定移动、攻击、朝向，卡牌表现弹体按出手延迟单独计时",
 	)
 	_main._active_skill_effect_system.clear()
+	_main._skill_presentation.clear()
 	_main._projectile_system.clear_all()
 	attacker.free()
 	target.free()

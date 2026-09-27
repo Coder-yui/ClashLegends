@@ -251,7 +251,7 @@ func _check_xin_animation_routes_and_active() -> void:
 		xin._target = null
 		xin._move_intent = Vector2.ZERO
 		var prepared: Dictionary = _main._active_skill_effect_system.prepare_cast(xin, skill)
-		_main._begin_configured_active_skill_cast(xin, prepared)
+		_main._skill_lifecycle._begin_cast(xin, prepared)
 		view._sync_visual(false, 0.05)
 		var active_started_with_spell4 := view._animation_player.current_animation == "Spell4"
 		active_locks_ok = (
@@ -267,7 +267,7 @@ func _check_xin_animation_routes_and_active() -> void:
 
 		view._on_animation_finished(&"Spell4_To_Run")
 		xin._move_intent = Vector2.ZERO
-		_main._begin_configured_active_skill_cast(xin, prepared)
+		_main._skill_lifecycle._begin_cast(xin, prepared)
 		view._sync_visual(false, 0.05)
 		xin._target = dummy
 		xin._attacking = true

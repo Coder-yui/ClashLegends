@@ -64,14 +64,14 @@ func _check_card_config_and_visuals() -> void:
 
 func _check_frost_storm_zone() -> void:
 	var skill: Dictionary = CardDB.active_skills_for("anivia")[0]
-	var phoenix: Unit = _main._spawn_unit(0, "anivia", Vector2(360.0, 1000.0), 0.0)
+	var phoenix: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "anivia", Vector2(360.0, 1000.0), {"deploy_time_override": 0.0}))
 	var target := _spawn_dummy(Vector2(360.0, 875.0), 1)
 	var target_before := target.hp
 	phoenix.begin_active_skill_cast(float(skill.cast_duration), Vector2.UP, skill.cast_locks)
 	phoenix.play_visual_action(&"frost_storm", float(skill.cast_duration))
-	var frontal_visual_count_before: int = _main._active_skill_effect_system.frontal_effects.size()
-	_main._active_skill_effect_system.begin_forward_area_visual(phoenix, skill, Vector2.UP)
-	var no_preimpact_star_visual: bool = _main._active_skill_effect_system.frontal_effects.size() == frontal_visual_count_before
+	var frontal_visual_count_before: int = _main._skill_presentation.frontal_effects.size()
+	_main._active_skill_effect_system.prepare_forward_area_result(phoenix, skill, Vector2.UP)
+	var no_preimpact_star_visual: bool = _main._skill_presentation.frontal_effects.size() == frontal_visual_count_before
 	_main._active_skill_effect_system.apply_forward_area(phoenix, skill, Vector2.UP)
 	var initial_damage := target_before - target.hp
 	var locked: bool = phoenix.is_active_skill_movement_locked() and phoenix.is_active_skill_attack_locked() and phoenix.is_active_skill_facing_locked()
@@ -118,7 +118,7 @@ func _check_frost_storm_zone() -> void:
 	_cleanup([target, second_target, phoenix_egg])
 
 func _check_rebirth_egg() -> void:
-	var phoenix: Unit = _main._spawn_unit(0, "anivia", Vector2(260.0, 1000.0), 0.0)
+	var phoenix: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "anivia", Vector2(260.0, 1000.0), {"deploy_time_override": 0.0}))
 	var max_hp: float = phoenix.max_hp
 	phoenix.take_damage(max_hp + 1.0)
 	var egg := _find_unit("anivia_egg", 0)
@@ -157,7 +157,7 @@ func _check_rebirth_egg() -> void:
 	if is_instance_valid(revived):
 		revived.free()
 
-	var killable_phoenix: Unit = _main._spawn_unit(0, "anivia", Vector2(460.0, 1000.0), 0.0)
+	var killable_phoenix: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "anivia", Vector2(460.0, 1000.0), {"deploy_time_override": 0.0}))
 	killable_phoenix.take_damage(killable_phoenix.max_hp + 1.0)
 	var killable_egg := _find_unit("anivia_egg", 0)
 	var egg_hp := killable_egg.hp
@@ -192,7 +192,7 @@ func _cleanup(units: Array) -> void:
 	_main._active_skill_effect_system.continuous_area_effects.clear()
 
 func _check_frozen_replacement() -> void:
-	var phoenix: Unit = _main._spawn_unit(0, "anivia", Vector2(260, 1000), 0.0)
+	var phoenix: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "anivia", Vector2(260, 1000), {"deploy_time_override": 0.0}))
 	phoenix.hp = 1.0
 	phoenix.freeze(8.0)
 	var view: UnitModel3D

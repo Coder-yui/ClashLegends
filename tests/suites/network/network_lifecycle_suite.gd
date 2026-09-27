@@ -201,7 +201,7 @@ func run(harness: Object, main: Node2D) -> void:
 	cancelled[SNAP.U_ACTION_SERIAL] = 8
 	_deliver(3, [cancelled])
 	_expect(stopped.get_attack_visual_serial() == 5 and stopped.get_visual_action_time_left() == 2, "取消屏障允许后续新身份动作")
-	var effects = main._active_skill_effect_system
+	var effects = main._skill_presentation
 	effects.clear()
 	var star := {"fixed_position": true, "pos": Vector2(360, 600), "shape": "target_circle", "timer": 1.0, "duration": 1.0, "team": 0}
 	effects.show_skill_effect(100, star)

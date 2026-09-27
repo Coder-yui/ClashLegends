@@ -64,7 +64,7 @@ func _run() -> void:
 		var direction := Vector2.UP if team == 0 else Vector2.DOWN
 		var victims: Array[Unit] = []
 		for point in ([] if "--clean-arrival" in OS.get_cmdline_user_args() else [center - direction * 120.0 + Vector2(60, 0), center + direction * 80.0]):
-			var victim: Unit = main._spawn_unit(1-team, "garen", point, 0.0)
+			var victim: Unit = main._spawn_unit(UnitSpawnRequest.new(1-team, "garen", point, {"deploy_time_override": 0.0}))
 			victim.move_speed = 0.0
 			victim._deploy_timer = 99.0
 			victims.append(victim)
@@ -136,7 +136,7 @@ func _size_comparison() -> void:
 	var actors: Array[Unit] = []
 	for index in cards.size():
 		var point := Vector2(160 + index * 190, 860)
-		var unit: Unit = main._spawn_unit(0, cards[index], point, 0.0)
+		var unit: Unit = main._spawn_unit(UnitSpawnRequest.new(0, cards[index], point, {"deploy_time_override": 0.0}))
 		unit.move_speed = 0.0
 		actors.append(unit)
 		var label := Label.new()
@@ -200,7 +200,7 @@ func _arrival_materials() -> void:
 func _movement_range() -> void:
 	for team in [0, 1]:
 		main._clear_art_dev_units()
-		var unit: Unit = main._spawn_unit(team, "pantheon", Vector2(320, 850 if team == 0 else 430), 0.0)
+		var unit: Unit = main._spawn_unit(UnitSpawnRequest.new(team, "pantheon", Vector2(320, 850 if team == 0 else 430), {"deploy_time_override": 0.0}))
 		unit.configure_carried_active_skill(CardDB.active_skills_for("pantheon")[0])
 		for stacks in [0, 3, 4, 0]:
 			unit.skill_resource_value = stacks

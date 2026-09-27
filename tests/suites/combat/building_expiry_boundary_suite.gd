@@ -10,12 +10,12 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_lifecycle_edges()
 
 func _building(team: int) -> Unit:
-	var unit: Unit = _main._spawn_unit(team, "tombstone", Vector2(180, 700), 0)
+	var unit: Unit = _main._spawn_unit(UnitSpawnRequest.new(team, "tombstone", Vector2(180, 700), {"deploy_time_override": 0}))
 	unit.spawn_interval = 0
 	return unit
 
 func _attacker(team: int) -> Unit:
-	var unit: Unit = _main._spawn_unit(team, "masteryi", Vector2(180, 760), 0)
+	var unit: Unit = _main._spawn_unit(UnitSpawnRequest.new(team, "masteryi", Vector2(180, 760), {"deploy_time_override": 0}))
 	unit.hp = 100
 	unit.heal_every_hits = 1
 	unit.heal_amount = 10
@@ -38,7 +38,7 @@ func _check_due_attack(permutation: int) -> void:
 	_run_main_ticks(3)
 	_expect(attacker._attack_hit_index == 0 and attacker._attacking and is_equal_approx(attacker.attack_timeline.windup, 0.05), "到期夹具：正常索敌前摇，本 Tick 尚未出手")
 	building._lifespan_left = 0.05
-	var backup: Unit = _main._spawn_unit(1 - team, "garen", Vector2(290, 760), 0)
+	var backup: Unit = _main._spawn_unit(UnitSpawnRequest.new(1 - team, "garen", Vector2(290, 760), {"deploy_time_override": 0}))
 	backup.freeze(100)
 	if permutation & 4: _main.move_child(building, attacker.get_index())
 	if permutation & 8:

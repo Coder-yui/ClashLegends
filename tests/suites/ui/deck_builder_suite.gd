@@ -113,7 +113,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_expect(loading_match._resources.resources.keys().all(func(resource_path): return String(resource_path).get_file() != "systems.json"), "男爵特效使用自制覆层，不再加载原版粒子资源")
 	var prepared_count: int = pool.instances[path].size()
 	var source_count := _main.get_tree().get_nodes_in_group("combatants").size()
-	var unit = loading_match._spawn_unit(0, "melee_minion", Vector2(300, 800), 0.0)
+	var unit = loading_match._spawn_unit(UnitSpawnRequest.new(0, "melee_minion", Vector2(300, 800), {"deploy_time_override": 0.0}))
 	_expect(pool.instances[path].size() == prepared_count - 1 and unit != null, "正式小兵领取预建模型，避免首次登场实例化与动画库复制")
 	_expect(_main.get_tree().get_nodes_in_group("combatants").size() == source_count + 1, "预热样本不进入权威单位列表")
 	var invalid_pool := MatchModelPool.new()

@@ -15,10 +15,10 @@ func _run() -> void:
 		main._clear_art_dev_units()
 		await process_frame
 		main._active_skill_choices["garen"] = choice
-		var garen: Unit = main._spawn_unit(0, "garen", Vector2(220, 440), 0.0)
+		var garen: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "garen", Vector2(220, 440), {"deploy_time_override": 0.0}))
 		if choice == 1:
-			main._spawn_unit(1, "xin", Vector2(240, 460), 0.0)
-			main._spawn_unit(1, "xin", Vector2(200, 460), 0.0)
+			main._spawn_unit(UnitSpawnRequest.new(1, "xin", Vector2(240, 460), {"deploy_time_override": 0.0}))
+			main._spawn_unit(UnitSpawnRequest.new(1, "xin", Vector2(200, 460), {"deploy_time_override": 0.0}))
 		for tick in 120:
 			if tick == 20:
 				main.preview_active_skill(garen, CardDB.active_skills_for("garen")[choice])

@@ -20,25 +20,26 @@ func _init(source: Unit, definition: Dictionary) -> void:
 	skill = definition
 	serial = source.active_skill_cast_serial
 	forward = source.active_skill_cast_facing.normalized()
-	if forward.is_zero_approx(): forward = Vector2.UP if source.team == 0 else Vector2.DOWN
-	source.skill_dash_active = true
-	source.visual_action_clock_managed = true
+	if forward.is_zero_approx():
+		forward = Vector2.UP if source.team == 0 else Vector2.DOWN
 	_sync_clock(source)
 
 func tick(dt: float) -> bool:
-	if finished: return false
+	if finished:
+		return false
 	var source = source_ref.get_ref()
-	if not is_instance_valid(source): return false
+	if not is_instance_valid(source):
+		return false
 	if source.hp <= 0.0 or source.is_frozen() or serial <= source.cancelled_skill_cast_serial or serial != source.active_skill_cast_serial:
 		cancelled = true
 		_finish(source)
 		return false
 	var remaining := dt
-	if source._knockback_timer > 0.0: stopped = true
+	if source._knockback_timer > 0.0:
+		stopped = true
 	if not stopped:
 		var tick_start: Vector2 = source.global_position
-		source._prev_pos = source.position
-		source.skill_dash_moved_tick = source.battle_context.simulation_tick()
+		source.begin_dash_motion()
 		# 最多4px一小段，进入地形得到移速后，本Tick剩余时间即可使用新速度。
 		while remaining > 0.000001 and not stopped:
 			var wall := _boundary_distance(source)
@@ -53,16 +54,16 @@ func tick(dt: float) -> bool:
 			var travel := minf(minf(4.0, left), minf(wall, speed * remaining))
 			var start: Vector2 = source.global_position
 			var end := start + forward * travel
-			source.global_position = Vector2(clampf(end.x, source.body_radius, ArenaRules.FIELD_W - source.body_radius), clampf(end.y, source.body_radius, ArenaRules.FIELD_H - source.body_radius))
+			source.apply_dash_motion(end)
 			distance += travel
 			remaining = maxf(0.0, remaining - travel / speed)
-			source.terrain_traversal.update(source)
-			if travel + 0.000001 >= wall or distance + 0.000001 >= float(skill.length): stopped = true
+			if travel + 0.000001 >= wall or distance + 0.000001 >= float(skill.length):
+				stopped = true
 		if tick_start.distance_squared_to(source.global_position) > 0.000001:
 			_hit(source, tick_start, source.global_position, false)
 	elapsed += dt
 	if stopped:
-		source.skill_dash_active = false
+		_sync_clock(source)
 		tail_elapsed += remaining
 		if not spin_hit and tail_elapsed + 0.000001 >= float(skill.spin_delay) - float(skill.dash_duration):
 			spin_hit = true
@@ -81,56 +82,60 @@ func _boundary_distance(source: Unit) -> float:
 	var point := source.global_position
 	var radius := source.body_radius
 	var result := INF
-	if forward.x > 0.000001: result = minf(result, (ArenaRules.FIELD_W - radius - point.x) / forward.x)
-	elif forward.x < -0.000001: result = minf(result, (radius - point.x) / forward.x)
-	if forward.y > 0.000001: result = minf(result, (ArenaRules.FIELD_H - radius - point.y) / forward.y)
-	elif forward.y < -0.000001: result = minf(result, (radius - point.y) / forward.y)
+	if forward.x > 0.000001:
+		result = minf(result, (ArenaRules.FIELD_W - radius - point.x) / forward.x)
+	elif forward.x < -0.000001:
+		result = minf(result, (radius - point.x) / forward.x)
+	if forward.y > 0.000001:
+		result = minf(result, (ArenaRules.FIELD_H - radius - point.y) / forward.y)
+	elif forward.y < -0.000001:
+		result = minf(result, (radius - point.y) / forward.y)
 	return maxf(result, 0.0)
 
 func _sync_clock(source: Unit) -> void:
 	var duration := float(skill.cast_duration)
 	var dash_duration := float(skill.dash_duration)
 	var progress := dash_duration + tail_elapsed if stopped else dash_duration * distance / float(skill.length)
-	source._visual_action_duration = duration
-	source._visual_action_time_left = maxf(0.0, duration - progress)
-	source.visual_action_clock_rate = 1.0 if stopped else _speed(source) * dash_duration / float(skill.length)
-	# 动态施法锁由本状态持有，普通倒计时不参与；估计值只服务剩余窗口查询。
-	source.active_skill_cast_timer = maxf(0.000001, duration - progress if stopped else (float(skill.length) - distance) / maxf(_speed(source), 0.001) + duration - dash_duration)
+	var rate := 1.0 if stopped else _speed(source) * dash_duration / float(skill.length)
+	var remaining := duration - progress if stopped else (float(skill.length) - distance) / maxf(_speed(source), 0.001) + duration - dash_duration
+	source.sync_dash_cast(serial, not stopped, duration, progress, rate, remaining)
 
 func _finish(source: Unit) -> void:
 	finished = true
-	if serial != source.active_skill_cast_serial: return
-	source.skill_dash_active = false
-	source.visual_action_clock_managed = false
-	source.visual_action_clock_rate = 1.0
-	source._visual_action_time_left = 0.0
-	source.active_skill_cast_timer = 0.0
-	source.active_skill_cast_facing = Vector2.ZERO
-	source.active_skill_cast_locks.clear()
+	source.finish_dash_cast(serial)
 
 func _hit(source: Unit, start: Vector2, end: Vector2, spin: bool) -> void:
 	var receipts: Array[Dictionary] = []
 	for target in source.get_tree().get_nodes_in_group("combatants"):
-		if target == source or not is_instance_valid(target) or target.hp <= 0.0 or target.team == source.team: continue
-		if target is Unit and target.is_air: continue
+		if target == source or not is_instance_valid(target) or target.hp <= 0.0 or target.team == source.team:
+			continue
+		if target is Unit and target.is_air:
+			continue
 		var id: int = target.combat_source_id
-		if not spin and hit_ids.has(id): continue
+		if not spin and hit_ids.has(id):
+			continue
 		var closest := Geometry2D.get_closest_point_to_segment(target.global_position, start, end) if not spin else end
 		var radius := float(skill.radius) if spin else float(skill.width)*0.5
-		if closest.distance_to(target.global_position) > radius + target.body_radius: continue
+		if closest.distance_to(target.global_position) > radius + target.body_radius:
+			continue
 		var extra := float(skill.get("on_hit_tower_damage", 0.0)) if target is Tower else float(target.max_hp)*float(skill.get("on_hit_max_health_ratio", 0.0))
 		var result := BattleNumbers.hit(target, BattleNumbers.quantity(float(skill.damage)+extra), source, source.team, source.global_position)
-		if not result.accepted: continue
-		if not spin: hit_ids[id] = true
+		if not result.accepted:
+			continue
+		if not spin:
+			hit_ids[id] = true
 		receipts.append(result)
 	var resolver := source.battle_context.damage_batch()
 	var reward := func():
-		if not is_instance_valid(source) or source.hp <= 0.0 or not receipts.any(func(result): return result.landed): return
+		if not is_instance_valid(source) or source.hp <= 0.0 or not receipts.any(func(result): return result.landed):
+			return
 		if spin or not dash_healed:
 			source.heal(float(skill.get("hit_heal", 0.0)))
-			if not spin: dash_healed = true
+			if not spin:
+				dash_healed = true
 	var impact := func():
-		if is_instance_valid(source) and receipts.any(func(result): return result.landed): source.battle_context.notify_unit_audio_event(source, &"active:hit", source.global_position)
+		if is_instance_valid(source) and receipts.any(func(result): return result.landed):
+			source.battle_context.notify_unit_audio_event(source, &"active:hit", source.global_position)
 	if resolver.collecting:
 		resolver.defer_benefit(reward)
 		resolver.defer_effect(impact)

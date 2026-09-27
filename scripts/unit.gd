@@ -747,6 +747,37 @@ func play_visual_action(action_name: StringName, duration: float = 0.0) -> void:
 	_visual_action_time_left = _visual_action_duration
 	_visual_action_serial += 1
 
+## 突进 Tick 的插值起点只记录一次，子步移动保留完整进出地形边沿。
+func begin_dash_motion() -> void:
+	_prev_pos = position
+	skill_dash_moved_tick = battle_context.simulation_tick()
+
+func apply_dash_motion(point: Vector2) -> void:
+	global_position = Vector2(clampf(point.x, body_radius, ArenaRules.FIELD_W - body_radius), clampf(point.y, body_radius, ArenaRules.FIELD_H - body_radius))
+	terrain_traversal.update(self)
+
+func sync_dash_cast(serial: int, moving: bool, duration: float, progress: float, rate: float, remaining: float) -> void:
+	if serial != active_skill_cast_serial:
+		return
+	skill_dash_active = moving
+	visual_action_clock_managed = true
+	_visual_action_duration = duration
+	_visual_action_time_left = maxf(0.0, duration - progress)
+	visual_action_clock_rate = rate
+	active_skill_cast_timer = maxf(0.000001, remaining)
+
+## 旧突进结束不能释放后续施法的锁或动作时钟。
+func finish_dash_cast(serial: int) -> void:
+	if serial != active_skill_cast_serial:
+		return
+	skill_dash_active = false
+	visual_action_clock_managed = false
+	visual_action_clock_rate = 1.0
+	_visual_action_time_left = 0.0
+	active_skill_cast_timer = 0.0
+	active_skill_cast_facing = Vector2.ZERO
+	active_skill_cast_locks.clear()
+
 func begin_active_skill_cast(duration: float, facing: Vector2, cast_locks: Array = DEFAULT_CAST_LOCKS) -> void:
 	active_skill_cast_serial += 1
 	active_skill_cast_timer = maxf(duration, 0.0)
@@ -1090,6 +1121,24 @@ func set_continuous_beam_origin_world_position(world_position: Vector2) -> void:
 	queue_redraw()
 
 ## 固定 tick 模拟入口，由 main._sim_step 以 SIM_DT 驱动
+## 攻击出地形是一次位置转换：同步插值、网络目标与寻路缓存。
+func leave_terrain_for_attack() -> bool:
+	var point := terrain_traversal.attack_exit(self, _target)
+	if not terrain_traversal.inside:
+		return true
+	if _attacking:
+		cancel_basic_attack(&"terrain_exit")
+	if not point.is_finite():
+		return false
+	global_position = point
+	_prev_pos = point
+	net_target_pos = point
+	_path = PackedVector2Array()
+	_path_index = 0
+	_repath_cd = 0.0
+	terrain_traversal.update(self)
+	return true
+
 func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prepared: bool = false) -> void:
 	if hp <= 0.0 and not death_form.waiting():
 		return
@@ -1187,7 +1236,7 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prep
 	committed_attack = committed_attack and _attacking and _target_is_attackable(_target)
 	if _target != null:
 		if _target_gap(_target) <= attack_range or committed_attack:
-			if not terrain_traversal.leave_for_attack(self): return
+			if not leave_terrain_for_attack(): return
 			if continuous_attack:
 				var continuous_target_id := int(_target.get_instance_id())
 				if continuous_target_id != _continuous_visual_target_id:
@@ -2327,6 +2376,30 @@ func _get_nav() -> NavGrid:
 
 func _in_client_mode() -> bool:
 	return battle_context != null and battle_context.is_net_client()
+
+func begin_death_form_transition(delay: float) -> void:
+	cancel_basic_attack(&"death_form")
+	cancel_skill_cast()
+	clear_shields()
+	knockback.cancel(&"death_form")
+	_target = null
+	_move_intent = Vector2.ZERO
+	play_visual_action(&"death_form", delay)
+	if battle_context != null:
+		battle_context.notify_unit_audio_event(self, &"rebirth:begin", global_position)
+		battle_context.notify_unit_audio_event(self, &"rebirth:voice", global_position)
+
+func complete_death_form_transition() -> void:
+	_apply_form(1, false)
+	hp = max_hp
+	_deploy_timer = 0.0
+	if battle_context != null:
+		battle_context.notify_unit_audio_event(self, &"rebirth:ready", global_position)
+
+func apply_death_form_decay(amount: float) -> void:
+	hp = maxf(0.0, hp - amount)
+	if hp <= 0.0:
+		_die()
 
 func _die(trigger_death_effect: bool = false) -> void:
 	bleeding.clear()

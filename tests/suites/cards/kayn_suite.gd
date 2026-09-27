@@ -23,7 +23,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_expect(not CardDB.VALIDATOR.validate_all(invalid,false).is_empty(), "命中回复显示名拒绝非文本类型")
 
 func _make(id: String, team: int, point: Vector2) -> Unit:
-	return _main._spawn_unit(team, id, point, 0.0)
+	return _main._spawn_unit(UnitSpawnRequest.new(team, id, point, {"deploy_time_override": 0.0}))
 
 func _growth() -> void:
 	_main._card_growth.clear()
@@ -61,11 +61,11 @@ func _terrain() -> void:
 	target.position = Vector2(360, ArenaRules.RIVER_Y - 70)
 	a._target = target
 	a.position.y = ArenaRules.RIVER_Y - 40
-	_expect(a.terrain_traversal.leave_for_attack(a), "地形中攻击瞬间挤出后可开始正常前摇")
+	_expect(a.leave_terrain_for_attack(), "地形中攻击瞬间挤出后可开始正常前摇")
 	for tick in 40:
 		if not a.terrain_traversal.inside: break
 		_main._movement._try_apply_velocity(a, a._move_intent, 0.05)
-		a.terrain_traversal.leave_for_attack(a)
+		a.leave_terrain_for_attack()
 	_expect(not a.terrain_traversal.inside and a.is_walkable_at(a.position), "出地形落点完整合法")
 	a.position = Vector2(360,ArenaRules.RIVER_Y)
 	a.terrain_traversal.update(a)
@@ -425,7 +425,7 @@ func _terrain_attack_exit() -> void:
 		for tick in 40:
 			var before := a.position
 			a._move_intent = Vector2.ZERO
-			_expect(a.terrain_traversal.leave_for_attack(a), "准备攻击当步直接挤出，不走向出口")
+			_expect(a.leave_terrain_for_attack(), "准备攻击当步直接挤出，不走向出口")
 			_expect(a._move_intent == Vector2.ZERO, "挤出不产生自主移动意图")
 			_expect(before.distance_to(a.position) <= ArenaRules.TILE_SIZE * 2.0 + 0.001, "出地形修正限制在两格内")
 			if not a.terrain_traversal.inside:
@@ -435,7 +435,7 @@ func _terrain_attack_exit() -> void:
 		_expect(exited and (a.position.y - ArenaRules.RIVER_Y) * forward > 0, "贴河目标从对岸接近后在目标岸出地形")
 		_expect(a._target_gap(target) <= a.attack_range and a.hp == healed, "出地形即在攻击距离内，不反复入河刷回血")
 		var point := a.position
-		for tick in 5: _expect(a.terrain_traversal.leave_for_attack(a) and a.position == point, "合法攻击站位不再反复挪位")
+		for tick in 5: _expect(a.leave_terrain_for_attack() and a.position == point, "合法攻击站位不再反复挪位")
 		a.free();target.free()
 	# 目标深在河中央、所有攻击站位仍是河道时，不退到射程外的岸边。
 	var target := _make("kayn", 1, Vector2(360, ArenaRules.RIVER_Y))
@@ -446,7 +446,7 @@ func _terrain_attack_exit() -> void:
 	target.body_radius = 1
 	a.attack_range = 1
 	var before := a.position
-	_expect(not a.terrain_traversal.leave_for_attack(a) and a.position == before, "无合法攻击站位时等待，不往射程外退出")
+	_expect(not a.leave_terrain_for_attack() and a.position == before, "无合法攻击站位时等待，不往射程外退出")
 	a.free();target.free()
 
 func _terrain_audio() -> void:
@@ -494,7 +494,7 @@ func _deploy_voice() -> void:
 		_expect(event.pool.size() == 3 and event.bus == "Voice", "三形态各3条独立部署语音：" + id)
 		for team in [0, 1]:
 			var before := heard.size()
-			var unit: Unit = _main._spawn_unit(team, id, Vector2(360, 900))
+			var unit: Unit = _main._spawn_unit(UnitSpawnRequest.new(team, id, Vector2(360, 900)))
 			audio.attach_unit(unit, CardDB.get_card(id))
 			_expect(heard.size() == before + 1 and heard.back() == id, "部署发声一次，重复绑定不重播：%s/%s" % [id, team])
 			unit.free()

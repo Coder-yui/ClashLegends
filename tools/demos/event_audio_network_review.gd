@@ -16,7 +16,7 @@ func _run() -> void:
 	if main._ai != null: main._ai.enabled = false
 	var start := Time.get_ticks_msec()
 	main._audio_manager.cue_played.connect(func(id, cue, _pos):
-		if id == "sun_disc": print("[Event] ", main.mode, " t=", (Time.get_ticks_msec()-start)/1000.0, " ", cue, " waves=", main._active_skill_effect_system.shield_effects.size()))
+		if id == "sun_disc": print("[Event] ", main.mode, " t=", (Time.get_ticks_msec()-start)/1000.0, " ", cue, " waves=", main._skill_presentation.shield_effects.size()))
 	var recorder := AudioEffectRecord.new()
 	var bus_index := AudioServer.get_bus_effect_count(0)
 	AudioServer.add_bus_effect(0, recorder)

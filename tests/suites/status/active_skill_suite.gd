@@ -80,7 +80,7 @@ func _check_multiple_skill_selection() -> void:
 	var old_choices: Dictionary = _main._active_skill_choices.duplicate(true)
 	_main._deck = ["garen", "xin", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
 	_main._active_skill_choices["garen"] = 1
-	var source: Unit = _main._spawn_unit(0, "garen", Vector2(360.0, 1000.0), 0.0, 0)
+	var source: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "garen", Vector2(360.0, 1000.0), {"deploy_time_override": 0.0, "active_slot": 0}))
 	var carried_skill: Dictionary = _main._active_skills.entry(source.active_ability_id).skill
 	var selected_judgment := (
 		String(carried_skill.get("name", "")) == "审判"
@@ -97,7 +97,7 @@ func _check_deployment_skill_gate() -> void:
 	_reset_local_elixir()
 	var old_deck: Array = _main._deck.duplicate()
 	_main._deck = ["garen", "xin", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
-	var source: Unit = _main._spawn_unit(0, "garen", Vector2(360.0, 1000.0), -1.0, 0)
+	var source: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "garen", Vector2(360.0, 1000.0), {"active_slot": 0}))
 	var ability_id := source.active_ability_id
 	var locked_during_deploy: bool = (
 		not source.is_deployed()
@@ -126,10 +126,10 @@ func _check_deployment_skill_gate() -> void:
 func _check_skill_resource_loadout_visibility() -> void:
 	var old_deck: Array = _main._deck.duplicate()
 	_main._deck = ["sett", "garen", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
-	var ordinary_sett: Unit = _main._spawn_unit(0, "sett", Vector2(180.0, 1000.0), 0.0, -1)
-	var active_sett: Unit = _main._spawn_unit(0, "sett", Vector2(260.0, 1000.0), 0.0, 0)
+	var ordinary_sett: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "sett", Vector2(180.0, 1000.0), {"deploy_time_override": 0.0}))
+	var active_sett: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "sett", Vector2(260.0, 1000.0), {"deploy_time_override": 0.0, "active_slot": 0}))
 	var enabled_only_in_slot := not ordinary_sett.is_skill_resource_visible() and active_sett.is_skill_resource_visible()
-	var replacement: Unit = _main._spawn_unit(0, "garen", Vector2(340.0, 1000.0), 0.0, 0)
+	var replacement: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "garen", Vector2(340.0, 1000.0), {"deploy_time_override": 0.0, "active_slot": 0}))
 	_expect(
 		enabled_only_in_slot and not active_sett.is_skill_resource_visible()
 		and active_sett.active_ability_id == -1 and replacement.active_ability_id >= 0,
@@ -165,9 +165,9 @@ func _check_active_skill_activation() -> void:
 	_reset_local_elixir()
 	var old_deck: Array = _main._deck.duplicate()
 	_main._deck = ["garen", "xin", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
-	var first_source: Unit = _main._spawn_unit(0, "garen", Vector2(340.0, 800.0), 0.0, 0)
+	var first_source: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "garen", Vector2(340.0, 800.0), {"deploy_time_override": 0.0, "active_slot": 0}))
 	var first_ability_id := first_source.active_ability_id
-	var source: Unit = _main._spawn_unit(0, "garen", Vector2(380.0, 800.0), 0.0, 0)
+	var source: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "garen", Vector2(380.0, 800.0), {"deploy_time_override": 0.0, "active_slot": 0}))
 	var enemy_stats: Dictionary = CardDB.get_unit_stats("imp").duplicate()
 	enemy_stats["deploy_time"] = 0.0
 	enemy_stats["hp"] = 500.0
@@ -205,7 +205,7 @@ func _check_active_skill_activation() -> void:
 		and _main._active_skill_bar.is_slot_visible(0),
 		"主动技能结算后保留单位资格，扣除一次使用次数并进入技能 CD"
 	)
-	var slot_two_unit: Unit = _main._spawn_unit(0, "xin", Vector2(440.0, 840.0), 0.0, 1)
+	var slot_two_unit: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "xin", Vector2(440.0, 840.0), {"deploy_time_override": 0.0, "active_slot": 1}))
 	var slot_two_ability_id := slot_two_unit.active_ability_id
 	var slot_two_was_visible: bool = _main._active_skill_bar.is_slot_visible(1)
 	slot_two_unit.take_damage(slot_two_unit.hp + 1.0)
@@ -224,7 +224,7 @@ func _check_active_skill_cost_uses_and_refresh() -> void:
 	_reset_local_elixir()
 	var old_deck: Array = _main._deck.duplicate()
 	_main._deck = ["garen", "xin", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
-	var garen: Unit = _main._spawn_unit(0, "garen", Vector2(260.0, 760.0), 0.0, 0)
+	var garen: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "garen", Vector2(260.0, 760.0), {"deploy_time_override": 0.0, "active_slot": 0}))
 	var ability_id := garen.active_ability_id
 	var initial_elixir: float = _main._elixir.elixir
 	var combat_rules_visible: bool = (
@@ -247,7 +247,7 @@ func _check_active_skill_cost_uses_and_refresh() -> void:
 	var uses_exhausted: bool = int(exhausted_entry.uses_remaining) == 0
 	var spent_twice: bool = is_equal_approx(_main._elixir.elixir, initial_elixir - 2.0)
 
-	var refreshed: Unit = _main._spawn_unit(0, "garen", Vector2(320.0, 760.0), 0.0, 0)
+	var refreshed: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "garen", Vector2(320.0, 760.0), {"deploy_time_override": 0.0, "active_slot": 0}))
 	var refreshed_id := refreshed.active_ability_id
 	var refreshed_entry: Dictionary = _main._active_skills.entry(refreshed_id)
 	var redeploy_resets_uses: bool = refreshed_id != ability_id and int(refreshed_entry.uses_remaining) == 2 and is_equal_approx(float(refreshed_entry.cooldown_left), 0.0)
@@ -277,7 +277,7 @@ func _check_pending_active_skill_revalidation() -> void:
 	_main.add_child(enemy)
 
 	# 点击时合法，但单位在 0.5 秒等待窗内死亡：资格和 pending 一起作废，绝不落地效果。
-	var dead_source: Unit = _main._spawn_unit(0, "garen", Vector2(300.0, 800.0), 0.0, 0)
+	var dead_source: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "garen", Vector2(300.0, 800.0), {"deploy_time_override": 0.0, "active_slot": 0}))
 	var dead_ability_id := dead_source.active_ability_id
 	var hp_before_death_reject := enemy.hp
 	var queued_before_death: bool = _main._queue_active_skill(dead_ability_id, 0, 0)
@@ -295,7 +295,7 @@ func _check_pending_active_skill_revalidation() -> void:
 
 	# 点击后由其他权威机制开始变形；到期检查应拒绝，而不是把主动解释成大形态技能。
 	_main._deck[0] = "gnar"
-	var gnar: Unit = _main._spawn_unit(0, "gnar", Vector2(360.0, 800.0), 0.0, 0)
+	var gnar: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "gnar", Vector2(360.0, 800.0), {"deploy_time_override": 0.0, "active_slot": 0}))
 	var gnar_ability_id := gnar.active_ability_id
 	var queued_before_transform: bool = _main._queue_active_skill(gnar_ability_id, 0, 0)
 	_main._active_skill_bar.set_pending(gnar_ability_id, true)
@@ -317,7 +317,7 @@ func _check_pending_active_skill_revalidation() -> void:
 
 	# 同理，等待窗内开始另一段 active cast 时必须拒绝；cast 结束后仍可重新请求并正常释放。
 	_main._deck[0] = "garen"
-	var casting_source: Unit = _main._spawn_unit(0, "garen", Vector2(300.0, 800.0), 0.0, 0)
+	var casting_source: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "garen", Vector2(300.0, 800.0), {"deploy_time_override": 0.0, "active_slot": 0}))
 	var casting_ability_id := casting_source.active_ability_id
 	var queued_before_cast: bool = _main._queue_active_skill(casting_ability_id, 0, 0)
 	_main._active_skill_bar.set_pending(casting_ability_id, true)
@@ -363,7 +363,7 @@ func _check_pending_control_revalidation() -> void:
 	enemy.setup(1, enemy_stats, enemy_stats.name)
 	_main.add_child(enemy)
 
-	var frozen_source: Unit = _main._spawn_unit(0, "garen", Vector2(300.0, 800.0), 0.0, 0)
+	var frozen_source: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "garen", Vector2(300.0, 800.0), {"deploy_time_override": 0.0, "active_slot": 0}))
 	var frozen_ability_id := frozen_source.active_ability_id
 	var frozen_hp := enemy.hp
 	var frozen_queued: bool = _main._queue_active_skill(frozen_ability_id, 0, 0)
@@ -378,7 +378,7 @@ func _check_pending_control_revalidation() -> void:
 		and not _main._active_skill_bar._buttons[0].disabled
 	)
 
-	var stunned_source: Unit = _main._spawn_unit(0, "xin", Vector2(300.0, 900.0), 0.0, 1)
+	var stunned_source: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "xin", Vector2(300.0, 900.0), {"deploy_time_override": 0.0, "active_slot": 1}))
 	var stunned_ability_id := stunned_source.active_ability_id
 	var stunned_hp := enemy.hp
 	var stunned_queued: bool = _main._queue_active_skill(stunned_ability_id, 0, 0)
@@ -404,7 +404,7 @@ func _check_cast_impact_recovery_timeline() -> void:
 	_reset_local_elixir()
 	var old_deck: Array = _main._deck.duplicate()
 	_main._deck = ["garen", "xin", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
-	var source: Unit = _main._spawn_unit(0, "garen", Vector2(260.0, 680.0), 0.0, 0)
+	var source: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "garen", Vector2(260.0, 680.0), {"deploy_time_override": 0.0, "active_slot": 0}))
 	var ability_id := source.active_ability_id
 	var timeline_skill := {
 		"name": "测试施法",
@@ -438,7 +438,7 @@ func _check_cast_control_pause_and_death_cancel() -> void:
 	_reset_local_elixir()
 	var old_deck: Array = _main._deck.duplicate()
 	_main._deck = ["garen", "xin", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
-	var freeze_source: Unit = _main._spawn_unit(0, "garen", Vector2(260.0, 680.0), 0.0, 0)
+	var freeze_source: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "garen", Vector2(260.0, 680.0), {"deploy_time_override": 0.0, "active_slot": 0}))
 	var freeze_skill: Dictionary = {
 		"name": "冻结施法",
 		"kind": "buff",
@@ -459,7 +459,7 @@ func _check_cast_control_pause_and_death_cancel() -> void:
 	_run_main_ticks(20)
 	var freeze_no_resume: bool = freeze_source.shield_hp == 0
 
-	var stun_source: Unit = _main._spawn_unit(0, "xin", Vector2(260.0, 900.0), 0.0, 1)
+	var stun_source: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "xin", Vector2(260.0, 900.0), {"deploy_time_override": 0.0, "active_slot": 1}))
 	var stun_skill: Dictionary = freeze_skill.duplicate(true)
 	stun_skill["name"] = "眩晕施法"
 	SuiteUtils.replace_carried_skill(_main._active_skills, stun_source.active_ability_id, stun_skill)
@@ -475,7 +475,7 @@ func _check_cast_control_pause_and_death_cancel() -> void:
 	_run_main_ticks(14)
 	var stun_completed: bool = stun_source.active_skill_cast_timer == 0
 
-	var death_source: Unit = _main._spawn_unit(0, "garen", Vector2(520.0, 680.0), 0.0, 0)
+	var death_source: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "garen", Vector2(520.0, 680.0), {"deploy_time_override": 0.0, "active_slot": 0}))
 	var death_ability_id: int = death_source.active_ability_id
 	SuiteUtils.replace_carried_skill(_main._active_skills, death_ability_id, freeze_skill)
 	var death_queued: bool = _main._queue_active_skill(death_ability_id, 0, 0)
@@ -674,10 +674,10 @@ func _check_heal_spell() -> void:
 	var tower: Tower = _main._towers[0]
 	var cast_pos := tower.position
 	# 范围内重伤单位 + 范围内轻伤单位（验证不溢出上限）+ 范围外单位 + 范围内建筑卡。
-	var hurt: Unit = _main._spawn_unit(0, "masteryi", cast_pos + Vector2(80.0, 0.0), 0.0, -1)
-	var nearly_full: Unit = _main._spawn_unit(0, "masteryi", cast_pos + Vector2(-80.0, 0.0), 0.0, -1)
-	var distant: Unit = _main._spawn_unit(0, "masteryi", cast_pos + Vector2(0.0, -400.0), 0.0, -1)
-	var building: Unit = _main._spawn_unit(0, "tombstone", cast_pos + Vector2(0.0, 80.0), 0.0, -1)
+	var hurt: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "masteryi", cast_pos + Vector2(80.0, 0.0), {"deploy_time_override": 0.0}))
+	var nearly_full: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "masteryi", cast_pos + Vector2(-80.0, 0.0), {"deploy_time_override": 0.0}))
+	var distant: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "masteryi", cast_pos + Vector2(0.0, -400.0), {"deploy_time_override": 0.0}))
+	var building: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "tombstone", cast_pos + Vector2(0.0, 80.0), {"deploy_time_override": 0.0}))
 	hurt.take_damage(400.0, null, 1, hurt.position)
 	nearly_full.take_damage(50.0, null, 1, nearly_full.position)
 	distant.take_damage(400.0, null, 1, distant.position)
@@ -826,10 +826,11 @@ func _check_control_release_matrix() -> void:
 func _sample_skill_control(card: String, boundary: float, kind: StringName, skill_index: int = 0) -> Dictionary:
 	_main._commands.clear_impacts()
 	_main._active_skill_effect_system.clear()
+	_main._skill_presentation.clear()
 	_main._projectile_system.clear_all()
-	var source: Unit = _main._spawn_unit(0, card, Vector2(360, 1000), 0)
+	var source: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, card, Vector2(360, 1000), {"deploy_time_override": 0}))
 	var moving_units: Array[Unit] = [source]
-	var target: Unit = _main._spawn_unit(1, "garen", Vector2(360, 910), 0)
+	var target: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(360, 910), {"deploy_time_override": 0}))
 	target.max_hp = 100000
 	target.hp = 100000
 	target.freeze(100)
@@ -868,6 +869,7 @@ func _sample_skill_control(card: String, boundary: float, kind: StringName, skil
 	target.free()
 	_main._commands.clear_impacts()
 	_main._active_skill_effect_system.clear()
+	_main._skill_presentation.clear()
 	_main._projectile_system.clear_all()
 	return result
 
@@ -875,11 +877,12 @@ func _check_displaced_skill_range() -> void:
 	for card in ["sett", "gwen"]:
 		_main._commands.clear_impacts()
 		_main._active_skill_effect_system.clear()
-		var source: Unit = _main._spawn_unit(0, card, Vector2(200, 900), 0)
+		_main._skill_presentation.clear()
+		var source: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, card, Vector2(200, 900), {"deploy_time_override": 0}))
 		# 固定质量隔离技能位置归属；质量对击退距离的影响由 KnockbackBoundarySuite 覆盖。
 		source.mass = 4.0
-		var old_target: Unit = _main._spawn_unit(1, "garen", Vector2(200, 810), 0)
-		var new_target: Unit = _main._spawn_unit(1, "garen", Vector2(360, 810), 0)
+		var old_target: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(200, 810), {"deploy_time_override": 0}))
+		var new_target: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(360, 810), {"deploy_time_override": 0}))
 		for target in [old_target, new_target]: target.freeze(10)
 		var old_hp := old_target.hp
 		var new_hp := new_target.hp
@@ -902,6 +905,7 @@ func _check_displaced_skill_range() -> void:
 		for unit in [source, old_target, new_target]: unit.free()
 		_main._commands.clear_impacts()
 		_main._active_skill_effect_system.clear()
+		_main._skill_presentation.clear()
 
 func _check_skill_icon_reuse() -> void:
 	var bar := ActiveSkillBar.new()

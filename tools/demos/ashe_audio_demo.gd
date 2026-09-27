@@ -26,9 +26,9 @@ func _run() -> void:
 		main.set_process(false)
 		main._clear_art_dev_units()
 		await process_frame
-		var ashe: Unit = main._spawn_unit(0, "ashe", Vector2(360, 930), 0.0)
+		var ashe: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "ashe", Vector2(360, 930), {"deploy_time_override": 0.0}))
 		for position in [Vector2(340, 810), Vector2(390, 810)]:
-			var target: Unit = main._spawn_unit(1, "garen", position, 0.0)
+			var target: Unit = main._spawn_unit(UnitSpawnRequest.new(1, "garen", position, {"deploy_time_override": 0.0}))
 			target.move_speed = 0.0 # 演示木桩，避免模型重叠遮住射箭动作。
 		for tick in 160:
 			if tick == 40:

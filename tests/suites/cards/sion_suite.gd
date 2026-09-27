@@ -15,7 +15,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_frozen_revival()
 
 func _unit(card: String, team: int, pos: Vector2) -> Unit:
-	return _main._spawn_unit(team, card, pos, 0.0)
+	return _main._spawn_unit(UnitSpawnRequest.new(team, card, pos, {"deploy_time_override": 0.0}))
 
 func _check_revival() -> void:
 	var unit := _unit("sion", 0, Vector2(300, 900))

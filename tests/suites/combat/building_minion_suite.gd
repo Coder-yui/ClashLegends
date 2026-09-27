@@ -506,23 +506,23 @@ func _check_minion_line_mechanism() -> void:
 	_expect(
 		is_equal_approx(_main.MATCH_TIME, 185.0)
 		and is_equal_approx(_main.OVERTIME_TIME, 120.0)
-		and is_equal_approx(_main.NORMAL_MINION_WAVE_INTERVAL, 45.0)
-		and is_equal_approx(_main.DOUBLE_MINION_WAVE_INTERVAL, 30.0),
+		and is_equal_approx(MinionWaveSchedule.NORMAL_MINION_WAVE_INTERVAL, 45.0)
+		and is_equal_approx(MinionWaveSchedule.DOUBLE_MINION_WAVE_INTERVAL, 30.0),
 		"正赛 185 秒、加时 120 秒，普通兵线 45 秒、炮车兵线 30 秒"
 	)
-	var first_wave_ok := _run_scheduled_wave(4.95, 5.0, _main.MINION_WAVE_NORMAL)
-	var first_interval_ok := is_equal_approx(_main._next_minion_wave_time, 50.0)
+	var first_wave_ok := _run_scheduled_wave(4.95, 5.0, MinionWaveSchedule.MINION_WAVE_NORMAL)
+	var first_interval_ok := is_equal_approx(_main._minion_waves.next_wave_time, 50.0)
 	_expect(first_wave_ok, "0:05 首波双方两路生成近战兵，0.5 秒后补远程兵")
-	var second_wave_ok := _run_scheduled_wave(49.95, 50.0, _main.MINION_WAVE_NORMAL)
-	var second_interval_ok := is_equal_approx(_main._next_minion_wave_time, 95.0)
-	var third_wave_ok := _run_scheduled_wave(94.95, 95.0, _main.MINION_WAVE_NORMAL)
-	var third_interval_ok := is_equal_approx(_main._next_minion_wave_time, 140.0)
+	var second_wave_ok := _run_scheduled_wave(49.95, 50.0, MinionWaveSchedule.MINION_WAVE_NORMAL)
+	var second_interval_ok := is_equal_approx(_main._minion_waves.next_wave_time, 95.0)
+	var third_wave_ok := _run_scheduled_wave(94.95, 95.0, MinionWaveSchedule.MINION_WAVE_NORMAL)
+	var third_interval_ok := is_equal_approx(_main._minion_waves.next_wave_time, 140.0)
 	_expect(second_wave_ok and third_wave_ok and first_interval_ok and second_interval_ok and third_interval_ok, "普通阶段兵线时间为 0:05、0:50、1:35，间隔保持 45 秒")
 
 	_clear_minion_test_units()
-	_main._pending_lane_minions.clear()
-	_main._battle_elapsed = 124.95
-	_main._next_minion_wave_time = 140.0
+	_main._minion_waves.pending.clear()
+	_main._minion_waves.elapsed = 124.95
+	_main._minion_waves.next_wave_time = 140.0
 	_main._match_rules.time_left = _main.MATCH_TIME
 	_main._match_rules.overtime = false
 	_main._tick_minion_waves(0.05)
@@ -530,26 +530,26 @@ func _check_minion_line_mechanism() -> void:
 	var double_start_front_ok := double_start_front.size() == 4
 	for minion in double_start_front:
 		double_start_front_ok = double_start_front_ok and minion.card_id == "melee_minion"
-	_expect(double_start_front_ok and is_equal_approx(_main._next_minion_wave_time, 155.0), "2:05 立即生成炮车线，并取消普通阶段原定的 2:20 兵线")
+	_expect(double_start_front_ok and is_equal_approx(_main._minion_waves.next_wave_time, 155.0), "2:05 立即生成炮车线，并取消普通阶段原定的 2:20 兵线")
 	_main._tick_minion_waves(0.5)
 	_expect(_wave_cards_ok("melee_minion", "siege_minion"), "2:05 炮车线的后排为炮车兵")
-	var next_double_wave_ok := _run_scheduled_wave(154.95, 155.0, _main.MINION_WAVE_SIEGE)
+	var next_double_wave_ok := _run_scheduled_wave(154.95, 155.0, MinionWaveSchedule.MINION_WAVE_SIEGE)
 	_expect(next_double_wave_ok, "双倍金币阶段从 2:05 起按 30 秒间隔继续生成炮车线")
 
-	_main._battle_elapsed = 0.0
+	_main._minion_waves.elapsed = 0.0
 	_main._match_rules.time_left = _main.MATCH_TIME
 	_main._match_rules.overtime = false
 	_main._update_elixir_rate()
 	var one_x_at_start := is_equal_approx(_main._elixir.regen_multiplier, 1.0)
-	_main._battle_elapsed = 124.95
+	_main._minion_waves.elapsed = 124.95
 	_main._match_rules.time_left = _main.DOUBLE_ELIXIR_TIME + 0.05
 	_main._update_elixir_rate()
 	var one_x_before_double := is_equal_approx(_main._elixir.regen_multiplier, 1.0)
-	_main._battle_elapsed = 125.0
+	_main._minion_waves.elapsed = 125.0
 	_main._match_rules.time_left = _main.DOUBLE_ELIXIR_TIME
 	_main._update_elixir_rate()
 	var two_x_at_double_start := is_equal_approx(_main._elixir.regen_multiplier, 2.0)
-	_main._battle_elapsed = 130.0
+	_main._minion_waves.elapsed = 130.0
 	_main._match_rules.time_left = 55.0
 	_main._update_elixir_rate()
 	var two_x_after_double_start := is_equal_approx(_main._elixir.regen_multiplier, 2.0)
@@ -569,14 +569,14 @@ func _check_minion_line_mechanism() -> void:
 		tower_hps.append(tower.hp)
 	_main._match_rules.overtime = false
 	_main._match_rules.time_left = 0.0
-	_main._battle_elapsed = 185.0
-	_main._next_minion_wave_time = 185.0
+	_main._minion_waves.elapsed = 185.0
+	_main._minion_waves.next_wave_time = 185.0
 	_main._towers[0].hp = 0.0
 	_main.game_over = false
 	_main._match_rules.finished = false
 	_main._simulation_clock.remainder = 0.0
 	_clear_minion_test_units()
-	_main._pending_lane_minions.clear()
+	_main._minion_waves.pending.clear()
 	_main._tick_match_rules(0.0)
 	_expect(_main.game_over and not _main._match_rules.overtime and _minion_test_units().is_empty(), "3:05 若正赛已分出胜负则直接结束，不生成 3:05 兵线")
 	for index in _main._towers.size():
@@ -584,8 +584,8 @@ func _check_minion_line_mechanism() -> void:
 
 	_main._match_rules.overtime = false
 	_main._match_rules.time_left = 0.0
-	_main._battle_elapsed = 185.0
-	_main._next_minion_wave_time = 185.0
+	_main._minion_waves.elapsed = 185.0
+	_main._minion_waves.next_wave_time = 185.0
 	_main.game_over = false
 	_main._match_rules.finished = false
 	_main._simulation_clock.remainder = 0.0
@@ -597,18 +597,18 @@ func _check_minion_line_mechanism() -> void:
 	var overtime_wave_ok: bool = overtime_front_ok and _wave_cards_ok("melee_minion", "siege_minion")
 	_expect(overtime_wave_ok, "3:05 只有实际进入加时才立即生成炮车线")
 	_clear_minion_test_units()
-	_main._pending_lane_minions.clear()
-	var overtime_215_ok := _run_scheduled_wave(214.95, 215.0, _main.MINION_WAVE_SIEGE, true)
-	var overtime_245_ok := _run_scheduled_wave(244.95, 245.0, _main.MINION_WAVE_SIEGE, true)
-	var overtime_275_ok := _run_scheduled_wave(274.95, 275.0, _main.MINION_WAVE_SIEGE, true)
+	_main._minion_waves.pending.clear()
+	var overtime_215_ok := _run_scheduled_wave(214.95, 215.0, MinionWaveSchedule.MINION_WAVE_SIEGE, true)
+	var overtime_245_ok := _run_scheduled_wave(244.95, 245.0, MinionWaveSchedule.MINION_WAVE_SIEGE, true)
+	var overtime_275_ok := _run_scheduled_wave(274.95, 275.0, MinionWaveSchedule.MINION_WAVE_SIEGE, true)
 	_expect(overtime_215_ok and overtime_245_ok and overtime_275_ok, "加时继续在 3:35、4:05、4:35 生成炮车线，间隔为 30 秒")
 
 	_clear_minion_test_units()
-	_main._pending_lane_minions.clear()
+	_main._minion_waves.pending.clear()
 	_main._match_rules.overtime = true
 	_main._match_rules.time_left = 0.0
-	_main._battle_elapsed = 305.0
-	_main._next_minion_wave_time = 305.0
+	_main._minion_waves.elapsed = 305.0
+	_main._minion_waves.next_wave_time = 305.0
 	_main.game_over = false
 	_main._match_rules.finished = false
 	_main._simulation_clock.remainder = 0.0
@@ -619,11 +619,11 @@ func _check_minion_line_mechanism() -> void:
 		_main._towers[index].hp = tower_hps[index]
 
 	_clear_minion_test_units()
-	_main._pending_lane_minions.clear()
+	_main._minion_waves.pending.clear()
 	var enemy_left_hp: float = _main._towers[2].hp
 	_main._towers[2].hp = 0.0
-	_main._battle_elapsed = 0.0
-	_main._spawn_minion_wave(_main.MINION_WAVE_NORMAL)
+	_main._minion_waves.elapsed = 0.0
+	_main._spawn_minion_wave(MinionWaveSchedule.MINION_WAVE_NORMAL)
 	var upgraded_front_ok := false
 	var untouched_front_ok := false
 	for minion in _minion_test_units():
@@ -634,9 +634,9 @@ func _check_minion_line_mechanism() -> void:
 	_expect(upgraded_front_ok and untouched_front_ok, "推掉敌方左塔后，仅己方左路后续近战兵替换为超级兵")
 	_main._towers[2].hp = enemy_left_hp
 	_clear_minion_test_units()
-	_main._pending_lane_minions.clear()
-	_main._battle_elapsed = 0.0
-	_main._next_minion_wave_time = _main.FIRST_MINION_WAVE_TIME
+	_main._minion_waves.pending.clear()
+	_main._minion_waves.elapsed = 0.0
+	_main._minion_waves.next_wave_time = MinionWaveSchedule.FIRST_MINION_WAVE_TIME
 	_main._match_rules.time_left = _main.MATCH_TIME
 	_main._match_rules.overtime = false
 	_main.game_over = false
@@ -653,9 +653,9 @@ func _check_minion_line_mechanism() -> void:
 
 func _run_scheduled_wave(elapsed_before: float, wave_time: float, wave_type: String, overtime: bool = false) -> bool:
 	_clear_minion_test_units()
-	_main._pending_lane_minions.clear()
-	_main._battle_elapsed = elapsed_before
-	_main._next_minion_wave_time = wave_time
+	_main._minion_waves.pending.clear()
+	_main._minion_waves.elapsed = elapsed_before
+	_main._minion_waves.next_wave_time = wave_time
 	_main._match_rules.time_left = _main.OVERTIME_TIME if overtime else _main.MATCH_TIME
 	_main._match_rules.overtime = overtime
 	_main._tick_minion_waves(0.05)
@@ -663,7 +663,7 @@ func _run_scheduled_wave(elapsed_before: float, wave_time: float, wave_type: Str
 	for minion in _minion_test_units():
 		front_only_ok = front_only_ok and minion.card_id in ["melee_minion", "super_minion"]
 	_main._tick_minion_waves(0.5)
-	return front_only_ok and _wave_cards_ok("melee_minion", "siege_minion" if wave_type == _main.MINION_WAVE_SIEGE else "ranged_minion")
+	return front_only_ok and _wave_cards_ok("melee_minion", "siege_minion" if wave_type == MinionWaveSchedule.MINION_WAVE_SIEGE else "ranged_minion")
 
 func _wave_cards_ok(front_card: String, rear_card: String) -> bool:
 	var units := _minion_test_units()

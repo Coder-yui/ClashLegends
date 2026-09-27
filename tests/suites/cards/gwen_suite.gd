@@ -84,8 +84,8 @@ func _check_gwen_snip_snip_skill() -> void:
 			and is_equal_approx(total_duration, 1.5)
 			and is_equal_approx(float(durations[0]) / spell_0_source_duration, spell_0_time_scale)
 		)
-	_main._active_skill_effect_system.begin_frontal_visual(gwen, prepared_full, Vector2.UP)
-	var range_effect: Dictionary = _main._active_skill_effect_system.frontal_effects.back()
+	_main._skill_presentation.begin_frontal_visual(gwen, prepared_full, Vector2.UP)
+	var range_effect: Dictionary = _main._skill_presentation.frontal_effects.back()
 	var reference_range: bool = (
 		String(range_effect.shape) == "fan"
 		and is_equal_approx(float(range_effect.arc_degrees), 78.0)
@@ -93,7 +93,7 @@ func _check_gwen_snip_snip_skill() -> void:
 		and is_equal_approx(float(range_effect.center_width), 30.0)
 		and is_equal_approx(float(range_effect.duration), 1.04)
 	)
-	_main._active_skill_effect_system.frontal_effects.clear()
+	_main._skill_presentation.frontal_effects.clear()
 	_expect(
 		disabled_without_loadout and full_tier and all_tiers and uncompressed_b_timing and reference_range,
 		"格温只有携带快刀乱剪时普攻命中才充能；四档总时长均为 1.5 秒且 Spell1 B 保持原速，圆弧扇区和恒宽核心提示持续到最后一剪",
@@ -415,8 +415,8 @@ func _check_hallowed_mist() -> void:
 	var skill: Dictionary = CardDB.active_skills_for("gwen")[1]
 	_expect(skill.kind == "sanctuary" and skill.radius == 120.0 and skill.duration == 4.0 and skill.max_uses == 2 and skill.cost == 1 and skill.cooldown == 8.0, "圣霭可选技能的费用、次数、半径和时长")
 	for side in [0, 1]:
-		var gwen: Unit = _main._spawn_unit(side, "gwen", Vector2(360, 900), 0.0)
-		var enemy: Unit = _main._spawn_unit(1 - side, "ashe", Vector2(520, 900), 0.0)
+		var gwen: Unit = _main._spawn_unit(UnitSpawnRequest.new(side, "gwen", Vector2(360, 900), {"deploy_time_override": 0.0}))
+		var enemy: Unit = _main._spawn_unit(UnitSpawnRequest.new(1 - side, "ashe", Vector2(520, 900), {"deploy_time_override": 0.0}))
 		gwen.configure_carried_active_skill(skill)
 		gwen.stun(2.0, &"old_stun")
 		gwen.apply_slow(3.0, 0.5, &"old_slow")
@@ -527,7 +527,7 @@ func _check_mist_cost_and_cooldown() -> void:
 	_main._deck[0] = "gwen"
 	var choices: Dictionary = _main._active_skill_choices.duplicate(true)
 	_main._active_skill_choices["gwen"] = 1
-	var gwen: Unit = _main._spawn_unit(0, "gwen", Vector2(360, 1000), 0.0, 0)
+	var gwen: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "gwen", Vector2(360, 1000), {"deploy_time_override": 0.0, "active_slot": 0}))
 	var ability := gwen.active_ability_id
 	gwen.move_speed = 0.0
 	_main._elixir.elixir = 10
@@ -561,7 +561,7 @@ func _check_mist_audio_lifecycle() -> void:
 	var callback := func(card: String, cue: StringName, _position: Vector2):
 		if card == "gwen": cues.append(cue)
 	audio.cue_played.connect(callback)
-	var gwen: Unit = _main._spawn_unit(0, "gwen", Vector2(360, 900), 0.0)
+	var gwen: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "gwen", Vector2(360, 900), {"deploy_time_override": 0.0}))
 	_main.preview_active_skill(gwen, CardDB.active_skills_for("gwen")[1])
 	audio._tick_attached_units()
 	var key := audio._sustain_key(gwen.get_instance_id(), &"sanctuary")

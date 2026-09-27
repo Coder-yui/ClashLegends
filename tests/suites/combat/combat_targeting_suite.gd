@@ -694,8 +694,8 @@ func _check_attack_tolerance_and_chase() -> void:
 	# 用正式速度和0.4秒强化前摇验证追逃；盖伦保持直线推进。
 	for team in [0, 1]:
 		var forward := Vector2.UP if team == 0 else Vector2.DOWN
-		var runner: Unit = _main._spawn_unit(1 - team, "garen", Vector2(180, 800 if team == 0 else 480), 0)
-		var chaser: Unit = _main._spawn_unit(team, "aatrox", runner.position - forward * 118.0, 0)
+		var runner: Unit = _main._spawn_unit(UnitSpawnRequest.new(1 - team, "garen", Vector2(180, 800 if team == 0 else 480), {"deploy_time_override": 0}))
+		var chaser: Unit = _main._spawn_unit(UnitSpawnRequest.new(team, "aatrox", runner.position - forward * 118.0, {"deploy_time_override": 0}))
 		runner.hp = 100000
 		chaser._attack_swing_count = 3
 		chaser._target = runner

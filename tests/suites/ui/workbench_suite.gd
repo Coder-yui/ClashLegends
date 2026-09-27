@@ -12,7 +12,7 @@ func run(harness: Object, main: Node2D) -> void:
 func _check_artdev_active_skill_timeline() -> void:
 	var old_deck: Array = _main._deck.duplicate()
 	_main._deck = ["garen", "xin", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
-	var source: Unit = _main._spawn_unit(0, "garen", Vector2(260.0, 680.0), 0.0, 0)
+	var source: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "garen", Vector2(260.0, 680.0), {"deploy_time_override": 0.0, "active_slot": 0}))
 	var ability_id: int = source.active_ability_id
 	var skill: Dictionary = {
 		"name": "ArtDev 时间轴",
@@ -235,6 +235,7 @@ func _check_artdev_workbench() -> void:
 
 	_main._commands.clear_impacts()
 	_main._active_skill_effect_system.clear()
+	_main._skill_presentation.clear()
 	if is_instance_valid(gwen):
 		gwen.free()
 	if is_instance_valid(sett):

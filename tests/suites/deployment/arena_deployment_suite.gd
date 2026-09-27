@@ -130,7 +130,7 @@ func _check_landing_position_correction() -> void:
 	var all_corrected := true
 	for landing_case in cases:
 		var desired: Vector2 = landing_case[1]
-		var unit: Unit = _main._spawn_unit(0, "garen", desired)
+		var unit: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "garen", desired))
 		var corrected: bool = not unit.position.is_equal_approx(desired)
 		var physically_valid: bool = _main.is_ground_position_walkable(unit.position, unit.body_radius, unit)
 		all_corrected = all_corrected and corrected and physically_valid
@@ -142,7 +142,7 @@ func _check_tower_ingress_guards() -> void:
 	_expect(not _main.is_card_deploy_position_valid(0, "xin", king.position), "玩家与联机请求不能在存活国王塔上部署")
 	_expect(not _main.is_card_deploy_position_valid(1, "xin", Vector2(ArenaRules.BRIDGE_X_LEFT, 250.0)), "AI 的旧出兵坐标会被统一占位校验拒绝")
 	_expect(_main.is_card_deploy_position_valid(1, "xin", Vector2(ArenaRules.BRIDGE_X_LEFT, 460.0)), "AI 改用公主塔前方合法格出兵")
-	var tombstone: Unit = _main._spawn_unit(0, "tombstone", Vector2(480.0, 1080.0))
+	var tombstone: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "tombstone", Vector2(480.0, 1080.0)))
 	# 召唤偏移位于墓碑占地内时，生成前改到最近合法位置。
 	var desired_summon := tombstone.position + Vector2(-24.0, 0.0)
 	var imp: Unit = _main.spawn_summoned(0, "imp", desired_summon)

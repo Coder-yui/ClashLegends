@@ -17,8 +17,8 @@ func _run() -> void:
 	var master := AudioServer.get_bus_index("Master")
 	AudioServer.add_bus_effect(master, record)
 	record.set_recording_active(true)
-	var missfortune: Unit = main._spawn_unit(0, "missfortune", Vector2(360, 900), 0.0)
-	var target: Unit = main._spawn_unit(1, "garen", Vector2(360, 735), 0.0)
+	var missfortune: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "missfortune", Vector2(360, 900), {"deploy_time_override": 0.0}))
+	var target: Unit = main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(360, 735), {"deploy_time_override": 0.0}))
 	target.move_speed = 0.0
 	for tick in 150:
 		if tick == 25:

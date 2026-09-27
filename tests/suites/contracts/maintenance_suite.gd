@@ -2,6 +2,7 @@ extends RefCounted
 
 func run(harness: Object) -> void:
 	_check_state_ownership(harness)
+	_check_dash_cast_identity(harness)
 	_check_clock_budget(harness)
 	_check_status_instances(harness)
 	var unit := Unit.new()
@@ -346,3 +347,19 @@ func _check_state_ownership(harness: Object) -> void:
 	harness._expect(schedule.enqueue_skill(4, 0, 10, null, 0) and not schedule.enqueue_skill(4, 0, 11, null, 0), "排程所有者拒绝重复技能")
 	schedule.cancel_skill(4, false)
 	harness._expect(not schedule.has_pending_skill(4), "取消解除等待身份")
+
+func _check_dash_cast_identity(harness: Object) -> void:
+	var unit := Unit.new()
+	unit.setup(0, CardDB.get_unit_stats("kayn"), "cast_identity")
+	var skill: Dictionary = CardDB.active_skills_for("kayn")[0]
+	unit.begin_active_skill_cast(1.0, Vector2.UP)
+	unit.play_visual_action(&"active", 1.0)
+	var dash := DashStrikeState.new(unit, skill)
+	unit.cancel_skill_cast()
+	unit.begin_active_skill_cast(2.0, Vector2.LEFT)
+	unit.play_visual_action(&"active", 2.0)
+	var serial := unit.active_skill_cast_serial
+	harness._expect(not dash.tick(0.05) and unit.active_skill_cast_serial == serial and is_equal_approx(unit.active_skill_cast_timer, 2.0) and unit.active_skill_cast_facing == Vector2.LEFT and not unit.active_skill_cast_locks.is_empty() and is_equal_approx(unit.get_visual_action_time_left(), 2.0), "旧突进取消后不清理新施法身份、朝向、锁或动作时钟")
+	unit.finish_dash_cast(serial)
+	harness._expect(not unit.skill_dash_active and not unit.visual_action_clock_managed and unit.active_skill_cast_locks.is_empty() and unit.active_skill_cast_timer == 0.0, "当前突进完成原子释放碰撞豁免、动态时钟和施法锁")
+	unit.free()

@@ -145,8 +145,8 @@ func _check_ashe_volley() -> void:
 	ashe.begin_active_skill_cast(float(skill.cast_duration), Vector2.UP, skill.cast_locks)
 	var front_before := front.hp
 	var behind_before := behind.hp
-	_main._active_skill_effect_system.begin_frontal_visual(ashe, skill, Vector2.UP)
-	var range_effect: Dictionary = _main._active_skill_effect_system.frontal_effects.back()
+	_main._skill_presentation.begin_frontal_visual(ashe, skill, Vector2.UP)
+	var range_effect: Dictionary = _main._skill_presentation.frontal_effects.back()
 	var ring_sector_shape := (
 		bool(skill.fan_inner_arc)
 		and bool(range_effect.fan_inner_arc)
@@ -169,7 +169,7 @@ func _check_ashe_volley() -> void:
 		and is_equal_approx(behind.hp, behind_before),
 		"寒冰 Spell2 万箭齐发压至 1 秒，普攻/W 均按源 0.30 秒换算离弦节点，使用贴合人物体型内圆弧的 8 箭环形扇区，命中前方目标一次并减速，不命中身后",
 	)
-	_main._active_skill_effect_system.frontal_effects.clear()
+	_main._skill_presentation.frontal_effects.clear()
 	for unit in [ashe, front, behind]:
 		unit.free()
 
@@ -250,7 +250,7 @@ func _check_garen_judgment() -> void:
 	air.is_air = true
 	_main._battle_presentation.attach_unit(garen, CardDB.get_card("garen"))
 	var garen_view := _view_for(garen)
-	_main._begin_configured_active_skill_cast(garen, skill)
+	_main._skill_lifecycle._begin_cast(garen, skill)
 	_main._active_skill_effect_system.apply(garen, skill)
 	if garen_view != null:
 		garen_view._sync_visual(false, 0.0)
@@ -301,7 +301,7 @@ func _check_garen_judgment() -> void:
 		"盖伦审判播放 Spell3_0 3 秒；每秒按施法者当前位置造成环形伤害，只锁攻击并允许移动，地面目标可被跟随命中而空中目标不受影响",
 	)
 	_main._active_skill_effect_system.continuous_area_effects.clear()
-	_main._active_skill_effect_system.frontal_effects.clear()
+	_main._skill_presentation.frontal_effects.clear()
 	for unit in [garen, target, outside, air]:
 		if is_instance_valid(unit):
 			unit.free()

@@ -34,7 +34,7 @@ func _run() -> void:
 		for frame in 22:
 			if frame % 3 == 0:
 				main._sim_step(0.05)
-			main._active_skill_effect_system.tick_visuals(1.0 / 60.0)
+			main._skill_presentation.tick_visuals(1.0 / 60.0)
 			await process_frame
 			await RenderingServer.frame_post_draw
 			if frame in [5, 11, 14, 17, 21]:

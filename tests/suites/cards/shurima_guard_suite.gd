@@ -14,7 +14,7 @@ func run(harness: Object, main: Node2D) -> void:
 	for i in 6:
 		_expect(is_equal_approx(first[i].position.y, 900.0) and is_equal_approx(first[i].position.x, 110.0 + i * 100.0), "六人横排与2.5格间距")
 		first[i].hp = 100
-	var full: Unit = main._spawn_unit(0, "shurima_guard", Vector2(360, 1000), 0.0)
+	var full: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "shurima_guard", Vector2(360, 1000), {"deploy_time_override": 0.0}))
 	full.add_restoration_shield(180, 0.05)
 	full._tick_active_statuses(0.05)
 	_expect(full.hp == 420 and full.restoration_fx_timer == 0.0, "满血盾到期不伪造回复特效")
@@ -125,7 +125,7 @@ func _check_two_tower_deployment() -> void:
 		right.hp = 0
 		_expect(_main.is_card_deploy_position_valid(team, "shurima_guard", target) and _main.is_card_deploy_position_valid(team, "shurima_guard", Vector2(420, enemy_y)), "双路破塔后卫队两侧合法区域均开放")
 		_expect(not _main.is_card_deploy_position_valid(team, "shurima_guard", Vector2(20, enemy_y)) and not _main.is_card_deploy_position_valid(team, "shurima_guard", Vector2(340, 620)) and not _main.is_card_deploy_position_valid(team, "shurima_guard", Vector2(340, 180 if team == 0 else 1100)), "双破仍遵守横排边界、河道及敌方深处区域限制")
-		var blocker: Unit = _main._spawn_unit(team, "tombstone", target, 0.0)
+		var blocker: Unit = _main._spawn_unit(UnitSpawnRequest.new(team, "tombstone", target, {"deploy_time_override": 0.0}))
 		_expect(not _main.is_card_deploy_position_valid(team, "shurima_guard", target), "双破仍拒绝存活建筑占地")
 		blocker.free()
 		if team == 0:

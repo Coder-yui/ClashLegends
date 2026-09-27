@@ -21,8 +21,8 @@ func run(harness: Object, main: Node2D) -> void:
 	_expect(rules.advance(0.05, 0.0, 10.0, 0, 0).is_empty(), "正式终局不能被晚到状态改判")
 
 func _check_cycles() -> void:
-	var yi: Unit = _main._spawn_unit(0, "masteryi", Vector2(180, 760), 0.0)
-	var target: Unit = _main._spawn_unit(1, "garen", Vector2(180, 725), 0.0)
+	var yi: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "masteryi", Vector2(180, 760), {"deploy_time_override": 0.0}))
+	var target: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(180, 725), {"deploy_time_override": 0.0}))
 	target.max_hp = 100000
 	target.hp = target.max_hp
 	target.freeze(100.0)
@@ -46,11 +46,11 @@ func _check_mirror() -> void:
 		var a: Unit
 		var b: Unit
 		if permutation & 8:
-			b = _main._spawn_unit(0 if reverse else 1, "masteryi", Vector2(180, 725), 0)
-			a = _main._spawn_unit(1 if reverse else 0, "masteryi", Vector2(180, 760), 0)
+			b = _main._spawn_unit(UnitSpawnRequest.new(0 if reverse else 1, "masteryi", Vector2(180, 725), {"deploy_time_override": 0}))
+			a = _main._spawn_unit(UnitSpawnRequest.new(1 if reverse else 0, "masteryi", Vector2(180, 760), {"deploy_time_override": 0}))
 		else:
-			a = _main._spawn_unit(1 if reverse else 0, "masteryi", Vector2(180, 760), 0)
-			b = _main._spawn_unit(0 if reverse else 1, "masteryi", Vector2(180, 725), 0)
+			a = _main._spawn_unit(UnitSpawnRequest.new(1 if reverse else 0, "masteryi", Vector2(180, 760), {"deploy_time_override": 0}))
+			b = _main._spawn_unit(UnitSpawnRequest.new(0 if reverse else 1, "masteryi", Vector2(180, 725), {"deploy_time_override": 0}))
 		if permutation & 2:
 			_main.move_child(b, a.get_index())
 		if permutation & 4:
@@ -72,8 +72,8 @@ func _check_mirror() -> void:
 		b.free()
 
 func _extra_pair() -> Array[Unit]:
-	var yi: Unit = _main._spawn_unit(0, "masteryi", Vector2(180, 760), 0.0)
-	var target: Unit = _main._spawn_unit(1, "garen", Vector2(180, 725), 0.0)
+	var yi: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "masteryi", Vector2(180, 760), {"deploy_time_override": 0.0}))
+	var target: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(180, 725), {"deploy_time_override": 0.0}))
 	target.max_hp = 100000
 	target.hp = target.max_hp
 	target.freeze(100)
@@ -143,8 +143,8 @@ func _check_extra_boundaries() -> void:
 
 func _check_batch_effects() -> void:
 	for reverse in [false, true]:
-		var a: Unit = _main._spawn_unit(0, "masteryi", Vector2(180, 760), 0)
-		var b: Unit = _main._spawn_unit(1, "masteryi", Vector2(180, 725), 0)
+		var a: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "masteryi", Vector2(180, 760), {"deploy_time_override": 0}))
+		var b: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "masteryi", Vector2(180, 725), {"deploy_time_override": 0}))
 		a.hp = 100
 		b.hp = 100
 		a.attack_lifesteal_ratio = 1
@@ -164,9 +164,9 @@ func _check_batch_effects() -> void:
 		a.free()
 		b.free()
 		# 两个存活来源共同过量伤害：实际掉血之和固定为目标剩余生命。
-		a = _main._spawn_unit(0, "masteryi", Vector2(180, 760), 0)
-		b = _main._spawn_unit(0, "masteryi", Vector2(220, 760), 0)
-		var target: Unit = _main._spawn_unit(1, "garen", Vector2(180, 725), 0)
+		a = _main._spawn_unit(UnitSpawnRequest.new(0, "masteryi", Vector2(180, 760), {"deploy_time_override": 0}))
+		b = _main._spawn_unit(UnitSpawnRequest.new(0, "masteryi", Vector2(220, 760), {"deploy_time_override": 0}))
+		var target: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(180, 725), {"deploy_time_override": 0}))
 		a.hp = 100
 		b.hp = 100
 		a.attack_lifesteal_ratio = 1
@@ -182,8 +182,8 @@ func _check_batch_effects() -> void:
 		for unit in [a, b, target]: unit.free()
 
 func _check_early_tick() -> void:
-	var a: Unit = _main._spawn_unit(0, "masteryi", Vector2(180, 760), 0)
-	var b: Unit = _main._spawn_unit(1, "masteryi", Vector2(180, 725), 0)
+	var a: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "masteryi", Vector2(180, 760), {"deploy_time_override": 0}))
+	var b: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "masteryi", Vector2(180, 725), {"deploy_time_override": 0}))
 	a.hp = a.damage
 	b.hp = b.damage
 	b.freeze(0.1)
@@ -220,8 +220,8 @@ func _check_cancelled_cycle() -> void:
 
 func _check_extra_exchange_and_deaths() -> void:
 	for replacement in [false, true]:
-		var a: Unit = _main._spawn_unit(0, "masteryi", Vector2(180, 760), 0)
-		var b: Unit = _main._spawn_unit(1, "masteryi", Vector2(180, 725), 0)
+		var a: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "masteryi", Vector2(180, 760), {"deploy_time_override": 0}))
+		var b: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "masteryi", Vector2(180, 725), {"deploy_time_override": 0}))
 		for unit in [a, b]:
 			unit.hp = 182 # 三次主刀 + 一次追加刀，最后追加刀同时致死。
 			if replacement:
@@ -253,8 +253,8 @@ func _check_extra_exchange_and_deaths() -> void:
 
 func _check_continuous_and_skills() -> void:
 	for reverse in [false, true]:
-		var a: Unit = _main._spawn_unit(0, "aurelionsol", Vector2(180, 760), 0)
-		var b: Unit = _main._spawn_unit(1, "aurelionsol", Vector2(180, 710), 0)
+		var a: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "aurelionsol", Vector2(180, 760), {"deploy_time_override": 0}))
+		var b: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "aurelionsol", Vector2(180, 710), {"deploy_time_override": 0}))
 		a.hp = 3
 		b.hp = 3
 		if reverse:
@@ -265,8 +265,8 @@ func _check_continuous_and_skills() -> void:
 		a.free()
 		b.free()
 		# 正式技能影响队列：两个已开始施法的落点在同 Tick 到期。
-		a = _main._spawn_unit(0, "aurelionsol", Vector2(180, 760), 0)
-		b = _main._spawn_unit(1, "aurelionsol", Vector2(180, 710), 0)
+		a = _main._spawn_unit(UnitSpawnRequest.new(0, "aurelionsol", Vector2(180, 760), {"deploy_time_override": 0}))
+		b = _main._spawn_unit(UnitSpawnRequest.new(1, "aurelionsol", Vector2(180, 710), {"deploy_time_override": 0}))
 		a.hp = 120
 		b.hp = 120
 		var skill := CardDB.active_skills_for("aurelionsol")[0].duplicate(true)
@@ -281,8 +281,8 @@ func _check_continuous_and_skills() -> void:
 
 
 func _check_same_batch_blind() -> void:
-	var a: Unit = _main._spawn_unit(0, "masteryi", Vector2(180, 760), 0)
-	var b: Unit = _main._spawn_unit(1, "masteryi", Vector2(180, 725), 0)
+	var a: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "masteryi", Vector2(180, 760), {"deploy_time_override": 0}))
+	var b: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "masteryi", Vector2(180, 725), {"deploy_time_override": 0}))
 	for unit in [a, b]:
 		unit.hp = 100
 		unit.prepare_empowered_attack(1, 1, 1)
@@ -295,9 +295,9 @@ func _check_same_batch_blind() -> void:
 
 
 func _check_zero_damage_credit() -> void:
-	var a: Unit = _main._spawn_unit(0, "masteryi", Vector2(180, 760), 0)
-	var b: Unit = _main._spawn_unit(0, "masteryi", Vector2(220, 760), 0)
-	var target: Unit = _main._spawn_unit(1, "garen", Vector2(180, 725), 0)
+	var a: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "masteryi", Vector2(180, 760), {"deploy_time_override": 0}))
+	var b: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "masteryi", Vector2(220, 760), {"deploy_time_override": 0}))
+	var target: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(180, 725), {"deploy_time_override": 0}))
 	for source in [a, b]:
 		source.skill_resource_max = 10
 		source.skill_resource_kill_gain = 1
@@ -311,7 +311,7 @@ func _check_zero_damage_credit() -> void:
 
 func _check_status_admission_and_heal() -> void:
 	for reverse in [false, true]:
-		var target: Unit = _main._spawn_unit(0, "garen", Vector2(180, 760), 0)
+		var target: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "garen", Vector2(180, 760), {"deploy_time_override": 0}))
 		target.hp = target.max_hp - 20
 		_main._combat.begin_batch(_main._sim_tick_id, "status_admission")
 		var shield := func(): target.add_shield(30, 2, false, &"batch")
@@ -343,7 +343,7 @@ func _check_status_admission_and_heal() -> void:
 
 	# 对死亡准入同时检查直接接口和同批死亡后的延迟提交。
 	for deferred in [false, true]:
-		var target: Unit = _main._spawn_unit(0, "garen", Vector2(180, 760), 0)
+		var target: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "garen", Vector2(180, 760), {"deploy_time_override": 0}))
 		if deferred:
 			_main._combat.begin_batch(_main._sim_tick_id, "dead_status_admission")
 			target.take_damage(target.hp)

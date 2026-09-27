@@ -21,7 +21,7 @@ func run(harness: Object, main: Node2D) -> void:
 				var point := Vector2(x, y)
 				same_zone = same_zone and _main.is_card_deploy_position_valid(team, "pantheon", point) == _main.is_card_deploy_position_valid(team, "twisted_fate", point)
 		_expect(same_zone, "双方全场逐格部署范围与卡牌大师一致")
-		var source: Unit = _main._spawn_unit(team, "pantheon", Vector2(360, 900), 0.0)
+		var source: Unit = _main._spawn_unit(UnitSpawnRequest.new(team, "pantheon", Vector2(360, 900), {"deploy_time_override": 0.0}))
 		source.add_skill_resource(4)
 		_expect(source.skill_resource_value == 0, "未携带主动时不获得红怒")
 		source.configure_carried_active_skill(skill)
@@ -39,10 +39,10 @@ func run(harness: Object, main: Node2D) -> void:
 		_expect(source.skill_resource_value == 4, "红怒不能超过四层")
 		source.clear_carried_active_skill_resource()
 		_expect(not source.skill_resource_enabled and source.skill_resource_value == 0, "主动资格替换清理红怒")
-		var enemy: Unit = _main._spawn_unit(1-team, "garen", source.position + Vector2(0, -60), 0.0)
-		var ally: Unit = _main._spawn_unit(team, "garen", source.position + Vector2(0, -60), 0.0)
-		var air: Unit = _main._spawn_unit(1-team, "anivia", source.position + Vector2(0, -60), 0.0)
-		var behind: Unit = _main._spawn_unit(1-team, "garen", source.position + Vector2(0, 80), 0.0)
+		var enemy: Unit = _main._spawn_unit(UnitSpawnRequest.new(1-team, "garen", source.position + Vector2(0, -60), {"deploy_time_override": 0.0}))
+		var ally: Unit = _main._spawn_unit(UnitSpawnRequest.new(team, "garen", source.position + Vector2(0, -60), {"deploy_time_override": 0.0}))
+		var air: Unit = _main._spawn_unit(UnitSpawnRequest.new(1-team, "anivia", source.position + Vector2(0, -60), {"deploy_time_override": 0.0}))
+		var behind: Unit = _main._spawn_unit(UnitSpawnRequest.new(1-team, "garen", source.position + Vector2(0, 80), {"deploy_time_override": 0.0}))
 		var before: Array = [enemy.hp, ally.hp, air.hp, behind.hp]
 		_main._active_skill_effect_system.apply_frontal(source, skill, Vector2.UP)
 		_expect(enemy.hp == before[0] - 120 and ally.hp == before[1] and air.hp == before[2] and behind.hp == before[3], "短Q仅刺中前方地面敌人")
@@ -60,7 +60,7 @@ func run(harness: Object, main: Node2D) -> void:
 func _check_payment() -> void:
 	var deck: Array = _main._deck.duplicate()
 	_main._deck[0] = "pantheon"
-	var source: Unit = _main._spawn_unit(0, "pantheon", Vector2(360, 1000), 0.0, 0)
+	var source: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "pantheon", Vector2(360, 1000), {"deploy_time_override": 0.0, "active_slot": 0}))
 	var ability := source.active_ability_id
 	source.move_speed = 0.0
 	_main._elixir.elixir = 10
@@ -163,7 +163,7 @@ func _check_resource_audio() -> void:
 	var callback := func(card: String, cue: StringName, _position: Vector2):
 		if card == "pantheon": cues.append(cue)
 	manager.cue_played.connect(callback)
-	var unit: Unit = _main._spawn_unit(0, "pantheon", Vector2(360, 900), 0.0)
+	var unit: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "pantheon", Vector2(360, 900), {"deploy_time_override": 0.0}))
 	manager.attach_unit(unit, CardDB.get_card("pantheon"))
 	unit.add_skill_resource(4)
 	manager._tick_attached_units()
@@ -198,11 +198,11 @@ func _check_pre_deployment() -> void:
 		var forward := Vector2.UP if team == 0 else Vector2.DOWN
 		var rear := path.start_position(center, team, stats)
 		_expect(rear == center - forward * 120.0, "双方彗星着地位置都在下牌点己方侧3格")
-		var enemy: Unit = _main._spawn_unit(1-team, "garen", rear + Vector2(60, 0), 0.0)
-		var far: Unit = _main._spawn_unit(1-team, "garen", center + forward * 80.0, 0.0)
-		var ally: Unit = _main._spawn_unit(team, "garen", rear, 0.0)
-		var air: Unit = _main._spawn_unit(1-team, "anivia", rear, 0.0)
-		var outside: Unit = _main._spawn_unit(1-team, "garen", center + Vector2(160, 0), 0.0)
+		var enemy: Unit = _main._spawn_unit(UnitSpawnRequest.new(1-team, "garen", rear + Vector2(60, 0), {"deploy_time_override": 0.0}))
+		var far: Unit = _main._spawn_unit(UnitSpawnRequest.new(1-team, "garen", center + forward * 80.0, {"deploy_time_override": 0.0}))
+		var ally: Unit = _main._spawn_unit(UnitSpawnRequest.new(team, "garen", rear, {"deploy_time_override": 0.0}))
+		var air: Unit = _main._spawn_unit(UnitSpawnRequest.new(1-team, "anivia", rear, {"deploy_time_override": 0.0}))
+		var outside: Unit = _main._spawn_unit(UnitSpawnRequest.new(1-team, "garen", center + Vector2(160, 0), {"deploy_time_override": 0.0}))
 		var hp: Array = [enemy.hp, far.hp, ally.hp, air.hp, outside.hp]
 		var count := _main.get_tree().get_nodes_in_group("combatants").size()
 		_main.play_card(team, "pantheon", center, {"immediate": true, "validate_position": false})
@@ -235,7 +235,7 @@ func _check_pre_deployment() -> void:
 		_expect(presentation._pre_deploy_views.is_empty() and not view.visible, "实体生成移除残影")
 		for actor in [unit, enemy, far, ally, air, outside]: actor.free()
 	# 权威跨步扫掠必须覆盖两帧之间，不漏过整段路径；取消和视觉副本不得伤害。
-	var enemy: Unit = _main._spawn_unit(1, "garen", Vector2(360, 840), 0.0)
+	var enemy: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(360, 840), {"deploy_time_override": 0.0}))
 	var hp := enemy.hp
 	_main.play_card(0, "pantheon", Vector2(360, 780), {"immediate": true, "validate_position": false})
 	_main._commands.tick_deployment_visuals(0.7)
@@ -249,7 +249,7 @@ func _check_pre_deployment() -> void:
 	_main._latest_unit_for_card("pantheon", 0).free()
 	enemy.free()
 	# 两次独立出牌分别命中，单次排程的命中记录不会被另一排程复用。
-	var victim: Unit = _main._spawn_unit(1, "garen", Vector2(360, 840), 0.0)
+	var victim: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(360, 840), {"deploy_time_override": 0.0}))
 	hp = victim.hp
 	for cast in 2:
 		_main.play_card(0, "pantheon", Vector2(360, 780), {"immediate": true, "validate_position": false})

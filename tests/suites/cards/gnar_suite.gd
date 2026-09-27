@@ -201,7 +201,7 @@ func _check_gnar_mechanic() -> void:
 		front.hp == front_hp
 		and is_zero_approx(front.control.stun_timer)
 		and _main._commands.inspect_impacts().size() == 1
-		and _main._active_skill_effect_system.frontal_effects.size() == 1
+		and _main._skill_presentation.frontal_effects.size() == 1
 	)
 	_main._commands.tick_impacts(float(skill.transform_impact_delay) - 0.05)
 	var waits_for_hand_impact := front.hp == front_hp and is_zero_approx(front.control.stun_timer)
@@ -224,7 +224,7 @@ func _check_gnar_mechanic() -> void:
 	)
 	_expect(mega_waits_for_impact, "大纳尔主动固定方向并锁定行动，直接播放 Spell2 后延迟到 0.8 秒手掌触地时结算")
 	_main._commands.clear_impacts()
-	_main._active_skill_effect_system.frontal_effects.clear()
+	_main._skill_presentation.frontal_effects.clear()
 	active_small.active_skill_cast_timer = 0.0
 	active_small.active_skill_cast_facing = Vector2.ZERO
 	for unit in [gnar, dummy, resize_gnar, crowded_gnar, edge_gnar, edge_neighbor, active_small, front, back, air] + crowded_neighbors:
@@ -481,12 +481,12 @@ func _check_gnar_art_integration() -> void:
 		unit.free()
 	# 清理待结算主动技能现场，避免污染后续领域 suite。
 	_main._commands.clear_impacts()
-	_main._active_skill_effect_system.frontal_effects.clear()
+	_main._skill_presentation.frontal_effects.clear()
 
 func _check_frozen_pending_generation() -> void:
 	for team in [0, 1]:
-		var source: Unit = _main._spawn_unit(team, "gnar", Vector2(360, 900), 0)
-		var target: Unit = _main._spawn_unit(1 - team, "garen", Vector2(360, 800), 0)
+		var source: Unit = _main._spawn_unit(UnitSpawnRequest.new(team, "gnar", Vector2(360, 900), {"deploy_time_override": 0}))
+		var target: Unit = _main._spawn_unit(UnitSpawnRequest.new(1 - team, "garen", Vector2(360, 800), {"deploy_time_override": 0}))
 		target.max_hp = 100000
 		target.hp = 100000
 		for i in 5:

@@ -33,7 +33,7 @@ func _run() -> void:
 	var master := AudioServer.get_bus_index("Master")
 	AudioServer.add_bus_effect(master, record)
 	record.set_recording_active(true)
-	var garen: Unit = main._spawn_unit(0, "garen", Vector2(360, 1000), 0.0)
+	var garen: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "garen", Vector2(360, 1000), {"deploy_time_override": 0.0}))
 	main.preview_active_skill(garen, CardDB.active_skills_for("garen")[1])
 	for tick in 190:
 		if tick == 85:
@@ -41,7 +41,7 @@ func _run() -> void:
 		if tick == 105:
 			garen.take_damage(99999.0)
 		if tick == 135:
-			var ashe: Unit = main._spawn_unit(0, "ashe", Vector2(360, 1000), 0.0)
+			var ashe: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "ashe", Vector2(360, 1000), {"deploy_time_override": 0.0}))
 			ashe.take_damage(99999.0)
 		main._sim_step(0.05)
 		await create_timer(0.05).timeout

@@ -12,7 +12,7 @@ func run(harness: Object) -> void:
 		main._active_skills.clear()
 		main._sim_tick_id = 0
 		main._elixir.elixir = 10
-		var unit: Unit = main._spawn_unit(0, "garen", Vector2(300, 800), 0, 0)
+		var unit: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "garen", Vector2(300, 800), {"deploy_time_override": 0, "active_slot": 0}))
 		var ability: int = unit.active_ability_id
 		var entry: Dictionary = main._active_skills.entry(ability)
 		var cost: float = entry.skill.cost
@@ -23,7 +23,7 @@ func run(harness: Object) -> void:
 		match scenario:
 			"control": unit.stun(1.0)
 			"transform": unit.form_transition_timer = 1.0
-			"replaced": replacement = main._spawn_unit(0, "garen", Vector2(400, 800), 0, 0)
+			"replaced": replacement = main._spawn_unit(UnitSpawnRequest.new(0, "garen", Vector2(400, 800), {"deploy_time_override": 0, "active_slot": 0}))
 			"death": unit.take_damage(100000)
 			"cancel": main._cancel_pending_active_skill(ability)
 			"cap":
@@ -49,8 +49,8 @@ func run(harness: Object) -> void:
 		main._commands.clear()
 		main._sim_tick_id = 0
 		main._elixir.elixir = 10
-		var herald: Unit = main._spawn_unit(0, "rift_herald", Vector2(140, 800), 0.0, 0)
-		var building: Unit = main._spawn_unit(1, "tombstone", Vector2(140, 600), 0.0)
+		var herald: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "rift_herald", Vector2(140, 800), {"deploy_time_override": 0.0, "active_slot": 0}))
+		var building: Unit = main._spawn_unit(UnitSpawnRequest.new(1, "tombstone", Vector2(140, 600), {"deploy_time_override": 0.0}))
 		var ability: int = herald.active_ability_id
 		var before: Dictionary = main.get_active_skill_snapshot(ability)
 		harness._expect(main.use_active_skill(ability, 0), "先锋未冲撞时请求被接受")

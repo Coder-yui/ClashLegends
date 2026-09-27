@@ -12,7 +12,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_hit_timing()
 
 func _unit(card: String, team: int) -> Unit:
-	var unit: Unit = _main._spawn_unit(team, card, Vector2(300 + team * 45, 900), 0.0)
+	var unit: Unit = _main._spawn_unit(UnitSpawnRequest.new(team, card, Vector2(300 + team * 45, 900), {"deploy_time_override": 0.0}))
 	unit.move_speed = 0.0
 	return unit
 

@@ -22,8 +22,8 @@ func _capture() -> void:
 
 	var ruined_disc: Unit = main._spawn_card_units(0, "sun_disc", ruined_tower.position)[0]
 	var normal_disc: Unit = main._spawn_card_units(1, "sun_disc", Vector2(580.0, 380.0))[0]
-	main._spawn_unit(1, "aurelionsol", Vector2(140.0, 770.0), 0.0)
-	var projectile_target: Unit = main._spawn_unit(0, "melee_minion", Vector2(580.0, 620.0), 0.0)
+	main._spawn_unit(UnitSpawnRequest.new(1, "aurelionsol", Vector2(140.0, 770.0), {"deploy_time_override": 0.0}))
+	var projectile_target: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "melee_minion", Vector2(580.0, 620.0), {"deploy_time_override": 0.0}))
 	for _frame in range(12):
 		await process_frame
 	_save_viewport(preload("res://tools/lib/development_paths.gd").output("sun_disc_spawn_early_qa.png"))

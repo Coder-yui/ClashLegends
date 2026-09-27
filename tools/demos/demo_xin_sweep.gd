@@ -99,7 +99,7 @@ func spawn_round() -> void:
 
 	# 赵信使用真实 1 秒部署，加入场景当帧结算部署版新月护卫。
 	var xin_stats: Dictionary = CardDB.get_card("xin").duplicate()
-	var xin := _spawn_unit(0, xin_stats, CENTER, "赵信", Color(0.10, 0.35, 0.85))
+	var xin := _spawn_unit(UnitSpawnRequest.new(0, xin_stats, CENTER, {"deploy_time_override": "赵信", "active_slot": Color(0.10, 0.35, 0.85)}))
 	# 预扣部分生命，让三段循环第三击的回血在血条上可见。
 	xin.take_damage(320.0)
 	# 演示与验证脚本约定赵信为数组第 0 项；不改变节点实际生成先后。
@@ -121,7 +121,7 @@ func _dummy_stats(base_id: String) -> Dictionary:
 	return stats
 
 func _spawn_dummy(team: int, base_id: String, pos: Vector2, label_text: String, label_color: Color) -> Unit:
-	return _spawn_unit(team, _dummy_stats(base_id), pos, label_text, label_color)
+	return _spawn_unit(UnitSpawnRequest.new(team, _dummy_stats(base_id), pos, {"deploy_time_override": label_text, "active_slot": label_color}))
 
 func _spawn_unit(team: int, stats: Dictionary, pos: Vector2, label_text: String, label_color: Color) -> Unit:
 	var u := Unit.new()

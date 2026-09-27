@@ -103,11 +103,11 @@ func run(harness: SceneTree) -> void:
 			main._on_peer_connected(main._session.opponent_id)
 			stable_callback = main.get_child_count() == before and main._towers.size() == 6 and main._session.phase == MatchSession.Phase.RUNNING
 		if main.mode == "host" and main._match_started and main._sim_tick_id >= 40 and expired_id < 0:
-			var building: Unit = main._spawn_unit(0, "tombstone", Vector2(500, 950), 0)
+			var building: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "tombstone", Vector2(500, 950), {"deploy_time_override": 0}))
 			building.spawn_interval = 0
 			building._lifespan_left = 0.05
 			expired_id = building.net_id
-			boundary_unit = main._spawn_unit(0, "masteryi", Vector2(480, 850), 0)
+			boundary_unit = main._spawn_unit(UnitSpawnRequest.new(0, "masteryi", Vector2(480, 850), {"deploy_time_override": 0}))
 			boundary_unit.apply_knockback(Vector2(400, 850), 40, 0.4)
 			boundary_unit.freeze(0.05)
 		if main.mode == "host" and main._sim_tick_id >= 42 and not takeover_applied and is_instance_valid(boundary_unit):
@@ -211,7 +211,7 @@ func _begin_status_case(main: Node2D) -> Dictionary:
 	main._towers[1].stun(10)
 	main._deck[1] = "gnar"
 	main._elixir.elixir = 10.0
-	var gnar: Unit = main._spawn_unit(0, "gnar", Vector2(80, 1000), 0, 1)
+	var gnar: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "gnar", Vector2(80, 1000), {"deploy_time_override": 0, "active_slot": 1}))
 	var queued: bool = main.use_active_skill(gnar.active_ability_id, 0)
 	assert(queued)
 	var payment: CommandPayment = main._commands.inspect_skills().back().payment
@@ -219,7 +219,7 @@ func _begin_status_case(main: Node2D) -> Dictionary:
 	gnar.freeze(0.5)
 	gnar.stun(10)
 	for i in 6: main.launch_attack(gnar, gnar_target, 1, 1000, 0, 0, Color.WHITE)
-	var star: Unit = main._spawn_unit(0, "aurelionsol", Vector2(360, 1000), 0)
+	var star: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "aurelionsol", Vector2(360, 1000), {"deploy_time_override": 0}))
 	var star_target := _status_target(main, 1, Vector2(360, 825))
 	var star_skill: Dictionary = CardDB.active_skills_for("aurelionsol")[0].duplicate(true)
 	star_skill["cast_forward"] = Vector2.UP
@@ -229,7 +229,7 @@ func _begin_status_case(main: Node2D) -> Dictionary:
 	var targets: Array[Unit] = []
 	for frozen in [false, true]:
 		var origin := Vector2(600, 1000 if not frozen else 300)
-		var caster: Unit = main._spawn_unit(0, "sett", origin, 0)
+		var caster: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "sett", origin, {"deploy_time_override": 0}))
 		var target := _status_target(main, 1, origin + Vector2(0, -80))
 		var skill: Dictionary = CardDB.active_skills_for("sett")[0].duplicate(true)
 		skill["cast_forward"] = Vector2.UP
@@ -251,13 +251,13 @@ func _begin_status_case(main: Node2D) -> Dictionary:
 		wallet.free()
 	var mist_units: Array[Unit] = []
 	for position in [Vector2(65, 800), Vector2(360, 1100)]:
-		var mist: Unit = main._spawn_unit(0, "gwen", position, 0)
+		var mist: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "gwen", position, {"deploy_time_override": 0}))
 		main.preview_active_skill(mist, CardDB.active_skills_for("gwen")[1])
 		mist.freeze(10)
 		mist_units.append(mist)
 	return {"mist": mist_units, "gnar": gnar, "payment": payment, "star_target": star_target, "stunned_target": targets[0], "frozen_target": targets[1]}
 
 func _status_target(main: Node2D, team: int, position: Vector2) -> Unit:
-	var target: Unit = main._spawn_unit(team, "super_minion", position, 0)
+	var target: Unit = main._spawn_unit(UnitSpawnRequest.new(team, "super_minion", position, {"deploy_time_override": 0}))
 	target.freeze(10)
 	return target

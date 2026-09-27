@@ -10,9 +10,9 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_swept_obstacles()
 	_check_swept_unit_contacts()
 	for reverse in [false, true]:
-		var a: Unit = main._spawn_unit(0, "masteryi", Vector2(130, 800), 0)
-		var b: Unit = main._spawn_unit(0, "masteryi", Vector2(230, 800), 0)
-		var target: Unit = main._spawn_unit(1, "masteryi", Vector2(180, 800), 0)
+		var a: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "masteryi", Vector2(130, 800), {"deploy_time_override": 0}))
+		var b: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "masteryi", Vector2(230, 800), {"deploy_time_override": 0}))
+		var target: Unit = main._spawn_unit(UnitSpawnRequest.new(1, "masteryi", Vector2(180, 800), {"deploy_time_override": 0}))
 		main._combat.begin_batch(100, "ordered_knockbacks")
 		for source in ([b, a] if reverse else [a, b]):
 			var order := [10 if source == a else 20, 1, 0]
@@ -20,7 +20,7 @@ func run(harness: Object, main: Node2D) -> void:
 		main._combat.commit_batch()
 		_expect(target._knockback_velocity.x < 0 and is_equal_approx(target._knockback_velocity.length(), 50), "同批后序合法事件接管：更短击退胜出，不依赖收集排列")
 		for unit in [a, b, target]: unit.free()
-	var unit: Unit = main._spawn_unit(0, "masteryi", Vector2(180, 800), 0)
+	var unit: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "masteryi", Vector2(180, 800), {"deploy_time_override": 0}))
 	unit.apply_knockback(Vector2(100, 800), 40, 0.4)
 	var velocity := unit._knockback_velocity
 	unit.hp = 0
@@ -29,7 +29,7 @@ func run(harness: Object, main: Node2D) -> void:
 	unit.free()
 
 func _locked_unit(pos: Vector2) -> Unit:
-	var unit: Unit = _main._spawn_unit(0, "masteryi", pos, 0)
+	var unit: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "masteryi", pos, {"deploy_time_override": 0}))
 	unit.freeze(3.0)
 	return unit
 
@@ -39,7 +39,7 @@ func _advance_knockback(units: Array, count: int = 1) -> void:
 		_main._movement.tick(0.05)
 
 func _check_swept_obstacles() -> void:
-	var unlocked: Unit = _main._spawn_unit(0, "masteryi", Vector2(360, 750), 0)
+	var unlocked: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "masteryi", Vector2(360, 750), {"deploy_time_override": 0}))
 	unlocked.apply_knockback(Vector2(360, 850), 800, 0.2)
 	_advance_knockback([unlocked])
 	var action_mask := ControlState.MOVE | ControlState.BASIC_ATTACK | ControlState.START_SKILL
@@ -67,7 +67,7 @@ func _check_swept_obstacles() -> void:
 	_advance_knockback([unit], 2)
 	_expect(absf((unit.position.x - 280) - (730 - unit.position.y)) < 0.01, "斜向撞岸在原轨迹截停，不沿河岸滑动")
 	unit.free()
-	var building: Unit = _main._spawn_unit(0, "tombstone", Vector2(360, 800), 0)
+	var building: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "tombstone", Vector2(360, 800), {"deploy_time_override": 0}))
 	var obstacles: Array = [building]
 	obstacles.append_array(_main._towers)
 	for obstacle in obstacles:
@@ -89,7 +89,7 @@ func _check_swept_obstacles() -> void:
 
 func _check_swept_unit_contacts() -> void:
 	var ground := _locked_unit(Vector2(360, 750))
-	var air: Unit = _main._spawn_unit(0, "aurelionsol", Vector2(360, 750), 0)
+	var air: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "aurelionsol", Vector2(360, 750), {"deploy_time_override": 0}))
 	air.freeze(3.0)
 	air.mass = 4.0
 	air.apply_knockback(Vector2(360, 850), 800, 0.2)
@@ -121,7 +121,7 @@ func _check_swept_unit_contacts() -> void:
 		right.free()
 
 func _check_continuous_takeover() -> void:
-	var unit: Unit = _main._spawn_unit(0, "masteryi", Vector2(180, 800), 0)
+	var unit: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "masteryi", Vector2(180, 800), {"deploy_time_override": 0}))
 	unit.apply_knockback(Vector2(100, 800), 40, 0.4)
 	unit.sim_tick(0.05)
 	_main._movement.tick(0.05)
@@ -150,7 +150,7 @@ func _check_continuous_takeover() -> void:
 	_expect(is_equal_approx(unit._knockback_timer, 0.05) and is_equal_approx(unit._knockback_velocity.x, 100), "同方向更弱更短击退也接管")
 	unit.free()
 	for reverse in [false, true]:
-		unit = _main._spawn_unit(0, "masteryi", Vector2(180, 800), 0)
+		unit = _main._spawn_unit(UnitSpawnRequest.new(0, "masteryi", Vector2(180, 800), {"deploy_time_override": 0}))
 		_main._combat.begin_batch(300, "source_sequence")
 		for sequence in ([2, 1] if reverse else [1, 2]):
 			unit.apply_knockback(Vector2(100 if sequence == 1 else 300, 800), 10, 0.1, 1.4, [42, sequence, 0])
@@ -164,9 +164,9 @@ func _check_continuous_takeover() -> void:
 
 func _check_authoritative_launch_order() -> void:
 	for reverse in [false, true]:
-		var a: Unit = _main._spawn_unit(0, "masteryi", Vector2(130, 800), 0)
-		var b: Unit = _main._spawn_unit(0, "masteryi", Vector2(230, 800), 0)
-		var target: Unit = _main._spawn_unit(1, "masteryi", Vector2(180, 800), 0)
+		var a: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "masteryi", Vector2(130, 800), {"deploy_time_override": 0}))
+		var b: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "masteryi", Vector2(230, 800), {"deploy_time_override": 0}))
+		var target: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "masteryi", Vector2(180, 800), {"deploy_time_override": 0}))
 		var ids := [a.combat_source_id, b.combat_source_id]
 		_main.move_child(b, a.get_index())
 		_main._combat.begin_batch(400, "normal_launch")
@@ -175,13 +175,13 @@ func _check_authoritative_launch_order() -> void:
 		_main._combat.commit_batch()
 		_expect(ids[0] < ids[1] and target._knockback_velocity.x < 0, "正式出手入口固定出生身份，节点与出手收集顺序不改变同阶段接管者")
 		for unit in [a, b, target]: unit.free()
-	var building: Unit = _main._spawn_unit(0, "tombstone", Vector2(180, 800), 0)
+	var building: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "tombstone", Vector2(180, 800), {"deploy_time_override": 0}))
 	building.apply_knockback(Vector2(100, 800), 100, 1)
 	_expect(building._knockback_timer == 0 and building._knockback_velocity == Vector2.ZERO, "建筑仍拒绝击退")
 	building.free()
 
 func _check_terrain_and_independent_state() -> void:
-	var unit: Unit = _main._spawn_unit(0, "masteryi", Vector2(100, 800), 0)
+	var unit: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "masteryi", Vector2(100, 800), {"deploy_time_override": 0}))
 	unit.add_shield(50, 10)
 	unit.freeze(0.1)
 	unit.stun(0.1)

@@ -414,7 +414,7 @@ func _check_zone_audio(harness: Object, main: Node2D) -> void:
 	audio.set_battle_paused(true)
 	audio._process(0.5)
 	var paused_with_world := is_equal_approx(float(audio._zone_players[event_id].time_left), 3.0)
-	main._active_skill_effect_system.tick_visuals(1.0)
+	main._skill_presentation.tick_visuals(1.0)
 	harness._expect(is_equal_approx(float(audio._zone_players[event_id].time_left), 3.0), "技能效果更新不再修改声音生命周期")
 	audio.set_battle_paused(false)
 	audio._process(2.9)
@@ -752,14 +752,14 @@ func _check_shield_audio(harness: Object, main: Node2D) -> void:
 			if cue == &"shield:cast": casts.append(position)
 			if cue == &"shield:applied": applied.append(position)
 	main._audio_manager.cue_played.connect(listener)
-	main._active_skill_effect_system.shield_effects.clear()
+	main._skill_presentation.shield_effects.clear()
 	main._active_skill_effect_system.apply_area_shield(source, stats.active_skills[0])
-	var waves: Array = main._active_skill_effect_system.shield_effects
+	var waves: Array = main._skill_presentation.shield_effects
 	harness._expect(waves.size() == 1 and is_equal_approx(float(waves[0].radius), float(stats.radius) + float(stats.range)), "护盾施放只生成一圈黄色波，使用自身表面加攻击射程的边界")
 	var event_id: int = main._last_card_event_id
 	main._play_card_event(event_id, "sun_disc", "shield:cast", source.global_position)
 	harness._expect(waves.size() == 1, "重复可靠护盾事件不重复生成特效")
-	main._active_skill_effect_system.tick_visuals(0.6)
+	main._skill_presentation.tick_visuals(0.6)
 	harness._expect(waves.is_empty() and ally.shield_hp == 180.0, "护盾波自然消失不改变已生效护盾")
 	harness._expect(casts.size() == 1 and applied.is_empty()
 		and ally.shield_hp == 180.0 and enemy.shield_hp == 0.0,
@@ -938,18 +938,18 @@ func _check_match_announcements(harness: Object, main: Node2D) -> void:
 	var listener := func(card, cue, _position):
 		if card == "match": cues.append(cue)
 	main._audio_manager.cue_played.connect(listener)
-	var saved_elapsed: float = main._battle_elapsed
-	var saved_next: float = main._next_minion_wave_time
-	var saved_pending: Array = main._pending_lane_minions.duplicate(true)
+	var saved_elapsed: float = main._minion_waves.elapsed
+	var saved_next: float = main._minion_waves.next_wave_time
+	var saved_pending: Array = main._minion_waves.pending.duplicate(true)
 	var saved_mode: String = main.mode
 	var saved_over: bool = main.game_over
 	var saved_finished: bool = main._match_rules.finished
 	var old_children: Array = main.get_children()
 	main.mode = "local"
 	main.game_over = false
-	main._battle_elapsed = 4.9
-	main._next_minion_wave_time = 5.0
-	main._pending_lane_minions.clear()
+	main._minion_waves.elapsed = 4.9
+	main._minion_waves.next_wave_time = 5.0
+	main._minion_waves.pending.clear()
 	main._tick_minion_waves(0.05)
 	harness._expect(cues.is_empty(), "首波播报在4.95秒前不提前播放")
 	main._tick_minion_waves(0.05)
@@ -968,9 +968,9 @@ func _check_match_announcements(harness: Object, main: Node2D) -> void:
 	harness._expect(cues.count(&"victory") == 1, "本地胜利播放胜利播报")
 	for child in main.get_children():
 		if child not in old_children: child.free()
-	main._battle_elapsed = saved_elapsed
-	main._next_minion_wave_time = saved_next
-	main._pending_lane_minions.assign(saved_pending)
+	main._minion_waves.elapsed = saved_elapsed
+	main._minion_waves.next_wave_time = saved_next
+	main._minion_waves.pending.assign(saved_pending)
 	main.mode = saved_mode
 	main.game_over = saved_over
 	main._match_rules.finished = saved_finished
@@ -1130,7 +1130,7 @@ func _check_independent_creation_audio(harness: Object, main: Node2D) -> void:
 		var callback := func(card, cue, _pos):
 			if card == "aurelionsol": cues.append(cue)
 		audio.cue_played.connect(callback)
-		var source: Unit = main._spawn_unit(0, "aurelionsol", Vector2(360, 1000), 0)
+		var source: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "aurelionsol", Vector2(360, 1000), {"deploy_time_override": 0}))
 		var skill: Dictionary = CardDB.active_skills_for("aurelionsol")[0].duplicate(true)
 		source.configure_carried_active_skill(skill)
 		source.skill_resource_value = source.skill_resource_max if full else 0
@@ -1148,3 +1148,4 @@ func _check_independent_creation_audio(harness: Object, main: Node2D) -> void:
 		audio.cue_played.disconnect(callback)
 		main._commands.clear_impacts()
 		main._active_skill_effect_system.clear()
+		main._skill_presentation.clear()

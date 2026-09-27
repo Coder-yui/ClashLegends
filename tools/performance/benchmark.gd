@@ -105,7 +105,7 @@ func run() -> void:
 			for unit in get_nodes_in_group("combatants"):
 				if unit is Unit: unit.take_damage(10000000)
 			for team in [0, 1]:
-				var source: Unit = main._spawn_unit(team, "rift_herald", Vector2(360, 850 if team == 0 else 430), 0.0)
+				var source: Unit = main._spawn_unit(UnitSpawnRequest.new(team, "rift_herald", Vector2(360, 850 if team == 0 else 430), {"deploy_time_override": 0.0}))
 				source.structure_rush.target = main._towers[2 if team == 0 else 0]
 				source.structure_rush.direction = Vector2.UP if team == 0 else Vector2.DOWN
 				source.structure_rush.target.hp = 10000000
@@ -171,7 +171,7 @@ func spawn_load(count: int, heavy: bool) -> Array[Unit]:
 		var row := index / 16
 		var pos := Vector2(90 + (index % 8) * 76, (900 - row * 38) if team == 0 else (380 + row * 38))
 		var card := "gnar" if heavy else ("ashe" if index % 4 == 0 else "melee_minion")
-		var unit: Unit = main._spawn_unit(team, card, pos, 0.0)
+		var unit: Unit = main._spawn_unit(UnitSpawnRequest.new(team, card, pos, {"deploy_time_override": 0.0}))
 		unit.max_hp = 10000000.0
 		unit.hp = unit.max_hp
 		unit.damage = 0.0

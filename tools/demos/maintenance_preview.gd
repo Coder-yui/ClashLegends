@@ -14,12 +14,12 @@ func _run() -> void:
 	main._start_local()
 	main._ai.enabled = false
 	main._minion_waves_enabled = false
-	var left: Unit = main._spawn_unit(0, "garen", Vector2(260, 920), 0.0)
-	var right: Unit = main._spawn_unit(1, "garen", Vector2(260, 790), 0.0)
-	main._spawn_unit(0, "missfortune", Vector2(450, 1000), 0.0)
-	main._spawn_unit(1, "garen", Vector2(450, 800), 0.0)
-	var gnar: Unit = main._spawn_unit(0, "gnar", Vector2(550, 950), 0.0)
-	main._spawn_unit(1, "aurelionsol", Vector2(480, 450), 0.0)
+	var left: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "garen", Vector2(260, 920), {"deploy_time_override": 0.0}))
+	var right: Unit = main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(260, 790), {"deploy_time_override": 0.0}))
+	main._spawn_unit(UnitSpawnRequest.new(0, "missfortune", Vector2(450, 1000), {"deploy_time_override": 0.0}))
+	main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(450, 800), {"deploy_time_override": 0.0}))
+	var gnar: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "gnar", Vector2(550, 950), {"deploy_time_override": 0.0}))
+	main._spawn_unit(UnitSpawnRequest.new(1, "aurelionsol", Vector2(480, 450), {"deploy_time_override": 0.0}))
 	await create_timer(1.2).timeout
 	await _capture("01_attack")
 	left.freeze(1.5)
@@ -74,13 +74,14 @@ func _status_migration() -> void:
 		for card in cards:
 			for unit in get_nodes_in_group("combatants"):
 				if unit is Unit: unit.free()
-			main._commands.impacts.clear()
+			main._commands.clear_impacts()
 			main._active_skill_effect_system.clear()
+			main._skill_presentation.clear()
 			main._projectile_system.clear_all()
 			main._audio_manager.clear_zone_audio()
 			await process_frame
-			var source: Unit = main._spawn_unit(team, card, Vector2(360, 940), 0)
-			var target: Unit = main._spawn_unit(1 - team, "garen", Vector2(360, 815), 0)
+			var source: Unit = main._spawn_unit(UnitSpawnRequest.new(team, card, Vector2(360, 940), {"deploy_time_override": 0}))
+			var target: Unit = main._spawn_unit(UnitSpawnRequest.new(1 - team, "garen", Vector2(360, 815), {"deploy_time_override": 0}))
 			target.max_hp = 100000
 			target.hp = 100000
 			target.freeze(100)
@@ -106,7 +107,7 @@ func _status_migration() -> void:
 					source.freeze(0.6)
 					source.apply_knockback(source.position + Vector2.LEFT * 40, 45, 0.4)
 				main._sim_step(0.05)
-				main._active_skill_effect_system.tick_visuals(0.05)
+				main._skill_presentation.tick_visuals(0.05)
 				main._effects_view.queue_redraw()
 				await create_timer(0.05).timeout
 				if tick in ([0, 4, 9, 12, 21, 40, 61] if boundary_review else [4, 9, 12, 21, 40, 61]):

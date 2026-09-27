@@ -19,14 +19,14 @@ func _check_thaw_command() -> void:
 	var deck: Array = _main._deck.duplicate()
 	_main._deck[0] = "gnar"
 	_main._elixir.elixir = 10.0
-	var unit: Unit = _main._spawn_unit(0, "gnar", Vector2(160, 1000), 0.0, 0)
+	var unit: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "gnar", Vector2(160, 1000), {"deploy_time_override": 0.0, "active_slot": 0}))
 	var id := unit.active_ability_id
 	_expect(_main.use_active_skill(id, 0), "纳尔正式请求合法入队")
 	var request: Dictionary = _main._commands.inspect_skills().back()
 	var due := int(request.execute_tick)
 	unit.freeze((due - _main._sim_tick_id) * _main.SIM_DT)
 	unit.transform_hit_count = 5
-	var target: Unit = _main._spawn_unit(1, "garen", Vector2(160, 900), 0.0)
+	var target: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(160, 900), {"deploy_time_override": 0.0}))
 	target.stun(10.0)
 	_main.launch_attack(unit, target, 1.0, 10000.0, 0.0, 0.0, unit.color)
 	_main._tick_projectiles(_main.SIM_DT)
@@ -47,7 +47,7 @@ func _check_command_clock() -> void:
 	var deck: Array = _main._deck.duplicate()
 	_main._deck[0] = "sett"
 	_main._elixir.elixir = 10.0
-	var unit: Unit = _main._spawn_unit(0, "sett", Vector2(160, 1000), 0.0, 0)
+	var unit: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "sett", Vector2(160, 1000), {"deploy_time_override": 0.0, "active_slot": 0}))
 	var id := unit.active_ability_id
 	_expect(_main.use_active_skill(id, 0), "计时回归从正式请求开始")
 	var due := int(_main._commands.inspect_skills().back().execute_tick)
@@ -63,7 +63,7 @@ func _check_command_clock() -> void:
 	_main._deck = deck
 
 func _check_first_render_stun() -> void:
-	var unit: Unit = _main._spawn_unit(0, "sett", Vector2(160, 1000), 0.0)
+	var unit: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "sett", Vector2(160, 1000), {"deploy_time_override": 0.0}))
 	var view: UnitModel3D
 	for child in _main._battle_presentation._world_root.get_children():
 		if child is UnitModel3D and child._source == unit: view = child
@@ -79,11 +79,11 @@ func _check_revival_order() -> void:
 		var egg: Unit
 		var attacker: Unit
 		if egg_first:
-			egg = _main._spawn_unit(1, "anivia_egg", Vector2(160, 950), 0.0)
-			attacker = _main._spawn_unit(0, "masteryi", Vector2(160, 1000), 0.0)
+			egg = _main._spawn_unit(UnitSpawnRequest.new(1, "anivia_egg", Vector2(160, 950), {"deploy_time_override": 0.0}))
+			attacker = _main._spawn_unit(UnitSpawnRequest.new(0, "masteryi", Vector2(160, 1000), {"deploy_time_override": 0.0}))
 		else:
-			attacker = _main._spawn_unit(0, "masteryi", Vector2(160, 1000), 0.0)
-			egg = _main._spawn_unit(1, "anivia_egg", Vector2(160, 950), 0.0)
+			attacker = _main._spawn_unit(UnitSpawnRequest.new(0, "masteryi", Vector2(160, 1000), {"deploy_time_override": 0.0}))
+			egg = _main._spawn_unit(UnitSpawnRequest.new(1, "anivia_egg", Vector2(160, 950), {"deploy_time_override": 0.0}))
 		egg.position = Vector2(360, 900)
 		attacker.position = Vector2(360, 930)
 		egg._timed_revival_left = 0.1
@@ -117,7 +117,7 @@ func _check_revival_order() -> void:
 		egg.free()
 		phoenix.free()
 	_expect(results[0] == results[1], "交换蛋与攻击者创建/更新顺序，孵化和实际攻击结果一致")
-	var egg: Unit = _main._spawn_unit(1, "anivia_egg", Vector2(160, 950), 0.0)
+	var egg: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "anivia_egg", Vector2(160, 950), {"deploy_time_override": 0.0}))
 	egg._timed_revival_left = 0.05
 	_main._combat.begin_batch(_main._sim_tick_id, "skill_impacts")
 	var receipt: Dictionary = _main._combat.submit_damage(egg, egg.hp + 1, null, 0, Vector2.ZERO)
@@ -127,8 +127,8 @@ func _check_revival_order() -> void:
 	egg.free()
 
 func _check_facing_and_replica() -> void:
-	var unit: Unit = _main._spawn_unit(0, "sett", Vector2(160, 1000), 0.0)
-	var target: Unit = _main._spawn_unit(1, "garen", Vector2(220, 1000), 0.0)
+	var unit: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "sett", Vector2(160, 1000), {"deploy_time_override": 0.0}))
+	var target: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(220, 1000), {"deploy_time_override": 0.0}))
 	unit.position = Vector2(360, 950)
 	target.position = Vector2(420, 950)
 	unit._move_direction = Vector2.UP
@@ -168,12 +168,13 @@ func _check_formal_skill_ticks() -> void:
 		for control_kind in ["none", "stun", "freeze_before", "freeze_after"]:
 			_main._commands.clear_impacts()
 			_main._active_skill_effect_system.clear()
+			_main._skill_presentation.clear()
 			_main._projectile_system.clear_all()
 			_main._deck[0] = card
 			_main._active_skill_choices[card] = 1 if card == "garen" else 0
 			_main._elixir.elixir = 10.0
-			var unit: Unit = _main._spawn_unit(0, card, Vector2(360, 1000), 0.0, 0)
-			var target: Unit = _main._spawn_unit(1, "super_minion", Vector2(360, 910), 0.0)
+			var unit: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, card, Vector2(360, 1000), {"deploy_time_override": 0.0, "active_slot": 0}))
+			var target: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "super_minion", Vector2(360, 910), {"deploy_time_override": 0.0}))
 			unit.position = Vector2(360, 1000)
 			target.position = Vector2(360, 910)
 			target.max_hp = 100000.0
@@ -229,7 +230,7 @@ func _check_gnar_transition_edges() -> void:
 	_main._deck[0] = "gnar"
 	for remaining in [0.05, 0.1]:
 		_main._elixir.elixir = 10.0
-		var unit: Unit = _main._spawn_unit(0, "gnar", Vector2(360, 1000), 0.0, 0)
+		var unit: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "gnar", Vector2(360, 1000), {"deploy_time_override": 0.0, "active_slot": 0}))
 		var id := unit.active_ability_id
 		_expect(_main.use_active_skill(id, 0), "变形边界请求先合法入队")
 		var due := int(_main._commands.inspect_skills().back().execute_tick)
@@ -245,14 +246,14 @@ func _check_gnar_transition_edges() -> void:
 		_main._on_active_skill_unit_died(id)
 		unit.free()
 	_main._elixir.elixir = 10.0
-	var unit: Unit = _main._spawn_unit(0, "gnar", Vector2(360, 1000), 0.0, 0)
+	var unit: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "gnar", Vector2(360, 1000), {"deploy_time_override": 0.0, "active_slot": 0}))
 	var id := unit.active_ability_id
 	_expect(_main.use_active_skill(id, 0), "无待变形的小纳尔正式主动请求合法")
 	_run_main_ticks(_main.COMMAND_DELAY_TICKS)
 	_expect(unit.form_index == 1 and unit.active_skill_cast_serial == 1 and _main._active_skills.entry(id).uses_remaining == _main._active_skills.entry(id).max_uses - 1, "合法主动变大属于同次施法，不自我拒绝退款")
 	_main._on_active_skill_unit_died(id)
 	unit.free()
-	unit = _main._spawn_unit(0, "gnar", Vector2(360, 1000), 0.0)
+	unit = _main._spawn_unit(UnitSpawnRequest.new(0, "gnar", Vector2(360, 1000), {"deploy_time_override": 0.0}))
 	unit.stun(1.0)
 	unit.pending_form_generation = unit.form_change_serial
 	unit._apply_pending_form()
@@ -275,7 +276,7 @@ func _check_gnar_transition_edges() -> void:
 	_main._deck = deck
 
 func _check_region_birth() -> void:
-	var target: Unit = _main._spawn_unit(1, "masteryi", Vector2(360, 900), 0.0)
+	var target: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "masteryi", Vector2(360, 900), {"deploy_time_override": 0.0}))
 	_main._sim_step_active = true
 	_main._apply_freeze(target.position, 100.0, 0.1, 0, 0.2, 0.5)
 	_main._tick_slow_zones(0.05)
@@ -294,7 +295,7 @@ func _check_submission_boundary() -> void:
 			var initial := 2.0 if expires else 10.0
 			_main._elixir._timer = 0.0
 			_main._elixir.elixir = initial
-			var unit: Unit = _main._spawn_unit(0, "gnar", Vector2(160, 1000), 0.0, 0)
+			var unit: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "gnar", Vector2(160, 1000), {"deploy_time_override": 0.0, "active_slot": 0}))
 			var id := unit.active_ability_id
 			var uses: int = _main._active_skills.entry(id).uses_remaining
 			var duration := 0.1 if expires else 1.0

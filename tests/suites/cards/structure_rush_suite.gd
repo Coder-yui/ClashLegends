@@ -12,7 +12,7 @@ class LaunchContext extends BattleContext:
 		return PackedVector2Array([goal]) if not blocked else PackedVector2Array()
 
 func spawn(id: String, team: int, point: Vector2) -> Unit:
-	var unit: Unit = _main._spawn_unit(team, id, point, 0.0)
+	var unit: Unit = _main._spawn_unit(UnitSpawnRequest.new(team, id, point, {"deploy_time_override": 0.0}))
 	units.append(unit)
 	return unit
 
@@ -52,7 +52,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_recovery_boundary()
 	_check_failed_launch_search()
 	for tower in main._towers: tower.can_attack = false
-	var deployed: Unit = main._spawn_unit(0, "rift_herald", Vector2(360, 1050), 3.0)
+	var deployed: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "rift_herald", Vector2(360, 1050), {"deploy_time_override": 3.0}))
 	units.append(deployed)
 	step(deployed, 59)
 	_expect(deployed._deploy_timer > 0.0 and deployed.position.is_equal_approx(Vector2(360, 1050)), "先锋部署前2.95秒不能移动")
@@ -363,7 +363,7 @@ func _check_recovery_boundary() -> void:
 				clear_units()
 				_main._elixir._timer = 0.0
 				_main._elixir.elixir = 10.0
-				var source: Unit = _main._spawn_unit(0, "rift_herald", Vector2(360, 950), 0.0, 0)
+				var source: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "rift_herald", Vector2(360, 950), {"deploy_time_override": 0.0, "active_slot": 0}))
 				var id := source.active_ability_id
 				var uses: int = _main._active_skills.entry(id).uses_remaining
 				var request: Dictionary = {}
@@ -417,7 +417,7 @@ func _check_rush_submission() -> void:
 	for phase in [StructureRushState.Phase.PREPARING, StructureRushState.Phase.DASHING]:
 		_main._elixir._timer = 0.0
 		_main._elixir.elixir = 10.0
-		var source: Unit = _main._spawn_unit(0, "rift_herald", Vector2(360, 950), 0.0, 0)
+		var source: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "rift_herald", Vector2(360, 950), {"deploy_time_override": 0.0, "active_slot": 0}))
 		var id := source.active_ability_id
 		var uses: int = _main._active_skills.entry(id).uses_remaining
 		var target := structure(Vector2(360, 900))

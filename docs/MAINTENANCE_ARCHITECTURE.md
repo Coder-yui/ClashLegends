@@ -10,17 +10,17 @@
 | --- | --- |
 | 定义 | CardDB 注册逐卡四域；CardDefinitionCompiler 合并，CardShapeValidator 前置类型检查，CardValidator 校验语义与资源；共享定义递归只读 |
 | 编排 | Main 装配节点、比赛生命周期、UI/RPC、固定阶段调用；Unit/Tower 通过 BattleContext 使用服务，不能反向探测 current_scene |
-| 比赛 | FixedStepClock 积压与 Tick；MatchRules 时间/胜负；MatchSession 对手/握手/命令序号；ElixirManager 金币 |
+| 比赛 | FixedStepClock 积压与 Tick；MatchRules 时间/胜负；MatchSession 对手/握手/命令序号；ElixirManager 金币；MinionWaveSchedule 兵线阶段、延迟条目与有序生成请求 |
 | 卡牌命令 | CardCycle 手牌与轮换；CardPlayHistory 最近成功出牌/镜像代次；MatchCardGrowth 每阵营局内成长；CommandSchedule 排程，CommandPayment 一次性付款收据 |
-| 部署 | DeploymentRules 区域/建筑合法落点；PreDeploymentSweep 预部署轨迹与扫掠查询；部署命中集合随排程条目存活 |
+| 部署 | UnitSpawnRequest 具名生成参数（不改变网络载荷）；DeploymentRules 区域/建筑合法落点；PreDeploymentSweep 预部署轨迹与扫掠查询；部署命中集合随排程条目存活 |
 | 通用实体 | Unit/Tower 汇合权限、委托状态并执行生命周期；普通新卡复用 Unit，不建立英雄子类 |
 | 控制与攻击 | StatusInstances 来源独立窗口；ControlState 硬控/减速；AttackTimeline 前后摇、间隔、基础攻速表现时间 |
 | 生命状态 | ShieldState 每层生命/时间/衰减/恢复与爆炸资格；BleedState 来源叠层/窗口/余量；DeathFormState 致死换形资格、等待 Tick 与衰血 |
 | 位移 | MovementSystem 碰撞与移动；NavGrid/BattlePathSearch 全局导航；KnockbackState 普通击退；StructureRushState 建筑冲撞；TerrainTraversalState 穿地形门禁；UnitLandingQuery 连续几何落点 |
 | 命中与技能 | CombatInteraction/TargetProtectionState 准入与固定圣霭；CombatResolver 阶段命中/附带效果/收益/死亡队列；ProjectileSystem 弹体；SpellSystem 法术；ActiveSkillEffectSystem 技能效果与 DashStrikeState |
-| 主动资格 | ActiveSkillRoster 技能槽、编队转交、次数、冷却、免费追斩；效果执行身份归 CommandSchedule 与 Unit.active_skill_cast_serial |
+| 主动资格 | ActiveSkillLifecycle 协调准备、起手、动作和排程，CommandSchedule 按身份结束/取消；ActiveSkillRoster 技能槽、编队转交、次数、冷却、免费追斩；效果执行身份归 CommandSchedule 与 Unit.active_skill_cast_serial |
 | 联网 | NetworkEntityLifecycle 出生/销毁/快照屏障；NetworkSnapshotSystem 编解码与状态投影；RPC 保留在 Main 节点 |
-| 表现 | UnitPresentationState 只读视图；PresentationConfig 形态选择；PresentationEvents 真实事件能力；UnitModel3D/TowerModel3D/BattleEffects2D 只读驱动图像 |
+| 表现 | UnitPresentationState 只读视图；PresentationConfig 形态选择；PresentationEvents 真实事件能力；UnitModel3D/TowerModel3D/BattleEffects2D 只读驱动图像；SkillEffectPresentation 拥有范围/护盾视觉实例、渲染计时与网络去重 |
 | 动画与资源 | VisualActionSequence 片段进度；ModelVisualResources 实例动画库与材质；MatchResources 本局资源强引用；MatchModelPool 预热/领取/回收 |
 | 音频 | GameAudioManager 事件消费、播放器、区域时钟、暂停与清场；不由技能系统推进音频 |
 | UI 与工作台 | CardDetails/CardArt 详情与卡面；WorkbenchSession 选择和操作会话；模型预览、声音目录、牌库及窗口布局各有独立组件 |
@@ -39,7 +39,7 @@
 
 同源状态刷新/替换、异源独立到期、强度聚合见[状态共通合同](status/CORE.md)；动作取消与权限见[动作合同](status/ACTIONS.md)。状态正时长向上取整到 Tick。AttackTimeline 的取消、命中与后摇写入分开，避免形态变化后写回旧阶段。
 
-CombatResolver 按阶段收集并统一提交；建筑自然生命周期在收集 combatants 前推进。普通击退按出生身份、来源事件序号及子序号排序，不以遍历顺序分配身份。真实在途弹体保留出手来源和形态；来源死亡后仍可命中，但不给死者生命或技能资源收益。规则细节见[卡牌机制](CARD_DESIGN.md)、[数值](NUMERIC_SYSTEM.md)和[移动接触](BATTLE_CONTACT_MODEL.md)。
+CombatResolver 按阶段收集并统一提交；单位行动阶段先固定 combatants 参与者名单，再推进建筑自然生命周期；自然退出生成的对象不回头加入本阶段名单。普通击退按出生身份、来源事件序号及子序号排序，不以遍历顺序分配身份。真实在途弹体保留出手来源和形态；来源死亡后仍可命中，但不给死者生命或技能资源收益。规则细节见[卡牌机制](CARD_DESIGN.md)、[数值](NUMERIC_SYSTEM.md)和[移动接触](BATTLE_CONTACT_MODEL.md)。
 
 ## 比赛与网络生命周期
 
@@ -57,7 +57,7 @@ ActiveSkillRoster.entry 是单项只读视图，权威消费走 consume，客户
 
 盾层自然到期由 ShieldState 返回一次性结果；死亡和清除不能触发恢复或爆炸。爆炸递交技能效果批次；流血由 Unit/Tower 各自持有，CombatResolver 发放存活来源收益。形态、生命上限、待变形代次和技能资源由 Unit 汇合，死亡替身/复生的新实体不能与原位换形混用。
 
-技能后段绑定施法身份；冰冻/死亡取消依附动作，龙王星辰等独立结果持有固定落点和归因。DashStrikeState 在 skill_effects 阶段推进可受伤的穿单位突进，MovementSystem 跳过其普通推挤。PreDeploymentSweep 只在权威端得到伤害目标；客户端采样轨迹只用于显示。
+技能后段绑定施法身份；冰冻/死亡取消依附动作，龙王星辰等独立结果持有固定落点和归因。DashStrikeState 在 skill_effects 阶段推进可受伤的穿单位突进，MovementSystem 跳过其普通推挤。状态对象不直接写 Unit 的位置、锁、寻路或形态字段；Unit 的位置转换、突进完成和致死换形接口统一应用，旧施法序号不能释放新施法。PreDeploymentSweep 只在权威端得到伤害目标；客户端采样轨迹只用于显示。
 
 ## 资源准备与表现复用
 
@@ -81,6 +81,6 @@ WorkbenchSession 只注入放置、选中、清场、重建、暂停及视图更
 
 自动测试按 contracts/combat/deployment/status/presentation/ui/network/cards 分类；目录内测试由唯一注册表编排，共享夹具不注册。全卡内容检查、共通机制与逐卡差异各有覆盖所有者，具体约定见[测试手册](../tests/README.md)。
 
-Main、Unit、UnitModel3D 仍是较大的编排类；后续拆分应以单一状态所有者和明确生命周期为边界，不按行数机械切割，也不通过更多转发层掩盖耦合。本轮结构整理集中于测试职责与导航，不声称完成全部运行时代码重构。
+Main、Unit、UnitModel3D 仍是较大的编排类；后续拆分应以单一状态所有者和明确生命周期为边界，不按行数机械切割，也不通过更多转发层掩盖耦合。已按边界收拢兵线、施法协调与生成请求；部署几何和场景装配仍留在 Main，后续按实际扩展需要维护。
 
 设备、性能和联网未验证范围见[开发状态](DEV_PLAN.md)。历次记录见[归档](archive/README.md)，日常任务从[任务导航](AGENT_WORKFLOW.md)进入当前专题。

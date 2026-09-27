@@ -13,7 +13,8 @@ func configure(stats: Dictionary) -> void:
 	inside = false
 
 func update(unit: Unit) -> void:
-	if not enabled or unit.battle_context == null or unit.hp <= 0.0: return
+	if not enabled or unit.battle_context == null or unit.hp <= 0.0:
+		return
 	var now_inside := not unit.battle_context.is_ground_position_walkable(unit.global_position, unit.body_radius, unit)
 	if now_inside and not inside:
 		unit.heal(heal_amount)
@@ -24,18 +25,8 @@ func update(unit: Unit) -> void:
 		unit.battle_context.notify_unit_audio_event(unit, &"terrain:exit", unit.global_position)
 	inside = now_inside
 
-func leave_for_attack(unit: Unit) -> bool:
-	if not enabled or unit.battle_context == null: return true
+func attack_exit(unit: Unit, target: Node2D) -> Vector2:
 	update(unit)
-	if not inside: return true
-	var point := UnitLandingQuery.find_attack_exit(unit, unit._target)
-	if unit._attacking: unit.cancel_basic_attack(&"terrain_exit")
-	if not point.is_finite(): return false
-	unit.global_position = point
-	unit._prev_pos = point
-	unit.net_target_pos = point
-	unit._path = PackedVector2Array()
-	unit._path_index = 0
-	unit._repath_cd = 0.0
-	update(unit)
-	return true # 目标仍在攻击范围内，当前步可开始正常普攻前摇。
+	if not enabled or unit.battle_context == null or not inside:
+		return unit.global_position
+	return UnitLandingQuery.find_attack_exit(unit, target)

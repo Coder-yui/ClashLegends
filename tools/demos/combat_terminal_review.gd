@@ -15,8 +15,8 @@ func _run() -> void:
 	main._ai.enabled = false
 	main._minion_waves_enabled = false
 	for tower in main._towers: tower.can_attack = false
-	var a: Unit = main._spawn_unit(0, "masteryi", Vector2(180, 760), 0)
-	var b: Unit = main._spawn_unit(1, "masteryi", Vector2(180, 725), 0)
+	var a: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "masteryi", Vector2(180, 760), {"deploy_time_override": 0}))
+	var b: Unit = main._spawn_unit(UnitSpawnRequest.new(1, "masteryi", Vector2(180, 725), {"deploy_time_override": 0}))
 	a.hp = a.damage
 	b.hp = b.damage
 	for tick in 12:
@@ -27,8 +27,8 @@ func _run() -> void:
 			break
 		await create_timer(0.05).timeout
 	await create_timer(1.0).timeout
-	var yi: Unit = main._spawn_unit(0, "masteryi", Vector2(180, 760), 0)
-	var target: Unit = main._spawn_unit(1, "garen", Vector2(180, 715), 0)
+	var yi: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "masteryi", Vector2(180, 760), {"deploy_time_override": 0}))
+	var target: Unit = main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(180, 715), {"deploy_time_override": 0}))
 	target.max_hp = 100000
 	target.hp = target.max_hp
 	target.freeze(100)

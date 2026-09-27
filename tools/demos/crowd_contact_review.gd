@@ -30,7 +30,7 @@ func _run() -> void:
 	var spacing := float(CardDB.get_unit_stats(card_id).radius) * 2.0 + 4.0
 	for index in count:
 		var pos := tower.position + Vector2((index % columns - (columns - 1) * 0.5) * spacing, 100 + (index / columns) * spacing)
-		var unit: Unit = main._spawn_unit(0, card_id, pos, 0)
+		var unit: Unit = main._spawn_unit(UnitSpawnRequest.new(0, card_id, pos, {"deploy_time_override": 0}))
 		unit._target = tower
 		units.append(unit)
 		if range_override >= 0.0: unit.attack_range = range_override
@@ -71,8 +71,8 @@ func _run() -> void:
 func _measure_mass(main: Node) -> void:
 	# 同样重叠2px、无自主移动、开阔地，隔离质量对被动接触位移的影响。
 	for ids in [["garen", "imp"], ["garen", "garen"], ["imp", "garen"]]:
-		var front: Unit = main._spawn_unit(0, ids[0], Vector2(340, 850), 0)
-		var rear: Unit = main._spawn_unit(0, ids[1], Vector2(340, 950), 0)
+		var front: Unit = main._spawn_unit(UnitSpawnRequest.new(0, ids[0], Vector2(340, 850), {"deploy_time_override": 0}))
+		var rear: Unit = main._spawn_unit(UnitSpawnRequest.new(0, ids[1], Vector2(340, 950), {"deploy_time_override": 0}))
 		rear.position = front.position + Vector2.DOWN * (front.body_radius + rear.body_radius - 2.0)
 		var start_front := front.position
 		var start_rear := rear.position
