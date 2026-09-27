@@ -35,15 +35,6 @@ func _check_card_config() -> void:
 		"大步流星为 0 费 1 次的 buff：3 秒内移速×1.5、攻速×1.3、伤害不变，冷却 5 秒",
 	)
 
-func _spawn_test_unit(card_id: String, p_team: int, pos: Vector2) -> Unit:
-	var stats := CardDB.get_card(card_id).duplicate(true)
-	stats["deploy_time"] = 0.0
-	var unit := Unit.new()
-	unit.position = pos
-	unit.setup(p_team, stats, stats.name)
-	_main.add_child(unit)
-	return unit
-
 func _spawn_dummy(pos: Vector2, p_team: int = 1) -> Unit:
 	var unit := Unit.new()
 	var stats := SuiteUtils.sweep_dummy_stats(CardDB.get_card("garen"))

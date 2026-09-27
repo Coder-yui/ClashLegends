@@ -290,9 +290,9 @@ func _check_ranged_audio(harness: Object, main: Node2D) -> void:
 	var previous_mode: String = main.mode
 	main.mode = "client"
 	main._client_units[987654] = source
-	preload("res://tests/suites/network_fixture.gd").deliver(main, "_rpc_unit_audio_event", [987654, "attack_launch", source.global_position])
-	preload("res://tests/suites/network_fixture.gd").deliver(main, "_rpc_unit_audio_event", [987654, "active:release", source.global_position])
-	preload("res://tests/suites/network_fixture.gd").deliver(main, "_rpc_unit_audio_event", [987654, "active:hit", source.global_position])
+	preload("res://tests/fixtures/network_fixture.gd").deliver(main, "_rpc_unit_audio_event", [987654, "attack_launch", source.global_position])
+	preload("res://tests/fixtures/network_fixture.gd").deliver(main, "_rpc_unit_audio_event", [987654, "active:release", source.global_position])
+	preload("res://tests/fixtures/network_fixture.gd").deliver(main, "_rpc_unit_audio_event", [987654, "active:hit", source.global_position])
 	harness._expect(cues == [&"attack_launch", &"active:release", &"active:hit"] and is_equal_approx(victims[0].hp, hp_a - 70.0), "客户端重放寒冰离弦和技能事件，不重复结算伤害")
 	main._client_units.erase(987654)
 	main.mode = previous_mode
@@ -619,16 +619,16 @@ func _check_projectile_launch_lifetime(harness: Object, main: Node2D) -> void:
 	var remote_id := projectiles._next_id
 	projectiles._next_id += 1
 	var saved_source := {"card_id": "gnar", "form": 0, "serial": 1}
-	preload("res://tests/suites/network_fixture.gd").deliver(main, "_rpc_projectile_launch_audio", [remote_id, saved_source, Vector2.ZERO, true])
+	preload("res://tests/fixtures/network_fixture.gd").deliver(main, "_rpc_projectile_launch_audio", [remote_id, saved_source, Vector2.ZERO, true])
 	var remote_player = audio._projectile_launch_players.get(remote_id)
-	preload("res://tests/suites/network_fixture.gd").deliver(main, "_rpc_projectile_launch_audio", [remote_id, saved_source, Vector2.ZERO, true])
+	preload("res://tests/fixtures/network_fixture.gd").deliver(main, "_rpc_projectile_launch_audio", [remote_id, saved_source, Vector2.ZERO, true])
 	var once: bool = audio._projectile_launch_players.size() == 1 and audio._projectile_launch_players.get(remote_id) == remote_player
-	preload("res://tests/suites/network_fixture.gd").deliver(main, "_rpc_projectile_launch_audio", [remote_id, {}, Vector2.ZERO, false])
-	preload("res://tests/suites/network_fixture.gd").deliver(main, "_rpc_projectile_launch_audio", [remote_id, saved_source, Vector2.ZERO, true])
+	preload("res://tests/fixtures/network_fixture.gd").deliver(main, "_rpc_projectile_launch_audio", [remote_id, {}, Vector2.ZERO, false])
+	preload("res://tests/fixtures/network_fixture.gd").deliver(main, "_rpc_projectile_launch_audio", [remote_id, saved_source, Vector2.ZERO, true])
 	harness._expect(once and audio._projectile_launch_players.is_empty(), "客户端开始/命中停止按弹体 ID 重放，重复及结束后的旧开始不重播")
 	remote_id = projectiles._next_id
 	projectiles._next_id += 1
-	preload("res://tests/suites/network_fixture.gd").deliver(main, "_rpc_projectile_launch_audio", [remote_id, saved_source, Vector2.ZERO, true])
+	preload("res://tests/fixtures/network_fixture.gd").deliver(main, "_rpc_projectile_launch_audio", [remote_id, saved_source, Vector2.ZERO, true])
 	projectiles.clear_all()
 	harness._expect(audio._projectile_launch_players.is_empty(), "客户端清场清理所有弹体持有的发射声")
 	main.mode = previous_mode
@@ -956,7 +956,7 @@ func _check_match_announcements(harness: Object, main: Node2D) -> void:
 	main._tick_minion_waves(0.05)
 	harness._expect(cues == [&"minions_spawn"], "第5秒首波兵线只播一次全军出击")
 	main.mode = "client"
-	preload("res://tests/suites/network_fixture.gd").deliver(main, "_rpc_card_event", [main._last_card_event_id, "match", "minions_spawn", Vector2.ZERO])
+	preload("res://tests/fixtures/network_fixture.gd").deliver(main, "_rpc_card_event", [main._last_card_event_id, "match", "minions_spawn", Vector2.ZERO])
 	harness._expect(cues.size() == 1, "可靠首波播报重放按事件ID去重")
 	main._end_game(0, "nexus")
 	main._end_game(0, "nexus")
@@ -1079,9 +1079,9 @@ func _check_team_audio_routes(harness: Object, main: Node2D) -> void:
 	main._audio_manager = audio
 	main.mode = "client"
 	for player in audio._world_players: player.stop()
-	preload("res://tests/suites/network_fixture.gd").deliver(main, &"_rpc_card_event", [saved_card_event + 1, "gnar", "probe:start", Vector2.ZERO, 1, 1])
+	preload("res://tests/fixtures/network_fixture.gd").deliver(main, &"_rpc_card_event", [saved_card_event + 1, "gnar", "probe:start", Vector2.ZERO, 1, 1])
 	harness._expect(audio._world_players[0].volume_db == -40.0, "卡牌 RPC 从红方大形态一路传到音频选择入口")
-	preload("res://tests/suites/network_fixture.gd").deliver(main, &"_rpc_zone_audio", [100, "gnar", 1, "pulse", Vector2.ZERO, 1.0, 1])
+	preload("res://tests/fixtures/network_fixture.gd").deliver(main, &"_rpc_zone_audio", [100, "gnar", 1, "pulse", Vector2.ZERO, 1.0, 1])
 	harness._expect(audio._zone_players[100].player.volume_db == -40.0, "区域 RPC 保存红方大形态来源")
 	main._audio_manager = saved_audio
 	main.mode = saved_mode

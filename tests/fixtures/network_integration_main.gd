@@ -8,5 +8,5 @@ func _ready() -> void:
 
 func _initialize_authoritative_card_cycle(team: int, deck: Array) -> bool:
 	if not super._initialize_authoritative_card_cycle(team, deck): return false
-	preload("res://tests/suites/network_fixture.gd").fixed_cycle(self, team, deck)
+	preload("res://tests/fixtures/network_fixture.gd").fixed_cycle(self, team, deck)
 	return true

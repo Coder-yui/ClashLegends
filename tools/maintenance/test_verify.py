@@ -27,6 +27,15 @@ class VerifyTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             verify.expected_suites('[{"id":"a"},{"id":"a"}]')
 
+    def test_group_union_is_deduplicated_and_rejects_unknown(self):
+        catalog = json.dumps([{'id': 'a', 'group': 'combat'},
+                              {'id': 'b', 'group': 'combat'},
+                              {'id': 'c', 'group': 'ui'}])
+        self.assertEqual(verify.expected_suites(catalog, ['a', 'c'], ['combat']), ['a', 'b', 'c'])
+        self.assertEqual(verify.expected_suites(catalog, groups=['combat', 'combat']), ['a', 'b'])
+        with self.assertRaises(ValueError):
+            verify.expected_suites(catalog, groups=['typo'])
+
     def test_selected_result_cannot_hide_missing_or_extra_suites(self):
         self.assertEqual(verify.validate_mechanics(self.log(completed_suites=['b']), ['b'])[1], [])
         self.assertTrue(verify.validate_mechanics(self.log(completed_suites=['a']), ['b'])[1])

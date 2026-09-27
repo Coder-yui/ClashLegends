@@ -147,7 +147,7 @@ func _queued_form() -> void:
 	_main._card_growth.clear()
 	_main._commands.clear()
 	_main._deck = ["kayn","garen","ashe","teemo","xin","freeze","heal","pix"]
-	preload("res://tests/suites/network_fixture.gd").fixed_cycle(_main,0,_main._deck)
+	preload("res://tests/fixtures/network_fixture.gd").fixed_cycle(_main,0,_main._deck)
 	_main._elixir.elixir = 10.0
 	_expect(_main.play_card(0,"kayn",Vector2(300,900),{"elixir":_main._elixir}), "未成长时成功付款入队")
 	var source := _make("kayn",0,Vector2(600,1100))

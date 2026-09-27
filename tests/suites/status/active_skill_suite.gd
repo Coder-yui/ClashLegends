@@ -502,7 +502,7 @@ func _check_cast_control_pause_and_death_cancel() -> void:
 func _check_authoritative_hand_cycle() -> void:
 	var old_deck: Array = _main._deck.duplicate()
 	_main._deck = ["garen", "xin", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
-	preload("res://tests/suites/network_fixture.gd").fixed_cycle(_main, 0, _main._deck)
+	preload("res://tests/fixtures/network_fixture.gd").fixed_cycle(_main, 0, _main._deck)
 	_main._elixir.elixir = ElixirManager.MAX_ELIXIR
 	var hand_before: Array = _main.get_authoritative_hand(0)
 	var queue_before: Array = _main.get_authoritative_queue(0)
@@ -531,7 +531,7 @@ func _check_authoritative_hand_cycle() -> void:
 	_main._commands.clear_cards()
 	_main._elixir.elixir = ElixirManager.MAX_ELIXIR
 	_main._deck = old_deck
-	preload("res://tests/suites/network_fixture.gd").fixed_cycle(_main, 0, old_deck)
+	preload("res://tests/fixtures/network_fixture.gd").fixed_cycle(_main, 0, old_deck)
 
 func _check_network_hand_confirmation() -> void:
 	var old_mode: String = _main.mode
@@ -548,7 +548,7 @@ func _check_network_hand_confirmation() -> void:
 	_main._remote_deck = deck.duplicate()
 	_main.mode = "host"
 	_main._sim_tick_id = 103
-	preload("res://tests/suites/network_fixture.gd").fixed_cycle(_main, 1, deck)
+	preload("res://tests/fixtures/network_fixture.gd").fixed_cycle(_main, 1, deck)
 	network_elixir.elixir = ElixirManager.MAX_ELIXIR
 	var host_initial_hand: Array = _main.get_authoritative_hand(1)
 	var host_initial_queue: Array = _main.get_authoritative_queue(1)
@@ -590,7 +590,7 @@ func _check_network_hand_confirmation() -> void:
 
 	_main.mode = "client"
 	_main._deck = deck.duplicate()
-	preload("res://tests/suites/network_fixture.gd").fixed_cycle(_main, 1, deck)
+	preload("res://tests/fixtures/network_fixture.gd").fixed_cycle(_main, 1, deck)
 	_main._elixir.elixir = ElixirManager.MAX_ELIXIR
 	_main._hand.set_card_pending("garen", false)
 	_main._hand.set_card_pending("xin", false)
@@ -605,7 +605,7 @@ func _check_network_hand_confirmation() -> void:
 		and _main.get_authoritative_queue(1) == client_initial_queue
 		and is_equal_approx(_main._elixir.elixir, client_elixir_before_request)
 	)
-	preload("res://tests/suites/network_fixture.gd").deliver(_main, "_rpc_deploy_accepted", ["garen", _main.get_estimated_server_tick() + _main.COMMAND_DELAY_TICKS, host_accepted_hand, host_accepted_queue])
+	preload("res://tests/fixtures/network_fixture.gd").deliver(_main, "_rpc_deploy_accepted", ["garen", _main.get_estimated_server_tick() + _main.COMMAND_DELAY_TICKS, host_accepted_hand, host_accepted_queue])
 	var client_after_accept_hand: Array = _main.get_authoritative_hand(1)
 	var client_after_accept_queue: Array = _main.get_authoritative_queue(1)
 	var client_accept_synced: bool = (
@@ -619,7 +619,7 @@ func _check_network_hand_confirmation() -> void:
 	var client_queue_before_reject: Array = client_after_accept_queue.duplicate()
 	var client_elixir_before_reject: float = _main._elixir.elixir
 	_main._hand.set_card_pending("xin", true)
-	preload("res://tests/suites/network_fixture.gd").deliver(_main, "_rpc_deploy_rejected", ["xin"])
+	preload("res://tests/fixtures/network_fixture.gd").deliver(_main, "_rpc_deploy_rejected", ["xin"])
 	var client_reject_kept_state: bool = (
 		_main.get_authoritative_hand(1) == client_hand_before_reject
 		and _main.get_authoritative_queue(1) == client_queue_before_reject
@@ -638,7 +638,7 @@ func _check_network_hand_confirmation() -> void:
 	_main._elixir.elixir = old_elixir_value
 	if is_instance_valid(network_elixir):
 		network_elixir.free()
-	preload("res://tests/suites/network_fixture.gd").fixed_cycle(_main, 0, old_deck)
+	preload("res://tests/fixtures/network_fixture.gd").fixed_cycle(_main, 0, old_deck)
 
 func _check_empowered_freeze_slow_zone() -> void:
 	var stats: Dictionary = CardDB.get_unit_stats("imp").duplicate()
@@ -808,9 +808,13 @@ func _check_control_release_matrix() -> void:
 				if skill.has(key): points.append(float(skill[key]))
 			var boundaries: Dictionary = {}
 			for point in points:
-				for offset in [-0.05, 0.0, 0.05]: boundaries[maxf(float(point) + offset, 0.0)] = true
-			for boundary in boundaries:
-				var normal := _sample_skill_control(card, boundary, &"", skill_index)
+				for offset in [-0.05, 0.0, 0.05]:
+					var tick := maxi(ceili((float(point) + offset - 0.000001) / _main.SIM_DT), 0)
+					boundaries[tick] = true
+			# 无控制的最终状态与插入控制的时间无关，只采样一次。
+			var normal := _sample_skill_control(card, 0.0, &"", skill_index)
+			for tick in boundaries:
+				var boundary: float = tick * _main.SIM_DT
 				var stunned := _sample_skill_control(card, boundary, &"stun", skill_index)
 				var frozen := _sample_skill_control(card, boundary, &"freeze", skill_index)
 				var knocked := _sample_skill_control(card, boundary, &"knockback", skill_index)

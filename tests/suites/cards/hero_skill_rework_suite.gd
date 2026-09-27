@@ -23,15 +23,6 @@ func _dummy_stats() -> Dictionary:
 	stats["hp"] = 3000.0
 	return stats
 
-func _spawn_test_unit(card_id: String, p_team: int, pos: Vector2) -> Unit:
-	var stats := CardDB.get_card(card_id).duplicate(true)
-	stats["deploy_time"] = 0.0
-	var unit := Unit.new()
-	unit.position = pos
-	unit.setup(p_team, stats, stats.name)
-	_main.add_child(unit)
-	return unit
-
 func _spawn_dummy(pos: Vector2, p_team: int = 1) -> Unit:
 	var unit := Unit.new()
 	var stats := _dummy_stats()
@@ -586,7 +577,7 @@ func _check_ashe_release_vs_collision() -> void:
 		_expect(release_tick == 4, "0.16 秒效果延迟在 CastStart 后第 4 Tick（0.20 秒）发射")
 		_expect(collision_tick == (4 if distance == 80.0 else 6), "碰撞时刻取决于目标距离：近目标可在发射 Tick 命中，远目标要继续飞行")
 		_expect(target.hp == initial_hp - 70.0, "同次箭阵碰撞只对目标结算一次伤害")
-		print("[SKILL_TIMING] distance=%s release_tick=%d collision_tick=%d" % [distance, release_tick, collision_tick])
+		if "--verbose-checks" in OS.get_cmdline_user_args(): print("[SKILL_TIMING] distance=%s release_tick=%d collision_tick=%d" % [distance, release_tick, collision_tick])
 		source.free()
 		target.free()
 	_main._projectile_system.clear_all()

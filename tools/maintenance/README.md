@@ -1,6 +1,6 @@
 # 项目维护工具
 
-`audit_project.py` 只读检查资源引用、Markdown 链接、卡牌注册与手册覆盖，以及目录边界。`test_audit_project.py` 提供错误检测夹具。
+`audit_project.py` 只读检查资源引用、Markdown 链接、卡牌注册与手册覆盖，以及目录边界。测试注册还检查脚本/方法存在、分组与目录一致、入口不重复及套件没有漏注册。`test_audit_project.py` 提供错误检测夹具。
 
 ```sh
 python3 tools/maintenance/audit_project.py

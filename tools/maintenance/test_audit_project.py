@@ -1,4 +1,5 @@
 """Repository audit regression fixtures; no project or asset writes."""
+import json
 import tempfile
 import unittest
 from pathlib import Path
@@ -6,6 +7,20 @@ from audit_project import audit
 
 
 class AuditTests(unittest.TestCase):
+    def test_suite_catalog_rejects_duplicates_and_missing_registration(self):
+        self.write('tests/suites/combat/first_suite.gd', 'extends RefCounted\nfunc run(): pass\n')
+        entry = dict(id='first', script='res://tests/suites/combat/first_suite.gd', method='run', scene='battle', group='combat')
+        self.write('tests/suite_catalog.json', json.dumps([entry]))
+        self.assertEqual(audit(self.root)['errors'], [])
+        self.write('tests/suite_catalog.json', json.dumps([entry, dict(entry, id='alias')]))
+        self.assertTrue(any('duplicate suite' in e for e in audit(self.root)['errors']))
+        self.write('tests/suite_catalog.json', json.dumps([dict(entry, group='ui', method='absent')]))
+        errors = audit(self.root)['errors']
+        self.assertTrue(any('invalid scene/group' in e for e in errors))
+        self.assertTrue(any('missing method' in e for e in errors))
+        self.write('tests/suites/combat/second_suite.gd', 'extends RefCounted\nfunc run(): pass\n')
+        self.assertTrue(any('unregistered suite' in e for e in audit(self.root)['errors']))
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)

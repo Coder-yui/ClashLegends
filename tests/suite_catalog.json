@@ -1,326 +1,345 @@
 [
   {
     "id": "maintenance_suite",
-    "script": "res://tests/suites/maintenance_suite.gd",
+    "script": "res://tests/suites/contracts/maintenance_suite.gd",
     "method": "run",
-    "scene": "none"
+    "scene": "none",
+    "group": "contracts"
   },
   {
     "id": "CardDBValidationSuite",
-    "script": "res://tests/suites/card_db_validation_suite.gd",
+    "script": "res://tests/suites/contracts/card_db_validation_suite.gd",
     "method": "run",
-    "scene": "none"
+    "scene": "none",
+    "group": "contracts"
   },
   {
     "id": "ContentContractSuite",
-    "script": "res://tests/suites/content_contract_suite.gd",
+    "script": "res://tests/suites/contracts/content_contract_suite.gd",
     "method": "run",
-    "scene": "none"
+    "scene": "none",
+    "group": "contracts"
   },
   {
     "id": "DeckBuilderSuite",
-    "script": "res://tests/suites/deck_builder_suite.gd",
+    "script": "res://tests/suites/ui/deck_builder_suite.gd",
     "method": "run",
-    "scene": "menu"
+    "scene": "menu",
+    "group": "ui"
   },
   {
     "id": "maintenance_contracts",
-    "script": "res://tests/suites/maintenance_suite.gd",
+    "script": "res://tests/suites/contracts/maintenance_suite.gd",
     "method": "check_contracts",
-    "scene": "battle"
+    "scene": "battle",
+    "group": "contracts"
   },
   {
     "id": "numeric_system_suite",
-    "script": "res://tests/suites/numeric_system_suite.gd",
+    "script": "res://tests/suites/combat/numeric_system_suite.gd",
     "method": "run",
-    "scene": "battle"
+    "scene": "battle",
+    "group": "combat"
   },
   {
     "id": "ArenaDeploymentSuite",
-    "script": "res://tests/suites/arena_deployment_suite.gd",
+    "script": "res://tests/suites/deployment/arena_deployment_suite.gd",
     "method": "run",
-    "scene": "battle"
+    "scene": "battle",
+    "group": "deployment"
   },
   {
     "id": "AUDIO_PRESENTATION_SUITE_SCRIPT",
-    "script": "res://tests/suites/audio_presentation_suite.gd",
+    "script": "res://tests/suites/presentation/audio_presentation_suite.gd",
     "method": "run",
-    "scene": "battle"
+    "scene": "battle",
+    "group": "presentation"
   },
   {
     "id": "PresentationSuite",
-    "script": "res://tests/suites/presentation_suite.gd",
+    "script": "res://tests/suites/presentation/presentation_suite.gd",
     "method": "run",
-    "scene": "battle"
+    "scene": "battle",
+    "group": "presentation"
   },
   {
     "id": "BuildingMinionSuite",
-    "script": "res://tests/suites/building_minion_suite.gd",
+    "script": "res://tests/suites/combat/building_minion_suite.gd",
     "method": "run",
-    "scene": "battle"
+    "scene": "battle",
+    "group": "combat"
   },
   {
     "id": "NavigationCollisionSuite",
-    "script": "res://tests/suites/navigation_collision_suite.gd",
+    "script": "res://tests/suites/combat/navigation_collision_suite.gd",
     "method": "run",
-    "scene": "battle"
+    "scene": "battle",
+    "group": "combat"
   },
   {
     "id": "ActiveSkillSuite",
-    "script": "res://tests/suites/active_skill_suite.gd",
+    "script": "res://tests/suites/status/active_skill_suite.gd",
     "method": "run",
-    "scene": "battle"
+    "scene": "battle",
+    "group": "status"
   },
   {
     "id": "workbench_suite",
-    "script": "res://tests/suites/workbench_suite.gd",
+    "script": "res://tests/suites/ui/workbench_suite.gd",
     "method": "run",
-    "scene": "battle"
+    "scene": "battle",
+    "group": "ui"
   },
   {
     "id": "AnimationStateSuite",
-    "script": "res://tests/suites/animation_state_suite.gd",
+    "script": "res://tests/suites/presentation/animation_state_suite.gd",
     "method": "run",
-    "scene": "battle"
+    "scene": "battle",
+    "group": "presentation"
   },
   {
     "id": "cards/sett_animation_suite",
     "script": "res://tests/suites/cards/sett_animation_suite.gd",
     "method": "run",
-    "scene": "battle"
+    "scene": "battle",
+    "group": "cards"
   },
   {
     "id": "HeroSkillReworkSuite",
     "script": "res://tests/suites/cards/hero_skill_rework_suite.gd",
     "method": "run",
-    "scene": "battle"
+    "scene": "battle",
+    "group": "cards"
   },
   {
     "id": "CombatTargetingSuite",
-    "script": "res://tests/suites/combat_targeting_suite.gd",
+    "script": "res://tests/suites/combat/combat_targeting_suite.gd",
     "method": "run",
-    "scene": "battle"
+    "scene": "battle",
+    "group": "combat"
   },
   {
     "id": "GnarSuite",
     "script": "res://tests/suites/cards/gnar_suite.gd",
     "method": "run",
-    "scene": "battle"
+    "scene": "battle",
+    "group": "cards"
   },
   {
     "id": "XinSuite",
     "script": "res://tests/suites/cards/xin_suite.gd",
     "method": "run",
-    "scene": "battle"
+    "scene": "battle",
+    "group": "cards"
   },
   {
     "id": "GwenSuite",
     "script": "res://tests/suites/cards/gwen_suite.gd",
     "method": "run",
-    "scene": "battle"
+    "scene": "battle",
+    "group": "cards"
   },
   {
     "id": "TwistedFateSuite",
     "script": "res://tests/suites/cards/twisted_fate_suite.gd",
     "method": "run",
-    "scene": "battle"
+    "scene": "battle",
+    "group": "cards"
   },
   {
     "id": "AurelionSolSuite",
     "script": "res://tests/suites/cards/aurelionsol_suite.gd",
     "method": "run",
-    "scene": "battle"
+    "scene": "battle",
+    "group": "cards"
   },
   {
     "id": "MissFortuneSuite",
     "script": "res://tests/suites/cards/missfortune_suite.gd",
     "method": "run",
-    "scene": "battle"
+    "scene": "battle",
+    "group": "cards"
   },
   {
     "id": "PixSuite",
     "script": "res://tests/suites/cards/pix_suite.gd",
     "method": "run",
-    "scene": "battle"
+    "scene": "battle",
+    "group": "cards"
   },
   {
     "id": "MinionSquadSuite",
     "script": "res://tests/suites/cards/minion_squad_suite.gd",
     "method": "run",
-    "scene": "battle"
-  },
-  {
-    "id": "MeleeMinionSquadSuite",
-    "script": "res://tests/suites/cards/melee_minion_squad_suite.gd",
-    "method": "run",
-    "scene": "battle"
-  },
-  {
-    "id": "RangedMinionSquadSuite",
-    "script": "res://tests/suites/cards/ranged_minion_squad_suite.gd",
-    "method": "run",
-    "scene": "battle"
-  },
-  {
-    "id": "HeavyMinionSquadSuite",
-    "script": "res://tests/suites/cards/heavy_minion_squad_suite.gd",
-    "method": "run",
-    "scene": "battle"
-  },
-  {
-    "id": "SuperMinionSquadSuite",
-    "script": "res://tests/suites/cards/super_minion_squad_suite.gd",
-    "method": "run",
-    "scene": "battle"
-  },
-  {
-    "id": "SiegeMinionSquadSuite",
-    "script": "res://tests/suites/cards/siege_minion_squad_suite.gd",
-    "method": "run",
-    "scene": "battle"
+    "scene": "battle",
+    "group": "cards"
   },
   {
     "id": "ANIVIA_SUITE_SCRIPT",
     "script": "res://tests/suites/cards/anivia_suite.gd",
     "method": "run",
-    "scene": "battle"
+    "scene": "battle",
+    "group": "cards"
   },
   {
     "id": "ProjectileSuite",
-    "script": "res://tests/suites/projectile_suite.gd",
+    "script": "res://tests/suites/combat/projectile_suite.gd",
     "method": "run",
-    "scene": "battle"
+    "scene": "battle",
+    "group": "combat"
   },
   {
     "id": "network_lifecycle_suite",
-    "script": "res://tests/suites/network_lifecycle_suite.gd",
+    "script": "res://tests/suites/network/network_lifecycle_suite.gd",
     "method": "run",
-    "scene": "battle"
+    "scene": "battle",
+    "group": "network"
   },
   {
     "id": "workbench_scenario_suite",
-    "script": "res://tests/suites/workbench_scenario_suite.gd",
+    "script": "res://tests/suites/ui/workbench_scenario_suite.gd",
     "method": "run",
-    "scene": "battle"
+    "scene": "battle",
+    "group": "ui"
   },
   {
     "id": "building_placement_suite",
-    "script": "res://tests/suites/building_placement_suite.gd",
+    "script": "res://tests/suites/deployment/building_placement_suite.gd",
     "method": "run",
-    "scene": "none"
+    "scene": "none",
+    "group": "deployment"
   },
   {
     "id": "payment_suite",
-    "script": "res://tests/suites/payment_suite.gd",
+    "script": "res://tests/suites/deployment/payment_suite.gd",
     "method": "run",
-    "scene": "none"
+    "scene": "none",
+    "group": "deployment"
   },
   {
     "id": "shield_suite",
-    "script": "res://tests/suites/shield_suite.gd",
+    "script": "res://tests/suites/status/shield_suite.gd",
     "method": "run",
-    "scene": "none"
+    "scene": "none",
+    "group": "status"
   },
   {
     "id": "session_suite",
-    "script": "res://tests/suites/session_suite.gd",
+    "script": "res://tests/suites/network/session_suite.gd",
     "method": "run",
-    "scene": "none"
+    "scene": "none",
+    "group": "network"
   },
   {
     "id": "terminal_state_suite",
-    "script": "res://tests/suites/terminal_state_suite.gd",
+    "script": "res://tests/suites/network/terminal_state_suite.gd",
     "method": "run",
-    "scene": "none"
+    "scene": "none",
+    "group": "network"
   },
   {
     "id": "CombatBatchSuite",
-    "script": "res://tests/suites/combat_batch_suite.gd",
+    "script": "res://tests/suites/combat/combat_batch_suite.gd",
     "method": "run",
-    "scene": "battle"
+    "scene": "battle",
+    "group": "combat"
   },
   {
     "id": "TerminalAudioSuite",
-    "script": "res://tests/suites/terminal_audio_suite.gd",
+    "script": "res://tests/suites/presentation/terminal_audio_suite.gd",
     "method": "run",
-    "scene": "battle"
+    "scene": "battle",
+    "group": "presentation"
   },
   {
     "id": "BuildingExpiryBoundarySuite",
-    "script": "res://tests/suites/building_expiry_boundary_suite.gd",
+    "script": "res://tests/suites/combat/building_expiry_boundary_suite.gd",
     "method": "run",
-    "scene": "battle"
+    "scene": "battle",
+    "group": "combat"
   },
   {
     "id": "KnockbackBoundarySuite",
-    "script": "res://tests/suites/knockback_boundary_suite.gd",
+    "script": "res://tests/suites/combat/knockback_boundary_suite.gd",
     "method": "run",
-    "scene": "battle"
+    "scene": "battle",
+    "group": "combat"
   },
   {
     "id": "ShurimaGuardSuite",
     "script": "res://tests/suites/cards/shurima_guard_suite.gd",
     "method": "run",
-    "scene": "battle"
+    "scene": "battle",
+    "group": "cards"
   },
   {
     "id": "TimedFormCycleSuite",
-    "script": "res://tests/suites/timed_form_cycle_suite.gd",
+    "script": "res://tests/suites/status/timed_form_cycle_suite.gd",
     "method": "run",
-    "scene": "battle"
+    "scene": "battle",
+    "group": "status"
   },
   {
     "id": "StructureRushSuite",
     "script": "res://tests/suites/cards/structure_rush_suite.gd",
     "method": "run",
-    "scene": "battle"
+    "scene": "battle",
+    "group": "cards"
   },
   {
     "id": "DeploymentSkillSuite",
-    "script": "res://tests/suites/deployment_skill_suite.gd",
+    "script": "res://tests/suites/deployment/deployment_skill_suite.gd",
     "method": "run",
-    "scene": "battle"
+    "scene": "battle",
+    "group": "deployment"
   },
   {
     "id": "StatusBoundarySuite",
-    "script": "res://tests/suites/status_boundary_suite.gd",
+    "script": "res://tests/suites/status/status_boundary_suite.gd",
     "method": "run",
-    "scene": "battle"
+    "scene": "battle",
+    "group": "status"
   },
   {
     "id": "KayleSuite",
     "script": "res://tests/suites/cards/kayle_suite.gd",
     "method": "run",
-    "scene": "battle"
+    "scene": "battle",
+    "group": "cards"
   },
   {
     "id": "SionSuite",
     "script": "res://tests/suites/cards/sion_suite.gd",
     "method": "run",
-    "scene": "battle"
+    "scene": "battle",
+    "group": "cards"
   },
   {
     "id": "MirrorSuite",
     "script": "res://tests/suites/cards/mirror_suite.gd",
     "method": "run",
-    "scene": "battle"
+    "scene": "battle",
+    "group": "cards"
   },
   {
     "id": "DariusSuite",
     "script": "res://tests/suites/cards/darius_suite.gd",
     "method": "run",
-    "scene": "battle"
+    "scene": "battle",
+    "group": "cards"
   },
   {
     "id": "KaynSuite",
     "script": "res://tests/suites/cards/kayn_suite.gd",
     "method": "run",
-    "scene": "battle"
+    "scene": "battle",
+    "group": "cards"
   },
   {
     "id": "PantheonSuite",
     "script": "res://tests/suites/cards/pantheon_suite.gd",
     "method": "run",
-    "scene": "battle"
+    "scene": "battle",
+    "group": "cards"
   }
 ]

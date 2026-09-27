@@ -163,7 +163,7 @@ func _check_wild_cards_visual() -> void:
 	_expect(paths_match and index == 3, "万能牌提示与三条真实弹体共用方向，逐条起点和长度一致")
 	var old_mode: String = _main.mode
 	_main.mode = "client"
-	preload("res://tests/suites/network_fixture.gd").deliver(_main, "_rpc_frontal_skill_fx", [-1, caster.position, Vector2.DOWN, caster.body_radius, float(effect.length), 0.0, float(effect.duration), 1, String(effect.shape), 0.0, 0.0, float(effect.arc_degrees), int(effect.projectile_count)])
+	preload("res://tests/fixtures/network_fixture.gd").deliver(_main, "_rpc_frontal_skill_fx", [-1, caster.position, Vector2.DOWN, caster.body_radius, float(effect.length), 0.0, float(effect.duration), 1, String(effect.shape), 0.0, 0.0, float(effect.arc_degrees), int(effect.projectile_count)])
 	var replay: Dictionary = _main._active_skill_effect_system.frontal_effects.back()
 	_expect(replay.shape == "projectile_fan" and replay.projectile_count == 3 and replay.forward == Vector2.DOWN, "客户端范围 RPC 保留三条穿透路径参数和红方朝向")
 	_main.mode = old_mode

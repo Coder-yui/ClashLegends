@@ -2,6 +2,7 @@ extends SceneTree
 ## 每个套件拥有独立场景与固定种子；完成标记只在套件返回及清理检查后写出。
 const CATALOG_PATH := "res://tests/suite_catalog.json"
 var _completed_suites: Array[String] = []
+var _suite_results: Array[Dictionary] = []
 var _failed := 0
 var _checks := 0
 var _verbose := "--verbose-checks" in OS.get_cmdline_user_args()
@@ -14,10 +15,10 @@ func _initialize() -> void:
 func _run() -> void:
 	for argument in OS.get_cmdline_user_args():
 		if argument.begins_with("--network-case="):
-			await preload("res://tests/suites/network_boundary_suite.gd").new().run(self, argument.trim_prefix("--network-case="))
+			await preload("res://tests/suites/network/network_boundary_suite.gd").new().run(self, argument.trim_prefix("--network-case="))
 			return
 	if "--network-smoke" in OS.get_cmdline_user_args():
-		await preload("res://tests/suites/network_integration_suite.gd").new().run(self)
+		await preload("res://tests/suites/network/network_integration_suite.gd").new().run(self)
 		return
 	var catalog: Array = JSON.parse_string(FileAccess.get_file_as_string(CATALOG_PATH))
 	var selected: Array[String] = []
@@ -37,6 +38,9 @@ func _run() -> void:
 	if "--reverse-suites" in OS.get_cmdline_user_args(): catalog.reverse()
 	for entry in catalog:
 		if not selected.is_empty() and not selected.has(entry.id): continue
+		var started := Time.get_ticks_msec()
+		var checks_before := _checks
+		var failed_before := _failed
 		seed(12345)
 		await _prepare_suite(entry.scene)
 		print("[套件] " + entry.id)
@@ -52,16 +56,17 @@ func _run() -> void:
 			await suite.call(entry.method, self, _main)
 		await _clear_suite()
 		_completed_suites.append(entry.id)
+		_suite_results.append({"id": entry.id, "group": entry.group, "checks": _checks - checks_before, "failed": _failed - failed_before, "milliseconds": Time.get_ticks_msec() - started})
 	if "--profile-maintenance" in OS.get_cmdline_user_args():
 		await _prepare_suite("battle")
-		preload("res://tests/suites/maintenance_suite.gd").new().profile(self, _main)
+		preload("res://tests/suites/contracts/maintenance_suite.gd").new().profile(self, _main)
 		await _clear_suite()
 	if _failed == 0:
 		print("[机制检查] 全部通过（%d 项断言）" % _checks)
 	else:
 		push_error("[机制检查] %d 项失败" % _failed)
 	await create_timer(0.25).timeout
-	print("[MECHANICS_RESULT] " + JSON.stringify({"schema": 1, "checks": _checks, "failed": _failed, "completed_suites": _completed_suites}))
+	print("[MECHANICS_RESULT] " + JSON.stringify({"schema": 1, "checks": _checks, "failed": _failed, "completed_suites": _completed_suites, "suites": _suite_results}))
 	quit(_failed)
 
 func _prepare_suite(scene_kind: String) -> void:

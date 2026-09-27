@@ -1,5 +1,5 @@
 extends "res://tests/suites/battle_suite.gd"
-const FIXTURE = preload("res://tests/suites/network_fixture.gd")
+const FIXTURE = preload("res://tests/fixtures/network_fixture.gd")
 const DECK := ["mirror", "ashe", "garen", "heal", "freeze", "kayle", "shurima_guard", "tombstone"]
 
 func run(harness: Object, main: Node2D) -> void:

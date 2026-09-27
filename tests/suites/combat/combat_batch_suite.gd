@@ -63,9 +63,9 @@ func _check_mirror() -> void:
 		for tick in 100:
 			_main._sim_step(0.05)
 			if a.hp <= 0 or b.hp <= 0:
-				print("FAIRNESS tick=", _main._sim_tick_id, " a=", a.hp, " b=", b.hp, " stages=", a._attack_hit_index, "/", b._attack_hit_index)
+				if "--verbose-checks" in OS.get_cmdline_user_args(): print("FAIRNESS tick=", _main._sim_tick_id, " a=", a.hp, " b=", b.hp, " stages=", a._attack_hit_index, "/", b._attack_hit_index)
 				break
-		print("FAIRNESS_TRACE ", JSON.stringify(_main._combat.trace))
+		if "--verbose-checks" in OS.get_cmdline_user_args(): print("FAIRNESS_TRACE ", JSON.stringify(_main._combat.trace))
 		_main._combat.trace_enabled = false
 		_expect(a.hp == 0 and b.hp == 0, "正常近战镜像同刻致死，换边不改变互换")
 		a.free()
@@ -246,7 +246,7 @@ func _check_extra_exchange_and_deaths() -> void:
 				_expect(unit._attack_hit_index == 0, "死亡提交中新生单位不能进入已收集的攻击批次")
 				unit.free()
 		_expect(spawned == 2, "重复死亡请求不重复生成死亡召唤或替身")
-		print("EXTRA_FAIRNESS_TRACE ", JSON.stringify(_main._combat.trace))
+		if "--verbose-checks" in OS.get_cmdline_user_args(): print("EXTRA_FAIRNESS_TRACE ", JSON.stringify(_main._combat.trace))
 		_main._combat.trace_enabled = false
 		a.free()
 		b.free()

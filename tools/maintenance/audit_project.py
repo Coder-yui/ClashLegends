@@ -81,9 +81,42 @@ def audit_navigation(root: Path, texts: dict, errors: list) -> dict:
                 errors.append(f'{relative}: current fact mismatch: {source}::{constant}={value}')
     return config.get('card_documents', {})
 
+def audit_suite_catalog(root: Path, errors: list) -> None:
+    """Every automatic suite has one catalog entry per public entry point."""
+    manifest = root / 'tests/suite_catalog.json'
+    if not manifest.exists(): return
+    try:
+        entries = json.loads(manifest.read_text())
+        if not isinstance(entries, list) or not entries:
+            raise ValueError('expected a nonempty list')
+        ids, calls, scripts = set(), set(), set()
+        for entry in entries:
+            name, script, method, scene, group = (entry[key] for key in ('id', 'script', 'method', 'scene', 'group'))
+            if not all(isinstance(value, str) and value for value in (name, script, method, scene, group)):
+                raise ValueError('fields must be nonempty strings')
+            path = root / script.removeprefix('res://')
+            if name in ids or (script, method) in calls:
+                errors.append(f'tests/suite_catalog.json: duplicate suite or entry point: {name}')
+            ids.add(name); calls.add((script, method)); scripts.add(path.resolve())
+            if scene not in ('none', 'menu', 'battle') or group != path.parent.name:
+                errors.append(f'tests/suite_catalog.json: invalid scene/group: {name}')
+            if not script.startswith('res://tests/suites/') or not path.is_file():
+                errors.append(f'tests/suite_catalog.json: missing suite script: {script}')
+            elif not re.search(r'^func ' + re.escape(method) + r'\(', path.read_text(), re.M):
+                errors.append(f'tests/suite_catalog.json: missing method: {name}.{method}')
+        # These two are selected by the runner's two-process mode, not the single-process catalog.
+        external = {'network_integration_suite.gd', 'network_boundary_suite.gd'}
+        for path in (root / 'tests/suites').glob('*/*_suite.gd'):
+            if path.name not in external and path.resolve() not in scripts:
+                errors.append(f'tests/suite_catalog.json: unregistered suite: {path.relative_to(root)}')
+    except (ValueError, KeyError, TypeError) as exc:
+        errors.append(f'tests/suite_catalog.json: invalid catalog: {exc}')
+
+
 def audit(root: Path, inventory: bool = False) -> dict:
     root = root.resolve()
     errors = []
+    audit_suite_catalog(root, errors)
     for forbidden in ['assets/archive', 'assets/audio/auditions', 'assets/audio/workbench_auditions.json', '待开发卡牌美术素材', 'builds']:
         if (root / forbidden).exists():
             errors.append(f'{forbidden}: development content belongs in ClashLegends-开发素材库')

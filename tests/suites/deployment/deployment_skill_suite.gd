@@ -56,6 +56,8 @@ func run(harness: Object, main: Node2D) -> void:
 		var last := paid.back() as Unit
 		_expect(last.active_buff_timer > 0 or last.shield_hp > 0, card_id + " 等待期间连续死亡后最后成员仍施放")
 		_expect(main._elixir.elixir == balance and main._active_skills.entry(ability).uses_remaining == main._active_skills.entry(ability).max_uses - 1, card_id + " 转交不重复收费不重置次数")
+		var entry: Dictionary = main._active_skills.entry(ability)
+		_expect(is_equal_approx(float(entry.cooldown_left), float(entry.skill.cooldown)) and not main.use_active_skill(ability, 0), card_id + " 转交后保持配置冷却，冷却中或次数耗尽不得再次提交")
 		last.take_damage(100000)
 		_expect(not main._active_skills.has(ability), card_id + " 全灭清除正式资格")
 		for member in old + enemy + paid:

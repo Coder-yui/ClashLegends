@@ -396,7 +396,7 @@ func _check_recovery_boundary() -> void:
 						_expect((source.structure_rush.phase == StructureRushState.Phase.RECOVERY) == (elapsed < 13), "恢复阶段精确边界 %s/%s K+%d" % [queued, control_kind, elapsed])
 						if elapsed == 12:
 							_expect(first_attack == -1 and first_cast == -1 and is_equal_approx(source.structure_rush.remaining, 0.05), "K+12无提前行动且没有重复扣恢复时间")
-				print("RUSH_BOUNDARY ", [queued, control_kind, control_ticks, first_attack, first_cast, source._target_gap(building), source.attack_range])
+				if "--verbose-checks" in OS.get_cmdline_user_args(): print("RUSH_BOUNDARY ", [queued, control_kind, control_ticks, first_attack, first_cast, source._target_gap(building), source.attack_range])
 				var accepted: bool = queued and control_ticks <= 13
 				_expect(first_cast == (13 if accepted else -1), "正式技能实际Cast Start边界 %s/%s/%d" % [queued, control_kind, control_ticks])
 				_expect(first_attack == (-1 if accepted else maxi(13, control_ticks)), "普攻实际起手在全部锁到期边界 %s/%s/%d" % [queued, control_kind, control_ticks])

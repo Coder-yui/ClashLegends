@@ -42,14 +42,20 @@ def identity(root: Path) -> dict:
             'status': status, 'content_sha256': digest.hexdigest(), 'file_count': len(paths)}
 
 
-def expected_suites(source: str, selected: list[str] | None = None) -> list[str]:
+def expected_suites(source: str, selected: list[str] | None = None, groups: list[str] | None = None) -> list[str]:
     catalog = json.loads(source)
     names = [entry['id'] for entry in catalog]
     if len(names) != len(set(names)) or not names:
         raise ValueError('Invalid or duplicate suite catalog')
     if selected and set(selected) - set(names):
         raise ValueError('Unknown suites: ' + ', '.join(sorted(set(selected) - set(names))))
-    return [name for name in names if not selected or name in selected]
+    known_groups = {entry.get('group') for entry in catalog}
+    if groups and set(groups) - known_groups:
+        raise ValueError('Unknown groups: ' + ', '.join(sorted(set(groups) - known_groups)))
+    # Suite and group selectors form a union, emitted once in catalog order.
+    return [entry['id'] for entry in catalog
+            if not (selected or groups) or entry['id'] in (selected or [])
+            or entry.get('group') in (groups or [])]
 
 
 def validate_mechanics(log: str, expected: list[str]) -> tuple[dict | None, list[str]]:
@@ -231,6 +237,8 @@ def run_network(godot: str, output: Path, timeout: float, port: int = 0, rendere
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--group', action='append', help='Select a catalog group; repeat or combine with --suite (union)')
+    parser.add_argument('--list-suites', action='store_true', help='List suite IDs by group without running checks')
     parser.add_argument('--suite', action='append', help='Run only a named mechanics suite; repeat to select several')
     parser.add_argument('--reverse-suites', action='store_true', help='Run selected suites in reverse order to check isolation')
     parser.add_argument('--network-boundaries', action='store_true', help='Also run protocol/content mismatch, slow loading and disconnect cases')
@@ -246,7 +254,14 @@ def main() -> int:
     if args.timeout <= 0:
         parser.error('--timeout must be positive')
     try:
-        expected_suites((ROOT / 'tests/suite_catalog.json').read_text(), args.suite)
+        source = (ROOT / 'tests/suite_catalog.json').read_text()
+        selection = expected_suites(source, args.suite, args.group)
+        if args.list_suites:
+            for entry in json.loads(source):
+                if entry['id'] in selection:
+                    print(f"{entry['group']:14} {entry['id']}")
+            return 0
+        args.suite = selection if args.suite or args.group else None
     except ValueError as exc:
         parser.error(str(exc))
     godot = args.godot or shutil.which('godot') or shutil.which('Godot')

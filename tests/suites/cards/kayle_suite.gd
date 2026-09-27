@@ -7,7 +7,7 @@ func run(harness: Object, main: Node2D) -> void:
 	for tower in main._towers: tower.can_attack = false
 	for money in [2.99, 3.0, 5.99, 6.0, 10.0]:
 		_clear()
-		preload("res://tests/suites/network_fixture.gd").fixed_cycle(main, 0, main._deck)
+		preload("res://tests/fixtures/network_fixture.gd").fixed_cycle(main, 0, main._deck)
 		main._elixir.elixir = money
 		var expected_id := "kayle_ranged" if money >= 6 else "kayle"
 		var cost := 6 if money >= 6 else 3

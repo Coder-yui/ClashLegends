@@ -9,3 +9,12 @@ func _expect(condition: bool, message: String) -> void:
 func _run_main_ticks(count: int) -> void:
 	for _tick in count:
 		_main._sim_step(_main.SIM_DT)
+
+func _spawn_test_unit(card_id: String, p_team: int, pos: Vector2) -> Unit:
+	var stats := CardDB.get_card(card_id).duplicate(true)
+	stats["deploy_time"] = 0.0
+	var unit := Unit.new()
+	unit.position = pos
+	unit.setup(p_team, stats, stats.name)
+	_main.add_child(unit)
+	return unit

@@ -47,7 +47,7 @@ func _check_due_attack(permutation: int) -> void:
 	_main._sim_step(0.05)
 	_expect(building.nav_cells.is_empty() and not building.is_in_group("combatants"), "到期提交解除导航与战斗集合")
 	var state := [attacker._attack_hit_index, attacker.attack_timeline.cooldown, attacker.hp, attacker.skill_resource_value, attacker._target == backup]
-	print("EXPIRY_BOUNDARY permutation=", permutation, " tick=", _main._sim_tick_id, " state=", state)
+	if "--verbose-checks" in OS.get_cmdline_user_args(): print("EXPIRY_BOUNDARY permutation=", permutation, " tick=", _main._sim_tick_id, " state=", state)
 	_expect(building.hp == 0 and state == [0, 0.0, 100.0, 0.0, true], "自然到期在全体攻击资格之前：不出手、不消耗段/间隔、无收益且一致转火")
 	for unit in [attacker, building, backup]: unit.free()
 

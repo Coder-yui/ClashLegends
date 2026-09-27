@@ -94,7 +94,7 @@ func _check_revival_order() -> void:
 		attacker._just_deployed = false
 		var before := egg.hp
 		_run_main_ticks(1)
-		print("EGG_TRACE ", [before, egg.hp, attacker._attacking, attacker._attack_swing_count, attacker.attack_timeline.windup, attacker.attack_timeline.cooldown])
+		if "--verbose-checks" in OS.get_cmdline_user_args(): print("EGG_TRACE ", [before, egg.hp, attacker._attacking, attacker._attack_swing_count, attacker.attack_timeline.windup, attacker.attack_timeline.cooldown])
 		_expect(egg.hp < before and egg.hp > 0.0, "孵化前一 Tick 的近战实际命中蛋")
 		var attack_count := attacker._attack_swing_count
 		attacker.attack_timeline.recovery = 0.0
@@ -144,7 +144,7 @@ func _check_facing_and_replica() -> void:
 	unit.apply_knockback(unit.position + Vector2.LEFT * 40, 45, 0.2)
 	_run_main_ticks(1)
 	view._process(0.05)
-	print("FACING_TRACE ", [before, unit.get_visual_facing_direction(), yaw, view.rotation.y, unit.position])
+	if "--verbose-checks" in OS.get_cmdline_user_args(): print("FACING_TRACE ", [before, unit.get_visual_facing_direction(), yaw, view.rotation.y, unit.position])
 	_expect(before.dot(Vector2.RIGHT) > 0.99 and unit.get_visual_facing_direction() == before and view.rotation.y == yaw and unit.position.x > 360, "冰冻取消攻击后保持身体和已显示根朝向，击退只平移")
 	var old_mode: String = _main.mode
 	_main.mode = "client"
@@ -217,7 +217,7 @@ func _check_formal_skill_ticks() -> void:
 				_expect(unlock_tick == end_tick, "%s %s 行动锁与 Cast End 同边界" % [card, control_kind])
 			if card == "gwen":
 				_expect(heal_ticks == ([] if control_kind == "freeze_before" else [2]), "格温首次命中在 K+2 回血，命中前冻结不回血，命中后冻结保留收益")
-			print("CAST_BOUNDARY ", {"card": card, "control": control_kind, "start": start, "impacts": observed, "unlock": unlock_tick, "heal": heal_ticks})
+			if "--verbose-checks" in OS.get_cmdline_user_args(): print("CAST_BOUNDARY ", {"card": card, "control": control_kind, "start": start, "impacts": observed, "unlock": unlock_tick, "heal": heal_ticks})
 			_main._on_active_skill_unit_died(id)
 			unit.free()
 			target.free()
@@ -321,7 +321,7 @@ func _check_submission_boundary() -> void:
 			var paid: float = initial - _main._elixir.elixir
 			_expect(paid > 0.0 and not _main.use_active_skill(id, 0) and _main._elixir.elixir == initial - paid, "基础去重不二次扣费 " + kind)
 			_run_main_ticks(int(request.execute_tick) - _main._sim_tick_id)
-			print("SUBMIT_BOUNDARY ", [kind, expires, _main._active_skills.entry(id).uses_remaining, uses, _main._elixir.elixir, paid, unit.hp, unit.action_permissions(), unit.active_skill_cast_serial])
+			if "--verbose-checks" in OS.get_cmdline_user_args(): print("SUBMIT_BOUNDARY ", [kind, expires, _main._active_skills.entry(id).uses_remaining, uses, _main._elixir.elixir, paid, unit.hp, unit.action_permissions(), unit.active_skill_cast_serial])
 			_expect(_main._active_skills.entry(id).uses_remaining == uses - (1 if expires else 0) and is_equal_approx(_main._elixir.elixir, initial - (paid if expires else 0.0)), "执行时解锁则成功，仍锁则退费不耗次数 %s/%s" % [kind, expires])
 			_expect(_main._commands.inspect_skills().is_empty() and request.payment.is_settled(), "拒绝不延迟重试，原收据已结算 " + kind)
 			_main._elixir.elixir = 4.0
