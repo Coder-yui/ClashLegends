@@ -159,7 +159,7 @@ const VISUAL_ANIMATION_FIELDS := [
 	&"visual_action_durations", &"transitions", &"transition_blends", &"clip_blends",
 ]
 const ACTIVE_SKILL_FIELDS := [
-	&"dash_duration", &"spin_delay", &"hit_heal", &"on_hit_max_health_ratio", &"on_hit_tower_damage",
+	&"dash_duration", &"dash_reference_speed", &"spin_delay", &"hit_heal", &"on_hit_max_health_ratio", &"on_hit_tower_damage",
 	&"execute_damage_per_stack",
 	&"heal_amount",
 	&"icon_path",

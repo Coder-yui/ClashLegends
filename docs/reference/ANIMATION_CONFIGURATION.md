@@ -79,3 +79,5 @@
 模型包装可提供`advance_skill_resource_visual(full, delta)`消费已同步的满层技能资源，以及`advance_deployment_visual(elapsed, duration, enabled)`消费部署经过时间；均仅负责表现。具有部署特效的包装令Unit关闭默认横扫弧，权威部署伤害与范围不变，回收必须清理附属节点和材质。
 
 `full_resource_move` 在主动资源可见且满层时选择移动循环，资源变化时刷新移动姿态；专用过渡使用 `来源片段>full_resource_move`。只读资源，不等同于下一击强化状态。
+
+动态位移技能可由权威状态持有动作时钟：Unit.get_visual_action_clock()返回Vector2(是否管理, 播放倍率)，既有动作duration/time_left在此模式下表示归一进度。表现按新进度校正序列、帧间按倍率播放，动画结束回调不自主转段；不允许表现反向修改模拟。

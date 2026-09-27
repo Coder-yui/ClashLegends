@@ -1,6 +1,6 @@
 class_name DashStrikeState
 extends RefCounted
-## 依附施法的两段伤害；20Hz效果阶段推进，突进后恢复通用碰撞，旋转按命中时当前位置结算。
+## 权威距离进度驱动突进；实际结束后才启动固定时长的停步/旋转。
 var source_ref: WeakRef
 var skill: Dictionary
 var serial := -1
@@ -10,6 +10,10 @@ var hit_ids: Dictionary = {}
 var dash_healed := false
 var stopped := false
 var cancelled := false
+var distance := 0.0
+var tail_elapsed := 0.0
+var spin_hit := false
+var finished := false
 
 func _init(source: Unit, definition: Dictionary) -> void:
 	source_ref = weakref(source)
@@ -18,41 +22,91 @@ func _init(source: Unit, definition: Dictionary) -> void:
 	forward = source.active_skill_cast_facing.normalized()
 	if forward.is_zero_approx(): forward = Vector2.UP if source.team == 0 else Vector2.DOWN
 	source.skill_dash_active = true
+	source.visual_action_clock_managed = true
+	_sync_clock(source)
 
 func tick(dt: float) -> bool:
+	if finished: return false
 	var source = source_ref.get_ref()
 	if not is_instance_valid(source): return false
-	if source.hp <= 0.0:
-		source.skill_dash_active = false
+	if source.hp <= 0.0 or source.is_frozen() or serial <= source.cancelled_skill_cast_serial or serial != source.active_skill_cast_serial:
+		cancelled = true
+		_finish(source)
 		return false
-	cancelled = cancelled or source.is_frozen() or serial <= source.cancelled_skill_cast_serial
-	if cancelled or source._knockback_timer > 0.0: stopped = true
-	var dash_duration := float(skill.dash_duration)
-	if not stopped and elapsed < dash_duration:
-		var step := minf(dt, dash_duration - elapsed)
+	var remaining := dt
+	if source._knockback_timer > 0.0: stopped = true
+	if not stopped:
+		var tick_start: Vector2 = source.global_position
 		source._prev_pos = source.position
 		source.skill_dash_moved_tick = source.battle_context.simulation_tick()
-		var start: Vector2 = source.global_position
-		var end: Vector2 = start + forward * float(skill.length) * step / dash_duration
-		end = Vector2(clampf(end.x, source.body_radius, ArenaRules.FIELD_W-source.body_radius), clampf(end.y, source.body_radius, ArenaRules.FIELD_H-source.body_radius))
-		# 逐段记录地形边沿，避免单Tick跨过窄地形漏回一次血。
-		var samples := maxi(1, ceili(start.distance_to(end)/4.0))
-		for index in range(1, samples+1):
-			source.global_position = start.lerp(end, float(index)/samples)
+		# 最多4px一小段，进入地形得到移速后，本Tick剩余时间即可使用新速度。
+		while remaining > 0.000001 and not stopped:
+			var wall := _boundary_distance(source)
+			var left := maxf(0.0, float(skill.length) - distance)
+			if wall <= 0.000001 or left <= 0.000001:
+				stopped = true
+				break
+			var speed := _speed(source)
+			if speed <= 0.000001:
+				remaining = 0.0
+				break
+			var travel := minf(minf(4.0, left), minf(wall, speed * remaining))
+			var start: Vector2 = source.global_position
+			var end := start + forward * travel
+			source.global_position = Vector2(clampf(end.x, source.body_radius, ArenaRules.FIELD_W - source.body_radius), clampf(end.y, source.body_radius, ArenaRules.FIELD_H - source.body_radius))
+			distance += travel
+			remaining = maxf(0.0, remaining - travel / speed)
 			source.terrain_traversal.update(source)
-		_hit(source, start, end, false)
+			if travel + 0.000001 >= wall or distance + 0.000001 >= float(skill.length): stopped = true
+		if tick_start.distance_squared_to(source.global_position) > 0.000001:
+			_hit(source, tick_start, source.global_position, false)
 	elapsed += dt
-	if stopped or elapsed + 0.000001 >= dash_duration:
-		stopped = true
-		# Stop/Circle 与普通单位一样参与接触分离；不瞬移找空位，
-		# 也不因为人堆拥堵延迟旋转伤害或保留穿单位权限。
+	if stopped:
 		source.skill_dash_active = false
-		if cancelled: return false
-	if elapsed + 0.000001 >= float(skill.spin_delay):
-		_hit(source, source.global_position, source.global_position, true)
-		source.battle_context.notify_unit_audio_event(source, &"active:spin", source.global_position)
-		return false
+		tail_elapsed += remaining
+		if not spin_hit and tail_elapsed + 0.000001 >= float(skill.spin_delay) - float(skill.dash_duration):
+			spin_hit = true
+			_hit(source, source.global_position, source.global_position, true)
+			source.battle_context.notify_unit_audio_event(source, &"active:spin", source.global_position)
+		if tail_elapsed + 0.000001 >= float(skill.cast_duration) - float(skill.dash_duration):
+			_finish(source)
+			return false
+	_sync_clock(source)
 	return true
+
+func _speed(source: Unit) -> float:
+	return float(skill.length) / float(skill.dash_duration) * source.move_speed * source._effective_movement_multiplier() / float(skill.dash_reference_speed)
+
+func _boundary_distance(source: Unit) -> float:
+	var point := source.global_position
+	var radius := source.body_radius
+	var result := INF
+	if forward.x > 0.000001: result = minf(result, (ArenaRules.FIELD_W - radius - point.x) / forward.x)
+	elif forward.x < -0.000001: result = minf(result, (radius - point.x) / forward.x)
+	if forward.y > 0.000001: result = minf(result, (ArenaRules.FIELD_H - radius - point.y) / forward.y)
+	elif forward.y < -0.000001: result = minf(result, (radius - point.y) / forward.y)
+	return maxf(result, 0.0)
+
+func _sync_clock(source: Unit) -> void:
+	var duration := float(skill.cast_duration)
+	var dash_duration := float(skill.dash_duration)
+	var progress := dash_duration + tail_elapsed if stopped else dash_duration * distance / float(skill.length)
+	source._visual_action_duration = duration
+	source._visual_action_time_left = maxf(0.0, duration - progress)
+	source.visual_action_clock_rate = 1.0 if stopped else _speed(source) * dash_duration / float(skill.length)
+	# 动态施法锁由本状态持有，普通倒计时不参与；估计值只服务剩余窗口查询。
+	source.active_skill_cast_timer = maxf(0.000001, duration - progress if stopped else (float(skill.length) - distance) / maxf(_speed(source), 0.001) + duration - dash_duration)
+
+func _finish(source: Unit) -> void:
+	finished = true
+	if serial != source.active_skill_cast_serial: return
+	source.skill_dash_active = false
+	source.visual_action_clock_managed = false
+	source.visual_action_clock_rate = 1.0
+	source._visual_action_time_left = 0.0
+	source.active_skill_cast_timer = 0.0
+	source.active_skill_cast_facing = Vector2.ZERO
+	source.active_skill_cast_locks.clear()
 
 func _hit(source: Unit, start: Vector2, end: Vector2, spin: bool) -> void:
 	var receipts: Array[Dictionary] = []

@@ -26,6 +26,9 @@ func _run() -> void:
 	if "--terrain-audio" in OS.get_cmdline_user_args():
 		await _review_terrain_audio()
 		return
+	if "--dynamic-dash" in OS.get_cmdline_user_args():
+		await _review_dynamic_dash()
+		return
 	if "--terrain-exit" in OS.get_cmdline_user_args():
 		await _review_terrain_exit()
 		return
@@ -195,4 +198,45 @@ func _review_deploy_voice() -> void:
 	main._clear_art_dev_units()
 	main._audio_manager.end_battle()
 	print("KAYN_REVIEW_OUTPUT ", output)
+	quit()
+
+func _review_dynamic_dash() -> void:
+	for kind in ["kayn", "kayn_assassin", "kayn_slayer", "accelerate", "slow", "wall"]:
+		main._clear_art_dev_units()
+		await process_frame
+		var card: String = kind if kind.begins_with("kayn") else "kayn"
+		main.play_card(0, card, Vector2(360, 900), {"immediate": true, "validate_position": false})
+		var unit: Unit = main._latest_unit_for_card(card, 0)
+		unit._deploy_timer = 0.0
+		if kind == "wall":
+			unit.position = Vector2(690, 850)
+			unit._body_facing_direction = Vector2(1, -1).normalized()
+		if kind == "slow": unit.apply_slow(4.0, 0.25)
+		await process_frame
+		var skill: Dictionary = CardDB.active_skills_for(card)[0].duplicate(true)
+		if kind == "wall":
+			unit.position = Vector2(690, 850)
+			skill["cast_forward"] = Vector2(1, -1).normalized()
+		main.preview_active_skill(unit, skill)
+		var view: UnitModel3D
+		for child in main._battle_presentation._world_root.get_children():
+			if child is UnitModel3D and child._source == unit: view = child
+		var started := Time.get_ticks_msec()
+		var last_clip := ""
+		var accelerated := false
+		while Time.get_ticks_msec() - started < 2600:
+			await process_frame
+			if kind == "accelerate" and not accelerated and Time.get_ticks_msec() - started >= 120:
+				unit.apply_active_buff(2.0, 2.0, 1.0, 1.0)
+				accelerated = true
+			var clip := String(view._animation_player.assigned_animation)
+			if clip != last_clip:
+				print("DYNAMIC_REVIEW ", kind, " t=", Time.get_ticks_msec()-started, " clip=", clip, " clock=", unit.get_visual_action_clock(), " left=", unit.get_visual_action_time_left(), " cast=", unit.active_skill_cast_timer, " pos=", unit.position)
+				await shot("dynamic_"+kind+"_"+clip)
+				last_clip = clip
+			if not unit.is_active_skill_casting() and Time.get_ticks_msec() - started > 100: break
+	main._clear_art_dev_units()
+	main.queue_free()
+	await process_frame
+	print("DYNAMIC_REVIEW output=", output)
 	quit()

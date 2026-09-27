@@ -827,7 +827,7 @@ func effect_source(effect: Dictionary):
 func clear() -> void:
 	for dash in dash_strikes:
 		var source = dash.source_ref.get_ref()
-		if is_instance_valid(source): source.skill_dash_active = false
+		if is_instance_valid(source): dash._finish(source)
 	dash_strikes.clear()
 	_shield_explosions.clear()
 	_resolved_results.clear()

@@ -66,7 +66,8 @@ const U_BLOOD_RAGE := 45
 const U_CONTINUOUS_TARGET_AIR_ID := 46
 const U_HIT_HASTE_FULL := 47
 const U_ATTACK_SPEED_SLOW := 48
-const UNIT_PAYLOAD_SIZE := 49
+const U_ACTION_CLOCK := 49
+const UNIT_PAYLOAD_SIZE := 50
 
 const P_ID := 0
 const P_X := 1
@@ -190,6 +191,9 @@ func apply(snapshot_bytes: PackedByteArray, terminal: bool = false, expected_tic
 	for payload: Array in units_data:
 		if not payload[U_HIT_HASTE_FULL] is bool: return false
 		if not payload[U_ATTACK_SPEED_SLOW] is bool: return false
+		if not payload[U_ACTION_CLOCK] is Vector2: return false
+		var action_clock: Vector2 = payload[U_ACTION_CLOCK]
+		if not action_clock.is_finite() or action_clock.x not in [0.0, 1.0] or action_clock.y < 0.0: return false
 		if not payload[U_EXPLOSIVE_SHIELD] is bool: return false
 		if not DeathFormState.valid_snapshot(payload[U_DEATH_FORM]): return false
 		if not TargetProtectionState.valid_snapshot(payload[U_TARGET_PROTECTION]): return false
@@ -268,6 +272,7 @@ func _apply_units(units_data: Array) -> void:
 		u.net_facing_direction = Vector2(d[U_FACING_DIRECTION_X], d[U_FACING_DIRECTION_Y])
 		u.net_attacking_structure = int(d[U_ATTACKING_STRUCTURE]) == 1
 		# 时长和剩余时间让晚到客户端从权威进度开始播放。
+		u.net_visual_action_clock = d[U_ACTION_CLOCK]
 		u.net_visual_action_duration = maxf(float(d[U_ACTION_DURATION]), 0.0)
 		u.net_visual_action_time_left = clampf(float(d[U_ACTION_TIME_LEFT]), 0.0, u.net_visual_action_duration)
 		if not u.last_action_cancellation.is_empty():
@@ -278,6 +283,7 @@ func _apply_units(units_data: Array) -> void:
 			if action_serial <= u.cancelled_visual_serial:
 				u.net_visual_action_time_left = 0.0
 				u.net_visual_action_name = &""
+				u.net_visual_action_clock = Vector2(0.0, 1.0)
 		u.net_locomotion_state = int(d[U_LOCOMOTION])
 		u.net_empowered_attack_ready = int(d[U_EMPOWERED_READY]) == 1
 		u.net_empowered_attack_visual_serial = int(d[U_EMPOWERED_ATTACK_SERIAL])
@@ -481,4 +487,5 @@ func _unit_snapshot_payload(id: int, u: Unit, has_continuous_target: bool = fals
 		u.get_continuous_visual_target_air_id(),
 		u.hit_haste_full_visual(),
 		u.attack_speed_slow_visual(),
+		u.get_visual_action_clock(),
 	]

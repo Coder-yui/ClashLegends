@@ -22,6 +22,9 @@ const TRANSITION_DEFAULTS := {
 	&"model_swap": 0.02,
 }
 
+var _managed_clock_serial := -1
+var _managed_clock_left := -1.0
+
 var _active_buff_visual: ActiveBuffVisual3D
 var _model_resources := ModelVisualResources.new()
 var _last_buff_visible := false
@@ -365,6 +368,7 @@ func _sync_visual(force: bool, delta: float) -> void:
 		var action_name := _source.get_visual_action_name()
 		if visual_action_serial > _source.cancelled_visual_serial and (_source.get_visual_action_duration() <= 0.0 or _source.get_visual_action_time_left() > 0.0):
 			_play_visual_action(action_name)
+	_sync_managed_action_clock()
 	var attack_serial := _source.get_attack_visual_serial()
 	var attack_serial_changed := attack_serial != _last_attack_serial
 	if attack_serial_changed:
@@ -429,6 +433,8 @@ func _sync_visual(force: bool, delta: float) -> void:
 		_play_state(1)
 	if _animation_player != null:
 		var playback_scale := _state.attack_rate if _playing_attack else (_state.movement_rate if _current_state == 2 and not _playing_visual_action else 1.0)
+		if _playing_visual_action and _source.get_visual_action_clock().x > 0.5:
+			playback_scale = _source.get_visual_action_clock().y
 		_animation_player.speed_scale = 0.0 if _state.frozen else playback_scale
 
 ## 事件动作仅在空闲/移动时展示；攻击、控制、变形优先且不排队补播。
@@ -514,6 +520,21 @@ func _play_visual_action_clip(animation_name: StringName) -> void:
 	_last_clip_blend_time = blend_time
 	_notify_model_blend(animation_name, blend_time)
 	_animation_player.play_section(animation_name, clip_range.x, clip_range.y, blend_time, playback_speed)
+
+## 动态技能发布归一动作时间；每份权威进度只校正一次，帧间按只读倍率播放。
+func _sync_managed_action_clock() -> void:
+	var clock := _source.get_visual_action_clock()
+	var serial := _source.get_visual_action_serial()
+	if clock.x > 0.5 and _playing_visual_action:
+		var left := _source.get_visual_action_time_left()
+		if serial != _managed_clock_serial or not is_equal_approx(left, _managed_clock_left):
+			_managed_clock_serial = serial
+			_managed_clock_left = left
+			_seek_visual_action(_source.get_visual_action_duration() - left)
+	elif serial == _managed_clock_serial and _playing_visual_action and _source.get_visual_action_time_left() <= 0.0:
+		_managed_clock_serial = -1
+		_managed_clock_left = -1.0
+		_finish_visual_action()
 
 func _seek_visual_action(elapsed: float) -> void:
 	if _action_sequence.current().is_empty():
@@ -1356,6 +1377,7 @@ func _on_animation_finished(animation_name: StringName) -> void:
 				_retire()
 		return
 	if _playing_visual_action:
+		if _source.get_visual_action_clock().x > 0.5: return
 		if animation_name == _active_visual_action:
 			if _action_sequence.advance():
 				_play_visual_action_clip(StringName(_action_sequence.current().name))

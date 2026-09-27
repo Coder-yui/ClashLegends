@@ -355,6 +355,9 @@ var _visual_action_serial := 0
 var _visual_action_name := &""
 var _visual_action_duration := 0.0
 var _visual_action_time_left := 0.0
+var visual_action_clock_managed := false
+var visual_action_clock_rate := 1.0
+var net_visual_action_clock := Vector2(0.0, 1.0)
 ## 血条绘制中心；实际位置由屏幕空间头顶锚点计算。
 var _health_bar_center := Vector2.ZERO
 var _health_bar_screen_center := Vector2.ZERO
@@ -728,12 +731,17 @@ func get_visual_action_name() -> StringName:
 func get_visual_action_duration() -> float:
 	return net_visual_action_duration if _in_client_mode() else _visual_action_duration
 
+func get_visual_action_clock() -> Vector2:
+	return net_visual_action_clock if _in_client_mode() else Vector2(1.0 if visual_action_clock_managed else 0.0, visual_action_clock_rate)
+
 func get_visual_action_time_left() -> float:
 	return net_visual_action_time_left if _in_client_mode() else _visual_action_time_left
 
 ## 主机记录一次纯表现动作；序号、名称和权威动作窗口会随快照同步。
 ## duration 只用于客户端对齐播放进度，动画依旧不能决定效果时刻。
 func play_visual_action(action_name: StringName, duration: float = 0.0) -> void:
+	visual_action_clock_managed = false
+	visual_action_clock_rate = 1.0
 	_visual_action_name = action_name
 	_visual_action_duration = maxf(BattleNumbers.decimal(duration), 0.0)
 	_visual_action_time_left = _visual_action_duration
@@ -1323,12 +1331,12 @@ func prepare_action_clocks(dt: float) -> void:
 		structure_rush.tick(self, dt)
 	var age_form := form_index == 1 and form_lifetime_left > 0.0 and not (form_lifetime_after_transition and form_transition_timer > 0.0)
 	# 生命周期与普通技能时钟不因硬控暂停。冰冻在施加入口取消施法。
-	if _visual_action_time_left > 0.0:
+	if _visual_action_time_left > 0.0 and not visual_action_clock_managed:
 		_visual_action_time_left = maxf(0.0, _visual_action_time_left - dt)
 	if form_transition_timer > 0.0:
 		form_transition_timer = maxf(0.0, form_transition_timer - dt)
 		if form_transition_timer < 0.000001: form_transition_timer = 0.0
-	if active_skill_cast_timer > 0.0:
+	if active_skill_cast_timer > 0.0 and not visual_action_clock_managed:
 		if is_active_skill_attack_locked():
 			_cancel_attack_for_cast()
 		active_skill_cast_timer = maxf(0.0, active_skill_cast_timer - dt)
@@ -2042,6 +2050,9 @@ func _try_attack_lifesteal(landed_damage: float, cycle_ratio: float = 0.0) -> vo
 	queue_redraw()
 
 func cancel_skill_cast() -> void:
+	visual_action_clock_managed = false
+	visual_action_clock_rate = 1.0
+	skill_dash_active = false
 	cancelled_skill_cast_serial = active_skill_cast_serial
 	_visual_action_time_left = 0.0
 	_visual_action_name = &""

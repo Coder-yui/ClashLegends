@@ -10,6 +10,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_terrain_attack_exit()
 	_terrain_external_movement()
 	_dash_collision_and_timing()
+	_dynamic_dash()
 	_dash()
 	_control_and_growth_deployment()
 	_dash_edges()
@@ -82,7 +83,7 @@ func _dash() -> void:
 	a.active_skill_cast_facing = Vector2.UP
 	var skill: Dictionary = CardDB.active_skills_for("kayn_slayer")[0]
 	var dash := DashStrikeState.new(a,skill)
-	for tick in 10:
+	for tick in 20:
 		_main._combat.begin_batch(tick,"dash_test")
 		dash.tick(0.05)
 		_main._combat.commit_batch()
@@ -168,13 +169,13 @@ func _dash_edges() -> void:
 	a.active_skill_cast_facing = Vector2.UP
 	var skill: Dictionary = CardDB.active_skills_for("kayn_slayer")[0]
 	var dash := DashStrikeState.new(a,skill)
-	for tick in 10: dash.tick(0.05)
+	for tick in 20: dash.tick(0.05)
 	_expect(a.hp == 300, "红凯空Q不回血")
 	a.position = Vector2(360,1000)
 	var targets: Array[Unit] = []
 	for x in [340,360,380]: targets.append(_make("garen",1,Vector2(x,920)))
 	dash = DashStrikeState.new(a,skill)
-	for tick in 10:
+	for tick in 20:
 		_main._combat.begin_batch(tick,"multi_dash")
 		dash.tick(0.05)
 		_main._combat.commit_batch()
@@ -244,7 +245,7 @@ func _workbench_forms_and_animation() -> void:
 			view._sync_visual(false, 0.05)
 			_expect(view._animation_player.current_animation == String(stats.visual_animations.move), "离开地形到桥面恢复本形态跑步：" + id)
 			unit.position = Vector2(360, ArenaRules.RIVER_Y)
-			unit.play_visual_action(&"active", 0.7)
+			unit.play_visual_action(&"active", 1.0)
 			view._sync_visual(false, 0.05)
 			_expect(view._animation_player.current_animation == "Spell1_Dash", "进入地形不能覆盖正在进行的Q：" + id)
 			view.free()
@@ -332,12 +333,12 @@ func _weapon_blend_and_q() -> void:
 					_expect(actual.origin.distance_to(target.origin) < 0.02 and actual.basis.get_rotation_quaternion().angle_to(target.basis.get_rotation_quaternion()) < 0.002, "红凯外侧过渡准确落回原片")
 		modifier.reset_pool_visual()
 		_expect(not modifier._has_pose and modifier._duration == 0.0, "模型池重置清除上个单位的混合姿势：" + id)
-		unit.play_visual_action(&"active", 0.7)
+		unit.play_visual_action(&"active", 1.0)
 		view._sync_visual(false, 0.0)
-		for sample in [[0.2, "Spell1_Dash"], [0.35, "Spell1_Stop"], [0.5, "Spell1_Circle"]]:
+		for sample in [[0.2, "Spell1_Dash"], [0.5, "Spell1_Stop"], [0.71, "Spell1_Circle"]]:
 			view._seek_visual_action(sample[0])
 			_expect(player.assigned_animation == sample[1], "Q三段按权威窗口定位：" + id + "/" + sample[1])
-			if sample[0] > 0.3: _expect(is_zero_approx(view._last_clip_blend_time), "Q内部连续片段零混合：" + id)
+			if sample[0] > 0.43: _expect(is_zero_approx(view._last_clip_blend_time), "Q内部连续片段零混合：" + id)
 		view.free()
 		unit.free()
 
@@ -384,22 +385,22 @@ func _dash_collision_and_timing() -> void:
 	_expect(a.position == Vector2(360, 1000), "突进穿碰撞阶段也不被新建筑的部署推挤挪位")
 	dash.tick(0.05)
 	_expect(target.hp == 1000, "Q首步不会提前伤害整条未来路径上的目标")
-	for tick in 5: dash.tick(0.05)
+	for tick in 8: dash.tick(0.05)
 	_expect(target.hp == 910 and not a.skill_dash_active and a.position.distance_to(Vector2(360, 880)) < 0.001, "突进到达目标才伤害一次，结束恢复碰撞且不瞬移落点")
 	_contact_step(a, target)
 	_expect(a.position.distance_to(target.position) > 0.0, "Stop阶段重叠由通用接触机制分离")
 	# 第一段打中过，但旋转节点已离开范围，不能再受伤。
 	target.position = Vector2(600, 880)
-	for tick in 4: dash.tick(0.05)
+	for tick in 6: dash.tick(0.05)
 	_expect(target.hp == 910, "第一段命中不锁定第二段：旋转前离圈则不受旋转伤害")
 	a.position = Vector2(360, 1000)
 	target.position = Vector2(600, 880)
 	dash = DashStrikeState.new(a, skill)
-	for tick in 6: dash.tick(0.05)
+	for tick in 9: dash.tick(0.05)
 	# 没有经过突进路径的敌人在第二段节点前入圈，也应该被命中。
 	target.position = a.position + Vector2(50, 0)
-	for tick in 3: dash.tick(0.05)
-	_expect(target.hp == 910, "旋转在0.45秒尚未命中")
+	for tick in 5: dash.tick(0.05)
+	_expect(target.hp == 910, "旋转在0.70秒尚未命中")
 	dash.tick(0.05)
 	_expect(target.hp == 820, "旋转独立查询当时范围，后来入圈的敌人也受伤")
 	a.free()
@@ -521,3 +522,80 @@ func _attack_hit_timing() -> void:
 		unit.free()
 		target.free()
 	_main._card_growth.clear()
+
+func _dynamic_dash() -> void:
+	var skill: Dictionary = CardDB.active_skills_for("kayn")[0]
+	for id in ["kayn", "kayn_assassin", "kayn_slayer"]:
+		var a := _make(id, 0, Vector2(360, 1100))
+		var start := a.position
+		a.begin_active_skill_cast(1.0, Vector2.UP)
+		a.play_visual_action(&"active", 1.0)
+		var dash := DashStrikeState.new(a, skill)
+		var view: UnitModel3D
+		for child in _main._battle_presentation._world_root.get_children():
+			if child is UnitModel3D and child._source == a: view = child
+		view._sync_visual(false, 0.0)
+		var tick := 0
+		var dash_end := 0
+		var spin_at := 0
+		while not dash.finished and tick < 40:
+			tick += 1
+			a.prepare_action_clocks(0.05)
+			dash.tick(0.05)
+			view._sync_visual(false, 0.05)
+			if tick == 1: _expect(view._animation_player.assigned_animation == "Spell1_Dash" and is_equal_approx(view._animation_player.speed_scale, a.move_speed / 68.0), "动态突进表现使用有效移速倍率")
+			if dash.spin_hit and not dash.finished: _expect(view._animation_player.assigned_animation == "Spell1_Circle" and view._animation_player.speed_scale == 1.0, "旋转伤害时表现位于Circle且保持固定速度")
+			if dash.stopped and dash_end == 0: dash_end = tick
+			if dash.spin_hit and spin_at == 0: spin_at = tick
+		_expect(is_equal_approx(dash.distance, 120.0) and a.position.distance_to(start + Vector2.UP * 120.0) < 0.001, "变速突进距离固定120：" + id)
+		_expect(dash_end == (7 if id == "kayn_assassin" else 9) and spin_at == (13 if id == "kayn_assassin" else 15) and tick == (19 if id == "kayn_assassin" else 20), "三形态正常移速的突进/旋转/结束Tick：" + id)
+		_expect(not a.visual_action_clock_managed and not a.is_active_skill_casting(), "动态技能完成释放施法锁和时钟")
+		a.free()
+	var a := _make("kayn", 0, Vector2(360, 1100))
+	a.active_skill_cast_facing = Vector2.UP
+	var dash := DashStrikeState.new(a, skill)
+	dash.tick(0.1)
+	var before := dash.distance
+	a.apply_active_buff(2.0, 2.0, 1.0, 1.0)
+	dash.tick(0.1)
+	_expect(absf(dash.distance - before - before * 2.0) < 0.001, "突进中获得加速立即提高后续速度")
+	while not dash.stopped: dash.tick(0.01)
+	var tail := dash.tail_elapsed
+	a.apply_active_buff(2.0, 4.0, 1.0, 1.0)
+	dash.tick(0.1)
+	_expect(is_equal_approx(dash.tail_elapsed - tail, 0.1) and a.visual_action_clock_rate == 1.0, "停步旋转不受移速加成")
+	a.free()
+	# 斜撞边界取射线首个交点，不贴边滑行；半径必须在竞技场内。
+	a = _make("kayn", 0, Vector2(690, 1000))
+	a.active_skill_cast_facing = Vector2(1, -1).normalized()
+	dash = DashStrikeState.new(a, skill)
+	for i in 2: dash.tick(0.05)
+	_expect(dash.stopped and not a.skill_dash_active and a.position.distance_to(Vector2(702, 988)) < 0.001, "撞边界立即接Stop并不沿边滑动")
+	var wall_point := a.position
+	for i in 15: dash.tick(0.05)
+	_expect(a.position == wall_point and dash.finished and dash.spin_hit, "撞边界缩短总窗口但保留一次旋转")
+	a.free()
+	# 减速让突进超过原1秒仍持有施法锁，不能提前进入Circle。
+	a = _make("kayn", 0, Vector2(360, 1100))
+	a.apply_slow(3.0, 0.25)
+	a.begin_active_skill_cast(1.0, Vector2.UP)
+	a.play_visual_action(&"active", 1.0)
+	dash = DashStrikeState.new(a, skill)
+	for i in 20:
+		a.prepare_action_clocks(0.05)
+		dash.tick(0.05)
+	_expect(not dash.stopped and a.is_active_skill_casting() and a._visual_action_time_left > 0.57, "持续减速延长突进且不提前解锁/播旋转")
+	a.freeze(1.0)
+	_expect(not dash.tick(0.05) and not a.visual_action_clock_managed and not a.skill_dash_active, "冰冻清除动态突进与后段")
+	a.free()
+	a = _make("kayn_assassin", 0, Vector2(360, 720))
+	a.position = Vector2(360, 720)
+	a.active_skill_cast_facing = Vector2.UP
+	dash = DashStrikeState.new(a, CardDB.active_skills_for("kayn_assassin")[0])
+	dash.tick(0.1)
+	var plain_distance := 120.0 / 0.43 * 88.0 / 68.0 * 0.1
+	_expect(a.terrain_traversal.inside and dash.distance > plain_distance and is_equal_approx(a.visual_action_clock_rate, 88.0 / 68.0 * 1.3), "蓝凯途中入河加速影响同Tick剩余突进")
+	a.free()
+	var invalid := CardDB.all().duplicate(true)
+	invalid.kayn.active_skills[0].dash_reference_speed = 0.0
+	_expect(not CardDB.VALIDATOR.validate_all(invalid, false).is_empty(), "动态突进拒绝零参考移速")

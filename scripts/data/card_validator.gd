@@ -794,7 +794,7 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 			&"dash_strike":
 				if not bool(stats.get("terrain_traversal",false)): errors.append("%s: 当前突进效果要求穿地形能力" % label)
 				if float(skill.get("hit_heal",0.0)) < 0.0 or float(skill.get("on_hit_tower_damage",0.0)) < 0.0 or float(skill.get("on_hit_max_health_ratio",0.0)) < 0.0 or float(skill.get("on_hit_max_health_ratio",0.0)) > 1.0: errors.append("%s: 回复与塔伤非负，最大生命比例须在0至1之间" % label)
-				for field in ["dash_duration", "spin_delay", "length", "width", "radius", "damage"]:
+				for field in ["dash_duration", "dash_reference_speed", "spin_delay", "length", "width", "radius", "damage"]:
 					if float(skill.get(field, 0.0)) <= 0.0: errors.append("%s.%s: 必须 > 0" % [label, field])
 				if float(skill.get("spin_delay", 0.0)) < float(skill.get("dash_duration", 0.0)) or float(skill.get("spin_delay", 0.0)) > float(skill.get("cast_duration", 0.0)): errors.append("%s: 旋转必须在突进结束后、施法结束前" % label)
 				if float(skill.get("impact_delay", 0.0)) != 0.0: errors.append("%s: 突进须在施法开始启动" % label)

@@ -26,6 +26,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_payload_contract()
 	_check_hit_haste_visual_snapshot()
 	_check_soft_control_snapshot()
+	_check_dynamic_action_clock()
 	_check_bleeding_projection()
 	_system.reset_session("death-form")
 	var dormant := _payload("sion", 76000, 1)
@@ -436,4 +437,48 @@ func _check_soft_control_snapshot() -> void:
 	data[SNAP.U_ATTACK_SPEED_SLOW] = false
 	_deliver(4, [data])
 	_expect(not unit.stun_visual() and not unit.movement_slow_visual() and not unit.attack_speed_slow_visual(), "新快照清除眩晕与两类软控提示")
+	_system.reset_session("")
+
+func _check_dynamic_action_clock() -> void:
+	_system.reset_session("dynamic-action")
+	var data := _payload("kayn_slayer", 79103, 1)
+	data[SNAP.U_ACTION_SERIAL] = 5
+	data[SNAP.U_ACTION_NAME] = "active"
+	data[SNAP.U_ACTION_DURATION] = 1.0
+	data[SNAP.U_ACTION_TIME_LEFT] = 0.8
+	data[SNAP.U_ACTION_CLOCK] = Vector2(1.0, 0.5)
+	_deliver(2, [data])
+	var replica: Unit = _main._client_units[79103]
+	_expect(replica.get_visual_action_clock() == Vector2(1.0, 0.5) and is_equal_approx(replica.get_visual_action_time_left(), 0.8), "晚到快照恢复动态技能归一进度和减速倍率")
+	var invalid := data.duplicate(true)
+	invalid[SNAP.U_ACTION_CLOCK] = Vector2(1.0, NAN)
+	_deliver(3, [invalid])
+	_expect(_system.lifecycle.snapshot_tick == 2, "非法动态时钟拒绝整份快照")
+	data[SNAP.U_ACTION_TIME_LEFT] = 0.56
+	data[SNAP.U_ACTION_CLOCK] = Vector2(1.0, 1.0)
+	_deliver(4, [data])
+	_expect(replica.get_visual_action_clock() == Vector2(1.0, 1.0) and is_equal_approx(replica.get_visual_action_time_left(), 0.56), "撞边界后同一动作序号跳至后段并恢复1倍速")
+	data[SNAP.U_CANCELLATION] = {"serial": 1, "reason": "freeze", "attack": 0, "action": 1, "form": 0, "cancelled_action": 1, "cancelled_deployment": false}
+	_deliver(5, [data])
+	_expect(replica.get_visual_action_clock() == Vector2(1.0, 1.0), "旧取消事件不能清掉新动态施法时钟")
+	var camera := Camera3D.new()
+	camera.position = Vector3(0, 20, 30)
+	_main.add_child(camera)
+	camera.look_at(Vector3.ZERO)
+	var view := UnitModel3D.new()
+	_main.add_child(view)
+	var stats := CardDB.get_card("kayn_slayer")
+	var ready := view.setup(replica, load(stats.visual_scene_path), camera, stats.visual_animations, 0.0)
+	_expect(ready and view._animation_player.assigned_animation == "Spell1_Stop", "客户端晚到模型直接进入权威Stop段")
+	data[SNAP.U_ACTION_TIME_LEFT] = 0.25
+	_deliver(6, [data])
+	view._sync_visual(false, 0.05)
+	_expect(view._animation_player.assigned_animation == "Spell1_Circle" and view._animation_player.speed_scale == 1.0, "客户端同序号跳段进入Circle且不继承突进倍率")
+	data[SNAP.U_ACTION_CLOCK] = Vector2(0.0, 1.0)
+	data[SNAP.U_ACTION_TIME_LEFT] = 0.0
+	_deliver(7, [data])
+	view._sync_visual(false, 0.05)
+	_expect(not view._playing_visual_action, "客户端权威动态动作结束立即释放表现锁")
+	view.free()
+	camera.free()
 	_system.reset_session("")
