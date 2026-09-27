@@ -8,6 +8,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_terrain_audio()
 	_deploy_voice()
 	_terrain_attack_exit()
+	_crystal_dash_exit()
 	_terrain_external_movement()
 	_dash_collision_and_timing()
 	_dynamic_dash()
@@ -599,3 +600,28 @@ func _dynamic_dash() -> void:
 	var invalid := CardDB.all().duplicate(true)
 	invalid.kayn.active_skills[0].dash_reference_speed = 0.0
 	_expect(not CardDB.VALIDATOR.validate_all(invalid, false).is_empty(), "动态突进拒绝零参考移速")
+
+func _crystal_dash_exit() -> void:
+	for team in [0, 1]:
+		var crystal: Tower
+		for node in _main.get_tree().get_nodes_in_group("combatants"):
+			if node is Tower and node.is_king and node.team != team: crystal = node
+		for id in ["kayn", "kayn_assassin", "kayn_slayer"]:
+			var a := _make(id, team, Vector2(360, 900))
+			var direction := Vector2.UP if team == 0 else Vector2.DOWN
+			a.position = crystal.position - direction * 120.0
+			a._deploy_timer = 0.0
+			a.begin_active_skill_cast(1.0, direction)
+			a.play_visual_action(&"active", 1.0)
+			var dash := DashStrikeState.new(a, CardDB.active_skills_for(id)[0])
+			for tick in 30: dash.tick(0.05)
+			_expect(dash.finished and not a.is_active_skill_casting() and a.position.distance_to(crystal.position) < 0.01, "Q进入水晶中心正常结束并释放施法锁：" + id)
+			a._target = crystal
+			var before := a.position
+			_expect(a.leave_terrain_for_attack(), "水晶中心准备普攻可当步挤出：" + id)
+			_expect(UnitLandingQuery.legal(a, a.position, false) and a._target_gap(crystal) <= a.attack_range, "水晶出口合法且可直接攻击：" + id)
+			_expect(a.position.distance_to(before) <= a.body_radius + crystal.body_radius + ArenaRules.STRUCTURE_SEPARATION + 0.02, "水晶中心仅挤出必要距离：" + id)
+			var hp_before := crystal.hp
+			for tick in 8: a.sim_tick(0.05)
+			_expect(crystal.hp < hp_before and not a.terrain_traversal.inside, "挤出后正常普攻水晶不循环卡住：" + id)
+			a.free()

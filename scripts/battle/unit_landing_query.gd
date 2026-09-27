@@ -53,7 +53,7 @@ static func find_position(unit: Unit, desired: Vector2, allow_terrain: bool) -> 
 	return best
 
 ## 在目标攻击范围内检查3圈各16点，优先最小挤出距离，不产生自主移动。
-## 最远两格；无近处合法站位时不挤出，避免跳到远处或退回射程外。
+## 最远三格，覆盖水晶中心到外沿所需距离；无近处合法站位时不挤出，避免跳到远处或退回射程外。
 static func find_attack_exit(unit: Unit, target: Node2D) -> Vector2:
 	if not is_instance_valid(target) or target.hp <= 0.0: return Vector2(INF, INF)
 	var regions := _regions(unit.body_radius, false)
@@ -64,7 +64,7 @@ static func find_attack_exit(unit: Unit, target: Node2D) -> Vector2:
 	var direction := target.global_position.direction_to(unit.global_position)
 	if direction.is_zero_approx(): direction = Vector2.DOWN if unit.team == 0 else Vector2.UP
 	var best := Vector2(INF, INF)
-	var best_distance := pow(ArenaRules.TILE_SIZE * 2.0, 2.0) + 0.0001
+	var best_distance := pow(ArenaRules.TILE_SIZE * 3.0, 2.0) + 0.0001
 	for radius in [inner, (inner + outer) * 0.5, outer]:
 		for index in 16:
 			var point: Vector2 = target.global_position + direction.rotated(TAU * index / 16.0) * radius
