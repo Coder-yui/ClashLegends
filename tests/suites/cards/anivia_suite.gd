@@ -23,6 +23,9 @@ func _check_card_config_and_visuals() -> void:
 	_expect(
 		bool(stats.get("is_air", false))
 		and bool(stats.get("can_attack_air", false))
+		and stats.get("size_tier") == CardDB.SIZE_MEDIUM
+		and is_equal_approx(float(stats.get("radius", 0.0)), CardDB.RADIUS_MEDIUM)
+		and is_equal_approx(float(stats.get("visual_radius", 0.0)), CardDB.RADIUS_MEDIUM + CardDB.VISUAL_RADIUS_PADDING)
 		and is_equal_approx(float(stats.get("range", 0.0)), 190.0)
 		and is_equal_approx(float(stats.get("interval", 0.0)), 1.7)
 		and StringName(stats.get("projectile_visual", "")) == &"ice_cone"
@@ -31,8 +34,8 @@ func _check_card_config_and_visuals() -> void:
 	)
 	_expect(
 		model_node != null
-		and is_equal_approx(model_node.scale.x, 0.018216)
-		and is_equal_approx(model_node.scale.y, 0.018216)
+		and is_equal_approx(model_node.scale.x, 0.011385)
+		and is_equal_approx(model_node.scale.y, 0.011385)
 		and String(animations.get("deploy", "")) == "Idle1"
 		and String(animations.get("idle", "")) == "Idle1"
 		and String(animations.get("move", "")) == "Run"

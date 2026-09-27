@@ -88,12 +88,14 @@ func run(harness: Object) -> void:
 		"" if errors.is_empty() else "：" + "；".join(errors)
 	))
 	var custom := CardDB.get_card("anivia").duplicate(true)
+	custom.radius = 20.0
+	custom.custom_radius = true
 	var radius_errors := PackedStringArray()
 	CardDB.VALIDATOR._validate_combat_stats("custom", custom, true, radius_errors)
 	var custom_ok := radius_errors.is_empty() and is_equal_approx(float(custom.radius), 20.0)
 	custom.erase("custom_radius")
 	CardDB.VALIDATOR._validate_combat_stats("standard", custom, true, radius_errors)
-	harness._expect(custom_ok and not radius_errors.is_empty(), "显式自定义半径允许冰鸟 0.5 格，未声明的体型半径偏差仍拒绝")
+	harness._expect(custom_ok and not radius_errors.is_empty(), "显式自定义半径允许测试样本使用 0.5 格，未声明的体型半径偏差仍拒绝")
 	var access_api_ok := true
 	for card_id in CardDB.selectable_ids():
 		access_api_ok = access_api_ok and CardDB.has_card(card_id) and not CardDB.get_card(card_id).is_empty()

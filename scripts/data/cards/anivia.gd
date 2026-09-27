@@ -8,7 +8,7 @@ static func definition() -> Dictionary:
 			"description": "远程空中单位，攻速较慢；施放冰雪风暴在身前制造持续伤害与减速区域。被动可化为蛋，3秒未被击破后满血复活。",
 			"hp": 620, "damage": 78, "range": 190.0,
 			"speed": SPEED_EXTREMELY_SLOW, "interval": 1.7, "first_hit": 0.68,
-			"size_tier": SIZE_SLIGHTLY_LARGE, "radius": 20.0, "custom_radius": true,
+			"size_tier": SIZE_MEDIUM, "radius": RADIUS_MEDIUM,
 			"mass": 5.0, "sight": 270.0,
 			"projectile_speed": 420.0,
 			"projectile_spawn_at_edge": true, "projectile_spawn_offset": 7.5, "projectile_collision_radius": 4.0,
@@ -26,7 +26,7 @@ static func definition() -> Dictionary:
 					"cast_locks": ["movement", "attack", "facing"],
 				}],
 		},
-		"visual": { "visual_radius": (RADIUS_SLIGHTLY_LARGE + VISUAL_RADIUS_PADDING) * 1.15,
+		"visual": { "visual_radius": RADIUS_MEDIUM + VISUAL_RADIUS_PADDING,
 			"visual_scene_path": "res://assets/units/anivia/anivia_view.tscn",
 			"visual_forward_yaw": 0.0,
 			"visual_animations": {
