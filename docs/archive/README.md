@@ -7,6 +7,8 @@
 | 2026-09-11 | [开发里程碑](2026-09-11/development_milestones.md)、[工作台验收](2026-09-11/workbench_validation.md)、[结构验收](2026-09-11/maintenance_validation.md) |
 | 2026-09-13 | [研究与逐卡历史](2026-09-13/README.md)、[项目整理证据](2026-09-13/project_cleanup.md) |
 | 2026-09-14 | [通用文档整理前快照](2026-09-14/README.md)、[提交前综合检查](2026-09-14/final_review.md) |
+| 2026-09-22 | [状态迁移旧计划](2026-09-22/status_implementation_before_cleanup.md)、[架构旧稿](2026-09-22/maintenance_architecture_before_cleanup.md)、[卡牌机制旧稿](2026-09-22/card_design_before_cleanup.md)、[阶段旧稿](2026-09-22/dev_plan_before_cleanup.md) |
+| 2026-09-26 | [测试、架构、计划与已完成问题整理](2026-09-26/README.md) |
 
 日期记录中的“本轮通过”只适用于当时版本；本机路径与临时日志不保证仍可用。源模型、素材来源清单和仍有效的专项说明不会因为旧日期就当缓存删除。
 

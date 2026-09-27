@@ -61,8 +61,8 @@ Godot --path . -- --mode=workbench
 - `scripts/ui/workbench/model_preview.gd`：独立 3D 观察器与播放器，动画库按实例复制。
 - `scripts/ui/workbench/battle_scenarios.gd`：经典场景配方，只描述卡牌、阵营和落点。
 - `scripts/main.gd`：开发会话装配、正式出牌/技能接口和受限场景操作。
-- `tests/suites/workbench_suite.gd`：选卡、预览隔离、形态、试听清理、记录与资源技能回归；仍由统一 mechanics 入口执行。
-- `tests/suites/workbench_scenario_suite.gd`：场景重建、红方镜像、过桥、法术以及正式模式隔离；实际渲染工具为 `tools/demos/workbench_scenarios_preview.gd`。
+- `tests/suites/ui/workbench_suite.gd`：选卡、预览隔离、形态、试听清理、记录与资源技能回归；仍由统一 mechanics 入口执行。
+- `tests/suites/ui/workbench_scenario_suite.gd`：场景重建、红方镜像、过桥、法术以及正式模式隔离；实际渲染工具为 `tools/demos/workbench_scenarios_preview.gd`。
 
 开发工作台不能代替 [完整测试](../../../../tests/README.md)或联机验证。相关字段分别查 [卡牌设计](../../../CARD_DESIGN.md)、[动画状态](../../../ANIMATION_STATE_SYSTEM.md)和 [音频接入](../../../AUDIO_INTEGRATION.md)。
 

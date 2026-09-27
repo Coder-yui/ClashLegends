@@ -1,7 +1,7 @@
 class_name AIOpponent
 extends Node
-## 占位电脑对手：独立金币，攒够费用随机出牌。
-## 只是阶段 2 的过渡形态，阶段 3 联机 1v1 后移除，不追求强度。
+## 单机电脑对手：独立金币，从权威手牌选择可负担的卡，经 play_card 提交。
+## 使用简单随机策略；联机模式不启用，不作为竞技强度 AI。
 
 const THINK_INTERVAL := 1.0   # 每秒决策一次
 const PLAY_THRESHOLD := 6.0   # 金币攒到这个数才开始出牌

@@ -1,6 +1,6 @@
 # 游戏运行代码导航
 
-返回 [项目入口](../README.md)。离线提取、转换、摄影与试听工具在 [tools](../tools/README.md)；这里仅放游戏运行和工作台代码。
+返回 [项目入口](../README.md)。权威子系统按[战斗目录导航](battle/README.md)定位。离线提取、转换、摄影与试听工具在 [tools](../tools/README.md)；这里仅放游戏运行和工作台代码。
 
 | 位置 | 职责与复用方式 |
 | --- | --- |
@@ -18,3 +18,5 @@
 `diagnostics/release_smoke.gd` 是仅由专用命令行参数启动的发布包探针，验证真实开局、命令和终局；不进入正常菜单流程。
 
 业务所有者：`battle/command_schedule.gd` 管理排程，`active_skill_roster.gd` 管理技能资格，`card_cycle.gd` 管理牌序，`deployment_rules.gd` 管理部署判断，`knockback_state.gd` 管理击退轨迹；工作台会话在 `ui/workbench/session.gd`。Main 保留装配、场景与 UI/RPC。
+
+工作台组件按职责划分：`session` 持有会话，`card_catalog` 展开正式目录，`card_library` 搜索与快捷栏，`card_info` 只读详情，`animation_picker` 动作列表，`desktop_layout` 窗口与观察变换。主 UI 负责装配，不将状态回写卡牌定义。

@@ -23,7 +23,7 @@ static func definition() -> Dictionary:
 
 `transformed_stats` 保留原有完整形态字典格式；模型和声音共同通过 `PresentationConfig.for_form` 选择，不能各写回退规则。共享定义不是 Unit 运行状态：Unit 持有 ControlState、AttackTimeline 和技能/生命/目标等实例状态；需改测试数据或部署覆盖时只复制该卡，不能写入缓存或每次查询复制整库。
 
-字段白名单/常量在 `card_schema.gd`，校验在 `card_validator.gd`，统一调用 `CardDB.validate_all()`。新字段必须能在对应系统找到读取方。`tests/suites/maintenance_suite.gd` 的四域夹具证明定义、现有包装/动画、卡面和可选死亡音可一起接入，不注册额外正式卡牌。完整场景契约遍历所有注册卡，无须为复用卡增加 Main/Unit/动画/音频的英雄分支。
+字段白名单/常量在 `card_schema.gd`，校验在 `card_validator.gd`，统一调用 `CardDB.validate_all()`。新字段必须能在对应系统找到读取方。`tests/suites/contracts/maintenance_suite.gd` 的四域夹具证明定义、现有包装/动画、卡面和可选死亡音可一起接入，不注册额外正式卡牌。完整场景契约遍历所有注册卡，无须为复用卡增加 Main/Unit/动画/音频的英雄分支。
 
 ## 统一 API
 
