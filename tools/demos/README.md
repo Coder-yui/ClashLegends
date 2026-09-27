@@ -49,3 +49,19 @@
 
 - `mirror_review.gd` / `mirror_network_review.gd`：镜像卡部署、复制技能、网络资格同步及战斗表现复核。
 - `sion_review.gd`：双阵营赛恩部署、护盾、复生、普攻、死亡与录音复核。
+
+## 潘森落地逐层评审包
+
+复用`pantheon_review.gd`录制当前正式资源，不修改卡牌配置。包含112个单层、7个系统组合、长矛与两段人物代理，以及双方真实出牌的俯视/侧面同步视角；统一编码为¼倍速。
+
+```sh
+Godot --path . --fixed-fps 30 --script tools/demos/pantheon_review.gd -- --review-pack
+python3 tools/demos/pantheon_review_media.py --input /本次输出/pantheon-review --output /素材库内新的评审目录
+```
+
+输出包含`index.html`离线视频目录、`manifest.json`、`items.csv`与MP4/海报；L编号对应粒子层，G对应组合，P对应长矛/人物。单层使用灰底自动取景，不能根据缩略图比较实际尺寸。完整部署调用真实`play_card()`，两个相机观察同一个世界，保留正式表现朝向。
+
+录制每帧主动渲染，避免macOS后台窗口停刷。中断后可加`--review-output=/原输出/pantheon-review`复用已完整输出的单层；仅在运行素材未改变时续拍，审查期间保留原始帧；用户确认定稿后，核对成片和manifest完整，可清理可再生成的PNG逐帧缓存，保留清单、日志和关键截图。视频打包要求新目录，避免覆盖旧评审意见所对应的编号和素材。
+
+
+潘森审查页“不要”清单：使用 `python3 tools/demos/pantheon_review_server.py --directory <审查包目录> --port 8768` 启动。单层、独立对象及组合卡支持勾选，组操作展开到各层；保存到该审查包的 `selections.json`，只写审查意见，不直接改游戏。页面支持只看已选、取消和导出；下一轮按清单修改时读取该文件的稳定编号、系统/发射器名。勿覆盖用户已保存的清单；新生成的包才初始化当前已停用层。静态文件方式打开只提供浏览器缓存/导出，请优先用本地服务。
