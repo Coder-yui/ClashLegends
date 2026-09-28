@@ -4,6 +4,7 @@ extends RefCounted
 ## 资格归 ActiveSkillRoster，施法协调归 ActiveSkillLifecycle；这里只执行权威效果。
 
 var dash_strikes: Array[DashStrikeState] = []
+var ornn_charges: Array[OrnnChargeState] = []
 var _next_result_id := 1
 var _resolved_results: Dictionary = {}
 var _shield_explosions: Array[Dictionary] = []
@@ -117,6 +118,9 @@ func apply_cast_end(source: Unit, skill: Dictionary) -> void:
 
 func apply(source: Unit, skill: Dictionary) -> bool:
 	match StringName(skill.get("kind", "")):
+		&"terrain_charge":
+			ornn_charges.append(OrnnChargeState.new(source, skill))
+			_controller.notify_unit_audio_event(source, &"charge:start", source.global_position)
 		&"dash_strike":
 			dash_strikes.append(DashStrikeState.new(source, skill))
 		&"bleeding_execute":
@@ -574,6 +578,10 @@ func queue_shield_explosion(source: Unit, skill: Dictionary) -> void:
 	_shield_explosions.append({"source": weakref(source), "skill": skill})
 
 func tick_effects(dt: float) -> void:
+	var active_charges: Array[OrnnChargeState] = []
+	for charge in ornn_charges:
+		if charge.tick(dt): active_charges.append(charge)
+	ornn_charges = active_charges
 	var ongoing: Array[DashStrikeState] = []
 	for dash in dash_strikes:
 		if dash.tick(dt): ongoing.append(dash)
@@ -695,6 +703,10 @@ func frontal_forward(source: Unit) -> Vector2:
 
 
 func clear() -> void:
+	for charge in ornn_charges:
+		var source = charge.source_ref.get_ref()
+		if is_instance_valid(source): charge._finish(source)
+	ornn_charges.clear()
 	for dash in dash_strikes:
 		var source = dash.source_ref.get_ref()
 		if is_instance_valid(source): dash._finish(source)

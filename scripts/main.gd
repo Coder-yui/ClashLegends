@@ -52,6 +52,7 @@ var _spell_system: RefCounted
 ## 纳尔 Spell2：固定模拟延迟到手掌触地才结算；范围框是独立纯表现数据。
 var _skill_lifecycle: ActiveSkillLifecycle
 var _skill_presentation: SkillEffectPresentation
+var _team_attack_boost_system: TeamAttackBoostSystem
 var _active_skill_effect_system: RefCounted
 var _projectile_system: ProjectileSystem
 
@@ -164,6 +165,7 @@ func _ready() -> void:
 	battle_context = BattleContext.new(self)
 	_spell_system = SPELL_SYSTEM_SCRIPT.new(self)
 	_skill_presentation = SkillEffectPresentation.new(self)
+	_team_attack_boost_system = TeamAttackBoostSystem.new(self)
 	_active_skill_effect_system = ACTIVE_SKILL_EFFECT_SYSTEM_SCRIPT.new(self, _skill_presentation)
 	_skill_lifecycle = ActiveSkillLifecycle.new(_active_skill_effect_system, _skill_presentation, _commands, _combat)
 	_commands.impact = _active_skill_effect_system.apply
@@ -1207,6 +1209,7 @@ func clear_preview_battle() -> void:
 		_audio_manager.begin_battle()
 	_active_skill_effect_system.clear()
 	_skill_presentation.clear()
+	_team_attack_boost_system.clear()
 	_sync_art_dev_panel_state()
 	queue_redraw()
 
@@ -1582,7 +1585,10 @@ func notify_unit_audio_event(unit: Unit, cue: StringName, position: Vector2) -> 
 	if _audio_manager != null:
 		_audio_manager.play_event(unit, cue, position)
 	if mode == "host" and unit.net_id >= 0:
-		_rpc_unit_audio_event.rpc_id(_session.opponent_id, _session.session_id, unit.net_id, String(cue), position, unit.presentation_state().attack_serial)
+		if cue in [&"forge:pulse", &"forge:cancel"]:
+			_rpc_unit_forge_audio.rpc_id(_session.opponent_id, _session.session_id, unit.net_id, String(cue), position)
+		else:
+			_rpc_unit_audio_event.rpc_id(_session.opponent_id, _session.session_id, unit.net_id, String(cue), position, unit.presentation_state().attack_serial)
 
 @rpc("authority", "call_remote", "unreliable")
 func _rpc_unit_audio_event(epoch: String, net_id: int, cue: String, position: Vector2, attack_serial: int = -1) -> void:
@@ -2084,6 +2090,7 @@ func _sim_step(dt: float) -> void:
 		elif c is Tower:
 			c.sim_tick(dt, true)
 	_combat.commit_batch()
+	_team_attack_boost_system.tick(dt)
 	# 预部署在本 Tick 边界完成；新单位从下一 Tick 推进实际部署，避免两阶段共用一个 Tick。
 	_tick_pending_card_pre_deployments(dt)
 	_sync_active_skill_deployment_readiness()
@@ -2264,6 +2271,7 @@ func _end_game(winner_team: int, reason: String) -> void:
 	_spell_system.clear()
 	_active_skill_effect_system.clear()
 	_skill_presentation.clear()
+	_team_attack_boost_system.clear()
 	_clear_deployment_preview()
 	if _hand != null:
 		_hand.hide()
@@ -2789,6 +2797,20 @@ func present_skill_projectile_hit(source: Dictionary, action: String, pos: Vecto
 	if mode == "host":
 		_rpc_card_event.rpc_id(_session.opponent_id, _session.session_id, _presentation_event_id, card_id, action + ":" + phase, pos, form, int(source.get("team", 0)))
 
+func present_team_attack_boost(source: Unit, target: Unit, duration: float) -> void:
+	if not is_instance_valid(source) or not is_instance_valid(target):
+		return
+	var effect := _skill_presentation.add_team_attack_boost(source, target, duration)
+	if not effect.is_empty():
+		publish_skill_fx(effect)
+
+func present_ornn_charge_impact(source: Unit, radius: float, center: Vector2) -> void:
+	if not is_instance_valid(source) or radius <= 0.0:
+		return
+	var effect := _skill_presentation.add_ornn_charge_impact(center, radius, source.team)
+	if not effect.is_empty():
+		publish_skill_fx(effect)
+
 func present_zone_audio(source: Unit, action: String, pos: Vector2, duration: float) -> void:
 	_presentation_event_id += 1
 	if _audio_manager != null:
@@ -2832,6 +2854,8 @@ func _rpc_restoration_heal(epoch: String, net_id: int) -> void:
 		unit.show_restoration_heal()
 
 func notify_action_cancelled(unit: Unit, payload: Dictionary) -> void:
+	if not is_net_client() and String(payload.get("reason", "")) in ["stun", "freeze", "stasis"]:
+		_team_attack_boost_system.interrupt(unit)
 	if mode == "host" and unit.net_id >= 0:
 		_rpc_action_cancelled.rpc_id(_session.opponent_id, _session.session_id, unit.net_id, payload)
 
@@ -2905,3 +2929,8 @@ func growth_snapshot() -> Dictionary:
 func apply_growth_snapshot(value: Dictionary) -> void:
 	_card_growth.replace_replica(value)
 	if _hand != null: _hand._refresh(0.0)
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_unit_forge_audio(epoch: String, net_id: int, cue: String, position: Vector2) -> void:
+	if cue not in ["forge:pulse", "forge:cancel"]: return
+	_rpc_unit_audio_event(epoch, net_id, cue, position)

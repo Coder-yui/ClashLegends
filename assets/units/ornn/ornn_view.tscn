@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/units/ornn/source/ornn.glb" id="1_ornn"]
+
+[ext_resource type="Script" path="res://assets/units/ornn/ornn_view.gd" id="2_wrapper"]
+
+[node name="OrnnView" type="Node3D"]
+script = ExtResource("2_wrapper")
+
+[node name="Model" parent="." instance=ExtResource("1_ornn")]
+position = Vector3(0, 0.002, 0)
+scale = Vector3(1.35, 1.35, 1.35)

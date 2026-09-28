@@ -11,10 +11,11 @@
 | 艾尼维亚 / 奥瑞利安·索尔 | 冰雪风暴 R / 星落 R1 |
 | 赵信 / 崔斯特 | 新月护卫 R / 万能牌 Q（cardmaster_powercard） |
 | 易 / 厄运小姐 / 提莫 | 高原血统 R / 大步流星 W / 致盲 Q |
+| 奥恩 | 熔铸冲锋 E（ornne） |
 | 太阳圆盘 | 日耀庇护使用装备钢铁烈阳之匣（3190） |
 | 治疗术 | 强化治疗使用召唤师治疗术；过量治疗使用同名精密系符文 |
 
-17 张 PNG 的逐文件来源、源包、原路径与 SHA-256 见 [来源清单](source_manifest.json)。16 张来自本机只读 LoL 素材库；DDS 由 Pillow 12.3.0 解码为 RGBA PNG，不重绘、不放大。两张客户端 PNG 直接复制。过量治疗在本地包中未找到，补自 [Riot Data Dragon 官方图标](https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/Precision/Overheal.png)。
+26 张 PNG 的逐文件来源、源包、原路径与 SHA-256 见 [来源清单](source_manifest.json)。25 张来自本机只读 LoL 素材库；DDS 由 Pillow 解码为 RGBA PNG，不重绘、不放大。客户端 PNG 直接复制。过量治疗在本地包中未找到，补自 [Riot Data Dragon 官方图标](https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/Precision/Overheal.png)。
 
 提取原件、批次脚本和渲染截图保存在本地开发素材库 `04-中间产物/技能图标/2026-09-22/`。正式目录仅保留已接入图标。
 

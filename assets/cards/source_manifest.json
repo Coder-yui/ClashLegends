@@ -1,0 +1,12 @@
+[
+  {
+    "card": "ornn",
+    "path": "res://assets/cards/ornn_loading.jpg",
+    "source_package": "LeagueClient/Plugins/rcp-be-lol-game-data/default-assets2.wad",
+    "source_path": "plugins/rcp-be-lol-game-data/global/default/assets/characters/ornn/skins/base/ornnloadscreen.jpg",
+    "source_wad_hash": "04970490f3026e89",
+    "source_sha256": "99614ba0b62f61e10d0b1ad92fec36d995a2e3e0846283cf8d8f061c1afb0921",
+    "sha256": "99614ba0b62f61e10d0b1ad92fec36d995a2e3e0846283cf8d8f061c1afb0921",
+    "processing": "原始 JPG 直接复制；未裁切或改色。"
+  }
+]

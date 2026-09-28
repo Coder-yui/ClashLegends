@@ -1,0 +1,622 @@
+[
+  {
+    "file": "play_sfx_ornn_ornnbasicattack_oncast_r1_d.wav",
+    "event": "Play_sfx_Ornn_OrnnBasicAttack_OnCast",
+    "event_id": 4059386288,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/奥恩/audio-revision/float/play_sfx_ornn_ornnbasicattack_oncast_r1_d.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/奥恩/2026-09-27/audio_prepared/ornn/txtp/Play_sfx_Ornn_OrnnBasicAttack_OnCast {r1} {d}.txtp",
+    "media_ids": [
+      33273772,
+      168208435,
+      550174172
+    ],
+    "duration": 0.9826,
+    "processing": "vgmstream-cli -i -W 4 原事件浮点解码；所有SFX统一-3dB余量后PCM16，无逐文件归一化或截断",
+    "sha256": "06892806c02eee0db5e343cf56b2e97d2e03f9f979f816983e99b8c8b562d1f6",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ornn_ornnbasicattack_oncast_r2_d.wav",
+    "event": "Play_sfx_Ornn_OrnnBasicAttack_OnCast",
+    "event_id": 4059386288,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/奥恩/audio-revision/float/play_sfx_ornn_ornnbasicattack_oncast_r2_d.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/奥恩/2026-09-27/audio_prepared/ornn/txtp/Play_sfx_Ornn_OrnnBasicAttack_OnCast {r2} {d}.txtp",
+    "media_ids": [
+      33273772,
+      168208435,
+      550174172
+    ],
+    "duration": 0.8873,
+    "processing": "vgmstream-cli -i -W 4 原事件浮点解码；所有SFX统一-3dB余量后PCM16，无逐文件归一化或截断",
+    "sha256": "c43ab083f8fe32685e9a5af42fab68d5793592c948327c25f11ebd9dd17e351c",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ornn_ornnbasicattack_oncast_r3_d.wav",
+    "event": "Play_sfx_Ornn_OrnnBasicAttack_OnCast",
+    "event_id": 4059386288,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/奥恩/audio-revision/float/play_sfx_ornn_ornnbasicattack_oncast_r3_d.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/奥恩/2026-09-27/audio_prepared/ornn/txtp/Play_sfx_Ornn_OrnnBasicAttack_OnCast {r3} {d}.txtp",
+    "media_ids": [
+      33273772,
+      168208435,
+      550174172
+    ],
+    "duration": 1.1707,
+    "processing": "vgmstream-cli -i -W 4 原事件浮点解码；所有SFX统一-3dB余量后PCM16，无逐文件归一化或截断",
+    "sha256": "6c27bd3b52e70e54904a8da02a8a070ef5dc4acc17ae8fe976b0b9ccc891e39f",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ornn_ornnbasicattack2_oncast_r1.wav",
+    "event": "Play_sfx_Ornn_OrnnBasicAttack2_OnCast",
+    "event_id": 2578283728,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/奥恩/audio-revision/float/play_sfx_ornn_ornnbasicattack2_oncast_r1.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/奥恩/2026-09-27/audio_prepared/ornn/txtp/Play_sfx_Ornn_OrnnBasicAttack2_OnCast {r1}.txtp",
+    "media_ids": [
+      33273772,
+      168208435,
+      550174172
+    ],
+    "duration": 0.9826,
+    "processing": "vgmstream-cli -i -W 4 原事件浮点解码；所有SFX统一-3dB余量后PCM16，无逐文件归一化或截断",
+    "sha256": "06892806c02eee0db5e343cf56b2e97d2e03f9f979f816983e99b8c8b562d1f6",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ornn_ornnbasicattack2_oncast_r2.wav",
+    "event": "Play_sfx_Ornn_OrnnBasicAttack2_OnCast",
+    "event_id": 2578283728,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/奥恩/audio-revision/float/play_sfx_ornn_ornnbasicattack2_oncast_r2.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/奥恩/2026-09-27/audio_prepared/ornn/txtp/Play_sfx_Ornn_OrnnBasicAttack2_OnCast {r2}.txtp",
+    "media_ids": [
+      33273772,
+      168208435,
+      550174172
+    ],
+    "duration": 0.8873,
+    "processing": "vgmstream-cli -i -W 4 原事件浮点解码；所有SFX统一-3dB余量后PCM16，无逐文件归一化或截断",
+    "sha256": "c43ab083f8fe32685e9a5af42fab68d5793592c948327c25f11ebd9dd17e351c",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ornn_ornnbasicattack2_oncast_r3.wav",
+    "event": "Play_sfx_Ornn_OrnnBasicAttack2_OnCast",
+    "event_id": 2578283728,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/奥恩/audio-revision/float/play_sfx_ornn_ornnbasicattack2_oncast_r3.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/奥恩/2026-09-27/audio_prepared/ornn/txtp/Play_sfx_Ornn_OrnnBasicAttack2_OnCast {r3}.txtp",
+    "media_ids": [
+      33273772,
+      168208435,
+      550174172
+    ],
+    "duration": 1.1707,
+    "processing": "vgmstream-cli -i -W 4 原事件浮点解码；所有SFX统一-3dB余量后PCM16，无逐文件归一化或截断",
+    "sha256": "6c27bd3b52e70e54904a8da02a8a070ef5dc4acc17ae8fe976b0b9ccc891e39f",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ornn_ornnbasicattack3_oncast_r1_d.wav",
+    "event": "Play_sfx_Ornn_OrnnBasicAttack3_OnCast",
+    "event_id": 3952365043,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/奥恩/audio-revision/float/play_sfx_ornn_ornnbasicattack3_oncast_r1_d.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/奥恩/2026-09-27/audio_prepared/ornn/txtp/Play_sfx_Ornn_OrnnBasicAttack3_OnCast {r1} {d}.txtp",
+    "media_ids": [
+      33273772,
+      168208435,
+      550174172
+    ],
+    "duration": 0.9826,
+    "processing": "vgmstream-cli -i -W 4 原事件浮点解码；所有SFX统一-3dB余量后PCM16，无逐文件归一化或截断",
+    "sha256": "06892806c02eee0db5e343cf56b2e97d2e03f9f979f816983e99b8c8b562d1f6",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ornn_ornnbasicattack3_oncast_r2_d.wav",
+    "event": "Play_sfx_Ornn_OrnnBasicAttack3_OnCast",
+    "event_id": 3952365043,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/奥恩/audio-revision/float/play_sfx_ornn_ornnbasicattack3_oncast_r2_d.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/奥恩/2026-09-27/audio_prepared/ornn/txtp/Play_sfx_Ornn_OrnnBasicAttack3_OnCast {r2} {d}.txtp",
+    "media_ids": [
+      33273772,
+      168208435,
+      550174172
+    ],
+    "duration": 0.8873,
+    "processing": "vgmstream-cli -i -W 4 原事件浮点解码；所有SFX统一-3dB余量后PCM16，无逐文件归一化或截断",
+    "sha256": "c43ab083f8fe32685e9a5af42fab68d5793592c948327c25f11ebd9dd17e351c",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ornn_ornnbasicattack3_oncast_r3_d.wav",
+    "event": "Play_sfx_Ornn_OrnnBasicAttack3_OnCast",
+    "event_id": 3952365043,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/奥恩/audio-revision/float/play_sfx_ornn_ornnbasicattack3_oncast_r3_d.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/奥恩/2026-09-27/audio_prepared/ornn/txtp/Play_sfx_Ornn_OrnnBasicAttack3_OnCast {r3} {d}.txtp",
+    "media_ids": [
+      33273772,
+      168208435,
+      550174172
+    ],
+    "duration": 1.1707,
+    "processing": "vgmstream-cli -i -W 4 原事件浮点解码；所有SFX统一-3dB余量后PCM16，无逐文件归一化或截断",
+    "sha256": "6c27bd3b52e70e54904a8da02a8a070ef5dc4acc17ae8fe976b0b9ccc891e39f",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ornn_ornnbasicattack_onhit_1559186049_1153642577_r1_d.wav",
+    "event": "Play_sfx_Ornn_OrnnBasicAttack_OnHit",
+    "event_id": 413492720,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/奥恩/audio-revision/float/play_sfx_ornn_ornnbasicattack_onhit_1559186049_1153642577_r1_d.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/奥恩/2026-09-27/audio_prepared/ornn/txtp/Play_sfx_Ornn_OrnnBasicAttack_OnHit [1559186049=1153642577] {r1} {d}.txtp",
+    "media_ids": [
+      77764320,
+      107611070,
+      593465095,
+      980236127
+    ],
+    "duration": 1.0,
+    "processing": "vgmstream-cli -i -W 4 原事件浮点解码；所有SFX统一-3dB余量后PCM16，无逐文件归一化或截断",
+    "sha256": "dfcaa5efdadcac72b181636fa309e01a27488847647a8fb5ab5de9ad1ba47bcc",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ornn_ornnbasicattack_onhit_1559186049_1153642577_r2_d.wav",
+    "event": "Play_sfx_Ornn_OrnnBasicAttack_OnHit",
+    "event_id": 413492720,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/奥恩/audio-revision/float/play_sfx_ornn_ornnbasicattack_onhit_1559186049_1153642577_r2_d.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/奥恩/2026-09-27/audio_prepared/ornn/txtp/Play_sfx_Ornn_OrnnBasicAttack_OnHit [1559186049=1153642577] {r2} {d}.txtp",
+    "media_ids": [
+      77764320,
+      107611070,
+      593465095,
+      980236127
+    ],
+    "duration": 1.0,
+    "processing": "vgmstream-cli -i -W 4 原事件浮点解码；所有SFX统一-3dB余量后PCM16，无逐文件归一化或截断",
+    "sha256": "4ffad53346cd0519fe52ae6a70c0bbab935a067dc9a916c6a4e7ba0fa2c6aa67",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ornn_ornnbasicattack_onhit_1559186049_1153642577_r3_d.wav",
+    "event": "Play_sfx_Ornn_OrnnBasicAttack_OnHit",
+    "event_id": 413492720,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/奥恩/audio-revision/float/play_sfx_ornn_ornnbasicattack_onhit_1559186049_1153642577_r3_d.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/奥恩/2026-09-27/audio_prepared/ornn/txtp/Play_sfx_Ornn_OrnnBasicAttack_OnHit [1559186049=1153642577] {r3} {d}.txtp",
+    "media_ids": [
+      77764320,
+      107611070,
+      593465095,
+      980236127
+    ],
+    "duration": 1.0,
+    "processing": "vgmstream-cli -i -W 4 原事件浮点解码；所有SFX统一-3dB余量后PCM16，无逐文件归一化或截断",
+    "sha256": "0b930259f5d4b45bb195e7c4d33d5a59b18b59cf4d75efa9bae04bb1e2978e81",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ornn_ornnbasicattack2_onhit_1559186049_1153642577_r1.wav",
+    "event": "Play_sfx_Ornn_OrnnBasicAttack2_OnHit",
+    "event_id": 285820816,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/奥恩/audio-revision/float/play_sfx_ornn_ornnbasicattack2_onhit_1559186049_1153642577_r1.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/奥恩/2026-09-27/audio_prepared/ornn/txtp/Play_sfx_Ornn_OrnnBasicAttack2_OnHit [1559186049=1153642577] {r1}.txtp",
+    "media_ids": [
+      77764320,
+      107611070,
+      593465095,
+      980236127
+    ],
+    "duration": 1.0,
+    "processing": "vgmstream-cli -i -W 4 原事件浮点解码；所有SFX统一-3dB余量后PCM16，无逐文件归一化或截断",
+    "sha256": "dfcaa5efdadcac72b181636fa309e01a27488847647a8fb5ab5de9ad1ba47bcc",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ornn_ornnbasicattack2_onhit_1559186049_1153642577_r2.wav",
+    "event": "Play_sfx_Ornn_OrnnBasicAttack2_OnHit",
+    "event_id": 285820816,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/奥恩/audio-revision/float/play_sfx_ornn_ornnbasicattack2_onhit_1559186049_1153642577_r2.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/奥恩/2026-09-27/audio_prepared/ornn/txtp/Play_sfx_Ornn_OrnnBasicAttack2_OnHit [1559186049=1153642577] {r2}.txtp",
+    "media_ids": [
+      77764320,
+      107611070,
+      593465095,
+      980236127
+    ],
+    "duration": 1.0,
+    "processing": "vgmstream-cli -i -W 4 原事件浮点解码；所有SFX统一-3dB余量后PCM16，无逐文件归一化或截断",
+    "sha256": "4ffad53346cd0519fe52ae6a70c0bbab935a067dc9a916c6a4e7ba0fa2c6aa67",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ornn_ornnbasicattack2_onhit_1559186049_1153642577_r3.wav",
+    "event": "Play_sfx_Ornn_OrnnBasicAttack2_OnHit",
+    "event_id": 285820816,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/奥恩/audio-revision/float/play_sfx_ornn_ornnbasicattack2_onhit_1559186049_1153642577_r3.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/奥恩/2026-09-27/audio_prepared/ornn/txtp/Play_sfx_Ornn_OrnnBasicAttack2_OnHit [1559186049=1153642577] {r3}.txtp",
+    "media_ids": [
+      77764320,
+      107611070,
+      593465095,
+      980236127
+    ],
+    "duration": 1.0,
+    "processing": "vgmstream-cli -i -W 4 原事件浮点解码；所有SFX统一-3dB余量后PCM16，无逐文件归一化或截断",
+    "sha256": "0b930259f5d4b45bb195e7c4d33d5a59b18b59cf4d75efa9bae04bb1e2978e81",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ornn_ornnbasicattack3_onhit_1559186049_1153642577_r1_d.wav",
+    "event": "Play_sfx_Ornn_OrnnBasicAttack3_OnHit",
+    "event_id": 949322713,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/奥恩/audio-revision/float/play_sfx_ornn_ornnbasicattack3_onhit_1559186049_1153642577_r1_d.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/奥恩/2026-09-27/audio_prepared/ornn/txtp/Play_sfx_Ornn_OrnnBasicAttack3_OnHit [1559186049=1153642577] {r1} {d}.txtp",
+    "media_ids": [
+      77764320,
+      107611070,
+      593465095,
+      980236127
+    ],
+    "duration": 1.0,
+    "processing": "vgmstream-cli -i -W 4 原事件浮点解码；所有SFX统一-3dB余量后PCM16，无逐文件归一化或截断",
+    "sha256": "dfcaa5efdadcac72b181636fa309e01a27488847647a8fb5ab5de9ad1ba47bcc",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ornn_ornnbasicattack3_onhit_1559186049_1153642577_r2_d.wav",
+    "event": "Play_sfx_Ornn_OrnnBasicAttack3_OnHit",
+    "event_id": 949322713,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/奥恩/audio-revision/float/play_sfx_ornn_ornnbasicattack3_onhit_1559186049_1153642577_r2_d.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/奥恩/2026-09-27/audio_prepared/ornn/txtp/Play_sfx_Ornn_OrnnBasicAttack3_OnHit [1559186049=1153642577] {r2} {d}.txtp",
+    "media_ids": [
+      77764320,
+      107611070,
+      593465095,
+      980236127
+    ],
+    "duration": 1.0,
+    "processing": "vgmstream-cli -i -W 4 原事件浮点解码；所有SFX统一-3dB余量后PCM16，无逐文件归一化或截断",
+    "sha256": "4ffad53346cd0519fe52ae6a70c0bbab935a067dc9a916c6a4e7ba0fa2c6aa67",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ornn_ornnbasicattack3_onhit_1559186049_1153642577_r3_d.wav",
+    "event": "Play_sfx_Ornn_OrnnBasicAttack3_OnHit",
+    "event_id": 949322713,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/奥恩/audio-revision/float/play_sfx_ornn_ornnbasicattack3_onhit_1559186049_1153642577_r3_d.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/奥恩/2026-09-27/audio_prepared/ornn/txtp/Play_sfx_Ornn_OrnnBasicAttack3_OnHit [1559186049=1153642577] {r3} {d}.txtp",
+    "media_ids": [
+      77764320,
+      107611070,
+      593465095,
+      980236127
+    ],
+    "duration": 1.0,
+    "processing": "vgmstream-cli -i -W 4 原事件浮点解码；所有SFX统一-3dB余量后PCM16，无逐文件归一化或截断",
+    "sha256": "0b930259f5d4b45bb195e7c4d33d5a59b18b59cf4d75efa9bae04bb1e2978e81",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_vo_ornn_death3d_r1_zh_cn.wav",
+    "event": "Play_vo_Ornn_Death3D",
+    "event_id": 3731730283,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/奥恩/2026-09-27/audio_prepared/ornn_vo/event_wav/Play_vo_Ornn_Death3D {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/奥恩/2026-09-27/audio_prepared/ornn_vo/txtp/Play_vo_Ornn_Death3D {r1}.txtp",
+    "media_ids": [
+      18274099,
+      805078121,
+      1364764698
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "d61dbe38e67645347b67f14129af2b33f8ba4001969548173923b1efa1acc5a4",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 2.6111791383219956,
+      "source_sha256": "b394c026c92dd19728c62b526873b984f1201080e2f14432906b928c92d7cdef",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_vo_ornn_death3d_r2_zh_cn.wav",
+    "event": "Play_vo_Ornn_Death3D",
+    "event_id": 3731730283,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/奥恩/2026-09-27/audio_prepared/ornn_vo/event_wav/Play_vo_Ornn_Death3D {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/奥恩/2026-09-27/audio_prepared/ornn_vo/txtp/Play_vo_Ornn_Death3D {r2}.txtp",
+    "media_ids": [
+      18274099,
+      805078121,
+      1364764698
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "c37a342e7212b628bf1ff7498790df6978725719ea99de8fb4807ae9cb9a5ea6",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 1.6387755102040817,
+      "source_sha256": "84c74142d2f118cb5458199bec31b3a170585bb0f89b46e9ae9ac2919f115268",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_vo_ornn_death3d_r3_zh_cn.wav",
+    "event": "Play_vo_Ornn_Death3D",
+    "event_id": 3731730283,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/奥恩/2026-09-27/audio_prepared/ornn_vo/event_wav/Play_vo_Ornn_Death3D {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/奥恩/2026-09-27/audio_prepared/ornn_vo/txtp/Play_vo_Ornn_Death3D {r3}.txtp",
+    "media_ids": [
+      18274099,
+      805078121,
+      1364764698
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "d449cd4577007a5dec972140e96a84346c0d3202d42dff142706a5456640bd7e",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 3.007845804988662,
+      "source_sha256": "f7ffdc0da0257b66a1e6fd3af5159b58122c2a5bb868ef60b27e1d3021ef5ae0",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_sfx_ornn_ornne_oncast.wav",
+    "event": "Play_sfx_Ornn_OrnnE_OnCast",
+    "event_id": 734260917,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/奥恩/audio-revision/float/play_sfx_ornn_ornne_oncast.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/奥恩/2026-09-27/audio_prepared/ornn/txtp/Play_sfx_Ornn_OrnnE_OnCast.txtp",
+    "media_ids": [
+      304852776,
+      399274204
+    ],
+    "duration": 2.4868,
+    "processing": "vgmstream-cli -i -W 4 原事件浮点解码；所有SFX统一-3dB余量后PCM16，无逐文件归一化或截断",
+    "sha256": "ca08ac205c4e1eb809083553f7e90b2de6eeb7b4a1ef195631c5e7815eb04035",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ornn_ornne_buffonmoveend_explosion_r.wav",
+    "event": "Play_sfx_Ornn_OrnnE_BuffOnMoveEnd_explosion",
+    "event_id": 2642792679,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/奥恩/audio-revision/float/play_sfx_ornn_ornne_buffonmoveend_explosion_r.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/奥恩/2026-09-27/audio_prepared/ornn/txtp/Play_sfx_Ornn_OrnnE_BuffOnMoveEnd_explosion {r}.txtp",
+    "media_ids": [
+      46278076,
+      66097124,
+      277646260,
+      440885201,
+      474796128,
+      649152168,
+      1028831939,
+      1063943855
+    ],
+    "duration": 3.4,
+    "processing": "vgmstream-cli -i -W 4 原事件浮点解码；所有SFX统一-3dB余量后PCM16，无逐文件归一化或截断",
+    "sha256": "f4c311eff71c6048e3f730bcb875b58d9a8ee050ff5e2d717a5e0d1a8b920e6f",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "deploy_choose_zh_cn.wav",
+    "event": "champion-choose-vo/516.ogg",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/奥恩/audio-revision/choose.wav",
+    "sha256": "ed50ad00e7bef266d5781e09630c6b3f83fd648dfc75d3cf35d5efc1859c49d3",
+    "processing": "原事件解码；PCM16，不裁切、不归一化",
+    "selection_note": "中文选人原声：好吧，我们走。台词元数据与本地转写一致，未记录人工听感确认。",
+    "duration": 3.8853333333333335,
+    "sample_rate": 48000,
+    "channels": 2
+  },
+  {
+    "file": "forge_equipment.wav",
+    "event": "Play_sfx_Ornn_OrnnP_forging",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/奥恩/audio-revision/float/forge_equipment.wav",
+    "sha256": "07d7713b0ee734b3c249eb6a5ab5d78312c8ad1dd520b2e5c9ae5eebc6b1935d",
+    "processing": "vgmstream-cli -i -W 4 原事件浮点解码；所有SFX统一-3dB余量后PCM16，无逐文件归一化或截断",
+    "selection_note": "原生锻造事件，media 515457883，event 3114075896；替换队友购买提示。",
+    "duration": 5.397664399092971,
+    "sample_rate": 44100,
+    "channels": 1,
+    "event_id": 3114075896,
+    "media_ids": [
+      515457883
+    ],
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/奥恩/2026-09-27/audio_prepared/ornn/txtp/Play_sfx_Ornn_OrnnP_forging.txtp"
+  },
+  {
+    "file": "deploy_quality_zh_cn.wav",
+    "event": "Play_vo_Ornn_OrnnP_allypurchasesitem",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/奥恩/audio-third/purchase-voice/wav/Play_vo_Ornn_OrnnP_allypurchasesitem {r7}.wav",
+    "sha256": "4d31ac4ca824ed8e4443fef7734cdaf19f1fc31f32760810995e2d6179e28945",
+    "processing": "PCM16，无裁切",
+    "line": "奥恩出品，必属精品。"
+  },
+  {
+    "file": "deploy_ban_zh_cn.wav",
+    "event": "LCU champion-ban-vo/516",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/奥恩/audio-third/plugins/rcp-be-lol-game-data/global/zh_cn/v1/champion-ban-vo/516.ogg",
+    "sha256": "6cb6c8a05d9037f5da71f945595846d45d3231d955fd88ecc6b087cb95c48d1b",
+    "processing": "PCM16，无裁切",
+    "line": "回炉去了。"
+  },
+  {
+    "file": "charge_step_1.wav",
+    "event": "Play_sfx_Ornn_OrnnE_fs",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/奥恩/2026-09-27/audio_prepared/ornn/txtp/Play_sfx_Ornn_OrnnE_fs {r1}.txtp",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/奥恩/audio-fourth/float_charge_step_1.wav",
+    "media_ids": [
+      214975305,
+      340598393,
+      568585795,
+      630885716,
+      725222891
+    ],
+    "processing": "原生事件浮点解码，统一-3dB后PCM16",
+    "sha256": "024ec7fa0a782caf2c42e2d13bddac7c7a188e79d864f68dd4a2e02293fc2d44"
+  },
+  {
+    "file": "charge_step_2.wav",
+    "event": "Play_sfx_Ornn_OrnnE_fs",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/奥恩/2026-09-27/audio_prepared/ornn/txtp/Play_sfx_Ornn_OrnnE_fs {r2}.txtp",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/奥恩/audio-fourth/float_charge_step_2.wav",
+    "media_ids": [
+      214975305,
+      340598393,
+      568585795,
+      630885716,
+      725222891
+    ],
+    "processing": "原生事件浮点解码，统一-3dB后PCM16",
+    "sha256": "846b6faf1ec381284da976429d9ddb96afe09e2b0305e4e5bec906ebf3b57f76"
+  },
+  {
+    "file": "charge_step_3.wav",
+    "event": "Play_sfx_Ornn_OrnnE_fs",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/奥恩/2026-09-27/audio_prepared/ornn/txtp/Play_sfx_Ornn_OrnnE_fs {r3}.txtp",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/奥恩/audio-fourth/float_charge_step_3.wav",
+    "media_ids": [
+      214975305,
+      340598393,
+      568585795,
+      630885716,
+      725222891
+    ],
+    "processing": "原生事件浮点解码，统一-3dB后PCM16",
+    "sha256": "d93f75017990f4ecce1aadc5f24878c593e86769efa3a7c475d8499476154df5"
+  },
+  {
+    "file": "charge_step_4.wav",
+    "event": "Play_sfx_Ornn_OrnnE_fs",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/奥恩/2026-09-27/audio_prepared/ornn/txtp/Play_sfx_Ornn_OrnnE_fs {r4}.txtp",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/奥恩/audio-fourth/float_charge_step_4.wav",
+    "media_ids": [
+      214975305,
+      340598393,
+      568585795,
+      630885716,
+      725222891
+    ],
+    "processing": "原生事件浮点解码，统一-3dB后PCM16",
+    "sha256": "70602fce8948aaf369c0c0f08444cb4c76214ab51fb8687c966847627717659c"
+  },
+  {
+    "file": "charge_step_5.wav",
+    "event": "Play_sfx_Ornn_OrnnE_fs",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/奥恩/2026-09-27/audio_prepared/ornn/txtp/Play_sfx_Ornn_OrnnE_fs {r5}.txtp",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/奥恩/audio-fourth/float_charge_step_5.wav",
+    "media_ids": [
+      214975305,
+      340598393,
+      568585795,
+      630885716,
+      725222891
+    ],
+    "processing": "原生事件浮点解码，统一-3dB后PCM16",
+    "sha256": "652b23c5d020caa6151394420771f2b2ce563cf8dd4a960c5b66d40d6b05ffb3"
+  },
+  {
+    "file": "charge_trail_hit_1.wav",
+    "event": "Play_sfx_Ornn_OrnnEKnockAway_buffactivate",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/奥恩/2026-09-27/audio_prepared/ornn/txtp/Play_sfx_Ornn_OrnnEKnockAway_buffactivate {r1}.txtp",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/奥恩/audio-fourth/float_charge_trail_hit_1.wav",
+    "media_ids": [
+      220391060,
+      398446957,
+      881868124,
+      970687187,
+      1031861158
+    ],
+    "processing": "原生事件浮点解码，统一-3dB后PCM16",
+    "sha256": "f6214842979c93a945788fba3952e39a4de9bc30d23388c450cea2f7c1f29341"
+  },
+  {
+    "file": "charge_trail_hit_2.wav",
+    "event": "Play_sfx_Ornn_OrnnEKnockAway_buffactivate",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/奥恩/2026-09-27/audio_prepared/ornn/txtp/Play_sfx_Ornn_OrnnEKnockAway_buffactivate {r2}.txtp",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/奥恩/audio-fourth/float_charge_trail_hit_2.wav",
+    "media_ids": [
+      220391060,
+      398446957,
+      881868124,
+      970687187,
+      1031861158
+    ],
+    "processing": "原生事件浮点解码，统一-3dB后PCM16",
+    "sha256": "a93e8561d3300548549133305a7f738f6bea1bec135985a0a7e5169a07838bd4"
+  },
+  {
+    "file": "charge_trail_hit_3.wav",
+    "event": "Play_sfx_Ornn_OrnnEKnockAway_buffactivate",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/奥恩/2026-09-27/audio_prepared/ornn/txtp/Play_sfx_Ornn_OrnnEKnockAway_buffactivate {r3}.txtp",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/奥恩/audio-fourth/float_charge_trail_hit_3.wav",
+    "media_ids": [
+      220391060,
+      398446957,
+      881868124,
+      970687187,
+      1031861158
+    ],
+    "processing": "原生事件浮点解码，统一-3dB后PCM16",
+    "sha256": "577b3d0e8b64644931c64e5668cea74fca9d53a68706cf42daf611e9f6d4bcb7"
+  },
+  {
+    "file": "charge_trail_hit_4.wav",
+    "event": "Play_sfx_Ornn_OrnnEKnockAway_buffactivate",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/奥恩/2026-09-27/audio_prepared/ornn/txtp/Play_sfx_Ornn_OrnnEKnockAway_buffactivate {r4}.txtp",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/奥恩/audio-fourth/float_charge_trail_hit_4.wav",
+    "media_ids": [
+      220391060,
+      398446957,
+      881868124,
+      970687187,
+      1031861158
+    ],
+    "processing": "原生事件浮点解码，统一-3dB后PCM16",
+    "sha256": "eb4a3035a84b66d5ebb5378625943fc8fdf8b1fabc3e1a771ea39d1ca00e11ae"
+  },
+  {
+    "file": "charge_trail_hit_5.wav",
+    "event": "Play_sfx_Ornn_OrnnEKnockAway_buffactivate",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/奥恩/2026-09-27/audio_prepared/ornn/txtp/Play_sfx_Ornn_OrnnEKnockAway_buffactivate {r5}.txtp",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/奥恩/audio-fourth/float_charge_trail_hit_5.wav",
+    "media_ids": [
+      220391060,
+      398446957,
+      881868124,
+      970687187,
+      1031861158
+    ],
+    "processing": "原生事件浮点解码，统一-3dB后PCM16",
+    "sha256": "f4a520b3d2f2ff711003429e684797c32774d9dc855f2e10a3fe234064f4d311"
+  },
+  {
+    "file": "charge_knockup_1.wav",
+    "event": "Play_sfx_Ornn_OrnnEKnockUp_OnBuffActivate",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/奥恩/2026-09-27/audio_prepared/ornn/txtp/Play_sfx_Ornn_OrnnEKnockUp_OnBuffActivate.txtp",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/奥恩/audio-fourth/float_charge_knockup_1.wav",
+    "media_ids": [
+      1021200681
+    ],
+    "processing": "原生事件浮点解码，统一-3dB后PCM16",
+    "sha256": "69e91ff52b9a88833307eee34ca0a34c49bf1bd0f9f9415494b3e296d1a8c243"
+  },
+  {
+    "file": "forge_arrive_1.wav",
+    "event": "Play_sfx_hud_store_buy",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/奥恩/audio-fourth/shop-buy/txtp/Play_sfx_hud_store_buy.txtp",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/奥恩/audio-fourth/float_forge_arrive_1.wav",
+    "media_ids": [
+      41429280
+    ],
+    "processing": "原生事件浮点解码，统一-3dB后PCM16",
+    "sha256": "47d7e0deefba9611c6a59ad4386e10b122a6ba01a5629dba6fa2e95ce0f3037e"
+  }
+]

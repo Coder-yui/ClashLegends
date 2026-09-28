@@ -19,3 +19,12 @@ static func effect_context(source: Node2D = null, team: int = -1, position: Vect
 static func allows_effect(target: Node2D, context: Dictionary) -> bool:
 	var source = context.get("source")
 	return allows(target, source if is_instance_valid(source) else null, int(context.get("team", -1)), context.get("position", Vector2(INF, INF)), bool(context.get("attached", false)))
+
+## Friendly targeting does not inherit Gwen's enemy-only sanctuary rejection.
+## Stasis/general untargetability read status families; their global application remains a separate capability.
+static func allows_allied_target(target: Unit, team: int) -> bool:
+	if not is_instance_valid(target) or target.team != team or target.hp <= 0.0 or not allows(target, null, team): return false
+	return not in_stasis(target) and target.control.hard.remaining(&"untargetable") <= 0.0
+
+static func in_stasis(unit: Unit) -> bool:
+	return unit.control.hard.remaining(&"stasis") > 0.0

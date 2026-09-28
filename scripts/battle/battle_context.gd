@@ -86,5 +86,8 @@ func damage_batch() -> CombatResolver:
 func present_restoration_heal(unit: Unit) -> void:
 	_controller.present_restoration_heal(unit)
 
+func present_ornn_charge_impact(unit: Unit, radius: float, center: Vector2) -> void:
+	_controller.present_ornn_charge_impact(unit, radius, center)
+
 func notify_action_cancelled(unit: Unit, payload: Dictionary) -> void:
 	_controller.notify_action_cancelled(unit, payload)

@@ -186,6 +186,7 @@ func _process(delta: float) -> void:
 		_tick_terminal_audio(audio_delta, true)
 	if _battle_ended or _battle_paused:
 		return
+	_tick_forge_positions()
 	_tick_sustain_fades(delta)
 	_tick_zone_audio(delta)
 	_tick_building_damage_audio()
@@ -466,6 +467,7 @@ func complete_revival(unit: Unit) -> void:
 
 func _event_owner(unit: Unit, cue: StringName) -> Dictionary:
 	var name := String(cue)
+	if cue == &"forge:pulse": return {"unit": unit.get_instance_id(), "kind": "forge", "serial": 0}
 	if cue in [&"empowered_swing", &"first_strike:cast", &"attack_swing", &"continuous_attack:start", &"continuous_attack:release"]:
 		return {"unit": unit.get_instance_id(), "kind": "attack", "serial": unit.get_attack_visual_serial()}
 	var phase := name.get_slice(":", 1)
@@ -499,9 +501,11 @@ func _on_action_cancelled(payload: Dictionary, instance_id: int) -> void:
 
 
 func _detach_unit(instance_id: int) -> void:
+	_stop_forge_audio(instance_id)
 	_stop_sustain(instance_id)
 	_unit_entries.erase(instance_id)
 func _on_unit_death(instance_id: int) -> void:
+	_stop_forge_audio(instance_id)
 	_stop_sustain(instance_id, &"", true)
 	var entry: Dictionary = _unit_entries.get(instance_id, {})
 	if entry.is_empty():
@@ -518,6 +522,10 @@ func _on_unit_death(instance_id: int) -> void:
 func play_event(unit: Unit, cue: StringName, position: Vector2, attack_serial: int = -1, action_timed: bool = false) -> bool:
 	if unit == null or not is_instance_valid(unit):
 		return false
+	if cue == &"forge:cancel":
+		_stop_forge_audio(unit.get_instance_id())
+		return true
+	if cue == &"forge:pulse": _stop_forge_audio(unit.get_instance_id())
 	var entry: Dictionary = _unit_entries.get(unit.get_instance_id(), {})
 	if entry.is_empty():
 		return false
@@ -538,7 +546,7 @@ func play_event(unit: Unit, cue: StringName, position: Vector2, attack_serial: i
 	# 独立结果创建声由权威结果事件派发，不再随本体动作重复启动。
 	if event.get("owner", "") == "result": return false
 	var owner := _event_owner(unit, cue)
-	if not owner.is_empty():
+	if not owner.is_empty() and owner.kind in ["attack", "action"]:
 		var cancelled := unit.last_action_cancellation
 		var key := "attack" if owner.kind == "attack" else "action"
 		if not cancelled.is_empty() and ((key == "attack" and int(owner.serial) <= int(cancelled.attack)) or (key == "action" and int(owner.serial) <= unit.cancelled_visual_serial)):
@@ -1102,3 +1110,20 @@ func _cancel_terminal_audio() -> void:
 		player.queue_free()
 	_nexus_players.clear()
 	_nexus_seen.clear()
+
+func _stop_forge_audio(instance_id: int) -> void:
+	for player in _world_players:
+		var owner: Dictionary = player.get_meta("action_owner", {})
+		if int(owner.get("unit", -1)) == instance_id and owner.get("kind", "") == "forge":
+			player.stop()
+			player.stream = null
+
+func _tick_forge_positions() -> void:
+	for player in _world_players:
+		var owner: Dictionary = player.get_meta("action_owner", {})
+		if owner.get("kind", "") != "forge" or not player.playing: continue
+		var unit = instance_from_id(int(owner.unit))
+		if not is_instance_valid(unit) or unit.hp <= 0.0:
+			player.stop()
+			continue
+		player.global_position = unit.get_visual_screen_position()

@@ -329,6 +329,13 @@
     "group": "cards"
   },
   {
+    "id": "OrnnSuite",
+    "script": "res://tests/suites/cards/ornn_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "cards"
+  },
+  {
     "id": "KaynSuite",
     "script": "res://tests/suites/cards/kayn_suite.gd",
     "method": "run",

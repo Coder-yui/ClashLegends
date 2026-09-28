@@ -29,11 +29,28 @@ static func _validate_card_id(card_id: String, errors: PackedStringArray) -> voi
 	if card_id.is_empty() or card_id != card_id.to_snake_case() or card_id.to_lower() != card_id:
 		errors.append("%s: card_id 必须是非空英文 snake_case" % card_id)
 
+static func _validate_team_attack_boost(card_id: String, stats: Dictionary, errors: PackedStringArray) -> void:
+	var fields := [&"team_attack_boost_first_delay", &"team_attack_boost_interval", &"team_attack_boost_multiplier"]
+	var present := fields.filter(func(field): return stats.has(field)).size()
+	if present == 0:
+		return
+	if present != fields.size():
+		errors.append("%s.team_attack_boost_*: 三个字段必须成组配置" % card_id)
+		return
+	if StringName(stats.get("type", "")) != &"unit" or bool(stats.get("is_building", false)):
+		errors.append("%s.team_attack_boost_first_delay: 仅普通单位可持有周期友军普攻增幅" % card_id)
+	for field in fields:
+		if float(stats.get(field, 0.0)) <= 0.0:
+			errors.append("%s.%s: 必须 > 0" % [card_id, field])
+	if float(stats.get("team_attack_boost_multiplier", 1.0)) <= 1.0:
+		errors.append("%s.team_attack_boost_multiplier: 必须 > 1" % card_id)
+
 static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStringArray, inspect_resources: bool = true) -> void:
 	if not SHAPES.validate(card_id, stats, errors):
 		return
 	_require_fields(card_id, stats, [&"name", &"cost", &"type", &"description", &"radius", &"color"], errors)
 	_validate_hit_haste(card_id, stats, errors)
+	_validate_team_attack_boost(card_id, stats, errors)
 	_validate_attack_wave(card_id, stats, errors)
 	var card_type := StringName(stats.get("type", ""))
 	if card_type not in CARD_TYPES:
@@ -730,6 +747,16 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 		if float(skill.get("cooldown", -1.0)) < 0.0:
 			errors.append("%s.cooldown: 必须 >= 0" % label)
 		match kind:
+			&"terrain_charge":
+				for field in [&"length", &"fixed_speed", &"charge_prepare_time", &"charge_recovery_time", &"charge_miss_recovery_time", &"width", &"radius", &"damage", &"stun_duration", &"cast_duration"]:
+					if float(skill.get(field, 0.0)) <= 0.0:
+						errors.append("%s.%s: terrain_charge 必须 > 0" % [label, field])
+				if float(skill.get("trail_damage", -1.0)) < 0.0:
+					errors.append("%s.trail_damage: 必须 >= 0" % label)
+				if float(skill.get("stun_duration", 0.0)) > 3.0:
+					errors.append("%s.stun_duration: terrain_charge 上限为 3 秒" % label)
+				if float(skill.get("impact_delay", 0.0)) != 0.0:
+					errors.append("%s: terrain_charge 在施法开始立即启动" % label)
 			&"dash_strike":
 				if not bool(stats.get("terrain_traversal",false)):
 					errors.append("%s: 当前突进效果要求穿地形能力" % label)

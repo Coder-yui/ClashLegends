@@ -4,9 +4,9 @@
 
 | 契约 | 当前值 |
 | --- | --- |
-| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->68 |
+| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->70 |
 | 顶层快照项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd SNAPSHOT_PACKET_SIZE -->11 |
-| 单位载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd UNIT_PAYLOAD_SIZE -->50 |
+| 单位载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd UNIT_PAYLOAD_SIZE -->51 |
 | 塔载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd TOWER_PAYLOAD_SIZE -->6 |
 | 弹体载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd PROJECTILE_PAYLOAD_SIZE -->14 |
 
@@ -40,4 +40,8 @@ RPC 端点留在 Main，主客节点路径保持一致。运行请求只接受�
 
 潘森登场伤害改为预部署路径冲击波，规则版本67。既有预部署通知继续同步阵营、落点与时长，客户端由相同只读定义重建轨迹；命中去重集合只在主机排程内，伤害结果随既有HP快照同步，不增加载荷字段。
 
-单位载荷 U_ACTION_CLOCK 为 Vector2：x=0/1表示动作是否由动态技能时钟管理，y为非负有限的动作播放倍率。动态时钟下 ACTION_DURATION/TIME_LEFT 表示归一动作进度，客户端据其选择片段并按倍率播放，不推进伤害或位移；普通动作仍使用原实时时钟。协议版本68。
+单位载荷 U_ACTION_CLOCK 为 Vector2：x=0/1表示动作是否由动态技能时钟管理，y为非负有限的动作播放倍率。动态时钟下 ACTION_DURATION/TIME_LEFT 表示归一动作进度，客户端据其选择片段并按倍率播放，不推进伤害或位移；普通动作仍使用原实时时钟。
+
+单位载荷追加 `U_TEAM_ATTACK_BOOST_MULTIPLIER`（下标50）：有限且不小于1的倍率由主机维护，客户端只更新普攻数值状态与锻造锤血条标记，不自主触发周期脉冲。协议版本69。
+
+奥恩锻造开始/取消通过可靠 `_rpc_unit_forge_audio` 传递，受会话与实体身份校验；抵达音通过已有独立技能结果事件发出。音频不参与权威发锤和增幅计时。

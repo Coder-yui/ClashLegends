@@ -27,6 +27,8 @@
 | 穿地形 | TerrainTraversalState 记录完整进出边沿与自疗；攻击前选择最近合法出口，由 Unit 应用位置转换；[凯隐](../units/kayn.md)；KaynSuite |
 | 技能突进 | DashStrikeState 按距离推进，可受伤并临时穿单位；结束恢复通用碰撞并逐步分离，不另作终点修正。冰冻取消后段、眩晕保留、击退停止突进并保留旋转；[凯隐](../units/kayn.md)；KaynSuite |
 | 命中叠层攻速 | StatusInstances 持有层数与整体窗口，CombatResolver 真实命中后每击一次收益，Unit 重算攻速进度，快照同步最终倍率；[天使](../units/kayle.md)；KayleSuite |
+| 永久队伍普攻增伤 | [TeamAttackBoostSystem](../../scripts/battle/team_attack_boost_system.gd) 由主机固定 Tick 管理锤子在途与目标预留，首次4秒/后续8秒发锤，提前3.6秒锻造，眩晕/冰冻/凝滞打断后重锻；抵达重新检查友方选取资格，为未增幅友军永久写入 Unit 倍率；普通攻击经既有结算取整，主动技能不读此倍率；U_TEAM_ATTACK_BOOST_MULTIPLIER 快照同步；[奥恩](../units/ornn.md)；OrnnSuite |
+| 地形冲锋 | [OrnnChargeState](../../scripts/battle/ornn_charge_state.gd) 按蓄力、固定速度冲锋、停顿三阶段沿合法地面几何推进，沿路目标去重；建筑阻挡者不吃路径伤害，撞停后才结算范围伤害和眩晕；奥恩专用回归见 OrnnSuite |
 | 未实施 | 强制击退／强制位移（固定距离、条件穿越障碍）、禁锢、沉默、嘲讽、凝滞、通用隐身、持续吸引、通用中毒等仍无完整执行链，本次不新增 |
 
 现有换形生命上限、皮克斯溢出生命与先锋免控仍为专项能力。画面与听感须按每次实际验证分别记录。
@@ -77,3 +79,5 @@
 `BattleEffects2D._draw_frontal_skill_effect` 对非固定范围特效读取来源模型显示位置，符合随身技能范围跟随位移的规则；`ProjectileSystem.launch_skill_fan` 保存创建位置/方向，后续独立推进；`UnitModel3D` 将 ActiveBuffVisual3D 挂为子节点并独立 advance，符合随身 Buff 挂载。
 
 `SkillEffectPresentation.tick_visuals` 按动作身份清理依附施法的范围：眩晕继续，冰冻取消。固定独立区域和星辰按自身时间推进；`apply_frontal` 仍按每次结算的位置查询目标。凝滞未实现，不能宣称已验证。实际画面与声音的验收状态见交付记录。
+
+奥恩的友方增幅复用 CombatInteraction 的复生/阵营判定，并读取 StatusInstances 的 stasis / untargetable 状态族作为准入边界；专项夹具覆盖此边界，不代表通用凝滞或不可选中的完整施加、权限与联网链已实现。赛恩与冰鸟致死取消依赖原有生命/实体生命周期，无新增专用转换逻辑。

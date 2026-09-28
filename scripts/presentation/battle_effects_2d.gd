@@ -83,6 +83,35 @@ func _draw_frontal_skill_effect(effect: Dictionary) -> void:
 	var center: Vector2 = effect.get("pos", Vector2.ZERO)
 	var forward: Vector2 = effect.get("forward", Vector2.UP)
 	var source_radius := float(effect.get("source_radius", 0.0))
+	var shape := StringName(effect.get("shape", "rectangle"))
+	if shape == &"team_attack_boost_hammer":
+		var destination: Vector2 = effect.get("end_position", center)
+		var ratio := 1.0 - clampf(float(effect.get("timer", 0.0)) / maxf(float(effect.get("duration", 0.0)), 0.001), 0.0, 1.0)
+		var height := clampf(center.distance_to(destination) * 0.2 + 28.0, 28.0, 100.0)
+		var tail_fraction := minf(0.32, 0.24 / maxf(float(effect.duration), 0.001))
+		var previous := center.lerp(destination, maxf(0.0, ratio - tail_fraction))
+		previous.y -= sin(maxf(0.0, ratio - tail_fraction) * PI) * height
+		for index in range(1, 19):
+			var fade := float(index) / 18.0
+			var time := maxf(0.0, ratio - tail_fraction * (1.0 - fade))
+			var tail_point := center.lerp(destination, time) - Vector2(0.0, sin(time * PI) * height)
+			draw_line(previous, tail_point, Color(1.0, 0.24, 0.015, 0.22 * fade), 10.0 * fade, true)
+			draw_line(previous, tail_point, Color(1.0, 0.56, 0.06, 0.85 * fade), 4.0 * fade, true)
+			if index % 3 == 0:
+				var spark := tail_point + Vector2(sin(time * 41.0 + index), cos(time * 29.0 + index)) * (1.0 - fade) * 12.0
+				draw_circle(spark, 1.0 + fade, Color(1.0, 0.68, 0.13, fade * 0.7))
+			previous = tail_point
+		var point := center.lerp(destination, ratio) - Vector2(0.0, sin(ratio * PI) * height)
+		draw_circle(point, 8.0, Color(1.0, 0.42, 0.02, 0.20))
+		_draw_ornn_hammer(point, Vector2.from_angle(ratio * TAU * 1.5), 1.0, 1.5)
+		return
+	if shape == &"ornn_charge_impact":
+		var radius := float(effect.get("length", 0.0))
+		var alpha := clampf(float(effect.get("timer", 0.0)) / 0.15, 0.0, 1.0)
+		draw_circle(center, radius, Color(1.0, 0.38, 0.05, 0.10 * alpha))
+		draw_arc(center, radius, 0.0, TAU, 64, Color(1.0, 0.56, 0.12, 0.85 * alpha), 2.0, true)
+		return
+
 	if not bool(effect.get("fixed_position", false)) and source is Unit and is_instance_valid(source):
 		center = (source as Unit).get_visual_screen_position()
 		source_radius = (source as Unit).body_radius
@@ -106,7 +135,6 @@ func _draw_frontal_skill_effect(effect: Dictionary) -> void:
 		projectile_progress = clampf(projectile_elapsed / projectile_flight_duration, 0.0, 1.0)
 	var line_color := Color(0.28, 0.68, 1.0, 0.9) if int(effect.get("team", 0)) == 0 else Color(1.0, 0.34, 0.24, 0.9)
 	var fill_color := Color(line_color.r, line_color.g, line_color.b, 0.10 + 0.06 * remaining_ratio)
-	var shape := StringName(effect.get("shape", "rectangle"))
 	if shape == &"shield_explosion":
 		var reach := maxf(length, 1.0)
 		# 前80毫秒冲至外圈，随后只留下逐渐消散的余焰；不把伤害画成缓慢扩散波。
@@ -129,6 +157,7 @@ func _draw_frontal_skill_effect(effect: Dictionary) -> void:
 			draw_circle(cloud_center - direction * cloud_radius * 0.25, cloud_radius * 0.55, Color(0.66, 0.018, 0.075, 0.36 * tail))
 
 		return
+
 	if shape == &"continuous_area":
 		var radius := maxf(length, 0.0)
 		var pulse := 0.5 + 0.5 * sin(progress * TAU * 2.0)
@@ -284,6 +313,18 @@ func _frontal_projectile_visual_position(effect: Dictionary, center: Vector2, fo
 	var start := center + forward * launch_forward + side * lerpf(-near_half, near_half, width_ratio) + height_offset
 	var end := center + forward * (source_radius + maxf(float(effect.get("length", 0.0)), 0.0)) + side * lerpf(-far_half, far_half, width_ratio) + height_offset
 	return start.lerp(end, clampf(progress, 0.0, 1.0))
+
+func _draw_ornn_hammer(center: Vector2, direction: Vector2, alpha: float, scale: float) -> void:
+	var angle := direction.angle() + PI * 0.5
+	draw_set_transform(center, angle, Vector2.ONE * scale)
+	draw_line(Vector2(0, -1), Vector2(0, 8), Color(0.22, 0.08, 0.02, alpha), 4.5, true)
+	draw_line(Vector2(0, -1), Vector2(0, 8), Color(1.0, 0.42, 0.06, alpha), 2.5, true)
+	var head := PackedVector2Array([Vector2(-6, -5), Vector2(-4, -7), Vector2(5, -7), Vector2(7, -5), Vector2(7, 0), Vector2(5, 2), Vector2(-4, 2), Vector2(-6, 0)])
+	draw_colored_polygon(head, Color(0.35, 0.12, 0.025, alpha))
+	draw_rect(Rect2(-4, -5, 9, 5), Color(1.0, 0.48, 0.055, alpha))
+	draw_line(Vector2(-4, -5), Vector2(5, -5), Color(1.0, 0.88, 0.4, alpha), 1.8, true)
+	draw_line(Vector2(-1, -4), Vector2(1, -1), Color(1.0, 0.78, 0.25, alpha), 1.4, true)
+	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 
 func _draw_frontal_projectile(center: Vector2, direction: Vector2, effect: Dictionary) -> void:
 	var visual := StringName(effect.get("projectile_visual", "arrow"))

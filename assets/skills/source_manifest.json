@@ -221,5 +221,15 @@
     "source_path": "assets/characters/pantheon/hud/icons2d/pantheon_q1.dds",
     "source_sha256": "cdcd4ad301350adf145a8ee9fee31d5d50a3174bd276a276fcd2a30fc5dc19d8",
     "sha256": "81becc79358f2e2ba68055612dc81cd53576b6f10092d29c7671d30928d6d995"
+  },
+  {
+    "card": "ornn",
+    "skill_index": 0,
+    "path": "res://assets/skills/ornn_e.png",
+    "source_package": "LeagueClient/Plugins/rcp-be-lol-game-data/default-assets2.wad",
+    "source_path": "plugins/rcp-be-lol-game-data/global/default/assets/characters/ornn/hud/icons2d/ornne.png",
+    "source_wad_hash": "b7431c2963c6fbb0",
+    "source_sha256": "7984d8a6d4653321308fec7c740167d0190a95ef60afe534e22213ff3cf46dcc",
+    "sha256": "7984d8a6d4653321308fec7c740167d0190a95ef60afe534e22213ff3cf46dcc"
   }
 ]

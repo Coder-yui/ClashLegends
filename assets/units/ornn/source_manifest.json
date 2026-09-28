@@ -1,0 +1,29 @@
+{
+  "source_name": "用户提供的山隐之焰.glb（原名），本地制作中目录统一重命名为 ornn.glb；素材库原件与正式 assets 副本哈希一致。",
+  "files": [
+    {
+      "path": "res://assets/units/ornn/source/ornn.glb",
+      "size": 11995672,
+      "sha256": "3de8a52d90319253e128a16f682970e263c3ae728acc643b7ca32d622a70ca0f",
+      "origin": "用户提供的 GLB 同包资源，原图不重绘。"
+    },
+    {
+      "path": "res://assets/units/ornn/source/ornn_Ornn_Base_Mat.png",
+      "size": 863490,
+      "sha256": "f885dee252edaf276355514927080cffaada54da780bc8da4c6a43f461541cb8",
+      "origin": "用户提供的 GLB 同包资源，原图不重绘。"
+    },
+    {
+      "path": "res://assets/units/ornn/source/ornn_Ornn_Base_Sword_Mat.png",
+      "size": 22159,
+      "sha256": "e7db9e74cdb03489bf0c5af98b687836ebe294af4bc7242da7af8e380ad60f6d",
+      "origin": "用户提供的 GLB 同包资源，原图不重绘。"
+    },
+    {
+      "path": "res://assets/units/ornn/source/ornn_Ornn_Base_Poro_Mat.png",
+      "size": 60728,
+      "sha256": "fb60862db680b38bff5cc5048a680fc5c81e0aa9dd666e5a3782f5f8645a013c",
+      "origin": "用户提供的 GLB 同包资源，原图不重绘。"
+    }
+  ]
+}

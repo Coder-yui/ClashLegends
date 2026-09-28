@@ -102,6 +102,12 @@ var is_building := false:
 var building_only := false
 var can_attack_air := true
 var continuous_attack := false
+## Ornn permanent team effect; multiplies only the ordinary attack pipeline.
+var team_attack_boost_multiplier := 1.0
+var team_attack_boost_first_delay := 0.0
+var team_attack_boost_interval := 0.0
+var team_attack_boost_clock := 0.0
+var team_attack_boost_started := false
 var color := Color.DIM_GRAY
 var has_model_art := false
 var has_model_deployment_effect := false
@@ -222,7 +228,7 @@ var active_buff_timer: float:
 var active_speed_multiplier: float:
 	get: return buffs.strongest(&"buff", &"speed", 1.0)
 var active_damage_multiplier: float:
-	get: return buffs.strongest(&"buff", &"damage", 1.0) * buffs.strongest(&"blood_rage", &"damage", 1.0)
+	get: return buffs.strongest(&"buff", &"damage", 1.0) * buffs.strongest(&"blood_rage", &"damage", 1.0) * team_attack_boost_multiplier
 var active_attack_speed_multiplier: float:
 	get: return maxf(buffs.strongest(&"buff", &"attack_speed", 1.0), buffs.strongest(&"hit_haste", &"attack_speed", 1.0))
 var active_buff_ignores_movement_slow: bool:
@@ -423,6 +429,11 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	building_only = stats.get("building_only", false)
 	can_attack_air = stats.get("can_attack_air", true)
 	continuous_attack = stats.get("is_continuous_attack", false)
+	team_attack_boost_multiplier = 1.0
+	team_attack_boost_first_delay = maxf(float(stats.get("team_attack_boost_first_delay", 0.0)), 0.0)
+	team_attack_boost_interval = maxf(float(stats.get("team_attack_boost_interval", 0.0)), 0.0)
+	team_attack_boost_clock = 0.0
+	team_attack_boost_started = false
 	deploy_time = stats.get("deploy_time", 1.0)
 	first_hit_time = stats.get("first_hit", minf(attack_interval * 0.5, 0.4))
 	passive_first_hit_time = float(stats.get("passive_first_hit", -1.0))
@@ -2518,6 +2529,17 @@ func _update_fallback_health_bar_anchor() -> void:
 	if is_inside_tree():
 		set_visual_head_world_position(get_visual_screen_position() + Vector2(0.0, -visual_radius).rotated(-get_canvas_transform().get_rotation()))
 
+func _draw_team_attack_boost_hammer(center: Vector2) -> void:
+	var orange := Color(1.0, 0.51, 0.08, 1.0)
+	var edge := Color(0.30, 0.13, 0.035, 1.0)
+	var shapes := [Rect2(-3, -2, 6, 10), Rect2(-2, -2, 4, 9), Rect2(-7, -6, 14, 7), Rect2(-6, -5, 12, 5)]
+	for index in shapes.size():
+		var rect: Rect2 = shapes[index]
+		var points := PackedVector2Array()
+		for corner in [rect.position, rect.position + Vector2(rect.size.x, 0), rect.end, rect.position + Vector2(0, rect.size.y)]:
+			points.append(center + (corner as Vector2).rotated(PI / 4.0))
+		draw_colored_polygon(points, edge if index % 2 == 0 else orange)
+
 func _draw() -> void:
 	draw_set_transform(_vis_offset, 0.0, Vector2.ONE)
 
@@ -2545,7 +2567,7 @@ func _draw() -> void:
 	var overheal_ratio := maxf(raw_hp_ratio - 1.0, 0.0)
 	var shield_health_ratio := get_shield_health_ratio()
 	var shield_capacity_ratio := get_shield_capacity_ratio()
-	if death_form.waiting() or not is_equal_approx(raw_hp_ratio, 1.0) or shield_health_ratio > 0.0:
+	if death_form.waiting() or not is_equal_approx(raw_hp_ratio, 1.0) or shield_health_ratio > 0.0 or team_attack_boost_multiplier > 1.0:
 		var bar_w := visual_radius * 2.0
 		var bar_rect := Rect2(
 			_health_bar_center.x - bar_w * 0.5,
@@ -2568,6 +2590,8 @@ func _draw() -> void:
 				Rect2(Vector2(bar_rect.end.x, bar_rect.position.y), Vector2(bar_w * overheal_ratio, HEALTH_BAR_HEIGHT)),
 				Color(0.82, 0.35, 1.0),
 			)
+		if team_attack_boost_multiplier > 1.0:
+			_draw_team_attack_boost_hammer(Vector2(bar_rect.position.x - 11.0, bar_rect.position.y + HEALTH_BAR_HEIGHT * 0.5))
 	if is_skill_resource_visible():
 		var resource_w := visual_radius * 2.0
 		var resource_y := _health_bar_center.y + HEALTH_BAR_HEIGHT * 0.5 + SKILL_RESOURCE_BAR_GAP

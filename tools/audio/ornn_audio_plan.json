@@ -1,0 +1,31 @@
+{
+  "ornn": {
+    "source": "ornn",
+    "attack": [
+      "Play_sfx_Ornn_OrnnBasicAttack_OnCast",
+      "Play_sfx_Ornn_OrnnBasicAttack2_OnCast",
+      "Play_sfx_Ornn_OrnnBasicAttack3_OnCast"
+    ],
+    "hit": null,
+    "hit_segments": [
+      "Play_sfx_Ornn_OrnnBasicAttack_OnHit",
+      "Play_sfx_Ornn_OrnnBasicAttack2_OnHit",
+      "Play_sfx_Ornn_OrnnBasicAttack3_OnHit"
+    ],
+    "events": {
+      "deploy:voice": "LCU_champion_choose_516_zh_CN",
+      "death": "Play_vo_Ornn_Death3D",
+      "forge:pulse": "Play_sfx_Ornn_OrnnP_forging",
+      "charge:start": "Play_sfx_Ornn_OrnnE_OnCast",
+      "charge:impact": "Play_sfx_Ornn_OrnnE_BuffOnMoveEnd_explosion"
+    },
+    "event_variant_limits": {},
+    "event_volume_db": {
+      "forge:pulse": -7.0,
+      "charge:trail_hit": -5.0,
+      "charge:impact": -3.0,
+      "deploy:voice": -2.0
+    },
+    "notes": "部署使用本地LCU zh_CN champion-choose-vo/516.ogg（好吧，我们走。）单独导入，不可用重生池覆盖；锻造使用原生OrnnP_forging。路径仅伤害，不使用击飞声音。普攻三段与真实命中保持对应。 LCU语音无TXTP，通用银行导入器不能重建此项，须按event_manifest单独复制；缺失时应报错而非回退重生。"
+  }
+}

@@ -17,6 +17,32 @@ func add_fixed_area_effect(center: Vector2, start_radius: float, end_radius: flo
 		"timer": duration, "duration": duration, "team": p_team,
 	})
 
+func add_team_attack_boost(source: Unit, target: Unit, duration: float) -> Dictionary:
+	if not is_instance_valid(source) or not is_instance_valid(target):
+		return {}
+	var effect := {
+		"source_ref": null, "net_id": -1, "fixed_position": true,
+		"pos": source.get_visual_screen_position(),
+		"end_position": target.get_visual_screen_position(), "target_net_id": target.net_id, "target_instance_id": target.get_instance_id(), "forward": Vector2.UP,
+		"length": source.global_position.distance_to(target.global_position),
+		"width": 0.0, "shape": "team_attack_boost_hammer",
+		"timer": duration, "duration": duration, "team": source.team,
+	}
+	frontal_effects.append(effect)
+	return effect
+
+func add_ornn_charge_impact(center: Vector2, radius: float, p_team: int) -> Dictionary:
+	if radius <= 0.0:
+		return {}
+	var effect := {
+		"source_ref": null, "net_id": -1, "fixed_position": true,
+		"pos": center, "forward": Vector2.UP, "source_radius": 0.0,
+		"length": radius, "width": radius, "shape": "ornn_charge_impact",
+		"timer": 0.4, "duration": 0.4, "team": p_team,
+	}
+	frontal_effects.append(effect)
+	return effect
+
 func begin_frontal_visual(source: Unit, skill: Dictionary, cast_forward: Vector2) -> void:
 	# 真实弹体通过 ProjectileSystem/快照绘制；这里只保留范围预警，避免重复画箭或卡牌。
 	if bool(skill.get("projectile_stop_on_hit", false)) or bool(skill.get("projectile_piercing", false)):
@@ -112,6 +138,10 @@ func tick_visuals(delta: float) -> void:
 		if shield_effects[index].timer <= 0.0: shield_effects.remove_at(index)
 	var alive: Array[Dictionary] = []
 	for effect in frontal_effects:
+		if String(effect.get("shape", "")) == "team_attack_boost_hammer":
+			var target = _controller.find_client_unit(int(effect.get("target_net_id", -1))) if _controller.is_net_client() else instance_from_id(int(effect.get("target_instance_id", 0)))
+			if not is_instance_valid(target) or target.hp <= 0.0: continue
+			effect.end_position = target.get_visual_screen_position()
 		var source = effect_source(effect)
 		if not bool(effect.get("fixed_position", false)) and source is Unit and (source.hp <= 0.0 or source.is_frozen() or int(effect.get("cast_serial", source.active_skill_cast_serial)) <= source.cancelled_skill_cast_serial or int(effect.get("action_serial", 2147483647)) <= source.cancelled_visual_serial):
 			continue
