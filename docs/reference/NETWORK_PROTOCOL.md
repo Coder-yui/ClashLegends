@@ -4,7 +4,7 @@
 
 | 契约 | 当前值 |
 | --- | --- |
-| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->70 |
+| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->72 |
 | 顶层快照项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd SNAPSHOT_PACKET_SIZE -->11 |
 | 单位载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd UNIT_PAYLOAD_SIZE -->51 |
 | 塔载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd TOWER_PAYLOAD_SIZE -->6 |
@@ -45,3 +45,9 @@ RPC 端点留在 Main，主客节点路径保持一致。运行请求只接受�
 单位载荷追加 `U_TEAM_ATTACK_BOOST_MULTIPLIER`（下标50）：有限且不小于1的倍率由主机维护，客户端只更新普攻数值状态与锻造锤血条标记，不自主触发周期脉冲。协议版本69。
 
 奥恩锻造开始/取消通过可靠 `_rpc_unit_forge_audio` 传递，受会话与实体身份校验；抵达音通过已有独立技能结果事件发出。音频不参与权威发锤和增幅计时。
+
+电击法术每次命中使用可靠 `_rpc_lightning_fx`，携带会话、表现事件序号、卡牌ID、落点、半径与阵营。客户端按事件序号去重并播放特效/音效；血量与眩晕仍由Snapshot收敛，不运行选敌或追加电击排程。
+
+`_rpc_lightning_area` 可靠同步电击范围圈的会话、事件序号、卡牌、施法中心、半径、完整窗口时长和阵营；复用事件去重与终局拒绝，不创建客户端权威区域。
+
+协议版本72：潘森登场扫掠改用平直后沿与前半圆；后伸20像素，客户端仍只显示轨迹，伤害由主机判定。
