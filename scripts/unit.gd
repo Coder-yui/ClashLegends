@@ -764,6 +764,12 @@ func begin_dash_motion() -> void:
 	skill_dash_moved_tick = battle_context.simulation_tick()
 
 func apply_dash_motion(point: Vector2) -> void:
+	# 突进越过旧路径点后必须从新位置寻路，不能回头追赶冲锋前的绕路节点。
+	_path = PackedVector2Array()
+	_path_index = 0
+	_path_target = null
+	_path_goal = Vector2(INF, INF)
+	_repath_cd = 0.0
 	global_position = Vector2(clampf(point.x, body_radius, ArenaRules.FIELD_W - body_radius), clampf(point.y, body_radius, ArenaRules.FIELD_H - body_radius))
 	terrain_traversal.update(self)
 
