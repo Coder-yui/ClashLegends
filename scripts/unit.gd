@@ -364,6 +364,7 @@ var _visual_action_time_left := 0.0
 var visual_action_clock_managed := false
 var visual_action_clock_rate := 1.0
 var net_visual_action_clock := Vector2(0.0, 1.0)
+var _forge_work_effect: RefCounted
 ## 血条绘制中心；实际位置由屏幕空间头顶锚点计算。
 var _health_bar_center := Vector2.ZERO
 var _health_bar_screen_center := Vector2.ZERO
@@ -532,6 +533,9 @@ func _sync_structure_group() -> void:
 		remove_from_group("combat_structures")
 
 func _ready() -> void:
+	if team_attack_boost_interval > 0.0:
+		_forge_work_effect = preload("res://scripts/presentation/forge_work_effect.gd").new()
+		presentation_cue.connect(_forge_work_effect.on_cue)
 	add_to_group("combatants")
 	_sync_structure_group()
 	_update_fallback_health_bar_anchor()
@@ -544,6 +548,8 @@ func _ready() -> void:
 			_perform_deploy_sweep()
 
 func _process(delta: float) -> void:
+	if _forge_work_effect != null:
+		_forge_work_effect.advance(delta, hp > 0.0)
 	presentation_state().advance_health_bar(delta)
 	_status_effect_phase = fposmod(_status_effect_phase + delta, preload("res://scripts/presentation/soft_control_effect.gd").LOOP_SECONDS)
 	_update_status_visual_motion(delta)
@@ -2624,6 +2630,8 @@ func _draw() -> void:
 		preload("res://scripts/presentation/restoration_heal_effect.gd").draw_effect(self, 1.0 - restoration_fx_timer / preload("res://scripts/presentation/restoration_heal_effect.gd").DURATION)
 	if control.frozen_timer > 0.0:
 		draw_circle(Vector2.ZERO, visual_radius + 4.0, Color(0.4, 0.8, 1.0, 0.3))
+	if _forge_work_effect != null and hp > 0.0:
+		_forge_work_effect.draw_effect(self, get_health_bar_screen_center())
 	if stun_visual():
 		preload("res://scripts/presentation/stun_effect.gd").draw_effect(self, stun_effect_origin(), _status_effect_phase)
 	if hp > 0.0 and (movement_slow_effect_visible() or attack_speed_slow_visual()):
