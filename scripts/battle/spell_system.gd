@@ -9,6 +9,10 @@ var slow_effects: Array[Dictionary] = []
 ## 治疗术表现区域：淡黄光圈；全图强化治疗额外带全图扩散波纹。
 var heal_effects: Array[Dictionary] = []
 
+var lightning_casts: Array[Dictionary] = []
+var lightning_effects: Array[Dictionary] = []
+var lightning_areas: Array[Dictionary] = []
+
 var _effect_serial := 0
 var _controller: Node2D
 
@@ -23,6 +27,9 @@ static func supports(kind: StringName) -> bool:
 
 func cast(team: int, stats: Dictionary, position: Vector2, active_enabled: bool = false, active_skill_index: int = 0) -> bool:
 	match StringName(stats.get("spell_kind", "")):
+		&"zap", &"lightning":
+			start_lightning(team, stats, position, active_enabled, active_skill_index)
+			return true
 		&"freeze":
 			var radius := float(stats.get("radius", 0.0))
 			var duration := float(stats.get("duration", 0.0))
@@ -116,6 +123,7 @@ func show_heal(position: Vector2, radius: float, duration: float, enhanced: bool
 	heal_effects.append({"pos": position, "radius": radius, "timer": duration, "duration": duration, "enhanced": enhanced, "global_heal": global_heal})
 
 func tick(dt: float) -> void:
+	_tick_lightning()
 	var alive: Array[Dictionary] = []
 	for zone in slow_zones:
 		if _controller.simulation_step_active() and int(zone.get("created_tick", -1)) == _controller.get_authoritative_server_tick():
@@ -143,6 +151,12 @@ func tick(dt: float) -> void:
 
 
 func tick_visuals(delta: float) -> void:
+	for area in lightning_areas:
+		area.timer = maxf(0.0, float(area.timer) - delta)
+	lightning_areas.assign(lightning_areas.filter(func(area): return float(area.timer) > 0.0))
+	for effect in lightning_effects:
+		effect.timer = maxf(0.0, float(effect.timer) - delta)
+	lightning_effects.assign(lightning_effects.filter(func(effect): return float(effect.timer) > 0.0))
 	for effect in freeze_effects:
 		effect.timer = maxf(0.0, float(effect.timer) - delta)
 	freeze_effects.assign(freeze_effects.filter(func(effect): return float(effect.timer) > 0.0))
@@ -162,7 +176,80 @@ func tick_visuals(delta: float) -> void:
 
 
 func clear() -> void:
+	lightning_casts.clear()
+	lightning_effects.clear()
+	lightning_areas.clear()
 	freeze_effects.clear()
 	slow_zones.clear()
 	slow_effects.clear()
 	heal_effects.clear()
+
+
+## 独立法术结果，以整数权威Tick调度；客户端只接收每次落雷的表现。
+func start_lightning(team: int, stats: Dictionary, position: Vector2, enhanced: bool, skill_index: int) -> void:
+	_effect_serial += 1
+	var skill := _active_heal_skill(stats, skill_index) if enhanced else {}
+	var cast_data := {"team": team, "pos": position, "stats": stats,
+		"count": int(skill.get("strike_count", stats.strike_count)), "index": 0, "struck_ids": {},
+		"multiplier": float(skill.get("strike_damage_multiplier", 1.0)),
+		"interval_ticks": maxi(roundi(float(stats.strike_interval) / FixedStepClock.STEP), 1),
+		"next_tick": _controller.get_authoritative_server_tick(),
+		"source": StringName("lightning:%d:%d" % [team, _effect_serial])}
+	var window := float(int(cast_data.count) - 1) * float(cast_data.interval_ticks) * FixedStepClock.STEP + float(stats.stun_duration)
+	_controller.present_lightning_area(String(stats.spell_kind), position, float(stats.radius), window, team)
+	_strike_lightning(cast_data)
+	cast_data.index = 1
+	cast_data.next_tick += int(cast_data.interval_ticks)
+	if int(cast_data.count) > 1: lightning_casts.append(cast_data)
+
+
+func _tick_lightning() -> void:
+	var tick: int = _controller.get_authoritative_server_tick()
+	var alive: Array[Dictionary] = []
+	for cast_data in lightning_casts:
+		if tick >= int(cast_data.next_tick):
+			_strike_lightning(cast_data)
+			cast_data.index += 1
+			cast_data.next_tick += int(cast_data.interval_ticks)
+		if int(cast_data.index) < int(cast_data.count): alive.append(cast_data)
+	lightning_casts.assign(alive)
+
+
+func _strike_lightning(cast_data: Dictionary) -> void:
+	var stats: Dictionary = cast_data.stats
+	var team := int(cast_data.team)
+	var interaction := _spell_context(team)
+	var targets: Array[Node2D] = []
+	for target in _controller.get_tree().get_nodes_in_group("combatants"):
+		if not is_instance_valid(target) or target.is_queued_for_deletion() or target.hp <= 0 or target.team == team: continue
+		if String(stats.spell_kind) == "lightning" and cast_data.struck_ids.has(target.combat_source_id): continue
+		if not CombatInteraction.allows_effect(target, interaction): continue
+		if target.global_position.distance_to(cast_data.pos) > float(stats.radius) + target.body_radius: continue
+		targets.append(target)
+	var kind := String(stats.spell_kind)
+	if kind == "lightning":
+		# 血量相同用出生身份稳定排序；每次重新查询并排除本次施法已经电击的目标。
+		targets.sort_custom(func(a, b): return a.hp > b.hp if a.hp != b.hp else a.combat_source_id < b.combat_source_id)
+		if targets.size() > 1: targets.resize(1)
+		if targets.is_empty(): return
+		cast_data.struck_ids[targets[0].combat_source_id] = true
+	var strike_pos: Vector2 = cast_data.pos if kind == "zap" else targets[0].global_position
+	var damage := float(stats.damage) * pow(float(cast_data.multiplier), int(cast_data.index))
+	for target in targets:
+		var amount := damage * (float(stats.tower_damage_multiplier) if target is Tower else 1.0)
+		var result := BattleNumbers.hit(target, amount, interaction.get("source"), team, interaction.get("position", Vector2(INF, INF)))
+		var apply_stun := func():
+			if bool(result.landed) and is_instance_valid(target) and target.hp > 0:
+				if target is Unit: target.stun(float(stats.stun_duration), cast_data.source, interaction)
+				elif target is Tower: target.stun(float(stats.stun_duration), cast_data.source)
+		if _controller.combat_service().collecting: _controller.combat_service().defer_effect(apply_stun)
+		else: apply_stun.call()
+	_controller.present_lightning_spell(kind, strike_pos, float(stats.radius), team)
+
+
+func show_lightning(kind: String, position: Vector2, radius: float) -> void:
+	lightning_effects.append({"kind": kind, "pos": position, "radius": radius, "duration": 0.6, "timer": 0.6})
+
+
+func show_lightning_area(kind: String, position: Vector2, radius: float, duration: float, team: int) -> void:
+	lightning_areas.append({"kind": kind, "pos": position, "radius": radius, "duration": duration, "timer": duration, "team": team})

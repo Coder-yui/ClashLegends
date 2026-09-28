@@ -27,6 +27,8 @@ const DEFINITIONS = [
 	preload("res://scripts/data/cards/pix.gd"),
 	preload("res://scripts/data/cards/freeze.gd"),
 	preload("res://scripts/data/cards/heal.gd"),
+	preload("res://scripts/data/cards/zap.gd"),
+	preload("res://scripts/data/cards/lightning.gd"),
 	preload("res://scripts/data/cards/mirror.gd"),
 	preload("res://scripts/data/cards/masteryi.gd"),
 	preload("res://scripts/data/cards/twisted_fate.gd"),

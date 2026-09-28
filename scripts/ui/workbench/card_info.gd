@@ -47,7 +47,18 @@ func show_card(id: String, stats: Dictionary) -> void:
 	for i in skills.size():
 		var skill: Dictionary = skills[i]
 		var section := _section(abilities)
-		_text(String(skill.get("name", "主动技能")), 20, section)
+		var heading := HBoxContainer.new()
+		heading.add_theme_constant_override("separation", 8)
+		section.add_child(heading)
+		var texture := CardArt.skill_icon(skill)
+		if texture != null:
+			var icon := TextureRect.new()
+			icon.texture = texture
+			icon.custom_minimum_size = Vector2(28, 28)
+			icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+			heading.add_child(icon)
+		_text(String(skill.get("name", "主动技能")), 20, heading)
 		_text("消耗 %s · %d 次 · 冷却 %ss" % [CardDetails.format_number(float(skill.get("cost", 0))), int(skill.get("max_uses", 1)), CardDetails.format_number(float(skill.get("cooldown", 0)))], 16, section)
 		_text(CardDetails.active_choice_description(id, i), 16, section)
 	var upgraded_id := String(stats.get("deployment_upgrade_id", ""))
@@ -81,6 +92,7 @@ func _section(parent: Node) -> VBoxContainer:
 func _text(value: String, font_size: int = 16, parent: Node = null) -> void:
 	var label := Label.new()
 	label.text = value
+	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	label.add_theme_font_size_override("font_size", font_size)
 	(parent if parent != null else _body).add_child(label)

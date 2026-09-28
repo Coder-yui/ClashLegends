@@ -25,6 +25,13 @@ static func attributes(stats: Dictionary, quantity_override: String = "") -> Arr
 		var target := "友方单位" if StringName(stats.get("spell_kind", "")) == &"heal" else "敌方单位"
 		result.append({"name": "目标", "value": target})
 		result.append({"name": "作用范围", "value": "%s（%.2f格）" % [format_number(float(stats.get("radius", 0.0))), float(stats.get("radius", 0.0)) / TILE_SIZE]})
+		if String(stats.get("spell_kind", "")) in ["zap", "lightning"]:
+			result.append({"name": "单次伤害", "value": format_number(float(stats.damage))})
+			result.append({"name": "电击次数", "value": str(stats.strike_count)})
+			result.append({"name": "电击间隔", "value": "%s秒" % format_number(float(stats.strike_interval))})
+			result.append({"name": "眩晕", "value": "%s秒" % format_number(float(stats.stun_duration))})
+			result.append({"name": "塔 / 水晶伤害", "value": "%s%%" % format_number(float(stats.tower_damage_multiplier) * 100.0)})
+			return result
 		result.append({"name": "持续时间", "value": "%s秒" % format_number(float(stats.get("duration", 0.0)))})
 		return result
 

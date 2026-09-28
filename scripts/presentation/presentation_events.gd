@@ -19,7 +19,7 @@ static func supports(stats: Dictionary, cue: String) -> bool:
 		return (stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "terrain_charge")
 	var spell := String(stats.get("type", "")) == "spell"
 	if spell:
-		return cue == "spell:cast"
+		return cue == "spell:cast" or (cue == "spell:strike" and String(stats.get("spell_kind", "")) in ["zap", "lightning"])
 	if cue in ["sanctuary:sustain", "sanctuary:end"]:
 		return (stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "sanctuary")
 	if cue == "active:cast":

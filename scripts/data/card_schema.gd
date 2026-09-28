@@ -97,8 +97,8 @@ const SIZE_RADII := {
 }
 const PROJECTILE_VISUALS := [&"kayle_sword", &"orb", &"arrow", &"needle", &"boomerang", &"ice_cone"]
 const VISUAL_SPAWN_TRANSITIONS := [&"drop", &"rebirth"]
-const SPELL_KINDS := [&"freeze", &"heal", &"mirror"]
-const ACTIVE_SKILL_KINDS := [&"dash_strike", &"terrain_charge", &"bleeding_execute", &"explosive_shield", &"sanctuary", &"timed_form", &"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"continuous_area", &"empowered_attack", &"attack_lifesteal", &"area_shield", &"restoration_shield", &"spell_heal"]
+const SPELL_KINDS := [&"zap", &"lightning", &"freeze", &"heal", &"mirror"]
+const ACTIVE_SKILL_KINDS := [&"spell_lightning", &"dash_strike", &"terrain_charge", &"bleeding_execute", &"explosive_shield", &"sanctuary", &"timed_form", &"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"continuous_area", &"empowered_attack", &"attack_lifesteal", &"area_shield", &"restoration_shield", &"spell_heal"]
 const ACTIVE_SKILL_TARGET_SCOPES := [&"self", &"deployment_group"]
 const CAST_LOCKS := [&"movement", &"attack", &"facing"]
 const VISUAL_ACTION_KINDS := [&"deploy", &"transform", &"skill"]
@@ -109,6 +109,7 @@ const TRANSITION_BLEND_FIELDS := [&"default", &"locomotion", &"action_in", &"act
 ## Validator 会检测未知或未登记字段。新增字段必须同时实现运行时读取逻辑、
 ## validator 登记和对应机制测试，防止只把配置写进 CardDB、却忘记接入权威模拟或表现层。
 const CARD_FIELDS := [
+	&"strike_count", &"strike_interval", &"stun_duration", &"tower_damage_multiplier",
 	&"heal_on_hit_name", &"on_hit_passive_name", &"team_attack_boost_first_delay", &"team_attack_boost_interval", &"team_attack_boost_multiplier",
 	&"terrain_traversal", &"terrain_entry_heal", &"terrain_entry_speed_multiplier", &"growth_ranged_id", &"growth_melee_id", &"growth_ranged_hits", &"growth_melee_hits",
 	&"hit_haste_max_stacks", &"hit_haste_per_stack", &"hit_haste_duration",
@@ -159,6 +160,7 @@ const VISUAL_ANIMATION_FIELDS := [
 	&"visual_action_durations", &"transitions", &"transition_blends", &"clip_blends",
 ]
 const ACTIVE_SKILL_FIELDS := [
+	&"strike_count", &"strike_damage_multiplier",
 	&"dash_duration", &"dash_reference_speed", &"spin_delay", &"fixed_speed", &"charge_prepare_time", &"charge_recovery_time", &"charge_miss_recovery_time", &"trail_damage", &"hit_heal", &"on_hit_max_health_ratio", &"on_hit_tower_damage",
 	&"execute_damage_per_stack",
 	&"heal_amount",
@@ -187,7 +189,7 @@ const ACTIVE_SKILL_FIELDS := [
 ## is_continuous_attack: true 时持续伤害（DPS模式，每固定Tick累计 damage*dt，按目标保留余量扣整数）
 
 ## 数量字段含嵌套数组；其他玩法数值最多两位，比例按百分数最多两位。
-const INTEGER_NUMBER_FIELDS := [
+const INTEGER_NUMBER_FIELDS := ["strike_count",
 	&"growth_ranged_hits", &"growth_melee_hits", &"terrain_entry_heal", &"hit_heal",
 	"attack_recovery_cancel_every_hits", "rush_path_damage", "rush_building_damage", "rush_spawn_count", "hp", "damage", "heal_amount", "trail_damage", "on_hit_tower_damage", "deploy_sweep_damage", "shield", "resource_shield_max", "full_resource_first_hit_heal", "full_resource_cast_end_heal", "shockwave_damage", "zone_damage", "resource_damage_by_stacks", "resource_hit_damage_sequences", "cost", "active_cost_bonus", "spawn_count", "death_spawn_count", "deployment_count", "max_uses", "blind_charges", "heal_every_hits", "transform_after_hits", "revert_after_hits", "death_replacement_charges", "timed_revival_death_replacement_charges", "projectile_count"]
 

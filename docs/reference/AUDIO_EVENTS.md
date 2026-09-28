@@ -12,6 +12,7 @@
 
 | 配置 / 事件 | 触发或限制 |
 | --- | --- |
+| `spell:strike` | 电击/大型电击每次权威落雷派发；电击空放仍播放中心落雷，大型电击无合法目标时该次静音。可靠表现序号去重，清场取消后续电击 |
 | `attack_wave:launch / attack_wave:hit` | 携带 attack_wave_damage 的单位；延迟波真正创建 / 每波首次真实有效命中，通过保存的出手来源走可靠卡牌事件；空波与清场不补播 |
 | `attack_swing / attack_hit` | 普攻出手 / 真实伤害成功；空挥与免疫不伪造命中 |
 | `attack_hit_by_segment / attack_launch_by_segment` | 与普攻段对齐；分段发射替代普通发射池 |

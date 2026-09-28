@@ -82,6 +82,12 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 			elif float(stats.get("duration", 0.0)) <= 0.0:
 				errors.append("%s.duration: 法术持续时间必须 > 0" % card_id)
 			match spell_kind:
+				&"zap", &"lightning":
+					_require_fields(card_id, stats, [&"damage", &"strike_count", &"strike_interval", &"stun_duration", &"tower_damage_multiplier"], errors)
+					if float(stats.get("damage", 0)) <= 0 or int(stats.get("strike_count", 0)) < 1 or float(stats.get("strike_interval", 0)) < FixedStepClock.STEP or float(stats.get("stun_duration", 0)) <= 0:
+						errors.append("%s: 电击伤害/次数/眩晕必须为正，间隔至少一个Tick" % card_id)
+					if float(stats.get("tower_damage_multiplier", -1)) < 0 or float(stats.get("tower_damage_multiplier", -1)) > 1:
+						errors.append("%s.tower_damage_multiplier: 必须在0到1之间" % card_id)
 				&"heal":
 					if float(stats.get("heal_amount", 0.0)) <= 0.0:
 						errors.append("%s.heal_amount: 治疗法术必须配置 > 0 的治疗量" % card_id)
@@ -873,6 +879,12 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 					errors.append("%s.heal_ratio: 必须 > 0" % label)
 				if float(skill.get("max_health_ratio", 0.0)) < 1.0:
 					errors.append("%s.max_health_ratio: 必须 >= 1" % label)
+			&"spell_lightning":
+				if String(stats.get("type", "")) != "spell" or String(stats.get("spell_kind", "")) not in ["zap", "lightning"]:
+					errors.append("%s.kind: spell_lightning 只能用于电击法术" % label)
+				_require_fields(label, skill, [&"strike_count", &"strike_damage_multiplier"], errors)
+				if int(skill.get("strike_count", 0)) < 1 or float(skill.get("strike_damage_multiplier", 0)) < 1:
+					errors.append("%s: 电击次数必须为正，逐次倍率必须>=1" % label)
 			&"spell_heal":
 				if StringName(stats.get("type", "")) != &"spell" or StringName(stats.get("spell_kind", "")) != &"heal":
 					errors.append("%s.kind: spell_heal 只能用于治疗法术" % label)

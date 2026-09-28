@@ -231,5 +231,23 @@
     "source_wad_hash": "b7431c2963c6fbb0",
     "source_sha256": "7984d8a6d4653321308fec7c740167d0190a95ef60afe534e22213ff3cf46dcc",
     "sha256": "7984d8a6d4653321308fec7c740167d0190a95ef60afe534e22213ff3cf46dcc"
+  },
+  {
+    "card": "zap",
+    "skill_index": 0,
+    "path": "res://assets/skills/zap_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/LeagueClient/Plugins/rcp-be-lol-game-data/default-assets2.wad",
+    "source_path": "plugins/rcp-be-lol-game-data/global/default/v1/perk-images/styles/domination/electrocute/electrocute.png",
+    "source_sha256": "189813a541c72d9f08aadc3a0c81d32ab63199f5ef035c5bab9b795bbca07014",
+    "sha256": "189813a541c72d9f08aadc3a0c81d32ab63199f5ef035c5bab9b795bbca07014"
+  },
+  {
+    "card": "lightning",
+    "skill_index": 0,
+    "path": "res://assets/skills/lightning_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/LeagueClient/Plugins/rcp-be-lol-game-data/default-assets2.wad",
+    "source_path": "plugins/rcp-be-lol-game-data/global/default/assets/items/icons2d/4646_stormsurge.png",
+    "source_sha256": "e1c8c11a0851d6159ff8d238f7a62608e594179c2c3d3ee323e3c2aa0e08ea25",
+    "sha256": "e1c8c11a0851d6159ff8d238f7a62608e594179c2c3d3ee323e3c2aa0e08ea25"
   }
 ]

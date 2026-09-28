@@ -2934,3 +2934,39 @@ func apply_growth_snapshot(value: Dictionary) -> void:
 func _rpc_unit_forge_audio(epoch: String, net_id: int, cue: String, position: Vector2) -> void:
 	if cue not in ["forge:pulse", "forge:cancel"]: return
 	_rpc_unit_audio_event(epoch, net_id, cue, position)
+
+
+func present_lightning_spell(card_id: String, pos: Vector2, radius: float, team: int) -> void:
+	_presentation_event_id += 1
+	_show_lightning_spell(_presentation_event_id, card_id, pos, radius, team)
+	if mode == "host":
+		_rpc_lightning_fx.rpc_id(network_opponent_id(), network_session_id(), _presentation_event_id, card_id, pos, radius, team)
+
+func _show_lightning_spell(event_id: int, card_id: String, pos: Vector2, radius: float, team: int) -> void:
+	if event_id <= _last_card_event_id: return
+	_spell_system.show_lightning(card_id, pos, radius)
+	_play_card_event(event_id, card_id, "spell:strike", pos, 0, team)
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_lightning_fx(epoch: String, event_id: int, card_id: String, pos: Vector2, radius: float, team: int) -> void:
+	if not _session.accepts(1, epoch, MatchSession.Phase.RUNNING) or game_over or mode != "client": return
+	if card_id not in ["zap", "lightning"]: return
+	_show_lightning_spell(event_id, card_id, pos, radius, team)
+
+
+func present_lightning_area(card_id: String, pos: Vector2, radius: float, duration: float, team: int) -> void:
+	_presentation_event_id += 1
+	_show_lightning_area(_presentation_event_id, card_id, pos, radius, duration, team)
+	if mode == "host":
+		_rpc_lightning_area.rpc_id(network_opponent_id(), network_session_id(), _presentation_event_id, card_id, pos, radius, duration, team)
+
+func _show_lightning_area(event_id: int, card_id: String, pos: Vector2, radius: float, duration: float, team: int) -> void:
+	if event_id <= _last_card_event_id: return
+	_last_card_event_id = event_id
+	_spell_system.show_lightning_area(card_id, pos, radius, duration, team)
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_lightning_area(epoch: String, event_id: int, card_id: String, pos: Vector2, radius: float, duration: float, team: int) -> void:
+	if not _session.accepts(1, epoch, MatchSession.Phase.RUNNING) or game_over or mode != "client": return
+	if card_id not in ["zap", "lightning"]: return
+	_show_lightning_area(event_id, card_id, pos, radius, duration, team)

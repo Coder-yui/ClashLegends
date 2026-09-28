@@ -4,6 +4,11 @@ extends Node2D
 var spells: RefCounted
 var skills: RefCounted
 
+func _ready() -> void:
+	var lightning := LightningSpellEffect.new()
+	lightning.spells = spells
+	add_child(lightning)
+
 func _process(_delta: float) -> void:
 	queue_redraw()
 
@@ -36,6 +41,13 @@ func _draw() -> void:
 		draw_arc(center, radius, 0.0, TAU, 96, Color(1.0, 0.83, 0.15, 0.80 * alpha), 4.0, true)
 		draw_arc(center, maxf(radius - 4.0, 0.0), 0.0, TAU, 96, Color(1.0, 0.96, 0.64, 0.65 * alpha), 1.5, true)
 
+	# 法术生效窗口覆盖完整多击序列；固定施法中心，不跟随大型电击目标。
+	for area in spells.lightning_areas:
+		var color := Color(0.35, 0.8, 1.0) if int(area.team) == 0 else Color(1.0, 0.3, 0.35)
+		var alpha := clampf(float(area.timer) / 0.12, 0.0, 1.0)
+		draw_circle(area.pos, area.radius, Color(color, 0.08 * alpha))
+		draw_arc(area.pos, area.radius, 0.0, TAU, 80, Color(color, 0.95 * alpha), 2.5, true)
+		draw_arc(area.pos, maxf(float(area.radius) - 4.0, 0.0), 0.0, TAU, 80, Color(color, 0.25 * alpha), 1.0, true)
 	# 冰冻区域效果
 	for fe in spells.freeze_effects:
 		var alpha: float = (fe.timer / fe.duration) * 0.25

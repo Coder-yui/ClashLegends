@@ -24,3 +24,5 @@
 凯隐新增凯隐/影流刺客/拉亚斯特Q原生图标（kayn_q_primary / kayn_q_ass / kayn_q_slay），均从本地Kayn基础角色包提取DDS后解码，逐文件来源见清单。
 
 潘森贯星长枪使用基础皮肤原版 `pantheon_q1.dds`，转换为 `pantheon_q.png`；来源和哈希见 source_manifest.json。
+
+电击法术使用电刑符文原图，大型电击法术使用风暴狂涌装备原图；均从本地客户端default-assets2.wad直接提取PNG，未重绘。
