@@ -10,7 +10,8 @@
 | 部署、预部署轨迹 | `unit_spawn_request`、`deployment_rules`、`pre_deployment_sweep` |
 | 地图、导航、碰撞与落点 | `arena_rules`、`nav_grid`、`battle_path_search`、`movement_system`、`unit_landing_query` |
 | 攻击与状态 | `attack_timeline`、`status_instances`、`control_state`、`shield_state`、`bleed_state`、`death_form_state` |
-| 特殊位移状态 | `knockback_state`、`structure_rush_state`、`terrain_traversal_state`、`dash_strike_state` |
+| 特殊位移状态 | `knockback_state`、`structure_rush_state`、`terrain_traversal_state`、`dash_strike_state`、`ornn_charge_state` |
+| 周期队伍普攻增幅、锻造时序与在途锤子 | `team_attack_boost_system` |
 | 效果准入与结算 | `combat_interaction`、`target_protection_state`、`battle_numbers`、`combat_resolver` |
 | 弹体、法术、主动效果 | `projectile_system`、`spell_system`、`active_skill_effect_system` |
 | 会话与副本 | `match_session`、`network_entity_lifecycle`、`network_snapshot_system` |
