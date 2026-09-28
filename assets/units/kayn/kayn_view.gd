@@ -1,6 +1,6 @@
 extends Node3D
 ## 源库三形态显隐；只显示当前形态的皮肤和武器，不创建三套骨骼。
-@export_enum("普通", "蓝凯", "红凯") var form := 0
+@export_enum("凯隐", "影流刺客", "拉亚斯特") var form := 0
 var _weapon_blend: SkeletonModifier3D
 func prepare_visual_animations() -> void:
 	if _weapon_blend == null:

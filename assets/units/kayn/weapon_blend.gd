@@ -1,5 +1,5 @@
 extends SkeletonModifier3D
-## 镰刀在模型空间混合；默认最短路径，红凯进出地形沿固定的身体外侧路径。
+## 镰刀在模型空间混合；默认最短路径，拉亚斯特进出地形沿固定的身体外侧路径。
 ## 只读动画采样，不改骨架、源片段、战斗位置或技能时钟。
 var player: AnimationPlayer
 var _weapon := -1

@@ -2,7 +2,7 @@ extends "res://scripts/data/card_schema.gd"
 static func definition() -> Dictionary:
 	var data := preload("res://scripts/data/cards/kayn.gd").definition()
 	for key in ["growth_ranged_id", "growth_melee_id", "growth_ranged_hits", "growth_melee_hits"]: data.gameplay.erase(key)
-	data.gameplay.merge({"selectable": false, "name": "影流之镰·蓝凯", "hp": 650, "damage": 110, "speed": SPEED_EXTREMELY_FAST, "interval": 0.85, "first_hit": 0.12, "terrain_entry_heal": 120, "terrain_entry_speed_multiplier": 1.3, "description": "蓝凯：高速高伤，进入地形回复120生命并加速30%持续1秒。巨镰横扫仅需1金币。"}, true)
+	data.gameplay.merge({"selectable": false, "name": "影流刺客", "hp": 650, "damage": 110, "speed": SPEED_EXTREMELY_FAST, "interval": 0.85, "first_hit": 0.12, "terrain_entry_heal": 120, "terrain_entry_speed_multiplier": 1.3, "description": "影流刺客：高速高伤，进入地形回复120生命并加速30%持续1秒。巨镰横扫仅需1金币。"}, true)
 	data.gameplay.active_skills[0].cost = 1
 	data.visual.color = Color(0.15, 0.6, 1.0)
 	data.visual.visual_scene_path = "res://assets/units/kayn/kayn_assassin_view.tscn"

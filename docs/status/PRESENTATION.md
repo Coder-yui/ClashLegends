@@ -135,7 +135,7 @@
 
 | 效果入口 | 已接入来源 | 通用表现入口 |
 | --- | --- | --- |
-| `Unit.heal()` / `heal_with_overflow()` | 治疗术及强化/过量治疗、天使治疗、格温满层首次命中回复、凯隐三形态入地形、红凯 Q 命中、赵信/红凯普攻回血、恕瑞玛回复盾到期 | 实际生命增加 → `_present_heal_gain()` → `restoration_heal_effect.gd` |
+| `Unit.heal()` / `heal_with_overflow()` | 治疗术及强化/过量治疗、天使治疗、格温满层首次命中回复、凯隐三形态入地形、拉亚斯特 Q 命中、赵信/拉亚斯特普攻回血、恕瑞玛回复盾到期 | 实际生命增加 → `_present_heal_gain()` → `restoration_heal_effect.gd` |
 | `Unit._try_attack_lifesteal()` | 皮克斯授予的吸血、剑魔攻击吸血、赛恩亡魂吸血 | 实际生命增加 → 同一 `_present_heal_gain()`；支持溢出生命上限 |
 | `Unit.apply_slow()` | 寒冰技能、冰鸟技能/区域、龙王冲击波、强化冰冻后续区域、工作台 | 有效状态 + 实际自主移动 → `soft_control_effect.gd` 黄色拖痕 |
 | `Unit.stun()` / `Tower.stun()` | 纳尔技能、龙王落星及通用技能命中、工作台 | 有效眩晕 → `stun_effect.gd` 紫色漩涡 |

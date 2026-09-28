@@ -2,8 +2,8 @@ extends "res://scripts/data/card_schema.gd"
 static func definition() -> Dictionary:
 	return {
 		"gameplay": {
-			"name": "影流之镰·凯隐", "cost": 4, "type": "unit",
-			"description": "可穿越河流和建筑，进入地形回复70生命，完整离开后可再次触发；地形内不能普攻，攻击前挤到最近合法地面。本阵营普通凯隐普攻命中非建筑敌军累计：远程4次解锁蓝凯、近战6次解锁红凯，率先完成永久锁定，仅影响后续部署。",
+			"name": "凯隐", "cost": 4, "type": "unit",
+			"description": "可穿越河流和建筑，进入地形回复70生命，完整离开后可再次触发；地形内不能普攻，攻击前挤到最近合法地面。本阵营凯隐普攻命中非建筑敌军累计：远程4次解锁影流刺客、近战6次解锁拉亚斯特，率先完成永久锁定，仅影响后续部署。",
 			"hp": 650, "damage": 80, "range": MELEE_RANGE_MIN,
 			"speed": SPEED_SLIGHTLY_FAST, "interval": 1.1, "first_hit": 0.16,
 			"size_tier": SIZE_MEDIUM, "radius": RADIUS_MEDIUM, "mass": 4.0, "sight": 240.0,

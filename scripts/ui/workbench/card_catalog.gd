@@ -50,7 +50,7 @@ static func selection_id(base_id: String, form: int) -> String:
 	return base_id + (":" + str(form) if form > 0 else "")
 
 static func form_labels(base: Dictionary) -> Array[String]:
-	if base.has("growth_ranged_id"): return ["普通形态", "蓝凯形态", "红凯形态"]
+	if base.has("growth_ranged_id"): return ["凯隐", "影流刺客", "拉亚斯特"]
 	if base.has("deployment_upgrade_id"): return ["近战形态", "远程形态"]
 	if base.has("transformed_stats"): return ["基础形态", "变形形态"]
 	return ["基础形态"]

@@ -2,7 +2,7 @@ extends "res://scripts/data/card_schema.gd"
 static func definition() -> Dictionary:
 	var data := preload("res://scripts/data/cards/kayn.gd").definition()
 	for key in ["growth_ranged_id", "growth_melee_id", "growth_ranged_hits", "growth_melee_hits"]: data.gameplay.erase(key)
-	data.gameplay.merge({"selectable": false, "heal_on_hit_name": "暗裔汲取", "on_hit_passive_name": "暗裔重创", "name": "影流之镰·红凯", "hp": 950, "damage": 80, "heal_every_hits": 1, "heal_amount": 35, "on_hit_max_health_ratio": 0.03, "on_hit_tower_damage": 35, "description": "红凯保留穿地形能力，进入地形回复70生命，地形中普攻前须离开。普攻命中回复35生命，附加目标最大生命3%伤害（塔、水晶固定35）。Q每段同样附伤，每段命中至少一人回复50生命。"}, true)
+	data.gameplay.merge({"selectable": false, "heal_on_hit_name": "暗裔汲取", "on_hit_passive_name": "暗裔重创", "name": "拉亚斯特", "hp": 950, "damage": 80, "heal_every_hits": 1, "heal_amount": 35, "on_hit_max_health_ratio": 0.03, "on_hit_tower_damage": 35, "description": "拉亚斯特保留穿地形能力，进入地形回复70生命，地形中普攻前须离开。普攻命中回复35生命，附加目标最大生命3%伤害（塔、水晶固定35）。Q每段同样附伤，每段命中至少一人回复50生命。"}, true)
 	data.gameplay.active_skills[0].merge({"on_hit_max_health_ratio": 0.03, "on_hit_tower_damage": 35, "hit_heal": 50}, true)
 	data.gameplay.active_skills[0].description = "向前突进120像素，随后旋转；每段造成90加目标最大生命3%的伤害（塔、水晶附伤固定35）。每段至少命中一人回复50生命，多人不叠加，空放不回血。"
 	data.visual.color = Color(0.8, 0.15, 0.15)
