@@ -11,6 +11,7 @@ static func definition() -> Dictionary:
 			"mass": 5.0, "sight": 220.0,
 			"deploy_zone": "global", "pre_deploy_time": 1.3, "deploy_time": 1.0,
 			"pre_deploy_sweep_start": 0.65, "pre_deploy_sweep_distance": 3.0 * ArenaRules.TILE_SIZE,
+			"pre_deploy_sweep_flat_rear": 0.5 * ArenaRules.TILE_SIZE,
 			"pre_deploy_sweep_radius": 90.0, "pre_deploy_sweep_damage": 100,
 			"skill_resource_max": 4.0, "skill_resource_attack_gain": 1.0,
 			"is_air": false, "building_only": false, "can_attack_air": false,

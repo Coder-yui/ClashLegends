@@ -25,7 +25,25 @@ static func advance(entry: Dictionary, before: float, after: float, combatants: 
 		var id: int = target.get_instance_id()
 		if hit_ids.has(id): continue
 		var closest := Geometry2D.get_closest_point_to_segment(target.global_position, previous, current)
-		if target.global_position.distance_to(closest) > radius + target.body_radius: continue
+		if stats.has("pre_deploy_sweep_flat_rear"):
+			var forward := Vector2.UP if team == 0 else Vector2.DOWN
+			# Only the first swept strip extends behind the landing center. Later
+			# strips cover this tick, so the old path is not a lingering damage zone.
+			var rear_extension := float(stats.pre_deploy_sweep_flat_rear) if before <= float(stats.pre_deploy_sweep_start) else 0.0
+			if flat_front_distance(target.global_position, previous, current, forward, radius, rear_extension) > target.body_radius: continue
+		elif target.global_position.distance_to(closest) > radius + target.body_radius: continue
 		if not CombatInteraction.allows(target, null, team, closest): continue
 		hit_ids[id] = true
 		target.take_damage(damage, null, team, closest)
+
+## Distance to this tick's rectangle plus forward semicircle, before target radius.
+## Local x is lateral; local y is forward from the previous wave center.
+static func flat_front_distance(point: Vector2, previous: Vector2, current: Vector2, forward: Vector2, radius: float, rear_extension: float) -> float:
+	var delta := point - previous
+	var lateral := delta.dot(Vector2(-forward.y, forward.x))
+	var along := delta.dot(forward)
+	var length := maxf((current - previous).dot(forward), 0.0)
+	var rectangle_distance := Vector2(maxf(absf(lateral) - radius, 0.0), maxf(maxf(-rear_extension - along, along - length), 0.0)).length()
+	var cap_point := Vector2(lateral, along - length)
+	var cap_distance := maxf(cap_point.length() - radius, 0.0) if cap_point.y >= 0.0 else Vector2(maxf(absf(lateral) - radius, 0.0), cap_point.y).length()
+	return minf(rectangle_distance, cap_distance)

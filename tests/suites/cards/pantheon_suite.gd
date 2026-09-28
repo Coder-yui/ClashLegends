@@ -4,6 +4,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
 	_check_pre_deployment()
+	_check_flat_rear_sweep()
 	_check_directional_comet()
 	_check_arrival_sampling()
 	_check_medium_scale()
@@ -263,7 +264,7 @@ func _check_pre_deployment() -> void:
 	path.advance(entry, 0.0, 1.3, [tower])
 	path.advance(entry, 0.0, 1.3, [tower])
 	_expect(tower.hp == tower_hp - 100, "地面冲击波伤害建筑，同一条目重复推进不会重复扣血")
-	for field in ["pre_deploy_sweep_start", "pre_deploy_sweep_distance", "pre_deploy_sweep_radius", "pre_deploy_sweep_damage"]:
+	for field in ["pre_deploy_sweep_flat_rear", "pre_deploy_sweep_start", "pre_deploy_sweep_distance", "pre_deploy_sweep_radius", "pre_deploy_sweep_damage"]:
 		for bad in [-1.0, "wrong"]:
 			var invalid := stats.duplicate(true)
 			invalid[field] = bad
@@ -474,3 +475,31 @@ func _check_arrival_sampling() -> void:
 		view.advance_visual(1.0 / 1.3)
 		_expect(_arrival_fingerprint(view) == expected, "重复快照不追加出生或拖尾采样")
 		view.free()
+
+func _check_flat_rear_sweep() -> void:
+	var path := preload("res://scripts/battle/pre_deployment_sweep.gd")
+	var stats := CardDB.get_card("pantheon")
+	for team in [0, 1]:
+		var forward := Vector2.UP if team == 0 else Vector2.DOWN
+		var destination := Vector2(360, 620)
+		var start := path.start_position(destination, team, stats)
+		# Expected distances around the rear plane/corner, side, and front arc.
+		for sample in [[0.0, -20.0, 0.0], [0.0, -21.0, 1.0], [89.0, -19.0, 0.0], [93.0, -24.0, 5.0], [91.0, 50.0, 1.0], [0.0, 210.0, 0.0], [0.0, 211.0, 1.0], [90.0, 210.0, sqrt(16200.0) - 90.0]]:
+			var point: Vector2 = start + Vector2.RIGHT * sample[0] + forward * sample[1]
+			_expect(is_equal_approx(path.flat_front_distance(point, start, destination, forward, 90.0, 20.0), sample[2]), "红蓝矩形后沿、直角和前半圆的精确距离")
+		for sample in [[0.0, -39.5, true], [0.0, -40.5, false], [102.0, -36.0, true], [103.0, -36.0, false], [0.0, -70.0, false], [0.0, 229.5, true], [0.0, 230.5, false]]:
+			var victim: Unit = _main._spawn_unit(UnitSpawnRequest.new(1-team, "garen", start, {"deploy_time_override": 0.0}))
+			victim.body_radius = 20.0
+			victim.position = start + Vector2.RIGHT * sample[0] + forward * sample[1]
+			var hp := victim.hp
+			var entry := {"card_id": "pantheon", "team": team, "pos": destination}
+			path.advance(entry, 0.0, 1.3, [victim])
+			path.advance(entry, 0.0, 1.3, [victim])
+			_expect(is_equal_approx(victim.hp, hp - (100.0 if sample[2] else 0.0)), "跨步扫掠按目标身体判边界，旧后半圆不命中且每次部署只伤害一次")
+			victim.free()
+		var late: Unit = _main._spawn_unit(UnitSpawnRequest.new(1-team, "garen", start, {"deploy_time_override": 0.0}))
+		late.position = start - forward * 19.0
+		var old_hp := late.hp
+		path.advance({"card_id": "pantheon", "team": team, "pos": destination}, 1.2, 1.3, [late])
+		_expect(late.hp == old_hp, "晚进入起点的敌人不受已经过去的冲击波伤害")
+		late.free()

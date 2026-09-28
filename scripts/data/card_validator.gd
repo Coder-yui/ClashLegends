@@ -1176,6 +1176,9 @@ static func _validate_deployment(card_id: String, stats: Dictionary, errors: Pac
 	var has_pre_sweep := false
 	for field in pre_sweep_fields:
 		has_pre_sweep = has_pre_sweep or stats.has(field)
+	if stats.has("pre_deploy_sweep_flat_rear"):
+		if not has_pre_sweep or float(stats.pre_deploy_sweep_flat_rear) < 0.0:
+			errors.append("%s.pre_deploy_sweep_flat_rear: 需要完整预部署冲击波配置且后伸距离 >= 0" % card_id)
 	if has_pre_sweep:
 		for field in pre_sweep_fields:
 			if not stats.has(field) or float(stats.get(field, -1.0)) <= 0.0:

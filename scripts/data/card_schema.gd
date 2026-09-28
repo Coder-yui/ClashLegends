@@ -121,7 +121,7 @@ const CARD_FIELDS := [
 	&"hp", &"damage", &"range", &"speed", &"interval", &"first_hit", &"passive_first_hit", &"empowered_first_hit",
 	&"size_tier", &"custom_radius", &"radius", &"visual_radius", &"mass", &"sight", &"color",
 	&"is_air", &"is_building", &"building_only", &"can_attack_air", &"is_continuous_attack",
-	&"pre_deploy_sweep_start", &"pre_deploy_sweep_distance", &"pre_deploy_sweep_radius", &"pre_deploy_sweep_damage",
+	&"pre_deploy_sweep_flat_rear", &"pre_deploy_sweep_start", &"pre_deploy_sweep_distance", &"pre_deploy_sweep_radius", &"pre_deploy_sweep_damage",
 	&"deploy_time", &"pre_deploy_time", &"deploy_zone", &"deploy_pocket_requires_both_towers", &"deploy_ignore_structures", &"show_team_ring", &"footprint_tiles", &"lifespan", &"lifespan_hp_decay", &"tower_ruin_foundation",
 	&"deployment_count", &"deployment_spacing", &"deployment_formation", &"deployment_member_ids",
 	&"spawn_id", &"spawn_interval", &"spawn_count", &"spawn_side", &"death_spawn_id", &"death_spawn_count",
