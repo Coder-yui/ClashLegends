@@ -290,8 +290,17 @@
       "path": "assets/audio/units/kayle/play_sfx_kayle_death3d_cast.wav",
       "event": "Play_sfx_Kayle_Death3D_cast",
       "source": "ClashLegends-开发素材库/03-制作中/正义天使/audio-prepared/kayle/txtp/Play_sfx_Kayle_Death3D_cast.txtp",
-      "sha256": "1dc23f9cb3fe85f7749ea20d1ca48ea1db016e0e60ff964fa6583fbab29e0a66",
-      "processing": "vgmstream float32 decode; shared SFX gain -4 dB; PCM16 (no per-file normalization)"
+      "sha256": "0fec02510fa39aaa7790468b3c428e7e828f589a3df0053ece3d5769e21313ee",
+      "processing": "vgmstream float32 decode; shared SFX gain -4 dB; PCM16 (no per-file normalization); death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+      "duration": 1.5,
+      "death_envelope": {
+        "source_duration": 5.169569160997733,
+        "source_sha256": "1dc23f9cb3fe85f7749ea20d1ca48ea1db016e0e60ff964fa6583fbab29e0a66",
+        "keep_seconds": 1.5,
+        "fade_start_seconds": 1.0,
+        "fade_seconds": 0.5,
+        "curve": "linear_amplitude"
+      }
     },
     {
       "path": "assets/audio/units/kayle/wave_launch_r1.wav",
