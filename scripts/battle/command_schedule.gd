@@ -5,6 +5,7 @@ var _card_commands: Array[Dictionary] = []
 var _skill_commands: Array[Dictionary] = []
 var _pre_deployments: Array[Dictionary] = []
 var _impacts: Array[Dictionary] = []
+var _summons: Array[Dictionary] = []
 var _next_pre_deploy_id := 1
 var impact: Callable
 var cast_end: Callable
@@ -86,6 +87,7 @@ func clear() -> void:
 	_skill_commands.clear()
 	_pre_deployments.clear()
 	_impacts.clear()
+	_summons.clear()
 
 ## 低频检查导出隔离副本；绘制逐项读取，不在每 Tick 复制整个队列。
 func inspect_cards() -> Array[Dictionary]:
@@ -179,3 +181,20 @@ func _queue_single_active_skill_impact(source: Unit, skill: Dictionary, impact_d
 		impact.call(source, skill)
 		return
 	enqueue_impact(source, skill, impact_delay, &"impact", source.active_skill_cast_serial)
+
+## 独立召唤结果只存值，不绑定来源生命或动作身份；清场才撤销。
+func enqueue_summon(team: int, card_id: String, pos: Vector2, duration: float, deploy_time: float) -> void:
+	_summons.append({"team": team, "card_id": card_id, "pos": pos, "remaining": duration, "deploy_time": deploy_time})
+
+func take_summons(dt: float) -> Array[Dictionary]:
+	var ready: Array[Dictionary] = []
+	var waiting: Array[Dictionary] = []
+	for entry in _summons:
+		entry.remaining = maxf(0.0, float(entry.remaining) - dt)
+		if float(entry.remaining) <= 0.000001: ready.append(entry)
+		else: waiting.append(entry)
+	_summons.assign(waiting)
+	return ready
+
+func inspect_summons() -> Array[Dictionary]:
+	return _summons.duplicate(true)

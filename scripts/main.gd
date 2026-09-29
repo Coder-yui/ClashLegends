@@ -1957,6 +1957,20 @@ func _activate_active_skill(ability_id: int, expected_team: int = -1) -> bool:
 	var entry: Dictionary = _active_skills.entry(ability_id)
 	var unit: Unit = entry.unit
 	var skill: Dictionary = entry.skill
+	if String(skill.get("kind", "")) == "permanent_growth":
+		skill = skill.duplicate(true)
+		var receipt := ActiveSkillEffectSystem.RefundReceipt.new()
+		var old_uses := int(entry.uses_remaining)
+		var old_cooldown := float(entry.cooldown_left)
+		var cost := _active_skills.cost(ability_id)
+		var payer := _elixir_for_team(int(entry.team))
+		receipt.rollback = func() -> void:
+			if game_over: return
+			if payer != null: payer.elixir = minf(payer.elixir + cost, ElixirManager.MAX_ELIXIR)
+			if _active_skills.has(ability_id):
+				_active_skills.replace_replica(ability_id, old_uses, old_cooldown)
+				if mode == "host": _rpc_active_skill_used.rpc_id(_session.opponent_id, _session.session_id, ability_id, old_uses, old_cooldown, false)
+		skill["refund_receipt"] = receipt
 	if not _start_active_skill_cast(unit, skill):
 		return false
 	_active_skills.consume(ability_id)
@@ -2063,6 +2077,7 @@ func _sim_step(dt: float) -> void:
 	# 已存在的施法时间线先推进；本 Tick 新执行的命令从当前 Tick 边界开始计时。
 	_tick_active_skill_cooldowns(dt)
 	_combat.begin_batch(_sim_tick_id, "skill_impacts")
+	_tick_summon_flights(dt)
 	_commands.tick_impacts(dt)
 	_combat.commit_batch()
 	_combat.begin_batch(_sim_tick_id, "skill_effects")
@@ -2970,3 +2985,25 @@ func _rpc_lightning_area(epoch: String, event_id: int, card_id: String, pos: Vec
 	if not _session.accepts(1, epoch, MatchSession.Phase.RUNNING) or game_over or mode != "client": return
 	if card_id not in ["zap", "lightning"]: return
 	_show_lightning_area(event_id, card_id, pos, radius, duration, team)
+
+func schedule_summon_flight(source: Unit, card_id: String, pos: Vector2, duration: float, deploy_time: float) -> void:
+	if is_net_client() or game_over: return
+	var stats := CardDB.get_unit_stats(card_id)
+	var radius := float(stats.get("radius", 14.0))
+	pos = pos.clamp(Vector2.ONE * radius, Vector2(ArenaRules.FIELD_W, ArenaRules.FIELD_H) - Vector2.ONE * radius)
+	if not bool(stats.get("is_air", false)): pos = _nearest_valid_ground_spawn(pos, radius, source.team)
+	_commands.enqueue_summon(source.team, card_id, pos, duration, deploy_time)
+	var effect := _skill_presentation.add_summon_flight(source, pos, bool(stats.get("is_air", false)), duration)
+	publish_skill_fx(effect)
+
+func _tick_summon_flights(dt: float) -> void:
+	if is_net_client() or game_over: return
+	for entry in _commands.take_summons(dt):
+		spawn_summoned(int(entry.team), String(entry.card_id), entry.pos, float(entry.deploy_time))
+
+func project_effect_height(point: Vector2, height: float) -> Vector2:
+	return _battle_presentation.project_height(point, height) if _battle_presentation != null else point - Vector2(0.0, height * 28.0)
+
+func present_growth_wave(target: Unit, radius: float) -> void:
+	var effect := _skill_presentation.add_growth_wave(target, radius)
+	publish_skill_fx(effect)

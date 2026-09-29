@@ -12,6 +12,14 @@ var expanding_shockwaves: Array[Dictionary] = []
 ## 施法者跟随型持续范围效果；每个 pulse 都读取施法者当前权威位置。
 var continuous_area_effects: Array[Dictionary] = []
 
+class RefundReceipt extends RefCounted:
+	var settled := false
+	var rollback: Callable
+	func refund() -> void:
+		if settled: return
+		settled = true
+		if rollback.is_valid(): rollback.call()
+
 class CastHitState extends RefCounted:
 	var landed := false
 
@@ -118,6 +126,8 @@ func apply_cast_end(source: Unit, skill: Dictionary) -> void:
 
 func apply(source: Unit, skill: Dictionary) -> bool:
 	match StringName(skill.get("kind", "")):
+		&"permanent_growth":
+			return apply_permanent_growth(source, skill)
 		&"terrain_charge":
 			ornn_charges.append(OrnnChargeState.new(source, skill))
 			_controller.notify_unit_audio_event(source, &"charge:start", source.global_position)
@@ -188,6 +198,47 @@ func apply(source: Unit, skill: Dictionary) -> bool:
 ## 范围护盾沿用普通攻击的“表面间距”口径：技能 radius 与卡牌 attack range
 ## 可以填同一数值，大小不同的友军也会在与索敌一致的边界上获得护盾。
 ## combatants 中的 Unit、建筑、防御塔与水晶统一提供 add_shield()，都可成为目标。
+static func growth_target(source: Unit, skill: Dictionary) -> Unit:
+	if not is_instance_valid(source) or not source.is_inside_tree(): return null
+	var candidates: Array[Unit] = []
+	var radius := float(skill.get("radius", 0.0))
+	for target in source.get_tree().get_nodes_in_group("combatants"):
+		if not target is Unit or not is_instance_valid(target): continue
+		if target.is_building or target.card_id == "anivia_egg" or target.growth_body_scale > 1.0: continue
+		if not CombatInteraction.allows_allied_target(target, source.team): continue
+		if source.global_position.distance_squared_to(target.global_position) > radius * radius: continue
+		candidates.append(target)
+	candidates.sort_custom(func(a: Unit, b: Unit) -> bool:
+		var ac := int(CardDB.get_card(a.card_id).get("cost", 0))
+		var bc := int(CardDB.get_card(b.card_id).get("cost", 0))
+		if ac != bc: return ac > bc
+		var ad := source.global_position.distance_squared_to(a.global_position)
+		var bd := source.global_position.distance_squared_to(b.global_position)
+		if not is_equal_approx(ad, bd): return ad < bd
+		return a.combat_source_id < b.combat_source_id
+	)
+	return candidates[0] if not candidates.is_empty() else null
+
+func apply_permanent_growth(source: Unit, skill: Dictionary) -> bool:
+	var target := growth_target(source, skill)
+	if target == null or not target.apply_permanent_growth(float(skill.health_bonus_ratio), float(skill.body_scale_multiplier)):
+		var receipt = skill.get("refund_receipt")
+		if receipt is RefundReceipt: receipt.refund()
+		source.cancel_skill_cast()
+		return false
+	var receipt = skill.get("refund_receipt")
+	if receipt is RefundReceipt: receipt.settled = true
+	_controller.present_growth_wave(target, float(skill.knockback_radius))
+	var order: Array = skill.get("displacement_order", [])
+	if order.is_empty(): order = _controller.combat_service().next_displacement_order(source)
+	for enemy in source.get_tree().get_nodes_in_group("combatants"):
+		if not enemy is Unit or not is_instance_valid(enemy) or enemy.team == source.team or enemy.is_building: continue
+		if enemy.is_air != target.is_air: continue
+		if not CombatInteraction.allows(enemy, source, source.team, target.global_position): continue
+		if enemy.global_position.distance_to(target.global_position) > float(skill.knockback_radius) + enemy.body_radius: continue
+		enemy.apply_knockback(target.global_position, float(skill.knockback), float(skill.knockback_duration), float(skill.get("knockback_mass_factor_max", 1.4)), order)
+	return true
+
 func apply_area_shield(source: Unit, skill: Dictionary) -> void:
 	_controller.notify_unit_audio_event(source, &"shield:cast", source.global_position)
 	var radius := maxf(float(skill.get("radius", 0.0)), 0.0)

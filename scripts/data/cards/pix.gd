@@ -36,7 +36,7 @@ static func definition() -> Dictionary:
 			# 统一悬空后的施法手位约在权威地面点上方 84px；只影响紫色光弹绘制起点。
 			"projectile_visual_height": 84.0,
 			"projectile_visual_forward_offset": 4.0,
-			"projectile_colors": [Color(0.72, 0.24, 1.0), Color(0.72, 0.24, 1.0)],
+			"projectile_colors": [Color(0.83, 0.56, 1.0), Color(0.83, 0.56, 1.0)],
 			"color": Color(0.72, 0.24, 1.0),
 		},
 		# BEGIN IMPORTED AUDIO pix

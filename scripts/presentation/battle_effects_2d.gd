@@ -96,6 +96,28 @@ func _draw_frontal_skill_effect(effect: Dictionary) -> void:
 	var forward: Vector2 = effect.get("forward", Vector2.UP)
 	var source_radius := float(effect.get("source_radius", 0.0))
 	var shape := StringName(effect.get("shape", "rectangle"))
+	if shape == &"growth_wave":
+		GrowthEffect2D.draw_wave(self, skills, effect)
+		return
+	if shape == &"summon_mote":
+		var start: Vector2 = skills.project_height(center, float(effect.start_height))
+		var finish: Vector2 = skills.project_height(effect.end_position, float(effect.end_height))
+		var progress := clampf(1.0 - float(effect.timer) / maxf(float(effect.duration), 0.001), 0.0, 1.0)
+		var previous := start.lerp(finish, maxf(0.0, progress - 0.55))
+		for index in range(1, 15):
+			var fade := float(index) / 14.0
+			var t := maxf(0.0, progress - 0.55 * (1.0 - fade))
+			var point := start.lerp(finish, t)
+			draw_line(previous, point, Color(0.58, 0.12, 1.0, fade * 0.30), 13.0 * fade, true)
+			draw_line(previous, point, Color(0.84, 0.44, 1.0, fade * 0.95), 4.0 * fade, true)
+			if index % 3 == 0:
+				draw_circle(point + Vector2(sin(t * 30.0), cos(t * 24.0)) * 5.0, 1.7, Color(0.92, 0.65, 1.0, fade))
+			previous = point
+		var head := start.lerp(finish, progress)
+		draw_circle(head, 9.0, Color(0.60, 0.15, 1.0, 0.25))
+		draw_circle(head, 4.0, Color(0.88, 0.53, 1.0, 0.95))
+		draw_circle(head, 1.8, Color(1.0, 0.92, 1.0))
+		return
 	if shape == &"team_attack_boost_hammer":
 		var destination: Vector2 = effect.get("end_position", center)
 		var ratio := 1.0 - clampf(float(effect.get("timer", 0.0)) / maxf(float(effect.get("duration", 0.0)), 0.001), 0.0, 1.0)

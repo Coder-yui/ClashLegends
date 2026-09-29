@@ -173,3 +173,11 @@ func _create_environment() -> void:
 
 func _exit_tree() -> void:
 	model_pool.release_sources()
+
+## 世界高度由本机相机投影，适配红方翻转；不参与权威落点计算。
+func project_height(point: Vector2, height: float) -> Vector2:
+	if _camera == null: return point
+	var origin := _camera.project_ray_origin(point)
+	var direction := _camera.project_ray_normal(point)
+	if absf(direction.y) < 0.0001: return point
+	return _camera.unproject_position(origin + direction * (-origin.y / direction.y) + Vector3.UP * height)

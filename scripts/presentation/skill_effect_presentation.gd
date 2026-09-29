@@ -186,3 +186,26 @@ func present_shield_explosion(source: Unit, radius: float) -> void:
 	add_frontal_effect(source, {"shape": "shield_explosion", "length": radius}, 0.45, Vector2.UP)
 	frontal_effects.back()["fixed_position"] = true
 	_controller.publish_skill_fx(frontal_effects.back())
+
+func add_summon_flight(source: Unit, destination: Vector2, airborne: bool, duration: float) -> Dictionary:
+	var effect := {
+		"source_ref": null, "net_id": -1, "fixed_position": true,
+		"pos": source.global_position, "end_position": destination,
+		"start_height": 0.7 * source.growth_body_scale + (CardDB.AIR_VISUAL_ELEVATION if source.is_air else 0.0),
+		"end_height": CardDB.AIR_VISUAL_ELEVATION + 0.25 if airborne else 0.3,
+		"shape": "summon_mote", "timer": duration, "duration": duration, "team": source.team,
+	}
+	frontal_effects.append(effect)
+	return effect
+
+func project_height(point: Vector2, height: float) -> Vector2:
+	return _controller.project_effect_height(point, height)
+
+func add_growth_wave(target: Unit, radius: float) -> Dictionary:
+	var effect := {
+		"source_ref": null, "net_id": -1, "fixed_position": true,
+		"pos": target.global_position, "height": CardDB.AIR_VISUAL_ELEVATION if target.is_air else 0.08,
+		"radius": radius, "shape": "growth_wave", "timer": 0.55, "duration": 0.55, "team": target.team,
+	}
+	frontal_effects.append(effect)
+	return effect

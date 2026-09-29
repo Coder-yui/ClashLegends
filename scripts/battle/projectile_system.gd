@@ -412,6 +412,7 @@ func _draw() -> void:
 		match StringName(projectile.get("visual", &"orb")):
 			&"baron_siege", &"baron_ranged": preload("res://scripts/presentation/baron_projectile_effect.gd").draw_flight(self, _visual_position(projectile), _direction(projectile), float(projectile.radius) * float(projectile.get("visual_scale", 1.0)), projectile.color)
 			&"kayle_sword", &"kayle_wave": pass # 由独立表现代理绘制
+			&"magic_orb": _draw_magic_orb(projectile)
 			&"tower_orb": _draw_tower_orb(projectile)
 			&"arrow": _draw_arrow(projectile)
 			&"card": _draw_card(projectile)
@@ -579,3 +580,13 @@ func _draw_card(projectile: Dictionary) -> void:
 	var points := PackedVector2Array([center - direction * 9.0 - side * 5.0, center + direction * 9.0 - side * 5.0, center + direction * 9.0 + side * 5.0, center - direction * 9.0 + side * 5.0])
 	draw_colored_polygon(points, Color(1.0, 0.94, 0.58, 0.96))
 	draw_polyline(PackedVector2Array([points[0], points[1], points[2], points[3], points[0]]), Color(0.32, 0.14, 0.08, 0.96), 1.5, true)
+
+func _draw_magic_orb(projectile: Dictionary) -> void:
+	var pos := _visual_position(projectile)
+	var direction := _direction(projectile)
+	var radius := float(projectile.radius) * float(projectile.get("visual_scale", 1.0))
+	var color: Color = projectile.color
+	draw_line(pos - direction * radius * 2.5, pos, Color(color, 0.32), radius, true)
+	draw_circle(pos, radius * 1.5, Color(color, 0.18))
+	draw_circle(pos, radius, color)
+	draw_circle(pos - direction * radius * 0.25, radius * 0.32, Color(0.84, 0.64, 1.0, 0.9))

@@ -68,7 +68,8 @@ const U_HIT_HASTE_FULL := 47
 const U_ATTACK_SPEED_SLOW := 48
 const U_ACTION_CLOCK := 49
 const U_TEAM_ATTACK_BOOST_MULTIPLIER := 50
-const UNIT_PAYLOAD_SIZE := 51
+const U_GROWTH := 51
+const UNIT_PAYLOAD_SIZE := 52
 
 const P_ID := 0
 const P_X := 1
@@ -195,6 +196,9 @@ func apply(snapshot_bytes: PackedByteArray, terminal: bool = false, expected_tic
 		if not payload[U_ACTION_CLOCK] is Vector2: return false
 		if not (payload[U_TEAM_ATTACK_BOOST_MULTIPLIER] is int or payload[U_TEAM_ATTACK_BOOST_MULTIPLIER] is float): return false
 		if not is_finite(float(payload[U_TEAM_ATTACK_BOOST_MULTIPLIER])) or float(payload[U_TEAM_ATTACK_BOOST_MULTIPLIER]) < 1.0: return false
+		if not payload[U_GROWTH] is Vector2: return false
+		var growth: Vector2 = payload[U_GROWTH]
+		if not is_finite(growth.x) or not is_finite(growth.y) or growth.x < 0.0 or growth.y < 1.0: return false
 		var action_clock: Vector2 = payload[U_ACTION_CLOCK]
 		if not action_clock.is_finite() or action_clock.x not in [0.0, 1.0] or action_clock.y < 0.0: return false
 		if not payload[U_EXPLOSIVE_SHIELD] is bool: return false
@@ -277,6 +281,12 @@ func _apply_units(units_data: Array) -> void:
 		# 时长和剩余时间让晚到客户端从权威进度开始播放。
 		u.net_visual_action_clock = d[U_ACTION_CLOCK]
 		u.team_attack_boost_multiplier = float(d[U_TEAM_ATTACK_BOOST_MULTIPLIER])
+		var growth: Vector2 = d[U_GROWTH]
+		u.max_hp += growth.x - u.growth_health_bonus
+		u.body_radius = u.body_radius / u.growth_body_scale * growth.y
+		u.visual_radius = u.visual_radius / u.growth_body_scale * growth.y
+		u.growth_health_bonus = growth.x
+		u.growth_body_scale = growth.y
 		u.queue_redraw()
 		u.net_visual_action_duration = maxf(float(d[U_ACTION_DURATION]), 0.0)
 		u.net_visual_action_time_left = clampf(float(d[U_ACTION_TIME_LEFT]), 0.0, u.net_visual_action_duration)
@@ -494,4 +504,5 @@ func _unit_snapshot_payload(id: int, u: Unit, has_continuous_target: bool = fals
 		u.attack_speed_slow_visual(),
 		u.get_visual_action_clock(),
 		u.team_attack_boost_multiplier,
+		Vector2(u.growth_health_bonus, u.growth_body_scale),
 	]

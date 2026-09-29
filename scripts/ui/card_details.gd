@@ -218,11 +218,16 @@ static func passives(stats: Dictionary) -> Array[Dictionary]:
 		var punch_gap := float(combo_pattern[0]) if not combo_pattern.is_empty() else 0.0
 		var pair_gap := float(stats.get("attack_interval_display", combo_pattern[1] if combo_pattern.size() > 1 else stats.get("interval", 0.0)))
 		result.append({"name": "拳锋连击", "description": "左拳造成%s点伤害，右拳造成%s点伤害；两拳之间间隔%s秒，打完两拳后间隔%s秒，循环进行。" % [format_number(roundf(left_damage)), format_number(roundf(right_damage)), format_number(punch_gap), format_number(pair_gap)]})
-	if String(stats.get("type", "unit")) == "building" and float(stats.get("spawn_interval", 0.0)) > 0.0:
+	if float(stats.get("spawn_interval", 0.0)) > 0.0:
 		var spawn_id := String(stats.get("spawn_id", ""))
 		var spawn_stats := CardDB.get_unit_stats(spawn_id)
 		var spawn_name := String(spawn_stats.get("name", spawn_id))
-		result.append({"name": "周期召唤", "description": "部署完成生成%d只%s，之后每%s秒再次生成。" % [int(stats.get("spawn_count", 0)), spawn_name, format_number(float(stats.get("spawn_interval", 0.0)))]})
+		var description := "部署完成生成%d只%s，之后每%s秒再次生成。" % [int(stats.get("spawn_count", 0)), spawn_name, format_number(float(stats.get("spawn_interval", 0.0)))]
+		if float(stats.get("spawn_flight_duration", 0.0)) > 0.0:
+			description = "部署完成发出紫光，%s秒后生成%d只%s，之后每%s秒再次发出。" % [format_number(float(stats.spawn_flight_duration)), int(stats.get("spawn_count", 0)), spawn_name, format_number(float(stats.spawn_interval))]
+		if bool(stats.get("spawn_defer_while_controlled", false)):
+			description += "眩晕、冰冻、凝滞期间到期延后，解除后发出；已发出不被打断。"
+		result.append({"name": "仙灵伙伴" if stats.get("spawn_side", "") == "bilateral" else "周期召唤", "description": description})
 	if int(stats.get("death_spawn_count", 0)) > 0 and not String(stats.get("death_spawn_id", "")).is_empty():
 		var death_spawn_id := String(stats.get("death_spawn_id", ""))
 		var death_spawn_stats := CardDB.get_unit_stats(death_spawn_id)

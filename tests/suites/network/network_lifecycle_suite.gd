@@ -331,6 +331,7 @@ func _check_payload_contract() -> void:
 	var data := _payload("gwen", 79000, 1)
 	data[SNAP.U_TARGET_PROTECTION] = [Vector2(360, 900), 120.0, 3.5, 2]
 	data[SNAP.U_HP] = 321.0
+	data[SNAP.U_GROWTH] = Vector2(150.0, 1.3)
 	data[SNAP.U_STUN] = 1
 	data[SNAP.U_DEPLOY_LEFT] = 0.2
 	data[SNAP.U_SKILL_RESOURCE_RATIO] = 0.5
@@ -346,11 +347,19 @@ func _check_payload_contract() -> void:
 		var invalid_packet := packet.duplicate(true)
 		invalid_packet[SNAP.S_UNITS][0][SNAP.U_TARGET_PROTECTION] = invalid_protection
 		_expect(not _system.apply(var_to_bytes(invalid_packet).compress(FileAccess.COMPRESSION_DEFLATE)), "非法圣霭载荷拒绝整份快照")
+	for invalid_growth in [Vector2(INF, 1.3), Vector2(100, 0.0), "bad"]:
+		var invalid_packet := packet.duplicate(true)
+		invalid_packet[SNAP.S_UNITS][0][SNAP.U_GROWTH] = invalid_growth
+		_expect(not _system.apply(var_to_bytes(invalid_packet).compress(FileAccess.COMPRESSION_DEFLATE)), "非法成长载荷拒绝整份快照")
 	var old := packet.duplicate(true)
 	old[SNAP.S_VERSION] = MatchSession.PROTOCOL_VERSION - 1
 	_expect(not _system.apply(var_to_bytes(old).compress(FileAccess.COMPRESSION_DEFLATE)), "旧版快照不解码；双进程另验握手拒绝")
 	_expect(_system.apply(var_to_bytes(packet).compress(FileAccess.COMPRESSION_DEFLATE)) and data.size() == SNAP.UNIT_PAYLOAD_SIZE, "新载荷压缩编码、解码与未知格温重建成功")
 	var replica: Unit = _main._client_units[79000]
+	_expect(replica.growth_health_bonus == 150.0 and is_equal_approx(replica.growth_body_scale, 1.3) and replica.max_hp == float(CardDB.get_card("gwen").hp) + 150.0, "成长快照恢复最大生命与体型")
+	var grown_radius := replica.body_radius
+	_system._apply_units([data])
+	_expect(is_equal_approx(replica.body_radius, grown_radius) and replica.hp == 321.0, "重复成长快照不叠加半径、不额外加血")
 	_expect(replica.target_protection.snapshot() == data[SNAP.U_TARGET_PROTECTION], "未知实体恢复完整结界中心、半径、寿命与代次")
 	replica.target_protection.advance(10.0, Vector2.ZERO)
 	_expect(replica.target_protection.active() and replica.target_protection.remaining() == 3.5, "客户端不能自行推进或因插值位置清除权威结界")

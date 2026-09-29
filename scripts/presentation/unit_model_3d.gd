@@ -25,6 +25,7 @@ const TRANSITION_DEFAULTS := {
 var _managed_clock_serial := -1
 var _managed_clock_left := -1.0
 
+var _growth_mark: GrowthMark3D
 var _active_buff_visual: ActiveBuffVisual3D
 var _model_resources := ModelVisualResources.new()
 var _last_buff_visible := false
@@ -258,6 +259,7 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 	return true
 
 func _process(delta: float) -> void:
+	_update_growth_mark()
 	if is_instance_valid(_model_root) and _model_root.has_method("advance_hit_haste_visual"):
 		_model_root.call("advance_hit_haste_visual", not _dying and is_instance_valid(_source) and _source.hit_haste_full_visual(), delta)
 	if is_instance_valid(_model_root) and _model_root.has_method("advance_skill_resource_visual"):
@@ -271,6 +273,7 @@ func _process(delta: float) -> void:
 	if _source == null or not is_instance_valid(_source):
 		_retire()
 		return
+	scale = Vector3.ONE * _source.growth_body_scale
 	_tick_form_elevation(delta)
 	_tick_spawn_transition(delta)
 	if _sync_control_override():
@@ -345,6 +348,8 @@ func _sync_transform(force: bool, delta: float) -> void:
 	var screen_position := _source.get_visual_screen_position()
 	var ground_position := _screen_to_ground(screen_position)
 	position = ground_position
+	if _source.is_air:
+		position.y += CardDB.AIR_VISUAL_ELEVATION * (1.0 - scale.y)
 
 	# 控制保持已显示的根朝向；外部位移仍更新位置，不继续插值旋转。
 	if not force and (_state.frozen or _state.stunned): return
@@ -929,13 +934,13 @@ func _visual_bounds_bottom_y() -> float:
 func _update_health_bar_anchor() -> void:
 	if _source == null or _camera == null or not _model_resources.has_meshes():
 		return
-	var ground_screen := _camera.unproject_position(global_position)
+	var ground_screen := _source.get_visual_screen_position()
 	# 用实际升降进度投影附着平面，包含部署位移；不改权威坐标或碰撞。
 	var elevation := 0.0
 	var height_span := _model_air_height - _model_ground_height
 	if absf(height_span) > 0.001:
 		elevation = CardDB.AIR_VISUAL_ELEVATION * clampf((_model_root.position.y - _model_ground_height) / height_span, 0.0, 1.0)
-	_source.set_status_effect_world_position(_camera.unproject_position(global_position + Vector3.UP * elevation))
+	_source.set_status_effect_world_position(_camera.unproject_position(_screen_to_ground(_source.get_visual_screen_position()) + Vector3.UP * elevation))
 
 	if is_instance_valid(_projectile_anchor):
 		_source.set_meta("projectile_model_offset", _camera.unproject_position(_projectile_anchor.global_position) - ground_screen)
@@ -1866,3 +1871,19 @@ func _retire() -> void:
 	_source = null
 	_release_model()
 	queue_free()
+
+func _update_growth_mark() -> void:
+	var enabled := not _dying and is_instance_valid(_source) and _source.hp > 0.0 and _source.growth_body_scale > 1.0 and not CombatInteraction.in_stasis(_source)
+	if not enabled:
+		if is_instance_valid(_growth_mark): _growth_mark.hide()
+		return
+	if not is_instance_valid(_growth_mark):
+		_growth_mark = GrowthMark3D.new()
+		add_child(_growth_mark)
+		_growth_mark.top_level = true
+	var screen := _source.get_visual_screen_position()
+	var foot := _screen_to_ground(screen)
+	var radius := _screen_to_ground(screen + Vector2(maxf(_source.body_radius * 1.9, 28.0), 0.0)).distance_to(foot)
+	_growth_mark.global_position = foot + Vector3.UP * ((CardDB.AIR_VISUAL_ELEVATION if _source.is_air else 0.0) + 0.065)
+	_growth_mark.global_basis = Basis.IDENTITY.scaled(Vector3.ONE * radius)
+	_growth_mark.show()

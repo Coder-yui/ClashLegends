@@ -91,3 +91,6 @@ func present_ornn_charge_impact(unit: Unit, radius: float, center: Vector2) -> v
 
 func notify_action_cancelled(unit: Unit, payload: Dictionary) -> void:
 	_controller.notify_action_cancelled(unit, payload)
+
+func schedule_summon_flight(source: Unit, card_id: String, pos: Vector2, duration: float, deploy_time: float) -> void:
+	_controller.schedule_summon_flight(source, card_id, pos, duration, deploy_time)

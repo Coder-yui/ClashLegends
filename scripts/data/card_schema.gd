@@ -95,10 +95,10 @@ const SIZE_RADII := {
 	SIZE_LARGE: RADIUS_LARGE,
 	SIZE_EXTREMELY_LARGE: RADIUS_EXTREMELY_LARGE,
 }
-const PROJECTILE_VISUALS := [&"kayle_sword", &"orb", &"arrow", &"needle", &"boomerang", &"ice_cone"]
+const PROJECTILE_VISUALS := [&"magic_orb", &"kayle_sword", &"orb", &"arrow", &"needle", &"boomerang", &"ice_cone"]
 const VISUAL_SPAWN_TRANSITIONS := [&"drop", &"rebirth"]
 const SPELL_KINDS := [&"zap", &"lightning", &"freeze", &"heal", &"mirror"]
-const ACTIVE_SKILL_KINDS := [&"spell_lightning", &"dash_strike", &"terrain_charge", &"bleeding_execute", &"explosive_shield", &"sanctuary", &"timed_form", &"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"continuous_area", &"empowered_attack", &"attack_lifesteal", &"area_shield", &"restoration_shield", &"spell_heal"]
+const ACTIVE_SKILL_KINDS := [&"permanent_growth", &"spell_lightning", &"dash_strike", &"terrain_charge", &"bleeding_execute", &"explosive_shield", &"sanctuary", &"timed_form", &"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"continuous_area", &"empowered_attack", &"attack_lifesteal", &"area_shield", &"restoration_shield", &"spell_heal"]
 const ACTIVE_SKILL_TARGET_SCOPES := [&"self", &"deployment_group"]
 const CAST_LOCKS := [&"movement", &"attack", &"facing"]
 const VISUAL_ACTION_KINDS := [&"deploy", &"transform", &"skill"]
@@ -124,7 +124,7 @@ const CARD_FIELDS := [
 	&"pre_deploy_sweep_flat_rear", &"pre_deploy_sweep_start", &"pre_deploy_sweep_distance", &"pre_deploy_sweep_radius", &"pre_deploy_sweep_damage",
 	&"deploy_time", &"pre_deploy_time", &"deploy_zone", &"deploy_pocket_requires_both_towers", &"deploy_ignore_structures", &"show_team_ring", &"footprint_tiles", &"lifespan", &"lifespan_hp_decay", &"tower_ruin_foundation",
 	&"deployment_count", &"deployment_spacing", &"deployment_formation", &"deployment_member_ids",
-	&"spawn_id", &"spawn_interval", &"spawn_count", &"spawn_side", &"death_spawn_id", &"death_spawn_count",
+	&"spawn_id", &"spawn_interval", &"spawn_count", &"spawn_side", &"spawn_distance", &"spawn_deploy_time", &"spawn_flight_duration", &"spawn_defer_while_controlled", &"death_spawn_id", &"death_spawn_count",
 	&"death_replacement_id", &"death_replacement_charges", &"death_replacement_visual_transition", &"timed_revival_id", &"timed_revival_delay", &"timed_revival_death_replacement_charges", &"timed_revival_visual_transition",
 	&"attack_wave_damage", &"attack_wave_delay", &"attack_wave_tail_distance", &"attack_wave_near_width", &"attack_wave_max_scale", &"attack_wave_speed", &"attack_wave_visual", &"attack_wave_visual_height",
 	&"projectile_spawn_at_edge", &"projectile_spawn_offset", &"projectile_collision_radius",
@@ -182,7 +182,7 @@ const ACTIVE_SKILL_FIELDS := [
 	&"zone_duration", &"zone_tick_interval", &"zone_damage", &"zone_slow_duration", &"zone_slow_multiplier",
 	&"tick_interval",
 	&"empowered_damage_multiplier", &"empowered_speed_multiplier", &"blind_charges",
-	&"target_scope", &"heal_ratio", &"max_health_ratio", &"heal_multiplier", &"overheal_shield_ratio", &"global_heal", &"copy_member_buff",
+	&"health_bonus_ratio", &"body_scale_multiplier", &"knockback_radius", &"target_scope", &"heal_ratio", &"max_health_ratio", &"heal_multiplier", &"overheal_shield_ratio", &"global_heal", &"copy_member_buff",
 ]
 ## building_only: true 时只攻击建筑（塔+建筑卡），无视普通单位
 ## can_attack_air: false 时无法选中/攻击空中单位（近战地面单位通常不能对空）

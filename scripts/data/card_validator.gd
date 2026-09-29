@@ -29,6 +29,23 @@ static func _validate_card_id(card_id: String, errors: PackedStringArray) -> voi
 	if card_id.is_empty() or card_id != card_id.to_snake_case() or card_id.to_lower() != card_id:
 		errors.append("%s: card_id 必须是非空英文 snake_case" % card_id)
 
+static func _validate_periodic_summons(card_id: String, stats: Dictionary, errors: PackedStringArray) -> void:
+	for field in ["spawn_flight_duration", "spawn_defer_while_controlled"]:
+		if stats.has(field) and not stats.has("spawn_interval"): errors.append(card_id + "." + field + ": 必须配置周期召唤")
+	if stats.has("spawn_flight_duration"):
+		if float(stats.spawn_flight_duration) <= 0.0 or stats.get("spawn_side", "") != "bilateral": errors.append(card_id + ".spawn_flight_duration: 要求正时长和左右召唤")
+	if stats.has("spawn_deploy_time") and float(stats.spawn_deploy_time) < 0.0: errors.append(card_id + ".spawn_deploy_time: 必须非负")
+	if not stats.has("spawn_interval"):
+		if stats.has("spawn_deploy_time"): errors.append(card_id + ".spawn_deploy_time: 必须配置周期召唤")
+		if stats.has("spawn_distance"): errors.append(card_id + ".spawn_distance: 必须配置周期召唤")
+		return
+	if String(stats.get("type", "")) not in ["unit", "building"]: errors.append(card_id + ".spawn_interval: 仅单位或建筑支持周期召唤")
+	if float(stats.spawn_interval) <= 0.0 or int(stats.get("spawn_count", 0)) <= 0 or String(stats.get("spawn_id", "")).is_empty():
+		errors.append(card_id + ".spawn_interval: 周期召唤要求正间隔、正数量和有效单位")
+	if String(stats.get("spawn_side", "")) not in ["", "map_side", "bilateral"]: errors.append(card_id + ".spawn_side: 未支持的方位")
+	if stats.get("spawn_side", "") == "bilateral" and (float(stats.get("spawn_distance", 0.0)) <= 0.0 or int(stats.get("spawn_count", 0)) != 2): errors.append(card_id + ".spawn_distance: 左右召唤要求正距离和两只单位")
+	if stats.has("spawn_distance") and stats.get("spawn_side", "") != "bilateral": errors.append(card_id + ".spawn_distance: 仅用于左右召唤")
+
 static func _validate_team_attack_boost(card_id: String, stats: Dictionary, errors: PackedStringArray) -> void:
 	var fields := [&"team_attack_boost_first_delay", &"team_attack_boost_interval", &"team_attack_boost_multiplier"]
 	var present := fields.filter(func(field): return stats.has(field)).size()
@@ -51,6 +68,7 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 	_require_fields(card_id, stats, [&"name", &"cost", &"type", &"description", &"radius", &"color"], errors)
 	_validate_hit_haste(card_id, stats, errors)
 	_validate_team_attack_boost(card_id, stats, errors)
+	_validate_periodic_summons(card_id, stats, errors)
 	_validate_attack_wave(card_id, stats, errors)
 	var card_type := StringName(stats.get("type", ""))
 	if card_type not in CARD_TYPES:
@@ -752,7 +770,15 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 			errors.append("%s.max_uses: 必须 > 0" % label)
 		if float(skill.get("cooldown", -1.0)) < 0.0:
 			errors.append("%s.cooldown: 必须 >= 0" % label)
+		if kind != &"permanent_growth" and (skill.has("health_bonus_ratio") or skill.has("body_scale_multiplier") or skill.has("knockback_radius")):
+			errors.append(label + ".health_bonus_ratio/body_scale_multiplier/knockback_radius: 仅永久成长读取这些字段")
 		match kind:
+			&"permanent_growth":
+				if float(skill.get("impact_delay", 0.0)) <= 0.0: errors.append(label + ".impact_delay: 成长退款需要正数生效延迟")
+				_require_fields(label, skill, [&"radius", &"health_bonus_ratio", &"body_scale_multiplier", &"knockback_radius", &"knockback", &"knockback_duration"], errors)
+				for field in [&"radius", &"health_bonus_ratio", &"knockback_radius", &"knockback", &"knockback_duration"]:
+					if float(skill.get(field, 0.0)) <= 0.0: errors.append("%s.%s: 必须 > 0" % [label, field])
+				if float(skill.get("body_scale_multiplier", 1.0)) <= 1.0: errors.append(label + ".body_scale_multiplier: 必须 > 1")
 			&"terrain_charge":
 				for field in [&"length", &"fixed_speed", &"charge_prepare_time", &"charge_recovery_time", &"charge_miss_recovery_time", &"width", &"radius", &"damage", &"stun_duration", &"cast_duration"]:
 					if float(skill.get(field, 0.0)) <= 0.0:
