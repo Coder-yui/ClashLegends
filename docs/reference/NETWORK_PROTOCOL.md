@@ -4,9 +4,9 @@
 
 | 契约 | 当前值 |
 | --- | --- |
-| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->72 |
+| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->74 |
 | 顶层快照项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd SNAPSHOT_PACKET_SIZE -->11 |
-| 单位载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd UNIT_PAYLOAD_SIZE -->51 |
+| 单位载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd UNIT_PAYLOAD_SIZE -->52 |
 | 塔载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd TOWER_PAYLOAD_SIZE -->6 |
 | 弹体载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd PROJECTILE_PAYLOAD_SIZE -->14 |
 
@@ -51,3 +51,7 @@ RPC 端点留在 Main，主客节点路径保持一致。运行请求只接受�
 `_rpc_lightning_area` 可靠同步电击范围圈的会话、事件序号、卡牌、施法中心、半径、完整窗口时长和阵营；复用事件去重与终局拒绝，不创建客户端权威区域。
 
 协议版本72：潘森登场扫掠改用平直后沿与前半圆；后伸20像素，客户端仍只显示轨迹，伤害由主机判定。
+
+协议版本73：单位载荷追加成长状态 `Vector2(固定生命上限增量, 身体/模型倍率)`；重复快照按差额恢复，不重复加血。狂野生长空目标回退复用金币快照与主动次数/冷却可靠通知。
+
+协议74：周期召唤支持控制延后及0.25秒独立在途结果；紫光复用可靠skill_fx事件及去重，实体仍只由权威生成并同步。无新增快照字段，拒绝旧规则客户端混连。

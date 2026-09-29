@@ -27,6 +27,7 @@
 | 穿地形 | TerrainTraversalState 记录完整进出边沿与自疗；攻击前选择最近合法出口，由 Unit 应用位置转换；[凯隐](../units/kayn.md)；KaynSuite |
 | 技能突进 | DashStrikeState 按距离推进，可受伤并临时穿单位；结束恢复通用碰撞并逐步分离，不另作终点修正。冰冻取消后段、眩晕保留、击退停止突进并保留旋转；[凯隐](../units/kayn.md)；KaynSuite |
 | 命中叠层攻速 | StatusInstances 持有层数与整体窗口，CombatResolver 真实命中后每击一次收益，Unit 重算攻速进度，快照同步最终倍率；[天使](../units/kayle.md)；KayleSuite |
+| 控制延后召唤 | 璐璐首次/周期到期在眩晕、冰冻、凝滞状态窗口中保留一批，解除后发出；CommandSchedule独立召唤队列保证已发出结果不被控制或来源死亡取消。凝滞仍仅对接现有状态准入，不代表完整凝滞能力已实施 |
 | 永久队伍普攻增伤 | [TeamAttackBoostSystem](../../scripts/battle/team_attack_boost_system.gd) 由主机固定 Tick 管理锤子在途与目标预留，首次4秒/后续8秒发锤，提前3.6秒锻造，眩晕/冰冻/凝滞打断后重锻；抵达重新检查友方选取资格，为未增幅友军永久写入 Unit 倍率；普通攻击经既有结算取整，主动技能不读此倍率；U_TEAM_ATTACK_BOOST_MULTIPLIER 快照同步；[奥恩](../units/ornn.md)；OrnnSuite |
 | 地形冲锋 | [OrnnChargeState](../../scripts/battle/ornn_charge_state.gd) 按蓄力、固定速度冲锋、停顿三阶段沿合法地面几何推进，沿路目标去重；建筑阻挡者不吃路径伤害，撞停后才结算范围伤害和眩晕；奥恩专用回归见 OrnnSuite |
 | 未实施 | 强制击退／强制位移（固定距离、条件穿越障碍）、禁锢、沉默、嘲讽、凝滞、通用隐身、持续吸引、通用中毒等仍无完整执行链，本次不新增 |
@@ -81,3 +82,7 @@
 `SkillEffectPresentation.tick_visuals` 按动作身份清理依附施法的范围：眩晕继续，冰冻取消。固定独立区域和星辰按自身时间推进；`apply_frontal` 仍按每次结算的位置查询目标。凝滞未实现，不能宣称已验证。实际画面与声音的验收状态见交付记录。
 
 奥恩的友方增幅复用 CombatInteraction 的复生/阵营判定，并读取 StatusInstances 的 stasis / untargetable 状态族作为准入边界；专项夹具覆盖此边界，不代表通用凝滞或不可选中的完整施加、权限与联网链已实现。赛恩与冰鸟致死取消依赖原有生命/实体生命周期，无新增专用转换逻辑。
+
+## 一次性永久成长
+
+已接入璐璐：ActiveSkillEffectSystem选择目标并施加，Unit保存一次性生命增量/体型倍率，Main按一次性退款收据回退空目标释放，当前协议74投影成长状态（该字段自73加入）。LuluSuite覆盖召唤、目标、属性、换形与退款，网络生命周期套件覆盖非法/重复载荷。规则见[增益](BUFFS.md#一次性永久成长)；不代表通用限时最大生命或凝滞抑制系统已实现。
