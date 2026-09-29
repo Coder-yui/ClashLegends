@@ -45,7 +45,7 @@
 
 - 可复用文档模板统一放在 `docs/templates/`：单位文档用 [卡牌模板](templates/card.md)，任务交付用 [交付模板](templates/delivery.md)。填写后的文档分别放在 `docs/units/` 和 `docs/deliveries/`，后续新增模板也遵循此约定。
 
-- 新卡需求用 [新卡需求模板](templates/new_card_requirement.md)，填写后放项目根目录 `需求文档/`。用户只需描述设计意图和指定约束；未指定数值由 agent 参考当前体系补齐，素材与验收沿用当前开发流程。
+- 新卡需求按类型使用 [单位卡模板](templates/unit_card_requirement.md)、[建筑卡模板](templates/building_card_requirement.md) 或 [法术卡模板](templates/spell_card_requirement.md)，填写后放项目根目录 `需求文档/`。未填数值由 agent 参考现有体系补齐，其他留空内容按设计意图和现有流程决定，开发过程中需要澄清时可以询问用户；明确写“无”的内容不添加，已指定要求不得擅自更改。素材与验收沿用当前开发流程，不因留空跳过。
 
 - 单位手册面向不阅读代码的用户：总览直接列中文数值与规则，链接动画、音频和适用特效页，均能返回总索引。
 - 蓝红版本合篇；独立形态分篇；冰鸟与蛋、大小纳尔、墓碑与小鬼双向链接。不得自动覆盖为字段或源码清单。
