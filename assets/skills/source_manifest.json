@@ -249,5 +249,14 @@
     "source_path": "plugins/rcp-be-lol-game-data/global/default/assets/items/icons2d/4646_stormsurge.png",
     "source_sha256": "e1c8c11a0851d6159ff8d238f7a62608e594179c2c3d3ee323e3c2aa0e08ea25",
     "sha256": "e1c8c11a0851d6159ff8d238f7a62608e594179c2c3d3ee323e3c2aa0e08ea25"
+  },
+  {
+    "card": "lulu",
+    "skill_index": 0,
+    "path": "res://assets/skills/lulu_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Lulu.wad.client",
+    "source_path": "assets/characters/lulu/hud/icons2d/lulu_giantgrowth.dds",
+    "source_sha256": "0325068beac3f61de5e7096fd732e09b6380f934ba7db005d7e9a8cb41a49eeb",
+    "sha256": "37eb75642d7b5af7bd2e665a07c10debf6b847937ba165ef692495f766e1e6f8"
   }
 ]

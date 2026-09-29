@@ -1,0 +1,72 @@
+[
+  {
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/lulu/txtp/Play_sfx_Lulu_LuluBasicAttack2_OnMissileLaunch {r1}.txtp",
+    "output": "attack_launch_1.wav",
+    "sha256": "01b473b9b98acb43a98c72318d7108fe1ef808a1601a5245e71d80f65be79d6a"
+  },
+  {
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/lulu/txtp/Play_sfx_Lulu_LuluBasicAttack2_OnMissileLaunch {r2}.txtp",
+    "output": "attack_launch_2.wav",
+    "sha256": "8953adc7b09996f48a92af215359bf2c740ef385cb091d88cd9f7ee87d7453ac"
+  },
+  {
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/lulu/txtp/Play_sfx_Lulu_LuluBasicAttack2_OnMissileLaunch {r3}.txtp",
+    "output": "attack_launch_3.wav",
+    "sha256": "1f9cb517b6ff1ea8f3e3a64395d9eafe13e5a915afc33fe01283d21d7f23f042"
+  },
+  {
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/lulu/txtp/Play_sfx_Lulu_LuluBasicAttack2_OnHit {r1}.txtp",
+    "output": "attack_hit_1.wav",
+    "sha256": "11b3abae30a968b53bb62c1fc64408aac3b17deb7a3897d361faf698ee648f5b"
+  },
+  {
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/lulu/txtp/Play_sfx_Lulu_LuluBasicAttack2_OnHit {r2}.txtp",
+    "output": "attack_hit_2.wav",
+    "sha256": "d275e93c4c4e332529c678d3bf505b6ecb8e8c0481d53750cca2ac134c679bc4"
+  },
+  {
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/lulu/txtp/Play_sfx_Lulu_LuluBasicAttack2_OnHit {r3}.txtp",
+    "output": "attack_hit_3.wav",
+    "sha256": "da049315fa95356a5399b8bf1f437964eca875b9e700a2eb738faa442b028f2f"
+  },
+  {
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/lulu/txtp/Play_sfx_Lulu_Death3D_cast.txtp",
+    "output": "death_1.wav",
+    "sha256": "7ae0effd4e315887ae14bc5fcf6a01b37cc6943effa1e846a9ec71492bc8bc45"
+  },
+  {
+    "source_package": "LeagueClient/Plugins/rcp-be-lol-game-data/zh_CN-assets.wad",
+    "source_path": "plugins/rcp-be-lol-game-data/global/zh_cn/v1/champion-choose-vo/117.ogg",
+    "output": "deploy_voice.ogg",
+    "sha256": "ea2d0a4528c5f52914211aa760f265353c277c7328ffcddf4adf9d810b50932e"
+  },
+  {
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/lulu/play_sfx_lulu_lulur_oncast_r1.wav",
+    "output": "play_sfx_lulu_lulur_oncast_r1.wav",
+    "sha256": "3225586c49a0a0122ccb754f97533f30b70e45ef8834669c3a32860edbf6b2bc"
+  },
+  {
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/lulu/play_sfx_lulu_lulur_oncast_r3.wav",
+    "output": "play_sfx_lulu_lulur_oncast_r3.wav",
+    "sha256": "cd93c38bdd39781cb7397c64a4ffc96f45ca6f0bcfde5d677987569295a4585a"
+  },
+  {
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/lulu/play_sfx_lulu_lulur_oncast_r2.wav",
+    "output": "play_sfx_lulu_lulur_oncast_r2.wav",
+    "sha256": "71ef27c2edd2fe11be1bffda37d4cee54adfacfbe2c2dc914e9d5d557e59948e"
+  },
+  {
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/deployment_audio_review/voice_candidates_20260914/lulu/wav/Play_vo_Lulu_Move2DStandard_r1_.wav",
+    "output": "deploy_slide.wav",
+    "text": "我建议滑着走。",
+    "identification": "local MLX Whisper; subjective listening pending",
+    "sha256": "29621453a71dc15be0097d28f608b5feacb47358a2c69a4cf4a0d3c68446335d"
+  },
+  {
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/deployment_audio_review/voice_candidates_20260914/lulu/wav/Play_vo_Lulu_Move2DStandard_r8_.wav",
+    "output": "deploy_dewdrop.wav",
+    "text": "大鼻子露珠。",
+    "identification": "local MLX Whisper; subjective listening pending",
+    "sha256": "3d44edca893f5637453401fa03e6084f657b83a5818229e14bbad31ec599a87a"
+  }
+]
