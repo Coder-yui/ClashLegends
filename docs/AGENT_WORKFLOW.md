@@ -12,6 +12,7 @@
 | 音频 | [音频流程](AUDIO_INTEGRATION.md)、对应单位音频页 |
 | 工作台 | [工作台](DEVELOPMENT_WORKBENCH.md)、[测试手册](../tests/README.md) |
 | 控制 / 增益 / 减益 / 特殊状态设计 | [状态规则总览](status/README.md) → 共通规则与对应分类；实现前核对落地现状 |
+| 仅文档整理 | [逐卡覆盖](reference/UNIT_DOC_COVERAGE.md)、相关当前规则与只读实现；文档审计和工具校验，不以历史游戏测试冒充新验证 |
 | 结构整理 | [维护架构](MAINTENANCE_ARCHITECTURE.md)、[测试手册](../tests/README.md)；只读受影响规则 |
 | 联网 | [维护架构](MAINTENANCE_ARCHITECTURE.md)、[协议契约](reference/NETWORK_PROTOCOL.md)、[测试手册](../tests/README.md) |
 | 新机制 | [卡牌机制](CARD_DESIGN.md)、[落地现状](status/IMPLEMENTATION.md)、对应状态正文和测试手册 |

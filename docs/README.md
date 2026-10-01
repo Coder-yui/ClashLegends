@@ -6,7 +6,7 @@
 
 | 想了解什么 | 阅读入口 |
 | --- | --- |
-| 单位、法术、建筑和地图 | [单位手册](units/README.md) |
+| 单位、法术、建筑和地图 | [单位手册](units/README.md) · [逐卡覆盖核对](reference/UNIT_DOC_COVERAGE.md) |
 | 如何看模型、试技能、听声音 | [开发工作台](DEVELOPMENT_WORKBENCH.md) |
 | 已完成什么、还缺什么 | [当前开发状态](DEV_PLAN.md) |
 | 声音的缺项 | [音频覆盖与缺项](AUDIO_CARD_MAP.md) |

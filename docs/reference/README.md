@@ -4,6 +4,7 @@
 
 | 参考 | 用途 |
 | --- | --- |
+| [逐卡文档覆盖](UNIT_DOC_COVERAGE.md) | 全注册定义、形态、系统对象及已知产品文案差异 |
 | [动画配置](ANIMATION_CONFIGURATION.md) | 分段、裁剪、过渡、播放速率与挂点 |
 | [音频事件](AUDIO_EVENTS.md) | 事件能力、分段映射、持有者与网络去重 |
 | [音频来源与转换](AUDIO_SOURCE_PIPELINE.md) | 原始事件解析、转换与来源记录 |
