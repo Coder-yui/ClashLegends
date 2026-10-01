@@ -1,0 +1,29 @@
+# 图奇 · 模型与动作
+
+[返回图奇](../twitch.md) · [总索引](../README.md)
+
+用户提供“瘟疫之源.glb”，正式位于assets/units/twitch/source/twitch.glb。蓝红共用，部署为Respawn原速前1秒；普通待机Idle1_Base、行走Run，隐身时分别切换Idle_Stealth和Run_Stealth；普攻交替Attack1/Attack2，火力全开期间普攻使用Spell4并按1.5倍攻速推进；死亡Death压至0.8秒。状态切换只读权威/快照，不让骨骼产生伤害。
+
+源网格包围盒约264×135×273源单位，含弩和长尾；统一缩放0.0115，以实际战场同镜头艾希为中体型参照，不按尾巴长度等大。基础皮肤声明隐藏Twitch_Cheese_Mat，用户GLB只有一个网格/材质，当前可见模型没有独立奶酪子网格，未额外增加部件。
+
+原始定义：Twitch.wad.client内data/characters/twitch/twitch.bin。BasicAttack castFrame=12.74，BasicAttack2=13.16；按原施法30fps换算分别0.424667、0.438667秒，两个GLB攻击片长均55/30=1.833333秒。映射至本项目1秒周期为0.23164、0.23927秒，公共前摇0.24秒，误差+0.00836/+0.00073秒；20Hz实际跨节点发射，不把该节点当作弹体命中时间。
+
+隐身模型对双方玩家始终可见：使用保留原纹理的冷绿色半透明材质（透明度0.42），取消实体阴影；血条、队伍环保留，不显示“隐身”文字；入隐有绿色收拢烟雾，攻击破隐有短促向外散开的黄绿色烟雾。敌方战斗单位仍无法索敌。材质为实例私有副本，破隐、死亡和模型池回收恢复原材质/阴影，凝滞金身优先于虚化。
+
+[返回图奇](../twitch.md)
+
+弩箭起点使用包装提供的Arrow骨骼挂点，模型池复用时重新创建；不改权威出生点。普通弹体为带箭头、木色尾翼的橄榄绿弩箭，大招弹体不保留实体箭头和尾翼，改为深绿光晕、亮绿细芯，随已行进路径拉出最长150像素渐隐拖尾。穿透箭只取首帧炮口投影，此后保持直线，不随目标或武器转弯。Spell4原长1.833333秒，沿既定普攻周期缩放，仍使用0.24秒基础前摇；原版R施法节点不作为本项目强化普攻伤害节点。
+
+## 原版混合表
+
+依据本地Twitch.wad.client的`data/characters/twitch/animations/skin0.bin`中`mBlendDataTable`，64位键高32位是来源、低32位是目标，各为小写片段名FNV1a。已将当前使用片段对应的14条原版记录接入`clip_blends`，不把未启用的技能动作加入状态机。
+
+| 当前片段对 | 混合秒数 | 依据 |
+| --- | --- | --- |
+| Run ↔ Run_Stealth | 0.10 | 原表没有这两个片段对；沿用项目原有locomotion回退，不另写显式配置，非原版明确数值 |
+| Idle1_Base ↔ Idle_Stealth | 0.10 | 同上，项目适配 |
+| Run、Run_Stealth、Idle1_Base、Idle_Stealth、Attack1、Attack2、Spell4、Respawn → Death | 0 | 原表明确记录 |
+| Run、Run_Stealth、Idle1_Base、Idle_Stealth、Respawn、Death → 自身 | 0 | 原表明确记录 |
+| 其余未列边 | 保留项目策略 | 不将源表缺项当成0，不宣称恢复了LoL引擎隐式默认 |
+
+原表的`Run_Stealth`中另有`ConformToPathEventData`的0.1/0.2秒，是路径适配事件的进出时间，不能当作Run与Run_Stealth之间的混合时长。项目GLB的普通跑实际名为`Run`，不是`Run_Base`。源文件、校验和及完整解码表保存在素材库`03-制作中/图奇/animation-blends/`；正式配置使用精确源片段>目标片段，优先于通用混合策略。

@@ -200,3 +200,13 @@ bleeding_execute武装下一次普攻，以命中前本来源流血层数计算d
 周期召唤可用`spawn_deploy_time`覆盖生成后部署时间（非负；省略时沿用召唤物默认值）。璐璐配置左右各60、覆盖0秒；`spawn_flight_duration`使左右召唤先发出纯表现，再由CommandSchedule独立召唤队列在固定Tick到点生成，来源控制/死亡不撤销。`spawn_defer_while_controlled`使眩晕/冰冻/凝滞中的到期批次等待解除，从实际发出时重启间隔，不积攒多批。独立皮克斯卡仍沿用自身部署规则。
 
 璐璐的`permanent_growth`按费用、距离与出生身份选择未增益友方普通单位；Unit保存固定生命增量与身体倍率。叠加、换形和死亡规则见[增益规则](status/BUFFS.md#一次性永久成长)。实际生效时无目标回退金币、次数与本次冷却；字段、效果执行、快照和回归均已接入。
+
+## 空中路径突进
+
+`dash_strike`允许飞行单位或具备terrain_traversal的单位使用。`air_only`默认false，true时仅命中敌方空中Unit；`dash_spin`默认true，false时取消结束旋转与旋转音效，可省略spin_delay/radius。两字段只用于dash_strike，施法时间不得短于基础突进时间。默认配置保持凯隐的地面突进加旋转；卑尔维斯使用纯空中路径突进。死亡召唤复用death_spawn_id/count及可靠生成事件。
+
+## 穿透普攻的攻击射程与飞行距离
+
+图奇的range_bonus只增加可起手普攻的射程；piercing_distance定义每枚穿透弩箭从权威发射点起的固定行程，当前为300，大于增益后的200攻击射程。两者不相加，也不按当前目标距离或身体半径换算飞行距离。弹体出手时固化方向、行程、伤害与来源，后续目标移动不会改变方向；逐Tick扫掠沿途敌人，每箭每目标一次，落空正常结束。
+
+远程buff可配置不小于1的`projectile_speed_multiplier`，由ranged_attack状态持有，在权威发射时乘入弹速，出手后固化；图奇为2倍，即520→1040。到期后新发射恢复基础速度，已发弹体不变。

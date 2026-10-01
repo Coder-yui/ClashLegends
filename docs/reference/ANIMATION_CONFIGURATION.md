@@ -81,3 +81,5 @@
 `full_resource_move` 在主动资源可见且满层时选择移动循环，资源变化时刷新移动姿态；专用过渡使用 `来源片段>full_resource_move`。只读资源，不等同于下一击强化状态。
 
 动态位移技能可由权威状态持有动作时钟：Unit.get_visual_action_clock()返回Vector2(是否管理, 播放倍率)，既有动作duration/time_left在此模式下表示归一进度。表现按新进度校正序列、帧间按倍率播放，动画结束回调不自主转段；不允许表现反向修改模拟。
+
+可选`stealth_idle`/`stealth_move`只读隐身状态替换基础循环，状态边沿在非攻击/技能/部署时刷新姿态；`active_buff_attack`在持续主动增益期间替换攻击片段，每次攻击起手选择，片段中途不跳切。均受现有动作优先级、冻结与取消控制。模型包装可实现`create_projectile_anchor() -> Node3D`，每次复用重新建立炮口挂点，禁止驱动权威弹体位置。

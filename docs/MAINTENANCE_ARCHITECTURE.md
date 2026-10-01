@@ -17,7 +17,7 @@
 | 控制与攻击 | StatusInstances 来源独立窗口；ControlState 硬控/减速；AttackTimeline 前后摇、间隔、基础攻速表现时间 |
 | 生命状态 | ShieldState 每层生命/时间/衰减/恢复与爆炸资格；BleedState 来源叠层/窗口/余量；DeathFormState 致死换形资格、等待 Tick 与衰血 |
 | 位移 | MovementSystem 碰撞与移动；NavGrid/BattlePathSearch 全局导航；KnockbackState 普通击退；StructureRushState 建筑冲撞；TerrainTraversalState 穿地形门禁；UnitLandingQuery 连续几何落点 |
-| 命中与技能 | CombatInteraction/TargetProtectionState 准入与固定圣霭；CombatResolver 阶段命中/附带效果/收益/死亡队列；ProjectileSystem 弹体；SpellSystem 法术；ActiveSkillEffectSystem 技能效果与 DashStrikeState、OrnnChargeState |
+| 命中与技能 | CombatInteraction/TargetProtectionState 准入与固定圣霭；CombatResolver 阶段命中/附带效果/收益/死亡队列；ProjectileSystem 弹体；SpellSystem 法术与可选速度配置的在途时钟；ActiveSkillEffectSystem 技能效果与 DashStrikeState、OrnnChargeState |
 | 周期队伍普攻增幅 | TeamAttackBoostSystem 主机固定 Tick 选择未增幅友军并写入 Unit 永久倍率；快照只复制倍率，不复制周期时钟 |
 | 主动资格 | ActiveSkillLifecycle 协调准备、起手、动作和排程，CommandSchedule 按身份结束/取消；ActiveSkillRoster 技能槽、编队转交、次数、冷却、免费追斩；效果执行身份归 CommandSchedule 与 Unit.active_skill_cast_serial |
 | 联网 | NetworkEntityLifecycle 出生/销毁/快照屏障；NetworkSnapshotSystem 编解码与状态投影；RPC 保留在 Main 节点 |
@@ -52,7 +52,7 @@ NetworkEntityLifecycle 按生命周期序号区分同 Tick 生成与销毁；快
 
 ## 状态与排程所有权
 
-CommandSchedule 通过 enqueue/take/cancel/clear 管理内部集合；inspect 仅用于低频检查，生产 Tick 不复制全量集合。付款收据绑定原付款者：开始施放消费、存活取消退款、死亡/会话清场关闭。等待部署不预留建筑占地；真正生成时选择最近合法位置，全场无位置则保留到下一 Tick。
+CommandSchedule 通过 enqueue/take/cancel/clear 管理内部集合；inspect 仅用于低频检查，生产 Tick 不复制全量集合。付款收据绑定原付款者：开始施放消费、存活取消退款、死亡/会话清场关闭。等待部署不预留建筑占地；真正生成时选择最近合法位置，全场无位置则保留到下一 Tick。凝滞等不可推动占位的玩家部署复用这一策略，编队先整体规划；可推动单位含冰冻继续自然碰撞。召唤/复生使用全场几何，不套用玩家部署范围。
 
 ActiveSkillRoster.entry 是单项只读视图，权威消费走 consume，客户端走 replace_replica。多单位卡的来源卡、部署身份与技能槽分别保存；转交只查询同次部署的存活成员，不能以卡 ID 相同推断资格。CardCycle 只维护牌序，可靠确认后更新客户端镜像。
 

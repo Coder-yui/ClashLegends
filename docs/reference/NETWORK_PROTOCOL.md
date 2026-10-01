@@ -4,10 +4,10 @@
 
 | 契约 | 当前值 |
 | --- | --- |
-| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->74 |
+| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->82 |
 | 顶层快照项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd SNAPSHOT_PACKET_SIZE -->11 |
-| 单位载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd UNIT_PAYLOAD_SIZE -->52 |
-| 塔载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd TOWER_PAYLOAD_SIZE -->6 |
+| 单位载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd UNIT_PAYLOAD_SIZE -->54 |
+| 塔载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd TOWER_PAYLOAD_SIZE -->7 |
 | 弹体载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd PROJECTILE_PAYLOAD_SIZE -->14 |
 
 双方先核对版本、内容指纹和完整合法卡组，再准备本局资源并确认就绪；加载期间不推进模拟。版本不匹配在握手拒绝，不提供旧载荷兼容槽位。内容指纹包含统一协议版本与四域编译内容。规则算法或消息结构变化均须提升版本。
@@ -55,3 +55,17 @@ RPC 端点留在 Main，主客节点路径保持一致。运行请求只接受�
 协议版本73：单位载荷追加成长状态 `Vector2(固定生命上限增量, 身体/模型倍率)`；重复快照按差额恢复，不重复加血。狂野生长空目标回退复用金币快照与主动次数/冷却可靠通知。
 
 协议74：周期召唤支持控制延后及0.25秒独立在途结果；紫光复用可靠skill_fx事件及去重，实体仍只由权威生成并同步。无新增快照字段，拒绝旧规则客户端混连。
+
+协议75：单位载荷索引52为布尔隐身状态；客户端只投影隐身表现，不自行计时。双方玩家均能观察完整位置；隐身索敌限制仅在权威端执行。图奇穿透普攻复用已有弹体快照字段。
+
+凝滞：单位载荷U_STASIS为布尔值，副本只应用当前状态，禁用自行到期。协议78的可靠_rpc_spell_flight携带事件ID、在途ID、法术类型、来源点、目标点、半径、发射/抵达Tick与阵营；_rpc_spell_arrival按在途ID确认抵达。副本只插值在途进度，不能按本地时间触发爆炸；可靠抵达事件统一触发落地视觉及spell:strike声音。两类事件均检查会话、终局与事件去重；终局清理在途及表现。取消动作新增stasis原因，沿用动作序号与去重。
+
+协议77：图奇隐身对双方玩家公开显示虚化，不隐藏实体；穿透普攻的固定飞行距离由piercing_distance独立定义，出手后不追踪目标。载荷布局不变。
+
+协议79：塔载荷追加索引6 `T_STASIS` 布尔值；副本只投影权威凝滞标志，不自行计时。双方防御塔可凝滞，`is_king` 水晶始终免疫；旧版6项塔载荷拒绝接收。
+
+协议80：图奇主动技能不破隐，强化攻击射程200、固定弹程300；`stealth:enter/exit`沿现有单位短音表现RPC发送，不改变快照字段。短音RPC仍为unreliable，丢包不影响快照隐身状态。
+
+协议81：支持crossbow_bolt/venom_bolt弹体外观；穿透普攻visual_path携带fixed_muzzle=true并保留首帧武器投影偏移，此后按固定方向绘制，不改变碰撞。
+
+协议82：远程buff可增加弹速；攻击来源字典携带出手时active_buff布尔值用于在途命中音选择；图奇绿色拖尾读取已同步的弹体位置和发射起点，固定快照字段数量不变。

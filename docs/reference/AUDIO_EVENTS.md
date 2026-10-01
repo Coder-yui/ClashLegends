@@ -82,3 +82,7 @@
 持续音事件可配置 `fade_in` / `fade_out` 非负秒数（仅 `:sustain`）：按线性振幅渐变，默认0。状态自然结束/最终死亡可保留受预算管理的淡出尾音；替换、卸载和终局立即清理。工作台暂停冻结渐变。致死换形新增 `rebirth:voice`，与 `rebirth:begin` 同时由权威事件派发，独立Voice层且不绑定普攻取消。
 
 凯隐E补充：`terrain:sustain`为独立单位地形层，观察权威/快照位置的只读地形查询，完整循环、预热、跟随位置，普通动作和冰冻不打断。`terrain:exit`仅由存活单位真正离开地形的权威边沿派发，使用现有可靠单位事件；死亡/清场仅停止循环。
+
+隐身单位（`stealth_delay > 0`）支持 `stealth:enter` / `stealth:exit`，分别在脱战入隐、攻击破隐的权威状态边沿派发；重复状态和初始构造不派发。音频与模型代理烟雾共用 cue。
+
+持续主动增益支持`active_buff:attack_launch`和`active_buff:attack_hit`专属攻击音。权威发射时选取具体cue，命中读取出手时`presentation_source.active_buff`，不按命中瞬间剩余增益猜测；沿用真实伤害收据与命中去重。
