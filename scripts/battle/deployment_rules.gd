@@ -156,13 +156,13 @@ func can_deploy_at(pos: Vector2, radius: float, is_air: bool = false, footprint:
 	return true
 
 ## 所有正常卡牌部署入口（玩家、客户端请求、AI）共享同一套区域与占位校验。
-func is_card_deploy_position_valid(p_team: int, card_id: String, pos: Vector2) -> bool:
+func is_card_deploy_position_valid(p_team: int, card_id: String, pos: Vector2, check_formation: bool = true) -> bool:
 	if not CardDB.has_card(card_id):
 		return false
 	pos = snap_card_position(card_id, pos, p_team)
 	var stats: Dictionary = CardDB.get_card(card_id)
 	# 横排中心跨度须留在场内；边缘身体在生成时逐兵挤回合法位置。
-	if String(stats.get("deployment_formation", "ring")) == "line":
+	if check_formation and String(stats.get("deployment_formation", "ring")) == "line":
 		var margin := (int(stats.get("deployment_count", 1)) - 1) * float(stats.get("deployment_spacing", 0.0)) * 0.5
 		if pos.x < margin or pos.x > ArenaRules.FIELD_W - margin:
 			return false
@@ -227,7 +227,7 @@ func is_card_deploy_position_valid(p_team: int, card_id: String, pos: Vector2) -
 
 func nearest_valid_building_spawn(team: int, card_id: String, requested: Vector2) -> Vector2:
 	var origin := snap_card_position(card_id, requested, team)
-	if is_card_deploy_position_valid(team, card_id, origin):
+	if is_card_deploy_position_valid(team, card_id, origin) and anchored_spawn_clear(origin, CardDB.get_unit_stats(card_id)):
 		return origin
 	var best := Vector2.INF
 	var best_distance := INF
@@ -236,7 +236,38 @@ func nearest_valid_building_spawn(team: int, card_id: String, requested: Vector2
 			var tile := Vector2i(column, row) if team == 0 else Vector2i(ArenaRules.ARENA_COLUMNS - 1 - column, ArenaRules.ARENA_ROWS - 1 - row)
 			var candidate := snap_card_position(card_id, arena_tile_center(tile), team)
 			var distance := candidate.distance_squared_to(origin)
-			if distance < best_distance and is_card_deploy_position_valid(team, card_id, candidate):
+			if distance < best_distance and is_card_deploy_position_valid(team, card_id, candidate) and anchored_spawn_clear(candidate, CardDB.get_unit_stats(card_id)):
 				best = candidate
 				best_distance = distance
 	return best
+
+## 碰撞存在不等于不可推动；冰冻和普通军队不在此过滤。
+func anchored_spawn_clear(pos: Vector2, stats: Dictionary) -> bool:
+	var air := bool(stats.get("is_air", false))
+	var radius := float(stats.get("radius", 14.0))
+	for other in combatants.call():
+		if not is_instance_valid(other) or not other is Unit or other.hp <= 0.0 or other.is_air != air: continue
+		if CombatInteraction.in_stasis(other) and pos.distance_to(other.global_position) < radius + other.body_radius:
+			return false
+	return true
+
+func resolve_anchored_spawn(team: int, card_id: String, stats: Dictionary, desired: Vector2, player_deployment: bool) -> Vector2:
+	if anchored_spawn_clear(desired, stats): return desired
+	if bool(stats.get("is_building", false)):
+		return nearest_valid_building_spawn(team, card_id, desired)
+	var radius := float(stats.get("radius", 14.0))
+	var terrain_regions := UnitLandingQuery._regions(radius, bool(stats.get("is_air", false)))
+	var regions: Array[Rect2] = []
+	if not player_deployment:
+		regions = terrain_regions
+	else:
+		# 用原卡牌部署规则约束每个成员；不再次把整排宽度约束套在单个士兵上。
+		for row in ArenaRules.ARENA_ROWS:
+			for column in ArenaRules.ARENA_COLUMNS:
+				var center := arena_tile_center(Vector2i(column, row))
+				if not is_card_deploy_position_valid(team, card_id, center, false): continue
+				var cell := Rect2(center - Vector2.ONE * (ArenaRules.TILE_SIZE * 0.5 - 0.002), Vector2.ONE * (ArenaRules.TILE_SIZE - 0.004))
+				for terrain in terrain_regions:
+					var overlap := cell.intersection(terrain)
+					if overlap.has_area(): regions.append(overlap)
+	return UnitLandingQuery.find_spawn_position(desired, radius, bool(stats.get("is_air", false)), team, combatants.call(), regions)

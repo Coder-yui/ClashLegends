@@ -87,7 +87,12 @@ var on_hit_tower_damage := 0.0
 var _lifespan_decay_remainder := 0.0
 var _continuous_damage_stream := BattleNumbers.DamageStream.new()
 var damage := 10.0
-var attack_range := 20.0
+var base_attack_range := 20.0
+var attack_range: float:
+	get: return base_attack_range + buffs.strongest(&"ranged_attack", &"range_bonus", 0.0)
+	set(value): base_attack_range = value
+var stealth := preload("res://scripts/battle/stealth_state.gd").new()
+var net_stealth_hidden := false
 var attack_interval := 1.0
 var move_speed := 60.0
 var body_radius := 14.0
@@ -415,6 +420,10 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	_continuous_damage_stream = BattleNumbers.DamageStream.new()
 	damage = BattleNumbers.quantity(stats.damage)
 	attack_range = stats.range
+	if not stealth.changed.is_connected(_on_stealth_changed):
+		stealth.changed.connect(_on_stealth_changed)
+	stealth.setup(float(stats.get("stealth_delay", 0.0)))
+	net_stealth_hidden = stealth.hidden
 	attack_interval = snappedf(stats.interval, 0.01)
 	move_speed = snappedf(stats.speed, 0.01)
 	body_radius = stats.radius
@@ -815,6 +824,7 @@ func finish_dash_cast(serial: int) -> void:
 	active_skill_cast_locks.clear()
 
 func begin_active_skill_cast(duration: float, facing: Vector2, cast_locks: Array = DEFAULT_CAST_LOCKS) -> void:
+	stealth.activity()
 	active_skill_cast_serial += 1
 	active_skill_cast_timer = maxf(duration, 0.0)
 	active_skill_cast_locks.clear()
@@ -886,6 +896,7 @@ func clear_carried_active_skill_resource() -> void:
 	queue_redraw()
 
 func add_skill_resource(amount: float) -> void:
+	if CombatInteraction.in_stasis(self): return
 	if battle_context != null and (battle_context.damage_batch().collecting or battle_context.damage_batch().committing):
 		battle_context.damage_batch().defer_benefit(func():
 			if hp > 0.0: add_skill_resource(amount))
@@ -942,6 +953,7 @@ func apply_permanent_growth(health_ratio: float, body_scale: float) -> bool:
 
 ## 给后续真正命中的普攻附加吸血，不改攻击计时。
 func apply_attack_lifesteal(heal_ratio: float, max_health_ratio: float = 1.0) -> void:
+	if CombatInteraction.in_stasis(self): return
 	attack_lifesteal_ratio = maxf(heal_ratio, 0.0)
 	attack_lifesteal_max_health_ratio = maxf(max_health_ratio, 1.0)
 	queue_redraw()
@@ -1235,7 +1247,7 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prep
 		_building_tick(dt, true)
 		if hp <= 0.0 or is_queued_for_deletion():
 			return
-	if control.frozen_timer > 0.0 or control.stun_timer > 0.0:
+	if is_frozen() or control.stun_timer > 0.0:
 		if control.frozen_timer <= 0.0 and control.stun_timer <= 0.0:
 			queue_redraw()
 		_charge_timer = 0.0
@@ -1432,6 +1444,9 @@ func surface_gap_to_circle(center: Vector2, radius: float) -> float:
 
 ## 旧动作窗口在命令执行前推进一次；本边界新动作从下个边界开始推进。
 func prepare_action_clocks(dt: float) -> void:
+	if _attacking or active_skill_cast_timer > 0.0: stealth.activity()
+	# 控制只阻止新入隐；既有隐身和脱战倒计时不因此重置。
+	stealth.advance(dt, not is_frozen() and not is_stunned())
 	target_protection.advance(dt, global_position)
 	# 仅推进旧恢复锁；新撞击仍在后续行动阶段创建，下个边界才首次扣时。
 	if structure_rush.phase == StructureRushState.Phase.RECOVERY:
@@ -1619,6 +1634,7 @@ func _update_target(keep_windup_target: bool = false) -> void:
 		_repath_cd = 0.0
 
 func _target_is_attackable(target) -> bool:
+	if not CombatInteraction.can_acquire(target, team): return false
 	if target == null or not is_instance_valid(target) or target.hp <= 0.0:
 		return false
 	if not CombatInteraction.allows(target, self):
@@ -1932,6 +1948,7 @@ func _try_start_attack_visual(time_until_hit: float) -> void:
 	var hit_delay := _next_attack_first_hit_time()
 	if continuous_attack or not _attack_visual_pending or time_until_hit > hit_delay / _effective_attack_speed_multiplier() + 0.001:
 		return
+	stealth.activity(true)
 	_attack_visual_pending = false
 	_attack_visual_first_strike = false
 	if first_strike_damage_multiplier != 1.0 and _target != null and is_instance_valid(_target):
@@ -2010,6 +2027,7 @@ func _settle_melee_delivery(delivered: bool, generation: int, cycle: int, advanc
 
 ## 每一刀都独立消费一次致盲。剑圣 Passive 的第二刀因此确实算作第二次普通攻击。
 func _perform_attack_strike(target: Node2D, amount: float, effects: Dictionary = {}) -> bool:
+	stealth.activity()
 	if blind_attack_charges > 0:
 		blind_attack_charges -= 1
 		queue_redraw()
@@ -2089,6 +2107,7 @@ func on_attack_landed(attack_form_index: int = -1, landed_damage: float = 0.0, s
 		if transform_hit_count >= revert_after_hits:
 			if is_frozen(): pending_form_generation = form_change_serial
 			else: transform_to_small()
+	if CombatInteraction.in_stasis(self): return
 	var definition := PresentationConfig.for_form(_base_form_stats, form_index)
 	var max_stacks := int(definition.get("hit_haste_max_stacks", 0))
 	if max_stacks > 0:
@@ -2133,6 +2152,7 @@ func blood_rage_time_left_visual() -> float:
 	return net_blood_rage if _in_client_mode() else buffs.remaining(&"blood_rage")
 
 func refresh_blood_rage() -> void:
+	if CombatInteraction.in_stasis(self): return
 	if hp <= 0.0 or bleed_definition.is_empty(): return
 	var starting := buffs.remaining(&"blood_rage") <= 0.0
 	buffs.apply(&"blood_rage", status_source("blood_rage"), float(bleed_definition.blood_rage_duration), {"damage": float(bleed_definition.blood_rage_damage_multiplier)})
@@ -2140,6 +2160,7 @@ func refresh_blood_rage() -> void:
 		battle_context.notify_unit_audio_event(self, &"blood_rage:start", global_position)
 
 func on_enemy_killed(target: Node2D) -> void:
+	if CombatInteraction.in_stasis(self): return
 	# 与 on_attack_landed 同理，在途弹体可以晚于攻击者死亡完成击杀。
 	if hp > 0.0 and target is Unit and target.team != team:
 		add_skill_resource(skill_resource_kill_gain)
@@ -2168,6 +2189,7 @@ func _try_heal_on_hit(submitted_swing: int = -1) -> void:
 	queue_redraw()
 
 func _try_attack_lifesteal(landed_damage: float, cycle_ratio: float = 0.0) -> void:
+	if CombatInteraction.in_stasis(self): return
 	var ratio := attack_lifesteal_ratio + cycle_ratio
 	if ratio <= 0.0 or landed_damage <= 0.0:
 		return
@@ -2190,7 +2212,7 @@ func cancel_skill_cast() -> void:
 
 func cancel_basic_attack(reason: StringName) -> void:
 	action_cancel_serial += 1
-	if reason in [&"freeze", &"death_form"]:
+	if reason in [&"freeze", &"stasis", &"death_form"]:
 		cancelled_visual_serial = maxi(cancelled_visual_serial, get_visual_action_serial())
 		cancelled_deployment = cancelled_deployment or _deploy_timer > 0.0
 	last_action_cancellation = {"serial": action_cancel_serial, "reason": String(reason),
@@ -2219,7 +2241,7 @@ static func valid_action_cancellation(payload: Dictionary) -> bool:
 		if not payload.get(key) is int or int(payload[key]) < 0: return false
 	if payload.has("cancelled_action") and (not payload.cancelled_action is int or int(payload.cancelled_action) < -1): return false
 	if payload.has("cancelled_deployment") and not payload.cancelled_deployment is bool: return false
-	return payload.get("reason") is String and String(payload.reason) in ["freeze", "stun", "knockback", "death_form", "empowered_reset"]
+	return payload.get("reason") is String and String(payload.reason) in ["freeze", "stasis", "stun", "knockback", "death_form", "empowered_reset"]
 
 func apply_action_cancellation(payload: Dictionary) -> void:
 	if not valid_action_cancellation(payload) or int(payload.get("serial", 0)) <= action_cancel_serial:
@@ -2233,6 +2255,31 @@ func apply_action_cancellation(payload: Dictionary) -> void:
 
 func status_source(effect: String = "") -> StringName:
 	return StringName("unit:%d:%s" % [combat_source_id, effect])
+
+func apply_stasis(duration: float, source: StringName = &"legacy", interaction: Dictionary = {}) -> void:
+	if not CombatInteraction.allows_effect(self, interaction): return
+	if hp <= 0.0 or not is_finite(duration) or duration <= 0.0: return
+	if structure_rush.control_immune(): return
+	if battle_context != null and battle_context.damage_batch().collecting:
+		battle_context.damage_batch().defer_effect(func(): _receive_stasis(duration, source))
+		return
+	_receive_stasis(duration, source)
+
+func _receive_stasis(duration: float, source: StringName) -> void:
+	if hp <= 0.0: return
+	get_visual_facing_direction()
+	control.hard.apply(&"stasis", source, duration, {})
+	buffs.suppressed = true
+	cancel_basic_attack(&"stasis")
+	cancel_skill_cast()
+	knockback.cancel(&"stasis")
+	if structure_rush.phase == StructureRushState.Phase.DASHING:
+		structure_rush.phase = StructureRushState.Phase.SPENT
+	if battle_context != null: battle_context.invalidate_target_locks(self)
+	_move_intent = Vector2.ZERO
+	_forced_movement = false
+	structure_rush.interrupt_preparation(self)
+	queue_redraw()
 
 func freeze(duration: float, source: StringName = &"legacy", interaction: Dictionary = {}) -> void:
 	if not CombatInteraction.allows_effect(self, interaction): return
@@ -2331,7 +2378,12 @@ func _restore_shield_health() -> void:
 	if battle_context != null and battle_context.damage_batch().collecting:
 		battle_context.damage_batch().defer_benefit(_restore_shield_health)
 		return
-	heal(maxf(max_hp - hp, 0.0))
+	# 黄沙庇护是已建立盾层的到期结果，允许穿过凝滞；不开放普通治疗入口。
+	if hp <= 0.0 or death_form.waiting(): return
+	var previous_hp := hp
+	hp = maxf(hp, max_hp)
+	_present_heal_gain(previous_hp)
+	queue_redraw()
 
 ## 所有真实回血共用同一表现；保留旧 RPC / 方法名以兼容现有联网入口。
 func _present_heal_gain(previous_hp: float) -> void:
@@ -2359,6 +2411,7 @@ func clear_shields() -> void:
 func _tick_active_statuses(dt: float) -> void:
 	var previous_speed := _effective_attack_speed_multiplier()
 	control.tick_hard_controls(dt)
+	buffs.suppressed = CombatInteraction.in_stasis(self)
 	control.tick_slows(dt)
 	if shields.tick(dt) and hp > 0.0:
 		_restore_shield_health()
@@ -2376,7 +2429,7 @@ func _rescale_attack_phase(previous_speed: float) -> void:
 		pending.time_left = float(pending.time_left) * previous_speed / _effective_attack_speed_multiplier()
 
 func is_frozen() -> bool:
-	return control.frozen_timer > 0.0
+	return control.frozen_timer > 0.0 or CombatInteraction.in_stasis(self)
 
 func is_stunned() -> bool:
 	return control.stun_timer > 0.0
@@ -2413,6 +2466,7 @@ func take_damage(amount: float, from: Node2D = null, source_team: int = -1, sour
 	if hp <= 0.0:
 		return false
 	if amount > 0.0:
+		stealth.activity()
 		mark_skill_resource_combat_activity()
 	var remaining_damage := BattleNumbers.quantity(maxf(amount, 0.0))
 	remaining_damage = shields.absorb(remaining_damage)
@@ -2613,18 +2667,40 @@ func _draw_team_attack_boost_hammer(center: Vector2) -> void:
 			points.append(center + (corner as Vector2).rotated(PI / 4.0))
 		draw_colored_polygon(points, edge if index % 2 == 0 else orange)
 
+func stealth_hidden() -> bool:
+	return net_stealth_hidden if _in_client_mode() else stealth.hidden
+
+func perceived_by_team(observer: int) -> bool:
+	return observer == team or not stealth_hidden()
+
+## 玩家拥有公开战场视图；隐身只影响战斗单位的感知与索敌。
+func visible_to_team(_observer: int) -> bool:
+	return true
+
+func visible_to_local_player() -> bool:
+	return visible_to_team(1 if _in_client_mode() else 0)
+
+func piercing_attack_distance() -> float:
+	return buffs.strongest(&"ranged_attack", &"flight_distance", 0.0)
+
+func piercing_attacks_active() -> bool:
+	return buffs.any_flag(&"ranged_attack", &"piercing")
+
 func _draw() -> void:
+	if not visible_to_local_player(): return
 	draw_set_transform(_vis_offset, 0.0, Vector2.ONE)
 
 	if continuous_beam_visible and has_continuous_visual_target():
 		_draw_continuous_beam()
+	var body_color := Color(1.0, 0.67, 0.12) if CombatInteraction.in_stasis(self) else color
 	if is_building and not has_model_art:
-		draw_rect(Rect2(-body_radius, -body_radius, body_radius * 2.0, body_radius * 2.0), color)
+		draw_rect(Rect2(-body_radius, -body_radius, body_radius * 2.0, body_radius * 2.0), body_color)
 		draw_rect(Rect2(-body_radius, -body_radius, body_radius * 2.0, body_radius * 2.0), Color(0.2, 0.18, 0.12), false, 2.0)
 	elif not is_building and not has_model_art:
 		var outline := Color(0.30, 0.60, 1.00) if team == 0 else Color(1.00, 0.35, 0.30)
 		draw_circle(Vector2.ZERO, visual_radius + 2.0, outline)
-		draw_circle(Vector2.ZERO, visual_radius, color)
+		draw_circle(Vector2.ZERO, visual_radius, body_color)
+	if not PresentationConfig.status_indicators_visible(self): return
 	if _deploy_timer > 0.0:
 		# 部署读条仍使用代码绘制，便于观察一秒落地窗口。
 		var deploy_ratio := 1.0 - _deploy_timer / maxf(deploy_time, 0.001)
@@ -2759,3 +2835,7 @@ func _draw_active_sweep_fx() -> void:
 		if String(skill.get("kind", "")) == "nova" and StringName(skill.get("visual_action", "")) == get_visual_action_name():
 			SWEEP_EFFECT.draw_effect(self, float(skill.get("radius", 0.0)), get_visual_facing_direction(), elapsed / SWEEP_FX_DURATION)
 			return
+
+func _on_stealth_changed(hidden: bool) -> void:
+	if battle_context != null and is_inside_tree() and hp > 0.0 and not _in_client_mode():
+		battle_context.notify_unit_audio_event(self, &"stealth:enter" if hidden else &"stealth:exit", get_visual_screen_position())

@@ -26,11 +26,11 @@ func _apply_unit_movement(dt: float, units: Array[Unit]) -> void:
 	var combined_velocities := {}
 	for unit in units:
 		var key := _unit_order_key(unit)
-		combined_velocities[key] = velocities[key] + contacts[key] / maxf(dt, 0.0001)
+		combined_velocities[key] = Vector2.ZERO if CombatInteraction.in_stasis(unit) else velocities[key] + contacts[key] / maxf(dt, 0.0001)
 	_clip_knockback_contacts(units, combined_velocities, dt)
 	for unit in units:
 		var key := _unit_order_key(unit)
-		if unit.skill_dash_active: continue
+		if unit.skill_dash_active or CombatInteraction.in_stasis(unit): continue
 		var autonomous: Vector2 = velocities[key]
 		if unit.structure_rush.displacement_immune():
 			# 冲撞只能沿已验证直线推进，准备期也不接受接触推挤。

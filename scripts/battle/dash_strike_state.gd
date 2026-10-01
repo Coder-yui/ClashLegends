@@ -1,6 +1,6 @@
 class_name DashStrikeState
 extends RefCounted
-## 权威距离进度驱动突进；实际结束后才启动固定时长的停步/旋转。
+## 权威距离进度驱动突进；实际结束后才启动固定时长收势，可选旋转命中。
 var source_ref: WeakRef
 var skill: Dictionary
 var serial := -1
@@ -65,7 +65,7 @@ func tick(dt: float) -> bool:
 	if stopped:
 		_sync_clock(source)
 		tail_elapsed += remaining
-		if not spin_hit and tail_elapsed + 0.000001 >= float(skill.spin_delay) - float(skill.dash_duration):
+		if bool(skill.get("dash_spin", true)) and not spin_hit and tail_elapsed + 0.000001 >= float(skill.spin_delay) - float(skill.dash_duration):
 			spin_hit = true
 			_hit(source, source.global_position, source.global_position, true)
 			source.battle_context.notify_unit_audio_event(source, &"active:spin", source.global_position)
@@ -109,7 +109,10 @@ func _hit(source: Unit, start: Vector2, end: Vector2, spin: bool) -> void:
 	for target in source.get_tree().get_nodes_in_group("combatants"):
 		if target == source or not is_instance_valid(target) or target.hp <= 0.0 or target.team == source.team:
 			continue
-		if target is Unit and target.is_air:
+		if bool(skill.get("air_only", false)):
+			if not target is Unit or not target.is_air:
+				continue
+		elif target is Unit and target.is_air:
 			continue
 		var id: int = target.combat_source_id
 		if not spin and hit_ids.has(id):

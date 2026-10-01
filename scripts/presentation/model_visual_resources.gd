@@ -8,11 +8,24 @@ var _overlays: Array = []
 var _last_state := -1
 var _loops := {}
 var _player: AnimationPlayer
+var _stealth_active := false
+var _surface_originals: Array = []
+var _surface_ghosts: Array = []
+var _override_originals: Array = []
+var _shadow_originals: Array = []
+var _gold: StandardMaterial3D
 var _flash: StandardMaterial3D
 
 func bind_model(root: Node) -> AnimationPlayer:
 	clear()
 	_collect_meshes(root)
+	_prepare_stealth_materials()
+	_gold = StandardMaterial3D.new()
+	_gold.albedo_color = Color(1.0, 0.67, 0.12)
+	_gold.metallic = 0.8
+	_gold.roughness = 0.24
+	_gold.emission_enabled = true
+	_gold.emission = Color(0.24, 0.11, 0.01)
 	_flash = StandardMaterial3D.new()
 	_flash.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	_flash.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
@@ -62,12 +75,13 @@ func _prepare_overlays() -> void:
 		if index < _overlays.size(): _overlays[index] = variants
 		else: _overlays.append(variants)
 
-func apply_overlays(hit: bool, frozen: bool, buff_visible: bool) -> void:
-	var state := (3 if buff_visible else 0) + (1 if hit else (2 if frozen else 0))
+func apply_overlays(hit: bool, frozen: bool, buff_visible: bool, stasis: bool = false, stealth: bool = false) -> void:
+	apply_stealth(stealth and not stasis)
+	var state := 6 if stasis else (3 if buff_visible else 0) + (1 if hit else (2 if frozen else 0))
 	if state == _last_state: return
 	_last_state = state
 	for index in _meshes.size():
-		if is_instance_valid(_meshes[index]): _meshes[index].material_overlay = _overlays[index][state]
+		if is_instance_valid(_meshes[index]): _meshes[index].material_overlay = _gold if stasis else _overlays[index][state]
 
 func reset_overlays() -> void:
 	if is_instance_valid(_player):
@@ -75,7 +89,42 @@ func reset_overlays() -> void:
 	configure_buff()
 	apply_overlays(false, false, false)
 
+func _prepare_stealth_materials() -> void:
+	for mesh in _meshes:
+		var originals: Array = []
+		var ghosts: Array = []
+		_override_originals.append(mesh.material_override)
+		_shadow_originals.append(mesh.cast_shadow)
+		for surface in mesh.get_surface_override_material_count():
+			originals.append(mesh.get_surface_override_material(surface))
+			var material := mesh.get_active_material(surface)
+			var ghost := material.duplicate() as BaseMaterial3D if material is BaseMaterial3D else StandardMaterial3D.new()
+			ghost.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+			ghost.albedo_color = Color(0.75, 0.95, 0.90, 0.42)
+			ghost.emission_enabled = true
+			ghost.emission = Color(0.035, 0.10, 0.08)
+			ghost.next_pass = null
+			ghosts.append(ghost)
+		_surface_originals.append(originals)
+		_surface_ghosts.append(ghosts)
+
+func apply_stealth(enabled: bool) -> void:
+	if enabled == _stealth_active: return
+	_stealth_active = enabled
+	for index in _meshes.size():
+		var mesh := _meshes[index]
+		if not is_instance_valid(mesh): continue
+		mesh.material_override = null if enabled else _override_originals[index]
+		mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF if enabled else _shadow_originals[index]
+		for surface in mesh.get_surface_override_material_count():
+			mesh.set_surface_override_material(surface, _surface_ghosts[index][surface] if enabled else _surface_originals[index][surface])
+
 func clear() -> void:
+	apply_stealth(false)
+	_surface_originals.clear()
+	_surface_ghosts.clear()
+	_override_originals.clear()
+	_shadow_originals.clear()
 	for index in _meshes.size():
 		if is_instance_valid(_meshes[index]): _meshes[index].material_overlay = _originals[index]
 	_meshes.clear()

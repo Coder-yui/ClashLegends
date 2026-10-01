@@ -362,5 +362,26 @@
     "method": "run",
     "scene": "battle",
     "group": "cards"
+  },
+  {
+    "id": "TwitchSuite",
+    "script": "res://tests/suites/cards/twitch_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "cards"
+  },
+  {
+    "id": "StasisSuite",
+    "script": "res://tests/suites/cards/stasis_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "cards"
+  },
+  {
+    "id": "BelvethSuite",
+    "script": "res://tests/suites/cards/belveth_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "cards"
   }
 ]

@@ -94,3 +94,6 @@ func notify_action_cancelled(unit: Unit, payload: Dictionary) -> void:
 
 func schedule_summon_flight(source: Unit, card_id: String, pos: Vector2, duration: float, deploy_time: float) -> void:
 	_controller.schedule_summon_flight(source, card_id, pos, duration, deploy_time)
+
+func invalidate_target_locks(unit: Node2D) -> void:
+	_controller.projectile_service().invalidate_target_locks(unit)

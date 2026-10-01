@@ -159,7 +159,7 @@ func _structure_gap(structure: Node2D, point: Vector2, radius: float) -> float:
 	return maxf(0.0, point.distance_to(structure.global_position) - structure.body_radius - radius)
 
 func _valid_target(unit: Unit) -> bool:
-	return is_instance_valid(target) and target.hp > 0.0 and not target.is_queued_for_deletion() and target.team != unit.team and unit._is_struct(target)
+	return is_instance_valid(target) and target.hp > 0.0 and not target.is_queued_for_deletion() and target.team != unit.team and unit._is_struct(target) and CombatInteraction.allows(target, unit)
 
 func _sweep(unit: Unit, next: Vector2) -> void:
 	var side := Vector2(-direction.y, direction.x)

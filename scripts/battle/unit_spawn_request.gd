@@ -12,6 +12,7 @@ var visual_transition: String = ""
 var death_replacement_charges_override: int = -1
 var built_on_tower_ruin: bool = false
 var active_skill_card_id_override: String = ""
+var position_resolved := false
 
 func _init(p_team: int, p_card_id: String, p_position: Vector2, options: Dictionary = {}) -> void:
 	team = p_team
@@ -25,3 +26,4 @@ func _init(p_team: int, p_card_id: String, p_position: Vector2, options: Diction
 	death_replacement_charges_override = int(options.get("death_replacement_charges_override", -1))
 	built_on_tower_ruin = bool(options.get("built_on_tower_ruin", false))
 	active_skill_card_id_override = String(options.get("active_skill_card_id_override", ""))
+	position_resolved = bool(options.get("position_resolved", false))

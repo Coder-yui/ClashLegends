@@ -24,6 +24,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_system = SNAP.new(main, main._projectile_system)
 	main._snapshot_system = _system
 	_check_payload_contract()
+	_check_tower_stasis()
 	_check_hit_haste_visual_snapshot()
 	_check_soft_control_snapshot()
 	_check_dynamic_action_clock()
@@ -332,6 +333,7 @@ func _check_payload_contract() -> void:
 	data[SNAP.U_TARGET_PROTECTION] = [Vector2(360, 900), 120.0, 3.5, 2]
 	data[SNAP.U_HP] = 321.0
 	data[SNAP.U_GROWTH] = Vector2(150.0, 1.3)
+	data[SNAP.U_STEALTH] = true
 	data[SNAP.U_STUN] = 1
 	data[SNAP.U_DEPLOY_LEFT] = 0.2
 	data[SNAP.U_SKILL_RESOURCE_RATIO] = 0.5
@@ -351,12 +353,16 @@ func _check_payload_contract() -> void:
 		var invalid_packet := packet.duplicate(true)
 		invalid_packet[SNAP.S_UNITS][0][SNAP.U_GROWTH] = invalid_growth
 		_expect(not _system.apply(var_to_bytes(invalid_packet).compress(FileAccess.COMPRESSION_DEFLATE)), "非法成长载荷拒绝整份快照")
+	var invalid_stealth := packet.duplicate(true)
+	invalid_stealth[SNAP.S_UNITS][0][SNAP.U_STEALTH] = 1
+	_expect(not _system.apply(var_to_bytes(invalid_stealth).compress(FileAccess.COMPRESSION_DEFLATE)), "隐身载荷拒绝非布尔值")
 	var old := packet.duplicate(true)
 	old[SNAP.S_VERSION] = MatchSession.PROTOCOL_VERSION - 1
 	_expect(not _system.apply(var_to_bytes(old).compress(FileAccess.COMPRESSION_DEFLATE)), "旧版快照不解码；双进程另验握手拒绝")
 	_expect(_system.apply(var_to_bytes(packet).compress(FileAccess.COMPRESSION_DEFLATE)) and data.size() == SNAP.UNIT_PAYLOAD_SIZE, "新载荷压缩编码、解码与未知格温重建成功")
 	var replica: Unit = _main._client_units[79000]
 	_expect(replica.growth_health_bonus == 150.0 and is_equal_approx(replica.growth_body_scale, 1.3) and replica.max_hp == float(CardDB.get_card("gwen").hp) + 150.0, "成长快照恢复最大生命与体型")
+	_expect(replica.net_stealth_hidden and replica.visible_to_team(0) and replica.visible_to_team(1) and not replica.perceived_by_team(0), "隐身快照保留双方玩家可见和敌方单位感知门禁")
 	var grown_radius := replica.body_radius
 	_system._apply_units([data])
 	_expect(is_equal_approx(replica.body_radius, grown_radius) and replica.hp == 321.0, "重复成长快照不叠加半径、不额外加血")
@@ -491,3 +497,25 @@ func _check_dynamic_action_clock() -> void:
 	view.free()
 	camera.free()
 	_system.reset_session("")
+
+func _check_tower_stasis() -> void:
+	_system.reset_session("tower-stasis")
+	var saved: Array = _main._towers.map(func(t): return _system._tower_snapshot_payload(t))
+	var payloads: Array = saved.duplicate(true)
+	for payload: Array in payloads: payload[SNAP.T_STASIS] = true
+	var packet := _system._snapshot_packet([], [], payloads, 5, 180, false)
+	packet[SNAP.S_SERVER_TICK] = 1
+	packet[SNAP.S_LIFECYCLE_REVISION] = 1
+	_expect(_system.apply(var_to_bytes(packet).compress(FileAccess.COMPRESSION_DEFLATE)), "7项塔载荷通过真实压缩快照接收")
+	for tower: Tower in _main._towers:
+		_expect(CombatInteraction.in_stasis(tower) == not tower.is_king, "副本双方塔复制凝滞，水晶始终免疫")
+		var timer := tower.control.stasis_timer
+		tower._process(5)
+		_expect(tower.control.stasis_timer == timer, "副本塔不按本地表现时间解除凝滞")
+	packet[SNAP.S_SERVER_TICK] = 2
+	packet[SNAP.S_LIFECYCLE_REVISION] = 2
+	payloads[0][SNAP.T_STASIS] = 1
+	_expect(not _system.apply(var_to_bytes(packet).compress(FileAccess.COMPRESSION_DEFLATE)), "塔凝滞字段拒绝非布尔载荷")
+	packet[SNAP.S_TOWERS] = saved
+	_expect(_system.apply(var_to_bytes(packet).compress(FileAccess.COMPRESSION_DEFLATE)), "权威解除快照恢复塔状态")
+	_expect(_main._towers.all(func(t): return not CombatInteraction.in_stasis(t)), "解除后所有塔不保留旧金身标志")

@@ -66,6 +66,18 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 	if not SHAPES.validate(card_id, stats, errors):
 		return
 	_require_fields(card_id, stats, [&"name", &"cost", &"type", &"description", &"radius", &"color"], errors)
+	if stats.has("stealth_delay") and (float(stats.stealth_delay) <= 0.0 or stats.get("type", "") != "unit" or bool(stats.get("is_building", false)) or bool(stats.get("is_continuous_attack", false))):
+		errors.append(card_id + ".stealth_delay: 仅普通单位支持正数脱战隐身时间")
+	for skill in stats.get("active_skills", []):
+		if skill.has("range_bonus") or skill.has("piercing_attacks") or skill.has("piercing_distance") or skill.has("projectile_speed_multiplier"):
+			if skill.get("kind", "") != "buff" or float(skill.get("duration", 0.0)) <= 0.0 or float(stats.get("projectile_speed", 0.0)) <= 0.0 or float(skill.get("range_bonus", 0.0)) < 0.0:
+				errors.append(card_id + ".active_skills: 射程/穿透普攻要求正时长远程 buff 与非负射程增量")
+			if skill.has("projectile_speed_multiplier") and float(skill.projectile_speed_multiplier) < 1.0:
+				errors.append(card_id + ".active_skills.projectile_speed_multiplier: 加速倍率必须 >= 1")
+			if bool(skill.get("piercing_attacks", false)) and float(skill.get("piercing_distance", 0.0)) <= 0.0:
+				errors.append(card_id + ".active_skills.piercing_distance: 穿透普攻必须配置正数固定飞行距离")
+			if skill.has("piercing_distance") and not bool(skill.get("piercing_attacks", false)):
+				errors.append(card_id + ".active_skills.piercing_distance: 仅穿透普攻使用")
 	_validate_hit_haste(card_id, stats, errors)
 	_validate_team_attack_boost(card_id, stats, errors)
 	_validate_periodic_summons(card_id, stats, errors)
@@ -111,6 +123,11 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 						errors.append("%s.heal_amount: 治疗法术必须配置 > 0 的治疗量" % card_id)
 					if stats.has("active_cost_bonus") and int(stats.active_cost_bonus) < 0:
 						errors.append("%s.active_cost_bonus: 必须是 >= 0 的整数" % card_id)
+	if stats.has("flight_speed") or stats.has("flight_min_duration"):
+		if card_type != &"spell" or String(stats.get("spell_kind", "")) == "mirror":
+			errors.append("%s: 在途配置只用于可结算法术" % card_id)
+		if float(stats.get("flight_speed", 0.0)) <= 0.0 or float(stats.get("flight_min_duration", 0.0)) < 0.0:
+			errors.append("%s: 飞行速度必须为正，最短飞行时间不能为负" % card_id)
 	_validate_bleed(card_id, stats, errors)
 	_validate_death_form(card_id, stats, errors)
 	var art = stats.get("card_art", {})
@@ -402,8 +419,8 @@ static func _validate_projectile(label: String, stats: Dictionary, errors: Packe
 	if speed < 0.0:
 		errors.append("%s.projectile_speed: 必须 >= 0" % label)
 	if stats.has("active_buff_projectile_visual"):
-		if speed <= 0.0 or not (stats.active_buff_projectile_visual is String or stats.active_buff_projectile_visual is StringName) or StringName(stats.active_buff_projectile_visual) not in [&"baron_siege", &"baron_ranged"]:
-			errors.append("%s.active_buff_projectile_visual: 需要远程弹体及已实现的 baron_siege / baron_ranged" % label)
+		if speed <= 0.0 or not (stats.active_buff_projectile_visual is String or stats.active_buff_projectile_visual is StringName) or StringName(stats.active_buff_projectile_visual) not in PROJECTILE_VISUALS + [&"baron_siege", &"baron_ranged"]:
+			errors.append("%s.active_buff_projectile_visual: 需要远程弹体及已实现的弹体外观" % label)
 	if speed <= 0.0:
 		return
 	var visual := StringName(stats.get("projectile_visual", "orb"))
@@ -757,6 +774,9 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 				errors.append("%s.icon_path: 必须指向 assets 内有效的 Texture2D" % label)
 		_require_fields(label, skill, [&"name", &"kind", &"cost", &"max_uses", &"cooldown"], errors)
 		var kind := StringName(skill.get("kind", ""))
+		for option in ["air_only", "dash_spin"]:
+			if skill.has(option) and kind != &"dash_strike":
+				errors.append("%s.%s: 仅用于 dash_strike" % [label, option])
 		if kind not in ACTIVE_SKILL_KINDS:
 			errors.append("%s.kind: 系统不支持 %s" % [label, kind])
 			continue
@@ -790,14 +810,16 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 				if float(skill.get("impact_delay", 0.0)) != 0.0:
 					errors.append("%s: terrain_charge 在施法开始立即启动" % label)
 			&"dash_strike":
-				if not bool(stats.get("terrain_traversal",false)):
-					errors.append("%s: 当前突进效果要求穿地形能力" % label)
+				if not bool(stats.get("terrain_traversal",false)) and not bool(stats.get("is_air", false)):
+					errors.append("%s: 突进效果要求穿地形能力或飞行" % label)
 				if float(skill.get("hit_heal",0.0)) < 0.0 or float(skill.get("on_hit_tower_damage",0.0)) < 0.0 or float(skill.get("on_hit_max_health_ratio",0.0)) < 0.0 or float(skill.get("on_hit_max_health_ratio",0.0)) > 1.0:
 					errors.append("%s: 回复与塔伤非负，最大生命比例须在0至1之间" % label)
-				for field in ["dash_duration", "dash_reference_speed", "spin_delay", "length", "width", "radius", "damage"]:
+				for field in ["dash_duration", "dash_reference_speed", "length", "width", "damage"]:
 					if float(skill.get(field, 0.0)) <= 0.0:
 						errors.append("%s.%s: 必须 > 0" % [label, field])
-				if float(skill.get("spin_delay", 0.0)) < float(skill.get("dash_duration", 0.0)) or float(skill.get("spin_delay", 0.0)) > float(skill.get("cast_duration", 0.0)):
+				if float(skill.get("cast_duration", 0.0)) < float(skill.get("dash_duration", 0.0)):
+					errors.append("%s: 施法时长不能短于突进" % label)
+				if bool(skill.get("dash_spin", true)) and (float(skill.get("radius", 0.0)) <= 0.0 or float(skill.get("spin_delay", 0.0)) < float(skill.get("dash_duration", 0.0)) or float(skill.get("spin_delay", 0.0)) > float(skill.get("cast_duration", 0.0))):
 					errors.append("%s: 旋转必须在突进结束后、施法结束前" % label)
 				if float(skill.get("impact_delay", 0.0)) != 0.0:
 					errors.append("%s: 突进须在施法开始启动" % label)
@@ -911,6 +933,9 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 				_require_fields(label, skill, [&"strike_count", &"strike_damage_multiplier"], errors)
 				if int(skill.get("strike_count", 0)) < 1 or float(skill.get("strike_damage_multiplier", 0)) < 1:
 					errors.append("%s: 电击次数必须为正，逐次倍率必须>=1" % label)
+			&"spell_stasis":
+				if String(stats.get("spell_kind", "")) != "stasis": errors.append("%s: 凝滞强化只用于凝滞法术" % label)
+				if float(skill.get("duration", 0.0)) <= 0.0: errors.append("%s.duration: 必须为正" % label)
 			&"spell_heal":
 				if StringName(stats.get("type", "")) != &"spell" or StringName(stats.get("spell_kind", "")) != &"heal":
 					errors.append("%s.kind: spell_heal 只能用于治疗法术" % label)

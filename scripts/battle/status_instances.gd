@@ -2,6 +2,7 @@ class_name StatusInstances
 extends RefCounted
 ## 轻量独立效果窗口。强度包整体替换；同源同强度仅刷新结束 Tick。
 const TICKS_PER_SECOND := 20
+var suppressed := false
 var tick_index := 0
 var _fraction := 0.0
 var _next_id := 0
@@ -47,6 +48,7 @@ func remaining(family: StringName) -> float:
 	return float(end_tick - tick_index) / TICKS_PER_SECOND
 
 func strongest(family: StringName, field: StringName, baseline: float, minimum: bool = false) -> float:
+	if suppressed: return baseline
 	var result := baseline
 	for effect in _instances:
 		if effect.family == family:
@@ -55,6 +57,7 @@ func strongest(family: StringName, field: StringName, baseline: float, minimum: 
 	return result
 
 func any_flag(family: StringName, field: StringName) -> bool:
+	if suppressed: return false
 	for effect in _instances:
 		if effect.family == family and bool(effect.potency.get(field, false)):
 			return true

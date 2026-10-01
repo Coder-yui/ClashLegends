@@ -8,6 +8,8 @@ const TURN := 8
 const CONTINUE_SKILL := 16
 const EXTERNAL_MOTION := 32
 const ALL_PERMISSIONS := 63
+var stasis_timer: float:
+	get: return hard.remaining(&"stasis")
 var hard := StatusInstances.new()
 var modifiers := StatusInstances.new()
 var frozen_timer: float:
@@ -54,10 +56,12 @@ func apply_replica_stun(stunned: bool) -> void:
 
 ## 致死结算建立新的生命阶段，旧硬控不能阻塞死亡/复生表现或继承给下一条命。
 func clear_on_death() -> void:
+	hard.clear_family(&"stasis")
 	hard.clear_family(&"freeze")
 	hard.clear_family(&"stun")
 
 func permissions() -> int:
+	if stasis_timer > 0.0: return 0
 	var allowed := ALL_PERMISSIONS
 	if frozen_timer > 0.0 or stun_timer > 0.0:
 		allowed &= ~(MOVE | BASIC_ATTACK | START_SKILL | TURN)

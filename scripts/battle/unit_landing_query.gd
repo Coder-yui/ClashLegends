@@ -5,6 +5,24 @@ extends RefCounted
 static func find_position(unit: Unit, desired: Vector2, allow_terrain: bool) -> Vector2:
 	var circles := _circles(unit, allow_terrain)
 	var regions := _regions(unit.body_radius, allow_terrain)
+	return _nearest(desired, unit.team, circles, regions)
+
+## 出生避让只排除静态建筑及凝滞占位，普通单位（包括冰冻）留给自然碰撞。
+static func find_spawn_position(desired: Vector2, radius: float, air: bool, team: int, combatants: Array, regions: Array[Rect2]) -> Vector2:
+	var circles: Array[Vector3] = []
+	for other in combatants:
+		if not is_instance_valid(other) or other.hp <= 0.0: continue
+		var structure: bool = other is Tower or (other is Unit and other.is_building)
+		if structure:
+			if air: continue
+		elif not other is Unit or other.is_air != air or not CombatInteraction.in_stasis(other):
+			continue
+		circles.append(Vector3(other.global_position.x, other.global_position.y,
+			radius + other.body_radius + 0.002 + (ArenaRules.STRUCTURE_SEPARATION if structure else 0.0)))
+	# Vector2单精度的圆周交点距离会有微小误差，等距容差只用于出生查询。
+	return _nearest(desired, team, circles, regions, 0.02)
+
+static func _nearest(desired: Vector2, team: int, circles: Array[Vector3], regions: Array[Rect2], tie_epsilon: float = 0.0001) -> Vector2:
 	var candidates: Array[Vector2] = []
 	for region in regions:
 		candidates.append(Vector2(clampf(desired.x,region.position.x,region.end.x),clampf(desired.y,region.position.y,region.end.y)))
@@ -13,7 +31,7 @@ static func find_position(unit: Unit, desired: Vector2, allow_terrain: bool) -> 
 		var circle: Vector3 = circles[index]
 		var center := Vector2(circle.x,circle.y)
 		var direction := center.direction_to(desired)
-		if direction.is_zero_approx(): direction = Vector2.UP if unit.team == 0 else Vector2.DOWN
+		if direction.is_zero_approx(): direction = Vector2.UP if team == 0 else Vector2.DOWN
 		candidates.append(center+direction*circle.z)
 		for region in regions:
 			for x in [region.position.x,region.end.x]:
@@ -42,10 +60,10 @@ static func find_position(unit: Unit, desired: Vector2, allow_terrain: bool) -> 
 	var best_distance := INF
 	for point in candidates:
 		var distance := desired.distance_squared_to(point)
-		if distance > best_distance+0.0001 or not _legal(point,regions,circles): continue
-		if absf(distance-best_distance) <= 0.0001 and best.is_finite():
+		if distance > best_distance+tie_epsilon or not _legal(point,regions,circles): continue
+		if absf(distance-best_distance) <= tie_epsilon and best.is_finite():
 			# 镜像阵营同距优先前方，再按横向固定顺序。
-			var sign_value := 1.0 if unit.team == 0 else -1.0
+			var sign_value := 1.0 if team == 0 else -1.0
 			if point.y*sign_value > best.y*sign_value+0.0001: continue
 			if absf(point.y-best.y) <= 0.0001 and point.x*sign_value >= best.x*sign_value: continue
 		best = point

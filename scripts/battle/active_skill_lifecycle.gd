@@ -21,6 +21,7 @@ func start(unit: Unit, skill: Dictionary) -> bool:
 	if prepared_skill.is_empty():
 		return false
 	# 先发布 Cast Start，再按 impact_delay 进入固定 Tick 队列；动画回调不参与结算。
+	unit.stealth.activity()
 	_effects.apply_cast_start(unit, prepared_skill)
 	# 瞬时主动技能可能没有 visual_action，不能依赖表现动作序号触发起手声。
 	var audio_card_id := unit.active_skill_card_id if not unit.active_skill_card_id.is_empty() else unit.card_id

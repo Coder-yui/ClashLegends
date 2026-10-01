@@ -1,6 +1,10 @@
 class_name PresentationConfig
 extends RefCounted
 ## 模型、声音共享形态选择；无第二套回退规则。
+## 金身隐藏实体附属标识，不改变真实属性或模型可见性；主客端读取同一当前状态。
+static func status_indicators_visible(source) -> bool:
+	return is_instance_valid(source) and not CombatInteraction.in_stasis(source)
+
 static func for_form(base: Dictionary, form: int) -> Dictionary:
 	if form == 1:
 		var transformed: Dictionary = base.get("transformed_stats", {})
@@ -12,7 +16,7 @@ static func attack_source(unit: Node2D) -> Dictionary:
 	if unit is Tower:
 		return {"unit_id": unit.get_instance_id(), "card_id": world_card_id(unit), "team": unit.team, "form": 0, "serial": 0}
 	return {"unit_id": unit.net_id if unit.net_id >= 0 else unit.get_instance_id(), "card_id": unit.card_id, "team": unit.team, "form": unit.get_form_index(),
-		"serial": unit.get_attack_visual_serial(), "first_strike": unit.is_attack_visual_first_strike(),
+		"active_buff": unit.get_active_buff_active_visual(), "serial": unit.get_attack_visual_serial(), "first_strike": unit.is_attack_visual_first_strike(),
 		"empowered": unit.get_attack_visual_serial() > 0 and unit.get_empowered_attack_visual_serial() == unit.get_attack_visual_serial()}
 
 static func scene_path(stats: Dictionary, team: int) -> String:

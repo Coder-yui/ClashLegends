@@ -29,6 +29,7 @@ var _growth_mark: GrowthMark3D
 var _active_buff_visual: ActiveBuffVisual3D
 var _model_resources := ModelVisualResources.new()
 var _last_buff_visible := false
+var _last_stealth_pose := false
 
 var _state: UnitPresentationState
 var _control_stage := &""
@@ -144,6 +145,7 @@ func setup(unit: Unit, packed: PackedScene, camera: Camera3D, animations: Dictio
 	# 客户端 Unit 会在默认优先级更新快照插值；3D 代理随后读取最终位置。
 	process_priority = 10
 	_source = unit
+	visible = unit.visible_to_local_player()
 	_state = unit.presentation_state()
 	_spawn_transition_kind = unit.visual_spawn_transition
 	_spawn_transition_initialized = false
@@ -259,13 +261,14 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 	return true
 
 func _process(delta: float) -> void:
+	if is_instance_valid(_source): visible = _source.visible_to_local_player()
 	_update_growth_mark()
 	if is_instance_valid(_model_root) and _model_root.has_method("advance_hit_haste_visual"):
-		_model_root.call("advance_hit_haste_visual", not _dying and is_instance_valid(_source) and _source.hit_haste_full_visual(), delta)
+		_model_root.call("advance_hit_haste_visual", not _dying and PresentationConfig.status_indicators_visible(_source) and _source.hit_haste_full_visual(), delta)
 	if is_instance_valid(_model_root) and _model_root.has_method("advance_skill_resource_visual"):
-		_model_root.call("advance_skill_resource_visual", not _dying and is_instance_valid(_source) and _source.is_skill_resource_visible() and _source.get_skill_resource_ratio() >= 0.999, delta)
+		_model_root.call("advance_skill_resource_visual", not _dying and PresentationConfig.status_indicators_visible(_source) and _source.is_skill_resource_visible() and _source.get_skill_resource_ratio() >= 0.999, delta)
 	if is_instance_valid(_model_root) and _model_root.has_method("advance_deployment_visual") and is_instance_valid(_source):
-		_model_root.call("advance_deployment_visual", _source.deploy_time - _source._deploy_timer, _source.deploy_time, not _dying and not _source.cancelled_deployment)
+		_model_root.call("advance_deployment_visual", _source.deploy_time - _source._deploy_timer, _source.deploy_time, not _dying and PresentationConfig.status_indicators_visible(_source) and not _source.cancelled_deployment)
 	_update_active_buff_visual(delta)
 	_update_hit_flash(delta)
 	if _dying:
@@ -390,6 +393,11 @@ func _sync_visual(force: bool, delta: float) -> void:
 		_finish_visual_action()
 	var state := _source.get_visual_state_code()
 	var locomotion_state := _source.get_locomotion_visual_state_code()
+	var stealth_pose := _source.stealth_hidden()
+	if stealth_pose != _last_stealth_pose:
+		_last_stealth_pose = stealth_pose
+		if not _playing_visual_action and not _playing_attack and not _playing_deploy_sequence and locomotion_state in [1, 2]:
+			_transition_to_basic_state(locomotion_state, _transition_blend(&"locomotion"))
 	var empowered_ready := _source.is_empowered_attack_ready_visual()
 	if empowered_ready != _last_empowered_ready:
 		_last_empowered_ready = empowered_ready
@@ -444,6 +452,12 @@ func _sync_visual(force: bool, delta: float) -> void:
 
 ## 事件动作仅在空闲/移动时展示；攻击、控制、变形优先且不排队补播。
 func _on_presentation_cue(cue: StringName) -> void:
+	if cue in [&"stealth:enter", &"stealth:exit"]:
+		if not _dying and is_instance_valid(_source) and _source.hp > 0.0:
+			var effect := preload("res://scripts/presentation/stealth_transition_3d.gd").new()
+			add_child(effect)
+			effect.setup(cue == &"stealth:enter")
+		return
 	if _dying or _animation_player == null or not is_instance_valid(_source): return
 	if _state.dead or _state.frozen or _state.stunned or _state.behavior in [0, 3] or _source.death_form.waiting(): return
 	if _playing_attack or _holding_attack_pose or _playing_visual_action or _playing_deploy_sequence: return
@@ -1016,6 +1030,9 @@ func _play_state(state: int, blend_time: float = -1.0) -> void:
 	if state == 2:
 		var terrain_move := _terrain_move_animation()
 		if terrain_move != &"": configured = terrain_move
+	if state in [1, 2] and _source.stealth_hidden():
+		var stealth_clip := _first_valid_animation("stealth_idle" if state == 1 else "stealth_move")
+		if stealth_clip != &"": configured = stealth_clip
 	# deploy 配置为数组时由部署序列生命周期单独处理。
 	if configured is Array:
 		configured = ""
@@ -1146,6 +1163,8 @@ func _play_attack(serial: int, blend_override: float = -1.0) -> void:
 	# 普攻↔强化用完整动作混合，保留当前姿势，不经过Idle。
 	var entry_transition_kind := &"action_in" if _active_attack_empowered or was_empowered else (&"sequence" if _current_state == 3 else &"action_in")
 	var attack_key := "empowered_attack" if _active_attack_empowered else ("attack_structure" if _source.is_attacking_structure_visual() else "attack")
+	if not _active_attack_empowered and _state.active_buff and _animation_names.has("active_buff_attack"):
+		attack_key = "active_buff_attack"
 	var configured = _animation_names.get(attack_key, _animation_names.get("attack", []))
 	var attacks: Array = configured if configured is Array else [configured]
 	if attacks.is_empty():
@@ -1322,7 +1341,7 @@ func _configure_looping_animations() -> void:
 			var move_animation := _animation_player.get_animation(move_name)
 			if move_animation != null:
 				move_animation.loop_mode = Animation.LOOP_LINEAR
-	for key in ["initial_move", "attack_move", "empowered_idle", "empowered_move", "haste_move", "terrain_move", "full_resource_move"]:
+	for key in ["stealth_idle", "stealth_move", "initial_move", "attack_move", "empowered_idle", "empowered_move", "haste_move", "terrain_move", "full_resource_move"]:
 		for value in _animation_list(key):
 			var routed_move := StringName(value)
 			if routed_move != &"" and _animation_player.has_animation(routed_move):
@@ -1335,7 +1354,7 @@ func _configure_looping_animations() -> void:
 		if continuous_animation != null:
 			continuous_animation.loop_mode = Animation.LOOP_LINEAR
 	# 出场技能与攻击分段动画都必须是非循环完整动作。
-	for key in ["attack", "attack_structure", "attack_hit", "attack_recover", "empowered_attack", "empowered_attack_hit", "empowered_attack_recover", "empowered_attack_to_move", "deploy", "attack_enter", "attack_retarget_enter", "attack_to_move", "idle_cycle", "move_enter", "move_cycle"]:
+	for key in ["active_buff_attack", "attack", "attack_structure", "attack_hit", "attack_recover", "empowered_attack", "empowered_attack_hit", "empowered_attack_recover", "empowered_attack_to_move", "deploy", "attack_enter", "attack_retarget_enter", "attack_to_move", "idle_cycle", "move_enter", "move_cycle"]:
 		for value in _animation_list(key):
 			var animation_name := StringName(value)
 			if animation_name != &"" and _animation_player.has_animation(animation_name):
@@ -1643,6 +1662,7 @@ func _on_source_visual_hit() -> void:
 	_set_hit_flash(true)
 
 func _update_hit_flash(delta: float) -> void:
+	_set_hit_flash(_hit_flash_timer > 0.0)
 	if _last_frozen_overlay != (_state.frozen and not _dying):
 		_last_frozen_overlay = _state.frozen and not _dying
 		_set_hit_flash(_hit_flash_timer > 0.0)
@@ -1653,7 +1673,7 @@ func _update_hit_flash(delta: float) -> void:
 		_set_hit_flash(false)
 
 func _set_hit_flash(enabled: bool) -> void:
-	_model_resources.apply_overlays(enabled, _state.frozen and not _dying, _last_buff_visible)
+	_model_resources.apply_overlays(enabled, _state.frozen and not _dying, _last_buff_visible, not _dying and is_instance_valid(_source) and CombatInteraction.in_stasis(_source), not _dying and is_instance_valid(_source) and _source.stealth_hidden())
 
 ## 冰冻优先保持当前姿态；眩晕片段自身播放。无素材明确回退为保持姿态。
 func _on_action_cancelled(payload: Dictionary) -> void:
@@ -1661,7 +1681,7 @@ func _on_action_cancelled(payload: Dictionary) -> void:
 		return
 	if int(payload.get("form", 0)) < maxi(_source.form_change_serial, _source.net_form_change_serial): return
 	var cancel_attack := _last_attack_serial <= int(payload.get("attack", 0))
-	var freeze_pose := String(payload.get("reason", "")) == "freeze" and _last_visual_action_serial <= int(payload.get("action", 0))
+	var freeze_pose := String(payload.get("reason", "")) in ["freeze", "stasis"] and _last_visual_action_serial <= int(payload.get("action", 0))
 	if not cancel_attack and not freeze_pose: return
 	if cancel_attack:
 		_last_attack_serial = maxi(_last_attack_serial, int(payload.get("attack", 0)))
@@ -1839,7 +1859,7 @@ func _update_active_buff_visual(delta: float) -> void:
 	var status_active := is_instance_valid(_source) and _state.active_buff
 	if _active_buff_visual.status_source == "blood_rage":
 		status_active = is_instance_valid(_source) and _source.blood_rage_time_left_visual() > 0.0
-	var enabled := not _dying and is_instance_valid(_source) and status_active
+	var enabled := not _dying and PresentationConfig.status_indicators_visible(_source) and status_active
 	_active_buff_visual.advance(enabled, delta)
 	var shown := _active_buff_visual.visible
 	if shown != _last_buff_visible:
@@ -1873,7 +1893,7 @@ func _retire() -> void:
 	queue_free()
 
 func _update_growth_mark() -> void:
-	var enabled := not _dying and is_instance_valid(_source) and _source.hp > 0.0 and _source.growth_body_scale > 1.0 and not CombatInteraction.in_stasis(_source)
+	var enabled := not _dying and is_instance_valid(_source) and _source.hp > 0.0 and _source.growth_body_scale > 1.0 and PresentationConfig.status_indicators_visible(_source)
 	if not enabled:
 		if is_instance_valid(_growth_mark): _growth_mark.hide()
 		return

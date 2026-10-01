@@ -8,6 +8,9 @@ func _ready() -> void:
 	var lightning := LightningSpellEffect.new()
 	lightning.spells = spells
 	add_child(lightning)
+	var stasis := preload("res://scripts/presentation/stasis_spell_effect.gd").new()
+	stasis.spells = spells
+	add_child(stasis)
 
 func _process(_delta: float) -> void:
 	queue_redraw()

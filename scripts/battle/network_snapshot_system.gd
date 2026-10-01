@@ -69,7 +69,9 @@ const U_ATTACK_SPEED_SLOW := 48
 const U_ACTION_CLOCK := 49
 const U_TEAM_ATTACK_BOOST_MULTIPLIER := 50
 const U_GROWTH := 51
-const UNIT_PAYLOAD_SIZE := 52
+const U_STEALTH := 52
+const U_STASIS := 53
+const UNIT_PAYLOAD_SIZE := 54
 
 const P_ID := 0
 const P_X := 1
@@ -93,7 +95,8 @@ const T_STUNNED := 2
 const T_SHIELD_RATIO := 3
 const T_SHIELD_CAPACITY_RATIO := 4
 const T_FROZEN := 5
-const TOWER_PAYLOAD_SIZE := 6
+const T_STASIS := 6
+const TOWER_PAYLOAD_SIZE := 7
 
 var terminal_applied := false
 var lifecycle := NetworkEntityLifecycle.new()
@@ -189,8 +192,11 @@ func apply(snapshot_bytes: PackedByteArray, terminal: bool = false, expected_tic
 		return false
 	if not _payloads_have_size(towers_data, TOWER_PAYLOAD_SIZE):
 		return false
+	for payload: Array in towers_data:
+		if not payload[T_STASIS] is bool: return false
 	var ids := {}
 	for payload: Array in units_data:
+		if not payload[U_STEALTH] is bool or not payload[U_STASIS] is bool: return false
 		if not payload[U_HIT_HASTE_FULL] is bool: return false
 		if not payload[U_ATTACK_SPEED_SLOW] is bool: return false
 		if not payload[U_ACTION_CLOCK] is Vector2: return false
@@ -312,6 +318,8 @@ func _apply_units(units_data: Array) -> void:
 		u.death_form.apply_replica(d[U_DEATH_FORM])
 		u.net_explosive_shield = d[U_EXPLOSIVE_SHIELD]
 		u.net_movement_rate = maxf(float(d[U_MOVEMENT_RATE]), 0.01)
+		u.net_stealth_hidden = d[U_STEALTH]
+		u.control._replace_hard(&"stasis", 0.15 if d[U_STASIS] else 0.0)
 		u.net_active_buff_active = int(d[U_ACTIVE_BUFF_ACTIVE]) == 1
 		_controller.apply_network_skill_state(u, int(d[U_ACTIVE_SKILL_USES_REMAINING]), float(d[U_ACTIVE_SKILL_COOLDOWN]), bool(d[U_FREE_RECAST]))
 		u.bleeding.replica_stacks = int(d[U_BLEED_STACKS])
@@ -369,7 +377,7 @@ func _apply_towers(towers_data: Array) -> void:
 		_controller._towers[i].apply_network_state(
 			float(tower_data[T_HP]), int(tower_data[T_ACTIVATED]) == 1,
 			int(tower_data[T_STUNNED]) == 1, float(tower_data[T_SHIELD_RATIO]),
-			float(tower_data[T_SHIELD_CAPACITY_RATIO]), int(tower_data[T_FROZEN]) == 1)
+			float(tower_data[T_SHIELD_CAPACITY_RATIO]), int(tower_data[T_FROZEN]) == 1, bool(tower_data[T_STASIS]))
 
 
 func send() -> void:
@@ -436,6 +444,7 @@ func _tower_snapshot_payload(tower: Tower) -> Array:
 		tower.get_shield_ratio(),
 		tower.get_shield_capacity_ratio(),
 		1 if tower.frozen_timer > 0.0 else 0,
+		CombatInteraction.in_stasis(tower),
 	]
 
 
@@ -505,4 +514,6 @@ func _unit_snapshot_payload(id: int, u: Unit, has_continuous_target: bool = fals
 		u.get_visual_action_clock(),
 		u.team_attack_boost_multiplier,
 		Vector2(u.growth_health_bonus, u.growth_body_scale),
+		u.stealth_hidden(),
+		CombatInteraction.in_stasis(u),
 	]

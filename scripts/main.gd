@@ -1317,7 +1317,7 @@ func is_ground_segment_walkable(from: Vector2, to: Vector2, mover_radius: float,
 func _push_units_around(pos: Vector2, radius: float) -> void:
 	for c in get_tree().get_nodes_in_group("combatants"):
 		var u := c as Unit
-		if u == null or u.is_building or u.is_air or not is_instance_valid(u) or u.hp <= 0.0 or u.skill_dash_active:
+		if u == null or u.is_building or u.is_air or not is_instance_valid(u) or u.hp <= 0.0 or u.skill_dash_active or CombatInteraction.in_stasis(u):
 			continue
 		var min_dist: float = u.body_radius + radius
 		var gap: float = pos.distance_to(u.global_position)
@@ -1619,7 +1619,7 @@ func _cast_spell(p_team: int, card_id: String, pos: Vector2, active_enabled: boo
 		_execute_card_deployment(p_team, String(mirror_copy.card_id), pos, String(mirror_copy.deployment_card_id), {}, slot, generation)
 		return true
 	var cast: bool = _spell_system.cast(p_team, CardDB.get_card(card_id), pos, active_enabled, active_skill_index)
-	if cast:
+	if cast and card_id != "stasis":
 		_presentation_event_id += 1
 		_play_card_event(_presentation_event_id, card_id, "spell:cast", pos, 0, p_team)
 		if mode == "host":
@@ -1648,7 +1648,6 @@ func _spawn_card_units(team: int, card_id: String, pos: Vector2, deploy_time_ove
 			_commands.enqueue_deployment(team, card_id, pos, FixedStepClock.STEP, active_slot, pre_deploy_id, -1.0, deployment_card_id, mirror_generation)
 			return []
 		pos = resolved
-		_push_units_around(pos, float(stats.get("radius", 14.0)))
 	var built_on_tower_ruin := (
 		bool(stats.get("tower_ruin_foundation", false))
 		and _destroyed_princess_tower_at_card_center(pos) != null
@@ -1662,15 +1661,31 @@ func _spawn_card_units(team: int, card_id: String, pos: Vector2, deploy_time_ove
 		_next_deployment_group_id += 1
 	var formation := String(stats.get("deployment_formation", "ring"))
 	var offsets := _deployment_formation_offsets(count, spacing, team, formation)
-	var spawned: Array[Unit] = []
+	# 先规划整个编队；无落点时沿用建筑已付费等待队列，不能生成半批再重试。
+	var positions: Array[Vector2] = []
 	for index in range(count):
-		var member_slot := active_slot if index == 0 else -1
 		var member_pos := pos + offsets[index]
 		var member_card_id := spawn_card_id if member_ids.is_empty() else String(member_ids[index])
 		var member_stats := CardDB.get_unit_stats(member_card_id)
 		var member_radius := float(member_stats.get("radius", stats.get("radius", 14.0)))
 		member_pos.x = clampf(member_pos.x, member_radius, ArenaRules.FIELD_W - member_radius)
 		member_pos.y = clampf(member_pos.y, member_radius, ArenaRules.FIELD_H - member_radius)
+		var requested_member_pos := member_pos
+		if not bool(member_stats.get("is_air", false)) and not bool(member_stats.get("is_building", false)):
+			member_pos = _nearest_valid_ground_spawn(member_pos, member_radius, team)
+		var anchor_origin := requested_member_pos if not _deployment_rules.anchored_spawn_clear(requested_member_pos, member_stats) else member_pos
+		member_pos = _deployment_rules.resolve_anchored_spawn(team, card_id, member_stats, anchor_origin, true)
+		if not member_pos.is_finite():
+			_commands.enqueue_deployment(team, card_id, pos, FixedStepClock.STEP, active_slot, pre_deploy_id, -1.0, deployment_card_id, mirror_generation)
+			return []
+		positions.append(member_pos)
+	if String(stats.get("type", "unit")) == "building":
+		_push_units_around(pos, float(stats.get("radius", 14.0)))
+	var spawned: Array[Unit] = []
+	for index in range(count):
+		var member_slot := active_slot if index == 0 else -1
+		var member_card_id := spawn_card_id if member_ids.is_empty() else String(member_ids[index])
+		var member_pos := positions[index]
 		var skill_source_card_id := card_id
 		var member := _spawn_unit(UnitSpawnRequest.new(team, member_card_id, member_pos, {
 			"deploy_time_override": deploy_time_override,
@@ -1679,6 +1694,7 @@ func _spawn_card_units(team: int, card_id: String, pos: Vector2, deploy_time_ove
 			"deployment_group_id": group_id,
 			"built_on_tower_ruin": built_on_tower_ruin,
 			"active_skill_card_id_override": skill_source_card_id,
+			"position_resolved": true,
 		}))
 		if member != null:
 			if _workbench.enabled and mirror_generation >= 0: member.set_meta("workbench_no_skill", active_slot < 0)
@@ -1731,9 +1747,13 @@ func _spawn_unit(request: UnitSpawnRequest) -> Unit:
 		stats["deploy_time"] = request.deploy_time_override
 	# 部署资格按网格统一，但真实体积从落地开始生效。若格心与河岸、桥边、塔或水晶重叠，
 	# 先把地面移动单位推到最近的完整合法位置，再加入场景，避免第一帧就被静态碰撞锁死。
-	if not bool(stats.get("is_air", false)) and not bool(stats.get("is_building", false)):
-		pos = _nearest_valid_ground_spawn(pos, float(stats.get("radius", 14.0)), team)
-
+	if not request.position_resolved:
+		if not bool(stats.get("is_air", false)) and not bool(stats.get("is_building", false)):
+			pos = _nearest_valid_ground_spawn(pos, float(stats.get("radius", 14.0)), team)
+		var resolved := _deployment_rules.resolve_anchored_spawn(team, card_id, stats, pos, false)
+		# 非玩家生成沿用原有无解保留请求点的兜底，不把召唤/复生限制在己方部署区。
+		if resolved.is_finite(): pos = resolved
+		else: push_warning("生成物没有可避让落点，保留原位置：%s" % card_id)
 	var u := Unit.new()
 	u.card_id = card_id
 	u.active_skill_card_id = card_id if request.active_skill_card_id_override.is_empty() else request.active_skill_card_id_override
@@ -3007,3 +3027,38 @@ func project_effect_height(point: Vector2, height: float) -> Vector2:
 func present_growth_wave(target: Unit, radius: float) -> void:
 	var effect := _skill_presentation.add_growth_wave(target, radius)
 	publish_skill_fx(effect)
+
+
+func present_spell_flight(flight_id: int, kind: String, origin: Vector2, pos: Vector2, radius: float, start_tick: int, impact_tick: int, team: int) -> void:
+	_presentation_event_id += 1
+	_show_spell_flight(_presentation_event_id, flight_id, kind, origin, pos, radius, start_tick, impact_tick, team)
+	if mode == "host":
+		_rpc_spell_flight.rpc_id(network_opponent_id(), network_session_id(), _presentation_event_id, flight_id, kind, origin, pos, radius, start_tick, impact_tick, team)
+
+func _show_spell_flight(event_id: int, flight_id: int, kind: String, origin: Vector2, pos: Vector2, radius: float, start_tick: int, impact_tick: int, team: int) -> void:
+	if event_id <= _last_card_event_id: return
+	_spell_system.show_flight(flight_id, kind, origin, pos, radius, start_tick, impact_tick)
+	if kind == "stasis": _play_card_event(event_id, kind, "spell:cast", origin, 0, team)
+	else: _last_card_event_id = event_id
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_spell_flight(epoch: String, event_id: int, flight_id: int, kind: String, origin: Vector2, pos: Vector2, radius: float, start_tick: int, impact_tick: int, team: int) -> void:
+	if not _session.accepts(1, epoch, MatchSession.Phase.RUNNING) or game_over or mode != "client": return
+	_show_spell_flight(event_id, flight_id, kind, origin, pos, radius, start_tick, impact_tick, team)
+
+func present_spell_arrival(flight_id: int, kind: String, pos: Vector2, team: int) -> void:
+	_presentation_event_id += 1
+	_show_spell_arrival(_presentation_event_id, flight_id, kind, pos, team)
+	if mode == "host":
+		_rpc_spell_arrival.rpc_id(network_opponent_id(), network_session_id(), _presentation_event_id, flight_id, kind, pos, team)
+
+func _show_spell_arrival(event_id: int, flight_id: int, kind: String, pos: Vector2, team: int) -> void:
+	if event_id <= _last_card_event_id: return
+	_spell_system.show_arrival(flight_id)
+	if kind == "stasis": _play_card_event(event_id, kind, "spell:strike", pos, 0, team)
+	else: _last_card_event_id = event_id
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_spell_arrival(epoch: String, event_id: int, flight_id: int, kind: String, pos: Vector2, team: int) -> void:
+	if not _session.accepts(1, epoch, MatchSession.Phase.RUNNING) or game_over or mode != "client": return
+	_show_spell_arrival(event_id, flight_id, kind, pos, team)

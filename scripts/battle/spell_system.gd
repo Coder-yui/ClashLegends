@@ -9,6 +9,9 @@ var slow_effects: Array[Dictionary] = []
 ## 治疗术表现区域：淡黄光圈；全图强化治疗额外带全图扩散波纹。
 var heal_effects: Array[Dictionary] = []
 
+var spell_flights: Array[Dictionary] = []
+var stasis_effects: Array[Dictionary] = []
+
 var lightning_casts: Array[Dictionary] = []
 var lightning_effects: Array[Dictionary] = []
 var lightning_areas: Array[Dictionary] = []
@@ -26,9 +29,18 @@ static func supports(kind: StringName) -> bool:
 
 
 func cast(team: int, stats: Dictionary, position: Vector2, active_enabled: bool = false, active_skill_index: int = 0) -> bool:
+	if float(stats.get("flight_speed", 0.0)) > 0.0:
+		_start_flight(team, stats, position, active_enabled, active_skill_index)
+		return true
+	return _resolve_cast(team, stats, position, active_enabled, active_skill_index)
+
+func _resolve_cast(team: int, stats: Dictionary, position: Vector2, active_enabled: bool, active_skill_index: int) -> bool:
 	match StringName(stats.get("spell_kind", "")):
 		&"zap", &"lightning":
 			start_lightning(team, stats, position, active_enabled, active_skill_index)
+			return true
+		&"stasis":
+			_apply_stasis(team, stats, position, active_enabled, active_skill_index)
 			return true
 		&"freeze":
 			var radius := float(stats.get("radius", 0.0))
@@ -123,6 +135,7 @@ func show_heal(position: Vector2, radius: float, duration: float, enhanced: bool
 	heal_effects.append({"pos": position, "radius": radius, "timer": duration, "duration": duration, "enhanced": enhanced, "global_heal": global_heal})
 
 func tick(dt: float) -> void:
+	_tick_flights()
 	_tick_lightning()
 	var alive: Array[Dictionary] = []
 	for zone in slow_zones:
@@ -151,6 +164,14 @@ func tick(dt: float) -> void:
 
 
 func tick_visuals(delta: float) -> void:
+	for effect in stasis_effects:
+		if bool(effect.impacted):
+			effect.timer = maxf(0.0, float(effect.timer) - delta)
+		else:
+			var tick: int = _controller.get_estimated_server_tick() if _controller.is_net_client() else _controller.get_authoritative_server_tick()
+			var fraction: float = 0.0 if _controller.is_net_client() else _controller.get_sim_interpolation_alpha()
+			effect.progress = clampf((float(tick - int(effect.start_tick)) + fraction) / maxi(1, int(effect.impact_tick) - int(effect.start_tick)), 0.0, 1.0)
+	stasis_effects.assign(stasis_effects.filter(func(effect): return not bool(effect.impacted) or float(effect.timer) > 0.0))
 	for area in lightning_areas:
 		area.timer = maxf(0.0, float(area.timer) - delta)
 	lightning_areas.assign(lightning_areas.filter(func(area): return float(area.timer) > 0.0))
@@ -176,6 +197,8 @@ func tick_visuals(delta: float) -> void:
 
 
 func clear() -> void:
+	spell_flights.clear()
+	stasis_effects.clear()
 	lightning_casts.clear()
 	lightning_effects.clear()
 	lightning_areas.clear()
@@ -253,3 +276,52 @@ func show_lightning(kind: String, position: Vector2, radius: float) -> void:
 
 func show_lightning_area(kind: String, position: Vector2, radius: float, duration: float, team: int) -> void:
 	lightning_areas.append({"kind": kind, "pos": position, "radius": radius, "duration": duration, "timer": duration, "team": team})
+
+
+## 在途仅持有落点与整数时钟，不碰撞、不追踪目标，不依附水晶后续生命。
+func _start_flight(team: int, stats: Dictionary, position: Vector2, enhanced: bool, skill_index: int) -> void:
+	_effect_serial += 1
+	var context := _spell_context(team)
+	var origin: Vector2 = context.position
+	if not origin.is_finite(): origin = Vector2(360, 1160 if team == 0 else 120)
+	var duration := maxf(float(stats.get("flight_min_duration", 0.0)), origin.distance_to(position) / float(stats.flight_speed))
+	var ticks := maxi(1, ceili(duration / FixedStepClock.STEP - 0.00000001))
+	var start_tick: int = _controller.get_authoritative_server_tick()
+	spell_flights.append({"id": _effect_serial, "team": team, "stats": stats, "pos": position,
+		"enhanced": enhanced, "skill_index": skill_index, "impact_tick": start_tick + ticks})
+	_controller.present_spell_flight(_effect_serial, String(stats.spell_kind), origin, position, float(stats.radius), start_tick, start_tick + ticks, team)
+
+func _tick_flights() -> void:
+	var tick: int = _controller.get_authoritative_server_tick()
+	var waiting: Array[Dictionary] = []
+	for flight in spell_flights:
+		if tick < int(flight.impact_tick):
+			waiting.append(flight)
+			continue
+		_resolve_cast(int(flight.team), flight.stats, flight.pos, bool(flight.enhanced), int(flight.skill_index))
+		_controller.present_spell_arrival(int(flight.id), String(flight.stats.spell_kind), flight.pos, int(flight.team))
+	spell_flights.assign(waiting)
+
+func _apply_stasis(team: int, stats: Dictionary, position: Vector2, enhanced: bool, skill_index: int) -> void:
+	_effect_serial += 1
+	var interaction := _spell_context(team)
+	var skill := _active_heal_skill(stats, skill_index) if enhanced else {}
+	var source := StringName("stasis:%d:%d" % [team, _effect_serial])
+	for target in _controller.get_tree().get_nodes_in_group("combatants"):
+		if not is_instance_valid(target) or not (target is Unit or target is Tower) or target.hp <= 0: continue
+		if target is Tower and target.is_king: continue
+		if target.global_position.distance_to(position) > float(stats.radius) + target.body_radius: continue
+		target.apply_stasis(float(skill.get("duration", stats.duration)) if target.team == team else float(stats.duration), source, interaction)
+
+func show_flight(id: int, kind: String, origin: Vector2, position: Vector2, radius: float, start_tick: int, impact_tick: int) -> void:
+	# 首个皮肤为凝滞；其他法术复用调度并沿用自身抵达表现。
+	if kind != "stasis": return
+	stasis_effects.append({"id": id, "origin": origin, "pos": position, "radius": radius,
+		"start_tick": start_tick, "impact_tick": impact_tick, "progress": 0.0, "impacted": false, "timer": 0.8})
+
+func show_arrival(id: int) -> void:
+	for effect in stasis_effects:
+		if int(effect.id) == id:
+			effect.impacted = true
+			effect.timer = 0.8
+			return

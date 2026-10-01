@@ -7,7 +7,7 @@ var target: WeakRef
 
 func inspected_unit() -> Unit:
 	var unit = target.get_ref() if target != null else null
-	return unit if is_instance_valid(unit) and unit is Unit and unit.hp > 0 and not unit.is_queued_for_deletion() else null
+	return unit if is_instance_valid(unit) and unit is Unit and unit.visible_to_local_player() and unit.hp > 0 and not unit.is_queued_for_deletion() else null
 
 func inspect(unit: Unit) -> void:
 	target = weakref(unit) if is_instance_valid(unit) else null
@@ -17,6 +17,7 @@ func pick(units: Array, position: Vector2, canvas: Transform2D) -> void:
 	var best := INF
 	for node in units:
 		if not node is Unit or node.hp <= 0 or node.is_queued_for_deletion(): continue
+		if not node.visible_to_local_player(): continue
 		var head: Vector2 = canvas.affine_inverse() * node.get_visual_head_screen_position()
 		var radius := maxf(node.body_radius, 24.0)
 		if head.distance_to(node.position) > maxf(node.visual_radius * 8, 240.0): head = node.position - Vector2(0, radius * 2)

@@ -258,6 +258,17 @@ func _tick_attached_units() -> void:
 		if not unit is Unit or not is_instance_valid(unit):
 			stale_ids.append(instance_id)
 			continue
+		if not unit.visible_to_local_player():
+			_stop_sustain(instance_id)
+			entry.last_attack_serial = unit.get_attack_visual_serial()
+			entry.last_swing_serial = unit.get_attack_visual_serial()
+			entry.last_empowered_serial = unit.get_empowered_attack_visual_serial()
+			entry.action_serial = unit.get_visual_action_serial()
+			entry.active_buff = unit.get_active_buff_active_visual()
+			for player in _world_players:
+				var owner: Dictionary = player.get_meta("action_owner", {})
+				if int(owner.get("unit", -1)) == instance_id: player.stop()
+			continue
 		if int(entry.form) != unit.get_form_index():
 			_stop_sustain(instance_id)
 			entry.form = unit.get_form_index()
@@ -478,7 +489,7 @@ func _event_owner(unit: Unit, cue: StringName) -> Dictionary:
 	return {}
 
 func _on_action_cancelled(payload: Dictionary, instance_id: int) -> void:
-	var freeze := String(payload.get("reason", "")) in ["freeze", "death_form"]
+	var freeze := String(payload.get("reason", "")) in ["freeze", "stasis", "death_form"]
 	for player in _world_players:
 		var owner: Dictionary = player.get_meta("action_owner", {})
 		if int(owner.get("unit", -1)) != instance_id:
@@ -520,6 +531,7 @@ func _on_unit_death(instance_id: int) -> void:
 
 ## 通用纯表现事件入口；未配置的事件保持静音，不猜测或替代技能素材。
 func play_event(unit: Unit, cue: StringName, position: Vector2, attack_serial: int = -1, action_timed: bool = false) -> bool:
+	if is_instance_valid(unit) and not unit.visible_to_local_player(): return false
 	if unit == null or not is_instance_valid(unit):
 		return false
 	if cue == &"forge:cancel":
@@ -574,13 +586,19 @@ func play_attack_source(source: Dictionary, position: Vector2, first_strike: boo
 	if first_strike and special is Array and not special.is_empty():
 		cue = &"first_strike_hit"
 		configured = special
+	var hit_volume := float(audio.get("attack_hit_volume_db", -4.0))
+	if cue == &"attack_hit" and bool(source.get("active_buff", false)) and audio.get("events", {}).has("active_buff:attack_hit"):
+		var event: Dictionary = audio.events["active_buff:attack_hit"]
+		configured = event.get("pool", [])
+		hit_volume = float(event.get("volume_db", -5.0))
+		cue = &"active_buff:attack_hit"
 	var grouped: Array = audio.get("attack_hit_once_by_segment", [])
 	var serial := int(source.get("serial", 0))
 	var once := serial > 0 and not grouped.is_empty() and bool(grouped[(serial - 1) % grouped.size()])
 	var group_key := "%s:%s:%s:%s" % [source.get("unit_id", -1), card_id, source.get("form", 0), serial]
 	if once and _played_attack_groups.has(group_key):
 		return false
-	var played := _play_pool(card_id, cue, configured, position, float(audio.get("attack_hit_volume_db", -4.0)))
+	var played := _play_pool(card_id, cue, configured, position, hit_volume)
 	if once and played:
 		_played_attack_groups[group_key] = true
 		if _played_attack_groups.size() > 512:

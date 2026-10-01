@@ -17,6 +17,7 @@ uniform vec4 albedo_color : source_color = vec4(1.0);
 uniform float ground_cutoff = 0.0;
 uniform float surface_visible = 1.0;
 uniform float flash_amount = 0.0;
+uniform float stasis_amount = 0.0;
 
 void fragment() {
 	// fragment() 的 VERTEX 已是蒙皮与模型变换后的视图空间位置；转回世界空间后
@@ -37,10 +38,14 @@ void fragment() {
 		discard;
 	}
 	// 受击闪白：向白色轻微混合，隐藏表面已在前面的 discard 中剔除。
-	ALBEDO = mix(sampled.rgb, vec3(1.0), flash_amount);
+	float detail = clamp(dot(sampled.rgb, vec3(0.299, 0.587, 0.114)) * 2.0, 0.0, 1.0);
+	vec3 gold = vec3(1.0, 0.67, 0.12) * (0.35 + 0.65 * detail);
+	ALBEDO = mix(mix(sampled.rgb, vec3(1.0), flash_amount), gold, stasis_amount);
+	EMISSION = vec3(0.06, 0.025, 0.002) * stasis_amount;
 }
 """
 
+var _stasis_visible := false
 var _status_head_height := 0.0
 var _projectile_anchor: Node3D
 var _source: Tower
@@ -108,6 +113,16 @@ func setup(tower: Tower, packed: PackedScene, camera: Camera3D, config: Dictiona
 func _process(delta: float) -> void:
 	if _source == null or not is_instance_valid(_source):
 		queue_free()
+		return
+	var stasis := _source.hp > 0.0 and CombatInteraction.in_stasis(_source)
+	if stasis != _stasis_visible:
+		_stasis_visible = stasis
+		for materials in _surface_materials_by_name.values():
+			for material in materials: material.set_shader_parameter("stasis_amount", 1.0 if stasis else 0.0)
+	if _animation_player != null: _animation_player.speed_scale = 0.0 if stasis else 1.0
+	for layer in _debris_layers: layer.player.speed_scale = 0.0 if stasis else 1.0
+	if stasis:
+		_sync_position()
 		return
 	var animation_delta := delta
 	if _spawn_hold_remaining > 0.0 and not _destroyed:

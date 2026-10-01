@@ -4,6 +4,9 @@ extends "res://scripts/data/card_schema.gd"
 const DEFINITION_COMPILER = preload("res://scripts/data/card_definition_compiler.gd")
 const VALIDATOR = preload("res://scripts/data/card_validator.gd")
 const DEFINITIONS = [
+	preload("res://scripts/data/cards/belveth.gd"),
+	preload("res://scripts/data/cards/voidfish.gd"),
+	preload("res://scripts/data/cards/twitch.gd"),
 	preload("res://scripts/data/cards/lulu.gd"),
 	preload("res://scripts/data/cards/pantheon.gd"),
 	preload("res://scripts/data/cards/kayn.gd"),
@@ -27,6 +30,7 @@ const DEFINITIONS = [
 	preload("res://scripts/data/cards/super_minion.gd"),
 	preload("res://scripts/data/cards/pix.gd"),
 	preload("res://scripts/data/cards/freeze.gd"),
+	preload("res://scripts/data/cards/stasis.gd"),
 	preload("res://scripts/data/cards/heal.gd"),
 	preload("res://scripts/data/cards/zap.gd"),
 	preload("res://scripts/data/cards/lightning.gd"),

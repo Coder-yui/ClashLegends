@@ -69,6 +69,8 @@ func launch(attacker: Node2D, target: Node2D, amount: float, projectile_speed: f
 		if first_strike and attacker is Unit:
 			_context.notify_unit_audio_event(attacker as Unit, &"first_strike:missile_launch", attacker.global_position)
 		return _context.resolve_attack_hit(attacker.team, attacker.global_position, target, amount, splash_radius, knockback, attacker, attacker.global_position, source_form_index, effects)
+	if attacker is Unit:
+		projectile_speed *= attacker.buffs.strongest(&"ranged_attack", &"projectile_speed_multiplier", 1.0)
 	var direction := attacker.global_position.direction_to(target.global_position)
 	var projectile_visual := &"orb"
 	var projectile_visual_height := 0.0
@@ -114,6 +116,12 @@ func launch(attacker: Node2D, target: Node2D, amount: float, projectile_speed: f
 		"visual_offset_follows_trajectory": visual_offset_follows_trajectory,
 		"visual_launch_pos": start_position, "direction": direction,
 	}
+	if attacker is Unit and attacker.piercing_attacks_active():
+		projectiles[id].merge({"skill_fan": true, "basic_piercing": true,
+			"skill": {"projectile_piercing": true, "ground_only": not attacker.can_attack_air},
+			"cast": {"targets": {}, "sound_played": false},
+			"remaining": attacker.piercing_attack_distance(),
+			"presentation_source": effects.get("presentation_source", {}), "status_source": attacker.status_source("piercing_attack")})
 	# 普通弹体沿模型投影的起点和目标锚点绘制；权威位置、碰撞与速度不变。
 	var source_fallback := visual_offset + Vector2(0.0, -projectile_visual_height)
 	projectiles[id]["visual_path"] = {
@@ -125,12 +133,18 @@ func launch(attacker: Node2D, target: Node2D, amount: float, projectile_speed: f
 		"contact_radius": target.body_radius + attacker.projectile_collision_radius,
 		"progress": 0.0, "wave": false,
 	}
+	if bool(projectiles[id].get("basic_piercing", false)):
+		# 固定保存炮口偏移，后续沿权威方向直行，不追踪目标或武器。
+		projectiles[id].visual_path["wave"] = true
+		projectiles[id].visual_path["fixed_muzzle"] = true
 	if projectile_visual in [&"baron_siege", &"baron_ranged"]:
 		_context.show_projectile_impact(start_position + visual_offset - Vector2(0, projectile_visual_height), 1.0, projectile_color, StringName(String(projectile_visual) + "_cast"))
 	if attacker is Unit:
 		var cue := &"first_strike:missile_launch" if first_strike else (&"empowered_launch" if bool(effects.get("presentation_source", {}).get("empowered", false)) else &"attack_launch")
 		var source: Dictionary = effects.get("presentation_source", {})
 		var audio: Dictionary = PresentationConfig.audio_for(CardDB.get_card(String(source.get("card_id", ""))), int(source.get("team", 0)), source_form_index)
+		if cue == &"attack_launch" and bool(source.get("active_buff", false)) and audio.get("events", {}).has("active_buff:attack_launch"):
+			cue = &"active_buff:attack_launch"
 		if cue == &"attack_launch" and bool(audio.get("attack_launch_until_impact", false)):
 			projectiles[id]["owned_launch_audio"] = true
 			launch_audio_started.emit(id, source, attacker.global_position)
@@ -181,7 +195,7 @@ func _tick_pending_waves(dt: float) -> void:
 			_pending_attack_waves.remove_at(i)
 
 ## 保护建立时立即断开旧追踪；来源同Tick稍后入圈也不能救回这枚弹体。
-func invalidate_target_locks(target: Unit) -> void:
+func invalidate_target_locks(target: Node2D) -> void:
 	for id in projectiles.keys():
 		var projectile: Dictionary = projectiles[id]
 		if bool(projectile.get("skill_fan", false)) or projectile.get("target") != target: continue
@@ -326,7 +340,7 @@ func _tick_skill_arrow(projectile: Dictionary, dt: float, colliders: Array) -> b
 		if not targets.has(target_id):
 			targets[target_id] = true
 			var source: Node2D = projectile.attacker if is_instance_valid(projectile.attacker) else null
-			var landed := _context.resolve_attack_hit(projectile.team, origin, target, projectile.damage, 0.0, 0.0, source, projectile.source_pos, projectile.source_form_index, {}, false)
+			var landed := _context.resolve_attack_hit(projectile.team, origin, target, projectile.damage, 0.0, 0.0, source, projectile.source_pos, projectile.source_form_index, projectile.get("effects", {}), bool(projectile.get("basic_piercing", false)))
 			if landed:
 				if bool(projectile.skill.get("passive_wave", false)) and not bool(projectile.cast.sound_played):
 					projectile.cast.sound_played = true
@@ -337,7 +351,7 @@ func _tick_skill_arrow(projectile: Dictionary, dt: float, colliders: Array) -> b
 						target.apply_slow(float(skill.slow_duration), float(skill.get("slow_multiplier", 1.0)), projectile.status_source)
 					if float(skill.get("stun_duration", 0.0)) > 0.0:
 						target.stun(float(skill.stun_duration), projectile.status_source)
-				if not bool(projectile.skill.get("passive_wave", false)) and (piercing or not bool(projectile.cast.sound_played)):
+				if not bool(projectile.get("basic_piercing", false)) and not bool(projectile.skill.get("passive_wave", false)) and (piercing or not bool(projectile.cast.sound_played)):
 					projectile.cast.sound_played = true
 					skill_hit.emit(projectile.presentation_source, String(projectile.skill.get("visual_action", "")), projectile.pos)
 		# 非穿透箭仍被已命中过的实体阻挡；穿透牌继续处理本 Tick 沿途目标。
@@ -414,6 +428,7 @@ func _draw() -> void:
 			&"kayle_sword", &"kayle_wave": pass # 由独立表现代理绘制
 			&"magic_orb": _draw_magic_orb(projectile)
 			&"tower_orb": _draw_tower_orb(projectile)
+			&"crossbow_bolt", &"venom_bolt": preload("res://scripts/presentation/crossbow_projectile_2d.gd").draw_bolt(self, _visual_position(projectile), _direction(projectile), StringName(projectile.visual) == &"venom_bolt", (projectile.pos as Vector2).distance_to(projectile.get("visual_path", {}).get("start", projectile.pos)))
 			&"arrow": _draw_arrow(projectile)
 			&"card": _draw_card(projectile)
 			&"electromagnetic_wave": preload("res://scripts/presentation/electromagnetic_projectile_2d.gd").draw_effect(self, _visual_position(projectile), _direction(projectile), {"projectile_visual_width": float(projectile.radius) * 2.0 * float(projectile.get("visual_scale", 1.0))})
@@ -541,6 +556,11 @@ func _direction(projectile: Dictionary) -> Vector2:
 
 func _visual_position(projectile: Dictionary) -> Vector2:
 	var path: Dictionary = projectile.get("visual_path", {})
+	if bool(path.get("fixed_muzzle", false)):
+		var id := int(projectile.get("visual_id", -1))
+		if not _visual_origin_cache.has(id):
+			_visual_origin_cache[id] = _visual_model_offset(path.source, path.get("start_model_offset", Vector2.ZERO))
+		return projectile.pos + path.origin_offset + _visual_origin_cache[id]
 	if not path.is_empty() and not bool(path.get("wave", false)):
 		var progress := clampf(float(path.get("progress", 0.0)), 0.0, 1.0)
 		var id: int = int(projectile.get("visual_id", -1))

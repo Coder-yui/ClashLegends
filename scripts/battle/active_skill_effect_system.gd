@@ -158,6 +158,8 @@ func apply(source: Unit, skill: Dictionary) -> bool:
 					bool(target_skill.get("ignore_attack_speed_slow", false)),
 					source.status_source(String(skill.get("name", "buff")))
 				)
+				if target_skill.has("range_bonus") or target_skill.has("piercing_attacks") or target_skill.has("projectile_speed_multiplier"):
+					target.buffs.apply(&"ranged_attack", source.status_source("ranged_attack"), float(target_skill.duration), {"range_bonus": float(target_skill.get("range_bonus", 0.0)), "piercing": bool(target_skill.get("piercing_attacks", false)), "flight_distance": float(target_skill.get("piercing_distance", 0.0)), "projectile_speed_multiplier": float(target_skill.get("projectile_speed_multiplier", 1.0))})
 				if not bool(target_skill.get("shield_on_cast_start", false)):
 					target.add_shield(float(target_skill.get("shield", 0.0)), float(target_skill.get("shield_duration", target_skill.get("duration", 0.0))), bool(target_skill.get("shield_decay", false)), source.status_source("shield"))
 		&"nova":
@@ -262,9 +264,11 @@ func apply_area_shield(source: Unit, skill: Dictionary) -> void:
 func _skill_target_units(source: Unit, skill: Dictionary) -> Array[Unit]:
 	var targets: Array[Unit] = []
 	if StringName(skill.get("target_scope", "self")) != &"deployment_group" or source.deployment_group_id < 0:
-		targets.append(source)
+		if CombatInteraction.allows_allied_target(source, source.team): targets.append(source)
 		return targets
-	return _controller.living_deployment_members(source.deployment_group_id, source.team)
+	for member in _controller.living_deployment_members(source.deployment_group_id, source.team):
+		if CombatInteraction.allows_allied_target(member, source.team): targets.append(member)
+	return targets
 
 
 ## 异构编队的主动技能可声明复用成员自己的同名 buff；这样近战兵和远程兵

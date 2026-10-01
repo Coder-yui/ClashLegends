@@ -15,7 +15,7 @@ static func definition() -> Dictionary:
 			"active_skills": [{"name": "黄沙庇护", "kind": "restoration_shield",
 				"cost": 2, "max_uses": 1, "cooldown": 8.0, "target_scope": "deployment_group",
 				"shield": 180, "shield_duration": 2.0,
-				"description": "同次出牌的存活士兵各获得180点护盾，持续2秒；逐人判断，到期时护盾未破则回复至满血。"}],
+				"description": "同次出牌的存活士兵各获得180点护盾，持续2秒；逐人判断，到期时护盾未破则回复至满血，凝滞期间也生效。"}],
 		},
 		"visual": {"visual_radius": RADIUS_MEDIUM + VISUAL_RADIUS_PADDING,
 			"visual_scene_path": "res://assets/units/shurima_guard/shurima_guard_view.tscn",

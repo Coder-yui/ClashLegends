@@ -95,10 +95,10 @@ const SIZE_RADII := {
 	SIZE_LARGE: RADIUS_LARGE,
 	SIZE_EXTREMELY_LARGE: RADIUS_EXTREMELY_LARGE,
 }
-const PROJECTILE_VISUALS := [&"magic_orb", &"kayle_sword", &"orb", &"arrow", &"needle", &"boomerang", &"ice_cone"]
+const PROJECTILE_VISUALS := [&"crossbow_bolt", &"venom_bolt", &"magic_orb", &"kayle_sword", &"orb", &"arrow", &"needle", &"boomerang", &"ice_cone"]
 const VISUAL_SPAWN_TRANSITIONS := [&"drop", &"rebirth"]
-const SPELL_KINDS := [&"zap", &"lightning", &"freeze", &"heal", &"mirror"]
-const ACTIVE_SKILL_KINDS := [&"permanent_growth", &"spell_lightning", &"dash_strike", &"terrain_charge", &"bleeding_execute", &"explosive_shield", &"sanctuary", &"timed_form", &"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"continuous_area", &"empowered_attack", &"attack_lifesteal", &"area_shield", &"restoration_shield", &"spell_heal"]
+const SPELL_KINDS := [&"stasis", &"zap", &"lightning", &"freeze", &"heal", &"mirror"]
+const ACTIVE_SKILL_KINDS := [&"spell_stasis", &"permanent_growth", &"spell_lightning", &"dash_strike", &"terrain_charge", &"bleeding_execute", &"explosive_shield", &"sanctuary", &"timed_form", &"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"continuous_area", &"empowered_attack", &"attack_lifesteal", &"area_shield", &"restoration_shield", &"spell_heal"]
 const ACTIVE_SKILL_TARGET_SCOPES := [&"self", &"deployment_group"]
 const CAST_LOCKS := [&"movement", &"attack", &"facing"]
 const VISUAL_ACTION_KINDS := [&"deploy", &"transform", &"skill"]
@@ -109,6 +109,7 @@ const TRANSITION_BLEND_FIELDS := [&"default", &"locomotion", &"action_in", &"act
 ## Validator 会检测未知或未登记字段。新增字段必须同时实现运行时读取逻辑、
 ## validator 登记和对应机制测试，防止只把配置写进 CardDB、却忘记接入权威模拟或表现层。
 const CARD_FIELDS := [
+	&"stealth_delay",
 	&"strike_count", &"strike_interval", &"stun_duration", &"tower_damage_multiplier",
 	&"heal_on_hit_name", &"on_hit_passive_name", &"team_attack_boost_first_delay", &"team_attack_boost_interval", &"team_attack_boost_multiplier",
 	&"terrain_traversal", &"terrain_entry_heal", &"terrain_entry_speed_multiplier", &"growth_ranged_id", &"growth_melee_id", &"growth_ranged_hits", &"growth_melee_hits",
@@ -144,12 +145,13 @@ const CARD_FIELDS := [
 	&"skill_resource_damage_gain_multiplier", &"skill_resource_decay_delay", &"skill_resource_decay_rate",
 	&"attack_interval_display", &"transform_after_hits", &"revert_after_hits",
 	&"transform_duration", &"active_transform_duration", &"revert_duration", &"transformed_stats",
-	&"spell_kind", &"duration", &"active_name", &"active_slow_duration", &"active_slow_multiplier", &"active_skills",
+	&"spell_kind", &"flight_speed", &"flight_min_duration", &"duration", &"active_name", &"active_slow_duration", &"active_slow_multiplier", &"active_skills",
 	&"heal_amount", &"active_cost_bonus",
 	&"visual_pre_deploy_scene", &"visual_active_buff_scene", &"visual_scene_path", &"visual_scene_paths", &"visual_forward_yaw", &"visual_animations", &"audio",
 ]
 const AUDIO_FIELDS := [&"team_overrides", &"attack_launch_until_impact", &"attack_hit_once_by_segment", &"attack_swing_lead_time", &"attack_swing", &"attack_hit", &"attack_launch_by_segment", &"attack_hit_by_segment", &"empowered_hit", &"first_strike_hit", &"attack_swing_volume_db", &"attack_hit_volume_db", &"events"]
 const VISUAL_ANIMATION_FIELDS := [
+	&"stealth_idle", &"stealth_move", &"active_buff_attack",
 	&"stun_enter", &"stun_loop", &"stun_exit", &"deploy", &"deploy_durations", &"deploy_clip_ratio", &"idle", &"idle_cycle", &"move", &"move_enter", &"haste_move", &"terrain_move", &"full_resource_move",
 	&"move_cycle", &"attack", &"attack_enter", &"attack_retarget_enter", &"attack_loop",
 	&"attack_clip_ranges", &"attack_hit_clip_ranges", &"attack_hit", &"attack_hit_duration", &"attack_recover", &"attack_recover_delay", &"attack_reference_interval",
@@ -160,8 +162,9 @@ const VISUAL_ANIMATION_FIELDS := [
 	&"visual_action_durations", &"transitions", &"transition_blends", &"clip_blends",
 ]
 const ACTIVE_SKILL_FIELDS := [
+	&"projectile_speed_multiplier", &"range_bonus", &"piercing_attacks", &"piercing_distance",
 	&"strike_count", &"strike_damage_multiplier",
-	&"dash_duration", &"dash_reference_speed", &"spin_delay", &"fixed_speed", &"charge_prepare_time", &"charge_recovery_time", &"charge_miss_recovery_time", &"trail_damage", &"hit_heal", &"on_hit_max_health_ratio", &"on_hit_tower_damage",
+	&"air_only", &"dash_spin", &"dash_duration", &"dash_reference_speed", &"spin_delay", &"fixed_speed", &"charge_prepare_time", &"charge_recovery_time", &"charge_miss_recovery_time", &"trail_damage", &"hit_heal", &"on_hit_max_health_ratio", &"on_hit_tower_damage",
 	&"execute_damage_per_stack",
 	&"heal_amount",
 	&"icon_path",

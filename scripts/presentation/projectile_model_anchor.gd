@@ -3,6 +3,9 @@ extends RefCounted
 static func create(model: Node3D) -> Node3D:
 	var existing := model.find_child("ProjectileModelAnchor", true, false) as Node3D
 	if existing != null: return existing
+	if model.has_method("create_projectile_anchor"):
+		var custom := model.call("create_projectile_anchor") as Node3D
+		if custom != null: return custom
 	for skeleton in model.find_children("*", "Skeleton3D", true, false):
 		for preferred in ["spine2", "chest", "spine1", "spine"]:
 			for index in skeleton.get_bone_count():

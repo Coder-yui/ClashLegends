@@ -113,7 +113,26 @@ func activate() -> void:
 	activated = true
 	queue_redraw()
 
+## 水晶（is_king）免疫；防御塔与单位共用硬控时钟和交互隔离。
+func apply_stasis(duration: float, source: StringName = &"legacy", interaction: Dictionary = {}) -> void:
+	if is_king or hp <= 0.0 or not is_finite(duration) or duration <= 0.0: return
+	if not CombatInteraction.allows_effect(self, interaction): return
+	if battle_context != null and battle_context.damage_batch().collecting:
+		battle_context.damage_batch().defer_effect(func(): _receive_stasis(duration, source))
+		return
+	_receive_stasis(duration, source)
+
+func _receive_stasis(duration: float, source: StringName) -> void:
+	if is_king or hp <= 0.0: return
+	control.hard.apply(&"stasis", source, duration, {})
+	_target = null
+	_lock_windup = 0.0
+	_cooldown = 0.0
+	if battle_context != null: battle_context.invalidate_target_locks(self)
+	queue_redraw()
+
 func freeze(duration: float, source: StringName = &"legacy") -> void:
+	if CombatInteraction.in_stasis(self): return
 	if hp <= 0.0 or not is_finite(duration) or duration <= 0.0: return
 	if battle_context != null and battle_context.damage_batch().collecting:
 		battle_context.damage_batch().defer_effect(func(): freeze(duration, source))
@@ -125,6 +144,7 @@ func freeze(duration: float, source: StringName = &"legacy") -> void:
 	queue_redraw()
 
 func stun(duration: float, source: StringName = &"legacy") -> void:
+	if CombatInteraction.in_stasis(self): return
 	if hp <= 0.0 or not is_finite(duration) or duration <= 0.0: return
 	if battle_context != null and battle_context.damage_batch().collecting:
 		battle_context.damage_batch().defer_effect(func(): stun(duration, source))
@@ -161,7 +181,7 @@ func sim_tick(dt: float, statuses_prepared: bool = false) -> void:
 		prepare_statuses(dt)
 	# 冰冻计时不因国王塔休眠而暂停。
 	_hit_flash_event_cooldown = maxf(0.0, _hit_flash_event_cooldown - dt)
-	if frozen_timer > 0.0 or control.stun_timer > 0.0:
+	if CombatInteraction.in_stasis(self) or frozen_timer > 0.0 or control.stun_timer > 0.0:
 		queue_redraw()
 		return
 	if not can_attack:
@@ -196,6 +216,7 @@ func _target_is_valid(target) -> bool:
 		return false
 	if not target is Unit or target.team == team:
 		return false
+	if not CombatInteraction.can_acquire(target, team): return false
 	if not CombatInteraction.allows(target, self): return false
 	var unit := target as Unit
 	return _target_gap(unit) <= attack_range
@@ -214,6 +235,7 @@ func _find_enemy_in_range() -> Node2D:
 		# 塔只打单位，不打塔
 		if not c is Unit or c.team == team or c.hp <= 0.0:
 			continue
+		if not CombatInteraction.can_acquire(c, team): continue
 		if not CombatInteraction.allows(c, self): continue
 		var unit := c as Unit
 		var gap := _target_gap(unit)
@@ -223,6 +245,7 @@ func _find_enemy_in_range() -> Node2D:
 	return best
 
 func take_damage(amount: float, _from: Node2D = null, _source_team: int = -1, _source_position: Vector2 = Vector2(INF, INF), attached: bool = false) -> bool:
+	if not CombatInteraction.allows(self, _from, _source_team, _source_position, attached): return false
 	if battle_context != null and battle_context.damage_batch().collecting:
 		return bool(battle_context.damage_batch().submit_damage(self, amount, _from, _source_team, _source_position, attached).accepted)
 	if hp <= 0.0:
@@ -251,6 +274,7 @@ func take_damage(amount: float, _from: Node2D = null, _source_team: int = -1, _s
 
 
 func add_shield(amount: float, duration: float, decays: bool = false, source: StringName = &"legacy") -> void:
+	if CombatInteraction.in_stasis(self): return
 	if battle_context != null and battle_context.damage_batch().collecting:
 		battle_context.damage_batch().defer_effect(func(): add_shield(amount, duration, decays, source))
 		return
@@ -293,11 +317,13 @@ func get_shield_health_ratio() -> float:
 	return get_shield_ratio() * get_shield_capacity_ratio()
 
 ## 网络只传递解码后的值；塔拥有副本更新、死亡表现与导航释放的完整转换。
-func apply_network_state(health: float, active: bool, stunned: bool, shield_ratio: float, capacity_ratio: float, frozen: bool = false) -> void:
+func apply_network_state(health: float, active: bool, stunned: bool, shield_ratio: float, capacity_ratio: float, frozen: bool = false, stasis: bool = false) -> void:
 	var was_alive := hp > 0.0
 	hp = BattleNumbers.quantity(health)
 	activated = active
 	control.apply_replica_flags(frozen, stunned)
+	control.hard.clear_family(&"stasis")
+	if stasis and not is_king and hp > 0.0: control.hard.apply(&"stasis", &"replica", 1.0, {})
 	apply_shield_snapshot(shield_ratio, capacity_ratio)
 	if was_alive and hp <= 0.0:
 		bleeding.clear()
@@ -333,9 +359,10 @@ func _draw() -> void:
 	if not has_model_art:
 		var outline := Color(0.30, 0.60, 1.00) if team == 0 else Color(1.00, 0.35, 0.30)
 		draw_circle(Vector2.ZERO, visual_radius + 3.0, outline)
-		draw_circle(Vector2.ZERO, visual_radius, Color(0.55, 0.50, 0.45))
+		draw_circle(Vector2.ZERO, visual_radius, Color(1.0, 0.67, 0.12) if CombatInteraction.in_stasis(self) else Color(0.55, 0.50, 0.45))
+	if not PresentationConfig.status_indicators_visible(self): return
 	# 冰冻状态：蓝色覆盖
-	if frozen_timer > 0.0:
+	if frozen_timer > 0.0 and not CombatInteraction.in_stasis(self):
 		draw_circle(Vector2.ZERO, visual_radius + 4.0, Color(0.40, 0.70, 1.00, 0.35))
 	if control.stun_timer > 0.0:
 		var rotation := -get_global_transform_with_canvas().get_rotation()
