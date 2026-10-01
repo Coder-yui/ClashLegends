@@ -1,0 +1,40 @@
+{
+  "source_package": "Game/DATA/FINAL/Champions/Belveth.wad.client",
+  "files": [
+    {
+      "event": "swing",
+      "source_txtp": "ClashLegends-开发素材库/03-制作中/卑尔维斯/audio/belveth/txtp/Play_sfx_Belveth_BelvethRMinion_cast_melee.txtp",
+      "target": "swing_1.wav",
+      "sha256": "aaeb84f4fd7067a9a8b004acb9283c4164ae8604d41d516eb9938090985c4424",
+      "processing": "48000Hz mono PCM16; no normalization"
+    },
+    {
+      "event": "hit",
+      "source_txtp": "ClashLegends-开发素材库/03-制作中/卑尔维斯/audio/belveth/txtp/Play_sfx_Belveth_BelvethRMinion_hit_melee.txtp",
+      "target": "hit_1.wav",
+      "sha256": "401c009b4b095c454b0e0917cdd74f6fdfe03474814014ad2243c55b2abb16d2",
+      "processing": "48000Hz mono PCM16; no normalization"
+    },
+    {
+      "event": "deploy",
+      "source_txtp": "ClashLegends-开发素材库/03-制作中/卑尔维斯/audio/belveth/txtp/Play_sfx_Belveth_BelvethRMinionConverter_buffactivate_birth {r}.txtp",
+      "target": "deploy_1.wav",
+      "sha256": "3e69144c7ecaac352f6c6af11e6de413d03cba1d22103cedab9288a9aa082b05",
+      "processing": "48000Hz mono PCM16; no normalization"
+    },
+    {
+      "event": "death",
+      "source_txtp": "ClashLegends-开发素材库/03-制作中/卑尔维斯/audio/belveth/txtp/Play_sfx_Belveth_BelvethRMinion_cast_death {r1}.txtp",
+      "target": "death_1.wav",
+      "sha256": "aaa4b02983ed7d170722436cb017a3d93f597fc902a0592e08fa369aded2bcc6",
+      "processing": "48000Hz mono PCM16; no normalization"
+    },
+    {
+      "event": "death",
+      "source_txtp": "ClashLegends-开发素材库/03-制作中/卑尔维斯/audio/belveth/txtp/Play_sfx_Belveth_BelvethRMinion_cast_death {r2}.txtp",
+      "target": "death_2.wav",
+      "sha256": "3de7fadb607043aac4f60a5aba568add43e6136eff813d8203b590746ec2c3a9",
+      "processing": "48000Hz mono PCM16; no normalization"
+    }
+  ]
+}

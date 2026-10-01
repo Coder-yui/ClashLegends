@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/units/belveth/source/belveth.glb" id="1"]
+
+[ext_resource type="Script" path="res://assets/units/belveth/belveth_view.gd" id="2"]
+
+[node name="BelvethView" type="Node3D"]
+script = ExtResource("2")
+
+[node name="Model" parent="." instance=ExtResource("1")]
+scale = Vector3(0.011, 0.011, 0.011)

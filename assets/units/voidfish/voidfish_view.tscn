@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/units/voidfish/source/voidfish.glb" id="1"]
+
+[ext_resource type="Script" path="res://assets/units/voidfish/voidfish_view.gd" id="2"]
+
+[node name="VoidfishView" type="Node3D"]
+script = ExtResource("2")
+
+[node name="Model" parent="." instance=ExtResource("1")]
+scale = Vector3(0.014, 0.014, 0.014)

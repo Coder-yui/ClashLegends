@@ -1,0 +1,75 @@
+{
+  "source_package": "Game/DATA/FINAL/Champions/Belveth.wad.client",
+  "files": [
+    {
+      "event": "swing",
+      "source_txtp": "ClashLegends-开发素材库/03-制作中/卑尔维斯/audio/belveth/txtp/Play_sfx_Belveth_BelvethBasicAttack_cast_slow {r1}.txtp",
+      "target": "swing_1.wav",
+      "sha256": "b71ca7e18d69fe75d74c38d3c9cbe7d2861c5af2173a594421b4f49072ea2711",
+      "processing": "48000Hz mono PCM16; no normalization"
+    },
+    {
+      "event": "swing",
+      "source_txtp": "ClashLegends-开发素材库/03-制作中/卑尔维斯/audio/belveth/txtp/Play_sfx_Belveth_BelvethBasicAttack_cast_slow {r2}.txtp",
+      "target": "swing_2.wav",
+      "sha256": "70f708b589bc2734bb5a87554b628d6abeb9a70666e9940635777be16246292d",
+      "processing": "48000Hz mono PCM16; no normalization"
+    },
+    {
+      "event": "swing",
+      "source_txtp": "ClashLegends-开发素材库/03-制作中/卑尔维斯/audio/belveth/txtp/Play_sfx_Belveth_BelvethBasicAttack_cast_slow {r3}.txtp",
+      "target": "swing_3.wav",
+      "sha256": "d0d0ac0dc48c3724ac14eac47e4b54f1e0fe2eef32f782f77a0b1c2be692a92d",
+      "processing": "48000Hz mono PCM16; no normalization"
+    },
+    {
+      "event": "hit",
+      "source_txtp": "ClashLegends-开发素材库/03-制作中/卑尔维斯/audio/belveth/txtp/Play_sfx_Belveth_BelvethBasicAttack_OnHit {r1} {d}.txtp",
+      "target": "hit_1.wav",
+      "sha256": "056b0297167cc24faffc95ece0f902809202499c2d6191ba3359b88ea8b9f598",
+      "processing": "48000Hz mono PCM16; no normalization"
+    },
+    {
+      "event": "hit",
+      "source_txtp": "ClashLegends-开发素材库/03-制作中/卑尔维斯/audio/belveth/txtp/Play_sfx_Belveth_BelvethBasicAttack_OnHit {r2} {d}.txtp",
+      "target": "hit_2.wav",
+      "sha256": "8ca4d1d8838db28659135946fe4af272b9bc03d315805670388e535f56da6fc0",
+      "processing": "48000Hz mono PCM16; no normalization"
+    },
+    {
+      "event": "hit",
+      "source_txtp": "ClashLegends-开发素材库/03-制作中/卑尔维斯/audio/belveth/txtp/Play_sfx_Belveth_BelvethBasicAttack_OnHit {r3} {d}.txtp",
+      "target": "hit_3.wav",
+      "sha256": "d8b8d9a3e0f2ac5bf65d67703aee8bf01bf5c545ecce02e70b881dc0d615903c",
+      "processing": "48000Hz mono PCM16; no normalization"
+    },
+    {
+      "event": "deploy",
+      "source_txtp": "ClashLegends-开发素材库/03-制作中/卑尔维斯/audio/belveth/txtp/Play_sfx_Belveth_Respawn3D_buffactivate.txtp",
+      "target": "deploy_1.wav",
+      "sha256": "7c15300ccda6851e6d193aaafe9ce29ae5591968ca3f8eadfe2b9c4a6342745a",
+      "processing": "48000Hz mono PCM16; no normalization"
+    },
+    {
+      "event": "death",
+      "source_txtp": "ClashLegends-开发素材库/03-制作中/卑尔维斯/audio/belveth/txtp/Play_sfx_Belveth_Death3D_buffactivate.txtp",
+      "target": "death_1.wav",
+      "sha256": "31b9f7d1ee0cb8d4f726695767308677110ea6efc025a42a3c945502da652ad7",
+      "processing": "48000Hz mono PCM16; no normalization"
+    },
+    {
+      "event": "cast",
+      "source_txtp": "ClashLegends-开发素材库/03-制作中/卑尔维斯/audio/belveth/txtp/Play_sfx_Belveth_BelvethQ_cast.txtp",
+      "target": "cast_1.wav",
+      "sha256": "13b367ba937cb2f88fd7a18638df31c272ac16cb4473cce4a63b4f3e6236b74b",
+      "processing": "48000Hz mono PCM16; no normalization"
+    },
+    {
+      "event": "skill_hit",
+      "source_txtp": "ClashLegends-开发素材库/03-制作中/卑尔维斯/audio/belveth/txtp/Play_sfx_Belveth_BelvethQ_hit.txtp",
+      "target": "skill_hit_1.wav",
+      "sha256": "aa8dc5442207f5d687dcacb41be97219dc4dde188379c0f728dc35d52956908e",
+      "processing": "48000Hz mono PCM16; no normalization"
+    }
+  ]
+}
