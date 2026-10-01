@@ -25,14 +25,34 @@
       "wad_hash": "7f6cbdd378710f42",
       "size": 87420,
       "sha256": "e71ac66baf09f1c6562ae0a50c4a462d530da3bdf01eeb87dd57b982f9a93727"
+    },
+    {
+      "path": "assets/characters/bard/skins/base/particles/bard_base_p_speed_swirl_mult.tex",
+      "wad_hash": "15dcffc08cf900da",
+      "size": 87420,
+      "sha256": "6ed4269818b17651032012f73c2fb22ae6a04bdd045a1247dba241ff088df25e"
+    },
+    {
+      "path": "assets/characters/bard/skins/base/particles/common_itemzhonya_base_p_speed_swirl_mult.tex",
+      "wad_hash": "6f898088cae00ca2",
+      "size": 87420,
+      "sha256": "6ed4269818b17651032012f73c2fb22ae6a04bdd045a1247dba241ff088df25e"
     }
   ],
-  "note": "Staged source assets only. Model materials and particle dependencies must be verified before project integration.",
+  "note": "正式接入资源与来源；模型附着网格两层为Godot适配，完整粒子运行器未移植。",
   "conversion": "tools/dev.py source convert --format texture; runtime spherical alpha mask for cosmic_gold",
   "outputs": {
     "explo_nova.png": "b10b0f8c05422a58711d2303963796b17697580f251aa3b061f24e00c55aefed",
     "warning_decal.png": "6581aea90cefd7afe4a175f4ded118c527da7dae7775e0cdd7cfec3a67dec2c4",
     "cosmic_gold.png": "c4c680e42bf791afab6df2354121b36113512df63ee7c4b360c74291b6442509",
-    "ring_flare.png": "3fa57557caff4a69e8ca3136ae84460c52529c5f6d5ce1e909566858ca71f7ca"
+    "ring_flare.png": "3fa57557caff4a69e8ca3136ae84460c52529c5f6d5ce1e909566858ca71f7ca",
+    "zhonya_swirl.png": "7381919da7c9523050fabe3805e6503ae92c069c799778f970233ac08ece2ff5",
+    "bard_swirl.png": "7381919da7c9523050fabe3805e6503ae92c069c799778f970233ac08ece2ff5"
+  },
+  "model_stasis": {
+    "definition_source": "ClashLegends-开发素材库/03-制作中/凝滞法术/stasis-definitions/f857b33e2ea89784.ritobin",
+    "entry": "Characters/Bard/Skins/Skin0/Particles/Bard_Base_R_stasis_skin_full",
+    "method": "VfxPrimitiveAttachedMesh: Temp_Avatar scale1.02 UV scroll(0,0.4), Gold_Avatar1 scale1.01; constant alpha0.700008 * curve plateau0.700008",
+    "adaptation": "Godot two-pass shader; tower composite in ground-clip shader; no original particle runner. Excludes source submesh filters, entry/exit alpha curves and peripheral particle emitters; follows project stasis state lifetime."
   }
 }
