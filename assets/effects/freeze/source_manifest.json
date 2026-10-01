@@ -1,0 +1,12 @@
+[
+  {
+    "card": "freeze",
+    "skill_index": 0,
+    "path": "res://assets/effects/freeze/ice_mask.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Global.wad.client",
+    "source_path": "assets/items/6662/particles/global_item_atlas_indicator_ice_mask.tex",
+    "sha256": "d93516d923353fcf34e534246d8235f7dd12cc074209826bf645b2ac859ee0c0",
+    "processing": "原版纹理解码；图标 Pillow DDS，冰面 ltk-tex-utils；冰面材质由表现层映射颜色和透明度",
+    "source_sha256": "cffb15fc0d0f4da103923e05f3ef1b060584d9d28f471862ddee6214f59ed287"
+  }
+]

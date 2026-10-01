@@ -285,5 +285,15 @@
     "source_path": "assets/characters/belveth/hud/icons2d/bv_q_15.dds",
     "source_sha256": "7ef20d2d8634081dd8e4a51a7233e9eb4bfd79b2d15c772b01de9ade8d6c769c",
     "sha256": "9c0d79a351d38aa91d79316d083cedf0bedc007aeb060d5e07b41ca8420cebb9"
+  },
+  {
+    "card": "freeze",
+    "skill_index": 0,
+    "path": "res://assets/skills/freeze_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Global.wad.client",
+    "source_path": "assets/items/icons2d/6662_tank_t3_iceborngauntlet.dds",
+    "sha256": "9cda13176d693fa3bea76cf421cfe574f28766e1b158f65b4012bb746592620e",
+    "processing": "原版纹理解码；图标 Pillow DDS，冰面 ltk-tex-utils；冰面材质由表现层映射颜色和透明度",
+    "source_sha256": "4eb3900ee273b9ea98a14c954424c8c3f8ccd7182c6db6aee48dce17a6b8d2c1"
   }
 ]
