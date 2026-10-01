@@ -343,11 +343,13 @@ func _build_battle_page(page: Control) -> void:
 	_label(_inspection_controls, "技能控制板")
 	_unit_status_label = _label(_inspection_controls, "未选中单位 · 切到选择模式后点击地图单位", true)
 	_spell_active = CheckButton.new()
-	_spell_active.text = "强化法术"
+	_spell_active.text = "启用法术技能"
 	_spell_active.toggled.connect(func(enabled): spell_active_changed.emit(enabled))
 	_inspection_controls.add_child(_spell_active)
 	_spell_choice = OptionButton.new()
-	_spell_choice.item_selected.connect(func(index): active_skill_selected.emit(_selected_id, index))
+	_spell_choice.fit_to_longest_item = false
+	_spell_choice.clip_text = true
+	_spell_choice.item_selected.connect(_on_spell_skill_selected)
 	_inspection_controls.add_child(_spell_choice)
 	var skills := _row(_inspection_controls)
 	_skill_option = OptionButton.new()
@@ -589,12 +591,7 @@ func _select_item(item_id: String) -> void:
 	_form = clampi(requested_form, 0, FORM_CATALOG.form_labels(_cards.get(item_id, {})).size() - 1)
 	_spell_active.set_pressed_no_signal(false)
 	var is_spell := String(_cards.get(item_id, {}).get("type", "")) == "spell"
-	var has_spell_choices := is_spell and not CardDB.active_skills_for(item_id).is_empty()
-	_spell_active.visible = is_spell and not has_spell_choices and _cards.get(item_id, {}).has("active_name")
-	_spell_active.text = String(_cards.get(item_id, {}).get("active_name", "强化法术"))
-	_spell_choice.clear()
-	for skill in CardDB.active_skills_for(item_id): _spell_choice.add_item(String(skill.get("name", "强化法术")))
-	_spell_choice.visible = has_spell_choices
+	_refresh_spell_controls(is_spell)
 	_form_option.clear()
 	for label in FORM_CATALOG.form_labels(_cards.get(item_id, {})): _form_option.add_item(label)
 	_form_option.select(_form)
@@ -607,12 +604,39 @@ func _select_item(item_id: String) -> void:
 	_unit_casting = false
 	_refresh_skill_controls()
 	if not _inspection_bound:
-		_skill_option.get_parent().visible = not is_spell or has_spell_choices
+		_skill_option.get_parent().visible = not is_spell
 		_skill_button.visible = not is_spell
 		_control_buttons[0].get_parent().visible = not is_spell
 	_refresh_assets()
 	item_selected.emit(item_id)
 	form_selected.emit(_form)
+
+func _refresh_spell_controls(is_spell: bool) -> void:
+	_spell_active.visible = is_spell
+	_spell_choice.visible = is_spell
+	_spell_choice.clear()
+	if not is_spell: return
+	for skill in CardDB.active_skills_for(_selected_id):
+		_spell_choice.add_item(String(skill.get("name", "法术技能")))
+	# 镜像沿用 active_name 定义；它的技能候选与复制体原卡的技能分开。
+	if _spell_choice.item_count == 0 and _cards.get(_selected_id, {}).has("active_name"):
+		_spell_choice.add_item(String(_cards[_selected_id].active_name))
+	var has_choices := _spell_choice.item_count > 0
+	_spell_active.disabled = not has_choices
+	_spell_choice.disabled = not has_choices
+	if has_choices:
+		var index := clampi(int(_active_skill_choices.get(_selected_id, 0)), 0, _spell_choice.item_count - 1)
+		_active_skill_choices[_selected_id] = index
+		_spell_choice.select(index)
+	else:
+		_spell_choice.add_item("暂无可选技能")
+
+func _on_spell_skill_selected(skill_index: int) -> void:
+	if _spell_choice.disabled: return
+	var index := clampi(skill_index, 0, _spell_choice.item_count - 1)
+	_active_skill_choices[_selected_id] = index
+	_spell_choice.select(index)
+	active_skill_selected.emit(_selected_id, index)
 
 func _refresh_assets() -> void:
 	_card_info.show_card(FORM_CATALOG.deployment_id(_selected_id, _form), FORM_CATALOG.stats_for_form(_cards.get(_selected_id, {}), _form))

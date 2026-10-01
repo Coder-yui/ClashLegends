@@ -48,6 +48,7 @@ func _check_artdev_workbench() -> void:
 	var old_team: int = _main._workbench.team
 	var old_last_units: Dictionary = _main._workbench.last_units.duplicate()
 	var old_choices: Dictionary = _main._workbench.skill_choices.duplicate(true)
+	var old_spell_active: bool = _main._workbench.spell_active
 	var panel := DevelopmentWorkbench.new()
 	_main.add_child(panel)
 	panel.setup(CardDB.all())
@@ -58,6 +59,7 @@ func _check_artdev_workbench() -> void:
 	panel.active_skill_selected.connect(_main._on_art_dev_active_skill_selected)
 	panel.active_skill_requested.connect(_main._use_art_dev_active_skill)
 	panel.skill_resource_requested.connect(_main._set_art_dev_skill_resource)
+	panel.spell_active_changed.connect(func(enabled): _main._workbench.spell_active = enabled)
 
 	panel._filter_cards("gwen")
 	var search_ok: bool = panel._library.entries.size() == 1 and panel._library.entries[0].id == "gwen"
@@ -153,6 +155,34 @@ func _check_artdev_workbench() -> void:
 	panel._select_item("garen")
 	_expect(audio_started and audio_stopped and formal_audio_only, "工作台试听切页清理，法术显示正式音频且不混入未接候选")
 	var old_dev_mode: bool = _main._workbench.enabled
+	for card_id in ["freeze", "heal", "zap", "lightning", "stasis", "mirror"]:
+		panel._select_item(card_id)
+		_expect(panel._spell_active.visible and not panel._spell_active.disabled and panel._spell_choice.visible and not panel._spell_choice.disabled and not panel._spell_active.button_pressed, "法术统一显示技能开关与候选，切卡默认关闭：" + card_id)
+	panel._select_item("mirror")
+	_expect(panel._spell_choice.item_count == 1 and panel._spell_choice.get_item_text(0) == "完整镜像", "完整镜像是镜像法术的一个技能候选")
+	panel._select_item("heal")
+	panel._spell_choice.item_selected.emit(1)
+	panel._spell_active.button_pressed = true
+	panel._select_item("freeze")
+	panel._select_item("heal")
+	_expect(panel._spell_choice.selected == 1 and int(_main._workbench.skill_choices.get("heal", -1)) == 1 and not _main._workbench.spell_active, "切回法术恢复预选技能，但启用状态重置为关闭")
+	_main._workbench.enabled = true
+	var patient := _spawn_test_unit("garen", 0, Vector2(100, 1000))
+	var distant := _spawn_test_unit("garen", 0, Vector2(620, 1000))
+	patient.hp = patient.max_hp - 100
+	distant.hp = distant.max_hp - 100
+	_main._place_art_dev_item(patient.position)
+	_expect(is_equal_approx(patient.hp, patient.max_hp) and is_zero_approx(patient.shield_hp) and is_equal_approx(distant.hp, distant.max_hp - 100), "关闭法术技能时只施放普通范围治疗，不应用已选过量治疗")
+	patient.hp -= 100
+	panel._spell_active.button_pressed = true
+	_main._place_art_dev_item(patient.position)
+	_expect(patient.shield_hp > 0 and is_equal_approx(distant.hp, distant.max_hp - 100), "开启后通过工作台出牌应用所选过量治疗")
+	panel._spell_choice.item_selected.emit(0)
+	_main._place_art_dev_item(patient.position)
+	_expect(is_equal_approx(distant.hp, distant.max_hp), "切换法术候选后应用强化治疗的全图治疗")
+	patient.free()
+	distant.free()
+	panel._select_item("garen")
 	var original_zones: int = _main._spell_system.slow_zones.size()
 	_main._workbench.enabled = true
 	_main.play_card(0, "freeze", Vector2.ZERO, {"immediate": true, "validate_position": false, "preview_active_spell": true})
@@ -245,6 +275,7 @@ func _check_artdev_workbench() -> void:
 	_main._workbench.team = old_team
 	_main._workbench.last_units = old_last_units
 	_main._workbench.skill_choices = old_choices
+	_main._workbench.spell_active = old_spell_active
 	panel.free()
 
 func _check_desktop_camera() -> void:

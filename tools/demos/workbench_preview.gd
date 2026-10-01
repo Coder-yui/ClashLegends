@@ -18,6 +18,26 @@ func _run() -> void:
 	for argument in OS.get_cmdline_user_args():
 		if argument.begins_with("--card="):
 			panel._select_item(argument.trim_prefix("--card="))
+	if "--spell-review" in OS.get_cmdline_user_args():
+		panel.show_workspace(1)
+		panel._select_item("garen")
+		main._place_art_dev_item(Vector2(300, 1000))
+		for card in ["freeze", "heal", "zap", "lightning", "stasis", "mirror"]:
+			panel._select_item(card)
+			await _capture(card + "_skill_off")
+			panel._spell_active.button_pressed = true
+			if card == "heal": panel._spell_choice.item_selected.emit(1)
+			if card == "mirror": main._place_art_dev_item(Vector2(420, 1000))
+			await _capture(card + "_skill_on")
+			if not panel._spell_active.is_visible_in_tree() or not panel._spell_choice.is_visible_in_tree() or not main._workbench.spell_active:
+				push_error("法术技能开关或候选不可用：" + card)
+				quit(1)
+				return
+		print("[工作台法术验证] 六张法术的开关与候选全部可见")
+		main.free()
+		await process_frame
+		quit()
+		return
 	if "--form-review" in OS.get_cmdline_user_args():
 		var catalog := preload("res://scripts/ui/workbench/card_catalog.gd")
 		var id: String = panel._selected_id
