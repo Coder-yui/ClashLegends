@@ -1,0 +1,38 @@
+{
+  "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Bard.wad.client",
+  "package_sha256": "55bf501c8d93f49b4a18da8fac103556463a1c8edd0b6adbecb53f3562b7139b",
+  "files": [
+    {
+      "path": "assets/characters/bard/skins/base/particles/bard_base_r_cosmic_gold.tex",
+      "wad_hash": "40f96fc5b0d74e6a",
+      "size": 87420,
+      "sha256": "8829e6aff5c01b76f715c51accbcc1353f97c9462059d7ecf7ac6b92a3b82304"
+    },
+    {
+      "path": "assets/characters/bard/skins/base/particles/bard_base_r_explo_nova.tex",
+      "wad_hash": "aa0df76726b1efd3",
+      "size": 87420,
+      "sha256": "cefb1bc1c54d75d39e81863253703aacfa8f94772611f3822f4ef57902837d03"
+    },
+    {
+      "path": "assets/characters/bard/skins/base/particles/bard_base_r_ring_flare.tex",
+      "wad_hash": "7b1e8ea409c3a34a",
+      "size": 43716,
+      "sha256": "9d4d6f2156253e3b468c8169432729e850d6a38e6d40e264533ffcc23f113d4a"
+    },
+    {
+      "path": "assets/characters/bard/skins/base/particles/bard_base_r_warning_decal.tex",
+      "wad_hash": "7f6cbdd378710f42",
+      "size": 87420,
+      "sha256": "e71ac66baf09f1c6562ae0a50c4a462d530da3bdf01eeb87dd57b982f9a93727"
+    }
+  ],
+  "note": "Staged source assets only. Model materials and particle dependencies must be verified before project integration.",
+  "conversion": "tools/dev.py source convert --format texture; runtime spherical alpha mask for cosmic_gold",
+  "outputs": {
+    "explo_nova.png": "b10b0f8c05422a58711d2303963796b17697580f251aa3b061f24e00c55aefed",
+    "warning_decal.png": "6581aea90cefd7afe4a175f4ded118c527da7dae7775e0cdd7cfec3a67dec2c4",
+    "cosmic_gold.png": "c4c680e42bf791afab6df2354121b36113512df63ee7c4b360c74291b6442509",
+    "ring_flare.png": "3fa57557caff4a69e8ca3136ae84460c52529c5f6d5ce1e909566858ca71f7ca"
+  }
+}

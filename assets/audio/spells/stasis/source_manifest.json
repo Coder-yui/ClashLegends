@@ -1,0 +1,20 @@
+{
+  "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Bard.wad.client",
+  "processing": "wwiser TXTP -> vgmstream WAV, original gain",
+  "events": [
+    {
+      "event": "Play_sfx_Bard_BardR_OnCast {r1}",
+      "source_txtp": "ClashLegends-开发素材库/03-制作中/凝滞法术/audio/bard/txtp/Play_sfx_Bard_BardR_OnCast {r1}.txtp",
+      "source_sha256": "c71031e0b717791b78787fb472351b98a6f178cd0c28af66d3cd7f62b6271203",
+      "output": "OnCast.wav",
+      "sha256": "cde8605f85a18be9fac8097d46cc420dc2971ae33be3d6b2d919803890403ba3"
+    },
+    {
+      "event": "Play_sfx_Bard_BardR_explo {r1}",
+      "source_txtp": "ClashLegends-开发素材库/03-制作中/凝滞法术/audio/bard/txtp/Play_sfx_Bard_BardR_explo {r1}.txtp",
+      "source_sha256": "60e387e52341005f8f8a5ebe4c4f92e3b7c63344f303128a7e62ea752be9f3fd",
+      "output": "explo.wav",
+      "sha256": "2e4a99178c3de989dc5b8737b629f4a332aa046b6cbde45db2366bc7ebc1c1c6"
+    }
+  ]
+}
