@@ -1355,6 +1355,7 @@ func _nearest_valid_ground_spawn(desired: Vector2, radius: float, p_team: int) -
 ## 形态放大采用权威半径瞬时切换。若当前位置对新半径不合法，确定性地挪到最近安全点，
 ## 并重置插值/路径，避免桥角、河岸或塔边因为旧体积合法而新体积永久卡住。
 func ensure_unit_form_resize_safe(unit: Unit) -> void:
+	if is_instance_valid(unit) and unit.knockback.in_transit: return # 外力途中不提前落地，抵达按新体型修正。
 	if unit == null or not is_instance_valid(unit) or unit.is_air or unit.is_building:
 		return
 	if is_ground_position_walkable(unit.global_position, unit.body_radius, unit):

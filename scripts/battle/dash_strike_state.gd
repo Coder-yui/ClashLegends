@@ -35,8 +35,11 @@ func tick(dt: float) -> bool:
 		_finish(source)
 		return false
 	var remaining := dt
-	if source._knockback_timer > 0.0:
-		stopped = true
+	if not stopped and (source.is_stunned() or source._knockback_timer > 0.0):
+		source.cancel_controlled_action(&"stun" if source.is_stunned() else &"knockback")
+		cancelled = true
+		_finish(source)
+		return false
 	if not stopped:
 		var tick_start: Vector2 = source.global_position
 		source.begin_dash_motion()

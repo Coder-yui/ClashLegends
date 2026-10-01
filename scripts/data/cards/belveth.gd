@@ -3,13 +3,13 @@ extends "res://scripts/data/card_schema.gd"
 static func definition() -> Dictionary:
 	return {
 		"gameplay": {
-			"name": "卑尔维斯", "cost": 7, "type": "unit",
+			"name": "虚空女皇", "cost": 7, "type": "unit",
 			"description": "大型空中推进单位，只攻击建筑；死亡后向周围分散生成8只可对地对空的虚空鱼。",
 			"hp": 1500, "damage": 90, "range": MELEE_RANGE_MIN,
 			"speed": SPEED_SLOW, "interval": 1.5, "first_hit": 0.15,
 			"size_tier": SIZE_LARGE, "radius": RADIUS_LARGE, "mass": 10.0, "sight": 240.0,
 			"is_air": true, "building_only": true, "can_attack_air": false,
-			"death_spawn_id": "voidfish", "death_spawn_count": 8,
+			"death_spawn_id": "voidfish", "death_spawn_count": 8, "death_spawn_spread": 100.0, "death_spawn_duration": 0.45,
 			"active_skills": [{
 				"name": "虚空突袭", "kind": "dash_strike", "cost": 1, "max_uses": 2, "cooldown": 6.0,
 				"damage": 100, "length": 3.0 * ArenaRules.TILE_SIZE, "width": 48.0,
@@ -22,9 +22,9 @@ static func definition() -> Dictionary:
 			"color": Color(0.6, 0.27, 0.85), "visual_radius": RADIUS_LARGE + VISUAL_RADIUS_PADDING,
 			"visual_scene_path": "res://assets/units/belveth/belveth_view.tscn", "visual_forward_yaw": 0.0,
 			"visual_animations": {
-				"deploy": "Respawn", "idle": "Idle1_Base", "move": "RunClosed_anm",
-				"attack": ["Attack1", "Attack2"], "death": "Death", "death_duration": 1.0,
-				"visual_actions": {"active": {"animation": ["Spell1_In", "Spell1_ToIdle"], "durations": [0.4, 0.2], "clip_ranges": [[0.0, 0.2666667], [0.0, 0.4]], "kind": "skill"}},
+				"deploy": "Respawn_Ult_anm", "idle": "Idle_Ult_anm", "move": "Run_Ult_anm",
+				"attack": ["AttackSwipe1_anm", "AttackSwipe2_anm"], "death": "Death", "death_duration": 1.0,
+				"visual_actions": {"active": {"animation": ["Spell1_ult_in_anm", "Spell1_ult_out_anm", "Spell1_ult_toidle_anm"], "durations": [0.1666667, 0.2333333, 0.2], "kind": "skill"}},
 			},
 			"active_skills": [{"visual_action": "active", "icon_path": "res://assets/skills/belveth_q.png"}],
 		},

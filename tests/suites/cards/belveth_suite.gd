@@ -6,8 +6,10 @@ func run(harness: Object, main: Node2D) -> void:
 	for team in [0, 1]:
 		_dash(team)
 		_death(team)
+	_scatter_boundary()
 	_controls()
 	_schema()
+	_ultimate_visual()
 
 func _make(id: String, team: int, point: Vector2) -> Unit:
 	return _main._spawn_unit(UnitSpawnRequest.new(team, id, point, {"deploy_time_override": 0.0}))
@@ -48,13 +50,41 @@ func _death(team: int) -> void:
 	for unit in _main.get_tree().get_nodes_in_group("combatants"):
 		if unit is Unit and unit.card_id == "voidfish" and unit.team == team: fish.append(unit)
 	_expect(fish.size() == 8, "死亡恰好生成8只虚空鱼，重复伤害不重复召唤")
-	var positions: Dictionary = {}
 	for unit in fish:
-		positions[unit.position] = true
 		_expect(unit.is_air and unit.can_attack_air and not unit.building_only and unit.max_hp == 110 and unit.damage == 26, "虚空鱼为独立对地对空弱小单位")
-		_expect(unit.position.distance_to(center) > source.body_radius, "虚空鱼从本体周围分散出生")
-	_expect(positions.size() == 8, "八个分散出生位置互异")
+		_expect(unit.position.distance_to(center) < 0.01, "八只虚空鱼从死亡点出生")
+	for tick in 9:
+		for unit in fish: unit.sim_tick(0.05)
+		_main._movement.tick(0.05)
+		if tick == 0:
+			for unit in fish:
+				_expect(unit.position.distance_to(center) > 1.0 and unit.position.distance_to(center) < 30.0, "散开经过中间位置，不瞬移到终点")
+	var positions: Dictionary = {}
+	for index in fish.size():
+		var unit := fish[index]
+		positions[unit.position] = true
+		_expect(unit.position.distance_to(center) > 95.0 and unit.position.distance_to(center) < 115.0, "散开半径约100像素")
+		_expect(unit.position.direction_to(center).dot(-Unit.SPAWN_DIRECTIONS[index]) > 0.98, "八方向散开轨迹正确")
+		_expect(unit._deploy_timer > 0.0 and unit._knockback_timer < 0.000001, "散开按时结束，保留部署锁定")
+	_expect(positions.size() == 8, "八个散开位置互异")
+	for index in fish.size():
+		_expect(fish[index].get_visual_facing_direction().is_equal_approx(Unit.SPAWN_DIRECTIONS[index]), "散开时面朝外侧")
 	for unit in fish: unit.free()
+	if is_instance_valid(source) and not source.is_queued_for_deletion(): source.free()
+
+func _scatter_boundary() -> void:
+	var source := _make("belveth", 0, Vector2(26, 26))
+	source.take_damage(100000)
+	var fish: Array[Unit] = []
+	for unit in _main.get_tree().get_nodes_in_group("combatants"):
+		if unit is Unit and unit.card_id == "voidfish": fish.append(unit)
+	for tick in 10:
+		for unit in fish: unit.sim_tick(0.05)
+		_main._movement.tick(0.05)
+	for unit in fish:
+		_expect(unit.position.x >= unit.body_radius - 0.01 and unit.position.y >= unit.body_radius - 0.01, "死亡散开在场边停止，不越界")
+		_expect(unit._knockback_timer == 0.0, "场边撞停后散开计时正常结束")
+		unit.free()
 	if is_instance_valid(source) and not source.is_queued_for_deletion(): source.free()
 
 func _controls() -> void:
@@ -90,3 +120,39 @@ func _schema() -> void:
 	var invalid := CardDB.all().duplicate(true)
 	invalid.belveth.active_skills[0].cast_duration = 0.1
 	_expect(not CardDB.VALIDATOR.validate_all(invalid, false).is_empty(), "拒绝施法时间短于突进")
+
+	for field in ["death_spawn_spread", "death_spawn_duration"]:
+		for value in [0.0, -1.0, "invalid"]:
+			invalid = CardDB.all().duplicate(true)
+			invalid.belveth[field] = value
+			_expect(not CardDB.VALIDATOR.validate_all(invalid, false).is_empty(), "死亡散开参数拒绝无效值")
+	invalid = CardDB.all().duplicate(true)
+	invalid.belveth.death_spawn_count = 0
+	_expect(not CardDB.VALIDATOR.validate_all(invalid, false).is_empty(), "死亡散开需要正数召唤数量")
+	invalid = CardDB.all().duplicate(true)
+	invalid.belveth.erase("death_spawn_duration")
+	_expect(not CardDB.VALIDATOR.validate_all(invalid, false).is_empty(), "死亡散开距离与时间必须成对配置")
+	invalid = CardDB.all().duplicate(true)
+	invalid.belveth.death_spawn_id = "tombstone"
+	_expect(not CardDB.VALIDATOR.validate_all(invalid, false).is_empty(), "死亡散开不能召唤建筑")
+
+func _ultimate_visual() -> void:
+	var source: Node3D = load("res://assets/units/belveth/source/belveth.glb").instantiate()
+	var view: Node3D = load("res://assets/units/belveth/belveth_view.tscn").instantiate()
+	view.prepare_visual_animations()
+	var source_mesh: MeshInstance3D = source.find_children("*", "MeshInstance3D", true, false)[0]
+	var visible_mesh: MeshInstance3D = view.find_children("*", "MeshInstance3D", true, false)[0]
+	_expect(source_mesh.mesh.get_surface_count() == 2 and visible_mesh.mesh.get_surface_count() == 1, "大招隐藏人形头部，原始共享网格保留")
+	var material: StandardMaterial3D = visible_mesh.mesh.surface_get_material(0)
+	_expect(material.albedo_texture.resource_path.ends_with("ultimate_body.png"), "大招身体使用原生大招贴图")
+	var player: AnimationPlayer = view.find_child("AnimationPlayer", true, false)
+	var stats: Dictionary = CardDB.get_unit_stats("belveth")
+	for index in [1, 2]:
+		var name := "AttackSwipe%d_anm" % index
+		var attack: Animation = player.get_animation(name)
+		_expect(stats.visual_animations.attack[index-1] == name, "直接映射原生大招常规普攻完整片段")
+		_expect(is_equal_approx(attack.length, 3.0), "原生普攻保持完整3秒时长")
+		_expect(is_equal_approx(0.3 / attack.length * stats.interval, stats.first_hit), "原生9帧节点整体等比映射到权威前摇")
+	_expect(not player.has_animation("AttackUlt1") and not player.has_animation("AttackUlt2"), "不再创建拆分重排的普攻动画")
+	view.free()
+	source.free()

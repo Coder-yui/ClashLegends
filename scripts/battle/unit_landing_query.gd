@@ -133,3 +133,54 @@ static func _legal(point: Vector2, regions: Array[Rect2], circles: Array[Vector3
 	for circle in circles:
 		if point.distance_squared_to(Vector2(circle.x,circle.y)) < circle.z*circle.z-0.01: return false
 	return true
+
+## 外部强制位移落点：普通可推动单位不参加终点排斥。
+static func displacement_circles(unit: Unit) -> Array[Vector3]:
+	var circles: Array[Vector3] = []
+	for other in unit.get_tree().get_nodes_in_group("combatants"):
+		if other == unit or not is_instance_valid(other) or other.hp <= 0.0: continue
+		var structure: bool = other is Tower or (other is Unit and other.is_building)
+		if structure:
+			if unit.is_air or unit.terrain_traversal.enabled: continue
+		elif not other is Unit or other.is_air != unit.is_air or not CombatInteraction.in_stasis(other): continue
+		circles.append(Vector3(other.global_position.x, other.global_position.y,
+			unit.body_radius + other.body_radius + 0.002 + (ArenaRules.STRUCTURE_SEPARATION if structure else 0.0)))
+	return circles
+
+static func displacement_legal(unit: Unit, point: Vector2) -> bool:
+	return _legal(point, _regions(unit.body_radius, unit.is_air or unit.terrain_traversal.enabled), displacement_circles(unit))
+
+static func displacement_recovery(unit: Unit, point: Vector2) -> Vector2:
+	return _nearest(point, unit.team, displacement_circles(unit), _regions(unit.body_radius, unit.is_air or unit.terrain_traversal.enabled), 0.02)
+
+## 在一条有限线段上枚举几何边界，不以采样步长漏掉狭窄合法区间。
+## 优先原终点，其次向前最近合法点，再退回起点方向；无解INF。
+static func displacement_endpoint(unit: Unit, origin: Vector2, direction: Vector2, distance: float, extension: float) -> Vector2:
+	var regions := _regions(unit.body_radius, unit.is_air or unit.terrain_traversal.enabled)
+	var circles := displacement_circles(unit)
+	var candidates: Array[float] = [distance, 0.0, distance + extension]
+	for region in regions:
+		if absf(direction.x) > 0.000001:
+			for x in [region.position.x, region.end.x]: candidates.append((x-origin.x)/direction.x)
+		if absf(direction.y) > 0.000001:
+			for y in [region.position.y, region.end.y]: candidates.append((y-origin.y)/direction.y)
+	for circle in circles:
+		var delta := origin - Vector2(circle.x, circle.y)
+		var along := delta.dot(direction)
+		var discriminant := along*along - delta.length_squared() + circle.z*circle.z
+		if discriminant >= 0.0:
+			candidates.append(-along-sqrt(discriminant))
+			candidates.append(-along+sqrt(discriminant))
+	var best_forward := INF
+	var best_backward := -INF
+	for candidate in candidates:
+		# 仅用于浮点边界的几何余量，独立于默认延长上限的2px安全余量。
+		for value in [candidate, candidate+0.002, candidate-0.002]:
+			var travel: float = value
+			if travel < 0.0 or travel > distance+extension: continue
+			if not _legal(origin+direction*travel, regions, circles): continue
+			if travel >= distance: best_forward = minf(best_forward, travel)
+			else: best_backward = maxf(best_backward, travel)
+	if is_finite(best_forward): return origin + direction*best_forward
+	if is_finite(best_backward): return origin + direction*best_backward
+	return Vector2(INF, INF)

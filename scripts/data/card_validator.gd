@@ -477,6 +477,15 @@ static func _validate_rush(card_id: String, stats: Dictionary, errors: PackedStr
 
 static func _validate_references(card_id: String, stats: Dictionary, cards: Dictionary, errors: PackedStringArray) -> void:
 	_validate_rush(card_id, stats, errors)
+	if stats.has("death_spawn_spread") or stats.has("death_spawn_duration"):
+		for field in ["death_spawn_spread", "death_spawn_duration"]:
+			if float(stats.get(field, 0.0)) <= 0.0:
+				errors.append("%s.%s: 死亡散开距离与时间必须同时为正数" % [card_id, field])
+		var summon_id := String(stats.get("death_spawn_id", ""))
+		if int(stats.get("death_spawn_count", 0)) <= 0 or summon_id.is_empty():
+			errors.append("%s.death_spawn_spread: 需要死亡召唤单位与正数数量" % card_id)
+		elif cards.has(summon_id) and bool(cards[summon_id].get("is_building", false)):
+			errors.append("%s.death_spawn_spread: 召唤建筑不能散开移动" % card_id)
 	for field in [&"growth_ranged_id", &"growth_melee_id", &"deployment_upgrade_id", &"spawn_id", &"death_spawn_id", &"death_replacement_id", &"timed_revival_id", &"rush_spawn_id"]:
 		var referenced_id := String(stats.get(field, ""))
 		if not referenced_id.is_empty() and not _unit_reference_exists(referenced_id, cards):

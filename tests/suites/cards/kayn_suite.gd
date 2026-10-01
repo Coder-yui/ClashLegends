@@ -128,7 +128,7 @@ func _control_and_growth_deployment() -> void:
 	dash = DashStrikeState.new(source,skill)
 	source.stun(1.0)
 	dash.tick(0.05)
-	_expect(source.position != before and source.skill_dash_active, "眩晕不取消已开始Q")
+	_expect(source.position == before and not source.skill_dash_active and dash.cancelled, "眩晕取消突进与尚未开始的旋转")
 	source.take_damage(30)
 	_expect(source.hp == 620, "突进仍可被伤害命中")
 	source.free();target.free()
@@ -190,7 +190,7 @@ func _dash_edges() -> void:
 	dash.tick(0.05)
 	_expect(not a.skill_dash_active and a.position == position_before, "击退接管后停止剩余自主突进")
 	for tick in 8: dash.tick(0.05)
-	_expect(dash.stopped and not dash.cancelled, "击退保留旋转阶段，区别于冰冻取消")
+	_expect(dash.cancelled and not dash.spin_hit, "击退取消突进和未开始旋转，不伪造正常停止")
 	a.free()
 
 func _workbench_forms_and_animation() -> void:

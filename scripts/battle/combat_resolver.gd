@@ -22,7 +22,7 @@ func _resolve_immediate_attack_hit(p_team: int, origin: Vector2, primary: Node2D
 		var result := _hit(primary, hit_amount, amount, from, p_team, source_position, effects)
 		var landed: bool = result.landed
 		if landed:
-			_apply_attack_hit_effects(primary, effects)
+			_apply_attack_hit_effects(primary, effects, from)
 			if counts_as_attack and is_instance_valid(from) and from is Unit:
 				_settle_bleeding_attack(primary, from, effects, result)
 				if from.battle_context != null: from.battle_context.record_growth_hit(from, primary)
@@ -33,7 +33,7 @@ func _resolve_immediate_attack_hit(p_team: int, origin: Vector2, primary: Node2D
 		if landed and was_alive and primary.hp <= 0.0 and from is Unit and is_instance_valid(from) and from.hp > 0.0:
 			(from as Unit).on_enemy_killed(primary)
 		if landed and knockback > 0.0 and primary is Unit and is_instance_valid(primary) and primary.hp > 0.0:
-			(primary as Unit).apply_knockback(origin, knockback)
+			(primary as Unit).apply_knockback(origin, knockback, 0.2, 1.4, [], CombatInteraction.effect_context(from, p_team, source_position))
 		return landed
 	var impact_pos := primary.global_position
 	var any_landed := false
@@ -52,12 +52,12 @@ func _resolve_immediate_attack_hit(p_team: int, origin: Vector2, primary: Node2D
 			var result := _hit(c, hit_amount, amount, from, p_team, source_position, effects)
 			var landed: bool = result.landed
 			if landed:
-				_apply_attack_hit_effects(c, effects)
+				_apply_attack_hit_effects(c, effects, from)
 			any_landed = landed or any_landed
 			if landed and was_alive and c.hp <= 0.0 and from is Unit and is_instance_valid(from) and from.hp > 0.0:
 				(from as Unit).on_enemy_killed(c)
 			if landed and knockback > 0.0 and c is Unit and is_instance_valid(c) and c.hp > 0.0:
-				(c as Unit).apply_knockback(origin, knockback)
+				(c as Unit).apply_knockback(origin, knockback, 0.2, 1.4, [], CombatInteraction.effect_context(from, p_team, source_position))
 	if any_landed and counts_as_attack and from is Unit and is_instance_valid(from) and from.hp > 0.0:
 		(from as Unit).on_attack_landed(source_form_index, 0.0, -1, int(effects.get("source_generation", -1))) # 范围吸血尚未设计，不把名义伤害作为掉血。
 	if any_landed and counts_as_attack:
@@ -77,11 +77,11 @@ func _settle_bleeding_attack(target: Node2D, source: Unit, effects: Dictionary, 
 			source.battle_context.grant_skill_recast(source)
 			source.battle_context.notify_unit_audio_event(source, &"execute:kill", target.global_position)
 
-func _apply_attack_hit_effects(target: Node2D, effects: Dictionary) -> void:
+func _apply_attack_hit_effects(target: Node2D, effects: Dictionary, source: Node2D = null) -> void:
 	if target is Unit and is_instance_valid(target) and target.hp > 0.0:
 		var blind_charges := maxi(int(effects.get("blind_charges", 0)), 0)
 		if blind_charges > 0:
-			(target as Unit).apply_blind(blind_charges)
+			(target as Unit).apply_blind(blind_charges, CombatInteraction.effect_context(source if is_instance_valid(source) else null))
 
 
 func _hit(target: Node2D, hit_amount: float, raw_amount: float, source: Node2D, team: int, position: Vector2, effects: Dictionary) -> Dictionary:
@@ -160,6 +160,8 @@ func commit_batch() -> void:
 			var share := float(hit.result.damage) / total if total > 0.0 else 0.0
 			hit.result.health_lost = lost * share
 			hit.result.shield_absorbed = absorbed * share
+			if (lost + absorbed) * share > 0.0:
+				CombatInteraction.record_combat_effect(target, CombatInteraction.effect_context(hit.source if is_instance_valid(hit.source) else null))
 			hit.result.overkill = maxf(float(hit.result.damage) - (lost + absorbed) * share, 0.0)
 	# 先固定全批存活状态，再施加控制和发放存活收益。
 	for callback in _effects: callback.call()
@@ -205,12 +207,12 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 		var fixed_target: Node2D = target
 		defer_effect(func():
 			if not result.landed: return
-			_apply_attack_hit_effects(fixed_target, effects)
+			_apply_attack_hit_effects(fixed_target, effects, from)
 			if counts_as_attack and radius <= 0.0 and is_instance_valid(from) and from is Unit:
 				_settle_bleeding_attack(fixed_target, from, effects, result)
 				if from.battle_context != null: from.battle_context.record_growth_hit(from, fixed_target))
 		if knockback > 0.0 and fixed_target is Unit:
-			submit_knockback(fixed_target, origin, knockback, 0.2, 1.4, displacement_order, result)
+			submit_knockback(fixed_target, origin, knockback, 0.2, 1.4, displacement_order, result, CombatInteraction.effect_context(from, p_team, source_position))
 		defer_benefit(func():
 			if not result.landed: return
 			if not is_instance_valid(from) or not from is Unit or from.hp <= 0.0: return
@@ -254,11 +256,17 @@ func next_displacement_order(source: Node2D) -> Array:
 	_source_event_sequences[id] = sequence
 	return [id, sequence, 0]
 
-func submit_knockback(target: Unit, origin: Vector2, distance: float, duration: float, mass_factor_max: float, order: Array, hit_result: Dictionary = {}) -> void:
+func submit_knockback(target: Unit, origin: Vector2, distance: float, duration: float, mass_factor_max: float, order: Array, hit_result: Dictionary = {}, interaction: Dictionary = {}) -> void:
 	if not target.can_receive_knockback(origin, distance, duration, mass_factor_max): return
 	assert(order.size() == 3 and int(order[0]) > 0 and int(order[1]) > 0 and int(order[2]) >= 0)
 	_knockbacks.append({"target": target, "origin": origin, "distance": distance,
-		"duration": duration, "mass_factor_max": mass_factor_max, "order": order.duplicate(), "hit_result": hit_result})
+		"duration": duration, "mass_factor_max": mass_factor_max, "order": order.duplicate(), "hit_result": hit_result, "interaction": interaction})
+
+func submit_forced_displacement(target: Unit, direction: Vector2, distance: float, duration: float, extension: float, order: Array, interaction: Dictionary = {}) -> void:
+	assert(order.size() == 3 and int(order[0]) > 0 and int(order[1]) > 0 and int(order[2]) >= 0)
+	_knockbacks.append({"target": target, "origin": target.global_position, "direction": direction,
+		"distance": distance, "duration": duration, "extension": extension, "mass_factor_max": 1.0,
+		"order": order.duplicate(), "hit_result": {}, "interaction": interaction, "forced": true})
 
 func _commit_knockbacks() -> void:
 	_knockbacks.sort_custom(func(a, b):
@@ -267,6 +275,11 @@ func _commit_knockbacks() -> void:
 		return false)
 	for event in _knockbacks:
 		if not event.hit_result.is_empty() and not event.hit_result.landed: continue
-		if is_instance_valid(event.target):
-			event.target.apply_knockback(event.origin, event.distance, event.duration, event.mass_factor_max)
+		if is_instance_valid(event.target) and CombatInteraction.allows(event.target) and event.target.can_receive_knockback(event.origin, event.distance, event.duration, event.mass_factor_max):
+			# 来源上下文只补战斗归属，不重新用已移动的来源改变本批既有空间准入。
+			if bool(event.get("forced", false)):
+				if not event.target.apply_forced_displacement(event.direction, event.distance, event.duration, event.extension): continue
+			else:
+				event.target.apply_knockback(event.origin, event.distance, event.duration, event.mass_factor_max)
+			CombatInteraction.record_combat_effect(event.target, event.interaction)
 	_knockbacks.clear()

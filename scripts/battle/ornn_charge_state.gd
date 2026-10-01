@@ -13,6 +13,7 @@ var stopped := false
 var hit_obstacle := false
 var collided := false
 var finished := false
+var cancelled := false
 var trail_hit_ids: Dictionary = {}
 var blast_hit_ids: Dictionary = {}
 var stop_structure: Node2D
@@ -34,6 +35,7 @@ func tick(dt: float) -> bool:
 	if not is_instance_valid(source):
 		return false
 	if source.hp <= 0.0 or source.is_frozen() or serial <= source.cancelled_skill_cast_serial or serial != source.active_skill_cast_serial:
+		cancelled = true
 		_finish(source)
 		return false
 	var prepare := float(skill.charge_prepare_time)
@@ -45,11 +47,15 @@ func tick(dt: float) -> bool:
 		source.sync_dash_cast(serial, false, duration, elapsed, 1.0, duration - elapsed)
 		return true
 	if not stopped:
-		if source._knockback_timer <= 0.0:
-			_play_steps(source, travelled / float(skill.length))
-			_advance_charge(source, float(skill.length), float(skill.fixed_speed) * dt)
-		else:
-			stopped = true
+		if source.is_stunned() or source._knockback_timer > 0.0:
+			# 准备结束仍受控也不能开始位移；取消不伪造撞墙/抵达。
+			source.skill_dash_active = true
+			source.cancel_controlled_action(&"stun" if source.is_stunned() else &"knockback")
+			cancelled = true
+			_finish(source)
+			return false
+		_play_steps(source, travelled / float(skill.length))
+		_advance_charge(source, float(skill.length), float(skill.fixed_speed) * dt)
 		if stopped:
 			hit_obstacle = collided
 			recovery = float(skill.charge_recovery_time) if hit_obstacle else float(skill.charge_miss_recovery_time)
@@ -168,7 +174,7 @@ func _resolve_blast(source: Unit) -> void:
 			if target is Unit:
 				target.stun(float(skill.stun_duration), source.status_source("ornn_charge"), CombatInteraction.effect_context(source))
 			else:
-				target.stun(float(skill.stun_duration), source.status_source("ornn_charge"))
+				target.stun(float(skill.stun_duration), source.status_source("ornn_charge"), CombatInteraction.effect_context(source))
 
 func _active_damage(source: Unit, target: Node2D, amount: float, origin: Vector2) -> bool:
 	if source.battle_context != null:

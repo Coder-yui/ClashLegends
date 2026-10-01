@@ -118,12 +118,13 @@ func apply_stasis(duration: float, source: StringName = &"legacy", interaction: 
 	if is_king or hp <= 0.0 or not is_finite(duration) or duration <= 0.0: return
 	if not CombatInteraction.allows_effect(self, interaction): return
 	if battle_context != null and battle_context.damage_batch().collecting:
-		battle_context.damage_batch().defer_effect(func(): _receive_stasis(duration, source))
+		battle_context.damage_batch().defer_effect(func(): _receive_stasis(duration, source, interaction))
 		return
-	_receive_stasis(duration, source)
+	_receive_stasis(duration, source, interaction)
 
-func _receive_stasis(duration: float, source: StringName) -> void:
+func _receive_stasis(duration: float, source: StringName, interaction: Dictionary = {}) -> void:
 	if is_king or hp <= 0.0: return
+	CombatInteraction.record_combat_effect(self, interaction)
 	control.hard.apply(&"stasis", source, duration, {})
 	_target = null
 	_lock_windup = 0.0
@@ -131,24 +132,26 @@ func _receive_stasis(duration: float, source: StringName) -> void:
 	if battle_context != null: battle_context.invalidate_target_locks(self)
 	queue_redraw()
 
-func freeze(duration: float, source: StringName = &"legacy") -> void:
-	if CombatInteraction.in_stasis(self): return
+func freeze(duration: float, source: StringName = &"legacy", interaction: Dictionary = {}) -> void:
+	if is_king or CombatInteraction.in_stasis(self): return
 	if hp <= 0.0 or not is_finite(duration) or duration <= 0.0: return
 	if battle_context != null and battle_context.damage_batch().collecting:
-		battle_context.damage_batch().defer_effect(func(): freeze(duration, source))
+		battle_context.damage_batch().defer_effect(func(): freeze(duration, source, interaction))
 		return
+	CombatInteraction.record_combat_effect(self, interaction)
 	if control.refresh_freeze(duration, source):
 		_target = null
 		_lock_windup = 0.0
 		_cooldown = 0.0
 	queue_redraw()
 
-func stun(duration: float, source: StringName = &"legacy") -> void:
+func stun(duration: float, source: StringName = &"legacy", interaction: Dictionary = {}) -> void:
 	if CombatInteraction.in_stasis(self): return
 	if hp <= 0.0 or not is_finite(duration) or duration <= 0.0: return
 	if battle_context != null and battle_context.damage_batch().collecting:
-		battle_context.damage_batch().defer_effect(func(): stun(duration, source))
+		battle_context.damage_batch().defer_effect(func(): stun(duration, source, interaction))
 		return
+	CombatInteraction.record_combat_effect(self, interaction)
 	if control.refresh_stun(duration, source):
 		_target = null
 		_lock_windup = 0.0
@@ -250,6 +253,8 @@ func take_damage(amount: float, _from: Node2D = null, _source_team: int = -1, _s
 		return bool(battle_context.damage_batch().submit_damage(self, amount, _from, _source_team, _source_position, attached).accepted)
 	if hp <= 0.0:
 		return false
+	if BattleNumbers.quantity(amount) > 0:
+		CombatInteraction.record_combat_effect(self, CombatInteraction.effect_context(_from, _source_team, _source_position))
 	var was_alive := hp > 0.0
 	var remaining_damage := BattleNumbers.quantity(maxf(amount, 0.0))
 	remaining_damage = shields.absorb(remaining_damage)
@@ -361,9 +366,6 @@ func _draw() -> void:
 		draw_circle(Vector2.ZERO, visual_radius + 3.0, outline)
 		draw_circle(Vector2.ZERO, visual_radius, Color(1.0, 0.67, 0.12) if CombatInteraction.in_stasis(self) else Color(0.55, 0.50, 0.45))
 	if not PresentationConfig.status_indicators_visible(self): return
-	# 冰冻状态：蓝色覆盖
-	if frozen_timer > 0.0 and not CombatInteraction.in_stasis(self):
-		draw_circle(Vector2.ZERO, visual_radius + 4.0, Color(0.40, 0.70, 1.00, 0.35))
 	if control.stun_timer > 0.0:
 		var rotation := -get_global_transform_with_canvas().get_rotation()
 		var head := _stun_head_local if _has_stun_head else Vector2(0, -visual_radius).rotated(rotation)

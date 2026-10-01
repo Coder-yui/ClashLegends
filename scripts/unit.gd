@@ -275,6 +275,8 @@ var spawn_defer_while_controlled := false
 var spawn_side := ""
 var death_spawn_id := ""
 var death_spawn_count := 0
+var death_spawn_spread := 0.0
+var death_spawn_duration := 0.0
 ## 通用一次性死亡替身：原单位死亡时立即生成指定单位（例如凤凰→蛋）。
 var death_replacement_id := ""
 var death_replacement_charges := 0
@@ -335,7 +337,9 @@ var _knockback_timer: float:
 	get: return knockback.remaining
 var _charge_timer := 0.0
 var _charged := false
-var _skill_resource_combat_timer := 0.0
+# 权威公共事实：无进攻动作、硬控或有效战斗减益时才累计；消费方不另起等待。
+var combat_idle_seconds := 0.0
+var active_skill_offensive := false
 var _just_deployed := false
 var net_visual_state := 1
 var net_attack_visual_serial := 0
@@ -532,6 +536,8 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	spawn_side = String(stats.get("spawn_side", ""))
 	death_spawn_id = String(stats.get("death_spawn_id", ""))
 	death_spawn_count = maxi(int(stats.get("death_spawn_count", 0)), 0)
+	death_spawn_spread = float(stats.get("death_spawn_spread", 0.0))
+	death_spawn_duration = float(stats.get("death_spawn_duration", 0.0))
 	death_replacement_id = String(stats.get("death_replacement_id", ""))
 	death_replacement_charges = maxi(int(stats.get("death_replacement_charges", 0)), 0)
 	death_replacement_visual_transition = String(stats.get("death_replacement_visual_transition", ""))
@@ -638,7 +644,7 @@ func action_permissions() -> int:
 		allowed &= ~ControlState.MOVE
 	if is_active_skill_facing_locked():
 		allowed &= ~ControlState.TURN
-	if _knockback_timer > 0.0:
+	if _knockback_timer > 0.0 or knockback.recovery_pending:
 		allowed &= ~(ControlState.MOVE | ControlState.BASIC_ATTACK | ControlState.START_SKILL | ControlState.TURN)
 	if is_building or structure_rush.control_immune():
 		allowed &= ~ControlState.EXTERNAL_MOTION
@@ -823,8 +829,9 @@ func finish_dash_cast(serial: int) -> void:
 	active_skill_cast_facing = Vector2.ZERO
 	active_skill_cast_locks.clear()
 
-func begin_active_skill_cast(duration: float, facing: Vector2, cast_locks: Array = DEFAULT_CAST_LOCKS) -> void:
-	stealth.activity()
+func begin_active_skill_cast(duration: float, facing: Vector2, cast_locks: Array = DEFAULT_CAST_LOCKS, offensive: bool = true) -> void:
+	active_skill_offensive = offensive
+	if offensive: record_combat_activity()
 	active_skill_cast_serial += 1
 	active_skill_cast_timer = maxf(duration, 0.0)
 	active_skill_cast_locks.clear()
@@ -879,7 +886,6 @@ func configure_carried_active_skill(skill: Dictionary) -> void:
 	skill_resource_damage_gain_multiplier = _configured_skill_resource_damage_gain_multiplier
 	skill_resource_decay_delay = _configured_skill_resource_decay_delay
 	skill_resource_decay_rate = _configured_skill_resource_decay_rate
-	_skill_resource_combat_timer = skill_resource_decay_delay
 	queue_redraw()
 
 func clear_carried_active_skill_resource() -> void:
@@ -892,7 +898,6 @@ func clear_carried_active_skill_resource() -> void:
 	skill_resource_damage_gain_multiplier = 0.0
 	skill_resource_decay_delay = 0.0
 	skill_resource_decay_rate = 0.0
-	_skill_resource_combat_timer = 0.0
 	queue_redraw()
 
 func add_skill_resource(amount: float) -> void:
@@ -906,21 +911,28 @@ func add_skill_resource(amount: float) -> void:
 	skill_resource_value = minf(skill_resource_value + amount, skill_resource_max)
 	queue_redraw()
 
+func record_combat_activity(reveal: bool = false) -> void:
+	combat_idle_seconds = 0.0
+	stealth.activity(reveal)
+
+# 兼容技能资源/工作台调用；只记录一次公共战斗事实。
 func mark_skill_resource_combat_activity() -> void:
-	if not skill_resource_enabled:
-		return
-	_skill_resource_combat_timer = skill_resource_decay_delay
+	record_combat_activity()
+
+func has_sustained_combat() -> bool:
+	if _attacking or (active_skill_cast_timer > 0.0 and active_skill_offensive): return true
+	if _knockback_timer > 0.0: return true
+	for family in [&"stun", &"freeze", &"stasis", &"root", &"taunt", &"pull", &"push"]:
+		if control.hard.remaining(family) > 0.0: return true
+	return bleeding.total_stacks() > 0 or blind_attack_charges > 0 or (not active_buff_ignores_movement_slow and control.slow_multiplier < 1.0) or (not active_buff_ignores_attack_speed_slow and control.attack_speed_slow_multiplier < 1.0)
+
+func _advance_combat_idle(dt: float) -> void:
+	# 在旧状态扣时前采样，控制到期的这一段时间仍不属于空闲。
+	combat_idle_seconds = 0.0 if has_sustained_combat() else combat_idle_seconds + maxf(dt, 0.0)
 
 func _tick_skill_resource_decay(dt: float) -> void:
-	if not skill_resource_enabled or skill_resource_value <= 0.0:
-		return
-	var decay_dt := dt
-	if _skill_resource_combat_timer > 0.0:
-		if dt <= _skill_resource_combat_timer:
-			_skill_resource_combat_timer -= dt
-			return
-		decay_dt = dt - _skill_resource_combat_timer
-		_skill_resource_combat_timer = 0.0
+	if not skill_resource_enabled or skill_resource_value <= 0.0: return
+	var decay_dt := clampf(combat_idle_seconds - skill_resource_decay_delay, 0.0, dt)
 	if decay_dt > 0.0 and skill_resource_decay_rate > 0.0:
 		skill_resource_value = maxf(0.0, skill_resource_value - skill_resource_decay_rate * decay_dt)
 
@@ -961,11 +973,12 @@ func apply_attack_lifesteal(heal_ratio: float, max_health_ratio: float = 1.0) ->
 func apply_blind(attacks: int, interaction: Dictionary = {}) -> void:
 	if not CombatInteraction.allows_effect(self, interaction): return
 	# 持续输出能力没有离散出手，致盲对此类攻击无作用。
-	if hp <= 0.0 or continuous_attack or structure_rush.control_immune(): return
+	if hp <= 0.0 or attacks <= 0 or continuous_attack or structure_rush.control_immune(): return
 	if battle_context != null and battle_context.damage_batch().collecting:
 		battle_context.damage_batch().defer_effect(func():
-			if hp > 0.0: apply_blind(attacks))
+			if hp > 0.0: apply_blind(attacks, interaction))
 		return
+	CombatInteraction.record_combat_effect(self, interaction)
 	blind_attack_charges = maxi(blind_attack_charges, maxi(attacks, 0))
 	queue_redraw()
 
@@ -1218,6 +1231,7 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prep
 	if battle_context == null or skill_dash_moved_tick != battle_context.simulation_tick(): _prev_pos = position
 	_move_intent = Vector2.ZERO
 	_forced_movement = false
+	if knockback.recovery_pending: recover_displacement_position()
 	if _knockback_timer > 0.0:
 		_tick_knockback_movement(dt)
 	var summons_started := false
@@ -1244,10 +1258,10 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prep
 		else:
 			_tick_periodic_summons(dt)
 	if is_building:
-		_building_tick(dt, true)
+		_building_tick(dt, true, summons_started)
 		if hp <= 0.0 or is_queued_for_deletion():
 			return
-	if is_frozen() or control.stun_timer > 0.0:
+	if is_frozen() or control.stun_timer > 0.0 or knockback.recovery_pending:
 		if control.frozen_timer <= 0.0 and control.stun_timer <= 0.0:
 			queue_redraw()
 		_charge_timer = 0.0
@@ -1399,7 +1413,7 @@ func _perform_deploy_sweep() -> void:
 		if was_alive and c.hp <= 0.0:
 			on_enemy_killed(c)
 		if c is Unit and is_instance_valid(c) and c.hp > 0.0 and deploy_sweep_knockback > 0.0:
-			(c as Unit).apply_knockback(global_position, deploy_sweep_knockback, deploy_sweep_duration, deploy_sweep_mass_factor_max, displacement_order)
+			(c as Unit).apply_knockback(global_position, deploy_sweep_knockback, deploy_sweep_duration, deploy_sweep_mass_factor_max, displacement_order, CombatInteraction.effect_context(self))
 
 	if any_landed and battle_context != null:
 		battle_context.notify_unit_audio_event(self, &"deploy:hit", global_position)
@@ -1407,13 +1421,73 @@ func _perform_deploy_sweep() -> void:
 func can_receive_knockback(origin: Vector2, distance: float, duration: float, mass_factor_max: float) -> bool:
 	return hp > 0.0 and not structure_rush.control_immune() and not is_queued_for_deletion() and not is_building and origin.is_finite() and is_finite(distance) and distance > 0.0 and is_finite(duration) and duration > 0.0 and is_finite(mass_factor_max)
 
+## 外部强制位移按世界距离/原始速度执行；不是自主技能，也不借用质量倍率。
+func apply_forced_displacement(direction: Vector2, distance: float, duration: float, max_extension: float = -1.0, interaction: Dictionary = {}, displacement_order: Array = []) -> bool:
+	if not is_inside_tree() or battle_context == null: return false
+	if not direction.is_finite() or direction.length_squared() < 0.000001 or not is_finite(max_extension) or (max_extension < 0.0 and max_extension != -1.0): return false
+	if not can_receive_knockback(global_position, distance, duration, 1.0) or not CombatInteraction.allows_effect(self, interaction): return false
+	if battle_context != null and battle_context.damage_batch().collecting:
+		var order := displacement_order
+		if order.is_empty(): order = battle_context.damage_batch().next_displacement_order(self)
+		battle_context.damage_batch().submit_forced_displacement(self, direction, distance, duration, max_extension, order, interaction)
+		return true
+	var extension := 40.0 + body_radius + 2.0 if max_extension == -1.0 else max_extension
+	var forward := direction.normalized()
+	var end := UnitLandingQuery.displacement_endpoint(self, global_position, forward, distance, extension)
+	if not end.is_finite(): return false # 没有合法线段终点：拒绝新请求，不破坏旧外力。
+	# 接管不结算旧轨迹的完成收益，也不跳到旧终点。
+	structure_rush.interrupt_preparation(self)
+	knockback.replace_forced(global_position, end, forward, distance, duration, extension)
+	_path = PackedVector2Array()
+	_path_index = 0
+	_path_target = null
+	_repath_cd = 0.0
+	_move_intent = Vector2.ZERO
+	_forced_movement = false
+	CombatInteraction.record_combat_effect(self, interaction)
+	cancel_controlled_action(&"knockback", false)
+	return true
+
+## 结束/中断只修正非法的实际位置；不执行技能命中、到达或路径收益。
+func recover_displacement_position() -> bool:
+	if not is_inside_tree() or battle_context == null: return true # 尚未加入战场的纯状态对象没有落点可修正。
+	if UnitLandingQuery.displacement_legal(self, global_position):
+		knockback.recovery_pending = false
+		return true
+	var point := UnitLandingQuery.displacement_recovery(self, global_position)
+	if point.is_finite():
+		global_position = point
+		_prev_pos = point
+		_path = PackedVector2Array()
+		_path_index = 0
+		_path_target = null
+		_repath_cd = 0.0
+		knockback.recovery_pending = false
+		return true
+	# 全场无解：不出界、不伪造到达。停在场内并在后续Tick重试。
+	global_position = Vector2(clampf(global_position.x, body_radius, ArenaRules.FIELD_W-body_radius), clampf(global_position.y, body_radius, ArenaRules.FIELD_H-body_radius))
+	knockback.recovery_pending = true
+	return false
+
+func finish_forced_displacement_step() -> void:
+	if not knockback.collisionless: return
+	if knockback.arrival_pending:
+		knockback.arrival_pending = false
+		knockback.in_transit = false
+		recover_displacement_position()
+	if knockback.remaining <= 0.0:
+		recover_displacement_position()
+		knockback.collisionless = false
+		knockback.end_reason = &"completed"
+
 func apply_knockback(origin: Vector2, distance: float, duration: float = 0.2, mass_factor_max: float = 1.4, displacement_order: Array = [], interaction: Dictionary = {}) -> void:
 	if not CombatInteraction.allows_effect(self, interaction): return
 	# 必须先校验再替换；拒绝的请求不得破坏旧位移。
 	if not can_receive_knockback(origin, distance, duration, mass_factor_max): return
 	if battle_context != null and battle_context.damage_batch().collecting:
-		battle_context.damage_batch().submit_knockback(self, origin, distance, duration, mass_factor_max, displacement_order)
+		battle_context.damage_batch().submit_knockback(self, origin, distance, duration, mass_factor_max, displacement_order, {}, interaction)
 		return
+	if knockback.collisionless and not recover_displacement_position(): return
 	structure_rush.interrupt_preparation(self)
 	# 当前没有异步位移完成回调。只替换状态，清掉旧 Tick 尚未消费的移动意图。
 	_move_intent = Vector2.ZERO
@@ -1423,7 +1497,8 @@ func apply_knockback(origin: Vector2, distance: float, duration: float = 0.2, ma
 		direction = Vector2.DOWN if team == 0 else Vector2.UP
 	var mass_factor := clampf(4.0 / maxf(mass, 1.0), 0.35, maxf(mass_factor_max, 0.35))
 	knockback.replace(direction, distance * mass_factor, duration)
-	cancel_basic_attack(&"knockback")
+	CombatInteraction.record_combat_effect(self, interaction)
+	cancel_controlled_action(&"knockback")
 
 func _tick_knockback_movement(dt: float) -> void:
 	# 最后一 Tick 只结算剩余时长，避免浮点余量让 0.25s 击退多走一个完整 20Hz Tick。
@@ -1444,9 +1519,8 @@ func surface_gap_to_circle(center: Vector2, radius: float) -> float:
 
 ## 旧动作窗口在命令执行前推进一次；本边界新动作从下个边界开始推进。
 func prepare_action_clocks(dt: float) -> void:
-	if _attacking or active_skill_cast_timer > 0.0: stealth.activity()
-	# 控制只阻止新入隐；既有隐身和脱战倒计时不因此重置。
-	stealth.advance(dt, not is_frozen() and not is_stunned())
+	# 已有隐身是否解除独立于脱战资格；这里只消费公共空闲时长。
+	stealth.sync_idle(combat_idle_seconds)
 	target_protection.advance(dt, global_position)
 	# 仅推进旧恢复锁；新撞击仍在后续行动阶段创建，下个边界才首次扣时。
 	if structure_rush.phase == StructureRushState.Phase.RECOVERY:
@@ -1503,12 +1577,14 @@ func _tick_building_lifetime(dt: float) -> void:
 			_die()
 			return
 
-func _building_tick(dt: float, natural_lifecycle_prepared: bool = false) -> void:
+func _building_tick(dt: float, natural_lifecycle_prepared: bool = false, summons_started: bool = false) -> void:
 	if not natural_lifecycle_prepared:
 		_tick_building_lifetime(dt)
 	if hp <= 0.0 or is_queued_for_deletion(): return
+	if summons_started: return
 	if not _initial_summons_spawned:
 		_spawn_initial_summons()
+		return # 首批发出当帧不预扣下一周期，等待期间也不另排周期批次。
 	if spawn_interval > 0.0:
 		_tick_periodic_summons(dt)
 
@@ -1604,7 +1680,7 @@ func _update_target(keep_windup_target: bool = false) -> void:
 		_path_index = 0
 	if _target != null:
 		var drop := false
-		if not is_instance_valid(_target) or _target.hp <= 0.0:
+		if not _target_is_attackable(_target):
 			drop = true
 		elif building_only and not _is_struct(_target):
 			drop = true
@@ -1682,7 +1758,7 @@ func _find_nearest_tower() -> Node2D:
 	var princess_towers: Array[Tower] = []
 	var enemy_towers: Array[Tower] = []
 	for c in get_tree().get_nodes_in_group("combatants"):
-		if not c is Tower or c.team == team or c.hp <= 0.0:
+		if not c is Tower or not _target_is_attackable(c):
 			continue
 		var tower := c as Tower
 		enemy_towers.append(tower)
@@ -1948,7 +2024,7 @@ func _try_start_attack_visual(time_until_hit: float) -> void:
 	var hit_delay := _next_attack_first_hit_time()
 	if continuous_attack or not _attack_visual_pending or time_until_hit > hit_delay / _effective_attack_speed_multiplier() + 0.001:
 		return
-	stealth.activity(true)
+	record_combat_activity(true)
 	_attack_visual_pending = false
 	_attack_visual_first_strike = false
 	if first_strike_damage_multiplier != 1.0 and _target != null and is_instance_valid(_target):
@@ -2009,7 +2085,7 @@ func _deal_attack_damage_to(target: Node2D, amount: float, effects: Dictionary =
 		var landed: bool = result.landed
 		if landed:
 			if target is Unit and int(effects.get("blind_charges", 0)) > 0:
-				(target as Unit).apply_blind(int(effects.blind_charges))
+				(target as Unit).apply_blind(int(effects.blind_charges), CombatInteraction.effect_context(self))
 			on_attack_landed(-1, float(result.health_lost))
 			if was_alive and target.hp <= 0.0:
 				on_enemy_killed(target)
@@ -2027,7 +2103,7 @@ func _settle_melee_delivery(delivered: bool, generation: int, cycle: int, advanc
 
 ## 每一刀都独立消费一次致盲。剑圣 Passive 的第二刀因此确实算作第二次普通攻击。
 func _perform_attack_strike(target: Node2D, amount: float, effects: Dictionary = {}) -> bool:
-	stealth.activity()
+	record_combat_activity()
 	if blind_attack_charges > 0:
 		blind_attack_charges -= 1
 		queue_redraw()
@@ -2199,7 +2275,8 @@ func _try_attack_lifesteal(landed_damage: float, cycle_ratio: float = 0.0) -> vo
 	_present_heal_gain(hp_before_heal)
 	queue_redraw()
 
-func cancel_skill_cast() -> void:
+func cancel_skill_cast(recover_position: bool = true) -> void:
+	if recover_position and skill_dash_active and hp > 0.0: recover_displacement_position()
 	visual_action_clock_managed = false
 	visual_action_clock_rate = 1.0
 	skill_dash_active = false
@@ -2209,6 +2286,14 @@ func cancel_skill_cast() -> void:
 	active_skill_cast_timer = 0.0
 	active_skill_cast_facing = Vector2.ZERO
 	active_skill_cast_locks.clear()
+
+## 有效眩晕/击退只取消正在自主位移的技能，不取消已停下的普通尾段。
+func cancel_controlled_action(reason: StringName, recover_position: bool = true) -> void:
+	var cancel_displacement := skill_dash_active
+	if cancel_displacement:
+		cancelled_visual_serial = maxi(cancelled_visual_serial, get_visual_action_serial())
+	cancel_basic_attack(reason)
+	if cancel_displacement: cancel_skill_cast(recover_position)
 
 func cancel_basic_attack(reason: StringName) -> void:
 	action_cancel_serial += 1
@@ -2261,13 +2346,15 @@ func apply_stasis(duration: float, source: StringName = &"legacy", interaction: 
 	if hp <= 0.0 or not is_finite(duration) or duration <= 0.0: return
 	if structure_rush.control_immune(): return
 	if battle_context != null and battle_context.damage_batch().collecting:
-		battle_context.damage_batch().defer_effect(func(): _receive_stasis(duration, source))
+		battle_context.damage_batch().defer_effect(func(): _receive_stasis(duration, source, interaction))
 		return
-	_receive_stasis(duration, source)
+	_receive_stasis(duration, source, interaction)
 
-func _receive_stasis(duration: float, source: StringName) -> void:
+func _receive_stasis(duration: float, source: StringName, interaction: Dictionary = {}) -> void:
 	if hp <= 0.0: return
+	CombatInteraction.record_combat_effect(self, interaction)
 	get_visual_facing_direction()
+	if knockback.collisionless or skill_dash_active: recover_displacement_position()
 	control.hard.apply(&"stasis", source, duration, {})
 	buffs.suppressed = true
 	cancel_basic_attack(&"stasis")
@@ -2285,12 +2372,13 @@ func freeze(duration: float, source: StringName = &"legacy", interaction: Dictio
 	if not CombatInteraction.allows_effect(self, interaction): return
 	if hp <= 0.0 or not is_finite(duration) or duration <= 0.0 or structure_rush.control_immune(): return
 	if battle_context != null and battle_context.damage_batch().collecting:
-		battle_context.damage_batch().defer_effect(func(): _receive_freeze(duration, source))
+		battle_context.damage_batch().defer_effect(func(): _receive_freeze(duration, source, interaction))
 		return
-	_receive_freeze(duration, source)
+	_receive_freeze(duration, source, interaction)
 
-func _receive_freeze(duration: float, source: StringName) -> void:
+func _receive_freeze(duration: float, source: StringName, interaction: Dictionary = {}) -> void:
 	if hp <= 0.0: return
+	CombatInteraction.record_combat_effect(self, interaction)
 	get_visual_facing_direction()
 	if control.refresh_freeze(duration, source):
 		cancel_basic_attack(&"freeze")
@@ -2302,15 +2390,16 @@ func stun(duration: float, source: StringName = &"legacy", interaction: Dictiona
 	if not CombatInteraction.allows_effect(self, interaction): return
 	if hp <= 0.0 or not is_finite(duration) or duration <= 0.0 or structure_rush.control_immune(): return
 	if battle_context != null and battle_context.damage_batch().collecting:
-		battle_context.damage_batch().defer_effect(func(): _receive_stun(duration, source))
+		battle_context.damage_batch().defer_effect(func(): _receive_stun(duration, source, interaction))
 		return
-	_receive_stun(duration, source)
+	_receive_stun(duration, source, interaction)
 
-func _receive_stun(duration: float, source: StringName) -> void:
+func _receive_stun(duration: float, source: StringName, interaction: Dictionary = {}) -> void:
 	if hp <= 0.0: return
+	CombatInteraction.record_combat_effect(self, interaction)
 	get_visual_facing_direction()
 	if control.refresh_stun(duration, source):
-		cancel_basic_attack(&"stun")
+		cancel_controlled_action(&"stun")
 	if duration > 0.0: structure_rush.interrupt_preparation(self)
 	queue_redraw()
 
@@ -2318,12 +2407,13 @@ func apply_slow(duration: float, multiplier: float, source: StringName = &"legac
 	if not CombatInteraction.allows_effect(self, interaction): return
 	if hp <= 0.0 or not is_finite(duration) or duration <= 0.0 or not is_finite(multiplier) or structure_rush.control_immune() or active_buff_ignores_movement_slow: return
 	if battle_context != null and battle_context.damage_batch().collecting:
-		battle_context.damage_batch().defer_effect(func(): _receive_apply_slow(duration, multiplier, source))
+		battle_context.damage_batch().defer_effect(func(): _receive_apply_slow(duration, multiplier, source, interaction))
 		return
-	_receive_apply_slow(duration, multiplier, source)
+	_receive_apply_slow(duration, multiplier, source, interaction)
 
-func _receive_apply_slow(duration: float, multiplier: float, source: StringName) -> void:
+func _receive_apply_slow(duration: float, multiplier: float, source: StringName, interaction: Dictionary = {}) -> void:
 	if hp <= 0.0: return
+	if multiplier < 1.0: CombatInteraction.record_combat_effect(self, interaction)
 	control.refresh_slow(duration, multiplier, source)
 	queue_redraw()
 
@@ -2332,12 +2422,13 @@ func apply_attack_speed_slow(duration: float, multiplier: float, source: StringN
 	if not CombatInteraction.allows_effect(self, interaction): return
 	if hp <= 0.0 or not is_finite(duration) or duration <= 0.0 or not is_finite(multiplier) or structure_rush.control_immune() or active_buff_ignores_attack_speed_slow: return
 	if battle_context != null and battle_context.damage_batch().collecting:
-		battle_context.damage_batch().defer_effect(func(): _receive_apply_attack_speed_slow(duration, multiplier, source))
+		battle_context.damage_batch().defer_effect(func(): _receive_apply_attack_speed_slow(duration, multiplier, source, interaction))
 		return
-	_receive_apply_attack_speed_slow(duration, multiplier, source)
+	_receive_apply_attack_speed_slow(duration, multiplier, source, interaction)
 
-func _receive_apply_attack_speed_slow(duration: float, multiplier: float, source: StringName) -> void:
+func _receive_apply_attack_speed_slow(duration: float, multiplier: float, source: StringName, interaction: Dictionary = {}) -> void:
 	if hp <= 0.0: return
+	if multiplier < 1.0: CombatInteraction.record_combat_effect(self, interaction)
 	var previous_speed := _effective_attack_speed_multiplier()
 	control.refresh_attack_slow(duration, multiplier, source)
 	_rescale_attack_phase(previous_speed)
@@ -2409,6 +2500,7 @@ func clear_shields() -> void:
 	queue_redraw()
 
 func _tick_active_statuses(dt: float) -> void:
+	_advance_combat_idle(dt)
 	var previous_speed := _effective_attack_speed_multiplier()
 	control.tick_hard_controls(dt)
 	buffs.suppressed = CombatInteraction.in_stasis(self)
@@ -2465,9 +2557,8 @@ func take_damage(amount: float, from: Node2D = null, source_team: int = -1, sour
 		return bool(battle_context.damage_batch().submit_damage(self, amount, from, source_team, source_position, attached).accepted)
 	if hp <= 0.0:
 		return false
-	if amount > 0.0:
-		stealth.activity()
-		mark_skill_resource_combat_activity()
+	if BattleNumbers.quantity(amount) > 0:
+		CombatInteraction.record_combat_effect(self, CombatInteraction.effect_context(from, source_team, source_position))
 	var remaining_damage := BattleNumbers.quantity(maxf(amount, 0.0))
 	remaining_damage = shields.absorb(remaining_damage)
 	if not shields.broken_effects.is_empty() and battle_context != null:
@@ -2519,6 +2610,7 @@ func begin_death_form_transition(delay: float) -> void:
 	cancel_basic_attack(&"death_form")
 	cancel_skill_cast()
 	clear_shields()
+	if knockback.collisionless: recover_displacement_position()
 	knockback.cancel(&"death_form")
 	_target = null
 	_move_intent = Vector2.ZERO
@@ -2611,8 +2703,13 @@ func _spawn_death_summons() -> void:
 	var spawn_distance := body_radius + summon_radius + SUMMON_SEPARATION
 	for index in range(death_spawn_count):
 		var direction: Vector2 = SPAWN_DIRECTIONS[index % SPAWN_DIRECTIONS.size()]
-		var spawn_pos := global_position + direction * spawn_distance
-		battle_context.spawn_summoned(team, death_spawn_id, spawn_pos)
+		var scattering := death_spawn_spread > 0.0 and death_spawn_duration > 0.0
+		var spawn_pos := global_position if scattering else global_position + direction * spawn_distance
+		var summoned: Unit = battle_context.spawn_summoned(team, death_spawn_id, spawn_pos)
+		if scattering and is_instance_valid(summoned):
+			# 出生外力复用权威位移/碰撞，不结算敌方击退、质量缩放或受击事件。
+			summoned._body_facing_direction = direction
+			summoned.apply_forced_displacement(direction, death_spawn_spread, death_spawn_duration)
 
 ## 可由客户端死亡 RPC / 快照缺席兜底调用；信号只发一次，避免重复死亡表现。
 func notify_visual_death() -> void:
@@ -2765,8 +2862,6 @@ func _draw() -> void:
 	draw_set_transform(_vis_offset, 0.0, Vector2.ONE)
 	if restoration_fx_timer > 0.0 and hp > 0.0:
 		preload("res://scripts/presentation/restoration_heal_effect.gd").draw_effect(self, 1.0 - restoration_fx_timer / preload("res://scripts/presentation/restoration_heal_effect.gd").DURATION)
-	if control.frozen_timer > 0.0:
-		draw_circle(Vector2.ZERO, visual_radius + 4.0, Color(0.4, 0.8, 1.0, 0.3))
 	if _forge_work_effect != null and hp > 0.0:
 		_forge_work_effect.draw_effect(self, get_health_bar_screen_center())
 	if stun_visual():

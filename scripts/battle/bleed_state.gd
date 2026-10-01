@@ -21,6 +21,7 @@ func apply(target: Node2D, source: Unit, definition: Dictionary, full: bool) -> 
 	effect.dps = float(definition.bleed_damage_per_second)
 	effect.fraction = 0.0
 	_sources[id] = effect
+	CombatInteraction.record_combat_effect(target, CombatInteraction.effect_context(source))
 	return int(effect.stacks)
 
 func advance(target: Node2D, dt: float) -> void:

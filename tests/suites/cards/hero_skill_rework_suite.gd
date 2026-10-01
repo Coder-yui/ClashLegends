@@ -104,6 +104,8 @@ func _check_sett_shield_and_combat_decay() -> void:
 	sett._tick_active_statuses(1.0)
 	var shield_expired := is_zero_approx(sett.shield_hp) and is_zero_approx(sett.shield_timer)
 
+	# 此夹具手动起攻后没有推进攻击时间线；显式结束攻击才可测试严格空闲。
+	sett.cancel_basic_attack(&"empowered_reset")
 	sett.add_skill_resource(100.0)
 	sett._tick_active_statuses(0.75)
 	var combat_delay_holds := is_equal_approx(sett.skill_resource_value, 100.0)

@@ -109,7 +109,6 @@ func apply_cast_start(source: Unit, skill: Dictionary) -> void:
 	var duration := maxf(float(skill.get("shield_duration", 0.0)), 0.0)
 	if amount <= 0.0 or duration <= 0.0:
 		return
-	source.mark_skill_resource_combat_activity()
 	source.add_shield(amount, duration, bool(skill.get("shield_decay", false)), source.status_source("shield"))
 
 
@@ -238,7 +237,7 @@ func apply_permanent_growth(source: Unit, skill: Dictionary) -> bool:
 		if enemy.is_air != target.is_air: continue
 		if not CombatInteraction.allows(enemy, source, source.team, target.global_position): continue
 		if enemy.global_position.distance_to(target.global_position) > float(skill.knockback_radius) + enemy.body_radius: continue
-		enemy.apply_knockback(target.global_position, float(skill.knockback), float(skill.knockback_duration), float(skill.get("knockback_mass_factor_max", 1.4)), order)
+		enemy.apply_knockback(target.global_position, float(skill.knockback), float(skill.knockback_duration), float(skill.get("knockback_mass_factor_max", 1.4)), order, CombatInteraction.effect_context(source))
 	return true
 
 func apply_area_shield(source: Unit, skill: Dictionary) -> void:
@@ -313,7 +312,7 @@ func activate_nova(source: Unit, skill: Dictionary) -> void:
 			any_landed = _damage_combatant(source, combatant, amount, source.global_position) or any_landed
 		if combatant is Unit and is_instance_valid(combatant) and combatant.hp > 0.0:
 			if knockback > 0.0:
-				(combatant as Unit).apply_knockback(source.global_position, knockback, knockback_duration, knockback_mass_factor_max, displacement_order)
+				(combatant as Unit).apply_knockback(source.global_position, knockback, knockback_duration, knockback_mass_factor_max, displacement_order, CombatInteraction.effect_context(source))
 			if slow_duration > 0.0:
 				(combatant as Unit).apply_slow(slow_duration, slow_multiplier, source.status_source("skill"), CombatInteraction.effect_context(source))
 	if not bool(skill.get("shield_on_cast_start", false)):
@@ -539,7 +538,7 @@ func apply_forward_area(source: Unit, skill: Dictionary, forward: Vector2 = Vect
 		if combatant is Unit and is_instance_valid(combatant) and combatant.hp > 0.0 and float(skill.get("slow_duration", 0.0)) > 0.0:
 			(combatant as Unit).apply_slow(float(skill.slow_duration), float(skill.get("slow_multiplier", 1.0)), context.status_source, CombatInteraction.effect_context(source, source_team, context.get("source_position", center)))
 		if is_instance_valid(combatant) and combatant.hp > 0.0 and stun_duration > 0.0 and combatant.has_method("stun"):
-			combatant.stun(stun_duration, context.status_source)
+			combatant.stun(stun_duration, context.status_source, CombatInteraction.effect_context(source, source_team, context.get("source_position", center)))
 	var zone_duration := maxf(float(skill.get("zone_duration", 0.0)), 0.0)
 	var zone_tick_interval := maxf(float(skill.get("zone_tick_interval", 1.0)), 0.01)
 	if zone_duration > 0.0:
@@ -741,7 +740,7 @@ func apply_frontal_stun(source: Unit, skill: Dictionary, forward: Vector2) -> vo
 		if amount > 0.0:
 			any_landed = combatant.take_damage(amount, source, source.team, source.global_position) or any_landed
 		if is_instance_valid(combatant) and combatant.hp > 0.0 and stun_duration > 0.0 and combatant.has_method("stun"):
-			combatant.stun(stun_duration, source.status_source("skill"))
+			combatant.stun(stun_duration, source.status_source("skill"), CombatInteraction.effect_context(source))
 
 
 	if any_landed:

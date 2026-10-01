@@ -177,10 +177,10 @@ func _sweep(unit: Unit, next: Vector2) -> void:
 		# 挤出路径的侧向位移走现有击退接管、质量与地形规则。
 		var origin: Vector2 = c.global_position - push_side
 		if unit.battle_context.damage_batch().collecting:
-			unit.battle_context.damage_batch().submit_knockback(c, origin, float(config.rush_push_distance), 0.2, 1.0, order, result)
+			unit.battle_context.damage_batch().submit_knockback(c, origin, float(config.rush_push_distance), 0.2, 1.0, order, result, CombatInteraction.effect_context(unit))
 		elif result.landed:
 			if not CombatInteraction.allows(c, unit): continue
-			c.apply_knockback(origin, float(config.rush_push_distance), 0.2, 1.0, order)
+			c.apply_knockback(origin, float(config.rush_push_distance), 0.2, 1.0, order, CombatInteraction.effect_context(unit))
 		var apply_hit := func():
 			if not result.landed: return
 			_audio(unit, &"rush:path_hit")
@@ -214,7 +214,7 @@ func _impact(unit: Unit) -> void:
 			var seed := point - impact_direction * (radius + ArenaRules.STRUCTURE_SEPARATION + 2.0) + side * lerpf(-8.0, 8.0, ratio)
 			var spawn := unit.battle_context.spawn_summoned(unit.team, String(config.rush_spawn_id), seed)
 			if spawn != null:
-				spawn.apply_knockback(spawn.global_position - outward, float(config.rush_spawn_spread) * ([0.8, 2.3, 1.5, 2.0, 1.0, 2.6][index % 6]), 0.45, 1.0)
+				spawn.apply_forced_displacement(outward, float(config.rush_spawn_spread) * ([0.8, 2.3, 1.5, 2.0, 1.0, 2.6][index % 6]), 0.45)
 	if unit.battle_context.damage_batch().collecting:
 		unit.battle_context.damage_batch().defer_effect(on_hit)
 	else: on_hit.call()

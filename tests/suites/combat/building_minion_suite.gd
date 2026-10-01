@@ -15,6 +15,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_tombstone_footprint()
 	_check_tombstone_does_not_push_air_units()
 	_check_tombstone_spawn_cycle()
+	_check_tombstone_deferred_summons()
 	_check_generic_periodic_summon()
 
 
@@ -838,6 +839,8 @@ func _check_tombstone_spawn_cycle() -> void:
 			initial_ready = initial_ready and imp.is_deployed() and is_equal_approx(imp._deploy_timer, 0.0)
 	_expect(initial_count == 2 and initial_left_side and initial_ready, "墓碑完成部署后立即在地图左侧连续生成两个无需部署读条的小鬼")
 	left.sim_tick(4.95)
+	_expect(_imp_units().size() == after_initial.size(), "墓碑首批发出后4.95秒不提前产出")
+	left.sim_tick(0.05)
 	var after_periodic := _imp_units()
 	_expect(after_periodic.size() - after_initial.size() == 2, "墓碑每 5 秒额外生成两个小鬼")
 
@@ -984,3 +987,35 @@ func _check_baron_projectile_card(card: String) -> void:
 	system.clear_all()
 	source.free()
 	target.free()
+
+func _check_tombstone_deferred_summons() -> void:
+	for kind in ["stun", "freeze", "stasis"]:
+		var unit: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "tombstone", Vector2(360,900)))
+		var before := _imp_units().size()
+		match kind:
+			"stun": unit.stun(3.0)
+			"freeze": unit.freeze(3.0)
+			"stasis": unit.apply_stasis(3.0)
+		for tick in range(40): unit.sim_tick(0.05)
+		_expect(_imp_units().size() == before and not unit._initial_summons_spawned, "墓碑%s首批待发不跳过" % kind)
+		unit.control.hard.clear_family(StringName(kind))
+		unit.stun(0.5)
+		unit.freeze(0.5)
+		unit.control.hard.clear_family(&"stun")
+		unit.sim_tick(0.05)
+		_expect(_imp_units().size() == before, "墓碑部分解控不发出")
+		unit.control.hard.clear_family(&"freeze")
+		unit.sim_tick(0.05)
+		_expect(_imp_units().size() == before + 2 and is_equal_approx(unit._spawn_timer,5.0), "墓碑最终解控仅发一批并完整重计5秒")
+		unit._spawn_timer = 0.05
+		unit.apply_stasis(7.0)
+		for tick in range(120): unit.sim_tick(0.05)
+		_expect(_imp_units().size() == before + 2 and unit._spawn_timer == 0.0, "墓碑到期周期最多待发一批")
+		unit.control.hard.clear_family(&"stasis")
+		unit.sim_tick(0.05)
+		_expect(_imp_units().size() == before + 4 and is_equal_approx(unit._spawn_timer,5.0), "墓碑周期解控发出后完整重计")
+		unit.apply_stasis(20.0)
+		unit.sim_tick(10.0)
+		_expect(unit.hp <= 0.0 and _imp_units().size() == before + 4, "墓碑受控自然到期不延寿、不补待发或死亡额外小鬼")
+		if not unit.is_queued_for_deletion(): unit.free()
+		for imp in _imp_units(): imp.free()

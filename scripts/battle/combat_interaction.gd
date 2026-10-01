@@ -31,3 +31,12 @@ static func allows_allied_target(target: Unit, team: int) -> bool:
 
 static func in_stasis(target: Node2D) -> bool:
 	return is_instance_valid(target) and (target is Unit or target is Tower) and target.control.hard.remaining(&"stasis") > 0.0
+
+## 成功发生的伤害/控制/战斗减益：接受方入战，有敌对来源时来源也入战。
+## 友方硬控同样记录接受方；普通友方收益不调用此入口。
+static func record_combat_effect(target, context: Dictionary = {}) -> void:
+	if not is_instance_valid(target): return
+	if target.has_method("record_combat_activity"): target.record_combat_activity()
+	var source = context.get("source")
+	if is_instance_valid(source) and source != target and source.team != target.team and source.has_method("record_combat_activity"):
+		source.record_combat_activity()

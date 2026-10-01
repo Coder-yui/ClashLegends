@@ -31,6 +31,13 @@ func _apply_unit_movement(dt: float, units: Array[Unit]) -> void:
 	for unit in units:
 		var key := _unit_order_key(unit)
 		if unit.skill_dash_active or CombatInteraction.in_stasis(unit): continue
+		if unit.knockback.in_transit:
+			unit.global_position += unit._move_intent * dt
+			unit.global_position = Vector2(clampf(unit.position.x, unit.body_radius, ArenaRules.FIELD_W-unit.body_radius), clampf(unit.position.y, unit.body_radius, ArenaRules.FIELD_H-unit.body_radius))
+			unit.finish_forced_displacement_step()
+			unit.on_movement_applied(0.0, dt)
+			continue
+		unit.finish_forced_displacement_step()
 		var autonomous: Vector2 = velocities[key]
 		if unit.structure_rush.displacement_immune():
 			# 冲撞只能沿已验证直线推进，准备期也不接受接触推挤。
@@ -72,6 +79,7 @@ func _clip_knockback_contacts(units: Array[Unit], velocities: Dictionary, dt: fl
 		if not a._forced_movement or a.structure_rush.displacement_immune(): continue
 		for j in units.size():
 			var b := units[j]
+			if a.knockback.in_transit or b.knockback.in_transit: continue
 			if a == b or a.skill_dash_active or b.skill_dash_active or a.is_air != b.is_air or b.structure_rush.displacement_immune(): continue
 			if b._forced_movement and j < i: continue
 			var ka := _unit_order_key(a)
@@ -232,17 +240,20 @@ func _adjust_unit_velocity(unit: Unit, units: Array[Unit], dt: float) -> Vector2
 		var direction := desired.normalized()
 		var side := Vector2(-direction.y, direction.x)
 		for other in units:
+			if other.knockback.in_transit: continue
 			if other == unit or other.skill_dash_active or unit.skill_dash_active or other.is_air != unit.is_air:
 				continue
+			var immovable_stasis := CombatInteraction.in_stasis(other)
+			# 凝滞实体保留碰撞且不能推动，敌我均须尝试侧移。
 			# 敌军仅为互不索敌、迎面接触的建筑目标单位解除僵持。
 			# 防守者（包括已停步攻击者）不触发推进单位主动避让。
-			if other.team != unit.team and not (unit.building_only and other.building_only
+			if not immovable_stasis and other.team != unit.team and not (unit.building_only and other.building_only
 					and not other._forced_movement and desired.dot(other._move_intent) < 0.0):
 				continue
 			# ContactA 对同向行军不请求侧移；冲锋且质量更大的单位也能继续推行。
-			if not other._forced_movement and desired.dot(other._move_intent) > 0.0:
+			if not immovable_stasis and not other._forced_movement and desired.dot(other._move_intent) > 0.0:
 				continue
-			if unit._charged and unit.mass > other.mass:
+			if not immovable_stasis and unit._charged and unit.mass > other.mass:
 				continue
 			# 只在身体受阻后侧挤，不提前选择空位或改变寻路目标。
 			if unit.global_position.distance_squared_to(other.global_position) > pow(unit.body_radius + other.body_radius, 2.0):
@@ -278,6 +289,7 @@ func _collect_unit_contacts(units: Array[Unit]) -> Dictionary:
 		var a := units[i]
 		for j in range(i + 1, units.size()):
 			var b := units[j]
+			if a.knockback.in_transit or b.knockback.in_transit: continue
 			if a.skill_dash_active or b.skill_dash_active or a.structure_rush.control_immune() or b.structure_rush.control_immune(): continue
 			if a.is_air != b.is_air:
 				continue
@@ -289,6 +301,9 @@ func _collect_unit_contacts(units: Array[Unit]) -> Dictionary:
 			var direction: Vector2
 			if distance > 0.0001:
 				direction = delta / distance
+			elif a._forced_movement and b._forced_movement and not a._move_intent.is_equal_approx(b._move_intent):
+				# 同点向外散开的实体按相对外力分离，避免任意上下轴把其中一只挤停。
+				direction = (a._move_intent - b._move_intent).normalized()
 			elif a._just_deployed or b._just_deployed:
 				# 保留项目部署挤位的结构朝向约定，不冒充原生对象 id 奇偶规则。
 				direction = _landing_overlap_direction(a, b)

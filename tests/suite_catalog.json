@@ -383,5 +383,19 @@
     "method": "run",
     "scene": "battle",
     "group": "cards"
+  },
+  {
+    "id": "CombatActivitySuite",
+    "script": "res://tests/suites/status/combat_activity_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "status"
+  },
+  {
+    "id": "ForcedDisplacementSuite",
+    "script": "res://tests/suites/status/forced_displacement_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "status"
   }
 ]

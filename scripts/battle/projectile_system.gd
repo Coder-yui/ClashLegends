@@ -348,9 +348,9 @@ func _tick_skill_arrow(projectile: Dictionary, dt: float, colliders: Array) -> b
 				if target is Unit and is_instance_valid(target) and target.hp > 0.0:
 					var skill: Dictionary = projectile.skill
 					if float(skill.get("slow_duration", 0.0)) > 0.0:
-						target.apply_slow(float(skill.slow_duration), float(skill.get("slow_multiplier", 1.0)), projectile.status_source)
+						target.apply_slow(float(skill.slow_duration), float(skill.get("slow_multiplier", 1.0)), projectile.status_source, CombatInteraction.effect_context(source, projectile.team, projectile.source_pos))
 					if float(skill.get("stun_duration", 0.0)) > 0.0:
-						target.stun(float(skill.stun_duration), projectile.status_source)
+						target.stun(float(skill.stun_duration), projectile.status_source, CombatInteraction.effect_context(source, projectile.team, projectile.source_pos))
 				if not bool(projectile.get("basic_piercing", false)) and not bool(projectile.skill.get("passive_wave", false)) and (piercing or not bool(projectile.cast.sound_played)):
 					projectile.cast.sound_played = true
 					skill_hit.emit(projectile.presentation_source, String(projectile.skill.get("visual_action", "")), projectile.pos)

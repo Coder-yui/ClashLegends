@@ -4,7 +4,7 @@ static func definition() -> Dictionary:
 	return {
 		"gameplay": {
 			"name": "虚空鱼", "cost": 1, "type": "unit", "selectable": false,
-			"description": "卑尔维斯死亡后生成的小型空中近战单位，可以攻击地面和空中目标。",
+			"description": "虚空女皇死亡后生成的小型空中近战单位，可以攻击地面和空中目标。",
 			"hp": 110, "damage": 26, "range": MELEE_RANGE_MIN,
 			"speed": SPEED_MEDIUM, "interval": 1.25, "first_hit": 0.41,
 			"size_tier": SIZE_SMALL, "radius": RADIUS_SMALL, "mass": 1.8, "sight": 210.0,

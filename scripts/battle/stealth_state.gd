@@ -18,9 +18,10 @@ func activity(break_hidden: bool = false) -> void:
 		hidden = false
 		changed.emit(false)
 
-func advance(dt: float, entry_allowed: bool = true) -> void:
+## 生产路径不再独立累计脱战时间，只消费Unit的同一份权威空闲时长。
+func sync_idle(idle_seconds: float) -> void:
 	if delay <= 0.0: return
-	remaining = maxf(remaining - dt, 0.0)
-	if remaining <= 0.000001 and entry_allowed and not hidden:
+	remaining = maxf(delay - idle_seconds, 0.0)
+	if remaining <= 0.000001 and not hidden:
 		hidden = true
 		changed.emit(true)
