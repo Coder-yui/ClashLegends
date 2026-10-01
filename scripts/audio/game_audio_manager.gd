@@ -28,6 +28,9 @@ var _projectile_launch_players: Dictionary = {}
 var _last_projectile_launch_id := -1
 var _sustain_players: Dictionary = {}
 var _unit_entries: Dictionary = {}
+# 状态声音归受影响对象，独立于其原卡音频、换形和被取消的动作。
+var _stasis_sources: Dictionary = {}
+var _spell_flight_players: Dictionary = {}
 var _stream_pool_cache: Dictionary = {}
 var _preview_hit_queue: Array[Dictionary] = []
 var _preview_serials: Dictionary = {}
@@ -43,6 +46,8 @@ func end_battle(preserve_nexus: bool = false) -> void:
 	if not preserve_nexus:
 		_cancel_terminal_audio()
 	_battle_ended = true
+	_stasis_sources.clear()
+	clear_spell_flight_audio()
 	clear_zone_audio()
 	clear_projectile_launch_audio()
 	for key in _sustain_players.keys():
@@ -85,7 +90,7 @@ func set_battle_paused(paused: bool) -> void:
 		_paused_players.clear()
 
 func battle_audio_stopped() -> bool:
-	if not _sustain_players.is_empty() or not _zone_players.is_empty() or not _projectile_launch_players.is_empty() or not _building_audio.is_empty() or not _preview_hit_queue.is_empty():
+	if not _spell_flight_players.is_empty() or not _sustain_players.is_empty() or not _zone_players.is_empty() or not _projectile_launch_players.is_empty() or not _building_audio.is_empty() or not _preview_hit_queue.is_empty():
 		return false
 	for player in _world_players:
 		if player.playing:
@@ -192,6 +197,7 @@ func _process(delta: float) -> void:
 	_tick_building_damage_audio()
 	_tick_building_audio(delta)
 	_tick_attached_units()
+	_tick_stasis_audio()
 	_tick_preview_hits(delta)
 
 ## 固定落地区域拥有自己的声音，施法者死亡/受控不终止已经生成的区域。
@@ -394,7 +400,7 @@ func _tick_attached_units() -> void:
 		_detach_unit(instance_id)
 
 ## 每单位 action/buff/attack 独立长音层；只有持续普攻片段结束后续播。
-func _start_sustain(unit: Unit, entry: Dictionary, action: StringName, layer: StringName = &"action") -> void:
+func _start_sustain(unit: Node2D, entry: Dictionary, action: StringName, layer: StringName = &"action") -> void:
 	if _battle_ended or _battle_paused:
 		return
 	var cue := StringName(String(action) + ":sustain")
@@ -418,7 +424,7 @@ func _start_sustain(unit: Unit, entry: Dictionary, action: StringName, layer: St
 	player.volume_db = float(event.get("volume_db", 0.0))
 	player.stream = _randomized_stream(PackedStringArray(event.get("pool", [])), layer in [&"explosive_shield", &"berserk", &"blood_rage", &"terrain"])
 	add_child(player)
-	player.global_position = unit.target_protection.center if layer == &"sanctuary" else unit.get_visual_screen_position()
+	player.global_position = unit.target_protection.center if layer == &"sanctuary" and unit is Unit else _status_audio_position(unit)
 	var key := _sustain_key(unit.get_instance_id(), layer)
 	player.set_meta("audio_priority", priority)
 	_sustain_players[key] = player
@@ -481,6 +487,8 @@ func _event_owner(unit: Unit, cue: StringName) -> Dictionary:
 	if cue == &"forge:pulse": return {"unit": unit.get_instance_id(), "kind": "forge", "serial": 0}
 	if cue in [&"empowered_swing", &"first_strike:cast", &"attack_swing", &"continuous_attack:start", &"continuous_attack:release"]:
 		return {"unit": unit.get_instance_id(), "kind": "attack", "serial": unit.get_attack_visual_serial()}
+	if cue in [&"active:cast", &"active:spin", &"charge:step"] and unit.active_skill_cast_timer > 0.0:
+		return {"unit": unit.get_instance_id(), "kind": "action", "serial": unit.get_visual_action_serial()}
 	var phase := name.get_slice(":", 1)
 	if name.get_slice(":", 0) in ["active_buff", "empowered_buff", "revival", "rebirth", "sanctuary", "blood_rage"] or cue in [&"empowered_ready", &"resource_full", &"passive_heal", &"active:cast"]:
 		return {}
@@ -495,7 +503,8 @@ func _on_action_cancelled(payload: Dictionary, instance_id: int) -> void:
 		if int(owner.get("unit", -1)) != instance_id:
 			continue
 		var kind := String(owner.get("kind", ""))
-		if (kind == "attack" or freeze) and int(owner.get("serial", 0)) <= int(payload.get(kind, 0)):
+		var barrier := int(payload.get("cancelled_action", payload.get("action", -1) if freeze else -1)) if kind == "action" else int(payload.get(kind, -1)) if kind == "attack" or freeze else -1
+		if int(owner.get("serial", 0)) <= barrier:
 			player.stop()
 			player.stream = null
 	if _unit_entries.has(instance_id):
@@ -505,10 +514,10 @@ func _on_action_cancelled(payload: Dictionary, instance_id: int) -> void:
 			entry.continuous_active = false
 		entry.last_swing_serial = maxi(int(entry.last_swing_serial), int(payload.get("attack", 0)))
 		entry.last_empowered_serial = maxi(int(entry.last_empowered_serial), int(payload.get("attack", 0)))
-		if freeze and int(entry.action_serial) <= int(payload.get("action", 0)):
+		if int(entry.action_serial) <= int(payload.get("cancelled_action", payload.get("action", -1) if freeze else -1)):
 			_stop_sustain(instance_id, &"action")
 			entry.active_action = &""
-			entry.action_serial = maxi(int(entry.action_serial), int(payload.get("action", 0)))
+			entry.action_serial = maxi(int(entry.action_serial), int(payload.get("cancelled_action", payload.get("action", 0))))
 
 
 func _detach_unit(instance_id: int) -> void:
@@ -530,7 +539,7 @@ func _on_unit_death(instance_id: int) -> void:
 	_unit_entries.erase(instance_id)
 
 ## 通用纯表现事件入口；未配置的事件保持静音，不猜测或替代技能素材。
-func play_event(unit: Unit, cue: StringName, position: Vector2, attack_serial: int = -1, action_timed: bool = false) -> bool:
+func play_event(unit: Unit, cue: StringName, position: Vector2, attack_serial: int = -1, action_timed: bool = false, action_serial: int = -1) -> bool:
 	if is_instance_valid(unit) and not unit.visible_to_local_player(): return false
 	if unit == null or not is_instance_valid(unit):
 		return false
@@ -558,6 +567,12 @@ func play_event(unit: Unit, cue: StringName, position: Vector2, attack_serial: i
 	# 独立结果创建声由权威结果事件派发，不再随本体动作重复启动。
 	if event.get("owner", "") == "result": return false
 	var owner := _event_owner(unit, cue)
+	# 可靠取消可能早于快照/不可靠音效到达；使用发出时身份，不借用当前新动作。
+	if action_serial >= 0:
+		if cue in [&"active:cast", &"active:spin", &"charge:step"]:
+			owner = {"unit": unit.get_instance_id(), "kind": "action", "serial": action_serial}
+		elif owner.get("kind", "") == "action":
+			owner.serial = action_serial
 	if not owner.is_empty() and owner.kind in ["attack", "action"]:
 		var cancelled := unit.last_action_cancellation
 		var key := "attack" if owner.kind == "attack" else "action"
@@ -1145,3 +1160,73 @@ func _tick_forge_positions() -> void:
 			player.stop()
 			continue
 		player.global_position = unit.get_visual_screen_position()
+
+
+func _status_audio_position(source: Node2D) -> Vector2:
+	return source.get_visual_screen_position() if source is Unit else source.global_position
+
+## 凝滞窗口由主机/快照持有；这里不设2/3秒Timer，不改变权威状态。
+## 仅播放目标进入短音；quiet/full持续声按用户要求移除。
+func _tick_stasis_audio() -> void:
+	if _battle_ended or _battle_paused: return
+	var active := {}
+	for source in get_tree().get_nodes_in_group("combatants"):
+		if not (source is Unit or source is Tower) or not is_instance_valid(source) or source.is_queued_for_deletion() or source.hp <= 0.0: continue
+		if not CombatInteraction.in_stasis(source): continue
+		if source is Unit and not source.visible_to_local_player(): continue
+		var id := source.get_instance_id()
+		active[id] = true
+		if not _stasis_sources.has(id):
+			_stasis_sources[id] = true
+			_start_sustain(source, {"card_id": "stasis", "audio": _card_audio("stasis", source.team, 0)}, &"stasis_target", &"stasis_target")
+			var exit_callback := _stop_stasis_audio.bind(id)
+			if not source.tree_exiting.is_connected(exit_callback): source.tree_exiting.connect(exit_callback, CONNECT_ONE_SHOT)
+		for layer in [&"stasis_target"]:
+			var player: AudioStreamPlayer2D = _sustain_players.get(_sustain_key(id, layer))
+			if is_instance_valid(player): player.global_position = _status_audio_position(source)
+	for id in _stasis_sources.keys():
+		if not active.has(id): _stop_stasis_audio(id)
+
+func _stop_stasis_audio(id: int) -> void:
+	_stop_sustain_key(_sustain_key(id, &"stasis_target"))
+	_stasis_sources.erase(id)
+
+## 可靠飞行表现事件已去重；声音生命周期独立于普通攻击弹体ID。
+func start_spell_flight_audio(id: int, card_id: String, team: int, position: Vector2) -> void:
+	if _battle_ended or _battle_paused or _spell_flight_players.has(id): return
+	var event: Dictionary = _card_audio(card_id, team, 0).get("events", {}).get("spell:flight", {})
+	if event.is_empty(): return
+	if _spell_flight_players.size() >= WORLD_PLAYER_COUNT:
+		stop_spell_flight_audio(int(_spell_flight_players.keys()[0]))
+	var player := _new_world_player()
+	player.bus = StringName(event.get("bus", COMBAT_BUS))
+	player.volume_db = float(event.get("volume_db", 0.0))
+	player.stream = _randomized_stream(PackedStringArray(event.get("pool", [])))
+	add_child(player)
+	player.global_position = position
+	_spell_flight_players[id] = player
+	player.play()
+	cue_played.emit(card_id, &"spell:flight", position)
+
+func stop_spell_flight_audio(id: int) -> void:
+	var player = _spell_flight_players.get(id)
+	if is_instance_valid(player):
+		player.stop()
+		player.queue_free()
+	_spell_flight_players.erase(id)
+
+func clear_spell_flight_audio() -> void:
+	for id in _spell_flight_players.keys(): stop_spell_flight_audio(int(id))
+
+func update_spell_flight_audio(effects: Array[Dictionary]) -> void:
+	var active := {}
+	for effect in effects:
+		if bool(effect.impacted): continue
+		var id := int(effect.id)
+		active[id] = true
+		var player: AudioStreamPlayer2D = _spell_flight_players.get(id)
+		if not is_instance_valid(player): continue
+		var t := float(effect.progress)
+		player.global_position = (effect.origin as Vector2).lerp(effect.pos, t) + Vector2(0, -sin(t * PI) * 160.0 - (1.0 - t) * 60.0)
+	for id in _spell_flight_players.keys():
+		if not active.has(id): stop_spell_flight_audio(int(id))

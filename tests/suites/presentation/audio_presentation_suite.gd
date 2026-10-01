@@ -2,6 +2,8 @@ class_name AudioPresentationSuite
 extends RefCounted
 
 func run(harness: Object, main: Node2D) -> void:
+	await _check_stasis_audio(harness, main)
+	await _check_stasis_flight_audio(harness, main)
 	_check_selected_deploy_audio(harness, main)
 	_check_voice_budget(harness, main)
 	_check_team_audio_routes(harness, main)
@@ -1149,3 +1151,72 @@ func _check_independent_creation_audio(harness: Object, main: Node2D) -> void:
 		main._commands.clear_impacts()
 		main._active_skill_effect_system.clear()
 		main._skill_presentation.clear()
+
+func _check_stasis_audio(harness: Object, main: Node2D) -> void:
+	harness._expect(not CardDB.get_card("stasis").audio.events.has("stasis:sustain"), "用户移除quiet/full后不再配置持续音")
+	var audio: GameAudioManager = main._audio_manager
+	for duration in [2, 3]:
+		var unit := Unit.new()
+		unit.card_id = "garen"
+		unit.setup(0, CardDB.get_card("garen"), "stasis audio")
+		main.add_child(unit)
+		var key := audio._sustain_key(unit.get_instance_id(), &"stasis_target")
+		var target_key := audio._sustain_key(unit.get_instance_id(), &"stasis_target")
+		audio._tick_stasis_audio()
+		harness._expect(not audio._sustain_players.has(key), "非凝滞目标不播放金身音")
+		unit.apply_stasis(float(duration))
+		audio._tick_stasis_audio()
+		var player: AudioStreamPlayer2D = audio._sustain_players.get(key)
+		harness._expect(is_instance_valid(player) and audio._sustain_players.has(target_key), "仅播放目标触发音，不播放quiet/full")
+		await main.get_tree().physics_frame
+		await main.get_tree().process_frame
+		audio.set_battle_paused(true)
+		harness._expect(player.stream_paused, "暂停同步暂停凝滞声音")
+		audio.set_battle_paused(false)
+		for i in duration * 20 - 1:
+			unit._tick_active_statuses(0.05)
+			audio._tick_stasis_audio()
+		harness._expect(audio._sustain_players.get(key) == player and not player.stream_paused, "%d秒凝滞到期前保持同一播放器" % duration)
+		unit._tick_active_statuses(0.05)
+		audio._tick_stasis_audio()
+		harness._expect(not audio._sustain_players.has(key) and not audio._sustain_players.has(target_key) and not player.playing, "%d秒凝滞到期立即截断声音" % duration)
+		unit.apply_stasis(3.0)
+		audio._tick_stasis_audio()
+		harness._expect(audio._sustain_players.has(key), "再次凝滞重新播放")
+		unit.hp = 0.0
+		audio._tick_stasis_audio()
+		harness._expect(not audio._sustain_players.has(key), "死亡清理凝滞音")
+		unit.free()
+	for tower: Tower in main._towers:
+		if tower.is_king: continue
+		tower.apply_stasis(2.0)
+		audio._tick_stasis_audio()
+		var key := audio._sustain_key(tower.get_instance_id(), &"stasis_target")
+		harness._expect(audio._sustain_players.has(key), "防御塔播放金身音")
+		tower.control.hard.clear_family(&"stasis")
+		audio._tick_stasis_audio()
+		harness._expect(not audio._sustain_players.has(key), "防御塔解除凝滞停止声音")
+
+func _check_stasis_flight_audio(harness: Object, main: Node2D) -> void:
+	var audio: GameAudioManager = main._audio_manager
+	var previous_event_id: int = main._last_card_event_id
+	var event_id: int = previous_event_id + 100
+	main._show_spell_flight(event_id, 70001, "stasis", Vector2(360,1160), Vector2(360,500), 110, 0, 20, 0)
+	var player: AudioStreamPlayer2D = audio._spell_flight_players.get(70001)
+	main._show_spell_flight(event_id, 70001, "stasis", Vector2.ZERO, Vector2.ZERO, 110, 0, 20, 0)
+	harness._expect(is_instance_valid(player) and audio._spell_flight_players.get(70001) == player, "飞行声可靠事件重复不重播")
+	await main.get_tree().physics_frame
+	await main.get_tree().process_frame
+	audio.set_battle_paused(true)
+	harness._expect(player.stream_paused, "法术飞行声随比赛暂停")
+	audio.set_battle_paused(false)
+	var effects: Array[Dictionary] = [{"id":70001, "impacted":false, "origin":Vector2(360,1160), "pos":Vector2(360,500), "progress":0.5}]
+	audio.update_spell_flight_audio(effects)
+	harness._expect(player.global_position.is_equal_approx(Vector2(360,640)), "飞行声跟随弧线弹体位置")
+	main._show_spell_arrival(event_id + 1, 70001, "stasis", Vector2(360,500), 0)
+	harness._expect(not audio._spell_flight_players.has(70001) and not player.playing, "抵达立即停止飞行声")
+	audio.start_spell_flight_audio(70002, "stasis", 0, Vector2.ZERO)
+	audio.update_spell_flight_audio([])
+	harness._expect(audio._spell_flight_players.is_empty(), "清除飞行表现时清理声音")
+	main._spell_system.stasis_effects.clear()
+	main._last_card_event_id = previous_event_id

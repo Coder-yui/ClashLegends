@@ -1205,6 +1205,7 @@ func clear_preview_battle() -> void:
 		unit.queue_free()
 	_projectile_system.clear_all()
 	_spell_system.clear()
+	if is_instance_valid(_audio_manager): _audio_manager.clear_spell_flight_audio()
 	if _audio_manager != null:
 		_audio_manager.begin_battle()
 	_active_skill_effect_system.clear()
@@ -1589,10 +1590,10 @@ func notify_unit_audio_event(unit: Unit, cue: StringName, position: Vector2) -> 
 		if cue in [&"forge:pulse", &"forge:cancel"]:
 			_rpc_unit_forge_audio.rpc_id(_session.opponent_id, _session.session_id, unit.net_id, String(cue), position)
 		else:
-			_rpc_unit_audio_event.rpc_id(_session.opponent_id, _session.session_id, unit.net_id, String(cue), position, unit.presentation_state().attack_serial)
+			_rpc_unit_audio_event.rpc_id(_session.opponent_id, _session.session_id, unit.net_id, String(cue), position, unit.presentation_state().attack_serial, unit.get_visual_action_serial() if unit.active_skill_cast_timer > 0.0 else -1)
 
 @rpc("authority", "call_remote", "unreliable")
-func _rpc_unit_audio_event(epoch: String, net_id: int, cue: String, position: Vector2, attack_serial: int = -1) -> void:
+func _rpc_unit_audio_event(epoch: String, net_id: int, cue: String, position: Vector2, attack_serial: int = -1, action_serial: int = -1) -> void:
 	if not _session.accepts(1, epoch, MatchSession.Phase.RUNNING) or game_over:
 		return
 	if mode != "client":
@@ -1601,7 +1602,7 @@ func _rpc_unit_audio_event(epoch: String, net_id: int, cue: String, position: Ve
 	if unit != null and is_instance_valid(unit):
 		unit.presentation_cue.emit(StringName(cue))
 		if _audio_manager != null:
-			_audio_manager.play_event(unit, StringName(cue), position, attack_serial)
+			_audio_manager.play_event(unit, StringName(cue), position, attack_serial, false, action_serial)
 
 func _cast_spell(p_team: int, card_id: String, pos: Vector2, active_enabled: bool = false, active_skill_index: int = 0, mirror_copy: Dictionary = {}) -> bool:
 	if CardPlayHistory.is_mirror(card_id):
@@ -1635,6 +1636,7 @@ func _tick_slow_zones(dt: float) -> void:
 
 func _tick_slow_effect_visuals(delta: float) -> void:
 	_spell_system.tick_visuals(delta)
+	_audio_manager.update_spell_flight_audio(_spell_system.stasis_effects)
 
 ## 手牌单位卡的生成入口。一条部署命令和一个落点提示可以展开为确定性编队；
 ## 每个成员仍是独立 Unit，碰撞、索敌、快照和死亡都沿用普通单位规则。
@@ -2305,6 +2307,7 @@ func _end_game(winner_team: int, reason: String) -> void:
 	_minion_waves.clear()
 	_projectile_system.clear_all()
 	_spell_system.clear()
+	if is_instance_valid(_audio_manager): _audio_manager.clear_spell_flight_audio()
 	_active_skill_effect_system.clear()
 	_skill_presentation.clear()
 	_team_attack_boost_system.clear()
@@ -3039,7 +3042,9 @@ func present_spell_flight(flight_id: int, kind: String, origin: Vector2, pos: Ve
 func _show_spell_flight(event_id: int, flight_id: int, kind: String, origin: Vector2, pos: Vector2, radius: float, start_tick: int, impact_tick: int, team: int) -> void:
 	if event_id <= _last_card_event_id: return
 	_spell_system.show_flight(flight_id, kind, origin, pos, radius, start_tick, impact_tick)
-	if kind == "stasis": _play_card_event(event_id, kind, "spell:cast", origin, 0, team)
+	if kind == "stasis":
+		_play_card_event(event_id, kind, "spell:cast", origin, 0, team)
+		_audio_manager.start_spell_flight_audio(flight_id, kind, team, origin)
 	else: _last_card_event_id = event_id
 
 @rpc("authority", "call_remote", "reliable")
@@ -3056,6 +3061,7 @@ func present_spell_arrival(flight_id: int, kind: String, pos: Vector2, team: int
 func _show_spell_arrival(event_id: int, flight_id: int, kind: String, pos: Vector2, team: int) -> void:
 	if event_id <= _last_card_event_id: return
 	_spell_system.show_arrival(flight_id)
+	_audio_manager.stop_spell_flight_audio(flight_id)
 	if kind == "stasis": _play_card_event(event_id, kind, "spell:strike", pos, 0, team)
 	else: _last_card_event_id = event_id
 
