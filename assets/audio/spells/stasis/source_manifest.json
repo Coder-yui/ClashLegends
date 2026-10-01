@@ -15,6 +15,82 @@
       "source_sha256": "60e387e52341005f8f8a5ebe4c4f92e3b7c63344f303128a7e62ea752be9f3fd",
       "output": "explo.wav",
       "sha256": "2e4a99178c3de989dc5b8737b629f4a332aa046b6cbde45db2366bc7ebc1c1c6"
+    },
+    {
+      "event": "Play_sfx_Bard_BardR_OnCast {r2}",
+      "source_txtp": "ClashLegends-开发素材库/03-制作中/凝滞法术/audio/bard/txtp/Play_sfx_Bard_BardR_OnCast {r2}.txtp",
+      "output": "OnCast_2.wav",
+      "sha256": "99df434d2c30b30f899616c67e1412f8e9cf9d34383b48dbe82c889fa0535cbf",
+      "duration_seconds": 3.1975510204081634,
+      "processing": "wwiser/vgmstream原始增益；项目状态结束时截断；full与quiet为替代池，不同时叠加。"
+    },
+    {
+      "event": "Play_sfx_Bard_BardR_OnCast {r3}",
+      "source_txtp": "ClashLegends-开发素材库/03-制作中/凝滞法术/audio/bard/txtp/Play_sfx_Bard_BardR_OnCast {r3}.txtp",
+      "output": "OnCast_3.wav",
+      "sha256": "e3fa739115e8b5efed23a522cb94a17435664d080f768e03ae18479c23f55a22",
+      "duration_seconds": 3.124240362811791,
+      "processing": "wwiser/vgmstream原始增益；项目状态结束时截断；full与quiet为替代池，不同时叠加。"
+    },
+    {
+      "event": "Play_sfx_Bard_BardR_explo {r2}",
+      "source_txtp": "ClashLegends-开发素材库/03-制作中/凝滞法术/audio/bard/txtp/Play_sfx_Bard_BardR_explo {r2}.txtp",
+      "output": "explo_2.wav",
+      "sha256": "d1e39e2cab743f0ae469e8daf668ced721ce749acd3bffa6b16fc735ae6d3149",
+      "duration_seconds": 3.6417233560090705,
+      "processing": "wwiser/vgmstream原始增益；项目状态结束时截断；full与quiet为替代池，不同时叠加。"
+    },
+    {
+      "event": "Play_sfx_Bard_BardR_explo {r3}",
+      "source_txtp": "ClashLegends-开发素材库/03-制作中/凝滞法术/audio/bard/txtp/Play_sfx_Bard_BardR_explo {r3}.txtp",
+      "output": "explo_3.wav",
+      "sha256": "a208e9c73a4ca51664507777d5b16ade107dc0b1005b8b0f1c02afda3fb90066",
+      "duration_seconds": 3.372925170068027,
+      "processing": "wwiser/vgmstream原始增益；项目状态结束时截断；full与quiet为替代池，不同时叠加。"
+    },
+    {
+      "event": "Play_sfx_Bard_BardR_mis {r1}",
+      "source_txtp": "ClashLegends-开发素材库/03-制作中/凝滞法术/audio/bard/txtp/Play_sfx_Bard_BardR_mis {r1}.txtp",
+      "output": "flight_1.wav",
+      "sha256": "039e175572378f8ee618c0a4af750b803d49b4e1291a49b7f875d1b91fa24d92",
+      "duration_seconds": 3.2353061224489794,
+      "processing": "wwiser/vgmstream原始增益；项目状态结束时截断；full与quiet为替代池，不同时叠加。"
+    },
+    {
+      "event": "Play_sfx_Bard_BardR_mis {r2}",
+      "source_txtp": "ClashLegends-开发素材库/03-制作中/凝滞法术/audio/bard/txtp/Play_sfx_Bard_BardR_mis {r2}.txtp",
+      "output": "flight_2.wav",
+      "sha256": "cc02fcde03fec229bc8de0f6529d30cfe88789d872c94ad15363695f19de3cc1",
+      "duration_seconds": 3.2419274376417233,
+      "processing": "wwiser/vgmstream原始增益；项目状态结束时截断；full与quiet为替代池，不同时叠加。"
+    },
+    {
+      "event": "Play_sfx_Bard_bardr_stasis_tar {r1}",
+      "source_txtp": "ClashLegends-开发素材库/03-制作中/凝滞法术/audio/bard/txtp/Play_sfx_Bard_bardr_stasis_tar {r1}.txtp",
+      "output": "target_1.wav",
+      "sha256": "1f3b9c69e8885139f2aafe80d0684d268e878796d34e0fa7663727f643dfd1c6",
+      "duration_seconds": 1.0403628117913832,
+      "processing": "wwiser/vgmstream原始增益；项目状态结束时截断；full与quiet为替代池，不同时叠加。"
+    },
+    {
+      "event": "Play_sfx_Bard_bardr_stasis_tar {r2}",
+      "source_txtp": "ClashLegends-开发素材库/03-制作中/凝滞法术/audio/bard/txtp/Play_sfx_Bard_bardr_stasis_tar {r2}.txtp",
+      "output": "target_2.wav",
+      "sha256": "692b0c9ac33037afb3d8b01ba071a5bf8b265c0882508bc1e2d580e451818622",
+      "duration_seconds": 1.0403628117913832,
+      "processing": "wwiser/vgmstream原始增益；项目状态结束时截断；full与quiet为替代池，不同时叠加。"
     }
-  ]
+  ],
+  "excluded_events": {
+    "Play_sfx_Bard_BardR_windup_cast": "用户明确排除巴德动作声",
+    "Play_sfx_Bard_BardR_warn_oba": "用户明确排除落点预警",
+    "Play_sfx_Bard_BardR_statisquiet_hit": "用户要求移除",
+    "Play_sfx_Bard_BardR_statisfull_hit": "用户要求移除"
+  },
+  "project_mapping": {
+    "OnCast": "水晶发射，3变体",
+    "mis": "飞行跟随，2变体；抵达停止",
+    "explo": "爆开，3变体",
+    "stasis_tar": "目标短触发，2变体"
+  }
 }
