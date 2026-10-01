@@ -10,6 +10,6 @@
 | 死亡 | 黄沙士兵消散，2变体 |
 | 主动技能开始 | 沙皇E护盾施放，仅OnBuffCast r1；整队只由技能持有者触发一次 |
 
-不接走路声；没有增加沙皇语音。护盾独立生效/结束原声仍是候选，当前缺少区分到期与破盾的音频入口，因此不强行触发。详细来源见 [音频清单](../../../assets/audio/units/shurima_guard/event_manifest.json)。
+不接走路声；没有增加沙皇语音。护盾独立生效/结束原声仍是候选。当前到期回复已有表现事件调用，但该卡未配置对应回复音频，不能把事件调用当作已接入声音；真实回血使用通用绿色上浮提示。详细来源见 [音频清单](../../../assets/audio/units/shurima_guard/event_manifest.json)。
 
 临时试听：`python3 tools/dev.py audio --manifest ClashLegends-开发素材库/02-候选讨论/恕瑞玛卫队/音频/manifest.json`。该清单同时标明已接入和候选；工作台只读取正式音频配置。最终混音听感仍待用户确认。
