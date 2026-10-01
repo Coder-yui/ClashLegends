@@ -6,7 +6,7 @@ extends RefCounted
 var freeze_effects: Array[Dictionary] = []
 var slow_zones: Array[Dictionary] = []
 var slow_effects: Array[Dictionary] = []
-## 治疗术表现区域：淡黄光圈；全图强化治疗额外带全图扩散波纹。
+## 治疗术表现区域：阵营色边界与淡黄内光；全图强化治疗额外带全图扩散波纹。
 var heal_effects: Array[Dictionary] = []
 
 var spell_flights: Array[Dictionary] = []
@@ -57,7 +57,7 @@ func _resolve_cast(team: int, stats: Dictionary, position: Vector2, active_enabl
 			var fx_duration := float(stats.get("duration", 1.2))
 			var active_skill: Dictionary = _active_heal_skill(stats, active_skill_index) if active_enabled else {}
 			apply_heal(position, heal_radius, team, stats, active_enabled, active_skill)
-			_controller.present_heal_spell(position, heal_radius, fx_duration, active_enabled, bool(active_skill.get("global_heal", false)))
+			_controller.present_heal_spell(position, heal_radius, fx_duration, team, active_enabled, bool(active_skill.get("global_heal", false)))
 			return true
 		_:
 			push_error("未实现的 spell_kind：%s" % String(stats.get("spell_kind", "")))
@@ -112,7 +112,7 @@ func apply_heal(position: Vector2, radius: float, team: int, stats: Dictionary, 
 	var global_heal := active_enabled and bool(active_skill.get("global_heal", false))
 	var overheal_shield_ratio := clampf(float(active_skill.get("overheal_shield_ratio", 0.0)), 0.0, 1.0) if active_enabled else 0.0
 	var shield_duration := maxf(float(active_skill.get("shield_duration", 0.0)), 0.0) if active_enabled else 0.0
-	show_heal(position, radius, float(stats.get("duration", 1.2)), active_enabled, global_heal)
+	show_heal(position, radius, float(stats.get("duration", 1.2)), team, active_enabled, global_heal)
 	for combatant in _controller.get_tree().get_nodes_in_group("combatants"):
 		if not is_instance_valid(combatant) or combatant.team != team or combatant.hp <= 0.0:
 			continue
@@ -134,8 +134,8 @@ func show_freeze(position: Vector2, radius: float, duration: float, slow_duratio
 	if slow_duration > 0.0:
 		slow_effects.append({"pos": position, "radius": radius, "delay": duration, "timer": slow_duration, "duration": slow_duration, "team": team})
 
-func show_heal(position: Vector2, radius: float, duration: float, enhanced: bool = false, global_heal: bool = false) -> void:
-	heal_effects.append({"pos": position, "radius": radius, "timer": duration, "duration": duration, "enhanced": enhanced, "global_heal": global_heal})
+func show_heal(position: Vector2, radius: float, duration: float, team: int, enhanced: bool = false, global_heal: bool = false) -> void:
+	heal_effects.append({"pos": position, "radius": radius, "timer": duration, "duration": duration, "team": team, "enhanced": enhanced, "global_heal": global_heal})
 
 func tick(dt: float) -> void:
 	_tick_flights()

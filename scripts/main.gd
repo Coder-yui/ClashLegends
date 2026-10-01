@@ -2651,14 +2651,15 @@ func _rpc_freeze_fx(epoch: String, pos: Vector2, radius: float, duration: float,
 		return
 	_spell_system.show_freeze(pos, radius, duration, slow_duration, p_team)
 
-## 主机 → 客户端：治疗法术视觉。治疗数值由主机权威结算，客户端只显示淡黄光效。
+## 主机 → 客户端：治疗法术视觉。治疗数值由主机权威结算，客户端按施法阵营显示范围边界。
 @rpc("authority", "call_remote", "reliable")
-func _rpc_heal_fx(epoch: String, pos: Vector2, radius: float, duration: float, enhanced: bool = false, global_heal: bool = false) -> void:
+func _rpc_heal_fx(epoch: String, pos: Vector2, radius: float, duration: float, p_team: int, enhanced: bool = false, global_heal: bool = false) -> void:
 	if not _session.accepts(1, epoch, MatchSession.Phase.RUNNING) or game_over:
 		return
 	if mode != "client" or game_over:
 		return
-	_spell_system.show_heal(pos, radius, duration, enhanced, global_heal)
+	if p_team not in [0, 1]: return
+	_spell_system.show_heal(pos, radius, duration, p_team, enhanced, global_heal)
 
 ## 主机 → 客户端：定向技能蓄力范围。客户端只画表现，伤害与状态仍由主机快照体现。
 @rpc("authority", "call_remote", "reliable")
@@ -2935,9 +2936,9 @@ func present_freeze_spell(pos: Vector2, radius: float, duration: float, slow_dur
 	if mode == "host":
 		_rpc_freeze_fx.rpc_id(network_opponent_id(), network_session_id(), pos, radius, duration, slow_duration, slow_multiplier, p_team)
 
-func present_heal_spell(pos: Vector2, radius: float, duration: float, enhanced: bool, global_heal: bool) -> void:
+func present_heal_spell(pos: Vector2, radius: float, duration: float, p_team: int, enhanced: bool, global_heal: bool) -> void:
 	if mode == "host":
-		_rpc_heal_fx.rpc_id(network_opponent_id(), network_session_id(), pos, radius, duration, enhanced, global_heal)
+		_rpc_heal_fx.rpc_id(network_opponent_id(), network_session_id(), pos, radius, duration, p_team, enhanced, global_heal)
 
 func _refresh_mirror_hand(team: int) -> void:
 	if _hand != null and _is_local_player_team(team):

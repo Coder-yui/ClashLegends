@@ -51,12 +51,13 @@ func _draw() -> void:
 		draw_circle(area.pos, area.radius, Color(color, 0.08 * alpha))
 		draw_arc(area.pos, area.radius, 0.0, TAU, 80, Color(color, 0.95 * alpha), 2.5, true)
 		draw_arc(area.pos, maxf(float(area.radius) - 4.0, 0.0), 0.0, TAU, 80, Color(color, 0.25 * alpha), 1.0, true)
-	# 治疗术区域效果：淡黄光圈 + 上升的十字光点；过量治疗额外强调同一范围。
+	# 治疗术区域效果：阵营色外圈 + 淡黄内光和上升的十字；过量治疗额外强调同一范围。
 	for effect in spells.heal_effects:
 		var heal_progress := 1.0 - clampf(float(effect.timer) / maxf(float(effect.duration), 0.001), 0.0, 1.0)
 		var heal_remaining := clampf(float(effect.timer) / maxf(float(effect.duration), 0.001), 0.0, 1.0)
 		var heal_pos: Vector2 = effect.pos
 		var heal_radius := float(effect.radius)
+		var edge := Color(0.35, 0.8, 1.0) if int(effect.team) == 0 else Color(1.0, 0.3, 0.35)
 		if bool(effect.get("enhanced", false)):
 			# 强化治疗的全图选项扩散到全场；过量治疗只强调落点范围。
 			var wave_progress := clampf(heal_progress * 2.2, 0.0, 1.0)
@@ -66,7 +67,7 @@ func _draw() -> void:
 			draw_arc(heal_pos, wave_radius, 0.0, TAU, 64, Color(1.0, 0.93, 0.60, wave_alpha), 4.0, true)
 			draw_arc(heal_pos, wave_radius * 0.92, 0.0, TAU, 64, Color(1.0, 0.97, 0.75, wave_alpha * 0.6), 2.0, true)
 		draw_circle(heal_pos, heal_radius, Color(1.0, 0.93, 0.60, 0.20 * heal_remaining))
-		draw_arc(heal_pos, heal_radius, 0.0, TAU, 48, Color(1.0, 0.96, 0.72, 0.70 * heal_remaining), 3.0, true)
+		draw_arc(heal_pos, heal_radius, 0.0, TAU, 48, Color(edge, 0.90 * heal_remaining), 3.0, true)
 		# 中心圣光与上升的十字光点都是纯表现，不参与任何权威判定。
 		draw_circle(heal_pos, 10.0 + 4.0 * sin(heal_progress * PI), Color(1.0, 0.98, 0.85, 0.85 * heal_remaining))
 		for index in range(7):

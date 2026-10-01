@@ -5,6 +5,7 @@ extends "res://tests/suites/battle_suite.gd"
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
+	_check_heal_range_team()
 	_check_soft_control_visuals()
 	_check_control_effect_motion()
 	_check_warm_geometry()
@@ -23,6 +24,41 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_ashe_art_integration()
 	_check_sett_art_integration()
 	_check_teemo_art_integration()
+
+func _check_heal_range_team() -> void:
+	var spells: SpellSystem = _main._spell_system
+	var old_size := spells.heal_effects.size()
+	for team in [0, 1]:
+		for choice in [-1, 0, 1]:
+			spells.cast(team, CardDB.get_card("heal"), Vector2(300, 900), choice >= 0, maxi(choice, 0))
+			var effect: Dictionary = spells.heal_effects.back()
+			_expect(int(effect.team) == team and bool(effect.enhanced) == (choice >= 0) and bool(effect.global_heal) == (choice == 0), "治疗普通/强化/过量范围表现保留施法阵营：%d/%d" % [team, choice])
+	var old_mode: String = _main.mode
+	var old_session: MatchSession = _main._session
+	var old_game_over: bool = _main.game_over
+	_main.mode = "client"
+	_main.game_over = false
+	_main._session = MatchSession.new()
+	_main._session.join("heal-team-review")
+	_main._session.phase = MatchSession.Phase.RUNNING
+	var patient := _spawn_test_unit("garen", 1, Vector2(300, 900))
+	patient.hp -= 100
+	var hp := patient.hp
+	_main._rpc_heal_fx("heal-team-review", patient.position, 110, 1.2, 1, true, false)
+	_expect(int(spells.heal_effects.back().team) == 1 and bool(spells.heal_effects.back().enhanced) and patient.hp == hp, "客户端治疗事件保留红方与强化标记，只创建表现不治疗")
+	_main._rpc_heal_fx("heal-team-review", Vector2(300, 900), 110, 1.2, 0)
+	_expect(int(spells.heal_effects.back().team) == 0, "客户端蓝方治疗事件不依赖本地观察阵营")
+	var count := spells.heal_effects.size()
+	_main._rpc_heal_fx("heal-team-review", Vector2.ZERO, 110, 1.2, 2)
+	_main._rpc_heal_fx("stale", Vector2.ZERO, 110, 1.2, 1)
+	_main.game_over = true
+	_main._rpc_heal_fx("heal-team-review", Vector2.ZERO, 110, 1.2, 1)
+	_expect(spells.heal_effects.size() == count, "治疗表现拒绝非法阵营、旧会话及终局事件")
+	patient.free()
+	spells.heal_effects.resize(old_size)
+	_main.mode = old_mode
+	_main._session = old_session
+	_main.game_over = old_game_over
 
 func _check_structure_art_integration() -> void:
 	var wrapper_paths := [

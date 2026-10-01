@@ -10,6 +10,9 @@ func _run() -> void:
 	main._start_art_dev()
 	var panel = main._art_dev_panel
 	panel._persist = false
+	if "--spell-team-review" in OS.get_cmdline_user_args():
+		await _review_spell_teams(main, panel)
+		return
 	if "--control-review" in OS.get_cmdline_user_args():
 		await _review_control(main, panel)
 		return
@@ -60,6 +63,23 @@ func _run() -> void:
 		root.get_texture().get_image().save_png(output)
 		print("[回血截图] ", output)
 	print("[回血验证] 7 项通过")
+	main.queue_free()
+	await process_frame
+	quit()
+
+func _review_spell_teams(main: Node, panel: CanvasLayer) -> void:
+	panel.show_workspace(1)
+	panel._select_item("heal")
+	main.set_process(false)
+	main.set_physics_process(false)
+	for choice in [-1, 0, 1]:
+		main._spell_system.heal_effects.clear()
+		main._workbench.skill_choices["heal"] = maxi(choice, 0)
+		for team in [0, 1]:
+			main.play_card(team, "heal", Vector2(180 + 360 * team, 950), {"immediate": true, "validate_position": false, "preview_active_spell": choice >= 0})
+		for effect in main._spell_system.heal_effects: effect.timer = effect.duration * 0.85
+		await _capture_control("heal-spell-teams-" + str(choice))
+	print("[治疗法术验证] 普通、强化、过量治疗均从正式出牌入口生成双方范围圈")
 	main.queue_free()
 	await process_frame
 	quit()
