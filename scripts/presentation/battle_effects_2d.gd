@@ -51,18 +51,6 @@ func _draw() -> void:
 		draw_circle(area.pos, area.radius, Color(color, 0.08 * alpha))
 		draw_arc(area.pos, area.radius, 0.0, TAU, 80, Color(color, 0.95 * alpha), 2.5, true)
 		draw_arc(area.pos, maxf(float(area.radius) - 4.0, 0.0), 0.0, TAU, 80, Color(color, 0.25 * alpha), 1.0, true)
-	# 冰冻区域效果
-	for fe in spells.freeze_effects:
-		var alpha: float = (fe.timer / fe.duration) * 0.25
-		draw_circle(fe.pos, fe.radius, Color(0.40, 0.70, 1.00, alpha))
-		draw_circle(fe.pos, fe.radius, Color(0.60, 0.85, 1.00, alpha * 0.5), false, 2.0)
-	# 强化冰冻的减速阶段在冻结结束后才显示，和权威区域使用相同半径与时长。
-	for effect in spells.slow_effects:
-		if float(effect.delay) > 0.0:
-			continue
-		var slow_alpha: float = clampf(float(effect.timer) / maxf(float(effect.duration), 0.001), 0.0, 1.0)
-		draw_circle(effect.pos, effect.radius, Color(0.20, 0.48, 0.92, 0.12 * slow_alpha))
-		draw_arc(effect.pos, effect.radius, 0.0, TAU, 48, Color(0.38, 0.70, 1.0, 0.72 * slow_alpha), 3.0, true)
 	# 治疗术区域效果：淡黄光圈 + 上升的十字光点；过量治疗额外强调同一范围。
 	for effect in spells.heal_effects:
 		var heal_progress := 1.0 - clampf(float(effect.timer) / maxf(float(effect.duration), 0.001), 0.0, 1.0)

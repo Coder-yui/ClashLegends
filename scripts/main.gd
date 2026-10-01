@@ -2644,12 +2644,12 @@ func _rpc_snapshot(snapshot_bytes: PackedByteArray) -> void:
 
 ## 主机 → 客户端：冰冻法术视觉
 @rpc("authority", "call_remote", "reliable")
-func _rpc_freeze_fx(epoch: String, pos: Vector2, radius: float, duration: float, slow_duration: float = 0.0, _slow_multiplier: float = 1.0) -> void:
+func _rpc_freeze_fx(epoch: String, pos: Vector2, radius: float, duration: float, slow_duration: float = 0.0, _slow_multiplier: float = 1.0, p_team: int = 0) -> void:
 	if not _session.accepts(1, epoch, MatchSession.Phase.RUNNING) or game_over:
 		return
 	if mode != "client" or game_over:
 		return
-	_spell_system.show_freeze(pos, radius, duration, slow_duration)
+	_spell_system.show_freeze(pos, radius, duration, slow_duration, p_team)
 
 ## 主机 → 客户端：治疗法术视觉。治疗数值由主机权威结算，客户端只显示淡黄光效。
 @rpc("authority", "call_remote", "reliable")
@@ -2931,9 +2931,9 @@ func combat_service() -> CombatResolver:
 func projectile_service() -> ProjectileSystem:
 	return _projectile_system
 
-func present_freeze_spell(pos: Vector2, radius: float, duration: float, slow_duration: float, slow_multiplier: float) -> void:
+func present_freeze_spell(pos: Vector2, radius: float, duration: float, slow_duration: float, slow_multiplier: float, p_team: int = 0) -> void:
 	if mode == "host":
-		_rpc_freeze_fx.rpc_id(network_opponent_id(), network_session_id(), pos, radius, duration, slow_duration, slow_multiplier)
+		_rpc_freeze_fx.rpc_id(network_opponent_id(), network_session_id(), pos, radius, duration, slow_duration, slow_multiplier, p_team)
 
 func present_heal_spell(pos: Vector2, radius: float, duration: float, enhanced: bool, global_heal: bool) -> void:
 	if mode == "host":

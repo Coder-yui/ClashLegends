@@ -45,10 +45,12 @@ func _resolve_cast(team: int, stats: Dictionary, position: Vector2, active_enabl
 		&"freeze":
 			var radius := float(stats.get("radius", 0.0))
 			var duration := float(stats.get("duration", 0.0))
-			var slow_duration := float(stats.get("active_slow_duration", 0.0)) if active_enabled else 0.0
-			var slow_multiplier := float(stats.get("active_slow_multiplier", 1.0))
-			apply_freeze(position, radius, duration, team, slow_duration, slow_multiplier)
-			_controller.present_freeze_spell(position, radius, duration, slow_duration, slow_multiplier)
+			var skill := _active_heal_skill(stats, active_skill_index) if active_enabled else {}
+			var slow_duration := float(skill.get("slow_duration", 0.0))
+			var slow_multiplier := float(skill.get("slow_multiplier", 1.0))
+			var attack_multiplier := float(skill.get("attack_speed_multiplier", 1.0))
+			apply_freeze(position, radius, duration, team, slow_duration, slow_multiplier, attack_multiplier)
+			_controller.present_freeze_spell(position, radius, duration, slow_duration, slow_multiplier, team)
 			return true
 		&"heal":
 			var heal_radius := float(stats.get("radius", 0.0))
@@ -77,16 +79,17 @@ func _spell_context(team: int) -> Dictionary:
 	return CombatInteraction.effect_context(null, team)
 
 
-func apply_freeze(position: Vector2, radius: float, duration: float, team: int, slow_duration: float = 0.0, slow_multiplier: float = 1.0) -> void:
+func apply_freeze(position: Vector2, radius: float, duration: float, team: int, slow_duration: float = 0.0, slow_multiplier: float = 1.0, attack_multiplier: float = 1.0) -> void:
 	_effect_serial += 1
 	var source := StringName("spell:%d:%d" % [team, _effect_serial])
 	var interaction := _spell_context(team)
-	show_freeze(position, radius, duration, slow_duration)
+	show_freeze(position, radius, duration, slow_duration, team)
 	if slow_duration > 0.0:
-		slow_zones.append({"created_tick": _controller.get_authoritative_server_tick() if _controller.simulation_step_active() else -1, "pos": position, "radius": radius, "delay": duration, "timer": slow_duration, "team": team, "multiplier": slow_multiplier, "status_source": source})
+		slow_zones.append({"created_tick": _controller.get_authoritative_server_tick() if _controller.simulation_step_active() else -1, "pos": position, "radius": radius, "delay": duration, "timer": slow_duration, "team": team, "multiplier": slow_multiplier, "attack_multiplier": attack_multiplier, "status_source": source})
 	for combatant in _controller.get_tree().get_nodes_in_group("combatants"):
 		if not is_instance_valid(combatant) or combatant.team == team or combatant.hp <= 0.0:
 			continue
+		if combatant is Tower and combatant.is_king: continue
 		if not CombatInteraction.allows_effect(combatant, interaction): continue
 		if combatant.global_position.distance_to(position) > radius + combatant.body_radius:
 			continue
@@ -126,10 +129,10 @@ func apply_heal(position: Vector2, radius: float, team: int, stats: Dictionary, 
 
 
 ## 主机结算和客户端 RPC 共用表现创建入口，副本不创建权威区域。
-func show_freeze(position: Vector2, radius: float, duration: float, slow_duration: float = 0.0) -> void:
-	freeze_effects.append({"pos": position, "timer": duration, "duration": duration, "radius": radius})
+func show_freeze(position: Vector2, radius: float, duration: float, slow_duration: float = 0.0, team: int = 0) -> void:
+	freeze_effects.append({"pos": position, "timer": duration, "duration": duration, "radius": radius, "team": team})
 	if slow_duration > 0.0:
-		slow_effects.append({"pos": position, "radius": radius, "delay": duration, "timer": slow_duration, "duration": slow_duration})
+		slow_effects.append({"pos": position, "radius": radius, "delay": duration, "timer": slow_duration, "duration": slow_duration, "team": team})
 
 func show_heal(position: Vector2, radius: float, duration: float, enhanced: bool = false, global_heal: bool = false) -> void:
 	heal_effects.append({"pos": position, "radius": radius, "timer": duration, "duration": duration, "enhanced": enhanced, "global_heal": global_heal})
@@ -158,6 +161,8 @@ func tick(dt: float) -> void:
 			if not CombatInteraction.allows_effect(combatant, interaction): continue
 			if combatant.global_position.distance_to(zone.pos) <= float(zone.radius) + combatant.body_radius:
 				(combatant as Unit).apply_slow(dt + FixedStepClock.STEP, float(zone.multiplier), zone.status_source, interaction)
+				if float(zone.attack_multiplier) < 1.0:
+					(combatant as Unit).apply_attack_speed_slow(dt + FixedStepClock.STEP, float(zone.attack_multiplier), zone.status_source, interaction)
 		if float(zone.timer) > 0.0:
 			alive.append(zone)
 	slow_zones.assign(alive)

@@ -942,6 +942,15 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 				_require_fields(label, skill, [&"strike_count", &"strike_damage_multiplier"], errors)
 				if int(skill.get("strike_count", 0)) < 1 or float(skill.get("strike_damage_multiplier", 0)) < 1:
 					errors.append("%s: 电击次数必须为正，逐次倍率必须>=1" % label)
+			&"spell_freeze":
+				if String(stats.get("type", "")) != "spell" or String(stats.get("spell_kind", "")) != "freeze":
+					errors.append("%s.kind: spell_freeze 只用于冰冻法术" % label)
+				_require_fields(label, skill, [&"slow_duration", &"slow_multiplier", &"attack_speed_multiplier"], errors)
+				if float(skill.get("slow_duration", 0.0)) <= 0.0:
+					errors.append("%s.slow_duration: 必须为正" % label)
+				for field in ["slow_multiplier", "attack_speed_multiplier"]:
+					if float(skill.get(field, 1.0)) < 0.1 or float(skill.get(field, 1.0)) >= 1.0:
+						errors.append("%s.%s: 必须在0.1（含）到1（不含）之间" % [label, field])
 			&"spell_stasis":
 				if String(stats.get("spell_kind", "")) != "stasis": errors.append("%s: 凝滞强化只用于凝滞法术" % label)
 				if float(skill.get("duration", 0.0)) <= 0.0: errors.append("%s.duration: 必须为正" % label)

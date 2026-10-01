@@ -24,6 +24,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_authoritative_hand_cycle()
 	_check_network_hand_confirmation()
 	_check_empowered_freeze_slow_zone()
+	_check_freeze_crystal_immunity()
 	_check_heal_spell()
 
 func _check_active_skill_loadout_rule() -> void:
@@ -33,7 +34,7 @@ func _check_active_skill_loadout_rule() -> void:
 		var stats: Dictionary = cards[card_id]
 		if stats.get("type", "unit") == "spell":
 			var spell_skills := CardDB.active_skills_for(card_id)
-			var expected_spell_count := int({"heal": 2, "zap": 1, "lightning": 1, "stasis": 1}.get(card_id, 0))
+			var expected_spell_count := int({"heal": 2, "zap": 1, "lightning": 1, "stasis": 1, "freeze": 1}.get(card_id, 0))
 			data_ok = data_ok and spell_skills.size() == expected_spell_count
 		else:
 			var available_skills := CardDB.active_skills_for(card_id)
@@ -642,25 +643,49 @@ func _check_network_hand_confirmation() -> void:
 	preload("res://tests/fixtures/network_fixture.gd").fixed_cycle(_main, 0, old_deck)
 
 func _check_empowered_freeze_slow_zone() -> void:
-	var stats: Dictionary = CardDB.get_unit_stats("imp").duplicate()
-	stats["deploy_time"] = 0.0
-	var enemy := Unit.new()
-	enemy.position = Vector2(360.0, 600.0)
-	enemy.setup(1, stats, stats.name)
-	_main.add_child(enemy)
-	_main._apply_freeze(enemy.position, 110.0, 3.0, 0, 2.0, 0.5)
+	var actors: Array[Unit] = []
+	for spec in [[1, Vector2(360, 600)], [0, Vector2(360, 600)], [1, Vector2(600, 600)]]:
+		var stats := CardDB.get_unit_stats("imp").duplicate()
+		stats.deploy_time = 0.0
+		var actor := Unit.new()
+		actor.position = spec[1]
+		actor.setup(spec[0], stats, stats.name)
+		_main.add_child(actor)
+		actors.append(actor)
+	var enemy := actors[0]
+	var freeze_stats := CardDB.get_card("freeze")
+	var skill := CardDB.active_skills_for("freeze")[0]
+	_main._spell_system.cast(0, freeze_stats, enemy.position, false)
+	_expect(enemy.is_frozen() and _main._spell_system.slow_zones.is_empty(), "普通冰冻只冻结，不留下双减速区")
+	_main._spell_system.clear()
+	_main._spell_system.cast(0, freeze_stats, enemy.position, true)
 	_main._tick_slow_zones(2.95)
-	var delayed_ok := enemy.control.slow_timer <= 0.0
+	_expect(enemy.control.slow_timer <= 0.0 and enemy.control.attack_speed_slow_timer <= 0.0, "冻结阶段不提前施加移速与攻速减益")
+	enemy.control.tick_hard_controls(3.0)
 	_main._tick_slow_zones(0.05)
-	_main._tick_slow_zones(_main.SIM_DT)
 	enemy._prepare_movement(Vector2.UP, _main.SIM_DT)
-	var slowed_ok := enemy.control.slow_timer > 0.0 and is_equal_approx(enemy._move_intent.length(), enemy.move_speed * 0.5)
-	_main._tick_slow_zones(2.0)
-	_expect(delayed_ok and slowed_ok, "主动版冰冻在 3 秒冻结结束后才开启区域减速")
-	_expect(_main._spell_system.slow_zones.is_empty(), "强化冰冻减速区域持续 2 秒后由权威模拟移除")
-	_main._spell_system.freeze_effects.clear()
-	_main._spell_system.slow_effects.clear()
-	enemy.free()
+	_expect(is_equal_approx(enemy._move_intent.length(), enemy.move_speed * 0.7) and is_equal_approx(enemy._effective_attack_speed_multiplier(), 0.7), "冻结结束边界敌军移速与攻速各降低30%")
+	_expect(actors[1].control.slow_timer == 0 and actors[1].control.attack_speed_slow_timer == 0 and actors[2].control.slow_timer == 0 and actors[2].control.attack_speed_slow_timer == 0, "双减速排除友军与圈外敌军")
+	enemy.apply_attack_speed_slow(0.05, 0.5, &"stronger")
+	_expect(is_equal_approx(enemy._effective_attack_speed_multiplier(), 0.5), "双减速沿用异源最强减攻速")
+	enemy.control.tick_slows(0.05)
+	_expect(is_equal_approx(enemy._effective_attack_speed_multiplier(), 0.7), "更强减攻速结束后保留冰冻区域70%攻速")
+	enemy.position = Vector2(600, 600)
+	_main._tick_slow_zones(0.05)
+	enemy.control.tick_slows(0.15)
+	_expect(enemy.control.slow_timer == 0 and enemy.control.attack_speed_slow_timer == 0, "离开区域后两种短续期减益均恢复")
+	enemy.position = Vector2(360, 600)
+	_main._tick_slow_zones(0.05)
+	_expect(enemy.control.attack_speed_slow_timer > 0, "重新进入仍有效区域重新施加减攻速")
+	_main._tick_slow_zones(1.9)
+	enemy.control.tick_slows(2.0)
+	_expect(_main._spell_system.slow_zones.is_empty() and is_equal_approx(enemy._effective_attack_speed_multiplier(), 1.0), "强化区域持续2秒后移除并恢复攻速")
+	var invalid := freeze_stats.duplicate(true)
+	invalid.active_skills[0].attack_speed_multiplier = 1.1
+	_expect(not preload("res://scripts/data/card_validator.gd").validate_all({"freeze": invalid}, false).is_empty(), "冰冻强化拒绝非法攻速倍率")
+	_expect(CardDetails.active_choice_description("freeze").contains("30%") and CardArt.skill_icon(skill) != null, "强化说明与图标读取正式定义")
+	_main._spell_system.clear()
+	for actor in actors: actor.free()
 
 func _check_heal_spell() -> void:
 	var heal_stats: Dictionary = CardDB.get_card("heal")
@@ -921,3 +946,16 @@ func _check_skill_icon_reuse() -> void:
 	bar.show_skill(0, 902, "仙灵汲取", Color.GREEN)
 	_expect(bar._icons[0].texture == null and bar._buttons[0].text == "仙" and not bar._pending_labels[0].visible, "复用槽位时清除旧图标与待释放状态，恢复文字占位")
 	bar.free()
+
+func _check_freeze_crystal_immunity() -> void:
+	for team in [0,1]:
+		var king := Tower.new()
+		king.setup(team, CardDB.NEXUS_STATS, true)
+		king.position = Vector2(360,600)
+		_main.add_child(king)
+		king.freeze(3.0)
+		_expect(king.frozen_timer == 0, "水晶在冰冻准入入口免疫")
+		_main._spell_system.cast(1-team,CardDB.get_card("freeze"),king.position,true)
+		_expect(king.frozen_timer == 0, "强化冰冻法术同样不冻结双方水晶")
+		king.free()
+	_main._spell_system.clear()
