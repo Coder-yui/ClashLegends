@@ -1,0 +1,9 @@
+{
+  "source_package": "Game/DATA/FINAL/Champions/Belveth.wad.client",
+  "source_path": "assets/characters/belveth/skins/base/belveth_base_ult_main_tx.tex",
+  "source_sha256": "eee9b3b387aea87343338a92623e99470f84c1f0c064e0fceb842fd2dbbea083",
+  "texture": "source/ultimate_body.png",
+  "sha256": "47f2dc636eb3124cd58750e385941ddb747c6b0a14ea08b3acee658821857dd7",
+  "native_hidden_submesh": "Head",
+  "native_override_submesh": "Body"
+}
