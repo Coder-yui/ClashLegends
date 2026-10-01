@@ -1,0 +1,29 @@
+{
+  "source_model": "ClashLegends-开发素材库/01-待开发/卡牌模型/瘟疫之源.glb",
+  "model_sha256": "a70a252f4bdee5a529d88ac8dcc4bc9c6c3554a7ab71e4a91350bbfe3a66be32",
+  "wrapper_scale": 0.0115,
+  "card_art_source": "Twitch.wad.client:assets/characters/twitch/skins/base/twitchloadscreen.tex",
+  "card_art_sha256": "b8842c492ad86f4874f3b23a301f9e6dd4727dbc70ea05d61d6035566c67aa3b",
+  "animation_blends": {
+    "source": "Twitch.wad.client:data/characters/twitch/animations/skin0.bin",
+    "sha256": "4bf0af2a74bf96d34010c76e338fa33a0c9ffd0abda7ed006b250981a2fefd13",
+    "encoding": "FNV1a lowercase; high32 source, low32 target",
+    "adopted_pairs": {
+      "Run>Run": 0.0,
+      "Run>Death": 0.0,
+      "Attack1>Death": 0.0,
+      "Attack2>Death": 0.0,
+      "Idle_Stealth>Idle_Stealth": 0.0,
+      "Idle_Stealth>Death": 0.0,
+      "Idle1_Base>Idle1_Base": 0.0,
+      "Idle1_Base>Death": 0.0,
+      "Respawn>Respawn": 0.0,
+      "Respawn>Death": 0.0,
+      "Spell4>Death": 0.0,
+      "Death>Death": 0.0,
+      "Run_Stealth>Death": 0.0,
+      "Run_Stealth>Run_Stealth": 0.0
+    },
+    "fallback_note": "Project locomotion fallback 0.10 seconds; not an explicit native value"
+  }
+}

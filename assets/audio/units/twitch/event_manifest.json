@@ -1,0 +1,361 @@
+[
+  {
+    "file": "play_sfx_twitch_twitchbasicattack_oncast_r1.wav",
+    "event": "Play_sfx_Twitch_TwitchBasicAttack_OnCast",
+    "event_id": 2868823828,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/图奇/audio/twitch/event_wav/Play_sfx_Twitch_TwitchBasicAttack_OnCast {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/图奇/audio/twitch/txtp/Play_sfx_Twitch_TwitchBasicAttack_OnCast {r1}.txtp",
+    "media_ids": [
+      8739784,
+      203740124,
+      461411522
+    ],
+    "duration": 0.1502,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "d3cbf001fbe5279edea0cb9911bcfc514c7be21227acb667b298139e9898d0d3",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_twitch_twitchbasicattack_oncast_r2.wav",
+    "event": "Play_sfx_Twitch_TwitchBasicAttack_OnCast",
+    "event_id": 2868823828,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/图奇/audio/twitch/event_wav/Play_sfx_Twitch_TwitchBasicAttack_OnCast {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/图奇/audio/twitch/txtp/Play_sfx_Twitch_TwitchBasicAttack_OnCast {r2}.txtp",
+    "media_ids": [
+      8739784,
+      203740124,
+      461411522
+    ],
+    "duration": 0.1595,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "d671684c727e512e936bbe36a9c2a97892c00f9f30f062ac1c7a2b24acedfb6b",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_twitch_twitchbasicattack_oncast_r3.wav",
+    "event": "Play_sfx_Twitch_TwitchBasicAttack_OnCast",
+    "event_id": 2868823828,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/图奇/audio/twitch/event_wav/Play_sfx_Twitch_TwitchBasicAttack_OnCast {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/图奇/audio/twitch/txtp/Play_sfx_Twitch_TwitchBasicAttack_OnCast {r3}.txtp",
+    "media_ids": [
+      8739784,
+      203740124,
+      461411522
+    ],
+    "duration": 0.1449,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "10c30bf7355cf3145ba41ccc6aeb441f1aba00affe8c87851e2240c9a963feb7",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_twitch_twitchbasicattack_onhit_1559186049_1153642577_r1.wav",
+    "event": "Play_sfx_Twitch_TwitchBasicAttack_OnHit",
+    "event_id": 3151149500,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/图奇/audio/twitch/event_wav/Play_sfx_Twitch_TwitchBasicAttack_OnHit [1559186049=1153642577] {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/图奇/audio/twitch/txtp/Play_sfx_Twitch_TwitchBasicAttack_OnHit [1559186049=1153642577] {r1}.txtp",
+    "media_ids": [
+      2352942,
+      8729930,
+      100392539,
+      136312881,
+      162177411,
+      180327986,
+      206527835,
+      353343319
+    ],
+    "duration": 0.4972,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "9528ade81fe5fb57f2690af303ed4961fe19b7a3f1e87d7c6c093137402f5295",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_twitch_twitchbasicattack_onhit_1559186049_1153642577_r2.wav",
+    "event": "Play_sfx_Twitch_TwitchBasicAttack_OnHit",
+    "event_id": 3151149500,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/图奇/audio/twitch/event_wav/Play_sfx_Twitch_TwitchBasicAttack_OnHit [1559186049=1153642577] {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/图奇/audio/twitch/txtp/Play_sfx_Twitch_TwitchBasicAttack_OnHit [1559186049=1153642577] {r2}.txtp",
+    "media_ids": [
+      2352942,
+      8729930,
+      100392539,
+      136312881,
+      162177411,
+      180327986,
+      206527835,
+      353343319
+    ],
+    "duration": 0.4995,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "2bbe1bcf0f0ae05ae61b187b670701a32bcaa2f39d912c45f7bc2988de244ce1",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_twitch_twitchbasicattack_onhit_1559186049_1153642577_r3.wav",
+    "event": "Play_sfx_Twitch_TwitchBasicAttack_OnHit",
+    "event_id": 3151149500,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/图奇/audio/twitch/event_wav/Play_sfx_Twitch_TwitchBasicAttack_OnHit [1559186049=1153642577] {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/图奇/audio/twitch/txtp/Play_sfx_Twitch_TwitchBasicAttack_OnHit [1559186049=1153642577] {r3}.txtp",
+    "media_ids": [
+      2352942,
+      8729930,
+      100392539,
+      136312881,
+      162177411,
+      180327986,
+      206527835,
+      353343319
+    ],
+    "duration": 0.5445,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "765629d2867a2540dca14497187137893c7de8e482cb361418497598552760e7",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_twitch_twitchbasicattack_onmissilelaunch_r1.wav",
+    "event": "Play_sfx_Twitch_TwitchBasicAttack_OnMissileLaunch",
+    "event_id": 1551821890,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/图奇/audio/twitch/event_wav/Play_sfx_Twitch_TwitchBasicAttack_OnMissileLaunch {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/图奇/audio/twitch/txtp/Play_sfx_Twitch_TwitchBasicAttack_OnMissileLaunch {r1}.txtp",
+    "media_ids": [
+      102287191,
+      247766132,
+      259262300,
+      388718592,
+      512280993
+    ],
+    "duration": 0.7946,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "5c8c8362f9f8e0b8759ab89d56a6ae036b47a7d20e8084b22bb4fe6e26484bd0",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_twitch_twitchbasicattack_onmissilelaunch_r2.wav",
+    "event": "Play_sfx_Twitch_TwitchBasicAttack_OnMissileLaunch",
+    "event_id": 1551821890,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/图奇/audio/twitch/event_wav/Play_sfx_Twitch_TwitchBasicAttack_OnMissileLaunch {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/图奇/audio/twitch/txtp/Play_sfx_Twitch_TwitchBasicAttack_OnMissileLaunch {r2}.txtp",
+    "media_ids": [
+      102287191,
+      247766132,
+      259262300,
+      388718592,
+      512280993
+    ],
+    "duration": 0.7991,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "b52e7fc04a072bf8ec957fb5aad7476deb4e47671e2085b07d668912dee53322",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_twitch_twitchbasicattack_onmissilelaunch_r3.wav",
+    "event": "Play_sfx_Twitch_TwitchBasicAttack_OnMissileLaunch",
+    "event_id": 1551821890,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/图奇/audio/twitch/event_wav/Play_sfx_Twitch_TwitchBasicAttack_OnMissileLaunch {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/图奇/audio/twitch/txtp/Play_sfx_Twitch_TwitchBasicAttack_OnMissileLaunch {r3}.txtp",
+    "media_ids": [
+      102287191,
+      247766132,
+      259262300,
+      388718592,
+      512280993
+    ],
+    "duration": 0.7958,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "301fa9b3123ed6e49bdc1974defaee8bfadff15ab9d19b2034f24ef09ca3685f",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_twitch_twitchfullautomatic_oncast.wav",
+    "event": "Play_sfx_Twitch_TwitchFullAutomatic_OnCast",
+    "event_id": 3442861486,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/图奇/audio/twitch/event_wav/Play_sfx_Twitch_TwitchFullAutomatic_OnCast.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/图奇/audio/twitch/txtp/Play_sfx_Twitch_TwitchFullAutomatic_OnCast.txtp",
+    "media_ids": [
+      880541898
+    ],
+    "duration": 2.5951,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "c9e63cf017f5b41acfff1b6752fd663fec5c5fcd324af1c86e37f9d34fe8c402",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_twitch_twitchfullautomatic_onbuffdeactivate.wav",
+    "event": "Play_sfx_Twitch_TwitchFullAutomatic_OnBuffDeactivate",
+    "event_id": 3657052666,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/图奇/audio/twitch/event_wav/Play_sfx_Twitch_TwitchFullAutomatic_OnBuffDeactivate.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/图奇/audio/twitch/txtp/Play_sfx_Twitch_TwitchFullAutomatic_OnBuffDeactivate.txtp",
+    "media_ids": [
+      73485685
+    ],
+    "duration": 1.6453,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "ae1c76ad4f76f211855cc02199acb1a31cce93d103d25aab45e68f4b215caf46",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_vo_twitch_death3d_r1_zh_cn.wav",
+    "event": "Play_vo_Twitch_Death3D",
+    "event_id": 3856451473,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/图奇/audio/twitch_vo/event_wav/Play_vo_Twitch_Death3D {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/图奇/audio/twitch_vo/txtp/Play_vo_Twitch_Death3D {r1}.txtp",
+    "media_ids": [
+      72609424,
+      616525324,
+      723505343,
+      1690179165
+    ],
+    "duration": 1.2771,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "b5175312768253382da74f76f18a0877dee5a9bb6f7505de5a21445302544653",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_vo_twitch_death3d_r2_zh_cn.wav",
+    "event": "Play_vo_Twitch_Death3D",
+    "event_id": 3856451473,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/图奇/audio/twitch_vo/event_wav/Play_vo_Twitch_Death3D {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/图奇/audio/twitch_vo/txtp/Play_vo_Twitch_Death3D {r2}.txtp",
+    "media_ids": [
+      72609424,
+      616525324,
+      723505343,
+      1690179165
+    ],
+    "duration": 1.4164,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "17fdbeb39feb8efb23a34aaee7ec71a2885417ac6e05e14be6a249c231b31802",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_vo_twitch_death3d_r3_zh_cn.wav",
+    "event": "Play_vo_Twitch_Death3D",
+    "event_id": 3856451473,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/图奇/audio/twitch_vo/event_wav/Play_vo_Twitch_Death3D {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/图奇/audio/twitch_vo/txtp/Play_vo_Twitch_Death3D {r3}.txtp",
+    "media_ids": [
+      72609424,
+      616525324,
+      723505343,
+      1690179165
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "6e808322eb7c551969841dceedde7f6b49fa7cd80d86a5a927fedbd646df6cde",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 2.066575963718821,
+      "source_sha256": "9e2f258f38b29f6ad92cfe76d43574502925912161116c7eb12454ab9c0b852a",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "twitch_q_enter.wav",
+    "event": "Play_sfx_Twitch_TwitchHideInShadows_OnCast",
+    "event_id": 2279046074,
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/图奇/audio/twitch/txtp/Play_sfx_Twitch_TwitchHideInShadows_OnCast {r1}.txtp",
+    "media_ids": [
+      750917715
+    ],
+    "duration": 2.404172335600907,
+    "processing": "vgmstream-cli -i -W 4; ffmpeg volume=-3dB pcm_s16le; common headroom, no per-file normalization",
+    "sha256": "94ecb00374bdf6905d552b2d643d364f207dff1473928c0508ff1bfeb59bba94",
+    "selection_note": "Q施法短音用于自动入隐，不接9.3秒持续层"
+  },
+  {
+    "file": "twitch_q_exit.wav",
+    "event": "Play_sfx_Twitch_TwitchHideInShadows_OnBuffDeactivate",
+    "event_id": 2517413190,
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/图奇/audio/twitch/txtp/Play_sfx_Twitch_TwitchHideInShadows_OnBuffDeactivate.txtp",
+    "media_ids": [
+      876396485
+    ],
+    "duration": 1.106439909297052,
+    "processing": "vgmstream-cli -i -W 4; ffmpeg volume=-3dB pcm_s16le; common headroom, no per-file normalization",
+    "sha256": "e552770dcdb816d1cab42e4fc32c095cc197e167df3049013dfb141b1fbad561",
+    "selection_note": "Q隐身结束用于攻击破隐"
+  },
+  {
+    "file": "deploy_q_end_r4_zh_cn.wav",
+    "event": "Play_vo_Twitch_Spell3DQEnd",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/图奇/voice-selection/q-end/txtp/Play_vo_Twitch_Spell3DQEnd {r4}.txtp",
+    "text": "嗨。",
+    "selection": "Chinese local ASR + event transcript catalog; laughter tail preserved",
+    "verified_by_listening": false,
+    "duration": 1.7647165532879818,
+    "processing": "float source to PCM16; common -3dB headroom; no trim",
+    "sha256": "03dbb809fba5f79fd3ec89f9c3fc508a9c285d6037ca80ea3e0cb910ebd5541d"
+  },
+  {
+    "file": "deploy_q_end_r1_zh_cn.wav",
+    "event": "Play_vo_Twitch_Spell3DQEnd",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/图奇/voice-selection/q-end/txtp/Play_vo_Twitch_Spell3DQEnd {r1}.txtp",
+    "text": "哦，你好。（图奇 大笑）",
+    "selection": "Chinese local ASR + event transcript catalog; laughter tail preserved",
+    "verified_by_listening": false,
+    "duration": 3.6687528344671203,
+    "processing": "float source to PCM16; common -3dB headroom; no trim",
+    "sha256": "13be8dcd759ac4162697812ed31915665c805051ff7b865cd72d4490ad081a33"
+  },
+  {
+    "file": "deploy_q_end_r3_zh_cn.wav",
+    "event": "Play_vo_Twitch_Spell3DQEnd",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/图奇/voice-selection/q-end/txtp/Play_vo_Twitch_Spell3DQEnd {r3}.txtp",
+    "text": "是我。（图奇 大笑）",
+    "selection": "Chinese local ASR + event transcript catalog; laughter tail preserved",
+    "verified_by_listening": false,
+    "duration": 3.6687528344671203,
+    "processing": "float source to PCM16; common -3dB headroom; no trim",
+    "sha256": "84d1d02450ba5427db9364694cbb3e576e3ec7cd1d4aa98989dcc12435f235ee"
+  },
+  {
+    "file": "spray_and_pray_onmissilelaunch_1.wav",
+    "event": "Play_sfx_Twitch_TwitchSprayAndPrayAttack_OnMissileLaunch",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/图奇/audio/twitch/txtp/Play_sfx_Twitch_TwitchSprayAndPrayAttack_OnMissileLaunch {r1}.txtp",
+    "duration": 1.199909297052154,
+    "processing": "vgmstream -i -W 4; uniform -3dB headroom to PCM16",
+    "sha256": "f9963353aa7bca9e86e85d6852c0a0aa245a00601e2ef2d0efba9782a2b7fa14"
+  },
+  {
+    "file": "spray_and_pray_onmissilelaunch_2.wav",
+    "event": "Play_sfx_Twitch_TwitchSprayAndPrayAttack_OnMissileLaunch",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/图奇/audio/twitch/txtp/Play_sfx_Twitch_TwitchSprayAndPrayAttack_OnMissileLaunch {r2}.txtp",
+    "duration": 1.1968707482993197,
+    "processing": "vgmstream -i -W 4; uniform -3dB headroom to PCM16",
+    "sha256": "8e0b3cd7a8d021142040e3b6abf6187e8bc841e04b760787ce313d470fca9179"
+  },
+  {
+    "file": "spray_and_pray_onmissilelaunch_3.wav",
+    "event": "Play_sfx_Twitch_TwitchSprayAndPrayAttack_OnMissileLaunch",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/图奇/audio/twitch/txtp/Play_sfx_Twitch_TwitchSprayAndPrayAttack_OnMissileLaunch {r3}.txtp",
+    "duration": 1.218798185941043,
+    "processing": "vgmstream -i -W 4; uniform -3dB headroom to PCM16",
+    "sha256": "7f905e1b28757fbef3c50bd66dd0101b4a9fc4c7cee1386b8de6f824f7fe894f"
+  },
+  {
+    "file": "spray_and_pray_onhit_1.wav",
+    "event": "Play_sfx_Twitch_TwitchSprayAndPrayAttack_OnHit",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/图奇/audio/twitch/txtp/Play_sfx_Twitch_TwitchSprayAndPrayAttack_OnHit {r1}.txtp",
+    "duration": 1.0991836734693878,
+    "processing": "vgmstream -i -W 4; uniform -3dB headroom to PCM16",
+    "sha256": "e7fdb56f001930326aa9c02c73605199eabb43fb4c9003d0bec5918cb65d3bf9"
+  },
+  {
+    "file": "spray_and_pray_onhit_2.wav",
+    "event": "Play_sfx_Twitch_TwitchSprayAndPrayAttack_OnHit",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/图奇/audio/twitch/txtp/Play_sfx_Twitch_TwitchSprayAndPrayAttack_OnHit {r2}.txtp",
+    "duration": 0.934421768707483,
+    "processing": "vgmstream -i -W 4; uniform -3dB headroom to PCM16",
+    "sha256": "33f936c74e28a4187438145cab74a1df8c3ce0bab035d1222e69d85675949218"
+  },
+  {
+    "file": "spray_and_pray_onhit_3.wav",
+    "event": "Play_sfx_Twitch_TwitchSprayAndPrayAttack_OnHit",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/图奇/audio/twitch/txtp/Play_sfx_Twitch_TwitchSprayAndPrayAttack_OnHit {r3}.txtp",
+    "duration": 1.2231292517006802,
+    "processing": "vgmstream -i -W 4; uniform -3dB headroom to PCM16",
+    "sha256": "4635c91740d8bf30a79439c9f83ed2820704683db114406c3dbbf6781b1e61aa"
+  }
+]

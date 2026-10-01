@@ -258,5 +258,32 @@
     "source_path": "assets/characters/lulu/hud/icons2d/lulu_giantgrowth.dds",
     "source_sha256": "0325068beac3f61de5e7096fd732e09b6380f934ba7db005d7e9a8cb41a49eeb",
     "sha256": "37eb75642d7b5af7bd2e665a07c10debf6b847937ba165ef692495f766e1e6f8"
+  },
+  {
+    "card": "twitch",
+    "skill_index": 0,
+    "path": "res://assets/skills/twitch_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Twitch.wad.client",
+    "source_path": "assets/characters/twitch/hud/icons2d/twitch_r.dds",
+    "source_sha256": "eb89e1ed746e7234bb717aa8f29601cd82c304b878fb483e2c44a96309a1b90f",
+    "sha256": "c39322c605b5245ca9de6e779d9c5ef844e22549e45c36b9280dab4a8fd93df9"
+  },
+  {
+    "card": "stasis",
+    "skill_index": 0,
+    "path": "res://assets/skills/stasis_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Bard.wad.client",
+    "source_path": "assets/characters/bard/hud/icons2d/bard_r.dds",
+    "source_sha256": "42afc095ed0bea48aa4f270fc247ae49c98f4498e8d4726d0e0adbd937f24391",
+    "sha256": "0535f8bf4ca71f1fe2f242d4b161c2083ab8b6d00e2972d86fce2246f40b1610"
+  },
+  {
+    "card": "belveth",
+    "skill_index": 0,
+    "path": "res://assets/skills/belveth_q.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Belveth.wad.client",
+    "source_path": "assets/characters/belveth/hud/icons2d/bv_q_15.dds",
+    "source_sha256": "7ef20d2d8634081dd8e4a51a7233e9eb4bfd79b2d15c772b01de9ade8d6c769c",
+    "sha256": "9c0d79a351d38aa91d79316d083cedf0bedc007aeb060d5e07b41ca8420cebb9"
   }
 ]
