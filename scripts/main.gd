@@ -839,6 +839,7 @@ func _setup_battle_presentation() -> void:
 	_battle_presentation = BattlePresentation3D.new()
 	add_child(_battle_presentation)
 	_battle_presentation.setup(Vector2(ArenaRules.FIELD_W, ArenaRules.FIELD_H), ArenaRules.TILE_SIZE, mode == "client")
+	_battle_presentation.spells = _spell_system
 	_battle_presentation.pending_deployments = _commands.inspect_deployments
 	_arena_background_sprite.hide()
 

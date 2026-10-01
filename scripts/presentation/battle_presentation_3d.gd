@@ -3,6 +3,9 @@ extends Node
 ## 战场的 3D 表现容器。模拟、碰撞与联机仍在 Node2D 中运行；
 ## 本节点承载正式 3D 地图，并把单位、塔与基地水晶镜像到同一视口。
 
+var spells: RefCounted
+var _freeze_ground: Node3D
+
 var _viewport: SubViewport
 var _world_root: Node3D
 var _camera: Camera3D
@@ -11,6 +14,8 @@ var pending_deployments: Callable
 var _pre_deploy_views: Dictionary = {}
 
 func _process(delta: float) -> void:
+	if _freeze_ground != null and spells != null:
+		_freeze_ground.sync_effects(spells, _camera)
 	if pending_deployments.is_valid():
 		sync_pre_deployments(pending_deployments.call(), delta)
 
@@ -61,6 +66,9 @@ func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void
 	if flipped:
 		_camera.rotate_object_local(Vector3.BACK, PI)
 		_camera.set_meta("canvas_flipped", true)
+
+	_freeze_ground = preload("res://scripts/presentation/freeze_ground_3d.gd").new()
+	_world_root.add_child(_freeze_ground)
 
 	# 地图与模型共享深度；2D 部署提示、脚下标记与血条绘制在视口上方。
 	var overlay := Sprite2D.new()

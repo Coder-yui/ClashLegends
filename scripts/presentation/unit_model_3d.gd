@@ -242,6 +242,7 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 		_model_root.remove_meta("prepared_animation_player")
 	else:
 		_animation_player = _model_resources.bind_model(_model_root)
+	_model_resources.configure_frost(is_instance_valid(_source) and _source.is_building)
 	_stable_head_offset = NAN
 	_control_stage = &""
 	if _animation_player == null:
@@ -1069,7 +1070,7 @@ func _update_deploy_sequence_lifecycle() -> void:
 		return
 	var deploy_names = _animation_names.get("deploy", "")
 	var has_sequence: bool = deploy_names is Array and not (deploy_names as Array).is_empty()
-	var deploying := _source._deploy_timer > 0.0
+	var deploying := _source.get_locomotion_visual_state_code() == 0
 	if has_sequence and deploying and not _deploy_sequence_started and not _source.cancelled_deployment:
 		_deploy_sequence_started = true
 		_start_deploy_sequence(deploy_names as Array)
@@ -1591,6 +1592,7 @@ func _start_death_followup() -> bool:
 		_model_root.remove_meta("prepared_animation_player")
 	else:
 		_animation_player = _model_resources.bind_model(_model_root)
+	_model_resources.configure_frost(is_instance_valid(_source) and _source.is_building)
 	_stable_head_offset = NAN
 	_control_stage = &""
 	if _animation_player == null or not _animation_player.has_animation(followup_name):
@@ -1682,7 +1684,8 @@ func _on_action_cancelled(payload: Dictionary) -> void:
 	if int(payload.get("form", 0)) < maxi(_source.form_change_serial, _source.net_form_change_serial): return
 	var cancel_attack := _last_attack_serial <= int(payload.get("attack", 0))
 	var freeze_pose := String(payload.get("reason", "")) in ["freeze", "stasis"] and _last_visual_action_serial <= int(payload.get("action", 0))
-	if not cancel_attack and not freeze_pose: return
+	var cancel_action := _last_visual_action_serial > 0 and _last_visual_action_serial <= int(payload.get("cancelled_action", -1))
+	if not cancel_attack and not freeze_pose and not cancel_action: return
 	if cancel_attack:
 		_last_attack_serial = maxi(_last_attack_serial, int(payload.get("attack", 0)))
 		_pending_attack_serial = 0
@@ -1714,9 +1717,15 @@ func _on_action_cancelled(payload: Dictionary) -> void:
 		_last_visual_action_serial = maxi(_last_visual_action_serial, int(payload.get("action", 0)))
 		_animation_player.speed_scale = 0.0
 		_was_controlled = true
-	elif cancel_attack and not _state.frozen:
+	elif (cancel_attack or cancel_action) and not _state.frozen:
+		if cancel_action:
+			_playing_visual_action = false
+			_action_sequence.clear()
+			_active_visual_action = &""
+			_active_action_priority = 0
+			_last_visual_action_serial = maxi(_last_visual_action_serial, int(payload.get("cancelled_action", -1)))
 		_sync_visual_action_while_controlled()
-		if not _playing_visual_action and not _playing_deploy_sequence:
+		if not _playing_visual_action and not _playing_deploy_sequence and _source.get_locomotion_visual_state_code() != 0:
 			_transition_to_basic_state(1, 0.1)
 
 func _sync_control_override() -> bool:
@@ -1747,7 +1756,7 @@ func _sync_control_override() -> bool:
 	if _state.stunned:
 		_sync_visual_action_while_controlled()
 	# 眩晕保留已开始的技能/部署/转换；普通动作由取消事件切到 Idle。
-	if _state.stunned and not _playing_visual_action and not _playing_deploy_sequence and _source._deploy_timer <= 0.0:
+	if _state.stunned and not _playing_visual_action and not _playing_deploy_sequence and _source.get_locomotion_visual_state_code() != 0:
 		if _current_state != 1:
 			_transition_to_basic_state(1, 0.1)
 		return true

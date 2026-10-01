@@ -13,6 +13,8 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_finished_source_idle_transition()
 	_check_cast_policies_and_snapshot()
 	_check_control_interruptions()
+	_check_deploy_control_priority()
+	_check_deploy_control_endings()
 
 func _view_for(unit: Unit) -> UnitModel3D:
 	for child in _main._battle_presentation._world_root.get_children():
@@ -548,3 +550,87 @@ func _check_egg_death_model() -> void:
 	unit.take_damage(100000.0, null, 1)
 	_expect(view != null and view._death_followup_started and view._model_root.scene_file_path == "res://assets/units/anivia/anivia_view.tscn" and view._animation_player.current_animation == "Death", "凤凰蛋被击破直接切凤凰模型 Death，跳过蛋死亡片段")
 	if view != null: view.queue_free()
+
+func _check_deploy_control_priority() -> void:
+	for card in ["garen", "xin", "pantheon"]:
+		for kind in ["stun", "knockback"]:
+			var stats: Dictionary = CardDB.get_card(card)
+			var unit := Unit.new()
+			unit.setup(0, stats, stats.name)
+			_main.add_child(unit)
+			_main._battle_presentation.attach_unit(unit, stats)
+			var view := _view_for(unit)
+			view._process(0.0)
+			var player := view._animation_player
+			player.advance(0.15)
+			var clip := player.current_animation
+			var position := player.current_animation_position
+			var remaining := unit._deploy_timer
+			for repeat in range(2):
+				if kind == "stun": unit.stun(2.0)
+				else: unit.apply_knockback(Vector2.LEFT * 100.0, 30.0, 2.0)
+				_expect(player.current_animation == clip and is_equal_approx(player.current_animation_position, position), "%s %s重复取消不切Idle或重启部署" % [card, kind])
+				view._process(0.0)
+			_expect(is_equal_approx(unit._deploy_timer, remaining), "%s控制表现不改变部署计时" % card)
+			unit.freeze(0.5)
+			view._process(0.0)
+			clip = player.current_animation
+			position = player.current_animation_position
+			unit.stun(2.0)
+			view._process(0.0)
+			_expect(player.speed_scale == 0.0 and player.current_animation == clip and is_equal_approx(player.current_animation_position, position), "%s冻结优先于后续眩晕且不恢复部署" % card)
+			unit.apply_stasis(1.0)
+			SuiteUtils.set_control_window(unit.control, &"freeze", 0.0)
+			view._process(0.0)
+			_expect(player.speed_scale == 0.0, "%s冰冻结束仍凝滞保持冻结" % card)
+			unit.control.hard.clear_family(&"stasis")
+			view._process(0.0)
+			_expect(view._current_state == 1 and not view._playing_deploy_sequence and player.speed_scale > 0.0, "%s冻结结束仍眩晕转Idle不补播部署" % card)
+			view.free()
+			unit.free()
+
+func _check_deploy_control_endings() -> void:
+	for card in ["garen", "xin", "pantheon"]:
+		for offset in [-0.15, 0.0, 0.15]:
+			var stats: Dictionary = CardDB.get_card(card)
+			var unit := Unit.new()
+			unit.setup(0, stats, stats.name)
+			_main.add_child(unit)
+			_main._battle_presentation.attach_unit(unit, stats)
+			var view := _view_for(unit)
+			view._process(0.0)
+			unit.stun(unit._deploy_timer + offset)
+			var original := unit._deploy_timer
+			var ticks := int(ceil(original / 0.05))
+			for tick in range(ticks):
+				unit.sim_tick(0.05)
+				view._process(0.05)
+				view._animation_player.advance(0.05)
+			_expect(unit._deploy_timer <= 0.00001 and not view._playing_deploy_sequence and view._current_state != 0, "%s部署结束按当前控制退出：偏移%s" % [card, offset])
+			_expect(unit.is_stunned() == (offset > 0.0), "%s部署和控制独立计时：偏移%s" % [card, offset])
+			view.free()
+			unit.free()
+	# 初次客户端表现已受晕：权威投影仍在部署，本地计时不作为生命周期来源。
+	var saved_mode: String = _main.mode
+	_main.mode = "client"
+	for card in ["garen", "pantheon"]:
+		var stats: Dictionary = CardDB.get_card(card)
+		var unit := Unit.new()
+		unit.setup(0, stats, stats.name)
+		unit.battle_context = _main.battle_context
+		unit._deploy_timer = 0.0
+		unit.net_visual_state = 0
+		unit.net_locomotion_state = 0
+		unit.control.apply_replica_flags(false, true)
+		_main.add_child(unit)
+		_main._battle_presentation.attach_unit(unit, stats)
+		var view := _view_for(unit)
+		view._process(0.0)
+		_expect(view._current_state == 0, "%s客户端初始受晕快照保留权威部署" % card)
+		unit.net_visual_state = 1
+		unit.net_locomotion_state = 1
+		view._process(0.0)
+		_expect(view._current_state == 1 and not view._playing_deploy_sequence, "%s客户端部署结束仍眩晕转待机" % card)
+		view.free()
+		unit.free()
+	_main.mode = saved_mode

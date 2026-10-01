@@ -13,19 +13,36 @@ var _surface_originals: Array = []
 var _surface_ghosts: Array = []
 var _override_originals: Array = []
 var _shadow_originals: Array = []
-var _gold: StandardMaterial3D
+var _gold_overlays: Array[Material] = []
+var _gold: ShaderMaterial
 var _flash: StandardMaterial3D
+var _building_frost := false
 
 func bind_model(root: Node) -> AnimationPlayer:
 	clear()
 	_collect_meshes(root)
 	_prepare_stealth_materials()
-	_gold = StandardMaterial3D.new()
-	_gold.albedo_color = Color(1.0, 0.67, 0.12)
-	_gold.metallic = 0.8
-	_gold.roughness = 0.24
-	_gold.emission_enabled = true
-	_gold.emission = Color(0.24, 0.11, 0.01)
+	_gold = ShaderMaterial.new()
+	_gold.shader = preload("res://assets/effects/stasis/attached_mesh.gdshader")
+	_gold.set_shader_parameter("swirl", preload("res://assets/effects/stasis/bard_swirl.png"))
+	var gold_layer := ShaderMaterial.new()
+	gold_layer.shader = preload("res://assets/effects/stasis/attached_gold.gdshader")
+	gold_layer.set_shader_parameter("swirl", preload("res://assets/effects/stasis/zhonya_swirl.png"))
+	_gold.next_pass = gold_layer
+	_gold_overlays.clear()
+	for mesh in _meshes:
+		var overlay := _gold
+		# 烘焙废墟包含内凹面；绕原点扩张会让覆盖面埋回原网格。
+		# 保持顶点完全贴合，仅向相机偏移深度，不改变轮廓或遮挡关系。
+		if String(root.get_path_to(mesh)).begins_with("RuinBase/"):
+			overlay = _gold.duplicate() as ShaderMaterial
+			overlay.set_shader_parameter("mesh_scale", 1.0)
+			overlay.set_shader_parameter("depth_bias", 0.00001)
+			var attached_gold := gold_layer.duplicate() as ShaderMaterial
+			attached_gold.set_shader_parameter("mesh_scale", 1.0)
+			attached_gold.set_shader_parameter("depth_bias", 0.00002)
+			overlay.next_pass = attached_gold
+		_gold_overlays.append(overlay)
 	_flash = StandardMaterial3D.new()
 	_flash.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	_flash.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
@@ -58,13 +75,25 @@ func configure_buff(factory: Callable = Callable()) -> void:
 		for original in _originals: _buffs.append(factory.call(original))
 	_prepare_overlays()
 
+func configure_frost(building: bool) -> void:
+	if _building_frost == building: return
+	_building_frost = building
+	_overlays.clear()
+	_prepare_overlays()
+
 func _overlay_variants(base: Material) -> Array:
 	var variants := [base]
 	for color in [Color(1.0, 1.0, 1.0, 0.22), Color(0.3, 0.7, 1.0, 0.28)]:
 		var overlay := _flash.duplicate() as StandardMaterial3D
 		overlay.albedo_color = color
 		overlay.next_pass = base
-		variants.append(overlay)
+		if _building_frost and color.b == 1.0 and color.r < 1.0:
+			var frost := ShaderMaterial.new()
+			frost.shader = preload("res://assets/effects/freeze/attached_frost.gdshader")
+			frost.next_pass = base
+			variants.append(frost)
+		else:
+			variants.append(overlay)
 	return variants
 
 func _prepare_overlays() -> void:
@@ -81,7 +110,7 @@ func apply_overlays(hit: bool, frozen: bool, buff_visible: bool, stasis: bool = 
 	if state == _last_state: return
 	_last_state = state
 	for index in _meshes.size():
-		if is_instance_valid(_meshes[index]): _meshes[index].material_overlay = _gold if stasis else _overlays[index][state]
+		if is_instance_valid(_meshes[index]): _meshes[index].material_overlay = _gold_overlays[index] if stasis else _overlays[index][state]
 
 func reset_overlays() -> void:
 	if is_instance_valid(_player):
@@ -133,6 +162,7 @@ func clear() -> void:
 	_player = null
 	_loops.clear()
 	_flash = null
+	_building_frost = false
 	_overlays.clear()
 	_last_state = -1
 

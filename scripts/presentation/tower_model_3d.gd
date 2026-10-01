@@ -18,6 +18,10 @@ uniform float ground_cutoff = 0.0;
 uniform float surface_visible = 1.0;
 uniform float flash_amount = 0.0;
 uniform float stasis_amount = 0.0;
+uniform float frozen_amount = 0.0;
+uniform vec4 frost_color : source_color = vec4(0.3, 0.7, 1.0, 0.28);
+uniform sampler2D stasis_swirl : source_color, repeat_enable;
+uniform sampler2D stasis_gold : source_color, repeat_enable;
 
 void fragment() {
 	// fragment() 的 VERTEX 已是蒙皮与模型变换后的视图空间位置；转回世界空间后
@@ -38,14 +42,18 @@ void fragment() {
 		discard;
 	}
 	// 受击闪白：向白色轻微混合，隐藏表面已在前面的 discard 中剔除。
-	float detail = clamp(dot(sampled.rgb, vec3(0.299, 0.587, 0.114)) * 2.0, 0.0, 1.0);
-	vec3 gold = vec3(1.0, 0.67, 0.12) * (0.35 + 0.65 * detail);
-	ALBEDO = mix(mix(sampled.rgb, vec3(1.0), flash_amount), gold, stasis_amount);
-	EMISSION = vec3(0.06, 0.025, 0.002) * stasis_amount;
+	vec3 base = mix(sampled.rgb, frost_color.rgb, frost_color.a * frozen_amount);
+	base = mix(base, vec3(1.0), flash_amount);
+	// Same original attached-mesh textures; retain tower surface/ground clipping.
+	vec3 swirl = texture(stasis_swirl, UV + vec2(0.0, TIME * 0.4)).rgb;
+	vec3 gold = texture(stasis_gold, UV).rgb;
+	vec3 attached = mix(base, swirl, 0.4900112) + gold * 0.4900112;
+	ALBEDO = mix(base, attached, stasis_amount);
 }
 """
 
 var _stasis_visible := false
+var _frozen_visible := false
 var _status_head_height := 0.0
 var _projectile_anchor: Node3D
 var _source: Tower
@@ -115,13 +123,20 @@ func _process(delta: float) -> void:
 		queue_free()
 		return
 	var stasis := _source.hp > 0.0 and CombatInteraction.in_stasis(_source)
-	if stasis != _stasis_visible:
+	var frozen := _source.hp > 0.0 and not _source.is_king and _source.frozen_timer > 0.0 and not stasis
+	if stasis != _stasis_visible or frozen != _frozen_visible:
 		_stasis_visible = stasis
-		for materials in _surface_materials_by_name.values():
-			for material in materials: material.set_shader_parameter("stasis_amount", 1.0 if stasis else 0.0)
+		_frozen_visible = frozen
+		for surface in _surface_materials_by_name:
+			# 已脱离碎块拥有独立材质/时钟；金身/冰霜只覆盖塔身，不显露隐藏表面。
+			var body_surface: bool = not _stage_mode or surface in _animations.get("stage_surfaces", [])
+			for material in _surface_materials_by_name[surface]:
+				material.set_shader_parameter("stasis_amount", 1.0 if stasis and body_surface else 0.0)
+				material.set_shader_parameter("frozen_amount", 1.0 if frozen and body_surface else 0.0)
 	if _animation_player != null: _animation_player.speed_scale = 0.0 if stasis else 1.0
-	for layer in _debris_layers: layer.player.speed_scale = 0.0 if stasis else 1.0
 	if stasis:
+		_advance_debris(delta)
+		_update_hit_flash(delta)
 		_sync_position()
 		return
 	var animation_delta := delta
@@ -199,12 +214,8 @@ func _setup_stage_mode() -> void:
 	if _visual_stage < surfaces.size():
 		_set_surface_visible(String(surfaces[_visual_stage]), true)
 
-## 阶段推进与掉块演出：血量掉到哪个阶段就直接跳到哪个阶段（跨阶段不补演
-## 中间碎块），播放该阶段碎块并打断可能还在播的旧碎块；演出计时结束时隐藏
-## 碎块表面。死亡演出结束后隐藏残核并定格废墟。
-func _update_stage_flow(delta: float) -> void:
-	if not _stage_mode:
-		return
+## 已生成碎块独立推进寿命；凝滞冻结塔身时仍按原片下落并到期隐藏。
+func _advance_debris(delta: float) -> void:
 	for layer in _debris_layers.duplicate():
 		layer.remaining = maxf(0.0, float(layer.remaining) - delta)
 		if layer.remaining <= 0.0:
@@ -214,6 +225,12 @@ func _update_stage_flow(delta: float) -> void:
 	if _debris_layers.is_empty():
 		_active_debris_surface = ""
 		_death_pending = false
+
+## 血量直接切到目标阶段，跨阶段不补演中间碎块，已有碎块不重播。
+func _update_stage_flow(delta: float) -> void:
+	if not _stage_mode:
+		return
+	_advance_debris(delta)
 	if _destroyed or _source == null:
 		return
 	var target_stage := _stage_from_hp(_source.hp, _source.max_hp)
@@ -447,6 +464,8 @@ func _apply_ground_clip_materials(cutoff_y: float) -> void:
 			var clipped_material := ShaderMaterial.new()
 			clipped_material.shader = clip_shader
 			clipped_material.set_shader_parameter("albedo_texture", source_material.albedo_texture)
+			clipped_material.set_shader_parameter("stasis_swirl", preload("res://assets/effects/stasis/bard_swirl.png"))
+			clipped_material.set_shader_parameter("stasis_gold", preload("res://assets/effects/stasis/zhonya_swirl.png"))
 			clipped_material.set_shader_parameter("albedo_color", source_material.albedo_color)
 			clipped_material.set_shader_parameter("ground_cutoff", cutoff_y)
 			mesh_instance.set_surface_override_material(surface_index, clipped_material)

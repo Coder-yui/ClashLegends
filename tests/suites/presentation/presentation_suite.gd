@@ -11,6 +11,8 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_model_resources_owner()
 	_check_action_sequence_owner()
 	_check_structure_art_integration()
+	_check_stasis_debris()
+	_check_freeze_surfaces()
 	_check_unit_size_tiers()
 	_check_visual_state_contract()
 	_check_hit_flash_presentation()
@@ -273,6 +275,74 @@ func _check_structure_art_integration() -> void:
 	if instant_view != null:
 		instant_view.free()
 	instant_tower.free()
+
+func _check_stasis_debris() -> void:
+	for team in [0, 1]:
+		var tower := Tower.new()
+		tower.setup(team, CardDB.PRINCESS_TOWER_STATS, false)
+		tower.position = Vector2(360.0, 800.0)
+		_main.add_child(tower)
+		_main._battle_presentation.attach_tower(tower, CardDB.PRINCESS_TOWER_VISUAL_CONFIG)
+		var view: TowerModel3D = null
+		for child in _main._battle_presentation._world_root.get_children():
+			if child is TowerModel3D and child._source == tower: view = child
+		_expect(view != null, "双方凝滞掉块回归加载正式塔模型")
+		if view == null:
+			tower.free()
+			continue
+		tower.take_damage(tower.max_hp * 0.4)
+		view._process(0.01)
+		var first: AnimationPlayer = view._debris_layers[0].player
+		first.advance(0.2)
+		tower.take_damage(tower.max_hp * 0.3)
+		view._process(0.1)
+		var second: AnimationPlayer = view._debris_layers[1].player
+		second.advance(0.1)
+		var first_pos := first.current_animation_position
+		var second_pos := second.current_animation_position
+		var remaining: float = view._debris_layers[0].remaining
+		var hp_before := tower.hp
+		tower.apply_stasis(3.0)
+		view._process(0.2)
+		_expect(view._animation_player.speed_scale == 0.0 and first.speed_scale == 1.0 and second.speed_scale == 1.0, "凝滞只冻结塔身，两组已脱离碎块均保持正常速率")
+		_expect(is_equal_approx(float(view._debris_layers[0].remaining), remaining - 0.2), "金身中碎块寿命继续计时")
+		first.advance(0.2)
+		second.advance(0.2)
+		_expect(first.current_animation_position > first_pos and second.current_animation_position > second_pos, "金身中两组真实掉块动画继续前进")
+		var colors_ok := true
+		for surface in view._surface_materials_by_name:
+			var expected := 1.0 if surface in view._animations.stage_surfaces else 0.0
+			for material in view._surface_materials_by_name[surface]:
+				colors_ok = colors_ok and is_equal_approx(float(material.get_shader_parameter("stasis_amount")), expected)
+		_expect(colors_ok and _surfaces_visible(view, ["Broken1", "Broken2", "Stage2"], true) and _surfaces_visible(view, ["Base", "Stage1", "Broken3", "Rubble"], false), "金身仅染塔身，独立碎块原色且隐藏表面不显露")
+		tower.take_damage(100.0)
+		_expect(tower.hp == hp_before and view._debris_layers.size() == 2, "表现修改不改变凝滞免伤且不产生新碎块")
+		first_pos = first.current_animation_position
+		second_pos = second.current_animation_position
+		tower.control.hard.clear_family(&"stasis")
+		view._process(0.05)
+		_expect(view._debris_layers.size() == 2 and view._debris_layers[0].player == first and view._debris_layers[1].player == second and first.current_animation_position == first_pos and second.current_animation_position == second_pos, "解除凝滞保留两组播放器和原进度，不重播掉块")
+		tower.freeze(1.0)
+		tower.stun(1.0)
+		view._process(0.05)
+		_expect(view._animation_player.speed_scale == 1.0 and first.speed_scale == 1.0 and second.speed_scale == 1.0, "冰冻眩晕仍不暂停结构生命周期播放器")
+		tower.apply_stasis(3.0)
+		view._process(20.0)
+		_expect(view._debris_layers.is_empty() and _surfaces_visible(view, ["Broken1", "Broken2"], false) and _surfaces_visible(view, ["Stage2"], true), "金身未解除时碎块自然结束并隐藏，塔身保留")
+		tower.control.hard.clear_family(&"stasis")
+		view._process(0.1)
+		_expect(view._debris_layers.is_empty(), "到期碎块在解除金身后不会重新生成")
+		tower.take_damage(10000.0)
+		view._process(0.05)
+		var death_player: AnimationPlayer = view._debris_layers[0].player
+		var death_ref: WeakRef = weakref(death_player)
+		view._on_source_destroyed()
+		_expect(view._debris_layers.size() == 1 and _surfaces_visible(view, ["Rubble", "Broken3"], true), "死亡只创建一次最终碎块并显示废墟")
+		view._process(20.0)
+		_expect(view._debris_layers.is_empty() and _surfaces_visible(view, ["Broken3"], false) and _surfaces_visible(view, ["Rubble"], true), "死亡碎块自然结束保留废墟")
+		view.free()
+		_expect(death_ref.get_ref() == null, "代理销毁清理独立碎块播放器")
+		tower.free()
 
 ## 校验表面组内所有裁切材质的可见参数，且表面名必须真实存在（防止配置名写错）。
 func _surfaces_visible(view: TowerModel3D, surface_names: Array, expected: bool) -> bool:
@@ -787,3 +857,91 @@ func _check_control_effect_motion() -> void:
 	unit.control.refresh_stun(1.0)
 	_expect(not unit.stun_visual() and not unit.movement_slow_effect_visible(), "死亡不保留控制特效")
 	unit.free()
+
+func _check_freeze_surfaces() -> void:
+	for team in [0, 1]:
+		for id in ["garen", "tombstone", "apex_turret", "sun_disc"]:
+			var stats := CardDB.get_unit_stats(id).duplicate(true)
+			stats.deploy_time = 0.0
+			var unit := Unit.new()
+			unit.position = Vector2(360, 850)
+			unit.setup(team, stats, stats.name)
+			_main.add_child(unit)
+			_main._battle_presentation.attach_unit(unit, stats)
+			var view: UnitModel3D
+			for child in _main._battle_presentation._world_root.get_children():
+				if child is UnitModel3D and child._source == unit: view = child
+			_expect(view != null, "冻结材质加载双方人物与建筑：" + id)
+			if view == null:
+				unit.free()
+				continue
+			unit.freeze(3.0)
+			view._process(0.01)
+			var frost_ok := true
+			for mesh in view._model_resources.meshes():
+				if unit.is_building:
+					frost_ok = frost_ok and mesh.material_overlay is ShaderMaterial and mesh.material_overlay.shader == preload("res://assets/effects/freeze/attached_frost.gdshader")
+				else:
+					frost_ok = frost_ok and mesh.material_overlay is StandardMaterial3D and mesh.material_overlay.albedo_color == Color(0.3,0.7,1.0,0.28)
+			_expect(frost_ok, "冰冻保留人物淡蓝叠层，建筑贴面覆盖含凹面基座：" + id)
+			unit.control.tick_hard_controls(3.0)
+			unit.apply_slow(2.0,0.7)
+			unit.apply_attack_speed_slow(2.0,0.7)
+			view._process(0.01)
+			var restored := true
+			var meshes := view._model_resources.meshes()
+			for index in meshes.size(): restored = restored and meshes[index].material_overlay == view._model_resources.original_overlay(index)
+			_expect(restored and unit.control.attack_speed_slow_timer > 0, "双减速有效期间模型恢复原色：" + id)
+			view.free()
+			unit.free()
+		var tower := Tower.new()
+		tower.setup(team, CardDB.PRINCESS_TOWER_STATS, false)
+		tower.position = Vector2(360,850)
+		_main.add_child(tower)
+		_main._battle_presentation.attach_tower(tower, CardDB.PRINCESS_TOWER_VISUAL_CONFIG)
+		var tower_view: TowerModel3D
+		for child in _main._battle_presentation._world_root.get_children():
+			if child is TowerModel3D and child._source == tower: tower_view = child
+		tower.freeze(3)
+		tower_view._process(0.01)
+		var body_ok := true
+		for surface in tower_view._surface_materials_by_name:
+			for material in tower_view._surface_materials_by_name[surface]:
+				var expected := 1.0 if surface in tower_view._animations.stage_surfaces else 0.0
+				body_ok = body_ok and float(material.get_shader_parameter("frozen_amount")) == expected
+		_expect(body_ok and tower_view._animation_player.speed_scale == 1.0, "防御塔冰冻只染塔身，不染碎块、不暂停结构动画")
+		tower.apply_stasis(1)
+		tower_view._process(0.01)
+		_expect(not tower_view._frozen_visible and tower_view._stasis_visible, "金身优先于防御塔冰霜覆盖")
+		tower.control.tick_hard_controls(1)
+		tower_view._process(0.01)
+		_expect(tower_view._frozen_visible and not tower_view._stasis_visible, "凝滞结束恢复仍有效冰霜覆盖")
+		tower.control.tick_hard_controls(2)
+		tower_view._process(0.01)
+		_expect(not tower_view._frozen_visible, "防御塔解冻移除蓝色覆盖")
+		tower_view.free()
+		tower.free()
+	var ground: Node3D = _main._battle_presentation._freeze_ground
+	var spells: RefCounted = _main._spell_system
+	spells.clear()
+	spells.show_freeze(Vector2(360,850),110,3,2,0)
+	spells.show_freeze(Vector2(360,450),110,3,2,1)
+	ground.sync_effects(spells,_main._battle_presentation._camera)
+	var first: MeshInstance3D = ground._views[0]
+	var first_mesh := first.mesh
+	var red: MeshInstance3D = ground._views[1]
+	_expect(first.material_override.get_shader_parameter("rim_color") == ground.BLUE_RIM and red.material_override.get_shader_parameter("rim_color") == ground.RED_RIM, "冰纹外圈按施法阵营区分蓝红，冰面共用材质")
+	spells.tick_visuals(3.0)
+	ground.sync_effects(spells,_main._battle_presentation._camera)
+	_expect(first.visible and first.mesh == first_mesh, "冰纹从首帧完整出现，强化阶段无缝复用完整地面")
+	spells.tick_visuals(1.95)
+	ground.sync_effects(spells,_main._battle_presentation._camera)
+	_expect(first.visible and first.mesh == first_mesh, "强化2秒末尾仍保留完整冰纹地面")
+	_expect(first.material_override.get_shader_parameter("rim_color") == ground.BLUE_RIM and red.material_override.get_shader_parameter("rim_color") == ground.RED_RIM, "冻后双减速阶段延续各自阵营范围圈")
+	spells.tick_visuals(0.1)
+	ground.sync_effects(spells,_main._battle_presentation._camera)
+	_expect(not first.visible, "双减速区域结束后隐藏冰纹地面")
+	spells.show_freeze(Vector2(360,850),110,3,0,1)
+	ground.sync_effects(spells,_main._battle_presentation._camera)
+	_expect(first.mesh == first_mesh and first.material_override.get_shader_parameter("rim_color") == ground.RED_RIM, "相同位置复用地面槽位仍更新施法阵营颜色")
+	spells.clear()
