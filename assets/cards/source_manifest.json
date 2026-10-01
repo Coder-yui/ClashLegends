@@ -8,5 +8,12 @@
     "source_sha256": "99614ba0b62f61e10d0b1ad92fec36d995a2e3e0846283cf8d8f061c1afb0921",
     "sha256": "99614ba0b62f61e10d0b1ad92fec36d995a2e3e0846283cf8d8f061c1afb0921",
     "processing": "原始 JPG 直接复制；未裁切或改色。"
+  },
+  {
+    "card": "stasis",
+    "path": "res://assets/cards/stasis_loading.png",
+    "source": "用户提供：ChatGPT 图像 2026年10月1日 21_30_56.png",
+    "sha256": "08b7f18a929623c64a91ee5469a5cc03dbff22e37edeaec98070b0ff3b21125e",
+    "processing": "原图重命名并移动，无裁切或修改"
   }
 ]
