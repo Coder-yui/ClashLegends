@@ -3,6 +3,7 @@ extends "res://tests/suites/battle_suite.gd"
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
+	_check_stasis_target_and_bypass(main)
 	var center := Vector2(180, 800)
 	var ally: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "garen", center, {"deploy_time_override": 0.0}))
 	var enemy: Unit = main._spawn_unit(UnitSpawnRequest.new(1, "garen", center + Vector2(50, 0), {"deploy_time_override": 0.0}))
@@ -333,12 +334,15 @@ func _check_indicators_and_grit(main: Node2D) -> void:
 	for i in 20:
 		sett._tick_active_statuses(0.05)
 		sett.prepare_action_clocks(0.05)
-	_expect(is_equal_approx(sett.skill_resource_value, 200), "凝滞中豪意仍遵守原有1秒衰减等待")
+	_expect(is_equal_approx(sett.skill_resource_value, 200), "凝滞期间不累计脱战等待")
 	for i in 10:
 		sett._tick_active_statuses(0.05)
 		sett.prepare_action_clocks(0.05)
-	_expect(is_equal_approx(sett.skill_resource_value, 150), "非攻击凝滞状态豪意按每秒100正常衰减")
+	_expect(is_equal_approx(sett.skill_resource_value, 200), "虽已取消攻击，凝滞硬控仍阻止豪意衰减")
 	sett.control.hard.clear_family(&"stasis")
+	for i in 30:
+		sett._tick_active_statuses(0.05)
+		sett.prepare_action_clocks(0.05)
 	_expect(PresentationConfig.status_indicators_visible(sett) and is_equal_approx(sett.skill_resource_value, 150) and sett.hp == 500, "解除标识按实时150豪意和500生命恢复，不回滚旧值")
 	var original_mode: String = main.mode
 	main.mode = "client"
@@ -358,3 +362,52 @@ func _check_indicators_and_grit(main: Node2D) -> void:
 	_expect(not PresentationConfig.status_indicators_visible(tower), "防御塔金身隐藏血条等标识")
 	tower.control.hard.clear_family(&"stasis")
 	_expect(PresentationConfig.status_indicators_visible(tower), "防御塔解除恢复实时血条")
+
+func _check_stasis_target_and_bypass(main: Node2D) -> void:
+	for team in [0, 1]:
+		var tower: Tower
+		var king: Tower
+		for candidate: Tower in main._towers:
+			if candidate.team == team: continue
+			if candidate.is_king: king = candidate
+			elif candidate.position.x < 360: tower = candidate
+		var toward_home := Vector2.DOWN if team == 0 else Vector2.UP
+		var attacker := _unit(main, "xin", team, tower.position + toward_home * 80)
+		attacker._target = tower
+		attacker._attacking = true
+		attacker.attack_timeline.begin_windup(0.4, 1.0)
+		tower.apply_stasis(3.0)
+		attacker._update_target(true)
+		_expect(attacker._target == king and not attacker._attacking, "攻击中塔凝滞后放弃旧前摇并改推同路水晶")
+		var attack_serial := attacker.get_attack_visual_serial()
+		for i in 8:
+			attacker.sim_tick(0.05)
+		_expect(attacker.get_attack_visual_serial() == attack_serial and attacker._move_intent.length_squared() > 0, "放弃凝滞塔后产生行军意图且不重复播放攻击前摇")
+		_expect(attacker._target == king, "重复索敌不重新锁定凝滞防御塔")
+		var enemy := _unit(main, "garen", 1 - team, attacker.position + Vector2(100, 0))
+		attacker._update_target(false)
+		_expect(attacker._target == enemy, "凝滞塔不可选时转向视野内更近合法敌军")
+		attacker.building_only = true
+		attacker._update_target(false)
+		_expect(attacker._target == king, "仅攻建筑的单位仍然跳过敌方普通单位")
+		attacker.building_only = false
+		enemy.apply_stasis(3.0)
+		attacker._update_target(false)
+		_expect(attacker._target == king, "追击目标凝滞后也重新选择水晶")
+		tower.control.hard.clear_family(&"stasis")
+		attacker._update_target(false)
+		_expect(attacker._target == tower, "凝滞解除的近塔恢复合法选取")
+		_retire([attacker, enemy])
+	for blocker_team in [0, 1]:
+		var mover := _unit(main, "garen", 0, Vector2(360, 1050))
+		var blocker := _unit(main, "garen", blocker_team, Vector2(360, 1050 - mover.body_radius * 2 + 1))
+		blocker.apply_stasis(3.0)
+		var fixed_position := blocker.position
+		var moved_sideways := false
+		for i in 65:
+			mover._move_intent = mover.position.direction_to(Vector2(360, 820)) * 100.0
+			main._movement.tick(0.05)
+			moved_sideways = moved_sideways or absf(mover.position.x - 360) > 5
+		_expect(moved_sideways and mover.position.y < fixed_position.y - blocker.body_radius, "经过凝滞友军/敌军时侧移并绕过阻挡")
+		_expect(blocker.position.is_equal_approx(fixed_position), "绕行不推动凝滞阻挡者")
+		_retire([mover, blocker])
