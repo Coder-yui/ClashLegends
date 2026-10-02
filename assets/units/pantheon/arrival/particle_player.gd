@@ -25,17 +25,18 @@ static func systems() -> Dictionary:
 	if _data.is_empty(): _data = JSON.parse_string(FileAccess.get_file_as_string(DATA_PATH))
 	return _data
 
-func setup(system: String, factor: float = 0.0075, motion_frame: bool = false, emitter_filter: String = "", include_disabled: bool = false, bound_single_only: bool = false) -> void:
+func setup(system: String, factor: float = 0.0075, motion_frame: bool = false, emitter_filter: String = "", include_disabled: bool = false, bound_single_only: bool = false, source_definitions: Array = []) -> void:
 	_system = system
 	_motion_frame = motion_frame
 	_factor = factor
 	_rng.seed = 81271
 	_camera = get_viewport().get_camera_3d()
-	for source: Dictionary in systems()[system]:
+	var definitions: Array = systems()[system] if source_definitions.is_empty() else source_definitions
+	for source: Dictionary in definitions:
 		if not emitter_filter.is_empty() and source.name != emitter_filter: continue
 		if bound_single_only and (not source.single or float(sample(source.bind, 0.0)) < 1.0): continue
 		var c := source.duplicate(true)
-		c["adaptation"] = PROFILE.layer(system, c.name)
+		c["adaptation"] = PROFILE.layer(system, c.name) if source_definitions.is_empty() else {}
 		if not include_disabled and not c.adaptation.get("enabled", true): continue
 		if c.adaptation.has("offset_override"):
 			c.birthOffset = {"base": c.adaptation.offset_override}
@@ -97,10 +98,15 @@ func _spawn(c: Dictionary, birth: float, material: ShaderMaterial) -> void:
 		node.mesh = quad
 	var color: Array = _birth_sample(c.birthColor, birth)
 	var rotation: Vector3 = vec3(_birth_sample(c.birthRotation0, birth))
+	var spawn_offset := Vector3.ZERO
+	if float(c.get("spawn_radius", 0.0)) > 0.0:
+		var angle := _rng.randf() * TAU
+		var radius := sqrt(_rng.randf()) * float(c.spawn_radius)
+		spawn_offset = Vector3(cos(angle) * radius, _rng.randf() * float(c.get("spawn_height", 0.0)), sin(angle) * radius)
 	_particles.append({"node": node, "c": c, "birth": birth, "life": life,
 		"origin": global_position, "basis": global_basis, "rotation": rotation, "color": Color(color[0], color[1], color[2], color[3]),
-		"scale": vec3(_birth_sample(c.birthScale0, birth)), "velocity": vec3(_birth_sample(c.birthVelocity, birth)),
-		"offset": vec3(_birth_sample(c.get("birthOffset", {"base": c.offset}), birth)),
+		"scale": vec3(_birth_sample(c.birthScale0, birth)), "orbital": vec3(_birth_sample(c.get("birthOrbitalVelocity", {"base": [0,0,0]}), birth)), "velocity": vec3(_birth_sample(c.birthVelocity, birth)),
+		"offset": vec3(_birth_sample(c.get("birthOffset", {"base": c.offset}), birth)) + spawn_offset,
 		"mult_offset": vec2(_birth_sample(c.mult_birth_offset, birth)),
 		"mult_rate": vec2(_birth_sample(c.mult_birth_scroll, birth)),
 		"frame": _rng.randi_range(0, maxi(int(c.frames) - 1, 0))})
@@ -115,6 +121,8 @@ func _update(p: Dictionary, age: float) -> void:
 	for axis in 3:
 		displacement[axis] = velocity[axis] * ((1.0 - exp(-drag[axis] * age)) / drag[axis] if drag[axis] > 0.001 else age)
 	var offset: Vector3 = p.offset + vec3(sample(c.get("emitterPosition", {"base": [0,0,0]}), float(p.birth) + age)) + displacement + vec3(sample(c.birthAcceleration, 0.0)) * age * age * 0.5
+	var orbital: Vector3 = p.get("orbital", Vector3.ZERO)
+	if orbital.length_squared() > 0.0: offset = Basis.from_euler(orbital * age) * offset
 	var bind := clampf(float(sample(c.bind, t)), 0.0, 1.0)
 	var particle_basis: Basis = (p.basis as Basis).slerp(global_basis, bind)
 	node.global_position = (p.origin as Vector3).lerp(global_position, bind) + (particle_basis * offset + vec3(sample(c.worldAcceleration, t)) * age * age * 0.5) * _factor
@@ -144,7 +152,9 @@ func _update(p: Dictionary, age: float) -> void:
 		node.global_basis = Basis(forward.cross(Vector3.UP), forward, Vector3.UP)
 		node.global_position.y = 0.045
 	var size := (p.scale as Vector3) * vec3(sample(c.scale0, t)) * _factor
-	for axis in 3: size[axis] = maxf(absf(size[axis]), 0.0001)
+	for axis in 3:
+		var sign_value := -1.0 if bool(c.get("preserve_signed_scale", false)) and size[axis] < 0.0 else 1.0
+		size[axis] = maxf(absf(size[axis]), 0.0001) * sign_value
 	node.scale = size
 	# The original two streak layers share the central opening in this adaptation.
 	# Center its mesh cross-section too, without moving the authored forward tail.
@@ -249,8 +259,13 @@ static func _texture(path: String) -> Texture2D:
 static func _material(c: Dictionary) -> ShaderMaterial:
 	var material := ShaderMaterial.new()
 	material.shader = ADD if int(c.blend) in [0, 4] else MIX
+	if not String(c.get("distortion_texture", "")).is_empty():
+		material.shader = preload("res://scripts/presentation/native_particle_distortion.gdshader")
+		material.set_shader_parameter("normal_map", _texture(c.distortion_texture))
+		material.set_shader_parameter("distortion_strength", float(c.distortion_strength))
 	material.render_priority = clampi(int(c.pass), -128, 127)
 	material.set_shader_parameter("source_texture", _texture(c.texture))
+	material.set_shader_parameter("uv_clamp", bool(c.get("uv_clamp", false)))
 	material.set_shader_parameter("uv_scale", vec2(sample(c.uvScale, 0.0)))
 	material.set_shader_parameter("uv_offset", vec2(sample(c.birthUVOffset, 0.0)))
 	material.set_shader_parameter("uv_phase", Vector2.ZERO)

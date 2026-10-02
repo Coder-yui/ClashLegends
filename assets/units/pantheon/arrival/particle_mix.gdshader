@@ -16,9 +16,11 @@ uniform float elapsed = 0.0;
 uniform float frame = 0.0;
 uniform float erosion = 0.0;
 uniform float opacity = 1.0;
+uniform bool uv_clamp = false;
 void fragment() {
  vec2 atlas = (UV + vec2(mod(frame,tex_div.x),floor(frame/tex_div.x)))/tex_div;
- vec4 tex = texture(source_texture, atlas * uv_scale + uv_offset + uv_phase);
+ vec2 sample_uv = atlas * uv_scale + uv_offset + uv_phase;
+ vec4 tex = texture(source_texture, uv_clamp ? clamp(sample_uv, vec2(0.0), vec2(1.0)) : sample_uv);
  if(has_mult) tex *= texture(mult_texture, UV * mult_scale + mult_phase);
  float alpha = tex.a;
  if(has_erosion) alpha *= smoothstep(erosion-0.08,erosion+0.08,texture(erosion_texture,UV).r);
