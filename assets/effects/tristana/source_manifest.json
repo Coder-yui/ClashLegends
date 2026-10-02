@@ -1,0 +1,8 @@
+{
+  "implementation": "Project-authored procedural barrel heat shader; original weapon-skinned surface geometry reused at runtime",
+  "source_mesh": "res://assets/units/tristana/source/tristana.glb",
+  "selection": "Weapon_Base / WeaponTip_Scale weights > 0.95; original bind pose masks heat beyond muzzle-local z 0.65..0.9",
+  "attachment": "Same Skin and Skeleton3D as original mesh; no projectile anchor or positional approximation",
+  "processing": "Generate missing clockwise mesh normals; 0.008 normal offset; additive depth-tested heat and animated surface embers",
+  "supersedes": "Native Q shell/ring adaptation archived outside assets; native Q runtime attachment was not verified"
+}

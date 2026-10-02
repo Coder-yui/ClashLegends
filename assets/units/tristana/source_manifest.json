@@ -1,0 +1,14 @@
+[
+  {
+    "path": "assets/units/tristana/source/tristana.glb",
+    "sha256": "c7255ef3c0514c5cc3c6ed838c3cb0cef789b84bd5b8ecad62aa792a857ec831"
+  },
+  {
+    "path": "assets/cards/tristana_loading.png",
+    "sha256": "d1823b1189c4a25ac1bdfb2c8435062252681c8a7e0740621da74ba67174e09e"
+  },
+  {
+    "path": "assets/effects/tristana/muzzleglow.png",
+    "sha256": "8233f0cf02dc7d0c42ee7cdaf8407a1815f6a481fabf06ce65eca873905f1602"
+  }
+]

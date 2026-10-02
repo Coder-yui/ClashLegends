@@ -1,0 +1,250 @@
+[
+  {
+    "file": "play_sfx_tristana_tristanabasicattack_onhit_1559186049_1153642577_r_d.wav",
+    "event": "Play_sfx_Tristana_TristanaBasicAttack_OnHit",
+    "event_id": 341370974,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/麦林炮手/audio-float/play_sfx_tristana_tristanabasicattack_onhit_1559186049_1153642577_r_d.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/麦林炮手/audio/tristana/txtp/Play_sfx_Tristana_TristanaBasicAttack_OnHit [1559186049=1153642577] {r} {d}.txtp",
+    "media_ids": [
+      48192118,
+      346401503,
+      356227766,
+      360555163,
+      432533566,
+      618920823,
+      636039080,
+      999183526
+    ],
+    "duration": 0.6792,
+    "processing": "vgmstream-cli -i -W 4 float render; all selected Tristana events receive common -4 dB before PCM16 conversion (no per-file normalization)",
+    "sha256": "bf18a6f4e9b5f70ad84e3145ab6202b9ac9d3a67d998bca2e45e54d520af117e",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_tristana_tristanabasicattack_onmissilelaunch_r1_d.wav",
+    "event": "Play_sfx_Tristana_TristanaBasicAttack_OnMissileLaunch",
+    "event_id": 2756918292,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/麦林炮手/audio-float/play_sfx_tristana_tristanabasicattack_onmissilelaunch_r1_d.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/麦林炮手/audio/tristana/txtp/Play_sfx_Tristana_TristanaBasicAttack_OnMissileLaunch {r1} {d}.txtp",
+    "media_ids": [
+      494402604,
+      639154240,
+      726868612,
+      905097461
+    ],
+    "duration": 0.7686,
+    "processing": "vgmstream-cli -i -W 4 float render; all selected Tristana events receive common -4 dB before PCM16 conversion (no per-file normalization)",
+    "sha256": "9bacd7b7f9e9f0f0af6becddffdf9e2d5ddd2b053675f8dab406da99b0f97aa9",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_tristana_tristanabasicattack_onmissilelaunch_r2_d.wav",
+    "event": "Play_sfx_Tristana_TristanaBasicAttack_OnMissileLaunch",
+    "event_id": 2756918292,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/麦林炮手/audio-float/play_sfx_tristana_tristanabasicattack_onmissilelaunch_r2_d.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/麦林炮手/audio/tristana/txtp/Play_sfx_Tristana_TristanaBasicAttack_OnMissileLaunch {r2} {d}.txtp",
+    "media_ids": [
+      494402604,
+      639154240,
+      726868612,
+      905097461
+    ],
+    "duration": 0.7398,
+    "processing": "vgmstream-cli -i -W 4 float render; all selected Tristana events receive common -4 dB before PCM16 conversion (no per-file normalization)",
+    "sha256": "8c6ed84802f08a4e6f3fc89b0684b88c38204709b8cafcfa5ca2b4ee328236ad",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_tristana_tristanabasicattack_onmissilelaunch_r3_d.wav",
+    "event": "Play_sfx_Tristana_TristanaBasicAttack_OnMissileLaunch",
+    "event_id": 2756918292,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/麦林炮手/audio-float/play_sfx_tristana_tristanabasicattack_onmissilelaunch_r3_d.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/麦林炮手/audio/tristana/txtp/Play_sfx_Tristana_TristanaBasicAttack_OnMissileLaunch {r3} {d}.txtp",
+    "media_ids": [
+      494402604,
+      639154240,
+      726868612,
+      905097461
+    ],
+    "duration": 0.7398,
+    "processing": "vgmstream-cli -i -W 4 float render; all selected Tristana events receive common -4 dB before PCM16 conversion (no per-file normalization)",
+    "sha256": "0c5d0aaef627fcc69d957e8602d69405c313c6c34b4ce2acd8dfb5a2032c18fa",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_tristana_tristanaq_oncast_r1.wav",
+    "event": "Play_sfx_Tristana_TristanaQ_OnCast",
+    "event_id": 3496759791,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/麦林炮手/audio-float/play_sfx_tristana_tristanaq_oncast_r1.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/麦林炮手/audio/tristana/txtp/Play_sfx_Tristana_TristanaQ_OnCast {r1}.txtp",
+    "media_ids": [
+      343291120,
+      487512625,
+      795287767,
+      1012240554
+    ],
+    "duration": 2.6743,
+    "processing": "vgmstream-cli -i -W 4 float render; all selected Tristana events receive common -4 dB before PCM16 conversion (no per-file normalization)",
+    "sha256": "895cce1b12e5fee34e97a98fd982a9edb2ff4775e3b8c1e314616fe3bfdab96a",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_tristana_tristanaq_oncast_r2.wav",
+    "event": "Play_sfx_Tristana_TristanaQ_OnCast",
+    "event_id": 3496759791,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/麦林炮手/audio-float/play_sfx_tristana_tristanaq_oncast_r2.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/麦林炮手/audio/tristana/txtp/Play_sfx_Tristana_TristanaQ_OnCast {r2}.txtp",
+    "media_ids": [
+      343291120,
+      487512625,
+      795287767,
+      1012240554
+    ],
+    "duration": 3.1988,
+    "processing": "vgmstream-cli -i -W 4 float render; all selected Tristana events receive common -4 dB before PCM16 conversion (no per-file normalization)",
+    "sha256": "56367f9b9ef381c6a3f1f0e61f3cbbd9cad2204bb8cb5718683ca20fed710225",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_tristana_tristanaq_oncast_r3.wav",
+    "event": "Play_sfx_Tristana_TristanaQ_OnCast",
+    "event_id": 3496759791,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/麦林炮手/audio-float/play_sfx_tristana_tristanaq_oncast_r3.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/麦林炮手/audio/tristana/txtp/Play_sfx_Tristana_TristanaQ_OnCast {r3}.txtp",
+    "media_ids": [
+      343291120,
+      487512625,
+      795287767,
+      1012240554
+    ],
+    "duration": 2.7222,
+    "processing": "vgmstream-cli -i -W 4 float render; all selected Tristana events receive common -4 dB before PCM16 conversion (no per-file normalization)",
+    "sha256": "fb67de7650c02bca07bf446627bc9e9013a7f8cef452c461ad391ec95200fef6",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_tristana_tristanaq_onbuffdeactivate.wav",
+    "event": "Play_sfx_Tristana_TristanaQ_OnBuffDeactivate",
+    "event_id": 1078879323,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/麦林炮手/audio-float/play_sfx_tristana_tristanaq_onbuffdeactivate.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/麦林炮手/audio/tristana/txtp/Play_sfx_Tristana_TristanaQ_OnBuffDeactivate.txtp",
+    "media_ids": [
+      1009829779
+    ],
+    "duration": 1.3512,
+    "processing": "vgmstream-cli -i -W 4 float render; all selected Tristana events receive common -4 dB before PCM16 conversion (no per-file normalization)",
+    "sha256": "6d1106e9a6135a7f88261a22e7b1ed2eb171af7963364898f01fce1a39f9f66e",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_vo_tristana_death3d_r1_zh_cn.wav",
+    "event": "Play_vo_Tristana_Death3D",
+    "event_id": 395359436,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/麦林炮手/audio-float/play_vo_tristana_death3d_r1_zh_cn.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/麦林炮手/audio/tristana_vo/txtp/Play_vo_Tristana_Death3D {r1}.txtp",
+    "media_ids": [
+      187180499,
+      532687860,
+      744543276,
+      1242001777
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i -W 4 float render; all selected Tristana events receive common -4 dB before PCM16 conversion (no per-file normalization); death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "47398c5ba3383ad81afa9efb61d2264728ffa23f1c29292416fd549366c77058",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 1.609750566893424,
+      "source_sha256": "f0b09bcf971e69185b7ed3ac48e88d68746a50b0f0908a4aa20dbbda09e53ae7",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_vo_tristana_death3d_r2_zh_cn.wav",
+    "event": "Play_vo_Tristana_Death3D",
+    "event_id": 395359436,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/麦林炮手/audio-float/play_vo_tristana_death3d_r2_zh_cn.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/麦林炮手/audio/tristana_vo/txtp/Play_vo_Tristana_Death3D {r2}.txtp",
+    "media_ids": [
+      187180499,
+      532687860,
+      744543276,
+      1242001777
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i -W 4 float render; all selected Tristana events receive common -4 dB before PCM16 conversion (no per-file normalization); death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "5b3b164b47d93595192acad354e10d2f77d902a217caa547fa6abea30ea58c94",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 1.9678458049886622,
+      "source_sha256": "c1d0f50e1a38aa019c1e97b94ed70635654a07b2200690e8c1952f5be6755239",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_vo_tristana_death3d_r3_zh_cn.wav",
+    "event": "Play_vo_Tristana_Death3D",
+    "event_id": 395359436,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/麦林炮手/audio-float/play_vo_tristana_death3d_r3_zh_cn.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/麦林炮手/audio/tristana_vo/txtp/Play_vo_Tristana_Death3D {r3}.txtp",
+    "media_ids": [
+      187180499,
+      532687860,
+      744543276,
+      1242001777
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i -W 4 float render; all selected Tristana events receive common -4 dB before PCM16 conversion (no per-file normalization); death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "6e2cd0e94feb3e36a010d01f8c186336fd9e57c43f468bfda74ec6a06d26fa47",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 2.0853061224489795,
+      "source_sha256": "200e2cd859f3c95a3215f8a6e2262c59767be61276496898a7bf8813fa88a007",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "deploy_crossfire_zh_cn.wav",
+    "event": "Play_vo_Tristana_Attack2DGeneral",
+    "variant": 18,
+    "text": "交火咯。",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/麦林炮手/attack-voices/wav/Play_vo_Tristana_Attack2DGeneral {r18}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/麦林炮手/attack-voices/txtp/Play_vo_Tristana_Attack2DGeneral {r18}.txtp",
+    "processing": "Local zh_CN event float render; -4 dB; PCM16; full line, no cut",
+    "sha256": "ed0ec36a4d4341edd2cf9ada58baf82f2ce17551693c3bfb4369d0303d298c40",
+    "verified_by_listening": false,
+    "selection_evidence": "Public event transcript + local mlx-whisper Chinese transcription"
+  },
+  {
+    "file": "deploy_ready_aim_fire_zh_cn.wav",
+    "event": "Play_vo_Tristana_Attack2DGeneral",
+    "variant": 17,
+    "text": "预备，瞄准，射。",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/麦林炮手/attack-voices/wav/Play_vo_Tristana_Attack2DGeneral {r17}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/麦林炮手/attack-voices/txtp/Play_vo_Tristana_Attack2DGeneral {r17}.txtp",
+    "processing": "Local zh_CN event float render; -4 dB; PCM16; full line, no cut",
+    "sha256": "5340630e760233e996a521353821da64df72e748ab52d694b44b4614a5c3a7c9",
+    "verified_by_listening": false,
+    "selection_evidence": "Public event transcript + local mlx-whisper Chinese transcription"
+  },
+  {
+    "file": "deploy_cannot_touch_me_zh_cn.wav",
+    "event": "Play_vo_Tristana_TristanaW_cast3DLowHealth",
+    "variant": 5,
+    "text": "碰不到我。",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/麦林炮手/escape-voices/wav/Play_vo_Tristana_TristanaW_cast3DLowHealth {r5}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/麦林炮手/escape-voices/txtp/Play_vo_Tristana_TristanaW_cast3DLowHealth {r5}.txtp",
+    "processing": "Local zh_CN event float render; -4 dB; PCM16; full line, no cut",
+    "sha256": "c9724272e1d24fcb445eb950852106e475df65ea3a92c472563c32fb95c8ee97",
+    "verified_by_listening": false,
+    "selection_evidence": "Public event transcript + local mlx-whisper Chinese transcription"
+  }
+]
