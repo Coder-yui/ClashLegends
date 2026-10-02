@@ -49,3 +49,7 @@
 旧迁移过程仅在需要追溯时查看[历史快照](../archive/2026-09-22/status_implementation_before_cleanup.md)。
 
 强化冰冻通过`spell_freeze`技能定义在冻结结束后创建2秒区域，移速与攻速各降低30%。SpellSystem按20Hz给圈内敌方Unit独立续期`slow`与`attack_slow`，沿用最强值聚合、动作进度重算和快照表现；防御塔受起始冻结，水晶免疫冰冻；防御塔与水晶不接受后续双减速。地面冰纹由BattlePresentation3D只读法术表现窗口，使用冰霜护手原版遮罩与人物共用深度，图标登记在visual域。
+
+## 怒气暴击与拒绝死亡
+
+Unit读取rage_crit_multiplier，仅支持两点资源的离散近战单位；被动资源不依赖主动槽。正式普通出手加1，暴击出手消费满层，取消前摇不消费。undying_rage由ActiveSkillEffectSystem在Cast Start即时建立StatusInstances的undying窗口并满怒，生命入口在护盾结算后将伤害钳制到1；固定Tick到期后恢复正常伤害。施放权限经Unit.can_start_active_skill逐技能判断，除凝滞外允许受控开始；普通技能权限不变。沿用现有资源/增益/攻击序号快照与empowered_reset动作取消事件，无新增网络字段。

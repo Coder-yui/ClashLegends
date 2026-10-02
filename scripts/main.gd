@@ -1970,7 +1970,8 @@ func queue_shield_explosion(unit: Unit, skill: Dictionary) -> void:
 
 func _active_skill_is_legal(ability_id: int, expected_team: int = -1) -> bool:
 	if not _active_skill_has_qualification(ability_id, expected_team): return false
-	return ((_active_skills.entry(ability_id).unit as Unit).action_permissions() & ControlState.START_SKILL) != 0
+	var entry := _active_skills.entry(ability_id)
+	return (entry.unit as Unit).can_start_active_skill(entry.skill)
 
 func _activate_active_skill(ability_id: int, expected_team: int = -1) -> bool:
 	if not _active_skill_is_legal(ability_id, expected_team):

@@ -1,0 +1,239 @@
+[
+  {
+    "output": "attack1_1.wav",
+    "event_txtp": "ClashLegends-开发素材库/03-制作中/蛮族之王/audio/tryndamere/txtp/Play_sfx_Tryndamere_TryndamereBasicAttack_OnCast {r1} {d}.txtp",
+    "sha256": "b11df45490615a1fd5ab5a77a46c200dcbe24eb72b74e36a0cc0c2eb747d9cac",
+    "decoded_float_peak": 1.0854915380477905,
+    "gain_db": -2.216392673417647
+  },
+  {
+    "output": "attack1_2.wav",
+    "event_txtp": "ClashLegends-开发素材库/03-制作中/蛮族之王/audio/tryndamere/txtp/Play_sfx_Tryndamere_TryndamereBasicAttack_OnCast {r2} {d}.txtp",
+    "sha256": "505766b662043c514160d1fa5d950b36f820ecec980bb9016e86d21eaf7e0217",
+    "decoded_float_peak": 0.9422860741615295,
+    "gain_db": -2.216392673417647
+  },
+  {
+    "output": "attack1_3.wav",
+    "event_txtp": "ClashLegends-开发素材库/03-制作中/蛮族之王/audio/tryndamere/txtp/Play_sfx_Tryndamere_TryndamereBasicAttack_OnCast {r3} {d}.txtp",
+    "sha256": "48aaff702366bb5399f3ff1892d5859f6c14c5a38c48513778a262ab9f24665c",
+    "decoded_float_peak": 1.0513139963150024,
+    "gain_db": -2.216392673417647
+  },
+  {
+    "output": "attack1_4.wav",
+    "event_txtp": "ClashLegends-开发素材库/03-制作中/蛮族之王/audio/tryndamere/txtp/Play_sfx_Tryndamere_TryndamereBasicAttack_OnCast {r4} {d}.txtp",
+    "sha256": "a4c0039f9105b325243d1e23bc22b49a2ccc20a55e839eb8876fc11a98d7a33f",
+    "decoded_float_peak": 1.015665054321289,
+    "gain_db": -2.216392673417647
+  },
+  {
+    "output": "attack2_1.wav",
+    "event_txtp": "ClashLegends-开发素材库/03-制作中/蛮族之王/audio/tryndamere/txtp/Play_sfx_Tryndamere_TryndamereBasicAttack2_OnCast {r1}.txtp",
+    "sha256": "b11df45490615a1fd5ab5a77a46c200dcbe24eb72b74e36a0cc0c2eb747d9cac",
+    "decoded_float_peak": 1.0854915380477905,
+    "gain_db": -2.216392673417647
+  },
+  {
+    "output": "attack2_2.wav",
+    "event_txtp": "ClashLegends-开发素材库/03-制作中/蛮族之王/audio/tryndamere/txtp/Play_sfx_Tryndamere_TryndamereBasicAttack2_OnCast {r2}.txtp",
+    "sha256": "505766b662043c514160d1fa5d950b36f820ecec980bb9016e86d21eaf7e0217",
+    "decoded_float_peak": 0.9422860741615295,
+    "gain_db": -2.216392673417647
+  },
+  {
+    "output": "attack2_3.wav",
+    "event_txtp": "ClashLegends-开发素材库/03-制作中/蛮族之王/audio/tryndamere/txtp/Play_sfx_Tryndamere_TryndamereBasicAttack2_OnCast {r3}.txtp",
+    "sha256": "48aaff702366bb5399f3ff1892d5859f6c14c5a38c48513778a262ab9f24665c",
+    "decoded_float_peak": 1.0513139963150024,
+    "gain_db": -2.216392673417647
+  },
+  {
+    "output": "attack2_4.wav",
+    "event_txtp": "ClashLegends-开发素材库/03-制作中/蛮族之王/audio/tryndamere/txtp/Play_sfx_Tryndamere_TryndamereBasicAttack2_OnCast {r4}.txtp",
+    "sha256": "a4c0039f9105b325243d1e23bc22b49a2ccc20a55e839eb8876fc11a98d7a33f",
+    "decoded_float_peak": 1.015665054321289,
+    "gain_db": -2.216392673417647
+  },
+  {
+    "output": "crit_1.wav",
+    "event_txtp": "ClashLegends-开发素材库/03-制作中/蛮族之王/audio/tryndamere/txtp/Play_sfx_Tryndamere_TryndamereCritAttack_OnCast {r1}.txtp",
+    "sha256": "e365f7a5b0c11dc095500e1d76e548787cd72b4e95cd0445b9332892013607bb",
+    "decoded_float_peak": 1.0439097881317139,
+    "gain_db": -2.216392673417647
+  },
+  {
+    "output": "crit_2.wav",
+    "event_txtp": "ClashLegends-开发素材库/03-制作中/蛮族之王/audio/tryndamere/txtp/Play_sfx_Tryndamere_TryndamereCritAttack_OnCast {r2}.txtp",
+    "sha256": "a0352ba39d2da686efdde201f59c3e3b92b6d811e7598e5bf199e86e021a16e7",
+    "decoded_float_peak": 1.0736029148101807,
+    "gain_db": -2.216392673417647
+  },
+  {
+    "output": "crit_3.wav",
+    "event_txtp": "ClashLegends-开发素材库/03-制作中/蛮族之王/audio/tryndamere/txtp/Play_sfx_Tryndamere_TryndamereCritAttack_OnCast {r3}.txtp",
+    "sha256": "fe79cd47c0cc9f3dad96e37628ccdd18e87238053f4bc06fa3c91937c420ddda",
+    "decoded_float_peak": 1.0767710208892822,
+    "gain_db": -2.216392673417647
+  },
+  {
+    "output": "crit_4.wav",
+    "event_txtp": "ClashLegends-开发素材库/03-制作中/蛮族之王/audio/tryndamere/txtp/Play_sfx_Tryndamere_TryndamereCritAttack_OnCast {r4}.txtp",
+    "sha256": "b63fd47320c608bf9a178eba8bf2a0f1546d4c87e98e77713843ca52660207c4",
+    "decoded_float_peak": 1.084876537322998,
+    "gain_db": -2.216392673417647
+  },
+  {
+    "output": "hit1_1.wav",
+    "event_txtp": "ClashLegends-开发素材库/03-制作中/蛮族之王/audio/tryndamere/txtp/Play_sfx_Tryndamere_TryndamereBasicAttack_OnHit [1559186049=1153642577] {r1} {d}.txtp",
+    "sha256": "e80c2ecae92ed9b2c1429a9eda978eed4ddd9b5096a120d3326d63274414c56e",
+    "decoded_float_peak": 1.0298243761062622,
+    "gain_db": -2.216392673417647
+  },
+  {
+    "output": "hit1_2.wav",
+    "event_txtp": "ClashLegends-开发素材库/03-制作中/蛮族之王/audio/tryndamere/txtp/Play_sfx_Tryndamere_TryndamereBasicAttack_OnHit [1559186049=1153642577] {r2} {d}.txtp",
+    "sha256": "2fa7ae820f64a7393a69bfc774594f5ad0852772651a4e1cc79c330008e185b1",
+    "decoded_float_peak": 1.138542652130127,
+    "gain_db": -2.216392673417647
+  },
+  {
+    "output": "hit1_3.wav",
+    "event_txtp": "ClashLegends-开发素材库/03-制作中/蛮族之王/audio/tryndamere/txtp/Play_sfx_Tryndamere_TryndamereBasicAttack_OnHit [1559186049=1153642577] {r3} {d}.txtp",
+    "sha256": "daa5da9467eece4d9115e8b2a3942a6c5d68bb6c969fe2a22e5c5021622b8c92",
+    "decoded_float_peak": 1.0721056461334229,
+    "gain_db": -2.216392673417647
+  },
+  {
+    "output": "hit1_4.wav",
+    "event_txtp": "ClashLegends-开发素材库/03-制作中/蛮族之王/audio/tryndamere/txtp/Play_sfx_Tryndamere_TryndamereBasicAttack_OnHit [1559186049=1153642577] {r4} {d}.txtp",
+    "sha256": "108da9438cf1ff4b768ab6daefc004c4ce41e327aa902d5d41dae5fd26883669",
+    "decoded_float_peak": 1.1487079858779907,
+    "gain_db": -2.216392673417647
+  },
+  {
+    "output": "hit2_1.wav",
+    "event_txtp": "ClashLegends-开发素材库/03-制作中/蛮族之王/audio/tryndamere/txtp/Play_sfx_Tryndamere_TryndamereBasicAttack2_OnHit [1559186049=1153642577] {r1}.txtp",
+    "sha256": "e80c2ecae92ed9b2c1429a9eda978eed4ddd9b5096a120d3326d63274414c56e",
+    "decoded_float_peak": 1.0298243761062622,
+    "gain_db": -2.216392673417647
+  },
+  {
+    "output": "hit2_2.wav",
+    "event_txtp": "ClashLegends-开发素材库/03-制作中/蛮族之王/audio/tryndamere/txtp/Play_sfx_Tryndamere_TryndamereBasicAttack2_OnHit [1559186049=1153642577] {r2}.txtp",
+    "sha256": "2fa7ae820f64a7393a69bfc774594f5ad0852772651a4e1cc79c330008e185b1",
+    "decoded_float_peak": 1.138542652130127,
+    "gain_db": -2.216392673417647
+  },
+  {
+    "output": "hit2_3.wav",
+    "event_txtp": "ClashLegends-开发素材库/03-制作中/蛮族之王/audio/tryndamere/txtp/Play_sfx_Tryndamere_TryndamereBasicAttack2_OnHit [1559186049=1153642577] {r3}.txtp",
+    "sha256": "daa5da9467eece4d9115e8b2a3942a6c5d68bb6c969fe2a22e5c5021622b8c92",
+    "decoded_float_peak": 1.0721056461334229,
+    "gain_db": -2.216392673417647
+  },
+  {
+    "output": "hit2_4.wav",
+    "event_txtp": "ClashLegends-开发素材库/03-制作中/蛮族之王/audio/tryndamere/txtp/Play_sfx_Tryndamere_TryndamereBasicAttack2_OnHit [1559186049=1153642577] {r4}.txtp",
+    "sha256": "108da9438cf1ff4b768ab6daefc004c4ce41e327aa902d5d41dae5fd26883669",
+    "decoded_float_peak": 1.1487079858779907,
+    "gain_db": -2.216392673417647
+  },
+  {
+    "output": "crit_hit_1.wav",
+    "event_txtp": "ClashLegends-开发素材库/03-制作中/蛮族之王/audio/tryndamere/txtp/Play_sfx_Tryndamere_TryndamereCritAttack_OnHit {r1}.txtp",
+    "sha256": "6748345f36ead7a5b8aba0d5c864f889efc5cfbac12d238adf485108dc95a3f8",
+    "decoded_float_peak": 1.0956225395202637,
+    "gain_db": -2.216392673417647
+  },
+  {
+    "output": "crit_hit_2.wav",
+    "event_txtp": "ClashLegends-开发素材库/03-制作中/蛮族之王/audio/tryndamere/txtp/Play_sfx_Tryndamere_TryndamereCritAttack_OnHit {r2}.txtp",
+    "sha256": "510dcf98a118feeaafd4e05a5d8eea6d6ed488a4722f81053776e5c8ab93f43b",
+    "decoded_float_peak": 0.9994869828224182,
+    "gain_db": -2.216392673417647
+  },
+  {
+    "output": "crit_hit_3.wav",
+    "event_txtp": "ClashLegends-开发素材库/03-制作中/蛮族之王/audio/tryndamere/txtp/Play_sfx_Tryndamere_TryndamereCritAttack_OnHit {r3}.txtp",
+    "sha256": "74baeb9d4288d5b13920adb7487b757d383b9c07ae584c9ab057db9646dd5a2f",
+    "decoded_float_peak": 1.024153232574463,
+    "gain_db": -2.216392673417647
+  },
+  {
+    "output": "crit_hit_4.wav",
+    "event_txtp": "ClashLegends-开发素材库/03-制作中/蛮族之王/audio/tryndamere/txtp/Play_sfx_Tryndamere_TryndamereCritAttack_OnHit {r4}.txtp",
+    "sha256": "de636a48f65ec188ea6a75f86ae237dfc517d9b54893a3f0dc57f066b704ecca",
+    "decoded_float_peak": 1.0426812171936035,
+    "gain_db": -2.216392673417647
+  },
+  {
+    "output": "ultimate_cast_1.wav",
+    "event_txtp": "ClashLegends-开发素材库/03-制作中/蛮族之王/audio/tryndamere/txtp/Play_sfx_Tryndamere_UndyingRage_OnCast.txtp",
+    "sha256": "fbd1ec10c7b5865d65028c9dadc36f8ea4d787ccb61d369d95e822b63e382724",
+    "decoded_float_peak": 0.7629862427711487,
+    "gain_db": -2.216392673417647
+  },
+  {
+    "output": "ultimate_sustain_1.wav",
+    "event_txtp": "ClashLegends-开发素材库/03-制作中/蛮族之王/audio/tryndamere/txtp/Play_sfx_Tryndamere_UndyingRage_OnBuffActivate.txtp",
+    "sha256": "f855e86816361ca9cf371273815742c5a5627eaf3ac9be07a0a9dc90fabe6bc4",
+    "decoded_float_peak": 1.031197190284729,
+    "gain_db": -2.216392673417647
+  },
+  {
+    "output": "ultimate_end_1.wav",
+    "event_txtp": "ClashLegends-开发素材库/03-制作中/蛮族之王/audio/tryndamere/txtp/Play_sfx_Tryndamere_UndyingRage_OnBuffDeactivate.txtp",
+    "sha256": "2ed6684efffc36bf52b936cf8838289437d4eee9afc93d432c312d9c309a8390",
+    "decoded_float_peak": 1.0292835235595703,
+    "gain_db": -2.216392673417647
+  },
+  {
+    "output": "death_1.wav",
+    "event_txtp": "ClashLegends-开发素材库/03-制作中/蛮族之王/audio/tryndamere_vo/txtp/Play_vo_Tryndamere_Death3D {r1}.txtp",
+    "sha256": "daf546dbcf02780696a5d1f4911b6d69baaf133ee79ea1829ea7b5c76643fcfd",
+    "decoded_float_peak": 0.6200271248817444,
+    "gain_db": -2.216392673417647
+  },
+  {
+    "output": "death_2.wav",
+    "event_txtp": "ClashLegends-开发素材库/03-制作中/蛮族之王/audio/tryndamere_vo/txtp/Play_vo_Tryndamere_Death3D {r2}.txtp",
+    "sha256": "9fd3a80df920d3902bfb2a41cfb073ce08be1e6ca6c88e63c7fb1e34311cc275",
+    "decoded_float_peak": 0.7719135284423828,
+    "gain_db": -2.216392673417647
+  },
+  {
+    "output": "death_3.wav",
+    "event_txtp": "ClashLegends-开发素材库/03-制作中/蛮族之王/audio/tryndamere_vo/txtp/Play_vo_Tryndamere_Death3D {r3}.txtp",
+    "sha256": "a4a5cdd0d5431c90c26b0fa2fc37e1ed18c17eafb445f46b644abcaa2577ad51",
+    "decoded_float_peak": 0.7017683982849121,
+    "gain_db": -2.216392673417647
+  },
+  {
+    "output": "deploy_1.wav",
+    "text": "我的大刀早已饥渴难耐了。",
+    "source": "ClashLegends-开发素材库/03-制作中/蛮族之王/choose-voice/plugins/rcp-be-lol-game-data/global/zh_cn/v1/champion-choose-vo/23.ogg",
+    "source_sha256": "636bcb214a8a1e69df3ae0858f3d2ae816a37577926c6137bc05387b7156f653",
+    "sha256": "7699002f509acd75bdc0381bb7ff81ea0aa553af638413e619a14d418a40d2cf",
+    "gain_db": -2.21639267,
+    "peak": 0.81842041015625
+  },
+  {
+    "output": "deploy_2.wav",
+    "text": "开战吧。",
+    "source": "ClashLegends-开发素材库/03-制作中/蛮族之王/deploy_voice/wav/Play_vo_Tryndamere_Attack2DGeneral {r4}.wav",
+    "source_sha256": "3e57f72343b391cf0d7f8248d9e5de496b84166d94ed06596966cf28bb6e3436",
+    "sha256": "28c2ea3a0b3c8f4db0328fc2b0f3b52fcf8cc6bc16107c10a3ece1cf2dee02c0",
+    "gain_db": -2.21639267,
+    "peak": 0.60504150390625
+  },
+  {
+    "output": "deploy_3.wav",
+    "text": "这将会是场屠杀。",
+    "source": "ClashLegends-开发素材库/03-制作中/蛮族之王/deploy_voice/wav/Play_vo_Tryndamere_Attack2DGeneral {r3}.wav",
+    "source_sha256": "e6d0fe35034b29ce472aa3c7b998c634143ba4afd3eacb2b2f997143b46157a2",
+    "sha256": "22c46c0e73df18308fe5e7e2ffce70aa03e2d964995a6a2a671b6d6dfee989f8",
+    "gain_db": -2.21639267,
+    "peak": 0.58355712890625
+  }
+]

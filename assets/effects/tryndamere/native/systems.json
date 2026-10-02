@@ -1,0 +1,2472 @@
+{
+  "R": [
+    {
+      "name": "WindTunnel",
+      "mesh": "res://assets/effects/tryndamere/native/helix.mesh.json",
+      "primitive": "VfxPrimitiveMesh",
+      "trail": false,
+      "ground": false,
+      "blend": 4,
+      "single": false,
+      "life": {
+        "base": 0.4,
+        "times": [
+          0.0
+        ],
+        "values": [
+          0.4
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              1.0,
+              1.4
+            ]
+          }
+        ]
+      },
+      "rate": {
+        "base": 40.0
+      },
+      "duration": 0.2,
+      "delay": 0,
+      "texture": "res://assets/effects/tryndamere/native/helix.png",
+      "offset": [
+        0,
+        0,
+        0
+      ],
+      "bind": {
+        "base": 1.0
+      },
+      "frames": 4,
+      "tex_div": [
+        2.0,
+        2.0
+      ],
+      "birthOffset": {
+        "base": [
+          0.0,
+          140.0,
+          0.0
+        ],
+        "times": [
+          0.0,
+          0.0
+        ],
+        "values": [
+          [
+            0.0,
+            84.0,
+            0.0
+          ],
+          [
+            0.0,
+            70.0,
+            0.0
+          ]
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "pass": 1,
+      "spawn_radius": 0,
+      "spawn_height": 0,
+      "birthScale0": {
+        "base": [
+          10.0,
+          15.0,
+          10.0
+        ],
+        "times": [
+          0.0,
+          0.0
+        ],
+        "values": [
+          [
+            10.0,
+            15.0,
+            10.0
+          ],
+          [
+            15.0,
+            22.5,
+            10.0
+          ]
+        ]
+      },
+      "scale0": {
+        "base": [
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          0.3,
+          1.0
+        ],
+        "values": [
+          [
+            0.6,
+            0.6,
+            0.6
+          ],
+          [
+            0.9,
+            0.9,
+            0.4
+          ],
+          [
+            1.4,
+            1.4,
+            0.05
+          ]
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          90.0,
+          1.0,
+          0.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            90.0,
+            1.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              1.0,
+              360.0
+            ]
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          0.0,
+          400.0,
+          0.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            0.0,
+            400.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              1.0,
+              1.5
+            ]
+          }
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0.0,
+          500.0,
+          0.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            0.0,
+            500.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          5.0,
+          5.0,
+          5.0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "Color": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          0.05,
+          0.5,
+          0.8,
+          1.0
+        ],
+        "values": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.8,
+            0.5,
+            0.0,
+            1.0
+          ],
+          [
+            0.7,
+            0.3,
+            0.0,
+            1.0
+          ],
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.2
+          ],
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        ]
+      },
+      "uvScale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          -0.1,
+          0.0
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthFrameRate": {
+        "base": 0.0
+      },
+      "mult": "",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0.0
+      },
+      "frameRate": 0,
+      "startFrame": 0,
+      "distortion_texture": "",
+      "distortion_strength": 0.0,
+      "preserve_signed_scale": true,
+      "uv_clamp": false,
+      "birthOrbitalVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "source_color_lookup": ""
+    },
+    {
+      "name": "Temp_Mesh",
+      "mesh": "res://assets/effects/tryndamere/native/tryndamere_base_r_mesh_dome.mesh.json",
+      "primitive": "VfxPrimitiveMesh",
+      "trail": false,
+      "ground": false,
+      "blend": 4,
+      "single": false,
+      "life": {
+        "base": 1.0,
+        "times": [
+          0.0
+        ],
+        "values": [
+          1.0
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              1.0,
+              2.0
+            ]
+          }
+        ]
+      },
+      "rate": {
+        "base": 2.0
+      },
+      "duration": 9999.0,
+      "delay": 0,
+      "texture": "res://assets/effects/tryndamere/native/tryndamere_base_r_dome_flames.png",
+      "offset": [
+        0,
+        0,
+        0
+      ],
+      "bind": {
+        "base": 1.0
+      },
+      "frames": 1,
+      "tex_div": [
+        1.0,
+        1.0
+      ],
+      "birthOffset": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "pass": -1,
+      "spawn_radius": 0,
+      "spawn_height": 0,
+      "birthScale0": {
+        "base": [
+          -0.28,
+          2.0,
+          0.28
+        ]
+      },
+      "scale0": {
+        "base": [
+          0.6,
+          1.0,
+          0.6
+        ],
+        "times": [
+          0.0,
+          0.5,
+          1.0
+        ],
+        "values": [
+          [
+            0.48000002,
+            1.0,
+            0.48000002
+          ],
+          [
+            0.53999996,
+            1.0,
+            0.53999996
+          ],
+          [
+            0.6,
+            1.0,
+            0.6
+          ]
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            0.0,
+            1.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              0.0,
+              360.0
+            ]
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "Color": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.5,
+          1.0
+        ],
+        "values": [
+          [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0,
+            0.0
+          ]
+        ]
+      },
+      "uvScale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          0.2,
+          0.0
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          -1.0,
+          0.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            -1.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              0.7,
+              1.2
+            ]
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthFrameRate": {
+        "base": 0.0
+      },
+      "mult": "",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0.0
+      },
+      "frameRate": 0,
+      "startFrame": 0,
+      "distortion_texture": "",
+      "distortion_strength": 0.0,
+      "preserve_signed_scale": true,
+      "uv_clamp": true,
+      "birthOrbitalVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "source_color_lookup": ""
+    },
+    {
+      "name": "Temp_Mesh1",
+      "mesh": "res://assets/effects/tryndamere/native/tryndamere_base_r_mesh_dome.mesh.json",
+      "primitive": "VfxPrimitiveMesh",
+      "trail": false,
+      "ground": false,
+      "blend": 4,
+      "single": false,
+      "life": {
+        "base": 1.0,
+        "times": [
+          0.0
+        ],
+        "values": [
+          1.0
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              1.0,
+              2.0
+            ]
+          }
+        ]
+      },
+      "rate": {
+        "base": 2.0
+      },
+      "duration": 9999.0,
+      "delay": 0,
+      "texture": "res://assets/effects/tryndamere/native/tryndamere_base_r_dome_flames.png",
+      "offset": [
+        0,
+        0,
+        0
+      ],
+      "bind": {
+        "base": 1.0
+      },
+      "frames": 1,
+      "tex_div": [
+        1.0,
+        1.0
+      ],
+      "birthOffset": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "pass": -1,
+      "spawn_radius": 0,
+      "spawn_height": 0,
+      "birthScale0": {
+        "base": [
+          -0.6,
+          0.5,
+          0.6
+        ]
+      },
+      "scale0": {
+        "base": [
+          0.5,
+          1.0,
+          0.5
+        ],
+        "times": [
+          0.0,
+          0.5,
+          1.0
+        ],
+        "values": [
+          [
+            0.4,
+            1.0,
+            0.4
+          ],
+          [
+            0.45,
+            1.0,
+            0.45
+          ],
+          [
+            0.5,
+            1.0,
+            0.5
+          ]
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            0.0,
+            1.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              0.0,
+              360.0
+            ]
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "Color": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.5,
+          1.0
+        ],
+        "values": [
+          [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0,
+            0.0
+          ]
+        ]
+      },
+      "uvScale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          0.2,
+          0.0
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          -1.0,
+          0.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            -1.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              0.7,
+              1.2
+            ]
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthFrameRate": {
+        "base": 0.0
+      },
+      "mult": "",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0.0
+      },
+      "frameRate": 0,
+      "startFrame": 0,
+      "distortion_texture": "",
+      "distortion_strength": 0.0,
+      "preserve_signed_scale": true,
+      "uv_clamp": true,
+      "birthOrbitalVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "source_color_lookup": ""
+    },
+    {
+      "name": "sparks",
+      "mesh": "",
+      "primitive": "",
+      "trail": false,
+      "ground": false,
+      "blend": 0,
+      "single": false,
+      "life": {
+        "base": 0.5,
+        "times": [
+          0.0
+        ],
+        "values": [
+          0.5
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              0.9,
+              1.0
+            ],
+            "values": [
+              0.5,
+              1.0,
+              1.5
+            ]
+          }
+        ]
+      },
+      "rate": {
+        "base": 50.0
+      },
+      "duration": 9999.0,
+      "delay": 0,
+      "texture": "res://assets/effects/tryndamere/native/common_bw_sparks.png",
+      "offset": [
+        0,
+        0,
+        0
+      ],
+      "bind": {
+        "base": 1.0
+      },
+      "frames": 4,
+      "tex_div": [
+        2.0,
+        2.0
+      ],
+      "birthOffset": {
+        "base": [
+          50.0,
+          0.0,
+          0.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            50.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              0.5,
+              1.0
+            ]
+          },
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0.0,
+          80.0,
+          0.0
+        ]
+      },
+      "pass": 0,
+      "spawn_radius": 0,
+      "spawn_height": 0,
+      "birthScale0": {
+        "base": [
+          50.0,
+          30.0,
+          0.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            50.0,
+            30.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              0.9,
+              1.0
+            ],
+            "values": [
+              0.4,
+              0.7,
+              1.0
+            ]
+          },
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "scale0": {
+        "base": [
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          0.9,
+          1.0
+        ],
+        "values": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            0.3,
+            0.3,
+            0.3
+          ],
+          [
+            0.6,
+            0.6,
+            0.6
+          ],
+          [
+            0.1,
+            0.1,
+            0.1
+          ],
+          [
+            0.3,
+            0.3,
+            0.3
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ]
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          -90.0,
+          0.0,
+          0.0
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          1000.0,
+          500.0,
+          0.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            1000.0,
+            500.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              0.1,
+              0.8
+            ]
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              0.1,
+              1.0
+            ]
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0.0,
+          50.0,
+          0.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            0.0,
+            50.0,
+            0.0
+          ]
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          5.0,
+          5.0,
+          5.0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          1.0,
+          1.0,
+          1.0,
+          0.7499962
+        ]
+      },
+      "Color": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          0.7,
+          1.0
+        ],
+        "values": [
+          [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            0.5,
+            0.0,
+            1.0
+          ],
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        ]
+      },
+      "uvScale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthFrameRate": {
+        "base": 0.0
+      },
+      "mult": "",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0.0
+      },
+      "frameRate": 0,
+      "startFrame": 0,
+      "distortion_texture": "",
+      "distortion_strength": 0.0,
+      "preserve_signed_scale": true,
+      "uv_clamp": false,
+      "birthOrbitalVelocity": {
+        "base": [
+          0.0,
+          -8.0,
+          0.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            0.0,
+            -8.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              0.5,
+              1.0
+            ]
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "source_color_lookup": ""
+    },
+    {
+      "name": "CAS_Flames",
+      "mesh": "",
+      "primitive": "",
+      "trail": false,
+      "ground": false,
+      "blend": 4,
+      "single": false,
+      "life": {
+        "base": 0.4,
+        "times": [
+          0.0
+        ],
+        "values": [
+          0.4
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              0.9,
+              1.0
+            ],
+            "values": [
+              0.5,
+              1.0,
+              1.5
+            ]
+          }
+        ]
+      },
+      "rate": {
+        "base": 40.0
+      },
+      "duration": 0.5,
+      "delay": 0,
+      "texture": "res://assets/effects/tryndamere/native/tryndamere_base_r_ash01.png",
+      "offset": [
+        0,
+        0,
+        0
+      ],
+      "bind": {
+        "base": 0.9,
+        "times": [
+          0.0,
+          1.0
+        ],
+        "values": [
+          0.9,
+          0.18
+        ]
+      },
+      "frames": 4,
+      "tex_div": [
+        2.0,
+        2.0
+      ],
+      "birthOffset": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0.0,
+          50.0,
+          50.0
+        ]
+      },
+      "pass": 5,
+      "spawn_radius": 55.0,
+      "spawn_height": 50.0,
+      "birthScale0": {
+        "base": [
+          70.0,
+          75.0,
+          0.0
+        ]
+      },
+      "scale0": {
+        "base": [
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          1.0
+        ],
+        "values": [
+          [
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            1.25,
+            1.25,
+            1.25
+          ]
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              1.0,
+              360.0
+            ]
+          },
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          10.0,
+          10.0,
+          0.0
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0.0,
+          500.0,
+          0.0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0.0,
+          -200.0,
+          0.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            0.0,
+            -200.0,
+            0.0
+          ]
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          300.0,
+          0.0,
+          0.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            300.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              0.0,
+              1.0
+            ]
+          },
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          1.0,
+          0.48235294,
+          0.48235294,
+          1.0
+        ]
+      },
+      "Color": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          0.2,
+          0.5,
+          1.0
+        ],
+        "values": [
+          [
+            1.0,
+            1.0,
+            0.25,
+            0.0
+          ],
+          [
+            1.0,
+            1.0,
+            0.2500038,
+            1.0
+          ],
+          [
+            1.0,
+            0.5000076,
+            0.14999619,
+            1.0
+          ],
+          [
+            1.0,
+            0.2,
+            0.15,
+            0.0
+          ]
+        ]
+      },
+      "uvScale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthFrameRate": {
+        "base": 0.0
+      },
+      "mult": "",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0.0
+      },
+      "frameRate": 0,
+      "startFrame": 0,
+      "distortion_texture": "",
+      "distortion_strength": 0.0,
+      "preserve_signed_scale": true,
+      "uv_clamp": false,
+      "birthOrbitalVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "source_color_lookup": ""
+    },
+    {
+      "name": "FlameBits_Alpha1",
+      "mesh": "",
+      "primitive": "",
+      "trail": false,
+      "ground": false,
+      "blend": 4,
+      "single": false,
+      "life": {
+        "base": 0.5,
+        "times": [
+          0.0
+        ],
+        "values": [
+          0.5
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              0.9,
+              1.0
+            ],
+            "values": [
+              0.5,
+              1.0,
+              1.5
+            ]
+          }
+        ]
+      },
+      "rate": {
+        "base": 5.0
+      },
+      "duration": 9999.0,
+      "delay": 0,
+      "texture": "res://assets/effects/tryndamere/native/tryndamere_base_r_ash01.png",
+      "offset": [
+        0,
+        0,
+        0
+      ],
+      "bind": {
+        "base": 0.9,
+        "times": [
+          0.0,
+          1.0
+        ],
+        "values": [
+          0.9,
+          0.225
+        ]
+      },
+      "frames": 4,
+      "tex_div": [
+        2.0,
+        2.0
+      ],
+      "birthOffset": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0.0,
+          25.0,
+          50.0
+        ]
+      },
+      "pass": 2,
+      "spawn_radius": 40.0,
+      "spawn_height": 0,
+      "birthScale0": {
+        "base": [
+          50.0,
+          75.0,
+          0.0
+        ]
+      },
+      "scale0": {
+        "base": [
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          1.0
+        ],
+        "values": [
+          [
+            0.5,
+            0.5,
+            0.5
+          ],
+          [
+            1.25,
+            1.25,
+            1.25
+          ]
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              1.0,
+              360.0
+            ]
+          },
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          10.0,
+          10.0,
+          0.0
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0.0,
+          500.0,
+          0.0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0.0,
+          150.0,
+          0.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            0.0,
+            150.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              0.0,
+              1.0
+            ]
+          },
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          1.0,
+          0.6,
+          0.4,
+          0.34999618
+        ]
+      },
+      "Color": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          0.2,
+          0.5,
+          1.0
+        ],
+        "values": [
+          [
+            1.0,
+            1.0,
+            0.25,
+            0.0
+          ],
+          [
+            1.0,
+            1.0,
+            0.2500038,
+            1.0
+          ],
+          [
+            1.0,
+            0.5000076,
+            0.14999619,
+            0.77999544
+          ],
+          [
+            1.0,
+            0.2,
+            0.15,
+            0.0
+          ]
+        ]
+      },
+      "uvScale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthFrameRate": {
+        "base": 0.0
+      },
+      "mult": "",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0.0
+      },
+      "frameRate": 0,
+      "startFrame": 0,
+      "distortion_texture": "",
+      "distortion_strength": 0.0,
+      "preserve_signed_scale": true,
+      "uv_clamp": false,
+      "birthOrbitalVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "source_color_lookup": ""
+    }
+  ],
+  "attached": [
+    {
+      "name": "Avatar",
+      "life": 4.3,
+      "delay": 0,
+      "blend": 1,
+      "pass": 0,
+      "texture": "res://assets/effects/tryndamere/native/alphaslice_mesh.png",
+      "birthColor": {
+        "base": [
+          0.14901961,
+          0.007843138,
+          0.0,
+          1.0
+        ]
+      },
+      "Color": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "uv_rate": {
+        "base": [
+          0.4,
+          0.2
+        ]
+      },
+      "mult": "res://assets/effects/tryndamere/native/alphaslice_bubbles_02.png",
+      "mult_rate": {
+        "base": [
+          0.25,
+          0.0
+        ]
+      },
+      "erosion": "res://assets/effects/tryndamere/native/alphaslice_bubbles_02.png",
+      "erosion_drive": {
+        "base": 0,
+        "times": [
+          0.0,
+          0.2,
+          0.8,
+          1.0
+        ],
+        "values": [
+          1.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "reflection_color": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "fresnel": 0,
+      "mesh_scale": [
+        1.002,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "Fresnel",
+      "life": 4.3,
+      "delay": 0,
+      "blend": 4,
+      "pass": 1,
+      "texture": "res://assets/effects/tryndamere/native/alphaslice_mesh.png",
+      "birthColor": {
+        "base": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "Color": {
+        "base": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "uv_rate": {
+        "base": [
+          0.4,
+          0.2
+        ]
+      },
+      "mult": "",
+      "mult_rate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "res://assets/effects/tryndamere/native/alphaslice_bubbles_02.png",
+      "erosion_drive": {
+        "base": 0,
+        "times": [
+          0.0,
+          0.2,
+          0.8,
+          1.0
+        ],
+        "values": [
+          1.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "reflection_color": [
+        1.0,
+        0.3372549,
+        0.07450981,
+        0.0
+      ],
+      "fresnel": 0.05,
+      "mesh_scale": [
+        1.002,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "End",
+      "life": 0.2,
+      "delay": 3.8,
+      "blend": 4,
+      "pass": 1,
+      "texture": "res://assets/effects/tryndamere/native/common_color-hold.png",
+      "birthColor": {
+        "base": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "Color": {
+        "base": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "times": [
+          0.0,
+          0.14423077,
+          0.35897437,
+          0.60897434,
+          0.7275641,
+          0.88782054,
+          1.0
+        ],
+        "values": [
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.2028302
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.9056604
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.8113208
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.25943395
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        ]
+      },
+      "uv_rate": {
+        "base": [
+          0.4,
+          0.2
+        ]
+      },
+      "mult": "",
+      "mult_rate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0
+      },
+      "reflection_color": [
+        1.0,
+        0.8,
+        0.4,
+        0.4500038
+      ],
+      "fresnel": 0,
+      "mesh_scale": [
+        1.002,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "Fresnel1",
+      "life": 4.3,
+      "delay": 0,
+      "blend": 4,
+      "pass": 1,
+      "texture": "res://assets/effects/tryndamere/native/common_color-hold.png",
+      "birthColor": {
+        "base": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "Color": {
+        "base": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "uv_rate": {
+        "base": [
+          0.4,
+          0.2
+        ]
+      },
+      "mult": "",
+      "mult_rate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "res://assets/effects/tryndamere/native/alphaslice_bubbles_02.png",
+      "erosion_drive": {
+        "base": 0,
+        "times": [
+          0.0,
+          0.2,
+          0.8,
+          1.0
+        ],
+        "values": [
+          1.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "reflection_color": [
+        1.0,
+        0.8039216,
+        0.40392157,
+        0.0
+      ],
+      "fresnel": 0.05,
+      "mesh_scale": [
+        1.002,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "Start",
+      "life": 0.44,
+      "delay": 0,
+      "blend": 4,
+      "pass": 1,
+      "texture": "res://assets/effects/tryndamere/native/common_color-hold.png",
+      "birthColor": {
+        "base": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "Color": {
+        "base": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "times": [
+          0.0032051282,
+          0.5,
+          0.64102566,
+          0.8301282,
+          1.0
+        ],
+        "values": [
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.9198113
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.12264151
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        ]
+      },
+      "uv_rate": {
+        "base": [
+          0.4,
+          0.2
+        ]
+      },
+      "mult": "",
+      "mult_rate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0
+      },
+      "reflection_color": [
+        1.0,
+        0.8,
+        0.4,
+        0.4500038
+      ],
+      "fresnel": 0.3,
+      "mesh_scale": [
+        1.002,
+        1.0,
+        1.0
+      ]
+    }
+  ]
+}

@@ -23,6 +23,9 @@ static func validate_all(cards: Dictionary, inspect_resources: bool = true) -> P
 		_validate_numbers(card_id, stats, errors)
 		_validate_card(card_id, stats, errors, inspect_resources)
 		_validate_references(card_id, stats, cards, errors)
+		if stats.has("rage_crit_multiplier"):
+			if float(stats.rage_crit_multiplier) <= 1.0 or float(stats.get("skill_resource_max", 0.0)) != 2.0 or float(stats.get("projectile_speed", 0.0)) > 0.0 or bool(stats.get("is_continuous_attack", false)) or stats.get("type", "") != "unit":
+				errors.append(card_id + ".rage_crit_multiplier: 要求两点资源的离散近战单位及大于1的暴击倍率")
 	return errors
 
 static func _validate_card_id(card_id: String, errors: PackedStringArray) -> void:
@@ -307,6 +310,10 @@ static func _validate_combat_stats(label: String, stats: Dictionary, require_siz
 			errors.append("%s.%s: 需要非空的 0..1 比例数组" % [label, field])
 		if float(stats.get("projectile_speed", 0.0)) > 0.0 or float(stats.get("splash_radius", 0.0)) > 0.0 or bool(stats.get("is_continuous_attack", false)) or not stats.get("attack_extra_hit_damage_multipliers", []).is_empty():
 			errors.append("%s.%s: 当前仅支持无追加刀的单体近战" % [label, field])
+	if stats.has("attack_recovery_cancel_window"):
+		var window := float(stats.attack_recovery_cancel_window)
+		if window <= 0.0 or window >= float(stats.get("interval", 0.0)) - float(stats.get("first_hit", 0.0)) or int(stats.get("attack_recovery_cancel_every_hits", 0)) <= 0:
+			errors.append("%s.attack_recovery_cancel_window: 需要可取消后摇，且窗口必须在命中后收招段内" % label)
 	if stats.has("empowered_first_hit"):
 		if float(stats.empowered_first_hit) <= 0.0 or float(stats.empowered_first_hit) >= float(stats.get("interval", 0.0)) or not stats.get("visual_animations", {}).has("empowered_attack"):
 			errors.append("%s.empowered_first_hit: 需要强化攻击动画及 0 < 前摇 < 攻击间隔" % label)
@@ -928,6 +935,11 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 					errors.append("%s.damage: 必须 >= 0" % label)
 				if float(skill.get("duration", 0.0)) > float(skill.get("cast_duration", 0.0)):
 					errors.append("%s.duration: 不得大于 cast_duration" % label)
+			&"undying_rage":
+				if float(skill.get("duration", 0.0)) <= 0.0 or float(stats.get("rage_crit_multiplier", 1.0)) <= 1.0:
+					errors.append(label + ": 拒绝死亡要求正持续时间及怒气暴击被动")
+				if float(skill.get("cast_duration", 0.0)) != 0.0 or float(skill.get("impact_delay", 0.0)) != 0.0 or skill.has("visual_action") or bool(skill.get("uses_skill_resource", false)):
+					errors.append(label + ": 拒绝死亡必须瞬时生效，不占用全身动作或消费技能资源")
 			&"empowered_attack":
 				_require_fields(label, skill, [&"empowered_damage_multiplier"], errors)
 				if float(skill.get("empowered_damage_multiplier", 0.0)) <= 0.0:

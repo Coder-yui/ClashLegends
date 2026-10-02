@@ -83,3 +83,7 @@
 动态位移技能可由权威状态持有动作时钟：Unit.get_visual_action_clock()返回Vector2(是否管理, 播放倍率)，既有动作duration/time_left在此模式下表示归一进度。表现按新进度校正序列、帧间按倍率播放，动画结束回调不自主转段；不允许表现反向修改模拟。
 
 可选`stealth_idle`/`stealth_move`只读隐身状态替换基础循环，状态边沿在非攻击/技能/部署时刷新姿态；`active_buff_attack`在持续主动增益期间替换攻击片段，每次攻击起手选择，片段中途不跳切。均受现有动作优先级、冻结与取消控制。模型包装可实现`create_projectile_anchor() -> Node3D`，每次复用重新建立炮口挂点，禁止驱动权威弹体位置。
+
+## 可取消后摇的末尾窗口
+
+`attack_recovery_cancel_every_hits`继续决定允许取消的攻击段；可选玩法字段`attack_recovery_cancel_window`将取消限制在后摇剩余的最后若干秒，必须大于0且小于`interval-first_hit`。未配置时维持原有整段取消规则（如腕豪）。窗口随有效攻速同比缩放，只在没有圈内下一目标时生效。蛮族之王配置每刀、0.23秒，仅取消末帧保持，保留原挥刀收招。

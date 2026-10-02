@@ -75,7 +75,7 @@ static func supports(stats: Dictionary, cue: String) -> bool:
 			return float(stats.get("active_transform_duration", stats.get("transform_duration", 0.0))) > 0.0
 		if cue in ["empowered_ready", "empowered_swing"] and kind in ["empowered_attack", "bleeding_execute"]:
 			return true
-		if cue in ["active_buff:start", "active_buff:end", "active_buff:sustain", "active_buff:attack_launch", "active_buff:attack_hit"] and kind == "buff":
+		if cue in ["active_buff:start", "active_buff:end", "active_buff:sustain", "active_buff:attack_launch", "active_buff:attack_hit"] and kind in ["buff", "undying_rage"]:
 			return float(skill.get("duration", 0.0)) > 0.0
 		var actions: Array = [String(skill.get("visual_action", "")), String(skill.get("full_resource_visual_action", ""))]
 		actions.append_array(skill.get("resource_visual_actions", []))

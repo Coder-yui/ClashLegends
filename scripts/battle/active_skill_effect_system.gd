@@ -103,6 +103,8 @@ func prepare_dual_form_cast(source: Unit, skill: Dictionary) -> Dictionary:
 
 ## Cast Start 的效果必须在施法窗口开始时发生；它不依赖动画，也不等待 EffectExecution。
 func apply_cast_start(source: Unit, skill: Dictionary) -> void:
+	if StringName(skill.get("kind", "")) == &"undying_rage":
+		source.begin_undying_rage(float(skill.duration))
 	if not bool(skill.get("shield_on_cast_start", false)):
 		return
 	var amount := maxf(float(skill.get("shield", 0.0)), 0.0)
@@ -125,6 +127,8 @@ func apply_cast_end(source: Unit, skill: Dictionary) -> void:
 
 func apply(source: Unit, skill: Dictionary) -> bool:
 	match StringName(skill.get("kind", "")):
+		&"undying_rage":
+			pass # 效果在 Cast Start 原子生效，受控不取消已施加的独立状态。
 		&"permanent_growth":
 			return apply_permanent_growth(source, skill)
 		&"terrain_charge":

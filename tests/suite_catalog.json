@@ -404,5 +404,12 @@
     "method": "run",
     "scene": "battle",
     "group": "deployment"
+  },
+  {
+    "id": "tryndamere_suite",
+    "script": "res://tests/suites/cards/tryndamere_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "cards"
   }
 ]

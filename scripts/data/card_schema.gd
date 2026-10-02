@@ -98,7 +98,7 @@ const SIZE_RADII := {
 const PROJECTILE_VISUALS := [&"fireball", &"crossbow_bolt", &"venom_bolt", &"magic_orb", &"kayle_sword", &"orb", &"arrow", &"needle", &"boomerang", &"ice_cone"]
 const VISUAL_SPAWN_TRANSITIONS := [&"drop", &"rebirth"]
 const SPELL_KINDS := [&"stasis", &"zap", &"lightning", &"freeze", &"heal", &"mirror"]
-const ACTIVE_SKILL_KINDS := [&"spell_freeze", &"spell_stasis", &"permanent_growth", &"spell_lightning", &"dash_strike", &"terrain_charge", &"bleeding_execute", &"explosive_shield", &"sanctuary", &"timed_form", &"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"continuous_area", &"empowered_attack", &"attack_lifesteal", &"area_shield", &"restoration_shield", &"spell_heal"]
+const ACTIVE_SKILL_KINDS := [&"undying_rage", &"spell_freeze", &"spell_stasis", &"permanent_growth", &"spell_lightning", &"dash_strike", &"terrain_charge", &"bleeding_execute", &"explosive_shield", &"sanctuary", &"timed_form", &"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"continuous_area", &"empowered_attack", &"attack_lifesteal", &"area_shield", &"restoration_shield", &"spell_heal"]
 const ACTIVE_SKILL_TARGET_SCOPES := [&"self", &"deployment_group"]
 const CAST_LOCKS := [&"movement", &"attack", &"facing"]
 const VISUAL_ACTION_KINDS := [&"deploy", &"transform", &"skill"]
@@ -109,6 +109,7 @@ const TRANSITION_BLEND_FIELDS := [&"default", &"locomotion", &"action_in", &"act
 ## Validator 会检测未知或未登记字段。新增字段必须同时实现运行时读取逻辑、
 ## validator 登记和对应机制测试，防止只把配置写进 CardDB、却忘记接入权威模拟或表现层。
 const CARD_FIELDS := [
+	&"rage_crit_multiplier",
 	&"stealth_delay",
 	&"strike_count", &"strike_interval", &"stun_duration", &"tower_damage_multiplier",
 	&"heal_on_hit_name", &"on_hit_passive_name", &"team_attack_boost_first_delay", &"team_attack_boost_interval", &"team_attack_boost_multiplier", &"team_attack_boost_forge_duration", &"team_attack_boost_release_time",
@@ -140,7 +141,7 @@ const CARD_FIELDS := [
 	&"on_hit_max_health_ratio", &"on_hit_tower_damage", &"charge_damage_multiplier", &"attack_pattern", &"attack_damage_multipliers", &"first_strike_damage_multiplier",
 	&"attack_extra_hit_damage_multipliers", &"attack_extra_hit_delays",
 	&"attack_passive_multipliers", &"attack_lifesteal_ratios", &"form_lifetime", &"form_lifetime_after_transition", &"form_speed_boost_duration", &"form_speed_boost_multiplier", &"form_refresh_on_kill",
-	&"attack_recovery_cancel_every_hits",
+	&"attack_recovery_cancel_every_hits", &"attack_recovery_cancel_window",
 	&"skill_resource_max", &"skill_resource_attack_gain", &"skill_resource_hit_gain", &"skill_resource_kill_gain", &"skill_resource_full_color",
 	&"skill_resource_damage_gain_multiplier", &"skill_resource_decay_delay", &"skill_resource_decay_rate",
 	&"attack_interval_display", &"transform_after_hits", &"revert_after_hits",

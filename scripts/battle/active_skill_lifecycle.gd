@@ -15,6 +15,7 @@ func _init(effects: ActiveSkillEffectSystem, presentation: SkillEffectPresentati
 
 func start(unit: Unit, skill: Dictionary) -> bool:
 	if unit != null and (unit.is_active_skill_rush_locked() or unit.death_form.used): return false
+	if StringName(skill.get("kind", "")) == &"undying_rage" and (unit == null or not unit.can_start_active_skill(skill)): return false
 	var prepared_skill: Dictionary = _effects.prepare_cast(unit, skill)
 	if StringName(prepared_skill.get("kind", "")) == &"dual_form":
 		prepared_skill = _effects.prepare_dual_form_cast(unit, prepared_skill)

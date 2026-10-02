@@ -1,0 +1,8 @@
+{
+  "recipe": "hold first pose 0.4s + source attack 1.07s + hold last pose 0.23s",
+  "deploy": "last 1.0s of Idle1",
+  "outputs": {
+    "source/tryndamere.glb": "b9f95e151cc19b82dc82ad6a93d3626990b0fed03f433cc5266d8d83330de6af",
+    "animations.res": "e83f87f9cc499935803a5df966b1d739bac73e3938dcd233afddc9e8a16191be"
+  }
+}

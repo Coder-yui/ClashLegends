@@ -177,7 +177,9 @@ var attack_extra_hit_damage_multipliers: Array = []
 var attack_extra_hit_delays: Array = []
 ## 每N次命中后可在没有圈内目标时提前转走并清除间隔；0禁用。
 var attack_recovery_cancel_every_hits := 0
+var attack_recovery_cancel_window := 0.0
 ## 可复用的主动技能资源。当前腕豪用它表达豪意；权威值不由白条或动画反推。
+var rage_crit_multiplier := 1.0
 var skill_resource_max := 0.0
 var skill_resource_value := 0.0
 var skill_resource_attack_gain := 0.0
@@ -496,6 +498,8 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	attack_extra_hit_damage_multipliers = stats.get("attack_extra_hit_damage_multipliers", [])
 	attack_extra_hit_delays = stats.get("attack_extra_hit_delays", [])
 	attack_recovery_cancel_every_hits = int(stats.get("attack_recovery_cancel_every_hits", 0))
+	attack_recovery_cancel_window = float(stats.get("attack_recovery_cancel_window", 0.0))
+	rage_crit_multiplier = float(stats.get("rage_crit_multiplier", 1.0))
 	_configured_skill_resource_max = maxf(float(stats.get("skill_resource_max", 0.0)), 0.0)
 	_configured_skill_resource_attack_gain = maxf(float(stats.get("skill_resource_attack_gain", 0.0)), 0.0)
 	_configured_skill_resource_hit_gain = maxf(float(stats.get("skill_resource_hit_gain", 0.0)), 0.0)
@@ -513,6 +517,9 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	skill_resource_decay_delay = 0.0
 	skill_resource_decay_rate = 0.0
 	skill_resource_enabled = false
+	if rage_crit_multiplier > 1.0:
+		skill_resource_enabled = true
+		skill_resource_max = _configured_skill_resource_max
 	shields.clear()
 	transform_after_hits = maxi(int(stats.get("transform_after_hits", 0)), 0)
 	revert_after_hits = maxi(int(stats.get("revert_after_hits", 0)), 0)
@@ -630,6 +637,18 @@ func get_locomotion_visual_state_code() -> int:
 	return 1
 
 ## 3D 与 2D 表现都直接读取同一个最终渲染位置，不依赖彼此的 _process 执行顺序。
+func can_start_active_skill(skill: Dictionary) -> bool:
+	if StringName(skill.get("kind", "")) == &"undying_rage":
+		return hp > 0.0 and is_deployed() and not CombatInteraction.in_stasis(self) and not death_form.used
+	return (action_permissions() & ControlState.START_SKILL) != 0
+
+func begin_undying_rage(duration: float) -> void:
+	buffs.apply(&"undying", status_source("undying"), duration, {"health_floor": 1.0})
+	skill_resource_value = skill_resource_max
+	# 满怒刷新未释放攻击，以完整暴击前摇同步动作和伤害。
+	cancel_basic_attack(&"empowered_reset")
+	apply_active_buff(duration, 1.0, 1.0, 1.0)
+
 func action_permissions() -> int:
 	if hp <= 0.0: return 0
 	if _in_client_mode(): return net_action_permissions
@@ -892,6 +911,8 @@ func configure_carried_active_skill(skill: Dictionary) -> void:
 	queue_redraw()
 
 func clear_carried_active_skill_resource() -> void:
+	# 怒气属于被动；主动槽被替换或未携带主动均不清空。
+	if rage_crit_multiplier > 1.0: return
 	skill_resource_enabled = false
 	skill_resource_max = 0.0
 	skill_resource_value = 0.0
@@ -1294,7 +1315,7 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prep
 	# 默认命中后必须完整收招；配置允许的连招段结束且没有圈内目标时可提前转走。
 	# 冻结会在上方提前 return，因此同样会暂停后摇计时。
 	if attack_timeline.recovery > 0.0:
-		if attack_recovery_cancel_every_hits > 0 and _attack_hit_index > 0 and _attack_hit_index % attack_recovery_cancel_every_hits == 0:
+		if attack_recovery_cancel_every_hits > 0 and _attack_hit_index > 0 and _attack_hit_index % attack_recovery_cancel_every_hits == 0 and (attack_recovery_cancel_window <= 0.0 or attack_timeline.recovery <= attack_recovery_cancel_window / _effective_attack_speed_multiplier() + 0.0001):
 			# 复用权威索敌规则：目标死亡/离圈时优先换打圈内目标；完全没有
 			# 下一次攻击目标时才解除 Attack，避免表现层提前猜测目标状态。
 			_update_target(false)
@@ -1938,6 +1959,8 @@ func _attack(dt: float) -> void:
 		var next_attack_gap := _next_attack_gap()
 		attack_timeline.commit_hit(next_attack_gap)
 		var base_hit_damage := damage * _attack_damage_multiplier(hit_index) * active_damage_multiplier * (charge_damage_multiplier if _charged else 1.0)
+		var rage_critical := rage_crit_multiplier > 1.0 and posmod(_attack_visual_serial - 1, 3) == 2
+		if rage_critical: base_hit_damage *= rage_crit_multiplier
 		var hit_damage := base_hit_damage
 		var first_strike := _attack_visual_first_strike and first_strike_damage_multiplier != 1.0
 		# 先声夺人：对每个目标的首次普攻附加伤害倍率；远程弹体在出手 tick 固化该次伤害。
@@ -1974,7 +1997,13 @@ func _attack(dt: float) -> void:
 		# 挥击序号与表现层攻击动画序号同步推进，供命中回血按三段循环取模。
 		_attack_swing_count += 1
 		mark_skill_resource_combat_activity()
-		add_skill_resource(skill_resource_attack_gain)
+		if rage_crit_multiplier > 1.0:
+			if rage_critical:
+				if buffs.remaining(&"undying") <= 0.0: skill_resource_value = 0.0
+			else:
+				skill_resource_value = minf(skill_resource_max, skill_resource_value + 1.0)
+		else:
+			add_skill_resource(skill_resource_attack_gain)
 		var attack_form_index := form_index
 		if projectile_speed <= 0.0 and battle_context != null and battle_context.damage_batch().collecting:
 			attack_effects["delivery_callback"] = _settle_melee_delivery.bind(form_change_serial, _attack_visual_serial, true)
@@ -2042,7 +2071,10 @@ func _try_start_attack_visual(time_until_hit: float) -> void:
 	_attack_visual_serial += 1
 	# 可取消的连招以前用每次尝试的序号选片，取消一拳会令动作与伤害/间隔错位。
 	# 序号仍严格递增（快照/声音去重不变），余数对齐尚未结算的权威拳段。
-	if not attack_passive_multipliers.is_empty():
+	if rage_crit_multiplier > 1.0:
+		var segment := 2 if skill_resource_value >= skill_resource_max else posmod(_attack_swing_count, 2)
+		_attack_visual_serial += posmod(segment - (_attack_visual_serial - 1), 3)
+	elif not attack_passive_multipliers.is_empty():
 		_attack_visual_serial += posmod(_attack_swing_count - (_attack_visual_serial - 1), attack_passive_multipliers.size())
 	elif not attack_pattern.is_empty():
 		_attack_visual_serial += posmod(_attack_hit_index - (_attack_visual_serial - 1), attack_pattern.size())
@@ -2575,7 +2607,7 @@ func take_damage(amount: float, from: Node2D = null, source_team: int = -1, sour
 		battle_context.notify_unit_audio_event(self, &"explosive_shield:break", global_position)
 	shields.broken_effects.clear()
 	var hp_before := hp
-	hp = maxf(roundf(hp - remaining_damage), 0.0)
+	hp = maxf(roundf(hp - remaining_damage), buffs.strongest(&"undying", &"health_floor", 0.0))
 	add_skill_resource(minf(maxf(hp_before, 0.0), remaining_damage) * skill_resource_damage_gain_multiplier)
 	if hp <= 0.0:
 		_die(death_spawn_count > 0)

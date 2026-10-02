@@ -1,0 +1,120 @@
+{
+  "source": "Tryndamere_Base_R_buf_01",
+  "source_sha256": "36361635caf0077849e5b69cd640593b2e39a9a4f9cf78964f7c886e31284f43",
+  "emitters": [
+    "WindTunnel",
+    "Temp_Mesh",
+    "Temp_Mesh1",
+    "sparks",
+    "CAS_Flames",
+    "FlameBits_Alpha1"
+  ],
+  "attached_mesh_layers": [
+    "Avatar",
+    "Fresnel",
+    "End",
+    "Fresnel1",
+    "Start"
+  ],
+  "disabled_in_source": [
+    "Basic",
+    "push_out",
+    "Temp_Mesh2",
+    "Flame",
+    "FlameBits_Alpha",
+    "Dome",
+    "MeshFire_",
+    "WeaponGlowsAVATAR",
+    "BlackHole_STAY1",
+    "cast_flash",
+    "spark1",
+    "timer",
+    "timer1"
+  ],
+  "unsupported_screen_distortion": [],
+  "resources": [
+    {
+      "source": "assets/characters/tryndamere/skins/base/particles/tryndamere_base_r_mesh_dome.scb",
+      "sha256": "c1a17e61e4bd402ab4ea0e3e44260b22c890d45a1d4a393067c9a9849633f2cc",
+      "output": "res://assets/effects/tryndamere/native/tryndamere_base_r_mesh_dome.mesh.json"
+    },
+    {
+      "source": "assets/characters/tryndamere/skins/base/particles/tryndamere_base_r_dome_flames.tex",
+      "sha256": "5ec7d39c6385aa2de6881967acb4bc0fa5b7191f37f8b610ed0d5252de98df61",
+      "output": "res://assets/effects/tryndamere/native/tryndamere_base_r_dome_flames.png"
+    },
+    {
+      "source": "assets/characters/tryndamere/skins/base/particles/common_bw_sparks.tex",
+      "sha256": "6b559e51f976a517f10f5681cd8d6760a972d1c5eae1bb4eb789cfd501b76709",
+      "output": "res://assets/effects/tryndamere/native/common_bw_sparks.png"
+    },
+    {
+      "source": "assets/characters/tryndamere/skins/base/particles/tryndamere_base_r_ash01.tex",
+      "sha256": "4b6645e6e0af97fd31e6edb1036b9ad8216f9476cfc9ce91f4990e39118e968d",
+      "output": "res://assets/effects/tryndamere/native/tryndamere_base_r_ash01.png"
+    },
+    {
+      "source": "assets/characters/tryndamere/skins/base/particles/alphaslice_bubbles_02.tex",
+      "sha256": "2d23625bf9cc3c29af0db565babaa76378445c6a85732beba3ec29767ac76f2b",
+      "output": "res://assets/effects/tryndamere/native/alphaslice_bubbles_02.png"
+    },
+    {
+      "source": "assets/characters/tryndamere/skins/base/particles/alphaslice_mesh.tex",
+      "sha256": "45d28984b1466228f8cd02d542382ab11fe6ad2c1e85fba1b11dce90e27c685e",
+      "output": "res://assets/effects/tryndamere/native/alphaslice_mesh.png"
+    },
+    {
+      "source": "assets/characters/tryndamere/skins/base/particles/common_color-hold.tex",
+      "sha256": "bc06557b44402fee1498430bd4008df9598085f44b29fea2f02218473674b2f8",
+      "output": "res://assets/effects/tryndamere/native/common_color-hold.png"
+    },
+    {
+      "source": "assets/characters/tryndamere/skins/base/particles/helix.scb",
+      "sha256": "3c7fa4f4b466b33f90d893dd153f42b71ceb6c19aa8046574d418d8a9b7ec6dd",
+      "output": "res://assets/effects/tryndamere/native/helix.mesh.json"
+    },
+    {
+      "source": "assets/characters/tryndamere/skins/base/particles/helix.tex",
+      "sha256": "0aa66a261cbd6a8163defb7c57a29f4ad433804cd65abd206424f5e1977bce6f",
+      "output": "res://assets/effects/tryndamere/native/helix.png"
+    }
+  ],
+  "adaptation": {
+    "world_units_per_lol_unit": 0.013175,
+    "derivation": "GLB native scale 0.0085 * wrapper scale 3.1 / original skinScale 2",
+    "attached_layers": "5 separate source layers; long lifetime 5.3 -> 4.3; End delay 4.8 -> 3.8",
+    "restored": [
+      "legacy emitter offsets and curves",
+      "signed mesh scaling",
+      "alpha-channel erosion",
+      "per-layer start/sustain/end lifetimes",
+      "UV clamping",
+      "orbital velocity"
+    ],
+    "not_reproduced": [
+      "LoL noise field turbulence",
+      "arbitrary color lookup tables (distortion opacity ramp approximated)"
+    ]
+  },
+  "excluded_by_art_direction": [
+    "FireGlow",
+    "Shockwaves",
+    "SoftBeams",
+    "Yellow_Flash",
+    "BlackHole",
+    "distort",
+    "Speed_Rings",
+    "fireRing",
+    "groundCracks",
+    "groundCracks_add",
+    "ground_frost",
+    "lotus_leaves",
+    "praxis",
+    "OuterEdges",
+    "BlackHole_STAY",
+    "Constant_Distortion",
+    "Basic1",
+    "scorchedGround"
+  ],
+  "art_direction": "Body flames and outer WindTunnel retained; no ground shadows, impact rings or distortion."
+}

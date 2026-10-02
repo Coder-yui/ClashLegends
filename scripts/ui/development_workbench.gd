@@ -825,7 +825,7 @@ func _on_active_skill_pressed() -> void:
 func _update_resource_config(skill: Dictionary) -> void:
 	var stats: Dictionary = _cards.get(_skill_source(), {})
 	_resource_max = maxf(float(stats.get("skill_resource_max", 0.0)), 0.0)
-	_resource_supported = bool(skill.get("uses_skill_resource", false)) and _resource_max > 0.0
+	_resource_supported = (bool(skill.get("uses_skill_resource", false)) or float(stats.get("rage_crit_multiplier", 1.0)) > 1.0) and _resource_max > 0.0
 	_resource_controls.visible = _resource_supported
 	_resource_slider.max_value = maxf(_resource_max, 1.0)
 	_resource_slider.step = 1.0
@@ -897,7 +897,12 @@ func update_live_details(unit: Unit) -> void:
 	if state.stunned: tags.append("眩晕")
 	var action: String = String(state.action) if not state.action.is_empty() else ["部署", "待机", "移动", "攻击"][clampi(state.behavior, 0, 3)]
 	_unit_status_label.text = "%s · %s · 批次 %d\nHP %.0f/%.0f · %s · 攻击 #%d · %.2fs · ×%.2f · %s" % [CardDB.get_card(unit.card_id).get("name", "训练木桩"), "蓝方" if unit.team == 0 else "红方", unit.deployment_group_id, unit.hp, unit.max_hp, action, state.attack_serial, state.attack_elapsed, state.attack_rate, " / ".join(tags) if not tags.is_empty() else "无冰冻/眩晕"]
-	_skill_button.disabled = _skill_button.disabled or state.frozen or state.stunned
+	var skills := CardDB.active_skills_for(_skill_source())
+	var index := selected_skill_index()
+	if index >= 0 and index < skills.size() and String(skills[index].get("kind", "")) == "undying_rage":
+		_skill_button.disabled = not unit.can_start_active_skill(skills[index])
+	else:
+		_skill_button.disabled = _skill_button.disabled or state.frozen or state.stunned
 
 func bind_inspected_unit(unit: Unit, source: String) -> void:
 	var changed := not _inspection_bound or source != _inspection_source
