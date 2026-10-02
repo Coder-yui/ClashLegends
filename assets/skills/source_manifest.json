@@ -295,5 +295,259 @@
     "sha256": "9cda13176d693fa3bea76cf421cfe574f28766e1b158f65b4012bb746592620e",
     "processing": "原版纹理解码；图标 Pillow DDS，冰面 ltk-tex-utils；冰面材质由表现层映射颜色和透明度",
     "source_sha256": "4eb3900ee273b9ea98a14c954424c8c3f8ccd7182c6db6aee48dce17a6b8d2c1"
+  },
+  {
+    "card": "tristana",
+    "skill_index": 0,
+    "path": "res://assets/skills/tristana_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Tristana.wad.client",
+    "source_path": "assets/characters/tristana/hud/icons2d/tristana_q.dds",
+    "source_sha256": "58b09f0d23c18f6eb275918dcd9831c4230e8d4dff0a371d21976cd2095ed6f0",
+    "sha256": "019fd80d0f3234584e6fea1bdd4a679f09cb15b47ea15872fb9bd2a86580bff0"
+  },
+  {
+    "card": "shurima_guard",
+    "skill_index": 0,
+    "path": "res://assets/skills/shurima_guard_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Azir.wad.client",
+    "source_path": "assets/characters/azir/hud/icons2d/azir_e.dds",
+    "source_sha256": "ffe1cb3d6eff6526178d2dd1a171028a1d2ff174624cab7ea96d98759717c9db",
+    "sha256": "85e3cd30ad470b861fd8637f5d29331fd1dd3539c74176134bf8a104bde96c8a",
+    "mapping_evidence": "Azir E / Spell3",
+    "dimensions": [
+      64,
+      64
+    ],
+    "processing": "DDS decoded to RGBA PNG with Pillow; native resolution; no redraw or resize"
+  },
+  {
+    "card": "apex_turret",
+    "skill_index": 0,
+    "path": "res://assets/skills/apex_turret_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Heimerdinger.wad.client",
+    "source_path": "assets/characters/heimerdinger/hud/icons2d/heimerdinger_q2.dds",
+    "source_sha256": "5afdf31bcc68dc931ecc65ba2d18174f9c535f61d04460cd9591ae467b2060a9",
+    "sha256": "e2fa8e8cfd1a5bb7b3350a52fd76f89b90ffe1b4c98ea7e228a32b0b453db092",
+    "mapping_evidence": "HeimerdingerRAbility/HeimerdingerQUlt mImgIconName; Trait_Ultimate",
+    "dimensions": [
+      64,
+      64
+    ],
+    "processing": "DDS decoded to RGBA PNG with Pillow; native resolution; no redraw or resize"
+  },
+  {
+    "card": "tombstone",
+    "skill_index": 0,
+    "path": "res://assets/skills/tombstone_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Yorick.wad.client",
+    "source_path": "assets/characters/yorick/hud/icons2d/yorick_w.dds",
+    "source_sha256": "4179e51dc8266ce1547812d97672f2116b676701d203fdd893439306e87d981a",
+    "sha256": "1e09b225a799e82c1edb81efce5d9aaca92e94cea90c900d9c8f8b20144b8094",
+    "mapping_evidence": "Yorick W / Spell2",
+    "dimensions": [
+      64,
+      64
+    ],
+    "processing": "DDS decoded to RGBA PNG with Pillow; native resolution; no redraw or resize"
+  },
+  {
+    "card": "pix",
+    "skill_index": 0,
+    "path": "res://assets/skills/pix_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Lulu.wad.client",
+    "source_path": "assets/characters/lulu/hud/icons2d/lulu_pixfaeriecompanion.dds",
+    "source_sha256": "c9e908d602b17b3a6dbb7d61911836a002ebeb2eec8f6061136c485357655ba0",
+    "sha256": "2c6f8170083a555d6a0721e9023a54ab43c2039451ebdccb07347e1843b4e1bc",
+    "mapping_evidence": "LuluPassiveAbility/LuluPassive mImgIconName; Character passiveSpell=LuluPassive; passive1IconName hash 2b7ab03b62888c56 matches source index",
+    "dimensions": [
+      64,
+      64
+    ],
+    "processing": "DDS decoded to RGBA PNG with Pillow; native resolution; no redraw or resize"
+  },
+  {
+    "card": "rift_herald",
+    "skill_index": 0,
+    "path": "res://assets/skills/rift_herald_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Map11.wad.client",
+    "source_path": "assets/characters/sru_riftherald/hud/icons2d/sruriftherald_death_recap_square.dds",
+    "source_sha256": "fbb9029db27abd03f7b3c49949763cd9bb9150dec5c5a5ddd775054973ca7bb2",
+    "sha256": "58071d1831b06ac645f13b0e1df745d2841cff1f126a5aae55f509643b80c3d1",
+    "mapping_evidence": "SRU_RiftHerald BIN: HeraldSpinAttack and HeraldLeapAttack mImgIconName both reference SRURiftHerald_Death_Recap_Square.dds",
+    "dimensions": [
+      64,
+      64
+    ],
+    "processing": "DDS decoded to RGBA PNG with Pillow; native resolution; no redraw or resize"
+  },
+  {
+    "card": "melee_minion",
+    "skill_index": 0,
+    "path": "res://assets/skills/melee_minion_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Map11.wad.client",
+    "source_path": "assets/characters/sru_orderminionmelee/hud/bluemelee_square.tex",
+    "source_sha256": "d328fa251dbc8924fd9ae2dea23bc7a13574d4f615d834e7b223349e8a8461d5",
+    "sha256": "bf047f41db6a3fea035e971f334ce17c948d006abb5ca673864c71391daee8f1",
+    "mapping_evidence": "SRU_OrderMinionMelee skin0 iconSquare hash 6def25f2954b9518; current blue-side square portrait, not classic",
+    "dimensions": [
+      128,
+      128
+    ],
+    "processing": "Original TEX decoded by ltk-tex-utils to PNG; no redraw or resize; fixed blue-side icon"
+  },
+  {
+    "card": "ranged_minion",
+    "skill_index": 0,
+    "path": "res://assets/skills/ranged_minion_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Map11.wad.client",
+    "source_path": "assets/characters/sru_orderminionranged/hud/bluerange_square.tex",
+    "source_sha256": "f0d1dada9f6c0a8e99ecb680e738763eb7dcb3e5814e06a3faa40bc9d9a14068",
+    "sha256": "2b98d0748a0828cff8b88a84f8fe87ae50d5d5d861ac28fced3c390bf5632d4d",
+    "mapping_evidence": "SRU_OrderMinionRanged skin0 iconSquare hash 7a8321cb32c881c5; current blue-side square portrait, not classic",
+    "dimensions": [
+      128,
+      128
+    ],
+    "processing": "Original TEX decoded by ltk-tex-utils to PNG; no redraw or resize; fixed blue-side icon"
+  },
+  {
+    "card": "siege_minion",
+    "skill_index": 0,
+    "path": "res://assets/skills/siege_minion_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Map11.wad.client",
+    "source_path": "assets/characters/sru_orderminionsiege/hud/bluemechcannon_square.tex",
+    "source_sha256": "92e44aa3baf3047a3fb5630249d540c86f16fb105daccb1bc312910896b59bf3",
+    "sha256": "1e92696b17bbc519951f3cb2d03b4fc68bb6d5822d83157573b376a24bb3401c",
+    "mapping_evidence": "SRU_OrderMinionSiege skin0 iconSquare hash 1dbefa84657b4873; current blue-side square portrait, not classic",
+    "dimensions": [
+      128,
+      128
+    ],
+    "processing": "Original TEX decoded by ltk-tex-utils to PNG; no redraw or resize; fixed blue-side icon"
+  },
+  {
+    "card": "super_minion",
+    "skill_index": 0,
+    "path": "res://assets/skills/super_minion_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Map11.wad.client",
+    "source_path": "assets/characters/sru_orderminionsuper/hud/bluemechmelee_square.tex",
+    "source_sha256": "d4db7fc8852e88371b53d5188753912b72fe6d5c922cfa84b9e2d1c31fddc8c5",
+    "sha256": "59f520de3c80a90d0c7f673cfb0c244b7b85b004f0ac13ce9570cd35396aec18",
+    "mapping_evidence": "SRU_OrderMinionSuper skin0 iconSquare hash ef0a974fd16c41af; current blue-side square portrait, not classic",
+    "dimensions": [
+      128,
+      128
+    ],
+    "processing": "Original TEX decoded by ltk-tex-utils to PNG; no redraw or resize; fixed blue-side icon"
+  },
+  {
+    "card": "melee_minion_squad",
+    "skill_index": 0,
+    "path": "res://assets/skills/melee_minion_squad_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Map11.wad.client",
+    "source_path": "assets/characters/sru_chaosminionmelee/hud/redmelee_square.tex",
+    "source_sha256": "a1e988a81e206b5e547e4ac4df654b1d137c3f342e4ab124d9a5378bce7a9eae",
+    "sha256": "39e0fadcf9031553fdb82199b0cc2a5d478883ccd850e5f4bbf0f36a7b9ab213",
+    "dimensions": [
+      128,
+      128
+    ],
+    "mapping_evidence": "Current red-side skin0 iconSquare hash 703a12dda23f430a; not classic",
+    "processing": "Original TEX decoded by ltk-tex-utils; no resize or recolor; fixed red-side icon"
+  },
+  {
+    "card": "ranged_minion_squad",
+    "skill_index": 0,
+    "path": "res://assets/skills/ranged_minion_squad_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Map11.wad.client",
+    "source_path": "assets/characters/sru_chaosminionranged/hud/redrange_square.tex",
+    "source_sha256": "81f9490d1334166bc040d97fbc9996b1ee479de9cbcd93cd4ec27a6e519328ed",
+    "sha256": "c3943080dbad282ee119436d308164ddf1c3dfab8efca596f59bbf80312a54b3",
+    "dimensions": [
+      128,
+      128
+    ],
+    "mapping_evidence": "Current red-side skin0 iconSquare hash 8da2498925546c0f; not classic",
+    "processing": "Original TEX decoded by ltk-tex-utils; no resize or recolor; fixed red-side icon"
+  },
+  {
+    "card": "siege_minion_squad",
+    "skill_index": 0,
+    "path": "res://assets/skills/siege_minion_squad_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Map11.wad.client",
+    "source_path": "assets/characters/sru_chaosminionsiege/hud/redmechcannon_square.tex",
+    "source_sha256": "f477d7a4786936caa3ad041fbd80b430aeda1552ac0a32fe8e685b9c83d7d09c",
+    "sha256": "39d2d26c0764e95d572325afce3cd9ed4d95951c278bcdbdc35981460ae1b2b0",
+    "dimensions": [
+      128,
+      128
+    ],
+    "mapping_evidence": "Current red-side skin0 iconSquare hash 87d49d58e4ab422a; not classic",
+    "processing": "Original TEX decoded by ltk-tex-utils; no resize or recolor; fixed red-side icon"
+  },
+  {
+    "card": "super_minion_squad",
+    "skill_index": 0,
+    "path": "res://assets/skills/super_minion_squad_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Map11.wad.client",
+    "source_path": "assets/characters/sru_chaosminionsuper/hud/redmechmelee_square.tex",
+    "source_sha256": "fbe79ebeabdcb0d4c5e0f944e12479147a4e1db0f277d3f5b08e9ea65f1c3006",
+    "sha256": "dfd30bea23959539e4a5e000924be6ac008a4f5d1f29ef2d0ba465407a5eccdb",
+    "dimensions": [
+      128,
+      128
+    ],
+    "mapping_evidence": "Current red-side skin0 iconSquare hash 308ff6b617d52a97; not classic",
+    "processing": "Original TEX decoded by ltk-tex-utils; no resize or recolor; fixed red-side icon"
+  },
+  {
+    "card": "minion_squad",
+    "skill_index": 0,
+    "path": "res://assets/skills/minion_squad_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/LeagueClient/Plugins/rcp-be-lol-game-data/default-assets.wad",
+    "source_path": "plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/5116.jpg",
+    "source_sha256": "73bf1ac40b63001f1d89ad907375b558e5c15ee5b2d7b09a7608abb3398d7575",
+    "sha256": "520d9cb8e9c9ffb50ecbdc9041a34b21c8ce12862cd6d88fa0fb0deb5e87d289",
+    "dimensions": [
+      300,
+      300
+    ],
+    "profile_icon_id": 5116,
+    "profile_icon_title": "小兵觉得很赞 图标",
+    "metadata_source_package": "/Users/czh/Downloads/LOL_Asset_Source/LeagueClient/Plugins/rcp-be-lol-game-data/zh_CN-assets.wad",
+    "metadata_source_path": "plugins/rcp-be-lol-game-data/global/zh_cn/v1/summoner-icons.json",
+    "metadata_source_sha256": "c773013f7f80f43fde2d447ff57d7b7e8687be9c13d6f6d22153c0df82d5ec30",
+    "mapping_evidence": "Exact Chinese title and imagePath from local client summoner-icons.json: /lol-game-data/assets/v1/profile-icons/5116.jpg",
+    "processing": "Original 300x300 JPEG decoded to RGBA PNG with Pillow; no resize or redraw"
+  },
+  {
+    "card": "heavy_minion_squad",
+    "skill_index": 0,
+    "path": "res://assets/skills/heavy_minion_squad_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/LeagueClient/Plugins/rcp-be-lol-game-data/default-assets.wad",
+    "source_path": "plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/7066.jpg",
+    "source_sha256": "7f1bf2e32257e8b2353704117d2f2f35275f2d659a32f90f5fb8a0cbc9a1adcd",
+    "sha256": "9e7d2ce692c13ead2208a23af0eee31a225e7cdb492b7930aa2381f291a31af1",
+    "dimensions": [
+      300,
+      300
+    ],
+    "profile_icon_id": 7066,
+    "profile_icon_title": "禁魔石小兵 图标",
+    "metadata_source_package": "/Users/czh/Downloads/LOL_Asset_Source/LeagueClient/Plugins/rcp-be-lol-game-data/zh_CN-assets.wad",
+    "metadata_source_path": "plugins/rcp-be-lol-game-data/global/zh_cn/v1/summoner-icons.json",
+    "metadata_source_sha256": "c773013f7f80f43fde2d447ff57d7b7e8687be9c13d6f6d22153c0df82d5ec30",
+    "mapping_evidence": "Exact Chinese title and imagePath from local client summoner-icons.json: /lol-game-data/assets/v1/profile-icons/7066.jpg",
+    "processing": "Original 300x300 JPEG decoded to RGBA PNG with Pillow; no resize or redraw"
+  },
+  {
+    "card": "tryndamere",
+    "path": "res://assets/skills/tryndamere_0.png",
+    "source_package": "Game/DATA/FINAL/Champions/Tryndamere.wad.client",
+    "source_path": "assets/characters/tryndamere/hud/icons2d/tryndamere_r.dds",
+    "source_sha256": "cf6c8c9785343a9f8f841523047bb5e3a9b29f17d8fdbc5956b5adb918568999",
+    "sha256": "d05724a3601495ea213474d23b40064973be533a3cc01c368f2ea9c89d0aba7f",
+    "processing": "原版R图标DDS由Pillow解码",
+    "skill_index": 0
   }
 ]

@@ -15,5 +15,23 @@
     "source": "用户提供：ChatGPT 图像 2026年10月1日 21_30_56.png",
     "sha256": "08b7f18a929623c64a91ee5469a5cc03dbff22e37edeaec98070b0ff3b21125e",
     "processing": "原图重命名并移动，无裁切或修改"
+  },
+  {
+    "card": "tristana",
+    "path": "res://assets/cards/tristana_loading.png",
+    "source_package": "Game/DATA/FINAL/Champions/Tristana.wad.client",
+    "source_path": "assets/characters/tristana/skins/base/tristanaloadscreen.tex",
+    "source_sha256": "cfb339dfe943f1a2788fc8ef4ccf4450b0e82e0e9cc318536272a1bdfa97f48a",
+    "sha256": "d1823b1189c4a25ac1bdfb2c8435062252681c8a7e0740621da74ba67174e09e",
+    "processing": "ltk-tex-utils解码原版基础皮肤加载图，未裁切或改色。"
+  },
+  {
+    "card": "tryndamere",
+    "path": "res://assets/cards/tryndamere_loading.png",
+    "source_package": "Game/DATA/FINAL/Champions/Tryndamere.wad.client",
+    "source_path": "assets/characters/tryndamere/skins/base/tryndamereloadscreen.tex",
+    "source_sha256": "3fefec0006369d8b7b9e4c17e0d32a9c88444cff3108a80d23a446623a20cd3f",
+    "sha256": "07266e0d367ab7f782866d6f7080e3d99c50f8a70b480ca95320a1584ac5b9c8",
+    "processing": "原版基础加载图TEX解码，无裁切改色"
   }
 ]

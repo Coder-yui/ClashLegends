@@ -40,7 +40,7 @@
 | `gwen` · [格温](../units/gwen.md) | 中心/多段剪切；来源条件圣霭 | [动作](../units/animations/gwen.md) · [声音](../units/audio/gwen.md) |
 | `heal` · [治疗术](../units/heal.md) | 200基础；强化300、过量转盾逐目标准入 | [动作](../units/animations/heal.md) · [声音](../units/audio/heal.md) |
 | `heavy_minion_squad` · [重装部队](../units/heavy_minion_squad.md) | 超级兵+炮车；成员独立Buff、共享技能资格 | [动作](../units/animations/super_minion.md) · [声音](../units/audio/heavy_minion_squad.md) |
-| `imp` · [小鬼](../units/imp.md) | 墓碑生成；无主动、普通近战 | [动作](../units/animations/imp.md) · [声音](../units/audio/imp.md) |
+| `imp` · [雾行者](../units/imp.md) | 墓碑生成；无主动、普通近战 | [动作](../units/animations/imp.md) · [声音](../units/audio/imp.md) |
 | `kayle` · [正义天使（近战）](../units/kayle.md) | 按付款金币选形态；真实命中攻速、W自疗 | [动作](../units/animations/kayle.md) · [声音](../units/audio/kayle.md) |
 | `kayle_ranged` · [正义天使（远程）](../units/kayle_ranged.md) | 105追踪光剑+55独立扩宽焰浪；被动/W共用 | [动作](../units/animations/kayle.md) · [声音](../units/audio/kayle.md) |
 | `kayn` · [凯隐](../units/kayn.md) | 共享成长只影响后续部署；穿地形出口与Q分段 | [动作](../units/animations/kayn.md) · [声音](../units/audio/kayn.md) |
@@ -72,6 +72,7 @@
 | `teemo` · [提莫](../units/teemo.md) | 强化致盲两次；无持续毒伤 | [动作](../units/animations/teemo.md) · [声音](../units/audio/teemo.md) |
 | `tombstone` · [墓碑](../units/tombstone.md) | 10秒寿命；受控最多保留一批、死亡召唤 | [动作](../units/animations/tombstone.md) · [声音](../units/audio/tombstone.md) |
 | `twisted_fate` · [卡牌大师](../units/twisted_fate.md) | 全图合法地面部署；第五击、三牌去重穿透 | [动作](../units/animations/twisted_fate.md) · [声音](../units/audio/twisted_fate.md) |
+| `tristana` · [麦林炮手](../units/tristana.md) | 远程对空；5秒攻速增益 | [动作](../units/animations/tristana.md) · [声音](../units/audio/tristana.md) |
 | `twitch` · [图奇](../units/twitch.md) | 公开玩家视图；严格脱战入隐、攻击起手破隐、穿透箭 | [动作](../units/animations/twitch.md) · [声音](../units/audio/twitch.md) |
 | `voidfish` · [虚空鱼](../units/voidfish.md) | 虚空女皇衍生；空地近战、无主动 | [动作](../units/animations/voidfish.md) · [声音](../units/audio/voidfish.md) |
 | `voidmite` · [虚空蠕虫](../units/voidmite.md) | 先锋衍生；外抛部署、仅攻城、无主动 | [动作](../units/animations/voidmite.md) · [声音](../units/audio/voidmite.md) |
@@ -101,3 +102,5 @@
 ## 验证边界
 
 注册/正文/素材入口完整性和标准数值表以只读导出的CardDB逐项检查；复杂合并表、形态换算、技能描述及例外另与实际读取方核对。自动数值检查覆盖到的条目数记录在本次交付，不能称全数值自动证明。资源来源与历史验收保留原记录，逐卡素材未重新目视/试听；新增塔碎块表现已实际渲染，最终全量游戏回归56套8491项通过，详见本次交付。历史问题/交付仅修复两条已知需求链接，不重写历史结论。部署单段受控重播已修复，TF预部署音轨跨出生已确认为独立传送结果，见[部署合同](../status/ACTIONS.md#部署)。
+
+2026-10-02新增：[蛮族之王](../units/tryndamere.md)，独立怒气、受控释放与4秒保命；[动画](../units/animations/tryndamere.md)、[音频](../units/audio/tryndamere.md)、[特效](../units/effects/tryndamere.md)。

@@ -65,3 +65,8 @@ python3 tools/demos/pantheon_review_media.py --input /本次输出/pantheon-revi
 
 
 潘森审查页“不要”清单：使用 `python3 tools/demos/pantheon_review_server.py --directory <审查包目录> --port 8768` 启动。单层、独立对象及组合卡支持勾选，组操作展开到各层；保存到该审查包的 `selections.json`，只写审查意见，不直接改游戏。页面支持只看已选、取消和导出；下一轮按清单修改时读取该文件的稳定编号、系统/发射器名。勿覆盖用户已保存的清单；新生成的包才初始化当前已停用层。静态文件方式打开只提供浏览器缓存/导出，请优先用本地服务。
+
+- `tristana_review.gd`：麦林炮手双方普攻、Q启停、冻结、死亡，提莫/纳尔同场尺寸、卡面及真实混音录制。
+
+
+`tryndamere_review.gd`：正式工作台中的双方模型对比、连续普攻/暴击、大招、冻结及死亡录音与截图；使用通用工作台，不承担验收持久化。
