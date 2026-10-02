@@ -31,7 +31,7 @@ static func definition() -> Dictionary:
       "pool": [
         "res://assets/audio/units/voidfish/deploy_1.wav"
       ],
-      "volume_db": -5.0,
+      "volume_db": -23.0,
       "bus": "Combat"
     },
     "death": {
