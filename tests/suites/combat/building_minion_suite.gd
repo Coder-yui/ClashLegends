@@ -30,8 +30,8 @@ func _check_apex_turret() -> void:
 		and is_equal_approx(float(stats.visual_radius), 55.0)
 		and is_equal_approx(float(stats.projectile_visual_height), 46.75)
 		and is_equal_approx(float(stats.projectile_visual_forward_offset), 46.75)
-		and is_equal_approx(float(stats.projectile_visual_scale), 2.25)
-		and StringName(stats.projectile_impact_visual) == &"splash_wave"
+		and is_equal_approx(float(stats.projectile_visual_scale), 3.5)
+		and StringName(stats.projectile_impact_visual) == &"fire_area"
 		and (stats.projectile_colors as Array).all(func(color): return color is Color and color.r > color.g and color.g > color.b)
 		and is_equal_approx(float(stats.lifespan), 45.0)
 		and bool(stats.lifespan_hp_decay)
@@ -169,8 +169,8 @@ func _check_apex_turret() -> void:
 			)
 			projectile_visual_style_ok = (
 				is_equal_approx(float(projectile.radius), 4.0)
-				and is_equal_approx(float(projectile.visual_scale), 2.25)
-				and StringName(projectile.impact_visual) == &"splash_wave"
+				and is_equal_approx(float(projectile.visual_scale), 3.5)
+				and StringName(projectile.impact_visual) == &"fire_area"
 			)
 			source_projectile_id = int(projectile_id)
 			break
@@ -181,14 +181,14 @@ func _check_apex_turret() -> void:
 	if impact_visual_ok:
 		var impact_effect: Dictionary = _main._projectile_system.impact_effects.back()
 		impact_visual_ok = (
-			StringName(impact_effect.visual) == &"splash_wave"
+			StringName(impact_effect.visual) == &"fire_area"
 			and is_equal_approx(float(impact_effect.radius), float(stats.splash_radius))
 			and (impact_effect.pos as Vector2).is_equal_approx(ground_near.position)
 		)
 	_expect(
 		projectile_carries_ground_only and projectile_visual_origin_ok and projectile_visual_style_ok and impact_visual_ok
 		and ground_near.hp < ground_hp and is_equal_approx(splash_air.hp, splash_air_hp),
-		"H-28Q 橙红炮弹以 2.25 倍表现尺寸从炮口显示，权威弹体半径仍为 4，命中范围环取 32 且溅射严格过滤空中单位",
+		"H-28Q 火焰弹以 3.5 倍表现尺寸从炮口显示，权威弹体半径仍为 4，命中范围环取 32 且溅射严格过滤空中单位",
 	)
 	for unit in [source, ground_near, ground_far, ground_off_path, air_on_path, splash_air]:
 		if is_instance_valid(unit):

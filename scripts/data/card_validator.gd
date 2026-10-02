@@ -430,8 +430,8 @@ static func _validate_projectile(label: String, stats: Dictionary, errors: Packe
 		errors.append("%s: 弹体表现高度和前向偏移必须 >= 0" % label)
 	if float(stats.get("projectile_visual_scale", 1.0)) <= 0.0:
 		errors.append("%s.projectile_visual_scale: 必须 > 0" % label)
-	if StringName(stats.get("projectile_impact_visual", "")) not in [&"", &"splash_wave"]:
-		errors.append("%s.projectile_impact_visual: 只支持 splash_wave" % label)
+	if StringName(stats.get("projectile_impact_visual", "")) not in [&"", &"splash_wave", &"fire_area"]:
+		errors.append("%s.projectile_impact_visual: 只支持 splash_wave/fire_area" % label)
 	if stats.has("projectile_colors"):
 		var colors = stats.projectile_colors
 		if not colors is Array or colors.size() != 2 or not colors[0] is Color or not colors[1] is Color:

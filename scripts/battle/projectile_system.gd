@@ -426,6 +426,7 @@ func _draw() -> void:
 		match StringName(projectile.get("visual", &"orb")):
 			&"baron_siege", &"baron_ranged": preload("res://scripts/presentation/baron_projectile_effect.gd").draw_flight(self, _visual_position(projectile), _direction(projectile), float(projectile.radius) * float(projectile.get("visual_scale", 1.0)), projectile.color)
 			&"kayle_sword", &"kayle_wave": pass # 由独立表现代理绘制
+			&"fireball": preload("res://scripts/presentation/fireball_effect_2d.gd").draw_flight(self, _visual_position(projectile), _direction(projectile), float(projectile.radius) * float(projectile.get("visual_scale", 1.0)))
 			&"magic_orb": _draw_magic_orb(projectile)
 			&"tower_orb": _draw_tower_orb(projectile)
 			&"crossbow_bolt", &"venom_bolt": preload("res://scripts/presentation/crossbow_projectile_2d.gd").draw_bolt(self, _visual_position(projectile), _direction(projectile), StringName(projectile.visual) == &"venom_bolt", (projectile.pos as Vector2).distance_to(projectile.get("visual_path", {}).get("start", projectile.pos)))
@@ -474,6 +475,9 @@ func _draw_first_strike_orb(projectile: Dictionary) -> void:
 	draw_circle(pos - direction * radius * 0.20, radius * 0.54, Color(1.0, 0.98, 0.76, 1.0))
 
 func _draw_impact_effect(effect: Dictionary) -> void:
+	if StringName(effect.get("visual", "")) == &"fire_area":
+		preload("res://scripts/presentation/fireball_effect_2d.gd").draw_impact(self, effect)
+		return
 	if String(effect.get("visual", "")).begins_with("baron_"):
 		preload("res://scripts/presentation/baron_projectile_effect.gd").draw_burst(self, effect)
 		return
