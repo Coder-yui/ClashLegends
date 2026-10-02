@@ -1,6 +1,6 @@
-# 小鬼 · 音频接入
+# 雾行者 · 音频接入
 
-[← 返回小鬼总览](../imp.md) · [总索引](../README.md)
+[← 返回雾行者总览](../imp.md) · [总索引](../README.md)
 
 ## 当前配置与触发入口
 
@@ -18,7 +18,7 @@
 
 ## 试听台补充候选
 
-本轮另放入 [临时音频展台](http://127.0.0.1:18765/) 对照：小鬼跳跃攻击 `Play_sfx_Yorick_YorickQ_GhoulAttack_jump` 三个变体，以及 `Play_sfx_Yorick_YorickQ_aggro` 低吼。它们都没有接入正式配置；出生、出手、死亡的全部当前变体也在展台中便于横向比较。
+本轮另放入 [临时音频展台](http://127.0.0.1:18765/) 对照：雾行者跳跃攻击 `Play_sfx_Yorick_YorickQ_GhoulAttack_jump` 三个变体，以及 `Play_sfx_Yorick_YorickQ_aggro` 低吼。它们都没有接入正式配置；出生、出手、死亡的全部当前变体也在展台中便于横向比较。
 
 ## 使用边界与待补项
 

@@ -82,7 +82,7 @@ static func definition() -> Dictionary:
     }
   }
 },
-			"active_skills": [{"visual_action": "spinning_punch"}],
+			"active_skills": [{"icon_path": "res://assets/skills/rift_herald_0.png", "visual_action": "spinning_punch"}],
 		},
 		"card_art": {},
 		"audio": {

@@ -43,3 +43,5 @@
 数值是本项目首版平衡，不是LoL原版数据。[关联：虚空蠕虫](voidmite.md) · [返回索引](README.md)
 
 出生六虫的外抛采用[通用强制位移](../status/HARD_CONTROL.md#通用强制位移已实现)，保持原出生布局、方向与距离；途中不因六虫相互碰撞卡住，原地形/普通击退规则不被全局放开。
+
+**技能图标：**旋转重拳使用原版旋转/冲锋共用图标 `sruriftherald_death_recap_square`（64×64），来自本地 Map11 包。来源见[技能图标清单](../../assets/skills/source_manifest.json)。

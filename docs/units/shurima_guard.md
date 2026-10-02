@@ -33,3 +33,5 @@
 - [护盾表现](effects/shurima_guard.md)
 
 [← 返回总索引](README.md)
+
+**技能图标：**黄沙庇护使用沙漠皇帝 E 原版图标。来源见[技能图标清单](../../assets/skills/source_manifest.json)。

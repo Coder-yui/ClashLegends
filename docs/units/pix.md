@@ -55,3 +55,5 @@
 - [特效说明：画面效果与出现时机](effects/pix.md)
 
 [← 返回总索引](README.md)
+
+**技能图标：**仙灵汲取使用璐璐被动原版图标（LuluPassive / PixFaerieCompanion）。来源见[技能图标清单](../../assets/skills/source_manifest.json)。

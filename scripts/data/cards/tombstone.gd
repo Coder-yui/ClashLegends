@@ -5,9 +5,9 @@ static func definition() -> Dictionary:
 	return {
 		"gameplay": {
 			"name": "墓碑", "cost": 3, "type": "building",
-			"description": "持续召唤小鬼的建筑，适合建立防守屏障并拖延敌军。",
+			"description": "持续召唤雾行者的建筑，适合建立防守屏障并拖延敌军。",
 			# 建筑卡：3x3 格部署占地；权威碰撞仍使用 radius=40 的圆柱，不可移动。
-			# 完成部署立即生成两个小鬼，之后每 5 秒在地图中心线对应的一侧生成两个。
+			# 完成部署立即生成两个雾行者，之后每 5 秒在地图中心线对应的一侧生成两个。
 			"hp": 400, "damage": 0, "range": 0.0,
 			"speed": 0.0, "interval": 1.0, "radius": 40.0,
 			"footprint_tiles": Vector2i(3, 3),
@@ -15,7 +15,7 @@ static func definition() -> Dictionary:
 			"is_building": true,
 			"lifespan": 10.0,       # 存活时间（秒），到时自动消失
 			"spawn_id": "imp",
-			"spawn_interval": 5.0,  # 每隔多久生成一批小鬼
+			"spawn_interval": 5.0,  # 每隔多久生成一批雾行者
 			"spawn_count": 2,
 			"spawn_defer_while_controlled": true,
 			"spawn_side": "map_side",
@@ -25,6 +25,7 @@ static func definition() -> Dictionary:
 				}],
 		},
 		"visual": {
+			"active_skills": [{"icon_path": "res://assets/skills/tombstone_0.png"}],
 			"visual_radius": 50.0,
 			"visual_scene_path": "res://assets/units/tombstone/tombstone_view.tscn",
 			"visual_forward_yaw": 0.0,

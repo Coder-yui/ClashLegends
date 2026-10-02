@@ -32,3 +32,5 @@
 - [远程兵成员总览](ranged_minion.md)
 
 [← 返回单位总览](README.md)
+
+**技能图标：**男爵之力使用当前原版红方远程小兵128×128方形头像（`redrange_square`），固定红方图，不随战斗阵营切换。来源见[技能图标清单](../../assets/skills/source_manifest.json)。

@@ -30,3 +30,5 @@
 - [超级兵特效](effects/super_minion.md) · [炮车兵特效](effects/siege_minion.md)
 
 [← 返回单位总览](README.md)
+
+**技能图标：**男爵之力使用玩家头像“禁魔石小兵 图标”（ID 7066，原生300×300），已核对本地中文客户端名称和原图。来源见[技能图标清单](../../assets/skills/source_manifest.json)。

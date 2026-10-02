@@ -25,6 +25,7 @@ static func definition() -> Dictionary:
 			}],
 		},
 		"visual": {
+			"active_skills": [{"icon_path": "res://assets/skills/siege_minion_squad_0.png"}],
 			"visual_radius": RADIUS_MEDIUM + VISUAL_RADIUS_PADDING,
 			"color": Color(0.38, 0.40, 0.44),
 		},

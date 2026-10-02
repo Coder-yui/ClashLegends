@@ -24,6 +24,7 @@ static func definition() -> Dictionary:
 			}],
 		},
 		"visual": {
+			"active_skills": [{"icon_path": "res://assets/skills/melee_minion_squad_0.png"}],
 			"visual_radius": RADIUS_SMALL + VISUAL_RADIUS_PADDING,
 			"color": Color(0.48, 0.58, 0.82),
 		},

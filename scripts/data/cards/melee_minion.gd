@@ -15,6 +15,7 @@ static func definition() -> Dictionary:
 				}],
 		},
 		"visual": {
+			"active_skills": [{"icon_path": "res://assets/skills/melee_minion_0.png"}],
 			"visual_active_buff_scene": "res://assets/effects/baron_minion/melee_minion.tscn",
 			"visual_radius": RADIUS_SMALL + VISUAL_RADIUS_PADDING,
 			"visual_scene_paths": [

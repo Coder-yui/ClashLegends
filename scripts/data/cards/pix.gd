@@ -26,6 +26,7 @@ static func definition() -> Dictionary:
 				}],
 		},
 		"visual": {
+			"active_skills": [{"icon_path": "res://assets/skills/pix_0.png"}],
 			"visual_radius": RADIUS_EXTREMELY_SMALL + VISUAL_RADIUS_PADDING,
 			"visual_scene_path": "res://assets/units/pix/pix_view.tscn",
 			"visual_forward_yaw": 0.0,

@@ -63,3 +63,5 @@
 - [特效说明：画面效果与出现时机](effects/apex_turret.md)
 
 [← 返回总索引](README.md)
+
+**技能图标：**海克斯穿透激光使用大发明家 R 强化 Q 原版图标（非普通 Q）。来源见[技能图标清单](../../assets/skills/source_manifest.json)。

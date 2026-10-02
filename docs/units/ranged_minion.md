@@ -50,3 +50,5 @@
 - [特效说明：画面效果与出现时机](effects/ranged_minion.md)
 
 [← 返回总索引](README.md)
+
+**技能图标：**男爵之力使用本兵种当前原版蓝方 128×128 方形头像（`bluerange_square`），固定蓝方图，不随战斗阵营切换；只用于本单兵卡，不扩展到组合部队卡。来源见[技能图标清单](../../assets/skills/source_manifest.json)。

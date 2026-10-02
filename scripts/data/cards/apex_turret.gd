@@ -50,7 +50,7 @@ static func definition() -> Dictionary:
 			"projectile_visual_scale": 3.5, "projectile_impact_visual": "fire_area",
 			"projectile_colors": [Color(1.0, 0.34, 0.08), Color(1.0, 0.22, 0.055)],
 			"color": Color(0.20, 0.72, 0.86), "show_team_ring": false,
-			"active_skills": [{ "projectile_visual": "electromagnetic_wave", "projectile_visual_width": 28.8,
+			"active_skills": [{ "icon_path": "res://assets/skills/apex_turret_0.png", "projectile_visual": "electromagnetic_wave", "projectile_visual_width": 28.8,
 					"projectile_visual_height": 46.75, "projectile_visual_forward_offset": 46.75, "visual_action": "laser",
 				}],
 		},

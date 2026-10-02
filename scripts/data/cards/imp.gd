@@ -4,7 +4,7 @@ extends "res://scripts/data/card_schema.gd"
 static func definition() -> Dictionary:
 	return {
 		"gameplay": {
-			"name": "小鬼", "cost": 0, "type": "unit", "selectable": false,
+			"name": "雾行者", "cost": 0, "type": "unit", "selectable": false,
 			"description": "墓碑及召唤技能生成的系统近战单位。",
 			# 生命/攻击锚定公主塔单次伤害（当前55），落地后恰好被一击击杀。
 			"hp": PRINCESS_TOWER_STATS.damage, "damage": PRINCESS_TOWER_STATS.damage, "range": MELEE_RANGE_MIN,
