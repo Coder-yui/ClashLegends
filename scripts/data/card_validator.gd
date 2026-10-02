@@ -819,6 +819,8 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 				if float(skill.get("impact_delay", 0.0)) != 0.0:
 					errors.append("%s: terrain_charge 在施法开始立即启动" % label)
 			&"dash_strike":
+				if bool(skill.get("air_only", false)) and bool(skill.get("ground_only", false)):
+					errors.append("%s: air_only与ground_only不能同时为true" % label)
 				if not bool(stats.get("terrain_traversal",false)) and not bool(stats.get("is_air", false)):
 					errors.append("%s: 突进效果要求穿地形能力或飞行" % label)
 				if float(skill.get("hit_heal",0.0)) < 0.0 or float(skill.get("on_hit_tower_damage",0.0)) < 0.0 or float(skill.get("on_hit_max_health_ratio",0.0)) < 0.0 or float(skill.get("on_hit_max_health_ratio",0.0)) > 1.0:

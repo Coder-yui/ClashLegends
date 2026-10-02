@@ -8,24 +8,31 @@
 
 按Belveth基础皮肤的GearSkinUpgrade隐藏Head表面，将Body替换为`belveth_base_ult_main_tx.tex`解码后的`ultimate_body.png`。过滤网格与复制材质均在实例内完成，原始GLB和共享资源保持完整。没有普通形态切回过程。
 
-## 动作
+## 动作与衔接
 
 | 行为 | 当前动作 |
 | --- | --- |
-| 部署 | Respawn_Ult_anm |
-| 待机 | Idle_Ult_anm |
-| 移动 | Run_Ult_anm |
-| 普攻1 | AttackSwipe1_anm，完整原生片段 |
-| 普攻2 | AttackSwipe2_anm，完整原生片段 |
-| 主动突进 | Spell1_ult_in_anm → Spell1_ult_out_anm，共0.4秒 |
-| 主动收势 | Spell1_ult_toidle_anm，压缩到0.2秒 |
-| 死亡 | 源包共用Death，1秒；仍隐藏Head并使用大招贴图 |
+| 部署 | Respawn_Ult_anm，映射1秒部署窗口 |
+| 待机 / 移动 | Idle_Ult_anm / Run_Ult_anm |
+| 移动转待机 | Idle_Ult_In_anm，从原生第3帧（0.1秒）进入，再接Idle_Ult；进入混合0.35秒 |
+| 普攻1 | 原生AttackSwipe1_in_anm → AttackSwipe1_anm |
+| 普攻2 | 原生AttackSwipe2_in_anm → AttackSwipe2_anm |
+| 普攻转移动 / 待机 | 对应AttackSwipe1/2_anm从原生startFrame=47（源素材30Hz，1.566667秒）接收势，再转Run_Ult / Idle_Ult |
+| 主动突进 | Spell1_ult_in_anm → Spell1_ult_out_anm，0.166667 + 0.233333秒；衔接混合为0 |
+| 主动转移动 | Spell1_ult_out_anm → Spell1_ult_torun_anm → Run_Ult_anm |
+| 主动转待机 | Spell1_ult_out_anm → Spell1_ult_toidle_anm → Idle_Ult_anm |
+| 死亡 | 不配置死亡动画，死亡时立即回收模型；8鱼照常出生 |
 
-## 普攻时序对齐
+使用原包已有完整片段与原版指定的过渡起点，不创建合成动画，不补关键帧，不裁出新的片段文件。普攻退出路线复用原片，按项目通用过渡播放原速收势；原版退出节点另有mTickDuration=1/60，本项目不将该播放时钟误用为源素材帧位置。过渡不锁住实际移动，也不延长攻击冷却。
 
-直接引用原生大招常规攻速分支的两条完整挥击片段 `AttackSwipe1_anm` / `AttackSwipe2_anm`，各3秒、30Hz。不裁切，不组合起手片段，不补姿态采样点，也不重排关键帧；进出动作使用通用表现层的过渡。
+## 普攻时序
 
-普通攻击SpellData的castFrame=9，即原始0.3秒。选择1.5秒攻击周期，两种动作均以整段2倍速播放，映射前摇为 `0.3 ÷ 3.0 × 1.5 = 0.15秒`。攻速变化时动作与权威时间同比缩放；20Hz下0.15秒为3个固定步，基础节点无取整误差。伤害仍由权威模拟结算。
+原版Attack1_Ult / Attack2_Ult常规分支本身就是in→swipe序列。两种起手均0.3秒、挥击均3秒；整组原始3.3秒统一2倍速播放，周期选择1.65秒。普通攻击castFrame=9、素材30Hz，原生0.3秒节点位于起手结束处，对应本项目0.15秒前摇；主片段完整播放1.5秒。源片之间原生混合为0。20Hz下前摇为3个固定步，基础节点无取整误差；攻速变化时按通用攻击时间轴同步缩放，伤害仍由权威模拟结算。
 
-原生动画图的 `Attack1_Ult` / `Attack2_Ult` 常规分支引用 AttackSwipe 系列；超过2.11的高速分支才引用 SlowToFast 系列。本卡采用常规挥击素材；不再生成 `AttackUlt1/2` 包装动画。
-原生图在大招Q中使用in→out序列，复生使用Respawn_Ult；死亡没有独立大招片段。来源为本地只读Belveth.wad.client的`data/characters/belveth/animations/skin0.bin`及皮肤skin0.bin。提取与解析证据保留在本地制作中目录的ultimate-animation-source、ultimate-texture-source。
+高速SlowToFast分支不用于本卡；AttackUlt1/2合成片段仍不存在。原生挥击声在主片段开始处，使用attack_swing_lead_time=0对齐前摇结束；退出时复用同名素材不会重播挥击声。
+
+## Q与来源
+
+原生Q的in→out保留完整片段，按0.4秒突进时钟推进；技能锁定同为0.4秒，突进结束不再保持out末姿态等待0.2秒。有可攻击建筑时直接进入普攻，否则依实际移动状态选完整ToRun（1.466667秒）或ToIdle（1.3秒）；ToRun播放期间已经正常移动，可被新普攻打断。不再将ToIdle强压为0.2秒，也不再在移动前强制经过ToIdle。进入Q的原生混合为0.05秒，in→out及out→ToRun为0。
+
+来源：本地只读Belveth.wad.client的data/characters/belveth/animations/skin0.bin与皮肤skin0.bin。普攻退出节点0x79866517 / 0x05d356ba，Q退出0xd1391269 / 0x113ac9f6，移动转待机入口0xbf228a5c。解析证据保留在本地制作中ultimate-animation-source；本轮核对摘录保存在中间产物“虚空女皇动作音频核对-20261002”。

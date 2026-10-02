@@ -217,7 +217,7 @@ bleeding_execute武装下一次普攻，以命中前本来源流血层数计算d
 
 ## 空中路径突进
 
-`dash_strike`允许飞行单位或具备terrain_traversal的单位使用。`air_only`默认false，true时仅命中敌方空中Unit；`dash_spin`默认true，false时取消结束旋转与旋转音效，可省略spin_delay/radius。两字段只用于dash_strike，施法时间不得短于基础突进时间。默认配置保持凯隐的地面突进加旋转；虚空女皇使用纯空中路径突进。死亡召唤复用death_spawn_id/count及可靠生成事件。可选death_spawn_spread/death_spawn_duration须同时为正数，并指向非建筑召唤物；配置后从死亡点生成，复用权威外力移动与碰撞向周围散开，不触发敌方击退的战斗事件或质量缩放。虚空女皇配置8只、100像素、0.45秒；未配置的卡牌仍在原有周围位置出生。
+`dash_strike`允许飞行单位或具备terrain_traversal的单位使用。`air_only`默认false，true时仅命中敌方空中Unit；`dash_spin`默认true，false时取消结束旋转与旋转音效，可省略spin_delay/radius。两字段只用于dash_strike，施法时间不得短于基础突进时间。通用目标范围有三种：ground_only=true仅对地（含建筑），air_only=true仅对空，ground_only=false且air_only=false或省略时对地对空（含建筑）。两项不能同时为true；两项均省略保持默认仅对地。默认配置保持凯隐的地面突进加旋转；虚空女皇使用对地对空的路径突进，不带旋转。死亡召唤复用death_spawn_id/count及可靠生成事件。可选death_spawn_spread/death_spawn_duration须同时为正数，并指向非建筑召唤物；配置后从死亡点生成，复用权威外力移动与碰撞向周围散开，不触发敌方击退的战斗事件或质量缩放。虚空女皇配置8只、100像素、0.45秒；未配置的卡牌仍在原有周围位置出生。
 
 ## 穿透普攻的攻击射程与飞行距离
 

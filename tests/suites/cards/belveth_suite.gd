@@ -9,6 +9,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_scatter_boundary()
 	_controls()
 	_schema()
+	_dash_target_modes()
 	_ultimate_visual()
 
 func _make(id: String, team: int, point: Vector2) -> Unit:
@@ -30,15 +31,15 @@ func _dash(team: int) -> void:
 		_main._combat.begin_batch(tick, "belveth_dash")
 		dash.tick(0.05)
 		_main._combat.commit_batch()
-	_expect(air.hp == 900, "突进只命中敌方空军一次，收势不重复伤害")
-	_expect(ground.hp == 1000 and friend.hp == 1000 and outside.hp == 1000, "路径外、友方及地面单位不受突进伤害")
+	_expect(air.hp == 900, "突进命中敌方空军一次，不重复伤害")
+	_expect(ground.hp == 900 and friend.hp == 1000 and outside.hp == 1000, "突进命中地面敌人一次，路径外及友方不受伤害")
 	_expect(source.position.distance_to(origin + direction * 3.0 * ArenaRules.TILE_SIZE) < 0.01, "双方突进准确推进3格")
 	_expect(dash.finished and not source.skill_dash_active and source.active_skill_cast_timer == 0, "突进正常结束释放动作锁")
 	_expect(source.building_only and source.is_air and not source._target_is_attackable(air) and not source._target_is_attackable(ground), "本体飞行且普通攻击拒绝空中和地面单位")
 	var tower: Tower = _main._towers[(1-team)*2]
 	var tower_hp: float = tower.hp
 	dash._hit(source, tower.position, tower.position, false)
-	_expect(tower.hp == tower_hp, "空中突进不伤害路径上的建筑")
+	_expect(tower.hp == tower_hp - 100, "突进可伤害路径上的敌方建筑")
 	for unit in [source, air, ground, friend, outside]: unit.free()
 
 func _death(team: int) -> void:
@@ -150,9 +151,40 @@ func _ultimate_visual() -> void:
 	for index in [1, 2]:
 		var name := "AttackSwipe%d_anm" % index
 		var attack: Animation = player.get_animation(name)
-		_expect(stats.visual_animations.attack[index-1] == name, "直接映射原生大招常规普攻完整片段")
+		_expect(stats.visual_animations.attack_hit[index-1] == name and stats.visual_animations.attack[index-1] == "AttackSwipe%d_in_anm" % index, "映射原生大招起手与挥击完整片段")
 		_expect(is_equal_approx(attack.length, 3.0), "原生普攻保持完整3秒时长")
-		_expect(is_equal_approx(0.3 / attack.length * stats.interval, stats.first_hit), "原生9帧节点整体等比映射到权威前摇")
+		_expect(is_equal_approx(0.3 / (attack.length + 0.3) * stats.interval, stats.first_hit), "原生9帧节点整体等比映射到权威前摇")
 	_expect(not player.has_animation("AttackUlt1") and not player.has_animation("AttackUlt2"), "不再创建拆分重排的普攻动画")
 	view.free()
 	source.free()
+
+func _dash_target_modes() -> void:
+	# 同一通用DashStrikeState以配置选择目标层，不依赖英雄身份或普攻目标。
+	for mode in [{}, {"ground_only": true}, {"air_only": true}, {"ground_only": false}]:
+		var source := _make("belveth", 0, Vector2(360, 900))
+		var air := _make("anivia", 1, Vector2(360, 840))
+		var ground := _make("garen", 1, Vector2(360, 840))
+		var building := _make("tombstone", 1, Vector2(360, 840))
+		var friend := _make("garen", 0, Vector2(360, 840))
+		for target in [air, ground, building, friend]: target.hp = 1000
+		var skill: Dictionary = CardDB.active_skills_for("belveth")[0].duplicate(true)
+		skill.erase("ground_only")
+		skill.erase("air_only")
+		skill.merge(mode, true)
+		var dash := DashStrikeState.new(source, skill)
+		var tower: Tower = _main._towers[2]
+		var tower_hp := tower.hp
+		for repeat in 2:
+			dash._hit(source, source.position, Vector2(360, 780), false)
+			dash._hit(source, tower.position, tower.position, false)
+		var air_only := bool(mode.get("air_only", false))
+		var hit_air := air_only or not bool(mode.get("ground_only", true))
+		_expect(air.hp == (900 if hit_air else 1000), "通用突进模式%s：空中筛选与单次命中" % str(mode))
+		_expect(ground.hp == (1000 if air_only else 900), "通用突进模式%s：地面筛选与单次命中" % str(mode))
+		_expect(building.hp == (1000 if air_only else 900) and tower.hp == tower_hp - (0 if air_only else 100), "通用突进模式%s：建筑卡与防御塔按地面目标处理" % str(mode))
+		_expect(friend.hp == 1000, "通用突进不伤友方")
+		for unit in [source, air, ground, building, friend]: unit.free()
+	var invalid := CardDB.all().duplicate(true)
+	invalid.belveth.active_skills[0].air_only = true
+	invalid.belveth.active_skills[0].ground_only = true
+	_expect(not CardDB.VALIDATOR.validate_all(invalid, false).is_empty(), "拒绝同时仅对地与仅对空的矛盾配置")

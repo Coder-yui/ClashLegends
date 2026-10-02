@@ -115,7 +115,7 @@ func _hit(source: Unit, start: Vector2, end: Vector2, spin: bool) -> void:
 		if bool(skill.get("air_only", false)):
 			if not target is Unit or not target.is_air:
 				continue
-		elif target is Unit and target.is_air:
+		elif bool(skill.get("ground_only", true)) and target is Unit and target.is_air:
 			continue
 		var id: int = target.combat_source_id
 		if not spin and hit_ids.has(id):
