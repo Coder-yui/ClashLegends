@@ -26,7 +26,7 @@
 | 命中叠层 | StatusInstances、CombatResolver | [天使](../units/kayle.md)；真实命中加层，独立焰浪不重复加层 |
 | 控制延后召唤 | Unit、CommandSchedule独立召唤队列 | [璐璐](../units/lulu.md)；受控到期保留一批，紫光发出后不依赖来源动作 |
 | 一次性永久成长 | Unit、ActiveSkillEffectSystem | [永久成长](BUFFS.md#一次性永久成长)；璐璐生命/体型和奥恩永久普攻倍率在凝滞中保留 |
-| 永久普攻增幅 | TeamAttackBoostSystem | [奥恩](../units/ornn.md)；独立锤子、目标预留、抵达准入；锻造受控重启，与公共脱战分开 |
+| 永久普攻增幅 | TeamAttackBoostSystem | [奥恩](../units/ornn.md)；独立锤子、目标预留、抵达准入；就绪/CD与短锻造动作分离，中断不退款，与公共脱战分开 |
 | 模型、标识、声音 | UnitModel3D、TowerModel3D、HUD与GameAudioManager | [表现合同](PRESENTATION.md)；金身隐藏附属标识，声音按实例所有者取消；冰冻/眩晕不暂停塔/水晶生命周期动画 |
 | 联网 | 权威快照、可靠表现事件及生命周期事件 | [网络协议](../reference/NETWORK_PROTOCOL.md)维护唯一版本/载荷事实；客户端不自行结算解控、伤害或收益 |
 

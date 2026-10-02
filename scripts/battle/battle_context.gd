@@ -5,6 +5,9 @@ extends RefCounted
 
 var _controller: Node2D
 
+func interrupt_team_attack_boost(unit: Unit) -> void:
+	_controller._team_attack_boost_system.interrupt(unit)
+
 func _init(controller: Node2D) -> void:
 	_controller = controller
 
@@ -97,3 +100,4 @@ func schedule_summon_flight(source: Unit, card_id: String, pos: Vector2, duratio
 
 func invalidate_target_locks(unit: Node2D) -> void:
 	_controller.projectile_service().invalidate_target_locks(unit)
+	_controller._team_attack_boost_system.invalidate_target_locks(unit)

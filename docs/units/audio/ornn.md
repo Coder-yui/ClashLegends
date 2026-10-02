@@ -4,14 +4,14 @@
 
 ## 声音与触发时机
 
-基础皮肤普攻三段分别使用对应的出手与命中事件；部署从“奥恩出品，必属精品。”、“好吧，我们走。”、“回炉去了。”三句中随机选择，来源为中文客户端选人、禁用及英雄语音资源。被动使用原生 OrnnP_forging，发锤前3.6秒开始；成功抵达播放通用购买装备成功声。冲锋接入E起手、冲刺脚步、路径命中、撞停爆发及范围受击声音，范围受击借用原生击飞声，玩法仍为眩晕。
+基础皮肤普攻三段分别使用对应的出手与命中事件；部署从“奥恩出品，必属精品。”、“好吧，我们走。”、“回炉去了。”三句中随机选择，来源为中文客户端选人、禁用及英雄语音资源。被动使用原生 OrnnP_forging 的最后单锤，在起锻后0.65秒发锤时响一次；成功抵达播放通用购买装备成功声。冲锋接入E起手、冲刺脚步、路径命中、撞停爆发及范围受击声音，范围受击借用原生击飞声，玩法仍为眩晕。
 
 | 发生时机 | 接入变体 | 代表试听 |
 | --- | ---: | --- |
 | 部署语音 | 三句随机 | [奥恩出品](../../../assets/audio/units/ornn/deploy_quality_zh_cn.wav) · [好吧，我们走](../../../assets/audio/units/ornn/deploy_choose_zh_cn.wav) · [回炉去了](../../../assets/audio/units/ornn/deploy_ban_zh_cn.wav) |
 | 普攻出手 | 每段3个 | [Attack1](../../../assets/audio/units/ornn/play_sfx_ornn_ornnbasicattack_oncast_r1_d.wav) · [Attack2](../../../assets/audio/units/ornn/play_sfx_ornn_ornnbasicattack2_oncast_r1.wav) · [Attack3](../../../assets/audio/units/ornn/play_sfx_ornn_ornnbasicattack3_oncast_r1_d.wav) |
 | 普攻命中 | 每段3个 | [Attack1](../../../assets/audio/units/ornn/play_sfx_ornn_ornnbasicattack_onhit_1559186049_1153642577_r1_d.wav) · [Attack2](../../../assets/audio/units/ornn/play_sfx_ornn_ornnbasicattack2_onhit_1559186049_1153642577_r1.wav) · [Attack3](../../../assets/audio/units/ornn/play_sfx_ornn_ornnbasicattack3_onhit_1559186049_1153642577_r1_d.wav) |
-| 发锤前3.6秒 | 原生锻造音效 | [锻造](../../../assets/audio/units/ornn/forge_equipment.wav) |
+| 起锻后0.65秒发锤 | 原生最后单锤，自然尾音 | [单锤](../../../assets/audio/units/ornn/forge_final_strike.wav) |
 | 冲锋起手 | 1个事件 | [起手](../../../assets/audio/units/ornn/play_sfx_ornn_ornne_oncast.wav) |
 | 撞停爆发 | 1个事件 | [撞停](../../../assets/audio/units/ornn/play_sfx_ornn_ornne_buffonmoveend_explosion_r.wav) |
 | 冲刺脚步 | 原生E_fs变体，冲刺三个步点 | [试听](../../../assets/audio/units/ornn/charge_step_1.wav) |
@@ -23,9 +23,9 @@
 
 ## 锻造与声音生命周期
 
-锻造声音保留完整5.398秒；权威锻造计时在开始3.6秒后发锤，声音播放进度不驱动发射。眩晕、冰冻、凝滞截断锻造声音；发锤前打断则解除后从头播放并重锻3.6秒，发锤后只切声音尾段，已发出的锤子继续飞行。
+原始完整5.398秒锻造声音保留；运行使用3.50秒至原文件结束的最后单锤片段（约1.898秒），仅开头2毫秒淡入防截断爆音，不改变速度和整体音量。起锻后0.65秒的权威事件同时发锤并播放一次`forge:strike`，不由声音或模型反推逻辑；准备阶段无循环音和重复敲击。
 
-锻造声绑定来源单位，可停止且跟随其位置；购买成功声在锤子抵达且增幅成功时播放，绑定独立结果，来源死亡也可播放。抵达判定失败不派发声音。完整目标准入和周期规则见[奥恩手册](../ornn.md)。冲刺脚步按原生E步点映射到0.5秒冲刺，不使用持续循环。
+发锤前中断没有敲击声；发锤后的短敲击尾音自然结束，来源控制/死亡不截断。命中声仍由独立锤子成功抵达后派发，目标失效不播放。末段裁剪记录见音频素材清单，完整准入见[奥恩手册](../ornn.md)。
 
 ## 来源与加工
 

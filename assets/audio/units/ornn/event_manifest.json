@@ -618,5 +618,19 @@
     ],
     "processing": "原生事件浮点解码，统一-3dB后PCM16",
     "sha256": "47d7e0deefba9611c6a59ad4386e10b122a6ba01a5629dba6fa2e95ce0f3037e"
+  },
+  {
+    "file": "forge_final_strike.wav",
+    "event": "forge:strike",
+    "source": "forge_equipment.wav",
+    "source_event_id": 3114075896,
+    "media_ids": [
+      515457883
+    ],
+    "clip_start_seconds": 3.5,
+    "clip_end_seconds": 5.397664399092971,
+    "duration": 1.8976643990929705,
+    "processing": "保留原速PCM16 mono 44100Hz；开头88采样淡入；保留自然尾音与原完整文件",
+    "timing": "起锻0.65秒，权威发锤同节点一次"
   }
 ]

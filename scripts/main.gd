@@ -2895,7 +2895,7 @@ func _rpc_restoration_heal(epoch: String, net_id: int) -> void:
 		unit.show_restoration_heal()
 
 func notify_action_cancelled(unit: Unit, payload: Dictionary) -> void:
-	if not is_net_client() and String(payload.get("reason", "")) in ["stun", "freeze", "stasis"]:
+	if not is_net_client() and String(payload.get("reason", "")) in ["stun", "freeze", "stasis", "knockback", "death_form"]:
 		_team_attack_boost_system.interrupt(unit)
 	if mode == "host" and unit.net_id >= 0:
 		_rpc_action_cancelled.rpc_id(_session.opponent_id, _session.session_id, unit.net_id, payload)

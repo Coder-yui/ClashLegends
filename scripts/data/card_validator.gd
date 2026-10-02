@@ -59,6 +59,10 @@ static func _validate_team_attack_boost(card_id: String, stats: Dictionary, erro
 	for field in fields:
 		if float(stats.get(field, 0.0)) <= 0.0:
 			errors.append("%s.%s: 必须 > 0" % [card_id, field])
+	var duration := float(stats.get("team_attack_boost_forge_duration", 1.0))
+	var release := float(stats.get("team_attack_boost_release_time", 0.65))
+	if not is_finite(duration) or not is_finite(release) or duration <= 0.0 or release <= 0.0 or release > duration:
+		errors.append("%s.team_attack_boost_forge_duration/release_time: 必须满足 0 < 发锤时刻 <= 动作时长" % card_id)
 	if float(stats.get("team_attack_boost_multiplier", 1.0)) <= 1.0:
 		errors.append("%s.team_attack_boost_multiplier: 必须 > 1" % card_id)
 

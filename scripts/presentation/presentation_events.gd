@@ -15,7 +15,7 @@ static func supports(stats: Dictionary, cue: String) -> bool:
 		return (stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "explosive_shield")
 	if cue in ["rush_prepare:sustain", "rush:start", "rush:path_hit", "rush:hit"]:
 		return float(stats.get("rush_distance", 0.0)) > 0.0
-	if cue in ["forge:pulse", "forge:arrive", "forge:cancel"]:
+	if cue in ["forge:pulse", "forge:strike", "forge:arrive", "forge:cancel"]:
 		return stats.has("team_attack_boost_multiplier")
 	if cue in ["charge:start", "charge:trail_hit", "charge:impact", "charge:step", "charge:knockup"]:
 		return (stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "terrain_charge")

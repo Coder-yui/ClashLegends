@@ -111,7 +111,7 @@ const TRANSITION_BLEND_FIELDS := [&"default", &"locomotion", &"action_in", &"act
 const CARD_FIELDS := [
 	&"stealth_delay",
 	&"strike_count", &"strike_interval", &"stun_duration", &"tower_damage_multiplier",
-	&"heal_on_hit_name", &"on_hit_passive_name", &"team_attack_boost_first_delay", &"team_attack_boost_interval", &"team_attack_boost_multiplier",
+	&"heal_on_hit_name", &"on_hit_passive_name", &"team_attack_boost_first_delay", &"team_attack_boost_interval", &"team_attack_boost_multiplier", &"team_attack_boost_forge_duration", &"team_attack_boost_release_time",
 	&"terrain_traversal", &"terrain_entry_heal", &"terrain_entry_speed_multiplier", &"growth_ranged_id", &"growth_melee_id", &"growth_ranged_hits", &"growth_melee_hits",
 	&"hit_haste_max_stacks", &"hit_haste_per_stack", &"hit_haste_duration",
 	&"bleed_damage_per_second", &"bleed_duration", &"bleed_max_stacks", &"blood_rage_duration", &"blood_rage_damage_multiplier",

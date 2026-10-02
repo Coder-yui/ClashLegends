@@ -116,6 +116,7 @@ var team_attack_boost_first_delay := 0.0
 var team_attack_boost_interval := 0.0
 var team_attack_boost_clock := 0.0
 var team_attack_boost_started := false
+var team_attack_boost_forging := false
 var color := Color.DIM_GRAY
 var has_model_art := false
 var has_model_deployment_effect := false
@@ -633,6 +634,7 @@ func action_permissions() -> int:
 	if hp <= 0.0: return 0
 	if _in_client_mode(): return net_action_permissions
 	var allowed := control.permissions()
+	if team_attack_boost_forging: allowed &= ~(ControlState.MOVE | ControlState.BASIC_ATTACK | ControlState.TURN)
 	if not is_deployed() or structure_rush.skill_locked():
 		allowed &= ~(ControlState.MOVE | ControlState.BASIC_ATTACK | ControlState.START_SKILL | ControlState.TURN)
 	if death_form.used: allowed &= ~ControlState.START_SKILL
@@ -830,6 +832,7 @@ func finish_dash_cast(serial: int) -> void:
 	active_skill_cast_locks.clear()
 
 func begin_active_skill_cast(duration: float, facing: Vector2, cast_locks: Array = DEFAULT_CAST_LOCKS, offensive: bool = true) -> void:
+	if team_attack_boost_forging and battle_context != null: battle_context.interrupt_team_attack_boost(self)
 	active_skill_offensive = offensive
 	if offensive: record_combat_activity()
 	active_skill_cast_serial += 1
@@ -1267,6 +1270,7 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prep
 		_charge_timer = 0.0
 		_charged = false
 		return
+	if team_attack_boost_forging: return
 	if _attacking and _attack_visual_serial > 0:
 		attack_timeline.advance_visual(dt, _effective_attack_speed_multiplier())
 	_tick_pending_extra_attacks(dt)
@@ -2297,7 +2301,7 @@ func cancel_controlled_action(reason: StringName, recover_position: bool = true)
 
 func cancel_basic_attack(reason: StringName) -> void:
 	action_cancel_serial += 1
-	if reason in [&"freeze", &"stasis", &"death_form"]:
+	if reason in [&"freeze", &"stasis", &"death_form"] or (team_attack_boost_forging and reason in [&"stun", &"knockback"]):
 		cancelled_visual_serial = maxi(cancelled_visual_serial, get_visual_action_serial())
 		cancelled_deployment = cancelled_deployment or _deploy_timer > 0.0
 	last_action_cancellation = {"serial": action_cancel_serial, "reason": String(reason),

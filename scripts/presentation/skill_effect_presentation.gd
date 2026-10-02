@@ -140,7 +140,7 @@ func tick_visuals(delta: float) -> void:
 	for effect in frontal_effects:
 		if String(effect.get("shape", "")) == "team_attack_boost_hammer":
 			var target = _controller.find_client_unit(int(effect.get("target_net_id", -1))) if _controller.is_net_client() else instance_from_id(int(effect.get("target_instance_id", 0)))
-			if not is_instance_valid(target) or target.hp <= 0.0: continue
+			if not is_instance_valid(target) or target.hp <= 0.0 or not CombatInteraction.allows_allied_target(target, int(effect.get("team", target.team))): continue
 			effect.end_position = target.get_visual_screen_position()
 		var source = effect_source(effect)
 		if not bool(effect.get("fixed_position", false)) and source is Unit and (source.hp <= 0.0 or source.is_frozen() or int(effect.get("cast_serial", source.active_skill_cast_serial)) <= source.cancelled_skill_cast_serial or int(effect.get("action_serial", 2147483647)) <= source.cancelled_visual_serial):

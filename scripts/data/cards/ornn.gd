@@ -4,15 +4,17 @@ static func definition() -> Dictionary:
 	return {
 		"gameplay": {
 			"name": "奥恩", "cost": 6, "type": "unit",
-			"description": "慢速大型推进坦克，只攻击建筑。部署完成4秒后首次发锤，此后每8秒向全场一名未增幅友军发锤；锤子抵达后永久提高20%普通攻击伤害；主动技能向前冲撞，撞上建筑或地形时造成范围伤害与眩晕。",
+			"description": "慢速大型推进坦克，只攻击建筑。部署完成4秒后锻造就绪，合法起锻时进入6秒冷却，短锻造后向全场一名未增幅友军发锤；锤子抵达后永久提高20%普通攻击伤害；主动技能向前冲撞，撞上建筑或地形时造成范围伤害与眩晕。",
 			"hp": 1260, "damage": 104, "range": MELEE_RANGE_MIN,
 			"speed": SPEED_SLOW, "interval": 2.0, "first_hit": 0.26,
 			"size_tier": SIZE_LARGE, "radius": RADIUS_LARGE,
 			"mass": 10.0, "sight": 220.0,
 			"is_air": false, "building_only": true, "can_attack_air": false,
 			"team_attack_boost_first_delay": 4.0,
-			"team_attack_boost_interval": 8.0,
+			"team_attack_boost_interval": 6.0,
 			"team_attack_boost_multiplier": 1.2,
+			"team_attack_boost_forge_duration": 1.0,
+			"team_attack_boost_release_time": 0.65,
 			"active_skills": [{
 				"name": "熔铸冲锋", "kind": "terrain_charge",
 				"cost": 2, "max_uses": 2, "cooldown": 10.0,
@@ -32,7 +34,13 @@ static func definition() -> Dictionary:
 			"visual_animations": {
 				"deploy": "Respawn", "idle": "Idle1_Base", "move": "Run_Base",
 				"attack": ["Attack1", "Attack2", "Attack3"], "death": "Death", "death_duration": 1.0,
+				"transitions": {
+					"Forge>move": {"animation": "Forge_ToRun", "blend_in": 0.05, "blend_out": 0.08},
+					"Forge>idle": {"animation": "Forge_ToIdle", "blend_in": 0.05, "blend_out": 0.08},
+					"Forge_ToIdle>move": {"animation": "Forge_ToRun", "blend_in": 0.05, "blend_out": 0.08},
+				},
 				"visual_actions": {
+					"ornn_forge": {"animation": "Forge", "clip_ranges": [[3.1, 4.1]], "kind": "skill", "priority": 25, "blend_in": 0.10, "blend_out": 0.12},
 					"ornn_charge": {"animation": ["Spell3", "Spell3_Dash"], "durations": [0.35, 0.5], "kind": "skill", "priority": 30, "blend_in": 0.05, "blend_out": 0.08, "sequence_blend": 0.04},
 					"ornn_charge_hit": {"animation": ["Spell3_Hit", "Spell3_hit_toIdle"], "durations": [0.3, 0.25], "kind": "skill", "priority": 30, "blend_in": 0.03, "blend_out": 0.08, "sequence_blend": 0.05},
 					"ornn_charge_miss": {"animation": "Idle1_Base", "kind": "skill", "priority": 30, "blend_in": 0.12, "blend_out": 0.08},
@@ -57,9 +65,9 @@ static func definition() -> Dictionary:
 				"charge:trail_hit": {"pool": ["res://assets/audio/units/ornn/charge_trail_hit_1.wav", "res://assets/audio/units/ornn/charge_trail_hit_2.wav", "res://assets/audio/units/ornn/charge_trail_hit_3.wav", "res://assets/audio/units/ornn/charge_trail_hit_4.wav", "res://assets/audio/units/ornn/charge_trail_hit_5.wav"], "volume_db": -6, "bus": "Combat"},
 				"charge:knockup": {"pool": ["res://assets/audio/units/ornn/charge_knockup_1.wav"], "volume_db": -6, "bus": "Combat"},
 				"forge:arrive": {"pool": ["res://assets/audio/units/ornn/forge_arrive_1.wav"], "volume_db": -3, "bus": "Combat"},
-				"forge:pulse": {
+				"forge:strike": {
 					"pool": [
-						"res://assets/audio/units/ornn/forge_equipment.wav"
+						"res://assets/audio/units/ornn/forge_final_strike.wav"
 					],
 					"volume_db": -7.0,
 					"bus": "Combat"
