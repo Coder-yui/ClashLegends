@@ -2948,7 +2948,10 @@ func record_growth_hit(unit: Unit, target: Node2D) -> void:
 	if _hand != null: _hand._refresh(0.0)
 
 func growth_snapshot() -> Dictionary:
-	return _card_growth.snapshot()
+	# 网络快照发给客户端（阵营1），不泄露主机尚未部署的成长。
+	var state := _card_growth.snapshot()
+	state.erase(0)
+	return state
 
 func apply_growth_snapshot(value: Dictionary) -> void:
 	_card_growth.replace_replica(value)

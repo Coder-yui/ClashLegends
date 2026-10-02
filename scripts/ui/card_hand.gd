@@ -16,6 +16,11 @@ var _elixir_bar: ProgressBar
 var _elixir_label: Label
 var _next_label: Label
 var _next_button: Button
+var _growth_notice: Label
+var _growth_notice_left := 0.0
+var _growth_forms: Dictionary = {}
+const GROWTH_BLUE := Color(0.18, 0.68, 1.0)
+const GROWTH_RED := Color(1.0, 0.24, 0.28)
 
 const BATTLE_FIELD_HEIGHT := 1280.0
 const HAND_AREA_HEIGHT := 120.0
@@ -114,6 +119,19 @@ func _build_ui() -> void:
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
 	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(root)
+
+	_growth_notice = Label.new()
+	_growth_notice.name = "GrowthNotice"
+	_growth_notice.position = Vector2(10, BATTLE_FIELD_HEIGHT - 40)
+	_growth_notice.size = Vector2(700, 36)
+	_growth_notice.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_growth_notice.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_growth_notice.add_theme_font_override("font", CardArt.ui_font())
+	_growth_notice.add_theme_font_size_override("font_size", 24)
+	_growth_notice.add_theme_color_override("font_outline_color", Color(0.01, 0.02, 0.05))
+	_growth_notice.add_theme_constant_override("outline_size", 6)
+	_growth_notice.hide()
+	root.add_child(_growth_notice)
 
 	# 手牌区固定在 1280~1400 的场外区域，卡框不能回伸到竞技场。
 	var panel := PanelContainer.new()
@@ -237,6 +255,7 @@ func _on_slot_pressed(slot_idx: int) -> void:
 func _refresh(_value: float) -> void:
 	if _elixir_bar == null:
 		return
+	_refresh_growth_notice()
 	_elixir_bar.value = _elixir.elixir
 	_elixir_label.text = str(int(_elixir.elixir))
 	# 下一张卡预览
@@ -253,6 +272,7 @@ func _refresh(_value: float) -> void:
 		var b: Button = _button_slots[i]
 		var accent: Color = stats.get("color", CardArt.DEFAULT_ACCENT)
 		_apply_card(b, card_id, stats, accent)
+		_apply_growth_bars(b, card_id)
 		CardArt.set_active_skill_card(b, _active_skill_cards.has(card_id))
 		var affordable := _elixir.can_afford(_display_cost(card_id, stats))
 		var pending := is_card_pending(card_id) or (CardPlayHistory.is_mirror(card_id) and has_pending_source_card())
@@ -294,3 +314,59 @@ func _apply_card(button: Button, card_id: String, stats: Dictionary, accent: Col
 		(button.get_node("CardCostBadge/CardCost") as Label).text = "?"
 	if mirrored:
 		button.tooltip_text = "镜像法术：" + ("尚未使用其他卡牌" if source.is_empty() else String(CardDB.get_card(source).name))
+
+## 仅本地手牌消费阵营限定查询；待抽队列中的成长同样通知。
+func _refresh_growth_notice() -> void:
+	if not visual_card_query.is_valid(): return
+	for id in _hand + _queue:
+		var stats := CardDB.get_card(id)
+		if not stats.has("growth_ranged_id"): continue
+		var form := String(visual_card_query.call(id))
+		var previous := String(_growth_forms.get(id, id))
+		_growth_forms[id] = form
+		if form == id or form == previous: continue
+		var blue := form == String(stats.growth_ranged_id)
+		_growth_notice.text = "凯隐已经升级为影流刺客" if blue else "凯隐已经升级为暗裔杀手"
+		_growth_notice.add_theme_color_override("font_color", GROWTH_BLUE if blue else GROWTH_RED)
+		_growth_notice_left = 2.0
+		_growth_notice.show()
+
+func _process(delta: float) -> void:
+	if _growth_notice_left <= 0.0: return
+	_growth_notice_left = maxf(0.0, _growth_notice_left - delta)
+	if _growth_notice_left == 0.0: _growth_notice.hide()
+
+func _apply_growth_bars(button: Button, card_id: String) -> void:
+	var overlay := button.get_node_or_null("GrowthBars") as Control
+	var stats := CardDB.get_card(card_id)
+	var progress: Dictionary = growth_progress_query.call(card_id) if growth_progress_query.is_valid() else {}
+	var enabled := stats.has("growth_ranged_id") and growth_progress_query.is_valid() and String(progress.get("unlocked", card_id)) == card_id
+	if overlay != null: overlay.visible = enabled
+	if not enabled: return
+	if overlay == null:
+		overlay = Control.new()
+		overlay.name = "GrowthBars"
+		overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		button.add_child(overlay)
+		overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		for kind in ["ranged", "melee"]:
+			var count := int(stats["growth_" + kind + "_hits"])
+			for index in range(count):
+				var cell := ColorRect.new()
+				cell.name = kind + str(index)
+				cell.mouse_filter = Control.MOUSE_FILTER_IGNORE
+				cell.anchor_left = 0.0 if kind == "ranged" else 1.0
+				cell.anchor_right = cell.anchor_left
+				cell.anchor_top = 1.0 - float(index + 1) / count
+				cell.anchor_bottom = 1.0 - float(index) / count
+				cell.offset_left = 2.0 if kind == "ranged" else -8.0
+				cell.offset_right = 8.0 if kind == "ranged" else -2.0
+				cell.offset_top = 3.0
+				cell.offset_bottom = -3.0
+				overlay.add_child(cell)
+	button.move_child(overlay, -1)
+	for kind in ["ranged", "melee"]:
+		var tint := GROWTH_BLUE if kind == "ranged" else GROWTH_RED
+		for index in range(int(stats["growth_" + kind + "_hits"])):
+			var cell := overlay.get_node(kind + str(index)) as ColorRect
+			cell.color = tint if index < int(progress.get(kind, 0)) else tint.darkened(0.75)

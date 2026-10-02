@@ -4,7 +4,7 @@
 
 | 契约 | 当前值 |
 | --- | --- |
-| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->85 |
+| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->86 |
 | 顶层快照项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd SNAPSHOT_PACKET_SIZE -->11 |
 | 单位载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd UNIT_PAYLOAD_SIZE -->54 |
 | 塔载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd TOWER_PAYLOAD_SIZE -->7 |
@@ -79,3 +79,5 @@ RPC 端点留在 Main，主客节点路径保持一致。运行请求只接受�
 强制位移、两阶段落点修正及延长/缩短后的行动锁只在权威端执行。客户端沿用现有位置、视觉移动状态、部署剩余、行动权限与动作取消屏障，不自行查询或重算路径。此次未新增快照字段或取消原因，不改变协议布局；控制取消继续复用既有事件。
 
 协议84：可靠`_rpc_freeze_fx`追加施法阵营，客户端只用于冰纹范围外圈的蓝红颜色；冻结和后续双减速表现窗口均保存阵营，不创建客户端权威区域。旧版本在握手拒绝，Snapshot布局不变。
+
+协议86：顶层 card_growth 仅下发接收方客户端（阵营1）的局内卡牌成长，不传主机进度或未部署的解锁结果；载荷结构与校验不变。卡槽升级提示由各自手牌读取本方状态，仅本地显示2秒。
