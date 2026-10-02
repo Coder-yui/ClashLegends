@@ -192,17 +192,15 @@ func run(harness: Object, main: Node2D) -> void:
 		step(source, 15)
 		_expect(source.structure_rush.phase == StructureRushState.Phase.SPENT, "被建筑截停仍消耗一生一次冲撞")
 		clear_units()
-	# 部署前0.45秒外抛，后0.55秒停留完成孵化，不提前攻击。
+	# 召唤出生只受外抛控制，不额外等待下牌部署；出生片段独立匹配0.45秒。
 	var mite := spawn("voidmite", 0, Vector2(360, 950))
-	mite._deploy_timer = 1.0
-	mite.apply_knockback(mite.position + Vector2.UP, 100, 0.45, 1.0)
-	step(mite, 9)
+	mite.begin_scattered_birth(Vector2.DOWN,100,0.45)
+	step(mite,9)
 	var landing := mite.position
-	_expect(is_equal_approx(landing.y, 1050.0) and mite._deploy_timer > 0.5, "蠕虫前0.45秒外抛100px并仍处于部署")
-	step(mite, 10)
-	_expect(mite.position.distance_to(landing) < 0.01 and mite._deploy_timer > 0.0 and not mite._attacking, "落地后至0.95秒原地完成孵化，不继续外抛或攻击")
+	_expect(is_equal_approx(landing.y,1050) and mite._deploy_timer==0 and mite._knockback_timer==0,"蠕虫外抛0.45秒100px后无额外部署锁")
+	_expect(mite.get_visual_action_duration()==0.45 and mite.get_visual_action_time_left()<0.000001,"出生表现匹配基准外抛时长，不另加行动锁")
 	step(mite)
-	_expect(mite._deploy_timer == 0.0 and mite.attack_interval == 1.33 and mite.body_radius == CardDB.RADIUS_SMALL, "蠕虫1秒部署、1.33秒攻击周期、小体型半径")
+	_expect(mite._deploy_timer==0 and mite.attack_interval==1.33 and mite.body_radius==CardDB.RADIUS_SMALL,"出生结束保留原攻击周期和小体型，正常行动")
 	clear_units()
 	# 隔河中央目标进入距离也不能直接撞水；桥中心的同样距离可以冲撞。
 	for x in [360.0, ArenaRules.BRIDGE_X_LEFT]:

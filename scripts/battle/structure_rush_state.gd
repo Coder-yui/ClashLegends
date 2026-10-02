@@ -212,9 +212,9 @@ func _impact(unit: Unit) -> void:
 			var ratio := float(index) / float(maxi(1, count - 1))
 			var outward := (-impact_direction).rotated(lerpf(-1.22, 1.22, ratio))
 			var seed := point - impact_direction * (radius + ArenaRules.STRUCTURE_SEPARATION + 2.0) + side * lerpf(-8.0, 8.0, ratio)
-			var spawn := unit.battle_context.spawn_summoned(unit.team, String(config.rush_spawn_id), seed)
+			var spawn := unit.battle_context.spawn_summoned(unit.team, String(config.rush_spawn_id), seed, 0.0)
 			if spawn != null:
-				spawn.apply_forced_displacement(outward, float(config.rush_spawn_spread) * ([0.8, 2.3, 1.5, 2.0, 1.0, 2.6][index % 6]), 0.45)
+				spawn.begin_scattered_birth(outward, float(config.rush_spawn_spread) * ([0.8, 2.3, 1.5, 2.0, 1.0, 2.6][index % 6]), 0.45)
 	if unit.battle_context.damage_batch().collecting:
 		unit.battle_context.damage_batch().defer_effect(on_hit)
 	else: on_hit.call()

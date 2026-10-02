@@ -217,7 +217,7 @@
     {
       "file": "deploy_start_1.wav",
       "group": "虚空蠕虫",
-      "cue": "deploy:start",
+      "cue": "spawn:start",
       "event": "Play_sfx_SRU_Horde_Mini_Buff_cast",
       "duration": 1.383718820861678,
       "source_txtp": "ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/txtp-all-original-gain/Play_sfx_SRU_Horde_Mini_Buff_cast {r1}.txtp",
@@ -228,7 +228,7 @@
     {
       "file": "deploy_start_2.wav",
       "group": "虚空蠕虫",
-      "cue": "deploy:start",
+      "cue": "spawn:start",
       "event": "Play_sfx_SRU_Horde_Mini_Buff_cast",
       "duration": 1.2954875283446712,
       "source_txtp": "ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/txtp-all-original-gain/Play_sfx_SRU_Horde_Mini_Buff_cast {r2}.txtp",
@@ -239,7 +239,7 @@
     {
       "file": "deploy_start_3.wav",
       "group": "虚空蠕虫",
-      "cue": "deploy:start",
+      "cue": "spawn:start",
       "event": "Play_sfx_SRU_Horde_Mini_Buff_cast",
       "duration": 1.533718820861678,
       "source_txtp": "ClashLegends-开发素材库/03-制作中/峡谷先锋/lol-source/txtp-all-original-gain/Play_sfx_SRU_Horde_Mini_Buff_cast {r3}.txtp",

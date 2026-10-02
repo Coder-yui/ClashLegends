@@ -21,6 +21,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_batch_takeover()
 	_check_failures()
 	_check_real_spawns()
+	_check_scattered_birth()
 	clear()
 func _check_line_and_time() -> void:
 	var unit := make("voidmite",Vector2(360,720))
@@ -114,7 +115,12 @@ func _check_failures() -> void:
 	_expect(not unit.knockback.recovery_pending,"障碍消失后确定性重试恢复")
 	clear()
 func _check_real_spawns() -> void:
+	var heard: Array = []
+	var listener := func(card: String, cue: StringName, _position: Vector2):
+		if card in ["voidmite", "voidfish"] and cue == &"spawn:start": heard.append(card)
+	_main._audio_manager.cue_played.connect(listener)
 	for team in [0,1]:
+		heard.clear()
 		var herald := make("rift_herald",Vector2(160,850) if team==0 else Vector2(560,430),team)
 		var children: Array[Unit]=[]
 		for tick in 700:
@@ -123,13 +129,14 @@ func _check_real_spawns() -> void:
 				if candidate is Unit and candidate.card_id=="voidmite" and not children.has(candidate): children.append(candidate)
 			if not children.is_empty(): break
 		_expect(children.size()==6,"双方先锋真实撞塔生成六只")
+		_expect(heard.count("voidmite")==6,"六虫无部署锁仍每只播放一次出生声音")
 		var starts: Array[Vector2]=[]
 		for child in children:
 			starts.append(child.position)
 			units.append(child)
 		for tick in 9: _main._sim_step(0.05)
 		for index in children.size():
-			_expect(children[index].position.distance_to(starts[index])>20 and children[index]._deploy_timer>0,"六虫整组实际外抛不互卡，部署锁独立")
+			_expect(children[index].position.distance_to(starts[index])>20 and children[index]._deploy_timer==0,"六虫整组实际外抛不互卡，无额外部署锁")
 		clear()
 		var queen := make("belveth",Vector2(360,850),team)
 		var center := queen.position
@@ -138,12 +145,15 @@ func _check_real_spawns() -> void:
 		for candidate in _main.get_tree().get_nodes_in_group("combatants"):
 			if candidate is Unit and candidate.card_id=="voidfish": children.append(candidate); units.append(candidate)
 		_expect(children.size()==8,"女皇真实死亡生成八鱼")
+		_expect(heard.count("voidfish")==8,"八鱼无部署锁仍每只播放一次出生声音")
 		for child in children: _expect(child.position==center and child.knockback.origin==center,"八鱼强制散开起点恰是死亡点，不重复偏移")
 		for tick in 9:
 			for child in children: child.sim_tick(0.05)
 			_main._movement.tick(0.05)
 		for child in children: _expect(absf(child.position.distance_to(center)-100)<0.01,"八鱼实际散开100px不受质量和同点挤压改变")
 		clear()
+
+	_main._audio_manager.cue_played.disconnect(listener)
 
 func _check_extra_boundaries() -> void:
 	var unit := make("voidmite",Vector2(360,900))
@@ -228,3 +238,60 @@ func _check_batch_takeover() -> void:
 		_main._combat.commit_batch()
 		_expect(unit.knockback.collisionless==forced_last and is_equal_approx(unit._knockback_timer,0.5 if forced_last else 0.2),"同批普通/强制位移共用稳定顺序，最后有效请求接管")
 		clear()
+
+func _check_scattered_birth() -> void:
+	for card in ["voidmite","voidfish"]:
+		var unit := make(card,Vector2(360,900))
+		unit.begin_scattered_birth(Vector2.RIGHT,50,0.45)
+		var serial := unit.get_visual_action_serial()
+		_expect(unit._deploy_timer==0 and unit.is_deployed() and CombatInteraction.allows_allied_target(unit,unit.team),"%s出生即实体可选，无部署锁" % card)
+		var hp := unit.hp
+		unit.take_damage(1)
+		_expect(unit.hp<hp and unit.get_visual_action_duration()==0.45,"%s出生可受伤，动画基准0.45秒" % card)
+		_expect((unit.action_permissions() & (ControlState.MOVE|ControlState.BASIC_ATTACK|ControlState.START_SKILL))==0,"%s仅外力限制散开自主行动" % card)
+		step(unit,9)
+		_expect(unit._knockback_timer==0 and unit._deploy_timer==0 and unit.get_visual_action_time_left()<0.000001 and (unit.action_permissions() & ControlState.BASIC_ATTACK)!=0,"%s正常散开与出生表现同期结束后立即可行动" % card)
+		_expect(unit.get_visual_action_serial()==serial,"%s出生不重复播放" % card)
+		clear()
+		for kind in ["stun","freeze","stasis","knockback","forced"]:
+			unit=make(card,Vector2(360,900))
+			unit.begin_scattered_birth(Vector2.RIGHT,50,0.45)
+			step(unit,2)
+			serial=unit.get_visual_action_serial()
+			match kind:
+				"stun": unit.stun(0.6)
+				"freeze": unit.freeze(0.6)
+				"stasis": unit.apply_stasis(0.2)
+				"knockback": unit.apply_knockback(unit.position+Vector2(50,0),20,0.2,1)
+				"forced": unit.apply_forced_displacement(Vector2.UP,20,0.2)
+			if kind=="stasis":
+				_expect(unit._knockback_timer==0,"凝滞立即取消出生外抛")
+			step(unit,5 if kind=="knockback" else 4)
+			_expect(unit._deploy_timer==0 and unit.get_visual_action_serial()==serial,"%s/%s不遗留部署锁或重播出生" % [card,kind])
+			if kind in ["stasis","knockback","forced"]:
+				_expect(unit._knockback_timer==0 and (unit.action_permissions() & ControlState.BASIC_ATTACK)!=0,"%s/%s新控制结束即可行动，不等旧散开或部署" % [card,kind])
+			else:
+				step(unit,3)
+				_expect(unit._knockback_timer==0 and (unit.action_permissions() & ControlState.BASIC_ATTACK)==0,"%s剩余硬控单独限制外抛后行动" % kind)
+				step(unit,6)
+				_expect((unit.action_permissions() & ControlState.BASIC_ATTACK)!=0,"%s剩余硬控结束后无额外等待" % kind)
+			clear()
+	var unit := make("voidmite",Vector2(360,720))
+	unit.begin_scattered_birth(Vector2.UP,80,0.45)
+	_expect(unit.knockback.remaining>0.7 and unit.get_visual_action_duration()==0.45,"落点延长只延长外力控制，出生动画仍0.45秒")
+	step(unit,9)
+	_expect(unit._knockback_timer>0 and unit.get_visual_action_time_left()<0.000001 and unit._deploy_timer==0,"延长时出生表现先结束，真实外力仍限制行动")
+	step(unit,7)
+	_expect(unit._knockback_timer==0 and (unit.action_permissions() & ControlState.MOVE)!=0,"延长控制结束并合法落位后立即可动")
+	clear()
+	unit=make("voidmite",Vector2(360,720))
+	unit.begin_scattered_birth(Vector2.UP,40,0.45)
+	step(unit,7)
+	_expect(not unit.knockback.in_transit and unit._knockback_timer>0 and unit.get_visual_action_time_left()>0,"缩短早停仍等待原0.45秒且出生表现继续")
+	step(unit,2)
+	_expect(unit._knockback_timer==0 and unit.get_visual_action_time_left()<0.000001,"缩短等待与基准出生动画同期结束")
+	clear()
+	unit=_main._spawn_unit(UnitSpawnRequest.new(0,"garen",Vector2(360,900)))
+	units.append(unit)
+	_expect(unit._deploy_timer>0,"普通下牌部署锁不受召唤出生调整影响")
+	clear()

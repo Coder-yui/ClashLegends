@@ -16,7 +16,7 @@ static func definition() -> Dictionary:
 			"visual_scene_path": "res://assets/units/voidmite/voidmite_view.tscn",
 			"visual_forward_yaw": 0.0,
 			"color": Color(0.55, 0.22, 0.8),
-			"visual_animations": {
+			"visual_animations": {"visual_actions": {"scatter_birth": {"animation": "SRU_Horde_Mini_Hatch_anm", "kind": "deploy", "priority": 10, "blend_in": 0.0, "blend_out": 0.08}},
   "deploy": "SRU_Horde_Mini_Hatch_anm",
   "idle": "Idle1",
   "move": "Ranged_Run",
@@ -92,7 +92,7 @@ static func definition() -> Dictionary:
     "Run3>Run3": 0.0
   }
 },
-			
+
 		},
 		"card_art": {},
 		"audio": {
@@ -116,7 +116,7 @@ static func definition() -> Dictionary:
   "attack_swing_volume_db": 0.0,
   "attack_hit_volume_db": 0.0,
   "events": {
-    "deploy:start": {"pool": ["res://assets/audio/units/voidmite/deploy_start_1.wav", "res://assets/audio/units/voidmite/deploy_start_2.wav", "res://assets/audio/units/voidmite/deploy_start_3.wav"], "volume_db": 0.0, "bus": "Combat"},
+    "spawn:start": {"pool": ["res://assets/audio/units/voidmite/deploy_start_1.wav", "res://assets/audio/units/voidmite/deploy_start_2.wav", "res://assets/audio/units/voidmite/deploy_start_3.wav"], "volume_db": 0.0, "bus": "Combat"},
     "death": {
       "pool": [
         "res://assets/audio/units/voidmite/death_1.wav",

@@ -13,7 +13,7 @@ static func definition() -> Dictionary:
 		"visual": {
 			"color": Color(0.6, 0.27, 0.85), "visual_radius": RADIUS_SMALL + VISUAL_RADIUS_PADDING,
 			"visual_scene_path": "res://assets/units/voidfish/voidfish_view.tscn", "visual_forward_yaw": 0.0,
-			"visual_animations": {"deploy": "Idle1", "idle": "Idle1", "move": "Run", "attack": ["attack_1_anm"], "death": "Death", "death_duration": 0.6},
+			"visual_animations": {"visual_actions": {"scatter_birth": {"animation": "Idle1", "kind": "deploy", "priority": 10, "blend_in": 0.0, "blend_out": 0.08}}, "deploy": "Idle1", "idle": "Idle1", "move": "Run", "attack": ["attack_1_anm"], "death": "Death", "death_duration": 0.6},
 		},
 		"card_art": {}, "audio": {
   "attack_swing": [
@@ -27,7 +27,7 @@ static func definition() -> Dictionary:
   "attack_swing_volume_db": -7.0,
   "attack_hit_volume_db": -7.0,
   "events": {
-    "deploy:start": {
+    "spawn:start": {
       "pool": [
         "res://assets/audio/units/voidfish/deploy_1.wav"
       ],

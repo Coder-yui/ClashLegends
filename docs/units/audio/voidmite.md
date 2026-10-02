@@ -6,7 +6,7 @@
 
 [打开本批试听台](http://127.0.0.1:18779/)；关闭后可运行 `python3 tools/dev.py audio --manifest "ClashLegends-开发素材库/02-候选讨论/峡谷先锋与虚空蠕虫全量音频/catalog.json" --port 18779`。游戏内在卡牌开发工作台选择本单位试听与实战检查。
 
-出现声按用户确认使用`Play_sfx_SRU_Horde_Mini_Buff_cast`，三种原始变体组成deploy:start声音池，每只生成时随机播放一个；复用项目随机池的避免连续重复机制。声音保持原始增益、时长，不随动画变调。无走路音效。普攻、死亡声音沿用现有蠕虫原声事件。
+出现声按用户确认使用`Play_sfx_SRU_Horde_Mini_Buff_cast`，三种原始变体组成spawn:start声音池，每只生成时随机播放一个；复用项目随机池的避免连续重复机制。声音保持原始增益、时长，不随动画变调。无走路音效。普攻、死亡声音沿用现有蠕虫原声事件。
 
 [逐文件来源清单](../../../assets/audio/units/voidmite/event_manifest.json)
 

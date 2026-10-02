@@ -54,6 +54,8 @@ func _death(team: int) -> void:
 	for unit in fish:
 		_expect(unit.is_air and unit.can_attack_air and not unit.building_only and unit.max_hp == 110 and unit.damage == 26, "虚空鱼为独立对地对空弱小单位")
 		_expect(unit.position.distance_to(center) < 0.01, "八只虚空鱼从死亡点出生")
+	for index in fish.size():
+		_expect(fish[index].get_visual_facing_direction().is_equal_approx(Unit.SPAWN_DIRECTIONS[index]), "散开时面朝外侧")
 	for tick in 9:
 		for unit in fish: unit.sim_tick(0.05)
 		_main._movement.tick(0.05)
@@ -66,10 +68,8 @@ func _death(team: int) -> void:
 		positions[unit.position] = true
 		_expect(unit.position.distance_to(center) > 95.0 and unit.position.distance_to(center) < 115.0, "散开半径约100像素")
 		_expect(unit.position.direction_to(center).dot(-Unit.SPAWN_DIRECTIONS[index]) > 0.98, "八方向散开轨迹正确")
-		_expect(unit._deploy_timer > 0.0 and unit._knockback_timer < 0.000001, "散开按时结束，保留部署锁定")
+		_expect(unit._deploy_timer == 0.0 and unit._knockback_timer < 0.000001, "散开按时结束，不留额外部署锁定")
 	_expect(positions.size() == 8, "八个散开位置互异")
-	for index in fish.size():
-		_expect(fish[index].get_visual_facing_direction().is_equal_approx(Unit.SPAWN_DIRECTIONS[index]), "散开时面朝外侧")
 	for unit in fish: unit.free()
 	if is_instance_valid(source) and not source.is_queued_for_deletion(): source.free()
 

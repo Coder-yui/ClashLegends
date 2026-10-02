@@ -1425,6 +1425,12 @@ func _perform_deploy_sweep() -> void:
 func can_receive_knockback(origin: Vector2, distance: float, duration: float, mass_factor_max: float) -> bool:
 	return hp > 0.0 and not structure_rush.control_immune() and not is_queued_for_deletion() and not is_building and origin.is_finite() and is_finite(distance) and distance > 0.0 and is_finite(duration) and duration > 0.0 and is_finite(mass_factor_max)
 
+## 出生动画是独立表现，固定匹配原始散开时长；落点延长不拉伸动画。
+## 生成入口使用零部署锁，只有已成立的外力及其它控制限制自主行动。
+func begin_scattered_birth(direction: Vector2, distance: float, duration: float) -> void:
+	apply_forced_displacement(direction, distance, duration)
+	play_visual_action(&"scatter_birth", duration)
+
 ## 外部强制位移按世界距离/原始速度执行；不是自主技能，也不借用质量倍率。
 func apply_forced_displacement(direction: Vector2, distance: float, duration: float, max_extension: float = -1.0, interaction: Dictionary = {}, displacement_order: Array = []) -> bool:
 	if not is_inside_tree() or battle_context == null: return false
@@ -2709,11 +2715,11 @@ func _spawn_death_summons() -> void:
 		var direction: Vector2 = SPAWN_DIRECTIONS[index % SPAWN_DIRECTIONS.size()]
 		var scattering := death_spawn_spread > 0.0 and death_spawn_duration > 0.0
 		var spawn_pos := global_position if scattering else global_position + direction * spawn_distance
-		var summoned: Unit = battle_context.spawn_summoned(team, death_spawn_id, spawn_pos)
+		var summoned: Unit = battle_context.spawn_summoned(team, death_spawn_id, spawn_pos, 0.0 if scattering else -1.0)
 		if scattering and is_instance_valid(summoned):
 			# 出生外力复用权威位移/碰撞，不结算敌方击退、质量缩放或受击事件。
 			summoned._body_facing_direction = direction
-			summoned.apply_forced_displacement(direction, death_spawn_spread, death_spawn_duration)
+			summoned.begin_scattered_birth(direction, death_spawn_spread, death_spawn_duration)
 
 ## 可由客户端死亡 RPC / 快照缺席兜底调用；信号只发一次，避免重复死亡表现。
 func notify_visual_death() -> void:

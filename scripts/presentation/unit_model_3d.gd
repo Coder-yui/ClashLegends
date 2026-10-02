@@ -394,6 +394,9 @@ func _sync_visual(force: bool, delta: float) -> void:
 		_finish_visual_action()
 	var state := _source.get_visual_state_code()
 	var locomotion_state := _source.get_locomotion_visual_state_code()
+	# 无部署锁的出生动作只是表现：新外力提前结束后，真实移动可直接接管。
+	if _playing_visual_action and _active_action_kind == &"deploy" and _source.is_deployed() and locomotion_state == 2:
+		_finish_visual_action()
 	var stealth_pose := _source.stealth_hidden()
 	if stealth_pose != _last_stealth_pose:
 		_last_stealth_pose = stealth_pose
