@@ -230,8 +230,10 @@ func _check_flights(main: Node2D) -> void:
 
 func _check_card_timing(main: Node2D) -> void:
 	var deck: Array = main._deck.duplicate()
+	var remote_deck: Array = main._remote_deck.duplicate()
 	var cycles: Dictionary = main._authoritative_card_cycles.duplicate()
 	main._deck = ["stasis", "garen", "ashe", "teemo", "xin", "heal", "freeze", "zap"]
+	main._remote_deck = main._deck.duplicate()
 	for team in [0, 1]:
 		main._authoritative_card_cycles[team] = CardCycle.new(main._deck, false)
 		var pos := Vector2(180,820) if team == 0 else Vector2(540,460)
@@ -251,6 +253,7 @@ func _check_card_timing(main: Node2D) -> void:
 		_retire([unit])
 		main._spell_system.clear()
 	main._deck = deck
+	main._remote_deck = remote_deck
 	main._authoritative_card_cycles = cycles
 	main._spell_system.cast(0, CardDB.get_card("stasis"), Vector2(180,800))
 	var tick: int = main._sim_tick_id

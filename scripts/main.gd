@@ -428,6 +428,12 @@ func _start_local() -> void:
 	# CLI/直接启动没有备战页：先确定同一份默认卡组，再创建显示与权威循环。
 	if _deck.is_empty():
 		_deck = CardDB.selectable_ids().slice(0, 8)
+	_remote_deck = AIOpponent.build_deck()
+	_remote_active_skill_choices.clear()
+	for card_id in _remote_deck.slice(0, 2):
+		var skills := CardDB.active_skills_for(card_id)
+		if not skills.is_empty():
+			_remote_active_skill_choices[card_id] = randi() % skills.size()
 	_audio_manager.begin_battle()
 	mode = "local"
 	_match_started = true
@@ -437,7 +443,7 @@ func _start_local() -> void:
 	_setup_player_ui()
 	_ai = AIOpponent.new()
 	add_child(_ai)
-	_ai.setup(self, _deck)
+	_ai.setup(self)
 	_create_towers()
 	_build_nav()
 	_create_timer_ui()
@@ -665,7 +671,7 @@ func _setup_player_ui() -> void:
 	var local_team := 1 if mode == "client" else 0
 	_initialize_authoritative_card_cycle(local_team, _deck)
 	if mode == "local":
-		_initialize_authoritative_card_cycle(1, _deck)
+		_initialize_authoritative_card_cycle(1, _remote_deck)
 	_active_skill_bar = ACTIVE_SKILL_BAR_SCRIPT.new()
 	_active_skill_bar.can_submit = _can_submit_active_skill
 	add_child(_active_skill_bar)
@@ -677,7 +683,7 @@ func _is_local_player_team(p_team: int) -> bool:
 	return p_team == (1 if mode == "client" else 0)
 
 func _team_deck(p_team: int) -> Array:
-	if (mode == "host" and p_team == 1) or (mode == "client" and p_team == 0):
+	if (mode in ["local", "host"] and p_team == 1) or (mode == "client" and p_team == 0):
 		return _remote_deck
 	return _deck
 
@@ -787,7 +793,7 @@ func get_authoritative_server_tick() -> int:
 	return _authoritative_server_tick if mode == "client" else _sim_tick_id
 
 func _team_active_skill_choices(p_team: int) -> Dictionary:
-	if (mode == "host" and p_team == 1) or (mode == "client" and p_team == 0):
+	if (mode in ["local", "host"] and p_team == 1) or (mode == "client" and p_team == 0):
 		return _remote_active_skill_choices
 	return _active_skill_choices
 
@@ -1822,9 +1828,6 @@ func _register_active_skill(unit: Unit, card_id: String, p_team: int) -> void:
 			active_slot, ability_id, String(carried_skill.name), stats.get("color", CardArt.DEFAULT_ACCENT),
 			float(carried_skill.get("cost", 0.0)), max_uses, max_uses, float(carried_skill.get("cooldown", 0.0)), unit.is_deployed(), CardArt.skill_icon(carried_skill)
 		)
-	# 单机 AI 也携带卡组前两槽的技能；占位 AI 同样经过 0.5 秒待释放窗口。
-	if mode == "local" and p_team == 1:
-		call_deferred("use_active_skill", ability_id, p_team, 0, false)
 
 ## 部署期间技能按钮保持不可点击；部署计时归零后只同步可用表现，不改变权威技能判定。
 func _sync_active_skill_deployment_readiness() -> void:
@@ -2274,27 +2277,6 @@ func _update_elixir_rate() -> void:
 		_elixir_p1.regen_multiplier = mult
 	if _ai != null:
 		_ai._elixir.regen_multiplier = mult
-
-## 找玩家单位最密集的位置（敌方法术 AI 用）
-func _find_player_cluster() -> Vector2:
-	var best_pos := Vector2(360.0, 960.0)
-	var best_count := 0
-	for c in get_tree().get_nodes_in_group("combatants"):
-		if not is_instance_valid(c) or c.team != 0:
-			continue
-		var u := c as Unit
-		if u == null or u.is_building:
-			continue
-		var count := 0
-		for c2 in get_tree().get_nodes_in_group("combatants"):
-			if not is_instance_valid(c2) or c2.team != 0:
-				continue
-			if c2.global_position.distance_to(c.global_position) < 120.0:
-				count += 1
-		if count > best_count:
-			best_count = count
-			best_pos = c.global_position
-	return best_pos
 
 func _end_game(winner_team: int, reason: String) -> void:
 	if game_over:

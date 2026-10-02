@@ -397,5 +397,12 @@
     "method": "run",
     "scene": "battle",
     "group": "status"
+  },
+  {
+    "id": "AIOpponentSuite",
+    "script": "res://tests/suites/deployment/ai_opponent_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "deployment"
   }
 ]

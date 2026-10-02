@@ -88,7 +88,9 @@ func _check_two_tower_deployment() -> void:
 	var old_deck: Array = _main._deck.duplicate()
 	var old_cycles: Dictionary = _main._authoritative_card_cycles.duplicate()
 	var old_elixir: float = _main._elixir.elixir
+	var old_remote_deck: Array = _main._remote_deck
 	_main._deck = ["shurima_guard", "garen", "ashe", "heal", "xin", "teemo", "freeze", "pix"]
+	_main._remote_deck = _main._deck.duplicate()
 	for team in [0, 1]:
 		var left: Tower = _main._towers[2 if team == 0 else 0]
 		var right: Tower = _main._towers[3 if team == 0 else 1]
@@ -138,6 +140,7 @@ func _check_two_tower_deployment() -> void:
 		right.hp = hp.y
 	_main._on_card_selected("")
 	_main._deck = old_deck
+	_main._remote_deck = old_remote_deck
 	_main._authoritative_card_cycles = old_cycles
 	_main._elixir.elixir = old_elixir
 	var stats := CardDB.get_card("shurima_guard").duplicate(true)
