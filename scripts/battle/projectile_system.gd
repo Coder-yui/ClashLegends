@@ -57,6 +57,7 @@ func launch(attacker: Node2D, target: Node2D, amount: float, projectile_speed: f
 	effects = effects.duplicate(true)
 	if attacker is Unit:
 		effects["source_generation"] = attacker.form_change_serial
+		effects.merge(attacker.on_hit_passive_effects())
 	if knockback > 0.0 and not effects.has("displacement_order"):
 		effects.displacement_order = _context.damage_batch().next_displacement_order(attacker)
 	if (attacker is Unit or attacker is Tower) and not effects.has("presentation_source"):
@@ -281,6 +282,7 @@ func launch_skill_fan(source: Unit, skill: Dictionary, forward: Vector2) -> void
 		var pos := source.global_position + direction * source.body_radius
 		projectiles[_next_id] = {
 			"skill_fan": true, "cast": cast, "skill": skill,
+			"effects": source.on_hit_passive_effects() if bool(skill.get("applies_on_hit_slow", false)) else {},
 			"attacker": source, "source_pos": source.global_position,
 			"presentation_source": PresentationConfig.attack_source(source),
 			"team": source.team, "source_form_index": source.form_index,

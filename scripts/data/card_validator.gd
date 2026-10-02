@@ -135,6 +135,9 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 			errors.append("%s: 在途配置只用于可结算法术" % card_id)
 		if float(stats.get("flight_speed", 0.0)) <= 0.0 or float(stats.get("flight_min_duration", 0.0)) < 0.0:
 			errors.append("%s: 飞行速度必须为正，最短飞行时间不能为负" % card_id)
+	if stats.has("on_hit_slow_duration") or stats.has("on_hit_slow_multiplier"):
+		if float(stats.get("on_hit_slow_duration", 0.0)) <= 0.0 or float(stats.get("on_hit_slow_multiplier", 1.0)) < 0.1 or float(stats.get("on_hit_slow_multiplier", 1.0)) >= 1.0:
+			errors.append("%s: 命中减速需要正时长及[0.1, 1)移速倍率" % card_id)
 	_validate_bleed(card_id, stats, errors)
 	_validate_death_form(card_id, stats, errors)
 	var art = stats.get("card_art", {})
@@ -1091,9 +1094,11 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 						if hit_delay < 0.0 or hit_delay > float(skill.get("cast_duration", 0.0)) or hit_delay < previous_delay:
 							errors.append("%s.resource_hit_delay_sequences[%d]: 时刻必须递增且位于施法窗口内" % [label, tier_index])
 						previous_delay = hit_delay
-		for flag in [&"cast_end_heal_requires_hit", &"applies_on_hit_passive"]:
+		for flag in [&"cast_end_heal_requires_hit", &"applies_on_hit_passive", &"applies_on_hit_slow"]:
 			if skill.has(flag) and typeof(skill[flag]) != TYPE_BOOL:
 				errors.append("%s.%s: 必须为布尔值" % [label, flag])
+		if bool(skill.get("applies_on_hit_slow", false)) and (String(skill.get("kind", "")) != "frontal" or int(skill.get("projectile_count", 0)) <= 0 or not (bool(skill.get("projectile_stop_on_hit", false)) or bool(skill.get("projectile_piercing", false))) or float(stats.get("on_hit_slow_duration", 0.0)) <= 0.0):
+			errors.append("%s.applies_on_hit_slow: 需要扇形弹体及命中减速被动" % label)
 		if bool(skill.get("applies_on_hit_passive", false)) and (String(skill.get("kind", "")) != "frontal" or int(skill.get("projectile_count", 0)) > 0):
 			errors.append("%s.applies_on_hit_passive: 仅支持直接结算的 frontal" % label)
 		if bool(skill.get("cast_end_heal_requires_hit", false)) and (String(skill.get("kind", "")) != "frontal" or int(skill.get("projectile_count", 0)) > 0 or float(skill.get("full_resource_cast_end_heal", 0.0)) <= 0.0):

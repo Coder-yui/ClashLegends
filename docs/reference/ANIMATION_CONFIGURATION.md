@@ -2,6 +2,8 @@
 
 共用行为见 [动画系统](../ANIMATION_STATE_SYSTEM.md)。配置读取在 UnitModel3D，合法字段与资源由 CardValidator 和内容契约共同验证。
 
+部署映射与自身 `idle` 相同时，以原速从 `max(0, Idle长度 − deploy_time)` 开始播放；不应用 `deploy_clip_ratio`，也不压缩完整 Idle。
+
 ## 映射与分段
 
 | 配置 | 语义 |

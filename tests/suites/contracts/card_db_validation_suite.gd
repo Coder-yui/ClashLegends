@@ -2,6 +2,11 @@ class_name CardDBValidationSuite
 extends RefCounted
 
 func run(harness: Object) -> void:
+	for field in ["on_hit_slow_duration", "on_hit_slow_multiplier"]:
+		for invalid in [-1.0, 0.0, INF, "wrong"]:
+			var ashe := CardDB.get_card("ashe").duplicate(true)
+			ashe[field] = invalid
+			harness._expect(not CardDB.VALIDATOR.validate_all({"ashe": ashe}, false).is_empty(), "冰霜射击拒绝非法" + field)
 	for field in ["radius", "duration"]:
 		for invalid in [-1.0, 0.0, INF, "wrong"]:
 			var mist: Dictionary = CardDB.get_card("gwen").duplicate(true)

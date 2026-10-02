@@ -167,7 +167,7 @@ func _check_ashe_volley() -> void:
 			and waits_for_flight and animation_duration_ok
 			and ring_sector_shape
 			and is_equal_approx(front_before - front.hp, float(skill.damage))
-		and is_equal_approx(front.control.slow_timer, 1.0)
+		and is_equal_approx(front.control.slow_timer, 2.0) and is_equal_approx(front.control.slow_multiplier, 0.7) and not skill.has("slow_duration")
 		and is_equal_approx(behind.hp, behind_before),
 		"寒冰 Spell2 万箭齐发压至 1 秒，普攻/W 均按源 0.30 秒换算离弦节点，使用贴合人物体型内圆弧的 8 箭环形扇区，命中前方目标一次并减速，不命中身后",
 	)

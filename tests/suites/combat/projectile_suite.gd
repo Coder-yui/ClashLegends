@@ -34,6 +34,11 @@ func _check_projectile_travel() -> void:
 	for _i in 12:
 		_main._tick_projectiles(_main.SIM_DT)
 	_expect(target.hp < hp_before and _main._projectile_system.projectiles.is_empty(), "弹道抵达目标碰撞圆后才结算伤害")
+	_expect(is_equal_approx(target.control.slow_timer, 2.0) and is_equal_approx(target.control.slow_multiplier, 0.7), "冰霜射击在普攻真实命中后减速30%持续2秒")
+	target.control.tick_slows(1.95)
+	_expect(target.control.slow_timer > 0.0, "冰霜射击在末个Tick前仍有效")
+	target.control.tick_slows(0.05)
+	_expect(is_zero_approx(target.control.slow_timer), "冰霜射击满2秒到期")
 	attacker.set_meta("projectile_model_offset", Vector2(5, -35))
 	target.set_meta("projectile_model_offset", Vector2(0, -80))
 	_main.launch_attack(attacker, target, 10.0, attacker.projectile_speed, 0.0, 0.0, attacker.color)

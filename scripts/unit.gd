@@ -2117,6 +2117,8 @@ func _deal_continuous_damage(amount: float) -> void:
 		on_attack_landed(form_index, 0.0)
 
 func _deal_attack_damage_to(target: Node2D, amount: float, effects: Dictionary = {}) -> bool:
+	effects = effects.duplicate(true)
+	effects.merge(on_hit_passive_effects())
 	if target == null or not is_instance_valid(target) or target.hp <= 0.0:
 		return false
 	if battle_context != null:
@@ -2126,6 +2128,8 @@ func _deal_attack_damage_to(target: Node2D, amount: float, effects: Dictionary =
 		var result := BattleNumbers.hit(target, BattleNumbers.quantity(amount) + on_hit_passive_damage(target), self, team, global_position)
 		var landed: bool = result.landed
 		if landed:
+			if target is Unit and target.hp > 0.0 and effects.has("on_hit_slow_duration"):
+				target.apply_slow(float(effects.on_hit_slow_duration), float(effects.on_hit_slow_multiplier), effects.on_hit_status_source, effects.on_hit_context)
 			if target is Unit and int(effects.get("blind_charges", 0)) > 0:
 				(target as Unit).apply_blind(int(effects.blind_charges), CombatInteraction.effect_context(self))
 			on_attack_landed(-1, float(result.health_lost))
@@ -2144,6 +2148,14 @@ func _settle_melee_delivery(delivered: bool, generation: int, cycle: int, advanc
 		_pending_extra_attacks.assign(_pending_extra_attacks.filter(func(pending): return int(pending.cycle_id) != cycle))
 
 ## 每一刀都独立消费一次致盲。剑圣 Passive 的第二刀因此确实算作第二次普通攻击。
+func on_hit_passive_effects() -> Dictionary:
+	var definition := PresentationConfig.for_form(_base_form_stats, form_index)
+	if float(definition.get("on_hit_slow_duration", 0.0)) <= 0.0: return {}
+	return {"on_hit_slow_duration": definition.on_hit_slow_duration,
+		"on_hit_slow_multiplier": definition.on_hit_slow_multiplier,
+		"on_hit_status_source": status_source("on_hit_slow"),
+		"on_hit_context": CombatInteraction.effect_context(self, team, global_position)}
+
 func _perform_attack_strike(target: Node2D, amount: float, effects: Dictionary = {}) -> bool:
 	record_combat_activity()
 	if blind_attack_charges > 0:

@@ -1047,6 +1047,9 @@ func _play_state(state: int, blend_time: float = -1.0) -> void:
 		var playback_speed := _state_playback_speed(state, animation_name)
 		_set_model_visual_clip(animation_name)
 		_play_clip(animation_name, &"locomotion", playback_speed, _transition_blend(&"locomotion") if blend_time < 0.0 else blend_time)
+		# Idle 部署按原速取末尾部署时长，不压缩整段待机。
+		if state == 0 and animation_name == StringName(_animation_names.get("idle", "")):
+			_animation_player.seek(maxf(_animation_player.get_animation(animation_name).length - _source.deploy_time, 0.0), true)
 
 func _start_idle_cycle(reset_index: bool, blend_time: float = -1.0) -> void:
 	var configured := _animation_list("idle_cycle")
@@ -1321,6 +1324,8 @@ func _state_playback_speed(state: int, animation_name: StringName) -> float:
 	var target_duration := 0.0
 	match state:
 		0:
+			if animation_name == StringName(_animation_names.get("idle", "")):
+				return 1.0
 			# 可选的通用裁剪：只播放部署动画开头的一段，剩余部分由普通状态机接管。
 			var deploy_ratio := clampf(float(_animation_names.get("deploy_clip_ratio", 1.0)), 0.01, 1.0)
 			target_duration = _source.deploy_time / deploy_ratio

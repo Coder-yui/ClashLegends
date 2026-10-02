@@ -192,6 +192,8 @@ static func passives(stats: Dictionary) -> Array[Dictionary]:
 		})
 	if stats.has("heal_every_hits"):
 		result.append({"name": String(stats.get("heal_on_hit_name", "无畏战吼")), "description": "每第%d次普通攻击命中回复%s点生命。" % [int(stats.get("heal_every_hits", 0)), format_number(roundf(float(stats.get("heal_amount", 0.0)))) ]})
+	if float(stats.get("on_hit_slow_duration", 0.0)) > 0.0:
+		result.append({"name": String(stats.get("on_hit_passive_name", "冰霜射击")), "description": "普通攻击命中使敌人减速%s%%，持续%s秒；万箭齐发也触发此被动。" % [format_number((1.0 - float(stats.on_hit_slow_multiplier)) * 100.0), format_number(float(stats.on_hit_slow_duration))]})
 	if float(stats.get("on_hit_max_health_ratio", 0.0)) > 0.0:
 		var scope := "普攻与每次剪切" if (stats.get("active_skills", []) as Array).any(func(skill): return bool(skill.get("applies_on_hit_passive",false))) else "普通攻击命中"
 		result.append({"name": String(stats.get("on_hit_passive_name", "千穿百孔")), "description": "%s附加目标最大生命值%s%%的伤害（四舍五入）；对防御塔和水晶固定附加%d点。" % [scope, format_number(float(stats.on_hit_max_health_ratio) * 100.0), roundi(float(stats.get("on_hit_tower_damage", 0.0)))]})

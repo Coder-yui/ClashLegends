@@ -6,21 +6,22 @@ static func definition() -> Dictionary:
 		"gameplay": {
 			"name": "艾希", "cost": 3, "type": "unit",
 			"description": "远程射手，能攻击空中和地面目标，在安全距离持续输出。",
-			"hp": 340, "damage": 58, "range": 170.0,
+			"hp": 340, "damage": 50, "range": 170.0,
 			# Attack1/2 原片 64/30 秒，源 0.30 秒离弦；完整压到基础 1 秒攻击周期。
 			"speed": SPEED_SLIGHTLY_SLOW, "interval": 1.0, "first_hit": 0.14,
 			"size_tier": SIZE_MEDIUM, "radius": RADIUS_MEDIUM,
 			"mass": 3.0, "sight": 240.0,
 			"projectile_speed": 480.0,
+			"on_hit_passive_name": "冰霜射击", "on_hit_slow_duration": 2.0, "on_hit_slow_multiplier": 0.7,
 			"projectile_spawn_at_edge": true, "projectile_spawn_offset": 7.5, "projectile_collision_radius": 3.0,
 			"is_air": false, "building_only": false, "can_attack_air": true,
 			"active_skills": [{
 					"name": "万箭齐发", "kind": "frontal", "shape": "fan",
 					"cost": 2, "max_uses": 1, "cooldown": 10.0,
-					"description": "使用 Spell2 朝前方扇形区域射出 8 根非穿透箭矢，每支命中首个敌人后消失；同次施法对每个目标最多造成 70 点伤害并减速 1 秒。",
+					"description": "使用 Spell2 朝前方扇形区域射出 8 根非穿透箭矢，每支命中首个敌人后消失；同次施法对每个目标最多造成 70 点伤害，并触发被动冰霜射击（减速30%，持续2秒）。",
 					"length": 210.0, "arc_degrees": 72.0, "projectile_count": 8, "fan_inner_arc": true,
 					"projectile_stop_on_hit": true,
-					"damage": 70, "slow_duration": 1.0, "slow_multiplier": 0.55,
+					"damage": 70, "applies_on_hit_slow": true,
 					"impact_delay": 0.16, "cast_duration": 1.0,
 					"cast_locks": ["movement", "attack", "facing"],
 					# 箭矢表现也等待源离弦点；保留既有约 0.2 秒的飞行表现。

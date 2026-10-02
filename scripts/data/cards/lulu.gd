@@ -25,7 +25,7 @@ static func definition() -> Dictionary:
 		"visual": {
 			"visual_radius": RADIUS_SLIGHTLY_SMALL + VISUAL_RADIUS_PADDING,
 			"visual_scene_path": "res://assets/units/lulu/lulu_view.tscn", "visual_forward_yaw": 0.0,
-			"visual_animations": {"deploy": "Lulu_idle0_anm", "idle": "Lulu_idle0_anm", "deploy_clip_ratio": 1.0 / 4.599997043609619, "move": "Run", "attack": ["Attack1", "Attack2"], "death": "Death", "death_duration": 1.0, "visual_actions": {"growth": "Spell4"}},
+			"visual_animations": {"deploy": "Lulu_idle0_anm", "idle": "Lulu_idle0_anm", "move": "Run", "attack": ["Attack1", "Attack2"], "death": "Death", "death_duration": 1.0, "visual_actions": {"growth": "Spell4"}},
 			"active_skills": [{"visual_action": "growth", "icon_path": "res://assets/skills/lulu_0.png"}],
 			"projectile_visual": "magic_orb", "projectile_visual_scale": 1.4, "projectile_visual_height": 50.0,
 			"projectile_colors": [Color(0.54, 0.18, 0.86), Color(0.54, 0.18, 0.86)], "color": Color(0.7, 0.3, 1.0),

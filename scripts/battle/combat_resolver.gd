@@ -79,6 +79,8 @@ func _settle_bleeding_attack(target: Node2D, source: Unit, effects: Dictionary, 
 
 func _apply_attack_hit_effects(target: Node2D, effects: Dictionary, source: Node2D = null) -> void:
 	if target is Unit and is_instance_valid(target) and target.hp > 0.0:
+		if float(effects.get("on_hit_slow_duration", 0.0)) > 0.0:
+			target.apply_slow(float(effects.on_hit_slow_duration), float(effects.on_hit_slow_multiplier), effects.on_hit_status_source, effects.on_hit_context)
 		var blind_charges := maxi(int(effects.get("blind_charges", 0)), 0)
 		if blind_charges > 0:
 			(target as Unit).apply_blind(blind_charges, CombatInteraction.effect_context(source if is_instance_valid(source) else null))

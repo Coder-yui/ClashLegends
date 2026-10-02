@@ -13,6 +13,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_finished_source_idle_transition()
 	_check_cast_policies_and_snapshot()
 	_check_control_interruptions()
+	_check_idle_tail_deploy()
 	_check_deploy_control_priority()
 	_check_deploy_control_endings()
 
@@ -634,3 +635,24 @@ func _check_deploy_control_endings() -> void:
 		view.free()
 		unit.free()
 	_main.mode = saved_mode
+
+func _check_idle_tail_deploy() -> void:
+	for card in ["ashe", "anivia", "anivia_egg", "darius", "lulu", "pix", "voidfish", "melee_minion", "ranged_minion", "siege_minion", "super_minion", "tryndamere"]:
+		var stats := CardDB.get_unit_stats(card).duplicate()
+		stats["deploy_time"] = 0.5 if card == "ashe" else 1.0
+		var unit := Unit.new()
+		unit.setup(0, stats, stats.name)
+		_main.add_child(unit)
+		_main._battle_presentation.attach_unit(unit, stats)
+		var view := _view_for(unit)
+		view._play_state(0, 0.0)
+		var player := view._animation_player
+		var clip := StringName(stats.visual_animations.idle)
+		if card == "tryndamere":
+			clip = &"DeployIdle" # 独立片段已经截取了原Idle最后1秒。
+			_expect(player.current_animation == clip, "蛮王部署播放独立Idle尾段")
+		var length := player.get_animation(clip).length
+		_expect(is_equal_approx(player.current_animation_position, maxf(length - unit.deploy_time, 0.0)), card + "部署从Idle尾段部署时长开始")
+		_expect(is_equal_approx(view._current_clip_speed, 1.0), card + "部署保持Idle原速")
+		view.free()
+		unit.free()
