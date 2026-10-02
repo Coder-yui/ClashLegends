@@ -156,6 +156,7 @@ func _hit_trail(source: Unit, start: Vector2, end: Vector2, excluded: Node2D) ->
 			source.battle_context.notify_unit_audio_event(source, &"charge:trail_hit", target.global_position)
 
 func _resolve_blast(source: Unit) -> void:
+	# 碰撞爆发同时覆盖空地目标，独立于奥恩仅攻击建筑的普攻索敌能力。
 	var center: Vector2 = impact_center
 	for target in source.get_tree().get_nodes_in_group("combatants"):
 		if target == source or not is_instance_valid(target) or target.hp <= 0.0 or target.team == source.team:

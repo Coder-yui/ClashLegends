@@ -23,7 +23,7 @@ static func definition() -> Dictionary:
 				"stun_duration": 1.5, "cast_duration": 1.4,
 				"charge_prepare_time": 0.35, "charge_recovery_time": 0.55, "charge_miss_recovery_time": 0.2,
 				"cast_locks": ["movement", "attack", "facing"],
-				"description": "蓄力0.35秒，向前冲锋3.5格（0.5秒）；撞到障碍停顿0.55秒，未撞到则收势0.2秒；冲锋速度不受移速影响。路径上的敌人受到少量伤害；遇到建筑、河流或场地边界时停止，并以障碍表面接触点为中心造成范围伤害和1.5秒眩晕。未撞上障碍时不造成范围伤害或眩晕。",
+				"description": "蓄力0.35秒，向前冲锋3.5格（0.5秒）；撞到障碍停顿0.55秒，未撞到则收势0.2秒；冲锋速度不受移速影响。路径上的敌人受到少量伤害；遇到建筑、河流或场地边界时停止，并以障碍表面接触点为中心对空中与地面敌人造成范围伤害和1.5秒眩晕。未撞上障碍时不造成范围伤害或眩晕。",
 			}],
 		},
 		"visual": {

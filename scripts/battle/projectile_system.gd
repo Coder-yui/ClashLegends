@@ -117,6 +117,7 @@ func launch(attacker: Node2D, target: Node2D, amount: float, projectile_speed: f
 		"visual_offset_follows_trajectory": visual_offset_follows_trajectory,
 		"visual_launch_pos": start_position, "direction": direction,
 	}
+	# 穿透普攻按发射者对空能力筛选；不继承主目标的空地层（图奇可一箭同时命中两层）。
 	if attacker is Unit and attacker.piercing_attacks_active():
 		projectiles[id].merge({"skill_fan": true, "basic_piercing": true,
 			"skill": {"projectile_piercing": true, "ground_only": not attacker.can_attack_air},

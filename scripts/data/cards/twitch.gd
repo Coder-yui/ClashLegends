@@ -14,7 +14,7 @@ static func definition() -> Dictionary:
 			"is_air": false, "building_only": false, "can_attack_air": true,
 			"active_skills": [{
 				"name": "火力全开", "kind": "buff", "cost": 2, "max_uses": 1, "cooldown": 0.0,
-				"description": "持续5秒，攻速提高50%，弹速翻倍，攻击距离从170提升到200；普攻变为固定飞行300距离的直线穿透弩箭，不追踪移动目标，每支箭对沿途每个敌人造成一次完整普攻伤害。",
+				"description": "持续5秒，攻速提高50%，弹速翻倍，攻击距离从170提升到200；普攻变为固定飞行300距离的直线穿透弩箭，不追踪移动目标，同一支箭可同时命中沿途空中和地面敌人，每个敌人受到一次完整普攻伤害。",
 				"duration": 5.0, "attack_speed_multiplier": 1.5,
 				"projectile_speed_multiplier": 2.0, "range_bonus": 30.0, "piercing_attacks": true, "piercing_distance": 300.0,
 				"cast_duration": 0.25, "impact_delay": 0.0, "cast_locks": [],
