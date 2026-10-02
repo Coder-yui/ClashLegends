@@ -5,15 +5,17 @@
       "event": "swing",
       "source_txtp": "ClashLegends-开发素材库/03-制作中/卑尔维斯/audio/belveth/txtp/Play_sfx_Belveth_BelvethRMinion_cast_melee.txtp",
       "target": "swing_1.wav",
-      "sha256": "aaeb84f4fd7067a9a8b004acb9283c4164ae8604d41d516eb9938090985c4424",
-      "processing": "48000Hz mono PCM16; no normalization"
+      "sha256": "7805a8e1d09315f462cd235720f2e0aef4a441275b5f6e8b6fd7d24cda979fc2",
+      "processing": "vgmstream-cli -W 4 float decode; fixed -6 dB shared headroom for melee swing/hit before 48000Hz mono PCM16 conversion; no per-file normalization",
+      "float_source_sha256": "0a9cc5937d171de5bc951b1a531a7f536c54b0755ade02ba7c8fdfc9ee121f4e"
     },
     {
       "event": "hit",
       "source_txtp": "ClashLegends-开发素材库/03-制作中/卑尔维斯/audio/belveth/txtp/Play_sfx_Belveth_BelvethRMinion_hit_melee.txtp",
       "target": "hit_1.wav",
-      "sha256": "401c009b4b095c454b0e0917cdd74f6fdfe03474814014ad2243c55b2abb16d2",
-      "processing": "48000Hz mono PCM16; no normalization"
+      "sha256": "4c9be6bafd3f71a34317371963189db9092c4ce6edabd62f1f0906576c078e76",
+      "processing": "vgmstream-cli -W 4 float decode; fixed -6 dB shared headroom for melee swing/hit before 48000Hz mono PCM16 conversion; no per-file normalization",
+      "float_source_sha256": "a9a7dc2fb62814481116407bfb36e6e2633c944ecc24470546f45ad4d7753147"
     },
     {
       "event": "deploy",
