@@ -76,4 +76,3 @@ func _update_mesh(view: MeshInstance3D, bounds: Rect2, camera: Camera3D) -> void
 	var mesh := ArrayMesh.new()
 	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
 	view.mesh = mesh
-
