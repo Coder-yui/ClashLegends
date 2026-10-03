@@ -67,7 +67,13 @@ func _check_default_local_deck(harness: Object) -> void:
 	local._elixir.elixir = 10.0
 	var visible: Array = local._hand._hand.duplicate()
 	harness._expect(local._deck.size() == 8 and visible == local.get_authoritative_hand(0) and local.get_authoritative_hand(1).size() == 4, "直接单机启动的默认卡组、显示手牌与本地权威循环一致，AI独立随机四张")
-	var card: String = visible[0]
+	# 本断言检查单位部署；默认卡组也可能抽到法术，不能要求法术生成Unit。
+	var unit_cards := visible.filter(func(id): return String(CardDB.get_card(id).get("type", "unit")) != "spell")
+	harness._expect(not unit_cards.is_empty(), "默认起手包含可验证部署的单位或建筑")
+	if unit_cards.is_empty():
+		local.free()
+		return
+	var card: String = unit_cards[0]
 	var cost: float = local.card_cost_for_team(0, card)
 	var accepted: bool = local.play_card(0, card, Vector2(300, 900), {"elixir": local._elixir})
 	harness._expect(accepted and is_equal_approx(local._elixir.elixir, 10.0 - cost) and local._hand._hand != visible, "直接单机启动可以真实扣费出牌并轮换")
