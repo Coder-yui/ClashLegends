@@ -1970,8 +1970,8 @@ func _can_submit_active_skill(ability_id: int, expected_team: int = -1) -> bool:
 	return cost <= 0.0 or (payer != null and payer.elixir >= cost)
 
 ## 执行时费用已经预扣，不能再次以余额/本请求pending阻挡；重新检查当前权威行动权限。
-func queue_shield_explosion(unit: Unit, skill: Dictionary) -> void:
-	_active_skill_effect_system.queue_shield_explosion(unit, skill)
+func queue_expiry_explosion(unit: Unit, skill: Dictionary) -> void:
+	_active_skill_effect_system.queue_expiry_explosion(unit, skill)
 
 func _active_skill_is_legal(ability_id: int, expected_team: int = -1) -> bool:
 	if not _active_skill_has_qualification(ability_id, expected_team): return false
@@ -2659,7 +2659,7 @@ func _rpc_frontal_skill_fx(epoch: String, net_id: int, pos: Vector2, forward: Ve
 	_skill_presentation.show_network_frontal({
 		"source_ref": null,
 		"net_id": net_id,
-		"fixed_position": shape in ["target_circle", "target_circle_strong", "star_impact", "star_impact_strong", "shockwave", "frost_storm"],
+		"fixed_position": shape in ["target_circle", "target_circle_strong", "star_impact", "star_impact_strong", "shockwave", "frost_storm", "aftershock"],
 		"pos": pos,
 		"forward": forward.normalized(),
 		"source_radius": source_radius,

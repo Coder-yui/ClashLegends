@@ -418,5 +418,12 @@
     "method": "run",
     "scene": "battle",
     "group": "cards"
+  },
+  {
+    "id": "TargetDummySuite",
+    "script": "res://tests/suites/cards/target_dummy_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "cards"
   }
 ]

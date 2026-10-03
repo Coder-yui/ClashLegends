@@ -558,5 +558,14 @@
     "source_path": "assets/characters/morgana/hud/icons2d/fallenangel_tormentedsoil.dds",
     "source_sha256": "ebf97f7674cef41a755e6a85930b5a5c943928d526069e4fadbbb7554da259c8",
     "sha256": "3f1b749c766eff7928c2417a803234ea8eb6a87eba75f105c0fe5dc5c7a85a7f"
+  },
+  {
+    "card": "target_dummy",
+    "skill_index": 0,
+    "path": "res://assets/skills/target_dummy_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Global.wad.client",
+    "source_path": "assets/perks/styles/resolve/veteranaftershock/veteranaftershock.tex",
+    "source_sha256": "d9c7d544a73129a6cbe7bd07506a26be39b9dfe4ecb7c0990a3e2969216d5f8c",
+    "sha256": "6a78816151a00f7a4f23c7ff9df596413f4bc07a566a3b0f0b8f93a40e1c3569"
   }
 ]

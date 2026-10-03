@@ -2,6 +2,8 @@ class_name PresentationEvents
 extends RefCounted
 ## 当前实际派发能力表；新增 cue 必须同时实现权威派发与消费者。
 static func supports(stats: Dictionary, cue: String) -> bool:
+	if cue == "hit": return String(stats.get("type", "")) in ["unit", "building"]
+	if cue == "aftershock:explode": return (stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "aftershock")
 	if cue in ["stasis_target:sustain", "spell:flight"]: return String(stats.get("spell_kind", "")) == "stasis"
 	if cue in ["stealth:enter", "stealth:exit"]: return float(stats.get("stealth_delay", 0.0)) > 0.0
 	if cue in ["attack_wave:launch", "attack_wave:hit"]: return float(stats.get("attack_wave_damage", 0.0)) > 0.0
@@ -75,7 +77,7 @@ static func supports(stats: Dictionary, cue: String) -> bool:
 			return float(stats.get("active_transform_duration", stats.get("transform_duration", 0.0))) > 0.0
 		if cue in ["empowered_ready", "empowered_swing"] and kind in ["empowered_attack", "bleeding_execute"]:
 			return true
-		if cue in ["active_buff:start", "active_buff:end", "active_buff:sustain", "active_buff:attack_launch", "active_buff:attack_hit"] and kind in ["buff", "undying_rage"]:
+		if cue in ["active_buff:start", "active_buff:end", "active_buff:sustain", "active_buff:attack_launch", "active_buff:attack_hit"] and kind in ["buff", "undying_rage", "aftershock"]:
 			return float(skill.get("duration", 0.0)) > 0.0
 		var actions: Array = [String(skill.get("visual_action", "")), String(skill.get("full_resource_visual_action", ""))]
 		actions.append_array(skill.get("resource_visual_actions", []))

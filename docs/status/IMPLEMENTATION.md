@@ -55,3 +55,7 @@
 Unit读取rage_crit_multiplier，仅支持两点资源的离散近战单位；被动资源不依赖主动槽。正式普通出手加1，暴击出手消费满层，取消前摇不消费。undying_rage由ActiveSkillEffectSystem在Cast Start即时建立StatusInstances的undying窗口并满怒，生命入口在护盾结算后将伤害钳制到1；固定Tick到期后恢复正常伤害。施放权限经Unit.can_start_active_skill逐技能判断，除凝滞外允许受控开始；普通技能权限不变。沿用现有资源/增益/攻击序号快照与empowered_reset动作取消事件，无新增网络字段。
 
 腐蚀法术由SpellSystem持有独立固定区域，20Hz时钟每10Tick结算一次60伤害，0.5至5秒共10次；入圈减速独立于伤害节拍立即检测；强化20%移速减缓复用ControlState与通用减速表现。客户端可靠事件只创建画面/区域音频，权威血量和减速沿用快照。字段与规则见[腐蚀法术](../units/corrosion.md)。
+
+## 余震减伤与到期结果
+
+`aftershock`在Cast Start建立StatusInstances减伤实例，Unit在入盾前取最强减伤并统一取整。自然到期返回效果，通过通用到期爆炸队列在同Tick技能效果阶段结算；移除/死亡不伪造自然结束，凝滞到期不补发。`can_attack=false`由通用Unit阻止自主普攻，不影响受击、寿命或技能。增益表现复用现有快照布尔位，受击动作复用可靠受击事件。见[训练木桩](../units/target_dummy.md)。

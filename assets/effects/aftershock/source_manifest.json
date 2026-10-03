@@ -1,0 +1,26 @@
+[
+  {
+    "path": "res://assets/effects/aftershock/buff.png",
+    "source_package": "Global.wad.client",
+    "source_path": "assets/perks/styles/resolve/aftershock/particles/perks_aftershock_buff.tex",
+    "source_sha256": "07ca2dda45d2db0705a9f19468e9993cdffd609286113954ce5d5f48f15be963",
+    "sha256": "2742c97f52c9b8ab909f092abc096571f24413c97733d26e54bc50debf0b78b8",
+    "processing": "ltk-tex-utils decode; Godot additive blending"
+  },
+  {
+    "path": "res://assets/effects/aftershock/aoe_ground_crack.png",
+    "source_package": "Global.wad.client",
+    "source_path": "assets/perks/styles/resolve/aftershock/particles/perks_aftershock_aoe_ground_crack.tex",
+    "source_sha256": "bd3945d807f4acab31e6c1212ab9e4afa2f5ece79c26087b09a737b5833cf052",
+    "sha256": "f748d1590aeb16c570aa793f87fa3f5c13b625764807b5a3c6f93d2329883bbc",
+    "processing": "ltk-tex-utils decode; Godot additive blending"
+  },
+  {
+    "path": "res://assets/effects/aftershock/avatar_mult.png",
+    "source_package": "Global.wad.client",
+    "source_path": "assets/perks/styles/resolve/aftershock/particles/perks_aftershock_avatar_mult.tex",
+    "source_sha256": "1f1ec186950cb121f902bf0d34213dcca5f53ff5366ca7c15019f4081d2097ad",
+    "sha256": "82a6240ab60dcf4e4b5cde945a96d35fc51c16ffd7ecbed6c221e316ff2aa21b",
+    "processing": "ltk-tex-utils decode; Godot animated green attached mesh overlay adaptation"
+  }
+]

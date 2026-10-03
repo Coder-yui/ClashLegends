@@ -7,7 +7,7 @@ var dash_strikes: Array[DashStrikeState] = []
 var ornn_charges: Array[OrnnChargeState] = []
 var _next_result_id := 1
 var _resolved_results: Dictionary = {}
-var _shield_explosions: Array[Dictionary] = []
+var _expiry_explosions: Array[Dictionary] = []
 var expanding_shockwaves: Array[Dictionary] = []
 ## 施法者跟随型持续范围效果；每个 pulse 都读取施法者当前权威位置。
 var continuous_area_effects: Array[Dictionary] = []
@@ -103,6 +103,8 @@ func prepare_dual_form_cast(source: Unit, skill: Dictionary) -> Dictionary:
 
 ## Cast Start 的效果必须在施法窗口开始时发生；它不依赖动画，也不等待 EffectExecution。
 func apply_cast_start(source: Unit, skill: Dictionary) -> void:
+	if StringName(skill.get("kind", "")) == &"aftershock":
+		source.buffs.apply(&"damage_reduction", source.status_source("aftershock"), float(skill.duration), {"reduction": float(skill.damage_reduction), "expiry_skill": skill})
 	if StringName(skill.get("kind", "")) == &"undying_rage":
 		source.begin_undying_rage(float(skill.duration))
 	if not bool(skill.get("shield_on_cast_start", false)):
@@ -127,7 +129,7 @@ func apply_cast_end(source: Unit, skill: Dictionary) -> void:
 
 func apply(source: Unit, skill: Dictionary) -> bool:
 	match StringName(skill.get("kind", "")):
-		&"undying_rage":
+		&"aftershock", &"undying_rage":
 			pass # 效果在 Cast Start 原子生效，受控不取消已施加的独立状态。
 		&"permanent_growth":
 			return apply_permanent_growth(source, skill)
@@ -632,8 +634,8 @@ func _damage_combatant(source: Unit, combatant: Node2D, amount: float, origin: V
 	return landed
 
 
-func queue_shield_explosion(source: Unit, skill: Dictionary) -> void:
-	_shield_explosions.append({"source": weakref(source), "skill": skill})
+func queue_expiry_explosion(source: Unit, skill: Dictionary) -> void:
+	_expiry_explosions.append({"source": weakref(source), "skill": skill})
 
 func tick_effects(dt: float) -> void:
 	var active_charges: Array[OrnnChargeState] = []
@@ -644,16 +646,19 @@ func tick_effects(dt: float) -> void:
 	for dash in dash_strikes:
 		if dash.tick(dt): ongoing.append(dash)
 	dash_strikes = ongoing
-	for pending in _shield_explosions:
+	for pending in _expiry_explosions:
 		var source = pending.source.get_ref()
 		if not is_instance_valid(source) or source.hp <= 0.0 or source.death_form.used: continue
 		var explosion: Dictionary = pending.skill.duplicate(true)
 		explosion.erase("shield")
 		activate_nova(source, explosion)
-		_presentation.present_shield_explosion(source, float(explosion.radius))
-
-		_controller.notify_unit_audio_event(source, &"shield:explode", source.global_position)
-	_shield_explosions.clear()
+		if String(explosion.get("kind", "")) == "aftershock":
+			_presentation.present_fixed_area(source.global_position, float(explosion.radius), float(explosion.radius), 0.65, source.team, &"aftershock")
+			_controller.notify_unit_audio_event(source, &"aftershock:explode", source.global_position)
+		else:
+			_presentation.present_shield_explosion(source, float(explosion.radius))
+			_controller.notify_unit_audio_event(source, &"shield:explode", source.global_position)
+	_expiry_explosions.clear()
 	_tick_expanding_shockwaves(dt)
 	_tick_continuous_area_effects(dt)
 
@@ -769,7 +774,7 @@ func clear() -> void:
 		var source = dash.source_ref.get_ref()
 		if is_instance_valid(source): dash._finish(source)
 	dash_strikes.clear()
-	_shield_explosions.clear()
+	_expiry_explosions.clear()
 	_resolved_results.clear()
 	_next_result_id = 1
 	expanding_shockwaves.clear()

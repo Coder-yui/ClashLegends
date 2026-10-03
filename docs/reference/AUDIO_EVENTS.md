@@ -92,3 +92,5 @@
 腐蚀法术支持`spell:zone_sustain`：正式施法通过Main的区域音频入口开始，复用GameAudioManager.start_zone_audio与可靠_rpc_zone_audio；区域5秒到期后保留原始尾声，清场和终局立即停止，暂停恢复沿用区域播放器。该事件仅对spell_kind=corrosion登记，普通spell:cast不再重复播放同段音轨。
 
 区域持续音支持布尔`natural_tail`（默认false，仅`:zone_sustain`）：保留原始单段音轨至自然结束，声音计时至少覆盖原音长度，不循环重播；暂停、清场、终局和预算淘汰仍统一管理。此字段不延长权威区域或视觉。腐蚀配置true，原音6.547188秒，权威区域5秒。
+
+训练木桩新增通用`hit`存活受击事件（沿用0.18秒节流，仅配置声音时派发）及`aftershock:explode`实际到期爆炸事件；余震启动使用`active_buff:sustain`持有2.5秒原版音轨，死亡/清场结束，硬控不取消。受击动画另消费既有可靠visual_hit，无需音频RPC驱动。

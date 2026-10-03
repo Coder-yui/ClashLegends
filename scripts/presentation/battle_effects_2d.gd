@@ -5,6 +5,9 @@ var spells: RefCounted
 var skills: RefCounted
 
 func _ready() -> void:
+	var aftershock := preload("res://assets/effects/aftershock/burst.gd").new()
+	aftershock.skills = skills
+	add_child(aftershock)
 	var lightning := LightningSpellEffect.new()
 	lightning.spells = spells
 	add_child(lightning)
@@ -161,6 +164,7 @@ func _draw_frontal_skill_effect(effect: Dictionary) -> void:
 		projectile_progress = clampf(projectile_elapsed / projectile_flight_duration, 0.0, 1.0)
 	var line_color := Color(0.28, 0.68, 1.0, 0.9) if int(effect.get("team", 0)) == 0 else Color(1.0, 0.34, 0.24, 0.9)
 	var fill_color := Color(line_color.r, line_color.g, line_color.b, 0.10 + 0.06 * remaining_ratio)
+	if shape == &"aftershock": return # 独立加色层绘制原版纹理。
 	if shape == &"shield_explosion":
 		var reach := maxf(length, 1.0)
 		# 前80毫秒冲至外圈，随后只留下逐渐消散的余焰；不把伤害画成缓慢扩散波。

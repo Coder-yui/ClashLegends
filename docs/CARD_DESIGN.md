@@ -228,3 +228,7 @@ bleeding_execute武装下一次普攻，以命中前本来源流血层数计算d
 ## 腐蚀区域法术
 
 `corrosion`使用现有`damage / interval`定义单次伤害与结算间隔，固定半径区域持续`duration`，每Tick重新查询敌方combatants（含空军、建筑卡、防御塔与水晶；Tower按tower_damage_multiplier结算30%伤害，其余全额）。独立施法分别持有下一伤害Tick，施放Tick不伤害，随后每10Tick结算60伤害，0.5至5秒共10次；凝滞与来源保护通过CombatInteraction准入，跳过的伤害不补发。`spell_corrosion`强化读取`slow_multiplier`并在施法时与入圈检测Tick向普通Unit按来源立即施加并续期通用减速，不等待伤害节点，离圈最多0.1秒恢复；同类减速取最强，不减攻速。客户端只接收表现与状态，清场取消区域。
+
+## 余震建筑
+
+`aftershock`使用duration/damage_reduction/radius/damage，瞬时建立独立减伤实例，到期在同Tick技能阶段爆炸；凝滞到期不补发，死亡取消。`can_attack=false`禁止通用Unit自主普攻。详细规则见[训练木桩](units/target_dummy.md)。

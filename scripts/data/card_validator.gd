@@ -805,6 +805,8 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 				errors.append("%s.icon_path: 必须指向 assets 内有效的 Texture2D" % label)
 		_require_fields(label, skill, [&"name", &"kind", &"cost", &"max_uses", &"cooldown"], errors)
 		var kind := StringName(skill.get("kind", ""))
+		if skill.has("damage_reduction") and kind != &"aftershock":
+			errors.append(label + ".damage_reduction: 仅用于aftershock")
 		for option in ["air_only", "dash_spin"]:
 			if skill.has(option) and kind != &"dash_strike":
 				errors.append("%s.%s: 仅用于 dash_strike" % [label, option])
@@ -946,6 +948,14 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 					errors.append("%s.damage: 必须 >= 0" % label)
 				if float(skill.get("duration", 0.0)) > float(skill.get("cast_duration", 0.0)):
 					errors.append("%s.duration: 不得大于 cast_duration" % label)
+			&"aftershock":
+				_require_fields(label, skill, [&"duration", &"damage_reduction", &"radius", &"damage"], errors)
+				if float(skill.get("duration", 0.0)) <= 0.0 or float(skill.get("radius", 0.0)) <= 0.0 or float(skill.get("damage", -1.0)) < 0.0:
+					errors.append(label + ": 余震要求正持续时间、范围和非负伤害")
+				if float(skill.get("damage_reduction", -1.0)) < 0.0 or float(skill.get("damage_reduction", 2.0)) > 1.0:
+					errors.append(label + ": 减伤比例必须在0到1之间")
+				if float(skill.get("cast_duration", 0.0)) != 0.0 or float(skill.get("impact_delay", 0.0)) != 0.0 or skill.has("visual_action"):
+					errors.append(label + ": 余震必须瞬时建立独立状态，不占用全身动作")
 			&"undying_rage":
 				if float(skill.get("duration", 0.0)) <= 0.0 or float(stats.get("rage_crit_multiplier", 1.0)) <= 1.0:
 					errors.append(label + ": 拒绝死亡要求正持续时间及怒气暴击被动")

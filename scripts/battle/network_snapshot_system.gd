@@ -496,7 +496,7 @@ func _unit_snapshot_payload(id: int, u: Unit, has_continuous_target: bool = fals
 		active_skill_state.get("uses_remaining", 0), active_skill_state.get("cooldown_left", 0.0),
 		u.get_shield_ratio(),
 		u.get_shield_capacity_ratio(),
-		1 if u.active_buff_timer > 0.0 else 0,
+		1 if u.get_active_buff_active_visual() else 0,
 		1 if u.is_attack_visual_first_strike() else 0,
 		u.get_attack_elapsed_visual(), u.get_effective_movement_rate_visual(), u.get_action_permissions_visual(),
 		descriptor,

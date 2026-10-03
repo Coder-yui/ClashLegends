@@ -105,6 +105,7 @@ var is_building := false:
 		is_building = value
 		_sync_structure_group()
 var building_only := false
+var can_attack := true
 var can_attack_air := true
 var continuous_attack := false
 ## 一次性永久成长：固定生命增量与体型倍率，不写回共享定义。
@@ -451,6 +452,7 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	is_building = stats.get("is_building", false)
 	footprint_tiles = stats.get("footprint_tiles", Vector2i.ONE)
 	building_only = stats.get("building_only", false)
+	can_attack = bool(stats.get("can_attack", true))
 	can_attack_air = stats.get("can_attack_air", true)
 	continuous_attack = stats.get("is_continuous_attack", false)
 	growth_health_bonus = 0.0
@@ -771,7 +773,7 @@ func is_skill_resource_visible() -> bool:
 	return net_skill_resource_enabled if _in_client_mode() else skill_resource_enabled
 
 func get_active_buff_active_visual() -> bool:
-	return net_active_buff_active if _in_client_mode() else active_buff_timer > 0.0
+	return net_active_buff_active if _in_client_mode() else active_buff_timer > 0.0 or buffs.remaining(&"damage_reduction") > 0.0
 
 func get_active_speed_multiplier_visual() -> float:
 	return net_active_speed_multiplier if _in_client_mode() else active_speed_multiplier
@@ -1091,6 +1093,7 @@ func _apply_form(next_form_index: int, grant_max_hp_increase: bool, advance_form
 	sight_range = float(next_stats.get("sight", sight_range))
 	is_air = bool(next_stats.get("is_air", is_air))
 	building_only = bool(next_stats.get("building_only", building_only))
+	can_attack = bool(next_stats.get("can_attack", can_attack))
 	can_attack_air = bool(next_stats.get("can_attack_air", can_attack_air))
 	projectile_speed = float(next_stats.get("projectile_speed", projectile_speed))
 	projectile_spawn_at_edge = bool(next_stats.get("projectile_spawn_at_edge", false))
@@ -1290,6 +1293,10 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prep
 			queue_redraw()
 		_charge_timer = 0.0
 		_charged = false
+		return
+	if not can_attack:
+		_target = null
+		_attacking = false
 		return
 	if team_attack_boost_forging: return
 	if _attacking and _attack_visual_serial > 0:
@@ -1603,7 +1610,7 @@ func _tick_building_lifetime(dt: float) -> void:
 			if hp <= 0.0:
 				_die()
 				return
-		if _lifespan_left <= 0.0:
+		if _lifespan_left <= 0.000001:
 			hp = 0.0
 			_die()
 			return
@@ -2562,9 +2569,11 @@ func _tick_active_statuses(dt: float) -> void:
 	if shields.tick(dt) and hp > 0.0:
 		_restore_shield_health()
 	for effect in shields.expired_effects:
-		if hp > 0.0 and battle_context != null: battle_context.queue_shield_explosion(self, effect)
+		if hp > 0.0 and battle_context != null: battle_context.queue_expiry_explosion(self, effect)
 	shields.expired_effects.clear()
-	buffs.advance(dt)
+	for expired in buffs.advance(dt):
+		if expired.family == &"damage_reduction" and expired.potency.has("expiry_skill") and hp > 0.0 and not CombatInteraction.in_stasis(self) and battle_context != null:
+			battle_context.queue_expiry_explosion(self, expired.potency.expiry_skill)
 	_rescale_attack_phase(previous_speed)
 	_tick_skill_resource_decay(dt)
 
@@ -2613,7 +2622,7 @@ func take_damage(amount: float, from: Node2D = null, source_team: int = -1, sour
 		return false
 	if BattleNumbers.quantity(amount) > 0:
 		CombatInteraction.record_combat_effect(self, CombatInteraction.effect_context(from, source_team, source_position))
-	var remaining_damage := BattleNumbers.quantity(maxf(amount, 0.0))
+	var remaining_damage := BattleNumbers.quantity(maxf(amount, 0.0) * (1.0 - buffs.strongest(&"damage_reduction", &"reduction", 0.0)))
 	remaining_damage = shields.absorb(remaining_damage)
 	if not shields.broken_effects.is_empty() and battle_context != null:
 		battle_context.notify_unit_audio_event(self, &"explosive_shield:break", global_position)
@@ -2628,6 +2637,8 @@ func take_damage(amount: float, from: Node2D = null, source_team: int = -1, sour
 		if _hit_flash_event_cooldown <= 0.0:
 			_hit_flash_event_cooldown = HIT_FLASH_EVENT_COOLDOWN
 			notify_visual_hit()
+			if battle_context != null and PresentationConfig.audio_for(CardDB.get_card(card_id), team, form_index).get("events", {}).has("hit"):
+				battle_context.notify_unit_audio_event(self, &"hit", global_position)
 			if net_id >= 0 and battle_context != null:
 				battle_context.notify_unit_hit(net_id)
 		queue_redraw()

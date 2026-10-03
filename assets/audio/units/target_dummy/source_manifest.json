@@ -1,0 +1,152 @@
+[
+  {
+    "file": "assets/audio/units/target_dummy/play_sfx_perks_resolve_aftershock_onbuffactivate_r1.wav",
+    "cue": "active_buff:sustain",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/训练木桩/音频解码/wav/play_sfx_perks_resolve_aftershock_onbuffactivate_r1.wav",
+    "sha256": "bf778c38d004c180d50f0c7da1ce27073d8bb58e814475025d41d4a100697ca0",
+    "processing": "vgmstream decode, original level; no normalization",
+    "archived_source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/训练木桩/源件与过程记录/音频解码/wav/play_sfx_perks_resolve_aftershock_onbuffactivate_r1.wav",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Common.wad.client",
+    "source_audio_bank": "misc_gameplay_sfx_audio.bnk"
+  },
+  {
+    "file": "assets/audio/units/target_dummy/play_sfx_perks_resolve_aftershock_onbuffactivate_r2.wav",
+    "cue": "active_buff:sustain",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/训练木桩/音频解码/wav/play_sfx_perks_resolve_aftershock_onbuffactivate_r2.wav",
+    "sha256": "634eeb92aaf419e1d915ad9a5cc403c68148f3ff7c178acc254c13726a2daf75",
+    "processing": "vgmstream decode, original level; no normalization",
+    "archived_source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/训练木桩/源件与过程记录/音频解码/wav/play_sfx_perks_resolve_aftershock_onbuffactivate_r2.wav",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Common.wad.client",
+    "source_audio_bank": "misc_gameplay_sfx_audio.bnk"
+  },
+  {
+    "file": "assets/audio/units/target_dummy/play_sfx_perks_resolve_aftershock_onbuffactivate_r3.wav",
+    "cue": "active_buff:sustain",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/训练木桩/音频解码/wav/play_sfx_perks_resolve_aftershock_onbuffactivate_r3.wav",
+    "sha256": "dba1cf440d9c4ef56a3d032ea5cbafaf9f896ab6c05a9f2fd3d3f02c611b11fe",
+    "processing": "vgmstream decode, original level; no normalization",
+    "archived_source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/训练木桩/源件与过程记录/音频解码/wav/play_sfx_perks_resolve_aftershock_onbuffactivate_r3.wav",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Common.wad.client",
+    "source_audio_bank": "misc_gameplay_sfx_audio.bnk"
+  },
+  {
+    "file": "assets/audio/units/target_dummy/play_sfx_perks_resolve_aftershock_onbuffdeactivate_r1.wav",
+    "cue": "aftershock:explode",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/训练木桩/音频解码/wav/play_sfx_perks_resolve_aftershock_onbuffdeactivate_r1.wav",
+    "sha256": "2ec05e153e76aa91a547484bf15f804ee507f6ccfa2fa7251c5d2b9ffb6b43ad",
+    "processing": "vgmstream decode, original level; no normalization",
+    "archived_source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/训练木桩/源件与过程记录/音频解码/wav/play_sfx_perks_resolve_aftershock_onbuffdeactivate_r1.wav",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Common.wad.client",
+    "source_audio_bank": "misc_gameplay_sfx_audio.bnk"
+  },
+  {
+    "file": "assets/audio/units/target_dummy/play_sfx_perks_resolve_aftershock_onbuffdeactivate_r2.wav",
+    "cue": "aftershock:explode",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/训练木桩/音频解码/wav/play_sfx_perks_resolve_aftershock_onbuffdeactivate_r2.wav",
+    "sha256": "da87f231f92bd2cd32912e13f383199ec5d43a9628b79e7df0649c7cb9e1ff5b",
+    "processing": "vgmstream decode, original level; no normalization",
+    "archived_source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/训练木桩/源件与过程记录/音频解码/wav/play_sfx_perks_resolve_aftershock_onbuffdeactivate_r2.wav",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Common.wad.client",
+    "source_audio_bank": "misc_gameplay_sfx_audio.bnk"
+  },
+  {
+    "file": "assets/audio/units/target_dummy/play_sfx_perks_resolve_aftershock_onbuffdeactivate_r3.wav",
+    "cue": "aftershock:explode",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/训练木桩/音频解码/wav/play_sfx_perks_resolve_aftershock_onbuffdeactivate_r3.wav",
+    "sha256": "b278734f8c47fa59bc3be2e73c8b716eabcab8ac9c1838f563eef43dcb881647",
+    "processing": "vgmstream decode, original level; no normalization",
+    "archived_source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/训练木桩/源件与过程记录/音频解码/wav/play_sfx_perks_resolve_aftershock_onbuffdeactivate_r3.wav",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Common.wad.client",
+    "source_audio_bank": "misc_gameplay_sfx_audio.bnk"
+  },
+  {
+    "file": "assets/audio/units/target_dummy/play_sfx_practicedummy_death_r1.wav",
+    "cue": "death",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/训练木桩/木桩音频解码/wav/play_sfx_practicedummy_death_r1.wav",
+    "sha256": "0f0ededd8b8c15c5dc9cff7597a4eea3200e82d77f68a07abf95001ea4ed0cc0",
+    "processing": "vgmstream decode, original level; no normalization",
+    "archived_source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/训练木桩/源件与过程记录/木桩音频解码/wav/play_sfx_practicedummy_death_r1.wav",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Common.wad.client",
+    "source_audio_bank": "misc_global_sfx_audio.bnk"
+  },
+  {
+    "file": "assets/audio/units/target_dummy/play_sfx_practicedummy_death_r2.wav",
+    "cue": "death",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/训练木桩/木桩音频解码/wav/play_sfx_practicedummy_death_r2.wav",
+    "sha256": "9449c6c4ebc69b2464d976859f3ef2583d24081ec600258d0f465493e3d1879c",
+    "processing": "vgmstream decode, original level; no normalization",
+    "archived_source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/训练木桩/源件与过程记录/木桩音频解码/wav/play_sfx_practicedummy_death_r2.wav",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Common.wad.client",
+    "source_audio_bank": "misc_global_sfx_audio.bnk"
+  },
+  {
+    "file": "assets/audio/units/target_dummy/play_sfx_practicedummy_death_r3.wav",
+    "cue": "death",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/训练木桩/木桩音频解码/wav/play_sfx_practicedummy_death_r3.wav",
+    "sha256": "0fddd0ea7b37166b7c5e08af790bf6695d41a5b82af95405e5fc679a2652690b",
+    "processing": "vgmstream decode, original level; no normalization",
+    "archived_source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/训练木桩/源件与过程记录/木桩音频解码/wav/play_sfx_practicedummy_death_r3.wav",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Common.wad.client",
+    "source_audio_bank": "misc_global_sfx_audio.bnk"
+  },
+  {
+    "file": "assets/audio/units/target_dummy/play_sfx_practicedummy_onhit_r1.wav",
+    "cue": "hit",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/训练木桩/木桩音频解码/wav/play_sfx_practicedummy_onhit_r1.wav",
+    "sha256": "6d46b53a62e5353e1fd68a75f6c9c76ebaac81afaa84338aa6f5715d653431c0",
+    "processing": "vgmstream decode, original level; no normalization",
+    "archived_source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/训练木桩/源件与过程记录/木桩音频解码/wav/play_sfx_practicedummy_onhit_r1.wav",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Common.wad.client",
+    "source_audio_bank": "misc_global_sfx_audio.bnk"
+  },
+  {
+    "file": "assets/audio/units/target_dummy/play_sfx_practicedummy_onhit_r2.wav",
+    "cue": "hit",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/训练木桩/木桩音频解码/wav/play_sfx_practicedummy_onhit_r2.wav",
+    "sha256": "665c0ce5d84d3e77fc7e57bcdb591adc0192e0d678a126206dd98e561b34c5cf",
+    "processing": "vgmstream decode, original level; no normalization",
+    "archived_source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/训练木桩/源件与过程记录/木桩音频解码/wav/play_sfx_practicedummy_onhit_r2.wav",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Common.wad.client",
+    "source_audio_bank": "misc_global_sfx_audio.bnk"
+  },
+  {
+    "file": "assets/audio/units/target_dummy/play_sfx_practicedummy_onhit_r3.wav",
+    "cue": "hit",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/训练木桩/木桩音频解码/wav/play_sfx_practicedummy_onhit_r3.wav",
+    "sha256": "244437b7ce25e9f73aac2906d168ac3632bc2a052f892ea08ac6fbffbd38c69e",
+    "processing": "vgmstream decode, original level; no normalization",
+    "archived_source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/训练木桩/源件与过程记录/木桩音频解码/wav/play_sfx_practicedummy_onhit_r3.wav",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Common.wad.client",
+    "source_audio_bank": "misc_global_sfx_audio.bnk"
+  },
+  {
+    "file": "assets/audio/units/target_dummy/play_sfx_practicedummy_onhit_r4.wav",
+    "cue": "hit",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/训练木桩/木桩音频解码/wav/play_sfx_practicedummy_onhit_r4.wav",
+    "sha256": "e5019d4aca602749168b84d9f2ebd964e09068f5c7807d667cd6f5e46527eeb5",
+    "processing": "vgmstream decode, original level; no normalization",
+    "archived_source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/训练木桩/源件与过程记录/木桩音频解码/wav/play_sfx_practicedummy_onhit_r4.wav",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Common.wad.client",
+    "source_audio_bank": "misc_global_sfx_audio.bnk"
+  },
+  {
+    "file": "assets/audio/units/target_dummy/play_sfx_practicedummy_spawn_r1.wav",
+    "cue": "deploy:start",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/训练木桩/木桩音频解码/wav/play_sfx_practicedummy_spawn_r1.wav",
+    "sha256": "7f52b16d4fbbfafc4a3172e2acec5819c42ccecee0bfb60ced1756fc82d27969",
+    "processing": "vgmstream decode, original level; no normalization",
+    "archived_source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/训练木桩/源件与过程记录/木桩音频解码/wav/play_sfx_practicedummy_spawn_r1.wav",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Common.wad.client",
+    "source_audio_bank": "misc_global_sfx_audio.bnk"
+  },
+  {
+    "file": "assets/audio/units/target_dummy/play_sfx_practicedummy_spawn_r2.wav",
+    "cue": "deploy:start",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/训练木桩/木桩音频解码/wav/play_sfx_practicedummy_spawn_r2.wav",
+    "sha256": "138c0a14073452aa0e52e58bd2c3e81211881e0213add3b75997f2ceb3a184f8",
+    "processing": "vgmstream decode, original level; no normalization",
+    "archived_source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/训练木桩/源件与过程记录/木桩音频解码/wav/play_sfx_practicedummy_spawn_r2.wav",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Common.wad.client",
+    "source_audio_bank": "misc_global_sfx_audio.bnk"
+  }
+]

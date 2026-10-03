@@ -11,8 +11,8 @@ func interrupt_team_attack_boost(unit: Unit) -> void:
 func _init(controller: Node2D) -> void:
 	_controller = controller
 
-func queue_shield_explosion(unit: Unit, skill: Dictionary) -> void:
-	_controller.queue_shield_explosion(unit, skill)
+func queue_expiry_explosion(unit: Unit, skill: Dictionary) -> void:
+	_controller.queue_expiry_explosion(unit, skill)
 
 func find_unit_landing(unit: Unit, desired: Vector2, allow_terrain: bool) -> Vector2:
 	return UnitLandingQuery.find_position(unit, desired, allow_terrain)

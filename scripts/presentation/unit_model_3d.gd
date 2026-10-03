@@ -1668,6 +1668,7 @@ func _on_source_visual_hit() -> void:
 		return
 	if is_instance_valid(_active_buff_visual):
 		_active_buff_visual.on_hit()
+	_on_presentation_cue(&"hit")
 	_hit_flash_timer = 0.05
 	_set_hit_flash(true)
 

@@ -56,7 +56,7 @@ CommandSchedule 通过 enqueue/take/cancel/clear 管理内部集合；inspect �
 
 ActiveSkillRoster.entry 是单项只读视图，权威消费走 consume，客户端走 replace_replica。多单位卡的来源卡、部署身份与技能槽分别保存；转交只查询同次部署的存活成员，不能以卡 ID 相同推断资格。CardCycle 只维护牌序，可靠确认后更新客户端镜像。
 
-盾层自然到期由 ShieldState 返回一次性结果；死亡和清除不能触发恢复或爆炸。爆炸递交技能效果批次；流血由 Unit/Tower 各自持有，CombatResolver 发放存活来源收益。形态、生命上限、待变形代次和技能资源由 Unit 汇合，死亡替身/复生的新实体不能与原位换形混用。
+盾层自然到期由 ShieldState 返回一次性结果；死亡和清除不能触发恢复或爆炸。盾层和StatusInstances减伤自然到期的爆炸统一通过queue_expiry_explosion递交技能效果批次；流血由 Unit/Tower 各自持有，CombatResolver 发放存活来源收益。形态、生命上限、待变形代次和技能资源由 Unit 汇合，死亡替身/复生的新实体不能与原位换形混用。
 
 技能后段绑定施法身份；冰冻/死亡取消依附动作，龙王星辰等独立结果持有固定落点和归因。DashStrikeState 在 skill_effects 阶段推进可受伤的穿单位突进，OrnnChargeState 按固定速度采样地形/建筑并结算沿途命中与停点范围效果，MovementSystem 跳过这两种状态的普通推挤。状态对象不直接写 Unit 的位置、锁、寻路或形态字段；Unit 的位置转换、突进完成和致死换形接口统一应用，旧施法序号不能释放新施法。PreDeploymentSweep 只在权威端得到伤害目标；客户端采样轨迹只用于显示。
 

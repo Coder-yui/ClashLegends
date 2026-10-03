@@ -1,0 +1,26 @@
+[
+  {
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/01-待开发/卡牌模型/target_dummy.glb",
+    "runtime": "assets/units/target_dummy/source/blue.glb",
+    "sha256": "5409023f60e9d32a77f948b879af541d912d4734f48bd2d74ef3e27863f6373c",
+    "scale": [
+      2.25,
+      2.25,
+      2.25
+    ],
+    "offset_y": -0.0209,
+    "archived_source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/训练木桩/源件/target_dummy.glb"
+  },
+  {
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/01-待开发/卡牌模型/target_dummy_(2).glb",
+    "runtime": "assets/units/target_dummy/source/red.glb",
+    "sha256": "cb6fece6627980dd62abb9d4a75a07cc2c06233ea144931fc6baf650fff893ca",
+    "scale": [
+      2.25,
+      2.25,
+      2.25
+    ],
+    "offset_y": -0.0209,
+    "archived_source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/训练木桩/源件/target_dummy_(2).glb"
+  }
+]

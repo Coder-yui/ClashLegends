@@ -26,14 +26,17 @@ func apply(family: StringName, source: StringName, duration: float, potency: Dic
 		"start_tick": tick_index, "end_tick": end_tick, "potency": potency.duplicate(true)})
 	return true
 
-func advance(dt: float) -> void:
+func advance(dt: float) -> Array[Dictionary]:
+	var expired: Array[Dictionary] = []
 	_fraction += maxf(dt, 0.0) * TICKS_PER_SECOND
 	var steps := floori(_fraction + 0.00000001)
 	_fraction -= steps
 	tick_index += steps
 	for i in range(_instances.size() - 1, -1, -1):
 		if int(_instances[i].end_tick) <= tick_index:
+			expired.append(_instances[i])
 			_instances.remove_at(i)
+	return expired
 
 func clear_family(family: StringName) -> void:
 	for i in range(_instances.size() - 1, -1, -1):
