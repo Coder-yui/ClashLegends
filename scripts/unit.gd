@@ -397,6 +397,7 @@ var _status_effect_offset := Vector2.ZERO # 3D 代理投影的离地平面，仅
 var _status_effect_phase := 0.0
 var _status_last_position := Vector2(INF, INF)
 var _status_visual_velocity := Vector2.ZERO
+var _soft_control_effect := preload("res://scripts/presentation/soft_control_effect.gd").new()
 
 func set_battle_context(context: BattleContext) -> void:
 	battle_context = context
@@ -591,6 +592,9 @@ func _process(delta: float) -> void:
 	presentation_state().advance_health_bar(delta)
 	_status_effect_phase = fposmod(_status_effect_phase + delta, preload("res://scripts/presentation/soft_control_effect.gd").LOOP_SECONDS)
 	_update_status_visual_motion(delta)
+	var had_slow_trails := not _soft_control_effect.trails.is_empty()
+	_soft_control_effect.advance(self, delta)
+	if had_slow_trails or not _soft_control_effect.trails.is_empty(): queue_redraw()
 	if movement_slow_visual() or attack_speed_slow_visual(): queue_redraw()
 	if restoration_fx_timer > 0.0: queue_redraw()
 	restoration_fx_timer = maxf(0.0, restoration_fx_timer - delta)
@@ -2933,7 +2937,8 @@ func _draw() -> void:
 		_forge_work_effect.draw_effect(self, get_health_bar_screen_center())
 	if stun_visual():
 		preload("res://scripts/presentation/stun_effect.gd").draw_effect(self, stun_effect_origin(), _status_effect_phase)
-	if hp > 0.0 and (movement_slow_effect_visible() or attack_speed_slow_visual()):
+	if hp > 0.0: _soft_control_effect.draw_trails(self)
+	if hp > 0.0 and attack_speed_slow_visual():
 		preload("res://scripts/presentation/soft_control_effect.gd").draw_effect(self, _status_effect_phase, movement_slow_effect_visible(), attack_speed_slow_visual())
 	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 

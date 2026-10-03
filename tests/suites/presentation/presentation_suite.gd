@@ -928,6 +928,25 @@ func _check_control_effect_motion() -> void:
 	_expect(not unit.movement_slow_effect_visible() and unit.stun_visual() and unit.attack_speed_slow_visual(), "眩晕停步隐藏黄色拖痕，不停止减攻速提示")
 	unit.control.tick_hard_controls(0.6)
 	_expect(not unit.stun_visual(), "眩晕到期清除漩涡")
+	var effect = unit._soft_control_effect
+	unit._status_visual_velocity = Vector2.ZERO
+	effect.advance(unit, 0.01)
+	for step in 6:
+		unit.position += Vector2(2, 0)
+		unit._update_status_visual_motion(0.01)
+		effect.advance(unit, 0.01)
+	_expect(effect.trails.size() == 1, "移动12px生成一对拖尾")
+	var first_center: Vector2 = effect.trails[0].center
+	for step in 24:
+		unit.position += Vector2(2, 0)
+		unit._update_status_visual_motion(0.01)
+		effect.advance(unit, 0.01)
+	_expect(effect.trails.size() == 5 and effect.trails[0].center == first_center, "连续移动可累积超过三段，旧段不跟随单位")
+	unit._update_status_visual_motion(0.1)
+	effect.advance(unit, 0.1)
+	_expect(effect.trails.size() == 5, "停步不再发射，已有拖尾保留至淡出")
+	effect.advance(unit, 0.85)
+	_expect(effect.trails.is_empty(), "已有拖尾寿命结束后清理")
 	unit.hp = 0
 	unit.control.refresh_stun(1.0)
 	_expect(not unit.stun_visual() and not unit.movement_slow_effect_visible(), "死亡不保留控制特效")

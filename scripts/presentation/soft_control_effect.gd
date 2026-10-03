@@ -3,21 +3,52 @@ extends RefCounted
 const ATTACK_SLOW_DENSITY := 0.8
 const LOOP_SECONDS := 10.0 # 0.4 / 0.8 / 1.2 Hz 发射与其他状态循环的公共周期。
 
-static func draw_effect(canvas: Unit, phase: float, movement_slow: bool, attack_slow: bool) -> void:
+const TRAIL_SPACING := 12.0
+const TRAIL_LIFETIME := 0.85
+var trails: Array[Dictionary] = []
+var _distance := 0.0
+var _last_origin := Vector2(INF, INF)
+
+func advance(canvas: Unit, delta: float) -> void:
+	for trail in trails:
+		trail.age += delta
+	trails = trails.filter(func(trail: Dictionary) -> bool: return trail.age < TRAIL_LIFETIME)
+	var origin := canvas.to_global(canvas.status_effect_origin())
+	if canvas.hp <= 0.0:
+		trails.clear()
+	if not canvas.movement_slow_effect_visible() or not _last_origin.is_finite():
+		_distance = 0.0
+		_last_origin = origin
+		return
+	# 用已过滤传送/击退的实际渲染位移累计距离；投影升降不增加发射量。
+	var travel := canvas._status_visual_velocity.length() * delta
+	var forward := canvas._status_visual_velocity.normalized()
+	var radius := clampf(canvas.visual_radius + 4.0, 18.0, 32.0)
+	var next := TRAIL_SPACING - _distance
+	while next <= travel:
+		var center := _last_origin.lerp(origin, next / travel) - forward * radius * 0.3
+		trails.append({"center": center, "forward": forward, "radius": radius, "age": 0.0})
+		next += TRAIL_SPACING
+	_distance = fposmod(_distance + travel, TRAIL_SPACING)
+	_last_origin = origin
+
+func draw_trails(canvas: Unit) -> void:
+	canvas.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+	for trail in trails:
+		var forward: Vector2 = trail.forward
+		var side := forward.orthogonal()
+		var alpha := (1.0 - float(trail.age) / TRAIL_LIFETIME) * 0.80
+		for mirror in [-1.0, 1.0]:
+			var start: Vector2 = trail.center + side * mirror * float(trail.radius) * 0.35
+			var end: Vector2 = start - forward * 8.0 + side * mirror * 7.0
+			canvas.draw_line(canvas.to_local(start), canvas.to_local(end), Color(0.65, 0.38, 0.04, alpha * 0.4), 4.8, true)
+			canvas.draw_line(canvas.to_local(start), canvas.to_local(end), Color(1.0, 0.87, 0.38, alpha), 2.4, true)
+	canvas.draw_set_transform(canvas._vis_offset, 0.0, Vector2.ONE)
+
+static func draw_effect(canvas: Unit, phase: float, _movement_slow: bool, attack_slow: bool) -> void:
 	var rotation := -canvas.get_global_transform_with_canvas().get_rotation()
 	canvas.draw_set_transform(canvas.status_effect_origin(), rotation, Vector2.ONE)
 	var radius := clampf(canvas.visual_radius + 4.0, 18.0, 32.0)
-	if movement_slow:
-		var forward := canvas._status_visual_velocity.rotated(-rotation).normalized()
-		var side := forward.orthogonal()
-		# 少量贴脚拖痕朝移动反向淡出，静止时立即隐藏，不画持续光圈。
-		for i in 3:
-			var t := fposmod(phase * 1.5 + float(i) / 3.0, 1.0)
-			var p := -forward * (radius * 0.3 + t * 22.0) + side * float(i - 1) * 9.0
-			var alpha := sin(PI * t) * 0.80
-			var points := PackedVector2Array([p + side * 3.5, p - forward * 3.0, p - forward * 8.0 - side * 2.0])
-			canvas.draw_polyline(points, Color(0.65, 0.38, 0.04, alpha * 0.4), 4.8, true)
-			canvas.draw_polyline(points, Color(1.0, 0.87, 0.38, alpha), 2.4, true)
 	if attack_slow:
 		# 固定种子的错落分布与不同下落周期；不逐帧随机，避免闪烁。
 		var offsets := [-0.94, 0.43, -0.36, 0.91, -0.68, 0.12, 0.68]
