@@ -123,7 +123,7 @@ CardValidator 检查字段、类型、时序、资源、召唤与动作关系；
 
 ## 横排编队与恢复护盾
 
-`deployment_formation` 支持 ring（默认）与 line；line 按相邻中心间距横排，正常下牌校验横排中心跨度，边缘身体在生成时逐兵限制到合法位置，不平移整排、不修改行走逻辑。`restoration_shield` 使用现有 shield / shield_duration / target_scope 字段。ShieldState 独立保存每层是否具备自然到期恢复资格；破裂或清除不发放恢复，Unit 只在权威存活时回复缺失生命。此盾计时沿用普通护盾，不因硬控延长，其他盾层不替代判断。
+`deployment_formation` 支持ring（默认）、polygon、square、line与depth_line。line/depth_line的spacing为相邻中心间距，分别横排/纵排；环形及多边形的spacing为外接半径，ring奇数成员包含中心点，polygon不放中心点，square旋转至一边平行河道。line正常下牌校验横排中心跨度，边缘身体在生成时逐兵限制到合法位置，不平移整排、不修改行走逻辑。`restoration_shield` 使用现有 shield / shield_duration / target_scope 字段。ShieldState 独立保存每层是否具备自然到期恢复资格；破裂或清除不发放恢复，Unit 只在权威存活时回复缺失生命。此盾计时沿用普通护盾，不因硬控延长，其他盾层不替代判断。
 
 ## 限时形态与分段吸血
 
@@ -187,7 +187,7 @@ bleeding_execute武装下一次普攻，以命中前本来源流血层数计算d
 
 `growth_ranged_id`/`growth_melee_id`及对应`*_hits`声明两条先到先锁的共享成长任务。MatchCardGrowth按阵营持有进度，CombatResolver在真实单体普攻命中后记录；普通单位死亡不清除队伍进度，已接受的部署命令保留接受时形态。来源牌仍负责轮换与主动槽，实际定义决定生成属性、技能费用和卡面；不修改CardDB。
 
-`terrain_traversal`单位可穿过河流/双方结构，仍与同层普通单位碰撞。TerrainTraversalState记录完整圆柱进出边沿，`terrain_entry_heal`与可选`terrain_entry_speed_multiplier`在入地形触发一次，离开后重新武装；加速固定1秒。普攻起手先出地形再在下一步重查射程。UnitLandingQuery用地面区域与扩张圆柱边界的投影/交点选择最近合法位置，无解不使用非法坐标。
+`terrain_traversal`单位可穿过河流/双方结构，仍与同层普通单位碰撞。TerrainTraversalState按完整身体是否满足地面合法性记录进出边沿（接触河道或结构阻挡即可触发，不要求全身埋入），`terrain_entry_heal`与可选`terrain_entry_speed_multiplier`在入地形触发一次，离开后重新武装；加速固定1秒。普攻起手通过UnitLandingQuery在目标射程内检查3圈各16个站位，选120像素内挤出距离最小的合法点，当步转换位置并继续正常前摇；无解等待，不使用非法坐标。
 
 主动`dash_strike`由DashStrikeState在既有skill_effects批次推进。`length`/`dash_duration`决定位移，`width`扫掠穿过的地面敌人，每目标每段一次；`spin_delay`到点后按`radius`旋转。突进结束恢复普通接触推挤逐步分离，不预先另找无重叠终点，`damage`为两段基础伤害；可选`on_hit_max_health_ratio`/`on_hit_tower_damage`与`hit_heal`分别控制每段附伤和最多一次命中回血。全程可受伤；突进阶段的有效眩晕/击退取消剩余突进和未开始旋转，击退独立接管。正常突进结束后普通旋转阶段保留眩晕/击退保护，冰冻/凝滞始终取消未释放后段；同批已提交结果不回滚。动画、音频不驱动模拟。
 

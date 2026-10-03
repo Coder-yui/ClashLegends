@@ -17,12 +17,6 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_deploy_control_priority()
 	_check_deploy_control_endings()
 
-func _view_for(unit: Unit) -> UnitModel3D:
-	for child in _main._battle_presentation._world_root.get_children():
-		if child is UnitModel3D and child._source == unit:
-			return child as UnitModel3D
-	return null
-
 func _check_control_interruptions() -> void:
 	# 眩晕会经过 UnitModel3D 的控制覆盖恢复路径；冻结则走动作重新对齐路径。
 	# 眩晕保留多段动作 section 和倍率；冰冻取消旧动作且不续播。

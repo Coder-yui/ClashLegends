@@ -18,3 +18,10 @@ func _spawn_test_unit(card_id: String, p_team: int, pos: Vector2) -> Unit:
 	unit.setup(p_team, stats, stats.name)
 	_main.add_child(unit)
 	return unit
+
+## 只查找既有表现代理，不创建模型或改变模拟状态。
+func _view_for(unit: Unit) -> UnitModel3D:
+	for child in _main._battle_presentation._world_root.get_children():
+		if child is UnitModel3D and child._source == unit:
+			return child as UnitModel3D
+	return null

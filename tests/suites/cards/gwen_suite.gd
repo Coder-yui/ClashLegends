@@ -2,12 +2,6 @@ class_name GwenSuite
 extends "res://tests/suites/battle_suite.gd"
 ## 格温卡牌领域：百分比被动、推塔回归与美术接入。
 
-func _view_for(unit: Unit) -> UnitModel3D:
-	for child in _main._battle_presentation._world_root.get_children():
-		if child is UnitModel3D and child._source == unit:
-			return child as UnitModel3D
-	return null
-
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main

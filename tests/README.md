@@ -2,6 +2,19 @@
 
 `tests/mechanics_check.gd` 是唯一 Godot 自动回归入口，`suite_catalog.json` 是套件 ID、脚本、方法、场景与领域的唯一注册表。默认执行全部领域；普通新卡自动进入全卡契约，仅独特机制需要专项用例。
 
+## 按任务选入口
+
+| 验证类型 | 常用入口 | 证明范围 |
+| --- | --- | --- |
+| 文档、路径、注册与资源引用 | `python3 tools/maintenance/audit_project.py` | 静态完整性；不证明运行行为或资源听感 |
+| 机制/测试代码改动 | `python3 tools/dev.py verify` | 审计、工具故障夹具、导入、数值标记、全部机制及差异检查 |
+| 定位单领域/单卡 | `verify --group status` / `verify --suite OrnnSuite`（均通过tools/dev.py） | 只验证所选范围，最终全量仍用上一行 |
+| 网络协议、快照、生命周期 | `python3 tools/dev.py verify --network` | 全量加本机双进程终局一致性；边界故障另加`--network-boundaries` |
+| 模型、UI、动画、音频 | 工作台及[专项场景](../tools/demos/README.md) | 实际渲染/试听，需人工验收；headless通过不能替代 |
+| 局部性能 | Godot机制入口追加`-- --profile-maintenance` | 固定32/64/128单位CPU采样；需同条件前后比较，不当成FPS或正确性门槛 |
+
+历史一次性配方与证据保留原路径，按对应交付复现，不加入默认测试或当作当前通过证明。注册ID保留稳定命令接口，不为大小写统一而改名。当前59个注册入口；数量以catalog与本次结构化结果为准。
+
 ## 基本检查
 
 ```sh
@@ -48,10 +61,12 @@ python3 tools/dev.py verify --reverse-suites
 | `suites/ui/` / ui | 备战、工作台交互、经典场景 |
 | `suites/network/` / network | 单进程协议/会话/副本/终态；双进程脚本由网络模式单独调度 |
 | `suites/cards/` / cards | 逐卡特有规则、数值、动作与特殊效果；六种普通小兵编队集中在 MinionSquadSuite |
-| `suites/battle_suite.gd`、`suite_utils.gd` | 共享绑定、断言、固定 Tick 与内容夹具；不单独注册 |
+| `suites/battle_suite.gd`、`suite_utils.gd` | 共享绑定、断言、固定Tick、既有模型代理查询与内容夹具；不单独注册 |
 | `fixtures/` | 网络场景、固定牌序辅助及原始寻路输入 |
 
 新增用例先找所有者，遵循以下去重边界：
+
+纯内容/状态夹具放SuiteUtils；依赖当前对局的固定Tick、单位夹具及模型查询放battle_suite。不同生成路径（真实play_card、直接Unit.setup、带部署覆盖）不强行合并，否则会隐藏部署或归属差异。场景释放与随机种子仍只由统一入口管理。
 
 奥恩的 OrnnSuite 覆盖独立CD就绪与动作准入、单锤节点、控制/主动抢占和发射前后边界、永久全场普攻增幅的排序/预留/不重复、伤害取整、固定速度地形冲锋、阻挡建筑免路径伤害及撞停后的范围伤害与眩晕。
 
@@ -101,3 +116,5 @@ LuluSuite覆盖部署首批/7秒周期、左右生成、目标优先级/排除�
 CombatActivitySuite覆盖公共战斗事实、纯护盾承伤归属、硬控/减益阻止空闲、瑟提1秒与图奇2秒消费、位移阶段眩晕/击退取消及凯隐停止后普通技能保护、同批路径伤害保留；原逐卡与控制矩阵继续覆盖正常技能及独立结果。
 
 ForcedDisplacementSuite覆盖两阶段落点、保速延长/缩短锁、河流与斜线预算、动态建筑与凝滞占位、体型/空地变化、无解重试、批次交叉接管，以及双方先锋实际撞塔六虫和女皇死亡八鱼的真实位移。动画与声音所有权继续由表现套件负责。
+
+NavigationCollisionSuite另覆盖环形最近通行格的稳定同分顺序、无解回退和重叠阻挡释放；原始A*路线夹具继续约束搜索次序。静态路线布局与动态代价分离不会改变路径合同。

@@ -16,7 +16,7 @@
 | 通用实体 | Unit/Tower 汇合权限、委托状态并执行生命周期；普通新卡复用 Unit，不建立英雄子类 |
 | 控制与攻击 | StatusInstances 来源独立窗口；ControlState 硬控/减速；AttackTimeline 前后摇、间隔、基础攻速表现时间 |
 | 生命状态 | ShieldState 每层生命/时间/衰减/恢复与爆炸资格；BleedState 来源叠层/窗口/余量；DeathFormState 致死换形资格、等待 Tick 与衰血 |
-| 位移 | MovementSystem 碰撞与移动；NavGrid/BattlePathSearch 全局导航；KnockbackState 普通击退；StructureRushState 建筑冲撞；TerrainTraversalState 穿地形门禁；UnitLandingQuery 连续几何落点 |
+| 位移 | MovementSystem 碰撞与移动；NavGrid 动态导航格、nav_lane_layout 静态路线场、BattlePathSearch 搜索；KnockbackState 普通击退；StructureRushState 建筑冲撞；TerrainTraversalState 穿地形门禁；UnitLandingQuery 连续几何落点 |
 | 命中与技能 | CombatInteraction/TargetProtectionState 准入与固定圣霭；CombatResolver 阶段命中/附带效果/收益/死亡队列；ProjectileSystem 弹体；SpellSystem 法术与可选速度配置的在途时钟；ActiveSkillEffectSystem 技能效果与 DashStrikeState、OrnnChargeState |
 | 周期队伍普攻增幅 | TeamAttackBoostSystem 主机固定 Tick 选择未增幅友军并写入 Unit 永久倍率；快照只复制倍率，不复制周期时钟 |
 | 主动资格 | ActiveSkillLifecycle 协调准备、起手、动作和排程，CommandSchedule 按身份结束/取消；ActiveSkillRoster 技能槽、编队转交、次数、冷却、免费追斩；效果执行身份归 CommandSchedule 与 Unit.active_skill_cast_serial |
@@ -69,6 +69,7 @@ Unit持有唯一 `combat_idle_seconds`，旧状态推进前采样持续战斗条
 加载页至少保持 1 秒且等待实际准备完成。MatchResources 递归收集双方卡组、召唤物/形态、四类兵线、地图、塔、水晶与声音；资源缺失或加载失败停止准备。CardDB 启动校验路径和配置，开发验证继续执行完整资源/音频类型/特效检查。
 
 MatchModelPool 在遮罩后预建模型和实例独立动画库。离树只读样本不参与战斗或发声；Compatibility 渲染器实际绘制不同网格/材质组合，隐藏保留样本与绘制资源。预热覆盖完整动画及受击/冻结/强化六种材质组合；相同需求合并，互斥形态容量不覆盖预热配置。
+
 
 模型池只回收已审计模型/显式支持 reset_pool_visual 的包装，重置骨骼、网格、变换、动画循环区间及材质。每路径最多 64 个闲置模型，按编队、召唤与兵线预算；不足时立即创建，不阻塞模拟。UnitModel3D 代理、信号与附属特效不复用。换模型/退场恢复覆盖材质并释放引用。
 

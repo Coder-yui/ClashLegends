@@ -11,81 +11,13 @@ class_name NavGrid
 var revision := 0
 
 const CELL_SIZE := ArenaRules.TILE_SIZE * 0.5
-const LANE_HALF_TILE := CELL_SIZE
-const ROAD_COST := 5
-const DEFAULT_COST := 8
-const OFF_LANE_WEIGHT := float(DEFAULT_COST) / ROAD_COST
-# 参考项目的 36x64 半格路线场。1/2 都是低成本推进区，点是可走但稍高成本区。
-# 左右标记分开保留，便于之后对单路做可视化/调试，当前两者权重相同。
-const LANE_MAP := [
-	"....................................",
-	"....................................",
-	"..............11112222..............",
-	"..............11112222..............",
-	"..............11112222..............",
-	".....11111111111112222222222222.....",
-	".....11111111111112222222222222.....",
-	".....11111111111112222222222222.....",
-	".....11111111111112222222222222.....",
-	".....11111....11112222....22222.....",
-	"....111111................222222....",
-	"....111111................222222....",
-	"....111111................222222....",
-	"....111111................222222....",
-	"....111111................222222....",
-	"....111111................222222....",
-	"....111111................222222....",
-	".....1111..................2222.....",
-	".....1111..................2222.....",
-	".....1111..................2222.....",
-	".....1111..................2222.....",
-	".....1111..................2222.....",
-	".....1111..................2222.....",
-	".....1111..................2222.....",
-	".....1111..................2222.....",
-	".....1111..................2222.....",
-	".....1111..................2222.....",
-	".....1111..................2222.....",
-	".....1111..................2222.....",
-	".....1111..................2222.....",
-	"WWWWW1111WWWWWWWWWWWWWWWWWW2222WWWWW",
-	"WWWWW.11.WWWWWWWWWWWWWWWWWW.22.WWWWW",
-	"WWWWW.11.WWWWWWWWWWWWWWWWWW.22.WWWWW",
-	"WWWWW1111WWWWWWWWWWWWWWWWWW2222WWWWW",
-	".....1111..................2222.....",
-	".....1111..................2222.....",
-	".....1111..................2222.....",
-	".....1111..................2222.....",
-	".....1111..................2222.....",
-	".....1111..................2222.....",
-	".....1111..................2222.....",
-	".....1111..................2222.....",
-	".....1111..................2222.....",
-	".....1111..................2222.....",
-	".....1111..................2222.....",
-	".....1111..................2222.....",
-	".....1111..................2222.....",
-	"....111111................222222....",
-	"....111111................222222....",
-	"....111111................222222....",
-	"....111111................222222....",
-	"....111111................222222....",
-	"....111111................222222....",
-	"....111111................222222....",
-	".....11111....11112222....22222.....",
-	".....11111111111112222222222222.....",
-	".....11111111111112222222222222.....",
-	".....11111111111112222222222222.....",
-	".....11111111111112222222222222.....",
-	"..............11112222..............",
-	"..............11112222..............",
-	"..............11112222..............",
-	"....................................",
-	"....................................",
-]
+const LaneLayout = preload("res://scripts/battle/nav_lane_layout.gd")
+const ROAD_COST := LaneLayout.ROAD_COST
 
 var _region := Rect2i()
 var _costs := PackedInt32Array()
+# 与阻挡无关的静态代价，供恢复格子与高频路径平滑直接读取。
+var _lane_costs := PackedInt32Array()
 var _search := preload("res://scripts/battle/battle_path_search.gd").new()
 # 永久阻挡（河道），引用计数解除时也不放开
 var _base_blocked := {}
@@ -98,13 +30,16 @@ func build(size: Vector2, river_y: float, river_half: float, bridge_xs: Array, b
 	var rows := int(size.y / CELL_SIZE)
 	_region = Rect2i(0, 0, cols, rows)
 	_costs.resize(cols * rows)
+	_lane_costs.resize(cols * rows)
 	_base_blocked = {}
 	_block_counts = {}
 	for y in rows:
 		for x in cols:
 			var cell := Vector2i(x, y)
 			var world_pos := cell_to_world(cell)
-			_costs[cell.x + cell.y * cols] = roundi(get_lane_weight_at(world_pos) * ROAD_COST)
+			var index := cell.x + cell.y * cols
+			_lane_costs[index] = roundi(get_lane_weight_at(world_pos) * ROAD_COST)
+			_costs[index] = _lane_costs[index]
 			# 与河岸一样为身体留出边界：最外侧半格中心只有 10px 余量，
 			# 不能作为大单位绕水晶的路径点，否则移动层钳制位置后永远到不了。
 			var outside_body_bounds := world_pos.x < ArenaRules.NAV_CLEARANCE or world_pos.x > size.x - ArenaRules.NAV_CLEARANCE or world_pos.y < ArenaRules.NAV_CLEARANCE or world_pos.y > size.y - ArenaRules.NAV_CLEARANCE
@@ -153,11 +88,7 @@ func is_terrain_walkable(pos: Vector2) -> bool:
 ## 返回推进偏好权重：1.0 是宽松的左右路区，8/5 是仍可通行的非主路区。
 ## 偏好只负责把单位渐进引向分路，不能强到让右下角单位绕己方右塔左侧。
 func get_lane_weight_at(pos: Vector2) -> float:
-	var map_x := clampi(floori(pos.x / LANE_HALF_TILE), 0, 35)
-	var map_y := clampi(floori(pos.y / LANE_HALF_TILE), 0, 63)
-	var row: String = LANE_MAP[map_y]
-	var marker: String = row.substr(map_x, 1)
-	return 1.0 if marker == "1" or marker == "2" else OFF_LANE_WEIGHT
+	return LaneLayout.weight_at(pos)
 
 ## 圆形占地覆盖的格子（格中心落在圆内）
 func cells_for_circle(center: Vector2, radius: float) -> Array:
@@ -206,7 +137,7 @@ func set_cells_blocked(cells: Array, blocked: bool) -> void:
 			if count <= 0:
 				_block_counts.erase(key)
 				if not _base_blocked.has(key):
-					_costs[key.x + key.y * _region.size.x] = roundi(get_lane_weight_at(cell_to_world(key)) * ROAD_COST)
+					_costs[key.x + key.y * _region.size.x] = _lane_costs[key.x + key.y * _region.size.x]
 			else:
 				_block_counts[key] = count
 
@@ -243,9 +174,9 @@ func _nearest_walkable_cell(pos: Vector2, reference: Vector2i) -> Vector2i:
 		var best := Vector2i(-1, -1)
 		var best_score := INF
 		for dy in range(-r, r + 1):
-			for dx in range(-r, r + 1):
-				if maxi(absi(dx), absi(dy)) != r:
-					continue
+			# 按原先 y/x 顺序只枚举环边；保留同分时最先命中的格子。
+			var stride := 1 if absi(dy) == r else 2 * r
+			for dx in range(-r, r + 1, stride):
 				var cand := cell + Vector2i(dx, dy)
 				if _region.has_point(cand) and not _is_cell_blocked(cand):
 					var score := Vector2(cand).distance_squared_to(Vector2(reference))
@@ -273,7 +204,7 @@ func _line_walkable(from: Vector2, to: Vector2) -> bool:
 		var cell := world_to_cell(from.lerp(to, t))
 		if not _region.has_point(cell) or _is_cell_blocked(cell):
 			return false
-		if get_lane_weight_at(cell_to_world(cell)) > max_weight:
+		if float(_lane_costs[cell.x + cell.y * _region.size.x]) / ROAD_COST > max_weight:
 			return false
 	return true
 

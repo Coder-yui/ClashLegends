@@ -7,6 +7,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_main = main
 	_check_direct_approach_after_bridge()
 	_check_lane_weight_field()
+	_check_nearest_walkable_order()
 	_check_bridge_path()
 	_check_bridge_contact_stays_on_land()
 	_check_left_spawn_crosses_without_backtracking()
@@ -697,3 +698,43 @@ func _check_garen_defender() -> void:
 			"盖伦继续锁定防御塔，剑圣实际防守攻击期间不触发敌军避让（team=%d）" % team)
 		garen.free()
 		defender.free()
+
+## 环边枚举必须保留旧的 y/x 扫描和严格小于同分规则。
+func _check_nearest_walkable_order() -> void:
+	var grid := NavGrid.new()
+	grid.build(Vector2(720, 1280), 640, 60, [140, 580], 32, [[Vector2(360, 1000), 180]])
+	var matched := true
+	for point in [Vector2(360, 640), Vector2(360, 1000), Vector2(-40, -40), Vector2(760, 1320), Vector2(140, 800)]:
+		for reference in [Vector2i(0, 0), Vector2i(18, 32), Vector2i(35, 63)]:
+			matched = matched and grid._nearest_walkable_cell(point, reference) == _reference_nearest_cell(grid, point, reference)
+	var cells := grid.cells_for_circle(Vector2(140, 800), 100)
+	grid.set_cells_blocked(cells, true)
+	grid.set_cells_blocked(cells, true)
+	grid.set_cells_blocked(cells, false)
+	_expect(not grid.is_walkable(Vector2(140, 800)), "重叠建筑引用计数不提前恢复路线代价")
+	grid.set_cells_blocked(cells, false)
+	_expect(grid.is_walkable(Vector2(140, 800)), "移除最后建筑恢复静态路线代价")
+	grid.set_cells_blocked(grid.cells_for_rect(Rect2(0, 0, 720, 1280)), true)
+	matched = matched and grid._nearest_walkable_cell(Vector2(360, 640), Vector2i.ZERO) == Vector2i(18, 32)
+	_expect(matched, "最近通行格保留环形半径、扫描顺序、同分规则与无解回退")
+
+func _reference_nearest_cell(grid: NavGrid, pos: Vector2, reference: Vector2i) -> Vector2i:
+	var cell := grid.world_to_cell(pos)
+	if grid.is_walkable(grid.cell_to_world(cell)):
+		return cell
+	for radius in range(1, 32):
+		var best := Vector2i(-1, -1)
+		var score := INF
+		for y in range(-radius, radius + 1):
+			for x in range(-radius, radius + 1):
+				if maxi(absi(x), absi(y)) != radius:
+					continue
+				var candidate := cell + Vector2i(x, y)
+				if grid.is_walkable(grid.cell_to_world(candidate)):
+					var distance := Vector2(candidate).distance_squared_to(Vector2(reference))
+					if distance < score:
+						best = candidate
+						score = distance
+		if best.x >= 0:
+			return best
+	return cell

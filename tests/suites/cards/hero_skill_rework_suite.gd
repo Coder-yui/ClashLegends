@@ -383,12 +383,6 @@ func _check_masteryi_double_strike_and_highlander() -> void:
 		if is_instance_valid(unit):
 			unit.free()
 
-func _view_for(unit: Unit) -> UnitModel3D:
-	for child in _main._battle_presentation._world_root.get_children():
-		if child is UnitModel3D and child._source == unit:
-			return child as UnitModel3D
-	return null
-
 func _check_animation_routes() -> void:
 	var sett := _spawn_test_unit("sett", 0, Vector2(100.0, 900.0))
 	_main._battle_presentation.attach_unit(sett, CardDB.get_card("sett"))
