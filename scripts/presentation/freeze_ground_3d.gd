@@ -58,3 +58,9 @@ func _update_mesh(view: MeshInstance3D, bounds: Rect2, camera: Camera3D) -> void
 	var mesh := ArrayMesh.new()
 	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
 	view.mesh = mesh
+
+## 加载遮罩内预建首个冰面槽并真实绘制；不创建法术状态、权威效果或声音。
+func prepare_visual(camera: Camera3D, radius: float) -> void:
+	_sync_view(0, {"pos": Vector2(360, 640), "radius": radius, "team": 0}, camera)
+	if DisplayServer.get_name() != "headless": RenderingServer.force_draw(false)
+	_views[0].hide()

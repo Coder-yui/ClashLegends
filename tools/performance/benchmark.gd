@@ -9,6 +9,13 @@ var main: Node2D
 var events: Array = []
 var slow_frames: Array = []
 var objects: Array[float] = []
+var loading_frames: Array[float] = []
+var loading_last := 0
+
+func sample_loading_frame() -> void:
+	var now := Time.get_ticks_usec()
+	if loading_last > 0: loading_frames.append((now - loading_last) / 1000.0)
+	loading_last = now
 
 func option(key: String, fallback: String) -> String:
 	for argument in OS.get_cmdline_user_args():
@@ -33,6 +40,8 @@ func run() -> void:
 	main.set_script(preload("res://tools/performance/benchmark_main.gd"))
 	var deck := ["garen", "ashe", "xin", "gnar", "teemo", "masteryi", "tombstone", "anivia"]
 	if case == "herald": deck[2] = "rift_herald"
+	var requested_deck := option("--perf-deck", "")
+	if not requested_deck.is_empty(): deck = Array(requested_deck.split(","))
 	main._deck = deck.duplicate()
 	root.add_child(main)
 	current_scene = main
@@ -55,11 +64,14 @@ func run() -> void:
 	seed(12345)
 	var setup_start := Time.get_ticks_usec()
 	main.silent = not audio_enabled
+	loading_last = Time.get_ticks_usec()
+	process_frame.connect(sample_loading_frame)
 	print("[PERF_STAGE] start local")
 	if option("--perf-prepare", "menu") == "menu":
 		await main._start_local_with_loading()
 	else:
 		main._start_local()
+	process_frame.disconnect(sample_loading_frame)
 	main.set_process(false)
 	main._ai.enabled = false
 	main._minion_waves_enabled = case == "match"
@@ -139,6 +151,10 @@ func run() -> void:
 		AudioServer.remove_bus_effect(0, record_index)
 	var result := {"schema": 1, "capture_policy": "after_measurement", "case": case, "count": count, "seed": 12345, "rendered": rendered,
 		"preparation": option("--perf-prepare", "menu"), "entry": option("--perf-entry", "fresh"), "first_exit": first_exit,
+		"loading_frame_ms": distribution(loading_frames), "video_memory_bytes": Performance.get_monitor(Performance.RENDER_VIDEO_MEM_USED),
+		"deck": main._deck, "remote_deck": main._remote_deck,
+		"resource_paths": main._resources.resources.keys(), "resource_cards": main._resources.cards.keys(),
+		"pool_capacity": main._battle_presentation.model_pool.capacity if is_instance_valid(main._battle_presentation) else {},
 		"loading_stages": main.get("preparation_metrics"), "pool": main._battle_presentation.model_pool.get("metrics") if is_instance_valid(main._battle_presentation) else {},
 		"pool_preparation": main._battle_presentation.model_pool.get("preparation_times") if is_instance_valid(main._battle_presentation) else {},
 		"events": events, "slow_frames": slow_frames, "objects": distribution(objects),

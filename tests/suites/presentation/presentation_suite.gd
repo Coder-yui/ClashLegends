@@ -8,6 +8,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_heal_range_team()
 	_check_soft_control_visuals()
 	_check_control_effect_motion()
+	_check_animation_copy()
 	_check_warm_geometry()
 	_check_model_resources_owner()
 	_check_action_sequence_owner()
@@ -823,6 +824,17 @@ func _check_model_resources_owner() -> void:
 	owners[0].apply_overlays(false, true, false)
 	owners[0].apply_overlays(true, false, false)
 	_expect(mesh.material_overlay == first_overlay, "有限材质组合重复切换复用同一实例资源")
+	var plain_variants := {}
+	for state in range(6):
+		owners[0].apply_overlays(state % 3 == 1, state % 3 == 2, state >= 3)
+		plain_variants[MatchModelPool.mesh_configuration(owners[0].meshes())] = true
+	_expect(plain_variants.size() == 3 and owners[0].overlay_state_repeats_base(3) and not owners[0].overlay_state_repeats_base(0), "无强化材质的六种状态只有三个实际组合，可安全去重绘制")
+	owners[0].configure_buff(func(_base): return StandardMaterial3D.new())
+	var buff_variants := {}
+	for state in range(6):
+		owners[0].apply_overlays(state % 3 == 1, state % 3 == 2, state >= 3)
+		buff_variants[MatchModelPool.mesh_configuration(owners[0].meshes())] = true
+	_expect(buff_variants.size() == 6 and not owners[0].overlay_state_repeats_base(3), "真正不同的强化和控制组合必须保留六种预热绘制")
 	owners[0].clear()
 	_expect(mesh.material_overlay == original and owners[0].meshes().is_empty(), "释放资源恢复原始覆盖并清空模型引用")
 	owners[0].bind_model(roots[1])
@@ -960,6 +972,8 @@ func _check_freeze_surfaces() -> void:
 	var ground: Node3D = _main._battle_presentation._freeze_ground
 	var spells: RefCounted = _main._spell_system
 	spells.clear()
+	ground.prepare_visual(_main._battle_presentation._camera, 110.0)
+	_expect(spells.freeze_effects.is_empty() and spells.slow_effects.is_empty() and not ground._views[0].visible, "冰面预热只建立隐藏表现槽，不生成法术状态")
 	spells.show_freeze(Vector2(360,850),110,3,2,0)
 	spells.show_freeze(Vector2(360,450),110,3,2,1)
 	ground.sync_effects(spells,_main._battle_presentation._camera)
@@ -981,3 +995,41 @@ func _check_freeze_surfaces() -> void:
 	ground.sync_effects(spells,_main._battle_presentation._camera)
 	_expect(first.mesh == first_mesh and first.material_override.get_shader_parameter("rim_color") == ground.RED_RIM, "相同位置复用地面槽位仍更新施法阵营颜色")
 	spells.clear()
+
+func _check_animation_copy() -> void:
+	var source := Animation.new()
+	source.length = 2.5
+	source.step = 0.02
+	source.loop_mode = Animation.LOOP_PINGPONG
+	source.add_marker("release", 0.6)
+	source.set_marker_color("release", Color.RED)
+	for type in [Animation.TYPE_POSITION_3D, Animation.TYPE_ROTATION_3D, Animation.TYPE_SCALE_3D, Animation.TYPE_BLEND_SHAPE]:
+		var track := source.add_track(type)
+		source.track_set_path(track, NodePath("Rig:bone"))
+		source.track_set_enabled(track, false)
+		source.track_set_imported(track, true)
+		source.track_set_interpolation_type(track, Animation.INTERPOLATION_CUBIC)
+		source.track_set_interpolation_loop_wrap(track, false)
+		var value: Variant = 0.7 if type == Animation.TYPE_BLEND_SHAPE else (Quaternion.IDENTITY if type == Animation.TYPE_ROTATION_3D else Vector3(1, 2, 3))
+		source.track_insert_key(track, 0.25, value, 0.8)
+	var copy := ModelVisualResources.copy_animation(source)
+	var equal := true
+	for property in source.get_property_list():
+		if int(property.usage) & PROPERTY_USAGE_STORAGE:
+			equal = equal and var_to_bytes(source.get(property.name)) == var_to_bytes(copy.get(property.name))
+	_expect(equal, "快速动画复制保留数值轨道、插值、导入标记、关键帧、时间与标记颜色")
+	copy.loop_mode = Animation.LOOP_NONE
+	copy.track_set_key_value(0, 0, Vector3.ZERO)
+	_expect(source.loop_mode == Animation.LOOP_PINGPONG and source.track_get_key_value(0, 0) == Vector3(1, 2, 3), "快速复制后的循环及关键帧修改不污染源动画")
+	var track := source.add_track(Animation.TYPE_VALUE)
+	source.track_set_path(track, NodePath("Mesh:material_override"))
+	var material := StandardMaterial3D.new()
+	source.track_insert_key(track, 0.0, material)
+	copy = ModelVisualResources.copy_animation(source)
+	var copied_material: Material = copy.track_get_key_value(track, 0)
+	_expect(copied_material != material, "含资源值轨道保留深复制，不能分享可变材质")
+	var library := AnimationLibrary.new()
+	library.add_animation("first", source)
+	library.add_animation("alias", source)
+	var copied_library := ModelVisualResources.copy_library(library)
+	_expect(copied_library.get_animation("first") == copied_library.get_animation("alias") and copied_library.get_animation("first") != source, "同库动画别名保持同一副本，同时与源库隔离")

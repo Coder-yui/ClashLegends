@@ -34,3 +34,14 @@ python3 tools/performance/benchmark.py --counts 32,64,128 --visual off --audio o
 图形测量使用当前Godot4.7.1及项目默认gl_compatibility，不降低阴影、分辨率或粒子数量。按[Godot预热说明](https://docs.godotengine.org/en/4.6/tutorials/performance/pipeline_compilations.html)，Compatibility仍要求相机内实际绘制；隐藏或仅加载不构成渲染预热。
 
 截图只在计时结束后保存final.png；禁止在采样循环同步写PNG，否则会产生工具自身的慢帧和模拟追赶。结果capture_policy=after_measurement标记修正后的测量，旧第300帧截图数据仅作历史记录，不能据其最大帧判断游戏尖峰。
+
+## 对局加载专项
+
+GDScript 基准可追加 `--perf-deck=id1,id2,...` 与 `--perf-remote-deck=id1,id2,...` 固定双方样本；覆盖只存在于基准子类，在收集资源前应用。未指定时保留固定随机种子的既有样本。`metrics.json` 额外记录双方卡组、完整资源路径/卡牌闭包、模型池容量、加载帧间隔及引擎可报告的显存。基准中的无画面开关仍允许没有模型池。
+
+图形 A/B 应交错顺序、同一设备/卡组/池容量，分别报告新进程和同进程第二局。未清理 OS 文件缓存和驱动缓存时，不能称为冷磁盘/冷着色器测试。不要把 ResourceLoader 总耗时拆成未经测量的磁盘、解码和上传数字。动画轨道快速复制曾因内存增量撤回，现按用户明确接受约78MiB额外静态内存的授权恢复；保留明确别名材质去重及首次冰面预热。历史约30%加载收益不等于当前组合的新测量，过程证据及精确局部回退见加载优化交付。
+
+
+`tools/performance/first_events.gd` 固定每卡240帧、每帧1/60模拟步长，事件在第0帧部署、第60帧主动及冻结/治疗、第140帧死亡/召唤。记录每帧间隔、事件调用/模拟CPU耗时、前一完成帧的根及3D视口渲染CPU/GPU时间、引擎资源计数、内存、cue与模型池指标。帧间隔包含上一帧事件、表现回调、渲染及系统等待；GPU计时返回0可能表示不支持，不能解释成GPU零耗时；资源计数不是磁盘读取跟踪。高生命、绕过经济及手动先锋命中用于可重复诊断，不是正常对局密度。截图须显式`--capture`，在片段结束后保存。
+
+通过`-- --output=/绝对证据目录 --perf-remote-deck=gnar,anivia,belveth,rift_herald,garen,ashe,freeze,heal`固定对手。cue记录不等于主观试听，也不隔离音频解码耗时。比较至少五轮交错A/B，并保留逐帧时间关联与所有反向指标，不将零池缺货写成无卡顿。

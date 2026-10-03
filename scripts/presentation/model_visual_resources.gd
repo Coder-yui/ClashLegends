@@ -50,7 +50,7 @@ func bind_model(root: Node) -> AnimationPlayer:
 	var player := _find_player(root)
 	if player != null:
 		for name in player.get_animation_library_list():
-			var library := player.get_animation_library(name).duplicate(true) as AnimationLibrary
+			var library := copy_library(player.get_animation_library(name))
 			player.remove_animation_library(name)
 			player.add_animation_library(name, library)
 	_player = player
@@ -103,6 +103,11 @@ func _prepare_overlays() -> void:
 		variants.append_array(_overlay_variants(_buffs[index]) if index < _buffs.size() else variants.duplicate())
 		if index < _overlays.size(): _overlays[index] = variants
 		else: _overlays.append(variants)
+
+## _prepare_overlays 在没有强化材质时，后三态直接复用前三态的引用。
+## apply_overlays 只切换引用，不修改资源参数；任何强化材质均保守保留六次绘制。
+func overlay_state_repeats_base(state: int) -> bool:
+	return state >= 3 and state < 6 and _buffs.is_empty()
 
 func apply_overlays(hit: bool, frozen: bool, buff_visible: bool, stasis: bool = false, stealth: bool = false) -> void:
 	apply_stealth(stealth and not stasis)
@@ -178,3 +183,35 @@ func _find_player(node: Node) -> AnimationPlayer:
 		var player := _find_player(child)
 		if player != null: return player
 	return null
+
+## 数值骨骼轨道直接由引擎复制，避免 duplicate 的逐属性序列化往返。
+## 仍是实例独立 Animation；含资源/事件、压缩轨道或扩展数据时保留完整深复制。
+static func copy_animation(source: Animation) -> Animation:
+	if source.get_script() != null or not source.get_meta_list().is_empty():
+		return source.duplicate(true) as Animation
+	for track in source.get_track_count():
+		if source.track_is_compressed(track) or source.track_get_type(track) not in [Animation.TYPE_POSITION_3D, Animation.TYPE_ROTATION_3D, Animation.TYPE_SCALE_3D, Animation.TYPE_BLEND_SHAPE]:
+			return source.duplicate(true) as Animation
+	var result := Animation.new()
+	result.resource_name = source.resource_name
+	result.resource_local_to_scene = source.resource_local_to_scene
+	result.length = source.length
+	result.step = source.step
+	result.loop_mode = source.loop_mode
+	for marker in source.get_marker_names():
+		result.add_marker(marker, source.get_marker_time(marker))
+		result.set_marker_color(marker, source.get_marker_color(marker))
+	for track in source.get_track_count(): source.copy_track(track, result)
+	return result
+
+static func copy_library(source: AnimationLibrary) -> AnimationLibrary:
+	if source.get_script() != null or not source.get_meta_list().is_empty():
+		return source.duplicate(true) as AnimationLibrary
+	var result := source.duplicate(false) as AnimationLibrary
+	var copies := {}
+	for clip in source.get_animation_list():
+		result.remove_animation(clip)
+		var animation := source.get_animation(clip)
+		if not copies.has(animation): copies[animation] = copy_animation(animation)
+		result.add_animation(clip, copies[animation])
+	return result

@@ -21,6 +21,11 @@ var command_index := 0
 var max_combatants := 0
 
 func _setup_battle_presentation() -> void:
+	# 固定双方卡组样本只用于基准；在任何对局资源收集前替换随机对手。
+	for argument in OS.get_cmdline_user_args():
+		if argument.begins_with("--perf-remote-deck="):
+			_remote_deck = Array(argument.trim_prefix("--perf-remote-deck=").split(","))
+			_remote_active_skill_choices.clear()
 	if "--perf-visual=off" not in OS.get_cmdline_user_args(): super._setup_battle_presentation()
 
 func _sim_step(dt: float) -> void:

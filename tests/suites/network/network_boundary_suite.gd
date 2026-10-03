@@ -14,7 +14,9 @@ func run(harness: SceneTree, scenario: String) -> void:
 	var restart_clean := false
 	var funded := false
 	var buildings_sent := false
-	while Time.get_ticks_msec() - started < 15000:
+	# 重开包含两次正式加载（每次最多30秒）及握手；总测试预算不能比生产合同短。
+	var budget_ms := 75000 if scenario == "restart" else 15000
+	while Time.get_ticks_msec() - started < budget_ms:
 		await harness.process_frame
 		if main._session.phase == MatchSession.Phase.LOADING:
 			observed_loading = true

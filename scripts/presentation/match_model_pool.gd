@@ -10,7 +10,7 @@ var errors := PackedStringArray()
 var metrics := {}
 var _world: Node3D
 var cancelled := false
-var preparation_times := {"instantiate_usec": 0, "animation_usec": 0, "render_usec": 0, "sample_prepare_usec": 0, "draws": 0, "animation_draws_skipped": 0}
+var preparation_times := {"instantiate_usec": 0, "animation_usec": 0, "render_usec": 0, "sample_prepare_usec": 0, "draws": 0, "animation_draws_skipped": 0, "overlay_draws_skipped": 0}
 
 ## 每卡/阵营只有一个并发来源；同卡互斥形态同路径取最大，独立来源累加。
 ## 两轮爆发窗口有界保留；循环依赖只扫描已去重闭包一次，不按整场累计数量扩张。
@@ -60,7 +60,7 @@ static func _collect_demand(value: Variant, demand: Dictionary) -> void:
 		for child in value: _collect_demand(child, demand)
 
 func _metric(path: String) -> Dictionary:
-	if not metrics.has(path): metrics[path] = {"hits": 0, "misses": 0, "recycled": 0, "active": 0, "peak": 0, "instantiate_usec": 0, "unplanned": 0, "exhausted": 0, "unsupported_recycle": 0}
+	if not metrics.has(path): metrics[path] = {"hits": 0, "misses": 0, "recycled": 0, "active": 0, "peak": 0, "instantiate_usec": 0, "unplanned": 0, "exhausted": 0, "unsupported_recycle": 0, "prepare_animation_usec": 0, "prepare_wrapper_usec": 0}
 	return metrics[path]
 
 
@@ -95,8 +95,11 @@ func prepare(resources: Dictionary, world: Node3D, camera: Camera3D, cards: Dict
 			preparation_times.instantiate_usec += Time.get_ticks_usec() - started
 			started = Time.get_ticks_usec()
 			if node.has_method("prepare_visual_animations"): node.call("prepare_visual_animations")
+			_metric(path).prepare_wrapper_usec += Time.get_ticks_usec() - started
+			var bind_started := Time.get_ticks_usec()
 			var model_resources := ModelVisualResources.new()
 			var player := model_resources.bind_model(node)
+			_metric(path).prepare_animation_usec += Time.get_ticks_usec() - bind_started
 			node.set_meta("prepared_model_resources", model_resources)
 			node.set_meta("prepared_animation_player", player)
 			preparation_times.animation_usec += Time.get_ticks_usec() - started
@@ -155,12 +158,16 @@ func prepare(resources: Dictionary, world: Node3D, camera: Camera3D, cards: Dict
 						else: preparation_times.animation_draws_skipped += 1
 				if is_instance_valid(sample._active_buff_visual):
 					sample._active_buff_visual.advance(true, 0.1)
+				# 仅跳过资源所有者明确构造为基础三态别名的强化三态。
+				# 不比较材质身份来猜测等价；有任何强化材质时仍完整绘制六态。
 				for state in range(6):
 					sample._model_resources.apply_overlays(state % 3 == 1, state % 3 == 2, state >= 3)
 					for mesh in sample._model_resources.meshes():
 						if mesh.material_overlay != null: _warmed_materials.append(mesh.material_overlay)
-					# force_draw提交当前状态，不额外等待一个垂直同步帧。
-					_draw_sample()
+					if sample._model_resources.overlay_state_repeats_base(state):
+						preparation_times.overlay_draws_skipped += 1
+					else:
+						_draw_sample()
 			rendered_paths[path] = true
 			# 保留绘制资源/骨骼/材质实例；样本不再播放，不需持有独立的巨大动画副本。
 			for player in sample.find_children("*", "AnimationPlayer", true, false):

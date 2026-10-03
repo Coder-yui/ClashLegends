@@ -418,6 +418,11 @@ func _prepare_match_assets() -> void:
 	if not is_instance_valid(_battle_presentation): return
 	await _battle_presentation.model_pool.prepare(_resources.resources, _battle_presentation._world_root, _battle_presentation._camera, _resources.cards)
 	if is_instance_valid(_battle_presentation) and not _battle_presentation.model_pool.errors.is_empty(): _fail_preparation(_battle_presentation.model_pool.errors)
+	if is_instance_valid(_battle_presentation) and not _battle_presentation.model_pool.cancelled and _battle_presentation.model_pool.errors.is_empty() and _resources.cards.has("freeze"):
+		var started := Time.get_ticks_usec()
+		_battle_presentation._freeze_ground.prepare_visual(_battle_presentation._camera, float(CardDB.get_card("freeze").get("radius", 110.0)))
+		preparation_metrics.freeze_warm_usec = Time.get_ticks_usec() - started
+
 
 func _fail_preparation(errors: PackedStringArray) -> void:
 	for message in errors: push_error(message)
