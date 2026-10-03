@@ -354,6 +354,7 @@ func _health_text() -> String:
 	return "%d" % BattleNumbers.quantity(hp)
 
 func _draw() -> void:
+	var local_team := 1 if battle_context != null and battle_context.is_net_client() else 0
 	# 已被摧毁：画废墟，不画描边和血条
 	if hp <= 0.0:
 		if not has_model_art:
@@ -362,7 +363,7 @@ func _draw() -> void:
 		return
 	# 队伍描边：玩家蓝、敌方红
 	if not has_model_art:
-		var outline := Color(0.30, 0.60, 1.00) if team == 0 else Color(1.00, 0.35, 0.30)
+		var outline := Color(0.30, 0.60, 1.00) if team == local_team else Color(1.00, 0.35, 0.30)
 		draw_circle(Vector2.ZERO, visual_radius + 3.0, outline)
 		draw_circle(Vector2.ZERO, visual_radius, Color(1.0, 0.67, 0.12) if CombatInteraction.in_stasis(self) else Color(0.55, 0.50, 0.45))
 	if not PresentationConfig.status_indicators_visible(self): return
@@ -377,7 +378,6 @@ func _draw() -> void:
 	# 血条：塔3格、水晶4格（每格40px）。敌方红条在建筑上方；
 	# 己方塔绿条在塔身中央，己方水晶绿条贴着水晶底座下方。
 	draw_set_transform(Vector2.ZERO, -get_global_transform_with_canvas().get_rotation(), Vector2.ONE)
-	var local_team := 1 if battle_context != null and battle_context.is_net_client() else 0
 	var bar_w := KING_HEALTH_BAR_WIDTH if is_king else PRINCESS_HEALTH_BAR_WIDTH
 	var bar_h := HEALTH_BAR_HEIGHT
 	var ratio := maxf(hp / max_hp, 0.0)
@@ -390,7 +390,7 @@ func _draw() -> void:
 		bar_center_y = -visual_radius          # 敌方水晶：稍下移，贴在水晶顶部上方
 	elif team == local_team:
 		bar_center_y = -visual_radius * 2.0 + 80.0    # 己方塔：塔身中央再下放两格（每格40px）
-	var bar_color := Color(0.95, 0.28, 0.26) if team == 1 else Color(0.28, 0.88, 0.28)
+	var bar_color := Color(0.95, 0.28, 0.26) if team != local_team else Color(0.28, 0.88, 0.28)
 	var bar_rect := Rect2(Vector2(-bar_w / 2.0, bar_center_y - bar_h / 2.0), Vector2(bar_w, bar_h))
 	draw_rect(bar_rect, Color(0.10, 0.10, 0.10))
 	var combined_capacity := 1.0 + shield_capacity_ratio

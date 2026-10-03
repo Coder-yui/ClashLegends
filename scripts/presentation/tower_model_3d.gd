@@ -114,8 +114,9 @@ func setup(tower: Tower, packed: PackedScene, camera: Camera3D, config: Dictiona
 	_source.destroyed.connect(_on_source_destroyed)
 	_source.visual_hit.connect(_on_source_visual_hit)
 	_sync_position()
-	# 模型默认正面朝世界 +Z（画面下方）。蓝方在下，应转身朝上方红方；红方保持朝下。
-	rotation.y = PI if tower.team == 0 else 0.0
+	# 相机滚转抵消画布翻转后，模型朝向同样按观察方选择，保持己方朝上、敌方朝下。
+	var viewer_team := 1 if bool(camera.get_meta("canvas_flipped", false)) else 0
+	rotation.y = PI if tower.team == viewer_team else 0.0
 	return true
 
 func _process(delta: float) -> void:

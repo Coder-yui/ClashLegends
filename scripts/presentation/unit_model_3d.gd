@@ -1647,7 +1647,7 @@ func _create_team_ring() -> void:
 	var material := StandardMaterial3D.new()
 	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	material.albedo_color = Color(0.20, 0.55, 1.0, 0.72) if _source.team == 0 else Color(1.0, 0.24, 0.18, 0.72)
+	material.albedo_color = Color(0.20, 0.55, 1.0, 0.72) if _source.team == (1 if bool(_camera.get_meta("canvas_flipped", false)) else 0) else Color(1.0, 0.24, 0.18, 0.72)
 	ring_mesh.material = material
 
 	_team_ring = MeshInstance3D.new()

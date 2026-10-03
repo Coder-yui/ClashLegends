@@ -3,6 +3,11 @@ extends Node
 ## 战场的 3D 表现容器。模拟、碰撞与联机仍在 Node2D 中运行；
 ## 本节点承载正式 3D 地图，并把单位、塔与基地水晶镜像到同一视口。
 
+var viewer_team := 0
+
+func visual_team(team: int) -> int:
+	return 0 if team == viewer_team else 1
+
 var spells: RefCounted
 var _freeze_ground: Node3D
 var _corrosion_ground: Node3D
@@ -50,6 +55,7 @@ func sync_pre_deployments(deployments: Array, delta: float = 0.0) -> void:
 
 
 func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void:
+	viewer_team = 1 if flipped else 0
 	_viewport = SubViewport.new()
 	_viewport.name = "UnitViewport3D"
 	_viewport.size = Vector2i(roundi(field_size.x), roundi(field_size.y))
@@ -86,7 +92,7 @@ func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void
 
 func attach_unit(unit: Unit, stats: Dictionary) -> bool:
 	var visual_stats := PresentationConfig.for_form(stats, unit.get_form_index())
-	var scene_path := PresentationConfig.scene_path(visual_stats, unit.team)
+	var scene_path := PresentationConfig.scene_path(visual_stats, visual_team(unit.team))
 	if scene_path.is_empty():
 		return false
 	var packed := load(scene_path) as PackedScene
@@ -111,7 +117,7 @@ func _on_unit_form_changed(form_index: int, unit: Unit, view: UnitModel3D, base_
 	if unit == null or not is_instance_valid(unit) or view == null or not is_instance_valid(view):
 		return
 	var visual_stats := PresentationConfig.for_form(base_stats, form_index)
-	var scene_path := PresentationConfig.scene_path(visual_stats, unit.team)
+	var scene_path := PresentationConfig.scene_path(visual_stats, visual_team(unit.team))
 	if scene_path.is_empty():
 		return
 	var packed := load(scene_path) as PackedScene
@@ -129,7 +135,7 @@ func attach_tower(tower: Tower, config: Dictionary) -> bool:
 	var scene_paths: Array = config.get("scene_paths", [])
 	if tower.team < 0 or tower.team >= scene_paths.size():
 		return false
-	var scene_path := String(scene_paths[tower.team])
+	var scene_path := String(scene_paths[visual_team(tower.team)])
 	var packed := load(scene_path) as PackedScene
 	if packed == null:
 		push_warning("无法加载塔的 3D 表现：%s" % scene_path)

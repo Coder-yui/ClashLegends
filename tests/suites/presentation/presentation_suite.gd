@@ -565,6 +565,29 @@ func _check_health_bar_team_anchor() -> void:
 	var client_view := BattlePresentation3D.new()
 	_main.add_child(client_view)
 	client_view.setup(Vector2(720, 1280), 40.0, true)
+	for team in [0, 1]:
+		var relative := client_view.visual_team(team)
+		_expect(relative == 1 - team, "客户端模型阵营按本机队伍转换")
+		for id in CardDB.all():
+			var variant_stats: Dictionary = CardDB.get_card(id)
+			if variant_stats.get("visual_scene_paths", []).size() != 2: continue
+			var subject := Unit.new()
+			subject.setup(team, variant_stats, variant_stats.name)
+			_main.add_child(subject)
+			_expect(client_view.attach_unit(subject, variant_stats), "双阵营单位可挂接客户端模型：" + id)
+			var model: UnitModel3D = client_view._world_root.get_child(client_view._world_root.get_child_count() - 1)
+			_expect(model._model_root.scene_file_path == variant_stats.visual_scene_paths[relative], "己方蓝模型、敌方红模型：" + id)
+			model.free()
+			subject.free()
+	for original in _main._battle_presentation._world_root.get_children():
+		if not original is TowerModel3D: continue
+		var tower: Tower = original._source
+		var config: Dictionary = CardDB.NEXUS_VISUAL_CONFIG if tower.is_king else CardDB.PRINCESS_TOWER_VISUAL_CONFIG
+		_expect(client_view.attach_tower(tower, config), "客户端建筑模型挂接")
+		var model: TowerModel3D = client_view._world_root.get_child(client_view._world_root.get_child_count() - 1)
+		_expect(model._model_root.scene_file_path == config.scene_paths[1 - tower.team], "客户端塔与水晶己蓝敌红")
+		_expect(is_equal_approx(model.rotation.y, PI if tower.team == 1 else 0.0), "客户端塔与水晶朝向按观察方转换")
+		model.free()
 	var camera := client_view._camera
 	var ray_origin := camera.project_ray_origin(Vector2(360, 900))
 	var ray_direction := camera.project_ray_normal(Vector2(360, 900))
@@ -572,6 +595,10 @@ func _check_health_bar_team_anchor() -> void:
 	var screen_feet := canvas * camera.unproject_position(ground)
 	var screen_head := canvas * camera.unproject_position(ground + Vector3.UP)
 	_expect(screen_head.y < screen_feet.y, "3D 相机配合翻转画布后模型头部仍高于脚底")
+	var previous_mode: String = _main.mode
+	_main.mode = "client"
+	_expect(red.get_health_bar_fill_color() == Color(0.2, 0.9, 0.2) and blue.get_health_bar_fill_color() == Color(0.95, 0.25, 0.25), "客户端己方绿血条、敌方红血条")
+	_main.mode = previous_mode
 	client_view.free()
 	if blue_view != null:
 		blue_view._update_health_bar_anchor()

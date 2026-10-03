@@ -2811,7 +2811,8 @@ func get_visual_head_screen_position() -> Vector2:
 
 
 func get_health_bar_fill_color() -> Color:
-	return Color(0.95, 0.25, 0.25) if team == 1 else Color(0.2, 0.9, 0.2)
+	var local_team := 1 if battle_context != null and battle_context.is_net_client() else 0
+	return Color(0.95, 0.25, 0.25) if team != local_team else Color(0.2, 0.9, 0.2)
 
 
 func _update_fallback_health_bar_anchor() -> void:
@@ -2859,7 +2860,8 @@ func _draw() -> void:
 		draw_rect(Rect2(-body_radius, -body_radius, body_radius * 2.0, body_radius * 2.0), body_color)
 		draw_rect(Rect2(-body_radius, -body_radius, body_radius * 2.0, body_radius * 2.0), Color(0.2, 0.18, 0.12), false, 2.0)
 	elif not is_building and not has_model_art:
-		var outline := Color(0.30, 0.60, 1.00) if team == 0 else Color(1.00, 0.35, 0.30)
+		var local_team := 1 if battle_context != null and battle_context.is_net_client() else 0
+		var outline := Color(0.30, 0.60, 1.00) if team == local_team else Color(1.00, 0.35, 0.30)
 		draw_circle(Vector2.ZERO, visual_radius + 2.0, outline)
 		draw_circle(Vector2.ZERO, visual_radius, body_color)
 	if not PresentationConfig.status_indicators_visible(self): return
