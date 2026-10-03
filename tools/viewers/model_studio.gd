@@ -16,7 +16,7 @@ func _fail(message: String) -> void:
 
 func _parse() -> bool:
 	var args := OS.get_cmdline_user_args()
-	var allowed := ["card", "scene", "team", "form", "animation", "time", "yaw", "zoom", "capture", "size", "list", "help", "install-missing-art"]
+	var allowed := ["card", "scene", "team", "form", "animation", "time", "yaw", "zoom", "capture", "size", "list", "help", "install-missing-art", "background", "soft-light", "light-strength"]
 	var index := 0
 	while index < args.size():
 		var token := args[index]
@@ -27,7 +27,7 @@ func _parse() -> bool:
 		if key not in allowed:
 			_fail("Unknown option: " + key)
 			return false
-		if key in ["list", "help", "install-missing-art"]:
+		if key in ["list", "help", "install-missing-art", "soft-light"]:
 			_options[key] = true
 		elif "=" in token:
 			_options[key] = token.substr(token.find("=") + 1)
@@ -43,16 +43,22 @@ func _parse() -> bool:
 func _run() -> void:
 	if not _parse(): return
 	if _options.has("help"):
-		print("Model studio: --card ID | --scene PATH(.tscn/.glb); --team 0|1 --form 0|1 --animation NAME --time SECONDS --yaw DEGREES --zoom SCALE --list --capture OUTPUT.png --size 308x560 --install-missing-art")
+		print("Model studio: --card ID | --scene PATH(.tscn/.glb); --team 0|1 --form 0|1 --animation NAME --time SECONDS --yaw DEGREES --zoom SCALE --list --capture OUTPUT.png --size 308x560 --background RRGGBB --soft-light --light-strength 1.0 --install-missing-art")
 		quit()
+		return
+	if _options.has("background") and not Color.html_is_valid(String(_options.background)):
+		_fail("background must be an HTML color")
 		return
 	if _options.has("card") == _options.has("scene"):
 		_fail("Specify exactly one of --card or --scene")
 		return
-	for key in ["time", "yaw", "zoom"]:
+	for key in ["time", "yaw", "zoom", "light-strength"]:
 		if _options.has(key) and (not String(_options[key]).is_valid_float() or not is_finite(float(_options[key]))):
 			_fail("Invalid numeric value: " + key)
 			return
+	if float(_options.get("light-strength", "1")) <= 0.0 or float(_options.get("light-strength", "1")) > 3.0:
+		_fail("light-strength must be greater than 0 and at most 3")
+		return
 	for key in ["team", "form"]:
 		if _options.has(key) and String(_options[key]) not in ["0", "1"]:
 			_fail(key + " must be 0 or 1")
@@ -126,6 +132,8 @@ func _run() -> void:
 	if _preview.model.has_method("prepare_visual_animations"):
 		_preview.model.call("prepare_visual_animations")
 		if _preview.player != null: clips = _preview.player.get_animation_list()
+	if _options.has("soft-light"):
+		_apply_soft_light()
 	if _options.has("list"):
 		for clip in clips:
 			print("%s\t%.6f seconds" % [clip, _preview.player.get_animation(clip).length])
@@ -264,9 +272,41 @@ func _capture() -> void:
 	else:
 		_fail("Capture contains no visible model")
 		return
+	if _options.has("background"):
+		var backdrop := Image.create(size.x, size.y, false, Image.FORMAT_RGBA8)
+		backdrop.fill(Color(String(_options.background)))
+		backdrop.blend_rect(result, Rect2i(Vector2i.ZERO, size), Vector2i.ZERO)
+		result = backdrop
 	var error := result.save_png(output)
 	if error != OK:
 		_fail("Cannot save capture: " + error_string(error))
 		return
 	print("Saved model capture: ", output)
 	quit()
+
+## 摄影专用材质副本与柔光；不改源模型、姿态、相机或裁切规则。
+func _apply_soft_light() -> void:
+	var strength := float(_options.get("light-strength", "1"))
+	for mesh in _preview.model.find_children("*", "MeshInstance3D", true, false):
+		for surface in mesh.mesh.get_surface_count():
+			var original = mesh.get_active_material(surface)
+			if original is BaseMaterial3D:
+				var material = original.duplicate()
+				material.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
+				material.metallic = 0.0
+				material.roughness = 0.9
+				mesh.set_surface_override_material(surface, material)
+	for child in _preview._viewport.get_children():
+		if child is DirectionalLight3D:
+			child.light_energy = 1.4 * strength
+			child.light_color = Color("fff1dc")
+			child.shadow_enabled = false
+		if child is WorldEnvironment:
+			child.environment.ambient_light_energy = 1.7 * strength
+	for spec in [[Color("b8d6ff"), 1.15, Vector3(-20, 145, 0)], [Color("9ec7ff"), 0.45, Vector3(-25, 155, 0)]]:
+		var light := DirectionalLight3D.new()
+		light.light_color = spec[0]
+		light.light_energy = float(spec[1]) * strength
+		light.rotation_degrees = spec[2]
+		light.shadow_enabled = false
+		_preview._viewport.add_child(light)

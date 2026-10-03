@@ -5,3 +5,5 @@
 - LoL原表：素材库03-制作中/峡谷先锋/lol-source/data/characters/sru_riftherald/animations/skin0.ritobin；提取自只读Map11.wad.client，配套source_manifest.json记录源路径与哈希。
 - 卡面：模型展台 Idle_Base（先锋）/Idle1（蠕虫），0.2秒，yaw=25，308×560；原包只找到头像图标，未找到对应纵向加载卡面，采用指定模型摄影。
 - 双阵营共用材质与包装。[动画与用途](../../../docs/units/animations/rift_herald.md)。
+
+当前卡面保持上述待机与角度，已增加独立背景配色及柔光；精确参数见[卡面摄影记录](../../cards/workbench_portraits.md)。
