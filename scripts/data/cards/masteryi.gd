@@ -22,6 +22,7 @@ static func definition() -> Dictionary:
 				}],
 		},
 		"visual": {
+			"visual_active_buff_scene": "res://assets/effects/masteryi/highlander.tscn",
 			"active_skills": [{"icon_path": "res://assets/skills/masteryi_0.png"}],
 			"visual_radius": RADIUS_MEDIUM + VISUAL_RADIUS_PADDING,
 			"visual_scene_path": "res://assets/units/masteryi/masteryi_view.tscn",

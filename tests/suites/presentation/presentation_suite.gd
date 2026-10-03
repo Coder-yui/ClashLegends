@@ -6,6 +6,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
 	_check_heal_range_team()
+	_check_highlander_trail()
 	_check_soft_control_visuals()
 	_check_control_effect_motion()
 	_check_animation_copy()
@@ -1079,3 +1080,18 @@ func _check_animation_copy() -> void:
 	library.add_animation("alias", source)
 	var copied_library := ModelVisualResources.copy_library(library)
 	_expect(copied_library.get_animation("first") == copied_library.get_animation("alias") and copied_library.get_animation("first") != source, "同库动画别名保持同一副本，同时与源库隔离")
+
+func _check_highlander_trail() -> void:
+	var stats := CardDB.get_unit_stats("masteryi")
+	var effect = load(stats.visual_active_buff_scene).instantiate()
+	_main.add_child(effect)
+	effect.configure(float(stats.visual_radius), 0)
+	effect.advance(false, 0.1)
+	_expect(not effect.visible, "高原血统未开启时隐藏流线")
+	effect.advance(true, 0.35)
+	_expect(effect.visible and effect._lines.size() == 5 and effect._lines[0].mesh != null, "高原血统启动自制后向流线")
+	effect.advance(false, 0.01)
+	_expect(not effect.visible, "高原血统结束或状态隐藏时关闭全部流线")
+	effect.advance(true, 0.2)
+	_expect(effect.get_child_count() == 5 and effect._phase < 0.3, "再次开启重置淡入且不累积节点")
+	effect.free()
