@@ -1,0 +1,14 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Morgana.wad.client",
+  "skin": "base",
+  "event": "Play_sfx_Morgana_MorganaW_cast",
+  "event_id": 952066656,
+  "media_id": 931864068,
+  "source_duration": 6.547188,
+  "duration": 6.547188,
+  "processing": "Original vgmstream-decoded PCM16 WAV, 44100Hz mono; no trimming, crossfade, time stretch or pitch change. Gameplay lasts 5s; original tail finishes naturally.",
+  "sha256": "3f17b0f46d41cb51ef9d3a9bbf75a43e3451e3233ae17251be96e8691707293a",
+  "source_wav_sha256": "3f17b0f46d41cb51ef9d3a9bbf75a43e3451e3233ae17251be96e8691707293a",
+  "user_listening_confirmed": false,
+  "audit": "Base and 10 associated definitions checked: confirmed W cast event only; no separately identifiable W hit/end SFX. Reused original natural tail within the cast clip."
+}

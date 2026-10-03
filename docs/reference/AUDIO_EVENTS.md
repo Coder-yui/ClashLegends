@@ -88,3 +88,7 @@
 隐身单位（`stealth_delay > 0`）支持 `stealth:enter` / `stealth:exit`，分别在脱战入隐、攻击破隐的权威状态边沿派发；重复状态和初始构造不派发。音频与模型代理烟雾共用 cue。
 
 持续主动增益支持`active_buff:attack_launch`和`active_buff:attack_hit`专属攻击音。权威发射时选取具体cue，命中读取出手时`presentation_source.active_buff`，不按命中瞬间剩余增益猜测；沿用真实伤害收据与命中去重。
+
+腐蚀法术支持`spell:zone_sustain`：正式施法通过Main的区域音频入口开始，复用GameAudioManager.start_zone_audio与可靠_rpc_zone_audio；区域5秒到期后保留原始尾声，清场和终局立即停止，暂停恢复沿用区域播放器。该事件仅对spell_kind=corrosion登记，普通spell:cast不再重复播放同段音轨。
+
+区域持续音支持布尔`natural_tail`（默认false，仅`:zone_sustain`）：保留原始单段音轨至自然结束，声音计时至少覆盖原音长度，不循环重播；暂停、清场、终局和预算淘汰仍统一管理。此字段不延长权威区域或视觉。腐蚀配置true，原音6.547188秒，权威区域5秒。

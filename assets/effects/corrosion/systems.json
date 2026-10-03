@@ -1,0 +1,2917 @@
+[
+  {
+    "name": "Dark Under Glow",
+    "mesh": "",
+    "primitive": "VfxPrimitiveArbitraryQuad",
+    "trail": false,
+    "ground": true,
+    "blend": 1,
+    "single": true,
+    "life": {
+      "base": 5.0
+    },
+    "rate": {
+      "base": 1.0
+    },
+    "duration": 1.0,
+    "delay": 0.1,
+    "texture": "res://assets/effects/corrosion/morgana_base_e_backdrop.png",
+    "offset": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "bind": {
+      "base": 0.0
+    },
+    "frames": 1,
+    "tex_div": [
+      1.0,
+      1.0
+    ],
+    "birthOffset": {
+      "base": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "emitterPosition": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "pass": -1910,
+    "birthScale0": {
+      "base": [
+        350.0,
+        350.0,
+        350.0
+      ]
+    },
+    "scale0": {
+      "base": [
+        1,
+        1,
+        1
+      ],
+      "times": [
+        0.0,
+        0.04
+      ],
+      "values": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          1.0,
+          1.0,
+          1.0
+        ]
+      ]
+    },
+    "birthRotation0": {
+      "base": [
+        1.0,
+        1.0,
+        0.0
+      ],
+      "times": [
+        0.0
+      ],
+      "values": [
+        [
+          1.0,
+          1.0,
+          0.0
+        ]
+      ],
+      "probabilities": [
+        {
+          "base": 1,
+          "times": [
+            0.0
+          ],
+          "values": [
+            90.0
+          ]
+        },
+        {
+          "base": 1
+        },
+        {
+          "base": 1
+        }
+      ]
+    },
+    "birthRotationalVelocity0": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthOrbitalVelocity": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthVelocity": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "worldAcceleration": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthAcceleration": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthDrag": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthColor": {
+      "base": [
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    "Color": {
+      "base": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "times": [
+        0.0,
+        0.02,
+        0.04,
+        0.9,
+        1.0
+      ],
+      "values": [
+        [
+          0.38431373,
+          0.02745098,
+          1.0,
+          0.0
+        ],
+        [
+          0.5921569,
+          0.02745098,
+          0.6431373,
+          1.0
+        ],
+        [
+          0.12941177,
+          0.011764706,
+          0.29411766,
+          1.0
+        ],
+        [
+          0.0627451,
+          0.003921569,
+          0.21960784,
+          1.0
+        ],
+        [
+          0.023529412,
+          0.0,
+          0.0627451,
+          0.0
+        ]
+      ]
+    },
+    "uvScale": {
+      "base": [
+        1,
+        1
+      ]
+    },
+    "birthUVOffset": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "birthUvScrollRate": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "particleUVScrollRate": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "mult": "",
+    "mult_scale": {
+      "base": [
+        1,
+        1
+      ]
+    },
+    "mult_scroll": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "mult_birth_offset": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "mult_birth_scroll": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "erosion": "",
+    "erosion_drive": {
+      "base": 0.0
+    }
+  },
+  {
+    "name": "Additive Flame Wave",
+    "mesh": "res://assets/effects/corrosion/morgana_w_circle_mesh.mesh.json",
+    "primitive": "VfxPrimitiveMesh",
+    "trail": false,
+    "ground": true,
+    "blend": 4,
+    "single": true,
+    "life": {
+      "base": 5.0
+    },
+    "rate": {
+      "base": 1.0
+    },
+    "duration": 1.0,
+    "delay": 0,
+    "texture": "res://assets/effects/corrosion/morgana_base_r_fire_trail_up.png",
+    "offset": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "bind": {
+      "base": 0.0
+    },
+    "frames": 1,
+    "tex_div": [
+      1.0,
+      1.0
+    ],
+    "birthOffset": {
+      "base": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "emitterPosition": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "pass": -1700,
+    "birthScale0": {
+      "base": [
+        2.7,
+        2.7,
+        2.7
+      ]
+    },
+    "scale0": {
+      "base": [
+        1,
+        1,
+        1
+      ],
+      "times": [
+        0.0,
+        0.06835443,
+        0.13670886,
+        0.17050633,
+        1.0
+      ],
+      "values": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.93476146,
+          0.93476146,
+          0.14237288
+        ],
+        [
+          0.9784155,
+          0.9784155,
+          0.30508474
+        ],
+        [
+          1.0,
+          1.0,
+          0.8067797
+        ],
+        [
+          1.2,
+          0.0,
+          1.2
+        ]
+      ]
+    },
+    "birthRotation0": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthRotationalVelocity0": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthOrbitalVelocity": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthVelocity": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "worldAcceleration": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthAcceleration": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthDrag": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthColor": {
+      "base": [
+        0.4899977,
+        0.0,
+        0.8299992,
+        0.33000687
+      ]
+    },
+    "Color": {
+      "base": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "times": [
+        0.0,
+        0.05,
+        0.1,
+        0.95,
+        1.0
+      ],
+      "values": [
+        [
+          1.0,
+          1.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.21960784,
+          0.9647059,
+          1.0,
+          1.0
+        ],
+        [
+          0.627451,
+          0.02745098,
+          1.0,
+          1.0
+        ],
+        [
+          0.14509805,
+          0.015686275,
+          0.27450982,
+          1.0
+        ],
+        [
+          0.13725491,
+          0.003921569,
+          0.27450982,
+          0.0
+        ]
+      ]
+    },
+    "uvScale": {
+      "base": [
+        2.0,
+        1.0
+      ]
+    },
+    "birthUVOffset": {
+      "base": [
+        0.0,
+        -0.1
+      ]
+    },
+    "birthUvScrollRate": {
+      "base": [
+        -0.1,
+        -0.7
+      ]
+    },
+    "particleUVScrollRate": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "mult": "res://assets/effects/corrosion/morg_base_ba_meshmult.png",
+    "mult_scale": {
+      "base": [
+        1,
+        1
+      ]
+    },
+    "mult_scroll": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "mult_birth_offset": {
+      "base": [
+        0.0,
+        -0.2
+      ]
+    },
+    "mult_birth_scroll": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "erosion": "",
+    "erosion_drive": {
+      "base": 0.0
+    }
+  },
+  {
+    "name": "alpha Flame Wave",
+    "mesh": "res://assets/effects/corrosion/morgana_w_circle_mesh.mesh.json",
+    "primitive": "VfxPrimitiveMesh",
+    "trail": false,
+    "ground": true,
+    "blend": 1,
+    "single": true,
+    "life": {
+      "base": 5.0
+    },
+    "rate": {
+      "base": 1.0
+    },
+    "duration": 1.0,
+    "delay": 0,
+    "texture": "res://assets/effects/corrosion/morgana_base_r_fire_trail_up.png",
+    "offset": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "bind": {
+      "base": 0.0
+    },
+    "frames": 1,
+    "tex_div": [
+      1.0,
+      1.0
+    ],
+    "birthOffset": {
+      "base": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "emitterPosition": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "pass": -1800,
+    "birthScale0": {
+      "base": [
+        3.0,
+        3.0,
+        3.0
+      ]
+    },
+    "scale0": {
+      "base": [
+        1,
+        1,
+        1
+      ],
+      "times": [
+        0.0,
+        0.06835443,
+        0.13670886,
+        0.17050633,
+        1.0
+      ],
+      "values": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.93476146,
+          0.93476146,
+          0.14237288
+        ],
+        [
+          0.9784155,
+          0.9784155,
+          0.30508474
+        ],
+        [
+          1.0,
+          1.0,
+          0.8067797
+        ],
+        [
+          1.2,
+          0.0,
+          1.2
+        ]
+      ]
+    },
+    "birthRotation0": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthRotationalVelocity0": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthOrbitalVelocity": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthVelocity": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "worldAcceleration": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthAcceleration": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthDrag": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthColor": {
+      "base": [
+        0.06666667,
+        0.0,
+        0.14509805,
+        0.6901961
+      ]
+    },
+    "Color": {
+      "base": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "times": [
+        0.0,
+        0.1,
+        0.95,
+        1.0
+      ],
+      "values": [
+        [
+          1.0,
+          1.0,
+          1.0,
+          0.0
+        ],
+        [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          0.08235294,
+          0.08235294,
+          0.08235294,
+          0.0
+        ]
+      ]
+    },
+    "uvScale": {
+      "base": [
+        3.0,
+        1.0
+      ]
+    },
+    "birthUVOffset": {
+      "base": [
+        0.0,
+        -0.1
+      ]
+    },
+    "birthUvScrollRate": {
+      "base": [
+        0.0,
+        -0.3
+      ]
+    },
+    "particleUVScrollRate": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "mult": "res://assets/effects/corrosion/morg_base_ba_meshmult.png",
+    "mult_scale": {
+      "base": [
+        1,
+        1
+      ]
+    },
+    "mult_scroll": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "mult_birth_offset": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "mult_birth_scroll": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "erosion": "",
+    "erosion_drive": {
+      "base": 0.0
+    }
+  },
+  {
+    "name": "Small Ripples",
+    "mesh": "res://assets/effects/corrosion/morgana_w_mist_mesh.mesh.json",
+    "primitive": "VfxPrimitiveMesh",
+    "trail": false,
+    "ground": true,
+    "blend": 1,
+    "single": true,
+    "life": {
+      "base": 5.0
+    },
+    "rate": {
+      "base": 1.0
+    },
+    "duration": 1.0,
+    "delay": 0,
+    "texture": "res://assets/effects/corrosion/morgana_base_r_fire_trail_up.png",
+    "offset": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "bind": {
+      "base": 0.0
+    },
+    "frames": 1,
+    "tex_div": [
+      1.0,
+      1.0
+    ],
+    "birthOffset": {
+      "base": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "emitterPosition": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "pass": -1800,
+    "birthScale0": {
+      "base": [
+        2.0,
+        100.0,
+        2.0
+      ]
+    },
+    "scale0": {
+      "base": [
+        1,
+        1,
+        1
+      ],
+      "times": [
+        0.0,
+        0.01,
+        0.02,
+        0.17050633,
+        1.0
+      ],
+      "values": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          1.2,
+          2.0,
+          1.2
+        ],
+        [
+          0.935,
+          0.0,
+          0.935
+        ],
+        [
+          1.2,
+          0.0,
+          1.2
+        ],
+        [
+          1.2,
+          0.0,
+          1.2
+        ]
+      ]
+    },
+    "birthRotation0": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthRotationalVelocity0": {
+      "base": [
+        0.0,
+        -30.0,
+        0.0
+      ]
+    },
+    "birthOrbitalVelocity": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthVelocity": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "worldAcceleration": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthAcceleration": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthDrag": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthColor": {
+      "base": [
+        0.08999771,
+        0.0,
+        0.1600061,
+        0.34999618
+      ]
+    },
+    "Color": {
+      "base": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "times": [
+        0.0,
+        0.1,
+        0.8,
+        1.0
+      ],
+      "values": [
+        [
+          1.0,
+          1.0,
+          1.0,
+          0.0
+        ],
+        [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          1.0,
+          1.0,
+          1.0,
+          0.0
+        ]
+      ]
+    },
+    "uvScale": {
+      "base": [
+        1.0,
+        2.0
+      ]
+    },
+    "birthUVOffset": {
+      "base": [
+        0.0,
+        -0.1
+      ]
+    },
+    "birthUvScrollRate": {
+      "base": [
+        0.0,
+        -1.5
+      ]
+    },
+    "particleUVScrollRate": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "mult": "res://assets/effects/corrosion/morgana_base_r_funnelmult.png",
+    "mult_scale": {
+      "base": [
+        1,
+        1
+      ]
+    },
+    "mult_scroll": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "mult_birth_offset": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "mult_birth_scroll": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "erosion": "",
+    "erosion_drive": {
+      "base": 0.0
+    }
+  },
+  {
+    "name": "Ring Alpha Fill",
+    "mesh": "res://assets/effects/corrosion/morgana_base_r_indicator_ring.mesh.json",
+    "primitive": "VfxPrimitiveMesh",
+    "trail": false,
+    "ground": true,
+    "blend": 1,
+    "single": true,
+    "life": {
+      "base": 5.0
+    },
+    "rate": {
+      "base": 1.0
+    },
+    "duration": 1.0,
+    "delay": 0.05,
+    "texture": "res://assets/effects/corrosion/morg_base_ba_meshmult.png",
+    "offset": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "bind": {
+      "base": 1.0
+    },
+    "frames": 1,
+    "tex_div": [
+      1.0,
+      1.0
+    ],
+    "birthOffset": {
+      "base": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "emitterPosition": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "pass": -10,
+    "birthScale0": {
+      "base": [
+        0.57,
+        0.57,
+        0.57
+      ]
+    },
+    "scale0": {
+      "base": [
+        1,
+        1,
+        1
+      ],
+      "times": [
+        0.0,
+        0.03,
+        1.0
+      ],
+      "values": [
+        [
+          1.5,
+          1.1,
+          2.0
+        ],
+        [
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          1.0,
+          1.0,
+          1.0
+        ]
+      ]
+    },
+    "birthRotation0": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthRotationalVelocity0": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthOrbitalVelocity": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthVelocity": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "worldAcceleration": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthAcceleration": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthDrag": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthColor": {
+      "base": [
+        1.0,
+        1.0,
+        1.0,
+        0.08000305
+      ]
+    },
+    "Color": {
+      "base": [
+        0.043137256,
+        0.03137255,
+        0.3019608,
+        1.0
+      ],
+      "times": [
+        0.0,
+        0.06,
+        0.9,
+        0.9999
+      ],
+      "values": [
+        [
+          0.043137256,
+          0.03137255,
+          0.3019608,
+          0.0
+        ],
+        [
+          0.043137256,
+          0.03137255,
+          0.3019608,
+          1.0
+        ],
+        [
+          0.043137256,
+          0.03137255,
+          0.3019608,
+          1.0
+        ],
+        [
+          0.043137256,
+          0.03137255,
+          0.3019608,
+          1.0
+        ]
+      ]
+    },
+    "uvScale": {
+      "base": [
+        8.0,
+        1.0
+      ]
+    },
+    "birthUVOffset": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "birthUvScrollRate": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "particleUVScrollRate": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "mult": "",
+    "mult_scale": {
+      "base": [
+        1,
+        1
+      ]
+    },
+    "mult_scroll": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "mult_birth_offset": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "mult_birth_scroll": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "erosion": "res://assets/effects/corrosion/morgana_base_e_smoke_erode.png",
+    "erosion_drive": {
+      "base": 0.0,
+      "times": [
+        0.0,
+        0.05
+      ],
+      "values": [
+        2.0,
+        0.0
+      ]
+    }
+  },
+  {
+    "name": "Additive Ring",
+    "mesh": "res://assets/effects/corrosion/morgana_base_r_indicator_ring.mesh.json",
+    "primitive": "VfxPrimitiveMesh",
+    "trail": false,
+    "ground": true,
+    "blend": 4,
+    "single": true,
+    "life": {
+      "base": 5.0
+    },
+    "rate": {
+      "base": 1.0
+    },
+    "duration": 1.0,
+    "delay": 0.05,
+    "texture": "res://assets/effects/corrosion/morgana_base_w_edge.png",
+    "offset": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "bind": {
+      "base": 1.0
+    },
+    "frames": 1,
+    "tex_div": [
+      1.0,
+      1.0
+    ],
+    "birthOffset": {
+      "base": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "emitterPosition": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "pass": 90,
+    "birthScale0": {
+      "base": [
+        0.57,
+        0.57,
+        0.57
+      ]
+    },
+    "scale0": {
+      "base": [
+        1,
+        1,
+        1
+      ]
+    },
+    "birthRotation0": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthRotationalVelocity0": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthOrbitalVelocity": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthVelocity": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "worldAcceleration": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthAcceleration": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthDrag": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthColor": {
+      "base": [
+        0.93000686,
+        0.5499962,
+        1.0,
+        0.57000077
+      ]
+    },
+    "Color": {
+      "base": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "times": [
+        0.0,
+        0.06,
+        0.98,
+        1.0
+      ],
+      "values": [
+        [
+          0.8200046,
+          0.059998475,
+          1.0,
+          0.0
+        ],
+        [
+          0.81960785,
+          0.05882353,
+          1.0,
+          1.0
+        ],
+        [
+          0.34901962,
+          0.09803922,
+          0.45490196,
+          1.0
+        ],
+        [
+          0.22000457,
+          0.00999466,
+          0.34999618,
+          0.0
+        ]
+      ]
+    },
+    "uvScale": {
+      "base": [
+        8.0,
+        1.0
+      ]
+    },
+    "birthUVOffset": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "birthUvScrollRate": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "particleUVScrollRate": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "mult": "res://assets/effects/corrosion/morgana_base_q_mis_energy.png",
+    "mult_scale": {
+      "base": [
+        3.0,
+        1.0
+      ]
+    },
+    "mult_scroll": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "mult_birth_offset": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "mult_birth_scroll": {
+      "base": [
+        0.2,
+        0.0
+      ]
+    },
+    "erosion": "res://assets/effects/corrosion/morgana_base_e_smoke_erode.png",
+    "erosion_drive": {
+      "base": 0.0,
+      "times": [
+        0.0,
+        0.05
+      ],
+      "values": [
+        0.0,
+        0.0
+      ]
+    }
+  },
+  {
+    "name": "Embers1",
+    "mesh": "",
+    "primitive": "",
+    "trail": false,
+    "ground": false,
+    "blend": 4,
+    "single": false,
+    "life": {
+      "base": 0.5,
+      "times": [
+        0.0
+      ],
+      "values": [
+        0.5
+      ],
+      "probabilities": [
+        {
+          "base": 1,
+          "times": [
+            0.0,
+            1.0
+          ],
+          "values": [
+            0.5,
+            1.0
+          ]
+        }
+      ]
+    },
+    "rate": {
+      "base": 15.0
+    },
+    "duration": 5.0,
+    "delay": 0,
+    "texture": "res://assets/effects/corrosion/morgana_base_r_energybits.png",
+    "offset": [
+      3.0,
+      3.0,
+      200.0,
+      0.0,
+      200.0,
+      3.0,
+      32.0,
+      0.0,
+      1.0,
+      32.0,
+      -1.0,
+      1.0,
+      32.0,
+      0.0,
+      1.0,
+      32.0,
+      -1.0,
+      1.0,
+      32.0,
+      0.0,
+      3.0,
+      200.0,
+      0.0,
+      200.0
+    ],
+    "bind": {
+      "base": 0.0
+    },
+    "frames": 1,
+    "tex_div": [
+      1.0,
+      1.0
+    ],
+    "birthOffset": {
+      "base": [
+        3.0,
+        3.0,
+        200.0,
+        0.0,
+        200.0,
+        3.0,
+        32.0,
+        0.0,
+        1.0,
+        32.0,
+        -1.0,
+        1.0,
+        32.0,
+        0.0,
+        1.0,
+        32.0,
+        -1.0,
+        1.0,
+        32.0,
+        0.0,
+        3.0,
+        200.0,
+        0.0,
+        200.0
+      ]
+    },
+    "emitterPosition": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "pass": 0,
+    "birthScale0": {
+      "base": [
+        10.0,
+        10.0,
+        50.0
+      ],
+      "times": [
+        0.0
+      ],
+      "values": [
+        [
+          10.0,
+          10.0,
+          50.0
+        ]
+      ],
+      "probabilities": [
+        {
+          "base": 1,
+          "times": [
+            0.0,
+            1.0
+          ],
+          "values": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "base": 1
+        },
+        {
+          "base": 1
+        }
+      ]
+    },
+    "scale0": {
+      "base": [
+        1,
+        1,
+        1
+      ],
+      "times": [
+        0.0,
+        0.1,
+        1.0
+      ],
+      "values": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          1.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    "birthRotation0": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthRotationalVelocity0": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthOrbitalVelocity": {
+      "base": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "times": [
+        0.0
+      ],
+      "values": [
+        [
+          0.0,
+          1.0,
+          0.0
+        ]
+      ],
+      "probabilities": [
+        {
+          "base": 1
+        },
+        {
+          "base": 1,
+          "times": [
+            0.0,
+            1.0
+          ],
+          "values": [
+            -1.0,
+            1.0
+          ]
+        },
+        {
+          "base": 1
+        }
+      ]
+    },
+    "birthVelocity": {
+      "base": [
+        0.0,
+        700.0,
+        0.0
+      ],
+      "times": [
+        0.0
+      ],
+      "values": [
+        [
+          0.0,
+          700.0,
+          0.0
+        ]
+      ],
+      "probabilities": [
+        {
+          "base": 1
+        },
+        {
+          "base": 1,
+          "times": [
+            0.0,
+            1.0
+          ],
+          "values": [
+            0.3,
+            1.0
+          ]
+        },
+        {
+          "base": 1
+        }
+      ]
+    },
+    "worldAcceleration": {
+      "base": [
+        900.0,
+        25.0,
+        0.0
+      ],
+      "times": [
+        0.0
+      ],
+      "values": [
+        [
+          900.0,
+          25.0,
+          0.0
+        ]
+      ],
+      "probabilities": [
+        {
+          "base": 1,
+          "times": [
+            0.0,
+            1.0
+          ],
+          "values": [
+            0.5,
+            1.25
+          ]
+        },
+        {
+          "base": 1
+        },
+        {
+          "base": 1
+        }
+      ]
+    },
+    "birthAcceleration": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthDrag": {
+      "base": [
+        0.0,
+        4.0,
+        0.0
+      ]
+    },
+    "birthColor": {
+      "base": [
+        1.0,
+        1.0,
+        1.0,
+        0.8399939
+      ]
+    },
+    "Color": {
+      "base": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "times": [
+        0.0,
+        0.5,
+        1.0
+      ],
+      "values": [
+        [
+          0.19215687,
+          0.16470589,
+          1.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.17254902,
+          0.93333334,
+          1.0
+        ],
+        [
+          0.05882353,
+          0.003921569,
+          0.101960786,
+          0.0
+        ]
+      ]
+    },
+    "uvScale": {
+      "base": [
+        1,
+        1
+      ]
+    },
+    "birthUVOffset": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "birthUvScrollRate": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "particleUVScrollRate": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "mult": "",
+    "mult_scale": {
+      "base": [
+        1,
+        1
+      ]
+    },
+    "mult_scroll": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "mult_birth_offset": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "mult_birth_scroll": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "erosion": "",
+    "erosion_drive": {
+      "base": 0.0
+    }
+  },
+  {
+    "name": "Ring Blur",
+    "mesh": "res://assets/effects/corrosion/morgana_base_r_indicator_ring.mesh.json",
+    "primitive": "VfxPrimitiveMesh",
+    "trail": false,
+    "ground": true,
+    "blend": 0,
+    "single": true,
+    "life": {
+      "base": 5.0
+    },
+    "rate": {
+      "base": 1.0
+    },
+    "duration": 1.0,
+    "delay": 0.05,
+    "texture": "res://assets/effects/corrosion/morgana_base_w_edge_blur.png",
+    "offset": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "bind": {
+      "base": 1.0
+    },
+    "frames": 1,
+    "tex_div": [
+      1.0,
+      1.0
+    ],
+    "birthOffset": {
+      "base": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "emitterPosition": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "pass": 80,
+    "birthScale0": {
+      "base": [
+        0.57,
+        0.57,
+        0.57
+      ]
+    },
+    "scale0": {
+      "base": [
+        1,
+        1,
+        1
+      ]
+    },
+    "birthRotation0": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthRotationalVelocity0": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthOrbitalVelocity": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthVelocity": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "worldAcceleration": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthAcceleration": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthDrag": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthColor": {
+      "base": [
+        0.43529412,
+        0.14901961,
+        0.54901963,
+        0.34901962
+      ]
+    },
+    "Color": {
+      "base": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "times": [
+        0.0,
+        0.06,
+        0.98,
+        1.0
+      ],
+      "values": [
+        [
+          0.8200046,
+          0.059998475,
+          1.0,
+          0.0
+        ],
+        [
+          0.81960785,
+          0.05882353,
+          1.0,
+          1.0
+        ],
+        [
+          0.4745098,
+          0.13333334,
+          0.61960787,
+          1.0
+        ],
+        [
+          0.22000457,
+          0.00999466,
+          0.34999618,
+          0.0
+        ]
+      ]
+    },
+    "uvScale": {
+      "base": [
+        8.0,
+        1.0
+      ]
+    },
+    "birthUVOffset": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "birthUvScrollRate": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "particleUVScrollRate": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "mult": "",
+    "mult_scale": {
+      "base": [
+        1,
+        1
+      ]
+    },
+    "mult_scroll": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "mult_birth_offset": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "mult_birth_scroll": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "erosion": "res://assets/effects/corrosion/morgana_base_e_smoke_erode.png",
+    "erosion_drive": {
+      "base": 0.0,
+      "times": [
+        0.0,
+        0.05
+      ],
+      "values": [
+        0.0,
+        0.0
+      ]
+    }
+  },
+  {
+    "name": "Embers2",
+    "mesh": "",
+    "primitive": "VfxPrimitiveArbitraryQuad",
+    "trail": false,
+    "ground": false,
+    "blend": 4,
+    "single": false,
+    "life": {
+      "base": 1.25,
+      "times": [
+        0.0
+      ],
+      "values": [
+        1.25
+      ],
+      "probabilities": [
+        {
+          "base": 1,
+          "times": [
+            0.0,
+            1.0
+          ],
+          "values": [
+            0.5,
+            1.0
+          ]
+        }
+      ]
+    },
+    "rate": {
+      "base": 10.0
+    },
+    "duration": 5.0,
+    "delay": 0,
+    "texture": "res://assets/effects/corrosion/morgana_base_p_stardustmote.png",
+    "offset": [
+      3.0,
+      3.0,
+      200.0,
+      0.0,
+      200.0,
+      3.0,
+      32.0,
+      0.0,
+      1.0,
+      32.0,
+      -1.0,
+      1.0,
+      32.0,
+      0.0,
+      1.0,
+      32.0,
+      -1.0,
+      1.0,
+      32.0,
+      0.0,
+      3.0,
+      200.0,
+      0.0,
+      200.0
+    ],
+    "bind": {
+      "base": 0.0
+    },
+    "frames": 1,
+    "tex_div": [
+      1.0,
+      1.0
+    ],
+    "birthOffset": {
+      "base": [
+        3.0,
+        3.0,
+        200.0,
+        0.0,
+        200.0,
+        3.0,
+        32.0,
+        0.0,
+        1.0,
+        32.0,
+        -1.0,
+        1.0,
+        32.0,
+        0.0,
+        1.0,
+        32.0,
+        -1.0,
+        1.0,
+        32.0,
+        0.0,
+        3.0,
+        200.0,
+        0.0,
+        200.0
+      ]
+    },
+    "emitterPosition": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "pass": 0,
+    "birthScale0": {
+      "base": [
+        60.0,
+        60.0,
+        50.0
+      ],
+      "times": [
+        0.0
+      ],
+      "values": [
+        [
+          60.0,
+          60.0,
+          50.0
+        ]
+      ],
+      "probabilities": [
+        {
+          "base": 1,
+          "times": [
+            0.0,
+            1.0
+          ],
+          "values": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "base": 1
+        },
+        {
+          "base": 1
+        }
+      ]
+    },
+    "scale0": {
+      "base": [
+        1,
+        1,
+        1
+      ],
+      "times": [
+        0.0,
+        0.1,
+        1.0
+      ],
+      "values": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          1.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    "birthRotation0": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthRotationalVelocity0": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthOrbitalVelocity": {
+      "base": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "times": [
+        0.0
+      ],
+      "values": [
+        [
+          0.0,
+          1.0,
+          0.0
+        ]
+      ],
+      "probabilities": [
+        {
+          "base": 1
+        },
+        {
+          "base": 1,
+          "times": [
+            0.0,
+            1.0
+          ],
+          "values": [
+            -1.0,
+            1.0
+          ]
+        },
+        {
+          "base": 1
+        }
+      ]
+    },
+    "birthVelocity": {
+      "base": [
+        0.0,
+        700.0,
+        0.0
+      ],
+      "times": [
+        0.0
+      ],
+      "values": [
+        [
+          0.0,
+          700.0,
+          0.0
+        ]
+      ],
+      "probabilities": [
+        {
+          "base": 1
+        },
+        {
+          "base": 1,
+          "times": [
+            0.0,
+            1.0
+          ],
+          "values": [
+            0.3,
+            1.0
+          ]
+        },
+        {
+          "base": 1
+        }
+      ]
+    },
+    "worldAcceleration": {
+      "base": [
+        300.0,
+        25.0,
+        0.0
+      ],
+      "times": [
+        0.0
+      ],
+      "values": [
+        [
+          300.0,
+          25.0,
+          0.0
+        ]
+      ],
+      "probabilities": [
+        {
+          "base": 1,
+          "times": [
+            0.0,
+            1.0
+          ],
+          "values": [
+            0.5,
+            1.25
+          ]
+        },
+        {
+          "base": 1
+        },
+        {
+          "base": 1
+        }
+      ]
+    },
+    "birthAcceleration": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthDrag": {
+      "base": [
+        0.0,
+        4.0,
+        0.0
+      ]
+    },
+    "birthColor": {
+      "base": [
+        1.0,
+        1.0,
+        1.0,
+        0.7100023
+      ]
+    },
+    "Color": {
+      "base": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "times": [
+        0.0,
+        0.5,
+        1.0
+      ],
+      "values": [
+        [
+          0.19215687,
+          0.16470589,
+          1.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.17254902,
+          0.93333334,
+          1.0
+        ],
+        [
+          0.05882353,
+          0.003921569,
+          0.101960786,
+          0.0
+        ]
+      ]
+    },
+    "uvScale": {
+      "base": [
+        1,
+        1
+      ]
+    },
+    "birthUVOffset": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "birthUvScrollRate": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "particleUVScrollRate": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "mult": "",
+    "mult_scale": {
+      "base": [
+        1,
+        1
+      ]
+    },
+    "mult_scroll": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "mult_birth_offset": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "mult_birth_scroll": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "erosion": "",
+    "erosion_drive": {
+      "base": 0.0
+    }
+  },
+  {
+    "name": "Ground_Mesh2",
+    "mesh": "",
+    "primitive": "VfxPrimitiveArbitraryQuad",
+    "trail": false,
+    "ground": true,
+    "blend": 1,
+    "single": true,
+    "life": {
+      "base": 5.0
+    },
+    "rate": {
+      "base": 1.0
+    },
+    "duration": 5.0,
+    "delay": 0,
+    "texture": "res://assets/effects/corrosion/morgana_base_w_tar_ground.png",
+    "offset": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "bind": {
+      "base": 0.0
+    },
+    "frames": 1,
+    "tex_div": [
+      1.0,
+      1.0
+    ],
+    "birthOffset": {
+      "base": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "emitterPosition": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "pass": -1900,
+    "birthScale0": {
+      "base": [
+        370.0,
+        370.0,
+        370.0
+      ]
+    },
+    "scale0": {
+      "base": [
+        1,
+        1,
+        1
+      ]
+    },
+    "birthRotation0": {
+      "base": [
+        90.0,
+        0.0,
+        90.0
+      ]
+    },
+    "birthRotationalVelocity0": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthOrbitalVelocity": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthVelocity": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "worldAcceleration": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthAcceleration": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthDrag": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthColor": {
+      "base": [
+        1.0,
+        0.9799954,
+        1.0,
+        0.7000076
+      ]
+    },
+    "Color": {
+      "base": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "times": [
+        0.0,
+        0.1,
+        0.9,
+        0.9999
+      ],
+      "values": [
+        [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      ]
+    },
+    "uvScale": {
+      "base": [
+        1,
+        1
+      ]
+    },
+    "birthUVOffset": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "birthUvScrollRate": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "particleUVScrollRate": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "mult": "",
+    "mult_scale": {
+      "base": [
+        1,
+        1
+      ]
+    },
+    "mult_scroll": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "mult_birth_offset": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "mult_birth_scroll": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "erosion": "res://assets/effects/corrosion/morgana_base_w_tar_ground_erode.png",
+    "erosion_drive": {
+      "base": 0.0,
+      "times": [
+        0.0,
+        0.03
+      ],
+      "values": [
+        2.0,
+        0.0
+      ]
+    }
+  },
+  {
+    "name": "Energy Cracks",
+    "mesh": "",
+    "primitive": "VfxPrimitiveArbitraryQuad",
+    "trail": false,
+    "ground": true,
+    "blend": 4,
+    "single": true,
+    "life": {
+      "base": 5.0
+    },
+    "rate": {
+      "base": 1.0
+    },
+    "duration": 5.0,
+    "delay": 0,
+    "texture": "res://assets/effects/corrosion/morgana_base_q_mis_energy.png",
+    "offset": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "bind": {
+      "base": 0.0
+    },
+    "frames": 1,
+    "tex_div": [
+      1.0,
+      1.0
+    ],
+    "birthOffset": {
+      "base": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "emitterPosition": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "pass": -1900,
+    "birthScale0": {
+      "base": [
+        360.0,
+        360.0,
+        360.0
+      ]
+    },
+    "scale0": {
+      "base": [
+        1,
+        1,
+        1
+      ]
+    },
+    "birthRotation0": {
+      "base": [
+        90.0,
+        0.0,
+        90.0
+      ]
+    },
+    "birthRotationalVelocity0": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthOrbitalVelocity": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthVelocity": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "worldAcceleration": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthAcceleration": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthDrag": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthColor": {
+      "base": [
+        0.8399939,
+        0.059998475,
+        1.0,
+        0.8200046
+      ]
+    },
+    "Color": {
+      "base": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "times": [
+        0.0,
+        0.1,
+        0.9,
+        0.9999
+      ],
+      "values": [
+        [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      ]
+    },
+    "uvScale": {
+      "base": [
+        2.0,
+        2.0
+      ]
+    },
+    "birthUVOffset": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "birthUvScrollRate": {
+      "base": [
+        0.25,
+        0.25
+      ]
+    },
+    "particleUVScrollRate": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "mult": "res://assets/effects/corrosion/morgana_base_w_tar_lightmult.png",
+    "mult_scale": {
+      "base": [
+        1,
+        1
+      ]
+    },
+    "mult_scroll": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "mult_birth_offset": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "mult_birth_scroll": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "erosion": "res://assets/effects/corrosion/morgana_base_w_tar_ground_erode.png",
+    "erosion_drive": {
+      "base": 0.0,
+      "times": [
+        0.0,
+        0.03
+      ],
+      "values": [
+        2.0,
+        0.0
+      ]
+    }
+  }
+]

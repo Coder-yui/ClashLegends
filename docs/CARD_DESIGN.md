@@ -224,3 +224,7 @@ bleeding_execute武装下一次普攻，以命中前本来源流血层数计算d
 图奇的range_bonus只增加可起手普攻的射程；piercing_distance定义每枚穿透弩箭从权威发射点起的固定行程，当前为300，大于增益后的200攻击射程。两者不相加，也不按当前目标距离或身体半径换算飞行距离。弹体出手时固化方向、行程、伤害与来源，后续目标移动不会改变方向；逐Tick扫掠沿途敌人，每箭每目标一次，落空正常结束。
 
 远程buff可配置不小于1的`projectile_speed_multiplier`，由ranged_attack状态持有，在权威发射时乘入弹速，出手后固化；图奇为2倍，即520→1040。到期后新发射恢复基础速度，已发弹体不变。
+
+## 腐蚀区域法术
+
+`corrosion`使用现有`damage / interval`定义单次伤害与结算间隔，固定半径区域持续`duration`，每Tick重新查询敌方combatants（含空军、建筑卡、防御塔与水晶；Tower按tower_damage_multiplier结算30%伤害，其余全额）。独立施法分别持有下一伤害Tick，施放Tick不伤害，随后每10Tick结算60伤害，0.5至5秒共10次；凝滞与来源保护通过CombatInteraction准入，跳过的伤害不补发。`spell_corrosion`强化读取`slow_multiplier`并在施法时与入圈检测Tick向普通Unit按来源立即施加并续期通用减速，不等待伤害节点，离圈最多0.1秒恢复；同类减速取最强，不减攻速。客户端只接收表现与状态，清场取消区域。

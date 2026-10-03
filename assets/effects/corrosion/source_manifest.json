@@ -1,0 +1,103 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Morgana.wad.client",
+  "system": "Morgana_Base_W_Tar_Update",
+  "layers": 11,
+  "files": [
+    {
+      "source": "assets/characters/morgana/skins/base/particles/morgana_base_e_backdrop.tex",
+      "source_sha256": "402dbc2999fefa8cf5576da67f7882afcb0115b734a6c1b7f4dd6e24bb4ddb8c",
+      "output": "morgana_base_e_backdrop.png",
+      "sha256": "8d530d6b832b57dd06b9a163afe3792e7cc3250d498462cbdf9a4634aa6c9c39"
+    },
+    {
+      "source": "assets/characters/morgana/skins/base/particles/morgana_w_circle_mesh.scb",
+      "source_sha256": "9dfc35416b3fd32a9f4122fb2a8a0ba6dcae4238743b2f23b1a9e1fe55fc4ea4",
+      "output": "morgana_w_circle_mesh.mesh.json",
+      "sha256": "b7b9b8d4cec3af2fda764d513bd972cbd66df1fc03139bac5f1185b7593833f0"
+    },
+    {
+      "source": "assets/characters/morgana/skins/base/particles/morgana_base_r_fire_trail_up.tex",
+      "source_sha256": "6b14882bd9c3b103db8188cfdd1f04061c88abdb976d755faa601aba2359f84d",
+      "output": "morgana_base_r_fire_trail_up.png",
+      "sha256": "c10943264e106e14ee28d9b664fcdab5c16f0c1e4ce92ffacdc2c082d0392b50"
+    },
+    {
+      "source": "assets/characters/morgana/skins/base/particles/morg_base_ba_meshmult.tex",
+      "source_sha256": "4e109c73fa0c97031c90a03bca175b60338d1eb3d2ed42aeb8e25e9233b1a6b0",
+      "output": "morg_base_ba_meshmult.png",
+      "sha256": "3511a8e44568809fd3969a72bb5b6a3e4b433ef79b109fc5fecde668b8d07a45"
+    },
+    {
+      "source": "assets/characters/morgana/skins/base/particles/morgana_w_mist_mesh.scb",
+      "source_sha256": "4947394244342a1453b1d09d7748a259c68d2085b3821431caa7373dc447240c",
+      "output": "morgana_w_mist_mesh.mesh.json",
+      "sha256": "1171795de3396e6e6b664177ddc120b32fe1d4f2ccf367cf20d3149b0fcb9bbe"
+    },
+    {
+      "source": "assets/characters/morgana/skins/base/particles/morgana_base_r_funnelmult.tex",
+      "source_sha256": "10b5d3c19779d9042bc855a5ffcf08089d76254d9f3914bcfcbbc715a528e5d1",
+      "output": "morgana_base_r_funnelmult.png",
+      "sha256": "1c7129cf4cf4aabd3b7545cecbc5615bb3b6924108a3f4338b253e7521456f8f"
+    },
+    {
+      "source": "assets/characters/morgana/skins/base/particles/morgana_base_r_indicator_ring.scb",
+      "source_sha256": "fa8ba4708780fa5edc8e6ca424d9e41d2ef5fc4e1e5bee73dfcaa3c307196a03",
+      "output": "morgana_base_r_indicator_ring.mesh.json",
+      "sha256": "eff613ad0a1deefd6322045ce5388d90f56362cbf4d4f93683d04e2612dad418"
+    },
+    {
+      "source": "assets/characters/morgana/skins/base/particles/morgana_base_e_smoke_erode.tex",
+      "source_sha256": "4265e8af420763f690d805d0b9ebc78ea032194d0e48c85f1b47118cb3125f18",
+      "output": "morgana_base_e_smoke_erode.png",
+      "sha256": "8ac3cc249cee5669fe29bca0fc3e59538a102fb97ddaba26166453cf95aadb58"
+    },
+    {
+      "source": "assets/characters/morgana/skins/base/particles/morgana_base_w_edge.tex",
+      "source_sha256": "9242cb1a071bd011bbddb74e363fcf13dc4614abd2de190fc67a63f9db37f46d",
+      "output": "morgana_base_w_edge.png",
+      "sha256": "30cc529350a02f598dd18c942b43790b5bc9e26bcb88df954f035a342db1f484"
+    },
+    {
+      "source": "assets/characters/morgana/skins/base/particles/morgana_base_q_mis_energy.tex",
+      "source_sha256": "d5a35e1ebedabe9b7b5974ff7cfa84637d1b0f339a104bfc70e3afbfef46bdd2",
+      "output": "morgana_base_q_mis_energy.png",
+      "sha256": "c03b2a51a7ad34e499aa9f44bca229548a76063e9a91f066772369a7e87d94cc"
+    },
+    {
+      "source": "assets/characters/morgana/skins/base/particles/morgana_base_r_energybits.tex",
+      "source_sha256": "2e05ca9b3bb0a3c7df279a7062ecc87d1704f8c3764290ec96fadf88c3c16465",
+      "output": "morgana_base_r_energybits.png",
+      "sha256": "8bce22fe1c7f3892f2c6c602caa097e3a78eba741bd1942dfb999bf5c8bbd827"
+    },
+    {
+      "source": "assets/characters/morgana/skins/base/particles/morgana_base_w_edge_blur.tex",
+      "source_sha256": "77d6659c561bc62c77d01939797f340c0c64b48f0df6df096f530632a5312d2a",
+      "output": "morgana_base_w_edge_blur.png",
+      "sha256": "ba8fce1f7ffab650381677aee3b77bbd57097e0a8440a904b415b7b2097e3945"
+    },
+    {
+      "source": "assets/characters/morgana/skins/base/particles/morgana_base_p_stardustmote.tex",
+      "source_sha256": "900b45c159aca6343711275d4f13f43c0e603ea229046f8dc8872010c735c29c",
+      "output": "morgana_base_p_stardustmote.png",
+      "sha256": "52cee14392bc80cb1d84896d63c107e07df8780a2e35f580bbe0bf403369113f"
+    },
+    {
+      "source": "assets/characters/morgana/skins/base/particles/morgana_base_w_tar_ground.tex",
+      "source_sha256": "b3b90702e92fe13d05b947b43d8b905f9a274286d74f1ab9d74fb1933e318e5d",
+      "output": "morgana_base_w_tar_ground.png",
+      "sha256": "1cd5d95f5b4fdbdd65170d13636e42b7815f68b44da4faec1a246a8b9224d77f"
+    },
+    {
+      "source": "assets/characters/morgana/skins/base/particles/morgana_base_w_tar_ground_erode.tex",
+      "source_sha256": "98092454fa28c758734f2e5f723ed7c4e60fc76da0c706c15888d7d09fc98c8d",
+      "output": "morgana_base_w_tar_ground_erode.png",
+      "sha256": "3b38ac5ed2b376e09414edfcbd1367675e73968b418962956ee438c48a5472d4"
+    },
+    {
+      "source": "assets/characters/morgana/skins/base/particles/morgana_base_w_tar_lightmult.tex",
+      "source_sha256": "87f01bc55f5f01a62b2aa6de03e83cc9f23f6f9b2ac10c83ef7b557a48c22a89",
+      "output": "morgana_base_w_tar_lightmult.png",
+      "sha256": "ce883de94826f0a935b5cb1086227b571649dcb54674e8162a195ed24bdecad0"
+    }
+  ]
+}

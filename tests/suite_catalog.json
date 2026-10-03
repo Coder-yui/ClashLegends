@@ -411,5 +411,12 @@
     "method": "run",
     "scene": "battle",
     "group": "cards"
+  },
+  {
+    "id": "CorrosionSuite",
+    "script": "res://tests/suites/cards/corrosion_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "cards"
   }
 ]

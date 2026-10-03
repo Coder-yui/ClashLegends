@@ -223,11 +223,15 @@ func start_zone_audio(event_id: int, card_id: String, form: int, action: String,
 	add_child(player)
 	player.global_position = position
 	player.stream = _randomized_stream(PackedStringArray(event.get("pool", [])))
-	_zone_players[event_id] = {"player": player, "time_left": duration, "card_id": card_id, "action": action, "ending": ending, "position": position}
+	# 区域规则到期后允许原始单段音轨自然收尾；仅延长声音生命周期。
+	var natural_tail := bool(event.get("natural_tail", false))
+	var audio_duration := maxf(duration, player.stream.get_length()) if natural_tail and player.stream != null else duration
+	_zone_players[event_id] = {"player": player, "time_left": audio_duration, "card_id": card_id, "action": action, "ending": ending, "position": position}
 	if player.stream != null:
 		player.finished.connect(func():
 			if _zone_players.has(event_id):
-				player.play()
+				if natural_tail: _stop_zone_audio(event_id, true)
+				else: player.play()
 		)
 		player.play()
 		cue_played.emit(card_id, cue, position)

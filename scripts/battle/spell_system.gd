@@ -3,6 +3,9 @@ extends RefCounted
 ## 数据驱动法术的权威执行与持续区域。
 ## Main 只负责出牌编排；新增 spell_kind 时在这里实现一次，并由 CardDB 拒绝未实现的配置。
 
+var corrosion_zones: Array[Dictionary] = []
+var corrosion_effects: Array[Dictionary] = []
+
 var freeze_effects: Array[Dictionary] = []
 var slow_zones: Array[Dictionary] = []
 var slow_effects: Array[Dictionary] = []
@@ -36,6 +39,9 @@ func cast(team: int, stats: Dictionary, position: Vector2, active_enabled: bool 
 
 func _resolve_cast(team: int, stats: Dictionary, position: Vector2, active_enabled: bool, active_skill_index: int) -> bool:
 	match StringName(stats.get("spell_kind", "")):
+		&"corrosion":
+			_start_corrosion(team, stats, position, active_enabled, active_skill_index)
+			return true
 		&"zap", &"lightning":
 			start_lightning(team, stats, position, active_enabled, active_skill_index)
 			return true
@@ -138,6 +144,7 @@ func show_heal(position: Vector2, radius: float, duration: float, team: int, enh
 	heal_effects.append({"pos": position, "radius": radius, "timer": duration, "duration": duration, "team": team, "enhanced": enhanced, "global_heal": global_heal})
 
 func tick(dt: float) -> void:
+	_tick_corrosion()
 	_tick_flights()
 	_tick_lightning()
 	var alive: Array[Dictionary] = []
@@ -169,6 +176,9 @@ func tick(dt: float) -> void:
 
 
 func tick_visuals(delta: float) -> void:
+	for effect in corrosion_effects:
+		effect.timer = maxf(0.0, float(effect.timer) - delta)
+	corrosion_effects.assign(corrosion_effects.filter(func(effect): return float(effect.timer) > 0.0))
 	for effect in stasis_effects:
 		if bool(effect.impacted):
 			effect.timer = maxf(0.0, float(effect.timer) - delta)
@@ -202,6 +212,8 @@ func tick_visuals(delta: float) -> void:
 
 
 func clear() -> void:
+	corrosion_zones.clear()
+	corrosion_effects.clear()
 	spell_flights.clear()
 	stasis_effects.clear()
 	lightning_casts.clear()
@@ -330,3 +342,65 @@ func show_arrival(id: int) -> void:
 			effect.impacted = true
 			effect.timer = 0.8
 			return
+
+
+
+## 独立区域：每10Tick结算一次伤害，0.5至5秒共10次；减速每Tick检测，独立于伤害节拍。
+func _start_corrosion(team: int, stats: Dictionary, position: Vector2, enhanced: bool, skill_index: int) -> void:
+	_effect_serial += 1
+	var skill := _active_heal_skill(stats, skill_index) if enhanced else {}
+	var tick: int = _controller.get_authoritative_server_tick()
+	var interval_ticks := maxi(1, ceili(float(stats.interval) / FixedStepClock.STEP))
+	var zone := {"team": team, "pos": position, "radius": float(stats.radius),
+		"start_tick": tick, "end_tick": tick + maxi(1, ceili(float(stats.duration) / FixedStepClock.STEP)),
+		"last_tick": tick, "damage": float(stats.damage), "tower_damage_multiplier": float(stats.tower_damage_multiplier), "interval_ticks": interval_ticks,
+		"next_damage_tick": tick + interval_ticks, "slow": float(skill.get("slow_multiplier", 1.0)),
+		"source": StringName("corrosion:%d:%d" % [team, _effect_serial])}
+	corrosion_zones.append(zone)
+	# 施放当刻圈内目标立即减速，不提前造成伤害。
+	var interaction := _spell_context(team)
+	for target in _corrosion_targets(zone, interaction):
+		_apply_corrosion_slow(zone, target, interaction)
+	show_corrosion(position, float(stats.radius), float(stats.duration), team)
+	_controller.present_corrosion_spell(position, float(stats.radius), float(stats.duration), team)
+
+func show_corrosion(position: Vector2, radius: float, duration: float, team: int) -> void:
+	corrosion_effects.append({"pos": position, "radius": radius, "duration": duration, "timer": duration, "team": team})
+
+func _corrosion_targets(zone: Dictionary, interaction: Dictionary) -> Array[Node2D]:
+	var targets: Array[Node2D] = []
+	for target in _controller.get_tree().get_nodes_in_group("combatants"):
+		if not is_instance_valid(target) or target.is_queued_for_deletion(): continue
+		if target.team == int(zone.team) or target.hp <= 0.0: continue
+		if target.global_position.distance_to(zone.pos) > float(zone.radius) + target.body_radius: continue
+		if CombatInteraction.allows_effect(target, interaction): targets.append(target)
+	return targets
+
+func _apply_corrosion_slow(zone: Dictionary, target: Node2D, interaction: Dictionary) -> void:
+	if not target is Unit or target.is_building or float(zone.slow) >= 1.0: return
+	var apply_slow := func():
+		if is_instance_valid(target) and target.hp > 0.0:
+			target.apply_slow(FixedStepClock.STEP * 2.0, float(zone.slow), zone.source, interaction)
+	if _controller.combat_service().collecting: _controller.combat_service().defer_effect(apply_slow)
+	else: apply_slow.call()
+
+func _tick_corrosion() -> void:
+	var tick: int = _controller.get_authoritative_server_tick()
+	var alive: Array[Dictionary] = []
+	for zone in corrosion_zones:
+		if tick <= int(zone.last_tick):
+			alive.append(zone)
+			continue
+		zone.last_tick = tick
+		if tick > int(zone.end_tick): continue
+		var damage_due := tick >= int(zone.next_damage_tick)
+		var interaction := _spell_context(int(zone.team))
+		for target in _corrosion_targets(zone, interaction):
+			if damage_due:
+				var amount := float(zone.damage) * (float(zone.tower_damage_multiplier) if target is Tower else 1.0)
+				BattleNumbers.hit(target, amount, interaction.get("source"), int(zone.team), interaction.get("position", Vector2(INF, INF)))
+			_apply_corrosion_slow(zone, target, interaction)
+		if damage_due: zone.next_damage_tick += int(zone.interval_ticks)
+		# 先结算到期末跳，再移除区域。
+		if tick < int(zone.end_tick): alive.append(zone)
+	corrosion_zones.assign(alive)

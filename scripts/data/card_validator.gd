@@ -119,6 +119,12 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 			elif float(stats.get("duration", 0.0)) <= 0.0:
 				errors.append("%s.duration: 法术持续时间必须 > 0" % card_id)
 			match spell_kind:
+				&"corrosion":
+					_require_fields(card_id, stats, [&"damage", &"interval", &"tower_damage_multiplier"], errors)
+					if not is_finite(float(stats.get("tower_damage_multiplier", -1))) or float(stats.get("tower_damage_multiplier", -1)) < 0 or float(stats.get("tower_damage_multiplier", -1)) > 1:
+						errors.append("%s.tower_damage_multiplier: 必须为0到1之间有限数值" % card_id)
+					if float(stats.get("damage", 0.0)) <= 0.0 or float(stats.get("interval", 0.0)) < FixedStepClock.STEP:
+						errors.append("%s: 腐蚀伤害必须为正，间隔至少一个Tick" % card_id)
 				&"zap", &"lightning":
 					_require_fields(card_id, stats, [&"damage", &"strike_count", &"strike_interval", &"stun_duration", &"tower_damage_multiplier"], errors)
 					if float(stats.get("damage", 0)) <= 0 or int(stats.get("strike_count", 0)) < 1 or float(stats.get("strike_interval", 0)) < FixedStepClock.STEP or float(stats.get("stun_duration", 0)) <= 0:
@@ -216,7 +222,9 @@ static func _validate_audio_config(label: String, stats: Dictionary, errors: Pac
 			if not event is Dictionary:
 				errors.append("%s.audio.events.%s: 必须是 Dictionary" % [label, cue])
 				continue
-			_validate_known_fields("%s.audio.events.%s" % [label, cue], event, [&"pool", &"volume_db", &"bus", &"action_time", &"owner", &"fade_in", &"fade_out"], errors)
+			_validate_known_fields("%s.audio.events.%s" % [label, cue], event, [&"pool", &"volume_db", &"bus", &"action_time", &"owner", &"fade_in", &"fade_out", &"natural_tail"], errors)
+			if event.has("natural_tail") and (typeof(event.natural_tail) != TYPE_BOOL or not String(cue).ends_with(":zone_sustain")):
+				errors.append("%s.audio.events.%s.natural_tail: 仅区域持续音允许布尔值" % [label, cue])
 			for fade in ["fade_in", "fade_out"]:
 				if event.has(fade) and (typeof(event[fade]) not in [TYPE_INT, TYPE_FLOAT] or not is_finite(float(event[fade])) or float(event[fade]) < 0.0 or not String(cue).ends_with(":sustain")):
 					errors.append("%s.audio.events.%s.%s: 仅持续音支持有限非负渐变秒数" % [label, cue, fade])
@@ -963,6 +971,11 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 				_require_fields(label, skill, [&"strike_count", &"strike_damage_multiplier"], errors)
 				if int(skill.get("strike_count", 0)) < 1 or float(skill.get("strike_damage_multiplier", 0)) < 1:
 					errors.append("%s: 电击次数必须为正，逐次倍率必须>=1" % label)
+			&"spell_corrosion":
+				if String(stats.get("spell_kind", "")) != "corrosion":
+					errors.append("%s: 腐蚀强化只用于腐蚀法术" % label)
+				if float(skill.get("slow_multiplier", 1.0)) < 0.1 or float(skill.get("slow_multiplier", 1.0)) >= 1.0:
+					errors.append("%s.slow_multiplier: 必须在0.1（含）到1（不含）之间" % label)
 			&"spell_freeze":
 				if String(stats.get("type", "")) != "spell" or String(stats.get("spell_kind", "")) != "freeze":
 					errors.append("%s.kind: spell_freeze 只用于冰冻法术" % label)

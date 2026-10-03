@@ -4,7 +4,7 @@
 
 | 契约 | 当前值 |
 | --- | --- |
-| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->86 |
+| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->91 |
 | 顶层快照项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd SNAPSHOT_PACKET_SIZE -->11 |
 | 单位载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd UNIT_PAYLOAD_SIZE -->54 |
 | 塔载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd TOWER_PAYLOAD_SIZE -->7 |
@@ -81,3 +81,13 @@ RPC 端点留在 Main，主客节点路径保持一致。运行请求只接受�
 协议84：可靠`_rpc_freeze_fx`追加施法阵营，客户端只用于冰纹范围外圈的蓝红颜色；冻结和后续双减速表现窗口均保存阵营，不创建客户端权威区域。旧版本在握手拒绝，Snapshot布局不变。
 
 协议86：顶层 card_growth 仅下发接收方客户端（阵营1）的局内卡牌成长，不传主机进度或未部署的解锁结果；载荷结构与校验不变。卡槽升级提示由各自手牌读取本方状态，仅本地显示2秒。
+
+协议87：腐蚀法术由SpellSystem在80个固定Tick内逐步结算。可靠`_rpc_corrosion_fx`携带会话、表现事件序号、落点、半径、持续时间及阵营；客户端检查会话/终局/参数并去重，只建立表现区域。伤害与减速随原有Snapshot同步。音频复用可靠`_rpc_zone_audio`及区域生命周期。
+
+协议88：腐蚀目标扩展至敌方建筑卡、防御塔与水晶，与普通单位同样承受完整持续伤害；静止建筑不施加移速减益。快照和RPC载荷不变。
+
+协议89：腐蚀改为每0.5秒40伤害，0.5至4秒共8次；强化入圈立即施加20%减速，与伤害节点独立。快照和RPC载荷不变。
+
+协议90：腐蚀持续5秒，每0.5秒60伤害，共10次600；原版W声音在区域结束后自然收尾。快照和RPC载荷不变。
+
+协议91：腐蚀对防御塔和水晶使用30%伤害倍率，每跳18、总计180；普通单位与建筑卡仍为每跳60、总计600。RPC载荷不变。

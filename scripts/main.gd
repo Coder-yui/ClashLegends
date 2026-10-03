@@ -3062,3 +3062,20 @@ func _show_spell_arrival(event_id: int, flight_id: int, kind: String, pos: Vecto
 func _rpc_spell_arrival(epoch: String, event_id: int, flight_id: int, kind: String, pos: Vector2, team: int) -> void:
 	if not _session.accepts(1, epoch, MatchSession.Phase.RUNNING) or game_over or mode != "client": return
 	_show_spell_arrival(event_id, flight_id, kind, pos, team)
+
+
+func present_corrosion_spell(pos: Vector2, radius: float, duration: float, p_team: int) -> void:
+	_presentation_event_id += 1
+	if _audio_manager != null:
+		_audio_manager.start_zone_audio(_presentation_event_id, "corrosion", 0, "spell", pos, duration, p_team)
+	if mode == "host":
+		_rpc_zone_audio.rpc_id(network_opponent_id(), network_session_id(), _presentation_event_id, "corrosion", 0, "spell", pos, duration, p_team)
+		_rpc_corrosion_fx.rpc_id(network_opponent_id(), network_session_id(), _presentation_event_id, pos, radius, duration, p_team)
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_corrosion_fx(epoch: String, event_id: int, pos: Vector2, radius: float, duration: float, p_team: int) -> void:
+	if mode != "client" or game_over or not _session.accepts(1, epoch, MatchSession.Phase.RUNNING): return
+	if p_team not in [0, 1] or not pos.is_finite() or not is_finite(radius) or not is_finite(duration) or radius <= 0.0 or duration <= 0.0: return
+	if event_id <= _last_card_event_id: return
+	_last_card_event_id = event_id
+	_spell_system.show_corrosion(pos, radius, duration, p_team)

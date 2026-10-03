@@ -549,5 +549,14 @@
     "sha256": "d05724a3601495ea213474d23b40064973be533a3cc01c368f2ea9c89d0aba7f",
     "processing": "原版R图标DDS由Pillow解码",
     "skill_index": 0
+  },
+  {
+    "card": "corrosion",
+    "skill_index": 0,
+    "path": "res://assets/skills/corrosion_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Morgana.wad.client",
+    "source_path": "assets/characters/morgana/hud/icons2d/fallenangel_tormentedsoil.dds",
+    "source_sha256": "ebf97f7674cef41a755e6a85930b5a5c943928d526069e4fadbbb7554da259c8",
+    "sha256": "3f1b749c766eff7928c2417a803234ea8eb6a87eba75f105c0fe5dc5c7a85a7f"
   }
 ]

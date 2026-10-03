@@ -33,6 +33,12 @@ static func attributes(stats: Dictionary, quantity_override: String = "") -> Arr
 			result.append({"name": "眩晕", "value": "%s秒" % format_number(float(stats.stun_duration))})
 			result.append({"name": "塔 / 水晶伤害", "value": "%s%%" % format_number(float(stats.tower_damage_multiplier) * 100.0)})
 			return result
+		if String(stats.get("spell_kind", "")) == "corrosion":
+			result.append({"name": "每次伤害", "value": format_number(float(stats.damage))})
+			result.append({"name": "伤害间隔", "value": "%s秒" % format_number(float(stats.interval))})
+			result.append({"name": "每秒伤害", "value": format_number(float(stats.damage) / float(stats.interval))})
+			result.append({"name": "伤害目标", "value": "敌方地面 / 空中 / 建筑"})
+			result.append({"name": "塔 / 水晶伤害", "value": "%s%%" % format_number(float(stats.tower_damage_multiplier) * 100.0)})
 		result.append({"name": "持续时间", "value": "%s秒" % format_number(float(stats.get("duration", 0.0)))})
 		return result
 
