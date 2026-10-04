@@ -240,7 +240,6 @@ func apply_permanent_growth(source: Unit, skill: Dictionary) -> bool:
 	if order.is_empty(): order = _controller.combat_service().next_displacement_order(source)
 	for enemy in source.get_tree().get_nodes_in_group("combatants"):
 		if not enemy is Unit or not is_instance_valid(enemy) or enemy.team == source.team or enemy.is_building: continue
-		if enemy.is_air != target.is_air: continue
 		if not CombatInteraction.allows(enemy, source, source.team, target.global_position): continue
 		if enemy.global_position.distance_to(target.global_position) > float(skill.knockback_radius) + enemy.body_radius: continue
 		enemy.apply_knockback(target.global_position, float(skill.knockback), float(skill.knockback_duration), float(skill.get("knockback_mass_factor_max", 1.4)), order, CombatInteraction.effect_context(source))

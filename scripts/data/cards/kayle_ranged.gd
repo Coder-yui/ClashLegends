@@ -5,7 +5,7 @@ static func definition() -> Dictionary:
 	data.gameplay.erase("deployment_upgrade_id")
 	data.gameplay.merge({
 		"name": "正义天使（远程）", "cost": 6, "selectable": false,
-		"description": "6金币远程形态，对地对空；金色光剑造成单体伤害；每次普攻附带一道穿透焰浪，出手时锁定对空或对地，对同类别敌人造成55伤害。",
+		"description": "6金币远程形态，对地对空；金色光剑造成单体伤害；每次普攻附带一道穿透焰浪，对路径内的空中、地面及建筑敌人各造成55伤害。",
 		"hp": 820, "damage": 105, "range": 190.0, "sight": 280.0,
 		"interval": 1.5, "first_hit": snappedf(1.5 * (8.0 / 65.0), 0.01), "splash_radius": 0.0,
 		"attack_wave_damage": 55, "attack_wave_delay": 0.1, "attack_wave_tail_distance": 40.0, "attack_wave_near_width": 48.0, "attack_wave_max_scale": 2.0, "attack_wave_speed": 420.0,

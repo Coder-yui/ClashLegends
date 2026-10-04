@@ -169,10 +169,10 @@ func _queue_attack_wave(source: Unit, target: Node2D, sword_id: int) -> void:
 	var length := start.distance_to(end) + float(wave.tail_distance)
 	# range是身体边缘间距，换算为从弹体起点出发的最大合法行程。
 	var max_distance := maxf(source.attack_range + source.body_radius + target.body_radius - source.global_position.distance_to(start) + float(wave.tail_distance), 0.001)
-	var wave_air: bool = target is Unit and target.is_air
+	var target_air: bool = target is Unit and target.is_air
 	var wave_id := _next_id
 	var path := {"start": start, "end": end, "origin_offset": source.global_position - start,
-		"source": _visual_entity(source), "target": _visual_entity(target), "contact_radius": target.body_radius + float(sword.radius), "progress": 0.0, "air": wave_air, "wave": false}
+		"source": _visual_entity(source), "target": _visual_entity(target), "contact_radius": target.body_radius + float(sword.radius), "progress": 0.0, "air": target_air, "wave": false}
 	sword.visual_path = path.duplicate(true)
 	launch_skill_fan(source, {
 		"projectile_count": 1, "length": length,
@@ -183,7 +183,7 @@ func _queue_attack_wave(source: Unit, target: Node2D, sword_id: int) -> void:
 	}, start.direction_to(end))
 	path.wave = true
 	var pending: Dictionary = projectiles[wave_id]
-	pending.merge({"pos": start, "wave_air": wave_air, "width_growth": float(wave.near_width) * (float(wave.max_scale) - 1.0) / max_distance,
+	pending.merge({"pos": start, "width_growth": float(wave.near_width) * (float(wave.max_scale) - 1.0) / max_distance,
 		"max_radius": float(wave.near_width) * float(wave.max_scale) * 0.5, "visual_path": path}, true)
 	projectiles.erase(wave_id)
 	_pending_attack_waves.append({"id": wave_id, "delay": float(wave.delay), "projectile": pending})
@@ -320,7 +320,6 @@ func _tick_skill_arrow(projectile: Dictionary, dt: float, colliders: Array) -> b
 		if not is_instance_valid(candidate) or candidate.team == int(projectile.team):
 			continue
 		if not CombatInteraction.allows(candidate, projectile.attacker if is_instance_valid(projectile.attacker) else null, int(projectile.team), projectile.source_pos): continue
-		if projectile.has("wave_air") and bool(projectile.wave_air) != (candidate is Unit and candidate.is_air): continue
 		if bool(projectile.skill.get("air_only", false)) and not (candidate is Unit and candidate.is_air): continue
 		if candidate is Unit:
 			if bool(projectile.skill.get("ground_only", false)) and candidate.is_air:

@@ -109,22 +109,33 @@ func _check_continuous() -> void:
 	var ground_near := _unit("garen")
 	var air_primary := _unit("aurelionsol")
 	var air_near := _unit("aurelionsol")
+	var building := _unit("tombstone")
+	var ally := _unit("garen", 0)
+	var outside := _unit("aurelionsol")
 	dragon.position = Vector2(10000, 10000)
 	ground_primary.position = Vector2(10100, 10000)
 	ground_near.position = ground_primary.position + Vector2(8, 0)
 	air_primary.position = ground_primary.position + Vector2(0, 8)
 	air_near.position = ground_primary.position + Vector2(8, 8)
-	dragon._target = ground_primary
-	var ground_before := ground_near.hp
-	var air_before := air_near.hp
-	for tick in 20: dragon._deal_continuous_damage(55.0 * 0.05)
-	_h._expect(ground_near.hp == ground_before - 55 and air_primary.hp == air_before and air_near.hp == air_before, "龙王吐息攻击地面时只溅射附近地面单位")
-	ground_before = ground_near.hp
-	var ground_primary_before := ground_primary.hp
-	air_before = air_near.hp
-	dragon._target = air_primary
-	for tick in 20: dragon._deal_continuous_damage(55.0 * 0.05)
-	_h._expect(air_near.hp == air_before - 55 and ground_primary.hp == ground_primary_before and ground_near.hp == ground_before, "龙王吐息攻击空中时只溅射附近空中单位")
+	building.position = ground_primary.position + Vector2(-8, 0)
+	ally.position = ground_primary.position + Vector2(0, -8)
+	outside.position = ground_primary.position + Vector2(200, 0)
+	var victims := [ground_primary, ground_near, air_primary, air_near, building]
+	var resolver: CombatResolver = _main.combat_service()
+	for batched in [false, true]:
+		for primary in [ground_primary, air_primary]:
+			dragon._target = primary
+			var before := victims.map(func(unit): return unit.hp)
+			var ally_before := ally.hp
+			var outside_before := outside.hp
+			for tick in 20:
+				if batched: resolver.begin_batch(tick, "continuous_attack")
+				dragon._deal_continuous_damage(55.0 * 0.05)
+				if batched: resolver.commit_batch()
+			var damage_ok := true
+			for i in victims.size(): damage_ok = damage_ok and victims[i].hp == before[i] - 55
+			_h._expect(damage_ok, "龙王吐息同时波及空军、地面及建筑，每秒55伤害；空中主目标=%s，批次结算=%s" % [str(primary.is_air), str(batched)])
+			_h._expect(ally.hp == ally_before and outside.hp == outside_before, "龙王跨空地溅射仍排除友军和范围外敌人")
 
 func _check_decay() -> void:
 	var building := _unit("apex_turret")

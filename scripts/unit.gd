@@ -2121,7 +2121,7 @@ func _deal_continuous_damage(amount: float) -> void:
 	if _target == null or not is_instance_valid(_target):
 		return
 	if battle_context != null:
-		battle_context.apply_damage_pulse(self, _target, amount, splash_radius, global_position, true, form_index, {"continuous_damage": true, "splash_match_primary_air": card_id == "aurelionsol"})
+		battle_context.apply_damage_pulse(self, _target, amount, splash_radius, global_position, true, form_index, {"continuous_damage": true})
 		return
 	var result := _continuous_damage_stream.hit(_target, amount, self, team, global_position)
 	if result.landed:

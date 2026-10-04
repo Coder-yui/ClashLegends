@@ -63,7 +63,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_expect(target.hp == start[0] and air.hp == start[1], "出手不提前造成伤害")
 	ranged.free()
 	for _i in 12: main._tick_projectiles(0.05)
-	_expect(target.hp == start[0] - 160 and air.hp == start[1], "来源死亡不取消弹体，对地焰浪不伤空中目标")
+	_expect(target.hp == start[0] - 160 and air.hp == start[1] - 55, "来源死亡不取消弹体，焰浪仍伤害路径内空中目标")
 	_expect(ally.hp == start[2] and far.hp == start[3], "焰浪不伤友方或范围外目标")
 	_clear()
 	var invalid := CardDB.all().duplicate(true)
@@ -78,7 +78,7 @@ func run(harness: Object, main: Node2D) -> void:
 
 	_test_hit_haste()
 	_test_wave()
-	_test_wave_category_and_scale()
+	_test_wave_targets_and_scale()
 	_test_wave_audio()
 	_test_sword_facing()
 	_test_enrage_visual()
@@ -250,7 +250,7 @@ func _wave_lifecycle(distance: float, remove_target: bool) -> float:
 	_expect(system._pending_attack_waves.is_empty(), "清场同时移除待创建焰浪")
 	return start.distance_to(wave.pos)
 
-func _test_wave_category_and_scale() -> void:
+func _test_wave_targets_and_scale() -> void:
 	for air_mode in [false, true]:
 		_clear()
 		var source: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "kayle_ranged", Vector2(300, 1000), {"deploy_time_override": 0}))
@@ -259,8 +259,15 @@ func _test_wave_category_and_scale() -> void:
 		target.position = source.position + Vector2.UP * max_center_distance
 		var air: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "anivia", Vector2(325, target.position.y), {"deploy_time_override": 0}))
 		var ground: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(325, target.position.y), {"deploy_time_override": 0}))
+		var building: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "tombstone", Vector2(275, target.position.y), {"deploy_time_override": 0}))
+		var enemy_tower: Tower = _main._king_enemy
+		var old_position := enemy_tower.position
+		enemy_tower.position = Vector2(270, target.position.y)
 		var air_hp := air.hp
 		var ground_hp := ground.hp
+		var target_hp := target.hp
+		var building_hp := building.hp
+		var tower_hp := enemy_tower.hp
 		var system: ProjectileSystem = _main._projectile_system
 		_main.launch_attack(source, target, 105, 420, 0, 0, Color.YELLOW)
 		_expect(system.projectiles.size() == 1, "每次普攻仅一枚光剑权威弹体")
@@ -273,18 +280,23 @@ func _test_wave_category_and_scale() -> void:
 		_expect(is_equal_approx(initial_radius + travel * 0.5 * float(wave.width_growth) * 0.5, initial_radius * 1.5), "最大路径中点宽度线性为1.5倍")
 		for i in 25: _main._tick_projectiles(0.05)
 		_expect(not system.projectiles.has(sword_id), "光剑命中销毁，不能穿透或残留")
-		_expect(air.hp == air_hp - (55 if air_mode else 0), "只有对空焰浪伤害空军")
-		_expect(ground.hp == ground_hp - (0 if air_mode else 55), "只有对地焰浪伤害地面单位")
+		_expect(air.hp == air_hp - 55 and ground.hp == ground_hp - 55, "攻击空中或地面主目标时，焰浪同时伤害空军和地面单位一次")
+		_expect(target.hp == target_hp - 160, "空中或地面主目标均叠加光剑105与焰浪55")
+		_expect(building.hp == building_hp - 55 and enemy_tower.hp == tower_hp - 55, "攻击空中或地面主目标时，焰浪均伤害路径内建筑与水晶")
+		enemy_tower.position = old_position
+		enemy_tower.hp = tower_hp
 		_expect(is_equal_approx(float(wave.radius), initial_radius * 2), "最大路径末端为2倍宽")
 		# 近目标终点更近，归一化标尺不随这次实际短路径缩小。
 		system.clear_all()
 		target.position = source.position + Vector2.UP * 100
 		_main.launch_attack(source, target, 105, 420, 0, 0, Color.YELLOW)
 		wave = system._pending_attack_waves[0].projectile
-		var locked_mode: bool = wave.wave_air
+		var visual_air: bool = wave.visual_path.air
+		target_hp = target.hp
 		target.is_air = not target.is_air
-		_expect(bool(wave.wave_air) == locked_mode, "目标后续改变飞行类别不改变已锁定焰浪")
+		_expect(bool(wave.visual_path.air) == visual_air, "目标后续改变空地属性不改变出手时的表现路径信息")
 		for i in 20: _main._tick_projectiles(0.05)
+		_expect(target.hp == target_hp - 160, "目标出手后改变空地属性仍承受光剑和焰浪伤害")
 		_expect(float(wave.radius) < initial_radius * 2, "近距离提前结束时宽度不到2倍")
 
 func _test_wave_audio() -> void:

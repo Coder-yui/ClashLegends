@@ -3,9 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://jgmiq57q4emt"
-path="res://.godot/imported/belveth_Body.png-6c19d53eb6121da5894894e774d4f519.ctex"
+path.s3tc="res://.godot/imported/belveth_Body.png-6c19d53eb6121da5894894e774d4f519.s3tc.ctex"
+path.etc2="res://.godot/imported/belveth_Body.png-6c19d53eb6121da5894894e774d4f519.etc2.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
+"vram_texture": true
 }
 generator_parameters={
 "md5": "f08bb9b79b7a44e86781fdb3447a3360"
@@ -14,11 +16,11 @@ generator_parameters={
 [deps]
 
 source_file="res://assets/units/belveth/source/belveth_Body.png"
-dest_files=["res://.godot/imported/belveth_Body.png-6c19d53eb6121da5894894e774d4f519.ctex"]
+dest_files=["res://.godot/imported/belveth_Body.png-6c19d53eb6121da5894894e774d4f519.s3tc.ctex", "res://.godot/imported/belveth_Body.png-6c19d53eb6121da5894894e774d4f519.etc2.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
@@ -40,4 +42,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=1
+detect_3d/compress_to=0

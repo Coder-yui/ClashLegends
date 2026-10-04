@@ -29,6 +29,8 @@ func run(harness: Object, main: Node2D) -> void:
 	var tower := _spawn("tombstone", 0, Vector2(360, 1040))
 	var air_enemy := _spawn("pix", 1, Vector2(400, 1010))
 	var enemy := _spawn("melee_minion", 1, Vector2(400, 1000))
+	var outside_enemy := _spawn("pix", 1, Vector2(550, 1000))
+	var enemy_building := _spawn("tombstone", 1, Vector2(400, 1040))
 	_expect(ActiveSkillEffectSystem.growth_target(source, skill) == near, "同费选近者，高费圈外和建筑蛋排除")
 	near.hp = 100.0
 	var before := near.max_hp
@@ -38,7 +40,8 @@ func run(harness: Object, main: Node2D) -> void:
 	_expect(near.max_hp == before + BattleNumbers.quantity(before * 0.3) and near.hp == 100.0 + BattleNumbers.quantity(before * 0.3), "最大和当前生命增加相同差额")
 	_expect(is_equal_approx(near.body_radius, radius * 1.3) and near.growth_body_scale == 1.3, "身体碰撞和模型倍率同步增大30%")
 	_expect(enemy._knockback_timer > 0.0, "受益单位周围敌军被击退")
-	_expect(air_enemy._knockback_timer == 0.0, "地面变大不击退空军")
+	_expect(air_enemy._knockback_timer > 0.0, "地面受益者同时击退附近空军")
+	_expect(near._knockback_timer == 0.0 and outside_enemy._knockback_timer == 0.0 and enemy_building._knockback_timer == 0.0, "狂野生长不击退友军、范围外敌军或建筑")
 	_expect(not near.apply_permanent_growth(0.3, 1.3), "已增益单位不能重复获益")
 	_expect(ActiveSkillEffectSystem.growth_target(source, skill) == far, "第二次跳过已增益目标")
 	effects.apply(source, skill)
@@ -59,8 +62,9 @@ func run(harness: Object, main: Node2D) -> void:
 	_expect(calls[0] == 1, "失败回退收据只执行一次")
 	var air_friend := _spawn("pix", 0, Vector2(365, 1000))
 	enemy.knockback.advance(1.0)
+	air_enemy.knockback.advance(1.0)
 	effects.apply(source, skill)
-	_expect(air_friend.growth_body_scale == 1.3 and air_enemy._knockback_timer > 0.0 and enemy._knockback_timer == 0.0, "空军变大仅击退空军")
+	_expect(air_friend.growth_body_scale == 1.3 and air_enemy._knockback_timer > 0.0 and enemy._knockback_timer > 0.0, "空中受益者同时击退附近空军和地面敌军")
 	var gnar := _spawn("gnar", 0, Vector2(100, 1000))
 	gnar.apply_permanent_growth(0.3, 1.3)
 	var bonus := gnar.growth_health_bonus
