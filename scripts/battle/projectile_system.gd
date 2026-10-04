@@ -284,7 +284,12 @@ func launch_skill_fan(source: Unit, skill: Dictionary, forward: Vector2) -> void
 	var radius := float(skill.get("near_width", 6.0)) * 0.5 if String(skill.get("shape", "")) == "trapezoid" else 3.0
 	for index in count:
 		var direction := skill_fan_direction(forward, float(skill.get("arc_degrees", 0.0)), count, index)
-		var pos := source.global_position + direction * source.body_radius
+		var shared_origin := skill.has("projectile_spawn_offset")
+		var spawn_offset := forward.normalized() * float(skill.projectile_spawn_offset) if shared_origin else direction * source.body_radius
+		var pos := source.global_position + spawn_offset
+		var colors: Array = skill.get("projectile_colors", [])
+		var projectile_color: Color = colors[index] if index < colors.size() else source.color
+		var visual_forward := forward.normalized() if shared_origin else direction
 		projectiles[_next_id] = {
 			"skill_fan": true, "cast": cast, "skill": skill,
 			"effects": source.on_hit_passive_effects() if bool(skill.get("applies_on_hit_slow", false)) else {},
@@ -294,9 +299,9 @@ func launch_skill_fan(source: Unit, skill: Dictionary, forward: Vector2) -> void
 			"status_source": source.status_source("skill_projectile"),
 			"pos": pos, "direction": direction, "speed": length / flight,
 			"remaining": length, "damage": float(skill.get("damage", 0.0)),
-			"radius": radius, "visual": StringName(skill.get("projectile_visual", "arrow")), "color": source.color,
+			"radius": radius, "visual": StringName(skill.get("projectile_visual", "arrow")), "color": projectile_color,
 			"visual_height": float(skill.get("projectile_visual_height", source.projectile_visual_height)),
-			"visual_offset": direction * (float(skill.get("projectile_visual_forward_offset", source.body_radius)) - source.body_radius),
+			"visual_offset": visual_forward * float(skill.get("projectile_visual_forward_offset", skill.get("projectile_spawn_offset", source.body_radius))) - spawn_offset,
 			"visual_scale": maxf(float(skill.get("projectile_visual_width", radius * 2.0)) / (radius * 2.0), 1.0),
 		}
 		_next_id += 1
@@ -632,8 +637,10 @@ func _draw_card(projectile: Dictionary) -> void:
 	var direction := _direction(projectile)
 	var side := Vector2(-direction.y, direction.x)
 	var points := PackedVector2Array([center - direction * 9.0 - side * 5.0, center + direction * 9.0 - side * 5.0, center + direction * 9.0 + side * 5.0, center - direction * 9.0 + side * 5.0])
-	draw_colored_polygon(points, Color(1.0, 0.94, 0.58, 0.96))
-	draw_polyline(PackedVector2Array([points[0], points[1], points[2], points[3], points[0]]), Color(0.32, 0.14, 0.08, 0.96), 1.5, true)
+	draw_line(center - direction * 20.0, center, Color(projectile.color, 0.3), 5.0, true)
+	draw_colored_polygon(points, Color(projectile.color, 0.96))
+	draw_polyline(PackedVector2Array([points[0], points[1], points[2], points[3], points[0]]), Color(1.0, 0.97, 0.85, 0.96), 1.5, true)
+	draw_colored_polygon(PackedVector2Array([center - direction * 4.0, center + side * 2.5, center + direction * 4.0, center - side * 2.5]), Color(1.0, 0.98, 0.9, 0.95))
 
 func _draw_magic_orb(projectile: Dictionary) -> void:
 	var pos := _visual_position(projectile)

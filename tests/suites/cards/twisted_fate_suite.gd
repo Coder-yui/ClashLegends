@@ -45,7 +45,7 @@ func _check_card_config() -> void:
 		and int(skill.get("projectile_count", 0)) == 3
 		and String(skill.get("projectile_visual", "")) == "card"
 		and is_equal_approx(float(skill.get("projectile_launch_delay", -1.0)), 0.25)
-		and is_equal_approx(float(skill.get("projectile_flight_duration", -1.0)), 0.72)
+		and is_equal_approx(float(skill.get("projectile_flight_duration", -1.0)), 0.75)
 		and is_equal_approx(float(skill.get("impact_delay", -1.0)), 0.25)
 		and is_equal_approx(float(skill.get("cast_duration", -1.0)), 0.97)
 		and String(skill.get("visual_action", "")) == "wild_cards"
@@ -147,10 +147,10 @@ func _check_wild_cards_visual() -> void:
 	_main._skill_presentation.begin_frontal_visual(caster, skill, Vector2.UP)
 	var effect: Dictionary = _main._skill_presentation.frontal_effects.back()
 	_expect(
-		String(effect.get("shape", "")) == "projectile_fan"
+		String(effect.get("shape", "")) == "fan_shared"
 		and int(effect.get("projectile_count", 0)) == 3
 		and String(effect.get("projectile_visual", "")) == "card",
-		"万能牌范围提示保留三条真实弹道参数，不重复绘制视觉牌",
+		"万能牌使用完整扇形提示，并保留弹体参数供表现同步",
 	)
 	_main._projectile_system.clear_all()
 	_main._projectile_system.launch_skill_fan(caster, skill, Vector2.UP)
@@ -158,15 +158,16 @@ func _check_wild_cards_visual() -> void:
 	var index := 0
 	for projectile in _main._projectile_system.projectiles.values():
 		var direction := ProjectileSystem.skill_fan_direction(Vector2.UP, float(effect.arc_degrees), int(effect.projectile_count), index)
-		paths_match = paths_match and (projectile.pos as Vector2).is_equal_approx(caster.position + direction * float(effect.source_radius))
+		paths_match = paths_match and (projectile.pos as Vector2).is_equal_approx(caster.position + Vector2.UP * float(effect.source_radius))
 		paths_match = paths_match and (projectile.direction as Vector2).is_equal_approx(direction) and is_equal_approx(float(projectile.remaining), float(effect.length))
+		paths_match = paths_match and projectile.color == skill.projectile_colors[index] and is_equal_approx(float(projectile.speed), 400.0)
 		index += 1
-	_expect(paths_match and index == 3, "万能牌提示与三条真实弹体共用方向，逐条起点和长度一致")
+	_expect(paths_match and index == 3, "万能牌扇形提示与三张牌共用起点、方向和长度")
 	var old_mode: String = _main.mode
 	_main.mode = "client"
 	preload("res://tests/fixtures/network_fixture.gd").deliver(_main, "_rpc_frontal_skill_fx", [-1, caster.position, Vector2.DOWN, caster.body_radius, float(effect.length), 0.0, float(effect.duration), 1, String(effect.shape), 0.0, 0.0, float(effect.arc_degrees), int(effect.projectile_count)])
 	var replay: Dictionary = _main._skill_presentation.frontal_effects.back()
-	_expect(replay.shape == "projectile_fan" and replay.projectile_count == 3 and replay.forward == Vector2.DOWN, "客户端范围 RPC 保留三条穿透路径参数和红方朝向")
+	_expect(replay.shape == "fan_shared" and replay.projectile_count == 3 and replay.forward == Vector2.DOWN, "客户端范围 RPC 保留完整扇形提示和红方朝向")
 	_main.mode = old_mode
 	_main._projectile_system.clear_all()
 	_main._active_skill_effect_system.clear()
@@ -210,7 +211,7 @@ func _check_attack_release_and_skill_lock() -> void:
 	var effect: Dictionary = _main._skill_presentation.frontal_effects.back()
 	var visual_timing_ok := (
 		is_equal_approx(float(effect.get("projectile_launch_delay", -1.0)), 0.25)
-		and is_equal_approx(float(effect.get("projectile_flight_duration", -1.0)), 0.72)
+		and is_equal_approx(float(effect.get("projectile_flight_duration", -1.0)), 0.75)
 	)
 	attacker.sim_tick(_main.SIM_DT)
 	_expect(

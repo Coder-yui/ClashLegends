@@ -1061,6 +1061,12 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 			errors.append("%s.projectile_launch_delay: 必须 >= 0" % label)
 		if skill.has("projectile_flight_duration") and float(skill.projectile_flight_duration) < 0.0:
 			errors.append("%s.projectile_flight_duration: 必须 >= 0" % label)
+		if skill.has("projectile_spawn_offset"):
+			if float(skill.projectile_spawn_offset) < 0.0 or String(skill.get("shape", "")) != "fan" or int(skill.get("projectile_count", 0)) < 2 or not (bool(skill.get("projectile_piercing", false)) or bool(skill.get("projectile_stop_on_hit", false))):
+				errors.append("%s.projectile_spawn_offset: 需要多弹体扇形及非负共同起点距离" % label)
+		if skill.has("projectile_colors"):
+			if (skill.projectile_colors as Array).size() != int(skill.get("projectile_count", 0)) or (skill.projectile_colors as Array).is_empty():
+				errors.append("%s.projectile_colors: 颜色数量必须与弹体数量一致" % label)
 		if skill.has("projectile_visual_height") and float(skill.projectile_visual_height) < 0.0:
 			errors.append("%s.projectile_visual_height: 必须 >= 0" % label)
 		if skill.has("projectile_visual_forward_offset") and float(skill.projectile_visual_forward_offset) < 0.0:

@@ -20,10 +20,10 @@ static func definition() -> Dictionary:
 			"active_skills": [{
 					"name": "万能牌", "kind": "frontal", "shape": "fan",
 					"cost": 1, "max_uses": 2, "cooldown": 8.0,
-					"description": "朝前方扇出 3 张穿透牌，飞行命中地面或空中敌人时造成伤害；同一敌人每次施法只受伤一次。",
-					"length": 190.0, "arc_degrees": 54.0, "projectile_count": 3,
+					"description": "朝前方射出黄、红、蓝3张穿透牌，相邻夹角30度，以400/秒飞行300距离，飞行命中地面或空中敌人时造成伤害；同一敌人每次施法只受伤一次。",
+					"length": 300.0, "arc_degrees": 60.0, "projectile_count": 3, "projectile_spawn_offset": 20.0,
 					# Spell1 出手生成三张权威穿透牌，沿路径碰撞结算；同次施法每目标只伤害一次。
-					"projectile_piercing": true, "projectile_launch_delay": 0.25, "projectile_flight_duration": 0.72,
+					"projectile_piercing": true, "projectile_launch_delay": 0.25, "projectile_flight_duration": 0.75,
 					"damage": 100, "impact_delay": 0.25, "cast_duration": 0.97,
 					"cast_locks": ["movement", "attack", "facing"],
 				}],
@@ -41,7 +41,8 @@ static func definition() -> Dictionary:
 				"death": "Death", "death_duration": 0.8,
 			}, "projectile_visual": "orb", "projectile_visual_height": 60.0,
 			"color": Color(0.34, 0.56, 0.92),
-			"active_skills": [{ "icon_path": "res://assets/skills/twisted_fate_0.png", "projectile_visual": "card", "visual_action": "wild_cards",
+			"active_skills": [{ "icon_path": "res://assets/skills/twisted_fate_0.png", "projectile_visual": "card", "visual_action": "wild_cards", "projectile_visual_height": 60.0, "projectile_visual_forward_offset": 20.0,
+					"projectile_colors": [Color(1.0, 0.78, 0.12), Color(1.0, 0.16, 0.2), Color(0.15, 0.48, 1.0)],
 				}],
 		},
 		# BEGIN IMPORTED AUDIO twisted_fate

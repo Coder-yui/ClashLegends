@@ -20,12 +20,12 @@ static func definition() -> Dictionary:
 					"cost": 2, "max_uses": 1, "cooldown": 10.0,
 					"description": "使用 Spell2 朝前方扇形区域射出 8 根非穿透箭矢，每支命中首个敌人后消失；同次施法对每个目标最多造成 70 点伤害，并触发被动冰霜射击（减速30%，持续2秒）。",
 					"length": 210.0, "arc_degrees": 72.0, "projectile_count": 8, "fan_inner_arc": true,
-					"projectile_stop_on_hit": true,
+					"projectile_stop_on_hit": true, "projectile_spawn_offset": 20.0,
 					"damage": 70, "applies_on_hit_slow": true,
 					"impact_delay": 0.16, "cast_duration": 1.0,
 					"cast_locks": ["movement", "attack", "facing"],
-					# 箭矢表现也等待源离弦点；保留既有约 0.2 秒的飞行表现。
-					"projectile_launch_delay": 0.16, "projectile_flight_duration": 0.20,
+					# 离弦节点不变；技能箭以约480/秒飞行，接近普攻弹速。
+					"projectile_launch_delay": 0.16, "projectile_flight_duration": 0.44,
 				}],
 		},
 		"visual": { "visual_radius": RADIUS_MEDIUM + VISUAL_RADIUS_PADDING,
@@ -44,7 +44,7 @@ static func definition() -> Dictionary:
 				"death": "Death", "death_duration": 0.8,
 			},
 			"color": Color(0.50, 0.85, 0.95),
-			"active_skills": [{ "icon_path": "res://assets/skills/ashe_0.png", "visual_action": "active",
+			"active_skills": [{ "icon_path": "res://assets/skills/ashe_0.png", "visual_action": "active", "projectile_visual_height": 45.0, "projectile_visual_forward_offset": 20.0,
 				}],
 		},
 		"card_art": {}, # 默认 assets/cards/<card_id>_loading.*

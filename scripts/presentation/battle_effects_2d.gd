@@ -214,6 +214,19 @@ func _draw_frontal_skill_effect(effect: Dictionary) -> void:
 	if shape in [&"target_circle", &"target_circle_strong", &"star_impact", &"star_impact_strong", &"shockwave"]:
 		preload("res://scripts/presentation/starfall_visual.gd").draw_effect(self, effect)
 		return
+	if shape == &"fan_shared":
+		# 整体扇形显示技能朝向与最大展开范围；伤害仍由各枚权威弹体碰撞决定。
+		var origin := center + forward * source_radius
+		var half_angle := deg_to_rad(float(effect.get("arc_degrees", 0.0)) * 0.5)
+		var angle := forward.angle()
+		var points := PackedVector2Array([origin])
+		for index in range(33):
+			points.append(origin + Vector2.from_angle(lerpf(angle - half_angle, angle + half_angle, float(index) / 32.0)) * length)
+		draw_colored_polygon(points, fill_color)
+		draw_arc(origin, length, angle - half_angle, angle + half_angle, 32, line_color, 2.0, true)
+		draw_line(origin, points[1], line_color, 1.5, true)
+		draw_line(origin, points[points.size() - 1], line_color, 1.5, true)
+		return
 	if shape == &"projectile_fan":
 		# 与权威弹体共用夹角；宽 6px 表示半径 3px 的扫掠路径，目标自身半径由碰撞处理。
 		var count := maxi(int(effect.get("projectile_count", 0)), 1)

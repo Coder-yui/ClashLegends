@@ -152,16 +152,16 @@ func _check_ashe_volley() -> void:
 	var ring_sector_shape := (
 		bool(skill.fan_inner_arc)
 		and bool(range_effect.fan_inner_arc)
-		and is_equal_approx(float(range_effect.source_radius), ashe.body_radius)
+		and is_equal_approx(float(range_effect.source_radius), float(skill.projectile_spawn_offset))
 		and is_equal_approx(float(range_effect.length), 210.0)
 		and is_equal_approx(float(range_effect.arc_degrees), 72.0)
 		and is_equal_approx(float(range_effect.projectile_launch_delay), float(skill.impact_delay))
-		and is_equal_approx(float(range_effect.projectile_flight_duration), 0.2)
+		and is_equal_approx(float(range_effect.projectile_flight_duration), 0.44)
 		and is_equal_approx(ashe.first_hit_time, 0.14)
 	)
 	_main._active_skill_effect_system.apply(ashe, skill)
 	var waits_for_flight := is_equal_approx(front.hp, front_before)
-	_main._tick_projectiles(0.25)
+	_main._tick_projectiles(0.5)
 	_expect(
 			int(skill.projectile_count) == 8 and String(skill.shape) == "fan" and String(skill.visual_action) == "active"
 			and waits_for_flight and animation_duration_ok
@@ -481,7 +481,7 @@ func _check_ashe_arrow_collision() -> void:
 		var source := _spawn_test_unit("ashe", team, Vector2(360, 850 if team == 0 else 430))
 		var front := _spawn_dummy(source.position + forward * 80.0, 1 - team)
 		var rear := _spawn_dummy(source.position + forward * 150.0, 1 - team)
-		var side := _spawn_dummy(source.position + forward.rotated(deg_to_rad(23.65)) * 150.0, 1 - team)
+		var side := _spawn_dummy(source.position + forward * float(skill.projectile_spawn_offset) + forward.rotated(deg_to_rad(36.0)) * 150.0, 1 - team)
 		front.body_radius = 24.0
 		rear.body_radius = 10.0
 		side.body_radius = 10.0
@@ -490,10 +490,10 @@ func _check_ashe_arrow_collision() -> void:
 		_main._active_skill_effect_system.apply_frontal(source, skill, forward)
 		var no_instant_hit := front.hp == hp and rear.hp == hp and side.hp == hp
 		# 单 Tick 跨过所有对象仍必须取沿路径最近碰撞，不能穿透前排。
-		_main._tick_projectiles(0.25)
+		_main._tick_projectiles(0.5)
 		_expect(no_instant_hit and front.hp == hp - 70.0 and rear.hp == hp and side.hp == hp - 70.0 and source._attack_swing_count == hit_count, "阵营 %d：W 飞行后前排挡住后排，多箭命中仅伤害一次，未受阻侧箭仍可命中且不计普攻" % team)
 		_main._active_skill_effect_system.apply_frontal(source, skill, forward)
-		_main._tick_projectiles(0.25)
+		_main._tick_projectiles(0.5)
 		_expect(front.hp == hp - 140.0 and rear.hp == hp, "下一次 W 有独立命中记录，前排仍持续阻挡")
 		front.free()
 		rear.free()
@@ -505,7 +505,7 @@ func _check_ashe_arrow_collision() -> void:
 		far.body_radius = 2.0
 		_main._active_skill_effect_system.apply_frontal(source, single, forward)
 		source.free() # 已飞出的技能仍能碰撞、伤害和按固化来源发声。
-		_main._tick_projectiles(0.25)
+		_main._tick_projectiles(0.5)
 		_expect(far.hp == hp - 70.0, "阵营 %d：210 射程能命中旧 190 射程外目标，施法者销毁不取消在途箭" % team)
 		far.free()
 	var invalid := CardDB.get_card("ashe").duplicate(true)
@@ -566,12 +566,12 @@ func _check_ashe_release_vs_collision() -> void:
 		_expect(_main._start_active_skill_cast(source, skill), "艾希时序夹具通过正式 CastStart 入口开始")
 		var release_tick := -1
 		var collision_tick := -1
-		for step in range(1, 9):
+		for step in range(1, 13):
 			_main._sim_step(_main.SIM_DT)
 			if release_tick < 0 and not _main._projectile_system.projectiles.is_empty(): release_tick = _main._sim_tick_id - cast_tick
 			if collision_tick < 0 and target.hp < initial_hp: collision_tick = _main._sim_tick_id - cast_tick
 		_expect(release_tick == 4, "0.16 秒效果延迟在 CastStart 后第 4 Tick（0.20 秒）发射")
-		_expect(collision_tick == (4 if distance == 80.0 else 6), "碰撞时刻取决于目标距离：近目标可在发射 Tick 命中，远目标要继续飞行")
+		_expect(collision_tick == (5 if distance == 80.0 else 9), "碰撞时刻取决于目标距离：近目标第5Tick命中，远目标第9Tick命中")
 		_expect(target.hp == initial_hp - 70.0, "同次箭阵碰撞只对目标结算一次伤害")
 		if "--verbose-checks" in OS.get_cmdline_user_args(): print("[SKILL_TIMING] distance=%s release_tick=%d collision_tick=%d" % [distance, release_tick, collision_tick])
 		source.free()

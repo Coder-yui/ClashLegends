@@ -47,7 +47,9 @@ func begin_frontal_visual(source: Unit, skill: Dictionary, cast_forward: Vector2
 	# 真实弹体通过 ProjectileSystem/快照绘制；这里只保留范围预警，避免重复画箭或卡牌。
 	if bool(skill.get("projectile_stop_on_hit", false)) or bool(skill.get("projectile_piercing", false)):
 		skill = skill.duplicate(true)
-		if bool(skill.get("projectile_piercing", false)) and String(skill.get("shape", "")) == "fan":
+		if skill.has("projectile_spawn_offset"):
+			skill["shape"] = "fan_shared"
+		elif bool(skill.get("projectile_piercing", false)) and String(skill.get("shape", "")) == "fan":
 			skill["shape"] = "projectile_fan"
 		else:
 			# 单枚首碰弹体沿直线前进，预警使用等宽轮廓；不把扇形夹角当弹道宽度。
@@ -79,7 +81,7 @@ func add_frontal_effect(source: Unit, skill: Dictionary, duration: float, cast_f
 		"net_id": source.net_id,
 		"pos": source.global_position,
 		"forward": cast_forward,
-		"source_radius": source.body_radius,
+		"source_radius": float(skill.get("projectile_spawn_offset", source.body_radius)),
 		"length": maxf(float(skill.get("length", 0.0)), 0.0),
 		"width": maxf(float(skill.get("width", 0.0)), 0.0),
 		"shape": String(skill.get("shape", "rectangle")),
@@ -116,7 +118,7 @@ func begin_continuous_area_visual(source: Unit, skill: Dictionary) -> void:
 		"fixed_position": false,
 		"pos": source.global_position,
 		"forward": Vector2.UP,
-		"source_radius": source.body_radius,
+		"source_radius": float(skill.get("projectile_spawn_offset", source.body_radius)),
 		"length": radius,
 		"width": radius,
 		"shape": "continuous_area",
