@@ -473,6 +473,8 @@ static func _validate_building(card_id: String, stats: Dictionary, errors: Packe
 		errors.append("%s.is_building: building 卡必须为 true" % card_id)
 	if stats.has("lifespan_hp_decay") and typeof(stats.lifespan_hp_decay) != TYPE_BOOL:
 		errors.append("%s.lifespan_hp_decay: 必须是 bool" % card_id)
+	if float(stats.get("lifespan", 0.0)) > 0.0 and not bool(stats.get("lifespan_hp_decay", false)):
+		errors.append("%s.lifespan_hp_decay: 限时建筑必须随寿命衰减生命" % card_id)
 	if stats.has("tower_ruin_foundation") and typeof(stats.tower_ruin_foundation) != TYPE_BOOL:
 		errors.append("%s.tower_ruin_foundation: 必须是 bool" % card_id)
 	var footprint = stats.get("footprint_tiles")

@@ -13,7 +13,7 @@ static func definition() -> Dictionary:
 			"footprint_tiles": Vector2i(3, 3),
 			"is_air": false, "building_only": false, "can_attack_air": false,
 			"is_building": true,
-			"lifespan": 10.0,       # 存活时间（秒），到时自动消失
+			"lifespan": 10.0, "lifespan_hp_decay": true, # 每秒自然衰减40生命
 			"spawn_id": "imp",
 			"spawn_interval": 5.0,  # 每隔多久生成一批雾行者
 			"spawn_count": 2,

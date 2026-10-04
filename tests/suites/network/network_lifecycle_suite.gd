@@ -25,6 +25,7 @@ func run(harness: Object, main: Node2D) -> void:
 	main._snapshot_system = _system
 	_check_payload_contract()
 	_check_tower_stasis()
+	_check_building_health_decay()
 	_check_hit_haste_visual_snapshot()
 	_check_soft_control_snapshot()
 	_check_dynamic_action_clock()
@@ -497,6 +498,34 @@ func _check_dynamic_action_clock() -> void:
 	view.free()
 	camera.free()
 	_system.reset_session("")
+
+func _check_building_health_decay() -> void:
+	_system.reset_session("building-health-decay")
+	var aged_payloads: Array = []
+	for card_id in CardDB.all():
+		var stats: Dictionary = CardDB.get_card(card_id)
+		if stats.get("type") != "building": continue
+		for team in [0, 1]:
+			var source := Unit.new()
+			source.card_id = card_id
+			source.setup(team, stats, stats.name)
+			source._deploy_timer = 0.0
+			for tick in roundi(source.lifespan / 0.05 / 2.0): source._tick_building_lifetime(0.05)
+			var payload := _system._unit_snapshot_payload(79500 + aged_payloads.size(), source)
+			aged_payloads.append(payload)
+			source.free()
+	_deliver(100, aged_payloads)
+	for payload: Array in aged_payloads:
+		var replica: Unit = _main._client_units[payload[SNAP.U_ID]]
+		_expect(replica.hp == replica.max_hp * 0.5 and is_equal_approx(replica.presentation_state().health_ratio, 0.5), "%s 阵营%d客户端首次见到已老化建筑就显示半血" % [replica.card_id, replica.team])
+	var damaged_payloads := aged_payloads.duplicate(true)
+	for payload: Array in damaged_payloads: payload[SNAP.U_HP] -= 10.0
+	_deliver(101, damaged_payloads)
+	_deliver(100, aged_payloads)
+	for payload: Array in damaged_payloads:
+		var replica: Unit = _main._client_units[payload[SNAP.U_ID]]
+		replica._process(1.0)
+		_expect(replica.hp == float(payload[SNAP.U_HP]) and is_equal_approx(replica.presentation_state().health_ratio, replica.hp / replica.max_hp), "%s 阵营%d伤害快照继续从半血扣除，旧快照和表现帧不回满血" % [replica.card_id, replica.team])
 
 func _check_tower_stasis() -> void:
 	_system.reset_session("tower-stasis")

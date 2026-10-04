@@ -5,6 +5,7 @@ extends "res://tests/suites/battle_suite.gd"
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
+	_check_registered_building_decay()
 	_check_tombstone_art_integration()
 	_check_apex_turret()
 	_check_sun_disc()
@@ -17,6 +18,31 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_tombstone_spawn_cycle()
 	_check_tombstone_deferred_summons()
 	_check_generic_periodic_summon()
+
+func _check_registered_building_decay() -> void:
+	for card_id in CardDB.all():
+		var stats: Dictionary = CardDB.get_card(card_id)
+		if stats.get("type") != "building" or float(stats.get("lifespan", 0.0)) <= 0.0: continue
+		for team in [0, 1]:
+			var unit := Unit.new()
+			unit.card_id = card_id
+			unit.setup(team, stats, stats.name)
+			_main.add_child(unit)
+			var hit_events := [0]
+			unit.visual_hit.connect(func(): hit_events[0] += 1)
+			var half_ticks := roundi(unit.lifespan / _main.SIM_DT / 2.0)
+			for tick in half_ticks: unit._tick_building_lifetime(_main.SIM_DT)
+			_expect(unit.hp == unit.max_hp * 0.5 and is_equal_approx(unit.presentation_state().health_ratio, 0.5) and hit_events[0] == 0, "%s 阵营%d未受击经过半寿命，生命和血条均为一半且不发受击事件" % [card_id, team])
+			unit.take_damage(10.0)
+			var after_hit := unit.hp
+			unit._tick_building_lifetime(_main.SIM_DT)
+			_expect(after_hit == unit.max_hp * 0.5 - 10.0 and unit.hp < after_hit and hit_events[0] == 1, "%s 阵营%d首次伤害从残血扣除并发一次受击，随后自然衰血不追加事件" % [card_id, team])
+			unit.free()
+		for value in [false, null]:
+			var invalid := CardDB.all().duplicate(true)
+			if value == null: invalid[card_id].erase("lifespan_hp_decay")
+			else: invalid[card_id].lifespan_hp_decay = value
+			_expect(not CardDB.VALIDATOR.validate_all(invalid, false).is_empty(), "%s 关闭或遗漏限时建筑衰血配置时校验拒绝" % card_id)
 
 
 func _check_apex_turret() -> void:

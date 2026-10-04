@@ -8,7 +8,7 @@ static func definition() -> Dictionary:
 			"hp": 750, "damage": 0, "range": 0.0, "speed": 0.0,
 			"interval": 1.0, "radius": RADIUS_SLIGHTLY_LARGE, "footprint_tiles": Vector2i(2, 2),
 			"can_attack": false, "is_air": false, "building_only": false, "can_attack_air": false, "is_building": true,
-			"lifespan": 15.0,
+			"lifespan": 15.0, "lifespan_hp_decay": true,
 			"active_skills": [{"name": "余震", "kind": "aftershock", "cost": 2, "max_uses": 1,
 				"cooldown": 10.0, "duration": 2.5, "damage_reduction": 0.6, "radius": 90.0, "damage": 80,
 				"ground_only": false,

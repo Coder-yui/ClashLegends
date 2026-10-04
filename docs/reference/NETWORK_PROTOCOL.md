@@ -4,7 +4,7 @@
 
 | 契约 | 当前值 |
 | --- | --- |
-| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->91 |
+| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->92 |
 | 顶层快照项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd SNAPSHOT_PACKET_SIZE -->11 |
 | 单位载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd UNIT_PAYLOAD_SIZE -->54 |
 | 塔载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd TOWER_PAYLOAD_SIZE -->7 |
@@ -91,5 +91,7 @@ RPC 端点留在 Main，主客节点路径保持一致。运行请求只接受�
 协议90：腐蚀持续5秒，每0.5秒60伤害，共10次600；原版W声音在区域结束后自然收尾。快照和RPC载荷不变。
 
 协议91：腐蚀对防御塔和水晶使用30%伤害倍率，每跳18、总计180；普通单位与建筑卡仍为每跳60、总计600。RPC载荷不变。
+
+协议92：补齐训练木桩15秒寿命（每秒50）与墓碑10秒寿命（每秒40）的自然生命衰减；所有限时建筑定义必须启用衰血。伤害从剩余生命继续扣除，客户端读取既有HP快照显示双方实时生命，不自主衰血。炮台、太阳圆盘与塔墟重建规则沿用原配置，RPC与快照载荷不变。
 
 余震沿用U_ACTIVE_BUFF_ACTIVE表达独立增益；权威仍独立计算减伤与到期爆炸。frontal技能表现的aftershock形状为固定位置，受击动画沿用可靠unit_hit。没有新增载荷字段。
