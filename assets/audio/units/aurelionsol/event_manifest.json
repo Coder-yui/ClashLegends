@@ -3,129 +3,175 @@
     "file": "play_sfx_aurelionsol_respawn3d_buffactivate.wav",
     "event": "Play_sfx_AurelionSol_Respawn3D_buffactivate",
     "event_id": 2229428896,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/event_wav/Play_sfx_AurelionSol_Respawn3D_buffactivate.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_Respawn3D_buffactivate.txtp",
     "media_ids": [
       127942819
     ],
-    "duration": 2.4254,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "a19ea8cc994cfb7f0d3cb79fd7671d86dfe11a90b5121176defcc2d49f02957a",
-    "selection_note": "与卡牌 visual_animations.deploy=Respawn 对应；先不裁剪、不变速，按部署事件一次播放。"
+    "duration": 2.4254195011337867,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "1a27c99b5a9d99fb57dc1cb9d24e05a5d68a2c91592adaa656847dfef24aff05",
+    "selection_note": "与卡牌 visual_animations.deploy=Respawn 对应；先不裁剪、不变速，按部署事件一次播放。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/901fcbbbe07870c156c1719b616646614aa37242a46d70aa1a87f5b3e6890b79.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/901fcbbbe07870c156c1719b616646614aa37242a46d70aa1a87f5b3e6890b79.wav",
+    "source_sha256": "08e755f91c10eb645f60c30fa8d0a19ec9df27222f9460ee53d765d8f622cb87",
+    "txtp_sha256": "463049c23d55b2dd105a1ed4d0d16bdc21fc54a43e230be36ef2f51c2c5a329d"
   },
   {
     "file": "play_sfx_aurelionsol_aurelionsolq_oncast.wav",
     "event": "Play_sfx_AurelionSol_AurelionSolQ_OnCast",
     "event_id": 3095077577,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/event_wav/Play_sfx_AurelionSol_AurelionSolQ_OnCast.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolQ_OnCast.txtp",
     "media_ids": [
       213042414
     ],
-    "duration": 1.8907,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "a08af84f57eec6fc0adc714ba5d476424669247c858edfadb1f02b53c3f25bf5",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 1.8906575963718821,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "558a6cd6d0cec9461ac535c215932e4cf27770137a6f01280969c6452e7ea030",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/cf7d97004bd6278a751e8f1cae3c7dd78511bd09a5c39c59ed8a9edaec562e6a.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/cf7d97004bd6278a751e8f1cae3c7dd78511bd09a5c39c59ed8a9edaec562e6a.wav",
+    "source_sha256": "d4c2289b413ed9da593f9684c9b7ef83f16af24c0d29dbcbdb076697b5d83b69",
+    "txtp_sha256": "7dc4ef00d2992bf808689346197079eabd9299e6ccf64be7192b40b129bb3d92"
   },
   {
     "file": "play_sfx_aurelionsol_aurelionsolq_missilelaunch.wav",
     "event": "Play_sfx_AurelionSol_AurelionSolQ_missilelaunch",
     "event_id": 3477141528,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/event_wav/Play_sfx_AurelionSol_AurelionSolQ_missilelaunch.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolQ_missilelaunch.txtp",
     "media_ids": [
       977507558
     ],
-    "duration": 5.6217,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "3ba4e21375ab24e8a5f8ba7cf92d4e9808ab370ef22850348003f63cf93f30cb",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 5.6216780045351475,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "d334ce6f3971163e3791a544336f89d6161d4777e4866dd2445aeac434582955",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/be922459b27e3753efdeef9678eed52f6fc0e452c65a153ff9189687beeee39b.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/be922459b27e3753efdeef9678eed52f6fc0e452c65a153ff9189687beeee39b.wav",
+    "source_sha256": "31e5365b5f11c7d58eb9a674e65312735f28deebbc0f104a05a04faaf2c606af",
+    "txtp_sha256": "9e1a5f11d6a767457a48db6bc392587d9c6cd1a5aaf51306e994a0ef4242f4cc"
   },
   {
     "file": "play_sfx_aurelionsol_aurelionsolq_buffdeactivate_r1.wav",
     "event": "Play_sfx_AurelionSol_AurelionSolQ_buffdeactivate",
     "event_id": 2470934330,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/event_wav/Play_sfx_AurelionSol_AurelionSolQ_buffdeactivate {r1}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolQ_buffdeactivate {r1}.txtp",
     "media_ids": [
       272519467,
       434511164,
       689099185,
       1036976884
     ],
-    "duration": 0.8418,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "3ba167684c142ccd011662494c3344c56e9909ce735c7bc079f95f0481171d9d",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 0.8418367346938775,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "b7296d7f46fc9f983343827efd46682db08c0a628e30adeaa38750c4bc355d2b",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/b7c235bb70c0913a5d6ac5b854fce89f905923b4d351e1f09765c3a6fc6fad91.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/b7c235bb70c0913a5d6ac5b854fce89f905923b4d351e1f09765c3a6fc6fad91.wav",
+    "source_sha256": "0103cc9f31aa07c154565d5a32c4de4e79c9a46a5d9fd1522496d4cc66b09f6e",
+    "txtp_sha256": "b36ab9d0c6583adc385242862885bfc123062008171c95cad533eb65ebe31c89"
   },
   {
     "file": "play_sfx_aurelionsol_aurelionsolq_buffdeactivate_r2.wav",
     "event": "Play_sfx_AurelionSol_AurelionSolQ_buffdeactivate",
     "event_id": 2470934330,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/event_wav/Play_sfx_AurelionSol_AurelionSolQ_buffdeactivate {r2}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolQ_buffdeactivate {r2}.txtp",
     "media_ids": [
       272519467,
       434511164,
       689099185,
       1036976884
     ],
-    "duration": 0.8844,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "01f2f89200a1c671843b784786f95667f11053e2175e69fa422a8502d0f643c0",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 0.8843537414965986,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "98b1978f65fbcbddd04e2a27390ff5b68b8682df9b54598e166fd7411b993029",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/c35466ad66469ab9d80bd6e22f78e7939d822aeb9c16f3ca0e97e4d66a1e228f.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/c35466ad66469ab9d80bd6e22f78e7939d822aeb9c16f3ca0e97e4d66a1e228f.wav",
+    "source_sha256": "6e6dbe717284fdd56f61e04cc8376cf6273c81bd213c56577eb88d1177c69ef2",
+    "txtp_sha256": "34f73f084b153330cc80d5b679fa46c9ad4fdf74e06fbdb2e77511c555be23e5"
   },
   {
     "file": "play_sfx_aurelionsol_aurelionsolq_buffdeactivate_r3.wav",
     "event": "Play_sfx_AurelionSol_AurelionSolQ_buffdeactivate",
     "event_id": 2470934330,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/event_wav/Play_sfx_AurelionSol_AurelionSolQ_buffdeactivate {r3}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolQ_buffdeactivate {r3}.txtp",
     "media_ids": [
       272519467,
       434511164,
       689099185,
       1036976884
     ],
-    "duration": 0.8497,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "3b78f5ca1f4d07c5f706ef1b3311e73fb07ac69243a906f64fa432eb1baff536",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 0.8497052154195012,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "8d1a1ebf503b944bbcc0d3de915e29e7b3eee76acc86a7f980ba252d5be37a91",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/079facfa0c3c9a84d7f46dba235c0b88ef9a4b407788140aec864cffeabbcac8.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/079facfa0c3c9a84d7f46dba235c0b88ef9a4b407788140aec864cffeabbcac8.wav",
+    "source_sha256": "5e53b12fb2e671a914bbeaeecf86b7a1fa8610c628698077b7f7a45a8d41dd20",
+    "txtp_sha256": "ae818b3064863202edccf5dbe4dd6817076ed8006eec0d7286afed9d058c56af"
   },
   {
     "file": "play_sfx_aurelionsol_aurelionsolr_oncast.wav",
     "event": "Play_sfx_AurelionSol_AurelionSolR_OnCast",
     "event_id": 4162034424,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/event_wav/Play_sfx_AurelionSol_AurelionSolR_OnCast.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolR_OnCast.txtp",
     "media_ids": [
       1037831232
     ],
-    "duration": 1.5798,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "1c8adc8ebb793b9f526d391a49a9a547ae194a76e98bb9ffb6f3b3400d968c0a",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 1.579750566893424,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "7afeb69f27e7ba03064afc427103fddc07198b0b2585c33c993f5a67ae477d8e",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/3081971e478e07d99b6800ebe322ad07c75b0c06e054de32cdfbce78eb3591b5.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/3081971e478e07d99b6800ebe322ad07c75b0c06e054de32cdfbce78eb3591b5.wav",
+    "source_sha256": "08362d2a769f2f8797b358515b73871ab67ca2e4114b41c0533e858c7b2f4f33",
+    "txtp_sha256": "7153906fadda28a97412a6549ba243ac27bc2375b0512a36560a10800c70b138"
   },
   {
     "file": "play_sfx_aurelionsol_aurelionsolr2_oncast.wav",
     "event": "Play_sfx_AurelionSol_AurelionSolR2_OnCast",
     "event_id": 3803278248,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/event_wav/Play_sfx_AurelionSol_AurelionSolR2_OnCast.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolR2_OnCast.txtp",
     "media_ids": [
       987858008
     ],
-    "duration": 1.5798,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "42def426885bea382c32b79509270d808f3851dbffde1c967e3056ca758ea9d8",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 1.579750566893424,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "328b53e49adfc20c538ff472397a336ce2a5d00e3e9793cd3fa212e7fed3cb68",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/e54d2a27bd646c0f8e2049bd38a23dd32c6cfbaca174d50c7f7a132b00d59a74.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/e54d2a27bd646c0f8e2049bd38a23dd32c6cfbaca174d50c7f7a132b00d59a74.wav",
+    "source_sha256": "2603661d93fe401ed8e52b0f52bb68c6e1788676029c3fb98dd150477c215b0a",
+    "txtp_sha256": "8805e743be92700e3136c8fcc64f3c73e1b574e5694688e535a1bac4fe51a389"
   },
   {
     "file": "play_vo_aurelionsol_death3d_r1_zh_cn.wav",
     "event": "Play_vo_AurelionSol_Death3D",
     "event_id": 2928834675,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol_vo/event_wav/Play_vo_AurelionSol_Death3D {r1}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol_vo/txtp/Play_vo_AurelionSol_Death3D {r1}.txtp",
     "media_ids": [
       3685532,
       90902781,
@@ -136,24 +182,22 @@
       1857803624
     ],
     "duration": 1.5,
-    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
-    "sha256": "e42e29d22c1360982d86352c854ba14b9703b0475160ee76a01000ad23572e21",
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "551bf2b040fee55c4ccbb9f6a43a01736732b36befb4f10935d39470df34aac7",
     "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
-    "death_envelope": {
-      "source_duration": 3.0073015873015874,
-      "source_sha256": "b8aa7bf8b39c546eef042936575c56520704d206444f1651c06534b9fb7c06dd",
-      "keep_seconds": 1.5,
-      "fade_start_seconds": 1.0,
-      "fade_seconds": 0.5,
-      "curve": "linear_amplitude"
-    }
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/07412291e82b8ee356a1bf7ee5adcb0fd6cfdc7b60bcf94c817166a7913f7e85.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/07412291e82b8ee356a1bf7ee5adcb0fd6cfdc7b60bcf94c817166a7913f7e85.wav",
+    "source_sha256": "153ddad010df15acf157ff0da28528b4e6bae42bbd836da68501a1c35be7ddac",
+    "txtp_sha256": "b4fcaa2f5e4dc827bd50801e7a50443040465eedd213072c650828ac1733f1cc"
   },
   {
     "file": "play_vo_aurelionsol_death3d_r2_zh_cn.wav",
     "event": "Play_vo_AurelionSol_Death3D",
     "event_id": 2928834675,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol_vo/event_wav/Play_vo_AurelionSol_Death3D {r2}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol_vo/txtp/Play_vo_AurelionSol_Death3D {r2}.txtp",
     "media_ids": [
       3685532,
       90902781,
@@ -164,24 +208,22 @@
       1857803624
     ],
     "duration": 1.5,
-    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
-    "sha256": "7ff49c64046b1464f6745166edf611e141360c72cbfa6bfc175a3e289b8e7d29",
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "6555a3758bcf3e34b717fb1c13ba1f76a694ee147041c1046c417bcc2d4e0667",
     "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
-    "death_envelope": {
-      "source_duration": 2.86734693877551,
-      "source_sha256": "5a35d27e07d07139f1f3013eabac0e15c0d2e2e6da5957451aa448d937ae2d17",
-      "keep_seconds": 1.5,
-      "fade_start_seconds": 1.0,
-      "fade_seconds": 0.5,
-      "curve": "linear_amplitude"
-    }
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/215b43247d56ae97adada702b5ab457740b78cfa6d056c6cc84364d975fa67de.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/215b43247d56ae97adada702b5ab457740b78cfa6d056c6cc84364d975fa67de.wav",
+    "source_sha256": "a44bf057837666ae60322780064e03371cac4e524c9f2a6457251a6b248a3aec",
+    "txtp_sha256": "b95c275c6cabd5fd1dfb9936041de70d23f46a9a3cb20467800b662451ca779f"
   },
   {
     "file": "play_vo_aurelionsol_death3d_r3_zh_cn.wav",
     "event": "Play_vo_AurelionSol_Death3D",
     "event_id": 2928834675,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol_vo/event_wav/Play_vo_AurelionSol_Death3D {r3}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol_vo/txtp/Play_vo_AurelionSol_Death3D {r3}.txtp",
     "media_ids": [
       3685532,
       90902781,
@@ -192,144 +234,206 @@
       1857803624
     ],
     "duration": 1.5,
-    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
-    "sha256": "7ce5094a159201f234d018e9fdc34d78d225e434960c4ec9a3189f519b72cdf1",
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "47575097399d5fc1c348a9b64472be2c65ad582b67639fb2da2e6b94c90f723e",
     "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
-    "death_envelope": {
-      "source_duration": 3.120907029478458,
-      "source_sha256": "5739742d1e5ef1433403b205644138f9430c5d6e90e59e9d1456112b62940d09",
-      "keep_seconds": 1.5,
-      "fade_start_seconds": 1.0,
-      "fade_seconds": 0.5,
-      "curve": "linear_amplitude"
-    }
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/9ac75f09eaee2c8d90857597399ad2ee6a056eaf46f7cd737aa67a0b16ba41ec.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/9ac75f09eaee2c8d90857597399ad2ee6a056eaf46f7cd737aa67a0b16ba41ec.wav",
+    "source_sha256": "a912d1b628c66d617096b7433782706447576e74213968b8daeb465325cc373c",
+    "txtp_sha256": "2b5bec8466d62e4b9dfa8a8a2717bb7e675b81803b8f05d3c2db48ab0d121ed8"
   },
   {
     "file": "play_sfx_aurelionsol_aurelionsolq_missilecast_r1.wav",
     "event": "Play_sfx_AurelionSol_AurelionSolQ_missilecast",
     "event_id": 398105608,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolQ_missilecast {r1}.txtp",
     "media_ids": [
       336070000,
       402341783,
       506729953
     ],
     "duration": 2.92,
-    "processing": "vgmstream-cli -i; original event layers and gain retained",
-    "sha256": "281db3fb5dcff8dd10ca709c30c600a5d14c839c9bacdc757e4036023e77e6cc"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "53ca3261792be39b4a1ecfb413bf44bc1c3fe7e3583d6868188bee9446b2b06c",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/72808399998ef3ae1edf7aed3869195c7f4c7fa7285592716228963f40420d23.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/72808399998ef3ae1edf7aed3869195c7f4c7fa7285592716228963f40420d23.wav",
+    "source_sha256": "6443e19fcba2165a18c0aac80056934489b518f39c01cd06cfbee582133f9d53",
+    "txtp_sha256": "1a087dde730927e51e6342c948c57e41bf04f06383a5d369dba01e89e42a9755"
   },
   {
     "file": "play_sfx_aurelionsol_aurelionsolq_missilecast_r2.wav",
     "event": "Play_sfx_AurelionSol_AurelionSolQ_missilecast",
     "event_id": 398105608,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolQ_missilecast {r2}.txtp",
     "media_ids": [
       336070000,
       402341783,
       506729953
     ],
     "duration": 2.92,
-    "processing": "vgmstream-cli -i; original event layers and gain retained",
-    "sha256": "54a180639db1005f9b478763a9db6e3f569f1e0db58d410729304572a6dfe325"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "ced148cccc84b9eae45e980974a413400b019eca19355bf7a9d2d41b7a7a3173",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/d16af1ccbc8b924d06c81f41b699568cf53dd567553f1b47218f69dac666b920.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/d16af1ccbc8b924d06c81f41b699568cf53dd567553f1b47218f69dac666b920.wav",
+    "source_sha256": "5f024cfd7fa3598fd1a805b83c3ae1a28435ec73a62303f9f7cf0d66e8317f5d",
+    "txtp_sha256": "aaf196f7bb2f256411a75a4d3f9a3696ef8ac0b9d6a4652facb3d3ff23f7f6bd"
   },
   {
     "file": "play_sfx_aurelionsol_aurelionsolq_missilecast_r3.wav",
     "event": "Play_sfx_AurelionSol_AurelionSolQ_missilecast",
     "event_id": 398105608,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolQ_missilecast {r3}.txtp",
     "media_ids": [
       336070000,
       402341783,
       506729953
     ],
     "duration": 2.92,
-    "processing": "vgmstream-cli -i; original event layers and gain retained",
-    "sha256": "a6e78246a5769f8806b58c6f92471e0d0ae623468071ab5ffd318b0c90f3dc93"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "fb9ed77809438f6d381929e3e2c510f1b8e975049b8fe78224acc1c53687c009",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/471fdc5f77f19f8d99a0bc5b358c5ee08b9cd985db6c92089e2625e9e686dfb1.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/471fdc5f77f19f8d99a0bc5b358c5ee08b9cd985db6c92089e2625e9e686dfb1.wav",
+    "source_sha256": "585bfd12b3d3117c1131077dfe0896c85e87b03eff47404e3ecf96782cac2901",
+    "txtp_sha256": "96046ee5bc925e31e8cc0c3eaff1650cef1b495808afbf73fbcb62d905368724"
   },
   {
     "file": "play_sfx_aurelionsol_aurelionsolrmissile_missilelaunch.wav",
     "event": "Play_sfx_AurelionSol_AurelionSolRMissile_missilelaunch",
     "event_id": 2553594109,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolRMissile_missilelaunch.txtp",
     "media_ids": [
       603027560
     ],
-    "duration": 2.0101,
-    "processing": "vgmstream-cli -i; original event layers and gain retained",
-    "sha256": "c75c3915130cd8142c087f0cdddd5331b3224df5d82c7f6d503d01b397913297"
+    "duration": 2.010068027210884,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "8a733d2e3a46c44d00f2061170e899abd48adf5c800f8395da48c9f7b7574d20",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/ecefb45b9d98f34c260d897ae9226bf4b609b7e32670b670b61decb485704509.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/ecefb45b9d98f34c260d897ae9226bf4b609b7e32670b670b61decb485704509.wav",
+    "source_sha256": "21f41857186e8a3f036100bf898f3bffa854ea7cc847b7d127b26fc978ac1bab",
+    "txtp_sha256": "72a950cbfb2c68c2d5b83173b95f708e9b606ddd468c6c86ff801f0bf1136e70"
   },
   {
     "file": "play_sfx_aurelionsol_aurelionsolrmissile_hit_r1.wav",
     "event": "Play_sfx_AurelionSol_AurelionSolRMissile_hit",
     "event_id": 361331667,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolRMissile_hit {r1}.txtp",
     "media_ids": [
       348958784,
       597444599,
       773751231
     ],
-    "duration": 4.1034,
-    "processing": "vgmstream-cli -i; original event layers and gain retained",
-    "sha256": "1d72ec4e1ec39933ab907523504ad5f5f5300dbc156585fbae9741b6fd2269a9"
+    "duration": 4.10344671201814,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "53c06033bf28a4b06e587587d133afadb6cee6923621283352540b49f751fbf6",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/264ec08af4a534fea4ae66cd5452ce2f21411514ae69d9e77528787fb47c21f1.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/264ec08af4a534fea4ae66cd5452ce2f21411514ae69d9e77528787fb47c21f1.wav",
+    "source_sha256": "c672a83c2a5c736674d1d45d0a30b6d4d8c133228f11d3ed897af29abbe8ff81",
+    "txtp_sha256": "2854b4af0d37b2997f9e6806c5eacb43b3f9e88169bf8e3aaa719f5632a2a877"
   },
   {
     "file": "play_sfx_aurelionsol_aurelionsolrmissile_hit_r2.wav",
     "event": "Play_sfx_AurelionSol_AurelionSolRMissile_hit",
     "event_id": 361331667,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolRMissile_hit {r2}.txtp",
     "media_ids": [
       348958784,
       597444599,
       773751231
     ],
-    "duration": 3.8202,
-    "processing": "vgmstream-cli -i; original event layers and gain retained",
-    "sha256": "61a0a6715a83f7e469e8f984509dca43a91484bc9b271bb4e8d936ea3d9d8150"
+    "duration": 3.820249433106576,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "fcd5f01c0f3b89e16f413fdde985ccb0b24dc006a5ff1e041e5444369e1b1f35",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/268fc6b21026725faa4440065ca920b41148375fbae0e9d1de814c0b617109a7.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/268fc6b21026725faa4440065ca920b41148375fbae0e9d1de814c0b617109a7.wav",
+    "source_sha256": "85e2ddad0673dc9378396ab032e79846298792d50c106a7a34ce5f21547d7ffe",
+    "txtp_sha256": "0f5499947c438cf6cb6019e6a2cdf04a2f317a5f1f67aca20f4a6a1affc5e475"
   },
   {
     "file": "play_sfx_aurelionsol_aurelionsolrmissile_hit_r3.wav",
     "event": "Play_sfx_AurelionSol_AurelionSolRMissile_hit",
     "event_id": 361331667,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolRMissile_hit {r3}.txtp",
     "media_ids": [
       348958784,
       597444599,
       773751231
     ],
-    "duration": 3.82,
-    "processing": "vgmstream-cli -i; original event layers and gain retained",
-    "sha256": "6075f1ee5e5c256dd98bae89f28638eda9000ce225cb9b3f459581188660ae28"
+    "duration": 3.8200226757369613,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "ece13b59fe5a6dff400e7ff29cd187219c4024569aaa43c051990e6335602190",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/af4c4404a9539776e7bc18f8e8dc3e4f504112aafa5c1c84f8edece182b3b388.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/af4c4404a9539776e7bc18f8e8dc3e4f504112aafa5c1c84f8edece182b3b388.wav",
+    "source_sha256": "3e66b1ddd03a2b1ce40e72d1b10df4f5b98a32919e1751c3dc15d1c31bde867d",
+    "txtp_sha256": "7b29c1bcffdebf073f486501618d0f8981dd40d43c2035ff64140831878b8dc6"
   },
   {
     "file": "play_sfx_aurelionsol_aurelionsolr2missile_missilelaunch_super.wav",
     "event": "Play_sfx_AurelionSol_AurelionSolR2Missile_missilelaunch_super",
     "event_id": 2309761105,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolR2Missile_missilelaunch_super.txtp",
     "media_ids": [
       1027810183
     ],
-    "duration": 2.179,
-    "processing": "vgmstream-cli -i; original event layers and gain retained",
-    "sha256": "168a1114bb33114c8ccaca7144fe93eeb83a0c028d4a4ec82b6a3999ce090d97"
+    "duration": 2.1789569160997733,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "453e262e882ba864c36ec85004da1fab01284a1c5827c8403ca075101091c0c5",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/49bd024be558e971f115e0804a7400bfa12adfb6c7ff307c1a2fbdf8482f6097.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/49bd024be558e971f115e0804a7400bfa12adfb6c7ff307c1a2fbdf8482f6097.wav",
+    "source_sha256": "d60e7022112daaad6def66b2bdc731e23798ec633a2a1b4907974b1cf3749b07",
+    "txtp_sha256": "68eae33a1db35f07d73573b13f2e4001ca1902e4563a186f9a8cc763a266cb5d"
   },
   {
     "file": "play_sfx_aurelionsol_aurelionsolr2missile_hit_super_s.wav",
     "event": "Play_sfx_AurelionSol_AurelionSolR2Missile_hit_super",
     "event_id": 3692241899,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolR2Missile_hit_super {s}.txtp",
     "media_ids": [
       18582862,
       920317002
     ],
-    "duration": 12.4385,
-    "processing": "vgmstream-cli -i; original event layers and gain retained",
-    "sha256": "8300090e5d7e4ebb399be1c902f566398482d9a714a03adae9920429cb4cdabb"
+    "duration": 12.438503401360544,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "c027d1fe7248b524fec41ebcf207ce3c9ad73485f752b8dc0677bda48ec25ba8",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/23c79c4d885cd936fadceaf5d4a7a97206e66666526b0d3ba4b09e1f1f96f2d2.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/23c79c4d885cd936fadceaf5d4a7a97206e66666526b0d3ba4b09e1f1f96f2d2.wav",
+    "source_sha256": "82a76d582f27eb6a399188855af49087046d2117d9c2f32bc4554fabea0b60e4",
+    "txtp_sha256": "1c2680141f5776ccf73d0ff753253d88cd408cd7fc78c66618795b7d06cf43a5"
   },
   {
     "file": "play_sfx_aurelionsol_aurelionsolr_hit_shockwave_r1.wav",
     "event": "Play_sfx_AurelionSol_AurelionSolR_hit_shockwave",
     "event_id": 2637623209,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolR_hit_shockwave {r1}.txtp",
     "media_ids": [
       767382225,
       948852579,
@@ -337,37 +441,59 @@
       1054539665
     ],
     "duration": 2.9,
-    "processing": "vgmstream-cli -i; original event layers and gain retained",
-    "sha256": "2d43d95dc406fb9f3037bdc124c8a178d298782b890c37e107aa592fcf9e2c66"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "30279fda409c3fdca03e820ac04daee7dfb006243ac49cd0bdd165f007b7e4a7",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/7c3686504b54a19fb6d08facd886f8f2dd50c2b81a2a9f51be88b76c1af35753.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/7c3686504b54a19fb6d08facd886f8f2dd50c2b81a2a9f51be88b76c1af35753.wav",
+    "source_sha256": "52f543f393c3245b2a896fa5facadc158645810ef908b48f6691201b94deab99",
+    "txtp_sha256": "90053e867645c63725e75bff2b0c7b1796028630985aea4860cb914213e41712"
   },
   {
     "file": "play_sfx_aurelionsol_aurelionsolr_hit_shockwave_r2.wav",
     "event": "Play_sfx_AurelionSol_AurelionSolR_hit_shockwave",
     "event_id": 2637623209,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolR_hit_shockwave {r2}.txtp",
     "media_ids": [
       767382225,
       948852579,
       970291862,
       1054539665
     ],
-    "duration": 2.9388,
-    "processing": "vgmstream-cli -i; original event layers and gain retained",
-    "sha256": "9564b3dc2eb7566383f5c0a0b082294e609fbec94ce7c22ece13c9b6876be0e2"
+    "duration": 2.938775510204082,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "f8fabaf542143e2864eb868f7a6f20278de8a7edfd6ff0255aaff86d7df30251",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/642500c3fc932e813ed6bdbe1b94bf7e6dbee1aa06b04b19e284edea752cbaa8.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/642500c3fc932e813ed6bdbe1b94bf7e6dbee1aa06b04b19e284edea752cbaa8.wav",
+    "source_sha256": "0d5c4fc25820b9d050fc4fde13158b444e11c1fdfeeb136013dd75b5bc2794e7",
+    "txtp_sha256": "ed875e0e1b6f9eac1a058a9e215509f1e230180c5a3c12257c9c02c57ff7c455"
   },
   {
     "file": "play_sfx_aurelionsol_aurelionsolr_hit_shockwave_r3.wav",
     "event": "Play_sfx_AurelionSol_AurelionSolR_hit_shockwave",
     "event_id": 2637623209,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/aurelionsol/txtp/Play_sfx_AurelionSol_AurelionSolR_hit_shockwave {r3}.txtp",
     "media_ids": [
       767382225,
       948852579,
       970291862,
       1054539665
     ],
-    "duration": 3.0537,
-    "processing": "vgmstream-cli -i; original event layers and gain retained",
-    "sha256": "4f259abbb1306ffaba885855ac4554c10366504decb1496e8e87312f0d094711"
+    "duration": 3.0536507936507937,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "4761980adf250ea362cd9c3bec0b426c5a11ee5d4ea591077c7059ba3de4dc62",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/93fcb6cedfad2eff3678fae3ad8d1ab7f76befbe4f1f1ced67c1b2c6bc4aff33.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/93fcb6cedfad2eff3678fae3ad8d1ab7f76befbe4f1f1ced67c1b2c6bc4aff33.wav",
+    "source_sha256": "87dd7e10eeaa9b87b61884ceb3d91cda6c67f43419a7e38d040ed2042f5c94be",
+    "txtp_sha256": "4c31c474f57836ca7d9639874c59c3085e791d774b490aef5dedec30ce3aa4a4"
   }
 ]

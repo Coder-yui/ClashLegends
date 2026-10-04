@@ -5,13 +5,20 @@
     "cue": "victory",
     "label": "胜利 · 已接入结尾",
     "duration": 3.1165079365079364,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Global_Female1_OnVictory.txtp",
     "event_id": 179484193,
     "media_ids": [
       "349955032"
     ],
-    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
-    "sha256": "ce41a74756f6f35a8a98a1d70c6ae565704a3da990283b9d8a8b9d82e410d2d6"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "72cced3fbb8bf0ca5fdeb4ace6765741d1be12cfe3c60d59049c2b921d0ed7f6",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/0140bb0a589aebdc2e843554423d329f1559fd30aa146bbf8119f93d105a74e2.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/0140bb0a589aebdc2e843554423d329f1559fd30aa146bbf8119f93d105a74e2.wav",
+    "source_sha256": "51887e1128f3a0bae81ac84293635c1d4fb0639035455d6a7f1616ddfd80b1cb",
+    "txtp_sha256": "6ccfdd69b340443566abf91799335cf2ce0b94ce4c63ea275d7a54920027ab4c"
   },
   {
     "file": "assets/audio/announcer/defeat_r1.wav",
@@ -19,13 +26,20 @@
     "cue": "defeat",
     "label": "失败 · 已接入结尾",
     "duration": 3.0352380952380953,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Global_Female1_OnDefeat.txtp",
     "event_id": 2224178004,
     "media_ids": [
       "52198965"
     ],
-    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
-    "sha256": "49699c8e9d12c60ad9dd4a1c3780530f5ac343de49a16a6e04b56cba673a23da"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "353274e905bde7c1dbf5e4cbc3ccd01cf287e2bf2bc064cc841841f488c36472",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/e4fcb4f34d3e166bb6f9857eb9f39654e17132afff396270d133aab802e04230.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/e4fcb4f34d3e166bb6f9857eb9f39654e17132afff396270d133aab802e04230.wav",
+    "source_sha256": "5fae63ad26ea70840154c82f1be0672da6fc07ee44679d383866c5814043a61a",
+    "txtp_sha256": "8d9addfe21d188c9fc8957eb47034e0cc634b31ed06cb6b2dec266819d297740"
   },
   {
     "file": "assets/audio/announcer/minions_spawn_r1.wav",
@@ -33,13 +47,20 @@
     "cue": "minions_spawn",
     "label": "全军出击 · 已接入第5秒首波兵线",
     "duration": 2.9824943310657597,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/announcer_review/txtp/Play_vo_Announcer_Female1_MinionSpawn.txtp",
     "event_id": 3292132413,
     "media_ids": [
       "219151739"
     ],
-    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
-    "sha256": "31c864045ccdb062152b7061dcfae50b27e2c5df7178a7c543520fc9c7bb2fc6"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "b59a79be7fb41f38a63cb0abd2d5a36d80b185f60f337a7e953a7c71db51d3a8",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/997545fc2f91a16ec188dab77a3c5ce200b7272c4f6bd66213bb7ebc10c84c2b.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/997545fc2f91a16ec188dab77a3c5ce200b7272c4f6bd66213bb7ebc10c84c2b.wav",
+    "source_sha256": "d8606847d07a7bc0b917c5c65578fc63d5ca374e744d247b6cacdc1585403083",
+    "txtp_sha256": "e5857af506a02bfbe0fa215bc7bb93cfe0b7af8482e4186a7fc3f70e409d2619"
   },
   {
     "file": "assets/audio/announcer/welcome_r1.wav",
@@ -678,15 +699,22 @@
     "cue": "spawn:start",
     "label": "小兵生成 · 兵线/部署共用",
     "duration": 1.763514739229025,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/minion_spawn_review/txtp/Play_sfx_SRU_Spawn_MinionsSpawn_cast {r1}.txtp",
     "event_id": 546694519,
     "media_ids": [
       "691552716",
       "716449542",
       "146970335"
     ],
-    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
-    "sha256": "785389fe6af79722f2b1d09271b43e6cc9adb4c45750027ba11edd4d6a16f475"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "f6546c82b551376274c699d77a80ebcd785d2fd87c44b789ea2ea4b49b6e76c0",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/da3fa963a7083c0515426edb7b5f6884381fdd4183bb1dd88653e40e77a7e67b.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/da3fa963a7083c0515426edb7b5f6884381fdd4183bb1dd88653e40e77a7e67b.wav",
+    "source_sha256": "b419effbf67aadedd8892a1fcb3e808c2762388182057b8229cfdd76c37a22a4",
+    "txtp_sha256": "f5f2ee2bf8909cbc54d2cdc07e13d26ca962e7a632a2265a7d786d43f4158547"
   },
   {
     "file": "assets/audio/units/minion_shared/spawn_r2.wav",
@@ -694,15 +722,22 @@
     "cue": "spawn:start",
     "label": "小兵生成 · 兵线/部署共用",
     "duration": 1.6336507936507936,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/minion_spawn_review/txtp/Play_sfx_SRU_Spawn_MinionsSpawn_cast {r2}.txtp",
     "event_id": 546694519,
     "media_ids": [
       "691552716",
       "716449542",
       "146970335"
     ],
-    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
-    "sha256": "a3e74c7ed24f0e0d75e3338ce5ad905283bf722a3667585f1b6f45d1f5710e85"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "af6f6d105a03811d61a22f4f7e844672f409ac49be3fcc5a45b487a319750f7d",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/0474d9c498b53dee193429a541a9670617671ed7a7877213bb83cc888397e05b.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/0474d9c498b53dee193429a541a9670617671ed7a7877213bb83cc888397e05b.wav",
+    "source_sha256": "ddfb8cd0e7ed81357ce58e64ec8e1b8cb9936ee07f014f2d147dfbe046a07473",
+    "txtp_sha256": "976ec04097690986ef9ebb68323506a51ede718e5929f372b3a760c99e10ff7a"
   },
   {
     "file": "assets/audio/units/minion_shared/spawn_r3.wav",
@@ -710,14 +745,21 @@
     "cue": "spawn:start",
     "label": "小兵生成 · 兵线/部署共用",
     "duration": 1.9058049886621315,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/minion_spawn_review/txtp/Play_sfx_SRU_Spawn_MinionsSpawn_cast {r3}.txtp",
     "event_id": 546694519,
     "media_ids": [
       "691552716",
       "716449542",
       "146970335"
     ],
-    "processing": "Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut",
-    "sha256": "f9f8ffe832342cd5b9f2917cbb0b2322c57279845fdb468ff8113dde957ab5d4"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "235a781e4c4ced48b1f3d6c879f4343636d2bc83aa80eec8e6e894487a2073a5",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/b3f7565926150bbd5fad54352c8d78c8e1a40da1315a3001b4798e849a25305d.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/b3f7565926150bbd5fad54352c8d78c8e1a40da1315a3001b4798e849a25305d.wav",
+    "source_sha256": "863cac81f7656df81590714f2c3eb6df13d13389a2576b318b3d414779a2d460",
+    "txtp_sha256": "0b64b3dab94fdbc22a2b876d378885114c709bffb35b99342c94855d1be50eaa"
   }
 ]

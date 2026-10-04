@@ -3,136 +3,182 @@
     "file": "play_sfx_anivia_aniviabasicattack_oncast_d.wav",
     "event": "Play_sfx_Anivia_AniviaBasicAttack_OnCast",
     "event_id": 2722190902,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/anivia/event_wav/Play_sfx_Anivia_AniviaBasicAttack_OnCast {d}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/anivia/txtp/Play_sfx_Anivia_AniviaBasicAttack_OnCast {d}.txtp",
     "media_ids": [
       118527491
     ],
-    "duration": 0.7745,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "ccd072d24a3370fc1348ac4668e717fb03417a5a0800b0cb0a16640a12adca19",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 0.7745124716553288,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "057acf999c21c1ecb150870cab8a660fa7e0eab55287b340feff0473cf9d49fb",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/7dd0d6d3d67c4fa8d1f0c20a15d6203b6f94c22b56e566b26ef40a4cb6efd3a3.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/7dd0d6d3d67c4fa8d1f0c20a15d6203b6f94c22b56e566b26ef40a4cb6efd3a3.wav",
+    "source_sha256": "ad648695e3f9b9fd2d1f337132f7e4707b201fb25be592f79df86d12a1900f55",
+    "txtp_sha256": "d235b28686c773ac3447034c45430155ee7e0aa63b1877830084926428141f13"
   },
   {
     "file": "play_sfx_anivia_aniviabasicattack_onhit_r1_d.wav",
     "event": "Play_sfx_Anivia_AniviaBasicAttack_OnHit",
     "event_id": 3535932114,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/anivia/event_wav/Play_sfx_Anivia_AniviaBasicAttack_OnHit {r1} {d}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/anivia/txtp/Play_sfx_Anivia_AniviaBasicAttack_OnHit {r1} {d}.txtp",
     "media_ids": [
       64327303,
       460294116,
       470106826,
       717759378
     ],
-    "duration": 1.0489,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "4afd35e47402bb29d1be868c8870267d420dcd4158e313684aa74497998e1cfa",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 1.0489342403628117,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "1b3230920c6621a5287d87c10d85b52955ca2443e6d97cd3e3dad80f79b22029",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/2de6fcc4cb31a42b9e05f6874a4d1f719a0f2fc7f636367692a77edc681a0297.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/2de6fcc4cb31a42b9e05f6874a4d1f719a0f2fc7f636367692a77edc681a0297.wav",
+    "source_sha256": "394cc36e9e23f9a3dae577d18b775822d8740780782f5a055f0678fd54ee3f57",
+    "txtp_sha256": "1873781183a360a3be0f112cd5fb49f4eda62cca5b71f72358d1597f915c2e67"
   },
   {
     "file": "play_sfx_anivia_aniviabasicattack_onhit_r2_d.wav",
     "event": "Play_sfx_Anivia_AniviaBasicAttack_OnHit",
     "event_id": 3535932114,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/anivia/event_wav/Play_sfx_Anivia_AniviaBasicAttack_OnHit {r2} {d}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/anivia/txtp/Play_sfx_Anivia_AniviaBasicAttack_OnHit {r2} {d}.txtp",
     "media_ids": [
       64327303,
       460294116,
       470106826,
       717759378
     ],
-    "duration": 0.9068,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "b0718978ea219b74428db476debe4157a9e6ac633c17c51339f22df04f932f84",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 0.9067800453514739,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "11ec6ad939e047c6fd608976bb755d1925ab440a2eafbc697d1888643fc8e2ec",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/bc83ce905fed549a0020e7aac4ba6c0e7b4d3c40c0ab36d1314ba24515b215fa.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/bc83ce905fed549a0020e7aac4ba6c0e7b4d3c40c0ab36d1314ba24515b215fa.wav",
+    "source_sha256": "8f4171e92c77e75af7cbea7548ea9b4dda17e252e5e17ba72c6cad865d52791c",
+    "txtp_sha256": "5acdd8428e91b34f2bb0d207c8824ece5c2137a0ac925e1f29918119a92c04b3"
   },
   {
     "file": "play_sfx_anivia_aniviabasicattack_onhit_r3_d.wav",
     "event": "Play_sfx_Anivia_AniviaBasicAttack_OnHit",
     "event_id": 3535932114,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/anivia/event_wav/Play_sfx_Anivia_AniviaBasicAttack_OnHit {r3} {d}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/anivia/txtp/Play_sfx_Anivia_AniviaBasicAttack_OnHit {r3} {d}.txtp",
     "media_ids": [
       64327303,
       460294116,
       470106826,
       717759378
     ],
-    "duration": 0.9734,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "89d91607945486b86310b8b8087ae07be27095e04fba0d9d269ec4b57575ea5f",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 0.9734467120181406,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "8c5b3737448e421cb01a71301dd7126f61bc41f00079aeb862b7a05b7f97e6ad",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/4ed3c00105a7f5555dbc9831a438cde2840e1d58519f82d4dcc7961fdeb2c4d3.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/4ed3c00105a7f5555dbc9831a438cde2840e1d58519f82d4dcc7961fdeb2c4d3.wav",
+    "source_sha256": "2a9d3cb68f00c17f0075fda74f9b03f6260ed559c2c53976aac98e7e07ed0b8e",
+    "txtp_sha256": "c2e005f7d8852e6ac3c3ac74ae7351df9e93c79a0603b94653e25646b8465430"
   },
   {
     "file": "play_sfx_anivia_aniviabasicattack_onmissilelaunch_r1_d.wav",
     "event": "Play_sfx_Anivia_AniviaBasicAttack_OnMissileLaunch",
     "event_id": 511029056,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/anivia/event_wav/Play_sfx_Anivia_AniviaBasicAttack_OnMissileLaunch {r1} {d}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/anivia/txtp/Play_sfx_Anivia_AniviaBasicAttack_OnMissileLaunch {r1} {d}.txtp",
     "media_ids": [
       103515413,
       166377426,
       199257006
     ],
-    "duration": 1.4822,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "f0f322db507333233be000ee55364526d3595074c90c218b44367c339c40d6c6",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 1.4821995464852609,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "de9deca20cc8083cb6f6bcf4342d787714c3c87c8774e6a4568e7c6442094e08",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/c5ed6363fb14df07868e0d06d2da332b9e5e2dc2e05292ab52a7957dda1ffde1.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/c5ed6363fb14df07868e0d06d2da332b9e5e2dc2e05292ab52a7957dda1ffde1.wav",
+    "source_sha256": "ebaada33d0d750e156f4d9fb35e3533eb90a3782fc95d1919c97995874e715e4",
+    "txtp_sha256": "17daba662ed9984d0aed9752d896c004653ebb58b919507c0bb03eae08920cae"
   },
   {
     "file": "play_sfx_anivia_aniviabasicattack_onmissilelaunch_r2_d.wav",
     "event": "Play_sfx_Anivia_AniviaBasicAttack_OnMissileLaunch",
     "event_id": 511029056,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/anivia/event_wav/Play_sfx_Anivia_AniviaBasicAttack_OnMissileLaunch {r2} {d}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/anivia/txtp/Play_sfx_Anivia_AniviaBasicAttack_OnMissileLaunch {r2} {d}.txtp",
     "media_ids": [
       103515413,
       166377426,
       199257006
     ],
-    "duration": 1.6277,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "b98773aac079a281492d05bf168238c8522af49546a285db61542a3d98742206",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 1.627687074829932,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "6d56bb75bf5d635ebe5a45c6c8ed7de4a3e0275413c53423ac6d9994986bbc31",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/c2459f88c3cc221d975f6b0305e3ccd5389247b2abe625dddc26b0226678887b.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/c2459f88c3cc221d975f6b0305e3ccd5389247b2abe625dddc26b0226678887b.wav",
+    "source_sha256": "32c91dc78cfd1ac767869fbdc9586cad85d7175e1f1e240ba663aebd350756f0",
+    "txtp_sha256": "b5b3568254e05cb027ea9dc8bc8a6b826b02243893dfbc43c6dfbc1f294f8cf5"
   },
   {
     "file": "play_sfx_anivia_aniviabasicattack_onmissilelaunch_r3_d.wav",
     "event": "Play_sfx_Anivia_AniviaBasicAttack_OnMissileLaunch",
     "event_id": 511029056,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/anivia/event_wav/Play_sfx_Anivia_AniviaBasicAttack_OnMissileLaunch {r3} {d}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/anivia/txtp/Play_sfx_Anivia_AniviaBasicAttack_OnMissileLaunch {r3} {d}.txtp",
     "media_ids": [
       103515413,
       166377426,
       199257006
     ],
-    "duration": 1.6272,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "121bb9b472fdcdfc948c151bd57dc1a61be08420db44244ae197b9560478e67c",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 1.6271655328798187,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "86cd734c96ac66377b9d033d023c28d443804e91b81d639d55516943686d9fa3",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/a3215cd09f8666e92097e5ca3aaa7a80b6fefe638e7eea3259d0a710d18cbe00.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/a3215cd09f8666e92097e5ca3aaa7a80b6fefe638e7eea3259d0a710d18cbe00.wav",
+    "source_sha256": "0344cba49835071695de86337208b1115d81dfdf3df033f74b1b7b5aa3011c37",
+    "txtp_sha256": "f8b3893cc79fd5fd449423e301da87bf573ba99171295e6786d1d58e9b3678d9"
   },
   {
     "file": "play_sfx_anivia_glacialstorm_buffactivate_m_onset.wav",
     "event": "Play_sfx_Anivia_GlacialStorm_buffactivate",
     "event_id": 1414845678,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/anivia/event_wav/Play_sfx_Anivia_GlacialStorm_buffactivate {m}_onset.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/anivia/txtp/Play_sfx_Anivia_GlacialStorm_buffactivate {m}.txtp",
     "media_ids": [
       654023714,
       1072498615
     ],
     "duration": 0.72,
-    "processing": "vgmstream-cli -i; source event gain retained; first 0.72s, final 50ms fade",
-    "sha256": "6420492032adf878273ccc1de468b306a98d91d6d53f29d851214610b3baa407",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "fe2a17e5080e31c1706db16bbe788a9f6234ed5c129568eb667987c1c82a695f",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/51707b5a45b84612febc3d26989ca880a027b6a990dbad2cbe4bdd4a35942970.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/51707b5a45b84612febc3d26989ca880a027b6a990dbad2cbe4bdd4a35942970.wav",
+    "source_sha256": "a6dc5559a6a14420bae7763a6f74a69fa347a9403fd532496c535411bf40e49c",
+    "txtp_sha256": "25f34c90b6793390f75906f860a2e6349b34f6d8f934913a91707ae5e678ca88"
   },
   {
     "file": "play_vo_anivia_death3d_r1_zh_cn.wav",
     "event": "Play_vo_Anivia_Death3D",
     "event_id": 1808815934,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/anivia_vo/event_wav/Play_vo_Anivia_Death3D {r1}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/anivia_vo/txtp/Play_vo_Anivia_Death3D {r1}.txtp",
     "media_ids": [
       209388094,
       241922061,
@@ -140,17 +186,23 @@
       1392094749,
       2064511476
     ],
-    "duration": 1.4852,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "57848d1fbc7895d57cc5f034c9f03ee0744d459ca14156e193006fcdbeae2e7c",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 1.4851700680272109,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "ef1c52d0a7a2e7cd0d42719aa723211a47335adb3c20b6f013bbdfef598f42b0",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/bfb72aaa6e5f771edbbde62500a31d284da7c655d56b8da2d418dd2f695ed501.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/bfb72aaa6e5f771edbbde62500a31d284da7c655d56b8da2d418dd2f695ed501.wav",
+    "source_sha256": "213414f00a751165938a473c43363499211d0072bf4200ea6a2ca6ddbcf7027c",
+    "txtp_sha256": "ac887bbfa4cf7c65d7c954d9534bae097b64c27a2bf5d22d865df06702481ca1"
   },
   {
     "file": "play_vo_anivia_death3d_r2_zh_cn.wav",
     "event": "Play_vo_Anivia_Death3D",
     "event_id": 1808815934,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/anivia_vo/event_wav/Play_vo_Anivia_Death3D {r2}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/anivia_vo/txtp/Play_vo_Anivia_Death3D {r2}.txtp",
     "media_ids": [
       209388094,
       241922061,
@@ -158,17 +210,23 @@
       1392094749,
       2064511476
     ],
-    "duration": 1.2265,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "40d2560398633097582cbc48c76ea64bbf3c4182fdd21935ea45c785aed957d1",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 1.226485260770975,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "c1b03c37a96b634ba6b108870d37bbe0057b8084443742f9a3cd8f6969d379cb",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/6c51092bd1e08f1ece36dc3de864b8f2e39646929af14dc0543a385912a80af1.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/6c51092bd1e08f1ece36dc3de864b8f2e39646929af14dc0543a385912a80af1.wav",
+    "source_sha256": "443ae686859e94301351ba0890b96ae96c7143abe854f1712ff96abc9368f88d",
+    "txtp_sha256": "1130e9c66beab07340957267b258bd31ec19b74dc3873035575dd3c6529c77f2"
   },
   {
     "file": "play_vo_anivia_death3d_r3_zh_cn.wav",
     "event": "Play_vo_Anivia_Death3D",
     "event_id": 1808815934,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/anivia_vo/event_wav/Play_vo_Anivia_Death3D {r3}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/anivia_vo/txtp/Play_vo_Anivia_Death3D {r3}.txtp",
     "media_ids": [
       209388094,
       241922061,
@@ -176,43 +234,63 @@
       1392094749,
       2064511476
     ],
-    "duration": 1.3805,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "483b98cf1056c3f3d1264560d9c1d13c4b38383ac9c24d42014c6be834374d46",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 1.3804988662131519,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "0b6e6810530b4c358423bb1e98346ead3f35e061ea73093a307f11575cc974e2",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/23280b0928b2a0f973cc5996f0cafa32db5b16879053c4b38847611fe0806764.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/23280b0928b2a0f973cc5996f0cafa32db5b16879053c4b38847611fe0806764.wav",
+    "source_sha256": "21b03863fa4def95716153bd7beed54d80974da470b69300d24cac4be1a5c033",
+    "txtp_sha256": "527b8c9bfc21ee6fbebb68748943e2bf81cec2892a65a002ec7b716030b88de4"
   },
   {
     "file": "play_sfx_anivia_glacialstorm_zone_sustain.wav",
     "event": "Play_sfx_Anivia_GlacialStorm_buffactivate",
     "event_id": 1414845678,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/anivia/event_wav/Play_sfx_Anivia_GlacialStorm_buffactivate {m}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/anivia/txtp/Play_sfx_Anivia_GlacialStorm_buffactivate {m}.txtp",
     "media_ids": [
       654023714,
       1072498615
     ],
     "duration": 3.0,
-    "processing": "Existing event preview 0.72–3.72 s; ffmpeg PCM16; 25 ms fade in, 80 ms fade out; original layered gain retained",
-    "sha256": "452cf33142e63004cfece91a9e72c048b435469e389c272bc17afdb828e9ae63"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "f0a3b315c0489d6b437f098c59f3ab913d52f2bbc38b92e9798226858d2337dc",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/51707b5a45b84612febc3d26989ca880a027b6a990dbad2cbe4bdd4a35942970.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/51707b5a45b84612febc3d26989ca880a027b6a990dbad2cbe4bdd4a35942970.wav",
+    "source_sha256": "a6dc5559a6a14420bae7763a6f74a69fa347a9403fd532496c535411bf40e49c",
+    "txtp_sha256": "25f34c90b6793390f75906f860a2e6349b34f6d8f934913a91707ae5e678ca88"
   },
   {
     "file": "play_sfx_anivia_glacialstorm_onbuffdeactivate.wav",
     "event": "Play_sfx_Anivia_GlacialStorm_OnBuffDeactivate",
     "event_id": 3610503524,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/anivia/event_wav/Play_sfx_Anivia_GlacialStorm_OnBuffDeactivate.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/anivia/txtp/Play_sfx_Anivia_GlacialStorm_OnBuffDeactivate.txtp",
     "media_ids": [
       291249390
     ],
     "duration": 2.07734693877551,
-    "processing": "vgmstream-cli -i; original -20 dB TXTP gain retained",
-    "sha256": "4f5647a4365e81979d85bed4099ae426815c4a76a0dc2ab9fd09e4be58408a05"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "ddf9f4d1979a58e8f158454c4487c1b765b873aed3e0ed87c5dd8738bbeb0ffa",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/282779f8e07e68d4a52ac060ca3881e264bcac2c27569bbf34d6c351db64a8ed.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/282779f8e07e68d4a52ac060ca3881e264bcac2c27569bbf34d6c351db64a8ed.wav",
+    "source_sha256": "466f42e8ee020f0719cd86b0d3fc0bf996911fbd2dff74c973dc03f17c0a97e4",
+    "txtp_sha256": "bcac16f25458345990d3eacd4cb617dcada69aed6b7f6dc39b3989fda5e807a0"
   },
   {
     "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/音频/历史版本/units/anivia/play_sfx_anivia_rebirth_onbuffactivate.wav",
     "event": "Play_sfx_Anivia_Rebirth_OnBuffActivate",
     "event_id": 3510664673,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/anivia/txtp/Play_sfx_Anivia_Rebirth_OnBuffActivate.txtp",
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/d0e30db686322b86298985a4d9e77e68c3dd9aabb2a5eda0f744ac4d61b897fd.txtp",
     "media_ids": [
       334487340
     ],
@@ -236,7 +314,7 @@
     "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/音频/历史版本/units/anivia/anivia_rebirth_incubation_3s.wav",
     "event": "Play_sfx_Anivia_Rebirth_OnBuffActivate",
     "event_id": 3510664673,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/anivia/txtp/Play_sfx_Anivia_Rebirth_OnBuffActivate.txtp",
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/d0e30db686322b86298985a4d9e77e68c3dd9aabb2a5eda0f744ac4d61b897fd.txtp",
     "media_ids": [
       334487340
     ],
@@ -249,7 +327,7 @@
     "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/音频/历史版本/units/anivia/anivia_rebirth_success.wav",
     "event": "Play_sfx_Anivia_Rebirth_OnBuffActivate",
     "event_id": 3510664673,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/anivia/txtp/Play_sfx_Anivia_Rebirth_OnBuffActivate.txtp",
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/d0e30db686322b86298985a4d9e77e68c3dd9aabb2a5eda0f744ac4d61b897fd.txtp",
     "media_ids": [
       334487340
     ],
@@ -265,29 +343,48 @@
     "media_ids": [
       334487340
     ],
-    "duration": 3.406916099773243,
-    "sha256": "51352ed01e0b61217f8a533ad380430ea67203cfd1779a6f8fe3c0deda77a4b7",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/anivia/txtp/Play_sfx_Anivia_Rebirth_OnBuffActivate.txtp",
-    "processing": "Complete original event atempo=2, uninterrupted playback; stop if egg killed, continue same player tail on successful revival"
-  }
-  ,{
+    "duration": 3.4120408163265306,
+    "sha256": "32ded5b106a3115177934453d71e7e1b7ffc4c05714abd136eb67a674469fb3c",
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/d0e30db686322b86298985a4d9e77e68c3dd9aabb2a5eda0f744ac4d61b897fd.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/d0e30db686322b86298985a4d9e77e68c3dd9aabb2a5eda0f744ac4d61b897fd.wav",
+    "source_sha256": "a81e040a38f70979f0ac610824f8d6ef857a71fc070df4a90779bc7501d1adcf",
+    "txtp_sha256": "bcd305486d0d5f9b0f0cfe15d0cd588914bf9e8115317e69d96b29f19e66af4d"
+  },
+  {
     "file": "play_vo_anivia_attack2dgeneral_r2_en_us.wav",
     "event": "Play_vo_Anivia_Attack2DGeneral",
     "event_id": 2667772315,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/deployment_audio_review/voice_candidates_all_20260914/anivia/txtp/Play_vo_Anivia_Attack2DGeneral {r2}.txtp",
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/deployment_audio_review/voice_candidates_all_20260914/anivia/wav/Play_vo_Anivia_Attack2DGeneral_r2_.wav",
-    "duration": 1.702041,
-    "sha256": "d1ea417ec1b2e190d15df34d5a5270a0a7738a3c7d69f701d43f751e9f4d717e",
-    "processing": "vgmstream-cli 原始事件渲染；保留 en_us 原增益，不裁剪、不变速；作为 deploy:voice 两段随机池之一。"
+    "duration": 1.7020408163265306,
+    "sha256": "e49e851bf5408b98df28383adea8ea9ac6260ba2efe1c685c1b5f3c2bd88435d",
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/50bcd10ea3bed5e68b273b7c0c86c4317c77c16d6e3a14daae729c14dadbe38c.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/50bcd10ea3bed5e68b273b7c0c86c4317c77c16d6e3a14daae729c14dadbe38c.wav",
+    "source_sha256": "ece7129da3a5e68c6653a680c0c789e049d96b0978a9f55c88dd9a1dc6384a53",
+    "txtp_sha256": "32114855b11b9c88b7336cb2a9680d5ce515f69a5675a58827e71d13ce5cfa8c"
   },
   {
     "file": "play_vo_anivia_laugh3dgeneral_r1_en_us.wav",
     "event": "Play_vo_Anivia_Laugh3DGeneral",
     "event_id": 3955988821,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/deployment_audio_review/voice_candidates_all_20260914/anivia/txtp/Play_vo_Anivia_Laugh3DGeneral {r1}.txtp",
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/deployment_audio_review/voice_candidates_all_20260914/anivia/wav/Play_vo_Anivia_Laugh3DGeneral_r1_.wav",
-    "duration": 1.409864,
-    "sha256": "c2da484fd191f87bf515fbeb7ba7d6fc7dd985ae088d0f6de4b41b32a8a68d3a",
-    "processing": "vgmstream-cli 原始事件渲染；保留 en_us 原增益，不裁剪、不变速；作为 deploy:voice 两段随机池之一。"
+    "duration": 1.4098639455782314,
+    "sha256": "2470c8c9f7027676f1875b55e55ff1f0410ff49646bf22a34c06cf121b8162ee",
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/3efa28fe87d2b31ca8715a76cf4b479c76054cfbd8cc9c3a76e8023b08048559.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/3efa28fe87d2b31ca8715a76cf4b479c76054cfbd8cc9c3a76e8023b08048559.wav",
+    "source_sha256": "b88a67d38ed485857d97009b66acd5779e1c51d3fc0c57d2f685bd958fc979d4",
+    "txtp_sha256": "1b60eea947c79fb9d11dc1ea06ed35ff89ea4d199e53bccbc06146e79d604930"
   }
 ]

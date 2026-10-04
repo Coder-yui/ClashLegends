@@ -15,7 +15,7 @@ static func definition() -> Dictionary:
 		"card_art": {"path": "res://assets/cards/stasis_loading.png"},
 		"audio": {"events": {
 			"spell:flight": {"pool": ["res://assets/audio/spells/stasis/flight_1.wav", "res://assets/audio/spells/stasis/flight_2.wav"], "volume_db": 0.0, "bus": "Combat"},
-			"stasis_target:sustain": {"pool": ["res://assets/audio/spells/stasis/target_1.wav", "res://assets/audio/spells/stasis/target_2.wav"], "volume_db": -6.0, "bus": "Combat"},
+			"stasis_target:sustain": {"pool": ["res://assets/audio/spells/stasis/target_1.wav", "res://assets/audio/spells/stasis/target_2.wav"], "volume_db": 0.0, "bus": "Combat"},
 			"spell:cast": {"pool": ["res://assets/audio/spells/stasis/OnCast.wav", "res://assets/audio/spells/stasis/OnCast_2.wav", "res://assets/audio/spells/stasis/OnCast_3.wav"], "volume_db": 0.0, "bus": "Combat"},
 			"spell:strike": {"pool": ["res://assets/audio/spells/stasis/explo.wav", "res://assets/audio/spells/stasis/explo_2.wav", "res://assets/audio/spells/stasis/explo_3.wav"], "volume_db": 0.0, "bus": "Combat"}}},
 	}

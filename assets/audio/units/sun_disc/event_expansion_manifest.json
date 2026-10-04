@@ -3,13 +3,20 @@
     "file": "assets/audio/units/sun_disc/play_sfx_3190active_oncast_r1.wav",
     "event": "Play_sfx_3190Active_OnCast",
     "event_id": 2210307500,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/items_global_events-1270-event.txtp",
     "duration": 2.3146031746031746,
     "media_ids": [
       87343910
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "e833ed6e89f1fd59289095176f4ae1a9d8bcc217926fa120bdcb9e7d9f192444"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "cc6333db8e89a292cfcd9a6c2661ac3c46e06ab84379ad30dbbe482b699312ea",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/008ffe8b9e880600b9add866abbdfc52cd14f849795a283d7e9e2736fb73675f.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/008ffe8b9e880600b9add866abbdfc52cd14f849795a283d7e9e2736fb73675f.wav",
+    "source_sha256": "9842f08de9697b98eee69e598444cc4a884fd0d05084c5c97afcdc69b49bb05f",
+    "txtp_sha256": "b6006fb8f00a6e4afcb2f76da0563ee547eeb4997a7e5dc1cce06ac53e8807e7"
   },
   {
     "file": "assets/audio/units/sun_disc/play_sfx_3190shield_onbuffactivate_r1.wav",

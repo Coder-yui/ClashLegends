@@ -87,7 +87,7 @@ def main():
         names = args.output/'wwnames.txt'
         names.write_text(args.event + '\n')
         with (args.output/'render.log').open('w') as log:
-            subprocess.run([args.wwiser, str(args.init.resolve()), *map(str, banks), '-nl', str(names), '-g', '-gra', '-gd', '-go', str(args.output/'txtp'), '-gw', str(source/'wem'), '-d', 'none', '-gf', args.event], cwd=args.output, stdout=log, stderr=log, check=True)
+            subprocess.run([args.wwiser, str(args.init.resolve()), *map(str, banks), '-nl', str(names), '-g', '-gv=0dB', '-gra', '-gd', '-go', str(args.output/'txtp'), '-gw', str(source/'wem'), '-d', 'none', '-gf', args.event], cwd=args.output, stdout=log, stderr=log, check=True)
             (args.output/'wav').mkdir()
             records = []
             for txtp in sorted((args.output/'txtp').glob('*.txtp')):

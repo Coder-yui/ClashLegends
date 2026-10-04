@@ -3,40 +3,80 @@
   "files": [
     {
       "event": "swing",
-      "source_txtp": "ClashLegends-开发素材库/03-制作中/卑尔维斯/audio/belveth/txtp/Play_sfx_Belveth_BelvethRMinion_cast_melee.txtp",
       "target": "swing_1.wav",
-      "sha256": "7805a8e1d09315f462cd235720f2e0aef4a441275b5f6e8b6fd7d24cda979fc2",
-      "processing": "vgmstream-cli -W 4 float decode; fixed -6 dB shared headroom for melee swing/hit before 48000Hz mono PCM16 conversion; no per-file normalization",
-      "float_source_sha256": "0a9cc5937d171de5bc951b1a531a7f536c54b0755ade02ba7c8fdfc9ee121f4e"
+      "sha256": "1714583c74e0bfee5adfc023139ad8f8d2790968654588718b96f8e3f2fcdc9c",
+      "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+      "float_source_sha256": "0ad430d9930bebbf3bac2004b41748ba6cb6890518523b23f04c993487e4be05",
+      "duration": 0.32277083333333334,
+      "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+      "tool_master_gain_db": 0.0,
+      "post_gain_db": 0.0,
+      "runtime_gain_db": 0.0,
+      "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/6d4be9b1fd88ebf5d007d8dfb29fda98e2c686d77c4cebdb0746c90d16856229.txtp",
+      "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/6d4be9b1fd88ebf5d007d8dfb29fda98e2c686d77c4cebdb0746c90d16856229.wav",
+      "source_sha256": "0ad430d9930bebbf3bac2004b41748ba6cb6890518523b23f04c993487e4be05",
+      "txtp_sha256": "a9fe6a59e7a69d4522e77a0a306aab3b61146b7f50ad49e141c90e940da70091"
     },
     {
       "event": "hit",
-      "source_txtp": "ClashLegends-开发素材库/03-制作中/卑尔维斯/audio/belveth/txtp/Play_sfx_Belveth_BelvethRMinion_hit_melee.txtp",
       "target": "hit_1.wav",
-      "sha256": "4c9be6bafd3f71a34317371963189db9092c4ce6edabd62f1f0906576c078e76",
-      "processing": "vgmstream-cli -W 4 float decode; fixed -6 dB shared headroom for melee swing/hit before 48000Hz mono PCM16 conversion; no per-file normalization",
-      "float_source_sha256": "a9a7dc2fb62814481116407bfb36e6e2633c944ecc24470546f45ad4d7753147"
+      "sha256": "33f983ffa17ba8bfb1759a13d027eee7dce46cce3cffa629fab2d95a1d9ae9b9",
+      "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+      "float_source_sha256": "2978527af712139b4c84fbe8ef3058aac0dbd56dbab5b3fcae68a79c92f7cf30",
+      "duration": 0.2941875,
+      "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+      "tool_master_gain_db": 0.0,
+      "post_gain_db": 0.0,
+      "runtime_gain_db": 0.0,
+      "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/040534ba8bb824b670173352aa36b03bdab93a40c7f7aa7f08dba463ec5d85b3.txtp",
+      "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/040534ba8bb824b670173352aa36b03bdab93a40c7f7aa7f08dba463ec5d85b3.wav",
+      "source_sha256": "2978527af712139b4c84fbe8ef3058aac0dbd56dbab5b3fcae68a79c92f7cf30",
+      "txtp_sha256": "dea1b459e18440437656a96fb2833b938110d0a2ea6ec5b9b5030025e5de65d8"
     },
     {
       "event": "deploy",
-      "source_txtp": "ClashLegends-开发素材库/03-制作中/卑尔维斯/audio/belveth/txtp/Play_sfx_Belveth_BelvethRMinionConverter_buffactivate_birth {r}.txtp",
       "target": "deploy_1.wav",
-      "sha256": "3e69144c7ecaac352f6c6af11e6de413d03cba1d22103cedab9288a9aa082b05",
-      "processing": "48000Hz mono PCM16; no normalization"
+      "sha256": "8f81885ec59313829bb49f72bf6d14d8bc0263108c2ac632a4c43e69d1e334a4",
+      "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+      "duration": 1.1714166666666668,
+      "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+      "tool_master_gain_db": 0.0,
+      "post_gain_db": 0.0,
+      "runtime_gain_db": 0.0,
+      "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/f10d00965b0d106dc9d57919b9ae1eafc06c2cf785bb7a73a12343d76457a8b9.txtp",
+      "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/f10d00965b0d106dc9d57919b9ae1eafc06c2cf785bb7a73a12343d76457a8b9.wav",
+      "source_sha256": "676ab652c2a5cd52c8090c7d728d18d1fd7906f9c6880bb8ba08df34345f0325",
+      "txtp_sha256": "53a56aceb151595dabb82294a99c0b11483cc3b5e34cb5d4c162871d7d4c1b66"
     },
     {
       "event": "death",
-      "source_txtp": "ClashLegends-开发素材库/03-制作中/卑尔维斯/audio/belveth/txtp/Play_sfx_Belveth_BelvethRMinion_cast_death {r1}.txtp",
       "target": "death_1.wav",
-      "sha256": "aaa4b02983ed7d170722436cb017a3d93f597fc902a0592e08fa369aded2bcc6",
-      "processing": "48000Hz mono PCM16; no normalization"
+      "sha256": "5e5aa259f3021fc368e7c4de8ff507fa8a138114e2b78b9299088ac8cff5aa9b",
+      "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+      "duration": 0.9478541666666667,
+      "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+      "tool_master_gain_db": 0.0,
+      "post_gain_db": 0.0,
+      "runtime_gain_db": 0.0,
+      "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/02dc8af88ef359a2f8ba8426469cae46282087f636124f93a89ee820aa076851.txtp",
+      "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/02dc8af88ef359a2f8ba8426469cae46282087f636124f93a89ee820aa076851.wav",
+      "source_sha256": "da228d39d403085f7071a365e0dfed171d7cb66e467c2bc3944b785d0d660407",
+      "txtp_sha256": "e9eed56cc2ebe2c09acb1802e2481a0c702e8bf9550737db9b38215d4d91e874"
     },
     {
       "event": "death",
-      "source_txtp": "ClashLegends-开发素材库/03-制作中/卑尔维斯/audio/belveth/txtp/Play_sfx_Belveth_BelvethRMinion_cast_death {r2}.txtp",
       "target": "death_2.wav",
-      "sha256": "3de7fadb607043aac4f60a5aba568add43e6136eff813d8203b590746ec2c3a9",
-      "processing": "48000Hz mono PCM16; no normalization"
+      "sha256": "6a1849e42890d5f35a1dc3b85fbb9835ca28a1bc63e4a39b2ac75579794617d4",
+      "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+      "duration": 0.9696458333333333,
+      "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+      "tool_master_gain_db": 0.0,
+      "post_gain_db": 0.0,
+      "runtime_gain_db": 0.0,
+      "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/0c1dbdf2f8d095bca6deffc8656bf1f6521447c5f1545804f46fa82c1c207ef3.txtp",
+      "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/0c1dbdf2f8d095bca6deffc8656bf1f6521447c5f1545804f46fa82c1c207ef3.wav",
+      "source_sha256": "648bcd21e572c388d6728ea9df708e85c0902d133d619b6bd904991a9e779a79",
+      "txtp_sha256": "9c0bed8cb038d6f1ff68d97141add2bf9c7a58c4957eacd7c9a73eadc0680dbc"
     }
   ]
 }

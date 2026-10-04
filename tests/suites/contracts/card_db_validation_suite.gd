@@ -2,6 +2,10 @@ class_name CardDBValidationSuite
 extends RefCounted
 
 func run(harness: Object) -> void:
+	for gains in [{"missing": -12.0}, {"res://assets/audio/units/tryndamere/deploy_1.ogg": INF}, {"res://assets/audio/units/tryndamere/deploy_1.ogg": "wrong"}, []]:
+		var broken := CardDB.get_card("tryndamere").duplicate(true)
+		broken.audio.events["deploy:voice"].clip_volume_db = gains
+		harness._expect(not CardDB.VALIDATOR.validate_all({"tryndamere": broken}, false).is_empty(), "部署逐文件增益拒绝池外路径、非有限数值和错误类型")
 	for field in ["on_hit_slow_duration", "on_hit_slow_multiplier"]:
 		for invalid in [-1.0, 0.0, INF, "wrong"]:
 			var ashe := CardDB.get_card("ashe").duplicate(true)

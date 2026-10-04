@@ -3,7 +3,6 @@
     "file": "assets/audio/units/imp/play_sfx_yorick_yorickq_summon_r1.wav",
     "event": "Play_sfx_Yorick_YorickQ_summon",
     "event_id": 3732154062,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_summon {r1}.txtp",
     "duration": 3.250793650793651,
     "media_ids": [
       63271389,
@@ -12,14 +11,21 @@
       677912814,
       750927905
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "d6b33380d57b0074bbe4a0bb34f6203ba8e81dd0243f04da298abbf60865d922"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "e3f348787175ee317751292842f260a1a5a56ce111e21c71c2c95c2679098c4d",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/02a235a4adfcd4243dd9e8b493d4fffca07011b29ced6d623cb6df5794c3cd47.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/02a235a4adfcd4243dd9e8b493d4fffca07011b29ced6d623cb6df5794c3cd47.wav",
+    "source_sha256": "43fd10f04ab347466ada224802855e6b44c4dc18a9c74a3ae8f978b3da02a706",
+    "txtp_sha256": "ad3c7305bf5b2ec092cf2c6938d870dace1f70fe7b94562bc449ad8dd869067a"
   },
   {
     "file": "assets/audio/units/imp/play_sfx_yorick_yorickq_summon_r2.wav",
     "event": "Play_sfx_Yorick_YorickQ_summon",
     "event_id": 3732154062,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_summon {r2}.txtp",
     "duration": 3.813877551020408,
     "media_ids": [
       63271389,
@@ -28,14 +34,21 @@
       677912814,
       750927905
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "600e32fefe9ed77196d87e5cc55258a38e875f7b757727d3dbfbe1bac1dcf799"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "7407df680d1307c5d864b34bf17ad8dc0051798b4b8554ba8442e01f89336a18",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/5eddcfd63d54a776577c03a453eec846ea09d0510ee7330a3354f3d4cb3e955b.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/5eddcfd63d54a776577c03a453eec846ea09d0510ee7330a3354f3d4cb3e955b.wav",
+    "source_sha256": "60bc0ddfba3239f5f293f4fe9500941c6ea29c06844d3862a7b4c688ef78a848",
+    "txtp_sha256": "692f005e61838500a8427a7116a43374eaaacbf94969d9d3e920e36f90fc8603"
   },
   {
     "file": "assets/audio/units/imp/play_sfx_yorick_yorickq_summon_r3.wav",
     "event": "Play_sfx_Yorick_YorickQ_summon",
     "event_id": 3732154062,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_summon {r3}.txtp",
     "duration": 4.057687074829932,
     "media_ids": [
       63271389,
@@ -44,14 +57,21 @@
       677912814,
       750927905
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "4dcb8852348a7f68dd7776c56e254057f297a72516ea6eaa75815910eca083fa"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "14790affa894b67676018422497b301ebcc4022156784adf198c015955101ba8",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/517655a37d69e4c9602155eaeac6d31070987334892f426a84b5eb3a154766c2.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/517655a37d69e4c9602155eaeac6d31070987334892f426a84b5eb3a154766c2.wav",
+    "source_sha256": "7bd983ba759aa017a70d5d6bf7f256e5ed45ee70a2eb9878bce32ca4ba87ce5b",
+    "txtp_sha256": "909d942aecf0aaec1c92ba45902c8aa26ab32e944e2f49d03f2302ccff8001ca"
   },
   {
     "file": "assets/audio/units/imp/play_sfx_yorick_yorickq_summon_r4.wav",
     "event": "Play_sfx_Yorick_YorickQ_summon",
     "event_id": 3732154062,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_summon {r4}.txtp",
     "duration": 3.6281179138321997,
     "media_ids": [
       63271389,
@@ -60,14 +80,21 @@
       677912814,
       750927905
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "3561fd1365f4298f65a6781b4fcb50f64f1a903b1860471fbee9f5971f6d66d2"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "c7d901e5789fa73ddfff9617fdab888226e7d83418e0e2ce0b84fee1474ba933",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/873cb9d98badfc507ddeb9c75672dd494f795edec377440ac6a966f880029902.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/873cb9d98badfc507ddeb9c75672dd494f795edec377440ac6a966f880029902.wav",
+    "source_sha256": "bd72a5eaa27fa484eb02d01db510f3c425aa391e347f3aacd3f83a74627f6c56",
+    "txtp_sha256": "95e3520976ce5ef85f1726dc9155c83800089fba0fd163ca659f92a90118253e"
   },
   {
     "file": "assets/audio/units/imp/play_sfx_yorick_yorickq_summon_r5.wav",
     "event": "Play_sfx_Yorick_YorickQ_summon",
     "event_id": 3732154062,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_summon {r5}.txtp",
     "duration": 3.8312925170068026,
     "media_ids": [
       63271389,
@@ -76,7 +103,15 @@
       677912814,
       750927905
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "28564706c0a67fcbbcff33d1f99aa017cff460a77c0146c5201416f20a7e4e37"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "b9bb5dd0ec122bac01aef948df3ef9376525098a6df1c5a70d800545a2163852",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/c4c20a3bef2a33998a218c6203f4b54cf4edfa6f39eb4878dc413db3b14211c2.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/c4c20a3bef2a33998a218c6203f4b54cf4edfa6f39eb4878dc413db3b14211c2.wav",
+    "source_sha256": "f1ee9a9c379784b4bacd58ee4e0d7d2a096b937ba99b47417e6ec57589fdea9d",
+    "txtp_sha256": "ae213bc48b6ef17752c0b6a3dd7d2900caa13ad71e22c6a197936c7a5e8450d1"
   }
 ]

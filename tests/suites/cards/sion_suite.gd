@@ -200,7 +200,7 @@ func _check_audio_lifecycle() -> void:
 	var player: AudioStreamPlayer2D = manager._sustain_players[berserk_key]
 	_expect(is_zero_approx(player.volume_linear), "狂暴循环从零振幅淡入")
 	manager._tick_sustain_fades(0.125)
-	_expect(is_equal_approx(player.volume_linear, db_to_linear(-8.0) * 0.5), "原版0.25秒线性淡入中点")
+	_expect(is_equal_approx(player.volume_linear, 0.5), "原版0.25秒线性淡入中点")
 	manager._tick_sustain_fades(0.125)
 	unit.take_damage(10000)
 	_expect(manager._sustain_players.has(berserk_key + ":tail"), "狂暴结束保留原版0.5秒淡出尾音")

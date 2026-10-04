@@ -55,8 +55,8 @@ static func definition() -> Dictionary:
       "res://assets/audio/units/darius/play_sfx_darius_dariusbasicattack2_onhit_1559186049_1153642577_r4.wav"
     ]
   ],
-  "attack_swing_volume_db": -3.0,
-  "attack_hit_volume_db": -5.0,
+  "attack_swing_volume_db": 0.0,
+  "attack_hit_volume_db": 0.0,
   "empowered_hit": [
     "res://assets/audio/units/darius/play_sfx_darius_dariusexecute_onhit_r1.wav",
     "res://assets/audio/units/darius/play_sfx_darius_dariusexecute_onhit_r2.wav",
@@ -80,16 +80,16 @@ static func definition() -> Dictionary:
         "res://assets/audio/units/darius/play_sfx_darius_dariusexecute_oncast_r3.wav",
         "res://assets/audio/units/darius/play_sfx_darius_dariusexecute_oncast_r4.wav"
       ],
-      "volume_db": -2.0,
+      "volume_db": 0.0,
       "bus": "Combat"
     },
-    "blood_rage:sustain": {"pool": ["res://assets/audio/units/darius/play_sfx_darius_dariushemomax_loop.wav"], "volume_db": -9.0, "bus": "Combat"},
+    "blood_rage:sustain": {"pool": ["res://assets/audio/units/darius/play_sfx_darius_dariushemomax_loop.wav"], "volume_db": 0.0, "bus": "Combat"},
 "blood_rage:start": {
       "pool": [
         "res://assets/audio/units/darius/play_sfx_darius_dariushemomax_onbuffactivate_r1.wav",
         "res://assets/audio/units/darius/play_sfx_darius_dariushemomax_onbuffactivate_r2.wav"
       ],
-      "volume_db": -3.0,
+      "volume_db": 0.0,
       "bus": "Combat"
     },
     "execute:kill": {
@@ -98,14 +98,14 @@ static func definition() -> Dictionary:
         "res://assets/audio/units/darius/play_sfx_darius_dariusexecute_hit_kill_r2.wav",
         "res://assets/audio/units/darius/play_sfx_darius_dariusexecute_hit_kill_r3.wav"
       ],
-      "volume_db": -3.0,
+      "volume_db": 0.0,
       "bus": "Combat"
     },
     "death": {
       "pool": [
         "res://assets/audio/units/darius/play_sfx_darius_death3d_cast.wav"
       ],
-      "volume_db": -3.0,
+      "volume_db": 0.0,
       "bus": "Combat"
     }
   }

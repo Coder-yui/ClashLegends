@@ -3,42 +3,63 @@
     "file": "assets/audio/spells/heal/play_sfx_summonerheal_oncast_r1.wav",
     "event": "Play_sfx_SummonerHeal_OnCast",
     "event_id": 4193126161,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/Play_sfx_SummonerHeal_OnCast {r1}.txtp",
     "duration": 4.679637188208617,
     "media_ids": [
       273299281,
       379910541,
       960674905
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "2f66291596322fd78c94edceeea22464296b1a946d03883418ba650295d983a4"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "39cb31a845430363f5061160111a06dea2eb6ba2a7d85b1498c2509d528c840a",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/f9174b60bac0442682edc1c3fe81ac6da69617d851be93c620c145801afda3be.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/f9174b60bac0442682edc1c3fe81ac6da69617d851be93c620c145801afda3be.wav",
+    "source_sha256": "c26029b74ba5468dc1887ae21691a251a5c759bde6772b25f6c0a85ba6f03206",
+    "txtp_sha256": "07602348557047e666f06536c32012bcaba6ce2f5365b088dc5e5a5c7c113c26"
   },
   {
     "file": "assets/audio/spells/heal/play_sfx_summonerheal_oncast_r2.wav",
     "event": "Play_sfx_SummonerHeal_OnCast",
     "event_id": 4193126161,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/Play_sfx_SummonerHeal_OnCast {r2}.txtp",
     "duration": 4.685079365079365,
     "media_ids": [
       273299281,
       379910541,
       960674905
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "88ef9409e37f8f526c85cea24e1de7fbe2def494bf1a1f2c26c163aaa6250601"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "1616340f1adeabb2d1dab76b45ada63af9270837417f9a78fd8aeda3a41d9d89",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/8ef78aabbd644879033bb7aacdebf3cdc07782d9938ae9f27a7cd5328f5335ef.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/8ef78aabbd644879033bb7aacdebf3cdc07782d9938ae9f27a7cd5328f5335ef.wav",
+    "source_sha256": "6ba1d581dcba7f9826f97112744464b95057f7bacf469818dbaad0e1184deb8f",
+    "txtp_sha256": "b669609404845568b9356988780007f06e55ae23af8c93eb341865981a265037"
   },
   {
     "file": "assets/audio/spells/heal/play_sfx_summonerheal_oncast_r3.wav",
     "event": "Play_sfx_SummonerHeal_OnCast",
     "event_id": 4193126161,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/Play_sfx_SummonerHeal_OnCast {r3}.txtp",
     "duration": 4.56079365079365,
     "media_ids": [
       273299281,
       379910541,
       960674905
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "86082b641a0d38e77f5254b9e97a5f18c3004868ed79e9d63973cac3cbaced03"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "b0162923e7554b507524c60d884e730e52a8bca7db7b3f5c242b6385a4e47ccc",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/4915331907752d89053da43518473766a805a5b9a740606fd056c8a00fcd166e.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/4915331907752d89053da43518473766a805a5b9a740606fd056c8a00fcd166e.wav",
+    "source_sha256": "e64d0b2f23776178482559499a2d681efc55e5546342b05adaa448dd26f8935a",
+    "txtp_sha256": "863b848d7f7b64091026d8afe0fde217b86294cd62ed7209c2c21ef87e0b1f2e"
   }
 ]

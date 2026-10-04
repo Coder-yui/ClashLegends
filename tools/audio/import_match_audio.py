@@ -1,5 +1,6 @@
 """Import Chinese default announcer and shared minion spawn; source banks stay read-only."""
 from pathlib import Path
+from original_gain import render_fresh
 import json,re,subprocess,wave,hashlib,runpy
 ROOT=Path(__file__).resolve().parents[2]
 LIB=Path('/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工')
@@ -34,7 +35,7 @@ SELECT={
 manifest=[];runtime={}
 def export(source,event,dest,label,cue):
  dest.parent.mkdir(parents=True,exist_ok=True)
- subprocess.run(['/opt/homebrew/bin/vgmstream-cli','-i','-o',str(dest),str(source)],check=True,stdout=subprocess.DEVNULL)
+ render_fresh(source, dest, decoder="/opt/homebrew/bin/vgmstream-cli")
  with wave.open(str(dest)) as w:d=w.getnframes()/w.getframerate()
  manifest.append({'file':str(dest.relative_to(ROOT)),'event':event,'cue':cue,'label':label,'duration':d,'source_txtp':str(source),'event_id':int(re.search(r'CAkEvent\[\d+\] (\d+)',source.read_text())[1]),'media_ids':re.findall(r'Source (\d+)',source.read_text()),'processing':'Chinese Map11 zh_CN default Female1 or shared spawn SFX; wwiser -gv 0dB; vgmstream-cli -i; no normalization/cut','sha256':hashlib.sha256(dest.read_bytes()).hexdigest()})
  return 'res://'+str(dest.relative_to(ROOT))

@@ -222,7 +222,7 @@ static func _validate_audio_config(label: String, stats: Dictionary, errors: Pac
 			if not event is Dictionary:
 				errors.append("%s.audio.events.%s: 必须是 Dictionary" % [label, cue])
 				continue
-			_validate_known_fields("%s.audio.events.%s" % [label, cue], event, [&"pool", &"volume_db", &"bus", &"action_time", &"owner", &"fade_in", &"fade_out", &"natural_tail"], errors)
+			_validate_known_fields("%s.audio.events.%s" % [label, cue], event, [&"pool", &"clip_volume_db", &"volume_db", &"bus", &"action_time", &"owner", &"fade_in", &"fade_out", &"natural_tail"], errors)
 			if event.has("natural_tail") and (typeof(event.natural_tail) != TYPE_BOOL or not String(cue).ends_with(":zone_sustain")):
 				errors.append("%s.audio.events.%s.natural_tail: 仅区域持续音允许布尔值" % [label, cue])
 			for fade in ["fade_in", "fade_out"]:
@@ -246,6 +246,14 @@ static func _validate_audio_config(label: String, stats: Dictionary, errors: Pac
 					errors.append("%s.audio.events.%s.action_time: 必须是主动动作窗口内的非负 start/voice/release 秒数，命中声音只能由真实命中触发" % [label, cue])
 			if event.get("bus", "Combat") not in ["Combat", "Voice"]:
 				errors.append("%s.audio.events.%s.bus: 只支持 Combat / Voice" % [label, cue])
+			if event.has("clip_volume_db"):
+				var gains = event.clip_volume_db
+				if cue != "deploy:voice" or not gains is Dictionary:
+					errors.append("%s.audio.events.%s.clip_volume_db: 仅部署语音支持逐文件增益字典" % [label, cue])
+				else:
+					for path in gains:
+						if not event.get("pool", []) is Array or path not in event.get("pool", []) or typeof(gains[path]) not in [TYPE_INT, TYPE_FLOAT] or not is_finite(float(gains[path])):
+							errors.append("%s.audio.events.%s.clip_volume_db: 键必须属于声音池，值必须是有限分贝数值" % [label, cue])
 			_validate_audio_path_pool("%s.audio.events.%s.pool" % [label, cue], event.get("pool", []), errors, inspect_resources)
 			if typeof(event.get("volume_db", 0.0)) not in [TYPE_INT, TYPE_FLOAT] or not is_finite(float(event.get("volume_db", 0.0))):
 				errors.append("%s.audio.events.%s.volume_db: 必须是有限分贝数值" % [label, cue])

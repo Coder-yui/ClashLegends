@@ -10,6 +10,8 @@
     "source_sha256": "5efbdf87e9789e813b17ffcfebe7475542c13ffc9dce8d07ccec964aa5c6233f",
     "sha256": "1ee13665da02de6694527bc2c501597f5dcaed3b3056a4261fba3fe02065b8ee",
     "processing": "trim first 3.000 seconds; convert ADPCM IMA WAV to PCM 16-bit WAV; no normalization or time-stretch",
-    "selection_note": "正式配置到 freeze 的 spell:cast；冻结持续、结束和强化减速暂不另接声音。"
+    "selection_note": "正式配置到 freeze 的 spell:cast；冻结持续、结束和强化减速暂不另接声音。",
+    "playback_volume_db": -12.0,
+    "playback_gain_reason": "2026-10-04: independent non-LoL source at -12.03 LUFS; fixed -12 dB playback attenuation matches stasis cast reference (-23.10 to -24.56 LUFS); asset unchanged, no automatic gain"
   }
 ]

@@ -5,6 +5,7 @@ func run(harness: Object, main: Node2D) -> void:
 	await _check_stasis_audio(harness, main)
 	await _check_stasis_flight_audio(harness, main)
 	_check_selected_deploy_audio(harness, main)
+	_check_client_voice_gain(harness, main)
 	_check_voice_budget(harness, main)
 	_check_team_audio_routes(harness, main)
 	_check_match_announcements(harness, main)
@@ -1220,3 +1221,28 @@ func _check_stasis_flight_audio(harness: Object, main: Node2D) -> void:
 	harness._expect(audio._spell_flight_players.is_empty(), "清除飞行表现时清理声音")
 	main._spell_system.stasis_effects.clear()
 	main._last_card_event_id = previous_event_id
+
+func _check_client_voice_gain(harness: Object, main: Node2D) -> void:
+	var audio := GameAudioManager.new()
+	audio._clip_rng.seed = 7
+	main.add_child(audio)
+	var pool: Array = CardDB.get_card("tryndamere").audio.events["deploy:voice"].pool
+	var seen := {}
+	var previous := ""
+	var correct := true
+	for index in 30:
+		for player in audio._world_players: player.stop()
+		correct = audio.play_card_event("tryndamere", "deploy:voice", Vector2.ZERO) and correct
+		var latest: AudioStreamPlayer2D
+		for player in audio._world_players:
+			if player.stream != null and (latest == null or int(player.get_meta("audio_serial", 0)) > int(latest.get_meta("audio_serial", 0))): latest = player
+		if latest == null:
+			correct = false
+			continue
+		var path := latest.stream.resource_path
+		correct = correct and path in pool and path != previous
+		correct = correct and is_equal_approx(latest.volume_db, -18.5 if path == pool[0] else 0.0)
+		seen[path] = true
+		previous = path
+	harness._expect(correct and seen.size() == 3, "客户端语音单独补偿，其他池成员保持原增益，随机不连续重复")
+	audio.free()

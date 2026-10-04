@@ -5,6 +5,7 @@ import struct
 import subprocess
 import shutil
 from pathlib import Path
+from original_gain import render_fresh
 import xml.etree.ElementTree as ET
 from death_audio_envelope import apply_death_envelope
 
@@ -64,7 +65,7 @@ def main():
     for txtp in sorted((OUT/'txtp').glob('*.txtp')):
         txtp.write_text(txtp.read_text().replace(str(wem)+'/', '../wem/'))
         wav = rendered / (txtp.stem + '.wav')
-        subprocess.run(['/opt/homebrew/bin/vgmstream-cli', '-i', '-o', str(wav), str(txtp)], check=True, capture_output=True)
+        render_fresh(txtp, wav, decoder="/opt/homebrew/bin/vgmstream-cli")
         name = re.sub('[^a-z0-9]+', '_', txtp.stem.lower()).strip('_') + '_zh_cn.wav'
         shutil.copy2(wav, DEST/name)
         manifest.append(dict(file=name, event=EVENT, event_id=event_id, media_ids=sorted(media),

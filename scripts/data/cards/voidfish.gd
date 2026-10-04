@@ -24,14 +24,14 @@ static func definition() -> Dictionary:
   "attack_hit": [
     "res://assets/audio/units/voidfish/hit_1.wav"
   ],
-  "attack_swing_volume_db": -7.0,
-  "attack_hit_volume_db": -7.0,
+  "attack_swing_volume_db": 0.0,
+  "attack_hit_volume_db": 0.0,
   "events": {
     "spawn:start": {
       "pool": [
         "res://assets/audio/units/voidfish/deploy_1.wav"
       ],
-      "volume_db": -23.0,
+      "volume_db": 0.0,
       "bus": "Combat"
     },
     "death": {
@@ -39,7 +39,7 @@ static func definition() -> Dictionary:
         "res://assets/audio/units/voidfish/death_1.wav",
         "res://assets/audio/units/voidfish/death_2.wav"
       ],
-      "volume_db": -5.0,
+      "volume_db": 0.0,
       "bus": "Combat"
     }
   }

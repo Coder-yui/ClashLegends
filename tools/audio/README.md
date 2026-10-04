@@ -50,3 +50,11 @@ python3 tools/audio/find_lol_voice.py search --index 'ClashLegends-开发素材�
 ```
 
 首次转写下载公开 MLX Whisper Small 模型权重；音频始终在本机处理。`--model` 可替换模型。转写可能使用繁体或识错，宜用短句片段搜索，再核对原始事件并试听，不能直接把 ASR 当人工确认；输出默认 `verified_by_listening: false`。客户端英雄选择/禁用台词需从本地 LCU 语言 WAD 的 `champion-choose-vo` / `champion-ban-vo/<英雄ID>.ogg` 提取，不一定在游戏角色音频银行里。
+
+## 原版增益防线（2026-10-04）
+
+`prepare_lol_card_audio.py` 与 `find_lol_voice.py render-event` 明确传入 `-gv=0dB`，保留事件各层增益。`original_gain.py` 拒绝 auto/非零 master TXTP；导入时每次重新解码并原子替换预览，不复用旧 WAV 缓存。历史仅复制预览的专用配方不是安全的重导入口，不能把旧预览重新当成原声。
+
+`rebuild_original_audio.py --plan /素材库/审核后配方.json --output /素材库/新目录` 从干净浮点源重放裁切、淡出、变速与混合，要求 NumPy、FFmpeg。输出仅允许位于开发素材库；不改动 assets。PCM16 超量程会报错，不能自动减增益。未经加工的原始 OGG 直接复制，避免有损重编码；其解码峰值可超过 0 dBFS，另行登记。
+
+当前成品权威来源及逐文件加工配方见 `assets/audio/original_gain_manifest.json`。旧 manifest 的加工文字已替换为新基准，完整历史版本在 Git 与开发素材库 `04-中间产物/原版增益重导/2026-10-04/previous-manifests/` 保留。生成、匹配、重解码脚本和银行命令亦在该批次目录。原事件增益不等于完整 LoL 实时混音。

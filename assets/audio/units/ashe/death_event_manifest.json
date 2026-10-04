@@ -8,19 +8,18 @@
       2413345029,
       2639712284
     ],
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/ashe_death_zh_audio/event_wav/Play_vo_Ashe_Death3D {r1}.wav",
     "source_package": "Ashe.zh_CN.wad.client",
     "duration": 1.5,
-    "sha256": "c3ac045e908519d286a32a83f9cfe68c789c41d346eb0437a277779f4eb3bcab",
-    "death_envelope": {
-      "source_duration": 3.1811337868480725,
-      "source_sha256": "de5244b609859636f65212b00616ce6de35fceab21454807d167c35cf163bcdc",
-      "keep_seconds": 1.5,
-      "fade_start_seconds": 1.0,
-      "fade_seconds": 0.5,
-      "curve": "linear_amplitude"
-    },
-    "processing": "source PCM gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s"
+    "sha256": "b301ecc9e9f0ad909d7ddde423e41d69d239c84aff066ecf2bca3524d83baf6a",
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/9107d48fc83d7e6fb74fff9d691480c192a70886d9ad64275066b4a3a163165d.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/9107d48fc83d7e6fb74fff9d691480c192a70886d9ad64275066b4a3a163165d.wav",
+    "source_sha256": "bdf2122a340bd08a4977679f606f7bcacc66bc564d3f7c5eac56eec3aa06a4c9",
+    "txtp_sha256": "a1556fca256d97c2ddbf5caeb48477356d0ce45373b1bea708818d791b72753e"
   },
   {
     "file": "play_vo_ashe_death3d_r2_zh_cn.wav",
@@ -31,19 +30,18 @@
       2413345029,
       2639712284
     ],
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/ashe_death_zh_audio/event_wav/Play_vo_Ashe_Death3D {r2}.wav",
     "source_package": "Ashe.zh_CN.wad.client",
     "duration": 1.5,
-    "sha256": "ab7cb541dde0931a947203c49b53b72423669d37933171ef1ae1594b1ba26740",
-    "death_envelope": {
-      "source_duration": 2.972154195011338,
-      "source_sha256": "66028dba2da3bf7c2901537dc06104075413c5565f9973e0c59f0391a1fae146",
-      "keep_seconds": 1.5,
-      "fade_start_seconds": 1.0,
-      "fade_seconds": 0.5,
-      "curve": "linear_amplitude"
-    },
-    "processing": "source PCM gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s"
+    "sha256": "1f257c2e05a3e3a15d9342fd951049d139650cbe0ebb79cdbc03f155aef39580",
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/de3425829c04297efb814a72c768d41f24fdd581db7edce82bf6b60c57a6feba.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/de3425829c04297efb814a72c768d41f24fdd581db7edce82bf6b60c57a6feba.wav",
+    "source_sha256": "69c3e6db0d346053afac7327360a01eacaaf6ee0ab1f664102870c30a552ab00",
+    "txtp_sha256": "ceb9b3dbd630e1ee746b5ab1456482e7efe1fd140cfc0ee9e4ba800dded89c9d"
   },
   {
     "file": "play_vo_ashe_death3d_r3_zh_cn.wav",
@@ -54,18 +52,17 @@
       2413345029,
       2639712284
     ],
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/ashe_death_zh_audio/event_wav/Play_vo_Ashe_Death3D {r3}.wav",
     "source_package": "Ashe.zh_CN.wad.client",
     "duration": 1.5,
-    "sha256": "aa819251f4bb98ae20ad448309d34d921d131fa6803b164486a9d42358f5afd9",
-    "death_envelope": {
-      "source_duration": 2.716734693877551,
-      "source_sha256": "3585f239f3387894471caa841673984dd24173051ad84454a76c56c47c352a0a",
-      "keep_seconds": 1.5,
-      "fade_start_seconds": 1.0,
-      "fade_seconds": 0.5,
-      "curve": "linear_amplitude"
-    },
-    "processing": "source PCM gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s"
+    "sha256": "93e6b60a2177f31b3dee5ba5df1dd0c770176944284be6f28a04475269b0caf5",
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/e41b3f5ad321fb73732c796457d2c8b40d50520216cbbd75ad1faa9112a1ad2f.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/e41b3f5ad321fb73732c796457d2c8b40d50520216cbbd75ad1faa9112a1ad2f.wav",
+    "source_sha256": "ee5a8096fc8a9d66b2471a5e514defa4be268cb902257d947dd47797ea29ca5d",
+    "txtp_sha256": "4be51fad07e38e47bc256f4b8d12878531c8ff2bf91a8895cf141f4caf38fc68"
   }
 ]

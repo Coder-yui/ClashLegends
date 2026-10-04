@@ -3,7 +3,6 @@
     "file": "assets/audio/units/siege_minion/order/play_sfx_sru_orderminionsiege_sru_orderminionsiegebasicattack_oncast_r1.wav",
     "event": "Play_sfx_SRU_OrderMinionSiege_SRU_OrderMinionSiegeBasicAttack_OnCast",
     "event_id": 1828033034,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordersiege_sfx_events-0017-event {r1}.txtp",
     "duration": 2.4884353741496597,
     "media_ids": [
       102902881,
@@ -11,14 +10,21 @@
       645432613,
       959602084
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "deb7346c34e9de543da67edd5a6d215563348666da7fa4fa92946a45471f943a"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "64c4bcbf6a48ad9f351aeb2faf32dd65e74d0544ee3c4945a8b58b7a43ab3a00",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/5f402d610271d2130ace79652c0eabac5a937024cdf42520c447249819fdb4b3.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/5f402d610271d2130ace79652c0eabac5a937024cdf42520c447249819fdb4b3.wav",
+    "source_sha256": "af11cca1290bc490742cbcca4d17334182ec73eafdc7127fdf0cf41abb237abc",
+    "txtp_sha256": "500f54e57f9a5d5bb8ee514548f49465d9cc35e4743a56cb4ea16ad8311ce8fe"
   },
   {
     "file": "assets/audio/units/siege_minion/order/play_sfx_sru_orderminionsiege_sru_orderminionsiegebasicattack_oncast_r2.wav",
     "event": "Play_sfx_SRU_OrderMinionSiege_SRU_OrderMinionSiegeBasicAttack_OnCast",
     "event_id": 1828033034,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordersiege_sfx_events-0017-event {r2}.txtp",
     "duration": 2.4506349206349207,
     "media_ids": [
       102902881,
@@ -26,14 +32,21 @@
       645432613,
       959602084
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "b9e03a7a71a8a26794213609e297bcb83c63890338045ee774d54001bec0b928"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "3c24e0026024d0a3b274ebdc60abff311312dd410d8fb49182005ecf938e8a17",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/1476adc906d99c24775f400894b4982aa311cdd7a72f58a3f97ecb13966791e9.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/1476adc906d99c24775f400894b4982aa311cdd7a72f58a3f97ecb13966791e9.wav",
+    "source_sha256": "6bdc4c1b1faeb859eb21596b5ee573aad478c42928d14829efc6bc5fac751e4a",
+    "txtp_sha256": "c489fb7c8c1f9b5f023e670b43d99c7424e696edde6e5819e295262d00cc068b"
   },
   {
     "file": "assets/audio/units/siege_minion/order/play_sfx_sru_orderminionsiege_sru_orderminionsiegebasicattack_oncast_r3.wav",
     "event": "Play_sfx_SRU_OrderMinionSiege_SRU_OrderMinionSiegeBasicAttack_OnCast",
     "event_id": 1828033034,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordersiege_sfx_events-0017-event {r3}.txtp",
     "duration": 2.2688208616780043,
     "media_ids": [
       102902881,
@@ -41,14 +54,21 @@
       645432613,
       959602084
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "5de5197a85244d9d4381de70919a710f1d8237ef2d44a6bfa4adf68422807916"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "95e41e9fac92aa5c3295d6e3ed7e02b53649ced71aa2c0c3dabcf7ddc4ba0bfb",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/ddf7040f9d728eb4d6dcb8c9dea93ec815f6293d821b8feb407370ceb9c10db3.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/ddf7040f9d728eb4d6dcb8c9dea93ec815f6293d821b8feb407370ceb9c10db3.wav",
+    "source_sha256": "3119b4c82561d9dd7ce5cb3f43f3243681bcb41d5cd9512ddcacaf9200ecb0ac",
+    "txtp_sha256": "a96b5e60fd5c36552528a0a97c5c781e6e4993a977ca80143e081972b3a55c72"
   },
   {
     "file": "assets/audio/units/siege_minion/order/play_sfx_sru_orderminionsiege_sru_orderminionsiegebasicattack_onhit_r1.wav",
     "event": "Play_sfx_SRU_OrderMinionSiege_SRU_OrderMinionSiegeBasicAttack_OnHit",
     "event_id": 2658307326,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordersiege_sfx_events-0021-event {r1}.txtp",
     "duration": 1.633061224489796,
     "media_ids": [
       127103123,
@@ -60,14 +80,21 @@
       555363738,
       904299398
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "de8705b4bd0d51598c1b566182db20d847f32252e2b3e6b4c803267bf84a58c3"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "0191415cfcea726d92cf77e9064278a7fd929b25718834254728eea7b4e63f28",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/bbe1a77117a9725b5d74ffefcac79b00c713acd895cb59409cb1f04413c531d9.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/bbe1a77117a9725b5d74ffefcac79b00c713acd895cb59409cb1f04413c531d9.wav",
+    "source_sha256": "e455bfd3816088b6a7f6871dd0be4053bd41f32d2c0f2a46fe2dccebe35f1bbe",
+    "txtp_sha256": "fa882f63b4d1a94f1461584e597a40e6158b3750befbb427c81c972e3fa313a3"
   },
   {
     "file": "assets/audio/units/siege_minion/order/play_sfx_sru_orderminionsiege_sru_orderminionsiegebasicattack_onhit_r2.wav",
     "event": "Play_sfx_SRU_OrderMinionSiege_SRU_OrderMinionSiegeBasicAttack_OnHit",
     "event_id": 2658307326,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordersiege_sfx_events-0021-event {r2}.txtp",
     "duration": 1.3475510204081633,
     "media_ids": [
       127103123,
@@ -79,14 +106,21 @@
       555363738,
       904299398
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "0ca737f940baece39b4d0dbb510f49a776b4705b8949d1a29801127911083a85"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "d50ef8eba526c2ece1d9a2e450d294cc8e77aea4e9eef9610aa0016a096101a2",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/6e250e4361abf0027994b3f69d881f8fe84b7e50591cac7b606b7e720f813f38.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/6e250e4361abf0027994b3f69d881f8fe84b7e50591cac7b606b7e720f813f38.wav",
+    "source_sha256": "36f8c56f02e4aa68aeafeb7ee9e55f80c2e11a16f99483552609c66345ef7cf1",
+    "txtp_sha256": "fe88cdc630c0e1ba13b4adda776900b5202cd78a5fce77d6ad4d483283d336bb"
   },
   {
     "file": "assets/audio/units/siege_minion/order/play_sfx_sru_orderminionsiege_sru_orderminionsiegebasicattack_onhit_r3.wav",
     "event": "Play_sfx_SRU_OrderMinionSiege_SRU_OrderMinionSiegeBasicAttack_OnHit",
     "event_id": 2658307326,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordersiege_sfx_events-0021-event {r3}.txtp",
     "duration": 1.578639455782313,
     "media_ids": [
       127103123,
@@ -98,14 +132,21 @@
       555363738,
       904299398
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "fe4af6a78f0f5562d45cb5a75f10fbc5ed92005012d75dfdbae71d2f23608d7d"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "20fb57bc7c1bb655225378db170fb18dbcd2f8b3d22b13a9e471fdf22413b4c5",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/266e8ad0f23f953a26cad1da5630da068bb7319efbaf6f7d4d2b87b0e3ce3a34.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/266e8ad0f23f953a26cad1da5630da068bb7319efbaf6f7d4d2b87b0e3ce3a34.wav",
+    "source_sha256": "5391d29d46a18f1c2e64e68ebdfea08399d13492f015ca1f1a107e46f8e15dad",
+    "txtp_sha256": "17f5fa5d11c4208afcbf62e6baa392df9c21bba83f75f7ca640ba82c6e441cc1"
   },
   {
     "file": "assets/audio/units/siege_minion/chaos/play_sfx_sru_chaosminionsiege_sru_chaosminionsiegebasicattack_onmissilecast_r1.wav",
     "event": "Play_sfx_SRU_ChaosMinionSiege_SRU_ChaosMinionSiegeBasicAttack_OnMissileCast",
     "event_id": 2858937692,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaossiege_sfx_events-0019-event {r1}.txtp",
     "duration": 1.2183673469387755,
     "media_ids": [
       265319268,
@@ -113,14 +154,21 @@
       513282067,
       701531219
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "96e2d91d774e8d0a2bc3ce02700ab212737b9c8ab13dbe1f06630f0c206711a4"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "0f4c0d4a3d8d78995f06e1bfd5e2cec08d65fc1d27d1fe3b2671a68b242513e5",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/a5785efe6c181c433bc197cbcce3253d9dfc71bd4210226d69a796f94f4dec69.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/a5785efe6c181c433bc197cbcce3253d9dfc71bd4210226d69a796f94f4dec69.wav",
+    "source_sha256": "deda5a33a9e3a461522bce4810392ad86164c68e92fec9c9f9365901bdbd6776",
+    "txtp_sha256": "f9bbc8ef53efbb7234724d3e31b07d22b32663845f150d609b8599c6fb1de32c"
   },
   {
     "file": "assets/audio/units/siege_minion/chaos/play_sfx_sru_chaosminionsiege_sru_chaosminionsiegebasicattack_onmissilecast_r2.wav",
     "event": "Play_sfx_SRU_ChaosMinionSiege_SRU_ChaosMinionSiegeBasicAttack_OnMissileCast",
     "event_id": 2858937692,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaossiege_sfx_events-0019-event {r2}.txtp",
     "duration": 1.5973242630385487,
     "media_ids": [
       265319268,
@@ -128,14 +176,21 @@
       513282067,
       701531219
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "f6742053c6f73da87deb88f0977c0308491e0d90704e8a6015c21097c4efddf6"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "636d72a77e4099158ff1085461be9feb6ed387ccecde89f627073ecbee019ae0",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/c8b12bdfe309d4ee1bfc16d19476002761d6d665d3ddf3070acd8a8bf73d3b55.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/c8b12bdfe309d4ee1bfc16d19476002761d6d665d3ddf3070acd8a8bf73d3b55.wav",
+    "source_sha256": "36fe27abb40c0550753a142d35c76d1d21be297c39afe341d6227423eb45c069",
+    "txtp_sha256": "b3e0d2ce80d15eb4c186f6e6fa6348a44fd017b1d5bc9615287a84392208cf03"
   },
   {
     "file": "assets/audio/units/siege_minion/chaos/play_sfx_sru_chaosminionsiege_sru_chaosminionsiegebasicattack_onmissilecast_r3.wav",
     "event": "Play_sfx_SRU_ChaosMinionSiege_SRU_ChaosMinionSiegeBasicAttack_OnMissileCast",
     "event_id": 2858937692,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaossiege_sfx_events-0019-event {r3}.txtp",
     "duration": 1.7741950113378684,
     "media_ids": [
       265319268,
@@ -143,14 +198,21 @@
       513282067,
       701531219
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "411d6101bfc402b5247c5dd5ff99b64968bdd0fb67a4fd16a3eff03ab2b03986"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "76405a2b2c73800ba8d8bed2a068b2f7799fe4a3d52b3667002ee92b2c44f332",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/ee39e6cc9081f1ec287d6f760ffbebc6315520d663f3fbb61d85d984e8286882.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/ee39e6cc9081f1ec287d6f760ffbebc6315520d663f3fbb61d85d984e8286882.wav",
+    "source_sha256": "9a1d4f9d79c854e1ce9805a22c803ac8b9153427aa26c45560e7919b863b27cb",
+    "txtp_sha256": "d2c8e95de4965e10b21d42cfea70e1d44cafa4f3161ce8389555d3e3da704b06"
   },
   {
     "file": "assets/audio/units/siege_minion/chaos/play_sfx_sru_chaosminionsiege_sru_chaosminionsiegebasicattack_onhit_r1.wav",
     "event": "Play_sfx_SRU_ChaosMinionSiege_SRU_ChaosMinionSiegeBasicAttack_OnHit",
     "event_id": 2998416022,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaossiege_sfx_events-0021-event {r1} {d}.txtp",
     "duration": 0.8940136054421769,
     "media_ids": [
       264301615,
@@ -158,14 +220,21 @@
       928248863,
       986079880
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "fc3722dae98e98f31b927faa7ea3c39074188c851eec1d59d62ac9889bc57a36"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "a17e4e2089bf872bc8fb2ffbfe838b4113a2d637a69dac39e46e085ccef2771e",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/ccfb18531c6e03501b9c6eccb9f330001c9cdb416b68cd28742f576850300a4e.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/ccfb18531c6e03501b9c6eccb9f330001c9cdb416b68cd28742f576850300a4e.wav",
+    "source_sha256": "c7fadb3bf1b762c1bb9f6d6820ebcd48cb81c8c1ec8334397b3629c6413407f5",
+    "txtp_sha256": "634b9cbcb2ab28434f9cf9bbd0bac927e0a645c5a4e6b3fcc447441521d805fa"
   },
   {
     "file": "assets/audio/units/siege_minion/chaos/play_sfx_sru_chaosminionsiege_sru_chaosminionsiegebasicattack_onhit_r2.wav",
     "event": "Play_sfx_SRU_ChaosMinionSiege_SRU_ChaosMinionSiegeBasicAttack_OnHit",
     "event_id": 2998416022,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaossiege_sfx_events-0021-event {r2} {d}.txtp",
     "duration": 1.121609977324263,
     "media_ids": [
       264301615,
@@ -173,14 +242,21 @@
       928248863,
       986079880
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "b5a15751a66aee232358248d92a17cca1eec997f0c3babbb5a505dd27e1c8da3"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "974c438ecad094ca28c23cfa8b3a8b09b1d80fb5edbd0136dc3bae62c1079f37",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/eb1c93eb42f328a51842adaf9580274673e82e381548b491d3c3dd946c0da398.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/eb1c93eb42f328a51842adaf9580274673e82e381548b491d3c3dd946c0da398.wav",
+    "source_sha256": "4fe5a77058e8e9ce0468b524959cdbbd4bd42ca9242ca91fdbef1b9d84152b46",
+    "txtp_sha256": "95f70f0243820dc5952ee5aae1b16d1da5546ed39f892dbbe12b8364059364db"
   },
   {
     "file": "assets/audio/units/siege_minion/chaos/play_sfx_sru_chaosminionsiege_sru_chaosminionsiegebasicattack_onhit_r3.wav",
     "event": "Play_sfx_SRU_ChaosMinionSiege_SRU_ChaosMinionSiegeBasicAttack_OnHit",
     "event_id": 2998416022,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaossiege_sfx_events-0021-event {r3} {d}.txtp",
     "duration": 1.167142857142857,
     "media_ids": [
       264301615,
@@ -188,7 +264,15 @@
       928248863,
       986079880
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "bdec49cd21befb5a7645c734473ffbece17e600b4aa486675e7119ead8bb6edf"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "50c70027b6a7ee705a86176fc9e67078b1511a5d555bf3ee0e8d807733c8ed5e",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/6424705d91fe1bc2bc2b649b78fa1758c1c9ef5ca28a02951b17b218e5e1c357.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/6424705d91fe1bc2bc2b649b78fa1758c1c9ef5ca28a02951b17b218e5e1c357.wav",
+    "source_sha256": "6a0d70e317b7a78ccc833e07f0d0bd4c9f70810a6ef5842da21fe6476b0a8008",
+    "txtp_sha256": "3dab616869c2a333d0693e45763a5531aa493b12b0067acb5b025d3492a03a19"
   }
 ]

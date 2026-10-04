@@ -162,13 +162,13 @@ static func definition() -> Dictionary:
 					"res://assets/audio/units/gnar/play_sfx_gnar_gnarbasicattack2_oncast_r3.wav"
 				]
 			],
-			"attack_swing_volume_db": -3.0,
+			"attack_swing_volume_db": 0.0,
 			"attack_hit": [
 				"res://assets/audio/units/gnar/play_sfx_gnar_gnarbasicattack_onhit_r1_d.wav",
 				"res://assets/audio/units/gnar/play_sfx_gnar_gnarbasicattack_onhit_r2_d.wav",
 				"res://assets/audio/units/gnar/play_sfx_gnar_gnarbasicattack_onhit_r3_d.wav"
 			],
-			"attack_hit_volume_db": -5.0,
+			"attack_hit_volume_db": 0.0,
 			"transformed_stats": {
 				"events": {
 					"active:hit": {"pool": ["res://assets/audio/units/gnar/play_sfx_gnar_gnarbigw_hit2_r1.wav", "res://assets/audio/units/gnar/play_sfx_gnar_gnarbigw_hit2_r2.wav", "res://assets/audio/units/gnar/play_sfx_gnar_gnarbigw_hit2_r3.wav"], "volume_db": 0.0, "bus": "Combat"},
@@ -219,13 +219,13 @@ static func definition() -> Dictionary:
 						"res://assets/audio/units/gnar/play_sfx_gnar_gnarbigbasicattack2_oncast_r3_d.wav"
 					]
 				],
-				"attack_swing_volume_db": -3.0,
+				"attack_swing_volume_db": 0.0,
 				"attack_hit": [
 					"res://assets/audio/units/gnar/play_sfx_gnar_gnarbigbasicattack_onhit_r1_d.wav",
 					"res://assets/audio/units/gnar/play_sfx_gnar_gnarbigbasicattack_onhit_r2_d.wav",
 					"res://assets/audio/units/gnar/play_sfx_gnar_gnarbigbasicattack_onhit_r3_d.wav"
 				],
-				"attack_hit_volume_db": -5.0,
+				"attack_hit_volume_db": 0.0,
 			},
 		},
 		# END IMPORTED AUDIO gnar

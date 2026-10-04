@@ -58,7 +58,7 @@ static func definition() -> Dictionary:
 				"res://assets/audio/units/pix/play_sfx_lulu_lulupassivemissile_hit_r2.wav",
 				"res://assets/audio/units/pix/play_sfx_lulu_lulupassivemissile_hit_r3.wav"
 			],
-			"attack_hit_volume_db": -5.0,
+			"attack_hit_volume_db": 0.0,
 		},
 		# END IMPORTED AUDIO pix
 		"card_art": {},

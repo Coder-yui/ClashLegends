@@ -3,7 +3,6 @@
     "file": "assets/audio/units/tombstone/play_sfx_yorick_yorickwwalllife_onbuffactivate_r1.wav",
     "event": "Play_sfx_Yorick_YorickWWallLife_OnBuffActivate",
     "event_id": 3320850004,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickWWallLife_OnBuffActivate {m}.txtp",
     "duration": 23.408367346938775,
     "media_ids": [
       "534399200",
@@ -12,7 +11,15 @@
       "683936781",
       "835980414"
     ],
-    "processing": "vgmstream-cli -i; source event gain retained; no normalization; loop rendered as one cycle; no death truncation",
-    "sha256": "2401b05e98b7f0d524b120077206854b194e24fc9d4757fada191a8562d6e206"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "8a888ced0a1710261e30863fd3de76ff51b37bfa191117cf536cbdce9a5f2047",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/7e754e180eb4da419744384c4e3a7fad0f1d20d595921b41f50c89dfc8ebe15b.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/7e754e180eb4da419744384c4e3a7fad0f1d20d595921b41f50c89dfc8ebe15b.wav",
+    "source_sha256": "8b688622b45f2f389d2ab52c8c64279a7d67635d00c9004858bf19ade160c41d",
+    "txtp_sha256": "03132ece25820d8b8dd370f62aa1987bb478325752b9d6c7f7e2bdd42082a2e3"
   }
 ]

@@ -67,35 +67,35 @@ static func definition() -> Dictionary:
     "res://assets/audio/units/belveth/hit_4.wav"
   ],
   "attack_swing_lead_time": 0.0,
-  "attack_swing_volume_db": -7.0,
-  "attack_hit_volume_db": -7.0,
+  "attack_swing_volume_db": 0.0,
+  "attack_hit_volume_db": 0.0,
   "events": {
     "deploy:start": {
       "pool": [
         "res://assets/audio/units/belveth/deploy_1.wav"
       ],
-      "volume_db": -5.0,
+      "volume_db": 0.0,
       "bus": "Combat"
     },
     "death": {
       "pool": [
         "res://assets/audio/units/belveth/death_1.wav"
       ],
-      "volume_db": -5.0,
+      "volume_db": 0.0,
       "bus": "Combat"
     },
     "active:cast": {
       "pool": [
         "res://assets/audio/units/belveth/cast_1.wav"
       ],
-      "volume_db": -4.0,
+      "volume_db": 0.0,
       "bus": "Combat"
     },
     "active:hit": {
       "pool": [
         "res://assets/audio/units/belveth/skill_hit_1.wav"
       ],
-      "volume_db": -5.0,
+      "volume_db": 0.0,
       "bus": "Combat"
     }
   }

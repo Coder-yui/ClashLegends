@@ -1,5 +1,6 @@
 """Import Q turret spawn SFX, not champion QUlt voice; original library stays read-only."""
 from pathlib import Path
+from original_gain import render_fresh
 import hashlib, json, re, subprocess, wave
 ROOT = Path(__file__).resolve().parents[2]
 SOURCE = Path('/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/heimerdinger/txtp')
@@ -11,7 +12,7 @@ pool = []
 for index in range(1,4):
     txtp = SOURCE / f'{EVENT} {{r{index}}} {{d}}.txtp'
     output = DEST / f'{EVENT.lower()}_r{index}.wav'
-    subprocess.run(['/opt/homebrew/bin/vgmstream-cli','-i','-o',str(output),str(txtp)],check=True,stdout=subprocess.DEVNULL)
+    render_fresh(txtp, output, decoder="/opt/homebrew/bin/vgmstream-cli")
     pool.append('res://'+str(output.relative_to(ROOT)))
     with wave.open(str(output)) as wav: duration = wav.getnframes()/wav.getframerate()
     manifest = [e for e in manifest if e['file'] != output.name]
@@ -26,7 +27,7 @@ death_pool = []
 for index in range(1,4):
     txtp = SOURCE / f'{death_event} {{r{index}}}.txtp'
     output = DEST / f'{death_event.lower()}_r{index}.wav'
-    subprocess.run(['/opt/homebrew/bin/vgmstream-cli','-i','-o',str(output),str(txtp)],check=True,stdout=subprocess.DEVNULL)
+    render_fresh(txtp, output, decoder="/opt/homebrew/bin/vgmstream-cli")
     death_pool.append('res://'+str(output.relative_to(ROOT)))
     with wave.open(str(output)) as wav: duration = wav.getnframes()/wav.getframerate()
     entry = {'file':output.name,'event':death_event,'event_id':int(re.search(r'CAkEvent\[\d+\] (\d+)',txtp.read_text())[1]),

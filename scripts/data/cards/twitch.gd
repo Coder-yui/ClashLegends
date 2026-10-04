@@ -54,11 +54,11 @@ static func definition() -> Dictionary:
 		"audio": {
 			"events": {
 				"active_buff:attack_launch": {"pool": ["res://assets/audio/units/twitch/spray_and_pray_onmissilelaunch_1.wav", "res://assets/audio/units/twitch/spray_and_pray_onmissilelaunch_2.wav", "res://assets/audio/units/twitch/spray_and_pray_onmissilelaunch_3.wav"], "volume_db": 0.0, "bus": "Combat"},
-				"active_buff:attack_hit": {"pool": ["res://assets/audio/units/twitch/spray_and_pray_onhit_1.wav", "res://assets/audio/units/twitch/spray_and_pray_onhit_2.wav", "res://assets/audio/units/twitch/spray_and_pray_onhit_3.wav"], "volume_db": -5.0, "bus": "Combat"},
+				"active_buff:attack_hit": {"pool": ["res://assets/audio/units/twitch/spray_and_pray_onhit_1.wav", "res://assets/audio/units/twitch/spray_and_pray_onhit_2.wav", "res://assets/audio/units/twitch/spray_and_pray_onhit_3.wav"], "volume_db": 0.0, "bus": "Combat"},
 
 				"deploy:voice": {"pool": ["res://assets/audio/units/twitch/deploy_q_end_r4_zh_cn.wav", "res://assets/audio/units/twitch/deploy_q_end_r1_zh_cn.wav", "res://assets/audio/units/twitch/deploy_q_end_r3_zh_cn.wav"], "volume_db": 0.0, "bus": "Voice"},
-				"stealth:enter": {"pool": ["res://assets/audio/units/twitch/twitch_q_enter.wav"], "volume_db": -3.0, "bus": "Combat"},
-				"stealth:exit": {"pool": ["res://assets/audio/units/twitch/twitch_q_exit.wav"], "volume_db": -3.0, "bus": "Combat"},
+				"stealth:enter": {"pool": ["res://assets/audio/units/twitch/twitch_q_enter.wav"], "volume_db": 0.0, "bus": "Combat"},
+				"stealth:exit": {"pool": ["res://assets/audio/units/twitch/twitch_q_exit.wav"], "volume_db": 0.0, "bus": "Combat"},
 
 				"attack_launch": {
 					"pool": [
@@ -105,13 +105,13 @@ static func definition() -> Dictionary:
 					"res://assets/audio/units/twitch/play_sfx_twitch_twitchbasicattack_oncast_r3.wav"
 				]
 			],
-			"attack_swing_volume_db": -3.0,
+			"attack_swing_volume_db": 0.0,
 			"attack_hit": [
 				"res://assets/audio/units/twitch/play_sfx_twitch_twitchbasicattack_onhit_1559186049_1153642577_r1.wav",
 				"res://assets/audio/units/twitch/play_sfx_twitch_twitchbasicattack_onhit_1559186049_1153642577_r2.wav",
 				"res://assets/audio/units/twitch/play_sfx_twitch_twitchbasicattack_onhit_1559186049_1153642577_r3.wav"
 			],
-			"attack_hit_volume_db": -5.0
+			"attack_hit_volume_db": 0.0
 		},
 		# END IMPORTED AUDIO twitch
 		"card_art": {},

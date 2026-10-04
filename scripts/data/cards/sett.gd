@@ -155,13 +155,13 @@ static func definition() -> Dictionary:
 					"res://assets/audio/units/sett/play_sfx_sett_settbasicattack2_cast_r3.wav"
 				]
 			],
-			"attack_swing_volume_db": -3.0,
+			"attack_swing_volume_db": 0.0,
 			"attack_hit": [
 				"res://assets/audio/units/sett/play_sfx_sett_settbasicattack_onhit_1559186049_1153642577_r1_d.wav",
 				"res://assets/audio/units/sett/play_sfx_sett_settbasicattack_onhit_1559186049_1153642577_r2_d.wav",
 				"res://assets/audio/units/sett/play_sfx_sett_settbasicattack_onhit_1559186049_1153642577_r3_d.wav"
 			],
-			"attack_hit_volume_db": -5.0,
+			"attack_hit_volume_db": 0.0,
 			"attack_hit_by_segment": [
 				[
 					"res://assets/audio/units/sett/play_sfx_sett_settbasicattack_onhit_1559186049_1153642577_r1_d.wav",

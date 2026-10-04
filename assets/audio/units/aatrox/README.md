@@ -1,5 +1,11 @@
 # 剑魔音频来源
 
+
+> 客户端部署语音混音例外（2026-10-04）：`play_vo_aatrox_deploy_1.wav` 固定播放 -12 dB。原素材不变，同池游戏内语音仍为 0 dB；此说明优先于下文历史的“全部播放补偿为 0 dB”。
+
+> 2026-10-04 原版增益重导：当前文件与加工参数以 `assets/audio/original_gain_manifest.json` 为准；下面历史文字中的额外增益、制作余量及旧哈希说明已被本次重导替代。工具主增益、后期固定增益和事件播放补偿均为 0 dB；原事件内部增益保留。
+
+
 只读来源：LOL_Asset_Source/Game/DATA/FINAL/Champions/Aatrox.wad.client，基础皮肤SFX Events/Audio banks；使用项目现有Init bank和wwiser v20260909恢复事件图，vgmstream浮点解码后统一-6dB转换至PCM16。
 
 处理目的为避免解码输出削波，不做逐文件归一化。普通死亡采用共用1.5秒包络。事件、候选条件、源试听文件与加工参数见event_manifest.json；完整TXTP和原包提取记录保留在开发素材库03-制作中/剑魔。

@@ -23,7 +23,7 @@ static func definition() -> Dictionary:
 			"events": {
 				"spell:cast": {
 					"pool": ["res://assets/audio/units/freeze/play_sfx_cr_freeze_spell_cast_first3s.wav"],
-					"volume_db": 0.0,
+					"volume_db": -12.0,
 					"bus": "Combat"
 				}
 			},

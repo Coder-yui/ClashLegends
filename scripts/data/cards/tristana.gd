@@ -74,7 +74,7 @@ static func definition() -> Dictionary:
 			"attack_hit": [
 				"res://assets/audio/units/tristana/play_sfx_tristana_tristanabasicattack_onhit_1559186049_1153642577_r_d.wav"
 			],
-			"attack_hit_volume_db": -5.0
+			"attack_hit_volume_db": 0.0
 		},
 		# END IMPORTED AUDIO tristana
 		"card_art": {},

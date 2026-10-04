@@ -30,8 +30,8 @@ static func definition() -> Dictionary:
 	}
 	data.audio = {
 		"events": {
-			"attack_wave:launch": {"pool": ["res://assets/audio/units/kayle/wave_launch_r1.wav", "res://assets/audio/units/kayle/wave_launch_r2.wav", "res://assets/audio/units/kayle/wave_launch_r3.wav", "res://assets/audio/units/kayle/wave_launch_r4.wav"], "volume_db": -5.0},
-			"attack_wave:hit": {"pool": ["res://assets/audio/units/kayle/wave_hit.wav"], "volume_db": -5.0},
+			"attack_wave:launch": {"pool": ["res://assets/audio/units/kayle/wave_launch_r1.wav", "res://assets/audio/units/kayle/wave_launch_r2.wav", "res://assets/audio/units/kayle/wave_launch_r3.wav", "res://assets/audio/units/kayle/wave_launch_r4.wav"], "volume_db": 0.0},
+			"attack_wave:hit": {"pool": ["res://assets/audio/units/kayle/wave_hit.wav"], "volume_db": 0.0},
 			"deploy:voice": {
 				"pool": [
 					"res://assets/audio/units/kayle/deploy_ranged_1.wav",
@@ -49,14 +49,14 @@ static func definition() -> Dictionary:
 					"res://assets/audio/units/kayle/play_sfx_kayle_kaylewheal_oncast_r4.wav"
 				],
 				"bus": "Combat",
-				"volume_db": -3.0
+				"volume_db": 0.0
 			},
 			"death": {
 				"pool": [
 					"res://assets/audio/units/kayle/play_sfx_kayle_death3d_cast.wav"
 				],
 				"bus": "Combat",
-				"volume_db": -3.0
+				"volume_db": 0.0
 			}
 		},
 		"attack_swing": [
@@ -73,7 +73,7 @@ static func definition() -> Dictionary:
 				"res://assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack4_oncast_r4_d.wav"
 			]
 		],
-		"attack_swing_volume_db": -5.0,
+		"attack_swing_volume_db": 0.0,
 		"attack_hit_by_segment": [
 			[
 				"res://assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack3_onhit.wav"
@@ -82,7 +82,7 @@ static func definition() -> Dictionary:
 				"res://assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack4_onhit_d.wav"
 			]
 		],
-		"attack_hit_volume_db": -5.0,
+		"attack_hit_volume_db": 0.0,
 		"attack_launch_by_segment": [
 			[
 				"res://assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack3_onmissilecast.wav"

@@ -1,5 +1,6 @@
 """Import verified building events from read-only LoL banks; no gameplay edits."""
 from pathlib import Path
+from original_gain import render_fresh
 import hashlib,json,re,subprocess,wave,tempfile
 ROOT=Path(__file__).resolve().parents[2]
 LIB=Path('/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工')
@@ -18,7 +19,7 @@ def export(event,card,limit=4):
  choices=named or choices;pool=[]
  for i,source in enumerate(choices[:limit],1):
   dest=ROOT/'assets/audio/units'/card/(event.lower()+f'_r{i}.wav')
-  subprocess.run(['/opt/homebrew/bin/vgmstream-cli','-i','-o',str(dest),str(source)],check=True,stdout=subprocess.DEVNULL)
+  render_fresh(source, dest, decoder="/opt/homebrew/bin/vgmstream-cli")
   processing='vgmstream-cli -i; source event gain retained; no normalization; loop rendered as one cycle; no death truncation'
   if event == 'Play_sfx_Azir_AzirObeliskSound_OnBuffCast':
    # Keep existing one-second deployment. Compress the native Spawn window only;

@@ -3,6 +3,7 @@ Requires externally prepared wwiser TXTP banks under --source (see AUDIO_CARD_MA
 No event-name guessing: the reviewed JSON whitelist owns all mappings.
 """
 from audio_manifest_merge import merge_audio_manifest
+from original_gain import render_fresh
 import argparse, hashlib, json, re, shutil, subprocess, wave
 from pathlib import Path
 from death_audio_envelope import apply_death_envelope, DEATH_AUDIO_NOTE
@@ -51,8 +52,7 @@ def main():
                 assert re.search(r"CAkEvent\[\d+\] " + str(event_id(event)) + r"\b", txtp.read_text()), event
                 preview = source/'event_wav'/(txtp.stem+'.wav')
                 preview.parent.mkdir(exist_ok=True)
-                if not preview.exists():
-                    subprocess.run(['vgmstream-cli','-i','-o',str(preview),str(txtp)],check=True,capture_output=True)
+                render_fresh(txtp, preview)
                 processing = 'vgmstream-cli -i; source event gain retained'
                 if event in plan.get('trim_events', {}):
                     duration = float(plan['trim_events'][event])
@@ -75,11 +75,11 @@ def main():
         audio = {'events':{}}
         if plan['attack']:
             audio['attack_swing'] = [pool(e) for e in plan['attack']]
-            audio['attack_swing_volume_db'] = -3.0
+            audio['attack_swing_volume_db'] = 0.0
             rows.extend((f'attack_swing[{i+1}]',e) for i,e in enumerate(plan['attack']))
         if plan['hit']:
             audio['attack_hit'] = pool(plan['hit'])
-            audio['attack_hit_volume_db'] = -5.0
+            audio['attack_hit_volume_db'] = 0.0
             rows.append(('attack_hit',plan['hit']))
         if plan.get('launch_segments'):
             audio['attack_launch_by_segment'] = [pool(e) for e in plan['launch_segments']]

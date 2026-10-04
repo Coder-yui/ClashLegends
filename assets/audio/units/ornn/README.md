@@ -1,5 +1,11 @@
 # 奥恩音频来源
 
+
+> 客户端部署语音混音例外（2026-10-04）：`deploy_choose_zh_cn.wav` 固定播放 -13 dB；`deploy_ban_zh_cn.ogg` 固定播放 -14 dB。原素材不变，同池游戏内语音仍为 0 dB；此说明优先于下文历史的“全部播放补偿为 0 dB”。
+
+> 2026-10-04 原版增益重导：当前文件与加工参数以 `assets/audio/original_gain_manifest.json` 为准；下面历史文字中的额外增益、制作余量及旧哈希说明已被本次重导替代。工具主增益、后期固定增益和事件播放补偿均为 0 dB；原事件内部增益保留。
+
+
 部署使用本地 `LeagueClient/Plugins/rcp-be-lol-game-data/zh_CN-assets.wad` 中 `plugins/rcp-be-lol-game-data/global/zh_cn/v1/champion-choose-vo/516.ogg`，台词“好吧，我们走。”。解码PCM16，不剪辑、不归一化。
 
 锻造使用原生 `Play_sfx_Ornn_OrnnP_forging`，事件3114075896，声音848756079，媒体515457883，基础皮肤SFX银行。wwiser事件图 → vgmstream完整事件解码 → PCM16，保留5.398秒原声。此前 allypurchasesitem_stinger_ornnonly 为购买提示，已退役。

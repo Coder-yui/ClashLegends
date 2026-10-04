@@ -3,7 +3,6 @@
     "file": "assets/audio/units/super_minion/order/play_sfx_sru_orderminionsuper_sru_orderminionsuperbasicattack_oncast_r1.wav",
     "event": "Play_sfx_SRU_OrderMinionSuper_SRU_OrderMinionSuperBasicAttack_OnCast",
     "event_id": 4287046350,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordersuper_sfx_events-0041-event {r1} {d}.txtp",
     "duration": 0.7303854875283446,
     "media_ids": [
       296206528,
@@ -11,14 +10,21 @@
       774927191,
       931964229
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "f1c8ca99da89f4e162d3f90a59855d7219a352604f3d86cc7ef54f1bbf8c7559"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "66ce6b53bbc2875b5eb017afc88b79cf67012b1f88b91a2e2d34ef03bc2be187",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/9472a6ffeb912deb7d9578979e0762e5e97566ed75b2ba913a8079df06ed6288.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/9472a6ffeb912deb7d9578979e0762e5e97566ed75b2ba913a8079df06ed6288.wav",
+    "source_sha256": "50f294b42ec9a80bcd8d74446fd4dc77591f13a0d3ebab8e2f3be0482a672e4c",
+    "txtp_sha256": "afd13dbf3fb42d0757ba2a0693a7f44c2533c0a56592e97e9392ca450144ff4c"
   },
   {
     "file": "assets/audio/units/super_minion/order/play_sfx_sru_orderminionsuper_sru_orderminionsuperbasicattack_oncast_r2.wav",
     "event": "Play_sfx_SRU_OrderMinionSuper_SRU_OrderMinionSuperBasicAttack_OnCast",
     "event_id": 4287046350,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordersuper_sfx_events-0041-event {r2} {d}.txtp",
     "duration": 0.7662811791383219,
     "media_ids": [
       296206528,
@@ -26,14 +32,21 @@
       774927191,
       931964229
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "270ac9b10f5fe3d5c18c7de84f3bdfb56ac9f348b188eaeab93609208b01a779"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "7baa9226dea29d6f470943cdfc0ef5336083f3f7b686e62ef0786fc888386a39",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/fa98f897e7e01827a1af7c4cb3fc4889a897ad650d8142d4b57203dae130f40b.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/fa98f897e7e01827a1af7c4cb3fc4889a897ad650d8142d4b57203dae130f40b.wav",
+    "source_sha256": "b8ff350c7d30098b696de352a6869c2d9313660d7f0d3d8708cee76694c88566",
+    "txtp_sha256": "40e36f5d86710cd08fa7d47bb1b5299bf727a41fa9b79ea63d0e47863ae2e8ec"
   },
   {
     "file": "assets/audio/units/super_minion/order/play_sfx_sru_orderminionsuper_sru_orderminionsuperbasicattack_oncast_r3.wav",
     "event": "Play_sfx_SRU_OrderMinionSuper_SRU_OrderMinionSuperBasicAttack_OnCast",
     "event_id": 4287046350,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordersuper_sfx_events-0041-event {r3} {d}.txtp",
     "duration": 0.7672562358276644,
     "media_ids": [
       296206528,
@@ -41,14 +54,21 @@
       774927191,
       931964229
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "fa72cdc66dadf0e2d8b84d91ab7dcd0a3155d8bd3b0e66b8b2e03fbbfcc53be4"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "211cd3050a11f250c1bf200592a18087e8db1565f7e64a7e8908a54856edc055",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/ac1a2002552a2475ef4da6dba0b34c63accc1f0979d0e3819d85cec8948dd362.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/ac1a2002552a2475ef4da6dba0b34c63accc1f0979d0e3819d85cec8948dd362.wav",
+    "source_sha256": "e44c1665b3374e543983520cd3b92d6602bfed91bc1624b014ccb81c863c61fc",
+    "txtp_sha256": "0ea11b59adf7c63748488b9d4e33b7dd7c84057fa714596672a686ce4c95ce0a"
   },
   {
     "file": "assets/audio/units/super_minion/order/play_sfx_sru_orderminionsuper_sru_orderminionsuperbasicattack_onhit_r1.wav",
     "event": "Play_sfx_SRU_OrderMinionSuper_SRU_OrderMinionSuperBasicAttack_OnHit",
     "event_id": 927726618,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordersuper_sfx_events-0023-event {r1}.txtp",
     "duration": 1.4167120181405897,
     "media_ids": [
       59568009,
@@ -56,14 +76,21 @@
       765723772,
       965795940
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "2ac6d46e5772af6337659b47abfdfb81dc7ec74a23c82034e1607e62f621cf0f"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "173158efd235a9eea03dbe440bc1535e3a75a4f9ff0d87d2ebbf8e18816a5bac",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/23ca44b3bdc47eb4de2ee1a99312807e5caa9f3fe9d1edf56115ceea1cd32c7d.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/23ca44b3bdc47eb4de2ee1a99312807e5caa9f3fe9d1edf56115ceea1cd32c7d.wav",
+    "source_sha256": "649ac8c14577844bea63edd815dd3fd9af691bed64b80224e451640d7d937831",
+    "txtp_sha256": "cc3c464863a97b7ec3f908c66f1ed2732da96a8f930a70a17fdf48eb1d952809"
   },
   {
     "file": "assets/audio/units/super_minion/order/play_sfx_sru_orderminionsuper_sru_orderminionsuperbasicattack_onhit_r2.wav",
     "event": "Play_sfx_SRU_OrderMinionSuper_SRU_OrderMinionSuperBasicAttack_OnHit",
     "event_id": 927726618,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordersuper_sfx_events-0023-event {r2}.txtp",
     "duration": 1.4720408163265306,
     "media_ids": [
       59568009,
@@ -71,14 +98,21 @@
       765723772,
       965795940
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "c33dc8e4e30d75f511368bfc45ec40cc45965dc18aa1fec8e72291180de8ca2f"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "98661f0ce0aaec0f95ed3d8e1d063a1fd001299706fe134d4a5b1a557142b8d3",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/f0607838c548ac3319babcd6f875a3d5ae60ff5a1e8c97fcc09904c38b364061.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/f0607838c548ac3319babcd6f875a3d5ae60ff5a1e8c97fcc09904c38b364061.wav",
+    "source_sha256": "ea865d732370d6b05542f1fc9ff70f7298909316d68245287f1310ca43475de9",
+    "txtp_sha256": "1ef77b06c6141a482632a9e051a57cddfff755a4b137c73e33bf428eb192744a"
   },
   {
     "file": "assets/audio/units/super_minion/order/play_sfx_sru_orderminionsuper_sru_orderminionsuperbasicattack_onhit_r3.wav",
     "event": "Play_sfx_SRU_OrderMinionSuper_SRU_OrderMinionSuperBasicAttack_OnHit",
     "event_id": 927726618,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordersuper_sfx_events-0023-event {r3}.txtp",
     "duration": 1.3344671201814058,
     "media_ids": [
       59568009,
@@ -86,14 +120,21 @@
       765723772,
       965795940
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "9d087c93527319e44c85a3c6a8ef6a117c8c218bc5d42eef61e226873b2b1d2e"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "0e39338db73e846c18f6f52864497be3b82d7fd4f77858f3f2361f608393287d",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/a4be807ee82413b27091495ca0cded04a54df0cd9aeef3bcd397dabe36151892.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/a4be807ee82413b27091495ca0cded04a54df0cd9aeef3bcd397dabe36151892.wav",
+    "source_sha256": "0772c5e47b66f79e43eec682163f18d6ba6fbed557c682b293f4c89c9e8cbd0b",
+    "txtp_sha256": "03a5bccfccf821cc5365a94aeb642b8e3f14d192bcfcba73c13201a34a10bf80"
   },
   {
     "file": "assets/audio/units/super_minion/order/play_sfx_sru_orderminionsuper_sru_orderminionsuperbasicattack2_oncast_r1.wav",
     "event": "Play_sfx_SRU_OrderMinionSuper_SRU_OrderMinionSuperBasicAttack2_OnCast",
     "event_id": 521526550,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordersuper_sfx_events-0019-event {r1}.txtp",
     "duration": 2.5627437641723354,
     "media_ids": [
       255122525,
@@ -101,14 +142,21 @@
       548452169,
       1054850674
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "00e84ed7e86dc92339c746e673ff8b7281cf26ebe58030c7778a762ad9ce33c7"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "48dc0deaf3fd49c4045b0bee5b0e7e910490bd41526c6c258d86e9bb83141290",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/17c3ecdf2a5f85f144d5412bd015ef9f4c6ef630eb5afb95dd07c5c7c13eb028.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/17c3ecdf2a5f85f144d5412bd015ef9f4c6ef630eb5afb95dd07c5c7c13eb028.wav",
+    "source_sha256": "9f3464084fabb1671532f57a187eaa48b206fdb6f5bed17901dad1a48b310d0f",
+    "txtp_sha256": "0c038d4849daca622a98d5cf4dced591e107231b1a7680fc455bd93a4532f61d"
   },
   {
     "file": "assets/audio/units/super_minion/order/play_sfx_sru_orderminionsuper_sru_orderminionsuperbasicattack2_oncast_r2.wav",
     "event": "Play_sfx_SRU_OrderMinionSuper_SRU_OrderMinionSuperBasicAttack2_OnCast",
     "event_id": 521526550,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordersuper_sfx_events-0019-event {r2}.txtp",
     "duration": 2.5777551020408165,
     "media_ids": [
       255122525,
@@ -116,14 +164,21 @@
       548452169,
       1054850674
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "ad999b2bb151e4c821a5d87bf57d7cfa572d1d44e83a633e800749fbe3164107"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "3ab134f11d104da46bfb3b93eea5bb8a5ea2de57686745bdedc8482e3394f5b4",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/98663895af96ab97f436f077a77c93e675d37fb22a2a6dff19a615638ab226b9.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/98663895af96ab97f436f077a77c93e675d37fb22a2a6dff19a615638ab226b9.wav",
+    "source_sha256": "0fa4ae78df0361d219e3a360b4429c5465cc1bccf4d7d9a8529b5f37ec14d388",
+    "txtp_sha256": "eaff17731977f874f4089028d20b7a574debb3c5b23777590b4cda652d866b13"
   },
   {
     "file": "assets/audio/units/super_minion/order/play_sfx_sru_orderminionsuper_sru_orderminionsuperbasicattack2_oncast_r3.wav",
     "event": "Play_sfx_SRU_OrderMinionSuper_SRU_OrderMinionSuperBasicAttack2_OnCast",
     "event_id": 521526550,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordersuper_sfx_events-0019-event {r3}.txtp",
     "duration": 2.5056009070294785,
     "media_ids": [
       255122525,
@@ -131,14 +186,21 @@
       548452169,
       1054850674
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "0648823085d7b9e9e82ac6bb496fc4c7ef018da4d0f4fe12f304c87459183672"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "bcb3ecc91a5fe54180569e504ac0ea792567a0962ab937960eb60f04b965fbcc",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/a982e7f308ec7233234dd38407784006cb758983bc22677787dc6b345575d6b1.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/a982e7f308ec7233234dd38407784006cb758983bc22677787dc6b345575d6b1.wav",
+    "source_sha256": "216b14feb88bf61d1025972d23addc4d4a34dbb2e09a18df7c3baede7d826529",
+    "txtp_sha256": "2368bb74ebef1975095b52813b8855a2055efc5435486c043afb1f692ea96ab0"
   },
   {
     "file": "assets/audio/units/super_minion/order/play_sfx_sru_orderminionsuper_sru_orderminionsuperbasicattack2_onhit_r1.wav",
     "event": "Play_sfx_SRU_OrderMinionSuper_SRU_OrderMinionSuperBasicAttack2_OnHit",
     "event_id": 3537132338,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordersuper_sfx_events-0033-event {r1} {d}.txtp",
     "duration": 1.4167120181405897,
     "media_ids": [
       59568009,
@@ -146,14 +208,21 @@
       765723772,
       965795940
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "2ac6d46e5772af6337659b47abfdfb81dc7ec74a23c82034e1607e62f621cf0f"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "173158efd235a9eea03dbe440bc1535e3a75a4f9ff0d87d2ebbf8e18816a5bac",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/9f95554a8c2e038c926c357b355c60203374e43c228f86763067a6953ebc7b4c.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/9f95554a8c2e038c926c357b355c60203374e43c228f86763067a6953ebc7b4c.wav",
+    "source_sha256": "649ac8c14577844bea63edd815dd3fd9af691bed64b80224e451640d7d937831",
+    "txtp_sha256": "0695707ec2c011bdefb46d0e28aeba251fbd75ea8665ec39434ee49c816d58d9"
   },
   {
     "file": "assets/audio/units/super_minion/order/play_sfx_sru_orderminionsuper_sru_orderminionsuperbasicattack2_onhit_r2.wav",
     "event": "Play_sfx_SRU_OrderMinionSuper_SRU_OrderMinionSuperBasicAttack2_OnHit",
     "event_id": 3537132338,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordersuper_sfx_events-0033-event {r2} {d}.txtp",
     "duration": 1.4720408163265306,
     "media_ids": [
       59568009,
@@ -161,14 +230,21 @@
       765723772,
       965795940
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "c33dc8e4e30d75f511368bfc45ec40cc45965dc18aa1fec8e72291180de8ca2f"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "98661f0ce0aaec0f95ed3d8e1d063a1fd001299706fe134d4a5b1a557142b8d3",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/fedbb53ec1b977355bc4a4f09581d946f98bf3dc9aaea016b03156c3737a90ea.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/fedbb53ec1b977355bc4a4f09581d946f98bf3dc9aaea016b03156c3737a90ea.wav",
+    "source_sha256": "ea865d732370d6b05542f1fc9ff70f7298909316d68245287f1310ca43475de9",
+    "txtp_sha256": "37238dd71e385fd436fc7f2f5b5739fb1b10cd1f7309b7cab02ec1ea551dcfda"
   },
   {
     "file": "assets/audio/units/super_minion/order/play_sfx_sru_orderminionsuper_sru_orderminionsuperbasicattack2_onhit_r3.wav",
     "event": "Play_sfx_SRU_OrderMinionSuper_SRU_OrderMinionSuperBasicAttack2_OnHit",
     "event_id": 3537132338,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_ordersuper_sfx_events-0033-event {r3} {d}.txtp",
     "duration": 1.3344671201814058,
     "media_ids": [
       59568009,
@@ -176,14 +252,21 @@
       765723772,
       965795940
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "9d087c93527319e44c85a3c6a8ef6a117c8c218bc5d42eef61e226873b2b1d2e"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "0e39338db73e846c18f6f52864497be3b82d7fd4f77858f3f2361f608393287d",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/8942908a329f1edb3e89532d0ff024ec081aebbae4bad2afb4291eed59f1429d.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/8942908a329f1edb3e89532d0ff024ec081aebbae4bad2afb4291eed59f1429d.wav",
+    "source_sha256": "0772c5e47b66f79e43eec682163f18d6ba6fbed557c682b293f4c89c9e8cbd0b",
+    "txtp_sha256": "117e94fa13c43225c7b83e6500276548b6ca848366457c1a66a2098ed3ce61b0"
   },
   {
     "file": "assets/audio/units/super_minion/chaos/play_sfx_sru_chaosminionsuper_sru_chaosminionsuperbasicattack_oncast_r1.wav",
     "event": "Play_sfx_SRU_ChaosMinionSuper_SRU_ChaosMinionSuperBasicAttack_OnCast",
     "event_id": 2342324534,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaossuper_sfx_events-0027-event {r1} {d}.txtp",
     "duration": 0.8357596371882087,
     "media_ids": [
       102090040,
@@ -191,14 +274,21 @@
       267771522,
       969969263
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "88ae300414bb2a135545589076808c6f9ad75fff6da6730911b6c41733713bbe"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "2939674a7e4801e1df8442131448ca03be8abab5635f2cb7e487c38973c6e33b",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/ce8a1c81c33797bc58dce054f790b990ca6d75426e1e26ba0dfbf5fe730a75a4.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/ce8a1c81c33797bc58dce054f790b990ca6d75426e1e26ba0dfbf5fe730a75a4.wav",
+    "source_sha256": "5d31d971d61851334ed376b91c36c2515c56c81c0e3b7a5124d6340166c698ad",
+    "txtp_sha256": "c8fcb1409f560613f89cc03d43b3b362786a72e006c030646a442fb5dceb2c50"
   },
   {
     "file": "assets/audio/units/super_minion/chaos/play_sfx_sru_chaosminionsuper_sru_chaosminionsuperbasicattack_oncast_r2.wav",
     "event": "Play_sfx_SRU_ChaosMinionSuper_SRU_ChaosMinionSuperBasicAttack_OnCast",
     "event_id": 2342324534,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaossuper_sfx_events-0027-event {r2} {d}.txtp",
     "duration": 0.9024489795918368,
     "media_ids": [
       102090040,
@@ -206,14 +296,21 @@
       267771522,
       969969263
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "ab57b37d3d0cf4e981f48a07a58495dc46882c02814552a48d0bc66260d02b13"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "172c340a790a55acbe5acefb79c9db3aed0af4de79ca56b2844ee39867d55b37",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/68b498e36fd135b28e469776611760a8e4064b49f2596d30b9f88f51a711c60c.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/68b498e36fd135b28e469776611760a8e4064b49f2596d30b9f88f51a711c60c.wav",
+    "source_sha256": "8209578cbc8c061ff32ba4d3e2b076cac110324821037809e41166aa9142c0e0",
+    "txtp_sha256": "23d55b7a5900737bcd7178fff12ec1b86c71e79efbaa6dc430d2c26687313ac5"
   },
   {
     "file": "assets/audio/units/super_minion/chaos/play_sfx_sru_chaosminionsuper_sru_chaosminionsuperbasicattack_oncast_r3.wav",
     "event": "Play_sfx_SRU_ChaosMinionSuper_SRU_ChaosMinionSuperBasicAttack_OnCast",
     "event_id": 2342324534,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaossuper_sfx_events-0027-event {r3} {d}.txtp",
     "duration": 0.9557596371882087,
     "media_ids": [
       102090040,
@@ -221,14 +318,21 @@
       267771522,
       969969263
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "d97a57549ee034c26b9ef0d78f00afae70ce327075c837f73dce657ecf586964"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "dcf834d9dcc164ca559f18dd1c72e6485b0b97ebbc037179ef39b957e3185cc7",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/0b59b95219e4548edb2ae295bcb0e299705268b9b8b4d37d62669d8573f1b9bb.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/0b59b95219e4548edb2ae295bcb0e299705268b9b8b4d37d62669d8573f1b9bb.wav",
+    "source_sha256": "938c64ab5f80f037bd7f25346f468b61d7884fe5e62ea20d0d201f4af5558dfa",
+    "txtp_sha256": "5417f0c2534b23dea0a789c8aab55f9d9d79d0baa9cc42fd5a6b2308468e80c4"
   },
   {
     "file": "assets/audio/units/super_minion/chaos/play_sfx_sru_chaosminionsuper_sru_chaosminionsuperbasicattack_onhit_r1.wav",
     "event": "Play_sfx_SRU_ChaosMinionSuper_SRU_ChaosMinionSuperBasicAttack_OnHit",
     "event_id": 2362665938,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaossuper_sfx_events-0029-event {r1} {d}.txtp",
     "duration": 1.4586621315192745,
     "media_ids": [
       665034686,
@@ -236,14 +340,21 @@
       765116358,
       931278533
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "6baec7deb0c48274864c134c6ff8ead83e25afd499619e817458c92a836d7a72"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "09c4868ae9e2740660ad67fe66f2f2da897ffc0e912e4686253d8603da1f9153",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/64cb10f56ba1204ccba7ad908e2e7521f084705d050a22527029e80d2b32ffa8.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/64cb10f56ba1204ccba7ad908e2e7521f084705d050a22527029e80d2b32ffa8.wav",
+    "source_sha256": "a0c758f700de53b79ed2e9f7a1e947e9e32050d33cef6558c360729779404242",
+    "txtp_sha256": "25aa223e1d20f0d3bf1dee20e426dd2ec16f9055d5e44872b8f14160908df8e8"
   },
   {
     "file": "assets/audio/units/super_minion/chaos/play_sfx_sru_chaosminionsuper_sru_chaosminionsuperbasicattack_onhit_r2.wav",
     "event": "Play_sfx_SRU_ChaosMinionSuper_SRU_ChaosMinionSuperBasicAttack_OnHit",
     "event_id": 2362665938,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaossuper_sfx_events-0029-event {r2} {d}.txtp",
     "duration": 1.123628117913832,
     "media_ids": [
       665034686,
@@ -251,14 +362,21 @@
       765116358,
       931278533
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "1ce91c41b6a69cbf9e750957f6d50ad05d7285a18bc1764642b7683301ad7448"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "2f604da41871cc745942a43ad09b726b23ce483a5a6c1d15fe797ec72aa83772",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/28041b952cb512b135cb172268945af2e5fc2b96fb918bd4a4c073dc887d6e7c.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/28041b952cb512b135cb172268945af2e5fc2b96fb918bd4a4c073dc887d6e7c.wav",
+    "source_sha256": "df950033a2fcfa5f944ff15432717a13f23307e00136cf0ca982076c6640d09c",
+    "txtp_sha256": "8f3144a21b993a9725d9bfc7a0507a39c6c76c659649eceda2956899c640c4cc"
   },
   {
     "file": "assets/audio/units/super_minion/chaos/play_sfx_sru_chaosminionsuper_sru_chaosminionsuperbasicattack_onhit_r3.wav",
     "event": "Play_sfx_SRU_ChaosMinionSuper_SRU_ChaosMinionSuperBasicAttack_OnHit",
     "event_id": 2362665938,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaossuper_sfx_events-0029-event {r3} {d}.txtp",
     "duration": 1.2017913832199547,
     "media_ids": [
       665034686,
@@ -266,14 +384,21 @@
       765116358,
       931278533
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "2a46eba13f64f6174d890c9585e3c7d117426a3d7f4360926b4f99b9c52726db"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "50338e11a38ec5db19b0d276c6467fcd3d83542f483104092b71a4921cf4785f",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/3e24fc6f6d0012dad6a2fb8ad2dbd85093e8d802aaaf4de424c9f9151fd54af1.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/3e24fc6f6d0012dad6a2fb8ad2dbd85093e8d802aaaf4de424c9f9151fd54af1.wav",
+    "source_sha256": "5161c585087b55c1f5956c3ab23c1e85340dced7ef26b448881c54b2718dfcee",
+    "txtp_sha256": "a750731ff6c0f04e0e091de59f2a03e678dabb3f145298c11f84aefad9abc772"
   },
   {
     "file": "assets/audio/units/super_minion/chaos/play_sfx_sru_chaosminionsuper_sru_chaosminionsuperbasicattack2_oncast_r1.wav",
     "event": "Play_sfx_SRU_ChaosMinionSuper_SRU_ChaosMinionSuperBasicAttack2_OnCast",
     "event_id": 1347524046,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaossuper_sfx_events-0019-event {r1}.txtp",
     "duration": 1.4482312925170069,
     "media_ids": [
       634067554,
@@ -281,14 +406,21 @@
       808954279,
       882427249
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "d3bd53531f59a5f6e027429f4b8759d43c1a9885ca6aec5dd0d6daa7f20730e9"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "b406f405a910c5ee9ae363edef93794a871ffe878cc9376f9d55dd0aff2bd31d",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/8975e73b65aac825c7974684be3bf8ad2235f0aee0d76b938bdf1a29cac17c38.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/8975e73b65aac825c7974684be3bf8ad2235f0aee0d76b938bdf1a29cac17c38.wav",
+    "source_sha256": "094228d7f6f0d26e22e6b91f9bb3fff7f841d74996a768eb965c4faee4023f14",
+    "txtp_sha256": "94cf0fa8f9d72576bb507a27a204387de854d00220ee094e164a8f8e6a4f9295"
   },
   {
     "file": "assets/audio/units/super_minion/chaos/play_sfx_sru_chaosminionsuper_sru_chaosminionsuperbasicattack2_oncast_r2.wav",
     "event": "Play_sfx_SRU_ChaosMinionSuper_SRU_ChaosMinionSuperBasicAttack2_OnCast",
     "event_id": 1347524046,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaossuper_sfx_events-0019-event {r2}.txtp",
     "duration": 1.3275283446712018,
     "media_ids": [
       634067554,
@@ -296,14 +428,21 @@
       808954279,
       882427249
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "f3cf28e97717602b22ab8d324b5e21be4d14403e1ffea8e8c932161ab5d5e448"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "8b5485e93452c1c511f071f35cf70f45d5c1f212f368b21558530f3ac25f7f34",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/868e1bf518e41b38e3d4c7e634d4aee2522e89973b79fd20cfa631fe63e39c4b.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/868e1bf518e41b38e3d4c7e634d4aee2522e89973b79fd20cfa631fe63e39c4b.wav",
+    "source_sha256": "c0a973b38919103526d7bed43e58578479f40534a6957172e176eb822bc24dbf",
+    "txtp_sha256": "875db5299434fe083e9326de55946921bb1612fdc038fe4e1e582c9408781983"
   },
   {
     "file": "assets/audio/units/super_minion/chaos/play_sfx_sru_chaosminionsuper_sru_chaosminionsuperbasicattack2_oncast_r3.wav",
     "event": "Play_sfx_SRU_ChaosMinionSuper_SRU_ChaosMinionSuperBasicAttack2_OnCast",
     "event_id": 1347524046,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaossuper_sfx_events-0019-event {r3}.txtp",
     "duration": 1.079591836734694,
     "media_ids": [
       634067554,
@@ -311,14 +450,21 @@
       808954279,
       882427249
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "8758f2bf3d697562be39b19baec09f8977d6c77c7398b2c7b427ed3e0ec332ae"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "d116c24532a57aa88131843ad5e316ffa1e05927fb75b90068a61c46bff21582",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/dc601d9e84048dd123d3b886b053f7c67a6984a064310f50041140a291a912c5.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/dc601d9e84048dd123d3b886b053f7c67a6984a064310f50041140a291a912c5.wav",
+    "source_sha256": "73af1b94c306295d5dde6e102651b7513b6f756098beff2d56c862ae11eee70a",
+    "txtp_sha256": "99519588824c3c897ba9638d135f34340a45843f2afb5460706182db0ee74b09"
   },
   {
     "file": "assets/audio/units/super_minion/chaos/play_sfx_sru_chaosminionsuper_sru_chaosminionsuperbasicattack2_onhit_r1.wav",
     "event": "Play_sfx_SRU_ChaosMinionSuper_SRU_ChaosMinionSuperBasicAttack2_OnHit",
     "event_id": 4234911002,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaossuper_sfx_events-0041-event {r1} {d}.txtp",
     "duration": 1.4586621315192745,
     "media_ids": [
       665034686,
@@ -326,14 +472,21 @@
       765116358,
       931278533
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "6baec7deb0c48274864c134c6ff8ead83e25afd499619e817458c92a836d7a72"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "09c4868ae9e2740660ad67fe66f2f2da897ffc0e912e4686253d8603da1f9153",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/349f52d39007f4dc2e66cb2450a70386868c97ba67a8379efe065959f7bee2b3.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/349f52d39007f4dc2e66cb2450a70386868c97ba67a8379efe065959f7bee2b3.wav",
+    "source_sha256": "a0c758f700de53b79ed2e9f7a1e947e9e32050d33cef6558c360729779404242",
+    "txtp_sha256": "1edd09e254e0d7df31b4ab1f36e629029f3db1424ac4950c0d94d833c0f78aed"
   },
   {
     "file": "assets/audio/units/super_minion/chaos/play_sfx_sru_chaosminionsuper_sru_chaosminionsuperbasicattack2_onhit_r2.wav",
     "event": "Play_sfx_SRU_ChaosMinionSuper_SRU_ChaosMinionSuperBasicAttack2_OnHit",
     "event_id": 4234911002,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaossuper_sfx_events-0041-event {r2} {d}.txtp",
     "duration": 1.123628117913832,
     "media_ids": [
       665034686,
@@ -341,14 +494,21 @@
       765116358,
       931278533
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "1ce91c41b6a69cbf9e750957f6d50ad05d7285a18bc1764642b7683301ad7448"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "2f604da41871cc745942a43ad09b726b23ce483a5a6c1d15fe797ec72aa83772",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/3e096717b88d5c12fa6ab96a5760df88a077d4aac1854798eb81fe6ea7b3c962.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/3e096717b88d5c12fa6ab96a5760df88a077d4aac1854798eb81fe6ea7b3c962.wav",
+    "source_sha256": "df950033a2fcfa5f944ff15432717a13f23307e00136cf0ca982076c6640d09c",
+    "txtp_sha256": "5a3b5b7b03b99347a5ba0bd574b7022ca9bf897135e6c41f7cd0e59f50ebe25c"
   },
   {
     "file": "assets/audio/units/super_minion/chaos/play_sfx_sru_chaosminionsuper_sru_chaosminionsuperbasicattack2_onhit_r3.wav",
     "event": "Play_sfx_SRU_ChaosMinionSuper_SRU_ChaosMinionSuperBasicAttack2_OnHit",
     "event_id": 4234911002,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/npc_global_minions_chaossuper_sfx_events-0041-event {r3} {d}.txtp",
     "duration": 1.2017913832199547,
     "media_ids": [
       665034686,
@@ -356,7 +516,15 @@
       765116358,
       931278533
     ],
-    "processing": "Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization",
-    "sha256": "2a46eba13f64f6174d890c9585e3c7d117426a3d7f4360926b4f99b9c52726db"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "50338e11a38ec5db19b0d276c6467fcd3d83542f483104092b71a4921cf4785f",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/a6e5c31b706adb5ee60ea2c2ad531783a95401b7a463219d345f5ea74dc748ef.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/a6e5c31b706adb5ee60ea2c2ad531783a95401b7a463219d345f5ea74dc748ef.wav",
+    "source_sha256": "5161c585087b55c1f5956c3ab23c1e85340dced7ef26b448881c54b2718dfcee",
+    "txtp_sha256": "11d662e58c3e27200cc173cb06f93734b2f36bb219bbdce76957b84a7fbd237c"
   }
 ]

@@ -96,13 +96,13 @@ static func definition() -> Dictionary:
 					"res://assets/audio/units/anivia/play_sfx_anivia_aniviabasicattack_oncast_d.wav"
 				]
 			],
-			"attack_swing_volume_db": -3.0,
+			"attack_swing_volume_db": 0.0,
 			"attack_hit": [
 				"res://assets/audio/units/anivia/play_sfx_anivia_aniviabasicattack_onhit_r1_d.wav",
 				"res://assets/audio/units/anivia/play_sfx_anivia_aniviabasicattack_onhit_r2_d.wav",
 				"res://assets/audio/units/anivia/play_sfx_anivia_aniviabasicattack_onhit_r3_d.wav"
 			],
-			"attack_hit_volume_db": -5.0,
+			"attack_hit_volume_db": 0.0,
 		},
 		# END IMPORTED AUDIO anivia
 		"card_art": {},

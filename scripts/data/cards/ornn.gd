@@ -51,7 +51,7 @@ static func definition() -> Dictionary:
 		# BEGIN IMPORTED AUDIO ornn
 		"audio": {
 			"events": {
-				"deploy:voice": {"pool": ["res://assets/audio/units/ornn/deploy_choose_zh_cn.wav", "res://assets/audio/units/ornn/deploy_quality_zh_cn.wav", "res://assets/audio/units/ornn/deploy_ban_zh_cn.wav"], "volume_db": -2.0, "bus": "Voice"},
+				"deploy:voice": {"clip_volume_db": {"res://assets/audio/units/ornn/deploy_choose_zh_cn.wav": -13.0, "res://assets/audio/units/ornn/deploy_ban_zh_cn.ogg": -14.0}, "pool": ["res://assets/audio/units/ornn/deploy_choose_zh_cn.wav", "res://assets/audio/units/ornn/deploy_quality_zh_cn.wav", "res://assets/audio/units/ornn/deploy_ban_zh_cn.ogg"], "volume_db": 0.0, "bus": "Voice"},
 				"death": {
 					"pool": [
 						"res://assets/audio/units/ornn/play_vo_ornn_death3d_r1_zh_cn.wav",
@@ -61,15 +61,15 @@ static func definition() -> Dictionary:
 					"volume_db": 0.0,
 					"bus": "Voice"
 				},
-				"charge:step": {"pool": ["res://assets/audio/units/ornn/charge_step_1.wav", "res://assets/audio/units/ornn/charge_step_2.wav", "res://assets/audio/units/ornn/charge_step_3.wav", "res://assets/audio/units/ornn/charge_step_4.wav", "res://assets/audio/units/ornn/charge_step_5.wav"], "volume_db": -7, "bus": "Combat"},
-				"charge:trail_hit": {"pool": ["res://assets/audio/units/ornn/charge_trail_hit_1.wav", "res://assets/audio/units/ornn/charge_trail_hit_2.wav", "res://assets/audio/units/ornn/charge_trail_hit_3.wav", "res://assets/audio/units/ornn/charge_trail_hit_4.wav", "res://assets/audio/units/ornn/charge_trail_hit_5.wav"], "volume_db": -6, "bus": "Combat"},
-				"charge:knockup": {"pool": ["res://assets/audio/units/ornn/charge_knockup_1.wav"], "volume_db": -6, "bus": "Combat"},
-				"forge:arrive": {"pool": ["res://assets/audio/units/ornn/forge_arrive_1.wav"], "volume_db": -3, "bus": "Combat"},
+				"charge:step": {"pool": ["res://assets/audio/units/ornn/charge_step_1.wav", "res://assets/audio/units/ornn/charge_step_2.wav", "res://assets/audio/units/ornn/charge_step_3.wav", "res://assets/audio/units/ornn/charge_step_4.wav", "res://assets/audio/units/ornn/charge_step_5.wav"], "volume_db": 0.0, "bus": "Combat"},
+				"charge:trail_hit": {"pool": ["res://assets/audio/units/ornn/charge_trail_hit_1.wav", "res://assets/audio/units/ornn/charge_trail_hit_2.wav", "res://assets/audio/units/ornn/charge_trail_hit_3.wav", "res://assets/audio/units/ornn/charge_trail_hit_4.wav", "res://assets/audio/units/ornn/charge_trail_hit_5.wav"], "volume_db": 0.0, "bus": "Combat"},
+				"charge:knockup": {"pool": ["res://assets/audio/units/ornn/charge_knockup_1.wav"], "volume_db": 0.0, "bus": "Combat"},
+				"forge:arrive": {"pool": ["res://assets/audio/units/ornn/forge_arrive_1.wav"], "volume_db": 0.0, "bus": "Combat"},
 				"forge:strike": {
 					"pool": [
 						"res://assets/audio/units/ornn/forge_final_strike.wav"
 					],
-					"volume_db": -7.0,
+					"volume_db": 0.0,
 					"bus": "Combat"
 				},
 				"charge:start": {
@@ -84,7 +84,7 @@ static func definition() -> Dictionary:
 					"pool": [
 						"res://assets/audio/units/ornn/play_sfx_ornn_ornne_buffonmoveend_explosion_r.wav"
 					],
-					"volume_db": -3.0,
+					"volume_db": 0.0,
 					"bus": "Combat"
 				}
 			},
@@ -105,7 +105,7 @@ static func definition() -> Dictionary:
 					"res://assets/audio/units/ornn/play_sfx_ornn_ornnbasicattack3_oncast_r3_d.wav"
 				]
 			],
-			"attack_swing_volume_db": -3.0,
+			"attack_swing_volume_db": 0.0,
 			"attack_hit_by_segment": [
 				[
 					"res://assets/audio/units/ornn/play_sfx_ornn_ornnbasicattack_onhit_1559186049_1153642577_r1_d.wav",

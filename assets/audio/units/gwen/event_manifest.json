@@ -3,206 +3,276 @@
     "file": "play_sfx_gwen_gwenbasicattack_swipe_cast_r1.wav",
     "event": "Play_sfx_Gwen_GwenBasicAttack_Swipe_cast",
     "event_id": 4188707306,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenBasicAttack_Swipe_cast {r1}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenBasicAttack_Swipe_cast {r1}.txtp",
     "media_ids": [
       502470164,
       541742055,
       611764951,
       869530993
     ],
-    "duration": 0.9969,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "1613c0fb0e4559391d6a2b8a0f7a01d80dd5925097148c364b4914a03f244f2c",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 0.996938775510204,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "9ed35ecb84340f1bbb101359c9d4a99a8d76372501eea0980fbd61230bf4f7d8",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/ff6c87b340c142b3e6a25906231d03da7f1b5ca28130ffc4de0b4a5dbcdd1f01.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/ff6c87b340c142b3e6a25906231d03da7f1b5ca28130ffc4de0b4a5dbcdd1f01.wav",
+    "source_sha256": "b1c39ae0a8be534a99fd0afbf383b720056d010288b48284df2cf5069919c7e8",
+    "txtp_sha256": "6f83a884cae65073de5d85f8b75b1aa04a7ed942e00bb6279b4e0480e3d8ea67"
   },
   {
     "file": "play_sfx_gwen_gwenbasicattack_swipe_cast_r2.wav",
     "event": "Play_sfx_Gwen_GwenBasicAttack_Swipe_cast",
     "event_id": 4188707306,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenBasicAttack_Swipe_cast {r2}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenBasicAttack_Swipe_cast {r2}.txtp",
     "media_ids": [
       502470164,
       541742055,
       611764951,
       869530993
     ],
-    "duration": 0.9969,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "01327997cf483fef2654a4b7b9d80697604e728a7fe92f58b177adad102dc0df",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 0.996938775510204,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "7dc2f48a8865e46fabe7a80995ae47b7c8115813111d74bdf956d0df30ce4852",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/b19324125bbe7f677a8d01fd9926127f325e0c6efca1bde38edc6755cf9c6a51.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/b19324125bbe7f677a8d01fd9926127f325e0c6efca1bde38edc6755cf9c6a51.wav",
+    "source_sha256": "e85eeb984762c02608613fe456de68dc280907894aecf98507dbdfc586bc9c67",
+    "txtp_sha256": "094376a5a915f03a2ecdf27e30bdcf39c2d988eff4330658186cc7837400644a"
   },
   {
     "file": "play_sfx_gwen_gwenbasicattack_swipe_cast_r3.wav",
     "event": "Play_sfx_Gwen_GwenBasicAttack_Swipe_cast",
     "event_id": 4188707306,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenBasicAttack_Swipe_cast {r3}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenBasicAttack_Swipe_cast {r3}.txtp",
     "media_ids": [
       502470164,
       541742055,
       611764951,
       869530993
     ],
-    "duration": 0.9969,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "7e8db099c411e5730aa092f036a328fee17d58c5ef0c6e8de906f845ea64fd04",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 0.996938775510204,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "dff4cc2a68d782752ff1f22def5359661af6ac43989b539353010e4ca7e54d1d",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/1c7e32f99d08587ee51325f677eaef9422e4caed9e5af817076b77c622f39ad7.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/1c7e32f99d08587ee51325f677eaef9422e4caed9e5af817076b77c622f39ad7.wav",
+    "source_sha256": "76808c17eecfb433e847560171f4edd3f5e0b7207a4a7eef55e443ccf0caf952",
+    "txtp_sha256": "e894203b928341a2360a0a51e30fbad2486fad4d1e70424bb06dd139b4b2497f"
   },
   {
     "file": "play_sfx_gwen_gwenbasicattack_stab_cast_r1.wav",
     "event": "Play_sfx_Gwen_GwenBasicAttack_Stab_cast",
     "event_id": 3760145488,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenBasicAttack_Stab_cast {r1}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenBasicAttack_Stab_cast {r1}.txtp",
     "media_ids": [
       148656732,
       313949284,
       690571695
     ],
-    "duration": 0.9145,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "fa7b1f2365220a9b29e8fe9ae80c582dd79224b7caabf60fbf3e02ddaaca6795",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 0.9145351473922902,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "8ea106ff245144fa852464a13d1066d56aa781f37cbcb409b92daa0714e44286",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/0b6608a393360f453f314eb5614f676b2c3a9d450a14f765ace868e662aab7c1.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/0b6608a393360f453f314eb5614f676b2c3a9d450a14f765ace868e662aab7c1.wav",
+    "source_sha256": "e599a94a0dcc37f50b0f08e0639d90e43cfddc9beb92d1af524c305466b6b1cb",
+    "txtp_sha256": "5629e59ca1751db97e5e8f7c4aa71905b500111bfea106ef09e0fadf920db8a3"
   },
   {
     "file": "play_sfx_gwen_gwenbasicattack_stab_cast_r2.wav",
     "event": "Play_sfx_Gwen_GwenBasicAttack_Stab_cast",
     "event_id": 3760145488,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenBasicAttack_Stab_cast {r2}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenBasicAttack_Stab_cast {r2}.txtp",
     "media_ids": [
       148656732,
       313949284,
       690571695
     ],
-    "duration": 0.9145,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "0822ff9721d2d38c2a5ef97e05244995d0f189f4a2d763db91237a8ddb37595e",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 0.9145351473922902,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "fdd3c2e43e8f6493435cea6774bb9e6098145fde9f22c5edb03fd35c93117296",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/c94bd13972d88a87d78682b101a8270ec017c4f225e66b490ca75a3b28c3eec0.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/c94bd13972d88a87d78682b101a8270ec017c4f225e66b490ca75a3b28c3eec0.wav",
+    "source_sha256": "9002038398362967ddf9a0d3208e9ea1ff30d0d69495cbf4a61839eb3b7d1e65",
+    "txtp_sha256": "4fdc4586d1d367734ad459965025c12cb3cb796b251aac04b9eda2ab230ffe97"
   },
   {
     "file": "play_sfx_gwen_gwenbasicattack_stab_cast_r3.wav",
     "event": "Play_sfx_Gwen_GwenBasicAttack_Stab_cast",
     "event_id": 3760145488,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenBasicAttack_Stab_cast {r3}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenBasicAttack_Stab_cast {r3}.txtp",
     "media_ids": [
       148656732,
       313949284,
       690571695
     ],
-    "duration": 0.9145,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "7ce8905797cab054a303fd45313b0285b7b51a03e87ff4f1a23330837ae8d928",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 0.9145351473922902,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "624af215c28529f2844501fa6088c1f4ae8162f6f2531a31f866f4108009b21f",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/9f2310a10b79f3d38ead12c73662828ac0a8180e0aa8c3cfefe3e829de7d47ab.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/9f2310a10b79f3d38ead12c73662828ac0a8180e0aa8c3cfefe3e829de7d47ab.wav",
+    "source_sha256": "94b0898a34a3e63b587ff15c164dc355d7db3edb42d6caa112fe27167b7ca376",
+    "txtp_sha256": "a68fea1a1c5ec8ebfefa0e5115133a6bd0a5e81d768624bc1277f275d934de1b"
   },
   {
     "file": "play_sfx_gwen_gwenbasicattack_swipe_hit_r1.wav",
     "event": "Play_sfx_Gwen_GwenBasicAttack_Swipe_hit",
     "event_id": 3715259742,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenBasicAttack_Swipe_hit {r1}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenBasicAttack_Swipe_hit {r1}.txtp",
     "media_ids": [
       38300093,
       803256852,
       817087734,
       843161985
     ],
-    "duration": 1.0187,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "5725b2b71cddc524800eb02430d25006a344c95fbcded0ba5ffb37ab71251588",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 1.0187301587301587,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "e8218e7a359980f81b1035601216df55e91dda299279f85f84e560cb43a585d5",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/d263271b5746cf2d07698082cb17c11afd57b46322f5fd0943ca92ad1676941e.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/d263271b5746cf2d07698082cb17c11afd57b46322f5fd0943ca92ad1676941e.wav",
+    "source_sha256": "e7b9e9f87c5fe4e67b9f704305fb5889a40e8befdb88bdeb3efcf9290cb868be",
+    "txtp_sha256": "c071049e3a9d53be53c48740e1447d42e2e84204f428076cba7b7851950a91e4"
   },
   {
     "file": "play_sfx_gwen_gwenbasicattack_swipe_hit_r2.wav",
     "event": "Play_sfx_Gwen_GwenBasicAttack_Swipe_hit",
     "event_id": 3715259742,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenBasicAttack_Swipe_hit {r2}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenBasicAttack_Swipe_hit {r2}.txtp",
     "media_ids": [
       38300093,
       803256852,
       817087734,
       843161985
     ],
-    "duration": 1.0187,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "ae8540af81b88235bc5cc7b6ee547e26f99924b18ce752472d625d3314add3da",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 1.0187301587301587,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "3ed2bfeb397070b3625ab047cb32dcbb0e99291c813a7029c2d086743b0f265d",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/04e9b2e35268a3066c6e01c51fe7f700cf8bd61803221de0304fd2ea90f6d31f.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/04e9b2e35268a3066c6e01c51fe7f700cf8bd61803221de0304fd2ea90f6d31f.wav",
+    "source_sha256": "1ab6bfea8e1d4d50dcb36e46735ebbf404e91bed3334bf231bcc176501dba517",
+    "txtp_sha256": "aa05e6df372062957f0f5cd91a6c5a20570d432524ea5a65238726e5b1d290c1"
   },
   {
     "file": "play_sfx_gwen_gwenbasicattack_swipe_hit_r3.wav",
     "event": "Play_sfx_Gwen_GwenBasicAttack_Swipe_hit",
     "event_id": 3715259742,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenBasicAttack_Swipe_hit {r3}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenBasicAttack_Swipe_hit {r3}.txtp",
     "media_ids": [
       38300093,
       803256852,
       817087734,
       843161985
     ],
-    "duration": 1.0187,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "333005e19deff6ed6ad84f16506eaeb0db50073ed63d7c87bdd0e5502df80053",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 1.0187301587301587,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "b5d61453bb99acce4c27d27fca88efbf2c4c1860d9b17db7a61b401ec02ce349",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/f745c8ea4e190c9693e2e8c882fbee1c05a0f92a2702b2317c9ceac59aa43209.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/f745c8ea4e190c9693e2e8c882fbee1c05a0f92a2702b2317c9ceac59aa43209.wav",
+    "source_sha256": "506703731946e48d12c946cede87acccf5fae1cbdbc6d67017d1f7032566b158",
+    "txtp_sha256": "dc41a771ef81ed0af7bba6229a27c49d04619801d728f786a28d4c449b98ef3c"
   },
   {
     "file": "play_sfx_gwen_gwenbasicattack_stab_hit_r1.wav",
     "event": "Play_sfx_Gwen_GwenBasicAttack_Stab_hit",
     "event_id": 48960016,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenBasicAttack_Stab_hit {r1}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenBasicAttack_Stab_hit {r1}.txtp",
     "media_ids": [
       397982840,
       819503653,
       1070466832
     ],
-    "duration": 1.1857,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "29ab4f584276f1d67281d64f8a747c73544907cff61b4fb0d6518cd0eab192a6",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 1.1856689342403628,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "deaa374224ce431acb8f353754e9008db84e3eac64a38040455f4cdb30c71fd4",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/08ebfdfb662ae6cc431b81985bd6c220119efaf3495663866f99c0b50bbdc9ad.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/08ebfdfb662ae6cc431b81985bd6c220119efaf3495663866f99c0b50bbdc9ad.wav",
+    "source_sha256": "caf2f8c9217c7ff27e2a04b4a891afb3cd30e1b9296db4a495b2fdbc6eb490b4",
+    "txtp_sha256": "7cb572a66bb7849d7550cc1ae7da38219025217c7ec0f547b39b321711b1a329"
   },
   {
     "file": "play_sfx_gwen_gwenbasicattack_stab_hit_r2.wav",
     "event": "Play_sfx_Gwen_GwenBasicAttack_Stab_hit",
     "event_id": 48960016,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenBasicAttack_Stab_hit {r2}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenBasicAttack_Stab_hit {r2}.txtp",
     "media_ids": [
       397982840,
       819503653,
       1070466832
     ],
-    "duration": 1.1857,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "61fa7923cffd8c405e9d742dfde54452c34c3ebdadddefcce6ffb4dfe6aaeabd",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 1.1856689342403628,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "3d68f16ae580e6f5b90116c9fcf391c0fcd20ecea823704739ac269d4ff3187c",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/0c0c7662924c4418ba31a7596eff9afccca30cf66cc82efa497d8b791ef573ca.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/0c0c7662924c4418ba31a7596eff9afccca30cf66cc82efa497d8b791ef573ca.wav",
+    "source_sha256": "d7c036d7ede417870d3eb178dee9639c3fea4555e23a7c3b6112c4b76022d530",
+    "txtp_sha256": "a9223a2f9a6680edfaebc9ef00799f37004a08038a035eab3ff8f32d397623ff"
   },
   {
     "file": "play_sfx_gwen_gwenbasicattack_stab_hit_r3.wav",
     "event": "Play_sfx_Gwen_GwenBasicAttack_Stab_hit",
     "event_id": 48960016,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenBasicAttack_Stab_hit {r3}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenBasicAttack_Stab_hit {r3}.txtp",
     "media_ids": [
       397982840,
       819503653,
       1070466832
     ],
-    "duration": 1.1857,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "62967e25df01903fb5d67c29c14cdce850787a8da6203bb3c81c0f2fcf3176f0",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 1.1856689342403628,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "ce7ea83640169b539b0049e7603b0f9f8a3e22d83a519ff42e1ecadde545cf12",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/c600580995464a6a8b2f1c47b9c080b5111dd3a32eaa39d1ac54d39c880f70bd.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/c600580995464a6a8b2f1c47b9c080b5111dd3a32eaa39d1ac54d39c880f70bd.wav",
+    "source_sha256": "b5e8cf556217cf5525ad73557f3f012839715b23108a8df84d54372311af99e6",
+    "txtp_sha256": "86f73e977f178386bfb086e8556aafa15a43d74341df99fc01bbc1da41912da5"
   },
   {
     "file": "play_vo_gwen_death3d_r1_zh_cn.wav",
     "event": "Play_vo_Gwen_Death3D",
     "event_id": 1475155975,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen_vo/event_wav/Play_vo_Gwen_Death3D {r1}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen_vo/txtp/Play_vo_Gwen_Death3D {r1}.txtp",
     "media_ids": [
       24922094,
       474938432,
@@ -212,24 +282,22 @@
       1987674222
     ],
     "duration": 1.5,
-    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
-    "sha256": "f0a7250105870655e2de544d4b475c9ccb3492a27d832aa474df965e24e6e4f8",
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "3980a2b9315b57f12422a1105485aecfc039d8fca44a5eacd9ac7ce32d4ea57b",
     "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
-    "death_envelope": {
-      "source_duration": 4.467097505668934,
-      "source_sha256": "aa1665243e65e057ec77edeac9c11fc43985991b31994ad8f5001840adcd5b9f",
-      "keep_seconds": 1.5,
-      "fade_start_seconds": 1.0,
-      "fade_seconds": 0.5,
-      "curve": "linear_amplitude"
-    }
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/c8a1152464ed48f549b8e0afba91eb22c958da7487f8ca6433ca604ae902c520.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/c8a1152464ed48f549b8e0afba91eb22c958da7487f8ca6433ca604ae902c520.wav",
+    "source_sha256": "f2d3ee2366fe93265c4101b73ae19e44993e19190212ff7f1ef9ad5cc1ad2993",
+    "txtp_sha256": "4c3c73b7cbeff9640da34a32cef48f6436c25c3af24f34c8b542e9213a9998ad"
   },
   {
     "file": "play_vo_gwen_death3d_r2_zh_cn.wav",
     "event": "Play_vo_Gwen_Death3D",
     "event_id": 1475155975,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen_vo/event_wav/Play_vo_Gwen_Death3D {r2}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen_vo/txtp/Play_vo_Gwen_Death3D {r2}.txtp",
     "media_ids": [
       24922094,
       474938432,
@@ -239,24 +307,22 @@
       1987674222
     ],
     "duration": 1.5,
-    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
-    "sha256": "54a45693bb3fbab828fc5a1fcfaeb3eead3f3d06240c0ed1fb324ac1517e8ab7",
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "8911776e3716b489e0be889a1cab49d3c42693f9a4db9c270590de690a1c2421",
     "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
-    "death_envelope": {
-      "source_duration": 3.608548752834467,
-      "source_sha256": "26084e0758f69954b4fbd3dae8bb595f18e155f1b5309197a4d970be267a2c1e",
-      "keep_seconds": 1.5,
-      "fade_start_seconds": 1.0,
-      "fade_seconds": 0.5,
-      "curve": "linear_amplitude"
-    }
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/619cbfa3d47c79f823fd4efe4abd44def8ec28595f682994dd42d1fc1a60b29f.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/619cbfa3d47c79f823fd4efe4abd44def8ec28595f682994dd42d1fc1a60b29f.wav",
+    "source_sha256": "c1f08cc48178fa116b0f67b796912b68bdc24a48221cb54d96f508ce0531a1e0",
+    "txtp_sha256": "104721849d225b5f61da08495c0e6ac19fc1bff6b6f77b6c3342590fa3c829be"
   },
   {
     "file": "play_vo_gwen_death3d_r3_zh_cn.wav",
     "event": "Play_vo_Gwen_Death3D",
     "event_id": 1475155975,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen_vo/event_wav/Play_vo_Gwen_Death3D {r3}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen_vo/txtp/Play_vo_Gwen_Death3D {r3}.txtp",
     "media_ids": [
       24922094,
       474938432,
@@ -266,24 +332,24 @@
       1987674222
     ],
     "duration": 1.5,
-    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
-    "sha256": "40fd5d7a3bf8eeea786664693d5a22a8d7ada97eb9298f1f4a1e0126832371c5",
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "a60c24043c61066478cb1c76936c54dda64020b6927dde4c0328c1677ea5f284",
     "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
-    "death_envelope": {
-      "source_duration": 3.412403628117914,
-      "source_sha256": "d26bae7f6ae21b7f1093cb1b56cf79bc21798339d45f45bc8da880e5f0ef32f2",
-      "keep_seconds": 1.5,
-      "fade_start_seconds": 1.0,
-      "fade_seconds": 0.5,
-      "curve": "linear_amplitude"
-    }
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/9dc8d837a8c3c9d595fd615f986c3d9b1b28955f9abe260bd6df796ecac3fb79.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/9dc8d837a8c3c9d595fd615f986c3d9b1b28955f9abe260bd6df796ecac3fb79.wav",
+    "source_sha256": "aaef463710112edc88ab8c76a3d22871cf22fc90a5d6e74710c5a0a94d76b84c",
+    "txtp_sha256": "144f2dd426facc332613cfd794b748d6452b401b5d7a2b4487572da4b252ecba"
   },
   {
     "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenqfirst_cast_r.wav",
     "event": "Play_sfx_Gwen_GwenQFirst_cast",
     "event_id": 1117487748,
     "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenQFirst_cast {r}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenQFirst_cast {r}.txtp",
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/aa31dd0885aa3ee3b34a5a272d60f5d3fe7fd98fb9ad11e6c63a92a7c1ac3ee0.txtp",
     "media_ids": [
       53754217,
       164825511,
@@ -304,7 +370,7 @@
     "event": "Play_sfx_Gwen_GwenQLast_cast",
     "event_id": 2146811922,
     "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenQLast_cast {r}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenQLast_cast {r}.txtp",
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/842af6bdf37c86485acf0e22b1f94ca0f345b8f91d402a48bbb74f4b2d9f3d22.txtp",
     "media_ids": [
       164825511,
       429688416,
@@ -323,7 +389,6 @@
   {
     "file": "gwen_q_active_0.wav",
     "event": "Play_sfx_Gwen_GwenQFirst_cast + Play_sfx_Gwen_GwenQLast_cast",
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/event_wav/gwen_q_active_0.wav",
     "sequence": [
       {
         "event": "Play_sfx_Gwen_GwenQFirst_cast",
@@ -334,15 +399,21 @@
         "time": 1.0443036
       }
     ],
-    "processing": "ffmpeg adelay ms; amix normalize=0; 1.5 s with final 20 ms fade; 44.1k mono PCM16",
-    "sha256": "702eabd85efa7907a9e239061fbcb940fae6c05536015ea78620fc59932552be"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "a5c4ac3a0e94ca6ec394b41299c136ed31ad42515403d493249f43649d533526",
+    "duration": 1.5,
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_preview": null
   },
   {
     "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenqmiddle_1stack_cast_r1.wav",
     "event": "Play_sfx_Gwen_GwenQMiddle_1stack_cast",
     "event_id": 268254909,
     "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenQMiddle_1stack_cast {r1}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenQMiddle_1stack_cast {r1}.txtp",
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/d118756c4bf3db3bfa16533b814ce3be24383b4afe4cdbd161ec25dee630658d.txtp",
     "media_ids": [
       164825511,
       429688416,
@@ -359,7 +430,7 @@
     "event": "Play_sfx_Gwen_GwenQMiddle_1stack_cast",
     "event_id": 268254909,
     "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenQMiddle_1stack_cast {r2}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenQMiddle_1stack_cast {r2}.txtp",
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/8594ea820aaa2a5b675cb75a44b35d108cceb6720b78467e2e15c4ba08745dbe.txtp",
     "media_ids": [
       164825511,
       429688416,
@@ -376,7 +447,7 @@
     "event": "Play_sfx_Gwen_GwenQMiddle_1stack_cast",
     "event_id": 268254909,
     "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenQMiddle_1stack_cast {r3}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenQMiddle_1stack_cast {r3}.txtp",
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/0cb3faf49416e96e298bfcf4bbae98598ded8e031d2c9f39a441497680cd335b.txtp",
     "media_ids": [
       164825511,
       429688416,
@@ -391,7 +462,6 @@
   {
     "file": "gwen_q_active_1.wav",
     "event": "Play_sfx_Gwen_GwenQFirst_cast + Play_sfx_Gwen_GwenQMiddle_1stack_cast + Play_sfx_Gwen_GwenQLast_cast",
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/event_wav/gwen_q_active_1.wav",
     "sequence": [
       {
         "event": "Play_sfx_Gwen_GwenQFirst_cast",
@@ -406,13 +476,18 @@
         "time": 1.0443036
       }
     ],
-    "processing": "ffmpeg adelay ms; amix normalize=0; 1.5 s with final 20 ms fade; 44.1k mono PCM16",
-    "sha256": "f2cef6e31864ec8a4d7d863467095768469beb59307346e982fce9ce1604fc35"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "c65b5825d1a501cf80de1880aec872d1c473d19e87dd0444182ae06f7cf7a308",
+    "duration": 1.5,
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_preview": null
   },
   {
     "file": "gwen_q_active_2.wav",
     "event": "Play_sfx_Gwen_GwenQFirst_cast + Play_sfx_Gwen_GwenQMiddle_1stack_cast + Play_sfx_Gwen_GwenQMiddle_1stack_cast + Play_sfx_Gwen_GwenQLast_cast",
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/event_wav/gwen_q_active_2.wav",
     "sequence": [
       {
         "event": "Play_sfx_Gwen_GwenQFirst_cast",
@@ -431,13 +506,18 @@
         "time": 1.0443036
       }
     ],
-    "processing": "ffmpeg adelay ms; amix normalize=0; 1.5 s with final 20 ms fade; 44.1k mono PCM16",
-    "sha256": "7139c389617fce0d1bd932f28c3f6952c2da0bf9dc5d771f4c63b9f2662a2d73"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "03b427f144d17a02356865510fb94ffb0d4defbf82e919776d7cfedeeeb3df64",
+    "duration": 1.5,
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_preview": null
   },
   {
     "file": "gwen_q_active_3.wav",
     "event": "Play_sfx_Gwen_GwenQFirst_cast + Play_sfx_Gwen_GwenQMiddle_1stack_cast + Play_sfx_Gwen_GwenQMiddle_1stack_cast + Play_sfx_Gwen_GwenQMiddle_1stack_cast + Play_sfx_Gwen_GwenQLast_cast",
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/event_wav/gwen_q_active_3.wav",
     "sequence": [
       {
         "event": "Play_sfx_Gwen_GwenQFirst_cast",
@@ -460,149 +540,218 @@
         "time": 1.0443036
       }
     ],
-    "processing": "ffmpeg adelay ms; amix normalize=0; 1.5 s with final 20 ms fade; 44.1k mono PCM16",
-    "sha256": "73378578ac1f0c54d2da3c93372c37f25c2cd8156c27a4fdd4b4a96e6f326a5e"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "4765ff53d9142bc2d46fe09f8a28e96981ef00c97122f369ea14a3079abb8e0d",
+    "duration": 1.5,
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_preview": null
   },
   {
     "file": "play_sfx_gwen_gwenqfirst_hit_r1.wav",
     "event": "Play_sfx_Gwen_GwenQFirst_hit",
     "event_id": 88848300,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenQFirst_hit {r1}.txtp",
     "media_ids": [
       74812377,
       115397365,
       531174420,
       887902542
     ],
-    "duration": 0.5803,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "560556925a3025d6972ceb062e06a68b9ede59ed6b5e21be007ae92070d29862"
+    "duration": 0.5802947845804989,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "3ac186dc9ead2407c4865e9f11ed491bd7581f41cdcf6568788bbc3d5cc59a32",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/998f5107913db39b38a93682ab8a7008debdc3b1fcb756a9b26db4f996002e5b.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/998f5107913db39b38a93682ab8a7008debdc3b1fcb756a9b26db4f996002e5b.wav",
+    "source_sha256": "863bb1fcddb3cad35bcff293a553fb628871c57a89ea901f28b6e5b9a7d9bddf",
+    "txtp_sha256": "915680243a3cb3461bf8eb3748ca842bb115da78e9a3eec9877bb59ef339c4a0"
   },
   {
     "file": "play_sfx_gwen_gwenqfirst_hit_r2.wav",
     "event": "Play_sfx_Gwen_GwenQFirst_hit",
     "event_id": 88848300,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenQFirst_hit {r2}.txtp",
     "media_ids": [
       74812377,
       115397365,
       531174420,
       887902542
     ],
-    "duration": 0.5803,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "d0e1eb00c02a27312e99ab783a193c634cfdcad5a5656c9604f1a448af2cf5aa"
+    "duration": 0.5802947845804989,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "61f3fe21b25464028bc25ee17ed6fec7d152ebdff182cb19881ec97d564a6c52",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/98891845a41cb3e6e4a7755d1e129f6e3075547e7bfb909edb4dc7768cac99b1.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/98891845a41cb3e6e4a7755d1e129f6e3075547e7bfb909edb4dc7768cac99b1.wav",
+    "source_sha256": "1af90166fc1492c6da064c157ddafb6c226800873245c1f92e73568c0038e560",
+    "txtp_sha256": "401c5cffe355db6fbb386a11da1a89761a988407dfc698632a97d0dfe0f5b2be"
   },
   {
     "file": "play_sfx_gwen_gwenqfirst_hit_r3.wav",
     "event": "Play_sfx_Gwen_GwenQFirst_hit",
     "event_id": 88848300,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenQFirst_hit {r3}.txtp",
     "media_ids": [
       74812377,
       115397365,
       531174420,
       887902542
     ],
-    "duration": 0.5803,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "7cc735de9943c08cbc28b125c8ece828bf239da8b50f3714b39f86f770932b66"
+    "duration": 0.5802947845804989,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "13770bbbbf08efe733566ebd137fc46320ef033783d16dd9688dfd770228808a",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/66a8bca57fe0996011fe7797a62b3840f4a6b72b2e2a98ff92d39a967446b8e0.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/66a8bca57fe0996011fe7797a62b3840f4a6b72b2e2a98ff92d39a967446b8e0.wav",
+    "source_sha256": "644af19ea59e74f45fd3290a82cf35f865ce02339b3fd8ed3e207204a179425f",
+    "txtp_sha256": "c620043f67ac5405fcaa5da25934923c8c850d76e1076a3b82864af79c4d5d38"
   },
   {
     "file": "play_sfx_gwen_gwenqmiddle_hit_r1.wav",
     "event": "Play_sfx_Gwen_GwenQMiddle_hit",
     "event_id": 606706469,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenQMiddle_hit {r1}.txtp",
     "media_ids": [
       253101884,
       497484892,
       927225298,
       1064256902
     ],
-    "duration": 0.1256,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "ef46cde42c52888bd82a70bdff45019abc37524e81636b3831c54edf41868a3a"
+    "duration": 0.12560090702947846,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "77d0c2523ce523a7ab76d10b485e2a01a024dc302363debfa63f484755b5612c",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/4d30c7dda162aa10d0edb9a671908566a2a4761a2a5cef77e28a601232a85943.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/4d30c7dda162aa10d0edb9a671908566a2a4761a2a5cef77e28a601232a85943.wav",
+    "source_sha256": "1c7027a0bc06d37e5e725257452aa3d9a70aca7c5fcd84d800c4feefd6ba9ace",
+    "txtp_sha256": "b22c4aa00d14cf9d8b3a9a167d229a007a982e86cdbf65bd9d8ddefb50638114"
   },
   {
     "file": "play_sfx_gwen_gwenqmiddle_hit_r2.wav",
     "event": "Play_sfx_Gwen_GwenQMiddle_hit",
     "event_id": 606706469,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenQMiddle_hit {r2}.txtp",
     "media_ids": [
       253101884,
       497484892,
       927225298,
       1064256902
     ],
-    "duration": 0.1256,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "a882664f9ed8238cbd08c8bcb590158eb0dc9a80dda9c70b1df47046ba755342"
+    "duration": 0.12560090702947846,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "eab088c1e813f8aad8795c3b2fcfa0a6109d9ff89c0492304cce02b59dac6e7a",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/c4e6dcd51e2c543789d93aba74d0a2eb603de993a0afcde738962d9ff7873755.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/c4e6dcd51e2c543789d93aba74d0a2eb603de993a0afcde738962d9ff7873755.wav",
+    "source_sha256": "b282efb5d8efbc61cd43a47bffc8102feed1bd0ff386a32a9b1f6d220ac05975",
+    "txtp_sha256": "f02da690107e0fe8d758b6093b1cef61b2c060214e280c02610a5bccae1c8b59"
   },
   {
     "file": "play_sfx_gwen_gwenqmiddle_hit_r3.wav",
     "event": "Play_sfx_Gwen_GwenQMiddle_hit",
     "event_id": 606706469,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenQMiddle_hit {r3}.txtp",
     "media_ids": [
       253101884,
       497484892,
       927225298,
       1064256902
     ],
-    "duration": 0.1256,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "a9dba70fcebde605d98b54ff3f436d92254a2278824f0c104de4ba7ef59db5c6"
+    "duration": 0.12560090702947846,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "4b2aa359a9338938d176a9d2966a53b826afa362a3c29655afe61b183ac7fddc",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/c5280bc95de488832feeae74976a170f303b0329edb4f5a9995a8d0a067e6a79.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/c5280bc95de488832feeae74976a170f303b0329edb4f5a9995a8d0a067e6a79.wav",
+    "source_sha256": "dd43dadde5ecd586b06511df4a3f7782ae619d9647639d21924dd125a09108ed",
+    "txtp_sha256": "ec856ce496ce6993a41db7dbd532718a4569408a27d0f39e9943b0123bccc49f"
   },
   {
     "file": "play_sfx_gwen_gwenqlast_hit_r1.wav",
     "event": "Play_sfx_Gwen_GwenQLast_hit",
     "event_id": 1022951862,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenQLast_hit {r1}.txtp",
     "media_ids": [
       74812377,
       115397365,
       531174420,
       887902542
     ],
-    "duration": 0.5803,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "2427eb42a1c4a1fdbee993c64a5ceb724dc8829d2ea80eff540558606ec8887d"
+    "duration": 0.5802947845804989,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "6d38fdb6b7c5886694774b0bfe6c155f36dbd5e4ec124a8a11b6cc66151adbee",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/6ad26c34084710d5791d4eb2aaefbce330d82389a32d37df01285113c86f52d7.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/6ad26c34084710d5791d4eb2aaefbce330d82389a32d37df01285113c86f52d7.wav",
+    "source_sha256": "5ad89487c5366bef0a378054c38a936481a4a6fe86abbc553f8638db1dda84cd",
+    "txtp_sha256": "4db0beea81b1b1506f15e412178c895faa9da5db088f9d380610d45b9e824adb"
   },
   {
     "file": "play_sfx_gwen_gwenqlast_hit_r2.wav",
     "event": "Play_sfx_Gwen_GwenQLast_hit",
     "event_id": 1022951862,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenQLast_hit {r2}.txtp",
     "media_ids": [
       74812377,
       115397365,
       531174420,
       887902542
     ],
-    "duration": 0.5803,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "9f5503b459af27828fb9af3a2c2923f5414eb157cdd7a43a1173aef5cd6980ca"
+    "duration": 0.5802947845804989,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "b163927f5c02b4804426885aae93f679b88e651de12296cf0ca749e168e6299f",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/2b2b4006e722ce1bacff0ef5ec316d4b994eb89316970c5aea9dd3a114cfdbeb.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/2b2b4006e722ce1bacff0ef5ec316d4b994eb89316970c5aea9dd3a114cfdbeb.wav",
+    "source_sha256": "1c9ead9dfd0bc880895dfe2e3bfae8347e86e5c307f20d6f7ece9da85cbbe69f",
+    "txtp_sha256": "35f0a2c54fb4bf33205110aa60ca79736339a60b29401c4003d4d6331ab0ec1b"
   },
   {
     "file": "play_sfx_gwen_gwenqlast_hit_r3.wav",
     "event": "Play_sfx_Gwen_GwenQLast_hit",
     "event_id": 1022951862,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenQLast_hit {r3}.txtp",
     "media_ids": [
       74812377,
       115397365,
       531174420,
       887902542
     ],
-    "duration": 0.5803,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "b0a8cac8cdb885bbfdccc2c7e0d5291a9da0d955d3bb806fbcce80a14e349488"
+    "duration": 0.5802947845804989,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "1320808e342de1d706615b9eff9b993ed0ce5ebe285e72f6bdab600261ca5ca5",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/ef289a518918eaad5dc1857702412af403d435b289aa5077f87f88e3972425dd.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/ef289a518918eaad5dc1857702412af403d435b289aa5077f87f88e3972425dd.wav",
+    "source_sha256": "9fa76a178e0dc3383f69b9e796252e92ffc5d5f404e4fc2cb60ade7f4936595e",
+    "txtp_sha256": "18c55e5b35431f417536984245b4c99553677816da58268c57406b4d8e5e9deb"
   },
   {
     "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenw_cast_r1.wav",
     "event": "Play_sfx_Gwen_GwenW_cast",
     "event_id": 3236859832,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenW_cast {r1}.txtp",
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/32ce6eb8d3c2d8c42ad03401d0b4a1672d3c5a8b29baee70c1120f7ee0b33a1f.txtp",
     "media_ids": [
       188850940,
       258981711,
@@ -616,7 +765,7 @@
     "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenw_cast_r2.wav",
     "event": "Play_sfx_Gwen_GwenW_cast",
     "event_id": 3236859832,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenW_cast {r2}.txtp",
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/76b39db5b2f1ff4dac727f779fb73c778823436833eea859812d713cd54e236d.txtp",
     "media_ids": [
       188850940,
       258981711,
@@ -630,7 +779,7 @@
     "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenw_cast_r3.wav",
     "event": "Play_sfx_Gwen_GwenW_cast",
     "event_id": 3236859832,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenW_cast {r3}.txtp",
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/0b420e827b64122f21e9fb748a798abb45cbc6824364d688d0ba85b055e90d17.txtp",
     "media_ids": [
       188850940,
       258981711,
@@ -644,7 +793,7 @@
     "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenw_buffactivate_r_m.wav",
     "event": "Play_sfx_Gwen_GwenW_buffactivate",
     "event_id": 3882395433,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenW_buffactivate {r} {m}.txtp",
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/4bd6dc1c5022e3062984040f89bb354caf85aff0595c2a4df28da096c0367775.txtp",
     "media_ids": [
       515185330,
       574607003,
@@ -659,7 +808,7 @@
     "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenw_buffdeactivate_r1.wav",
     "event": "Play_sfx_Gwen_GwenW_buffdeactivate",
     "event_id": 3057272456,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenW_buffdeactivate {r1}.txtp",
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/d7a879dc69bf0266ec2dc45a0e67d4b17efc7908057b84c191a1bdfeb1009aba.txtp",
     "media_ids": [
       250909294,
       370391358
@@ -672,7 +821,7 @@
     "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenw_buffdeactivate_r2.wav",
     "event": "Play_sfx_Gwen_GwenW_buffdeactivate",
     "event_id": 3057272456,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenW_buffdeactivate {r2}.txtp",
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/8004c0733316f3e278bc34eb2e6e0ab2cf4fffeb94a5eacbef122e0b44d348cd.txtp",
     "media_ids": [
       250909294,
       370391358
@@ -685,49 +834,69 @@
     "file": "play_sfx_gwen_gwenq_max_stacks_buffactivate_r1.wav",
     "event": "Play_sfx_Gwen_GwenQ_max_stacks_buffactivate",
     "event_id": 3094126528,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenQ_max_stacks_buffactivate {r1}.txtp",
     "media_ids": [
       545613006,
       880053733,
       892809311
     ],
     "duration": 2.006031746031746,
-    "sha256": "4aa81c47cfe2ac170467ef017d0cec0b2e17cd9327bf0b3e8da40ccbac1f4e37",
-    "processing": "vgmstream-cli -i; source event gain retained"
+    "sha256": "7e0a1756c928412ea7a071f0e16f4d9887551a29312bc5f83453f05a157c0a85",
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/5c541f389f1609a46a9c1a2b949c7610c7a1ee3e8457a385576b91e3f02d659e.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/5c541f389f1609a46a9c1a2b949c7610c7a1ee3e8457a385576b91e3f02d659e.wav",
+    "source_sha256": "8dd09838ac0b91e617c248dc25f8d55a55fdef832d51b3930bd3c3d752d83e1a",
+    "txtp_sha256": "cbbf666eaece2f6ddb6be5ff6be5332ceeb7f7d0923496f42570525979c5c509"
   },
   {
     "file": "play_sfx_gwen_gwenq_max_stacks_buffactivate_r2.wav",
     "event": "Play_sfx_Gwen_GwenQ_max_stacks_buffactivate",
     "event_id": 3094126528,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenQ_max_stacks_buffactivate {r2}.txtp",
     "media_ids": [
       545613006,
       880053733,
       892809311
     ],
     "duration": 2.006031746031746,
-    "sha256": "64e357f22f06952c7e10cfd3e5b2f484f055238d8db4df7564263106805f0f29",
-    "processing": "vgmstream-cli -i; source event gain retained"
+    "sha256": "55d2464158ae371d2581d9fad33be17289b8822925dde5acc9dc25545c8f34ad",
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/a4b4c98c0316365656df0c5dc7ae6c5ebc4df1af5f210548aeb34c7f47026982.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/a4b4c98c0316365656df0c5dc7ae6c5ebc4df1af5f210548aeb34c7f47026982.wav",
+    "source_sha256": "756984c4582b495b23c84fa4d344b17d049972dcda640250ab9850f89fc9694d",
+    "txtp_sha256": "ae2cf2695a06184d7657091aba929b8f60e4f4d853f546beb0a913038adabd52"
   },
   {
     "file": "play_sfx_gwen_gwenq_max_stacks_buffactivate_r3.wav",
     "event": "Play_sfx_Gwen_GwenQ_max_stacks_buffactivate",
     "event_id": 3094126528,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenQ_max_stacks_buffactivate {r3}.txtp",
     "media_ids": [
       545613006,
       880053733,
       892809311
     ],
     "duration": 1.8037868480725623,
-    "sha256": "cc7229f0df2c2fea2d45022ce9a215eff1b2b659d4e75915474a7c21a62caf17",
-    "processing": "vgmstream-cli -i; source event gain retained"
+    "sha256": "fa24606091ea3a87d2b540b5ffa2213d2c377580e0b334d067c3ccfc705c6e1f",
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/902b078457ad7343c9ff3dda2e9d62d454c921ea53cc376232d524ed366db27f.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/902b078457ad7343c9ff3dda2e9d62d454c921ea53cc376232d524ed366db27f.wav",
+    "source_sha256": "eeac75e84afc505feffd2e204d4c001cdd080d38a5c47f111393c4291a322518",
+    "txtp_sha256": "4cfb3d2a547e62228309a30e72c73955a6dc24d148daf3de8127c53324833ce8"
   },
   {
     "file": "play_sfx_gwen_gwenqlast_hit_center_r.wav",
     "event": "Play_sfx_Gwen_GwenQLast_hit_center",
     "event_id": 4278009390,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenQLast_hit_center {r}.txtp",
     "media_ids": [
       253101884,
       309821044,
@@ -739,8 +908,16 @@
       1071995365
     ],
     "duration": 2.0329478458049888,
-    "sha256": "e68fc9da33605fa7a03a89c1a1fa4737cdcda14f9bd09f7d518c4f972de6923b",
-    "processing": "vgmstream-cli -i; original center-hit layers/gain"
+    "sha256": "eebcc05be6a8245fae2cc113e2e1d2c0e1d6ca85fbda5e19915c84898d2ffc0f",
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/05e1d2e93d45835ba4c3f28b40c64867a5833cf69315c3d4247d56a4780b72ac.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/05e1d2e93d45835ba4c3f28b40c64867a5833cf69315c3d4247d56a4780b72ac.wav",
+    "source_sha256": "b1a9bc568926a0f316bcbcc7d89320f36b18deb623e95c6440dda4abb54f1ed7",
+    "txtp_sha256": "4578a39b946ca2d2eaca0068707d844e8fcea8ae61162a25e4e361a32842f93b"
   },
   {
     "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_champselect_lockin_event253_r1.wav",
@@ -768,12 +945,17 @@
     "source_package": "LeagueClient/Plugins/rcp-be-lol-game-data/default-assets2.wad",
     "source_path": "plugins/rcp-be-lol-game-data/global/default/v1/champion-sfx-audios/887.ogg",
     "source_sha256": "2da9e27f67637e84fd88f5757dc93cac021d4f5dbcbb1fccb0e450807b8e9998",
-    "processing": "ffmpeg decode Ogg to PCM16 WAV; original sample rate, channels and gain retained; no trim or normalization; rewrite WAVE_FORMAT_EXTENSIBLE as standard PCM RIFF header for Godot, PCM samples unchanged",
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
     "verification": "独立英雄 ID 对应的选择语音/英雄专属锁定音效；不是通用 UI 音效",
     "duration": 2.6,
     "sample_rate": 96000,
     "channels": 2,
-    "sha256": "d834a387f150f9d4330271634e6137f30aecc85debfd6c5b8ecdb1abe3363dc5"
+    "sha256": "28452d8e5974273fa9ba22e7e5c49a35b2b102c8d4b5776aea99230b42a3725a",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/lcu/plugins/rcp-be-lol-game-data/global/default/v1/champion-sfx-audios/887.ogg"
   },
   {
     "file": "play_vo_gwen_attack2dgeneral_r17_zh_cn.wav",
@@ -782,7 +964,6 @@
     "language": "zh_CN",
     "skin": "base",
     "reference_page": "https://voice.buguoguo.cn/#/voice/887",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/deployment_audio_review/voice_candidates_20260914/gwen/txtp/Play_vo_Gwen_Attack2DGeneral {r17}.txtp",
     "media_ids": [
       1664910702
     ],
@@ -790,12 +971,20 @@
     "source_package": "Gwen.zh_CN.wad.client",
     "variant": 17,
     "reference_voice_id": "3A4C46D5",
-    "processing": "vgmstream-cli -i; selected single random branch; source event gain retained; no trim, normalization or time stretch",
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
     "verification": "网站对应原声与本地事件 WAV 解码波形匹配，相关度 > 0.996",
     "duration": 2.5769387755102042,
     "sample_rate": 44100,
     "channels": 2,
-    "sha256": "06bec619892d0ef65ce289dbbb428307f8c60fba980b0ad68c863e6ec00300df"
+    "sha256": "0d3a29ef7417b4faa46fa8287877b4e00aa520296cf06e441bae241a8436bcdb",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/2bcfe3de1426a9bfcd15c070df7f06199ad1372b7cccb24e627c32f5311f6f15.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/2bcfe3de1426a9bfcd15c070df7f06199ad1372b7cccb24e627c32f5311f6f15.wav",
+    "source_sha256": "bb3116e6601a7111e04eb93b57c344ff85c210f520230d229d9b0a80dc52dd00",
+    "txtp_sha256": "c6c5895b16f68967c78fb458c88564a8df530b2c2706072510d755c17160e9b7"
   },
   {
     "file": "play_vo_gwen_attack2dgeneral_r20_zh_cn.wav",
@@ -804,7 +993,6 @@
     "language": "zh_CN",
     "skin": "base",
     "reference_page": "https://voice.buguoguo.cn/#/voice/887",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/deployment_audio_review/voice_candidates_20260914/gwen/txtp/Play_vo_Gwen_Attack2DGeneral {r20}.txtp",
     "media_ids": [
       1210792821
     ],
@@ -812,91 +1000,132 @@
     "source_package": "Gwen.zh_CN.wad.client",
     "variant": 20,
     "reference_voice_id": "9BD6172D",
-    "processing": "vgmstream-cli -i; selected single random branch; source event gain retained; no trim, normalization or time stretch",
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
     "verification": "网站对应原声与本地事件 WAV 解码波形匹配，相关度 > 0.996",
     "duration": 2.688253968253968,
     "sample_rate": 44100,
     "channels": 2,
-    "sha256": "0ed15874159cfc9a13cc43418ba841c926f551e4ebaf23bee29e4e3c3f9e2038"
+    "sha256": "324403888acc5f458be1eccbdd841c5e47a12dc504628bcf87269ee0b5abafdb",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/fb3e86c175323e3a3eec41496305328a5cf9d0f1bdc7e1d08cd40a0254fa40df.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/fb3e86c175323e3a3eec41496305328a5cf9d0f1bdc7e1d08cd40a0254fa40df.wav",
+    "source_sha256": "91eca1e15652ff3216da0ee9fe85c24146617e2e68319a031b274850856b534f",
+    "txtp_sha256": "4b6adf8420659c65f9ae2dfdd9ead4a82b9517b23c947c586018f9b602395416"
   },
   {
     "file": "play_sfx_gwen_gwenw_cast_r1.wav",
     "event": "Play_sfx_Gwen_GwenW_cast",
     "duration": 1.1320408163265305,
-    "processing": "Existing decoded LoL W event; copied without gain or timing changes",
-    "sha256": "e5dc003ce459f273f7b2d651a402f3639794af0c78645147fa22f4acbc40cf29",
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "002bcd499259f549fb640370b65cbf0a26bb252824648809b9decd01525bea04",
     "migrated_from": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenw_cast_r1.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenW_cast {r1}.txtp",
     "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Gwen.wad.client",
     "media_ids": [
       188850940,
       258981711,
       293766443
-    ]
+    ],
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/32ce6eb8d3c2d8c42ad03401d0b4a1672d3c5a8b29baee70c1120f7ee0b33a1f.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/32ce6eb8d3c2d8c42ad03401d0b4a1672d3c5a8b29baee70c1120f7ee0b33a1f.wav",
+    "source_sha256": "42ceac82ca7018bea1a09499535edafcf4c9c7f4e1f5e55c8efd0c163a63fb34",
+    "txtp_sha256": "526a3716a760d0c85e6fdd3503223b945468a796ce64f111bec7ebf71bcffaa0"
   },
   {
     "file": "play_sfx_gwen_gwenw_cast_r2.wav",
     "event": "Play_sfx_Gwen_GwenW_cast",
     "duration": 1.1320408163265305,
-    "processing": "Existing decoded LoL W event; copied without gain or timing changes",
-    "sha256": "1907c81017e3f96e62748dbd75763089679530b9903c13e4452f0aca74fa46af",
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "7fc3edef7e8643c79738af4f4e13ae875ed42db86c4f7833bf796a49b12ddd39",
     "migrated_from": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenw_cast_r2.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenW_cast {r2}.txtp",
     "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Gwen.wad.client",
     "media_ids": [
       188850940,
       258981711,
       293766443
-    ]
+    ],
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/76b39db5b2f1ff4dac727f779fb73c778823436833eea859812d713cd54e236d.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/76b39db5b2f1ff4dac727f779fb73c778823436833eea859812d713cd54e236d.wav",
+    "source_sha256": "b7c27bb7e94799e322105258254fde0df989ba765c9d0fab7c4f6bdb86e6bb4d",
+    "txtp_sha256": "9e19b039dfe0e107b9d2e0f62d6d35670ff0a4e35719f091d123b221d9ebc5aa"
   },
   {
     "file": "play_sfx_gwen_gwenw_cast_r3.wav",
     "event": "Play_sfx_Gwen_GwenW_cast",
     "duration": 1.1320408163265305,
-    "processing": "Existing decoded LoL W event; copied without gain or timing changes",
-    "sha256": "c5a054f17e325dc22115fa298a92987dd40ca93d291270b4b94e34c9a7fccebe",
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "5849226f5899824b7a6ea3334694a51221ae04c432afc19adf3ab6c1ecb665f4",
     "migrated_from": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenw_cast_r3.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenW_cast {r3}.txtp",
     "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Gwen.wad.client",
     "media_ids": [
       188850940,
       258981711,
       293766443
-    ]
+    ],
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/0b420e827b64122f21e9fb748a798abb45cbc6824364d688d0ba85b055e90d17.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/0b420e827b64122f21e9fb748a798abb45cbc6824364d688d0ba85b055e90d17.wav",
+    "source_sha256": "cc33719bbdcb74966423e549c15c38d8656e4e0262ae4230e4a34430d7dbd062",
+    "txtp_sha256": "8e6b82ad4efab78480b6c341dd4b6eb7f6c1ade997625e7b24b42a651153ab83"
   },
   {
     "file": "play_sfx_gwen_gwenw_buffdeactivate_r1.wav",
     "event": "Play_sfx_Gwen_GwenW_buffdeactivate",
     "duration": 3.131156462585034,
-    "processing": "Existing decoded LoL W event; copied without gain or timing changes",
-    "sha256": "bb191cb4ac382f89745fe5b3cb56fe3036dcada4fa83e9bb0a73520d86f08b8e",
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "2bc1f906e5b542997a027e5db175298f3485133ab46cdcdbfac555343f7b9b43",
     "migrated_from": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenw_buffdeactivate_r1.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenW_buffdeactivate {r1}.txtp",
     "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Gwen.wad.client",
     "media_ids": [
       250909294,
       370391358
-    ]
+    ],
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/d7a879dc69bf0266ec2dc45a0e67d4b17efc7908057b84c191a1bdfeb1009aba.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/d7a879dc69bf0266ec2dc45a0e67d4b17efc7908057b84c191a1bdfeb1009aba.wav",
+    "source_sha256": "a3d6a1499a955166b5e98e0b1d816587487589eb36a6cc4d3024d4b6c1e6e2ef",
+    "txtp_sha256": "4dbe1094c2270b3590393184dd090afd58698c0e02e854991c604e76381b9aa2"
   },
   {
     "file": "play_sfx_gwen_gwenw_buffdeactivate_r2.wav",
     "event": "Play_sfx_Gwen_GwenW_buffdeactivate",
     "duration": 2.967097505668934,
-    "processing": "Existing decoded LoL W event; copied without gain or timing changes",
-    "sha256": "be87c9f8b39f4d41678fcce165f3a75c1424809ba30802da54f2fb440521e50f",
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "8ba42835ea2609c8152028b9280d5cd2743336575bbe9de69accf4d14a5d6158",
     "migrated_from": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenw_buffdeactivate_r2.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenW_buffdeactivate {r2}.txtp",
     "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Gwen.wad.client",
     "media_ids": [
       250909294,
       370391358
-    ]
+    ],
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/8004c0733316f3e278bc34eb2e6e0ab2cf4fffeb94a5eacbef122e0b44d348cd.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/8004c0733316f3e278bc34eb2e6e0ab2cf4fffeb94a5eacbef122e0b44d348cd.wav",
+    "source_sha256": "79415f6bdf13fe212a9dfaa2dbe6fb4ccad14543773f21596f4b004f6c5cc5ed",
+    "txtp_sha256": "6c9393aa399e567fc87cbd06f18302438c108ecaedeb3bff4502ccf2a2081ccd"
   },
   {
     "file": "gwen_w_sanctuary.wav",
     "event": "Play_sfx_Gwen_GwenW_buffactivate",
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/格温圣霭/audio_source/play_sfx_gwen_gwenw_buffactivate_r_m.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/txtp/Play_sfx_Gwen_GwenW_buffactivate {r} {m}.txtp",
     "media_ids": [
       574607003,
       712039398,
@@ -904,8 +1133,15 @@
       854509046
     ],
     "duration": 4.0,
-    "processing": "First 4.0 seconds of decoded activation/ambient layered event; original gains retained; state-owned stop on exit/death",
-    "sha256": "0b0d65fe9e86b3f167446e6ef9fa6d63d00a97594027547ec5f2198d64369ef9",
-    "source_sha256": "4d452d024ff0def68914f44aa511e496da8ed7c3c50076155a94715ad0026a86"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "3169625264f659cd84b6d2c7acbe3c275b44938d01b0a092ca2f31272d60aa7a",
+    "source_sha256": "330d0f30a9f3d7dbff4e4ae8a471d5e61b37c9bf627499ebe7e270e72290cef5",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/4bd6dc1c5022e3062984040f89bb354caf85aff0595c2a4df28da096c0367775.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/4bd6dc1c5022e3062984040f89bb354caf85aff0595c2a4df28da096c0367775.wav",
+    "txtp_sha256": "309b4ea6cc79afb983a372ada71633a1063cf0606eabf4d220281b2318835745"
   }
 ]

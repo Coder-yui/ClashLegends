@@ -100,16 +100,16 @@ static func definition() -> Dictionary:
 					"res://assets/audio/units/gwen/play_vo_gwen_attack2dgeneral_r17_zh_cn.wav",
 					"res://assets/audio/units/gwen/play_vo_gwen_attack2dgeneral_r20_zh_cn.wav",
 				], "volume_db": 0.0, "bus": "Voice"},
-				"active_0:hit_first_center": {"bus": "Combat", "pool": ["res://assets/audio/units/gwen/play_sfx_gwen_gwenqfirst_hit_r1.wav", "res://assets/audio/units/gwen/play_sfx_gwen_gwenqfirst_hit_r2.wav", "res://assets/audio/units/gwen/play_sfx_gwen_gwenqfirst_hit_r3.wav"], "volume_db": 3.0},
+				"active_0:hit_first_center": {"bus": "Combat", "pool": ["res://assets/audio/units/gwen/play_sfx_gwen_gwenqfirst_hit_r1.wav", "res://assets/audio/units/gwen/play_sfx_gwen_gwenqfirst_hit_r2.wav", "res://assets/audio/units/gwen/play_sfx_gwen_gwenqfirst_hit_r3.wav"], "volume_db": 0.0},
 				"active_0:hit_last_center": {"pool": ["res://assets/audio/units/gwen/play_sfx_gwen_gwenqlast_hit_center_r.wav"], "volume_db": 0.0},
-				"active_1:hit_first_center": {"bus": "Combat", "pool": ["res://assets/audio/units/gwen/play_sfx_gwen_gwenqfirst_hit_r1.wav", "res://assets/audio/units/gwen/play_sfx_gwen_gwenqfirst_hit_r2.wav", "res://assets/audio/units/gwen/play_sfx_gwen_gwenqfirst_hit_r3.wav"], "volume_db": 3.0},
-				"active_1:hit_middle_center": {"bus": "Combat", "pool": ["res://assets/audio/units/gwen/play_sfx_gwen_gwenqmiddle_hit_r1.wav", "res://assets/audio/units/gwen/play_sfx_gwen_gwenqmiddle_hit_r2.wav", "res://assets/audio/units/gwen/play_sfx_gwen_gwenqmiddle_hit_r3.wav"], "volume_db": 3.0},
+				"active_1:hit_first_center": {"bus": "Combat", "pool": ["res://assets/audio/units/gwen/play_sfx_gwen_gwenqfirst_hit_r1.wav", "res://assets/audio/units/gwen/play_sfx_gwen_gwenqfirst_hit_r2.wav", "res://assets/audio/units/gwen/play_sfx_gwen_gwenqfirst_hit_r3.wav"], "volume_db": 0.0},
+				"active_1:hit_middle_center": {"bus": "Combat", "pool": ["res://assets/audio/units/gwen/play_sfx_gwen_gwenqmiddle_hit_r1.wav", "res://assets/audio/units/gwen/play_sfx_gwen_gwenqmiddle_hit_r2.wav", "res://assets/audio/units/gwen/play_sfx_gwen_gwenqmiddle_hit_r3.wav"], "volume_db": 0.0},
 				"active_1:hit_last_center": {"pool": ["res://assets/audio/units/gwen/play_sfx_gwen_gwenqlast_hit_center_r.wav"], "volume_db": 0.0},
-				"active_2:hit_first_center": {"bus": "Combat", "pool": ["res://assets/audio/units/gwen/play_sfx_gwen_gwenqfirst_hit_r1.wav", "res://assets/audio/units/gwen/play_sfx_gwen_gwenqfirst_hit_r2.wav", "res://assets/audio/units/gwen/play_sfx_gwen_gwenqfirst_hit_r3.wav"], "volume_db": 3.0},
-				"active_2:hit_middle_center": {"bus": "Combat", "pool": ["res://assets/audio/units/gwen/play_sfx_gwen_gwenqmiddle_hit_r1.wav", "res://assets/audio/units/gwen/play_sfx_gwen_gwenqmiddle_hit_r2.wav", "res://assets/audio/units/gwen/play_sfx_gwen_gwenqmiddle_hit_r3.wav"], "volume_db": 3.0},
+				"active_2:hit_first_center": {"bus": "Combat", "pool": ["res://assets/audio/units/gwen/play_sfx_gwen_gwenqfirst_hit_r1.wav", "res://assets/audio/units/gwen/play_sfx_gwen_gwenqfirst_hit_r2.wav", "res://assets/audio/units/gwen/play_sfx_gwen_gwenqfirst_hit_r3.wav"], "volume_db": 0.0},
+				"active_2:hit_middle_center": {"bus": "Combat", "pool": ["res://assets/audio/units/gwen/play_sfx_gwen_gwenqmiddle_hit_r1.wav", "res://assets/audio/units/gwen/play_sfx_gwen_gwenqmiddle_hit_r2.wav", "res://assets/audio/units/gwen/play_sfx_gwen_gwenqmiddle_hit_r3.wav"], "volume_db": 0.0},
 				"active_2:hit_last_center": {"pool": ["res://assets/audio/units/gwen/play_sfx_gwen_gwenqlast_hit_center_r.wav"], "volume_db": 0.0},
-				"active_3:hit_first_center": {"bus": "Combat", "pool": ["res://assets/audio/units/gwen/play_sfx_gwen_gwenqfirst_hit_r1.wav", "res://assets/audio/units/gwen/play_sfx_gwen_gwenqfirst_hit_r2.wav", "res://assets/audio/units/gwen/play_sfx_gwen_gwenqfirst_hit_r3.wav"], "volume_db": 3.0},
-				"active_3:hit_middle_center": {"bus": "Combat", "pool": ["res://assets/audio/units/gwen/play_sfx_gwen_gwenqmiddle_hit_r1.wav", "res://assets/audio/units/gwen/play_sfx_gwen_gwenqmiddle_hit_r2.wav", "res://assets/audio/units/gwen/play_sfx_gwen_gwenqmiddle_hit_r3.wav"], "volume_db": 3.0},
+				"active_3:hit_first_center": {"bus": "Combat", "pool": ["res://assets/audio/units/gwen/play_sfx_gwen_gwenqfirst_hit_r1.wav", "res://assets/audio/units/gwen/play_sfx_gwen_gwenqfirst_hit_r2.wav", "res://assets/audio/units/gwen/play_sfx_gwen_gwenqfirst_hit_r3.wav"], "volume_db": 0.0},
+				"active_3:hit_middle_center": {"bus": "Combat", "pool": ["res://assets/audio/units/gwen/play_sfx_gwen_gwenqmiddle_hit_r1.wav", "res://assets/audio/units/gwen/play_sfx_gwen_gwenqmiddle_hit_r2.wav", "res://assets/audio/units/gwen/play_sfx_gwen_gwenqmiddle_hit_r3.wav"], "volume_db": 0.0},
 				"active_3:hit_last_center": {"pool": ["res://assets/audio/units/gwen/play_sfx_gwen_gwenqlast_hit_center_r.wav"], "volume_db": 0.0},
 
 				"resource_full": {"pool": ["res://assets/audio/units/gwen/play_sfx_gwen_gwenq_max_stacks_buffactivate_r1.wav", "res://assets/audio/units/gwen/play_sfx_gwen_gwenq_max_stacks_buffactivate_r2.wav", "res://assets/audio/units/gwen/play_sfx_gwen_gwenq_max_stacks_buffactivate_r3.wav"], "volume_db": 0.0},
@@ -178,13 +178,13 @@ static func definition() -> Dictionary:
 					"res://assets/audio/units/gwen/play_sfx_gwen_gwenbasicattack_swipe_cast_r3.wav"
 				]
 			],
-			"attack_swing_volume_db": -3.0,
+			"attack_swing_volume_db": 0.0,
 			"attack_hit": [
 				"res://assets/audio/units/gwen/play_sfx_gwen_gwenbasicattack_swipe_hit_r1.wav",
 				"res://assets/audio/units/gwen/play_sfx_gwen_gwenbasicattack_swipe_hit_r2.wav",
 				"res://assets/audio/units/gwen/play_sfx_gwen_gwenbasicattack_swipe_hit_r3.wav"
 			],
-			"attack_hit_volume_db": -5.0,
+			"attack_hit_volume_db": 0.0,
 			"attack_hit_by_segment": [
 				[
 					"res://assets/audio/units/gwen/play_sfx_gwen_gwenbasicattack_swipe_hit_r1.wav",

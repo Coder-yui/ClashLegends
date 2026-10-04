@@ -1,5 +1,8 @@
 # 艾希 · 音频接入
 
+> 当前增益基准（2026-10-04）：声音已从原版源事件重新导出，关闭工具 auto；文件制作增益和播放补偿均为 0 dB。裁剪、变速、包络及事件时机保留。本页旧调校段落中的额外 dB、统一制作余量属于重导前记录，已由此基准替代；原事件内部各层增益仍保留。详见[重导交付](../../deliveries/2026-10-04_原版增益音频重导.md)。
+
+
 [← 返回艾希总览](../ashe.md) · [总索引](../README.md)
 
 ## 当前配置与触发入口
@@ -17,7 +20,7 @@
 | 万箭齐发 · 起手 | 2 | 0 dB | [试听 1](../../../assets/audio/units/ashe/play_sfx_ashe_volley_oncast_r1_d.wav) · [试听 2](../../../assets/audio/units/ashe/play_sfx_ashe_volley_oncast_r2_d.wav) |
 | 普攻发射 | 3 | 0 dB | [试听 1](../../../assets/audio/units/ashe/play_sfx_ashe_ashebasicattack_onmissilelaunch_r1_d.wav) · [试听 2](../../../assets/audio/units/ashe/play_sfx_ashe_ashebasicattack_onmissilelaunch_r2_d.wav) |
 | 死亡 | 3 | 0 dB | [试听 1](../../../assets/audio/units/ashe/play_vo_ashe_death3d_r1_zh_cn.wav) · [试听 2](../../../assets/audio/units/ashe/play_vo_ashe_death3d_r2_zh_cn.wav) |
-| 部署语音（随机二选一） | 2 | 0 dB / Voice | [Attack2DGeneral](../../../assets/audio/units/ashe/play_vo_ashe_attack2dgeneral_r10_en_us.wav) · [Move2DStandard](../../../assets/audio/units/ashe/play_vo_ashe_move2dstandard_r3_en_us.wav) |
+| 部署语音（随机二选一） | 2 | 0 dB | [Attack2DGeneral](../../../assets/audio/units/ashe/play_vo_ashe_attack2dgeneral_r10_en_us.wav) · [Move2DStandard](../../../assets/audio/units/ashe/play_vo_ashe_move2dstandard_r3_en_us.wav) |
 
 0 dB 表示不额外加减音量，不代表所有原声听起来一样响。表中给出代表性试听，完整原始素材仍保留在来源记录中。
 

@@ -1,5 +1,8 @@
 # 小兵生成与中文赛事播报
 
+> 2026-10-04 原版增益重导：当前文件与加工参数以 `assets/audio/original_gain_manifest.json` 为准；下面历史文字中的额外增益、制作余量及旧哈希说明已被本次重导替代。工具主增益、后期固定增益和事件播放补偿均为 0 dB；原事件内部增益保留。
+
+
 本轮接入：四种小兵的 spawn:start 共用三条 `Play_sfx_SRU_Spawn_MinionsSpawn_cast`，自动兵线与手牌部署都消费通用 attach_unit 首次生成事件，重绑不重播。两队音频覆盖均含生成池，红方炮车原 OnMissileCast 层保留。空间/Combat 总线照旧，源事件 −25 dB 保留，不自动归一化。
 
 胜利与失败使用简体中文 Map11.zh_CN 默认 Female1 播报 `Play_vo_Announcer_Global_Female1_OnVictory / OnDefeat`，不是 VictoryBlue/Red 等按队伍播报候选。原包内部路径 en_us 是命名历史，语言由 zh_CN WAD 决定。全军出击使用 `Play_vo_Announcer_Female1_MinionSpawn`。

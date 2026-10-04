@@ -93,13 +93,13 @@ static func definition() -> Dictionary:
 					"res://assets/audio/units/apex_turret/play_sfx_heimertblue_heimertbluebasicattack_oncast_r3.wav"
 				]
 			],
-			"attack_swing_volume_db": -3.0,
+			"attack_swing_volume_db": 0.0,
 			"attack_hit": [
 				"res://assets/audio/units/apex_turret/play_sfx_heimertblue_heimertbluebasicattack_onhit_r1.wav",
 				"res://assets/audio/units/apex_turret/play_sfx_heimertblue_heimertbluebasicattack_onhit_r2.wav",
 				"res://assets/audio/units/apex_turret/play_sfx_heimertblue_heimertbluebasicattack_onhit_r3.wav"
 			],
-			"attack_hit_volume_db": -5.0,
+			"attack_hit_volume_db": 0.0,
 		},
 		# END IMPORTED AUDIO apex_turret
 		"card_art": {},

@@ -52,14 +52,14 @@ static func definition() -> Dictionary:
 			# BEGIN DISC ATTACK AUDIO
 			"attack_swing": [["res://assets/audio/units/sun_disc/play_sfx_env_map11_chaosturretchampionbasicattack_cast_r1.wav", "res://assets/audio/units/sun_disc/play_sfx_env_map11_chaosturretchampionbasicattack_cast_r2.wav", "res://assets/audio/units/sun_disc/play_sfx_env_map11_chaosturretchampionbasicattack_cast_r3.wav", "res://assets/audio/units/sun_disc/play_sfx_env_map11_chaosturretchampionbasicattack_cast_r4.wav"], ["res://assets/audio/units/sun_disc/play_sfx_env_map11_chaosturretchampionbasicattack_cast_r1.wav", "res://assets/audio/units/sun_disc/play_sfx_env_map11_chaosturretchampionbasicattack_cast_r2.wav", "res://assets/audio/units/sun_disc/play_sfx_env_map11_chaosturretchampionbasicattack_cast_r3.wav", "res://assets/audio/units/sun_disc/play_sfx_env_map11_chaosturretchampionbasicattack_cast_r4.wav"]],
 			"attack_hit": ["res://assets/audio/units/sun_disc/play_sfx_env_turretbasicattack_hit_r1.wav", "res://assets/audio/units/sun_disc/play_sfx_env_turretbasicattack_hit_r2.wav", "res://assets/audio/units/sun_disc/play_sfx_env_turretbasicattack_hit_r3.wav", "res://assets/audio/units/sun_disc/play_sfx_env_turretbasicattack_hit_r4.wav"],
-			"attack_swing_volume_db": -6.0,
-			"attack_hit_volume_db": -6.0,
+			"attack_swing_volume_db": 0.0,
+			"attack_hit_volume_db": 0.0,
 			# END DISC ATTACK AUDIO
 			"events": {
 				# BEGIN BUILDING AUDIO sun_disc
 				"deploy:start": {"pool": ["res://assets/audio/units/sun_disc/play_sfx_azir_azirobelisksound_onbuffcast_r1.wav"], "volume_db": 0.0, "bus": "Combat"},
 				"death": {"pool": ["res://assets/audio/units/sun_disc/play_sfx_azir_azirobelisksound_onbuffdeactivate_r1.wav", "res://assets/audio/units/sun_disc/play_sfx_azir_azirobelisksound_onbuffdeactivate_r2.wav"], "volume_db": 0.0, "bus": "Combat"},
-				"attack_launch": {"pool": ["res://assets/audio/units/sun_disc/play_sfx_env_turretbasicattack_missilelaunch_r1.wav", "res://assets/audio/units/sun_disc/play_sfx_env_turretbasicattack_missilelaunch_r2.wav", "res://assets/audio/units/sun_disc/play_sfx_env_turretbasicattack_missilelaunch_r3.wav"], "volume_db": -6.0, "bus": "Combat"},
+				"attack_launch": {"pool": ["res://assets/audio/units/sun_disc/play_sfx_env_turretbasicattack_missilelaunch_r1.wav", "res://assets/audio/units/sun_disc/play_sfx_env_turretbasicattack_missilelaunch_r2.wav", "res://assets/audio/units/sun_disc/play_sfx_env_turretbasicattack_missilelaunch_r3.wav"], "volume_db": 0.0, "bus": "Combat"},
 				# END BUILDING AUDIO sun_disc
 				"shield:cast": {
 					"pool": [

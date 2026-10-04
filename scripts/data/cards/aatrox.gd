@@ -357,7 +357,7 @@ static func definition() -> Dictionary:
 					"volume_db": 0.0,
 					"bus": "Voice"
 				},
-				"deploy:voice": {
+				"deploy:voice": {"clip_volume_db": {"res://assets/audio/units/aatrox/play_vo_aatrox_deploy_1.wav": -12.0},
 					"pool": [
 						"res://assets/audio/units/aatrox/play_vo_aatrox_deploy_1.wav",
 						"res://assets/audio/units/aatrox/play_vo_aatrox_deploy_2.wav",

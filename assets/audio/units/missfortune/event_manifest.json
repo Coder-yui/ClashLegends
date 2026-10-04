@@ -3,106 +3,195 @@
     "file": "play_sfx_missfortune_missfortunebasicattack_oncast_r1_d.wav",
     "event": "Play_sfx_MissFortune_MissFortuneBasicAttack_OnCast",
     "event_id": 1195439380,
-    "source_preview": "event_wav/play_sfx_missfortune_missfortunebasicattack_oncast_r1_d.wav",
     "media_ids": [
       4356046,
       61557718,
       297310032
-    ]
+    ],
+    "sha256": "cdd399a8783861b7320a41ca67f2993f304144f3885a4f252f6c589b5d311a87",
+    "duration": 1.1053968253968254,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/00da738ff04d4275d8a3a7170912cd716192f0d446ff95908d689a52cc7cd624.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/00da738ff04d4275d8a3a7170912cd716192f0d446ff95908d689a52cc7cd624.wav",
+    "source_sha256": "1f265d1f6603f323ea3dce687e75c5a7b4da4fc0c6429aa9a803e2b3acb30176",
+    "txtp_sha256": "62ff6c3597db63dbe40c3bad769827e189bd8e0821e72b8b7bbda8347a4dae29"
   },
   {
     "file": "play_sfx_missfortune_missfortunebasicattack_oncast_r2_d.wav",
     "event": "Play_sfx_MissFortune_MissFortuneBasicAttack_OnCast",
     "event_id": 1195439380,
-    "source_preview": "event_wav/play_sfx_missfortune_missfortunebasicattack_oncast_r2_d.wav",
     "media_ids": [
       4356046,
       61557718,
       297310032
-    ]
+    ],
+    "sha256": "3070838dd264b85ff20eb88e2aed4cb260a99c724efb1883a0e6566d1703220a",
+    "duration": 0.9545804988662131,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/725ab941deb5f6fc58bd32e05b4b2e709dd638664c125001c24d70e70e9f88a1.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/725ab941deb5f6fc58bd32e05b4b2e709dd638664c125001c24d70e70e9f88a1.wav",
+    "source_sha256": "9ab4345c89ecc7cdd337502ded8edf0016bef011f6e5219d8253b50bb5842834",
+    "txtp_sha256": "561be4fcb618f5a760442ffe34dd136e99794e29f764e9dba7d18d12e4c4bacb"
   },
   {
     "file": "play_sfx_missfortune_missfortunebasicattack_oncast_r3_d.wav",
     "event": "Play_sfx_MissFortune_MissFortuneBasicAttack_OnCast",
     "event_id": 1195439380,
-    "source_preview": "event_wav/play_sfx_missfortune_missfortunebasicattack_oncast_r3_d.wav",
     "media_ids": [
       4356046,
       61557718,
       297310032
-    ]
+    ],
+    "sha256": "fa9f59bee36b46b46eb74a46f26a44c2e5ed06218e1b06d26f750637c432a2c1",
+    "duration": 1.6403401360544219,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/b9be034ff51fdd9b86f169a24972571725a45f23541153c9a4f702286fef08f5.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/b9be034ff51fdd9b86f169a24972571725a45f23541153c9a4f702286fef08f5.wav",
+    "source_sha256": "4ae915d009a74bbab1a1a3860a030873684340e41e6dd482964a4298f6a86c8f",
+    "txtp_sha256": "c7d94c23631e177b4ef7842176224bb338eb80759cbdfacd65ddb302eda27256"
   },
   {
     "file": "play_sfx_missfortune_missfortunebasicattack2_oncast_r1.wav",
     "event": "Play_sfx_MissFortune_MissFortuneBasicAttack2_OnCast",
     "event_id": 4094680492,
-    "source_preview": "event_wav/play_sfx_missfortune_missfortunebasicattack2_oncast_r1.wav",
     "media_ids": [
       4356046,
       61557718,
       297310032
-    ]
+    ],
+    "sha256": "cdd399a8783861b7320a41ca67f2993f304144f3885a4f252f6c589b5d311a87",
+    "duration": 1.1053968253968254,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/1908753badd3c911ecb63f7daa1457c5201516bdf1bfc991c9979814a2353660.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/1908753badd3c911ecb63f7daa1457c5201516bdf1bfc991c9979814a2353660.wav",
+    "source_sha256": "1f265d1f6603f323ea3dce687e75c5a7b4da4fc0c6429aa9a803e2b3acb30176",
+    "txtp_sha256": "c60769681805697955117f821d5f9f553c70342e255d18a39d8df3a12f2d3692"
   },
   {
     "file": "play_sfx_missfortune_missfortunebasicattack2_oncast_r2.wav",
     "event": "Play_sfx_MissFortune_MissFortuneBasicAttack2_OnCast",
     "event_id": 4094680492,
-    "source_preview": "event_wav/play_sfx_missfortune_missfortunebasicattack2_oncast_r2.wav",
     "media_ids": [
       4356046,
       61557718,
       297310032
-    ]
+    ],
+    "sha256": "3070838dd264b85ff20eb88e2aed4cb260a99c724efb1883a0e6566d1703220a",
+    "duration": 0.9545804988662131,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/47de47ba7717ce239abc1083cfc98f9ad90ea8c632eeff16d6f32766a2dbb4c1.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/47de47ba7717ce239abc1083cfc98f9ad90ea8c632eeff16d6f32766a2dbb4c1.wav",
+    "source_sha256": "9ab4345c89ecc7cdd337502ded8edf0016bef011f6e5219d8253b50bb5842834",
+    "txtp_sha256": "b5ca4b4247d160ecfad7f45d270e06369c137f15d619baf3dc852c954ae749bf"
   },
   {
     "file": "play_sfx_missfortune_missfortunebasicattack2_oncast_r3.wav",
     "event": "Play_sfx_MissFortune_MissFortuneBasicAttack2_OnCast",
     "event_id": 4094680492,
-    "source_preview": "event_wav/play_sfx_missfortune_missfortunebasicattack2_oncast_r3.wav",
     "media_ids": [
       4356046,
       61557718,
       297310032
-    ]
+    ],
+    "sha256": "fa9f59bee36b46b46eb74a46f26a44c2e5ed06218e1b06d26f750637c432a2c1",
+    "duration": 1.6403401360544219,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/995972bab2556eda156c830e5234f7935c2035cdb7e8b622d0b2c96a5b6b41c5.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/995972bab2556eda156c830e5234f7935c2035cdb7e8b622d0b2c96a5b6b41c5.wav",
+    "source_sha256": "4ae915d009a74bbab1a1a3860a030873684340e41e6dd482964a4298f6a86c8f",
+    "txtp_sha256": "29013a78f947705fc5008c0ef7009de32527c0cc0db71c52ebf1272fc4457362"
   },
   {
     "file": "play_sfx_missfortune_missfortunebasicattack_onmissilelaunch_r1_d.wav",
     "event": "Play_sfx_MissFortune_MissFortuneBasicAttack_OnMissileLaunch",
     "event_id": 1104188994,
-    "source_preview": "event_wav/play_sfx_missfortune_missfortunebasicattack_onmissilelaunch_r1_d.wav",
     "media_ids": [
       108461385,
       151548048,
       609678474
-    ]
+    ],
+    "sha256": "9ce7fb3ad4fb47235cf393892114052aa6661184534eb19d9ace6380774675da",
+    "duration": 1.2844897959183674,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/47aa5f9b15e4324941940be3812297ff06c7d480a8854a662ae932babd992a22.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/47aa5f9b15e4324941940be3812297ff06c7d480a8854a662ae932babd992a22.wav",
+    "source_sha256": "cbda0ceae565e64ed33f067d560e842b99cfa1d9af0e3dad503cefcb8cfbd4b3",
+    "txtp_sha256": "5e9b19770b8ade1d7841cf7b7d73cd1fbb68c28e8f3894ddfb6d7b385a3fcb5d"
   },
   {
     "file": "play_sfx_missfortune_missfortunebasicattack_onmissilelaunch_r2_d.wav",
     "event": "Play_sfx_MissFortune_MissFortuneBasicAttack_OnMissileLaunch",
     "event_id": 1104188994,
-    "source_preview": "event_wav/play_sfx_missfortune_missfortunebasicattack_onmissilelaunch_r2_d.wav",
     "media_ids": [
       108461385,
       151548048,
       609678474
-    ]
+    ],
+    "sha256": "7d72df1c810145850d9571b15fe559a7d7accd3388c7fdf4c89df40987026fd6",
+    "duration": 1.5436054421768708,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/cc948445c680b1fd4a0c3e5b6dc7417aa30af8dbb60dd0cff88f3dcf2fcb910a.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/cc948445c680b1fd4a0c3e5b6dc7417aa30af8dbb60dd0cff88f3dcf2fcb910a.wav",
+    "source_sha256": "bb1ccd5217da97ad49e27f241ee36d4eef49f2e4a5c5577ad93bd9784ac85ec3",
+    "txtp_sha256": "e4eb752abe1a20c1f9f0afa117d0b423ef1c6dd192076469d2cf91123e687134"
   },
   {
     "file": "play_sfx_missfortune_missfortunebasicattack_onmissilelaunch_r3_d.wav",
     "event": "Play_sfx_MissFortune_MissFortuneBasicAttack_OnMissileLaunch",
     "event_id": 1104188994,
-    "source_preview": "event_wav/play_sfx_missfortune_missfortunebasicattack_onmissilelaunch_r3_d.wav",
     "media_ids": [
       108461385,
       151548048,
       609678474
-    ]
+    ],
+    "sha256": "67ad336e2c92764ab87788dbfe9d94baad241b6ac9c52ebe20621e4e0872ecc4",
+    "duration": 1.8831972789115645,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/8c42963e6d2907350167a54482b52cef3164c05f69f7c896f524b831163a7a30.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/8c42963e6d2907350167a54482b52cef3164c05f69f7c896f524b831163a7a30.wav",
+    "source_sha256": "bc19bb1b264f5b34a2ed93623fb605625e70bccf6192f375a88ea4376115fc30",
+    "txtp_sha256": "5273121735146bcf61da2039795c233ba4e1db36ebcec8d1b7edd187cc541ca8"
   },
   {
     "file": "play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1153642577_r1_d.wav",
     "event": "Play_sfx_MissFortune_MissFortuneBasicAttack_OnHit",
     "event_id": 4095513532,
-    "source_preview": "event_wav/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1153642577_r1_d.wav",
     "media_ids": [
       2976772,
       6586415,
@@ -128,13 +217,23 @@
       298951005,
       332477919,
       338524500
-    ]
+    ],
+    "sha256": "26c41de3212365f9fb68bbbe0dee970f4a30eba864667e9083ad55ebfd6c5073",
+    "duration": 0.8960090702947846,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/8c97bf3fe680b8b093b75859e90d06d18712f0f655c93fb582629cd929647112.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/8c97bf3fe680b8b093b75859e90d06d18712f0f655c93fb582629cd929647112.wav",
+    "source_sha256": "91be716b80e29014b08bc2642dffc862d87ee8d792e80f3b245ec9e84ac94367",
+    "txtp_sha256": "0e5e46bc3ef0261cb699eb26410136aef6be1765409c089d686c1aa714b9d916"
   },
   {
     "file": "play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1153642577_r2_d.wav",
     "event": "Play_sfx_MissFortune_MissFortuneBasicAttack_OnHit",
     "event_id": 4095513532,
-    "source_preview": "event_wav/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1153642577_r2_d.wav",
     "media_ids": [
       2976772,
       6586415,
@@ -160,13 +259,23 @@
       298951005,
       332477919,
       338524500
-    ]
+    ],
+    "sha256": "6342c29767e5145168b57c54cab0f2fe6fdcf12fa842b092455afb0a994a2714",
+    "duration": 0.7808163265306123,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/bcfc16ae650e8f1065d26bd2add23e0bb4e436c3fb558fa6401ba54d774ea262.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/bcfc16ae650e8f1065d26bd2add23e0bb4e436c3fb558fa6401ba54d774ea262.wav",
+    "source_sha256": "769f38a483224f3e4da5a72746f921a30bdb949473a7a85f0f10f716b7fc0384",
+    "txtp_sha256": "cfd27f19a1411a9e0aa7bd4c2e973bebe97743b38754eabcb9bcb578518c4a47"
   },
   {
     "file": "play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1153642577_r3_d.wav",
     "event": "Play_sfx_MissFortune_MissFortuneBasicAttack_OnHit",
     "event_id": 4095513532,
-    "source_preview": "event_wav/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1153642577_r3_d.wav",
     "media_ids": [
       2976772,
       6586415,
@@ -192,13 +301,23 @@
       298951005,
       332477919,
       338524500
-    ]
+    ],
+    "sha256": "036bfc1e8a4b40cf01d1665cacb3a7d44422624d39166c5bab2129a0314e3257",
+    "duration": 0.7819727891156463,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/54bd2d777f0d653ce2a63e048b1b1e2463949b564dd99b6080b2d12766a88110.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/54bd2d777f0d653ce2a63e048b1b1e2463949b564dd99b6080b2d12766a88110.wav",
+    "source_sha256": "94bceaf64f9aa97abe777651bbed31a0f7a8c222013bb3e56ac1c4680a28f77e",
+    "txtp_sha256": "3165830816bcc7efeacfe50339f7d8ea9288ee1a22eeb3b61fce39e5ea92038e"
   },
   {
     "file": "play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1153642577_r4_d.wav",
     "event": "Play_sfx_MissFortune_MissFortuneBasicAttack_OnHit",
     "event_id": 4095513532,
-    "source_preview": "event_wav/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1153642577_r4_d.wav",
     "media_ids": [
       2976772,
       6586415,
@@ -224,13 +343,23 @@
       298951005,
       332477919,
       338524500
-    ]
+    ],
+    "sha256": "c222e208b93cf4db7a2591a04f7b9d895a02a6771a0ee55555b91fa87d886376",
+    "duration": 0.7602040816326531,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/02df17e8a782c6f6fc11ad0402617d6e79994ed4a0d82db9e3334f4f55188f14.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/02df17e8a782c6f6fc11ad0402617d6e79994ed4a0d82db9e3334f4f55188f14.wav",
+    "source_sha256": "42dc93e818b51ee4202fbb3a0ab0a9c7b4e3e50440fd2046a1a384909c736e9b",
+    "txtp_sha256": "c33667c16f4e68eafbf5c493f500b117f8e3198387cf6da3e3bc27ff730f8aab"
   },
   {
     "file": "play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1153642577_r5_d.wav",
     "event": "Play_sfx_MissFortune_MissFortuneBasicAttack_OnHit",
     "event_id": 4095513532,
-    "source_preview": "event_wav/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1153642577_r5_d.wav",
     "media_ids": [
       2976772,
       6586415,
@@ -256,13 +385,23 @@
       298951005,
       332477919,
       338524500
-    ]
+    ],
+    "sha256": "f489f7cc53603ea1dbe34d1752f6ba76a5bbc69b81b4d79b6586771dc3e50c32",
+    "duration": 0.9724716553287982,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/812b7039b1474067f953d96652a67546c2a0320f3e1b24dd958dd8d24c175e06.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/812b7039b1474067f953d96652a67546c2a0320f3e1b24dd958dd8d24c175e06.wav",
+    "source_sha256": "22562d9072626bfb756a506904aa2afcc2a685674586095370980207d2df211c",
+    "txtp_sha256": "b7278438834a937f2bb684e1708bc3965e5f84fe98df3af11c83cdec4ca6b603"
   },
   {
     "file": "play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1153642577_r6_d.wav",
     "event": "Play_sfx_MissFortune_MissFortuneBasicAttack_OnHit",
     "event_id": 4095513532,
-    "source_preview": "event_wav/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1153642577_r6_d.wav",
     "media_ids": [
       2976772,
       6586415,
@@ -288,13 +427,23 @@
       298951005,
       332477919,
       338524500
-    ]
+    ],
+    "sha256": "7a1d967a89489e7c174527505db9ff8e4ab03ca8e51c5c890031d5e2ee89aeae",
+    "duration": 0.7590476190476191,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/efa70b4ac736e856673cf0a1c5158a347a85dbd8236f836c689bd4e3eb44042d.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/efa70b4ac736e856673cf0a1c5158a347a85dbd8236f836c689bd4e3eb44042d.wav",
+    "source_sha256": "67c7e31be339d50c569fbff000e090a5d3f9bf555d74269a79460e418cfdd2f9",
+    "txtp_sha256": "fb28bafaceb2bfcf085fc73afcc91efbc71251d1254e4854152e51c1b9210876"
   },
   {
     "file": "play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1216965916_r1_d.wav",
     "event": "Play_sfx_MissFortune_MissFortuneBasicAttack_OnHit",
     "event_id": 4095513532,
-    "source_preview": "event_wav/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1216965916_r1_d.wav",
     "media_ids": [
       2976772,
       6586415,
@@ -320,13 +469,23 @@
       298951005,
       332477919,
       338524500
-    ]
+    ],
+    "sha256": "cfe8a9d7d9d861afb5d29bbc1f13121b2340dbf533c9cb980e67e59c726030ec",
+    "duration": 1.6681179138321995,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/219b62babb7abad60ce60b2fcf1c71e51aaa15af3da511d7f13ec09c5276c752.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/219b62babb7abad60ce60b2fcf1c71e51aaa15af3da511d7f13ec09c5276c752.wav",
+    "source_sha256": "eea8590126b0880ec583ed3084f3fa4a0075256bc6d27f508b0a88430edb50b3",
+    "txtp_sha256": "d9485dfc980a7a9f630a342c4802fcb33f12352fb3920816ef3ef2ea28c0c260"
   },
   {
     "file": "play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1216965916_r2_d.wav",
     "event": "Play_sfx_MissFortune_MissFortuneBasicAttack_OnHit",
     "event_id": 4095513532,
-    "source_preview": "event_wav/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1216965916_r2_d.wav",
     "media_ids": [
       2976772,
       6586415,
@@ -352,13 +511,23 @@
       298951005,
       332477919,
       338524500
-    ]
+    ],
+    "sha256": "d10e0d032e5ffdd58a676604884598404d8294ab7b269cb29eeafbb7308eed1f",
+    "duration": 1.2185714285714286,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/90b24d5f1bde2c64af7e13185519038647998c714da1ba190e4934682237a6c9.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/90b24d5f1bde2c64af7e13185519038647998c714da1ba190e4934682237a6c9.wav",
+    "source_sha256": "f48c7fbda0443b142d0d45626d6d33027c8af1a89181d35f690c7e744c59d071",
+    "txtp_sha256": "564c3b6c2a77cf5d22354ce4cda36f4f00c8a44f73ff81aba53bfe644b4c2c3e"
   },
   {
     "file": "play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1216965916_r3_d.wav",
     "event": "Play_sfx_MissFortune_MissFortuneBasicAttack_OnHit",
     "event_id": 4095513532,
-    "source_preview": "event_wav/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1216965916_r3_d.wav",
     "media_ids": [
       2976772,
       6586415,
@@ -384,13 +553,23 @@
       298951005,
       332477919,
       338524500
-    ]
+    ],
+    "sha256": "dcfdc2e1a7c048943efd16193571741a15c37a1d302650a7f89ba2cf6fe723ef",
+    "duration": 1.3508843537414965,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/663387f1f2b62b4c4acf891cb04b73638257ba18b9427ad49226e4959502fa28.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/663387f1f2b62b4c4acf891cb04b73638257ba18b9427ad49226e4959502fa28.wav",
+    "source_sha256": "0499526f9d60daff56c013cb15f15c111eca96e1fca189c3361d629cd7467098",
+    "txtp_sha256": "dca58acda7af866a26b0dce9306636da482662ab14f2770269caf6d3f338195e"
   },
   {
     "file": "play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1216965916_r4_d.wav",
     "event": "Play_sfx_MissFortune_MissFortuneBasicAttack_OnHit",
     "event_id": 4095513532,
-    "source_preview": "event_wav/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1216965916_r4_d.wav",
     "media_ids": [
       2976772,
       6586415,
@@ -416,13 +595,23 @@
       298951005,
       332477919,
       338524500
-    ]
+    ],
+    "sha256": "fc52b673ee5fe0e1d8817ffeab541a08ed05a61bb391092eb033c18b40d89add",
+    "duration": 1.2529251700680273,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/336bac6713539f3ebe0a5b2b479e8815bf2151f9181b7d0c929e0e7aa9b1d790.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/336bac6713539f3ebe0a5b2b479e8815bf2151f9181b7d0c929e0e7aa9b1d790.wav",
+    "source_sha256": "2a361c434e7507dcbb36ca60f9595ab0e2ab84247c64c9d1690e35a83164ae32",
+    "txtp_sha256": "d69b1fd2171604f6cae969122c5973e482a9d020b81bfc9cd287ab581f06bb8e"
   },
   {
     "file": "play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1216965916_r5_d.wav",
     "event": "Play_sfx_MissFortune_MissFortuneBasicAttack_OnHit",
     "event_id": 4095513532,
-    "source_preview": "event_wav/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1216965916_r5_d.wav",
     "media_ids": [
       2976772,
       6586415,
@@ -448,13 +637,23 @@
       298951005,
       332477919,
       338524500
-    ]
+    ],
+    "sha256": "fecda13d767d3b864b1051f74f0e1c0a71c5848966b6a9b35c2988e7a306f93a",
+    "duration": 1.049501133786848,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/ef11ed00aa011d182864b4861df3f1058f082eaa55a4ba14c05f3b053cccc812.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/ef11ed00aa011d182864b4861df3f1058f082eaa55a4ba14c05f3b053cccc812.wav",
+    "source_sha256": "b165de7e252bae989409743b5f90608548e6e21f21d5188f7139e643e0f83359",
+    "txtp_sha256": "93c0b6ad3f7d7aaab866f5cc628710573768ad034ce6d1f9646fdc6d9f5a7676"
   },
   {
     "file": "play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1216965916_r6_d.wav",
     "event": "Play_sfx_MissFortune_MissFortuneBasicAttack_OnHit",
     "event_id": 4095513532,
-    "source_preview": "event_wav/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1216965916_r6_d.wav",
     "media_ids": [
       2976772,
       6586415,
@@ -480,13 +679,23 @@
       298951005,
       332477919,
       338524500
-    ]
+    ],
+    "sha256": "c6bcdf457880b450cda7e50f3ebc04921e3f09bade45bd1f7e7a1a961014d7d6",
+    "duration": 1.5708163265306123,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/ed9934989d8cf5d740da16b40da6538430f9761764de68a579835f88ab7d0637.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/ed9934989d8cf5d740da16b40da6538430f9761764de68a579835f88ab7d0637.wav",
+    "source_sha256": "795c5e50487845758277d622372582bd18b6fb3ec3200e0a69ebedebfe0b96db",
+    "txtp_sha256": "9991b1ce7ebb70c99c6340de80bb66e941d69b51bd6de5d89194c5902d5fe22b"
   },
   {
     "file": "play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2058049674_r1_d.wav",
     "event": "Play_sfx_MissFortune_MissFortuneBasicAttack_OnHit",
     "event_id": 4095513532,
-    "source_preview": "event_wav/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2058049674_r1_d.wav",
     "media_ids": [
       2976772,
       6586415,
@@ -512,13 +721,23 @@
       298951005,
       332477919,
       338524500
-    ]
+    ],
+    "sha256": "df2ebeee5fc8dd4333a7e00cfa00445f9efc8a4df0c9527a8b6c90b175b382d9",
+    "duration": 1.1203854875283448,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/b122145c2977eb3da15bd80ebb4dde71bff38326ce560b583892407b4d506b41.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/b122145c2977eb3da15bd80ebb4dde71bff38326ce560b583892407b4d506b41.wav",
+    "source_sha256": "f18b8d0b6d68a44b7836b67ebecf992c48ac302eacc1a646ef79d0edea2d0a70",
+    "txtp_sha256": "3f7fe64722b7936d2f0f33a3355bea46488cd2ce07ac68782a537d535c83fe20"
   },
   {
     "file": "play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2058049674_r2_d.wav",
     "event": "Play_sfx_MissFortune_MissFortuneBasicAttack_OnHit",
     "event_id": 4095513532,
-    "source_preview": "event_wav/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2058049674_r2_d.wav",
     "media_ids": [
       2976772,
       6586415,
@@ -544,13 +763,23 @@
       298951005,
       332477919,
       338524500
-    ]
+    ],
+    "sha256": "54487c7edda728744249c395f52d73c6c882ff726f490e324a4bd732c913ad9a",
+    "duration": 1.0880045351473924,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/d21d234c1e79102c851ad847ab145f8674d47eb7187adc4ef8cd0cb8ae1637eb.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/d21d234c1e79102c851ad847ab145f8674d47eb7187adc4ef8cd0cb8ae1637eb.wav",
+    "source_sha256": "06dc7393271de1bc032efb96c02aea6535feea3784c9f368070ca447f8a1cfc3",
+    "txtp_sha256": "d75679ed897f58398dc05419c6869cee64b81d0d1f004eb503574ce631e153fa"
   },
   {
     "file": "play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2058049674_r3_d.wav",
     "event": "Play_sfx_MissFortune_MissFortuneBasicAttack_OnHit",
     "event_id": 4095513532,
-    "source_preview": "event_wav/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2058049674_r3_d.wav",
     "media_ids": [
       2976772,
       6586415,
@@ -576,13 +805,23 @@
       298951005,
       332477919,
       338524500
-    ]
+    ],
+    "sha256": "c242870476763effbc5020cf5d87e2d6f74062c7c12285722e42316d8aa73c0f",
+    "duration": 1.2903174603174603,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/b0c1c14205223b8e1fb1987a64d12fd23cbd228c906d98bde69f62d2696a5871.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/b0c1c14205223b8e1fb1987a64d12fd23cbd228c906d98bde69f62d2696a5871.wav",
+    "source_sha256": "6ddcd288d945016200ba52902f6be0bdf03e23cb00e8080c1935fe3631574221",
+    "txtp_sha256": "a2a90e9d99331efa38599b2d414c14ebcb99befc51c297957428ca3e73ca6c74"
   },
   {
     "file": "play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2058049674_r4_d.wav",
     "event": "Play_sfx_MissFortune_MissFortuneBasicAttack_OnHit",
     "event_id": 4095513532,
-    "source_preview": "event_wav/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2058049674_r4_d.wav",
     "media_ids": [
       2976772,
       6586415,
@@ -608,13 +847,23 @@
       298951005,
       332477919,
       338524500
-    ]
+    ],
+    "sha256": "fb32a349e1236c7f92314bc8f4178953f3f3c101ea4787e114ca71ea22139039",
+    "duration": 1.053922902494331,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/f849f5f901814877b14f18738641c9ed9627eca21fda611a82b85eba49e80789.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/f849f5f901814877b14f18738641c9ed9627eca21fda611a82b85eba49e80789.wav",
+    "source_sha256": "a7841f9adc1cd60e495f4a087225b85e4eab489da4a63af1f453c663434617d1",
+    "txtp_sha256": "39924bd9728d8d12c18dadb9dba5249029b690b0bec85495554d6f82cae67e37"
   },
   {
     "file": "play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2058049674_r5_d.wav",
     "event": "Play_sfx_MissFortune_MissFortuneBasicAttack_OnHit",
     "event_id": 4095513532,
-    "source_preview": "event_wav/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2058049674_r5_d.wav",
     "media_ids": [
       2976772,
       6586415,
@@ -640,13 +889,23 @@
       298951005,
       332477919,
       338524500
-    ]
+    ],
+    "sha256": "7af6926c289501d9615d87b4ed81f809df8d53652e5479e841a77a0354b8959f",
+    "duration": 1.0936507936507935,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/13c9a93d4985049f0ad47b4770fa910cd443f5ec5f59ca7eb769393669bbb026.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/13c9a93d4985049f0ad47b4770fa910cd443f5ec5f59ca7eb769393669bbb026.wav",
+    "source_sha256": "c664f6503ec34e5230a0bfcb4bad458f02f885779d01cd6c19b197ab339b1f8a",
+    "txtp_sha256": "0f599a5585a9ac26a3616059c4428b3180e3ca5479717f403c305dcea8362bd9"
   },
   {
     "file": "play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2058049674_r6_d.wav",
     "event": "Play_sfx_MissFortune_MissFortuneBasicAttack_OnHit",
     "event_id": 4095513532,
-    "source_preview": "event_wav/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2058049674_r6_d.wav",
     "media_ids": [
       2976772,
       6586415,
@@ -672,13 +931,23 @@
       298951005,
       332477919,
       338524500
-    ]
+    ],
+    "sha256": "4251bd836745c0bc106c29906ff7f65ee0fb734fcc13fcc6ae737d23d70b786c",
+    "duration": 1.1656009070294784,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/d1285e6e1d334c22076da56350505f4b7ab293e4cfb1432828d9f62e6878adb9.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/d1285e6e1d334c22076da56350505f4b7ab293e4cfb1432828d9f62e6878adb9.wav",
+    "source_sha256": "1321553ef9d15f90b5f5535b0978ce821cd9d8fd7e67718639e8ff046f235fe8",
+    "txtp_sha256": "f074e6f3edd769dbc0c379fac4c1d5062bdf26670eb682711d077331a8268ea9"
   },
   {
     "file": "play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2473969246_r1_d.wav",
     "event": "Play_sfx_MissFortune_MissFortuneBasicAttack_OnHit",
     "event_id": 4095513532,
-    "source_preview": "event_wav/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2473969246_r1_d.wav",
     "media_ids": [
       2976772,
       6586415,
@@ -704,13 +973,23 @@
       298951005,
       332477919,
       338524500
-    ]
+    ],
+    "sha256": "8c697a23d14c6ccd4fe903e0af4371a192586bfb3b24ddf8210a23136ad83d6b",
+    "duration": 0.7650566893424037,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/8ea12cd24fe8bc87dd7b1342fde0bbf13e2c43aa1d37e8e9b0f78beb2a611232.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/8ea12cd24fe8bc87dd7b1342fde0bbf13e2c43aa1d37e8e9b0f78beb2a611232.wav",
+    "source_sha256": "966394715c0990f998da9eab4f81dd085891d63a892f2290714406e0410fcd9b",
+    "txtp_sha256": "fcdb213aa604db99ef28ddd33c292d500cd2ceceeee1a788ce6a5bce505bf30c"
   },
   {
     "file": "play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2473969246_r2_d.wav",
     "event": "Play_sfx_MissFortune_MissFortuneBasicAttack_OnHit",
     "event_id": 4095513532,
-    "source_preview": "event_wav/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2473969246_r2_d.wav",
     "media_ids": [
       2976772,
       6586415,
@@ -736,13 +1015,23 @@
       298951005,
       332477919,
       338524500
-    ]
+    ],
+    "sha256": "c78eeedf117658273e39e7feeb3a0d5a50d732ce21faa210737e7461725afed8",
+    "duration": 0.8006122448979592,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/6128bcc855028729098bb6c5dacc3af09a1936425397b594788a34f60792a920.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/6128bcc855028729098bb6c5dacc3af09a1936425397b594788a34f60792a920.wav",
+    "source_sha256": "e74409e24a8c85e0161d1571830fb5568834b980aef0078c3d510cd936fd96ae",
+    "txtp_sha256": "fb852d501b0e879df0d2f12918c231badbccd07e5eab78e1f5847d4df87cbdb5"
   },
   {
     "file": "play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2473969246_r3_d.wav",
     "event": "Play_sfx_MissFortune_MissFortuneBasicAttack_OnHit",
     "event_id": 4095513532,
-    "source_preview": "event_wav/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2473969246_r3_d.wav",
     "media_ids": [
       2976772,
       6586415,
@@ -768,13 +1057,23 @@
       298951005,
       332477919,
       338524500
-    ]
+    ],
+    "sha256": "53b52904ae348abc2849faff3521ff89725e4b191333280ed98b13f126d11256",
+    "duration": 0.6959183673469388,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/1ecc7266a02265d6ed1ef7337c96c73a2dfd7929d5b42e629fe94b0db5725a0d.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/1ecc7266a02265d6ed1ef7337c96c73a2dfd7929d5b42e629fe94b0db5725a0d.wav",
+    "source_sha256": "4d5a3e0f55586ddda19c7226b64b87eddb29f4d12cc87805e85bd0f7ac4bdf92",
+    "txtp_sha256": "87c0c84cb941259079d69b1a353b5011ac038c2668273294f6f0dbcb1d6dc5ce"
   },
   {
     "file": "play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2473969246_r4_d.wav",
     "event": "Play_sfx_MissFortune_MissFortuneBasicAttack_OnHit",
     "event_id": 4095513532,
-    "source_preview": "event_wav/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2473969246_r4_d.wav",
     "media_ids": [
       2976772,
       6586415,
@@ -800,13 +1099,23 @@
       298951005,
       332477919,
       338524500
-    ]
+    ],
+    "sha256": "ae25fde586da188f9e817211aa9b15a7b49512f7252f7fc6bca102c299314e84",
+    "duration": 1.099047619047619,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/a1030915ddfa51c498f82ae3f7723f96879b37c2da344c37352793fea9867b4a.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/a1030915ddfa51c498f82ae3f7723f96879b37c2da344c37352793fea9867b4a.wav",
+    "source_sha256": "428f1b031394e434fc455587ae906ce678b9cbb72c111e4f09785ddfaf0f7793",
+    "txtp_sha256": "219cee8097edead00ae1a62b82a4de8177a0d08a3562568a1abdae26178f9133"
   },
   {
     "file": "play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2473969246_r5_d.wav",
     "event": "Play_sfx_MissFortune_MissFortuneBasicAttack_OnHit",
     "event_id": 4095513532,
-    "source_preview": "event_wav/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2473969246_r5_d.wav",
     "media_ids": [
       2976772,
       6586415,
@@ -832,13 +1141,23 @@
       298951005,
       332477919,
       338524500
-    ]
+    ],
+    "sha256": "521e3bebbf84791c9e529412fd5af87d553ae909708dc46b42ae8c6acfd1d176",
+    "duration": 0.8473242630385488,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/4ab211a6873c9239bd1c03cec454775277c5cd378cdde2b3585e5dbe9e0daaec.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/4ab211a6873c9239bd1c03cec454775277c5cd378cdde2b3585e5dbe9e0daaec.wav",
+    "source_sha256": "7bdacfd175429fc237d975d47e3eed4aee443092c06a1064789afd60d8639ec0",
+    "txtp_sha256": "05e1ca198c927a8726ecbc7b0ab757f4babc722ed57a2773be25842e1940a3a4"
   },
   {
     "file": "play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2473969246_r6_d.wav",
     "event": "Play_sfx_MissFortune_MissFortuneBasicAttack_OnHit",
     "event_id": 4095513532,
-    "source_preview": "event_wav/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2473969246_r6_d.wav",
     "media_ids": [
       2976772,
       6586415,
@@ -864,73 +1183,143 @@
       298951005,
       332477919,
       338524500
-    ]
+    ],
+    "sha256": "9a9fd870f4ad4d909b3ff5429b55659953d5090361a232b572851b4a42978dc0",
+    "duration": 0.9365759637188209,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/c521cec8c7045ab60f6980178bc5bc194d17a2e94e4ca3add4f0b82ba866089c.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/c521cec8c7045ab60f6980178bc5bc194d17a2e94e4ca3add4f0b82ba866089c.wav",
+    "source_sha256": "c13ef1f2959a63a9a1a86e822ba06272787505957f47661de1fb02ef8ad45fb3",
+    "txtp_sha256": "e294d8af9fd2b1e1a733efd338b2abefe0ee4e15757a0cc8ded3b375616ad643"
   },
   {
     "file": "play_sfx_missfortune_missfortuneviciousstrikes_oncast_r1.wav",
     "event": "Play_sfx_MissFortune_MissFortuneViciousStrikes_OnCast",
     "event_id": 3038925665,
-    "source_preview": "event_wav/play_sfx_missfortune_missfortuneviciousstrikes_oncast_r1.wav",
     "media_ids": [
       119998499,
       404636949
-    ]
+    ],
+    "sha256": "c47516aa6e9b56b7ed3165d15fcfd2a6c6c3dfd1946373b82305c165f97aa314",
+    "duration": 2.924625850340136,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/7ede89b5cfd0db9cba8d78e13aead00081577fea49917c874a449e1e40b056f0.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/7ede89b5cfd0db9cba8d78e13aead00081577fea49917c874a449e1e40b056f0.wav",
+    "source_sha256": "4b2fd63622ccc4e0635cc81f49afbab460948ccde5de28f0dbe831ba8c2d6c29",
+    "txtp_sha256": "3d43de4684893cd1394b4c8d036c0ffea16cfa903e9217fe131a0f9708cdd973"
   },
   {
     "file": "play_sfx_missfortune_missfortuneviciousstrikes_oncast_r2.wav",
     "event": "Play_sfx_MissFortune_MissFortuneViciousStrikes_OnCast",
     "event_id": 3038925665,
-    "source_preview": "event_wav/play_sfx_missfortune_missfortuneviciousstrikes_oncast_r2.wav",
     "media_ids": [
       119998499,
       404636949
-    ]
+    ],
+    "sha256": "ea1f8b8c15b03130b37b6b1fffd81be83b1cac24040ce9f67acc3fa3983d727e",
+    "duration": 2.168888888888889,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/f1b464a37d3af30af859a484f7f0681c1dade1b5da4a1e4b5dbec2b77e18766a.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/f1b464a37d3af30af859a484f7f0681c1dade1b5da4a1e4b5dbec2b77e18766a.wav",
+    "source_sha256": "6be805e775cccb937b010e82b9881b46dca74ffa78a0a1fb49cc518e09254689",
+    "txtp_sha256": "3c7c142e044819f893251c88a7f4c03325027c6a4ed51357f03da9411355ad71"
   },
   {
     "file": "play_sfx_missfortune_missfortuneviciousstrikes_onbuffactivate_r1.wav",
     "event": "Play_sfx_MissFortune_MissFortuneViciousStrikes_OnBuffActivate",
     "event_id": 4046706192,
-    "source_preview": "event_wav/play_sfx_missfortune_missfortuneviciousstrikes_onbuffactivate_r1.wav",
     "media_ids": [
       463646178,
       678279379
-    ]
+    ],
+    "sha256": "06b66c4e9c4bbc4b921d1405ec1a036b5033335bf326aaa4f25088054a351639",
+    "duration": 6.010634920634921,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/78dba7d31491946f378cf060fb2baaa682d16fa348bc53a0b6586cf35cdc8471.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/78dba7d31491946f378cf060fb2baaa682d16fa348bc53a0b6586cf35cdc8471.wav",
+    "source_sha256": "6b9cb84b2d3fe557642b8126e1b4e27aac701371f5d951f025b172de8dc2e2f6",
+    "txtp_sha256": "c310ae2e79e01a19967aab9903cb9dbbe697e345ed3966b236fad9148b4089d4"
   },
   {
     "file": "play_sfx_missfortune_missfortuneviciousstrikes_onbuffactivate_r2.wav",
     "event": "Play_sfx_MissFortune_MissFortuneViciousStrikes_OnBuffActivate",
     "event_id": 4046706192,
-    "source_preview": "event_wav/play_sfx_missfortune_missfortuneviciousstrikes_onbuffactivate_r2.wav",
     "media_ids": [
       463646178,
       678279379
-    ]
+    ],
+    "sha256": "07f21e6fa5886e15cf03d352b2d389e474fa94c66be63e7adf0424d20917b34e",
+    "duration": 6.1788208616780045,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/0c17c12c6beff8ce129b1f20cb3a7a4d3c9362b30badb5ec40ac1a643e65ffd2.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/0c17c12c6beff8ce129b1f20cb3a7a4d3c9362b30badb5ec40ac1a643e65ffd2.wav",
+    "source_sha256": "c8b585c93aba8147e7c5ac269ce31f336377d19b9e069286d507849cf656e998",
+    "txtp_sha256": "71af4ecd4e5f5a4218ce3d5e81ceedd3889c9da9cc7c00dd59b946f559cc8df0"
   },
   {
     "file": "play_sfx_missfortune_missfortuneviciousstrikes_onbuffdeactivate_r1.wav",
     "event": "Play_sfx_MissFortune_MissFortuneViciousStrikes_OnBuffDeactivate",
     "event_id": 3721234945,
-    "source_preview": "event_wav/play_sfx_missfortune_missfortuneviciousstrikes_onbuffdeactivate_r1.wav",
     "media_ids": [
       31359958,
       345180998
-    ]
+    ],
+    "sha256": "ecd75f60f18253751a9e1a3db00d49df5ff628d075f3c118db48ab4a27e9aa20",
+    "duration": 1.0277551020408164,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/b1f0deef6b736962da9b4ddeab7f5c6119b431bd33e8f2a97c8513175022a0b7.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/b1f0deef6b736962da9b4ddeab7f5c6119b431bd33e8f2a97c8513175022a0b7.wav",
+    "source_sha256": "b6e663d13d1b7df21c141c7a5fad434daaaa2768fb545c22e3e87d579d6cda06",
+    "txtp_sha256": "10d275efe86cd8022bee382feb2d76bb214132aa72fa2df0d41c9f7a2943978b"
   },
   {
     "file": "play_sfx_missfortune_missfortuneviciousstrikes_onbuffdeactivate_r2.wav",
     "event": "Play_sfx_MissFortune_MissFortuneViciousStrikes_OnBuffDeactivate",
     "event_id": 3721234945,
-    "source_preview": "event_wav/play_sfx_missfortune_missfortuneviciousstrikes_onbuffdeactivate_r2.wav",
     "media_ids": [
       31359958,
       345180998
-    ]
+    ],
+    "sha256": "40ccc076203000390dca8a2a23a81bfcff6b6ba22eef22f86e1d8e16eabf91b5",
+    "duration": 0.9555555555555556,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/306dfd71db2f4c4cae746be69602a8a4dd146c9a0c2872314fe8e37ae21ac849.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/306dfd71db2f4c4cae746be69602a8a4dd146c9a0c2872314fe8e37ae21ac849.wav",
+    "source_sha256": "bb986d6fc16ffc98affb5cc31b67ee0a9d7ac814fd2378185fba95a1a8f49e74",
+    "txtp_sha256": "9e2d607c4043c02a572d6792dec14186748480ed820d65c4bd556a7a942d8092"
   },
   {
     "file": "play_sfx_missfortune_missfortunepassiveattack_oncast_r1_d.wav",
     "event": "Play_sfx_MissFortune_MissFortunePassiveAttack_OnCast",
     "event_id": 3539532735,
-    "source_preview": "event_wav/_inspect_play_sfx_missfortune_missfortunepassiveattack_oncast_r1_d.wav",
     "media_ids": [
       15777038,
       26204524,
@@ -939,13 +1328,23 @@
       259861560,
       285174077
     ],
-    "selection_note": "已验证的 PassiveAttack 完整链条自然变体；其余随机分支留在外部来源库。"
+    "selection_note": "已验证的 PassiveAttack 完整链条自然变体；其余随机分支留在外部来源库。",
+    "sha256": "cb05ec63006c324d0721badbb20b9d14c9c3932c84724ad914d5ec67914d9466",
+    "duration": 0.34061224489795916,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/2af47a997edd7b48ff04f869c450ff5bd586952189fc47b4bc9ab844ce60207c.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/2af47a997edd7b48ff04f869c450ff5bd586952189fc47b4bc9ab844ce60207c.wav",
+    "source_sha256": "dd293252fa39b24ba5b6af5091ef0663e553e9ac8b0f084cec8e6055904bd746",
+    "txtp_sha256": "a1c9a2439a6eefa2b29276ad4d911507ba7c20fb71aaede85d65997cec87ff2f"
   },
   {
     "file": "play_sfx_missfortune_missfortunepassiveattack_oncast_r2_d.wav",
     "event": "Play_sfx_MissFortune_MissFortunePassiveAttack_OnCast",
     "event_id": 3539532735,
-    "source_preview": "event_wav/_inspect_play_sfx_missfortune_missfortunepassiveattack_oncast_r2_d.wav",
     "media_ids": [
       15777038,
       26204524,
@@ -954,13 +1353,23 @@
       259861560,
       285174077
     ],
-    "selection_note": "已验证的 PassiveAttack 完整链条自然变体；其余随机分支留在外部来源库。"
+    "selection_note": "已验证的 PassiveAttack 完整链条自然变体；其余随机分支留在外部来源库。",
+    "sha256": "9f94f59c86063a866670354ef536fb7d5f9154d62ac949862b9dd674c3be6fce",
+    "duration": 0.306281179138322,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/8afe2c0edddb8fa8e52195284900fedd2575c38f087c6c0595667c8399478c7b.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/8afe2c0edddb8fa8e52195284900fedd2575c38f087c6c0595667c8399478c7b.wav",
+    "source_sha256": "c978a65b7a3ac59bcc7ab5fda66aed50f304dd5403ce9ae77dba481d8375c5cd",
+    "txtp_sha256": "3b423832ae1eaea8c21764f3a583cbebc24e3f9b70cc531168c27c2024820fce"
   },
   {
     "file": "play_sfx_missfortune_missfortunepassiveattack_onmissilecast_r1_d.wav",
     "event": "Play_sfx_MissFortune_MissFortunePassiveAttack_OnMissileCast",
     "event_id": 1678124587,
-    "source_preview": "event_wav/_inspect_play_sfx_missfortune_missfortunepassiveattack_onmissilecast_r1_d.wav",
     "media_ids": [
       18378979,
       32099403,
@@ -969,13 +1378,23 @@
       158378122,
       211201504
     ],
-    "selection_note": "已验证的 PassiveAttack 完整链条自然变体；其余随机分支留在外部来源库。"
+    "selection_note": "已验证的 PassiveAttack 完整链条自然变体；其余随机分支留在外部来源库。",
+    "sha256": "7237d705bfbcb3652bd86bea7fcbf8d7277d8f91551d8289fbba945f18f7fac3",
+    "duration": 1.6603854875283446,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/ffe365fd1f71c17a55510c2bbb3b4f9341fd0a508aae44eaa0d6c4488bc49237.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/ffe365fd1f71c17a55510c2bbb3b4f9341fd0a508aae44eaa0d6c4488bc49237.wav",
+    "source_sha256": "f24b24f33992a3bc34c087528bef5fd7ac19b8b1c73a37f0d468da3428ccb87d",
+    "txtp_sha256": "f48e71f25b433ff524d09cd260fb7531f0ccab9b75d5d59f9eb81085baca9257"
   },
   {
     "file": "play_sfx_missfortune_missfortunepassiveattack_onmissilecast_r2_d.wav",
     "event": "Play_sfx_MissFortune_MissFortunePassiveAttack_OnMissileCast",
     "event_id": 1678124587,
-    "source_preview": "event_wav/_inspect_play_sfx_missfortune_missfortunepassiveattack_onmissilecast_r2_d.wav",
     "media_ids": [
       18378979,
       32099403,
@@ -984,13 +1403,23 @@
       158378122,
       211201504
     ],
-    "selection_note": "已验证的 PassiveAttack 完整链条自然变体；其余随机分支留在外部来源库。"
+    "selection_note": "已验证的 PassiveAttack 完整链条自然变体；其余随机分支留在外部来源库。",
+    "sha256": "1215098ec8c596c56435248cedb83ea7fcbc14aa3c94cc9fb658f54860ad76af",
+    "duration": 1.511111111111111,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/701ebea3d13ec10c0e5ff02f0c578ba2e52124bd2c7d807b343d33eb2a9c48cb.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/701ebea3d13ec10c0e5ff02f0c578ba2e52124bd2c7d807b343d33eb2a9c48cb.wav",
+    "source_sha256": "b140083b0e65e3068afc7ac0c11c8ce69cf85d20fa257ed7d7a0825800e54bca",
+    "txtp_sha256": "a028929df1d70a9df84e99f37bc387d87ff8d52f5b156017cb6b70aa7bcc273a"
   },
   {
     "file": "play_sfx_missfortune_missfortunepassiveattack_onmissilelaunch_r1_d.wav",
     "event": "Play_sfx_MissFortune_MissFortunePassiveAttack_OnMissileLaunch",
     "event_id": 2962715415,
-    "source_preview": "event_wav/_inspect_play_sfx_missfortune_missfortunepassiveattack_onmissilelaunch_r1_d.wav",
     "media_ids": [
       2853485,
       62316331,
@@ -999,13 +1428,23 @@
       104129671,
       105856332
     ],
-    "selection_note": "已验证的 PassiveAttack 完整链条自然变体；其余随机分支留在外部来源库。"
+    "selection_note": "已验证的 PassiveAttack 完整链条自然变体；其余随机分支留在外部来源库。",
+    "sha256": "d2495f1668a64c2b7af783d090fa018c0700d8171ddbf0d806a509850f28fb4c",
+    "duration": 0.9043537414965986,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/a403d375121448a30c8b8c93ded19fed1f3926cfa258fc916d880f83c0eda867.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/a403d375121448a30c8b8c93ded19fed1f3926cfa258fc916d880f83c0eda867.wav",
+    "source_sha256": "ff1e18388a3ae0daa61e9c4004de4fad88198e510d7c712ac4a685463f13fb39",
+    "txtp_sha256": "71754c7db0e2e34b6abbcf1282871793c68bcff7a6b3871787317579c65d5113"
   },
   {
     "file": "play_sfx_missfortune_missfortunepassiveattack_onmissilelaunch_r2_d.wav",
     "event": "Play_sfx_MissFortune_MissFortunePassiveAttack_OnMissileLaunch",
     "event_id": 2962715415,
-    "source_preview": "event_wav/_inspect_play_sfx_missfortune_missfortunepassiveattack_onmissilelaunch_r2_d.wav",
     "media_ids": [
       2853485,
       62316331,
@@ -1014,13 +1453,23 @@
       104129671,
       105856332
     ],
-    "selection_note": "已验证的 PassiveAttack 完整链条自然变体；其余随机分支留在外部来源库。"
+    "selection_note": "已验证的 PassiveAttack 完整链条自然变体；其余随机分支留在外部来源库。",
+    "sha256": "599172c9fca26a7b998f53fac39c7b395084f1274697c5de69901759e932d727",
+    "duration": 0.6647619047619048,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/b6605b67017bae62119cf582e1e5f0f1822b9a462fa4a543bcf85268ffdc2dbe.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/b6605b67017bae62119cf582e1e5f0f1822b9a462fa4a543bcf85268ffdc2dbe.wav",
+    "source_sha256": "1cc5d2c62a3f245175af5ecdf261882b9bd697cfe2967a1672850e702d84b443",
+    "txtp_sha256": "bfb1807f967c99a7250d96ff7ffa4e26d6478cdeb876080b25edc6d578110683"
   },
   {
     "file": "play_sfx_missfortune_missfortunepassiveattack_onhit_1559186049_1153642577_r1_d.wav",
     "event": "Play_sfx_MissFortune_MissFortunePassiveAttack_OnHit",
     "event_id": 644705581,
-    "source_preview": "event_wav/_inspect_play_sfx_missfortune_missfortunepassiveattack_onhit_1559186049_1153642577_r1_d.wav",
     "media_ids": [
       72463933,
       75463106,
@@ -1029,13 +1478,23 @@
       198488072,
       305334516
     ],
-    "selection_note": "已验证的 PassiveAttack 完整链条自然变体；其余随机分支留在外部来源库。"
+    "selection_note": "已验证的 PassiveAttack 完整链条自然变体；其余随机分支留在外部来源库。",
+    "sha256": "8125728a0c15903d545797d71a78c781110a183467de0423f594a6bd96d08806",
+    "duration": 0.9494331065759637,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/9a6dbc4474581095aacc55c4522265fa67625425e4192907937ba9c80ee5dd22.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/9a6dbc4474581095aacc55c4522265fa67625425e4192907937ba9c80ee5dd22.wav",
+    "source_sha256": "316d712119753d7e4be15b8c4ede650a042e909dbaea4ca5e34b0ae6b272eee6",
+    "txtp_sha256": "99dbf578744cfee6e461c49755030600b97816a6962de10c4f828770f37aa10c"
   },
   {
     "file": "play_sfx_missfortune_missfortunepassiveattack_onhit_1559186049_1153642577_r2_d.wav",
     "event": "Play_sfx_MissFortune_MissFortunePassiveAttack_OnHit",
     "event_id": 644705581,
-    "source_preview": "event_wav/_inspect_play_sfx_missfortune_missfortunepassiveattack_onhit_1559186049_1153642577_r2_d.wav",
     "media_ids": [
       72463933,
       75463106,
@@ -1044,23 +1503,43 @@
       198488072,
       305334516
     ],
-    "selection_note": "已验证的 PassiveAttack 完整链条自然变体；其余随机分支留在外部来源库。"
+    "selection_note": "已验证的 PassiveAttack 完整链条自然变体；其余随机分支留在外部来源库。",
+    "sha256": "fce020fbd41a080887ff14ba17b97eab9108cb25dd2617d976aaed28c3b75de1",
+    "duration": 0.996281179138322,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/9715625bb0c8c94998612649e8b6c8dccdd391aba5dc48cef03c1ce5bd2fa685.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/9715625bb0c8c94998612649e8b6c8dccdd391aba5dc48cef03c1ce5bd2fa685.wav",
+    "source_sha256": "cb15272e1d2b8f85c5a8ed3b8571bb6b3aaca1ed3235088c094f42a832ce0cee",
+    "txtp_sha256": "4cfcf3a5f4e337f3526274dab6d4cbec3857ed5709e7273b8d477171155b42ed"
   },
   {
     "file": "play_sfx_missfortune_missfortunepassiveattack_onhitlocation_d.wav",
     "event": "Play_sfx_MissFortune_MissFortunePassiveAttack_OnHitLocation",
     "event_id": 3874678880,
-    "source_preview": "event_wav/_inspect_play_sfx_missfortune_missfortunepassiveattack_onhitlocation_d.wav",
     "media_ids": [
       192796325
     ],
-    "selection_note": "已验证的 PassiveAttack 完整链条自然变体；其余随机分支留在外部来源库。"
+    "selection_note": "已验证的 PassiveAttack 完整链条自然变体；其余随机分支留在外部来源库。",
+    "sha256": "36e34d8732a4ccf27064377608e287d8ef8fe7cc007bac5e9dc09ea67e4eb9d1",
+    "duration": 1.0934467120181406,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/bcb588593616c55b1b5c778b683fdf7ee1b560e704b16a8a45796f32e3974346.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/bcb588593616c55b1b5c778b683fdf7ee1b560e704b16a8a45796f32e3974346.wav",
+    "source_sha256": "a5acb2980e00655b705c8816befa28fc61ba08a701651940e96e4094418b849d",
+    "txtp_sha256": "6097866f841b0f3b5e1fb55ce46af37e05ccaa3a9467096b3c97887eae38c069"
   },
   {
     "file": "play_vo_missfortune_death3d_r1_zh_cn.wav",
     "event": "Play_vo_MissFortune_Death3D",
     "event_id": 1154046355,
-    "source_preview": "/Users/czh/Tools/lol-asset-tools/verification/missfortune_vo_zh/event_wav/play_vo_missfortune_death3d_r1_zh_cn.wav",
     "media_ids": [
       342264711,
       1290892025,
@@ -1069,23 +1548,21 @@
     ],
     "source_package": "MissFortune.zh_CN.wad.client",
     "duration": 1.5,
-    "sha256": "67b10d9f959b7ad4ac2cf83ab8d418d6284ba6d6cd6877c52f4f47e8d2925577",
-    "death_envelope": {
-      "source_duration": 3.8545124716553287,
-      "source_sha256": "50cc0eae150a54e2604bba832b3c160c04d4ff9bbae480c48b9161b952aeb258",
-      "keep_seconds": 1.5,
-      "fade_start_seconds": 1.0,
-      "fade_seconds": 0.5,
-      "curve": "linear_amplitude"
-    },
-    "processing": "source PCM gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/verification/missfortune_vo_zh/txtp/Play_vo_MissFortune_Death3D {r1}.txtp"
+    "sha256": "5ea04ad27aefe94188ae12a3b92ae732ba6ce5cd258cc1de90801168bc48da50",
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/5e25cc4d5dfc7b7c0fa67a50f25ceff23a59d5ecc9ab43df7ba0a341be33a1a2.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/5e25cc4d5dfc7b7c0fa67a50f25ceff23a59d5ecc9ab43df7ba0a341be33a1a2.wav",
+    "source_sha256": "a589b9dc9d6c36bcf9123569cf118fcfbfba5ba7b01059fe070c2c6157196a0e",
+    "txtp_sha256": "27bce5afb007069def5835f848bbdf0819983d1ae0c3680c44dd08d62b6cb5a7"
   },
   {
     "file": "play_vo_missfortune_death3d_r2_zh_cn.wav",
     "event": "Play_vo_MissFortune_Death3D",
     "event_id": 1154046355,
-    "source_preview": "/Users/czh/Tools/lol-asset-tools/verification/missfortune_vo_zh/event_wav/play_vo_missfortune_death3d_r2_zh_cn.wav",
     "media_ids": [
       342264711,
       1290892025,
@@ -1094,23 +1571,21 @@
     ],
     "source_package": "MissFortune.zh_CN.wad.client",
     "duration": 1.5,
-    "sha256": "51de4a026228b91a3bf4e87eb1bb62e96899335bde354f7f99fe8c20934d5102",
-    "death_envelope": {
-      "source_duration": 3.274013605442177,
-      "source_sha256": "b1df97c82eeca72e82dd2dcb17a60f066d1d97053d58229b392cc9a8933c6c02",
-      "keep_seconds": 1.5,
-      "fade_start_seconds": 1.0,
-      "fade_seconds": 0.5,
-      "curve": "linear_amplitude"
-    },
-    "processing": "source PCM gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/verification/missfortune_vo_zh/txtp/Play_vo_MissFortune_Death3D {r2}.txtp"
+    "sha256": "563c138ebfbf225d369ed184b61e980f1a29ab9d043562b958d05bbe3753231a",
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/7c9b2ae41e7f462cdcaac4b0137a025684c9501d1ceb3721c510a3bbd04fbe58.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/7c9b2ae41e7f462cdcaac4b0137a025684c9501d1ceb3721c510a3bbd04fbe58.wav",
+    "source_sha256": "140a867e4fd009ccf8f82dcafcd425ca87e5b45694b64b7e7c3aff8c30d6c020",
+    "txtp_sha256": "9378f6cc5211d821af2f81da6e78a0889d6d02e16e9c6442d1189fb2a6a6f4ff"
   },
   {
     "file": "play_vo_missfortune_death3d_r3_zh_cn.wav",
     "event": "Play_vo_MissFortune_Death3D",
     "event_id": 1154046355,
-    "source_preview": "/Users/czh/Tools/lol-asset-tools/verification/missfortune_vo_zh/event_wav/play_vo_missfortune_death3d_r3_zh_cn.wav",
     "media_ids": [
       342264711,
       1290892025,
@@ -1119,23 +1594,21 @@
     ],
     "source_package": "MissFortune.zh_CN.wad.client",
     "duration": 1.5,
-    "sha256": "85bf4c5d4e2f985477d83356da68899b4db5fbbef53587e2c8a0e14600ee3816",
-    "death_envelope": {
-      "source_duration": 3.575873015873016,
-      "source_sha256": "f060b285918d1f5fbd3e69acfd98dded3313f9dc69ed9caaf88df3a42c5078cf",
-      "keep_seconds": 1.5,
-      "fade_start_seconds": 1.0,
-      "fade_seconds": 0.5,
-      "curve": "linear_amplitude"
-    },
-    "processing": "source PCM gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/verification/missfortune_vo_zh/txtp/Play_vo_MissFortune_Death3D {r3}.txtp"
+    "sha256": "a7fa799aaacdf2e50f3ba9e8fe7c1af3394750f93b686ecec7e3e3ce82039e45",
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/5def1d60a909b6ac5629e883de4a1c3e058b062be573a82970c9ddec162945cc.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/5def1d60a909b6ac5629e883de4a1c3e058b062be573a82970c9ddec162945cc.wav",
+    "source_sha256": "c6197ed9a0580f74ac2ef546432b5e7ad8782fef618b0117c733fd13840c9a0b",
+    "txtp_sha256": "b3ac0416dcbc003f9ee6d2054dc916edeb977be0e90736abc7de5119c0278ffa"
   },
   {
     "file": "play_vo_missfortune_death3d_r4_zh_cn.wav",
     "event": "Play_vo_MissFortune_Death3D",
     "event_id": 1154046355,
-    "source_preview": "/Users/czh/Tools/lol-asset-tools/verification/missfortune_vo_zh/event_wav/play_vo_missfortune_death3d_r4_zh_cn.wav",
     "media_ids": [
       342264711,
       1290892025,
@@ -1144,65 +1617,84 @@
     ],
     "source_package": "MissFortune.zh_CN.wad.client",
     "duration": 1.5,
-    "sha256": "fcbe6a36df492c47d40bf5bc52268ef885e53252ede82c7c753b3ba112307997",
-    "death_envelope": {
-      "source_duration": 2.948934240362812,
-      "source_sha256": "90d022e3a588adcfa58f0605742e089f1fb1e5dd0f6c18b122f393c0e9bd6098",
-      "keep_seconds": 1.5,
-      "fade_start_seconds": 1.0,
-      "fade_seconds": 0.5,
-      "curve": "linear_amplitude"
-    },
-    "processing": "source PCM gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/verification/missfortune_vo_zh/txtp/Play_vo_MissFortune_Death3D {r4}.txtp"
+    "sha256": "16547907d1d7439566b1205ee3ad2aefff9657142b001afce2d8c3de9916fb40",
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/7459f360365137bbd104bb623af77dcd6027862c75f599522ed7a4c5856d056a.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/7459f360365137bbd104bb623af77dcd6027862c75f599522ed7a4c5856d056a.wav",
+    "source_sha256": "78f54653b10c51ce2c1810a2d14659b85253eb3f1626a61737edfd220d97caf1",
+    "txtp_sha256": "1c0cd4841d9e757403dd4efa27d594b992201e1840c4fb204e6d14771628e475"
   },
   {
     "file": "play_sfx_missfortune_missfortunebasicattack_onmissilecast_r1_d.wav",
     "event": "Play_sfx_MissFortune_MissFortuneBasicAttack_OnMissileCast",
     "event_id": 1341971386,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/verification/missfortune/txtp/Play_sfx_MissFortune_MissFortuneBasicAttack_OnMissileCast {r1} {d}.txtp",
     "media_ids": [
       32038653,
       359615028,
       365748403
     ],
-    "duration": 2.0323,
-    "processing": "vgmstream-cli -i; original event layers and gain retained",
-    "sha256": "c07d20a74bc8814c08e572f8ed46491669dc5a2e6b3b8175b728990bbe8cb607"
+    "duration": 2.0323129251700682,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "18e36d86d9c389a3e05bdbc69534c96b4858dd74e746fdc211dc83257cfcd3ff",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/2f0e3e3256d3aa7bba72313c104b388f92ab8d906bd0317c6ef9161ab2c814bf.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/2f0e3e3256d3aa7bba72313c104b388f92ab8d906bd0317c6ef9161ab2c814bf.wav",
+    "source_sha256": "089f6d6421eabdc6c10e2af7c482e32d7d70b98b9b4822b340db90441e66d2ee",
+    "txtp_sha256": "f5ba11208d2cc38330b838851040d8a8e3685ddf6c90512037c5e8542aea9617"
   },
   {
     "file": "play_sfx_missfortune_missfortunebasicattack_onmissilecast_r2_d.wav",
     "event": "Play_sfx_MissFortune_MissFortuneBasicAttack_OnMissileCast",
     "event_id": 1341971386,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/verification/missfortune/txtp/Play_sfx_MissFortune_MissFortuneBasicAttack_OnMissileCast {r2} {d}.txtp",
     "media_ids": [
       32038653,
       359615028,
       365748403
     ],
-    "duration": 2.174,
-    "processing": "vgmstream-cli -i; original event layers and gain retained",
-    "sha256": "ead0906fb50f4eb8d3f760cb14ce10bb8eb1a4cfd12f502f2f299d3e3909f7b7"
+    "duration": 2.1740362811791383,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "7d45dbdee57534b92a69e8d1e14a2fbae71c2a41db249d8fc23c2bd041fd37f9",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/75bd98d851d02b08ca8c95261aace80363e07a2c1e50bb9fe8eb19af3e8dff36.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/75bd98d851d02b08ca8c95261aace80363e07a2c1e50bb9fe8eb19af3e8dff36.wav",
+    "source_sha256": "523a8b12f4a4af0441e999f621c96269ac56330b50756ed3aa03f89f8dc18bf7",
+    "txtp_sha256": "2340f4cfbfa7667025f5a741d2bede5c366e8f58a12dcf24467354d9d0877038"
   },
   {
     "file": "play_sfx_missfortune_missfortunebasicattack_onmissilecast_r3_d.wav",
     "event": "Play_sfx_MissFortune_MissFortuneBasicAttack_OnMissileCast",
     "event_id": 1341971386,
-    "source_txtp": "/Users/czh/Tools/lol-asset-tools/verification/missfortune/txtp/Play_sfx_MissFortune_MissFortuneBasicAttack_OnMissileCast {r3} {d}.txtp",
     "media_ids": [
       32038653,
       359615028,
       365748403
     ],
-    "duration": 2.056,
-    "processing": "vgmstream-cli -i; original event layers and gain retained",
-    "sha256": "9c283d5e58e6d927a75e90b9c4afb91ae9155092b744baf4a1dd41dd84ae8e93"
+    "duration": 2.0559637188208617,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "f685a687bbc136398b6cc16cb7b97ca69fcfac1674b62d748c3380cad0f69691",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/879187ad3eee8089eccec2d149b75cf88f909b33b64e57715da3c7244f9d0894.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/879187ad3eee8089eccec2d149b75cf88f909b33b64e57715da3c7244f9d0894.wav",
+    "source_sha256": "e684bd06d76383bc2574c9b298509a5c8b0329c8cc11d9dea33c8d0c4c66365f",
+    "txtp_sha256": "119e46f4085d0416f65722536141f81dfc1206a21b72e1fcf702e30effd28837"
   },
   {
     "file": "play_vo_missfortune_move2dstandard_r1_zh_cn.wav",
     "event": "Play_vo_MissFortune_Move2DStandard",
     "event_id": 514315002,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/deployment_audio_review/voice_candidates_all_20260914/missfortune/txtp/Play_vo_MissFortune_Move2DStandard {r1}.txtp",
     "media_ids": [
       160731317,
       32017411,
@@ -1214,9 +1706,17 @@
       441669498
     ],
     "source_package": "MissFortune.zh_CN.wad.client",
-    "duration": 1.671837,
-    "sha256": "f6bd64d97b87ba7114910a28cf85f470db3d71544ac1f57201011e9bf52cabc2",
-    "processing": "vgmstream-cli -i; source VO gain retained",
-    "selection_note": "按用户指定的 Play_vo_MissFortune_Move2DStandard 作为部署语音，取 r1 变体。"
+    "duration": 1.6718367346938776,
+    "sha256": "614cd4ac1265304646654b556d6d1de32a55236d98af4223c98d5a2aa6bf29ce",
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "selection_note": "按用户指定的 Play_vo_MissFortune_Move2DStandard 作为部署语音，取 r1 变体。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/a0b6e626ccf9684abdf7b14cb9b3bf532bbda60737e4721b8e3a0f38260a7a31.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/a0b6e626ccf9684abdf7b14cb9b3bf532bbda60737e4721b8e3a0f38260a7a31.wav",
+    "source_sha256": "97a235d88932338adb2df704f0aa189a20c3c04422fb795057208f037c8e27e7",
+    "txtp_sha256": "df492184e4b149e4f292106885b20cacd10d53b237eb03eb1bc2837ab9da83a8"
   }
 ]

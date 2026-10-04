@@ -12,7 +12,7 @@
 
 | 发生时机 | 已接变体 | 音量调整 | 试听示例 |
 | --- | --- | --- | --- |
-| 施放 | 1 | 0 dB | [试听](../../../assets/audio/units/freeze/play_sfx_cr_freeze_spell_cast_first3s.wav) |
+| 施放 | 1 | -12 dB | [试听](../../../assets/audio/units/freeze/play_sfx_cr_freeze_spell_cast_first3s.wav) |
 
 ## 使用边界与待补项
 
@@ -28,3 +28,5 @@
 
 
 [← 返回单位总览](../freeze.md)
+
+2026-10-04：素材约 -12.03 LUFS，明显高于禁锢施放变体（约 -23.10 至 -24.56 LUFS）。固定播放降低 12 dB 后对应约 -24.03 LUFS，文件、裁剪和动态保持不变。素材试听链接播放的是原文件，最终响度以工作台实际施放为准。

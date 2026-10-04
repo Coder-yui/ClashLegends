@@ -1,5 +1,8 @@
 # 德莱厄斯原生音频来源
 
+> 2026-10-04 原版增益重导：当前文件与加工参数以 `assets/audio/original_gain_manifest.json` 为准；下面历史文字中的额外增益、制作余量及旧哈希说明已被本次重导替代。工具主增益、后期固定增益和事件播放补偿均为 0 dB；原事件内部增益保留。
+
+
 来源：只读本地`/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Darius.wad.client`和`Darius.zh_CN.wad.client`；基础皮肤事件由wwiser还原，vgmstream浮点解码，FFmpeg转PCM16。
 
 部署语音来自Play_vo_Darius_Move2DStandard的r3/r4/r1，依次对应“诺克萨斯即将崛起。”、“懦弱之举，我绝不姑息。”、“我将死战不休。”。公开台词元数据仅用于定位事件；最终声音来自本地中文包。银行内部en_us路径不代表实际语言，中文包和本地ASR共同核对。`verified_by_listening: false`保留人工未确认状态。

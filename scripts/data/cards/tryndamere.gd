@@ -65,7 +65,7 @@ static func definition() -> Dictionary:
     ]
   ],
   "events": {
-"deploy:voice": {"pool": ["res://assets/audio/units/tryndamere/deploy_1.wav", "res://assets/audio/units/tryndamere/deploy_2.wav", "res://assets/audio/units/tryndamere/deploy_3.wav"], "bus": "Voice"},
+"deploy:voice": {"clip_volume_db": {"res://assets/audio/units/tryndamere/deploy_1.ogg": -18.5}, "pool": ["res://assets/audio/units/tryndamere/deploy_1.ogg", "res://assets/audio/units/tryndamere/deploy_2.wav", "res://assets/audio/units/tryndamere/deploy_3.wav"], "bus": "Voice"},
     "active_buff:start": {
       "pool": [
         "res://assets/audio/units/tryndamere/ultimate_cast_1.wav"

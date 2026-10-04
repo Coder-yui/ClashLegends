@@ -1,5 +1,6 @@
 """Import verified event variants and candidate-only Spell4 auditions from local source banks."""
 from pathlib import Path
+from original_gain import render_fresh
 import hashlib,json,re,subprocess,os
 from death_audio_envelope import apply_death_envelope
 ROOT=Path(__file__).resolve().parents[2]
@@ -30,7 +31,7 @@ def pool(event,folder,death=False,limit=3):
    return m[1]+os.path.relpath(source,converted)
   text=re.sub(r'(?m)^(\s*)([^#\n]+?\.(?:bnk|wem))(?= #|\n)',relative,text)
   source_txtp=converted/(str(event_hash(event))+f'_{i}.txtp');source_txtp.write_text(text)
-  subprocess.run(['/opt/homebrew/bin/vgmstream-cli','-i','-o',str(output),str(source_txtp)],check=True,stdout=subprocess.DEVNULL)
+  render_fresh(source_txtp, output, decoder="/opt/homebrew/bin/vgmstream-cli")
   import wave
   with wave.open(str(output)) as w:duration=w.getnframes()/w.getframerate()
   entry={'file':str(output.relative_to(ROOT)),'event':event,'event_id':event_hash(event),'source_txtp':str(txtp),'duration':duration,'media_ids':sorted(set(map(int,re.findall(r'Source (\d+)',text)))),'processing':'Original event layers and gain; selected outer random variants; vgmstream-cli -i, no normalization','sha256':hashlib.sha256(output.read_bytes()).hexdigest()}

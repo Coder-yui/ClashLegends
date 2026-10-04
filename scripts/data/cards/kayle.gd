@@ -59,14 +59,14 @@ static func definition() -> Dictionary:
 						"res://assets/audio/units/kayle/play_sfx_kayle_kaylewheal_oncast_r4.wav"
 					],
 					"bus": "Combat",
-					"volume_db": -3.0
+					"volume_db": 0.0
 				},
 				"death": {
 					"pool": [
 						"res://assets/audio/units/kayle/play_sfx_kayle_death3d_cast.wav"
 					],
 					"bus": "Combat",
-					"volume_db": -3.0
+					"volume_db": 0.0
 				}
 			},
 			"attack_swing": [
@@ -83,7 +83,7 @@ static func definition() -> Dictionary:
 					"res://assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack2_oncast_r4.wav"
 				]
 			],
-			"attack_swing_volume_db": -5.0,
+			"attack_swing_volume_db": 0.0,
 			"attack_hit_by_segment": [
 				[
 					"res://assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack_onhit_r1_d.wav",
@@ -98,6 +98,6 @@ static func definition() -> Dictionary:
 					"res://assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack2_onhit_r4.wav"
 				]
 			],
-			"attack_hit_volume_db": -5.0
+			"attack_hit_volume_db": 0.0
 		},
 	}

@@ -39,6 +39,9 @@ def main():
     library = Path(__file__).resolve().parents[2] / 'ClashLegends-开发素材库'
     if not args.output.is_relative_to(library):
         parser.error('--output must be inside ClashLegends-开发素材库')
+    if args.output.exists():
+        parser.error('--output must be a new directory; do not mix old auto TXTP/previews with new events')
+    args.output.mkdir(parents=True)
     assert args.init.is_file()
     for champion in args.champions:
         output = (args.output/champion.lower()).resolve()
@@ -54,7 +57,7 @@ def main():
             names = sorted(set(re.findall(r'"((?:Play|Stop)_[^"]+)"','\n'.join(texts))))
             (output/'wwnames.txt').write_text('\n'.join(names)+'\n')
             banks = sorted(output.rglob('*.bnk'))
-            run(['wwiser',args.init,*banks,'-nl',output/'wwnames.txt','-g','-gra','-gd','-go',output/'txtp','-gw',banks[0].parent,'-d','none'],log,output)
+            run(['wwiser',args.init,*banks,'-nl',output/'wwnames.txt','-g','-gv=0dB','-gra','-gd','-go',output/'txtp','-gw',banks[0].parent,'-d','none'],log,output)
         if args.voices:
             voice = output.with_name(output.name+'_vo')
             voice.mkdir(exist_ok=True)
@@ -67,7 +70,7 @@ def main():
                 deaths = [n for n in names if n.startswith('Play_vo_') and n.endswith('_Death3D')]
                 (voice/'wwnames.txt').write_text('\n'.join(deaths)+'\n')
                 if deaths:
-                    run(['wwiser',args.init,*sorted(voice.rglob('*.bnk')),'-nl',voice/'wwnames.txt','-g','-gra','-gd','-go',voice/'txtp','-gw',wem,'-d','none','-gf',*deaths],log,voice)
+                    run(['wwiser',args.init,*sorted(voice.rglob('*.bnk')),'-nl',voice/'wwnames.txt','-g','-gv=0dB','-gra','-gd','-go',voice/'txtp','-gw',wem,'-d','none','-gf',*deaths],log,voice)
         for folder in [output, output.with_name(output.name+'_vo')]:
             for txtp in (folder/'txtp').glob('*.txtp'):
                 # vgmstream's TXTP reader needs paths relative to the TXTP directory.

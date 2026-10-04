@@ -92,7 +92,7 @@ static func definition() -> Dictionary:
 			"attack_hit_volume_db": 0.0,
 			"events": {
 				# 用户指定的三段部署候选共用一个池，每次生成只播放其中一个。
-				"deploy:voice": {"pool": [
+				"deploy:voice": {"clip_volume_db": {"res://assets/audio/units/garen/champion_choose_86_zh_cn.wav": -8.0}, "pool": [
 					"res://assets/audio/units/garen/champion_choose_86_zh_cn.wav",
 					"res://assets/audio/units/garen/play_vo_garen_move2dstandard_r16_zh_cn.wav",
 					"res://assets/audio/units/garen/play_vo_garen_move2dstandard_r11_zh_cn.wav",

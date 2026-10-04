@@ -35,6 +35,8 @@ var _stream_pool_cache: Dictionary = {}
 var _preview_hit_queue: Array[Dictionary] = []
 var _preview_serials: Dictionary = {}
 var _voice_serial := 0
+var _last_adjusted_clip: Dictionary = {}
+var _clip_rng := RandomNumberGenerator.new()
 var _budget_counters: Dictionary = {}
 var _zone_players: Dictionary = {}
 var _last_zone_event_id := -1
@@ -582,7 +584,7 @@ func play_event(unit: Unit, cue: StringName, position: Vector2, attack_serial: i
 		var key := "attack" if owner.kind == "attack" else "action"
 		if not cancelled.is_empty() and ((key == "attack" and int(owner.serial) <= int(cancelled.attack)) or (key == "action" and int(owner.serial) <= unit.cancelled_visual_serial)):
 			return false
-	return _play_pool(String(entry.card_id), cue, event.get("pool", []), position, float(event.get("volume_db", 0.0)), StringName(event.get("bus", "Combat")), owner)
+	return _play_pool(String(entry.card_id), cue, event.get("pool", []), position, float(event.get("volume_db", 0.0)), StringName(event.get("bus", "Combat")), owner, event.get("clip_volume_db", {}))
 ## 真实伤害结算成功后由 Main 调用。position 是命中点，来源单位只用于选择声音配置。
 ## first_strike 为权威攻击效果携带的首次命中标记；有专用素材时替换普通命中音。
 func play_attack_hit(unit: Unit, position: Vector2, first_strike: bool = false) -> bool:
@@ -605,11 +607,11 @@ func play_attack_source(source: Dictionary, position: Vector2, first_strike: boo
 	if first_strike and special is Array and not special.is_empty():
 		cue = &"first_strike_hit"
 		configured = special
-	var hit_volume := float(audio.get("attack_hit_volume_db", -4.0))
+	var hit_volume := float(audio.get("attack_hit_volume_db", 0.0))
 	if cue == &"attack_hit" and bool(source.get("active_buff", false)) and audio.get("events", {}).has("active_buff:attack_hit"):
 		var event: Dictionary = audio.events["active_buff:attack_hit"]
 		configured = event.get("pool", [])
-		hit_volume = float(event.get("volume_db", -5.0))
+		hit_volume = float(event.get("volume_db", 0.0))
 		cue = &"active_buff:attack_hit"
 	var grouped: Array = audio.get("attack_hit_once_by_segment", [])
 	var serial := int(source.get("serial", 0))
@@ -642,7 +644,7 @@ func preview_attack(card_id: String, stats: Dictionary, position: Vector2, team:
 	if swings.is_empty():
 		return false
 	var swing_pool: Array = swings[(serial - 1) % swings.size()]
-	_queue_preview_pool(card_id, &"attack_swing", swing_pool, position, delay, float(audio.get("attack_swing_volume_db", -5.0)))
+	_queue_preview_pool(card_id, &"attack_swing", swing_pool, position, delay, float(audio.get("attack_swing_volume_db", 0.0)))
 	var speed := float(stats.get("projectile_speed", 0.0))
 	if speed > 0.0:
 		for cue in ["attack_missile_cast", "attack_launch"]:
@@ -656,7 +658,7 @@ func preview_attack(card_id: String, stats: Dictionary, position: Vector2, team:
 	var hit_pool: Array = hits[(serial - 1) % hits.size()] if not hits.is_empty() else audio.get("attack_hit", [])
 	# 无真实目标的试听用卡牌射程估算飞行时间；实战仍只由碰撞派发。
 	var flight := maxf(float(stats.get("range", 0.0)), 0.0) / speed if speed > 0.0 else 0.0
-	_queue_preview_pool(card_id, &"attack_hit", hit_pool, position, windup + flight, float(audio.get("attack_hit_volume_db", -4.0)))
+	_queue_preview_pool(card_id, &"attack_hit", hit_pool, position, windup + flight, float(audio.get("attack_hit_volume_db", 0.0)))
 	return true
 
 func _queue_preview_pool(card_id: String, cue: StringName, pool: Array, position: Vector2, delay: float, volume: float) -> void:
@@ -688,7 +690,7 @@ func _play_attack_swing(card_id: String, audio: Dictionary, position: Vector2, s
 		&"attack_swing",
 		pool,
 		position,
-		float(audio.get("attack_swing_volume_db", -5.0)), COMBAT_BUS, owner
+		float(audio.get("attack_swing_volume_db", 0.0)), COMBAT_BUS, owner
 	)
 
 ## 弹体独占播放器，不占用/回收短音池，命中一枚只停止该枚的发射尾音。
@@ -737,7 +739,7 @@ func clear_projectile_launch_audio() -> void:
 	for id in _projectile_launch_players.keys():
 		stop_projectile_launch(int(id))
 
-func _play_pool(card_id: String, cue: StringName, configured: Variant, position: Vector2, volume_db: float, bus: StringName = COMBAT_BUS, owner: Dictionary = {}) -> bool:
+func _play_pool(card_id: String, cue: StringName, configured: Variant, position: Vector2, volume_db: float, bus: StringName = COMBAT_BUS, owner: Dictionary = {}, clip_volume_db: Dictionary = {}) -> bool:
 	if _battle_ended or _battle_paused:
 		return false
 	if not configured is Array or (configured as Array).is_empty():
@@ -745,7 +747,19 @@ func _play_pool(card_id: String, cue: StringName, configured: Variant, position:
 	var paths := PackedStringArray()
 	for value in configured as Array:
 		paths.append(String(value))
-	var stream := _randomized_stream(paths)
+	var stream: AudioStream
+	if clip_volume_db.is_empty():
+		stream = _randomized_stream(paths)
+	else:
+		# 独立来源语音逐条补偿；保留等概率、不连续重复的声音池行为。
+		var key := "\n".join(paths)
+		var candidates := Array(paths)
+		if candidates.size() > 1:
+			candidates.erase(_last_adjusted_clip.get(key, ""))
+		var selected: String = candidates[_clip_rng.randi_range(0, candidates.size() - 1)]
+		stream = load(selected) as AudioStream
+		volume_db += float(clip_volume_db.get(selected, 0.0))
+		_last_adjusted_clip[key] = selected
 	if stream == null:
 		return false
 	var player := _available_world_player(_cue_priority(cue, bus))
@@ -832,7 +846,7 @@ static func _cue_priority(cue: StringName, bus: StringName) -> int:
 
 func play_card_event(card_id: String, cue: String, position: Vector2, form: int = 0, team: int = 0) -> bool:
 	var event: Dictionary = _card_audio(card_id, team, form).get("events", {}).get(cue, {})
-	return _play_pool(card_id, StringName(cue), event.get("pool", []), position, float(event.get("volume_db", 0.0)), StringName(event.get("bus", "Combat")))
+	return _play_pool(card_id, StringName(cue), event.get("pool", []), position, float(event.get("volume_db", 0.0)), StringName(event.get("bus", "Combat")), {}, event.get("clip_volume_db", {}))
 
 func _on_sustain_finished(key: String, player: AudioStreamPlayer2D) -> void:
 	if _sustain_players.get(key) == player:

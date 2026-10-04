@@ -3,242 +3,312 @@
     "file": "play_sfx_teemo_respawn3d_buffactivate.wav",
     "event": "Play_sfx_Teemo_Respawn3D_buffactivate",
     "event_id": 1626058215,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/teemo/event_wav/Play_sfx_Teemo_Respawn3D_buffactivate.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/teemo/txtp/Play_sfx_Teemo_Respawn3D_buffactivate.txtp",
     "media_ids": [
       797296161
     ],
-    "duration": 1.2143,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "6124015f22902962c874288281f45c20d4cd0f32d090decd2f113ee046778902",
-    "selection_note": "与卡牌 visual_animations.deploy=Respawn 对应；先不裁剪、不变速，按部署事件一次播放。"
+    "duration": 1.2142857142857142,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "9bc721681989ff4d99ad99a139fa12384a43095eb26a4efd066f97693367b939",
+    "selection_note": "与卡牌 visual_animations.deploy=Respawn 对应；先不裁剪、不变速，按部署事件一次播放。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/ff2b9a2c70f728e6585b22fa078ee90b065d0a8301fcc13b18cb4c2a665afcf3.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/ff2b9a2c70f728e6585b22fa078ee90b065d0a8301fcc13b18cb4c2a665afcf3.wav",
+    "source_sha256": "0324c527a0650d9864f30971ffee5d4eb8e84353f21770375b5628e966202f72",
+    "txtp_sha256": "3f90d0989f9c2e7fa2be53dd0c1dc54b3a8b1dacf6d54be980ebf511ee0d9639"
   },
   {
     "file": "play_sfx_teemo_teemobasicattack_oncast_r1.wav",
     "event": "Play_sfx_Teemo_TeemoBasicAttack_OnCast",
     "event_id": 1400011736,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/teemo/event_wav/Play_sfx_Teemo_TeemoBasicAttack_OnCast {r1}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/teemo/txtp/Play_sfx_Teemo_TeemoBasicAttack_OnCast {r1}.txtp",
     "media_ids": [
       349029602,
       721159118
     ],
-    "duration": 0.4843,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "95998c773c37494176d07dbb7d3ecf8b4e3122d0ef7aa1dfe1228cab960fbd10",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 0.4843310657596372,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "4be181db9eff3977349a7f3faf061b594818e9191d2ddf964f43d9ff91e6e911",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/c15c2323ccfd519a527bd90274e20b9ea553f897c16b4d3084d6bda26f684bb7.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/c15c2323ccfd519a527bd90274e20b9ea553f897c16b4d3084d6bda26f684bb7.wav",
+    "source_sha256": "d54b7e4c455ff9e158f7aba9881ff003b144e3521835561195ec90ec48dc3f65",
+    "txtp_sha256": "cfda003fd2e099e331d1bcf36c63310b9efd0269be3c31b239ef4aa4db3f4336"
   },
   {
     "file": "play_sfx_teemo_teemobasicattack_oncast_r2.wav",
     "event": "Play_sfx_Teemo_TeemoBasicAttack_OnCast",
     "event_id": 1400011736,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/teemo/event_wav/Play_sfx_Teemo_TeemoBasicAttack_OnCast {r2}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/teemo/txtp/Play_sfx_Teemo_TeemoBasicAttack_OnCast {r2}.txtp",
     "media_ids": [
       349029602,
       721159118
     ],
-    "duration": 0.5437,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "df4cf8d284c785b606ec402117031ed1c1ae725513a339140b685c939e0117b4",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 0.543718820861678,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "729885ebe68ce98fc1b683ee75ad4d47e362f8d0610c6ef59520ecb508d32383",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/7d28adfdee72f7a1cf793b64c420fe7984c264fd9bbf5496ec54379f8f112841.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/7d28adfdee72f7a1cf793b64c420fe7984c264fd9bbf5496ec54379f8f112841.wav",
+    "source_sha256": "61a381f7c8a51c247bc9dbd129562d9d9893f6bbcd1b7ee47dfd89e28e2dbecf",
+    "txtp_sha256": "8e85c71373de22c8c4ed1f709ceaee444698b291cae90e9db5d1bddc06bed9d1"
   },
   {
     "file": "play_sfx_teemo_teemobasicattack_onhit_r1.wav",
     "event": "Play_sfx_Teemo_TeemoBasicAttack_OnHit",
     "event_id": 1478120,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/teemo/event_wav/Play_sfx_Teemo_TeemoBasicAttack_OnHit {r1}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/teemo/txtp/Play_sfx_Teemo_TeemoBasicAttack_OnHit {r1}.txtp",
     "media_ids": [
       303141121,
       607382600
     ],
-    "duration": 0.4949,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "8a5d3ce0ef883bbe1bdf64b96cd8c703ba94861bd3a54faf36801f9f545a7aa4",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 0.4948526077097506,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "a83b93c3ace4ff019e423af6cbe5eb408dc040302591845b593a8bc2b131725c",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/8ce75cf7a646d74d4e581c81c69087a0c045655083ef7918d6b4b719aaba922f.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/8ce75cf7a646d74d4e581c81c69087a0c045655083ef7918d6b4b719aaba922f.wav",
+    "source_sha256": "c23eaadab32b003182aee079a2dee30cec2ead64ac2b77d7257ee330e7b06190",
+    "txtp_sha256": "a25c67dd8050c079694adfef0011a18376d5566ba3a8e2372615084a4c41b61f"
   },
   {
     "file": "play_sfx_teemo_teemobasicattack_onhit_r2.wav",
     "event": "Play_sfx_Teemo_TeemoBasicAttack_OnHit",
     "event_id": 1478120,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/teemo/event_wav/Play_sfx_Teemo_TeemoBasicAttack_OnHit {r2}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/teemo/txtp/Play_sfx_Teemo_TeemoBasicAttack_OnHit {r2}.txtp",
     "media_ids": [
       303141121,
       607382600
     ],
-    "duration": 0.529,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "5e9c2547e76781f6c46844752a3e9d4bcb81213a19c075d4d1d06bf1358540b4",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 0.5290022675736962,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "5758c3d5fcddf0bf7ecdde4f3fe7a48407d3d642276f5eeb40d2e60bf6d2f439",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/efbb069dcd49ae3d846a0bcfc257ebec18b9ab3249fb59d5313811c642a2f231.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/efbb069dcd49ae3d846a0bcfc257ebec18b9ab3249fb59d5313811c642a2f231.wav",
+    "source_sha256": "7a902f310a4a8350f0ce6cdc6b983fe53544479a80724a04890ba23d2be9c2f1",
+    "txtp_sha256": "90845b71f7aa2b122c7c801e6b64f661ea3b549fb3b851102c655b1084ddf646"
   },
   {
     "file": "play_sfx_teemo_teemoq_onhit_r1.wav",
     "event": "Play_sfx_Teemo_TeemoQ_OnHit",
     "event_id": 4091846019,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/teemo/event_wav/Play_sfx_Teemo_TeemoQ_OnHit {r1}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/teemo/txtp/Play_sfx_Teemo_TeemoQ_OnHit {r1}.txtp",
     "media_ids": [
       41272196,
       63286599
     ],
-    "duration": 1.9875,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "9b7f470b659031121636591609bfcb5f160ec84f48e24c9de978aca947a15d39",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 1.9875056689342403,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "d8f0f5cb06e57be1079e3b3d3b15598364373cc55501991eb1be60eaa09d8e95",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/252db8cd9e370d651512efe25e478a57510fe91d9f2d53cc7e8326e3c59d0625.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/252db8cd9e370d651512efe25e478a57510fe91d9f2d53cc7e8326e3c59d0625.wav",
+    "source_sha256": "05e1bc05ab1933792845704a6790dcc150efdef7b1a120a3343519a8bfca532d",
+    "txtp_sha256": "17088f8aa51fa98912002a727fb69111f1185a066686da0540d667b5d782592b"
   },
   {
     "file": "play_sfx_teemo_teemoq_onhit_r2.wav",
     "event": "Play_sfx_Teemo_TeemoQ_OnHit",
     "event_id": 4091846019,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/teemo/event_wav/Play_sfx_Teemo_TeemoQ_OnHit {r2}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/teemo/txtp/Play_sfx_Teemo_TeemoQ_OnHit {r2}.txtp",
     "media_ids": [
       41272196,
       63286599
     ],
-    "duration": 1.9542,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "5b36bc8ba23f091a264fe6e537c491fe0e4f89cf21465b6be40442704387f5e7",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 1.954172335600907,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "1a6bf4cc97031f43e77ea46ad3c3a3b755afa921b78668c2596c81b9045ba995",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/7e7ad60a1f4eb3369d6baa8480fd10dc75553312298cab84727c7562b9711044.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/7e7ad60a1f4eb3369d6baa8480fd10dc75553312298cab84727c7562b9711044.wav",
+    "source_sha256": "c86cc6e4e4e6abc2ddbf848c3b79d33d4603c61bf82c0ee3417341386b224d63",
+    "txtp_sha256": "8643e2748305bd1b13dec4f6f3ca1e38529ca72b8d9279f7e27713a74c78e10c"
   },
   {
     "file": "play_sfx_teemo_teemoq_oncast.wav",
     "event": "Play_sfx_Teemo_TeemoQ_OnCast",
     "event_id": 1713748153,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/teemo/event_wav/Play_sfx_Teemo_TeemoQ_OnCast.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/teemo/txtp/Play_sfx_Teemo_TeemoQ_OnCast.txtp",
     "media_ids": [
       4691174
     ],
-    "duration": 0.6326,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "7ff3b2e0800485c3dc1dc4cd99eeefa5cbc1a970ffba1dd15bd38880489f77a1",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 0.6325850340136054,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "a828118a9e918b18cf730e33fa9cda26059a5a05d73e4e315ebdae019aef3546",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/a22fb7439c1717350db7934074c010bcfb3b74575904b7045b1deab1d210dc41.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/a22fb7439c1717350db7934074c010bcfb3b74575904b7045b1deab1d210dc41.wav",
+    "source_sha256": "d1e5d5119616136778da18a7f825e6a0c99e4dab4ab46e1ff9e1cc44d3a52ebc",
+    "txtp_sha256": "64eb5e287fb51223e76ccfe24f179ebc655be98d50e3f736e850c96b00ee90d0"
   },
   {
     "file": "play_vo_teemo_death3d_r1_zh_cn.wav",
     "event": "Play_vo_Teemo_Death3D",
     "event_id": 277640722,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/teemo_vo/event_wav/Play_vo_Teemo_Death3D {r1}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/teemo_vo/txtp/Play_vo_Teemo_Death3D {r1}.txtp",
     "media_ids": [
       185126813,
       913981307,
       1436824049
     ],
     "duration": 1.5,
-    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
-    "sha256": "172a386f0d5625322d23d2ff82d30ef8ed1f4c9d56bdbf9ac2b8a75c784491a7",
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "d368b97e35a905eebb4ab8951e4a4fd7393bc7c55b0df34b36f0a77eb48f994c",
     "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
-    "death_envelope": {
-      "source_duration": 3.7746938775510204,
-      "source_sha256": "e60f836524c74bcb58372c2a752357badb835814a298d116864baf5824770ec7",
-      "keep_seconds": 1.5,
-      "fade_start_seconds": 1.0,
-      "fade_seconds": 0.5,
-      "curve": "linear_amplitude"
-    }
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/31d30fd261914ef4b47980b24964df72e3c2fec002e1158ceb5698421296aace.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/31d30fd261914ef4b47980b24964df72e3c2fec002e1158ceb5698421296aace.wav",
+    "source_sha256": "bbd6de1ce550589e35c488d7ad1b4bfeb5a4cd6ebc6ebaeca87a5012131c7126",
+    "txtp_sha256": "40c671883b4d0d600704d40039cf55ca10717c3f2e9757ca8d1a48e46de4b30a"
   },
   {
     "file": "play_vo_teemo_death3d_r2_zh_cn.wav",
     "event": "Play_vo_Teemo_Death3D",
     "event_id": 277640722,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/teemo_vo/event_wav/Play_vo_Teemo_Death3D {r2}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/teemo_vo/txtp/Play_vo_Teemo_Death3D {r2}.txtp",
     "media_ids": [
       185126813,
       913981307,
       1436824049
     ],
     "duration": 1.5,
-    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
-    "sha256": "f4fa9c68b9806d26084f76ba145c8b47edecb5e2958efbe6dccc5b765e71df67",
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "66a0af5f245564b29b15148f4796d28bbc05096ed580ee14212fa1b20d219700",
     "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
-    "death_envelope": {
-      "source_duration": 1.5507256235827664,
-      "source_sha256": "65ad5fb7598bdf8869768d5b73dabc4c708c19ba1c12042b90abd0e016e49c7d",
-      "keep_seconds": 1.5,
-      "fade_start_seconds": 1.0,
-      "fade_seconds": 0.5,
-      "curve": "linear_amplitude"
-    }
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/719c3f94d5f1e57c97a24817431a8630fd9d62b8802e96be2db511b78139e4b0.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/719c3f94d5f1e57c97a24817431a8630fd9d62b8802e96be2db511b78139e4b0.wav",
+    "source_sha256": "523e41505053f16a825a75df89f929d0c0e5d097963ece4716fa09dc6e9857d2",
+    "txtp_sha256": "c41e9322c8a419a9afb9027a8af7cb289cd846fc418705c94ec5be8b34897efd"
   },
   {
     "file": "play_vo_teemo_death3d_r3_zh_cn.wav",
     "event": "Play_vo_Teemo_Death3D",
     "event_id": 277640722,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/teemo_vo/event_wav/Play_vo_Teemo_Death3D {r3}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/teemo_vo/txtp/Play_vo_Teemo_Death3D {r3}.txtp",
     "media_ids": [
       185126813,
       913981307,
       1436824049
     ],
     "duration": 1.5,
-    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
-    "sha256": "581e995937841059737c8e5b0c378acb8a1bb95de2fdbeb13e60dbb3354e1355",
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "09efe91af2cb491971fdf6b06c17f99a303b693e806215ccdbc316a84876f25f",
     "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
-    "death_envelope": {
-      "source_duration": 2.782721088435374,
-      "source_sha256": "c269f416d38c2fbe6bfa57dcb0baeb2d93d2b46f1fa92e57b87f77d6bddbd6b1",
-      "keep_seconds": 1.5,
-      "fade_start_seconds": 1.0,
-      "fade_seconds": 0.5,
-      "curve": "linear_amplitude"
-    }
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/f1a76a38d2b29b6b9c9fd26081a20002e3412f8cc394404e677e5f0084ed8681.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/f1a76a38d2b29b6b9c9fd26081a20002e3412f8cc394404e677e5f0084ed8681.wav",
+    "source_sha256": "19ad5c2ac993a0a88a1d0cd1a38f7049283e7466629bfa513965da5e23b5c77f",
+    "txtp_sha256": "f9dc5bf7f2bc1b486e81f1f980011d5d0e030ee31173cafe98f1f9eedfc935bf"
   },
   {
     "file": "play_sfx_teemo_teemobasicattack_onmissilelaunch_r1.wav",
     "event": "Play_sfx_Teemo_TeemoBasicAttack_OnMissileLaunch",
     "event_id": 2333251846,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/teemo/txtp/Play_sfx_Teemo_TeemoBasicAttack_OnMissileLaunch {r1}.txtp",
     "media_ids": [
       27483388,
       593182911
     ],
-    "duration": 0.7607,
-    "processing": "vgmstream-cli -i; original event layers and gain retained",
-    "sha256": "a78034a66a365d268030335e78e62f19be14bcf68a2a85fe79a1424fbd68ee9b"
+    "duration": 0.7607029478458049,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "1b2268912ea751483e25001bd47c24e5da07d6cc6c0ae870fe22b8465f97fbb2",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/9ff6c7ae9be8a8cd6ea0b61c309f3bfc243ebcb7f91378b35d917189e79db91a.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/9ff6c7ae9be8a8cd6ea0b61c309f3bfc243ebcb7f91378b35d917189e79db91a.wav",
+    "source_sha256": "eaa90021e09f284114635002ad06d935f2e21db9c5000ba2ec9fc71f52fee3c9",
+    "txtp_sha256": "dafc54778226bcceac3332ebe7ce038d775488f024a17d66d1ed4e8f4057b3d5"
   },
   {
     "file": "play_sfx_teemo_teemobasicattack_onmissilelaunch_r2.wav",
     "event": "Play_sfx_Teemo_TeemoBasicAttack_OnMissileLaunch",
     "event_id": 2333251846,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/teemo/txtp/Play_sfx_Teemo_TeemoBasicAttack_OnMissileLaunch {r2}.txtp",
     "media_ids": [
       27483388,
       593182911
     ],
-    "duration": 0.7263,
-    "processing": "vgmstream-cli -i; original event layers and gain retained",
-    "sha256": "e9b395cf8faabb49af5f7447537cc0c6e21b8970d03efab777929d47b764f267"
+    "duration": 0.7262585034013606,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "bc14a7182d146f184d4d13790d25b74e1a5b27da835cefeaee4abb0b263a63d8",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/12e4650d2af040175797d4231fd69033dfcf44dd1808e80132b0a86f778d7565.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/12e4650d2af040175797d4231fd69033dfcf44dd1808e80132b0a86f778d7565.wav",
+    "source_sha256": "854617ac46bcafd3407239310fc4defbdbb560d78030a150cdbd58945a59821b",
+    "txtp_sha256": "45be5a3a0464c8c0c81c45d86b93b4b637a33fdd124bf8e4313ebb27fe077a5b"
   },
   {
     "file": "play_sfx_teemo_teemoq_onmissilelaunch_r1.wav",
     "event": "Play_sfx_Teemo_TeemoQ_OnMissileLaunch",
     "event_id": 1987439021,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/teemo/txtp/Play_sfx_Teemo_TeemoQ_OnMissileLaunch {r1}.txtp",
     "media_ids": [
       814203979,
       1030668168
     ],
-    "duration": 1.4085,
-    "processing": "vgmstream-cli -i; original event layers and gain retained",
-    "sha256": "add5e2e6b2262344a110d7b738e54466253f397dc6fa479db236913c542c3a13"
+    "duration": 1.4085260770975057,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "9f423302827611570a428282773dc7f003594599010a0752dbe856ae3b0b91cc",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/66a70a18bf22da3b7f99cab942c71047ef913956429c6f012c322fd0fe15f0a2.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/66a70a18bf22da3b7f99cab942c71047ef913956429c6f012c322fd0fe15f0a2.wav",
+    "source_sha256": "a07ca6eb11340a2f97868c87e4d9dda4115464190d35a5d4d0bb2f2b2eaa933d",
+    "txtp_sha256": "8b921ba596bfd5e1303cf3cb8ed93af602abe94f4f90452bd05457dae2221fef"
   },
   {
     "file": "play_sfx_teemo_teemoq_onmissilelaunch_r2.wav",
     "event": "Play_sfx_Teemo_TeemoQ_OnMissileLaunch",
     "event_id": 1987439021,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/teemo/txtp/Play_sfx_Teemo_TeemoQ_OnMissileLaunch {r2}.txtp",
     "media_ids": [
       814203979,
       1030668168
     ],
-    "duration": 1.4167,
-    "processing": "vgmstream-cli -i; original event layers and gain retained",
-    "sha256": "ede060460d1395cbd726424d7e8b4916b6c9ffea05c6233c8a03522950a069ac"
+    "duration": 1.4166666666666667,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "7b0a2570ac8442ed67e3657225ac80566e38f6d1115faa06732020e3a2e8d3c0",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/d2aecc990d6060882d14ff8f787fe3a5aabbd5828b16b0fe64f04fa0c492db63.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/d2aecc990d6060882d14ff8f787fe3a5aabbd5828b16b0fe64f04fa0c492db63.wav",
+    "source_sha256": "35d48eba7403c2fda1a10511075bda12ed36d3d89ee1748e1caf5688c7041ec7",
+    "txtp_sha256": "9e06164345cf5488524185ce8e1f3a4e4354bfbdd7a20c8afa2fb1cc6e0521ff"
   }
 ]

@@ -102,7 +102,7 @@ static func definition() -> Dictionary:
       "volume_db": 0.0,
       "bus": "Combat"
     },
-    "deploy:voice": {
+    "deploy:voice": {"clip_volume_db": {"res://assets/audio/units/corki/deploy_ace.wav": -16.5},
       "pool": [
         "res://assets/audio/units/corki/deploy_ace.wav",
         "res://assets/audio/units/corki/deploy_ready.wav",

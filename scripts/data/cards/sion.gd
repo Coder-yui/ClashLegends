@@ -92,7 +92,7 @@ static func definition() -> Dictionary:
 						"pool": [
 								"res://assets/audio/units/sion/play_sfx_sion_sionwshieldstacks_onbuffactivate.wav"
 						],
-						"volume_db": -8.0,
+						"volume_db": 0.0,
 						"bus": "Combat"
 				},
 				"explosive_shield:break": {
@@ -117,7 +117,7 @@ static func definition() -> Dictionary:
 						"res://assets/audio/units/sion/play_sfx_sion_sionbasicattacktower_oncast_r3.wav"
 				]
 		],
-		"attack_swing_volume_db": -3.0,
+		"attack_swing_volume_db": 0.0,
 		"attack_hit_by_segment": [
 				[
 						"res://assets/audio/units/sion/play_sfx_sion_sionbasicattacktower2_onhit_r1.wav",
@@ -130,7 +130,7 @@ static func definition() -> Dictionary:
 						"res://assets/audio/units/sion/play_sfx_sion_sionbasicattacktower_onhit_r3.wav"
 				]
 		],
-		"attack_hit_volume_db": -5.0,
+		"attack_hit_volume_db": 0.0,
 		"transformed_stats": {
 				"events": {
 						"rebirth:ready": {
@@ -157,7 +157,7 @@ static func definition() -> Dictionary:
 								"pool": [
 										"res://assets/audio/units/sion/play_sfx_sion_sionpassivezombie_onbuffactivate.wav"
 								],
-								"volume_db": -8.0,
+								"volume_db": 0.0,
 								"bus": "Combat"
 						}
 				},
@@ -173,7 +173,7 @@ static func definition() -> Dictionary:
 								"res://assets/audio/units/sion/play_sfx_sion_sionbasicattackpassive2_oncast_r3.wav"
 						]
 				],
-				"attack_swing_volume_db": -3.0,
+				"attack_swing_volume_db": 0.0,
 				"attack_hit_by_segment": [
 						[
 								"res://assets/audio/units/sion/play_sfx_sion_sionbasicattackpassive_onhit_r1_d.wav",
@@ -186,7 +186,7 @@ static func definition() -> Dictionary:
 								"res://assets/audio/units/sion/play_sfx_sion_sionbasicattackpassive2_onhit_r3.wav"
 						]
 				],
-				"attack_hit_volume_db": -5.0
+				"attack_hit_volume_db": 0.0
 		}
 },
 	}

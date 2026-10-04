@@ -93,12 +93,12 @@ static func definition() -> Dictionary:
 					"res://assets/audio/units/teemo/play_sfx_teemo_teemobasicattack_oncast_r2.wav"
 				]
 			],
-			"attack_swing_volume_db": -3.0,
+			"attack_swing_volume_db": 0.0,
 			"attack_hit": [
 				"res://assets/audio/units/teemo/play_sfx_teemo_teemobasicattack_onhit_r1.wav",
 				"res://assets/audio/units/teemo/play_sfx_teemo_teemobasicattack_onhit_r2.wav"
 			],
-			"attack_hit_volume_db": -5.0,
+			"attack_hit_volume_db": 0.0,
 			"empowered_hit": [
 				"res://assets/audio/units/teemo/play_sfx_teemo_teemoq_onhit_r1.wav",
 				"res://assets/audio/units/teemo/play_sfx_teemo_teemoq_onhit_r2.wav"

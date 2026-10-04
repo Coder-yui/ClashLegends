@@ -64,7 +64,7 @@ static func definition() -> Dictionary:
 				["res://assets/audio/units/imp/play_sfx_yorick_yorickq_ghoulattack_cast_r1.wav"],
 				["res://assets/audio/units/imp/play_sfx_yorick_yorickq_ghoulattack_cast_r1.wav"],
 			],
-			"attack_swing_volume_db": -3.0,
+			"attack_swing_volume_db": 0.0,
 		},
 		# END IMPORTED AUDIO imp
 		"card_art": {},

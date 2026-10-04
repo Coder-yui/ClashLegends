@@ -1,5 +1,11 @@
 # 奥恩 · 音频接入
 
+
+> 客户端部署语音混音例外（2026-10-04）：`deploy_choose_zh_cn.wav` 固定播放 -13 dB；`deploy_ban_zh_cn.ogg` 固定播放 -14 dB。原素材不变，同池游戏内语音仍为 0 dB；此说明优先于下文历史的“全部播放补偿为 0 dB”。
+
+> 当前增益基准（2026-10-04）：声音已从原版源事件重新导出，关闭工具 auto；文件制作增益和播放补偿均为 0 dB。裁剪、变速、包络及事件时机保留。本页旧调校段落中的额外 dB、统一制作余量属于重导前记录，已由此基准替代；原事件内部各层增益仍保留。详见[重导交付](../../deliveries/2026-10-04_原版增益音频重导.md)。
+
+
 [← 返回奥恩总览](../ornn.md) · [总索引](../README.md)
 
 ## 声音与触发时机
@@ -8,7 +14,7 @@
 
 | 发生时机 | 接入变体 | 代表试听 |
 | --- | ---: | --- |
-| 部署语音 | 三句随机 | [奥恩出品](../../../assets/audio/units/ornn/deploy_quality_zh_cn.wav) · [好吧，我们走](../../../assets/audio/units/ornn/deploy_choose_zh_cn.wav) · [回炉去了](../../../assets/audio/units/ornn/deploy_ban_zh_cn.wav) |
+| 部署语音 | 三句随机 | [奥恩出品](../../../assets/audio/units/ornn/deploy_quality_zh_cn.wav) · [好吧，我们走](../../../assets/audio/units/ornn/deploy_choose_zh_cn.wav) · [回炉去了](../../../assets/audio/units/ornn/deploy_ban_zh_cn.ogg) |
 | 普攻出手 | 每段3个 | [Attack1](../../../assets/audio/units/ornn/play_sfx_ornn_ornnbasicattack_oncast_r1_d.wav) · [Attack2](../../../assets/audio/units/ornn/play_sfx_ornn_ornnbasicattack2_oncast_r1.wav) · [Attack3](../../../assets/audio/units/ornn/play_sfx_ornn_ornnbasicattack3_oncast_r1_d.wav) |
 | 普攻命中 | 每段3个 | [Attack1](../../../assets/audio/units/ornn/play_sfx_ornn_ornnbasicattack_onhit_1559186049_1153642577_r1_d.wav) · [Attack2](../../../assets/audio/units/ornn/play_sfx_ornn_ornnbasicattack2_onhit_1559186049_1153642577_r1.wav) · [Attack3](../../../assets/audio/units/ornn/play_sfx_ornn_ornnbasicattack3_onhit_1559186049_1153642577_r1_d.wav) |
 | 起锻后0.65秒发锤 | 原生最后单锤，自然尾音 | [单锤](../../../assets/audio/units/ornn/forge_final_strike.wav) |

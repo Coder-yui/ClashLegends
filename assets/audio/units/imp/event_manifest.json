@@ -51,64 +51,72 @@
     "file": "play_sfx_yorick_yorickq_ghoul_death_r1.wav",
     "event": "Play_sfx_Yorick_YorickQ_ghoul_death",
     "event_id": 3971829909,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/event_wav/Play_sfx_Yorick_YorickQ_ghoul_death {r1}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_ghoul_death {r1}.txtp",
     "media_ids": [
       339205711,
       427211440,
       916401884
     ],
     "duration": 1.5,
-    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
-    "sha256": "7ed222bbc68116d194f2f72073a69ef3198abb487d680fb3304f4bd6fb05ab06",
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "eb2b0e51d5fc3b17e539ba564eacc9ad0c054fc68f1a7d039c2baada5ca34bc6",
     "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
-    "death_envelope": {
-      "source_duration": 1.5720634920634922,
-      "source_sha256": "36f365c2568a1133b50442b044139b9c759014acc73d982dc48557661aa7edcf",
-      "keep_seconds": 1.5,
-      "fade_start_seconds": 1.0,
-      "fade_seconds": 0.5,
-      "curve": "linear_amplitude"
-    }
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/0d87a1a6bb1efcf81af3f07941bd44aa10963c428c7fd6a3e30746592deba7c6.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/0d87a1a6bb1efcf81af3f07941bd44aa10963c428c7fd6a3e30746592deba7c6.wav",
+    "source_sha256": "188bb7c2753c2915feb6ab2a158de2850e7b738b6998601297f228b6e1173d4d",
+    "txtp_sha256": "dcad5d58b6de2711d415125e0899d4c53d5cdcf1e72635bc48db2223cb022d93"
   },
   {
     "file": "play_sfx_yorick_yorickq_ghoul_death_r2.wav",
     "event": "Play_sfx_Yorick_YorickQ_ghoul_death",
     "event_id": 3971829909,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/event_wav/Play_sfx_Yorick_YorickQ_ghoul_death {r2}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_ghoul_death {r2}.txtp",
     "media_ids": [
       339205711,
       427211440,
       916401884
     ],
-    "duration": 1.2967,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "50dd8ed76e10ce713f7557d23a5a457ec49d05cd5c6daeb67a4f3cca0b5f620b",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 1.296689342403628,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "fd911aa0eba8b644d12a5d7dacd6a26d2620a902ef3b6907d1539469be9c4db9",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/a1ff9dbdffa491b30a8a3341d91986139d5051e56f63b1c9928a75c786593bfb.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/a1ff9dbdffa491b30a8a3341d91986139d5051e56f63b1c9928a75c786593bfb.wav",
+    "source_sha256": "674f04b14e12a7e9147a08f4939b8d92fedb322148481ce4b0af7384fcc9ec10",
+    "txtp_sha256": "3073fd2299197cc8a9265b7042ad622e5095b53ad60000ed2b630ad53c60a366"
   },
   {
     "file": "play_sfx_yorick_yorickq_ghoul_death_r3.wav",
     "event": "Play_sfx_Yorick_YorickQ_ghoul_death",
     "event_id": 3971829909,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/event_wav/Play_sfx_Yorick_YorickQ_ghoul_death {r3}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_ghoul_death {r3}.txtp",
     "media_ids": [
       339205711,
       427211440,
       916401884
     ],
-    "duration": 1.4571,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "abc19b2f3458808f97c95e029ccbfaeeb8bb4a0019d126e7f48f6ea3527b9e3e",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "duration": 1.4570521541950114,
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "4bcba5659724082599842112cca9b686c90d6404c61343dba1fd34da04c157e2",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/72481f07ceb6357cf5d0f51fa62af716dc9dbf44b31d5758bd7ea0afed20037d.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/72481f07ceb6357cf5d0f51fa62af716dc9dbf44b31d5758bd7ea0afed20037d.wav",
+    "source_sha256": "175d51e0120da0a3abab56a586ac7935a85853a1301119d8b105aab3ac3c72bf",
+    "txtp_sha256": "602f8ddd53e4275c5304865188b4696a534c5c2447ad907981b1367fef137abd"
   },
   {
     "file": "play_sfx_yorick_yorickq_ghoulattack_cast_r1.wav",
     "event": "Play_sfx_Yorick_YorickQ_GhoulAttack_cast",
     "event_id": 198729928,
-    "source_preview": "/Users/czh/Projects/Clash Legends/assets/audio/units/imp/play_sfx_yorick_yorickq_ghoulattack_cast_r1.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/yorick/txtp/Play_sfx_Yorick_YorickQ_GhoulAttack_cast [4030904392=3118032683] {r}.txtp",
     "media_ids": [
       471691804,
       561749991,
@@ -120,8 +128,16 @@
       146764526
     ],
     "duration": 0.8753061224489795,
-    "processing": "vgmstream-cli -i; event -25dB retained; render duplicates removed",
-    "sha256": "eff10bf52844e41c21f232fbe52278735cf67552f4693cade3cd6180080da1dc",
-    "selection_note": "未知 Switch 4030904392=3118032683；media_ids 为可达候选集合，未穷举组合。三套普通攻击使用相同原始 cast 事件。"
+    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+    "sha256": "4094a4df171cb4999bcf43e4981bbad811ff1ee5424d6ed2f014ca4b7ad26a26",
+    "selection_note": "未知 Switch 4030904392=3118032683；media_ids 为可达候选集合，未穷举组合。三套普通攻击使用相同原始 cast 事件。",
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/24b4e64d56b467512e5693345ea2509930c83d396e7b2468c54a1761ab20acdb.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/24b4e64d56b467512e5693345ea2509930c83d396e7b2468c54a1761ab20acdb.wav",
+    "source_sha256": "5bfb21b3b8697cfa969c9de5032b9fbde6f07e283e1edb34c831237bd07cf0f7",
+    "txtp_sha256": "b2db493e16a1c2cc204a41d4b617296e33c96d8f3990d60593dcce7d3f6e2ebb"
   }
 ]
