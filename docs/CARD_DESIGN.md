@@ -232,3 +232,9 @@ bleeding_execute武装下一次普攻，以命中前本来源流血层数计算d
 ## 余震建筑
 
 `aftershock`使用duration/damage_reduction/radius/damage，瞬时建立独立减伤实例，到期在同Tick技能阶段爆炸；凝滞到期不补发，死亡取消。`can_attack=false`禁止通用Unit自主普攻。详细规则见[训练木桩](units/target_dummy.md)。
+
+## 按使用次数变体与首碰爆炸
+
+frontal可配置damage_by_use，序列长度须等于max_uses，数值均为有限正数；visual_actions_by_use/projectile_visuals_by_use属于表现域，长度同样等于max_uses且值必须有真实消费者。ActiveSkillRoster在实际Cast Start前按已消费次数生成副本，失败请求不推进，第三枚等变体无需英雄子类。工作台仅在预览成功后循环独立实例预览索引。
+
+真实首碰停止弹体可配置正数projectile_explosion_radius，接触首个合法敌人的位置成为爆炸中心，按当前碰撞快照向范围内合法敌人逐个提交一次技能伤害。到最大射程空飞不产生爆炸；来源死亡不取消已发弹体。爆炸通过既有可靠表现事件发布，客户端不自行结算。库奇使用55半径及100/100/180伤害序列。

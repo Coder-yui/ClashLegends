@@ -567,5 +567,14 @@
     "source_path": "assets/perks/styles/resolve/veteranaftershock/veteranaftershock.tex",
     "source_sha256": "d9c7d544a73129a6cbe7bd07506a26be39b9dfe4ecb7c0990a3e2969216d5f8c",
     "sha256": "6a78816151a00f7a4f23c7ff9df596413f4bc07a566a3b0f0b8f93a40e1c3569"
+  },
+  {
+    "card": "corki",
+    "skill_index": 0,
+    "path": "res://assets/skills/corki_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Corki.wad.client",
+    "source_path": "assets/characters/corki/hud/icons2d/corki_missilebarrage.dds",
+    "source_sha256": "aa7cd8916f645e40fc8fd5832118636a18dd9c25617dd391de18114af074aa9a",
+    "sha256": "74ce6365593e8b7528303db04b6cd433b3c7fa4bf879825400ccb2734d01db02"
   }
 ]

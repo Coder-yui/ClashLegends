@@ -61,6 +61,23 @@ func tick(dt: float) -> void:
 	for entry in _entries.values():
 		entry.cooldown_left = maxf(float(entry.get("cooldown_left", 0.0)) - dt, 0.0)
 
+## 在真正开始前按已消费次数生成本次副本；失败请求不会推进序列。
+func skill_for_cast(id: int) -> Dictionary:
+	var current: Dictionary = _entries[id]
+	return prepare_use(current.skill, int(current.max_uses) - int(current.uses_remaining))
+
+static func prepare_use(definition: Dictionary, index: int) -> Dictionary:
+	var skill := definition.duplicate(true)
+	var damages: Array = skill.get("damage_by_use", [])
+	var actions: Array = skill.get("visual_actions_by_use", [])
+	if index >= 0 and index < damages.size(): skill.damage = damages[index]
+	if index >= 0 and index < actions.size(): skill.visual_action = actions[index]
+	var visuals: Array = skill.get("projectile_visuals_by_use", [])
+	if index >= 0 and index < visuals.size(): skill.projectile_visual = visuals[index]
+	var impacts: Array = skill.get("projectile_impact_visuals_by_use", [])
+	if index >= 0 and index < impacts.size(): skill.projectile_impact_visual = impacts[index]
+	return skill
+
 func consume(id: int) -> void:
 	var entry: Dictionary = _entries[id]
 	if bool(entry.get("free_recast", false)):

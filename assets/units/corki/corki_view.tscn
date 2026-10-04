@@ -1,0 +1,5 @@
+[gd_scene load_steps=2 format=3]
+[ext_resource type="PackedScene" path="res://assets/units/corki/source/corki.glb" id="1"]
+[node name="CorkiView" type="Node3D"]
+[node name="Model" parent="." instance=ExtResource("1")]
+scale = Vector3(1.0, 1.0, 1.0)

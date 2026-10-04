@@ -1131,7 +1131,12 @@ func _use_art_dev_active_skill(skill_index: int = -1) -> void:
 	var skill_source := _art_dev_skill_source(unit)
 	_workbench.skill_choices[skill_source] = clampi(skill_index, 0, CardDB.active_skills_for(skill_source).size() - 1) if skill_index >= 0 else int(_workbench.skill_choices.get(skill_source, 0))
 	unit.configure_carried_active_skill(skill)
-	preview_active_skill(unit, skill)
+	# 工作台无限预览按本实例循环次数变体，不消费正式对局资格。
+	var preview_key := "workbench_skill_use_" + str(int(_workbench.skill_choices.get(skill_source, 0)))
+	var preview_use := int(unit.get_meta(preview_key, 0))
+	var prepared := ActiveSkillRoster.prepare_use(skill, preview_use)
+	if preview_active_skill(unit, prepared):
+		unit.set_meta(preview_key, (preview_use + 1) % maxi(int(skill.get("max_uses", 1)), 1))
 	_sync_art_dev_panel_state()
 
 func _set_art_dev_skill_resource(value: float) -> void:
@@ -1989,7 +1994,7 @@ func _activate_active_skill(ability_id: int, expected_team: int = -1) -> bool:
 		return false
 	var entry: Dictionary = _active_skills.entry(ability_id)
 	var unit: Unit = entry.unit
-	var skill: Dictionary = entry.skill
+	var skill: Dictionary = _active_skills.skill_for_cast(ability_id)
 	if String(skill.get("kind", "")) == "permanent_growth":
 		skill = skill.duplicate(true)
 		var receipt := ActiveSkillEffectSystem.RefundReceipt.new()

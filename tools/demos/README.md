@@ -70,3 +70,5 @@ python3 tools/demos/pantheon_review_media.py --input /本次输出/pantheon-revi
 
 
 `tryndamere_review.gd`：正式工作台中的双方模型对比、连续普攻/暴击、大招、冻结及死亡录音与截图；使用通用工作台，不承担验收持久化。
+
+- `corki_review.gd`：库奇双方模型、艾希/冰鸟同场尺寸、卡面、三枚导弹循环、冻结恢复及死亡录音与截图。

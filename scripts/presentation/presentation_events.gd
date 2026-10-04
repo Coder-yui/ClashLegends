@@ -81,6 +81,7 @@ static func supports(stats: Dictionary, cue: String) -> bool:
 			return float(skill.get("duration", 0.0)) > 0.0
 		var actions: Array = [String(skill.get("visual_action", "")), String(skill.get("full_resource_visual_action", ""))]
 		actions.append_array(skill.get("resource_visual_actions", []))
+		actions.append_array(skill.get("visual_actions_by_use", []))
 		var parts := cue.split(":")
 		if parts.size() != 2 or parts[0].is_empty() or parts[0] not in actions:
 			continue

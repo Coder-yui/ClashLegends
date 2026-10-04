@@ -1022,6 +1022,27 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 			errors.append("%s.center_width: 必须 >= 0" % label)
 		if skill.has("fan_inner_arc") and typeof(skill.fan_inner_arc) != TYPE_BOOL:
 			errors.append("%s.fan_inner_arc: 必须是 bool" % label)
+		for sequence_field in ["damage_by_use", "visual_actions_by_use", "projectile_visuals_by_use", "projectile_impact_visuals_by_use"]:
+			if skill.has(sequence_field):
+				if String(skill.get("kind", "")) != "frontal" or skill[sequence_field].size() != int(skill.get("max_uses", 1)):
+					errors.append("%s.%s: 需要frontal且序列长度等于max_uses" % [label, sequence_field])
+				for value in skill[sequence_field]:
+					if sequence_field == "damage_by_use" and float(value) <= 0.0:
+						errors.append("%s.damage_by_use: 伤害必须为正数" % label)
+					if sequence_field == "visual_actions_by_use" and not stats.get("visual_animations", {}).get("visual_actions", {}).has(value):
+						errors.append("%s.visual_actions_by_use: 动作未定义" % label)
+		if skill.has("projectile_impact_visuals_by_use"):
+			for impact in skill.projectile_impact_visuals_by_use:
+				if impact not in ["corki_explosion", "corki_explosion_big"] or not skill.has("projectile_explosion_radius"):
+					errors.append("%s.projectile_impact_visuals_by_use: 未支持的爆炸表现或缺少范围" % label)
+		if skill.has("projectile_visuals_by_use"):
+			for visual in skill.projectile_visuals_by_use:
+				if StringName(visual) not in [&"arrow", &"card", &"orb", &"laser", &"electromagnetic_wave", &"corki_missile", &"corki_missile_big"]:
+					errors.append("%s.projectile_visuals_by_use: 未支持的弹体表现" % label)
+		if skill.has("projectile_explosion_radius") and (float(skill.projectile_explosion_radius) <= 0.0 or not bool(skill.get("projectile_stop_on_hit", false))):
+			errors.append("%s.projectile_explosion_radius: 需要正数及首个碰撞停止弹体" % label)
+		if skill.has("projectile_impact_visual") and (String(skill.projectile_impact_visual) not in ["corki_explosion", "corki_explosion_big"] or not skill.has("projectile_explosion_radius")):
+			errors.append("%s.projectile_impact_visual: 需要corki_explosion与爆炸范围" % label)
 		if skill.has("projectile_stop_on_hit"):
 			if typeof(skill.projectile_stop_on_hit) != TYPE_BOOL:
 				errors.append("%s.projectile_stop_on_hit: 必须是 bool" % label)
@@ -1034,8 +1055,8 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 				errors.append("%s.projectile_piercing: 需要 frontal/fan 或单枚等宽 trapezoid、正数弹体数量、射程和飞行时长" % label)
 		if bool(skill.get("projectile_piercing", false)) and bool(skill.get("projectile_stop_on_hit", false)):
 			errors.append("%s: 穿透与命中停止不可同时启用" % label)
-		if skill.has("projectile_visual") and StringName(skill.projectile_visual) not in [&"arrow", &"card", &"orb", &"laser", &"electromagnetic_wave"]:
-			errors.append("%s.projectile_visual: 只支持 arrow/card/orb/laser/electromagnetic_wave" % label)
+		if skill.has("projectile_visual") and StringName(skill.projectile_visual) not in [&"arrow", &"card", &"orb", &"laser", &"electromagnetic_wave", &"corki_missile"]:
+			errors.append("%s.projectile_visual: 只支持 arrow/card/orb/laser/electromagnetic_wave/corki_missile" % label)
 		if skill.has("projectile_launch_delay") and float(skill.projectile_launch_delay) < 0.0:
 			errors.append("%s.projectile_launch_delay: 必须 >= 0" % label)
 		if skill.has("projectile_flight_duration") and float(skill.projectile_flight_duration) < 0.0:

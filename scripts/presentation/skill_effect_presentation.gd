@@ -50,6 +50,13 @@ func begin_frontal_visual(source: Unit, skill: Dictionary, cast_forward: Vector2
 		if bool(skill.get("projectile_piercing", false)) and String(skill.get("shape", "")) == "fan":
 			skill["shape"] = "projectile_fan"
 		else:
+			# 单枚首碰弹体沿直线前进，预警使用等宽轮廓；不把扇形夹角当弹道宽度。
+			if bool(skill.get("projectile_stop_on_hit", false)) and int(skill.get("projectile_count", 0)) == 1:
+				var path_width := maxf(float(skill.get("projectile_visual_width", 6.0)), 6.0)
+				skill["shape"] = "trapezoid"
+				skill["width"] = path_width
+				skill["near_width"] = path_width
+				skill["far_width"] = path_width
 			skill["projectile_count"] = 0
 	var duration := maxf(float(skill.get("impact_delay", 0.0)), 0.0)
 	var projectile_launch_delay := maxf(float(skill.get("projectile_launch_delay", 0.0)), 0.0)

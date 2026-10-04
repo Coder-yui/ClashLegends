@@ -15,6 +15,7 @@ var impact_effects: Array[Dictionary] = []
 var _next_id := 1
 var _context: BattleContext
 var _native_visuals: Node2D
+var _missile_visuals: Node2D
 var _pending_attack_waves: Array[Dictionary] = []
 var _visual_origin_cache: Dictionary = {}
 
@@ -23,6 +24,9 @@ func setup(context: BattleContext) -> void:
 	_native_visuals = preload("res://scripts/presentation/kayle_projectile_visuals.gd").new()
 	add_child(_native_visuals)
 	_native_visuals.setup(self)
+	_missile_visuals = preload("res://scripts/presentation/corki_projectile_effect.gd").new()
+	add_child(_missile_visuals)
+	_missile_visuals.setup(self)
 
 ## 快照提供目标状态；当前插值位置由本系统保留，调用者不能持有内部字典别名。
 func apply_client_targets(targets: Dictionary) -> void:
@@ -312,6 +316,7 @@ func _tick_skill_arrow(projectile: Dictionary, dt: float, colliders: Array) -> b
 			continue
 		if not CombatInteraction.allows(candidate, projectile.attacker if is_instance_valid(projectile.attacker) else null, int(projectile.team), projectile.source_pos): continue
 		if projectile.has("wave_air") and bool(projectile.wave_air) != (candidate is Unit and candidate.is_air): continue
+		if bool(projectile.skill.get("air_only", false)) and not (candidate is Unit and candidate.is_air): continue
 		if candidate is Unit:
 			if bool(projectile.skill.get("ground_only", false)) and candidate.is_air:
 				continue
@@ -338,6 +343,9 @@ func _tick_skill_arrow(projectile: Dictionary, dt: float, colliders: Array) -> b
 	for contact in contacts:
 		var target: Node2D = contact[1]
 		projectile.pos = origin + direction * float(contact[0])
+		if float(projectile.skill.get("projectile_explosion_radius", 0.0)) > 0.0:
+			_explode_skill_projectile(projectile, colliders)
+			return true
 		var targets: Dictionary = projectile.cast.targets
 		var target_id := target.get_instance_id()
 		if not targets.has(target_id):
@@ -367,6 +375,21 @@ func _tick_skill_arrow(projectile: Dictionary, dt: float, colliders: Array) -> b
 	projectile.remaining = maxf(float(projectile.remaining) - distance, 0.0)
 	return float(projectile.remaining) <= 0.0001
 
+## 首个合法接触点爆炸；到达最大行程不调用这里。独立弹体保留出手来源。
+func _explode_skill_projectile(projectile: Dictionary, colliders: Array) -> void:
+	var source: Node2D = projectile.attacker if is_instance_valid(projectile.attacker) else null
+	var radius := float(projectile.skill.projectile_explosion_radius)
+	for collider in colliders:
+		var target: Node2D = collider[0]
+		if not is_instance_valid(target) or target.hp <= 0.0 or target.team == int(projectile.team): continue
+		if bool(projectile.skill.get("ground_only", false)) and target is Unit and target.is_air: continue
+		if bool(projectile.skill.get("air_only", false)) and not (target is Unit and target.is_air): continue
+		if (collider[1] as Vector2).distance_to(projectile.pos) > radius + float(collider[2]): continue
+		if not CombatInteraction.allows(target, source, int(projectile.team), projectile.source_pos): continue
+		_context.resolve_attack_hit(projectile.team, projectile.pos, target, projectile.damage, 0.0, 0.0, source, projectile.source_pos, projectile.source_form_index, {}, false)
+	_context.show_projectile_impact(projectile.pos, radius, projectile.color, StringName(projectile.skill.get("projectile_impact_visual", "")))
+	skill_hit.emit(projectile.presentation_source, String(projectile.skill.get("visual_action", "")), projectile.pos)
+
 static func _wave_sweep_overlaps(point: Vector2, radius: float, distance: float, start_width: float, end_width: float) -> bool:
 	var polygon := PackedVector2Array([Vector2(0, -start_width), Vector2(distance, -end_width), Vector2(distance, end_width), Vector2(0, start_width)])
 	if Geometry2D.is_point_in_polygon(point, polygon): return true
@@ -386,6 +409,7 @@ func tick_client_interpolation(delta: float) -> void:
 	queue_redraw()
 
 func tick_visuals(delta: float) -> void:
+	if is_instance_valid(_missile_visuals): _missile_visuals.queue_redraw()
 	if is_instance_valid(_native_visuals): _native_visuals.advance(delta)
 	var visible := _client_projectiles if _context != null and _context.is_net_client() else projectiles
 	for id in _visual_origin_cache.keys():
@@ -427,8 +451,9 @@ func _draw() -> void:
 	for id in visible:
 		var projectile: Dictionary = visible[id]
 		match StringName(projectile.get("visual", &"orb")):
+			&"corki_missile", &"corki_missile_big": preload("res://scripts/presentation/corki_projectile_effect.gd").draw_flight(self, _visual_position(projectile), _direction(projectile), StringName(projectile.visual) == &"corki_missile_big")
 			&"baron_siege", &"baron_ranged": preload("res://scripts/presentation/baron_projectile_effect.gd").draw_flight(self, _visual_position(projectile), _direction(projectile), float(projectile.radius) * float(projectile.get("visual_scale", 1.0)), projectile.color)
-			&"kayle_sword", &"kayle_wave": pass # 由独立表现代理绘制
+			&"corki_bullet", &"kayle_sword", &"kayle_wave": pass # 由独立表现代理绘制
 			&"fireball": preload("res://scripts/presentation/fireball_effect_2d.gd").draw_flight(self, _visual_position(projectile), _direction(projectile), float(projectile.radius) * float(projectile.get("visual_scale", 1.0)))
 			&"magic_orb": _draw_magic_orb(projectile)
 			&"tower_orb": _draw_tower_orb(projectile)
@@ -478,6 +503,8 @@ func _draw_first_strike_orb(projectile: Dictionary) -> void:
 	draw_circle(pos - direction * radius * 0.20, radius * 0.54, Color(1.0, 0.98, 0.76, 1.0))
 
 func _draw_impact_effect(effect: Dictionary) -> void:
+	if StringName(effect.get("visual", "")) in [&"corki_explosion", &"corki_explosion_big"]:
+		return # 原版加法混合由独立表现画布绘制
 	if StringName(effect.get("visual", "")) == &"fire_area":
 		preload("res://scripts/presentation/fireball_effect_2d.gd").draw_impact(self, effect)
 		return

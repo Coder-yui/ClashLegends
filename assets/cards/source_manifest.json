@@ -33,5 +33,14 @@
     "source_sha256": "3fefec0006369d8b7b9e4c17e0d32a9c88444cff3108a80d23a446623a20cd3f",
     "sha256": "07266e0d367ab7f782866d6f7080e3d99c50f8a70b480ca95320a1584ac5b9c8",
     "processing": "原版基础加载图TEX解码，无裁切改色"
+  },
+  {
+    "card": "corki",
+    "path": "res://assets/cards/corki_loading.png",
+    "source_package": "Game/DATA/FINAL/Champions/Corki.wad.client",
+    "source_path": "assets/characters/corki/skins/base/corkiloadscreen.tex",
+    "source_sha256": "5646103ab96d7437696538753da91ecab3785c2cf8ba569e1c06e3488a28263d",
+    "sha256": "01a747b2ad228a3635b7857cb378c47e62bc7fb70f22773729053c6eaa5669cd",
+    "processing": "ltk-tex-utils原图解码，无裁切或改色"
   }
 ]

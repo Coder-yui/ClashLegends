@@ -1,0 +1,137 @@
+[
+  {
+    "path": "res://assets/audio/units/corki/attack_launch0.wav",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/attack_launch0.wav",
+    "sha256": "663dddb552f5adc24e8fd9579e580ca3754757dec64330cd593496fb34a48409",
+    "event_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/original-gain-txtp/Play_sfx_Corki_CorkiBasicAttack_OnMissileLaunch {d}.txtp",
+    "processing": "wwiser -gv=0dB: preserve source event attenuation, no automatic gain or normalization; vgmstream-cli -i; PCM16 stereo 44100 Hz"
+  },
+  {
+    "path": "res://assets/audio/units/corki/active_start0.wav",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_start0.wav",
+    "sha256": "3092b8e1f8933946891b2527cfb6c37d89138cc9e6f2eb9c47cd70fa70a9440d",
+    "event_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/original-gain-txtp/Play_sfx_Corki_MissileBarrage_OnCast {r1}.txtp",
+    "processing": "wwiser -gv=0dB: preserve source event attenuation, no automatic gain or normalization; vgmstream-cli -i; PCM16 stereo 44100 Hz"
+  },
+  {
+    "path": "res://assets/audio/units/corki/active_start1.wav",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_start1.wav",
+    "sha256": "75ddfda02a0763b473b2e36c01aa4f3ba56f616ae6448ca8d20b20ed485dbda0",
+    "event_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/original-gain-txtp/Play_sfx_Corki_MissileBarrage_OnCast {r2}.txtp",
+    "processing": "wwiser -gv=0dB: preserve source event attenuation, no automatic gain or normalization; vgmstream-cli -i; PCM16 stereo 44100 Hz"
+  },
+  {
+    "path": "res://assets/audio/units/corki/active_start2.wav",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_start2.wav",
+    "sha256": "75887d11e1b35934a3353355dfe215147923577c3accc4f2ef85365d814c668c",
+    "event_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/original-gain-txtp/Play_sfx_Corki_MissileBarrage_OnCast {r3}.txtp",
+    "processing": "wwiser -gv=0dB: preserve source event attenuation, no automatic gain or normalization; vgmstream-cli -i; PCM16 stereo 44100 Hz"
+  },
+  {
+    "path": "res://assets/audio/units/corki/active_release0.wav",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_release0.wav",
+    "sha256": "ed2f1e89745ee68139c2addf6db0807284961ba69c3ec80e40f3d3ff6771da0d",
+    "event_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/original-gain-txtp/Play_sfx_Corki_MissileBarrageMissile_OnMissileLaunch.txtp",
+    "processing": "wwiser -gv=0dB: preserve source event attenuation, no automatic gain or normalization; vgmstream-cli -i; PCM16 stereo 44100 Hz"
+  },
+  {
+    "path": "res://assets/audio/units/corki/active_hit0.wav",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_hit0.wav",
+    "sha256": "42d67d6f814f5502f63ea3e1c870aab0a3bc0345e2567ae637933860eed639af",
+    "event_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/original-gain-txtp/Play_sfx_Corki_MissileBarrageMissile_boom {r1}.txtp",
+    "processing": "wwiser -gv=0dB: preserve source event attenuation, no automatic gain or normalization; vgmstream-cli -i; PCM16 stereo 44100 Hz"
+  },
+  {
+    "path": "res://assets/audio/units/corki/active_hit1.wav",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_hit1.wav",
+    "sha256": "48bdbf9eff5b3950283131a6ec9eaab822236a12d4168a41cb36a60c6e9fcc85",
+    "event_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/original-gain-txtp/Play_sfx_Corki_MissileBarrageMissile_boom {r2}.txtp",
+    "processing": "wwiser -gv=0dB: preserve source event attenuation, no automatic gain or normalization; vgmstream-cli -i; PCM16 stereo 44100 Hz"
+  },
+  {
+    "path": "res://assets/audio/units/corki/active_hit2.wav",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_hit2.wav",
+    "sha256": "c3dddc13304709d96e254ed3f833844e200d36574cf0fba2a2abd8ea0e2a34a7",
+    "event_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/original-gain-txtp/Play_sfx_Corki_MissileBarrageMissile_boom {r3}.txtp",
+    "processing": "wwiser -gv=0dB: preserve source event attenuation, no automatic gain or normalization; vgmstream-cli -i; PCM16 stereo 44100 Hz"
+  },
+  {
+    "path": "res://assets/audio/units/corki/active_big_start0.wav",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_big_start0.wav",
+    "sha256": "3092b8e1f8933946891b2527cfb6c37d89138cc9e6f2eb9c47cd70fa70a9440d",
+    "event_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/original-gain-txtp/Play_sfx_Corki_MissileBarrage_OnCast {r1}.txtp",
+    "processing": "wwiser -gv=0dB: preserve source event attenuation, no automatic gain or normalization; vgmstream-cli -i; PCM16 stereo 44100 Hz"
+  },
+  {
+    "path": "res://assets/audio/units/corki/active_big_start1.wav",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_big_start1.wav",
+    "sha256": "75ddfda02a0763b473b2e36c01aa4f3ba56f616ae6448ca8d20b20ed485dbda0",
+    "event_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/original-gain-txtp/Play_sfx_Corki_MissileBarrage_OnCast {r2}.txtp",
+    "processing": "wwiser -gv=0dB: preserve source event attenuation, no automatic gain or normalization; vgmstream-cli -i; PCM16 stereo 44100 Hz"
+  },
+  {
+    "path": "res://assets/audio/units/corki/active_big_start2.wav",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_big_start2.wav",
+    "sha256": "75887d11e1b35934a3353355dfe215147923577c3accc4f2ef85365d814c668c",
+    "event_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/original-gain-txtp/Play_sfx_Corki_MissileBarrage_OnCast {r3}.txtp",
+    "processing": "wwiser -gv=0dB: preserve source event attenuation, no automatic gain or normalization; vgmstream-cli -i; PCM16 stereo 44100 Hz"
+  },
+  {
+    "path": "res://assets/audio/units/corki/active_big_release0.wav",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_big_release0.wav",
+    "sha256": "8ea26597cfa7c69d8a43cc280d3251e779e558785ac1d8719d0f7f46f5ca89bd",
+    "event_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/original-gain-txtp/Play_sfx_Corki_MissileBarrageMissile2_OnMissileLaunch.txtp",
+    "processing": "wwiser -gv=0dB: preserve source event attenuation, no automatic gain or normalization; vgmstream-cli -i; PCM16 stereo 44100 Hz"
+  },
+  {
+    "path": "res://assets/audio/units/corki/active_big_hit0.wav",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_big_hit0.wav",
+    "sha256": "bb7062fc47786d5fbd884578eff73c3059e21ff772b15cee64fd93133034834f",
+    "event_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/original-gain-txtp/Play_sfx_Corki_MissileBarrageMissile2_boom.txtp",
+    "processing": "wwiser -gv=0dB: preserve source event attenuation, no automatic gain or normalization; vgmstream-cli -i; PCM16 stereo 44100 Hz"
+  },
+  {
+    "path": "res://assets/audio/units/corki/attack_hit0.wav",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/attack_hit0.wav",
+    "sha256": "298b25d58d2a5cc3ef811252918fcb6c62e6877cbaf0475cb94478546d437b75",
+    "event_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/original-gain-txtp/Play_sfx_Corki_CorkiBasicAttack_OnHit {d}.txtp",
+    "processing": "wwiser -gv=0dB: preserve source event attenuation, no automatic gain or normalization; vgmstream-cli -i; PCM16 stereo 44100 Hz"
+  },
+  {
+    "path": "res://assets/audio/units/corki/deploy_ace.wav",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/choose/plugins/rcp-be-lol-game-data/global/zh_cn/v1/champion-choose-vo/42.ogg",
+    "sha256": "ac7e61d95ad2b2252381cfe958a99af945c69a740c866cf65ffa59d74d42a0ae"
+  },
+  {
+    "path": "res://assets/audio/units/corki/deploy_ready.wav",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/voice-loaded/wav/Play_vo_Corki_CorkiLoaded_cast {r2}.wav",
+    "sha256": "5c6fb3b0ccc4326c3e2fa0d8ce760c57415cdb353a786a6f82a277917f0e1a12"
+  },
+  {
+    "path": "res://assets/audio/units/corki/deploy_burning.wav",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/voice-move/wav/Play_vo_Corki_Move2DStandard {r1}.wav",
+    "sha256": "79a25789f71cdaf59b3e236f7d926393f9e91840d43f4edc80d5b09034ce3b27"
+  },
+  {
+    "path": "res://assets/audio/units/corki/death0.wav",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/death0.wav",
+    "sha256": "c7e1a4826d950d7df4abec3d9b52ac1561cefe9c8df05bb1d3b0dfc7ee5eac25"
+  },
+  {
+    "path": "res://assets/audio/units/corki/death1.wav",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/death1.wav",
+    "sha256": "f02a9efdb74d606a9debc7cd8202d6ee28ddd0b2661a274fb9e5ffb6e39fe2f9"
+  },
+  {
+    "path": "res://assets/audio/units/corki/death2.wav",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/death2.wav",
+    "sha256": "85820da0c7e24616fc5f308379a4b06dab20f792fe48b964143e76ad3fd5ad7b"
+  },
+  {
+    "path": "res://assets/audio/units/corki/attack_swing0.wav",
+    "event_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/original-gain-txtp/Play_sfx_Corki_CorkiBasicAttack_OnCast {d}.txtp",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/attack_swing0.wav",
+    "sha256": "3ef54df9af85649ec6f844326a12389064259e60f348170006b346243891d351",
+    "processing": "wwiser -gv=0dB: preserve source event attenuation, no automatic gain or normalization; vgmstream-cli -i; PCM16 stereo 44100 Hz"
+  }
+]
