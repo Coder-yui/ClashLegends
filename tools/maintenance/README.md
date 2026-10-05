@@ -1,6 +1,8 @@
 # 项目维护工具
 
-`audit_project.py` 只读检查资源引用、Markdown 链接、卡牌注册与手册覆盖，以及目录边界。测试注册还检查脚本/方法存在、分组与目录一致、入口不重复及套件没有漏注册。`test_audit_project.py` 提供错误检测夹具。
+`audit_project.py` 只读检查资源引用、Markdown 链接、卡牌注册与手册覆盖，以及目录边界。手册正文与[覆盖表](../../docs/reference/UNIT_DOC_COVERAGE.md)均须匹配全部注册定义及导航声明的形态例外。测试注册还检查脚本/方法存在、分组与目录一致、入口不重复及套件没有漏注册。`test_audit_project.py` 提供错误检测夹具。
+
+摄影工具声明的输出路径（如`DEFAULT_OUT_16X9`）不要求文件预先存在；同一路径被`preload`、`load`或图片加载方法读取时仍须存在。此例外仅用于`tools/`输出，正式运行资源仍检查缺失与外部素材库污染。
 
 ```sh
 python3 tools/maintenance/audit_project.py

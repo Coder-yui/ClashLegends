@@ -46,7 +46,7 @@ func _capture() -> void:
 	var output_path := ProjectSettings.globalize_path(preload("res://tools/lib/development_paths.gd").output("card_art/sun_disc_loading.png"))
 	var error := image.save_png(output_path)
 	if error == OK:
-		print("[卡面摄影] 已保存 res://assets/cards/sun_disc_loading.png")
+		print("[卡面摄影] 已保存 ", output_path)
 	else:
 		push_error("太阳圆盘卡面保存失败：%s" % output_path)
 	quit(0 if error == OK else 1)

@@ -4,7 +4,7 @@ static func definition() -> Dictionary:
 	return {
 		"gameplay": {
 			"name": "图奇", "cost": 4, "type": "unit",
-			"description": "隐身远程射手。攻击起手破隐，开启技能保持隐身，连续2秒没有攻击、施法或受伤后重新隐身；双方玩家都可见虚化模型，隐身不免疫范围伤害。",
+			"description": "隐身远程射手。攻击起手破隐，开启技能保持隐身，严格脱战2秒后重新隐身；攻击、施法、伤害交互、硬控和战斗减益均阻止脱战。双方玩家都可见虚化模型，隐身不免疫范围伤害。",
 			"hp": 420, "damage": 68, "range": 170.0,
 			"speed": SPEED_MEDIUM, "interval": 1.0, "first_hit": 0.24,
 			"size_tier": SIZE_MEDIUM, "radius": RADIUS_MEDIUM,

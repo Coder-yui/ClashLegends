@@ -20,7 +20,7 @@ static func definition() -> Dictionary:
 			"active_skills": [{
 					"name": "海克斯穿透激光", "kind": "frontal", "shape": "trapezoid",
 					"cost": 1, "max_uses": 2, "cooldown": 2.0,
-					"description": "沿当前朝向发射一枚可穿透的激光弹，对 270（4.5格）长路径上的所有地面敌人造成 240 点伤害。",
+					"description": "沿当前朝向发射一枚可穿透的激光弹，对 270（6.75格）长路径上的所有地面敌人造成 240 点伤害。",
 					"length": 270.0, "near_width": 28.8, "far_width": 28.8,
 					"damage": 240, "ground_only": true,
 					# 激光在动作 0.45 秒时离开炮口，0.30 秒飞完路径；途中逐目标穿透结算。

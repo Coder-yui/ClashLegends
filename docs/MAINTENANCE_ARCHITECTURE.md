@@ -23,7 +23,7 @@
 | 联网 | NetworkEntityLifecycle 出生/销毁/快照屏障；NetworkSnapshotSystem 编解码与状态投影；RPC 保留在 Main 节点 |
 | 表现 | UnitPresentationState 只读视图；PresentationConfig 形态选择；PresentationEvents 真实事件能力；UnitModel3D/TowerModel3D/BattleEffects2D 只读驱动图像；SkillEffectPresentation 拥有范围/护盾视觉实例、渲染计时与网络去重；GrowthEffect2D绘制成长气浪/叶片，GrowthMark3D以共享网格和深度测试表现持续花叶纹样 |
 | 动画与资源 | VisualActionSequence 片段进度；ModelVisualResources 实例动画库与材质；MatchResources 本局资源强引用；MatchModelPool 预热/领取/回收 |
-| 音频 | GameAudioManager 事件消费、播放器、区域时钟、暂停与清场；不由技能系统推进音频 |
+| 音频 | GameAudioManager 事件消费、播放器、区域时钟、暂停与清场；default_bus_layout.tres 持有总线压缩/限幅，见[动态混音](AUDIO_INTEGRATION.md#通用混音动态处理)；不由技能系统推进音频 |
 | UI 与工作台 | CardDetails/CardArt 详情与卡面；WorkbenchSession 选择和操作会话；模型预览、声音目录、牌库及窗口布局各有独立组件 |
 
 ## 改动应落在哪里

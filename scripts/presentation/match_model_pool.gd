@@ -175,6 +175,11 @@ func prepare(resources: Dictionary, world: Node3D, camera: Camera3D, cards: Dict
 				for library in player.get_animation_library_list(): player.remove_animation_library(library)
 			sample.hide()
 		instances[path] = batch
+	if not cancelled and is_instance_valid(world):
+		for id in cards:
+			if float(CardDB.get_card(String(id)).get("stealth_delay", 0.0)) > 0.0:
+				StealthTransition3D.prepare_visual(world)
+				break
 
 func take(packed: PackedScene) -> Node:
 	var path := packed.resource_path

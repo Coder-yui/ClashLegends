@@ -464,6 +464,7 @@ func _start_art_dev() -> void:
 	_workbench.inspect_enabled = true
 	_hide_menu()
 	_setup_battle_presentation()
+	StealthTransition3D.prepare_visual(_battle_presentation)
 	_create_towers()
 	_build_nav()
 	_art_dev_panel = WORKBENCH_SCRIPT.new()

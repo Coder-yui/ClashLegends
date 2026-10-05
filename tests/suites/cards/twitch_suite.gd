@@ -106,6 +106,8 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_control_entry()
 	_check_ghost_materials()
 	_check_animation_mapping()
+	_check_deployment_first_frame()
+	_check_stealth_effect_resources()
 	var old_deck: Array = main._deck.duplicate()
 	main._deck[0] = "twitch"
 	var units: Array[Unit] = main._spawn_card_units(0, "twitch", Vector2(500, 1050), 0.0, 0)
@@ -241,3 +243,64 @@ func _check_animation_mapping() -> void:
 	view.free()
 	camera.free()
 	rat.free()
+
+func _check_deployment_first_frame() -> void:
+	for team in [0, 1]:
+		var rat: Unit = _main._spawn_unit(UnitSpawnRequest.new(team, "twitch", Vector2(300, 1000 if team == 0 else 400)))
+		var view := _view_for(rat)
+		_expect(view != null and view._animation_player != null, "图奇双方部署生成正式模型代理")
+		if view == null or view._animation_player == null:
+			rat.free()
+			continue
+		var player := view._animation_player
+		var skeleton := view.find_children("*", "Skeleton3D", true, false)[0] as Skeleton3D
+		var first_pose: Array[Transform3D] = []
+		for bone in skeleton.get_bone_count(): first_pose.append(skeleton.get_bone_pose(bone))
+		# 首次绘制前应已采到部署动作；零时间求值不能再把默认骨架变成部署姿势。
+		player.advance(0.0)
+		var pose_ready := true
+		for bone in skeleton.get_bone_count():
+			pose_ready = pose_ready and first_pose[bone].is_equal_approx(skeleton.get_bone_pose(bone))
+		_expect(pose_ready, "图奇部署首帧已应用骨骼姿势，不闪现身体与弩分离的默认模型")
+		var hidden_material_ready := true
+		for mesh in view._model_resources.meshes():
+			for surface in mesh.get_surface_override_material_count():
+				var material := mesh.get_active_material(surface) as BaseMaterial3D
+				hidden_material_ready = hidden_material_ready and material != null and material.transparency == BaseMaterial3D.TRANSPARENCY_ALPHA and material.albedo_color.a < 0.5
+			hidden_material_ready = hidden_material_ready and mesh.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		_expect(hidden_material_ready, "图奇部署首帧已应用隐身材质与阴影状态，不闪现实体")
+		_expect(player.current_animation == "Respawn" and is_zero_approx(player.current_animation_position) and is_equal_approx(rat._deploy_timer, 1.0), "首帧初始化不推进部署计时或跳过出场动作")
+		view.free()
+		rat.free()
+
+func _check_stealth_effect_resources() -> void:
+	var entering := StealthTransition3D.new()
+	var exiting := StealthTransition3D.new()
+	var repeated := StealthTransition3D.new()
+	for effect in [entering, exiting, repeated]: _main.add_child(effect)
+	entering.setup(true)
+	exiting.setup(false)
+	repeated.setup(false)
+	var shaders_shared := true
+	var materials_private := true
+	for key in ["material", "streak_material", "wave_material"]:
+		var first := entering.get(key) as ShaderMaterial
+		var second := exiting.get(key) as ShaderMaterial
+		var third := repeated.get(key) as ShaderMaterial
+		shaders_shared = shaders_shared and first.shader == second.shader and second.shader == third.shader
+		materials_private = materials_private and first != second and second != third and first != third
+	_expect(shaders_shared, "入隐、破隐及再次破隐复用同三份着色器，避免按事件重新编译")
+	_expect(materials_private, "同时发生的隐身烟雾各自持有材质，不串用动画参数")
+	entering._process(0.2)
+	var fading_independent := true
+	for key in ["material", "streak_material", "wave_material"]:
+		var first := entering.get(key) as ShaderMaterial
+		var second := exiting.get(key) as ShaderMaterial
+		fading_independent = fading_independent and float(first.get_shader_parameter("fade")) > 0.0 and is_zero_approx(float(second.get_shader_parameter("fade")))
+	_expect(fading_independent and is_zero_approx(exiting.elapsed), "一个烟雾推进不改变另一个烟雾的透明度或计时")
+	_expect(entering.material.get_shader_parameter("tint") != exiting.material.get_shader_parameter("tint") and entering.streak_material.get_shader_parameter("inward") and not exiting.streak_material.get_shader_parameter("inward"), "共享着色器仍分别保留入隐色调与收拢、破隐色调与散开")
+	for effect in [entering, exiting, repeated]: effect.free()
+	var children := _main.get_child_count()
+	var combatants := _main.get_tree().get_nodes_in_group("combatants").size()
+	StealthTransition3D.prepare_visual(_main)
+	_expect(_main.get_child_count() == children and _main.get_tree().get_nodes_in_group("combatants").size() == combatants, "烟雾预热不留下可见样本或生成权威战斗对象")

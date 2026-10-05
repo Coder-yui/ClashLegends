@@ -1,5 +1,11 @@
+class_name StealthTransition3D
 extends Node3D
 ## 只消费隐身切换表现事件；收束／迸散不参与感知、伤害或计时。
+const SMOKE_SHADER := preload("res://assets/effects/stealth/smoke.gdshader")
+const STREAK_SHADER := preload("res://assets/effects/stealth/streak.gdshader")
+const WAVE_SHADER := preload("res://assets/effects/stealth/wave.gdshader")
+static var _visual_prepared := false
+
 const PUFF_COUNT := 12
 const STREAK_COUNT := 9
 var elapsed := 0.0
@@ -13,49 +19,11 @@ var wave_material: ShaderMaterial
 
 func setup(is_entering: bool) -> void:
 	entering = is_entering
-	material = _shader_material("""shader_type spatial;
-render_mode unshaded, cull_disabled, depth_draw_never;
-uniform float fade = 1.0;
-uniform float progress = 0.0;
-uniform vec3 tint;
-void vertex() {
- VERTEX *= vec3(length(MODEL_MATRIX[0].xyz), length(MODEL_MATRIX[1].xyz), length(MODEL_MATRIX[2].xyz));
- MODELVIEW_MATRIX = VIEW_MATRIX * mat4(INV_VIEW_MATRIX[0], INV_VIEW_MATRIX[1], INV_VIEW_MATRIX[2], MODEL_MATRIX[3]);
-}
-void fragment() {
- vec2 p = (UV - vec2(0.5)) * 2.0;
- float ripple = sin(p.x * 12.0 + progress * 6.0) * sin(p.y * 9.0 - progress * 4.0);
- float cloud = pow(max(1.0 - length(p) + ripple * 0.10, 0.0), 1.5);
- ALBEDO = tint;
- ALPHA = cloud * fade * 0.48;
-}
-""")
+	material = _shader_material(SMOKE_SHADER)
 	material.set_shader_parameter("tint", Vector3(0.20, 0.72, 0.40) if entering else Vector3(0.56, 0.82, 0.16))
-	streak_material = _shader_material("""shader_type spatial;
-render_mode unshaded, blend_add, cull_disabled, depth_draw_never;
-uniform float fade = 1.0;
-uniform bool inward = true;
-void fragment() {
- float across = pow(max(1.0 - abs(UV.x * 2.0 - 1.0), 0.0), 1.8);
- float head = inward ? 1.0 - UV.y : UV.y;
- float taper = smoothstep(0.0, 0.2, head) * (1.0 - smoothstep(0.75, 1.0, head));
- ALBEDO = mix(vec3(0.16, 0.68, 0.26), vec3(0.40, 0.78, 0.30), head);
- ALPHA = across * taper * fade * 0.46;
-}
-""")
+	streak_material = _shader_material(STREAK_SHADER)
 	streak_material.set_shader_parameter("inward", entering)
-	wave_material = _shader_material("""shader_type spatial;
-render_mode unshaded, blend_add, cull_disabled, depth_draw_never;
-uniform float fade = 1.0;
-void fragment() {
- vec2 p = (UV - vec2(0.5)) * 2.0;
- float r = length(p);
- float rim = exp(-pow((r - 0.82) * 19.0, 2.0));
- float wisps = 0.65 + 0.35 * sin(atan(p.y, p.x) * 9.0 + r * 16.0);
- ALBEDO = vec3(0.25, 0.72, 0.28);
- ALPHA = rim * wisps * fade * 0.22;
-}
-""")
+	wave_material = _shader_material(WAVE_SHADER)
 	for i in PUFF_COUNT:
 		puffs.append(_quad(Vector2.ONE, material))
 	for i in STREAK_COUNT:
@@ -70,12 +38,38 @@ void fragment() {
 	wave.position.y = 0.08
 	_update_puffs(0.0)
 
-func _shader_material(code: String) -> ShaderMaterial:
-	var shader := Shader.new()
-	shader.code = code
+func _shader_material(shader: Shader) -> ShaderMaterial:
 	var result := ShaderMaterial.new()
 	result.shader = shader
 	return result
+
+## 不显示的独立视口只编译共享着色器，样本不进入战场或派发事件。
+static func prepare_visual(parent: Node) -> void:
+	if _visual_prepared or DisplayServer.get_name() == "headless" or not parent.is_inside_tree(): return
+	var viewport := SubViewport.new()
+	viewport.size = Vector2i(32, 32)
+	viewport.own_world_3d = true
+	viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	viewport.process_mode = Node.PROCESS_MODE_ALWAYS
+	parent.add_child(viewport)
+	var camera := Camera3D.new()
+	camera.projection = Camera3D.PROJECTION_ORTHOGONAL
+	camera.size = 4.0
+	viewport.add_child(camera)
+	camera.position = Vector3(3.0, 2.6, 5.5)
+	camera.look_at(Vector3.UP * 0.6)
+	camera.current = true
+	var sample := StealthTransition3D.new()
+	sample.process_mode = Node.PROCESS_MODE_DISABLED
+	viewport.add_child(sample)
+	sample.setup(false)
+	sample._update_puffs(0.3)
+	# 同步创建后立即绘制，先提交变换；等待常规帧更新会让预热相机仍看向空处。
+	camera.force_update_transform()
+	for mesh in sample.find_children("*", "MeshInstance3D", true, false): mesh.force_update_transform()
+	RenderingServer.force_draw(false)
+	viewport.free()
+	_visual_prepared = true
 
 func _quad(size: Vector2, mat: Material) -> MeshInstance3D:
 	var mesh := MeshInstance3D.new()

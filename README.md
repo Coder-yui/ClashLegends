@@ -17,7 +17,7 @@ Godot --headless --path . --script tests/mechanics_check.gd
 
 ## 开发入口
 
-- [文档首页](docs/README.md)：按任务找当前手册；[任务 Router](docs/AGENT_WORKFLOW.md)用于具体开发。
+- [文档首页](docs/README.md)：按任务找当前手册；[任务导航](docs/AGENT_WORKFLOW.md)用于具体开发。
 - [新卡与素材接入](docs/NEW_CARD_CHECKLIST.md)：五阶段执行、迁移记录与联合验收。
 - [工具目录](tools/README.md)：音频加工、渲染演示和只读仓库审计。
 - [模块与数据流](docs/MAINTENANCE_ARCHITECTURE.md)：Main 编排、battle 权威系统、逐卡定义、独立表现。

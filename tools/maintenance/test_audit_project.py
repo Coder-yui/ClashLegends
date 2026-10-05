@@ -54,6 +54,23 @@ class AuditTests(unittest.TestCase):
         errors = audit(self.root)['errors']
         self.assertEqual(len(errors), 4, errors)
 
+    def test_tool_output_is_optional_but_loaded_input_is_required(self):
+        output = 'res://ClashLegends-promo-materials/new-cover.png'
+        declaration = f'const DEFAULT_OUT_16X9 := "{output}"\n'
+        self.write('tools/capture/cover.gd', declaration + 'func save(image): image.save_png(DEFAULT_OUT_16X9)\n')
+        self.assertEqual(audit(self.root)['errors'], [])
+        for loading in (f'var image = preload("{output}")\n', 'var image = Image.load_from_file(DEFAULT_OUT_16X9)\n'):
+            self.write('tools/capture/cover.gd', declaration + loading)
+            self.assertTrue(any('missing resource' in error for error in audit(self.root)['errors']))
+        self.write('tools/capture/cover.gd', declaration + 'var scene = preload("res://missing.tscn")\n')
+        self.assertEqual(audit(self.root)['errors'], ['tools/capture/cover.gd: missing resource: missing.tscn'])
+
+    def test_card_coverage_table_tracks_registered_pages(self):
+        self.write('docs/reference/UNIT_DOC_COVERAGE.md', '| `example` · [Example](../units/example.md) | Basic |\n')
+        self.assertEqual(audit(self.root)['errors'], [])
+        self.write('docs/reference/UNIT_DOC_COVERAGE.md', '# Coverage\n')
+        self.assertEqual(audit(self.root)['errors'], ['card coverage table mismatch: example'])
+
     def test_gnar_requires_both_reader_facing_forms(self):
         self.write('scripts/data/card_db.gd', 'preload("res://scripts/data/cards/gnar.gd")')
         (self.root / 'scripts/data/cards/example.gd').unlink()

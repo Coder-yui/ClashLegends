@@ -6,7 +6,7 @@ static func definition() -> Dictionary:
 	return {
 		"gameplay": {
 			"name": "正义天使", "cost": 3, "type": "unit",
-			"description": "对地对空的飞行战士。金币不足6时花3金币部署近战形态；金币达到6时花6金币部署远程形态，弹体命中造成范围伤害。部署后形态固定。",
+			"description": "对地对空的飞行战士。金币不足6时花3金币部署近战形态；金币达到6时花6金币部署远程形态，普攻发射追踪单体光剑和独立穿透焰浪。部署后形态固定。",
 			"deployment_upgrade_id": "kayle_ranged",
 			"hp": 520, "damage": 75, "range": 56.0,
 			"speed": SPEED_MEDIUM, "interval": BASE_ATTACK_INTERVAL, "first_hit": snappedf(BASE_ATTACK_INTERVAL * (9.5 / 65.0), 0.01),

@@ -5,7 +5,7 @@ static func definition() -> Dictionary:
 	return {
 		"gameplay": {
 			"name": "太阳圆盘", "cost": 4, "type": "building",
-			"description": "建立在防御塔废墟之上的远程建筑，可攻击空中与地面目标。主动为攻击范围内的友军提供护盾；建于塔墟时不再随时间失去生命。",
+			"description": "可在普通合法地面或已毁防御塔的塔墟上建立的远程建筑，可攻击空中与地面目标。主动为攻击范围内的友军提供护盾；建于精确塔墟位置时不再随时间失去生命。",
 			# 普通地面部署时使用 40 秒建筑寿命；中心对齐已毁公主塔正中心时，
 			# tower_ruin_foundation 会保留完整生命且取消寿命倒计时。
 			"hp": 1200, "damage": 105, "range": 220.0,

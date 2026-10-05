@@ -20,6 +20,23 @@ RESOURCE_SUFFIXES = {'.gd', '.tscn', '.tres', '.gdshader', '.png', '.jpg', '.web
 EXTERNAL = ('ClashLegends-promo-materials', 'ClashLegends-开发素材库')
 
 
+def tool_output_reference(text: str, target: str) -> bool:
+    """New output files may be absent; a load of that path still requires it."""
+    literal = re.escape('res://' + target)
+    names = re.findall(r'^\s*(?:const|var)\s+(\w+).*?["\']' + literal + r'["\']', text, re.M)
+    inputs = r'\b(?:preload|load|load_threaded_request|load_from_file)\s*\(\s*'
+    if re.search(inputs + r'["\']' + literal + r'["\']', text):
+        return False
+    if any(re.search(inputs + re.escape(name) + r'\b', text) for name in names):
+        return False
+    output_names = {name for name in names if re.search(r'(?:^|_)(?:out|output|dest|destination)(?:_|$)', name, re.I)}
+    lines = [line for line in text.splitlines() if 'res://' + target in line]
+    return bool(lines) and all(
+        any(word in line for word in ('save_', 'OUTPUT', 'output', 'DEST', 'destination'))
+        or any(re.search(r'\b' + re.escape(name) + r'\b', line) for name in output_names)
+        for line in lines
+    )
+
 
 def markdown_anchors(text: str) -> set[str]:
     text = re.sub(r'```.*?```', '', text, flags=re.S)
@@ -169,9 +186,8 @@ def audit(root: Path, inventory: bool = False) -> dict:
             if relative.startswith('tools/capture/') and target == 'assets/arena/rift_arena/rift_arena.tscn':
                 continue  # Available only in the external integration preview created by tools/dev.py stage.
             if not (root / target).exists():
-                # Capture tools intentionally write new images under builds/ and res://.
-                lines = [line for line in text.splitlines() if 'res://' + target in line]
-                if not relative.startswith('tools/') or not any(any(word in line for word in ('save_', 'OUTPUT', 'output', 'DEST', 'destination')) for line in lines):
+                # Capture outputs need not pre-exist; required input resources still do.
+                if not relative.startswith('tools/') or not tool_output_reference(text, target):
                     errors.append(f'{relative}: missing resource: {target}')
             else:
                 references.add(target)
@@ -196,6 +212,11 @@ def audit(root: Path, inventory: bool = False) -> dict:
         errors.append(f'card registry/definition mismatch: {card_id}')
     for card_id in sorted(expected_docs ^ docs):
         errors.append(f'card registry/document mismatch: {card_id}')
+    coverage = root / 'docs/reference/UNIT_DOC_COVERAGE.md'
+    if coverage.is_file():
+        covered = set(re.findall(r'^\| `[^|]*\[[^]]+\]\(\.\./units/([a-z0-9_]+)\.md\)', coverage.read_text(), re.M))
+        for page in sorted(expected_docs ^ covered):
+            errors.append(f'card coverage table mismatch: {page}')
     for folder in EXTERNAL:
         base = root / folder
         if base.exists() and not (base / '.gdignore').exists():

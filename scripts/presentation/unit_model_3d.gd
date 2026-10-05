@@ -258,6 +258,10 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 	_recreate_team_ring()
 	if not reuse:
 		_sync_visual(true, 0.0)
+		# 新模型在首次绘制前采到当前动作；否则会闪过导入的默认骨架，武器与身体分离。
+		if _animation_player != null:
+			_animation_player.advance(0.0)
+		_update_hit_flash(0.0)
 	_update_health_bar_anchor()
 	return true
 
