@@ -1612,11 +1612,11 @@ func _tick_building_lifetime(dt: float) -> void:
 			_lifespan_decay_remainder -= decay
 			hp = maxf(0.0, hp - decay)
 			if hp <= 0.0:
-				_die()
+				_die(death_spawn_count > 0)
 				return
 		if _lifespan_left <= 0.000001:
 			hp = 0.0
-			_die()
+			_die(death_spawn_count > 0)
 			return
 
 func _building_tick(dt: float, natural_lifecycle_prepared: bool = false, summons_started: bool = false) -> void:

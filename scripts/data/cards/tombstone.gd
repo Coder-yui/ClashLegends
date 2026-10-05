@@ -5,7 +5,7 @@ static func definition() -> Dictionary:
 	return {
 		"gameplay": {
 			"name": "墓碑", "cost": 3, "type": "building",
-			"description": "持续召唤雾行者的建筑，适合建立防守屏障并拖延敌军。",
+			"description": "持续20秒的召唤建筑，每5秒生成两只雾行者，死亡时再释放两只。",
 			# 建筑卡：3x3 格部署占地；权威碰撞仍使用 radius=40 的圆柱，不可移动。
 			# 完成部署立即生成两个雾行者，之后每 5 秒在地图中心线对应的一侧生成两个。
 			"hp": 400, "damage": 0, "range": 0.0,
@@ -13,7 +13,7 @@ static func definition() -> Dictionary:
 			"footprint_tiles": Vector2i(3, 3),
 			"is_air": false, "building_only": false, "can_attack_air": false,
 			"is_building": true,
-			"lifespan": 10.0, "lifespan_hp_decay": true, # 每秒自然衰减40生命
+			"lifespan": 20.0, "lifespan_hp_decay": true, # 每秒自然衰减20生命
 			"spawn_id": "imp",
 			"spawn_interval": 5.0,  # 每隔多久生成一批雾行者
 			"spawn_count": 2,

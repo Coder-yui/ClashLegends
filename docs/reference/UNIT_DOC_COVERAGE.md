@@ -73,7 +73,7 @@
 | `super_minion` · [超级兵](../units/super_minion.md) | 近战；男爵移速/伤害/独立盾 | [动作](../units/animations/super_minion.md) · [声音](../units/audio/super_minion.md) |
 | `super_minion_squad` · [攻城部队](../units/super_minion_squad.md) | 2超级兵编队；资格转交、成员Buff | [动作](../units/animations/super_minion.md) · [声音](../units/audio/super_minion_squad.md) |
 | `teemo` · [提莫](../units/teemo.md) | 强化致盲两次；无持续毒伤 | [动作](../units/animations/teemo.md) · [声音](../units/audio/teemo.md) |
-| `tombstone` · [墓碑](../units/tombstone.md) | 10秒寿命；受控最多保留一批、死亡召唤 | [动作](../units/animations/tombstone.md) · [声音](../units/audio/tombstone.md) |
+| `tombstone` · [墓碑](../units/tombstone.md) | 20秒寿命；受控最多保留一批、被击杀或自然死亡额外召唤两只 | [动作](../units/animations/tombstone.md) · [声音](../units/audio/tombstone.md) |
 | `twisted_fate` · [卡牌大师](../units/twisted_fate.md) | 全图合法地面部署；第五击、三牌去重穿透 | [动作](../units/animations/twisted_fate.md) · [声音](../units/audio/twisted_fate.md) |
 | `tristana` · [麦林炮手](../units/tristana.md) | 远程对空；5秒攻速增益 | [动作](../units/animations/tristana.md) · [声音](../units/audio/tristana.md) |
 | `tryndamere` · [蛮族之王](../units/tryndamere.md) | 独立怒气、受控释放与4秒保命 | [动作](../units/animations/tryndamere.md) · [声音](../units/audio/tryndamere.md) |

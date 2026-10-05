@@ -8,10 +8,13 @@ func run(harness: Object, main: Node2D) -> void:
 		_check_due_attack(permutation)
 	_check_stale_acceptance()
 	_check_lifecycle_edges()
+	_check_tombstone_death_summons()
 
 func _building(team: int) -> Unit:
 	var unit: Unit = _main._spawn_unit(UnitSpawnRequest.new(team, "tombstone", Vector2(180, 700), {"deploy_time_override": 0}))
 	unit.spawn_interval = 0
+	# 通用寿命/攻击边界夹具隔离产出，真实墓碑死亡召唤由专用用例验证。
+	unit.death_spawn_count = 0
 	return unit
 
 func _attacker(team: int) -> Unit:
@@ -121,3 +124,38 @@ func _check_lifecycle_edges() -> void:
 	_expect(source.hp == healed, "随后自然到期不追溯撤销先前阶段收益")
 	source.free()
 	building.free()
+
+func _check_tombstone_death_summons() -> void:
+	for team in [0, 1]:
+		for cause in ["expiry", "healed_expiry", "decay", "damage"]:
+			var building: Unit = _main._spawn_unit(UnitSpawnRequest.new(team, "tombstone", Vector2(300, 900), {"deploy_time_override": 0}))
+			# 隔离周期产出，直接观察死亡召唤；到期前恢复首批/周期到点冲突。
+			building.spawn_interval = 0
+			if cause in ["expiry", "healed_expiry"]:
+				_run_main_ticks(399)
+				_expect(building.hp == 1 and is_equal_approx(building._lifespan_left, Unit.SIM_DT), "墓碑19.95秒仍存活，按20秒寿命自然衰血")
+				if cause == "healed_expiry": building.heal(100)
+				building.spawn_interval = 5.0
+				building._spawn_timer = Unit.SIM_DT
+				building._initial_summons_spawned = team == 0
+			elif cause == "decay":
+				building.hp = 1
+				building.freeze(10.0)
+			building.add_shield(100, 30)
+			var before := _main.get_tree().get_nodes_in_group("combatants").filter(func(c): return c is Unit and c.card_id == "imp")
+			if cause == "damage":
+				_main._combat.begin_batch(_main._sim_tick_id, "tombstone_death_test")
+				building.take_damage(1000)
+				building.take_damage(1000)
+				_main._combat.commit_batch()
+			else:
+				_main._sim_step(Unit.SIM_DT)
+			var summons := _main.get_tree().get_nodes_in_group("combatants").filter(func(c): return c is Unit and c.card_id == "imp" and not before.has(c))
+			_expect(building.hp == 0 and not building.is_in_group("combatants") and building.nav_cells.is_empty() and summons.size() == 2, "墓碑%s死亡仅释放两只雾行者并解除占位，阵营%d" % [cause, team])
+			_expect(summons.all(func(c): return c.team == team and c.hp == c.max_hp and c.is_walkable_at(c.position) and c._move_intent == Vector2.ZERO and c._attack_hit_index == 0), "墓碑死亡召唤阵营与落点合法，生成当Tick不行动")
+			if cause != "damage":
+				_expect(building.shield_hp == 100, "墓碑自然死亡不消耗护盾")
+			building._die(true)
+			_expect(_main.get_tree().get_nodes_in_group("combatants").filter(func(c): return c is Unit and c.card_id == "imp" and not before.has(c)).size() == 2, "墓碑重复死亡通知不重复生成")
+			building.free()
+			for summoned in summons: summoned.free()
