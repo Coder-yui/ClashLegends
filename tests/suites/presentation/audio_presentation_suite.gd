@@ -4,6 +4,7 @@ extends RefCounted
 func run(harness: Object, main: Node2D) -> void:
 	await _check_stasis_audio(harness, main)
 	await _check_stasis_flight_audio(harness, main)
+	_check_mix_bus_protection(harness)
 	_check_selected_deploy_audio(harness, main)
 	_check_client_voice_gain(harness, main)
 	_check_voice_budget(harness, main)
@@ -1246,3 +1247,12 @@ func _check_client_voice_gain(harness: Object, main: Node2D) -> void:
 		previous = path
 	harness._expect(correct and seen.size() == 3, "客户端语音单独补偿，其他池成员保持原增益，随机不连续重复")
 	audio.free()
+
+func _check_mix_bus_protection(harness: Object) -> void:
+	for name in ["Combat", "Voice"]:
+		var index := AudioServer.get_bus_index(name)
+		var effect := AudioServer.get_bus_effect(index, 0)
+		harness._expect(effect is AudioEffectCompressor and AudioServer.is_bus_effect_enabled(index, 0) and is_zero_approx(effect.gain), name + " 总线压缩启用且不补偿放大小声音")
+	var limiter := AudioServer.get_bus_effect(AudioServer.get_bus_index("Master"), 0)
+	harness._expect(limiter is AudioEffectHardLimiter and limiter.ceiling_db < 0 and is_zero_approx(limiter.pre_gain_db), "总输出限幅保留余量且不预放大")
+	harness._expect(AudioServer.get_bus_send(AudioServer.get_bus_index("Voice")) == &"Master" and AudioServer.get_bus_send(AudioServer.get_bus_index("Combat")) == &"SFX", "语音与战斗独立压缩，所有输出汇入总线保护")

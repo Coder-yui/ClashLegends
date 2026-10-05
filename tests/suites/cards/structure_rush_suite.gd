@@ -52,6 +52,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_recovery_boundary()
 	_check_failed_launch_search()
 	for tower in main._towers: tower.can_attack = false
+	_check_preparation_structure_lock()
 	var deployed: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "rift_herald", Vector2(360, 1050), {"deploy_time_override": 3.0}))
 	units.append(deployed)
 	step(deployed, 59)
@@ -326,6 +327,46 @@ func run(harness: Object, main: Node2D) -> void:
 	invalid = CardDB.all().duplicate(true)
 	invalid.rift_herald.audio.events["spinning_punch:hit"].action_time = 1.0
 	_expect(not CardDB.VALIDATOR.validate_all(invalid).is_empty(), "真实命中声不能改为定时伪命中")
+
+func _check_preparation_structure_lock() -> void:
+	# 真实防御塔与 play_card 建筑落地：准备首步/最后一步插入，双方镜像覆盖。
+	for team in [0, 1]:
+		var tower: Tower = _main._towers[2 if team == 0 else 0]
+		var outward := Vector2.DOWN if team == 0 else Vector2.UP
+		for insertion_tick in [1, 49]:
+			var source := spawn("rift_herald", team, tower.position + outward * 240.0)
+			step(source, insertion_tick)
+			var rush := source.structure_rush
+			_expect(rush.phase == StructureRushState.Phase.PREPARING and rush.target == tower, "准备期间插入建筑前已锁定敌方防御塔 %s/%s" % [team, insertion_tick])
+			var start := source.position
+			var direction := rush.direction
+			var endpoint := rush.endpoint
+			var serial := source.get_visual_action_serial()
+			# 最后一步使用偏轴建筑，验证不能转向较近的新目标。
+			var placement := tower.position + outward * 120.0 + Vector2(40.0 if insertion_tick == 49 else 0.0, 0.0)
+			_expect(_main.play_card(1 - team, "apex_turret", placement, {"immediate": true}), "准备阶段通过正式出牌入口放下挡路建筑")
+			var buildings := _main.get_tree().get_nodes_in_group("combatants").filter(func(c): return c is Unit and c.card_id == "apex_turret")
+			_expect(buildings.size() == 1, "准备阶段挡路建筑已经实际生成")
+			if buildings.size() != 1:
+				clear_units()
+				continue
+			var blocker: Unit = buildings[0]
+			var tower_hp := tower.hp
+			var blocker_hp := blocker.hp
+			source.hp = 1000
+			step(source, 50 - insertion_tick)
+			_expect(rush.phase == StructureRushState.Phase.PREPARING and is_equal_approx(rush.remaining, Unit.SIM_DT) and source.position.is_equal_approx(start), "新增建筑不重置准备，2.45秒仍未起冲")
+			_expect(rush.target == tower and rush.direction == direction and rush.endpoint == endpoint and source.get_visual_action_serial() == serial, "新增建筑不改变锁塔、方向、终点或重播准备动作")
+			step(source)
+			_expect(rush.phase == StructureRushState.Phase.DASHING and rush.target == tower and rush.direction == direction and source.position.is_equal_approx(start + direction * float(rush.config.rush_speed) * Unit.SIM_DT), "满2.5秒仍以原防御塔为目标沿既定方向冲撞")
+			step(source, 6)
+			_expect(rush.phase == StructureRushState.Phase.RECOVERY and rush.target == blocker and tower.hp == tower_hp and blocker.hp == blocker_hp - 500, "冲撞实际接触新建筑时才改为撞击它，后排防御塔不受伤")
+			_expect(source._target_gap(blocker) >= ArenaRules.STRUCTURE_SEPARATION and source.is_walkable_at(source.position), "沿既定直线停在新建筑表面之外，不穿透建筑")
+			var mites := _main.get_tree().get_nodes_in_group("combatants").filter(func(c): return c is Unit and c.card_id == "voidmite")
+			_expect(source.hp == 700 and mites.size() == 6, "准备期间新增敌方建筑承受完整撞击、自伤与六虫孵化")
+			step(source, 15)
+			_expect(rush.phase == StructureRushState.Phase.SPENT, "新增建筑截停后消耗唯一冲撞机会")
+			clear_units()
 
 func _check_failed_launch_search() -> void:
 	var source := spawn("rift_herald", 0, Vector2(360, 950))

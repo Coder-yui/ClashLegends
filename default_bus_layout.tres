@@ -1,4 +1,28 @@
-[gd_resource type="AudioBusLayout" format=3]
+[gd_resource type="AudioBusLayout" load_steps=4 format=3]
+
+[sub_resource type="AudioEffectCompressor" id="CombatCompressor"]
+resource_name = "Combat mix control"
+threshold = -18.0
+ratio = 2.0
+gain = 0.0
+attack_us = 2000.0
+release_ms = 160.0
+mix = 1.0
+
+[sub_resource type="AudioEffectCompressor" id="VoiceCompressor"]
+resource_name = "Voice mix control"
+threshold = -16.0
+ratio = 2.0
+gain = 0.0
+attack_us = 3000.0
+release_ms = 180.0
+mix = 1.0
+
+[sub_resource type="AudioEffectHardLimiter" id="OutputLimiter"]
+resource_name = "Output peak protection"
+pre_gain_db = 0.0
+ceiling_db = -1.0
+release = 0.1
 
 [resource]
 bus/0/name = &"Master"
@@ -7,6 +31,8 @@ bus/0/mute = false
 bus/0/bypass_fx = false
 bus/0/volume_db = 0.0
 bus/0/send = &""
+bus/0/effect/0/effect = SubResource("OutputLimiter")
+bus/0/effect/0/enabled = true
 bus/1/name = &"Music"
 bus/1/solo = false
 bus/1/mute = false
@@ -25,6 +51,8 @@ bus/3/mute = false
 bus/3/bypass_fx = false
 bus/3/volume_db = 0.0
 bus/3/send = &"SFX"
+bus/3/effect/0/effect = SubResource("CombatCompressor")
+bus/3/effect/0/enabled = true
 bus/4/name = &"UI"
 bus/4/solo = false
 bus/4/mute = false
@@ -37,3 +65,5 @@ bus/5/mute = false
 bus/5/bypass_fx = false
 bus/5/volume_db = 0.0
 bus/5/send = &"Master"
+bus/5/effect/0/effect = SubResource("VoiceCompressor")
+bus/5/effect/0/enabled = true

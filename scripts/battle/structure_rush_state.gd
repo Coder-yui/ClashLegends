@@ -89,12 +89,8 @@ func tick(unit: Unit, dt: float) -> bool:
 			return true
 		remaining = maxf(0.0, remaining - dt)
 		if remaining > 0.000001: return true
-		# 准备期间出现建筑也必须重新验证，不能沿过时路线冲过去。
-		if not unit.battle_context.is_ground_segment_walkable(unit.global_position, endpoint, unit.body_radius, unit):
-			phase = Phase.READY
-			awaiting_reprepare = false
-			unit.play_visual_action(&"", 0.0)
-			return true
+		# 起手已锁定目标与直线；新增建筑交给 DASHING 的逐步接触检测截停，
+		# 不取消或重启准备。硬控打断与目标失效仍由各自入口处理。
 		phase = Phase.DASHING
 		hit_ids.clear()
 		unit.play_visual_action(&"rush_dash", maxf(Unit.SIM_DT, unit.global_position.distance_to(endpoint) / float(config.rush_speed)))
