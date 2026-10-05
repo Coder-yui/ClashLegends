@@ -14,6 +14,7 @@ COMMANDS = {
     'source': ('python', 'tools/assets/lol_source.py', '原始素材：找包、筛选、提取、转换'),
     'model': ('godot', 'tools/viewers/model_studio.gd', '模型动作展台与卡面摄影'),
     'studio': ('godot', 'tools/viewers/camera_studio.gd', '可调相机、灯光、背景并拍摄卡面的 3D 摄影棚'),
+    'cover': ('godot', 'tools/viewers/cover_studio.gd', '真实峡谷封面摄影台：横竖画幅、多单位、动作与特效定格'),
     'audio': ('python', 'tools/audio_review/serve.py', '目录或清单驱动的声音试听台'),
     'audio-prepare': ('python', 'tools/audio/prepare_lol_card_audio.py', '准备英雄原始音频事件工作目录'),
     'audio-import': ('python', 'tools/audio/import_card_audio.py', '按选定计划导入声音（先用 --dry-run）'),
