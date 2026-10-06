@@ -171,6 +171,8 @@ func apply(source: Unit, skill: Dictionary) -> bool:
 			activate_nova(source, skill)
 		&"summon":
 			activate_summon(source, skill)
+		&"toggle_form":
+			source.toggle_weapon_form()
 		&"dual_form":
 			apply_frontal_stun(source, skill, skill.get("cast_forward", source.active_skill_cast_facing))
 		&"frontal":

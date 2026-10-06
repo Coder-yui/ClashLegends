@@ -3,8 +3,10 @@ extends Node3D
 ## 可复用的持续 Buff 表现接口；由模型代理喂入权威/快照状态与表现时钟。
 ## 不持有 Unit，不参与玩法或网络。
 
-@export_enum("active_buff", "blood_rage") var status_source: String = "active_buff"
+@export_enum("active_buff", "blood_rage", "structure_haste") var status_source: String = "active_buff"
+@export var preserve_on_form_change := false
 var active := false
+var status_state := Vector2.ZERO
 var overlay_material: ShaderMaterial
 var overlay_instances: Array[ShaderMaterial] = []
 
@@ -25,3 +27,7 @@ func make_overlay(original: Material) -> Material:
 
 func on_hit() -> void:
 	pass
+
+## 将状态存续与暂时隐藏区分开，避免凝滞恢复被误判为重新触发。
+func advance_status(_status_active: bool, shown: bool, delta: float) -> void:
+	advance(shown, delta)

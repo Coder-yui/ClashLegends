@@ -2,6 +2,7 @@ class_name PresentationEvents
 extends RefCounted
 ## 当前实际派发能力表；新增 cue 必须同时实现权威派发与消费者。
 static func supports(stats: Dictionary, cue: String) -> bool:
+	if cue == "structure_haste:start": return float(stats.get("structure_assist_window", 0.0)) > 0.0
 	if cue == "hit": return String(stats.get("type", "")) in ["unit", "building"]
 	if cue == "aftershock:explode": return (stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "aftershock")
 	if cue in ["stasis_target:sustain", "spell:flight"]: return String(stats.get("spell_kind", "")) == "stasis"
@@ -73,6 +74,8 @@ static func supports(stats: Dictionary, cue: String) -> bool:
 			return true
 	for skill in stats.get("active_skills", []):
 		var kind := String(skill.get("kind", ""))
+		if kind == "toggle_form" and cue in ["transform:start", "transform:end", "transform:sustain"]:
+			return float(stats.get("transform_duration", 0.0)) > 0.0
 		if kind in ["dual_form", "timed_form"] and lifecycle.size() == 2 and lifecycle[0] == "transform_active" and lifecycle[1] in ["start", "end", "sustain", "hit"]:
 			return float(stats.get("active_transform_duration", stats.get("transform_duration", 0.0))) > 0.0
 		if cue in ["empowered_ready", "empowered_swing"] and kind in ["empowered_attack", "bleeding_execute"]:

@@ -576,5 +576,14 @@
     "source_path": "assets/characters/corki/hud/icons2d/corki_missilebarrage.dds",
     "source_sha256": "aa7cd8916f645e40fc8fd5832118636a18dd9c25617dd391de18114af074aa9a",
     "sha256": "74ce6365593e8b7528303db04b6cd433b3c7fa4bf879825400ccb2734d01db02"
+  },
+  {
+    "card": "jinx",
+    "skill_index": 0,
+    "path": "res://assets/skills/jinx_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Jinx.wad.client",
+    "source_path": "assets/characters/jinx/hud/icons2d/jinx_q1.dds",
+    "source_sha256": "139c9957adb9865bc302046fe54a8e5b49447ff18112572f6cc1f8272e925e1e",
+    "sha256": "f5c33ad3cb27c0eb206aea8543b7e1492a91ab634f216acc2636258a248e56ba"
   }
 ]

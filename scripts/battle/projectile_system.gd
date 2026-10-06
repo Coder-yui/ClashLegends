@@ -16,6 +16,7 @@ var _next_id := 1
 var _context: BattleContext
 var _native_visuals: Node2D
 var _missile_visuals: Node2D
+var _weapon_visuals: Node2D
 var _pending_attack_waves: Array[Dictionary] = []
 var _visual_origin_cache: Dictionary = {}
 
@@ -27,6 +28,9 @@ func setup(context: BattleContext) -> void:
 	_missile_visuals = preload("res://scripts/presentation/corki_projectile_effect.gd").new()
 	add_child(_missile_visuals)
 	_missile_visuals.setup(self)
+	_weapon_visuals = preload("res://scripts/presentation/jinx_projectile_effect.gd").new()
+	add_child(_weapon_visuals)
+	_weapon_visuals.setup(self)
 
 ## 快照提供目标状态；当前插值位置由本系统保留，调用者不能持有内部字典别名。
 func apply_client_targets(targets: Dictionary) -> void:
@@ -413,6 +417,7 @@ func tick_client_interpolation(delta: float) -> void:
 	queue_redraw()
 
 func tick_visuals(delta: float) -> void:
+	if is_instance_valid(_weapon_visuals): _weapon_visuals.queue_redraw()
 	if is_instance_valid(_missile_visuals): _missile_visuals.queue_redraw()
 	if is_instance_valid(_native_visuals): _native_visuals.advance(delta)
 	var visible := _client_projectiles if _context != null and _context.is_net_client() else projectiles
@@ -457,7 +462,7 @@ func _draw() -> void:
 		match StringName(projectile.get("visual", &"orb")):
 			&"corki_missile", &"corki_missile_big": preload("res://scripts/presentation/corki_projectile_effect.gd").draw_flight(self, _visual_position(projectile), _direction(projectile), StringName(projectile.visual) == &"corki_missile_big")
 			&"baron_siege", &"baron_ranged": preload("res://scripts/presentation/baron_projectile_effect.gd").draw_flight(self, _visual_position(projectile), _direction(projectile), float(projectile.radius) * float(projectile.get("visual_scale", 1.0)), projectile.color)
-			&"corki_bullet", &"kayle_sword", &"kayle_wave": pass # 由独立表现代理绘制
+			&"jinx_rocket", &"jinx_bullet", &"corki_bullet", &"kayle_sword", &"kayle_wave": pass # 由独立表现代理绘制
 			&"fireball": preload("res://scripts/presentation/fireball_effect_2d.gd").draw_flight(self, _visual_position(projectile), _direction(projectile), float(projectile.radius) * float(projectile.get("visual_scale", 1.0)))
 			&"magic_orb": _draw_magic_orb(projectile)
 			&"tower_orb": _draw_tower_orb(projectile)
@@ -507,7 +512,7 @@ func _draw_first_strike_orb(projectile: Dictionary) -> void:
 	draw_circle(pos - direction * radius * 0.20, radius * 0.54, Color(1.0, 0.98, 0.76, 1.0))
 
 func _draw_impact_effect(effect: Dictionary) -> void:
-	if StringName(effect.get("visual", "")) in [&"corki_explosion", &"corki_explosion_big"]:
+	if StringName(effect.get("visual", "")) in [&"jinx_explosion", &"corki_explosion", &"corki_explosion_big"]:
 		return # 原版加法混合由独立表现画布绘制
 	if StringName(effect.get("visual", "")) == &"fire_area":
 		preload("res://scripts/presentation/fireball_effect_2d.gd").draw_impact(self, effect)

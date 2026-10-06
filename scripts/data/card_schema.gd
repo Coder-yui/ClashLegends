@@ -95,10 +95,10 @@ const SIZE_RADII := {
 	SIZE_LARGE: RADIUS_LARGE,
 	SIZE_EXTREMELY_LARGE: RADIUS_EXTREMELY_LARGE,
 }
-const PROJECTILE_VISUALS := [&"corki_bullet", &"fireball", &"crossbow_bolt", &"venom_bolt", &"magic_orb", &"kayle_sword", &"orb", &"arrow", &"needle", &"boomerang", &"ice_cone"]
+const PROJECTILE_VISUALS := [&"jinx_rocket", &"jinx_bullet", &"corki_bullet", &"fireball", &"crossbow_bolt", &"venom_bolt", &"magic_orb", &"kayle_sword", &"orb", &"arrow", &"needle", &"boomerang", &"ice_cone"]
 const VISUAL_SPAWN_TRANSITIONS := [&"drop", &"rebirth"]
 const SPELL_KINDS := [&"corrosion", &"stasis", &"zap", &"lightning", &"freeze", &"heal", &"mirror"]
-const ACTIVE_SKILL_KINDS := [&"aftershock", &"spell_corrosion", &"undying_rage", &"spell_freeze", &"spell_stasis", &"permanent_growth", &"spell_lightning", &"dash_strike", &"terrain_charge", &"bleeding_execute", &"explosive_shield", &"sanctuary", &"timed_form", &"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"continuous_area", &"empowered_attack", &"attack_lifesteal", &"area_shield", &"restoration_shield", &"spell_heal"]
+const ACTIVE_SKILL_KINDS := [&"toggle_form", &"aftershock", &"spell_corrosion", &"undying_rage", &"spell_freeze", &"spell_stasis", &"permanent_growth", &"spell_lightning", &"dash_strike", &"terrain_charge", &"bleeding_execute", &"explosive_shield", &"sanctuary", &"timed_form", &"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"continuous_area", &"empowered_attack", &"attack_lifesteal", &"area_shield", &"restoration_shield", &"spell_heal"]
 const ACTIVE_SKILL_TARGET_SCOPES := [&"self", &"deployment_group"]
 const CAST_LOCKS := [&"movement", &"attack", &"facing"]
 const VISUAL_ACTION_KINDS := [&"deploy", &"transform", &"skill"]
@@ -116,6 +116,7 @@ const CARD_FIELDS := [
 	&"heal_on_hit_name", &"on_hit_passive_name", &"team_attack_boost_first_delay", &"team_attack_boost_interval", &"team_attack_boost_multiplier", &"team_attack_boost_forge_duration", &"team_attack_boost_release_time",
 	&"terrain_traversal", &"terrain_entry_heal", &"terrain_entry_speed_multiplier", &"growth_ranged_id", &"growth_melee_id", &"growth_ranged_hits", &"growth_melee_hits",
 	&"hit_haste_max_stacks", &"hit_haste_per_stack", &"hit_haste_duration",
+	&"structure_assist_window", &"structure_haste_duration", &"structure_haste_attack_speed", &"structure_haste_speed_bonus",
 	&"bleed_damage_per_second", &"bleed_duration", &"bleed_max_stacks", &"blood_rage_duration", &"blood_rage_damage_multiplier",
 	&"death_form_delay", &"death_form_decay_duration",
 	&"deployment_upgrade_id",

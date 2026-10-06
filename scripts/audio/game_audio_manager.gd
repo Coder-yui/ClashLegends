@@ -193,7 +193,7 @@ func _process(delta: float) -> void:
 		_tick_terminal_audio(audio_delta, true)
 	if _battle_ended or _battle_paused:
 		return
-	_tick_forge_positions()
+	_tick_attached_result_positions()
 	_tick_sustain_fades(delta)
 	_tick_zone_audio(delta)
 	_tick_building_damage_audio()
@@ -490,13 +490,14 @@ func complete_revival(unit: Unit) -> void:
 
 func _event_owner(unit: Unit, cue: StringName) -> Dictionary:
 	var name := String(cue)
+	if cue == &"structure_haste:start": return {"unit": unit.get_instance_id(), "kind": "structure_haste", "serial": 0}
 	if cue == &"forge:pulse": return {"unit": unit.get_instance_id(), "kind": "forge", "serial": 0}
 	if cue in [&"empowered_swing", &"first_strike:cast", &"attack_swing", &"continuous_attack:start", &"continuous_attack:release"]:
 		return {"unit": unit.get_instance_id(), "kind": "attack", "serial": unit.get_attack_visual_serial()}
 	if cue in [&"active:cast", &"active:spin", &"charge:step"] and unit.active_skill_cast_timer > 0.0:
 		return {"unit": unit.get_instance_id(), "kind": "action", "serial": unit.get_visual_action_serial()}
 	var phase := name.get_slice(":", 1)
-	if name.get_slice(":", 0) in ["active_buff", "empowered_buff", "revival", "rebirth", "sanctuary", "blood_rage"] or cue in [&"empowered_ready", &"resource_full", &"passive_heal", &"active:cast"]:
+	if name.get_slice(":", 0) in ["active_buff", "empowered_buff", "revival", "rebirth", "sanctuary", "blood_rage", "structure_haste"] or cue in [&"empowered_ready", &"resource_full", &"passive_heal", &"active:cast"]:
 		return {}
 	if phase in ["start", "voice", "sustain", "release", "end"] and not name.begins_with("continuous_attack"):
 		return {"unit": unit.get_instance_id(), "kind": "action", "serial": unit.get_visual_action_serial()}
@@ -527,10 +528,12 @@ func _on_action_cancelled(payload: Dictionary, instance_id: int) -> void:
 
 
 func _detach_unit(instance_id: int) -> void:
+	_stop_structure_haste_audio(instance_id)
 	_stop_forge_audio(instance_id)
 	_stop_sustain(instance_id)
 	_unit_entries.erase(instance_id)
 func _on_unit_death(instance_id: int) -> void:
+	_stop_structure_haste_audio(instance_id)
 	_stop_forge_audio(instance_id)
 	_stop_sustain(instance_id, &"", true)
 	var entry: Dictionary = _unit_entries.get(instance_id, {})
@@ -1169,12 +1172,12 @@ func _stop_forge_audio(instance_id: int) -> void:
 			player.stop()
 			player.stream = null
 
-func _tick_forge_positions() -> void:
+func _tick_attached_result_positions() -> void:
 	for player in _world_players:
 		var owner: Dictionary = player.get_meta("action_owner", {})
-		if owner.get("kind", "") != "forge" or not player.playing: continue
+		if owner.get("kind", "") not in ["forge", "structure_haste"] or not player.playing: continue
 		var unit = instance_from_id(int(owner.unit))
-		if not is_instance_valid(unit) or unit.hp <= 0.0:
+		if not is_instance_valid(unit) or unit.hp <= 0.0 or (owner.kind == "structure_haste" and not unit.structure_haste_visual()):
 			player.stop()
 			continue
 		player.global_position = unit.get_visual_screen_position()
@@ -1248,3 +1251,10 @@ func update_spell_flight_audio(effects: Array[Dictionary]) -> void:
 		player.global_position = (effect.origin as Vector2).lerp(effect.pos, t) + Vector2(0, -sin(t * PI) * 160.0 - (1.0 - t) * 60.0)
 	for id in _spell_flight_players.keys():
 		if not active.has(id): stop_spell_flight_audio(int(id))
+
+func _stop_structure_haste_audio(instance_id: int) -> void:
+	for player in _world_players:
+		var owner: Dictionary = player.get_meta("action_owner", {})
+		if int(owner.get("unit", -1)) == instance_id and owner.get("kind", "") == "structure_haste":
+			player.stop()
+			player.stream = null

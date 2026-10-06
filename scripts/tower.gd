@@ -8,6 +8,8 @@ var combat_source_id := 0
 ## 受到伤害或己方任一公主塔被摧毁后激活。
 ## 战斗逻辑在固定 20Hz tick（sim_tick）中推进，与渲染帧率解耦，由 main 驱动。
 
+## 仅权威伤害致死；客户端快照与死亡表现不能触发玩法收益。
+signal defeated
 signal destroyed
 signal visual_hit
 
@@ -270,6 +272,7 @@ func take_damage(amount: float, _from: Node2D = null, _source_team: int = -1, _s
 			battle_context.notify_tower_hit(self)
 	if was_alive and hp <= 0.0:
 		bleeding.clear()
+		defeated.emit()
 		if battle_context != null and battle_context.damage_batch().committing:
 			battle_context.damage_batch().defer_effect(notify_visual_destroyed)
 		else:

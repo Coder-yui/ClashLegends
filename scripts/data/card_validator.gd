@@ -86,6 +86,7 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 			if skill.has("piercing_distance") and not bool(skill.get("piercing_attacks", false)):
 				errors.append(card_id + ".active_skills.piercing_distance: 仅穿透普攻使用")
 	_validate_hit_haste(card_id, stats, errors)
+	_validate_structure_haste(card_id, stats, errors)
 	_validate_team_attack_boost(card_id, stats, errors)
 	_validate_periodic_summons(card_id, stats, errors)
 	_validate_attack_wave(card_id, stats, errors)
@@ -163,6 +164,9 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 		else:
 			_validate_known_fields("%s.transformed_stats" % card_id, transformed, CARD_FIELDS, errors)
 			_validate_combat_stats("%s.transformed_stats" % card_id, transformed, true, errors)
+			var form_capabilities := stats.duplicate()
+			form_capabilities.merge(transformed, true)
+			_validate_hit_haste("%s.transformed_stats" % card_id, form_capabilities, errors)
 			_validate_visual_config("%s.transformed_stats" % card_id, transformed, errors, inspect_resources)
 			if transformed.has("audio"):
 				var capabilities := stats.duplicate()
@@ -460,8 +464,8 @@ static func _validate_projectile(label: String, stats: Dictionary, errors: Packe
 		errors.append("%s: 弹体表现高度和前向偏移必须 >= 0" % label)
 	if float(stats.get("projectile_visual_scale", 1.0)) <= 0.0:
 		errors.append("%s.projectile_visual_scale: 必须 > 0" % label)
-	if StringName(stats.get("projectile_impact_visual", "")) not in [&"", &"splash_wave", &"fire_area"]:
-		errors.append("%s.projectile_impact_visual: 只支持 splash_wave/fire_area" % label)
+	if StringName(stats.get("projectile_impact_visual", "")) not in [&"", &"splash_wave", &"fire_area", &"jinx_explosion"]:
+		errors.append("%s.projectile_impact_visual: 只支持 splash_wave/fire_area/jinx_explosion" % label)
 	if stats.has("projectile_colors"):
 		var colors = stats.projectile_colors
 		if not colors is Array or colors.size() != 2 or not colors[0] is Color or not colors[1] is Color:
@@ -902,6 +906,11 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 					if float(skill.get(positive_field, 0.0)) <= 0.0:
 						errors.append("%s.%s: 必须 > 0" % [label, positive_field])
 			&"summon": _require_fields(label, skill, [&"spawn_id", &"spawn_count"], errors)
+			&"toggle_form":
+				if stats.get("transformed_stats", {}).is_empty(): errors.append(label + ": 换形需要 transformed_stats")
+				var duration = stats.get("transform_duration", 0.0)
+				_validate_number_value(label + ".transform_duration", duration, 0.01, errors, true)
+				if (duration is int or duration is float) and duration <= 0.0: errors.append(label + ": 切枪需要正 transform_duration")
 			&"dual_form": _require_fields(label, skill, [&"length", &"width", &"damage", &"impact_delay", &"cast_duration", &"stun_duration"], errors)
 			&"frontal":
 				_require_fields(label, skill, [&"shape", &"length", &"damage", &"impact_delay", &"cast_duration"], errors)
@@ -1389,3 +1398,11 @@ static func _validate_death_form(card_id: String, stats: Dictionary, errors: Pac
 				errors.append("%s.%s: 必须 > 0" % [card_id, field])
 		if stats.get("transformed_stats", {}).is_empty() or String(stats.get("type", "")) != "unit":
 			errors.append("%s: 致死换形需要普通单位与 transformed_stats" % card_id)
+
+static func _validate_structure_haste(card_id: String, stats: Dictionary, errors: PackedStringArray) -> void:
+	var fields := ["structure_assist_window", "structure_haste_duration", "structure_haste_attack_speed", "structure_haste_speed_bonus"]
+	if not fields.any(func(field): return stats.has(field)): return
+	for field in fields:
+		if float(stats.get(field, 0.0)) <= 0.0: errors.append("%s.%s: 必须为正数且成组配置" % [card_id, field])
+	if float(stats.get("structure_haste_attack_speed", 0.0)) < 1.0: errors.append(card_id + ".structure_haste_attack_speed: 必须 >= 1")
+	if String(stats.get("type", "")) != "unit" or bool(stats.get("is_building", false)): errors.append(card_id + ": 建筑击败加速仅支持普通单位")

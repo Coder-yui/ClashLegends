@@ -65,3 +65,11 @@ func any_flag(family: StringName, field: StringName) -> bool:
 		if effect.family == family and bool(effect.potency.get(field, false)):
 			return true
 	return false
+
+## 层数是实例事实；凝滞只抑制属性，不隐藏仍在计时的层数。
+func stack_count(family: StringName) -> int:
+	var count := 0
+	for effect in _instances:
+		if effect.family == family:
+			count = maxi(count, int(effect.potency.get("stacks", 0)))
+	return count

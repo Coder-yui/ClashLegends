@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/presentation/jinx_haste_effect.gd" id="1"]
+[node name="JinxHaste" type="Node3D"]
+scale = Vector3(1.1, 1.1, 1.1)
+script = ExtResource("1")
+status_source = "structure_haste"
+preserve_on_form_change = true

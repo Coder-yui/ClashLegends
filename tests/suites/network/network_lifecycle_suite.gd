@@ -334,6 +334,8 @@ func _check_payload_contract() -> void:
 	data[SNAP.U_TARGET_PROTECTION] = [Vector2(360, 900), 120.0, 3.5, 2]
 	data[SNAP.U_HP] = 321.0
 	data[SNAP.U_GROWTH] = Vector2(150.0, 1.3)
+	data[SNAP.U_STRUCTURE_HASTE] = true
+	data[SNAP.U_STRUCTURE_HASTE_STATE] = Vector2(5.5, 3)
 	data[SNAP.U_STEALTH] = true
 	data[SNAP.U_STUN] = 1
 	data[SNAP.U_DEPLOY_LEFT] = 0.2
@@ -360,6 +362,10 @@ func _check_payload_contract() -> void:
 	var old := packet.duplicate(true)
 	old[SNAP.S_VERSION] = MatchSession.PROTOCOL_VERSION - 1
 	_expect(not _system.apply(var_to_bytes(old).compress(FileAccess.COMPRESSION_DEFLATE)), "旧版快照不解码；双进程另验握手拒绝")
+	for invalid in [Vector2(-1, 1), Vector2(1, -1), Vector2(1, 1.5), Vector2(INF, 1), Vector2(1, 0), Vector2(0, 1), "bad"]:
+		var malformed := packet.duplicate(true)
+		malformed[SNAP.S_UNITS][0][SNAP.U_STRUCTURE_HASTE_STATE] = invalid
+		_expect(not _system.apply(var_to_bytes(malformed).compress(FileAccess.COMPRESSION_DEFLATE)), "被动层数与倒计时拒绝非法快照")
 	_expect(_system.apply(var_to_bytes(packet).compress(FileAccess.COMPRESSION_DEFLATE)) and data.size() == SNAP.UNIT_PAYLOAD_SIZE, "新载荷压缩编码、解码与未知格温重建成功")
 	var replica: Unit = _main._client_units[79000]
 	_expect(replica.growth_health_bonus == 150.0 and is_equal_approx(replica.growth_body_scale, 1.3) and replica.max_hp == float(CardDB.get_card("gwen").hp) + 150.0, "成长快照恢复最大生命与体型")
@@ -368,6 +374,7 @@ func _check_payload_contract() -> void:
 	_system._apply_units([data])
 	_expect(is_equal_approx(replica.body_radius, grown_radius) and replica.hp == 321.0, "重复成长快照不叠加半径、不额外加血")
 	_expect(replica.target_protection.snapshot() == data[SNAP.U_TARGET_PROTECTION], "未知实体恢复完整结界中心、半径、寿命与代次")
+	_expect(replica.structure_haste_state_visual() == Vector2(5.5, 3), "客户端往返保留被动3层与5.5秒，仅显示不结算叠层")
 	replica.target_protection.advance(10.0, Vector2.ZERO)
 	_expect(replica.target_protection.active() and replica.target_protection.remaining() == 3.5, "客户端不能自行推进或因插值位置清除权威结界")
 	_expect(replica.hp == 321.0 and replica.is_stunned() and is_equal_approx(replica._deploy_timer, 0.2) and is_equal_approx(replica.net_skill_resource_ratio, 0.5), "移除旧字段后控制、部署、资源索引仍往返一致")

@@ -27,6 +27,7 @@ func _resolve_immediate_attack_hit(p_team: int, origin: Vector2, primary: Node2D
 				_settle_bleeding_attack(primary, from, effects, result)
 				if from.battle_context != null: from.battle_context.record_growth_hit(from, primary)
 		if landed and counts_as_attack and from is Unit and is_instance_valid(from) and from.hp > 0.0:
+			(from as Unit).record_structure_attack(primary)
 			(from as Unit).on_attack_landed(source_form_index, float(result.health_lost), -1, int(effects.get("source_generation", -1)))
 		if landed and counts_as_attack:
 			attack_hit.emit(effects.get("presentation_source", {}), primary.global_position, bool(effects.get("first_strike", false)))
@@ -53,6 +54,7 @@ func _resolve_immediate_attack_hit(p_team: int, origin: Vector2, primary: Node2D
 			var landed: bool = result.landed
 			if landed:
 				_apply_attack_hit_effects(c, effects, from)
+				if counts_as_attack and is_instance_valid(from) and from is Unit: from.record_structure_attack(c)
 			any_landed = landed or any_landed
 			if landed and was_alive and c.hp <= 0.0 and from is Unit and is_instance_valid(from) and from.hp > 0.0:
 				(from as Unit).on_enemy_killed(c)
@@ -218,6 +220,7 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 		defer_benefit(func():
 			if not result.landed: return
 			if not is_instance_valid(from) or not from is Unit or from.hp <= 0.0: return
+			if counts_as_attack: from.record_structure_attack(fixed_target)
 			if counts_as_attack and radius <= 0.0:
 				from.on_attack_landed(source_form_index, float(result.health_lost), swing, int(effects.get("source_generation", -1)))
 			# 同批多人共同致死只给存活参与者一次自己的击杀收益，不按遍历挑尾刀。

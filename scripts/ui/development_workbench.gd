@@ -897,6 +897,9 @@ func update_live_details(unit: Unit) -> void:
 	if state.stunned: tags.append("眩晕")
 	var action: String = String(state.action) if not state.action.is_empty() else ["部署", "待机", "移动", "攻击"][clampi(state.behavior, 0, 3)]
 	_unit_status_label.text = "%s · %s · 批次 %d\nHP %.0f/%.0f · %s · 攻击 #%d · %.2fs · ×%.2f · %s" % [CardDB.get_card(unit.card_id).get("name", "训练木桩"), "蓝方" if unit.team == 0 else "红方", unit.deployment_group_id, unit.hp, unit.max_hp, action, state.attack_serial, state.attack_elapsed, state.attack_rate, " / ".join(tags) if not tags.is_empty() else "无冰冻/眩晕"]
+	var haste := unit.structure_haste_state_visual()
+	if haste.y > 0.0:
+		_unit_status_label.text += "\n罪恶快感 %d层 · 剩余%.1f秒" % [int(haste.y), haste.x]
 	var skills := CardDB.active_skills_for(_skill_source())
 	var index := selected_skill_index()
 	if index >= 0 and index < skills.size() and String(skills[index].get("kind", "")) == "undying_rage":

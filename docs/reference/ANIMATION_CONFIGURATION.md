@@ -19,6 +19,7 @@
 | `attack_enter / attack_retarget_enter / attack_loop` | 持续攻击起手、换目标和循环 |
 | `visual_actions` | 技能与变形动作；映射名需与技能所选动作一致 |
 
+
 动作支持 `animation`、`durations` 数组；`clip_ranges` 指定各段原片起止秒数，长度须对应。`visual_action_durations` 可按动作名提供时长。连续素材确认无缝后才将 `sequence_blend` 设为零。
 
 `attack_clip_ranges / attack_hit_clip_ranges` 与攻击段逐项对应；空数组用整段。`death_clip_end` 是死亡源片裁剪终点，须为正数且不超过原长，再由 `death_duration` 缩放。

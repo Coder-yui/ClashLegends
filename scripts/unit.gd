@@ -234,15 +234,16 @@ var bleeding := BleedState.new()
 var bleed_definition: Dictionary = {}
 var empowered_execute: Dictionary = {}
 var buffs := StatusInstances.new()
+var _structure_assists: Dictionary = {}
 var target_protection := TargetProtectionState.new()
 var active_buff_timer: float:
 	get: return maxf(buffs.remaining(&"buff"), buffs.remaining(&"blood_rage"))
 var active_speed_multiplier: float:
-	get: return buffs.strongest(&"buff", &"speed", 1.0)
+	get: return maxf(buffs.strongest(&"buff", &"speed", 1.0), 1.0 + buffs.strongest(&"structure_haste", &"speed_bonus", 0.0) * buffs.remaining(&"structure_haste") / maxf(float(_base_form_stats.get("structure_haste_duration", 1.0)), 0.01))
 var active_damage_multiplier: float:
 	get: return buffs.strongest(&"buff", &"damage", 1.0) * buffs.strongest(&"blood_rage", &"damage", 1.0) * team_attack_boost_multiplier
 var active_attack_speed_multiplier: float:
-	get: return maxf(buffs.strongest(&"buff", &"attack_speed", 1.0), buffs.strongest(&"hit_haste", &"attack_speed", 1.0))
+	get: return maxf(maxf(buffs.strongest(&"buff", &"attack_speed", 1.0), buffs.strongest(&"hit_haste", &"attack_speed", 1.0)), buffs.strongest(&"structure_haste", &"attack_speed", 1.0))
 var active_buff_ignores_movement_slow: bool:
 	get: return buffs.any_flag(&"buff", &"ignore_movement_slow")
 var active_buff_ignores_attack_speed_slow: bool:
@@ -266,6 +267,7 @@ var footprint_tiles := Vector2i.ONE
 var lifespan := 0.0
 ## 可选的建筑寿命表现：按初始最大生命/寿命匀速扣减，仍由固定模拟驱动。
 var lifespan_hp_decay := false
+var natural_structure_exit := false
 ## 由主机在生成时固化并可靠同步。只声明“这次部署位于已毁防御塔九格内”，
 ## 不负责找塔；权威寿命规则与纯表现废墟显隐分别读取该不可变状态。
 var built_on_tower_ruin := false
@@ -362,6 +364,8 @@ var net_visual_action_time_left := 0.0
 var net_locomotion_state := 1
 var net_blood_rage := 0.0
 var net_hit_haste_full := false
+var net_structure_haste := false
+var net_structure_haste_state := Vector2.ZERO
 var net_empowered_attack_ready := false
 var net_empowered_attack_visual_serial := 0
 var net_skill_resource_ratio := 0.0
@@ -1042,6 +1046,46 @@ func sync_network_form(next_form_index: int, next_form_serial: int = 0) -> void:
 		return
 	_apply_form(net_form_index, false, false)
 
+## 属性瞬时切换，复用变形时钟锁普攻；动作/硬控/快照沿用通用变形合同。
+func toggle_weapon_form() -> void:
+	if hp <= 0.0 or transformed_stats.is_empty() or is_form_transitioning(): return
+	buffs.clear_family(&"hit_haste")
+	_apply_form(1 - form_index, false)
+	form_transition_timer = transform_duration
+	play_visual_action(&"transform", form_transition_timer)
+
+## 仅真实普通攻击（含溅射）登记建筑助攻；以权威 Tick 计时。
+func record_structure_attack(target: Node2D) -> void:
+	if battle_context == null or _in_client_mode() or hp <= 0.0 or float(_base_form_stats.get("structure_assist_window", 0.0)) <= 0.0: return
+	if target.team == team or not (target is Tower or (target is Unit and target.is_building)): return
+	var identity := target.get_instance_id()
+	var callback := _on_assisted_structure_destroyed.bind(identity)
+	var death_signal: Signal = target.defeated if target is Tower else target.died
+	if not death_signal.is_connected(callback): death_signal.connect(callback, CONNECT_ONE_SHOT)
+	_structure_assists[identity] = battle_context.simulation_tick()
+	if target.hp <= 0.0: _on_assisted_structure_destroyed(identity)
+
+func _on_assisted_structure_destroyed(identity: int) -> void:
+	if not _structure_assists.has(identity) or battle_context == null: return
+	var hit_tick := int(_structure_assists[identity])
+	_structure_assists.erase(identity)
+	if battle_context.damage_batch().committing:
+		battle_context.damage_batch().defer_benefit(_grant_structure_haste.bind(hit_tick))
+	else:
+		_grant_structure_haste(hit_tick)
+
+func _grant_structure_haste(hit_tick: int) -> void:
+	if hp <= 0.0 or CombatInteraction.in_stasis(self): return
+	if battle_context.simulation_tick() - hit_tick > ceili(float(_base_form_stats.structure_assist_window) * 20.0): return
+	var previous_speed := _effective_attack_speed_multiplier()
+	var starting := buffs.remaining(&"structure_haste") <= 0.0
+	var stacks := buffs.stack_count(&"structure_haste") + 1
+	var attack_speed := snappedf(1.0 + stacks * (float(_base_form_stats.structure_haste_attack_speed) - 1.0), 0.01)
+	buffs.apply(&"structure_haste", status_source("structure_haste"), float(_base_form_stats.structure_haste_duration), {
+		"speed_bonus": float(_base_form_stats.structure_haste_speed_bonus), "attack_speed": attack_speed, "stacks": stacks})
+	_rescale_attack_phase(previous_speed)
+	if starting: battle_context.notify_unit_audio_event(self, &"structure_haste:start", global_position)
+
 func transform_to_mega(active_cast: bool = false) -> bool:
 	# queue_free() 到帧末才真正释放节点；在途弹体等弱引用仍可能于同帧回调。
 	# 死亡单位不能再改变权威形态，否则 form_changed 会替换正在播放 Death 的表现模型。
@@ -1606,16 +1650,18 @@ func _tick_building_lifetime(dt: float) -> void:
 		var lifetime_step := minf(dt, _lifespan_left)
 		_lifespan_left -= lifetime_step
 		if lifespan_hp_decay and lifetime_step > 0.0:
-			# 自然寿命衰减不算受击，不触发护盾、资源、闪白或攻击者击杀收益。
+			# 自然寿命衰减不算受击，不触发护盾、资源、闪白或直接击杀收益；死亡信号仍检查既有建筑助攻。
 			_lifespan_decay_remainder += max_hp * lifetime_step / lifespan
 			var decay := roundf(_lifespan_decay_remainder)
 			_lifespan_decay_remainder -= decay
 			hp = maxf(0.0, hp - decay)
 			if hp <= 0.0:
+				natural_structure_exit = true
 				_die(death_spawn_count > 0)
 				return
 		if _lifespan_left <= 0.000001:
 			hp = 0.0
+			natural_structure_exit = true
 			_die(death_spawn_count > 0)
 			return
 
@@ -2283,6 +2329,9 @@ func _refresh_form_speed_boost() -> void:
 		apply_active_buff(form_speed_boost_duration, form_speed_boost_multiplier, 1.0, 1.0, false, false, status_source("form_speed"))
 
 ## 满层附着表现使用专属状态，不能从受其他增益/减速影响的最终攻速反推。
+func structure_haste_visual() -> bool:
+	return net_structure_haste if _in_client_mode() else buffs.remaining(&"structure_haste") > 0.0
+
 func hit_haste_full_visual() -> bool:
 	if hp <= 0.0: return false
 	if _in_client_mode(): return net_hit_haste_full
@@ -3006,3 +3055,7 @@ func _draw_active_sweep_fx() -> void:
 func _on_stealth_changed(hidden: bool) -> void:
 	if battle_context != null and is_inside_tree() and hp > 0.0 and not _in_client_mode():
 		battle_context.notify_unit_audio_event(self, &"stealth:enter" if hidden else &"stealth:exit", get_visual_screen_position())
+
+## 只读表现状态：剩余时间与层数在凝滞中仍保留，属性聚合另行抑制。
+func structure_haste_state_visual() -> Vector2:
+	return net_structure_haste_state if _in_client_mode() else Vector2(buffs.remaining(&"structure_haste"), buffs.stack_count(&"structure_haste"))

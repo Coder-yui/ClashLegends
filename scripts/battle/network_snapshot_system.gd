@@ -71,7 +71,9 @@ const U_TEAM_ATTACK_BOOST_MULTIPLIER := 50
 const U_GROWTH := 51
 const U_STEALTH := 52
 const U_STASIS := 53
-const UNIT_PAYLOAD_SIZE := 54
+const U_STRUCTURE_HASTE := 54
+const U_STRUCTURE_HASTE_STATE := 55
+const UNIT_PAYLOAD_SIZE := 56
 
 const P_ID := 0
 const P_X := 1
@@ -197,7 +199,11 @@ func apply(snapshot_bytes: PackedByteArray, terminal: bool = false, expected_tic
 	var ids := {}
 	for payload: Array in units_data:
 		if not payload[U_STEALTH] is bool or not payload[U_STASIS] is bool: return false
-		if not payload[U_HIT_HASTE_FULL] is bool: return false
+		if not payload[U_HIT_HASTE_FULL] is bool or not payload[U_STRUCTURE_HASTE] is bool: return false
+		if not payload[U_STRUCTURE_HASTE_STATE] is Vector2: return false
+		var haste: Vector2 = payload[U_STRUCTURE_HASTE_STATE]
+		if not haste.is_finite() or haste.x < 0.0 or haste.y < 0.0 or haste.y != floorf(haste.y): return false
+		if (haste.x > 0.0) != (haste.y > 0.0) or bool(payload[U_STRUCTURE_HASTE]) != (haste.x > 0.0): return false
 		if not payload[U_ATTACK_SPEED_SLOW] is bool: return false
 		if not payload[U_ACTION_CLOCK] is Vector2: return false
 		if not (payload[U_TEAM_ATTACK_BOOST_MULTIPLIER] is int or payload[U_TEAM_ATTACK_BOOST_MULTIPLIER] is float): return false
@@ -325,6 +331,8 @@ func _apply_units(units_data: Array) -> void:
 		u.bleeding.replica_stacks = int(d[U_BLEED_STACKS])
 		u.net_blood_rage = float(d[U_BLOOD_RAGE])
 		u.net_hit_haste_full = d[U_HIT_HASTE_FULL]
+		u.net_structure_haste = d[U_STRUCTURE_HASTE]
+		u.net_structure_haste_state = d[U_STRUCTURE_HASTE_STATE]
 		u.net_shield_ratio = clampf(float(d[U_SHIELD_RATIO]), 0.0, 1.0)
 		u.net_shield_capacity_ratio = maxf(float(d[U_SHIELD_CAPACITY_RATIO]), 0.0)
 		if (
@@ -516,4 +524,6 @@ func _unit_snapshot_payload(id: int, u: Unit, has_continuous_target: bool = fals
 		Vector2(u.growth_health_bonus, u.growth_body_scale),
 		u.stealth_hidden(),
 		CombatInteraction.in_stasis(u),
+		u.structure_haste_visual(),
+		u.structure_haste_state_visual(),
 	]

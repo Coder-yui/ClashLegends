@@ -4,9 +4,9 @@
 
 | 契约 | 当前值 |
 | --- | --- |
-| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->92 |
+| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->95 |
 | 顶层快照项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd SNAPSHOT_PACKET_SIZE -->11 |
-| 单位载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd UNIT_PAYLOAD_SIZE -->54 |
+| 单位载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd UNIT_PAYLOAD_SIZE -->56 |
 | 塔载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd TOWER_PAYLOAD_SIZE -->7 |
 | 弹体载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd PROJECTILE_PAYLOAD_SIZE -->14 |
 
@@ -95,3 +95,9 @@ RPC 端点留在 Main，主客节点路径保持一致。运行请求只接受�
 协议92：补齐限时建筑的自然生命衰减；所有限时建筑定义必须启用衰血。当前训练木桩寿命15秒（每秒50），墓碑寿命20秒（每秒20），墓碑被击杀或自然死亡额外生成两只雾行者。伤害从剩余生命继续扣除，客户端读取既有HP快照显示双方实时生命，不自主衰血；死亡召唤复用已有实体生命周期同步。炮台、太阳圆盘与塔墟重建规则沿用原配置，RPC与快照载荷不变。
 
 余震沿用U_ACTIVE_BUFF_ACTIVE表达独立增益；权威仍独立计算减伤与到期爆炸。frontal技能表现的aftershock形状为固定位置，受击动画沿用可靠unit_hit。没有新增载荷字段。
+
+协议93：单位载荷末尾追加罪恶快感有效窗口布尔标识，客户端只读该状态显示被动特效与管理声音；移速、攻速和武器形态沿用既有快照字段。主机登记真实普攻建筑助攻，以20Hz Tick判断3秒窗口；被动状态和伤害不由客户端计算。
+
+协议94：单位载荷追加罪恶快感Vector2（剩余秒数、层数）；层数为非负整数，时长为非负有限数，与原有效窗口布尔值一致。客户端只读显示发射器强度、刷新与层数，不自行结算被动。叠层攻击倍率、重新衰减的移动倍率仍由主机下发既有有效倍率字段。
+
+协议95：金克丝建筑助攻包含最后命中后3秒内的自然衰血致死与寿命到期；目标仍仅建筑、防御塔、水晶。载荷布局不变。

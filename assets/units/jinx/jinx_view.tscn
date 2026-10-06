@@ -1,0 +1,7 @@
+[gd_scene load_steps=3 format=3]
+[ext_resource type="PackedScene" path="res://assets/units/jinx/source/jinx.glb" id="1"]
+[ext_resource type="Script" path="res://scripts/presentation/jinx_model.gd" id="2"]
+[node name="JinxView" type="Node3D"]
+script = ExtResource("2")
+[node name="Model" parent="." instance=ExtResource("1")]
+scale = Vector3(1.232, 1.232, 1.232)

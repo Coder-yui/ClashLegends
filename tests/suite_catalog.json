@@ -432,5 +432,12 @@
     "method": "run",
     "scene": "battle",
     "group": "cards"
+  },
+  {
+    "id": "JinxSuite",
+    "script": "res://tests/suites/cards/jinx_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "cards"
   }
 ]

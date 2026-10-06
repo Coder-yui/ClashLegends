@@ -1,0 +1,235 @@
+[
+  {
+    "file": "rocket_launch0.wav",
+    "source_event": "Play_sfx_Jinx_JinxQAttack_OnMissileLaunch {r1} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/金克丝/过程记录/audio-source/jinx/txtp/Play_sfx_Jinx_JinxQAttack_OnMissileLaunch {r1} {d}.txtp",
+    "source_sha256": "d053bc0089a2f21d434e45b8b2b9ad060e3a5295a84ceb23b20706fe48e31303",
+    "processing": "wwiser -gv=0dB; vgmstream -i -w; PCM16, no post gain",
+    "duration": 0.6956916099773243,
+    "sample_rate": 44100,
+    "channels": 1,
+    "sha256": "ded127a8ccccf05be157f82858c498f005fd5ffb9a75ab8ed154a482f234006d"
+  },
+  {
+    "file": "rocket_launch1.wav",
+    "source_event": "Play_sfx_Jinx_JinxQAttack_OnMissileLaunch {r2} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/金克丝/过程记录/audio-source/jinx/txtp/Play_sfx_Jinx_JinxQAttack_OnMissileLaunch {r2} {d}.txtp",
+    "source_sha256": "c522d12f5a01b8d1ed518b82bb6772f62a49fd3a3a54e6fca9e84e8388250ebf",
+    "processing": "wwiser -gv=0dB; vgmstream -i -w; PCM16, no post gain",
+    "duration": 0.7250793650793651,
+    "sample_rate": 44100,
+    "channels": 1,
+    "sha256": "99f8eba10bc9156bd14b472ef95b22a33e6c0d1ced92ead9a36113f09f685652"
+  },
+  {
+    "file": "rocket_launch2.wav",
+    "source_event": "Play_sfx_Jinx_JinxQAttack_OnMissileLaunch {r3} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/金克丝/过程记录/audio-source/jinx/txtp/Play_sfx_Jinx_JinxQAttack_OnMissileLaunch {r3} {d}.txtp",
+    "source_sha256": "30ea7a71a1692824b357d5b9c73a46b4606e376ea4b80aee84b905af124eb07c",
+    "processing": "wwiser -gv=0dB; vgmstream -i -w; PCM16, no post gain",
+    "duration": 0.8682993197278912,
+    "sample_rate": 44100,
+    "channels": 1,
+    "sha256": "f591d51532d4e4198dc36147bc6aa9b9ee1b8c91d8469a8335616da3c0c0de1f"
+  },
+  {
+    "file": "rocket_hit0.wav",
+    "source_event": "Play_sfx_Jinx_JinxQAttack_hit {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/金克丝/过程记录/audio-source/jinx/txtp/Play_sfx_Jinx_JinxQAttack_hit {r1}.txtp",
+    "source_sha256": "14058303cdb0698f3fa85e0558029c4af59d91c91124ed5cc07653943aaf5313",
+    "processing": "wwiser -gv=0dB; vgmstream -i -w; PCM16, no post gain",
+    "duration": 3.761451247165533,
+    "sample_rate": 44100,
+    "channels": 1,
+    "sha256": "f954693eb44d398cd2c5d66d1fba3bfd2971e4442a3d5080424fce2054e843a5"
+  },
+  {
+    "file": "rocket_hit1.wav",
+    "source_event": "Play_sfx_Jinx_JinxQAttack_hit {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/金克丝/过程记录/audio-source/jinx/txtp/Play_sfx_Jinx_JinxQAttack_hit {r2}.txtp",
+    "source_sha256": "4e2415623c71598042c8976b416db7df88a801b015d13d43a3632c3c2febf3ab",
+    "processing": "wwiser -gv=0dB; vgmstream -i -w; PCM16, no post gain",
+    "duration": 2.8723809523809525,
+    "sample_rate": 44100,
+    "channels": 1,
+    "sha256": "e782cf848b8e3aeac2c125b7155712133cdcccde1a6269741f0199cd1f848d7a"
+  },
+  {
+    "file": "rocket_hit2.wav",
+    "source_event": "Play_sfx_Jinx_JinxQAttack_hit {r3}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/金克丝/过程记录/audio-source/jinx/txtp/Play_sfx_Jinx_JinxQAttack_hit {r3}.txtp",
+    "source_sha256": "ae1bf09496c982024dd83166380d2ef1d28b561c8d7a325fd86db86384302ed9",
+    "processing": "wwiser -gv=0dB; vgmstream -i -w; PCM16, no post gain",
+    "duration": 2.886485260770975,
+    "sample_rate": 44100,
+    "channels": 1,
+    "sha256": "abc031040cf10fa75d222c3f701cb67c20f0dcbd49560c481dc6a41ce0fe66df"
+  },
+  {
+    "file": "gun_launch0.wav",
+    "source_event": "Play_sfx_Jinx_JinxBasicAttack_OnMissileLaunch {r1} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/金克丝/过程记录/audio-source/jinx/txtp/Play_sfx_Jinx_JinxBasicAttack_OnMissileLaunch {r1} {d}.txtp",
+    "source_sha256": "b5cc01958603854809e02ffe26b3c071bd7e8aa5efdc693fb30c95732824c6e5",
+    "processing": "wwiser -gv=0dB; vgmstream -i -w; PCM16, no post gain",
+    "duration": 0.8291836734693877,
+    "sample_rate": 44100,
+    "channels": 1,
+    "sha256": "5c72f23aa46f13b06da9dd4655413ddf3e7a7127890177cd9e51fdc78fe160c3"
+  },
+  {
+    "file": "gun_launch1.wav",
+    "source_event": "Play_sfx_Jinx_JinxBasicAttack_OnMissileLaunch {r2} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/金克丝/过程记录/audio-source/jinx/txtp/Play_sfx_Jinx_JinxBasicAttack_OnMissileLaunch {r2} {d}.txtp",
+    "source_sha256": "6e1c4b8ab9d88a950c12369376eff856b00fba70cddf2c06fdd085c9db2a0376",
+    "processing": "wwiser -gv=0dB; vgmstream -i -w; PCM16, no post gain",
+    "duration": 0.9124489795918367,
+    "sample_rate": 44100,
+    "channels": 1,
+    "sha256": "6fe91b33b970a4bdc44c43d3685a89121cb1aca533cdd7bd23618c4f44571345"
+  },
+  {
+    "file": "gun_launch2.wav",
+    "source_event": "Play_sfx_Jinx_JinxBasicAttack_OnMissileLaunch {r3} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/金克丝/过程记录/audio-source/jinx/txtp/Play_sfx_Jinx_JinxBasicAttack_OnMissileLaunch {r3} {d}.txtp",
+    "source_sha256": "91cf8585f41caf5bfcee4977b38bc0347eea7a744aeb17bd9f1bc016cd9b747b",
+    "processing": "wwiser -gv=0dB; vgmstream -i -w; PCM16, no post gain",
+    "duration": 0.7463265306122449,
+    "sample_rate": 44100,
+    "channels": 1,
+    "sha256": "3d52baed981f3a461b9844f6fdb82ec25e6e0f31158bc9e31941a7701c10627e"
+  },
+  {
+    "file": "to_rocket0.wav",
+    "source_event": "Play_sfx_Jinx_JinxQ_OnBuffActivate.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/金克丝/过程记录/audio-source/jinx/txtp/Play_sfx_Jinx_JinxQ_OnBuffActivate.txtp",
+    "source_sha256": "f4ef97169c15e551e9727b26098342ad4547a0d1e283786687bdd20f465af08b",
+    "processing": "wwiser -gv=0dB; vgmstream -i -w; PCM16, no post gain",
+    "duration": 1.2508390022675737,
+    "sample_rate": 44100,
+    "channels": 1,
+    "sha256": "2e15437bff0bac62a480e541bb4943844547ea3ce192b90fa912fcc52de5e68c"
+  },
+  {
+    "file": "to_gun0.wav",
+    "source_event": "Play_sfx_Jinx_JinxQIcon_OnBuffActivate.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/金克丝/过程记录/audio-source/jinx/txtp/Play_sfx_Jinx_JinxQIcon_OnBuffActivate.txtp",
+    "source_sha256": "4828356e750422aee2a435eff5aa67a537bfd301751b0d823cd8747e8d0fb632",
+    "processing": "wwiser -gv=0dB; vgmstream -i -w; PCM16, no post gain",
+    "duration": 1.405578231292517,
+    "sample_rate": 44100,
+    "channels": 1,
+    "sha256": "f37b9916a5d4461d0e21168baf6a0cf6d6bfd1577eb2c8f378327303fb89a767"
+  },
+  {
+    "file": "passive0.wav",
+    "source_event": "Play_sfx_Jinx_JinxPassiveKill_OnBuffActivate.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/金克丝/过程记录/audio-source/jinx/txtp/Play_sfx_Jinx_JinxPassiveKill_OnBuffActivate.txtp",
+    "source_sha256": "a6fe8d87dc45dfc880af4115b40391f9c7a0e41eda655bdd875711ca6ff7915b",
+    "processing": "wwiser -gv=0dB; vgmstream -i -w; PCM16, no post gain",
+    "duration": 6.923424036281179,
+    "sample_rate": 44100,
+    "channels": 1,
+    "sha256": "d0c85e6c20aee43cbe85b47300208482dd0911193cc94b5b7c51ef07652ad3c6"
+  },
+  {
+    "file": "death0.wav",
+    "source_event": "Play_vo_Jinx_Death3D {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/金克丝/过程记录/audio-source/jinx_vo/txtp/Play_vo_Jinx_Death3D {r1}.txtp",
+    "source_sha256": "c002dfacc8bda282645eaab1fb8a5306f204888aa2f71196ad1eaa48c72f32e1",
+    "processing": "wwiser -gv=0dB; vgmstream -i -w; PCM16, no post gain; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "duration": 1.5,
+    "sha256": "7a00aa09b8154ca20a64704496dfe0b340a3f074dfbc038ff662873afc9cd335",
+    "death_envelope": {
+      "source_duration": 3.683378684807256,
+      "source_sha256": "4d8f839372d36247d8f5d438a13f2b4b5b2b2f426d5e106752940ba606553219",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    },
+    "sample_rate": 44100,
+    "channels": 1
+  },
+  {
+    "file": "death1.wav",
+    "source_event": "Play_vo_Jinx_Death3D {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/金克丝/过程记录/audio-source/jinx_vo/txtp/Play_vo_Jinx_Death3D {r2}.txtp",
+    "source_sha256": "a2901da0adddbe8c3dfc74f75b1bb78f8c661ae241f25df88d046dda1fa78d9b",
+    "processing": "wwiser -gv=0dB; vgmstream -i -w; PCM16, no post gain; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "duration": 1.5,
+    "sha256": "f4cbb1645d0c7aca1cf4c359f796e4b74a15b19fef80431b778fee6bdf1e2484",
+    "death_envelope": {
+      "source_duration": 2.6328798185941045,
+      "source_sha256": "90cb489d208aad9044555e513f80b2757fbb7306406d613096cd27c369a477e3",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    },
+    "sample_rate": 44100,
+    "channels": 1
+  },
+  {
+    "file": "death2.wav",
+    "source_event": "Play_vo_Jinx_Death3D {r3}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/金克丝/过程记录/audio-source/jinx_vo/txtp/Play_vo_Jinx_Death3D {r3}.txtp",
+    "source_sha256": "6ad0b850342bdfbd908d98060b81e8ac9db3b7949d74e0e9f8be7e96cfe2b583",
+    "processing": "wwiser -gv=0dB; vgmstream -i -w; PCM16, no post gain; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "duration": 1.5,
+    "sha256": "ddc93c563d1c7d394ff742d009a376ae966a5d9eee535e13359e9b2eb68dc097",
+    "death_envelope": {
+      "source_duration": 2.8110204081632655,
+      "source_sha256": "ab6b91352bb8bb1dc386de68df5ee84787718af06272338f9ff38efcf3cbdcb5",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    },
+    "sample_rate": 44100,
+    "channels": 1
+  },
+  {
+    "file": "gun_hit0.wav",
+    "source_event": "Play_sfx_Jinx_JinxBasicAttack_OnHit [1559186049=1153642577] {r1} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/金克丝/过程记录/audio-source/jinx/txtp/Play_sfx_Jinx_JinxBasicAttack_OnHit [1559186049=1153642577] {r1} {d}.txtp",
+    "source_sha256": "308d342f4cb86adab47ac385a0e32fe3b715a2a900c892c3321816e823aa843d",
+    "processing": "wwiser -gv=0dB; vgmstream -i -w; PCM16, no post gain; Flesh material FNV1=1153642577",
+    "sha256": "d7ee800e01ac9ba7415ae6ef2606fcc6c4a74d1c0b143ea19bd6aee7115f237d",
+    "duration": 0.9017460317460317,
+    "sample_rate": 44100,
+    "channels": 1
+  },
+  {
+    "file": "gun_hit1.wav",
+    "source_event": "Play_sfx_Jinx_JinxBasicAttack_OnHit [1559186049=1153642577] {r2} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/金克丝/过程记录/audio-source/jinx/txtp/Play_sfx_Jinx_JinxBasicAttack_OnHit [1559186049=1153642577] {r2} {d}.txtp",
+    "source_sha256": "d3324a4994a601ccd8809cd7d4da42a86a45baccd0a05dceb1dc61fa9c1f51b6",
+    "processing": "wwiser -gv=0dB; vgmstream -i -w; PCM16, no post gain; Flesh material FNV1=1153642577",
+    "sha256": "d322290f86ccac55141d624668d39d2ab4e9c60a963cfbd34ec25da6b8d7f098",
+    "duration": 0.956031746031746,
+    "sample_rate": 44100,
+    "channels": 1
+  },
+  {
+    "file": "gun_hit2.wav",
+    "source_event": "Play_sfx_Jinx_JinxBasicAttack_OnHit [1559186049=1153642577] {r3} {d}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/金克丝/过程记录/audio-source/jinx/txtp/Play_sfx_Jinx_JinxBasicAttack_OnHit [1559186049=1153642577] {r3} {d}.txtp",
+    "source_sha256": "6071216d5ae45cab5ab482a0f00be8e660a7cf417fd16f3b1d95fc10282eb306",
+    "processing": "wwiser -gv=0dB; vgmstream -i -w; PCM16, no post gain; Flesh material FNV1=1153642577",
+    "sha256": "0f3688a4cf73f3296cee25dbe2c8fba5bb3a2f739efec1eb9fa81e93b04e4948",
+    "duration": 0.6499773242630386,
+    "sample_rate": 44100,
+    "channels": 1
+  },
+  {
+    "file": "respawn.wav",
+    "source_event": "Play_sfx_Jinx_Respawn3D_buffactivate.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/金克丝/过程记录/audio-source/jinx/txtp/Play_sfx_Jinx_Respawn3D_buffactivate.txtp",
+    "source_sha256": "ff25393be0379f231f36b75444c15c4c6629eef8fa2142efed7b78f4e6f180ef",
+    "processing": "wwiser -gv=0dB; vgmstream -i -w; ffmpeg atempo=2.566666667 maps Respawn 2.5667s to deployment 1s, PCM16, no post gain",
+    "sha256": "8a573e7a89080e52688618cfc5f02ff3851e7f00ccffea4593b07efe354eebd9",
+    "duration": 1.1007256235827665,
+    "sample_rate": 44100,
+    "channels": 1
+  }
+]

@@ -27,6 +27,7 @@ var _managed_clock_left := -1.0
 
 var _growth_mark: GrowthMark3D
 var _active_buff_visual: ActiveBuffVisual3D
+var _active_buff_scene_path := ""
 var _model_resources := ModelVisualResources.new()
 var _last_buff_visible := false
 var _last_stealth_pose := false
@@ -1855,6 +1856,11 @@ func _align_attack_progress(elapsed: float) -> void:
 
 
 func _replace_active_buff_visual(scene_path: String) -> void:
+	if is_instance_valid(_active_buff_visual) and _active_buff_scene_path == scene_path and _active_buff_visual.preserve_on_form_change:
+		_model_resources.configure_buff(_active_buff_visual.make_overlay)
+		_update_active_buff_visual(0.0)
+		return
+	_active_buff_scene_path = scene_path
 	if is_instance_valid(_active_buff_visual):
 		_active_buff_visual.hide()
 		_active_buff_visual.queue_free()
@@ -1881,8 +1887,11 @@ func _update_active_buff_visual(delta: float) -> void:
 	var status_active := is_instance_valid(_source) and _state.active_buff
 	if _active_buff_visual.status_source == "blood_rage":
 		status_active = is_instance_valid(_source) and _source.blood_rage_time_left_visual() > 0.0
+	if _active_buff_visual.status_source == "structure_haste":
+		status_active = is_instance_valid(_source) and _source.structure_haste_visual()
+		_active_buff_visual.status_state = _source.structure_haste_state_visual() if is_instance_valid(_source) else Vector2.ZERO
 	var enabled := not _dying and PresentationConfig.status_indicators_visible(_source) and status_active
-	_active_buff_visual.advance(enabled, delta)
+	_active_buff_visual.advance_status(not _dying and status_active, enabled, delta)
 	var shown := _active_buff_visual.visible
 	if shown != _last_buff_visible:
 		_last_buff_visible = shown
