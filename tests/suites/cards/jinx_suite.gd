@@ -6,7 +6,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_animation_routes()
 	_check_switch_controls()
 	_check_moving_switch()
-	_check_weapon_and_gait_continuity()
+	_check_gait_continuity()
 	_check_haste_placement()
 	_check_six_second_haste()
 	var source := _spawn("jinx", 0, Vector2(200, 900))
@@ -149,7 +149,6 @@ func _check_animation_routes() -> void:
 		unit.toggle_weapon_form()
 		view._sync_visual(false, 0.0)
 		_expect(view._animation_player.current_animation == "launcher_spell1_weapon2_anm", "火箭切机枪使用原Launcher起始方向")
-		_expect(not view._model_root._swap_tracks.is_empty() and view._model_root._swap_tracks.all(func(pair): return String(view._model_root._skeleton.get_bone_name(pair.y)) in view._model_root.WEAPON_MASK), "原Minigun遮罩只覆盖武器骨骼")
 		view._play_attack(1)
 		_expect(view._animation_player.current_animation == "launcher_spell1_weapon2_anm", "变形优先级阻止普攻打断切枪")
 		unit.prepare_action_clocks(0.4)
@@ -314,7 +313,7 @@ func _check_moving_switch() -> void:
 		unit.prepare_action_clocks(0.4)
 	unit.free()
 
-func _check_weapon_and_gait_continuity() -> void:
+func _check_gait_continuity() -> void:
 	var unit := _spawn("jinx", 0, Vector2(200, 1000))
 	var view := _view_for(unit)
 	for form in 2:
@@ -323,17 +322,6 @@ func _check_weapon_and_gait_continuity() -> void:
 		view._sync_visual(false, 0.0)
 		var model = view._model_root
 		_expect(model._leg_tracks.all(func(pair): return not "Minigun" in String(model._skeleton.get_bone_name(pair.y)) and String(model._skeleton.get_bone_name(pair.y)) != "Pistol"), "下肢遮罩不包含挂在骨盆上的武器")
-		var barrel: int = model._skeleton.find_bone("Minigun_Barrel1")
-		var body: int = model._skeleton.find_bone("Minigun_Body")
-		model._update_weapon(true, 0.0)
-		var start: Vector3 = model._skeleton.get_bone_pose_scale(barrel)
-		model._update_weapon(true, 0.5)
-		var middle: Vector3 = model._skeleton.get_bone_pose_scale(barrel)
-		model._update_weapon(true, 1.0)
-		var end: Vector3 = model._skeleton.get_bone_pose_scale(barrel)
-		_expect(not start.is_equal_approx(end) and not middle.is_equal_approx(start), "两个方向均包含枪管伸缩过程")
-		_expect((end.z > 0.99 if unit.form_index == 1 else end.z < 0.3), "机枪展开枪管、火箭形态收短枪管")
-		_expect(is_equal_approx(model._skeleton.get_bone_pose_scale(body).x, 1.0 if unit.form_index == 1 else 0.64), "机枪主体同步放大与收起")
 		model._leg_phase = 0.43
 		model._update_lower_body(0.0, true, 0.0)
 		var hip: int = model._skeleton.find_bone("L_Hip")
@@ -346,7 +334,6 @@ func _check_weapon_and_gait_continuity() -> void:
 		view._finish_visual_action()
 		model._process(0.0)
 		_expect(is_equal_approx(view._animation_player.current_animation_position / model._run_clip.length, 0.43), "切枪结束基础播放器承接共享相位，不从0重播")
-		_expect(model._skeleton.get_bone_pose_scale(barrel).is_equal_approx(end), "基础动画接管后仍保持正确枪管尺寸")
 		model._process(0.05)
 		_expect(model._leg_phase > 0.43, "接回正常跑步仍推进共享时钟")
 	unit.free()

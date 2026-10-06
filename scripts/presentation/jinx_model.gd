@@ -1,7 +1,5 @@
 extends Node3D
-## 原版双武器遮罩、Respawn挂点及模型复用；只读表现，不改变权威动作。
-const WEAPON_MASK := ["Minigun_Space", "Minigun_Barrel1", "Minigun_Tank", "Minigun_Handle_Front", "Minigun_Handle_Back", "Minigun_Ammo_Drum", "Minigun_Strap_Back", "Minigun_Strap_Front", "Cstm_Buffbone_Minigun", "Buffbone_Glb_Weapon_1", "Minigun_Barrel2", "Minigun_Barrel3", "Buffbone_Glb_Channel_Loc", "Minigun_Body"]
-const RIGID_WEAPON_PARTS := ["Minigun_Space", "Minigun_Barrel1", "Minigun_Barrel2", "Minigun_Barrel3", "Minigun_Body", "Minigun_Tank", "Minigun_Handle_Front", "Minigun_Handle_Back", "Minigun_Ammo_Drum"]
+## 双形态步态混合、Respawn挂点及模型复用；只读表现，不改变权威动作。
 const LOWER_BODY_MASK := ["Root", "Pelvis", "L_Hip", "L_KneeUpper", "L_KneeLower", "L_Foot", "L_Toe", "L_Buffbone_Glb_Foot_Loc", "R_Hip", "R_KneeUpper", "R_KneeLower", "R_Foot", "R_Toe", "R_Buffbone_Glb_Foot_Loc"]
 var _form := -1
 var _previous_form := -1
@@ -12,8 +10,6 @@ var _source: Unit
 var _swap_elapsed := 0.0
 var _swap_serial := -1
 var _swap_observed_left := -1.0
-var _swap_clip: Animation
-var _swap_tracks: Array[Vector2i] = []
 var _leg_phase := 0.0
 var _leg_blend := 0.0
 var _leg_tracks: Array[Vector2i] = []
@@ -24,10 +20,9 @@ var _skeleton: Skeleton3D
 
 func configure_unit_visual(unit: Unit) -> void:
 	_source = unit
-	process_priority = 100 # 在基础播放器后应用原版 Minigun 遮罩层。
+	process_priority = 100 # 在基础播放器后同步步态。
 	_player = find_child("AnimationPlayer", true, false) as AnimationPlayer
 	_skeleton = find_child("Skeleton3D", true, false) as Skeleton3D
-	_swap_tracks.clear()
 	_leg_tracks.clear()
 	if _player == null or _skeleton == null: return
 	_run_clip = _player.get_animation("Jinx_Rlauncher_run_anm" if _form == 0 else "Run_Base")
@@ -40,13 +35,6 @@ func configure_unit_visual(unit: Unit) -> void:
 		var index := _skeleton.find_bone(String(path.get_subname(0)))
 		if index >= 0 and String(path.get_subname(0)) in LOWER_BODY_MASK:
 			_leg_tracks.append(Vector2i(track, index))
-	_swap_clip = _player.get_animation("minigun_spell1_weapon_GunOnly_anm" if _form == 0 else "launcher_spell1_weapon_anm")
-	for track in _swap_clip.get_track_count():
-		var path := _swap_clip.track_get_path(track)
-		var bone := String(path.get_subname(0)) if path.get_subname_count() else ""
-		if bone in WEAPON_MASK:
-			var index := _skeleton.find_bone(bone)
-			if index >= 0: _swap_tracks.append(Vector2i(track, index))
 
 func _process(delta: float) -> void:
 	if not is_instance_valid(_source) or _source.hp <= 0.0 or _player == null: return
@@ -59,7 +47,7 @@ func _process(delta: float) -> void:
 	var left := _source.get_visual_action_time_left()
 	var duration := _source.get_visual_action_duration()
 	if _source.is_frozen() or CombatInteraction.in_stasis(_source): return
-	var switching := _swap_clip != null and _source.get_visual_action_name() == &"transform" and serial > _source.cancelled_visual_serial and left > 0.0
+	var switching := _source.get_visual_action_name() == &"transform" and serial > _source.cancelled_visual_serial and left > 0.0
 	if switching:
 		if serial != _swap_serial or not is_equal_approx(left, _swap_observed_left):
 			_swap_serial = serial
@@ -69,20 +57,6 @@ func _process(delta: float) -> void:
 			_swap_elapsed = minf(_swap_elapsed + delta, minf(duration, duration - left + Unit.SIM_DT))
 	var progress := clampf(_swap_elapsed / maxf(duration, 0.001), 0.0, 1.0) if switching else 1.0
 	_update_lower_body(delta, switching, progress)
-	# 部署保留Respawn自身武器轨道；结束、取消后直接保持当前形态机械尺寸。
-	if _player.current_animation != "Respawn": _update_weapon(switching, progress)
-
-func _update_weapon(switching: bool, progress: float) -> void:
-	if _swap_clip == null: return
-	var sample := progress * _swap_clip.length
-	for pair in _swap_tracks:
-		var bone := String(_skeleton.get_bone_name(pair.y))
-		match _swap_clip.track_get_type(pair.x):
-			Animation.TYPE_POSITION_3D:
-				if switching or bone in RIGID_WEAPON_PARTS: _skeleton.set_bone_pose_position(pair.y, _swap_clip.position_track_interpolate(pair.x, sample))
-			Animation.TYPE_ROTATION_3D:
-				if switching: _skeleton.set_bone_pose_rotation(pair.y, _swap_clip.rotation_track_interpolate(pair.x, sample))
-			Animation.TYPE_SCALE_3D: _skeleton.set_bone_pose_scale(pair.y, _swap_clip.scale_track_interpolate(pair.x, sample))
 
 func set_visual_form(form: int) -> void:
 	if form != _form:
