@@ -6,7 +6,7 @@ const SOURCE_EMITTER_POSITION := Vector3(0, 50, 50)
 # 本项目根挂载校正：出生在躯干略后方，保留原版分布和后向速度。
 const BODY_MOUNT_OFFSET := Vector3(0, -50, -90)
 const SOURCE_EMIT_OFFSET := Vector3(50, 1, 30)
-const SOURCE_UNIT := 0.0112 # 初版模型1.12；场景再跟随本轮模型调整放大1.1倍。
+const SOURCE_UNIT := 0.0085 * 1.12 # SKL→GLB实测0.0085；与模型一致的1.12×1.1缩放。
 var _cloud: Sprite3D
 var _particles: Array[Dictionary] = []
 var _elapsed := 0.0
@@ -71,9 +71,9 @@ func advance_status(status_active: bool, shown: bool, delta: float) -> void:
 		particle.node.global_position += particle.velocity * delta
 		particle.velocity *= exp(-delta) # 原版 birthDrag=(1,1,1)。
 		particle.node.scale = particle.base_scale * Vector3(1, maxf(0.001, progress * 3.0), 1)
-		particle.material.albedo_color = Color(0.5, 0.5, 1.0, 1.0 - progress)
-	# 原版发射率20→0按权威剩余时间驱动；刷新恢复发射率，不重播触发笑脸。
-	_emission += 20.0 * clampf(status_state.x / 6.0, 0.0, 1.0) * delta
+		particle.material.albedo_color = Color(0.65, 0.65, 1.0, 1.0 - progress)
+	# 项目增强发射率24→0按权威剩余时间驱动；刷新恢复发射率，不重播触发笑脸。
+	_emission += 24.0 * clampf(status_state.x / 6.0, 0.0, 1.0) * delta
 	while _emission >= 1.0:
 		_emission -= 1.0
 		_emit_streak()
@@ -86,7 +86,7 @@ func _emit_streak() -> void:
 	var node := MeshInstance3D.new()
 	var quad := QuadMesh.new()
 	# 源80×30任意四边形：贴图纵轴转向前后方向，避免错误的竖直白色条纹。
-	quad.size = Vector2(30.0 * SOURCE_UNIT * _rng.randf_range(1.0, 2.0), 80.0 * SOURCE_UNIT * _rng.randf_range(1.0, 1.5))
+	quad.size = Vector2(36.0 * SOURCE_UNIT * _source_scale_y(), 80.0 * SOURCE_UNIT * _source_scale_x())
 	node.mesh = quad
 	var material := StandardMaterial3D.new()
 	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
@@ -94,7 +94,7 @@ func _emit_streak() -> void:
 	material.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
 	material.cull_mode = BaseMaterial3D.CULL_DISABLED
 	material.albedo_texture = STREAK_TEXTURE
-	material.albedo_color = Color(0.5, 0.5, 1, 1)
+	material.albedo_color = Color(0.65, 0.65, 1, 1)
 	node.material_override = material
 	add_child(node)
 	node.top_level = true
@@ -113,3 +113,11 @@ func _source_spawn_position() -> Vector3:
 	var x := _rng.randf()
 	var spread := lerpf(-1.0, -0.3, x / 0.2) if x < 0.2 else (lerpf(-0.3, 0.3, (x - 0.2) / 0.6) if x < 0.8 else lerpf(0.3, 1.0, (x - 0.8) / 0.2))
 	return (BODY_MOUNT_OFFSET + SOURCE_EMITTER_POSITION + SOURCE_EMIT_OFFSET * Vector3(spread, _rng.randf_range(50.0, 150.0), 1.0)) * SOURCE_UNIT
+
+func _source_scale_x() -> float:
+	var p := _rng.randf()
+	return lerpf(1.0, 1.2, p / 0.8) if p < 0.8 else lerpf(1.2, 1.5, (p - 0.8) / 0.2)
+
+func _source_scale_y() -> float:
+	var p := _rng.randf()
+	return lerpf(1.0, 1.2, p / 0.5) if p < 0.5 else lerpf(1.2, 2.0, (p - 0.5) / 0.5)

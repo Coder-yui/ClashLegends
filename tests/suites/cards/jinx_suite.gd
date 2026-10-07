@@ -7,6 +7,9 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_switch_controls()
 	_check_moving_switch()
 	_check_gait_continuity()
+	_check_swap_capture_and_muzzle()
+	_check_final_pose_handoff()
+	_check_blast_boundary()
 	_check_haste_placement()
 	_check_six_second_haste()
 	var source := _spawn("jinx", 0, Vector2(200, 900))
@@ -212,8 +215,8 @@ func _check_haste_placement() -> void:
 	_expect(not effect._particles.is_empty(), "罪恶快感产生速度线")
 	for particle in effect._particles:
 		var offset: Vector3 = effect.to_local(particle.node.global_position)
-		_expect(absf(offset.x) <= 0.56001 and is_equal_approx(offset.z, -0.112), "速度线从身体略后方出生，保留原版横向分布")
-		_expect(offset.y >= 0.56 and offset.y <= 1.68, "速度线覆盖躯干高度")
+		_expect(absf(offset.x) <= 0.47601 and is_equal_approx(offset.z, -0.0952), "速度线从身体略后方出生，保留原版横向分布")
+		_expect(offset.y >= 0.476 and offset.y <= 1.428, "速度线覆盖躯干高度")
 		_expect((particle.velocity as Vector3).dot(effect.global_basis.z) < 0.0, "速度线向身后运动")
 	var first: Dictionary = effect._particles[0]
 	var previous: Vector3 = first.node.global_position
@@ -327,13 +330,88 @@ func _check_gait_continuity() -> void:
 		var hip: int = model._skeleton.find_bone("L_Hip")
 		var route: NodePath = model._run_clip.track_get_path(model._leg_tracks.filter(func(pair): return pair.y == hip and model._run_clip.track_get_type(pair.x) == Animation.TYPE_ROTATION_3D)[0].x)
 		var track: int = model._run_from.find_track(route, Animation.TYPE_ROTATION_3D)
-		_expect(model._skeleton.get_bone_pose_rotation(hip).is_equal_approx(model._run_from.rotation_track_interpolate(track, 0.43 * model._run_from.length)), "切枪起点保持旧形态同相位腿姿")
+		_expect(model._skeleton.get_bone_pose_rotation(hip).is_equal_approx(model._run_from.rotation_track_interpolate(track, 0.43 * model._run_from.length)), "切枪使用固定的共同腿部动作")
 		model._update_lower_body(0.0, true, 0.5)
-		_expect(is_equal_approx(model._leg_blend, 0.5), "切枪中途两跑姿等权混合")
+		_expect(model._skeleton.get_bone_pose_rotation(hip).is_equal_approx(model._run_from.rotation_track_interpolate(track, 0.43 * model._run_from.length)), "切枪中途同相位脚步不换动作")
 		unit.prepare_action_clocks(0.4)
 		view._finish_visual_action()
 		model._process(0.0)
-		_expect(is_equal_approx(view._animation_player.current_animation_position / model._run_clip.length, 0.43), "切枪结束基础播放器承接共享相位，不从0重播")
+		_expect(is_equal_approx(model._leg_phase, 0.43), "切枪结束腿部延续原相位")
+		view._animation_player.seek(0.19, true)
+		model._process(0.0)
+		_expect(is_equal_approx(view._animation_player.current_animation_position, 0.19), "腿部采样不能seek整身播放器或破坏上身混合")
 		model._process(0.05)
 		_expect(model._leg_phase > 0.43, "接回正常跑步仍推进共享时钟")
 	unit.free()
+
+func _check_swap_capture_and_muzzle() -> void:
+	var unit := _spawn("jinx", 0, Vector2(200, 1000))
+	var view := _view_for(unit)
+	for form in 2:
+		unit._move_intent = Vector2.UP
+		var model = view._model_root
+		model._phase_owned = false
+		model._leg_phase = 0.1 # 模拟上一帧的过期采样。
+		view._animation_player.play("Jinx_Rlauncher_run_anm" if unit.form_index == 0 else "Run_Base")
+		view._animation_player.seek(model._run_clip.length * 0.73, true)
+		unit.toggle_weapon_form()
+		view._sync_visual(false, 0.0)
+		_expect(is_equal_approx(model._leg_phase, 0.73), "切枪捕获播放器当前相位，不沿用上帧相位")
+		var anchor: BoneAttachment3D = model.create_projectile_anchor()
+		var bone := "Cstm_Buffbone_Rocket_Launcher" if unit.form_index == 0 else "Cstm_Buffbone_Minigun"
+		_expect(anchor != null and anchor.bone_name == bone and model._skeleton.find_bone(bone) >= 0, "两形态枪口使用原图JointSnap目标骨骼")
+		anchor.free()
+		var head: int = model._skeleton.find_bone("Head")
+		var before: Quaternion = model._skeleton.get_bone_pose_rotation(head)
+		model._last_pose = model._read_pose()
+		model.set_visual_blend(&"launcher_spell1_weapon2_anm", 0.04)
+		view._animation_player.seek(0.2, true)
+		model._update_body_blend(0.0)
+		_expect(model._skeleton.get_bone_pose_rotation(head).is_equal_approx(before), "切枪入口seek后仍从原上身姿势开始过渡")
+		model._update_body_blend(0.12)
+		_expect(model._body_blend_left == 0.0, "身体姿势过渡按时结束，不残留覆盖层")
+		unit.prepare_action_clocks(0.4)
+		view._finish_visual_action()
+	unit.free()
+
+func _check_final_pose_handoff() -> void:
+	var unit := _spawn("jinx", 0, Vector2(200, 1000))
+	var view := _view_for(unit)
+	var model = view._model_root
+	unit._move_intent = Vector2.UP
+	for pair in [["Respawn", "Jinx_Rlauncher_run_in_anm"], ["Jinx_Rlauncher_run_in_anm", "Jinx_Rlauncher_run_anm"], ["Jinx_Rlauncher_run_anm", "launcher_spell1_weapon2_anm"], ["launcher_spell1_weapon2_anm", "Run_Base"], ["Run_Base", "Attack1"], ["Attack1", "IdleIn1"]]:
+		view._animation_player.play(pair[0])
+		view._animation_player.seek(0.2, true)
+		model._last_body_clip = StringName(pair[0])
+		model._last_pose = model._read_pose()
+		var before: Array = model._last_pose.duplicate()
+		# 模拟原播放器先写下一帧，再收到动作切换回调。
+		view._animation_player.play(pair[1])
+		view._animation_player.seek(0.15, true)
+		model.set_visual_blend(StringName(pair[1]), 0.04)
+		model._update_body_blend(0.0)
+		for bone in ["Root", "Pelvis", "L_Hip", "R_Hip", "Head", "Rocket_Launcher", "Minigun_Body"]:
+			var index: int = model._skeleton.find_bone(bone)
+			_expect(model._skeleton.get_bone_pose_position(index).is_equal_approx(before[index].position) and model._skeleton.get_bone_pose_rotation(index).is_equal_approx(before[index].rotation) and model._skeleton.get_bone_pose_scale(index).is_equal_approx(before[index].scale), "动作边界完整姿势从上一显示帧续接：" + pair[0] + "→" + pair[1] + "/" + bone)
+	view._animation_player.play("Jinx_Rlauncher_run_in_anm")
+	view._animation_player.seek(0.2, true)
+	var hip: int = model._skeleton.find_bone("L_Hip")
+	var original: Transform3D = model._skeleton.get_bone_pose(hip)
+	model._update_lower_body(0.0, false, 1.0)
+	_expect(model._skeleton.get_bone_pose(hip).is_equal_approx(original), "RunIn保留原版起跑脚步，不被循环跑步覆盖")
+	unit.free()
+
+func _check_blast_boundary() -> void:
+	var source := _spawn("jinx", 0, Vector2(200, 1000))
+	var center := _spawn("target_dummy", 1, Vector2(400, 1000))
+	var touching := _spawn("ashe", 1, Vector2.ZERO)
+	var outside := _spawn("ashe", 1, Vector2.ZERO)
+	touching.position = center.position + Vector2(45.0 + touching.body_radius, 0)
+	outside.position = center.position - Vector2(45.0 + outside.body_radius + 0.1, 0)
+	var touching_hp := touching.hp
+	var outside_hp := outside.hp
+	var resolver: CombatResolver = _main.combat_service()
+	resolver.resolve_attack_hit(0, source.position, center, 100, source.splash_radius, 0, source, source.position)
+	_expect(touching.hp == touching_hp - 100, "身体边缘接触45像素爆炸圆即受伤，不要求中心进入")
+	_expect(outside.hp == outside_hp, "身体整体位于45像素爆炸圆外不受伤")
+	for body in [source, center, touching, outside]: body.free()

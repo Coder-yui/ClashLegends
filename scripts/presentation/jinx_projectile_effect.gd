@@ -9,9 +9,15 @@ const GEOMETRY = preload("res://assets/effects/jinx/rocket_geometry.gd")
 var _system: Node2D
 const BLAST_MASK := """shader_type canvas_item;
 render_mode blend_mix;
+uniform float sample_span = 1.0;
+varying vec4 tint;
+void vertex() { tint = COLOR; }
 void fragment() {
-	vec2 cell_uv = fract(UV * 2.0);
-	float edge = 1.0 - smoothstep(0.78, 1.0, length(cell_uv * 2.0 - 1.0));
+	vec2 atlas_uv = clamp(UV * 2.0, vec2(0.00001), vec2(1.99999));
+	vec2 cell_uv = fract(atlas_uv);
+	vec2 sample_uv = (floor(atlas_uv) + (cell_uv - 0.5) * sample_span + 0.5) * 0.5;
+	float edge = 1.0 - smoothstep(0.90, 1.0, length(cell_uv * 2.0 - 1.0));
+	COLOR = texture(TEXTURE, sample_uv) * tint;
 	COLOR.a *= edge;
 }
 """
@@ -71,12 +77,14 @@ func _blast_material(additive: bool) -> ShaderMaterial:
 	shader.code = BLAST_MASK.replace("blend_mix", "blend_add") if additive else BLAST_MASK
 	var material := ShaderMaterial.new()
 	material.shader = shader
+	# 按图集有效内容校正留白；仅缩放采样，几何半径仍严格不超过事件半径。
+	material.set_shader_parameter("sample_span", 0.82 if additive else 0.90)
 	return material
 
 ## 外沿最大恰好到权威溅射半径；内部火焰与烟雾随生长曲线展开。
 static func blast_radius(radius: float, progress: float, smoke: bool) -> float:
 	var growth := clampf(progress / 0.25, 0.0, 1.0)
-	return maxf(radius, 0.0) * (lerpf(0.75, 1.0, clampf(progress, 0.0, 1.0)) if smoke else lerpf(0.65, 1.0, 1.0 - pow(1.0 - growth, 2.0)))
+	return maxf(radius, 0.0) * (lerpf(0.75, 1.0, clampf(progress / 0.45, 0.0, 1.0)) if smoke else lerpf(0.65, 1.0, 1.0 - pow(1.0 - growth, 2.0)))
 
 func _draw_blast(canvas: Node2D, smoke: bool) -> void:
 	for effect in _system.impact_effects:
