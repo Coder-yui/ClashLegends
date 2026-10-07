@@ -28,7 +28,7 @@ static func definition() -> Dictionary:
 				"deploy": "Respawn", "idle": "Idle1_Base", "move": "Run1",
 				"attack": ["kayle_attack1_anm", "kayle_attack2_anm"],
 				"transitions": {
-					"Respawn>move": {"animation": "Run_In", "blend_in": 0.1, "blend_out": 0.0},
+					"Respawn>move": {"animation": "Run_In", "blend_in": 0.24, "blend_out": 0.0},
 					"Idle1_Base>move": {"animation": "Run_In", "blend_in": 0.0, "blend_out": 0.0},
 					"Idle_In>move": {"animation": "Run_In", "blend_in": 0.0, "blend_out": 0.0},
 					"Run1>idle": {"animation": "Idle_In", "blend_in": 0.0, "blend_out": 0.1},

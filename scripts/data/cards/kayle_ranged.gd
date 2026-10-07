@@ -20,9 +20,10 @@ static func definition() -> Dictionary:
 	}, true)
 	data.visual.visual_animations.idle = "IdlePassive"
 	data.visual.visual_animations.move = "Kayle_RunPassive_anm"
+	data.visual.visual_animations.clip_blends = {"Kayle_RunInPassive_anm>Kayle_RunPassive_anm": 0.18}
 	data.visual.visual_animations.attack = ["Kayle_Attack3_anm", "Kayle_Attack4_anm"]
 	data.visual.visual_animations.transitions = {
-		"Respawn>move": {"animation": "Kayle_RunInPassive_anm", "blend_in": 0.1, "blend_out": 0.0},
+		"Respawn>move": {"animation": "Kayle_RunInPassive_anm", "blend_in": 0.24, "blend_out": 0.0},
 		"IdlePassive>move": {"animation": "Kayle_RunInPassive_anm", "blend_in": 0.0, "blend_out": 0.0},
 		"Kayle_IdleInPassive_anm>move": {"animation": "Kayle_RunInPassive_anm", "blend_in": 0.0, "blend_out": 0.0},
 		"Kayle_RunPassive_anm>idle": {"animation": "Kayle_IdleInPassive_anm", "blend_in": 0.0, "blend_out": 0.0},

@@ -54,3 +54,5 @@
 - [模型来源与制作记录（进一步查阅）](../../../assets/units/aurelionsol/README.md)
 
 [← 返回单位总览](../aurelionsol.md)
+
+部署 Respawn → RunIn 使用0.3秒混合，RunIn → Run1B保持0秒原片连接；不改变1秒部署锁定或权威移动。

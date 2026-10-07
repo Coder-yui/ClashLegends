@@ -45,6 +45,7 @@ static func definition() -> Dictionary:
 				"attack_loop": "AurelionSol_Spell1_loop_anm",
 				# 吐息后进入移动：Spell1_2Run 后摇 → Run1B→C→D→A。
 				"transitions": {
+					"Respawn>move": {"animation": "RunIn", "blend_in": 0.3, "blend_out": 0.0},
 					"attack>move": "Spell1_2Run",
 					"AurelionSol_Spell1_newtst_anm>idle": "Spell1_2Idle",
 					"AurelionSol_Spell1_loop_anm>idle": "Spell1_2Idle",
