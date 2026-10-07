@@ -4,28 +4,11 @@ const CARDS := ["aurelionsol", "sett", "gwen", "teemo", "twisted_fate", "xin", "
 func _initialize() -> void:
 	_run.call_deferred()
 func _run() -> void:
+	if not preload("res://tools/lib/demo_options.gd").local_only(self): return
 	var main = load("res://scenes/main.tscn").instantiate()
 	root.add_child(main)
 	current_scene = main
 	main._audio_manager.cue_played.connect(func(id, cue, _pos): print("[batch audio] ", id, " ", cue))
-	if "--network" in OS.get_cmdline_user_args():
-		await create_timer(6.0).timeout
-		if main.mode == "host":
-			main.play_card(1, "garen", Vector2(360, 680), {"immediate": true, "validate_position": false})
-			main.play_card(0, "teemo", Vector2(360, 790), {"immediate": true, "validate_position": false})
-			main.play_card(0, "aurelionsol", Vector2(300, 790), {"immediate": true, "validate_position": false})
-			await create_timer(1.2).timeout
-			var teemo: Unit = main._latest_unit_for_card("teemo", 0)
-			if teemo != null: main.preview_active_skill(teemo, CardDB.active_skills_for("teemo")[0])
-		await create_timer(8.0).timeout
-		main.multiplayer.multiplayer_peer.close()
-		main.multiplayer.multiplayer_peer = null
-		main.queue_free()
-		await process_frame
-		await process_frame
-		await create_timer(0.25).timeout
-		quit()
-		return
 	DirAccess.make_dir_recursive_absolute(preload("res://tools/lib/development_paths.gd").output("clash-card-audio"))
 	main._start_art_dev()
 	main._art_dev_panel.show_workspace(1)

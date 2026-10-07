@@ -14,16 +14,12 @@
 
 ## 已有专用配方
 
-以下脚本保留原路径，便于素材记录追溯；它们含固定事件选择、裁剪或增益，有些直接运行即写入，**不要批量重放**。新增卡牌先选通用入口和独立计划；旧 `card_audio_plan.json` 不是当前所有修订的完整重建配方。
+以下配方保留原路径，便于素材记录追溯；它们含固定事件选择、裁剪或增益，有些直接运行即写入，**不要批量重放**。新增卡牌先选通用入口和独立计划；旧 `card_audio_plan.json` 不是当前所有修订的完整重建配方。
 
 - `import_apex_spawn_audio.py`：高级炮台部署。
-- `import_ashe_audio.py`：艾希。
 - `import_ashe_death_audio.py`：艾希死亡声。
 - `import_event_audio_expansion.py`：一批补充事件。
-- `import_garen_audio.py`：盖伦。
-- `import_masteryi_audio.py`：易大师。
 - `import_match_audio.py`：比赛全局声音。
-- `import_missfortune_audio.py`：厄运小姐。
 - `import_sun_disc_tombstone_audio.py`：太阳圆盘与墓碑。
 - `import_twisted_fate_deploy_audio.py`：崔斯特部署。
 - `import_xin_sweep_audio.py`：赵信横扫。
@@ -53,7 +49,7 @@ python3 tools/audio/find_lol_voice.py search --index 'ClashLegends-开发素材�
 
 ## 原版增益防线（2026-10-04）
 
-`prepare_lol_card_audio.py` 与 `find_lol_voice.py render-event` 明确传入 `-gv=0dB`，保留事件各层增益。`original_gain.py` 拒绝 auto/非零 master TXTP；导入时每次重新解码并原子替换预览，不复用旧 WAV 缓存。历史仅复制预览的专用配方不是安全的重导入口，不能把旧预览重新当成原声。
+`prepare_lol_card_audio.py` 与 `find_lol_voice.py render-event` 明确传入 `-gv=0dB`，保留事件各层增益。`original_gain.py` 拒绝 auto/非零 master TXTP；导入时每次重新解码并原子替换预览，不复用旧 WAV 缓存。艾希、盖伦、易大师、厄运小姐的旧整卡导入器仅复制历史 WAV 预览，已退役；它们不再作为可运行入口。原有事件选择和加工依据由逐卡 manifest、当前 original_gain_manifest 及 Git 历史保留。新增导入使用 `import_card_audio.py` 的明确计划，重建使用下面的工具，不能把旧预览当成原声。
 
 `rebuild_original_audio.py --plan /素材库/审核后配方.json --output /素材库/新目录` 从干净浮点源重放裁切、淡出、变速与混合，要求 NumPy、FFmpeg。输出仅允许位于开发素材库；不改动 assets。PCM16 超量程会报错，不能自动减增益。未经加工的原始 OGG 直接复制，避免有损重编码；其解码峰值可超过 0 dBFS，另行登记。
 

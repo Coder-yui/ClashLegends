@@ -37,6 +37,7 @@ func _option(name: String, fallback: String) -> String:
 	return fallback
 
 func _run() -> void:
+	if not preload("res://tools/lib/demo_options.gd").local_only(self): return
 	validate_only = "--validate-only" in OS.get_cmdline_user_args()
 	all_exits = "--all-exits" in OS.get_cmdline_user_args()
 	transition_frames = "--transition-frames" in OS.get_cmdline_user_args()
@@ -54,9 +55,6 @@ func _run() -> void:
 	main = load("res://scenes/main.tscn").instantiate()
 	root.add_child(main)
 	current_scene = main
-	if "--network-hit-haste" in OS.get_cmdline_user_args():
-		await _review_network_hit_haste()
-		return
 	main._start_art_dev()
 	main.set_process(false)
 	_setup_closeup()
@@ -543,60 +541,3 @@ func _setup_closeup() -> void:
 	label.add_theme_constant_override("shadow_offset_x", 1)
 	label.add_theme_constant_override("shadow_offset_y", 1)
 	text_layer.add_child(label)
-
-## 专属状态的真实双进程验证；命中回执由fixture推进，联网仍走正式快照。
-func _review_network_hit_haste() -> void:
-	for attempt in 400:
-		if main._match_started: break
-		await create_timer(0.1).timeout
-	if not main._match_started:
-		push_error("HASTE_NETWORK match did not start")
-		quit(1)
-		return
-	main._minion_waves_enabled = false
-	if main._ai != null: main._ai.enabled = false
-	for tower in main._towers: tower.can_attack = false
-	var sources: Array[Unit] = []
-	if main.mode == "host":
-		for team in [0, 1]:
-			for card in ["kayle", "kayle_ranged"]:
-				main._elixir_for_team(team).elixir = 3.0
-				main.play_card(team, card, Vector2(280 if card == "kayle" else 460, 850 if team == 0 else 420), {"immediate": true, "validate_position": false})
-				var source: Unit = main._latest_unit_for_card(card, team)
-				if source == null:
-					push_error("HASTE_NETWORK missing " + card)
-					quit(1)
-					return
-				source.move_speed = 0.0
-				sources.append(source)
-	var shown := {}
-	var expired := {}
-	var malformed := false
-	var screen_saved := false
-	DirAccess.make_dir_recursive_absolute(OUTPUT)
-	for sample in 150:
-		if sample == 20 and main.mode == "host":
-			for source in sources:
-				for i in 4: source.on_attack_landed()
-		for candidate in main._battle_presentation._world_root.get_children():
-			if not candidate is UnitModel3D or not is_instance_valid(candidate._source): continue
-			var source: Unit = candidate._source
-			if source.card_id not in ["kayle", "kayle_ranged"]: continue
-			var key := source.card_id + str(source.team)
-			var strength: float = candidate._model_root._enrage_strength
-			if source.hit_haste_full_visual() and strength >= 0.99: shown[key] = true
-			if shown.has(key) and not source.hit_haste_full_visual() and strength <= 0.001: expired[key] = true
-			if source.hp <= 0: malformed = true
-		if shown.size() == 4 and not screen_saved:
-			screen_saved = true
-			if DisplayServer.get_name() != "headless":
-				await RenderingServer.frame_post_draw
-				root.get_texture().get_image().save_png(OUTPUT.path_join(main.mode + "-full.png"))
-		await create_timer(0.1).timeout
-	var success := shown.size() == 4 and expired.size() == 4 and not malformed
-	print("HASTE_NETWORK ", main.mode, " full=", shown.size(), " expired=", expired.size(), " success=", success, " output=", OUTPUT)
-	if main.multiplayer.multiplayer_peer != null: main.multiplayer.multiplayer_peer.close()
-	main.multiplayer.multiplayer_peer = null
-	main.queue_free()
-	await process_frame
-	quit(0 if success else 1)

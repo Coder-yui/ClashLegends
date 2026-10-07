@@ -9,12 +9,14 @@ import json
 import os
 from pathlib import Path
 import re
-import shutil
 import signal
 import socket
 import subprocess
 import sys
 import time
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from lib.tool_paths import godot as find_godot
 
 ROOT = Path(__file__).resolve().parents[1]
 RESULT_PREFIX = '[MECHANICS_RESULT] '
@@ -250,7 +252,7 @@ def main() -> int:
     parser.add_argument('--suite', action='append', help='Run only a named mechanics suite; repeat to select several')
     parser.add_argument('--reverse-suites', action='store_true', help='Run selected suites in reverse order to check isolation')
     parser.add_argument('--network-boundaries', action='store_true', help='Also run protocol/content mismatch, slow loading and disconnect cases')
-    parser.add_argument('--network', action='store_true', help='Run two-process terminal-state integration')
+    parser.add_argument('--network', action='store_true', help='Run one-server/two-client terminal-state integration')
     parser.add_argument('--network-port', type=int, default=0, help='0 chooses a free local UDP port')
     parser.add_argument('--network-render', action='store_true', help='Run network integration with visible rendering and capture final frames')
     parser.add_argument('--godot', default=os.environ.get('GODOT_BIN'))
@@ -272,9 +274,7 @@ def main() -> int:
         args.suite = selection if args.suite or args.group else None
     except ValueError as exc:
         parser.error(str(exc))
-    godot = args.godot or shutil.which('godot') or shutil.which('Godot')
-    if not godot and Path('/Applications/Godot.app/Contents/MacOS/Godot').exists():
-        godot = '/Applications/Godot.app/Contents/MacOS/Godot'
+    godot = args.godot or find_godot()
     output = (args.output or ROOT / 'ClashLegends-开发素材库/04-中间产物/构建与验证/verification' / datetime.now().strftime('%Y%m%d-%H%M%S-%f')).resolve()
     output.mkdir(parents=True, exist_ok=False)
     report = {'schema': 1, 'started_at': datetime.now(timezone.utc).isoformat(), 'workspace': str(ROOT),

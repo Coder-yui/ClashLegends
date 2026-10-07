@@ -4,27 +4,10 @@ func _initialize() -> void:
 	_run.call_deferred()
 
 func _run() -> void:
+	if not preload("res://tools/lib/demo_options.gd").local_only(self): return
 	var main = load("res://scenes/main.tscn").instantiate()
 	root.add_child(main)
 	main._audio_manager.cue_played.connect(func(id, cue, _pos): print("[sustain demo] ", id, " ", cue))
-	var network := false
-	for arg in OS.get_cmdline_user_args():
-		network = network or arg in ["--mode=host", "--mode=join"]
-	if network:
-		await create_timer(5.0).timeout
-		if main.mode == "host":
-			for unit in get_nodes_in_group("combatants"):
-				if unit is Unit and unit.card_id == "garen":
-					main.preview_active_skill(unit, CardDB.active_skills_for("garen")[1])
-				if unit is Unit and unit.card_id == "ashe":
-					unit.take_damage(99999.0)
-		await create_timer(5.0).timeout
-		main.queue_free()
-		await process_frame
-		await process_frame
-		await create_timer(0.25).timeout
-		quit()
-		return
 	main._start_local()
 	main.set_process(false)
 	main._ai.enabled = false

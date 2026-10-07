@@ -28,6 +28,12 @@ class AuditTests(unittest.TestCase):
             self.write('scripts/battle/dash_strike_state.gd', 'func finish(source):\n\t' + write + '\n')
             self.assertTrue(any('transition owner' in e for e in audit(self.root)['errors']))
 
+    def test_retired_player_host_recipe(self):
+        self.write('tools/demos/example.gd', 'if main.mode == "host": pass\n')
+        self.assertTrue(any('retired player-host' in e for e in audit(self.root)['errors']))
+        self.write('tools/demos/example.gd', '# historical host note\nif main.mode == "server": pass\n')
+        self.assertEqual(audit(self.root)['errors'], [])
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)

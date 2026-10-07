@@ -9,14 +9,12 @@ func shot(label: String) -> void:
 	RenderingServer.force_draw()
 	root.get_texture().get_image().save_png(output + "/" + label + ".png")
 func _run() -> void:
+	if not preload("res://tools/lib/demo_options.gd").local_only(self): return
 	root.audio_listener_enable_2d = true
 	DirAccess.make_dir_recursive_absolute(output)
 	main = load("res://scenes/main.tscn").instantiate()
 	root.add_child(main)
 	current_scene = main
-	if "--network" in OS.get_cmdline_user_args():
-		await _network()
-		return
 	main._start_local()
 	main._ai.enabled = false
 	main._minion_waves_enabled = false
@@ -98,56 +96,3 @@ func _run() -> void:
 	await process_frame
 	await create_timer(0.3).timeout
 	quit()
-
-func _network() -> void:
-	for attempt in 300:
-		if main._match_started: break
-		await create_timer(0.1).timeout
-	if not main._match_started:
-		push_error("DARIUS_NETWORK match did not start")
-		quit(1)
-		return
-	main._minion_waves_enabled = false
-	for tower in main._towers: tower.can_attack = false
-	var saw_bleed := false
-	var saw_rage := false
-	var saw_recast := false
-	if main.mode == "host":
-		main._deck[0] = "darius"
-		main.play_card(0, "darius", Vector2(320, 850), {"immediate": true, "validate_position": false})
-		var unit: Unit = main._latest_unit_for_card("darius", 0)
-		unit.move_speed = 0.0
-		# Source card chosen after lobby only for this deterministic test fixture.
-		unit.active_ability_id = 99011
-		unit.active_ability_slot = 0
-		main._register_active_skill(unit, "darius", 0)
-		main.play_card(1, "garen", Vector2(380, 810), {"immediate": true, "validate_position": false})
-		var target: Unit = main._latest_unit_for_card("garen", 1)
-		target.move_speed = 0.0
-		target.damage = 0.0
-		target.hp = 10000
-		target.max_hp = 10000
-		await create_timer(5.4).timeout
-		target.hp = 400
-		main._elixir.elixir = 5.0
-		main.use_active_skill(99011, 0)
-		await create_timer(9.0).timeout
-		print("DARIUS_NETWORK host state ", main.get_active_skill_snapshot(99011))
-	else:
-		for sample in 140:
-			for id in main.client_unit_ids():
-				var unit: Unit = main.find_client_unit(id)
-				saw_bleed = saw_bleed or unit.bleeding.total_stacks() > 0
-				if unit.card_id == "darius":
-					saw_rage = saw_rage or unit.blood_rage_time_left_visual() > 0.0
-					saw_recast = saw_recast or bool(main.get_active_skill_snapshot(unit.active_ability_id).get("free_recast", false))
-			await create_timer(0.1).timeout
-		print("DARIUS_NETWORK client bleed=", saw_bleed, " rage=", saw_rage, " recast=", saw_recast)
-	var success: bool = main.mode == "host" or (saw_bleed and saw_rage and saw_recast)
-	if main._network_peer != null: main._network_peer.close()
-	main.multiplayer.multiplayer_peer = null
-	main._clear_art_dev_units()
-	main.queue_free()
-	await process_frame
-	await create_timer(0.3).timeout
-	quit(0 if success else 1)

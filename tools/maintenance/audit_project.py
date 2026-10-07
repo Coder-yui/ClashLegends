@@ -162,6 +162,10 @@ def audit(root: Path, inventory: bool = False) -> dict:
                 errors.append(f'{relative}: retired production mechanism')
             if re.search(r'_commands\._(?:card_commands|skill_commands|pre_deployments|impacts|next_pre_deploy_id)\b', text):
                 errors.append(f'{relative}: command schedule private state access')
+        if relative.startswith('tools/demos/') and path.suffix == '.gd':
+            code = '\n'.join(line.split('#', 1)[0] for line in text.splitlines())
+            if '--mode=host' in code or re.search(r'\.mode\s*==\s*[\"\']host[\"\']', code):
+                errors.append(f'{relative}: retired player-host demo recipe; use three-process verifier')
         if path.suffix == '.py':
             try:
                 ast.parse(text, filename=relative)

@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 """Common entry points for reusable card-development tools. Run a command with --help for options."""
-import argparse
-import os
 from pathlib import Path
 import subprocess
 import sys

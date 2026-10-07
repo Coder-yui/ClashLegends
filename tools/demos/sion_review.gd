@@ -11,14 +11,12 @@ func shot(label: String) -> void:
 		if node is UnitModel3D and node._animation_player != null and node._model_root != null and "Sion" in node._model_root.name:
 			print("SION_CLIP ", label, " ", node._animation_player.current_animation, " source_time=", node._animation_player.current_animation_position, " speed=", node._current_clip_speed, " blend=", node._last_clip_blend_time)
 func _run() -> void:
+	if not preload("res://tools/lib/demo_options.gd").local_only(self): return
 	root.audio_listener_enable_2d = true
 	DirAccess.make_dir_recursive_absolute(output)
 	main = load("res://scenes/main.tscn").instantiate()
 	root.add_child(main)
 	current_scene = main
-	if "--network" in OS.get_cmdline_user_args():
-		await _run_network()
-		return
 	main._start_local()
 	main._ai.enabled = false
 	main._minion_waves_enabled = false
@@ -116,63 +114,6 @@ func _run() -> void:
 	await create_timer(1.0).timeout
 	quit()
 
-func _run_network() -> void:
-	for attempt in 300:
-		if main._match_started: break
-		await create_timer(0.1).timeout
-	if not main._match_started:
-		push_error("SION_NETWORK match did not start")
-		quit(1)
-		return
-	main._minion_waves_enabled = false
-	for tower in main._towers: tower.can_attack = false
-	var saw_shield := false
-	var saw_wait := false
-	var saw_berserk := false
-	var saw_recovery_bar := false
-	var saw_thawed_wait := false
-	if main.mode == "host":
-		main.play_card(0, "sion", Vector2(350, 900), {"immediate": true, "validate_position": false})
-		var unit: Unit = main._latest_unit_for_card("sion", 0)
-		unit.move_speed = 0.0
-		await create_timer(1.2).timeout
-		main.preview_active_skill(unit, CardDB.active_skills_for("sion")[0])
-		await create_timer(2.4).timeout
-		unit.hp = 1.0
-		unit.freeze(8.0)
-		await create_timer(0.3).timeout
-		print("SION_NETWORK before lethal hp=", unit.hp, " state=", unit.death_form.snapshot(), " tick=", main._sim_tick_id)
-		unit.take_damage(10000)
-		print("SION_NETWORK after lethal hp=", unit.hp, " state=", unit.death_form.snapshot(), " ids=", main.authoritative_units_snapshot().keys())
-		await create_timer(2.2).timeout
-		print("SION_NETWORK after revival hp=", unit.hp, " state=", unit.death_form.snapshot(), " form=", unit.form_index, " ids=", main.authoritative_units_snapshot().keys())
-		await create_timer(10.0).timeout
-		print("SION_NETWORK host completed")
-	else:
-		for sample in 140:
-			for id in main.client_unit_ids():
-				var unit: Unit = main.find_client_unit(id)
-				if unit.card_id != "sion": continue
-				if sample % 5 == 0: print("SION_NETWORK sample=", sample, " hp=", unit.hp, " form=", unit.get_form_index(), " state=", unit.death_form.snapshot())
-				saw_shield = saw_shield or unit.has_explosive_shield()
-				saw_wait = saw_wait or (unit.hp == 0 and unit.death_form.waiting())
-				if unit.death_form.waiting():
-					saw_thawed_wait = saw_thawed_wait or not unit.presentation_state().frozen
-					var bar := unit.presentation_state().health_ratio
-					saw_recovery_bar = saw_recovery_bar or (bar > 0.2 and bar < 0.8 and unit.hp == 0)
-				saw_berserk = saw_berserk or (unit.get_form_index() == 1 and unit.hp > 0)
-			await create_timer(0.1).timeout
-		print("SION_NETWORK client shield=", saw_shield, " zero_hp_wait=", saw_wait, " berserk=", saw_berserk, " thawed_wait=", saw_thawed_wait, " recovery_bar=", saw_recovery_bar)
-		if not (saw_shield and saw_wait and saw_berserk and saw_thawed_wait and saw_recovery_bar):
-			push_error("SION_NETWORK missed authoritative states")
-	var success: bool = main.mode == "host" or (saw_shield and saw_wait and saw_berserk and saw_thawed_wait and saw_recovery_bar)
-	if main._network_peer != null: main._network_peer.close()
-	main.multiplayer.multiplayer_peer = null
-	main._clear_art_dev_units()
-	main.queue_free()
-	await process_frame
-	await create_timer(0.3).timeout
-	quit(0 if success else 1)
 
 func _run_frozen_revival() -> void:
 	main.play_card(0, "sion", Vector2(260, 880), {"immediate": true, "validate_position": false})
