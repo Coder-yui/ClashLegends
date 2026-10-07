@@ -29,15 +29,14 @@ const HAND_CARD_WIDTH := 112.0
 
 # 卡组轮换
 var _hand: Array[String] = []   # 当前4张手牌
-var _queue: Array[String] = []  # 等待队列4张
-var _deck: Array = []           # 本次对战选定的 8 张卡组（空则随机 8 张）
+var _next_card := ""  # 唯一可见待抽牌；不保存隐藏队列
+var _deck: Array = []           # 备战配置；UI不洗牌、不推进轮转
 var _pending_cards: Dictionary = {}  # 客户端已发出、等待主机确认的卡牌
 var _active_skill_cards: Dictionary = {}  # 卡牌 ID -> 主动槽序号；标记跟随卡牌轮换
 
 func setup(elixir: ElixirManager, deck: Array = []) -> void:
 	_elixir = elixir
 	_deck = deck
-	_init_deck()
 	_build_ui()
 	_elixir.changed.connect(_refresh)
 
@@ -50,8 +49,8 @@ func clear_selection() -> void:
 func get_hand() -> Array[String]:
 	return _hand.duplicate()
 
-func get_queue() -> Array[String]:
-	return _queue.duplicate()
+func get_next_card() -> String:
+	return _next_card
 
 func get_deck() -> Array:
 	return _deck.duplicate()
@@ -68,14 +67,13 @@ func set_active_skill_cards(card_ids: Array) -> void:
 
 ## 手牌只是权威 Card Cycle 的表现视图；主机确认后的完整状态由 Main 推送到这里。
 func set_cycle_state(hand: Array, queue: Array) -> void:
-	if hand.size() != 4 or queue.size() != 4:
-		return
-	_hand.clear()
-	_queue.clear()
-	for card_id in hand:
-		_hand.append(String(card_id))
-	for card_id in queue:
-		_queue.append(String(card_id))
+	# 本地权威/测试适配入口；UI也只留下下一张。
+	set_visible_state(hand, String(queue[0]) if not queue.is_empty() else "")
+
+func set_visible_state(hand: Array, next_card: String) -> void:
+	if hand.size() != 4 or next_card.is_empty(): return
+	_hand.assign(hand)
+	_next_card = next_card
 	_refresh(_elixir.elixir if _elixir != null else 0.0)
 
 func set_card_pending(card_id: String, pending: bool) -> void:
@@ -92,27 +90,6 @@ func has_pending_source_card() -> bool:
 
 func is_card_pending(card_id: String) -> bool:
 	return bool(_pending_cards.get(card_id, false))
-
-## 卡牌使用后：从队列补一张，用过的牌排到队尾
-func card_used(card_id: String) -> void:
-	var idx := _hand.find(card_id)
-	if idx < 0:
-		return
-	_hand[idx] = _queue.pop_front()
-	_queue.push_back(card_id)
-	_pending_cards.erase(card_id)
-	_refresh(_elixir.elixir)
-
-func _init_deck() -> void:
-	# 优先使用对战前选定的 8 张卡组；未指定时从全部卡里随机取 8 张。
-	var pool: Array = _deck.duplicate() if _deck.size() == 8 else []
-	if pool.is_empty():
-		pool = CardDB.selectable_ids()
-		pool.shuffle()
-		pool = pool.slice(0, 8)
-	var cycle := CardCycle.new(pool)
-	_hand.assign(cycle.hand())
-	_queue.assign(cycle.queue())
 
 func _build_ui() -> void:
 	var root := Control.new()
@@ -240,6 +217,7 @@ func _build_ui() -> void:
 	_refresh(_elixir.elixir)
 
 func _on_slot_pressed(slot_idx: int) -> void:
+	if slot_idx < 0 or slot_idx >= _hand.size(): return
 	var card_id := _hand[slot_idx]
 	if is_card_pending(card_id) or (CardPlayHistory.is_mirror(card_id) and has_pending_source_card()):
 		return
@@ -259,14 +237,17 @@ func _refresh(_value: float) -> void:
 	_elixir_bar.value = _elixir.elixir
 	_elixir_label.text = str(int(_elixir.elixir))
 	# 下一张卡预览
-	if _next_label != null and _next_button != null and _queue.size() > 0:
-		var next_stats: Dictionary = CardDB.get_card(_queue[0])
+	if _next_label != null and _next_button != null and not _next_card.is_empty():
+		var next_stats: Dictionary = CardDB.get_card(_next_card)
 		_next_label.text = "下一张"
 		var next_accent: Color = next_stats.get("color", CardArt.DEFAULT_ACCENT)
-		_apply_card(_next_button, _queue[0], next_stats, next_accent)
+		_apply_card(_next_button, _next_card, next_stats, next_accent)
 		CardArt.set_affordable(_next_button, true)
 	# 更新4张手牌按钮
 	for i in range(4):
+		if i >= _hand.size():
+			_button_slots[i].disabled = true
+			continue
 		var card_id := _hand[i]
 		var stats: Dictionary = CardDB.get_card(card_id)
 		var b: Button = _button_slots[i]
@@ -318,7 +299,7 @@ func _apply_card(button: Button, card_id: String, stats: Dictionary, accent: Col
 ## 仅本地手牌消费阵营限定查询；待抽队列中的成长同样通知。
 func _refresh_growth_notice() -> void:
 	if not visual_card_query.is_valid(): return
-	for id in _hand + _queue:
+	for id in _hand + ([_next_card] if not _next_card.is_empty() else []):
 		var stats := CardDB.get_card(id)
 		if not stats.has("growth_ranged_id"): continue
 		var form := String(visual_card_query.call(id))

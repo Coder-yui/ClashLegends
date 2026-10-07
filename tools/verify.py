@@ -146,10 +146,15 @@ def validate_network(logs: dict[str, str]) -> tuple[dict, list[str]]:
             errors.append(f'{role}: {exc}')
         if ERROR_PATTERN.search(log):
             errors.append(f'{role}: unexpected runtime error')
-    if set(results) != {'host', 'client'}:
-        errors.append('Both host and client must complete')
-    elif any(results['host'][field] != results['client'][field] for field in required):
-        errors.append('Host and client terminal entity/tower/result states differ')
+    if set(results) != {'server', 'client0', 'client1'}:
+        errors.append('Server and both clients must complete')
+    elif any(results['server'][field] != results[client][field] for client in ['client0', 'client1'] for field in required if field != 'remote_elixir'):
+        errors.append('Server and clients terminal entity/tower/result states differ')
+    if set(results) == {'server', 'client0', 'client1'}:
+        private = results['server'].get('player_states')
+        if not isinstance(private, list) or len(private) != 2 or any(
+                results[f'client{team}'].get('player_state') != private[team] for team in [0, 1]):
+            errors.append('Recipient private state differs from authoritative player state')
     return results, errors
 
 
@@ -170,9 +175,9 @@ def validate_network_boundary(logs: dict[str, str], scenario: str) -> tuple[dict
             errors.append(f'{role}: {exc}')
         if ERROR_PATTERN.search(log):
             errors.append(f'{role}: unexpected runtime error')
-    if set(results) != {'host', 'client'}:
-        errors.append('Both boundary peers must complete')
-    elif results['host']['session_id'] != results['client']['session_id']:
+    if set(results) != {'server', 'client0', 'client1'}:
+        errors.append('All three boundary peers must complete')
+    elif any(results['server']['session_id'] != results[client]['session_id'] for client in ['client0', 'client1']):
         errors.append('Boundary peers disagree on session identity')
     return results, errors
 
@@ -187,25 +192,28 @@ def run_network(godot: str, output: Path, timeout: float, port: int = 0, rendere
     commands = []
     failures = []
     started = time.monotonic()
-    roles = [('host', 'host'), ('client', 'join')]
+    roles = [('server', 'server'), ('client0', 'join'), ('client1', 'join')]
     try:
         for role, mode in roles:
             stream = (output / f'network-{role}.log').open('w')
             streams.append(stream)
-            command = [godot, *([] if rendered else ['--headless']), '--path', '.', '--script', 'tests/mechanics_check.gd', '--',
+            command = [godot, *([] if rendered and role != 'server' else ['--headless']), '--path', '.', '--script', 'tests/mechanics_check.gd', '--',
                        '--network-smoke', '--auto-test', f'--mode={mode}', '--ip=127.0.0.1', f'--port={port}']
-            if scenario:
+            if scenario == "impaired":
+                command.append("--network-impaired")
+            elif scenario:
                 command.append(f"--network-case={scenario}")
             if rendered:
                 command.append(f'--network-render-dir={output}')
             commands.append(command)
             processes.append(subprocess.Popen(command, cwd=ROOT, stdout=stream, stderr=subprocess.STDOUT, start_new_session=True))
-            if role == 'host':
+            if role in ['server', 'client0']:
                 # Wait for actual listening state, not a fixed startup delay.
                 deadline = time.monotonic() + min(timeout, 20)
-                while '房间已创建，端口' not in (output / 'network-host.log').read_text(errors='replace'):
+                marker = '服务器已启动，端口' if role == 'server' else '玩家 0 已绑定'
+                while marker not in (output / 'network-server.log').read_text(errors='replace'):
                     if processes[0].poll() is not None or time.monotonic() >= deadline:
-                        raise RuntimeError('Host did not reach listening state')
+                        raise RuntimeError('Server did not reach expected connection state')
                     time.sleep(0.1)
         for process in processes:
             process.wait(timeout=max(0.01, timeout - (time.monotonic() - started)))
@@ -226,7 +234,7 @@ def run_network(godot: str, output: Path, timeout: float, port: int = 0, rendere
         for stream in streams:
             stream.close()
     logs = {role: (output / f'network-{role}.log').read_text(errors='replace') if (output / f'network-{role}.log').exists() else '' for role, _ in roles}
-    results, errors = validate_network_boundary(logs, scenario) if scenario else validate_network(logs)
+    results, errors = validate_network_boundary(logs, scenario) if scenario and scenario != "impaired" else validate_network(logs)
     failures.extend(errors)
     result = {'name': 'network-' + scenario if scenario else 'network', 'passed': not failures, 'errors': failures, 'commands': commands,
               'port': port, 'seconds': time.monotonic() - started, 'results': results,
@@ -300,7 +308,7 @@ def main() -> int:
             report['steps'].append(network)
             report['passed'] = network['passed']
         if report['passed'] and args.network_boundaries:
-            for scenario in ['protocol', 'content', 'slow', 'slow_host', 'load_disconnect', 'load_timeout', 'disconnect', 'restart', 'buildings']:
+            for scenario in ['protocol', 'content', 'slow', 'slow_second_client', 'load_disconnect', 'load_timeout', 'disconnect', 'restart', 'buildings', 'impaired']:
                 case_output = output / scenario
                 case_output.mkdir()
                 network = run_network(godot, case_output, args.timeout, scenario=scenario)

@@ -163,7 +163,9 @@ func _test_wave() -> void:
 	for id in _main._projectile_system.projectiles:
 		payloads.append(_main._snapshot_system._projectile_snapshot_payload(id, _main._projectile_system.projectiles[id]))
 	var old_mode: String = _main.mode
+	var old_mode_team: int = _main.local_team
 	_main.mode = "client"
+	_main.local_team = 1
 	_main._snapshot_system._apply_projectiles(payloads)
 	_main._projectile_system.tick_visuals(0.05)
 	var views: Dictionary = _main._projectile_system._native_visuals._views
@@ -173,6 +175,7 @@ func _test_wave() -> void:
 	_main._projectile_system.clear_client()
 	_expect(_main._projectile_system._native_visuals._views.is_empty(), "客户端清场立即释放焰浪表现")
 	_main.mode = old_mode
+	_main.local_team = old_mode_team
 	for i in 20: _main._tick_projectiles(0.05)
 	_expect(primary.hp == before[0] - 160, "主目标可叠加105+55")
 	_expect(back.hp == before[1] - 55, "焰浪穿过主目标继续伤害地面后排")

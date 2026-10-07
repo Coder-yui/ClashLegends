@@ -59,6 +59,7 @@ func run(harness: Object, main: Node2D) -> void:
 	main._deck = saved_deck
 	var saved_session: MatchSession = main._session
 	main.mode = "client"
+	main.local_team = 1
 	main._session = MatchSession.new()
 	main._session.opponent_id = 1
 	main._session.session_id = "stasis-test"
@@ -86,6 +87,7 @@ func run(harness: Object, main: Node2D) -> void:
 	main._last_card_event_id = saved_event_id
 	main._session = saved_session
 	main.mode = "local"
+	main.local_team = 0
 	spells.clear()
 	_check_exceptions(main)
 	_check_placement(main)
@@ -348,12 +350,15 @@ func _check_indicators_and_grit(main: Node2D) -> void:
 		sett.prepare_action_clocks(0.05)
 	_expect(PresentationConfig.status_indicators_visible(sett) and is_equal_approx(sett.skill_resource_value, 150) and sett.hp == 500, "解除标识按实时150豪意和500生命恢复，不回滚旧值")
 	var original_mode: String = main.mode
+	var original_mode_team: int = main.local_team
 	main.mode = "client"
+	main.local_team = 1
 	sett.control.hard.apply(&"stasis", &"replica", 1, {})
 	_expect(not PresentationConfig.status_indicators_visible(sett), "客户端凝滞标志同样隐藏附属标识")
 	sett.control.hard.clear_family(&"stasis")
 	_expect(PresentationConfig.status_indicators_visible(sett), "客户端解除按当前状态恢复附属标识")
 	main.mode = original_mode
+	main.local_team = original_mode_team
 	_retire([sett])
 	for card in ["tombstone", "garen"]:
 		var unit := _unit(main, card, 0, Vector2(300,900))

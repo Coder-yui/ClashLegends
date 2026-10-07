@@ -164,11 +164,14 @@ func _check_wild_cards_visual() -> void:
 		index += 1
 	_expect(paths_match and index == 3, "万能牌扇形提示与三张牌共用起点、方向和长度")
 	var old_mode: String = _main.mode
+	var old_mode_team: int = _main.local_team
 	_main.mode = "client"
+	_main.local_team = 1
 	preload("res://tests/fixtures/network_fixture.gd").deliver(_main, "_rpc_frontal_skill_fx", [-1, caster.position, Vector2.DOWN, caster.body_radius, float(effect.length), 0.0, float(effect.duration), 1, String(effect.shape), 0.0, 0.0, float(effect.arc_degrees), int(effect.projectile_count)])
 	var replay: Dictionary = _main._skill_presentation.frontal_effects.back()
 	_expect(replay.shape == "fan_shared" and replay.projectile_count == 3 and replay.forward == Vector2.DOWN, "客户端范围 RPC 保留完整扇形提示和红方朝向")
 	_main.mode = old_mode
+	_main.local_team = old_mode_team
 	_main._projectile_system.clear_all()
 	_main._active_skill_effect_system.clear()
 	_main._skill_presentation.clear()

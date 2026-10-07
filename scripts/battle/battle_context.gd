@@ -101,3 +101,9 @@ func schedule_summon_flight(source: Unit, card_id: String, pos: Vector2, duratio
 func invalidate_target_locks(unit: Node2D) -> void:
 	_controller.projectile_service().invalidate_target_locks(unit)
 	_controller._team_attack_boost_system.invalidate_target_locks(unit)
+
+func has_presentation() -> bool:
+	return _controller.has_presentation()
+
+func local_player_team() -> int:
+	return _controller.local_team

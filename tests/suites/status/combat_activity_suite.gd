@@ -217,11 +217,14 @@ func _check_action_audio() -> void:
 	_expect(action.stream == null and independent.stream != null and successor.stream != null, "位移眩晕取消只停止旧动作音，不停止独立结果或后继实例")
 	# 模拟客户端快照尚未到达、取消先到达，迟到旧声音不能认作新动作。
 	var previous_mode: String = _main.mode
+	var previous_mode_team: int = _main.local_team
 	_main.mode = "client"
+	_main.local_team = 1
 	source.net_visual_action_serial = cast_serial + 1
 	source.active_skill_cast_timer = 0
 	_expect(not audio.play_event(source,&"active:cast",source.position,-1,false,cast_serial), "客户端迟到旧施法音按发送序号拒绝，不套用后继身份")
 	_main.mode = previous_mode
+	_main.local_team = previous_mode_team
 	for player in [action,independent,successor]:
 		audio._world_players.erase(player)
 		player.free()

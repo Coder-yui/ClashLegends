@@ -576,7 +576,7 @@ func _sync_structure_group() -> void:
 		remove_from_group("combat_structures")
 
 func _ready() -> void:
-	if team_attack_boost_interval > 0.0:
+	if team_attack_boost_interval > 0.0 and (battle_context == null or battle_context.has_presentation()):
 		_forge_work_effect = preload("res://scripts/presentation/forge_work_effect.gd").new()
 		presentation_cue.connect(_forge_work_effect.on_cue)
 	add_to_group("combatants")
@@ -591,6 +591,7 @@ func _ready() -> void:
 			_perform_deploy_sweep()
 
 func _process(delta: float) -> void:
+	if battle_context != null and not battle_context.has_presentation(): return
 	if _forge_work_effect != null:
 		_forge_work_effect.advance(delta, hp > 0.0)
 	presentation_state().advance_health_bar(delta)
@@ -2864,7 +2865,7 @@ func get_visual_head_screen_position() -> Vector2:
 
 
 func get_health_bar_fill_color() -> Color:
-	var local_team := 1 if battle_context != null and battle_context.is_net_client() else 0
+	var local_team := battle_context.local_player_team() if battle_context != null else 0
 	return Color(0.95, 0.25, 0.25) if team != local_team else Color(0.2, 0.9, 0.2)
 
 
@@ -2894,7 +2895,7 @@ func visible_to_team(_observer: int) -> bool:
 	return true
 
 func visible_to_local_player() -> bool:
-	return visible_to_team(1 if _in_client_mode() else 0)
+	return visible_to_team(battle_context.local_player_team() if battle_context != null else 0)
 
 func piercing_attack_distance() -> float:
 	return buffs.strongest(&"ranged_attack", &"flight_distance", 0.0)
@@ -2903,6 +2904,7 @@ func piercing_attacks_active() -> bool:
 	return buffs.any_flag(&"ranged_attack", &"piercing")
 
 func _draw() -> void:
+	if battle_context != null and not battle_context.has_presentation(): return
 	if not visible_to_local_player(): return
 	draw_set_transform(_vis_offset, 0.0, Vector2.ONE)
 
@@ -2913,7 +2915,7 @@ func _draw() -> void:
 		draw_rect(Rect2(-body_radius, -body_radius, body_radius * 2.0, body_radius * 2.0), body_color)
 		draw_rect(Rect2(-body_radius, -body_radius, body_radius * 2.0, body_radius * 2.0), Color(0.2, 0.18, 0.12), false, 2.0)
 	elif not is_building and not has_model_art:
-		var local_team := 1 if battle_context != null and battle_context.is_net_client() else 0
+		var local_team := battle_context.local_player_team() if battle_context != null else 0
 		var outline := Color(0.30, 0.60, 1.00) if team == local_team else Color(1.00, 0.35, 0.30)
 		draw_circle(Vector2.ZERO, visual_radius + 2.0, outline)
 		draw_circle(Vector2.ZERO, visual_radius, body_color)

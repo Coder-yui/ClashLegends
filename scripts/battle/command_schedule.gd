@@ -1,5 +1,6 @@
 class_name CommandSchedule
 extends RefCounted
+const BUFFER_TICKS := 10
 ## 命令与施法排程的唯一状态所有者。入队资格/费用由 Main 校验，排程不读取 Main。
 var _card_commands: Array[Dictionary] = []
 var _skill_commands: Array[Dictionary] = []
@@ -64,14 +65,17 @@ func tick_impacts(dt: float) -> void:
 			impact.call(unit, pending.skill)
 	_impacts = waiting
 
-func cancel_skill(ability_id: int, refund: bool) -> void:
+func cancel_skill(ability_id: int, refund: bool) -> Array[Dictionary]:
+	var cancelled: Array[Dictionary] = []
 	var waiting: Array[Dictionary] = []
 	for pending in _skill_commands:
 		if int(pending.ability_id) == ability_id:
+			cancelled.append(pending)
 			settle_skill(pending, refund)
 		else:
 			waiting.append(pending)
 	_skill_commands = waiting
+	return cancelled
 
 func settle_skill(pending: Dictionary, refund: bool) -> void:
 	var payment = pending.get("payment")
@@ -102,12 +106,12 @@ func inspect_deployments() -> Array[Dictionary]:
 func inspect_impacts() -> Array[Dictionary]:
 	return _impacts.duplicate(true)
 
-func enqueue_card(team: int, card_id: String, pos: Vector2, execute_tick: int, deployment_card_id: String = "", mirror_copy: Dictionary = {}) -> void:
-	_card_commands.append({"team": team, "card_id": card_id, "pos": pos, "execute_tick": execute_tick, "deployment_card_id": deployment_card_id, "mirror_copy": mirror_copy.duplicate(true)})
+func enqueue_card(team: int, card_id: String, pos: Vector2, execute_tick: int, deployment_card_id: String = "", mirror_copy: Dictionary = {}, command_id: int = 0) -> void:
+	_card_commands.append({"team": team, "card_id": card_id, "pos": pos, "execute_tick": execute_tick, "deployment_card_id": deployment_card_id, "mirror_copy": mirror_copy.duplicate(true), "command_id": command_id})
 
-func enqueue_skill(ability_id: int, team: int, execute_tick: int, payment: CommandPayment = null, requester_peer_id: int = 0) -> bool:
+func enqueue_skill(ability_id: int, team: int, execute_tick: int, payment: CommandPayment = null, requester_peer_id: int = 0, command_id: int = 0) -> bool:
 	if has_pending_skill(ability_id): return false
-	_skill_commands.append({"ability_id": ability_id, "team": team, "execute_tick": execute_tick, "payment": payment, "requester_peer_id": requester_peer_id})
+	_skill_commands.append({"ability_id": ability_id, "team": team, "execute_tick": execute_tick, "payment": payment, "requester_peer_id": requester_peer_id, "command_id": command_id})
 	return true
 
 func has_pending_skill(ability_id: int) -> bool:

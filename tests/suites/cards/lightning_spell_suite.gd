@@ -136,8 +136,10 @@ func _check_cost_and_replica() -> void:
 	_main._deck = saved_deck
 	_spells.clear()
 	var saved_mode: String = _main.mode
+	var saved_mode_team: int = _main.local_team
 	var saved_session: MatchSession = _main._session
 	_main.mode = "client"
+	_main.local_team = 1
 	_main._session = MatchSession.new()
 	_main._session.opponent_id = 1
 	_main._session.session_id = "lightning-test"
@@ -155,6 +157,7 @@ func _check_cost_and_replica() -> void:
 	_expect(_spells.lightning_effects.size() == 1, "终局拒绝电击表现")
 	_main.game_over = false
 	_main.mode = saved_mode
+	_main.local_team = saved_mode_team
 	_main._session = saved_session
 
 

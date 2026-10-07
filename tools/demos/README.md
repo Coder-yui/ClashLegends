@@ -1,3 +1,5 @@
+> 联网入口已升级为一个 `server` 与两个 `join`。本页保留的旧 `host/join` 专项配方尚未迁移，不能作为当前联网验收入口；请使用 `python3 tools/dev.py verify --network-render` 或 `tools/run_local_multiplayer.sh`。单机/工作台配方仍可使用。
+
 # 专项复现场景
 
 返回 [工具索引](../README.md)。临时看新模型或试听任意声音，优先使用通用展台；这些脚本保留特定实战问题的复现条件。

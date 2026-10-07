@@ -92,8 +92,10 @@ func _advance(count: int) -> void:
 func _check_replica() -> void:
 	_spells.clear()
 	var mode: String = _main.mode
+	var mode_team: int = _main.local_team
 	var session: MatchSession = _main._session
 	_main.mode = "client"
+	_main.local_team = 1
 	_main._session = MatchSession.new()
 	_main._session.opponent_id = 1
 	_main._session.session_id = "corrosion-test"
@@ -111,6 +113,7 @@ func _check_replica() -> void:
 	_expect(_spells.corrosion_effects.size() == 1, "终局不恢复腐蚀表现")
 	_main.game_over = false
 	_main.mode = mode
+	_main.local_team = mode_team
 	_main._session = session
 
 func _check_structures() -> void:

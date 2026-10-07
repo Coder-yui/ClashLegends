@@ -156,12 +156,13 @@ func _check_tower_ingress_guards() -> void:
 
 func _check_command_tick_estimation() -> void:
 	var old_mode: String = _main.mode
+	var old_mode_team: int = _main.local_team
 	var old_authoritative_tick: int = _main._authoritative_server_tick
 	var old_estimated_tick: int = _main._estimated_server_tick
 	var old_estimated_fraction: float = _main._estimated_server_tick_fraction
 	var old_has_estimate: bool = _main._has_estimated_server_tick
 	var old_sim_tick: int = _main._sim_tick_id
-	_main.mode = "host"
+	_main.mode = "server"
 	_main._sim_tick_id = 103
 	var case_one_target: int = _main._resolve_command_execute_tick(100)
 	_main._sim_tick_id = 108
@@ -173,6 +174,7 @@ func _check_command_tick_estimation() -> void:
 	var obviously_future_target: int = _main._resolve_command_execute_tick(103 + _main.COMMAND_CLOCK_FUTURE_TOLERANCE + 1)
 	var host_local_target: int = _main._resolve_command_execute_tick()
 	_main.mode = "client"
+	_main.local_team = 1
 	_main._authoritative_server_tick = 100
 	_main._estimated_server_tick = 100
 	_main._estimated_server_tick_fraction = 0.0
@@ -204,11 +206,12 @@ func _check_command_tick_estimation() -> void:
 	snapshot_system.apply(var_to_bytes(stale_packet).compress(FileAccess.COMPRESSION_DEFLATE))
 	var stale_snapshot_rejected: bool = _main._authoritative_server_tick == 102
 	var current_client_tick: int = _main.get_estimated_server_tick()
-	_main.mode = "host"
+	_main.mode = "server"
 	_main._sim_tick_id = current_client_tick
 	var host_target_from_client_input: int = _main._resolve_command_execute_tick(current_client_tick)
 	var host_client_share_timeline: bool = host_target_from_client_input == client_target_after_gap
 	_main.mode = old_mode
+	_main.local_team = old_mode_team
 	_main._authoritative_server_tick = old_authoritative_tick
 	_main._estimated_server_tick = old_estimated_tick
 	_main._estimated_server_tick_fraction = old_estimated_fraction

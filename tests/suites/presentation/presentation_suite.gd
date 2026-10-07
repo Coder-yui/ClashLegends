@@ -36,9 +36,11 @@ func _check_heal_range_team() -> void:
 			var effect: Dictionary = spells.heal_effects.back()
 			_expect(int(effect.team) == team and bool(effect.enhanced) == (choice >= 0) and bool(effect.global_heal) == (choice == 0), "治疗普通/强化/过量范围表现保留施法阵营：%d/%d" % [team, choice])
 	var old_mode: String = _main.mode
+	var old_mode_team: int = _main.local_team
 	var old_session: MatchSession = _main._session
 	var old_game_over: bool = _main.game_over
 	_main.mode = "client"
+	_main.local_team = 1
 	_main.game_over = false
 	_main._session = MatchSession.new()
 	_main._session.join("heal-team-review")
@@ -59,6 +61,7 @@ func _check_heal_range_team() -> void:
 	patient.free()
 	spells.heal_effects.resize(old_size)
 	_main.mode = old_mode
+	_main.local_team = old_mode_team
 	_main._session = old_session
 	_main.game_over = old_game_over
 
@@ -597,9 +600,12 @@ func _check_health_bar_team_anchor() -> void:
 	var screen_head := canvas * camera.unproject_position(ground + Vector3.UP)
 	_expect(screen_head.y < screen_feet.y, "3D 相机配合翻转画布后模型头部仍高于脚底")
 	var previous_mode: String = _main.mode
+	var previous_mode_team: int = _main.local_team
 	_main.mode = "client"
+	_main.local_team = 1
 	_expect(red.get_health_bar_fill_color() == Color(0.2, 0.9, 0.2) and blue.get_health_bar_fill_color() == Color(0.95, 0.25, 0.25), "客户端己方绿血条、敌方红血条")
 	_main.mode = previous_mode
+	_main.local_team = previous_mode_team
 	client_view.free()
 	if blue_view != null:
 		blue_view._update_health_bar_anchor()

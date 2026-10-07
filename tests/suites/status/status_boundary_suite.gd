@@ -147,7 +147,9 @@ func _check_facing_and_replica() -> void:
 	if "--verbose-checks" in OS.get_cmdline_user_args(): print("FACING_TRACE ", [before, unit.get_visual_facing_direction(), yaw, view.rotation.y, unit.position])
 	_expect(before.dot(Vector2.RIGHT) > 0.99 and unit.get_visual_facing_direction() == before and view.rotation.y == yaw and unit.position.x > 360, "冰冻取消攻击后保持身体和已显示根朝向，击退只平移")
 	var old_mode: String = _main.mode
+	var old_mode_team: int = _main.local_team
 	_main.mode = "client"
+	_main.local_team = 1
 	unit.net_facing_direction = before
 	unit.net_action_permissions = ControlState.EXTERNAL_MOTION
 	unit.active_skill_cast_timer = 0.0
@@ -158,6 +160,7 @@ func _check_facing_and_replica() -> void:
 	unit.form_transition_timer = 100.0
 	_expect((unit.action_permissions() & ControlState.START_SKILL) != 0, "客户端解除权限后忽略残留本地施法/变形计时")
 	_main.mode = old_mode
+	_main.local_team = old_mode_team
 	unit.free()
 	target.free()
 

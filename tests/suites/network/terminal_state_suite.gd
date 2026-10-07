@@ -13,6 +13,7 @@ func run(harness: Object) -> void:
 	client._ai.enabled = false
 	host._snapshot_system.reset_session("terminal")
 	client.mode = "client"
+	client.local_team = 1
 	client._snapshot_system.reset_session("terminal")
 	host._sim_tick_id = 100
 	var before: PackedByteArray = host._snapshot_system.capture()

@@ -32,7 +32,7 @@
 - `demos/`：具体问题的复现场景，见 [索引](demos/README.md)；不是通用展台，也不是第二套自动测试。
 - `arena/`：候选地图的源素材准备、Blender 构建和共用材质处理。
 - `maintenance/`：仓库审计；`tests/`：通用工具的自动检查。
-- `run_local_multiplayer.sh`：本机 host/join 双终端启动。
+- `run_local_multiplayer.sh`：本机独立服务器与两个客户端窗口启动，退出自动清理本组进程。
 
 游戏运行代码在 [scripts](../scripts/README.md)，不要把离线提取、摄影或批量加工塞进运行时。新工具先复用上述入口；只有不同职责才新增脚本。
 

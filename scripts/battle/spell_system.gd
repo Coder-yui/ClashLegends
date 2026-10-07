@@ -136,11 +136,13 @@ func apply_heal(position: Vector2, radius: float, team: int, stats: Dictionary, 
 
 ## 主机结算和客户端 RPC 共用表现创建入口，副本不创建权威区域。
 func show_freeze(position: Vector2, radius: float, duration: float, slow_duration: float = 0.0, team: int = 0) -> void:
+	if not _controller.has_presentation(): return
 	freeze_effects.append({"pos": position, "timer": duration, "duration": duration, "radius": radius, "team": team})
 	if slow_duration > 0.0:
 		slow_effects.append({"pos": position, "radius": radius, "delay": duration, "timer": slow_duration, "duration": slow_duration, "team": team})
 
 func show_heal(position: Vector2, radius: float, duration: float, team: int, enhanced: bool = false, global_heal: bool = false) -> void:
+	if not _controller.has_presentation(): return
 	heal_effects.append({"pos": position, "radius": radius, "timer": duration, "duration": duration, "team": team, "enhanced": enhanced, "global_heal": global_heal})
 
 func tick(dt: float) -> void:
@@ -183,7 +185,7 @@ func tick_visuals(delta: float) -> void:
 		if bool(effect.impacted):
 			effect.timer = maxf(0.0, float(effect.timer) - delta)
 		else:
-			var tick: int = _controller.get_estimated_server_tick() if _controller.is_net_client() else _controller.get_authoritative_server_tick()
+			var tick: int = int(_controller.get_presentation_tick())
 			var fraction: float = 0.0 if _controller.is_net_client() else _controller.get_sim_interpolation_alpha()
 			effect.progress = clampf((float(tick - int(effect.start_tick)) + fraction) / maxi(1, int(effect.impact_tick) - int(effect.start_tick)), 0.0, 1.0)
 	stasis_effects.assign(stasis_effects.filter(func(effect): return not bool(effect.impacted) or float(effect.timer) > 0.0))
@@ -288,10 +290,12 @@ func _strike_lightning(cast_data: Dictionary) -> void:
 
 
 func show_lightning(kind: String, position: Vector2, radius: float) -> void:
+	if not _controller.has_presentation(): return
 	lightning_effects.append({"kind": kind, "pos": position, "radius": radius, "duration": 0.6, "timer": 0.6})
 
 
 func show_lightning_area(kind: String, position: Vector2, radius: float, duration: float, team: int) -> void:
+	if not _controller.has_presentation(): return
 	lightning_areas.append({"kind": kind, "pos": position, "radius": radius, "duration": duration, "timer": duration, "team": team})
 
 
@@ -331,12 +335,14 @@ func _apply_stasis(team: int, stats: Dictionary, position: Vector2, enhanced: bo
 		target.apply_stasis(float(skill.get("duration", stats.duration)) if target.team == team else float(stats.duration), source, interaction)
 
 func show_flight(id: int, kind: String, origin: Vector2, position: Vector2, radius: float, start_tick: int, impact_tick: int) -> void:
+	if not _controller.has_presentation(): return
 	# 首个皮肤为凝滞；其他法术复用调度并沿用自身抵达表现。
 	if kind != "stasis": return
 	stasis_effects.append({"id": id, "origin": origin, "pos": position, "radius": radius,
 		"start_tick": start_tick, "impact_tick": impact_tick, "progress": 0.0, "impacted": false, "timer": 0.8})
 
 func show_arrival(id: int) -> void:
+	if not _controller.has_presentation(): return
 	for effect in stasis_effects:
 		if int(effect.id) == id:
 			effect.impacted = true
@@ -365,6 +371,7 @@ func _start_corrosion(team: int, stats: Dictionary, position: Vector2, enhanced:
 	_controller.present_corrosion_spell(position, float(stats.radius), float(stats.duration), team)
 
 func show_corrosion(position: Vector2, radius: float, duration: float, team: int) -> void:
+	if not _controller.has_presentation(): return
 	corrosion_effects.append({"pos": position, "radius": radius, "duration": duration, "timer": duration, "team": team})
 
 func _corrosion_targets(zone: Dictionary, interaction: Dictionary) -> Array[Node2D]:

@@ -7,6 +7,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
 	var saved_mode: String = main.mode
+	var saved_mode_team: int = main.local_team
 	var saved_system: NetworkSnapshotSystem = main._snapshot_system
 	var saved_audio: GameAudioManager = main._audio_manager
 	var saved_view = main._battle_presentation
@@ -19,6 +20,7 @@ func run(harness: Object, main: Node2D) -> void:
 	var saved_time: float = main._match_rules.time_left
 	var saved_overtime: bool = main._match_rules.overtime
 	main.mode = "client"
+	main.local_team = 1
 	main._audio_manager = null
 	main._battle_presentation = null
 	_system = SNAP.new(main, main._projectile_system)
@@ -78,6 +80,11 @@ func run(harness: Object, main: Node2D) -> void:
 	_expect(is_instance_valid(reconstructed) and reconstructed.card_id == "ashe" and is_equal_approx(reconstructed._deploy_timer, 0.35), "未知实体由快照重建完整卡牌和剩余部署状态")
 	_spawn(payload)
 	_expect(main._client_units.get(70001) == reconstructed, "快照先于 Spawn：迟到生成事件幂等")
+	var delayed_descriptor: Dictionary = payload[SNAP.U_SPAWN].duplicate(true)
+	delayed_descriptor.args[7] = 93
+	main._commands.enqueue_deployment(1, "ashe", Vector2.ZERO, 2.0, -1, 93)
+	_system.receive_spawn("two", delayed_descriptor)
+	_expect(main._commands.inspect_deployments().is_empty() and main._client_units.get(70001) == reconstructed, "迟到出生事实清理旧部署提示，即使实体已由快照建立")
 	_deliver(104, [payload]) # 丢失 103 不影响收敛。
 	_expect(_system.lifecycle.snapshot_tick == 104 and main._client_units.size() == 1, "丢一份快照后实体集合仍收敛")
 	main._rpc_unit_died(70001, true, "two", 106)
@@ -246,6 +253,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_system.reset_session("")
 	main._snapshot_system = saved_system
 	main.mode = saved_mode
+	main.local_team = saved_mode_team
 	main._audio_manager = saved_audio
 	main._battle_presentation = saved_view
 	main._authoritative_server_tick = saved_tick
@@ -317,7 +325,8 @@ func _check_permission_projection() -> void:
 	_main._rpc_active_skill_used(_main._session.session_id, 73500, 1, 0.0)
 	_expect(not _main._active_skill_bar.is_pending(73500) and _main._can_submit_active_skill(73500, 1), "客户端成功回执解除pending，不遗留永久禁用")
 	_main._active_skill_bar.set_pending(73500, true)
-	_main._rpc_active_skill_rejected(_main._session.session_id, 73500)
+	_main._client_inputs.skill(73500, 4)
+	_main._rpc_active_skill_rejected(_main._session.session_id, 73500, 4)
 	_expect(not _main._active_skill_bar.is_pending(73500) and _main._can_submit_active_skill(73500, 1), "客户端拒绝回执恢复提交资格")
 	_main._session = saved_session
 	var invalid := projected.duplicate(true)

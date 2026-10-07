@@ -537,6 +537,7 @@ func _check_authoritative_hand_cycle() -> void:
 
 func _check_network_hand_confirmation() -> void:
 	var old_mode: String = _main.mode
+	var old_mode_team: int = _main.local_team
 	var old_deck: Array = _main._deck.duplicate()
 	var old_remote_deck: Array = _main._remote_deck.duplicate()
 	var old_cycles: Dictionary = _main._authoritative_card_cycles.duplicate(true)
@@ -548,7 +549,7 @@ func _check_network_hand_confirmation() -> void:
 	_main.add_child(network_elixir)
 	_main._elixir_p1 = network_elixir
 	_main._remote_deck = deck.duplicate()
-	_main.mode = "host"
+	_main.mode = "server"
 	_main._sim_tick_id = 103
 	preload("res://tests/fixtures/network_fixture.gd").fixed_cycle(_main, 1, deck)
 	network_elixir.elixir = ElixirManager.MAX_ELIXIR
@@ -591,6 +592,7 @@ func _check_network_hand_confirmation() -> void:
 	)
 
 	_main.mode = "client"
+	_main.local_team = 1
 	_main._deck = deck.duplicate()
 	preload("res://tests/fixtures/network_fixture.gd").fixed_cycle(_main, 1, deck)
 	_main._elixir.elixir = ElixirManager.MAX_ELIXIR
@@ -601,27 +603,29 @@ func _check_network_hand_confirmation() -> void:
 	var client_elixir_before_request: float = _main._elixir.elixir
 	# 单元回归不建立第二个 ENet peer；这里模拟客户端请求已发出后的 pending UI 状态。
 	_main._hand.set_card_pending("garen", true)
+	_main._client_inputs.card("garen", 1, Vector2(300, 900))
 	var client_pending_request: bool = (
 		_main._hand.is_card_pending("garen")
 		and _main.get_authoritative_hand(1) == client_initial_hand
 		and _main.get_authoritative_queue(1) == client_initial_queue
 		and is_equal_approx(_main._elixir.elixir, client_elixir_before_request)
 	)
-	preload("res://tests/fixtures/network_fixture.gd").deliver(_main, "_rpc_deploy_accepted", ["garen", _main.get_estimated_server_tick() + _main.COMMAND_DELAY_TICKS, host_accepted_hand, host_accepted_queue])
+	preload("res://tests/fixtures/network_fixture.gd").deliver(_main, "_rpc_deploy_accepted", ["garen", _main.get_estimated_server_tick() + _main.COMMAND_DELAY_TICKS, {"version": 1, "ack": 1, "hand": host_accepted_hand, "next": host_accepted_queue[0], "history": {}}])
 	var client_after_accept_hand: Array = _main.get_authoritative_hand(1)
 	var client_after_accept_queue: Array = _main.get_authoritative_queue(1)
 	var client_accept_synced: bool = (
 		client_initial_hand == host_initial_hand
-		and client_initial_queue == host_initial_queue
+		and client_initial_queue.is_empty()
 		and client_after_accept_hand == host_accepted_hand
-		and client_after_accept_queue == host_accepted_queue
+		and client_after_accept_queue.is_empty() and _main.get_next_card(1) == host_accepted_queue[0]
 		and not _main._hand.is_card_pending("garen")
 	)
 	var client_hand_before_reject: Array = client_after_accept_hand.duplicate()
 	var client_queue_before_reject: Array = client_after_accept_queue.duplicate()
 	var client_elixir_before_reject: float = _main._elixir.elixir
 	_main._hand.set_card_pending("xin", true)
-	preload("res://tests/fixtures/network_fixture.gd").deliver(_main, "_rpc_deploy_rejected", ["xin"])
+	_main._client_inputs.card("xin", 2, Vector2(300, 900))
+	preload("res://tests/fixtures/network_fixture.gd").deliver(_main, "_rpc_deploy_rejected", ["xin", 2])
 	var client_reject_kept_state: bool = (
 		_main.get_authoritative_hand(1) == client_hand_before_reject
 		and _main.get_authoritative_queue(1) == client_queue_before_reject
@@ -632,6 +636,7 @@ func _check_network_hand_confirmation() -> void:
 
 	_main._commands.clear_cards()
 	_main.mode = old_mode
+	_main.local_team = old_mode_team
 	_main._deck = old_deck
 	_main._remote_deck = old_remote_deck
 	_main._authoritative_card_cycles = old_cycles

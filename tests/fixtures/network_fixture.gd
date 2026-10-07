@@ -11,5 +11,10 @@ static func deliver(main: Node, method: StringName, args: Array) -> void:
 
 ## 与出牌排序无关的机制测试显式安装固定牌序；随机开局另由镜像套件覆盖。
 static func fixed_cycle(main: Node, team: int, deck: Array) -> void:
+	if main.is_net_client():
+		main._client_hand.clear()
+		main._authoritative_card_cycles.clear()
+		main._apply_client_hand_state(CardCycle.new(deck, false).visible_state(0, {}))
+		return
 	main._authoritative_card_cycles[team] = CardCycle.new(deck, false)
 	main._sync_card_cycle_ui(team)

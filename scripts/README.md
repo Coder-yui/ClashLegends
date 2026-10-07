@@ -20,3 +20,8 @@
 业务所有者：`battle/command_schedule.gd` 管理排程，`active_skill_roster.gd` 管理技能资格，`card_cycle.gd` 管理牌序，`deployment_rules.gd` 管理部署判断，`knockback_state.gd` 管理击退轨迹；工作台会话在 `ui/workbench/session.gd`。Main 保留装配、场景与 UI/RPC。
 
 工作台组件按职责划分：`session` 持有会话，`card_catalog` 展开正式目录，`card_library` 搜索与快捷栏，`card_info` 只读详情，`animation_picker` 动作列表，`desktop_layout` 窗口与观察变换。主 UI 负责装配，不将状态回写卡牌定义。
+
+独立服务器通过 `--mode=server` 启动，不占玩家席位。`battle/battle_simulation.gd` 是服务器、单机、工作台共用的固定阶段编排；`battle/match_session.gd` 管理两席玩家身份与连接映射。客户端只驱动输入和表现；精确协议见[联网契约](../docs/reference/NETWORK_PROTOCOL.md)。
+
+
+联机时间与操作：`battle/network_clock.gd`校准服务器时钟，`battle/network_command_state.gd`保存出牌/技能的公开准备与完成身份，`battle/network_playback.gd`按同一Tick时间轴应用快照/表现事件。只有CommandSchedule/BattleSimulation执行真实命令，客户端时间轴不能驱动战斗规则。

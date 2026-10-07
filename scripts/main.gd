@@ -6,7 +6,7 @@ const ACTIVE_SKILL_BAR_SCRIPT := preload("res://scripts/ui/active_skill_bar.gd")
 const SPELL_SYSTEM_SCRIPT := preload("res://scripts/battle/spell_system.gd")
 const ACTIVE_SKILL_EFFECT_SYSTEM_SCRIPT := preload("res://scripts/battle/active_skill_effect_system.gd")
 const AUDIO_MANAGER_SCRIPT := preload("res://scripts/audio/game_audio_manager.gd")
-const ARENA_BACKGROUND_TEXTURE := preload("res://assets/arena/arena_rift_v4.png")
+const ARENA_BACKGROUND_PATH := "res://assets/arena/arena_rift_v4.png"
 
 # 比赛计时：3 分 05 秒正赛，平局进 2 分钟加时（先破塔者胜），再平则平局
 const MATCH_TIME := MatchRules.REGULATION_TIME
@@ -16,7 +16,7 @@ const DOUBLE_ELIXIR_TIME := 60.0
 const OVERTIME_TRIPLE_ELIXIR_TIME := 60.0
 const DOUBLE_ELIXIR_START_TIME := MATCH_TIME - DOUBLE_ELIXIR_TIME
 ## 所有玩家命令使用 20Hz 权威 Tick 排程，0.5 秒对应 10 个模拟 Tick。
-const COMMAND_DELAY_TICKS := 10
+const COMMAND_DELAY_TICKS := CommandSchedule.BUFFER_TICKS
 ## 网络请求的 input_tick 最多允许落后两个 Buffer；更早的输入直接视为异常。
 const COMMAND_MAX_LATENCY_TICKS := COMMAND_DELAY_TICKS * 2
 ## 允许少量客户端时钟领先 Host；这只是校验窗口，不是客户端执行权。
@@ -30,13 +30,23 @@ var _network_port := NET_PORT
 var _network_peer: ENetMultiplayerPeer
 var _session := MatchSession.new()
 var _network_request_id := 0
+var _client_hand := ClientHandState.new()
+var _client_inputs := ClientInputState.new()
+var _network_clock := NetworkClock.new()
+var _network_playback := NetworkPlayback.new()
+var _network_commands := NetworkCommandState.new()
+var _clock_probe_timer := 0.0
+var _clock_probe_last_by_peer: Dictionary = {}
+signal network_command_announced(command: Dictionary)
+signal network_command_finished(command: Dictionary, outcome: String)
+
 var _network_loading_started := 0
 
 var _presentation_event_id := 0
 var _last_card_event_id := -1
 var _commands := CommandSchedule.new()
 var _deployment_rules := DeploymentRules.new()
-var _effects_view: BattleEffects2D
+var _effects_view: Node2D
 var _resources := MatchResources.new()
 var _combat: CombatResolver
 var _movement: MovementSystem
@@ -44,7 +54,13 @@ var game_over := false
 var _terminal_result: Dictionary = {}
 var nav: NavGrid
 var battle_context: BattleContext
-var mode := "local"  # local=单机 / host=主机 / client=客户端
+var mode := "local"  # local=单机 / server=独立服务器 / client=客户端
+var local_team := 0
+var _server_decks: Dictionary = {}
+var _server_skill_choices: Dictionary = {}
+var _server_reset_pending := false
+var server_auto_restart := true
+var _battle_simulation := BattleSimulation.new()
 var _match_started := false  # 比赛是否已开始（联机时主机需等对手加入）
 ## 强化冰冻结束后的权威减速区域与客户端纯视觉区域分开保存。
 ## 治疗术淡黄光效区域；治疗本身立即结算，这里只保存表现。
@@ -98,7 +114,7 @@ var _timer_label: Label
 var _king_player: Tower
 var _king_enemy: Tower
 var _towers: Array[Tower] = []
-var _battle_presentation: BattlePresentation3D
+var _battle_presentation: Node
 var _audio_manager: GameAudioManager
 var _workbench := WorkbenchSession.new()
 var _art_dev_panel: DevelopmentWorkbench
@@ -140,9 +156,17 @@ var _has_estimated_server_tick := false
 var _sim_tick_id := 0
 
 func _ready() -> void:
-	_setup_arena_background()
+	var cli := _parse_cli()
+	if get_tree().has_meta("return_to_main_menu"):
+		get_tree().remove_meta("return_to_main_menu")
+		cli["mode"] = ""
+	if cli.get("mode", "") == "server":
+		mode = "server"
+		local_team = -1
+	if has_presentation(): _setup_arena_background()
 	_simulation_clock.max_ticks_per_advance = 4
 	_simulation_clock.max_work_usec = 8000
+	_battle_simulation.setup(self)
 	_simulation_clock.step = _sim_step
 	_simulation_clock.running = func(): return not game_over
 	_combat = CombatResolver.new()
@@ -170,10 +194,11 @@ func _ready() -> void:
 	_skill_lifecycle = ActiveSkillLifecycle.new(_active_skill_effect_system, _skill_presentation, _commands, _combat)
 	_commands.impact = _active_skill_effect_system.apply
 	_commands.cast_end = _active_skill_effect_system.apply_cast_end
-	_effects_view = BattleEffects2D.new()
-	_effects_view.spells = _spell_system
-	_effects_view.skills = _skill_presentation
-	add_child(_effects_view)
+	if has_presentation():
+		_effects_view = load("res://scripts/presentation/battle_effects_2d.gd").new()
+		_effects_view.spells = _spell_system
+		_effects_view.skills = _skill_presentation
+		add_child(_effects_view)
 	child_entered_tree.connect(_provide_battle_context)
 	_projectile_system = ProjectileSystem.new()
 	_projectile_system.setup(battle_context)
@@ -183,22 +208,23 @@ func _ready() -> void:
 	_projectile_system.launch_audio_stopped.connect(_on_projectile_launch_audio_stopped)
 	add_child(_projectile_system)
 	_snapshot_system = NetworkSnapshotSystem.new(self, _projectile_system)
-	_audio_manager = AUDIO_MANAGER_SCRIPT.new()
-	add_child(_audio_manager)
-	_projectile_system.launch_audio_cleared.connect(_audio_manager.clear_projectile_launch_audio)
+	if has_presentation():
+		_audio_manager = AUDIO_MANAGER_SCRIPT.new()
+		add_child(_audio_manager)
+		_projectile_system.launch_audio_cleared.connect(_audio_manager.clear_projectile_launch_audio)
 	randomize()
 	var card_errors := CardDB.validate_all(false)
 	if not card_errors.is_empty():
 		for error in card_errors:
 			push_error("[CardDB] " + error)
 		return
-	var cli := _parse_cli()
 	_network_port = int(cli.get("port", NET_PORT))
 	_auto_test = cli.get("auto_test", false)
 	match cli.get("mode", ""):
-		"host":
-			_start_host()
+		"server":
+			_start_server()
 		"join":
+			_show_menu()
 			_start_client(cli.get("ip", "127.0.0.1"))
 		"local":
 			_start_local()
@@ -270,17 +296,14 @@ func _show_menu() -> void:
 	var btn_art_dev := _make_menu_button("卡牌开发工作台")
 	btn_art_dev.pressed.connect(_start_art_dev)
 	vbox.add_child(btn_art_dev)
-	var btn_host := _make_menu_button("创建房间（我做主机）")
-	btn_host.pressed.connect(func(): _pick_deck_ui(_start_host))
-	vbox.add_child(btn_host)
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 8)
 	_ip_input = LineEdit.new()
 	_ip_input.text = "127.0.0.1"
 	_ip_input.custom_minimum_size = Vector2(220, 0)
-	_ip_input.placeholder_text = "对方 IP 地址"
+	_ip_input.placeholder_text = "服务器 IP 地址"
 	row.add_child(_ip_input)
-	var btn_join := _make_menu_button("加入房间")
+	var btn_join := _make_menu_button("连接服务器")
 	btn_join.pressed.connect(func(): _pick_deck_ui(func(): _start_client(_ip_input.text.strip_edges())))
 	row.add_child(btn_join)
 	vbox.add_child(row)
@@ -295,6 +318,7 @@ func _make_menu_button(text: String) -> Button:
 	return b
 
 func _pick_deck_ui(after_start: Callable) -> void:
+	if _network_peer != null: return
 	if _deck_builder != null and is_instance_valid(_deck_builder):
 		_deck_builder.queue_free()
 	_deck_builder = DeckBuilder.new()
@@ -334,7 +358,7 @@ func _load_battle(start_battle: Callable, network: bool = false) -> void:
 	loading.process_mode = Node.PROCESS_MODE_ALWAYS
 	add_child(loading)
 	var background := TextureRect.new()
-	background.texture = preload("res://assets/arena/arena_rift_v4.png")
+	background.texture = load(ARENA_BACKGROUND_PATH)
 	background.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	background.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	background.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
@@ -378,11 +402,8 @@ func _load_battle(start_battle: Callable, network: bool = false) -> void:
 	stage_start = Time.get_ticks_usec()
 	if network and _session.phase == MatchSession.Phase.LOADING:
 		_session.local_ready = true
-		if mode == "host":
-			_try_start_network_match()
-		else:
-			_session.deck_confirmed = true
-			_rpc_loaded.rpc_id(1, _session.session_id)
+		_session.deck_confirmed = true
+		_rpc_loaded.rpc_id(1, _session.session_id)
 		label.text = "等待对方加载完成…"
 		while _session.phase == MatchSession.Phase.LOADING:
 			if Time.get_ticks_msec() - _network_loading_started > 30000:
@@ -426,7 +447,7 @@ func _prepare_match_assets() -> void:
 
 func _fail_preparation(errors: PackedStringArray) -> void:
 	for message in errors: push_error(message)
-	if mode in ["host", "client"]: _network_failed("本局资源准备失败")
+	if mode in ["server", "client"]: _network_failed("本局资源准备失败")
 	else: _end_game(-1, "resource_error")
 
 func _start_local() -> void:
@@ -441,6 +462,7 @@ func _start_local() -> void:
 			_remote_active_skill_choices[card_id] = randi() % skills.size()
 	_audio_manager.begin_battle()
 	mode = "local"
+	local_team = 0
 	_match_started = true
 	queue_redraw()
 	_hide_menu()
@@ -455,9 +477,11 @@ func _start_local() -> void:
 
 ## 美术开发模式复用正式模拟与表现，但不创建金币、手牌、AI 和比赛倒计时。
 func _start_art_dev() -> void:
+	if _network_peer != null: return
 	_audio_manager.begin_battle()
 	_resources.prepare(CardDB.all().keys())
 	mode = "local"
+	local_team = 0
 	_match_started = true
 	queue_redraw()
 	_workbench.enabled = true
@@ -488,140 +512,140 @@ func _start_art_dev() -> void:
 		get_tree().reload_current_scene()
 	)
 
-func _start_host() -> void:
-	if _network_peer != null or _match_started:
-		return
+func _start_server() -> void:
+	if _network_peer != null: return
+	mode = "server"
+	local_team = -1
 	_session = MatchSession.new()
-	if _deck.is_empty():
-		_deck = CardDB.selectable_ids().slice(0, 8)
-	mode = "host"
+	_session.open(Crypto.new().generate_random_bytes(16).hex_encode())
 	var peer := ENetMultiplayerPeer.new()
 	var err := peer.create_server(_network_port)
 	if err != OK:
-		if _menu_status != null:
-			_menu_status.text = "创建失败：端口 %d 被占用？" % _network_port
+		push_error("服务器启动失败：端口 %d，错误 %d" % [_network_port, err])
 		return
 	_network_peer = peer
+	multiplayer.server_relay = false
 	multiplayer.multiplayer_peer = peer
-	if _menu_status != null:
-		_menu_status.text = "房间已创建，等待对手加入…（把你的 IP 告诉对方）"
-	print("[联机] 主机：房间已创建，端口 %d" % _network_port)
-	if not multiplayer.peer_connected.is_connected(_on_peer_connected):
-		multiplayer.peer_connected.connect(_on_peer_connected)
-	if not multiplayer.peer_disconnected.is_connected(_on_peer_disconnected):
-		multiplayer.peer_disconnected.connect(_on_peer_disconnected)
+	multiplayer.peer_connected.connect(_on_peer_connected)
+	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
+	print("[联机] 服务器已启动，端口 %d，等待两个客户端" % _network_port)
 
 func _on_peer_connected(peer_id: int) -> void:
-	if mode != "host":
+	if mode != "server": return
+	if _session.team_for_peer(peer_id) >= 0: return
+	var team := _session.bind_player(peer_id)
+	if team < 0:
+		_network_peer.disconnect_peer(peer_id)
 		return
-	if not _session.bind_opponent(peer_id, Crypto.new().generate_random_bytes(16).hex_encode()):
-		# 重复回调无副作用；额外连接不触碰正在运行的对局。
-		if peer_id != _session.opponent_id and _network_peer != null:
-			_network_peer.disconnect_peer(peer_id)
-		return
+	print("[联机] 玩家 %d 已绑定" % team)
 	_network_loading_started = Time.get_ticks_msec()
 	_snapshot_system.reset_session(_session.session_id)
-	_rpc_offer.rpc_id(peer_id, _session.session_id, MatchSession.PROTOCOL_VERSION, MatchSession.content_fingerprint(), _deck, _active_skill_choices)
+	_rpc_offer.rpc_id(peer_id, _session.session_id, MatchSession.PROTOCOL_VERSION, MatchSession.content_fingerprint(), team)
 
 func _network_failed(message: String) -> void:
-	if _session.phase in [MatchSession.Phase.FINISHED, MatchSession.Phase.DISCONNECTED]:
-		return
+	if _session.phase in [MatchSession.Phase.FINISHED, MatchSession.Phase.DISCONNECTED]: return
+	print("[联机] " + message)
+	if mode == "server": _broadcast(_rpc_abort, [_session.session_id, message])
 	_session.finish(true)
 	if _battle_loading and is_instance_valid(_battle_presentation): _battle_presentation.model_pool.cancelled = true
-	print("[联机] " + message)
-	if _match_started or _session.local_ready:
+	if _match_started or _session.local_ready or not _towers.is_empty():
 		_end_game(-1, "disconnect")
+	elif _menu_status != null:
+		_menu_status.text = message + "；可重新连接服务器"
+	if _audio_manager != null: _audio_manager.end_battle()
+	if mode == "server":
+		_schedule_server_reset()
 	else:
-		if _menu_status != null:
-			_menu_status.text = message + "；可重新创建或加入房间"
-		_audio_manager.end_battle()
-	if _network_peer != null:
-		_network_peer.close()
-		if multiplayer.multiplayer_peer == _network_peer:
-			multiplayer.multiplayer_peer = null
-		_network_peer = null
+		_close_network()
+
+func _close_network() -> void:
+	if _network_peer == null: return
+	_network_peer.close()
+	if multiplayer.multiplayer_peer == _network_peer: multiplayer.multiplayer_peer = null
+	_network_peer = null
+
+func _schedule_server_reset() -> void:
+	if not server_auto_restart or _server_reset_pending: return
+	_server_reset_pending = true
+	# 留出可靠终局/中止消息发送窗口；新场景生成新 match_id 并清除全部状态。
+	await get_tree().create_timer(1.0, true).timeout
+	get_tree().reload_current_scene()
 
 func _on_peer_disconnected(peer_id: int) -> void:
-	if mode == "host" and peer_id == _session.opponent_id:
-		_network_failed("对手已断线，对局停止")
+	if mode != "server" or _session.team_for_peer(peer_id) < 0: return
+	if game_over or _session.phase == MatchSession.Phase.FINISHED:
+		if multiplayer.get_peers().is_empty(): _schedule_server_reset()
+	else:
+		_network_failed("玩家已断线，对局停止")
 
 @rpc("authority", "call_remote", "reliable")
-func _rpc_offer(epoch: String, protocol: int, fingerprint: String, deck: Array, choices: Dictionary) -> void:
-	if mode != "client" or _match_started or not _session.join(epoch):
-		return
-	if protocol != MatchSession.PROTOCOL_VERSION or fingerprint != MatchSession.content_fingerprint():
+func _rpc_abort(epoch: String, message: String) -> void:
+	if mode != "client" or epoch != _session.session_id: return
+	_network_failed(message)
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_offer(epoch: String, protocol: int, fingerprint: String, assigned_team: int) -> void:
+	if mode != "client" or _match_started or not _session.join(epoch): return
+	if protocol != MatchSession.PROTOCOL_VERSION or fingerprint != MatchSession.content_fingerprint() or assigned_team not in [0, 1]:
 		_network_failed("协议或卡牌规则版本不一致")
 		return
-	if not MatchSession.valid_deck(deck, choices):
-		_network_failed("主机卡组或技能选择无效")
-		return
-	_remote_deck = deck.duplicate()
-	_remote_active_skill_choices = choices.duplicate()
+	local_team = assigned_team
+	DisplayServer.window_set_title("Clash Legends — 玩家 %d" % (local_team + 1))
 	_network_loading_started = Time.get_ticks_msec()
 	_snapshot_system.reset_session(epoch)
 	_rpc_register_deck.rpc_id(1, _deck, _active_skill_choices, epoch, protocol, fingerprint)
+	if _menu_status != null: _menu_status.text = "已连接，等待另一名玩家…"
 
 func _start_client(ip: String) -> void:
-	if _network_peer != null or _match_started:
-		return
+	if _network_peer != null or _match_started: return
 	_session = MatchSession.new()
-	if _deck.is_empty():
-		_deck = CardDB.selectable_ids().slice(0, 8)
+	if _deck.is_empty(): _deck = CardDB.selectable_ids().slice(0, 8)
 	mode = "client"
+	local_team = -1
 	var peer := ENetMultiplayerPeer.new()
 	var err := peer.create_client(ip, _network_port)
 	if err != OK:
-		if _menu_status != null:
-			_menu_status.text = "连接失败：%s" % ip
+		if _menu_status != null: _menu_status.text = "连接失败：%s" % ip
 		return
 	_network_peer = peer
 	multiplayer.multiplayer_peer = peer
-	if _menu_status != null:
-		_menu_status.text = "正在连接 %s …" % ip
+	if _menu_status != null: _menu_status.text = "正在连接 %s:%d …" % [ip, _network_port]
 	print("[联机] 客户端：正在连接 %s:%d" % [ip, _network_port])
-	if not multiplayer.connection_failed.is_connected(_on_connection_failed):
-		multiplayer.connection_failed.connect(_on_connection_failed)
-	if not multiplayer.server_disconnected.is_connected(_on_server_disconnected):
-		multiplayer.server_disconnected.connect(_on_server_disconnected)
-	# 之后等主机的 _rpc_start
+	if not multiplayer.connection_failed.is_connected(_on_connection_failed): multiplayer.connection_failed.connect(_on_connection_failed)
+	if not multiplayer.server_disconnected.is_connected(_on_server_disconnected): multiplayer.server_disconnected.connect(_on_server_disconnected)
 
 func _on_connection_failed() -> void:
-	if mode == "client":
-		_network_failed("连接失败")
+	if mode == "client": _network_failed("连接失败")
 
 func _on_server_disconnected() -> void:
-	if mode == "client":
-		_network_failed("主机已断线，对局停止")
+	if mode == "client": _network_failed("服务器已断线，对局停止")
 
-## 主机端开局：双方金币独立，主机权威模拟
-func _begin_net_match_host() -> void:
-	_audio_manager.begin_battle()
-	# 加载阶段可以建立对象，但双方确认前不推进模拟。
-	_match_started = false
-	queue_redraw()
-	_hide_menu()
-	_setup_battle_presentation()
-	_setup_player_ui()
+func _begin_net_match_server() -> void:
+	# 服务器只建立规则实体与两队钱包，不创建玩家界面或准备美术/音频资源。
+	_elixir = ElixirManager.new()
 	_elixir_p1 = ElixirManager.new()
+	add_child(_elixir)
 	add_child(_elixir_p1)
+	for team in [0, 1]: _initialize_authoritative_card_cycle(team, _team_deck(team))
 	_create_towers()
 	_build_nav()
-	_create_timer_ui()
+	_session.local_ready = true
 
-## 客户端收到主机开局通知
 @rpc("authority", "call_remote", "reliable")
-func _rpc_start(session_id: String) -> void:
-	if mode != "client" or _match_started or _battle_loading or _session.local_ready or not _session.accepts(1, session_id, MatchSession.Phase.LOADING):
+func _rpc_start(epoch: String, remote_deck: Array, remote_choices: Dictionary) -> void:
+	if mode != "client" or _match_started or _battle_loading or _session.local_ready or not _session.accepts(1, epoch, MatchSession.Phase.LOADING): return
+	if not MatchSession.valid_deck(remote_deck, remote_choices):
+		_network_failed("服务器卡组信息无效")
 		return
-	_snapshot_system.reset_session(session_id)
+	_remote_deck = remote_deck.duplicate()
+	_remote_active_skill_choices = remote_choices.duplicate()
+	_network_loading_started = Time.get_ticks_msec()
 	await _load_battle(_begin_net_match_client, true)
 
 func _begin_net_match_client() -> void:
 	_audio_manager.begin_battle()
-	print("[联机] 客户端：收到开局通知")
-	queue_redraw()
 	_hide_menu()
-	_flip_camera()
+	if local_team == 1: _flip_camera()
 	_setup_battle_presentation()
 	_setup_player_ui()
 	_create_towers()
@@ -630,25 +654,181 @@ func _begin_net_match_client() -> void:
 
 @rpc("any_peer", "call_remote", "reliable")
 func _rpc_loaded(epoch: String) -> void:
-	if mode != "host" or not _session.mark_remote_ready(multiplayer.get_remote_sender_id(), epoch):
-		return
+	if mode != "server" or not _session.mark_remote_ready(multiplayer.get_remote_sender_id(), epoch): return
 	_try_start_network_match()
 
 func _try_start_network_match() -> void:
-	if _session.start():
-		_match_started = true
-		_rpc_running.rpc_id(_session.opponent_id, _session.session_id, get_authoritative_hand(1), get_authoritative_queue(1))
+	if not _session.start(): return
+	_match_started = true
+	for team in [0, 1]:
+		_rpc_running.rpc_id(_session.peer_for_team(team), _session.session_id, visible_hand_state(team))
+	print("[联机] 双客户端就绪，开始模拟")
 
 @rpc("authority", "call_remote", "reliable")
-func _rpc_running(epoch: String, hand: Array = [], queue: Array = []) -> void:
-	if mode != "client" or not _session.mark_remote_ready(1, epoch):
+func _rpc_running(epoch: String, state: Dictionary) -> void:
+	if mode != "client" or not _session.mark_remote_ready(1, epoch): return
+	if not _apply_client_hand_state(state):
+		_network_failed("初始手牌数据无效")
 		return
-	if _session.start():
-		_match_started = true
-		if hand.size() == 4 and queue.size() == 4:
-			(_authoritative_card_cycles[1] as CardCycle).replace_replica(hand, queue)
-			_sync_card_cycle_ui(1)
+	if _session.start(): _match_started = true
 
+func visible_hand_state(team: int) -> Dictionary:
+	if is_net_client() or not _ensure_authoritative_card_cycle(team): return {}
+	return (_authoritative_card_cycles[team] as CardCycle).visible_state(maxi(0, _session.request_sequence(team)), _card_history.get_last(team))
+
+func _apply_client_hand_state(state: Dictionary) -> bool:
+	if not _client_hand.apply(state, _deck): return false
+	if _hand != null: _hand.set_visible_state(_client_hand.hand, _client_hand.next_card)
+	_card_history.replace_replica(local_team, _client_hand.history)
+	_refresh_mirror_hand(local_team)
+	return true
+
+func get_next_card(team: int) -> String:
+	if is_net_client(): return _client_hand.next_card if team == local_team else ""
+	var queue := get_authoritative_queue(team)
+	return String(queue[0]) if not queue.is_empty() else ""
+
+func has_presentation() -> bool:
+	return mode != "server"
+
+const BUFFERED_BATTLE_EVENTS := {
+	&"_rpc_action_cancelled": true,
+	&"_rpc_active_skill_used": true,
+	&"_rpc_attack_audio_hit": true,
+	&"_rpc_card_event": true,
+	&"_rpc_card_pre_deploy_started": true,
+	&"_rpc_corrosion_fx": true,
+	&"_rpc_freeze_fx": true,
+	&"_rpc_heal_fx": true,
+	&"_rpc_lightning_area": true,
+	&"_rpc_lightning_fx": true,
+	&"_rpc_projectile_impact_fx": true,
+	&"_rpc_projectile_launch_audio": true,
+	&"_rpc_restoration_heal": true,
+	&"_rpc_skill_fx": true,
+	&"_rpc_spawn_unit": true,
+	&"_rpc_spell_arrival": true,
+	&"_rpc_spell_flight": true,
+	&"_rpc_tower_hit": true,
+	&"_rpc_unit_audio_event": true,
+	&"_rpc_unit_died": true,
+	&"_rpc_unit_forge_audio": true,
+	&"_rpc_unit_hit": true,
+	&"_rpc_zone_audio": true,
+	&"_rpc_command_finished": true,
+}
+
+## 公共战场事件仅发给绑定的两名玩家，未握手连接不能旁听。
+func _broadcast(endpoint: Callable, args: Array) -> void:
+	if _network_peer == null: return
+	for team in _session.players:
+		var peer := _session.peer_for_team(team)
+		if not multiplayer.get_peers().has(peer): continue
+		var method := endpoint.get_method()
+		if BUFFERED_BATTLE_EVENTS.has(method):
+			if method in [&"_rpc_unit_audio_event", &"_rpc_attack_audio_hit"]:
+				_rpc_battle_event_unreliable.rpc_id(peer, _session.session_id, _sim_tick_id, method, args)
+			else:
+				_rpc_battle_event.rpc_id(peer, _session.session_id, _sim_tick_id, method, args)
+		else:
+			callv("rpc_id", [peer, method] + args)
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_battle_event(epoch: String, tick: int, method: StringName, args: Array) -> void:
+	_receive_battle_event(epoch, tick, method, args)
+
+@rpc("authority", "call_remote", "unreliable", 1)
+func _rpc_battle_event_unreliable(epoch: String, tick: int, method: StringName, args: Array) -> void:
+	_receive_battle_event(epoch, tick, method, args)
+
+func _receive_battle_event(epoch: String, tick: int, method: StringName, args: Array) -> void:
+	if mode != "client" or game_over or not _session.accepts(1, epoch, MatchSession.Phase.RUNNING): return
+	if not BUFFERED_BATTLE_EVENTS.has(method) or tick < 0: return
+	_observe_network_arrival(tick)
+	if not _network_playback.enqueue(tick, method, args): _network_failed("网络表现队列已满，对局停止")
+
+func _observe_network_arrival(tick: int) -> void:
+	if _network_clock.synchronized:
+		_network_playback.observe_delay(maxf(0.0, _network_clock.estimate(Time.get_ticks_msec()) - float(tick)) * SIM_DT * 1000.0)
+
+func _advance_network_playback() -> void:
+	var server_time := float(get_estimated_server_tick()) + _estimated_server_tick_fraction / SIM_DT
+	for event in _network_playback.advance(server_time):
+		if game_over: break
+		# 更新的快照已包含次数/CD，迟到旧通知不能把它们回拨。
+		if event.method == &"_rpc_active_skill_used" and int(event.tick) < _snapshot_system.lifecycle.snapshot_tick: continue
+		callv(event.method, event.args)
+
+func get_presentation_tick() -> float:
+	if not is_net_client(): return float(_sim_tick_id)
+	return _network_playback.tick if _network_peer != null else float(get_estimated_server_tick())
+
+func _update_command_countdowns() -> void:
+	if _active_skill_bar == null: return
+	_network_commands.visit(func(command):
+		if command.kind == "skill" and int(command.team) == local_team:
+			_active_skill_bar.set_pending_seconds(int(command.ability_id), maxf(0.0, float(command.execute_tick) - get_presentation_tick()) * SIM_DT))
+
+## 独立时钟通道；客户端时钟只用于提交时间和播放时间，不驱动规则。
+@rpc("any_peer", "call_remote", "unreliable", 2)
+func _rpc_clock_probe(epoch: String, probe_id: int) -> void:
+	var sender := multiplayer.get_remote_sender_id()
+	if mode != "server" or not _session.accepts(sender, epoch, MatchSession.Phase.RUNNING) or probe_id <= 0: return
+	var now := Time.get_ticks_msec()
+	if now - int(_clock_probe_last_by_peer.get(sender, -1000)) < 200: return
+	_clock_probe_last_by_peer[sender] = now
+	# 固定时钟积压不能冒充已执行Tick；只携带不足一Tick的相位。
+	var tick_time := float(_sim_tick_id) + minf(_simulation_clock.remainder / SIM_DT, 0.999)
+	_rpc_clock_sample.rpc_id(sender, epoch, probe_id, tick_time)
+
+@rpc("authority", "call_remote", "unreliable", 2)
+func _rpc_clock_sample(epoch: String, probe_id: int, tick_time: float) -> void:
+	if mode != "client" or game_over or not _session.accepts(1, epoch, MatchSession.Phase.RUNNING): return
+	if not _network_clock.accept_probe(probe_id, tick_time, Time.get_ticks_msec()): return
+	_network_playback.observe_delay(_network_clock.rtt_msec * 0.5 + _network_clock.jitter_msec)
+	var corrected := _network_clock.estimate(Time.get_ticks_msec())
+	_estimated_server_tick = int(floor(corrected))
+	_estimated_server_tick_fraction = (corrected - floor(corrected)) * SIM_DT
+	_has_estimated_server_tick = true
+
+func _tick_network_clock(delta: float) -> void:
+	if _network_peer == null or not _match_started or _session.phase != MatchSession.Phase.RUNNING: return
+	_clock_probe_timer -= delta
+	if _clock_probe_timer > 0.0: return
+	_clock_probe_timer = 1.0 if _network_clock.synchronized else 0.25
+	var probe := _network_clock.begin_probe(Time.get_ticks_msec())
+	_rpc_clock_probe.rpc_id(1, _session.session_id, probe)
+
+func _announce_network_command(kind: String, team: int, card_id: String, ability_id: int, pos: Vector2, execute_tick: int) -> int:
+	var command := _network_commands.create(kind, team, card_id, ability_id, pos, execute_tick - COMMAND_DELAY_TICKS, execute_tick)
+	if mode == "server": _broadcast(_rpc_command_scheduled, [_session.session_id, command])
+	return int(command.id)
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_command_scheduled(epoch: String, command: Dictionary) -> void:
+	if mode != "client" or game_over or not _session.accepts(1, epoch, MatchSession.Phase.RUNNING): return
+	if not _network_commands.receive(command): return
+	# 只准备已知资源/记录时序，不创建实体，不提前暴露对方的操作提示。
+	_resources.prepare([command.card_id])
+	if command.kind == "skill" and int(command.team) == local_team and _active_skill_bar != null:
+		_active_skill_bar.set_pending(int(command.ability_id), true)
+	network_command_announced.emit(command.duplicate(true))
+
+func _complete_network_command(id: int, outcome: String) -> void:
+	var command := _network_commands.finish(id)
+	if command.is_empty(): return
+	if mode == "server": _broadcast(_rpc_command_finished, [_session.session_id, id, outcome])
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_command_finished(epoch: String, id: int, outcome: String) -> void:
+	if mode != "client" or game_over or not _session.accepts(1, epoch, MatchSession.Phase.RUNNING): return
+	if outcome not in ["executed", "cancelled"]: return
+	var command := _network_commands.finish(id)
+	if command.is_empty(): return
+	if command.kind == "skill" and int(command.team) == local_team and _active_skill_bar != null:
+		_active_skill_bar.set_pending(int(command.ability_id), _network_commands.has_skill(int(command.ability_id)))
+		if not _network_commands.has_skill(int(command.ability_id)): _client_inputs.forget_skill(int(command.ability_id))
+	network_command_finished.emit(command, outcome)
 
 ## 客户端是上方玩家：相机旋转 180°，让自己半场显示在屏幕下方
 func _flip_camera() -> void:
@@ -669,13 +849,12 @@ func _setup_player_ui() -> void:
 	_hand = CardHand.new()
 	add_child(_hand)
 	_hand.setup(_elixir, _deck)
-	_hand.growth_progress_query = func(id: String) -> Dictionary: return _card_growth.progress(1 if mode == "client" else 0, id)
-	_hand.visual_card_query = func(id: String) -> String: return _card_growth.resolved_id(1 if mode == "client" else 0, id)
-	_hand.cost_query = func(id: String) -> int: return card_cost_for_team(1 if mode == "client" else 0, id)
+	_hand.growth_progress_query = func(id: String) -> Dictionary: return _card_growth.progress(local_team, id)
+	_hand.visual_card_query = func(id: String) -> String: return _card_growth.resolved_id(local_team, id)
+	_hand.cost_query = func(id: String) -> int: return card_cost_for_team(local_team, id)
 	_hand.set_active_skill_cards(_deck.slice(0, 2))
 	_hand.card_selected.connect(_on_card_selected)
-	var local_team := 1 if mode == "client" else 0
-	_initialize_authoritative_card_cycle(local_team, _deck)
+	if not is_net_client(): _initialize_authoritative_card_cycle(local_team, _deck)
 	if mode == "local":
 		_initialize_authoritative_card_cycle(1, _remote_deck)
 	_active_skill_bar = ACTIVE_SKILL_BAR_SCRIPT.new()
@@ -686,18 +865,24 @@ func _setup_player_ui() -> void:
 	_elixir.changed.connect(_active_skill_bar.set_elixir)
 
 func _is_local_player_team(p_team: int) -> bool:
-	return p_team == (1 if mode == "client" else 0)
+	return mode != "server" and p_team == local_team
 
 func _team_deck(p_team: int) -> Array:
-	if (mode in ["local", "host"] and p_team == 1) or (mode == "client" and p_team == 0):
+	if mode == "server" and _server_decks.has(p_team): return _server_decks[p_team]
+	if p_team != local_team:
 		return _remote_deck
 	return _deck
 
 func _initialize_authoritative_card_cycle(p_team: int, deck: Array) -> bool:
+	if is_net_client(): return false
 	if deck.size() != 8:
 		_authoritative_card_cycles.erase(p_team)
 		return false
-	_authoritative_card_cycles[p_team] = CardCycle.new(deck)
+	var opening_seed := Crypto.new().generate_random_bytes(8).decode_s64(0) & 0x7fffffffffffffff
+	var cycle := CardCycle.new(deck, true, opening_seed)
+	_authoritative_card_cycles[p_team] = cycle
+	if mode == "server" and _network_peer != null:
+		print("[CARD_ORDER] " + JSON.stringify({"session_id": _session.session_id, "team": p_team, "seed": str(opening_seed), "deck": deck, "opening": cycle.hand() + cycle.queue()}))
 	_sync_card_cycle_ui(p_team)
 	return true
 
@@ -707,6 +892,7 @@ func _sync_card_cycle_ui(p_team: int) -> void:
 		_hand.set_cycle_state(cycle.hand(), cycle.queue())
 
 func _ensure_authoritative_card_cycle(p_team: int) -> bool:
+	if is_net_client(): return false
 	var deck := _team_deck(p_team)
 	if deck.size() != 8: return false
 	var cycle: CardCycle = _authoritative_card_cycles.get(p_team)
@@ -715,10 +901,12 @@ func _ensure_authoritative_card_cycle(p_team: int) -> bool:
 	return true
 
 func get_authoritative_hand(p_team: int) -> Array:
+	if is_net_client(): return _client_hand.hand.duplicate() if p_team == local_team else []
 	if not _ensure_authoritative_card_cycle(p_team): return []
 	return (_authoritative_card_cycles[p_team] as CardCycle).hand()
 
 func get_authoritative_queue(p_team: int) -> Array:
+	if is_net_client(): return []
 	if not _ensure_authoritative_card_cycle(p_team): return []
 	return (_authoritative_card_cycles[p_team] as CardCycle).queue()
 
@@ -751,13 +939,17 @@ func _accept_authoritative_server_tick(server_tick: int) -> bool:
 	_has_estimated_server_tick = true
 	return true
 
-func network_opponent_id() -> int:
-	return _session.opponent_id
-
 func network_session_id() -> String:
 	return _session.session_id
 
 func reset_network_clock() -> void:
+	_network_clock.reset()
+	_client_hand.clear()
+	_client_inputs.clear()
+	_network_playback.clear()
+	_network_commands.clear()
+	_clock_probe_timer = 0.0
+	_clock_probe_last_by_peer.clear()
 	_authoritative_server_tick = 0
 	_estimated_server_tick = 0
 	_estimated_server_tick_fraction = 0.0
@@ -799,7 +991,8 @@ func get_authoritative_server_tick() -> int:
 	return _authoritative_server_tick if mode == "client" else _sim_tick_id
 
 func _team_active_skill_choices(p_team: int) -> Dictionary:
-	if (mode in ["local", "host"] and p_team == 1) or (mode == "client" and p_team == 0):
+	if mode == "server" and _server_skill_choices.has(p_team): return _server_skill_choices[p_team]
+	if p_team != local_team:
 		return _remote_active_skill_choices
 	return _active_skill_choices
 
@@ -848,9 +1041,9 @@ func get_sim_interpolation_alpha() -> float:
 func _setup_battle_presentation() -> void:
 	if _battle_presentation != null:
 		return
-	_battle_presentation = BattlePresentation3D.new()
+	_battle_presentation = load("res://scripts/presentation/battle_presentation_3d.gd").new()
 	add_child(_battle_presentation)
-	_battle_presentation.setup(Vector2(ArenaRules.FIELD_W, ArenaRules.FIELD_H), ArenaRules.TILE_SIZE, mode == "client")
+	_battle_presentation.setup(Vector2(ArenaRules.FIELD_W, ArenaRules.FIELD_H), ArenaRules.TILE_SIZE, local_team == 1)
 	_battle_presentation.spells = _spell_system
 	_battle_presentation.pending_deployments = _commands.inspect_deployments
 	_arena_background_sprite.hide()
@@ -953,7 +1146,7 @@ func _update_deployment_preview(pointer_pos: Vector2) -> void:
 	if pointer_pos.x < 0.0 or pointer_pos.x >= ArenaRules.FIELD_W or pointer_pos.y < 0.0 or pointer_pos.y >= ArenaRules.FIELD_H:
 		queue_redraw()
 		return
-	var my_team := 1 if mode == "client" else 0
+	var my_team := local_team
 	var tile := _world_to_arena_tile(pointer_pos)
 	tile.x = clampi(tile.x, 0, ArenaRules.ARENA_COLUMNS - 1)
 	tile.y = clampi(tile.y, 0, ArenaRules.ARENA_ROWS - 1)
@@ -979,7 +1172,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		_update_deployment_preview(get_global_mouse_position())
 		if not _deployment_preview_visible:
 			return
-		var my_team := 1 if mode == "client" else 0
+		var my_team := local_team
 		var pos := _deployment_preview_pos
 		if not _deployment_preview_valid:
 			return
@@ -1212,6 +1405,9 @@ func clear_preview_battle() -> void:
 	_card_history.clear()
 	_card_growth.clear()
 	_commands.clear()
+	_network_commands.clear()
+	_client_inputs.clear()
+	_network_playback.clear()
 	for combatant in get_tree().get_nodes_in_group("combatants"):
 		combatant.bleeding.clear()
 		if not combatant is Unit:
@@ -1397,7 +1593,8 @@ func _deploy_card(p_team: int, card_id: String, pos: Vector2, input_tick: int = 
 	var resolved_execute_tick := _resolve_command_execute_tick(input_tick)
 	if resolved_execute_tick < 0:
 		return -1
-	_commands.enqueue_card(p_team, card_id, pos, resolved_execute_tick, deployment_card_id, mirror_copy)
+	var command_id := _announce_network_command("card", p_team, card_id, -1, pos, resolved_execute_tick)
+	_commands.enqueue_card(p_team, card_id, pos, resolved_execute_tick, deployment_card_id, mirror_copy, command_id)
 	return resolved_execute_tick
 
 ## 玩家、AI、联机 RPC 与 DevelopmentWorkbench 共用的出牌命令入口。
@@ -1437,13 +1634,17 @@ func play_card(p_team: int, card_id: String, pos: Vector2, options: Dictionary =
 	if bool(options.get("client_request", false)):
 		if mode != "client" or immediate or elixir == null or not elixir.can_afford(card_cost):
 			return false
+		if _hand != null and _hand.is_card_pending(card_id): return false
 		if CardPlayHistory.is_mirror(card_id) and _hand != null and _hand.has_pending_source_card():
 			return false
 		_network_request_id += 1
-		_rpc_deploy_request.rpc_id(1, card_id, pos, _input_tick_for_new_command(), _session.session_id, _network_request_id)
+		_client_inputs.card(card_id, _network_request_id, pos)
+		queue_redraw()
+		_send_card_request(card_id, pos, _input_tick_for_new_command(), _network_request_id)
 		if _hand != null:
 			_hand.set_card_pending(card_id, true)
 		return true
+	if is_net_client(): return false
 	if elixir != null and not elixir.spend(card_cost):
 		return false
 	if immediate:
@@ -1481,10 +1682,10 @@ func play_card(p_team: int, card_id: String, pos: Vector2, options: Dictionary =
 		_card_history.record(p_team, card_id, deployment_card_id, int(CardDB.get_card(deployment_card_id).get("cost", card_cost)))
 	_refresh_mirror_hand(p_team)
 	var requester_peer_id := int(options.get("requester_peer_id", 0))
-	if mode == "host" and requester_peer_id > 0:
+	if mode == "server" and requester_peer_id > 0:
 		_rpc_deploy_accepted.rpc_id(
 			requester_peer_id, _session.session_id, card_id, execute_tick,
-			get_authoritative_hand(p_team), get_authoritative_queue(p_team), _card_history.get_last(p_team)
+			visible_hand_state(p_team)
 		)
 	return true
 
@@ -1496,6 +1697,7 @@ func _tick_pending_card_deployments(_dt: float) -> void:
 			String(deployment.card_id),
 			deployment.pos as Vector2, String(deployment.get("deployment_card_id", "")), deployment.get("mirror_copy", {})
 		)
+		_complete_network_command(int(deployment.get("command_id", 0)), "executed")
 
 func _tick_pending_card_pre_deployments(dt: float) -> void:
 	_combat.begin_batch(_sim_tick_id, "pre_deployment")
@@ -1518,12 +1720,12 @@ func _execute_card_deployment(p_team: int, card_id: String, pos: Vector2, deploy
 	if pre_deploy_time > 0.0 and type != "spell":
 		var pre_deploy_id := _commands.allocate_deployment_id()
 		_commands.enqueue_deployment(p_team, card_id, pos, pre_deploy_time, active_slot, pre_deploy_id, pre_deploy_time, deployment_card_id, mirror_generation)
-		if mode == "host":
-			_rpc_card_pre_deploy_started.rpc_id(_session.opponent_id, _session.session_id, pre_deploy_id, card_id, p_team, pos, pre_deploy_time)
+		if mode == "server":
+			_broadcast(_rpc_card_pre_deploy_started, [_session.session_id, pre_deploy_id, card_id, p_team, pos, pre_deploy_time])
 		_presentation_event_id += 1
 		_play_card_event(_presentation_event_id, card_id, "pre_deploy:start", pos, 0, p_team)
-		if mode == "host":
-			_rpc_card_event.rpc_id(_session.opponent_id, _session.session_id, _presentation_event_id, card_id, "pre_deploy:start", pos, 0, p_team)
+		if mode == "server":
+			_broadcast(_rpc_card_event, [_session.session_id, _presentation_event_id, card_id, "pre_deploy:start", pos, 0, p_team])
 		return
 	match type:
 		"spell":
@@ -1543,9 +1745,9 @@ func launch_attack(attacker: Node2D, target: Node2D, amount: float, projectile_s
 
 ## 弹体命中表现与伤害结算分离；半径只用于绘制对应的权威溅射范围。
 func show_projectile_impact(position: Vector2, radius: float, color: Color, visual: StringName) -> void:
-	_projectile_system.add_impact_visual(position, radius, color, visual)
-	if mode == "host":
-		_rpc_projectile_impact_fx.rpc_id(_session.opponent_id, _session.session_id, position, radius, color, String(visual))
+	if has_presentation(): _projectile_system.add_impact_visual(position, radius, color, visual)
+	if mode == "server":
+		_broadcast(_rpc_projectile_impact_fx, [_session.session_id, position, radius, color, String(visual)])
 
 ## 持续伤害（龙王吐息、审判等）共用的战斗层入口。调用方决定脉冲频率和命中目标，
 ## 这里统一处理攻击来源、护盾、受击表现、击杀以及可选的普攻击中回调。
@@ -1566,21 +1768,21 @@ func _notify_attack_presentation(source: Dictionary, position: Vector2, first_st
 		return
 	if _audio_manager != null:
 		_audio_manager.play_attack_source(source, position, first_strike)
-	if mode == "host":
-		_rpc_attack_audio_hit.rpc_id(_session.opponent_id, _session.session_id, source, position, first_strike)
+	if mode == "server":
+		_broadcast(_rpc_attack_audio_hit, [_session.session_id, source, position, first_strike])
 
 ## 一次范围脉冲即使命中多个目标也只播放一次；空挥/免疫不产生命中声。
 func _on_projectile_launch_audio_started(id: int, source: Dictionary, position: Vector2) -> void:
 	if _audio_manager != null:
 		_audio_manager.start_projectile_launch(id, source, position)
-	if mode == "host":
-		_rpc_projectile_launch_audio.rpc_id(_session.opponent_id, _session.session_id, id, source, position, true)
+	if mode == "server":
+		_broadcast(_rpc_projectile_launch_audio, [_session.session_id, id, source, position, true])
 
 func _on_projectile_launch_audio_stopped(id: int) -> void:
 	if _audio_manager != null:
 		_audio_manager.stop_projectile_launch(id)
-	if mode == "host":
-		_rpc_projectile_launch_audio.rpc_id(_session.opponent_id, _session.session_id, id, {}, Vector2.ZERO, false)
+	if mode == "server":
+		_broadcast(_rpc_projectile_launch_audio, [_session.session_id, id, {}, Vector2.ZERO, false])
 
 @rpc("authority", "call_remote", "reliable")
 func _rpc_projectile_launch_audio(epoch: String, id: int, source: Dictionary, position: Vector2, started: bool) -> void:
@@ -1604,11 +1806,11 @@ func notify_unit_audio_event(unit: Unit, cue: StringName, position: Vector2) -> 
 		return
 	if _audio_manager != null:
 		_audio_manager.play_event(unit, cue, position)
-	if mode == "host" and unit.net_id >= 0:
+	if mode == "server" and unit.net_id >= 0:
 		if cue in [&"forge:pulse", &"forge:cancel"]:
-			_rpc_unit_forge_audio.rpc_id(_session.opponent_id, _session.session_id, unit.net_id, String(cue), position)
+			_broadcast(_rpc_unit_forge_audio, [_session.session_id, unit.net_id, String(cue), position])
 		else:
-			_rpc_unit_audio_event.rpc_id(_session.opponent_id, _session.session_id, unit.net_id, String(cue), position, unit.presentation_state().attack_serial, unit.get_visual_action_serial() if unit.active_skill_cast_timer > 0.0 else -1)
+			_broadcast(_rpc_unit_audio_event, [_session.session_id, unit.net_id, String(cue), position, unit.presentation_state().attack_serial, unit.get_visual_action_serial() if unit.active_skill_cast_timer > 0.0 else -1])
 
 @rpc("authority", "call_remote", "unreliable")
 func _rpc_unit_audio_event(epoch: String, net_id: int, cue: String, position: Vector2, attack_serial: int = -1, action_serial: int = -1) -> void:
@@ -1642,8 +1844,8 @@ func _cast_spell(p_team: int, card_id: String, pos: Vector2, active_enabled: boo
 	if cast and card_id != "stasis":
 		_presentation_event_id += 1
 		_play_card_event(_presentation_event_id, card_id, "spell:cast", pos, 0, p_team)
-		if mode == "host":
-			_rpc_card_event.rpc_id(_session.opponent_id, _session.session_id, _presentation_event_id, card_id, "spell:cast", pos, 0, p_team)
+		if mode == "server":
+			_broadcast(_rpc_card_event, [_session.session_id, _presentation_event_id, card_id, "spell:cast", pos, 0, p_team])
 	return cast
 
 func _apply_freeze(pos: Vector2, radius: float, duration: float, p_team: int, slow_duration: float = 0.0, slow_multiplier: float = 1.0) -> void:
@@ -1798,7 +2000,7 @@ func _spawn_unit(request: UnitSpawnRequest) -> Unit:
 	if nav != null and u.is_building:
 		_register_dynamic_building(u)
 	# 主机：分配网络 id 并广播给客户端
-	if mode == "host":
+	if mode == "server":
 		u.net_id = _next_net_id
 		_next_net_id += 1
 		_net_units[u.net_id] = u
@@ -1809,10 +2011,10 @@ func _spawn_unit(request: UnitSpawnRequest) -> Unit:
 		if u.net_id < 0:
 			_next_active_ability_id += 1
 		_register_active_skill(u, skill_card_id, team)
-	if mode == "host":
+	if mode == "server":
 		var spawn_args := [card_id, team, pos, u.net_id, request.deploy_time_override, u.active_ability_id, u.active_ability_slot, request.pre_deploy_id, request.deployment_group_id, request.visual_transition, request.death_replacement_charges_override, request.built_on_tower_ruin, u.active_skill_card_id]
 		_snapshot_system.register_spawn(spawn_args)
-		_rpc_spawn_unit.rpc_id(_session.opponent_id, card_id, team, pos, u.net_id, request.deploy_time_override, u.active_ability_id, u.active_ability_slot, request.pre_deploy_id, request.deployment_group_id, request.visual_transition, request.death_replacement_charges_override, request.built_on_tower_ruin, u.active_skill_card_id, _snapshot_system.lifecycle.session_id, _sim_tick_id, _snapshot_system.lifecycle.revision)
+		_broadcast(_rpc_spawn_unit, [card_id, team, pos, u.net_id, request.deploy_time_override, u.active_ability_id, u.active_ability_slot, request.pre_deploy_id, request.deployment_group_id, request.visual_transition, request.death_replacement_charges_override, request.built_on_tower_ruin, u.active_skill_card_id, _snapshot_system.lifecycle.session_id, _sim_tick_id, _snapshot_system.lifecycle.revision])
 	return u
 
 func _register_active_skill(unit: Unit, card_id: String, p_team: int) -> void:
@@ -1872,19 +2074,21 @@ func _on_active_skill_unit_died(ability_id: int) -> void:
 	if _active_skill_bar != null: _active_skill_bar.remove_skill(ability_id)
 
 func _on_active_skill_pressed(ability_id: int) -> void:
-	use_active_skill(ability_id, 0, 0, mode == "client")
+	use_active_skill(ability_id, local_team, 0, mode == "client")
 
 ## 玩家、AI 和联机 RPC 共用的主动技能请求入口；客户端提交 input_tick，Host 统一计算 10 Tick 目标。
 func use_active_skill(ability_id: int, expected_team: int = -1, requester_peer_id: int = 0, client_request: bool = false, input_tick: int = -1) -> bool:
 	if _network_peer != null and _session.phase != MatchSession.Phase.RUNNING:
 		return false
 	if client_request:
-		if mode != "client" or not _can_submit_active_skill(ability_id, 1):
+		if mode != "client" or not _can_submit_active_skill(ability_id, local_team):
 			return false
 		if _active_skill_bar != null: _active_skill_bar.set_pending(ability_id, true)
 		_network_request_id += 1
-		_rpc_active_skill_request.rpc_id(1, ability_id, _input_tick_for_new_command(), _session.session_id, _network_request_id)
+		_client_inputs.skill(ability_id, _network_request_id)
+		_send_skill_request(ability_id, _input_tick_for_new_command(), _network_request_id)
 		return true
+	if is_net_client(): return false
 	return _queue_active_skill(ability_id, expected_team, requester_peer_id, input_tick)
 
 func _queue_active_skill(ability_id: int, expected_team: int = -1, requester_peer_id: int = 0, input_tick: int = -1) -> bool:
@@ -1898,7 +2102,8 @@ func _queue_active_skill(ability_id: int, expected_team: int = -1, requester_pee
 	var payment := CommandPayment.charge(_elixir_for_team(p_team), _active_skills.cost(ability_id))
 	if payment == null:
 		return false
-	_commands.enqueue_skill(ability_id, p_team, execute_tick, payment, requester_peer_id)
+	var command_id := _announce_network_command("skill", p_team, String(entry.card_id), ability_id, (entry.unit as Unit).position, execute_tick)
+	_commands.enqueue_skill(ability_id, p_team, execute_tick, payment, requester_peer_id, command_id)
 	if _active_skill_bar != null and _is_local_player_team(p_team):
 		_active_skill_bar.set_pending(ability_id, true)
 	return true
@@ -1912,24 +2117,26 @@ func _tick_pending_active_skills(_dt: float) -> void:
 		var alive: bool = is_instance_valid(unit) and unit is Unit and (unit.hp > 0.0 or unit.death_form.waiting())
 		if _activate_active_skill(ability_id, int(pending.team)):
 			_commands.settle_skill(pending, false)
+			_complete_network_command(int(pending.get("command_id", 0)), "executed")
 			continue
 		_commands.settle_skill(pending, alive)
-		var requester_peer_id := int(pending.requester_peer_id)
-		if mode == "host" and requester_peer_id > 0:
-			_rpc_active_skill_rejected.rpc_id(requester_peer_id, _session.session_id, ability_id)
-		elif _active_skill_bar != null:
+		_complete_network_command(int(pending.get("command_id", 0)), "cancelled")
+		# 已接受命令的取消走带Tick的完成通知；不再提前清除客户端pending。
+		if _active_skill_bar != null:
 			_active_skill_bar.set_pending(ability_id, false)
 
 func _cancel_pending_active_skill(ability_id: int, refund: bool = true) -> void:
-	_commands.cancel_skill(ability_id, refund)
+	for pending in _commands.cancel_skill(ability_id, refund):
+		_complete_network_command(int(pending.get("command_id", 0)), "cancelled")
 
 func _tick_active_skill_cooldowns(dt: float) -> void:
 	_active_skills.tick(dt)
 
 func _elixir_for_team(p_team: int) -> ElixirManager:
+	if mode == "server": return _elixir if p_team == 0 else _elixir_p1
 	if _is_local_player_team(p_team):
 		return _elixir
-	if mode == "host" and p_team == 1:
+	if mode == "server" and p_team == 1:
 		return _elixir_p1
 	if mode == "local" and p_team == 1 and _ai != null:
 		return _ai._elixir
@@ -2008,7 +2215,7 @@ func _activate_active_skill(ability_id: int, expected_team: int = -1) -> bool:
 			if payer != null: payer.elixir = minf(payer.elixir + cost, ElixirManager.MAX_ELIXIR)
 			if _active_skills.has(ability_id):
 				_active_skills.replace_replica(ability_id, old_uses, old_cooldown)
-				if mode == "host": _rpc_active_skill_used.rpc_id(_session.opponent_id, _session.session_id, ability_id, old_uses, old_cooldown, false)
+				if mode == "server": _broadcast(_rpc_active_skill_used, [_session.session_id, ability_id, old_uses, old_cooldown, false])
 		skill["refund_receipt"] = receipt
 	if not _start_active_skill_cast(unit, skill):
 		return false
@@ -2017,8 +2224,8 @@ func _activate_active_skill(ability_id: int, expected_team: int = -1) -> bool:
 	if _active_skill_bar != null:
 		_active_skill_bar.set_pending(ability_id, false)
 		_sync_active_skill_deployment_readiness()
-	if mode == "host":
-		_rpc_active_skill_used.rpc_id(_session.opponent_id, _session.session_id, ability_id, int(entry["uses_remaining"]), float(entry["cooldown_left"]), bool(entry.get("free_recast", false)))
+	if mode == "server":
+		_broadcast(_rpc_active_skill_used, [_session.session_id, ability_id, int(entry["uses_remaining"]), float(entry["cooldown_left"]), bool(entry.get("free_recast", false))])
 	return true
 
 func _start_active_skill_cast(unit: Unit, skill: Dictionary) -> bool:
@@ -2071,136 +2278,55 @@ func find_ground_path(from: Vector2, goal: Vector2, _target: Node2D, _mover_radi
 ## 单位死亡回调（由 unit._die 调用）：主机可靠广播死亡表现并立即清理映射。
 func on_unit_died(id: int, play_death_visual: bool = true) -> void:
 	_net_units.erase(id)
-	if mode == "host":
+	if mode == "server":
 		_snapshot_system.lifecycle.host_death(id, _sim_tick_id)
-		_rpc_unit_died.rpc_id(_session.opponent_id, id, play_death_visual, _snapshot_system.lifecycle.session_id, _sim_tick_id)
+		_broadcast(_rpc_unit_died, [id, play_death_visual, _snapshot_system.lifecycle.session_id, _sim_tick_id])
 
 ## 单位受击回调：本地模型已由 Unit 信号闪白，主机只负责可靠转发给客户端表现层。
 func on_unit_hit(id: int) -> void:
-	if mode == "host":
-		_rpc_unit_hit.rpc_id(_session.opponent_id, _session.session_id, id)
+	if mode == "server":
+		_broadcast(_rpc_unit_hit, [_session.session_id, id])
 
 ## 塔受击回调：本地模型已由 Tower 信号闪白，主机按 _towers 下标可靠转发给客户端。
 func on_tower_hit(tower: Tower) -> void:
-	if mode == "host":
+	if mode == "server":
 		var index := _towers.find(tower)
 		if index >= 0:
-			_rpc_tower_hit.rpc_id(_session.opponent_id, _session.session_id, index)
+			_broadcast(_rpc_tower_hit, [_session.session_id, index])
 
 ## 固定 20Hz 模拟步：驱动全部战斗单位与塔，处理国王塔激活与障碍移除。
 ## 帧率高低只影响每帧跑多少步，不改变战斗结果（联机两端行为一致）。
 var _sim_step_active := false
 
 func _sim_step(dt: float) -> void:
-	if game_over:
-		return
-	_sim_tick_id += 1
-	_sim_step_active = true
-	if _match_started and not _workbench.enabled:
-		_update_elixir_rate()
-		_elixir.sim_tick(dt)
-		if _elixir_p1 != null:
-			_elixir_p1.sim_tick(dt)
-		if _ai != null:
-			_ai._elixir.sim_tick(dt)
-			if _ai.enabled:
-				_ai.sim_tick(dt)
-	# 在行动阶段前统一处理旧状态到期；本Tick新施加的状态不重复扣时。
-	for actor in get_tree().get_nodes_in_group("combatants"):
-		if actor.hp <= 0.0 and not (actor is Unit and actor.death_form.waiting()): continue
-		if actor is Unit:
-			actor._tick_active_statuses(dt)
-			actor.prepare_action_clocks(dt)
-			actor._apply_pending_form()
-		elif actor is Tower: actor.prepare_statuses(dt)
-	# 已存在的施法时间线先推进；本 Tick 新执行的命令从当前 Tick 边界开始计时。
-	_tick_active_skill_cooldowns(dt)
-	_combat.begin_batch(_sim_tick_id, "skill_impacts")
-	_tick_summon_flights(dt)
-	_commands.tick_impacts(dt)
-	_combat.commit_batch()
-	_combat.begin_batch(_sim_tick_id, "skill_effects")
-	_active_skill_effect_system.tick_effects(dt)
-	_combat.commit_batch()
-	_tick_pending_card_deployments(dt)
-	_combat.begin_batch(_sim_tick_id, "skill_commands")
-	_tick_pending_active_skills(dt)
-	_combat.commit_batch()
-	_combat.begin_batch(_sim_tick_id, "spell_zones")
-	_tick_slow_zones(dt)
-	_combat.commit_batch()
-	if not _workbench.enabled and _minion_waves_enabled:
-		_tick_minion_waves(dt)
-	# 固定本阶段参与者；自然到期退出及死亡生成不能回头加入预处理或行动批次。
-	var combatants := get_tree().get_nodes_in_group("combatants")
-	for c in combatants:
-		if c is Unit: c.prepare_natural_lifecycle(dt)
-	_combat.begin_batch(_sim_tick_id, "combatants")
-	for c in combatants:
-		c.bleeding.advance(c, dt)
-	for c in combatants:
-		if c is Unit:
-			c.sim_tick(dt, true, true)
-		elif c is Tower:
-			c.sim_tick(dt, true)
-	_combat.commit_batch()
-	_team_attack_boost_system.tick(dt)
-	# 预部署在本 Tick 边界完成；新单位从下一 Tick 推进实际部署，避免两阶段共用一个 Tick。
-	_tick_pending_card_pre_deployments(dt)
-	_sync_active_skill_deployment_readiness()
-	_movement.tick(dt)
-	for actor in get_tree().get_nodes_in_group("combatants"):
-		if actor is Unit: actor.target_protection.check_position(actor.global_position)
-	_combat.begin_batch(_sim_tick_id, "projectiles")
-	_tick_projectiles(dt)
-	_combat.commit_batch()
-	# 己方任一公主塔被摧毁 → 国王塔参战。
-	for king in [_king_player, _king_enemy]:
-		if not king.can_attack or king.activated or king.hp <= 0.0:
-			continue
-		var side: int = king.team
-		if _towers[side * 2].hp <= 0.0 or _towers[side * 2 + 1].hp <= 0.0:
-			king.activate()
-	# 塔被摧毁 → 解除其导航网格占地，路径可穿过原塔位
-	for t in _towers:
-		if t.hp <= 0.0 and not t.nav_cells.is_empty():
-			unblock_nav_cells(t.nav_cells)
-			t.nav_cells = []
-	# 联机测试钩子：主动变大序列结束后再强制变小，覆盖双向形态序号与动作快照。
-	if _auto_gnar_revert_timer > 0.0:
-		_auto_gnar_revert_timer = maxf(0.0, _auto_gnar_revert_timer - dt)
-		if _auto_gnar_revert_timer <= 0.0 and _auto_gnar_revert_unit != null and is_instance_valid(_auto_gnar_revert_unit):
-			_auto_gnar_revert_unit.transform_to_small()
-	# 进入模拟 2 秒后生成近战、远程、弹道、持续吐息与双形态样本。
-	if _auto_test:
-		_auto_timer -= dt
-		if _auto_timer <= 0.0:
-			_auto_test = false
-			_deploy_card(0, "garen", Vector2(360, 1000))
-			_deploy_card(0, "ashe", Vector2(300, 700))
-			_deploy_card(0, "aurelionsol", Vector2(410, 700))
-			_deploy_card(1, "xin", Vector2(300, 580))
-			var auto_gnar := _spawn_unit(UnitSpawnRequest.new(0, "gnar", Vector2(520, 760), {"deploy_time_override": 0.0}))
-			preview_active_skill(auto_gnar, CardDB.active_skills_for("gnar")[0])
-			_auto_gnar_revert_unit = auto_gnar
-			_auto_gnar_revert_timer = 2.4
-
-	if _match_started and not _workbench.enabled:
-		_tick_match_rules(dt)
-
-	_sim_step_active = false
+	_battle_simulation.step(dt)
 
 func _process(delta: float) -> void:
+	if mode == "server":
+		if _session.phase == MatchSession.Phase.LOADING and Time.get_ticks_msec() - _network_loading_started > 30000:
+			_network_failed("等待客户端加载超时")
+		if _session.phase == MatchSession.Phase.LOBBY and not _session.players.is_empty() and Time.get_ticks_msec() - _network_loading_started > 30000:
+			_network_failed("等待玩家或卡组超时")
+		if not _match_started or game_over: return
+		_simulation_clock.advance(delta)
+		_snapshot_timer -= delta
+		if _snapshot_timer <= 0.0 and not game_over:
+			_snapshot_timer = SNAPSHOT_INTERVAL
+			_send_snapshot()
+		return
 	if _session.phase == MatchSession.Phase.LOADING and Time.get_ticks_msec() - _network_loading_started > 30000:
 		_network_failed("等待对方加载超时")
 	if game_over:
 		return
+	_update_command_countdowns()
 	if mode == "client":
 		_sync_active_skill_deployment_readiness()
 	_projectile_system.tick_visuals(delta)
 	# 客户端：只更新冰冻视觉与重绘，逻辑状态全靠主机快照
 	if mode == "client":
 		_advance_estimated_server_tick(delta)
+		_tick_network_clock(delta)
+		_advance_network_playback()
 		_projectile_system.tick_client_interpolation(delta)
 		_tick_card_pre_deploy_visuals(delta)
 		_tick_slow_effect_visuals(delta)
@@ -2222,12 +2348,6 @@ func _process(delta: float) -> void:
 	_tick_slow_effect_visuals(delta)
 	_skill_presentation.tick_visuals(delta)
 	queue_redraw()
-	# 主机：定时向客户端发送快照
-	if mode == "host":
-		_snapshot_timer -= delta
-		if _snapshot_timer <= 0.0:
-			_snapshot_timer = SNAPSHOT_INTERVAL
-			_send_snapshot()
 	# 固定 20Hz 战斗模拟：与渲染帧率解耦（auto-test 出兵也在模拟内计时）
 	_simulation_clock.advance(delta)
 	_update_timer_label()
@@ -2263,9 +2383,10 @@ func apply_network_match_snapshot(coins: float, remaining: float, extra_time: bo
 	if _auto_test and _snapshots_received % 40 == 0:
 		print("[测试] 客户端已收快照 ", _snapshots_received, " 份，单位数=", _client_units.size())
 
-func network_match_snapshot() -> Dictionary:
+func network_match_snapshot(receiver_team: int = 1) -> Dictionary:
 	var state := _match_rules.snapshot()
-	state["elixir"] = _elixir_p1.elixir if _elixir_p1 != null else _elixir.elixir
+	var wallet := _elixir_for_team(receiver_team)
+	state["elixir"] = wallet.elixir if wallet != null else 0.0
 	return state
 
 func _update_timer_label() -> void:
@@ -2295,10 +2416,20 @@ func _end_game(winner_team: int, reason: String) -> void:
 		return
 	if mode != "client":
 		_terminal_result = {"session_id": _snapshot_system.lifecycle.session_id, "final_tick": _sim_tick_id, "winner_team": winner_team, "reason": reason, "terminal_state": _snapshot_system.capture()}
+	if mode == "server":
+		for team in _session.players:
+			var peer := _session.peer_for_team(team)
+			if _network_peer == null or not multiplayer.get_peers().has(peer): continue
+			var result := _terminal_result.duplicate()
+			result.terminal_state = _snapshot_system.capture(team)
+			_rpc_end.rpc_id(peer, result)
 	game_over = true
 	_session.finish(reason == "disconnect")
 	_match_rules.finish()
 	_commands.clear()
+	_network_commands.clear()
+	_client_inputs.clear()
+	_network_playback.clear()
 	_minion_waves.clear()
 	_projectile_system.clear_all()
 	_spell_system.clear()
@@ -2318,6 +2449,7 @@ func _end_game(winner_team: int, reason: String) -> void:
 				if tower.hp <= 0.0: destroyed_nexuses.append(tower)
 		var result_cue := ("victory" if _is_local_player_team(winner_team) else "defeat") if winner_team >= 0 else ""
 		_audio_manager.finish_match_audio(result_cue, destroyed_nexuses)
+	if not has_presentation(): return
 	var overlay := CanvasLayer.new()
 	overlay.name = "MatchResult"
 	overlay.layer = 100
@@ -2331,15 +2463,13 @@ func _end_game(winner_team: int, reason: String) -> void:
 	back.text = "返回主菜单"
 	back.position = Vector2(260, 680)
 	back.size = Vector2(200, 70)
-	back.pressed.connect(func(): get_tree().reload_current_scene())
+	back.pressed.connect(return_to_main_menu)
 	overlay.add_child(back)
-	if mode == "host" and _network_peer != null and multiplayer.get_peers().has(_session.opponent_id):
-		_rpc_end.rpc_id(_session.opponent_id, _terminal_result)
 
 func _match_result_text(winner_team: int, reason: String) -> String:
 	if reason == "disconnect":
 		return "连接已断开，对局停止"
-	var my_team := 1 if mode == "client" else 0
+	var my_team := local_team
 	if winner_team < 0:
 		return "平局！双方战成 %d:%d" % [_count_destroyed_towers(1 - my_team), _count_destroyed_towers(my_team)]
 	var won := winner_team == my_team
@@ -2355,52 +2485,35 @@ func _match_result_text(winner_team: int, reason: String) -> String:
 @rpc("any_peer", "call_remote", "reliable")
 func _rpc_register_deck(deck: Array, active_skill_choices: Dictionary = {}, epoch: String = "", protocol: int = -1, fingerprint: String = "") -> void:
 	var sender := multiplayer.get_remote_sender_id()
-	if mode != "host" or not _session.accepts(sender, epoch, MatchSession.Phase.LOADING) or _session.deck_confirmed:
-		return
+	if mode != "server" or not _session.accepts(sender, epoch, MatchSession.Phase.LOBBY) or _session.has_deck(sender): return
 	if protocol != MatchSession.PROTOCOL_VERSION or fingerprint != MatchSession.content_fingerprint():
 		_network_failed("协议或卡牌规则版本不一致")
 		return
 	if not _accept_remote_deck(sender, epoch, deck, active_skill_choices):
-		_network_failed("对方卡组或技能选择无效")
+		_network_failed("玩家卡组或技能选择无效")
 		return
-	_rpc_start.rpc_id(_session.opponent_id, _session.session_id)
-	await _load_battle(_begin_net_match_host, true)
+	if not _session.begin_loading(): return
+	_network_loading_started = Time.get_ticks_msec()
+	_begin_net_match_server()
+	for team in [0, 1]:
+		_rpc_start.rpc_id(_session.peer_for_team(team), epoch, _team_deck(1 - team), _team_active_skill_choices(1 - team))
 
 func _accept_remote_deck(sender: int, epoch: String, deck: Array, choices: Dictionary) -> bool:
-	if not MatchSession.valid_deck(deck, choices) or not _session.accepts(sender, epoch, MatchSession.Phase.LOADING) or _session.deck_confirmed:
-		return false
-	var validated: Array = []
-	var selected := {}
-	for raw_id in deck:
-		if not raw_id is String:
-			return false
-		var card_id: String = raw_id
-		if not CardDB.has_card(card_id) or not bool(CardDB.get_card(card_id).get("selectable", true)) or card_id in validated:
-			return false
-		validated.append(card_id)
-		var skills := CardDB.active_skills_for(card_id)
-		var selection: Variant = choices.get(card_id, 0)
-		if not selection is int or selection < 0 or (not skills.is_empty() and selection >= skills.size()):
-			return false
-		if not skills.is_empty():
-			selected[card_id] = selection
-	if not _session.confirm_deck(sender, epoch):
-		return false
-	_remote_deck = validated
-	_remote_active_skill_choices = selected
-	_resources.prepare(validated)
-	_initialize_authoritative_card_cycle(1, validated)
+	if not MatchSession.valid_deck(deck, choices) or not _session.confirm_deck(sender, epoch): return false
+	var team := _session.team_for_peer(sender)
+	_server_decks[team] = deck.duplicate()
+	_server_skill_choices[team] = choices.duplicate()
 	return true
 
 @rpc("any_peer", "call_remote", "reliable")
 func _rpc_active_skill_request(ability_id: int, input_tick: int = -1, epoch: String = "", request_id: int = 0) -> void:
-	if mode != "host" or game_over:
+	if mode != "server" or game_over:
 		return
 	var sender := multiplayer.get_remote_sender_id()
 	if not _session.accept_command(sender, epoch, request_id):
 		return
-	if input_tick < 0 or not use_active_skill(ability_id, 1, sender, false, input_tick):
-		_rpc_active_skill_rejected.rpc_id(sender, _session.session_id, ability_id)
+	if input_tick < 0 or not use_active_skill(ability_id, _session.team_for_peer(sender), sender, false, input_tick):
+		_rpc_active_skill_rejected.rpc_id(sender, _session.session_id, ability_id, request_id)
 
 func _tick_card_pre_deploy_visuals(delta: float) -> void:
 	_commands.tick_deployment_visuals(delta)
@@ -2417,55 +2530,54 @@ func _rpc_active_skill_used(epoch: String, ability_id: int, uses_remaining: int 
 	if _active_skills.has(ability_id):
 		var entry: Dictionary = _active_skills.entry(ability_id)
 		_active_skills.replace_replica(ability_id, uses_remaining, cooldown_left, free_recast)
-		if _active_skill_bar != null: _active_skill_bar.set_pending(ability_id, false)
+		if _active_skill_bar != null: _active_skill_bar.set_pending(ability_id, _network_commands.has_skill(ability_id))
 		_sync_active_skill_deployment_readiness()
 
 @rpc("authority", "call_remote", "reliable")
-func _rpc_active_skill_rejected(epoch: String, ability_id: int) -> void:
+func _rpc_active_skill_rejected(epoch: String, ability_id: int, request_id: int) -> void:
 	if not _session.accepts(1, epoch, MatchSession.Phase.RUNNING) or game_over:
 		return
-	if mode == "client" and _active_skill_bar != null:
-		_active_skill_bar.set_pending(ability_id, false)
+	if mode == "client" and _client_inputs.finish_skill(ability_id, request_id) and _active_skill_bar != null:
+		_active_skill_bar.set_pending(ability_id, _network_commands.has_skill(ability_id))
+
+func _send_card_request(card_id: String, pos: Vector2, input_tick: int, request_id: int) -> void:
+	_rpc_deploy_request.rpc_id(1, card_id, pos, input_tick, _session.session_id, request_id)
+
+func _send_skill_request(ability_id: int, input_tick: int, request_id: int) -> void:
+	_rpc_active_skill_request.rpc_id(1, ability_id, input_tick, _session.session_id, request_id)
 
 ## 客户端 → 主机：部署请求。客户端只携带点击时观察到的 input_tick，目标 Tick 由 Host 计算。
 @rpc("any_peer", "call_remote", "reliable")
 func _rpc_deploy_request(card_id: String, pos: Vector2, input_tick: int = -1, epoch: String = "", request_id: int = 0) -> void:
-	if mode != "host" or game_over:
+	if mode != "server" or game_over:
 		return
 	var sender := multiplayer.get_remote_sender_id()
 	if not _session.accept_command(sender, epoch, request_id):
 		return
-	var accepted := input_tick >= 0 and play_card(1, card_id, pos, {
-		"elixir": _elixir_p1,
+	var team := _session.team_for_peer(sender)
+	var accepted := input_tick >= 0 and play_card(team, card_id, pos, {
+		"elixir": _elixir_for_team(team),
 		"require_team_deck": true,
 		"requester_peer_id": sender,
 		"input_tick": input_tick,
 	})
 	if not accepted:
-		_rpc_deploy_rejected.rpc_id(sender, _session.session_id, card_id)
+		_rpc_deploy_rejected.rpc_id(sender, _session.session_id, card_id, request_id)
 
 ## 主机 → 客户端：仅在权威扣费、轮换手牌并排程成功后确认出牌。
 @rpc("authority", "call_remote", "reliable")
-func _rpc_deploy_accepted(epoch: String, card_id: String, execute_tick: int, hand: Array, queue: Array, last_play: Dictionary = {}) -> void:
-	if not _session.accepts(1, epoch, MatchSession.Phase.RUNNING) or game_over:
-		return
-	if mode != "client" or game_over:
-		return
-	if _hand != null:
+func _rpc_deploy_accepted(epoch: String, card_id: String, execute_tick: int, state: Dictionary) -> void:
+	if mode != "client" or game_over or not _session.accepts(1, epoch, MatchSession.Phase.RUNNING): return
+	if execute_tick < 0 or not ClientHandState.valid(state, _deck): return
+	# 即使旧状态被版本屏障拒绝，也只能结束完全对应的旧请求，不能清新pending。
+	if _client_inputs.finish_card(card_id, int(state.ack)) and _hand != null:
 		_hand.set_card_pending(card_id, false)
-		_hand.set_cycle_state(hand, queue)
-	var cycle := CardCycle.new(_deck)
-	cycle.replace_replica(hand, queue)
-	_authoritative_card_cycles[1] = cycle
-	_card_history.replace_replica(1, last_play)
-	_refresh_mirror_hand(1)
+	_apply_client_hand_state(state)
 
-## 主机 → 客户端：拒绝不改变权威手牌；只恢复对应卡牌按钮。
 @rpc("authority", "call_remote", "reliable")
-func _rpc_deploy_rejected(epoch: String, card_id: String) -> void:
-	if not _session.accepts(1, epoch, MatchSession.Phase.RUNNING) or game_over:
-		return
-	if mode == "client" and _hand != null:
+func _rpc_deploy_rejected(epoch: String, card_id: String, request_id: int) -> void:
+	if mode != "client" or game_over or not _session.accepts(1, epoch, MatchSession.Phase.RUNNING): return
+	if _client_inputs.finish_card(card_id, request_id) and _hand != null:
 		_hand.set_card_pending(card_id, false)
 
 ## 主机 → 客户端：单位生成
@@ -2634,6 +2746,19 @@ func sync_network_unit_skill(unit: Unit, ability_id: int, slot: int) -> void:
 ## 因此先序列化并 DEFLATE 压缩成单个字节载荷，客户端解包后仍只做表现插值。
 @rpc("authority", "call_remote", "unreliable")
 func _rpc_snapshot(snapshot_bytes: PackedByteArray) -> void:
+	if _network_peer == null:
+		_snapshot_system.apply(snapshot_bytes)
+		return
+	if mode != "client" or game_over or _session.phase != MatchSession.Phase.RUNNING: return
+	var tick := _snapshot_system.packet_tick(snapshot_bytes)
+	if tick < 0: return
+	_observe_network_arrival(tick)
+	if not _has_estimated_server_tick:
+		_estimated_server_tick = tick
+		_has_estimated_server_tick = true
+	if not _network_playback.enqueue(tick, &"_apply_buffered_snapshot", [snapshot_bytes]): _network_failed("网络快照队列已满，对局停止")
+
+func _apply_buffered_snapshot(snapshot_bytes: PackedByteArray) -> void:
 	_snapshot_system.apply(snapshot_bytes)
 
 ## 主机 → 客户端：冰冻法术视觉
@@ -2715,6 +2840,7 @@ func _send_snapshot() -> void:
 	_snapshot_system.send()
 
 func _draw() -> void:
+	if not has_presentation(): return
 	if _workbench.enabled and _workbench.inspect_enabled:
 		var inspected := _workbench.inspected_unit()
 		if inspected != null:
@@ -2722,7 +2848,7 @@ func _draw() -> void:
 	# 正式 3D 地图在下层视口绘制；此处只画部署提示。
 	# 选中卡牌时高亮可部署区域
 	if _selected_card != "":
-		var sel_stats: Dictionary = CardDB.get_card(resolved_card_for_team(1 if mode == "client" else 0, _selected_card))
+		var sel_stats: Dictionary = CardDB.get_card(resolved_card_for_team(local_team, _selected_card))
 		var deploy_zone: String = String(sel_stats.get("deploy_zone", "own_side"))
 		match deploy_zone:
 			"global":
@@ -2731,7 +2857,7 @@ func _draw() -> void:
 				draw_rect(Rect2(0, 0, ArenaRules.FIELD_W, ArenaRules.FIELD_H), Color(0.40, 0.70, 1.00, 0.08))
 			_:
 				# own_side：逐格按己方部署掩码绘制
-				var deploy_team := 1 if mode == "client" else 0
+				var deploy_team := local_team
 				for row in ArenaRules.ARENA_ROWS:
 					for column in ArenaRules.ARENA_COLUMNS:
 						var tile := Vector2i(column, row)
@@ -2740,11 +2866,30 @@ func _draw() -> void:
 		_draw_deployment_preview(sel_stats)
 	# 两段式部署的第一段只显示一个落点卡牌标记，不创建单位或战斗碰撞体。
 	_commands.draw_deployments(_draw_card_pre_deploy_indicator)
+	_network_commands.visit(_draw_command_indicator)
+	_client_inputs.visit_cards(_draw_unconfirmed_input)
+
+func _draw_unconfirmed_input(center: Vector2) -> void:
+	# 点击即刻反馈；没有实体、碰撞和伤害，服务器拒绝时撤掉。
+	draw_circle(center, 19.0, Color(0.8, 0.9, 1.0, 0.10))
+	for segment in 4:
+		var angle := TAU * float(segment) / 4.0
+		draw_arc(center, 22.0, angle, angle + PI * 0.3, 12, Color(0.8, 0.9, 1.0, 0.7), 2.0, true)
+
+func _draw_command_indicator(command: Dictionary) -> void:
+	if command.kind != "card" or int(command.team) != local_team: return
+	if _client_inputs.has_card(String(command.card_id)): return
+	# 仅自己的已接受落点提示；没有碰撞/单位/法术效果，不显示对方的意图。
+	var remaining := maxf(0.0, float(command.execute_tick) - get_presentation_tick())
+	var progress := clampf(1.0 - remaining / float(COMMAND_DELAY_TICKS), 0.0, 1.0)
+	var center: Vector2 = command.pos
+	draw_circle(center, 19.0, Color(0.3, 0.75, 1.0, 0.12))
+	draw_arc(center, 22.0, -PI * 0.5, -PI * 0.5 + TAU * progress, 32, Color(0.45, 0.85, 1.0, 0.85), 2.0, true)
 
 func _setup_arena_background() -> void:
 	_arena_background_sprite = Sprite2D.new()
 	_arena_background_sprite.name = "ArenaBackground2D"
-	_arena_background_sprite.texture = ARENA_BACKGROUND_TEXTURE
+	_arena_background_sprite.texture = load(ARENA_BACKGROUND_PATH)
 	_arena_background_sprite.visible = true
 	_arena_background_sprite.centered = false
 	_arena_background_sprite.position = Vector2.ZERO
@@ -2811,6 +2956,7 @@ func _draw_deployment_preview(stats: Dictionary) -> void:
 		draw_line(_deployment_preview_pos - Vector2(0.0, cross_size), _deployment_preview_pos + Vector2(0.0, cross_size), color, 2.0, true)
 
 func _play_card_event(event_id: int, card_id: String, cue: String, pos: Vector2, form: int = 0, team: int = 0) -> void:
+	if not has_presentation(): return
 	if event_id <= _last_card_event_id:
 		return
 	_last_card_event_id = event_id
@@ -2829,8 +2975,8 @@ func present_skill_projectile_hit(source: Dictionary, action: String, pos: Vecto
 	var card_id := String(source.get("card_id", ""))
 	var form := int(source.get("form", 0))
 	_play_card_event(_presentation_event_id, card_id, action + ":" + phase, pos, form, int(source.get("team", 0)))
-	if mode == "host":
-		_rpc_card_event.rpc_id(_session.opponent_id, _session.session_id, _presentation_event_id, card_id, action + ":" + phase, pos, form, int(source.get("team", 0)))
+	if mode == "server":
+		_broadcast(_rpc_card_event, [_session.session_id, _presentation_event_id, card_id, action + ":" + phase, pos, form, int(source.get("team", 0))])
 
 func present_team_attack_boost(source: Unit, target: Unit, duration: float) -> void:
 	if not is_instance_valid(source) or not is_instance_valid(target):
@@ -2850,8 +2996,8 @@ func present_zone_audio(source: Unit, action: String, pos: Vector2, duration: fl
 	_presentation_event_id += 1
 	if _audio_manager != null:
 		_audio_manager.start_zone_audio(_presentation_event_id, source.card_id, source.form_index, action, pos, duration, source.team)
-	if mode == "host":
-		_rpc_zone_audio.rpc_id(_session.opponent_id, _session.session_id, _presentation_event_id, source.card_id, source.form_index, action, pos, duration, source.team)
+	if mode == "server":
+		_broadcast(_rpc_zone_audio, [_session.session_id, _presentation_event_id, source.card_id, source.form_index, action, pos, duration, source.team])
 
 @rpc("authority", "call_remote", "reliable")
 func _rpc_zone_audio(epoch: String, event_id: int, card_id: String, form: int, action: String, pos: Vector2, duration: float, team: int = 0) -> void:
@@ -2871,14 +3017,14 @@ func _rpc_card_event(epoch: String, event_id: int, card_id: String, cue: String,
 func _present_match_announcement(cue: String) -> void:
 	_presentation_event_id += 1
 	_play_card_event(_presentation_event_id, "match", cue, Vector2.ZERO)
-	if mode == "host":
-		_rpc_card_event.rpc_id(_session.opponent_id, _session.session_id, _presentation_event_id, "match", cue, Vector2.ZERO)
+	if mode == "server":
+		_broadcast(_rpc_card_event, [_session.session_id, _presentation_event_id, "match", cue, Vector2.ZERO])
 
 ## 权威治疗完成后派发跟随单位的纯表现；可靠消息不依赖客户端猜测血量变化。
 func present_restoration_heal(unit: Unit) -> void:
-	unit.show_restoration_heal()
-	if mode == "host" and unit.net_id >= 0:
-		_rpc_restoration_heal.rpc_id(_session.opponent_id, _session.session_id, unit.net_id)
+	if has_presentation(): unit.show_restoration_heal()
+	if mode == "server" and unit.net_id >= 0:
+		_broadcast(_rpc_restoration_heal, [_session.session_id, unit.net_id])
 
 @rpc("authority", "call_remote", "reliable")
 func _rpc_restoration_heal(epoch: String, net_id: int) -> void:
@@ -2886,13 +3032,13 @@ func _rpc_restoration_heal(epoch: String, net_id: int) -> void:
 		return
 	var unit: Unit = _client_units.get(net_id)
 	if is_instance_valid(unit) and unit.hp > 0.0:
-		unit.show_restoration_heal()
+		if has_presentation(): unit.show_restoration_heal()
 
 func notify_action_cancelled(unit: Unit, payload: Dictionary) -> void:
 	if not is_net_client() and String(payload.get("reason", "")) in ["stun", "freeze", "stasis", "knockback", "death_form"]:
 		_team_attack_boost_system.interrupt(unit)
-	if mode == "host" and unit.net_id >= 0:
-		_rpc_action_cancelled.rpc_id(_session.opponent_id, _session.session_id, unit.net_id, payload)
+	if mode == "server" and unit.net_id >= 0:
+		_broadcast(_rpc_action_cancelled, [_session.session_id, unit.net_id, payload])
 
 @rpc("authority", "call_remote", "reliable")
 func _rpc_action_cancelled(epoch: String, net_id: int, payload: Dictionary) -> void:
@@ -2903,11 +3049,12 @@ func _rpc_action_cancelled(epoch: String, net_id: int, payload: Dictionary) -> v
 		unit.apply_action_cancellation(payload)
 
 func publish_skill_fx(payload: Dictionary) -> void:
-	if mode != "host": return
+	if mode != "server": return
 	payload = payload.duplicate(true)
 	payload.erase("source_ref")
 	_presentation_event_id += 1
-	_rpc_skill_fx.rpc_id(_session.opponent_id, _session.session_id, _presentation_event_id, payload)
+	_broadcast(_rpc_skill_fx, [_session.session_id, _presentation_event_id, payload])
+	_skill_presentation.clear()
 
 @rpc("authority", "call_remote", "reliable")
 func _rpc_skill_fx(epoch: String, event_id: int, payload: Dictionary) -> void:
@@ -2927,12 +3074,12 @@ func projectile_service() -> ProjectileSystem:
 	return _projectile_system
 
 func present_freeze_spell(pos: Vector2, radius: float, duration: float, slow_duration: float, slow_multiplier: float, p_team: int = 0) -> void:
-	if mode == "host":
-		_rpc_freeze_fx.rpc_id(network_opponent_id(), network_session_id(), pos, radius, duration, slow_duration, slow_multiplier, p_team)
+	if mode == "server":
+		_broadcast(_rpc_freeze_fx, [network_session_id(), pos, radius, duration, slow_duration, slow_multiplier, p_team])
 
 func present_heal_spell(pos: Vector2, radius: float, duration: float, p_team: int, enhanced: bool, global_heal: bool) -> void:
-	if mode == "host":
-		_rpc_heal_fx.rpc_id(network_opponent_id(), network_session_id(), pos, radius, duration, p_team, enhanced, global_heal)
+	if mode == "server":
+		_broadcast(_rpc_heal_fx, [network_session_id(), pos, radius, duration, p_team, enhanced, global_heal])
 
 func _refresh_mirror_hand(team: int) -> void:
 	if _hand != null and _is_local_player_team(team):
@@ -2958,10 +3105,10 @@ func record_growth_hit(unit: Unit, target: Node2D) -> void:
 	_card_growth.record_hit(unit, target)
 	if _hand != null: _hand._refresh(0.0)
 
-func growth_snapshot() -> Dictionary:
-	# 网络快照发给客户端（阵营1），不泄露主机尚未部署的成长。
+func growth_snapshot(receiver_team: int = 1) -> Dictionary:
+	# 私有成长按接收阵营投影，不泄露对方尚未部署的解锁进度。
 	var state := _card_growth.snapshot()
-	state.erase(0)
+	state.erase(1 - receiver_team)
 	return state
 
 func apply_growth_snapshot(value: Dictionary) -> void:
@@ -2977,10 +3124,11 @@ func _rpc_unit_forge_audio(epoch: String, net_id: int, cue: String, position: Ve
 func present_lightning_spell(card_id: String, pos: Vector2, radius: float, team: int) -> void:
 	_presentation_event_id += 1
 	_show_lightning_spell(_presentation_event_id, card_id, pos, radius, team)
-	if mode == "host":
-		_rpc_lightning_fx.rpc_id(network_opponent_id(), network_session_id(), _presentation_event_id, card_id, pos, radius, team)
+	if mode == "server":
+		_broadcast(_rpc_lightning_fx, [network_session_id(), _presentation_event_id, card_id, pos, radius, team])
 
 func _show_lightning_spell(event_id: int, card_id: String, pos: Vector2, radius: float, team: int) -> void:
+	if not has_presentation(): return
 	if event_id <= _last_card_event_id: return
 	_spell_system.show_lightning(card_id, pos, radius)
 	_play_card_event(event_id, card_id, "spell:strike", pos, 0, team)
@@ -2995,10 +3143,11 @@ func _rpc_lightning_fx(epoch: String, event_id: int, card_id: String, pos: Vecto
 func present_lightning_area(card_id: String, pos: Vector2, radius: float, duration: float, team: int) -> void:
 	_presentation_event_id += 1
 	_show_lightning_area(_presentation_event_id, card_id, pos, radius, duration, team)
-	if mode == "host":
-		_rpc_lightning_area.rpc_id(network_opponent_id(), network_session_id(), _presentation_event_id, card_id, pos, radius, duration, team)
+	if mode == "server":
+		_broadcast(_rpc_lightning_area, [network_session_id(), _presentation_event_id, card_id, pos, radius, duration, team])
 
 func _show_lightning_area(event_id: int, card_id: String, pos: Vector2, radius: float, duration: float, team: int) -> void:
+	if not has_presentation(): return
 	if event_id <= _last_card_event_id: return
 	_last_card_event_id = event_id
 	_spell_system.show_lightning_area(card_id, pos, radius, duration, team)
@@ -3035,10 +3184,11 @@ func present_growth_wave(target: Unit, radius: float) -> void:
 func present_spell_flight(flight_id: int, kind: String, origin: Vector2, pos: Vector2, radius: float, start_tick: int, impact_tick: int, team: int) -> void:
 	_presentation_event_id += 1
 	_show_spell_flight(_presentation_event_id, flight_id, kind, origin, pos, radius, start_tick, impact_tick, team)
-	if mode == "host":
-		_rpc_spell_flight.rpc_id(network_opponent_id(), network_session_id(), _presentation_event_id, flight_id, kind, origin, pos, radius, start_tick, impact_tick, team)
+	if mode == "server":
+		_broadcast(_rpc_spell_flight, [network_session_id(), _presentation_event_id, flight_id, kind, origin, pos, radius, start_tick, impact_tick, team])
 
 func _show_spell_flight(event_id: int, flight_id: int, kind: String, origin: Vector2, pos: Vector2, radius: float, start_tick: int, impact_tick: int, team: int) -> void:
+	if not has_presentation(): return
 	if event_id <= _last_card_event_id: return
 	_spell_system.show_flight(flight_id, kind, origin, pos, radius, start_tick, impact_tick)
 	if kind == "stasis":
@@ -3054,10 +3204,11 @@ func _rpc_spell_flight(epoch: String, event_id: int, flight_id: int, kind: Strin
 func present_spell_arrival(flight_id: int, kind: String, pos: Vector2, team: int) -> void:
 	_presentation_event_id += 1
 	_show_spell_arrival(_presentation_event_id, flight_id, kind, pos, team)
-	if mode == "host":
-		_rpc_spell_arrival.rpc_id(network_opponent_id(), network_session_id(), _presentation_event_id, flight_id, kind, pos, team)
+	if mode == "server":
+		_broadcast(_rpc_spell_arrival, [network_session_id(), _presentation_event_id, flight_id, kind, pos, team])
 
 func _show_spell_arrival(event_id: int, flight_id: int, kind: String, pos: Vector2, team: int) -> void:
+	if not has_presentation(): return
 	if event_id <= _last_card_event_id: return
 	_spell_system.show_arrival(flight_id)
 	_audio_manager.stop_spell_flight_audio(flight_id)
@@ -3074,9 +3225,9 @@ func present_corrosion_spell(pos: Vector2, radius: float, duration: float, p_tea
 	_presentation_event_id += 1
 	if _audio_manager != null:
 		_audio_manager.start_zone_audio(_presentation_event_id, "corrosion", 0, "spell", pos, duration, p_team)
-	if mode == "host":
-		_rpc_zone_audio.rpc_id(network_opponent_id(), network_session_id(), _presentation_event_id, "corrosion", 0, "spell", pos, duration, p_team)
-		_rpc_corrosion_fx.rpc_id(network_opponent_id(), network_session_id(), _presentation_event_id, pos, radius, duration, p_team)
+	if mode == "server":
+		_broadcast(_rpc_zone_audio, [network_session_id(), _presentation_event_id, "corrosion", 0, "spell", pos, duration, p_team])
+		_broadcast(_rpc_corrosion_fx, [network_session_id(), _presentation_event_id, pos, radius, duration, p_team])
 
 @rpc("authority", "call_remote", "reliable")
 func _rpc_corrosion_fx(epoch: String, event_id: int, pos: Vector2, radius: float, duration: float, p_team: int) -> void:
@@ -3085,3 +3236,8 @@ func _rpc_corrosion_fx(epoch: String, event_id: int, pos: Vector2, radius: float
 	if event_id <= _last_card_event_id: return
 	_last_card_event_id = event_id
 	_spell_system.show_corrosion(pos, radius, duration, p_team)
+
+## 返回菜单不能再次执行 CLI 的 join/local 自动启动，服务器进程的自动重建不走此入口。
+func return_to_main_menu() -> void:
+	get_tree().set_meta("return_to_main_menu", true)
+	get_tree().reload_current_scene()

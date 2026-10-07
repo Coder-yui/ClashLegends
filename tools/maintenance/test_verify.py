@@ -100,8 +100,8 @@ class VerifyTests(unittest.TestCase):
                      winner_team=0, reason='nexus', tower_hp=[3600, 0],
                      units=[[1, 'gnar', 100, 50, 60]], audio_stopped=True, remote_elixir=1, tower_shields=[[1, 0.1], [0, 0]], tower_controls=[[False, False], [False, False]])
         return {role: '[NETWORK_RESULT] ' + json.dumps(dict(
-            state, role=role, **(client_updates if role == 'client' else {})))
-                for role in ['host', 'client']}
+            state, role=role, player_states=[{'coins': 1}, {'coins': 2}], player_state={'coins': 1 if role == 'client0' else 2}, **(client_updates if role == 'client1' else {})))
+                for role in ['server', 'client0', 'client1']}
 
     def test_network_complete(self):
         self.assertEqual(verify.validate_network(self.network_logs())[1], [])
@@ -114,30 +114,30 @@ class VerifyTests(unittest.TestCase):
     def test_network_missing_duplicate_or_failed_result(self):
         for value in ['', '[NETWORK_RESULT] null', '[NETWORK_RESULT] {}']:
             logs = self.network_logs()
-            logs['client'] = value
+            logs['client1'] = value
             self.assertTrue(verify.validate_network(logs)[1])
         logs = self.network_logs()
-        logs['client'] += '\n' + logs['client']
+        logs['client1'] += '\n' + logs['client1']
         self.assertTrue(verify.validate_network(logs)[1])
         self.assertTrue(verify.validate_network(self.network_logs(passed=False))[1])
         self.assertTrue(verify.validate_network(self.network_logs(audio_stopped=False))[1])
 
     def test_network_runtime_error_despite_success(self):
         logs = self.network_logs()
-        logs['client'] += '\nSCRIPT ERROR: injected'
+        logs['client1'] += '\nSCRIPT ERROR: injected'
         self.assertTrue(verify.validate_network(logs)[1])
 
     def test_network_boundary_results(self):
         logs = {role: '[NETWORK_BOUNDARY_RESULT] ' + json.dumps(dict(
             schema=1, role=role, passed=True, case='slow', session_id='epoch'))
-                for role in ['host', 'client']}
+                for role in ['server', 'client0', 'client1']}
         self.assertEqual(verify.validate_network_boundary(logs, 'slow')[1], [])
         self.assertTrue(verify.validate_network_boundary(logs, 'disconnect')[1])
-        for broken in ['', logs['client'] + '\n' + logs['client'],
-                       logs['client'].replace('epoch', 'other'),
-                       logs['client'].replace('true', 'false'),
-                       logs['client'] + '\nSCRIPT ERROR: injected']:
-            self.assertTrue(verify.validate_network_boundary(dict(logs, client=broken), 'slow')[1])
+        for broken in ['', logs['client1'] + '\n' + logs['client1'],
+                       logs['client1'].replace('epoch', 'other'),
+                       logs['client1'].replace('true', 'false'),
+                       logs['client1'] + '\nSCRIPT ERROR: injected']:
+            self.assertTrue(verify.validate_network_boundary(dict(logs, client1=broken), 'slow')[1])
 
 
 if __name__ == '__main__':

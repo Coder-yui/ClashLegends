@@ -9,7 +9,7 @@
 | 文档、路径、注册与资源引用 | `python3 tools/maintenance/audit_project.py` | 静态完整性；不证明运行行为或资源听感 |
 | 机制/测试代码改动 | `python3 tools/dev.py verify` | 审计、工具故障夹具、导入、数值标记、全部机制及差异检查 |
 | 定位单领域/单卡 | `verify --group status` / `verify --suite OrnnSuite`（均通过tools/dev.py） | 只验证所选范围，最终全量仍用上一行 |
-| 网络协议、快照、生命周期 | `python3 tools/dev.py verify --network` | 全量加本机双进程终局一致性；边界故障另加`--network-boundaries` |
+| 网络协议、快照、生命周期 | `python3 tools/dev.py verify --network` | 全量加本机三进程终局一致性；边界故障另加`--network-boundaries` |
 | 模型、UI、动画、音频 | 工作台及[专项场景](../tools/demos/README.md) | 实际渲染/试听，需人工验收；headless通过不能替代 |
 | 局部性能 | Godot机制入口追加`-- --profile-maintenance` | 固定32/64/128单位CPU采样；需同条件前后比较，不当成FPS或正确性门槛 |
 
@@ -61,7 +61,7 @@ python3 tools/dev.py verify --reverse-suites
 | `suites/status/` / status | 通用主动时序、控制前后边界、盾层、限时形态 |
 | `suites/presentation/` / presentation | 动作、材质、插值、共享特效、声音归属与终局播放器生命周期 |
 | `suites/ui/` / ui | 备战、工作台交互、经典场景 |
-| `suites/network/` / network | 单进程协议/会话/副本/终态；双进程脚本由网络模式单独调度 |
+| `suites/network/` / network | 单进程协议/会话/副本/终态；三进程脚本由网络模式单独调度 |
 | `suites/cards/` / cards | 逐卡特有规则、数值、动作与特殊效果；六种普通小兵编队集中在 MinionSquadSuite |
 | `suites/battle_suite.gd`、`suite_utils.gd` | 共享绑定、断言、固定Tick、既有模型代理查询与内容夹具；不单独注册 |
 | `fixtures/` | 网络场景、固定牌序辅助及原始寻路输入 |
@@ -100,13 +100,15 @@ python3 tools/dev.py verify --network-boundaries
 python3 tools/dev.py verify --network-render
 ```
 
-`--network` 自动选择空闲 UDP 端口（`--network-port` 可固定），启动主客进程，比较会话、最终 Tick、胜负、完整实体/塔状态与终局音频事件；结果缺失、重复、不同步、脚本错误或超时均失败。`CLASH_TEST_DOUBLE_NEXUS=1` 仅由测试读取，用于同 Tick 双水晶平局。
+`--network` 自动选择空闲 UDP 端口（`--network-port` 可固定），启动服务器和两个客户端进程，比较会话、最终 Tick、胜负、完整实体/塔状态与终局音频事件；结果缺失、重复、不同步、脚本错误或超时均失败。`CLASH_TEST_DOUBLE_NEXUS=1` 仅由测试读取，用于同 Tick 双水晶平局。
 
-`--network-boundaries` 加测版本/内容不一致、双方慢加载、加载中断线/超时、运行断线、返回菜单后同端口第二局与建筑同点部署。测试注入位于 fixtures；正式代码不读取用例参数。`--network-render` 保存 host/client 截图，仍需目视确认。
+`--network-boundaries` 加测版本/内容不一致、双方慢加载、加载中断线/超时、运行断线、返回菜单后同端口第二局与建筑同点部署。测试注入位于 fixtures；正式代码不读取用例参数。`--network-render` 保存 client0/client1 截图，仍需目视确认。
+
+三进程分别比较公共终态，并将两个客户端的金币、手牌、牌序、镜像历史和私有成长与对应服务器席位比较。边界模式还包含受损快照注入：丢弃1/3普通快照，交错延迟20/120ms，并将出牌发送延后80ms；不等同于真实WAN测试。服务器始终headless，实际渲染与录音只在两个客户端进行。重开使用真实返回菜单按钮，服务器自动重建会话，两端重新连接后允许交换阵营。
 
 restart边界包含两次正式加载，外层测试预算为75秒（两次30秒生产加载期限加握手余量）；生产加载超时仍为30秒，会话/端口/清场断言照常执行。
 
-手工长时观察使用 `tools/run_local_multiplayer.sh`，或两个进程分别运行 `Godot --headless --path . -- --mode=host --auto-test` 与 `--mode=join --ip=127.0.0.1 --auto-test`。观察至少 12 秒后自行结束，不同时启动占同端口的两组主机。本机链路不证明 WAN 条件。
+手工长时观察使用 `tools/run_local_multiplayer.sh`，或一个服务器进程与两个客户端进程分别运行 `Godot --headless --path . -- --mode=server --auto-test` 与 `--mode=join --ip=127.0.0.1 --auto-test`。观察至少 12 秒后自行结束，不同时启动占同端口的两组服务器。本机链路不证明 WAN 条件。
 
 已知未解决问题以[问题目录](../docs/issues/README.md)为准；旧报告不能代替本次运行。
 
@@ -126,3 +128,9 @@ python3 -m unittest discover -s tools/tests -p 'test_*.py'
 ```
 
 前者验证审计和执行器的失败路径，由 verify 自动执行；后者用于通用素材工具改动。静态链接/注册审计不能代替机制回归。数值检查首批覆盖赛恩、凯隐、潘森的费用、生命、伤害、攻击间隔、实体部署锁定，以及主动费用、次数和冷却；未标记的数值、玩法解释和听感仍需人工核对。历史长篇测试说明保留在[归档](../docs/archive/2026-09-26/tests_README.md)。
+
+
+协议97缓冲回归：session_suite覆盖时钟样本去重/超时/重置、按Tick播放及同Tick事件/快照次序、迟到追赶、排程去重/非法字段/旧会话、准备通知不运行客户端权威逻辑。三进程验证双方均提前收到出牌及技能通知、固定10Tick、技能取消、时钟同步、播放队列与终局清理。impaired夹具还注入技能请求80ms、命令预告70ms、可靠战斗信封120ms和时钟响应40ms延迟，配合原有快照丢弃/乱序；属于应用层可复现故障注入，不是公网实测。render检查新增Tick8本方下牌圆环与Tick62技能等待阶段。
+
+
+协议98回归：session_suite覆盖洗牌种子复现/不消耗战斗随机、仅四张+下一张的载荷、客户端空初始化、版本/请求倒退、旧拒绝不能清新pending、自适应50–200ms边界及重置。三进程通过正式play_card/use_active_skill提交，核对点击当帧反馈且尚未扣费/轮换/执行，客户端无权威CardCycle/隐藏队列，最终四张/下一张与服务器投影一致；受损链路验证缓冲增大，稳定链路验证缓冲降低。render另存client0-input.png/client1-input.png检查未确认输入提示，原有5个时间点保持。

@@ -165,6 +165,7 @@ func _ready() -> void:
 	add_to_group("combat_structures")
 
 func _process(delta: float) -> void:
+	if battle_context != null and not battle_context.has_presentation(): return
 	_stun_visual_phase = fposmod(_stun_visual_phase + delta, 2.0)
 	if control.stun_timer > 0.0 or _stun_was_visible:
 		queue_redraw()
@@ -357,7 +358,8 @@ func _health_text() -> String:
 	return "%d" % BattleNumbers.quantity(hp)
 
 func _draw() -> void:
-	var local_team := 1 if battle_context != null and battle_context.is_net_client() else 0
+	if battle_context != null and not battle_context.has_presentation(): return
+	var local_team := battle_context.local_player_team() if battle_context != null else 0
 	# 已被摧毁：画废墟，不画描边和血条
 	if hp <= 0.0:
 		if not has_model_art:
@@ -393,7 +395,7 @@ func _draw() -> void:
 		bar_center_y = -visual_radius          # 敌方水晶：稍下移，贴在水晶顶部上方
 	elif team == local_team:
 		bar_center_y = -visual_radius * 2.0 + 80.0    # 己方塔：塔身中央再下放两格（每格40px）
-	var bar_color := Color(0.95, 0.28, 0.26) if team != local_team else Color(0.28, 0.88, 0.28)
+	var bar_color := get_health_bar_fill_color()
 	var bar_rect := Rect2(Vector2(-bar_w / 2.0, bar_center_y - bar_h / 2.0), Vector2(bar_w, bar_h))
 	draw_rect(bar_rect, Color(0.10, 0.10, 0.10))
 	var combined_capacity := 1.0 + shield_capacity_ratio
@@ -407,3 +409,7 @@ func _draw() -> void:
 	var text_pos := Vector2(bar_rect.position.x, bar_rect.position.y + 14.0)
 	draw_string(ThemeDB.fallback_font, text_pos + Vector2.ONE, hp_text, HORIZONTAL_ALIGNMENT_CENTER, bar_w, HEALTH_TEXT_SIZE, Color(0.0, 0.0, 0.0, 0.85))
 	draw_string(ThemeDB.fallback_font, text_pos, hp_text, HORIZONTAL_ALIGNMENT_CENTER, bar_w, HEALTH_TEXT_SIZE, Color.WHITE)
+
+func get_health_bar_fill_color() -> Color:
+	var viewer := battle_context.local_player_team() if battle_context != null else 0
+	return Color(0.95, 0.28, 0.26) if team != viewer else Color(0.28, 0.88, 0.28)

@@ -4,14 +4,15 @@
 
 ## 模块职责
 
-请求 → Main 校验与付款 → CommandSchedule → 固定模拟与批次结算 → 快照/表现事件 → UI、模型与声音。
+请求 → Main 权威校验与付款 → CommandSchedule → BattleSimulation 固定阶段与批次结算 → 按接收方快照/表现事件 → 客户端UI、模型与声音。
 
 | 层 | 状态所有者与职责 |
 | --- | --- |
 | 定义 | CardDB 注册逐卡四域；CardDefinitionCompiler 合并，CardShapeValidator 前置类型检查，CardValidator 校验语义与资源；共享定义递归只读 |
 | 编排 | Main 装配节点、比赛生命周期、UI/RPC、固定阶段调用；Unit/Tower 通过 BattleContext 使用服务，不能反向探测 current_scene |
-| 比赛 | FixedStepClock 积压与 Tick；MatchRules 时间/胜负；MatchSession 对手/握手/命令序号；ElixirManager 金币；MinionWaveSchedule 兵线阶段、延迟条目与有序生成请求 |
-| 卡牌命令 | CardCycle 手牌与轮换；CardPlayHistory 最近成功出牌/镜像代次；MatchCardGrowth 每阵营局内成长；CommandSchedule 排程（含不依附来源的在途召唤），CommandPayment 一次性付款收据 |
+| 固定阶段 | BattleSimulation 编排同一权威 Tick 的状态、命令、技能、单位、移动、弹体与胜负；独立服务器、单机和工作台共用，客户端拒绝调用 |
+| 比赛 | FixedStepClock 积压与 Tick；MatchRules 时间/胜负；MatchSession 双玩家身份映射/握手/独立命令序号；ElixirManager 金币；MinionWaveSchedule 兵线阶段、延迟条目与有序生成请求 |
+| 卡牌命令 | CardCycle 服务端/单机完整牌序与独立随机源，ClientHandState仅保存客户端四张手牌/下一张/版本，ClientInputState持有请求反馈；CardPlayHistory 最近成功出牌/镜像代次；MatchCardGrowth 每阵营局内成长；CommandSchedule 排程（含不依附来源的在途召唤），CommandPayment 一次性付款收据 |
 | 部署 | UnitSpawnRequest 具名生成参数（不改变网络载荷）；DeploymentRules 区域/建筑合法落点；PreDeploymentSweep 预部署轨迹与扫掠查询；部署命中集合随排程条目存活 |
 | 通用实体 | Unit/Tower 汇合权限、委托状态并执行生命周期；普通新卡复用 Unit，不建立英雄子类 |
 | 控制与攻击 | StatusInstances 来源独立窗口；ControlState 硬控/减速；AttackTimeline 前后摇、间隔、基础攻速表现时间 |
@@ -20,7 +21,7 @@
 | 命中与技能 | CombatInteraction/TargetProtectionState 准入与固定圣霭；CombatResolver 阶段命中/附带效果/收益/死亡队列；ProjectileSystem 弹体；SpellSystem 法术与可选速度配置的在途时钟；ActiveSkillEffectSystem 技能效果与 DashStrikeState、OrnnChargeState |
 | 周期队伍普攻增幅 | TeamAttackBoostSystem 主机固定 Tick 选择未增幅友军并写入 Unit 永久倍率；快照只复制倍率，不复制周期时钟 |
 | 主动资格 | ActiveSkillLifecycle 协调准备、起手、动作和排程，CommandSchedule 按身份结束/取消；ActiveSkillRoster 技能槽、编队转交、次数、冷却、免费追斩；效果执行身份归 CommandSchedule 与 Unit.active_skill_cast_serial |
-| 联网 | NetworkEntityLifecycle 出生/销毁/快照屏障；NetworkSnapshotSystem 编解码与状态投影；RPC 保留在 Main 节点 |
+| 联网 | NetworkClock拥有RTT/时钟采样，NetworkCommandState拥有公开命令准备记录，NetworkPlayback拥有客户端快照/事件播放时间轴；NetworkEntityLifecycle 出生/销毁/快照屏障；NetworkSnapshotSystem 编解码与状态投影；RPC 保留在 Main 节点 |
 | 表现 | UnitPresentationState 只读视图；PresentationConfig 形态选择；PresentationEvents 真实事件能力；UnitModel3D/TowerModel3D/BattleEffects2D 只读驱动图像；SkillEffectPresentation 拥有范围/护盾视觉实例、渲染计时与网络去重；GrowthEffect2D绘制成长气浪/叶片，GrowthMark3D以共享网格和深度测试表现持续花叶纹样 |
 | 动画与资源 | VisualActionSequence 片段进度；ModelVisualResources 实例动画库与材质；MatchResources 本局资源强引用；MatchModelPool 预热/领取/回收 |
 | 音频 | GameAudioManager 事件消费、播放器、区域时钟、暂停与清场；default_bus_layout.tres 持有总线压缩/限幅，见[动态混音](AUDIO_INTEGRATION.md#通用混音动态处理)；不由技能系统推进音频 |
@@ -36,7 +37,7 @@
 
 ## 需要保留的语义
 
-主机/单机固定 20Hz；每帧最多赶 4 Tick，或已耗时 8 ms 后停止继续赶步，积压保留，单 Tick 不截断。客户端只请求操作、接收快照及事件，不自行解除控制、判伤害或提前换形。
+独立服务器/单机固定 20Hz；每帧最多赶 4 Tick，或已耗时 8 ms 后停止继续赶步，积压保留，单 Tick 不截断。客户端只请求操作、接收快照及事件，不自行解除控制、判伤害或提前换形。
 
 同源状态刷新/替换、异源独立到期、强度聚合见[状态共通合同](status/CORE.md)；动作取消与权限见[动作合同](status/ACTIONS.md)。状态正时长向上取整到 Tick。AttackTimeline 的取消、命中与后摇写入分开，避免形态变化后写回旧阶段。
 
@@ -44,17 +45,17 @@ CombatResolver 按阶段收集并统一提交；单位行动阶段先固定 comb
 
 ## 比赛与网络生命周期
 
-MatchSession 绑定唯一对手，双方校验协议版本、内容指纹和合法卡组，再分别加载并确认就绪。加载不推进战斗；准备和等待共享 30 秒超时，局中不能重注册卡组。请求按会话/阵营/单调序号校验，所有表现事件携带会话身份。
+MatchSession 在服务器绑定两名玩家，独立保存玩家身份、阵营、连接和请求序号；两端校验协议版本、内容指纹和合法卡组，再分别加载并确认就绪。服务器无本地玩家，不实例化界面、模型池及音频管理器。加载不推进战斗；准备和等待共享 30 秒超时，局中不能重注册卡组。请求按会话/连接映射阵营/各玩家单调序号校验，所有表现事件携带会话身份。
 
 NetworkEntityLifecycle 按生命周期序号区分同 Tick 生成与销毁；快照能恢复未知实体，旧会话不能污染新局。ProjectileSystem 独占客户端弹体目标与插值位置，外部只取副本；Main 持有网络实体索引。
 
-终局可靠信封包含最终快照；客户端先应用状态再显示结果，重复终态幂等，普通快照不能恢复战斗。终局清命令、弹体、区域及常规战斗音频，水晶爆炸独占音轨自然结束后触发本地结果播报；返回菜单释放本场 ENet。规则或载荷变更须提升协议版本，精确契约唯一入口为[网络协议](reference/NETWORK_PROTOCOL.md)。不支持局内断线续接。
+终局可靠信封包含最终快照；客户端先应用状态再显示结果，重复终态幂等，普通快照不能恢复战斗。终局清命令、弹体、区域及常规战斗音频，水晶爆炸独占音轨自然结束后触发本地结果播报；客户端返回菜单释放本场 ENet；正常终局两端离开或断线失败后服务器重建干净会话。规则或载荷变更须提升协议版本，精确契约唯一入口为[网络协议](reference/NETWORK_PROTOCOL.md)。不支持局内断线续接。
 
 ## 状态与排程所有权
 
 CommandSchedule 通过 enqueue/take/cancel/clear 管理内部集合；inspect 仅用于低频检查，生产 Tick 不复制全量集合。付款收据绑定原付款者：开始施放消费、存活取消退款、死亡/会话清场关闭。等待部署不预留建筑占地；真正生成时选择最近合法位置，全场无位置则保留到下一 Tick。凝滞等不可推动占位的玩家部署复用这一策略，编队先整体规划；可推动单位含冰冻继续自然碰撞。召唤/复生使用全场几何，不套用玩家部署范围。
 
-ActiveSkillRoster.entry 是单项只读视图，权威消费走 consume，客户端走 replace_replica。多单位卡的来源卡、部署身份与技能槽分别保存；转交只查询同次部署的存活成员，不能以卡 ID 相同推断资格。CardCycle 只维护牌序，可靠确认后更新客户端镜像。
+ActiveSkillRoster.entry 是单项只读视图，权威消费走 consume，客户端走 replace_replica。多单位卡的来源卡、部署身份与技能槽分别保存；转交只查询同次部署的存活成员，不能以卡 ID 相同推断资格。CardCycle仅在权威端维护完整牌序与版本；可靠确认只下发本方四张手牌与下一张，ClientHandState按版本及请求序号更新，客户端不洗牌、不推导隐藏队列。
 
 盾层自然到期由 ShieldState 返回一次性结果；死亡和清除不能触发恢复或爆炸。盾层和StatusInstances减伤自然到期的爆炸统一通过queue_expiry_explosion递交技能效果批次；流血由 Unit/Tower 各自持有，CombatResolver 发放存活来源收益。形态、生命上限、待变形代次和技能资源由 Unit 汇合，死亡替身/复生的新实体不能与原位换形混用。
 

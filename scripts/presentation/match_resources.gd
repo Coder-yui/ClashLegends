@@ -22,7 +22,7 @@ func prepare(card_ids: Array) -> void:
 		_collect("res://assets/arena/rift_arena/rift_arena.tscn")
 		_world_prepared = true
 	if cards.has("kayle_ranged"):
-		_collect(preload("res://scripts/presentation/kayle_projectile_visuals.gd").dependency_paths())
+		_collect(load("res://scripts/presentation/kayle_projectile_visuals.gd").dependency_paths())
 	preparation_usec += Time.get_ticks_usec() - started
 
 func _prepare_card(id: String) -> void:

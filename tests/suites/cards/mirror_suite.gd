@@ -99,11 +99,13 @@ func _check_opening() -> void:
 
 func _check_replica() -> void:
 	var old_mode: String = _main.mode
+	var old_mode_team: int = _main.local_team
 	_main.mode = "client"
+	_main.local_team = 1
 	_main._deck = DECK.duplicate()
 	FIXTURE.fixed_cycle(_main, 1, _main._deck)
 	var history := {"card_id": "kayle", "deployment_card_id": "kayle_ranged", "cost": 6}
-	FIXTURE.deliver(_main, "_rpc_deploy_accepted", ["kayle", 20, ["mirror", "ashe", "garen", "heal"], ["freeze", "kayle", "shurima_guard", "tombstone"], history])
+	FIXTURE.deliver(_main, "_rpc_deploy_accepted", ["kayle", 20, {"version": 1, "ack": 1, "hand": ["mirror", "ashe", "garen", "heal"], "next": "freeze", "history": history}])
 	_expect(_main.card_cost_for_team(1, "mirror") == 6 and _main.resolved_card_for_team(1, "mirror") == "kayle", "可靠确认同步镜像形态与费用")
 	_expect(_main._hand._button_slots[0].get_node("CardArtwork").texture == CardArt.texture_for("kayle_ranged") and _main._hand._button_slots[0].get_node("MirrorGlass").visible, "客户端镜像保留原卡画面并叠镜面标记")
 	_main._hand.set_card_pending("garen", true)
@@ -111,11 +113,12 @@ func _check_replica() -> void:
 	_expect(not _main.play_card(1, "mirror", Vector2(300, 300), {"elixir": _main._elixir, "client_request": true}), "未确认历史不能发送镜像请求")
 	_main._hand.set_card_pending("garen", false)
 	_expect(not _main._hand._button_slots[0].disabled, "原卡确认后镜像恢复")
-	FIXTURE.deliver(_main, "_rpc_deploy_rejected", ["mirror"])
+	FIXTURE.deliver(_main, "_rpc_deploy_rejected", ["mirror", 2])
 	_expect(_main._card_history.get_last(1) == history, "拒绝不覆盖镜像历史")
 	_main._hand.set_mirror_copy({"card_id": "kayn", "deployment_card_id": "kayn_assassin", "cost": 4})
 	_expect(_main._hand._button_slots[0].get_node("CardArtwork").texture == CardArt.texture_for("kayn_assassin"), "镜像展示锁定的进阶形态而非基础凯隐")
 	_main.mode = old_mode
+	_main.local_team = old_mode_team
 
 func _check_resources() -> void:
 	var resources := MatchResources.new()

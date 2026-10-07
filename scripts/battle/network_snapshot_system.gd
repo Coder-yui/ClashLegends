@@ -127,6 +127,9 @@ func receive_spawn(session_id: String, descriptor: Dictionary, snapshot_payload:
 	if _controller.mode != "client" or terminal_applied or _controller.game_over or not lifecycle.accepts_session(session_id) or not _valid_spawn(descriptor):
 		return
 	var args: Array = descriptor.args.duplicate(true)
+	# 快照可能已重建甚至移除实体，可靠预部署/出生事件才到达。
+	# 无论是否需要重建，这一出生事实都结束对应的旧部署提示。
+	_controller._remove_card_pre_deploy_visual(int(args[7]))
 	var id := int(args[3])
 	var birth := int(descriptor.birth_tick)
 	var birth_revision := int(descriptor.birth_revision)
@@ -164,6 +167,15 @@ func _valid_spawn(descriptor: Dictionary) -> bool:
 		return false
 	return typeof(args[4]) in [TYPE_INT, TYPE_FLOAT] and is_finite(float(args[4])) and args[9] is String and args[11] is bool and args[12] is String and CardDB.has_card(args[12])
 
+
+## 仅用于网络播放排程，真正应用时仍执行完整载荷校验。
+func packet_tick(snapshot_bytes: PackedByteArray) -> int:
+	var raw := snapshot_bytes.decompress_dynamic(1024 * 1024, FileAccess.COMPRESSION_DEFLATE)
+	if raw.is_empty(): return -1
+	var decoded = bytes_to_var(raw)
+	if not decoded is Array or decoded.size() != SNAPSHOT_PACKET_SIZE: return -1
+	if decoded[S_VERSION] != SNAPSHOT_PROTOCOL_VERSION or not decoded[S_SESSION] is String or not lifecycle.accepts_session(decoded[S_SESSION]): return -1
+	return int(decoded[S_SERVER_TICK]) if decoded[S_SERVER_TICK] is int and int(decoded[S_SERVER_TICK]) >= 0 else -1
 
 func apply(snapshot_bytes: PackedByteArray, terminal: bool = false, expected_tick: int = -1) -> bool:
 	if _controller.mode != "client" or terminal_applied or _controller.game_over:
@@ -389,9 +401,12 @@ func _apply_towers(towers_data: Array) -> void:
 
 
 func send() -> void:
-	_controller._rpc_snapshot.rpc_id(_controller.network_opponent_id(), capture())
+	for team in _controller._session.players:
+		var peer: int = _controller._session.peer_for_team(team)
+		if _controller.multiplayer.get_peers().has(peer):
+			_controller._rpc_snapshot.rpc_id(peer, capture(team))
 
-func capture() -> PackedByteArray:
+func capture(receiver_team: int = 1) -> PackedByteArray:
 	var units_data := []
 	var units: Dictionary = _controller.authoritative_units_snapshot()
 	for id in units:
@@ -416,7 +431,7 @@ func capture() -> PackedByteArray:
 	var towers_data := []
 	for tower in _controller._towers:
 		towers_data.append(_tower_snapshot_payload(tower))
-	var match_state: Dictionary = _controller.network_match_snapshot()
+	var match_state: Dictionary = _controller.network_match_snapshot(receiver_team)
 	var snapshot_bytes := var_to_bytes(_snapshot_packet(
 		units_data,
 		projectiles_data,
@@ -424,11 +439,12 @@ func capture() -> PackedByteArray:
 		match_state.elixir,
 		match_state.time_left,
 		match_state.overtime,
+		receiver_team,
 	)).compress(FileAccess.COMPRESSION_DEFLATE)
 	return snapshot_bytes
 
 
-func _snapshot_packet(units_data: Array, projectiles_data: Array, towers_data: Array, client_elixir: float, match_timer: float, overtime: bool) -> Array:
+func _snapshot_packet(units_data: Array, projectiles_data: Array, towers_data: Array, client_elixir: float, match_timer: float, overtime: bool, receiver_team: int = 1) -> Array:
 	return [
 		SNAPSHOT_PROTOCOL_VERSION,
 		_controller._sim_tick_id,
@@ -440,7 +456,7 @@ func _snapshot_packet(units_data: Array, projectiles_data: Array, towers_data: A
 		overtime,
 		lifecycle.session_id,
 		lifecycle.revision,
-		_controller.growth_snapshot(),
+		_controller.growth_snapshot(receiver_team),
 	]
 
 

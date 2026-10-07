@@ -2,7 +2,7 @@ class_name DeckBuilder
 extends CanvasLayer
 ## 备战卡组、卡牌详情、主动技能选择和皮肤选择的独立 UI 模块。
 
-const ARENA_BACKGROUND_TEXTURE := preload("res://assets/arena/arena_rift_v4.png")
+const ARENA_BACKGROUND_PATH := "res://assets/arena/arena_rift_v4.png"
 
 var _deck: Array = []
 var _active_skill_choices: Dictionary = {}
@@ -103,7 +103,7 @@ func _pick_deck_ui(after_start: Callable) -> void:
 	layer.add_child(root)
 	_deck_ui_root = root
 	var background_art := TextureRect.new()
-	background_art.texture = ARENA_BACKGROUND_TEXTURE
+	background_art.texture = load(ARENA_BACKGROUND_PATH)
 	background_art.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	background_art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	background_art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED

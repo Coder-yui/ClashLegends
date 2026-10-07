@@ -22,13 +22,14 @@ var _visual_origin_cache: Dictionary = {}
 
 func setup(context: BattleContext) -> void:
 	_context = context
-	_native_visuals = preload("res://scripts/presentation/kayle_projectile_visuals.gd").new()
+	if not context.has_presentation(): return
+	_native_visuals = load("res://scripts/presentation/kayle_projectile_visuals.gd").new()
 	add_child(_native_visuals)
 	_native_visuals.setup(self)
-	_missile_visuals = preload("res://scripts/presentation/corki_projectile_effect.gd").new()
+	_missile_visuals = load("res://scripts/presentation/corki_projectile_effect.gd").new()
 	add_child(_missile_visuals)
 	_missile_visuals.setup(self)
-	_weapon_visuals = preload("res://scripts/presentation/jinx_projectile_effect.gd").new()
+	_weapon_visuals = load("res://scripts/presentation/jinx_projectile_effect.gd").new()
 	add_child(_weapon_visuals)
 	_weapon_visuals.setup(self)
 
@@ -456,11 +457,12 @@ func clear_all() -> void:
 	queue_redraw()
 
 func _draw() -> void:
+	if _context != null and not _context.has_presentation(): return
 	var visible := _client_projectiles if _context != null and _context.is_net_client() else projectiles
 	for id in visible:
 		var projectile: Dictionary = visible[id]
 		match StringName(projectile.get("visual", &"orb")):
-			&"corki_missile", &"corki_missile_big": preload("res://scripts/presentation/corki_projectile_effect.gd").draw_flight(self, _visual_position(projectile), _direction(projectile), StringName(projectile.visual) == &"corki_missile_big")
+			&"corki_missile", &"corki_missile_big": load("res://scripts/presentation/corki_projectile_effect.gd").draw_flight(self, _visual_position(projectile), _direction(projectile), StringName(projectile.visual) == &"corki_missile_big")
 			&"baron_siege", &"baron_ranged": preload("res://scripts/presentation/baron_projectile_effect.gd").draw_flight(self, _visual_position(projectile), _direction(projectile), float(projectile.radius) * float(projectile.get("visual_scale", 1.0)), projectile.color)
 			&"jinx_rocket", &"jinx_bullet", &"corki_bullet", &"kayle_sword", &"kayle_wave": pass # 由独立表现代理绘制
 			&"fireball": preload("res://scripts/presentation/fireball_effect_2d.gd").draw_flight(self, _visual_position(projectile), _direction(projectile), float(projectile.radius) * float(projectile.get("visual_scale", 1.0)))

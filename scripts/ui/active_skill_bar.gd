@@ -130,7 +130,13 @@ func set_pending(ability_id: int, pending: bool) -> void:
 	if slot_index < 0:
 		return
 	_pending[slot_index] = pending
+	_pending_labels[slot_index].text = "…"
 	_refresh_slot(slot_index)
+
+func set_pending_seconds(ability_id: int, seconds: float) -> void:
+	var slot := _ability_ids.find(ability_id)
+	if slot < 0 or not _pending[slot]: return
+	_pending_labels[slot].text = "%.1f" % seconds if seconds > 0.0 else "…"
 
 
 func remove_skill(ability_id: int) -> void:

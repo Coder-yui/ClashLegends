@@ -251,8 +251,10 @@ func _check_network_presentation(harness: Object, main: Node2D) -> void:
 	unit.apply_slow(2.0, 0.6)
 	var payload: Array = main._snapshot_system._unit_snapshot_payload(999999, unit)
 	var mode: String = main.mode
+	var mode_team: int = main.local_team
 	main._client_units[999999] = unit
 	main.mode = "client"
+	main.local_team = 1
 	main._snapshot_system._apply_units([payload])
 	main._audio_manager.attach_unit(unit, stats)
 	main._snapshot_system._apply_units([payload])
@@ -268,6 +270,7 @@ func _check_network_presentation(harness: Object, main: Node2D) -> void:
 	harness._expect(shared and aligned, "客户端重复载荷保持统一有效速率/权限，晚到普攻序号按权威进度 seek")
 	main._client_units.erase(999999)
 	main.mode = mode
+	main.local_team = mode_team
 	if view != null: view.free()
 	unit.free()
 	var seen: Array[StringName] = []

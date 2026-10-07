@@ -99,7 +99,9 @@ func run(harness: Object, main: Node2D) -> void:
 	main.add_child(client_unit)
 	client_unit.set_battle_context(main.battle_context)
 	var previous_mode: String = main.mode
+	var previous_mode_team: int = main.local_team
 	main.mode = "client"
+	main.local_team = 1
 	audio.attach_unit(client_unit, stats)
 	cues.clear()
 	client_unit.net_attack_visual_serial = 1
@@ -113,6 +115,7 @@ func run(harness: Object, main: Node2D) -> void:
 	audio._process(0.0)
 	harness._expect(cues == [&"empowered_swing", &"judgment:start", &"judgment:sustain", &"judgment:end"], "客户端音频跟随快照动作与强化序号，重复快照不重播")
 	main.mode = previous_mode
+	main.local_team = previous_mode_team
 	client_unit.free()
 	var yi_cues: Array[StringName] = []
 	var yi_listener := func(card_id: String, cue: StringName, _position: Vector2):
@@ -292,7 +295,9 @@ func _check_ranged_audio(harness: Object, main: Node2D) -> void:
 	harness._expect(cues == [&"active:release"], "万箭齐发空扇区有释放音而无命中音")
 	cues.clear()
 	var previous_mode: String = main.mode
+	var previous_mode_team: int = main.local_team
 	main.mode = "client"
+	main.local_team = 1
 	main._client_units[987654] = source
 	preload("res://tests/fixtures/network_fixture.gd").deliver(main, "_rpc_unit_audio_event", [987654, "attack_launch", source.global_position])
 	preload("res://tests/fixtures/network_fixture.gd").deliver(main, "_rpc_unit_audio_event", [987654, "active:release", source.global_position])
@@ -300,6 +305,7 @@ func _check_ranged_audio(harness: Object, main: Node2D) -> void:
 	harness._expect(cues == [&"attack_launch", &"active:release", &"active:hit"] and is_equal_approx(victims[0].hp, hp_a - 70.0), "客户端重放寒冰离弦和技能事件，不重复结算伤害")
 	main._client_units.erase(987654)
 	main.mode = previous_mode
+	main.local_team = previous_mode_team
 	cues.clear()
 	source.notify_visual_death()
 	source.notify_visual_death()
@@ -321,7 +327,9 @@ func _check_batch_audio(harness: Object, main: Node2D) -> void:
 	main.add_child(dragon)
 	dragon.set_battle_context(main.battle_context)
 	var old_mode: String = main.mode
+	var old_mode_team: int = main.local_team
 	main.mode = "client"
+	main.local_team = 1
 	audio.attach_unit(dragon, CardDB.get_card(dragon.card_id))
 	var cues: Array[StringName] = []
 	var listener := func(id: String, cue: StringName, _pos: Vector2):
@@ -360,6 +368,7 @@ func _check_batch_audio(harness: Object, main: Node2D) -> void:
 	audio.cue_played.disconnect(listener)
 	dragon.free()
 	main.mode = old_mode
+	main.local_team = old_mode_team
 	var teemo := Unit.new()
 	teemo.card_id = "teemo"
 	teemo.setup(0, CardDB.get_card("teemo"), "提莫")
@@ -619,7 +628,9 @@ func _check_projectile_launch_lifetime(harness: Object, main: Node2D) -> void:
 	harness._expect(audio._projectile_launch_players.is_empty() and not second_player.playing, "目标死亡使弹体消失时，发射声也停止")
 	target.free()
 	var previous_mode: String = main.mode
+	var previous_mode_team: int = main.local_team
 	main.mode = "client"
+	main.local_team = 1
 	var remote_id := projectiles._next_id
 	projectiles._next_id += 1
 	var saved_source := {"card_id": "gnar", "form": 0, "serial": 1}
@@ -636,6 +647,7 @@ func _check_projectile_launch_lifetime(harness: Object, main: Node2D) -> void:
 	projectiles.clear_all()
 	harness._expect(audio._projectile_launch_players.is_empty(), "客户端清场清理所有弹体持有的发射声")
 	main.mode = previous_mode
+	main.local_team = previous_mode_team
 
 func _check_apex_audio_timing(harness: Object, main: Node2D) -> void:
 	var audio: GameAudioManager = main._audio_manager
@@ -946,10 +958,12 @@ func _check_match_announcements(harness: Object, main: Node2D) -> void:
 	var saved_next: float = main._minion_waves.next_wave_time
 	var saved_pending: Array = main._minion_waves.pending.duplicate(true)
 	var saved_mode: String = main.mode
+	var saved_mode_team: int = main.local_team
 	var saved_over: bool = main.game_over
 	var saved_finished: bool = main._match_rules.finished
 	var old_children: Array = main.get_children()
 	main.mode = "local"
+	main.local_team = 0
 	main.game_over = false
 	main._minion_waves.elapsed = 4.9
 	main._minion_waves.next_wave_time = 5.0
@@ -960,12 +974,14 @@ func _check_match_announcements(harness: Object, main: Node2D) -> void:
 	main._tick_minion_waves(0.05)
 	harness._expect(cues == [&"minions_spawn"], "第5秒首波兵线只播一次全军出击")
 	main.mode = "client"
+	main.local_team = 1
 	preload("res://tests/fixtures/network_fixture.gd").deliver(main, "_rpc_card_event", [main._last_card_event_id, "match", "minions_spawn", Vector2.ZERO])
 	harness._expect(cues.size() == 1, "可靠首波播报重放按事件ID去重")
 	main._end_game(0, "nexus")
 	main._end_game(0, "nexus")
 	harness._expect(cues.count(&"defeat") == 1 and cues.count(&"victory") == 0, "主机胜利时客户端只播一次失败")
 	main.mode = "local"
+	main.local_team = 0
 	main.game_over = false
 	main._audio_manager.begin_battle()
 	main._end_game(0, "nexus")
@@ -976,6 +992,7 @@ func _check_match_announcements(harness: Object, main: Node2D) -> void:
 	main._minion_waves.next_wave_time = saved_next
 	main._minion_waves.pending.assign(saved_pending)
 	main.mode = saved_mode
+	main.local_team = saved_mode_team
 	main.game_over = saved_over
 	main._match_rules.finished = saved_finished
 	main._audio_manager.begin_battle()
@@ -1079,9 +1096,11 @@ func _check_team_audio_routes(harness: Object, main: Node2D) -> void:
 	# 真正的客户端 RPC 解码参数包含阵营；用可区分的红方形态配置观察最终播放器。
 	var saved_audio: GameAudioManager = main._audio_manager
 	var saved_mode: String = main.mode
+	var saved_mode_team: int = main.local_team
 	var saved_card_event: int = main._last_card_event_id
 	main._audio_manager = audio
 	main.mode = "client"
+	main.local_team = 1
 	for player in audio._world_players: player.stop()
 	preload("res://tests/fixtures/network_fixture.gd").deliver(main, &"_rpc_card_event", [saved_card_event + 1, "gnar", "probe:start", Vector2.ZERO, 1, 1])
 	harness._expect(audio._world_players[0].volume_db == -40.0, "卡牌 RPC 从红方大形态一路传到音频选择入口")
@@ -1089,6 +1108,7 @@ func _check_team_audio_routes(harness: Object, main: Node2D) -> void:
 	harness._expect(audio._zone_players[100].player.volume_db == -40.0, "区域 RPC 保存红方大形态来源")
 	main._audio_manager = saved_audio
 	main.mode = saved_mode
+	main.local_team = saved_mode_team
 	main._last_card_event_id = saved_card_event
 	audio.free()
 

@@ -136,7 +136,9 @@ func _check_projectile_visual_snapshot() -> void:
 		"visual_offset": Vector2(0.0, -20.0), "visual_scale": 2.25,
 	})
 	var old_mode: String = _main.mode
+	var old_mode_team: int = _main.local_team
 	_main.mode = "client"
+	_main.local_team = 1
 	_main._projectile_system.clear_client()
 	snapshot_system._apply_projectiles([payload])
 	var client_projectile: Dictionary = _main._projectile_system.client_snapshot().get(991, {})
@@ -148,6 +150,7 @@ func _check_projectile_visual_snapshot() -> void:
 	)
 	_main._projectile_system.clear_client()
 	_main.mode = old_mode
+	_main.local_team = old_mode_team
 
 ## 墓碑小鬼的生命值与公主塔单次伤害一致，确保一次塔击恰好击杀。
 func _check_imp_tower_damage() -> void:

@@ -301,13 +301,16 @@ func _check_aurelionsol_art_integration() -> void:
 	_expect(unit.get_continuous_beam_endpoint_position() == dummy.get_visual_screen_position() and unit.get_continuous_visual_target_air_id() == -1, "龙王吐息攻击地面目标时保留原战场端点")
 	dummy.is_air = true
 	var old_mode: String = _main.mode
+	var old_mode_team: int = _main.local_team
 	_main.mode = "client"
+	_main.local_team = 1
 	unit.net_visual_state = 3
 	unit.net_has_continuous_target = true
 	unit.net_continuous_target_pos = dummy.global_position
 	unit.net_continuous_target_air_id = 710
 	_expect(unit.get_continuous_beam_endpoint_position() == dummy.global_position + Vector2(0, -63), "客户端按快照目标 ID 找到本地空中模型锚点，不朝脚下吐息")
 	_main.mode = old_mode
+	_main.local_team = old_mode_team
 	unit.take_damage(unit.max_hp + 1.0)
 	var death_view_found := view != null and view._dying and view._animation_player.current_animation == "Death"
 	_expect(death_view_found, "龙王死亡时由独立 3D 代理播放 Death")

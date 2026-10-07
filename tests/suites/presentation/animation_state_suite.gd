@@ -607,7 +607,9 @@ func _check_deploy_control_endings() -> void:
 			unit.free()
 	# 初次客户端表现已受晕：权威投影仍在部署，本地计时不作为生命周期来源。
 	var saved_mode: String = _main.mode
+	var saved_mode_team: int = _main.local_team
 	_main.mode = "client"
+	_main.local_team = 1
 	for card in ["garen", "pantheon"]:
 		var stats: Dictionary = CardDB.get_card(card)
 		var unit := Unit.new()
@@ -629,6 +631,7 @@ func _check_deploy_control_endings() -> void:
 		view.free()
 		unit.free()
 	_main.mode = saved_mode
+	_main.local_team = saved_mode_team
 
 func _check_idle_tail_deploy() -> void:
 	for card in ["ashe", "anivia", "anivia_egg", "darius", "lulu", "pix", "voidfish", "melee_minion", "ranged_minion", "siege_minion", "super_minion", "tryndamere"]:
