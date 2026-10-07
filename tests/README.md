@@ -13,7 +13,7 @@
 | 模型、UI、动画、音频 | 工作台及[专项场景](../tools/demos/README.md) | 实际渲染/试听，需人工验收；headless通过不能替代 |
 | 局部性能 | Godot机制入口追加`-- --profile-maintenance` | 固定32/64/128单位CPU采样；需同条件前后比较，不当成FPS或正确性门槛 |
 
-历史一次性配方与证据保留原路径，按对应交付复现，不加入默认测试或当作当前通过证明。注册ID保留稳定命令接口，不为大小写统一而改名。当前入口清单通过 `verify --list-suites` 查询，数量以catalog与本次结构化结果为准。
+历史证据只供追溯；退役配方从 Git 历史读取，不作为当前可运行命令。注册ID保留稳定命令接口，不为大小写统一而改名。当前入口清单通过 `verify --list-suites` 查询，数量以catalog与本次结构化结果为准。
 
 金克丝专项 `--suite JinxSuite` 覆盖换枪次数/冷却、在途弹体、空地溅射、机枪三层、建筑/防御塔/水晶助攻边界、命中后自然到期/衰血致死及超时排除、移动切枪下肢同相位混合/结束不重启及下肢武器隔离、凝滞、同批互杀与快照；6秒叠层/刷新、120Tick到期、躯干后方速度线出生分布、爆炸45像素外沿及层数/剩余时间网络往返。
 
@@ -112,13 +112,19 @@ restart边界包含两次正式加载，外层测试预算为75秒（两次30秒
 
 已知未解决问题以[问题目录](../docs/issues/README.md)为准；旧报告不能代替本次运行。
 
+### 当前网络覆盖
+
+`session_suite` 负责身份/握手、私有四张手牌与下一张、版本/请求倒退、时钟样本去重/超时/重置、50–200ms自适应缓冲、按Tick播放及同Tick事件/快照次序、乱序插入、公开命令只读与复制隔离、准备通知不执行权威逻辑。
+
+三进程通过正式 `play_card` / `use_active_skill` 提交，检查点击当帧输入反馈、10Tick命令缓冲、通知、取消、终局和清场；客户端不持有权威牌序或隐藏队列。impaired夹具加入技能请求、命令预告、可靠战斗信封、时钟响应延迟及快照丢弃/乱序，属于应用层故障注入，不能替代公网测试。渲染模式保留输入提示、下牌圆环、技能等待和终局截图，仍需目视检查。
+
 ## 实际渲染与音频
 
 日常从 `Godot --path . -- --mode=workbench` 进入正式内容；专项场景统一在 [tools/demos](../tools/demos/README.md)，摄影配方在 [tools/capture](../tools/capture/README.md)。不再在 tests 保存重复演示场景。
 
-常用入口：maintenance_preview（跨卡状态）、original_animation_review（连续动作及天使命中攻速）、workbench_preview/workbench_scenarios_preview（工作台）、combat_terminal_review（同刻死亡与水晶音频）。逐卡配方和 host/join 参数见工具索引与脚本；不要求每次维护批量运行所有演示。
+常用入口：maintenance_preview（跨卡状态）、original_animation_review（连续动作及天使命中攻速）、workbench_preview/workbench_scenarios_preview（工作台）、combat_terminal_review（同刻死亡与水晶音频）。逐卡单机配方见工具索引与脚本，联网使用上面的三进程入口；不要求每次维护批量运行所有演示。
 
-模型/特效变动必须看实际画面；音频变动必须实际试听。截图生成、cue 日志、短 WAV 播放器的自然 finished 检查都不能代替主观验收。结果写[交付文档](../docs/deliveries/README.md)，工作台不存验收勾选。
+模型/特效变动必须看实际画面；音频变动必须实际试听。截图生成、cue 日志、短 WAV 播放器的自然 finished 检查都不能代替主观验收。结果写[改动记录](../docs/deliveries/README.md)，工作台不存验收勾选。
 
 ## Python 工具验证
 
@@ -128,9 +134,3 @@ python3 -m unittest discover -s tools/tests -p 'test_*.py'
 ```
 
 前者验证审计和执行器的失败路径，由 verify 自动执行；后者用于通用素材工具改动。静态链接/注册审计不能代替机制回归。数值检查首批覆盖赛恩、凯隐、潘森的费用、生命、伤害、攻击间隔、实体部署锁定，以及主动费用、次数和冷却；未标记的数值、玩法解释和听感仍需人工核对。历史长篇测试说明保留在[归档](../docs/archive/2026-09-26/tests_README.md)。
-
-
-协议97缓冲回归：session_suite覆盖时钟样本去重/超时/重置、按Tick播放及同Tick事件/快照次序、迟到追赶、排程去重/非法字段/旧会话、准备通知不运行客户端权威逻辑。三进程验证双方均提前收到出牌及技能通知、固定10Tick、技能取消、时钟同步、播放队列与终局清理。impaired夹具还注入技能请求80ms、命令预告70ms、可靠战斗信封120ms和时钟响应40ms延迟，配合原有快照丢弃/乱序；属于应用层可复现故障注入，不是公网实测。render检查新增Tick8本方下牌圆环与Tick62技能等待阶段。
-
-
-协议98回归：session_suite覆盖洗牌种子复现/不消耗战斗随机、仅四张+下一张的载荷、客户端空初始化、版本/请求倒退、旧拒绝不能清新pending、自适应50–200ms边界及重置。三进程通过正式play_card/use_active_skill提交，核对点击当帧反馈且尚未扣费/轮换/执行，客户端无权威CardCycle/隐藏队列，最终四张/下一张与服务器投影一致；受损链路验证缓冲增大，稳定链路验证缓冲降低。render另存client0-input.png/client1-input.png检查未确认输入提示，原有5个时间点保持。

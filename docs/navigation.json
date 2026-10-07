@@ -33,6 +33,13 @@
     "new_card": [
       "docs/NEW_CARD_CHECKLIST.md",
       "docs/CARD_DESIGN.md"
+    ],
+    "existing_content": [
+      "docs/units/README.md"
+    ],
+    "tools": [
+      "tools/README.md",
+      "tests/README.md"
     ]
   },
   "card_documents": {

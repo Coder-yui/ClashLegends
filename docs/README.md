@@ -14,20 +14,11 @@
 
 ## 开发与维护
 
-| 任务 | 阅读入口 |
-| --- | --- |
-| 新增卡牌或接入素材 | [新卡清单](NEW_CARD_CHECKLIST.md)；协作者先看 [任务导航](AGENT_WORKFLOW.md) |
-| 模型、卡面与地图 | [美术接入](ART_PIPELINE.md) → [近战模型](MELEE_3D_INTEGRATION.md) / [远程差异](RANGED_3D_INTEGRATION.md) |
-| 部署与动画时序 | [部署规则](UNIT_DEPLOYMENT.md)、[动画系统](ANIMATION_STATE_SYSTEM.md) |
-| 获取与接入音频 | [音频流程](AUDIO_INTEGRATION.md) |
-| 控制、增益、减益与特殊状态设计 | [状态与效果规则](status/README.md)（区分已实现、确定未实现与待定） |
-| 修改玩法或项目结构 | [卡牌机制](CARD_DESIGN.md)、[维护架构](MAINTENANCE_ARCHITECTURE.md)、[移动与接触](BATTLE_CONTACT_MODEL.md) |
-| 查开发细节、跑验证 | [技术参考](reference/README.md)、[测试手册](../tests/README.md) |
-| 查旧讨论与验收证据 | [历史归档](archive/README.md) |
+从 [任务导航](AGENT_WORKFLOW.md) 选择新卡、既有内容修改、通用机制、工具或其他工程任务，只读对应专题。代码入口见 [scripts](../scripts/README.md)，工具入口见 [tools](../tools/README.md)，验证方式见 [tests](../tests/README.md)。
 
 ## 文档如何维护
 
-单位手册写当前玩法、数值与观看说明；通用文档写跨单位的规则和流程；技术参考保留实现契约；历史讨论和当次验收留在归档。
+单位手册写当前玩法、数值与观看说明；通用文档写跨单位的规则和流程；技术参考保留实现契约；本次改动与验收写入任务唯一记录，规则见 [改动记录](AGENT_WORKFLOW.md#改动记录)。
 
 修改实现时同步核对相关说明，直接改正文，不在末尾叠加互相冲突的“新版补充”。文件存在、测试通过、目视通过和试听通过分别记录。
 

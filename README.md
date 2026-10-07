@@ -23,9 +23,9 @@ Godot --headless --path . --script tests/mechanics_check.gd
 - [模块与数据流](docs/MAINTENANCE_ARCHITECTURE.md)：Main 编排、battle 权威系统、逐卡定义、独立表现。
 - [卡牌索引](docs/units/README.md)：当前卡牌与系统对象；定义位于 `scripts/data/cards/`。
 - [测试与联机](tests/README.md)：统一 mechanics、server + 两个 join、真实渲染和试听要求。
-- [当前待办](docs/DEV_PLAN.md)与[历史归档](docs/archive/README.md)。
+- [当前待办](docs/DEV_PLAN.md)。历史只在追溯时从文档索引进入。
 
-普通卡复用通用 Unit；出牌统一经过 `play_card()`，新增机制扩展共享系统。素材和动画不能决定伤害、移动、碰撞或技能时刻。协作边界见 [AGENTS.md](AGENTS.md)。
+普通卡复用通用 Unit；出牌统一经过 `play_card()`，新增机制扩展共享系统。素材和动画不能决定伤害、移动、碰撞或技能时刻。协作边界见 [AGENTS.md](AGENTS.md)。实际修改的记录规则见 [任务导航](docs/AGENT_WORKFLOW.md#改动记录)，小任务直接依据对话。
 
 素材与迭代：正式资源在 `assets/`；候选、制作中版本和产物统一在项目根目录的 `ClashLegends-开发素材库/`。宣传素材独立在项目根目录的 `ClashLegends-promo-materials/`。这两个目录是本地工作区，已由 `.gitignore` 忽略；需要进入游戏的最终资源必须同步到 `assets/`，来源和验收结论写入文档。分类与展台流程见 [任务导航](docs/AGENT_WORKFLOW.md)。
 

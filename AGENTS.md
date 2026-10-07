@@ -4,16 +4,16 @@ Clash Legends 是 Godot 4.x 标准版（GDScript）的 1v1 卡牌即时对战学
 
 ## 开始与验证
 
-1. 先读 `docs/AGENT_WORKFLOW.md`，按任务类型选择最少当前专项资料；历史归档和交付仅在追溯或用户指定时定向读取，问题档案按具体任务读取。
+1. 先读 `docs/AGENT_WORKFLOW.md`，按任务类型选择最少当前专项资料；历史归档和改动记录仅在追溯或用户指定时定向读取，问题档案按具体任务读取。
 2. 先看 `git status --short --branch`，不得覆盖用户已有修改。
 3. F5 运行 `scenes/main.tscn`；内容审查进入“卡牌开发工作台”，用法见 `docs/DEVELOPMENT_WORKBENCH.md`。
 4. 核心回归：`Godot --headless --path . --script tests/mechanics_check.gd`。
 5. 美术任务还必须在实际渲染中目视验收。
 6. 完整新卡按“2D 权威逻辑 → 3D 模型/动画 → 卡面 → 音频 → 联合验收”推进；音频按 `docs/AUDIO_INTEGRATION.md` 执行并在实际运行中试听。缺素材或未支持的事件必须记录，不得默认为已完成。
 
-## 任务交付
+## 任务改动记录
 
-每个任务完成后，按 [交付合同模板](docs/templates/delivery.md) 在 `docs/deliveries/` 填写简洁交付报告，最终回复给出链接。问题文档放 `docs/issues/`；没有文档时直接依据用户对话处理。工作台只作预览器，不承担验收记录或报告导出。具体流程见 [任务导航](docs/AGENT_WORKFLOW.md)。
+只有实际修改代码、配置、资源、工具或正式文档时才维护改动记录；讨论、问答和只读检查不记。同一任务周期（包括测试反馈与后续修正）只更新一份 `docs/deliveries/` 记录，最终回复给出链接。记录结构与任务边界唯一规则见 [任务导航](docs/AGENT_WORKFLOW.md#改动记录)，起稿使用 [模板](docs/templates/change_record.md)。小任务直接依据对话，大任务可使用需求文档，不要求所有任务填模板。工作台只作预览器，不承担验收记录或报告导出。
 
 ## 必须保持的边界
 

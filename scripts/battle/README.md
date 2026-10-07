@@ -4,8 +4,8 @@
 
 | 修改内容 | 文件 |
 | --- | --- |
-| 时钟、比赛、金币、简单单机 AI | `fixed_step_clock`、`minion_wave_schedule`、`match_rules`、`elixir_manager`、`ai_opponent` |
-| 手牌、镜像、局内成长 | `card_cycle`、`card_play_history`、`match_card_growth` |
+| 共享阶段、时钟、比赛、金币、简单单机 AI | `battle_simulation`、`fixed_step_clock`、`minion_wave_schedule`、`match_rules`、`elixir_manager`、`ai_opponent` |
+| 手牌、镜像、局内成长 | `card_cycle`、`client_hand_state`、`card_play_history`、`match_card_growth` |
 | 排程、付款、主动资格 | `command_schedule`、`command_payment`、`active_skill_roster`、`active_skill_lifecycle` |
 | 部署、预部署轨迹 | `unit_spawn_request`、`deployment_rules`、`pre_deployment_sweep` |
 | 地图、导航、碰撞与落点 | `arena_rules`、`nav_lane_layout`、`nav_grid`、`battle_path_search`、`movement_system`、`unit_landing_query` |
@@ -15,6 +15,7 @@
 | 效果准入与结算 | `combat_interaction`、`target_protection_state`、`battle_numbers`、`combat_resolver` |
 | 弹体、法术、主动效果 | `projectile_system`、`spell_system`、`active_skill_effect_system` |
 | 会话与副本 | `match_session`、`network_entity_lifecycle`、`network_snapshot_system` |
+| 客户端输入、时钟与表现时间轴 | `client_input_state`、`network_clock`、`network_command_state`、`network_playback` |
 | 战场服务边界 | `battle_context` |
 
 表内文件均为 `.gd`。不为每张英雄卡新增系统；先看现有能力能否由四域定义组合。纯表现去 `scripts/presentation/`，声音去 `scripts/audio/`，离线加工去 `tools/`。对应自动测试按[测试领域](../../tests/README.md#分类与覆盖所有者)定位。

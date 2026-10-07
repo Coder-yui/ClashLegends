@@ -244,3 +244,9 @@ frontal可配置damage_by_use，序列长度须等于max_uses，数值均为有�
 ## 武器切换与建筑助攻
 
 `toggle_form`复用同一Unit的双形态字段和形态快照；真正效果执行时立即切换属性和弹体配置，清空旧攻击周期与命中攻速层数，不改变已发弹体。正数`transform_duration`决定切换窗口，复用变形锁普攻、行动权限、硬控取消和快照；期间不能攻击，圈外可按新形态射程追击，窗结束后从新前摇起手。`structure_assist_window / structure_haste_duration / structure_haste_attack_speed / structure_haste_speed_bonus`成组配置正数。CombatResolver在真实普攻命中后登记建筑助攻；Unit.died或Tower.defeated的权威死亡通知检查最后命中Tick并向存活、非凝滞来源发放收益。Tower的纯视觉destroyed信号与客户端快照不参与玩法。建筑自然到期或自然衰血致死同样检查此前真实命中的助攻窗口；普通单位不登记。每次真实建筑击败将structure_haste实例层数加一并整体刷新窗口；structure_haste_attack_speed表示首层倍率，多层按1+(首层倍率-1)×层数相加。移速加成不叠加，刷新只重置衰减；同类攻速取最强，移速按状态剩余时长线性衰减；金克丝具体数值见[卡牌手册](units/jinx.md)。
+
+## 按次敌方效果抵挡与循环范围追加
+
+`effect_shield`使用正数duration，在StatusInstances中计时；CombatInteraction按一次Delivery共享目标接受/拒绝结果。施法、多段、在途技能与延续区域持有同一轻量收据，作用结束后自然释放；同步调用作用域在返回时恢复，延期状态携带上下文。拒绝后不提交伤害、附带控制、流血或命中收益；友方和attached已有状态不参与消费。已接受持续效果不被后来开启的盾追溯拦截。选择目标不消耗盾，普通血量盾也不替代该资格。
+
+`empowered_attack`主动可配置`cleave_damage / cleave_radius`，将下一次离散近战普攻强化为范围追加伤害；主目标基础与追加量合并，其余目标只受追加量。`heal_ratio`按本次所有真实掉血合计回血，排除护盾吸收和过量伤害。普通攻击无自动周期溅射。表现使用强化攻击序号和cleave:hit事件。

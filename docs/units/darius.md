@@ -49,7 +49,7 @@
 | 来源死亡 | 已提交攻击仍施加流血；死者不获得血怒或免费技能 |
 | 权威所有者 | BleedState持有目标流血；StatusInstances持有血怒；ActiveSkillRoster持有付费次数/冷却/免费资格 |
 | 协议与校验 | 四域定义及类型/能力校验；快照同步流血标记、血怒时间、免费追斩；客户端不结算 |
-| 验收入口 | DariusSuite、network_lifecycle_suite与实际双阵营/双进程场景 |
+| 验收入口 | DariusSuite、network_lifecycle_suite与单机双阵营场景；通用联网用三进程验证 |
 
 ## 动画、声音与特效
 

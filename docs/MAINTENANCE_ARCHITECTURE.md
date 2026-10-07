@@ -4,7 +4,7 @@
 
 ## 模块职责
 
-请求 → Main 权威校验与付款 → CommandSchedule → BattleSimulation 固定阶段与批次结算 → 按接收方快照/表现事件 → 客户端UI、模型与声音。
+客户端输入反馈/操作请求 → Main 权威校验与付款 → CommandSchedule → BattleSimulation 固定阶段与批次结算 → 按接收方快照/表现事件 → 客户端UI、模型与声音。
 
 | 层 | 状态所有者与职责 |
 | --- | --- |
@@ -21,7 +21,7 @@
 | 命中与技能 | CombatInteraction/TargetProtectionState 准入与固定圣霭；CombatResolver 阶段命中/附带效果/收益/死亡队列；ProjectileSystem 弹体；SpellSystem 法术与可选速度配置的在途时钟；ActiveSkillEffectSystem 技能效果与 DashStrikeState、OrnnChargeState |
 | 周期队伍普攻增幅 | TeamAttackBoostSystem 主机固定 Tick 选择未增幅友军并写入 Unit 永久倍率；快照只复制倍率，不复制周期时钟 |
 | 主动资格 | ActiveSkillLifecycle 协调准备、起手、动作和排程，CommandSchedule 按身份结束/取消；ActiveSkillRoster 技能槽、编队转交、次数、冷却、免费追斩；效果执行身份归 CommandSchedule 与 Unit.active_skill_cast_serial |
-| 联网 | NetworkClock拥有RTT/时钟采样，NetworkCommandState拥有公开命令准备记录，NetworkPlayback拥有客户端快照/事件播放时间轴；NetworkEntityLifecycle 出生/销毁/快照屏障；NetworkSnapshotSystem 编解码与状态投影；RPC 保留在 Main 节点 |
+| 联网 | NetworkClock拥有RTT/时钟采样，NetworkCommandState拥有公开命令准备记录，visit仅提供只读字典，NetworkPlayback拥有客户端快照/事件播放时间轴，仅入队后重排，保持同Tick事件先于快照；NetworkEntityLifecycle 出生/销毁/快照屏障；NetworkSnapshotSystem 编解码与状态投影；RPC 保留在 Main 节点 |
 | 表现 | UnitPresentationState 只读视图；PresentationConfig 形态选择；PresentationEvents 真实事件能力；UnitModel3D/TowerModel3D/BattleEffects2D 只读驱动图像；SkillEffectPresentation 拥有范围/护盾视觉实例、渲染计时与网络去重；GrowthEffect2D绘制成长气浪/叶片，GrowthMark3D以共享网格和深度测试表现持续花叶纹样 |
 | 动画与资源 | VisualActionSequence 片段进度；ModelVisualResources 实例动画库与材质；MatchResources 本局资源强引用；MatchModelPool 预热/领取/回收 |
 | 音频 | GameAudioManager 事件消费、播放器、区域时钟、暂停与清场；default_bus_layout.tres 持有总线压缩/限幅，见[动态混音](AUDIO_INTEGRATION.md#通用混音动态处理)；不由技能系统推进音频 |
@@ -71,7 +71,7 @@ Unit持有唯一 `combat_idle_seconds`，旧状态推进前采样持续战斗条
 
 MatchModelPool 在遮罩后预建模型和实例独立动画库。离树只读样本不参与战斗或发声；Compatibility 渲染器实际绘制不同网格/材质组合，隐藏保留样本与绘制资源。预热覆盖完整动画及受击/冻结/强化六种材质组合；相同需求合并，互斥形态容量不覆盖预热配置。
 
-ModelVisualResources 对未压缩的纯数值骨骼/混合形状动画使用 copy_track 构建实例独立副本；资源值、事件、压缩轨道或脚本/元数据扩展仍完整深复制，同库别名保留。用户接受历史复杂样本约78MiB额外静态内存后恢复此策略，真实对局体验仍待观察。MatchModelPool 仅在资源所有者明确将强化后三态构造为基础前三态的引用别名（没有任何强化材质）时，省去后三次重复绘制；不以材质ID推断参数相同。所有六态仍应用，前三态及附属强化效果推进后的首次绘制保留；有任何强化材质仍绘制六态。全部操作仍在主线程，资源闭包、实例预算和双方 ready 门槛保持原流程。 本局闭包包含冰冻法术时，加载遮罩下预建并实际绘制一个冰面槽，随后隐藏；不创建法术状态、伤害或声音，开战后复用该槽。
+ModelVisualResources 对未压缩的纯数值骨骼/混合形状动画使用 copy_track 构建实例独立副本；资源值、事件、压缩轨道或脚本/元数据扩展仍完整深复制，同库别名保留。此策略以额外静态内存换取实例资源隔离，仍保留加载阶段预热；没有本次测量不能宣称新的性能收益。MatchModelPool 仅在资源所有者明确将强化后三态构造为基础前三态的引用别名（没有任何强化材质）时，省去后三次重复绘制；不以材质ID推断参数相同。所有六态仍应用，前三态及附属强化效果推进后的首次绘制保留；有任何强化材质仍绘制六态。全部操作仍在主线程，资源闭包、实例预算和双方 ready 门槛保持原流程。 本局闭包包含冰冻法术时，加载遮罩下预建并实际绘制一个冰面槽，随后隐藏；不创建法术状态、伤害或声音，开战后复用该槽。
 
 模型池只回收已审计模型/显式支持 reset_pool_visual 的包装，重置骨骼、网格、变换、动画循环区间及材质。每路径最多 64 个闲置模型，按编队、召唤与兵线预算；不足时立即创建，不阻塞模拟。UnitModel3D 代理、信号与附属特效不复用。换模型/退场恢复覆盖材质并释放引用。
 
