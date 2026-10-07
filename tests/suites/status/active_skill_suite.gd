@@ -38,9 +38,9 @@ func _check_active_skill_loadout_rule() -> void:
 			data_ok = data_ok and spell_skills.size() == expected_spell_count
 		else:
 			var available_skills := CardDB.active_skills_for(card_id)
-			var expected_count := 2 if card_id in ["garen", "gwen"] else 1
+			var expected_count := 2 if card_id in ["garen", "gwen", "nocturne"] else 1
 			data_ok = data_ok and available_skills.size() == expected_count and not String(available_skills[0].get("name", "")).is_empty()
-	_expect(data_ok, "当前每张可选单位/建筑卡至少有一个主动候选，盖伦、格温和治疗术各有两个候选但每个实例只携带一个，法术卡不生成场上主动按钮")
+	_expect(data_ok, "当前每张可选单位/建筑卡至少有一个主动候选，盖伦、格温、梦魇和治疗术各有两个候选但每个实例只携带一个，法术卡不生成场上主动按钮")
 	var left_position: Vector2 = ActiveSkillBar.LEFT_SLOT_POSITION
 	var right_position: Vector2 = ActiveSkillBar.RIGHT_SLOT_POSITION
 	_expect(

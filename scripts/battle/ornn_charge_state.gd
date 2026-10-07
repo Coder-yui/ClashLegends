@@ -29,6 +29,13 @@ func _init(source: Unit, definition: Dictionary) -> void:
 		forward = Vector2.UP if source.team == 0 else Vector2.DOWN
 
 func tick(dt: float) -> bool:
+	var previous := CombatInteraction.current_delivery
+	CombatInteraction.current_delivery = skill.get("effect_delivery")
+	var result := _tick_delivery(dt)
+	CombatInteraction.current_delivery = previous
+	return result
+
+func _tick_delivery(dt: float) -> bool:
 	if finished:
 		return false
 	var source = source_ref.get_ref()

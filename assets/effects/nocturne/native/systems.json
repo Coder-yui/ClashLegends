@@ -1,0 +1,5852 @@
+{
+  "P": [
+    {
+      "name": "DirtBits",
+      "mesh": "",
+      "primitive": "",
+      "trail": false,
+      "ground": false,
+      "blend": 1,
+      "single": true,
+      "life": {
+        "base": 0.3,
+        "times": [
+          0.0
+        ],
+        "values": [
+          0.3
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              0.9,
+              1.0
+            ],
+            "values": [
+              0.2,
+              0.6,
+              1.0
+            ]
+          }
+        ]
+      },
+      "rate": {
+        "base": 100.0
+      },
+      "duration": 1.0,
+      "delay": 0.05,
+      "texture": "res://assets/effects/nocturne/native/dirtbits.png",
+      "offset": [
+        3.0,
+        3.0,
+        250.0,
+        1.0,
+        0.0,
+        3.0,
+        32.0,
+        0.0,
+        1.0,
+        32.0,
+        0.75,
+        1.0,
+        32.0,
+        0.0,
+        1.0,
+        32.0,
+        0.0,
+        1.0,
+        32.0,
+        0.0,
+        3.0,
+        250.0,
+        1.0,
+        0.0
+      ],
+      "bind": {
+        "base": 0.0
+      },
+      "frames": 4,
+      "tex_div": [
+        2.0,
+        2.0
+      ],
+      "birthOffset": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "pass": 0,
+      "spawn_radius": 0,
+      "spawn_height": 0,
+      "birthScale0": {
+        "base": [
+          8.0,
+          8.0,
+          8.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            8.0,
+            8.0,
+            8.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.5,
+              1.0
+            ],
+            "values": [
+              0.23,
+              1.0
+            ]
+          },
+          {
+            "base": 1,
+            "times": [
+              0.5,
+              1.0
+            ],
+            "values": [
+              0.23,
+              1.0
+            ]
+          },
+          {
+            "base": 1,
+            "times": [
+              0.5,
+              1.0
+            ],
+            "values": [
+              0.23,
+              1.0
+            ]
+          }
+        ]
+      },
+      "scale0": {
+        "base": [
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          0.7,
+          1.0
+        ],
+        "values": [
+          [
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ]
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              -2000.0,
+              2000.0
+            ]
+          },
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          800.0,
+          800.0,
+          0.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            800.0,
+            800.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              1.0,
+              1.5
+            ]
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              0.2,
+              1.5
+            ]
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0.0,
+          5.0,
+          0.0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "Color": {
+        "base": [
+          0.49411765,
+          0.49411765,
+          0.49411765,
+          1.0
+        ]
+      },
+      "uvScale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthFrameRate": {
+        "base": 0.0
+      },
+      "mult": "",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0.0
+      },
+      "frameRate": 0,
+      "startFrame": 0,
+      "distortion_texture": "",
+      "distortion_strength": 0.0
+    },
+    {
+      "name": "Slashes",
+      "mesh": "res://assets/effects/nocturne/native/nocturne_base_p_slashes.mesh.json",
+      "primitive": "VfxPrimitiveMesh",
+      "trail": false,
+      "ground": false,
+      "blend": 1,
+      "single": true,
+      "life": {
+        "base": 0.3
+      },
+      "rate": {
+        "base": 1.0
+      },
+      "duration": 1.0,
+      "delay": 0,
+      "texture": "res://assets/effects/nocturne/native/nocturne_base_p_slashult.png",
+      "offset": [
+        0.0,
+        50.0,
+        0.0
+      ],
+      "bind": {
+        "base": 1.0
+      },
+      "frames": 1,
+      "tex_div": [
+        1.0,
+        1.0
+      ],
+      "birthOffset": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "pass": 100,
+      "spawn_radius": 0,
+      "spawn_height": 0,
+      "birthScale0": {
+        "base": [
+          6.6,
+          6.6,
+          6.6
+        ]
+      },
+      "scale0": {
+        "base": [
+          -1.0,
+          -1.0,
+          -1.0
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          0.0,
+          180.0,
+          0.0
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          0.0,
+          10.0,
+          0.0
+        ],
+        "times": [
+          0.0,
+          1.0
+        ],
+        "values": [
+          [
+            0.0,
+            10.0,
+            0.0
+          ],
+          [
+            0.0,
+            10.0,
+            0.0
+          ]
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          1.0,
+          1.0,
+          1.0,
+          0.17000076
+        ]
+      },
+      "Color": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.75,
+          1.0
+        ],
+        "values": [
+          [
+            1.0,
+            0.48235294,
+            0.6627451,
+            1.0
+          ],
+          [
+            0.6862745,
+            0.5254902,
+            1.0,
+            1.0
+          ]
+        ]
+      },
+      "uvScale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          6.0,
+          0.0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthFrameRate": {
+        "base": 0.0
+      },
+      "mult": "",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0.0
+      },
+      "frameRate": 0,
+      "startFrame": 0,
+      "distortion_texture": "",
+      "distortion_strength": 0.0
+    },
+    {
+      "name": "distort",
+      "mesh": "",
+      "primitive": "VfxPrimitiveArbitraryQuad",
+      "trail": false,
+      "ground": false,
+      "blend": 1,
+      "single": true,
+      "life": {
+        "base": 0.2
+      },
+      "rate": {
+        "base": 1.0
+      },
+      "duration": 1.0,
+      "delay": 0,
+      "texture": "res://assets/effects/nocturne/native/aura_self.png",
+      "offset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "bind": {
+        "base": 1.0
+      },
+      "frames": 1,
+      "tex_div": [
+        1.0,
+        1.0
+      ],
+      "birthOffset": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "pass": 1,
+      "spawn_radius": 0,
+      "spawn_height": 0,
+      "birthScale0": {
+        "base": [
+          350.0,
+          350.0,
+          350.0
+        ]
+      },
+      "scale0": {
+        "base": [
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          0.2,
+          1.0
+        ],
+        "values": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.8,
+            0.8,
+            0.8
+          ],
+          [
+            1.0,
+            1.0,
+            1.0
+          ]
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          90.0,
+          0.0,
+          0.0
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "Color": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "uvScale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthFrameRate": {
+        "base": 0.0
+      },
+      "mult": "",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0.0
+      },
+      "frameRate": 0,
+      "startFrame": 0,
+      "distortion_texture": "res://assets/effects/nocturne/native/orianna_base_p_distort-wave.png",
+      "distortion_strength": 0.01
+    },
+    {
+      "name": "mesh_ground",
+      "mesh": "res://assets/effects/nocturne/native/nocturne_base_p_weaponswipe.mesh.json",
+      "primitive": "VfxPrimitiveMesh",
+      "trail": false,
+      "ground": false,
+      "blend": 1,
+      "single": true,
+      "life": {
+        "base": 0.8
+      },
+      "rate": {
+        "base": 2.0
+      },
+      "duration": 1.0,
+      "delay": 0,
+      "texture": "res://assets/effects/nocturne/native/nocturne_base_p_trail_smoke.png",
+      "offset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "bind": {
+        "base": 0.0
+      },
+      "frames": 1,
+      "tex_div": [
+        0.5,
+        1.0
+      ],
+      "birthOffset": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "pass": -99,
+      "spawn_radius": 0,
+      "spawn_height": 0,
+      "birthScale0": {
+        "base": [
+          0.825,
+          0.825,
+          0.825
+        ]
+      },
+      "scale0": {
+        "base": [
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          0.1,
+          1.0
+        ],
+        "values": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            1.3,
+            1.3,
+            1.3
+          ],
+          [
+            1.31,
+            1.31,
+            1.31
+          ]
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            0.0,
+            1.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              1.0,
+              360.0
+            ]
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "Color": {
+        "base": [
+          0.68999773,
+          0.68999773,
+          0.68999773,
+          0.4
+        ],
+        "times": [
+          0.0,
+          0.1,
+          0.2013298,
+          0.38537234,
+          0.6,
+          1.0
+        ],
+        "values": [
+          [
+            0.68999773,
+            0.68999773,
+            0.68999773,
+            0.0
+          ],
+          [
+            0.68999773,
+            0.68999773,
+            0.68999773,
+            0.4
+          ],
+          [
+            0.68999773,
+            0.68999773,
+            0.68999773,
+            0.21481481
+          ],
+          [
+            0.3463518,
+            0.08658795,
+            0.08929383,
+            0.09989833
+          ],
+          [
+            0.34364593,
+            0.018941114,
+            0.024352862,
+            0.0
+          ],
+          [
+            0.34364593,
+            0.0,
+            0.005411747,
+            0.0
+          ]
+        ]
+      },
+      "uvScale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          0.75,
+          0.0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthFrameRate": {
+        "base": 0.0
+      },
+      "mult": "",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "res://assets/effects/nocturne/native/nocturne_base_p_erode.png",
+      "erosion_drive": {
+        "base": 0.0,
+        "times": [
+          0.0,
+          0.1,
+          1.0
+        ],
+        "values": [
+          0.1,
+          0.0,
+          1.0
+        ]
+      },
+      "frameRate": 0,
+      "startFrame": 0,
+      "distortion_texture": "",
+      "distortion_strength": 0.0
+    },
+    {
+      "name": "mesh_ground1",
+      "mesh": "res://assets/effects/nocturne/native/nocturne_base_p_claws.mesh.json",
+      "primitive": "VfxPrimitiveMesh",
+      "trail": false,
+      "ground": true,
+      "blend": 1,
+      "single": true,
+      "life": {
+        "base": 3.0
+      },
+      "rate": {
+        "base": 1.0
+      },
+      "duration": 2.0,
+      "delay": 0.05,
+      "texture": "res://assets/effects/nocturne/native/nocturne_base_p_wolfscratch.png",
+      "offset": [
+        0.0,
+        10.0,
+        0.0
+      ],
+      "bind": {
+        "base": 0.0
+      },
+      "frames": 1,
+      "tex_div": [
+        1.0,
+        1.0
+      ],
+      "birthOffset": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "pass": -80,
+      "spawn_radius": 0,
+      "spawn_height": 0,
+      "birthScale0": {
+        "base": [
+          0.525,
+          0.525,
+          0.525
+        ]
+      },
+      "scale0": {
+        "base": [
+          -1.0,
+          -1.0,
+          -1.0
+        ],
+        "times": [
+          0.0,
+          0.1,
+          1.0
+        ],
+        "values": [
+          [
+            -0.0,
+            -0.0,
+            -0.0
+          ],
+          [
+            -1.3,
+            -1.3,
+            -1.3
+          ],
+          [
+            -1.31,
+            -1.31,
+            -1.31
+          ]
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "Color": {
+        "base": [
+          1.0,
+          1.0,
+          1.0,
+          0.20999466
+        ],
+        "times": [
+          0.0,
+          0.1,
+          0.2,
+          0.4,
+          0.9,
+          1.0
+        ],
+        "values": [
+          [
+            1.0,
+            1.0,
+            1.0,
+            0.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0,
+            0.20999466
+          ],
+          [
+            1.0,
+            1.0,
+            1.0,
+            0.20999466
+          ],
+          [
+            1.0,
+            1.0,
+            1.0,
+            0.20999466
+          ],
+          [
+            1.0,
+            1.0,
+            1.0,
+            0.20999466
+          ],
+          [
+            1.0,
+            1.0,
+            1.0,
+            0.0
+          ]
+        ]
+      },
+      "uvScale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthFrameRate": {
+        "base": 0.0
+      },
+      "mult": "",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "res://assets/effects/nocturne/native/nocturne_base_p_erode.png",
+      "erosion_drive": {
+        "base": 0.0,
+        "times": [
+          0.0,
+          0.5,
+          1.0
+        ],
+        "values": [
+          0.1,
+          0.0,
+          1.0
+        ]
+      },
+      "frameRate": 0,
+      "startFrame": 0,
+      "distortion_texture": "",
+      "distortion_strength": 0.0
+    },
+    {
+      "name": "mesh_ground2",
+      "mesh": "res://assets/effects/nocturne/native/nocturne_base_p_weaponswipe.mesh.json",
+      "primitive": "VfxPrimitiveMesh",
+      "trail": false,
+      "ground": false,
+      "blend": 1,
+      "single": true,
+      "life": {
+        "base": 1.0
+      },
+      "rate": {
+        "base": 2.0
+      },
+      "duration": 1.0,
+      "delay": 0,
+      "texture": "res://assets/effects/nocturne/native/nocturne_base_p_mis_smoke_trail.png",
+      "offset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "bind": {
+        "base": 0.0
+      },
+      "frames": 1,
+      "tex_div": [
+        1.0,
+        1.0
+      ],
+      "birthOffset": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "pass": -100,
+      "spawn_radius": 0,
+      "spawn_height": 0,
+      "birthScale0": {
+        "base": [
+          0.825,
+          0.825,
+          0.825
+        ]
+      },
+      "scale0": {
+        "base": [
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          0.1,
+          1.0
+        ],
+        "values": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            1.3,
+            1.3,
+            1.3
+          ],
+          [
+            1.6,
+            1.5,
+            1.6
+          ]
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            0.0,
+            1.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              1.0,
+              360.0
+            ]
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0.0,
+          50.0,
+          0.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            0.0,
+            50.0,
+            0.0
+          ]
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "Color": {
+        "base": [
+          1.0,
+          1.0,
+          1.0,
+          0.7199969
+        ],
+        "times": [
+          0.0,
+          0.1694149,
+          0.25212768,
+          0.37473407,
+          0.5906915,
+          1.0
+        ],
+        "values": [
+          [
+            1.0,
+            1.0,
+            1.0,
+            0.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0,
+            0.34835243
+          ],
+          [
+            0.14509805,
+            0.1254902,
+            0.11372549,
+            0.47999793
+          ],
+          [
+            0.15294118,
+            0.11764706,
+            0.101960786,
+            0.24632576
+          ],
+          [
+            0.07450981,
+            0.05490196,
+            0.050980393,
+            0.10211722
+          ],
+          [
+            0.007843138,
+            0.003921569,
+            0.003921569,
+            0.0
+          ]
+        ]
+      },
+      "uvScale": {
+        "base": [
+          1.0,
+          1.5
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          1.0,
+          0.0
+        ],
+        "times": [
+          0.0,
+          1.0
+        ],
+        "values": [
+          [
+            0.4,
+            0.0
+          ],
+          [
+            0.1,
+            0.0
+          ]
+        ]
+      },
+      "birthFrameRate": {
+        "base": 0.0
+      },
+      "mult": "res://assets/effects/nocturne/native/nocturne_base_p_trail_smoke.png",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0.5,
+          0.0
+        ]
+      },
+      "erosion": "res://assets/effects/nocturne/native/nocturne_base_p_wisps.png",
+      "erosion_drive": {
+        "base": 0.0,
+        "times": [
+          0.5,
+          1.0
+        ],
+        "values": [
+          0.0,
+          1.0
+        ]
+      },
+      "frameRate": 0,
+      "startFrame": 0,
+      "distortion_texture": "",
+      "distortion_strength": 0.0
+    },
+    {
+      "name": "healspark",
+      "mesh": "",
+      "primitive": "",
+      "trail": false,
+      "ground": false,
+      "blend": 0,
+      "single": true,
+      "life": {
+        "base": 0.3,
+        "times": [
+          0.0
+        ],
+        "values": [
+          0.3
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              1.0,
+              3.0
+            ]
+          }
+        ]
+      },
+      "rate": {
+        "base": 15.0
+      },
+      "duration": 1.0,
+      "delay": 0,
+      "texture": "res://assets/effects/nocturne/native/nocturne_base_temp_p_cleave_aoe_spark.png",
+      "offset": [
+        3.0,
+        3.0,
+        60.0,
+        75.0,
+        60.0,
+        3.0,
+        32.0,
+        0.0,
+        0.5,
+        0.51,
+        1.0,
+        32.0,
+        -1.0,
+        -0.5,
+        0.5,
+        1.0,
+        32.0,
+        0.0,
+        0.5,
+        0.51,
+        1.0,
+        32.0,
+        -1.0,
+        -0.5,
+        0.5,
+        1.0,
+        32.0,
+        0.0,
+        3.0,
+        60.0,
+        75.0,
+        60.0
+      ],
+      "bind": {
+        "base": 1.0
+      },
+      "frames": 1,
+      "tex_div": [
+        1.0,
+        1.0
+      ],
+      "birthOffset": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "pass": 0,
+      "spawn_radius": 0,
+      "spawn_height": 0,
+      "birthScale0": {
+        "base": [
+          30.0,
+          30.0,
+          30.0
+        ]
+      },
+      "scale0": {
+        "base": [
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          0.1,
+          0.3,
+          0.6,
+          1.0
+        ],
+        "values": [
+          [
+            0.1,
+            0.1,
+            0.1
+          ],
+          [
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            2.0,
+            2.0,
+            2.0
+          ],
+          [
+            0.3,
+            0.3,
+            0.3
+          ],
+          [
+            0.1,
+            0.1,
+            0.1
+          ]
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0.0,
+          800.0,
+          0.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            0.0,
+            800.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              -1.0,
+              1.0
+            ]
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              0.1,
+              1.0
+            ]
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              -1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          1.0,
+          4.0,
+          1.0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "Color": {
+        "base": [
+          1.0,
+          1.0,
+          1.0,
+          0.7499962
+        ]
+      },
+      "uvScale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthFrameRate": {
+        "base": 0.0
+      },
+      "mult": "",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0.0
+      },
+      "frameRate": 0,
+      "startFrame": 0,
+      "distortion_texture": "",
+      "distortion_strength": 0.0
+    },
+    {
+      "name": "Slashes1",
+      "mesh": "res://assets/effects/nocturne/native/nocturne_base_p_slashes.mesh.json",
+      "primitive": "VfxPrimitiveMesh",
+      "trail": false,
+      "ground": false,
+      "blend": 1,
+      "single": true,
+      "life": {
+        "base": 0.3
+      },
+      "rate": {
+        "base": 1.0
+      },
+      "duration": 1.0,
+      "delay": 0,
+      "texture": "res://assets/effects/nocturne/native/nocturne_base_p_slashult.png",
+      "offset": [
+        0.0,
+        50.0,
+        0.0
+      ],
+      "bind": {
+        "base": 1.0
+      },
+      "frames": 1,
+      "tex_div": [
+        1.0,
+        1.0
+      ],
+      "birthOffset": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "pass": 100,
+      "spawn_radius": 0,
+      "spawn_height": 0,
+      "birthScale0": {
+        "base": [
+          6.6,
+          6.6,
+          6.6
+        ]
+      },
+      "scale0": {
+        "base": [
+          -1.0,
+          -1.0,
+          -1.0
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          0.0,
+          180.0,
+          0.0
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          0.0,
+          10.0,
+          0.0
+        ],
+        "times": [
+          0.0,
+          1.0
+        ],
+        "values": [
+          [
+            0.0,
+            10.0,
+            0.0
+          ],
+          [
+            0.0,
+            10.0,
+            0.0
+          ]
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "Color": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.75,
+          1.0
+        ],
+        "values": [
+          [
+            1.0,
+            0.48235294,
+            0.6627451,
+            1.0
+          ],
+          [
+            0.6862745,
+            0.5254902,
+            1.0,
+            1.0
+          ]
+        ]
+      },
+      "uvScale": {
+        "base": [
+          2.0,
+          1.0
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          6.0,
+          0.0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthFrameRate": {
+        "base": 0.0
+      },
+      "mult": "",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0.0
+      },
+      "frameRate": 0,
+      "startFrame": 0,
+      "distortion_texture": "",
+      "distortion_strength": 0.0
+    }
+  ],
+  "W": [
+    {
+      "name": "Bubble",
+      "mesh": "",
+      "primitive": "",
+      "trail": false,
+      "ground": false,
+      "blend": 1,
+      "single": true,
+      "life": {
+        "base": 1.5
+      },
+      "rate": {
+        "base": 1.0
+      },
+      "duration": 9999.0,
+      "delay": 0,
+      "texture": "res://assets/effects/nocturne/native/janna_skin08_shield_gradient.png",
+      "offset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "bind": {
+        "base": 1.0
+      },
+      "frames": 1,
+      "tex_div": [
+        1.0,
+        1.0
+      ],
+      "birthOffset": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "pass": -1,
+      "spawn_radius": 0,
+      "spawn_height": 0,
+      "birthScale0": {
+        "base": [
+          110.0,
+          110.0,
+          110.0
+        ]
+      },
+      "scale0": {
+        "base": [
+          1,
+          1,
+          1
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          1.0,
+          1.0,
+          1.0,
+          0.9100023
+        ]
+      },
+      "Color": {
+        "base": [
+          0.5799954,
+          1.0,
+          0.9499962,
+          0.5400015
+        ],
+        "times": [
+          0.0,
+          0.08029197,
+          0.9549878,
+          1.0
+        ],
+        "values": [
+          [
+            0.5799954,
+            1.0,
+            0.9499962,
+            0.0
+          ],
+          [
+            0.5799954,
+            1.0,
+            0.9499962,
+            0.533968
+          ],
+          [
+            0.5799954,
+            1.0,
+            0.9499962,
+            0.5400015
+          ],
+          [
+            0.5799954,
+            1.0,
+            0.9499962,
+            0.0
+          ]
+        ]
+      },
+      "uvScale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthFrameRate": {
+        "base": 0.0
+      },
+      "mult": "",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0.0
+      },
+      "frameRate": 0,
+      "startFrame": 0,
+      "distortion_texture": "",
+      "distortion_strength": 0.0
+    },
+    {
+      "name": "Glow",
+      "mesh": "",
+      "primitive": "",
+      "trail": false,
+      "ground": true,
+      "blend": 4,
+      "single": true,
+      "life": {
+        "base": 1.5
+      },
+      "rate": {
+        "base": 1.0
+      },
+      "duration": 9999.0,
+      "delay": 0,
+      "texture": "res://assets/effects/nocturne/native/item_bansheeveil_shieldglow.png",
+      "offset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "bind": {
+        "base": 1.0
+      },
+      "frames": 1,
+      "tex_div": [
+        1.0,
+        1.0
+      ],
+      "birthOffset": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0.0,
+          15.0,
+          0.0
+        ]
+      },
+      "pass": 30,
+      "spawn_radius": 0,
+      "spawn_height": 0,
+      "birthScale0": {
+        "base": [
+          150.0,
+          150.0,
+          150.0
+        ]
+      },
+      "scale0": {
+        "base": [
+          1,
+          1,
+          1
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          0.42999923,
+          0.2399939,
+          1.0,
+          1.0
+        ]
+      },
+      "Color": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          0.02919708,
+          0.05839416,
+          0.9549878,
+          0.99026763,
+          1.0
+        ],
+        "values": [
+          [
+            1.0,
+            1.0,
+            1.0,
+            0.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0,
+            0.83798885
+          ],
+          [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0,
+            0.8659218
+          ],
+          [
+            1.0,
+            1.0,
+            1.0,
+            0.0
+          ]
+        ]
+      },
+      "uvScale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthFrameRate": {
+        "base": 0.0
+      },
+      "mult": "",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0.0
+      },
+      "frameRate": 0,
+      "startFrame": 0,
+      "distortion_texture": "",
+      "distortion_strength": 0.0
+    },
+    {
+      "name": "START",
+      "mesh": "res://assets/effects/nocturne/native/banshee_veil_fireball2.mesh.json",
+      "primitive": "VfxPrimitiveMesh",
+      "trail": false,
+      "ground": false,
+      "blend": 4,
+      "single": true,
+      "life": {
+        "base": 0.3
+      },
+      "rate": {
+        "base": 2.0
+      },
+      "duration": 1.0,
+      "delay": 0,
+      "texture": "res://assets/effects/nocturne/native/banshee_veil_base_reveal.png",
+      "offset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "bind": {
+        "base": 1.0
+      },
+      "frames": 1,
+      "tex_div": [
+        1.0,
+        0.5
+      ],
+      "birthOffset": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "pass": 3,
+      "spawn_radius": 0,
+      "spawn_height": 0,
+      "birthScale0": {
+        "base": [
+          12.0,
+          12.0,
+          12.0
+        ]
+      },
+      "scale0": {
+        "base": [
+          1,
+          1,
+          1
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          105.0,
+          0.0,
+          0.0
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "Color": {
+        "base": [
+          1.0,
+          1.0,
+          1.0,
+          0.5499962
+        ],
+        "times": [
+          0.0,
+          0.15,
+          0.35,
+          0.65,
+          1.0
+        ],
+        "values": [
+          [
+            1.0,
+            1.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.45882353,
+            0.72156864,
+            1.0,
+            0.5499962
+          ],
+          [
+            0.18431373,
+            0.49803922,
+            1.0,
+            0.5499962
+          ],
+          [
+            0.21960784,
+            0.34117648,
+            0.87058824,
+            0.5499962
+          ],
+          [
+            0.11372549,
+            0.38039216,
+            1.0,
+            0.0
+          ]
+        ]
+      },
+      "uvScale": {
+        "base": [
+          0.5,
+          1.0
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          0.0,
+          -1.2
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          0.0,
+          12.0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthFrameRate": {
+        "base": 0.0
+      },
+      "mult": "",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0.0
+      },
+      "frameRate": 0,
+      "startFrame": 0,
+      "distortion_texture": "",
+      "distortion_strength": 0.0
+    },
+    {
+      "name": "shield",
+      "mesh": "",
+      "primitive": "",
+      "trail": false,
+      "ground": false,
+      "blend": 4,
+      "single": true,
+      "life": {
+        "base": 1.5
+      },
+      "rate": {
+        "base": 1.0
+      },
+      "duration": 9999.0,
+      "delay": 0,
+      "texture": "res://assets/effects/nocturne/native/banshee_veil_template_shield.png",
+      "offset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "bind": {
+        "base": 1.0
+      },
+      "frames": 1,
+      "tex_div": [
+        1.0,
+        1.0
+      ],
+      "birthOffset": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "pass": 50,
+      "spawn_radius": 0,
+      "spawn_height": 0,
+      "birthScale0": {
+        "base": [
+          140.0,
+          140.0,
+          140.0
+        ]
+      },
+      "scale0": {
+        "base": [
+          1,
+          1,
+          1
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          0.0,
+          0.7000076,
+          1.0,
+          1.0
+        ]
+      },
+      "Color": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          0.02189781,
+          0.07542579,
+          0.9306569,
+          0.9756691,
+          1.0
+        ],
+        "values": [
+          [
+            1.0,
+            1.0,
+            1.0,
+            0.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0,
+            0.9385475
+          ],
+          [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0,
+            0.89385474
+          ],
+          [
+            1.0,
+            1.0,
+            1.0,
+            0.0
+          ]
+        ]
+      },
+      "uvScale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthFrameRate": {
+        "base": 0.0
+      },
+      "mult": "",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0.0
+      },
+      "frameRate": 0,
+      "startFrame": 0,
+      "distortion_texture": "",
+      "distortion_strength": 0.0
+    },
+    {
+      "name": "DeactivateSweep",
+      "mesh": "res://assets/effects/nocturne/native/nocturne_base_w_shield_01.mesh.json",
+      "primitive": "VfxPrimitiveMesh",
+      "trail": false,
+      "ground": false,
+      "blend": 4,
+      "single": true,
+      "life": {
+        "base": 0.65
+      },
+      "rate": {
+        "base": 2.0
+      },
+      "duration": 1.6,
+      "delay": 1.4,
+      "texture": "res://assets/effects/nocturne/native/nocturne_base_shield_01_activate.png",
+      "offset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "bind": {
+        "base": 1.0
+      },
+      "frames": 1,
+      "tex_div": [
+        1.0,
+        1.0
+      ],
+      "birthOffset": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "pass": 12,
+      "spawn_radius": 0,
+      "spawn_height": 0,
+      "birthScale0": {
+        "base": [
+          8.1,
+          8.1,
+          8.1
+        ]
+      },
+      "scale0": {
+        "base": [
+          1,
+          1,
+          1
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          0.0,
+          45.0,
+          0.0
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          0.0,
+          45.0,
+          0.0
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "Color": {
+        "base": [
+          0.8235294,
+          0.91764706,
+          1.0,
+          1.0
+        ],
+        "times": [
+          0.0,
+          0.35,
+          0.75,
+          1.0
+        ],
+        "values": [
+          [
+            0.8235294,
+            0.91764706,
+            1.0,
+            1.0
+          ],
+          [
+            0.8235294,
+            0.91764706,
+            1.0,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        ]
+      },
+      "uvScale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          3.5,
+          0.0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          0,
+          0
+        ],
+        "times": [
+          0.0,
+          0.05,
+          0.2,
+          1.0
+        ],
+        "values": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0
+          ]
+        ]
+      },
+      "birthFrameRate": {
+        "base": 0.0
+      },
+      "mult": "",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0.0
+      },
+      "frameRate": 0,
+      "startFrame": 0,
+      "distortion_texture": "",
+      "distortion_strength": 0.0
+    },
+    {
+      "name": "DeactivateSweep1",
+      "mesh": "res://assets/effects/nocturne/native/nocturne_base_w_shield_01.mesh.json",
+      "primitive": "VfxPrimitiveMesh",
+      "trail": false,
+      "ground": false,
+      "blend": 4,
+      "single": true,
+      "life": {
+        "base": 0.65
+      },
+      "rate": {
+        "base": 2.0
+      },
+      "duration": 1.6,
+      "delay": 0,
+      "texture": "res://assets/effects/nocturne/native/nocturne_base_shield_01_activate.png",
+      "offset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "bind": {
+        "base": 1.0
+      },
+      "frames": 1,
+      "tex_div": [
+        1.0,
+        1.0
+      ],
+      "birthOffset": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "pass": 12,
+      "spawn_radius": 0,
+      "spawn_height": 0,
+      "birthScale0": {
+        "base": [
+          8.1,
+          8.1,
+          8.1
+        ]
+      },
+      "scale0": {
+        "base": [
+          1,
+          1,
+          1
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          0.0,
+          45.0,
+          0.0
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "Color": {
+        "base": [
+          0.8235294,
+          0.91764706,
+          1.0,
+          1.0
+        ],
+        "times": [
+          0.0,
+          0.35,
+          0.75,
+          1.0
+        ],
+        "values": [
+          [
+            0.8235294,
+            0.91764706,
+            1.0,
+            1.0
+          ],
+          [
+            0.8235294,
+            0.91764706,
+            1.0,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        ]
+      },
+      "uvScale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          3.5,
+          0.0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          0,
+          0
+        ],
+        "times": [
+          0.0,
+          0.05,
+          0.2,
+          1.0
+        ],
+        "values": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0
+          ]
+        ]
+      },
+      "birthFrameRate": {
+        "base": 0.0
+      },
+      "mult": "",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0.0
+      },
+      "frameRate": 0,
+      "startFrame": 0,
+      "distortion_texture": "",
+      "distortion_strength": 0.0
+    },
+    {
+      "name": "Ein_",
+      "mesh": "res://assets/effects/nocturne/native/nocturne_base_w_smoke_twirl_start.mesh.json",
+      "primitive": "VfxPrimitiveMesh",
+      "trail": false,
+      "ground": false,
+      "blend": 1,
+      "single": true,
+      "life": {
+        "base": 0.6,
+        "times": [
+          0.0
+        ],
+        "values": [
+          0.6
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              0.6,
+              1.3
+            ]
+          }
+        ]
+      },
+      "rate": {
+        "base": 6.0
+      },
+      "duration": 1.0,
+      "delay": 0,
+      "texture": "res://assets/effects/nocturne/native/nocturne_base_w_smoke_twirl.png",
+      "offset": [
+        0.0,
+        50.0,
+        0.0
+      ],
+      "bind": {
+        "base": 1.0
+      },
+      "frames": 1,
+      "tex_div": [
+        1.0,
+        1.0
+      ],
+      "birthOffset": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "pass": 0,
+      "spawn_radius": 0,
+      "spawn_height": 0,
+      "birthScale0": {
+        "base": [
+          1.5,
+          3.0,
+          1.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            1.5,
+            3.0,
+            1.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              0.8,
+              1.1
+            ]
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              0.8,
+              1.1
+            ]
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              1.5,
+              0.9
+            ]
+          }
+        ]
+      },
+      "scale0": {
+        "base": [
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          0.11059908,
+          0.24731183,
+          0.44777265,
+          1.0
+        ],
+        "values": [
+          [
+            1.0,
+            0.5,
+            1.0
+          ],
+          [
+            1.0,
+            0.6988636,
+            1.0
+          ],
+          [
+            1.0,
+            0.84659094,
+            1.0
+          ],
+          [
+            1.0,
+            0.9159091,
+            1.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0
+          ]
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          0.0,
+          120.0,
+          0.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            0.0,
+            120.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              -1.0,
+              1.0
+            ]
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              -1.0,
+              1.0
+            ]
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              -1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          0.19000535,
+          0.1600061,
+          0.5000076,
+          0.40999466
+        ]
+      },
+      "Color": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          0.5,
+          1.0
+        ],
+        "values": [
+          [
+            1.0,
+            1.0,
+            1.0,
+            0.26999313
+          ],
+          [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        ]
+      },
+      "uvScale": {
+        "base": [
+          1.0,
+          0.5
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          0.0,
+          1.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              -1.0,
+              1.0
+            ]
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              -1.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          0.0,
+          1.5
+        ],
+        "times": [
+          0.0,
+          0.22580644,
+          0.60983104,
+          1.0
+        ],
+        "values": [
+          [
+            0.0,
+            1.5
+          ],
+          [
+            0.0,
+            1.1335227
+          ],
+          [
+            0.0,
+            0.80965906
+          ],
+          [
+            0.0,
+            1.5
+          ]
+        ]
+      },
+      "birthFrameRate": {
+        "base": 0.0
+      },
+      "mult": "res://assets/effects/nocturne/native/nocturne_base_w_activate_mult.png",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0.0,
+          8.0
+        ],
+        "times": [
+          0.0,
+          0.5,
+          1.0
+        ],
+        "values": [
+          [
+            0.0,
+            8.0
+          ],
+          [
+            0.0,
+            4.0
+          ],
+          [
+            0.0,
+            1.6
+          ]
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0.0,
+          -0.9
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0.0
+      },
+      "frameRate": 0,
+      "startFrame": 0,
+      "distortion_texture": "",
+      "distortion_strength": 0.0
+    },
+    {
+      "name": "START2",
+      "mesh": "res://assets/effects/nocturne/native/banshee_veil_fireball2.mesh.json",
+      "primitive": "VfxPrimitiveMesh",
+      "trail": false,
+      "ground": false,
+      "blend": 1,
+      "single": true,
+      "life": {
+        "base": 1.6
+      },
+      "rate": {
+        "base": 2.0
+      },
+      "duration": 1.0,
+      "delay": 0,
+      "texture": "res://assets/effects/nocturne/native/nocturne_base_w_smoke_twirl_2.png",
+      "offset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "bind": {
+        "base": 1.0
+      },
+      "frames": 1,
+      "tex_div": [
+        1.0,
+        1.0
+      ],
+      "birthOffset": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "pass": -10,
+      "spawn_radius": 0,
+      "spawn_height": 0,
+      "birthScale0": {
+        "base": [
+          12.0,
+          12.0,
+          12.0
+        ]
+      },
+      "scale0": {
+        "base": [
+          1,
+          1,
+          1
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          120.0,
+          0.0,
+          0.0
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          1.0,
+          1.0,
+          1.0,
+          0.93000686
+        ]
+      },
+      "Color": {
+        "base": [
+          0.0,
+          0.0,
+          0.0,
+          0.6500038
+        ],
+        "times": [
+          0.0,
+          0.075,
+          0.7803571,
+          0.85,
+          1.0
+        ],
+        "values": [
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.6500038
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.6500038
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.5994047
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        ]
+      },
+      "uvScale": {
+        "base": [
+          0.5,
+          2.0
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          1.0,
+          0.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            1.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              0.0,
+              1.0
+            ]
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          0.5,
+          -3.0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthFrameRate": {
+        "base": 0.0
+      },
+      "mult": "",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0.0
+      },
+      "frameRate": 0,
+      "startFrame": 0,
+      "distortion_texture": "",
+      "distortion_strength": 0.0
+    },
+    {
+      "name": "Fire_Ring",
+      "mesh": "res://assets/effects/nocturne/native/geo_shield_fringes_00.mesh.json",
+      "primitive": "VfxPrimitiveMesh",
+      "trail": false,
+      "ground": false,
+      "blend": 1,
+      "single": true,
+      "life": {
+        "base": 1.5
+      },
+      "rate": {
+        "base": 1.0
+      },
+      "duration": 3.0,
+      "delay": 0,
+      "texture": "res://assets/effects/nocturne/native/nocturne_base_w_smoke_twirl_2.png",
+      "offset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "bind": {
+        "base": 1.0
+      },
+      "frames": 1,
+      "tex_div": [
+        1.0,
+        1.0
+      ],
+      "birthOffset": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0.0,
+          -30.0,
+          -85.0
+        ]
+      },
+      "pass": 10,
+      "spawn_radius": 0,
+      "spawn_height": 0,
+      "birthScale0": {
+        "base": [
+          0.7,
+          0.7,
+          0.7
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            0.7,
+            0.7,
+            0.7
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              0.95,
+              1.1
+            ]
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              0.95,
+              1.1
+            ]
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              0.95,
+              1.1
+            ]
+          }
+        ]
+      },
+      "scale0": {
+        "base": [
+          1,
+          1,
+          1
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          45.0,
+          0.0,
+          0.0
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          0.21176471,
+          0.2509804,
+          0.42352942,
+          1.0
+        ]
+      },
+      "Color": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          0.1,
+          0.9,
+          1.0
+        ],
+        "values": [
+          [
+            1.0,
+            1.0,
+            1.0,
+            0.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            0.75686276,
+            0.4745098,
+            1.0
+          ],
+          [
+            1.0,
+            0.101960786,
+            0.023529412,
+            0.0
+          ]
+        ]
+      },
+      "uvScale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          1.0,
+          0.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            1.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              -1.0,
+              1.0
+            ]
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              0.0,
+              0.1
+            ]
+          }
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          -1.0,
+          0.0
+        ],
+        "times": [
+          0.028571429,
+          0.18989795,
+          0.5,
+          1.0
+        ],
+        "values": [
+          [
+            -2.0208108,
+            0.0
+          ],
+          [
+            -1.5784171,
+            0.0
+          ],
+          [
+            -1.2,
+            0.0
+          ],
+          [
+            -0.9637838,
+            0.0
+          ]
+        ]
+      },
+      "birthFrameRate": {
+        "base": 0.0
+      },
+      "mult": "",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0.0
+      },
+      "frameRate": 0,
+      "startFrame": 0,
+      "distortion_texture": "",
+      "distortion_strength": 0.0
+    },
+    {
+      "name": "START3",
+      "mesh": "res://assets/effects/nocturne/native/banshee_veil_fireball2.mesh.json",
+      "primitive": "VfxPrimitiveMesh",
+      "trail": false,
+      "ground": false,
+      "blend": 4,
+      "single": true,
+      "life": {
+        "base": 1.6
+      },
+      "rate": {
+        "base": 2.0
+      },
+      "duration": 1.0,
+      "delay": 0,
+      "texture": "res://assets/effects/nocturne/native/nocturne_base_w_shield_lines.png",
+      "offset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "bind": {
+        "base": 1.0
+      },
+      "frames": 1,
+      "tex_div": [
+        1.0,
+        1.0
+      ],
+      "birthOffset": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "pass": -1,
+      "spawn_radius": 0,
+      "spawn_height": 0,
+      "birthScale0": {
+        "base": [
+          12.0,
+          12.0,
+          12.0
+        ]
+      },
+      "scale0": {
+        "base": [
+          1,
+          1,
+          1
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          120.0,
+          0.0,
+          0.0
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          1.0,
+          1.0,
+          1.0,
+          0.93000686
+        ]
+      },
+      "Color": {
+        "base": [
+          0.3372549,
+          0.73333335,
+          0.98039216,
+          0.6509804
+        ],
+        "times": [
+          0.0,
+          0.075,
+          0.7803571,
+          0.85,
+          1.0
+        ],
+        "values": [
+          [
+            0.3372549,
+            0.73333335,
+            0.98039216,
+            0.0
+          ],
+          [
+            0.3372549,
+            0.73333335,
+            0.98039216,
+            0.6509804
+          ],
+          [
+            0.3372549,
+            0.73333335,
+            0.98039216,
+            0.6509804
+          ],
+          [
+            0.3372549,
+            0.73333335,
+            0.98039216,
+            0.60030526
+          ],
+          [
+            0.3372549,
+            0.73333335,
+            0.98039216,
+            0.0
+          ]
+        ]
+      },
+      "uvScale": {
+        "base": [
+          4.0,
+          8.0
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          1.0,
+          0.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            1.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              0.0,
+              1.0
+            ]
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          0.5,
+          -3.0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthFrameRate": {
+        "base": 0.0
+      },
+      "mult": "res://assets/effects/nocturne/native/nocturne_base_w_fire_trail_up.png",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          1.0,
+          1.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            1.0,
+            1.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              0.0,
+              1.0
+            ]
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              0.0,
+              1.0
+            ]
+          }
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0.3,
+          0.1
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0.0
+      },
+      "frameRate": 0,
+      "startFrame": 0,
+      "distortion_texture": "",
+      "distortion_strength": 0.0
+    }
+  ],
+  "block": [
+    {
+      "name": "shieldInside",
+      "mesh": "",
+      "primitive": "",
+      "trail": false,
+      "ground": false,
+      "blend": 0,
+      "single": false,
+      "life": {
+        "base": 1.0
+      },
+      "rate": {
+        "base": 4.0
+      },
+      "duration": 20.0,
+      "delay": 0,
+      "texture": "res://assets/effects/nocturne/native/common_spellblock02.png",
+      "offset": [
+        0.0,
+        80.0,
+        0.0
+      ],
+      "bind": {
+        "base": 1.0
+      },
+      "frames": 4,
+      "tex_div": [
+        2.0,
+        2.0
+      ],
+      "birthOffset": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "pass": 0,
+      "spawn_radius": 0,
+      "spawn_height": 0,
+      "birthScale0": {
+        "base": [
+          6.0,
+          6.0,
+          6.0
+        ]
+      },
+      "scale0": {
+        "base": [
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          0.5,
+          1.0
+        ],
+        "values": [
+          [
+            2.0,
+            2.0,
+            2.0
+          ],
+          [
+            8.0,
+            8.0,
+            8.0
+          ],
+          [
+            11.70303,
+            11.70303,
+            11.70303
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          316.0,
+          0.0,
+          0.0
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "times": [
+          0.0,
+          0.3,
+          0.65,
+          1.0
+        ],
+        "values": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "Color": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "uvScale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthFrameRate": {
+        "base": 0.0
+      },
+      "mult": "",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0.0
+      },
+      "frameRate": 0,
+      "startFrame": 0,
+      "distortion_texture": "",
+      "distortion_strength": 0.0
+    },
+    {
+      "name": "jizballs",
+      "mesh": "",
+      "primitive": "",
+      "trail": false,
+      "ground": false,
+      "blend": 0,
+      "single": false,
+      "life": {
+        "base": 1.0
+      },
+      "rate": {
+        "base": 20.0
+      },
+      "duration": 20.0,
+      "delay": 0,
+      "texture": "res://assets/effects/nocturne/native/common_spellblock02.png",
+      "offset": [
+        3.0,
+        3.0,
+        0.0,
+        80.0,
+        0.0
+      ],
+      "bind": {
+        "base": 1.0
+      },
+      "frames": 4,
+      "tex_div": [
+        2.0,
+        2.0
+      ],
+      "birthOffset": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "pass": 0,
+      "spawn_radius": 0,
+      "spawn_height": 0,
+      "birthScale0": {
+        "base": [
+          50.0,
+          50.0,
+          50.0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            50.0,
+            50.0,
+            50.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              0.8,
+              1.0
+            ]
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              0.8,
+              1.0
+            ]
+          },
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              0.8,
+              1.0
+            ]
+          }
+        ]
+      },
+      "scale0": {
+        "base": [
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          0.5,
+          1.0
+        ],
+        "values": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            2.0,
+            2.0,
+            2.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          316.0,
+          0.0,
+          0.0
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "times": [
+          0.0,
+          0.3,
+          0.65,
+          1.0
+        ],
+        "values": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          25.0,
+          0.0,
+          0.0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "Color": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "uvScale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthFrameRate": {
+        "base": 0.0
+      },
+      "mult": "",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0.0
+      },
+      "frameRate": 0,
+      "startFrame": 1.0,
+      "distortion_texture": "",
+      "distortion_strength": 0.0
+    },
+    {
+      "name": "shieldOUT",
+      "mesh": "",
+      "primitive": "",
+      "trail": false,
+      "ground": false,
+      "blend": 0,
+      "single": true,
+      "life": {
+        "base": 20.0
+      },
+      "rate": {
+        "base": 1.0
+      },
+      "duration": 20.0,
+      "delay": 0,
+      "texture": "res://assets/effects/nocturne/native/common_spellblock02.png",
+      "offset": [
+        0.0,
+        80.0,
+        0.0
+      ],
+      "bind": {
+        "base": 1.0
+      },
+      "frames": 4,
+      "tex_div": [
+        2.0,
+        2.0
+      ],
+      "birthOffset": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "pass": 0,
+      "spawn_radius": 0,
+      "spawn_height": 0,
+      "birthScale0": {
+        "base": [
+          9.0,
+          9.0,
+          9.0
+        ]
+      },
+      "scale0": {
+        "base": [
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          0.5,
+          1.0
+        ],
+        "values": [
+          [
+            10.0,
+            10.0,
+            10.0
+          ],
+          [
+            10.0,
+            10.0,
+            10.0
+          ],
+          [
+            10.0,
+            10.0,
+            10.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          316.0,
+          0.0,
+          0.0
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "times": [
+          0.0,
+          0.3,
+          0.65,
+          1.0
+        ],
+        "values": [
+          [
+            360.0,
+            0.0,
+            0.0
+          ],
+          [
+            180.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "Color": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "uvScale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthFrameRate": {
+        "base": 0.0
+      },
+      "mult": "",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0.0
+      },
+      "frameRate": 0,
+      "startFrame": 0,
+      "distortion_texture": "",
+      "distortion_strength": 0.0
+    },
+    {
+      "name": "shield_4",
+      "mesh": "",
+      "primitive": "",
+      "trail": false,
+      "ground": false,
+      "blend": 0,
+      "single": false,
+      "life": {
+        "base": 1.0
+      },
+      "rate": {
+        "base": 8.0
+      },
+      "duration": 20.0,
+      "delay": 0,
+      "texture": "res://assets/effects/nocturne/native/common_spellblock02.png",
+      "offset": [
+        0.0,
+        80.0,
+        0.0
+      ],
+      "bind": {
+        "base": 1.0
+      },
+      "frames": 4,
+      "tex_div": [
+        2.0,
+        2.0
+      ],
+      "birthOffset": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "emitterPosition": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "pass": 0,
+      "spawn_radius": 0,
+      "spawn_height": 0,
+      "birthScale0": {
+        "base": [
+          13.2,
+          13.2,
+          13.2
+        ]
+      },
+      "scale0": {
+        "base": [
+          1,
+          1,
+          1
+        ],
+        "times": [
+          0.0,
+          0.5,
+          1.0
+        ],
+        "values": [
+          [
+            10.0,
+            10.0,
+            10.0
+          ],
+          [
+            10.0,
+            10.0,
+            10.0
+          ],
+          [
+            10.0,
+            10.0,
+            10.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "birthRotation0": {
+        "base": [
+          0,
+          0,
+          0
+        ],
+        "times": [
+          0.0
+        ],
+        "values": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1,
+            "times": [
+              0.0,
+              1.0
+            ],
+            "values": [
+              0.0,
+              1.0
+            ]
+          },
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "birthRotationalVelocity0": {
+        "base": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "times": [
+          0.0,
+          0.3,
+          0.65,
+          1.0
+        ],
+        "values": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "probabilities": [
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          },
+          {
+            "base": 1
+          }
+        ]
+      },
+      "birthVelocity": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "worldAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthAcceleration": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthDrag": {
+        "base": [
+          0,
+          0,
+          0
+        ]
+      },
+      "birthColor": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "Color": {
+        "base": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "uvScale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "birthUVOffset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthUvScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "particleUVScrollRate": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "birthFrameRate": {
+        "base": 0.0
+      },
+      "mult": "",
+      "mult_scale": {
+        "base": [
+          1,
+          1
+        ]
+      },
+      "mult_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_offset": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "mult_birth_scroll": {
+        "base": [
+          0,
+          0
+        ]
+      },
+      "erosion": "",
+      "erosion_drive": {
+        "base": 0.0
+      },
+      "frameRate": 0,
+      "startFrame": 2.0,
+      "distortion_texture": "",
+      "distortion_strength": 0.0
+    }
+  ]
+}

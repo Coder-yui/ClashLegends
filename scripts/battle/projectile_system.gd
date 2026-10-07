@@ -313,6 +313,13 @@ func launch_skill_fan(source: Unit, skill: Dictionary, forward: Vector2) -> void
 	queue_redraw()
 
 func _tick_skill_arrow(projectile: Dictionary, dt: float, colliders: Array) -> bool:
+	var previous := CombatInteraction.current_delivery
+	CombatInteraction.current_delivery = projectile.skill.get("effect_delivery")
+	var result := _tick_skill_delivery(projectile, dt, colliders)
+	CombatInteraction.current_delivery = previous
+	return result
+
+func _tick_skill_delivery(projectile: Dictionary, dt: float, colliders: Array) -> bool:
 	var distance := minf(float(projectile.remaining), float(projectile.speed) * dt)
 	var origin: Vector2 = projectile.pos
 	var direction: Vector2 = projectile.direction
@@ -360,6 +367,9 @@ func _tick_skill_arrow(projectile: Dictionary, dt: float, colliders: Array) -> b
 		if not targets.has(target_id):
 			targets[target_id] = true
 			var source: Node2D = projectile.attacker if is_instance_valid(projectile.attacker) else null
+			if CombatInteraction.blocks_effect(target, CombatInteraction.effect_context(source, projectile.team, projectile.source_pos)):
+				if not piercing: return true
+				continue
 			var landed := _context.resolve_attack_hit(projectile.team, origin, target, projectile.damage, 0.0, 0.0, source, projectile.source_pos, projectile.source_form_index, projectile.get("effects", {}), bool(projectile.get("basic_piercing", false)))
 			if landed:
 				if bool(projectile.skill.get("passive_wave", false)) and not bool(projectile.cast.sound_played):

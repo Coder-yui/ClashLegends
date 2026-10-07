@@ -124,7 +124,7 @@ func _update(p: Dictionary, age: float) -> void:
 	var orbital: Vector3 = p.get("orbital", Vector3.ZERO)
 	if orbital.length_squared() > 0.0: offset = Basis.from_euler(orbital * age) * offset
 	var bind := clampf(float(sample(c.bind, t)), 0.0, 1.0)
-	var particle_basis: Basis = (p.basis as Basis).slerp(global_basis, bind)
+	var particle_basis: Basis = (p.basis as Basis).orthonormalized().slerp(global_basis.orthonormalized(), bind)
 	node.global_position = (p.origin as Vector3).lerp(global_position, bind) + (particle_basis * offset + vec3(sample(c.worldAcceleration, t)) * age * age * 0.5) * _factor
 	var angles: Vector3 = (p.rotation + vec3(sample(c.birthRotationalVelocity0, 0.0)) * age) * PI / 180.0
 	if not String(c.mesh).is_empty() or String(c.get("primitive", "")) == "VfxPrimitiveArbitraryQuad":

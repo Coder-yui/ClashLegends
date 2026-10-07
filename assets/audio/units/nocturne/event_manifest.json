@@ -1,0 +1,388 @@
+[
+  {
+    "file": "play_sfx_nocturne_nocturnebasicattack_oncast_r1_d.wav",
+    "event": "Play_sfx_Nocturne_NocturneBasicAttack_OnCast",
+    "event_id": 3436667806,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneBasicAttack_OnCast {r1} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneBasicAttack_OnCast {r1} {d}.txtp",
+    "media_ids": [
+      168764120,
+      264243793,
+      389421540,
+      684404826
+    ],
+    "duration": 0.6624,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "0c9d1990254484789ac939846a978b03c8c0f2894c914963a23861fa22046d1d",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_nocturne_nocturnebasicattack_oncast_r2_d.wav",
+    "event": "Play_sfx_Nocturne_NocturneBasicAttack_OnCast",
+    "event_id": 3436667806,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneBasicAttack_OnCast {r2} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneBasicAttack_OnCast {r2} {d}.txtp",
+    "media_ids": [
+      168764120,
+      264243793,
+      389421540,
+      684404826
+    ],
+    "duration": 0.8676,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "30708a928a6c3dc320065d100b19625cd106a1ef9ba09cbe08468909911a91db",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_nocturne_nocturnebasicattack_oncast_r3_d.wav",
+    "event": "Play_sfx_Nocturne_NocturneBasicAttack_OnCast",
+    "event_id": 3436667806,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneBasicAttack_OnCast {r3} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneBasicAttack_OnCast {r3} {d}.txtp",
+    "media_ids": [
+      168764120,
+      264243793,
+      389421540,
+      684404826
+    ],
+    "duration": 0.7281,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "bd384b6d68b36613309447e56dabdf921c760a200130ec235382b16d8df7d8fe",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_nocturne_nocturnebasicattack2_oncast_r1.wav",
+    "event": "Play_sfx_Nocturne_NocturneBasicAttack2_OnCast",
+    "event_id": 1589380390,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneBasicAttack2_OnCast {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneBasicAttack2_OnCast {r1}.txtp",
+    "media_ids": [
+      168764120,
+      264243793,
+      389421540,
+      684404826
+    ],
+    "duration": 0.6624,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "0c9d1990254484789ac939846a978b03c8c0f2894c914963a23861fa22046d1d",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_nocturne_nocturnebasicattack2_oncast_r2.wav",
+    "event": "Play_sfx_Nocturne_NocturneBasicAttack2_OnCast",
+    "event_id": 1589380390,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneBasicAttack2_OnCast {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneBasicAttack2_OnCast {r2}.txtp",
+    "media_ids": [
+      168764120,
+      264243793,
+      389421540,
+      684404826
+    ],
+    "duration": 0.8676,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "30708a928a6c3dc320065d100b19625cd106a1ef9ba09cbe08468909911a91db",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_nocturne_nocturnebasicattack2_oncast_r3.wav",
+    "event": "Play_sfx_Nocturne_NocturneBasicAttack2_OnCast",
+    "event_id": 1589380390,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneBasicAttack2_OnCast {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneBasicAttack2_OnCast {r3}.txtp",
+    "media_ids": [
+      168764120,
+      264243793,
+      389421540,
+      684404826
+    ],
+    "duration": 0.7281,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "bd384b6d68b36613309447e56dabdf921c760a200130ec235382b16d8df7d8fe",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_nocturne_nocturneumbrabladesattack_oncast_r1.wav",
+    "event": "Play_sfx_Nocturne_NocturneUmbraBladesAttack_OnCast",
+    "event_id": 2813193866,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneUmbraBladesAttack_OnCast {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneUmbraBladesAttack_OnCast {r1}.txtp",
+    "media_ids": [
+      104188284,
+      398246198,
+      909657102,
+      936011364
+    ],
+    "duration": 1.1141,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "1b36a58671229389c528644a2c0818cc1e4aa9cc9508fd1791de3b75fbf297a6",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_nocturne_nocturneumbrabladesattack_oncast_r2.wav",
+    "event": "Play_sfx_Nocturne_NocturneUmbraBladesAttack_OnCast",
+    "event_id": 2813193866,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneUmbraBladesAttack_OnCast {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneUmbraBladesAttack_OnCast {r2}.txtp",
+    "media_ids": [
+      104188284,
+      398246198,
+      909657102,
+      936011364
+    ],
+    "duration": 1.2865,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "6306d9c89a11a2b93cb4545e437cc4be3bc177d7f25e3ecae748c96851085603",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_nocturne_nocturneumbrabladesattack_oncast_r3.wav",
+    "event": "Play_sfx_Nocturne_NocturneUmbraBladesAttack_OnCast",
+    "event_id": 2813193866,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneUmbraBladesAttack_OnCast {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneUmbraBladesAttack_OnCast {r3}.txtp",
+    "media_ids": [
+      104188284,
+      398246198,
+      909657102,
+      936011364
+    ],
+    "duration": 0.9988,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "5d42870a00ce512295f2e0143ae4aa0a30e2da626c5f5fbdda3d42ab88aa7852",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_nocturne_nocturnebasicattack_onhit_1559186049_1153642577_r1_d.wav",
+    "event": "Play_sfx_Nocturne_NocturneBasicAttack_OnHit",
+    "event_id": 2171979562,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneBasicAttack_OnHit [1559186049=1153642577] {r1} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneBasicAttack_OnHit [1559186049=1153642577] {r1} {d}.txtp",
+    "media_ids": [
+      7569282,
+      16571779,
+      38121208,
+      491104274
+    ],
+    "duration": 0.6448,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "8178d3cd4e0df2708071c7224912d437daf2487e83a8eb151177b16dbe2060b0",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_nocturne_nocturnebasicattack_onhit_1559186049_1153642577_r2_d.wav",
+    "event": "Play_sfx_Nocturne_NocturneBasicAttack_OnHit",
+    "event_id": 2171979562,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneBasicAttack_OnHit [1559186049=1153642577] {r2} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneBasicAttack_OnHit [1559186049=1153642577] {r2} {d}.txtp",
+    "media_ids": [
+      7569282,
+      16571779,
+      38121208,
+      491104274
+    ],
+    "duration": 0.5936,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "c997976beaf1118281db89dc0068ed2866b7b2fcc23ea4df11da609b2ad7f515",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_nocturne_nocturnebasicattack_onhit_1559186049_1153642577_r3_d.wav",
+    "event": "Play_sfx_Nocturne_NocturneBasicAttack_OnHit",
+    "event_id": 2171979562,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneBasicAttack_OnHit [1559186049=1153642577] {r3} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneBasicAttack_OnHit [1559186049=1153642577] {r3} {d}.txtp",
+    "media_ids": [
+      7569282,
+      16571779,
+      38121208,
+      491104274
+    ],
+    "duration": 0.7102,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "1a25de93c3e725d3c6bc81b9fcd3f30d54fb6abcf5ae8d06759db395a4166c51",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_nocturne_nocturnebasicattack2_onhit_1559186049_1153642577_r1.wav",
+    "event": "Play_sfx_Nocturne_NocturneBasicAttack2_OnHit",
+    "event_id": 2236238210,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneBasicAttack2_OnHit [1559186049=1153642577] {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneBasicAttack2_OnHit [1559186049=1153642577] {r1}.txtp",
+    "media_ids": [
+      7569282,
+      16571779,
+      38121208,
+      491104274
+    ],
+    "duration": 0.6448,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "8178d3cd4e0df2708071c7224912d437daf2487e83a8eb151177b16dbe2060b0",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_nocturne_nocturnebasicattack2_onhit_1559186049_1153642577_r2.wav",
+    "event": "Play_sfx_Nocturne_NocturneBasicAttack2_OnHit",
+    "event_id": 2236238210,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneBasicAttack2_OnHit [1559186049=1153642577] {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneBasicAttack2_OnHit [1559186049=1153642577] {r2}.txtp",
+    "media_ids": [
+      7569282,
+      16571779,
+      38121208,
+      491104274
+    ],
+    "duration": 0.5936,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "c997976beaf1118281db89dc0068ed2866b7b2fcc23ea4df11da609b2ad7f515",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_nocturne_nocturnebasicattack2_onhit_1559186049_1153642577_r3.wav",
+    "event": "Play_sfx_Nocturne_NocturneBasicAttack2_OnHit",
+    "event_id": 2236238210,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneBasicAttack2_OnHit [1559186049=1153642577] {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneBasicAttack2_OnHit [1559186049=1153642577] {r3}.txtp",
+    "media_ids": [
+      7569282,
+      16571779,
+      38121208,
+      491104274
+    ],
+    "duration": 0.7102,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "1a25de93c3e725d3c6bc81b9fcd3f30d54fb6abcf5ae8d06759db395a4166c51",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_nocturne_nocturneumbrabladesattack_hit_r1_d.wav",
+    "event": "Play_sfx_Nocturne_NocturneUmbraBladesAttack_hit",
+    "event_id": 3408196235,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneUmbraBladesAttack_hit {r1} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneUmbraBladesAttack_hit {r1} {d}.txtp",
+    "media_ids": [
+      7569282,
+      16571779,
+      38121208,
+      491104274
+    ],
+    "duration": 0.6448,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "34fd82be3a626cbf3233e48832cb734de8b628095368a2b424bc8e33bd2ea426",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_nocturne_nocturneumbrabladesattack_hit_r2_d.wav",
+    "event": "Play_sfx_Nocturne_NocturneUmbraBladesAttack_hit",
+    "event_id": 3408196235,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneUmbraBladesAttack_hit {r2} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneUmbraBladesAttack_hit {r2} {d}.txtp",
+    "media_ids": [
+      7569282,
+      16571779,
+      38121208,
+      491104274
+    ],
+    "duration": 0.5936,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "0535e099d0289bd4eb056b9543b3ea1b2ffb50d1fa71b2e7dfa89f745bc161da",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_nocturne_nocturneumbrabladesattack_hit_r3_d.wav",
+    "event": "Play_sfx_Nocturne_NocturneUmbraBladesAttack_hit",
+    "event_id": 3408196235,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneUmbraBladesAttack_hit {r3} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneUmbraBladesAttack_hit {r3} {d}.txtp",
+    "media_ids": [
+      7569282,
+      16571779,
+      38121208,
+      491104274
+    ],
+    "duration": 0.7102,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "870e1688da03dbe3a5a02b7fb43f676fd452525dd62a6ee6770c2a1525e09037",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_nocturne_nocturneshroudofdarkness_oncast_r1.wav",
+    "event": "Play_sfx_Nocturne_NocturneShroudofDarkness_OnCast",
+    "event_id": 691682749,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneShroudofDarkness_OnCast {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneShroudofDarkness_OnCast {r1}.txtp",
+    "media_ids": [
+      703400332,
+      830573667,
+      866652499,
+      1009330099
+    ],
+    "duration": 2.4114,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "8381c1ca5175d5df38669002e994f88ee89b12f1cbc6f1bbdcf246ce056f1dc8",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_nocturne_nocturneshroudofdarkness_oncast_r2.wav",
+    "event": "Play_sfx_Nocturne_NocturneShroudofDarkness_OnCast",
+    "event_id": 691682749,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneShroudofDarkness_OnCast {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneShroudofDarkness_OnCast {r2}.txtp",
+    "media_ids": [
+      703400332,
+      830573667,
+      866652499,
+      1009330099
+    ],
+    "duration": 2.6682,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "b856db2fe40dca65145ddfd169a08bae0135758bac59ff96516a59352d0957e6",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_nocturne_nocturneshroudofdarkness_oncast_r3.wav",
+    "event": "Play_sfx_Nocturne_NocturneShroudofDarkness_OnCast",
+    "event_id": 691682749,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneShroudofDarkness_OnCast {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneShroudofDarkness_OnCast {r3}.txtp",
+    "media_ids": [
+      703400332,
+      830573667,
+      866652499,
+      1009330099
+    ],
+    "duration": 2.7565,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "d12c062e9b9f08b21aa24be61c737f912c6f803404c56660022d5e665623abc8",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_nocturne_death3d_cast.wav",
+    "event": "Play_sfx_Nocturne_Death3D_cast",
+    "event_id": 165702720,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_Death3D_cast.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_Death3D_cast.txtp",
+    "media_ids": [
+      294950982
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "97217a78bff349e799885b29a02274842b8c87640124eabac3f171d2595605cb",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 5.2319501133786845,
+      "source_sha256": "9cf3a437689bf5a793e1561bbe39fbfcc59823bf856f924d510c67bc6372a7c8",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "deploy.ogg",
+    "source_package": "LeagueClient/Plugins/rcp-be-lol-game-data/zh_CN-assets.wad",
+    "source_path": "plugins/rcp-be-lol-game-data/global/zh_cn/v1/champion-choose-vo/56.ogg",
+    "processing": "original OGG; playback 0 dB",
+    "sha256": "783100fe960729c93f1dbd902b36c49e6fe0c269eb0b65972e63835e5098783f"
+  }
+]

@@ -249,6 +249,7 @@ var active_buff_ignores_movement_slow: bool:
 var active_buff_ignores_attack_speed_slow: bool:
 	get: return buffs.any_flag(&"buff", &"ignore_attack_speed_slow")
 ## 强化下一次普攻不另起攻击计时，只在原本的下一次命中节点消费。
+var empowered_attack_effects: Dictionary = {}
 var empowered_attack_ready := false
 var empowered_attack_damage_multiplier := 1.0
 var empowered_attack_speed_multiplier := 1.0
@@ -782,7 +783,7 @@ func is_skill_resource_visible() -> bool:
 	return net_skill_resource_enabled if _in_client_mode() else skill_resource_enabled
 
 func get_active_buff_active_visual() -> bool:
-	return net_active_buff_active if _in_client_mode() else active_buff_timer > 0.0 or buffs.remaining(&"damage_reduction") > 0.0
+	return net_active_buff_active if _in_client_mode() else active_buff_timer > 0.0 or buffs.remaining(&"damage_reduction") > 0.0 or buffs.remaining(&"effect_shield") > 0.0
 
 func get_active_speed_multiplier_visual() -> float:
 	return net_active_speed_multiplier if _in_client_mode() else active_speed_multiplier
@@ -972,9 +973,10 @@ func _tick_skill_resource_decay(dt: float) -> void:
 		skill_resource_value = maxf(0.0, skill_resource_value - skill_resource_decay_rate * decay_dt)
 
 ## 强化下一击刷新普攻周期；完整新前摇由本Tick的权威攻击入口开始。
-func prepare_empowered_attack(damage_multiplier: float, speed_multiplier: float = 1.0, applied_blind_charges: int = 0) -> void:
+func prepare_empowered_attack(damage_multiplier: float, speed_multiplier: float = 1.0, applied_blind_charges: int = 0, effects: Dictionary = {}) -> void:
 	var was_attacking := _attacking
 	cancel_basic_attack(&"empowered_reset")
+	empowered_attack_effects = effects.duplicate(true)
 	empowered_attack_ready = true
 	empowered_attack_damage_multiplier = maxf(damage_multiplier, 0.0)
 	# 保留既有移动加速规则：攻击中使用不额外获得追击加速。
@@ -1009,6 +1011,7 @@ func apply_blind(attacks: int, interaction: Dictionary = {}) -> void:
 	if not CombatInteraction.allows_effect(self, interaction): return
 	# 持续输出能力没有离散出手，致盲对此类攻击无作用。
 	if hp <= 0.0 or attacks <= 0 or continuous_attack or structure_rush.control_immune(): return
+	if CombatInteraction.blocks_effect(self, interaction): return
 	if battle_context != null and battle_context.damage_batch().collecting:
 		battle_context.damage_batch().defer_effect(func():
 			if hp > 0.0: apply_blind(attacks, interaction))
@@ -1513,6 +1516,7 @@ func apply_forced_displacement(direction: Vector2, distance: float, duration: fl
 	if not is_inside_tree() or battle_context == null: return false
 	if not direction.is_finite() or direction.length_squared() < 0.000001 or not is_finite(max_extension) or (max_extension < 0.0 and max_extension != -1.0): return false
 	if not can_receive_knockback(global_position, distance, duration, 1.0) or not CombatInteraction.allows_effect(self, interaction): return false
+	if CombatInteraction.blocks_effect(self, interaction): return false
 	if battle_context != null and battle_context.damage_batch().collecting:
 		var order := displacement_order
 		if order.is_empty(): order = battle_context.damage_batch().next_displacement_order(self)
@@ -1571,6 +1575,7 @@ func apply_knockback(origin: Vector2, distance: float, duration: float = 0.2, ma
 	if not CombatInteraction.allows_effect(self, interaction): return
 	# 必须先校验再替换；拒绝的请求不得破坏旧位移。
 	if not can_receive_knockback(origin, distance, duration, mass_factor_max): return
+	if CombatInteraction.blocks_effect(self, interaction): return
 	if battle_context != null and battle_context.damage_batch().collecting:
 		battle_context.damage_batch().submit_knockback(self, origin, distance, duration, mass_factor_max, displacement_order, {}, interaction)
 		return
@@ -2048,6 +2053,8 @@ func _attack(dt: float) -> void:
 			hit_damage *= empowered_attack_damage_multiplier
 			if empowered_attack_blind_charges > 0:
 				attack_effects["blind_charges"] = empowered_attack_blind_charges
+			attack_effects.merge(empowered_attack_effects)
+			empowered_attack_effects = {}
 			empowered_attack_ready = false
 			empowered_attack_damage_multiplier = 1.0
 			empowered_attack_speed_multiplier = 1.0
@@ -2177,6 +2184,9 @@ func _deal_continuous_damage(amount: float) -> void:
 func _deal_attack_damage_to(target: Node2D, amount: float, effects: Dictionary = {}) -> bool:
 	effects = effects.duplicate(true)
 	effects.merge(on_hit_passive_effects())
+	if float(effects.get("cleave_radius", 0.0)) > 0.0:
+		effects["cleave_damage"] = float(effects.cleave_damage) * active_damage_multiplier
+		effects["cleave_center"] = global_position
 	if target == null or not is_instance_valid(target) or target.hp <= 0.0:
 		return false
 	if battle_context != null:
@@ -2460,6 +2470,7 @@ func apply_stasis(duration: float, source: StringName = &"legacy", interaction: 
 	if not CombatInteraction.allows_effect(self, interaction): return
 	if hp <= 0.0 or not is_finite(duration) or duration <= 0.0: return
 	if structure_rush.control_immune(): return
+	if CombatInteraction.blocks_effect(self, interaction): return
 	if battle_context != null and battle_context.damage_batch().collecting:
 		battle_context.damage_batch().defer_effect(func(): _receive_stasis(duration, source, interaction))
 		return
@@ -2486,6 +2497,7 @@ func _receive_stasis(duration: float, source: StringName, interaction: Dictionar
 func freeze(duration: float, source: StringName = &"legacy", interaction: Dictionary = {}) -> void:
 	if not CombatInteraction.allows_effect(self, interaction): return
 	if hp <= 0.0 or not is_finite(duration) or duration <= 0.0 or structure_rush.control_immune(): return
+	if CombatInteraction.blocks_effect(self, interaction): return
 	if battle_context != null and battle_context.damage_batch().collecting:
 		battle_context.damage_batch().defer_effect(func(): _receive_freeze(duration, source, interaction))
 		return
@@ -2504,6 +2516,7 @@ func _receive_freeze(duration: float, source: StringName, interaction: Dictionar
 func stun(duration: float, source: StringName = &"legacy", interaction: Dictionary = {}) -> void:
 	if not CombatInteraction.allows_effect(self, interaction): return
 	if hp <= 0.0 or not is_finite(duration) or duration <= 0.0 or structure_rush.control_immune(): return
+	if CombatInteraction.blocks_effect(self, interaction): return
 	if battle_context != null and battle_context.damage_batch().collecting:
 		battle_context.damage_batch().defer_effect(func(): _receive_stun(duration, source, interaction))
 		return
@@ -2521,6 +2534,7 @@ func _receive_stun(duration: float, source: StringName, interaction: Dictionary 
 func apply_slow(duration: float, multiplier: float, source: StringName = &"legacy", interaction: Dictionary = {}) -> void:
 	if not CombatInteraction.allows_effect(self, interaction): return
 	if hp <= 0.0 or not is_finite(duration) or duration <= 0.0 or not is_finite(multiplier) or structure_rush.control_immune() or active_buff_ignores_movement_slow: return
+	if multiplier < 1.0 and CombatInteraction.blocks_effect(self, interaction): return
 	if battle_context != null and battle_context.damage_batch().collecting:
 		battle_context.damage_batch().defer_effect(func(): _receive_apply_slow(duration, multiplier, source, interaction))
 		return
@@ -2536,6 +2550,7 @@ func _receive_apply_slow(duration: float, multiplier: float, source: StringName,
 func apply_attack_speed_slow(duration: float, multiplier: float, source: StringName = &"legacy", interaction: Dictionary = {}) -> void:
 	if not CombatInteraction.allows_effect(self, interaction): return
 	if hp <= 0.0 or not is_finite(duration) or duration <= 0.0 or not is_finite(multiplier) or structure_rush.control_immune() or active_buff_ignores_attack_speed_slow: return
+	if multiplier < 1.0 and CombatInteraction.blocks_effect(self, interaction): return
 	if battle_context != null and battle_context.damage_batch().collecting:
 		battle_context.damage_batch().defer_effect(func(): _receive_apply_attack_speed_slow(duration, multiplier, source, interaction))
 		return
@@ -2626,6 +2641,8 @@ func _tick_active_statuses(dt: float) -> void:
 		if hp > 0.0 and battle_context != null: battle_context.queue_expiry_explosion(self, effect)
 	shields.expired_effects.clear()
 	for expired in buffs.advance(dt):
+		if expired.family == &"effect_shield" and hp > 0.0 and battle_context != null:
+			battle_context.notify_unit_audio_event(self, &"effect_shield:end", global_position)
 		if expired.family == &"damage_reduction" and expired.potency.has("expiry_skill") and hp > 0.0 and not CombatInteraction.in_stasis(self) and battle_context != null:
 			battle_context.queue_expiry_explosion(self, expired.potency.expiry_skill)
 	_rescale_attack_phase(previous_speed)
@@ -2674,6 +2691,7 @@ func take_damage(amount: float, from: Node2D = null, source_team: int = -1, sour
 		return bool(battle_context.damage_batch().submit_damage(self, amount, from, source_team, source_position, attached).accepted)
 	if hp <= 0.0:
 		return false
+	if BattleNumbers.quantity(amount) > 0 and (battle_context == null or not battle_context.damage_batch().committing) and CombatInteraction.blocks_effect(self, CombatInteraction.effect_context(from, source_team, source_position, attached)): return false
 	if BattleNumbers.quantity(amount) > 0:
 		CombatInteraction.record_combat_effect(self, CombatInteraction.effect_context(from, source_team, source_position))
 	var remaining_damage := BattleNumbers.quantity(maxf(amount, 0.0) * (1.0 - buffs.strongest(&"damage_reduction", &"reduction", 0.0)))

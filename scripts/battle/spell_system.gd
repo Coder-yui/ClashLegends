@@ -89,9 +89,10 @@ func apply_freeze(position: Vector2, radius: float, duration: float, team: int, 
 	_effect_serial += 1
 	var source := StringName("spell:%d:%d" % [team, _effect_serial])
 	var interaction := _spell_context(team)
+	interaction["delivery"] = CombatInteraction.Delivery.new()
 	show_freeze(position, radius, duration, slow_duration, team)
 	if slow_duration > 0.0:
-		slow_zones.append({"created_tick": _controller.get_authoritative_server_tick() if _controller.simulation_step_active() else -1, "pos": position, "radius": radius, "delay": duration, "timer": slow_duration, "team": team, "multiplier": slow_multiplier, "attack_multiplier": attack_multiplier, "status_source": source})
+		slow_zones.append({"created_tick": _controller.get_authoritative_server_tick() if _controller.simulation_step_active() else -1, "pos": position, "radius": radius, "delay": duration, "timer": slow_duration, "team": team, "multiplier": slow_multiplier, "attack_multiplier": attack_multiplier, "status_source": source, "effect_delivery": interaction.delivery})
 	for combatant in _controller.get_tree().get_nodes_in_group("combatants"):
 		if not is_instance_valid(combatant) or combatant.team == team or combatant.hp <= 0.0:
 			continue
@@ -164,14 +165,22 @@ func tick(dt: float) -> void:
 		else:
 			zone.timer = maxf(0.0, float(zone.timer) - dt)
 		var interaction := _spell_context(int(zone.team))
+		interaction["delivery"] = zone.get("effect_delivery")
 		for combatant in _controller.get_tree().get_nodes_in_group("combatants"):
 			if not combatant is Unit or not is_instance_valid(combatant) or combatant.team == int(zone.team) or combatant.hp <= 0.0:
 				continue
 			if not CombatInteraction.allows_effect(combatant, interaction): continue
 			if combatant.global_position.distance_to(zone.pos) <= float(zone.radius) + combatant.body_radius:
-				(combatant as Unit).apply_slow(dt + FixedStepClock.STEP, float(zone.multiplier), zone.status_source, interaction)
+				if not zone.has("contacts"): zone["contacts"] = {}
+				var contact_id: int = combatant.get_instance_id()
+				if not zone.contacts.has(contact_id):
+					zone.contacts[contact_id] = CombatInteraction.blocks_effect(combatant, interaction)
+				if bool(zone.contacts[contact_id]): continue
+				var ongoing := interaction.duplicate()
+				ongoing["attached"] = true
+				(combatant as Unit).apply_slow(dt + FixedStepClock.STEP, float(zone.multiplier), zone.status_source, ongoing)
 				if float(zone.attack_multiplier) < 1.0:
-					(combatant as Unit).apply_attack_speed_slow(dt + FixedStepClock.STEP, float(zone.attack_multiplier), zone.status_source, interaction)
+					(combatant as Unit).apply_attack_speed_slow(dt + FixedStepClock.STEP, float(zone.attack_multiplier), zone.status_source, ongoing)
 		if float(zone.timer) > 0.0:
 			alive.append(zone)
 	slow_zones.assign(alive)
@@ -231,7 +240,7 @@ func clear() -> void:
 func start_lightning(team: int, stats: Dictionary, position: Vector2, enhanced: bool, skill_index: int) -> void:
 	_effect_serial += 1
 	var skill := _active_heal_skill(stats, skill_index) if enhanced else {}
-	var cast_data := {"team": team, "pos": position, "stats": stats,
+	var cast_data := {"effect_delivery": CombatInteraction.Delivery.new(), "team": team, "pos": position, "stats": stats,
 		"count": int(skill.get("strike_count", stats.strike_count)), "index": 0, "struck_ids": {},
 		"multiplier": float(skill.get("strike_damage_multiplier", 1.0)),
 		"interval_ticks": maxi(roundi(float(stats.strike_interval) / FixedStepClock.STEP), 1),
@@ -258,6 +267,12 @@ func _tick_lightning() -> void:
 
 
 func _strike_lightning(cast_data: Dictionary) -> void:
+	var previous := CombatInteraction.current_delivery
+	CombatInteraction.current_delivery = cast_data.effect_delivery
+	_strike_lightning_delivery(cast_data)
+	CombatInteraction.current_delivery = previous
+
+func _strike_lightning_delivery(cast_data: Dictionary) -> void:
 	var stats: Dictionary = cast_data.stats
 	var team := int(cast_data.team)
 	var interaction := _spell_context(team)
@@ -357,7 +372,7 @@ func _start_corrosion(team: int, stats: Dictionary, position: Vector2, enhanced:
 	var skill := _active_heal_skill(stats, skill_index) if enhanced else {}
 	var tick: int = _controller.get_authoritative_server_tick()
 	var interval_ticks := maxi(1, ceili(float(stats.interval) / FixedStepClock.STEP))
-	var zone := {"team": team, "pos": position, "radius": float(stats.radius),
+	var zone := {"effect_delivery": CombatInteraction.Delivery.new(), "team": team, "pos": position, "radius": float(stats.radius),
 		"start_tick": tick, "end_tick": tick + maxi(1, ceili(float(stats.duration) / FixedStepClock.STEP)),
 		"last_tick": tick, "damage": float(stats.damage), "tower_damage_multiplier": float(stats.tower_damage_multiplier), "interval_ticks": interval_ticks,
 		"next_damage_tick": tick + interval_ticks, "slow": float(skill.get("slow_multiplier", 1.0)),
@@ -385,6 +400,8 @@ func _corrosion_targets(zone: Dictionary, interaction: Dictionary) -> Array[Node
 
 func _apply_corrosion_slow(zone: Dictionary, target: Node2D, interaction: Dictionary) -> void:
 	if not target is Unit or target.is_building or float(zone.slow) >= 1.0: return
+	interaction = interaction.duplicate()
+	interaction["delivery"] = zone.effect_delivery
 	var apply_slow := func():
 		if is_instance_valid(target) and target.hp > 0.0:
 			target.apply_slow(FixedStepClock.STEP * 2.0, float(zone.slow), zone.source, interaction)
@@ -400,6 +417,8 @@ func _tick_corrosion() -> void:
 			continue
 		zone.last_tick = tick
 		if tick > int(zone.end_tick): continue
+		var previous := CombatInteraction.current_delivery
+		CombatInteraction.current_delivery = zone.effect_delivery
 		var damage_due := tick >= int(zone.next_damage_tick)
 		var interaction := _spell_context(int(zone.team))
 		for target in _corrosion_targets(zone, interaction):
@@ -407,6 +426,7 @@ func _tick_corrosion() -> void:
 				var amount := float(zone.damage) * (float(zone.tower_damage_multiplier) if target is Tower else 1.0)
 				BattleNumbers.hit(target, amount, interaction.get("source"), int(zone.team), interaction.get("position", Vector2(INF, INF)))
 			_apply_corrosion_slow(zone, target, interaction)
+		CombatInteraction.current_delivery = previous
 		if damage_due: zone.next_damage_tick += int(zone.interval_ticks)
 		# 先结算到期末跳，再移除区域。
 		if tick < int(zone.end_tick): alive.append(zone)

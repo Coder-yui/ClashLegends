@@ -1,0 +1,154 @@
+{
+  "systems": [
+    "P",
+    "W",
+    "block"
+  ],
+  "resources": [
+    {
+      "source": "assets/characters/nocturne/skins/base/particles/dirtbits.tex",
+      "sha256": "c070d70bab45e364db65e617427846866023ccf7e8c5811e9d7f02f17a455d93",
+      "output": "res://assets/effects/nocturne/native/dirtbits.png"
+    },
+    {
+      "source": "assets/characters/nocturne/skins/base/particles/nocturne_base_p_slashes.scb",
+      "sha256": "8189b6f9dcc0dcc5592c8e2dd26aab882f5f566e9b45535368454ffa7311a135",
+      "output": "res://assets/effects/nocturne/native/nocturne_base_p_slashes.mesh.json"
+    },
+    {
+      "source": "assets/characters/nocturne/skins/base/particles/nocturne_base_p_slashult.tex",
+      "sha256": "76c02ad27f47cdc3f137ec7ca0cdf126950dc0a453e4575cb20f8d6aa62b1302",
+      "output": "res://assets/effects/nocturne/native/nocturne_base_p_slashult.png"
+    },
+    {
+      "source": "assets/characters/nocturne/skins/base/particles/aura_self.tex",
+      "sha256": "41241eafa700d7aa8a280bc7d943c090005324d146d33777a5b8b4bda3ab977b",
+      "output": "res://assets/effects/nocturne/native/aura_self.png"
+    },
+    {
+      "source": "assets/characters/nocturne/skins/base/particles/orianna_base_p_distort-wave.tex",
+      "sha256": "84e5d307bbc416642b25a6a301b6e0bd09eef9d53e3d97462d5598229165296c",
+      "output": "res://assets/effects/nocturne/native/orianna_base_p_distort-wave.png"
+    },
+    {
+      "source": "assets/characters/nocturne/skins/base/particles/nocturne_base_p_weaponswipe.scb",
+      "sha256": "8c2078cbd322c0375037f223737f963bcbbfcead252a0a3ecc70afebac3a9153",
+      "output": "res://assets/effects/nocturne/native/nocturne_base_p_weaponswipe.mesh.json"
+    },
+    {
+      "source": "assets/characters/nocturne/skins/base/particles/nocturne_base_p_trail_smoke.tex",
+      "sha256": "370b19fa4578a657777935316959703ef3e94eee12e777dd1d9f4966654cbb47",
+      "output": "res://assets/effects/nocturne/native/nocturne_base_p_trail_smoke.png"
+    },
+    {
+      "source": "assets/characters/nocturne/skins/base/particles/nocturne_base_p_erode.tex",
+      "sha256": "b0cd62a94f38facbbd4bd465a27e1c7b065e291b09b411b081168bae6711ef99",
+      "output": "res://assets/effects/nocturne/native/nocturne_base_p_erode.png"
+    },
+    {
+      "source": "assets/characters/nocturne/skins/base/particles/nocturne_base_p_claws.scb",
+      "sha256": "a5bfe1d014dbd13ef67a0cf8d546b16e918a0d8960800a12c692c24223ff8338",
+      "output": "res://assets/effects/nocturne/native/nocturne_base_p_claws.mesh.json"
+    },
+    {
+      "source": "assets/characters/nocturne/skins/base/particles/nocturne_base_p_wolfscratch.tex",
+      "sha256": "820b1ad416beacffe05416723bbd73727accfc87328e57e888400495f1cbf303",
+      "output": "res://assets/effects/nocturne/native/nocturne_base_p_wolfscratch.png"
+    },
+    {
+      "source": "assets/characters/nocturne/skins/base/particles/nocturne_base_p_mis_smoke_trail.tex",
+      "sha256": "dc36a9881e9368bf2bc80e287f2f54db23fe13599e6b24be1654b7c2667c5587",
+      "output": "res://assets/effects/nocturne/native/nocturne_base_p_mis_smoke_trail.png"
+    },
+    {
+      "source": "assets/characters/nocturne/skins/base/particles/nocturne_base_p_wisps.tex",
+      "sha256": "bd2d58c63a55412399994ef562c6875030c7ce26cd6194ce55888979b9b56f0c",
+      "output": "res://assets/effects/nocturne/native/nocturne_base_p_wisps.png"
+    },
+    {
+      "source": "assets/characters/nocturne/skins/base/particles/nocturne_base_temp_p_cleave_aoe_spark.tex",
+      "sha256": "45a7002f89e01b6de4e147b758632375efdf5fd60fe09438adb51caa961d81f8",
+      "output": "res://assets/effects/nocturne/native/nocturne_base_temp_p_cleave_aoe_spark.png"
+    },
+    {
+      "source": "assets/shared/particles/janna_skin08_shield_gradient.tex",
+      "sha256": "6bdfaabb7f2ed9d7b08616c434ac9885ae3c789afaaca124fed9aa0a6447285d",
+      "output": "res://assets/effects/nocturne/native/janna_skin08_shield_gradient.png"
+    },
+    {
+      "source": "assets/shared/particles/items/item_bansheeveil_shieldglow.tex",
+      "sha256": "b208b3bab8e2a35d9e78a5d40a16308861c585cc331c8e2ef2003209d335d545",
+      "output": "res://assets/effects/nocturne/native/item_bansheeveil_shieldglow.png"
+    },
+    {
+      "source": "assets/shared/particles/banshee_veil_fireball2.scb",
+      "sha256": "023830b0f88d9dcdbda2cdf543bbe12eae4734addaf540d695171319efddd698",
+      "output": "res://assets/effects/nocturne/native/banshee_veil_fireball2.mesh.json"
+    },
+    {
+      "source": "assets/shared/particles/banshee_veil_base_reveal.tex",
+      "sha256": "477b4ca93414f0c486017b9ef29dfe14a18f30c2cedebbd273d60c2fb1cd68a3",
+      "output": "res://assets/effects/nocturne/native/banshee_veil_base_reveal.png"
+    },
+    {
+      "source": "assets/shared/particles/banshee_veil_template_shield.tex",
+      "sha256": "3620dc9b7482e3d9b0397ab63c3d4aa913f2c5526fedc1cd7dfb8ff2f9be66a8",
+      "output": "res://assets/effects/nocturne/native/banshee_veil_template_shield.png"
+    },
+    {
+      "source": "assets/characters/nocturne/skins/base/particles/nocturne_base_w_shield_01.scb",
+      "sha256": "ed59f25712b1b31bab0794261d1dac8b3ea86d95be7fe17eb5b7f5433dcab41f",
+      "output": "res://assets/effects/nocturne/native/nocturne_base_w_shield_01.mesh.json"
+    },
+    {
+      "source": "assets/characters/nocturne/skins/base/particles/nocturne_base_shield_01_activate.tex",
+      "sha256": "e136765ddab3f079d48bd3d26c57c89d1dc746a6129ace3012b48ef9cd1171fe",
+      "output": "res://assets/effects/nocturne/native/nocturne_base_shield_01_activate.png"
+    },
+    {
+      "source": "assets/characters/nocturne/skins/base/particles/nocturne_base_w_smoke_twirl_start.scb",
+      "sha256": "631453aa113c4fea96116a3f8b983bc94529badc069a5a90c7efc59de4d78ce8",
+      "output": "res://assets/effects/nocturne/native/nocturne_base_w_smoke_twirl_start.mesh.json"
+    },
+    {
+      "source": "assets/characters/nocturne/skins/base/particles/nocturne_base_w_smoke_twirl.tex",
+      "sha256": "b6a1e26bd47cf88be6ed82781165cd4e98e2ecca731d0f778da81028540d88b3",
+      "output": "res://assets/effects/nocturne/native/nocturne_base_w_smoke_twirl.png"
+    },
+    {
+      "source": "assets/characters/nocturne/skins/base/particles/nocturne_base_w_activate_mult.tex",
+      "sha256": "3af8fa7d5afcc8ebba409d4be60adb28cc6fe5179d5e8d72fc5e6679d765bf70",
+      "output": "res://assets/effects/nocturne/native/nocturne_base_w_activate_mult.png"
+    },
+    {
+      "source": "assets/characters/nocturne/skins/base/particles/nocturne_base_w_smoke_twirl_2.tex",
+      "sha256": "d400df73d8428f88170ec5fb20c6996bdc07d41f306f35c1d2c999b9d047f2a0",
+      "output": "res://assets/effects/nocturne/native/nocturne_base_w_smoke_twirl_2.png"
+    },
+    {
+      "source": "assets/characters/nocturne/skins/base/particles/geo_shield_fringes_00.scb",
+      "sha256": "9832e1a715469189a015847a039e9659f2c63252f84bebe9c53a98afcce5fed6",
+      "output": "res://assets/effects/nocturne/native/geo_shield_fringes_00.mesh.json"
+    },
+    {
+      "source": "assets/characters/nocturne/skins/base/particles/banshee_veil_fireball2.scb",
+      "sha256": "023830b0f88d9dcdbda2cdf543bbe12eae4734addaf540d695171319efddd698",
+      "output": "res://assets/effects/nocturne/native/banshee_veil_fireball2.mesh.json"
+    },
+    {
+      "source": "assets/characters/nocturne/skins/base/particles/nocturne_base_w_shield_lines.tex",
+      "sha256": "01faabf9d07bac72b89558a76845cd9142188ac9a6bee360fa3b934f7d028131",
+      "output": "res://assets/effects/nocturne/native/nocturne_base_w_shield_lines.png"
+    },
+    {
+      "source": "assets/characters/nocturne/skins/base/particles/nocturne_base_w_fire_trail_up.tex",
+      "sha256": "6b14882bd9c3b103db8188cfdd1f04061c88abdb976d755faa601aba2359f84d",
+      "output": "res://assets/effects/nocturne/native/nocturne_base_w_fire_trail_up.png"
+    },
+    {
+      "source": "assets/characters/nocturne/skins/base/particles/common_spellblock02.tex",
+      "sha256": "9250f586237783b7e30dd7eba4f8c6223b7f8e3fefee1741a1eb77847666c736",
+      "output": "res://assets/effects/nocturne/native/common_spellblock02.png"
+    }
+  ]
+}

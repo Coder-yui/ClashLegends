@@ -879,6 +879,11 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 					errors.append("%s: 断头台需要正伤害和非负每层增幅" % label)
 				if not stats.has("bleed_max_stacks"):
 					errors.append("%s: 断头台需要流血被动" % label)
+			&"effect_shield":
+				if float(skill.get("duration", 0.0)) <= 0.0: errors.append(label + ": 抵挡护盾需要正持续时间")
+				if skill.has("block_haste_duration") or skill.has("block_attack_speed_multiplier"):
+					if float(skill.get("block_haste_duration", 0.0)) <= 0.0 or float(skill.get("block_attack_speed_multiplier", 1.0)) <= 1.0:
+						errors.append(label + ": 抵挡奖励需要正持续时间和大于1的攻速倍率")
 			&"explosive_shield":
 				for field in ["shield", "shield_duration", "radius", "damage"]:
 					if float(skill.get(field, 0.0)) <= 0.0:
@@ -981,6 +986,11 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 				if float(skill.get("cast_duration", 0.0)) != 0.0 or float(skill.get("impact_delay", 0.0)) != 0.0 or skill.has("visual_action") or bool(skill.get("uses_skill_resource", false)):
 					errors.append(label + ": 拒绝死亡必须瞬时生效，不占用全身动作或消费技能资源")
 			&"empowered_attack":
+				if skill.has("cleave_damage") or skill.has("cleave_radius"):
+					if float(skill.get("cleave_damage", 0.0)) <= 0.0 or float(skill.get("cleave_radius", 0.0)) <= 0.0 or float(stats.get("projectile_speed", 0.0)) > 0.0 or bool(stats.get("is_continuous_attack", false)):
+						errors.append(label + ": 强化溅射需要正伤害、正半径和离散近战")
+				if skill.has("heal_ratio") and (float(skill.heal_ratio) < 0.0 or float(skill.get("cleave_radius", 0.0)) <= 0.0):
+					errors.append(label + ": 强化溅射吸血需要非负比例和范围")
 				_require_fields(label, skill, [&"empowered_damage_multiplier"], errors)
 				if float(skill.get("empowered_damage_multiplier", 0.0)) <= 0.0:
 					errors.append("%s.empowered_damage_multiplier: 必须 > 0" % label)

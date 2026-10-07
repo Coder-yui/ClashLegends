@@ -585,5 +585,23 @@
     "source_path": "assets/characters/jinx/hud/icons2d/jinx_q1.dds",
     "source_sha256": "139c9957adb9865bc302046fe54a8e5b49447ff18112572f6cc1f8272e925e1e",
     "sha256": "f5c33ad3cb27c0eb206aea8543b7e1492a91ab634f216acc2636258a248e56ba"
+  },
+  {
+    "card": "nocturne",
+    "skill_index": 0,
+    "path": "res://assets/skills/nocturne_w.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Nocturne.wad.client",
+    "source_path": "assets/characters/nocturne/hud/icons2d/nocturne_shroudofdarkness.dds",
+    "source_sha256": "a3cf6280a54453839c4e8f5c0a718b07cddad287a25f41307f89ca350c127f6f",
+    "sha256": "ec318ff35ef81185028ea43a7a684a809644c88f3b1fd8ddfc48d03cd5e829c9"
+  },
+  {
+    "card": "nocturne",
+    "skill_index": 1,
+    "path": "res://assets/skills/nocturne_p.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Nocturne.wad.client",
+    "source_path": "assets/characters/nocturne/hud/icons2d/nocturne_umbrablades.dds",
+    "source_sha256": "1e29cdfed518a5afc1ed09aa002060a9f59080ba46e4defd5180c5170aa07096",
+    "sha256": "da5490fffea0a272d14e395b6cf1b81d3093feae4abd6035d437bcf98699152e"
   }
 ]

@@ -4,7 +4,7 @@
 
 | 契约 | 当前值 |
 | --- | --- |
-| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->98 |
+| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->99 |
 | 顶层快照项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd SNAPSHOT_PACKET_SIZE -->11 |
 | 单位载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd UNIT_PAYLOAD_SIZE -->56 |
 | 塔载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd TOWER_PAYLOAD_SIZE -->7 |
@@ -18,7 +18,7 @@ RPC 端点留在 Main，服务器与两个客户端保持相同节点路径。�
 
 协议85：可靠 `_rpc_heal_fx` 在持续时间后携带施法阵营（0蓝 / 1红），再携带强化与全图标记；客户端仅创建对应阵营色的治疗范围边界，非法阵营拒绝。治疗与护盾仍由权威端结算，内部淡黄光效与全图金色波纹保持原色。
 
-终局可靠信封携带最终快照；客户端先应用最终权威状态再显示结果，重复终态幂等，普通快照和实体事件随后不能恢复战斗。加载超时、断线、返回重开以及双进程验证见[测试手册](../../tests/README.md)。
+终局可靠信封携带最终快照；客户端先应用最终权威状态再显示结果，重复终态幂等，普通快照和实体事件随后不能恢复战斗。加载超时、断线、返回重开以及三进程验证见[测试手册](../../tests/README.md)。
 
 单位新增致死换形状态 `[used, waiting_ticks]`，零血但仍等待复生的实体必须出现在快照内。客户端只应用状态，不自主衰血、倒数或复生；乱序快照不能回滚已完成的换形。
 
@@ -139,3 +139,5 @@ NetworkClock在独立unreliable通道2发送带会话及探测序号的往返样
 ClientInputState在发送请求时立即显示本方落点等待提示或按钮pending；在收到确认前不扣费、不换牌、不建立战斗对象。接受后转为服务器排程提示，拒绝后撤下，对局结束清空。客户端以卡牌ID+单调request_id关联回执。
 
 NetworkPlayback默认100ms，根据时钟RTT/抖动与事件/快照到达时差动态调整到50–200ms：最近32个观测的90分位加一Tick余量，抖动增大快速增加、稳定后缓慢降低。播放Tick只前进，增大缓冲可能短暂保持上一帧，不回滚战斗。变化只在客户端表现层，10Tick操作缓冲和20Hz权威模拟不变。
+
+梦魇单次效果盾复用U_ACTIVE_BUFF_ACTIVE表现存续；Delivery只属于权威执行，不加入快照。协议99包含该规则与新卡内容；客户端不自行判断抵挡。

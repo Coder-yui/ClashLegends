@@ -461,6 +461,7 @@ func _sync_visual(force: bool, delta: float) -> void:
 
 ## 事件动作仅在空闲/移动时展示；攻击、控制、变形优先且不排队补播。
 func _on_presentation_cue(cue: StringName) -> void:
+	if is_instance_valid(_active_buff_visual): _active_buff_visual.on_cue(cue)
 	if cue in [&"stealth:enter", &"stealth:exit"]:
 		if not _dying and is_instance_valid(_source) and _source.hp > 0.0:
 			var effect := preload("res://scripts/presentation/stealth_transition_3d.gd").new()
@@ -1884,6 +1885,8 @@ func _replace_active_buff_visual(scene_path: String) -> void:
 func _update_active_buff_visual(delta: float) -> void:
 	if not is_instance_valid(_active_buff_visual):
 		return
+	if _active_buff_visual.follow_model_anchor and is_instance_valid(_projectile_anchor):
+		_active_buff_visual.global_position = _projectile_anchor.global_position
 	var status_active := is_instance_valid(_source) and _state.active_buff
 	if _active_buff_visual.status_source == "blood_rage":
 		status_active = is_instance_valid(_source) and _source.blood_rage_time_left_visual() > 0.0

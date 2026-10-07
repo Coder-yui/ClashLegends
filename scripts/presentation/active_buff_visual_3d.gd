@@ -5,6 +5,7 @@ extends Node3D
 
 @export_enum("active_buff", "blood_rage", "structure_haste") var status_source: String = "active_buff"
 @export var preserve_on_form_change := false
+@export var follow_model_anchor := false
 var active := false
 var status_state := Vector2.ZERO
 var overlay_material: ShaderMaterial
@@ -24,6 +25,9 @@ func make_overlay(original: Material) -> Material:
 	material.next_pass = original
 	overlay_instances.append(material)
 	return material
+
+func on_cue(_cue: StringName) -> void:
+	pass
 
 func on_hit() -> void:
 	pass

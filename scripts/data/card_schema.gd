@@ -98,7 +98,7 @@ const SIZE_RADII := {
 const PROJECTILE_VISUALS := [&"jinx_rocket", &"jinx_bullet", &"corki_bullet", &"fireball", &"crossbow_bolt", &"venom_bolt", &"magic_orb", &"kayle_sword", &"orb", &"arrow", &"needle", &"boomerang", &"ice_cone"]
 const VISUAL_SPAWN_TRANSITIONS := [&"drop", &"rebirth"]
 const SPELL_KINDS := [&"corrosion", &"stasis", &"zap", &"lightning", &"freeze", &"heal", &"mirror"]
-const ACTIVE_SKILL_KINDS := [&"toggle_form", &"aftershock", &"spell_corrosion", &"undying_rage", &"spell_freeze", &"spell_stasis", &"permanent_growth", &"spell_lightning", &"dash_strike", &"terrain_charge", &"bleeding_execute", &"explosive_shield", &"sanctuary", &"timed_form", &"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"continuous_area", &"empowered_attack", &"attack_lifesteal", &"area_shield", &"restoration_shield", &"spell_heal"]
+const ACTIVE_SKILL_KINDS := [&"effect_shield", &"toggle_form", &"aftershock", &"spell_corrosion", &"undying_rage", &"spell_freeze", &"spell_stasis", &"permanent_growth", &"spell_lightning", &"dash_strike", &"terrain_charge", &"bleeding_execute", &"explosive_shield", &"sanctuary", &"timed_form", &"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"continuous_area", &"empowered_attack", &"attack_lifesteal", &"area_shield", &"restoration_shield", &"spell_heal"]
 const ACTIVE_SKILL_TARGET_SCOPES := [&"self", &"deployment_group"]
 const CAST_LOCKS := [&"movement", &"attack", &"facing"]
 const VISUAL_ACTION_KINDS := [&"deploy", &"transform", &"skill"]
@@ -177,7 +177,7 @@ const ACTIVE_SKILL_FIELDS := [
 	&"name", &"kind", &"cost", &"max_uses", &"cooldown", &"radius", &"damage", &"knockback", &"knockback_duration", &"knockback_mass_factor_max",
 	&"slow_duration", &"slow_multiplier",
 	&"shield", &"shield_duration", &"shield_decay", &"shield_on_cast_start", &"independent_on_creation", &"resource_shield_max", &"duration", &"speed_multiplier", &"damage_multiplier",
-	&"attack_speed_multiplier", &"ignore_movement_slow", &"ignore_attack_speed_slow", &"spawn_id", &"spawn_count", &"length", &"width", &"impact_delay",
+	&"block_haste_duration", &"block_attack_speed_multiplier", &"attack_speed_multiplier", &"ignore_movement_slow", &"ignore_attack_speed_slow", &"spawn_id", &"spawn_count", &"length", &"width", &"impact_delay",
 	&"transform_impact_delay", &"cast_duration", &"transform_cast_duration", &"stun_duration", &"ground_only",
 	&"cast_locks", &"visual_action", &"description", &"shape", &"near_width", &"far_width", &"arc_degrees", &"fan_inner_arc",
 	&"projectile_count", &"projectile_visual", &"projectile_launch_delay", &"projectile_flight_duration", &"projectile_stop_on_hit", &"projectile_piercing",
@@ -190,7 +190,7 @@ const ACTIVE_SKILL_FIELDS := [
 	&"shockwave_slow_duration", &"shockwave_slow_multiplier", &"shockwave_full_only",
 	&"zone_duration", &"zone_tick_interval", &"zone_damage", &"zone_slow_duration", &"zone_slow_multiplier",
 	&"tick_interval",
-	&"empowered_damage_multiplier", &"empowered_speed_multiplier", &"blind_charges",
+	&"cleave_damage", &"cleave_radius", &"empowered_damage_multiplier", &"empowered_speed_multiplier", &"blind_charges",
 	&"health_bonus_ratio", &"body_scale_multiplier", &"knockback_radius", &"target_scope", &"heal_ratio", &"max_health_ratio", &"heal_multiplier", &"overheal_shield_ratio", &"global_heal", &"copy_member_buff",
 ]
 ## building_only: true 时只攻击建筑（塔+建筑卡），无视普通单位

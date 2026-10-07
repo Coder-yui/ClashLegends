@@ -35,6 +35,7 @@ func _init(controller: Node2D, presentation: SkillEffectPresentation) -> void:
 ## 不回写 CardDB，也不会让动画决定伤害。
 func prepare_cast(source: Unit, skill: Dictionary) -> Dictionary:
 	var prepared := skill.duplicate(true)
+	prepared["effect_delivery"] = CombatInteraction.Delivery.new()
 	if bool(prepared.get("uses_skill_resource", false)) and source.skill_resource_enabled and source.skill_resource_max > 0.0:
 		var resource_stacks := source.get_skill_resource_stacks()
 		var resource_ratio := source.get_skill_resource_ratio()
@@ -87,6 +88,7 @@ func prepare_cast(source: Unit, skill: Dictionary) -> Dictionary:
 ## 双形态技能只在 Cast Start 决定形态分支和锁定朝向，之后进入 Main 的通用 Impact 队列。
 func prepare_dual_form_cast(source: Unit, skill: Dictionary) -> Dictionary:
 	var prepared := skill.duplicate(true)
+	prepared["effect_delivery"] = CombatInteraction.Delivery.new()
 	prepared["cast_forward"] = frontal_forward(source)
 	if source.form_index == 0:
 		if not source.transform_to_mega(true):
@@ -128,7 +130,17 @@ func apply_cast_end(source: Unit, skill: Dictionary) -> void:
 
 
 func apply(source: Unit, skill: Dictionary) -> bool:
+	var previous := CombatInteraction.current_delivery
+	CombatInteraction.current_delivery = skill.get("effect_delivery")
+	var result := _apply(source, skill)
+	CombatInteraction.current_delivery = previous
+	return result
+
+func _apply(source: Unit, skill: Dictionary) -> bool:
 	match StringName(skill.get("kind", "")):
+		&"effect_shield":
+			source.buffs.apply(&"effect_shield", source.status_source("effect_shield"), float(skill.duration), {"haste_duration": float(skill.get("block_haste_duration", 0.0)), "attack_speed": float(skill.get("block_attack_speed_multiplier", 1.0))})
+			source.battle_context.notify_unit_audio_event(source, &"effect_shield:start", source.get_visual_screen_position())
 		&"aftershock", &"undying_rage":
 			pass # 效果在 Cast Start 原子生效，受控不取消已施加的独立状态。
 		&"permanent_growth":
@@ -185,7 +197,8 @@ func apply(source: Unit, skill: Dictionary) -> bool:
 			source.prepare_empowered_attack(
 				float(skill.get("empowered_damage_multiplier", 1.0)),
 				float(skill.get("empowered_speed_multiplier", 1.0)),
-				int(skill.get("blind_charges", 0))
+				int(skill.get("blind_charges", 0)),
+				{"cleave_damage": float(skill.get("cleave_damage", 0.0)), "cleave_radius": float(skill.get("cleave_radius", 0.0)), "cleave_heal_ratio": float(skill.get("heal_ratio", 0.0))}
 			)
 		&"attack_lifesteal":
 			for target in _skill_target_units(source, skill):
@@ -315,6 +328,7 @@ func activate_nova(source: Unit, skill: Dictionary) -> void:
 			continue
 		if combatant.global_position.distance_to(source.global_position) > radius + combatant.body_radius:
 			continue
+		if (amount > 0.0 or float(skill.get("stun_duration", 0.0)) > 0.0 or float(skill.get("knockback", 0.0)) > 0.0) and CombatInteraction.blocks_effect(combatant, CombatInteraction.effect_context(source)): continue
 		if amount > 0.0:
 			any_landed = _damage_combatant(source, combatant, amount, source.global_position) or any_landed
 		if combatant is Unit and is_instance_valid(combatant) and combatant.hp > 0.0:
@@ -340,7 +354,7 @@ func activate_continuous_area(source: Unit, skill: Dictionary) -> void:
 	if duration <= 0.0 or radius <= 0.0 or amount <= 0.0:
 		return
 	continuous_area_effects.append({
-		"created_tick": _controller.get_authoritative_server_tick() if _controller.simulation_step_active() else -1,
+		"effect_delivery": CombatInteraction.current_delivery, "created_tick": _controller.get_authoritative_server_tick() if _controller.simulation_step_active() else -1,
 		"status_source": source.status_source("skill_area"), "cast_serial": source.active_skill_cast_serial, "action_serial": source.get_visual_action_serial(),
 		"source_ref": weakref(source),
 		"visual_action": String(skill.get("visual_action", "")),
@@ -355,6 +369,12 @@ func activate_continuous_area(source: Unit, skill: Dictionary) -> void:
 
 
 func _apply_continuous_area_pulse(source: Unit, effect: Dictionary) -> void:
+	var previous := CombatInteraction.current_delivery
+	CombatInteraction.current_delivery = effect.get("effect_delivery")
+	_apply_continuous_delivery(source, effect)
+	CombatInteraction.current_delivery = previous
+
+func _apply_continuous_delivery(source: Unit, effect: Dictionary) -> void:
 	var center: Vector2 = effect.get("center", Vector2.ZERO)
 	if not bool(effect.get("fixed_position", false)) and source != null and is_instance_valid(source):
 		center = source.global_position
@@ -540,6 +560,7 @@ func apply_forward_area(source: Unit, skill: Dictionary, forward: Vector2 = Vect
 		if combatant.global_position.distance_to(center) > radius + combatant.body_radius:
 			continue
 		already_hit[int(combatant.get_instance_id())] = true
+		if (amount > 0.0 or float(skill.get("stun_duration", 0.0)) > 0.0 or float(skill.get("knockback", 0.0)) > 0.0) and CombatInteraction.blocks_effect(combatant, CombatInteraction.effect_context(source)): continue
 		if amount > 0.0:
 			_damage_result(source, combatant, amount, context)
 		if combatant is Unit and is_instance_valid(combatant) and combatant.hp > 0.0 and float(skill.get("slow_duration", 0.0)) > 0.0:
@@ -551,7 +572,7 @@ func apply_forward_area(source: Unit, skill: Dictionary, forward: Vector2 = Vect
 	if zone_duration > 0.0:
 		# 固定落点区域独立于施法者存活状态，创造后完整维持 zone_duration。
 		continuous_area_effects.append({
-		"created_tick": _controller.get_authoritative_server_tick() if _controller.simulation_step_active() else -1,
+		"effect_delivery": CombatInteraction.current_delivery, "created_tick": _controller.get_authoritative_server_tick() if _controller.simulation_step_active() else -1,
 			"status_source": context.status_source,
 		"source_ref": context.source_ref, "source_position": context.get("source_position", center), "team": source_team,
 			"fixed_position": true, "center": center,
@@ -578,7 +599,7 @@ func apply_forward_area(source: Unit, skill: Dictionary, forward: Vector2 = Vect
 		return
 	var end_radius := maxf(float(skill.get("shockwave_end_radius", radius)), radius)
 	expanding_shockwaves.append({
-		"created_tick": _controller.get_authoritative_server_tick() if _controller.simulation_step_active() else -1,
+		"effect_delivery": CombatInteraction.current_delivery, "created_tick": _controller.get_authoritative_server_tick() if _controller.simulation_step_active() else -1,
 		"status_source": context.status_source,
 		"source_ref": context.source_ref, "source_position": context.get("source_position", center), "team": source_team, "center": center,
 		"start_radius": radius, "end_radius": end_radius,
@@ -696,6 +717,8 @@ func _tick_expanding_shockwaves(dt: float) -> void:
 		if _controller.simulation_step_active() and int(shockwave.get("created_tick", -1)) == _controller.get_authoritative_server_tick():
 			alive.append(shockwave)
 			continue
+		var previous := CombatInteraction.current_delivery
+		CombatInteraction.current_delivery = shockwave.get("effect_delivery")
 		shockwave.timer = maxf(float(shockwave.timer) - dt, 0.0)
 		var progress := 1.0 - float(shockwave.timer) / maxf(float(shockwave.duration), 0.001)
 		var current_radius := lerpf(float(shockwave.start_radius), float(shockwave.end_radius), progress)
@@ -719,6 +742,7 @@ func _tick_expanding_shockwaves(dt: float) -> void:
 				_controller.present_skill_projectile_hit(shockwave.get("audio_source", {}), String(shockwave.get("visual_action", "")), combatant.global_position, "wave_hit")
 			if combatant is Unit and is_instance_valid(combatant) and combatant.hp > 0.0 and float(shockwave.slow_duration) > 0.0:
 				(combatant as Unit).apply_slow(float(shockwave.slow_duration), float(shockwave.slow_multiplier), shockwave.status_source, CombatInteraction.effect_context(source, int(shockwave.team), shockwave.get("source_position", shockwave.center)))
+		CombatInteraction.current_delivery = previous
 		shockwave.previous_radius = current_radius
 		if float(shockwave.timer) > 0.001:
 			alive.append(shockwave)
@@ -747,6 +771,7 @@ func apply_frontal_stun(source: Unit, skill: Dictionary, forward: Vector2) -> vo
 			continue
 		if lateral_distance > half_width + combatant.body_radius:
 			continue
+		if (amount > 0.0 or float(skill.get("stun_duration", 0.0)) > 0.0 or float(skill.get("knockback", 0.0)) > 0.0) and CombatInteraction.blocks_effect(combatant, CombatInteraction.effect_context(source)): continue
 		if amount > 0.0:
 			any_landed = combatant.take_damage(amount, source, source.team, source.global_position) or any_landed
 		if is_instance_valid(combatant) and combatant.hp > 0.0 and stun_duration > 0.0 and combatant.has_method("stun"):

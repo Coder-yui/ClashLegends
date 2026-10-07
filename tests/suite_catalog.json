@@ -439,5 +439,12 @@
     "method": "run",
     "scene": "battle",
     "group": "cards"
+  },
+  {
+    "id": "NocturneSuite",
+    "script": "res://tests/suites/cards/nocturne_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "cards"
   }
 ]

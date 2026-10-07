@@ -124,6 +124,8 @@ func defer_death(unit: Unit, trigger: bool) -> void:
 func submit_damage(target: Node2D, amount: float, source: Node2D, team: int, position: Vector2, attached: bool = false) -> Dictionary:
 	var accepted: bool = is_instance_valid(target) and not target.is_queued_for_deletion() and target.hp > 0.0 and CombatInteraction.allows(target, source, team, position, attached)
 	var result := {"accepted": accepted, "landed": false, "damage": BattleNumbers.quantity(amount), "health_lost": 0.0, "shield_absorbed": 0.0, "overkill": 0.0}
+	var blocked := accepted and BattleNumbers.quantity(amount) > 0 and CombatInteraction.blocks_effect(target, CombatInteraction.effect_context(source, team, position, attached))
+	result["blocked"] = blocked
 	if accepted:
 		_hits.append({"target": target, "source": source, "result": result})
 		_record("hit_submit", source, target, result.damage)
@@ -144,7 +146,7 @@ func commit_batch() -> void:
 	for hit in _hits:
 		var target = hit.target
 		# 在任何本批扣血之前冻结最终资格，不能逐刀用实时 hp 撤回同刻命中。
-		hit.result.landed = is_instance_valid(target) and not target.is_queued_for_deletion() and bool(hit.result.accepted)
+		hit.result.landed = is_instance_valid(target) and not target.is_queued_for_deletion() and bool(hit.result.accepted) and not bool(hit.result.get("blocked", false))
 		if not hit.result.landed: continue
 		if not groups.has(target): groups[target] = []
 		groups[target].append(hit)
@@ -184,7 +186,10 @@ func commit_batch() -> void:
 
 func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: float, radius: float, knockback: float, from: Node2D = null, source_position: Vector2 = Vector2(INF, INF), source_form_index: int = -1, effects: Dictionary = {}, counts_as_attack: bool = true) -> bool:
 	if not collecting:
-		return _resolve_immediate_attack_hit(p_team, origin, primary, amount, radius, knockback, from, source_position, source_form_index, effects, counts_as_attack)
+		begin_batch(0, "immediate_attack")
+		var accepted := resolve_attack_hit(p_team, origin, primary, amount, radius, knockback, from, source_position, source_form_index, effects, counts_as_attack)
+		commit_batch()
+		return accepted
 	if not is_instance_valid(primary) or primary.hp <= 0.0: return false
 	effects = effects.duplicate(true)
 	if not effects.has("presentation_source") and is_instance_valid(from):
@@ -192,7 +197,8 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 	var displacement_order: Array = effects.get("displacement_order", [])
 	if knockback > 0.0 and displacement_order.is_empty():
 		displacement_order = next_displacement_order(from)
-	var targets: Array = [primary] if radius <= 0.0 else get_tree().get_nodes_in_group("combatants")
+	var cleave_radius := float(effects.get("cleave_radius", 0.0))
+	var targets: Array = [primary] if radius <= 0.0 and cleave_radius <= 0.0 else get_tree().get_nodes_in_group("combatants")
 	var landed := false
 	var hit_results: Array[Dictionary] = []
 	var impact := primary.global_position
@@ -202,7 +208,9 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 		if radius > 0.0 and (target.team == p_team or target.global_position.distance_to(impact) > radius + target.body_radius): continue
 		if bool(effects.get("ground_only", false)) and target is Unit and target.is_air: continue
 		if bool(effects.get("splash_match_primary_air", false)) and (target is Unit and target.is_air) != (primary is Unit and primary.is_air): continue
-		var hit_amount := float(BattleNumbers.quantity(amount))
+		if cleave_radius > 0.0 and (target.team == p_team or (target != primary and target.global_position.distance_to(effects.cleave_center) > cleave_radius + target.body_radius)): continue
+		var hit_amount := float(BattleNumbers.quantity(amount)) if cleave_radius <= 0.0 or target == primary else 0.0
+		if cleave_radius > 0.0: hit_amount += float(effects.cleave_damage)
 		if counts_as_attack and from is Unit: hit_amount += from.on_hit_passive_damage(target)
 		var result := _hit(target, hit_amount, amount, from, p_team, source_position, effects)
 		if not result.accepted: continue
@@ -212,7 +220,7 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 		defer_effect(func():
 			if not result.landed: return
 			_apply_attack_hit_effects(fixed_target, effects, from)
-			if counts_as_attack and radius <= 0.0 and is_instance_valid(from) and from is Unit:
+			if counts_as_attack and radius <= 0.0 and (cleave_radius <= 0.0 or fixed_target == primary) and is_instance_valid(from) and from is Unit:
 				_settle_bleeding_attack(fixed_target, from, effects, result)
 				if from.battle_context != null: from.battle_context.record_growth_hit(from, fixed_target))
 		if knockback > 0.0 and fixed_target is Unit:
@@ -221,7 +229,7 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 			if not result.landed: return
 			if not is_instance_valid(from) or not from is Unit or from.hp <= 0.0: return
 			if counts_as_attack: from.record_structure_attack(fixed_target)
-			if counts_as_attack and radius <= 0.0:
+			if counts_as_attack and radius <= 0.0 and (cleave_radius <= 0.0 or fixed_target == primary):
 				from.on_attack_landed(source_form_index, float(result.health_lost), swing, int(effects.get("source_generation", -1)))
 			# 同批多人共同致死只给存活参与者一次自己的击杀收益，不按遍历挑尾刀。
 			if fixed_target.hp <= 0.0 and float(result.health_lost) > 0.0:
@@ -230,9 +238,20 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 					_kill_awards[key] = true
 					from.on_enemy_killed(fixed_target))
 	if landed:
+		if cleave_radius > 0.0:
+			defer_effect(func():
+				if hit_results.any(func(result): return result.landed) and is_instance_valid(from) and from.battle_context != null:
+					from.battle_context.notify_unit_audio_event(from, &"cleave:hit", from.global_position))
+		if float(effects.get("cleave_heal_ratio", 0.0)) > 0.0:
+			defer_benefit(func():
+				if not is_instance_valid(from) or not from is Unit or from.hp <= 0.0: return
+				var damage_total := 0.0
+				for result in hit_results:
+					if result.landed: damage_total += float(result.health_lost)
+				from.heal(damage_total * float(effects.cleave_heal_ratio)))
 		var completion: Callable = effects.get("delivery_callback", Callable())
 		if completion.is_valid():
-			defer_effect(func(): completion.call(hit_results.any(func(result): return result.landed)))
+			defer_effect(func(): completion.call(hit_results.any(func(result): return result.landed or bool(result.get("blocked", false)))))
 		if counts_as_attack and radius > 0.0:
 			defer_benefit(func():
 				if hit_results.any(func(result): return result.landed) and is_instance_valid(from) and from is Unit and from.hp > 0.0:

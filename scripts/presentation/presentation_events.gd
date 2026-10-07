@@ -2,6 +2,8 @@ class_name PresentationEvents
 extends RefCounted
 ## 当前实际派发能力表；新增 cue 必须同时实现权威派发与消费者。
 static func supports(stats: Dictionary, cue: String) -> bool:
+	if cue == "cleave:hit": return (stats.get("active_skills", []) as Array).any(func(skill): return float(skill.get("cleave_radius", 0.0)) > 0.0)
+	if cue in ["effect_shield:start", "effect_shield:block", "effect_shield:end"]: return (stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "effect_shield")
 	if cue == "structure_haste:start": return float(stats.get("structure_assist_window", 0.0)) > 0.0
 	if cue == "hit": return String(stats.get("type", "")) in ["unit", "building"]
 	if cue == "aftershock:explode": return (stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "aftershock")
