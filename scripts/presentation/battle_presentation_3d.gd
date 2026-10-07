@@ -26,6 +26,7 @@ func _process(delta: float) -> void:
 		_corrosion_ground.sync_effects(spells, _camera)
 	if pending_deployments.is_valid():
 		sync_pre_deployments(pending_deployments.call(), delta)
+	model_pool.advance_refill(delta)
 
 func sync_pre_deployments(deployments: Array, delta: float = 0.0) -> void:
 	var present: Dictionary = {}
@@ -55,6 +56,7 @@ func sync_pre_deployments(deployments: Array, delta: float = 0.0) -> void:
 
 
 func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void:
+	process_priority = 100 # 单位表现更新后再处理隐藏模型库存。
 	viewer_team = 1 if flipped else 0
 	_viewport = SubViewport.new()
 	_viewport.name = "UnitViewport3D"

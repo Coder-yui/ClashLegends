@@ -5,12 +5,28 @@ var instances: Dictionary = {}
 var rendered_paths: Dictionary = {}
 var _sample_sources: Array[Unit] = []
 var _warmed_materials: Array[Material] = []
+const LOADING_SLICE_USEC := 32000
+const REFILL_SLICE_USEC := 1000
 var capacity := {}
+var initial_capacity := {}
+var _packed := {}
+var _clips := {}
+var _runtime_safe := {}
+var _refill := {}
+var _refill_ready := false
+var refill_metrics := {"completed": 0, "steps": 0, "max_step_usec": 0, "max_slice_usec": 0, "busy_frames": 0, "by_path": {}}
+
 var errors := PackedStringArray()
 var metrics := {}
 var _world: Node3D
-var cancelled := false
-var preparation_times := {"instantiate_usec": 0, "animation_usec": 0, "render_usec": 0, "sample_prepare_usec": 0, "draws": 0, "animation_draws_skipped": 0, "overlay_draws_skipped": 0}
+var _render_samples: Array[Node3D] = []
+var cancelled := false:
+	set(value):
+		cancelled = value
+		if value:
+			for sample in _render_samples:
+				if is_instance_valid(sample): sample.hide()
+var preparation_times := {"instantiate_usec": 0, "animation_usec": 0, "render_usec": 0, "sample_prepare_usec": 0, "draws": 0, "animation_draws_skipped": 0, "stasis_samples": 0, "stealth_samples": 0, "predeployment_samples": 0, "overlay_draws_skipped": 0}
 
 ## 每卡/阵营只有一个并发来源；同卡互斥形态同路径取最大，独立来源累加。
 ## 两轮爆发窗口有界保留；循环依赖只扫描已去重闭包一次，不按整场累计数量扩张。
@@ -65,9 +81,11 @@ func _metric(path: String) -> Dictionary:
 
 
 func prepare(resources: Dictionary, world: Node3D, camera: Camera3D, cards: Dictionary) -> void:
+	if cancelled: return
 	_world = world
 	var tree := world.get_tree()
 	var specs := build_specs(cards)
+	var slice_started := Time.get_ticks_usec()
 	for path in resources:
 		if not (String(path).begins_with("res://assets/units/") or String(path).begins_with("res://assets/effects/")) or not String(path).ends_with(".tscn") or instances.has(path):
 			continue
@@ -82,7 +100,17 @@ func prepare(resources: Dictionary, world: Node3D, camera: Camera3D, cards: Dict
 			for use in uses: count += int(use.count)
 		count = mini(count, 64)
 		capacity[path] = count
-		for index in range(count):
+		var initial := 1
+		if not uses.is_empty():
+			initial = 0
+			for use in uses:
+				if int(use.count) > 0:
+					initial += maxi(int(use.stats.get("deployment_count", 1)), ceili(float(use.count) / 2.0))
+		initial_capacity[path] = mini(initial, count)
+		_packed[path] = packed
+		_clips[path] = {}
+		for use in uses: ModelVisualResources.collect_clip_names(use.stats.get("visual_animations", {}), _clips[path])
+		while batch.size() < int(initial_capacity[path]):
 			var started := Time.get_ticks_usec()
 			var node := packed.instantiate()
 			if not node is Node3D:
@@ -92,13 +120,18 @@ func prepare(resources: Dictionary, world: Node3D, camera: Camera3D, cards: Dict
 			node.process_mode = Node.PROCESS_MODE_DISABLED
 			world.add_child(node)
 			node.hide()
-			preparation_times.instantiate_usec += Time.get_ticks_usec() - started
+			var instantiate_usec := Time.get_ticks_usec() - started
+			preparation_times.instantiate_usec += instantiate_usec
+			# 包装脚本可能在_ready中整体加工网格/动画，不能用时间预算抢占。
+			var safe := ModelVisualResources.supports_clip_filter(node) and instantiate_usec <= REFILL_SLICE_USEC
+			_runtime_safe[path] = bool(_runtime_safe.get(path, true)) and safe
+			if not _runtime_safe[path]: initial_capacity[path] = count
 			started = Time.get_ticks_usec()
 			if node.has_method("prepare_visual_animations"): node.call("prepare_visual_animations")
 			_metric(path).prepare_wrapper_usec += Time.get_ticks_usec() - started
 			var bind_started := Time.get_ticks_usec()
 			var model_resources := ModelVisualResources.new()
-			var player := model_resources.bind_model(node)
+			var player := model_resources.bind_model(node, _allowed_clips(path, node))
 			_metric(path).prepare_animation_usec += Time.get_ticks_usec() - bind_started
 			node.set_meta("prepared_model_resources", model_resources)
 			node.set_meta("prepared_animation_player", player)
@@ -106,6 +139,11 @@ func prepare(resources: Dictionary, world: Node3D, camera: Camera3D, cards: Dict
 			node.set_meta("pool_path", path)
 			if _can_recycle(node): node.set_meta("pool_state", _capture_state(node))
 			batch.append(node)
+			# 不把场景树交给后台线程；以完整实例为最小单元分帧让出主线程。
+			if Time.get_ticks_usec() - slice_started >= LOADING_SLICE_USEC:
+				await tree.process_frame
+				if cancelled or not is_instance_valid(world): return
+				slice_started = Time.get_ticks_usec()
 		if batch.is_empty(): continue
 		if uses.is_empty(): uses = [{}]
 		var warmed_configs := {}
@@ -133,6 +171,7 @@ func prepare(resources: Dictionary, world: Node3D, camera: Camera3D, cards: Dict
 				sample = packed.instantiate() as Node3D
 				sample.process_mode = Node.PROCESS_MODE_DISABLED
 				world.add_child(sample)
+			_render_samples.append(sample)
 			preparation_times.sample_prepare_usec += Time.get_ticks_usec() - sample_started
 			# 实例的脚下光圈和蒙皮材质同样需要首次绘制。
 			sample.position += Vector3(0, 3, 0)
@@ -156,6 +195,10 @@ func prepare(resources: Dictionary, world: Node3D, camera: Camera3D, cards: Dict
 							_draw_sample()
 							drawn_geometry[configuration] = true
 						else: preparation_times.animation_draws_skipped += 1
+						if Time.get_ticks_usec() - slice_started >= LOADING_SLICE_USEC:
+							await tree.process_frame
+							if cancelled or not is_instance_valid(world): return
+							slice_started = Time.get_ticks_usec()
 				if is_instance_valid(sample._active_buff_visual):
 					sample._active_buff_visual.advance(true, 0.1)
 				# 仅跳过资源所有者明确构造为基础三态别名的强化三态。
@@ -168,6 +211,25 @@ func prepare(resources: Dictionary, world: Node3D, camera: Camera3D, cards: Dict
 						preparation_times.overlay_draws_skipped += 1
 					else:
 						_draw_sample()
+				for mesh in sample._model_resources.meshes(): mesh.show()
+				if cards.has("stasis"):
+					preparation_times.stasis_samples += 1
+					sample._model_resources.apply_overlays(false, false, false, true)
+					_draw_sample()
+				if float(spec.get("stats", {}).get("stealth_delay", 0.0)) > 0.0:
+					preparation_times.stealth_samples += 1
+					sample._model_resources.apply_overlays(false, false, false, false, true)
+					_draw_sample()
+				sample._model_resources.reset_overlays()
+			elif sample is PreDeploymentVisual3D:
+				sample.position = Vector3.ZERO
+				sample.setup(camera, Vector2(360, 640), 0)
+				for progress in [0.0, 0.1, 0.25, 0.5, 0.75, 0.99]:
+					preparation_times.predeployment_samples += 1
+					sample.advance_visual(progress)
+					_draw_sample()
+					await tree.process_frame
+					if cancelled or not is_instance_valid(world): return
 			rendered_paths[path] = true
 			# 保留绘制资源/骨骼/材质实例；样本不再播放，不需持有独立的巨大动画副本。
 			for player in sample.find_children("*", "AnimationPlayer", true, false):
@@ -180,6 +242,82 @@ func prepare(resources: Dictionary, world: Node3D, camera: Camera3D, cards: Dict
 			if float(CardDB.get_card(String(id)).get("stealth_delay", 0.0)) > 0.0:
 				StealthTransition3D.prepare_visual(world)
 				break
+
+	if not cancelled and is_instance_valid(world):
+		_refill_ready = true
+
+func _allowed_clips(path: String, node: Node) -> Dictionary:
+	return _clips.get(path, {}) if ModelVisualResources.supports_clip_filter(node) else {}
+
+## 只补回首轮闲置库存，并受原有总容量约束；回收已足够时不继续制造。
+func _needs_refill(path: String) -> bool:
+	var idle: int = instances.get(path, []).size()
+	return bool(_runtime_safe.get(path, false)) and idle < int(initial_capacity.get(path, 0)) and idle + int(_metric(path).active) < int(capacity.get(path, 0))
+
+func advance_refill(delta: float) -> void:
+	if cancelled or not _refill_ready or not is_instance_valid(_world): return
+	# 慢帧让战斗优先。单个引擎实例化无法中断，因此重步骤每帧最多一个。
+	if delta > 0.020:
+		refill_metrics.busy_frames += 1
+		return
+	var started := Time.get_ticks_usec()
+	if _refill.is_empty():
+		var best := ""
+		var ratio := 2.0
+		for path in initial_capacity:
+			if not _needs_refill(path): continue
+			var stock_ratio := float(instances[path].size()) / float(initial_capacity[path])
+			if stock_ratio < ratio:
+				best = path
+				ratio = stock_ratio
+		if best.is_empty(): return
+		_refill = {"path": best, "stage": 0}
+	var path: String = _refill.path
+	if not _needs_refill(path):
+		_discard_refill()
+		return
+	match int(_refill.stage):
+		0:
+			var node := (_packed[path] as PackedScene).instantiate() as Node3D
+			node.hide() # 必须先隐藏再入树；不绘制、不播放声音或驱动权威状态。
+			node.process_mode = Node.PROCESS_MODE_DISABLED
+			_world.add_child(node)
+			_refill.node = node
+			_refill.stage = 1
+		1:
+			if _refill.node.has_method("prepare_visual_animations"): _refill.node.call("prepare_visual_animations")
+			_refill.stage = 2
+		2:
+			var owner := ModelVisualResources.new()
+			owner.begin_bind(_refill.node, _allowed_clips(path, _refill.node))
+			_refill.owner = owner
+			_refill.stage = 3
+		3:
+			while true:
+				var step_started := Time.get_ticks_usec()
+				var done: bool = _refill.owner.step_bind()
+				refill_metrics.max_step_usec = maxi(refill_metrics.max_step_usec, Time.get_ticks_usec() - step_started)
+				if done:
+					var node: Node3D = _refill.node
+					node.set_meta("prepared_model_resources", _refill.owner)
+					node.set_meta("prepared_animation_player", _refill.owner.animation_player())
+					node.set_meta("pool_path", path)
+					if _can_recycle(node): node.set_meta("pool_state", _capture_state(node))
+					instances[path].append(node)
+					_refill.clear()
+					refill_metrics.completed += 1
+					break
+				if Time.get_ticks_usec() - started >= REFILL_SLICE_USEC: break
+	var elapsed := Time.get_ticks_usec() - started
+	refill_metrics.by_path[path] = maxi(int(refill_metrics.by_path.get(path, 0)), elapsed)
+	# 驱动/系统波动仍可能超预算；本局不再补充此路径，保留领取与回收后备。
+	if elapsed > REFILL_SLICE_USEC * 2: _runtime_safe[path] = false
+	refill_metrics.steps += 1
+	refill_metrics.max_slice_usec = maxi(refill_metrics.max_slice_usec, elapsed)
+
+func _discard_refill() -> void:
+	if _refill.has("node") and is_instance_valid(_refill.node): _refill.node.free()
+	_refill.clear()
 
 func take(packed: PackedScene) -> Node:
 	var path := packed.resource_path
@@ -198,7 +336,7 @@ func take(packed: PackedScene) -> Node:
 			_world.add_child(fresh)
 			if fresh.has_method("prepare_visual_animations"): fresh.call("prepare_visual_animations")
 			var owner := ModelVisualResources.new()
-			fresh.set_meta("prepared_animation_player", owner.bind_model(fresh))
+			fresh.set_meta("prepared_animation_player", owner.bind_model(fresh, _allowed_clips(path, fresh)))
 			fresh.set_meta("prepared_model_resources", owner)
 			if _can_recycle(fresh): fresh.set_meta("pool_state", _capture_state(fresh))
 			_world.remove_child(fresh)
@@ -258,11 +396,16 @@ func recycle(node: Node3D, owner: ModelVisualResources, player: AnimationPlayer)
 
 func release_sources() -> void:
 	cancelled = true
+	_refill_ready = false
+	_discard_refill()
+	_packed.clear()
+	_clips.clear()
 	for source in _sample_sources:
 		if is_instance_valid(source): source.free()
 	_sample_sources.clear()
 	instances.clear()
 	_warmed_materials.clear()
+	_render_samples.clear()
 	_world = null
 
 func _draw_sample() -> void:

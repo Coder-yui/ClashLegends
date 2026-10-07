@@ -18,7 +18,16 @@ var _gold: ShaderMaterial
 var _flash: StandardMaterial3D
 var _building_frost := false
 
-func bind_model(root: Node) -> AnimationPlayer:
+var _copy_jobs: Array = []
+var _copy_cache := {}
+
+func bind_model(root: Node, allowed: Dictionary = {}) -> AnimationPlayer:
+	begin_bind(root, allowed)
+	while not step_bind(): pass
+	return _player
+
+## 场景树/材质仍在主线程；动画按单片段分步复制，未完成者不交给表现代理。
+func begin_bind(root: Node, allowed: Dictionary = {}) -> void:
 	clear()
 	_collect_meshes(root)
 	_prepare_stealth_materials()
@@ -47,17 +56,60 @@ func bind_model(root: Node) -> AnimationPlayer:
 	_flash.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	_flash.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	_flash.albedo_color = Color(1.0, 1.0, 1.0, 0.22)
-	var player := _find_player(root)
-	if player != null:
-		for name in player.get_animation_library_list():
-			var library := copy_library(player.get_animation_library(name))
-			player.remove_animation_library(name)
-			player.add_animation_library(name, library)
-	_player = player
-	if player != null:
-		for name in player.get_animation_list(): _loops[name] = player.get_animation(name).loop_mode
+	_player = _find_player(root)
+	_copy_jobs.clear()
+	_copy_cache.clear()
+	if _player != null:
+		for name in _player.get_animation_library_list():
+			var source := _player.get_animation_library(name)
+			if source.get_script() != null or not source.get_meta_list().is_empty():
+				_copy_jobs.append({"name": name, "source": source})
+				continue
+			var library := source.duplicate(false) as AnimationLibrary
+			for clip in library.get_animation_list(): library.remove_animation(clip)
+			_player.remove_animation_library(name)
+			_player.add_animation_library(name, library)
+			for clip in source.get_animation_list():
+				var full_name := String(clip) if String(name).is_empty() else String(name) + "/" + String(clip)
+				if allowed.is_empty() or allowed.has(full_name) or clip == &"RESET":
+					_copy_jobs.append({"library": library, "clip": clip, "animation": source.get_animation(clip)})
 	_prepare_overlays()
-	return player
+
+func step_bind() -> bool:
+	if not _copy_jobs.is_empty():
+		var job: Dictionary = _copy_jobs.pop_back()
+		if job.has("source"):
+			_player.remove_animation_library(job.name)
+			_player.add_animation_library(job.name, copy_library(job.source))
+		else:
+			if not _copy_cache.has(job.library): _copy_cache[job.library] = {}
+			var copies: Dictionary = _copy_cache[job.library]
+			if not copies.has(job.animation): copies[job.animation] = copy_animation(job.animation)
+			job.library.add_animation(job.clip, copies[job.animation])
+	if not _copy_jobs.is_empty(): return false
+	if _player != null:
+		for name in _player.get_animation_list(): _loops[name] = _player.get_animation(name).loop_mode
+	_copy_cache.clear()
+	return true
+
+func animation_player() -> AnimationPlayer:
+	return _player
+
+## 脚本包装可能构造/选择未声明动作，保守保留其完整动画库。
+static func supports_clip_filter(node: Node) -> bool:
+	if node.get_script() != null: return false
+	for child in node.get_children():
+		if not supports_clip_filter(child): return false
+	return true
+
+static func collect_clip_names(value: Variant, result: Dictionary) -> void:
+	if value is String or value is StringName: result[String(value)] = true
+	elif value is Dictionary:
+		for key in value:
+			collect_clip_names(key, result)
+			collect_clip_names(value[key], result)
+	elif value is Array or value is PackedStringArray:
+		for child in value: collect_clip_names(child, result)
 
 func has_meshes() -> bool:
 	return not _meshes.is_empty()
@@ -154,6 +206,8 @@ func apply_stealth(enabled: bool) -> void:
 			mesh.set_surface_override_material(surface, _surface_ghosts[index][surface] if enabled else _surface_originals[index][surface])
 
 func clear() -> void:
+	_copy_jobs.clear()
+	_copy_cache.clear()
 	apply_stealth(false)
 	_surface_originals.clear()
 	_surface_ghosts.clear()

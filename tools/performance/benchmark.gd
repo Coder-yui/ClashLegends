@@ -156,6 +156,8 @@ func run() -> void:
 		"resource_paths": main._resources.resources.keys(), "resource_cards": main._resources.cards.keys(),
 		"pool_capacity": main._battle_presentation.model_pool.capacity if is_instance_valid(main._battle_presentation) else {},
 		"loading_stages": main.get("preparation_metrics"), "pool": main._battle_presentation.model_pool.get("metrics") if is_instance_valid(main._battle_presentation) else {},
+		"pool_refill": main._battle_presentation.model_pool.refill_metrics if is_instance_valid(main._battle_presentation) else {},
+		"pool_initial_capacity": main._battle_presentation.model_pool.initial_capacity if is_instance_valid(main._battle_presentation) else {},
 		"pool_preparation": main._battle_presentation.model_pool.get("preparation_times") if is_instance_valid(main._battle_presentation) else {},
 		"events": events, "slow_frames": slow_frames, "objects": distribution(objects),
 		"visual": option("--perf-visual", "on"), "audio": audio_enabled,

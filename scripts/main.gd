@@ -237,6 +237,7 @@ func _ready() -> void:
 		preload("res://scripts/diagnostics/release_smoke.gd").run(self, cli.release_smoke == "menu")
 
 func _exit_tree() -> void:
+	_resources.cancel_async(get_tree())
 	if _battle_loading:
 		get_tree().paused = false
 		if is_instance_valid(_battle_presentation): _battle_presentation.model_pool.cancelled = true
@@ -428,7 +429,10 @@ func _watch_network_loading(epoch: String) -> void:
 		await tree.process_frame
 
 func _prepare_match_assets() -> void:
-	_resources.prepare(_deck + _remote_deck + MatchResources.SYSTEM_UNIT_BUDGET.keys())
+	await _resources.prepare_async(_deck + _remote_deck + MatchResources.SYSTEM_UNIT_BUDGET.keys(), get_tree(), func(): return game_over)
+	preparation_metrics.threaded_requests = _resources.threaded_requests
+	preparation_metrics.threaded_wait_usec = _resources.threaded_wait_usec
+	if game_over: return
 	if not _resources.errors.is_empty():
 		_fail_preparation(_resources.errors)
 		return
@@ -443,6 +447,9 @@ func _prepare_match_assets() -> void:
 		var started := Time.get_ticks_usec()
 		_battle_presentation._freeze_ground.prepare_visual(_battle_presentation._camera, float(CardDB.get_card("freeze").get("radius", 110.0)))
 		preparation_metrics.freeze_warm_usec = Time.get_ticks_usec() - started
+
+	if is_instance_valid(_battle_presentation) and not game_over and _resources.cards.has("corrosion"):
+		await _battle_presentation._corrosion_ground.prepare_visual(_battle_presentation._camera, float(CardDB.get_card("corrosion").radius), func(): return game_over)
 
 
 func _fail_preparation(errors: PackedStringArray) -> void:
@@ -842,8 +849,9 @@ func _flip_camera() -> void:
 	cam.make_current()
 
 func _setup_player_ui() -> void:
-	_resources.prepare(CardDB.selectable_ids() if _deck.is_empty() else _deck)
-	_resources.prepare(_remote_deck + MatchResources.SYSTEM_UNIT_BUDGET.keys())
+	if not _battle_loading:
+		_resources.prepare(CardDB.selectable_ids() if _deck.is_empty() else _deck)
+		_resources.prepare(_remote_deck + MatchResources.SYSTEM_UNIT_BUDGET.keys())
 	_elixir = ElixirManager.new()
 	add_child(_elixir)
 	_hand = CardHand.new()

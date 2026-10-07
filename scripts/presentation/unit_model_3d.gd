@@ -242,7 +242,10 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 		_model_root.remove_meta("prepared_model_resources")
 		_model_root.remove_meta("prepared_animation_player")
 	else:
-		_animation_player = _model_resources.bind_model(_model_root)
+		var allowed := {}
+		if ModelVisualResources.supports_clip_filter(_model_root):
+			ModelVisualResources.collect_clip_names(_animation_names, allowed)
+		_animation_player = _model_resources.bind_model(_model_root, allowed)
 	_model_resources.configure_frost(is_instance_valid(_source) and _source.is_building)
 	_stable_head_offset = NAN
 	_control_stage = &""
@@ -1605,7 +1608,10 @@ func _start_death_followup() -> bool:
 		_model_root.remove_meta("prepared_model_resources")
 		_model_root.remove_meta("prepared_animation_player")
 	else:
-		_animation_player = _model_resources.bind_model(_model_root)
+		var allowed := {}
+		if ModelVisualResources.supports_clip_filter(_model_root):
+			ModelVisualResources.collect_clip_names(_animation_names, allowed)
+		_animation_player = _model_resources.bind_model(_model_root, allowed)
 	_model_resources.configure_frost(is_instance_valid(_source) and _source.is_building)
 	_stable_head_offset = NAN
 	_control_stage = &""

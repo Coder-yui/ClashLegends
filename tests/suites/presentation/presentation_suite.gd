@@ -16,6 +16,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_structure_art_integration()
 	_check_stasis_debris()
 	_check_freeze_surfaces()
+	await _check_corrosion_warmup()
 	_check_unit_size_tiers()
 	_check_visual_state_contract()
 	_check_hit_flash_presentation()
@@ -1087,6 +1088,20 @@ func _check_animation_copy() -> void:
 	var copied_library := ModelVisualResources.copy_library(library)
 	_expect(copied_library.get_animation("first") == copied_library.get_animation("alias") and copied_library.get_animation("first") != source, "同库动画别名保持同一副本，同时与源库隔离")
 
+	var root := Node3D.new()
+	var player := AnimationPlayer.new()
+	root.add_child(player)
+	library.add_animation("unused", Animation.new())
+	library.add_animation("RESET", Animation.new())
+	player.add_animation_library("", library)
+	var owner := ModelVisualResources.new()
+	owner.begin_bind(root, {"first": true, "alias": true})
+	_expect(not owner.step_bind(), "分步动画准备未完成时不会宣告就绪")
+	while not owner.step_bind(): pass
+	_expect(player.has_animation("first") and player.has_animation("alias") and player.has_animation("RESET") and not player.has_animation("unused"), "片段筛选保留需求、别名和RESET，排除未使用动作")
+	_expect(player.get_animation("first") == player.get_animation("alias") and player.get_animation("first") != source and library.has_animation("unused"), "分步副本保持别名且不删改源库")
+	root.free()
+
 func _check_highlander_trail() -> void:
 	var stats := CardDB.get_unit_stats("masteryi")
 	var effect = load(stats.visual_active_buff_scene).instantiate()
@@ -1101,3 +1116,23 @@ func _check_highlander_trail() -> void:
 	effect.advance(true, 0.2)
 	_expect(effect.get_child_count() == 5 and effect._phase < 0.3, "再次开启重置淡入且不累积节点")
 	effect.free()
+
+func _check_corrosion_warmup() -> void:
+	var ground := preload("res://scripts/presentation/corrosion_ground_3d.gd").new()
+	_main._battle_presentation._world_root.add_child(ground)
+	var combatants := _main.get_tree().get_nodes_in_group("combatants").size()
+	var effects: int = _main._spell_system.corrosion_effects.size()
+	await ground.prepare_visual(_main._battle_presentation._camera, 110.0)
+	_expect(ground._views.is_empty() and ground._warm_samples.size() == 2 and ground._warm_samples.all(func(node): return not node.visible), "腐蚀预热后只有隐藏样本，没有可见区域残留")
+	_expect(_main.get_tree().get_nodes_in_group("combatants").size() == combatants and _main._spell_system.corrosion_effects.size() == effects, "腐蚀预热不生成权威单位或法术状态")
+	var player: Node3D = ground._warm_samples[0]
+	_expect(player._particles.any(func(particle): return float(particle.node.material_override.get_shader_parameter("tint").a) > 0.0), "腐蚀采样已推进到非透明粒子阶段，而非只绘制零时刻")
+	var samples := ground._warm_samples.duplicate()
+	await ground.prepare_visual(_main._battle_presentation._camera, 110.0)
+	_expect(ground._warm_samples == samples, "重复准备不再创建腐蚀样本")
+	ground._sync_effects([{"pos": Vector2(300, 700), "radius": 110.0, "team": 1, "duration": 5.0, "timer": 4.5}], _main._battle_presentation._camera)
+	var view: Dictionary = ground._views.values()[0]
+	_expect(view.player.visible and view.ring.visible and view.ring.material_override.get_shader_parameter("rim_color") == Color(1.0, 0.25, 0.20), "预热后正式腐蚀仍独立创建并保持红方边环")
+	ground._sync_effects([], _main._battle_presentation._camera)
+	_expect(ground._views.is_empty(), "正式区域结束正常清除，不影响隐藏预热样本")
+	ground.free()

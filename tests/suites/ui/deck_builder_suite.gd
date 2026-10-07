@@ -98,6 +98,8 @@ func run(harness: Object, main: Node2D) -> void:
 	builder._clear_deck_ui()
 	await _main.get_tree().process_frame
 
+	await _check_background_resources()
+
 	var loading_match = load("res://scenes/main.tscn").instantiate()
 	_main.get_tree().root.add_child(loading_match)
 	loading_match._deck = ["tombstone", "gnar", "aatrox", "ashe", "aurelionsol", "rift_herald", "heal", "freeze"]
@@ -133,7 +135,7 @@ func run(harness: Object, main: Node2D) -> void:
 	invalid_resources._collect("res://assets/units/voidmite/voidmite_view.tscn", &"AudioStream")
 	_expect(invalid_resources.errors.size() == 1, "本局加载保留实际资源类型检查")
 	var mite_path := PresentationConfig.scene_path(CardDB.get_card("voidmite"), 0)
-	_expect(pool.instances[mite_path].size() == 24, "双方各两只先锋共24只蠕虫的合理并发已预建")
+	_expect(pool.instances[mite_path].size() >= 12 and pool.instances[mite_path].size() <= 24 and pool.capacity[mite_path] == 24, "开局至少预建双方首轮12只蠕虫，保留24只容量及慢设备完整预建后备")
 	for id in ["tombstone", "gnar", "aatrox", "aurelionsol"]:
 		var model_path := PresentationConfig.scene_path(CardDB.get_card(id), 0)
 		var model_scene: PackedScene = loading_match._resources.resources[model_path]
@@ -173,12 +175,61 @@ func run(harness: Object, main: Node2D) -> void:
 		for source in sources: source.free()
 		_expect(pool.instances[mite_path].size() == initial_stock, "双方爆发第%d轮完成表现后归还模型库存" % round_index)
 	_expect(pool.metrics[mite_path].misses == 0 and pool.metrics[mite_path].hits == 60 and pool.metrics[mite_path].recycled == 60, "超过初始库存的60次领取均复用，无即时实例化")
+	# 耗时准入依设备而异；此处固定轻量路径准入，独立检查补充状态机。
+	pool._runtime_safe[mite_path] = true
+	pool.capacity[mite_path] = initial_stock * 2
+	var before_refill: int = pool.refill_metrics.completed
+	var held := pool.take(packed) as Node3D
+	loading_match._battle_presentation._world_root.add_child(held)
+	pool.advance_refill(0.05)
+	_expect(pool._refill.is_empty(), "慢帧暂停后台补充")
+	for frame in 1000:
+		pool.advance_refill(1.0 / 60.0)
+		if pool.instances[mite_path].size() == initial_stock: break
+	_expect(pool.refill_metrics.completed > before_refill and pool.instances[mite_path].size() == initial_stock, "单位仍存活时按预算补回已领取库存")
+	_expect(pool.instances[mite_path].all(func(node): return not node.visible and node.process_mode == Node.PROCESS_MODE_DISABLED), "补充库存始终隐藏并禁用处理")
+	pool.recycle(held, held.get_meta("prepared_model_resources"), held.get_meta("prepared_animation_player"))
+	# 取消发生在实例已入树、动画尚未准备时，也必须释放半成品。
+	var borrowed: Array[Node3D] = []
+	while pool.instances[mite_path].size() >= initial_stock:
+		var node := pool.take(packed) as Node3D
+		loading_match._battle_presentation._world_root.add_child(node)
+		borrowed.append(node)
+	pool.advance_refill(1.0 / 60.0)
+	var pending: Node3D = pool._refill.get("node")
+	pool.release_sources()
+	_expect(not is_instance_valid(pending) and pool._refill.is_empty(), "退场释放未完成补充实例")
+
 	loading_match.free()
 	await _main.get_tree().process_frame
 	var cancelled = load("res://scenes/main.tscn").instantiate()
 	_main.get_tree().root.add_child(cancelled)
 	cancelled._start_local_with_loading()
 	for frame in 5: await _main.get_tree().process_frame
+	var cancelled_resources: MatchResources = cancelled._resources
 	cancelled.free()
+	var deadline := Time.get_ticks_msec() + 5000
+	while is_instance_valid(cancelled_resources._drain) and Time.get_ticks_msec() < deadline:
+		await _main.get_tree().process_frame
+	_expect(not is_instance_valid(cancelled_resources._drain) and cancelled_resources._active.is_empty(), "加载场景销毁后后台请求仍被完整领取并释放收尾节点")
 	for frame in 3: await _main.get_tree().process_frame
 	_expect(not _main.get_tree().paused, "加载中退出释放暂停状态，旧准备任务不能继续访问场景")
+
+func _check_background_resources() -> void:
+	var threaded := MatchResources.new()
+	var ids := ["anivia", "gnar", "tombstone", "corrosion"]
+	await threaded.prepare_async(ids, _main.get_tree())
+	var synchronous := MatchResources.new()
+	synchronous.prepare(ids)
+	_expect(threaded.errors.is_empty() and threaded.cards == synchronous.cards and threaded.resources.size() == synchronous.resources.size(), "后台加载与同步入口保留相同资源闭包和召唤/换形定义")
+	for path in synchronous.resources:
+		_expect(threaded.resources.get(path) == synchronous.resources[path], "后台完成前持有同一缓存资源：" + String(path))
+	var corrosion := preload("res://scripts/presentation/corrosion_ground_3d.gd")
+	_expect(corrosion.dependency_paths().all(func(path): return threaded.resources.has(path)), "腐蚀的动态粒子纹理纳入本局强引用集合")
+	var invalid := MatchResources.new()
+	invalid._pending["res://assets/units/voidmite/voidmite_view.tscn"] = [&"AudioStream"]
+	await invalid.prepare_async([], _main.get_tree())
+	_expect(invalid.errors.size() == 1, "后台加载仍拒绝错误资源类型")
+	var cancelled := MatchResources.new()
+	await cancelled.prepare_async(["corrosion"], _main.get_tree(), func(): return true)
+	_expect(cancelled.threaded_requests == 0 and cancelled._pending.is_empty(), "取消准备后不再发出后台请求")

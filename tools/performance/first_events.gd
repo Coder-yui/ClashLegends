@@ -121,6 +121,8 @@ func run() -> void:
 			root.get_texture().get_image().save_png(output.path_join(card + ".png"))
 	var result := {"schema": 2, "fixed_sim_delta": 1.0 / 60.0, "frame_limit": 240, "setup_ms": setup_ms,
 		"loading_frames_ms": loading_frames, "loading_stages": main.preparation_metrics,
+		"pool_refill": main._battle_presentation.model_pool.refill_metrics if is_instance_valid(main._battle_presentation) else {},
+		"pool_initial_capacity": main._battle_presentation.model_pool.initial_capacity if is_instance_valid(main._battle_presentation) else {},
 		"pool_preparation": main._battle_presentation.model_pool.preparation_times,
 		"renderer": RenderingServer.get_current_rendering_method(), "device": RenderingServer.get_video_adapter_name(),
 		"gpu_timer_note": "Previous completed viewport timing; zero may mean unsupported, not zero GPU work.",

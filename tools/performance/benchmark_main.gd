@@ -59,8 +59,8 @@ func _drive_cards() -> void:
 			if play_card(p_team, card, pos, {"elixir": _elixir_for_team(p_team), "require_team_deck": true}):
 				commands.append({"tick": _sim_tick_id, "team": p_team, "card": card, "position": [pos.x, pos.y]})
 				break
-	for id in _active_skills.keys():
-		var entry: Dictionary = _active_skills[id]
+	for id in _active_skills.ids():
+		var entry: Dictionary = _active_skills.entry(int(id))
 		use_active_skill(id, entry.team)
 	command_index += 1
 

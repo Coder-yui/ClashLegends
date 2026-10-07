@@ -5,14 +5,29 @@ const PLAYER = preload("res://assets/units/pantheon/arrival/particle_player.gd")
 # 用边环而非底光四边形350校准，让特效本体填满判定圈。
 const SOURCE_EDGE_RADIUS := 284.64396
 const DATA := "res://assets/effects/corrosion/systems.json"
-var _definitions: Array = []
+static var _definitions: Array = []
+var _prepared := false
+var _warm_samples: Array[Node3D] = []
 var _views: Dictionary = {}
 var _serial := 0
 
-func sync_effects(spells: RefCounted, camera: Camera3D) -> void:
+static func dependency_paths() -> Array[String]:
 	if _definitions.is_empty(): _definitions = JSON.parse_string(FileAccess.get_file_as_string(DATA))
+	var paths: Array[String] = []
+	for definition in _definitions:
+		for key in ["texture", "mult", "erosion", "distortion_texture"]:
+			var path := String(definition.get(key, ""))
+			if not path.is_empty() and path not in paths: paths.append(path)
+	return paths
+
+func sync_effects(spells: RefCounted, camera: Camera3D) -> void:
+	_sync_effects(spells.corrosion_effects, camera)
+
+func _sync_effects(effects: Array, camera: Camera3D) -> void:
+	if effects.is_empty() and _views.is_empty(): return
+	if _definitions.is_empty(): dependency_paths()
 	var present := {}
-	for effect in spells.corrosion_effects:
+	for effect in effects:
 		if not effect.has("view_id"):
 			_serial += 1
 			effect.view_id = _serial
@@ -76,3 +91,22 @@ func _update_mesh(view: MeshInstance3D, bounds: Rect2, camera: Camera3D) -> void
 	var mesh := ArrayMesh.new()
 	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
 	view.mesh = mesh
+
+## 独立表现样本覆盖延迟出生层；只改局部字典，不创建法术或派发音频。
+## 保留隐藏样本的材质/网格，避免首个正式区域才创建渲染组合。
+func prepare_visual(camera: Camera3D, radius: float, stop: Callable = Callable()) -> void:
+	if _prepared or (stop.is_valid() and bool(stop.call())): return
+	var effect := {"pos": Vector2(360, 640), "radius": radius, "team": 0, "duration": 5.0, "timer": 5.0}
+	for step in range(20):
+		if stop.is_valid() and bool(stop.call()): break
+		effect.timer = 5.0 - float(step) * 0.25
+		_sync_effects([effect], camera)
+		if DisplayServer.get_name() != "headless": RenderingServer.force_draw(false)
+		await get_tree().process_frame
+	var view: Dictionary = _views[int(effect.view_id)]
+	# 粒子为 top_level，但可见性仍继承父级。
+	view.player.hide()
+	view.ring.hide()
+	_warm_samples.assign([view.player, view.ring])
+	_views.erase(int(effect.view_id))
+	_prepared = not stop.is_valid() or not bool(stop.call())
