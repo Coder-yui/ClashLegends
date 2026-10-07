@@ -340,7 +340,7 @@ func _check_explicit_inspection() -> void:
 	panel.set_select_mode(false)
 	_main._workbench_map_click(Vector2(500, 500))
 	var dummy: Unit = _main._art_dev_selected_unit()
-	_expect(dummy != null and dummy.card_id == "training_dummy" and dummy.team == 1, "木桩按当前阵营与鼠标落点放置")
+	_expect(dummy != null and dummy.card_id == "training_dummy" and dummy.team == 0, "木桩按当前阵营的敌方与鼠标落点放置")
 	panel.set_quick_cards([])
 	panel._select_item("garen")
 	count = _main.get_tree().get_nodes_in_group("combatants").size()

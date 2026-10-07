@@ -1209,11 +1209,11 @@ func _place_art_dev_item(pos: Vector2) -> void:
 		var stats := CardDB.training_dummy_stats()
 		var dummy := Unit.new()
 		dummy.position = pos
-		dummy.setup(_workbench.team, stats, stats.name)
+		dummy.setup(1 - _workbench.team, stats, stats.name)
 		dummy.card_id = "training_dummy"
 		add_child(dummy)
 		_register_dynamic_building(dummy)
-		_workbench.last_units[_art_dev_unit_key("training_dummy", _workbench.team)] = weakref(dummy)
+		_workbench.last_units[_art_dev_unit_key("training_dummy", 1 - _workbench.team)] = weakref(dummy)
 		if _workbench.inspect_enabled: _workbench.inspect(dummy)
 		_sync_art_dev_panel_state()
 		return
@@ -1258,7 +1258,8 @@ func living_deployment_members(group_id: int, p_team: int) -> Array[Unit]:
 
 func _art_dev_selected_unit() -> Unit:
 	if _workbench.inspect_enabled: return _workbench.inspected_unit()
-	var candidate_ref = _workbench.last_units.get(_art_dev_unit_key(_workbench.selection, _workbench.team))
+	var selection_team := 1 - _workbench.team if _workbench.selection == "training_dummy" else _workbench.team
+	var candidate_ref = _workbench.last_units.get(_art_dev_unit_key(_workbench.selection, selection_team))
 	var candidate = (candidate_ref as WeakRef).get_ref() if candidate_ref is WeakRef else null
 	if candidate is Unit and is_instance_valid(candidate) and candidate.hp > 0.0:
 		return candidate as Unit

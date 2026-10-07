@@ -320,7 +320,9 @@ func _build_model_page(page: Control) -> void:
 func _build_battle_page(page: Control) -> void:
 	page.add_theme_constant_override("separation", 6)
 	var tools := _row(page)
-	_button(tools, "木桩", func(): _select_item("training_dummy"))
+	_button(tools, "敌方木桩", func():
+		_select_item("training_dummy")
+		set_select_mode(false))
 	_button(tools, "清场", func(): clear_requested.emit())
 	_pause_button = _button(tools, "暂停", func():
 		_battle_paused = not _battle_paused
@@ -541,7 +543,8 @@ func is_select_mode() -> bool:
 func _refresh_mode_label() -> void:
 	if _mode_label == null: return
 	var title := String(FORM_CATALOG.stats_for_form(_cards.get(_selected_id, {}), _form).get("name", "训练木桩"))
-	_mode_label.text = ("选择模式" if _select_mode else "放置模式") + " · 待放置：" + title + (" · 蓝方" if _team == 0 else " · 红方")
+	var placement_team := 1 - _team if _selected_id == "training_dummy" else _team
+	_mode_label.text = ("选择模式" if _select_mode else "放置模式") + " · 待放置：" + title + (" · 蓝方" if placement_team == 0 else " · 红方")
 
 func _refresh_page_chrome() -> void:
 	_shelf_panel.visible = _workspace == 1
