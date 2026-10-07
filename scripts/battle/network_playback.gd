@@ -9,6 +9,7 @@ var _delay_samples: Array[float] = []
 const MAX_QUEUED := 4096
 var _queue: Array[Dictionary] = []
 var _serial := 0
+var _needs_sort := false
 var tick := 0.0
 
 func observe_delay(milliseconds: float) -> void:
@@ -23,17 +24,20 @@ func observe_delay(milliseconds: float) -> void:
 
 func enqueue(at_tick: int, method: StringName, args: Array) -> bool:
 	if at_tick < 0 or _queue.size() >= MAX_QUEUED: return false
+	_needs_sort = true
 	_serial += 1
 	_queue.append({"tick": at_tick, "method": method, "args": args.duplicate(true), "serial": _serial})
 	return true
 
 func advance(server_tick: float) -> Array[Dictionary]:
 	tick = maxf(tick, server_tick - delay_ticks)
-	_queue.sort_custom(func(a, b):
-		if a.tick != b.tick: return a.tick < b.tick
-		if (a.method == &"_apply_buffered_snapshot") != (b.method == &"_apply_buffered_snapshot"):
-			return b.method == &"_apply_buffered_snapshot"
-		return a.serial < b.serial)
+	if _needs_sort:
+		_queue.sort_custom(func(a, b):
+			if a.tick != b.tick: return a.tick < b.tick
+			if (a.method == &"_apply_buffered_snapshot") != (b.method == &"_apply_buffered_snapshot"):
+				return b.method == &"_apply_buffered_snapshot"
+			return a.serial < b.serial)
+		_needs_sort = false
 	var ready: Array[Dictionary] = []
 	while not _queue.is_empty() and float(_queue[0].tick) <= tick:
 		ready.append(_queue.pop_front())
@@ -41,6 +45,7 @@ func advance(server_tick: float) -> Array[Dictionary]:
 
 func clear() -> void:
 	_queue.clear()
+	_needs_sort = false
 	_delay_samples.clear()
 	delay_ticks = DELAY_TICKS
 	tick = 0.0

@@ -10,13 +10,16 @@ func create(kind: String, team: int, card_id: String, ability_id: int, pos: Vect
 	var command := {"id": _next_id, "kind": kind, "team": team, "card_id": card_id,
 		"ability_id": ability_id, "pos": pos, "input_tick": input_tick, "execute_tick": execute_tick}
 	_next_id += 1
+	command.make_read_only()
 	_pending[command.id] = command
 	return command.duplicate(true)
 
 func receive(command: Dictionary) -> bool:
 	if not valid(command) or int(command.id) <= _last_received or _pending.size() >= MAX_PENDING: return false
 	_last_received = int(command.id)
-	_pending[command.id] = command.duplicate(true)
+	var owned := command.duplicate(true)
+	owned.make_read_only()
+	_pending[command.id] = owned
 	return true
 
 static func valid(command: Dictionary) -> bool:

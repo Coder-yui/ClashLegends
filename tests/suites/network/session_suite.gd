@@ -134,6 +134,13 @@ func _check_buffer_clock_and_playback(harness: Object) -> void:
 	var first := playback.advance(111.0)
 	var second := playback.advance(112.0)
 	harness._expect(first.size() == 1 and first[0].method == &"early" and second.size() == 2 and second[0].method == &"spawn" and second[1].method == &"_apply_buffered_snapshot", "乱序到达按Tick播放，同Tick事件先于最终快照")
+	playback.enqueue(120, &"future", [])
+	playback.advance(113.0)
+	playback.enqueue(115, &"inserted", [])
+	var inserted := playback.advance(117.0)
+	harness._expect(inserted.size() == 1 and inserted[0].method == &"inserted" and playback.size() == 1, "已排序的未来队列收到更早事件后仍按Tick释放")
+	playback.clear()
+	playback.advance(112.0)
 	playback.enqueue(105, &"late", [])
 	harness._expect(playback.advance(109.0).size() == 1 and playback.tick == 110.0, "迟到事件追赶，不让播放时钟倒退")
 	playback.enqueue(200, &"future", [])
@@ -144,6 +151,14 @@ func _check_buffer_clock_and_playback(harness: Object) -> void:
 	var skill := commands.create("skill", 1, "garen", 7, Vector2(300, 300), 100, 110)
 	var replica := NetworkCommandState.new()
 	harness._expect(replica.receive(card) and replica.receive(skill) and not replica.receive(card), "双方出牌与技能共享10Tick排程，通知按权威命令ID去重")
+	var visited: Array = []
+	replica.visit(func(command): visited.append(command))
+	harness._expect(visited.size() == 2 and visited[0].is_read_only(), "公开命令遍历只提供只读状态")
+	var inspected := replica.inspect()
+	inspected[0].team = 1
+	card.pos = Vector2.ZERO
+	harness._expect(replica.inspect()[0].team == 0 and replica.inspect()[0].pos != Vector2.ZERO, "接收和检查副本与外部可变字典隔离")
+	card.pos = Vector2(300, 900)
 	var malformed := card.duplicate()
 	malformed.id = 3
 	malformed.execute_tick = 109
