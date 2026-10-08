@@ -1,0 +1,41 @@
+{
+  "source_package": "Gragas.wad.client",
+  "processing": "wwiser -gv=0dB; fresh vgmstream decode; no post gain",
+  "files": [
+    {
+      "event": "Play_sfx_Gragas_GragasR_OnCast.txtp",
+      "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-\u5f00\u53d1\u7d20\u6750\u5e93/03-\u5236\u4f5c\u4e2d/\u7206\u7834\u9152\u6876/\u66f4\u65b0\u6e90\u4ef6/audio/gragas/txtp/Play_sfx_Gragas_GragasR_OnCast.txtp",
+      "txtp_sha256": "8463d4aafda9a597358156e061f9dca9ee089c68f314a7e9f22e12ec49226d2d",
+      "sha256": "a217dbc98fd313d8476bc30f0c3c9c4dd3bb895ff4aa81b122b40444bb09c819",
+      "output": "cast.wav"
+    },
+    {
+      "event": "Play_sfx_Gragas_GragasR_boom {r1}.txtp",
+      "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-\u5f00\u53d1\u7d20\u6750\u5e93/03-\u5236\u4f5c\u4e2d/\u7206\u7834\u9152\u6876/\u66f4\u65b0\u6e90\u4ef6/audio/gragas/txtp/Play_sfx_Gragas_GragasR_boom {r1}.txtp",
+      "txtp_sha256": "270c2f88cf85f8905862d5ea00c62606007c9d563f0aeb401651181d1050df7b",
+      "sha256": "6836dc78b094c546d68f7d0c3d041c63f059f52f610515f322ddc7bc29e12fc6",
+      "output": "boom_1.wav"
+    },
+    {
+      "event": "Play_sfx_Gragas_GragasR_boom {r2}.txtp",
+      "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-\u5f00\u53d1\u7d20\u6750\u5e93/03-\u5236\u4f5c\u4e2d/\u7206\u7834\u9152\u6876/\u66f4\u65b0\u6e90\u4ef6/audio/gragas/txtp/Play_sfx_Gragas_GragasR_boom {r2}.txtp",
+      "txtp_sha256": "19111f84ec759412825a076fd1d2c089f75a0769c5ee2026a7a1c0898d6a8634",
+      "sha256": "a198273b56a042deea9d73ea12c2365a62b269c148a4e5d0e9ea6be9ab83e366",
+      "output": "boom_2.wav"
+    },
+    {
+      "event": "Play_sfx_Gragas_GragasR_boom {r3}.txtp",
+      "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-\u5f00\u53d1\u7d20\u6750\u5e93/03-\u5236\u4f5c\u4e2d/\u7206\u7834\u9152\u6876/\u66f4\u65b0\u6e90\u4ef6/audio/gragas/txtp/Play_sfx_Gragas_GragasR_boom {r3}.txtp",
+      "txtp_sha256": "edd4cb7a54be660eebf60cb8e337cd2591aec2dc4032e49ceee967a9bedaef3f",
+      "sha256": "deeb32669e840f5d6a108fde90a7bed3c6d51767b73bc4b2d40903eaeef9d867",
+      "output": "boom_3.wav"
+    },
+    {
+      "event": "Play_sfx_Gragas_GragasR_boom {r4}.txtp",
+      "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-\u5f00\u53d1\u7d20\u6750\u5e93/03-\u5236\u4f5c\u4e2d/\u7206\u7834\u9152\u6876/\u66f4\u65b0\u6e90\u4ef6/audio/gragas/txtp/Play_sfx_Gragas_GragasR_boom {r4}.txtp",
+      "txtp_sha256": "1dc76fe48c68693632acc43dc65b587d8964ebea5e38aaa2d96e28bf9e2508f0",
+      "sha256": "c1303e41245e2b3e0351f26ff078467561d7f85ab4cc721fd351c281a8c6da87",
+      "output": "boom_4.wav"
+    }
+  ]
+}

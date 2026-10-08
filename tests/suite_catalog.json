@@ -453,5 +453,12 @@
     "method": "run",
     "scene": "battle",
     "group": "presentation"
+  },
+  {
+    "id": "ExplosiveCaskSuite",
+    "script": "res://tests/suites/cards/explosive_cask_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "cards"
   }
 ]

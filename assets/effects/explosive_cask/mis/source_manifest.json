@@ -1,0 +1,52 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Gragas.wad.client",
+  "source_package_sha256": "683dcfcda99507a45034601874196045e0b3d446595c0539ee4766e23617082b",
+  "system": "emitterPosition",
+  "definition_sha256": "66a44a367dbd8abc38e1001e1ae33d9a48d2f051cfde7816809563d2844467a0",
+  "layers": 5,
+  "files": [
+    {
+      "source": "assets/characters/gragas/skins/base/particles/gragas_base_q_mis.scb",
+      "source_sha256": "d7ddfa85701c2e1369606b307268e4460c1c710c21e6736afb75e013b864d375",
+      "output": "gragas_base_q_mis.mesh.json",
+      "sha256": "f89c0c57109de2a004f670319adb73f74e3d07f2e976a937d7100c02d7aec6aa"
+    },
+    {
+      "source": "assets/characters/gragas/skins/base/particles/gragas_base_q_mis.tex",
+      "source_sha256": "e72297cd990c09c525f9fd9ba68337704137b8209ac03d2b13da2200fb7de907",
+      "output": "gragas_base_q_mis.png",
+      "sha256": "09cf34b62393b00315a3ce069429399d18d3f2abc0f24e4216dbbfc160454a3c"
+    },
+    {
+      "source": "assets/characters/gragas/skins/skin10/particles/lux_skin07_z_distort.tex",
+      "source_sha256": "41241eafa700d7aa8a280bc7d943c090005324d146d33777a5b8b4bda3ab977b",
+      "output": "lux_skin07_z_distort.png",
+      "sha256": "9d1c0afae3a4040376460a1809143487b39bafa5e0d59448ca4c22bcde7dadd9"
+    },
+    {
+      "source": "assets/characters/gragas/skins/base/particles/gragas_base_scentmult.tex",
+      "source_sha256": "f13eb0279fd6e2eff7e6e4e601edb13abb32516d156fc6e98f817d5b20b2648f",
+      "output": "gragas_base_scentmult.png",
+      "sha256": "4ade1af6a5ec7baef94e65909210a50142131f3b2e561d23bc56fcf27cb564e9"
+    },
+    {
+      "source": "assets/characters/gragas/skins/base/particles/gragas_base_watertrailloop.tex",
+      "source_sha256": "cce9eb868ef89fa989c3a62e8ad48250a8b162dd64a7641263cad13f32e615d2",
+      "output": "gragas_base_watertrailloop.png",
+      "sha256": "7ee5cf9b0194a8b179f53eef77b057e9b72d32d8e9516d8c80781dc321eec0a6"
+    },
+    {
+      "source": "assets/characters/gragas/skins/base/particles/gragas_base_foam_splash_2x2.tex",
+      "source_sha256": "534452d4e421e6a5c7e3c71a18b77dd675392ce0bb2a1abca8cba2127d9f891c",
+      "output": "gragas_base_foam_splash_2x2.png",
+      "sha256": "a42a966fe1650c75c607751412b7ffc9555302cae3942f3a0f9d894a63e0da59"
+    },
+    {
+      "source": "assets/characters/gragas/skins/base/particles/gragas_base_q_alphaslice_1.tex",
+      "source_sha256": "4a34d5d15bfebf2b43e63604c4d6ddcefd44ded8888e85078a12144a575b9849",
+      "output": "gragas_base_q_alphaslice_1.png",
+      "sha256": "f9f71350b33caf6c0eca35950ecd025ee30d8d111c129a4caa2129685f00f414"
+    }
+  ],
+  "systems_sha256": "cec0c7b77153d46c4a7ef36ed0b354e6198da4cd5c881fca7210739addb28883"
+}

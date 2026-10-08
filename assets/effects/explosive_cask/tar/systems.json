@@ -1,0 +1,1514 @@
+[
+  {
+    "name": "flash_Add",
+    "role": "confirmed_target_hit",
+    "primitive": "VfxPrimitiveCameraQuad",
+    "mesh": "",
+    "trail": false,
+    "camera_trail": false,
+    "ground": false,
+    "blend": 4,
+    "single": true,
+    "life": {
+      "base": 0.15
+    },
+    "rate": {
+      "base": 1.0
+    },
+    "duration": 1.0,
+    "delay": 0.0,
+    "texture": "res://assets/effects/explosive_cask/tar/gragas_base_q_flash_01.png",
+    "offset": [
+      0.0,
+      25.0,
+      0.0
+    ],
+    "birthOffset": {
+      "base": [
+        0.0,
+        25.0,
+        0.0
+      ]
+    },
+    "bind": {
+      "base": 0.0
+    },
+    "frames": 1,
+    "tex_div": [
+      1.0,
+      1.0
+    ],
+    "pass": 101,
+    "uniform_scale": true,
+    "random_start_frame": false,
+    "local_orientation": true,
+    "direction_oriented": false,
+    "birthFrameRate": {
+      "base": 0.0
+    },
+    "birthScale0": {
+      "base": [
+        150.0,
+        1.0,
+        1.0
+      ],
+      "times": [
+        0.0
+      ],
+      "values": [
+        [
+          150.0,
+          1.0,
+          1.0
+        ]
+      ],
+      "probabilities": [
+        {
+          "base": 1,
+          "times": [
+            0.0,
+            1.0
+          ],
+          "values": [
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "base": 1
+        },
+        {
+          "base": 1
+        }
+      ]
+    },
+    "scale0": {
+      "base": [
+        1,
+        1,
+        1
+      ],
+      "times": [
+        0.0,
+        1.0
+      ],
+      "values": [
+        [
+          1.4,
+          1.4,
+          1.4
+        ],
+        [
+          0.2,
+          0.2,
+          0.2
+        ]
+      ]
+    },
+    "birthRotation0": {
+      "base": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "times": [
+        0.0
+      ],
+      "values": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "probabilities": [
+        {
+          "base": 1,
+          "times": [
+            0.0,
+            1.0
+          ],
+          "values": [
+            0.0,
+            360.0
+          ]
+        },
+        {
+          "base": 1
+        },
+        {
+          "base": 1
+        }
+      ]
+    },
+    "rotation0": {
+      "base": [
+        0,
+        0,
+        0
+      ],
+      "times": [
+        0.0
+      ],
+      "values": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    "birthRotationalVelocity0": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthOrbitalVelocity": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthVelocity": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "worldAcceleration": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthAcceleration": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthDrag": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthColor": {
+      "base": [
+        0.8399939,
+        0.3600061,
+        1.0,
+        1.0
+      ]
+    },
+    "Color": {
+      "base": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "times": [
+        0.0,
+        1.0
+      ],
+      "values": [
+        [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          1.0,
+          1.0,
+          1.0,
+          0.0
+        ]
+      ]
+    },
+    "uvScale": {
+      "base": [
+        1,
+        1
+      ]
+    },
+    "birthUVOffset": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "birthUvScrollRate": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "particleUVScrollRate": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "emitterPosition": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "mult": "",
+    "mult_scale": {
+      "base": [
+        1,
+        1
+      ]
+    },
+    "mult_scroll": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "mult_birth_offset": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "mult_birth_scroll": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "erosion": "",
+    "erosion_drive": {
+      "base": 0.0
+    },
+    "adaptation_gaps": [
+      "FlexShapeDefinition"
+    ],
+    "apply_local_orientation": true
+  },
+  {
+    "name": "Flame_Shockwave",
+    "role": "confirmed_target_hit",
+    "primitive": "VfxPrimitiveArbitraryQuad",
+    "mesh": "",
+    "trail": false,
+    "camera_trail": false,
+    "ground": false,
+    "blend": 4,
+    "single": true,
+    "life": {
+      "base": 0.24
+    },
+    "rate": {
+      "base": 2.0
+    },
+    "duration": 1.0,
+    "delay": 0.0,
+    "texture": "res://assets/effects/explosive_cask/tar/flareburst.png",
+    "offset": [
+      0.0,
+      60.0,
+      0.0
+    ],
+    "birthOffset": {
+      "base": [
+        0.0,
+        60.0,
+        0.0
+      ]
+    },
+    "bind": {
+      "base": 1.0
+    },
+    "frames": 1,
+    "tex_div": [
+      1.0,
+      1.0
+    ],
+    "pass": -1,
+    "uniform_scale": true,
+    "random_start_frame": false,
+    "local_orientation": false,
+    "direction_oriented": false,
+    "birthFrameRate": {
+      "base": 0.0
+    },
+    "birthScale0": {
+      "base": [
+        300.0,
+        300.0,
+        200.0
+      ]
+    },
+    "scale0": {
+      "base": [
+        1,
+        1,
+        1
+      ],
+      "times": [
+        0.0,
+        1.0
+      ],
+      "values": [
+        [
+          0.2,
+          0.2,
+          0.2
+        ],
+        [
+          1.0,
+          1.0,
+          1.0
+        ]
+      ]
+    },
+    "birthRotation0": {
+      "base": [
+        90.0,
+        360.0,
+        0.0
+      ],
+      "times": [
+        0.0
+      ],
+      "values": [
+        [
+          90.0,
+          360.0,
+          0.0
+        ]
+      ],
+      "probabilities": [
+        {
+          "base": 1
+        },
+        {
+          "base": 1,
+          "times": [
+            0.0,
+            1.0
+          ],
+          "values": [
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "base": 1
+        }
+      ]
+    },
+    "rotation0": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthRotationalVelocity0": {
+      "base": [
+        0.0,
+        80.0,
+        0.0
+      ],
+      "times": [
+        0.0
+      ],
+      "values": [
+        [
+          0.0,
+          80.0,
+          0.0
+        ]
+      ],
+      "probabilities": [
+        {
+          "base": 1
+        },
+        {
+          "base": 1,
+          "times": [
+            0.0,
+            0.499,
+            0.5,
+            1.0
+          ],
+          "values": [
+            -1.0,
+            -0.5,
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "base": 1
+        }
+      ]
+    },
+    "birthOrbitalVelocity": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthVelocity": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "worldAcceleration": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthAcceleration": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthDrag": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthColor": {
+      "base": [
+        1.0,
+        1.0,
+        1.0,
+        0.54901963
+      ]
+    },
+    "Color": {
+      "base": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "times": [
+        0.0,
+        0.1,
+        0.5,
+        1.0
+      ],
+      "values": [
+        [
+          0.996078,
+          1.0,
+          0.807843,
+          0.0
+        ],
+        [
+          1.0,
+          0.43137255,
+          0.7372549,
+          1.0
+        ],
+        [
+          0.89411765,
+          0.27450982,
+          1.0,
+          1.0
+        ],
+        [
+          0.21960784,
+          0.09411765,
+          0.32941177,
+          0.0
+        ]
+      ]
+    },
+    "uvScale": {
+      "base": [
+        1,
+        1
+      ]
+    },
+    "birthUVOffset": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "birthUvScrollRate": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "particleUVScrollRate": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "emitterPosition": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "mult": "",
+    "mult_scale": {
+      "base": [
+        1,
+        1
+      ]
+    },
+    "mult_scroll": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "mult_birth_offset": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "mult_birth_scroll": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "erosion": "",
+    "erosion_drive": {
+      "base": 0.0
+    },
+    "palette_texture": "res://assets/effects/explosive_cask/tar/hiteffect_gradient_64.png",
+    "palette_row": 3.0,
+    "palette_count": 64.0,
+    "adaptation_gaps": [
+      "FlexShapeDefinition"
+    ],
+    "apply_local_orientation": true
+  },
+  {
+    "name": "Shockwave",
+    "role": "confirmed_target_hit",
+    "primitive": "VfxPrimitiveMesh",
+    "mesh": "res://assets/effects/explosive_cask/tar/buff_crit_shockwave.mesh.json",
+    "trail": false,
+    "camera_trail": false,
+    "ground": false,
+    "blend": 4,
+    "single": true,
+    "life": {
+      "base": 0.3,
+      "times": [
+        0.0
+      ],
+      "values": [
+        0.3
+      ],
+      "probabilities": [
+        {
+          "base": 1,
+          "times": [
+            0.0,
+            1.0
+          ],
+          "values": [
+            0.5,
+            1.0
+          ]
+        }
+      ]
+    },
+    "rate": {
+      "base": 2.0
+    },
+    "duration": 0.9,
+    "delay": 0.0,
+    "texture": "res://assets/effects/explosive_cask/tar/buff_crit_shockwave.png",
+    "offset": [
+      0.0,
+      60.0,
+      0.0
+    ],
+    "birthOffset": {
+      "base": [
+        0.0,
+        60.0,
+        0.0
+      ]
+    },
+    "bind": {
+      "base": 1.0
+    },
+    "frames": 1,
+    "tex_div": [
+      1.0,
+      1.0
+    ],
+    "pass": 10,
+    "uniform_scale": true,
+    "random_start_frame": false,
+    "local_orientation": true,
+    "direction_oriented": false,
+    "birthFrameRate": {
+      "base": 0.0
+    },
+    "birthScale0": {
+      "base": [
+        0.8,
+        1.0,
+        0.8
+      ]
+    },
+    "scale0": {
+      "base": [
+        1,
+        1,
+        1
+      ]
+    },
+    "birthRotation0": {
+      "base": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "times": [
+        0.0
+      ],
+      "values": [
+        [
+          0.0,
+          1.0,
+          0.0
+        ]
+      ],
+      "probabilities": [
+        {
+          "base": 1,
+          "times": [
+            1.0
+          ],
+          "values": [
+            360.0
+          ]
+        },
+        {
+          "base": 1,
+          "times": [
+            0.0,
+            1.0
+          ],
+          "values": [
+            0.0,
+            360.0
+          ]
+        },
+        {
+          "base": 1
+        }
+      ]
+    },
+    "rotation0": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthRotationalVelocity0": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthOrbitalVelocity": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthVelocity": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "worldAcceleration": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthAcceleration": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthDrag": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthColor": {
+      "base": [
+        1.0,
+        1.0,
+        1.0,
+        0.2399939
+      ]
+    },
+    "Color": {
+      "base": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "times": [
+        0.0,
+        0.5,
+        0.8,
+        1.0
+      ],
+      "values": [
+        [
+          0.88235295,
+          0.27450982,
+          1.0,
+          1.0
+        ],
+        [
+          1.0,
+          0.2627451,
+          0.8784314,
+          0.69411767
+        ],
+        [
+          0.8,
+          0.15686275,
+          0.52156866,
+          0.2
+        ],
+        [
+          0.49411765,
+          0.105882354,
+          0.29411766,
+          0.0
+        ]
+      ]
+    },
+    "uvScale": {
+      "base": [
+        1,
+        1
+      ]
+    },
+    "birthUVOffset": {
+      "base": [
+        0.0,
+        -0.1
+      ]
+    },
+    "birthUvScrollRate": {
+      "base": [
+        0.0,
+        3.0
+      ],
+      "times": [
+        0.0
+      ],
+      "values": [
+        [
+          0.0,
+          3.0
+        ]
+      ],
+      "probabilities": [
+        {
+          "base": 1
+        },
+        {
+          "base": 1,
+          "times": [
+            0.0,
+            1.0
+          ],
+          "values": [
+            0.7,
+            1.0
+          ]
+        }
+      ]
+    },
+    "particleUVScrollRate": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "emitterPosition": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "mult": "",
+    "mult_scale": {
+      "base": [
+        1,
+        1
+      ]
+    },
+    "mult_scroll": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "mult_birth_offset": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "mult_birth_scroll": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "erosion": "",
+    "erosion_drive": {
+      "base": 0.0
+    },
+    "adaptation_gaps": [
+      "FlexShapeDefinition"
+    ],
+    "apply_local_orientation": true
+  },
+  {
+    "name": "flashAdd",
+    "role": "confirmed_target_hit",
+    "primitive": "VfxPrimitiveCameraQuad",
+    "mesh": "",
+    "trail": false,
+    "camera_trail": false,
+    "ground": false,
+    "blend": 4,
+    "single": true,
+    "life": {
+      "base": 0.1333
+    },
+    "rate": {
+      "base": 1.0
+    },
+    "duration": 1.0,
+    "delay": 0.0,
+    "texture": "res://assets/effects/explosive_cask/tar/flash_02.png",
+    "offset": [
+      0.0,
+      60.0,
+      0.0
+    ],
+    "birthOffset": {
+      "base": [
+        0.0,
+        60.0,
+        0.0
+      ]
+    },
+    "bind": {
+      "base": 1.0
+    },
+    "frames": 1,
+    "tex_div": [
+      1.0,
+      1.0
+    ],
+    "pass": 100,
+    "uniform_scale": true,
+    "random_start_frame": false,
+    "local_orientation": true,
+    "direction_oriented": false,
+    "birthFrameRate": {
+      "base": 0.0
+    },
+    "birthScale0": {
+      "base": [
+        80.0,
+        200.0,
+        200.0
+      ],
+      "times": [
+        0.0
+      ],
+      "values": [
+        [
+          80.0,
+          200.0,
+          200.0
+        ]
+      ],
+      "probabilities": [
+        {
+          "base": 1,
+          "times": [
+            0.0,
+            1.0
+          ],
+          "values": [
+            0.7,
+            1.0
+          ]
+        },
+        {
+          "base": 1,
+          "times": [
+            0.0,
+            1.0
+          ],
+          "values": [
+            0.7,
+            1.0
+          ]
+        },
+        {
+          "base": 1
+        }
+      ]
+    },
+    "scale0": {
+      "base": [
+        1,
+        1,
+        1
+      ],
+      "times": [
+        0.0,
+        0.15,
+        0.5,
+        1.0
+      ],
+      "values": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          3.0,
+          3.0,
+          3.0
+        ],
+        [
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    "birthRotation0": {
+      "base": [
+        360.0,
+        0.0,
+        1.0
+      ],
+      "times": [
+        0.0
+      ],
+      "values": [
+        [
+          360.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "probabilities": [
+        {
+          "base": 1,
+          "times": [
+            0.0,
+            1.0
+          ],
+          "values": [
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "base": 1
+        },
+        {
+          "base": 1
+        }
+      ]
+    },
+    "rotation0": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthRotationalVelocity0": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthOrbitalVelocity": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthVelocity": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "worldAcceleration": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthAcceleration": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthDrag": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthColor": {
+      "base": [
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    "Color": {
+      "base": [
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    "uvScale": {
+      "base": [
+        1,
+        1
+      ]
+    },
+    "birthUVOffset": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "birthUvScrollRate": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "particleUVScrollRate": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "emitterPosition": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "mult": "",
+    "mult_scale": {
+      "base": [
+        1,
+        1
+      ]
+    },
+    "mult_scroll": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "mult_birth_offset": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "mult_birth_scroll": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "erosion": "",
+    "erosion_drive": {
+      "base": 0.0
+    },
+    "palette_texture": "res://assets/effects/explosive_cask/tar/hiteffect_gradient_64.png",
+    "palette_row": 3.0,
+    "palette_count": 64.0,
+    "adaptation_gaps": [
+      "FlexShapeDefinition",
+      "useNavmeshMask"
+    ],
+    "apply_local_orientation": true
+  },
+  {
+    "name": "flashBlend",
+    "role": "confirmed_target_hit",
+    "primitive": "VfxPrimitiveCameraQuad",
+    "mesh": "",
+    "trail": false,
+    "camera_trail": false,
+    "ground": false,
+    "blend": 1,
+    "single": true,
+    "life": {
+      "base": 0.1333
+    },
+    "rate": {
+      "base": 2.0
+    },
+    "duration": 1.0,
+    "delay": 0.0,
+    "texture": "res://assets/effects/explosive_cask/tar/flash_02.png",
+    "offset": [
+      0.0,
+      60.0,
+      0.0
+    ],
+    "birthOffset": {
+      "base": [
+        0.0,
+        60.0,
+        0.0
+      ]
+    },
+    "bind": {
+      "base": 1.0
+    },
+    "frames": 1,
+    "tex_div": [
+      1.0,
+      1.0
+    ],
+    "pass": 90,
+    "uniform_scale": true,
+    "random_start_frame": false,
+    "local_orientation": true,
+    "direction_oriented": false,
+    "birthFrameRate": {
+      "base": 0.0
+    },
+    "birthScale0": {
+      "base": [
+        80.0,
+        220.0,
+        220.0
+      ],
+      "times": [
+        0.0
+      ],
+      "values": [
+        [
+          80.0,
+          220.0,
+          220.0
+        ]
+      ],
+      "probabilities": [
+        {
+          "base": 1,
+          "times": [
+            0.0,
+            1.0
+          ],
+          "values": [
+            0.7,
+            1.0
+          ]
+        },
+        {
+          "base": 1,
+          "times": [
+            0.0,
+            1.0
+          ],
+          "values": [
+            0.7,
+            1.0
+          ]
+        },
+        {
+          "base": 1
+        }
+      ]
+    },
+    "scale0": {
+      "base": [
+        1,
+        1,
+        1
+      ],
+      "times": [
+        0.0,
+        0.15,
+        0.5,
+        1.0
+      ],
+      "values": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          3.0,
+          3.0,
+          3.0
+        ],
+        [
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    "birthRotation0": {
+      "base": [
+        360.0,
+        0.0,
+        1.0
+      ],
+      "times": [
+        0.0
+      ],
+      "values": [
+        [
+          360.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "probabilities": [
+        {
+          "base": 1,
+          "times": [
+            0.0,
+            1.0
+          ],
+          "values": [
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "base": 1
+        },
+        {
+          "base": 1
+        }
+      ]
+    },
+    "rotation0": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthRotationalVelocity0": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthOrbitalVelocity": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthVelocity": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "worldAcceleration": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthAcceleration": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthDrag": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "birthColor": {
+      "base": [
+        1.0,
+        1.0,
+        1.0,
+        0.48000306
+      ]
+    },
+    "Color": {
+      "base": [
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    "uvScale": {
+      "base": [
+        1,
+        1
+      ]
+    },
+    "birthUVOffset": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "birthUvScrollRate": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "particleUVScrollRate": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "emitterPosition": {
+      "base": [
+        0,
+        0,
+        0
+      ]
+    },
+    "mult": "",
+    "mult_scale": {
+      "base": [
+        1,
+        1
+      ]
+    },
+    "mult_scroll": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "mult_birth_offset": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "mult_birth_scroll": {
+      "base": [
+        0,
+        0
+      ]
+    },
+    "erosion": "",
+    "erosion_drive": {
+      "base": 0.0
+    },
+    "palette_texture": "res://assets/effects/explosive_cask/tar/hiteffect_gradient_64.png",
+    "palette_row": 3.0,
+    "palette_count": 64.0,
+    "adaptation_gaps": [
+      "FlexShapeDefinition",
+      "useNavmeshMask"
+    ],
+    "apply_local_orientation": true
+  }
+]

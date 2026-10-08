@@ -1,0 +1,241 @@
+{
+  "source": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Gragas.wad.client",
+  "reader_revision": "c06b5bb1dba458a358628b0fd1ddef3a58a4ba43",
+  "systems": {
+    "mis": {
+      "name": "Characters/Gragas/Skins/Skin0/Particles/Gragas_Base_R_Mis",
+      "binary": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/爆破酒桶/更新源件/current_graph/data/characters/gragas/gragas_multi_skins_skin0_skins_skin1_skins_skin2.bin",
+      "binary_sha256": "adf9c5979e06f99055d880bec5573db57ef0055e39c44dfa817d58eef442ef25",
+      "asset_count": 8
+    },
+    "end": {
+      "name": "Characters/Gragas/Skins/Skin0/Particles/Gragas_Base_R_End",
+      "binary": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/爆破酒桶/更新源件/current_graph/data/characters/gragas/gragas_multi_skins_skin0_skins_skin1_skins_skin2_skins_skin3_skins_skin7_skins_skin8_skins_skin9.bin",
+      "binary_sha256": "051865e6d77c2ad75c70cdb35ae79fa57125d2b420a98225020e7ac664f3ff75",
+      "asset_count": 30
+    },
+    "tar": {
+      "name": "Characters/Gragas/Skins/Skin0/Particles/Gragas_Base_R_Tar",
+      "binary": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/爆破酒桶/更新源件/current_graph/data/characters/gragas/gragas_multi_skins_skin0_skins_skin1_skins_skin2_skins_skin3_skins_skin4_skins_skin7_skins_skin8_skins_skin9.bin",
+      "binary_sha256": "0731c951c14245f61fa750b6c45417766448a377c25bffbdbfa3a0b055a23c93",
+      "asset_count": 9
+    }
+  },
+  "assets": {
+    "assets/characters/gragas/skins/base/particles/gragas_base_q_mis.scb": {
+      "source_sha256": "d7ddfa85701c2e1369606b307268e4460c1c710c21e6736afb75e013b864d375",
+      "output": "gragas_base_q_mis.mesh.json",
+      "output_sha256": "dcb3a4c8dd87ca7a6550ce3f23f3d4114723909aae71c718ca0c7755cf8ed8df"
+    },
+    "assets/characters/gragas/skins/base/particles/gragas_base_q_mis.tex": {
+      "source_sha256": "e72297cd990c09c525f9fd9ba68337704137b8209ac03d2b13da2200fb7de907",
+      "output": "gragas_base_q_mis.png",
+      "output_sha256": "09cf34b62393b00315a3ce069429399d18d3f2abc0f24e4216dbbfc160454a3c"
+    },
+    "assets/characters/gragas/skins/base/particles/gragas_base_q_spit.tex": {
+      "source_sha256": "d7ad962b1667657551d4c26bb2745c0029f6086ab07674daffc7f123fde009e3",
+      "output": "gragas_base_q_spit.png",
+      "output_sha256": "e4c58c4b849f159a6b2115efd4a58c7551ba7b9b66f72dd4799aaf56bc9a9458"
+    },
+    "assets/characters/gragas/skins/base/particles/gragas_base_foam_splash_2x2.tex": {
+      "source_sha256": "534452d4e421e6a5c7e3c71a18b77dd675392ce0bb2a1abca8cba2127d9f891c",
+      "output": "gragas_base_foam_splash_2x2.png",
+      "output_sha256": "a42a966fe1650c75c607751412b7ffc9555302cae3942f3a0f9d894a63e0da59"
+    },
+    "assets/characters/gragas/skins/base/particles/gragas_base_scentmult.tex": {
+      "source_sha256": "f13eb0279fd6e2eff7e6e4e601edb13abb32516d156fc6e98f817d5b20b2648f",
+      "output": "gragas_base_scentmult.png",
+      "output_sha256": "4ade1af6a5ec7baef94e65909210a50142131f3b2e561d23bc56fcf27cb564e9"
+    },
+    "assets/characters/gragas/skins/base/particles/gragas_base_watertrailloop.tex": {
+      "source_sha256": "cce9eb868ef89fa989c3a62e8ad48250a8b162dd64a7641263cad13f32e615d2",
+      "output": "gragas_base_watertrailloop.png",
+      "output_sha256": "7ee5cf9b0194a8b179f53eef77b057e9b72d32d8e9516d8c80781dc321eec0a6"
+    },
+    "assets/characters/gragas/skins/skin10/particles/lux_skin07_z_distort.tex": {
+      "source_sha256": "41241eafa700d7aa8a280bc7d943c090005324d146d33777a5b8b4bda3ab977b",
+      "output": "lux_skin07_z_distort.png",
+      "output_sha256": "9d1c0afae3a4040376460a1809143487b39bafa5e0d59448ca4c22bcde7dadd9"
+    },
+    "assets/characters/gragas/skins/base/particles/gragas_base_q_alphaslice_1.tex": {
+      "source_sha256": "4a34d5d15bfebf2b43e63604c4d6ddcefd44ded8888e85078a12144a575b9849",
+      "output": "gragas_base_q_alphaslice_1.png",
+      "output_sha256": "f9f71350b33caf6c0eca35950ecd025ee30d8d111c129a4caa2129685f00f414"
+    },
+    "assets/characters/gragas/skins/base/particles/gragas_base_q_flash.tex": {
+      "source_sha256": "348059cc0fc064f319fab079db2daa34732d1389d3dee40ac1c1a6ccf6cb7a9d",
+      "output": "gragas_base_q_flash.png",
+      "output_sha256": "a3289d3eeefdf02d01277251303557f17b28dbab54c4d4e4f3f6cc6ffd01d41a"
+    },
+    "assets/characters/gragas/skins/base/particles/gragas_base_flare_1.tex": {
+      "source_sha256": "bd9a6a2a8f288978796869c7ae57bab3b852a533592ed2fd29ea8362c6ce7215",
+      "output": "gragas_base_flare_1.png",
+      "output_sha256": "61ed00f83e289976b6eec80a4ef2c7989a02885bf5bc916e5e0bcb57ab9d433f"
+    },
+    "assets/characters/gragas/skins/base/particles/lux_skin07_q_distort_rgba.tex": {
+      "source_sha256": "319a89743c70a7380a9ee91d56899d968ad2f8e7ca1ab57aeaffc9fe39e47967",
+      "output": "lux_skin07_q_distort_rgba.png",
+      "output_sha256": "66892b1db5d86a899c1f058ef925030c6286960ad6cb7d3532e34458bc426d0b"
+    },
+    "assets/characters/gragas/skins/base/particles/gragas_base_q_circle_normal.tex": {
+      "source_sha256": "9f7054552b0a1c69ee5e9f3f79d94461a109cf4a790d2e80482fc6d87cd86ca1",
+      "output": "gragas_base_q_circle_normal.png",
+      "output_sha256": "36954c0e793e62fdf1389587d53883686c9a67eae14e7d4f8de8acdbea69b9be"
+    },
+    "assets/characters/gragas/skins/base/particles/gragas_base_q_white.tex": {
+      "source_sha256": "bc06557b44402fee1498430bd4008df9598085f44b29fea2f02218473674b2f8",
+      "output": "gragas_base_q_white.png",
+      "output_sha256": "62ed85b52d6f757f5322176cb24ccfa294cb145ba9f1978bbf6ba479341f45a8"
+    },
+    "assets/characters/gragas/skins/base/particles/lux_skin07_q_distort_rgba_2.tex": {
+      "source_sha256": "28268db10a221e2e82ac7defdf4e5e0aadd70a21a643453dd2043af62bcc79be",
+      "output": "lux_skin07_q_distort_rgba_2.png",
+      "output_sha256": "ef6c8a8ddface79656006efb753bef81452e181515913eb720829e72c523906d"
+    },
+    "assets/characters/gragas/skins/base/particles/gragas_base_cast_muzzelflash_blue.tex": {
+      "source_sha256": "9d107a118be1c0cd34cf5f922f0a635ff06a8c7cf3dec4fda837260cef2926f9",
+      "output": "gragas_base_cast_muzzelflash_blue.png",
+      "output_sha256": "d30f15a163d2db836bd5d97002ceb9a0cfbe7c61dcc1d6b22e8a936e9232c88c"
+    },
+    "assets/characters/gragas/skins/base/particles/gragas_base_flame_ring.tex": {
+      "source_sha256": "0819072f1d856f9c330151c10ebc4e50a0f6cd724276b9ed5919a318c9718fc6",
+      "output": "gragas_base_flame_ring.png",
+      "output_sha256": "30c935d7781093ceed3a001a43b7bf88f87d6aad099d0a0ae16c3f0caa51d4d0"
+    },
+    "assets/characters/gragas/skins/base/particles/gragas_base_bubble.scb": {
+      "source_sha256": "7e54bcceba20249e08c8dc36c93658fa120d1bbcb6180a18a447dc12cac6bb2d",
+      "output": "gragas_base_bubble.mesh.json",
+      "output_sha256": "ad8731d22954b0ffbc880704385180404e710f7d01380c5e0bf52269af283a61"
+    },
+    "assets/characters/gragas/skins/base/particles/gragas_base_q_gradientv.tex": {
+      "source_sha256": "31543e17d94608a8021c46e7284634f9398a0ad1b34cc0cded5278fb3117496b",
+      "output": "gragas_base_q_gradientv.png",
+      "output_sha256": "acb0d84296421e0a56545dc599fbf738a6f74cda82757fb947e37e9f052cfd8e"
+    },
+    "assets/characters/gragas/skins/base/particles/gragas_base_puddle_mesh.scb": {
+      "source_sha256": "3a20701a91e704cb2df72ef3b6532a154425078fbf601fad6268d0e37710f5e3",
+      "output": "gragas_base_puddle_mesh.mesh.json",
+      "output_sha256": "57f8e26996324d2797d31ca0a7c34a9b3dc4eeafa75ef92aeab6387435f43f40"
+    },
+    "assets/characters/gragas/skins/base/particles/gragas_base_puddle_ripples.tex": {
+      "source_sha256": "a2633824c6644f3ccd74cdd99e3144a4003f220e96d9c59b4877e49d128987de",
+      "output": "gragas_base_puddle_ripples.png",
+      "output_sha256": "085065e9c7fc0d14719966709aab91193172cf940fed3ad0a536cae4411deaee"
+    },
+    "assets/characters/gragas/skins/base/particles/gragas_base_slam_cyl.scb": {
+      "source_sha256": "e8886e905f7c6399d824dd71efd5a505df9f00e2b1efda353173ff01957dcc64",
+      "output": "gragas_base_slam_cyl.mesh.json",
+      "output_sha256": "864970dd4bfbf46cbdeecacea7a4d0b951559bf1a383a717001022bb83a01261"
+    },
+    "assets/characters/gragas/skins/base/particles/gragas_base_goo_rgb.tex": {
+      "source_sha256": "dd623ed9c29e012feb9d82873f074c91a7f871da1dc6cb58330ff388f58dd502",
+      "output": "gragas_base_goo_rgb.png",
+      "output_sha256": "334d686374b7e61fc6cc963017e6955436a60eac6e6f62448f9a6c73f2e8a225"
+    },
+    "assets/characters/gragas/skins/base/particles/gragas_base_goo_r.tex": {
+      "source_sha256": "80a2a1522b80cb7a603ff6d1afbfc4b11b7393bf8f24627d1da2e4dc30ba01c9",
+      "output": "gragas_base_goo_r.png",
+      "output_sha256": "5a315f4795099a008fd940444050ee282020c5b0131836b6556211a4620f154c"
+    },
+    "assets/characters/gragas/skins/base/particles/gragas_base_q_floor_puddle_erode.tex": {
+      "source_sha256": "3f9691b91f38b9e369d69b8f336fe0c46ecbade60834a2e96e76af142ef35f74",
+      "output": "gragas_base_q_floor_puddle_erode.png",
+      "output_sha256": "d39f7702e430b711d2245b93455c2e60a10703ef086a3f5197356d69e96d864e"
+    },
+    "assets/characters/gragas/skins/base/particles/gragas_base_splash_2x2.tex": {
+      "source_sha256": "e38ca9e8343cd0232a334694ef6d81d733b2e626d4f0bd24a40ee7c26b7b9427",
+      "output": "gragas_base_splash_2x2.png",
+      "output_sha256": "25e1f842566121c287d4253b77dbe5e21a493b93e99b4746a06a50c0a9dec26d"
+    },
+    "assets/characters/gragas/skins/base/particles/gragas_base_q_cas_glowspark.tex": {
+      "source_sha256": "393f35b5cb14ab5a49869c03a410a3c575a5d6b9dda7e889f2a01c384bbc00da",
+      "output": "gragas_base_q_cas_glowspark.png",
+      "output_sha256": "4818306731b3d124a231140d087f1252953b0abe4a232ab46c5fa08434aaa525"
+    },
+    "assets/characters/gragas/skins/base/particles/gragas_base_q_hit_aoering.tex": {
+      "source_sha256": "d526d78641cfa6de2a52109c625120ac98f426ffc74142e91add0789c6fae9fb",
+      "output": "gragas_base_q_hit_aoering.png",
+      "output_sha256": "cb7df14549ab9e26cd8cc332111fa261b489f5cc9f26b4b337a7cb4c524e9cf4"
+    },
+    "assets/characters/gragas/skins/base/particles/gragas_base_q_flash_01.tex": {
+      "source_sha256": "efe226c7f4b7998a5ca287584c036f5e811a956036ea2db5468e110bb5f9da17",
+      "output": "gragas_base_q_flash_01.png",
+      "output_sha256": "8eb24b12865191cfd245fb607db7c6acd4bcc138eb776758406dcad74162eadd"
+    },
+    "assets/characters/gragas/skins/base/particles/gragas_base_q_floor_puddle.tex": {
+      "source_sha256": "65e386e22cf3a5fbf5dc75e8d92029bb1f8ccffc4f9fe3ae4a5188cd3ac9313a",
+      "output": "gragas_base_q_floor_puddle.png",
+      "output_sha256": "b1ae31b619ad8665258c612b4c9fc6084db63671f5041c58f7dabd9ff0967135"
+    },
+    "assets/characters/gragas/skins/base/particles/gragas_base_q_cone_blast.scb": {
+      "source_sha256": "823250479287b0c684114331476e9e0f6c9b3bd433f8cd63e4ab2115bea72d8b",
+      "output": "gragas_base_q_cone_blast.mesh.json",
+      "output_sha256": "97f6bb84cef47e688b457fdde121a17a5ac0a3a2386bcd14df2289b78ae06f06"
+    },
+    "assets/characters/gragas/skins/base/particles/gragas_base_q_einstein_01_mult.tex": {
+      "source_sha256": "a2a512dc44c5a6e2a4044a7091376446315073eda9019015a836aaa2667ef678",
+      "output": "gragas_base_q_einstein_01_mult.png",
+      "output_sha256": "e6522754c4cf2cc5da82bfa2e1acea23c454c78ff1382b214e37685c34352900"
+    },
+    "assets/characters/gragas/skins/base/particles/gragas_base_r_cone_hit.tex": {
+      "source_sha256": "647f5e3b035f0ef474b7ed3fbf11e1d90f7b0fd287d7de01fab2e8c111cf2eaf",
+      "output": "gragas_base_r_cone_hit.png",
+      "output_sha256": "f44f1f308ed3c40cd4566897001d59264921d2cbf0f55b0dec07b072c767ddba"
+    },
+    "assets/characters/gragas/skins/base/particles/gragas_base_impactglow.tex": {
+      "source_sha256": "f7a4187631b5e4570e66dbf145a54f1894826b22a91ff3d9977062ed59ec8967",
+      "output": "gragas_base_impactglow.png",
+      "output_sha256": "3f615d942ceafe6a5c41b29ac6e2ff7006b63b553ff68b3611de2877b9cb0c06"
+    },
+    "assets/characters/gragas/skins/base/particles/gragas_base_q_wood.tex": {
+      "source_sha256": "81e1a4bc37ed3e36e30e7a05b1ef0cfeb62b6c898253d206f9cd6595c38ff130",
+      "output": "gragas_base_q_wood.png",
+      "output_sha256": "96dfc5677bf928ac5ec54e654058b001d86c7cfb3b71f249df148ecd1a043d7e"
+    },
+    "assets/characters/gragas/skins/base/particles/gragas_base_r_squirt.tex": {
+      "source_sha256": "9f753f4184ae27d47adeb749fba71fb879320383bfe5bac1a38f876fff6e4721",
+      "output": "gragas_base_r_squirt.png",
+      "output_sha256": "52ab0ce4a4fc3849c4cbfd65e6ac97996c5225e0b4d28ba0e6fe94a956cad7ad"
+    },
+    "assets/characters/gragas/skins/base/particles/gragas_base_z_grog_rgba.tex": {
+      "source_sha256": "c5b111a931772767eb953758857a7c6bf6638b0013fe164895b87c3a3f000b5b",
+      "output": "gragas_base_z_grog_rgba.png",
+      "output_sha256": "2d9b72c33e02574647a8c0faabef06e7348211830fc5b144fd15020a6174d960"
+    },
+    "assets/characters/gragas/skins/base/particles/gragas_base_r_drops.tex": {
+      "source_sha256": "66e9fff976240bd79d289854fc91cc8f283923f419b7dbb2a3fbc38962fade25",
+      "output": "gragas_base_r_drops.png",
+      "output_sha256": "2d86aafc9e8d4877b5b0b473352d22dec996290698168792fc3eef5a0c74688b"
+    },
+    "assets/characters/gragas/skins/base/particles/gragas_base_z_splashes_anim_4x4.tex": {
+      "source_sha256": "d6c8f91902f741b7e5d26bd2a2562370dffb283044e3f3a3a27cbe9b734d1ad9",
+      "output": "gragas_base_z_splashes_anim_4x4.png",
+      "output_sha256": "af4438954bda18dbc40439d0a281bd92cb4d10d9a4869b8b5566f354f193030a"
+    },
+    "assets/shared/particles/library/hiteffect/flareburst.tex": {
+      "source_sha256": "278e883aa740865b78dadbd8c83b71a0136738f44152ebdf0d0b17f052d9dad7",
+      "output": "flareburst.png",
+      "output_sha256": "1674af8e4c078f230cc4758087bc770fa7b3c382d6a18e5cb89d54616654dfcd"
+    },
+    "assets/shared/particles/library/hiteffect/hiteffect_gradient_64.tex": {
+      "source_sha256": "dc9807463354d41df294a02ac43c982a0dc22988504a452c6b4362c1a4d4d358",
+      "output": "hiteffect_gradient_64.png",
+      "output_sha256": "64c48effb65e9f465552428420e532920aff8120575dd750c52972a32aec89cb"
+    },
+    "assets/shared/particles/library/hiteffect/buff_crit_shockwave.scb": {
+      "source_sha256": "7312a539bc14302cbf7835ea973147f7776b6bfbe2f1b0789e5a0cee5e53908c",
+      "output": "buff_crit_shockwave.mesh.json",
+      "output_sha256": "24c4bf1a52575820a9edfbf551412bdc112497bac7a6ddb9efcaffc6e2466e2f"
+    },
+    "assets/shared/particles/library/hiteffect/buff_crit_shockwave.tex": {
+      "source_sha256": "05dcd66f99ad096d1ae5667e0c3f266d02907ee83e3a775b2f1b81658fbf6c27",
+      "output": "buff_crit_shockwave.png",
+      "output_sha256": "44e6531120a48ba9276cec65b0efba8de9e1bcec71bb37d5094f9befd65df5db"
+    },
+    "assets/shared/particles/library/hiteffect/flash_02.tex": {
+      "source_sha256": "1a3a35ab48702a52816ed7b6acb360a411e6938cca9a3e93cee8ac6fb07fde16",
+      "output": "flash_02.png",
+      "output_sha256": "14cf7f813d332f56459552be81a3ace3511a4ab016d0e327fcaa708072a19443"
+    }
+  }
+}

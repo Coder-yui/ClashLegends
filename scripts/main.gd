@@ -1850,7 +1850,7 @@ func _cast_spell(p_team: int, card_id: String, pos: Vector2, active_enabled: boo
 		_execute_card_deployment(p_team, String(mirror_copy.card_id), pos, String(mirror_copy.deployment_card_id), {}, slot, generation)
 		return true
 	var cast: bool = _spell_system.cast(p_team, CardDB.get_card(card_id), pos, active_enabled, active_skill_index)
-	if cast and card_id != "stasis":
+	if cast and card_id not in ["stasis", "explosive_cask"]:
 		_presentation_event_id += 1
 		_play_card_event(_presentation_event_id, card_id, "spell:cast", pos, 0, p_team)
 		if mode == "server":
@@ -2972,6 +2972,8 @@ func _play_card_event(event_id: int, card_id: String, cue: String, pos: Vector2,
 	if card_id == "match":
 		if not game_over and _audio_manager != null: _audio_manager.play_match_event(cue)
 		return
+	if card_id == "explosive_cask" and cue == "spell:hit" and _battle_presentation != null:
+		_spell_system.cask_hits.append({"id": event_id, "pos": pos, "timer": 0.7})
 	if cue == "shield:cast":
 		_skill_presentation.present_area_shield(card_id, form, pos)
 	if _audio_manager != null:
@@ -3200,7 +3202,7 @@ func _show_spell_flight(event_id: int, flight_id: int, kind: String, origin: Vec
 	if not has_presentation(): return
 	if event_id <= _last_card_event_id: return
 	_spell_system.show_flight(flight_id, kind, origin, pos, radius, start_tick, impact_tick)
-	if kind == "stasis":
+	if kind in ["stasis", "explosive_cask"]:
 		_play_card_event(event_id, kind, "spell:cast", origin, 0, team)
 		_audio_manager.start_spell_flight_audio(flight_id, kind, team, origin)
 	else: _last_card_event_id = event_id
@@ -3221,7 +3223,7 @@ func _show_spell_arrival(event_id: int, flight_id: int, kind: String, pos: Vecto
 	if event_id <= _last_card_event_id: return
 	_spell_system.show_arrival(flight_id)
 	_audio_manager.stop_spell_flight_audio(flight_id)
-	if kind == "stasis": _play_card_event(event_id, kind, "spell:strike", pos, 0, team)
+	if kind in ["stasis", "explosive_cask"]: _play_card_event(event_id, kind, "spell:strike", pos, 0, team)
 	else: _last_card_event_id = event_id
 
 @rpc("authority", "call_remote", "reliable")
@@ -3250,3 +3252,9 @@ func _rpc_corrosion_fx(epoch: String, event_id: int, pos: Vector2, radius: float
 func return_to_main_menu() -> void:
 	get_tree().set_meta("return_to_main_menu", true)
 	get_tree().reload_current_scene()
+
+func present_cask_hit(pos: Vector2, team: int) -> void:
+	_presentation_event_id += 1
+	_play_card_event(_presentation_event_id, "explosive_cask", "spell:hit", pos, 0, team)
+	if mode == "server":
+		_broadcast(_rpc_card_event, [network_session_id(), _presentation_event_id, "explosive_cask", "spell:hit", pos, 0, team])

@@ -120,6 +120,12 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 			elif float(stats.get("duration", 0.0)) <= 0.0:
 				errors.append("%s.duration: 法术持续时间必须 > 0" % card_id)
 			match spell_kind:
+				&"explosive_cask":
+					_require_fields(card_id, stats, [&"damage", &"knockback", &"tower_damage_multiplier", &"flight_speed"], errors)
+					if float(stats.get("damage", 0)) <= 0 or float(stats.get("knockback", 0)) <= 0:
+						errors.append("%s: 酒桶伤害与击退必须为正" % card_id)
+					if float(stats.get("tower_damage_multiplier", -1)) < 0 or float(stats.get("tower_damage_multiplier", -1)) > 1:
+						errors.append("%s.tower_damage_multiplier: 必须在0到1之间" % card_id)
 				&"corrosion":
 					_require_fields(card_id, stats, [&"damage", &"interval", &"tower_damage_multiplier"], errors)
 					if not is_finite(float(stats.get("tower_damage_multiplier", -1))) or float(stats.get("tower_damage_multiplier", -1)) < 0 or float(stats.get("tower_damage_multiplier", -1)) > 1:
@@ -1010,6 +1016,9 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 				_require_fields(label, skill, [&"strike_count", &"strike_damage_multiplier"], errors)
 				if int(skill.get("strike_count", 0)) < 1 or float(skill.get("strike_damage_multiplier", 0)) < 1:
 					errors.append("%s: 电击次数必须为正，逐次倍率必须>=1" % label)
+			&"spell_explosive_cask":
+				if String(stats.get("spell_kind", "")) != "explosive_cask" or float(skill.get("damage", 0)) <= float(stats.get("damage", 0)):
+					errors.append("%s: 酒桶强化只用于爆破酒桶且伤害必须高于基础值" % label)
 			&"spell_corrosion":
 				if String(stats.get("spell_kind", "")) != "corrosion":
 					errors.append("%s: 腐蚀强化只用于腐蚀法术" % label)

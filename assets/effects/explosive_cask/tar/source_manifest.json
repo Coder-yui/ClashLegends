@@ -1,0 +1,46 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Gragas.wad.client",
+  "source_package_sha256": "683dcfcda99507a45034601874196045e0b3d446595c0539ee4766e23617082b",
+  "system": "emitterPosition",
+  "definition_sha256": "6f66ecc5361e677c702590be5db4dac963ee66186fbf3083c3ffa058d699cf77",
+  "layers": 5,
+  "files": [
+    {
+      "source": "assets/characters/gragas/skins/base/particles/gragas_base_q_flash_01.tex",
+      "source_sha256": "efe226c7f4b7998a5ca287584c036f5e811a956036ea2db5468e110bb5f9da17",
+      "output": "gragas_base_q_flash_01.png",
+      "sha256": "8eb24b12865191cfd245fb607db7c6acd4bcc138eb776758406dcad74162eadd"
+    },
+    {
+      "source": "assets/shared/particles/library/hiteffect/flareburst.tex",
+      "source_sha256": "278e883aa740865b78dadbd8c83b71a0136738f44152ebdf0d0b17f052d9dad7",
+      "output": "flareburst.png",
+      "sha256": "1674af8e4c078f230cc4758087bc770fa7b3c382d6a18e5cb89d54616654dfcd"
+    },
+    {
+      "source": "assets/shared/particles/library/hiteffect/hiteffect_gradient_64.tex",
+      "source_sha256": "dc9807463354d41df294a02ac43c982a0dc22988504a452c6b4362c1a4d4d358",
+      "output": "hiteffect_gradient_64.png",
+      "sha256": "64c48effb65e9f465552428420e532920aff8120575dd750c52972a32aec89cb"
+    },
+    {
+      "source": "assets/shared/particles/library/hiteffect/buff_crit_shockwave.scb",
+      "source_sha256": "7312a539bc14302cbf7835ea973147f7776b6bfbe2f1b0789e5a0cee5e53908c",
+      "output": "buff_crit_shockwave.mesh.json",
+      "sha256": "a0be27355f11b13ad3cf6d397688b9164d06a0e377130dc56b87df08cb502110"
+    },
+    {
+      "source": "assets/shared/particles/library/hiteffect/buff_crit_shockwave.tex",
+      "source_sha256": "05dcd66f99ad096d1ae5667e0c3f266d02907ee83e3a775b2f1b81658fbf6c27",
+      "output": "buff_crit_shockwave.png",
+      "sha256": "44e6531120a48ba9276cec65b0efba8de9e1bcec71bb37d5094f9befd65df5db"
+    },
+    {
+      "source": "assets/shared/particles/library/hiteffect/flash_02.tex",
+      "source_sha256": "1a3a35ab48702a52816ed7b6acb360a411e6938cca9a3e93cee8ac6fb07fde16",
+      "output": "flash_02.png",
+      "sha256": "14cf7f813d332f56459552be81a3ace3511a4ab016d0e327fcaa708072a19443"
+    }
+  ],
+  "systems_sha256": "6ecf60c92f17aa91860fd93f86cdeb5a5b8a1f1206e6cdc1e687e6e219b6b1c2"
+}

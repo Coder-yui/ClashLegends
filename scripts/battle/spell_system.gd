@@ -12,6 +12,8 @@ var slow_effects: Array[Dictionary] = []
 ## 治疗术表现区域：阵营色边界与淡黄内光；全图强化治疗额外带全图扩散波纹。
 var heal_effects: Array[Dictionary] = []
 
+var cask_hits: Array[Dictionary] = []
+var cask_effects: Array[Dictionary] = []
 var spell_flights: Array[Dictionary] = []
 var stasis_effects: Array[Dictionary] = []
 
@@ -39,6 +41,9 @@ func cast(team: int, stats: Dictionary, position: Vector2, active_enabled: bool 
 
 func _resolve_cast(team: int, stats: Dictionary, position: Vector2, active_enabled: bool, active_skill_index: int) -> bool:
 	match StringName(stats.get("spell_kind", "")):
+		&"explosive_cask":
+			_apply_explosive_cask(team, stats, position, active_enabled, active_skill_index)
+			return true
 		&"corrosion":
 			_start_corrosion(team, stats, position, active_enabled, active_skill_index)
 			return true
@@ -187,16 +192,19 @@ func tick(dt: float) -> void:
 
 
 func tick_visuals(delta: float) -> void:
+	for hit in cask_hits: hit.timer = maxf(0.0, float(hit.timer) - delta)
+	cask_hits.assign(cask_hits.filter(func(hit): return float(hit.timer) > 0.0))
 	for effect in corrosion_effects:
 		effect.timer = maxf(0.0, float(effect.timer) - delta)
 	corrosion_effects.assign(corrosion_effects.filter(func(effect): return float(effect.timer) > 0.0))
-	for effect in stasis_effects:
+	for effect in stasis_effects + cask_effects:
 		if bool(effect.impacted):
 			effect.timer = maxf(0.0, float(effect.timer) - delta)
 		else:
 			var tick: int = int(_controller.get_presentation_tick())
 			var fraction: float = 0.0 if _controller.is_net_client() else _controller.get_sim_interpolation_alpha()
 			effect.progress = clampf((float(tick - int(effect.start_tick)) + fraction) / maxi(1, int(effect.impact_tick) - int(effect.start_tick)), 0.0, 1.0)
+	cask_effects.assign(cask_effects.filter(func(effect): return not bool(effect.impacted) or float(effect.timer) > 0.0))
 	stasis_effects.assign(stasis_effects.filter(func(effect): return not bool(effect.impacted) or float(effect.timer) > 0.0))
 	for area in lightning_areas:
 		area.timer = maxf(0.0, float(area.timer) - delta)
@@ -227,6 +235,8 @@ func clear() -> void:
 	corrosion_effects.clear()
 	spell_flights.clear()
 	stasis_effects.clear()
+	cask_effects.clear()
+	cask_hits.clear()
 	lightning_casts.clear()
 	lightning_effects.clear()
 	lightning_areas.clear()
@@ -354,13 +364,14 @@ func _apply_stasis(team: int, stats: Dictionary, position: Vector2, enhanced: bo
 func show_flight(id: int, kind: String, origin: Vector2, position: Vector2, radius: float, start_tick: int, impact_tick: int) -> void:
 	if not _controller.has_presentation(): return
 	# 首个皮肤为凝滞；其他法术复用调度并沿用自身抵达表现。
-	if kind != "stasis": return
-	stasis_effects.append({"id": id, "origin": origin, "pos": position, "radius": radius,
-		"start_tick": start_tick, "impact_tick": impact_tick, "progress": 0.0, "impacted": false, "duration": 2.0, "timer": 2.0})
+	if kind not in ["stasis", "explosive_cask"]: return
+	var effects := cask_effects if kind == "explosive_cask" else stasis_effects
+	effects.append({"id": id, "origin": origin, "pos": position, "radius": radius,
+		"start_tick": start_tick, "impact_tick": impact_tick, "progress": 0.0, "impacted": false, "duration": 2.15 if kind == "explosive_cask" else 2.0, "timer": 2.15 if kind == "explosive_cask" else 2.0})
 
 func show_arrival(id: int) -> void:
 	if not _controller.has_presentation(): return
-	for effect in stasis_effects:
+	for effect in stasis_effects + cask_effects:
 		if int(effect.id) == id:
 			effect.impacted = true
 			effect.timer = float(effect.duration)
@@ -433,3 +444,33 @@ func _tick_corrosion() -> void:
 		# 先结算到期末跳，再移除区域。
 		if tick < int(zone.end_tick): alive.append(zone)
 	corrosion_zones.assign(alive)
+
+
+func _apply_explosive_cask(team: int, stats: Dictionary, position: Vector2, enhanced: bool, skill_index: int) -> void:
+	var interaction := _spell_context(team)
+	var skill := _active_heal_skill(stats, skill_index) if enhanced else {}
+	var damage := float(skill.get("damage", stats.damage))
+	var resolver: CombatResolver = _controller.combat_service()
+	var source: Node2D = interaction.get("source")
+	var order := resolver.next_displacement_order(source)
+	var delivery := CombatInteraction.Delivery.new()
+	interaction["delivery"] = delivery
+	for target in _controller.get_tree().get_nodes_in_group("combatants"):
+		if not is_instance_valid(target) or target.is_queued_for_deletion() or target.hp <= 0 or target.team == team: continue
+		if not CombatInteraction.allows_effect(target, interaction): continue
+		if target.global_position.distance_to(position) > float(stats.radius) + target.body_radius: continue
+		var amount := damage * (float(stats.tower_damage_multiplier) if target is Tower else 1.0)
+		var previous := CombatInteraction.current_delivery
+		CombatInteraction.current_delivery = delivery
+		var result := BattleNumbers.hit(target, amount, source, team, interaction.get("position", Vector2(INF, INF)))
+		CombatInteraction.current_delivery = previous
+		var hit_pos: Vector2 = target.global_position
+		var show_hit := func():
+			if bool(result.landed): _controller.present_cask_hit(hit_pos, team)
+		if resolver.collecting: resolver.defer_effect(show_hit)
+		else: show_hit.call()
+		if target is Unit:
+			if resolver.collecting:
+				resolver.submit_knockback(target, position, float(stats.knockback), 0.2, 1.4, order, result, interaction)
+			elif bool(result.landed) and is_instance_valid(target) and target.hp > 0:
+				target.apply_knockback(position, float(stats.knockback), 0.2, 1.4, order, interaction)
