@@ -33,6 +33,7 @@ func prepare(card_ids: Array) -> void:
 		_collect(load("res://scripts/presentation/kayle_projectile_visuals.gd").dependency_paths())
 	if cards.has("corrosion"):
 		_collect(preload("res://scripts/presentation/corrosion_ground_3d.gd").dependency_paths(), &"Texture2D")
+	_collect(preload("res://scripts/presentation/spell_effect_warmup.gd").dependency_paths(cards))
 	preparation_usec += Time.get_ticks_usec() - started
 
 ## 只在线程读取资源；定义遍历、类型检查和场景实例化仍属于主线程。

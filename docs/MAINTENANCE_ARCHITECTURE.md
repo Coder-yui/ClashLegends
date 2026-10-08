@@ -92,3 +92,9 @@ WorkbenchSession 只注入放置、选中、清场、重建、暂停及视图更
 Main、Unit、UnitModel3D 仍是较大的编排类；后续拆分应以单一状态所有者和明确生命周期为边界，不按行数机械切割，也不通过更多转发层掩盖耦合。已按边界收拢兵线、施法协调与生成请求；部署几何和场景装配仍留在 Main，后续按实际扩展需要维护。
 
 设备、性能和联网未验证范围见[开发状态](DEV_PLAN.md)。历次记录见[归档](archive/README.md)，日常任务从[任务导航](AGENT_WORKFLOW.md)进入当前专题。
+
+## 法术加载与绘制准备
+
+MatchResources按双方卡组收集法术定义中的图标/音频，以及SpellEffectWarmup声明的原生JSON内部纹理。腐蚀沿用自己的dependency_paths与prepare_visual，冰冻沿用现有绘制准备。电击、大型电击、凝滞、爆破酒桶在加载遮罩内通过SpellEffectWarmup创建独立样本，覆盖飞行、拖尾、预警、抵达和真实命中层；实际提交绘制后保留网格/材质引用并清理样本节点。它们不进入SpellSystem权威数组，不发布卡牌事件或音频，取消加载后不再继续准备。无对应法术的卡组不预热该法术。
+
+原生sampled/systems/mesh JSON是运行依赖，必须在export_presets.cfg的include_filter覆盖；仅Godot资源导入成功不证明导出包包含FileAccess读取的JSON。验证使用SpellWarmupSuite、实际绘制预热和导出PCK读取检查。预热覆盖不等于已证明所有硬件上没有首帧停顿，性能结论需单独测量。

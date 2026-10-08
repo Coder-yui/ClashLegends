@@ -2,7 +2,7 @@
 
 [返回单位索引](../units/README.md)
 
-更新于2026-10-06。当前覆盖全部58项CardDB定义、62篇卡牌/形态正文及4篇系统对象正文。数量包含不可组卡的形态和召唤物，不等于可选卡池数量。
+更新于2026-10-08。当前覆盖全部59项CardDB定义、63篇卡牌/形态正文及4篇系统对象正文。数量包含不可组卡的形态和召唤物，不等于可选卡池数量。
 
 本页维护注册定义、玩法正文和素材入口之间的对应关系。修改卡牌时，对照编译定义及下列消费者核对数值、条件与时序；编队采用实际成员定义，覆盖形态采用基础与transformed_stats合并值，召唤部署采用生成入口的覆盖值。本页收录不代表本次逐卡重新运行、目视或试听通过。
 
@@ -20,7 +20,7 @@
 
 编队读取成员定义；四类兵音频在阵营覆盖中，不以顶层events为空判成缺声音。镜像复用被复制对象。形态读取基础与覆盖合成结果。法术无角色骨骼；不为它伪造模型/动作验收。`sustain`不保证循环；声音素材已配置不保证每个场景实际触发或用户已认可听感。
 
-## 逐项覆盖（62篇正文）
+## 逐项覆盖（63篇正文）
 
 玩法正文保留中文数值和单卡规则，素材页记录动作/声音映射；公共规则在对应专题维护。静态审计检查本表与注册定义、形态例外的一致性，语义核对和运行验证按受影响范围执行。
 
@@ -38,6 +38,7 @@
 | `aurelionsol` · [龙王](../units/aurelionsol.md) | 持续吐息免致盲；星辰创建即独立 | [动作](../units/animations/aurelionsol.md) · [声音](../units/audio/aurelionsol.md) |
 | `belveth` · [虚空女皇](../units/belveth.md) | 空军攻城；空中突进受控取消、死亡8鱼 | [动作](../units/animations/belveth.md) · [声音](../units/audio/belveth.md) |
 | `corki` · [库奇](../units/corki.md) | 三枚导弹首碰爆炸、第三枚1.8倍；空地溅射不重复直接命中 | [动作](../units/animations/corki.md) · [声音](../units/audio/corki.md) |
+| `explosive_cask` · [爆破酒桶](../units/explosive_cask.md) | 3费径向爆炸、180伤害、击退40；强化270 | [动画](../units/animations/explosive_cask.md) · [声音](../units/audio/explosive_cask.md) · [特效](../units/effects/explosive_cask.md) |
 | `corrosion` · [腐蚀法术](../units/corrosion.md) | 5秒10次伤害；塔/水晶30%、强化减速20% | [无模型/特效](../units/effects/corrosion.md) · [声音](../units/audio/corrosion.md) |
 | `darius` · [德莱厄斯](../units/darius.md) | 来源流血/血怒；劈砍与免费追斩 | [动作](../units/animations/darius.md) · [声音](../units/audio/darius.md) |
 | `freeze` · [冰冻](../units/freeze.md) | 3秒敌方冰冻；强化后2秒减速区 | [动作](../units/animations/freeze.md) · [声音](../units/audio/freeze.md) |
@@ -107,3 +108,5 @@
 [静态审计](../../tools/maintenance/README.md)检查注册、覆盖表、链接与资源引用；数值标记自动核对首批赛恩、凯隐、潘森的显式字段。其余中文数值、技能语义、形态与召唤覆盖仍须按消费者核对，不能把审计通过当作全文自动证明。
 
 机制回归、联网与实际渲染/试听的范围和命令见[测试手册](../../tests/README.md)。素材配置、实际触发、主观验收分别记录；历史通过次数只证明当时工作区。尚未实现的通用能力以[实现现状](../status/IMPLEMENTATION.md)为准。
+
+爆破酒桶：见[玩法](../units/explosive_cask.md)、[动画](../units/animations/explosive_cask.md)、[音频](../units/audio/explosive_cask.md)及[特效](../units/effects/explosive_cask.md)。

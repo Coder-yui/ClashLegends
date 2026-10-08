@@ -42,5 +42,19 @@
     "source_sha256": "5646103ab96d7437696538753da91ecab3785c2cf8ba569e1c06e3488a28263d",
     "sha256": "01a747b2ad228a3635b7857cb378c47e62bc7fb70f22773729053c6eaa5669cd",
     "processing": "ltk-tex-utils原图解码，无裁切或改色"
+  },
+  {
+    "card": "zap",
+    "path": "res://assets/cards/zap_loading.png",
+    "source": "imagegen 2026-10-08",
+    "sha256": "20a720ba2172a7d34a486a6f95354fa7a4665de88759308b1420f0855643e92d",
+    "processing": "重新生成竖幅卡面，未裁切改色；蓝白范围雷击"
+  },
+  {
+    "card": "lightning",
+    "path": "res://assets/cards/lightning_loading.png",
+    "source": "imagegen 2026-10-08",
+    "sha256": "98724ecaceae01edb421a1f459d90f95d461bd512f3f0f3f873514bde6ac15e3",
+    "processing": "重新生成竖幅卡面，未裁切改色；红色定点电刑及远处两道雷击"
   }
 ]

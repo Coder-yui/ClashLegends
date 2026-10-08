@@ -3,6 +3,7 @@ extends Node
 ## 战场的 3D 表现容器。模拟、碰撞与联机仍在 Node2D 中运行；
 ## 本节点承载正式 3D 地图，并把单位、塔与基地水晶镜像到同一视口。
 
+var spell_warmup := preload("res://scripts/presentation/spell_effect_warmup.gd").new()
 var viewer_team := 0
 
 func visual_team(team: int) -> int:

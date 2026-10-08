@@ -209,41 +209,41 @@
     },
     {
       "file": "assets/audio/spells/lightning/strike_r1.wav",
-      "sha256": "abe8161c605d7a43477e0cf3596e459b20da9e412b63eca0730b4c33f623ecf3",
+      "sha256": "223efe4f341a41a99a96f354b32d6647bdad451feb2a75b1b763584d99e2fd68",
       "previous_file": "assets/audio/spells/lightning/strike_r1.wav",
-      "previous_sha256": "0951c83ba346cba8af7fa801e833cfe4a936648cda14b574dd7fb2c543a637ce",
+      "previous_sha256": "abe8161c605d7a43477e0cf3596e459b20da9e412b63eca0730b4c33f623ecf3",
       "source_events": [
         {
-          "txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/aee32039582ef135634548a08b40f62972bb1d166a5dfdec02b097983b1865e4.txtp",
-          "txtp_sha256": "b662e57edd08cfa1e885e11a7f366050ddcfe54006f9b5ee329bddfc656f98e2",
+          "txtp": "ClashLegends-开发素材库/05-已完成/电击法术/源件/2026-10-08-双电击重制/audio/lightning/strike_r1.txtp",
+          "txtp_sha256": "dc8ed38718a53dd29a789575f3cc0cf1595da954126f3bbd777e216ef77465b0",
           "event_ids": [
-            "1091589659"
+            "662676628"
           ],
           "media_ids": [
-            "940250035",
-            "427423407",
-            "917342522"
+            "160235300",
+            "912016791",
+            "763764212"
           ],
           "dependencies": [
             {
-              "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/电击法术/源件/电击法术/source_audio/assets/sounds/wwise2016/sfx/shared/items_global_audio.bnk",
-              "sha256": "4d1383a5eb902d121df2573775b763d034441d9f08d6ceab195b0561f437fe6a"
+              "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/电击法术/源件/电击法术/source_audio/assets/sounds/wwise2016/sfx/shared/misc_gameplay_sfx_audio.bnk",
+              "sha256": "7f2a1c186abfe93ead4f630e0873f889b9733a013c7e59804aaccede697607de"
             },
             {
-              "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/电击法术/源件/电击法术/source_audio/assets/sounds/wwise2016/sfx/shared/items_global_audio.bnk",
-              "sha256": "4d1383a5eb902d121df2573775b763d034441d9f08d6ceab195b0561f437fe6a"
+              "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/电击法术/源件/电击法术/source_audio/assets/sounds/wwise2016/sfx/shared/misc_gameplay_sfx_audio.bnk",
+              "sha256": "7f2a1c186abfe93ead4f630e0873f889b9733a013c7e59804aaccede697607de"
             },
             {
-              "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/电击法术/源件/电击法术/source_audio/assets/sounds/wwise2016/sfx/shared/items_global_audio.bnk",
-              "sha256": "4d1383a5eb902d121df2573775b763d034441d9f08d6ceab195b0561f437fe6a"
+              "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/电击法术/源件/电击法术/source_audio/assets/sounds/wwise2016/sfx/shared/misc_gameplay_sfx_audio.bnk",
+              "sha256": "7f2a1c186abfe93ead4f630e0873f889b9733a013c7e59804aaccede697607de"
             }
           ]
         }
       ],
       "source_inputs": [
         {
-          "file": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/aee32039582ef135634548a08b40f62972bb1d166a5dfdec02b097983b1865e4.wav",
-          "sha256": "046f6fc77810abec36ead3c2daffaf0937f49f9d1dfde19f0b38988a94b3e9f4"
+          "file": "ClashLegends-开发素材库/05-已完成/电击法术/源件/2026-10-08-双电击重制/audio/lightning/strike_r1_float.wav",
+          "sha256": "c7195f466d782986e75aa3d8ffeb9516af35a4c7a16c2a94d232fdc0420e6a36"
         }
       ],
       "processing": {
@@ -257,47 +257,49 @@
         "normalization": false,
         "original_ogg": false
       },
-      "duration": 2.3666439909297052,
-      "float_peak": 0.48574280738830566,
-      "verified_by_listening": false
+      "duration": 2.9752607709750567,
+      "float_peak": 0.347686767578125,
+      "verified_by_listening": false,
+      "source_spell": "zap",
+      "source_event": "Play_sfx_Perks_Domination_Electrocute_OnBuffActivate"
     },
     {
       "file": "assets/audio/spells/lightning/strike_r2.wav",
-      "sha256": "a8bbbc3d801437aa83690cc84e229fef117d0aff34fa0c92522c37f301120b60",
+      "sha256": "6b3a20ca8bd0fff7046713327617886d3dcc0ee0609a2702c660ff19c9483e4a",
       "previous_file": "assets/audio/spells/lightning/strike_r2.wav",
-      "previous_sha256": "da74679153eaf12fffc0f27182d54952708ffef0a9ec796ecb8d04e3ebea603a",
+      "previous_sha256": "a8bbbc3d801437aa83690cc84e229fef117d0aff34fa0c92522c37f301120b60",
       "source_events": [
         {
-          "txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/3f3a73a9474ee4a77a3ee90a36af865e6ca37c5b13fe37feacb49de4c63d44be.txtp",
-          "txtp_sha256": "3fdb972287879c2c095500ab07681a316dd1aa215bc0b9f50eb6c33acbb2d546",
+          "txtp": "ClashLegends-开发素材库/05-已完成/电击法术/源件/2026-10-08-双电击重制/audio/lightning/strike_r2.txtp",
+          "txtp_sha256": "a6fdd4d84a03188e535e77e0db11647ee3905073ef2f11c8de66d5357c121976",
           "event_ids": [
-            "1091589659"
+            "662676628"
           ],
           "media_ids": [
-            "940250035",
-            "427423407",
-            "917342522"
+            "160235300",
+            "912016791",
+            "763764212"
           ],
           "dependencies": [
             {
-              "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/电击法术/源件/电击法术/source_audio/assets/sounds/wwise2016/sfx/shared/items_global_audio.bnk",
-              "sha256": "4d1383a5eb902d121df2573775b763d034441d9f08d6ceab195b0561f437fe6a"
+              "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/电击法术/源件/电击法术/source_audio/assets/sounds/wwise2016/sfx/shared/misc_gameplay_sfx_audio.bnk",
+              "sha256": "7f2a1c186abfe93ead4f630e0873f889b9733a013c7e59804aaccede697607de"
             },
             {
-              "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/电击法术/源件/电击法术/source_audio/assets/sounds/wwise2016/sfx/shared/items_global_audio.bnk",
-              "sha256": "4d1383a5eb902d121df2573775b763d034441d9f08d6ceab195b0561f437fe6a"
+              "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/电击法术/源件/电击法术/source_audio/assets/sounds/wwise2016/sfx/shared/misc_gameplay_sfx_audio.bnk",
+              "sha256": "7f2a1c186abfe93ead4f630e0873f889b9733a013c7e59804aaccede697607de"
             },
             {
-              "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/电击法术/源件/电击法术/source_audio/assets/sounds/wwise2016/sfx/shared/items_global_audio.bnk",
-              "sha256": "4d1383a5eb902d121df2573775b763d034441d9f08d6ceab195b0561f437fe6a"
+              "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/电击法术/源件/电击法术/source_audio/assets/sounds/wwise2016/sfx/shared/misc_gameplay_sfx_audio.bnk",
+              "sha256": "7f2a1c186abfe93ead4f630e0873f889b9733a013c7e59804aaccede697607de"
             }
           ]
         }
       ],
       "source_inputs": [
         {
-          "file": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/3f3a73a9474ee4a77a3ee90a36af865e6ca37c5b13fe37feacb49de4c63d44be.wav",
-          "sha256": "aacab5d2bda7eeba8343a7f97ff01eff9c06e69226703ae3d071479c5387e05f"
+          "file": "ClashLegends-开发素材库/05-已完成/电击法术/源件/2026-10-08-双电击重制/audio/lightning/strike_r2_float.wav",
+          "sha256": "af5897b7a4b086bc75431ef124318c9b93d1c97037bec3bf243a47a4c9eb0af5"
         }
       ],
       "processing": {
@@ -311,47 +313,49 @@
         "normalization": false,
         "original_ogg": false
       },
-      "duration": 2.3666439909297052,
-      "float_peak": 0.48611512780189514,
-      "verified_by_listening": false
+      "duration": 2.8910884353741495,
+      "float_peak": 0.337158203125,
+      "verified_by_listening": false,
+      "source_spell": "zap",
+      "source_event": "Play_sfx_Perks_Domination_Electrocute_OnBuffActivate"
     },
     {
       "file": "assets/audio/spells/lightning/strike_r3.wav",
-      "sha256": "b81446b0c13945b25923e542226a5237716abb056810cb0be0068f2e91fd2d1f",
+      "sha256": "5679ca9556f6fe873feb76ad6e78f3e31af5ab132d8fa8cd5ced48fe6f97b8e7",
       "previous_file": "assets/audio/spells/lightning/strike_r3.wav",
-      "previous_sha256": "7461177f3d85cbc1f243a79c9de8de3e1212f037ca3aeede2abab1f465ccf40a",
+      "previous_sha256": "b81446b0c13945b25923e542226a5237716abb056810cb0be0068f2e91fd2d1f",
       "source_events": [
         {
-          "txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/0f13dca4f8a7fa908eaffdc2ef2794f7ec905b09840c27428b21e8b193133ab1.txtp",
-          "txtp_sha256": "7647b8fcf40b233da5979038eb0267fc1d1a05cd55cd181815999187a2fc37dc",
+          "txtp": "ClashLegends-开发素材库/05-已完成/电击法术/源件/2026-10-08-双电击重制/audio/lightning/strike_r3.txtp",
+          "txtp_sha256": "8126bb03c0e2f3504626f05ee0b3db5e9408abccdeb7c41faadfda32fbc99b25",
           "event_ids": [
-            "1091589659"
+            "662676628"
           ],
           "media_ids": [
-            "940250035",
-            "427423407",
-            "917342522"
+            "160235300",
+            "912016791",
+            "763764212"
           ],
           "dependencies": [
             {
-              "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/电击法术/源件/电击法术/source_audio/assets/sounds/wwise2016/sfx/shared/items_global_audio.bnk",
-              "sha256": "4d1383a5eb902d121df2573775b763d034441d9f08d6ceab195b0561f437fe6a"
+              "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/电击法术/源件/电击法术/source_audio/assets/sounds/wwise2016/sfx/shared/misc_gameplay_sfx_audio.bnk",
+              "sha256": "7f2a1c186abfe93ead4f630e0873f889b9733a013c7e59804aaccede697607de"
             },
             {
-              "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/电击法术/源件/电击法术/source_audio/assets/sounds/wwise2016/sfx/shared/items_global_audio.bnk",
-              "sha256": "4d1383a5eb902d121df2573775b763d034441d9f08d6ceab195b0561f437fe6a"
+              "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/电击法术/源件/电击法术/source_audio/assets/sounds/wwise2016/sfx/shared/misc_gameplay_sfx_audio.bnk",
+              "sha256": "7f2a1c186abfe93ead4f630e0873f889b9733a013c7e59804aaccede697607de"
             },
             {
-              "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/电击法术/源件/电击法术/source_audio/assets/sounds/wwise2016/sfx/shared/items_global_audio.bnk",
-              "sha256": "4d1383a5eb902d121df2573775b763d034441d9f08d6ceab195b0561f437fe6a"
+              "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/电击法术/源件/电击法术/source_audio/assets/sounds/wwise2016/sfx/shared/misc_gameplay_sfx_audio.bnk",
+              "sha256": "7f2a1c186abfe93ead4f630e0873f889b9733a013c7e59804aaccede697607de"
             }
           ]
         }
       ],
       "source_inputs": [
         {
-          "file": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/0f13dca4f8a7fa908eaffdc2ef2794f7ec905b09840c27428b21e8b193133ab1.wav",
-          "sha256": "5d48d959292282b3151cdc79636de88a4be6d1a673a44fa21e3888ab27757210"
+          "file": "ClashLegends-开发素材库/05-已完成/电击法术/源件/2026-10-08-双电击重制/audio/lightning/strike_r3_float.wav",
+          "sha256": "fc26e5759dbe01c23d62ef0a3cee3c004704010b5465beb63521da8d74c65b4a"
         }
       ],
       "processing": {
@@ -365,9 +369,11 @@
         "normalization": false,
         "original_ogg": false
       },
-      "duration": 2.3666439909297052,
-      "float_peak": 0.5562231540679932,
-      "verified_by_listening": false
+      "duration": 3.1505895691609975,
+      "float_peak": 0.32952880859375,
+      "verified_by_listening": false,
+      "source_spell": "zap",
+      "source_event": "Play_sfx_Perks_Domination_Electrocute_OnBuffActivate"
     },
     {
       "file": "assets/audio/spells/stasis/OnCast.wav",
@@ -891,41 +897,41 @@
     },
     {
       "file": "assets/audio/spells/zap/strike_r1.wav",
-      "sha256": "e5516440738ff7363b6063a6d62f22d2b01362a59c6245be09aaf81131c01957",
+      "sha256": "9dcc0259551a877e1e8271e7acfa2724fd0a581957ac776d4dd65fd576ad30e6",
       "previous_file": "assets/audio/spells/zap/strike_r1.wav",
-      "previous_sha256": "6f4e68d4cc03947676e4308e593590e5bd1cbd9afa4ab9e0f8e5079a338e41c2",
+      "previous_sha256": "e5516440738ff7363b6063a6d62f22d2b01362a59c6245be09aaf81131c01957",
       "source_events": [
         {
-          "txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/feb16c0227012a4eaf68cdcd68f3e3852dc43ab4bb573ecd1133c787ac42d7e8.txtp",
-          "txtp_sha256": "dc8ed38718a53dd29a789575f3cc0cf1595da954126f3bbd777e216ef77465b0",
+          "txtp": "ClashLegends-开发素材库/05-已完成/电击法术/源件/2026-10-08-双电击重制/audio/zap/strike_r1.txtp",
+          "txtp_sha256": "b662e57edd08cfa1e885e11a7f366050ddcfe54006f9b5ee329bddfc656f98e2",
           "event_ids": [
-            "662676628"
+            "1091589659"
           ],
           "media_ids": [
-            "160235300",
-            "912016791",
-            "763764212"
+            "940250035",
+            "427423407",
+            "917342522"
           ],
           "dependencies": [
             {
-              "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/电击法术/源件/电击法术/source_audio/assets/sounds/wwise2016/sfx/shared/misc_gameplay_sfx_audio.bnk",
-              "sha256": "7f2a1c186abfe93ead4f630e0873f889b9733a013c7e59804aaccede697607de"
+              "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/电击法术/源件/电击法术/source_audio/assets/sounds/wwise2016/sfx/shared/items_global_audio.bnk",
+              "sha256": "4d1383a5eb902d121df2573775b763d034441d9f08d6ceab195b0561f437fe6a"
             },
             {
-              "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/电击法术/源件/电击法术/source_audio/assets/sounds/wwise2016/sfx/shared/misc_gameplay_sfx_audio.bnk",
-              "sha256": "7f2a1c186abfe93ead4f630e0873f889b9733a013c7e59804aaccede697607de"
+              "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/电击法术/源件/电击法术/source_audio/assets/sounds/wwise2016/sfx/shared/items_global_audio.bnk",
+              "sha256": "4d1383a5eb902d121df2573775b763d034441d9f08d6ceab195b0561f437fe6a"
             },
             {
-              "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/电击法术/源件/电击法术/source_audio/assets/sounds/wwise2016/sfx/shared/misc_gameplay_sfx_audio.bnk",
-              "sha256": "7f2a1c186abfe93ead4f630e0873f889b9733a013c7e59804aaccede697607de"
+              "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/电击法术/源件/电击法术/source_audio/assets/sounds/wwise2016/sfx/shared/items_global_audio.bnk",
+              "sha256": "4d1383a5eb902d121df2573775b763d034441d9f08d6ceab195b0561f437fe6a"
             }
           ]
         }
       ],
       "source_inputs": [
         {
-          "file": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/feb16c0227012a4eaf68cdcd68f3e3852dc43ab4bb573ecd1133c787ac42d7e8.wav",
-          "sha256": "aeda976a27612b49a524a345be57dae849cc42b81076c208a5638d93427f0ee8"
+          "file": "ClashLegends-开发素材库/05-已完成/电击法术/源件/2026-10-08-双电击重制/audio/zap/strike_r1_float.wav",
+          "sha256": "e6fdfe2f90e4afcdfdcdff8ad83ca375d531d0cf71fd98b6db491195841c1be5"
         }
       ],
       "processing": {
@@ -939,47 +945,49 @@
         "normalization": false,
         "original_ogg": false
       },
-      "duration": 2.9752607709750567,
-      "float_peak": 0.3477216362953186,
-      "verified_by_listening": false
+      "duration": 2.3666439909297052,
+      "float_peak": 0.4857177734375,
+      "verified_by_listening": false,
+      "source_spell": "lightning",
+      "source_event": "Play_sfx_4646_lightning_large_hit"
     },
     {
       "file": "assets/audio/spells/zap/strike_r2.wav",
-      "sha256": "3a16477ca149053b3732e67fd07e046f338714b97719a7bd6c57308987414793",
+      "sha256": "087fd0b65af86579fce6e9884fa5d8d63d4c488ae5bdbe9a7de45c82c9668b18",
       "previous_file": "assets/audio/spells/zap/strike_r2.wav",
-      "previous_sha256": "02179b294a85b6b56d9e6ffdf2b067a0e5c7182bb427a56ab37ddc2c0c53ae52",
+      "previous_sha256": "3a16477ca149053b3732e67fd07e046f338714b97719a7bd6c57308987414793",
       "source_events": [
         {
-          "txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/af2b7ff4bf9384283adeb61b3835602fcdf2fc619059cd29ab7b642d77efa684.txtp",
-          "txtp_sha256": "a6fdd4d84a03188e535e77e0db11647ee3905073ef2f11c8de66d5357c121976",
+          "txtp": "ClashLegends-开发素材库/05-已完成/电击法术/源件/2026-10-08-双电击重制/audio/zap/strike_r2.txtp",
+          "txtp_sha256": "3fdb972287879c2c095500ab07681a316dd1aa215bc0b9f50eb6c33acbb2d546",
           "event_ids": [
-            "662676628"
+            "1091589659"
           ],
           "media_ids": [
-            "160235300",
-            "912016791",
-            "763764212"
+            "940250035",
+            "427423407",
+            "917342522"
           ],
           "dependencies": [
             {
-              "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/电击法术/源件/电击法术/source_audio/assets/sounds/wwise2016/sfx/shared/misc_gameplay_sfx_audio.bnk",
-              "sha256": "7f2a1c186abfe93ead4f630e0873f889b9733a013c7e59804aaccede697607de"
+              "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/电击法术/源件/电击法术/source_audio/assets/sounds/wwise2016/sfx/shared/items_global_audio.bnk",
+              "sha256": "4d1383a5eb902d121df2573775b763d034441d9f08d6ceab195b0561f437fe6a"
             },
             {
-              "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/电击法术/源件/电击法术/source_audio/assets/sounds/wwise2016/sfx/shared/misc_gameplay_sfx_audio.bnk",
-              "sha256": "7f2a1c186abfe93ead4f630e0873f889b9733a013c7e59804aaccede697607de"
+              "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/电击法术/源件/电击法术/source_audio/assets/sounds/wwise2016/sfx/shared/items_global_audio.bnk",
+              "sha256": "4d1383a5eb902d121df2573775b763d034441d9f08d6ceab195b0561f437fe6a"
             },
             {
-              "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/电击法术/源件/电击法术/source_audio/assets/sounds/wwise2016/sfx/shared/misc_gameplay_sfx_audio.bnk",
-              "sha256": "7f2a1c186abfe93ead4f630e0873f889b9733a013c7e59804aaccede697607de"
+              "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/电击法术/源件/电击法术/source_audio/assets/sounds/wwise2016/sfx/shared/items_global_audio.bnk",
+              "sha256": "4d1383a5eb902d121df2573775b763d034441d9f08d6ceab195b0561f437fe6a"
             }
           ]
         }
       ],
       "source_inputs": [
         {
-          "file": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/af2b7ff4bf9384283adeb61b3835602fcdf2fc619059cd29ab7b642d77efa684.wav",
-          "sha256": "6a841a155e0dd28a2854a10f35daffa9643043debe2827e4dc9c1741ab4faedd"
+          "file": "ClashLegends-开发素材库/05-已完成/电击法术/源件/2026-10-08-双电击重制/audio/zap/strike_r2_float.wav",
+          "sha256": "0653bc48e4a45357add0d474ef0eed281715f357b443600982c4521599457d08"
         }
       ],
       "processing": {
@@ -993,47 +1001,49 @@
         "normalization": false,
         "original_ogg": false
       },
-      "duration": 2.8910884353741495,
-      "float_peak": 0.3371714949607849,
-      "verified_by_listening": false
+      "duration": 2.3666439909297052,
+      "float_peak": 0.486083984375,
+      "verified_by_listening": false,
+      "source_spell": "lightning",
+      "source_event": "Play_sfx_4646_lightning_large_hit"
     },
     {
       "file": "assets/audio/spells/zap/strike_r3.wav",
-      "sha256": "a45de3a4b0a9aef7278d065b6c281aed9c842577b6c6f72eb0a8eb5213276574",
+      "sha256": "37620acc0576c267307fa66f65fcc6b8349c76fdb0d98f87bcdf0a41f049f5ac",
       "previous_file": "assets/audio/spells/zap/strike_r3.wav",
-      "previous_sha256": "c965653469a033e3bd59f9b2c38ece58f9d1a49faf359c3a7b8082e696f9ff84",
+      "previous_sha256": "a45de3a4b0a9aef7278d065b6c281aed9c842577b6c6f72eb0a8eb5213276574",
       "source_events": [
         {
-          "txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/3c20874000a952aa9ac59d7dd37b44f0e88654858907ac1dacb0a633ba58bae2.txtp",
-          "txtp_sha256": "8126bb03c0e2f3504626f05ee0b3db5e9408abccdeb7c41faadfda32fbc99b25",
+          "txtp": "ClashLegends-开发素材库/05-已完成/电击法术/源件/2026-10-08-双电击重制/audio/zap/strike_r3.txtp",
+          "txtp_sha256": "7647b8fcf40b233da5979038eb0267fc1d1a05cd55cd181815999187a2fc37dc",
           "event_ids": [
-            "662676628"
+            "1091589659"
           ],
           "media_ids": [
-            "160235300",
-            "912016791",
-            "763764212"
+            "940250035",
+            "427423407",
+            "917342522"
           ],
           "dependencies": [
             {
-              "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/电击法术/源件/电击法术/source_audio/assets/sounds/wwise2016/sfx/shared/misc_gameplay_sfx_audio.bnk",
-              "sha256": "7f2a1c186abfe93ead4f630e0873f889b9733a013c7e59804aaccede697607de"
+              "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/电击法术/源件/电击法术/source_audio/assets/sounds/wwise2016/sfx/shared/items_global_audio.bnk",
+              "sha256": "4d1383a5eb902d121df2573775b763d034441d9f08d6ceab195b0561f437fe6a"
             },
             {
-              "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/电击法术/源件/电击法术/source_audio/assets/sounds/wwise2016/sfx/shared/misc_gameplay_sfx_audio.bnk",
-              "sha256": "7f2a1c186abfe93ead4f630e0873f889b9733a013c7e59804aaccede697607de"
+              "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/电击法术/源件/电击法术/source_audio/assets/sounds/wwise2016/sfx/shared/items_global_audio.bnk",
+              "sha256": "4d1383a5eb902d121df2573775b763d034441d9f08d6ceab195b0561f437fe6a"
             },
             {
-              "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/电击法术/源件/电击法术/source_audio/assets/sounds/wwise2016/sfx/shared/misc_gameplay_sfx_audio.bnk",
-              "sha256": "7f2a1c186abfe93ead4f630e0873f889b9733a013c7e59804aaccede697607de"
+              "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/电击法术/源件/电击法术/source_audio/assets/sounds/wwise2016/sfx/shared/items_global_audio.bnk",
+              "sha256": "4d1383a5eb902d121df2573775b763d034441d9f08d6ceab195b0561f437fe6a"
             }
           ]
         }
       ],
       "source_inputs": [
         {
-          "file": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/3c20874000a952aa9ac59d7dd37b44f0e88654858907ac1dacb0a633ba58bae2.wav",
-          "sha256": "c200e311d82ae6fa4126eb60f5542da19bfce1c0ba075e328a443499a424ed9e"
+          "file": "ClashLegends-开发素材库/05-已完成/电击法术/源件/2026-10-08-双电击重制/audio/zap/strike_r3_float.wav",
+          "sha256": "f0c95f378eb68f6be3e1d2d17210b250ee57440138b09f7b0c8ef2975ffd45e6"
         }
       ],
       "processing": {
@@ -1047,9 +1057,11 @@
         "normalization": false,
         "original_ogg": false
       },
-      "duration": 3.1505895691609975,
-      "float_peak": 0.3295643925666809,
-      "verified_by_listening": false
+      "duration": 2.3666439909297052,
+      "float_peak": 0.556182861328125,
+      "verified_by_listening": false,
+      "source_spell": "lightning",
+      "source_event": "Play_sfx_4646_lightning_large_hit"
     },
     {
       "file": "assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack2_oncast_1.wav",

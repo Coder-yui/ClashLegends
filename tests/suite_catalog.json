@@ -448,13 +448,6 @@
     "group": "cards"
   },
   {
-    "id": "SpellProjectionSuite",
-    "script": "res://tests/suites/presentation/spell_projection_suite.gd",
-    "method": "run",
-    "scene": "battle",
-    "group": "presentation"
-  },
-  {
     "id": "ExplosiveCaskSuite",
     "script": "res://tests/suites/cards/explosive_cask_suite.gd",
     "method": "run",
@@ -464,6 +457,20 @@
   {
     "id": "CastNoticeSuite",
     "script": "res://tests/suites/presentation/cast_notice_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "presentation"
+  },
+  {
+    "id": "SpellProjectionSuite",
+    "script": "res://tests/suites/presentation/spell_projection_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "presentation"
+  },
+  {
+    "id": "SpellWarmupSuite",
+    "script": "res://tests/suites/presentation/spell_warmup_suite.gd",
     "method": "run",
     "scene": "battle",
     "group": "presentation"

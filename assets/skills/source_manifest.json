@@ -237,18 +237,18 @@
     "skill_index": 0,
     "path": "res://assets/skills/zap_0.png",
     "source_package": "/Users/czh/Downloads/LOL_Asset_Source/LeagueClient/Plugins/rcp-be-lol-game-data/default-assets2.wad",
-    "source_path": "plugins/rcp-be-lol-game-data/global/default/v1/perk-images/styles/domination/electrocute/electrocute.png",
-    "source_sha256": "189813a541c72d9f08aadc3a0c81d32ab63199f5ef035c5bab9b795bbca07014",
-    "sha256": "189813a541c72d9f08aadc3a0c81d32ab63199f5ef035c5bab9b795bbca07014"
+    "source_path": "plugins/rcp-be-lol-game-data/global/default/assets/items/icons2d/4646_stormsurge.png",
+    "source_sha256": "e1c8c11a0851d6159ff8d238f7a62608e594179c2c3d3ee323e3c2aa0e08ea25",
+    "sha256": "e1c8c11a0851d6159ff8d238f7a62608e594179c2c3d3ee323e3c2aa0e08ea25"
   },
   {
     "card": "lightning",
     "skill_index": 0,
     "path": "res://assets/skills/lightning_0.png",
     "source_package": "/Users/czh/Downloads/LOL_Asset_Source/LeagueClient/Plugins/rcp-be-lol-game-data/default-assets2.wad",
-    "source_path": "plugins/rcp-be-lol-game-data/global/default/assets/items/icons2d/4646_stormsurge.png",
-    "source_sha256": "e1c8c11a0851d6159ff8d238f7a62608e594179c2c3d3ee323e3c2aa0e08ea25",
-    "sha256": "e1c8c11a0851d6159ff8d238f7a62608e594179c2c3d3ee323e3c2aa0e08ea25"
+    "source_path": "plugins/rcp-be-lol-game-data/global/default/v1/perk-images/styles/domination/electrocute/electrocute.png",
+    "source_sha256": "189813a541c72d9f08aadc3a0c81d32ab63199f5ef035c5bab9b795bbca07014",
+    "sha256": "189813a541c72d9f08aadc3a0c81d32ab63199f5ef035c5bab9b795bbca07014"
   },
   {
     "card": "lulu",
@@ -603,5 +603,23 @@
     "source_path": "assets/characters/nocturne/hud/icons2d/nocturne_umbrablades.dds",
     "source_sha256": "1e29cdfed518a5afc1ed09aa002060a9f59080ba46e4defd5180c5170aa07096",
     "sha256": "da5490fffea0a272d14e395b6cf1b81d3093feae4abd6035d437bcf98699152e"
+  },
+  {
+    "card": "explosive_cask",
+    "skill_index": 0,
+    "path": "res://assets/skills/explosive_cask_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Gragas.wad.client",
+    "source_path": "assets/characters/gragas/hud/icons2d/gragasexplosivecask.dds",
+    "source_sha256": "0d4f3160732ac65ca99ab00879ac57eaa6d39e97d88773075be53def8e559ca3",
+    "sha256": "fdc83e0ed6abf219c9fa26a6f0bd75a0c0f453b0392d00c82bc45fe20b9aeccd"
+  },
+  {
+    "card": "mirror",
+    "skill_index": 0,
+    "path": "res://assets/skills/mirror_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Leblanc.wad.client",
+    "source_path": "assets/characters/leblanc/hud/icons2d/leblancr.dds",
+    "source_sha256": "541a80207c66bab29d8e46125b08e2bf5466ee844a5843423327ce212a6cb94c",
+    "sha256": "8e45f7636e12043bb14fba01b1d8c45b5400806fc5f036fbe2bfb091ef6a9ddd"
   }
 ]

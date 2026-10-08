@@ -452,6 +452,8 @@ func _prepare_match_assets() -> void:
 	if is_instance_valid(_battle_presentation) and not game_over and _resources.cards.has("corrosion"):
 		await _battle_presentation._corrosion_ground.prepare_visual(_battle_presentation._camera, float(CardDB.get_card("corrosion").radius), func(): return game_over)
 
+	if is_instance_valid(_battle_presentation) and not game_over:
+		await _battle_presentation.spell_warmup.prepare(_resources.cards, _battle_presentation._world_root, _battle_presentation._camera, func(): return game_over)
 
 func _fail_preparation(errors: PackedStringArray) -> void:
 	for message in errors: push_error(message)
