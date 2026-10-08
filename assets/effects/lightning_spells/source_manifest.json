@@ -1,103 +1,74 @@
 {
   "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Global.wad.client",
-  "audio_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Common.wad.client",
+  "spell_sources": {
+    "zap": {
+      "system": "Items/4646/Particles/4646_Lightning_Bolt_Large",
+      "vfx_manifest": "stormsurge/source_manifest.json",
+      "emitters": 17,
+      "presentation_duration": 2.1,
+      "audio_event": "Play_sfx_4646_lightning_large_hit"
+    },
+    "lightning": {
+      "system": "Perks/Styles/Domination/Electrocute/Particles/Perks_Electrocute_AOE",
+      "vfx_manifest": "electrocute/source_manifest.json",
+      "emitters": 8,
+      "presentation_duration": 1.1,
+      "audio_event": "Play_sfx_Perks_Domination_Electrocute_OnBuffActivate"
+    }
+  },
+  "adaptation": "Native emitter simulation sampled at 120 fps, seed 79; ground size is calibrated independently from approximately 320px camera-projected main bolt height. No gameplay changes. Fixed random sample and Godot blend/depth differences remain.",
+  "audio_processing": "Original event gains, wwiser -gv=0dB, PCM16 mono 44100Hz; no trimming, normalization or post gain. Detailed source hashes in assets/audio/original_gain_manifest.json.",
   "files": [
     {
       "file": "assets/audio/spells/zap/strike_r1.wav",
-      "source": "ClashLegends-开发素材库/03-制作中/电击法术/audio_electrocute/wav/Play_sfx_Perks_Domination_Electrocute_OnBuffActivate {r1}.wav",
-      "event": "Play_sfx_Perks_Domination_Electrocute_OnBuffActivate",
-      "sha256": "6f4e68d4cc03947676e4308e593590e5bd1cbd9afa4ab9e0f8e5079a338e41c2",
-      "source_sha256": "a056fa33451a325b76515bb171d6d0b7004a23c85d1e967198ff1fa4986d6ae4"
+      "event": "Play_sfx_4646_lightning_large_hit",
+      "sha256": "9dcc0259551a877e1e8271e7acfa2724fd0a581957ac776d4dd65fd576ad30e6"
     },
     {
       "file": "assets/audio/spells/zap/strike_r2.wav",
-      "source": "ClashLegends-开发素材库/03-制作中/电击法术/audio_electrocute/wav/Play_sfx_Perks_Domination_Electrocute_OnBuffActivate {r2}.wav",
-      "event": "Play_sfx_Perks_Domination_Electrocute_OnBuffActivate",
-      "sha256": "02179b294a85b6b56d9e6ffdf2b067a0e5c7182bb427a56ab37ddc2c0c53ae52",
-      "source_sha256": "c65803df62961a1ca262961d53ca1cd3c69a84a34749c9b4b462b1cf7900ae61"
+      "event": "Play_sfx_4646_lightning_large_hit",
+      "sha256": "087fd0b65af86579fce6e9884fa5d8d63d4c488ae5bdbe9a7de45c82c9668b18"
     },
     {
       "file": "assets/audio/spells/zap/strike_r3.wav",
-      "source": "ClashLegends-开发素材库/03-制作中/电击法术/audio_electrocute/wav/Play_sfx_Perks_Domination_Electrocute_OnBuffActivate {r3}.wav",
-      "event": "Play_sfx_Perks_Domination_Electrocute_OnBuffActivate",
-      "sha256": "c965653469a033e3bd59f9b2c38ece58f9d1a49faf359c3a7b8082e696f9ff84",
-      "source_sha256": "111c7b2f91318ef98b7f810c86f269b330e484c7feff0a35dde4a5afb22b2af7"
-    },
-    {
-      "file": "assets/skills/zap_0.png",
-      "source": "ClashLegends-开发素材库/03-制作中/电击法术/source_icons/plugins/rcp-be-lol-game-data/global/default/v1/perk-images/styles/domination/electrocute/electrocute.png",
-      "sha256": "189813a541c72d9f08aadc3a0c81d32ab63199f5ef035c5bab9b795bbca07014",
-      "source_sha256": "189813a541c72d9f08aadc3a0c81d32ab63199f5ef035c5bab9b795bbca07014"
+      "event": "Play_sfx_4646_lightning_large_hit",
+      "sha256": "37620acc0576c267307fa66f65fcc6b8349c76fdb0d98f87bcdf0a41f049f5ac"
     },
     {
       "file": "assets/audio/spells/lightning/strike_r1.wav",
-      "source": "ClashLegends-开发素材库/03-制作中/电击法术/audio_stormsurge/wav/Play_sfx_4646_lightning_large_hit {r1}.wav",
-      "event": "Play_sfx_4646_lightning_large_hit",
-      "sha256": "0951c83ba346cba8af7fa801e833cfe4a936648cda14b574dd7fb2c543a637ce",
-      "source_sha256": "33fcb01a605017c30ddbe482424bf65b40483c36281adc95f46b11b4b6a5201f"
+      "event": "Play_sfx_Perks_Domination_Electrocute_OnBuffActivate",
+      "sha256": "223efe4f341a41a99a96f354b32d6647bdad451feb2a75b1b763584d99e2fd68"
     },
     {
       "file": "assets/audio/spells/lightning/strike_r2.wav",
-      "source": "ClashLegends-开发素材库/03-制作中/电击法术/audio_stormsurge/wav/Play_sfx_4646_lightning_large_hit {r2}.wav",
-      "event": "Play_sfx_4646_lightning_large_hit",
-      "sha256": "da74679153eaf12fffc0f27182d54952708ffef0a9ec796ecb8d04e3ebea603a",
-      "source_sha256": "03dd22d723bc655ffbd32471f4cf0276e2e67399f78e562229c051cfe41c2261"
+      "event": "Play_sfx_Perks_Domination_Electrocute_OnBuffActivate",
+      "sha256": "6b3a20ca8bd0fff7046713327617886d3dcc0ee0609a2702c660ff19c9483e4a"
     },
     {
       "file": "assets/audio/spells/lightning/strike_r3.wav",
-      "source": "ClashLegends-开发素材库/03-制作中/电击法术/audio_stormsurge/wav/Play_sfx_4646_lightning_large_hit {r3}.wav",
-      "event": "Play_sfx_4646_lightning_large_hit",
-      "sha256": "7461177f3d85cbc1f243a79c9de8de3e1212f037ca3aeede2abab1f465ccf40a",
-      "source_sha256": "8939f8530fd6d2bbba48f44a5da0fbfa30bc547eb27364524490dc7cac6bfc1d"
+      "event": "Play_sfx_Perks_Domination_Electrocute_OnBuffActivate",
+      "sha256": "5679ca9556f6fe873feb76ad6e78f3e31af5ab132d8fa8cd5ced48fe6f97b8e7"
+    },
+    {
+      "file": "assets/cards/zap_loading.png",
+      "sha256": "20a720ba2172a7d34a486a6f95354fa7a4665de88759308b1420f0855643e92d",
+      "source": "imagegen 2026-10-08; ClashLegends-开发素材库/05-已完成/电击法术/源件/2026-10-08-双电击重制/card_art"
+    },
+    {
+      "file": "assets/skills/zap_0.png",
+      "sha256": "e1c8c11a0851d6159ff8d238f7a62608e594179c2c3d3ee323e3c2aa0e08ea25",
+      "source": "assets/skills/source_manifest.json"
+    },
+    {
+      "file": "assets/cards/lightning_loading.png",
+      "sha256": "98724ecaceae01edb421a1f459d90f95d461bd512f3f0f3f873514bde6ac15e3",
+      "source": "imagegen 2026-10-08; ClashLegends-开发素材库/05-已完成/电击法术/源件/2026-10-08-双电击重制/card_art"
     },
     {
       "file": "assets/skills/lightning_0.png",
-      "source": "ClashLegends-开发素材库/03-制作中/电击法术/source_icons/plugins/rcp-be-lol-game-data/global/default/assets/items/icons2d/4646_stormsurge.png",
-      "sha256": "e1c8c11a0851d6159ff8d238f7a62608e594179c2c3d3ee323e3c2aa0e08ea25",
-      "source_sha256": "e1c8c11a0851d6159ff8d238f7a62608e594179c2c3d3ee323e3c2aa0e08ea25"
-    },
-    {
-      "file": "assets/effects/lightning_spells/perks_electrocute_beams.png",
-      "source": "ClashLegends-开发素材库/03-制作中/电击法术/source_vfx/assets/perks/styles/domination/electrocute/particles/perks_electrocute_beams.tex",
-      "sha256": "ab6a76f420b751816a4de92e1c41a282fbba861bed5ed29d34798f0500bc2815",
-      "source_sha256": "f2c9bc9720a6f3ea4ace9e1697771f82d6461a7f3b91c4dc0dd0f5aa74c34dea"
-    },
-    {
-      "file": "assets/effects/lightning_spells/perks_electrocute_beams_flash.png",
-      "source": "ClashLegends-开发素材库/03-制作中/电击法术/source_vfx/assets/perks/styles/domination/electrocute/particles/perks_electrocute_beams_flash.tex",
-      "sha256": "ea5a9b193a02c2054b5931ae5d7f83912f62c14b20818dd307c93c3aca12c6d3",
-      "source_sha256": "739d10c82c21e25997bd168c1585f3a23154889468265bfe69599ebc5d68b42f"
-    },
-    {
-      "file": "assets/effects/lightning_spells/perks_electrocute_arcs_4x4.png",
-      "source": "ClashLegends-开发素材库/03-制作中/电击法术/source_vfx/assets/perks/styles/domination/electrocute/particles/perks_electrocute_arcs_4x4.tex",
-      "sha256": "ec276b7f34f8e158976a6c3bbcd784b10bf509b89f8d8cbb3c8ed850d8b8bfd0",
-      "source_sha256": "6736e291c165ac66f5ae67e9820eea846379ce01c74a3f8871d9015e3c5ac33d"
-    },
-    {
-      "file": "assets/effects/lightning_spells/perks_electrocute_scorch.png",
-      "source": "ClashLegends-开发素材库/03-制作中/电击法术/source_vfx/assets/perks/styles/domination/electrocute/particles/perks_electrocute_scorch.tex",
-      "sha256": "2997c7cf79b98f9031331f1ea931bae6bd33af9ce53d40860839943bde03f50e",
-      "source_sha256": "c4716d43ad31e5601d506cd6283eb4fd86a35e99f893e827ec9f7a361cbb9bb2"
-    },
-    {
-      "file": "assets/effects/lightning_spells/leesin_skin31_e_lightning03.png",
-      "source": "ClashLegends-开发素材库/03-制作中/电击法术/source_vfx/assets/items/4646/particles/leesin_skin31_e_lightning03.tex",
-      "sha256": "ab7159c211aaa0f33f09a97fe57bc15d20406153bb863dcdbd75afea902acc41",
-      "source_sha256": "60e35927dbfd7efcb2f665f16302270b0c9e09024a43644c9b79cd71ac638a15"
-    },
-    {
-      "file": "assets/effects/lightning_spells/leesin_skin31_e_groundlightning_01.png",
-      "source": "ClashLegends-开发素材库/03-制作中/电击法术/source_vfx/assets/items/4646/particles/leesin_skin31_e_groundlightning_01.tex",
-      "sha256": "aee132cce6b01c3e069e458ce263398bc569e3ead03a875ff37791a0c5133511",
-      "source_sha256": "17c5e8ec4b6b7f1c8d22b64c0e8eeba2237340ffceeed63565f92b77a811b9c7"
-    },
-    {
-      "file": "assets/effects/lightning_spells/leesin_skin31_e_shockring.png",
-      "source": "ClashLegends-开发素材库/03-制作中/电击法术/source_vfx/assets/items/4646/particles/leesin_skin31_e_shockring.tex",
-      "sha256": "a31853ad8d8e81fc338291f23d9a3b595b3018cc963a624c9bcf1c464655d9d5",
-      "source_sha256": "8973c8c6349070c7b08990df4addd95e9b6a31f2ffac75148346a9308612d94d"
+      "sha256": "189813a541c72d9f08aadc3a0c81d32ab63199f5ef035c5bab9b795bbca07014",
+      "source": "assets/skills/source_manifest.json"
     }
   ],
-  "audio_processing": "wwiser random event reconstruction; embedded BNK references resolved to identical WEM; vgmstream float render then ffmpeg PCM16 44100Hz mono. Electrocute all variants uniformly -3dB before PCM16 conversion to prevent source float peaks +1.36 to +1.83dB clipping. Stormsurge unchanged. No trimming or per-variant normalization."
+  "visibility_adaptation": "No scene depth test or soft-depth fade; ordered overlay priorities 100+, clip underground bolt tail. Bolt width 1.8x. Stormsurge ground layers flattened and inverse-projected to the circular authoritative area."
 }

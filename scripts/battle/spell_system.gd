@@ -306,7 +306,9 @@ func _strike_lightning_delivery(cast_data: Dictionary) -> void:
 
 func show_lightning(kind: String, position: Vector2, radius: float) -> void:
 	if not _controller.has_presentation(): return
-	lightning_effects.append({"kind": kind, "pos": position, "radius": radius, "duration": 0.6, "timer": 0.6})
+	# 风暴狂涌地面焦痕约2秒，电刑烟影约1秒；仅影响表现数组寿命。
+	var duration := 2.1 if kind == "zap" else 1.1
+	lightning_effects.append({"kind": kind, "pos": position, "radius": radius, "duration": duration, "timer": duration})
 
 
 func show_lightning_area(kind: String, position: Vector2, radius: float, duration: float, team: int) -> void:

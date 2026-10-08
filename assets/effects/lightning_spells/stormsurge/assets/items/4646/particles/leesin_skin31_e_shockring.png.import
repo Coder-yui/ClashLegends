@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cy6kvebwisvf3"
-path="res://.godot/imported/perks_electrocute_arcs_4x4.png-cc3e5a7b305287b054f8a37b624fdba7.ctex"
+uid="uid://c3cefppa58gft"
+path="res://.godot/imported/leesin_skin31_e_shockring.png-77ebacb5ed40b374085fcde1268b473f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/effects/lightning_spells/perks_electrocute_arcs_4x4.png"
-dest_files=["res://.godot/imported/perks_electrocute_arcs_4x4.png-cc3e5a7b305287b054f8a37b624fdba7.ctex"]
+source_file="res://assets/effects/lightning_spells/stormsurge/assets/items/4646/particles/leesin_skin31_e_shockring.png"
+dest_files=["res://.godot/imported/leesin_skin31_e_shockring.png-77ebacb5ed40b374085fcde1268b473f.ctex"]
 
 [params]
 

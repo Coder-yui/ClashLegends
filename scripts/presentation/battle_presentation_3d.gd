@@ -11,6 +11,7 @@ func visual_team(team: int) -> int:
 var spells: RefCounted
 var _freeze_ground: Node3D
 var _corrosion_ground: Node3D
+var _lightning_effect: Node3D
 
 var _viewport: SubViewport
 var _world_root: Node3D
@@ -20,6 +21,8 @@ var pending_deployments: Callable
 var _pre_deploy_views: Dictionary = {}
 
 func _process(delta: float) -> void:
+	if _lightning_effect != null and spells != null:
+		_lightning_effect.sync_effects(spells, _camera)
 	if _freeze_ground != null and spells != null:
 		_freeze_ground.sync_effects(spells, _camera)
 	if _corrosion_ground != null and spells != null:
@@ -82,6 +85,8 @@ func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void
 	_world_root.add_child(_freeze_ground)
 	_corrosion_ground = preload("res://scripts/presentation/corrosion_ground_3d.gd").new()
 	_world_root.add_child(_corrosion_ground)
+	_lightning_effect = preload("res://scripts/presentation/lightning_spell_effect_3d.gd").new()
+	_world_root.add_child(_lightning_effect)
 
 	# 地图与模型共享深度；2D 部署提示、脚下标记与血条绘制在视口上方。
 	var overlay := Sprite2D.new()

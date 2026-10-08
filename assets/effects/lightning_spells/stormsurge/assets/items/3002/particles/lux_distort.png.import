@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b7kslrbkuju8c"
-path="res://.godot/imported/leesin_skin31_e_lightning03.png-243dc4b05b26c23b95445f096b8f0340.ctex"
+uid="uid://da24tff7e34ud"
+path="res://.godot/imported/lux_distort.png-9a854b11b2903ece6161caa11d0f6f59.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/effects/lightning_spells/leesin_skin31_e_lightning03.png"
-dest_files=["res://.godot/imported/leesin_skin31_e_lightning03.png-243dc4b05b26c23b95445f096b8f0340.ctex"]
+source_file="res://assets/effects/lightning_spells/stormsurge/assets/items/3002/particles/lux_distort.png"
+dest_files=["res://.godot/imported/lux_distort.png-9a854b11b2903ece6161caa11d0f6f59.ctex"]
 
 [params]
 

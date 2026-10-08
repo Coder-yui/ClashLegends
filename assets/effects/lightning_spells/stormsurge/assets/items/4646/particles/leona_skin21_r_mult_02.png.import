@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cikw2iftynawn"
-path="res://.godot/imported/perks_electrocute_scorch.png-c3bb1af68746d061070d6f69170a89f8.ctex"
+uid="uid://cmvrcui145amk"
+path="res://.godot/imported/leona_skin21_r_mult_02.png-ff551b5b455a5a4a4584f0d54ed54b82.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/effects/lightning_spells/perks_electrocute_scorch.png"
-dest_files=["res://.godot/imported/perks_electrocute_scorch.png-c3bb1af68746d061070d6f69170a89f8.ctex"]
+source_file="res://assets/effects/lightning_spells/stormsurge/assets/items/4646/particles/leona_skin21_r_mult_02.png"
+dest_files=["res://.godot/imported/leona_skin21_r_mult_02.png-ff551b5b455a5a4a4584f0d54ed54b82.ctex"]
 
 [params]
 

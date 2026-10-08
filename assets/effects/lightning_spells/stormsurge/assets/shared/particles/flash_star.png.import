@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cp41cqe4qu2lq"
-path="res://.godot/imported/perks_electrocute_beams.png-b14ea37d2b2f1cdd774d74e448bd03da.ctex"
+uid="uid://dgxp3dxjbam8x"
+path="res://.godot/imported/flash_star.png-67b05ce7a08fda1142a99393aa0a04e6.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/effects/lightning_spells/perks_electrocute_beams.png"
-dest_files=["res://.godot/imported/perks_electrocute_beams.png-b14ea37d2b2f1cdd774d74e448bd03da.ctex"]
+source_file="res://assets/effects/lightning_spells/stormsurge/assets/shared/particles/flash_star.png"
+dest_files=["res://.godot/imported/flash_star.png-67b05ce7a08fda1142a99393aa0a04e6.ctex"]
 
 [params]
 

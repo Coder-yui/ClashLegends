@@ -1,0 +1,153 @@
+{
+  "system": "Items/4646/Particles/4646_Lightning_Bolt_Large",
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Global.wad.client",
+  "source_entry": "items",
+  "source_binary_sha256": "41d52e6bbd40aa09658192e6efe1e17419a2b2d5cd802ea863a8c10809824b1b",
+  "assets": {
+    "assets/items/3002/particles/lux_distort.tex": {
+      "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Global.wad.client",
+      "source_sha256": "41241eafa700d7aa8a280bc7d943c090005324d146d33777a5b8b4bda3ab977b",
+      "output": "assets/items/3002/particles/lux_distort.png",
+      "output_sha256": "9d1c0afae3a4040376460a1809143487b39bafa5e0d59448ca4c22bcde7dadd9"
+    },
+    "assets/items/4646/particles/leona_skin21_r_16.tex": {
+      "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Global.wad.client",
+      "source_sha256": "2a226f5df1938d2ddaa3272f8669365137d1b1b699c0a78dadee5c7b8df44fc6",
+      "output": "assets/items/4646/particles/leona_skin21_r_16.png",
+      "output_sha256": "9a440596c96e626cb4784f11d21d8973234a47dfa318db3ce5a3a7c941671560"
+    },
+    "assets/items/4646/particles/leona_skin21_e_08.tex": {
+      "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Global.wad.client",
+      "source_sha256": "431c8e67e739d36b4c860a1a2a67988a446db5d0ce7332460645cb60feabf48c",
+      "output": "assets/items/4646/particles/leona_skin21_e_08.png",
+      "output_sha256": "dc3e3e9b57e766c5c4e42adac0fe1a3277b0c6fc1151712ba2462a5d07c87f15"
+    },
+    "assets/items/4646/particles/leona_skin21_r_mult_02.tex": {
+      "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Global.wad.client",
+      "source_sha256": "a9a5d62aa658314d89b5f4985e51829f56fafab493ba0c7a809642776fc01640",
+      "output": "assets/items/4646/particles/leona_skin21_r_mult_02.png",
+      "output_sha256": "90f37be5896ea9a8d345e1feb597f230a66204f0ec6e101fb22de1f54a0b5fb0"
+    },
+    "assets/shared/particles/base_praxis.scb": {
+      "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Global.wad.client",
+      "source_sha256": "7312a539bc14302cbf7835ea973147f7776b6bfbe2f1b0789e5a0cee5e53908c",
+      "output": "assets/shared/particles/base_praxis.mesh.json",
+      "output_sha256": "24c4bf1a52575820a9edfbf551412bdc112497bac7a6ddb9efcaffc6e2466e2f"
+    },
+    "assets/items/4646/particles/kogmaw_skin37_particles_2_0.tex": {
+      "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Global.wad.client",
+      "source_sha256": "bf7d1cfc98c8a31596bb9df27be928e079dd827dba285c0cf1f3c9ab61a71f13",
+      "output": "assets/items/4646/particles/kogmaw_skin37_particles_2_0.png",
+      "output_sha256": "043d8056360ad77bc3963d9a6de20e8d6d6377873f414f9789134be5ac85d220"
+    },
+    "assets/items/3087/particles/jayce_base_alpha_backdrop.tex": {
+      "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Global.wad.client",
+      "source_sha256": "d8e01732230affa017c1320e4d48e03b7f89ba4bcb4e45cd65822a78ef704d4e",
+      "output": "assets/items/3087/particles/jayce_base_alpha_backdrop.png",
+      "output_sha256": "e85d46ff82c14fed306bbb1c7741573bb77e0ca104903076b1be6913eeccafbc"
+    },
+    "assets/shared/particles/dissolve_cloudy_01.tex": {
+      "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Global.wad.client",
+      "source_sha256": "e2fc4e3d8c66f015d89ec85998d3fc0aeba0d77161c3ce24e99591efdfa6914d",
+      "output": "assets/shared/particles/dissolve_cloudy_01.png",
+      "output_sha256": "5c91c3d7573ae0a06e1440d61cb563a66f6e954fe4016ef67c65578aea2d4eb3"
+    },
+    "assets/items/4646/particles/illaoi_skin02_r_ground_burn.tex": {
+      "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Global.wad.client",
+      "source_sha256": "06e9072ef202cac80e809d31276422be0e13a4b78ef513deccface976351cce3",
+      "output": "assets/items/4646/particles/illaoi_skin02_r_ground_burn.png",
+      "output_sha256": "f425727f2bca80cae770f985e42b6e714a1a5884b9cc40c8ce8e780a3cc0f3c3"
+    },
+    "assets/items/4646/particles/leesin_skin31_e_shockring.tex": {
+      "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Global.wad.client",
+      "source_sha256": "8973c8c6349070c7b08990df4addd95e9b6a31f2ffac75148346a9308612d94d",
+      "output": "assets/items/4646/particles/leesin_skin31_e_shockring.png",
+      "output_sha256": "a31853ad8d8e81fc338291f23d9a3b595b3018cc963a624c9bcf1c464655d9d5"
+    },
+    "assets/characters/sru_baron/skins/base/particles/sru_baron_base_ba_stormmesh01.scb": {
+      "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Global.wad.client",
+      "source_sha256": "0d2a606b3f7dac4f32f8989e9f7a147a438079097aed06ccd528825ec86a59d8",
+      "output": "assets/characters/sru_baron/skins/base/particles/sru_baron_base_ba_stormmesh01.mesh.json",
+      "output_sha256": "3bcf441ab39720f7939f66192c04782b74a2012d98aae9883d4422be4f917108"
+    },
+    "assets/items/4646/particles/leesin_skin31_e_cloudtxt03.tex": {
+      "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Global.wad.client",
+      "source_sha256": "fa8c8fa41dad2a01b40f046adde31251bbe23155fffbef7ebde29db0f0a4c1a9",
+      "output": "assets/items/4646/particles/leesin_skin31_e_cloudtxt03.png",
+      "output_sha256": "0e762d58f5538b2a971a228424185d99890297ab85593935435714e1e3373c14"
+    },
+    "assets/characters/sru_dragon_hextech/skins/base/particles/sru_dragon_hextech_base_emote_sidearc_1.scb": {
+      "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Global.wad.client",
+      "source_sha256": "e9da972714b1026c931e350290c79e6c7faee2c489aceb1d51d315a830efc2c2",
+      "output": "assets/characters/sru_dragon_hextech/skins/base/particles/sru_dragon_hextech_base_emote_sidearc_1.mesh.json",
+      "output_sha256": "b1334731041a5dad9599475dcb50dfb22f370c04c4dfac6a57f09de1bbaef691"
+    },
+    "assets/items/4646/particles/leesin_skin31_e_wispmult.tex": {
+      "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Global.wad.client",
+      "source_sha256": "8e5a448763fb75f10a1dd00e2017759e2d5b0863e69cdefcbac1f93e667addd7",
+      "output": "assets/items/4646/particles/leesin_skin31_e_wispmult.png",
+      "output_sha256": "dcc924413dcca2fe31481b78f823bd8e6c6873b27eef1287013ce865e74da236"
+    },
+    "assets/items/4646/particles/leesin_skin31_e_lightning03.tex": {
+      "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Global.wad.client",
+      "source_sha256": "60e35927dbfd7efcb2f665f16302270b0c9e09024a43644c9b79cd71ac638a15",
+      "output": "assets/items/4646/particles/leesin_skin31_e_lightning03.png",
+      "output_sha256": "ab7159c211aaa0f33f09a97fe57bc15d20406153bb863dcdbd75afea902acc41"
+    },
+    "assets/items/4646/particles/ezvgu_tristana_skin12_e_rings.tex": {
+      "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Global.wad.client",
+      "source_sha256": "8ca01338dd427732d4a50e4059b3da5a9acf054cad47532052b0da589fb85c29",
+      "output": "assets/items/4646/particles/ezvgu_tristana_skin12_e_rings.png",
+      "output_sha256": "7977da8dc4018ebceb31210e350eaf6ab51b228c66d2af2ca275956640d93bb9"
+    },
+    "assets/items/6697/particles/6697_hubris_lightningerosion.tex": {
+      "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Global.wad.client",
+      "source_sha256": "b02ae5c5444d83a8c855e598666a14529a08d23bab0ccf456c874f1bbf1e0ed3",
+      "output": "assets/items/6697/particles/6697_hubris_lightningerosion.png",
+      "output_sha256": "1af1834680ed66883ca4aaba33f599f63120ee3822098447b6a754583d99ead0"
+    },
+    "assets/items/4646/particles/kogmaw_skin37_r_decal_edge.scb": {
+      "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Global.wad.client",
+      "source_sha256": "3ca68fc56a0a61d18dcda898f7cd250fa3bf5df2985cd8c390699a47edfaa846",
+      "output": "assets/items/4646/particles/kogmaw_skin37_r_decal_edge.mesh.json",
+      "output_sha256": "28d1a577da60a2067c94d6a6b551656a0d4498dfc6278a3b61caa6aecaa3f5b3"
+    },
+    "assets/items/4646/particles/kogmaw_skin37_r_lightningerosion04_dis.tex": {
+      "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Global.wad.client",
+      "source_sha256": "58cb03a41ea7743f24d2760e5124e2ba299bb83fcbf9502005d82b6e4e30e28d",
+      "output": "assets/items/4646/particles/kogmaw_skin37_r_lightningerosion04_dis.png",
+      "output_sha256": "b971e32d487dd7acfc8c69823935ee4e474c681252ca30a185f9f78b78a3fcdd"
+    },
+    "assets/shared/particles/3026_itemspointstaradd.tex": {
+      "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Global.wad.client",
+      "source_sha256": "715e1a96bab3793c46bf4e079fb6a1caf990c84827d5542b79608dcc13fe550e",
+      "output": "assets/shared/particles/3026_itemspointstaradd.png",
+      "output_sha256": "ee808fd3976b0b9efb90fd9ac7f6ace6dd2bc9cbed863fc302ad574f463ffe88"
+    },
+    "assets/shared/particles/flash_star.tex": {
+      "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Global.wad.client",
+      "source_sha256": "9423c982b39aca5c95ca0c5ca36d75c1270c5ce5919cc1fcd3a4e972f01c5108",
+      "output": "assets/shared/particles/flash_star.png",
+      "output_sha256": "a0cad30c4d507841b8a5805df9da43cdf862bd3ae30a3a7943398d8e29a1faff"
+    },
+    "assets/items/4646/particles/kogmaw_skin37_particles_1_96.tex": {
+      "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Global.wad.client",
+      "source_sha256": "b396e38017423133583ca8b9c9b37b48657e203b8694c12175ded05918838d07",
+      "output": "assets/items/4646/particles/kogmaw_skin37_particles_1_96.png",
+      "output_sha256": "0b0d2f262f4487e282b2aed847a0a119c31d37020029d4d24f171eafdd7e6c8a"
+    },
+    "assets/items/4646/particles/kogmaw_skin37_r_groundlightning_erosion_01.tex": {
+      "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Global.wad.client",
+      "source_sha256": "d53e6dfa718dd1005b73e9d3570e2620e9aa013b86f2345161fa7517f940f3b0",
+      "output": "assets/items/4646/particles/kogmaw_skin37_r_groundlightning_erosion_01.png",
+      "output_sha256": "168d7ce3285a562a74ae3c06faf7589e9327562b5a5e86bc6753481561ce3c2f"
+    },
+    "assets/items/4646/particles/leesin_skin31_e_groundlightning_01.tex": {
+      "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Global.wad.client",
+      "source_sha256": "17c5e8ec4b6b7f1c8d22b64c0e8eeba2237340ffceeed63565f92b77a811b9c7",
+      "output": "assets/items/4646/particles/leesin_skin31_e_groundlightning_01.png",
+      "output_sha256": "aee132cce6b01c3e069e458ce263398bc569e3ead03a875ff37791a0c5133511"
+    }
+  },
+  "reader_revision": "c06b5bb1dba458a358628b0fd1ddef3a58a4ba43"
+}

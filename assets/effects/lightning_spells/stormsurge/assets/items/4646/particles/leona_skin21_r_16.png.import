@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bprmjsvxvpl47"
-path="res://.godot/imported/leesin_skin31_e_groundlightning_01.png-311d5a97ef977cda91f86cbb3f5615df.ctex"
+uid="uid://b8bobfnbf7u7o"
+path="res://.godot/imported/leona_skin21_r_16.png-bb6694357a6184f5e0a1b495226c6a86.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/effects/lightning_spells/leesin_skin31_e_groundlightning_01.png"
-dest_files=["res://.godot/imported/leesin_skin31_e_groundlightning_01.png-311d5a97ef977cda91f86cbb3f5615df.ctex"]
+source_file="res://assets/effects/lightning_spells/stormsurge/assets/items/4646/particles/leona_skin21_r_16.png"
+dest_files=["res://.godot/imported/leona_skin21_r_16.png-bb6694357a6184f5e0a1b495226c6a86.ctex"]
 
 [params]
 

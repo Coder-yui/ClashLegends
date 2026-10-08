@@ -8,9 +8,6 @@ func _ready() -> void:
 	var aftershock := preload("res://assets/effects/aftershock/burst.gd").new()
 	aftershock.skills = skills
 	add_child(aftershock)
-	var lightning := LightningSpellEffect.new()
-	lightning.spells = spells
-	add_child(lightning)
 	var stasis := preload("res://scripts/presentation/stasis_spell_effect.gd").new()
 	stasis.spells = spells
 	add_child(stasis)

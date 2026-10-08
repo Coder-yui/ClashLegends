@@ -1,0 +1,45 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Global.wad.client",
+  "source_entry": "perks",
+  "source_wad_hash": "fe11209c1b2fb62e",
+  "source_binary_sha256": "46baa320b36e7b167b3c1578cf87de9a76979ed02e7a6e9dc69998bd3aafec29",
+  "system": "Perks/Styles/Domination/Electrocute/Particles/Perks_Electrocute_AOE",
+  "reader_revision": "c06b5bb1dba458a358628b0fd1ddef3a58a4ba43",
+  "assets": {
+    "assets/perks/styles/domination/electrocute/particles/perks_electrocute_beams.tex": {
+      "source_sha256": "f2c9bc9720a6f3ea4ace9e1697771f82d6461a7f3b91c4dc0dd0f5aa74c34dea",
+      "output": "assets/perks/styles/domination/electrocute/particles/perks_electrocute_beams.png",
+      "output_sha256": "ab6a76f420b751816a4de92e1c41a282fbba861bed5ed29d34798f0500bc2815"
+    },
+    "assets/perks/styles/domination/electrocute/particles/perks_electrocute_arcs_4x4.tex": {
+      "source_sha256": "6736e291c165ac66f5ae67e9820eea846379ce01c74a3f8871d9015e3c5ac33d",
+      "output": "assets/perks/styles/domination/electrocute/particles/perks_electrocute_arcs_4x4.png",
+      "output_sha256": "ec276b7f34f8e158976a6c3bbcd784b10bf509b89f8d8cbb3c8ed850d8b8bfd0"
+    },
+    "assets/perks/styles/domination/darkharvest/particles/perks_soulreaper_sparkle.tex": {
+      "source_sha256": "52ca7b512a29f5df6bbf2403afcff33205c737ddea0834769605dec711d3cadb",
+      "output": "assets/perks/styles/domination/darkharvest/particles/perks_soulreaper_sparkle.png",
+      "output_sha256": "288bff79e70a7fef245fae9b4ae69f2911c1b46e6610d722b0aeaa44affc57fc"
+    },
+    "assets/shared/particles/globalcamouflage_erosion_mult.tex": {
+      "source_sha256": "6e9cf8a035f7f4ce25a4e0d66f2453759c72bbc107c3276bb7f4f261d2eec9c1",
+      "output": "assets/shared/particles/globalcamouflage_erosion_mult.png",
+      "output_sha256": "2f2a065a187523dad0289225fcb85b156434c0ee455aebf7eda3235e4cf5b17e"
+    },
+    "assets/perks/styles/domination/electrocute/particles/perks_electrocute_scorch.tex": {
+      "source_sha256": "c4716d43ad31e5601d506cd6283eb4fd86a35e99f893e827ec9f7a361cbb9bb2",
+      "output": "assets/perks/styles/domination/electrocute/particles/perks_electrocute_scorch.png",
+      "output_sha256": "2997c7cf79b98f9031331f1ea931bae6bd33af9ce53d40860839943bde03f50e"
+    },
+    "assets/perks/styles/domination/electrocute/particles/perks_electrocute_beams_flash.tex": {
+      "source_sha256": "739d10c82c21e25997bd168c1585f3a23154889468265bfe69599ebc5d68b42f",
+      "output": "assets/perks/styles/domination/electrocute/particles/perks_electrocute_beams_flash.png",
+      "output_sha256": "ea5a9b193a02c2054b5931ae5d7f83912f62c14b20818dd307c93c3aca12c6d3"
+    },
+    "assets/shared/particles/kalista_skin01_glow.tex": {
+      "source_sha256": "06c2d0eab8ed2541eeaf6bb3630984b874d5cb1efe694daa7535437171924c4a",
+      "output": "assets/shared/particles/kalista_skin01_glow.png",
+      "output_sha256": "336dd86c76c1f91bf80fa977dc24290ee3c883d2868fbf5a4a6fcae0b1285f8f"
+    }
+  }
+}

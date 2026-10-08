@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b8sanlom8i2rr"
-path="res://.godot/imported/perks_electrocute_beams_flash.png-c46e1725a19bed215e41af5b1d2d1c94.ctex"
+uid="uid://dexpjhds37rxd"
+path="res://.godot/imported/6697_hubris_lightningerosion.png-80a52b8354977c9aa156c608d71f521d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/effects/lightning_spells/perks_electrocute_beams_flash.png"
-dest_files=["res://.godot/imported/perks_electrocute_beams_flash.png-c46e1725a19bed215e41af5b1d2d1c94.ctex"]
+source_file="res://assets/effects/lightning_spells/stormsurge/assets/items/6697/particles/6697_hubris_lightningerosion.png"
+dest_files=["res://.godot/imported/6697_hubris_lightningerosion.png-80a52b8354977c9aa156c608d71f521d.ctex"]
 
 [params]
 
