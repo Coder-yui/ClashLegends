@@ -74,6 +74,7 @@ var _projectile_system: ProjectileSystem
 
 var _elixir: ElixirManager
 var _hand: CardHand
+var _cast_notice: Node2D
 var _active_skill_bar: ActiveSkillBar
 var _arena_background_sprite: Sprite2D
 ## ability_id -> {unit, card_id, team, skill, uses_remaining, cooldown_left}；按钮只是这份权威状态的视图。
@@ -1099,6 +1100,15 @@ func _create_towers() -> void:
 	if _battle_presentation != null:
 		_battle_presentation.attach_tower(_king_enemy, CardDB.NEXUS_VISUAL_CONFIG)
 	_towers.append(_king_enemy)
+	if has_presentation():
+		if _cast_notice == null:
+			var notice_layer := CanvasLayer.new()
+			notice_layer.layer = 2
+			add_child(notice_layer)
+			_cast_notice = preload("res://scripts/presentation/cast_notice.gd").new()
+			notice_layer.add_child(_cast_notice)
+		_cast_notice.nexuses = [_king_player, _king_enemy]
+		_cast_notice.presentation = _battle_presentation
 	for tower in _towers:
 		var audio_id := PresentationConfig.world_card_id(tower)
 		tower.destroyed.connect(_on_world_building_destroyed.bind(audio_id, weakref(tower)))
@@ -1427,6 +1437,7 @@ func clear_preview_battle() -> void:
 			unit.nav_cells = []
 		unit.queue_free()
 	_projectile_system.clear_all()
+	if _cast_notice != null: _cast_notice.clear()
 	_spell_system.clear()
 	if is_instance_valid(_audio_manager): _audio_manager.clear_spell_flight_audio()
 	if _audio_manager != null:
@@ -1833,7 +1844,7 @@ func _rpc_unit_audio_event(epoch: String, net_id: int, cue: String, position: Ve
 		if _audio_manager != null:
 			_audio_manager.play_event(unit, StringName(cue), position, attack_serial, false, action_serial)
 
-func _cast_spell(p_team: int, card_id: String, pos: Vector2, active_enabled: bool = false, active_skill_index: int = 0, mirror_copy: Dictionary = {}) -> bool:
+func _cast_spell(p_team: int, card_id: String, pos: Vector2, active_enabled: bool = false, active_skill_index: int = 0, mirror_copy: Dictionary = {}, announce: bool = true) -> bool:
 	if CardPlayHistory.is_mirror(card_id):
 		if mirror_copy.is_empty(): return false
 		var slot := _active_card_slot_for_team(p_team, card_id) if active_enabled else -1
@@ -1846,14 +1857,17 @@ func _cast_spell(p_team: int, card_id: String, pos: Vector2, active_enabled: boo
 		if String(CardDB.get_card(source).get("type", "")) == "spell":
 			var choice := _active_skill_choice_for_team(p_team, source, CardDB.active_skills_for(source).size()) if active_enabled else 0
 			if _workbench.enabled: choice = int(_workbench.skill_choices.get(source, 0))
-			var copied_cast := _cast_spell(p_team, source, pos, active_enabled, choice)
+			var copied_cast := _cast_spell(p_team, source, pos, active_enabled, choice, {}, false)
 			if copied_cast:
 				_present_mirror_cast(p_team, pos)
+				if active_enabled: _present_cast_notice(p_team, "mirror", 0)
 			return copied_cast
 		_execute_card_deployment(p_team, String(mirror_copy.card_id), pos, String(mirror_copy.deployment_card_id), {}, slot, generation)
 		_present_mirror_cast(p_team, pos)
+		if active_enabled: _present_cast_notice(p_team, "mirror", 0)
 		return true
 	var cast: bool = _spell_system.cast(p_team, CardDB.get_card(card_id), pos, active_enabled, active_skill_index)
+	if cast and active_enabled and announce: _present_cast_notice(p_team, card_id, active_skill_index)
 	if cast and card_id not in ["stasis", "explosive_cask"]:
 		_presentation_event_id += 1
 		_play_card_event(_presentation_event_id, card_id, "spell:cast", pos, 0, p_team)
@@ -2248,7 +2262,14 @@ func _activate_active_skill(ability_id: int, expected_team: int = -1) -> bool:
 	return true
 
 func _start_active_skill_cast(unit: Unit, skill: Dictionary) -> bool:
-	return _skill_lifecycle.start(unit, skill)
+	if not _skill_lifecycle.start(unit, skill): return false
+	var source := unit.active_skill_card_id if not unit.active_skill_card_id.is_empty() else unit.card_id
+	var skills := CardDB.active_skills_for(source)
+	var index := 0
+	for i in skills.size():
+		if String(skills[i].get("icon_path", "")) == String(skill.get("icon_path", "")): index = i
+	_present_cast_notice(unit.team, source, index)
+	return true
 
 ## 水晶兵线入口。只在单机/主机固定模拟调用，最终仍统一走 _spawn_unit 与现有 RPC。
 func _tick_minion_waves(dt: float) -> void:
@@ -2451,6 +2472,7 @@ func _end_game(winner_team: int, reason: String) -> void:
 	_network_playback.clear()
 	_minion_waves.clear()
 	_projectile_system.clear_all()
+	if _cast_notice != null: _cast_notice.clear()
 	_spell_system.clear()
 	if is_instance_valid(_audio_manager): _audio_manager.clear_spell_flight_audio()
 	_active_skill_effect_system.clear()
@@ -2974,17 +2996,27 @@ func _draw_deployment_preview(stats: Dictionary) -> void:
 		draw_line(_deployment_preview_pos - Vector2(cross_size, 0.0), _deployment_preview_pos + Vector2(cross_size, 0.0), color, 2.0, true)
 		draw_line(_deployment_preview_pos - Vector2(0.0, cross_size), _deployment_preview_pos + Vector2(0.0, cross_size), color, 2.0, true)
 
+func _present_cast_notice(team: int, card_id: String, skill_index: int) -> void:
+	_presentation_event_id += 1
+	_play_card_event(_presentation_event_id, card_id, "cast:notice", Vector2.ZERO, skill_index, team)
+	if mode == "server":
+		_broadcast(_rpc_card_event, [_session.session_id, _presentation_event_id, card_id, "cast:notice", Vector2.ZERO, skill_index, team])
+
 func _play_card_event(event_id: int, card_id: String, cue: String, pos: Vector2, form: int = 0, team: int = 0) -> void:
 	if not has_presentation(): return
 	if event_id <= _last_card_event_id:
 		return
 	_last_card_event_id = event_id
+	if cue == "cast:notice":
+		if _cast_notice != null: _cast_notice.show_cast(card_id, form, team)
+		return
 	if card_id == "match":
 		if not game_over and _audio_manager != null: _audio_manager.play_match_event(cue)
 		return
 	if card_id == "mirror" and cue == "spell:cast" and _effects_view != null:
 		var mirror := preload("res://scripts/presentation/mirror_cast_effect.gd").new()
 		mirror.position = pos
+		mirror.team = team
 		_effects_view.add_child(mirror)
 	if card_id == "explosive_cask" and cue == "spell:hit" and _battle_presentation != null:
 		_spell_system.cask_hits.append({"id": event_id, "pos": pos, "timer": 0.7})

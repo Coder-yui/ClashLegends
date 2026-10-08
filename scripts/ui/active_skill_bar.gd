@@ -5,6 +5,7 @@ extends CanvasLayer
 signal skill_pressed(ability_id: int)
 
 const BUTTON_SIZE := Vector2(58.0, 58.0)
+const ICON_SIZE := BUTTON_SIZE - Vector2(8.0, 8.0)
 ## 对齐战场底部两侧、手牌区上方的固定圆位（720×1400 设计分辨率）。
 const DESIGN_WIDTH := 720.0
 const LEFT_SLOT_POSITION := Vector2(23.0, 1195.0)
@@ -57,7 +58,7 @@ func _ready() -> void:
 		_buttons.append(button)
 		var icon := TextureRect.new()
 		icon.position = Vector2(4.0, 4.0)
-		icon.size = BUTTON_SIZE - Vector2(8.0, 8.0)
+		icon.size = ICON_SIZE
 		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		icon.mouse_filter = Control.MOUSE_FILTER_IGNORE

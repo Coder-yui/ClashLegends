@@ -460,5 +460,12 @@
     "method": "run",
     "scene": "battle",
     "group": "cards"
+  },
+  {
+    "id": "CastNoticeSuite",
+    "script": "res://tests/suites/presentation/cast_notice_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "presentation"
   }
 ]

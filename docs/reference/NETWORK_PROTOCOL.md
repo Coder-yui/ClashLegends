@@ -4,7 +4,7 @@
 
 | 契约 | 当前值 |
 | --- | --- |
-| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->99 |
+| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->100 |
 | 顶层快照项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd SNAPSHOT_PACKET_SIZE -->11 |
 | 单位载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd UNIT_PAYLOAD_SIZE -->56 |
 | 塔载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd TOWER_PAYLOAD_SIZE -->7 |
@@ -141,3 +141,9 @@ ClientInputState在发送请求时立即显示本方落点等待提示或按钮p
 NetworkPlayback默认100ms，根据时钟RTT/抖动与事件/快照到达时差动态调整到50–200ms：最近32个观测的90分位加一Tick余量，抖动增大快速增加、稳定后缓慢降低。播放Tick只前进，增大缓冲可能短暂保持上一帧，不回滚战斗。变化只在客户端表现层，10Tick操作缓冲和20Hz权威模拟不变。
 
 梦魇单次效果盾复用U_ACTIVE_BUFF_ACTIVE表现存续；Delivery只属于权威执行，不加入快照。协议99包含该规则与新卡内容；客户端不自行判断抵挡。
+
+爆破酒桶复用可靠在途发射/抵达载荷；真实命中后用卡牌表现事件 explosive_cask / spell:hit 传递固定受击位置。客户端仅播放 Mis、End、Tar，不重新查询伤害对象。
+
+镜像成功释放复用可靠 `_rpc_card_event`，载荷为 `card_id=mirror`、`cue=spell:cast` 及释放位置、施放队伍；双方均播放0.5秒镜面提示，不新增协议字段，不影响权威复制结果。
+
+协议100新增公开释放提示：复用可靠 `_rpc_card_event` 的 `cue=cast:notice`；card_id为释放卡牌/主动技能来源，form字段在此cue下为技能候选下标，team为施放队伍，pos不使用。按事件ID去重、会话校验和战场播放时间轴显示，服务器不创建表现节点。
