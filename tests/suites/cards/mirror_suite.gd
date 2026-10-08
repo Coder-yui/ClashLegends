@@ -5,6 +5,7 @@ const DECK := ["mirror", "ashe", "garen", "heal", "freeze", "kayle", "shurima_gu
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
+	_check_presentation()
 	_check_opening()
 	main._deck = DECK.duplicate()
 	main._active_skill_choices = {"garen": 1, "heal": 1}
@@ -242,3 +243,23 @@ func _check_queued_spell() -> void:
 	_main._sim_tick_id += 10
 	_main._tick_pending_card_deployments(0.05)
 	_expect(patient.shield_hp > 0, "较早镜像法术仍保留预选强化，不因新镜像入队失效")
+
+func _check_presentation() -> void:
+	_expect(CardArt.skill_icon(CardDB.get_card("mirror")) != null, "完整镜像提供诡术妖姬R技能图标")
+	var validator = load("res://scripts/data/card_validator.gd")
+	var invalid := CardDB.get_card("mirror").duplicate(true)
+	invalid.icon_path = "outside_assets.png"
+	_expect(not validator.validate_all({"mirror": invalid}, false).is_empty(), "卡级技能图标拒绝 assets 外路径")
+	if _main._effects_view == null: return
+	var before: int = _main._effects_view.get_child_count()
+	var event_id: int = _main._last_card_event_id + 1
+	for team in 2:
+		_main._play_card_event(event_id + team, "mirror", "spell:cast", Vector2(300, 350 + team * 550), 0, team)
+	_expect(_main._effects_view.get_child_count() == before + 2, "镜像释放表现不筛选敌我阵营")
+	_main._play_card_event(event_id + 1, "mirror", "spell:cast", Vector2.ZERO, 0, 1)
+	_expect(_main._effects_view.get_child_count() == before + 2, "重复可靠事件不重复播放镜像")
+	for index in range(before, _main._effects_view.get_child_count()):
+		var effect: Node = _main._effects_view.get_child(index)
+		_expect(effect.team == index - before, "镜像表现保留施放队伍用于配色")
+		effect._process(0.5)
+		_expect(effect.is_queued_for_deletion(), "镜像表现0.5秒后释放")

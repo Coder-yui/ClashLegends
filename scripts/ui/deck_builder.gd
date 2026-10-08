@@ -618,7 +618,7 @@ func _open_card_info(card_id: String) -> void:
 	_deck_info_active_option.get_popup().add_theme_constant_override("icon_max_width", 32)
 	if skills.is_empty():
 		if String(stats.get("type", "unit")) == "spell":
-			_deck_info_active_option.add_item(String(stats.get("active_name", "强化" + String(stats.get("name", "法术")))))
+			_deck_info_active_option.add_icon_item(CardArt.skill_icon(stats), String(stats.get("active_name", "强化" + String(stats.get("name", "法术")))))
 		else:
 			_deck_info_active_option.add_item("无主动技能")
 		_deck_info_active_option.disabled = true

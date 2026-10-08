@@ -1846,8 +1846,12 @@ func _cast_spell(p_team: int, card_id: String, pos: Vector2, active_enabled: boo
 		if String(CardDB.get_card(source).get("type", "")) == "spell":
 			var choice := _active_skill_choice_for_team(p_team, source, CardDB.active_skills_for(source).size()) if active_enabled else 0
 			if _workbench.enabled: choice = int(_workbench.skill_choices.get(source, 0))
-			return _cast_spell(p_team, source, pos, active_enabled, choice)
+			var copied_cast := _cast_spell(p_team, source, pos, active_enabled, choice)
+			if copied_cast:
+				_present_mirror_cast(p_team, pos)
+			return copied_cast
 		_execute_card_deployment(p_team, String(mirror_copy.card_id), pos, String(mirror_copy.deployment_card_id), {}, slot, generation)
+		_present_mirror_cast(p_team, pos)
 		return true
 	var cast: bool = _spell_system.cast(p_team, CardDB.get_card(card_id), pos, active_enabled, active_skill_index)
 	if cast and card_id not in ["stasis", "explosive_cask"]:
@@ -1856,6 +1860,12 @@ func _cast_spell(p_team: int, card_id: String, pos: Vector2, active_enabled: boo
 		if mode == "server":
 			_broadcast(_rpc_card_event, [_session.session_id, _presentation_event_id, card_id, "spell:cast", pos, 0, p_team])
 	return cast
+
+func _present_mirror_cast(team: int, pos: Vector2) -> void:
+	_presentation_event_id += 1
+	_play_card_event(_presentation_event_id, "mirror", "spell:cast", pos, 0, team)
+	if mode == "server":
+		_broadcast(_rpc_card_event, [_session.session_id, _presentation_event_id, "mirror", "spell:cast", pos, 0, team])
 
 func _apply_freeze(pos: Vector2, radius: float, duration: float, p_team: int, slow_duration: float = 0.0, slow_multiplier: float = 1.0) -> void:
 	_spell_system.apply_freeze(pos, radius, duration, p_team, slow_duration, slow_multiplier)
@@ -2972,6 +2982,10 @@ func _play_card_event(event_id: int, card_id: String, cue: String, pos: Vector2,
 	if card_id == "match":
 		if not game_over and _audio_manager != null: _audio_manager.play_match_event(cue)
 		return
+	if card_id == "mirror" and cue == "spell:cast" and _effects_view != null:
+		var mirror := preload("res://scripts/presentation/mirror_cast_effect.gd").new()
+		mirror.position = pos
+		_effects_view.add_child(mirror)
 	if card_id == "explosive_cask" and cue == "spell:hit" and _battle_presentation != null:
 		_spell_system.cask_hits.append({"id": event_id, "pos": pos, "timer": 0.7})
 	if cue == "shield:cast":

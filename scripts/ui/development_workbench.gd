@@ -623,7 +623,7 @@ func _refresh_spell_controls(is_spell: bool) -> void:
 		_spell_choice.add_item(String(skill.get("name", "法术技能")))
 	# 镜像沿用 active_name 定义；它的技能候选与复制体原卡的技能分开。
 	if _spell_choice.item_count == 0 and _cards.get(_selected_id, {}).has("active_name"):
-		_spell_choice.add_item(String(_cards[_selected_id].active_name))
+		_spell_choice.add_icon_item(CardArt.skill_icon(_cards[_selected_id]), String(_cards[_selected_id].active_name))
 	var has_choices := _spell_choice.item_count > 0
 	_spell_active.disabled = not has_choices
 	_spell_choice.disabled = not has_choices

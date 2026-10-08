@@ -18,6 +18,8 @@ static func validate_all(cards: Dictionary, inspect_resources: bool = true) -> P
 		var stats: Dictionary = cards[raw_card_id]
 		if not SHAPES.validate(card_id, stats, errors):
 			continue
+		if stats.has("icon_path") and (not String(stats.icon_path).begins_with("res://assets/") or (inspect_resources and not load(String(stats.icon_path)) is Texture2D)):
+			errors.append(card_id + ".icon_path: 必须指向 assets 内有效的 Texture2D")
 		_validate_card_id(card_id, errors)
 		_validate_known_fields(card_id, stats, CARD_FIELDS, errors)
 		_validate_numbers(card_id, stats, errors)
