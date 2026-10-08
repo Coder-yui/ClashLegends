@@ -1,0 +1,37 @@
+{
+  "system": "Characters/Bard/Skins/Skin0/Particles/Bard_Base_R_mis",
+  "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Bard.wad.client",
+  "binary_sha256": "a7a2f20e0c8179d8c77e079ded8a8ff39ffa142e19b4912d594cb990cf03b58a",
+  "assets": {
+    "assets/characters/bard/skins/base/particles/bard_base_q_sparks.tex": {
+      "source_sha256": "0d7b4aaf984f621168c9df0bba62be4d766a135eb41cd02914f1e2f52368a203",
+      "output": "assets/characters/bard/skins/base/particles/bard_base_q_sparks.png",
+      "output_sha256": "89ed63bd351c190a911d804adcec4c8e8f315fa10287a30d1275a725c743dbda"
+    },
+    "assets/characters/bard/skins/base/particles/bard_base_q_mis_spark.tex": {
+      "source_sha256": "aef036f7cf3a65f52fa108c7d990ac8ede8b627fd1a9d2239ea95f68840db2d4",
+      "output": "assets/characters/bard/skins/base/particles/bard_base_q_mis_spark.png",
+      "output_sha256": "99a8bf7d095de0920dd843a9f12ae029351d4bddc74b91a6e792ffc83034f68a"
+    },
+    "assets/characters/bard/skins/base/particles/bard_base_ba_flash_tar.tex": {
+      "source_sha256": "03908e0005d498fa3812c0b70e43a3c40a2e7d8ac237dd06e89291b68f289993",
+      "output": "assets/characters/bard/skins/base/particles/bard_base_ba_flash_tar.png",
+      "output_sha256": "fa7a10a2c0bb3e9fda14a2eb35850dacaa29d69ad8ac69e2f2ca6e12cda6d462"
+    },
+    "assets/characters/bard/skins/base/particles/bard_base_r_ring_flare.tex": {
+      "source_sha256": "9d4d6f2156253e3b468c8169432729e850d6a38e6d40e264533ffcc23f113d4a",
+      "output": "assets/characters/bard/skins/base/particles/bard_base_r_ring_flare.png",
+      "output_sha256": "3fa57557caff4a69e8ca3136ae84460c52529c5f6d5ce1e909566858ca71f7ca"
+    },
+    "assets/characters/bard/skins/base/particles/bard_base_p_shrine_spark.tex": {
+      "source_sha256": "6bc864452880ed4a01a03e9c4bcdfad85374e08eb6da8b041592f5f3574d1581",
+      "output": "assets/characters/bard/skins/base/particles/bard_base_p_shrine_spark.png",
+      "output_sha256": "81ff7863d4f0a94eaf910740fbf3a410294597126be9908aaaa1bbfbbe794252"
+    },
+    "assets/characters/bard/skins/base/particles/bard_base_e_speed_buff_trail.tex": {
+      "source_sha256": "8c47b45a57c4c435560d4419b3273146071c978d99801895d10aa9901ec005e7",
+      "output": "assets/characters/bard/skins/base/particles/bard_base_e_speed_buff_trail.png",
+      "output_sha256": "b51cacf0a0ba1517d3584a221e26c185b3e24d3a482825f2471610b57ead2cdd"
+    }
+  }
+}

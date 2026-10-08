@@ -356,14 +356,14 @@ func show_flight(id: int, kind: String, origin: Vector2, position: Vector2, radi
 	# 首个皮肤为凝滞；其他法术复用调度并沿用自身抵达表现。
 	if kind != "stasis": return
 	stasis_effects.append({"id": id, "origin": origin, "pos": position, "radius": radius,
-		"start_tick": start_tick, "impact_tick": impact_tick, "progress": 0.0, "impacted": false, "timer": 0.8})
+		"start_tick": start_tick, "impact_tick": impact_tick, "progress": 0.0, "impacted": false, "duration": 2.0, "timer": 2.0})
 
 func show_arrival(id: int) -> void:
 	if not _controller.has_presentation(): return
 	for effect in stasis_effects:
 		if int(effect.id) == id:
 			effect.impacted = true
-			effect.timer = 0.8
+			effect.timer = float(effect.duration)
 			return
 
 

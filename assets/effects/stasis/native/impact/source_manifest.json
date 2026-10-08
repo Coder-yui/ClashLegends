@@ -1,0 +1,57 @@
+{
+  "system": "Characters/Bard/Skins/Skin0/Particles/Bard_Base_R_explo",
+  "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Bard.wad.client",
+  "binary_sha256": "a7a2f20e0c8179d8c77e079ded8a8ff39ffa142e19b4912d594cb990cf03b58a",
+  "assets": {
+    "assets/characters/bard/skins/base/particles/bard_base_r_cosmic_purple.tex": {
+      "source_sha256": "54e78c2ac2a1134900336228e3f3f259f01ceec12ab5d88632ec326dfd469e9d",
+      "output": "assets/characters/bard/skins/base/particles/bard_base_r_cosmic_purple.png",
+      "output_sha256": "7d44c2977149a9affae32db5791730f43fc61a78c5333fce2ff29125d27ea85e"
+    },
+    "assets/characters/bard/skins/base/particles/bard_base_r_explo_nova.tex": {
+      "source_sha256": "cefb1bc1c54d75d39e81863253703aacfa8f94772611f3822f4ef57902837d03",
+      "output": "assets/characters/bard/skins/base/particles/bard_base_r_explo_nova.png",
+      "output_sha256": "b10b0f8c05422a58711d2303963796b17697580f251aa3b061f24e00c55aefed"
+    },
+    "assets/characters/bard/skins/base/particles/bard_base_p_speed_flash.tex": {
+      "source_sha256": "60e3650e01a4fe3c070f5b2d1e6dc4c26cffe31c65f4bd3ce75fbf5f8af3f43c",
+      "output": "assets/characters/bard/skins/base/particles/bard_base_p_speed_flash.png",
+      "output_sha256": "6d6cc37723a1102e6f2924f86bf95ca34755529f9800ae07a1495e894ecd94a7"
+    },
+    "assets/characters/bard/skins/base/particles/bard_base_p_shrine_spark.tex": {
+      "source_sha256": "6bc864452880ed4a01a03e9c4bcdfad85374e08eb6da8b041592f5f3574d1581",
+      "output": "assets/characters/bard/skins/base/particles/bard_base_p_shrine_spark.png",
+      "output_sha256": "81ff7863d4f0a94eaf910740fbf3a410294597126be9908aaaa1bbfbbe794252"
+    },
+    "assets/characters/bard/skins/base/particles/bard_base_q_mis_spark.tex": {
+      "source_sha256": "aef036f7cf3a65f52fa108c7d990ac8ede8b627fd1a9d2239ea95f68840db2d4",
+      "output": "assets/characters/bard/skins/base/particles/bard_base_q_mis_spark.png",
+      "output_sha256": "99a8bf7d095de0920dd843a9f12ae029351d4bddc74b91a6e792ffc83034f68a"
+    },
+    "assets/characters/bard/skins/base/particles/bard_base_r_explo_symbol.tex": {
+      "source_sha256": "aea9fee1eed426fa32767942815244fa7e066a77b69393b9c23aa3de5b7506e3",
+      "output": "assets/characters/bard/skins/base/particles/bard_base_r_explo_symbol.png",
+      "output_sha256": "8d6c6244c853ffabd8bbdaf2e90bb70057c5d4d4dc9a97e001670a18f3bf07db"
+    },
+    "assets/characters/bard/skins/base/particles/bard_base_r_explo_symbols.tex": {
+      "source_sha256": "9002d0d8be7670ea3e87bb4c64f0d53e8c9eb16a6b2fa9c6e0eadd961bf3f65a",
+      "output": "assets/characters/bard/skins/base/particles/bard_base_r_explo_symbols.png",
+      "output_sha256": "46161d4cdf16cab659a66f0e4327dc2b1e1310a8a3b00b67eedbb84d42831bfc"
+    },
+    "assets/characters/bard/skins/base/particles/bard_base_r_expo_cylinder.scb": {
+      "source_sha256": "25ada043a65ee7f137b35d87d8ee5a5de756a0128cefde106ce65d3760e05af0",
+      "output": "assets/characters/bard/skins/base/particles/bard_base_r_expo_cylinder.mesh.json",
+      "output_sha256": "c8102f99f190f557d543145d4ca96edeae82ca1f19d7b80348e718ea14a9cbf8"
+    },
+    "assets/characters/bard/skins/base/particles/bard_base_r_up_cylinder.tex": {
+      "source_sha256": "123e59c951af309f16b2f4ecc4027430357cdf2ccef52b7c4b6255a6663ef48e",
+      "output": "assets/characters/bard/skins/base/particles/bard_base_r_up_cylinder.png",
+      "output_sha256": "66195431998eaef96817a22a5df3739300c0ce1ef2fcab2955ae75f686ec5000"
+    },
+    "assets/characters/bard/skins/base/particles/bard_base_r_distort.tex": {
+      "source_sha256": "076063ad5b1e1fa25d39339e37288fe452a27bbc9a68ff227495b3149c41eaf9",
+      "output": "assets/characters/bard/skins/base/particles/bard_base_r_distort.png",
+      "output_sha256": "ccc2e333b2594c34644b3cc491226199f49c411880d15f85ef26c1786316fc9c"
+    }
+  }
+}

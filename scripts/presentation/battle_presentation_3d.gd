@@ -11,6 +11,7 @@ func visual_team(team: int) -> int:
 var spells: RefCounted
 var _freeze_ground: Node3D
 var _corrosion_ground: Node3D
+var _stasis_effect: Node3D
 var _lightning_effect: Node3D
 
 var _viewport: SubViewport
@@ -21,6 +22,8 @@ var pending_deployments: Callable
 var _pre_deploy_views: Dictionary = {}
 
 func _process(delta: float) -> void:
+	if _stasis_effect != null and spells != null:
+		_stasis_effect.sync_effects(spells, _camera)
 	if _lightning_effect != null and spells != null:
 		_lightning_effect.sync_effects(spells, _camera)
 	if _freeze_ground != null and spells != null:
@@ -85,6 +88,8 @@ func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void
 	_world_root.add_child(_freeze_ground)
 	_corrosion_ground = preload("res://scripts/presentation/corrosion_ground_3d.gd").new()
 	_world_root.add_child(_corrosion_ground)
+	_stasis_effect = preload("res://scripts/presentation/stasis_spell_effect_3d.gd").new()
+	_world_root.add_child(_stasis_effect)
 	_lightning_effect = preload("res://scripts/presentation/lightning_spell_effect_3d.gd").new()
 	_world_root.add_child(_lightning_effect)
 

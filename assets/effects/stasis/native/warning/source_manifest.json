@@ -1,0 +1,22 @@
+{
+  "system": "Characters/Bard/Skins/Skin0/Particles/Bard_Base_R_Stasis_tar_warn_green",
+  "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Bard.wad.client",
+  "binary_sha256": "a7a2f20e0c8179d8c77e079ded8a8ff39ffa142e19b4912d594cb990cf03b58a",
+  "assets": {
+    "assets/characters/bard/skins/base/particles/bard_base_r_spin_ring.tex": {
+      "source_sha256": "c88f0b46d5c6cfae2e28d9fcd4676737cfbcb3ecc92bd326ab00b6181596152c",
+      "output": "assets/characters/bard/skins/base/particles/bard_base_r_spin_ring.png",
+      "output_sha256": "a737300bcd5988ba0851c6f312eef4a771deecffa85610de0eae80c3832f08d8"
+    },
+    "assets/characters/bard/skins/base/particles/bard_base_r_warning_decal.tex": {
+      "source_sha256": "e71ac66baf09f1c6562ae0a50c4a462d530da3bdf01eeb87dd57b982f9a93727",
+      "output": "assets/characters/bard/skins/base/particles/bard_base_r_warning_decal.png",
+      "output_sha256": "6581aea90cefd7afe4a175f4ded118c527da7dae7775e0cdd7cfec3a67dec2c4"
+    },
+    "assets/characters/bard/skins/base/particles/bard_base_p_speed_swirl_mult.tex": {
+      "source_sha256": "6ed4269818b17651032012f73c2fb22ae6a04bdd045a1247dba241ff088df25e",
+      "output": "assets/characters/bard/skins/base/particles/bard_base_p_speed_swirl_mult.png",
+      "output_sha256": "7381919da7c9523050fabe3805e6503ae92c069c799778f970233ac08ece2ff5"
+    }
+  }
+}

@@ -39,13 +39,9 @@
       "sha256": "6ed4269818b17651032012f73c2fb22ae6a04bdd045a1247dba241ff088df25e"
     }
   ],
-  "note": "正式接入资源与来源；模型附着网格两层为Godot适配，完整粒子运行器未移植。",
-  "conversion": "tools/dev.py source convert --format texture; runtime spherical alpha mask for cosmic_gold",
+  "note": "当前运行资源：两层金身材质与native目录原版R采样；旧2D纹理移入本地制作源件。",
+  "conversion": "原版纹理解码、SCB网格转换及120fps粒子采样；来源分系统见native目录",
   "outputs": {
-    "explo_nova.png": "b10b0f8c05422a58711d2303963796b17697580f251aa3b061f24e00c55aefed",
-    "warning_decal.png": "6581aea90cefd7afe4a175f4ded118c527da7dae7775e0cdd7cfec3a67dec2c4",
-    "cosmic_gold.png": "c4c680e42bf791afab6df2354121b36113512df63ee7c4b360c74291b6442509",
-    "ring_flare.png": "3fa57557caff4a69e8ca3136ae84460c52529c5f6d5ce1e909566858ca71f7ca",
     "zhonya_swirl.png": "7381919da7c9523050fabe3805e6503ae92c069c799778f970233ac08ece2ff5",
     "bard_swirl.png": "7381919da7c9523050fabe3805e6503ae92c069c799778f970233ac08ece2ff5"
   },
@@ -54,5 +50,14 @@
     "entry": "Characters/Bard/Skins/Skin0/Particles/Bard_Base_R_stasis_skin_full",
     "method": "VfxPrimitiveAttachedMesh: Temp_Avatar scale1.02 UV scroll(0,0.4), Gold_Avatar1 scale1.01; constant alpha0.700008 * curve plateau0.700008",
     "adaptation": "Godot two-pass shader; tower composite in ground-clip shader; no original particle runner. Excludes source submesh filters, entry/exit alpha curves and peripheral particle emitters; follows project stasis state lifetime."
+  },
+  "native_r": {
+    "sources": [
+      "native/flight/source_manifest.json",
+      "native/warning/source_manifest.json",
+      "native/impact/source_manifest.json"
+    ],
+    "sampling": "120 fps, deterministic seed 79; original curves, meshes and texture layers",
+    "adaptation": "footprint and particle-center projection separated from local shape; world UP unchanged; native flight bindWeight and birthTimes; Basic1/Basic2 ribbon reconstruction; no synthetic glow overlay"
   }
 }

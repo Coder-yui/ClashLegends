@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c4mofmt08vni8"
-path="res://.godot/imported/cosmic_gold.png-5171c626d4211942eb463facd29f902a.ctex"
+uid="uid://ci20mjhboxi6"
+path="res://.godot/imported/bard_base_r_explo_symbol.png-89490f71c4d26e2315821c5a7c76a02f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/effects/stasis/cosmic_gold.png"
-dest_files=["res://.godot/imported/cosmic_gold.png-5171c626d4211942eb463facd29f902a.ctex"]
+source_file="res://assets/effects/stasis/native/impact/assets/characters/bard/skins/base/particles/bard_base_r_explo_symbol.png"
+dest_files=["res://.godot/imported/bard_base_r_explo_symbol.png-89490f71c4d26e2315821c5a7c76a02f.ctex"]
 
 [params]
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ce1y66vf0c85r"
-path="res://.godot/imported/explo_nova.png-06100f37c68b948b60bb9d61279f8cb4.ctex"
+uid="uid://s0d4kgfpprdp"
+path="res://.godot/imported/bard_base_r_warning_decal.png-b44692fcd80a2a3311f15c384d0c3599.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/effects/stasis/explo_nova.png"
-dest_files=["res://.godot/imported/explo_nova.png-06100f37c68b948b60bb9d61279f8cb4.ctex"]
+source_file="res://assets/effects/stasis/native/warning/assets/characters/bard/skins/base/particles/bard_base_r_warning_decal.png"
+dest_files=["res://.godot/imported/bard_base_r_warning_decal.png-b44692fcd80a2a3311f15c384d0c3599.ctex"]
 
 [params]
 

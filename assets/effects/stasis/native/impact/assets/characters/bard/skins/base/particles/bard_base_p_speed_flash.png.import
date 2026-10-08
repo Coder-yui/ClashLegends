@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b7d400kd7depa"
-path="res://.godot/imported/ring_flare.png-f38f75f37943c1c01bb1b5838790147d.ctex"
+uid="uid://c66n8oopqobd7"
+path="res://.godot/imported/bard_base_p_speed_flash.png-91df5552bb5e1bad11ecde4789529c0e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/effects/stasis/ring_flare.png"
-dest_files=["res://.godot/imported/ring_flare.png-f38f75f37943c1c01bb1b5838790147d.ctex"]
+source_file="res://assets/effects/stasis/native/impact/assets/characters/bard/skins/base/particles/bard_base_p_speed_flash.png"
+dest_files=["res://.godot/imported/bard_base_p_speed_flash.png-91df5552bb5e1bad11ecde4789529c0e.ctex"]
 
 [params]
 

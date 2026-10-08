@@ -446,5 +446,12 @@
     "method": "run",
     "scene": "battle",
     "group": "cards"
+  },
+  {
+    "id": "SpellProjectionSuite",
+    "script": "res://tests/suites/presentation/spell_projection_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "presentation"
   }
 ]
