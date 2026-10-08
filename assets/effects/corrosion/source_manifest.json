@@ -99,5 +99,14 @@
       "output": "morgana_base_w_tar_lightmult.png",
       "sha256": "ce883de94826f0a935b5cb1086227b571649dcb54674e8162a195ed24bdecad0"
     }
-  ]
+  ],
+  "adaptation": {
+    "revision": "2026-10-08",
+    "source_definition": "Morgana_Base_W_Tar_Update",
+    "source_pass_order": "Ordered distinct priorities -30..-16; original source_pass retained per emitter",
+    "spawn_shape": "ValueVector3 emitOffset with original probability tables",
+    "uniform_scale": "Preserve source uniform scaling across lifetime",
+    "dissolve": "Source LingerErosionDriveCurve mapped to final 0.4 seconds; opacity fades to zero at zone expiry",
+    "systems_sha256": "3f5ad0689b09bedb97c8bd45a49904d7a73b44422e1354f1b278228f1bd2dac7"
+  }
 }

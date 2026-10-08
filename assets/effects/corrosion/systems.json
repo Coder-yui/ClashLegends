@@ -17,9 +17,9 @@
     "delay": 0.1,
     "texture": "res://assets/effects/corrosion/morgana_base_e_backdrop.png",
     "offset": [
-      0.0,
-      0.0,
-      0.0
+      0,
+      0,
+      0
     ],
     "bind": {
       "base": 0.0
@@ -31,9 +31,9 @@
     ],
     "birthOffset": {
       "base": [
-        0.0,
-        0.0,
-        0.0
+        0,
+        0,
+        0
       ]
     },
     "emitterPosition": {
@@ -43,7 +43,7 @@
         0
       ]
     },
-    "pass": -1910,
+    "pass": -30,
     "birthScale0": {
       "base": [
         350.0,
@@ -257,6 +257,11 @@
     "erosion": "",
     "erosion_drive": {
       "base": 0.0
+    },
+    "source_pass": -1910,
+    "uniform_scale": true,
+    "linger_erosion": {
+      "base": 0.0
     }
   },
   {
@@ -277,9 +282,9 @@
     "delay": 0,
     "texture": "res://assets/effects/corrosion/morgana_base_r_fire_trail_up.png",
     "offset": [
-      0.0,
-      0.0,
-      0.0
+      0,
+      0,
+      0
     ],
     "bind": {
       "base": 0.0
@@ -291,9 +296,9 @@
     ],
     "birthOffset": {
       "base": [
-        0.0,
-        0.0,
-        0.0
+        0,
+        0,
+        0
       ]
     },
     "emitterPosition": {
@@ -303,7 +308,7 @@
         0
       ]
     },
-    "pass": -1700,
+    "pass": -24,
     "birthScale0": {
       "base": [
         2.7,
@@ -508,6 +513,11 @@
     "erosion": "",
     "erosion_drive": {
       "base": 0.0
+    },
+    "source_pass": -1700,
+    "uniform_scale": true,
+    "linger_erosion": {
+      "base": 0.0
     }
   },
   {
@@ -528,9 +538,9 @@
     "delay": 0,
     "texture": "res://assets/effects/corrosion/morgana_base_r_fire_trail_up.png",
     "offset": [
-      0.0,
-      0.0,
-      0.0
+      0,
+      0,
+      0
     ],
     "bind": {
       "base": 0.0
@@ -542,9 +552,9 @@
     ],
     "birthOffset": {
       "base": [
-        0.0,
-        0.0,
-        0.0
+        0,
+        0,
+        0
       ]
     },
     "emitterPosition": {
@@ -554,7 +564,7 @@
         0
       ]
     },
-    "pass": -1800,
+    "pass": -26,
     "birthScale0": {
       "base": [
         3.0,
@@ -752,6 +762,11 @@
     "erosion": "",
     "erosion_drive": {
       "base": 0.0
+    },
+    "source_pass": -1800,
+    "uniform_scale": true,
+    "linger_erosion": {
+      "base": 0.0
     }
   },
   {
@@ -772,9 +787,9 @@
     "delay": 0,
     "texture": "res://assets/effects/corrosion/morgana_base_r_fire_trail_up.png",
     "offset": [
-      0.0,
-      0.0,
-      0.0
+      0,
+      0,
+      0
     ],
     "bind": {
       "base": 0.0
@@ -786,9 +801,9 @@
     ],
     "birthOffset": {
       "base": [
-        0.0,
-        0.0,
-        0.0
+        0,
+        0,
+        0
       ]
     },
     "emitterPosition": {
@@ -798,7 +813,7 @@
         0
       ]
     },
-    "pass": -1800,
+    "pass": -26,
     "birthScale0": {
       "base": [
         2.0,
@@ -996,6 +1011,11 @@
     "erosion": "",
     "erosion_drive": {
       "base": 0.0
+    },
+    "source_pass": -1800,
+    "uniform_scale": false,
+    "linger_erosion": {
+      "base": 0.0
     }
   },
   {
@@ -1016,9 +1036,9 @@
     "delay": 0.05,
     "texture": "res://assets/effects/corrosion/morg_base_ba_meshmult.png",
     "offset": [
-      0.0,
-      0.0,
-      0.0
+      0,
+      0,
+      0
     ],
     "bind": {
       "base": 1.0
@@ -1030,9 +1050,9 @@
     ],
     "birthOffset": {
       "base": [
-        0.0,
-        0.0,
-        0.0
+        0,
+        0,
+        0
       ]
     },
     "emitterPosition": {
@@ -1042,7 +1062,7 @@
         0
       ]
     },
-    "pass": -10,
+    "pass": -22,
     "birthScale0": {
       "base": [
         0.57,
@@ -1236,6 +1256,19 @@
         2.0,
         0.0
       ]
+    },
+    "source_pass": -10,
+    "uniform_scale": true,
+    "linger_erosion": {
+      "base": 0.0,
+      "times": [
+        0.0,
+        1.0
+      ],
+      "values": [
+        0.0,
+        1.0
+      ]
     }
   },
   {
@@ -1256,9 +1289,9 @@
     "delay": 0.05,
     "texture": "res://assets/effects/corrosion/morgana_base_w_edge.png",
     "offset": [
-      0.0,
-      0.0,
-      0.0
+      0,
+      0,
+      0
     ],
     "bind": {
       "base": 1.0
@@ -1270,9 +1303,9 @@
     ],
     "birthOffset": {
       "base": [
-        0.0,
-        0.0,
-        0.0
+        0,
+        0,
+        0
       ]
     },
     "emitterPosition": {
@@ -1282,7 +1315,7 @@
         0
       ]
     },
-    "pass": 90,
+    "pass": -16,
     "birthScale0": {
       "base": [
         0.57,
@@ -1454,6 +1487,19 @@
         0.0,
         0.0
       ]
+    },
+    "source_pass": 90,
+    "uniform_scale": true,
+    "linger_erosion": {
+      "base": 0.0,
+      "times": [
+        0.0,
+        1.0
+      ],
+      "values": [
+        0.0,
+        1.0
+      ]
     }
   },
   {
@@ -1493,27 +1539,6 @@
     "delay": 0,
     "texture": "res://assets/effects/corrosion/morgana_base_r_energybits.png",
     "offset": [
-      3.0,
-      3.0,
-      200.0,
-      0.0,
-      200.0,
-      3.0,
-      32.0,
-      0.0,
-      1.0,
-      32.0,
-      -1.0,
-      1.0,
-      32.0,
-      0.0,
-      1.0,
-      32.0,
-      -1.0,
-      1.0,
-      32.0,
-      0.0,
-      3.0,
       200.0,
       0.0,
       200.0
@@ -1528,30 +1553,46 @@
     ],
     "birthOffset": {
       "base": [
-        3.0,
-        3.0,
-        200.0,
-        0.0,
-        200.0,
-        3.0,
-        32.0,
-        0.0,
-        1.0,
-        32.0,
-        -1.0,
-        1.0,
-        32.0,
-        0.0,
-        1.0,
-        32.0,
-        -1.0,
-        1.0,
-        32.0,
-        0.0,
-        3.0,
         200.0,
         0.0,
         200.0
+      ],
+      "times": [
+        0.0
+      ],
+      "values": [
+        [
+          200.0,
+          0.0,
+          200.0
+        ]
+      ],
+      "probabilities": [
+        {
+          "base": 1,
+          "times": [
+            0.0,
+            1.0
+          ],
+          "values": [
+            -1.0,
+            1.0
+          ]
+        },
+        {
+          "base": 1
+        },
+        {
+          "base": 1,
+          "times": [
+            0.0,
+            1.0
+          ],
+          "values": [
+            -1.0,
+            1.0
+          ]
+        }
       ]
     },
     "emitterPosition": {
@@ -1561,7 +1602,7 @@
         0
       ]
     },
-    "pass": 0,
+    "pass": -20,
     "birthScale0": {
       "base": [
         10.0,
@@ -1856,6 +1897,11 @@
     "erosion": "",
     "erosion_drive": {
       "base": 0.0
+    },
+    "source_pass": 0,
+    "uniform_scale": false,
+    "linger_erosion": {
+      "base": 0.0
     }
   },
   {
@@ -1876,9 +1922,9 @@
     "delay": 0.05,
     "texture": "res://assets/effects/corrosion/morgana_base_w_edge_blur.png",
     "offset": [
-      0.0,
-      0.0,
-      0.0
+      0,
+      0,
+      0
     ],
     "bind": {
       "base": 1.0
@@ -1890,9 +1936,9 @@
     ],
     "birthOffset": {
       "base": [
-        0.0,
-        0.0,
-        0.0
+        0,
+        0,
+        0
       ]
     },
     "emitterPosition": {
@@ -1902,7 +1948,7 @@
         0
       ]
     },
-    "pass": 80,
+    "pass": -18,
     "birthScale0": {
       "base": [
         0.57,
@@ -2074,6 +2120,19 @@
         0.0,
         0.0
       ]
+    },
+    "source_pass": 80,
+    "uniform_scale": true,
+    "linger_erosion": {
+      "base": 0.0,
+      "times": [
+        0.0,
+        1.0
+      ],
+      "values": [
+        0.0,
+        1.0
+      ]
     }
   },
   {
@@ -2113,27 +2172,6 @@
     "delay": 0,
     "texture": "res://assets/effects/corrosion/morgana_base_p_stardustmote.png",
     "offset": [
-      3.0,
-      3.0,
-      200.0,
-      0.0,
-      200.0,
-      3.0,
-      32.0,
-      0.0,
-      1.0,
-      32.0,
-      -1.0,
-      1.0,
-      32.0,
-      0.0,
-      1.0,
-      32.0,
-      -1.0,
-      1.0,
-      32.0,
-      0.0,
-      3.0,
       200.0,
       0.0,
       200.0
@@ -2148,30 +2186,46 @@
     ],
     "birthOffset": {
       "base": [
-        3.0,
-        3.0,
-        200.0,
-        0.0,
-        200.0,
-        3.0,
-        32.0,
-        0.0,
-        1.0,
-        32.0,
-        -1.0,
-        1.0,
-        32.0,
-        0.0,
-        1.0,
-        32.0,
-        -1.0,
-        1.0,
-        32.0,
-        0.0,
-        3.0,
         200.0,
         0.0,
         200.0
+      ],
+      "times": [
+        0.0
+      ],
+      "values": [
+        [
+          200.0,
+          0.0,
+          200.0
+        ]
+      ],
+      "probabilities": [
+        {
+          "base": 1,
+          "times": [
+            0.0,
+            1.0
+          ],
+          "values": [
+            -1.0,
+            1.0
+          ]
+        },
+        {
+          "base": 1
+        },
+        {
+          "base": 1,
+          "times": [
+            0.0,
+            1.0
+          ],
+          "values": [
+            -1.0,
+            1.0
+          ]
+        }
       ]
     },
     "emitterPosition": {
@@ -2181,7 +2235,7 @@
         0
       ]
     },
-    "pass": 0,
+    "pass": -20,
     "birthScale0": {
       "base": [
         60.0,
@@ -2476,6 +2530,11 @@
     "erosion": "",
     "erosion_drive": {
       "base": 0.0
+    },
+    "source_pass": 0,
+    "uniform_scale": false,
+    "linger_erosion": {
+      "base": 0.0
     }
   },
   {
@@ -2496,9 +2555,9 @@
     "delay": 0,
     "texture": "res://assets/effects/corrosion/morgana_base_w_tar_ground.png",
     "offset": [
-      0.0,
-      0.0,
-      0.0
+      0,
+      0,
+      0
     ],
     "bind": {
       "base": 0.0
@@ -2510,9 +2569,9 @@
     ],
     "birthOffset": {
       "base": [
-        0.0,
-        0.0,
-        0.0
+        0,
+        0,
+        0
       ]
     },
     "emitterPosition": {
@@ -2522,7 +2581,7 @@
         0
       ]
     },
-    "pass": -1900,
+    "pass": -28,
     "birthScale0": {
       "base": [
         370.0,
@@ -2694,6 +2753,21 @@
         2.0,
         0.0
       ]
+    },
+    "source_pass": -1900,
+    "uniform_scale": true,
+    "linger_erosion": {
+      "base": 0.0,
+      "times": [
+        0.0,
+        0.15,
+        1.0
+      ],
+      "values": [
+        0.0,
+        0.2,
+        1.0
+      ]
     }
   },
   {
@@ -2714,9 +2788,9 @@
     "delay": 0,
     "texture": "res://assets/effects/corrosion/morgana_base_q_mis_energy.png",
     "offset": [
-      0.0,
-      0.0,
-      0.0
+      0,
+      0,
+      0
     ],
     "bind": {
       "base": 0.0
@@ -2728,9 +2802,9 @@
     ],
     "birthOffset": {
       "base": [
-        0.0,
-        0.0,
-        0.0
+        0,
+        0,
+        0
       ]
     },
     "emitterPosition": {
@@ -2740,7 +2814,7 @@
         0
       ]
     },
-    "pass": -1900,
+    "pass": -28,
     "birthScale0": {
       "base": [
         360.0,
@@ -2911,6 +2985,21 @@
       "values": [
         2.0,
         0.0
+      ]
+    },
+    "source_pass": -1900,
+    "uniform_scale": true,
+    "linger_erosion": {
+      "base": 0.0,
+      "times": [
+        0.0,
+        0.15,
+        1.0
+      ],
+      "values": [
+        0.0,
+        0.2,
+        1.0
       ]
     }
   }

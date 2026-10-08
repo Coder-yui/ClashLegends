@@ -109,7 +109,8 @@ func _spawn(c: Dictionary, birth: float, material: ShaderMaterial) -> void:
 		"offset": vec3(_birth_sample(c.get("birthOffset", {"base": c.offset}), birth)) + spawn_offset,
 		"mult_offset": vec2(_birth_sample(c.mult_birth_offset, birth)),
 		"mult_rate": vec2(_birth_sample(c.mult_birth_scroll, birth)),
-		"frame": _rng.randi_range(0, maxi(int(c.frames) - 1, 0))})
+		"frame_rate": float(_birth_sample(c.get("birthFrameRate", {"base": 0.0}), birth)),
+		"frame": _rng.randi_range(0, maxi(int(c.frames) - 1, 0)) if bool(c.get("random_start_frame", true)) else 0})
 
 func _update(p: Dictionary, age: float) -> void:
 	var c: Dictionary = p.c
@@ -125,10 +126,11 @@ func _update(p: Dictionary, age: float) -> void:
 	if orbital.length_squared() > 0.0: offset = Basis.from_euler(orbital * age) * offset
 	var bind := clampf(float(sample(c.bind, t)), 0.0, 1.0)
 	var particle_basis: Basis = (p.basis as Basis).orthonormalized().slerp(global_basis.orthonormalized(), bind)
-	node.global_position = (p.origin as Vector3).lerp(global_position, bind) + (particle_basis * offset + vec3(sample(c.worldAcceleration, t)) * age * age * 0.5) * _factor
+	node.global_position = (p.origin as Vector3).lerp(global_position, bind) + (particle_basis * offset + (vec3(sample(c.worldAcceleration, t)) + vec3(sample(c.get("fieldAcceleration", {"base": [0,0,0]}), t))) * age * age * 0.5) * _factor
+	var orientation_basis: Basis = Basis.IDENTITY if bool(c.get("apply_local_orientation", false)) and not bool(c.get("local_orientation", true)) else particle_basis
 	var angles: Vector3 = (p.rotation + vec3(sample(c.birthRotationalVelocity0, 0.0)) * age) * PI / 180.0
 	if not String(c.mesh).is_empty() or String(c.get("primitive", "")) == "VfxPrimitiveArbitraryQuad":
-		node.global_basis = particle_basis * Basis.from_euler(angles)
+		node.global_basis = orientation_basis * Basis.from_euler(angles)
 	elif bool(c.ground):
 		node.global_basis = global_basis * Basis(Vector3.RIGHT, -PI / 2.0) * Basis(Vector3.BACK, angles.z)
 		node.global_position.y = maxf(node.global_position.y, 0.045)
@@ -152,6 +154,7 @@ func _update(p: Dictionary, age: float) -> void:
 		node.global_basis = Basis(forward.cross(Vector3.UP), forward, Vector3.UP)
 		node.global_position.y = 0.045
 	var size := (p.scale as Vector3) * vec3(sample(c.scale0, t)) * _factor
+	if bool(c.get("uniform_scale", false)): size = Vector3.ONE * size.x
 	for axis in 3:
 		var sign_value := -1.0 if bool(c.get("preserve_signed_scale", false)) and size[axis] < 0.0 else 1.0
 		size[axis] = maxf(absf(size[axis]), 0.0001) * sign_value
@@ -164,7 +167,7 @@ func _update(p: Dictionary, age: float) -> void:
 	var tint := Color(rgba[0], rgba[1], rgba[2], rgba[3]) * (p.color as Color)
 	node.material_override.set_shader_parameter("tint", tint)
 	node.material_override.set_shader_parameter("elapsed", age)
-	node.material_override.set_shader_parameter("frame", float(p.frame))
+	node.material_override.set_shader_parameter("frame", fmod(float(p.frame) + floor(age * float(p.get("frame_rate", 0.0))), maxf(1.0, float(c.frames))))
 	node.material_override.set_shader_parameter("uv_scale", vec2(sample(c.uvScale, t)))
 	node.material_override.set_shader_parameter("erosion", float(sample(c.erosion_drive, t)))
 	_update_flow(node.material_override, c, age, float(p.life), false)
@@ -194,6 +197,7 @@ func _update_trail(trail: Dictionary) -> void:
 		var width := float(points[i].width) * float(sample(c.scale0, t)[0])
 		var tangent: Vector3 = points[mini(i+1, points.size()-1)].pos - points[maxi(i-1, 0)].pos
 		var trail_normal := global_basis.z.normalized() if _motion_frame else Vector3.UP
+		if bool(c.get("camera_trail", false)) and is_instance_valid(_camera): trail_normal = _camera.global_basis.z
 		var side := tangent.cross(trail_normal).normalized() * width
 		var rgba: Array = sample(c.Color, t)
 		for sign in [-1.0, 1.0]:
@@ -263,6 +267,11 @@ static func _material(c: Dictionary) -> ShaderMaterial:
 		material.shader = preload("res://scripts/presentation/native_particle_distortion.gdshader")
 		material.set_shader_parameter("normal_map", _texture(c.distortion_texture))
 		material.set_shader_parameter("distortion_strength", float(c.distortion_strength))
+	if not String(c.get("palette_texture", "")).is_empty():
+		material.set_shader_parameter("palette_texture", _texture(c.palette_texture))
+		material.set_shader_parameter("has_palette", true)
+		material.set_shader_parameter("palette_row", float(c.palette_row))
+		material.set_shader_parameter("palette_count", float(c.palette_count))
 	material.render_priority = clampi(int(c.pass), -128, 127)
 	material.set_shader_parameter("source_texture", _texture(c.texture))
 	material.set_shader_parameter("uv_clamp", bool(c.get("uv_clamp", false)))

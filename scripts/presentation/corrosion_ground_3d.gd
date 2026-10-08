@@ -60,6 +60,12 @@ func _sync_effects(effects: Array, camera: Camera3D) -> void:
 			var node: MeshInstance3D = particle.node
 			node.global_position = view.player.position + view.warp * (node.global_position - view.player.position)
 			node.global_basis = view.warp * node.global_basis
+			# Compress the source linger erosion into the final 0.4 seconds of
+			# the authoritative zone; no damaging-looking residue after expiry.
+			var fade := smoothstep(4.6, 5.0, age)
+			node.material_override.set_shader_parameter("opacity", 1.0 - fade)
+			if not String(particle.c.erosion).is_empty() and age >= 4.6:
+				node.material_override.set_shader_parameter("erosion", PLAYER.sample(particle.c.linger_erosion, (age - 4.6) / 0.4))
 	for id in _views.keys():
 		if not present.has(id):
 			_views[id].player.free()
