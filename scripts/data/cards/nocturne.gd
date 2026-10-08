@@ -26,7 +26,27 @@ static func definition() -> Dictionary:
 				"attack": ["Attack1", "Attack2"], "empowered_attack": "Attack3", "death": "Death", "death_clip_end": 1.5, "death_duration": 0.8,
 				"clip_blends": {"Spell2>Run": 0.18, "Spell2>Attack1": 0.16, "Spell2>Attack2": 0.16, "Spell2>Attack3": 0.16},
 				"visual_actions": {"effect_shield:start": {"animation": "Spell2", "kind": "skill", "priority": 10, "blend_in": 0.16, "blend_out": 0.18}}},
-			"active_skills": [{"icon_path": "res://assets/skills/nocturne_w.png"}, {"icon_path": "res://assets/skills/nocturne_p.png"}],
+			"active_skills": [{"resource_dependencies": {
+				"effects": [
+					{
+						"provider": "res://assets/effects/nocturne/nocturne_effects.gd",
+						"variant": "shield"
+					}
+				],
+				"fields": [
+					"visual_active_buff_scene"
+				]
+			}, "icon_path": "res://assets/skills/nocturne_w.png"}, {"resource_dependencies": {
+				"effects": [
+					{
+						"provider": "res://assets/effects/nocturne/nocturne_effects.gd",
+						"variant": "cleave"
+					}
+				],
+				"fields": [
+					"visual_active_buff_scene"
+				]
+			}, "icon_path": "res://assets/skills/nocturne_p.png"}],
 		},
 		# BEGIN IMPORTED AUDIO nocturne
 		"audio": {

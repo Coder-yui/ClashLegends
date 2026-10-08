@@ -29,6 +29,14 @@ static func definition() -> Dictionary:
 			}],
 		},
 		"visual": {
+			"resource_dependencies": {
+				"effects": [
+					{
+						"provider": "res://scripts/presentation/jinx_projectile_effect.gd",
+						"variant": "rocket"
+					}
+				]
+			},
 			"visual_radius": RADIUS_MEDIUM + VISUAL_RADIUS_PADDING,
 			"visual_active_buff_scene": "res://assets/units/jinx/haste_view.tscn",
 			"visual_scene_path": "res://assets/units/jinx/jinx_view.tscn", "visual_forward_yaw": 0.0,
@@ -53,7 +61,17 @@ static func definition() -> Dictionary:
 					"attack": ["Attack1", "Attack2"], "death": "Death", "death_duration": 0.8,
 				},
 			},
-			"active_skills": [{"icon_path": "res://assets/skills/jinx_0.png"}],
+			"active_skills": [{"resource_dependencies": {
+				"effects": [
+					{
+						"provider": "res://scripts/presentation/jinx_projectile_effect.gd",
+						"variant": "bullet"
+					}
+				],
+				"fields": [
+					"transformed_stats"
+				]
+			}, "icon_path": "res://assets/skills/jinx_0.png"}],
 		},
 		"card_art": {"path": "res://assets/cards/jinx_loading.png"}, "audio": {
   "events": {

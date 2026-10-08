@@ -51,3 +51,7 @@ func _ground(camera: Camera3D, point: Vector2) -> Vector3:
 
 func _projection_basis(camera: Camera3D, point: Vector2, pixel_radius: float) -> Basis:
 	return PROJECTION.footprint_basis(camera, point, pixel_radius)
+
+static func resource_manifest(variant: String) -> Dictionary:
+	if variant != "default": return {}
+	return {"emitter_provider": "res://assets/effects/stasis/native/player.gd", "json": ["res://assets/effects/stasis/native/flight/sampled.json", "res://assets/effects/stasis/native/warning/sampled.json", "res://assets/effects/stasis/native/impact/sampled.json"], "view": {"script": "res://scripts/presentation/stasis_spell_effect_3d.gd", "collection": "stasis_effects", "kind": "stasis", "duration": 2.15, "flight": true}, "target_states": ["stasis"], "paths": ["res://assets/effects/stasis/attached_mesh.gdshader", "res://assets/effects/stasis/attached_gold.gdshader", "res://assets/effects/stasis/native/trail.gdshader", "res://assets/effects/stasis/bard_swirl.png", "res://assets/effects/stasis/zhonya_swirl.png"]}

@@ -18,7 +18,11 @@ static func definition() -> Dictionary:
 				}],
 		},
 		"visual": {
-			"active_skills": [{"icon_path": "res://assets/skills/ranged_minion_0.png"}],
+			"active_skills": [{"resource_dependencies": {
+				"fields": [
+					"visual_active_buff_scene"
+				]
+			}, "icon_path": "res://assets/skills/ranged_minion_0.png"}],
 			"active_buff_projectile_visual": "baron_ranged",
 			"visual_active_buff_scene": "res://assets/effects/baron_minion/ranged_minion.tscn",
 			"visual_radius": RADIUS_SMALL + VISUAL_RADIUS_PADDING,

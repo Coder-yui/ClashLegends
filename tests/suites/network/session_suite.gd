@@ -172,6 +172,13 @@ func _check_buffer_clock_and_playback(harness: Object) -> void:
 	main.mode = "client"
 	main._session.join("buffer")
 	main._session.phase = MatchSession.Phase.RUNNING
+	main._rpc_freeze_fx("buffer", Vector2(300,900), 110.0, 3.0, 2.0, 0.7, 1, 137.5)
+	harness._expect(main._spell_system.freeze_effects.size() == 1 and main._spell_system.slow_effects.size() == 1 and main._spell_system.slow_zones.is_empty(), "冰冻RPC在客户端只创建两个表现区域")
+	var slow: Dictionary = main._spell_system.slow_effects.back()
+	harness._expect(is_equal_approx(slow.radius, 137.5) and is_equal_approx(slow.timer, 5.0) and slow.delay == 0.0 and slow.team == 1, "冰冻RPC保留扩大半径、同刻开始、额外2秒与阵营")
+	main._rpc_freeze_fx("old", Vector2.ZERO, 110.0, 3.0, 2.0, 0.7, 0, 137.5)
+	harness._expect(main._spell_system.slow_effects.size() == 1, "旧会话冰冻表现不能生成区域")
+	main._spell_system.clear()
 	main._rpc_command_scheduled("old", card)
 	harness._expect(main._network_commands.inspect().is_empty(), "旧会话排程不能进入客户端")
 	main._rpc_command_scheduled("buffer", card)

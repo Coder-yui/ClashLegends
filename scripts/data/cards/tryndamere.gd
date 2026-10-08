@@ -19,7 +19,17 @@ static func definition() -> Dictionary:
 			"visual_active_buff_scene": "res://assets/effects/tryndamere/undying_rage.tscn",
 			"visual_scene_path": "res://assets/units/tryndamere/tryndamere_view.tscn", "visual_forward_yaw": 0.0,
 			"visual_animations": {"deploy": "DeployIdle", "idle": "Idle1", "move": "Run", "attack": ["HeldAttack1", "HeldAttack2", "HeldCrit"], "death": "Death", "death_duration": 1.0},
-			"active_skills": [{"icon_path": "res://assets/skills/tryndamere_0.png"}],
+			"active_skills": [{"resource_dependencies": {
+				"effects": [
+					{
+						"provider": "res://assets/effects/tryndamere/undying_rage.gd",
+						"variant": "default"
+					}
+				],
+				"fields": [
+					"visual_active_buff_scene"
+				]
+			}, "icon_path": "res://assets/skills/tryndamere_0.png"}],
 		},
 		"card_art": {"path": "res://assets/cards/tryndamere_loading.png"},
 		"audio": {

@@ -44,3 +44,16 @@ func advance(enabled: bool, delta: float) -> void:
 			bursts[index].node.queue_free()
 			bursts.remove_at(index)
 	visible = active or not bursts.is_empty()
+
+static func resource_manifest(variant: String) -> Dictionary:
+	if variant not in ["shield", "cleave"]: return {}
+	return {"shader_providers": ["res://assets/units/pantheon/arrival/particle_player.gd"], "json": ["res://assets/effects/nocturne/native/systems.json"], "systems": ["W", "block"] if variant == "shield" else ["P"]}
+
+## 附属播放器自己决定如何采样，模型池不识别英雄身份。
+func prepare_resource_sample(skills: Array, draw: Callable) -> void:
+	var shield_enabled := skills.any(func(skill): return skill.get("kind") == "effect_shield")
+	if skills.any(func(skill): return skill.get("kind") == "empowered_attack"): on_cue(&"cleave:hit")
+	if shield_enabled: on_cue(&"effect_shield:block")
+	for step in 20:
+		advance(shield_enabled, 0.1)
+		draw.call()

@@ -11,7 +11,15 @@ static func definition() -> Dictionary:
 				"max_uses": 1, "cooldown": 0.0, "duration": 2.0,
 				"description": "我方单位、建筑卡和防御塔凝滞时间缩短至2秒，敌方仍为3秒。"}],
 		},
-		"visual": {"color": Color(1.0, 0.78, 0.22), "active_skills": [{"icon_path": "res://assets/skills/stasis_0.png"}]},
+		"visual": {
+			"resource_dependencies": {
+				"effects": [
+					{
+						"provider": "res://scripts/presentation/stasis_spell_effect_3d.gd",
+						"variant": "default"
+					}
+				]
+			}, "color": Color(1.0, 0.78, 0.22), "active_skills": [{"icon_path": "res://assets/skills/stasis_0.png"}]},
 		"card_art": {"path": "res://assets/cards/stasis_loading.png"},
 		"audio": {"events": {
 			"spell:flight": {"pool": ["res://assets/audio/spells/stasis/flight_1.wav", "res://assets/audio/spells/stasis/flight_2.wav"], "volume_db": 0.0, "bus": "Combat"},

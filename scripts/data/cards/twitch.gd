@@ -21,6 +21,14 @@ static func definition() -> Dictionary:
 			}],
 		},
 		"visual": {
+			"resource_dependencies": {
+				"effects": [
+					{
+						"provider": "res://scripts/presentation/stealth_transition_3d.gd",
+						"variant": "default"
+					}
+				]
+			},
 			"visual_radius": RADIUS_MEDIUM + VISUAL_RADIUS_PADDING,
 			"visual_scene_path": "res://assets/units/twitch/twitch_view.tscn",
 			"visual_forward_yaw": 0.0,

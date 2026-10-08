@@ -328,7 +328,7 @@ static func active_skill_description(skill: Dictionary) -> String:
 		"restoration_shield":
 			parts.append("同次部署的存活成员各自获得护盾；到期仍未破盾的成员回复至满血")
 		"spell_freeze":
-			parts.append("冰冻结束后留下 %s 秒区域，敌军移速降低 %s%%、攻速降低 %s%%" % [format_number(float(skill.slow_duration)), format_number((1.0 - float(skill.slow_multiplier)) * 100.0), format_number((1.0 - float(skill.attack_speed_multiplier)) * 100.0)])
+			parts.append("施放时生成更大的减速区域（半径%s），比冰冻多持续 %s 秒；敌军移速降低 %s%%、攻速降低 %s%%" % [format_number(float(skill.radius)), format_number(float(skill.slow_duration)), format_number((1.0 - float(skill.slow_multiplier)) * 100.0), format_number((1.0 - float(skill.attack_speed_multiplier)) * 100.0)])
 		"spell_stasis":
 			parts.append("友军凝滞 %s 秒，敌军仍为3秒" % format_number(float(skill.duration)))
 		"spell_heal":

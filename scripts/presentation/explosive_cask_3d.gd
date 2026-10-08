@@ -15,6 +15,7 @@ var _hits: Array = []
 var _views: Dictionary = {}
 
 func sync_effects(spells: RefCounted, camera: Camera3D) -> void:
+	if spells.cask_effects.is_empty() and spells.cask_hits.is_empty() and _views.is_empty() and _hit_views.is_empty(): return
 	if _flight.is_empty():
 		_flight = JSON.parse_string(FileAccess.get_file_as_string("res://assets/effects/explosive_cask/mis/systems.json"))
 	if _hits.is_empty(): _hits = JSON.parse_string(FileAccess.get_file_as_string("res://assets/effects/explosive_cask/tar/systems.json"))
@@ -78,7 +79,7 @@ func sync_effects(spells: RefCounted, camera: Camera3D) -> void:
 			if not is_instance_valid(view.ring):
 				var ring := MeshInstance3D.new()
 				var mat := ShaderMaterial.new()
-				mat.shader = preload("res://assets/effects/corrosion/range.gdshader")
+				mat.shader = load("res://assets/effects/corrosion/range.gdshader")
 				mat.set_shader_parameter("rim_color", Color(0.8, 0.4, 1.0))
 				ring.material_override = mat
 				add_child(ring)
@@ -107,3 +108,7 @@ func _ground(camera: Camera3D, point: Vector2) -> Vector3:
 func _impact_basis(camera: Camera3D, point: Vector2, radius: float) -> Basis:
 	var unit_scale := _ground(camera, point + Vector2(radius, 0)).distance_to(_ground(camera, point)) / SOURCE_RADIUS
 	return PROJECTION.footprint_basis(camera, point, radius).scaled(Vector3.ONE * unit_scale)
+
+static func resource_manifest(variant: String) -> Dictionary:
+	if variant != "default": return {}
+	return {"shader_providers": ["res://assets/units/pantheon/arrival/particle_player.gd"], "emitter_provider": "res://assets/effects/explosive_cask/native_end/player.gd", "json": ["res://assets/effects/explosive_cask/mis/systems.json", "res://assets/effects/explosive_cask/tar/systems.json", "res://assets/effects/explosive_cask/native_end/sampled.json"], "view": {"script": "res://scripts/presentation/explosive_cask_3d.gd", "collection": "cask_effects", "kind": "explosive_cask", "duration": 2.15, "flight": true, "hits": "cask_hits"}}

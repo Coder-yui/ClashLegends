@@ -30,13 +30,13 @@ var preparation_times := {"instantiate_usec": 0, "animation_usec": 0, "render_us
 
 ## 每卡/阵营只有一个并发来源；同卡互斥形态同路径取最大，独立来源累加。
 ## 两轮爆发窗口有界保留；循环依赖只扫描已去重闭包一次，不按整场累计数量扩张。
-static func build_specs(cards: Dictionary) -> Dictionary:
+static func build_specs(cards: Dictionary, plan: RefCounted = null) -> Dictionary:
 	var demand := {}
 	for id in cards:
 		demand[id] = maxi(int(MatchResources.SYSTEM_UNIT_BUDGET.get(id, 2)), int(CardDB.get_card(String(id)).get("deployment_count", 1)))
 	var summoned := {}
 	for id in cards:
-		var base := CardDB.get_card(String(id))
+		var base: Dictionary = plan.definition(String(id)) if plan != null else CardDB.get_card(String(id))
 		var per_source := {}
 		for form in range(2 if base.has("transformed_stats") else 1):
 			var per_form := {}
@@ -47,12 +47,14 @@ static func build_specs(cards: Dictionary) -> Dictionary:
 		for child in per_source: summoned[child] = int(summoned.get(child, 0)) + int(per_source[child]) * int(base.get("deployment_count", 1))
 	for child in summoned: demand[child] = maxi(int(demand.get(child, 2)), mini(32, int(summoned[child]) * 2))
 	# 镜像是额外并发来源，复制闭包内任一卡及其召唤物均需库存。
-	if cards.has("mirror"):
+	if cards.keys().any(func(id): return bool(CardDB.get_card(String(id)).get("resource_dependencies", {}).get("copy_deck_skills", false))):
 		for id in demand: demand[id] = mini(64, int(demand[id]) * 2)
 	var specs := {}
 	for id in cards:
-		var base := CardDB.get_card(String(id))
+		var base: Dictionary = plan.definition(String(id)) if plan != null else CardDB.get_card(String(id))
 		for team in range(2):
+			if plan != null and team not in plan.cards.get(id, []): continue
+			if plan != null: base = plan.definition(String(id), team)
 			var seen := {}
 			for form in range(2 if base.has("transformed_stats") else 1):
 				var stats := PresentationConfig.for_form(base, form)
@@ -80,11 +82,11 @@ func _metric(path: String) -> Dictionary:
 	return metrics[path]
 
 
-func prepare(resources: Dictionary, world: Node3D, camera: Camera3D, cards: Dictionary) -> void:
+func prepare(resources: Dictionary, world: Node3D, camera: Camera3D, cards: Dictionary, plan: RefCounted = null) -> void:
 	if cancelled: return
 	_world = world
 	var tree := world.get_tree()
-	var specs := build_specs(cards)
+	var specs := build_specs(cards, plan)
 	var slice_started := Time.get_ticks_usec()
 	for path in resources:
 		if not (String(path).begins_with("res://assets/units/") or String(path).begins_with("res://assets/effects/")) or not String(path).ends_with(".tscn") or instances.has(path):
@@ -200,10 +202,13 @@ func prepare(resources: Dictionary, world: Node3D, camera: Camera3D, cards: Dict
 							if cancelled or not is_instance_valid(world): return
 							slice_started = Time.get_ticks_usec()
 				if is_instance_valid(sample._active_buff_visual):
-					sample._active_buff_visual.advance(true, 0.1)
+					if sample._active_buff_visual.has_method("prepare_resource_sample"):
+						sample._active_buff_visual.prepare_resource_sample(spec.stats.get("active_skills", []), _draw_sample)
+					else: sample._active_buff_visual.advance(true, 0.1)
 				# 仅跳过资源所有者明确构造为基础三态别名的强化三态。
 				# 不比较材质身份来猜测等价；有任何强化材质时仍完整绘制六态。
 				for state in range(6):
+					if plan != null and state % 3 == 2 and not plan.target_states.has("freeze"): continue
 					sample._model_resources.apply_overlays(state % 3 == 1, state % 3 == 2, state >= 3)
 					for mesh in sample._model_resources.meshes():
 						if mesh.material_overlay != null: _warmed_materials.append(mesh.material_overlay)
@@ -212,7 +217,7 @@ func prepare(resources: Dictionary, world: Node3D, camera: Camera3D, cards: Dict
 					else:
 						_draw_sample()
 				for mesh in sample._model_resources.meshes(): mesh.show()
-				if cards.has("stasis"):
+				if plan == null or plan.target_states.has("stasis"):
 					preparation_times.stasis_samples += 1
 					sample._model_resources.apply_overlays(false, false, false, true)
 					_draw_sample()

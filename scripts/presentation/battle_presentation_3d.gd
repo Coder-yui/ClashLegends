@@ -5,10 +5,17 @@ extends Node
 
 var spell_warmup := preload("res://scripts/presentation/spell_effect_warmup.gd").new()
 var viewer_team := 0
+var resource_plan: RefCounted
 
 func visual_team(team: int) -> int:
 	return 0 if team == viewer_team else 1
 
+var projectiles: Node2D
+var _gwen_tristana_effect: Node3D
+var _anivia_effect: Node3D
+var skills: RefCounted
+var _sion_w_effect: Node3D
+var _locket_effect: Node3D
 var spells: RefCounted
 var _freeze_ground: Node3D
 var _corrosion_ground: Node3D
@@ -24,6 +31,14 @@ var pending_deployments: Callable
 var _pre_deploy_views: Dictionary = {}
 
 func _process(delta: float) -> void:
+	if _gwen_tristana_effect != null:
+		_gwen_tristana_effect.sync_effects(projectiles, _camera)
+	if _sion_w_effect != null and skills != null:
+		_sion_w_effect.sync_effects(skills, _camera, delta)
+	if _anivia_effect != null and skills != null:
+		_anivia_effect.sync_effects(skills, projectiles, _camera)
+	if _locket_effect != null and skills != null:
+		_locket_effect.sync_effects(skills, _camera)
 	if _stasis_effect != null and spells != null:
 		_stasis_effect.sync_effects(spells, _camera)
 	if _lightning_effect != null and spells != null:
@@ -88,6 +103,14 @@ func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void
 		_camera.rotate_object_local(Vector3.BACK, PI)
 		_camera.set_meta("canvas_flipped", true)
 
+	_gwen_tristana_effect = preload("res://scripts/presentation/gwen_tristana_effect_3d.gd").new()
+	_world_root.add_child(_gwen_tristana_effect)
+	_anivia_effect = preload("res://scripts/presentation/anivia_effect_3d.gd").new()
+	_world_root.add_child(_anivia_effect)
+	_sion_w_effect = preload("res://scripts/presentation/sion_w_effect_3d.gd").new()
+	_world_root.add_child(_sion_w_effect)
+	_locket_effect = preload("res://scripts/presentation/locket_effect_3d.gd").new()
+	_world_root.add_child(_locket_effect)
 	_freeze_ground = preload("res://scripts/presentation/freeze_ground_3d.gd").new()
 	_world_root.add_child(_freeze_ground)
 	_corrosion_ground = preload("res://scripts/presentation/corrosion_ground_3d.gd").new()
@@ -109,6 +132,8 @@ func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void
 	add_child(overlay)
 
 func attach_unit(unit: Unit, stats: Dictionary) -> bool:
+	if resource_plan != null and resource_plan.cards.has(unit.card_id):
+		stats = resource_plan.definition(unit.card_id, visual_team(unit.team))
 	var visual_stats := PresentationConfig.for_form(stats, unit.get_form_index())
 	var scene_path := PresentationConfig.scene_path(visual_stats, visual_team(unit.team))
 	if scene_path.is_empty():
@@ -126,6 +151,7 @@ func attach_unit(unit: Unit, stats: Dictionary) -> bool:
 	if not view.setup(unit, packed, _camera, animations, forward_yaw, String(visual_stats.get("visual_active_buff_scene", ""))):
 		view.queue_free()
 		return false
+	_sion_w_effect.track(unit)
 	unit.has_model_art = true
 	unit.queue_redraw()
 	unit.form_changed.connect(_on_unit_form_changed.bind(unit, view, stats))
@@ -218,3 +244,7 @@ func project_height(point: Vector2, height: float) -> Vector2:
 	var direction := _camera.project_ray_normal(point)
 	if absf(direction.y) < 0.0001: return point
 	return _camera.unproject_position(origin + direction * (-origin.y / direction.y) + Vector3.UP * height)
+
+func prepare_target_states(states: Dictionary) -> void:
+	for child in _world_root.get_children():
+		if child is TowerModel3D: child.prepare_target_states(states)

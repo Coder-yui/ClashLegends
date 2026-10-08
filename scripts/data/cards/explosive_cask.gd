@@ -13,7 +13,15 @@ static func definition() -> Dictionary:
 				"max_uses": 1, "cooldown": 0.0, "damage": 270,
 				"description": "爆炸伤害提高至270，范围和击退不变。"}],
 		},
-		"visual": {"color": Color(0.85, 0.42, 0.12),
+		"visual": {
+			"resource_dependencies": {
+				"effects": [
+					{
+						"provider": "res://scripts/presentation/explosive_cask_3d.gd",
+						"variant": "default"
+					}
+				]
+			}, "color": Color(0.85, 0.42, 0.12),
 			"active_skills": [{"icon_path": "res://assets/skills/explosive_cask_0.png"}]},
 		"card_art": {"path": "res://assets/cards/explosive_cask_loading.png"},
 		"audio": {"events": {

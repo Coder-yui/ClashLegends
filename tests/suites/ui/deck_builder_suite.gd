@@ -135,7 +135,9 @@ func run(harness: Object, main: Node2D) -> void:
 	invalid_resources._collect("res://assets/units/voidmite/voidmite_view.tscn", &"AudioStream")
 	_expect(invalid_resources.errors.size() == 1, "本局加载保留实际资源类型检查")
 	var mite_path := PresentationConfig.scene_path(CardDB.get_card("voidmite"), 0)
-	_expect(pool.instances[mite_path].size() >= 12 and pool.instances[mite_path].size() <= 24 and pool.capacity[mite_path] == 24, "开局至少预建双方首轮12只蠕虫，保留24只容量及慢设备完整预建后备")
+	var mite_teams: Array = loading_match._resources.plan.cards["voidmite"]
+	var first_wave := mite_teams.size() * 6
+	_expect(pool.instances[mite_path].size() >= first_wave and pool.instances[mite_path].size() <= first_wave * 2 and pool.capacity[mite_path] == first_wave * 2, "只为可产生蠕虫的阵营预建首轮库存和两轮容量")
 	for id in ["tombstone", "gnar", "aatrox", "aurelionsol"]:
 		var model_path := PresentationConfig.scene_path(CardDB.get_card(id), 0)
 		var model_scene: PackedScene = loading_match._resources.resources[model_path]
@@ -160,9 +162,9 @@ func run(harness: Object, main: Node2D) -> void:
 	for round_index in 5:
 		var views: Array[UnitModel3D] = []
 		var sources: Array[Unit] = []
-		for index in 12:
+		for index in first_wave:
 			var source := Unit.new()
-			source.setup(index % 2, CardDB.get_card("voidmite"), "voidmite")
+			source.setup(int(mite_teams[index % mite_teams.size()]), CardDB.get_card("voidmite"), "voidmite")
 			sources.append(source)
 			var view := UnitModel3D.new()
 			view.model_factory = pool.take
@@ -173,8 +175,8 @@ func run(harness: Object, main: Node2D) -> void:
 			views.append(view)
 		for view in views: view._retire()
 		for source in sources: source.free()
-		_expect(pool.instances[mite_path].size() == initial_stock, "双方爆发第%d轮完成表现后归还模型库存" % round_index)
-	_expect(pool.metrics[mite_path].misses == 0 and pool.metrics[mite_path].hits == 60 and pool.metrics[mite_path].recycled == 60, "超过初始库存的60次领取均复用，无即时实例化")
+		_expect(pool.instances[mite_path].size() == initial_stock, "可达阵营爆发第%d轮完成表现后归还模型库存" % round_index)
+	_expect(pool.metrics[mite_path].misses == 0 and pool.metrics[mite_path].hits == first_wave * 5 and pool.metrics[mite_path].recycled == first_wave * 5, "超过初始库存的五轮领取均复用，无即时实例化")
 	# 耗时准入依设备而异；此处固定轻量路径准入，独立检查补充状态机。
 	pool._runtime_safe[mite_path] = true
 	pool.capacity[mite_path] = initial_stock * 2

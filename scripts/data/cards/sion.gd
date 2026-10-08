@@ -22,9 +22,9 @@ static func definition() -> Dictionary:
 			},
 			"active_skills": [{
 				"name": "灵魂熔炉", "kind": "explosive_shield",
-				"description": "消耗1金币，获得400护盾。2秒后若本层护盾未破，则移除剩余护盾并对周围地面、空中单位及建筑造成240伤害。冷却8秒，最多2次。",
-				"cost": 1, "max_uses": 2, "cooldown": 8.0,
-				"shield": 400, "shield_duration": 2.0, "radius": 110.0, "damage": 240,
+				"description": "消耗2金币，获得600护盾。3秒后若本层护盾未破，则移除剩余护盾并对周围地面、空中单位及建筑造成240伤害。冷却8秒，最多2次。",
+				"cost": 2, "max_uses": 2, "cooldown": 8.0,
+				"shield": 600, "shield_duration": 3.0, "radius": 200.0, "damage": 240,
 				"impact_delay": 0.0, "cast_duration": 0.0, "cast_locks": [], "ground_only": false,
 			}],
 		},
@@ -46,7 +46,22 @@ static func definition() -> Dictionary:
 					"clip_blends": {"Passive_Death>Sion_Passive_Run_anm": 0.18, "Passive_Death>Passive_Attack1": 0.18, "Passive_Death>Passive_Attack2": 0.18, "Passive_Death>Passive_Idle1": 0.18},
 					"death": "Death", "death_duration": 0.8, "death_clip_end": 2.5},
 			},
-			"active_skills": [{"icon_path": "res://assets/skills/sion_w.png"}],
+			"active_skills": [{"resource_dependencies": {
+				"effects": [
+					{
+						"provider": "res://assets/effects/sion_w/player.gd",
+						"variant": "Cas"
+					},
+					{
+						"provider": "res://assets/effects/sion_w/player.gd",
+						"variant": "Shield"
+					},
+					{
+						"provider": "res://assets/effects/sion_w/player.gd",
+						"variant": "Nova"
+					}
+				]
+			}, "icon_path": "res://assets/skills/sion_w.png"}],
 		},
 		"card_art": {"path": "res://assets/cards/sion_loading.png"},
 		"audio": {

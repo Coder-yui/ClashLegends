@@ -105,10 +105,7 @@ static func _v4(a: Array) -> Vector4: return Vector4(a[0],a[1],a[2],a[3])
 
 static func _material(e: Dictionary, source: String) -> ShaderMaterial:
 	var result := ShaderMaterial.new()
-	var shader_name := "warp" if e.distortion != null else ("pure_add" if int(e.blendMode) == 0 else ("add" if int(e.blendMode) == 4 else "mix"))
-	# 法术层保留原绘制顺序，并在单位与地表上保持可见。
-	shader_name += "_no_depth"
-	result.shader = load(ROOT + shader_name + ".gdshader")
+	result.shader = load(resource_shader_path(e))
 	result.render_priority = clampi(100 + (int(e.rank) + 1000000 if int(e.rank) < 0 else int(e.rank)), -128, 127)
 	# Original distortionMode=2 is the early, pre-particle phase.
 	if e.distortion != null: result.render_priority = -110
@@ -153,7 +150,7 @@ func _sync_trail(index: int, emitter: Dictionary, particles: Array) -> void:
 		var item := MeshInstance3D.new()
 		item.mesh = ImmediateMesh.new()
 		var mat := ShaderMaterial.new()
-		mat.shader = preload("res://assets/effects/stasis/native/trail.gdshader")
+		mat.shader = load("res://assets/effects/stasis/native/trail.gdshader")
 		mat.set_shader_parameter("source_texture", load(emitter.texture_path))
 		mat.render_priority = 100
 		item.material_override = mat
@@ -188,3 +185,7 @@ func _sync_trail(index: int, emitter: Dictionary, particles: Array) -> void:
 		mesh.surface_set_uv(Vector2(float(j) / (points.size() - 1), 1))
 		mesh.surface_add_vertex(points[j] + side * width)
 	mesh.surface_end()
+
+static func resource_shader_path(e: Dictionary) -> String:
+	var shader_name := "warp" if e.distortion != null else ("pure_add" if int(e.blendMode) == 0 else ("add" if int(e.blendMode) == 4 else "mix"))
+	return ROOT + shader_name + "_no_depth.gdshader"

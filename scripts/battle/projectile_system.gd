@@ -344,7 +344,7 @@ func _tick_skill_delivery(projectile: Dictionary, dt: float, colliders: Array) -
 			continue
 		var half_chord := sqrt(maxf(radius * radius - perpendicular_squared, 0.0))
 		if bool(projectile.skill.get("passive_wave", false)):
-			# 扩宽波前本Tick扫过梯形；圆与真实梯形相交，不能用终点宽度覆盖整个行程。
+			# 扩宽弧形波前逐段扫掠；后方尾焰不额外造成伤害。
 			var point := Vector2(along, offset.dot(direction.orthogonal()))
 			if not _wave_sweep_overlaps(point, float(collider[2]), distance, start_radius, end_radius): continue
 			contacts.append([clampf(along, 0.0, distance), candidate])
@@ -409,12 +409,24 @@ func _explode_skill_projectile(projectile: Dictionary, colliders: Array) -> void
 	_context.show_projectile_impact(projectile.pos, radius, projectile.color, StringName(projectile.skill.get("projectile_impact_visual", "")))
 	skill_hit.emit(projectile.presentation_source, String(projectile.skill.get("visual_action", "")), projectile.pos)
 
+## 焰浪亮弧是向后弯曲的半椭圆；逐段扫掠保留弧后空心区。
+## 只使用权威半径与步长，不读取纹理或渲染对象。
 static func _wave_sweep_overlaps(point: Vector2, radius: float, distance: float, start_width: float, end_width: float) -> bool:
-	var polygon := PackedVector2Array([Vector2(0, -start_width), Vector2(distance, -end_width), Vector2(distance, end_width), Vector2(0, start_width)])
-	if Geometry2D.is_point_in_polygon(point, polygon): return true
-	for edge in 4:
-		if point.distance_squared_to(Geometry2D.get_closest_point_to_segment(point, polygon[edge], polygon[(edge + 1) % 4])) <= radius * radius:
-			return true
+	const SEGMENTS := 16
+	const DEPTH_RATIO := 0.8
+	const HALF_THICKNESS := 3.0
+	for segment in SEGMENTS:
+		var a := -PI * 0.5 + PI * float(segment) / SEGMENTS
+		var b := -PI * 0.5 + PI * float(segment + 1) / SEGMENTS
+		var polygon := PackedVector2Array([
+			Vector2(-DEPTH_RATIO*start_width*(1.0-cos(a)),start_width*sin(a)),
+			Vector2(distance-DEPTH_RATIO*end_width*(1.0-cos(a)),end_width*sin(a)),
+			Vector2(distance-DEPTH_RATIO*end_width*(1.0-cos(b)),end_width*sin(b)),
+			Vector2(-DEPTH_RATIO*start_width*(1.0-cos(b)),start_width*sin(b)),
+		])
+		if Geometry2D.is_point_in_polygon(point, polygon): return true
+		for edge in 4:
+			if point.distance_squared_to(Geometry2D.get_closest_point_to_segment(point, polygon[edge], polygon[(edge+1)%4])) <= pow(radius+HALF_THICKNESS,2): return true
 	return false
 
 func tick_client_interpolation(delta: float) -> void:
@@ -484,7 +496,8 @@ func _draw() -> void:
 			&"electromagnetic_wave": preload("res://scripts/presentation/electromagnetic_projectile_2d.gd").draw_effect(self, _visual_position(projectile), _direction(projectile), {"projectile_visual_width": float(projectile.radius) * 2.0 * float(projectile.get("visual_scale", 1.0))})
 			&"needle", &"blind_needle": _draw_needle(projectile)
 			&"boomerang": _draw_boomerang(projectile)
-			&"ice_cone": _draw_ice_cone(projectile)
+			&"tristana_bullet": pass # 原版炮弹读取相同可见快照。
+			&"ice_cone": pass # 原版普攻由 AniviaEffect3D 消费同一可见弹体。
 			# orb 同样必须使用纯表现炮口偏移；权威弹体位置仍保留在 projectile.pos。
 			_:
 				if bool(projectile.get("first_strike", false)):
@@ -558,18 +571,6 @@ func _draw_needle(projectile: Dictionary) -> void:
 		draw_circle(pos + direction * 8.0, 2.2, Color(0.95, 0.75, 1.0, 0.95))
 	else:
 		draw_line(pos - direction * 8.0, pos + direction * 8.0, projectile.color, 2.0, true)
-
-func _draw_ice_cone(projectile: Dictionary) -> void:
-	var pos := _visual_position(projectile)
-	var direction := _direction(projectile)
-	var side := Vector2(-direction.y, direction.x)
-	var tip := pos + direction * 9.0
-	var base := pos - direction * 5.0
-	var glow := Color(0.72, 0.94, 1.0, 0.36)
-	draw_circle(pos, 6.0, glow)
-	draw_colored_polygon(PackedVector2Array([tip, base + side * 4.5, base - side * 4.5]), projectile.color)
-	draw_polyline(PackedVector2Array([tip, base + side * 4.5, base - side * 4.5, tip]), Color(0.88, 0.98, 1.0, 0.96), 1.2, true)
-	draw_line(base - direction * 1.0, tip - direction * 2.0, Color(0.95, 1.0, 1.0, 0.85), 1.2, true)
 
 func _draw_boomerang(projectile: Dictionary) -> void:
 	var pos := _visual_position(projectile)

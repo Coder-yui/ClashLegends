@@ -25,6 +25,7 @@ static func validate_all(cards: Dictionary, inspect_resources: bool = true) -> P
 		_validate_numbers(card_id, stats, errors)
 		_validate_card(card_id, stats, errors, inspect_resources)
 		_validate_references(card_id, stats, cards, errors)
+		_validate_resource_dependencies(card_id, stats, errors, inspect_resources)
 		if stats.has("rage_crit_multiplier"):
 			if float(stats.rage_crit_multiplier) <= 1.0 or float(stats.get("skill_resource_max", 0.0)) != 2.0 or float(stats.get("projectile_speed", 0.0)) > 0.0 or bool(stats.get("is_continuous_attack", false)) or stats.get("type", "") != "unit":
 				errors.append(card_id + ".rage_crit_multiplier: 要求两点资源的离散近战单位及大于1的暴击倍率")
@@ -1029,7 +1030,9 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 			&"spell_freeze":
 				if String(stats.get("type", "")) != "spell" or String(stats.get("spell_kind", "")) != "freeze":
 					errors.append("%s.kind: spell_freeze 只用于冰冻法术" % label)
-				_require_fields(label, skill, [&"slow_duration", &"slow_multiplier", &"attack_speed_multiplier"], errors)
+				_require_fields(label, skill, [&"radius", &"slow_duration", &"slow_multiplier", &"attack_speed_multiplier"], errors)
+				if not is_finite(float(skill.get("radius", 0.0))) or float(skill.get("radius", 0.0)) <= float(stats.get("radius", 0.0)):
+					errors.append("%s.radius: 强化减速半径必须大于冰冻半径" % label)
 				if float(skill.get("slow_duration", 0.0)) <= 0.0:
 					errors.append("%s.slow_duration: 必须为正" % label)
 				for field in ["slow_multiplier", "attack_speed_multiplier"]:
@@ -1427,3 +1430,30 @@ static func _validate_structure_haste(card_id: String, stats: Dictionary, errors
 		if float(stats.get(field, 0.0)) <= 0.0: errors.append("%s.%s: 必须为正数且成组配置" % [card_id, field])
 	if float(stats.get("structure_haste_attack_speed", 0.0)) < 1.0: errors.append(card_id + ".structure_haste_attack_speed: 必须 >= 1")
 	if String(stats.get("type", "")) != "unit" or bool(stats.get("is_building", false)): errors.append(card_id + ": 建筑击败加速仅支持普通单位")
+
+## 资源资格只影响表现；不能借 fields 删除玩法或音频能力。
+static func _validate_resource_dependencies(label: String, stats: Dictionary, errors: PackedStringArray, inspect_resources: bool, owner: Dictionary = {}, skill: bool = false) -> void:
+	var declaration: Dictionary = stats.get("resource_dependencies", {})
+	if declaration.has("fields"):
+		if not skill: errors.append(label + ".resource_dependencies.fields: 仅技能可声明字段所有权")
+		for field in declaration.fields:
+			if field not in ["transformed_stats", "visual_active_buff_scene"] or not owner.has(field): errors.append(label + ".resource_dependencies.fields: 必须引用现有的形态或附属效果字段")
+	if declaration.has("copy_deck_skills") and (skill or stats.get("spell_kind") != "mirror"):
+		errors.append(label + ".resource_dependencies.copy_deck_skills: 要求镜像出牌能力")
+	for request in declaration.get("effects", []):
+		var path := String(request.provider)
+		if not path.begins_with("res://") or not path.ends_with(".gd") or not ResourceLoader.exists(path):
+			errors.append(label + ".resource_dependencies: 效果提供者不存在 " + path)
+		elif inspect_resources:
+			var failures := PackedStringArray()
+			var manifest = preload("res://scripts/presentation/effect_resource_manifest.gd")
+			var files: Dictionary = manifest.files(request, failures)
+			for resource in files.resources:
+				if not ResourceLoader.exists(resource): failures.append("效果资源不存在: " + resource)
+			for raw in files.raw:
+				if not FileAccess.file_exists(raw): failures.append("效果原始文件不存在: " + raw)
+			for failure in failures: errors.append(label + ".resource_dependencies: " + failure)
+	for index in stats.get("active_skills", []).size():
+		_validate_resource_dependencies("%s.active_skills[%d]" % [label, index], stats.active_skills[index], errors, inspect_resources, stats, true)
+	if stats.has("transformed_stats"):
+		_validate_resource_dependencies(label + ".transformed_stats", stats.transformed_stats, errors, inspect_resources)

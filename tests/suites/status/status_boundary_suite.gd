@@ -283,10 +283,10 @@ func _check_region_birth() -> void:
 	_main._sim_step_active = true
 	_main._apply_freeze(target.position, 100.0, 0.1, 0, 0.2, 0.5)
 	_main._tick_slow_zones(0.05)
-	_expect(is_equal_approx(_main._spell_system.slow_zones.back().delay, 0.1), "创建当 Tick 不额外扣法术区域延迟")
+	_expect(is_equal_approx(_main._spell_system.slow_zones.back().timer, 0.3) and target.control.slow_timer > 0.0, "创建当Tick立即减速且不重复扣区域寿命")
 	_main._sim_step_active = false
 	_run_main_ticks(2)
-	_expect(not target.is_frozen() and target.control.slow_timer > 0.0 and is_equal_approx(_main._spell_system.slow_zones.back().timer, 0.2), "冰冻结束边界启动完整减速区，没有空缺或首次重复扣时")
+	_expect(not target.is_frozen() and target.control.slow_timer > 0.0 and is_equal_approx(_main._spell_system.slow_zones.back().timer, 0.2), "冻结结束时减速区还剩额外时长，两个区域从创建起独立计时")
 	target.free()
 	_main._spell_system.clear()
 

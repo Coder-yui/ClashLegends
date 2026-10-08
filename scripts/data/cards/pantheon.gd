@@ -27,6 +27,14 @@ static func definition() -> Dictionary:
 			}],
 		},
 		"visual": {
+			"resource_dependencies": {
+				"effects": [
+					{
+						"provider": "res://assets/units/pantheon/pantheon_arrival.gd",
+						"variant": "default"
+					}
+				]
+			},
 			"visual_radius": RADIUS_MEDIUM + VISUAL_RADIUS_PADDING,
 			"visual_pre_deploy_scene": "res://assets/units/pantheon/pantheon_arrival.tscn",
 			"visual_scene_path": "res://assets/units/pantheon/pantheon_view.tscn", "visual_forward_yaw": 0.0,

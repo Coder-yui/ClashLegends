@@ -13,8 +13,16 @@ static func definition() -> Dictionary:
 				"max_uses": 1, "cooldown": 0.0, "strike_count": 2, "strike_damage_multiplier": 1.0,
 				"description": "首次电击1秒后，在相同范围再次造成55伤害和0.2秒眩晕。"}],
 		},
-		"visual": {"color": Color(0.3, 0.8, 1.0),
-			"active_skills": [{"icon_path": "res://assets/skills/zap_0.png"}]},
+		"visual": {
+			"resource_dependencies": {
+				"effects": [
+					{
+						"provider": "res://scripts/presentation/lightning_spell_effect_3d.gd",
+						"variant": "zap"
+					}
+				]
+			}, "color": Color(0.3, 0.8, 1.0),
+			"active_skills": [{"icon_path": "res://assets/skills/lightning_0.png"}]},
 		"audio": {"events": {"spell:strike": {"pool": ["res://assets/audio/spells/zap/strike_r1.wav", "res://assets/audio/spells/zap/strike_r2.wav", "res://assets/audio/spells/zap/strike_r3.wav"], "volume_db": 0.0, "bus": "Combat"}}},
 		"card_art": {"path": "res://assets/cards/zap_loading.png"},
 	}

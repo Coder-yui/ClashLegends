@@ -17,7 +17,11 @@ static func definition() -> Dictionary:
 				}],
 		},
 		"visual": {
-			"active_skills": [{"icon_path": "res://assets/skills/siege_minion_0.png"}],
+			"active_skills": [{"resource_dependencies": {
+				"fields": [
+					"visual_active_buff_scene"
+				]
+			}, "icon_path": "res://assets/skills/siege_minion_0.png"}],
 			"active_buff_projectile_visual": "baron_siege",
 			"visual_active_buff_scene": "res://assets/effects/baron_minion/siege_minion.tscn",
 			"visual_radius": RADIUS_MEDIUM + VISUAL_RADIUS_PADDING,

@@ -13,6 +13,18 @@ static func definition() -> Dictionary:
 		"projectile_spawn_offset": 7.5, "projectile_collision_radius": 4.0,
 	}, true)
 	data.visual.merge({
+			"resource_dependencies": {
+				"effects": [
+					{
+						"provider": "res://assets/effects/kayle/native/player.gd",
+						"variant": "sword"
+					},
+					{
+						"provider": "res://assets/effects/kayle/native/player.gd",
+						"variant": "wave"
+					}
+				]
+			},
 		"visual_scene_path": "res://assets/units/kayle/ranged_view.tscn",
 		"attack_wave_visual": "kayle_wave", "attack_wave_visual_height": 50.0,
 		"projectile_visual": "kayle_sword", "projectile_visual_height": 80.0,

@@ -5,13 +5,12 @@ static func definition() -> Dictionary:
 	return {
 		"gameplay": {
 			"name": "龙王", "cost": 4, "type": "unit",
-			"description": "空中持续输出单位，吐息波及目标附近的空中、地面及建筑敌人。",
+			"description": "空中持续输出单位，吐息持续伤害当前锁定的空中、地面或建筑目标。",
 			# 空中远程单位：持续喷吐龙息（DPS模式）
-			"hp": 580, "damage": 55, "range": 130.0,
+			"hp": 580, "damage": 70, "range": 130.0,
 			"speed": SPEED_EXTREMELY_SLOW, "interval": 0.0, "first_hit": 0.0,
 			"size_tier": SIZE_MEDIUM, "radius": RADIUS_MEDIUM,
 			"mass": 5.0, "sight": 250.0,
-			"splash_radius": 34.0,
 			"skill_resource_max": 5.0, "skill_resource_kill_gain": 1.0,
 			"is_air": true, "building_only": false, "can_attack_air": true,
 			"is_continuous_attack": true,  # 持续伤害：固定Tick累计 damage*dt，按目标保留余量
@@ -30,7 +29,19 @@ static func definition() -> Dictionary:
 					"cast_locks": ["movement", "attack", "facing"],
 				}],
 		},
-		"visual": { "visual_radius": RADIUS_MEDIUM + VISUAL_RADIUS_PADDING,
+		"visual": {
+			"resource_dependencies": {
+				"effects": [
+					{
+						"provider": "res://assets/effects/aurelionsol_q/player.gd",
+						"variant": "beam"
+					},
+					{
+						"provider": "res://assets/effects/aurelionsol_q/player.gd",
+						"variant": "end"
+					}
+				]
+			},  "visual_radius": RADIUS_MEDIUM + VISUAL_RADIUS_PADDING,
 			"visual_scene_path": "res://assets/units/aurelionsol/aurelionsol_view.tscn",
 			"visual_forward_yaw": 0.0,
 			"visual_animations": {
@@ -76,7 +87,7 @@ static func definition() -> Dictionary:
 			},
 			"skill_resource_full_color": Color(0.58, 0.42, 1.0, 0.96),
 			"color": Color(0.95, 0.75, 0.25),
-			# 正式吐息素材接入前，用嘴部窄、目标端宽的半透明浅蓝梯形光柱占位。
+			# 无 3D 模型时保留简化吐息回退；模型包装负责原版 Q 粒子。
 			# 这些字段只控制 2D 表现，不参与持续伤害、范围或命中判定。
 			"continuous_beam_color": Color(0.42, 0.84, 1.0, 0.70),
 			"continuous_beam_start_width": 4.0,

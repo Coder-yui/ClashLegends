@@ -125,3 +125,7 @@ func _pose_at(time: float) -> void:
 		_player.pause()
 	_player.seek(minf(age, _player.current_animation_length), true)
 	_skeleton.force_update_all_bone_transforms()
+
+static func resource_manifest(variant: String) -> Dictionary:
+	if variant != "default": return {}
+	return {"emitter_source": "res://assets/units/pantheon/arrival/particle_player.gd", "raw": ["res://assets/units/pantheon/arrival/integration.json", "res://assets/units/pantheon/arrival/native_composition.json", "res://assets/units/pantheon/r_original/systems.json", "res://assets/units/pantheon/r_original/pantheon_base_q_hold_spear.mesh.json"]}

@@ -26,7 +26,14 @@ static func definition() -> Dictionary:
 				}],
 		},
 		"visual": {
-			"active_skills": [{"icon_path": "res://assets/skills/sun_disc_0.png"}],
+			"active_skills": [{"resource_dependencies": {
+				"effects": [
+					{
+						"provider": "res://scripts/presentation/locket_effect_3d.gd",
+						"variant": "default"
+					}
+				]
+			}, "icon_path": "res://assets/skills/sun_disc_0.png"}],
 			"visual_radius": 60.0,
 			"visual_scene_paths": [
 				"res://assets/units/sun_disc/sun_disc_blue_view.tscn",

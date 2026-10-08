@@ -258,6 +258,7 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 	_configure_looping_animations()
 	if is_instance_valid(_projectile_anchor): _projectile_anchor.free()
 	_projectile_anchor = preload("res://scripts/presentation/projectile_model_anchor.gd").create(_model_root)
+	_source.set_meta("continuous_beam_native", _model_root.has_method("advance_continuous_attack_visual"))
 	_source.has_model_deployment_effect = _model_root.has_method("advance_deployment_visual")
 	_recreate_team_ring()
 	if not reuse:
@@ -281,6 +282,8 @@ func _process(delta: float) -> void:
 	_update_active_buff_visual(delta)
 	_update_hit_flash(delta)
 	if _dying:
+		if _model_root != null and _model_root.has_method("stop_continuous_attack_visual"):
+			_model_root.call("stop_continuous_attack_visual")
 		return
 	if _source == null or not is_instance_valid(_source):
 		_retire()
@@ -290,12 +293,12 @@ func _process(delta: float) -> void:
 	_tick_spawn_transition(delta)
 	if _sync_control_override():
 		_sync_transform(false, delta)
-		_update_continuous_beam_origin()
+		_update_continuous_beam_origin(delta)
 		_update_health_bar_anchor()
 		return
 	_update_attack_stages(delta)
 	_sync_visual(false, delta)
-	_update_continuous_beam_origin()
+	_update_continuous_beam_origin(delta)
 	_update_health_bar_anchor()
 
 ## 死亡替身与计时复生没有专用动作素材时，使用纯表现的通用模型过渡：
@@ -1632,9 +1635,11 @@ func _start_death_followup() -> bool:
 	_play_clip(followup_name, &"model_swap", playback_speed)
 	return true
 
-func _update_continuous_beam_origin() -> void:
+func _update_continuous_beam_origin(delta: float = 0.0) -> void:
 	if _model_root == null or _camera == null:
 		return
+	if _model_root.has_method("advance_continuous_attack_visual"):
+		_model_root.call("advance_continuous_attack_visual", _source.continuous_beam_visible and _source.has_continuous_visual_target(), _source.get_continuous_beam_endpoint_position(), _camera, delta)
 	var mouth_world: Vector3
 	if _model_root.has_method("get_beam_origin_world"):
 		mouth_world = _model_root.call("get_beam_origin_world")

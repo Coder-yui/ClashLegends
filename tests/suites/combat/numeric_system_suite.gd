@@ -120,22 +120,30 @@ func _check_continuous() -> void:
 	building.position = ground_primary.position + Vector2(-8, 0)
 	ally.position = ground_primary.position + Vector2(0, -8)
 	outside.position = ground_primary.position + Vector2(200, 0)
-	var victims := [ground_primary, ground_near, air_primary, air_near, building]
+	var tower := Tower.new()
+	tower.setup(1, CardDB.PRINCESS_TOWER_STATS, false)
+	tower.position = ground_primary.position + Vector2(-16, 0)
+	_main.add_child(tower)
+	var victims := [ground_primary, ground_near, air_primary, air_near, building, tower]
+	_h._expect(dragon.damage == 70 and is_zero_approx(dragon.splash_radius), "龙王普攻配置为70DPS单体吐息")
 	var resolver: CombatResolver = _main.combat_service()
 	for batched in [false, true]:
-		for primary in [ground_primary, air_primary]:
+		for primary in [ground_primary, air_primary, building, tower]:
 			dragon._target = primary
 			var before := victims.map(func(unit): return unit.hp)
 			var ally_before := ally.hp
 			var outside_before := outside.hp
 			for tick in 20:
 				if batched: resolver.begin_batch(tick, "continuous_attack")
-				dragon._deal_continuous_damage(55.0 * 0.05)
+				dragon._attack(_main.SIM_DT)
 				if batched: resolver.commit_batch()
 			var damage_ok := true
-			for i in victims.size(): damage_ok = damage_ok and victims[i].hp == before[i] - 55
-			_h._expect(damage_ok, "龙王吐息同时波及空军、地面及建筑，每秒55伤害；空中主目标=%s，批次结算=%s" % [str(primary.is_air), str(batched)])
-			_h._expect(ally.hp == ally_before and outside.hp == outside_before, "龙王跨空地溅射仍排除友军和范围外敌人")
+			for i in victims.size():
+				damage_ok = damage_ok and victims[i].hp == before[i] - (70 if victims[i] == primary else 0)
+			_h._expect(damage_ok, "龙王20Tick只对当前目标造成70伤害，邻近空地单位/建筑/塔不受伤；目标=%s，批次结算=%s" % [primary.name, str(batched)])
+			_h._expect(ally.hp == ally_before and outside.hp == outside_before, "龙王单体吐息不伤害友军和远处敌人")
+
+	tower.free()
 
 func _check_decay() -> void:
 	var building := _unit("apex_turret")

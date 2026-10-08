@@ -24,6 +24,14 @@ static func definition() -> Dictionary:
 			}],
 		},
 		"visual": {
+			"resource_dependencies": {
+				"effects": [
+					{
+						"provider": "res://scripts/presentation/corki_projectile_effect.gd",
+						"variant": "bullet"
+					}
+				]
+			},
 			"visual_radius": RADIUS_MEDIUM + VISUAL_RADIUS_PADDING,
 			"visual_scene_path": "res://assets/units/corki/corki_view.tscn", "visual_forward_yaw": 0.0,
 			"projectile_visual": "corki_bullet", "projectile_visual_height": 60.0,
@@ -36,7 +44,14 @@ static func definition() -> Dictionary:
 					"active_big": {"animation": "Spell4", "kind": "skill", "durations": [0.5]},
 				},
 			},
-			"active_skills": [{
+			"active_skills": [{"resource_dependencies": {
+				"effects": [
+					{
+						"provider": "res://scripts/presentation/corki_projectile_effect.gd",
+						"variant": "missile"
+					}
+				]
+			},
 				"icon_path": "res://assets/skills/corki_0.png", "visual_action": "active",
 				"projectile_impact_visuals_by_use": ["corki_explosion", "corki_explosion", "corki_explosion_big"],
 				"projectile_visuals_by_use": ["corki_missile", "corki_missile", "corki_missile_big"],

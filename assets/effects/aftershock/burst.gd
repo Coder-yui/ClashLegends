@@ -16,5 +16,9 @@ func _draw() -> void:
 		var remaining := clampf(float(effect.timer) / float(effect.duration), 0.0, 1.0)
 		var burst := clampf((1.0 - remaining) * 8.0, 0.2, 1.0)
 		var extent := Vector2.ONE * radius * 2.0
-		draw_texture_rect(preload("res://assets/effects/aftershock/aoe_ground_crack.png"), Rect2(center - extent * 0.5, extent), false, Color(0.6, 1.0, 0.35, remaining))
-		draw_texture_rect(preload("res://assets/effects/aftershock/buff.png"), Rect2(center - extent * burst * 0.5, extent * burst), false, Color(0.65, 1.0, 0.4, remaining))
+		draw_texture_rect(load("res://assets/effects/aftershock/aoe_ground_crack.png"), Rect2(center - extent * 0.5, extent), false, Color(0.6, 1.0, 0.35, remaining))
+		draw_texture_rect(load("res://assets/effects/aftershock/buff.png"), Rect2(center - extent * burst * 0.5, extent * burst), false, Color(0.65, 1.0, 0.4, remaining))
+
+static func resource_manifest(variant: String) -> Dictionary:
+	if variant != "default": return {}
+	return {"paths": ["res://assets/effects/aftershock/aoe_ground_crack.png", "res://assets/effects/aftershock/buff.png"]}

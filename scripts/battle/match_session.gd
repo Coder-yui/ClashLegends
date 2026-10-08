@@ -2,7 +2,7 @@ class_name MatchSession
 extends RefCounted
 ## 服务器拥有两席玩家；连接可替换，玩家身份与阵营不依赖 peer_id。
 enum Phase { LOBBY, LOADING, RUNNING, FINISHED, DISCONNECTED }
-const PROTOCOL_VERSION := 100
+const PROTOCOL_VERSION := 102
 var phase := Phase.LOBBY
 var session_id := ""
 var players: Dictionary = {}

@@ -1,8 +1,11 @@
 class_name MatchResources
 extends RefCounted
 ## 本局强引用资源集合；覆盖双方卡组、衍生形态/召唤物及世界音频。模型实例由 MatchModelPool 预建。
+const EFFECTS = preload("res://scripts/presentation/effect_resource_manifest.gd")
 var resources: Dictionary = {}
+var raw_files: Dictionary = {}
 var cards: Dictionary = {}
+var plan: RefCounted # null 仅用于工作台/全卡审查；正式对局在准备前固定计划。
 var preparation_usec := 0
 var _world_prepared := false
 var errors := PackedStringArray()
@@ -20,8 +23,12 @@ const REFERENCES := ["growth_ranged_id", "growth_melee_id", "deployment_upgrade_
 
 func prepare(card_ids: Array) -> void:
 	var started := Time.get_ticks_usec()
+	var previous_count := cards.size()
 	for id in card_ids:
 		_prepare_card(String(id))
+	if cards.size() == previous_count and _world_prepared:
+		preparation_usec += Time.get_ticks_usec() - started
+		return
 	if not _world_prepared:
 		_collect(CardDB.PRINCESS_TOWER_VISUAL_CONFIG)
 		_collect(CardDB.NEXUS_VISUAL_CONFIG)
@@ -29,11 +36,12 @@ func prepare(card_ids: Array) -> void:
 		_collect(preload("res://scripts/data/match_audio.gd").EVENTS, &"AudioStream")
 		_collect("res://assets/arena/rift_arena/rift_arena.tscn")
 		_world_prepared = true
-	if cards.has("kayle_ranged"):
-		_collect(load("res://scripts/presentation/kayle_projectile_visuals.gd").dependency_paths())
-	if cards.has("corrosion"):
-		_collect(preload("res://scripts/presentation/corrosion_ground_3d.gd").dependency_paths(), &"Texture2D")
-	_collect(preload("res://scripts/presentation/spell_effect_warmup.gd").dependency_paths(cards))
+	for request in EFFECTS.requests(cards, plan, CardDB.all()):
+		var files := EFFECTS.files(request, errors)
+		_collect(files.resources)
+		for path in files.raw:
+			if not FileAccess.file_exists(path): errors.append("本局原始资源不存在: " + path)
+			else: raw_files[path] = true
 	preparation_usec += Time.get_ticks_usec() - started
 
 ## 只在线程读取资源；定义遍历、类型检查和场景实例化仍属于主线程。
@@ -104,8 +112,11 @@ func _accept(path: String, resource: Resource, expected: StringName) -> void:
 func _prepare_card(id: String) -> void:
 	if cards.has(id) or not CardDB.has_card(id):
 		return
+	if plan != null and not plan.cards.has(id):
+		errors.append("本局资源计划外卡牌: " + id)
+		return
 	cards[id] = true
-	_collect(CardDB.get_card(id))
+	_collect(plan.definition(id) if plan != null else CardDB.get_card(id))
 	if _collect_only:
 		# 正式卡面由定义收集；保留旧卡面命名的兼容发现，但不在此同步读取。
 		if String(CardDB.get_card(id).get("card_art", {}).get("path", "")).is_empty():
@@ -122,6 +133,7 @@ func _prepare_card(id: String) -> void:
 func _collect(value: Variant, expected: StringName = &"") -> void:
 	if value is Dictionary:
 		for key in value:
+			if key == "resource_dependencies": continue
 			if key in REFERENCES:
 				_prepare_card(String(value[key]))
 			elif key == "deployment_member_ids" and value[key] is Array:

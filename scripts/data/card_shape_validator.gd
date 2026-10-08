@@ -27,6 +27,8 @@ static func validate(label: String, stats: Dictionary, errors: PackedStringArray
 			array(path, value, "color", errors)
 		elif key in NUMERIC_ARRAY_FIELDS:
 			array(path, value, "numbers" if key in ["resource_hit_damage_sequences", "resource_hit_delay_sequences", "attack_extra_hit_damage_multipliers", "attack_extra_hit_delays"] else "number", errors)
+		elif key == "resource_dependencies":
+			_resources(path, value, errors)
 		elif key == "active_skills":
 			if check(path, value, "array", errors):
 				for index in value.size():
@@ -145,3 +147,21 @@ static func _text(value: Variant) -> bool:
 static func _error(path: String, value: Variant, expected: String, errors: PackedStringArray) -> void:
 	var names := {"text": "String / StringName", "number": "有限 int / float 数值", "numbers": "有限数值或数值数组", "names": "动画名或动画名数组", "dictionary": "Dictionary", "array": "Array", "bool": "bool", "color": "Color", "vector2i": "Vector2i"}
 	errors.append("%s: 期望 %s，实际 %s（%s）" % [path, names.get(expected, expected), type_string(typeof(value)), str(value)])
+
+static func _resources(path: String, value: Variant, errors: PackedStringArray) -> void:
+	if not check(path, value, "dictionary", errors): return
+	for key in value:
+		var child := path + "." + str(key)
+		match key:
+			"copy_deck_skills": check(child, value[key], "bool", errors)
+			"fields": array(child, value[key], "text", errors)
+			"effects":
+				if not check(child, value[key], "array", errors): continue
+				for index in value[key].size():
+					var effect_path := "%s[%d]" % [child, index]
+					var entry: Variant = value[key][index]
+					if not check(effect_path, entry, "dictionary", errors): continue
+					for field in ["provider", "variant"]: check(effect_path + "." + field, entry.get(field), "text", errors)
+					for field in entry:
+						if field not in ["provider", "variant"]: errors.append(effect_path + ": 未知效果字段 " + str(field))
+			_: errors.append(child + ": 未知资源依赖字段")

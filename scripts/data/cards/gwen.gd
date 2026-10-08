@@ -85,7 +85,14 @@ static func definition() -> Dictionary:
 			"color": Color(0.95, 0.75, 0.85),
 			"active_skills": [{ "icon_path": "res://assets/skills/gwen_0.png",
 					"visual_action": "active_0", "resource_visual_actions": ["active_0", "active_1", "active_2", "active_3"],
-				}, {"icon_path": "res://assets/skills/gwen_1.png", "visual_action": "hallowed_mist"}],
+				}, {"resource_dependencies": {
+					"effects": [
+						{
+							"provider": "res://assets/effects/gwen_tristana/player.gd",
+							"variant": "mist"
+						}
+					]
+				}, "icon_path": "res://assets/skills/gwen_1.png", "visual_action": "hallowed_mist"}],
 		},
 		# BEGIN IMPORTED AUDIO gwen
 		"audio": {

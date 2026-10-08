@@ -124,5 +124,9 @@ void fragment() {
 #endif
  // LoL's shader samples raw colour values. Convert the finished colour for Godot's linear target.
  ALBEDO=OUTPUT_IS_SRGB ? lit.rgb : mix(lit.rgb/12.92,pow((lit.rgb+vec3(0.055))/1.055,vec3(2.4)),step(vec3(0.04045),lit.rgb));
+#ifdef PURE_ADD
+ ALPHA=1.0;
+#else
  ALPHA=clamp(lit.a,0.0,1.0);
+#endif
 }

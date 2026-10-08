@@ -771,12 +771,14 @@ func _check_shield_audio(harness: Object, main: Node2D) -> void:
 	main._skill_presentation.shield_effects.clear()
 	main._active_skill_effect_system.apply_area_shield(source, stats.active_skills[0])
 	var waves: Array = main._skill_presentation.shield_effects
-	harness._expect(waves.size() == 1 and is_equal_approx(float(waves[0].radius), float(stats.radius) + float(stats.range)), "护盾施放只生成一圈黄色波，使用自身表面加攻击射程的边界")
+	harness._expect(waves.size() == 1 and is_equal_approx(float(waves[0].radius), float(stats.radius) + float(stats.range)), "护盾施放只生成一套烈阳装备特效，使用自身表面加攻击射程的边界")
 	var event_id: int = main._last_card_event_id
 	main._play_card_event(event_id, "sun_disc", "shield:cast", source.global_position)
 	harness._expect(waves.size() == 1, "重复可靠护盾事件不重复生成特效")
 	main._skill_presentation.tick_visuals(0.6)
-	harness._expect(waves.is_empty() and ally.shield_hp == 180.0, "护盾波自然消失不改变已生效护盾")
+	harness._expect(waves.size() == 1 and ally.shield_hp == 180.0, "烈阳原版尾部粒子不会在旧版半秒时长被截断")
+	main._skill_presentation.tick_visuals(2.3)
+	harness._expect(waves.is_empty() and ally.shield_hp == 180.0, "烈阳特效自然消失不改变已生效护盾")
 	harness._expect(casts.size() == 1 and applied.is_empty()
 		and ally.shield_hp == 180.0 and enemy.shield_hp == 0.0,
 		"太阳圆盘仅播放施放声，护盾实际生效保持静音")

@@ -1,10 +1,10 @@
 extends Node2D
 ## 原版火箭网格/UV和爆炸图集的投影；只消费权威弹体与命中事件。
-const ROCKET = preload("res://assets/effects/jinx/jinx_q_rocket.png")
-const BULLET = preload("res://assets/effects/jinx/jinx_basic_bullet.png")
-const FLAME = preload("res://assets/effects/jinx/jinx_explosion_flat.png")
-const SMOKE = preload("res://assets/effects/jinx/jinx_explosion_smoke.png")
-const TRAIL = preload("res://assets/effects/jinx/jinx_base_q_trail01.png")
+const ROCKET := "res://assets/effects/jinx/jinx_q_rocket.png"
+const BULLET := "res://assets/effects/jinx/jinx_basic_bullet.png"
+const FLAME := "res://assets/effects/jinx/jinx_explosion_flat.png"
+const SMOKE := "res://assets/effects/jinx/jinx_explosion_smoke.png"
+const TRAIL := "res://assets/effects/jinx/jinx_base_q_trail01.png"
 const GEOMETRY = preload("res://assets/effects/jinx/rocket_geometry.gd")
 var _system: Node2D
 const BLAST_MASK := """shader_type canvas_item;
@@ -57,7 +57,7 @@ func _draw() -> void:
 					var v: Array = face.v[i]
 					points.append(Vector2(-float(v[0]), float(v[2]) * 0.85 - float(v[1]) * 0.53) * 0.25)
 					uvs.append(Vector2(float(face.uv[i][0]), float(face.uv[i][1])))
-				draw_polygon(points, PackedColorArray([Color.WHITE]), uvs, ROCKET)
+				draw_polygon(points, PackedColorArray([Color.WHITE]), uvs, effect_texture(ROCKET))
 		draw_set_transform(Vector2.ZERO)
 func _draw_glow() -> void:
 	for projectile in _system.visible_snapshot().values():
@@ -66,10 +66,10 @@ func _draw_glow() -> void:
 		var direction: Vector2 = _system._direction(projectile)
 		if kind == &"jinx_bullet":
 			_glow.draw_set_transform(_system._visual_position(projectile), direction.angle() + PI * 0.5)
-			_glow.draw_texture_rect(BULLET, Rect2(-2, -14, 4, 28), false)
+			_glow.draw_texture_rect(effect_texture(BULLET), Rect2(-2, -14, 4, 28), false)
 		else:
 			_glow.draw_set_transform(_system._visual_position(projectile), direction.angle())
-			_glow.draw_texture_rect(TRAIL, Rect2(-32, -4, 28, 8), false, Color(1, 0.55, 0.18, 0.8))
+			_glow.draw_texture_rect(effect_texture(TRAIL), Rect2(-32, -4, 28, 8), false, Color(1, 0.55, 0.18, 0.8))
 		_glow.draw_set_transform(Vector2.ZERO)
 
 func _blast_material(additive: bool) -> ShaderMaterial:
@@ -91,9 +91,20 @@ func _draw_blast(canvas: Node2D, smoke: bool) -> void:
 		if StringName(effect.get("visual", "")) != &"jinx_explosion": continue
 		var progress := 1.0 - clampf(float(effect.timer) / float(effect.duration), 0.0, 1.0)
 		var frame := mini(int(progress * 4.0), 3)
-		var texture: Texture2D = SMOKE if smoke else FLAME
+		var texture: Texture2D = effect_texture(SMOKE) if smoke else effect_texture(FLAME)
 		var cell := Vector2(texture.get_size()) / 2.0
 		var origin := Vector2(frame % 2, frame / 2)
 		var size := Vector2.ONE * blast_radius(float(effect.radius), progress, smoke) * 2.0
 		var alpha := 0.55 * (1.0 - progress) if smoke else 1.0 - smoothstep(0.4, 1.0, progress)
 		canvas.draw_texture_rect_region(texture, Rect2(effect.pos - size * 0.5, size), Rect2(origin * cell, cell), Color(1, 1, 1, alpha))
+
+static var _textures: Dictionary = {}
+
+static func effect_texture(path: String) -> Texture2D:
+	if not _textures.has(path): _textures[path] = load(path)
+	return _textures[path]
+
+static func resource_manifest(variant: String) -> Dictionary:
+	if variant == "rocket": return {"paths": [ROCKET, FLAME, SMOKE, TRAIL]}
+	if variant == "bullet": return {"paths": [BULLET]}
+	return {}

@@ -9,7 +9,10 @@ static func definition() -> Dictionary:
 			"description": "复制上一张成功使用的卡牌，支付该卡本身的费用。复制体不携带主动技能。镜像不会出现在开局四张手牌中，部署区域与复制目标相同。",
 			"active_name": "完整镜像",
 		},
-		"visual": {"icon_path": "res://assets/skills/mirror_0.png", "color": Color(0.45, 0.85, 1.0)},
+		"visual": {
+			"resource_dependencies": {
+				"copy_deck_skills": true
+			}, "icon_path": "res://assets/skills/mirror_0.png", "color": Color(0.45, 0.85, 1.0)},
 		"card_art": {"path": "res://assets/cards/mirror_loading.png"},
 		"audio": {},
 	}

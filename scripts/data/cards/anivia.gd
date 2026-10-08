@@ -26,7 +26,15 @@ static func definition() -> Dictionary:
 					"cast_locks": ["movement", "attack", "facing"],
 				}],
 		},
-		"visual": { "visual_radius": RADIUS_MEDIUM + VISUAL_RADIUS_PADDING,
+		"visual": {
+			"resource_dependencies": {
+				"effects": [
+					{
+						"provider": "res://assets/effects/anivia/player.gd",
+						"variant": "missile"
+					}
+				]
+			},  "visual_radius": RADIUS_MEDIUM + VISUAL_RADIUS_PADDING,
 			"visual_scene_path": "res://assets/units/anivia/anivia_view.tscn",
 			"visual_forward_yaw": 0.0,
 			"visual_animations": {
@@ -43,7 +51,14 @@ static func definition() -> Dictionary:
 				"death": "Death", "death_duration": 2.4,
 			}, "projectile_visual": "ice_cone", "projectile_visual_height": 62.0,
 			"color": Color(0.45, 0.82, 1.0), "death_replacement_visual_transition": "drop",
-			"active_skills": [{ "icon_path": "res://assets/skills/anivia_0.png", "visual_action": "frost_storm",
+			"active_skills": [{"resource_dependencies": {
+				"effects": [
+					{
+						"provider": "res://assets/effects/anivia/player.gd",
+						"variant": "storm"
+					}
+				]
+			},  "icon_path": "res://assets/skills/anivia_0.png", "visual_action": "frost_storm",
 				}],
 		},
 		# BEGIN IMPORTED AUDIO anivia

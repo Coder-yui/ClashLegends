@@ -214,8 +214,13 @@ func _test_wave() -> void:
 	_wave_lifecycle(360.0, true)
 	_expect(CardDB.get_unit_stats("kayle_ranged").range == 190.0, "余波不增加190像素普攻范围")
 	_expect(not ProjectileSystem._wave_sweep_overlaps(Vector2(5, 40), 2, 21, 24, 26.52), "近端窄波前不提前命中外侧")
-	_expect(ProjectileSystem._wave_sweep_overlaps(Vector2(5, 40), 2, 21, 48, 50.52), "远端扩宽波前可命中相同侧向距离")
+	_expect(ProjectileSystem._wave_sweep_overlaps(Vector2(-5, 40), 2, 21, 48, 50.52), "远端扩宽波前可命中相同侧向距离")
 	_expect(not ProjectileSystem._wave_sweep_overlaps(Vector2(0, 45), 2, 100, 24, 60), "扩宽扫掠不用末端最大宽度误伤近端")
+
+	_expect(ProjectileSystem._wave_sweep_overlaps(Vector2(10,0),1,21,24,26.52), "弧顶扫过正前方目标")
+	_expect(not ProjectileSystem._wave_sweep_overlaps(Vector2(-18,0),1,21,24,26.52), "弧后中心空心区不因尾光造成伤害")
+	_expect(ProjectileSystem._wave_sweep_overlaps(Vector2(-16,23),1,21,24,26.52), "弧翼向后弯曲部分参与碰撞")
+	_expect(not ProjectileSystem._wave_sweep_overlaps(Vector2(18,25),1,21,24,26.52), "弧翼前方空白不按矩形提前命中")
 
 func _wave_lifecycle(distance: float, remove_target: bool) -> float:
 	_clear()

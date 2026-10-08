@@ -103,10 +103,7 @@ static func _v4(a: Array) -> Vector4: return Vector4(a[0],a[1],a[2],a[3])
 
 static func _material(e: Dictionary, source: String) -> ShaderMaterial:
 	var result := ShaderMaterial.new()
-	var shader_name := "warp" if e.distortion != null else ("pure_add" if int(e.blendMode) == 0 else ("add" if int(e.blendMode) == 4 else "mix"))
-	# 两种法术始终可见，保留原层顺序但关闭场景深度遮挡。
-	shader_name += "_no_depth"
-	result.shader = load(ROOT + shader_name + ".gdshader")
+	result.shader = load(resource_shader_path(e))
 	result.render_priority = 100 + (int(e.rank) + 1000000 if int(e.rank) < 0 else int(e.rank))
 	# Original distortionMode=2 is the early, pre-particle phase.
 	if e.distortion != null: result.render_priority = -110
@@ -131,3 +128,7 @@ static func _material(e: Dictionary, source: String) -> ShaderMaterial:
 	for pair in [["source_texture","texture_path"],["mult_texture","mult_path"],["ramp_texture","color_path"],["erosion_texture","erosion_path"],["normal_texture","normal_path"]]:
 		if not e[pair[1]].is_empty(): result.set_shader_parameter(pair[0],load(e[pair[1]]))
 	return result
+
+static func resource_shader_path(e: Dictionary) -> String:
+	var shader_name := "warp" if e.distortion != null else ("pure_add" if int(e.blendMode) == 0 else ("add" if int(e.blendMode) == 4 else "mix"))
+	return ROOT + shader_name + "_no_depth.gdshader"

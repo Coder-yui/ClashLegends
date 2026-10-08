@@ -1,9 +1,9 @@
 class_name StealthTransition3D
 extends Node3D
 ## 只消费隐身切换表现事件；收束／迸散不参与感知、伤害或计时。
-const SMOKE_SHADER := preload("res://assets/effects/stealth/smoke.gdshader")
-const STREAK_SHADER := preload("res://assets/effects/stealth/streak.gdshader")
-const WAVE_SHADER := preload("res://assets/effects/stealth/wave.gdshader")
+const SMOKE_SHADER := "res://assets/effects/stealth/smoke.gdshader"
+const STREAK_SHADER := "res://assets/effects/stealth/streak.gdshader"
+const WAVE_SHADER := "res://assets/effects/stealth/wave.gdshader"
 static var _visual_prepared := false
 
 const PUFF_COUNT := 12
@@ -19,11 +19,11 @@ var wave_material: ShaderMaterial
 
 func setup(is_entering: bool) -> void:
 	entering = is_entering
-	material = _shader_material(SMOKE_SHADER)
+	material = _shader_material(load(SMOKE_SHADER))
 	material.set_shader_parameter("tint", Vector3(0.20, 0.72, 0.40) if entering else Vector3(0.56, 0.82, 0.16))
-	streak_material = _shader_material(STREAK_SHADER)
+	streak_material = _shader_material(load(STREAK_SHADER))
 	streak_material.set_shader_parameter("inward", entering)
-	wave_material = _shader_material(WAVE_SHADER)
+	wave_material = _shader_material(load(WAVE_SHADER))
 	for i in PUFF_COUNT:
 		puffs.append(_quad(Vector2.ONE, material))
 	for i in STREAK_COUNT:
@@ -111,3 +111,7 @@ func _update_puffs(t: float) -> void:
 		streaks[i].scale = Vector3(1.0, lerpf(1.2, 0.25, travel) if entering else lerpf(0.45, 1.25, travel), 1.0)
 	var wave_radius := lerpf(1.35, 0.12, travel) if entering else lerpf(0.22, 1.45, travel)
 	wave.scale = Vector3.ONE * wave_radius
+
+static func resource_manifest(variant: String) -> Dictionary:
+	if variant != "default": return {}
+	return {"paths": [SMOKE_SHADER, STREAK_SHADER, WAVE_SHADER]}

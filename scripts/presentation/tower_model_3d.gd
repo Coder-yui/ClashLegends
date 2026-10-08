@@ -128,12 +128,7 @@ func _process(delta: float) -> void:
 	if stasis != _stasis_visible or frozen != _frozen_visible:
 		_stasis_visible = stasis
 		_frozen_visible = frozen
-		for surface in _surface_materials_by_name:
-			# 已脱离碎块拥有独立材质/时钟；金身/冰霜只覆盖塔身，不显露隐藏表面。
-			var body_surface: bool = not _stage_mode or surface in _animations.get("stage_surfaces", [])
-			for material in _surface_materials_by_name[surface]:
-				material.set_shader_parameter("stasis_amount", 1.0 if stasis and body_surface else 0.0)
-				material.set_shader_parameter("frozen_amount", 1.0 if frozen and body_surface else 0.0)
+		_apply_target_states(stasis, frozen)
 	if _animation_player != null: _animation_player.speed_scale = 0.0 if stasis else 1.0
 	if stasis:
 		_advance_debris(delta)
@@ -465,8 +460,6 @@ func _apply_ground_clip_materials(cutoff_y: float) -> void:
 			var clipped_material := ShaderMaterial.new()
 			clipped_material.shader = clip_shader
 			clipped_material.set_shader_parameter("albedo_texture", source_material.albedo_texture)
-			clipped_material.set_shader_parameter("stasis_swirl", preload("res://assets/effects/stasis/bard_swirl.png"))
-			clipped_material.set_shader_parameter("stasis_gold", preload("res://assets/effects/stasis/zhonya_swirl.png"))
 			clipped_material.set_shader_parameter("albedo_color", source_material.albedo_color)
 			clipped_material.set_shader_parameter("ground_cutoff", cutoff_y)
 			mesh_instance.set_surface_override_material(surface_index, clipped_material)
@@ -524,3 +517,23 @@ func _set_flash_amount(amount: float) -> void:
 			var material := material_variant as ShaderMaterial
 			if material != null:
 				material.set_shader_parameter("flash_amount", amount)
+
+func _apply_target_states(stasis: bool, frozen: bool) -> void:
+	for surface in _surface_materials_by_name:
+		# 已脱离碎块拥有独立材质/时钟；金身/冰霜只覆盖塔身，不显露隐藏表面。
+		var body_surface: bool = not _stage_mode or surface in _animations.get("stage_surfaces", [])
+		for material in _surface_materials_by_name[surface]:
+			if stasis:
+				material.set_shader_parameter("stasis_swirl", load("res://assets/effects/stasis/bard_swirl.png"))
+				material.set_shader_parameter("stasis_gold", load("res://assets/effects/stasis/zhonya_swirl.png"))
+			material.set_shader_parameter("stasis_amount", 1.0 if stasis and body_surface else 0.0)
+			material.set_shader_parameter("frozen_amount", 1.0 if frozen and body_surface else 0.0)
+
+## 在遮罩内只改变表现材质并实际绘制，不改塔的凝滞/冻结状态。
+func prepare_target_states(states: Dictionary) -> void:
+	if _source == null or _source.is_king: return
+	for state in states:
+		if state not in ["stasis", "freeze"]: continue
+		_apply_target_states(state == "stasis", state == "freeze")
+		if DisplayServer.get_name() != "headless": RenderingServer.force_draw(false)
+	_apply_target_states(_stasis_visible, _frozen_visible)

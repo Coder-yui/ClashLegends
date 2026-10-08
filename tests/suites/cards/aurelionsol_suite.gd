@@ -145,7 +145,7 @@ func _check_aurelionsol_art_integration() -> void:
 	_expect(
 		is_equal_approx(beam_color.a, 0.7)
 		and stats.continuous_beam_start_width < stats.continuous_beam_end_width,
-		"龙王临时吐息为 70% 不透明度、嘴部窄目标端宽的浅蓝梯形光柱",
+		"龙王无模型时保留窄口宽端的 2D 吐息回退",
 	)
 	var unit := Unit.new()
 	var dummy := Unit.new()
@@ -198,6 +198,15 @@ func _check_aurelionsol_art_integration() -> void:
 		view._sync_visual(false, 0.05)
 		view._update_continuous_beam_origin()
 		mouth_binding_ok = unit.continuous_beam_origin_tracks_model and not unit.continuous_beam_origin_world_position.is_zero_approx()
+		var native = view._model_root._breath
+		_expect(bool(unit.get_meta("continuous_beam_native", false)) and native != null and native.visible, "龙王模型接管原版 Q 吐息并抑制 2D 占位光柱")
+		if native != null:
+			var saved_hp := dummy.hp
+			view._model_root.advance_continuous_attack_visual(true, dummy.position + Vector2(80, 0), view._camera, 7.0)
+			_expect(native.visible and native._age >= 7.0 and dummy.hp == saved_hp, "原版吐息可持续播放超过采样窗口，表现更新不结算伤害")
+			view._model_root.stop_continuous_attack_visual()
+			_expect(not native.visible and not view._model_root._breath_end.visible, "吐息停止同时清理喷流和命中端")
+			view._update_continuous_beam_origin(0.05)
 		var entered_attack := (
 			view._animation_player.current_animation == "AurelionSol_Spell1_newtst_anm"
 			and is_zero_approx(view._last_clip_blend_time)
@@ -335,7 +344,7 @@ func _check_aurelionsol_direct_retarget() -> void:
 	var second_dummy := Unit.new()
 	dragon.position = Vector2(360.0, 1100.0)
 	first_dummy.position = Vector2(360.0, 990.0)
-	# 与第一目标相距超过吐息溅射判定，同时仍在龙王攻击范围内。
+	# 第二目标同样在龙王攻击范围内，击败第一目标后可直接切换。
 	second_dummy.position = Vector2(430.0, 980.0)
 	dragon.setup(0, dragon_stats, dragon_stats.name)
 	first_dummy.setup(1, dummy_stats, "换目标木桩一")
@@ -430,6 +439,6 @@ func _check_independent_star_result() -> void:
 		source.apply_blind(10)
 		if rate < 1: source.apply_attack_speed_slow(3.0, rate)
 		for i in 40: source._attack(0.05)
-		_expect(source.blind_attack_charges == 0 and target.hp == 1000 - roundf(110 * rate), "持续普攻拒绝无意义致盲并读取完整有效攻速、保留伤害余量")
+		_expect(source.blind_attack_charges == 0 and target.hp == 1000 - roundf(140 * rate), "持续普攻拒绝无意义致盲并读取完整有效攻速、保留伤害余量")
 		source.free()
 		target.free()

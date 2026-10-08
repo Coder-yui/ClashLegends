@@ -42,7 +42,7 @@ func _sync_effects(effects: Array, camera: Camera3D) -> void:
 			player.setup("corrosion", world_radius / SOURCE_EDGE_RADIUS, false, "", false, false, _definitions)
 			var ring := MeshInstance3D.new()
 			var material := ShaderMaterial.new()
-			material.shader = preload("res://assets/effects/corrosion/range.gdshader")
+			material.shader = load("res://assets/effects/corrosion/range.gdshader")
 			material.set_shader_parameter("rim_color", Color(0.15, 0.55, 1.0) if int(effect.team) == 0 else Color(1.0, 0.25, 0.20))
 			ring.material_override = material
 			add_child(ring)
@@ -116,3 +116,10 @@ func prepare_visual(camera: Camera3D, radius: float, stop: Callable = Callable()
 	_warm_samples.assign([view.player, view.ring])
 	_views.erase(int(effect.view_id))
 	_prepared = not stop.is_valid() or not bool(stop.call())
+
+static func resource_manifest(variant: String) -> Dictionary:
+	if variant != "default": return {}
+	return {"shader_providers": ["res://assets/units/pantheon/arrival/particle_player.gd"], "json": [DATA], "ground": {"slot": "_corrosion_ground", "variant": variant}}
+
+func prepare_resource_variant(camera: Camera3D, radius: float, _variant: String, stop: Callable) -> void:
+	await prepare_visual(camera, radius, stop)

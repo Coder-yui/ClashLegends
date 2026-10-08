@@ -44,3 +44,7 @@ func _ground(camera: Camera3D, point: Vector2) -> Vector3:
 	var origin := camera.project_ray_origin(point)
 	var direction := camera.project_ray_normal(point)
 	return origin + direction * ((0.06 - origin.y) / direction.y)
+
+static func resource_manifest(variant: String) -> Dictionary:
+	if variant not in ["lightning", "zap"]: return {}
+	return {"emitter_provider": "res://assets/effects/lightning_spells/player.gd", "json": ["res://assets/effects/lightning_spells/" + ("electrocute" if variant == "lightning" else "stormsurge") + "/sampled.json"], "view": {"script": "res://scripts/presentation/lightning_spell_effect_3d.gd", "collection": "lightning_effects", "kind": variant, "duration": 2.15, "flight": false}}

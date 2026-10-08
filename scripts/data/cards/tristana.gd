@@ -20,6 +20,14 @@ static func definition() -> Dictionary:
 			}],
 		},
 		"visual": {
+			"resource_dependencies": {
+				"effects": [
+					{
+						"provider": "res://assets/effects/gwen_tristana/player.gd",
+						"variant": "missile"
+					}
+				]
+			},
 			"visual_radius": RADIUS_SLIGHTLY_SMALL + VISUAL_RADIUS_PADDING,
 			"visual_scene_path": "res://assets/units/tristana/tristana_view.tscn",
 			"visual_forward_yaw": 0.0,
@@ -28,9 +36,19 @@ static func definition() -> Dictionary:
 				"attack": ["Attack1", "Attack2"], "death": "Death", "death_duration": 0.8,
 			},
 			"visual_active_buff_scene": "res://assets/effects/tristana/rapid_fire.tscn",
-			"projectile_visual": "orb", "projectile_visual_height": 30.0,
+			"projectile_visual": "tristana_bullet", "projectile_visual_height": 30.0,
 			"color": Color(1.0, 0.60, 0.15),
-			"active_skills": [{"icon_path": "res://assets/skills/tristana_0.png"}],
+			"active_skills": [{"resource_dependencies": {
+				"effects": [
+					{
+						"provider": "res://assets/effects/gwen_tristana/player.gd",
+						"variant": "rapid"
+					}
+				],
+				"fields": [
+					"visual_active_buff_scene"
+				]
+			}, "icon_path": "res://assets/skills/tristana_0.png"}],
 		},
 		# BEGIN IMPORTED AUDIO tristana
 		"audio": {

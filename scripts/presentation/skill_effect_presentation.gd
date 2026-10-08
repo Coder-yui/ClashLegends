@@ -179,7 +179,7 @@ func present_area_shield(card_id: String, form: int, position: Vector2) -> void:
 			continue
 		# 射程从自身表面起算；波前到达自身半径 + 技能射程。
 		var radius := float(stats.get("radius", 0.0)) + float(skill.get("radius", 0.0))
-		shield_effects.append({"pos":position,"radius":radius,"duration":0.5,"timer":0.5})
+		shield_effects.append({"pos":position,"radius":radius,"duration":2.8,"timer":2.8})
 		return
 
 func clear() -> void:
@@ -192,7 +192,7 @@ func present_fixed_area(center: Vector2, start_radius: float, end_radius: float,
 	_controller.publish_skill_fx(frontal_effects.back())
 
 func present_shield_explosion(source: Unit, radius: float) -> void:
-	add_frontal_effect(source, {"shape": "shield_explosion", "length": radius}, 0.45, Vector2.UP)
+	add_frontal_effect(source, {"shape": "shield_explosion", "length": radius}, 1.3, Vector2.UP)
 	frontal_effects.back()["fixed_position"] = true
 	_controller.publish_skill_fx(frontal_effects.back())
 

@@ -17,7 +17,17 @@ static func definition() -> Dictionary:
 		"visual": {
 			"visual_radius": 34.5,
 			"visual_active_buff_scene": "res://assets/effects/aftershock/buff.tscn",
-			"active_skills": [{"icon_path": "res://assets/skills/target_dummy_0.png"}],
+			"active_skills": [{"resource_dependencies": {
+				"effects": [
+					{
+						"provider": "res://assets/effects/aftershock/burst.gd",
+						"variant": "default"
+					}
+				],
+				"fields": [
+					"visual_active_buff_scene"
+				]
+			}, "icon_path": "res://assets/skills/target_dummy_0.png"}],
 			"visual_scene_paths": ["res://assets/units/target_dummy/blue_view.tscn", "res://assets/units/target_dummy/red_view.tscn"],
 			"visual_forward_yaw": 0.0, "show_team_ring": false,
 			"color": Color(0.4, 0.6, 0.8),

@@ -5,6 +5,7 @@ extends "res://tests/suites/battle_suite.gd"
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
+	_check_native_mist_and_rapid_fire()
 	_check_heal_range_team()
 	_check_highlander_trail()
 	_check_soft_control_visuals()
@@ -1028,26 +1029,31 @@ func _check_freeze_surfaces() -> void:
 	spells.clear()
 	ground.prepare_visual(_main._battle_presentation._camera, 110.0)
 	_expect(spells.freeze_effects.is_empty() and spells.slow_effects.is_empty() and not ground._views[0].visible, "冰面预热只建立隐藏表现槽，不生成法术状态")
-	spells.show_freeze(Vector2(360,850),110,3,2,0)
-	spells.show_freeze(Vector2(360,450),110,3,2,1)
+	spells.show_freeze(Vector2(360,850),110,3,2,0,137.5)
+	spells.show_freeze(Vector2(360,450),110,3,2,1,137.5)
 	ground.sync_effects(spells,_main._battle_presentation._camera)
 	var first: MeshInstance3D = ground._views[0]
 	var first_mesh := first.mesh
 	var red: MeshInstance3D = ground._views[1]
 	_expect(first.material_override.get_shader_parameter("rim_color") == ground.BLUE_RIM and red.material_override.get_shader_parameter("rim_color") == ground.RED_RIM, "冰纹外圈按施法阵营区分蓝红，冰面共用材质")
+	_expect(ground._players.size() >= 4 and ground._players[2].get_meta("kind") == "trundle" and ground._players[2].freeze_occluder.z == 110.0, "强化首帧已有大圈，内圈遮住巨魔W")
+	var dark_base := false
+	for emitter in ground._players[2]._data.emitters:
+		if String(emitter.name) == "Ground_black": dark_base = true
+	_expect(not dark_base, "巨魔W不加载暗底层")
 	spells.tick_visuals(3.0)
 	ground.sync_effects(spells,_main._battle_presentation._camera)
-	_expect(first.visible and first.mesh == first_mesh, "冰纹从首帧完整出现，强化阶段无缝复用完整地面")
+	_expect(first.visible and ground._players[0].get_meta("kind") == "trundle", "冻结结束后改为完整巨魔W减速场")
 	spells.tick_visuals(1.95)
 	ground.sync_effects(spells,_main._battle_presentation._camera)
-	_expect(first.visible and first.mesh == first_mesh, "强化2秒末尾仍保留完整冰纹地面")
+	_expect(first.visible and ground._players[0].get_meta("kind") == "trundle", "额外2秒末尾仍保留巨魔W地面")
 	_expect(first.material_override.get_shader_parameter("rim_color") == ground.BLUE_RIM and red.material_override.get_shader_parameter("rim_color") == ground.RED_RIM, "冻后双减速阶段延续各自阵营范围圈")
 	spells.tick_visuals(0.1)
 	ground.sync_effects(spells,_main._battle_presentation._camera)
 	_expect(not first.visible, "双减速区域结束后隐藏冰纹地面")
 	spells.show_freeze(Vector2(360,850),110,3,0,1)
 	ground.sync_effects(spells,_main._battle_presentation._camera)
-	_expect(first.mesh == first_mesh and first.material_override.get_shader_parameter("rim_color") == ground.RED_RIM, "相同位置复用地面槽位仍更新施法阵营颜色")
+	_expect(ground._players[0].get_meta("kind") == "iceborn" and first.material_override.get_shader_parameter("rim_color") == ground.RED_RIM, "相同位置复用地面槽位仍更新施法阵营颜色")
 	spells.clear()
 
 func _check_animation_copy() -> void:
@@ -1136,3 +1142,45 @@ func _check_corrosion_warmup() -> void:
 	ground._sync_effects([], _main._battle_presentation._camera)
 	_expect(ground._views.is_empty(), "正式区域结束正常清除，不影响隐藏预热样本")
 	ground.free()
+
+func _check_native_mist_and_rapid_fire() -> void:
+	var presentation: BattlePresentation3D = _main._battle_presentation
+	var effects: Node3D = presentation._gwen_tristana_effect
+	var camera: Camera3D = presentation._camera
+	var blue := _spawn_test_unit("gwen", 0, Vector2(200, 900))
+	var red := _spawn_test_unit("gwen", 1, Vector2(200, 350))
+	blue.target_protection.begin(blue.position, 120.0, 4.0)
+	red.target_protection.apply_replica([red.position, 120.0, 3.0, 1])
+	effects.sync_effects(_main._projectile_system, camera)
+	_expect(effects._mists.size() == 2, "原版圣霭支持权威和快照双方状态")
+	var positions: Array = effects._mists.values().map(func(view): return view.position)
+	blue.position += Vector2(30, 0)
+	effects.sync_effects(_main._projectile_system, camera)
+	_expect(positions == effects._mists.values().map(func(view): return view.position), "格温圈内移动不拖动原版圣霭")
+	blue.target_protection.check_position(blue.target_protection.center + Vector2(121, 0))
+	red.target_protection.apply_replica([red.position, 120.0, 0.0, 1])
+	effects.sync_effects(_main._projectile_system, camera)
+	_expect(effects._mists.is_empty(), "圣霭出圈和快照到期立即释放原版粒子")
+	var shooter := _spawn_test_unit("tristana", 0, Vector2(400, 900))
+	_main._battle_presentation.attach_unit(shooter, CardDB.get_card("tristana"))
+	var view := _view_for(shooter)
+	var buff: ActiveBuffVisual3D = view._active_buff_visual
+	buff.advance_status(true, true, 0.5)
+	_expect(is_instance_valid(buff._player) and buff._player.visible, "急速射击在武器骨骼创建原版粒子")
+	var age: float = buff._age
+	buff.advance_status(true, false, 0.2)
+	buff.advance_status(true, true, 0.1)
+	_expect(is_equal_approx(buff._age, age + 0.3), "急速射击临时隐藏恢复不重启粒子年龄")
+	buff.advance_status(false, false, 0.0)
+	_expect(not buff._player.visible, "急速射击到期隐藏骨骼下的独立粒子")
+	_main._projectile_system.launch(shooter, red, 1.0, 580.0, 0.0, 0.0, shooter.color)
+	effects.sync_effects(_main._projectile_system, camera)
+	_expect(effects._missiles.size() == 1, "小炮原版炮弹消费可见弹体快照")
+	shooter.hp = 0
+	effects.sync_effects(_main._projectile_system, camera)
+	_expect(effects._missiles.size() == 1, "来源死亡不删除仍在飞行的原版炮弹")
+	_main._projectile_system.clear_all()
+	effects.sync_effects(_main._projectile_system, camera)
+	_expect(effects._missiles.is_empty(), "清场释放原版炮弹与拖尾")
+	for unit in [blue, red, shooter]: unit.free()
+	view.free()

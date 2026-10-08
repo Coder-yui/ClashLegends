@@ -4,8 +4,8 @@ signal particle_died(emitter: String, pose: Transform3D, death_age: float)
 ## 原始BIN导出的落地粒子子集。只进行表现采样，不派发游戏事件。
 const PROFILE := preload("res://assets/units/pantheon/arrival/profile.gd")
 const DATA_PATH := "res://assets/units/pantheon/r_original/systems.json"
-const ADD := preload("res://assets/units/pantheon/arrival/particle_add.gdshader")
-const MIX := preload("res://assets/units/pantheon/arrival/particle_mix.gdshader")
+const ADD := "res://assets/units/pantheon/arrival/particle_add.gdshader"
+const MIX := "res://assets/units/pantheon/arrival/particle_mix.gdshader"
 static var _data: Dictionary = {}
 static var _mesh_cache: Dictionary = {}
 static var _texture_cache: Dictionary = {}
@@ -229,12 +229,12 @@ func _birth_sample(c: Dictionary, t: float) -> Variant:
 	else: result *= float(sample(probabilities[0], _rng.randf()))
 	return result
 
+
 static func prepare_assets() -> void:
-	for emitters: Array in systems().values():
-		for c: Dictionary in emitters:
-			for key in ["texture", "mult", "erosion"]:
-				if not String(c.get(key, "")).is_empty(): _texture(c[key])
-			if not String(c.mesh).is_empty(): _mesh(c.mesh)
+	for c in resource_emitters():
+		for key in ["texture", "mult", "erosion", "distortion_texture", "palette_texture"]:
+			if not String(c.get(key, "")).is_empty(): _texture(c[key])
+		if not String(c.mesh).is_empty(): _mesh(c.mesh)
 
 static func sample(c: Dictionary, t: float) -> Variant:
 	if not c.has("times"): return c.base
@@ -262,9 +262,8 @@ static func _texture(path: String) -> Texture2D:
 
 static func _material(c: Dictionary) -> ShaderMaterial:
 	var material := ShaderMaterial.new()
-	material.shader = ADD if int(c.blend) in [0, 4] else MIX
+	material.shader = load(resource_shader_path(c))
 	if not String(c.get("distortion_texture", "")).is_empty():
-		material.shader = preload("res://scripts/presentation/native_particle_distortion.gdshader")
 		material.set_shader_parameter("normal_map", _texture(c.distortion_texture))
 		material.set_shader_parameter("distortion_strength", float(c.distortion_strength))
 	if not String(c.get("palette_texture", "")).is_empty():
@@ -334,3 +333,19 @@ static func _update_flow(material: ShaderMaterial, c: Dictionary, age: float, li
 static func release_prepared_assets() -> void:
 	_mesh_cache.clear()
 	_texture_cache.clear()
+
+static func resource_shader_matches(value: Dictionary) -> bool:
+	return value.has("blend") and value.has("duration") and value.has("texture")
+
+static func resource_shader_path(value: Dictionary) -> String:
+	if not String(value.get("distortion_texture", "")).is_empty(): return "res://scripts/presentation/native_particle_distortion.gdshader"
+	return ADD if int(value.blend) in [0, 4] else MIX
+
+## 与运行时系统/层开关相同的潘森依赖集合。
+static func resource_emitters() -> Array:
+	var result: Array = []
+	for system in PROFILE.data().systems:
+		if not PROFILE.data().systems[system].get("enabled", true): continue
+		for emitter in systems()[system]:
+			if PROFILE.layer(system, emitter.name).get("enabled", true): result.append(emitter)
+	return result

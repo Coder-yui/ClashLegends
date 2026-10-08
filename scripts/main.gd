@@ -228,7 +228,7 @@ func _ready() -> void:
 			_show_menu()
 			_start_client(cli.get("ip", "127.0.0.1"))
 		"local":
-			_start_local()
+			_start_local_with_loading()
 		"workbench":
 			_start_art_dev()
 		_:
@@ -430,6 +430,10 @@ func _watch_network_loading(epoch: String) -> void:
 		await tree.process_frame
 
 func _prepare_match_assets() -> void:
+	_resources.plan = preload("res://scripts/presentation/match_resource_plan.gd").for_match([_deck, _remote_deck], [_active_skill_choices, _remote_active_skill_choices])
+	if not _resources.plan.errors.is_empty():
+		_fail_preparation(_resources.plan.errors)
+		return
 	await _resources.prepare_async(_deck + _remote_deck + MatchResources.SYSTEM_UNIT_BUDGET.keys(), get_tree(), func(): return game_over)
 	preparation_metrics.threaded_requests = _resources.threaded_requests
 	preparation_metrics.threaded_wait_usec = _resources.threaded_wait_usec
@@ -438,22 +442,19 @@ func _prepare_match_assets() -> void:
 		_fail_preparation(_resources.errors)
 		return
 	for id in _resources.cards:
-		_audio_manager.prepare_audio(CardDB.get_card(String(id)).get("audio", {}))
+		_audio_manager.prepare_audio(_resources.plan.definition(String(id)).get("audio", {}))
 	_audio_manager.prepare_audio(preload("res://scripts/data/world_audio.gd").DEFINITIONS)
 	_audio_manager.prepare_audio(preload("res://scripts/data/match_audio.gd").EVENTS)
 	if not is_instance_valid(_battle_presentation): return
-	await _battle_presentation.model_pool.prepare(_resources.resources, _battle_presentation._world_root, _battle_presentation._camera, _resources.cards)
+	_battle_presentation.resource_plan = _resources.plan
+	await _battle_presentation.model_pool.prepare(_resources.resources, _battle_presentation._world_root, _battle_presentation._camera, _resources.cards, _resources.plan)
 	if is_instance_valid(_battle_presentation) and not _battle_presentation.model_pool.errors.is_empty(): _fail_preparation(_battle_presentation.model_pool.errors)
-	if is_instance_valid(_battle_presentation) and not _battle_presentation.model_pool.cancelled and _battle_presentation.model_pool.errors.is_empty() and _resources.cards.has("freeze"):
-		var started := Time.get_ticks_usec()
-		_battle_presentation._freeze_ground.prepare_visual(_battle_presentation._camera, float(CardDB.get_card("freeze").get("radius", 110.0)))
-		preparation_metrics.freeze_warm_usec = Time.get_ticks_usec() - started
-
-	if is_instance_valid(_battle_presentation) and not game_over and _resources.cards.has("corrosion"):
-		await _battle_presentation._corrosion_ground.prepare_visual(_battle_presentation._camera, float(CardDB.get_card("corrosion").radius), func(): return game_over)
-
-	if is_instance_valid(_battle_presentation) and not game_over:
-		await _battle_presentation.spell_warmup.prepare(_resources.cards, _battle_presentation._world_root, _battle_presentation._camera, func(): return game_over)
+	if is_instance_valid(_battle_presentation) and not game_over and not _battle_presentation.model_pool.cancelled:
+		_battle_presentation.prepare_target_states(_resources.plan.target_states)
+		await _battle_presentation.spell_warmup.prepare_ground(_battle_presentation, _resources.plan, func(): return game_over)
+		if not is_instance_valid(_battle_presentation) or game_over: return
+		await _battle_presentation.spell_warmup.prepare(_resources.cards, _battle_presentation._world_root, _battle_presentation._camera, func(): return game_over, _resources.plan)
+		if is_instance_valid(_battle_presentation) and not _battle_presentation.spell_warmup.errors.is_empty(): _fail_preparation(_battle_presentation.spell_warmup.errors)
 
 func _fail_preparation(errors: PackedStringArray) -> void:
 	for message in errors: push_error(message)
@@ -1056,6 +1057,8 @@ func _setup_battle_presentation() -> void:
 	add_child(_battle_presentation)
 	_battle_presentation.setup(Vector2(ArenaRules.FIELD_W, ArenaRules.FIELD_H), ArenaRules.TILE_SIZE, local_team == 1)
 	_battle_presentation.spells = _spell_system
+	_battle_presentation.skills = _skill_presentation
+	_battle_presentation.projectiles = _projectile_system
 	_battle_presentation.pending_deployments = _commands.inspect_deployments
 	_arena_background_sprite.hide()
 
@@ -2806,12 +2809,12 @@ func _apply_buffered_snapshot(snapshot_bytes: PackedByteArray) -> void:
 
 ## 主机 → 客户端：冰冻法术视觉
 @rpc("authority", "call_remote", "reliable")
-func _rpc_freeze_fx(epoch: String, pos: Vector2, radius: float, duration: float, slow_duration: float = 0.0, _slow_multiplier: float = 1.0, p_team: int = 0) -> void:
+func _rpc_freeze_fx(epoch: String, pos: Vector2, radius: float, duration: float, slow_duration: float = 0.0, _slow_multiplier: float = 1.0, p_team: int = 0, slow_radius: float = 0.0) -> void:
 	if not _session.accepts(1, epoch, MatchSession.Phase.RUNNING) or game_over:
 		return
 	if mode != "client" or game_over:
 		return
-	_spell_system.show_freeze(pos, radius, duration, slow_duration, p_team)
+	_spell_system.show_freeze(pos, radius, duration, slow_duration, p_team, slow_radius)
 
 ## 主机 → 客户端：治疗法术视觉。治疗数值由主机权威结算，客户端按施法阵营显示范围边界。
 @rpc("authority", "call_remote", "reliable")
@@ -3132,9 +3135,9 @@ func combat_service() -> CombatResolver:
 func projectile_service() -> ProjectileSystem:
 	return _projectile_system
 
-func present_freeze_spell(pos: Vector2, radius: float, duration: float, slow_duration: float, slow_multiplier: float, p_team: int = 0) -> void:
+func present_freeze_spell(pos: Vector2, radius: float, duration: float, slow_duration: float, slow_multiplier: float, p_team: int = 0, slow_radius: float = 0.0) -> void:
 	if mode == "server":
-		_broadcast(_rpc_freeze_fx, [network_session_id(), pos, radius, duration, slow_duration, slow_multiplier, p_team])
+		_broadcast(_rpc_freeze_fx, [network_session_id(), pos, radius, duration, slow_duration, slow_multiplier, p_team, slow_radius])
 
 func present_heal_spell(pos: Vector2, radius: float, duration: float, p_team: int, enhanced: bool, global_heal: bool) -> void:
 	if mode == "server":

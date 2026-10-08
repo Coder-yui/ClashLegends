@@ -2170,7 +2170,7 @@ func _deal_attack_damage(amount: float, effects: Dictionary = {}) -> void:
 	_deal_attack_damage_to(_target, amount, effects)
 
 ## 龙王等持续普攻与主动持续伤害共用 BattleContext 的权威伤害脉冲结算。
-## 龙王仍由 _attack(dt) 以 damage*dt 驱动，并保留自身的溅射和普攻击中回调。
+## 持续攻击由 _attack(dt) 以 damage*dt 驱动，范围读取卡牌配置并保留普攻击中回调。
 func _deal_continuous_damage(amount: float) -> void:
 	if _target == null or not is_instance_valid(_target):
 		return
@@ -2927,7 +2927,7 @@ func _draw() -> void:
 	if not visible_to_local_player(): return
 	draw_set_transform(_vis_offset, 0.0, Vector2.ONE)
 
-	if continuous_beam_visible and has_continuous_visual_target():
+	if continuous_beam_visible and has_continuous_visual_target() and not bool(get_meta("continuous_beam_native", false)):
 		_draw_continuous_beam()
 	var body_color := Color(1.0, 0.67, 0.12) if CombatInteraction.in_stasis(self) else color
 	if is_building and not has_model_art:

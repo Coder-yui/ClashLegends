@@ -20,26 +20,7 @@ func _draw() -> void:
 		var center: Vector2 = protection.center
 		var radius: float = protection.radius
 		var edge := Color(0.35, 0.90, 1.0, 0.85) if actor.team == 0 else Color(0.88, 0.48, 0.95, 0.85)
-		draw_circle(center, radius, Color(0.24, 0.73, 0.87, 0.10))
-		draw_arc(center, radius - 5.0, 0.0, TAU, 96, Color(edge.r, edge.g, edge.b, 0.16), 12.0, true)
-		draw_arc(center, radius, 0.0, TAU, 96, edge, 2.4, true)
-		draw_arc(center, radius - 8.0, 0.0, TAU, 96, Color(0.88, 1.0, 1.0, 0.5), 1.0, true)
-		for index in 24:
-			var angle := TAU * float(index) / 24.0
-			var point := center + Vector2.from_angle(angle) * (radius - 4.0)
-			var tangent := Vector2.from_angle(angle + PI * 0.25) * 4.0
-			draw_line(point - tangent, point + tangent, Color(0.90, 1.0, 1.0, 0.65), 1.5, true)
-	for effect in skills.shield_effects:
-		var elapsed := float(effect.duration) - float(effect.timer)
-		var reach := clampf(elapsed / 0.28, 0.0, 1.0)
-		var radius := float(effect.radius) * (1.0 - pow(1.0 - reach, 2.0))
-		var alpha := (1.0 - smoothstep(0.23, 0.5, elapsed)) * smoothstep(0.0, 0.035, elapsed)
-		var center: Vector2 = effect.pos
-		# 快速金黄色波前与柔和内辉光；到达范围边界后淡出，不形成持续伤害圈。
-		draw_circle(center, radius, Color(1.0, 0.78, 0.10, 0.055 * alpha))
-		draw_arc(center, radius, 0.0, TAU, 96, Color(1.0, 0.69, 0.06, 0.16 * alpha), 16.0, true)
-		draw_arc(center, radius, 0.0, TAU, 96, Color(1.0, 0.83, 0.15, 0.80 * alpha), 4.0, true)
-		draw_arc(center, maxf(radius - 4.0, 0.0), 0.0, TAU, 96, Color(1.0, 0.96, 0.64, 0.65 * alpha), 1.5, true)
+		draw_arc(center, radius, 0.0, TAU, 96, Color(edge, 0.40), 1.0, true)
 
 	# 法术生效窗口覆盖完整多击序列；固定施法中心，不跟随大型电击目标。
 	for area in spells.lightning_areas:
@@ -159,28 +140,7 @@ func _draw_frontal_skill_effect(effect: Dictionary) -> void:
 	var line_color := Color(0.28, 0.68, 1.0, 0.9) if int(effect.get("team", 0)) == 0 else Color(1.0, 0.34, 0.24, 0.9)
 	var fill_color := Color(line_color.r, line_color.g, line_color.b, 0.10 + 0.06 * remaining_ratio)
 	if shape == &"aftershock": return # 独立加色层绘制原版纹理。
-	if shape == &"shield_explosion":
-		var reach := maxf(length, 1.0)
-		# 前80毫秒冲至外圈，随后只留下逐渐消散的余焰；不把伤害画成缓慢扩散波。
-		var elapsed := progress * float(effect.get("duration", 0.45))
-		var burst := 1.0 - pow(1.0 - clampf(elapsed / 0.08, 0.0, 1.0), 3.0)
-		var flash := pow(maxf(1.0 - elapsed / 0.10, 0.0), 2.0)
-		var tail := pow(remaining_ratio, 2.0)
-		var radius := reach * lerpf(0.25, 1.0, burst)
-		draw_circle(center, radius * 0.86, Color(0.34, 0.008, 0.035, 0.32 * tail))
-		draw_circle(center, radius * 0.65, Color(0.60, 0.018, 0.065, 0.7 * flash))
-		draw_circle(center, radius * 0.30, Color(0.88, 0.065, 0.14, flash))
-		# 用整片爆发与不规则余焰表达范围伤害，不绘制范围指示线。
-		for index in 18:
-			var angle := TAU * float(index) / 18.0 + 0.16 * sin(float(index) * 3.7)
-			var direction := Vector2.from_angle(angle)
-			var cloud_radius := reach * (0.18 + 0.06 * sin(float(index) * 2.3))
-			var distance := (reach - cloud_radius) * burst * (0.82 + 0.18 * sin(float(index) * 1.9))
-			var cloud_center := center + direction * distance
-			draw_circle(cloud_center, cloud_radius * (0.8 + 0.2 * progress), Color(0.36 + 0.12 * flash, 0.008, 0.04, 0.42 * tail))
-			draw_circle(cloud_center - direction * cloud_radius * 0.25, cloud_radius * 0.55, Color(0.66, 0.018, 0.075, 0.36 * tail))
-
-		return
+	if shape == &"shield_explosion": return # 3D 原版 W 粒子读取同一表现事件。
 
 	if shape == &"continuous_area":
 		var radius := maxf(length, 0.0)
@@ -190,20 +150,8 @@ func _draw_frontal_skill_effect(effect: Dictionary) -> void:
 		draw_arc(center, radius * (0.82 + 0.10 * pulse), 0.0, TAU, 64, Color(1.0, 0.88, 0.36, 0.34 * remaining_ratio), 2.0, true)
 		return
 	if shape == &"frost_storm":
-		var radius := maxf(length, 0.0)
-		var pulse := 0.5 + 0.5 * sin(progress * TAU * 2.5)
-		var frost_color := Color(0.56, 0.88, 1.0, 0.78 * remaining_ratio)
-		draw_circle(center, radius, Color(0.28, 0.68, 1.0, 0.045 + 0.025 * pulse))
-		draw_arc(center, radius, 0.0, TAU, 72, frost_color, 3.0, true)
-		draw_arc(center, radius * (0.68 + 0.06 * pulse), 0.0, TAU, 64, Color(0.78, 0.96, 1.0, 0.52 * remaining_ratio), 2.0, true)
-		for index in range(10):
-			var angle := TAU * float(index) / 10.0 + progress * 0.8
-			var flake_distance := radius * (0.28 + 0.42 * float((index * 7) % 10) / 9.0)
-			var flake_center := center + Vector2.from_angle(angle) * flake_distance
-			var flake_size := 3.0 + 2.0 * (0.5 + 0.5 * sin(progress * TAU + float(index)))
-			var flake_direction := Vector2.from_angle(angle + PI * 0.25)
-			draw_line(flake_center - flake_direction * flake_size, flake_center + flake_direction * flake_size, Color(0.88, 0.98, 1.0, 0.72 * remaining_ratio), 1.5, true)
-			draw_line(flake_center - flake_direction.rotated(PI * 0.5) * flake_size, flake_center + flake_direction.rotated(PI * 0.5) * flake_size, Color(0.70, 0.92, 1.0, 0.58 * remaining_ratio), 1.0, true)
+		# 原版粒子在3D中绘制；保留明确的权威范围阵营圈。
+		draw_arc(center, length, 0.0, TAU, 72, Color(line_color.r, line_color.g, line_color.b, 0.55), 1.2, true)
 		return
 	if shape in [&"target_circle", &"target_circle_strong", &"star_impact", &"star_impact_strong", &"shockwave"]:
 		preload("res://scripts/presentation/starfall_visual.gd").draw_effect(self, effect)
