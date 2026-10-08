@@ -18,7 +18,7 @@
 
 ## 主动：灵魂熔炉
 
-<!-- card-fact: sion active_skills.0.cost -->1金币，<!-- card-fact: sion active_skills.0.cooldown -->8秒冷却，最多<!-- card-fact: sion active_skills.0.max_uses -->2次。立即获得400点独立护盾；2秒后若该层护盾仍有生命，则消除剩余护盾并在自身周围110半径内造成240伤害，可以命中地面、空中和建筑。若护盾提前被打破、清除或赛恩进入复生，则不爆炸；其他护盾不能替代资格。爆炸以当时位置为中心，与目标身体圆相交即可命中。复生和狂暴阶段均禁止使用。
+<!-- card-fact: sion active_skills.0.cost -->2金币，<!-- card-fact: sion active_skills.0.cooldown -->8秒冷却，最多<!-- card-fact: sion active_skills.0.max_uses -->2次。立即获得600点独立护盾；3秒后若该层护盾仍有生命，则消除剩余护盾并在自身周围200半径内造成240伤害，可以命中地面、空中和建筑。若护盾提前被打破、清除或赛恩进入复生，则不爆炸；其他护盾不能替代资格。爆炸以当时位置为中心，与目标身体圆相交即可命中。复生和狂暴阶段均禁止使用。
 
 ## 效果定义
 

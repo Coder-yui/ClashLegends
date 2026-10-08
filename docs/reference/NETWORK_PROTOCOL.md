@@ -4,7 +4,7 @@
 
 | 契约 | 当前值 |
 | --- | --- |
-| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->100 |
+| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->102 |
 | 顶层快照项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd SNAPSHOT_PACKET_SIZE -->11 |
 | 单位载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd UNIT_PAYLOAD_SIZE -->56 |
 | 塔载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd TOWER_PAYLOAD_SIZE -->7 |
@@ -147,3 +147,7 @@ NetworkPlayback默认100ms，根据时钟RTT/抖动与事件/快照到达时差�
 镜像成功释放复用可靠 `_rpc_card_event`，载荷为 `card_id=mirror`、`cue=spell:cast` 及释放位置、施放队伍；双方均播放0.5秒镜面提示，不新增协议字段，不影响权威复制结果。
 
 协议100新增公开释放提示：复用可靠 `_rpc_card_event` 的 `cue=cast:notice`；card_id为释放卡牌/主动技能来源，form字段在此cue下为技能候选下标，team为施放队伍，pos不使用。按事件ID去重、会话校验和战场播放时间轴显示，服务器不创建表现节点。
+
+协议101：`_rpc_freeze_fx` 末尾携带强化减速区域半径。客户端同时创建3秒冰冻与5秒扩大减速表现，不创建权威区域。强化区域改为施放当刻生效；旧版本在握手阶段拒绝。
+
+协议102：天使焰浪由平直梯形扫掠改为弯曲亮弧逐段扫掠；弹体载荷仍为14项，算法变更通过握手版本拒绝旧端。
