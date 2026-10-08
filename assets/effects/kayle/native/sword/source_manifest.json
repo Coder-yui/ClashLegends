@@ -1,0 +1,42 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Kayle.wad.client",
+  "source_binary_sha256": "2f5621c50c3c0ddb36ecf4d71fc22688aa214b56c879698676798bf74b649fac",
+  "system": "Characters/Kayle/Skins/Skin0/Particles/Kayle_Base_BA_Ranged",
+  "assets": {
+    "assets/characters/kayle/skins/base/particles/beamswordshapes_orange.tex": {
+      "source_sha256": "5e7c79479c53523ab40a59e450c6e6931a24b9b8f5005bae044341d328f08206",
+      "output": "assets/characters/kayle/skins/base/particles/beamswordshapes_orange.png",
+      "output_sha256": "05d9ecf65474ecefb8c42403d5ee4fa2294c2bcb81382b542ed83bfe4400df1d"
+    },
+    "assets/characters/kayle/skins/base/particles/kayle_base_e_bigglow02.tex": {
+      "source_sha256": "efdbbd590fdfad499215a68166157c870ec7272ea9268aa52ed2c091b9bab882",
+      "output": "assets/characters/kayle/skins/base/particles/kayle_base_e_bigglow02.png",
+      "output_sha256": "6ca55121cbee0c35aec5ddc57b6a4bbe81651e7ad1e5b19e3e63d5ce4f6a5a7e"
+    },
+    "assets/characters/kayle/skins/base/particles/kayle_base_ba_trail.tex": {
+      "source_sha256": "9220624e7593dc8c93f506158fd71d43b41e3fa877165b491d148ad0a9eb062b",
+      "output": "assets/characters/kayle/skins/base/particles/kayle_base_ba_trail.png",
+      "output_sha256": "6c7f84ecf4847cd727acbc275247bea25456b14d07cee2a99ed4f5e3734349a4"
+    },
+    "assets/characters/kayle/skins/base/particles/kayle_base_ba_small_mote.tex": {
+      "source_sha256": "f62504a8189b4bf5e069e7a4fec78ed9ff769f6c431d13ca80cf1a29fec1e326",
+      "output": "assets/characters/kayle/skins/base/particles/kayle_base_ba_small_mote.png",
+      "output_sha256": "9b3852079fed8670aff69f0cfc73866265e5afd58f25973e28763460cd3f22b6"
+    },
+    "assets/characters/caitlyn/skins/skin11/particles/caitlyn_skin11_ba_bullet.tex": {
+      "source_sha256": "3232fcc69c55dc1f8ab1b6f42390cd900f271df766f69d9fa4895a3b0e74c10f",
+      "output": "assets/characters/caitlyn/skins/skin11/particles/caitlyn_skin11_ba_bullet.png",
+      "output_sha256": "0306e7c0d8216ee89b42dc825826fbac72c5e8e3fe4b0fe19b0253475edf53d5"
+    },
+    "assets/characters/kayle/skins/base/particles/flame_trail_gradient.tex": {
+      "source_sha256": "cd483ba979e2214b0fd76bf41855b342d67b801a6fdcf0376ad9f9bf81414e1a",
+      "output": "assets/characters/kayle/skins/base/particles/flame_trail_gradient.png",
+      "output_sha256": "ce72a90608dd3789dc1a53e8fb2dafb592a3d8dbab2913f1fa736ef0964ae233"
+    },
+    "assets/characters/xerath/skins/skin04/particles/xerath_skin04_z_sandflecks.tex": {
+      "source_sha256": "82071c6410b0db20e2e32b9869ec73c901b41c19b18b86659cd33a2439de8e5a",
+      "output": "assets/characters/xerath/skins/skin04/particles/xerath_skin04_z_sandflecks.png",
+      "output_sha256": "0529aeb0ed16d7a81e3efaf6b339c92372710fe796e9aec94b1f00ac484d7cd8"
+    }
+  }
+}

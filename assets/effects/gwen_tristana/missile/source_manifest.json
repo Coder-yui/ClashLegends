@@ -1,0 +1,37 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Tristana.wad.client",
+  "source_binary_sha256": "a7f1619c1a65f295d8be418219053b3b102c5661f179298577bb0326b993b4c1",
+  "system": "Characters/Tristana/Skins/Skin0/Particles/Tristana_Base_BA_mis",
+  "assets": {
+    "assets/characters/tristana/skins/base/particles/tristana_base_ba_mis_mesh.scb": {
+      "source_sha256": "ca11228dbc5c330a775c736de47a4dddc96c5cd16d6b889f32944ef4afeffa26",
+      "output": "assets/characters/tristana/skins/base/particles/tristana_base_ba_mis_mesh.mesh.json",
+      "output_sha256": "5d9e98348ae2438d143e93829e2e85e7ce5b5efb1a2c6e897063609213d8b0c0"
+    },
+    "assets/characters/tristana/skins/base/particles/common_color-white32.tex": {
+      "source_sha256": "cf589f62041fec1401d8737e05736f60ba8fc54b56f2a5d72019712451039037",
+      "output": "assets/characters/tristana/skins/base/particles/common_color-white32.png",
+      "output_sha256": "8e7cac54fb8557b4bd3a8a86a1f6d4a47ec7986d69e7cee67274e35dcb018305"
+    },
+    "assets/characters/tristana/skins/base/particles/tristana_base_projectile_meshes.tex": {
+      "source_sha256": "4d35ca153d49f3f48492fa1e8830aac652b9c9df45b8e5ee2003fe4b534b9c2c",
+      "output": "assets/characters/tristana/skins/base/particles/tristana_base_projectile_meshes.png",
+      "output_sha256": "6ed1579620eb603688d71787415e35b20a8bef055d76a95cb01a2249c2be90b9"
+    },
+    "assets/characters/tristana/skins/base/particles/tristana_base_ba_mis_smoketrail.tex": {
+      "source_sha256": "1ab96141eef7bb225a6fcb8e1d21cf82aea53f68fd96ab8c9593e59e1cea2243",
+      "output": "assets/characters/tristana/skins/base/particles/tristana_base_ba_mis_smoketrail.png",
+      "output_sha256": "63d3b20c75522dc3cc9ccbddb99cf289154cbaf41129cebf787e7cf6dd8fe39f"
+    },
+    "assets/characters/tristana/skins/base/particles/tristana_base_ba_mis_blurtrail.tex": {
+      "source_sha256": "3b0fa314e536a797a78604101ebce2d82891155465f7e3aaf26003c90f8efafc",
+      "output": "assets/characters/tristana/skins/base/particles/tristana_base_ba_mis_blurtrail.png",
+      "output_sha256": "9f7dfadb2a8f7f80527f61669b04a223927da116fe5f0b947f0762170be8d20c"
+    },
+    "assets/characters/tristana/skins/base/particles/tristana_base_spark.tex": {
+      "source_sha256": "aa96acfab3029ecfc5080572b75698b72dabccaf0dba8e7c836b6fe177038235",
+      "output": "assets/characters/tristana/skins/base/particles/tristana_base_spark.png",
+      "output_sha256": "5134020ebed372f3e818fc27174b3ef7a96e109823351ecda44305becbac339b"
+    }
+  }
+}

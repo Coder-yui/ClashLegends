@@ -1,0 +1,217 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Gwen.wad.client",
+  "source_binary_sha256": "1c5bff67915d7c7d7a70a9415f834e252fdf08efe91db7516d2d5f32cb255fb5",
+  "system": "Characters/Gwen/Skins/Skin0/Particles/Gwen_Base_W_MistArea",
+  "assets": {
+    "assets/characters/gwen/skins/base/particles/generic_groundbaselayer.tex": {
+      "source_sha256": "89cba8e37f2aee815d18cf86241a6601eceb87d73feaf71a8881c934d841b254",
+      "output": "assets/characters/gwen/skins/base/particles/generic_groundbaselayer.png",
+      "output_sha256": "4c2d74aac2f63341db134bb71e9bfd1d42de55061cd4ca5ef7e017aab6c579f5"
+    },
+    "assets/characters/gwen/skins/base/particles/generic_noisemulti02.tex": {
+      "source_sha256": "24560407673415810a96e64c86b287a72a3f9887e413f09ac2414646e9bc1c32",
+      "output": "assets/characters/gwen/skins/base/particles/generic_noisemulti02.png",
+      "output_sha256": "cc4fb66b4c19a669b72aef3dbe84bcd913abba0caa7a0a61c7a081aad50377f3"
+    },
+    "assets/characters/gwen/skins/base/particles/generic_glowsoft.tex": {
+      "source_sha256": "0df6814ec2241433b0106c23e81b6b3ebaaea7bfac8dde8ee30e290d38a3d1f0",
+      "output": "assets/characters/gwen/skins/base/particles/generic_glowsoft.png",
+      "output_sha256": "1e1418c607250b3798253db336c17259f835bce419be10fffa19574ab902c318"
+    },
+    "assets/characters/vladimir/skins/skin21/particles/vladimir_skin21_e_disc_2.scb": {
+      "source_sha256": "36251c111d0d9d2acede20ccbe09e503d89d26dbc04eefea67b1885b24a44457",
+      "output": "assets/characters/vladimir/skins/skin21/particles/vladimir_skin21_e_disc_2.mesh.json",
+      "output_sha256": "d1d0984b6b7c2c58d03f647d70804c5800e2eefce6fd11e8e4e4c4cb3dac1a13"
+    },
+    "assets/characters/vladimir/skins/skin21/particles/vladimir_skin21_noise2.tex": {
+      "source_sha256": "07d1c6d028aed8b8733a6f71a674229c25a161ce521a62c40247b94a6b27eaee",
+      "output": "assets/characters/vladimir/skins/skin21/particles/vladimir_skin21_noise2.png",
+      "output_sha256": "a8bf5dc8a5fbcf2d484f277f619ee0a407e99c96ea4adbfdb9bdafda008eee08"
+    },
+    "assets/characters/gwen/skins/base/particles/greyscale_sharpline.tex": {
+      "source_sha256": "41c3bfe39e95c1b6a58aa4f1261af75f9c1756d7b639b8bc45799a8f3d4d297c",
+      "output": "assets/characters/gwen/skins/base/particles/greyscale_sharpline.png",
+      "output_sha256": "e3fcd4e523e5c534f74a4270f9334e57ff3de22b8ee96af08af9baf0b52e1120"
+    },
+    "assets/characters/fiddlesticks/skins/base/particles/common_global_teamring_mesh.scb": {
+      "source_sha256": "f3257173940f3451d46aac801759647ccb1d41ceeb8653d16859b5cc5db121e4",
+      "output": "assets/characters/fiddlesticks/skins/base/particles/common_global_teamring_mesh.mesh.json",
+      "output_sha256": "f7cefe2a22ad163950350487633f31cd093eed59e337791b2d37039a5b5ad74a"
+    },
+    "assets/characters/fiddlesticks/skins/base/particles/common_global_teamring_mesh.tex": {
+      "source_sha256": "cc6ccccf131b82368fa312b965848116f600c64a7d5cbce239a100799cbece9e",
+      "output": "assets/characters/fiddlesticks/skins/base/particles/common_global_teamring_mesh.png",
+      "output_sha256": "e78b891eae5d0353097ea277950b48d5c1065b0245395a539a66e80c5d774358"
+    },
+    "assets/characters/fiddlesticks/skins/base/particles/fiddlesticks_base_e_softmult.tex": {
+      "source_sha256": "386663f9b099c420a72b9aee281907a5cbb146443305183b732b3850f99a062c",
+      "output": "assets/characters/fiddlesticks/skins/base/particles/fiddlesticks_base_e_softmult.png",
+      "output_sha256": "7f6734f32877de401bf5e73c57c0cebd908b7d11773e6b13bec7a83b7218d2ff"
+    },
+    "assets/characters/gwen/skins/base/particles/gwen_base_w_birthstrandsmesh.scb": {
+      "source_sha256": "4b6b8967dc19bf4fb89acbc906b8883951e706dd5cbeb9627390eb3ae4897835",
+      "output": "assets/characters/gwen/skins/base/particles/gwen_base_w_birthstrandsmesh.mesh.json",
+      "output_sha256": "d8b0008a3c691f6fdd2179f7cdab2e371d256579a326c13b29726b3696e822ef"
+    },
+    "assets/characters/gwen/skins/base/particles/generic_ribbonmask01.tex": {
+      "source_sha256": "e50880c960dd8f4cc1b716a3ca8b7c0f529e2e5c74d8817b12d48bb195edd33a",
+      "output": "assets/characters/gwen/skins/base/particles/generic_ribbonmask01.png",
+      "output_sha256": "3bf91c000f1f8b622a4c8eff70d9f5b6104c78cee86d69351e66cf3dc9b559b1"
+    },
+    "assets/characters/gwen/skins/base/particles/generic_string_strands.tex": {
+      "source_sha256": "a16627cfe1409fbfe72d5a359eb88c1e8457580f69a85cac1cbb9568d203b66c",
+      "output": "assets/characters/gwen/skins/base/particles/generic_string_strands.png",
+      "output_sha256": "77c07f07994d58389d8cead82e7bff294c84bb17c707aafc9e68e9e0d4a02337"
+    },
+    "assets/characters/kayle/skins/skin15/particles/kayle_skin15_z_sandflecks.tex": {
+      "source_sha256": "82071c6410b0db20e2e32b9869ec73c901b41c19b18b86659cd33a2439de8e5a",
+      "output": "assets/characters/kayle/skins/skin15/particles/kayle_skin15_z_sandflecks.png",
+      "output_sha256": "0529aeb0ed16d7a81e3efaf6b339c92372710fe796e9aec94b1f00ac484d7cd8"
+    },
+    "assets/characters/gwen/skins/base/particles/gwen_base_w_birthcastmesh02.scb": {
+      "source_sha256": "fe7a390e78b2a3ae65bc3d3ffd724bf04755664f4642f92c28e9fbfd0dba3f2f",
+      "output": "assets/characters/gwen/skins/base/particles/gwen_base_w_birthcastmesh02.mesh.json",
+      "output_sha256": "a42c5ade761d8dbc181b9c57a603527ace51c0dba3fb45c22bea38b3069c4372"
+    },
+    "assets/characters/gwen/skins/base/particles/generic_holystrings_hori.tex": {
+      "source_sha256": "579c6baf258d842a32fe895021cc1616ea7b1141738ab90241b9a23b3b2d797c",
+      "output": "assets/characters/gwen/skins/base/particles/generic_holystrings_hori.png",
+      "output_sha256": "5e253bce2c2c9a1eb8143b53b5602f885c8d17d4a94154da25a13a107ccaae06"
+    },
+    "assets/characters/gwen/skins/base/particles/generic_smokescroll_hori.tex": {
+      "source_sha256": "8a5d0394e603b2a8d61d84d19ab150bc1a96ef95365c7208853af18e0e6a0fe8",
+      "output": "assets/characters/gwen/skins/base/particles/generic_smokescroll_hori.png",
+      "output_sha256": "4730f23ddb7aef9f9ec6d9f3f76447adf2e50665088f68bbdf64003b614131e9"
+    },
+    "assets/characters/gwen/skins/base/particles/generic_trailcigsmoke_connected.tex": {
+      "source_sha256": "35c2f4e0cf803246828e2e264a7929342a524202933f0b8603eb47595f91e3df",
+      "output": "assets/characters/gwen/skins/base/particles/generic_trailcigsmoke_connected.png",
+      "output_sha256": "31e30a003e9d586578e081a35c36c11c96079e0e2188cbd39ecf7dc92f9815ff"
+    },
+    "assets/characters/gwen/skins/base/particles/draven_base_w_color-hold.tex": {
+      "source_sha256": "bc06557b44402fee1498430bd4008df9598085f44b29fea2f02218473674b2f8",
+      "output": "assets/characters/gwen/skins/base/particles/draven_base_w_color-hold.png",
+      "output_sha256": "62ed85b52d6f757f5322176cb24ccfa294cb145ba9f1978bbf6ba479341f45a8"
+    },
+    "assets/characters/gwen/skins/base/particles/gwen_base_w_birthcastmeshweaving01.scb": {
+      "source_sha256": "16974965853220a17781dc76456b181487f397eef0f4fab0c8a3d10e4290f3c6",
+      "output": "assets/characters/gwen/skins/base/particles/gwen_base_w_birthcastmeshweaving01.mesh.json",
+      "output_sha256": "c789ac8f4df304ab45339d794e53b4ff26c38ee09e2fa29768b99c6869ce92fb"
+    },
+    "assets/characters/gwen/skins/base/particles/generic_ringindicator.tex": {
+      "source_sha256": "c24914525cb6310a4cc5e74c23835c5e6995c017e8847014a391fa838bc8fb15",
+      "output": "assets/characters/gwen/skins/base/particles/generic_ringindicator.png",
+      "output_sha256": "9f68cb09571a67e547aa3f95ff3d02f2142f8de1efa182232a75935b96c40398"
+    },
+    "assets/maps/particles/tft/tft_glb_gradient.tex": {
+      "source_sha256": "310e40e3c4015ae748fa0587aae13c06dd27e1fe09551aaf9e166a70114872f1",
+      "output": "assets/maps/particles/tft/tft_glb_gradient.png",
+      "output_sha256": "08b0dca94629ffd767a726582ae4b98a3a25e95ed09f52a9dbf9e7fe9f921515"
+    },
+    "assets/characters/gwen/skins/base/particles/gwen_base_w_outeredgemesh001.scb": {
+      "source_sha256": "f2b6db14e848ebb9c92fd18ae30ac8b0972fe57ec06ba38a8c43ebf2d50fae02",
+      "output": "assets/characters/gwen/skins/base/particles/gwen_base_w_outeredgemesh001.mesh.json",
+      "output_sha256": "59528cf6efa22b1b6cc8efd33b6bc3827ed5177082d1f0ef283e194bf55e21b1"
+    },
+    "assets/characters/gwen/skins/base/particles/generic_trailcigsmoke_connected_second.tex": {
+      "source_sha256": "7618e25a2b9b994e4f9bfdc5fc2cf2edbb0eec963c1be9a57541fd4ff925f4d6",
+      "output": "assets/characters/gwen/skins/base/particles/generic_trailcigsmoke_connected_second.png",
+      "output_sha256": "278ec29125d83a9794fcfa074336e2af672be9aca9823f21751c1736a340ad9e"
+    },
+    "assets/characters/gwen/skins/base/particles/generic_erosion04.tex": {
+      "source_sha256": "3675eae91b55f54151a2523d19f7699de9db6b2983936a7846f5d2372d67620b",
+      "output": "assets/characters/gwen/skins/base/particles/generic_erosion04.png",
+      "output_sha256": "deaef1569bad8c0c0e28f7b48b46be090275a74d025ea11caa74722fa3b9e655"
+    },
+    "assets/characters/gwen/skins/base/particles/generic_2x2_smoke_sharp.tex": {
+      "source_sha256": "01dc9fd6c6c0af085e4b2b76347a2d1f65d9f0aea8979975031900dbb8fe4ad0",
+      "output": "assets/characters/gwen/skins/base/particles/generic_2x2_smoke_sharp.png",
+      "output_sha256": "6a03b38e4b3ad2d87adee5edff220bfc7846d9d39c75456924a7e41dd4ce828f"
+    },
+    "assets/characters/gwen/skins/base/particles/generic_holystrings_support.tex": {
+      "source_sha256": "afefc65220a801b9df561435cefbf70bc4d734021f56289fc6effd595146d30d",
+      "output": "assets/characters/gwen/skins/base/particles/generic_holystrings_support.png",
+      "output_sha256": "dc9e3cf9d2c904f3b25bac208532f149ffe0239cbebff0249ba874399eb3773c"
+    },
+    "assets/characters/gwen/skins/base/particles/generic_noisemulti01.tex": {
+      "source_sha256": "19d1c177b696494c979da9516c33206dc69bfedaed7fd82a72d51f0f06b24f9b",
+      "output": "assets/characters/gwen/skins/base/particles/generic_noisemulti01.png",
+      "output_sha256": "225b197f9598e40726abc7c414db6f69b5de967eda96e65c66173a2ab5b5c195"
+    },
+    "assets/characters/mordekaiser/skins/base/particles/mordekaiser_base_w_smokeerode.tex": {
+      "source_sha256": "d502c1c112180e1886c304bfb0bb4330bbe4159a688799e756f82e830696f548",
+      "output": "assets/characters/mordekaiser/skins/base/particles/mordekaiser_base_w_smokeerode.png",
+      "output_sha256": "f72989a9299d454d8dc5aff85b24461587b362c1f950a68d841b95ceff3d3827"
+    },
+    "assets/characters/gwen/skins/base/particles/gwen_2x2_smoke_soft.tex": {
+      "source_sha256": "d71be4fd98c85d8c95b37152c657d4584245f825a22a96ed62c1df27372a1134",
+      "output": "assets/characters/gwen/skins/base/particles/gwen_2x2_smoke_soft.png",
+      "output_sha256": "ccb3a9acf33e813f00418dc5e2895e0c439ed1ad83a46a4828ac9f95660b3435"
+    },
+    "assets/characters/kayn/skins/base/particles/kayn_base_q_spikes.scb": {
+      "source_sha256": "2d810a8e2ffb473b9542b6842b9d1e80f85741d8a8de42c75510acfadee9c914",
+      "output": "assets/characters/kayn/skins/base/particles/kayn_base_q_spikes.mesh.json",
+      "output_sha256": "2d3422c9ed197f41c246f0d328b95a2f6a7a87e99091dda7ffdda38ba2806f2a"
+    },
+    "assets/characters/kayn/skins/base/particles/kayn_base_q_spikes_tex.tex": {
+      "source_sha256": "f6425f6ef4dc7323553d3a55a4fc3683f235ef42dee14089df8e448206216bc4",
+      "output": "assets/characters/kayn/skins/base/particles/kayn_base_q_spikes_tex.png",
+      "output_sha256": "9b6af0a44fbabe5c3faadef802bef8c330f073f3278f8b4999aaf5cda6d40d47"
+    },
+    "assets/characters/kayn/skins/base/particles/kayn_base_q_weaponswipe_edge.scb": {
+      "source_sha256": "f306b4dc4915f320072a7b0b3d061d6bf8b2bd6818d521487e9bb0832e06e6b0",
+      "output": "assets/characters/kayn/skins/base/particles/kayn_base_q_weaponswipe_edge.mesh.json",
+      "output_sha256": "bedbc1bb78e030c12c06eb96b243757c251bb5d6af135fc7b52a844445c94ac2"
+    },
+    "assets/characters/kayn/skins/base/particles/kayn_base_q_weapon_edge.tex": {
+      "source_sha256": "bff481c979464fe887055df3f8049d33c91138a34243b80e34a5fc00646abee3",
+      "output": "assets/characters/kayn/skins/base/particles/kayn_base_q_weapon_edge.png",
+      "output_sha256": "8c7a278381c2605a60344766ece86a9c0e930b552872511c28f73b1dbd4f623f"
+    },
+    "assets/characters/riven/skins/base/particles/riven_base_q_groundslice.tex": {
+      "source_sha256": "ea6b547fcfa02fcecb6432c9f394401e7c34f9e6d8651fecb38e521cc95dd1f2",
+      "output": "assets/characters/riven/skins/base/particles/riven_base_q_groundslice.png",
+      "output_sha256": "e28132c9df315534adc45c935e754eb85cd5fcfc0a897c1ce3378b2e82729771"
+    },
+    "assets/characters/gwen/skins/base/particles/generic_ringindicator2.tex": {
+      "source_sha256": "a18f3b3df4cf6bffaa1acc50c47ccfdb683ec7b76742532e1c6515fd87c37b40",
+      "output": "assets/characters/gwen/skins/base/particles/generic_ringindicator2.png",
+      "output_sha256": "e2f695717f84483b11b7a755ef7a19065a9a01a8b62c28fbb4045bfa6ffe419c"
+    },
+    "assets/characters/gwen/skins/base/particles/gwen_base_w_ringmesh01.scb": {
+      "source_sha256": "1eeb7ef212cd3456d706b4593cb2d152733fc5f60024ad64b153ab7ca82ce40e",
+      "output": "assets/characters/gwen/skins/base/particles/gwen_base_w_ringmesh01.mesh.json",
+      "output_sha256": "df45b7b3b8987333a22807ca73ba4286fc6dd48b3be40c426b26c54d6b7dccd9"
+    },
+    "assets/characters/gwen/skins/base/particles/generic_windicator_corner_firstnew.tex": {
+      "source_sha256": "b33778343b24c1e9fcf4c10e2abc362a4593044ee0914f00187731709e31ddfd",
+      "output": "assets/characters/gwen/skins/base/particles/generic_windicator_corner_firstnew.png",
+      "output_sha256": "3b5b161de650153abbf4aeb7601367d2f40476f35428d0c4492e7e980e8d6a76"
+    },
+    "assets/characters/gwen/skins/base/particles/gwen_w_fullmesh.scb": {
+      "source_sha256": "0c4b6342fba5ad604de1d1694fa4da3b887fb9d1582db2a08a75dfd526db674e",
+      "output": "assets/characters/gwen/skins/base/particles/gwen_w_fullmesh.mesh.json",
+      "output_sha256": "20ff75582cf559b42ee9b308c76198d176be25dc0559a8f5e82471d0ee2f2179"
+    },
+    "assets/characters/gwen/skins/base/particles/generic_ringsircle3.tex": {
+      "source_sha256": "2a81d758d1aa5feda36ca585020398c76ab2f2b92cb1aeda9055d60dc386762e",
+      "output": "assets/characters/gwen/skins/base/particles/generic_ringsircle3.png",
+      "output_sha256": "25f15717ddb2b84d5d2cfe14a181de3c7859fca68c06870902365af068cbb755"
+    },
+    "assets/characters/gwen/skins/base/particles/generic_windicator_corner_firstnew_overlay.tex": {
+      "source_sha256": "f1644967a5bad8e8a3d51802f0c3b354f03918b1a73f52bcc62383f14d8bf3ee",
+      "output": "assets/characters/gwen/skins/base/particles/generic_windicator_corner_firstnew_overlay.png",
+      "output_sha256": "12247dbf0b5b0cb35658777fe0647796763a27282d11c901252f14936700fa3d"
+    },
+    "assets/characters/gwen/skins/base/particles/gwen_base_w_wraparound_strands.scb": {
+      "source_sha256": "a0925394149643f3341dfccb5c5b8595675a39e4c617a2ba2658abfa07008fe2",
+      "output": "assets/characters/gwen/skins/base/particles/gwen_base_w_wraparound_strands.mesh.json",
+      "output_sha256": "bb81cb9e2ba7048c1240b5d82f95ce639ef6591221493c267afcfa4a7f27f9c6"
+    }
+  },
+  "excluded_emitters": [
+    "CornerRune_BLOOM1",
+    "CornerRune_BLOOM2"
+  ],
+  "adaptation": "Remove persistent corner ornaments"
+}

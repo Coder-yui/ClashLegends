@@ -1,0 +1,41 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Tristana.wad.client",
+  "source_binary_sha256": "a7f1619c1a65f295d8be418219053b3b102c5661f179298577bb0326b993b4c1",
+  "system": "Characters/Tristana/Skins/Skin0/Particles/Tristana_Base_Q_Buf",
+  "assets": {
+    "assets/characters/tristana/skins/base/particles/tristana_base_r_tar_impactglow.tex": {
+      "source_sha256": "54e84bb654db0abfbdd6b614980803fa6031d631e03db7169c76a857a1453538",
+      "output": "assets/characters/tristana/skins/base/particles/tristana_base_r_tar_impactglow.png",
+      "output_sha256": "d32e308940b6cab9ed836a56f42722c509865a40014e4d01c03c266e64869a36"
+    },
+    "assets/characters/tristana/skins/base/particles/tristana_base_q_buf_cannonglow_mesh.scb": {
+      "source_sha256": "7d8b5c92f8f27fbef69821120076da01420be4c7a25370c57b5895a69282a538",
+      "output": "assets/characters/tristana/skins/base/particles/tristana_base_q_buf_cannonglow_mesh.mesh.json",
+      "output_sha256": "8f312391c15dc0c093352fd9a38bc7431c33506264f7563ff56b397c909e8b67"
+    },
+    "assets/characters/tristana/skins/base/particles/tristana_base_w_cas_firetrail.tex": {
+      "source_sha256": "09573da83bb705ae02ffac80aa7ea78149692ded27284881c004d778515e1fae",
+      "output": "assets/characters/tristana/skins/base/particles/tristana_base_w_cas_firetrail.png",
+      "output_sha256": "d852ac22c8e0448dba71775d57bebc9898d75c1ebc1cea7112bed249942281cd"
+    },
+    "assets/characters/tristana/skins/base/particles/tristana_base_q_muzzleglow_mesh.scb": {
+      "source_sha256": "4eddbd150aec5bd1a85471a50b887b5babe80b9581ff568f2e6610002dd10d86",
+      "output": "assets/characters/tristana/skins/base/particles/tristana_base_q_muzzleglow_mesh.mesh.json",
+      "output_sha256": "14f70a975e9b9672295b7c15053655105fa914681684824c9f13077e883e407a"
+    },
+    "assets/characters/tristana/skins/base/particles/tristana_base_q_buf_muzzleglow.tex": {
+      "source_sha256": "04bebf53b0eaaa62a6665ea133c49e64bb245b12b9eeee254b563671bcefa741",
+      "output": "assets/characters/tristana/skins/base/particles/tristana_base_q_buf_muzzleglow.png",
+      "output_sha256": "8233f0cf02dc7d0c42ee7cdaf8407a1815f6a481fabf06ce65eca873905f1602"
+    },
+    "assets/characters/tristana/skins/base/particles/tristana_base_q_buf_muzzleglow_mult.tex": {
+      "source_sha256": "e1aa5301f3977d82a3c0f522c9fd3747e04e96a410c4fba54feef6bfa2eb8883",
+      "output": "assets/characters/tristana/skins/base/particles/tristana_base_q_buf_muzzleglow_mult.png",
+      "output_sha256": "bbb6fb42abf3bdb588931db75dadb4350e01c11eb6f573eb6fa3329960db7d5d"
+    }
+  },
+  "excluded_emitters": [
+    "Embers"
+  ],
+  "adaptation": "Keep Mesh_Rings and both Muzzle_Glow layers; remove outward embers only"
+}
