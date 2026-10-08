@@ -16,10 +16,10 @@ static func definition() -> Dictionary:
 			"spawn_side": "bilateral", "spawn_distance": 60.0, "spawn_deploy_time": 0.0, "spawn_flight_duration": 0.25, "spawn_defer_while_controlled": true,
 			"active_skills": [{
 				"name": "狂野生长", "kind": "permanent_growth", "cost": 2, "max_uses": 2, "cooldown": 7.0,
-				"radius": 120.0, "health_bonus_ratio": 0.3, "body_scale_multiplier": 1.3,
+				"radius": 180.0, "health_bonus_ratio": 0.3, "body_scale_multiplier": 1.3,
 				"knockback_radius": 80.0, "knockback": 40.0, "knockback_duration": 0.25,
 				"cast_duration": 0.97, "impact_delay": 0.25,
-				"description": "选择自身120范围内费用最高、同费最近的未增益友军（含自身，不含建筑和冰鸟蛋），生命上限与当前生命增加原上限30%，模型和碰撞半径增大30%，持续到死亡且不能重复获得；将目标周围80范围内的空中和地面敌方普通单位击退40。无合法目标时回退金币、次数和本次冷却。",
+				"description": "选择自身180范围内费用最高、同费最近的未增益友军（含自身，不含建筑和冰鸟蛋），生命上限与当前生命增加原上限30%，模型和碰撞半径增大30%，持续到死亡且不能重复获得；将目标周围80范围内的空中和地面敌方普通单位击退40。无合法目标时回退金币、次数和本次冷却。",
 			}],
 		},
 		"visual": {

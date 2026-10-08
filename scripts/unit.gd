@@ -2226,7 +2226,8 @@ func on_hit_passive_effects() -> Dictionary:
 
 func _perform_attack_strike(target: Node2D, amount: float, effects: Dictionary = {}) -> bool:
 	record_combat_activity()
-	if blind_attack_charges > 0:
+	# 断头台借用攻击时间线，但属于独立技能出手，不消费或响应致盲。
+	if blind_attack_charges > 0 and not bool(effects.get("execute_reset", false)):
 		blind_attack_charges -= 1
 		queue_redraw()
 		return true

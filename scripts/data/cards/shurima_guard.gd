@@ -21,6 +21,7 @@ static func definition() -> Dictionary:
 			"visual_scene_path": "res://assets/units/shurima_guard/shurima_guard_view.tscn",
 			"visual_forward_yaw": 0.0, "color": Color(0.88, 0.69, 0.28),
 			"visual_animations": {"deploy": "AzirSoldier_Spawn_anm", "idle": "Idle1_Base", "move": "Run",
+				"move_cycle": ["Run"], "clip_blends": {"Run>Run": 0.12},
 				"attack": ["Attack1_BASE", "Attack2_BASE", "AzirSoldier_Attack3_anm"],
 				"death": "Death", "death_duration": 0.8}},
 		"card_art": {},
