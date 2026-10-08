@@ -1,0 +1,67 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Anivia.wad.client",
+  "source_binary_sha256": "917f1f750ef0f63d95c78d5e42fb990fcf9ee68e3c879512d717b5659bcc0ef5",
+  "system": "Characters/Anivia/Skins/Skin0/Particles/Anivia_Base_BA_Mis",
+  "assets": {
+    "assets/characters/anivia/skins/base/particles/common_cryo_basic_attack_proj.scb": {
+      "source_sha256": "0cb45148f7ffb05c99ab8effcbf2bec0e4f924e4a53d813db678de8bef2b7866",
+      "output": "assets/characters/anivia/skins/base/particles/common_cryo_basic_attack_proj.mesh.json",
+      "output_sha256": "cd262a2f843b9ed26d533f242205befdb0023fa630613e68907dd543a9d2f6e7"
+    },
+    "assets/characters/anivia/skins/base/particles/common_icerock05.tex": {
+      "source_sha256": "576708767ad251e0ad9b71bb5c3de521d29b5a616e1d91fe7be65b06f0b252ff",
+      "output": "assets/characters/anivia/skins/base/particles/common_icerock05.png",
+      "output_sha256": "85efe79df8cd8379761b05a2688f5253448394fc1e98c9e101a9d4c3ae8c16bf"
+    },
+    "assets/characters/anivia/skins/base/particles/common_color-snowball32_03.tex": {
+      "source_sha256": "77a9fdd8f6fb2e264ece8a16d1a9f558d1a44e09c598e4d35186b71d986fc6f4",
+      "output": "assets/characters/anivia/skins/base/particles/common_color-snowball32_03.png",
+      "output_sha256": "e1b321f947b24aec76451b3497a09d92a49701a70edbaa71969b2b78a47cea93"
+    },
+    "assets/characters/anivia/skins/base/particles/common_flower_star_sprite_01.tex": {
+      "source_sha256": "54217e55cc6f97c2e0abfad662635616562b082368c743d2d8ee331096990056",
+      "output": "assets/characters/anivia/skins/base/particles/common_flower_star_sprite_01.png",
+      "output_sha256": "2194ede072cee27e5ba5ff861ea075f52e51ff75f462de4adb459726dce7d3c3"
+    },
+    "assets/characters/anivia/skins/base/particles/common_color-hold.tex": {
+      "source_sha256": "bc06557b44402fee1498430bd4008df9598085f44b29fea2f02218473674b2f8",
+      "output": "assets/characters/anivia/skins/base/particles/common_color-hold.png",
+      "output_sha256": "62ed85b52d6f757f5322176cb24ccfa294cb145ba9f1978bbf6ba479341f45a8"
+    },
+    "assets/characters/anivia/skins/base/particles/common_glow-soft.tex": {
+      "source_sha256": "d21ae5cd9d6a95ffa10f91a1f389f8c958cf73d0c1b33ff593b368ee038913d1",
+      "output": "assets/characters/anivia/skins/base/particles/common_glow-soft.png",
+      "output_sha256": "6b0e534c1e284e0956fd7b694cde7531d05b837d52092e2c005589e77e4e5222"
+    },
+    "assets/characters/anivia/skins/base/particles/anivia_base_e_groundlight_01.tex": {
+      "source_sha256": "3424a6d6ecd2c4bd47688067f9a8ec59ebeebc964e4d14a38b8c2d88d2cf7106",
+      "output": "assets/characters/anivia/skins/base/particles/anivia_base_e_groundlight_01.png",
+      "output_sha256": "55396fc8235363ebf70f82590860a82f2b1234134b94db5e1ae1f89900ee1509"
+    },
+    "assets/characters/anivia/skins/base/particles/velkoz_skin_02_trail_soft_sg_2.tex": {
+      "source_sha256": "6c780e4f9a2295fd67d8c5d9d1ab2567134ffe0662e4b05362e05c40c9528a1b",
+      "output": "assets/characters/anivia/skins/base/particles/velkoz_skin_02_trail_soft_sg_2.png",
+      "output_sha256": "e303ef671ac514c55896d0e0549be9d96799886a71517130438675141104099a"
+    },
+    "assets/characters/anivia/skins/base/particles/anivia_base_q_snowflake_01.tex": {
+      "source_sha256": "12a16463beadce50e7577dd16b74ef58a820ba3e4c0e9663839507b77753ec3b",
+      "output": "assets/characters/anivia/skins/base/particles/anivia_base_q_snowflake_01.png",
+      "output_sha256": "16100e78e7f6104bfda4d6d6d0f8eb9c9d5c4b6f26a84c5bcd6da4819490374d"
+    },
+    "assets/characters/anivia/skins/base/particles/anivia_base_icicle_01.scb": {
+      "source_sha256": "c7113ea1a5fdfdb14dccc580efd042d06522643bbfb45d1cea00f5acb437b8cb",
+      "output": "assets/characters/anivia/skins/base/particles/anivia_base_icicle_01.mesh.json",
+      "output_sha256": "93d682c48107acdfbcc9e06e092fb617584cfb9f9f5c1ea128fc3196d251b2a2"
+    },
+    "assets/shared/particles/aatrox_cubemap.dds": {
+      "source_sha256": "057d147fc7e25067a1793d504868c25e91c7ab5274af5c1d0d5f062d5bd77749",
+      "output": "assets/shared/particles/aatrox_cubemap.png",
+      "output_sha256": "65e560f32dc88cbb434333be1f1d9b32c1498c3b66c6c8b46869e6356b83815f"
+    },
+    "assets/characters/anivia/skins/base/particles/anivia_base_iceshards_tx.tex": {
+      "source_sha256": "bb034715fc33eb8dbbbead81cd0d1c91e86f0d907f3f4744b44fd0bfc13642d0",
+      "output": "assets/characters/anivia/skins/base/particles/anivia_base_iceshards_tx.png",
+      "output_sha256": "80c34d45bc7227d85e128a781f23f885b818c0ec93c91f052f50278b60bf0010"
+    }
+  }
+}

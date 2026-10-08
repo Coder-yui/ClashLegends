@@ -1,0 +1,61 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Trundle.wad.client",
+  "source_entry": "data/characters/trundle/trundle_multi_skins_skin0_skins_skin1_skins_skin2_skins_skin4_skins_skin5.bin",
+  "source_binary_sha256": "2b9755e92b8e4d3ba00f9d903d434ebdf026e5271b5bb48740fdd09d64cfe51b",
+  "system": "Characters/Trundle/Skins/Skin0/Particles/Trundle_Base_W_ground",
+  "reader_revision": "c06b5bb1dba458a358628b0fd1ddef3a58a4ba43",
+  "assets": {
+    "assets/characters/trundle/skins/base/particles/trundle_w_frost_smoke.tex": {
+      "source_sha256": "d159291b5f6a23ed53ed0af1bd94cc47497ae399805964db39533185ebf9418c",
+      "output": "assets/characters/trundle/skins/base/particles/trundle_w_frost_smoke.png",
+      "output_sha256": "d9d556d5dfe1cfabc53265caea9e6cd0b8f837a9a250e493bb491c8cc044139d"
+    },
+    "assets/characters/trundle/skins/base/particles/trundle_w_frost_smoke_mult.tex": {
+      "source_sha256": "c871b2fd56509d71c79716c1a547813f8a8d94558655fb3541bbe4cb324952c0",
+      "output": "assets/characters/trundle/skins/base/particles/trundle_w_frost_smoke_mult.png",
+      "output_sha256": "748a25dbfbc5c46ef52cd408398d14f0e6a01b4d8adc2569aa1a299d3bbf15d8"
+    },
+    "assets/characters/trundle/skins/base/particles/common_alpha_20.tex": {
+      "source_sha256": "33f3f834ff89266709f07f46f8ad945111717e2fe93d76ca7a0a162a60ce38b0",
+      "output": "assets/characters/trundle/skins/base/particles/common_alpha_20.png",
+      "output_sha256": "a99ba326fbad4eefe549f0625041db8c98f641eb177b73b48418c52d7cb25a63"
+    },
+    "assets/characters/trundle/skins/base/particles/trundle_w_smoke_vert.tex": {
+      "source_sha256": "6bf26a180f8f5342f02f29ae156a67b86f2d25020b4c417c012cb12320e367d2",
+      "output": "assets/characters/trundle/skins/base/particles/trundle_w_smoke_vert.png",
+      "output_sha256": "3d7f71972a2052292f9f80f55c76fc3220d0dee1044781968f2ee1e7b34850b6"
+    },
+    "assets/characters/trundle/skins/base/particles/trundle_w_nova_snow_edge.tex": {
+      "source_sha256": "aab225051d55e751ca88242a4c582a203854318904165d45353098be6ccb4b01",
+      "output": "assets/characters/trundle/skins/base/particles/trundle_w_nova_snow_edge.png",
+      "output_sha256": "f78a0be028e2c5a08706b37303f9fced2f58a006018967bd1a0a552cce3af299"
+    },
+    "assets/characters/trundle/skins/base/particles/common_color-desecrate.tex": {
+      "source_sha256": "2b3f5d701a7874abb69b031ef15b7dfebe1f214091bc665d0b5103e28c3d5ec4",
+      "output": "assets/characters/trundle/skins/base/particles/common_color-desecrate.png",
+      "output_sha256": "d24df081f9e90f1d3f059cdaf4eb3cbd81b2d3b7783b707f802fccab17595631"
+    },
+    "assets/characters/trundle/skins/base/particles/trundle_w_ground.tex": {
+      "source_sha256": "84eb6b405821338f1e25493ee23377b1104308148ba75a3eba53e3ac8f56cf02",
+      "output": "assets/characters/trundle/skins/base/particles/trundle_w_ground.png",
+      "output_sha256": "81f4bdc8b8061c2db4dc71b945ebd083e8b22039dc1a86ec334011f2cac8f5e7"
+    },
+    "assets/characters/trundle/skins/base/particles/trundle_w_shockwave_scroll.tex": {
+      "source_sha256": "164e7787177723f277a73e8c6da35fe56089583f13746e6e0d1431fc23c02b2f",
+      "output": "assets/characters/trundle/skins/base/particles/trundle_w_shockwave_scroll.png",
+      "output_sha256": "993db7caa945727a1de377caaa195686d5a50e7ef75a4292a4a842cd5160e478"
+    }
+  },
+  "source_wad_hash": "2cca1ec46346ef82",
+  "excluded_emitters": [
+    "Ground_black"
+  ],
+  "adaptation": "Ground_black removed by request; scale visible circular footprint to authoritative 137.5px radius, preserving native edges without outer clipping.",
+  "source_only_assets": {
+    "assets/characters/trundle/skins/base/particles/trundle_w_ground_black.tex": {
+      "source_sha256": "74f3e85e617daa4d0b597c4b85e2b3130b6e1eca158e8bc527f9b748a1fb3a63",
+      "output": "assets/characters/trundle/skins/base/particles/trundle_w_ground_black.png",
+      "output_sha256": "386a5994ac8c95e1315399fd45a0a1337fd0d4179e84a1f693f5c3982ab7beb4"
+    }
+  }
+}

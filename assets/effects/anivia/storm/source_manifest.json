@@ -1,0 +1,62 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Anivia.wad.client",
+  "source_binary_sha256": "917f1f750ef0f63d95c78d5e42fb990fcf9ee68e3c879512d717b5659bcc0ef5",
+  "system": "Characters/Anivia/Skins/Skin0/Particles/Anivia_Base_R_AOE_Green",
+  "assets": {
+    "assets/characters/anivia/skins/base/particles/anivia_base_z_indicatormesh01.scb": {
+      "source_sha256": "70ff5334ec116a6a47298ef941ce0029cc28bc005fb5dfbc0308806d0d2900f4",
+      "output": "assets/characters/anivia/skins/base/particles/anivia_base_z_indicatormesh01.mesh.json",
+      "output_sha256": "a7b332cbc035e49506c944c28ece8df966f5e927d1b0153ba3492ca059fcfac0"
+    },
+    "assets/characters/anivia/skins/base/particles/anivia_base_z_border.tex": {
+      "source_sha256": "fe38e0ee92e8dca09721b8a3437116ed2b7460123fc0f5535dea75bb895a375d",
+      "output": "assets/characters/anivia/skins/base/particles/anivia_base_z_border.png",
+      "output_sha256": "96da3e7f9a74bb69bab4c3549f54a2fda41b62d3cf2252ce50ed19e48923ba98"
+    },
+    "assets/characters/anivia/skins/base/particles/anivia_base_r_ground_darkness.tex": {
+      "source_sha256": "8f7e9801a69f514c8de86fe784e07b43085a31e44439f17ed09fe0b7a911bd7a",
+      "output": "assets/characters/anivia/skins/base/particles/anivia_base_r_ground_darkness.png",
+      "output_sha256": "b99f51790b34352a95608c42ab1384e1e59e4e0fdee52a5ead82a928159b6364"
+    },
+    "assets/characters/anivia/skins/base/particles/anivia_base_z_swirlmesh03.scb": {
+      "source_sha256": "411196237a5ad177b287a835b12e6195aa984743344bcaa1ac5af894d14a8b69",
+      "output": "assets/characters/anivia/skins/base/particles/anivia_base_z_swirlmesh03.mesh.json",
+      "output_sha256": "4bb8e02efd3749dfc7db29711f9371b128808697aa796a3ace11982c9e58f7ea"
+    },
+    "assets/characters/anivia/skins/base/particles/anivia_base_z_windswirl01.tex": {
+      "source_sha256": "8fd450628bdccde4f6ec371e09aae093121260ef58020098b59dd0bfcb7a834e",
+      "output": "assets/characters/anivia/skins/base/particles/anivia_base_z_windswirl01.png",
+      "output_sha256": "caf086c73ffa9772600f6fccaad30d1343617bcd3b96d2631a1eebdb720166d1"
+    },
+    "assets/characters/anivia/skins/base/particles/anivia_base_z_swirlmesh01.scb": {
+      "source_sha256": "e1822376466de1e949d3fea24cb838fbf21566734020e6860bb3ddaa7854764a",
+      "output": "assets/characters/anivia/skins/base/particles/anivia_base_z_swirlmesh01.mesh.json",
+      "output_sha256": "ae6fe0dd4931a7f0c1cb60f09d20ac9ce2f6b282433f41a4c9ac326cb05702c1"
+    },
+    "assets/characters/anivia/skins/base/particles/anivia_base_e_groundlight_01.tex": {
+      "source_sha256": "3424a6d6ecd2c4bd47688067f9a8ec59ebeebc964e4d14a38b8c2d88d2cf7106",
+      "output": "assets/characters/anivia/skins/base/particles/anivia_base_e_groundlight_01.png",
+      "output_sha256": "55396fc8235363ebf70f82590860a82f2b1234134b94db5e1ae1f89900ee1509"
+    },
+    "assets/characters/anivia/skins/base/particles/anivia_base_z_frostcrystals.tex": {
+      "source_sha256": "6d0d5e95c0ef636a0f3ec0d10ff4348d15fd37fe7fe90262c72320310535b0cd",
+      "output": "assets/characters/anivia/skins/base/particles/anivia_base_z_frostcrystals.png",
+      "output_sha256": "fdc3a0ec7fe8efc11f113ec7981c016838d825efa4308fcac863ee1a7e91cf3c"
+    },
+    "assets/characters/anivia/skins/base/particles/anivia_base_q_tar_sphere.tex": {
+      "source_sha256": "3697473cd9b26a7b26f7f521a03f05e06e096bfa77f28aaa770e21fb73e336b0",
+      "output": "assets/characters/anivia/skins/base/particles/anivia_base_q_tar_sphere.png",
+      "output_sha256": "1dee051acdb6976f9459c0a6c5dc9a0c555bc564645178d75d785603d92dd775"
+    },
+    "assets/characters/anivia/skins/base/particles/anivia_frostout.tex": {
+      "source_sha256": "13f792365ebce3add4a765615084d36a6e11c012d6cc2a00e565687399a5b61d",
+      "output": "assets/characters/anivia/skins/base/particles/anivia_frostout.png",
+      "output_sha256": "3f97853906222cac4cae66f4ead5daf793acd297a3b66c5f078b49b26afad5bd"
+    },
+    "assets/characters/anivia/skins/base/particles/anivia_base_pororay_mult.tex": {
+      "source_sha256": "4b23b4edeb79ac8d101b943b42fb55dbe223eb18c57b04e1cd36be7cf1727436",
+      "output": "assets/characters/anivia/skins/base/particles/anivia_base_pororay_mult.png",
+      "output_sha256": "b827b2b48649d19e02a0a327b19702e83221539dbd892c5870efc17675a183db"
+    }
+  }
+}

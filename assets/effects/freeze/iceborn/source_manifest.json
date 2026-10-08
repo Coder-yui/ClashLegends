@@ -1,0 +1,79 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Global.wad.client",
+  "source_entry": "items",
+  "source_binary_sha256": "41d52e6bbd40aa09658192e6efe1e17419a2b2d5cd802ea863a8c10809824b1b",
+  "system": "Items/6662/Particles/6662_Slow_Field",
+  "reader_revision": "c06b5bb1dba458a358628b0fd1ddef3a58a4ba43",
+  "assets": {
+    "assets/shared/particles/xerath_skin03_w_fireswirl.tex": {
+      "source_sha256": "e710ef5c0fa6ae7727cbc7919e424c01a5a02bf9f171078c29ba877fc65f7f48",
+      "output": "assets/shared/particles/xerath_skin03_w_fireswirl.png",
+      "output_sha256": "8a0237ccf7f15613a8a35d78fddd105bdaa51032e1c1d872a6f9b166e050bd25"
+    },
+    "assets/characters/sru_baron/skins/base/particles/sru_clouds.scb": {
+      "source_sha256": "dc1234a687b41a3138add039204e1c82a9441d61d676627e5da5e3209b1fe82a",
+      "output": "assets/characters/sru_baron/skins/base/particles/sru_clouds.mesh.json",
+      "output_sha256": "b788d1625a985dffb7a71370f6646a4f9b9407fd9aac484b8760ea78593ad90d"
+    },
+    "assets/shared/particles/sru_order_clouds.tex": {
+      "source_sha256": "77c0d4c3d54549e8414c4431e3a181f896c9c881ab93cf690af3343702636392",
+      "output": "assets/shared/particles/sru_order_clouds.png",
+      "output_sha256": "66fb050ef01a65ea67a6f8545a297d2fda9ee43a06d9eecffb7c49c77a457c20"
+    },
+    "assets/shared/particles/base_frostcrystals.tex": {
+      "source_sha256": "6d0d5e95c0ef636a0f3ec0d10ff4348d15fd37fe7fe90262c72320310535b0cd",
+      "output": "assets/shared/particles/base_frostcrystals.png",
+      "output_sha256": "fdc3a0ec7fe8efc11f113ec7981c016838d825efa4308fcac863ee1a7e91cf3c"
+    },
+    "assets/shared/particles/base_ground_darkness.tex": {
+      "source_sha256": "8f7e9801a69f514c8de86fe784e07b43085a31e44439f17ed09fe0b7a911bd7a",
+      "output": "assets/shared/particles/base_ground_darkness.png",
+      "output_sha256": "b99f51790b34352a95608c42ab1384e1e59e4e0fdee52a5ead82a928159b6364"
+    },
+    "assets/shared/particles/base_icecrack_greypack.tex": {
+      "source_sha256": "519e4cb2bcc8e5ba6947a658de74717ecbda993e74441755bd3df981975c895c",
+      "output": "assets/shared/particles/base_icecrack_greypack.png",
+      "output_sha256": "af62dc88118425076fb8251ec75ab9ae89456eb96b226ff7727643ee02667b70"
+    },
+    "assets/shared/particles/base_cracks_gradient.tex": {
+      "source_sha256": "8e477d0de1bf4c4fa8a0b5bd881c3c2d21b928aa2b5ab60e7c62b33e6455786e",
+      "output": "assets/shared/particles/base_cracks_gradient.png",
+      "output_sha256": "9e772cde51caabf6ee332db3e76f2ff9640bfac6aeb8c6abe795bb3c681d6422"
+    },
+    "assets/shared/particles/drmundo_rays_mult.tex": {
+      "source_sha256": "de0a4c5dd607b7cb3cbb527c31dd8fa6261667486d70c826c40fd89f2bd2db0e",
+      "output": "assets/shared/particles/drmundo_rays_mult.png",
+      "output_sha256": "52565e783eba2d5621073869f4f15b2ffcd9bea2b27900dac5bacf3df4296926"
+    },
+    "assets/items/6662/particles/global_item_atlas_ground_plane.scb": {
+      "source_sha256": "02d038d6e78f2fbe877dd5aa3b02f6344f39870ef3bb2c3150d719c25b32f48e",
+      "output": "assets/items/6662/particles/global_item_atlas_ground_plane.mesh.json",
+      "output_sha256": "d5b978419021f8e05096cec437f99651e2cc3e1cfabf6d4ac1c7bcd1eab07e6f"
+    },
+    "assets/shared/particles/base_smokeerode.tex": {
+      "source_sha256": "0d1e61b096fa86e08ce4e714a0fb00b71e593b877ca8510ee4acf9adc0b1e35b",
+      "output": "assets/shared/particles/base_smokeerode.png",
+      "output_sha256": "920b748117e2c9acfefce25a4db4eabbea75fea3433d8b36e5a6f5befb2c3e5d"
+    },
+    "assets/items/6662/particles/global_item_atlas_indicator_ice_mask.tex": {
+      "source_sha256": "cffb15fc0d0f4da103923e05f3ef1b060584d9d28f471862ddee6214f59ed287",
+      "output": "assets/items/6662/particles/global_item_atlas_indicator_ice_mask.png",
+      "output_sha256": "d93516d923353fcf34e534246d8235f7dd12cc074209826bf645b2ac859ee0c0"
+    },
+    "assets/items/6662/particles/circle_shadow.tex": {
+      "source_sha256": "cd8272d7e950d014c9efcbe727a01e36ee20ddf93645ce49a54a06343e497063",
+      "output": "assets/items/6662/particles/circle_shadow.png",
+      "output_sha256": "3b399489f248ab8bb9d33b09727671476697e72292b7fbcf804f33c32b73e09a"
+    },
+    "assets/particles/sru_order_brightsparks.tex": {
+      "source_sha256": "0114ee39277a1cf50b0533b059924901f090969ee22477656537a15d5f91afdc",
+      "output": "assets/particles/sru_order_brightsparks.png",
+      "output_sha256": "b2a23a51ae8a1a47dcb75e72e87d281b79b1fe7f368c558d625563c798e8ec92"
+    },
+    "assets/shared/particles/base_6662_slow_field.tex": {
+      "source_sha256": "f5cbdff1d3a0edd0aafb35fe9e46cc2a1e755a9ff4f9168945103f633915a97c",
+      "output": "assets/shared/particles/base_6662_slow_field.png",
+      "output_sha256": "575ca7ebb67ea1ffa08173fe86e3199a06353f3ef491bf7aebe36cc34820c9d5"
+    }
+  }
+}
