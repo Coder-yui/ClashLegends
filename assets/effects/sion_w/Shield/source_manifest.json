@@ -1,0 +1,53 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Sion.wad.client",
+  "source_chunk": "0xef0e0a255f9d3632",
+  "resolved_definition_sha256": "69afae74f0d46e2423e5562f2393ccfcfc92ead795e33c6f32995b732b765d3f",
+  "system": "Characters/Sion/Skins/Skin0/Particles/Sion_Base_W_Shield",
+  "assets": {
+    "assets/characters/sion/skins/base/particles/sion_base_w_cas_circle_mesh.scb": {
+      "source_sha256": "e21849ec1b0c0ef9f9660675963d4de8e1419b9e571f0b31fdb237a0e78f36a7",
+      "output": "assets/characters/sion/skins/base/particles/sion_base_w_cas_circle_mesh.mesh.json",
+      "output_sha256": "499ec1749aa6f1ea0ec970d7cc8875709de335d96c17dd8e4a996b67f75b8d66"
+    },
+    "assets/characters/sion/skins/base/particles/sion_base_w_shield_texture.tex": {
+      "source_sha256": "3ef581c3504d523a5f602bb73d6f3cb138180c6d6552adb09ab90104190527b4",
+      "output": "assets/characters/sion/skins/base/particles/sion_base_w_shield_texture.png",
+      "output_sha256": "08bf326d280b0242ed13f13731332c90aa0092f110862895a445c0ed866f5d72"
+    },
+    "assets/characters/sion/skins/base/particles/sion_base_w_cas_circle_mesh_start.scb": {
+      "source_sha256": "35189930c86e7df707e4845e86e49516e54ea31e113c3a05914810a639610db4",
+      "output": "assets/characters/sion/skins/base/particles/sion_base_w_cas_circle_mesh_start.mesh.json",
+      "output_sha256": "4306a652c4d13d52d424c0da58f4b58900f44c1e0b915de5cd7c43b2c5e5953d"
+    },
+    "assets/characters/sion/skins/base/particles/sion_base_w_cas_ready_shieldpop.tex": {
+      "source_sha256": "d59cc2ab274e7eb3978a4bfc75035a49bda7001dfe7e9984fe0f22033d5add0d",
+      "output": "assets/characters/sion/skins/base/particles/sion_base_w_cas_ready_shieldpop.png",
+      "output_sha256": "3118786bb893780e1ecc267d612a50feb288635e51a801aaaa1fc5433901f633"
+    },
+    "assets/characters/sion/skins/base/particles/sion_base_w_shield_base.tex": {
+      "source_sha256": "f4df4b646929c6a964b96fcb745cbefa898cfae8211f9ac20ef9acc2af44391f",
+      "output": "assets/characters/sion/skins/base/particles/sion_base_w_shield_base.png",
+      "output_sha256": "85a467a04310c0ce2571d5ddae5f96e126e5d63aac7f94ac59b5a433f92ee714"
+    },
+    "assets/characters/sion/skins/base/particles/sion_base_w_shield__outerring_base.tex": {
+      "source_sha256": "99c23bb010f5548a078650593081631b55c21b8d2a9f6223da94421116a9d064",
+      "output": "assets/characters/sion/skins/base/particles/sion_base_w_shield__outerring_base.png",
+      "output_sha256": "9e78d759f00d7b48de325d53cd847848fd79b023a87faecb081b5a24289b6940"
+    },
+    "assets/characters/sion/skins/base/particles/sion_base_w_cas_shield_whipe.tex": {
+      "source_sha256": "d751e5eb0136cfa9e4130f19fffd8caa89e9d673b90894ba565bdd75d3da3727",
+      "output": "assets/characters/sion/skins/base/particles/sion_base_w_cas_shield_whipe.png",
+      "output_sha256": "a3d6df1e913474f908377830643c329c349995437a140ecf277114ef6d45ccd4"
+    },
+    "assets/characters/sion/skins/base/particles/sion_base_w_cas.scb": {
+      "source_sha256": "a19d7c6daea64caeebd559b68dae20503cdcac6d6e233e334240631a1b635cc2",
+      "output": "assets/characters/sion/skins/base/particles/sion_base_w_cas.mesh.json",
+      "output_sha256": "8ad81b5fe473f3864d5236ab59f1cc1f7742de030bf8192ada72ed2426127c19"
+    },
+    "assets/characters/sion/skins/base/particles/sion_base_w_cas_soul.tex": {
+      "source_sha256": "3e2447e88a9b51a5c87ffdc12b3b76eb627688c578dd5a2ca117e68571334fec",
+      "output": "assets/characters/sion/skins/base/particles/sion_base_w_cas_soul.png",
+      "output_sha256": "d92e3a4e447502768b94fe98329ec6cba445b37f7d59fa748a88281e4e122655"
+    }
+  }
+}

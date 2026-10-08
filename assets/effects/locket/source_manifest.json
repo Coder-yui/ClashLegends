@@ -1,0 +1,75 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Global.wad.client",
+  "source_entry": "items",
+  "source_wad_hash": "1d720f4f42640c18",
+  "source_binary_sha256": "41d52e6bbd40aa09658192e6efe1e17419a2b2d5cd802ea863a8c10809824b1b",
+  "system": "Items/3190/Particles/3190_Buff_Activate",
+  "reader_revision": "c06b5bb1dba458a358628b0fd1ddef3a58a4ba43",
+  "assets": {
+    "assets/shared/particles/3161_base_deflectionripples_big.tex": {
+      "source_sha256": "bd5edf45536643902149f1f0caad1187799c02132a02640e783f41dd4004b131",
+      "output": "assets/shared/particles/3161_base_deflectionripples_big.png",
+      "output_sha256": "b80afb1e9f630a59a2f45c52b6a35c95843b8013a35d3b55aeaefd656deeb19c"
+    },
+    "assets/shared/particles/base_flash_01.tex": {
+      "source_sha256": "e2d4ac8cf4a4588aa2be4b1ac49e7d1ffb31286de2f7484bff696011d21a3492",
+      "output": "assets/shared/particles/base_flash_01.png",
+      "output_sha256": "993b7345645717c088c743228aaa758957c2fdeebc54e17919ca4a4e392f39a9"
+    },
+    "assets/shared/particles/base_star.tex": {
+      "source_sha256": "89dfaaafe56bd716584ee43f07b19a5632c8328fd06abb90cf273f564445e32b",
+      "output": "assets/shared/particles/base_star.png",
+      "output_sha256": "a132a33be320869f4f83533cdbc356a7824a5f831bf6ea4fac73908c340285d0"
+    },
+    "assets/shared/particles/base_buff_bokeh_dots.tex": {
+      "source_sha256": "173a9293a7e34d597189ad95ade7b5e35e7016bdf3bc27c027b9684e88140bdd",
+      "output": "assets/shared/particles/base_buff_bokeh_dots.png",
+      "output_sha256": "b6c0d2bd53503098b3e35672ac76ce26d1e4cdf004406bbb0429327ff40e9170"
+    },
+    "assets/items/6676/particles/6676_dots_4x4.tex": {
+      "source_sha256": "629a648767351c06cb73bf4ab3ba83dc8df7bedaf0ba19096d2e04848c85157d",
+      "output": "assets/items/6676/particles/6676_dots_4x4.png",
+      "output_sha256": "68499c7195983387028c7522d1792a392cd034b638581631d42fa2c8732b714d"
+    },
+    "assets/particles/global_item_locket_solari_sigil.tex": {
+      "source_sha256": "ce9a25c85c3f1c2f358afefe86691f852b965813fb4e959606c83f8646df50f9",
+      "output": "assets/particles/global_item_locket_solari_sigil.png",
+      "output_sha256": "3a5778acbf61b528fbe6cfe172d74fa08ea58ea9ead3a5566b693a7ecd30316a"
+    },
+    "assets/particles/_test_texture_mult.tex": {
+      "source_sha256": "7f43d3b6e743c5859df35bdabf2c20380459750f1b149d7dd70f325d47163692",
+      "output": "assets/particles/_test_texture_mult.png",
+      "output_sha256": "31fcde92f68958fd49a7ebbf4a21ac5ae08982a583f67fbb3355063dbec6064c"
+    },
+    "assets/items/3107/particles/leona_base_z_color-alphabend32.tex": {
+      "source_sha256": "c8a6b8149433f0ffc08caed9ce437ed8a753a9760c26fc59c7fafa464d93266c",
+      "output": "assets/items/3107/particles/leona_base_z_color-alphabend32.png",
+      "output_sha256": "d05d6b15e7483c02656cc8cc15435e228f7ccaa3064a61bb071f20116be41aa9"
+    },
+    "assets/shared/particles/base_mult.tex": {
+      "source_sha256": "8a41e1f26bc7fbfd00a0944244a7da6e3072fbc852eda194b9c953445847e6bb",
+      "output": "assets/shared/particles/base_mult.png",
+      "output_sha256": "84d926f4d1b940b98178f4a263810c35dcc45717f1b464663587ae71bee1bdbb"
+    },
+    "assets/shared/particles/base_aoe_sun.tex": {
+      "source_sha256": "b939f8f78e778efb6a520e00a317db92f28c9bcd50a8b7c407e580a0572d4214",
+      "output": "assets/shared/particles/base_aoe_sun.png",
+      "output_sha256": "2e00f8d03097bde44c7727c573aa78c117bf35213f4cf3a432d89674bf82100b"
+    },
+    "assets/items/3364/particles/sparks.tex": {
+      "source_sha256": "02283067ddf584ff03470f8641ce633b440cc05aad5b621f68ce2dacfd0add64",
+      "output": "assets/items/3364/particles/sparks.png",
+      "output_sha256": "bd44e68d9b5f7b316a3931ec462134948fffe7deefdba1473ba99b904ee129cc"
+    },
+    "assets/shared/particles/base_auras_mesh_3.scb": {
+      "source_sha256": "91db962bdc01c04ff8e27ee3268a377db9a355729f19bad85ed649ef938945af",
+      "output": "assets/shared/particles/base_auras_mesh_3.mesh.json",
+      "output_sha256": "69e8e0cb4655e38a5ce48f37c9ac1a3efc4f541697ae6490d5c6fa1148bebdb2"
+    },
+    "assets/shared/particles/base_aura_texture_2b.tex": {
+      "source_sha256": "a4d89011ab420d7d7f85097a0e898af9c2a4b3b8a1c919abebfdacd968252605",
+      "output": "assets/shared/particles/base_aura_texture_2b.png",
+      "output_sha256": "15952883b13c6dcff4f5717ddc7ebda6e9af9e4cdf6475d3bbed881ab081aa11"
+    }
+  }
+}

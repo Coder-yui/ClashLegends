@@ -1,0 +1,18 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Sion.wad.client",
+  "source_chunk": "0xef0e0a255f9d3632",
+  "resolved_definition_sha256": "d4ca29cc102f7fec574f49a7a819c9f3d4c6af21e215bd21b6de66fc0517e0bb",
+  "system": "Characters/Sion/Skins/Skin0/Particles/Sion_Base_W_Cas",
+  "assets": {
+    "assets/characters/sion/skins/base/particles/sion_base_w_cas_circle_mesh.scb": {
+      "source_sha256": "e21849ec1b0c0ef9f9660675963d4de8e1419b9e571f0b31fdb237a0e78f36a7",
+      "output": "assets/characters/sion/skins/base/particles/sion_base_w_cas_circle_mesh.mesh.json",
+      "output_sha256": "499ec1749aa6f1ea0ec970d7cc8875709de335d96c17dd8e4a996b67f75b8d66"
+    },
+    "assets/characters/sion/skins/base/particles/sion_base_w_cas_ready_shieldon.tex": {
+      "source_sha256": "dc295c248f9430bfa422c724d014d16325d38ad8eb49af39ba1d86c8c7a9abcc",
+      "output": "assets/characters/sion/skins/base/particles/sion_base_w_cas_ready_shieldon.png",
+      "output_sha256": "0996f09044311ca15ce2ffc7b9b3c162e3f6040f18453530750079ac295633b2"
+    }
+  }
+}
