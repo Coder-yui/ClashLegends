@@ -6,6 +6,8 @@ func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
 	_check_direct_approach_after_bridge()
+	_check_bridge_building_attack_positions()
+	_check_bridge_horizontal_building_stall()
 	_check_lane_weight_field()
 	_check_nearest_walkable_order()
 	_check_bridge_path()
@@ -738,3 +740,75 @@ func _reference_nearest_cell(grid: NavGrid, pos: Vector2, reference: Vector2i) -
 		if best.x >= 0:
 			return best
 	return cell
+
+## 双桥、双方及两组射程/体型：旧迎敌侧射程点落在河里，必须出桥再攻击。
+func _check_bridge_building_attack_positions() -> void:
+	for team in [0, 1]:
+		for bridge_x in [ArenaRules.BRIDGE_X_LEFT, ArenaRules.BRIDGE_X_RIGHT]:
+			for attack_distance in [100.0, 170.0]:
+				var bank := -1.0 if team == 0 else 1.0
+				var target: Unit = _main._spawn_unit(UnitSpawnRequest.new(1 - team, "tombstone", Vector2(360, ArenaRules.RIVER_Y + bank * 90), {"deploy_time_override": 0}))
+				var unit: Unit = _main._spawn_unit(UnitSpawnRequest.new(team, "ashe", Vector2(bridge_x, ArenaRules.RIVER_Y), {"deploy_time_override": 0}))
+				unit.attack_range = attack_distance
+				unit.body_radius = 12.0 if attack_distance == 100.0 else 24.0
+				unit._target = target
+				unit._recompute_path()
+				if not unit._try_direct_approach(_main.SIM_DT):
+					var end: Vector2 = unit._path[unit._path.size() - 1] if not unit._path.is_empty() else Vector2(INF, INF)
+					_expect(end.distance_to(target.position) <= unit.attack_range + unit.body_radius + target.body_radius and unit.is_walkable_at(end), "受河道阻挡时选出的站位本身合法且在攻击范围内")
+					var saved_path := unit._path.duplicate()
+					unit._chase_target(0.5)
+					_expect(unit._path == saved_path, "目标与路径仍有效时跨过重算周期也保留站位")
+					# 路径耗尽但直线仍跨河：不得发出盲目朝目标的移动意图。
+					unit._path_index = unit._path.size()
+					unit._move_intent = Vector2.ZERO
+					unit._repath_cd = 0.1
+					unit._follow_current_path(_main.SIM_DT)
+					_expect(unit._move_intent == Vector2.ZERO, "路径结束而末段跨河时等待重寻路，不再直冲河岸")
+					unit._repath_cd = 0.0
+				var movers: Array[Unit] = [unit]
+				var legal := true
+				var arrived := false
+				for tick in 240:
+					unit._move_intent = Vector2.ZERO
+					if unit._target_gap(target) <= unit.attack_range:
+						arrived = true
+						break
+					unit.sim_tick(_main.SIM_DT)
+					_main._movement._apply_unit_movement(_main.SIM_DT, movers)
+					legal = legal and unit.is_walkable_at(unit.position)
+				_expect(arrived and legal, "桥上远程追击岸边建筑能进入射程且全程不入河（team=%d bridge=%.0f range=%.0f）" % [team, bridge_x, attack_distance])
+				for tick in 40:
+					unit.sim_tick(_main.SIM_DT)
+				_expect(unit._attack_hit_index > 0 and unit._target == target, "到达后通过正式攻击状态机向原建筑发起攻击")
+				# 已经隔河处于射程内时，正式行为 Tick 应停步攻击，不因走不到建筑而绕行。
+				unit.position = Vector2(bridge_x, ArenaRules.RIVER_Y)
+				unit.attack_range = 350.0
+				unit._move_intent = Vector2.ZERO
+				unit.sim_tick(_main.SIM_DT)
+				_expect(unit._move_intent == Vector2.ZERO, "隔河已在射程内时停步攻击")
+				unit.free()
+				target.free()
+
+## 建筑身体小于追击者，建筑本身合法，但与它同高的攻击站位压进追击者的河岸净空。
+func _check_bridge_horizontal_building_stall() -> void:
+	for team in [0, 1]:
+		for bridge_x in [ArenaRules.BRIDGE_X_LEFT, ArenaRules.BRIDGE_X_RIGHT]:
+			var y := ArenaRules.RIVER_Y + (-62.0 if team == 0 else 62.0)
+			var target: Unit = _main._spawn_unit(UnitSpawnRequest.new(1 - team, "target_dummy", Vector2(360, y), {"deploy_time_override": 0}))
+			var unit: Unit = _main._spawn_unit(UnitSpawnRequest.new(team, "ashe", Vector2(bridge_x, ArenaRules.RIVER_Y + (-40.0 if team == 0 else 40.0)), {"deploy_time_override": 0}))
+			unit.body_radius = 24.0
+			unit.attack_range = 130.0
+			unit._target = target
+			_expect(target.is_walkable_at(target.position) and unit.is_walkable_at(unit.position), "水平桥岸追击夹具的建筑与单位起点均合法")
+			var movers: Array[Unit] = [unit]
+			var legal := true
+			for tick in 240:
+				unit.sim_tick(_main.SIM_DT)
+				_main._movement._apply_unit_movement(_main.SIM_DT, movers)
+				legal = legal and unit.is_walkable_at(unit.position)
+				if unit._attack_hit_index > 0:
+					break
+			_expect(legal and unit._attack_hit_index > 0 and unit._target == target, "桥岸水平追击不持续撞河，先出桥再攻击（team=%d bridge=%.0f pos=%s）" % [team, bridge_x, unit.position])
+			unit.free()
+			target.free()

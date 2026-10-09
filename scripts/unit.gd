@@ -1942,7 +1942,7 @@ func _chase_march(dt: float) -> void:
 
 func _chase_target(dt: float) -> void:
 	_repath_cd -= dt
-	if _repath_cd <= 0.0 or _path_target != _target or _path_goal.x == INF:
+	if _path_target != _target or (_repath_cd <= 0.0 and not _attack_path_valid()):
 		_recompute_path()
 	_follow_current_path(dt)
 
@@ -1955,9 +1955,9 @@ func _follow_current_path(dt: float) -> void:
 	if _path_index < _path.size():
 		_prepare_movement((_path[_path_index] - global_position).normalized(), dt)
 	elif _target != null and _target_gap(_target) > attack_range:
-		# A* 终点落在离散格心，可能比精确攻击圈多出几像素。所有目标都补齐最后一段，
-		# 尤其不能让 Tower 在路径结束后停在射程外；连续碰撞仍会阻止单位穿入塔身。
-		_prepare_movement((_target.global_position - global_position).normalized(), dt)
+		# 离散终点不能成为无条件直冲目标的理由；河岸前必须重新选可攻击站位。
+		if not _try_direct_approach(dt) and _repath_cd <= 0.0:
+			_recompute_path()
 
 func _prepare_movement(direction: Vector2, _dt: float) -> void:
 	if direction.length_squared() < 0.001:
@@ -1981,6 +1981,76 @@ func _recompute_path() -> void:
 	if to_target.length_squared() > 0.001:
 		goal -= to_target.normalized() * maxf(stop_distance - PATH_REACH * 0.5, 0.0)
 	_recompute_path_to(goal)
+	if battle_context != null:
+		if not _path_can_reach_attack():
+			_find_reachable_attack_path()
+		elif not _path.is_empty():
+			# 保留原绕行路线，把已验证可走的最后几像素补进路径，终点落在攻击圈内。
+			var end := _path[_path.size() - 1]
+			var reach: float = attack_range + body_radius + _target.body_radius - 0.01
+			if end.distance_to(_target.global_position) > reach:
+				_path_goal = _target.global_position + _target.global_position.direction_to(end) * reach
+				_path.append(_path_goal)
+
+## 离散格心可在射程外，只要最后接近段确实通行，仍保留既有路线。
+func _path_can_reach_attack() -> bool:
+	if _path.is_empty():
+		return false
+	var end := _path[_path.size() - 1]
+	if not battle_context.is_ground_position_walkable(end, body_radius, self):
+		return false
+	var reach: float = attack_range + body_radius + _target.body_radius - 0.01
+	if end.distance_to(_target.global_position) <= reach:
+		return true
+	var goal: Vector2 = _target.global_position + _target.global_position.direction_to(end) * reach
+	return battle_context.is_ground_segment_walkable(end, goal, body_radius, self)
+
+## 目标未离开射程、下一段仍通行时保留站位，避免周期性在桥两侧换点。
+func _attack_path_valid() -> bool:
+	if battle_context == null or _target == null or _path_index >= _path.size():
+		return false
+	return (_path_can_reach_attack()
+		and battle_context.is_ground_segment_walkable(global_position, _path[_path_index], body_radius, self))
+
+## 仅常规迎敌侧终点无效时搜索攻击区域。格心同时满足实际身体净空和射程，
+## 按路线长度选可达站位；距离下界剪枝，避免对整个攻击区域逐格跑 A*。
+func _find_reachable_attack_path() -> void:
+	var nav := _get_nav()
+	if nav == null:
+		return
+	var reach: float = attack_range + body_radius + _target.body_radius - 0.01
+	var center: Vector2 = _target.global_position
+	var candidates: Array[Vector2] = []
+	var low := nav.world_to_cell(center - Vector2.ONE * reach)
+	var high := nav.world_to_cell(center + Vector2.ONE * reach)
+	for y in range(low.y, high.y + 1):
+		for x in range(low.x, high.x + 1):
+			var point := nav.cell_to_world(Vector2i(x, y))
+			if point.distance_to(center) <= reach and nav.is_walkable(point) and battle_context.is_ground_position_walkable(point, body_radius, self):
+				candidates.append(point)
+	candidates.sort_custom(func(a: Vector2, b: Vector2) -> bool:
+		return global_position.distance_squared_to(a) < global_position.distance_squared_to(b))
+	_path = PackedVector2Array()
+	_path_index = 0
+	var best_cost := INF
+	for point in candidates:
+		if global_position.distance_to(point) >= best_cost:
+			break
+		var route := battle_context.find_ground_path(global_position, point, _target, body_radius)
+		if route.size() < 2 or route[route.size() - 1].distance_to(center) > reach:
+			continue
+		var cost := 0.0
+		var legal := true
+		for i in range(1, route.size()):
+			if not battle_context.is_ground_segment_walkable(route[i - 1], route[i], body_radius, self):
+				legal = false
+				break
+			cost += route[i - 1].distance_to(route[i])
+		if legal and cost < best_cost:
+			best_cost = cost
+			_path = route
+			_path_index = 1
+			_path_goal = route[route.size() - 1]
 
 func _recompute_path_to(goal: Vector2) -> void:
 	_repath_cd = REPATH_INTERVAL
