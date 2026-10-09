@@ -12,6 +12,7 @@ func visual_team(team: int) -> int:
 
 var projectiles: Node2D
 var _gwen_tristana_effect: Node3D
+var _sett_effect: Node3D
 var _anivia_effect: Node3D
 var _aurelion_effect: Node3D
 var skills: RefCounted
@@ -34,6 +35,8 @@ var _pre_deploy_views: Dictionary = {}
 func _process(delta: float) -> void:
 	if _gwen_tristana_effect != null:
 		_gwen_tristana_effect.sync_effects(projectiles, _camera)
+	if _sett_effect != null and skills != null:
+		_sett_effect.sync_effects(skills, _camera, delta)
 	if _sion_w_effect != null and skills != null:
 		_sion_w_effect.sync_effects(skills, _camera, delta)
 	if _aurelion_effect != null and skills != null:
@@ -110,6 +113,8 @@ func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void
 	_world_root.add_child(_gwen_tristana_effect)
 	_aurelion_effect = preload("res://scripts/presentation/aurelionsol_effect_3d.gd").new()
 	_world_root.add_child(_aurelion_effect)
+	_sett_effect = preload("res://scripts/presentation/sett_effect_3d.gd").new()
+	_world_root.add_child(_sett_effect)
 	_anivia_effect = preload("res://scripts/presentation/anivia_effect_3d.gd").new()
 	_world_root.add_child(_anivia_effect)
 	_sion_w_effect = preload("res://scripts/presentation/sion_w_effect_3d.gd").new()
@@ -157,6 +162,7 @@ func attach_unit(unit: Unit, stats: Dictionary) -> bool:
 		view.queue_free()
 		return false
 	_sion_w_effect.track(unit)
+	_sett_effect.track(unit, view)
 	unit.has_model_art = true
 	unit.queue_redraw()
 	unit.form_changed.connect(_on_unit_form_changed.bind(unit, view, stats))

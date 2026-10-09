@@ -6,6 +6,9 @@ func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
 	_check_sett_resource_and_frontal_damage()
+	_check_sett_center_strip()
+	_check_sett_outer_footprint()
+	_check_sett_fixed_release()
 	_check_sett_shield_and_combat_decay()
 	_check_ashe_release_vs_collision()
 	_check_ashe_volley()
@@ -69,6 +72,23 @@ func _check_sett_resource_and_frontal_damage() -> void:
 	_expect(sett.is_active_skill_movement_locked() and sett.is_active_skill_attack_locked() and sett.is_active_skill_facing_locked(), "蓄意轰拳施放期间锁定移动、攻击与朝向")
 	for unit in [sett, center, edge, behind]:
 		unit.free()
+
+func _check_sett_center_strip() -> void:
+	var sett := _spawn_test_unit("sett", 0, Vector2(350, 1100))
+	var skill: Dictionary = CardDB.active_skills_for("sett")[0]
+	sett.begin_active_skill_cast(float(skill.cast_duration), Vector2.UP, skill.cast_locks)
+	var targets: Array[Unit] = []
+	for distance in [25.0, 130.0]:
+		for lateral in [float(skill.center_width)*0.5+0.9, float(skill.center_width)*0.5+1.1]:
+			var target := _spawn_dummy(sett.position + Vector2(lateral, -sett.body_radius-distance))
+			target.body_radius = 1.0
+			targets.append(target)
+	_main._active_skill_effect_system.apply(sett, skill)
+	for index in targets.size():
+		var expected := 195.0 if index % 2 == 0 else 130.0
+		_expect(is_equal_approx(3000.0-targets[index].hp, expected), "轰拳原比例中央直条在近端与远端保持相同边界，仍计目标身体半径")
+		targets[index].free()
+	sett.free()
 
 func _check_sett_shield_and_combat_decay() -> void:
 	var skill: Dictionary = CardDB.active_skills_for("sett")[0]
@@ -613,3 +633,71 @@ func _check_empowered_resets() -> void:
 			_expect(not view._active_attack_empowered and view._last_clip_transition_kind == &"action_in" and view._last_clip_blend_time > 0.0, card + "强化接回普通攻击使用姿态混合")
 			source.free()
 			target.free()
+
+func _check_sett_fixed_release() -> void:
+	_main._skill_presentation.clear()
+	var sett := _spawn_test_unit("sett", 0, Vector2(200, 1120))
+	sett.configure_carried_active_skill(CardDB.active_skills_for("sett")[0])
+	sett.add_skill_resource(200)
+	sett._body_facing_direction = Vector2.UP
+	var target := _spawn_dummy(Vector2(280, 1000))
+	_main._skill_lifecycle.start(sett, CardDB.active_skills_for("sett")[0])
+	for tick in 15: _main._commands.tick_impacts(0.05)
+	var impacts: Array = _main._skill_presentation.frontal_effects.filter(func(e): return String(e.shape).begins_with("sett_w_impact"))
+	_expect(impacts.is_empty() and is_equal_approx(target.hp, 3000), "轰拳伤害时刻之前没有冲击事件")
+	sett.global_position = Vector2(280,1120)
+	_main._commands.tick_impacts(0.05)
+	impacts = _main._skill_presentation.frontal_effects.filter(func(e): return String(e.shape).begins_with("sett_w_impact"))
+	_expect(impacts.size() == 1 and target.hp < 3000, "第16个固定Tick同时产生伤害与冲击事件，不依赖动画推进")
+	if not impacts.is_empty():
+		var event: Dictionary = impacts[0]
+		_expect(event.pos == Vector2(280,1120) and event.forward == Vector2.UP and event.fixed_position and event.shape == "sett_w_impact_strong", "满豪意释放事件锁定受位移后的结算位置与施法方向")
+		var payload := event.duplicate(true)
+		payload.erase("source_ref")
+		var replica := SkillEffectPresentation.new(_main)
+		var wire: Dictionary = bytes_to_var(var_to_bytes(payload))
+		replica.show_skill_effect(8001, wire)
+		replica.show_skill_effect(8001, wire)
+		sett.global_position += Vector2(140,0)
+		sett.hp = 0
+		replica.tick_visuals(0.1)
+		_expect(replica.frontal_effects.size() == 1 and replica.frontal_effects[0].pos == Vector2(280,1120), "可靠表现载荷去重，后续位移/死亡不带走已释放冲击")
+		replica.tick_visuals(3.0)
+		_expect(replica.frontal_effects.is_empty(), "冲击事件独立自然回收")
+	for unit in [sett,target]: unit.free()
+	_main._commands.clear_impacts()
+	_main._skill_presentation.clear()
+
+func _check_sett_outer_footprint() -> void:
+	var skill: Dictionary = CardDB.active_skills_for("sett")[0]
+	var geometry = preload("res://scripts/data/sett_w_geometry.gd")
+	_expect(Vector4(skill.length,skill.near_width,skill.far_width,skill.center_width).is_equal_approx(geometry.SOURCE_RANGE * geometry.SCALE), "轰拳伤害区域保留原版预警和冲击的统一比例")
+	for team in [0,1]:
+		for strong in [false,true]:
+			var caster := _spawn_test_unit("sett",team,Vector2(350,640))
+			var forward := Vector2.UP if team==0 else Vector2.DOWN
+			var side := Vector2(-forward.y,forward.x)
+			caster.begin_active_skill_cast(float(skill.cast_duration),forward,skill.cast_locks)
+			var hit_skill := skill.duplicate(true)
+			if strong: hit_skill.damage *= 2.0
+			var targets: Array[Unit] = []
+			var expected: Array[float] = []
+			# 原素材近端、中段、远端两侧内外；点状目标排除身体半径的边界扩张。
+			for distance in [0.1,float(skill.length)*0.5,float(skill.length)-0.1]:
+				var half_width := lerpf(skill.near_width,skill.far_width,distance/float(skill.length))*0.5
+				for sign_value in [-1.0,1.0]:
+					for margin in [-0.1,0.1]:
+						var target := _spawn_dummy(caster.position+forward*(caster.body_radius+distance)+side*(half_width+margin)*sign_value,1-team)
+						target.body_radius=0.0
+						targets.append(target)
+						expected.append(float(hit_skill.damage) if margin<0 else 0.0)
+			for distance in [-0.1,0.1,float(skill.length)-0.1,float(skill.length)+0.1]:
+				var target := _spawn_dummy(caster.position+forward*(caster.body_radius+distance),1-team)
+				target.body_radius=0.0
+				targets.append(target)
+				expected.append(float(hit_skill.damage)*1.5 if distance>0 and distance<float(skill.length) else 0.0)
+			_main._active_skill_effect_system.apply(caster,hit_skill)
+			for i in targets.size():
+				_expect(is_equal_approx(3000.0-targets[i].hp,expected[i]), "轰拳两队普通/强化原比例范围内外命中：%s/%s/%s" % [team,strong,i])
+				targets[i].free()
+			caster.free()

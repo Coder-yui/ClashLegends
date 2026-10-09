@@ -1,0 +1,32 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Sett.wad.client",
+  "source_binary_sha256": "fee6cc5da0dc84c17ce9309003a12a7c61bf4d1645feff43bfb5ac4aece87c0f",
+  "system": "Characters/Sett/Skins/Skin0/Particles/Sett_Base_W_Shared_Warning_Player",
+  "assets": {
+    "assets/characters/sett/skins/base/particles/sett_base_smoke_64x64.tex": {
+      "source_sha256": "6184ae77a16635e9098557c147bf8fe918ce21eb21ef61420f56e53ae5302b72",
+      "output": "assets/characters/sett/skins/base/particles/sett_base_smoke_64x64.png",
+      "output_sha256": "c0d5eb6bfbb1e0cb8ecbe3be3b7719b424bbaccdd0391d54060ec97ae0e7709d"
+    },
+    "assets/characters/sett/skins/base/particles/sett_base_w_ui_indicator.tex": {
+      "source_sha256": "922377df1b53fc9a0db87b653cf3732d72f69970c142c7761c63fe2ecb9e77b0",
+      "output": "assets/characters/sett/skins/base/particles/sett_base_w_ui_indicator.png",
+      "output_sha256": "3979247439db5e2c2fa046230fd3f3fcffc52ebc4303db221776716372b528a5"
+    },
+    "assets/characters/sett/skins/base/particles/sett_base_air_swoosh.tex": {
+      "source_sha256": "a8c56bbd8e0adb8e04cb7e8f9c5aa02b3f30b524b1d4792001bb3ce31881d4f0",
+      "output": "assets/characters/sett/skins/base/particles/sett_base_air_swoosh.png",
+      "output_sha256": "662433ed8b701a60c3781fb039462ee1b8e0f9ef87fcc9f5b4e99779d0bb9877"
+    },
+    "assets/characters/sett/skins/base/particles/sett_base_mask_vert_a.tex": {
+      "source_sha256": "c3e6b95fb34a0ba743616869ce267fc72ba7f452331c7f6625bde77f0927fe3b",
+      "output": "assets/characters/sett/skins/base/particles/sett_base_mask_vert_a.png",
+      "output_sha256": "f1dd57e1b33dd8b423e4834a4e21138f10577fce2fbb3a8793dbc01f0be5176a"
+    },
+    "assets/characters/sett/skins/base/particles/sett_base_vertical_glow.tex": {
+      "source_sha256": "cd72bf37811a3d1b36425c8bd3840e7515dd52fc233d795e424cbf70ebce5e4c",
+      "output": "assets/characters/sett/skins/base/particles/sett_base_vertical_glow.png",
+      "output_sha256": "c3df59038f468df781bb625d02ff015ef3a7429e7ac71404e8800b4a3ce3d0cc"
+    }
+  }
+}

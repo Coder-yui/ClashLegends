@@ -1,0 +1,147 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Sett.wad.client",
+  "source_binary_sha256": "fee6cc5da0dc84c17ce9309003a12a7c61bf4d1645feff43bfb5ac4aece87c0f",
+  "system": "Characters/Sett/Skins/Skin0/Particles/Sett_Base_W_Min_AoE",
+  "assets": {
+    "assets/characters/sett/skins/base/particles/sett_base_distort_rgba.tex": {
+      "source_sha256": "fbb301ed2453730627b58b7029b9afb27b2d72ce1717157319113787eddf6c93",
+      "output": "assets/characters/sett/skins/base/particles/sett_base_distort_rgba.png",
+      "output_sha256": "4bc3b41a258b43a0792bd21a2e1ebec627d998b506c5c17087db0fe01f8b7f51"
+    },
+    "assets/characters/sett/skins/base/particles/sett_base_distort_ring.tex": {
+      "source_sha256": "076063ad5b1e1fa25d39339e37288fe452a27bbc9a68ff227495b3149c41eaf9",
+      "output": "assets/characters/sett/skins/base/particles/sett_base_distort_ring.png",
+      "output_sha256": "ccc2e333b2594c34644b3cc491226199f49c411880d15f85ef26c1786316fc9c"
+    },
+    "assets/characters/sett/skins/base/particles/color-hold.tex": {
+      "source_sha256": "bc06557b44402fee1498430bd4008df9598085f44b29fea2f02218473674b2f8",
+      "output": "assets/characters/sett/skins/base/particles/color-hold.png",
+      "output_sha256": "62ed85b52d6f757f5322176cb24ccfa294cb145ba9f1978bbf6ba479341f45a8"
+    },
+    "assets/characters/sett/skins/base/particles/sett_base_smoke_64x64.tex": {
+      "source_sha256": "6184ae77a16635e9098557c147bf8fe918ce21eb21ef61420f56e53ae5302b72",
+      "output": "assets/characters/sett/skins/base/particles/sett_base_smoke_64x64.png",
+      "output_sha256": "c0d5eb6bfbb1e0cb8ecbe3be3b7719b424bbaccdd0391d54060ec97ae0e7709d"
+    },
+    "assets/characters/sett/skins/base/particles/sett_base_comet_mesh.scb": {
+      "source_sha256": "cc3a0c7b5e0a7e5fddbfd44c736e38ac068b4c7a977c5b60f11fec39d2d6561d",
+      "output": "assets/characters/sett/skins/base/particles/sett_base_comet_mesh.mesh.json",
+      "output_sha256": "b48d8c327ce552a68696c5ad8bb67badbd585c77b5288f5c1af08455649f8ba6"
+    },
+    "assets/characters/sett/skins/base/particles/sett_base_erode_a.tex": {
+      "source_sha256": "6274041a83233e517e196c3b8f87cc0c0267fb501c897b80a329ea1377c355c4",
+      "output": "assets/characters/sett/skins/base/particles/sett_base_erode_a.png",
+      "output_sha256": "a5a0946d4d3a1019dda670fe88b03c80b1cdeafa134845e9cda9eb50ec0fb869"
+    },
+    "assets/characters/sett/skins/base/particles/sett_base_w_mis_a.tex": {
+      "source_sha256": "0187bb2a2065db65bc9ff9025f0f313a741c45546ede48e920069fd1e150e8dd",
+      "output": "assets/characters/sett/skins/base/particles/sett_base_w_mis_a.png",
+      "output_sha256": "d169ecc871d691713019fa5d73ef556b37a76a3babf5037c98779660c08c6157"
+    },
+    "assets/characters/sett/skins/base/particles/sett_base_horizontal_erode_a.tex": {
+      "source_sha256": "b34fcd63ff3836264601d6a9340177e5cdf5b35cbb64f30072827bc1aa657544",
+      "output": "assets/characters/sett/skins/base/particles/sett_base_horizontal_erode_a.png",
+      "output_sha256": "8b4c9e7ad71785a781ba713b928d419029cc397e0157df992a6fd1982432dacb"
+    },
+    "assets/characters/sett/skins/base/particles/sett_base_saucer_mesh.scb": {
+      "source_sha256": "49d168396078779a383ed01421a407e4a099759849315af854f4f6efe958fd40",
+      "output": "assets/characters/sett/skins/base/particles/sett_base_saucer_mesh.mesh.json",
+      "output_sha256": "0a5dff9914c6fd35f76367da78542a8988864f6aec8ff6392a6522b9f404c360"
+    },
+    "assets/characters/sett/skins/base/particles/sett_base_air_swoosh.tex": {
+      "source_sha256": "a8c56bbd8e0adb8e04cb7e8f9c5aa02b3f30b524b1d4792001bb3ce31881d4f0",
+      "output": "assets/characters/sett/skins/base/particles/sett_base_air_swoosh.png",
+      "output_sha256": "662433ed8b701a60c3781fb039462ee1b8e0f9ef87fcc9f5b4e99779d0bb9877"
+    },
+    "assets/characters/sett/skins/base/particles/sett_base_horizontal_mask_sawtooth_soft.tex": {
+      "source_sha256": "88cc19426dbb2d0608a5076afd84fe4ffa600148e02cdae1c28b312cebbfd719",
+      "output": "assets/characters/sett/skins/base/particles/sett_base_horizontal_mask_sawtooth_soft.png",
+      "output_sha256": "70a3f99a87f80c9d49f3318d5a7bf4cc7455bd80e6e0937bc7c51177c8a699a5"
+    },
+    "assets/characters/sett/skins/base/particles/sett_base_glow_solid.tex": {
+      "source_sha256": "583b4c40fd77f20d8ef4ed17498194d3d10d5e596aaa39aa5a755a5082cb6fe6",
+      "output": "assets/characters/sett/skins/base/particles/sett_base_glow_solid.png",
+      "output_sha256": "a434160130bbfa7a7b99ce9791240ab54267d848608bedff4a9d6255bb52e3cf"
+    },
+    "assets/characters/sett/skins/base/particles/sett_base_fire_trail_graphic.tex": {
+      "source_sha256": "f35de13f65c881143faa125c8db5a31cd44cea301fbf1f7a91bd5a8f3d975e19",
+      "output": "assets/characters/sett/skins/base/particles/sett_base_fire_trail_graphic.png",
+      "output_sha256": "19b19c7d5147a813b3ace5bee75fd9db37e2ba3ad505698f8d0038a005963833"
+    },
+    "assets/characters/sett/skins/base/particles/aura_self.tex": {
+      "source_sha256": "4f8702982bd1e3b6fcab9eb57dee74968bc2625892f2f6df731847d687dfd2c0",
+      "output": "assets/characters/sett/skins/base/particles/aura_self.png",
+      "output_sha256": "f73cb02be9dd8335048bd77a785255cb9ff37996086e994cc9154f289044544b"
+    },
+    "assets/characters/sett/skins/base/particles/sett_base_vertical_mask_wispy_erode.tex": {
+      "source_sha256": "2ff6375b5e3f7dd8e84fb5ee0963ff5a08a6a79b6349f73e314bb380a027c094",
+      "output": "assets/characters/sett/skins/base/particles/sett_base_vertical_mask_wispy_erode.png",
+      "output_sha256": "8f83b94ae893855a284f87081a14486d60bce0b4a974690b624c7884d6e6613e"
+    },
+    "assets/characters/sett/skins/base/particles/sett_base_w_mid_decal.tex": {
+      "source_sha256": "e47a3ec5718dba28fa82f2efb78f13fa45baa2f9ba267b92834b3bb6bcb34075",
+      "output": "assets/characters/sett/skins/base/particles/sett_base_w_mid_decal.png",
+      "output_sha256": "0ab045ca62aa99ed9f14da453fd62c8d186a862fac2ac61ae9159b5652f8692b"
+    },
+    "assets/characters/sett/skins/base/particles/sett_base_r_rocks.tex": {
+      "source_sha256": "c8a9a7f7ee6b651db97c065a6f8263be6492a12cc68231425c8a8cfffb555e1f",
+      "output": "assets/characters/sett/skins/base/particles/sett_base_r_rocks.png",
+      "output_sha256": "8e145a8028384f173e88c116a6054211bac31b1686964a87e1cb777e11dfc0cb"
+    },
+    "assets/characters/sett/skins/base/particles/sett_base_vertical_erode_a.tex": {
+      "source_sha256": "2428437ccf14e52e81fe2f068528fe6943c886fa6be5082e9631138d98e49632",
+      "output": "assets/characters/sett/skins/base/particles/sett_base_vertical_erode_a.png",
+      "output_sha256": "49c88b962f61cc4c8d9ca431aeb71a510eccdbddad32f63de50dd9fd59b7c1b0"
+    },
+    "assets/characters/sett/skins/base/particles/sett_base_r_rocks_2x2.tex": {
+      "source_sha256": "698002e24f8158dad3d8481b30833f0a31b9916e1bea5d63fb91398686194d6c",
+      "output": "assets/characters/sett/skins/base/particles/sett_base_r_rocks_2x2.png",
+      "output_sha256": "74b457715384e453555b647c33bac263c7b5626de65dc3067d026c54e447834a"
+    },
+    "assets/characters/sett/skins/base/particles/sett_base_w_ground_layer.scb": {
+      "source_sha256": "9b2e85e0be66e8261f13654de578f879aba5ebeec310f6bb7a0580dd75586332",
+      "output": "assets/characters/sett/skins/base/particles/sett_base_w_ground_layer.mesh.json",
+      "output_sha256": "27df03519ed535a78751d87d5e9d647ce32609c99c50fd955f5be45f5b473d45"
+    },
+    "assets/characters/sett/skins/base/particles/sett_base_vertical_glow.tex": {
+      "source_sha256": "cd72bf37811a3d1b36425c8bd3840e7515dd52fc233d795e424cbf70ebce5e4c",
+      "output": "assets/characters/sett/skins/base/particles/sett_base_vertical_glow.png",
+      "output_sha256": "c3df59038f468df781bb625d02ff015ef3a7429e7ac71404e8800b4a3ce3d0cc"
+    },
+    "assets/characters/sett/skins/base/particles/sett_base_spark_round_bloom.tex": {
+      "source_sha256": "900b45c159aca6343711275d4f13f43c0e603ea229046f8dc8872010c735c29c",
+      "output": "assets/characters/sett/skins/base/particles/sett_base_spark_round_bloom.png",
+      "output_sha256": "52cee14392bc80cb1d84896d63c107e07df8780a2e35f580bbe0bf403369113f"
+    },
+    "assets/characters/sett/skins/base/particles/sett_base_w_ground_cone.scb": {
+      "source_sha256": "f5d2f37ad645a01fd8086e30bd0d89d7490c58c288833c5750f0732def8e01ad",
+      "output": "assets/characters/sett/skins/base/particles/sett_base_w_ground_cone.mesh.json",
+      "output_sha256": "87296d6f954730ade3426b497f51c35c63a0cffdec6920dd5f42427a69dd91c3"
+    },
+    "assets/characters/sett/skins/base/particles/sett_base_w_mid_decal_edge.tex": {
+      "source_sha256": "668eefa5c54966f455be563f02198bff3607248a7fc316740336de80bffc3e60",
+      "output": "assets/characters/sett/skins/base/particles/sett_base_w_mid_decal_edge.png",
+      "output_sha256": "0fd214b69125a253bf2ecc787628461fef193a5e823a24248032d680b828ec07"
+    },
+    "assets/characters/sett/skins/base/particles/sett_base_vertical_mask_leading_edge_flip.tex": {
+      "source_sha256": "02876513047953999bb642401096e3b072118fac86d505132a398cea6587171d",
+      "output": "assets/characters/sett/skins/base/particles/sett_base_vertical_mask_leading_edge_flip.png",
+      "output_sha256": "c2bcca9cba8757e582c250a5cce536b484af7e236c630e8ff510a5ed753dda88"
+    },
+    "assets/characters/sett/skins/base/particles/sett_base_horizontal_mask_sawtooth.tex": {
+      "source_sha256": "812ab03727462d3c63287851f6865e2f7a5fc95bd5cb07229f50f9115089346b",
+      "output": "assets/characters/sett/skins/base/particles/sett_base_horizontal_mask_sawtooth.png",
+      "output_sha256": "f8cf7b835cbec29fe5606240ad9cd19995c983a09ccce2611409896ac92399bd"
+    },
+    "assets/characters/sett/skins/base/particles/sett_base_fire_erode.tex": {
+      "source_sha256": "f6aad2d356f9dc5150b65b3eba6264e52237f0e7453e5cb4dabaaaa195020f7c",
+      "output": "assets/characters/sett/skins/base/particles/sett_base_fire_erode.png",
+      "output_sha256": "bf8914cc6851f3ec031d74f84e4822a0826fa5ed3e9fcb50d5a8a5309106c06c"
+    },
+    "assets/characters/sett/skins/base/particles/sett_base_ba_glow_arm_l.tex": {
+      "source_sha256": "29766dc1d4278db84677d1e99b3e23fde7cc800766e56ea056af5345946e697c",
+      "output": "assets/characters/sett/skins/base/particles/sett_base_ba_glow_arm_l.png",
+      "output_sha256": "cd6613c65bb649302a4ce09ebe8c34a572399ebf93e0017b70aa8b5317b25ac2"
+    }
+  }
+}

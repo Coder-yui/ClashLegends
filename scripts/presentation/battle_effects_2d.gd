@@ -66,6 +66,7 @@ func _draw_frontal_skill_effect(effect: Dictionary) -> void:
 	var forward: Vector2 = effect.get("forward", Vector2.UP)
 	var source_radius := float(effect.get("source_radius", 0.0))
 	var shape := StringName(effect.get("shape", "rectangle"))
+	if shape in [&"sett_w_impact", &"sett_w_impact_strong"]: return
 	if shape == &"growth_wave":
 		GrowthEffect2D.draw_wave(self, skills, effect)
 		return
@@ -140,6 +141,7 @@ func _draw_frontal_skill_effect(effect: Dictionary) -> void:
 	var line_color := Color(0.28, 0.68, 1.0, 0.9) if int(effect.get("team", 0)) == 0 else Color(1.0, 0.34, 0.24, 0.9)
 	var fill_color := Color(line_color.r, line_color.g, line_color.b, 0.10 + 0.06 * remaining_ratio)
 	if shape == &"aftershock": return # 独立加色层绘制原版纹理。
+	if shape == &"trapezoid" and source is Unit and source.card_id == "sett": return
 	if shape == &"shield_explosion": return # 3D 原版 W 粒子读取同一表现事件。
 
 	if shape == &"continuous_area":

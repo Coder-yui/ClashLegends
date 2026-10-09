@@ -1,0 +1,42 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Sett.wad.client",
+  "source_binary_sha256": "fee6cc5da0dc84c17ce9309003a12a7c61bf4d1645feff43bfb5ac4aece87c0f",
+  "system": "Characters/Sett/Skins/Skin0/Particles/Sett_Base_W_Max_Warning_Avatar",
+  "assets": {
+    "assets/shared/particles/generic_white_cubemap.dds": {
+      "source_sha256": "402a9ea7503e888426490a1d5f5d924921026d8c4971fa9d7affc108681ee634",
+      "output": "assets/shared/particles/generic_white_cubemap.png",
+      "output_sha256": "508e92238640e05034d4f6ac7d906a3288e82dbe047b7e8f55ff4d993a7523ef"
+    },
+    "assets/characters/sett/skins/base/particles/sett_base_noise_perlin.tex": {
+      "source_sha256": "7c8cb67eda9d47aec9065ecb9a9f6cf6771edf0eb2d8e5c8ee37b78758c6888d",
+      "output": "assets/characters/sett/skins/base/particles/sett_base_noise_perlin.png",
+      "output_sha256": "00dc865ffb3c617a7f2aae96990d50bdab29fe6c65385c6893426fafe782db1e"
+    },
+    "assets/characters/sett/skins/base/particles/sett_base_adrenaline_max_avatar.tex": {
+      "source_sha256": "6f0052ef28e827574ae7ca91703b4822faaa884d94ec77127faf63c2084a516e",
+      "output": "assets/characters/sett/skins/base/particles/sett_base_adrenaline_max_avatar.png",
+      "output_sha256": "9e20a69cbc65649b99db3a650581c564e62568296a3467e027b68830a2d1a466"
+    },
+    "assets/characters/sett/skins/base/particles/sett_base_adrenaline_burst_avatar.tex": {
+      "source_sha256": "cf2ce770d21700961d6b90bdb206d3442bfd75e3afc0ff76e15d8b49e9299330",
+      "output": "assets/characters/sett/skins/base/particles/sett_base_adrenaline_burst_avatar.png",
+      "output_sha256": "6f2c339fd16a79a8a7eea851ab54c5a583999ae7e8305363d8ac09c5e26c2366"
+    },
+    "assets/characters/sett/skins/base/particles/sett_base_w_head_mesh.tex": {
+      "source_sha256": "723fb53fcb7e258ff134ebc93bcb7ec9b54b32b23895fb2a92656cfa97d99f49",
+      "output": "assets/characters/sett/skins/base/particles/sett_base_w_head_mesh.png",
+      "output_sha256": "1579a2dd1316b6d91d526af9a858545df3671240aec05a5620e88fcd687a3925"
+    },
+    "assets/characters/sett/skins/base/particles/sett_base_adrenaline_max_avatar_mask.tex": {
+      "source_sha256": "963959a1d3b6bfac2a157e6c69005d186fc8f5982191ef5ac923dcb147608b9a",
+      "output": "assets/characters/sett/skins/base/particles/sett_base_adrenaline_max_avatar_mask.png",
+      "output_sha256": "9db937eed00b54fb8af9dfa0d24c4dbbb288ce41dcdc51340bc7004237c517c9"
+    },
+    "assets/characters/sett/skins/base/particles/sett_base_adrenaline_max_avatar_alpha.tex": {
+      "source_sha256": "aab3736a4ac4696674c70a0b361a8e647ab91792ff7651c437f437b8c7718d49",
+      "output": "assets/characters/sett/skins/base/particles/sett_base_adrenaline_max_avatar_alpha.png",
+      "output_sha256": "8fea7872caba8f8b6ae1371613119b6008c5e1423d453ec00f044994984883d0"
+    }
+  }
+}

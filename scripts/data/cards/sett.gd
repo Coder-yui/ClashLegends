@@ -3,6 +3,7 @@ extends "res://scripts/data/card_schema.gd"
 
 ## 调整基础攻速只改这里；前摇与左右拳节奏按同一比例生成，局内倍率由 Unit 处理。
 const BASE_ATTACK_INTERVAL := 1.0
+const W_GEOMETRY = preload("res://scripts/data/sett_w_geometry.gd")
 
 static func definition() -> Dictionary:
 	return {
@@ -26,8 +27,8 @@ static func definition() -> Dictionary:
 					"name": "蓄意轰拳", "kind": "frontal", "shape": "trapezoid",
 					"description": "消耗 2 金币。锁定移动、朝向和攻击后向前轰出梯形冲击波；豪意令伤害最高提高至 2 倍，中央区域再造成 1.5 倍伤害。释放瞬间按豪意获得护盾，0 豪意无护盾，满豪意 300 点并在 2 秒内衰减至 0。每个腕豪最多释放 1 次，冷却 8 秒。",
 					"cost": 2, "max_uses": 1, "cooldown": 8.0,
-					"length": 155.0, "near_width": 54.0, "far_width": 170.0,
-					"center_ratio": 0.34, "center_damage_multiplier": 1.5,
+					"length": W_GEOMETRY.LENGTH, "near_width": W_GEOMETRY.NEAR_WIDTH, "far_width": W_GEOMETRY.FAR_WIDTH,
+					"center_width": W_GEOMETRY.CENTER_WIDTH, "center_damage_multiplier": 1.5,
 					"damage": 130, "resource_damage_scale_max": 2.0,
 					"resource_shield_max": 300, "shield_duration": 2.0, "shield_on_cast_start": true, "shield_decay": true,
 					"uses_skill_resource": true,
@@ -83,6 +84,14 @@ static func definition() -> Dictionary:
 			"color": Color(0.85, 0.55, 0.25),
 			"active_skills": [{ "icon_path": "res://assets/skills/sett_0.png",
 					"visual_action": "active", "full_resource_visual_action": "active_strong",
+					"impact_visual_shape": "sett_w_impact", "full_resource_impact_visual_shape": "sett_w_impact_strong", "impact_visual_duration": 3.0,
+					"resource_dependencies": {"effects": [
+						{"provider": "res://assets/effects/sett/player.gd", "variant": "full_body"},
+						{"provider": "res://assets/effects/sett/player.gd", "variant": "cast_body"},
+						{"provider": "res://assets/effects/sett/player.gd", "variant": "warning"},
+						{"provider": "res://assets/effects/sett/player.gd", "variant": "min"},
+						{"provider": "res://assets/effects/sett/player.gd", "variant": "max"},
+					]},
 				}],
 		},
 		# BEGIN IMPORTED AUDIO sett

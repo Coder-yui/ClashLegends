@@ -6,7 +6,8 @@ func run(harness: Object, main: Node2D) -> void:
 	_main = main
 	await _selection_boundaries()
 	_declaration_contract()
-	var cards := {"anivia": true, "sion": true, "aurelionsol": true, "kayle_ranged": true, "gwen": true, "tristana": true, "sun_disc": true, "lightning": true, "zap": true, "stasis": true, "explosive_cask": true}
+	_sett_selection()
+	var cards := {"sett": true, "anivia": true, "sion": true, "aurelionsol": true, "kayle_ranged": true, "gwen": true, "tristana": true, "sun_disc": true, "lightning": true, "zap": true, "stasis": true, "explosive_cask": true}
 	var resources := MatchResources.new()
 	resources.prepare(cards.keys())
 	_expect(resources.errors.is_empty(), "调整后的法术资源完整加载")
@@ -155,3 +156,15 @@ func _declaration_contract() -> void:
 				for material in materials:
 					_expect(material.get_shader_parameter("stasis_swirl") != null and is_zero_approx(float(material.get_shader_parameter("stasis_amount"))), "防御塔金身纹理准备后恢复正常显示")
 	_expect(towers == 4, "双方四座防御塔参与金身准备，水晶排除")
+
+func _sett_selection() -> void:
+	var planner = load("res://scripts/presentation/match_resource_plan.gd")
+	var inactive: RefCounted = planner.for_match([["garen", "anivia", "sett"], []], [{}, {}])
+	var active: RefCounted = planner.for_match([["sett", "garen"], []], [{}, {}])
+	var off := WARMUP.dependency_paths(inactive.cards, inactive)
+	var on := WARMUP.dependency_paths(active.cards, active)
+	_expect(not off.any(func(path): return path.begins_with("res://assets/effects/sett/")), "普通槽腕豪不预热不可达的豪意/W特效")
+	for kind in ["warning", "min", "max", "full_body", "cast_body"]:
+		_expect(active.effects.any(func(request): return request.variant == kind and request.provider == "res://assets/effects/sett/player.gd"), "主动腕豪声明特效：" + kind)
+	for shader in ["body_mix", "body_add", "body_add_overlay", "body_pure_add", "add_overlay", "mix_overlay", "warp_overlay"]:
+		_expect("res://assets/effects/sett/" + shader + ".gdshader" in on, "运行时着色器路径进入资源计划：" + shader)
