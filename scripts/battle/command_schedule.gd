@@ -10,6 +10,7 @@ var _summons: Array[Dictionary] = []
 var _next_pre_deploy_id := 1
 var impact: Callable
 var cast_end: Callable
+var result_create: Callable
 
 func take_card_commands(tick: int) -> Array[Dictionary]:
 	return _take_due(_card_commands, tick)
@@ -55,10 +56,18 @@ func tick_impacts(dt: float) -> void:
 				continue
 			if unit.is_frozen() or int(pending.get("cast_serial", unit.active_skill_cast_serial)) <= unit.cancelled_skill_cast_serial:
 				continue
-		pending.time_left = maxf(0.0, float(pending.time_left) - dt)
+		pending.time_left = float(pending.time_left) - dt
 		if float(pending.time_left) > 0.001:
 			waiting.append(pending)
 			continue
+		if StringName(pending.get("phase", &"impact")) == &"result_create":
+			result_create.call(unit, pending.skill)
+			pending.phase = &"impact"
+			# 只在创建前依赖动作身份。保留当前步跨过创建点的时间余量。
+			pending.time_left += float(pending.skill.impact_delay) - float(pending.skill.result_creation_delay)
+			if float(pending.time_left) > 0.001:
+				waiting.append(pending)
+				continue
 		if StringName(pending.get("phase", &"impact")) == &"cast_end":
 			cast_end.call(unit, pending.skill)
 		else:
@@ -175,7 +184,11 @@ func schedule_cast(source: Unit, skill: Dictionary, impact_delay: float, displac
 			hit_skill["damage"] = maxf(float((hit_damages as Array)[hit_index]), 0.0)
 			_queue_single_active_skill_impact(source, hit_skill, maxf(float((hit_delays as Array)[hit_index]), 0.0))
 	else:
-		_queue_single_active_skill_impact(source, skill, impact_delay)
+		var creation_delay := float(skill.get("result_creation_delay", 0.0))
+		if creation_delay > 0.0 and not skill.has("independent_result"):
+			enqueue_impact(source, skill, creation_delay, &"result_create", source.active_skill_cast_serial)
+		else:
+			_queue_single_active_skill_impact(source, skill, impact_delay)
 	var cast_end_heal := maxf(float(skill.get("cast_end_heal", 0.0)), 0.0)
 	if cast_end_heal > 0.0:
 		enqueue_impact(source, {"cast_end_heal": cast_end_heal, "cast_end_heal_requires_hit": bool(skill.get("cast_end_heal_requires_hit", false)), "cast_hit_state": skill.cast_hit_state}, maxf(float(skill.get("cast_duration", 0.0)), 0.0), &"cast_end", source.active_skill_cast_serial)

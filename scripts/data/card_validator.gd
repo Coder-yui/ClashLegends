@@ -1061,6 +1061,12 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 		for bool_field in [&"ignore_movement_slow", &"ignore_attack_speed_slow"]:
 			if skill.has(bool_field) and typeof(skill.get(bool_field)) != TYPE_BOOL:
 				errors.append("%s.%s: 必须是 bool" % [label, bool_field])
+		if skill.has("impact_visual_shape"):
+			if String(skill.get("kind", "")) not in ["frontal", "dual_form"]: errors.append("%s.impact_visual_shape: 仅适用于即时前方范围命中" % label)
+			if not skill.impact_visual_shape is String or String(skill.impact_visual_shape).is_empty(): errors.append("%s.impact_visual_shape: 必须为非空 String" % label)
+			if not skill.get("impact_visual_duration") is float and not skill.get("impact_visual_duration") is int: errors.append("%s.impact_visual_duration: 必须为数值" % label)
+			elif float(skill.impact_visual_duration) <= 0.0: errors.append("%s.impact_visual_duration: 必须 > 0" % label)
+		if skill.has("full_resource_impact_visual_shape") and (not skill.full_resource_impact_visual_shape is String or String(skill.full_resource_impact_visual_shape).is_empty() or not skill.has("impact_visual_shape")): errors.append("%s.full_resource_impact_visual_shape: 需要普通表现及非空 String" % label)
 		if skill.has("center_width") and float(skill.center_width) < 0.0:
 			errors.append("%s.center_width: 必须 >= 0" % label)
 		if skill.has("fan_inner_arc") and typeof(skill.fan_inner_arc) != TYPE_BOOL:
@@ -1143,6 +1149,13 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 				errors.append("%s.resource_shield_max: 必须 >= 0" % label)
 			if not bool(skill.get("uses_skill_resource", false)):
 				errors.append("%s.resource_shield_max: 必须搭配 uses_skill_resource" % label)
+		for field in ["result_creation_delay", "full_resource_result_creation_delay"]:
+			if not skill.has(field): continue
+			var strong: bool = String(field).begins_with("full_resource")
+			var window := float(skill.get("full_resource_cast_duration" if strong else "cast_duration", skill.get("cast_duration", 0.0)))
+			var hit := float(skill.get("full_resource_impact_delay" if strong else "impact_delay", skill.get("impact_delay", 0.0)))
+			if not bool(skill.get("independent_on_creation", false)) or float(skill[field]) <= 0.0 or float(skill[field]) > window or float(skill[field]) >= hit:
+				errors.append("%s.%s: 仅独立结果支持，须位于施法动作内且早于命中" % [label, field])
 		if bool(skill.get("independent_on_creation", false)) and (String(skill.get("kind", "")) != "forward_area" or float(skill.get("zone_duration", 0.0)) > 0.0 or float(skill.get("impact_delay", 0.0)) <= 0.0):
 			errors.append("%s.independent_on_creation: 仅支持有创建预警与正落地延迟的 forward_area" % label)
 		if bool(skill.get("shield_on_cast_start", false)):
@@ -1205,7 +1218,7 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 			errors.append("%s.full_resource_cast_duration: 必须 > 0" % label)
 		if skill.has("full_resource_impact_delay"):
 			var full_cast := float(skill.get("full_resource_cast_duration", skill.get("cast_duration", 0.0)))
-			if float(skill.full_resource_impact_delay) < 0.0 or float(skill.full_resource_impact_delay) > full_cast:
+			if float(skill.full_resource_impact_delay) < 0.0 or (float(skill.full_resource_impact_delay) > full_cast and not bool(skill.get("independent_on_creation", false))):
 				errors.append("%s.full_resource_impact_delay: 必须位于满层施法窗口内" % label)
 		if skill.has("cast_locks"):
 			if not skill.cast_locks is Array:
@@ -1232,7 +1245,7 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 				errors.append("%s.impact_delay: 必须 >= 0" % label)
 			if impact_delay > 0.0 and not skill.has("cast_duration") and kind != &"dual_form":
 				errors.append("%s.impact_delay: 大于 0 时必须配置 cast_duration" % label)
-			elif skill.has("cast_duration") and impact_delay > float(skill.cast_duration):
+			elif skill.has("cast_duration") and impact_delay > float(skill.cast_duration) and not bool(skill.get("independent_on_creation", false)):
 				errors.append("%s.impact_delay: 不得大于 cast_duration" % label)
 		if skill.has("transform_cast_duration") and float(skill.transform_cast_duration) < 0.0:
 			errors.append("%s.transform_cast_duration: 必须 >= 0" % label)

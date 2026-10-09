@@ -12,6 +12,7 @@ func _init(effects: ActiveSkillEffectSystem, presentation: SkillEffectPresentati
 	_presentation = presentation
 	_commands = commands
 	_combat = combat
+	_commands.result_create = _effects.create_scheduled_result
 
 func start(unit: Unit, skill: Dictionary) -> bool:
 	if unit != null and (unit.is_active_skill_rush_locked() or unit.death_form.used): return false
@@ -54,7 +55,8 @@ func _begin_cast(unit: Unit, skill: Dictionary) -> void:
 		var cast_forward := unit.active_skill_cast_facing
 		if cast_forward.length_squared() < 0.001:
 			cast_forward = unit.get_visual_facing_direction()
-		_effects.prepare_forward_area_result(unit, skill, cast_forward)
+		if float(skill.get("result_creation_delay", 0.0)) <= 0.0:
+			_effects.prepare_forward_area_result(unit, skill, cast_forward)
 	elif StringName(skill.get("kind", "")) == &"continuous_area":
 		_presentation.begin_continuous_area_visual(unit, skill)
 

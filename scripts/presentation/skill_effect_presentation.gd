@@ -218,3 +218,12 @@ func add_growth_wave(target: Unit, radius: float) -> Dictionary:
 	}
 	frontal_effects.append(effect)
 	return effect
+
+## 结算回调捕获位置与方向；后续移动、死亡及施法结束不会重定位这一表现。
+func present_frontal_impact(source: Unit, skill: Dictionary, forward: Vector2) -> void:
+	if not skill.has("impact_visual_shape"): return
+	var visual := skill.duplicate()
+	visual.shape = skill.get("full_resource_impact_visual_shape", skill.impact_visual_shape) if float(skill.get("resource_ratio", 0.0)) >= 0.999 else skill.impact_visual_shape
+	add_frontal_effect(source, visual, float(skill.impact_visual_duration), forward)
+	frontal_effects.back().fixed_position = true
+	_controller.publish_skill_fx(frontal_effects.back())

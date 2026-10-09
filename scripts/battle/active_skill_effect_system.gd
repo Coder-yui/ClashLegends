@@ -74,6 +74,7 @@ func prepare_cast(source: Unit, skill: Dictionary) -> Dictionary:
 			prepared["stun_duration"] = float(prepared.get("stun_duration", 0.0)) * maxf(float(prepared.get("resource_full_stun_multiplier", 1.0)), 1.0)
 			prepared["cast_duration"] = float(prepared.get("full_resource_cast_duration", prepared.get("cast_duration", 0.0)))
 			prepared["impact_delay"] = float(prepared.get("full_resource_impact_delay", prepared.get("impact_delay", 0.0)))
+			prepared["result_creation_delay"] = float(prepared.get("full_resource_result_creation_delay", prepared.get("result_creation_delay", 0.0)))
 			prepared["full_resource"] = true
 			prepared["first_hit_heal"] = maxf(float(prepared.get("full_resource_first_hit_heal", 0.0)), 0.0)
 			prepared["cast_end_heal"] = maxf(float(prepared.get("full_resource_cast_end_heal", 0.0)), 0.0)
@@ -429,6 +430,7 @@ func apply_frontal(source: Unit, skill: Dictionary, forward: Vector2 = Vector2.Z
 	var any_landed := false
 	var center_landed := false
 	forward = frontal_forward(source) if forward.length_squared() < 0.001 else forward.normalized()
+	_presentation.present_frontal_impact(source, skill, forward)
 	var side := Vector2(-forward.y, forward.x)
 	var length := maxf(float(skill.get("length", 0.0)), 0.0)
 	var shape := StringName(skill.get("shape", "trapezoid"))
@@ -501,7 +503,9 @@ func apply_frontal(source: Unit, skill: Dictionary, forward: Vector2 = Vector2.Z
 			var half_width := lerpf(near_half, far_half, width_ratio)
 			hit = forward_distance >= -combatant.body_radius and forward_distance <= length + combatant.body_radius and lateral_distance <= half_width + combatant.body_radius
 			var center_ratio := clampf(float(skill.get("center_ratio", 0.0)), 0.0, 1.0)
-			if hit and center_ratio > 0.0 and lateral_distance <= half_width * center_ratio + combatant.body_radius:
+			var center_width := maxf(float(skill.get("center_width", 0.0)), 0.0)
+			var center_half := center_width * 0.5 if center_width > 0.0 else half_width * center_ratio
+			if hit and center_half > 0.0 and lateral_distance <= center_half + combatant.body_radius:
 				in_center = true
 				damage_multiplier = maxf(float(skill.get("center_damage_multiplier", 1.0)), 1.0)
 		if not hit:
@@ -615,12 +619,15 @@ func apply_forward_area(source: Unit, skill: Dictionary, forward: Vector2 = Vect
 
 
 
+func create_scheduled_result(source: Unit, skill: Dictionary) -> void:
+	prepare_forward_area_result(source, skill, skill.cast_forward)
+
 func prepare_forward_area_result(source: Unit, skill: Dictionary, cast_forward: Vector2) -> void:
 	if skill.has("independent_result"): return
 	# 固定持续区域技能在 Impact 时直接生成正式区域；不提前绘制龙王式落点预警/星体。
 	if float(skill.get("zone_duration", 0.0)) > 0.0:
 		return
-	var duration := maxf(float(skill.get("impact_delay", 0.0)), 0.0)
+	var duration := maxf(float(skill.get("impact_delay", 0.0)) - float(skill.get("result_creation_delay", 0.0)), 0.0)
 	if duration <= 0.0:
 		return
 	var center := source.global_position + cast_forward.normalized() * maxf(float(skill.get("forward_distance", 0.0)), 0.0)

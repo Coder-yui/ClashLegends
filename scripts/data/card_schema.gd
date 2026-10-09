@@ -182,13 +182,14 @@ const ACTIVE_SKILL_FIELDS := [
 	&"shield", &"shield_duration", &"shield_decay", &"shield_on_cast_start", &"independent_on_creation", &"resource_shield_max", &"duration", &"speed_multiplier", &"damage_multiplier",
 	&"block_haste_duration", &"block_attack_speed_multiplier", &"attack_speed_multiplier", &"ignore_movement_slow", &"ignore_attack_speed_slow", &"spawn_id", &"spawn_count", &"length", &"width", &"impact_delay",
 	&"transform_impact_delay", &"cast_duration", &"transform_cast_duration", &"stun_duration", &"ground_only",
-	&"cast_locks", &"visual_action", &"description", &"shape", &"near_width", &"far_width", &"arc_degrees", &"fan_inner_arc",
+	&"impact_visual_shape", &"full_resource_impact_visual_shape", &"impact_visual_duration", &"cast_locks", &"visual_action", &"description", &"shape", &"near_width", &"far_width", &"arc_degrees", &"fan_inner_arc",
 	&"projectile_count", &"projectile_visual", &"projectile_launch_delay", &"projectile_flight_duration", &"projectile_stop_on_hit", &"projectile_piercing",
 	&"projectile_visual_height", &"projectile_visual_forward_offset", &"projectile_visual_width",
 	&"center_ratio", &"center_width", &"center_damage_multiplier", &"resource_damage_scale_max",
 	&"resource_consume_only_full", &"resource_nonfull_cast_gain", &"uses_skill_resource", &"resource_damage_by_stacks", &"resource_full_damage_multiplier", &"resource_full_stun_multiplier",
 	&"resource_visual_actions", &"resource_hit_damage_sequences", &"resource_hit_delay_sequences",
 	&"full_resource_visual_action", &"full_resource_cast_duration", &"full_resource_impact_delay", &"full_resource_first_hit_heal", &"full_resource_cast_end_heal", &"cast_end_heal_requires_hit", &"applies_on_hit_passive", &"applies_on_hit_slow",
+	&"result_creation_delay", &"full_resource_result_creation_delay",
 	&"forward_distance", &"shockwave_damage", &"shockwave_duration", &"shockwave_end_radius",
 	&"shockwave_slow_duration", &"shockwave_slow_multiplier", &"shockwave_full_only",
 	&"zone_duration", &"zone_tick_interval", &"zone_damage", &"zone_slow_duration", &"zone_slow_multiplier",
@@ -207,6 +208,6 @@ const INTEGER_NUMBER_FIELDS := ["strike_count",
 
 ## 原始定义域归属；共享容器由 CardDefinitionCompiler 递归检查。
 const CARD_VISUAL_FIELDS := ["resource_dependencies", "icon_path", "attack_wave_visual", "attack_wave_visual_height", "active_buff_projectile_visual", "attack_interval_display", "color", "continuous_beam_color", "continuous_beam_end_width", "continuous_beam_forward_offset", "continuous_beam_origin_height", "continuous_beam_start_width", "death_replacement_visual_transition", "projectile_colors", "projectile_impact_visual", "projectile_visual", "projectile_visual_forward_offset", "projectile_visual_height", "projectile_visual_scale", "show_team_ring", "skill_resource_full_color", "timed_revival_visual_transition", "visual_pre_deploy_scene", "visual_active_buff_scene", "visual_animations", "visual_forward_yaw", "visual_radius", "visual_scene_path", "visual_scene_paths"]
-const SKILL_VISUAL_FIELDS := ["resource_dependencies", "projectile_colors", "projectile_impact_visuals_by_use", "projectile_visuals_by_use", "visual_actions_by_use", "projectile_impact_visual", "icon_path", "full_resource_visual_action", "projectile_visual", "projectile_visual_forward_offset", "projectile_visual_height", "projectile_visual_width", "resource_visual_actions", "visual_action"]
+const SKILL_VISUAL_FIELDS := ["impact_visual_shape", "full_resource_impact_visual_shape", "impact_visual_duration", "resource_dependencies", "projectile_colors", "projectile_impact_visuals_by_use", "projectile_visuals_by_use", "visual_actions_by_use", "projectile_impact_visual", "icon_path", "full_resource_visual_action", "projectile_visual", "projectile_visual_forward_offset", "projectile_visual_height", "projectile_visual_width", "resource_visual_actions", "visual_action"]
 
 # audio.events["deploy:voice"].clip_volume_db：可选的资源路径 → 固定播放分贝补偿，未列出的池成员为 0 dB；由 CardValidator 校验。

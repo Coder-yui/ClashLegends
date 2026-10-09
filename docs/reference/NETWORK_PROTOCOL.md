@@ -4,7 +4,7 @@
 
 | 契约 | 当前值 |
 | --- | --- |
-| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->102 |
+| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->103 |
 | 顶层快照项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd SNAPSHOT_PACKET_SIZE -->11 |
 | 单位载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd UNIT_PAYLOAD_SIZE -->56 |
 | 塔载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd TOWER_PAYLOAD_SIZE -->7 |
@@ -151,3 +151,5 @@ NetworkPlayback默认100ms，根据时钟RTT/抖动与事件/快照到达时差�
 协议101：`_rpc_freeze_fx` 末尾携带强化减速区域半径。客户端同时创建3秒冰冻与5秒扩大减速表现，不创建权威区域。强化区域改为施放当刻生效；旧版本在握手阶段拒绝。
 
 协议102：天使焰浪由平直梯形扫掠改为弯曲亮弧逐段扫掠；弹体载荷仍为14项，算法变更通过握手版本拒绝旧端。
+
+协议103：瑟提 W 冲击通过可靠 `_rpc_skill_fx` 在伤害结算 Tick 发布 `sett_w_impact` / `sett_w_impact_strong` 固定位置事件，包含当时的位置、锁定方向、身体偏移和范围。客户端不再凭动作时间生成冲击；快照仍为原长度，满豪意身体附着读取既有资源比例。

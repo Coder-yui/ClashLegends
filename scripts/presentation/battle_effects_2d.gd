@@ -273,13 +273,16 @@ func _draw_frontal_skill_effect(effect: Dictionary) -> void:
 	if shape == &"trapezoid":
 		draw_line(near_left, near_right, line_color, 3.0, true)
 	var center_ratio := clampf(float(effect.get("center_ratio", 0.0)), 0.0, 1.0)
-	if center_ratio > 0.0:
+	var center_width := maxf(float(effect.get("center_width", 0.0)), 0.0)
+	if center_ratio > 0.0 or center_width > 0.0:
 		var center_fill := Color(1.0, 0.96, 0.76, 0.16 + 0.10 * progress)
+		var near_center_half := minf(near_half, center_width * 0.5) if center_width > 0.0 else near_half * center_ratio
+		var far_center_half := minf(far_half, center_width * 0.5) if center_width > 0.0 else far_half * center_ratio
 		draw_colored_polygon(PackedVector2Array([
-			near_center - side * near_half * center_ratio,
-			far_center - side * far_half * center_ratio,
-			far_center + side * far_half * center_ratio,
-			near_center + side * near_half * center_ratio,
+			near_center - side * near_center_half,
+			far_center - side * far_center_half,
+			far_center + side * far_center_half,
+			near_center + side * near_center_half,
 		]), center_fill)
 	if projectile_visible:
 		var projectile_count := maxi(int(effect.get("projectile_count", 0)), 0)
