@@ -8,6 +8,14 @@
 - 圆盘可随索敌改变朝向，自带废墟会抵消父级转向并保持部署首帧方向。`Spawn` 使用世界地面高度裁切并保持正常深度关系：地下碎片不渲染，位于废墟内部的部分由废墟遮挡，升出废墟后才逐渐可见。
 - 包装脚本只管理纯表现，不读取塔、不改碰撞、不改寿命。
 
+## 普攻发射挂点
+
+LoL 原版 `Characters/AzirSunDisc/Spells/AzirSunDiscBasicAttack` 在 `mMissileSpec.movementComponent` 中配置 `FixedSpeedMovement.mStartBoneName = "joint2"`。正式 GLB 保留了这根骨骼，它位于 `Buffbone_Cstm_Obelisk_Tip` 下方的骨骼层级中，与圆盘顶端的武器/头部挂点重合。
+
+包装脚本通过现有 `create_projectile_anchor()` 接口返回附着于 `joint2` 的 `BoneAttachment3D`，替代圆盘与废墟合并包围盒的中心。发射时按本机相机投影采集画面起点，随后沿现有弹体表现路径飞行；没有改动权威出生点、速度、伤害、碰撞或网络载荷。卡牌中的 154px 高度仅作无模型锚点时的回退。
+
+本次只读提取来源：`Azir.wad.client` → `data/characters/azirsundisc/azirsundisc.bin`（条目哈希 `77a26987f95460fc`，SHA-256 `7410163b26060b71737d087a3473934ff80c1e19069e71d90ee0d76f97e972eb`）。源件、转换定义与验证产物保留在本机素材库 `04-中间产物/太阳圆盘弹体起点/2026-10-09/`，详见[改动记录](../../../docs/deliveries/2026-10-09_太阳圆盘弹体发射挂点.md)。
+
 ## 2026-09-13 太阳圆盘与墓碑正式接入
 
 太阳圆盘已接入 AzirObeliskSound_OnBuffCast 生成、OnBuffDeactivate 消失、共享防御塔出手/发射/命中，原盾技能施放声保持，获盾声仍不使用。来源与处理见各音频目录 building_event_manifest.json；导入器 tools/audio/import_sun_disc_tombstone_audio.py。

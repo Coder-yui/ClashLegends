@@ -247,7 +247,7 @@ func _check_sun_disc() -> void:
 		and is_zero_approx(float(stats.projectile_visual_forward_offset))
 		and bool(stats.lifespan_hp_decay)
 		and bool(stats.tower_ruin_foundation),
-		"太阳圆盘为 4 费 3x3、半径 40 的对空对陆建筑，弹体从圆盘中心发出，普通地面部署会衰减生命并启用塔墟基座被动",
+		"太阳圆盘为 4 费 3x3、半径 40 的对空对陆建筑，无模型弹体高度回退154px，普通地面部署会衰减生命并启用塔墟基座被动",
 	)
 	_expect(
 		StringName(skill.kind) == &"area_shield"

@@ -48,7 +48,7 @@ static func definition() -> Dictionary:
 				"attack": ["Attack1_BASE", "Attack2_BASE"],
 				"death": "Death", "death_duration": 0.8, "death_clip_end": 2.0,
 			}, "projectile_visual": "orb",
-			# 圆盘中心约在权威地面点上方 154px；不沿目标方向偏移，保证双方镜像一致。
+			# 正式模型从原版 joint2 骨骼发射；154px 仅作为无模型锚点时的表现回退。
 			"projectile_visual_height": 154.0, "projectile_visual_forward_offset": 0.0,
 			"projectile_visual_scale": 1.65,
 			"projectile_colors": [Color(1.0, 0.78, 0.18), Color(1.0, 0.52, 0.10)],

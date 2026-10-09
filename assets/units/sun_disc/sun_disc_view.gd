@@ -6,6 +6,19 @@ var _shares_tower_base := false
 var _ruin_world_yaw := INF
 
 
+## 原版 AzirSunDiscBasicAttack 的 FixedSpeedMovement.mStartBoneName 为 joint2。
+## 只提供画面发射点，随圆盘姿态运动；权威出生点与命中仍由 ProjectileSystem 决定。
+func create_projectile_anchor() -> Node3D:
+	var skeleton := get_node("DiscModel").find_child("Skeleton3D", true, false) as Skeleton3D
+	if skeleton == null or skeleton.find_bone("joint2") < 0:
+		return null
+	var anchor := BoneAttachment3D.new()
+	anchor.name = "ProjectileModelAnchor"
+	anchor.bone_name = "joint2"
+	skeleton.add_child(anchor)
+	return anchor
+
+
 func configure_unit_visual(source: Unit) -> void:
 	# 外观取决于实际塔位，不能用“免寿命衰减”资格决定是否另放废墟。
 	_shares_tower_base = false
