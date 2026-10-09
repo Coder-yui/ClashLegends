@@ -24,14 +24,21 @@ static func definition() -> Dictionary:
 					"resource_full_damage_multiplier": 1.5, "resource_full_stun_multiplier": 1.5,
 					"shockwave_damage": 55, "shockwave_duration": 2.8, "shockwave_end_radius": 1500.0,
 					"shockwave_slow_duration": 2.0, "shockwave_slow_multiplier": 0.60, "shockwave_full_only": true,
-					"impact_delay": 1.15, "cast_duration": 1.93,
-					"full_resource_impact_delay": 1.12, "full_resource_cast_duration": 1.90,
+					"result_creation_delay": 0.4, "impact_delay": 1.65, "cast_duration": 1.93,
+					"full_resource_result_creation_delay": 0.25, "full_resource_impact_delay": 2.25, "full_resource_cast_duration": 1.9,
 					"cast_locks": ["movement", "attack", "facing"],
 				}],
 		},
 		"visual": {
 			"resource_dependencies": {
 				"effects": [
+					{"provider": "res://assets/effects/aurelionsol_r/player.gd", "variant": "tell"},
+					{"provider": "res://assets/effects/aurelionsol_r/player.gd", "variant": "missile"},
+					{"provider": "res://assets/effects/aurelionsol_r/player.gd", "variant": "impact"},
+					{"provider": "res://assets/effects/aurelionsol_r/player.gd", "variant": "strong_tell"},
+					{"provider": "res://assets/effects/aurelionsol_r/player.gd", "variant": "strong_missile"},
+					{"provider": "res://assets/effects/aurelionsol_r/player.gd", "variant": "strong_impact"},
+					{"provider": "res://assets/effects/aurelionsol_r/player.gd", "variant": "wave"},
 					{
 						"provider": "res://assets/effects/aurelionsol_q/player.gd",
 						"variant": "beam"

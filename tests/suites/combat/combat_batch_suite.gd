@@ -272,6 +272,7 @@ func _check_continuous_and_skills() -> void:
 		var skill := CardDB.active_skills_for("aurelionsol")[0].duplicate(true)
 		skill.forward_distance = 0
 		skill.radius = 150
+		skill.erase("result_creation_delay") # 此夹具直接提交已创建结果的同刻命中。
 		for source in ([a, b] if not reverse else [b, a]):
 			_main._queue_active_skill_impact(source, skill, 0.05)
 		_main._sim_step(0.05)

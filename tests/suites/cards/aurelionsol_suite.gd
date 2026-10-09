@@ -7,6 +7,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_main = main
 	_check_aurelionsol_art_integration()
 	_check_aurelionsol_direct_retarget()
+	_check_creation_boundary()
 	_check_starfall_and_falling_sky()
 	_check_star_visual_lifecycle()
 	_check_independent_star_result()
@@ -42,6 +43,7 @@ func _check_starfall_and_falling_sky() -> void:
 	for _kill in range(5):
 		dragon.on_enemy_killed(kill_dummy)
 	var prepared: Dictionary = _main._active_skill_effect_system.prepare_cast(dragon, skill)
+	_expect(is_equal_approx(float(prepared_starfall.impact_delay) - float(prepared_starfall.result_creation_delay), 1.25) and is_equal_approx(float(prepared.impact_delay) - float(prepared.result_creation_delay), 2.0), "LoL落地延迟：星落1.25秒、天瀑2秒命中")
 	_expect(
 		disabled_without_loadout
 		and starfall_without_shockwave
@@ -65,7 +67,7 @@ func _check_starfall_and_falling_sky() -> void:
 	var wave_before := wave.hp
 	var behind_before := behind.hp
 	_main._queue_active_skill_impact(dragon, prepared, float(prepared.impact_delay))
-	_main._commands.tick_impacts(1.10)
+	_main._commands.tick_impacts(float(prepared.impact_delay) - 0.05)
 	_expect(center.hp == center_before and wave.hp == wave_before and _main._active_skill_effect_system.expanding_shockwaves.is_empty(), "龙王星辰未落地前不伤害也不生成冲击波")
 	_main._commands.tick_impacts(0.05)
 	var impact_ok := (
@@ -88,7 +90,7 @@ func _check_starfall_and_falling_sky() -> void:
 	_expect(
 		impact_ok and wave_ok
 		and dragon.is_active_skill_movement_locked() and dragon.is_active_skill_attack_locked() and dragon.is_active_skill_facing_locked(),
-		"星落/天瀑锁定行动，在龙王前方圆形区域造成伤害与眩晕；只有天瀑的落地冲击波从区域外围扩至全场，造成公主塔单次伤害并减速且不重复命中中心",
+		"星落/天瀑完整施法时锁定行动，在龙王前方圆形区域造成伤害与眩晕；只有天瀑的落地冲击波从区域外围扩至全场，造成公主塔单次伤害并减速且不重复命中中心",
 	)
 	var breath_target := Unit.new()
 	breath_target.position = Vector2(360.0, 940.0)
@@ -416,11 +418,15 @@ func _check_independent_star_result() -> void:
 			var skill: Dictionary = CardDB.active_skills_for("aurelionsol")[0].duplicate(true)
 			skill["cast_forward"] = Vector2.UP
 			_main._start_active_skill_cast(source, skill)
+			_expect(source.is_active_skill_movement_locked() and source.is_active_skill_attack_locked() and source.is_active_skill_facing_locked(), "施法动作完整锁定移动/攻击/朝向")
+			_expect(_main._skill_presentation.frontal_effects.is_empty(), "动作起手尚未创建落星")
+			_main._commands.tick_impacts(float(skill.result_creation_delay))
 			var pending: Dictionary = _main._commands.inspect_impacts()[0].duplicate(true)
+			_expect(pending.skill.has("independent_result"), "到达动作创建时刻后转为独立结果")
 			source.freeze(2.0)
 			source.position += Vector2(250, 0)
 			if remove_source: source.free()
-			_main._commands.tick_impacts(1.1)
+			_main._commands.tick_impacts(float(skill.impact_delay) - float(skill.result_creation_delay) - 0.05)
 			_expect(target.hp == 10000, "独立星辰释放前一个Tick不提前伤害")
 			_main._commands.tick_impacts(0.05)
 			_expect(target.hp == 9880 and target.is_stunned(), "星辰创建后来源冻结/位移/销毁，固定落点仍恰好结算一次")
@@ -442,3 +448,38 @@ func _check_independent_star_result() -> void:
 		_expect(source.blind_attack_charges == 0 and target.hp == 1000 - roundf(140 * rate), "持续普攻拒绝无意义致盲并读取完整有效攻速、保留伤害余量")
 		source.free()
 		target.free()
+
+func _check_creation_boundary() -> void:
+	for strong in [false, true]:
+		for cancel_before in [false, true]:
+			_main._commands.clear_impacts()
+			_main._active_skill_effect_system.clear()
+			_main._skill_presentation.clear()
+			var source: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "aurelionsol", Vector2(360,1000), {"deploy_time_override":0}))
+			var target: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(360,825), {"deploy_time_override":0}))
+			target.hp = 10000
+			var skill: Dictionary = CardDB.active_skills_for("aurelionsol")[0].duplicate(true)
+			source.configure_carried_active_skill(skill)
+			source.skill_resource_value = 5.0 if strong else 0.0
+			skill.cast_forward = Vector2.UP
+			_main._start_active_skill_cast(source, skill)
+			var creation := float(skill.full_resource_result_creation_delay if strong else skill.result_creation_delay)
+			var flight := 2.0 if strong else 1.25
+			_expect(source.get_visual_action_name() == (&"active_strong" if strong else &"active"), "普通和强化保持各自原版施法动作")
+			if cancel_before: source.freeze(5.0)
+			_main._commands.tick_impacts(creation)
+			if cancel_before:
+				_expect(_main._commands.inspect_impacts().is_empty() and _main._skill_presentation.frontal_effects.is_empty(), "创建前冰冻取消动作，不凭空创建星辰")
+			else:
+				_expect(_main._skill_presentation.frontal_effects.size() == 1, "创建时刻出现独立星辰")
+				source.freeze(5.0)
+				source.free()
+				_main._commands.tick_impacts(flight - 0.05)
+				_expect(target.hp == 10000, "独立飞行到最后一个Tick之前不提前命中")
+				_main._commands.tick_impacts(0.05)
+				_expect(target.hp == (9820 if strong else 9880), "创建后来源冰冻销毁不影响普通/强化落地")
+			if is_instance_valid(source): source.free()
+			target.free()
+	_main._commands.clear_impacts()
+	_main._active_skill_effect_system.clear()
+	_main._skill_presentation.clear()

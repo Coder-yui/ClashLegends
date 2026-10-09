@@ -1,0 +1,70 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/AurelionSol.wad.client",
+  "source_entry": "data/characters/aurelionsol/skins/skin0.bin",
+  "source_wad_hash": "7950ff05d527f12c",
+  "source_binary_sha256": "5b86367b33f76fffb06c55d5756c80ff64a1e92a7b062502eb29a8182e713dd2",
+  "system": "Characters/AurelionSol/Skins/Skin0/Particles/AurelionSol_Base_R_Calamity_Shockwave",
+  "reader_revision": "c06b5bb1dba458a358628b0fd1ddef3a58a4ba43",
+  "assets": {
+    "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_shockwave_hardline_noise.scb": {
+      "source_sha256": "385fad4e9a41689f106b7c362e8663bf61de685a1c97f641e62bfb15c4e5261e",
+      "output": "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_shockwave_hardline_noise.mesh.json",
+      "output_sha256": "7184be3fc593b1f6a6e4d954e326e7a1a1c59643f8e9418de963f05589c259bf"
+    },
+    "assets/shared/particles/library/hiteffect/common_color-hold.tex": {
+      "source_sha256": "bc06557b44402fee1498430bd4008df9598085f44b29fea2f02218473674b2f8",
+      "output": "assets/shared/particles/library/hiteffect/common_color-hold.png",
+      "output_sha256": "62ed85b52d6f757f5322176cb24ccfa294cb145ba9f1978bbf6ba479341f45a8"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/aurelionsol_r_shockwave_spacenoise.tex": {
+      "source_sha256": "71fcf6154a52b5084bc2e6258847a6bd27119dae1f2f84ed84d9310b1d699af6",
+      "output": "assets/characters/aurelionsol/skins/base/particles/aurelionsol_r_shockwave_spacenoise.png",
+      "output_sha256": "816eb6bdf4cf5ce93acae459672a267557a5a595b4571c3f5351bde44c3cdd81"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_p_stars.tex": {
+      "source_sha256": "70d7f94142a127a2ffba7ca89e493f876cd7b6ee1ef7ff0bf8a96386d7123e2f",
+      "output": "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_p_stars.png",
+      "output_sha256": "dc7fae389478ee83e731db2a1049e9f4cf60c95ed5316dc433622ee33328fee7"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/lux_base_e_indicator.scb": {
+      "source_sha256": "aa6c1420fd9db6b9285bedc41dabaec7a52632a98851769d6a05695397f53231",
+      "output": "assets/characters/aurelionsol/skins/base/particles/lux_base_e_indicator.mesh.json",
+      "output_sha256": "0279e82f20ec638e78c88347bad22ce4018a606075b88cc65baaedbf3d3df022"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_groundtrail_color-bellcurve.tex": {
+      "source_sha256": "e38f618b61b6a7f5da55e91310df9220ebad40028546ebe26ab388b37a18d03d",
+      "output": "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_groundtrail_color-bellcurve.png",
+      "output_sha256": "05d681d151cb0afafc2c9f0efc4ebfa4162b13fd35b87dba28eba1409ad70313"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_aoe_shimmer_mult.tex": {
+      "source_sha256": "2efb8e6b707babcfac2ca5070a29f04238afea7f191084f6e6a96b366673f756",
+      "output": "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_aoe_shimmer_mult.png",
+      "output_sha256": "9c62b9cc0e275a8d4f5388c05cc693cb8ae8879de5cd4935720d01ed4bc69823"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_update_nebulanoise_02.tex": {
+      "source_sha256": "f5265d5c03062614e722c14954b3095e959b223f92d7b3b6773d3d14cec34978",
+      "output": "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_update_nebulanoise_02.png",
+      "output_sha256": "aa94599334003d95e09b8a444abf36579a8f46ce3af813b6bee4e8440e6b89a1"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_q_fire_noise_bw.tex": {
+      "source_sha256": "dc1ac00e5b1f0e139b40eda16ede3ab6bf52d26b80e61fa035d883500abe9997",
+      "output": "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_q_fire_noise_bw.png",
+      "output_sha256": "d26ded0e8c3c65059436800fa745d2b855371849a4aa473e7150401122e1c088"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_shockwave_ring_vertical.scb": {
+      "source_sha256": "2e30abece9815eca2723859970107373a7a8be6946a9d13106dd9d11e98b3cd4",
+      "output": "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_shockwave_ring_vertical.mesh.json",
+      "output_sha256": "f3c407caefa2440368c10e6caee5565774f1cac9fd7863a2c12faa5c806c43a4"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_update_nebulanoise_03.tex": {
+      "source_sha256": "8692b4380bb2d8c9f57a312c1bb75342e98a19b66b9f2da1dd91f9e70ef0e953",
+      "output": "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_update_nebulanoise_03.png",
+      "output_sha256": "30c1b1b40cca90aeb3cc9a10710a4913a6b4247ef1c9cc25a189e1c5b75be75b"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_starnoise_01.tex": {
+      "source_sha256": "c9f19e6693ac1d43cdd6f06d624a5b2579afd94838f7edc747e2ca313254f841",
+      "output": "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_starnoise_01.png",
+      "output_sha256": "66e9d08c85dacbc4ed05e1fbf49465f0ee46d045d94ac6262fbad7d69fa92675"
+    }
+  }
+}

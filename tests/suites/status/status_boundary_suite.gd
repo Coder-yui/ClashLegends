@@ -197,7 +197,8 @@ func _check_formal_skill_ticks() -> void:
 			# Derive independent star boundary from its actual queued definition, not visual frames.
 			if card == "aurelionsol":
 				for impact in _main._commands.inspect_impacts():
-					if impact.skill.has("independent_result"): expected.append(int(ceil(float(impact.time_left) / _main.SIM_DT - 0.000001)))
+					if impact.skill.has("independent_result") or impact.get("phase") == &"result_create":
+						expected.append(int(ceil(float(impact.skill.impact_delay) / _main.SIM_DT - 0.000001)))
 			var first := int(expected[0])
 			var observed: Array = []
 			var previous_hp := target.hp

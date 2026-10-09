@@ -1164,6 +1164,8 @@ func _check_independent_creation_audio(harness: Object, main: Node2D) -> void:
 		var cue: StringName = &"active_strong:start" if full else &"active:start"
 		for player in audio._world_players: player.stop()
 		main._start_active_skill_cast(source, skill)
+		harness._expect(cues.count(cue) == 0, "星辰创建前不播放独立飞出声")
+		main._commands.tick_impacts(float(skill.full_resource_result_creation_delay if full else skill.result_creation_delay))
 		var flights: Array = audio._world_players.filter(func(player): return player.playing)
 		audio._process(0.0)
 		harness._expect(cues.count(cue) == 1 and not flights.is_empty(), "星辰创建即播放一次独立飞出声，动作观察不重复启动")

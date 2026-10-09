@@ -274,6 +274,7 @@ func _begin_status_case(main: Node2D) -> Dictionary:
 	var star_skill: Dictionary = CardDB.active_skills_for("aurelionsol")[0].duplicate(true)
 	star_skill["cast_forward"] = Vector2.UP
 	main._start_active_skill_cast(star, star_skill)
+	main._commands.tick_impacts(float(star_skill.result_creation_delay))
 	star.freeze(10)
 	star.apply_knockback(star.position + Vector2.LEFT * 40, 100, 0.4)
 	var targets: Array[Unit] = []

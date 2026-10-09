@@ -154,7 +154,8 @@ func _draw_frontal_skill_effect(effect: Dictionary) -> void:
 		draw_arc(center, length, 0.0, TAU, 72, Color(line_color.r, line_color.g, line_color.b, 0.55), 1.2, true)
 		return
 	if shape in [&"target_circle", &"target_circle_strong", &"star_impact", &"star_impact_strong", &"shockwave"]:
-		preload("res://scripts/presentation/starfall_visual.gd").draw_effect(self, effect)
+		if shape.begins_with("target_circle"):
+			draw_arc(center, length, 0.0, TAU, 96, Color(line_color.r, line_color.g, line_color.b, 0.5), 1.2, true)
 		return
 	if shape == &"fan_shared":
 		# 整体扇形显示技能朝向与最大展开范围；伤害仍由各枚权威弹体碰撞决定。

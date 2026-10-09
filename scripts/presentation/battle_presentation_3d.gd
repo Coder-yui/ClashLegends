@@ -13,6 +13,7 @@ func visual_team(team: int) -> int:
 var projectiles: Node2D
 var _gwen_tristana_effect: Node3D
 var _anivia_effect: Node3D
+var _aurelion_effect: Node3D
 var skills: RefCounted
 var _sion_w_effect: Node3D
 var _locket_effect: Node3D
@@ -35,6 +36,8 @@ func _process(delta: float) -> void:
 		_gwen_tristana_effect.sync_effects(projectiles, _camera)
 	if _sion_w_effect != null and skills != null:
 		_sion_w_effect.sync_effects(skills, _camera, delta)
+	if _aurelion_effect != null and skills != null:
+		_aurelion_effect.sync_effects(skills, _camera, delta)
 	if _anivia_effect != null and skills != null:
 		_anivia_effect.sync_effects(skills, projectiles, _camera)
 	if _locket_effect != null and skills != null:
@@ -105,6 +108,8 @@ func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void
 
 	_gwen_tristana_effect = preload("res://scripts/presentation/gwen_tristana_effect_3d.gd").new()
 	_world_root.add_child(_gwen_tristana_effect)
+	_aurelion_effect = preload("res://scripts/presentation/aurelionsol_effect_3d.gd").new()
+	_world_root.add_child(_aurelion_effect)
 	_anivia_effect = preload("res://scripts/presentation/anivia_effect_3d.gd").new()
 	_world_root.add_child(_anivia_effect)
 	_sion_w_effect = preload("res://scripts/presentation/sion_w_effect_3d.gd").new()

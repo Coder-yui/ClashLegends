@@ -1,0 +1,210 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/AurelionSol.wad.client",
+  "source_entry": "data/characters/aurelionsol/skins/skin0.bin",
+  "source_wad_hash": "7950ff05d527f12c",
+  "source_binary_sha256": "5b86367b33f76fffb06c55d5756c80ff64a1e92a7b062502eb29a8182e713dd2",
+  "system": "Characters/AurelionSol/Skins/Skin0/Particles/AurelionSol_Base_R_Impact",
+  "reader_revision": "c06b5bb1dba458a358628b0fd1ddef3a58a4ba43",
+  "assets": {
+    "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_decal_dissolve.tex": {
+      "source_sha256": "323e87a4c8f1166cc3f474208893233c23f24058a2af2f548f514c6f32bbca71",
+      "output": "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_decal_dissolve.png",
+      "output_sha256": "cdc73535a23f7b5b0594f2a0a2ef5b0f564a419038a24029ba9e85663d052a8f"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_decal.tex": {
+      "source_sha256": "ab60362fe52b53f452a89718bff38f62c27faf3db0a7bea8d0638b397661cebd",
+      "output": "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_decal.png",
+      "output_sha256": "6cbe712c37b071cef9542aad93e14d0a8ad67b9e5246330b5a5a9c27bc6ed03a"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/aurelionsol_generic_noisemulti01.tex": {
+      "source_sha256": "19d1c177b696494c979da9516c33206dc69bfedaed7fd82a72d51f0f06b24f9b",
+      "output": "assets/characters/aurelionsol/skins/base/particles/aurelionsol_generic_noisemulti01.png",
+      "output_sha256": "225b197f9598e40726abc7c414db6f69b5de967eda96e65c66173a2ab5b5c195"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_groundtar.tex": {
+      "source_sha256": "964520c936d67fcc03d705083c0f0c67d0cf0bcda8371ae651eb95559d85386f",
+      "output": "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_groundtar.png",
+      "output_sha256": "090ec9402921ec7543821af6777816aa71899f3a809fdd3baef8d82162aebbd3"
+    },
+    "assets/characters/ziggs/skins/base/particles/lux_skin07_r_distort_rgba_2.tex": {
+      "source_sha256": "28268db10a221e2e82ac7defdf4e5e0aadd70a21a643453dd2043af62bcc79be",
+      "output": "assets/characters/ziggs/skins/base/particles/lux_skin07_r_distort_rgba_2.png",
+      "output_sha256": "ef6c8a8ddface79656006efb753bef81452e181515913eb720829e72c523906d"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/ziggs_base_r_circle_normal.tex": {
+      "source_sha256": "9f7054552b0a1c69ee5e9f3f79d94461a109cf4a790d2e80482fc6d87cd86ca1",
+      "output": "assets/characters/aurelionsol/skins/base/particles/ziggs_base_r_circle_normal.png",
+      "output_sha256": "36954c0e793e62fdf1389587d53883686c9a67eae14e7d4f8de8acdbea69b9be"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/ziggs_base_r_white.tex": {
+      "source_sha256": "ff2137e5ee5e0e0bb23ce5622cb436169c5fe48996e22d1260d64810d8415d6f",
+      "output": "assets/characters/aurelionsol/skins/base/particles/ziggs_base_r_white.png",
+      "output_sha256": "b00326bf37280b35a270b1524c922525bbff44164fb9159baa8ea577cd935abe"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_impact_centernebulacards.scb": {
+      "source_sha256": "158d5bc5a70fae3788ff73370844bdeff990b444e557e3e31f3112a3c370c85d",
+      "output": "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_impact_centernebulacards.mesh.json",
+      "output_sha256": "dd2f2956cf74aa52102189cf6ba770db7f4eeb745b630eab8cb2847ad08b7208"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_impact_nebulaclouds_erosion.tex": {
+      "source_sha256": "df917dda70381e8af362d1e14c38233dd9c44614e37e2feef3fd3bd06668a6b7",
+      "output": "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_impact_nebulaclouds_erosion.png",
+      "output_sha256": "b700d67eded8ae9732bfb75d6b406dffd6072c4ba46bad35c3bccd1974b68eb4"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_impact_nebulaclouds.tex": {
+      "source_sha256": "7d87e35f72132c8fd479a1ef468859a02e20096aaed04b870ab5ee7dd3badd59",
+      "output": "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_impact_nebulaclouds.png",
+      "output_sha256": "a000e43041b8483cfec45233e3b81b662755e83ae045357bbe6011f8206b6dca"
+    },
+    "assets/shared/particles/library/hiteffect/common_color-hold.tex": {
+      "source_sha256": "bc06557b44402fee1498430bd4008df9598085f44b29fea2f02218473674b2f8",
+      "output": "assets/shared/particles/library/hiteffect/common_color-hold.png",
+      "output_sha256": "62ed85b52d6f757f5322176cb24ccfa294cb145ba9f1978bbf6ba479341f45a8"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_impact_centernebulacards_2.scb": {
+      "source_sha256": "7e55b2ea37c34837d0aff5d1cbc595ff6445083844b77976f62a847b1bd451d5",
+      "output": "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_impact_centernebulacards_2.mesh.json",
+      "output_sha256": "9428c3bfab54cb2f58a98877a446df00142651330d585a1f3e0de96861bba590"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_impact_nebulaclouds_nocolor.tex": {
+      "source_sha256": "abde896456a142fd0ca0bd301647575276864a5b74f127e4416526897aa303d0",
+      "output": "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_impact_nebulaclouds_nocolor.png",
+      "output_sha256": "140126be03f617c97ae5f3dd6288a7f695b6131fbfbd62ef1cc42866dbbc0c9f"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_q_fire_noise_bw.tex": {
+      "source_sha256": "dc1ac00e5b1f0e139b40eda16ede3ab6bf52d26b80e61fa035d883500abe9997",
+      "output": "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_q_fire_noise_bw.png",
+      "output_sha256": "d26ded0e8c3c65059436800fa745d2b855371849a4aa473e7150401122e1c088"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/ziggs_base_r_storm_r_dome.tex": {
+      "source_sha256": "db3c5aaff1e08bdf0caa40d13ad52d18152972f2b1dacc934312fc216861064d",
+      "output": "assets/characters/aurelionsol/skins/base/particles/ziggs_base_r_storm_r_dome.png",
+      "output_sha256": "a721f5a094a6a632918cf55fe66c0cf31aefa0e87c681d5b274de821886973d6"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_storm_r_dome.tex": {
+      "source_sha256": "ace34d8e424918ac48902e0135c9062c0fd5472fcb2f38c2507fcaed41e1372e",
+      "output": "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_storm_r_dome.png",
+      "output_sha256": "b48e5e566273a2ca40b77711edd72b1c73e5e53bfa584dd3e94fdb3eda025c06"
+    },
+    "assets/characters/ziggs/skins/base/particles/flame_trail_gradient.tex": {
+      "source_sha256": "92d2b1756e408d048ece263fca23d8839061b9b868b6eeddbbc4b678d86aaa14",
+      "output": "assets/characters/ziggs/skins/base/particles/flame_trail_gradient.png",
+      "output_sha256": "2f2cf0e39bd2010feb78d5cfab2e6ea7ec3dd27016e3591459167c8079cf321c"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_groundtrail_color-bellcurve.tex": {
+      "source_sha256": "e38f618b61b6a7f5da55e91310df9220ebad40028546ebe26ab388b37a18d03d",
+      "output": "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_groundtrail_color-bellcurve.png",
+      "output_sha256": "05d681d151cb0afafc2c9f0efc4ebfa4162b13fd35b87dba28eba1409ad70313"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_cata_sharpedges_gradientmask.tex": {
+      "source_sha256": "5af0ae5372cbdfd7775bebbe3d94b7e0f22abc252f6cce1c4b1a71ecb403ad37",
+      "output": "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_cata_sharpedges_gradientmask.png",
+      "output_sha256": "bda4840cd5508db6e5801e333d1a3c07b9f3fc04b61119897d6216ee3f7e484d"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/common_flare-omnimax.tex": {
+      "source_sha256": "452ff1dac9561752a117ea727cbf9e6e24a535ee92da6818df084e09a1b43f33",
+      "output": "assets/characters/aurelionsol/skins/base/particles/common_flare-omnimax.png",
+      "output_sha256": "8b7c2b4dac48572ed6f96ae4cbe0b6bbe3ae9bfbafd54578fe59e94fc6e1a54f"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_mis_sparkles.tex": {
+      "source_sha256": "d93c7deccf7940b57ba1f456a2dbc295527affba226c487a22d49ad158f8b8b1",
+      "output": "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_mis_sparkles.png",
+      "output_sha256": "3825627598eabfab82254fefd93d1709b3343c3a692533416da63fa08ece8e74"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/aatrox_skin19_emote_smokeerode.tex": {
+      "source_sha256": "d502c1c112180e1886c304bfb0bb4330bbe4159a688799e756f82e830696f548",
+      "output": "assets/characters/aurelionsol/skins/base/particles/aatrox_skin19_emote_smokeerode.png",
+      "output_sha256": "f72989a9299d454d8dc5aff85b24461587b362c1f950a68d841b95ceff3d3827"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_darkglow.tex": {
+      "source_sha256": "bccd91a307063e7d10c77ff08a6d5a516ebda506b31f5104e7ff67e3d89bd1bc",
+      "output": "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_darkglow.png",
+      "output_sha256": "f88558007e2f61a29d321a9dff1ccf6bebeedfe2bc6d4f6d4b16f3a54f0b172b"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_update_windskirt.scb": {
+      "source_sha256": "0aa68a7c091e0c0d6f698a927c9fffb17036638cb10e03065b54af6aaad0cd5b",
+      "output": "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_update_windskirt.mesh.json",
+      "output_sha256": "abebdab016f97817b72a111c75bed4ee632ac559a457f8d03b5f6c54645b282d"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_update_nebulanoise_01.tex": {
+      "source_sha256": "da433618a686449d6f44ea7b4816313760660d5db4d8f6cf83e4fb9820896d66",
+      "output": "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_update_nebulanoise_01.png",
+      "output_sha256": "9792a6e0252aaf313390d0c8d1027085292f82fb94a1f63b88ae829ea651db11"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_star02.tex": {
+      "source_sha256": "715e1a96bab3793c46bf4e079fb6a1caf990c84827d5542b79608dcc13fe550e",
+      "output": "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_star02.png",
+      "output_sha256": "ee808fd3976b0b9efb90fd9ac7f6ace6dd2bc9cbed863fc302ad574f463ffe88"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_p_stars.tex": {
+      "source_sha256": "70d7f94142a127a2ffba7ca89e493f876cd7b6ee1ef7ff0bf8a96386d7123e2f",
+      "output": "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_p_stars.png",
+      "output_sha256": "dc7fae389478ee83e731db2a1049e9f4cf60c95ed5316dc433622ee33328fee7"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_aoe_shimmer_mult.tex": {
+      "source_sha256": "2efb8e6b707babcfac2ca5070a29f04238afea7f191084f6e6a96b366673f756",
+      "output": "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_aoe_shimmer_mult.png",
+      "output_sha256": "9c62b9cc0e275a8d4f5388c05cc693cb8ae8879de5cd4935720d01ed4bc69823"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_impact_novamask.tex": {
+      "source_sha256": "8eab83bc65b8e010e9c5e9c293ba89fab5ff47a20872e334d85206b49bcdf4ec",
+      "output": "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_impact_novamask.png",
+      "output_sha256": "7e744265a276518b6999c6aadaea7a24ddac5724677ca705c5e2f739fd8d378c"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_comet_coremesh.scb": {
+      "source_sha256": "0b5cac8125a6f0c117c0f0e280b2496345b73d7b74fc3fd92a8ebd36aca17578",
+      "output": "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_comet_coremesh.mesh.json",
+      "output_sha256": "9e4b25a984221bf32037d87633b26f302779f6219373ef53c94eb59d816ee84c"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_e_groundcracks_dissolve.tex": {
+      "source_sha256": "b3da157264bc0b20356911c26c40c52c4db5d215e0b4a70f25c81fea98c45098",
+      "output": "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_e_groundcracks_dissolve.png",
+      "output_sha256": "0403f3ad844cc8b66be64b8822f7a2e885439e50c17b6fa40186590cd9c7ce5a"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_cometimpact.tex": {
+      "source_sha256": "50a6b105c642cd3025caa7d22fbd0079f9b55db18c6f7b265ba25332b2436e77",
+      "output": "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_cometimpact.png",
+      "output_sha256": "825d970ec2c4809e5779fa1821df748fcdd7988004250b0ed44b19a3aaebbeb0"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/udyr_base_vgu_awaken_glow.tex": {
+      "source_sha256": "86f854b46438453832b37a304d0bd9c9e656ca74cf196ea9c0f31055f4d3baaa",
+      "output": "assets/characters/aurelionsol/skins/base/particles/udyr_base_vgu_awaken_glow.png",
+      "output_sha256": "16dad7c8da58a86b5a55bc83bcd45dd5704b1779d145f842912a2ec965c8ea5a"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_nebulamesh_lowpoly.scb": {
+      "source_sha256": "59ffb654449d03a6e6f6e667f41357c559fc5c404d8cf58337f7d485b62410f9",
+      "output": "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_nebulamesh_lowpoly.mesh.json",
+      "output_sha256": "41013ca16f010eda4a87f89989ab53278e63abee95a4e7ac265ba41a08954186"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_empq_stars.tex": {
+      "source_sha256": "8b10255c2edfc489fadaab5b91738138f536a033aedbebf3fe33e489841fa96b",
+      "output": "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_empq_stars.png",
+      "output_sha256": "4854da7ea300d556421723f8aa4a21bb930555229c362d6d29727f8466a3274d"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_impact_flatshockwave.scb": {
+      "source_sha256": "9c2739a54f9407a3a1a4f2da4e4122bf3c2a5e578407ad0efdfaf93571836b72",
+      "output": "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_impact_flatshockwave.mesh.json",
+      "output_sha256": "a95818272bdb0b18dc0fd35ced438ab684a4d6cf380fa4cff079ad06fed26a70"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_constemesh.scb": {
+      "source_sha256": "d6580817f5ee0737bcb8cbff77748551cab2202edef8452cd0cc0096a30f14d8",
+      "output": "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_constemesh.mesh.json",
+      "output_sha256": "1570fae473c70af2915c9ec3c89628bf3d8cc7a57b618b24db4f7bb241189069"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_rocks_2x2.tex": {
+      "source_sha256": "698002e24f8158dad3d8481b30833f0a31b9916e1bea5d63fb91398686194d6c",
+      "output": "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_rocks_2x2.png",
+      "output_sha256": "74b457715384e453555b647c33bac263c7b5626de65dc3067d026c54e447834a"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_erosionshapes01.tex": {
+      "source_sha256": "1129e317c149b9675d7561afc1caa58407a3e4b98e7a4924f87c4f3daa3f1bc0",
+      "output": "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_erosionshapes01.png",
+      "output_sha256": "c23ff9e9c0cf546f804c4ebf992e09edcd8395c9de9597b3aca21e32b40a420b"
+    },
+    "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_animeshapes02.tex": {
+      "source_sha256": "a149c1ed40703a944209d1899b6a771c6e76c4984c62fd2060402c08cc1c1c92",
+      "output": "assets/characters/aurelionsol/skins/base/particles/aurelionsol_base_r_animeshapes02.png",
+      "output_sha256": "25e746ced062189825c32c6ca96549fd26218ba2524e310b8498ccb3ef92f443"
+    }
+  }
+}
