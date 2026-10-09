@@ -474,5 +474,12 @@
     "method": "run",
     "scene": "battle",
     "group": "presentation"
+  },
+  {
+    "id": "AzirSuite",
+    "script": "res://tests/suites/cards/azir_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "cards"
   }
 ]

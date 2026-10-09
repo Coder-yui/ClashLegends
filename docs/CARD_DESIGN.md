@@ -271,3 +271,9 @@ frontal可配置damage_by_use，序列长度须等于max_uses，数值均为有�
 `effect_shield`使用正数duration，在StatusInstances中计时；CombatInteraction按一次Delivery共享目标接受/拒绝结果。施法、多段、在途技能与延续区域持有同一轻量收据，作用结束后自然释放；同步调用作用域在返回时恢复，延期状态携带上下文。拒绝后不提交伤害、附带控制、流血或命中收益；友方和attached已有状态不参与消费。已接受持续效果不被后来开启的盾追溯拦截。选择目标不消耗盾，普通血量盾也不替代该资格。
 
 `empowered_attack`主动可配置`cleave_damage / cleave_radius`，将下一次离散近战普攻强化为范围追加伤害；主目标基础与追加量合并，其余目标只受追加量。`heal_ratio`按本次所有真实掉血合计回血，排除护盾吸收和过量伤害。普通攻击无自动周期溅射。表现使用强化攻击序号和cleave:hit事件。
+
+## 参与击杀转化
+
+`assist_conversion_window`为正数命中窗口，`assist_conversion_unit_id`与`assist_conversion_building_id`声明两类生成对象。受击者的AssistConversionState保存值与到期Tick，CombatResolver在同批扣血前登记所有有效正伤害命中，死亡生命周期在释放旧占位后消费一次。来源死亡不撤销窗口；在途普攻保存出手时的定义。普通单位/空军转化士兵，建筑/公主塔转化建筑，水晶排除。转化生成不授予主动资格或塔墟免衰减；MatchResources沿两类引用展开预热资源。
+
+`visual.attack_hit_visual` 声明直接命中后的纯表现（当前 `azir_beam`），仅允许 `projectile_speed=0`。伤害仍由通用普攻命中节点结算；资源通过同卡 `resource_dependencies.effects` 声明。

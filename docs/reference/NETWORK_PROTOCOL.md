@@ -4,7 +4,7 @@
 
 | 契约 | 当前值 |
 | --- | --- |
-| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->103 |
+| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->104 |
 | 顶层快照项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd SNAPSHOT_PACKET_SIZE -->11 |
 | 单位载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd UNIT_PAYLOAD_SIZE -->56 |
 | 塔载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd TOWER_PAYLOAD_SIZE -->7 |
@@ -153,3 +153,7 @@ NetworkPlayback默认100ms，根据时钟RTT/抖动与事件/快照到达时差�
 协议102：天使焰浪由平直梯形扫掠改为弯曲亮弧逐段扫掠；弹体载荷仍为14项，算法变更通过握手版本拒绝旧端。
 
 协议103：瑟提 W 冲击通过可靠 `_rpc_skill_fx` 在伤害结算 Tick 发布 `sett_w_impact` / `sett_w_impact_strong` 固定位置事件，包含当时的位置、锁定方向、身体偏移和范围。客户端不再凭动作时间生成冲击；快照仍为原长度，满豪意身体附着读取既有资源比例。
+
+协议104：新增参与击杀转化。命中窗口仅权威端持有；黄沙士兵与太阳圆盘继续使用既有可靠生成/死亡和快照，传输字段不变。被动圆盘built_on_tower_ruin=false，客户端不自行判断死亡转化。
+
+沙皇直接普攻命中新增可靠缓冲事件 `_rpc_attack_hit_visual`，与权威命中Tick对齐；来源字典附带命中原点和目标描述，断连/清场沿用既有生命周期。音频事件仍为独立不可靠通道。

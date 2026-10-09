@@ -61,6 +61,7 @@ var can_attack := true
 var has_model_art := false
 
 var nav_cells: Array = []
+var assist_conversion := AssistConversionState.new()
 
 var _cooldown := 0.0
 var _lock_windup := 0.0
@@ -258,6 +259,8 @@ func take_damage(amount: float, _from: Node2D = null, _source_team: int = -1, _s
 		return false
 	if BattleNumbers.quantity(amount) > 0:
 		CombatInteraction.record_combat_effect(self, CombatInteraction.effect_context(_from, _source_team, _source_position))
+	if BattleNumbers.quantity(amount) > 0:
+		assist_conversion.record(self, AssistConversionState.source_definition(_from))
 	var was_alive := hp > 0.0
 	var remaining_damage := BattleNumbers.quantity(maxf(amount, 0.0))
 	remaining_damage = shields.absorb(remaining_damage)
@@ -273,6 +276,7 @@ func take_damage(amount: float, _from: Node2D = null, _source_team: int = -1, _s
 			battle_context.notify_tower_hit(self)
 	if was_alive and hp <= 0.0:
 		bleeding.clear()
+		assist_conversion.consume(self)
 		defeated.emit()
 		if battle_context != null and battle_context.damage_batch().committing:
 			battle_context.damage_batch().defer_effect(notify_visual_destroyed)

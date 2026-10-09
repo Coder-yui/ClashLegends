@@ -156,7 +156,7 @@ func can_deploy_at(pos: Vector2, radius: float, is_air: bool = false, footprint:
 	return true
 
 ## 所有正常卡牌部署入口（玩家、客户端请求、AI）共享同一套区域与占位校验。
-func is_card_deploy_position_valid(p_team: int, card_id: String, pos: Vector2, check_formation: bool = true) -> bool:
+func is_card_deploy_position_valid(p_team: int, card_id: String, pos: Vector2, check_formation: bool = true, player_deployment: bool = true) -> bool:
 	if not CardDB.has_card(card_id):
 		return false
 	pos = snap_card_position(card_id, pos, p_team)
@@ -166,7 +166,7 @@ func is_card_deploy_position_valid(p_team: int, card_id: String, pos: Vector2, c
 		var margin := (int(stats.get("deployment_count", 1)) - 1) * float(stats.get("deployment_spacing", 0.0)) * 0.5
 		if pos.x < margin or pos.x > ArenaRules.FIELD_W - margin:
 			return false
-	var deploy_zone: String = String(stats.get("deploy_zone", "own_side"))
+	var deploy_zone: String = String(stats.get("deploy_zone", "own_side")) if player_deployment else "global"
 	var ignore_structures: bool = bool(stats.get("deploy_ignore_structures", false))
 	var footprint: Vector2i = stats.get("footprint_tiles", Vector2i.ONE)
 	var card_type: String = String(stats.get("type", "unit"))
@@ -202,6 +202,8 @@ func is_card_deploy_position_valid(p_team: int, card_id: String, pos: Vector2, c
 		for y in range(first_tile.y, first_tile.y + footprint.y):
 			for x in range(first_tile.x, first_tile.x + footprint.x):
 				var tile := Vector2i(x, y)
+				if tile.x < 0 or tile.x >= ArenaRules.ARENA_COLUMNS or tile.y < 0 or tile.y >= ArenaRules.ARENA_ROWS:
+					return false
 				# 太阳圆盘的 3x3 只要擦到塔墟就被阻挡；唯一例外是建筑中心
 				# 本身对齐该塔墟中心，此时只豁免这一个已毁公主塔。
 				if uses_tower_ruin_foundation:
@@ -225,9 +227,11 @@ func is_card_deploy_position_valid(p_team: int, card_id: String, pos: Vector2, c
 			return can_deploy_at(pos, placement_radius, stats.get("is_air", false), footprint, card_type == "building")
 	return true
 
-func nearest_valid_building_spawn(team: int, card_id: String, requested: Vector2) -> Vector2:
+func nearest_valid_building_spawn(team: int, card_id: String, requested: Vector2, player_deployment: bool = true) -> Vector2:
 	var origin := snap_card_position(card_id, requested, team)
-	if is_card_deploy_position_valid(team, card_id, origin) and anchored_spawn_clear(origin, CardDB.get_unit_stats(card_id)):
+	# 偶数格建筑死亡时原中心在格线上；召唤按真实死亡点比较四周格心，不能先偏向吸附的一侧。
+	var distance_origin := origin if player_deployment else requested
+	if (player_deployment or origin.is_equal_approx(requested)) and is_card_deploy_position_valid(team, card_id, origin, true, player_deployment) and anchored_spawn_clear(origin, CardDB.get_unit_stats(card_id)):
 		return origin
 	var best := Vector2.INF
 	var best_distance := INF
@@ -235,11 +239,20 @@ func nearest_valid_building_spawn(team: int, card_id: String, requested: Vector2
 		for column in ArenaRules.ARENA_COLUMNS:
 			var tile := Vector2i(column, row) if team == 0 else Vector2i(ArenaRules.ARENA_COLUMNS - 1 - column, ArenaRules.ARENA_ROWS - 1 - row)
 			var candidate := snap_card_position(card_id, arena_tile_center(tile), team)
-			var distance := candidate.distance_squared_to(origin)
-			if distance < best_distance and is_card_deploy_position_valid(team, card_id, candidate) and anchored_spawn_clear(candidate, CardDB.get_unit_stats(card_id)):
+			var distance := candidate.distance_squared_to(distance_origin)
+			if distance < best_distance and is_card_deploy_position_valid(team, card_id, candidate, true, player_deployment) and anchored_spawn_clear(candidate, CardDB.get_unit_stats(card_id)):
 				best = candidate
 				best_distance = distance
 	return best
+
+## 召唤不受手牌阵营区域限制：建筑按完整网格占地，兵种按连续地面几何。
+## 合法原点保留，非法原点找最近可行点；无解返回INF，由生成入口拒绝非法落地。
+func resolve_summoned_spawn(team: int, card_id: String, stats: Dictionary, desired: Vector2) -> Vector2:
+	if bool(stats.get("is_building", false)):
+		return nearest_valid_building_spawn(team, card_id, desired, false)
+	var radius := float(stats.get("radius", 14.0))
+	var air := bool(stats.get("is_air", false))
+	return UnitLandingQuery.find_spawn_position(desired, radius, air, team, combatants.call(), UnitLandingQuery._regions(radius, air))
 
 ## 碰撞存在不等于不可推动；冰冻和普通军队不在此过滤。
 func anchored_spawn_clear(pos: Vector2, stats: Dictionary) -> bool:

@@ -1,0 +1,32 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Azir.wad.client",
+  "source_binary_sha256": "a4bf1d46133bc6807e7f86756dfbc6373c5b4a8a2ef28490ae474d07b922238c",
+  "system": "Characters/Azir/Skins/Skin0/Particles/Azir_base_BA2_cas",
+  "assets": {
+    "assets/characters/azir/skins/base/particles/azir_base_ba_twirl.scb": {
+      "source_sha256": "fe86b12ae4665a0e6783604fcd7f873971c7d444d4f710bfe563ad5d2fac5182",
+      "output": "assets/characters/azir/skins/base/particles/azir_base_ba_twirl.mesh.json",
+      "output_sha256": "680e3784db9c1c79cee26130280cb41b235f5c66f5eab1bad17c2f07fb3f3284"
+    },
+    "assets/characters/azir/skins/base/particles/common_color-hold.tex": {
+      "source_sha256": "bc06557b44402fee1498430bd4008df9598085f44b29fea2f02218473674b2f8",
+      "output": "assets/characters/azir/skins/base/particles/common_color-hold.png",
+      "output_sha256": "62ed85b52d6f757f5322176cb24ccfa294cb145ba9f1978bbf6ba479341f45a8"
+    },
+    "assets/characters/azir/skins/base/particles/azir_base_ba_twirl.tex": {
+      "source_sha256": "043d26d4b020ce47c225fd61b38d1c594679146ef2a237d0c64f8621a478dba5",
+      "output": "assets/characters/azir/skins/base/particles/azir_base_ba_twirl.png",
+      "output_sha256": "ae3f3160ea702cee2ad582268c7389a515fa94bd42f5e525bc8638a1b574d8a5"
+    },
+    "assets/characters/azir/skins/base/particles/common_color-rampdown.tex": {
+      "source_sha256": "3fac764e02b2cb8dc91ff01feb7401681e8dffd631f9661a3452d210eea43220",
+      "output": "assets/characters/azir/skins/base/particles/common_color-rampdown.png",
+      "output_sha256": "9e89131a3255bff92c4488d6c42d9461d416efadf75ca9909b549ed05bdefb50"
+    },
+    "assets/characters/azir/skins/base/particles/azir_base_z_solarflare.tex": {
+      "source_sha256": "6c122ad45dd5a5f5661064106dfb047c097d055c9753874f5610a32d4b0626ec",
+      "output": "assets/characters/azir/skins/base/particles/azir_base_z_solarflare.png",
+      "output_sha256": "24a6b70f19d99b1e83d1876c409c54b6ac8317814dbe3f84b18418ffb60349ce"
+    }
+  }
+}

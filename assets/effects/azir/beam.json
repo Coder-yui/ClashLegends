@@ -1,0 +1,43 @@
+{
+  "system": "Characters/Azir/Skins/Skin0/Particles/Azir_Base_BA_Beam",
+  "duration": 0.25,
+  "emitters": [
+    {
+      "name": "beamflow",
+      "single": true,
+      "bind_weight": 1.0,
+      "lifetime": 0.25,
+      "width": 80.0,
+      "tiling_length": 200.0,
+      "tex_div": [
+        3,
+        2
+      ],
+      "scroll": [
+        2.0,
+        0.0
+      ],
+      "random_start_frame": true,
+      "random_birth_uv_x": true,
+      "alpha_ref": 0.23529411764705882,
+      "color_times": [
+        0.5,
+        1.0
+      ],
+      "color_alpha": [
+        1.0,
+        0.0
+      ],
+      "scale_times": [
+        0.6,
+        0.8
+      ],
+      "scale_x": [
+        1.0,
+        0.75
+      ],
+      "texture": "res://assets/effects/azir/azir_base_ba_beam_1x3.png"
+    }
+  ],
+  "frames": []
+}

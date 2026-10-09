@@ -14,6 +14,7 @@ var _client_projectiles: Dictionary = {}
 var impact_effects: Array[Dictionary] = []
 var _next_id := 1
 var _context: BattleContext
+var _hit_visuals: Node2D
 var _native_visuals: Node2D
 var _missile_visuals: Node2D
 var _weapon_visuals: Node2D
@@ -23,6 +24,9 @@ var _visual_origin_cache: Dictionary = {}
 func setup(context: BattleContext) -> void:
 	_context = context
 	if not context.has_presentation(): return
+	_hit_visuals = load("res://scripts/presentation/attack_hit_visuals.gd").new()
+	add_child(_hit_visuals)
+	_hit_visuals.setup(self)
 	_native_visuals = load("res://scripts/presentation/kayle_projectile_visuals.gd").new()
 	add_child(_native_visuals)
 	_native_visuals.setup(self)
@@ -58,6 +62,7 @@ func clear_client() -> void:
 	_client_projectiles.clear()
 	_visual_origin_cache.clear()
 	if is_instance_valid(_native_visuals): _native_visuals.clear()
+	if is_instance_valid(_hit_visuals): _hit_visuals.clear()
 
 func launch(attacker: Node2D, target: Node2D, amount: float, projectile_speed: float, splash_radius: float, knockback: float, projectile_color: Color, effects: Dictionary = {}) -> bool:
 	if target == null or not is_instance_valid(target) or target.hp <= 0.0:
@@ -72,6 +77,12 @@ func launch(attacker: Node2D, target: Node2D, amount: float, projectile_speed: f
 	if (attacker is Unit or attacker is Tower) and not effects.has("presentation_source"):
 		effects["presentation_source"] = PresentationConfig.attack_source(attacker)
 	var source_form_index := (attacker as Unit).form_index if attacker is Unit else -1
+	if attacker is Unit and CardDB.get_card(attacker.card_id).has("attack_hit_visual"):
+		var visual_source: Dictionary = effects.presentation_source.duplicate(true)
+		visual_source["hit_origin"] = attacker.global_position
+		visual_source["hit_target"] = {"id": target.net_id, "local_id": target.get_instance_id(), "air": target.is_air} if target is Unit else {"tower_position": target.global_position}
+		visual_source["hit_target_offset"] = Vector2(0,-30-CardDB.AIR_VISUAL_ELEVATION*40.0) if target is Unit and target.is_air else Vector2(0,-30)
+		effects["presentation_source"] = visual_source
 	var first_strike := bool(effects.get("first_strike", false))
 	if attacker is Unit:
 		_context.notify_unit_audio_event(attacker as Unit, &"first_strike:missile_cast" if first_strike else &"attack_missile_cast", attacker.global_position)
@@ -443,6 +454,7 @@ func tick_visuals(delta: float) -> void:
 	if is_instance_valid(_weapon_visuals): _weapon_visuals.queue_redraw()
 	if is_instance_valid(_missile_visuals): _missile_visuals.queue_redraw()
 	if is_instance_valid(_native_visuals): _native_visuals.advance(delta)
+	if is_instance_valid(_hit_visuals): _hit_visuals.advance(delta)
 	var visible := _client_projectiles if _context != null and _context.is_net_client() else projectiles
 	for id in _visual_origin_cache.keys():
 		if not visible.has(id): _visual_origin_cache.erase(id)

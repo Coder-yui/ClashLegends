@@ -1,0 +1,17 @@
+{
+  "model_source": "ClashLegends-开发素材库/03-制作中/沙漠皇帝/沙漠皇帝.glb",
+  "files": [
+    {
+      "path": "assets/units/azir/source/azir.glb",
+      "sha256": "1137b047e27759f1292babecf7190471c827375ddc01e07341a89f33c0610f73"
+    },
+    {
+      "path": "assets/cards/azir_loading.jpg",
+      "sha256": "bb8e56775651991278fc2cb67e9f45bba729262d80852c802a0e8c8fbf7a1f3e"
+    },
+    {
+      "path": "assets/skills/azir_w.png",
+      "sha256": "ac7786b5e0d387b0342e60b81576dfbe44679d44feeb8fc67a1450b87922e7bf"
+    }
+  ]
+}

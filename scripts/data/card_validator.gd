@@ -92,6 +92,11 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 	_validate_structure_haste(card_id, stats, errors)
 	_validate_team_attack_boost(card_id, stats, errors)
 	_validate_periodic_summons(card_id, stats, errors)
+	if stats.has("assist_conversion_window") or stats.has("assist_conversion_unit_id") or stats.has("assist_conversion_building_id"):
+		if float(stats.get("assist_conversion_window", 0.0)) <= 0.0:
+			errors.append("%s.assist_conversion_window: 必须为正数" % card_id)
+		for field in ["assist_conversion_unit_id", "assist_conversion_building_id"]:
+			if String(stats.get(field, "")).is_empty(): errors.append("%s.%s: 不能为空" % [card_id, field])
 	_validate_attack_wave(card_id, stats, errors)
 	var card_type := StringName(stats.get("type", ""))
 	if card_type not in CARD_TYPES:
@@ -461,6 +466,8 @@ static func _validate_projectile(label: String, stats: Dictionary, errors: Packe
 	var speed := float(stats.get("projectile_speed", 0.0))
 	if speed < 0.0:
 		errors.append("%s.projectile_speed: 必须 >= 0" % label)
+	if stats.has("attack_hit_visual") and (String(stats.attack_hit_visual) != "azir_beam" or speed > 0.0):
+		errors.append("%s.attack_hit_visual: 仅支持直接命中的 azir_beam 表现" % label)
 	if stats.has("active_buff_projectile_visual"):
 		if speed <= 0.0 or not (stats.active_buff_projectile_visual is String or stats.active_buff_projectile_visual is StringName) or StringName(stats.active_buff_projectile_visual) not in PROJECTILE_VISUALS + [&"baron_siege", &"baron_ranged"]:
 			errors.append("%s.active_buff_projectile_visual: 需要远程弹体及已实现的弹体外观" % label)
@@ -531,7 +538,13 @@ static func _validate_references(card_id: String, stats: Dictionary, cards: Dict
 			errors.append("%s.death_spawn_spread: 需要死亡召唤单位与正数数量" % card_id)
 		elif cards.has(summon_id) and bool(cards[summon_id].get("is_building", false)):
 			errors.append("%s.death_spawn_spread: 召唤建筑不能散开移动" % card_id)
-	for field in [&"growth_ranged_id", &"growth_melee_id", &"deployment_upgrade_id", &"spawn_id", &"death_spawn_id", &"death_replacement_id", &"timed_revival_id", &"rush_spawn_id"]:
+	for conversion_field in ["assist_conversion_unit_id", "assist_conversion_building_id"]:
+		var converted_id := String(stats.get(conversion_field, ""))
+		if not converted_id.is_empty() and cards.has(converted_id):
+			var expected_type := "building" if conversion_field.ends_with("building_id") else "unit"
+			if String(cards[converted_id].get("type", "")) != expected_type:
+				errors.append("%s.%s: 生成对象类型必须为%s" % [card_id, conversion_field, expected_type])
+	for field in [&"assist_conversion_unit_id", &"assist_conversion_building_id", &"growth_ranged_id", &"growth_melee_id", &"deployment_upgrade_id", &"spawn_id", &"death_spawn_id", &"death_replacement_id", &"timed_revival_id", &"rush_spawn_id"]:
 		var referenced_id := String(stats.get(field, ""))
 		if not referenced_id.is_empty() and not _unit_reference_exists(referenced_id, cards):
 			errors.append("%s.%s: 引用了不存在或不可生成的单位 %s" % [card_id, field, referenced_id])

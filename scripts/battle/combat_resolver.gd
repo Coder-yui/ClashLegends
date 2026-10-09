@@ -123,7 +123,7 @@ func defer_death(unit: Unit, trigger: bool) -> void:
 
 func submit_damage(target: Node2D, amount: float, source: Node2D, team: int, position: Vector2, attached: bool = false) -> Dictionary:
 	var accepted: bool = is_instance_valid(target) and not target.is_queued_for_deletion() and target.hp > 0.0 and CombatInteraction.allows(target, source, team, position, attached)
-	var result := {"accepted": accepted, "landed": false, "damage": BattleNumbers.quantity(amount), "health_lost": 0.0, "shield_absorbed": 0.0, "overkill": 0.0}
+	var result := {"accepted": accepted, "landed": false, "damage": BattleNumbers.quantity(amount), "health_lost": 0.0, "shield_absorbed": 0.0, "overkill": 0.0, "assist_conversion": AssistConversionState.source_definition(source)}
 	var blocked := accepted and BattleNumbers.quantity(amount) > 0 and CombatInteraction.blocks_effect(target, CombatInteraction.effect_context(source, team, position, attached))
 	result["blocked"] = blocked
 	if accepted:
@@ -155,6 +155,10 @@ func commit_batch() -> void:
 	for target in groups:
 		var total := 0.0
 		for hit in groups[target]: total += float(hit.result.damage)
+		# 本批所有有效参与者先登记，再扣血，避免同刻最后一刀或遍历顺序漏记。
+		for hit in groups[target]:
+			if float(hit.result.damage) > 0.0:
+				target.assist_conversion.record(target, hit.result.get("assist_conversion", {}))
 		var before_hp := float(target.hp)
 		var before_shield := float(target.shield_hp)
 		for hit in groups[target]:

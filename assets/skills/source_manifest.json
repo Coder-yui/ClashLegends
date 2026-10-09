@@ -621,5 +621,14 @@
     "source_path": "assets/characters/leblanc/hud/icons2d/leblancr.dds",
     "source_sha256": "541a80207c66bab29d8e46125b08e2bf5466ee844a5843423327ce212a6cb94c",
     "sha256": "8e45f7636e12043bb14fba01b1d8c45b5400806fc5f036fbe2bfb091ef6a9ddd"
+  },
+  {
+    "card": "azir",
+    "skill_index": 0,
+    "path": "res://assets/skills/azir_w.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Azir.wad.client",
+    "source_path": "assets/characters/azir/hud/icons2d/azir_w.dds",
+    "source_sha256": "c7c8d95704644ccbae34cb2e4238b66a653d7a2f774c282ba3ec248d3a602d40",
+    "sha256": "ac7786b5e0d387b0342e60b81576dfbe44679d44feeb8fc67a1450b87922e7bf"
   }
 ]

@@ -258,6 +258,7 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 	_configure_looping_animations()
 	if is_instance_valid(_projectile_anchor): _projectile_anchor.free()
 	_projectile_anchor = preload("res://scripts/presentation/projectile_model_anchor.gd").create(_model_root)
+	_source.set_meta("projectile_model_anchor", weakref(_projectile_anchor))
 	_source.set_meta("continuous_beam_native", _model_root.has_method("advance_continuous_attack_visual"))
 	_source.has_model_deployment_effect = _model_root.has_method("advance_deployment_visual")
 	_recreate_team_ring()

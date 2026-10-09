@@ -30,8 +30,12 @@
 
 - [模型与动画](animations/shurima_guard.md)
 - [声音与试听](audio/shurima_guard.md)
-- [护盾表现](effects/shurima_guard.md)
+- [出生、护盾与回复表现](effects/shurima_guard.md)
 
 [← 返回总索引](README.md)
 
 **技能图标：**黄沙庇护使用沙漠皇帝 E 原版图标。来源见[技能图标清单](../../assets/skills/source_manifest.json)。
+
+## 沙漠皇帝关联
+
+[沙漠皇帝](azir.md)可通过参与击杀召唤[黄沙士兵](sand_soldier.md)与太阳圆盘。被动生成的圆盘即使在敌方塔墟中心也保持自然衰减，不继承主动技能资格。

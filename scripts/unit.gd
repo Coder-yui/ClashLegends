@@ -298,6 +298,7 @@ var _timed_revival_left := 0.0
 var visual_spawn_transition: StringName = &""
 var _skip_death_visual := false
 var nav_cells: Array = []
+var assist_conversion := AssistConversionState.new()
 
 var _target: Node2D = null
 var _attacking := false
@@ -2695,6 +2696,8 @@ func take_damage(amount: float, from: Node2D = null, source_team: int = -1, sour
 	if BattleNumbers.quantity(amount) > 0 and (battle_context == null or not battle_context.damage_batch().committing) and CombatInteraction.blocks_effect(self, CombatInteraction.effect_context(from, source_team, source_position, attached)): return false
 	if BattleNumbers.quantity(amount) > 0:
 		CombatInteraction.record_combat_effect(self, CombatInteraction.effect_context(from, source_team, source_position))
+	if BattleNumbers.quantity(amount) > 0:
+		assist_conversion.record(self, AssistConversionState.source_definition(from))
 	var remaining_damage := BattleNumbers.quantity(maxf(amount, 0.0) * (1.0 - buffs.strongest(&"damage_reduction", &"reduction", 0.0)))
 	remaining_damage = shields.absorb(remaining_damage)
 	if not shields.broken_effects.is_empty() and battle_context != null:
@@ -2790,6 +2793,7 @@ func _die(trigger_death_effect: bool = false) -> void:
 		if battle_context != null:
 			battle_context.unblock_nav_cells(nav_cells)
 		nav_cells = []
+	assist_conversion.consume(self)
 	if has_death_replacement:
 		death_replacement_charges -= 1
 		_spawn_death_replacement()

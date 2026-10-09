@@ -1,0 +1,32 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Azir.wad.client",
+  "definition_path": "data/characters/azir/skins/skin0.bin",
+  "definition_sha256": "a4bf1d46133bc6807e7f86756dfbc6373c5b4a8a2ef28490ae474d07b922238c",
+  "system": "Characters/Azir/Skins/Skin0/Particles/Azir_Base_BA_Beam",
+  "emitter_count": 1,
+  "source_texture_path": "assets/characters/azir/skins/base/particles/azir_base_ba_beam_1x3.tex",
+  "source_texture_sha256": "a205330605ee85e916c2065851509efdfc76c60e169c1c0ece49d51aca7c703b",
+  "output_sha256": "3b12b19344feaa5b5d62972f1d269d556861d20af0ff03d02a743f0a5962a6c9",
+  "replay": "single beamflow emitter, native 0.25 second UV/atlas/color/scale/alphaRef curves; hit event weapon-to-target beam; no projectile or authority from VFX",
+  "attack_timing": {
+    "definition": "data/characters/azir/azir.bin",
+    "sha256": "db907ab8863832bfe2fc8ec0d5846073a9abd2c0654059dd4f22a0b144ef8e85",
+    "attack_total_time": 1.6,
+    "attack_cast_time": 0.25,
+    "w_cast_time": 0.25
+  },
+  "animation_events": {
+    "definition": "data/characters/azir/animations/skin0.bin",
+    "sha256": "027bdf9eeda0d8b30cf4b3c6a22f6bee40f9848cf1a906b0c5eeafa74980cbbb",
+    "attack1": {
+      "frame": 1,
+      "bone": "weapon",
+      "effect": "Azir_BA_cas"
+    },
+    "attack2": {
+      "frame": 1,
+      "bone": "weapon",
+      "effect": "Azir_BA2_cas"
+    }
+  }
+}

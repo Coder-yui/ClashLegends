@@ -1,0 +1,42 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Azir.wad.client",
+  "source_binary_sha256": "a4bf1d46133bc6807e7f86756dfbc6373c5b4a8a2ef28490ae474d07b922238c",
+  "system": "Characters/Azir/Skins/Skin0/Particles/Azir_base_BA_tar",
+  "assets": {
+    "assets/characters/azir/skins/base/particles/azir_base_ba_yellow_ray_rgba.tex": {
+      "source_sha256": "a62bcbe3599624b0abd33b6f81edfba50a58df843449e64b4eb9a99e3198b89c",
+      "output": "assets/characters/azir/skins/base/particles/azir_base_ba_yellow_ray_rgba.png",
+      "output_sha256": "a4cbad1a3ac9147ebac0e77b4553c519d72c18ff0094636a1da2101c6d0c3729"
+    },
+    "assets/characters/azir/skins/base/particles/azir_base_ba_yellow_ray.tex": {
+      "source_sha256": "1001e9e336468c34cde1671c0710b9ed08185b4acb2092be419c57ea728be3d0",
+      "output": "assets/characters/azir/skins/base/particles/azir_base_ba_yellow_ray.png",
+      "output_sha256": "f4c6964a3f0626f71c6b003f41f5b02303f716b5de8f00dfabfdfc7d1282530b"
+    },
+    "assets/characters/azir/skins/base/particles/azir_base_ba_tar_2x2.tex": {
+      "source_sha256": "226c58498664429fc3964dfd63bd267c160d91600c3efa8a5990d86bd247bf4d",
+      "output": "assets/characters/azir/skins/base/particles/azir_base_ba_tar_2x2.png",
+      "output_sha256": "3a1aeb0c9056b7400a0b9fff92f7faee4c95b3b554e2449a39fda6dacdcc00d9"
+    },
+    "assets/characters/azir/skins/base/particles/azir_base_ba_hit_rgb.tex": {
+      "source_sha256": "7979860d955eb8af8e3581d8d06c5b4cec8c15b7f88e8841d7a3e87175aeb964",
+      "output": "assets/characters/azir/skins/base/particles/azir_base_ba_hit_rgb.png",
+      "output_sha256": "b6beefb0fd82c7d2913396faa3db4b5050bf5cc79f59e10235d6266612126a55"
+    },
+    "assets/characters/azir/skins/base/particles/azir_base_ba_hit.tex": {
+      "source_sha256": "525f87e55eec96a19e590f6fbb9e48efc979163f941ba5cfe3db5b8f26b87e3f",
+      "output": "assets/characters/azir/skins/base/particles/azir_base_ba_hit.png",
+      "output_sha256": "231098195a19d3642dbe12e98a523113aaa798a9470a278c80a9e31ecf30d9ba"
+    },
+    "assets/characters/azir/skins/base/particles/common_color-rampdown.tex": {
+      "source_sha256": "3fac764e02b2cb8dc91ff01feb7401681e8dffd631f9661a3452d210eea43220",
+      "output": "assets/characters/azir/skins/base/particles/common_color-rampdown.png",
+      "output_sha256": "9e89131a3255bff92c4488d6c42d9461d416efadf75ca9909b549ed05bdefb50"
+    },
+    "assets/characters/azir/skins/base/particles/azir_base_z_solarflare.tex": {
+      "source_sha256": "6c122ad45dd5a5f5661064106dfb047c097d055c9753874f5610a32d4b0626ec",
+      "output": "assets/characters/azir/skins/base/particles/azir_base_z_solarflare.png",
+      "output_sha256": "24a6b70f19d99b1e83d1876c409c54b6ac8317814dbe3f84b18418ffb60349ce"
+    }
+  }
+}

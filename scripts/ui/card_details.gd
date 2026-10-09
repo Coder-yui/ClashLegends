@@ -223,6 +223,10 @@ static func passives(stats: Dictionary) -> Array[Dictionary]:
 				CardDB.size_tier_name(StringName(transformed.get("size_tier", ""))),
 			],
 		})
+	if float(stats.get("assist_conversion_window", 0.0)) > 0.0:
+		var unit_name := String(CardDB.get_unit_stats(String(stats.assist_conversion_unit_id)).get("name", "士兵"))
+		var building_name := String(CardDB.get_unit_stats(String(stats.assist_conversion_building_id)).get("name", "建筑"))
+		result.append({"name": "恕瑞玛传承", "description": "真实命中后%s秒内死亡的敌方单位在原地生成%s，敌方建筑和防御塔生成%s；水晶除外。同一死者只转化一次，来源死亡不撤销窗口。召唤圆盘在敌方塔墟上仍衰减生命，不继承主动资格。" % [format_number(float(stats.assist_conversion_window)), unit_name, building_name]})
 	if stats.has("attack_pattern"):
 		var combo_damage := float(stats.get("damage", 0.0))
 		var combo_multipliers: Array = stats.get("attack_damage_multipliers", [])

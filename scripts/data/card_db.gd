@@ -4,6 +4,8 @@ extends "res://scripts/data/card_schema.gd"
 const DEFINITION_COMPILER = preload("res://scripts/data/card_definition_compiler.gd")
 const VALIDATOR = preload("res://scripts/data/card_validator.gd")
 const DEFINITIONS = [
+	preload("res://scripts/data/cards/azir.gd"),
+	preload("res://scripts/data/cards/sand_soldier.gd"),
 	preload("res://scripts/data/cards/explosive_cask.gd"),
 	preload("res://scripts/data/cards/nocturne.gd"),
 	preload("res://scripts/data/cards/jinx.gd"),

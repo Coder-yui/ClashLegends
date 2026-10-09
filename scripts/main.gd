@@ -706,6 +706,7 @@ const BUFFERED_BATTLE_EVENTS := {
 	&"_rpc_action_cancelled": true,
 	&"_rpc_active_skill_used": true,
 	&"_rpc_attack_audio_hit": true,
+	&"_rpc_attack_hit_visual": true,
 	&"_rpc_card_event": true,
 	&"_rpc_card_pre_deploy_started": true,
 	&"_rpc_corrosion_fx": true,
@@ -1576,9 +1577,12 @@ func spawn_summoned(p_team: int, card_id: String, pos: Vector2, deploy_time_over
 	if stats.is_empty():
 		push_error("尝试生成不存在的召唤单位：%s" % card_id)
 		return null
-	if not stats.get("is_air", false):
-		pos = _nearest_valid_ground_spawn(pos, stats.get("radius", 14.0), p_team)
-	return _spawn_unit(UnitSpawnRequest.new(p_team, card_id, pos, {"deploy_time_override": deploy_time_override, "visual_transition": visual_transition, "death_replacement_charges_override": death_replacement_charges_override}))
+	var resolved := _deployment_rules.resolve_summoned_spawn(p_team, card_id, stats, pos)
+	if not resolved.is_finite():
+		push_warning("召唤物没有合法出生点：%s team=%d pos=%s" % [card_id, p_team, pos])
+		return null
+	# 已检查地形/完整建筑占地及凝滞；不再进入手牌区域修正，也不授予塔墟免衰减。
+	return _spawn_unit(UnitSpawnRequest.new(p_team, card_id, resolved, {"position_resolved": true, "deploy_time_override": deploy_time_override, "visual_transition": visual_transition, "death_replacement_charges_override": death_replacement_charges_override}))
 
 func _nearest_valid_ground_spawn(desired: Vector2, radius: float, p_team: int) -> Vector2:
 	if is_ground_position_walkable(desired, radius):
@@ -1795,6 +1799,19 @@ func _notify_attack_presentation(source: Dictionary, position: Vector2, first_st
 		_audio_manager.play_attack_source(source, position, first_strike)
 	if mode == "server":
 		_broadcast(_rpc_attack_audio_hit, [_session.session_id, source, position, first_strike])
+	if source.has("hit_origin"):
+		_play_attack_hit_visual(source, position)
+		if mode == "server":
+			_broadcast(_rpc_attack_hit_visual, [_session.session_id, source, position])
+
+func _play_attack_hit_visual(source: Dictionary, position: Vector2) -> void:
+	if has_presentation() and is_instance_valid(_projectile_system._hit_visuals):
+		_projectile_system._hit_visuals.play_hit(source, position, _battle_presentation._world_root, _battle_presentation._camera)
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_attack_hit_visual(epoch: String, source: Dictionary, position: Vector2) -> void:
+	if mode != "client" or game_over or not _session.accepts(1, epoch, MatchSession.Phase.RUNNING): return
+	_play_attack_hit_visual(source, position)
 
 ## 一次范围脉冲即使命中多个目标也只播放一次；空挥/免疫不产生命中声。
 func _on_projectile_launch_audio_started(id: int, source: Dictionary, position: Vector2) -> void:

@@ -2,7 +2,7 @@
 
 [返回单位索引](../units/README.md)
 
-更新于2026-10-08。当前覆盖全部59项CardDB定义、63篇卡牌/形态正文及4篇系统对象正文。数量包含不可组卡的形态和召唤物，不等于可选卡池数量。
+更新于2026-10-09。当前覆盖全部61项CardDB定义、65篇卡牌/形态正文及4篇系统对象正文。数量包含不可组卡的形态和召唤物，不等于可选卡池数量。
 
 本页维护注册定义、玩法正文和素材入口之间的对应关系。修改卡牌时，对照编译定义及下列消费者核对数值、条件与时序；编队采用实际成员定义，覆盖形态采用基础与transformed_stats合并值，召唤部署采用生成入口的覆盖值。本页收录不代表本次逐卡重新运行、目视或试听通过。
 
@@ -110,3 +110,6 @@
 机制回归、联网与实际渲染/试听的范围和命令见[测试手册](../../tests/README.md)。素材配置、实际触发、主观验收分别记录；历史通过次数只证明当时工作区。尚未实现的通用能力以[实现现状](../status/IMPLEMENTATION.md)为准。
 
 爆破酒桶：见[玩法](../units/explosive_cask.md)、[动画](../units/animations/explosive_cask.md)、[音频](../units/audio/explosive_cask.md)及[特效](../units/effects/explosive_cask.md)。
+
+| `azir` [沙漠皇帝](../units/azir.md) | [动画](../units/animations/azir.md) | [音频](../units/audio/azir.md) |
+| `sand_soldier` [黄沙士兵](../units/sand_soldier.md) | [动画](../units/animations/sand_soldier.md) | [音频](../units/audio/sand_soldier.md) |
