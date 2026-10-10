@@ -19,7 +19,7 @@
 | 强制位移与落点收尾 | Unit.apply_forced_displacement、KnockbackState、MovementSystem、UnitLandingQuery | [强制位移](HARD_CONTROL.md#通用强制位移已实现)；途中无碰撞、保速两阶段落点修正，六虫/八鱼共用；普通击退仍防穿透 |
 | 来源条件保护 | CombatInteraction、TargetProtectionState | [格温](../units/gwen.md)固定圣霭；按来源判断，不是全局targetable；旧追踪失效不恢复 |
 | 追踪及直线弹体 | ProjectileSystem | [弹体规则](../CARD_DESIGN.md#弹体失效与独立结果)；主目标失效即销毁追踪弹体，无主命中则无依附溅射 |
-| 护盾与收益 | ShieldState、CombatResolver | [增益](BUFFS.md)；独立盾层、实际治疗后过量转盾；赛恩旧爆炸盾和黄沙旧恢复盾到期为凝滞特例 |
+| 护盾与收益 | ShieldState、CombatResolver | [增益](BUFFS.md)；独立盾层、实际治疗后过量转盾；赛恩爆炸盾走通用准入与批次入口；既有爆炸盾和黄沙恢复盾到期为凝滞特例 |
 | 形态与致死生命周期 | Unit、DeathFormState、自然生命周期阶段 | [剑魔](../units/aatrox_ultimate.md)、[纳尔](../units/gnar_small.md)、[赛恩](../units/sion.md)、[冰鸟蛋](../units/anivia_egg.md)；形态基础属性不经普通Buff抑制 |
 | 建筑自然寿命与死亡召唤 | Unit、自然生命周期阶段、CommandSchedule | 限时建筑持续衰血；[墓碑](../units/tombstone.md)被击杀或自然死亡均召唤两只雾行者，新生对象不参与同Tick已锁定的行动名单 |
 | 流血与血怒 | BleedState、StatusInstances、ActiveSkillRoster | [德莱厄斯](../units/darius.md)；来源独立层数及余量，凝滞跳过伤害且不补发 |
@@ -64,3 +64,5 @@ Unit读取rage_crit_multiplier，仅支持两点资源的离散近战单位；�
 金克丝：`toggle_form`沿用双形态；`structure_haste`为20Hz建筑助攻增益，命中过的建筑在3秒内伤害致死、自然衰血归零或到期退出均触发（普通单位不触发），状态抑制沿通用规则，再次触发叠加每层30%攻速并刷新全部层数6秒，移速不叠加而重新衰减；客户端只读布尔窗口、剩余时间/层数和有效倍率。见[金克丝](../units/jinx.md)，专项JinxSuite。
 
 [爆破酒桶](../units/explosive_cask.md)复用在途法术调度，抵达后批量伤害与从爆心径向击退；强化仅增伤。建筑不位移，护盾不阻止击退；通过CombatResolver命中回执与位移顺序统一提交。客户端沿用可靠飞行/抵达事件与位置快照，不新增网络载荷。
+
+Unit 在致死入口固定 DeathOutcome，击杀资源/形态刷新、处决重置与参与转化读取真正死亡结果；实体死亡表现信号保持原职责。替身、孵化、亡语狂暴终结不发击杀收益，赛恩本体死亡发放后继续亡语流程。
