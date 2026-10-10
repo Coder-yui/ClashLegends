@@ -102,6 +102,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_h._expect(is_equal_approx(timed.active_speed_multiplier, 1.0), "开启加速1秒后还原")
 	timed.sim_tick(0.05)
 	_h._expect(is_equal_approx(timed.form_lifetime_left, 4.95), "动画结束下一模拟步开始5秒倒计时")
+	target.take_damage(99999)
 	timed.on_enemy_killed(target)
 	_h._expect(is_equal_approx(timed.form_lifetime_left, 5.0) and is_equal_approx(timed.active_speed_multiplier, 1.3), "击杀同时刷新5秒持续及30%移速")
 	_check_passive_windup()
@@ -133,7 +134,7 @@ func _check_audio_revision() -> void:
 			audio._process(0.0)
 			_h._expect(cues.count(&"transform_active:start") == 1, "大灭首次启动音只触发一次")
 			var victim := _unit("garen", 1)
-			victim.hp = 0
+			victim.take_damage(99999)
 			unit.form_lifetime_left = 1.0
 			unit.on_enemy_killed(victim)
 			_h._expect(cues.count(&"form:refresh") == 1 and unit.form_lifetime_left == 5.0, "技能真实刷新再次派发音频")
@@ -288,6 +289,7 @@ func _check_passive_windup() -> void:
 				if hits == 6: break
 			_h._expect(hits == 6, "双形态和攻速场景完成连续六次攻击")
 			if form == 1:
+				target.take_damage(99999)
 				source.on_enemy_killed(target)
 				_h._expect(is_equal_approx(source._next_attack_first_hit_time(), 0.4), "击杀刷新下一刀使用被动0.4秒前摇")
 				_h._expect(is_equal_approx(source.attack_timeline.recovery, maxf(source.attack_timeline.cooldown - 0.4 / rate, 0.0)), "击杀刷新重算待攻窗口，不延长下一命中冷却")

@@ -416,8 +416,10 @@ func _check_sun_disc() -> void:
 	)
 	var decaying_building := _make_apex_turret_test_unit(stats, 0, Vector2(500.0, 900.0), false)
 	decaying_building.add_shield(float(skill.shield), float(skill.shield_duration))
-	decaying_building._building_tick(decaying_building.lifespan)
-	var lifespan_ignores_shield := decaying_building.hp <= 0.0 and decaying_building.shield_hp > 0.0
+	decaying_building._building_tick(decaying_building.lifespan * 0.5)
+	var lifespan_ignores_shield := decaying_building.hp > 0.0 and decaying_building.hp < decaying_building.max_hp and decaying_building.shield_hp == float(skill.shield)
+	decaying_building._building_tick(decaying_building.lifespan * 0.5)
+	lifespan_ignores_shield = lifespan_ignores_shield and decaying_building.hp == 0 and decaying_building.shield_hp == 0
 	_expect(
 		is_equal_approx(source.shield_hp, float(skill.shield))
 		and is_equal_approx(building_inside.shield_hp, float(skill.shield))

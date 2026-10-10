@@ -3,6 +3,7 @@ extends "res://tests/suites/battle_suite.gd"
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
+	_check_shield_batch_contract()
 	_check_revival()
 	_check_shield()
 	_check_expanded_shield_radius()
@@ -365,3 +366,46 @@ func _check_expanded_shield_radius() -> void:
 	unit.queue_free()
 	inside.queue_free()
 	outside.queue_free()
+
+func _check_shield_batch_contract() -> void:
+	var skill := CardDB.active_skills_for("sion")[0]
+	for shield_first in [true, false]:
+		for damage in [100, 3000]:
+			var unit := _unit("sion", 0, Vector2(300, 900))
+			_main._combat.begin_batch(0, "shield_order")
+			if shield_first: _main._active_skill_effect_system.apply(unit, skill)
+			unit.take_damage(damage)
+			if not shield_first: _main._active_skill_effect_system.apply(unit, skill)
+			_main._combat.commit_batch()
+			_expect(unit.hp == maxf(2400 - damage, 0) and unit.shield_hp == (600 if damage < 2400 else 0), "W与伤害正反提交均不追溯抵挡同批伤害，致死不获盾")
+			unit.free()
+	var unit := _unit("sion", 0, Vector2(300, 900))
+	var target := _unit("garen", 1, Vector2(350, 900))
+	unit.apply_stasis(1.0)
+	_main._active_skill_effect_system.apply(unit, skill)
+	_expect(unit.shield_hp == 0, "W通用护盾入口拒绝凝滞中的新盾")
+	unit.control.clear_on_death()
+	_main._active_skill_effect_system.apply(unit, skill)
+	var before := target.hp
+	unit._tick_active_statuses(3.0)
+	_main._active_skill_effect_system.tick_effects(0.05)
+	unit._tick_active_statuses(3.0)
+	_main._active_skill_effect_system.tick_effects(0.05)
+	_expect(target.hp == before - 240, "自然到期结果仅消费一次")
+	_main._active_skill_effect_system.apply(unit, skill)
+	unit.clear_shields()
+	unit._tick_active_statuses(3.0)
+	_main._active_skill_effect_system.tick_effects(0.05)
+	_expect(target.hp == before - 240, "主动清除盾层不伪造到期伤害")
+	_main._active_skill_effect_system.apply(unit, skill)
+	unit._tick_active_statuses(3.0)
+	_main._active_skill_effect_system.clear()
+	_main._active_skill_effect_system.tick_effects(0.05)
+	_expect(target.hp == before - 240, "清场丢弃已排队的到期结果")
+	_main._active_skill_effect_system.apply(unit, skill)
+	unit._tick_active_statuses(3.0)
+	unit.take_damage(99999)
+	_main._active_skill_effect_system.tick_effects(0.05)
+	_expect(target.hp == before - 240, "到期后执行前死亡也不爆炸")
+	unit.free()
+	target.free()

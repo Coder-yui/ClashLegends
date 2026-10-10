@@ -156,7 +156,8 @@ func _check_decay() -> void:
 	for tick in range(40):
 		building._building_tick(0.05)
 		integer_steps = integer_steps and building.hp == roundf(building.hp)
-	_h._expect(integer_steps and building.hp == 0 and building.shield_hp == 50, "建筑101生命在2秒内整数衰减归零，自然衰减不消耗护盾")
+		if building.hp > 0: _h._expect(building.shield_hp == 50, "建筑存活期间自然衰减不消耗护盾")
+	_h._expect(integer_steps and building.hp == 0 and building.shield_hp == 0, "建筑101生命在2秒内整数衰减归零，死亡清除剩余护盾")
 	var unit := _unit("pix")
 	unit.add_shield(101, 2, true)
 	for tick in range(20):

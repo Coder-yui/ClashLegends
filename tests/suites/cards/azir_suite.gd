@@ -81,6 +81,7 @@ func run(harness: Object, main: Node2D) -> void:
 		marked.take_damage(99999)
 		_expect(_count("sand_soldier", team) == before + 1, "来源先死亡不撤回已命中的窗口")
 		_clear()
+	_check_true_death_rewards()
 	_check_instant_attack()
 	_check_definition_contracts()
 	await _check_beam_warmup()
@@ -189,3 +190,73 @@ func _check_client_beam() -> void:
 	_expect(_main.BUFFERED_BATTLE_EVENTS.has(&"_rpc_attack_hit_visual"), "光束纳入可靠战斗时间轴事件")
 	_main.mode = old_mode
 	_clear()
+
+func _check_true_death_rewards() -> void:
+	for reverse in [false, true]:
+		for card in ["sion", "anivia", "anivia_egg", "ashe"]:
+			var azir := _spawn("azir", 0, Vector2(250, 900))
+			var dragon := _spawn("aurelionsol", 0, Vector2(250, 1000))
+			dragon.configure_carried_active_skill(CardDB.active_skills_for("aurelionsol")[0])
+			var victim := _spawn(card, 1, Vector2(400, 900))
+			_main._combat.begin_batch(_main._sim_tick_id, "true_death")
+			if reverse: _hit(azir, victim, 99999)
+			_hit(dragon, victim, 99999)
+			_hit(dragon, victim, 99999)
+			if not reverse: _hit(azir, victim, 99999)
+			_main._combat.commit_batch()
+			var expected := 0 if card == "anivia" else 1
+			_expect(dragon.skill_resource_value == expected and _count("sand_soldier", 0) == expected, "%s正反批次：统一真正死亡决定龙王收益与沙皇转化，重复致死只给一次" % card)
+			for actor in _main.get_tree().get_nodes_in_group("combatants"):
+				if actor is Unit and actor.card_id in ["sand_soldier", "anivia_egg"] and actor != victim:
+					_expect(actor.hp == actor.max_hp, "本批新生蛋/沙兵不参与已锁定伤害")
+			if card == "sion":
+				_expect(victim.death_form.waiting() and victim.is_true_death(), "本体真死发收益后照常等待亡语狂暴")
+				victim.death_form.created_tick = -1
+				for tick in 40: victim.death_form.advance(victim, 0.05)
+				_hit(azir, victim, 1)
+				_hit(dragon, victim, 99999)
+				_expect(not victim.is_true_death() and dragon.skill_resource_value == 1 and _count("sand_soldier", 0) == 1, "狂暴被杀不再次充能或转化")
+			_clear()
+	# 狂暴第一条命未登记沙皇资格，第二条命有新命中也不能转化。
+	for natural in [false, true]:
+		var azir := _spawn("azir", 0, Vector2(250, 900))
+		var victim := _spawn("sion", 1, Vector2(400, 900))
+		victim.take_damage(99999)
+		victim.death_form.created_tick = -1
+		for tick in 40: victim.death_form.advance(victim, 0.05)
+		_hit(azir, victim, 1)
+		if natural: victim.apply_death_form_decay(99999)
+		else: _hit(azir, victim, 99999)
+		_expect(_count("sand_soldier", 0) == 0 and not victim.is_true_death(), "狂暴自然结束/被杀均拒绝新转化资格")
+		_clear()
+	var azir := _spawn("azir", 0, Vector2(250, 900))
+	var dragon := _spawn("aurelionsol", 0, Vector2(250, 1000))
+	dragon.configure_carried_active_skill(CardDB.active_skills_for("aurelionsol")[0])
+	var egg := _spawn("anivia_egg", 1, Vector2(400, 900))
+	_hit(azir, egg, 1)
+	egg._tick_timed_revival(3.0)
+	_expect(not egg.is_true_death() and _count("sand_soldier", 0) == 0 and dragon.skill_resource_value == 0, "带助攻标记蛋正常孵化不转化、不计击杀")
+	var revived: Unit
+	for actor in _main.get_tree().get_nodes_in_group("combatants"):
+		if actor is Unit and actor.card_id == "anivia": revived = actor
+	_expect(is_instance_valid(revived) and revived.death_replacement_charges == 0, "孵化生成无蛋机会的新冰鸟")
+	if is_instance_valid(revived):
+		_hit(azir, revived, 1)
+		_hit(dragon, revived, 99999)
+		_expect(revived.is_true_death() and dragon.skill_resource_value == 1 and _count("sand_soldier", 0) == 1, "无蛋机会冰鸟死亡正常充能与转化")
+	_clear()
+
+	# 同批死亡来源不得因亡语/孵化或收益顺序恢复资格。
+	for reverse in [false, true]:
+		azir = _spawn("azir", 0, Vector2(250, 900))
+		dragon = _spawn("aurelionsol", 0, Vector2(250, 1000))
+		dragon.configure_carried_active_skill(CardDB.active_skills_for("aurelionsol")[0])
+		var victim := _spawn("sion", 1, Vector2(400, 900))
+		_main._combat.begin_batch(_main._sim_tick_id, "dead_source")
+		if reverse: dragon.take_damage(99999)
+		_hit(azir, victim, 1)
+		_hit(dragon, victim, 99999)
+		if not reverse: dragon.take_damage(99999)
+		_main._combat.commit_batch()
+		_expect(dragon.skill_resource_value == 0 and _count("sand_soldier", 0) == 1, "同批来源死亡正反顺序均无龙王收益，沙皇已成立窗口仍转化赛恩本体")
+		_clear()

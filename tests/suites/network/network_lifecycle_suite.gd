@@ -32,6 +32,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_soft_control_snapshot()
 	_check_dynamic_action_clock()
 	_check_bleeding_projection()
+	_check_true_death_projection()
 	_system.reset_session("death-form")
 	var dormant := _payload("sion", 76000, 1)
 	dormant[SNAP.U_CANCELLATION] = {"serial": 1, "reason": "death_form", "attack": 0, "action": 0, "form": 0, "cancelled_action": 0, "cancelled_deployment": false}
@@ -564,3 +565,34 @@ func _check_tower_stasis() -> void:
 	packet[SNAP.S_TOWERS] = saved
 	_expect(_system.apply(var_to_bytes(packet).compress(FileAccess.COMPRESSION_DEFLATE)), "权威解除快照恢复塔状态")
 	_expect(_main._towers.all(func(t): return not CombatInteraction.in_stasis(t)), "解除后所有塔不保留旧金身标志")
+
+
+func _check_true_death_projection() -> void:
+	_system.reset_session("true-death-results")
+	var sion := _payload("sion", 78001, 1)
+	sion[SNAP.U_HP] = 0
+	sion[SNAP.U_DEATH_FORM] = [true, 40]
+	sion[SNAP.U_ACTION_PERMISSIONS] = 0
+	var soldier := _payload("sand_soldier", 78002, 2)
+	var dragon := _payload("aurelionsol", 78003, 1)
+	dragon[SNAP.U_SKILL_RESOURCE_ENABLED] = 1
+	dragon[SNAP.U_SKILL_RESOURCE_RATIO] = 0.2
+	_deliver(2, [sion, soldier, dragon])
+	_spawn(soldier)
+	_expect(_main._client_units.size() == 3 and _main._client_units[78001].death_form.waiting() and is_equal_approx(_main._client_units[78003].get_skill_resource_ratio(), 0.2), "本体真死快照同时保留赛恩、投影一层充能与单个新沙兵；迟到Spawn幂等")
+	sion[SNAP.U_HP] = 2400
+	sion[SNAP.U_FORM] = 1
+	sion[SNAP.U_FORM_CHANGE_SERIAL] = 1
+	sion[SNAP.U_DEATH_FORM] = [true, 0]
+	_deliver(42, [sion, soldier, dragon])
+	_main._rpc_unit_died(78001, true, "true-death-results", 43)
+	_deliver(43, [soldier, dragon])
+	_expect(_main._client_units.size() == 2 and is_equal_approx(_main._client_units[78003].get_skill_resource_ratio(), 0.2), "狂暴退出仅删除实体，不在客户端追加收益或召唤")
+	var egg := _payload("anivia_egg", 78004, 44)
+	_spawn(egg)
+	_main._rpc_unit_died(78004, false, "true-death-results", 45)
+	var bird := _payload("anivia", 78005, 45)
+	_spawn(bird)
+	_spawn(egg)
+	_deliver(46, [soldier, dragon, bird])
+	_expect(not _main._client_units.has(78004) and _main._client_units.has(78005) and _main._client_units.size() == 3, "孵化删除蛋并生成冰鸟，迟到蛋Spawn不复活或生成额外转化物")

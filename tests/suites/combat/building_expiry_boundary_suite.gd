@@ -96,7 +96,7 @@ func _check_lifecycle_edges() -> void:
 	var deaths := [0]
 	building.died.connect(func(): deaths[0] += 1)
 	_main._sim_step(0.05)
-	_expect(building.hp == 0 and building.shield_hp == 100 and deaths[0] == 1, "自然衰减归零只退出一次且不消耗盾")
+	_expect(building.hp == 0 and building.shield_hp == 0 and deaths[0] == 1, "自然衰减绕过盾归零，只退出一次并清理盾")
 	building.free()
 	for deploying in [false, true]:
 		building = _building(1)
@@ -154,7 +154,7 @@ func _check_tombstone_death_summons() -> void:
 			_expect(building.hp == 0 and not building.is_in_group("combatants") and building.nav_cells.is_empty() and summons.size() == 2, "墓碑%s死亡仅释放两只雾行者并解除占位，阵营%d" % [cause, team])
 			_expect(summons.all(func(c): return c.team == team and c.hp == c.max_hp and c.is_walkable_at(c.position) and c._move_intent == Vector2.ZERO and c._attack_hit_index == 0), "墓碑死亡召唤阵营与落点合法，生成当Tick不行动")
 			if cause != "damage":
-				_expect(building.shield_hp == 100, "墓碑自然死亡不消耗护盾")
+				_expect(building.shield_hp == 0, "墓碑自然死亡统一清理剩余护盾")
 			building._die(true)
 			_expect(_main.get_tree().get_nodes_in_group("combatants").filter(func(c): return c is Unit and c.card_id == "imp" and not before.has(c)).size() == 2, "墓碑重复死亡通知不重复生成")
 			building.free()

@@ -5,6 +5,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_main = main
 	_check_bleeding()
 	_check_execution()
+	_check_execution_true_death()
 	_check_payment()
 	_check_schema()
 	_check_lifecycle()
@@ -224,3 +225,33 @@ func _check_hit_timing() -> void:
 	_expect(not effect.visible and not effect.active, "血怒结束后清理自身特效")
 	effect.free()
 	source.queue_free()
+
+
+func _check_execution_true_death() -> void:
+	for card in ["sion", "anivia", "anivia_egg"]:
+		var source := _unit("darius", 0)
+		var victim := _unit(card, 1)
+		source.active_ability_id = 99003
+		source.active_ability_slot = 0
+		_main._active_skills.register(source, "darius", 0, CardDB.active_skills_for("darius")[0])
+		victim.hp = 1
+		_strike(source, victim, true)
+		_expect(bool(_main.get_active_skill_snapshot(99003).free_recast) == (card != "anivia"), "处决刷新读取真正死亡：本体赛恩及蛋碎触发，化蛋不触发")
+		if card == "sion":
+			victim.death_form.created_tick = -1
+			for tick in 40: victim.death_form.advance(victim, 0.05)
+			_main._active_skills.register(source, "darius", 0, CardDB.active_skills_for("darius")[0])
+			source.active_ability_id = 99003
+			source.active_ability_slot = 0
+			victim.hp = 1
+			_strike(source, victim, true)
+			_expect(not _main.get_active_skill_snapshot(99003).free_recast, "狂暴赛恩终结不触发处决刷新")
+			var ordinary := _unit("garen", 1)
+			ordinary.hp = 1
+			_strike(source, ordinary, true)
+			_expect(_main.get_active_skill_snapshot(99003).free_recast, "同一来源仍可从普通真正死亡获得处决刷新")
+			ordinary.free()
+		source.free()
+		victim.free()
+		for actor in _main.get_tree().get_nodes_in_group("combatants"):
+			if actor is Unit and actor.card_id == "anivia_egg": actor.free()

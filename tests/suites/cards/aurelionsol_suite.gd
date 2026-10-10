@@ -28,6 +28,7 @@ func _check_starfall_and_falling_sky() -> void:
 	kill_dummy.position = Vector2(600.0, 1100.0)
 	kill_dummy.setup(1, dummy_stats, "充能木桩")
 	_main.add_child(kill_dummy)
+	kill_dummy.take_damage(99999)
 	dragon.on_enemy_killed(kill_dummy)
 	var disabled_without_loadout := not dragon.is_skill_resource_visible() and is_zero_approx(dragon.skill_resource_value)
 	dragon.configure_carried_active_skill(skill)
