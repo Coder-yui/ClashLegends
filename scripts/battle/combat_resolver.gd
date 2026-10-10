@@ -73,7 +73,7 @@ func _settle_bleeding_attack(target: Node2D, source: Unit, effects: Dictionary, 
 	if source.hp <= 0.0: return
 	if source.buffs.remaining(&"blood_rage") > 0.0 or stacks >= int(definition.bleed_max_stacks):
 		source.refresh_blood_rage()
-	if bool(effects.get("execute_reset", false)) and target.hp <= 0.0 and float(result.health_lost) > 0.0:
+	if bool(effects.get("execute_reset", false)) and target.hp <= 0.0 and (not target is Unit or target.is_true_death()) and float(result.health_lost) > 0.0:
 		source.refresh_blood_rage()
 		if source.battle_context != null:
 			source.battle_context.grant_skill_recast(source)
@@ -173,7 +173,7 @@ func commit_batch() -> void:
 			if (lost + absorbed) * share > 0.0:
 				CombatInteraction.record_combat_effect(target, CombatInteraction.effect_context(hit.source if is_instance_valid(hit.source) else null))
 			hit.result.overkill = maxf(float(hit.result.damage) - (lost + absorbed) * share, 0.0)
-	# 先固定全批存活状态，再施加控制和发放存活收益。
+	# take_damage 已固定全批存活状态与死亡结果，再施加控制和发放存活收益。
 	for callback in _effects: callback.call()
 	_commit_knockbacks()
 	# 回调本身可调用资源入口；退出 committing 后才执行，避免二次排队。

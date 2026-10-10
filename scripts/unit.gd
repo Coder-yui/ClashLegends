@@ -223,6 +223,9 @@ var active_skill_cast_locks: Array[StringName] = []
 
 ## 预留的减攻速控制状态；高原血统在 Buff 期间会忽略它。
 var restoration_fx_timer := 0.0 # 纯表现秒数，不进入权威快照
+enum DeathOutcome { NONE, DEATH, DEATH_FORM, REPLACEMENT, FORM_END, HATCH }
+var death_outcome := DeathOutcome.NONE
+
 var shields := ShieldState.new()
 var shield_hp: float:
 	get: return shields.total_hp()
@@ -2435,7 +2438,7 @@ func refresh_blood_rage() -> void:
 func on_enemy_killed(target: Node2D) -> void:
 	if CombatInteraction.in_stasis(self): return
 	# 与 on_attack_landed 同理，在途弹体可以晚于攻击者死亡完成击杀。
-	if hp > 0.0 and target is Unit and target.team != team:
+	if hp > 0.0 and target is Unit and target.team != team and target.is_true_death():
 		add_skill_resource(skill_resource_kill_gain)
 		if form_index == 1 and form_refresh_on_kill and form_lifetime_left > 0.0:
 			form_lifetime_left = form_lifetime
@@ -2649,13 +2652,13 @@ func apply_active_buff(duration: float, speed_multiplier: float, damage_multipli
 	_rescale_attack_phase(previous_speed)
 	queue_redraw()
 
-func add_shield(amount: float, duration: float, decays: bool = false, source: StringName = &"legacy", interaction: Dictionary = {}) -> void:
+func add_shield(amount: float, duration: float, decays: bool = false, source: StringName = &"legacy", interaction: Dictionary = {}, expiry_effect: Dictionary = {}) -> void:
 	if not CombatInteraction.allows_effect(self, interaction): return
 	if battle_context != null and battle_context.damage_batch().collecting:
-		battle_context.damage_batch().defer_effect(func(): add_shield(amount, duration, decays, source))
+		battle_context.damage_batch().defer_effect(func(): add_shield(amount, duration, decays, source, {}, expiry_effect))
 		return
 	if hp > 0.0:
-		shields.add(amount, duration, decays, false, source)
+		shields.add(amount, duration, decays, false, source, expiry_effect)
 		queue_redraw()
 
 func add_restoration_shield(amount: float, duration: float, source: StringName = &"legacy", interaction: Dictionary = {}) -> void:
@@ -2831,6 +2834,7 @@ func begin_death_form_transition(delay: float) -> void:
 		battle_context.notify_unit_audio_event(self, &"rebirth:voice", global_position)
 
 func complete_death_form_transition() -> void:
+	death_outcome = DeathOutcome.NONE
 	_apply_form(1, false)
 	hp = max_hp
 	_deploy_timer = 0.0
@@ -2842,7 +2846,24 @@ func apply_death_form_decay(amount: float) -> void:
 	if hp <= 0.0:
 		_die()
 
+## 权威生命周期结果先于收益固定；died 仍只负责实体死亡表现。
+func is_true_death() -> bool:
+	return death_outcome in [DeathOutcome.DEATH, DeathOutcome.DEATH_FORM]
+
+func _resolve_death_outcome() -> void:
+	if death_outcome != DeathOutcome.NONE: return
+	if death_form.used:
+		death_outcome = DeathOutcome.FORM_END
+	elif float(_base_form_stats.get("death_form_delay", 0.0)) > 0.0 and not transformed_stats.is_empty():
+		death_outcome = DeathOutcome.DEATH_FORM
+	elif not death_replacement_id.is_empty() and death_replacement_charges > 0:
+		death_outcome = DeathOutcome.REPLACEMENT
+	else:
+		death_outcome = DeathOutcome.DEATH
+
 func _die(trigger_death_effect: bool = false) -> void:
+	if is_queued_for_deletion() or death_form.waiting(): return
+	_resolve_death_outcome()
 	bleeding.clear()
 	target_protection.clear()
 	hp = 0.0
@@ -2852,9 +2873,13 @@ func _die(trigger_death_effect: bool = false) -> void:
 		return
 	if is_queued_for_deletion(): return
 	control.clear_on_death()
-	if death_form.begin(self): return
+	clear_shields()
+	if death_outcome == DeathOutcome.DEATH_FORM:
+		assist_conversion.consume(self)
+		death_form.begin(self)
+		return
 	_pending_extra_attacks.clear()
-	var has_death_replacement := not death_replacement_id.is_empty() and death_replacement_charges > 0
+	var has_death_replacement := death_outcome == DeathOutcome.REPLACEMENT
 	var play_death_visual := not _skip_death_visual and not has_death_replacement
 	_skip_death_visual = false
 	remove_from_group("combatants")
@@ -2863,7 +2888,7 @@ func _die(trigger_death_effect: bool = false) -> void:
 		if battle_context != null:
 			battle_context.unblock_nav_cells(nav_cells)
 		nav_cells = []
-	assist_conversion.consume(self)
+	if is_true_death(): assist_conversion.consume(self)
 	if has_death_replacement:
 		death_replacement_charges -= 1
 		_spawn_death_replacement()
@@ -2890,6 +2915,7 @@ func _tick_timed_revival(dt: float) -> void:
 	timed_revival_id = ""
 	battle_context.spawn_summoned(team, revival_id, global_position, 0.0, timed_revival_visual_transition, timed_revival_death_replacement_charges)
 	_skip_death_visual = true
+	death_outcome = DeathOutcome.HATCH
 	_die(false)
 
 func _spawn_death_replacement() -> void:

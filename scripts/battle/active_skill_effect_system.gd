@@ -156,7 +156,7 @@ func _apply(source: Unit, skill: Dictionary) -> bool:
 			source.prepare_empowered_attack(1.0)
 		&"explosive_shield":
 			if source.hp <= 0.0 or source.death_form.used: return false
-			source.shields.add(float(skill.shield), float(skill.shield_duration), false, false, source.status_source("explosive_shield"), skill)
+			source.add_shield(float(skill.shield), float(skill.shield_duration), false, source.status_source("explosive_shield"), {}, skill)
 		&"sanctuary":
 			source.target_protection.begin(source.global_position, float(skill.radius), float(skill.duration))
 			_controller.projectile_service().invalidate_target_locks(source)
