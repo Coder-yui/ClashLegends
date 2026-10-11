@@ -10,6 +10,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_card_deployment_preview()
 	_check_formation_centers()
 	_check_multi_unit_card_centers()
+	_check_multi_unit_deployment_edges()
 	_check_large_unit_front_row_exit()
 	_check_landing_position_correction()
 	_check_tower_ingress_guards()
@@ -168,6 +169,57 @@ func _check_multi_unit_card_centers() -> void:
 	_main.local_team = original_team
 	_main._on_card_selected("")
 	_expect(checked_cards > 0, "全卡遍历确实检查了双方多单位部署，避免空夹具通过")
+
+func _check_multi_unit_deployment_edges() -> void:
+	var cards: Array[String] = []
+	var constrained: Array[String] = []
+	for card_id in CardDB.all():
+		var stats := CardDB.get_unit_stats(card_id)
+		var member_ids: Array = stats.get("deployment_member_ids", [])
+		var count := member_ids.size() if not member_ids.is_empty() else int(stats.get("deployment_count", 1))
+		if bool(stats.get("deploy_formation_requires_in_bounds", false)): constrained.append(card_id)
+		if count > 1 and card_id != "shurima_guard": cards.append(card_id)
+	_expect(cards.size() == 8 and constrained == ["shurima_guard"] and not bool(CardDB.get_card("sand_soldier").get("deploy_formation_requires_in_bounds", false)), "只有恕瑞玛卫队声明整排边界限制，召唤黄沙士兵不继承")
+	var original_hp: Array[float] = []
+	for tower in _main._towers: original_hp.append(tower.hp)
+	for team in [0, 1]:
+		for mask in 4:
+			for index in _main._towers.size(): _main._towers[index].hp = original_hp[index]
+			_main._towers[2 if team == 0 else 0].hp = 0.0 if mask & 1 else original_hp[2 if team == 0 else 0]
+			_main._towers[3 if team == 0 else 1].hp = 0.0 if mask & 2 else original_hp[3 if team == 0 else 1]
+			for card_id in cards:
+				var same_cells := true
+				for row in ArenaRules.ARENA_ROWS:
+					for column in ArenaRules.ARENA_COLUMNS:
+						var center: Vector2 = _main._arena_tile_center(Vector2i(column, row))
+						same_cells = same_cells and _main.is_card_deploy_position_valid(team, card_id, center) == _main.is_card_deploy_position_valid(team, "xin", center)
+				_expect(same_cells, "%s 阵营%d拆塔状态%d：全部部署格与单单位相同" % [card_id, team, mask])
+	for index in _main._towers.size(): _main._towers[index].hp = original_hp[index]
+	var original_team: int = _main.local_team
+	for team in [0, 1]:
+		_main.local_team = team
+		var old_history: Dictionary = _main._card_history.get_last(team)
+		for card_id in cards:
+			var stats := CardDB.get_unit_stats(card_id)
+			var member_ids: Array = stats.get("deployment_member_ids", [])
+			var count := member_ids.size() if not member_ids.is_empty() else int(stats.get("deployment_count", 1))
+			for blue_center in [Vector2(20, 860), Vector2(700, 860), Vector2(340, 700), Vector2(60, 1020)]:
+				var center: Vector2 = blue_center if team == 0 else Vector2(ArenaRules.FIELD_W, ArenaRules.FIELD_H) - blue_center
+				var before := _main.get_tree().get_nodes_in_group("combatants").map(func(actor): return actor.get_instance_id())
+				_main._on_card_selected(card_id)
+				_main._update_deployment_preview(center)
+				var preview_ok: bool = _main._deployment_preview_valid and _main._deployment_preview_pos == center
+				var accepted: bool = _main.play_card(team, card_id, center, {"immediate": true})
+				var members := _main.get_tree().get_nodes_in_group("combatants").filter(func(actor): return actor is Unit and actor.get_instance_id() not in before)
+				var legal := members.size() == count
+				for member in members:
+					legal = legal and member.position.x >= member.body_radius and member.position.x <= ArenaRules.FIELD_W - member.body_radius and member.position.y >= member.body_radius and member.position.y <= ArenaRules.FIELD_H - member.body_radius
+					if not member.is_air: legal = legal and _main.is_ground_position_walkable(member.position, member.body_radius, member)
+				_expect(preview_ok and accepted and legal, "%s 阵营%d落点%s：边缘、河岸、塔旁正常出牌，完整编队逐兵纠正到合法位置" % [card_id, team, center])
+				for member in members: member.free()
+		_main._card_history.replace_replica(team, old_history)
+	_main.local_team = original_team
+	_main._on_card_selected("")
 
 func _check_large_unit_front_row_exit() -> void:
 	var stats: Dictionary = CardDB.get_card("garen").duplicate()

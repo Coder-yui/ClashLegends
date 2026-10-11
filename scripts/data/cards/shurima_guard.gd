@@ -10,6 +10,7 @@ static func definition() -> Dictionary:
 			"size_tier": SIZE_MEDIUM, "radius": RADIUS_MEDIUM,
 			"mass": 4.0, "sight": 220.0,
 			"deploy_pocket_requires_both_towers": true,
+			"deploy_formation_requires_in_bounds": true,
 			"deployment_count": 6, "deployment_spacing": 100.0, "deployment_formation": "line",
 			"is_air": false, "building_only": false, "can_attack_air": false,
 			"active_skills": [{"name": "黄沙庇护", "kind": "restoration_shield",

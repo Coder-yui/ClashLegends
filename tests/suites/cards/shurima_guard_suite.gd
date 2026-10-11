@@ -2,6 +2,7 @@ extends "res://tests/suites/battle_suite.gd"
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
+	_check_formation_boundary_schema()
 	_check_two_tower_deployment()
 	var stats := CardDB.get_unit_stats("shurima_guard")
 	var skill: Dictionary = stats.active_skills[0]
@@ -83,6 +84,16 @@ func run(harness: Object, main: Node2D) -> void:
 	var invalid := CardDB.all().duplicate(true)
 	invalid.shurima_guard.deployment_formation = "unknown"
 	_expect(not preload("res://scripts/data/card_validator.gd").validate_all(invalid).is_empty(), "拒绝未知编队类型")
+
+func _check_formation_boundary_schema() -> void:
+	for invalid in [null, 1, "true"]:
+		var stats := CardDB.get_card("shurima_guard").duplicate(true)
+		stats.deploy_formation_requires_in_bounds = invalid
+		_expect("deploy_formation_requires_in_bounds" in "；".join(CardDB.VALIDATOR.validate_all({"shurima_guard": stats}, false)), "整排边界开关拒绝非布尔值")
+	for invalid in [{"deployment_formation": "polygon"}, {"deployment_count": 1}, {"type": "building"}, {"deployment_spacing": 200.0}]:
+		var stats := CardDB.get_card("shurima_guard").duplicate(true)
+		stats.merge(invalid, true)
+		_expect("deploy_formation_requires_in_bounds" in "；".join(CardDB.VALIDATOR.validate_all({"shurima_guard": stats}, false)), "整排边界开关要求可放入场内的多单位横排")
 
 func _check_two_tower_deployment() -> void:
 	var old_deck: Array = _main._deck.duplicate()

@@ -1418,8 +1418,11 @@ static func _validate_deployment(card_id: String, stats: Dictionary, errors: Pac
 		errors.append("%s.deployment_formation: square 必须搭配4名成员" % card_id)
 	if String(stats.get("deployment_formation", "ring")) == "depth_line" and int(stats.get("deployment_count", 0)) != 2:
 		errors.append("%s.deployment_formation: depth_line 必须搭配2名成员" % card_id)
-	if String(stats.get("deployment_formation", "ring")) == "line" and (int(stats.get("deployment_count", 1)) - 1) * float(stats.get("deployment_spacing", 0.0)) + 2.0 * float(stats.get("radius", 0.0)) > ArenaRules.FIELD_W:
-		errors.append("%s: 横排宽度不能超过战场" % card_id)
+	if bool(stats.get("deploy_formation_requires_in_bounds", false)):
+		if card_type != &"unit" or String(stats.get("deployment_formation", "ring")) != "line" or int(stats.get("deployment_count", 1)) <= 1:
+			errors.append("%s.deploy_formation_requires_in_bounds: 仅支持多单位横排" % card_id)
+		elif (int(stats.get("deployment_count", 1)) - 1) * float(stats.get("deployment_spacing", 0.0)) > ArenaRules.FIELD_W:
+			errors.append("%s.deploy_formation_requires_in_bounds: 横排中心跨度不能超过战场" % card_id)
 	if stats.has("deployment_count"):
 		if card_type != &"unit":
 			errors.append("%s.deployment_count: 只有单位卡可以编队部署" % card_id)

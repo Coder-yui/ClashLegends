@@ -161,8 +161,9 @@ func is_card_deploy_position_valid(p_team: int, card_id: String, pos: Vector2, c
 		return false
 	pos = snap_card_position(card_id, pos, p_team)
 	var stats: Dictionary = CardDB.get_card(card_id)
-	# 横排中心跨度须留在场内；边缘身体在生成时逐兵挤回合法位置。
-	if check_formation and String(stats.get("deployment_formation", "ring")) == "line":
+	# 只有卡牌显式要求时才限制整排跨度；普通编队与单单位共用落点格，
+	# 越界或落在地形、结构上的成员由生成入口逐兵纠正。
+	if check_formation and bool(stats.get("deploy_formation_requires_in_bounds", false)):
 		var margin := (int(stats.get("deployment_count", 1)) - 1) * float(stats.get("deployment_spacing", 0.0)) * 0.5
 		if pos.x < margin or pos.x > ArenaRules.FIELD_W - margin:
 			return false
