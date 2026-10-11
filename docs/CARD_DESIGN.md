@@ -277,3 +277,9 @@ frontal可配置damage_by_use，序列长度须等于max_uses，数值均为有�
 `assist_conversion_window`为正数命中窗口，`assist_conversion_unit_id`与`assist_conversion_building_id`声明两类生成对象。受击者的AssistConversionState保存值与到期Tick，CombatResolver在同批扣血前登记所有有效正伤害命中，死亡生命周期在释放旧占位后消费一次。来源死亡不撤销窗口；在途普攻保存出手时的定义。普通单位/空军转化士兵，建筑/公主塔转化建筑，水晶排除。转化生成不授予主动资格或塔墟免衰减；MatchResources沿两类引用展开预热资源。
 
 `visual.attack_hit_visual` 声明直接命中后的纯表现（当前 `azir_beam`），仅允许 `projectile_speed=0`。伤害仍由通用普攻命中节点结算；资源通过同卡 `resource_dependencies.effects` 声明。
+
+## 牺牲攻城与单位穿行
+
+`sacrifice_damage / sacrifice_delay`必须成组为正数，只允许`can_attack=false`的地面建筑索敌普通单位。进入射程后通过ActiveSkillEffectSystem固化目标弱引用、落点和独立结果，并立即走通用死亡。延迟向上对齐20Hz Tick，到期只向原锁定且仍合法的敌方建筑提交一次伤害；目标失效不转移，无范围查询或溅射。清场取消。连续表现代理通过`sacrifice_id`关联起跳与权威爆炸事件，`impact_delay`控制起跳动作适配窗口，动画不提交伤害。
+
+buff主动的`ignore_unit_collision=true`以StatusInstances独立窗口控制普通单位之间的避让、接触与位移截停；建筑占地和地形不受影响，凝滞抑制效果。资格与持续时间复用编队和增益规则。

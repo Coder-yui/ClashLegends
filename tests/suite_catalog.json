@@ -481,5 +481,12 @@
     "method": "run",
     "scene": "battle",
     "group": "cards"
+  },
+  {
+    "id": "VoidSpawnSuite",
+    "script": "res://tests/suites/cards/void_spawn_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "cards"
   }
 ]

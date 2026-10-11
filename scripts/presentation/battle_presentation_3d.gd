@@ -12,6 +12,7 @@ func visual_team(team: int) -> int:
 
 var projectiles: Node2D
 var _gwen_tristana_effect: Node3D
+var _sacrifice_effect: Node3D
 var _sett_effect: Node3D
 var _anivia_effect: Node3D
 var _aurelion_effect: Node3D
@@ -35,6 +36,8 @@ var _pre_deploy_views: Dictionary = {}
 func _process(delta: float) -> void:
 	if _gwen_tristana_effect != null:
 		_gwen_tristana_effect.sync_effects(projectiles, _camera)
+	if _sacrifice_effect != null and skills != null:
+		_sacrifice_effect.sync_effects(skills, _camera)
 	if _sett_effect != null and skills != null:
 		_sett_effect.sync_effects(skills, _camera, delta)
 	if _sion_w_effect != null and skills != null:
@@ -113,6 +116,8 @@ func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void
 	_world_root.add_child(_gwen_tristana_effect)
 	_aurelion_effect = preload("res://scripts/presentation/aurelionsol_effect_3d.gd").new()
 	_world_root.add_child(_aurelion_effect)
+	_sacrifice_effect = preload("res://scripts/presentation/sacrifice_leap_3d.gd").new()
+	_world_root.add_child(_sacrifice_effect)
 	_sett_effect = preload("res://scripts/presentation/sett_effect_3d.gd").new()
 	_world_root.add_child(_sett_effect)
 	_anivia_effect = preload("res://scripts/presentation/anivia_effect_3d.gd").new()

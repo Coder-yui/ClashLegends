@@ -1,0 +1,58 @@
+{
+  "definition": "Characters/Jade_VoidSpawn/Skins/Skin0/Particles/Jade_VoidSpawn_Base_NormalDeath_Explosion",
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Map12.wad.client",
+  "binary_sha256": "b2ca430dbe89d9c283f8289ced9f08d0c0a9428bdfbe050eb79fd2b732e848cd",
+  "assets": {
+    "assets/characters/jade_voidspawn/skins/base/particles/jade_voidspawn_normaldeath_firering.tex": {
+      "source_sha256": "a319d6f9846861554fb2f8025ec3f3d8a9c6ff60408542fa80f22d8fde1e3bcc",
+      "output": "jade_voidspawn_normaldeath_firering.png",
+      "output_sha256": "c40dee3a5426ed9d592b9616e9e6246079be393c4ea2f1d1a86e3b50dde4017b"
+    },
+    "assets/characters/jade_voidspawn/skins/base/particles/jade_voidspawn_normaldeath_tar_firecloud.tex": {
+      "source_sha256": "f183aa93704da070c928de05316d465b7ae7c1704ff64f697e78b76ca5c04bf4",
+      "output": "jade_voidspawn_normaldeath_tar_firecloud.png",
+      "output_sha256": "e7d8a835087ab3765bb3c85b48cfdcdc5e4c0749fd6207150a33d95f54f1aeb8"
+    },
+    "assets/characters/jade_voidspawn/skins/base/particles/jade_voidspawn_normaldeath_centerflare.tex": {
+      "source_sha256": "998e50c5329aa9200a05f14ff9d1bdf21025c723f9f5aab3a72ca94577e0a385",
+      "output": "jade_voidspawn_normaldeath_centerflare.png",
+      "output_sha256": "21b10c228e9c5a3c9e8bb47ff3862baba619225bb126fb3e386bc88350f599b9"
+    },
+    "assets/characters/jade_voidspawn/skins/base/particles/jade_voidspawn_normaldeath_tar_circlefire.tex": {
+      "source_sha256": "3d5467be24a2315c867b43cda7e0362fb6adef45038584d004c24ac9469acb2b",
+      "output": "jade_voidspawn_normaldeath_tar_circlefire.png",
+      "output_sha256": "e926efb90a567b5e9f0c0dabee5b7febcfa15813a446550ef7b6fdc3a940590a"
+    },
+    "assets/characters/jade_voidspawn/skins/base/particles/jade_voidspawn_normaldeath_sphere_geo.scb": {
+      "source_sha256": "26020d716fc0b5ecbe4a31489ab16af590cd0a45a021321d15606bf08e27e223",
+      "output": "jade_voidspawn_normaldeath_sphere_geo.mesh.json",
+      "output_sha256": "297af94fe6cabb8cafd1dbd31ca500eb547406ceb2b7b1c39c9328f24543a39b"
+    },
+    "assets/characters/jade_voidspawn/skins/base/particles/jade_voidspawn_normaldeath_tar_sphere_diff.tex": {
+      "source_sha256": "1dd39deb4eb89004e86e2cc1e5a624e8b853f6bdbd5b5bcebab0cfe4ed4e478b",
+      "output": "jade_voidspawn_normaldeath_tar_sphere_diff.png",
+      "output_sha256": "e1b9ebbe1ffcdd662eb61fd768601968f9fd17ac476934f22458dc90559e443e"
+    },
+    "assets/characters/jade_voidspawn/skins/base/particles/jade_voidspawn_normaldeath_tar_sparks.tex": {
+      "source_sha256": "c76d0098e105b40fa2e1195df0e81e3ab08bc28320c6c0a254fa21235324af0f",
+      "output": "jade_voidspawn_normaldeath_tar_sparks.png",
+      "output_sha256": "4be1ce5555ba3b110797f131e35598b6bbceb3c267b3782c37bf38f9f85d7dfe"
+    },
+    "assets/characters/jade_voidspawn/skins/base/particles/jade_voidspawn_turretdeathreksai_base_fin_spark.tex": {
+      "source_sha256": "74d6ec18976048f76966e1cf2bdfbafb34a59406c69572953113562983600668",
+      "output": "jade_voidspawn_turretdeathreksai_base_fin_spark.png",
+      "output_sha256": "6f703498fed2a810f73f3b1f11b4f53cbfee1519fef899643d11747afd6fc7db"
+    }
+  },
+  "project_adaptation": {
+    "native_to_world_scale": 0.012,
+    "ground_height": 0.09,
+    "ground_emitters": [
+      "FireRing",
+      "CenterFlare"
+    ],
+    "timing": "original sampled emitter curves unchanged",
+    "body_layers": "channel bone height; original yaw and emitter organization",
+    "ground_flash_size_multiplier": 1.0
+  }
+}

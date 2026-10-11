@@ -79,6 +79,8 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 	if stats.has("stealth_delay") and (float(stats.stealth_delay) <= 0.0 or stats.get("type", "") != "unit" or bool(stats.get("is_building", false)) or bool(stats.get("is_continuous_attack", false))):
 		errors.append(card_id + ".stealth_delay: 仅普通单位支持正数脱战隐身时间")
 	for skill in stats.get("active_skills", []):
+		if skill.has("ignore_unit_collision") and String(skill.get("kind", "")) != "buff":
+			errors.append(card_id + ".active_skills.ignore_unit_collision: 仅支持buff")
 		if skill.has("range_bonus") or skill.has("piercing_attacks") or skill.has("piercing_distance") or skill.has("projectile_speed_multiplier"):
 			if skill.get("kind", "") != "buff" or float(skill.get("duration", 0.0)) <= 0.0 or float(stats.get("projectile_speed", 0.0)) <= 0.0 or float(skill.get("range_bonus", 0.0)) < 0.0:
 				errors.append(card_id + ".active_skills: 射程/穿透普攻要求正时长远程 buff 与非负射程增量")
@@ -373,6 +375,11 @@ static func _validate_combat_stats(label: String, stats: Dictionary, require_siz
 			errors.append("%s.%s: 必须为非负有限数值" % [label, field])
 	if float(stats.get("on_hit_max_health_ratio", 0.0)) > 1.0:
 		errors.append("%s.on_hit_max_health_ratio: 必须 <= 1" % label)
+	if stats.has("sacrifice_damage") or stats.has("sacrifice_delay"):
+		for field in ["sacrifice_damage", "sacrifice_delay"]:
+			if float(stats.get(field, 0.0)) <= 0.0: errors.append(label + "." + field + ": 必须为正数")
+		if bool(stats.get("can_attack", true)) or not bool(stats.get("building_only", false)) or bool(stats.get("is_air", false)) or bool(stats.get("is_building", false)):
+			errors.append(label + ".sacrifice_damage: 仅支持禁用普攻的地面建筑索敌单位")
 	_require_fields(label, stats, [&"hp", &"damage", &"range", &"speed", &"interval", &"is_air", &"building_only", &"can_attack_air"], errors)
 	if float(stats.get("damage", 0.0)) > 0.0:
 		_require_fields(label, stats, [&"first_hit"], errors)
@@ -859,9 +866,16 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 			errors.append("%s.max_uses: 必须 > 0" % label)
 		if float(skill.get("cooldown", -1.0)) < 0.0:
 			errors.append("%s.cooldown: 必须 >= 0" % label)
-		if kind != &"permanent_growth" and (skill.has("health_bonus_ratio") or skill.has("body_scale_multiplier") or skill.has("knockback_radius")):
+		if (kind not in [&"permanent_growth", &"sacrifice_empower"] and (skill.has("health_bonus_ratio") or skill.has("body_scale_multiplier"))) or (kind != &"permanent_growth" and skill.has("knockback_radius")):
 			errors.append(label + ".health_bonus_ratio/body_scale_multiplier/knockback_radius: 仅永久成长读取这些字段")
+		if skill.has("visual_scale_multiplier") and kind != &"sacrifice_empower":
+			errors.append(label + ".visual_scale_multiplier: 仅用于牺牲强化表现")
 		match kind:
+			&"sacrifice_empower":
+				if float(stats.get("sacrifice_damage", 0.0)) <= 0.0: errors.append(label + ": 需要牺牲攻击能力")
+				for field in ["health_bonus_ratio", "body_scale_multiplier", "damage_multiplier", "speed_multiplier", "visual_scale_multiplier"]:
+					if float(skill.get(field, 0.0)) <= (0.0 if field == "health_bonus_ratio" else 1.0): errors.append(label + "." + field + ": 需要正生命增量或大于1的倍率")
+				if skill.has("duration"): errors.append(label + ".duration: 强化永久生效，不读取持续时间")
 			&"permanent_growth":
 				if float(skill.get("impact_delay", 0.0)) <= 0.0: errors.append(label + ".impact_delay: 成长退款需要正数生效延迟")
 				_require_fields(label, skill, [&"radius", &"health_bonus_ratio", &"body_scale_multiplier", &"knockback_radius", &"knockback", &"knockback_duration"], errors)

@@ -111,6 +111,10 @@ var continuous_attack := false
 ## 一次性永久成长：固定生命增量与体型倍率，不写回共享定义。
 var growth_health_bonus := 0.0
 var growth_body_scale := 1.0
+## 永久牺牲强化：伤害倍率、纯表现缩放；不改变碰撞或生命。
+var sacrifice_empowerment := Vector2.ONE
+# 最大生命增量、身体倍率、永久移速倍率；由权威写入并随快照同步。
+var sacrifice_stats := Vector3(0.0, 1.0, 1.0)
 ## Ornn permanent team effect; multiplies only the ordinary attack pipeline.
 var team_attack_boost_multiplier := 1.0
 var team_attack_boost_first_delay := 0.0
@@ -242,7 +246,7 @@ var target_protection := TargetProtectionState.new()
 var active_buff_timer: float:
 	get: return maxf(buffs.remaining(&"buff"), buffs.remaining(&"blood_rage"))
 var active_speed_multiplier: float:
-	get: return maxf(buffs.strongest(&"buff", &"speed", 1.0), 1.0 + buffs.strongest(&"structure_haste", &"speed_bonus", 0.0) * buffs.remaining(&"structure_haste") / maxf(float(_base_form_stats.get("structure_haste_duration", 1.0)), 0.01))
+	get: return maxf(sacrifice_stats.z, maxf(buffs.strongest(&"buff", &"speed", 1.0), 1.0 + buffs.strongest(&"structure_haste", &"speed_bonus", 0.0) * buffs.remaining(&"structure_haste") / maxf(float(_base_form_stats.get("structure_haste_duration", 1.0)), 0.01)))
 var active_damage_multiplier: float:
 	get: return buffs.strongest(&"buff", &"damage", 1.0) * buffs.strongest(&"blood_rage", &"damage", 1.0) * team_attack_boost_multiplier
 var active_attack_speed_multiplier: float:
@@ -467,6 +471,8 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	continuous_attack = stats.get("is_continuous_attack", false)
 	growth_health_bonus = 0.0
 	growth_body_scale = 1.0
+	sacrifice_stats = Vector3(0.0, 1.0, 1.0)
+	sacrifice_empowerment = Vector2.ONE
 	team_attack_boost_multiplier = 1.0
 	team_attack_boost_first_delay = maxf(float(stats.get("team_attack_boost_first_delay", 0.0)), 0.0)
 	team_attack_boost_interval = maxf(float(stats.get("team_attack_boost_interval", 0.0)), 0.0)
@@ -989,6 +995,15 @@ func prepare_empowered_attack(damage_multiplier: float, speed_multiplier: float 
 	attack_timeline.restart_visual()
 	queue_redraw()
 
+## 以差值恢复牺牲强化属性，重复快照不叠加生命上限或身体倍率。
+func set_sacrifice_stats(value: Vector3) -> void:
+	max_hp += value.x - sacrifice_stats.x
+	body_radius = body_radius / sacrifice_stats.y * value.y
+	sacrifice_stats = value
+	_path.clear()
+	_repath_cd = 0.0
+	queue_redraw()
+
 ## 成长与普通换形分别持有状态；仅首次获得时增加当前生命。
 func apply_permanent_growth(health_ratio: float, body_scale: float) -> bool:
 	if not is_finite(health_ratio) or not is_finite(body_scale) or health_ratio <= 0.0 or body_scale <= 1.0: return false
@@ -1298,6 +1313,10 @@ func leave_terrain_for_attack() -> bool:
 	terrain_traversal.update(self)
 	return true
 
+## 幽灵疾步只放开普通单位接触；建筑占地与导航仍按原规则。
+func ignores_unit_collision() -> bool:
+	return not is_building and buffs.any_flag(&"unit_phasing", &"enabled")
+
 func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prepared: bool = false) -> void:
 	if hp <= 0.0 and not death_form.waiting():
 		return
@@ -1350,7 +1369,7 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prep
 		_charge_timer = 0.0
 		_charged = false
 		return
-	if not can_attack:
+	if not can_attack and float(_base_form_stats.get("sacrifice_damage", 0.0)) <= 0.0:
 		_target = null
 		_attacking = false
 		return
@@ -1373,6 +1392,14 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prep
 		_tick_form_transition_movement(dt)
 		return
 	if structure_rush.phase == StructureRushState.Phase.RECOVERY or structure_rush.tick(self, dt):
+		return
+	if float(_base_form_stats.get("sacrifice_damage", 0.0)) > 0.0:
+		_update_target(false)
+		if is_instance_valid(_target) and _target_gap(_target) <= attack_range:
+			if not leave_terrain_for_attack(): return
+			battle_context.begin_sacrifice(self, _target)
+		else:
+			_chase(dt)
 		return
 	attack_timeline.tick_cooldown(dt)
 	# 默认命中后必须完整收招；配置允许的连招段结束且没有圈内目标时可提前转走。
@@ -2821,6 +2848,8 @@ func begin_death_form_transition(delay: float) -> void:
 	body_radius /= growth_body_scale
 	visual_radius /= growth_body_scale
 	growth_body_scale = 1.0
+	set_sacrifice_stats(Vector3(0.0, 1.0, 1.0))
+	sacrifice_empowerment = Vector2.ONE
 	cancel_basic_attack(&"death_form")
 	cancel_skill_cast()
 	clear_shields()

@@ -1,0 +1,57 @@
+{
+  "definition": "Characters/Jade_VoidSpawn/Skins/Skin0/Particles/Jade_VoidSpawn_Base_TurretDeath",
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Map12.wad.client",
+  "binary_sha256": "b2ca430dbe89d9c283f8289ced9f08d0c0a9428bdfbe050eb79fd2b732e848cd",
+  "assets": {
+    "assets/characters/jade_voidspawn/skins/base/particles/jade_voidspawn_turretdeathreksai_base_fin_spark.tex": {
+      "source_sha256": "74d6ec18976048f76966e1cf2bdfbafb34a59406c69572953113562983600668",
+      "output": "jade_voidspawn_turretdeathreksai_base_fin_spark.png",
+      "output_sha256": "6f703498fed2a810f73f3b1f11b4f53cbfee1519fef899643d11747afd6fc7db"
+    },
+    "assets/characters/jade_voidspawn/skins/base/particles/jade_voidspawn_turretdeathreksai_base_core_glow.tex": {
+      "source_sha256": "54fd892e9de5f9915f3393913962833be5c55538e84979903fe0e7cedcf3a53c",
+      "output": "jade_voidspawn_turretdeathreksai_base_core_glow.png",
+      "output_sha256": "037d6b512eef8ebd5cb4b7ee0f43f500f78cab384c4b487d5094074669806e6e"
+    },
+    "assets/characters/jade_voidspawn/skins/base/particles/jade_voidspawn_turretdeathreksai_base_bullet.scb": {
+      "source_sha256": "25d81ed86ac705181250ba0d014d2ee315549c12c3062597aa13237e6b7e97b9",
+      "output": "jade_voidspawn_turretdeathreksai_base_bullet.mesh.json",
+      "output_sha256": "e095fbb1b2aacd66cf85a6a605b6c5de377756b7f731b78b347d6ee2e06f4af9"
+    },
+    "assets/characters/jade_voidspawn/skins/base/particles/jade_voidspawn_turretdeathreksai_base_burrowed_splash_tar.tex": {
+      "source_sha256": "5fc79e7b17e29ed3ec054ab8d334399923f9b867b0b61b3599e64553f94b3363",
+      "output": "jade_voidspawn_turretdeathreksai_base_burrowed_splash_tar.png",
+      "output_sha256": "489eef859cae8c977de81284cbde43e8f9b87f8eb39aab81bf95cfe445d2bbcf"
+    },
+    "assets/characters/jade_voidspawn/skins/base/particles/jade_voidspawn_turretdeathreksai_base_burrowed_nova_flash.tex": {
+      "source_sha256": "e0520844a4cfd3eca5f83c4e7a93713f100e8d69e8c7d12e8589a22d3f6a2aa2",
+      "output": "jade_voidspawn_turretdeathreksai_base_burrowed_nova_flash.png",
+      "output_sha256": "4b32cf8c5a25649e3c0b4804cb8fa8a735433e6a07a2d03c2728781673e3da28"
+    },
+    "assets/characters/jade_voidspawn/skins/base/particles/jade_voidspawn_turretdeathreksai_base_burrowed_muzz_flash.tex": {
+      "source_sha256": "60fb60fa334c95110b3308f092afdc6d400e1fe23831482cbe58b3a659ddf761",
+      "output": "jade_voidspawn_turretdeathreksai_base_burrowed_muzz_flash.png",
+      "output_sha256": "3ca05842be45ae0b1dc1663316281f5718f9c8324eb2cc53f37420c407e6475f"
+    },
+    "assets/characters/jade_voidspawn/skins/base/particles/jade_voidspawn_turretdeath_sideflames.scb": {
+      "source_sha256": "38844471f16b6cf32fffcc4de9c46058b1616ddbecacc2b4e063b3fa66ade441",
+      "output": "jade_voidspawn_turretdeath_sideflames.mesh.json",
+      "output_sha256": "70717e208c86cb4ea2c8e0872ccc009295181adf745235dadd182e69d364e45f"
+    },
+    "assets/characters/jade_voidspawn/skins/base/particles/jade_voidspawn_turretdeath_sideflames.tex": {
+      "source_sha256": "0bc503d503880008319d44d1f303efe079e4e3dd6424640b81b509e60e09e09b",
+      "output": "jade_voidspawn_turretdeath_sideflames.png",
+      "output_sha256": "fe1319425f310da3472911eccd556cad0db70240cf6ac0e8ff9dcda30719a13c"
+    }
+  },
+  "project_adaptation": {
+    "native_to_world_scale": 0.012,
+    "ground_height": 0.09,
+    "ground_emitters": [
+      "Basic1"
+    ],
+    "timing": "original sampled emitter curves unchanged",
+    "body_layers": "channel bone height; original yaw and emitter organization",
+    "ground_flash_size_multiplier": 0.45
+  }
+}

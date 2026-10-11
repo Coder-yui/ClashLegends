@@ -88,7 +88,10 @@ func _skill_useful(unit: Unit, skill: Dictionary) -> bool:
 	var reach := float(skill.get("length", skill.get("range", skill.get("radius", unit.attack_range))))
 	if skill.get("kind", "") in ["buff", "timed_form", "sanctuary", "empowered_attack"]:
 		reach = unit.attack_range + 40.0
+	# 永久强化没有持续时间字段；接近建筑两秒行程内即可考虑施放。
+	if skill.get("kind", "") == "sacrifice_empower": reach = unit.attack_range + unit.move_speed * 2.0
 	for enemy in get_tree().get_nodes_in_group("combatants"):
+		if skill.get("kind", "") == "sacrifice_empower" and not (enemy is Tower or (enemy is Unit and enemy.is_building)): continue
 		if enemy.team != 0 or enemy.hp <= 0.0 or not CombatInteraction.can_acquire(enemy, 1) or not CombatInteraction.allows(enemy, unit):
 			continue
 		if unit.global_position.distance_to(enemy.global_position) <= reach + unit.body_radius + enemy.body_radius:

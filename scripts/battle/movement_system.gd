@@ -79,6 +79,7 @@ func _clip_knockback_contacts(units: Array[Unit], velocities: Dictionary, dt: fl
 		if not a._forced_movement or a.structure_rush.displacement_immune(): continue
 		for j in units.size():
 			var b := units[j]
+			if not a.is_building and not b.is_building and (a.ignores_unit_collision() or b.ignores_unit_collision()): continue
 			if a.knockback.in_transit or b.knockback.in_transit: continue
 			if a == b or a.skill_dash_active or b.skill_dash_active or a.is_air != b.is_air or b.structure_rush.displacement_immune(): continue
 			if b._forced_movement and j < i: continue
@@ -241,6 +242,7 @@ func _adjust_unit_velocity(unit: Unit, units: Array[Unit], dt: float) -> Vector2
 		var side := Vector2(-direction.y, direction.x)
 		for other in units:
 			if other.knockback.in_transit: continue
+			if not other.is_building and not unit.is_building and (unit.ignores_unit_collision() or other.ignores_unit_collision()): continue
 			if other == unit or other.skill_dash_active or unit.skill_dash_active or other.is_air != unit.is_air:
 				continue
 			var immovable_stasis := CombatInteraction.in_stasis(other)
@@ -289,6 +291,7 @@ func _collect_unit_contacts(units: Array[Unit]) -> Dictionary:
 		var a := units[i]
 		for j in range(i + 1, units.size()):
 			var b := units[j]
+			if not a.is_building and not b.is_building and (a.ignores_unit_collision() or b.ignores_unit_collision()): continue
 			if a.knockback.in_transit or b.knockback.in_transit: continue
 			if a.skill_dash_active or b.skill_dash_active or a.structure_rush.control_immune() or b.structure_rush.control_immune(): continue
 			if a.is_air != b.is_air:

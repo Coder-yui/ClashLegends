@@ -289,7 +289,7 @@ func _process(delta: float) -> void:
 	if _source == null or not is_instance_valid(_source):
 		_retire()
 		return
-	scale = Vector3.ONE * _source.growth_body_scale
+	scale = Vector3.ONE * _source.growth_body_scale * _source.sacrifice_empowerment.y
 	_tick_form_elevation(delta)
 	_tick_spawn_transition(delta)
 	if _sync_control_override():
@@ -1890,6 +1890,7 @@ func _replace_active_buff_visual(scene_path: String) -> void:
 		return
 	add_child(_active_buff_visual)
 	_active_buff_visual.configure(_source.visual_radius, _source.team)
+	_active_buff_visual.bind_model(_model_root)
 	_model_resources.configure_buff(_active_buff_visual.make_overlay)
 	_update_active_buff_visual(0.0)
 
@@ -1902,6 +1903,8 @@ func _update_active_buff_visual(delta: float) -> void:
 	var status_active := is_instance_valid(_source) and _state.active_buff
 	if _active_buff_visual.status_source == "blood_rage":
 		status_active = is_instance_valid(_source) and _source.blood_rage_time_left_visual() > 0.0
+	if _active_buff_visual.status_source == "sacrifice_empowerment":
+		status_active = is_instance_valid(_source) and _source.sacrifice_empowerment.x > 1.0
 	if _active_buff_visual.status_source == "structure_haste":
 		status_active = is_instance_valid(_source) and _source.structure_haste_visual()
 		_active_buff_visual.status_state = _source.structure_haste_state_visual() if is_instance_valid(_source) else Vector2.ZERO

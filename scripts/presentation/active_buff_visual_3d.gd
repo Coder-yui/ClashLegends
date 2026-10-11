@@ -3,7 +3,7 @@ extends Node3D
 ## 可复用的持续 Buff 表现接口；由模型代理喂入权威/快照状态与表现时钟。
 ## 不持有 Unit，不参与玩法或网络。
 
-@export_enum("active_buff", "blood_rage", "structure_haste") var status_source: String = "active_buff"
+@export_enum("active_buff", "blood_rage", "structure_haste", "sacrifice_empowerment") var status_source: String = "active_buff"
 @export var preserve_on_form_change := false
 @export var follow_model_anchor := false
 var active := false
@@ -12,6 +12,9 @@ var overlay_material: ShaderMaterial
 var overlay_instances: Array[ShaderMaterial] = []
 
 func configure(_visual_radius: float, _team: int = 0) -> void:
+	pass
+
+func bind_model(_model: Node3D) -> void:
 	pass
 
 func advance(enabled: bool, _delta: float) -> void:

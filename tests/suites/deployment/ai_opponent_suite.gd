@@ -4,6 +4,12 @@ func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
 	var ai: AIOpponent = main._ai
+	var sacrifice := _spawn_test_unit("void_spawn", 1, Vector2(140, 850))
+	var sacrifice_skill: Dictionary = CardDB.active_skills_for("void_spawn")[0]
+	_expect(not sacrifice_skill.has("duration") and ai._skill_useful(sacrifice, sacrifice_skill), "AI接近建筑时考虑永久虚空强化，不读取已移除的持续时间字段")
+	sacrifice.position = Vector2(360, 100)
+	_expect(not ai._skill_useful(sacrifice, sacrifice_skill), "AI远离敌方建筑时保留虚空强化")
+	sacrifice.free()
 	_expect(main._team_deck(1) == main._remote_deck and main._team_deck(0) == main._deck, "AI和玩家分别查询自己的卡组")
 	for index in 20:
 		var deck := AIOpponent.build_deck()

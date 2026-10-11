@@ -5,6 +5,7 @@ extends RefCounted
 
 var dash_strikes: Array[DashStrikeState] = []
 var ornn_charges: Array[OrnnChargeState] = []
+var sacrifice_results: Array[Dictionary] = []
 var _next_result_id := 1
 var _resolved_results: Dictionary = {}
 var _expiry_explosions: Array[Dictionary] = []
@@ -144,6 +145,16 @@ func _apply(source: Unit, skill: Dictionary) -> bool:
 			source.battle_context.notify_unit_audio_event(source, &"effect_shield:start", source.get_visual_screen_position())
 		&"aftershock", &"undying_rage":
 			pass # 效果在 Cast Start 原子生效，受控不取消已施加的独立状态。
+		&"sacrifice_empower":
+			var applied := false
+			for target in _skill_target_units(source, skill):
+				if float(target._base_form_stats.get("sacrifice_damage", 0.0)) <= 0.0 or target.sacrifice_empowerment.x > 1.0: continue
+				target.sacrifice_empowerment = Vector2(float(skill.damage_multiplier), float(skill.visual_scale_multiplier))
+				var health_bonus := BattleNumbers.quantity(target.max_hp * float(skill.health_bonus_ratio))
+				target.set_sacrifice_stats(Vector3(health_bonus, float(skill.body_scale_multiplier), float(skill.speed_multiplier)))
+				target.hp += health_bonus
+				applied = true
+			return applied
 		&"permanent_growth":
 			return apply_permanent_growth(source, skill)
 		&"terrain_charge":
@@ -176,6 +187,8 @@ func _apply(source: Unit, skill: Dictionary) -> bool:
 					bool(target_skill.get("ignore_attack_speed_slow", false)),
 					source.status_source(String(skill.get("name", "buff")))
 				)
+				if bool(target_skill.get("ignore_unit_collision", false)):
+					target.buffs.apply(&"unit_phasing", source.status_source("unit_phasing"), float(target_skill.duration), {"enabled": true})
 				if target_skill.has("range_bonus") or target_skill.has("piercing_attacks") or target_skill.has("projectile_speed_multiplier"):
 					target.buffs.apply(&"ranged_attack", source.status_source("ranged_attack"), float(target_skill.duration), {"range_bonus": float(target_skill.get("range_bonus", 0.0)), "piercing": bool(target_skill.get("piercing_attacks", false)), "flight_distance": float(target_skill.get("piercing_distance", 0.0)), "projectile_speed_multiplier": float(target_skill.get("projectile_speed_multiplier", 1.0))})
 				if not bool(target_skill.get("shield_on_cast_start", false)):
@@ -666,7 +679,67 @@ func _damage_combatant(source: Unit, combatant: Node2D, amount: float, origin: V
 func queue_expiry_explosion(source: Unit, skill: Dictionary) -> void:
 	_expiry_explosions.append({"source": weakref(source), "skill": skill})
 
+## 起跳固化单个建筑引用及独立结果后立即死亡；原目标失效只保留爆炸表现。
+func begin_sacrifice(source: Unit, target: Node2D) -> void:
+	if not is_instance_valid(source) or source.hp <= 0.0 or not _sacrifice_target_valid(target, source.team): return
+	var stats: Dictionary = source._base_form_stats
+	var direction := source.global_position.direction_to(target.global_position)
+	var center := source.global_position + direction * (source.body_radius + source._target_gap(target))
+	var duration := ceilf(float(stats.sacrifice_delay) / Unit.SIM_DT) * Unit.SIM_DT
+	var audio_source := PresentationConfig.attack_source(source)
+	_next_result_id += 1
+	var result := {"center": center, "team": source.team, "form": source.form_index, "card_id": source.card_id,
+		"target_ref": weakref(target), "sacrifice_id": _next_result_id,
+		"source_ref": weakref(source), "source_position": source.global_position, "audio_source": audio_source,
+		"time_left": duration, "damage": float(stats.sacrifice_damage) * source.sacrifice_empowerment.x,
+		"forward": direction, "visual_scale": source.sacrifice_empowerment.y,
+		"created_tick": _controller.get_authoritative_server_tick() if _controller.simulation_step_active() else -1,
+		"delivery": CombatInteraction.Delivery.new()}
+	sacrifice_results.append(result)
+	var effect := {"source_ref": null, "net_id": -1, "fixed_position": true,
+		"pos": source.global_position, "end_position": center, "forward": direction,
+		"length": 0.0, "width": 0.0, "shape": "sacrifice_leap",
+		"sacrifice_id": result.sacrifice_id, "impact_delay": duration, "visual_scale": result.visual_scale,
+		"card_id": source.card_id, "form": source.form_index, "timer": duration + 2.2, "duration": duration + 2.2, "team": source.team}
+	_presentation.frontal_effects.append(effect)
+	_controller.publish_skill_fx(effect)
+	_controller.present_skill_projectile_hit(audio_source, "sacrifice", source.global_position, "start")
+	source._skip_death_visual = true
+	source._die(false)
+
+func _sacrifice_target_valid(target: Node2D, source_team: int) -> bool:
+	return is_instance_valid(target) and not target.is_queued_for_deletion() and target.hp > 0.0 and target.team != source_team and (target is Tower or (target is Unit and target.is_building))
+
+func _tick_sacrifices(dt: float) -> void:
+	var waiting: Array[Dictionary] = []
+	for result in sacrifice_results:
+		if _controller.simulation_step_active() and int(result.created_tick) == _controller.get_authoritative_server_tick():
+			waiting.append(result)
+			continue
+		result.time_left = float(result.time_left) - dt
+		if float(result.time_left) > 0.000001:
+			waiting.append(result)
+			continue
+		var source = (result.source_ref as WeakRef).get_ref()
+		var previous_delivery = CombatInteraction.current_delivery
+		CombatInteraction.current_delivery = result.delivery
+		var target = (result.target_ref as WeakRef).get_ref()
+		if _sacrifice_target_valid(target, int(result.team)) and CombatInteraction.allows(target, source, int(result.team), result.source_position):
+			if not CombatInteraction.blocks_effect(target, CombatInteraction.effect_context(source, int(result.team), result.source_position)):
+				_damage_result(source, target, float(result.damage), result)
+		CombatInteraction.current_delivery = previous_delivery
+		# 可靠抵达确认连接同一个纯表现代理，不在客户端按计时预测爆炸。
+		var impact := {"source_ref": null, "net_id": -1, "fixed_position": true,
+			"pos": result.center, "forward": result.forward, "visual_scale": result.visual_scale, "length": 0.0, "width": 0.0,
+			"shape": "sacrifice_burst", "sacrifice_id": result.sacrifice_id, "card_id": result.card_id,
+			"timer": 2.2, "duration": 2.2, "team": result.team}
+		_presentation.frontal_effects.append(impact)
+		_controller.publish_skill_fx(impact)
+		_controller.present_skill_projectile_hit(result.audio_source, "sacrifice", result.center, "impact")
+	sacrifice_results = waiting
+
 func tick_effects(dt: float) -> void:
+	_tick_sacrifices(dt)
 	var active_charges: Array[OrnnChargeState] = []
 	for charge in ornn_charges:
 		if charge.tick(dt): active_charges.append(charge)
@@ -799,6 +872,7 @@ func frontal_forward(source: Unit) -> Vector2:
 
 
 func clear() -> void:
+	sacrifice_results.clear()
 	for charge in ornn_charges:
 		var source = charge.source_ref.get_ref()
 		if is_instance_valid(source): charge._finish(source)

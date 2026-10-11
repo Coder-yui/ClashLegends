@@ -2237,10 +2237,13 @@ func _can_submit_active_skill(ability_id: int, expected_team: int = -1) -> bool:
 	var cost := _active_skills.cost(ability_id)
 	return cost <= 0.0 or (payer != null and payer.elixir >= cost)
 
-## 执行时费用已经预扣，不能再次以余额/本请求pending阻挡；重新检查当前权威行动权限。
+func begin_sacrifice(unit: Unit, target: Node2D) -> void:
+	_active_skill_effect_system.begin_sacrifice(unit, target)
+
 func queue_expiry_explosion(unit: Unit, skill: Dictionary) -> void:
 	_active_skill_effect_system.queue_expiry_explosion(unit, skill)
 
+## 执行时费用已经预扣，不能再次以余额/本请求pending阻挡；重新检查当前权威行动权限。
 func _active_skill_is_legal(ability_id: int, expected_team: int = -1) -> bool:
 	if not _active_skill_has_qualification(ability_id, expected_team): return false
 	var entry := _active_skills.entry(ability_id)

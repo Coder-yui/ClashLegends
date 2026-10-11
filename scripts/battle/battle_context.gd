@@ -11,6 +11,9 @@ func interrupt_team_attack_boost(unit: Unit) -> void:
 func _init(controller: Node2D) -> void:
 	_controller = controller
 
+func begin_sacrifice(unit: Unit, target: Node2D) -> void:
+	_controller.begin_sacrifice(unit, target)
+
 func queue_expiry_explosion(unit: Unit, skill: Dictionary) -> void:
 	_controller.queue_expiry_explosion(unit, skill)
 

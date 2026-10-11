@@ -115,9 +115,13 @@ static func attributes(stats: Dictionary, quantity_override: String = "") -> Arr
 				dps = combo_damage / combo_interval
 	if damage > 0.0:
 		result.append({"name": "每秒伤害", "value": format_number(roundf(dps))})
-	if not continuous and interval > 0.0:
+	if not continuous and interval > 0.0 and float(stats.get("sacrifice_damage", 0.0)) <= 0.0:
 		var display_interval := float(stats.get("attack_interval_display", interval))
 		result.append({"name": "攻击间隔", "value": "%s秒" % format_number(display_interval)})
+	if float(stats.get("sacrifice_damage", 0.0)) > 0.0:
+		result.append({"name": "爆炸伤害", "value": format_number(float(stats.sacrifice_damage))})
+		result.append({"name": "起跳距离", "value": "%s（%.2f格）" % [format_number(float(stats.range)), float(stats.range) / TILE_SIZE]})
+		result.append({"name": "爆炸延迟", "value": "%s秒" % format_number(float(stats.sacrifice_delay))})
 	if damage > 0.0 and stats.has("range"):
 		result.append({"name": "攻击距离", "value": "%s（%.2f格）" % [format_number(float(stats.get("range", 0.0))), float(stats.get("range", 0.0)) / TILE_SIZE]})
 	if stats.has("radius"):
@@ -129,6 +133,7 @@ static func attributes(stats: Dictionary, quantity_override: String = "") -> Arr
 static func target_name(stats: Dictionary) -> String:
 	if String(stats.get("type", "unit")) == "spell":
 		return "敌方单位"
+	if float(stats.get("sacrifice_damage", 0.0)) > 0.0: return "建筑（牺牲攻击）"
 	if float(stats.get("damage", 0.0)) <= 0.0:
 		return "无"
 	if bool(stats.get("building_only", false)):
@@ -295,6 +300,8 @@ static func active_skill_description(skill: Dictionary) -> String:
 				parts.append("击退 %s" % format_number(float(skill.knockback)))
 			if float(skill.get("slow_duration", 0.0)) > 0.0:
 				parts.append("减速至 %s%%，持续 %s 秒" % [format_number(float(skill.get("slow_multiplier", 1.0)) * 100.0), format_number(float(skill.slow_duration))])
+		"sacrifice_empower":
+			parts.append("存活成员永久强化，爆炸伤害 ×%s；最大生命提高 %s%%，移速提高 %s%%，身体半径 ×%s" % [format_number(float(skill.damage_multiplier)), format_number(float(skill.health_bonus_ratio) * 100.0), format_number((float(skill.speed_multiplier) - 1.0) * 100.0), format_number(float(skill.body_scale_multiplier))])
 		"buff":
 			if float(skill.get("heal_amount", 0.0)) > 0:
 				parts.append("回复 %s 点生命" % format_number(float(skill.heal_amount)))

@@ -630,5 +630,14 @@
     "source_path": "assets/characters/azir/hud/icons2d/azir_w.dds",
     "source_sha256": "c7c8d95704644ccbae34cb2e4238b66a653d7a2f774c282ba3ec248d3a602d40",
     "sha256": "ac7786b5e0d387b0342e60b81576dfbe44679d44feeb8fc67a1450b87922e7bf"
+  },
+  {
+    "card": "void_spawn",
+    "skill_index": 0,
+    "path": "res://assets/skills/void_spawn_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Map22.wad.client",
+    "source_path": "assets/characters/tft_voidspawn/hud/icons2d/voidspawn_squarefixed.tex",
+    "source_sha256": "6108646a3a4f4d8e801fa5741c4f20162ea5ff4c6466817b8eba2cd8dfe559e1",
+    "sha256": "9b46777df6212eb0a4e3976ea7e0278c4a2417fa301d53f4cde97adbd716fcd7"
   }
 ]

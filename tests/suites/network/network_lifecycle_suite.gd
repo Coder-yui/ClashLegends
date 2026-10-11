@@ -344,6 +344,8 @@ func _check_payload_contract() -> void:
 	data[SNAP.U_TARGET_PROTECTION] = [Vector2(360, 900), 120.0, 3.5, 2]
 	data[SNAP.U_HP] = 321.0
 	data[SNAP.U_GROWTH] = Vector2(150.0, 1.3)
+	data[SNAP.U_SACRIFICE_EMPOWERMENT] = Vector2(1.5, 1.25)
+	data[SNAP.U_SACRIFICE_STATS] = Vector3(33.0, 1.25, 1.2)
 	data[SNAP.U_STRUCTURE_HASTE] = true
 	data[SNAP.U_STRUCTURE_HASTE_STATE] = Vector2(5.5, 3)
 	data[SNAP.U_STEALTH] = true
@@ -366,6 +368,14 @@ func _check_payload_contract() -> void:
 		var invalid_packet := packet.duplicate(true)
 		invalid_packet[SNAP.S_UNITS][0][SNAP.U_GROWTH] = invalid_growth
 		_expect(not _system.apply(var_to_bytes(invalid_packet).compress(FileAccess.COMPRESSION_DEFLATE)), "非法成长载荷拒绝整份快照")
+	for invalid in [Vector2(INF, 1.25), Vector2(1.5, NAN), Vector2(0.5, 1.25), Vector2(1.5, 0), "bad"]:
+		var malformed := packet.duplicate(true)
+		malformed[SNAP.S_UNITS][0][SNAP.U_SACRIFICE_EMPOWERMENT] = invalid
+		_expect(not _system.apply(var_to_bytes(malformed).compress(FileAccess.COMPRESSION_DEFLATE)), "非法牺牲强化倍率拒绝整份快照")
+	for invalid in [Vector3(INF, 1.25, 1.2), Vector3(-1, 1.25, 1.2), Vector3(33, 0, 1.2), Vector3(33, 1.25, 0), "bad"]:
+		var malformed := packet.duplicate(true)
+		malformed[SNAP.S_UNITS][0][SNAP.U_SACRIFICE_STATS] = invalid
+		_expect(not _system.apply(var_to_bytes(malformed).compress(FileAccess.COMPRESSION_DEFLATE)), "非法牺牲强化属性拒绝快照")
 	var invalid_stealth := packet.duplicate(true)
 	invalid_stealth[SNAP.S_UNITS][0][SNAP.U_STEALTH] = 1
 	_expect(not _system.apply(var_to_bytes(invalid_stealth).compress(FileAccess.COMPRESSION_DEFLATE)), "隐身载荷拒绝非布尔值")
@@ -378,8 +388,10 @@ func _check_payload_contract() -> void:
 		_expect(not _system.apply(var_to_bytes(malformed).compress(FileAccess.COMPRESSION_DEFLATE)), "被动层数与倒计时拒绝非法快照")
 	_expect(_system.apply(var_to_bytes(packet).compress(FileAccess.COMPRESSION_DEFLATE)) and data.size() == SNAP.UNIT_PAYLOAD_SIZE, "新载荷压缩编码、解码与未知格温重建成功")
 	var replica: Unit = _main._client_units[79000]
-	_expect(replica.growth_health_bonus == 150.0 and is_equal_approx(replica.growth_body_scale, 1.3) and replica.max_hp == float(CardDB.get_card("gwen").hp) + 150.0, "成长快照恢复最大生命与体型")
+	_expect(replica.growth_health_bonus == 150.0 and is_equal_approx(replica.growth_body_scale, 1.3) and replica.max_hp == float(CardDB.get_card("gwen").hp) + 183.0, "成长与牺牲强化快照恢复最大生命与体型")
 	_expect(replica.net_stealth_hidden and replica.visible_to_team(0) and replica.visible_to_team(1) and not replica.perceived_by_team(0), "隐身快照保留双方玩家可见和敌方单位感知门禁")
+	_expect(replica.sacrifice_empowerment == Vector2(1.5, 1.25), "快照往返保留永久牺牲伤害与表现缩放")
+	_expect(replica.sacrifice_stats == Vector3(33, 1.25, 1.2), "快照恢复永久生命碰撞与移速属性")
 	var grown_radius := replica.body_radius
 	_system._apply_units([data])
 	_expect(is_equal_approx(replica.body_radius, grown_radius) and replica.hp == 321.0, "重复成长快照不叠加半径、不额外加血")

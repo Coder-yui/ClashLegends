@@ -70,6 +70,8 @@ func _draw_frontal_skill_effect(effect: Dictionary) -> void:
 	if shape == &"growth_wave":
 		GrowthEffect2D.draw_wave(self, skills, effect)
 		return
+	if shape == &"sacrifice_leap": return
+	if shape == &"sacrifice_burst": return # 原版纹理粒子由 3D 表现层绘制。
 	if shape == &"summon_mote":
 		var start: Vector2 = skills.project_height(center, float(effect.start_height))
 		var finish: Vector2 = skills.project_height(effect.end_position, float(effect.end_height))

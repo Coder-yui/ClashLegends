@@ -1,0 +1,17 @@
+{
+  "definition": "Characters/Jade_VoidSpawn/Skins/Skin0/Particles/Jade_VoidSpawn_Base_TurretDeath_EnergyBuildUP",
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Map12.wad.client",
+  "binary_sha256": "b2ca430dbe89d9c283f8289ced9f08d0c0a9428bdfbe050eb79fd2b732e848cd",
+  "assets": {
+    "assets/characters/jade_voidspawn/skins/base/particles/jade_voidspawn_energybuildup.scb": {
+      "source_sha256": "414f6571a32cf1d5a80db124f80295061cc69a66ba79f683e5f24fdf869b1611",
+      "output": "jade_voidspawn_energybuildup.mesh.json",
+      "output_sha256": "2c01835b2a94f5fe5eb0e544d6af72105df373c4a2de0360cdd7479eaaac39d3"
+    },
+    "assets/characters/jade_voidspawn/skins/base/particles/jade_voidspawn_builduplines.tex": {
+      "source_sha256": "400ff126a6cd1538bd403c2524a0cced5385d72cf1d3f2b15720cb6afbd09ee9",
+      "output": "jade_voidspawn_builduplines.png",
+      "output_sha256": "9db49d0d32928e52234f068ca461fd67d953425597662d7a40d94b8837a0f82d"
+    }
+  }
+}

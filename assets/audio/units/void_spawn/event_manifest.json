@@ -1,0 +1,125 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Map12.wad.client",
+  "wwiser_gain": "0dB",
+  "post_gain_db": 0,
+  "events": {
+    "deploy:start": {
+      "original_event": "Play_sfx_S5_VoidSpawn_spawn_cast",
+      "event_id": 1690100238,
+      "files": [
+        {
+          "path": "res://assets/audio/units/void_spawn/deploy_start_1.wav",
+          "sha256": "70add8a6846a67c79140803e25ab2af535b5992c6410d96f43ed342c640bc6d6",
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空兽/original/audio/1690100238/npc_global_voidspawn_sfx_events-0035-event {r1}.txtp",
+          "float_sha256": "029ab6ab64db856cdbefe4524b676afe9b8b9d9c2bcacd396a1ae258fc708fb5",
+          "processing": "vgmstream -W 4; ffmpeg pcm_s16le; no normalization or added gain"
+        }
+      ]
+    },
+    "death": {
+      "original_event": "Play_sfx_S5_VoidSpawnDeath_cast",
+      "event_id": 3679720236,
+      "files": [
+        {
+          "path": "res://assets/audio/units/void_spawn/death_1.wav",
+          "sha256": "17932ed9005ce9449828779463b767e4c78323eede0f750eeec057f8312c842f",
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空兽/original/audio/3679720236/npc_global_voidspawn_sfx_events-0051-event {r1}.txtp",
+          "float_sha256": "015d07a9516a5d86f93275b4c231328f823c105755154f08d6853e649dc07683",
+          "processing": "vgmstream -W 4; ffmpeg pcm_s16le; no normalization or added gain; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+          "duration": 1.5,
+          "death_envelope": {
+            "source_duration": 1.7432879818594105,
+            "source_sha256": "31075ef6d2bfc4e418f73ae7d0de09ccf94592eed907532c39a6b161a4180518",
+            "keep_seconds": 1.5,
+            "fade_start_seconds": 1.0,
+            "fade_seconds": 0.5,
+            "curve": "linear_amplitude"
+          }
+        },
+        {
+          "path": "res://assets/audio/units/void_spawn/death_2.wav",
+          "sha256": "ceb508ef2b80ab379e33ff5b772a8b55a2f75a2b3af3ce3cc2a6af7e80a89362",
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空兽/original/audio/3679720236/npc_global_voidspawn_sfx_events-0051-event {r2}.txtp",
+          "float_sha256": "c5992b0d3b1714d26409f0f31e9e3a1ad7a8ee3163cba793622f904a1e6a87f8",
+          "processing": "vgmstream -W 4; ffmpeg pcm_s16le; no normalization or added gain; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+          "duration": 1.5,
+          "death_envelope": {
+            "source_duration": 1.5892290249433108,
+            "source_sha256": "ae10ab40e8f7c77f56e5b31a5fa6eed3d4adadb1209a27aed2e3d2d6f7bb15be",
+            "keep_seconds": 1.5,
+            "fade_start_seconds": 1.0,
+            "fade_seconds": 0.5,
+            "curve": "linear_amplitude"
+          }
+        }
+      ]
+    },
+    "sacrifice:start": {
+      "original_event": "Play_sfx_S5_VoidSpawnTowerBreak_spin",
+      "event_id": 1451302535,
+      "files": [
+        {
+          "path": "res://assets/audio/units/void_spawn/sacrifice_start_1.wav",
+          "sha256": "43d9e60f644c2e4e649b5b70e7b18a7732fa7e860aea946f5d9f37bfb3f01d9e",
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空兽/original/audio/1451302535/npc_global_voidspawn_sfx_events-0031-event {r1}.txtp",
+          "float_sha256": "a5a9acbbbc0ae14a0babcb0a29a85823e87a13866545ed5668e6c43e16182070",
+          "processing": "vgmstream -W 4; ffmpeg pcm_s16le; no normalization or added gain"
+        },
+        {
+          "path": "res://assets/audio/units/void_spawn/sacrifice_start_2.wav",
+          "sha256": "132a0cbc7944d81d734ca1dfa64798cbd1deb849d70cd21ed4429f226576b070",
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空兽/original/audio/1451302535/npc_global_voidspawn_sfx_events-0031-event {r2}.txtp",
+          "float_sha256": "e7b59eb4e096e6c5e51bf195ace382e4f52012531de0f49b584d4b40a9ba0986",
+          "processing": "vgmstream -W 4; ffmpeg pcm_s16le; no normalization or added gain"
+        },
+        {
+          "path": "res://assets/audio/units/void_spawn/sacrifice_start_3.wav",
+          "sha256": "5144dedc6ef72d4431dcc9708715c41545330a7c7cc6b30c04763546e612d34e",
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空兽/original/audio/1451302535/npc_global_voidspawn_sfx_events-0031-event {r3}.txtp",
+          "float_sha256": "e8feb278d1f664361f07e0a41364c8da6d0f472bec1f5f43e30f4ccdee8772c0",
+          "processing": "vgmstream -W 4; ffmpeg pcm_s16le; no normalization or added gain"
+        }
+      ]
+    },
+    "sacrifice:impact": {
+      "original_event": "Play_sfx_S5_VoidSpawnTowerBreak_OnHit",
+      "event_id": 3173631315,
+      "files": [
+        {
+          "path": "res://assets/audio/units/void_spawn/sacrifice_impact_1.wav",
+          "sha256": "5e3d35a9e336da932cce7334b793af948349ac7b7aef36565b1f126db5454b3a",
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空兽/original/audio/3173631315/npc_global_voidspawn_sfx_events-0043-event {r1}.txtp",
+          "float_sha256": "a5cb318647518e00165eb58931f50a03fb5e76a6c117be42b2a5a1c02cea43f1",
+          "processing": "vgmstream -W 4; ffmpeg pcm_s16le; no normalization or added gain"
+        },
+        {
+          "path": "res://assets/audio/units/void_spawn/sacrifice_impact_2.wav",
+          "sha256": "28fe515071b37a0f57285dd799aabb0fbb850acc618ad6da3357c1bd6083423b",
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空兽/original/audio/3173631315/npc_global_voidspawn_sfx_events-0043-event {r2}.txtp",
+          "float_sha256": "0e0ae8d979d69dd39b606061612f3e68d48ea930b422d49c4ca1b0ad1a11a419",
+          "processing": "vgmstream -W 4; ffmpeg pcm_s16le; no normalization or added gain"
+        }
+      ]
+    },
+    "active:cast": {
+      "original_event": "Play_sfx_S5_VoidSpawn_spawn_cast",
+      "event_id": 1690100238,
+      "usage_note": "User-requested reassignment of original spawn variant 2 to active skill; not original empowered-specific audio.",
+      "files": [
+        {
+          "path": "res://assets/audio/units/void_spawn/deploy_start_2.wav",
+          "sha256": "5df1341d579a1c7bd9bf1edbfd5af5e3ab621329261a89d7347a4a8ff9b525a5",
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空兽/original/audio/1690100238/npc_global_voidspawn_sfx_events-0035-event {r2}.txtp",
+          "float_sha256": "ef31af49207f4fb1a146acd2f2102c3dccdb19ebf62f56db72d3c9d588a57c6a",
+          "processing": "vgmstream -W 4; ffmpeg pcm_s16le; no normalization or added gain"
+        }
+      ]
+    }
+  },
+  "source_banks": {
+    "assets/sounds/wwise2016/sfx/shared/npc_global_voidspawn_sfx_events.bnk": "60d52a3c78fdee5ae2b541c62214f0e4d9340605803949c86e62d55feb06d92a",
+    "assets/sounds/wwise2016/sfx/shared/npc_global_voidspawn_sfx_audio.bnk": "2b138f6ff74a1560868df4ca4b5261b7429f1adefcf03a4a98ade67baa11c446"
+  },
+  "event_name_resolution": "Skin Jade_ aliases do not exist in bank. FNV1 IDs of corresponding names without Jade_ match CAkEvent IDs in the original bank.",
+  "gain_note": "wwiser set_master_volume assigns volume_master=0.0 and volume_master_auto=False; its incorrect-master warning for zero is a logging bug confirmed in source."
+}

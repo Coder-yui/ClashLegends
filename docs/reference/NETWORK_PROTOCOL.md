@@ -4,15 +4,15 @@
 
 | 契约 | 当前值 |
 | --- | --- |
-| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->104 |
+| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->108 |
 | 顶层快照项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd SNAPSHOT_PACKET_SIZE -->11 |
-| 单位载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd UNIT_PAYLOAD_SIZE -->56 |
+| 单位载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd UNIT_PAYLOAD_SIZE -->58 |
 | 塔载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd TOWER_PAYLOAD_SIZE -->7 |
 | 弹体载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd PROJECTILE_PAYLOAD_SIZE -->14 |
 
 双方先核对版本、内容指纹和完整合法卡组，再准备本局资源并确认就绪；加载期间不推进模拟。版本不匹配在握手拒绝，不提供旧载荷兼容槽位。内容指纹包含统一协议版本与四域编译内容。规则算法或消息结构变化均须提升版本。
 
-单位载荷包含出生描述、部署剩余、权限、动作身份、累计取消，以及固定保护结界的中心/半径/剩余时间/代次；精确下标只维护在代码常量中。解码先检查顶层版本、固定长度与类型，再应用数据。NetworkEntityLifecycle 管理出生身份、同 Tick 生命周期序号、销毁屏障和会话隔离；快照可恢复未知实体，晚到动作不得复活已取消动作。
+单位载荷增加牺牲强化属性Vector3（最大生命增量、碰撞倍率、永久移速倍率），恢复未知实体并以差值应用，重复快照不叠加属性。单位载荷包含出生描述、部署剩余、权限、动作身份、累计取消，以及固定保护结界的中心/半径/剩余时间/代次；精确下标只维护在代码常量中。解码先检查顶层版本、固定长度与类型，再应用数据。NetworkEntityLifecycle 管理出生身份、同 Tick 生命周期序号、销毁屏障和会话隔离；快照可恢复未知实体，晚到动作不得复活已取消动作。
 
 RPC 端点留在 Main，服务器与两个客户端保持相同节点路径。服务器绑定两名玩家席位，以连接反查阵营；两名玩家分别维护单调请求序号，拒绝旧会话及非参与者。服务器没有本地玩家，公共战场事件发给两端，私有状态按接收阵营生成。表现系统只产生通知，客户端播放图像与声音。
 
@@ -157,3 +157,11 @@ NetworkPlayback默认100ms，根据时钟RTT/抖动与事件/快照到达时差�
 协议104：新增参与击杀转化。命中窗口仅权威端持有；黄沙士兵与太阳圆盘继续使用既有可靠生成/死亡和快照，传输字段不变。被动圆盘built_on_tower_ruin=false，客户端不自行判断死亡转化。
 
 沙皇直接普攻命中新增可靠缓冲事件 `_rpc_attack_hit_visual`，与权威命中Tick对齐；来源字典附带命中原点和目标描述，断连/清场沿用既有生命周期。音频事件仍为独立不可靠通道。
+
+协议105：新增虚空兽牺牲攻城与单位穿行增益。`skill_fx`的`sacrifice_leap`纯表现载荷固定记录card_id/form/pos/end_position/forward/duration/team，来源死亡不取消；`sacrifice_burst`仅在权威爆炸Tick发送。客户端不生成伤害。可靠事件沿用会话校验与event_id去重，旧协议拒绝握手。
+
+协议106：虚空兽`sacrifice_leap`增加`sacrifice_id`与`impact_delay`，`sacrifice_burst`携带相同`sacrifice_id`。同一代理承接起跳、蓄能与权威抵达爆炸；当前0.8秒起跳窗口加2.2秒尾迹。客户端只消费可靠抵达事件，不按动画或计时自行创建爆炸。目标建筑独立单体结算，Snapshot布局不变；旧协议拒绝握手。
+
+协议107：单位载荷追加 `U_SACRIFICE_EMPOWERMENT`（索引56），Vector2保存永久牺牲伤害倍率与纯表现缩放，两个分量必须有限且>=1；默认(1,1)。客户端读取强化体型，不自行获得伤害或加速；2秒加速沿已有增益快照。可靠起跳与抵达均携带visual_scale，抵达携带原起跳forward与card_id，缺少起跳代理时仍可采样原版挂点。伤害在起跳时固化，来源死亡不取消独立结果；旧协议拒绝握手。
+
+协议108：单位载荷追加 `U_SACRIFICE_STATS`（索引57），Vector3保存最大生命增量、身体倍率与永久移速倍率，默认(0,1,1)。解码拒绝非有限值、负生命增量或小于1的倍率；未知实体恢复与重复快照按差值更新属性，不重复增加生命上限或碰撞半径。虚空强化不再使用限时加速，旧协议拒绝握手。

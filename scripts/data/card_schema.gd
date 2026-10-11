@@ -98,7 +98,7 @@ const SIZE_RADII := {
 const PROJECTILE_VISUALS := [&"tristana_bullet", &"jinx_rocket", &"jinx_bullet", &"corki_bullet", &"fireball", &"crossbow_bolt", &"venom_bolt", &"magic_orb", &"kayle_sword", &"orb", &"arrow", &"needle", &"boomerang", &"ice_cone"]
 const VISUAL_SPAWN_TRANSITIONS := [&"drop", &"rebirth"]
 const SPELL_KINDS := [&"explosive_cask", &"corrosion", &"stasis", &"zap", &"lightning", &"freeze", &"heal", &"mirror"]
-const ACTIVE_SKILL_KINDS := [&"spell_explosive_cask", &"effect_shield", &"toggle_form", &"aftershock", &"spell_corrosion", &"undying_rage", &"spell_freeze", &"spell_stasis", &"permanent_growth", &"spell_lightning", &"dash_strike", &"terrain_charge", &"bleeding_execute", &"explosive_shield", &"sanctuary", &"timed_form", &"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"continuous_area", &"empowered_attack", &"attack_lifesteal", &"area_shield", &"restoration_shield", &"spell_heal"]
+const ACTIVE_SKILL_KINDS := [&"sacrifice_empower", &"spell_explosive_cask", &"effect_shield", &"toggle_form", &"aftershock", &"spell_corrosion", &"undying_rage", &"spell_freeze", &"spell_stasis", &"permanent_growth", &"spell_lightning", &"dash_strike", &"terrain_charge", &"bleeding_execute", &"explosive_shield", &"sanctuary", &"timed_form", &"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"continuous_area", &"empowered_attack", &"attack_lifesteal", &"area_shield", &"restoration_shield", &"spell_heal"]
 const ACTIVE_SKILL_TARGET_SCOPES := [&"self", &"deployment_group"]
 const CAST_LOCKS := [&"movement", &"attack", &"facing"]
 const VISUAL_ACTION_KINDS := [&"deploy", &"transform", &"skill"]
@@ -112,6 +112,7 @@ const CARD_FIELDS := [
 	&"assist_conversion_window", &"assist_conversion_unit_id", &"assist_conversion_building_id",
 	&"resource_dependencies",
 	&"icon_path",
+	&"sacrifice_damage", &"sacrifice_delay",
 	&"can_attack",
 	&"rage_crit_multiplier",
 	&"stealth_delay",
@@ -168,6 +169,7 @@ const VISUAL_ANIMATION_FIELDS := [
 	&"visual_action_durations", &"transitions", &"transition_blends", &"clip_blends",
 ]
 const ACTIVE_SKILL_FIELDS := [
+	&"visual_scale_multiplier",
 	&"resource_dependencies",
 	&"projectile_spawn_offset", &"projectile_colors",
 	&"damage_by_use", &"projectile_impact_visuals_by_use", &"projectile_visuals_by_use", &"visual_actions_by_use", &"projectile_explosion_radius", &"projectile_impact_visual",
@@ -181,7 +183,7 @@ const ACTIVE_SKILL_FIELDS := [
 	&"name", &"kind", &"cost", &"max_uses", &"cooldown", &"radius", &"damage", &"knockback", &"knockback_duration", &"knockback_mass_factor_max",
 	&"slow_duration", &"slow_multiplier",
 	&"shield", &"shield_duration", &"shield_decay", &"shield_on_cast_start", &"independent_on_creation", &"resource_shield_max", &"duration", &"speed_multiplier", &"damage_multiplier",
-	&"block_haste_duration", &"block_attack_speed_multiplier", &"attack_speed_multiplier", &"ignore_movement_slow", &"ignore_attack_speed_slow", &"spawn_id", &"spawn_count", &"length", &"width", &"impact_delay",
+	&"ignore_unit_collision", &"block_haste_duration", &"block_attack_speed_multiplier", &"attack_speed_multiplier", &"ignore_movement_slow", &"ignore_attack_speed_slow", &"spawn_id", &"spawn_count", &"length", &"width", &"impact_delay",
 	&"transform_impact_delay", &"cast_duration", &"transform_cast_duration", &"stun_duration", &"ground_only",
 	&"impact_visual_shape", &"full_resource_impact_visual_shape", &"impact_visual_duration", &"cast_locks", &"visual_action", &"description", &"shape", &"near_width", &"far_width", &"arc_degrees", &"fan_inner_arc",
 	&"projectile_count", &"projectile_visual", &"projectile_launch_delay", &"projectile_flight_duration", &"projectile_stop_on_hit", &"projectile_piercing",
@@ -209,6 +211,6 @@ const INTEGER_NUMBER_FIELDS := ["strike_count",
 
 ## 原始定义域归属；共享容器由 CardDefinitionCompiler 递归检查。
 const CARD_VISUAL_FIELDS := ["attack_hit_visual", "resource_dependencies", "icon_path", "attack_wave_visual", "attack_wave_visual_height", "active_buff_projectile_visual", "attack_interval_display", "color", "continuous_beam_color", "continuous_beam_end_width", "continuous_beam_forward_offset", "continuous_beam_origin_height", "continuous_beam_start_width", "death_replacement_visual_transition", "projectile_colors", "projectile_impact_visual", "projectile_visual", "projectile_visual_forward_offset", "projectile_visual_height", "projectile_visual_scale", "show_team_ring", "skill_resource_full_color", "timed_revival_visual_transition", "visual_pre_deploy_scene", "visual_active_buff_scene", "visual_animations", "visual_forward_yaw", "visual_radius", "visual_scene_path", "visual_scene_paths"]
-const SKILL_VISUAL_FIELDS := ["impact_visual_shape", "full_resource_impact_visual_shape", "impact_visual_duration", "resource_dependencies", "projectile_colors", "projectile_impact_visuals_by_use", "projectile_visuals_by_use", "visual_actions_by_use", "projectile_impact_visual", "icon_path", "full_resource_visual_action", "projectile_visual", "projectile_visual_forward_offset", "projectile_visual_height", "projectile_visual_width", "resource_visual_actions", "visual_action"]
+const SKILL_VISUAL_FIELDS := ["visual_scale_multiplier", "impact_visual_shape", "full_resource_impact_visual_shape", "impact_visual_duration", "resource_dependencies", "projectile_colors", "projectile_impact_visuals_by_use", "projectile_visuals_by_use", "visual_actions_by_use", "projectile_impact_visual", "icon_path", "full_resource_visual_action", "projectile_visual", "projectile_visual_forward_offset", "projectile_visual_height", "projectile_visual_width", "resource_visual_actions", "visual_action"]
 
 # audio.events["deploy:voice"].clip_volume_db：可选的资源路径 → 固定播放分贝补偿，未列出的池成员为 0 dB；由 CardValidator 校验。
