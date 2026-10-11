@@ -13,7 +13,7 @@
 
 建筑攻击原片约1.333333秒（0至40帧，共41个采样点，30fps）。原动画定义在第23帧（23/30秒）触发TurretDeath，第24帧把Thorax移到远处隐藏身体，片段末尾不是爆炸时刻。按20Hz向上对齐到16Tick（0.8秒），起跳至爆炸的原动作等比适配这一窗口。没有普通攻击前摇；原生Attack1/2不参与战斗。起跳死亡不播放普通Death，独立代理从原位置平移到锁定落点并采样原跳跃动作，动画完成不提交伤害。普通被杀保留2.2秒纯表现代理承载原版死亡粒子，身体0.35秒后隐藏。
 
-卡面使用本卡两个包装模型并排摄影，横向位置为±0.78、成员轻微向内转，模型展台Idle1、0.3秒、8度、柔光，灰蓝背景#263949，616×1120。幽灵疾步技能图标已撤下；虚空强化使用云顶voidspawn_squarefixed图标，原样解码为64×64 PNG。
+卡面使用用户在3D摄影棚手动编排的两个包装模型，前后错位构图，308×560；2026-10-12选定的原始照片保留在本地摄影棚shots目录，来源路径与图片SHA-256登记在assets/units/void_spawn/source_manifest.json。幽灵疾步技能图标已撤下；虚空强化使用云顶voidspawn_squarefixed图标，原样解码为64×64 PNG。
 
 原版粒子来自 Map12.wad.client 的 Jade_VoidSpawn/Skins/Skin0：攻击建筑爆炸 TurretDeath 七层、普通死亡 NormalDeath_Explosion 七层、起跳 EnergyBuildUP 一层与 BuildUpGlow 三层。保留原版纹理、网格、曲线与层次，经120Hz离线采样适配Godot；不声称与LoL引擎逐像素相同。
 

@@ -6,25 +6,15 @@
   "clip_seconds": 1.333333373,
   "authority_seconds": 0.8,
   "capture": {
-    "composition": "two models side by side",
-    "scene_source": "ClashLegends-开发素材库/03-制作中/虚空兽/void_pair.tscn",
-    "positions_x": [
-      -0.78,
-      0.78
-    ],
-    "model_yaw_radians": [
-      0.16,
-      -0.16
-    ],
-    "animation": "Idle1",
-    "time": 0.3,
-    "yaw": 8,
-    "background": "#263949",
+    "tool": "tools/viewers/camera_studio.gd",
+    "composition": "two models, manually arranged by user",
+    "image_source": "ClashLegends-开发素材库/04-中间产物/3D摄影棚/shots/虚空兽_2单位_20261012_002719.png",
+    "sha256": "d15e0a6d243436980038659108d1e5432ed02c9fe76464a446470b0618873e0c",
     "size": [
-      616,
-      1120
+      308,
+      560
     ],
-    "soft_light": true
+    "installed_path": "assets/cards/void_spawn_loading.png"
   },
   "impact_frame": 23,
   "source_fps": 30,
