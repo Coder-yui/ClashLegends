@@ -15,7 +15,7 @@ void fragment() {
  float pulse = 0.94 + 0.06 * sin(elapsed * 2.7);
  float halo = exp(-r*r*5.0) * (1.0-smoothstep(0.75,1.0,r));
  float body = 1.0-smoothstep(0.12,0.62,r);
- float heart = exp(-dot(p-vec2(-0.06,-0.09),p-vec2(-0.06,-0.09))*65.0);
+ float heart = exp(-dot(p,p)*65.0);
  vec3 violet = mix(vec3(0.21,0.025,0.65),vec3(0.65,0.12,1.0),body);
  ALBEDO = mix(violet,vec3(0.95,0.72,1.0),heart);
  ALPHA = opacity*pulse*(0.55*halo+0.45*body);
