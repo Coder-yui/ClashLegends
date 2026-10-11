@@ -1,36 +1,37 @@
 extends ActiveBuffVisual3D
-## 原版余震纹理的 Godot 随身表现；状态与时钟由模型代理提供。
+## 原版六层 Buff；RimLighting 附着模型，其余五层保持源网格/贴图/曲线。
+const PLAYER = preload("res://assets/effects/aftershock/native/player.gd")
+const PROJECTION = preload("res://scripts/presentation/spell_effect_projection.gd")
 var _age := 0.0
-var _ring: MeshInstance3D
+var _player: Node3D
 
 func configure(radius: float, _team: int = 0) -> void:
 	overlay_material = ShaderMaterial.new()
 	overlay_material.shader = preload("res://assets/effects/aftershock/body.gdshader")
-	overlay_material.set_shader_parameter("source_texture", preload("res://assets/effects/aftershock/avatar_mult.png"))
-	_ring = MeshInstance3D.new()
-	var mesh := PlaneMesh.new()
-	mesh.size = Vector2.ONE * radius / 40.0 * 3.2
-	var mat := StandardMaterial3D.new()
-	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
-	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
-	mat.albedo_texture = preload("res://assets/effects/aftershock/buff.png")
-	mat.albedo_color = Color(0.8, 1.0, 0.6, 1.0)
-	mesh.material = mat
-	_ring.mesh = mesh
-	_ring.position.y = 0.04
-	_ring.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	add_child(_ring)
+	overlay_material.set_shader_parameter("source_texture", preload("res://assets/effects/aftershock/native/Buff/assets/perks/styles/resolve/aftershock/particles/perks_aftershock_avatar_mult.png"))
+	overlay_material.set_shader_parameter("reflection_texture", preload("res://assets/effects/aftershock/native/Buff/assets/shared/particles/generic_white_cubemap.png"))
+	_player = PLAYER.new()
+	add_child(_player)
+	_player.load_kind("Buff")
+	# 原版 Buff150 / circleOut311.40326 共用尺度，随模型视觉半径整体缩放。
+	_player.setup_native((radius / 34.5) * 110.0 / 40.0 / 311.40326)
 	visible = false
 
 func advance(enabled: bool, delta: float) -> void:
-	active = enabled
-	visible = enabled
-	_age += delta
-	for material in overlay_instances:
-		material.set_shader_parameter("strength", 1.0 if enabled else 0.0)
-		material.set_shader_parameter("elapsed", _age)
-	if _ring != null:
-		_ring.rotation.y = _age * 0.8
-		_ring.scale = Vector3.ONE * (1.0 + 0.025 * sin(_age * 6.0))
+	advance_status(enabled, enabled, delta)
+
+func advance_status(status_active: bool, shown: bool, delta: float) -> void:
+	active = status_active
+	visible = shown
+	_age = _age + delta if status_active else 0.0
+	if _player == null: return
+	var camera := get_viewport().get_camera_3d()
+	if camera != null:
+		_player.projection_basis = PROJECTION.footprint_basis(camera, camera.unproject_position(global_position), 110.0)
+	_player.seek(maxf(_age, 1.0 / 120.0))
+	var sample: Array = _player.attached_sample()
+	for surface in overlay_instances:
+		surface.set_shader_parameter("strength", 1.0 if shown and not sample.is_empty() else 0.0)
+		if not sample.is_empty():
+			surface.set_shader_parameter("source_tint", Vector4(sample[7], sample[8], sample[9], sample[10]))
+			surface.set_shader_parameter("source_uv", Vector4(sample[22], sample[23], sample[24], sample[25]))

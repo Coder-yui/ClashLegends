@@ -6,7 +6,7 @@
 
 当前卡面使用蓝方包装的Idle1_Base在0.3秒进行灰青底柔光摄影；精确参数见下文。没有使用原版加载图。技能图标来自Global.wad.client的assets/perks/styles/resolve/veteranaftershock/veteranaftershock.tex；见assets/skills/source_manifest.json。
 
-余震运行纹理来自同包assets/perks/styles/resolve/aftershock/particles/：buff.png对应perks_aftershock_buff.tex，aoe_ground_crack.png对应perks_aftershock_aoe_ground_crack.tex，身体覆盖avatar_mult.png对应perks_aftershock_avatar_mult.tex。原版纹理解码无重绘，Godot原生平面与加色画布重建环/地裂；未接入完整原生岩块、烟尘、模型粒子系统。
+余震使用Global.wad.client中perks条目的Perks_Aftershock_Buff（6层）和Perks_Aftershock_AOE（8层）完整发射器定义、原始SCB网格及纹理。原定义按120Hz离线采样，Godot播放器保留粒子时序、颜色/尺寸/UV、侵蚀、混合模式；RimLighting附着实际单位模型。正式依赖和来源清单位于assets/effects/aftershock/native/；根source_manifest.json登记当前构建。旧三纹理拼接版本的资源保留在本地素材库的本次源件归档。
 
 音频来自Common.wad.client的misc_gameplay/misc_global音频与事件银行，按common.ritobin中的完整事件名经wwiser解析、vgmstream解码。15个变体，0dB，无归一化。源素材、解码TXTP与验证截图/录音保留开发素材库训练木桩目录。
 

@@ -1,0 +1,50 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Global.wad.client",
+  "source_entry": "perks",
+  "source_wad_hash": "fe11209c1b2fb62e",
+  "source_binary_sha256": "46baa320b36e7b167b3c1578cf87de9a76979ed02e7a6e9dc69998bd3aafec29",
+  "system": "Perks/Styles/Resolve/Aftershock/Particles/Perks_Aftershock_Buff",
+  "reader_revision": "c06b5bb1dba458a358628b0fd1ddef3a58a4ba43",
+  "assets": {
+    "assets/shared/particles/generic_white_cubemap.dds": {
+      "source_sha256": "402a9ea7503e888426490a1d5f5d924921026d8c4971fa9d7affc108681ee634",
+      "output": "assets/shared/particles/generic_white_cubemap.png",
+      "output_sha256": "508e92238640e05034d4f6ac7d906a3288e82dbe047b7e8f55ff4d993a7523ef"
+    },
+    "assets/perks/styles/resolve/aftershock/particles/perks_aftershock_avatar_mult.tex": {
+      "source_sha256": "1f1ec186950cb121f902bf0d34213dcca5f53ff5366ca7c15019f4081d2097ad",
+      "output": "assets/perks/styles/resolve/aftershock/particles/perks_aftershock_avatar_mult.png",
+      "output_sha256": "82a6240ab60dcf4e4b5cde945a96d35fc51c16ffd7ecbed6c221e316ff2aa21b"
+    },
+    "assets/perks/styles/resolve/aftershock/particles/perks_aftershock_buff.tex": {
+      "source_sha256": "07ca2dda45d2db0705a9f19468e9993cdffd609286113954ce5d5f48f15be963",
+      "output": "assets/perks/styles/resolve/aftershock/particles/perks_aftershock_buff.png",
+      "output_sha256": "2742c97f52c9b8ab909f092abc096571f24413c97733d26e54bc50debf0b78b8"
+    },
+    "assets/perks/styles/domination/predator/particles/perks_lycanthropy_mark_mult.tex": {
+      "source_sha256": "1254b6c9d365365fba7264c0939e8a82df7e032da32178300ea2bd7529ec3048",
+      "output": "assets/perks/styles/domination/predator/particles/perks_lycanthropy_mark_mult.png",
+      "output_sha256": "e4dee457ae2fec30c2f04b3b8b17c21ab242f03fde666534c4b8440bd71ff135"
+    },
+    "assets/perks/styles/resolve/aftershock/particles/perks_aftershock_buff_inner.tex": {
+      "source_sha256": "da962a602b0ddcb4d6618cb01a5abf81027f1e1d7b936d3c4714076b5078017b",
+      "output": "assets/perks/styles/resolve/aftershock/particles/perks_aftershock_buff_inner.png",
+      "output_sha256": "dbe44e0efb82357ffd8f9143aa20f490b1684221edccdff99c0d619e765cfc50"
+    },
+    "assets/perks/styles/resolve/aftershock/particles/perks_aftershock_cylinder_mesh.scb": {
+      "source_sha256": "a2aac3b851a3397c9e311b7d6ae3a14268711546aaf1ea8ab6bbd37c10d4ba1f",
+      "output": "assets/perks/styles/resolve/aftershock/particles/perks_aftershock_cylinder_mesh.mesh.json",
+      "output_sha256": "b9189d8292f37b20adcf7299172e34b9ca501e49b31e01233d5fad61af22e71d"
+    },
+    "assets/perks/styles/resolve/aftershock/particles/perks_aftershock_aoe_crack_lights.tex": {
+      "source_sha256": "95617c933b4c4d6a7cf9cac008fa8b763136bc8b745ebaa095c59e1b849e737a",
+      "output": "assets/perks/styles/resolve/aftershock/particles/perks_aftershock_aoe_crack_lights.png",
+      "output_sha256": "3eed423d73fad98d4c0be028d64d354db3c484528ac4efa810278c0f01b90601"
+    },
+    "assets/perks/styles/resolve/aftershock/particles/perks_aftershock_buff_glow.tex": {
+      "source_sha256": "b216a4ae046caef41ae6e078b090dde96d15b32cd71310ba8bb34783c41aea38",
+      "output": "assets/perks/styles/resolve/aftershock/particles/perks_aftershock_buff_glow.png",
+      "output_sha256": "60770424518e22e0d0b8ed67e1ded8d0d464829fc226578d10e8b4ba648d0044"
+    }
+  }
+}

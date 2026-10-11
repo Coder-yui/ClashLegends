@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://u0ypomqq62ss"
-path="res://.godot/imported/aoe_ground_crack.png-d19bf634db3c6be1fcb0576f2b5b8c71.ctex"
+uid="uid://cij8cjl1ye3vn"
+path="res://.godot/imported/perks_lycanthropy_mark_mult.png-30b8f746dfa1a4079f8021e64b50ad4e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/effects/aftershock/aoe_ground_crack.png"
-dest_files=["res://.godot/imported/aoe_ground_crack.png-d19bf634db3c6be1fcb0576f2b5b8c71.ctex"]
+source_file="res://assets/effects/aftershock/native/Buff/assets/perks/styles/domination/predator/particles/perks_lycanthropy_mark_mult.png"
+dest_files=["res://.godot/imported/perks_lycanthropy_mark_mult.png-30b8f746dfa1a4079f8021e64b50ad4e.ctex"]
 
 [params]
 

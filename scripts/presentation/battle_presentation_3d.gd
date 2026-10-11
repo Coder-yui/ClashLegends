@@ -18,6 +18,7 @@ var _anivia_effect: Node3D
 var _aurelion_effect: Node3D
 var skills: RefCounted
 var _sion_w_effect: Node3D
+var _aftershock_effect: Node3D
 var _locket_effect: Node3D
 var spells: RefCounted
 var _freeze_ground: Node3D
@@ -34,6 +35,8 @@ var pending_deployments: Callable
 var _pre_deploy_views: Dictionary = {}
 
 func _process(delta: float) -> void:
+	if _aftershock_effect != null and skills != null:
+		_aftershock_effect.sync_effects(skills, _camera)
 	if _gwen_tristana_effect != null:
 		_gwen_tristana_effect.sync_effects(projectiles, _camera)
 	if _sacrifice_effect != null and skills != null:
@@ -124,6 +127,8 @@ func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void
 	_world_root.add_child(_anivia_effect)
 	_sion_w_effect = preload("res://scripts/presentation/sion_w_effect_3d.gd").new()
 	_world_root.add_child(_sion_w_effect)
+	_aftershock_effect = preload("res://scripts/presentation/aftershock_effect_3d.gd").new()
+	_world_root.add_child(_aftershock_effect)
 	_locket_effect = preload("res://scripts/presentation/locket_effect_3d.gd").new()
 	_world_root.add_child(_locket_effect)
 	_freeze_ground = preload("res://scripts/presentation/freeze_ground_3d.gd").new()

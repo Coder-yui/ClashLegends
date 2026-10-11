@@ -4,6 +4,8 @@ func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
 	_check_decay_hit_animation()
+	_check_blast_boundary()
+	_check_native_visual()
 	var skill: Dictionary = CardDB.active_skills_for("target_dummy")[0]
 	var dummy := _spawn(0, Vector2(300, 900))
 	var enemy := _spawn(1, Vector2(380, 900))
@@ -125,3 +127,46 @@ func _check_decay_hit_animation() -> void:
 
 func _spawn(team: int, pos: Vector2) -> Unit:
 	return _main._spawn_unit(UnitSpawnRequest.new(team, "target_dummy", pos, {"deploy_time_override": 0.0}))
+
+func _check_blast_boundary() -> void:
+	var skill: Dictionary = CardDB.active_skills_for("target_dummy")[0]
+	for team in [0, 1]:
+		var source := _spawn(team, Vector2(300, 900))
+		var inside := _spawn(1 - team, Vector2(430.5, 900))
+		var outside := _spawn(1 - team, Vector2(431.5, 900))
+		var inside_hp := inside.hp
+		var outside_hp := outside.hp
+		_main.preview_active_skill(source, skill)
+		for tick in 50: source._tick_active_statuses(0.05)
+		_main._active_skill_effect_system.tick_effects(0.05)
+		_expect(inside.hp == inside_hp - 80.0 and outside.hp == outside_hp, "双方110半径按目标21身体半径检测，外沿内外0.5像素分界正确")
+		var bursts: Array = _main._skill_presentation.frontal_effects.filter(func(effect): return String(effect.get("shape", "")) == "aftershock")
+		_expect(not bursts.is_empty() and float(bursts.back().length) == float(skill.radius) and float(bursts.back().duration) >= 1.7, "原版爆炸读取同一伤害半径并保留1.7秒阴影尾迹")
+		source.free()
+		inside.free()
+		outside.free()
+
+func _check_native_visual() -> void:
+	var player := preload("res://assets/effects/aftershock/native/player.gd").new()
+	_main._battle_presentation._world_root.add_child(player)
+	player.load_kind("AOE")
+	player.setup_native(0.01)
+	_expect(player._data.emitters.size() == 8, "余震爆炸保留原版八层发射器")
+	player.seek(0.1)
+	_expect(player._pools.filter(func(pool): return not pool.is_empty()).size() == 8, "八层原版爆炸均实际生成粒子")
+	player.seek(1.6)
+	_expect(player._pools.any(func(pool): return pool.any(func(item): return item.visible)), "原版阴影尾迹没有被旧0.65秒窗口截断")
+	player.free()
+	var source := _spawn(0, Vector2(300, 900))
+	var view := _view_for(source)
+	var buff: ActiveBuffVisual3D = view._active_buff_visual
+	buff.advance_status(true, true, 0.4)
+	_expect(buff._player._data.emitters.size() == 6 and not buff._player.attached_sample().is_empty(), "护体保留原版六层，模型附着层拥有采样")
+	var previous_age: float = buff._age
+	buff.advance_status(true, false, 0.5)
+	_expect(not buff.visible and buff._age > previous_age, "凝滞隐藏原版护体但不暂停表现年龄")
+	buff.advance_status(true, true, 0.05)
+	_expect(buff.visible and buff._age > previous_age + 0.5, "凝滞解除不重播护体起始闪光")
+	buff.advance_status(false, false, 0.05)
+	_expect(not buff.visible and buff._age == 0.0, "状态结束重置原版护体表现")
+	source.free()

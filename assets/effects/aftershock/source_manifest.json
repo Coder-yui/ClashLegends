@@ -1,26 +1,41 @@
-[
-  {
-    "path": "res://assets/effects/aftershock/buff.png",
-    "source_package": "Global.wad.client",
-    "source_path": "assets/perks/styles/resolve/aftershock/particles/perks_aftershock_buff.tex",
-    "source_sha256": "07ca2dda45d2db0705a9f19468e9993cdffd609286113954ce5d5f48f15be963",
-    "sha256": "2742c97f52c9b8ab909f092abc096571f24413c97733d26e54bc50debf0b78b8",
-    "processing": "ltk-tex-utils decode; Godot additive blending"
-  },
-  {
-    "path": "res://assets/effects/aftershock/aoe_ground_crack.png",
-    "source_package": "Global.wad.client",
-    "source_path": "assets/perks/styles/resolve/aftershock/particles/perks_aftershock_aoe_ground_crack.tex",
-    "source_sha256": "bd3945d807f4acab31e6c1212ab9e4afa2f5ece79c26087b09a737b5833cf052",
-    "sha256": "f748d1590aeb16c570aa793f87fa3f5c13b625764807b5a3c6f93d2329883bbc",
-    "processing": "ltk-tex-utils decode; Godot additive blending"
-  },
-  {
-    "path": "res://assets/effects/aftershock/avatar_mult.png",
-    "source_package": "Global.wad.client",
-    "source_path": "assets/perks/styles/resolve/aftershock/particles/perks_aftershock_avatar_mult.tex",
-    "source_sha256": "1f1ec186950cb121f902bf0d34213dcca5f53ff5366ca7c15019f4081d2097ad",
-    "sha256": "82a6240ab60dcf4e4b5cde945a96d35fc51c16ffd7ecbed6c221e316ff2aa21b",
-    "processing": "ltk-tex-utils decode; Godot animated green attached mesh overlay adaptation"
+{
+  "source_package": "Global.wad.client",
+  "source_entry": "perks",
+  "systems": [
+    "Perks/Styles/Resolve/Aftershock/Particles/Perks_Aftershock_Buff",
+    "Perks/Styles/Resolve/Aftershock/Particles/Perks_Aftershock_AOE"
+  ],
+  "source_directory": "ClashLegends-开发素材库/05-已完成/训练木桩/源件/2026-10-12-余震原版",
+  "sample_hz": 120,
+  "native_blast_radius": 311.40326,
+  "gameplay_radius": 110.0,
+  "files": {
+    "assets/effects/aftershock/native/AOE/assets/perks/styles/resolve/aftershock/particles/perks_aftershock_aoe_crack_lights.png": "3eed423d73fad98d4c0be028d64d354db3c484528ac4efa810278c0f01b90601",
+    "assets/effects/aftershock/native/AOE/assets/perks/styles/resolve/aftershock/particles/perks_aftershock_aoe_ground_crack.png": "f748d1590aeb16c570aa793f87fa3f5c13b625764807b5a3c6f93d2329883bbc",
+    "assets/effects/aftershock/native/AOE/assets/perks/styles/resolve/aftershock/particles/perks_aftershock_aoe_ground_crack_glow.png": "b7cb3cb67627244a927a2cecbba96bdc3755b637945a2161fa7d13d8029efdd8",
+    "assets/effects/aftershock/native/AOE/assets/perks/styles/resolve/aftershock/particles/perks_aftershock_aoe_ground_crack_mesh.mesh.json": "4ea90df9d99fd115166683e89cf10470b5e591bae50c89a8cbae7db4654e4846",
+    "assets/effects/aftershock/native/AOE/assets/perks/styles/resolve/aftershock/particles/perks_aftershock_aoe_ground_crack_shadows.png": "7f7b1060f1136d5b1d7a8c9d91a3963364dc9954d98cfc7f2962d468c3c72d0a",
+    "assets/effects/aftershock/native/AOE/assets/perks/styles/resolve/aftershock/particles/perks_aftershock_burst_wave.png": "6b1b1707d4019753b7fbb8c185561e571f6b9e6fc3d2dcb620f12add486292f8",
+    "assets/effects/aftershock/native/AOE/assets/perks/styles/resolve/aftershock/particles/perks_aftershock_burst_wave_mesh.mesh.json": "24c4bf1a52575820a9edfbf551412bdc112497bac7a6ddb9efcaffc6e2466e2f",
+    "assets/effects/aftershock/native/AOE/assets/perks/styles/resolve/aftershock/particles/perks_aftershock_rocks.png": "0c439cab312c94870c445e052e0446c5dbe8d958bb37659c2e67935db2eecc7a",
+    "assets/effects/aftershock/native/AOE/assets/perks/styles/resolve/aftershock/particles/perks_aftershock_sharpsmoke.png": "e885b1542ee78368e17fd32c9c19e58d808befedcfbf5c189d11759f72ab0030",
+    "assets/effects/aftershock/native/AOE/assets/perks/styles/resolve/aftershock/particles/perks_aftershock_smokemult.png": "d35c08b80d69da8f1a831228508fb93861099ab59ee02fa439fea614699b3fb6",
+    "assets/effects/aftershock/native/AOE/assets/shared/particles/flare-omnimax.png": "8b7c2b4dac48572ed6f96ae4cbe0b6bbe3ae9bfbafd54578fe59e94fc6e1a54f",
+    "assets/effects/aftershock/native/AOE/sampled.json": "80f545c8adb4ac9c61964a786ea88a6d3f66826b43f50fd3e64ce8b8fc22d796",
+    "assets/effects/aftershock/native/AOE/source_manifest.json": "cab4675d421c1c829992bec8a51105d8c9ce3081deaf7c4f9926907a18f8767c",
+    "assets/effects/aftershock/native/Buff/assets/perks/styles/domination/predator/particles/perks_lycanthropy_mark_mult.png": "e4dee457ae2fec30c2f04b3b8b17c21ab242f03fde666534c4b8440bd71ff135",
+    "assets/effects/aftershock/native/Buff/assets/perks/styles/resolve/aftershock/particles/perks_aftershock_aoe_crack_lights.png": "3eed423d73fad98d4c0be028d64d354db3c484528ac4efa810278c0f01b90601",
+    "assets/effects/aftershock/native/Buff/assets/perks/styles/resolve/aftershock/particles/perks_aftershock_avatar_mult.png": "82a6240ab60dcf4e4b5cde945a96d35fc51c16ffd7ecbed6c221e316ff2aa21b",
+    "assets/effects/aftershock/native/Buff/assets/perks/styles/resolve/aftershock/particles/perks_aftershock_buff.png": "2742c97f52c9b8ab909f092abc096571f24413c97733d26e54bc50debf0b78b8",
+    "assets/effects/aftershock/native/Buff/assets/perks/styles/resolve/aftershock/particles/perks_aftershock_buff_glow.png": "60770424518e22e0d0b8ed67e1ded8d0d464829fc226578d10e8b4ba648d0044",
+    "assets/effects/aftershock/native/Buff/assets/perks/styles/resolve/aftershock/particles/perks_aftershock_buff_inner.png": "dbe44e0efb82357ffd8f9143aa20f490b1684221edccdff99c0d619e765cfc50",
+    "assets/effects/aftershock/native/Buff/assets/perks/styles/resolve/aftershock/particles/perks_aftershock_cylinder_mesh.mesh.json": "b9189d8292f37b20adcf7299172e34b9ca501e49b31e01233d5fad61af22e71d",
+    "assets/effects/aftershock/native/Buff/assets/shared/particles/generic_white_cubemap.png": "508e92238640e05034d4f6ac7d906a3288e82dbe047b7e8f55ff4d993a7523ef",
+    "assets/effects/aftershock/native/Buff/sampled.json": "d4082c4d4c3708a8b9de1a7cf85608a70af341495a58e93d7eb55587a6a0c664",
+    "assets/effects/aftershock/native/Buff/source_manifest.json": "eccc8bc4d7ad7aae708cc9d97ae42037fa7ac1e0568c23c59268603b973c0ea9",
+    "assets/effects/aftershock/native/add.gdshader": "96216f776585ccae7f99383e32a54663e5479142ddd0ac840bab5b77e6bffd67",
+    "assets/effects/aftershock/native/mix.gdshader": "7fe7a28c5506181924ee2474e359875fd0e6cdc0298a44d8120cb0cfcb0e680e",
+    "assets/effects/aftershock/native/player.gd": "848a9be16fc14e19b11f87c454c95bd011bbea673c4897e12119d56f431cb9f2",
+    "assets/effects/aftershock/native/pure_add.gdshader": "feaeb219d84f2071b2123f3a82de0ceebc129e9a3e37abd9913d51f0aba57027"
   }
-]
+}

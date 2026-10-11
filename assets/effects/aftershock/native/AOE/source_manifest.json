@@ -1,0 +1,65 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Global.wad.client",
+  "source_entry": "perks",
+  "source_wad_hash": "fe11209c1b2fb62e",
+  "source_binary_sha256": "46baa320b36e7b167b3c1578cf87de9a76979ed02e7a6e9dc69998bd3aafec29",
+  "system": "Perks/Styles/Resolve/Aftershock/Particles/Perks_Aftershock_AOE",
+  "reader_revision": "c06b5bb1dba458a358628b0fd1ddef3a58a4ba43",
+  "assets": {
+    "assets/perks/styles/resolve/aftershock/particles/perks_aftershock_aoe_ground_crack.tex": {
+      "source_sha256": "bd3945d807f4acab31e6c1212ab9e4afa2f5ece79c26087b09a737b5833cf052",
+      "output": "assets/perks/styles/resolve/aftershock/particles/perks_aftershock_aoe_ground_crack.png",
+      "output_sha256": "f748d1590aeb16c570aa793f87fa3f5c13b625764807b5a3c6f93d2329883bbc"
+    },
+    "assets/shared/particles/flare-omnimax.tex": {
+      "source_sha256": "452ff1dac9561752a117ea727cbf9e6e24a535ee92da6818df084e09a1b43f33",
+      "output": "assets/shared/particles/flare-omnimax.png",
+      "output_sha256": "8b7c2b4dac48572ed6f96ae4cbe0b6bbe3ae9bfbafd54578fe59e94fc6e1a54f"
+    },
+    "assets/perks/styles/resolve/aftershock/particles/perks_aftershock_aoe_ground_crack_mesh.scb": {
+      "source_sha256": "40d36d3f8bd818e827ddac960cc51bc05306d5b2e9d5939d78e12edb06e59fe9",
+      "output": "assets/perks/styles/resolve/aftershock/particles/perks_aftershock_aoe_ground_crack_mesh.mesh.json",
+      "output_sha256": "4ea90df9d99fd115166683e89cf10470b5e591bae50c89a8cbae7db4654e4846"
+    },
+    "assets/perks/styles/resolve/aftershock/particles/perks_aftershock_aoe_crack_lights.tex": {
+      "source_sha256": "95617c933b4c4d6a7cf9cac008fa8b763136bc8b745ebaa095c59e1b849e737a",
+      "output": "assets/perks/styles/resolve/aftershock/particles/perks_aftershock_aoe_crack_lights.png",
+      "output_sha256": "3eed423d73fad98d4c0be028d64d354db3c484528ac4efa810278c0f01b90601"
+    },
+    "assets/perks/styles/resolve/aftershock/particles/perks_aftershock_burst_wave_mesh.scb": {
+      "source_sha256": "7312a539bc14302cbf7835ea973147f7776b6bfbe2f1b0789e5a0cee5e53908c",
+      "output": "assets/perks/styles/resolve/aftershock/particles/perks_aftershock_burst_wave_mesh.mesh.json",
+      "output_sha256": "24c4bf1a52575820a9edfbf551412bdc112497bac7a6ddb9efcaffc6e2466e2f"
+    },
+    "assets/perks/styles/resolve/aftershock/particles/perks_aftershock_burst_wave.tex": {
+      "source_sha256": "37c5603441bbc32f27039aea26eb24f24c235e29c0d44bdfbc59c4537843c731",
+      "output": "assets/perks/styles/resolve/aftershock/particles/perks_aftershock_burst_wave.png",
+      "output_sha256": "6b1b1707d4019753b7fbb8c185561e571f6b9e6fc3d2dcb620f12add486292f8"
+    },
+    "assets/perks/styles/resolve/aftershock/particles/perks_aftershock_aoe_ground_crack_shadows.tex": {
+      "source_sha256": "487fffc50005ab2ca91b40ce8113cfacd40fc15fe2e623ae275d6dfc335e07ea",
+      "output": "assets/perks/styles/resolve/aftershock/particles/perks_aftershock_aoe_ground_crack_shadows.png",
+      "output_sha256": "7f7b1060f1136d5b1d7a8c9d91a3963364dc9954d98cfc7f2962d468c3c72d0a"
+    },
+    "assets/perks/styles/resolve/aftershock/particles/perks_aftershock_aoe_ground_crack_glow.tex": {
+      "source_sha256": "16b0a29645d5e2c05d0bbec0b255bd2e4c278033550a40050d73a1e4da8e45c8",
+      "output": "assets/perks/styles/resolve/aftershock/particles/perks_aftershock_aoe_ground_crack_glow.png",
+      "output_sha256": "b7cb3cb67627244a927a2cecbba96bdc3755b637945a2161fa7d13d8029efdd8"
+    },
+    "assets/perks/styles/resolve/aftershock/particles/perks_aftershock_sharpsmoke.tex": {
+      "source_sha256": "819cb0ee784d8f4b0324fa6c325dda2d177691991e54a5bc02caded0045b169d",
+      "output": "assets/perks/styles/resolve/aftershock/particles/perks_aftershock_sharpsmoke.png",
+      "output_sha256": "e885b1542ee78368e17fd32c9c19e58d808befedcfbf5c189d11759f72ab0030"
+    },
+    "assets/perks/styles/resolve/aftershock/particles/perks_aftershock_smokemult.tex": {
+      "source_sha256": "ca2d058497f237fa51a6b6e2e4773650bab8cf366aa32635ca0c84423c7c38d9",
+      "output": "assets/perks/styles/resolve/aftershock/particles/perks_aftershock_smokemult.png",
+      "output_sha256": "d35c08b80d69da8f1a831228508fb93861099ab59ee02fa439fea614699b3fb6"
+    },
+    "assets/perks/styles/resolve/aftershock/particles/perks_aftershock_rocks.tex": {
+      "source_sha256": "9f90b2f21b224ebdf4b7e772502dbe38990a7d69b4d0a2a141448483af82a4c5",
+      "output": "assets/perks/styles/resolve/aftershock/particles/perks_aftershock_rocks.png",
+      "output_sha256": "0c439cab312c94870c445e052e0446c5dbe8d958bb37659c2e67935db2eecc7a"
+    }
+  }
+}

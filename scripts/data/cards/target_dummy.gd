@@ -10,9 +10,9 @@ static func definition() -> Dictionary:
 			"can_attack": false, "is_air": false, "building_only": false, "can_attack_air": false, "is_building": true,
 			"lifespan": 15.0, "lifespan_hp_decay": true,
 			"active_skills": [{"name": "余震", "kind": "aftershock", "cost": 2, "max_uses": 1,
-				"cooldown": 10.0, "duration": 2.5, "damage_reduction": 0.6, "radius": 90.0, "damage": 80,
+				"cooldown": 10.0, "duration": 2.5, "damage_reduction": 0.6, "radius": 110.0, "damage": 80,
 				"ground_only": false,
-				"description": "立即获得60%减伤，持续2.5秒；到期时对周围90像素内敌人造成80伤害。死亡取消爆炸，凝滞期间到期不爆炸。"}],
+				"description": "立即获得60%减伤，持续2.5秒；到期时对周围110像素内敌人造成80伤害。死亡取消爆炸，凝滞期间到期不爆炸。"}],
 		},
 		"visual": {
 			"visual_radius": 34.5,
@@ -22,7 +22,8 @@ static func definition() -> Dictionary:
 					{
 						"provider": "res://assets/effects/aftershock/burst.gd",
 						"variant": "default"
-					}
+					},
+					{"provider": "res://assets/effects/aftershock/native/player.gd", "variant": "Buff"}
 				],
 				"fields": [
 					"visual_active_buff_scene"

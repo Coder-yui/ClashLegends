@@ -755,7 +755,7 @@ func tick_effects(dt: float) -> void:
 		explosion.erase("shield")
 		activate_nova(source, explosion)
 		if String(explosion.get("kind", "")) == "aftershock":
-			_presentation.present_fixed_area(source.global_position, float(explosion.radius), float(explosion.radius), 0.65, source.team, &"aftershock")
+			_presentation.present_fixed_area(source.global_position, float(explosion.radius), float(explosion.radius), 1.8, source.team, &"aftershock")
 			_controller.notify_unit_audio_event(source, &"aftershock:explode", source.global_position)
 		else:
 			_presentation.present_shield_explosion(source, float(explosion.radius))

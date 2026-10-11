@@ -7,7 +7,7 @@ func run(harness: Object, main: Node2D) -> void:
 	await _selection_boundaries()
 	_declaration_contract()
 	_sett_selection()
-	var cards := {"sett": true, "anivia": true, "sion": true, "aurelionsol": true, "kayle_ranged": true, "gwen": true, "tristana": true, "sun_disc": true, "lightning": true, "zap": true, "stasis": true, "explosive_cask": true}
+	var cards := {"target_dummy": true, "sett": true, "anivia": true, "sion": true, "aurelionsol": true, "kayle_ranged": true, "gwen": true, "tristana": true, "sun_disc": true, "lightning": true, "zap": true, "stasis": true, "explosive_cask": true}
 	var resources := MatchResources.new()
 	resources.prepare(cards.keys())
 	_expect(resources.errors.is_empty(), "调整后的法术资源完整加载")

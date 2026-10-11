@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cyl5yffrjvoth"
-path="res://.godot/imported/buff.png-28fb8de34b98e0b52ee7c181219c2522.ctex"
+uid="uid://cquropfcws5dq"
+path="res://.godot/imported/perks_aftershock_buff.png-adaaeabaffd533bad5a8794384897995.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/effects/aftershock/buff.png"
-dest_files=["res://.godot/imported/buff.png-28fb8de34b98e0b52ee7c181219c2522.ctex"]
+source_file="res://assets/effects/aftershock/native/Buff/assets/perks/styles/resolve/aftershock/particles/perks_aftershock_buff.png"
+dest_files=["res://.godot/imported/perks_aftershock_buff.png-adaaeabaffd533bad5a8794384897995.ctex"]
 
 [params]
 
