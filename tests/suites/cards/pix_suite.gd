@@ -72,12 +72,15 @@ func _check_group_deployment_and_shared_skill() -> void:
 		positions[member.global_position] = true
 	for team in [0, 1]:
 		var offsets: Array[Vector2] = _main._deployment_formation_offsets(5, 36.0, team, "polygon")
-		var centroid := Vector2.ZERO
+		var circumcenter := Vector2.ZERO
+		var bounds := Rect2(offsets[0], Vector2.ZERO)
+		for offset in offsets:
+			circumcenter += offset / 5.0
+			bounds = bounds.expand(offset)
 		for index in range(5):
-			centroid += offsets[index]
-			_expect(is_equal_approx(offsets[index].length(), 36.0), "五个顶点到中心等距，无中心成员")
+			_expect(is_equal_approx(offsets[index].distance_to(circumcenter), 36.0) and offsets[index].length() > 0.001, "五个顶点保留36外接半径，部署点击点无成员")
 			_expect(is_equal_approx(offsets[index].distance_to(offsets[(index + 1) % 5]), 72.0 * sin(PI / 5.0)), "五边形相邻边等长")
-		_expect(centroid.length() < 0.001, "双方五边形重心保持部署中心")
+		_expect(bounds.get_center().length() < 0.001, "双方五边形成员位置范围中心保持部署点击点")
 	var lead: Unit = group[0]
 	var ability_id := lead.active_ability_id
 	_expect(

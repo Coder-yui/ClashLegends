@@ -146,7 +146,7 @@ CardValidator 检查字段、类型、时序、资源、召唤与动作关系；
 
 ## 横排编队与恢复护盾
 
-`deployment_formation` 支持ring（默认）、polygon、square、line与depth_line。line/depth_line的spacing为相邻中心间距，分别横排/纵排；环形及多边形的spacing为外接半径，ring奇数成员包含中心点，polygon不放中心点，square旋转至一边平行河道。line正常下牌校验横排中心跨度，边缘身体在生成时逐兵限制到合法位置，不平移整排、不修改行走逻辑。`restoration_shield` 使用现有 shield / shield_duration / target_scope 字段。ShieldState 独立保存每层是否具备自然到期恢复资格；破裂或清除不发放恢复，Unit 只在权威存活时回复缺失生命。此盾计时沿用普通护盾，不因硬控延长，其他盾层不替代判断。
+`deployment_formation` 支持ring（默认）、polygon、square、line与depth_line。所有预设阵型统一以成员位置范围的中心对齐点击格心，即分别取最左/右、最前/后坐标的中点；不计模型大小或成员身体半径。line/depth_line的spacing为相邻中心间距，分别横排/纵排；环形及多边形的spacing为外接半径，ring奇数成员包含中心成员，polygon不放中心成员，square旋转至一边平行河道。三角形、五边形等奇数多边形在构造后整体平移居中，外接圆中心不再充当部署锚点，形状、成员顺序、间距与红蓝镜像保持不变。line正常下牌校验横排中心跨度，边缘身体在生成时逐兵限制到合法位置；这些合法落点修正和后续碰撞不重新居中整排、不修改行走逻辑。`restoration_shield` 使用现有 shield / shield_duration / target_scope 字段。ShieldState 独立保存每层是否具备自然到期恢复资格；破裂或清除不发放恢复，Unit 只在权威存活时回复缺失生命。此盾计时沿用普通护盾，不因硬控延长，其他盾层不替代判断。
 
 ## 限时形态与分段吸血
 

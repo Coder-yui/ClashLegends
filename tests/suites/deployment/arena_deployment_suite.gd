@@ -8,6 +8,8 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_structure_query_membership()
 	_check_official_arena_grid()
 	_check_card_deployment_preview()
+	_check_formation_centers()
+	_check_multi_unit_card_centers()
 	_check_large_unit_front_row_exit()
 	_check_landing_position_correction()
 	_check_tower_ingress_guards()
@@ -104,6 +106,68 @@ func _check_card_deployment_preview() -> void:
 	)
 	_expect(invalid_preview, "非法部署格保留红色预览并拒绝部署，不会悄悄改落点")
 	_main._on_card_selected("")
+
+## 只检查预设位置的范围中心；实际落地避让和后续碰撞不承担保持编队中心的职责。
+func _position_range_center(positions: Array[Vector2]) -> Vector2:
+	var bounds := Rect2(positions[0], Vector2.ZERO)
+	for position in positions:
+		bounds = bounds.expand(position)
+	return bounds.get_center()
+
+func _check_formation_centers() -> void:
+	for formation in ["ring", "polygon", "square", "line", "depth_line"]:
+		for count in range(1, 8):
+			var blue: Array[Vector2] = _main._deployment_formation_offsets(count, 36.0, 0, formation)
+			var red: Array[Vector2] = _main._deployment_formation_offsets(count, 36.0, 1, formation)
+			var centered := blue.size() == count and red.size() == count
+			if centered:
+				centered = _position_range_center(blue).length() < 0.0001 and _position_range_center(red).length() < 0.0001
+			_expect(centered, "%s 的 %d 人预设阵型范围中心对齐点击点，双方一致" % [formation, count])
+			var mirrored := blue.size() == red.size()
+			for index in blue.size():
+				mirrored = mirrored and (blue[index] + red[index]).length() < 0.0001
+			_expect(mirrored, "%s 的 %d 人编队保留成员顺序与红蓝镜像" % [formation, count])
+	var triangle: Array[Vector2] = _main._deployment_formation_offsets(3, 24.0, 0, "polygon")
+	_expect(triangle.size() == 3 and absf(triangle[0].y + 18.0) < 0.0001 and absf(triangle[1].y - 18.0) < 0.0001 and absf(triangle[2].y - 18.0) < 0.0001,
+		"三角形前端与后排距点击点各18像素，范围中心取代原外接圆中心")
+	_expect(triangle.size() == 3 and absf(triangle[0].distance_to(triangle[1]) - sqrt(3.0) * 24.0) < 0.0001 and absf(triangle[1].distance_to(triangle[2]) - sqrt(3.0) * 24.0) < 0.0001,
+		"三角形居中只平移，仍保留原三角形边长")
+
+func _check_multi_unit_card_centers() -> void:
+	var original_team: int = _main.local_team
+	var checked_cards := 0
+	for team in [0, 1]:
+		_main.local_team = team
+		var pointer := Vector2(343.0, 863.0) if team == 0 else Vector2(383.0, 423.0)
+		var center := Vector2(340.0, 860.0) if team == 0 else Vector2(380.0, 420.0)
+		var old_history: Dictionary = _main._card_history.get_last(team)
+		for card_id in CardDB.all():
+			var stats := CardDB.get_unit_stats(card_id)
+			var member_ids: Array = stats.get("deployment_member_ids", [])
+			var count := member_ids.size() if not member_ids.is_empty() else int(stats.get("deployment_count", 1))
+			if count <= 1: continue
+			var before := _main.get_tree().get_nodes_in_group("combatants").map(func(actor): return actor.get_instance_id())
+			_main._on_card_selected(card_id)
+			_main._update_deployment_preview(pointer)
+			var preview_ok: bool = _main._deployment_preview_valid and _main._deployment_preview_pos == center
+			var accepted: bool = _main.play_card(team, card_id, pointer, {"immediate": true})
+			var members := _main.get_tree().get_nodes_in_group("combatants").filter(func(actor): return actor is Unit and actor.get_instance_id() not in before)
+			var positions: Array[Vector2] = []
+			for member in members: positions.append(member.position)
+			var centered := positions.size() == count
+			if centered: centered = _position_range_center(positions).distance_to(center) < 0.0001
+			_expect(preview_ok and accepted and centered, "%s 阵营%d：真实出牌的完整编队范围中心与点击格心、预览一致" % [card_id, team])
+			if card_id == "heavy_minion_squad":
+				var midpoint_ok := members.size() == 2
+				if midpoint_ok:
+					midpoint_ok = not is_equal_approx(members[0].body_radius, members[1].body_radius) and absf(positions[0].distance_to(center) - 50.0) < 0.0001 and absf(positions[1].distance_to(center) - 50.0) < 0.0001
+				_expect(midpoint_ok, "重装部队双方均以间隔中点部署，前后各50像素，不按不同碰撞半径加权")
+			for member in members: member.free()
+			checked_cards += 1
+		_main._card_history.replace_replica(team, old_history)
+	_main.local_team = original_team
+	_main._on_card_selected("")
+	_expect(checked_cards > 0, "全卡遍历确实检查了双方多单位部署，避免空夹具通过")
 
 func _check_large_unit_front_row_exit() -> void:
 	var stats: Dictionary = CardDB.get_card("garen").duplicate()

@@ -1982,8 +1982,8 @@ func _spawn_card_units(team: int, card_id: String, pos: Vector2, deploy_time_ove
 	return spawned
 
 
-## 奇数编队保留中心成员，其余成员围绕点击格心均匀排列；队伍方向只旋转阵型，
-## 不影响中心和成员间距。部署 UI 仍只显示点击格心的一个读条圈。
+## 所有预设编队以成员位置范围的中心对齐点击格心；队伍方向只旋转阵型，
+## 整体居中不改变成员顺序和间距。后续合法落点修正与碰撞仍可移动各个成员。
 func _deployment_formation_offsets(count: int, spacing: float, team: int, formation: String = "ring") -> Array[Vector2]:
 	var offsets: Array[Vector2] = []
 	if count <= 1:
@@ -1992,23 +1992,29 @@ func _deployment_formation_offsets(count: int, spacing: float, team: int, format
 	if formation == "line":
 		for index in range(count):
 			offsets.append(Vector2((index - (count - 1) * 0.5) * spacing * (1.0 if team == 0 else -1.0), 0.0))
-		return offsets
-	if formation == "depth_line":
+	elif formation == "depth_line":
 		for index in range(count):
 			offsets.append(Vector2(0.0, (index - (count - 1) * 0.5) * spacing * (1.0 if team == 0 else -1.0)))
-		return offsets
-	var ring_count := count
-	if count % 2 == 1 and formation != "polygon":
-		offsets.append(Vector2.ZERO)
-		ring_count -= 1
-	var rotation := 0.0 if team == 0 else PI
-	var angle_offset := -PI * 0.5
-	if formation == "square":
-		# 四个顶点落在对角线上，使上/下两条边保持水平，与横向河道平行。
-		angle_offset = -PI * 0.25
-	for index in range(ring_count):
-		var angle := rotation + angle_offset + TAU * float(index) / float(ring_count)
-		offsets.append(Vector2.RIGHT.rotated(angle) * spacing)
+	else:
+		var ring_count := count
+		if count % 2 == 1 and formation != "polygon":
+			offsets.append(Vector2.ZERO)
+			ring_count -= 1
+		var rotation := 0.0 if team == 0 else PI
+		var angle_offset := -PI * 0.5
+		if formation == "square":
+			# 四个顶点落在对角线上，使上/下两条边保持水平，与横向河道平行。
+			angle_offset = -PI * 0.25
+		for index in range(ring_count):
+			var angle := rotation + angle_offset + TAU * float(index) / float(ring_count)
+			offsets.append(Vector2.RIGHT.rotated(angle) * spacing)
+	# 奇数多边形的外接圆中心不同于阵型范围中心；统一平移，让点击点上下左右居中。
+	var bounds := Rect2(offsets[0], Vector2.ZERO)
+	for offset in offsets:
+		bounds = bounds.expand(offset)
+	var center := bounds.get_center()
+	for index in offsets.size():
+		offsets[index] -= center
 	return offsets
 
 
