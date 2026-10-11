@@ -5,6 +5,7 @@ const DEFINITION_COMPILER = preload("res://scripts/data/card_definition_compiler
 const VALIDATOR = preload("res://scripts/data/card_validator.gd")
 const DEFINITIONS = [
 	preload("res://scripts/data/cards/void_spawn.gd"),
+	preload("res://scripts/data/cards/void_spawn_single.gd"),
 	preload("res://scripts/data/cards/azir.gd"),
 	preload("res://scripts/data/cards/sand_soldier.gd"),
 	preload("res://scripts/data/cards/explosive_cask.gd"),

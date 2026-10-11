@@ -10,4 +10,5 @@ static func definition() -> Dictionary:
 		data.gameplay.erase(field)
 	data.visual.erase("active_skills")
 	data.audio.events.erase("active:cast")
+	data.card_art = {"path": "res://assets/cards/sand_soldier_loading.png"}
 	return data

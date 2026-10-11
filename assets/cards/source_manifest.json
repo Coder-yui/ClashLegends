@@ -56,5 +56,41 @@
     "source": "imagegen 2026-10-08",
     "sha256": "98724ecaceae01edb421a1f459d90f95d461bd512f3f0f3f873514bde6ac15e3",
     "processing": "重新生成竖幅卡面，未裁切改色；红色定点电刑及远处两道雷击"
+  },
+  {
+    "card": "sand_soldier",
+    "path": "res://assets/cards/sand_soldier_loading.png",
+    "source": "Godot正式单体模型摄影",
+    "model": "res://assets/units/shurima_guard/shurima_guard_view.tscn",
+    "animation": "Idle1_Base",
+    "time": 0.6,
+    "yaw": 25,
+    "background": "#344A5C",
+    "soft_light": true,
+    "light_strength": 0.85,
+    "size": [
+      308,
+      560
+    ],
+    "sha256": "d9b3ed8fa928ed3c23ee6ea8d49ad55a9b3bb05b9f37fc21515909caf598d968",
+    "processing": "tools/dev.py model; 2x render, silhouette framing, solid-color background"
+  },
+  {
+    "card": "void_spawn_single",
+    "path": "res://assets/cards/void_spawn_single_loading.png",
+    "source": "Godot正式单体模型摄影",
+    "model": "res://assets/units/void_spawn/void_spawn_view.tscn",
+    "animation": "Idle1",
+    "time": 0.6,
+    "yaw": -25,
+    "background": "#52614C",
+    "soft_light": true,
+    "light_strength": 0.85,
+    "size": [
+      308,
+      560
+    ],
+    "sha256": "a5c2340e6eb65afd6e983d92c1f97a7fd7319735ae8c12157f247286eef63c69",
+    "processing": "tools/dev.py model; 2x render, silhouette framing, solid-color background"
   }
 ]

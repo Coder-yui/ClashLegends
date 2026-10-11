@@ -60,6 +60,14 @@ func _check_artdev_workbench() -> void:
 	panel.active_skill_requested.connect(_main._use_art_dev_active_skill)
 	panel.skill_resource_requested.connect(_main._set_art_dev_skill_resource)
 	panel.spell_active_changed.connect(func(enabled): _main._workbench.spell_active = enabled)
+	panel._filter_cards("虚空兽")
+	_expect(panel._library.entries.size() == 2 and "void_spawn_single" not in CardDB.selectable_ids(), "工作台区分双只卡与单只虚空兽，单只不进入正式卡组")
+	panel._select_item("void_spawn_single")
+	_main._place_art_dev_item(Vector2(360, 1050))
+	var singles := _main.get_tree().get_nodes_in_group("combatants").filter(func(unit): return unit is Unit and unit.card_id == "void_spawn_single")
+	_expect(singles.size() == 1 and int(CardDB.get_card("void_spawn").deployment_count) == 2, "工作台单只入口通过正式出牌路径仅生成一只，原卡仍部署两只")
+	_expect(panel._art.texture == CardArt.texture_for("void_spawn_single") and panel._art.texture != CardArt.texture_for("void_spawn"), "单只对象信息页使用独立摄影卡面")
+	for unit in singles: unit.free()
 
 	panel._filter_cards("gwen")
 	var search_ok: bool = panel._library.entries.size() == 1 and panel._library.entries[0].id == "gwen"

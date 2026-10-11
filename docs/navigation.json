@@ -43,6 +43,9 @@
     ]
   },
   "card_documents": {
+    "void_spawn_single": [
+      "void_spawn"
+    ],
     "gnar": [
       "gnar_small",
       "gnar_mega"
