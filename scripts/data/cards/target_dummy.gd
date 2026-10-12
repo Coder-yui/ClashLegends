@@ -6,7 +6,7 @@ static func definition() -> Dictionary:
 			"name": "训练木桩", "cost": 3, "type": "building",
 			"description": "无法攻击的防守建筑，用生命吸收敌人的火力。余震短暂减伤后向周围爆炸。",
 			"hp": 750, "damage": 0, "range": 0.0, "speed": 0.0,
-			"interval": 1.0, "radius": RADIUS_SLIGHTLY_LARGE, "footprint_tiles": Vector2i(2, 2),
+			"interval": 1.0, "radius": 20.0, "footprint_tiles": Vector2i(2, 2),
 			"can_attack": false, "is_air": false, "building_only": false, "can_attack_air": false, "is_building": true,
 			"lifespan": 15.0, "lifespan_hp_decay": true,
 			"active_skills": [{"name": "余震", "kind": "aftershock", "cost": 2, "max_uses": 1,
