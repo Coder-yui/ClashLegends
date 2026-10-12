@@ -26,6 +26,7 @@
 
 | 定义 / 正文（含形态） | 当前机制与边界重点 | 动画 / 音频 |
 | --- | --- | --- |
+| `void_gate` · [兹若特传送门](../units/void_gate.md) | 6费建筑、6秒周期出兽；主动摧毁自身召唤2只、3×3占地与30碰撞半径 | [动作](../units/animations/void_gate.md) · [声音](../units/audio/void_gate.md) |
 | `void_spawn` · [虚空兽](../units/void_spawn.md) | 双单位牺牲攻城、16Tick独立单体爆炸、原版攻城音画；1金币强化360伤害及永久20%加速，强化专属粒子缺项 | [动作](../units/animations/void_spawn.md) · [声音](../units/audio/void_spawn.md) |
 | `nocturne` · [永恒梦魇](../units/nocturne.md) | 3费空中近战、五击范围追加、完整敌方效果抵挡 | [动作](../units/animations/nocturne.md) · [声音](../units/audio/nocturne.md) · [特效](../units/effects/nocturne.md) |
 | `jinx` · [金克丝](../units/jinx.md) | 5费火箭炮、45范围空地溅射、3秒建筑助攻、2秒衰减加速 | [动作](../units/animations/jinx.md) · [声音](../units/audio/jinx.md) |
@@ -65,7 +66,8 @@
 | `missfortune` · [赏金猎人](../units/missfortune.md) | 逐目标首击；3秒移速/攻速Buff | [动作](../units/animations/missfortune.md) · [声音](../units/audio/missfortune.md) |
 | `ornn` · [奥恩](../units/ornn.md) | 独立锻造及永久普攻倍率；分阶段冲锋 | [动作](../units/animations/ornn.md) · [声音](../units/audio/ornn.md) |
 | `pantheon` · [潘森](../units/pantheon.md) | 预部署扫掠；红怒资源及短Q | [动作](../units/animations/pantheon.md) · [声音](../units/audio/pantheon.md) |
-| `pix` · [皮克斯](../units/pix.md) | 5飞行成员；命中吸血及溢出生命 | [动作](../units/animations/pix.md) · [声音](../units/audio/pix.md) |
+| `pix` · [皮克斯](../units/pix.md) | 5飞行成员；命中吸血及溢出生命 | [动作](../units/animations/pix.md) · [声音](../units/audio/pix.md) · [特效](../units/effects/pix.md) |
+| `pix_single` · [皮克斯（单只）](../units/pix.md) | 工作台单只；保留技能，不进入正式卡池 | [动作](../units/animations/pix.md) · [声音](../units/audio/pix.md) · [特效](../units/effects/pix.md) |
 | `ranged_minion` · [远程兵](../units/ranged_minion.md) | 远程弹体；5秒男爵攻速/伤害 | [动作](../units/animations/ranged_minion.md) · [声音](../units/audio/ranged_minion.md) |
 | `ranged_minion_squad` · [远程兵小队](../units/ranged_minion_squad.md) | 3远程编队；资格转交、成员Buff | [动作](../units/animations/ranged_minion.md) · [声音](../units/audio/ranged_minion_squad.md) |
 | `rift_herald` · [峡谷先锋](../units/rift_herald.md) | 准备锁定目标；新增建筑在冲撞中接触挡停；冲撞双方凝滞免疫、6蠕虫 | [动作](../units/animations/rift_herald.md) · [声音](../units/audio/rift_herald.md) |
@@ -87,6 +89,7 @@
 | `tryndamere` · [蛮族之王](../units/tryndamere.md) | 独立怒气、受控释放与4秒保命 | [动作](../units/animations/tryndamere.md) · [声音](../units/audio/tryndamere.md) |
 | `twitch` · [图奇](../units/twitch.md) | 公开玩家视图；严格脱战入隐、攻击起手破隐、穿透箭 | [动作](../units/animations/twitch.md) · [声音](../units/audio/twitch.md) |
 | `voidfish` · [虚空鱼](../units/voidfish.md) | 虚空女皇衍生；空地近战、无主动 | [动作](../units/animations/voidfish.md) · [声音](../units/audio/voidfish.md) |
+| `voidfish_ranged` · [远程虚空鱼](../units/voidfish_ranged.md) | 三只远程卡与工作台单只；虚空再生 | [动作](../units/animations/voidfish_ranged.md) · [声音](../units/audio/voidfish_ranged.md) |
 | `voidmite` · [虚空蠕虫](../units/voidmite.md) | 先锋衍生；外抛部署、仅攻城、无主动 | [动作](../units/animations/voidmite.md) · [声音](../units/audio/voidmite.md) |
 | `xin` · [赵信](../units/xin.md) | 部署横扫/击退；三击回血、主动范围击退 | [动作](../units/animations/xin.md) · [声音](../units/audio/xin.md) |
 | `zap` · [电击法术](../units/zap.md) | 固定范围55伤害/眩晕；强化独立第二击 | [动作](../units/animations/zap.md) · [声音](../units/audio/zap.md) |

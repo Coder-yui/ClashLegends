@@ -61,6 +61,12 @@
     "jinx": [
       "jinx",
       "jinx_minigun"
+    ],
+    "voidfish_ranged_single": [
+      "voidfish_ranged"
+    ],
+    "pix_single": [
+      "pix"
     ]
   }
 }
