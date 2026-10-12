@@ -16,7 +16,7 @@ func add(amount: float, duration: float, decays: bool = false, restore_on_expiry
 		return -1
 	var id := _next_id
 	_next_id += 1
-	_layers.append({"id": id, "source": source, "hp": amount, "capacity": amount, "left": duration,
+	_layers.append({"id": id, "source": source, "hp": amount, "capacity": amount, "left": duration, "duration": duration,
 		"expiry_effect": expiry_effect.duplicate(true), "restore_on_expiry": restore_on_expiry, "rate": amount / duration if decays else 0.0, "remainder": 0.0})
 	return id
 
@@ -88,3 +88,13 @@ func _prune() -> void:
 ## 诊断副本；调用者不能通过它修改护盾权威状态。
 func inspect_layers() -> Array[Dictionary]:
 	return _layers.duplicate(true)
+
+## 最新仍存在的黄沙庇护层；其他护盾不能延长它的表现。
+func restoration_visual_state() -> Vector2:
+	var latest := 0
+	var state := Vector2.ZERO
+	for layer in _layers:
+		if bool(layer.get("restore_on_expiry", false)) and int(layer.id) > latest:
+			latest = int(layer.id)
+			state = Vector2(layer.left, layer.duration)
+	return state

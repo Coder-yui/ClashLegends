@@ -66,9 +66,11 @@ func run(harness: Object, main: Node2D) -> void:
 	_system.reset_session("one")
 	_expect(main._projectile_system.client_snapshot().is_empty(), "新会话由弹体所有者清除上一局客户端状态")
 	var payload := _payload("ashe", 70001, 101)
+	payload[SNAP.U_SPAWN].args[13] = Vector2(200, 900)
 	_deliver(90, [])
 	_spawn(payload)
 	var original: Unit = main._client_units[70001]
+	_expect(original.summon_visual_origin == Vector2(200, 900), "可靠生成往返保留召唤门心，不由客户端猜测")
 	_deliver(100, [])
 	_expect(main._client_units.get(70001) == original, "Spawn101 先于 Snapshot100：旧快照不能删除新生实体")
 	_deliver(102, [payload])
@@ -78,6 +80,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_system.reset_session("two")
 	_deliver(102, [payload])
 	var reconstructed: Unit = main._client_units.get(70001)
+	_expect(reconstructed.summon_visual_origin == Vector2(200, 900), "快照先到重建保留相同出生来源")
 	_expect(is_instance_valid(reconstructed) and reconstructed.card_id == "ashe" and is_equal_approx(reconstructed._deploy_timer, 0.35), "未知实体由快照重建完整卡牌和剩余部署状态")
 	_spawn(payload)
 	_expect(main._client_units.get(70001) == reconstructed, "快照先于 Spawn：迟到生成事件幂等")
@@ -346,6 +349,10 @@ func _check_payload_contract() -> void:
 	data[SNAP.U_GROWTH] = Vector2(150.0, 1.3)
 	data[SNAP.U_SACRIFICE_EMPOWERMENT] = Vector2(1.5, 1.25)
 	data[SNAP.U_SACRIFICE_STATS] = Vector3(33.0, 1.25, 1.2)
+	data[SNAP.U_DEATH_SPAWN_STATE] = Vector2(1.75, 3.0)
+	data[SNAP.U_LIFESTEAL_VISUAL_STATE] = Vector2(5, 1)
+	data[SNAP.U_BUFF_VISUAL_CLOCK] = Vector2(2, 3)
+	data[SNAP.U_RESTORATION_SHIELD_STATE] = Vector2(1.75, 2)
 	data[SNAP.U_STRUCTURE_HASTE] = true
 	data[SNAP.U_STRUCTURE_HASTE_STATE] = Vector2(5.5, 3)
 	data[SNAP.U_STEALTH] = true
@@ -376,6 +383,19 @@ func _check_payload_contract() -> void:
 		var malformed := packet.duplicate(true)
 		malformed[SNAP.S_UNITS][0][SNAP.U_SACRIFICE_STATS] = invalid
 		_expect(not _system.apply(var_to_bytes(malformed).compress(FileAccess.COMPRESSION_DEFLATE)), "非法牺牲强化属性拒绝快照")
+	for invalid in [Vector2(INF, 3), Vector2(1, NAN), Vector2(-1, 3), Vector2(4, 3), Vector2(0, 3), Vector2(1, 0), "bad"]:
+		var malformed := packet.duplicate(true)
+		malformed[SNAP.S_UNITS][0][SNAP.U_DEATH_SPAWN_STATE] = invalid
+		_expect(not _system.apply(var_to_bytes(malformed).compress(FileAccess.COMPRESSION_DEFLATE)), "再生窗口拒绝非法快照")
+	for field in [SNAP.U_LIFESTEAL_VISUAL_STATE, SNAP.U_BUFF_VISUAL_CLOCK]:
+		for invalid in [Vector2(INF, 1), Vector2(-1, 1), Vector2(1, 0), Vector2(0, -1), "bad"]:
+			var malformed := packet.duplicate(true)
+			malformed[SNAP.S_UNITS][0][field] = invalid
+			_expect(not _system.apply(var_to_bytes(malformed).compress(FileAccess.COMPRESSION_DEFLATE)), "技能表现时钟拒绝非法快照")
+	for invalid in [Vector2(INF, 2), Vector2(1, NAN), Vector2(-1, 2), Vector2(3, 2), Vector2(0, 2), Vector2(1, 0), "bad"]:
+		var malformed := packet.duplicate(true)
+		malformed[SNAP.S_UNITS][0][SNAP.U_RESTORATION_SHIELD_STATE] = invalid
+		_expect(not _system.apply(var_to_bytes(malformed).compress(FileAccess.COMPRESSION_DEFLATE)), "黄沙盾拒绝非法表现状态")
 	var invalid_stealth := packet.duplicate(true)
 	invalid_stealth[SNAP.S_UNITS][0][SNAP.U_STEALTH] = 1
 	_expect(not _system.apply(var_to_bytes(invalid_stealth).compress(FileAccess.COMPRESSION_DEFLATE)), "隐身载荷拒绝非布尔值")
@@ -388,6 +408,9 @@ func _check_payload_contract() -> void:
 		_expect(not _system.apply(var_to_bytes(malformed).compress(FileAccess.COMPRESSION_DEFLATE)), "被动层数与倒计时拒绝非法快照")
 	_expect(_system.apply(var_to_bytes(packet).compress(FileAccess.COMPRESSION_DEFLATE)) and data.size() == SNAP.UNIT_PAYLOAD_SIZE, "新载荷压缩编码、解码与未知格温重建成功")
 	var replica: Unit = _main._client_units[79000]
+	_expect(replica.restoration_shield_state_visual() == Vector2(1.75, 2) and replica.shields.restoration_visual_state() == Vector2.ZERO, "客户端恢复黄沙盾表现但不授予护盾玩法")
+	_expect(replica.lifesteal_state_visual() == Vector2(5, 1) and replica.active_buff_clock_visual() == Vector2(2, 3) and replica.attack_lifesteal_ratio == 0.0, "快照恢复光流进度但不授予吸血玩法")
+	_expect(replica.death_spawn_state_visual() == Vector2(1.75, 3.0) and replica.buffs.remaining(&"death_spawn") == 0.0, "再生状态快照恢复仅用于表现，不授予客户端再生Buff")
 	_expect(replica.growth_health_bonus == 150.0 and is_equal_approx(replica.growth_body_scale, 1.3) and replica.max_hp == float(CardDB.get_card("gwen").hp) + 183.0, "成长与牺牲强化快照恢复最大生命与体型")
 	_expect(replica.net_stealth_hidden and replica.visible_to_team(0) and replica.visible_to_team(1) and not replica.perceived_by_team(0), "隐身快照保留双方玩家可见和敌方单位感知门禁")
 	_expect(replica.sacrifice_empowerment == Vector2(1.5, 1.25), "快照往返保留永久牺牲伤害与表现缩放")

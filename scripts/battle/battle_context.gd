@@ -41,8 +41,8 @@ func field_width() -> float:
 func ensure_unit_form_resize_safe(unit: Unit) -> void:
 	_controller.ensure_unit_form_resize_safe(unit)
 
-func spawn_summoned(team: int, card_id: String, position: Vector2, deploy_time_override: float = -1.0, visual_transition: String = "", death_replacement_charges_override: int = -1) -> Unit:
-	return _controller.spawn_summoned(team, card_id, position, deploy_time_override, visual_transition, death_replacement_charges_override)
+func spawn_summoned(team: int, card_id: String, position: Vector2, deploy_time_override: float = -1.0, visual_transition: String = "", death_replacement_charges_override: int = -1, summon_visual_origin: Vector2 = Vector2.INF) -> Unit:
+	return _controller.spawn_summoned(team, card_id, position, deploy_time_override, visual_transition, death_replacement_charges_override, summon_visual_origin)
 
 func is_ground_position_walkable(position: Vector2, mover_radius: float, excluded: Node = null) -> bool:
 	return _controller.is_ground_position_walkable(position, mover_radius, excluded)

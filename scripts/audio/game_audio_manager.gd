@@ -150,6 +150,8 @@ func attach_unit(unit: Unit, stats: Dictionary) -> void:
 		"audio": audio,
 		"stats": stats,
 		"form": unit.get_form_index(),
+		"deploy_audio_elapsed": maxf(-0.001, unit.deploy_time - unit._deploy_timer - 0.001),
+		"deploy_audio_first_poll": true,
 		"last_attack_serial": unit.get_attack_visual_serial(),
 		"last_swing_serial": unit.get_attack_visual_serial(),
 		"resource_full": unit.is_skill_resource_visible() and unit.get_skill_resource_ratio() >= 0.999,
@@ -277,6 +279,7 @@ func _tick_attached_units() -> void:
 			entry.last_empowered_serial = unit.get_empowered_attack_visual_serial()
 			entry.action_serial = unit.get_visual_action_serial()
 			entry.active_buff = unit.get_active_buff_active_visual()
+			entry.deploy_audio_elapsed = unit.deploy_time - unit._deploy_timer
 			for player in _world_players:
 				var owner: Dictionary = player.get_meta("action_owner", {})
 				if int(owner.get("unit", -1)) == instance_id: player.stop()
@@ -291,6 +294,19 @@ func _tick_attached_units() -> void:
 			entry.continuous_active = false
 			entry.idle_active = false
 		var state: UnitPresentationState = unit.presentation_state()
+		var deploy_elapsed: float = unit.deploy_time - unit._deploy_timer
+		var deploy_previous := float(entry.get("deploy_audio_elapsed", deploy_elapsed))
+		if bool(entry.get("deploy_audio_first_poll", false)):
+			entry.deploy_audio_first_poll = false
+			if deploy_elapsed > 0.1: deploy_previous = deploy_elapsed
+		if not state.dead and not unit.cancelled_deployment and deploy_elapsed > deploy_previous:
+			for cue in entry.audio.get("events", {}):
+				var event: Dictionary = entry.audio.events[cue]
+				if String(cue).begins_with("deploy:") and event.has("action_time"):
+					var due := float(event.action_time)
+					if due > deploy_previous and due <= deploy_elapsed:
+						play_event(unit, StringName(cue), unit.get_visual_screen_position(), -1, true)
+		entry.deploy_audio_elapsed = maxf(deploy_previous, deploy_elapsed)
 		for layer: StringName in [&"explosive_shield", &"berserk", &"blood_rage"]:
 			var enabled: bool = (unit.has_explosive_shield() if layer == &"explosive_shield" else (unit.death_form.used and not unit.death_form.waiting() and unit.hp > 0.0))
 			if layer == &"blood_rage": enabled = unit.blood_rage_time_left_visual() > 0.0 and not state.dead

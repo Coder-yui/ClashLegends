@@ -4,9 +4,9 @@
 
 | 契约 | 当前值 |
 | --- | --- |
-| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->108 |
+| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->112 |
 | 顶层快照项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd SNAPSHOT_PACKET_SIZE -->11 |
-| 单位载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd UNIT_PAYLOAD_SIZE -->58 |
+| 单位载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd UNIT_PAYLOAD_SIZE -->62 |
 | 塔载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd TOWER_PAYLOAD_SIZE -->7 |
 | 弹体载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd PROJECTILE_PAYLOAD_SIZE -->14 |
 
@@ -165,3 +165,11 @@ NetworkPlayback默认100ms，根据时钟RTT/抖动与事件/快照到达时差�
 协议107：单位载荷追加 `U_SACRIFICE_EMPOWERMENT`（索引56），Vector2保存永久牺牲伤害倍率与纯表现缩放，两个分量必须有限且>=1；默认(1,1)。客户端读取强化体型，不自行获得伤害或加速；2秒加速沿已有增益快照。可靠起跳与抵达均携带visual_scale，抵达携带原起跳forward与card_id，缺少起跳代理时仍可采样原版挂点。伤害在起跳时固化，来源死亡不取消独立结果；旧协议拒绝握手。
 
 协议108：单位载荷追加 `U_SACRIFICE_STATS`（索引57），Vector3保存最大生命增量、身体倍率与永久移速倍率，默认(0,1,1)。解码拒绝非有限值、负生命增量或小于1的倍率；未知实体恢复与重复快照按差值更新属性，不重复增加生命上限或碰撞半径。虚空强化不再使用限时加速，旧协议拒绝握手。
+
+协议109：可靠生成参数及出生描述args追加索引13 `summon_visual_origin: Vector2`，无来源为Vector2.INF，否则必须有限。来源用于模型自声明的出生偏移/朝向，绝不修改权威位置、碰撞或寻路。未知实体快照重建保留同一来源；原13项出生描述拒绝。
+
+协议110：单位载荷追加 `U_DEATH_SPAWN_STATE`（索引58），Vector2保存再生窗口剩余时间和总时长；默认(0,0)，拒绝非有限值、负值、剩余大于总时长或仅一项为零。客户端只读恢复特效进度，不获得再生资格。成功再生的可靠死亡事件携带 `play_death_visual=false`，旧鱼直接清除；普通死亡不变。
+
+协议111：追加 `U_LIFESTEAL_VISUAL_STATE`（59，Vector2：开启秒数、0/1开启标记）与 `U_BUFF_VISUAL_CLOCK`（60，Vector2：播放秒数、窗口总长）。默认(0,0)，拒绝非有限值、负值和无窗口但非零进度；吸血标记仅0/1，Buff进度不得超过总长+2.1秒。尾段仅用于结束粒子，不延长权威技能或赋予客户端吸血。
+
+协议112：追加 `U_RESTORATION_SHIELD_STATE`（61，Vector2：黄沙庇护剩余秒数、初始总长）。无盾为(0,0)，仅统计仍存在的恢复盾层，不以总护盾值续时；拒绝非有限值、负值、剩余超过总长和半空状态。客户端只恢复表现，不生成护盾或结算回复。

@@ -9,6 +9,7 @@ var active_slot: int = -1
 var pre_deploy_id: int = -1
 var deployment_group_id: int = -1
 var visual_transition: String = ""
+var summon_visual_origin := Vector2.INF
 var death_replacement_charges_override: int = -1
 var built_on_tower_ruin: bool = false
 var active_skill_card_id_override: String = ""
@@ -23,6 +24,7 @@ func _init(p_team: int, p_card_id: String, p_position: Vector2, options: Diction
 	pre_deploy_id = int(options.get("pre_deploy_id", -1))
 	deployment_group_id = int(options.get("deployment_group_id", -1))
 	visual_transition = String(options.get("visual_transition", ""))
+	summon_visual_origin = options.get("summon_visual_origin", Vector2.INF)
 	death_replacement_charges_override = int(options.get("death_replacement_charges_override", -1))
 	built_on_tower_ruin = bool(options.get("built_on_tower_ruin", false))
 	active_skill_card_id_override = String(options.get("active_skill_card_id_override", ""))

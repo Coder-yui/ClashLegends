@@ -370,14 +370,24 @@ func _sync_transform(force: bool, delta: float) -> void:
 	# 控制保持已显示的根朝向；外部位移仍更新位置，不继续插值旋转。
 	if not force and (_state.frozen or _state.stunned): return
 	var facing_2d := _source.get_visual_facing_direction()
+	var emerging := _source.summon_visual_origin.is_finite() and not _source.is_deployed() and _model_root.has_method("summon_birth_offset")
+	if emerging:
+		facing_2d = screen_position - _source.summon_visual_origin
 	var facing_ground := _screen_to_ground(screen_position + facing_2d * 20.0)
 	var facing_3d := facing_ground - ground_position
 	facing_3d.y = 0.0
 	if facing_3d.length_squared() > 0.0001:
 		var target_yaw := atan2(facing_3d.x, facing_3d.z) + _forward_yaw
-		rotation.y = target_yaw if force else lerp_angle(rotation.y, target_yaw, minf(delta * 12.0, 1.0))
+		rotation.y = target_yaw if force or emerging else lerp_angle(rotation.y, target_yaw, minf(delta * 12.0, 1.0))
 		if _model_root != null and _model_root.has_method("sync_visual_facing"):
 			_model_root.call("sync_visual_facing", rotation.y)
+
+	if emerging:
+		var origin := _screen_to_ground(_source.summon_visual_origin)
+		var local_origin := global_basis.inverse() * (origin - global_position)
+		_model_root.position = _model_root.call("summon_birth_offset", local_origin, _source.deploy_time - _source._deploy_timer, _source.deploy_time)
+	elif _source.summon_visual_origin.is_finite() and _model_root.has_method("summon_birth_offset"):
+		_model_root.position = Vector3(0.0, _model_ground_height, 0.0)
 
 func _sync_visual(force: bool, delta: float) -> void:
 	_sync_transform(force, delta)
@@ -1665,6 +1675,9 @@ func _create_team_ring() -> void:
 	var material := StandardMaterial3D.new()
 	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	# Ground affiliation is a backdrop, including beneath transparent VFX.
+	# Keep normal depth testing so terrain and opaque models still occlude it.
+	material.render_priority = Material.RENDER_PRIORITY_MIN
 	material.albedo_color = Color(0.20, 0.55, 1.0, 0.72) if _source.team == (1 if bool(_camera.get_meta("canvas_flipped", false)) else 0) else Color(1.0, 0.24, 0.18, 0.72)
 	ring_mesh.material = material
 
@@ -1908,6 +1921,18 @@ func _update_active_buff_visual(delta: float) -> void:
 	if _active_buff_visual.status_source == "structure_haste":
 		status_active = is_instance_valid(_source) and _source.structure_haste_visual()
 		_active_buff_visual.status_state = _source.structure_haste_state_visual() if is_instance_valid(_source) else Vector2.ZERO
+	if _active_buff_visual.status_source == "death_spawn":
+		_active_buff_visual.status_state = _source.death_spawn_state_visual() if is_instance_valid(_source) else Vector2.ZERO
+		status_active = _active_buff_visual.status_state.x > 0.0
+	if _active_buff_visual.status_source == "attack_lifesteal":
+		_active_buff_visual.status_state = _source.lifesteal_state_visual() if is_instance_valid(_source) else Vector2.ZERO
+		status_active = _active_buff_visual.status_state.y > 0.0
+	if _active_buff_visual.status_source == "active_buff_clock":
+		_active_buff_visual.status_state = _source.active_buff_clock_visual() if is_instance_valid(_source) else Vector2.ZERO
+		status_active = _active_buff_visual.status_state.y > 0.0
+	if _active_buff_visual.status_source == "restoration_shield":
+		_active_buff_visual.status_state = _source.restoration_shield_state_visual() if is_instance_valid(_source) else Vector2.ZERO
+		status_active = _active_buff_visual.status_state.x > 0.0
 	var enabled := not _dying and PresentationConfig.status_indicators_visible(_source) and status_active
 	_active_buff_visual.advance_status(not _dying and status_active, enabled, delta)
 	var shown := _active_buff_visual.visible

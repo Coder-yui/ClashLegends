@@ -263,6 +263,11 @@ var empowered_attack_speed_multiplier := 1.0
 var empowered_attack_blind_charges := 0
 var blind_attack_charges := 0
 ## 通用普攻击中吸血。主动赋予后持续到该单位死亡，不因主动槽被新编队替换而清除。
+var _lifesteal_visual_start_tick := -1
+var _buff_visual_start_tick := -1
+var _buff_visual_duration := 0.0
+var net_lifesteal_visual_state := Vector2.ZERO
+var net_buff_visual_clock := Vector2.ZERO
 var attack_lifesteal_ratio := 0.0
 var attack_lifesteal_max_health_ratio := 1.0
 
@@ -287,6 +292,7 @@ var spawn_deploy_time := -1.0
 var spawn_flight_duration := 0.0
 var spawn_defer_while_controlled := false
 var spawn_side := ""
+var active_death_spawn_id := ""
 var death_spawn_id := ""
 var death_spawn_count := 0
 var death_spawn_spread := 0.0
@@ -302,6 +308,7 @@ var timed_revival_death_replacement_charges := -1
 var timed_revival_visual_transition := ""
 var _timed_revival_left := 0.0
 ## 仅供表现层读取的生成过渡；由死亡替身/计时复生入口传入，不参与权威模拟。
+var summon_visual_origin := Vector2.INF
 var visual_spawn_transition: StringName = &""
 var _skip_death_visual := false
 var nav_cells: Array = []
@@ -359,6 +366,7 @@ var _just_deployed := false
 var net_visual_state := 1
 var net_attack_visual_serial := 0
 var net_attack_visual_first_strike := false
+var net_restoration_shield_state := Vector2.ZERO
 var net_shield_ratio := 0.0
 var net_shield_capacity_ratio := 0.0
 var net_slow_active := false
@@ -372,6 +380,7 @@ var net_visual_action_duration := 0.0
 var net_visual_action_time_left := 0.0
 var net_locomotion_state := 1
 var net_blood_rage := 0.0
+var net_death_spawn_state := Vector2.ZERO
 var net_hit_haste_full := false
 var net_structure_haste := false
 var net_structure_haste_state := Vector2.ZERO
@@ -792,6 +801,20 @@ func get_skill_resource_ratio() -> float:
 func is_skill_resource_visible() -> bool:
 	return net_skill_resource_enabled if _in_client_mode() else skill_resource_enabled
 
+## x=开启以来的秒数；y=1 表示永久吸血已开启。客户端只读，不授予玩法状态。
+func lifesteal_state_visual() -> Vector2:
+	if _in_client_mode(): return net_lifesteal_visual_state
+	if attack_lifesteal_ratio <= 0.0 or _lifesteal_visual_start_tick < 0: return Vector2.ZERO
+	return Vector2(float(buffs.tick_index - _lifesteal_visual_start_tick) / StatusInstances.TICKS_PER_SECOND, 1.0)
+
+## x=播放时间，y=窗口总长；额外保留结束片段时间，不延长 buff。
+func active_buff_clock_visual() -> Vector2:
+	if _in_client_mode(): return net_buff_visual_clock
+	if _buff_visual_start_tick < 0: return Vector2.ZERO
+	var age := float(buffs.tick_index - _buff_visual_start_tick) / StatusInstances.TICKS_PER_SECOND
+	if age > _buff_visual_duration + 2.1: return Vector2.ZERO
+	return Vector2(age, _buff_visual_duration)
+
 func get_active_buff_active_visual() -> bool:
 	return net_active_buff_active if _in_client_mode() else active_buff_timer > 0.0 or buffs.remaining(&"damage_reduction") > 0.0 or buffs.remaining(&"effect_shield") > 0.0
 
@@ -1022,6 +1045,8 @@ func apply_permanent_growth(health_ratio: float, body_scale: float) -> bool:
 ## 给后续真正命中的普攻附加吸血，不改攻击计时。
 func apply_attack_lifesteal(heal_ratio: float, max_health_ratio: float = 1.0) -> void:
 	if CombatInteraction.in_stasis(self): return
+	if attack_lifesteal_ratio <= 0.0 and heal_ratio > 0.0:
+		_lifesteal_visual_start_tick = buffs.tick_index
 	attack_lifesteal_ratio = maxf(heal_ratio, 0.0)
 	attack_lifesteal_max_health_ratio = maxf(max_health_ratio, 1.0)
 	queue_redraw()
@@ -1745,6 +1770,11 @@ func _spawn_batch() -> void:
 		push_error("周期召唤引用了不存在的单位：%s" % spawn_id)
 		return
 	var summon_radius := float(summon_stats.get("radius", 14.0))
+	var summon_action: Dictionary = _base_form_stats.get("visual_animations", {}).get("visual_actions", {}).get("summon", {})
+	if not summon_action.is_empty():
+		var duration := 0.0
+		for segment in summon_action.get("durations", []): duration += float(segment)
+		play_visual_action(&"summon", duration)
 	var count := maxi(spawn_count, 1)
 	if spawn_side == "bilateral":
 		for index in count:
@@ -1763,7 +1793,7 @@ func _spawn_batch() -> void:
 		for index in count:
 			var lateral := first_lateral + float(index) * lateral_step
 			var spawn_pos := global_position + side * spawn_distance + Vector2.UP * lateral
-			battle_context.spawn_summoned(team, spawn_id, spawn_pos, spawn_deploy_time)
+			battle_context.spawn_summoned(team, spawn_id, spawn_pos, spawn_deploy_time, "", -1, global_position)
 		_spawn_counter += count
 		return
 	for index in count:
@@ -1771,7 +1801,7 @@ func _spawn_batch() -> void:
 		var spawn_distance := body_radius + summon_radius + SUMMON_SEPARATION
 		var spawn_pos: Vector2 = global_position + direction * spawn_distance
 		_spawn_counter += 1
-		battle_context.spawn_summoned(team, spawn_id, spawn_pos, spawn_deploy_time)
+		battle_context.spawn_summoned(team, spawn_id, spawn_pos, spawn_deploy_time, "", -1, global_position)
 
 ## 目标管理：攻击中的目标失效/超距时优先原地换打射程内最近合法目标；
 ## 只有没有替代目标时才退出 Attack 并按视野规则重新索敌/追击。
@@ -2676,6 +2706,9 @@ func apply_active_buff(duration: float, speed_multiplier: float, damage_multipli
 	buffs.apply(&"buff", source, duration, {"speed": speed_multiplier, "damage": damage_multiplier,
 		"attack_speed": attack_speed_multiplier, "ignore_movement_slow": ignores_movement_slow,
 		"ignore_attack_speed_slow": ignores_attack_speed_slow})
+	if is_finite(duration) and duration > 0.0:
+		_buff_visual_start_tick = buffs.tick_index
+		_buff_visual_duration = active_buff_timer
 	_rescale_attack_phase(previous_speed)
 	queue_redraw()
 
@@ -2890,6 +2923,12 @@ func _resolve_death_outcome() -> void:
 	else:
 		death_outcome = DeathOutcome.DEATH
 
+## 只读再生窗口；客户端使用快照，不自行推进或授予复生资格。
+func death_spawn_state_visual() -> Vector2:
+	if _in_client_mode(): return net_death_spawn_state
+	var remaining := buffs.remaining(&"death_spawn")
+	return Vector2(remaining, buffs.strongest(&"death_spawn", &"visual_duration", remaining)) if remaining > 0.0 else Vector2.ZERO
+
 func _die(trigger_death_effect: bool = false) -> void:
 	if is_queued_for_deletion() or death_form.waiting(): return
 	_resolve_death_outcome()
@@ -2918,6 +2957,12 @@ func _die(trigger_death_effect: bool = false) -> void:
 			battle_context.unblock_nav_cells(nav_cells)
 		nav_cells = []
 	if is_true_death(): assist_conversion.consume(self)
+	if is_true_death() and not _in_client_mode() and battle_context != null and buffs.remaining(&"death_spawn") > 0.0 and not active_death_spawn_id.is_empty():
+		var spawn_id := active_death_spawn_id
+		active_death_spawn_id = ""
+		buffs.clear_family(&"death_spawn")
+		var regenerated: Unit = battle_context.spawn_summoned(team, spawn_id, global_position)
+		if is_instance_valid(regenerated): play_death_visual = false
 	if has_death_replacement:
 		death_replacement_charges -= 1
 		_spawn_death_replacement()
@@ -3140,6 +3185,9 @@ func _draw() -> void:
 	if hp > 0.0 and attack_speed_slow_visual():
 		preload("res://scripts/presentation/soft_control_effect.gd").draw_effect(self, _status_effect_phase, movement_slow_effect_visible(), attack_speed_slow_visual())
 	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+
+func restoration_shield_state_visual() -> Vector2:
+	return net_restoration_shield_state if _in_client_mode() else shields.restoration_visual_state()
 
 func get_shield_ratio() -> float:
 	if _in_client_mode():

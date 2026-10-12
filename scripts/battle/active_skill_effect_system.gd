@@ -145,6 +145,10 @@ func _apply(source: Unit, skill: Dictionary) -> bool:
 			source.battle_context.notify_unit_audio_event(source, &"effect_shield:start", source.get_visual_screen_position())
 		&"aftershock", &"undying_rage":
 			pass # 效果在 Cast Start 原子生效，受控不取消已施加的独立状态。
+		&"death_spawn":
+			for target in _skill_target_units(source, skill):
+				target.active_death_spawn_id = String(skill.spawn_id)
+				target.buffs.apply(&"death_spawn", source.status_source("death_spawn"), float(skill.duration), {"visual_duration": float(skill.duration)})
 		&"sacrifice_empower":
 			var applied := false
 			for target in _skill_target_units(source, skill):
@@ -425,10 +429,15 @@ func activate_summon(source: Unit, skill: Dictionary) -> void:
 		push_error("主动技能引用了不存在的召唤单位：%s" % spawn_id)
 		return
 	var summon_radius := float(summon_stats.get("radius", 14.0))
+	var summon_team := source.team
+	var summon_center := source.global_position
+	var source_radius := source.body_radius
+	if bool(skill.get("sacrifice_source", false)):
+		source._die() # 先释放建筑占位，召唤不依赖已死亡来源。
 	for index in range(count):
 		var angle := TAU * float(index) / float(count)
-		var offset := Vector2.RIGHT.rotated(angle) * (source.body_radius + summon_radius + Unit.SUMMON_SEPARATION)
-		_controller.spawn_summoned(source.team, spawn_id, source.global_position + offset)
+		var offset := Vector2.RIGHT.rotated(angle) * (source_radius + summon_radius + Unit.SUMMON_SEPARATION)
+		_controller.spawn_summoned(summon_team, spawn_id, summon_center + offset, -1.0, "", -1, summon_center)
 
 
 ## 扇形/梯形主动统一按施法开始时锁定的朝向结算。目标碰撞圆会扩张边界，

@@ -313,6 +313,7 @@ static func active_skill_description(skill: Dictionary) -> String:
 			if float(skill.get("attack_speed_multiplier", 1.0)) != 1.0:
 				parts.append("攻速 ×%.2f" % float(skill.attack_speed_multiplier))
 		"summon":
+			if bool(skill.get("sacrifice_source", false)): parts.append("立即摧毁自身")
 			var spawn_id := String(skill.get("spawn_id", ""))
 			var spawn_stats := CardDB.get_unit_stats(spawn_id)
 			parts.append("在自身周围立即召唤 %d 个%s" % [int(skill.get("spawn_count", 1)), String(spawn_stats.get("name", spawn_id))])

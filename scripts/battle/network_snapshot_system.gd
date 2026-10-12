@@ -75,7 +75,11 @@ const U_STRUCTURE_HASTE := 54
 const U_STRUCTURE_HASTE_STATE := 55
 const U_SACRIFICE_EMPOWERMENT := 56
 const U_SACRIFICE_STATS := 57
-const UNIT_PAYLOAD_SIZE := 58
+const U_DEATH_SPAWN_STATE := 58
+const U_LIFESTEAL_VISUAL_STATE := 59
+const U_BUFF_VISUAL_CLOCK := 60
+const U_RESTORATION_SHIELD_STATE := 61
+const UNIT_PAYLOAD_SIZE := 62
 
 const P_ID := 0
 const P_X := 1
@@ -158,7 +162,7 @@ func _valid_spawn(descriptor: Dictionary) -> bool:
 	if not descriptor.get("birth_revision") is int or int(descriptor.birth_revision) < 0:
 		return false
 	var args = descriptor.get("args")
-	if not args is Array or args.size() != 13:
+	if not args is Array or args.size() != 14:
 		return false
 	if not args[0] is String or CardDB.get_unit_stats(args[0]).is_empty():
 		return false
@@ -167,7 +171,7 @@ func _valid_spawn(descriptor: Dictionary) -> bool:
 			return false
 	if args[1] not in [0, 1] or int(args[3]) < 0 or not args[2] is Vector2 or not args[2].is_finite():
 		return false
-	return typeof(args[4]) in [TYPE_INT, TYPE_FLOAT] and is_finite(float(args[4])) and args[9] is String and args[11] is bool and args[12] is String and CardDB.has_card(args[12])
+	return typeof(args[4]) in [TYPE_INT, TYPE_FLOAT] and is_finite(float(args[4])) and args[9] is String and args[11] is bool and args[12] is String and CardDB.has_card(args[12]) and args[13] is Vector2 and (args[13].is_finite() or args[13] == Vector2.INF)
 
 
 ## 仅用于网络播放排程，真正应用时仍执行完整载荷校验。
@@ -214,6 +218,20 @@ func apply(snapshot_bytes: PackedByteArray, terminal: bool = false, expected_tic
 	for payload: Array in units_data:
 		if not payload[U_STEALTH] is bool or not payload[U_STASIS] is bool: return false
 		if not payload[U_HIT_HASTE_FULL] is bool or not payload[U_STRUCTURE_HASTE] is bool: return false
+		for field in [U_LIFESTEAL_VISUAL_STATE, U_BUFF_VISUAL_CLOCK]:
+			if not payload[field] is Vector2: return false
+			var clock: Vector2 = payload[field]
+			if not clock.is_finite() or clock.x < 0.0 or clock.y < 0.0: return false
+			if clock.y == 0.0 and clock.x != 0.0: return false
+			if field == U_LIFESTEAL_VISUAL_STATE and clock.y not in [0.0, 1.0]: return false
+			if field == U_BUFF_VISUAL_CLOCK and clock.x > clock.y + 2.1: return false
+		if not payload[U_RESTORATION_SHIELD_STATE] is Vector2: return false
+		var ward: Vector2 = payload[U_RESTORATION_SHIELD_STATE]
+		if not ward.is_finite() or ward.x < 0.0 or ward.y < ward.x or ((ward.x > 0.0) != (ward.y > 0.0)): return false
+		if not payload[U_DEATH_SPAWN_STATE] is Vector2: return false
+		var regeneration: Vector2 = payload[U_DEATH_SPAWN_STATE]
+		if not regeneration.is_finite() or regeneration.x < 0.0 or regeneration.y < regeneration.x: return false
+		if (regeneration.x > 0.0) != (regeneration.y > 0.0): return false
 		if not payload[U_SACRIFICE_STATS] is Vector3: return false
 		var empowered_stats: Vector3 = payload[U_SACRIFICE_STATS]
 		if not empowered_stats.is_finite() or empowered_stats.x < 0.0 or empowered_stats.y < 1.0 or empowered_stats.z < 1.0: return false
@@ -350,11 +368,15 @@ func _apply_units(units_data: Array) -> void:
 		_controller.apply_network_skill_state(u, int(d[U_ACTIVE_SKILL_USES_REMAINING]), float(d[U_ACTIVE_SKILL_COOLDOWN]), bool(d[U_FREE_RECAST]))
 		u.bleeding.replica_stacks = int(d[U_BLEED_STACKS])
 		u.net_blood_rage = float(d[U_BLOOD_RAGE])
+		u.net_death_spawn_state = d[U_DEATH_SPAWN_STATE]
+		u.net_lifesteal_visual_state = d[U_LIFESTEAL_VISUAL_STATE]
+		u.net_buff_visual_clock = d[U_BUFF_VISUAL_CLOCK]
 		u.net_hit_haste_full = d[U_HIT_HASTE_FULL]
 		u.net_structure_haste = d[U_STRUCTURE_HASTE]
 		u.net_structure_haste_state = d[U_STRUCTURE_HASTE_STATE]
 		u.sacrifice_empowerment = d[U_SACRIFICE_EMPOWERMENT]
 		u.set_sacrifice_stats(d[U_SACRIFICE_STATS])
+		u.net_restoration_shield_state = d[U_RESTORATION_SHIELD_STATE]
 		u.net_shield_ratio = clampf(float(d[U_SHIELD_RATIO]), 0.0, 1.0)
 		u.net_shield_capacity_ratio = maxf(float(d[U_SHIELD_CAPACITY_RATIO]), 0.0)
 		if (
@@ -502,7 +524,7 @@ func _unit_snapshot_payload(id: int, u: Unit, has_continuous_target: bool = fals
 		facing_direction = u.get_visual_facing_direction()
 	var skill_card_id := u.active_skill_card_id if not u.active_skill_card_id.is_empty() else u.card_id
 	var active_skill_state: Dictionary = _controller.get_active_skill_snapshot(u.active_ability_id)
-	var descriptor: Dictionary = lifecycle.spawns.get(id, {"birth_tick": 0, "birth_revision": 0, "args": [u.card_id, u.team, u.global_position, id, u.deploy_time, u.active_ability_id, u.active_ability_slot, -1, u.deployment_group_id, String(u.visual_spawn_transition), u.death_replacement_charges, u.built_on_tower_ruin, skill_card_id]}).duplicate(true)
+	var descriptor: Dictionary = lifecycle.spawns.get(id, {"birth_tick": 0, "birth_revision": 0, "args": [u.card_id, u.team, u.global_position, id, u.deploy_time, u.active_ability_id, u.active_ability_slot, -1, u.deployment_group_id, String(u.visual_spawn_transition), u.death_replacement_charges, u.built_on_tower_ruin, skill_card_id, u.summon_visual_origin]}).duplicate(true)
 	# 主动资格会转交/被新部署替换；重建必须使用当前资格而非原始出生资格。
 	descriptor.args[5] = u.active_ability_id
 	descriptor.args[6] = u.active_ability_slot
@@ -553,4 +575,7 @@ func _unit_snapshot_payload(id: int, u: Unit, has_continuous_target: bool = fals
 		u.structure_haste_visual(),
 		u.structure_haste_state_visual(),
 		u.sacrifice_empowerment, u.sacrifice_stats,
+		u.death_spawn_state_visual(),
+		u.lifesteal_state_visual(), u.active_buff_clock_visual(),
+		u.restoration_shield_state_visual(),
 	]

@@ -285,3 +285,11 @@ frontal可配置damage_by_use，序列长度须等于max_uses，数值均为有�
 `sacrifice_damage / sacrifice_delay`必须成组为正数，只允许`can_attack=false`的地面建筑索敌普通单位。进入射程后通过ActiveSkillEffectSystem固化目标弱引用、落点和独立结果，并立即走通用死亡。延迟向上对齐20Hz Tick，到期只向原锁定且仍合法的敌方建筑提交一次伤害；目标失效不转移，无范围查询或溅射。清场取消。连续表现代理通过`sacrifice_id`关联起跳与权威爆炸事件，`impact_delay`控制起跳动作适配窗口，动画不提交伤害。
 
 buff主动的`ignore_unit_collision=true`以StatusInstances独立窗口控制普通单位之间的避让、接触与位移截停；建筑占地和地形不受影响，凝滞抑制效果。资格与持续时间复用编队和增益规则。
+
+## 牺牲来源召唤
+
+`summon`主动的可选布尔字段`sacrifice_source`在效果执行时先保存阵营、落点与半径，令来源走通用死亡释放占地，再通过统一召唤入口生成指定数量。普通死亡不自动触发主动召唤。周期召唤可在`visual_animations.visual_actions.summon`声明动作与durations数组；已有表现序号/时钟快照驱动播放，不改变召唤时序。
+
+### 限时死亡生成主动
+
+`death_spawn` 使用 `duration`、`spawn_id` 与 `target_scope`；给目标存活成员写入独立20Hz窗口。真实死亡时走BattleContext生成一只独立单位，窗口到期不生成，新单位不继承再生或主动资格。字段引用进入资源计划递归和卡牌校验。远程虚空鱼使用3秒窗口。

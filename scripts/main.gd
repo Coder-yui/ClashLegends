@@ -1572,7 +1572,7 @@ func _push_units_around(pos: Vector2, radius: float) -> void:
 				u.global_position = new_pos
 
 ## 墓碑等建筑的召唤入口。召唤偏移可能指向塔/建筑，生成前必须找到最近合法位置。
-func spawn_summoned(p_team: int, card_id: String, pos: Vector2, deploy_time_override: float = -1.0, visual_transition: String = "", death_replacement_charges_override: int = -1) -> Unit:
+func spawn_summoned(p_team: int, card_id: String, pos: Vector2, deploy_time_override: float = -1.0, visual_transition: String = "", death_replacement_charges_override: int = -1, summon_visual_origin: Vector2 = Vector2.INF) -> Unit:
 	var stats: Dictionary = CardDB.get_unit_stats(card_id)
 	if stats.is_empty():
 		push_error("尝试生成不存在的召唤单位：%s" % card_id)
@@ -1582,7 +1582,7 @@ func spawn_summoned(p_team: int, card_id: String, pos: Vector2, deploy_time_over
 		push_warning("召唤物没有合法出生点：%s team=%d pos=%s" % [card_id, p_team, pos])
 		return null
 	# 已检查地形/完整建筑占地及凝滞；不再进入手牌区域修正，也不授予塔墟免衰减。
-	return _spawn_unit(UnitSpawnRequest.new(p_team, card_id, resolved, {"position_resolved": true, "deploy_time_override": deploy_time_override, "visual_transition": visual_transition, "death_replacement_charges_override": death_replacement_charges_override}))
+	return _spawn_unit(UnitSpawnRequest.new(p_team, card_id, resolved, {"position_resolved": true, "deploy_time_override": deploy_time_override, "visual_transition": visual_transition, "death_replacement_charges_override": death_replacement_charges_override, "summon_visual_origin": summon_visual_origin}))
 
 func _nearest_valid_ground_spawn(desired: Vector2, radius: float, p_team: int) -> Vector2:
 	if is_ground_position_walkable(desired, radius):
@@ -2043,6 +2043,7 @@ func _spawn_unit(request: UnitSpawnRequest) -> Unit:
 	u.active_skill_card_id = card_id if request.active_skill_card_id_override.is_empty() else request.active_skill_card_id_override
 	u.deployment_group_id = request.deployment_group_id
 	u.visual_spawn_transition = StringName(request.visual_transition)
+	u.summon_visual_origin = request.summon_visual_origin
 	u.built_on_tower_ruin = request.built_on_tower_ruin
 	u.position = pos
 	u.setup(team, stats, stats.name)
@@ -2073,9 +2074,9 @@ func _spawn_unit(request: UnitSpawnRequest) -> Unit:
 			_next_active_ability_id += 1
 		_register_active_skill(u, skill_card_id, team)
 	if mode == "server":
-		var spawn_args := [card_id, team, pos, u.net_id, request.deploy_time_override, u.active_ability_id, u.active_ability_slot, request.pre_deploy_id, request.deployment_group_id, request.visual_transition, request.death_replacement_charges_override, request.built_on_tower_ruin, u.active_skill_card_id]
+		var spawn_args := [card_id, team, pos, u.net_id, request.deploy_time_override, u.active_ability_id, u.active_ability_slot, request.pre_deploy_id, request.deployment_group_id, request.visual_transition, request.death_replacement_charges_override, request.built_on_tower_ruin, u.active_skill_card_id, u.summon_visual_origin]
 		_snapshot_system.register_spawn(spawn_args)
-		_broadcast(_rpc_spawn_unit, [card_id, team, pos, u.net_id, request.deploy_time_override, u.active_ability_id, u.active_ability_slot, request.pre_deploy_id, request.deployment_group_id, request.visual_transition, request.death_replacement_charges_override, request.built_on_tower_ruin, u.active_skill_card_id, _snapshot_system.lifecycle.session_id, _sim_tick_id, _snapshot_system.lifecycle.revision])
+		_broadcast(_rpc_spawn_unit, [card_id, team, pos, u.net_id, request.deploy_time_override, u.active_ability_id, u.active_ability_slot, request.pre_deploy_id, request.deployment_group_id, request.visual_transition, request.death_replacement_charges_override, request.built_on_tower_ruin, u.active_skill_card_id, u.summon_visual_origin, _snapshot_system.lifecycle.session_id, _sim_tick_id, _snapshot_system.lifecycle.revision])
 	return u
 
 func _register_active_skill(unit: Unit, card_id: String, p_team: int) -> void:
@@ -2654,11 +2655,11 @@ func _rpc_deploy_rejected(epoch: String, card_id: String, request_id: int) -> vo
 
 ## 主机 → 客户端：单位生成
 @rpc("authority", "call_remote", "reliable")
-func _rpc_spawn_unit(card_id: String, p_team: int, pos: Vector2, net_id: int, deploy_time_override: float = -1.0, active_ability_id: int = -1, active_ability_slot: int = -1, pre_deploy_id: int = -1, deployment_group_id: int = -1, visual_transition: String = "", death_replacement_charges_override: int = -1, built_on_tower_ruin: bool = false, active_skill_card_id: String = "", session_id: String = "", birth_tick: int = 0, birth_revision: int = 0) -> void:
-	_snapshot_system.receive_spawn(session_id, {"birth_tick": birth_tick, "birth_revision": birth_revision, "args": [card_id, p_team, pos, net_id, deploy_time_override, active_ability_id, active_ability_slot, pre_deploy_id, deployment_group_id, visual_transition, death_replacement_charges_override, built_on_tower_ruin, active_skill_card_id]})
+func _rpc_spawn_unit(card_id: String, p_team: int, pos: Vector2, net_id: int, deploy_time_override: float = -1.0, active_ability_id: int = -1, active_ability_slot: int = -1, pre_deploy_id: int = -1, deployment_group_id: int = -1, visual_transition: String = "", death_replacement_charges_override: int = -1, built_on_tower_ruin: bool = false, active_skill_card_id: String = "", summon_visual_origin: Vector2 = Vector2.INF, session_id: String = "", birth_tick: int = 0, birth_revision: int = 0) -> void:
+	_snapshot_system.receive_spawn(session_id, {"birth_tick": birth_tick, "birth_revision": birth_revision, "args": [card_id, p_team, pos, net_id, deploy_time_override, active_ability_id, active_ability_slot, pre_deploy_id, deployment_group_id, visual_transition, death_replacement_charges_override, built_on_tower_ruin, active_skill_card_id, summon_visual_origin]})
 
 ## 生命周期协议已校验的创建入口；RPC 与快照重建共用。
-func create_network_unit(card_id: String, p_team: int, pos: Vector2, net_id: int, deploy_time_override: float = -1.0, active_ability_id: int = -1, active_ability_slot: int = -1, pre_deploy_id: int = -1, deployment_group_id: int = -1, visual_transition: String = "", death_replacement_charges_override: int = -1, built_on_tower_ruin: bool = false, active_skill_card_id: String = "") -> void:
+func create_network_unit(card_id: String, p_team: int, pos: Vector2, net_id: int, deploy_time_override: float = -1.0, active_ability_id: int = -1, active_ability_slot: int = -1, pre_deploy_id: int = -1, deployment_group_id: int = -1, visual_transition: String = "", death_replacement_charges_override: int = -1, built_on_tower_ruin: bool = false, active_skill_card_id: String = "", summon_visual_origin: Vector2 = Vector2.INF) -> void:
 	if mode != "client" or game_over:
 		return
 	_remove_card_pre_deploy_visual(pre_deploy_id)
@@ -2671,6 +2672,7 @@ func create_network_unit(card_id: String, p_team: int, pos: Vector2, net_id: int
 	u.active_skill_card_id = card_id if active_skill_card_id.is_empty() else active_skill_card_id
 	u.deployment_group_id = deployment_group_id
 	u.visual_spawn_transition = StringName(visual_transition)
+	u.summon_visual_origin = summon_visual_origin
 	u.built_on_tower_ruin = built_on_tower_ruin
 	u.position = pos
 	u.setup(p_team, stats, stats.name)

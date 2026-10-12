@@ -258,12 +258,12 @@ static func _validate_audio_config(label: String, stats: Dictionary, errors: Pac
 			if event.has("action_time"):
 				var action := String(cue).get_slice(":", 0)
 				var suffix := String(cue).get_slice(":", 1)
-				var window := 0.0
+				var window := float(stats.get("deploy_time", 0.0)) if action == "deploy" else 0.0
 				for skill in stats.get("active_skills", []):
 					if String(skill.get("visual_action", "")) == action:
 						window = maxf(window, float(skill.get("cast_duration", 0.0)))
 				if typeof(event.action_time) not in [TYPE_INT, TYPE_FLOAT] or not is_finite(float(event.action_time)) or float(event.action_time) < 0.0 or float(event.action_time) >= window or suffix not in ["start", "voice", "release"]:
-					errors.append("%s.audio.events.%s.action_time: 必须是主动动作窗口内的非负 start/voice/release 秒数，命中声音只能由真实命中触发" % [label, cue])
+					errors.append("%s.audio.events.%s.action_time: 必须是部署或主动动作窗口内的非负 start/voice/release 秒数，命中声音只能由真实命中触发" % [label, cue])
 			if event.get("bus", "Combat") not in ["Combat", "Voice"]:
 				errors.append("%s.audio.events.%s.bus: 只支持 Combat / Voice" % [label, cue])
 			if event.has("clip_volume_db"):
@@ -582,7 +582,7 @@ static func _validate_references(card_id: String, stats: Dictionary, cards: Dict
 	var skills: Array = stats.get("active_skills", []) if stats.get("active_skills", []) is Array else []
 	for index in range(skills.size()):
 		var skill = skills[index]
-		if not skill is Dictionary or StringName(skill.get("kind", "")) != &"summon":
+		if not skill is Dictionary or StringName(skill.get("kind", "")) not in [&"summon", &"death_spawn"]:
 			continue
 		var spawn_id := String(skill.get("spawn_id", ""))
 		if not _unit_reference_exists(spawn_id, cards):
@@ -870,6 +870,8 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 			errors.append(label + ".health_bonus_ratio/body_scale_multiplier/knockback_radius: 仅永久成长读取这些字段")
 		if skill.has("visual_scale_multiplier") and kind != &"sacrifice_empower":
 			errors.append(label + ".visual_scale_multiplier: 仅用于牺牲强化表现")
+		if skill.has("sacrifice_source") and (typeof(skill.sacrifice_source) != TYPE_BOOL or kind != &"summon"):
+			errors.append(label + ".sacrifice_source: 仅召唤技能支持布尔值")
 		match kind:
 			&"sacrifice_empower":
 				if float(stats.get("sacrifice_damage", 0.0)) <= 0.0: errors.append(label + ": 需要牺牲攻击能力")
@@ -946,6 +948,9 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 				for positive_field in [&"radius", &"shield", &"shield_duration"]:
 					if float(skill.get(positive_field, 0.0)) <= 0.0:
 						errors.append("%s.%s: 必须 > 0" % [label, positive_field])
+			&"death_spawn":
+				_require_fields(label, skill, [&"spawn_id", &"duration"], errors)
+				if float(skill.get("duration", 0.0)) <= 0.0: errors.append(label + ".duration: 必须大于0")
 			&"summon": _require_fields(label, skill, [&"spawn_id", &"spawn_count"], errors)
 			&"toggle_form":
 				if stats.get("transformed_stats", {}).is_empty(): errors.append(label + ": 换形需要 transformed_stats")
