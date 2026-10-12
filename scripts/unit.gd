@@ -1550,7 +1550,7 @@ func _perform_deploy_sweep() -> void:
 		var was_alive: bool = c.hp > 0.0
 		if deploy_sweep_damage > 0.0:
 			any_landed = c.take_damage(deploy_sweep_damage, self, team, global_position) or any_landed
-		if was_alive and c.hp <= 0.0:
+		if was_alive and is_instance_valid(c) and c.hp <= 0.0:
 			on_enemy_killed(c)
 		if is_instance_valid(c) and c is Unit and c.hp > 0.0 and deploy_sweep_knockback > 0.0:
 			(c as Unit).apply_knockback(global_position, deploy_sweep_knockback, deploy_sweep_duration, deploy_sweep_mass_factor_max, displacement_order, CombatInteraction.effect_context(self))

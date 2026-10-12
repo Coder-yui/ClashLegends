@@ -1557,8 +1557,9 @@ func is_ground_segment_walkable(from: Vector2, to: Vector2, mover_radius: float,
 ## 部署前把落点内的可移动单位挤开（建筑与空军不动）
 func _push_units_around(pos: Vector2, radius: float) -> void:
 	for c in get_tree().get_nodes_in_group("combatants"):
+		if not is_instance_valid(c): continue
 		var u := c as Unit
-		if u == null or u.is_building or u.is_air or not is_instance_valid(u) or u.hp <= 0.0 or u.skill_dash_active or CombatInteraction.in_stasis(u):
+		if u == null or u.is_building or u.is_air or u.hp <= 0.0 or u.skill_dash_active or CombatInteraction.in_stasis(u):
 			continue
 		var min_dist: float = u.body_radius + radius
 		var gap: float = pos.distance_to(u.global_position)

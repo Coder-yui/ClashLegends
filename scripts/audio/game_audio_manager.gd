@@ -905,6 +905,8 @@ func attach_building_audio(tower: Tower, visual_config: Dictionary) -> void:
 func _start_building_layers(entry: Dictionary) -> void:
 	# LoL 出生节点同时触发 Audio_Spawn 和 Audio_Idle；出生声自然结束，运转声持续。
 	_play_building_phase(entry, &"spawn:start")
+	# cue 回调可能同步销毁建筑并清理播放器，待机层不能继续接入。
+	if not is_instance_valid(entry.source.get_ref()) or not is_instance_valid(entry.player) or entry.player.is_queued_for_deletion(): return
 	entry.tail = entry.player
 	entry.player = _new_world_player()
 	add_child(entry.player)
@@ -912,7 +914,9 @@ func _start_building_layers(entry: Dictionary) -> void:
 	_play_building_phase(entry, &"idle:sustain")
 
 func _play_building_phase(entry: Dictionary, cue: StringName) -> void:
+	var source = entry.source.get_ref()
 	var player: AudioStreamPlayer2D = entry.player
+	if not is_instance_valid(source) or not is_instance_valid(player) or player.is_queued_for_deletion(): return
 	player.stop()
 	var event: Dictionary = entry.events.get(String(cue), {})
 	var paths := PackedStringArray(event.get("pool", []))
@@ -920,7 +924,7 @@ func _play_building_phase(entry: Dictionary, cue: StringName) -> void:
 		return
 	player.stream = _randomized_stream(paths, cue == &"idle:sustain")
 	player.volume_db = float(event.get("volume_db", 0.0))
-	player.global_position = entry.source.get_ref().global_position
+	player.global_position = source.global_position
 	player.play()
 	cue_played.emit(entry.card_id, cue, player.global_position)
 
@@ -941,6 +945,7 @@ func _tick_building_audio(delta: float) -> void:
 		player.global_position = source.global_position
 		if entry.idle and not player.playing and entry.events.has("idle:sustain"):
 			_play_building_phase(entry, &"idle:sustain")
+		if not is_instance_valid(source): continue
 		var tail = entry.tail
 		if is_instance_valid(tail):
 			tail.global_position = source.global_position

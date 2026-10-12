@@ -1,5 +1,13 @@
 extends RefCounted
 
+## 仅回归夹具：推挤读取可行走性时释放同一枚举快照中的后续对象。
+class ReleasingWalkabilityUnit extends Unit:
+	var release_ref: WeakRef
+	func is_walkable_at(_pos: Vector2) -> bool:
+		var other = release_ref.get_ref()
+		if is_instance_valid(other): other.free()
+		return true
+
 func run(harness: Object) -> void:
 	_check_state_ownership(harness)
 	_check_dash_cast_identity(harness)
@@ -30,6 +38,7 @@ func run(harness: Object) -> void:
 
 func check_contracts(harness: Object, main: Node2D) -> void:
 	_check_freed_instance_guards(harness, main)
+	_check_freed_property_access(harness, main)
 	main._process(0.0)
 	harness._expect(is_same(main._effects_view.spells, main._spell_system), "渲染推进不切断法术系统与冰冻表现集合的所有权")
 	var ai_timer: float = main._ai._think_timer
@@ -117,6 +126,46 @@ func _check_freed_instance_guards(harness: Object, main: Node2D) -> void:
 	if resolver.attack_hit.is_connected(callback): resolver.attack_hit.disconnect(callback)
 	if is_instance_valid(attacker): attacker.free()
 	victim.free()
+
+func _check_freed_property_access(harness: Object, main: Node2D) -> void:
+	for team in [0, 1]:
+		var center := Vector2(360.0, 900.0 if team == 0 else 380.0)
+		var releasing := ReleasingWalkabilityUnit.new()
+		releasing.setup(team, CardDB.get_card("garen"), "释放夹具")
+		releasing.position = center
+		main.add_child(releasing)
+		var stale := Unit.new()
+		stale.setup(team, CardDB.get_card("garen"), "后续释放对象")
+		stale.position = center + Vector2.UP * 20.0
+		main.add_child(stale)
+		var survivor := Unit.new()
+		survivor.setup(team, CardDB.get_card("garen"), "后续存活对象")
+		survivor.position = center + Vector2.UP * 10.0
+		main.add_child(survivor)
+		releasing.release_ref = weakref(stale)
+		main._push_units_around(center, 40.0)
+		harness._expect(not is_instance_valid(stale) and survivor.position.distance_to(center) >= 40.0 + survivor.body_radius - 0.001, "推挤枚举中途释放后续单位，仍跳过失效引用并继续推挤存活对象：阵营%d" % team)
+		releasing.free()
+		if is_instance_valid(stale): stale.free()
+		survivor.free()
+	var attacker := Unit.new()
+	attacker.setup(0, CardDB.get_card("garen"), "攻击者")
+	main.add_child(attacker)
+	var victim := Unit.new()
+	victim.setup(1, CardDB.training_dummy_stats(), "命中目标")
+	main.add_child(victim)
+	var victim_ref: WeakRef = weakref(victim)
+	var hits: Array[bool] = []
+	var callback := func(_source: Dictionary, _position: Vector2, _first_strike: bool):
+		hits.append(true)
+		victim_ref.get_ref().free()
+	var resolver: CombatResolver = main.combat_service()
+	resolver.attack_hit.connect(callback, CONNECT_ONE_SHOT)
+	var landed := resolver._resolve_immediate_attack_hit(0, attacker.global_position, victim, victim.hp, 0.0, 0.0, attacker)
+	harness._expect(landed and hits.size() == 1 and not is_instance_valid(victim), "命中回调释放目标后不再读取其生命属性，已结算命中仍成功")
+	if resolver.attack_hit.is_connected(callback): resolver.attack_hit.disconnect(callback)
+	if is_instance_valid(victim): victim.free()
+	attacker.free()
 
 func _run_schedule(frames: Array[float]) -> Array:
 	var clock := FixedStepClock.new()

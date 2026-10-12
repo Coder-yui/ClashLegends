@@ -869,6 +869,25 @@ func _check_building_audio_lifecycle(harness: Object, main: Node2D) -> void:
 	tower.free()
 	harness._expect(not CardDB.get_card("sun_disc").audio.events.has("shield:applied"),
 		"护盾生效声已按用户要求禁用")
+	for team in [0, 1]:
+		var interrupted := Tower.new()
+		interrupted.setup(team, CardDB.NEXUS_STATS, true)
+		main.add_child(interrupted)
+		var interrupted_id := interrupted.get_instance_id()
+		var interrupted_ref: WeakRef = weakref(interrupted)
+		var card_id := PresentationConfig.world_card_id(interrupted)
+		var live_players_before := audio.get_children().filter(func(child): return child is AudioStreamPlayer2D and not child.is_queued_for_deletion()).size()
+		var cues: Array[StringName] = []
+		var listener := func(id: String, cue: StringName, _position: Vector2):
+			if id != card_id: return
+			cues.append(cue)
+			if cue == &"spawn:start": interrupted_ref.get_ref().free()
+		audio.cue_played.connect(listener)
+		audio.attach_building_audio(interrupted, CardDB.NEXUS_VISUAL_CONFIG)
+		var live_players_after := audio.get_children().filter(func(child): return child is AudioStreamPlayer2D and not child.is_queued_for_deletion()).size()
+		harness._expect(cues == [&"spawn:start"] and not is_instance_valid(interrupted) and not audio._building_audio.has(interrupted_id) and live_players_after == live_players_before, "建筑出生声回调释放来源后取消待机层，不读取失效弱引用或遗留播放器：阵营%d" % team)
+		audio.cue_played.disconnect(listener)
+		if is_instance_valid(interrupted): interrupted.free()
 
 func _check_tower_damage_audio(harness: Object, main: Node2D) -> void:
 	var audio: GameAudioManager = main._audio_manager

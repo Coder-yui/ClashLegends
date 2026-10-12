@@ -673,14 +673,14 @@ func _damage_result(source: Unit, target: Node2D, amount: float, context: Dictio
 
 
 func _damage_combatant(source: Unit, combatant: Node2D, amount: float, origin: Vector2 = Vector2(INF, INF)) -> bool:
-	if combatant == null or not is_instance_valid(combatant) or combatant.hp <= 0.0 or amount <= 0.0:
+	if not is_instance_valid(source) or not is_instance_valid(combatant) or combatant.hp <= 0.0 or amount <= 0.0:
 		return false
 	if source.battle_context != null:
 		return source.battle_context.apply_damage_pulse(source, combatant, amount, 0.0, origin, false)
 	var was_alive: bool = combatant.hp > 0.0
 	var source_position := source.global_position if origin.x == INF else origin
 	var landed: bool = combatant.take_damage(amount, source, source.team, source_position)
-	if landed and was_alive and combatant.hp <= 0.0 and is_instance_valid(source):
+	if landed and was_alive and is_instance_valid(combatant) and combatant.hp <= 0.0 and is_instance_valid(source):
 		source.on_enemy_killed(combatant)
 	return landed
 
@@ -822,13 +822,14 @@ func _tick_expanding_shockwaves(dt: float) -> void:
 			if combatant.global_position.distance_to(shockwave.center) > current_radius + combatant.body_radius:
 				continue
 			shockwave.hit_ids[instance_id] = true
+			var hit_position: Vector2 = combatant.global_position
 			var landed := false
 			if is_instance_valid(source) and source is Unit:
 				landed = _damage_combatant(source as Unit, combatant, float(shockwave.damage), shockwave.center)
 			else:
 				landed = combatant.take_damage(float(shockwave.damage), null, int(shockwave.team), shockwave.get("source_position", shockwave.center))
 			if landed:
-				_controller.present_skill_projectile_hit(shockwave.get("audio_source", {}), String(shockwave.get("visual_action", "")), combatant.global_position, "wave_hit")
+				_controller.present_skill_projectile_hit(shockwave.get("audio_source", {}), String(shockwave.get("visual_action", "")), combatant.global_position if is_instance_valid(combatant) else hit_position, "wave_hit")
 			if is_instance_valid(combatant) and combatant is Unit and combatant.hp > 0.0 and float(shockwave.slow_duration) > 0.0:
 				(combatant as Unit).apply_slow(float(shockwave.slow_duration), float(shockwave.slow_multiplier), shockwave.status_source, CombatInteraction.effect_context(source, int(shockwave.team), shockwave.get("source_position", shockwave.center)))
 		CombatInteraction.current_delivery = previous
