@@ -4,6 +4,8 @@ extends Node3D
 const ROOT := "res://assets/effects/void_spawn/"
 static var _cache: Dictionary = {}
 var opacity := 1.0
+var emission_end := INF
+var _particle_births := {}
 var _kind := ""
 var _birth_positions: Dictionary = {}
 var _last_position := Vector3.INF
@@ -20,7 +22,7 @@ var projection_basis := Basis.IDENTITY
 # Turret impact preserves its source planes in the channel-bone frame.
 const GROUND_PLANES := ["FireRing", "CenterFlare"]
 # Uniform project calibration; preserve authored layer proportions and curves.
-const NATIVE_SCALES := {"burst": 0.012, "death": 0.012, "energy": 0.006, "glow": 0.006}
+const NATIVE_SCALES := {"burst": 0.012, "death": 0.012, "energy": 0.006, "glow": 0.006, "spawn": 0.015, "trail": 0.015}
 
 static func native_scale(kind: String) -> float:
 	return float(NATIVE_SCALES.get(kind, 0.006))
@@ -44,6 +46,12 @@ func load_kind(kind: String) -> void:
 			materials.append(_material(e))
 		_cache[kind] = {"data": data, "materials": materials}
 	_data = _cache[kind].data
+	if kind == "trail":
+		for frame_index in _data.frames.size():
+			for emitter_index in _data.frames[frame_index].size():
+				for particle in _data.frames[frame_index][emitter_index]:
+					var key := Vector2i(emitter_index, int(particle[0]))
+					if not _particle_births.has(key): _particle_births[key] = float(frame_index) / float(_data.fps)
 	_materials.assign(_cache[kind].materials)
 
 func setup_native(unit_scale: float) -> void:
@@ -68,6 +76,8 @@ func seek(age: float) -> void:
 		var e: Dictionary = _data.emitters[emitter_index]
 		var pool: Array = _pools[emitter_index]
 		var particles: Array = values[emitter_index]
+		if _kind == "trail" and is_finite(emission_end):
+			particles = particles.filter(func(p): return float(_particle_births.get(Vector2i(emitter_index, int(p[0])), 0.0)) <= emission_end)
 		while pool.size() < particles.size():
 			var item := MeshInstance3D.new()
 			item.mesh = _meshes[e.mesh_path]
@@ -90,10 +100,13 @@ func seek(age: float) -> void:
 				var sample: Array = particles[j]
 				if String(e.name) in GROUND_PLANES:
 					item.position.y = to_local(Vector3(global_position.x, 0.09, global_position.z)).y
-				if _kind == "missile" and float(e.bindWeight.constant[0]) == 0.0:
+				if _kind == "trail" or (_kind == "missile" and float(e.bindWeight.constant[0]) == 0.0):
 					var serial := int(sample[0])
 					if not _birth_positions.has(serial): _birth_positions[serial] = global_position
 					var drift := to_local(_birth_positions[serial])
+					if _kind == "trail":
+						var birth := float(_particle_births.get(Vector2i(emitter_index, serial), _age))
+						drift *= 1.0 - native_bind_weight(e, _age - birth)
 					sample = sample.duplicate()
 					sample[1] += drift.x
 					sample[2] += drift.y
@@ -164,8 +177,24 @@ static func _material(e: Dictionary) -> ShaderMaterial:
 
 ## 对外资源契约：定义读取不会创建粒子或加载纹理。
 static func resource_manifest(variant: String) -> Dictionary:
-	if variant not in ["burst", "death", "energy", "glow"]: return {}
+	if variant not in ["burst", "death", "energy", "glow", "spawn", "trail"]: return {}
 	return {"json": [ROOT + variant + "/sampled.json"], "sample": {"player": "res://assets/effects/void_spawn/player.gd", "kind": variant, "setup": "native"}}
 
 static func resource_shader_path(e: Dictionary) -> String:
 	return ROOT + ("pure_add" if int(e.blendMode) == 0 else ("add" if int(e.blendMode) == 4 else "mix")) + ".gdshader"
+
+
+static func native_bind_weight(emitter: Dictionary, particle_age: float) -> float:
+	var weight: Dictionary = emitter.bindWeight
+	var value := float(weight.constant[0])
+	var keys: Array = weight.keys
+	if keys.is_empty(): return value
+	var t := particle_age / maxf(float(emitter.particleLifetime.constant[0]), 0.00001)
+	var factor := float(keys[-1].values[0])
+	if t <= float(keys[0].time): factor = float(keys[0].values[0])
+	else:
+		for index in range(1, keys.size()):
+			if t <= float(keys[index].time):
+				factor = lerpf(float(keys[index - 1].values[0]), float(keys[index].values[0]), inverse_lerp(float(keys[index - 1].time), float(keys[index].time), t))
+				break
+	return clampf(value * factor, 0.0, 1.0)

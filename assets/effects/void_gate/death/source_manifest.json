@@ -1,0 +1,47 @@
+{
+  "definition": "Characters/Jade_VoidGate/Skins/Skin0/Particles/Jade_VoidGate_Base_Death_01",
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Map12.wad.client",
+  "binary_sha256": "011052fd62bf301f71531255a17e3a357b9e4e371efd188432d0bcc5ed8d1d9c",
+  "assets": {
+    "assets/characters/jade_voidgate/skins/base/particles/jade_voidgate_bigglow.tex": {
+      "source_sha256": "5f7991b33e8bdc3253e8ed59cd8654cb43c9e6d72c5f0335cc417713eeef3fba",
+      "output": "jade_voidgate_bigglow.png",
+      "output_sha256": "eac0456e8f5482ffad31b9cfebad1c119efb21ae19d2b260bf27ebf5405737be"
+    },
+    "assets/characters/jade_voidgate/skins/base/particles/jade_voidgate_activation_verticalglow.tex": {
+      "source_sha256": "d7a6145ccb492367b74398b01ddb0634611ecdf1ad936f0c12931bce9b5b9d6d",
+      "output": "jade_voidgate_activation_verticalglow.png",
+      "output_sha256": "298dab337774fe7a869ef33d8e70bd6e9d492fc575605f82145d4438c5b32bd7"
+    },
+    "assets/characters/jade_voidgate/skins/base/particles/sphere_01.scb": {
+      "source_sha256": "99c3df648b797fc7400318288c83cd47b6142c1c8a6a4bfe0bf5bb6757dcc6fa",
+      "output": "sphere_01.mesh.json",
+      "output_sha256": "e3af5d833e758370672ef8894ca4015a2989221aeda484ae08fd0c0b73a95095"
+    },
+    "assets/characters/jade_voidgate/skins/base/particles/color-hold.tex": {
+      "source_sha256": "bc06557b44402fee1498430bd4008df9598085f44b29fea2f02218473674b2f8",
+      "output": "color-hold.png",
+      "output_sha256": "62ed85b52d6f757f5322176cb24ccfa294cb145ba9f1978bbf6ba479341f45a8"
+    },
+    "assets/characters/jade_voidgate/skins/base/particles/jade_voidgate_spaceball.tex": {
+      "source_sha256": "400548635a68ba437c70524b675d0cabbc42c146fd642b82c14b645d359bb3ce",
+      "output": "jade_voidgate_spaceball.png",
+      "output_sha256": "ac9be737bb582a8e6e0c3945e714cb1679db10905678c7cfe89c7cfafa7ae0f1"
+    },
+    "assets/characters/jade_voidgate/skins/base/particles/color-bellcurve32.tex": {
+      "source_sha256": "7b3c8ef7cbae66ad07a2432a71163685583757b5dfca26874d4e47557c2b8a34",
+      "output": "color-bellcurve32.png",
+      "output_sha256": "5364a0559e23466ba78c00fab8aec691f7433a194ae61bdeab25bce5ffe07aaa"
+    },
+    "assets/characters/jade_voidgate/skins/base/particles/distort-pinch.tex": {
+      "source_sha256": "8a6a7056ff92bd8569843c4a68f60ba6528ea88451d0d78a0fbb0f53c39bfe40",
+      "output": "distort-pinch.png",
+      "output_sha256": "ecf917d6d84efb1cc7763bbd796440e1b25e65a783cc8dd0f4407f54fd96e89e"
+    },
+    "assets/characters/jade_voidgate/skins/base/particles/aura_self.tex": {
+      "source_sha256": "41241eafa700d7aa8a280bc7d943c090005324d146d33777a5b8b4bda3ab977b",
+      "output": "aura_self.png",
+      "output_sha256": "9d1c0afae3a4040376460a1809143487b39bafa5e0d59448ca4c22bcde7dadd9"
+    }
+  }
+}

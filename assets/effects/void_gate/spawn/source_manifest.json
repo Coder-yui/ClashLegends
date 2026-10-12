@@ -1,0 +1,62 @@
+{
+  "definition": "Characters/Jade_VoidGate/Skins/Skin0/Particles/Jade_VoidGate_Base_Portal",
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Map12.wad.client",
+  "binary_sha256": "011052fd62bf301f71531255a17e3a357b9e4e371efd188432d0bcc5ed8d1d9c",
+  "assets": {
+    "assets/characters/jade_voidgate/skins/base/particles/jade_voidgate_glowsoft.tex": {
+      "source_sha256": "bfe1ccfd6f0d3ac6d12c77246ab6f21148becc196a9ac79e4697014695652518",
+      "output": "jade_voidgate_glowsoft.png",
+      "output_sha256": "bf671d1c588da6f7481fdaedd117f1d260ba745c2888dae6aaee91cc481c1257"
+    },
+    "assets/characters/jade_voidgate/skins/base/particles/jade_voidgate_core_ring.tex": {
+      "source_sha256": "64c3662203a04e199b4741a420e8ae0b3ff71fa094ffeb59bea6d111b1f60e0a",
+      "output": "jade_voidgate_core_ring.png",
+      "output_sha256": "31aade94402a5979c00124b9fa317b4ec549f9579888cd3bf3ed00c206b6644e"
+    },
+    "assets/characters/jade_voidgate/skins/base/particles/jade_voidgate_bigglow.tex": {
+      "source_sha256": "5f7991b33e8bdc3253e8ed59cd8654cb43c9e6d72c5f0335cc417713eeef3fba",
+      "output": "jade_voidgate_bigglow.png",
+      "output_sha256": "eac0456e8f5482ffad31b9cfebad1c119efb21ae19d2b260bf27ebf5405737be"
+    },
+    "assets/characters/jade_voidgate/skins/base/particles/jade_voidgate_darkground.tex": {
+      "source_sha256": "898c0231316433168f79e176bf29044e792377cb80fced88caf0e89aa32733cb",
+      "output": "jade_voidgate_darkground.png",
+      "output_sha256": "d0ca1ae84c96977c41ddac350ee5ac14bd33d770412af816ecd9a85843f2bd99"
+    },
+    "assets/characters/jade_voidgate/skins/base/particles/jade_voidgate_spawnspiral.scb": {
+      "source_sha256": "d274a905e161037217c48a6bcf29625344ef6efa5b7390d47fab3d3fa71c30e5",
+      "output": "jade_voidgate_spawnspiral.mesh.json",
+      "output_sha256": "1b14e2dd0b1a78b0d06247da101445a925177d96ee4f35875043f65c6d91c217"
+    },
+    "assets/characters/jade_voidgate/skins/base/particles/jade_voidgate_builduplines.tex": {
+      "source_sha256": "400ff126a6cd1538bd403c2524a0cced5385d72cf1d3f2b15720cb6afbd09ee9",
+      "output": "jade_voidgate_builduplines.png",
+      "output_sha256": "9db49d0d32928e52234f068ca461fd67d953425597662d7a40d94b8837a0f82d"
+    },
+    "assets/characters/jade_voidgate/skins/base/particles/jade_voidgate_activation_verticalglow.tex": {
+      "source_sha256": "d7a6145ccb492367b74398b01ddb0634611ecdf1ad936f0c12931bce9b5b9d6d",
+      "output": "jade_voidgate_activation_verticalglow.png",
+      "output_sha256": "298dab337774fe7a869ef33d8e70bd6e9d492fc575605f82145d4438c5b32bd7"
+    },
+    "assets/characters/jade_voidgate/skins/base/particles/sphere_01.scb": {
+      "source_sha256": "99c3df648b797fc7400318288c83cd47b6142c1c8a6a4bfe0bf5bb6757dcc6fa",
+      "output": "sphere_01.mesh.json",
+      "output_sha256": "e3af5d833e758370672ef8894ca4015a2989221aeda484ae08fd0c0b73a95095"
+    },
+    "assets/characters/jade_voidgate/skins/base/particles/color-hold.tex": {
+      "source_sha256": "bc06557b44402fee1498430bd4008df9598085f44b29fea2f02218473674b2f8",
+      "output": "color-hold.png",
+      "output_sha256": "62ed85b52d6f757f5322176cb24ccfa294cb145ba9f1978bbf6ba479341f45a8"
+    },
+    "assets/characters/jade_voidgate/skins/base/particles/jade_voidgate_spaceball.tex": {
+      "source_sha256": "400548635a68ba437c70524b675d0cabbc42c146fd642b82c14b645d359bb3ce",
+      "output": "jade_voidgate_spaceball.png",
+      "output_sha256": "ac9be737bb582a8e6e0c3945e714cb1679db10905678c7cfe89c7cfafa7ae0f1"
+    },
+    "assets/characters/jade_voidgate/skins/base/particles/jade_voidgate_ballglow.tex": {
+      "source_sha256": "1626e708521a8d4faa10c29edfc5aca9053c5c0f9906229b6062cd5ab35e461b",
+      "output": "jade_voidgate_ballglow.png",
+      "output_sha256": "809b842303581870845ed05863ea7db82feb6bbb64dc9b506fd6d9e9d7018d7c"
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "definition": "Characters/Jade_VoidGate/Skins/Skin0/Particles/Jade_VoidGate_Base_BirthSpit",
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Map12.wad.client",
+  "binary_sha256": "011052fd62bf301f71531255a17e3a357b9e4e371efd188432d0bcc5ed8d1d9c",
+  "assets": {
+    "assets/characters/jade_voidgate/skins/base/particles/sphere_01.scb": {
+      "source_sha256": "99c3df648b797fc7400318288c83cd47b6142c1c8a6a4bfe0bf5bb6757dcc6fa",
+      "output": "sphere_01.mesh.json",
+      "output_sha256": "e3af5d833e758370672ef8894ca4015a2989221aeda484ae08fd0c0b73a95095"
+    },
+    "assets/characters/jade_voidgate/skins/base/particles/color-hold.tex": {
+      "source_sha256": "bc06557b44402fee1498430bd4008df9598085f44b29fea2f02218473674b2f8",
+      "output": "color-hold.png",
+      "output_sha256": "62ed85b52d6f757f5322176cb24ccfa294cb145ba9f1978bbf6ba479341f45a8"
+    },
+    "assets/characters/jade_voidgate/skins/base/particles/jade_voidgate_spaceball.tex": {
+      "source_sha256": "400548635a68ba437c70524b675d0cabbc42c146fd642b82c14b645d359bb3ce",
+      "output": "jade_voidgate_spaceball.png",
+      "output_sha256": "ac9be737bb582a8e6e0c3945e714cb1679db10905678c7cfe89c7cfafa7ae0f1"
+    },
+    "assets/characters/jade_voidgate/skins/base/particles/jade_voidgate_ballglow.tex": {
+      "source_sha256": "1626e708521a8d4faa10c29edfc5aca9053c5c0f9906229b6062cd5ab35e461b",
+      "output": "jade_voidgate_ballglow.png",
+      "output_sha256": "809b842303581870845ed05863ea7db82feb6bbb64dc9b506fd6d9e9d7018d7c"
+    }
+  }
+}

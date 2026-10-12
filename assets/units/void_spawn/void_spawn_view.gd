@@ -6,12 +6,26 @@ var _animation: AnimationPlayer
 var _skeleton: Skeleton3D
 var _death_duration := 0.0
 var _impact_started := false
+var _birth_start := Vector3.ZERO
+var _birth_age := -1.0
+var _birth_finished := false
+var _summoned := false
 
 func _ready() -> void:
+	process_priority = 21
 	_animation = find_child("AnimationPlayer", true, false) as AnimationPlayer
 	for node in find_children("*", "Skeleton3D", true, false):
 		_skeleton = node
 		break
+
+func configure_unit_visual(unit: Unit) -> void:
+	_summoned = unit.summon_visual_origin.is_finite()
+	if not _summoned: return
+	_animation.play("VoidSpawn_Spawn_anm")
+	_animation.seek(0.0, true)
+	_skeleton.force_update_all_bone_transforms()
+	_birth_start = _bone_position("Thorax")
+	_animation.stop(true)
 
 func _effect(kind: String) -> Node3D:
 	if not _effects.has(kind):
@@ -35,6 +49,7 @@ func begin_visual_death(duration: float) -> void:
 	effect.seek(0.0)
 
 func _process(_delta: float) -> void:
+	_update_birth_effects()
 	if _death_duration <= 0.0 or _animation == null: return
 	var duration := _animation.current_animation_length
 	if duration <= 0.0: return
@@ -74,8 +89,51 @@ func seek_sacrifice_visual(source_age: float, burst_age: float = -1.0) -> void:
 	_effects.burst.seek(burst_age)
 
 func reset_pool_visual() -> void:
+	_birth_age = -1.0
+	_birth_finished = false
+	_summoned = false
 	for effect in _effects.values(): effect.free()
 	_effects.clear()
 	_death_duration = 0.0
 	_impact_started = false
 	$Model.show()
+
+
+func summon_birth_offset(origin: Vector3, age: float, duration: float) -> Vector3:
+	# Native Spawn first-frame Thorax in wrapper coordinates (GLB Root rotates 180 degrees).
+	var authored_start := _birth_start
+	var progress := clampf(age / maxf(duration, 0.001), 0.0, 1.0)
+	var correction := origin - authored_start
+	# Keep the authored below-ground emergence and jump height; align only its exit plane.
+	correction.y = origin.y
+	# Preserve vertical flight curve; only settle the correction, never move the Unit.
+	return correction * (1.0 - smoothstep(0.0, 1.0, progress))
+
+
+func _update_birth_effects() -> void:
+	if not _summoned or _birth_finished or _animation == null: return
+	if _death_duration > 0.0:
+		for kind in ["trail", "spawn"]:
+			if _effects.has(kind): _effects[kind].hide()
+		_birth_finished = true
+		return
+	var spawning := String(_animation.assigned_animation) == "VoidSpawn_Spawn_anm"
+	if spawning: _birth_age = _animation.current_animation_position
+	elif _birth_age >= 0.0: _birth_age += get_process_delta_time()
+	if _birth_age < 0.0: return
+	var trail := _effect("trail")
+	trail.position = _bone_position("Thorax")
+	trail.emission_end = 34.0 / 30.0
+	trail.seek(_birth_age)
+	trail.visible = _birth_age < 34.0 / 30.0 + 0.4
+	if _birth_age >= 0.6:
+		var splat := _effect("spawn")
+		if not splat.top_level:
+			splat.position = _bone_position("C_Buffbone_Glb_Overhead_Loc")
+			var pose := splat.global_transform
+			splat.top_level = true
+			splat.global_transform = pose
+			splat.global_position.y = 0.015
+		splat.seek(_birth_age - 0.6)
+		splat.visible = _birth_age < 2.8
+	if _birth_age >= 2.8: _birth_finished = true

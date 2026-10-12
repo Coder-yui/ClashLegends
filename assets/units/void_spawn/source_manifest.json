@@ -22,5 +22,15 @@
   "body_hidden_frame": 24,
   "authority_ticks": 16,
   "animation_definition": "ClashLegends-开发素材库/03-制作中/虚空兽/original/source/data/characters/jade_voidspawn/animations/skin0.bin.txt",
-  "animation_definition_sha256": "c36043e275a1b5d672b78628b9cba3599e19e344cdeb628aacb1f573e82847b7"
+  "animation_definition_sha256": "c36043e275a1b5d672b78628b9cba3599e19e344cdeb628aacb1f573e82847b7",
+  "summoned_birth": {
+    "animation": "VoidSpawn_Spawn_anm",
+    "source_seconds": 1.1333333333333333,
+    "authority_deploy_seconds": 1,
+    "splat_frame": 18,
+    "audio_frame": 23,
+    "trail_bone": "Thorax",
+    "origin": "reliable summon_visual_origin, horizontal visual-only alignment",
+    "alternate_spawn2": "not integrated"
+  }
 }

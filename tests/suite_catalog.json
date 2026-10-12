@@ -488,5 +488,12 @@
     "method": "run",
     "scene": "battle",
     "group": "cards"
+  },
+  {
+    "id": "VoidGateSuite",
+    "script": "res://tests/suites/cards/void_gate_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "cards"
   }
 ]

@@ -1,0 +1,63 @@
+{
+  "definition": "Characters/Jade_VoidGate/Skins/Skin0/Particles/Jade_VoidGate_Base_Portal_Idle",
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Map12.wad.client",
+  "binary_sha256": "011052fd62bf301f71531255a17e3a357b9e4e371efd188432d0bcc5ed8d1d9c",
+  "assets": {
+    "assets/characters/jade_voidgate/skins/base/particles/jade_voidgate_darkground.tex": {
+      "source_sha256": "898c0231316433168f79e176bf29044e792377cb80fced88caf0e89aa32733cb",
+      "output": "jade_voidgate_darkground.png",
+      "output_sha256": "d0ca1ae84c96977c41ddac350ee5ac14bd33d770412af816ecd9a85843f2bd99"
+    },
+    "assets/characters/jade_voidgate/skins/base/particles/sru_baroncrackdark_swirl_01.tex": {
+      "source_sha256": "25334c737c9bc71a5247925f7f237d3aa04f238bb1576393ad5335b84a7a0514",
+      "output": "sru_baroncrackdark_swirl_01.png",
+      "output_sha256": "bc7c868cbd12bfbc44396e340dc8abac01d46b0a4adcfa022eec6e4a6249f5aa"
+    },
+    "assets/characters/jade_voidgate/skins/base/particles/sru_baroncrackdark_swirl_mult_01.tex": {
+      "source_sha256": "673f776adedb9c236b4339a6950c5363ffec34262800b96e796b222add73a4e9",
+      "output": "sru_baroncrackdark_swirl_mult_01.png",
+      "output_sha256": "9f3577059e1fa7e510aea74a6d169f448fb2fb588136d54ec62dd08497c7a546"
+    },
+    "assets/characters/jade_voidgate/skins/base/particles/sru_baroncrack_ball_01.scb": {
+      "source_sha256": "501a5f4d20c030008d03acaf40e71786cba6ef8cd589bfbc9cb8fe0c99ee0a10",
+      "output": "sru_baroncrack_ball_01.mesh.json",
+      "output_sha256": "54ee0a3bff72561aad82c7c69cf372ed928222d390fa9dca00b7232a12c9f089"
+    },
+    "assets/characters/jade_voidgate/skins/base/particles/sru_baroncrack_plasma_line_01.tex": {
+      "source_sha256": "4a211b3c63bfa6382be13e795c36cfe0d16b22cbcbbf4e307ccf8ffa137a4ede",
+      "output": "sru_baroncrack_plasma_line_01.png",
+      "output_sha256": "f2da3e7c39ca9ef3e3139c447995e05dbda57ae8e11463ca447a6640218a8ec2"
+    },
+    "assets/characters/jade_voidgate/skins/base/particles/sru_baroncrack_crescent_01.scb": {
+      "source_sha256": "ab26900b1f916595ec42bd6af3f9ab9d35231b66a88427e5a73f981f650aeba9",
+      "output": "sru_baroncrack_crescent_01.mesh.json",
+      "output_sha256": "8f65579ea10648f170da697a59f63362dff9f7bc9791b549a8e1307a465cfdb8"
+    },
+    "assets/characters/jade_voidgate/skins/base/particles/sru_baroncrack_crescent_02.scb": {
+      "source_sha256": "d5379e47430222c3abb5171f32425ae8dbdb2d08659b58b79ecfebcaaa017345",
+      "output": "sru_baroncrack_crescent_02.mesh.json",
+      "output_sha256": "b804a638b30b0d1dddfdca3b3eae59c0c5e384741de45a514313e657f4d7b5ab"
+    },
+    "assets/characters/jade_voidgate/skins/base/particles/jade_voidgate_sphere.scb": {
+      "source_sha256": "36b3876e7355202ffbbf29befa6c110e7ef84345f3fdeacc8b5b317d3d015fdc",
+      "output": "jade_voidgate_sphere.mesh.json",
+      "output_sha256": "bb88a341d45d1939b1da006fe17c8169cb4ab70d03e4067a9910a285a4ee7b2f",
+      "normal_generation": "Area-weighted original SCB vertex-index normals, before corner expansion; original positions/UVs/colors unchanged."
+    },
+    "assets/characters/jade_voidgate/skins/base/particles/jade_voidgate_spaceball.tex": {
+      "source_sha256": "400548635a68ba437c70524b675d0cabbc42c146fd642b82c14b645d359bb3ce",
+      "output": "jade_voidgate_spaceball.png",
+      "output_sha256": "ac9be737bb582a8e6e0c3945e714cb1679db10905678c7cfe89c7cfafa7ae0f1"
+    },
+    "assets/characters/jade_voidgate/skins/base/particles/jade_voidgate_ballglow.tex": {
+      "source_sha256": "1626e708521a8d4faa10c29edfc5aca9053c5c0f9906229b6062cd5ab35e461b",
+      "output": "jade_voidgate_ballglow.png",
+      "output_sha256": "809b842303581870845ed05863ea7db82feb6bbb64dc9b506fd6d9e9d7018d7c"
+    },
+    "assets/characters/jade_voidgate/skins/base/particles/aura_self.tex": {
+      "source_sha256": "41241eafa700d7aa8a280bc7d943c090005324d146d33777a5b8b4bda3ab977b",
+      "output": "aura_self.png",
+      "output_sha256": "9d1c0afae3a4040376460a1809143487b39bafa5e0d59448ca4c22bcde7dadd9"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "definition": "Characters/Jade_VoidSpawn/Skins/Skin0/Particles/Jade_VoidSpawn_Base_Trail",
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Map12.wad.client",
+  "binary_sha256": "b2ca430dbe89d9c283f8289ced9f08d0c0a9428bdfbe050eb79fd2b732e848cd",
+  "assets": {
+    "assets/characters/jade_voidspawn/skins/base/particles/jade_voidspawn_trail.tex": {
+      "source_sha256": "08040e0c00cecc8531a57fb4bb71e21d2a0baa42816b239a3b152125f6957115",
+      "output": "jade_voidspawn_trail.png",
+      "output_sha256": "f45903477419da5d0b85fc86f58297093158655444c0831d78514607d4904da8"
+    }
+  }
+}

@@ -10,4 +10,7 @@ static func definition() -> Dictionary:
 	for field in ["deployment_count", "deployment_spacing", "deployment_formation"]:
 		data.gameplay.erase(field)
 	data.card_art = {"path": "res://assets/cards/void_spawn_single_loading.png"}
+	data.audio.events["deploy:start"]["action_time"] = 23.0 / 34.0
+	for kind in ["spawn", "trail"]:
+		data.visual.resource_dependencies.effects.append({"provider": "res://assets/effects/void_spawn/player.gd", "variant": kind})
 	return data

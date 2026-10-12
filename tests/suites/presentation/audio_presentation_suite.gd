@@ -4,6 +4,7 @@ extends RefCounted
 func run(harness: Object, main: Node2D) -> void:
 	await _check_stasis_audio(harness, main)
 	await _check_stasis_flight_audio(harness, main)
+	_check_deploy_audio_node(harness, main)
 	_check_mix_bus_protection(harness)
 	_check_selected_deploy_audio(harness, main)
 	_check_client_voice_gain(harness, main)
@@ -1280,3 +1281,37 @@ func _check_mix_bus_protection(harness: Object) -> void:
 	var limiter := AudioServer.get_bus_effect(AudioServer.get_bus_index("Master"), 0)
 	harness._expect(limiter is AudioEffectHardLimiter and limiter.ceiling_db < 0 and is_zero_approx(limiter.pre_gain_db), "总输出限幅保留余量且不预放大")
 	harness._expect(AudioServer.get_bus_send(AudioServer.get_bus_index("Voice")) == &"Master" and AudioServer.get_bus_send(AudioServer.get_bus_index("Combat")) == &"SFX", "语音与战斗独立压缩，所有输出汇入总线保护")
+
+
+func _check_deploy_audio_node(harness: Object, main: Node2D) -> void:
+	var audio: GameAudioManager = main._audio_manager
+	var heard: Array = []
+	var listener := func(card: String, cue: StringName, _position: Vector2):
+		if card == "void_spawn_single" and cue == &"deploy:start": heard.append(cue)
+	audio.cue_played.connect(listener)
+	var unit: Unit = main.spawn_summoned(0, "void_spawn_single", Vector2(240, 900))
+	harness._expect(heard.is_empty(), "虚空兽出生声音不在零帧提前播放")
+	unit._deploy_timer = 0.4
+	audio._tick_attached_units()
+	harness._expect(heard.is_empty(), "未到原第23帧的归一节点不播放")
+	unit._deploy_timer = 0.3
+	audio._tick_attached_units()
+	harness._expect(heard.size() == 1, "跨过出生声音节点只播放一次")
+	unit._deploy_timer = 0.4
+	audio._tick_attached_units()
+	unit._deploy_timer = 0.2
+	audio._tick_attached_units()
+	harness._expect(heard.size() == 1, "同次部署快照回退不重播出生声")
+	unit.free()
+	unit = main.spawn_summoned(0, "void_spawn_single", Vector2(240, 900))
+	unit.cancelled_deployment = true
+	unit._deploy_timer = 0.2
+	audio._tick_attached_units()
+	harness._expect(heard.size() == 1, "出生取消不遗留延时音节点")
+	unit.free()
+	unit = main.spawn_summoned(0, "void_spawn_single", Vector2(240, 900))
+	unit._deploy_timer = 0.1
+	audio._tick_attached_units()
+	harness._expect(heard.size() == 1, "快照重建首次观察已越过节点，不补播历史出生声")
+	unit.free()
+	audio.cue_played.disconnect(listener)

@@ -92,5 +92,18 @@
     ],
     "sha256": "a5c2340e6eb65afd6e983d92c1f97a7fd7319735ae8c12157f247286eef63c69",
     "processing": "tools/dev.py model; 2x render, silhouette framing, solid-color background"
+  },
+  {
+    "card": "void_gate",
+    "path": "res://assets/cards/void_gate_loading.png",
+    "source": "用户指定的3D摄影棚截图",
+    "source_path": "ClashLegends-开发素材库/04-中间产物/3D摄影棚/shots/兹若特传送门_20261012_212027.png",
+    "source_sha256": "886102011f02313018c28e4792ba77b9675f4a01b6786ec58cf75659c36d3f4d",
+    "sha256": "886102011f02313018c28e4792ba77b9675f4a01b6786ec58cf75659c36d3f4d",
+    "size": [
+      308,
+      560
+    ],
+    "processing": "原PNG直接复制，未裁切、缩放或改色。"
   }
 ]

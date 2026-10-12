@@ -639,5 +639,14 @@
     "source_path": "assets/characters/tft_voidspawn/hud/icons2d/voidspawn_squarefixed.tex",
     "source_sha256": "6108646a3a4f4d8e801fa5741c4f20162ea5ff4c6466817b8eba2cd8dfe559e1",
     "sha256": "9b46777df6212eb0a4e3976ea7e0278c4a2417fa301d53f4cde97adbd716fcd7"
+  },
+  {
+    "card": "void_gate",
+    "skill_index": 0,
+    "path": "res://assets/skills/void_gate_0.png",
+    "source_package": "Riot Data Dragon 9.22.1",
+    "source_path": "https://ddragon.leagueoflegends.com/cdn/9.22.1/img/item/3512.png",
+    "source_sha256": "a8288fb2161d2e636cd58fb662a43778657ee40c8e2b40ab83d072bbd5d385f9",
+    "sha256": "a8288fb2161d2e636cd58fb662a43778657ee40c8e2b40ab83d072bbd5d385f9"
   }
 ]

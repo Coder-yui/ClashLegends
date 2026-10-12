@@ -1,0 +1,107 @@
+{
+  "source": "ClashLegends-开发素材库/01-待开发/卡牌模型/void_gate.glb",
+  "sha256": "688becc83dcd131400bcaf3b3a27fea5680952ee5c9d23d7b712c500d889484d",
+  "scale": 1.7,
+  "native_scale": 0.0240833333333333,
+  "vfx_bone": "Buffbone_Ground",
+  "animations": {
+    "deploy": "Spawn",
+    "idle": "Idle1",
+    "summon": "Spit",
+    "death": "Death"
+  },
+  "capture": {
+    "tool": "tools/viewers/camera_studio.gd",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/3D摄影棚/shots/兹若特传送门_20261012_212027.png",
+    "sha256": "886102011f02313018c28e4792ba77b9675f4a01b6786ec58cf75659c36d3f4d",
+    "size": [
+      308,
+      560
+    ],
+    "selection": "用户指定截图，原PNG直接复制"
+  },
+  "particle_scale_basis": {
+    "glb_conversion": 0.0085,
+    "wrapper_scale": 1.7,
+    "source_skin_scale": 0.6,
+    "formula": "0.0085 * 1.7 / 0.6"
+  },
+  "presentation_lifecycle": {
+    "spawn_tail_seconds": 7.2,
+    "idle_continuous_seconds": 64,
+    "spit_tail_seconds": 2.6,
+    "death_keyframes_seconds": 1,
+    "death_hold_until_seconds": 2.2,
+    "event_exit": "Idle persists continuously across Idle1/Spit; Spit exit stops its own emission; death and pool reset clear idle."
+  },
+  "source_version_note": "Verified from local archive contents: Global.wad.client items entry, Items/773512 -> ItemVoidGate_Jade; Scripts.wad.client itemvoidgate_jade.preload -> jade_voidgate and itemvoidgategate_jade; itemvoidgategate_jade.preload -> jade_voidspawn. Incremental-update resource timestamps are not used to infer version.",
+  "equipment_reference_chain": {
+    "item": 773512,
+    "item_table": {
+      "package": "Global.wad.client",
+      "entry": "items",
+      "sha256": "41d52e6bbd40aa09658192e6efe1e17419a2b2d5cd802ea863a8c10809824b1b"
+    },
+    "spell": "ItemVoidGate_Jade",
+    "character": "Jade_VoidGate",
+    "spawn_character": "Jade_VoidSpawn",
+    "references": [
+      {
+        "package": "Scripts.wad.client",
+        "path": "data/items/spells/itemvoidgate_jade.preload",
+        "sha256": "0712e33a82162dd757b79b323748213ca296b172eb55bb216b7cfc4379ee8b6c",
+        "text": "PreLoadBuildingBlocks = {\n{Function=BBPreloadCharacter, Params={Name=\"jade_voidgate\"}}, \n{Function=BBPreloadSpell, Params={Name=\"itemvoidgategate_jade\"}}, \n}\n"
+      },
+      {
+        "package": "Scripts.wad.client",
+        "path": "data/items/spells/itemvoidgategate_jade.preload",
+        "sha256": "c4fd4a6628f3d10f491d18af1dd32cf31cf646708daef4a29b8e662fef1fced3",
+        "text": "PreLoadBuildingBlocks = {\n{Function=BBPreloadCharacter, Params={Name=\"testcube\"}}, \n{Function=BBPreloadCharacter, Params={Name=\"jade_voidspawn\"}}, \n{Function=BBPreloadModule, Params={Name=\"Global.ItemVoidGateGate_Jade\"}}, \n{Function=BBPreloadSpell, Params={Name=\"itemvoidgatespawn_jade\"}}, \n}\n"
+      }
+    ]
+  },
+  "spit_blending": {
+    "source": "original additive Spit over continuous Idle1",
+    "transition": "absolute source clip for AnimationPlayer blend; native deltas kept separately",
+    "verified": "blue/red live rendered birth sequence, no crystal collapse"
+  },
+  "native_organization_audit": {
+    "evidence": "ClashLegends-开发素材库/03-制作中/兹若特传送门/classic/native-organization/",
+    "particle_event_kill_default": true,
+    "explicit_false": [
+      "Spawn",
+      "Death"
+    ],
+    "implicit_true": [
+      "Idle1",
+      "Spit"
+    ],
+    "idle_during_spit": "Project presentation requested by user: preserve idle throughout Spit, without restart. Original external dispatch remains unresolved.",
+    "source_shader_programs": [
+      "mesh-ALPHA_TEST_USE_VERTEX_COLORS.json",
+      "distortion-.json"
+    ],
+    "implemented": [
+      "mesh fresnel RGB/exponent and source-topology normals",
+      "joint render priority across four systems",
+      "mode 1 death distortion",
+      "event-owned emission stop; source type-0 birth-relative lifetime cap and over-life color/scale reevaluation, quantized to 120Hz samples"
+    ]
+  },
+  "footprint_calibration": {
+    "tiles": [
+      3,
+      3
+    ],
+    "tile_pixels": 40,
+    "model_ground_extent_pixels": [
+      117.6,
+      119.7
+    ],
+    "collision_radius_pixels": 30
+  },
+  "presentation_overlay": {
+    "spit_priority_offset": 32,
+    "scope": "Both BirthSpit emitters draw after every idle emitter, including additive glow. Source scale and alpha remain unchanged."
+  }
+}

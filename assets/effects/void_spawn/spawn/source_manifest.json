@@ -1,0 +1,32 @@
+{
+  "definition": "Characters/Jade_VoidSpawn/Skins/Skin0/Particles/Jade_VoidSpawn_Base_SpawnSplat",
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Map12.wad.client",
+  "binary_sha256": "b2ca430dbe89d9c283f8289ced9f08d0c0a9428bdfbe050eb79fd2b732e848cd",
+  "assets": {
+    "assets/characters/jade_voidspawn/skins/base/particles/jade_voidspawn_dustcloud.tex": {
+      "source_sha256": "1f4732a4e2bf4503019004a896ff0daf9c38ac8fcb6627bc30772227e4673b3b",
+      "output": "jade_voidspawn_dustcloud.png",
+      "output_sha256": "ec399f5011796bfa9fb769da42c398c92a0275c5df18f234e3f7ac53d05da21d"
+    },
+    "assets/characters/jade_voidspawn/skins/base/particles/jade_voidspawn_cloud_mult.tex": {
+      "source_sha256": "30c6691cc40235e67b6a8c09356693f87673fe7dfa3e375d54e679c6d32fdc0b",
+      "output": "jade_voidspawn_cloud_mult.png",
+      "output_sha256": "99fcecb00f8d0ae2446fdb0d15fe9b8843d46a260e191806a0c711e0cf432aa8"
+    },
+    "assets/characters/jade_voidspawn/skins/base/particles/jade_voidspawn_dirtbits.tex": {
+      "source_sha256": "bee1338025a3b63e3686f832b953811f7baf54cf7281e447b193bf8b1bce5856",
+      "output": "jade_voidspawn_dirtbits.png",
+      "output_sha256": "1f084a60f23ed3069eba17b96d550d96938935f0df876ddb380beb3c1f3c6473"
+    },
+    "assets/characters/jade_voidspawn/skins/base/particles/jade_voidspawn_aoering.tex": {
+      "source_sha256": "437b7ce0acd4e4c636865552c196bb327c73813435e7afc37f28f91f5ae98964",
+      "output": "jade_voidspawn_aoering.png",
+      "output_sha256": "10bf552c04392d4b670efce3e3c8e99f651f0edc7961af32a0ffb36d216bedeb"
+    },
+    "assets/characters/jade_voidspawn/skins/base/particles/jade_voidspawn_ring.tex": {
+      "source_sha256": "aaf235a766c1233e3b73654d1c7cf3adcdc1527cfdf0cca036448da75eec0f06",
+      "output": "jade_voidspawn_ring.png",
+      "output_sha256": "ab0e7073f242bcd1f9232ab0557d63ad66566fca1e2b0b8d8e4d0e35023dcdfa"
+    }
+  }
+}
