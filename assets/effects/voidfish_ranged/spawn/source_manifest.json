@@ -1,0 +1,487 @@
+{
+  "definition": "Characters/Belveth/Skins/Skin0/Particles/Belveth_Base_R_Minion_Transform",
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Belveth.wad.client",
+  "binary_sha256": "0f380c63c717628adab4487d1ac1abaed8c8a2f8d056abaeffd7c02f27ae350a",
+  "assets": {
+    "assets/characters/belveth/skins/base/particles/belveth_base_r_minion_swipe01.scb": {
+      "source_sha256": "67dabeed8e2e7388f222838b97aafb104bc7211e3ac7cf444601a52d4664746d",
+      "output": "belveth_base_r_minion_swipe01.mesh.json",
+      "output_sha256": "8b6388c793266e3dce19bf908dcdd54981f207eead55054ec12d01f414bc04b7",
+      "normal_generation": "Area-weighted original SCB shared vertex-index normals; corner order and UV unchanged."
+    },
+    "assets/characters/belveth/skins/base/particles/belveth_base_r_egg_erode.tex": {
+      "source_sha256": "1949f32a4ef5c3a549e3c6d0b1988a1c4fc6d5f57195b9cbedd0463e29607868",
+      "output": "belveth_base_r_egg_erode.png",
+      "output_sha256": "0093ca94b87a4906bbe1895418eb05cfc3a17254a140f5c3ee554dc44b470bd5"
+    },
+    "assets/characters/belveth/skins/base/particles/belveth_base_r_transform_trail.tex": {
+      "source_sha256": "e1726c8824d2668f615e2316021fa563e5a2077c4b5dbf88a62ea4530bb5ecdf",
+      "output": "belveth_base_r_transform_trail.png",
+      "output_sha256": "3b21c223ff2b95bfdb4e2f30d3cba80ca4a29da7d1255fc8f07b4bf131f3bdee"
+    },
+    "assets/characters/belveth/skins/base/particles/belveth_base_r_minion_swipe02.scb": {
+      "source_sha256": "af3e84265164957249aa3e4dca4d1ee27f9a68072c62ca98ef8f35b1f4e28e9a",
+      "output": "belveth_base_r_minion_swipe02.mesh.json",
+      "output_sha256": "9bd8e2850c0f2ccd5cfeded536a909d2469bb4330b2f2b826cdb18ff9d1bf7ac",
+      "normal_generation": "Area-weighted original SCB shared vertex-index normals; corner order and UV unchanged."
+    },
+    "assets/characters/belveth/skins/base/particles/belveth_base_r_minion_swipe03.scb": {
+      "source_sha256": "4959f1ad64e72bc54c1dbdffd3f557978dc1a166c8c79ec4b741d2c2ec690d7b",
+      "output": "belveth_base_r_minion_swipe03.mesh.json",
+      "output_sha256": "6841503301d80f3312618421702d24b9937d71ba1eb7699244ba24033f30a356",
+      "normal_generation": "Area-weighted original SCB shared vertex-index normals; corner order and UV unchanged."
+    },
+    "assets/characters/belveth/skins/base/particles/belveth_base_r_minion_swipe04.scb": {
+      "source_sha256": "6b80717feacda34bdc3861d41edc41add52fda510d8c002e3c7f0ecc0891b468",
+      "output": "belveth_base_r_minion_swipe04.mesh.json",
+      "output_sha256": "f87358463c473f2a8571261391c95b61dcaf0127cc6fb475c6c1e85e3edcea2b",
+      "normal_generation": "Area-weighted original SCB shared vertex-index normals; corner order and UV unchanged."
+    },
+    "assets/characters/belveth/skins/base/particles/belveth_base_r_minion_egg.scb": {
+      "source_sha256": "0592e59bae0c12b23a536bdb1ca8ebe4c100eb1cabeee6a72ec752b15af7e785",
+      "output": "belveth_base_r_minion_egg.mesh.json",
+      "output_sha256": "3030d7d14ae345cc0ef23c4ee593e065c28a321bcf9789bc09aa4c866c26cd0c",
+      "normal_generation": "Area-weighted original SCB shared vertex-index normals; corner order and UV unchanged."
+    },
+    "assets/characters/belveth/skins/base/particles/belveth_r_swarmtexture.tex": {
+      "source_sha256": "0b7f6fb410e8fdc968bd814f6454f6d655c218c2b18da13f47230dbcd27e08b8",
+      "output": "belveth_r_swarmtexture.png",
+      "output_sha256": "fbc20d5d5e67e9c071c0d642d743c4cf7cc41eaff9ed9e128558eeb5ed76b001"
+    },
+    "assets/characters/belveth/skins/base/particles/common_color-hold.tex": {
+      "source_sha256": "ff2137e5ee5e0e0bb23ce5622cb436169c5fe48996e22d1260d64810d8415d6f",
+      "output": "common_color-hold.png",
+      "output_sha256": "b00326bf37280b35a270b1524c922525bbff44164fb9159baa8ea577cd935abe"
+    },
+    "assets/characters/belveth/skins/base/particles/belveth_r_minion_bubble.tex": {
+      "source_sha256": "0029f97c25e3a8d7e33051b634da68ca05180b6087b1cd19fb38ee5140de3cc4",
+      "output": "belveth_r_minion_bubble.png",
+      "output_sha256": "a5cebbd846c6acca8be60dac120e5f3547f6c43fddae1e098466f4f45cc64dce"
+    },
+    "assets/characters/belveth/skins/base/particles/belveth_base_r_radial_gradient01.tex": {
+      "source_sha256": "bdab6ad58f5412c906f72aee5e1633163c995689dd75bd06853880c48f76302c",
+      "output": "belveth_base_r_radial_gradient01.png",
+      "output_sha256": "1a0a11e62c4997ca3598ff041ec26147dead6d14b1f65ac04fa9133ac82f6434"
+    },
+    "assets/characters/belveth/skins/base/particles/belveth_base_r_minion_ranged.scb": {
+      "source_sha256": "275acbe169925959027f3cc002ff01ffafb18a9e457d6a3bdb2ca2e04d959fbd",
+      "output": "belveth_base_r_minion_ranged.mesh.json",
+      "output_sha256": "2075f42994aa5a8d744a4c264de160af251654f9b289a07868a70e780132968b",
+      "normal_generation": "Area-weighted original SCB shared vertex-index normals; corner order and UV unchanged."
+    },
+    "assets/characters/belveth/skins/base/particles/belveth_base_glow01.tex": {
+      "source_sha256": "62f793d3fd3148ba14df63d8b17fe67bf158680ec02665ef30d82645389d4b70",
+      "output": "belveth_base_glow01.png",
+      "output_sha256": "bfd0722cf8146f818bff167cbe824f352b5fa5674c115f58d96225a3b59046b3"
+    },
+    "assets/characters/belveth/skins/base/particles/belveth_base_emote_indicator_mult.tex": {
+      "source_sha256": "31b5a958d86ea4b612f46beda98627a44efe73ecc04e5fc46ac01bf891f2217c",
+      "output": "belveth_base_emote_indicator_mult.png",
+      "output_sha256": "c96ffb45ba2d5ae00a1bd79974a2470ec5bcc6aed5253ddc3780794cd17e329f"
+    },
+    "assets/characters/belveth/skins/base/particles/belveth_base_ba_groundlight_01.tex": {
+      "source_sha256": "3424a6d6ecd2c4bd47688067f9a8ec59ebeebc964e4d14a38b8c2d88d2cf7106",
+      "output": "belveth_base_ba_groundlight_01.png",
+      "output_sha256": "55396fc8235363ebf70f82590860a82f2b1234134b94db5e1ae1f89900ee1509"
+    },
+    "assets/characters/belveth/skins/base/particles/belveth_r_impact_water_base.tex": {
+      "source_sha256": "64cf6c39ae98f85d1ea5a446579eb6240c87435c72d5ca857b5a18848f16ae42",
+      "output": "belveth_r_impact_water_base.png",
+      "output_sha256": "d084c09707a372dd9f44c1d77868c21ed984bc5114d2cb84dcdb69ea76e88357"
+    },
+    "assets/characters/belveth/skins/base/particles/belveth_w_splash_dissolve.tex": {
+      "source_sha256": "4796c2992482daf5eed8805b173c339ec32bdb96f1dfc687097de3f269fbf79c",
+      "output": "belveth_w_splash_dissolve.png",
+      "output_sha256": "493d10556c8cc74ad0b08814b842e3431f2df381355fe8b6ca44e32af812c13b"
+    },
+    "assets/characters/belveth/skins/base/particles/belveth_w_splash.tex": {
+      "source_sha256": "a538501f1327a7b3b84496b9cb7c05f4a6e58897f26a91703b21c65979c3db9c",
+      "output": "belveth_w_splash.png",
+      "output_sha256": "3c22d7d7d2f855329e878a16f9fceaf3695b47891c4b7ca500ada8c73f2bcc2f"
+    }
+  },
+  "organization": {
+    "emitters": [
+      {
+        "name": "Start_Liquid_Swipe01",
+        "start": 0,
+        "particle_lifetime": {
+          "constant": [
+            0.20000000298023224
+          ],
+          "keys": [],
+          "tables": []
+        },
+        "pass": 51,
+        "blend": 1,
+        "mesh_camera_pitch": true,
+        "mesh_camera_yaw": true,
+        "bound_size_scale": 0.005,
+        "sample_first": 0.008333333333333333,
+        "sample_last": 0.20833333333333334,
+        "ground_layer": false,
+        "native_center": [
+          0,
+          50,
+          0
+        ]
+      },
+      {
+        "name": "Start_Liquid_Swipe2",
+        "start": 0.05000000074505806,
+        "particle_lifetime": {
+          "constant": [
+            0.20000000298023224
+          ],
+          "keys": [],
+          "tables": []
+        },
+        "pass": 51,
+        "blend": 1,
+        "mesh_camera_pitch": true,
+        "mesh_camera_yaw": true,
+        "bound_size_scale": 0.005,
+        "sample_first": 0.058333333333333334,
+        "sample_last": 0.25833333333333336,
+        "ground_layer": false,
+        "native_center": [
+          0,
+          50,
+          0
+        ]
+      },
+      {
+        "name": "Start_Liquid_Swipe3",
+        "start": 0.07500000298023224,
+        "particle_lifetime": {
+          "constant": [
+            0.15000000596046448
+          ],
+          "keys": [],
+          "tables": []
+        },
+        "pass": 50,
+        "blend": 1,
+        "mesh_camera_pitch": true,
+        "mesh_camera_yaw": true,
+        "bound_size_scale": 0.005,
+        "sample_first": 0.08333333333333333,
+        "sample_last": 0.23333333333333334,
+        "ground_layer": false,
+        "native_center": [
+          0,
+          50,
+          0
+        ]
+      },
+      {
+        "name": "Start_Liquid_Swipe4",
+        "start": 0.09000000357627869,
+        "particle_lifetime": {
+          "constant": [
+            0.15000000596046448
+          ],
+          "keys": [],
+          "tables": []
+        },
+        "pass": 51,
+        "blend": 1,
+        "mesh_camera_pitch": true,
+        "mesh_camera_yaw": true,
+        "bound_size_scale": 0.005,
+        "sample_first": 0.09166666666666666,
+        "sample_last": 0.24166666666666667,
+        "ground_layer": false,
+        "native_center": [
+          0,
+          50,
+          0
+        ]
+      },
+      {
+        "name": "Egg_Dark_Cover",
+        "start": 0.125,
+        "particle_lifetime": {
+          "constant": [
+            0.25
+          ],
+          "keys": [],
+          "tables": []
+        },
+        "pass": 48,
+        "blend": 1,
+        "mesh_camera_pitch": true,
+        "mesh_camera_yaw": true,
+        "bound_size_scale": 0.005,
+        "sample_first": 0.13333333333333333,
+        "sample_last": 0.38333333333333336,
+        "ground_layer": false,
+        "native_center": [
+          0,
+          50,
+          0
+        ]
+      },
+      {
+        "name": "Egg_Fresnel",
+        "start": 0.27000001072883606,
+        "particle_lifetime": {
+          "constant": [
+            0.4000000059604645
+          ],
+          "keys": [],
+          "tables": []
+        },
+        "pass": 55,
+        "blend": 4,
+        "mesh_camera_pitch": false,
+        "mesh_camera_yaw": false,
+        "bound_size_scale": 0.005,
+        "sample_first": 0.275,
+        "sample_last": 0.675,
+        "ground_layer": false,
+        "native_center": [
+          0,
+          50,
+          0
+        ]
+      },
+      {
+        "name": "Egg_Reflection",
+        "start": 0.30000001192092896,
+        "particle_lifetime": {
+          "constant": [
+            0.30000001192092896
+          ],
+          "keys": [],
+          "tables": []
+        },
+        "pass": 41,
+        "blend": 4,
+        "mesh_camera_pitch": false,
+        "mesh_camera_yaw": false,
+        "bound_size_scale": 0.005,
+        "sample_first": 0.30833333333333335,
+        "sample_last": 0.6083333333333333,
+        "ground_layer": false,
+        "native_center": [
+          0,
+          50,
+          0
+        ]
+      },
+      {
+        "name": "Egg_Backdrop",
+        "start": 0.20000000298023224,
+        "particle_lifetime": {
+          "constant": [
+            0.5
+          ],
+          "keys": [],
+          "tables": []
+        },
+        "pass": 10,
+        "blend": 1,
+        "mesh_camera_pitch": false,
+        "mesh_camera_yaw": false,
+        "bound_size_scale": 0.005,
+        "sample_first": 0.20833333333333334,
+        "sample_last": 0.7,
+        "ground_layer": true,
+        "native_center": [
+          0,
+          50,
+          0
+        ]
+      },
+      {
+        "name": "Egg_Voidling",
+        "start": 0.20000000298023224,
+        "particle_lifetime": {
+          "constant": [
+            0.5
+          ],
+          "keys": [],
+          "tables": []
+        },
+        "pass": 0,
+        "blend": 3,
+        "mesh_camera_pitch": false,
+        "mesh_camera_yaw": false,
+        "bound_size_scale": 0.0,
+        "sample_first": 0.20833333333333334,
+        "sample_last": 0.7,
+        "ground_layer": false,
+        "native_center": [
+          0,
+          50,
+          0
+        ]
+      },
+      {
+        "name": "Egg_GlowInside",
+        "start": 0.20000000298023224,
+        "particle_lifetime": {
+          "constant": [
+            0.5
+          ],
+          "keys": [],
+          "tables": []
+        },
+        "pass": 30,
+        "blend": 0,
+        "mesh_camera_pitch": false,
+        "mesh_camera_yaw": false,
+        "bound_size_scale": 0.005,
+        "sample_first": 0.20833333333333334,
+        "sample_last": 0.7,
+        "ground_layer": true,
+        "native_center": [
+          0,
+          50,
+          0
+        ]
+      },
+      {
+        "name": "Egg_Erode_AlphaBlend02",
+        "start": 0.20000000298023224,
+        "particle_lifetime": {
+          "constant": [
+            0.550000011920929
+          ],
+          "keys": [],
+          "tables": []
+        },
+        "pass": 35,
+        "blend": 1,
+        "mesh_camera_pitch": false,
+        "mesh_camera_yaw": false,
+        "bound_size_scale": 0.005,
+        "sample_first": 0.20833333333333334,
+        "sample_last": 0.7583333333333333,
+        "ground_layer": false,
+        "native_center": [
+          0,
+          50,
+          0
+        ]
+      },
+      {
+        "name": "Egg_Backdrop3",
+        "start": 0,
+        "particle_lifetime": {
+          "constant": [
+            0.20000000298023224
+          ],
+          "keys": [],
+          "tables": []
+        },
+        "pass": 10,
+        "blend": 1,
+        "mesh_camera_pitch": false,
+        "mesh_camera_yaw": false,
+        "bound_size_scale": 0.0,
+        "sample_first": 0.008333333333333333,
+        "sample_last": 0.20833333333333334,
+        "ground_layer": true,
+        "native_center": [
+          0,
+          50,
+          0
+        ]
+      },
+      {
+        "name": "Egg_Reflection4",
+        "start": 0.20000000298023224,
+        "particle_lifetime": {
+          "constant": [
+            0.25
+          ],
+          "keys": [],
+          "tables": []
+        },
+        "pass": 61,
+        "blend": 4,
+        "mesh_camera_pitch": false,
+        "mesh_camera_yaw": false,
+        "bound_size_scale": 0.0,
+        "sample_first": 0.20833333333333334,
+        "sample_last": 0.45,
+        "ground_layer": false,
+        "native_center": [
+          0,
+          50,
+          0
+        ]
+      },
+      {
+        "name": "vecalign",
+        "start": 0.10000000149011612,
+        "particle_lifetime": {
+          "constant": [
+            0.17000000178813934
+          ],
+          "keys": [
+            {
+              "time": 0,
+              "values": [
+                0.17000000178813934
+              ]
+            }
+          ],
+          "tables": [
+            {
+              "channel": 0,
+              "single": 1,
+              "keys": [
+                {
+                  "time": 0,
+                  "values": [
+                    0.6000000238418579
+                  ]
+                },
+                {
+                  "time": 0.8500000238418579,
+                  "values": [
+                    1.100000023841858
+                  ]
+                },
+                {
+                  "time": 1,
+                  "values": [
+                    2
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "pass": 0,
+        "blend": 1,
+        "mesh_camera_pitch": false,
+        "mesh_camera_yaw": false,
+        "bound_size_scale": 0.004,
+        "sample_first": 0.10833333333333334,
+        "sample_last": 0.4083333333333333,
+        "ground_layer": false,
+        "native_center": [
+          0,
+          50,
+          0
+        ]
+      }
+    ],
+    "bound_object_diameter": 140.0,
+    "source_selection_radius": 70.0,
+    "body_model_scale": 0.014,
+    "notes": "Original 14-emitter transform sequence; no unreferenced Transform_Impact system appended. Native flex scales sizes only. Camera-facing meshes keep their own particle rotations.",
+    "body_reveal_time": 0.72,
+    "release_time": 0.78,
+    "origin": "Model root; native EmitterPosition or SpawnShape=(0,50,0); no chest-bone offset",
+    "orientation": "One native X mirror, Ry*Rx*Rz. Five camera-aligned SCB layers use local camera look-at. Other layers inherit model root yaw; Egg_Voidling retains native randomized Euler spin.",
+    "clock": "Continuous 120Hz source driver advance, read-only deployment age plus fixed-step interpolation; no wall-clock accumulation",
+    "render_order": "Three ground layers first; native pass/simple/blend/flags/index ordering. Egg_Voidling blendMode3 alpha-one replacement and depth writes.",
+    "scope": "Shared native Transform definition for melee/ranged, including authored Ranged.scb silhouette. Belveth death scatter deploy_time=0 skips all birth layers. Transform_Impact not appended without trigger evidence."
+  },
+  "sample_sha256": "6c2be66453a5e7f0b5b0a2576dd1157bdbe9beaa411cdf5821fa431c1df90b09"
+}

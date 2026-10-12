@@ -19,6 +19,8 @@ const DEFINITIONS = [
 	preload("res://scripts/data/cards/tristana.gd"),
 	preload("res://scripts/data/cards/belveth.gd"),
 	preload("res://scripts/data/cards/voidfish.gd"),
+	preload("res://scripts/data/cards/voidfish_ranged.gd"),
+	preload("res://scripts/data/cards/voidfish_ranged_single.gd"),
 	preload("res://scripts/data/cards/twitch.gd"),
 	preload("res://scripts/data/cards/lulu.gd"),
 	preload("res://scripts/data/cards/pantheon.gd"),

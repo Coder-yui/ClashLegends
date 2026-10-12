@@ -14,6 +14,7 @@ var projectiles: Node2D
 var _gwen_tristana_effect: Node3D
 var _sacrifice_effect: Node3D
 var _sett_effect: Node3D
+var _voidfish_effect: Node3D
 var _anivia_effect: Node3D
 var _aurelion_effect: Node3D
 var skills: RefCounted
@@ -47,6 +48,8 @@ func _process(delta: float) -> void:
 		_sion_w_effect.sync_effects(skills, _camera, delta)
 	if _aurelion_effect != null and skills != null:
 		_aurelion_effect.sync_effects(skills, _camera, delta)
+	if _voidfish_effect != null and skills != null:
+		_voidfish_effect.sync_effects(skills, projectiles, _camera)
 	if _anivia_effect != null and skills != null:
 		_anivia_effect.sync_effects(skills, projectiles, _camera)
 	if _locket_effect != null and skills != null:
@@ -125,6 +128,8 @@ func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void
 	_world_root.add_child(_sett_effect)
 	_anivia_effect = preload("res://scripts/presentation/anivia_effect_3d.gd").new()
 	_world_root.add_child(_anivia_effect)
+	_voidfish_effect = preload("res://scripts/presentation/voidfish_effect_3d.gd").new()
+	_world_root.add_child(_voidfish_effect)
 	_sion_w_effect = preload("res://scripts/presentation/sion_w_effect_3d.gd").new()
 	_world_root.add_child(_sion_w_effect)
 	_aftershock_effect = preload("res://scripts/presentation/aftershock_effect_3d.gd").new()

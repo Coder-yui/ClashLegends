@@ -509,6 +509,7 @@ func _draw() -> void:
 			&"needle", &"blind_needle": _draw_needle(projectile)
 			&"boomerang": _draw_boomerang(projectile)
 			&"tristana_bullet": pass # 原版炮弹读取相同可见快照。
+			&"voidfish_missile": pass # 原版远程虚空鱼弹体使用相同只读快照。
 			&"ice_cone": pass # 原版普攻由 AniviaEffect3D 消费同一可见弹体。
 			# orb 同样必须使用纯表现炮口偏移；权威弹体位置仍保留在 projectile.pos。
 			_:
@@ -643,7 +644,19 @@ func _visual_position(projectile: Dictionary) -> Vector2:
 	return projectile.pos + visual_offset + Vector2(0.0, -float(projectile.get("visual_height", 0.0)))
 
 func _visual_model_offset(descriptor: Dictionary, fallback: Vector2) -> Vector2:
-	if descriptor.is_empty(): return fallback
+	var body := _visual_body(descriptor)
+	return body.get_meta("projectile_model_offset", fallback) if is_instance_valid(body) else fallback
+
+## 纯表现查询，主客端使用同一实体描述；不改变权威弹道或快照。
+func visual_model_anchor_position(descriptor: Dictionary) -> Vector3:
+	var body := _visual_body(descriptor)
+	if not is_instance_valid(body) or not body.has_meta("projectile_model_anchor"): return Vector3.INF
+	var reference = body.get_meta("projectile_model_anchor")
+	var anchor = reference.get_ref() if reference is WeakRef else null
+	return anchor.global_position if is_instance_valid(anchor) and anchor is Node3D else Vector3.INF
+
+func _visual_body(descriptor: Dictionary) -> Node2D:
+	if descriptor.is_empty(): return null
 	var body: Node2D
 	if bool(descriptor.get("unit", false)) and int(descriptor.get("id", -1)) < 0:
 		body = instance_from_id(int(descriptor.get("local_id", 0))) as Node2D
@@ -652,14 +665,16 @@ func _visual_model_offset(descriptor: Dictionary, fallback: Vector2) -> Vector2:
 		for candidate in get_tree().get_nodes_in_group("combatants"):
 			if candidate.team != int(descriptor.team) or (candidate is Unit) != bool(descriptor.unit): continue
 			if candidate is Unit and int(descriptor.get("id", -1)) >= 0:
-				if candidate.net_id == int(descriptor.id): body = candidate
-				break
+				if candidate.net_id == int(descriptor.id):
+					body = candidate
+					break
+				continue
 			if candidate is Tower and candidate.is_king != bool(descriptor.king): continue
 			var distance: float = candidate.global_position.distance_squared_to(descriptor.position)
 			if distance < nearest_distance:
 				nearest_distance = distance
 				body = candidate
-	return body.get_meta("projectile_model_offset", fallback) if is_instance_valid(body) else fallback
+	return body
 
 func _draw_card(projectile: Dictionary) -> void:
 	var center := _visual_position(projectile)

@@ -648,5 +648,15 @@
     "source_path": "https://ddragon.leagueoflegends.com/cdn/9.22.1/img/item/3512.png",
     "source_sha256": "a8288fb2161d2e636cd58fb662a43778657ee40c8e2b40ab83d072bbd5d385f9",
     "sha256": "a8288fb2161d2e636cd58fb662a43778657ee40c8e2b40ab83d072bbd5d385f9"
+  },
+  {
+    "card": "voidfish_ranged",
+    "skill_index": 0,
+    "path": "res://assets/skills/voidfish_ranged_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Belveth.wad.client",
+    "source_path": "assets/characters/belveth/hud/icons2d/belveth_passive.dds",
+    "source_sha256": "277215fff7a30b24e8624541c37f27e4cedbcf24dab3ee24193a9040516a0462",
+    "sha256": "501b70365dd0f8c359379c0b735c1b8611bf184929ad1a1ee9138e35ef7fcbe5",
+    "selection": "User selected Belveth passive icon for custom Void Regeneration skill."
   }
 ]

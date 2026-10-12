@@ -54,6 +54,13 @@ func _death(team: int) -> void:
 	for unit in fish:
 		_expect(unit.is_air and unit.can_attack_air and not unit.building_only and unit.max_hp == 110 and unit.damage == 26, "虚空鱼为独立对地对空弱小单位")
 		_expect(unit.position.distance_to(center) < 0.01, "八只虚空鱼从死亡点出生")
+		var view = load("res://assets/units/voidfish/voidfish_view.tscn").instantiate()
+		_main.add_child(view)
+		view.configure_unit_visual(unit)
+		view.advance_deployment_visual(0.0, unit.deploy_time, true)
+		view._process(0.3)
+		_expect(unit.deploy_time == 0.0 and view._spawn == null and view.get_node("Model").visible, "女皇死亡散出的八鱼保持无出生特效且模型立即可见")
+		view.free()
 	for index in fish.size():
 		_expect(fish[index].get_visual_facing_direction().is_equal_approx(Unit.SPAWN_DIRECTIONS[index]), "散开时面朝外侧")
 	for tick in 9:

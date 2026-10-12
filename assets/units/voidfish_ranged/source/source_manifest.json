@@ -1,0 +1,89 @@
+{
+  "tool": "lol2gltf",
+  "arguments": [
+    "skn2gltf",
+    "-m",
+    "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/远程虚空鱼/model-source/assets/characters/belvethvoidling/skins/base/belvethvoidling_base.skn",
+    "-s",
+    "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/远程虚空鱼/model-source/assets/characters/belvethvoidling/skins/base/belvethvoidling_base.skl",
+    "-a",
+    "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/远程虚空鱼/model-source/assets/characters/belvethvoidling/skins/base/animations",
+    "--materials",
+    "Melee",
+    "Ranged",
+    "--textures",
+    "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/远程虚空鱼/model-source/assets/characters/belvethvoidling/skins/base/belvethvoidling_base_ranged_melee_tx_cm.tex",
+    "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/远程虚空鱼/model-source/assets/characters/belvethvoidling/skins/base/belvethvoidling_base_ranged_melee_tx_cm.tex",
+    "-g"
+  ],
+  "inputs": [
+    {
+      "path": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/远程虚空鱼/model-source/assets/characters/belvethvoidling/skins/base/belvethvoidling_base.skn",
+      "sha256": "758cd78102f041ebe56a38b5fc6cf9b88e6113a28a0d8e99bca8daf758d5cead"
+    },
+    {
+      "path": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/远程虚空鱼/model-source/assets/characters/belvethvoidling/skins/base/belvethvoidling_base.skl",
+      "sha256": "21fe8cbfc8b9c022a25e091b9444b265efb2eb77bab42283076a25ce603f6497"
+    },
+    {
+      "path": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/远程虚空鱼/model-source/assets/characters/belvethvoidling/skins/base/animations/attack_1.anm",
+      "sha256": "1ac7b6fcd975849df481a01cdbfb87387375aaea3966f76af7cb1a13942e3170"
+    },
+    {
+      "path": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/远程虚空鱼/model-source/assets/characters/belvethvoidling/skins/base/animations/attack_2.anm",
+      "sha256": "15d82621bac75e38f49f7d25182cb85c042d1a284b9047d25bdd2c8d5e94c588"
+    },
+    {
+      "path": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/远程虚空鱼/model-source/assets/characters/belvethvoidling/skins/base/animations/attack_3.anm",
+      "sha256": "3eabc6b0d6aaf100c3d09c1771f94ddb19e854265cca4c1c90e5504ee0e6d849"
+    },
+    {
+      "path": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/远程虚空鱼/model-source/assets/characters/belvethvoidling/skins/base/animations/idle.anm",
+      "sha256": "0ea8eab7557526236f92bbc8fc378135e253ae36fcf56f78cf412ad55ca90500"
+    },
+    {
+      "path": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/远程虚空鱼/model-source/assets/characters/belvethvoidling/skins/base/animations/melee_death.anm",
+      "sha256": "df6b8dcfdae6e65bd9b8c6c8c7b42a20ce83db7c78eeb27cfac41d6e0c0ee294"
+    },
+    {
+      "path": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/远程虚空鱼/model-source/assets/characters/belvethvoidling/skins/base/animations/ranged_attack.anm",
+      "sha256": "a1047f5dda2c8bbbbd428554062a67d906c811cc6d00add4b49b4062fe2f99a4"
+    },
+    {
+      "path": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/远程虚空鱼/model-source/assets/characters/belvethvoidling/skins/base/animations/ranged_death.anm",
+      "sha256": "bca5a6d8db026a6003bec9dd6225644654285c1f9d9f01f01444bac8524a1caa"
+    },
+    {
+      "path": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/远程虚空鱼/model-source/assets/characters/belvethvoidling/skins/base/animations/ranged_idle.anm",
+      "sha256": "eec1d483520167f727a68104c5a5352e39da802f5bdad15b3487f17d243a9560"
+    },
+    {
+      "path": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/远程虚空鱼/model-source/assets/characters/belvethvoidling/skins/base/animations/ranged_run.anm",
+      "sha256": "08ce18fd099ead60d23c67c30d805e48e05f8f3f364f532c20080aafc7fc9735"
+    },
+    {
+      "path": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/远程虚空鱼/model-source/assets/characters/belvethvoidling/skins/base/animations/run.anm",
+      "sha256": "1ca12fe8161459e201bafeef61b561cfed0cc7ddd73fcfc2b5c1d48b96f79b47"
+    },
+    {
+      "path": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/远程虚空鱼/model-source/assets/characters/belvethvoidling/skins/base/belvethvoidling_base_ranged_melee_tx_cm.tex",
+      "sha256": "dd14cbab9551c6944269688d3e84c0792e0d50c376b2c4443f10d7733c9ebe0e"
+    },
+    {
+      "path": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/远程虚空鱼/model-source/assets/characters/belvethvoidling/skins/base/belvethvoidling_base_ranged_melee_tx_cm.tex",
+      "sha256": "dd14cbab9551c6944269688d3e84c0792e0d50c376b2c4443f10d7733c9ebe0e"
+    }
+  ],
+  "output": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/远程虚空鱼/voidfish_complete.glb",
+  "sha256": "e155f44b3b03cb05ca604332111edd36056946f4447c8c3b176b351731da366e",
+  "feedback_revision": {
+    "card_art": {
+      "background": "714636",
+      "animation": "ranged_idle",
+      "time": 0.6,
+      "yaw": 25,
+      "sha256": "4e2768e67d7954eee395432269ca65b698fd75b47805911cc12a5e74da811d33"
+    },
+    "birth_organization": "assets/effects/voidfish_ranged/spawn/source_manifest.json"
+  }
+}

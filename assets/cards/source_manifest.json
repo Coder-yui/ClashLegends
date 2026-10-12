@@ -94,6 +94,19 @@
     "processing": "tools/dev.py model; 2x render, silhouette framing, solid-color background"
   },
   {
+    "card": "voidfish_ranged",
+    "path": "res://assets/cards/voidfish_ranged_loading.png",
+    "source": "用户指定的3D摄影棚截图",
+    "source_path": "ClashLegends-开发素材库/04-中间产物/3D摄影棚/shots/远程虚空鱼_3单位_20261012_185200.png",
+    "source_sha256": "0db7e0617597e8b7298cfb365b0be6b4572c2de0f6702e626b06d96d6eea3cca",
+    "sha256": "0db7e0617597e8b7298cfb365b0be6b4572c2de0f6702e626b06d96d6eea3cca",
+    "size": [
+      308,
+      560
+    ],
+    "processing": "原PNG直接复制，未裁切、缩放或改色。"
+  },
+  {
     "card": "void_gate",
     "path": "res://assets/cards/void_gate_loading.png",
     "source": "用户指定的3D摄影棚截图",

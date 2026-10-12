@@ -1,0 +1,22 @@
+{
+  "definition": "Characters/Belveth/Skins/Skin0/Particles/Belveth_Base_R_Voidling_BA_Mis",
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Belveth.wad.client",
+  "binary_sha256": "0f380c63c717628adab4487d1ac1abaed8c8a2f8d056abaeffd7c02f27ae350a",
+  "assets": {
+    "assets/characters/belveth/skins/base/particles/belveth_base_r_voidling_mis_dot.tex": {
+      "source_sha256": "1d517d84be6ecceacdf9b3c64e1d2d2eac83fc81587556b7284a1cc5ed5b5268",
+      "output": "belveth_base_r_voidling_mis_dot.png",
+      "output_sha256": "0332f2e2419d1f408bf7ba94770389032d17da0be2634c4e384d95175c3fee7f"
+    },
+    "assets/characters/belveth/skins/base/particles/belveth_base_r_reset_ground.tex": {
+      "source_sha256": "99178ee5ac3b33e06755e63342fc57e1a5febf1482e3a1d0c07ccbe798e76cde",
+      "output": "belveth_base_r_reset_ground.png",
+      "output_sha256": "faf1af705c6c47e29f98673558c2120f942e36df602f629c74aa165847bff5da"
+    },
+    "assets/characters/belveth/skins/base/particles/belveth_base_r_voidling_tar_dot.tex": {
+      "source_sha256": "05ef45bf69414140303ca09e2b04f7277fdcb5388cecf5ea2a92657d83893023",
+      "output": "belveth_base_r_voidling_tar_dot.png",
+      "output_sha256": "3e3233e219ced08acf91bccc2f1ec03b8f985a8a84336960d51c8fb3819510c4"
+    }
+  }
+}

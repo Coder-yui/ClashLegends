@@ -1,0 +1,9 @@
+{
+  "source": "Project-authored rising wisps and existing Baron minion model overlay",
+  "original_particle_assets": false,
+  "outputs": {
+    "player.gd": "918acd42fe2659a58f47f28a1aa5dd2b9acc4f3c14fca0da8149402fc064428d",
+    "buff.tscn": "cbb7f5f833447c6fe5cc9e553034e97b9397469133e9120fa31994ebfc2f1d12",
+    "rise.gdshader": "b607e419cec038e29eeced550957bf5e1122a601c6a26dea93bcbc7a21cfce8b"
+  }
+}
