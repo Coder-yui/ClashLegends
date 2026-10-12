@@ -115,7 +115,7 @@ func _draw_frontal_skill_effect(effect: Dictionary) -> void:
 		draw_arc(center, radius, 0.0, TAU, 64, Color(1.0, 0.56, 0.12, 0.85 * alpha), 2.0, true)
 		return
 
-	if not bool(effect.get("fixed_position", false)) and source is Unit and is_instance_valid(source):
+	if not bool(effect.get("fixed_position", false)) and is_instance_valid(source) and source is Unit:
 		center = (source as Unit).get_visual_screen_position()
 		source_radius = (source as Unit).body_radius
 	if forward.length_squared() < 0.001:

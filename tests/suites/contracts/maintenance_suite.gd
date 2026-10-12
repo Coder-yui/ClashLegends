@@ -29,6 +29,7 @@ func run(harness: Object) -> void:
 	gold.free()
 
 func check_contracts(harness: Object, main: Node2D) -> void:
+	_check_freed_instance_guards(harness, main)
 	main._process(0.0)
 	harness._expect(is_same(main._effects_view.spells, main._spell_system), "渲染推进不切断法术系统与冰冻表现集合的所有权")
 	var ai_timer: float = main._ai._think_timer
@@ -82,6 +83,40 @@ func check_contracts(harness: Object, main: Node2D) -> void:
 	_check_layers(harness, main)
 	_check_control_and_isolation(harness, main)
 	_check_network_presentation(harness, main)
+
+func _check_freed_instance_guards(harness: Object, main: Node2D) -> void:
+	var source := Unit.new()
+	source.setup(0, CardDB.get_card("ornn"), "来源")
+	main.add_child(source)
+	var target := Unit.new()
+	target.setup(0, CardDB.get_card("garen"), "友军")
+	main.add_child(target)
+	var stale := Unit.new()
+	var candidates: Array = [stale, null, main, target]
+	stale.free()
+	var boosts := TeamAttackBoostSystem.new(main)
+	harness._expect(boosts._choose_target(source, candidates) == target, "锻造候选列表跳过已释放引用、空值和非单位，仍选中存活友军")
+	harness._expect(boosts._choose_target(source, [stale, null, main]) == null, "无有效锻造候选时安全返回空目标")
+	target.free()
+	source.free()
+	# 命中事件监听者可同步释放来源，结算尾部不能再先做来源类型判断。
+	var attacker := Unit.new()
+	attacker.setup(0, CardDB.get_card("garen"), "攻击者")
+	main.add_child(attacker)
+	var victim := Unit.new()
+	victim.setup(1, CardDB.training_dummy_stats(), "受击者")
+	main.add_child(victim)
+	var resolver: CombatResolver = main.combat_service()
+	var hits: Array[bool] = []
+	var callback := func(_source: Dictionary, _position: Vector2, _first_strike: bool):
+		hits.append(true)
+		attacker.free()
+	resolver.attack_hit.connect(callback, CONNECT_ONE_SHOT)
+	var landed := resolver._resolve_immediate_attack_hit(0, attacker.global_position, victim, victim.hp, 0.0, 0.0, attacker)
+	harness._expect(landed and victim.hp == 0.0 and hits.size() == 1 and not is_instance_valid(attacker), "命中回调释放攻击者后仍完成伤害结算，不对已释放来源先做类型判断")
+	if resolver.attack_hit.is_connected(callback): resolver.attack_hit.disconnect(callback)
+	if is_instance_valid(attacker): attacker.free()
+	victim.free()
 
 func _run_schedule(frames: Array[float]) -> Array:
 	var clock := FixedStepClock.new()

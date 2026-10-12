@@ -31,7 +31,7 @@ static func allows_effect(target: Node2D, context: Dictionary) -> bool:
 ## Friendly targeting does not inherit Gwen's enemy-only sanctuary rejection.
 ## Stasis/general untargetability read status families; their global application remains a separate capability.
 static func blocks_effect(target: Node2D, context: Dictionary = {}) -> bool:
-	if not target is Unit or target.hp <= 0.0 or not allows_effect(target, context): return false
+	if not is_instance_valid(target) or not target is Unit or target.hp <= 0.0 or not allows_effect(target, context): return false
 	if bool(context.get("attached", false)): return false
 	var source = context.get("source")
 	var team := int(source.team) if is_instance_valid(source) else int(context.get("team", -1))

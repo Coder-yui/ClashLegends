@@ -163,12 +163,12 @@ func effect_source(effect: Dictionary):
 	var source_ref = effect.get("source_ref")
 	if source_ref is WeakRef:
 		var source = (source_ref as WeakRef).get_ref()
-		if source is Unit and is_instance_valid(source):
+		if is_instance_valid(source) and source is Unit:
 			return source
 	var net_id := int(effect.get("net_id", -1))
 	if net_id >= 0:
 		var client_source = _controller.find_client_unit(net_id)
-		if client_source is Unit and is_instance_valid(client_source):
+		if is_instance_valid(client_source) and client_source is Unit:
 			return client_source
 	return null
 

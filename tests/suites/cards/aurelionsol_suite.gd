@@ -7,10 +7,32 @@ func run(harness: Object, main: Node2D) -> void:
 	_main = main
 	_check_aurelionsol_art_integration()
 	_check_aurelionsol_direct_retarget()
+	_check_freed_continuous_visual_target()
 	_check_creation_boundary()
 	_check_starfall_and_falling_sky()
 	_check_star_visual_lifecycle()
 	_check_independent_star_result()
+
+func _check_freed_continuous_visual_target() -> void:
+	for team in [0, 1]:
+		var dragon := Unit.new()
+		dragon.position = Vector2(360.0, 1000.0 if team == 0 else 280.0)
+		dragon.setup(team, CardDB.get_card("aurelionsol"), "龙王")
+		_main.add_child(dragon)
+		var target := Unit.new()
+		target.setup(1 - team, CardDB.training_dummy_stats(), "吐息目标")
+		_main.add_child(target)
+		dragon._target = target
+		dragon._attacking = true
+		target.is_air = true
+		# 模拟目标已释放、下一次权威 Tick 尚未清理引用时的表现读取。
+		target.free()
+		_expect(not is_instance_valid(dragon._target), "吐息回归保留已释放目标引用：阵营%d" % team)
+		_expect(not dragon.has_continuous_visual_target() and dragon.get_continuous_visual_target_air_id() == -1, "已释放吐息目标不再提供有效目标或空中身份：阵营%d" % team)
+		_expect(dragon.get_continuous_visual_target_position() == dragon.get_visual_screen_position() and dragon.get_continuous_beam_endpoint_position() == dragon.get_visual_screen_position(), "目标释放后吐息端点安全回退，不对已释放引用执行类型判断：阵营%d" % team)
+		dragon._target = null
+		_expect(dragon.get_continuous_beam_endpoint_position() == dragon.get_visual_screen_position(), "空吐息目标端点安全回退：阵营%d" % team)
+		dragon.free()
 
 func _check_starfall_and_falling_sky() -> void:
 	_main._active_skill_effect_system.clear()

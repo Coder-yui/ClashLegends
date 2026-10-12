@@ -1285,7 +1285,7 @@ func _art_dev_selected_unit() -> Unit:
 	var selection_team := 1 - _workbench.team if _workbench.selection == "training_dummy" else _workbench.team
 	var candidate_ref = _workbench.last_units.get(_art_dev_unit_key(_workbench.selection, selection_team))
 	var candidate = (candidate_ref as WeakRef).get_ref() if candidate_ref is WeakRef else null
-	if candidate is Unit and is_instance_valid(candidate) and candidate.hp > 0.0:
+	if is_instance_valid(candidate) and candidate is Unit and candidate.hp > 0.0:
 		return candidate as Unit
 	var group_id := int(_workbench.last_groups.get(_art_dev_unit_key(_workbench.selection, _workbench.team), -1))
 	var members := living_deployment_members(group_id, _workbench.team)

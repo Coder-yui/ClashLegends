@@ -1301,7 +1301,7 @@ func get_continuous_beam_endpoint_position() -> Vector2:
 				if body is Unit and body.net_id == net_continuous_target_air_id and body.is_air:
 					air_target = body
 					break
-	elif _target is Unit and is_instance_valid(_target) and _target.is_air:
+	elif is_instance_valid(_target) and _target is Unit and _target.is_air:
 		air_target = _target
 	if air_target == null:
 		return target_screen
@@ -1552,7 +1552,7 @@ func _perform_deploy_sweep() -> void:
 			any_landed = c.take_damage(deploy_sweep_damage, self, team, global_position) or any_landed
 		if was_alive and c.hp <= 0.0:
 			on_enemy_killed(c)
-		if c is Unit and is_instance_valid(c) and c.hp > 0.0 and deploy_sweep_knockback > 0.0:
+		if is_instance_valid(c) and c is Unit and c.hp > 0.0 and deploy_sweep_knockback > 0.0:
 			(c as Unit).apply_knockback(global_position, deploy_sweep_knockback, deploy_sweep_duration, deploy_sweep_mass_factor_max, displacement_order, CombatInteraction.effect_context(self))
 
 	if any_landed and battle_context != null:
@@ -2403,7 +2403,7 @@ func _tick_pending_extra_attacks(dt: float) -> void:
 			waiting.append(pending)
 			continue
 		var target = (pending.target_ref as WeakRef).get_ref()
-		if not target is Node2D or not is_instance_valid(target) or target.hp <= 0.0:
+		if not is_instance_valid(target) or not target is Node2D or target.hp <= 0.0:
 			continue
 		_attack_swing_count += 1
 		mark_skill_resource_combat_activity()

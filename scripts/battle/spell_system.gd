@@ -172,7 +172,7 @@ func _apply_slow_zone(zone: Dictionary, dt: float) -> void:
 	var interaction := _spell_context(int(zone.team))
 	interaction["delivery"] = zone.get("effect_delivery")
 	for combatant in _controller.get_tree().get_nodes_in_group("combatants"):
-		if not combatant is Unit or not is_instance_valid(combatant) or combatant.team == int(zone.team) or combatant.hp <= 0.0:
+		if not is_instance_valid(combatant) or not combatant is Unit or combatant.team == int(zone.team) or combatant.hp <= 0.0:
 			continue
 		if not CombatInteraction.allows_effect(combatant, interaction): continue
 		if combatant.global_position.distance_to(zone.pos) <= float(zone.radius) + combatant.body_radius:
@@ -466,7 +466,7 @@ func _apply_explosive_cask(team: int, stats: Dictionary, position: Vector2, enha
 			if bool(result.landed): _controller.present_cask_hit(hit_pos, team)
 		if resolver.collecting: resolver.defer_effect(show_hit)
 		else: show_hit.call()
-		if target is Unit:
+		if is_instance_valid(target) and target is Unit:
 			if resolver.collecting:
 				resolver.submit_knockback(target, position, float(stats.knockback), 0.2, 1.4, order, result, interaction)
 			elif bool(result.landed) and is_instance_valid(target) and target.hp > 0:

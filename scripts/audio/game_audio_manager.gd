@@ -269,7 +269,7 @@ func _tick_attached_units() -> void:
 	for instance_id in _unit_entries:
 		var entry: Dictionary = _unit_entries[instance_id]
 		var unit = (entry.unit_ref as WeakRef).get_ref()
-		if not unit is Unit or not is_instance_valid(unit):
+		if not is_instance_valid(unit) or not unit is Unit:
 			stale_ids.append(instance_id)
 			continue
 		if not unit.visible_to_local_player():
@@ -556,7 +556,7 @@ func _on_unit_death(instance_id: int) -> void:
 	if entry.is_empty():
 		return
 	var unit = (entry.unit_ref as WeakRef).get_ref()
-	if unit is Unit and is_instance_valid(unit):
+	if is_instance_valid(unit) and unit is Unit:
 		play_event(unit, &"death", unit.get_visual_screen_position())
 		# 音效与语音独立选池、同时播放；未配置语音的旧卡保持原样。
 		play_event(unit, &"death:voice", unit.get_visual_screen_position())
@@ -1208,7 +1208,7 @@ func _tick_stasis_audio() -> void:
 	if _battle_ended or _battle_paused: return
 	var active := {}
 	for source in get_tree().get_nodes_in_group("combatants"):
-		if not (source is Unit or source is Tower) or not is_instance_valid(source) or source.is_queued_for_deletion() or source.hp <= 0.0: continue
+		if not is_instance_valid(source) or not (source is Unit or source is Tower) or source.is_queued_for_deletion() or source.hp <= 0.0: continue
 		if not CombatInteraction.in_stasis(source): continue
 		if source is Unit and not source.visible_to_local_player(): continue
 		var id := source.get_instance_id()

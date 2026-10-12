@@ -26,14 +26,14 @@ func _resolve_immediate_attack_hit(p_team: int, origin: Vector2, primary: Node2D
 			if counts_as_attack and is_instance_valid(from) and from is Unit:
 				_settle_bleeding_attack(primary, from, effects, result)
 				if from.battle_context != null: from.battle_context.record_growth_hit(from, primary)
-		if landed and counts_as_attack and from is Unit and is_instance_valid(from) and from.hp > 0.0:
+		if landed and counts_as_attack and is_instance_valid(from) and from is Unit and from.hp > 0.0:
 			(from as Unit).record_structure_attack(primary)
 			(from as Unit).on_attack_landed(source_form_index, float(result.health_lost), -1, int(effects.get("source_generation", -1)))
 		if landed and counts_as_attack:
 			attack_hit.emit(effects.get("presentation_source", {}), primary.global_position, bool(effects.get("first_strike", false)))
-		if landed and was_alive and primary.hp <= 0.0 and from is Unit and is_instance_valid(from) and from.hp > 0.0:
+		if landed and was_alive and primary.hp <= 0.0 and is_instance_valid(from) and from is Unit and from.hp > 0.0:
 			(from as Unit).on_enemy_killed(primary)
-		if landed and knockback > 0.0 and primary is Unit and is_instance_valid(primary) and primary.hp > 0.0:
+		if landed and knockback > 0.0 and is_instance_valid(primary) and primary is Unit and primary.hp > 0.0:
 			(primary as Unit).apply_knockback(origin, knockback, 0.2, 1.4, [], CombatInteraction.effect_context(from, p_team, source_position))
 		return landed
 	var impact_pos := primary.global_position
@@ -56,11 +56,11 @@ func _resolve_immediate_attack_hit(p_team: int, origin: Vector2, primary: Node2D
 				_apply_attack_hit_effects(c, effects, from)
 				if counts_as_attack and is_instance_valid(from) and from is Unit: from.record_structure_attack(c)
 			any_landed = landed or any_landed
-			if landed and was_alive and c.hp <= 0.0 and from is Unit and is_instance_valid(from) and from.hp > 0.0:
+			if landed and was_alive and c.hp <= 0.0 and is_instance_valid(from) and from is Unit and from.hp > 0.0:
 				(from as Unit).on_enemy_killed(c)
-			if landed and knockback > 0.0 and c is Unit and is_instance_valid(c) and c.hp > 0.0:
+			if landed and knockback > 0.0 and is_instance_valid(c) and c is Unit and c.hp > 0.0:
 				(c as Unit).apply_knockback(origin, knockback, 0.2, 1.4, [], CombatInteraction.effect_context(from, p_team, source_position))
-	if any_landed and counts_as_attack and from is Unit and is_instance_valid(from) and from.hp > 0.0:
+	if any_landed and counts_as_attack and is_instance_valid(from) and from is Unit and from.hp > 0.0:
 		(from as Unit).on_attack_landed(source_form_index, 0.0, -1, int(effects.get("source_generation", -1))) # 范围吸血尚未设计，不把名义伤害作为掉血。
 	if any_landed and counts_as_attack:
 		attack_hit.emit(effects.get("presentation_source", {}), impact_pos, bool(effects.get("first_strike", false)))
@@ -80,7 +80,7 @@ func _settle_bleeding_attack(target: Node2D, source: Unit, effects: Dictionary, 
 			source.battle_context.notify_unit_audio_event(source, &"execute:kill", target.global_position)
 
 func _apply_attack_hit_effects(target: Node2D, effects: Dictionary, source: Node2D = null) -> void:
-	if target is Unit and is_instance_valid(target) and target.hp > 0.0:
+	if is_instance_valid(target) and target is Unit and target.hp > 0.0:
 		if float(effects.get("on_hit_slow_duration", 0.0)) > 0.0:
 			target.apply_slow(float(effects.on_hit_slow_duration), float(effects.on_hit_slow_multiplier), effects.on_hit_status_source, effects.on_hit_context)
 		var blind_charges := maxi(int(effects.get("blind_charges", 0)), 0)

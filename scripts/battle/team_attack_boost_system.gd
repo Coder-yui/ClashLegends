@@ -62,7 +62,7 @@ func _blocked(source: Unit) -> bool:
 func _choose_target(source: Unit, combatants: Array) -> Unit:
 	var candidates: Array[Dictionary] = []
 	for target in combatants:
-		if not target is Unit or not is_instance_valid(target) or target.hp <= 0.0:
+		if not is_instance_valid(target) or not target is Unit or target.hp <= 0.0:
 			continue
 		if not _eligible(target, source.team) or target.team_attack_boost_multiplier > 1.0 or _reserved(target):
 			continue

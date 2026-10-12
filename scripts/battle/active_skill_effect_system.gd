@@ -243,7 +243,7 @@ static func growth_target(source: Unit, skill: Dictionary) -> Unit:
 	var candidates: Array[Unit] = []
 	var radius := float(skill.get("radius", 0.0))
 	for target in source.get_tree().get_nodes_in_group("combatants"):
-		if not target is Unit or not is_instance_valid(target): continue
+		if not is_instance_valid(target) or not target is Unit: continue
 		if target.is_building or target.card_id == "anivia_egg" or target.growth_body_scale > 1.0: continue
 		if not CombatInteraction.allows_allied_target(target, source.team): continue
 		if source.global_position.distance_squared_to(target.global_position) > radius * radius: continue
@@ -272,7 +272,7 @@ func apply_permanent_growth(source: Unit, skill: Dictionary) -> bool:
 	var order: Array = skill.get("displacement_order", [])
 	if order.is_empty(): order = _controller.combat_service().next_displacement_order(source)
 	for enemy in source.get_tree().get_nodes_in_group("combatants"):
-		if not enemy is Unit or not is_instance_valid(enemy) or enemy.team == source.team or enemy.is_building: continue
+		if not is_instance_valid(enemy) or not enemy is Unit or enemy.team == source.team or enemy.is_building: continue
 		if not CombatInteraction.allows(enemy, source, source.team, target.global_position): continue
 		if enemy.global_position.distance_to(target.global_position) > float(skill.knockback_radius) + enemy.body_radius: continue
 		enemy.apply_knockback(target.global_position, float(skill.knockback), float(skill.knockback_duration), float(skill.get("knockback_mass_factor_max", 1.4)), order, CombatInteraction.effect_context(source))
@@ -286,7 +286,7 @@ func apply_area_shield(source: Unit, skill: Dictionary) -> void:
 	if radius <= 0.0 or amount <= 0.0 or duration <= 0.0:
 		return
 	for combatant in _controller.get_tree().get_nodes_in_group("combatants"):
-		if not combatant is Node2D or not is_instance_valid(combatant) or combatant.hp <= 0.0:
+		if not is_instance_valid(combatant) or not combatant is Node2D or combatant.hp <= 0.0:
 			continue
 		var ally = combatant
 		if ally.team != source.team or not ally.has_method("add_shield"):
@@ -349,7 +349,7 @@ func activate_nova(source: Unit, skill: Dictionary) -> void:
 		if (amount > 0.0 or float(skill.get("stun_duration", 0.0)) > 0.0 or float(skill.get("knockback", 0.0)) > 0.0) and CombatInteraction.blocks_effect(combatant, CombatInteraction.effect_context(source)): continue
 		if amount > 0.0:
 			any_landed = _damage_combatant(source, combatant, amount, source.global_position) or any_landed
-		if combatant is Unit and is_instance_valid(combatant) and combatant.hp > 0.0:
+		if is_instance_valid(combatant) and combatant is Unit and combatant.hp > 0.0:
 			if knockback > 0.0:
 				(combatant as Unit).apply_knockback(source.global_position, knockback, knockback_duration, knockback_mass_factor_max, displacement_order, CombatInteraction.effect_context(source))
 			if slow_duration > 0.0:
@@ -414,7 +414,7 @@ func _apply_continuous_delivery(source: Unit, effect: Dictionary) -> void:
 				any_landed = _damage_combatant(source, combatant, amount, center) or any_landed
 			else:
 				combatant.take_damage(amount, null, source_team, effect.get("source_position", center))
-		if combatant is Unit and is_instance_valid(combatant) and combatant.hp > 0.0 and float(effect.get("slow_duration", 0.0)) > 0.0:
+		if is_instance_valid(combatant) and combatant is Unit and combatant.hp > 0.0 and float(effect.get("slow_duration", 0.0)) > 0.0:
 			(combatant as Unit).apply_slow(float(effect.get("slow_duration", 0.0)), float(effect.get("slow_multiplier", 1.0)), effect.status_source, CombatInteraction.effect_context(source, int(effect.team), effect.get("source_position", center)))
 	var action := String(effect.get("visual_action", ""))
 	if any_landed and not action.is_empty():
@@ -546,7 +546,7 @@ func apply_frontal(source: Unit, skill: Dictionary, forward: Vector2 = Vector2.Z
 						source.heal(heal_amount)
 			any_landed = landed or any_landed
 			center_landed = (landed and in_center) or center_landed
-		if combatant is Unit and is_instance_valid(combatant) and combatant.hp > 0.0 and float(skill.get("slow_duration", 0.0)) > 0.0:
+		if is_instance_valid(combatant) and combatant is Unit and combatant.hp > 0.0 and float(skill.get("slow_duration", 0.0)) > 0.0:
 			(combatant as Unit).apply_slow(float(skill.slow_duration), float(skill.get("slow_multiplier", 1.0)), source.status_source("skill"), CombatInteraction.effect_context(source))
 	if any_landed and not action.is_empty():
 		var cue := action + ":hit"
@@ -589,7 +589,7 @@ func apply_forward_area(source: Unit, skill: Dictionary, forward: Vector2 = Vect
 		if (amount > 0.0 or float(skill.get("stun_duration", 0.0)) > 0.0 or float(skill.get("knockback", 0.0)) > 0.0) and CombatInteraction.blocks_effect(combatant, CombatInteraction.effect_context(source)): continue
 		if amount > 0.0:
 			_damage_result(source, combatant, amount, context)
-		if combatant is Unit and is_instance_valid(combatant) and combatant.hp > 0.0 and float(skill.get("slow_duration", 0.0)) > 0.0:
+		if is_instance_valid(combatant) and combatant is Unit and combatant.hp > 0.0 and float(skill.get("slow_duration", 0.0)) > 0.0:
 			(combatant as Unit).apply_slow(float(skill.slow_duration), float(skill.get("slow_multiplier", 1.0)), context.status_source, CombatInteraction.effect_context(source, source_team, context.get("source_position", center)))
 		if is_instance_valid(combatant) and combatant.hp > 0.0 and stun_duration > 0.0 and combatant.has_method("stun"):
 			combatant.stun(stun_duration, context.status_source, CombatInteraction.effect_context(source, source_team, context.get("source_position", center)))
@@ -782,7 +782,7 @@ func _tick_continuous_area_effects(dt: float) -> void:
 			continue
 		var source = (effect.source_ref as WeakRef).get_ref()
 		var fixed_position := bool(effect.get("fixed_position", false))
-		if not fixed_position and (not source is Unit or not is_instance_valid(source) or source.hp <= 0.0):
+		if not fixed_position and (not is_instance_valid(source) or not source is Unit or source.hp <= 0.0):
 			continue
 		# 跟随施法者的持续范围在冰冻取消后终止；固定落点区域
 		# 已经脱离施法动作，不因凤凰死亡或被控制而缩短 3 秒寿命。
@@ -823,13 +823,13 @@ func _tick_expanding_shockwaves(dt: float) -> void:
 				continue
 			shockwave.hit_ids[instance_id] = true
 			var landed := false
-			if source is Unit and is_instance_valid(source):
+			if is_instance_valid(source) and source is Unit:
 				landed = _damage_combatant(source as Unit, combatant, float(shockwave.damage), shockwave.center)
 			else:
 				landed = combatant.take_damage(float(shockwave.damage), null, int(shockwave.team), shockwave.get("source_position", shockwave.center))
 			if landed:
 				_controller.present_skill_projectile_hit(shockwave.get("audio_source", {}), String(shockwave.get("visual_action", "")), combatant.global_position, "wave_hit")
-			if combatant is Unit and is_instance_valid(combatant) and combatant.hp > 0.0 and float(shockwave.slow_duration) > 0.0:
+			if is_instance_valid(combatant) and combatant is Unit and combatant.hp > 0.0 and float(shockwave.slow_duration) > 0.0:
 				(combatant as Unit).apply_slow(float(shockwave.slow_duration), float(shockwave.slow_multiplier), shockwave.status_source, CombatInteraction.effect_context(source, int(shockwave.team), shockwave.get("source_position", shockwave.center)))
 		CombatInteraction.current_delivery = previous
 		shockwave.previous_radius = current_radius
