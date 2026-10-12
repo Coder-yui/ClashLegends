@@ -7,6 +7,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_main = main
 	_check_card_config()
 	_check_first_strike_damage()
+	_check_w_visual()
 
 func _check_card_config() -> void:
 	var stats: Dictionary = CardDB.get_card("missfortune").duplicate(true)
@@ -93,3 +94,28 @@ func _flush_projectiles() -> void:
 		_main._tick_projectiles(_main.SIM_DT)
 		if _main._projectile_system.projectiles.is_empty():
 			return
+
+func _check_w_visual() -> void:
+	var unit := _spawn_test_unit("missfortune", 0, Vector2(360, 1000))
+	_expect(unit.active_buff_clock_visual() == Vector2.ZERO, "赏金未开技能没有W效果")
+	unit.apply_active_buff(3.0, 1.5, 1.0, 1.3)
+	_expect(unit.active_buff_clock_visual() == Vector2(0, 3), "赏金W表现时钟记录实际窗口")
+	unit.buffs.advance(3.0)
+	_expect(unit.active_buff_timer == 0.0 and unit.active_buff_clock_visual() == Vector2(3, 3), "W收尾不延长移速和攻速效果")
+	var effect = load("res://assets/effects/missfortune_w/buff.tscn").instantiate()
+	_main.add_child(effect)
+	effect.configure(12.0)
+	for kind in ["left", "right", "end_left", "end_right"]:
+		_expect(effect._players[kind]._data.emitters.size() == (3 if kind.begins_with("end_") else 6), "W保留原生系统有效层数：" + kind)
+	effect.status_state = Vector2(1.0, 3.0)
+	effect.advance_status(true, true, 0.0)
+	_expect(effect._players.left.visible and effect._players.right.visible and not effect._players.end_left.visible, "W期间双枪效果持续")
+	effect.status_state = Vector2(3.1, 3.0)
+	effect.advance_status(true, true, 0.0)
+	_expect(not effect._players.left.visible and effect._players.end_left.visible and effect._players.end_right.visible, "W到期切换原生双枪收尾")
+	effect.advance_status(false, false, 0.0)
+	_expect(not effect.visible and not effect._players.end_left.visible, "死亡或隐藏立即清理收尾")
+	unit.buffs.advance(2.15)
+	_expect(unit.active_buff_clock_visual() == Vector2.ZERO, "收尾结束归零")
+	effect.free()
+	unit.queue_free()

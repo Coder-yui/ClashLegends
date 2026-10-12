@@ -7,6 +7,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_main = main
 	_check_card_data_and_art()
 	_check_group_deployment_and_shared_skill()
+	_check_skill_visual()
 
 
 
@@ -152,3 +153,27 @@ func _check_group_deployment_and_shared_skill() -> void:
 		if is_instance_valid(member):
 			member.free()
 	_main._deck = old_deck
+
+func _check_skill_visual() -> void:
+	var unit := _spawn_test_unit("pix", 0, Vector2(360, 1000))
+	_expect(unit.lifesteal_state_visual() == Vector2.ZERO, "未开技能的皮克斯无红色覆层")
+	unit.apply_attack_lifesteal(0.25, 1.5)
+	_expect(unit.lifesteal_state_visual() == Vector2(0, 1), "皮克斯开启时记录表现时钟")
+	unit.buffs.advance(2.0)
+	_expect(unit.lifesteal_state_visual() == Vector2(2, 1), "永久吸血覆层不随开启光流结束")
+	var effect = load("res://assets/effects/pix_lifesteal/buff.tscn").instantiate()
+	_main.add_child(effect)
+	effect.configure(6.0)
+	effect.status_state = Vector2(0.2, 1)
+	effect.advance_status(true, true, 0.0)
+	_expect(effect._wisps.any(func(w): return w.visible), "开启红色光流上升")
+	effect.status_state = Vector2(2, 1)
+	effect.advance_status(true, true, 0.0)
+	_expect(effect.visible and not effect._wisps.any(func(w): return w.visible), "持续期保留覆层但不循环开场光流")
+	effect.advance_status(true, false, 0.0)
+	effect.advance_status(true, true, 0.0)
+	_expect(not effect._wisps.any(func(w): return w.visible), "凝滞恢复不重播皮克斯开启光流")
+	effect.advance_status(false, false, 0.0)
+	_expect(not effect.visible, "死亡清除皮克斯效果")
+	effect.free()
+	unit.queue_free()

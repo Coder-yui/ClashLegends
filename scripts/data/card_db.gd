@@ -44,6 +44,7 @@ const DEFINITIONS = [
 	preload("res://scripts/data/cards/siege_minion.gd"),
 	preload("res://scripts/data/cards/super_minion.gd"),
 	preload("res://scripts/data/cards/pix.gd"),
+	preload("res://scripts/data/cards/pix_single.gd"),
 	preload("res://scripts/data/cards/freeze.gd"),
 	preload("res://scripts/data/cards/stasis.gd"),
 	preload("res://scripts/data/cards/heal.gd"),

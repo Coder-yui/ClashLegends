@@ -2,6 +2,8 @@ extends "res://tests/suites/battle_suite.gd"
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
+	_check_ward_visual_state()
+	_check_centered_wisps()
 	_check_formation_boundary_schema()
 	_check_two_tower_deployment()
 	var stats := CardDB.get_unit_stats("shurima_guard")
@@ -161,3 +163,48 @@ func _check_two_tower_deployment() -> void:
 	stats.deploy_pocket_requires_both_towers = true
 	stats.deploy_zone = "global"
 	_expect("deploy_pocket_requires_both_towers" in "；".join(CardDB.VALIDATOR.validate_all({"shurima_guard": stats}, false)), "双塔部署开关拒绝无效的全图搭配")
+
+func _check_ward_visual_state() -> void:
+	var shield := ShieldState.new()
+	shield.add(500, 5)
+	_expect(shield.restoration_visual_state() == Vector2.ZERO, "普通护盾不触发黄沙表现")
+	shield.add(180, 2, false, true)
+	_expect(shield.restoration_visual_state() == Vector2(2, 2), "黄沙盾保存完整表现窗口")
+	shield.tick(0.25)
+	_expect(shield.restoration_visual_state() == Vector2(1.75, 2), "表现时钟读取技能盾实际剩余时间")
+	shield.absorb(180)
+	_expect(shield.total_hp() == 500 and shield.restoration_visual_state() == Vector2.ZERO, "黄沙盾破即清表现，普通盾不能续特效")
+	shield.add(180, 2, false, true)
+	shield.tick(2)
+	_expect(shield.restoration_visual_state() == Vector2.ZERO, "黄沙盾自然到期清表现")
+	shield.add(180, 2, false, true)
+	shield.clear()
+	_expect(shield.restoration_visual_state() == Vector2.ZERO, "清盾同步清表现")
+	var effect = preload("res://assets/effects/sand_ward/buff.tscn").instantiate()
+	_main.add_child(effect)
+	effect.configure(18)
+	effect.status_state = Vector2(1.8, 2)
+	effect.advance_status(true, true, 0)
+	_expect(effect.visible and effect._grains.size() == 24, "技能盾启用沙粒和护盾轮廓")
+	effect.advance_status(true, false, 0)
+	_expect(not effect.visible and effect.active, "凝滞只隐藏表现，保留盾状态")
+	effect.status_state = Vector2(0.5, 2)
+	effect.advance_status(true, true, 0)
+	_expect(effect.visible and is_equal_approx(effect._shell.material_override.get_shader_parameter("elapsed"), 1.5), "恢复可见时不重播获得特效")
+	effect.advance_status(false, false, 0)
+	_expect(not effect.visible and not effect.active, "盾失效立即隐藏")
+	effect.free()
+
+func _check_centered_wisps() -> void:
+	for path in ["res://assets/effects/pix_lifesteal/player.gd", "res://assets/effects/voidfish_regeneration/player.gd"]:
+		var effect = load(path).new()
+		_main.add_child(effect)
+		effect.configure(12)
+		for age in [0.04, 0.13, 0.4, 0.7]:
+			effect.seek(age)
+			var center := Vector3.ZERO
+			for wisp in effect._wisps:
+				if wisp.visible:
+					center += wisp.position * float(wisp.material_override.get_shader_parameter("opacity"))
+			_expect(absf(center.x) < 0.00001 and absf(center.z) < 0.00001, "光流各阶段亮度加权分布保持中心")
+		effect.free()

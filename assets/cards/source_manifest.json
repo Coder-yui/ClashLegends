@@ -118,5 +118,23 @@
       560
     ],
     "processing": "原PNG直接复制，未裁切、缩放或改色。"
+  },
+  {
+    "card": "pix_single",
+    "path": "res://assets/cards/pix_single_loading.png",
+    "source": "Godot正式单体模型摄影",
+    "model": "res://assets/units/pix/pix_view.tscn",
+    "animation": "Idle1",
+    "time": 0.25,
+    "yaw": -18,
+    "background": "#9EB7B4",
+    "soft_light": true,
+    "light_strength": 0.85,
+    "size": [
+      308,
+      560
+    ],
+    "sha256": "567b548b4d9e6136447bc08a4f514e55e83f3c089919bbc3ec5bfd0a46c41216",
+    "processing": "tools/dev.py model; 2x render, silhouette framing, sage-grey background"
   }
 ]

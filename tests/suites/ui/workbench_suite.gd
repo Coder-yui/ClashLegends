@@ -69,6 +69,44 @@ func _check_artdev_workbench() -> void:
 	_expect(panel._art.texture == CardArt.texture_for("void_spawn_single") and panel._art.texture != CardArt.texture_for("void_spawn"), "单只对象信息页使用独立摄影卡面")
 	for unit in singles: unit.free()
 
+	panel._filter_cards("皮克斯")
+	_expect(panel._library.entries.size() == 2 and "pix_single" not in CardDB.selectable_ids(), "工作台区分五只皮克斯与单只系统对象")
+	panel._select_item("pix_single")
+	_main._place_art_dev_item(Vector2(360, 1050))
+	var pix_singles := _main.get_tree().get_nodes_in_group("combatants").filter(func(unit): return unit is Unit and unit.card_id == "pix_single")
+	_expect(pix_singles.size() == 1 and int(CardDB.get_card("pix").deployment_count) == 5, "工作台单只皮克斯只生成一只，正式卡保持五只")
+	_expect(panel._art.texture == CardArt.texture_for("pix_single") and panel._art.texture != CardArt.texture_for("pix"), "单只皮克斯使用独立摄影卡面")
+	if pix_singles.size() == 1:
+		var skill: Dictionary = CardDB.active_skills_for("pix_single")[0]
+		_expect(_main.preview_active_skill(pix_singles[0], skill) and pix_singles[0].lifesteal_state_visual().y == 1.0, "单只皮克斯可通过工作台技能入口查看红色光流与覆层")
+	for unit in pix_singles: unit.free()
+
+	panel._select_item("voidfish_ranged_single")
+	_main._place_art_dev_item(Vector2(360, 1050))
+	var fish_singles := _main.get_tree().get_nodes_in_group("combatants").filter(func(unit): return unit is Unit and unit.card_id == "voidfish_ranged_single")
+	_expect(fish_singles.size() == 1 and "voidfish_ranged_single" not in CardDB.selectable_ids(), "工作台生成单只远程虚空鱼且不进入正式卡组")
+	if fish_singles.size() == 1:
+		var skills := CardDB.active_skills_for("voidfish_ranged_single")
+		_expect(skills.size() == 1, "单只远程虚空鱼提供技能预览入口")
+		if not skills.is_empty():
+			_expect(_main.preview_active_skill(fish_singles[0], skills[0]) and fish_singles[0].death_spawn_state_visual().x == 3.0, "单只鱼工作台技能实际开启再生窗口")
+	for unit in fish_singles: unit.free()
+
+	panel._select_item("sand_soldier")
+	_main._place_art_dev_item(Vector2(360, 1050))
+	var sand_singles := _main.get_tree().get_nodes_in_group("combatants").filter(func(unit): return unit is Unit and unit.card_id == "sand_soldier")
+	_expect(sand_singles.size() == 1 and "sand_soldier" not in CardDB.selectable_ids(), "单只黄沙士兵保留系统对象边界")
+	if sand_singles.size() == 1:
+		var skills := CardDB.active_skills_for("sand_soldier")
+		_expect(skills.size() == 1 and skills[0].get("target_scope", "self") == "self", "单兵工作台技能只作用自身")
+		var neighbor: Unit = _main.spawn_summoned(0, "sand_soldier", Vector2(440, 1050))
+		sand_singles[0]._deploy_timer = 0.0
+		panel._on_active_skill_pressed()
+		_expect(sand_singles[0].shield_hp == 180 and sand_singles[0].restoration_shield_state_visual() == Vector2(2, 2), "工作台真实技能按钮授予单兵黄沙盾")
+		_expect(neighbor.shield_hp == 0 and neighbor.active_ability_id < 0, "邻近召唤士兵不共享技能或主动资格")
+		neighbor.free()
+	for unit in sand_singles: unit.free()
+
 	panel._filter_cards("gwen")
 	var search_ok: bool = panel._library.entries.size() == 1 and panel._library.entries[0].id == "gwen"
 	panel._filter_cards("")

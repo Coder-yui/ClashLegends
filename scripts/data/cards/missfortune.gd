@@ -22,7 +22,8 @@ static func definition() -> Dictionary:
 				}],
 		},
 		"visual": {
-			"active_skills": [{"icon_path": "res://assets/skills/missfortune_0.png"}],
+			"visual_active_buff_scene": "res://assets/effects/missfortune_w/buff.tscn",
+			"active_skills": [{"icon_path": "res://assets/skills/missfortune_0.png", "resource_dependencies": {"fields": ["visual_active_buff_scene"], "effects": [{"provider": "res://assets/effects/missfortune_w/player.gd", "variant": "left"}, {"provider": "res://assets/effects/missfortune_w/player.gd", "variant": "right"}, {"provider": "res://assets/effects/missfortune_w/player.gd", "variant": "end_left"}, {"provider": "res://assets/effects/missfortune_w/player.gd", "variant": "end_right"}]}}],
 			"visual_radius": RADIUS_MEDIUM + VISUAL_RADIUS_PADDING,
 			"visual_scene_path": "res://assets/units/missfortune/missfortune_view.tscn",
 			"visual_forward_yaw": 0.0,

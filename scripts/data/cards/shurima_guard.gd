@@ -18,7 +18,7 @@ static func definition() -> Dictionary:
 				"shield": 180, "shield_duration": 2.0,
 				"description": "同次出牌的存活士兵各获得180点护盾，持续2秒；逐人判断，到期时护盾未破则回复至满血，凝滞期间也生效。"}],
 		},
-		"visual": {"active_skills": [{"icon_path": "res://assets/skills/shurima_guard_0.png"}], "visual_radius": RADIUS_MEDIUM + VISUAL_RADIUS_PADDING,
+		"visual": {"visual_active_buff_scene": "res://assets/effects/sand_ward/buff.tscn", "active_skills": [{"icon_path": "res://assets/skills/shurima_guard_0.png", "resource_dependencies": {"fields": ["visual_active_buff_scene"], "effects": [{"provider": "res://assets/effects/sand_ward/player.gd", "variant": "ward"}]}}], "visual_radius": RADIUS_MEDIUM + VISUAL_RADIUS_PADDING,
 			"resource_dependencies": {"effects": [{"provider": "res://assets/effects/azir/player.gd", "variant": "spawn"}]},
 			"visual_scene_path": "res://assets/units/shurima_guard/shurima_guard_view.tscn",
 			"visual_forward_yaw": 0.0, "color": Color(0.88, 0.69, 0.28),
