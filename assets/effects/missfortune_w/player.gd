@@ -1,11 +1,14 @@
 extends Node3D
-## MissFortune基础W原版粒子采样，保留双枪及结束四个系统18层。
+## MissFortune基础W原版粒子采样，保留双枪及结束五个系统26层。
 ## The authority supplies age; this node never advances battle state.
 const ROOT := "res://assets/effects/missfortune_w/"
 static var _cache: Dictionary = {}
 static var _draw_keys: Array = []
 const BLEND_RANK := [1, 2, 1, 0, 2, 2, 2, 2, 3]
 var opacity := 1.0
+var emitting := true
+var _rejected: Dictionary = {}
+var _trails: Dictionary = {}
 ## 原定义宿主selectionRadius=70，仅用于原生FlexShape的视觉尺寸。
 var bound_object_diameter := 140.0
 var _kind := ""
@@ -25,7 +28,7 @@ var projection_basis := Basis.IDENTITY
 ## 武器火光与环状网格保持原生三维组织。
 const GROUND_PLANES := []
 # Uniform project calibration; preserve authored layer proportions and curves.
-const NATIVE_SCALES := {"body": 0.014, "left": 0.014, "right": 0.014, "end_left": 0.014, "end_right": 0.014}
+const NATIVE_SCALES := {"trail": 0.014, "left": 0.014, "right": 0.014, "end_left": 0.014, "end_right": 0.014}
 
 static func native_scale(kind: String) -> float:
 	return float(NATIVE_SCALES.get(kind, 0.006))
@@ -60,7 +63,9 @@ func advance(delta: float) -> void:
 	seek(_age + delta)
 
 func seek(age: float) -> void:
-	if age < _age: _birth_positions.clear()
+	if age < _age:
+		_birth_positions.clear()
+		_rejected.clear()
 	_age = maxf(age, 0.0)
 	var frame := mini(int(_age * float(_data.fps)), _data.frames.size() - 1)
 	var current_camera := get_viewport().get_camera_3d()
@@ -77,6 +82,16 @@ func seek(age: float) -> void:
 		var e: Dictionary = _data.emitters[emitter_index]
 		var pool: Array = _pools[emitter_index]
 		var particles: Array = values[emitter_index]
+		if _kind == "trail":
+			for sample: Array in particles:
+				var key := Vector2i(emitter_index, int(sample[0]))
+				if not _birth_positions.has(key):
+					_birth_positions[key] = global_transform
+					if not emitting: _rejected[key] = true
+			particles = particles.filter(func(p): return not _rejected.has(Vector2i(emitter_index, int(p[0]))))
+		if e.trail != null:
+			_sync_trail(emitter_index, e, particles)
+			continue
 		while pool.size() < particles.size():
 			var item := MeshInstance3D.new()
 			item.mesh = _meshes[e.mesh_path]
@@ -105,13 +120,14 @@ func seek(age: float) -> void:
 						item.material_override.set_shader_parameter("mesh_camera_basis", _camera_mesh_basis(e, sample, camera))
 				if String(e.name) in GROUND_PLANES:
 					item.position.y = to_local(Vector3(global_position.x, 0.09, global_position.z)).y
-				if float(e.bindWeight.constant[0]) == 0.0:
+				if float(e.bindWeight.constant[0]) < 1.0:
 					# Detached end sparks retain their birth frame as the weapon moves.
 					var key := Vector2i(emitter_index, int(sample[0]))
 					if not _birth_positions.has(key): _birth_positions[key] = global_transform
 					var relative: Transform3D = global_transform.affine_inverse() * _birth_positions[key]
 					sample = sample.duplicate()
-					var center := relative * Vector3(sample[1], sample[2], sample[3])
+					var authored := Vector3(sample[1], sample[2], sample[3])
+					var center := authored.lerp(relative * authored, 1.0 - float(e.bindWeight.constant[0]))
 					sample[1] = center.x
 					sample[2] = center.y
 					sample[3] = center.z
@@ -204,8 +220,8 @@ static func _material(e: Dictionary) -> ShaderMaterial:
 
 ## 对外资源契约：定义读取不会创建粒子或加载纹理。
 static func resource_manifest(variant: String) -> Dictionary:
-	if variant not in ["left", "right", "end_left", "end_right"]: return {}
-	return {"raw": [ROOT + "render_order.json"], "json": [ROOT + variant + "/sampled.json"], "sample": {"player": "res://assets/effects/missfortune_w/player.gd", "kind": variant, "setup": "native"}}
+	if variant not in ["trail", "left", "right", "end_left", "end_right"]: return {}
+	return {"paths": [ROOT + "trail.gdshader", ROOT + "trail_mix.gdshader"], "raw": [ROOT + "render_order.json"], "json": [ROOT + variant + "/sampled.json"], "sample": {"player": "res://assets/effects/missfortune_w/player.gd", "kind": variant, "setup": "native"}}
 
 ## Compress native pass/simple/blend/flags/index keys jointly for all four systems.
 ## The old per-system rank put equal native passes in different Godot priorities.
@@ -229,3 +245,66 @@ static func native_render_priority(e: Dictionary) -> int:
 
 static func resource_shader_path(e: Dictionary) -> String:
 	return ROOT + ("pure_add" if int(e.blendMode) == 0 else ("add" if int(e.blendMode) == 4 else "mix")) + ".gdshader"
+
+
+func _sync_trail(index: int, emitter: Dictionary, particles: Array) -> void:
+	if not _trails.has(index):
+		var item := MeshInstance3D.new()
+		item.mesh = ImmediateMesh.new()
+		var mat := ShaderMaterial.new()
+		mat.shader = load(ROOT + ("trail_mix.gdshader" if int(emitter.blendMode) == 1 else "trail.gdshader"))
+		mat.set_shader_parameter("source_texture", load(emitter.texture_path))
+		mat.render_priority = native_render_priority(emitter)
+		mat.set_shader_parameter("cell", _v2(emitter.cell))
+		if emitter.erosion != null:
+			mat.set_shader_parameter("has_erosion", true)
+			if not String(emitter.erosion_path).is_empty():
+				mat.set_shader_parameter("erosion_texture", load(emitter.erosion_path))
+			mat.set_shader_parameter("erosion_mixer", _v4(emitter.erosion.mixer.constant))
+			mat.set_shader_parameter("erosion_band", Vector3(emitter.erosion.sliceWidth, emitter.erosion.featherIn, emitter.erosion.featherOut))
+		item.material_override = mat
+		item.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		add_child(item)
+		_trails[index] = item
+		_pools[index].append(item)
+	var item: MeshInstance3D = _trails[index]
+	var mesh: ImmediateMesh = item.mesh
+	mesh.clear_surfaces()
+	if particles.size() < 2: return
+	var ordered := particles.duplicate()
+	ordered.sort_custom(func(a: Array, b: Array) -> bool: return float(a[0]) < float(b[0]))
+	var points: Array[Vector3] = []
+	var samples: Array = []
+	for values in ordered:
+		var sample: Array = values.duplicate()
+		var key := Vector2i(index, int(sample[0]))
+		var frame: Transform3D = _birth_positions.get(key, global_transform)
+		var center := to_local(frame * Vector3(sample[1], sample[2], sample[3]))
+		sample[1] = center.x
+		sample[2] = center.y
+		sample[3] = center.z
+		samples.append(sample)
+		points.append(Vector3(sample[1], sample[2], sample[3]))
+	var camera := get_viewport().get_camera_3d()
+	if camera == null: return
+	mesh.surface_begin(Mesh.PRIMITIVE_TRIANGLE_STRIP)
+	var distance := 0.0
+	for j in points.size():
+		if j > 0: distance += points[j].distance_to(points[j-1])
+		var tangent := points[mini(j + 1, points.size() - 1)] - points[maxi(j - 1, 0)]
+		var facing := to_local(camera.global_position) - points[j]
+		var side := tangent.cross(facing).normalized()
+		if String(emitter.name) != "SmokeTrail1":
+			var sample_axis: Array = samples[j]
+			var frame: Transform3D = _birth_positions.get(Vector2i(index, int(sample_axis[0])), global_transform)
+			side = (global_basis.inverse() * frame.basis * Vector3(sample_axis[12], sample_axis[15], sample_axis[18])).normalized()
+		if side.length_squared() < 0.001: side = Vector3.RIGHT
+		var sample: Array = samples[j]
+		var width := float(sample[4])
+		mesh.surface_set_color(Color(sample[7], sample[8], sample[9], sample[10]))
+		mesh.surface_set_uv2(Vector2(float(sample[37]), 0))
+		mesh.surface_set_uv(Vector2(distance / maxf(float(emitter.trail.tiling.constant[0]), 1.0) + float(sample[24]), 0))
+		mesh.surface_add_vertex(points[j] - side * width)
+		mesh.surface_set_uv(Vector2(distance / maxf(float(emitter.trail.tiling.constant[0]), 1.0) + float(sample[24]), 1))
+		mesh.surface_add_vertex(points[j] + side * width)
+	mesh.surface_end()

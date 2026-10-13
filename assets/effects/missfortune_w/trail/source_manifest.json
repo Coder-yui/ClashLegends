@@ -1,0 +1,59 @@
+{
+  "definition": "Characters/MissFortune/Skins/Skin0/Particles/MissFortune_Base_W_Max",
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/MissFortune.wad.client",
+  "binary": "source/data/characters/missfortune/missfortune_multi_skins_skin0_skins_skin8.bin",
+  "binary_sha256": "63ed1da4f18b59a830908afba5aa3caa6dcd6555965e1d2f6e13b5aa190c15b9",
+  "assets": {
+    "assets/characters/missfortune/skins/base/particles/missfortune_base_w_buf_heart.tex": {
+      "source_sha256": "30d5c28136a7fb18e5d8e1f64a0d43f5d555a74e26ba8ac4706d1673acb410e9",
+      "output": "missfortune_base_w_buf_heart.png",
+      "output_sha256": "d359a3644e69837aa28e70a2e5bb268e7fb6892d639c64d7aae8b9293e05c50f"
+    },
+    "assets/characters/missfortune/skins/base/particles/missfortune_base_spark.tex": {
+      "source_sha256": "0d5a432c383f402a788035debb5e4b6d3df5ad425803104ab644255e2227f520",
+      "output": "missfortune_base_spark.png",
+      "output_sha256": "7478a00e4c2fa3bf77e07ee7b43a12f0ae438a0625a81772dce9383ecd181de0"
+    },
+    "assets/characters/missfortune/skins/base/particles/missfortune_base_clone_glow.tex": {
+      "source_sha256": "8ee21b71477ac4ddf1090f51e9a855a90db7392fe88583faa1caf71d307918ce",
+      "output": "missfortune_base_clone_glow.png",
+      "output_sha256": "232a4e813270f41b452866b078b360b2beb693f8de10bebbb1bab341eb79036f"
+    },
+    "assets/characters/soraka/skins/base/particles/common_xerath_di_blastring.scb": {
+      "source_sha256": "20357f3ddcc5692f9b10db3dda0f471db2a0cc8f59623e53b72128399ff9f3c1",
+      "output": "common_xerath_di_blastring.mesh.json",
+      "output_sha256": "20f01f1e9edffc7d3b835457057b8cb5b645da76254df8999656d3e3d3a376ce"
+    },
+    "assets/characters/missfortune/skins/base/particles/missfortune_base_w_swirl.tex": {
+      "source_sha256": "0687b2db3016044df61303bbaf8006af36c39ae541828c84ea01021b8433fe01",
+      "output": "missfortune_base_w_swirl.png",
+      "output_sha256": "dc023c534e57368b7b8dd0dc4c48ffb066b102650ebed6b9277f69d9f77408bf"
+    },
+    "assets/shared/particles/tft/tft11_kayn_base_e_trail.tex": {
+      "source_sha256": "1ef1baeb155827283e6cb29374cbee97b53224530f87e67cc13f53bd8675dd2c",
+      "output": "tft11_kayn_base_e_trail.png",
+      "output_sha256": "d33d98f2feb19d76cffe897787b7bfc2030844d62da9099d56d550bae07d5c9b"
+    },
+    "assets/characters/missfortune/skins/base/particles/missfortune_base_w_smoketrail.tex": {
+      "source_sha256": "a047ff4f5a9215a0f69307181b21b7633353d2f97ac8b01ff52dd8df21581e4a",
+      "output": "missfortune_base_w_smoketrail.png",
+      "output_sha256": "0f85abc2e27b038322405171519202c07547338c65a7aa98a60698a93786ca58"
+    },
+    "assets/characters/missfortune/skins/base/particles/missfortune_base_w_shimmermult.tex": {
+      "source_sha256": "f628bc5908e4910826bac1b1a3319c1d0fb2135e0f7b3d73d7366f43eda0af4c",
+      "output": "missfortune_base_w_shimmermult.png",
+      "output_sha256": "02ba6d29ffa71f645b8c55e422aab7860642adaf8b1955fcb547922de8b07295"
+    }
+  },
+  "layers": [
+    "hearts_ReduceNoise",
+    "sparks1",
+    "Flash_Glow_CameraFace1",
+    "rings",
+    "PDotsAlpha",
+    "SmokeTrail1",
+    "Trail1",
+    "Trail2"
+  ],
+  "sample_sha256": "b51ab47156008f6f41c83f75ee0ccb718b31b5e297d306f398c16ba1deab3cd1"
+}

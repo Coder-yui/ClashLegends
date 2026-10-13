@@ -4,18 +4,27 @@
     "MissFortune_Base_W_Buf_LWeapon",
     "MissFortune_Base_W_Buf_RWeapon",
     "MissFortune_Base_W_Buf_End_LWeapon",
-    "MissFortune_Base_W_Buf_End_RWeapon"
+    "MissFortune_Base_W_Buf_End_RWeapon",
+    "MissFortune_Base_W_Max"
   ],
-  "disabled_native_system": {
-    "name": "MissFortune_Base_W_buf",
-    "disabled_emitters": [
-      "glow",
-      "cast_flash_02",
-      "cast_flash",
-      "hand_sparks",
-      "hand_sparks_02"
-    ]
-  },
-  "attachment": "L_WEAPON / R_WEAPON bone frame; validate visually against weapon meshes",
-  "adaptation": "runtime buff 3s, native sampled curves 120Hz, end systems2.1s; no W_Max passive systems"
+  "attachment": "BUFFBONE_CSTM_WEAPON_2 / BUFFBONE_GLB_WEAPON_1: +Z aligned with gun barrels; skeleton frame for W_Max",
+  "adaptation": "W_Max eight emitters while moving; native partial binding and three ribbons; weapon bone scale inherited once; original W_MaxStart disabled",
+  "disabled_native_systems": [
+    {
+      "name": "MissFortune_Base_W_buf",
+      "disabled_emitters": [
+        "glow",
+        "cast_flash_02",
+        "cast_flash",
+        "hand_sparks",
+        "hand_sparks_02"
+      ]
+    },
+    {
+      "name": "MissFortune_Base_W_MaxStart",
+      "disabled_emitters": [
+        "Sparks1"
+      ]
+    }
+  ]
 }

@@ -107,6 +107,28 @@ func _check_w_visual() -> void:
 	effect.configure(12.0)
 	for kind in ["left", "right", "end_left", "end_right"]:
 		_expect(effect._players[kind]._data.emitters.size() == (3 if kind.begins_with("end_") else 6), "W保留原生系统有效层数：" + kind)
+	_expect(effect._players.trail._data.emitters.size() == 8, "加速系统保留八个原版有效发射器")
+	var model = load("res://assets/units/missfortune/missfortune_view.tscn").instantiate()
+	_main.add_child(model)
+	effect.bind_model(model)
+	_expect(effect._bones.size() == 2, "左右枪焰找到沿枪管的专用挂点")
+	for side in ["left", "right"]:
+		var weapon: int = effect._skeleton.find_bone("L_WEAPON" if side == "left" else "R_WEAPON")
+		var barrel: Vector3 = effect._skeleton.get_bone_global_pose(weapon).basis.x.normalized()
+		var flame: Vector3 = effect._skeleton.get_bone_global_pose(effect._bones[side]).basis.z.normalized()
+		_expect(barrel.dot(flame) > 0.99, "枪焰前向与枪管长轴一致：" + side)
+	var trail = effect._players.trail
+	trail.emitting = true
+	trail.seek(0.1)
+	var births: Dictionary = trail._birth_positions.duplicate()
+	trail.position.x += 1.0
+	trail.emitting = false
+	trail.seek(0.2)
+	_expect(not trail._rejected.is_empty(), "停步后拒绝新拖尾粒子")
+	var stable := true
+	for key in births:
+		stable = stable and trail._birth_positions[key] == births[key]
+	_expect(stable, "移动不搬走已出生拖尾的世界挂点")
 	effect.status_state = Vector2(1.0, 3.0)
 	effect.advance_status(true, true, 0.0)
 	_expect(effect._players.left.visible and effect._players.right.visible and not effect._players.end_left.visible, "W期间双枪效果持续")
@@ -117,5 +139,6 @@ func _check_w_visual() -> void:
 	_expect(not effect.visible and not effect._players.end_left.visible, "死亡或隐藏立即清理收尾")
 	unit.buffs.advance(2.15)
 	_expect(unit.active_buff_clock_visual() == Vector2.ZERO, "收尾结束归零")
+	model.free()
 	effect.free()
 	unit.queue_free()
