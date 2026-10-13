@@ -9,6 +9,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_birth_lifecycle()
 	_check_birth_coordinates_and_clock()
 	_check_splash_randomization()
+	_check_army()
 	_check_projectile_origin_and_timing()
 	var skill: Dictionary = CardDB.active_skills_for("voidfish_ranged")[0]
 	for team in [0, 1]:
@@ -299,3 +300,54 @@ func _check_splash_randomization() -> void:
 	first.setup(emitter, data.fps, 79)
 	second.setup(emitter, data.fps, 79)
 	_expect(first.sample(20) == second.sample(20), "指定视觉seed可复现源参数以便校验")
+
+func _check_army() -> void:
+	var old_deck: Array = _main._deck.duplicate()
+	var old_team: int = _main.local_team
+	_main._deck[0] = "voidfish_ranged_army"
+	for team in [0, 1]:
+		_clean()
+		_main.local_team = team
+		var center := Vector2(360, 940 if team == 0 else 340)
+		var wallet = _main._elixir_for_team(team)
+		wallet.elixir = 10.0
+		_expect(_main.play_card(team, "voidfish_ranged_army", center, {"immediate": true, "elixir": wallet, "active_slot": 0}), "大军通过正式放牌入口部署")
+		var members: Array = _main.get_tree().get_nodes_in_group("combatants").filter(func(n): return n is Unit and n.card_id == "voidfish_ranged_army" and n.team == team)
+		_expect(members.size() == 6 and wallet.elixir == 5.0, "双方大军均5费六只")
+		if members.size() != 6: continue
+		var centroid := Vector2.ZERO
+		for member in members: centroid += member.position / 6.0
+		for i in 6:
+			_expect(absf(members[i].position.distance_to(centroid) - 36.0) < 0.01 and absf(members[i].position.distance_to(members[(i + 1) % 6].position) - 36.0) < 0.01, "六成员均在正六边形顶点，中心留空")
+			members[i]._deploy_timer = 0.0
+		var other: Array = _main._spawn_card_units(team, "voidfish_ranged", Vector2(150, center.y), 0.0)
+		var skill: Dictionary = CardDB.active_skills_for("voidfish_ranged_army")[0]
+		_main._active_skill_effect_system.apply(members[0], skill)
+		for member in members:
+			_expect(member.buffs.remaining(&"death_spawn") == 3.0, "六只均进入再生窗口")
+		for member in other:
+			_expect(member.buffs.remaining(&"death_spawn") == 0.0, "三只原卡与六只大军不串批")
+		for member in members: member.take_damage(9999.0)
+		var children := _children(team)
+		_expect(children.size() == 6, "六原成员同批死亡仅生成六只")
+		for child in children:
+			_expect(child.hp == 80 and child.active_ability_id == -1 and child.buffs.remaining(&"death_spawn") == 0.0, "六再生鱼均不继承技能资格")
+			child.take_damage(9999.0)
+		_expect(_children(team).is_empty(), "六只新鱼再次死亡无递归再生")
+		_clean()
+		# 正式技能付款，待执行时原持有者死亡，剩余五只继承整批资格。
+		var paid: Array = _main._spawn_card_units(team, "voidfish_ranged_army", center, 0.0, 0)
+		var ability: int = paid[0].active_ability_id
+		wallet.elixir = 10.0
+		_expect(_main.use_active_skill(ability, team) and wallet.elixir == 8.0, "大军主动按原技能只收2费")
+		paid[0].take_damage(9999.0)
+		_main._sim_tick_id += 10
+		_main._tick_pending_active_skills(0.05)
+		for i in range(1, 6):
+			_expect(paid[i].buffs.remaining(&"death_spawn") == 3.0, "队长死亡后五个存活成员执行再生")
+		_expect(wallet.elixir == 8.0 and not _main.use_active_skill(ability, team), "资格转交不重复收费且技能仍限一次")
+	_clean()
+	_main._deck = old_deck
+	_main.local_team = old_team
+	var plan = load("res://scripts/presentation/match_resource_plan.gd").for_match([["voidfish_ranged_army"], []], [{}, {}])
+	_expect(plan.cards.has("voidfish_ranged_single"), "大军预热递归包含再生单只")

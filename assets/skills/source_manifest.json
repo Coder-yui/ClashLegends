@@ -658,5 +658,15 @@
     "source_sha256": "277215fff7a30b24e8624541c37f27e4cedbcf24dab3ee24193a9040516a0462",
     "sha256": "501b70365dd0f8c359379c0b735c1b8611bf184929ad1a1ee9138e35ef7fcbe5",
     "selection": "User selected Belveth passive icon for custom Void Regeneration skill."
+  },
+  {
+    "card": "voidfish_ranged_army",
+    "path": "res://assets/skills/voidfish_ranged_army_0.png",
+    "skill_index": 0,
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/LeagueClient/Plugins/rcp-be-lol-game-data/default-assets2.wad",
+    "source_path": "plugins/rcp-be-lol-game-data/global/default/assets/maps/particles/tft/item_icons/events/5yr/tftevent5yr_item_lavendercrown.tft_event_5yr_set17.png",
+    "source_sha256": "a312e819ebe4235cb83019683a35af6390ea925e27f4e020339d53c5c3e0cb4f",
+    "sha256": "a312e819ebe4235cb83019683a35af6390ea925e27f4e020339d53c5c3e0cb4f",
+    "processing": "用户指定原图直接复制，未裁切、缩放或改色。"
   }
 ]

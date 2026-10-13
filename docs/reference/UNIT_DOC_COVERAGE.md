@@ -2,7 +2,7 @@
 
 [返回单位索引](../units/README.md)
 
-更新于2026-10-12。当前覆盖全部63项CardDB定义、66篇卡牌/形态正文及4篇系统对象正文。数量包含不可组卡的形态和召唤物，不等于可选卡池数量。
+更新于2026-10-13。当前覆盖全部68项CardDB定义、69篇卡牌/形态正文及4篇系统对象正文。数量包含不可组卡的形态和召唤物，不等于可选卡池数量。
 
 本页维护注册定义、玩法正文和素材入口之间的对应关系。修改卡牌时，对照编译定义及下列消费者核对数值、条件与时序；编队采用实际成员定义，覆盖形态采用基础与transformed_stats合并值，召唤部署采用生成入口的覆盖值。本页收录不代表本次逐卡重新运行、目视或试听通过。
 
@@ -20,7 +20,7 @@
 
 编队读取成员定义；四类兵音频在阵营覆盖中，不以顶层events为空判成缺声音。镜像复用被复制对象。形态读取基础与覆盖合成结果。法术无角色骨骼；不为它伪造模型/动作验收。`sustain`不保证循环；声音素材已配置不保证每个场景实际触发或用户已认可听感。
 
-## 逐项覆盖（63篇正文）
+## 逐项覆盖
 
 玩法正文保留中文数值和单卡规则，素材页记录动作/声音映射；公共规则在对应专题维护。静态审计检查本表与注册定义、形态例外的一致性，语义核对和运行验证按受影响范围执行。
 
@@ -90,6 +90,7 @@
 | `twitch` · [图奇](../units/twitch.md) | 公开玩家视图；严格脱战入隐、攻击起手破隐、穿透箭 | [动作](../units/animations/twitch.md) · [声音](../units/audio/twitch.md) |
 | `voidfish` · [虚空鱼](../units/voidfish.md) | 虚空女皇衍生；空地近战、无主动 | [动作](../units/animations/voidfish.md) · [声音](../units/audio/voidfish.md) |
 | `voidfish_ranged` · [远程虚空鱼](../units/voidfish_ranged.md) | 三只远程卡与工作台单只；虚空再生 | [动作](../units/animations/voidfish_ranged.md) · [声音](../units/audio/voidfish_ranged.md) |
+| `voidfish_ranged_army` · [远程虚空鱼大军](../units/voidfish_ranged_army.md) | 5费六边形六只远程鱼；同批虚空再生 | [动作](../units/animations/voidfish_ranged.md) · [声音](../units/audio/voidfish_ranged.md) |
 | `voidmite` · [虚空蠕虫](../units/voidmite.md) | 先锋衍生；外抛部署、仅攻城、无主动 | [动作](../units/animations/voidmite.md) · [声音](../units/audio/voidmite.md) |
 | `xin` · [赵信](../units/xin.md) | 部署横扫/击退；三击回血、主动范围击退 | [动作](../units/animations/xin.md) · [声音](../units/audio/xin.md) |
 | `zap` · [电击法术](../units/zap.md) | 固定范围55伤害/眩晕；强化独立第二击 | [动作](../units/animations/zap.md) · [声音](../units/audio/zap.md) |

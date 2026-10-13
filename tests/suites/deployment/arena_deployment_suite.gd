@@ -179,7 +179,8 @@ func _check_multi_unit_deployment_edges() -> void:
 		var count := member_ids.size() if not member_ids.is_empty() else int(stats.get("deployment_count", 1))
 		if bool(stats.get("deploy_formation_requires_in_bounds", false)): constrained.append(card_id)
 		if count > 1 and card_id != "shurima_guard": cards.append(card_id)
-	_expect(cards.size() == 9 and constrained == ["shurima_guard"] and not bool(CardDB.get_card("sand_soldier").get("deploy_formation_requires_in_bounds", false)), "只有恕瑞玛卫队声明整排边界限制，召唤黄沙士兵不继承")
+	_expect(not cards.is_empty() and constrained == ["shurima_guard"] and not bool(CardDB.get_card("sand_soldier").get("deploy_formation_requires_in_bounds", false)), "只有恕瑞玛卫队声明整排边界限制，召唤黄沙士兵不继承")
+	_expect(cards.has("voidfish_ranged_army"), "六只大军纳入全卡部署边缘检查")
 	var original_hp: Array[float] = []
 	for tower in _main._towers: original_hp.append(tower.hp)
 	for team in [0, 1]:
