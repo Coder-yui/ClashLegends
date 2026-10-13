@@ -86,7 +86,7 @@ func _skill_useful(unit: Unit, skill: Dictionary) -> bool:
 	if bool(skill.get("uses_skill_resource", false)) and unit.get_skill_resource_ratio() < 0.5 and unit.hp > unit.max_hp * 0.35:
 		return false
 	var reach := float(skill.get("length", skill.get("range", skill.get("radius", unit.attack_range))))
-	if skill.get("kind", "") in ["buff", "timed_form", "sanctuary", "empowered_attack"]:
+	if skill.get("kind", "") in ["buff", "timed_form", "sanctuary", "channeled_attack", "empowered_attack"]:
 		reach = unit.attack_range + 40.0
 	# 永久强化没有持续时间字段；接近建筑两秒行程内即可考虑施放。
 	if skill.get("kind", "") == "sacrifice_empower": reach = unit.attack_range + unit.move_speed * 2.0

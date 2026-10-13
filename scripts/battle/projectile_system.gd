@@ -510,6 +510,7 @@ func _draw() -> void:
 			&"boomerang": _draw_boomerang(projectile)
 			&"tristana_bullet": pass # 原版炮弹读取相同可见快照。
 			&"voidfish_missile": pass # 原版远程虚空鱼弹体使用相同只读快照。
+			&"malzahar_missile": preload("res://scripts/presentation/malzahar_projectile_2d.gd").draw_flight(self, _visual_position(projectile), _direction(projectile))
 			&"ice_cone": pass # 原版普攻由 AniviaEffect3D 消费同一可见弹体。
 			# orb 同样必须使用纯表现炮口偏移；权威弹体位置仍保留在 projectile.pos。
 			_:

@@ -285,6 +285,11 @@ var natural_structure_exit := false
 ## 不负责找塔；权威寿命规则与纯表现废墟显隐分别读取该不可变状态。
 var built_on_tower_ruin := false
 var spawn_id := ""
+var taunt_source: WeakRef
+var channel_attack := ChanneledAttackState.new()
+var spawn_initial_delay_left := 0.0
+var spawn_sequence_interval := 0.0
+var summon_sequences: Array[Dictionary] = []
 var spawn_interval := 0.0
 var spawn_count := 1
 var spawn_distance := 0.0
@@ -563,6 +568,10 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	lifespan = 0.0 if tower_ruin_exempt else stats.get("lifespan", 0.0)
 	lifespan_hp_decay = false if tower_ruin_exempt else bool(stats.get("lifespan_hp_decay", false))
 	spawn_id = String(stats.get("spawn_id", ""))
+	channel_attack = ChanneledAttackState.new()
+	spawn_initial_delay_left = float(stats.get("spawn_initial_delay", 0.0))
+	spawn_sequence_interval = float(stats.get("spawn_sequence_interval", 0.0))
+	summon_sequences.clear()
 	spawn_interval = stats.get("spawn_interval", 0.0)
 	spawn_count = maxi(int(stats.get("spawn_count", 1)), 1)
 	spawn_distance = float(stats.get("spawn_distance", 0.0))
@@ -1282,6 +1291,10 @@ func _desired_facing_direction() -> Vector2:
 
 ## 持续吐息目标只供动画朝向和光柱端点使用；它不会反向参与索敌、射程或伤害。
 func has_continuous_visual_target() -> bool:
+	if get_visual_action_name() == &"channel":
+		if _in_client_mode(): return net_has_continuous_target
+		var channel_target = channel_attack.target_ref.get_ref() if channel_attack.active() else null
+		return is_instance_valid(channel_target) and channel_target.hp > 0.0
 	if not continuous_attack:
 		return false
 	if _in_client_mode():
@@ -1293,14 +1306,16 @@ func get_continuous_visual_target_position() -> Vector2:
 		return net_continuous_target_pos
 	if not has_continuous_visual_target():
 		return get_visual_screen_position()
-	if _target is Unit:
-		return (_target as Unit).get_visual_screen_position()
-	return _target.global_position
+	var visual_target = channel_attack.target_ref.get_ref() if channel_attack.active() else _target
+	if is_instance_valid(visual_target) and visual_target is Unit:
+		return visual_target.get_visual_screen_position() + visual_target.get_meta("projectile_model_offset", Vector2.ZERO) if channel_attack.active() else visual_target.get_visual_screen_position()
+	return visual_target.global_position if is_instance_valid(visual_target) else get_visual_screen_position()
 
 func get_continuous_visual_target_air_id() -> int:
-	if not has_continuous_visual_target() or not (_target is Unit) or not _target.is_air:
-		return -1
-	return _target.net_id
+	if not has_continuous_visual_target(): return -1
+	var visual_target = channel_attack.target_ref.get_ref() if channel_attack.active() else _target
+	if not is_instance_valid(visual_target) or not visual_target is Unit or not visual_target.is_air: return -1
+	return visual_target.net_id
 
 func get_continuous_beam_endpoint_position() -> Vector2:
 	var target_screen := get_continuous_visual_target_position()
@@ -1389,6 +1404,11 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prep
 		queue_redraw()
 		if _deploy_timer > 0.0 or _forced_movement:
 			return
+	if _deploy_timer <= 0.0 and spawn_initial_delay_left > 0.0 and not summons_started:
+		spawn_initial_delay_left = maxf(0.0, spawn_initial_delay_left - dt)
+	_tick_summon_sequence(dt, statuses_prepared)
+	channel_attack.tick(self, dt)
+	if channel_attack.active(): return
 	if not is_building and spawn_interval > 0.0 and not summons_started:
 		if not _initial_summons_spawned:
 			_spawn_initial_summons()
@@ -1764,7 +1784,7 @@ func _tick_periodic_summons(dt: float) -> void:
 		if not is_frozen() and not is_stunned(): _spawn_batch()
 
 func _spawn_initial_summons() -> void:
-	if _initial_summons_spawned or spawn_interval <= 0.0:
+	if _initial_summons_spawned or spawn_interval <= 0.0 or spawn_initial_delay_left > 0.000001:
 		return
 	if spawn_defer_while_controlled and _summon_controlled(): return
 	_initial_summons_spawned = true
@@ -1772,8 +1792,37 @@ func _spawn_initial_summons() -> void:
 	if not is_frozen() and not is_stunned():
 		_spawn_batch()
 
+## 被动与主动共用；每批独立计时，重叠释放不会覆盖尚未出生的虚灵。
+func begin_summon_sequence(id: String, count: int, interval: float, deploy_override: float) -> void:
+	if battle_context == null or hp <= 0.0: return
+	var batch := {"id": id, "left": count, "timer": 0.25, "born_tick": battle_context.simulation_tick(), "interval": interval, "origin": global_position, "deploy": deploy_override}
+	# Confirmed sequence: open at W release, first actor 0.25 s later, then every interval.
+	summon_sequences.append(batch)
+	battle_context.present_summon_portal(global_position, team)
+	battle_context.notify_unit_audio_event(self, &"summon:start", global_position)
+	_advance_summon_batch(batch, 0.0)
+
+func _advance_summon_batch(batch: Dictionary, dt: float) -> void:
+	batch.timer -= dt
+	while int(batch.left) > 0 and float(batch.timer) <= 0.000001:
+		var summoned := battle_context.spawn_summoned(team, batch.id, batch.origin, batch.deploy, "void_portal", -1, batch.origin)
+		if is_instance_valid(summoned): battle_context.present_summon_birth(batch.origin, team)
+		batch.left -= 1
+		batch.timer += maxf(float(batch.interval), 0.05)
+
+func _tick_summon_sequence(dt: float, in_authority_step: bool = false) -> void:
+	if battle_context == null: return
+	for batch in summon_sequences:
+		# A skill released earlier in this same authority tick has not aged yet.
+		if in_authority_step and int(batch.born_tick) == battle_context.simulation_tick(): continue
+		_advance_summon_batch(batch, dt)
+	summon_sequences = summon_sequences.filter(func(batch): return int(batch.left) > 0)
+
 func _spawn_batch() -> void:
 	if battle_context == null or spawn_id.is_empty():
+		return
+	if spawn_side == "below":
+		begin_summon_sequence(spawn_id, spawn_count, spawn_sequence_interval, spawn_deploy_time)
 		return
 	var summon_stats := CardDB.get_unit_stats(spawn_id)
 	if summon_stats.is_empty():
@@ -1875,6 +1924,9 @@ func _update_target(keep_windup_target: bool = false) -> void:
 		_repath_cd = 0.0
 
 func _target_is_attackable(target) -> bool:
+	if control.hard.remaining(&"taunt") > 0.0 and taunt_source != null:
+		var forced = taunt_source.get_ref()
+		if is_instance_valid(forced) and forced.hp > 0.0 and target != forced: return false
 	if not CombatInteraction.can_acquire(target, team): return false
 	if target == null or not is_instance_valid(target) or target.hp <= 0.0:
 		return false
@@ -2157,6 +2209,9 @@ func _attack(dt: float) -> void:
 		# 只在命中节点检查宽限；超距取消本次挥击，不伤害、不进入后摇。
 		if _target_gap(_target) > attack_range + ArenaRules.ATTACK_RANGE_TOLERANCE:
 			_cancel_attack_and_chase(dt)
+			return
+		if not channel_attack.prepared.is_empty():
+			channel_attack.begin(self, _target)
 			return
 		# 连招节奏：若配置了 attack_pattern，则按本次命中后的间隔取值；否则固定为 attack_interval。
 		var hit_index := _attack_hit_index
@@ -2563,6 +2618,8 @@ func cancel_controlled_action(reason: StringName, recover_position: bool = true)
 	if cancel_displacement: cancel_skill_cast(recover_position)
 
 func cancel_basic_attack(reason: StringName) -> void:
+	if reason in [&"stun", &"freeze", &"stasis", &"knockback", &"death_form", &"silence", &"taunt"]:
+		channel_attack.stop(self)
 	action_cancel_serial += 1
 	if reason in [&"freeze", &"stasis", &"death_form"] or (team_attack_boost_forging and reason in [&"stun", &"knockback"]):
 		cancelled_visual_serial = maxi(cancelled_visual_serial, get_visual_action_serial())
@@ -2593,7 +2650,7 @@ static func valid_action_cancellation(payload: Dictionary) -> bool:
 		if not payload.get(key) is int or int(payload[key]) < 0: return false
 	if payload.has("cancelled_action") and (not payload.cancelled_action is int or int(payload.cancelled_action) < -1): return false
 	if payload.has("cancelled_deployment") and not payload.cancelled_deployment is bool: return false
-	return payload.get("reason") is String and String(payload.reason) in ["freeze", "stasis", "stun", "knockback", "death_form", "empowered_reset"]
+	return payload.get("reason") is String and String(payload.reason) in ["freeze", "stasis", "stun", "knockback", "death_form", "empowered_reset", "silence", "taunt"]
 
 func apply_action_cancellation(payload: Dictionary) -> void:
 	if not valid_action_cancellation(payload) or int(payload.get("serial", 0)) <= action_cancel_serial:
@@ -2635,6 +2692,32 @@ func _receive_stasis(duration: float, source: StringName, interaction: Dictionar
 	_forced_movement = false
 	structure_rush.interrupt_preparation(self)
 	queue_redraw()
+
+## 无现役卡施加这两种状态；保留可测试的权威入口供引导打断和后续卡复用。
+func silence(duration: float, source: StringName = &"legacy", interaction: Dictionary = {}) -> void:
+	if hp <= 0.0 or not is_finite(duration) or duration <= 0.0: return
+	if not CombatInteraction.allows_effect(self, interaction) or CombatInteraction.blocks_effect(self, interaction): return
+	if battle_context != null and battle_context.damage_batch().collecting:
+		battle_context.damage_batch().defer_effect(func(): silence(duration, source, interaction))
+		return
+	control.hard.apply(&"silence", source, duration, {})
+	if channel_attack.active(): cancel_basic_attack(&"silence")
+
+func taunt(caster: Unit, duration: float) -> void:
+	if not is_instance_valid(caster) or caster.hp <= 0.0 or caster.is_air or caster.team == team: return
+	var interaction := CombatInteraction.effect_context(caster, caster.team, caster.global_position)
+	if hp <= 0.0 or not is_finite(duration) or duration <= 0.0 or not CombatInteraction.allows_effect(self, interaction) or CombatInteraction.blocks_effect(self, interaction): return
+	if battle_context != null and battle_context.damage_batch().collecting:
+		battle_context.damage_batch().defer_effect(func():
+			if is_instance_valid(caster): taunt(caster, duration))
+		return
+	taunt_source = weakref(caster)
+	control.hard.apply(&"taunt", caster.status_source("taunt"), duration, {})
+	if channel_attack.active() or _target != caster: cancel_basic_attack(&"taunt")
+	_target = caster
+
+func _exit_tree() -> void:
+	channel_attack.stop(self)
 
 func freeze(duration: float, source: StringName = &"legacy", interaction: Dictionary = {}) -> void:
 	if not CombatInteraction.allows_effect(self, interaction): return
@@ -2940,6 +3023,7 @@ func death_spawn_state_visual() -> Vector2:
 	return Vector2(remaining, buffs.strongest(&"death_spawn", &"visual_duration", remaining)) if remaining > 0.0 else Vector2.ZERO
 
 func _die(trigger_death_effect: bool = false) -> void:
+	channel_attack.stop(self)
 	if is_queued_for_deletion() or death_form.waiting(): return
 	_resolve_death_outcome()
 	bleeding.clear()

@@ -313,6 +313,10 @@ func _start_spawn_transition_if_needed() -> void:
 	_spawn_transition_start_position = _spawn_transition_base_position
 	_spawn_transition_start_scale = _spawn_transition_base_scale
 	match _spawn_transition_kind:
+		&"void_portal":
+			if not _source.summon_visual_origin.is_finite(): return
+			_spawn_transition_duration = 0.25
+			_spawn_transition_start_scale *= 0.65
 		&"drop":
 			_spawn_transition_duration = 0.28
 			_spawn_transition_start_position += Vector3.UP * CardDB.AIR_VISUAL_ELEVATION
@@ -333,6 +337,9 @@ func _tick_spawn_transition(delta: float) -> void:
 	_spawn_transition_elapsed = minf(_spawn_transition_elapsed + maxf(delta, 0.0), _spawn_transition_duration)
 	var ratio := _spawn_transition_elapsed / maxf(_spawn_transition_duration, 0.001)
 	var eased := 1.0 - pow(1.0 - ratio, 3.0)
+	if _spawn_transition_kind == &"void_portal":
+		# Recompute against the rendered actor each frame so the rift stays fixed as it walks.
+		_spawn_transition_start_position = to_local(_screen_to_ground(_source.summon_visual_origin)) + _spawn_transition_base_position
 	_model_root.position = _spawn_transition_start_position.lerp(_spawn_transition_base_position, eased)
 	_model_root.scale = _spawn_transition_start_scale.lerp(_spawn_transition_base_scale, eased)
 	if ratio >= 0.999:

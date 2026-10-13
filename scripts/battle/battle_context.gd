@@ -11,6 +11,15 @@ func interrupt_team_attack_boost(unit: Unit) -> void:
 func _init(controller: Node2D) -> void:
 	_controller = controller
 
+func present_summon_portal(position: Vector2, team: int) -> void:
+	_controller._skill_presentation.present_fixed_area(position, 28.0, 28.0, 3.0, team, &"voidling_portal")
+
+func present_summon_birth(position: Vector2, team: int) -> void:
+	_controller._skill_presentation.present_fixed_area(position, 22.0, 22.0, 1.5, team, &"voidling_birth")
+
+func begin_channel_zone(unit: Unit, center: Vector2, skill: Dictionary) -> void:
+	_controller._active_skill_effect_system.begin_channel_zone(unit, center, skill)
+
 func begin_sacrifice(unit: Unit, target: Node2D) -> void:
 	_controller.begin_sacrifice(unit, target)
 

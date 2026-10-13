@@ -38,6 +38,11 @@ func advance(dt: float) -> Array[Dictionary]:
 			_instances.remove_at(i)
 	return expired
 
+func remove_source(family: StringName, source: StringName) -> void:
+	for i in range(_instances.size() - 1, -1, -1):
+		if _instances[i].family == family and _instances[i].source == source:
+			_instances.remove_at(i)
+
 func clear_family(family: StringName) -> void:
 	for i in range(_instances.size() - 1, -1, -1):
 		if _instances[i].family == family:

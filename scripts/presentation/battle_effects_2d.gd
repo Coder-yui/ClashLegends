@@ -66,6 +66,7 @@ func _draw_frontal_skill_effect(effect: Dictionary) -> void:
 	if shape == &"growth_wave":
 		GrowthEffect2D.draw_wave(self, skills, effect)
 		return
+	if shape in [&"voidling_birth", &"voidling_portal"]: return # 原版出生粒子由3D表现绘制，不走默认矩形。
 	if shape == &"sacrifice_leap": return
 	if shape == &"sacrifice_burst": return # 原版纹理粒子由 3D 表现层绘制。
 	if shape == &"summon_mote":

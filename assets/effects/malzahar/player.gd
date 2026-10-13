@@ -175,4 +175,3 @@ static func resource_shader_path(e: Dictionary) -> String:
 	if bool(e.get("spawn_subtract", false)): return ROOT + "spawn_subtract.gdshader"
 	var shader_name := "warp" if e.distortion != null else ("pure_add" if int(e.blendMode) == 0 else ("add" if int(e.blendMode) == 4 else "mix"))
 	return ROOT + shader_name + ".gdshader"
-

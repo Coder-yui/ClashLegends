@@ -211,6 +211,9 @@ func _apply(source: Unit, skill: Dictionary) -> bool:
 			apply_forward_area(source, skill, skill.get("cast_forward", source.active_skill_cast_facing if is_instance_valid(source) else Vector2.ZERO))
 		&"continuous_area":
 			activate_continuous_area(source, skill)
+		&"channeled_attack":
+			source.channel_attack.prepared = skill.duplicate(true)
+			source.cancel_basic_attack(&"empowered_reset")
 		&"empowered_attack":
 			source.prepare_empowered_attack(
 				float(skill.get("empowered_damage_multiplier", 1.0)),
@@ -421,12 +424,24 @@ func _apply_continuous_delivery(source: Unit, effect: Dictionary) -> void:
 		_controller.notify_unit_audio_event(source, StringName(action + ":hit"), center)
 
 
+func begin_channel_zone(source: Unit, center: Vector2, skill: Dictionary) -> void:
+	continuous_area_effects.append({"source_ref": weakref(source), "source_position": source.global_position,
+		"team": source.team, "fixed_position": true, "center": center, "radius": float(skill.radius),
+		"damage": float(skill.zone_damage), "time_left": float(skill.zone_duration),
+		"next_tick": float(skill.zone_tick_interval), "tick_interval": float(skill.zone_tick_interval),
+		"created_tick": _controller.get_authoritative_server_tick() if _controller.simulation_step_active() else -1})
+	_controller.present_zone_audio(source, "channel", center, float(skill.zone_duration))
+	_presentation.present_fixed_area(center, float(skill.radius), float(skill.radius), float(skill.zone_duration), source.team, &"nether_zone")
+
 func activate_summon(source: Unit, skill: Dictionary) -> void:
 	var spawn_id := String(skill.get("spawn_id", ""))
 	var count := maxi(int(skill.get("spawn_count", 1)), 1)
 	var summon_stats := CardDB.get_unit_stats(spawn_id)
 	if summon_stats.is_empty():
 		push_error("主动技能引用了不存在的召唤单位：%s" % spawn_id)
+		return
+	if String(skill.get("spawn_side", "")) == "below":
+		source.begin_summon_sequence(spawn_id, count, float(skill.spawn_sequence_interval), 0.0)
 		return
 	var summon_radius := float(summon_stats.get("radius", 14.0))
 	var summon_team := source.team
@@ -781,6 +796,7 @@ func _tick_continuous_area_effects(dt: float) -> void:
 			alive.append(effect)
 			continue
 		var source = (effect.source_ref as WeakRef).get_ref()
+		if not is_instance_valid(source): source = null
 		var fixed_position := bool(effect.get("fixed_position", false))
 		if not fixed_position and (not is_instance_valid(source) or not source is Unit or source.hp <= 0.0):
 			continue

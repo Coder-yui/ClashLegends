@@ -95,10 +95,10 @@ const SIZE_RADII := {
 	SIZE_LARGE: RADIUS_LARGE,
 	SIZE_EXTREMELY_LARGE: RADIUS_EXTREMELY_LARGE,
 }
-const PROJECTILE_VISUALS := [&"voidfish_missile", &"tristana_bullet", &"jinx_rocket", &"jinx_bullet", &"corki_bullet", &"fireball", &"crossbow_bolt", &"venom_bolt", &"magic_orb", &"kayle_sword", &"orb", &"arrow", &"needle", &"boomerang", &"ice_cone"]
+const PROJECTILE_VISUALS := [&"malzahar_missile", &"voidfish_missile", &"tristana_bullet", &"jinx_rocket", &"jinx_bullet", &"corki_bullet", &"fireball", &"crossbow_bolt", &"venom_bolt", &"magic_orb", &"kayle_sword", &"orb", &"arrow", &"needle", &"boomerang", &"ice_cone"]
 const VISUAL_SPAWN_TRANSITIONS := [&"drop", &"rebirth"]
 const SPELL_KINDS := [&"explosive_cask", &"corrosion", &"stasis", &"zap", &"lightning", &"freeze", &"heal", &"mirror"]
-const ACTIVE_SKILL_KINDS := [&"death_spawn", &"sacrifice_empower", &"spell_explosive_cask", &"effect_shield", &"toggle_form", &"aftershock", &"spell_corrosion", &"undying_rage", &"spell_freeze", &"spell_stasis", &"permanent_growth", &"spell_lightning", &"dash_strike", &"terrain_charge", &"bleeding_execute", &"explosive_shield", &"sanctuary", &"timed_form", &"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"continuous_area", &"empowered_attack", &"attack_lifesteal", &"area_shield", &"restoration_shield", &"spell_heal"]
+const ACTIVE_SKILL_KINDS := [&"channeled_attack", &"death_spawn", &"sacrifice_empower", &"spell_explosive_cask", &"effect_shield", &"toggle_form", &"aftershock", &"spell_corrosion", &"undying_rage", &"spell_freeze", &"spell_stasis", &"permanent_growth", &"spell_lightning", &"dash_strike", &"terrain_charge", &"bleeding_execute", &"explosive_shield", &"sanctuary", &"timed_form", &"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"continuous_area", &"empowered_attack", &"attack_lifesteal", &"area_shield", &"restoration_shield", &"spell_heal"]
 const ACTIVE_SKILL_TARGET_SCOPES := [&"self", &"deployment_group"]
 const CAST_LOCKS := [&"movement", &"attack", &"facing"]
 const VISUAL_ACTION_KINDS := [&"deploy", &"transform", &"skill"]
@@ -132,7 +132,7 @@ const CARD_FIELDS := [
 	&"pre_deploy_sweep_flat_rear", &"pre_deploy_sweep_start", &"pre_deploy_sweep_distance", &"pre_deploy_sweep_radius", &"pre_deploy_sweep_damage",
 	&"deploy_time", &"pre_deploy_time", &"deploy_zone", &"deploy_pocket_requires_both_towers", &"deploy_ignore_structures", &"show_team_ring", &"footprint_tiles", &"lifespan", &"lifespan_hp_decay", &"tower_ruin_foundation",
 	&"deployment_count", &"deployment_spacing", &"deployment_formation", &"deployment_member_ids", &"deploy_formation_requires_in_bounds",
-	&"spawn_id", &"spawn_interval", &"spawn_count", &"spawn_side", &"spawn_distance", &"spawn_deploy_time", &"spawn_flight_duration", &"spawn_defer_while_controlled", &"death_spawn_id", &"death_spawn_count", &"death_spawn_spread", &"death_spawn_duration",
+	&"spawn_initial_delay", &"spawn_sequence_interval", &"spawn_id", &"spawn_interval", &"spawn_count", &"spawn_side", &"spawn_distance", &"spawn_deploy_time", &"spawn_flight_duration", &"spawn_defer_while_controlled", &"death_spawn_id", &"death_spawn_count", &"death_spawn_spread", &"death_spawn_duration",
 	&"death_replacement_id", &"death_replacement_charges", &"death_replacement_visual_transition", &"timed_revival_id", &"timed_revival_delay", &"timed_revival_death_replacement_charges", &"timed_revival_visual_transition",
 	&"attack_wave_damage", &"attack_wave_delay", &"attack_wave_tail_distance", &"attack_wave_near_width", &"attack_wave_max_scale", &"attack_wave_speed", &"attack_wave_visual", &"attack_wave_visual_height",
 	&"projectile_spawn_at_edge", &"projectile_spawn_offset", &"projectile_collision_radius",
@@ -183,7 +183,7 @@ const ACTIVE_SKILL_FIELDS := [
 	&"name", &"kind", &"cost", &"max_uses", &"cooldown", &"radius", &"damage", &"knockback", &"knockback_duration", &"knockback_mass_factor_max",
 	&"slow_duration", &"slow_multiplier",
 	&"shield", &"shield_duration", &"shield_decay", &"shield_on_cast_start", &"independent_on_creation", &"resource_shield_max", &"duration", &"speed_multiplier", &"damage_multiplier",
-	&"sacrifice_source", &"ignore_unit_collision", &"block_haste_duration", &"block_attack_speed_multiplier", &"attack_speed_multiplier", &"ignore_movement_slow", &"ignore_attack_speed_slow", &"spawn_id", &"spawn_count", &"length", &"width", &"impact_delay",
+	&"sacrifice_source", &"ignore_unit_collision", &"block_haste_duration", &"block_attack_speed_multiplier", &"attack_speed_multiplier", &"ignore_movement_slow", &"ignore_attack_speed_slow", &"spawn_id", &"spawn_count", &"spawn_side", &"spawn_sequence_interval", &"length", &"width", &"impact_delay",
 	&"transform_impact_delay", &"cast_duration", &"transform_cast_duration", &"stun_duration", &"ground_only",
 	&"impact_visual_shape", &"full_resource_impact_visual_shape", &"impact_visual_duration", &"cast_locks", &"visual_action", &"description", &"shape", &"near_width", &"far_width", &"arc_degrees", &"fan_inner_arc",
 	&"projectile_count", &"projectile_visual", &"projectile_launch_delay", &"projectile_flight_duration", &"projectile_stop_on_hit", &"projectile_piercing",

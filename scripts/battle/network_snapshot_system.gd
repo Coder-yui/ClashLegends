@@ -346,7 +346,9 @@ func _apply_units(units_data: Array) -> void:
 		if not u.last_action_cancellation.is_empty():
 			var cancelled: Dictionary = u.last_action_cancellation
 			if u.net_attack_visual_serial <= int(cancelled.attack):
-				u.net_has_continuous_target = false
+				# 新的技能引导端点不属于已取消的旧普攻。
+				if not (u.net_visual_action_name == &"channel" and action_serial > u.cancelled_visual_serial and u.net_visual_action_time_left > 0.0):
+					u.net_has_continuous_target = false
 				if u.net_visual_state == 3: u.net_visual_state = 1
 			if action_serial <= u.cancelled_visual_serial:
 				u.net_visual_action_time_left = 0.0

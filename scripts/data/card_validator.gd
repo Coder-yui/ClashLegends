@@ -36,8 +36,13 @@ static func _validate_card_id(card_id: String, errors: PackedStringArray) -> voi
 		errors.append("%s: card_id 必须是非空英文 snake_case" % card_id)
 
 static func _validate_periodic_summons(card_id: String, stats: Dictionary, errors: PackedStringArray) -> void:
-	for field in ["spawn_flight_duration", "spawn_defer_while_controlled"]:
+	for field in ["spawn_flight_duration", "spawn_defer_while_controlled", "spawn_initial_delay", "spawn_sequence_interval"]:
 		if stats.has(field) and not stats.has("spawn_interval"): errors.append(card_id + "." + field + ": 必须配置周期召唤")
+	for field in ["spawn_initial_delay", "spawn_sequence_interval"]:
+		if stats.has(field) and float(stats[field]) < 0.0: errors.append(card_id + "." + field + ": 必须非负")
+	if stats.has("spawn_sequence_interval") and stats.get("spawn_side", "") != "below": errors.append(card_id + ".spawn_sequence_interval: 要求下方召唤")
+	if float(stats.get("spawn_sequence_interval", 0.0)) * maxi(int(stats.get("spawn_count", 1)) - 1, 0) >= float(stats.get("spawn_interval", INF)):
+		errors.append(card_id + ".spawn_sequence_interval: 一批必须在下一周期前完成")
 	if stats.has("spawn_flight_duration"):
 		if float(stats.spawn_flight_duration) <= 0.0 or stats.get("spawn_side", "") != "bilateral": errors.append(card_id + ".spawn_flight_duration: 要求正时长和左右召唤")
 	if stats.has("spawn_deploy_time") and float(stats.spawn_deploy_time) < 0.0: errors.append(card_id + ".spawn_deploy_time: 必须非负")
@@ -48,7 +53,7 @@ static func _validate_periodic_summons(card_id: String, stats: Dictionary, error
 	if String(stats.get("type", "")) not in ["unit", "building"]: errors.append(card_id + ".spawn_interval: 仅单位或建筑支持周期召唤")
 	if float(stats.spawn_interval) <= 0.0 or int(stats.get("spawn_count", 0)) <= 0 or String(stats.get("spawn_id", "")).is_empty():
 		errors.append(card_id + ".spawn_interval: 周期召唤要求正间隔、正数量和有效单位")
-	if String(stats.get("spawn_side", "")) not in ["", "map_side", "bilateral"]: errors.append(card_id + ".spawn_side: 未支持的方位")
+	if String(stats.get("spawn_side", "")) not in ["", "map_side", "bilateral", "below"]: errors.append(card_id + ".spawn_side: 未支持的方位")
 	if stats.get("spawn_side", "") == "bilateral" and (float(stats.get("spawn_distance", 0.0)) <= 0.0 or int(stats.get("spawn_count", 0)) != 2): errors.append(card_id + ".spawn_distance: 左右召唤要求正距离和两只单位")
 	if stats.has("spawn_distance") and stats.get("spawn_side", "") != "bilateral": errors.append(card_id + ".spawn_distance: 仅用于左右召唤")
 
@@ -951,7 +956,12 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 			&"death_spawn":
 				_require_fields(label, skill, [&"spawn_id", &"duration"], errors)
 				if float(skill.get("duration", 0.0)) <= 0.0: errors.append(label + ".duration: 必须大于0")
-			&"summon": _require_fields(label, skill, [&"spawn_id", &"spawn_count"], errors)
+			&"summon":
+				_require_fields(label, skill, [&"spawn_id", &"spawn_count"], errors)
+				if skill.has("spawn_side"):
+					if String(skill.spawn_side) != "below" or String(skill.get("spawn_id", "")) != "voidling": errors.append("%s.spawn_side: below仅支持虚灵裂隙" % label)
+					if not (skill.get("spawn_sequence_interval") is float or skill.get("spawn_sequence_interval") is int) or float(skill.get("spawn_sequence_interval", 0.0)) <= 0.0: errors.append("%s.spawn_sequence_interval: 必须为正数" % label)
+				elif skill.has("spawn_sequence_interval"): errors.append("%s.spawn_sequence_interval: 需要spawn_side" % label)
 			&"toggle_form":
 				if stats.get("transformed_stats", {}).is_empty(): errors.append(label + ": 换形需要 transformed_stats")
 				var duration = stats.get("transform_duration", 0.0)
@@ -1026,6 +1036,11 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 					errors.append(label + ": 拒绝死亡要求正持续时间及怒气暴击被动")
 				if float(skill.get("cast_duration", 0.0)) != 0.0 or float(skill.get("impact_delay", 0.0)) != 0.0 or skill.has("visual_action") or bool(skill.get("uses_skill_resource", false)):
 					errors.append(label + ": 拒绝死亡必须瞬时生效，不占用全身动作或消费技能资源")
+			&"channeled_attack":
+				if float(skill.get("zone_damage", 0.0)) < 0.0: errors.append(label + ".zone_damage: 必须非负")
+				_require_fields(label, skill, [&"duration", &"radius", &"zone_duration", &"zone_damage", &"zone_tick_interval"], errors)
+				for field in ["duration", "radius", "zone_duration", "zone_tick_interval"]:
+					if float(skill.get(field, 0.0)) <= 0.0: errors.append(label + "." + field + ": 必须为正数")
 			&"empowered_attack":
 				if skill.has("cleave_damage") or skill.has("cleave_radius"):
 					if float(skill.get("cleave_damage", 0.0)) <= 0.0 or float(skill.get("cleave_radius", 0.0)) <= 0.0 or float(stats.get("projectile_speed", 0.0)) > 0.0 or bool(stats.get("is_continuous_attack", false)):
