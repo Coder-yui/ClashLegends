@@ -1,6 +1,8 @@
 extends Node3D
 ## Belveth 远程虚空鱼 原版粒子采样，保留发射器与曲线。
 ## The authority supplies age; this node never advances battle state.
+const SPAWN_SPLASH = preload("res://assets/effects/voidfish_ranged/spawn_splash.gd")
+var _spawn_splash: RefCounted
 const ROOT := "res://assets/effects/voidfish_ranged/"
 static var _cache: Dictionary = {}
 static var _draw_keys: Array = []
@@ -53,7 +55,11 @@ func load_kind(kind: String) -> void:
 
 func setup_native(unit_scale: float) -> void:
 	scale = Vector3.ONE * unit_scale
-	for e in _data.emitters: _pools.append([])
+	for e in _data.emitters:
+		_pools.append([])
+		if _kind == "spawn" and e.name == "vecalign":
+			_spawn_splash = SPAWN_SPLASH.new()
+			_spawn_splash.setup(e, float(_data.fps))
 	seek(0.0)
 
 func advance(delta: float) -> void:
@@ -76,7 +82,7 @@ func seek(age: float) -> void:
 	for emitter_index in values.size():
 		var e: Dictionary = _data.emitters[emitter_index]
 		var pool: Array = _pools[emitter_index]
-		var particles: Array = values[emitter_index]
+		var particles: Array = _spawn_splash.sample(frame) if _spawn_splash != null and e.name == "vecalign" else values[emitter_index]
 		while pool.size() < particles.size():
 			var item := MeshInstance3D.new()
 			item.mesh = _meshes[e.mesh_path]

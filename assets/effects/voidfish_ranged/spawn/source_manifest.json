@@ -481,7 +481,17 @@
     "orientation": "One native X mirror, Ry*Rx*Rz. Five camera-aligned SCB layers use local camera look-at. Other layers inherit model root yaw; Egg_Voidling retains native randomized Euler spin.",
     "clock": "Continuous 120Hz source driver advance, read-only deployment age plus fixed-step interpolation; no wall-clock accumulation",
     "render_order": "Three ground layers first; native pass/simple/blend/flags/index ordering. Egg_Voidling blendMode3 alpha-one replacement and depth writes.",
-    "scope": "Shared native Transform definition for melee/ranged, including authored Ranged.scb silhouette. Belveth death scatter deploy_time=0 skips all birth layers. Transform_Impact not appended without trigger evidence."
+    "scope": "Shared native Transform definition for melee/ranged, including authored Ranged.scb silhouette. Belveth death scatter deploy_time=0 skips all birth layers. Transform_Impact not appended without trigger evidence.",
+    "runtime_splash": {
+      "emitter": "vecalign",
+      "implementation": "res://assets/effects/voidfish_ranged/spawn_splash.gd",
+      "randomization": "Per-birth private presentation RNG; original rate/lifetime/birthVelocity/birthScale0/birthColor probability tables; shared roll for original UV frame. No forced bilateral pairs or finite sample bank.",
+      "motion": "Original stepped drag at 120Hz, evaluated as a geometric sum; seek does not redraw births.",
+      "scale": "Existing model scale 0.014 and native bound multiplier 140*0.004 unchanged.",
+      "validation": "301-frame / 38-field parity against existing native-definition simulator using identical birth parameters; max absolute error 0.000190.",
+      "evidence": "ClashLegends-开发素材库/04-中间产物/虚空图标与出生研究-20261013/方向修正/native-reference.json"
+    }
   },
-  "sample_sha256": "6c2be66453a5e7f0b5b0a2576dd1157bdbe9beaa411cdf5821fa431c1df90b09"
+  "sample_sha256": "6c2be66453a5e7f0b5b0a2576dd1157bdbe9beaa411cdf5821fa431c1df90b09",
+  "runtime_splash_sha256": "fac58f090fe7430c3e776122f490d3523ebc98af7dd5ad93119d603c0af0fff3"
 }

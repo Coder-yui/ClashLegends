@@ -8,6 +8,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_visual_snapshot()
 	_check_birth_lifecycle()
 	_check_birth_coordinates_and_clock()
+	_check_splash_randomization()
 	_check_projectile_origin_and_timing()
 	var skill: Dictionary = CardDB.active_skills_for("voidfish_ranged")[0]
 	for team in [0, 1]:
@@ -261,3 +262,40 @@ func _check_regeneration_warmup() -> void:
 	_expect(presentation._world_root.get_child_count() == before, "再生预热不遗留节点")
 	var inactive = load("res://scripts/presentation/match_resource_plan.gd").for_match([["garen", "garen", "voidfish_ranged"], []], [{}, {}])
 	_expect(not warm.dependency_paths(inactive.cards, inactive).has("res://assets/effects/voidfish_regeneration/rise.gdshader"), "非主动槽不预热再生专属效果")
+
+
+func _check_splash_randomization() -> void:
+	var data: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://assets/effects/voidfish_ranged/spawn/sampled.json"))
+	var emitter: Dictionary = data.emitters.filter(func(e): return e.name == "vecalign")[0]
+	var script = load("res://assets/effects/voidfish_ranged/spawn_splash.gd")
+	var first = script.new()
+	seed(12345)
+	var expected_global := randi()
+	seed(12345)
+	first.setup(emitter, data.fps)
+	_expect(randi() == expected_global, "出生随机只用私有RNG，不消耗权威随机流")
+	var birth: Array = first.sample(20)
+	first.sample(32)
+	_expect(first.sample(20) == birth, "溅射暂停、重读与向后seek不重抽随机数")
+	var second = script.new()
+	second.setup(emitter, data.fps)
+	_expect(second._particles != first._particles, "不同出生实例不再共享固定seed样本")
+	var counts := {}
+	var left := false
+	var right := false
+	var valid := true
+	for visual_seed in 128:
+		second.setup(emitter, data.fps, visual_seed)
+		counts[second._particles.size()] = true
+		valid = valid and second._particles.size() >= 3 and second._particles.size() <= 7
+		for particle in second._particles:
+			var v: Vector3 = particle.velocity
+			left = left or v.x < 0.0
+			right = right or v.x > 0.0
+			valid = valid and absf(v.x) <= 700.001 and absf(v.y) <= 400.001 and v.z >= -650.001 and v.z <= 0.001
+			valid = valid and particle.life >= 0.102 - 0.00001 and particle.life <= 0.34 + 0.00001
+		_expect(second.sample(12).is_empty() and second.sample(60).is_empty(), "原始延迟之前及最长寿命后无溅射")
+	_expect(valid and left and right and counts.size() > 1, "原始概率表保留随机数量、左右速度、负Z与寿命范围")
+	first.setup(emitter, data.fps, 79)
+	second.setup(emitter, data.fps, 79)
+	_expect(first.sample(20) == second.sample(20), "指定视觉seed可复现源参数以便校验")
