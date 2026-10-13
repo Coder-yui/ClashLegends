@@ -491,11 +491,17 @@ func _check_soft_control_snapshot() -> void:
 	data[SNAP.U_SLOW] = 1
 	data[SNAP.U_STUN] = 1
 	data[SNAP.U_ATTACK_SPEED_SLOW] = true
+	data[SNAP.U_BLIND] = true
 	data[SNAP.U_ACTIVE_ATTACK_SPEED_MULTIPLIER] = 1.4
 	_deliver(2, [data])
 	var unit: Unit = _main._client_units[79102]
 	_expect(unit.movement_slow_visual() and unit.attack_speed_slow_visual(), "客户端独立恢复两种软控提示，不依赖最终攻速")
 	_expect(unit.stun_visual() and not unit.movement_slow_effect_visible(), "客户端眩晕显示漩涡且静止时隐藏减速拖痕")
+	_expect(unit.blind_visual(), "客户端显示权威致盲标识")
+	var bad_blind := data.duplicate(true)
+	bad_blind[SNAP.U_BLIND] = 1
+	_deliver(3, [bad_blind])
+	_expect(_system.lifecycle.snapshot_tick == 2, "非布尔致盲状态拒绝应用")
 	var invalid := data.duplicate(true)
 	invalid[SNAP.U_ATTACK_SPEED_SLOW] = 1
 	_deliver(3, [invalid])
@@ -503,8 +509,10 @@ func _check_soft_control_snapshot() -> void:
 	data[SNAP.U_SLOW] = 0
 	data[SNAP.U_STUN] = 0
 	data[SNAP.U_ATTACK_SPEED_SLOW] = false
+	data[SNAP.U_BLIND] = false
 	_deliver(4, [data])
 	_expect(not unit.stun_visual() and not unit.movement_slow_visual() and not unit.attack_speed_slow_visual(), "新快照清除眩晕与两类软控提示")
+	_expect(not unit.blind_visual(), "权威清除致盲后移除图标")
 	_system.reset_session("")
 
 func _check_dynamic_action_clock() -> void:

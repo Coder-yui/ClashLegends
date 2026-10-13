@@ -4,9 +4,9 @@
 
 | 契约 | 当前值 |
 | --- | --- |
-| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->112 |
+| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->113 |
 | 顶层快照项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd SNAPSHOT_PACKET_SIZE -->11 |
-| 单位载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd UNIT_PAYLOAD_SIZE -->62 |
+| 单位载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd UNIT_PAYLOAD_SIZE -->63 |
 | 塔载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd TOWER_PAYLOAD_SIZE -->7 |
 | 弹体载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd PROJECTILE_PAYLOAD_SIZE -->14 |
 
@@ -173,3 +173,5 @@ NetworkPlayback默认100ms，根据时钟RTT/抖动与事件/快照到达时差�
 协议111：追加 `U_LIFESTEAL_VISUAL_STATE`（59，Vector2：开启秒数、0/1开启标记）与 `U_BUFF_VISUAL_CLOCK`（60，Vector2：播放秒数、窗口总长）。默认(0,0)，拒绝非有限值、负值和无窗口但非零进度；吸血标记仅0/1，Buff进度不得超过总长+2.1秒。尾段仅用于结束粒子，不延长权威技能或赋予客户端吸血。
 
 协议112：追加 `U_RESTORATION_SHIELD_STATE`（61，Vector2：黄沙庇护剩余秒数、初始总长）。无盾为(0,0)，仅统计仍存在的恢复盾层，不以总护盾值续时；拒绝非有限值、负值、剩余超过总长和半空状态。客户端只恢复表现，不生成护盾或结算回复。
+
+协议113：追加 `U_BLIND`（62，bool），表示权威有效致盲标识。客户端只读绘制，不自主消费次数；非法类型拒绝整份快照。

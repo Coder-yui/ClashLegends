@@ -10,6 +10,9 @@ func _run() -> void:
 	main._start_art_dev()
 	var panel = main._art_dev_panel
 	panel._persist = false
+	if "--blind-review" in OS.get_cmdline_user_args():
+		await _review_blind(main, panel)
+		return
 	if "--spell-team-review" in OS.get_cmdline_user_args():
 		await _review_spell_teams(main, panel)
 		return
@@ -146,3 +149,29 @@ func _capture_control(label: String) -> void:
 	var output := preload("res://tools/lib/development_paths.gd").output("control-" + label + ".png")
 	root.get_texture().get_image().save_png(output)
 	print("[控制截图] ", output)
+
+func _review_blind(main: Node, panel: CanvasLayer) -> void:
+	panel.show_workspace(1)
+	panel._set_battle_zoom(2.0)
+	for card in ["xin", "anivia"]:
+		for team in [0, 1]:
+			main._clear_art_dev_units()
+			await process_frame
+			main.play_card(team, card, Vector2(360, 950), {"immediate": true, "validate_position": false})
+			await create_timer(1.5).timeout
+			var unit: Unit
+			for candidate in get_nodes_in_group("combatants"):
+				if candidate is Unit: unit = candidate
+			unit.apply_blind(2)
+			assert(unit.blind_visual())
+			await _capture_control("blind-" + card + "-" + str(team))
+			unit.apply_stasis(0.2)
+			assert(not unit.blind_visual())
+			await create_timer(0.3).timeout
+			assert(unit.blind_visual())
+			unit.blind_attack_charges = 0
+			assert(not unit.blind_visual())
+			await _capture_control("blind-cleared-" + card + "-" + str(team))
+	main.queue_free()
+	await process_frame
+	quit()

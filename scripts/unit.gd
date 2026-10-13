@@ -372,6 +372,7 @@ var net_shield_capacity_ratio := 0.0
 var net_slow_active := false
 var net_attack_speed_slow_active := false
 var net_stun_active := false
+var net_blind_active := false
 var net_form_index := 0
 var net_form_change_serial := 0
 var net_visual_action_serial := 0
@@ -754,6 +755,15 @@ func movement_slow_effect_visible() -> bool:
 
 func stun_visual() -> bool:
 	return hp > 0.0 and (net_stun_active if _in_client_mode() else control.stun_timer > 0.0)
+
+func blind_visual() -> bool:
+	return hp > 0.0 and not death_form.waiting() and not CombatInteraction.in_stasis(self) and (net_blind_active if _in_client_mode() else blind_attack_charges > 0)
+
+func blind_effect_origin() -> Vector2:
+	if not has_model_art: return _vis_offset
+	var transform_to_screen := get_global_transform_with_canvas()
+	var feet_screen := transform_to_screen * status_effect_origin()
+	return transform_to_screen.affine_inverse() * feet_screen.lerp(get_visual_head_screen_position(), 0.5)
 
 func stun_effect_origin() -> Vector2:
 	# 置于模型头顶及血条上方，避免漩涡压住生命信息。缩放与画布翻转一起考虑。
@@ -3184,6 +3194,8 @@ func _draw() -> void:
 	if hp > 0.0: _soft_control_effect.draw_trails(self)
 	if hp > 0.0 and attack_speed_slow_visual():
 		preload("res://scripts/presentation/soft_control_effect.gd").draw_effect(self, _status_effect_phase, movement_slow_effect_visible(), attack_speed_slow_visual())
+	if blind_visual():
+		preload("res://scripts/presentation/blind_indicator.gd").draw_effect(self, blind_effect_origin())
 	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 
 func restoration_shield_state_visual() -> Vector2:

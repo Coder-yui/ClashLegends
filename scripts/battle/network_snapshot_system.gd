@@ -79,7 +79,8 @@ const U_DEATH_SPAWN_STATE := 58
 const U_LIFESTEAL_VISUAL_STATE := 59
 const U_BUFF_VISUAL_CLOCK := 60
 const U_RESTORATION_SHIELD_STATE := 61
-const UNIT_PAYLOAD_SIZE := 62
+const U_BLIND := 62
+const UNIT_PAYLOAD_SIZE := 63
 
 const P_ID := 0
 const P_X := 1
@@ -242,6 +243,7 @@ func apply(snapshot_bytes: PackedByteArray, terminal: bool = false, expected_tic
 		var haste: Vector2 = payload[U_STRUCTURE_HASTE_STATE]
 		if not haste.is_finite() or haste.x < 0.0 or haste.y < 0.0 or haste.y != floorf(haste.y): return false
 		if (haste.x > 0.0) != (haste.y > 0.0) or bool(payload[U_STRUCTURE_HASTE]) != (haste.x > 0.0): return false
+		if not payload[U_BLIND] is bool: return false
 		if not payload[U_ATTACK_SPEED_SLOW] is bool: return false
 		if not payload[U_ACTION_CLOCK] is Vector2: return false
 		if not (payload[U_TEAM_ATTACK_BOOST_MULTIPLIER] is int or payload[U_TEAM_ATTACK_BOOST_MULTIPLIER] is float): return false
@@ -320,6 +322,7 @@ func _apply_units(units_data: Array) -> void:
 			print("[测试] 客户端已收到持续吐息目标端点")
 		u.net_slow_active = int(d[U_SLOW]) == 1
 		u.net_attack_speed_slow_active = d[U_ATTACK_SPEED_SLOW]
+		u.net_blind_active = d[U_BLIND]
 		u.net_stun_active = int(d[U_STUN]) == 1
 		u.control.apply_replica_flags(int(d[U_FROZEN]) == 1, u.net_stun_active)
 		var action_serial := int(d[U_ACTION_SERIAL])
@@ -578,4 +581,5 @@ func _unit_snapshot_payload(id: int, u: Unit, has_continuous_target: bool = fals
 		u.death_spawn_state_visual(),
 		u.lifesteal_state_visual(), u.active_buff_clock_visual(),
 		u.restoration_shield_state_visual(),
+		u.blind_visual(),
 	]
