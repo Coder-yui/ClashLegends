@@ -1,0 +1,29 @@
+{
+  "binary": "/Users/czh/Projects/Clash Legends/ClashLegends-\u5f00\u53d1\u7d20\u6750\u5e93/03-\u5236\u4f5c\u4e2d/\u865a\u7a7a\u5148\u77e5/vfx-source/data/characters/malzahar/malzahar_multi_skins_skin0_skins_skin1_skins_skin2_skins_skin3.bin",
+  "assets": {
+    "assets/characters/malzahar/skins/base/particles/malzahar_base_w_portal_softrays_4x1.tex": {
+      "source_sha256": "344b6d2728faa2530c36447ecde307ab6de26b8f8e939ca374ad47ca32bedf32",
+      "output": "malzahar_base_w_portal_softrays_4x1.png"
+    },
+    "assets/characters/malzahar/skins/base/particles/malzahar_base_w_portal_swirl.scb": {
+      "source_sha256": "9af7acf8415513d803e9408084d6c1149f7c4a474e530de791efb39f485a6887",
+      "output": "malzahar_base_w_portal_swirl.mesh.json"
+    },
+    "assets/characters/malzahar/skins/base/particles/malzahar_base_w_portal_swirl.tex": {
+      "source_sha256": "6c26229717be0d8fe3437a6ac8ae1a2f362bf23a1c2e57d5b29b1bca5ee3495e",
+      "output": "malzahar_base_w_portal_swirl.png"
+    },
+    "assets/characters/malzahar/skins/base/particles/malzahar_base_w_voidgate_glowsoft.tex": {
+      "source_sha256": "bfe1ccfd6f0d3ac6d12c77246ab6f21148becc196a9ac79e4697014695652518",
+      "output": "malzahar_base_w_voidgate_glowsoft.png"
+    },
+    "assets/characters/malzahar/skins/base/particles/flash_2x2.tex": {
+      "source_sha256": "566bce76b0f1b9d0a1b60f7cec65644150284b464293fa1f7455e41087fba14c",
+      "output": "flash_2x2.png"
+    },
+    "assets/characters/malzahar/skins/base/particles/shards.tex": {
+      "source_sha256": "d29b851e37e2dfdd9a06c8d881aec5c2e3c2f0f4d2dc32027ed1a404143f37b5",
+      "output": "shards.png"
+    }
+  }
+}

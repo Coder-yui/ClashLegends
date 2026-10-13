@@ -1,0 +1,136 @@
+[
+  {
+    "event": "attack_launch",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空先知/audio/malzahar/txtp/Play_sfx_Malzahar_MalZaharBasicAttack_OnCast {r1} {d}.txtp",
+    "file": "res://assets/audio/units/malzahar/attack_launch_1.wav",
+    "sha256": "53765d59fcbc57698282b60b4e58ecd444ca909b51d85dfac0bc270598171b5f",
+    "gain_db": 0
+  },
+  {
+    "event": "attack_launch",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空先知/audio/malzahar/txtp/Play_sfx_Malzahar_MalZaharBasicAttack_OnCast {r2} {d}.txtp",
+    "file": "res://assets/audio/units/malzahar/attack_launch_2.wav",
+    "sha256": "28d58bef3ff5b8b6dc51c20a3775c0ce0152fd492e7867cbb5acb27053b370b4",
+    "gain_db": 0
+  },
+  {
+    "event": "attack_launch",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空先知/audio/malzahar/txtp/Play_sfx_Malzahar_MalZaharBasicAttack_OnCast {r3} {d}.txtp",
+    "file": "res://assets/audio/units/malzahar/attack_launch_3.wav",
+    "sha256": "ecc8f63fbacff87ec97fac191c72b728954219fcee9a5f3e1a76da75177a11d4",
+    "gain_db": 0
+  },
+  {
+    "event": "attack_hit",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空先知/audio/malzahar/txtp/Play_sfx_Malzahar_MalZaharBasicAttack_OnHit {r1} {d}.txtp",
+    "file": "res://assets/audio/units/malzahar/attack_hit_1.wav",
+    "sha256": "a3ddc10ca994bab24d2f49af9182130708608931e6ddf1e981e0d3bc0c5fb9e8",
+    "gain_db": 0
+  },
+  {
+    "event": "attack_hit",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空先知/audio/malzahar/txtp/Play_sfx_Malzahar_MalZaharBasicAttack_OnHit {r2} {d}.txtp",
+    "file": "res://assets/audio/units/malzahar/attack_hit_2.wav",
+    "sha256": "faf87dc64d66704b002d977b3d91c0b64eb04b87df42524ae933e1d995a6cafe",
+    "gain_db": 0
+  },
+  {
+    "event": "attack_hit",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空先知/audio/malzahar/txtp/Play_sfx_Malzahar_MalZaharBasicAttack_OnHit {r3} {d}.txtp",
+    "file": "res://assets/audio/units/malzahar/attack_hit_3.wav",
+    "sha256": "85f1866e934319b5171b8590c09d6a4580c3ec52fbd17605e36fc95975c5c6af",
+    "gain_db": 0
+  },
+  {
+    "event": "death",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空先知/audio/malzahar/txtp/Play_sfx_Malzahar_Death3D_cast {r1}.txtp",
+    "file": "res://assets/audio/units/malzahar/death_1.wav",
+    "sha256": "6ea6c77184f3084bab798f31fbd8228f762ce2b0065373e054f788a356348842",
+    "gain_db": 0
+  },
+  {
+    "event": "death",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空先知/audio/malzahar/txtp/Play_sfx_Malzahar_Death3D_cast {r2}.txtp",
+    "file": "res://assets/audio/units/malzahar/death_2.wav",
+    "sha256": "5c691d70c0b343bee5c2517dca780fcb425e00c8dac76f3b4f3abde3f7ec838c",
+    "gain_db": 0
+  },
+  {
+    "event": "death",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空先知/audio/malzahar/txtp/Play_sfx_Malzahar_Death3D_cast {r3}.txtp",
+    "file": "res://assets/audio/units/malzahar/death_3.wav",
+    "sha256": "ece2f2d12831b7c675fb5e7812c86cfad9072f409febecc2a78cbb52ca0e2a8a",
+    "gain_db": 0
+  },
+  {
+    "event": "channel:start",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空先知/audio/malzahar/txtp/Play_sfx_Malzahar_MalzaharR_OnBuffActivate {m}.txtp",
+    "file": "res://assets/audio/units/malzahar/channel_start_1.wav",
+    "sha256": "ce7f05dc74778bca52138645877320b8cc06fe91307c1288589142452a913d68",
+    "gain_db": 0
+  },
+  {
+    "event": "channel:zone",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空先知/audio/malzahar/txtp/Play_sfx_Malzahar_MalzaharRZone_buffactivate {r1}.txtp",
+    "file": "res://assets/audio/units/malzahar/channel_zone_1.wav",
+    "sha256": "a9b8b9d9546f3eba011ccc06dc9a99f68c4498d8d33145d96e4b7e17884e9296",
+    "gain_db": 0
+  },
+  {
+    "event": "channel:zone",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空先知/audio/malzahar/txtp/Play_sfx_Malzahar_MalzaharRZone_buffactivate {r2}.txtp",
+    "file": "res://assets/audio/units/malzahar/channel_zone_2.wav",
+    "sha256": "f050cc34d3bf503fe64129ca16f9e83aa08b870fbad7ea7fcc0d8fcba3cdf5b2",
+    "gain_db": 0
+  },
+  {
+    "event": "attack_launch",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空先知/audio/malzahar/txtp/Play_sfx_MalZaharVoidling_MalZaharVoidlingBasicAttack_OnCast {r1} {d}.txtp",
+    "file": "res://assets/audio/units/voidling/attack_launch_1.wav",
+    "sha256": "8eaa0b1f70731cf258aab4bda1ef547ec2f77294a2aceef82d798f85e6f410cb",
+    "gain_db": 0
+  },
+  {
+    "event": "attack_launch",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空先知/audio/malzahar/txtp/Play_sfx_MalZaharVoidling_MalZaharVoidlingBasicAttack_OnCast {r2} {d}.txtp",
+    "file": "res://assets/audio/units/voidling/attack_launch_2.wav",
+    "sha256": "60eb816cfb03c92fa8b35c01db21dce979e1ea6683580ea421ca7306ba62b895",
+    "gain_db": 0
+  },
+  {
+    "event": "attack_launch",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空先知/audio/malzahar/txtp/Play_sfx_MalZaharVoidling_MalZaharVoidlingBasicAttack_OnCast {r3} {d}.txtp",
+    "file": "res://assets/audio/units/voidling/attack_launch_3.wav",
+    "sha256": "991ba405cac4b038686d84cbca5dbbc30db5be585a92a012446e836c9bb2f85a",
+    "gain_db": 0
+  },
+  {
+    "event": "attack_hit",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空先知/audio/malzahar/txtp/Play_sfx_MalzaharVoidling_MalzaharVoidlingBasicAttack_OnHit [1559186049=1153642577] {r1} {d}.txtp",
+    "file": "res://assets/audio/units/voidling/attack_hit_1.wav",
+    "sha256": "a86af8915462398ac8eeca374ed5d82d1353fc31a85ce0cfad572355ee6c8e81",
+    "gain_db": 0
+  },
+  {
+    "event": "attack_hit",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空先知/audio/malzahar/txtp/Play_sfx_MalzaharVoidling_MalzaharVoidlingBasicAttack_OnHit [1559186049=1153642577] {r2} {d}.txtp",
+    "file": "res://assets/audio/units/voidling/attack_hit_2.wav",
+    "sha256": "e0b00cbbe15a59ddfe951202f476f2c76fc0434bd75ad42840a32e098061a2ed",
+    "gain_db": 0
+  },
+  {
+    "event": "attack_hit",
+    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空先知/audio/malzahar/txtp/Play_sfx_MalzaharVoidling_MalzaharVoidlingBasicAttack_OnHit [1559186049=1153642577] {r3} {d}.txtp",
+    "file": "res://assets/audio/units/voidling/attack_hit_3.wav",
+    "sha256": "c9a9d970aea3e6db55776d80f237f125846e9b1b55937066ef07ee53d1fc9f68",
+    "gain_db": 0
+  },
+  {
+    "event": "deploy:voice",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空先知/deploy-voice/plugins/rcp-be-lol-game-data/global/zh_cn/v1/champion-choose-vo/90.ogg",
+    "file": "res://assets/audio/units/malzahar/deploy_voice.ogg",
+    "sha256": "269e558e78381b409bf5ab00adc0871ee12dd5aaa61b33f3eff1ac3b8fef2eb5",
+    "gain_db": 0,
+    "playback_compensation_db": -12.5
+  }
+]

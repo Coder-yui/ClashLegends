@@ -1,0 +1,137 @@
+[
+  {
+    "file": "res://assets/audio/units/malzahar/spawn_1_1.wav",
+    "event": "Play_sfx_Malzahar_MalzaharVoidling_buffactivate",
+    "event_id": 1582461006,
+    "source_trigger": "Malzahar_Base_W_cas.soundOnCreateDefault",
+    "project_trigger": "one Malzahar summon:start per batch",
+    "random_layers": [
+      1,
+      1
+    ],
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-\u5f00\u53d1\u7d20\u6750\u5e93/03-\u5236\u4f5c\u4e2d/\u865a\u7a7a\u5148\u77e5/audio/malzahar/txtp/Play_sfx_Malzahar_MalzaharVoidling_buffactivate {r}.txtp",
+    "gain_db": 0,
+    "normalization": false,
+    "sha256": "416bf6750ce07550900993294203db8419c4907857ffc3715ff1a93eb86b02cb"
+  },
+  {
+    "file": "res://assets/audio/units/malzahar/spawn_1_2.wav",
+    "event": "Play_sfx_Malzahar_MalzaharVoidling_buffactivate",
+    "event_id": 1582461006,
+    "source_trigger": "Malzahar_Base_W_cas.soundOnCreateDefault",
+    "project_trigger": "one Malzahar summon:start per batch",
+    "random_layers": [
+      1,
+      2
+    ],
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-\u5f00\u53d1\u7d20\u6750\u5e93/03-\u5236\u4f5c\u4e2d/\u865a\u7a7a\u5148\u77e5/audio/malzahar/txtp/Play_sfx_Malzahar_MalzaharVoidling_buffactivate {r}.txtp",
+    "gain_db": 0,
+    "normalization": false,
+    "sha256": "c202831346b32daa3f53eb3a114ce4c8f7bd9779164e2abfc8d71defb3c6da3b"
+  },
+  {
+    "file": "res://assets/audio/units/malzahar/spawn_1_3.wav",
+    "event": "Play_sfx_Malzahar_MalzaharVoidling_buffactivate",
+    "event_id": 1582461006,
+    "source_trigger": "Malzahar_Base_W_cas.soundOnCreateDefault",
+    "project_trigger": "one Malzahar summon:start per batch",
+    "random_layers": [
+      1,
+      3
+    ],
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-\u5f00\u53d1\u7d20\u6750\u5e93/03-\u5236\u4f5c\u4e2d/\u865a\u7a7a\u5148\u77e5/audio/malzahar/txtp/Play_sfx_Malzahar_MalzaharVoidling_buffactivate {r}.txtp",
+    "gain_db": 0,
+    "normalization": false,
+    "sha256": "6c631c0fe7772352d12a7d0cc8560307540bed322baddf744aa4e74f2a3f3180"
+  },
+  {
+    "file": "res://assets/audio/units/malzahar/spawn_2_1.wav",
+    "event": "Play_sfx_Malzahar_MalzaharVoidling_buffactivate",
+    "event_id": 1582461006,
+    "source_trigger": "Malzahar_Base_W_cas.soundOnCreateDefault",
+    "project_trigger": "one Malzahar summon:start per batch",
+    "random_layers": [
+      2,
+      1
+    ],
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-\u5f00\u53d1\u7d20\u6750\u5e93/03-\u5236\u4f5c\u4e2d/\u865a\u7a7a\u5148\u77e5/audio/malzahar/txtp/Play_sfx_Malzahar_MalzaharVoidling_buffactivate {r}.txtp",
+    "gain_db": 0,
+    "normalization": false,
+    "sha256": "1c47300cccb4a14592f246f54826f1942dbc04b12448ad58fe950c63f9b39914"
+  },
+  {
+    "file": "res://assets/audio/units/malzahar/spawn_2_2.wav",
+    "event": "Play_sfx_Malzahar_MalzaharVoidling_buffactivate",
+    "event_id": 1582461006,
+    "source_trigger": "Malzahar_Base_W_cas.soundOnCreateDefault",
+    "project_trigger": "one Malzahar summon:start per batch",
+    "random_layers": [
+      2,
+      2
+    ],
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-\u5f00\u53d1\u7d20\u6750\u5e93/03-\u5236\u4f5c\u4e2d/\u865a\u7a7a\u5148\u77e5/audio/malzahar/txtp/Play_sfx_Malzahar_MalzaharVoidling_buffactivate {r}.txtp",
+    "gain_db": 0,
+    "normalization": false,
+    "sha256": "3f75881ce4544aa038ddcf4c41c09f8f67ad50b82a7e3d6777affacbe6801b89"
+  },
+  {
+    "file": "res://assets/audio/units/malzahar/spawn_2_3.wav",
+    "event": "Play_sfx_Malzahar_MalzaharVoidling_buffactivate",
+    "event_id": 1582461006,
+    "source_trigger": "Malzahar_Base_W_cas.soundOnCreateDefault",
+    "project_trigger": "one Malzahar summon:start per batch",
+    "random_layers": [
+      2,
+      3
+    ],
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-\u5f00\u53d1\u7d20\u6750\u5e93/03-\u5236\u4f5c\u4e2d/\u865a\u7a7a\u5148\u77e5/audio/malzahar/txtp/Play_sfx_Malzahar_MalzaharVoidling_buffactivate {r}.txtp",
+    "gain_db": 0,
+    "normalization": false,
+    "sha256": "54c542ba5701bd346de726deeabe4adeb32022b1385bb869f47e55f7a0b8da4f"
+  },
+  {
+    "file": "res://assets/audio/units/malzahar/spawn_3_1.wav",
+    "event": "Play_sfx_Malzahar_MalzaharVoidling_buffactivate",
+    "event_id": 1582461006,
+    "source_trigger": "Malzahar_Base_W_cas.soundOnCreateDefault",
+    "project_trigger": "one Malzahar summon:start per batch",
+    "random_layers": [
+      3,
+      1
+    ],
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-\u5f00\u53d1\u7d20\u6750\u5e93/03-\u5236\u4f5c\u4e2d/\u865a\u7a7a\u5148\u77e5/audio/malzahar/txtp/Play_sfx_Malzahar_MalzaharVoidling_buffactivate {r}.txtp",
+    "gain_db": 0,
+    "normalization": false,
+    "sha256": "6978eaceea8c79ca21e67cc98bb7e2deaa2c822756c0d03f2778e22ba3c88715"
+  },
+  {
+    "file": "res://assets/audio/units/malzahar/spawn_3_2.wav",
+    "event": "Play_sfx_Malzahar_MalzaharVoidling_buffactivate",
+    "event_id": 1582461006,
+    "source_trigger": "Malzahar_Base_W_cas.soundOnCreateDefault",
+    "project_trigger": "one Malzahar summon:start per batch",
+    "random_layers": [
+      3,
+      2
+    ],
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-\u5f00\u53d1\u7d20\u6750\u5e93/03-\u5236\u4f5c\u4e2d/\u865a\u7a7a\u5148\u77e5/audio/malzahar/txtp/Play_sfx_Malzahar_MalzaharVoidling_buffactivate {r}.txtp",
+    "gain_db": 0,
+    "normalization": false,
+    "sha256": "e9bad3a6529d0de7a3d853504d90fa238f4e0bca3d76f067bec222099290dee5"
+  },
+  {
+    "file": "res://assets/audio/units/malzahar/spawn_3_3.wav",
+    "event": "Play_sfx_Malzahar_MalzaharVoidling_buffactivate",
+    "event_id": 1582461006,
+    "source_trigger": "Malzahar_Base_W_cas.soundOnCreateDefault",
+    "project_trigger": "one Malzahar summon:start per batch",
+    "random_layers": [
+      3,
+      3
+    ],
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-\u5f00\u53d1\u7d20\u6750\u5e93/03-\u5236\u4f5c\u4e2d/\u865a\u7a7a\u5148\u77e5/audio/malzahar/txtp/Play_sfx_Malzahar_MalzaharVoidling_buffactivate {r}.txtp",
+    "gain_db": 0,
+    "normalization": false,
+    "sha256": "da392e3f9130c777fbd93ffd0fb7c96a1446c9bfe116d216f632b6e97d482811"
+  }
+]

@@ -1,0 +1,58 @@
+{
+  "binary": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空先知/vfx-source/data/characters/malzahar/malzahar_multi_skins_skin0_skins_skin1_skins_skin2_skins_skin3.bin",
+  "assets": {
+    "assets/characters/malzahar/skins/base/particles/malzahar_base_w_portal_softrays_4x1.tex": {
+      "source_sha256": "344b6d2728faa2530c36447ecde307ab6de26b8f8e939ca374ad47ca32bedf32",
+      "output": "malzahar_base_w_portal_softrays_4x1.png"
+    },
+    "assets/characters/malzahar/skins/base/particles/malzahar_base_w_portal_swirl.scb": {
+      "source_sha256": "9af7acf8415513d803e9408084d6c1149f7c4a474e530de791efb39f485a6887",
+      "output": "malzahar_base_w_portal_swirl.mesh.json"
+    },
+    "assets/characters/malzahar/skins/base/particles/malzahar_base_w_portal_swirl.tex": {
+      "source_sha256": "6c26229717be0d8fe3437a6ac8ae1a2f362bf23a1c2e57d5b29b1bca5ee3495e",
+      "output": "malzahar_base_w_portal_swirl.png"
+    },
+    "assets/characters/malzahar/skins/base/particles/malzahar_base_w_voidgate_glowsoft.tex": {
+      "source_sha256": "bfe1ccfd6f0d3ac6d12c77246ab6f21148becc196a9ac79e4697014695652518",
+      "output": "malzahar_base_w_voidgate_glowsoft.png"
+    },
+    "assets/characters/malzahar/skins/base/particles/3161glow.tex": {
+      "source_sha256": "6ff507c306873cc98aeb82f8c70f3fa9b36c242f2591e8fb28b2802eaab182f8",
+      "output": "3161glow.png"
+    },
+    "assets/characters/malzahar/skins/base/particles/malzahar_base_q_groundextrusion_2.scb": {
+      "source_sha256": "373b28f3ed361bee8abfd3efd9513791b16b95ee1292b7df8734db60ee5cf5db",
+      "output": "malzahar_base_q_groundextrusion_2.mesh.json"
+    },
+    "assets/characters/malzahar/skins/base/particles/common_smokedisc-strong32.tex": {
+      "source_sha256": "72e71a1a7b347290ee0351ff431aec71e242895684e8e272869666f0a9fb938c",
+      "output": "common_smokedisc-strong32.png"
+    },
+    "assets/characters/malzahar/skins/base/particles/malzahar_base_q_groundextrusion_mask.tex": {
+      "source_sha256": "55b8c63765a7c91e8f7c4aa254a8dabe1b266c5c22f59d7c99ac6863a1cb0cdc",
+      "output": "malzahar_base_q_groundextrusion_mask.png"
+    },
+    "assets/characters/malzahar/skins/base/particles/malzahar_base_q_groundextrusion_progression.tex": {
+      "source_sha256": "7297fa9a3d40e27f3701b19975c6dd1d36bde596fe0057b946e56cd6baf5450f",
+      "output": "malzahar_base_q_groundextrusion_progression.png"
+    },
+    "assets/characters/malzahar/skins/base/particles/malzahar_base_q_voidball_side.scb": {
+      "source_sha256": "b94347de9493d185dc374301137c2b42c7f33e86a31a0301ccdda449a0cc2480",
+      "output": "malzahar_base_q_voidball_side.mesh.json"
+    },
+    "assets/characters/malzahar/skins/base/particles/malzahar_base_z_voidtentacles_01.tex": {
+      "source_sha256": "501510f700668083a2996669d51deab158bbec801ff3165c3931adf049102245",
+      "output": "malzahar_base_z_voidtentacles_01.png"
+    },
+    "assets/characters/malzahar/skins/base/particles/malzahar_base_z_gradient_1.tex": {
+      "source_sha256": "9b122e39a02e1371669384bc9b2ab6fb1c7306a98af9a58820e699bd23c04a10",
+      "output": "malzahar_base_z_gradient_1.png"
+    }
+  },
+  "lifecycle": {
+    "stop_at": 1.5,
+    "keep_particle_linger": true,
+    "reason": "Close 0.25 seconds after third birth: opening-relative births 0.25, 0.75, 1.25; close 1.5"
+  }
+}
