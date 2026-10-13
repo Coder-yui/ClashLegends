@@ -33,6 +33,7 @@
 | `action:impact / wave_hit` | 前方区域落地 / 冲击波成功命中新目标 |
 | `action:zone_sustain/zone_end` | 已生成的固定区域，独立于施法者 |
 | `continuous_attack:start/release/sustain/end` | 持续攻击状态，独立层 |
+| `summon:start` | 脚下逐只召唤的开批事件，每批一次；虚空先知W不随每只子单位重播 |
 | `pre_deploy:start / deploy:start / spawn:start` | 预部署 / 有部署窗口的生成 / 零部署出生 |
 | `deploy:hit / deploy:voice / death / death:voice` | 部署真实命中、部署语音、死亡音效与独立死亡语音各一次 |
 | `replacement:start / revival:sustain/end` | 死亡替身、孵化过程、真实成功复生 |

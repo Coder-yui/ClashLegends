@@ -68,3 +68,7 @@ Unit读取rage_crit_multiplier，仅支持两点资源的离散近战单位；�
 [爆破酒桶](../units/explosive_cask.md)复用在途法术调度，抵达后批量伤害与从爆心径向击退；强化仅增伤。建筑不位移，护盾不阻止击退；通过CombatResolver命中回执与位移顺序统一提交。客户端沿用可靠飞行/抵达事件与位置快照，不新增网络载荷。
 
 Unit 在致死入口固定 DeathOutcome，击杀资源/形态刷新、处决重置与参与转化读取真正死亡结果；实体死亡表现信号保持原职责。替身、孵化、亡语狂暴终结不发击杀收益，赛恩本体死亡发放后继续亡语流程。
+
+## 可打断引导
+
+ChanneledAttackState持有下一击准备和引导目标，Unit转发控制取消，ActiveSkillEffectSystem持有独立伤害区。新增Unit.silence/taunt供权威施加：沉默限制新技能，嘲讽约束普通目标；二者打断引导，现役卡尚无施加者。
