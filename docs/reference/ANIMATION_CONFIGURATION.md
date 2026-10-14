@@ -22,7 +22,9 @@
 
 动作支持 `animation`、`durations` 数组；`clip_ranges` 指定各段原片起止秒数，长度须对应。`visual_action_durations` 可按动作名提供时长。连续素材确认无缝后才将 `sequence_blend` 设为零。
 
-`attack_clip_ranges / attack_hit_clip_ranges` 与攻击段逐项对应；空数组用整段。`death_clip_end` 是死亡源片裁剪终点，须为正数且不超过原长，再由 `death_duration` 缩放。
+`attack_clip_ranges / attack_hit_clip_ranges` 与攻击段逐项对应；空数组用整段。`death_clip_end` 是死亡源片裁剪终点，须为正数且不超过原长，再由 `death_duration` 限制最长播放时长；只加速超长片段，较短片段保持原速。
+
+普通新接入单位死亡动作默认显式配置 `death_duration: 0.8` 作为上限（长片压缩，短片原速，不拉长）；特殊死亡流程需要其他时长时，在单位动画页说明原因。该值是接入约定，不是播放器自动默认值；省略配置会保留原片时长。核对源片长度、可选裁剪终点和实际播放速率，并在实际渲染中检查双方的结束姿态。
 
 ## 混合与路线
 

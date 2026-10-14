@@ -24,6 +24,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_health_bar_team_anchor()
 	_check_shared_render_interpolation()
 	_check_garen_death_animation()
+	_check_death_duration_cap()
 	_check_masteryi_art_integration()
 	_check_ashe_art_integration()
 	_check_sett_art_integration()
@@ -675,6 +676,45 @@ func _check_garen_death_animation() -> void:
 	_expect(attached and death_signal_count[0] == 1 and death_view_found, "盖伦死亡时立即退出战斗并由独立 3D 代理播放 Death")
 	if is_instance_valid(unit):
 		unit.free()
+
+func _check_death_duration_cap() -> void:
+	# 用真实播放器推进短/等长/超长源片和裁剪段，保证上限不会拉长短动作。
+	for timing in [Vector2(0.4, 0.4), Vector2(0.8, 0.8), Vector2(1.6, 1.6), Vector2(1.6, 0.4)]:
+		var source_length: float = timing.x
+		var section_end: float = timing.y
+		var stats: Dictionary = CardDB.get_card("garen").duplicate(true)
+		stats.deploy_time = 0.0
+		stats.visual_animations.death_duration = 0.8
+		stats.visual_animations.death_clip_end = section_end
+		var unit := Unit.new()
+		unit.setup(0, stats, stats.name)
+		_main.add_child(unit)
+		_main._battle_presentation.attach_unit(unit, stats)
+		for child in _main._battle_presentation._world_root.get_children():
+			if not child is UnitModel3D or child._source != unit:
+				continue
+			var view := child as UnitModel3D
+			var player := view._animation_player
+			var clip := Animation.new()
+			clip.length = source_length
+			var library := AnimationLibrary.new()
+			library.add_animation("Death", clip)
+			player.add_animation_library("death_cap_test", library)
+			view._animation_names.death = "death_cap_test/Death"
+			unit.take_damage(unit.max_hp + 1.0)
+			var duration := minf(section_end, 0.8)
+			var finished := [false]
+			var on_finished := func(_clip): finished[0] = true
+			player.animation_finished.connect(on_finished)
+			player.advance(duration - 0.01)
+			_expect(not finished[0], "死亡片段 %.1f 秒在实际结束前仍播放" % source_length)
+			player.advance(0.02)
+			_expect(finished[0], "死亡片段 %.1f 秒在 %.1f 秒结束，短片不拉长" % [source_length, duration])
+			player.animation_finished.disconnect(on_finished)
+			player.remove_animation_library("death_cap_test")
+			if is_instance_valid(view): view.free()
+			break
+		if is_instance_valid(unit): unit.free()
 
 func _check_masteryi_art_integration() -> void:
 	var stats: Dictionary = CardDB.get_card("masteryi").duplicate(true)

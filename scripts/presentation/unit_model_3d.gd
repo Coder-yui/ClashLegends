@@ -1584,12 +1584,10 @@ func _on_source_died() -> void:
 	if animation != null:
 		animation.loop_mode = Animation.LOOP_NONE
 		if death_duration > 0.0 and animation.length > 0.0:
-			death_playback_speed = death_end / death_duration
+			death_playback_speed = maxf(1.0, death_end / death_duration)
 	# 包装场景可选择同步淡出粒子/雾气等纯表现节点；动画仍不参与死亡判定。
 	if _model_root != null and _model_root.has_method("begin_visual_death"):
-		var visual_duration := death_duration
-		if visual_duration <= 0.0 and animation != null:
-			visual_duration = death_end
+		var visual_duration := death_end / death_playback_speed
 		_model_root.call("begin_visual_death", maxf(visual_duration, 0.05))
 	# 死亡不再受生前冰冻状态影响；按卡牌配置时长播完动作后清理纯视觉代理。
 	_animation_player.speed_scale = 1.0
@@ -1648,7 +1646,7 @@ func _start_death_followup() -> bool:
 	if animation != null:
 		animation.loop_mode = Animation.LOOP_NONE
 		if target_duration > 0.0 and animation.length > 0.0:
-			playback_speed = animation.length / target_duration
+			playback_speed = maxf(1.0, animation.length / target_duration)
 	_set_model_visual_clip(followup_name)
 	_play_clip(followup_name, &"model_swap", playback_speed)
 	return true
