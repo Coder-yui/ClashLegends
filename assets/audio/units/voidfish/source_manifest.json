@@ -34,19 +34,36 @@
       "txtp_sha256": "dea1b459e18440437656a96fb2833b938110d0a2ea6ec5b9b5030025e5de65d8"
     },
     {
-      "event": "deploy",
+      "event": "spawn:start",
       "target": "deploy_1.wav",
       "sha256": "8f81885ec59313829bb49f72bf6d14d8bc0263108c2ac632a4c43e69d1e334a4",
-      "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+      "processing": "2026-10-14: original birth event, both independent 4-way random layers expanded into 16 pairs; retain -24/-20 dB node gains and 0.5s second-layer delay. wwiser v20260909 -gv=0dB; no post gain or normalization.",
       "duration": 1.1714166666666668,
       "original_gain_manifest": "assets/audio/original_gain_manifest.json",
       "tool_master_gain_db": 0.0,
       "post_gain_db": 0.0,
       "runtime_gain_db": 0.0,
-      "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/f10d00965b0d106dc9d57919b9ae1eafc06c2cf785bb7a73a12343d76457a8b9.txtp",
-      "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/f10d00965b0d106dc9d57919b9ae1eafc06c2cf785bb7a73a12343d76457a8b9.wav",
+      "source_txtp": "ClashLegends-开发素材库/04-中间产物/虚空鱼音频补齐/2026-10-14/clean/deploy_1.txtp",
+      "source_preview": "ClashLegends-开发素材库/04-中间产物/虚空鱼音频补齐/2026-10-14/clean/deploy_1.wav",
       "source_sha256": "676ab652c2a5cd52c8090c7d728d18d1fd7906f9c6880bb8ba08df34345f0325",
-      "txtp_sha256": "53a56aceb151595dabb82294a99c0b11483cc3b5e34cb5d4c162871d7d4c1b66"
+      "txtp_sha256": "1a83bb193bd7a71656ee8fbf31f7ab1cd5e671dac27286ceede7b1af0a8fb4f1",
+      "float_peak": 0.12377111613750458,
+      "original_event": "Play_sfx_Belveth_BelvethRMinionConverter_buffactivate_birth",
+      "event_id": 1661000856,
+      "random_selections": [
+        1,
+        1
+      ],
+      "media_ids": [
+        138639592,
+        625417511
+      ],
+      "layer_delay_seconds": 0.5,
+      "normalization": false,
+      "decoder": "vgmstream-cli r2117 -i -W 4; FFmpeg 48kHz mono float; round to PCM16",
+      "source_bank": "ClashLegends-开发素材库/05-已完成/卑尔维斯/源件/卑尔维斯/audio/belveth/assets/sounds/wwise2016/sfx/characters/belveth/skins/base/belveth_base_sfx_audio.bnk",
+      "source_bank_sha256": "d68cda2796216f383aedc52de5aa66564b6efd5cd32aa3c718b137b75e678b33",
+      "verified_by_listening": false
     },
     {
       "event": "death",
@@ -77,6 +94,486 @@
       "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/0c1dbdf2f8d095bca6deffc8656bf1f6521447c5f1545804f46fa82c1c207ef3.wav",
       "source_sha256": "648bcd21e572c388d6728ea9df708e85c0902d133d619b6bd904991a9e779a79",
       "txtp_sha256": "9c0bed8cb038d6f1ff68d97141add2bf9c7a58c4957eacd7c9a73eadc0680dbc"
+    },
+    {
+      "target": "deploy_2.wav",
+      "sha256": "bafe554311ec0403e6e523e287e70f0d2ccfcff0386f86e120ac965e9bc56e1d",
+      "duration": 1.2034375,
+      "float_peak": 0.11359767615795135,
+      "source_txtp": "ClashLegends-开发素材库/04-中间产物/虚空鱼音频补齐/2026-10-14/clean/deploy_2.txtp",
+      "txtp_sha256": "dec0356dd954ee6eab3dc335e27e9fb44ddfb23caeb79faab69c42d2c7ec476c",
+      "source_preview": "ClashLegends-开发素材库/04-中间产物/虚空鱼音频补齐/2026-10-14/clean/deploy_2.wav",
+      "source_sha256": "7d512112d477845cae1d63a738000a30cec2dcd27061fcefa0d8ecce87f0c2f3",
+      "event": "spawn:start",
+      "original_event": "Play_sfx_Belveth_BelvethRMinionConverter_buffactivate_birth",
+      "event_id": 1661000856,
+      "random_selections": [
+        1,
+        2
+      ],
+      "media_ids": [
+        138639592,
+        712295086
+      ],
+      "layer_delay_seconds": 0.5,
+      "tool_master_gain_db": 0.0,
+      "post_gain_db": 0.0,
+      "runtime_gain_db": 0.0,
+      "normalization": false,
+      "decoder": "vgmstream-cli r2117 -i -W 4; FFmpeg 48kHz mono float; round to PCM16",
+      "processing": "2026-10-14: original birth event, both independent 4-way random layers expanded into 16 pairs; retain -24/-20 dB node gains and 0.5s second-layer delay. wwiser v20260909 -gv=0dB; no post gain or normalization.",
+      "source_bank": "ClashLegends-开发素材库/05-已完成/卑尔维斯/源件/卑尔维斯/audio/belveth/assets/sounds/wwise2016/sfx/characters/belveth/skins/base/belveth_base_sfx_audio.bnk",
+      "source_bank_sha256": "d68cda2796216f383aedc52de5aa66564b6efd5cd32aa3c718b137b75e678b33",
+      "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+      "verified_by_listening": false
+    },
+    {
+      "target": "deploy_3.wav",
+      "sha256": "707405c77f4e652674ffe65575d9874e25e0f620c14f31b355939d3b7b595984",
+      "duration": 1.1414791666666666,
+      "float_peak": 0.11490872502326965,
+      "source_txtp": "ClashLegends-开发素材库/04-中间产物/虚空鱼音频补齐/2026-10-14/clean/deploy_3.txtp",
+      "txtp_sha256": "87e8e85f176005dfae4258bb2eae9a9f1c3aae78ca5854457602d9730d926b87",
+      "source_preview": "ClashLegends-开发素材库/04-中间产物/虚空鱼音频补齐/2026-10-14/clean/deploy_3.wav",
+      "source_sha256": "0c43d30ae53da674ead118fdd64be5ab5d304cb3c0cb6e202ffc52505632204b",
+      "event": "spawn:start",
+      "original_event": "Play_sfx_Belveth_BelvethRMinionConverter_buffactivate_birth",
+      "event_id": 1661000856,
+      "random_selections": [
+        1,
+        3
+      ],
+      "media_ids": [
+        138639592,
+        553477669
+      ],
+      "layer_delay_seconds": 0.5,
+      "tool_master_gain_db": 0.0,
+      "post_gain_db": 0.0,
+      "runtime_gain_db": 0.0,
+      "normalization": false,
+      "decoder": "vgmstream-cli r2117 -i -W 4; FFmpeg 48kHz mono float; round to PCM16",
+      "processing": "2026-10-14: original birth event, both independent 4-way random layers expanded into 16 pairs; retain -24/-20 dB node gains and 0.5s second-layer delay. wwiser v20260909 -gv=0dB; no post gain or normalization.",
+      "source_bank": "ClashLegends-开发素材库/05-已完成/卑尔维斯/源件/卑尔维斯/audio/belveth/assets/sounds/wwise2016/sfx/characters/belveth/skins/base/belveth_base_sfx_audio.bnk",
+      "source_bank_sha256": "d68cda2796216f383aedc52de5aa66564b6efd5cd32aa3c718b137b75e678b33",
+      "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+      "verified_by_listening": false
+    },
+    {
+      "target": "deploy_4.wav",
+      "sha256": "ef856b19cec05b559c6e091ffbb76e923c6a4facd452a372c2f412ce7db74c8b",
+      "duration": 1.3580208333333332,
+      "float_peak": 0.12033597379922867,
+      "source_txtp": "ClashLegends-开发素材库/04-中间产物/虚空鱼音频补齐/2026-10-14/clean/deploy_4.txtp",
+      "txtp_sha256": "95d29d57e01cc415334098f1713b9d45de0249811ff23b4688dd22ef74ab4947",
+      "source_preview": "ClashLegends-开发素材库/04-中间产物/虚空鱼音频补齐/2026-10-14/clean/deploy_4.wav",
+      "source_sha256": "ea7b2399f8dfd40b77bb575b37fc2daf492005d9848a1be3174bd17ffd3fb311",
+      "event": "spawn:start",
+      "original_event": "Play_sfx_Belveth_BelvethRMinionConverter_buffactivate_birth",
+      "event_id": 1661000856,
+      "random_selections": [
+        1,
+        4
+      ],
+      "media_ids": [
+        138639592,
+        205732612
+      ],
+      "layer_delay_seconds": 0.5,
+      "tool_master_gain_db": 0.0,
+      "post_gain_db": 0.0,
+      "runtime_gain_db": 0.0,
+      "normalization": false,
+      "decoder": "vgmstream-cli r2117 -i -W 4; FFmpeg 48kHz mono float; round to PCM16",
+      "processing": "2026-10-14: original birth event, both independent 4-way random layers expanded into 16 pairs; retain -24/-20 dB node gains and 0.5s second-layer delay. wwiser v20260909 -gv=0dB; no post gain or normalization.",
+      "source_bank": "ClashLegends-开发素材库/05-已完成/卑尔维斯/源件/卑尔维斯/audio/belveth/assets/sounds/wwise2016/sfx/characters/belveth/skins/base/belveth_base_sfx_audio.bnk",
+      "source_bank_sha256": "d68cda2796216f383aedc52de5aa66564b6efd5cd32aa3c718b137b75e678b33",
+      "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+      "verified_by_listening": false
+    },
+    {
+      "target": "deploy_5.wav",
+      "sha256": "74cb99a5d0dbd7ea45c9cc41bdaddf0a6f015503c6a92daa84f8b065c1894f73",
+      "duration": 1.1714166666666668,
+      "float_peak": 0.13552239537239075,
+      "source_txtp": "ClashLegends-开发素材库/04-中间产物/虚空鱼音频补齐/2026-10-14/clean/deploy_5.txtp",
+      "txtp_sha256": "c359e963a0e94add8d9927698bda5284de5f2cc7b39aca8fa502ad9279c9ca06",
+      "source_preview": "ClashLegends-开发素材库/04-中间产物/虚空鱼音频补齐/2026-10-14/clean/deploy_5.wav",
+      "source_sha256": "e4b87589988a1d451706fcbb5383def7242b0f47c5ac41dd29d16d7fcea62719",
+      "event": "spawn:start",
+      "original_event": "Play_sfx_Belveth_BelvethRMinionConverter_buffactivate_birth",
+      "event_id": 1661000856,
+      "random_selections": [
+        2,
+        1
+      ],
+      "media_ids": [
+        726928637,
+        625417511
+      ],
+      "layer_delay_seconds": 0.5,
+      "tool_master_gain_db": 0.0,
+      "post_gain_db": 0.0,
+      "runtime_gain_db": 0.0,
+      "normalization": false,
+      "decoder": "vgmstream-cli r2117 -i -W 4; FFmpeg 48kHz mono float; round to PCM16",
+      "processing": "2026-10-14: original birth event, both independent 4-way random layers expanded into 16 pairs; retain -24/-20 dB node gains and 0.5s second-layer delay. wwiser v20260909 -gv=0dB; no post gain or normalization.",
+      "source_bank": "ClashLegends-开发素材库/05-已完成/卑尔维斯/源件/卑尔维斯/audio/belveth/assets/sounds/wwise2016/sfx/characters/belveth/skins/base/belveth_base_sfx_audio.bnk",
+      "source_bank_sha256": "d68cda2796216f383aedc52de5aa66564b6efd5cd32aa3c718b137b75e678b33",
+      "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+      "verified_by_listening": false
+    },
+    {
+      "target": "deploy_6.wav",
+      "sha256": "c4644cbfbc509873404746b029dbfd63124ec492ce009683dc69075a10ac4d74",
+      "duration": 1.2034375,
+      "float_peak": 0.12889641523361206,
+      "source_txtp": "ClashLegends-开发素材库/04-中间产物/虚空鱼音频补齐/2026-10-14/clean/deploy_6.txtp",
+      "txtp_sha256": "ff8bc186e89745e1edd596b6276ceca9f7eaa2152871d7ce7972ca8271f133e5",
+      "source_preview": "ClashLegends-开发素材库/04-中间产物/虚空鱼音频补齐/2026-10-14/clean/deploy_6.wav",
+      "source_sha256": "46e1895ef400959dee0e52d08a53311aa1134c42b0993c5664ee5e5fdab8b28c",
+      "event": "spawn:start",
+      "original_event": "Play_sfx_Belveth_BelvethRMinionConverter_buffactivate_birth",
+      "event_id": 1661000856,
+      "random_selections": [
+        2,
+        2
+      ],
+      "media_ids": [
+        726928637,
+        712295086
+      ],
+      "layer_delay_seconds": 0.5,
+      "tool_master_gain_db": 0.0,
+      "post_gain_db": 0.0,
+      "runtime_gain_db": 0.0,
+      "normalization": false,
+      "decoder": "vgmstream-cli r2117 -i -W 4; FFmpeg 48kHz mono float; round to PCM16",
+      "processing": "2026-10-14: original birth event, both independent 4-way random layers expanded into 16 pairs; retain -24/-20 dB node gains and 0.5s second-layer delay. wwiser v20260909 -gv=0dB; no post gain or normalization.",
+      "source_bank": "ClashLegends-开发素材库/05-已完成/卑尔维斯/源件/卑尔维斯/audio/belveth/assets/sounds/wwise2016/sfx/characters/belveth/skins/base/belveth_base_sfx_audio.bnk",
+      "source_bank_sha256": "d68cda2796216f383aedc52de5aa66564b6efd5cd32aa3c718b137b75e678b33",
+      "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+      "verified_by_listening": false
+    },
+    {
+      "target": "deploy_7.wav",
+      "sha256": "8be7857e281227bf2877284c25b4e53b4fbcf50a1ced4f851acfcb357be57b61",
+      "duration": 1.1414791666666666,
+      "float_peak": 0.13422700762748718,
+      "source_txtp": "ClashLegends-开发素材库/04-中间产物/虚空鱼音频补齐/2026-10-14/clean/deploy_7.txtp",
+      "txtp_sha256": "c89f3b228c00e403fa73ca0f19c32bf8eb2f6f231df8104b3e033fe826aac030",
+      "source_preview": "ClashLegends-开发素材库/04-中间产物/虚空鱼音频补齐/2026-10-14/clean/deploy_7.wav",
+      "source_sha256": "0773fe70b25de11338d9735ced67ab7705a22bb0e3bb1340ef1784a9ddcddf9b",
+      "event": "spawn:start",
+      "original_event": "Play_sfx_Belveth_BelvethRMinionConverter_buffactivate_birth",
+      "event_id": 1661000856,
+      "random_selections": [
+        2,
+        3
+      ],
+      "media_ids": [
+        726928637,
+        553477669
+      ],
+      "layer_delay_seconds": 0.5,
+      "tool_master_gain_db": 0.0,
+      "post_gain_db": 0.0,
+      "runtime_gain_db": 0.0,
+      "normalization": false,
+      "decoder": "vgmstream-cli r2117 -i -W 4; FFmpeg 48kHz mono float; round to PCM16",
+      "processing": "2026-10-14: original birth event, both independent 4-way random layers expanded into 16 pairs; retain -24/-20 dB node gains and 0.5s second-layer delay. wwiser v20260909 -gv=0dB; no post gain or normalization.",
+      "source_bank": "ClashLegends-开发素材库/05-已完成/卑尔维斯/源件/卑尔维斯/audio/belveth/assets/sounds/wwise2016/sfx/characters/belveth/skins/base/belveth_base_sfx_audio.bnk",
+      "source_bank_sha256": "d68cda2796216f383aedc52de5aa66564b6efd5cd32aa3c718b137b75e678b33",
+      "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+      "verified_by_listening": false
+    },
+    {
+      "target": "deploy_8.wav",
+      "sha256": "1ee9bdcf3ba383337e0b679230971c6216947a50d4c78eadb4155c38cf6f83a0",
+      "duration": 1.3580208333333332,
+      "float_peak": 0.1340019404888153,
+      "source_txtp": "ClashLegends-开发素材库/04-中间产物/虚空鱼音频补齐/2026-10-14/clean/deploy_8.txtp",
+      "txtp_sha256": "7e6d3030fe23f4226bcf7daefb2f6476a20e0cf19d4897a4f10fe6090008901c",
+      "source_preview": "ClashLegends-开发素材库/04-中间产物/虚空鱼音频补齐/2026-10-14/clean/deploy_8.wav",
+      "source_sha256": "f1215bce0078b0ee2dc6d8391767127b9c94207884ddf96d432f7e3e27969db8",
+      "event": "spawn:start",
+      "original_event": "Play_sfx_Belveth_BelvethRMinionConverter_buffactivate_birth",
+      "event_id": 1661000856,
+      "random_selections": [
+        2,
+        4
+      ],
+      "media_ids": [
+        726928637,
+        205732612
+      ],
+      "layer_delay_seconds": 0.5,
+      "tool_master_gain_db": 0.0,
+      "post_gain_db": 0.0,
+      "runtime_gain_db": 0.0,
+      "normalization": false,
+      "decoder": "vgmstream-cli r2117 -i -W 4; FFmpeg 48kHz mono float; round to PCM16",
+      "processing": "2026-10-14: original birth event, both independent 4-way random layers expanded into 16 pairs; retain -24/-20 dB node gains and 0.5s second-layer delay. wwiser v20260909 -gv=0dB; no post gain or normalization.",
+      "source_bank": "ClashLegends-开发素材库/05-已完成/卑尔维斯/源件/卑尔维斯/audio/belveth/assets/sounds/wwise2016/sfx/characters/belveth/skins/base/belveth_base_sfx_audio.bnk",
+      "source_bank_sha256": "d68cda2796216f383aedc52de5aa66564b6efd5cd32aa3c718b137b75e678b33",
+      "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+      "verified_by_listening": false
+    },
+    {
+      "target": "deploy_9.wav",
+      "sha256": "4502e8261115515f3836bbac1fbe9f123a6f7744b72af644f82b3f533391f330",
+      "duration": 1.1714166666666668,
+      "float_peak": 0.12734490633010864,
+      "source_txtp": "ClashLegends-开发素材库/04-中间产物/虚空鱼音频补齐/2026-10-14/clean/deploy_9.txtp",
+      "txtp_sha256": "adb9529e23ef28867e7197c7c50c8b254ae20c99667f8d90bae52aabdf484f05",
+      "source_preview": "ClashLegends-开发素材库/04-中间产物/虚空鱼音频补齐/2026-10-14/clean/deploy_9.wav",
+      "source_sha256": "c43ee67a400f389a5bf9ae5c17230b89ae2aa0ec3693fa0253c7c23392855bcf",
+      "event": "spawn:start",
+      "original_event": "Play_sfx_Belveth_BelvethRMinionConverter_buffactivate_birth",
+      "event_id": 1661000856,
+      "random_selections": [
+        3,
+        1
+      ],
+      "media_ids": [
+        295861803,
+        625417511
+      ],
+      "layer_delay_seconds": 0.5,
+      "tool_master_gain_db": 0.0,
+      "post_gain_db": 0.0,
+      "runtime_gain_db": 0.0,
+      "normalization": false,
+      "decoder": "vgmstream-cli r2117 -i -W 4; FFmpeg 48kHz mono float; round to PCM16",
+      "processing": "2026-10-14: original birth event, both independent 4-way random layers expanded into 16 pairs; retain -24/-20 dB node gains and 0.5s second-layer delay. wwiser v20260909 -gv=0dB; no post gain or normalization.",
+      "source_bank": "ClashLegends-开发素材库/05-已完成/卑尔维斯/源件/卑尔维斯/audio/belveth/assets/sounds/wwise2016/sfx/characters/belveth/skins/base/belveth_base_sfx_audio.bnk",
+      "source_bank_sha256": "d68cda2796216f383aedc52de5aa66564b6efd5cd32aa3c718b137b75e678b33",
+      "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+      "verified_by_listening": false
+    },
+    {
+      "target": "deploy_10.wav",
+      "sha256": "2dabadd114efd601c957f26b096d074cdfd26b5fad85fcd852ab867275e94402",
+      "duration": 1.2034375,
+      "float_peak": 0.1175464540719986,
+      "source_txtp": "ClashLegends-开发素材库/04-中间产物/虚空鱼音频补齐/2026-10-14/clean/deploy_10.txtp",
+      "txtp_sha256": "6a2e35f6bf081ccf761185b806bc8bf4a12d1b8e28b32648b721a3da20730993",
+      "source_preview": "ClashLegends-开发素材库/04-中间产物/虚空鱼音频补齐/2026-10-14/clean/deploy_10.wav",
+      "source_sha256": "16e01392fd182941f1c74bf2cafaf8d8ba02979719efbbb369068c98dba98ffd",
+      "event": "spawn:start",
+      "original_event": "Play_sfx_Belveth_BelvethRMinionConverter_buffactivate_birth",
+      "event_id": 1661000856,
+      "random_selections": [
+        3,
+        2
+      ],
+      "media_ids": [
+        295861803,
+        712295086
+      ],
+      "layer_delay_seconds": 0.5,
+      "tool_master_gain_db": 0.0,
+      "post_gain_db": 0.0,
+      "runtime_gain_db": 0.0,
+      "normalization": false,
+      "decoder": "vgmstream-cli r2117 -i -W 4; FFmpeg 48kHz mono float; round to PCM16",
+      "processing": "2026-10-14: original birth event, both independent 4-way random layers expanded into 16 pairs; retain -24/-20 dB node gains and 0.5s second-layer delay. wwiser v20260909 -gv=0dB; no post gain or normalization.",
+      "source_bank": "ClashLegends-开发素材库/05-已完成/卑尔维斯/源件/卑尔维斯/audio/belveth/assets/sounds/wwise2016/sfx/characters/belveth/skins/base/belveth_base_sfx_audio.bnk",
+      "source_bank_sha256": "d68cda2796216f383aedc52de5aa66564b6efd5cd32aa3c718b137b75e678b33",
+      "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+      "verified_by_listening": false
+    },
+    {
+      "target": "deploy_11.wav",
+      "sha256": "7135e14bc6f6e237b7f9ffbd1007f6223e2360d48c2bca8444a0d6416dd04840",
+      "duration": 1.1414791666666666,
+      "float_peak": 0.12328410148620605,
+      "source_txtp": "ClashLegends-开发素材库/04-中间产物/虚空鱼音频补齐/2026-10-14/clean/deploy_11.txtp",
+      "txtp_sha256": "e96cc0c523ab1c9e0d00e37a372fffa1abacdb9b2a8c77c4f65ff679f9af8112",
+      "source_preview": "ClashLegends-开发素材库/04-中间产物/虚空鱼音频补齐/2026-10-14/clean/deploy_11.wav",
+      "source_sha256": "ee3ab81655c49e277805f1f27d178d81912447b2e98b679f753519cb4747b0b3",
+      "event": "spawn:start",
+      "original_event": "Play_sfx_Belveth_BelvethRMinionConverter_buffactivate_birth",
+      "event_id": 1661000856,
+      "random_selections": [
+        3,
+        3
+      ],
+      "media_ids": [
+        295861803,
+        553477669
+      ],
+      "layer_delay_seconds": 0.5,
+      "tool_master_gain_db": 0.0,
+      "post_gain_db": 0.0,
+      "runtime_gain_db": 0.0,
+      "normalization": false,
+      "decoder": "vgmstream-cli r2117 -i -W 4; FFmpeg 48kHz mono float; round to PCM16",
+      "processing": "2026-10-14: original birth event, both independent 4-way random layers expanded into 16 pairs; retain -24/-20 dB node gains and 0.5s second-layer delay. wwiser v20260909 -gv=0dB; no post gain or normalization.",
+      "source_bank": "ClashLegends-开发素材库/05-已完成/卑尔维斯/源件/卑尔维斯/audio/belveth/assets/sounds/wwise2016/sfx/characters/belveth/skins/base/belveth_base_sfx_audio.bnk",
+      "source_bank_sha256": "d68cda2796216f383aedc52de5aa66564b6efd5cd32aa3c718b137b75e678b33",
+      "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+      "verified_by_listening": false
+    },
+    {
+      "target": "deploy_12.wav",
+      "sha256": "21c3c743a8bc1436f94d7e2608fb32d71af1a1640e89c4ad556d31a47fee5644",
+      "duration": 1.3580208333333332,
+      "float_peak": 0.1293773055076599,
+      "source_txtp": "ClashLegends-开发素材库/04-中间产物/虚空鱼音频补齐/2026-10-14/clean/deploy_12.txtp",
+      "txtp_sha256": "4b8ca00abcafe0162dc2de1cee57a4947235031f01745593650c7e5e4c38898d",
+      "source_preview": "ClashLegends-开发素材库/04-中间产物/虚空鱼音频补齐/2026-10-14/clean/deploy_12.wav",
+      "source_sha256": "1e67db1ce744c595ab6aed83c02f4cb26034673225b24469602ed94829fcf02e",
+      "event": "spawn:start",
+      "original_event": "Play_sfx_Belveth_BelvethRMinionConverter_buffactivate_birth",
+      "event_id": 1661000856,
+      "random_selections": [
+        3,
+        4
+      ],
+      "media_ids": [
+        295861803,
+        205732612
+      ],
+      "layer_delay_seconds": 0.5,
+      "tool_master_gain_db": 0.0,
+      "post_gain_db": 0.0,
+      "runtime_gain_db": 0.0,
+      "normalization": false,
+      "decoder": "vgmstream-cli r2117 -i -W 4; FFmpeg 48kHz mono float; round to PCM16",
+      "processing": "2026-10-14: original birth event, both independent 4-way random layers expanded into 16 pairs; retain -24/-20 dB node gains and 0.5s second-layer delay. wwiser v20260909 -gv=0dB; no post gain or normalization.",
+      "source_bank": "ClashLegends-开发素材库/05-已完成/卑尔维斯/源件/卑尔维斯/audio/belveth/assets/sounds/wwise2016/sfx/characters/belveth/skins/base/belveth_base_sfx_audio.bnk",
+      "source_bank_sha256": "d68cda2796216f383aedc52de5aa66564b6efd5cd32aa3c718b137b75e678b33",
+      "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+      "verified_by_listening": false
+    },
+    {
+      "target": "deploy_13.wav",
+      "sha256": "737bf7a884a06e7ecaabf2439edc544e0d39e16e7fb83fce72c92c9704348daa",
+      "duration": 1.1714166666666668,
+      "float_peak": 0.12401803582906723,
+      "source_txtp": "ClashLegends-开发素材库/04-中间产物/虚空鱼音频补齐/2026-10-14/clean/deploy_13.txtp",
+      "txtp_sha256": "68735d3ee485c6115df55a97bc1f84fe0d2da89110cf6e9822ede8eedd89b442",
+      "source_preview": "ClashLegends-开发素材库/04-中间产物/虚空鱼音频补齐/2026-10-14/clean/deploy_13.wav",
+      "source_sha256": "df44dc094da1e89d87574cb76c0705e4ce2ecc4fe5ccdbd8d923447339e79904",
+      "event": "spawn:start",
+      "original_event": "Play_sfx_Belveth_BelvethRMinionConverter_buffactivate_birth",
+      "event_id": 1661000856,
+      "random_selections": [
+        4,
+        1
+      ],
+      "media_ids": [
+        348687355,
+        625417511
+      ],
+      "layer_delay_seconds": 0.5,
+      "tool_master_gain_db": 0.0,
+      "post_gain_db": 0.0,
+      "runtime_gain_db": 0.0,
+      "normalization": false,
+      "decoder": "vgmstream-cli r2117 -i -W 4; FFmpeg 48kHz mono float; round to PCM16",
+      "processing": "2026-10-14: original birth event, both independent 4-way random layers expanded into 16 pairs; retain -24/-20 dB node gains and 0.5s second-layer delay. wwiser v20260909 -gv=0dB; no post gain or normalization.",
+      "source_bank": "ClashLegends-开发素材库/05-已完成/卑尔维斯/源件/卑尔维斯/audio/belveth/assets/sounds/wwise2016/sfx/characters/belveth/skins/base/belveth_base_sfx_audio.bnk",
+      "source_bank_sha256": "d68cda2796216f383aedc52de5aa66564b6efd5cd32aa3c718b137b75e678b33",
+      "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+      "verified_by_listening": false
+    },
+    {
+      "target": "deploy_14.wav",
+      "sha256": "675b4c369094fbe0d304b7d5b7862264ef4bf0f9bc27332dd1216d26265b4c9f",
+      "duration": 1.2034375,
+      "float_peak": 0.11195853352546692,
+      "source_txtp": "ClashLegends-开发素材库/04-中间产物/虚空鱼音频补齐/2026-10-14/clean/deploy_14.txtp",
+      "txtp_sha256": "8c95cf3e9c3b168278c335b6fe19b8782109e06b6cad29d3be5b7f3c7717721d",
+      "source_preview": "ClashLegends-开发素材库/04-中间产物/虚空鱼音频补齐/2026-10-14/clean/deploy_14.wav",
+      "source_sha256": "56f3841c90bedd8db50f51ab5613dca5cbeb6cbd1ecc9459f1b6eaa42645ac89",
+      "event": "spawn:start",
+      "original_event": "Play_sfx_Belveth_BelvethRMinionConverter_buffactivate_birth",
+      "event_id": 1661000856,
+      "random_selections": [
+        4,
+        2
+      ],
+      "media_ids": [
+        348687355,
+        712295086
+      ],
+      "layer_delay_seconds": 0.5,
+      "tool_master_gain_db": 0.0,
+      "post_gain_db": 0.0,
+      "runtime_gain_db": 0.0,
+      "normalization": false,
+      "decoder": "vgmstream-cli r2117 -i -W 4; FFmpeg 48kHz mono float; round to PCM16",
+      "processing": "2026-10-14: original birth event, both independent 4-way random layers expanded into 16 pairs; retain -24/-20 dB node gains and 0.5s second-layer delay. wwiser v20260909 -gv=0dB; no post gain or normalization.",
+      "source_bank": "ClashLegends-开发素材库/05-已完成/卑尔维斯/源件/卑尔维斯/audio/belveth/assets/sounds/wwise2016/sfx/characters/belveth/skins/base/belveth_base_sfx_audio.bnk",
+      "source_bank_sha256": "d68cda2796216f383aedc52de5aa66564b6efd5cd32aa3c718b137b75e678b33",
+      "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+      "verified_by_listening": false
+    },
+    {
+      "target": "deploy_15.wav",
+      "sha256": "97b9558a360c066d6ddbcaab03e70ec7d99ca59317f33928cdb5490b7537cee1",
+      "duration": 1.1414791666666666,
+      "float_peak": 0.11657401919364929,
+      "source_txtp": "ClashLegends-开发素材库/04-中间产物/虚空鱼音频补齐/2026-10-14/clean/deploy_15.txtp",
+      "txtp_sha256": "6643ef9431bc2465121ede62cbb3e0eb90cf212dacc17d415cfeaf85476f6f9e",
+      "source_preview": "ClashLegends-开发素材库/04-中间产物/虚空鱼音频补齐/2026-10-14/clean/deploy_15.wav",
+      "source_sha256": "385dfc68f9eb9236b4142d159e905becfbf654a1861d11988c9db2eb0d746243",
+      "event": "spawn:start",
+      "original_event": "Play_sfx_Belveth_BelvethRMinionConverter_buffactivate_birth",
+      "event_id": 1661000856,
+      "random_selections": [
+        4,
+        3
+      ],
+      "media_ids": [
+        348687355,
+        553477669
+      ],
+      "layer_delay_seconds": 0.5,
+      "tool_master_gain_db": 0.0,
+      "post_gain_db": 0.0,
+      "runtime_gain_db": 0.0,
+      "normalization": false,
+      "decoder": "vgmstream-cli r2117 -i -W 4; FFmpeg 48kHz mono float; round to PCM16",
+      "processing": "2026-10-14: original birth event, both independent 4-way random layers expanded into 16 pairs; retain -24/-20 dB node gains and 0.5s second-layer delay. wwiser v20260909 -gv=0dB; no post gain or normalization.",
+      "source_bank": "ClashLegends-开发素材库/05-已完成/卑尔维斯/源件/卑尔维斯/audio/belveth/assets/sounds/wwise2016/sfx/characters/belveth/skins/base/belveth_base_sfx_audio.bnk",
+      "source_bank_sha256": "d68cda2796216f383aedc52de5aa66564b6efd5cd32aa3c718b137b75e678b33",
+      "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+      "verified_by_listening": false
+    },
+    {
+      "target": "deploy_16.wav",
+      "sha256": "4c0a774cce0e780b32b6e9a27983d20563dcfa5070d8638e72f74a374a2591e5",
+      "duration": 1.3580208333333332,
+      "float_peak": 0.12676496803760529,
+      "source_txtp": "ClashLegends-开发素材库/04-中间产物/虚空鱼音频补齐/2026-10-14/clean/deploy_16.txtp",
+      "txtp_sha256": "8419fcb425e793a9bfb8816f118af7b3f5980e9ef43dcb0b639905ca3fa46f95",
+      "source_preview": "ClashLegends-开发素材库/04-中间产物/虚空鱼音频补齐/2026-10-14/clean/deploy_16.wav",
+      "source_sha256": "87706e73fd417b82e3847b1e84282fd90f2b255cde44584b21d0cff3e94ab2c5",
+      "event": "spawn:start",
+      "original_event": "Play_sfx_Belveth_BelvethRMinionConverter_buffactivate_birth",
+      "event_id": 1661000856,
+      "random_selections": [
+        4,
+        4
+      ],
+      "media_ids": [
+        348687355,
+        205732612
+      ],
+      "layer_delay_seconds": 0.5,
+      "tool_master_gain_db": 0.0,
+      "post_gain_db": 0.0,
+      "runtime_gain_db": 0.0,
+      "normalization": false,
+      "decoder": "vgmstream-cli r2117 -i -W 4; FFmpeg 48kHz mono float; round to PCM16",
+      "processing": "2026-10-14: original birth event, both independent 4-way random layers expanded into 16 pairs; retain -24/-20 dB node gains and 0.5s second-layer delay. wwiser v20260909 -gv=0dB; no post gain or normalization.",
+      "source_bank": "ClashLegends-开发素材库/05-已完成/卑尔维斯/源件/卑尔维斯/audio/belveth/assets/sounds/wwise2016/sfx/characters/belveth/skins/base/belveth_base_sfx_audio.bnk",
+      "source_bank_sha256": "d68cda2796216f383aedc52de5aa66564b6efd5cd32aa3c718b137b75e678b33",
+      "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+      "verified_by_listening": false
     }
   ]
 }
