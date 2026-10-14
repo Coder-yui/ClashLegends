@@ -66205,6 +66205,156 @@
       },
       "verified_by_listening": false,
       "duration": 1.5
+    },
+    {
+      "file": "assets/audio/units/pix/play_sfx_lulu_lulufaerieoverride_blink_r1.wav",
+      "sha256": "201b7c0a5eab5a1539ed7eaa466b6587ef43760aedc78f95783962e1ff6a1e11",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/04-中间产物/皮克斯部署音频/2026-10-14/txtp/Play_sfx_Lulu_LuluFaerieOverride_blink {r1}.txtp",
+          "txtp_sha256": "6ea0f31909b84406ca9baff9be8a4d069f587bfee65c8ce05f8a4a0b34a51121",
+          "event_ids": [
+            "3161361626"
+          ],
+          "media_ids": [
+            "583188216"
+          ],
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/lulu/assets/sounds/wwise2016/sfx/characters/lulu/skins/base/lulu_base_sfx_audio.bnk",
+              "sha256": "1d0ab678d47bffbc6507060da29ede629893da74cb79e178132b0f08ac2ead2b"
+            },
+            {
+              "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/lulu/assets/sounds/wwise2016/sfx/characters/lulu/skins/base/lulu_base_sfx_events.bnk",
+              "sha256": "f89340b06100330d397c0341d4e7aa7502b357196697cf5f0227920b42f263d8"
+            },
+            {
+              "file": "/Users/czh/Tools/lol-asset-tools/verification/garen/assets/sounds/wwise2016/sfx/shared/init.bnk",
+              "sha256": "a70c8f2ffd5e7b798916f1bf8a52f963d990a72e0eb04ddf2c6db87b35bcaa9b"
+            }
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "ClashLegends-开发素材库/04-中间产物/皮克斯部署音频/2026-10-14/float/deploy_1.wav",
+          "sha256": "073f8c9a10c201e31d99ce59939973084c8d189e5e7dc40c22c6c9dadf2e7894"
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "filter_complex": null,
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false
+      },
+      "duration": 0.5523809523809524,
+      "float_peak": 0.10297257453203201,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/pix/play_sfx_lulu_lulufaerieoverride_blink_r2.wav",
+      "sha256": "71dbffa39b9def877650ed4252e1a8967bb85f2973944c0f92edadd78d9d2f1e",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/04-中间产物/皮克斯部署音频/2026-10-14/txtp/Play_sfx_Lulu_LuluFaerieOverride_blink {r2}.txtp",
+          "txtp_sha256": "83b2f59b0fa0b43685d2a9f72124131ec717a1f20f1f8f09e99888401473f464",
+          "event_ids": [
+            "3161361626"
+          ],
+          "media_ids": [
+            "341855628"
+          ],
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/lulu/assets/sounds/wwise2016/sfx/characters/lulu/skins/base/lulu_base_sfx_audio.bnk",
+              "sha256": "1d0ab678d47bffbc6507060da29ede629893da74cb79e178132b0f08ac2ead2b"
+            },
+            {
+              "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/lulu/assets/sounds/wwise2016/sfx/characters/lulu/skins/base/lulu_base_sfx_events.bnk",
+              "sha256": "f89340b06100330d397c0341d4e7aa7502b357196697cf5f0227920b42f263d8"
+            },
+            {
+              "file": "/Users/czh/Tools/lol-asset-tools/verification/garen/assets/sounds/wwise2016/sfx/shared/init.bnk",
+              "sha256": "a70c8f2ffd5e7b798916f1bf8a52f963d990a72e0eb04ddf2c6db87b35bcaa9b"
+            }
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "ClashLegends-开发素材库/04-中间产物/皮克斯部署音频/2026-10-14/float/deploy_2.wav",
+          "sha256": "223d903f8678da1742886307bfa24f0c3527fa731463eab45497a466c567e917"
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "filter_complex": null,
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false
+      },
+      "duration": 0.5650793650793651,
+      "float_peak": 0.10494235903024673,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/pix/play_sfx_lulu_lulufaerieoverride_blink_r3.wav",
+      "sha256": "754e0fb0ca6fd3d7aaf79937972a4be8586b937214d6fa69590c5fddf67cd645",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/04-中间产物/皮克斯部署音频/2026-10-14/txtp/Play_sfx_Lulu_LuluFaerieOverride_blink {r3}.txtp",
+          "txtp_sha256": "c870d57a17eb4f9098fcf68222ef33ee1cc3c7d7c06ccf9d3816817a29682e92",
+          "event_ids": [
+            "3161361626"
+          ],
+          "media_ids": [
+            "733132890"
+          ],
+          "dependencies": [
+            {
+              "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/lulu/assets/sounds/wwise2016/sfx/characters/lulu/skins/base/lulu_base_sfx_audio.bnk",
+              "sha256": "1d0ab678d47bffbc6507060da29ede629893da74cb79e178132b0f08ac2ead2b"
+            },
+            {
+              "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/lulu/assets/sounds/wwise2016/sfx/characters/lulu/skins/base/lulu_base_sfx_events.bnk",
+              "sha256": "f89340b06100330d397c0341d4e7aa7502b357196697cf5f0227920b42f263d8"
+            },
+            {
+              "file": "/Users/czh/Tools/lol-asset-tools/verification/garen/assets/sounds/wwise2016/sfx/shared/init.bnk",
+              "sha256": "a70c8f2ffd5e7b798916f1bf8a52f963d990a72e0eb04ddf2c6db87b35bcaa9b"
+            }
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "ClashLegends-开发素材库/04-中间产物/皮克斯部署音频/2026-10-14/float/deploy_3.wav",
+          "sha256": "4559429a6aa6015ad9995b6e8d688289cb69807f657e04099ec8dfe27fadc61e"
+        }
+      ],
+      "processing": {
+        "filters": [],
+        "filter_complex": null,
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false
+      },
+      "duration": 0.4793650793650794,
+      "float_peak": 0.10097461938858032,
+      "verified_by_listening": false
     }
   ]
 }

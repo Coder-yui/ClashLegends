@@ -44,6 +44,16 @@ static func definition() -> Dictionary:
 		# BEGIN IMPORTED AUDIO pix
 		"audio": {
 			"events": {
+				# 首次生成共用入口，同时覆盖五只部署与璐璐的零部署时间召唤。
+				"spawn:start": {
+					"pool": [
+						"res://assets/audio/units/pix/play_sfx_lulu_lulufaerieoverride_blink_r1.wav",
+						"res://assets/audio/units/pix/play_sfx_lulu_lulufaerieoverride_blink_r2.wav",
+						"res://assets/audio/units/pix/play_sfx_lulu_lulufaerieoverride_blink_r3.wav"
+					],
+					"volume_db": 0.0,
+					"bus": "Combat"
+				},
 				"attack_launch": {
 					"pool": [
 						"res://assets/audio/units/pix/play_sfx_lulu_lulupassivemissilecontroller_onmissilecast_r1.wav",

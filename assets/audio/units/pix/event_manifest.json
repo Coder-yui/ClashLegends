@@ -130,5 +130,116 @@
     "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/beadb666ca298ee80bf254b30d9df6739880bf9f065d0e0f7ff7e5ee595b9273.wav",
     "source_sha256": "559f2397990cda9e7541d79a512ddd6fd30e81cae7c4af4cde5f3924ecab1672",
     "txtp_sha256": "263a99592aef2c02221334468af405453e715bca6fd8def6c54e0ea2f315c6d5"
+  },
+  {
+    "file": "play_sfx_lulu_lulufaerieoverride_blink_r1.wav",
+    "event": "Play_sfx_Lulu_LuluFaerieOverride_blink",
+    "event_id": 3161361626,
+    "media_ids": [
+      583188216
+    ],
+    "duration": 0.5523809523809524,
+    "processing": "2026-10-14: fresh wwiser -gv=0dB event generation and vgmstream float decode; PCM16 at original sample rate/channels; no normalization, trimming or extra gain.",
+    "sha256": "201b7c0a5eab5a1539ed7eaa466b6587ef43760aedc78f95783962e1ff6a1e11",
+    "group": "皮克斯",
+    "cue": "部署 / 生成",
+    "project_cue": "spawn:start",
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/皮克斯部署音频/2026-10-14/txtp/Play_sfx_Lulu_LuluFaerieOverride_blink {r1}.txtp",
+    "txtp_sha256": "6ea0f31909b84406ca9baff9be8a4d069f587bfee65c8ce05f8a4a0b34a51121",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/皮克斯部署音频/2026-10-14/float/deploy_1.wav",
+    "source_sha256": "073f8c9a10c201e31d99ce59939973084c8d189e5e7dc40c22c6c9dadf2e7894",
+    "source_dependencies": [
+      {
+        "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/lulu/assets/sounds/wwise2016/sfx/characters/lulu/skins/base/lulu_base_sfx_audio.bnk",
+        "sha256": "1d0ab678d47bffbc6507060da29ede629893da74cb79e178132b0f08ac2ead2b"
+      },
+      {
+        "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/lulu/assets/sounds/wwise2016/sfx/characters/lulu/skins/base/lulu_base_sfx_events.bnk",
+        "sha256": "f89340b06100330d397c0341d4e7aa7502b357196697cf5f0227920b42f263d8"
+      },
+      {
+        "file": "/Users/czh/Tools/lol-asset-tools/verification/garen/assets/sounds/wwise2016/sfx/shared/init.bnk",
+        "sha256": "a70c8f2ffd5e7b798916f1bf8a52f963d990a72e0eb04ddf2c6db87b35bcaa9b"
+      }
+    ],
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "selection_note": "原版外层随机容器的前三个变体三选一，第1个；各实例首次生成时等概率随机且避免连续重复。"
+  },
+  {
+    "file": "play_sfx_lulu_lulufaerieoverride_blink_r2.wav",
+    "event": "Play_sfx_Lulu_LuluFaerieOverride_blink",
+    "event_id": 3161361626,
+    "media_ids": [
+      341855628
+    ],
+    "duration": 0.5650793650793651,
+    "processing": "2026-10-14: fresh wwiser -gv=0dB event generation and vgmstream float decode; PCM16 at original sample rate/channels; no normalization, trimming or extra gain.",
+    "sha256": "71dbffa39b9def877650ed4252e1a8967bb85f2973944c0f92edadd78d9d2f1e",
+    "group": "皮克斯",
+    "cue": "部署 / 生成",
+    "project_cue": "spawn:start",
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/皮克斯部署音频/2026-10-14/txtp/Play_sfx_Lulu_LuluFaerieOverride_blink {r2}.txtp",
+    "txtp_sha256": "83b2f59b0fa0b43685d2a9f72124131ec717a1f20f1f8f09e99888401473f464",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/皮克斯部署音频/2026-10-14/float/deploy_2.wav",
+    "source_sha256": "223d903f8678da1742886307bfa24f0c3527fa731463eab45497a466c567e917",
+    "source_dependencies": [
+      {
+        "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/lulu/assets/sounds/wwise2016/sfx/characters/lulu/skins/base/lulu_base_sfx_audio.bnk",
+        "sha256": "1d0ab678d47bffbc6507060da29ede629893da74cb79e178132b0f08ac2ead2b"
+      },
+      {
+        "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/lulu/assets/sounds/wwise2016/sfx/characters/lulu/skins/base/lulu_base_sfx_events.bnk",
+        "sha256": "f89340b06100330d397c0341d4e7aa7502b357196697cf5f0227920b42f263d8"
+      },
+      {
+        "file": "/Users/czh/Tools/lol-asset-tools/verification/garen/assets/sounds/wwise2016/sfx/shared/init.bnk",
+        "sha256": "a70c8f2ffd5e7b798916f1bf8a52f963d990a72e0eb04ddf2c6db87b35bcaa9b"
+      }
+    ],
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "selection_note": "原版外层随机容器的前三个变体三选一，第2个；各实例首次生成时等概率随机且避免连续重复。"
+  },
+  {
+    "file": "play_sfx_lulu_lulufaerieoverride_blink_r3.wav",
+    "event": "Play_sfx_Lulu_LuluFaerieOverride_blink",
+    "event_id": 3161361626,
+    "media_ids": [
+      733132890
+    ],
+    "duration": 0.4793650793650794,
+    "processing": "2026-10-14: fresh wwiser -gv=0dB event generation and vgmstream float decode; PCM16 at original sample rate/channels; no normalization, trimming or extra gain.",
+    "sha256": "754e0fb0ca6fd3d7aaf79937972a4be8586b937214d6fa69590c5fddf67cd645",
+    "group": "皮克斯",
+    "cue": "部署 / 生成",
+    "project_cue": "spawn:start",
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/皮克斯部署音频/2026-10-14/txtp/Play_sfx_Lulu_LuluFaerieOverride_blink {r3}.txtp",
+    "txtp_sha256": "c870d57a17eb4f9098fcf68222ef33ee1cc3c7d7c06ccf9d3816817a29682e92",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/皮克斯部署音频/2026-10-14/float/deploy_3.wav",
+    "source_sha256": "4559429a6aa6015ad9995b6e8d688289cb69807f657e04099ec8dfe27fadc61e",
+    "source_dependencies": [
+      {
+        "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/lulu/assets/sounds/wwise2016/sfx/characters/lulu/skins/base/lulu_base_sfx_audio.bnk",
+        "sha256": "1d0ab678d47bffbc6507060da29ede629893da74cb79e178132b0f08ac2ead2b"
+      },
+      {
+        "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/lulu/assets/sounds/wwise2016/sfx/characters/lulu/skins/base/lulu_base_sfx_events.bnk",
+        "sha256": "f89340b06100330d397c0341d4e7aa7502b357196697cf5f0227920b42f263d8"
+      },
+      {
+        "file": "/Users/czh/Tools/lol-asset-tools/verification/garen/assets/sounds/wwise2016/sfx/shared/init.bnk",
+        "sha256": "a70c8f2ffd5e7b798916f1bf8a52f963d990a72e0eb04ddf2c6db87b35bcaa9b"
+      }
+    ],
+    "tool_master_gain_db": 0.0,
+    "post_gain_db": 0.0,
+    "runtime_gain_db": 0.0,
+    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+    "selection_note": "原版外层随机容器的前三个变体三选一，第3个；各实例首次生成时等概率随机且避免连续重复。"
   }
 ]

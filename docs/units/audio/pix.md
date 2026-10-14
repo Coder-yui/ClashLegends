@@ -13,6 +13,7 @@
 
 | 发生时机 | 已接变体 | 音量调整 | 试听示例 |
 | --- | --- | --- | --- |
+| 部署 / 生成 | 3，等概率随机，避免连续重复 | 0 dB | [试听 1](../../../assets/audio/units/pix/play_sfx_lulu_lulufaerieoverride_blink_r1.wav) · [试听 2](../../../assets/audio/units/pix/play_sfx_lulu_lulufaerieoverride_blink_r2.wav) · [试听 3](../../../assets/audio/units/pix/play_sfx_lulu_lulufaerieoverride_blink_r3.wav) |
 | 普通攻击命中 | 3 | 0 dB | [试听 1](../../../assets/audio/units/pix/play_sfx_lulu_lulupassivemissile_hit_r1.wav) · [试听 2](../../../assets/audio/units/pix/play_sfx_lulu_lulupassivemissile_hit_r2.wav) |
 | 普攻发射 | 3 | 0 dB | [试听 1](../../../assets/audio/units/pix/play_sfx_lulu_lulupassivemissilecontroller_onmissilecast_r1.wav) · [试听 2](../../../assets/audio/units/pix/play_sfx_lulu_lulupassivemissilecontroller_onmissilecast_r2.wav) |
 
@@ -20,9 +21,13 @@
 
 ## 使用边界与待补项
 
-按当前决定，部署、死亡、吸血技能激活和吸血过程暂时不用接入，未来可能重新处理。普攻已有光弹创建声，没有另叠一声出手音。
+部署采用原版 `LuluFaerieOverride_blink` 的前三个闪现变体，走首次生成事件 `spawn:start`：五只编队成员各播一次，璐璐召唤的零部署时间皮克斯及工作台单只皮克斯也共用该声音池；同一对象重绑不重播。声音池等概率随机、避免连续重复，Combat 总线额外增益为 0 dB。
 
-露露 Q/W/R 以及皮克斯 / E 相关的 LoL 原始音效候选已放入[临时音频展台](http://127.0.0.1:18765/)试听；它们目前只作候选，不改变皮克斯正式配置。
+2026-10-14 接入时从原始事件重新生成，明确关闭旧试听候选的工具 auto（+19 dB），保留原事件内部增益，不裁剪、不归一化。正式版比旧候选试听版响度低，来源和哈希见同目录素材清单。
+
+死亡、吸血技能激活和吸血过程暂时不用接入。普攻已有光弹创建声，没有另叠一声出手音。
+
+除已选定的三条闪现音效外，露露 Q/W/R 以及皮克斯 / E 相关其他 LoL 原始音效仍只作候选。
 
 ## 怎么听
 
