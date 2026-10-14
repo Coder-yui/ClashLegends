@@ -1,6 +1,7 @@
 extends Node3D
 ## W/R 原始发射器采样；所有时间/端点仅读取权威表现数据。
 const PLAYER = preload("res://assets/effects/malzahar/player.gd")
+const NETHER_GRASP = preload("res://assets/effects/malzahar/nether_grasp/player.gd")
 const PROJECTION = preload("res://scripts/presentation/spell_effect_projection.gd")
 # W native geometry shares one conversion across opening, closing, cast and births.
 # 70 source units occupy 28 screen pixels; source mesh/height proportions stay intact.
@@ -22,40 +23,23 @@ func sync_effects(skills: RefCounted, camera: Camera3D) -> void:
 		present[id] = true
 		var kind := "zone" if String(effect.shape) == "nether_zone" else ("portal_start" if String(effect.shape) == "voidling_portal" else "spawn")
 		if not views.has(id):
-			var player := PLAYER.new()
+			var player = NETHER_GRASP.new() if kind == "zone" else PLAYER.new()
 			add_child(player)
 			player.load_kind(kind)
 			player.position = PROJECTION.ground(camera, effect.pos)
 			var radius: float = effect.length
 			var world_radius := PROJECTION.ground(camera, effect.pos + Vector2(radius, 0)).distance_to(player.position)
 			if kind == "zone":
-				player.projection_basis = PROJECTION.footprint_basis(camera, effect.pos, radius)
-				player.setup_native(world_radius / 400.0)
+				player.basis = PROJECTION.footprint_basis(camera, effect.pos, radius).scaled(Vector3.ONE * world_radius)
 			else:
 				# The portal is a volume, not an authoritative range decal.
 				# Do not stretch its meshes along the camera's ground projection.
 				player.setup_native(_w_scale(camera, effect.pos))
-			if kind == "zone":
-				var outline := MeshInstance3D.new()
-				var ring := TorusMesh.new()
-				ring.inner_radius = 392.0
-				ring.outer_radius = 400.0
-				ring.rings = 64
-				ring.ring_segments = 8
-				outline.mesh = ring
-				var material := StandardMaterial3D.new()
-				material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-				material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-				material.albedo_color = Color(0.55, 0.08, 0.8, 0.55)
-				outline.material_override = material
-				outline.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-				player.add_child(outline)
-				outline.basis = player.projection_basis
 			views[id] = player
-		views[id].opacity = smoothstep(0.0, 0.15, float(effect.timer)) if kind == "zone" else 1.0
-		# Birth arrives 0.25 s after opening. Its source pre-emission phase
-		# has elapsed; resume at that age without imposing a second delay.
-		views[id].seek(float(effect.duration) - float(effect.timer) + (W_BIRTH_RELEASE if kind == "spawn" else 0.0))
+		if kind == "zone":
+			views[id].seek(float(effect.duration) - float(effect.timer), float(effect.timer))
+		else:
+			views[id].seek(float(effect.duration) - float(effect.timer) + (W_BIRTH_RELEASE if kind == "spawn" else 0.0))
 		if kind == "portal_start":
 			var cast_id := id + "_cast"
 			present[cast_id] = true
@@ -86,24 +70,20 @@ func sync_effects(skills: RefCounted, camera: Camera3D) -> void:
 	for actor in get_tree().get_nodes_in_group("combatants"):
 		if not is_instance_valid(actor) or not actor is Unit or actor.card_id != "malzahar" or actor.hp <= 0.0: continue
 		if actor.get_visual_action_name() != &"channel" or actor.get_visual_action_time_left() <= 0.0 or not actor.has_continuous_visual_target(): continue
+		var eye_ref: WeakRef = actor.get_meta("skill_beam_anchor", null)
+		var eye: Node3D = eye_ref.get_ref() as Node3D if eye_ref != null and is_instance_valid(eye_ref.get_ref()) else null
+		if eye == null: continue
 		var id := "beam_" + str(actor.get_instance_id())
 		present[id] = true
 		if not views.has(id):
-			var player := PLAYER.new()
+			var player := NETHER_GRASP.new()
 			add_child(player)
 			player.load_kind("beam")
-			player.setup_native(0.01)
 			views[id] = player
-		var player: Node3D = views[id]
-		var start := _at_height(camera, actor.get_visual_screen_position() + actor.get_meta("projectile_model_offset", Vector2.ZERO), 3.5)
+		var start := eye.global_position
 		var end := _at_height(camera, actor.get_continuous_visual_target_position(), 1.0)
-		player.position = start
-		var forward := (end - start).normalized()
-		var right := forward.cross(Vector3.UP).normalized()
-		player.basis = Basis(right, forward.cross(right).normalized(), forward) * 0.01
-		player.beam_length = start.distance_to(end) / 0.01
-		player._frame = -1
-		player.seek(actor.get_visual_action_duration() - actor.get_visual_action_time_left())
+		views[id].set_endpoints(start, end, camera)
+		views[id].seek(actor.get_visual_action_duration() - actor.get_visual_action_time_left(), actor.get_visual_action_time_left())
 	for id in views.keys():
 		if not present.has(id):
 			views[id].free()

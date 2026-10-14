@@ -26,7 +26,7 @@
 | 流血与血怒 | BleedState、StatusInstances、ActiveSkillRoster | [德莱厄斯](../units/darius.md)；来源独立层数及余量，凝滞跳过伤害且不补发 |
 | 局内成长、穿地形 | MatchCardGrowth、TerrainTraversalState | [凯隐](../units/kayn.md)；队伍成长只改变后续部署，穿地形普攻先找合法出口 |
 | 命中叠层 | StatusInstances、CombatResolver | [天使](../units/kayle.md)；真实命中加层，独立焰浪不重复加层 |
-| 控制延后召唤 | Unit、CommandSchedule独立召唤队列 | [墓碑](../units/tombstone.md)、[璐璐](../units/lulu.md)；受控到期保留一批，璐璐紫光发出后不依赖来源动作 |
+| 控制延后召唤 | Unit、CommandSchedule独立召唤队列 | [墓碑](../units/tombstone.md)、[璐璐](../units/lulu.md)；受控到期保留一批，璐璐紫光发出、虚空先知裂隙开启后不依赖来源生命或动作 |
 | 一次性永久成长 | Unit、ActiveSkillEffectSystem | [永久成长](BUFFS.md#一次性永久成长)；璐璐生命/体型和奥恩永久普攻倍率在凝滞中保留 |
 | 永久牺牲强化 | Unit、ActiveSkillEffectSystem | [牺牲强化](BUFFS.md#永久牺牲强化)；本组存活成员永久强化爆炸、生命、碰撞与移速 |
 | 永久普攻增幅 | TeamAttackBoostSystem | [奥恩](../units/ornn.md)；独立锤子、目标预留、抵达准入；就绪/CD与短锻造动作分离，中断不退款，与公共脱战分开 |

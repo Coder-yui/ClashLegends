@@ -3259,10 +3259,18 @@ func schedule_summon_flight(source: Unit, card_id: String, pos: Vector2, duratio
 	var effect := _skill_presentation.add_summon_flight(source, pos, bool(stats.get("is_air", false)), duration)
 	publish_skill_fx(effect)
 
+func schedule_summon_sequence(team: int, card_id: String, pos: Vector2, count: int, interval: float, deploy_time: float) -> void:
+	if is_net_client() or game_over: return
+	for index in count:
+		_commands.enqueue_summon(team, card_id, pos, 0.25 + index * interval, deploy_time, "void_portal")
+
 func _tick_summon_flights(dt: float) -> void:
 	if is_net_client() or game_over: return
 	for entry in _commands.take_summons(dt):
-		spawn_summoned(int(entry.team), String(entry.card_id), entry.pos, float(entry.deploy_time))
+		var transition := String(entry.get("transition", ""))
+		var summoned := spawn_summoned(int(entry.team), String(entry.card_id), entry.pos, float(entry.deploy_time), transition, -1, entry.pos)
+		if transition == "void_portal" and is_instance_valid(summoned):
+			_skill_presentation.present_fixed_area(entry.pos, 22.0, 22.0, 1.5, int(entry.team), &"voidling_birth")
 
 func project_effect_height(point: Vector2, height: float) -> Vector2:
 	return _battle_presentation.project_height(point, height) if _battle_presentation != null else point - Vector2(0.0, height * 28.0)

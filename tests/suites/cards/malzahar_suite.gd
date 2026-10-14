@@ -3,31 +3,32 @@ func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
 	_test_w_composition()
+	_test_projectile_alignment()
 	var cues: Array = []
 	var source := _spawn("malzahar", 0, Vector2(360, 1000))
 	source.presentation_cue.connect(func(cue): cues.append(cue))
 	source._deploy_timer = 0.05
-	source.sim_tick(0.05)
-	for i in 39: source.sim_tick(0.05)
+	_tick_source(source)
+	for i in 39: _tick_source(source)
 	_expect(_children().is_empty(), "首次2秒前不生成虚灵")
-	source.sim_tick(0.05)
-	_expect(_children().is_empty() and not source.summon_sequences.is_empty(), "2秒先开裂隙，无隐藏或可碰撞虚灵实体")
-	for i in 4: source.sim_tick(0.05)
+	_tick_source(source)
+	_expect(_children().is_empty() and not main._commands.inspect_summons().is_empty(), "2秒先开裂隙，无隐藏或可碰撞虚灵实体")
+	for i in 4: _tick_source(source)
 	_expect(_children().is_empty(), "开门0.2秒不提前生成")
-	source.sim_tick(0.05)
+	_tick_source(source)
 	_expect(_children().size() == 1, "开门0.25秒首只实际生成")
-	var anchor: Vector2 = source.summon_sequences[0].origin
+	var anchor: Vector2 = main._commands.inspect_summons()[0].pos
 	source.global_position += Vector2(80,0)
-	for i in 10: source.sim_tick(0.05)
+	for i in 10: _tick_source(source)
 	_expect(_children().size() == 2, "原版SummonDelay 0.5秒第二只")
-	for i in 10: source.sim_tick(0.05)
+	for i in 10: _tick_source(source)
 	_expect(_children().size() == 3, "开门1.25秒第三只")
 	_expect(main._skill_presentation.frontal_effects.filter(func(e): return e.shape == &"voidling_portal").size() == 1, "三只虚灵共用一个裂隙")
 	_expect(cues.count(&"summon:start") == 1, "一批仅派发一次W音效")
 	_expect(_children().all(func(u): return u.summon_visual_origin == anchor and u.visual_spawn_transition == &"void_portal" and u.is_deployed()), "先知移动后整批仍从固定裂隙出场且不增加部署锁")
-	for i in 139: source.sim_tick(0.05)
+	for i in 139: _tick_source(source)
 	_expect(_children().size() == 3, "8秒前无下一批")
-	source.sim_tick(0.05)
+	_tick_source(source)
 	_expect(_children().size() == 4, "下一批开门0.25秒后生成首只")
 	var target := _spawn("garen", 1, Vector2(360, 900))
 	var skill: Dictionary = CardDB.get_card("malzahar").active_skills[0]
@@ -128,6 +129,13 @@ func run(harness: Object, main: Node2D) -> void:
 	_expect(not CardDB.selectable_ids().has("voidling"), "虚灵不加入正式卡组池")
 
 	_check_w()
+	_check_independent_summons()
+	_check_strike_type()
+	_check_r_layers()
+
+func _tick_source(source: Unit) -> void:
+	_main._tick_summon_flights(0.05)
+	source.sim_tick(0.05)
 
 func _children() -> Array:
 	return _main.get_tree().get_nodes_in_group("combatants").filter(func(u): return is_instance_valid(u) and u is Unit and u.card_id == "voidling")
@@ -165,7 +173,7 @@ func _check_w() -> void:
 	_expect(is_equal_approx(caster.active_skill_cast_timer, 0.5) and _children().size()==1, "W读条0.25秒开门，动作0.5秒时首只生成")
 	caster._spawn_batch()
 	_run_main_ticks(27)
-	_expect(_children().size()==6 and caster.summon_sequences.is_empty(), "主动与被动重叠仍完整产出两批共6只")
+	_expect(_children().size()==6 and _main._commands.inspect_summons().is_empty(), "主动与被动重叠仍完整产出两批共6只")
 	_expect(not caster.is_active_skill_attack_locked(), "W动作结束解除普攻锁")
 	_expect(int(_main._active_skills.entry(90221).uses_remaining)==2, "W首发只消耗一次资格")
 	for use in 2:
@@ -179,7 +187,7 @@ func _check_w() -> void:
 	_main._skill_lifecycle.start(cancelled,skill)
 	cancelled.freeze(1.0)
 	_run_main_ticks(8)
-	_expect(cancelled.summon_sequences.is_empty() and _children().filter(func(u): return u.summon_visual_origin == Vector2(400,1000)).is_empty(), "W释放前被冻结不补出虚灵")
+	_expect(_main._commands.inspect_summons().is_empty() and _children().filter(func(u): return u.summon_visual_origin == Vector2(400,1000)).is_empty(), "W释放前被冻结不补出虚灵")
 	var cards := CardDB.all().duplicate(true)
 	cards.malzahar.active_skills[1].spawn_sequence_interval = 0.0
 	_expect(not CardDB.VALIDATOR.validate_all(cards,false).is_empty(), "W拒绝零逐只间隔")
@@ -192,7 +200,7 @@ func _check_w() -> void:
 	_expect(_children().size()==before+1, "W释放节点只产生首只")
 	dying.take_damage(99999.0)
 	_run_main_ticks(25)
-	_expect(_children().size()==before+1, "先知死亡取消W尚未生成的两只")
+	_expect(_children().size()==before+3, "先知死亡后已开门W仍完整生成三只")
 
 func _test_w_composition() -> void:
 	var presentation = load("res://scripts/presentation/skill_effect_presentation.gd").new(_main)
@@ -228,3 +236,81 @@ func _test_w_composition() -> void:
 	view.sync_effects(presentation, camera)
 	_expect(view.views.is_empty(), "批次到期清理开门关门施法及出生层")
 	view.free()
+
+func _check_independent_summons() -> void:
+	_main._commands.clear()
+	for control_kind in ["stun", "freeze", "stasis"]:
+		var caster := _spawn("malzahar", 0, Vector2(320, 1000))
+		caster._initial_summons_spawned = true
+		caster._spawn_timer = 0.05
+		match control_kind:
+			"stun": caster.stun(1.0)
+			"freeze": caster.freeze(1.0)
+			"stasis": caster.apply_stasis(1.0)
+		caster._tick_periodic_summons(0.05)
+		_expect(_main._commands.inspect_summons().is_empty(), control_kind + "到期等待，不提前开门")
+		caster._tick_active_statuses(1.0)
+		caster._tick_periodic_summons(0.05)
+		_expect(_main._commands.inspect_summons().size() == 3 and is_equal_approx(caster._spawn_timer, 8.0), control_kind + "解除仅补一批，从开门重新计周期")
+		var before := _children().size()
+		caster.free()
+		for i in 25: _main._tick_summon_flights(0.05)
+		_expect(_children().size() == before + 3, control_kind + "开门后释放来源，三只照常出生")
+	var cleared := _spawn("malzahar", 0, Vector2(320, 1000))
+	cleared._spawn_batch()
+	var before := _children().size()
+	_main._commands.clear()
+	_main._tick_summon_flights(2.0)
+	_expect(_children().size() == before, "清场取消独立召唤")
+	cleared.free()
+
+func _check_strike_type() -> void:
+	var caster := _spawn("malzahar", 0, Vector2(320, 1000))
+	caster.apply_blind(3)
+	_expect(not caster._consume_blind_for_strike({"strike_type": "skill"}) and caster.blind_attack_charges == 3, "通用技能出手无需斩杀标记即可免疫致盲")
+	_expect(caster._consume_blind_for_strike({"execute_reset": true}) and caster.blind_attack_charges == 2, "斩杀收益标记不能决定致盲类别")
+	_expect(caster._consume_blind_for_strike({}) and caster.blind_attack_charges == 1, "未标类型默认普通攻击")
+	_expect(caster._consume_blind_for_strike({"strike_type": "basic_attack"}) and caster.blind_attack_charges == 0, "强化普攻仍正常消耗致盲")
+	for value in ["invalid", 2]:
+		var cards := CardDB.all().duplicate(true)
+		cards.malzahar.active_skills[0].strike_type = value
+		_expect(not CardDB.VALIDATOR.validate_all(cards, false).is_empty(), "拒绝非法出手类别 " + str(value))
+	caster.free()
+
+func _check_r_layers() -> void:
+	var presentation = load("res://scripts/presentation/skill_effect_presentation.gd").new(_main)
+	var view = load("res://scripts/presentation/malzahar_effect_3d.gd").new()
+	_main.add_child(view)
+	var camera: Camera3D = _main._battle_presentation._camera
+	for team in 2:
+		presentation.add_fixed_area_effect(Vector2(360, 850 if team == 0 else 430), 90.0, 90.0, 5.0, team, &"nether_zone")
+	view.sync_effects(presentation, camera)
+	for id in ["area_1", "area_2"]:
+		var zone = view.views[id]
+		var center := camera.unproject_position(zone.global_position)
+		for point in [Vector3.RIGHT, Vector3.LEFT, Vector3.FORWARD, Vector3.BACK]:
+			var edge := camera.unproject_position(zone.to_global(point))
+			_expect(absf(center.distance_to(edge) - 90.0) < 0.01, "自制紫色区域四向边界对应权威90像素")
+	presentation.frontal_effects.clear()
+	view.sync_effects(presentation, camera)
+	_expect(not view.views.has("area_1") and not view.views.has("area_2"), "伤害区域结束清除自制圆面")
+	view.free()
+
+func _test_projectile_alignment() -> void:
+	for segment in [1, 2]:
+		var unit := _spawn_test_unit("malzahar", 0, Vector2(300, 950))
+		unit._attacking = true
+		unit._attack_visual_serial = segment
+		unit._attack_visual_pending = false
+		unit.attack_timeline.visual_elapsed = 0.35
+		_main._battle_presentation.attach_unit(unit, CardDB.get_card("malzahar"))
+		var view := _view_for(unit)
+		view.set_process(false)
+		view._sync_visual(false, 0.0)
+		var player := view._animation_player
+		var release_time := (18.0 if segment == 1 else 16.0) / 61.0
+		_expect(not view._attack_hit_pending and absf(player.current_animation_position - release_time) < 0.0001, "先知动作%d晚到创建节点精确定位源发射帧" % segment)
+		_expect(is_zero_approx(view._last_clip_blend_time) and is_equal_approx(player.get_section_start_time(), release_time), "先知动作%d同片段衔接无交叉混合或重播" % segment)
+		_expect(view._projectile_anchor is BoneAttachment3D and view._projectile_anchor.bone_name == "C_BUFFBONE_GLB_CHEST_LOC", "先知普攻使用原版指定胸部挂点")
+		view.free()
+		unit.free()

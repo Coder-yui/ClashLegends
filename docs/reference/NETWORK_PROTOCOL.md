@@ -4,7 +4,7 @@
 
 | 契约 | 当前值 |
 | --- | --- |
-| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->113 |
+| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->114 |
 | 顶层快照项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd SNAPSHOT_PACKET_SIZE -->11 |
 | 单位载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd UNIT_PAYLOAD_SIZE -->63 |
 | 塔载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd TOWER_PAYLOAD_SIZE -->7 |
@@ -175,3 +175,5 @@ NetworkPlayback默认100ms，根据时钟RTT/抖动与事件/快照到达时差�
 协议112：追加 `U_RESTORATION_SHIELD_STATE`（61，Vector2：黄沙庇护剩余秒数、初始总长）。无盾为(0,0)，仅统计仍存在的恢复盾层，不以总护盾值续时；拒绝非有限值、负值、剩余超过总长和半空状态。客户端只恢复表现，不生成护盾或结算回复。
 
 协议113：追加 `U_BLIND`（62，bool），表示权威有效致盲标识。客户端只读绘制，不自主消费次数；非法类型拒绝整份快照。
+
+协议版本114：虚空先知裂隙开启后由CommandSchedule独立生成虚灵，受控到期延后开批；攻击时间线技能显式声明strike_type，技能出手不响应或消费致盲。单位载荷不变，出生与区域继续使用既有可靠事件及快照。

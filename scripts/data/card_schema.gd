@@ -169,6 +169,7 @@ const VISUAL_ANIMATION_FIELDS := [
 	&"visual_action_durations", &"transitions", &"transition_blends", &"clip_blends",
 ]
 const ACTIVE_SKILL_FIELDS := [
+	&"strike_type",
 	&"visual_scale_multiplier",
 	&"resource_dependencies",
 	&"projectile_spawn_offset", &"projectile_colors",

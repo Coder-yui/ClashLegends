@@ -13,7 +13,7 @@ static func definition() -> Dictionary:
 			"bleed_damage_per_second": 15.0, "bleed_duration": 3.0, "bleed_max_stacks": 4,
 			"blood_rage_duration": 4.0, "blood_rage_damage_multiplier": 2.0,
 			"active_skills": [{
-				"name": "诺克萨斯断头台", "kind": "bleeding_execute", "cost": 2, "max_uses": 2, "cooldown": 16.0,
+				"name": "诺克萨斯断头台", "kind": "bleeding_execute", "strike_type": "skill", "cost": 2, "max_uses": 2, "cooldown": 16.0,
 				"damage": 180, "execute_damage_per_stack": 0.25,
 				"description": "下一击劈砍造成180伤害，按命中前每层流血增加25%，再施加1层流血；血怒使伤害翻倍并直接叠满。劈砍不受致盲影响，也不消耗致盲次数。劈砍击杀获得或刷新血怒，并赠送一次免费追斩，不扣次数、不重启付费冷却。免费追斩优先保留，直至使用。",
 			}],

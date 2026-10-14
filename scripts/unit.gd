@@ -289,7 +289,6 @@ var taunt_source: WeakRef
 var channel_attack := ChanneledAttackState.new()
 var spawn_initial_delay_left := 0.0
 var spawn_sequence_interval := 0.0
-var summon_sequences: Array[Dictionary] = []
 var spawn_interval := 0.0
 var spawn_count := 1
 var spawn_distance := 0.0
@@ -571,7 +570,6 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	channel_attack = ChanneledAttackState.new()
 	spawn_initial_delay_left = float(stats.get("spawn_initial_delay", 0.0))
 	spawn_sequence_interval = float(stats.get("spawn_sequence_interval", 0.0))
-	summon_sequences.clear()
 	spawn_interval = stats.get("spawn_interval", 0.0)
 	spawn_count = maxi(int(stats.get("spawn_count", 1)), 1)
 	spawn_distance = float(stats.get("spawn_distance", 0.0))
@@ -1406,7 +1404,6 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prep
 			return
 	if _deploy_timer <= 0.0 and spawn_initial_delay_left > 0.0 and not summons_started:
 		spawn_initial_delay_left = maxf(0.0, spawn_initial_delay_left - dt)
-	_tick_summon_sequence(dt, statuses_prepared)
 	channel_attack.tick(self, dt)
 	if channel_attack.active(): return
 	if not is_building and spawn_interval > 0.0 and not summons_started:
@@ -1795,28 +1792,9 @@ func _spawn_initial_summons() -> void:
 ## 被动与主动共用；每批独立计时，重叠释放不会覆盖尚未出生的虚灵。
 func begin_summon_sequence(id: String, count: int, interval: float, deploy_override: float) -> void:
 	if battle_context == null or hp <= 0.0: return
-	var batch := {"id": id, "left": count, "timer": 0.25, "born_tick": battle_context.simulation_tick(), "interval": interval, "origin": global_position, "deploy": deploy_override}
-	# Confirmed sequence: open at W release, first actor 0.25 s later, then every interval.
-	summon_sequences.append(batch)
+	battle_context.schedule_summon_sequence(team, id, global_position, count, interval, deploy_override)
 	battle_context.present_summon_portal(global_position, team)
 	battle_context.notify_unit_audio_event(self, &"summon:start", global_position)
-	_advance_summon_batch(batch, 0.0)
-
-func _advance_summon_batch(batch: Dictionary, dt: float) -> void:
-	batch.timer -= dt
-	while int(batch.left) > 0 and float(batch.timer) <= 0.000001:
-		var summoned := battle_context.spawn_summoned(team, batch.id, batch.origin, batch.deploy, "void_portal", -1, batch.origin)
-		if is_instance_valid(summoned): battle_context.present_summon_birth(batch.origin, team)
-		batch.left -= 1
-		batch.timer += maxf(float(batch.interval), 0.05)
-
-func _tick_summon_sequence(dt: float, in_authority_step: bool = false) -> void:
-	if battle_context == null: return
-	for batch in summon_sequences:
-		# A skill released earlier in this same authority tick has not aged yet.
-		if in_authority_step and int(batch.born_tick) == battle_context.simulation_tick(): continue
-		_advance_summon_batch(batch, dt)
-	summon_sequences = summon_sequences.filter(func(batch): return int(batch.left) > 0)
 
 func _spawn_batch() -> void:
 	if battle_context == null or spawn_id.is_empty():
@@ -2211,6 +2189,7 @@ func _attack(dt: float) -> void:
 			_cancel_attack_and_chase(dt)
 			return
 		if not channel_attack.prepared.is_empty():
+			if _consume_blind_for_strike(channel_attack.prepared): return
 			channel_attack.begin(self, _target)
 			return
 		# 连招节奏：若配置了 attack_pattern，则按本次命中后的间隔取值；否则固定为 attack_interval。
@@ -2420,13 +2399,16 @@ func on_hit_passive_effects() -> Dictionary:
 		"on_hit_status_source": status_source("on_hit_slow"),
 		"on_hit_context": CombatInteraction.effect_context(self, team, global_position)}
 
+## 选目标与前摇可以复用普攻；致盲只作用于普通/强化普攻的正式出手。
+func _consume_blind_for_strike(effects: Dictionary) -> bool:
+	if String(effects.get("strike_type", "basic_attack")) == "skill" or blind_attack_charges <= 0: return false
+	blind_attack_charges -= 1
+	queue_redraw()
+	return true
+
 func _perform_attack_strike(target: Node2D, amount: float, effects: Dictionary = {}) -> bool:
 	record_combat_activity()
-	# 断头台借用攻击时间线，但属于独立技能出手，不消费或响应致盲。
-	if blind_attack_charges > 0 and not bool(effects.get("execute_reset", false)):
-		blind_attack_charges -= 1
-		queue_redraw()
-		return true
+	if _consume_blind_for_strike(effects): return true
 	# 远程单位在这里进入 BattleContext.launch_attack，弹体与出手 tick 同步；命中由弹体抵达后结算。
 	return _deal_attack_damage_to(target, amount, effects)
 

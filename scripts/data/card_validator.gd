@@ -853,6 +853,11 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 				errors.append("%s.icon_path: 必须指向 assets 内有效的 Texture2D" % label)
 		_require_fields(label, skill, [&"name", &"kind", &"cost", &"max_uses", &"cooldown"], errors)
 		var kind := StringName(skill.get("kind", ""))
+		if skill.has("strike_type"):
+			if kind not in [&"channeled_attack", &"bleeding_execute", &"empowered_attack"] or String(skill.strike_type) not in ["basic_attack", "skill"]:
+				errors.append(label + ".strike_type: 仅攻击时间线技能支持 basic_attack / skill")
+		if kind in [&"channeled_attack", &"bleeding_execute"] and String(skill.get("strike_type", "")) != "skill":
+			errors.append(label + ".strike_type: 目标技能必须声明 skill")
 		if skill.has("damage_reduction") and kind != &"aftershock":
 			errors.append(label + ".damage_reduction: 仅用于aftershock")
 		for option in ["air_only", "dash_spin"]:

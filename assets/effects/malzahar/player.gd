@@ -3,7 +3,6 @@ extends Node3D
 ## The authority supplies age; this node never advances battle state.
 const ROOT := "res://assets/effects/malzahar/"
 static var _cache: Dictionary = {}
-var beam_length := 0.0
 var opacity := 1.0
 var _kind := ""
 var _birth_positions: Dictionary = {}
@@ -31,9 +30,6 @@ func load_kind(kind: String) -> void:
 	_kind = kind
 	if not _cache.has(kind):
 		var data: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(ROOT + kind + "/sampled.json"))
-		if kind == "beam":
-			for e in data.emitters:
-				if not bool(e.billboard): e.ray = true
 		var materials: Array[ShaderMaterial] = []
 		for e in data.emitters:
 			if not layer_enabled(kind, String(e.name)):
@@ -86,22 +82,6 @@ func seek(age: float) -> void:
 				item.material_override.set_shader_parameter("shape_basis", shape_basis_for(e.name))
 				item.material_override.set_shader_parameter("opacity", opacity)
 				var sample: Array = particles[j]
-				if _kind == "zone" and String(e.name) == "Proj_white":
-					sample = sample.duplicate()
-					sample[4] = 400.0
-					sample[5] = 400.0
-					sample[7] = 0.4
-					sample[8] = 0.02
-					sample[9] = 0.7
-					sample[10] = 0.5
-				if _kind == "beam" and bool(e.ray):
-					sample = sample.duplicate()
-					sample[4] = absf(float(sample[4])) * 0.12
-					sample[5] = beam_length
-					sample[6] = 0.0
-				elif _kind == "beam":
-					sample = sample.duplicate()
-					sample[3] += beam_length
 				item.material_override.set_shader_parameter("p", PackedFloat32Array(sample))
 				var camera := get_viewport().get_camera_3d()
 				if camera != null:
@@ -168,7 +148,7 @@ static func _material(e: Dictionary) -> ShaderMaterial:
 
 ## 对外资源契约：定义读取不会创建粒子或加载纹理。
 static func resource_manifest(variant: String) -> Dictionary:
-	if variant not in ["zone", "spawn", "beam", "portal_start", "portal_end", "cast"]: return {}
+	if variant not in ["spawn", "portal_start", "portal_end", "cast"]: return {}
 	return {"json": [ROOT + variant + "/sampled.json"], "sample": {"player": "res://assets/effects/malzahar/player.gd", "kind": variant, "setup": "native"}}
 
 static func resource_shader_path(e: Dictionary) -> String:

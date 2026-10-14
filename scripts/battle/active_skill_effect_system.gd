@@ -168,7 +168,7 @@ func _apply(source: Unit, skill: Dictionary) -> bool:
 			dash_strikes.append(DashStrikeState.new(source, skill))
 		&"bleeding_execute":
 			source.empowered_execute = skill
-			source.prepare_empowered_attack(1.0)
+			source.prepare_empowered_attack(1.0, 1.0, 0, {"strike_type": skill.get("strike_type", "basic_attack")})
 		&"explosive_shield":
 			if source.hp <= 0.0 or source.death_form.used: return false
 			source.add_shield(float(skill.shield), float(skill.shield_duration), false, source.status_source("explosive_shield"), {}, skill)
@@ -219,7 +219,7 @@ func _apply(source: Unit, skill: Dictionary) -> bool:
 				float(skill.get("empowered_damage_multiplier", 1.0)),
 				float(skill.get("empowered_speed_multiplier", 1.0)),
 				int(skill.get("blind_charges", 0)),
-				{"cleave_damage": float(skill.get("cleave_damage", 0.0)), "cleave_radius": float(skill.get("cleave_radius", 0.0)), "cleave_heal_ratio": float(skill.get("heal_ratio", 0.0))}
+				{"strike_type": skill.get("strike_type", "basic_attack"), "cleave_damage": float(skill.get("cleave_damage", 0.0)), "cleave_radius": float(skill.get("cleave_radius", 0.0)), "cleave_heal_ratio": float(skill.get("heal_ratio", 0.0))}
 			)
 		&"attack_lifesteal":
 			for target in _skill_target_units(source, skill):

@@ -200,8 +200,8 @@ func _queue_single_active_skill_impact(source: Unit, skill: Dictionary, impact_d
 	enqueue_impact(source, skill, impact_delay, &"impact", source.active_skill_cast_serial)
 
 ## 独立召唤结果只存值，不绑定来源生命或动作身份；清场才撤销。
-func enqueue_summon(team: int, card_id: String, pos: Vector2, duration: float, deploy_time: float) -> void:
-	_summons.append({"team": team, "card_id": card_id, "pos": pos, "remaining": duration, "deploy_time": deploy_time})
+func enqueue_summon(team: int, card_id: String, pos: Vector2, duration: float, deploy_time: float, transition: String = "") -> void:
+	_summons.append({"team": team, "card_id": card_id, "pos": pos, "remaining": duration, "deploy_time": deploy_time, "transition": transition})
 
 func take_summons(dt: float) -> Array[Dictionary]:
 	var ready: Array[Dictionary] = []
