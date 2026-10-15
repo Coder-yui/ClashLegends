@@ -1940,6 +1940,7 @@ func _update_active_buff_visual(delta: float) -> void:
 	if _active_buff_visual.status_source == "restoration_shield":
 		_active_buff_visual.status_state = _source.restoration_shield_state_visual() if is_instance_valid(_source) else Vector2.ZERO
 		status_active = _active_buff_visual.status_state.x > 0.0
+	_active_buff_visual.shield_active = is_instance_valid(_source) and _source.get_shield_ratio() > 0.0
 	var enabled := not _dying and PresentationConfig.status_indicators_visible(_source) and status_active
 	_active_buff_visual.advance_status(not _dying and status_active, enabled, delta)
 	var shown := _active_buff_visual.visible

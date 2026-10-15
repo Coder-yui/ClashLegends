@@ -1,0 +1,133 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Olaf.wad.client",
+  "source_chunk": "resolved_by_dump_vfx",
+  "resolved_definition_sha256": "c71dbe0254dc186f1aeb8b6add7e40afce1a9fc0e030f0c2eb4638dc249879db",
+  "system": "Characters/Olaf/Skins/Skin0/Particles/Olaf_Base_W_shield",
+  "assets": {
+    "assets/characters/olaf/skins/base/particles/color-hold.tex": {
+      "source_sha256": "bc06557b44402fee1498430bd4008df9598085f44b29fea2f02218473674b2f8",
+      "output": "assets/characters/olaf/skins/base/particles/color-hold.png",
+      "output_sha256": "62ed85b52d6f757f5322176cb24ccfa294cb145ba9f1978bbf6ba479341f45a8"
+    },
+    "assets/characters/olaf/skins/base/particles/olaf_base_colorgrad.tex": {
+      "source_sha256": "f9471e3074f79b64df72ff091cb85f866e40c1699674c4e8be292f23f9970ecc",
+      "output": "assets/characters/olaf/skins/base/particles/olaf_base_colorgrad.png",
+      "output_sha256": "88effbdd2c4174796d8cdb5f3b331da4d7a678ce62d80a09268e208c2fef8250"
+    },
+    "assets/characters/olaf/skins/base/particles/olaf_base_dissolve_cloudy_01.tex": {
+      "source_sha256": "e2fc4e3d8c66f015d89ec85998d3fc0aeba0d77161c3ce24e99591efdfa6914d",
+      "output": "assets/characters/olaf/skins/base/particles/olaf_base_dissolve_cloudy_01.png",
+      "output_sha256": "5c91c3d7573ae0a06e1440d61cb563a66f6e954fe4016ef67c65578aea2d4eb3"
+    },
+    "assets/characters/olaf/skins/base/particles/olaf_base_w_shield_sphere_01.scb": {
+      "source_sha256": "909f3e3c9b916b2de781a3afc20ef112f305222c066ff98c51813308b9f53bf6",
+      "output": "assets/characters/olaf/skins/base/particles/olaf_base_w_shield_sphere_01.mesh.json",
+      "output_sha256": "dd4c3feb5cf400bf5bcc369626172ad2910400eab5fad24164ac381bb364eae4"
+    },
+    "assets/characters/olaf/skins/base/particles/olaf_w_landing_blowback.tex": {
+      "source_sha256": "a741fadbe8f5153a93b8c0112f8d378eb07521b84a339c3316906505e0679152",
+      "output": "assets/characters/olaf/skins/base/particles/olaf_w_landing_blowback.png",
+      "output_sha256": "160a1f87193aa1a61a578c4561dcd3b0ecffae86955afe7a77f03984d40a31bd"
+    },
+    "assets/characters/olaf/skins/base/particles/olaf_base_impacterode.tex": {
+      "source_sha256": "36dd36ab8a32c82107945fb11f9fd4e9300442f4caae8938ad4666f1c03e75df",
+      "output": "assets/characters/olaf/skins/base/particles/olaf_base_impacterode.png",
+      "output_sha256": "18644d29a952d54d4ee2103251005b3231927b97dbda68cbef4cf0308dc7ef57"
+    },
+    "assets/characters/olaf/skins/base/particles/common_alpha_03.tex": {
+      "source_sha256": "eb58b7fb89dd738aec8c0da0e87fbfebae0d1d139556842f19f68e4960e5f962",
+      "output": "assets/characters/olaf/skins/base/particles/common_alpha_03.png",
+      "output_sha256": "314687ac70f92ac57bfbc7f8540937ed4b233e7b549abce9db7296b9473d6d72"
+    },
+    "assets/characters/olaf/skins/base/particles/olaf_base_w_smokeerode.tex": {
+      "source_sha256": "d502c1c112180e1886c304bfb0bb4330bbe4159a688799e756f82e830696f548",
+      "output": "assets/characters/olaf/skins/base/particles/olaf_base_w_smokeerode.png",
+      "output_sha256": "f72989a9299d454d8dc5aff85b24461587b362c1f950a68d841b95ceff3d3827"
+    },
+    "assets/characters/olaf/skins/base/particles/olaf_base_w_shieldaura.tex": {
+      "source_sha256": "2265ecb8bbe9b9a56756c249dbc96f8418379f4bfbab90da9fd271551231c8ab",
+      "output": "assets/characters/olaf/skins/base/particles/olaf_base_w_shieldaura.png",
+      "output_sha256": "1c9bb7573dc4b8d2960449e3673f826946e16ca1eb5a9dd7d1559e45b7a801b4"
+    },
+    "assets/characters/olaf/skins/base/particles/olaf_base_w_bubblegrad_01.tex": {
+      "source_sha256": "7b4e7cdd02db3fae8d8b1c2df71c94436b27806bab8ca71a695ac8dc0684d279",
+      "output": "assets/characters/olaf/skins/base/particles/olaf_base_w_bubblegrad_01.png",
+      "output_sha256": "c20876b1162c870131a84b7ed4e3a041591f90f3bc319c829c099ce95106b48f"
+    },
+    "assets/characters/olaf/skins/base/particles/olaf_base_q_bottom_02.tex": {
+      "source_sha256": "c5d7ee04b7650b8166c1ba3fd00faec4f7a17822ee4a48d5e10ac2330981c614",
+      "output": "assets/characters/olaf/skins/base/particles/olaf_base_q_bottom_02.png",
+      "output_sha256": "33a52ccfb592ce0d4a3819870ade93b397d230cdf4a5853ad4b8636c297add79"
+    },
+    "assets/characters/olaf/skins/base/particles/common_alpha_12.tex": {
+      "source_sha256": "761530ca4a92df5060753c963c9e6d2ab03fd638a679d26150f1f55a06165404",
+      "output": "assets/characters/olaf/skins/base/particles/common_alpha_12.png",
+      "output_sha256": "22b0da970fb887a044778704bb027db18d5d26d278dd8f59a44a389fd608cea0"
+    },
+    "assets/characters/olaf/skins/base/particles/olaf_base_sparkmote.tex": {
+      "source_sha256": "bfdfdffbdded35ea103171bbaf7c549933b599d8384b20156609fa48703892cf",
+      "output": "assets/characters/olaf/skins/base/particles/olaf_base_sparkmote.png",
+      "output_sha256": "2d154e637e700ae7cd0cdbf6e9364c156436ff6d4f15a1346275936453a06f71"
+    },
+    "assets/characters/olaf/skins/base/particles/aura_self.tex": {
+      "source_sha256": "94ca708b6feb9ca42b344dd5ad889671c7bdfb569b31754e734e759c31db96e7",
+      "output": "assets/characters/olaf/skins/base/particles/aura_self.png",
+      "output_sha256": "2317dc8930883a238e3a1e7a8b9d95d3bbd7f177fd94efe6a04bad62f0536531"
+    },
+    "assets/characters/olaf/skins/base/particles/common_aura_self.tex": {
+      "source_sha256": "867a061b0822c5210c0d22ec2faf4e00389f604bc9a52f0aa2162a9a020b18d9",
+      "output": "assets/characters/olaf/skins/base/particles/common_aura_self.png",
+      "output_sha256": "c5670c88d11919cfdff203c900d4431be71d1ec0cfc8551a8e7d62e49a825e93"
+    },
+    "assets/characters/olaf/skins/base/particles/olaf_base_w_inwardswirls_1.scb": {
+      "source_sha256": "4637e6e2c22f902cef40042b4f8c14c15fb732e5e35cb9f15bcef4359df06032",
+      "output": "assets/characters/olaf/skins/base/particles/olaf_base_w_inwardswirls_1.mesh.json",
+      "output_sha256": "72725ffbdf6704364362ba8877b36d1106a31a37087d1335d7522edae42a48eb"
+    },
+    "assets/characters/olaf/skins/base/particles/olaf_base_w_bottom_02.tex": {
+      "source_sha256": "c5d7ee04b7650b8166c1ba3fd00faec4f7a17822ee4a48d5e10ac2330981c614",
+      "output": "assets/characters/olaf/skins/base/particles/olaf_base_w_bottom_02.png",
+      "output_sha256": "33a52ccfb592ce0d4a3819870ade93b397d230cdf4a5853ad4b8636c297add79"
+    },
+    "assets/characters/olaf/skins/base/particles/olaf_base_w_lightning03.tex": {
+      "source_sha256": "60e35927dbfd7efcb2f665f16302270b0c9e09024a43644c9b79cd71ac638a15",
+      "output": "assets/characters/olaf/skins/base/particles/olaf_base_w_lightning03.png",
+      "output_sha256": "ab7159c211aaa0f33f09a97fe57bc15d20406153bb863dcdbd75afea902acc41"
+    },
+    "assets/characters/olaf/skins/base/particles/olaf_base_w_smoke_mask_2.tex": {
+      "source_sha256": "9b51b34d4faa3c70687e3a36fbdde037d9283ff3e35528bba660bb1e44533669",
+      "output": "assets/characters/olaf/skins/base/particles/olaf_base_w_smoke_mask_2.png",
+      "output_sha256": "8e6c7c4c0b66acc273fece9a5200d0cdcc4afeaa429c8cee71f4f5d806b6ea3e"
+    },
+    "assets/characters/olaf/skins/base/particles/olaf_base_w_shield_facing.scb": {
+      "source_sha256": "9d1e3e727f240dc428c6188de1265b9d276da37ed8bded637229197f19cda60b",
+      "output": "assets/characters/olaf/skins/base/particles/olaf_base_w_shield_facing.mesh.json",
+      "output_sha256": "e3cc62885bccce7194a61f3694f8184165166c994d740b3e6eec096b1e3e1a28"
+    },
+    "assets/characters/olaf/skins/base/particles/olaf_base_dissolve_cloudy_012.tex": {
+      "source_sha256": "e2fc4e3d8c66f015d89ec85998d3fc0aeba0d77161c3ce24e99591efdfa6914d",
+      "output": "assets/characters/olaf/skins/base/particles/olaf_base_dissolve_cloudy_012.png",
+      "output_sha256": "5c91c3d7573ae0a06e1440d61cb563a66f6e954fe4016ef67c65578aea2d4eb3"
+    },
+    "assets/characters/olaf/skins/base/particles/olaf_base_w_lightningerosion03.tex": {
+      "source_sha256": "b02ae5c5444d83a8c855e598666a14529a08d23bab0ccf456c874f1bbf1e0ed3",
+      "output": "assets/characters/olaf/skins/base/particles/olaf_base_w_lightningerosion03.png",
+      "output_sha256": "1af1834680ed66883ca4aaba33f599f63120ee3822098447b6a754583d99ead0"
+    },
+    "assets/characters/olaf/skins/base/particles/olaf_base_w_smoke_mask_1.tex": {
+      "source_sha256": "6d1b171ebe1e5cd3fb4c3b7c92e6363948c666bde79958c4c4f7f1f6352457a4",
+      "output": "assets/characters/olaf/skins/base/particles/olaf_base_w_smoke_mask_1.png",
+      "output_sha256": "082f6bb37d73aa84e707532d1371d3caa6ecae7c194f17b978af4538737d9fc3"
+    },
+    "assets/characters/olaf/skins/base/particles/olaf_base_w_lightings01.tex": {
+      "source_sha256": "33a4e21663e95d6c3b750fce66bf66609b2cfb100dacb96488c07706bf87c1ec",
+      "output": "assets/characters/olaf/skins/base/particles/olaf_base_w_lightings01.png",
+      "output_sha256": "041f440f6ea95565235e59cd2e757efe84df94cd1cef21abf5c1481b08e66534"
+    },
+    "assets/characters/olaf/skins/base/particles/3026_items_noise_02.tex": {
+      "source_sha256": "05fffde66297ae8392f1fa14ed78d5590264af0b89d671a971501f692e853793",
+      "output": "assets/characters/olaf/skins/base/particles/3026_items_noise_02.png",
+      "output_sha256": "a0bfe95c28a10378ff319a8b03346cff3067628a6a76dc1a96f9506ac6c3d2ce"
+    }
+  }
+}

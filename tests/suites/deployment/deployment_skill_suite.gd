@@ -4,7 +4,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
 	var old_deck: Array = main._deck.duplicate()
-	for card_id in ["minion_squad", "shurima_guard", "heavy_minion_squad", "siege_minion_squad", "melee_minion_squad", "ranged_minion_squad", "super_minion_squad"]:
+	for card_id in ["olaf", "minion_squad", "shurima_guard", "heavy_minion_squad", "siege_minion_squad", "melee_minion_squad", "ranged_minion_squad", "super_minion_squad"]:
 		main._deck[0] = card_id
 		main._workbench.selection = card_id
 		main._workbench.team = 0

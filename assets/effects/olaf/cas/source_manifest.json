@@ -1,0 +1,23 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Olaf.wad.client",
+  "source_chunk": "resolved_by_dump_vfx",
+  "resolved_definition_sha256": "eec803a4acacb0a8e1eef78164923aa497aeb35ce9c8f292e5b35d31b1fdd3c6",
+  "system": "Characters/Olaf/Skins/Skin0/Particles/Olaf_Base_W_cas",
+  "assets": {
+    "assets/characters/olaf/skins/base/particles/olaf_base_w_alpha_02.tex": {
+      "source_sha256": "f0b6a73c7335116aa672068c753d01e56d336ece296e2bdf5e84f76ae55bd124",
+      "output": "assets/characters/olaf/skins/base/particles/olaf_base_w_alpha_02.png",
+      "output_sha256": "43d5c52cd6851429f87e02f6134cc56afc981b075e343a1602ff18d4d758689c"
+    },
+    "assets/characters/olaf/skins/base/particles/hit_spark_blue.tex": {
+      "source_sha256": "d8c0016be9ec0ba13e5e36f7feb1f0fa4a80ba98f0a69729c8c35b2becac677b",
+      "output": "assets/characters/olaf/skins/base/particles/hit_spark_blue.png",
+      "output_sha256": "281e641c791bcbd21e2a599bf4849be6af993f0f24f8f7e76dcca3a8b8b94446"
+    },
+    "assets/characters/olaf/skins/base/particles/flash.tex": {
+      "source_sha256": "c121a2391aba4a292d206f6346459650651c37f2dc96fe4a5236d613c91799b7",
+      "output": "assets/characters/olaf/skins/base/particles/flash.png",
+      "output_sha256": "c3330b8c5e7cdea18b89d90f070ea0dfb0494271ce2e3be17821af2b8efd86fc"
+    }
+  }
+}

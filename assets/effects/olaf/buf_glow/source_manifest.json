@@ -1,0 +1,28 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Olaf.wad.client",
+  "source_chunk": "resolved_by_dump_vfx",
+  "resolved_definition_sha256": "c1421fb67a3aec787405fb7426fcdcade31d2b8ee26b42a077b36d0c7d582912",
+  "system": "Characters/Olaf/Skins/Skin0/Particles/Olaf_Base_W_buf_glow",
+  "assets": {
+    "assets/characters/olaf/skins/base/particles/olaf_base_e_chainelec_01.tex": {
+      "source_sha256": "cd4c51ab585ea34ea005d24a93c56d11a600a827111b6dab3695479a7721c1a1",
+      "output": "assets/characters/olaf/skins/base/particles/olaf_base_e_chainelec_01.png",
+      "output_sha256": "6d3e53a276817cd8e542c5222d7c60a2aeb26587a0afdd17eb76f6432758c200"
+    },
+    "assets/characters/olaf/skins/base/particles/olaf_base_w_glow_01.tex": {
+      "source_sha256": "9cc18e8f4063064f948d2db7f79b5699c9599f6aa33deefeff07b621048265c3",
+      "output": "assets/characters/olaf/skins/base/particles/olaf_base_w_glow_01.png",
+      "output_sha256": "f4fd6ec63eec53c9fafaf4846763fc2b8d40573afbb316c9b138565c8b8bebfe"
+    },
+    "assets/characters/olaf/skins/base/particles/olaf_base_w_bitsdissolve_01.tex": {
+      "source_sha256": "538953b6a949c2bb603e316c249240bec3e8227f613db8a00527b68bdf2bd9ac",
+      "output": "assets/characters/olaf/skins/base/particles/olaf_base_w_bitsdissolve_01.png",
+      "output_sha256": "e2071ce213d6b8887612a8cf965aef43b7f3b93343a42049c7853c7b3490aa86"
+    },
+    "assets/characters/olaf/skins/base/particles/olaf_base_q_small_mote.tex": {
+      "source_sha256": "40d31052f879970cad592a7f4577b48ac6804b2699addd9889003c77412f329d",
+      "output": "assets/characters/olaf/skins/base/particles/olaf_base_q_small_mote.png",
+      "output_sha256": "cf5bf6cb2e45a0b8e5610686bb93adce50c28e6e4f11661fc71f1a0c2206f873"
+    }
+  }
+}

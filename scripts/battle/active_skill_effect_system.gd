@@ -192,6 +192,8 @@ func _apply(source: Unit, skill: Dictionary) -> bool:
 					bool(target_skill.get("ignore_attack_speed_slow", false)),
 					source.status_source(String(skill.get("name", "buff")))
 				)
+				if float(target_skill.get("heal_ratio", 0.0)) > 0.0:
+					target.buffs.apply(&"timed_lifesteal", source.status_source("timed_lifesteal"), float(target_skill.duration), {"ratio": float(target_skill.heal_ratio)})
 				if bool(target_skill.get("ignore_unit_collision", false)):
 					target.buffs.apply(&"unit_phasing", source.status_source("unit_phasing"), float(target_skill.duration), {"enabled": true})
 				if target_skill.has("range_bonus") or target_skill.has("piercing_attacks") or target_skill.has("projectile_speed_multiplier"):

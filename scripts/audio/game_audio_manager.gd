@@ -41,6 +41,7 @@ var _budget_counters: Dictionary = {}
 var _zone_players: Dictionary = {}
 var _last_zone_event_id := -1
 var _played_attack_groups: Dictionary = {}
+var _played_deployment_voices: Dictionary = {}
 
 ## 终局停止全部战斗层（含建筑待机和飞行声），结果播报另由 Main 调用。
 ## 保留节点到菜单退出也不会被轮询或迟到事件重新启动声音。
@@ -68,6 +69,7 @@ func begin_battle() -> void:
 	_unit_entries.clear()
 	_building_damage_audio.clear()
 	_played_attack_groups.clear()
+	_played_deployment_voices.clear()
 	_preview_serials.clear()
 	_last_projectile_launch_id = -1
 	_last_zone_event_id = -1
@@ -600,7 +602,14 @@ func play_event(unit: Unit, cue: StringName, position: Vector2, attack_serial: i
 		var key := "attack" if owner.kind == "attack" else "action"
 		if not cancelled.is_empty() and ((key == "attack" and int(owner.serial) <= int(cancelled.attack)) or (key == "action" and int(owner.serial) <= unit.cancelled_visual_serial)):
 			return false
-	return _play_pool(String(entry.card_id), cue, event.get("pool", []), position, float(event.get("volume_db", 0.0)), StringName(event.get("bus", "Combat")), owner, event.get("clip_volume_db", {}))
+	# 同一部署批次共享一次语音；组 ID 已由生成 RPC 同步，单只预览回退到实例身份。
+	var deployment_key := ""
+	if cue == &"deploy:voice" and event.get("scope", "unit") == "deployment_group":
+		deployment_key = "%s:%s:%s" % [unit.team, unit.card_id, unit.deployment_group_id if unit.deployment_group_id >= 0 else -unit.get_instance_id()]
+		if _played_deployment_voices.has(deployment_key): return false
+	var played := _play_pool(String(entry.card_id), cue, event.get("pool", []), position, float(event.get("volume_db", 0.0)), StringName(event.get("bus", "Combat")), owner, event.get("clip_volume_db", {}))
+	if played and not deployment_key.is_empty(): _played_deployment_voices[deployment_key] = true
+	return played
 ## 真实伤害结算成功后由 Main 调用。position 是命中点，来源单位只用于选择声音配置。
 ## first_strike 为权威攻击效果携带的首次命中标记；有专用素材时替换普通命中音。
 func play_attack_hit(unit: Unit, position: Vector2, first_strike: bool = false) -> bool:

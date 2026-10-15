@@ -688,6 +688,15 @@
     "sha256": "74f568442170aade9cb10e71702b4dea5b151fcc3e48d283f670eb301439648c"
   },
   {
+    "card": "olaf",
+    "skill_index": 0,
+    "path": "res://assets/skills/olaf_w.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Olaf.wad.client",
+    "source_path": "assets/characters/olaf/hud/icons2d/olafw.dds",
+    "source_sha256": "39a57e70697987f6b46f3f66218fb291fba739869b7dec891e9879f0dbddcbaa",
+    "sha256": "536a4ad5f40f44e775cecb49b25d8a635851abf16921cb7045fd98d7cba59f37"
+  },
+  {
     "card": "kassadin",
     "skill_index": 0,
     "path": "res://assets/skills/kassadin_r.png",

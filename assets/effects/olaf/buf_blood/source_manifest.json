@@ -1,0 +1,13 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Olaf.wad.client",
+  "source_chunk": "resolved_by_dump_vfx",
+  "resolved_definition_sha256": "7c076292063448cc2779662fa917d1d06530fdb31f6979295b3b4493e1a22f86",
+  "system": "Characters/Olaf/Skins/Skin0/Particles/Olaf_Base_W_buf_blood",
+  "assets": {
+    "assets/characters/olaf/skins/base/particles/olaf_base_w_avatarmask.tex": {
+      "source_sha256": "31e0bc1ed28cd34dafb32440387a005a0726db1d964533737d6563053ff3aee1",
+      "output": "assets/characters/olaf/skins/base/particles/olaf_base_w_avatarmask.png",
+      "output_sha256": "d0b9f2241effc57526d31e6864408b27407b704a080aee9e26d5f71ffad00d88"
+    }
+  }
+}

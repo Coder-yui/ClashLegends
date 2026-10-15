@@ -255,7 +255,7 @@ static func _validate_audio_config(label: String, stats: Dictionary, errors: Pac
 			if not event is Dictionary:
 				errors.append("%s.audio.events.%s: 必须是 Dictionary" % [label, cue])
 				continue
-			_validate_known_fields("%s.audio.events.%s" % [label, cue], event, [&"pool", &"clip_volume_db", &"volume_db", &"bus", &"action_time", &"owner", &"fade_in", &"fade_out", &"natural_tail"], errors)
+			_validate_known_fields("%s.audio.events.%s" % [label, cue], event, [&"pool", &"scope", &"clip_volume_db", &"volume_db", &"bus", &"action_time", &"owner", &"fade_in", &"fade_out", &"natural_tail"], errors)
 			if event.has("natural_tail") and (typeof(event.natural_tail) != TYPE_BOOL or not String(cue).ends_with(":zone_sustain")):
 				errors.append("%s.audio.events.%s.natural_tail: 仅区域持续音允许布尔值" % [label, cue])
 			for fade in ["fade_in", "fade_out"]:
@@ -279,6 +279,8 @@ static func _validate_audio_config(label: String, stats: Dictionary, errors: Pac
 					errors.append("%s.audio.events.%s.action_time: 必须是部署或主动动作窗口内的非负 start/voice/release 秒数，命中声音只能由真实命中触发" % [label, cue])
 			if event.get("bus", "Combat") not in ["Combat", "Voice"]:
 				errors.append("%s.audio.events.%s.bus: 只支持 Combat / Voice" % [label, cue])
+			if event.has("scope") and (cue != "deploy:voice" or event.scope not in ["unit", "deployment_group"]):
+				errors.append("%s.audio.events.%s.scope: 仅部署语音支持 unit/deployment_group" % [label, cue])
 			if event.has("clip_volume_db"):
 				var gains = event.clip_volume_db
 				if cue != "deploy:voice" or not gains is Dictionary:
@@ -967,6 +969,8 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 					errors.append("%s: 限时变形需要 transformed_stats 与正数 form_lifetime" % label)
 			&"buff":
 				_require_fields(label, skill, [&"duration"], errors)
+				if skill.has("heal_ratio") and (not is_finite(float(skill.heal_ratio)) or float(skill.heal_ratio) <= 0.0 or float(skill.get("duration", 0.0)) <= 0.0):
+					errors.append(label + ": 限时吸血需要正比例和正持续时间")
 				if bool(skill.get("copy_member_buff", false)) and StringName(skill.get("target_scope", "self")) != &"deployment_group":
 					errors.append("%s.copy_member_buff: 仅可用于 deployment_group 范围的 buff" % label)
 			&"restoration_shield":

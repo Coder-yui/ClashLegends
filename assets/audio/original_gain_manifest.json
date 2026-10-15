@@ -59779,6 +59779,829 @@
       "verified_by_listening": false
     },
     {
+      "file": "assets/audio/units/olaf/play_sfx_olaf_olafbasicattack_oncast_r1_d.wav",
+      "sha256": "ce9a2386bfa41be1213c2a6bf7e049b5a9dd7ef675d28eb6632ff3c80d0898af",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/event_wav/Play_sfx_Olaf_OlafBasicAttack_OnCast {r1} {d}.wav",
+          "sha256": "ce9a2386bfa41be1213c2a6bf7e049b5a9dd7ef675d28eb6632ff3c80d0898af"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1
+      },
+      "verified_by_listening": false,
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/txtp/Play_sfx_Olaf_OlafBasicAttack_OnCast {r1} {d}.txtp",
+          "txtp_sha256": "ce07a58f5dc4309d72407f5105a35fa3f992f1c80e01ba3e4f84774396f442af",
+          "event_ids": [
+            "690382890"
+          ],
+          "media_ids": [
+            19270190,
+            149496691,
+            282464047
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/olaf/play_sfx_olaf_olafbasicattack_oncast_r2_d.wav",
+      "sha256": "a09c251d168c2d71bd19564872c01f8eb87549329281dc8ca06ca9174d63b9cd",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/event_wav/Play_sfx_Olaf_OlafBasicAttack_OnCast {r2} {d}.wav",
+          "sha256": "a09c251d168c2d71bd19564872c01f8eb87549329281dc8ca06ca9174d63b9cd"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1
+      },
+      "verified_by_listening": false,
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/txtp/Play_sfx_Olaf_OlafBasicAttack_OnCast {r2} {d}.txtp",
+          "txtp_sha256": "59ee377552dd5f77698b876306896f81283297ce65223fd40e7f5c16875fffb0",
+          "event_ids": [
+            "690382890"
+          ],
+          "media_ids": [
+            19270190,
+            149496691,
+            282464047
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/olaf/play_sfx_olaf_olafbasicattack_oncast_r3_d.wav",
+      "sha256": "f8e67be86cbf8e20feb1b89ae9f0691c928e5a57f436aeb2acaf85bb794b6735",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/event_wav/Play_sfx_Olaf_OlafBasicAttack_OnCast {r3} {d}.wav",
+          "sha256": "f8e67be86cbf8e20feb1b89ae9f0691c928e5a57f436aeb2acaf85bb794b6735"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1
+      },
+      "verified_by_listening": false,
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/txtp/Play_sfx_Olaf_OlafBasicAttack_OnCast {r3} {d}.txtp",
+          "txtp_sha256": "0d97c633ae90b2ae0586da5141a0dab0ade5c5e0ee095dd421b10b49b06fbbd8",
+          "event_ids": [
+            "690382890"
+          ],
+          "media_ids": [
+            19270190,
+            149496691,
+            282464047
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/olaf/play_sfx_olaf_olafbasicattack2_oncast_r1.wav",
+      "sha256": "ce9a2386bfa41be1213c2a6bf7e049b5a9dd7ef675d28eb6632ff3c80d0898af",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/event_wav/Play_sfx_Olaf_OlafBasicAttack2_OnCast {r1}.wav",
+          "sha256": "ce9a2386bfa41be1213c2a6bf7e049b5a9dd7ef675d28eb6632ff3c80d0898af"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1
+      },
+      "verified_by_listening": false,
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/txtp/Play_sfx_Olaf_OlafBasicAttack2_OnCast {r1}.txtp",
+          "txtp_sha256": "7554bc12d89a239fdb5d189d990fb0ebf14b81a76d79c18493fb492041722bf4",
+          "event_ids": [
+            "3814113594"
+          ],
+          "media_ids": [
+            19270190,
+            149496691,
+            282464047
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/olaf/play_sfx_olaf_olafbasicattack2_oncast_r2.wav",
+      "sha256": "a09c251d168c2d71bd19564872c01f8eb87549329281dc8ca06ca9174d63b9cd",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/event_wav/Play_sfx_Olaf_OlafBasicAttack2_OnCast {r2}.wav",
+          "sha256": "a09c251d168c2d71bd19564872c01f8eb87549329281dc8ca06ca9174d63b9cd"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1
+      },
+      "verified_by_listening": false,
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/txtp/Play_sfx_Olaf_OlafBasicAttack2_OnCast {r2}.txtp",
+          "txtp_sha256": "c8acb3b3656ff14f46f0a8d6c124ed74973b716aa75e46284ee11e088f78b1c1",
+          "event_ids": [
+            "3814113594"
+          ],
+          "media_ids": [
+            19270190,
+            149496691,
+            282464047
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/olaf/play_sfx_olaf_olafbasicattack2_oncast_r3.wav",
+      "sha256": "f8e67be86cbf8e20feb1b89ae9f0691c928e5a57f436aeb2acaf85bb794b6735",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/event_wav/Play_sfx_Olaf_OlafBasicAttack2_OnCast {r3}.wav",
+          "sha256": "f8e67be86cbf8e20feb1b89ae9f0691c928e5a57f436aeb2acaf85bb794b6735"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1
+      },
+      "verified_by_listening": false,
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/txtp/Play_sfx_Olaf_OlafBasicAttack2_OnCast {r3}.txtp",
+          "txtp_sha256": "0c716146660af1cee21301c4fff815eda18b397c50a5ebe441cb7d88efaf208c",
+          "event_ids": [
+            "3814113594"
+          ],
+          "media_ids": [
+            19270190,
+            149496691,
+            282464047
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/olaf/play_sfx_olaf_olafbasicattack3_oncast_r1_d.wav",
+      "sha256": "ce9a2386bfa41be1213c2a6bf7e049b5a9dd7ef675d28eb6632ff3c80d0898af",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/event_wav/Play_sfx_Olaf_OlafBasicAttack3_OnCast {r1} {d}.wav",
+          "sha256": "ce9a2386bfa41be1213c2a6bf7e049b5a9dd7ef675d28eb6632ff3c80d0898af"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1
+      },
+      "verified_by_listening": false,
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/txtp/Play_sfx_Olaf_OlafBasicAttack3_OnCast {r1} {d}.txtp",
+          "txtp_sha256": "eeacdd84c0b079697d0b6214455d79cf3f88bac1c79aa1999369babdf9835c7c",
+          "event_ids": [
+            "70708613"
+          ],
+          "media_ids": [
+            19270190,
+            149496691,
+            282464047
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/olaf/play_sfx_olaf_olafbasicattack3_oncast_r2_d.wav",
+      "sha256": "a09c251d168c2d71bd19564872c01f8eb87549329281dc8ca06ca9174d63b9cd",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/event_wav/Play_sfx_Olaf_OlafBasicAttack3_OnCast {r2} {d}.wav",
+          "sha256": "a09c251d168c2d71bd19564872c01f8eb87549329281dc8ca06ca9174d63b9cd"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1
+      },
+      "verified_by_listening": false,
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/txtp/Play_sfx_Olaf_OlafBasicAttack3_OnCast {r2} {d}.txtp",
+          "txtp_sha256": "5ef6d56b54abfb8111d8cf826311ac472388489d041cfac61825cb39c3c2ff6f",
+          "event_ids": [
+            "70708613"
+          ],
+          "media_ids": [
+            19270190,
+            149496691,
+            282464047
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/olaf/play_sfx_olaf_olafbasicattack3_oncast_r3_d.wav",
+      "sha256": "f8e67be86cbf8e20feb1b89ae9f0691c928e5a57f436aeb2acaf85bb794b6735",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/event_wav/Play_sfx_Olaf_OlafBasicAttack3_OnCast {r3} {d}.wav",
+          "sha256": "f8e67be86cbf8e20feb1b89ae9f0691c928e5a57f436aeb2acaf85bb794b6735"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1
+      },
+      "verified_by_listening": false,
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/txtp/Play_sfx_Olaf_OlafBasicAttack3_OnCast {r3} {d}.txtp",
+          "txtp_sha256": "a7a7e8bd0b653164d11a7ee033fa274f9cd0f06a5238226401a6d3cef9be3477",
+          "event_ids": [
+            "70708613"
+          ],
+          "media_ids": [
+            19270190,
+            149496691,
+            282464047
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/olaf/play_sfx_olaf_olafbasicattack_onhit_1559186049_1153642577_r1_d.wav",
+      "sha256": "7a658f55d8b81a1ce9ed3be6229fe44314deb578355a5e9ad3167e89fc3abd32",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/event_wav/Play_sfx_Olaf_OlafBasicAttack_OnHit [1559186049=1153642577] {r1} {d}.wav",
+          "sha256": "7a658f55d8b81a1ce9ed3be6229fe44314deb578355a5e9ad3167e89fc3abd32"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1
+      },
+      "verified_by_listening": false,
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/txtp/Play_sfx_Olaf_OlafBasicAttack_OnHit [1559186049=1153642577] {r1} {d}.txtp",
+          "txtp_sha256": "68024b6d89af972172e49620448e50e64a0e6a3d912988b38a94cd2e179bcd62",
+          "event_ids": [
+            "1028885150"
+          ],
+          "media_ids": [
+            16480700,
+            62339056,
+            171725186
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/olaf/play_sfx_olaf_olafbasicattack_onhit_1559186049_1153642577_r2_d.wav",
+      "sha256": "62d66236a4cabbb2785afbccdceb75950a7ebb5be55ab0e4611c208978c707a3",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/event_wav/Play_sfx_Olaf_OlafBasicAttack_OnHit [1559186049=1153642577] {r2} {d}.wav",
+          "sha256": "62d66236a4cabbb2785afbccdceb75950a7ebb5be55ab0e4611c208978c707a3"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1
+      },
+      "verified_by_listening": false,
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/txtp/Play_sfx_Olaf_OlafBasicAttack_OnHit [1559186049=1153642577] {r2} {d}.txtp",
+          "txtp_sha256": "0999376a7ae2bc04ea54fc5fcabe55ee763715a719d7d5d405400c84ffcbdf59",
+          "event_ids": [
+            "1028885150"
+          ],
+          "media_ids": [
+            16480700,
+            62339056,
+            171725186
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/olaf/play_sfx_olaf_olafbasicattack_onhit_1559186049_1153642577_r3_d.wav",
+      "sha256": "19e76f9e5380f49d89ddf6394819d85da0c762fe2a68f555f72c2e30c436c9b5",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/event_wav/Play_sfx_Olaf_OlafBasicAttack_OnHit [1559186049=1153642577] {r3} {d}.wav",
+          "sha256": "19e76f9e5380f49d89ddf6394819d85da0c762fe2a68f555f72c2e30c436c9b5"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1
+      },
+      "verified_by_listening": false,
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/txtp/Play_sfx_Olaf_OlafBasicAttack_OnHit [1559186049=1153642577] {r3} {d}.txtp",
+          "txtp_sha256": "24c1f0bea47849ea0662f62269fb8df9bc63e9b5fef74c35363a875c10cebad2",
+          "event_ids": [
+            "1028885150"
+          ],
+          "media_ids": [
+            16480700,
+            62339056,
+            171725186
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/olaf/play_sfx_olaf_olafbasicattack2_onhit_1559186049_1153642577_r1.wav",
+      "sha256": "7a658f55d8b81a1ce9ed3be6229fe44314deb578355a5e9ad3167e89fc3abd32",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/event_wav/Play_sfx_Olaf_OlafBasicAttack2_OnHit [1559186049=1153642577] {r1}.wav",
+          "sha256": "7a658f55d8b81a1ce9ed3be6229fe44314deb578355a5e9ad3167e89fc3abd32"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1
+      },
+      "verified_by_listening": false,
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/txtp/Play_sfx_Olaf_OlafBasicAttack2_OnHit [1559186049=1153642577] {r1}.txtp",
+          "txtp_sha256": "1b3a7526a7a5225325cfe460c27b2d778f22b4db21f1a53f9988e1c387df58b9",
+          "event_ids": [
+            "2994283758"
+          ],
+          "media_ids": [
+            16480700,
+            62339056,
+            171725186
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/olaf/play_sfx_olaf_olafbasicattack2_onhit_1559186049_1153642577_r2.wav",
+      "sha256": "62d66236a4cabbb2785afbccdceb75950a7ebb5be55ab0e4611c208978c707a3",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/event_wav/Play_sfx_Olaf_OlafBasicAttack2_OnHit [1559186049=1153642577] {r2}.wav",
+          "sha256": "62d66236a4cabbb2785afbccdceb75950a7ebb5be55ab0e4611c208978c707a3"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1
+      },
+      "verified_by_listening": false,
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/txtp/Play_sfx_Olaf_OlafBasicAttack2_OnHit [1559186049=1153642577] {r2}.txtp",
+          "txtp_sha256": "2f278d9c0b0aae42abff5443c7009e3a614515b30660a2abd26ebcd0fcea483a",
+          "event_ids": [
+            "2994283758"
+          ],
+          "media_ids": [
+            16480700,
+            62339056,
+            171725186
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/olaf/play_sfx_olaf_olafbasicattack2_onhit_1559186049_1153642577_r3.wav",
+      "sha256": "19e76f9e5380f49d89ddf6394819d85da0c762fe2a68f555f72c2e30c436c9b5",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/event_wav/Play_sfx_Olaf_OlafBasicAttack2_OnHit [1559186049=1153642577] {r3}.wav",
+          "sha256": "19e76f9e5380f49d89ddf6394819d85da0c762fe2a68f555f72c2e30c436c9b5"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1
+      },
+      "verified_by_listening": false,
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/txtp/Play_sfx_Olaf_OlafBasicAttack2_OnHit [1559186049=1153642577] {r3}.txtp",
+          "txtp_sha256": "42d6ff8b39306550bc605298d07ac7cb301dbf77ff628ca7eb7901ba47687d43",
+          "event_ids": [
+            "2994283758"
+          ],
+          "media_ids": [
+            16480700,
+            62339056,
+            171725186
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/olaf/play_sfx_olaf_olafbasicattack3_onhit_1559186049_1153642577_r1_d.wav",
+      "sha256": "7a658f55d8b81a1ce9ed3be6229fe44314deb578355a5e9ad3167e89fc3abd32",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/event_wav/Play_sfx_Olaf_OlafBasicAttack3_OnHit [1559186049=1153642577] {r1} {d}.wav",
+          "sha256": "7a658f55d8b81a1ce9ed3be6229fe44314deb578355a5e9ad3167e89fc3abd32"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1
+      },
+      "verified_by_listening": false,
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/txtp/Play_sfx_Olaf_OlafBasicAttack3_OnHit [1559186049=1153642577] {r1} {d}.txtp",
+          "txtp_sha256": "1711767b600824028a8f54b33239b6fe6b110ddc2a8dc35103fd7ebe83b7b81e",
+          "event_ids": [
+            "6214535"
+          ],
+          "media_ids": [
+            16480700,
+            62339056,
+            171725186
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/olaf/play_sfx_olaf_olafbasicattack3_onhit_1559186049_1153642577_r2_d.wav",
+      "sha256": "62d66236a4cabbb2785afbccdceb75950a7ebb5be55ab0e4611c208978c707a3",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/event_wav/Play_sfx_Olaf_OlafBasicAttack3_OnHit [1559186049=1153642577] {r2} {d}.wav",
+          "sha256": "62d66236a4cabbb2785afbccdceb75950a7ebb5be55ab0e4611c208978c707a3"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1
+      },
+      "verified_by_listening": false,
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/txtp/Play_sfx_Olaf_OlafBasicAttack3_OnHit [1559186049=1153642577] {r2} {d}.txtp",
+          "txtp_sha256": "0b5b25c0bf124d14be01bff09ed945aabf918db48ab41b4e4a79018175b65d29",
+          "event_ids": [
+            "6214535"
+          ],
+          "media_ids": [
+            16480700,
+            62339056,
+            171725186
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/olaf/play_sfx_olaf_olafbasicattack3_onhit_1559186049_1153642577_r3_d.wav",
+      "sha256": "19e76f9e5380f49d89ddf6394819d85da0c762fe2a68f555f72c2e30c436c9b5",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/event_wav/Play_sfx_Olaf_OlafBasicAttack3_OnHit [1559186049=1153642577] {r3} {d}.wav",
+          "sha256": "19e76f9e5380f49d89ddf6394819d85da0c762fe2a68f555f72c2e30c436c9b5"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1
+      },
+      "verified_by_listening": false,
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/txtp/Play_sfx_Olaf_OlafBasicAttack3_OnHit [1559186049=1153642577] {r3} {d}.txtp",
+          "txtp_sha256": "f942b13cb72d5d279164c78790486014bb7f98b5325194b35b1250ebb5cb98e2",
+          "event_ids": [
+            "6214535"
+          ],
+          "media_ids": [
+            16480700,
+            62339056,
+            171725186
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/olaf/play_sfx_olaf_olafw_oncast.wav",
+      "sha256": "7d72902cb3c7350f45fff91611bf64e5e88b6c63620310940c1d920dacd47983",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/event_wav/Play_sfx_Olaf_OlafW_OnCast.wav",
+          "sha256": "7d72902cb3c7350f45fff91611bf64e5e88b6c63620310940c1d920dacd47983"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1
+      },
+      "verified_by_listening": false,
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/txtp/Play_sfx_Olaf_OlafW_OnCast.txtp",
+          "txtp_sha256": "f680fb2993c128f704c5d21b143d5a39f9d254e3b274041fe5691843f02018de",
+          "event_ids": [
+            "44768041"
+          ],
+          "media_ids": [
+            588130155
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/olaf/play_sfx_olaf_olafw_onbuffactivate.wav",
+      "sha256": "76816a1c49ab8556803789cdfbce126421a1de94d6053ccaf23e1405da684b07",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/event_wav/Play_sfx_Olaf_OlafW_OnBuffActivate.wav",
+          "sha256": "76816a1c49ab8556803789cdfbce126421a1de94d6053ccaf23e1405da684b07"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1
+      },
+      "verified_by_listening": false,
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf/txtp/Play_sfx_Olaf_OlafW_OnBuffActivate.txtp",
+          "txtp_sha256": "edff86677270e6acaf73b021ab9143832bc86ca86528a901f30c2db038acc2be",
+          "event_ids": [
+            "4143660392"
+          ],
+          "media_ids": [
+            1011765121
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/olaf/play_vo_olaf_death3d_r1_zh_cn.wav",
+      "sha256": "32a5dc9b1ad84d6cdb3b2c3780810abe3914ec9db418ec96a497394a90f6ca41",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf_vo/event_wav/Play_vo_Olaf_Death3D {r1}.wav",
+          "sha256": "af39c8ec3dcfceb369d58c0daad7392b20f9e4d61b4741041bf965334e7722fe"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "description": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+        "sample_rate": 44100,
+        "channels": 1
+      },
+      "verified_by_listening": false,
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf_vo/txtp/Play_vo_Olaf_Death3D {r1}.txtp",
+          "txtp_sha256": "d24f014f205c2c41a2babd8e27cf5a695e38a428b52317560808752d8223f6bd",
+          "event_ids": [
+            "1064726616"
+          ],
+          "media_ids": [
+            281362138,
+            751744190,
+            1318044863,
+            1591717316
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/olaf/play_vo_olaf_death3d_r2_zh_cn.wav",
+      "sha256": "7332f526bef92f2a5539834fee49be6ec36ee29e91ee0c4843b1fb19433f9a74",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf_vo/event_wav/Play_vo_Olaf_Death3D {r2}.wav",
+          "sha256": "7332f526bef92f2a5539834fee49be6ec36ee29e91ee0c4843b1fb19433f9a74"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1
+      },
+      "verified_by_listening": false,
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf_vo/txtp/Play_vo_Olaf_Death3D {r2}.txtp",
+          "txtp_sha256": "b20374420803a0e7cfc7d7ae67205c3b19d74150a657c3a78ed96d0303f3f8ef",
+          "event_ids": [
+            "1064726616"
+          ],
+          "media_ids": [
+            281362138,
+            751744190,
+            1318044863,
+            1591717316
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/olaf/play_vo_olaf_death3d_r3_zh_cn.wav",
+      "sha256": "916bb9acf1ab41fc9a930a4b5f81d6879c1f91a7adc84b47f7f3cdefe4200bbc",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf_vo/event_wav/Play_vo_Olaf_Death3D {r3}.wav",
+          "sha256": "334b6d81ba29c2383f10bdbdda32f2f937845a523f32d133180ee5bd8e06064c"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false,
+        "description": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+        "sample_rate": 44100,
+        "channels": 1
+      },
+      "verified_by_listening": false,
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/audio/olaf_vo/txtp/Play_vo_Olaf_Death3D {r3}.txtp",
+          "txtp_sha256": "2ab380054b88b94d955c2afb0b7262460b4ec8919b8dfeec7e8502066f272e1c",
+          "event_ids": [
+            "1064726616"
+          ],
+          "media_ids": [
+            281362138,
+            751744190,
+            1318044863,
+            1591717316
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/olaf/deploy.ogg",
+      "sha256": "ed4c77e7d19f468d72025c44803d960e17263b19ad9a87c3daec9ce0d727b3b9",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/deploy_voice/plugins/rcp-be-lol-game-data/global/zh_cn/v1/champion-choose-vo/2.ogg",
+          "sha256": "ed4c77e7d19f468d72025c44803d960e17263b19ad9a87c3daec9ce0d727b3b9"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": -12.0,
+        "normalization": false,
+        "original_ogg": true,
+        "description": "original OGG unchanged; deployment playback -12dB matches original movement event level (mean -24.8 vs -24.0/-24.9 dBFS)"
+      },
+      "verified_by_listening": false
+    },
+    {
       "file": "assets/audio/units/kassadin/play_sfx_kassadin_kassadinbasicattack_oncast_r1_d.wav",
       "sha256": "e1a719150865920327585fe296fa9a591ae6e1cb093bd5cb8b1d5caaa67ca6c7",
       "source_events": [
@@ -60491,6 +61314,42 @@
         "original_ogg": true
       },
       "duration": 5.948458,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/olaf/deploy_pillage.wav",
+      "sha256": "3323e026b4c9cf8dd9bb28c8695631c24b03712cca5977334a9514aeadf81c81",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/move_voice_original/txtp/Play_vo_Olaf_Move2DStandard {r2}.txtp",
+          "sha256": "00b027b21d80a68488a54d9e0b73f7a315f5079d9a2d03f5d9c3f161b9177368"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "description": "wwiser -gv=0dB; vgmstream-cli -i PCM16; original event node gain -13dB retained; no normalization"
+      },
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/olaf/deploy_bloodlust.wav",
+      "sha256": "ad832b31557ac144631e0a57c413fc146c2a5876c6ec4599ab77c7b27d45850d",
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/狂战士/move_voice_original/txtp/Play_vo_Olaf_Move2DStandard {r5}.txtp",
+          "sha256": "84609637ddb756267dbaf71285add60c68934b2d6b2124bb4e077cbbd013e5e4"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "description": "wwiser -gv=0dB; vgmstream-cli -i PCM16; original event node gain -13dB retained; no normalization"
+      },
       "verified_by_listening": false
     }
   ]

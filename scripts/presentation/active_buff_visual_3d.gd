@@ -7,6 +7,7 @@ extends Node3D
 @export var preserve_on_form_change := false
 @export var follow_model_anchor := false
 var active := false
+var shield_active := false
 var status_state := Vector2.ZERO
 var overlay_material: ShaderMaterial
 var overlay_instances: Array[ShaderMaterial] = []

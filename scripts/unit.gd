@@ -2585,7 +2585,7 @@ func _try_heal_on_hit(submitted_swing: int = -1) -> void:
 
 func _try_attack_lifesteal(landed_damage: float, cycle_ratio: float = 0.0) -> void:
 	if CombatInteraction.in_stasis(self): return
-	var ratio := attack_lifesteal_ratio + cycle_ratio
+	var ratio := attack_lifesteal_ratio + cycle_ratio + buffs.strongest(&"timed_lifesteal", &"ratio", 0.0)
 	if ratio <= 0.0 or landed_damage <= 0.0:
 		return
 	var hp_before_heal := hp

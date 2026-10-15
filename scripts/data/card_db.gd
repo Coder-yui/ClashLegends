@@ -74,6 +74,8 @@ const DEFINITIONS = [
 	preload("res://scripts/data/cards/sion.gd"),
 	preload("res://scripts/data/cards/darius.gd"),
 	preload("res://scripts/data/cards/ornn.gd"),
+	preload("res://scripts/data/cards/olaf.gd"),
+	preload("res://scripts/data/cards/olaf_single.gd"),
 	preload("res://scripts/data/cards/kassadin.gd"),
 ]
 static var _cards: Dictionary = {}

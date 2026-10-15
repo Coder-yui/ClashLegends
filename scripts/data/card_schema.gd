@@ -215,3 +215,5 @@ const CARD_VISUAL_FIELDS := ["attack_hit_visual", "resource_dependencies", "icon
 const SKILL_VISUAL_FIELDS := ["visual_scale_multiplier", "impact_visual_shape", "full_resource_impact_visual_shape", "impact_visual_duration", "resource_dependencies", "projectile_colors", "projectile_impact_visuals_by_use", "projectile_visuals_by_use", "visual_actions_by_use", "projectile_impact_visual", "icon_path", "full_resource_visual_action", "projectile_visual", "projectile_visual_forward_offset", "projectile_visual_height", "projectile_visual_width", "resource_visual_actions", "visual_action"]
 
 # audio.events["deploy:voice"].clip_volume_db：可选的资源路径 → 固定播放分贝补偿，未列出的池成员为 0 dB；由 CardValidator 校验。
+
+# audio.events["deploy:voice"].scope：unit（默认）或 deployment_group；同一批次仅首个成功播放的成员发声，新局清空。
