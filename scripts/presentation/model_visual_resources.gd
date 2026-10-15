@@ -178,10 +178,16 @@ func apply_overlays(hit: bool, frozen: bool, buff_visible: bool, stasis: bool = 
 	if stasis and _gold == null: _prepare_gold()
 	apply_stealth(stealth and not stasis)
 	var state := 6 if stasis else (3 if buff_visible else 0) + (1 if hit else (2 if frozen else 0))
-	if state == _last_state: return
-	_last_state = state
+	# 跳过闪白的网格仍需响应同一受击窗口内的冰冻边沿。
+	var cache_state := state + (8 if hit and frozen and not stasis else 0)
+	if cache_state == _last_state: return
+	_last_state = cache_state
 	for index in _meshes.size():
-		if is_instance_valid(_meshes[index]): _meshes[index].material_overlay = _gold_overlays[index] if stasis else _overlays[index][state]
+		if not is_instance_valid(_meshes[index]): continue
+		var mesh_state := state
+		if not stasis and hit and bool(_meshes[index].get_meta("exclude_hit_flash", false)):
+			mesh_state = (3 if buff_visible else 0) + (2 if frozen else 0)
+		_meshes[index].material_overlay = _gold_overlays[index] if stasis else _overlays[index][mesh_state]
 
 func reset_overlays() -> void:
 	if is_instance_valid(_player):

@@ -246,6 +246,10 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 			defer_effect(func():
 				if hit_results.any(func(result): return result.landed) and is_instance_valid(from) and from.battle_context != null:
 					from.battle_context.notify_unit_audio_event(from, &"cleave:hit", from.global_position))
+		if float(effects.get("hit_heal", 0.0)) > 0.0:
+			defer_benefit(func():
+				if hit_results.any(func(result): return result.landed) and is_instance_valid(from) and from is Unit and from.hp > 0.0:
+					from.heal(float(effects.hit_heal)))
 		if float(effects.get("cleave_heal_ratio", 0.0)) > 0.0:
 			defer_benefit(func():
 				if not is_instance_valid(from) or not from is Unit or from.hp <= 0.0: return

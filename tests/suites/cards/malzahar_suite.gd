@@ -144,6 +144,8 @@ func _spawn(id: String, team: int, pos: Vector2) -> Unit:
 	return _main._spawn_unit(UnitSpawnRequest.new(team, id, pos, {"deploy_time_override": 0.0}))
 
 func _check_w() -> void:
+	var previous_deck: Array = _main._deck.duplicate()
+	_main._deck[0] = "malzahar"
 	for actor in _main.get_tree().get_nodes_in_group("combatants"):
 		if is_instance_valid(actor) and actor is Unit: actor.free()
 	_main._commands.clear()
@@ -201,6 +203,7 @@ func _check_w() -> void:
 	dying.take_damage(99999.0)
 	_run_main_ticks(25)
 	_expect(_children().size()==before+3, "先知死亡后已开门W仍完整生成三只")
+	_main._deck = previous_deck
 
 func _test_w_composition() -> void:
 	var presentation = load("res://scripts/presentation/skill_effect_presentation.gd").new(_main)

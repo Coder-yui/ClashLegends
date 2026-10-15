@@ -494,8 +494,8 @@ static func _validate_projectile(label: String, stats: Dictionary, errors: Packe
 	var speed := float(stats.get("projectile_speed", 0.0))
 	if speed < 0.0:
 		errors.append("%s.projectile_speed: 必须 >= 0" % label)
-	if stats.has("attack_hit_visual") and (String(stats.attack_hit_visual) != "azir_beam" or speed > 0.0):
-		errors.append("%s.attack_hit_visual: 仅支持直接命中的 azir_beam 表现" % label)
+	if stats.has("attack_hit_visual") and (String(stats.attack_hit_visual) not in ["azir_beam", "splash_circle"] or speed > 0.0):
+		errors.append("%s.attack_hit_visual: 仅支持直接命中的 azir_beam / splash_circle 表现" % label)
 	if stats.has("active_buff_projectile_visual"):
 		if speed <= 0.0 or not (stats.active_buff_projectile_visual is String or stats.active_buff_projectile_visual is StringName) or StringName(stats.active_buff_projectile_visual) not in PROJECTILE_VISUALS + [&"baron_siege", &"baron_ranged"]:
 			errors.append("%s.active_buff_projectile_visual: 需要远程弹体及已实现的弹体外观" % label)
@@ -1071,6 +1071,8 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 				for field in ["duration", "radius", "zone_duration", "zone_tick_interval"]:
 					if float(skill.get(field, 0.0)) <= 0.0: errors.append(label + "." + field + ": 必须为正数")
 			&"empowered_attack":
+				if skill.has("hit_heal") and float(skill.hit_heal) <= 0.0:
+					errors.append(label + ".hit_heal: 命中回血必须为正数")
 				if skill.has("cleave_damage") or skill.has("cleave_radius"):
 					if float(skill.get("cleave_damage", 0.0)) <= 0.0 or float(skill.get("cleave_radius", 0.0)) <= 0.0 or float(stats.get("projectile_speed", 0.0)) > 0.0 or bool(stats.get("is_continuous_attack", false)):
 						errors.append(label + ": 强化溅射需要正伤害、正半径和离散近战")

@@ -61317,6 +61317,436 @@
       "verified_by_listening": false
     },
     {
+      "file": "assets/audio/units/yorick/play_sfx_yorick_yorickbasicattack_oncast_r_d.wav",
+      "sha256": "7e0a71b45a0309e41dbcb0fdf67a6ee611b0083a4d4ebfc6df982a37d54765aa",
+      "source_events": [
+        "Play_sfx_Yorick_YorickBasicAttack_OnCast"
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/txtp/Play_sfx_Yorick_YorickBasicAttack_OnCast {r} {d}.txtp"
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false
+      },
+      "duration": 2.250159,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/yorick/play_sfx_yorick_yorickbasicattack2_oncast_r.wav",
+      "sha256": "7e0a71b45a0309e41dbcb0fdf67a6ee611b0083a4d4ebfc6df982a37d54765aa",
+      "source_events": [
+        "Play_sfx_Yorick_YorickBasicAttack2_OnCast"
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/txtp/Play_sfx_Yorick_YorickBasicAttack2_OnCast {r}.txtp"
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false
+      },
+      "duration": 2.250159,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/yorick/play_sfx_yorick_yorickbasicattack_onhit_1559186049_1153642577_r1_d.wav",
+      "sha256": "388b5292f4229c0ef1092a1fec6a8aa5701240adb7b3c9f5e80df409612bdafd",
+      "source_events": [
+        "Play_sfx_Yorick_YorickBasicAttack_OnHit"
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/txtp/Play_sfx_Yorick_YorickBasicAttack_OnHit [1559186049=1153642577] {r1} {d}.txtp"
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 2,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false
+      },
+      "duration": 0.992018,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/yorick/play_sfx_yorick_yorickbasicattack_onhit_1559186049_1153642577_r2_d.wav",
+      "sha256": "f05a1fff07181e9a8f2603bfc5e2d3d975666adbee6bd9313e6ee755a03c6e43",
+      "source_events": [
+        "Play_sfx_Yorick_YorickBasicAttack_OnHit"
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/txtp/Play_sfx_Yorick_YorickBasicAttack_OnHit [1559186049=1153642577] {r2} {d}.txtp"
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 2,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false
+      },
+      "duration": 0.857347,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/yorick/play_sfx_yorick_yorickbasicattack_onhit_1559186049_1153642577_r3_d.wav",
+      "sha256": "3912954c786da6ebf7bdf071d7878adb2162795d1fe462e49fea66975f00c249",
+      "source_events": [
+        "Play_sfx_Yorick_YorickBasicAttack_OnHit"
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/txtp/Play_sfx_Yorick_YorickBasicAttack_OnHit [1559186049=1153642577] {r3} {d}.txtp"
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 2,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false
+      },
+      "duration": 0.966667,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/yorick/play_sfx_yorick_yorickbasicattack2_onhit_1559186049_1153642577_r1.wav",
+      "sha256": "388b5292f4229c0ef1092a1fec6a8aa5701240adb7b3c9f5e80df409612bdafd",
+      "source_events": [
+        "Play_sfx_Yorick_YorickBasicAttack2_OnHit"
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/txtp/Play_sfx_Yorick_YorickBasicAttack2_OnHit [1559186049=1153642577] {r1}.txtp"
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 2,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false
+      },
+      "duration": 0.992018,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/yorick/play_sfx_yorick_yorickbasicattack2_onhit_1559186049_1153642577_r2.wav",
+      "sha256": "f05a1fff07181e9a8f2603bfc5e2d3d975666adbee6bd9313e6ee755a03c6e43",
+      "source_events": [
+        "Play_sfx_Yorick_YorickBasicAttack2_OnHit"
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/txtp/Play_sfx_Yorick_YorickBasicAttack2_OnHit [1559186049=1153642577] {r2}.txtp"
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 2,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false
+      },
+      "duration": 0.857347,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/yorick/play_sfx_yorick_yorickbasicattack2_onhit_1559186049_1153642577_r3.wav",
+      "sha256": "3912954c786da6ebf7bdf071d7878adb2162795d1fe462e49fea66975f00c249",
+      "source_events": [
+        "Play_sfx_Yorick_YorickBasicAttack2_OnHit"
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/txtp/Play_sfx_Yorick_YorickBasicAttack2_OnHit [1559186049=1153642577] {r3}.txtp"
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 2,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false
+      },
+      "duration": 0.966667,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/yorick/play_sfx_yorick_yorickqattack_hit_1559186049_1153642577_r.wav",
+      "sha256": "1807d0f3af079a86a75733ff7a89ee653e18a081befea66eee9453d2fb5785fe",
+      "source_events": [
+        "Play_sfx_Yorick_YorickQAttack_hit"
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/txtp/Play_sfx_Yorick_YorickQAttack_hit [1559186049=1153642577] {r}.txtp"
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 2,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false
+      },
+      "duration": 1.557347,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/yorick/play_sfx_yorick_yorickq_oncast_r1.wav",
+      "sha256": "0d21078ae3236cf6197141d677e595ea9e52b5be1916ec5d704489b673471fff",
+      "source_events": [
+        "Play_sfx_Yorick_YorickQ_OnCast"
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/txtp/Play_sfx_Yorick_YorickQ_OnCast {r1}.txtp"
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false
+      },
+      "duration": 1.536735,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/yorick/play_sfx_yorick_yorickq_oncast_r2.wav",
+      "sha256": "499d8fa10da10d083cf8fc7b971f5685f073b28d62f78ca8ce277c573094afdc",
+      "source_events": [
+        "Play_sfx_Yorick_YorickQ_OnCast"
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/txtp/Play_sfx_Yorick_YorickQ_OnCast {r2}.txtp"
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false
+      },
+      "duration": 2.021587,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/yorick/play_sfx_yorick_yorickq_oncast_r3.wav",
+      "sha256": "ce10f0cb25028631d90872ce3526dcbb9fdeb2c2440abe324ace70c9af1155f2",
+      "source_events": [
+        "Play_sfx_Yorick_YorickQ_OnCast"
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/txtp/Play_sfx_Yorick_YorickQ_OnCast {r3}.txtp"
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false
+      },
+      "duration": 2.180113,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/yorick/play_sfx_yorick_yorickqattack_oncast_r.wav",
+      "sha256": "2c0e666ae1667428f4b20b468866dbef9cc46516cf7150264609d80d6000fb78",
+      "source_events": [
+        "Play_sfx_Yorick_YorickQAttack_OnCast"
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/txtp/Play_sfx_Yorick_YorickQAttack_OnCast {r}.txtp"
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false
+      },
+      "duration": 2.264966,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/yorick/play_sfx_yorick_base_death_m.wav",
+      "sha256": "4406789d885abc4f400b8a09fb246feffef626c5d17a5bda50c326de1bc757ab",
+      "source_events": [
+        "Play_sfx_Yorick_Base_death"
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/txtp/Play_sfx_Yorick_Base_death {m}.txtp"
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+        "sample_rate": 44100,
+        "channels": 2,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false
+      },
+      "duration": 1.5,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/yorick/play_sfx_yorick_yorickqbuff_onbuffactivate_r1.wav",
+      "sha256": "c5355ea51bff177cd176db1d04cf8e64139021b8de08eefa843d4ae0b77fb515",
+      "source_events": [
+        "Play_sfx_Yorick_YorickQBuff_OnBuffActivate"
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/txtp/Play_sfx_Yorick_YorickQBuff_OnBuffActivate {r1}.txtp"
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false
+      },
+      "duration": 6.840181,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/yorick/play_sfx_yorick_yorickqbuff_onbuffactivate_r2.wav",
+      "sha256": "c4ab5c3720322a65d61d9f25b7b532f913875d8340dcb7904b4da886a6a03317",
+      "source_events": [
+        "Play_sfx_Yorick_YorickQBuff_OnBuffActivate"
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/txtp/Play_sfx_Yorick_YorickQBuff_OnBuffActivate {r2}.txtp"
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false
+      },
+      "duration": 7.10712,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/yorick/play_sfx_yorick_yorickqbuff_onbuffactivate_r3.wav",
+      "sha256": "72c302a9a21c144bf47586a2ac8e6089e5065798977eafa372f69794c474e7ba",
+      "source_events": [
+        "Play_sfx_Yorick_YorickQBuff_OnBuffActivate"
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/txtp/Play_sfx_Yorick_YorickQBuff_OnBuffActivate {r3}.txtp"
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false
+      },
+      "duration": 7.040385,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/yorick/deploy.ogg",
+      "sha256": "052c217cc2a836d9b8ea132a5c9ea9e7ffdf816cc53f9483bf6e3d85575c3eef",
+      "source_events": [],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/deploy/plugins/rcp-be-lol-game-data/global/zh_cn/v1/champion-choose-vo/83.ogg"
+        }
+      ],
+      "processing": {
+        "description": "original OGG unchanged; client choose voice playback -8dB",
+        "sample_rate": 48000,
+        "channels": 2,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": -8.0,
+        "normalization": false,
+        "original_ogg": true
+      },
+      "duration": 6.648,
+      "verified_by_listening": false
+    },
+    {
       "file": "assets/audio/units/olaf/deploy_pillage.wav",
       "sha256": "3323e026b4c9cf8dd9bb28c8695631c24b03712cca5977334a9514aeadf81c81",
       "source_inputs": [

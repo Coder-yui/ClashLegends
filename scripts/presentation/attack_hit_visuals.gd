@@ -5,6 +5,7 @@ const PLAYER = preload("res://assets/effects/azir/beam_player.gd")
 var _context: BattleContext
 var _views: Array[Dictionary] = []
 var _hits: Array[Dictionary] = []
+var _circles: Array[Dictionary] = []
 
 func _ready() -> void:
 	# Main 先推进表现时间；本节点在模型和 AnimationPlayer 更新后重采挂点。
@@ -24,6 +25,10 @@ func setup(system: ProjectileSystem) -> void:
 
 func play_hit(source: Dictionary, position: Vector2, world: Node3D = null, camera: Camera3D = null) -> void:
 	var stats := PresentationConfig.for_form(CardDB.get_card(String(source.get("card_id", ""))), int(source.get("form", 0)))
+	if String(stats.get("attack_hit_visual", "")) == "splash_circle":
+		_circles.append({"position": position, "radius": float(stats.get("splash_radius", 0.0)), "age": 0.0})
+		queue_redraw()
+		return
 	if String(stats.get("attack_hit_visual", "")) != "azir_beam": return
 	var player := PLAYER.new()
 	add_child(player)
@@ -41,6 +46,9 @@ func play_hit(source: Dictionary, position: Vector2, world: Node3D = null, camer
 		_hits.append({"player": hit, "camera": camera, "age": 0.0, "view": view})
 
 func advance(delta: float) -> void:
+	for circle in _circles: circle.age += delta
+	_circles.assign(_circles.filter(func(circle): return circle.age < 0.3))
+	queue_redraw()
 	for index in range(_views.size()-1,-1,-1):
 		var view := _views[index]
 		view.age += delta
@@ -107,8 +115,16 @@ func _body(id: int, allow_local: bool) -> Node2D:
 	return null
 
 func clear() -> void:
+	_circles.clear()
+	queue_redraw()
 	for view in _views: view.player.free()
 	_views.clear()
 	for hit in _hits:
 		if is_instance_valid(hit.player): hit.player.free()
 	_hits.clear()
+
+func _draw() -> void:
+	for circle in _circles:
+		var alpha := 1.0 - float(circle.age) / 0.3
+		draw_circle(circle.position, circle.radius, Color(0.9, 0.08, 0.05, 0.18 * alpha))
+		draw_arc(circle.position, circle.radius, 0.0, TAU, 64, Color(1.0, 0.15, 0.1, 0.8 * alpha), 2.0, true)

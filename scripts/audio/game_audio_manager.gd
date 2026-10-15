@@ -355,6 +355,8 @@ func _tick_attached_units() -> void:
 		var ready: bool = unit.is_empowered_attack_ready_visual()
 		if ready and not bool(entry.empowered_ready):
 			play_event(unit, &"empowered_ready", unit.get_visual_screen_position())
+		if ready and not bool(entry.empowered_ready): _start_sustain(unit, entry, &"empowered_buff", &"empowered")
+		if not ready and bool(entry.empowered_ready): _stop_sustain(instance_id, &"empowered", true)
 		if ready != bool(entry.empowered_ready):
 			play_event(unit, &"empowered_buff:start" if ready else &"empowered_buff:end", unit.get_visual_screen_position())
 		entry.empowered_ready = ready
@@ -476,7 +478,7 @@ func _sustain_key(instance_id: int, layer: StringName = &"action") -> String:
 	return "%d:%s" % [instance_id, layer]
 
 func _stop_sustain(instance_id: int, layer: StringName = &"", fade: bool = false) -> void:
-	for candidate in [&"action", &"buff", &"attack", &"revival", &"idle", &"sanctuary", &"terrain", &"explosive_shield", &"berserk", &"blood_rage"] if layer == &"" else [layer]:
+	for candidate in [&"empowered", &"action", &"buff", &"attack", &"revival", &"idle", &"sanctuary", &"terrain", &"explosive_shield", &"berserk", &"blood_rage"] if layer == &"" else [layer]:
 		_stop_sustain_key(_sustain_key(instance_id, candidate), fade)
 
 func _stop_sustain_key(key: String, fade: bool = false) -> void:
@@ -815,7 +817,7 @@ func prepare_audio(value: Variant, looping: bool = false) -> void:
 			var paths := PackedStringArray(value.pool)
 			_randomized_stream(paths)
 			if looping: _randomized_stream(paths, true)
-		for key in value: prepare_audio(value[key], String(key) in ["idle:sustain", "explosive_shield:sustain", "berserk:sustain", "blood_rage:sustain", "terrain:sustain"])
+		for key in value: prepare_audio(value[key], String(key) in ["empowered_buff:sustain", "idle:sustain", "explosive_shield:sustain", "berserk:sustain", "blood_rage:sustain", "terrain:sustain"])
 	elif value is Array:
 		for child in value: prepare_audio(child)
 

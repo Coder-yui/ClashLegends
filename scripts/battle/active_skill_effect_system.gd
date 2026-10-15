@@ -234,7 +234,7 @@ func _apply(source: Unit, skill: Dictionary) -> bool:
 				float(skill.get("empowered_damage_multiplier", 1.0)),
 				float(skill.get("empowered_speed_multiplier", 1.0)),
 				int(skill.get("blind_charges", 0)),
-				{"strike_type": skill.get("strike_type", "basic_attack"), "cleave_damage": float(skill.get("cleave_damage", 0.0)), "cleave_radius": float(skill.get("cleave_radius", 0.0)), "cleave_heal_ratio": float(skill.get("heal_ratio", 0.0))}
+				{"hit_heal": float(skill.get("hit_heal", 0.0)), "strike_type": skill.get("strike_type", "basic_attack"), "cleave_damage": float(skill.get("cleave_damage", 0.0)), "cleave_radius": float(skill.get("cleave_radius", 0.0)), "cleave_heal_ratio": float(skill.get("heal_ratio", 0.0))}
 			)
 		&"attack_lifesteal":
 			for target in _skill_target_units(source, skill):

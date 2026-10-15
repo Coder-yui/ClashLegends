@@ -1,0 +1,316 @@
+[
+  {
+    "file": "play_sfx_yorick_yorickbasicattack_oncast_r_d.wav",
+    "event": "Play_sfx_Yorick_YorickBasicAttack_OnCast",
+    "event_id": 3615756372,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/event_wav/Play_sfx_Yorick_YorickBasicAttack_OnCast {r} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/txtp/Play_sfx_Yorick_YorickBasicAttack_OnCast {r} {d}.txtp",
+    "media_ids": [
+      379301581,
+      477386492,
+      539315970,
+      880556746,
+      944649281,
+      1002226888,
+      1020538239,
+      1032646448
+    ],
+    "duration": 2.2502,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "7e0a71b45a0309e41dbcb0fdf67a6ee611b0083a4d4ebfc6df982a37d54765aa",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_yorick_yorickbasicattack2_oncast_r.wav",
+    "event": "Play_sfx_Yorick_YorickBasicAttack2_OnCast",
+    "event_id": 1319618156,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/event_wav/Play_sfx_Yorick_YorickBasicAttack2_OnCast {r}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/txtp/Play_sfx_Yorick_YorickBasicAttack2_OnCast {r}.txtp",
+    "media_ids": [
+      379301581,
+      477386492,
+      539315970,
+      880556746,
+      944649281,
+      1002226888,
+      1020538239,
+      1032646448
+    ],
+    "duration": 2.2502,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "7e0a71b45a0309e41dbcb0fdf67a6ee611b0083a4d4ebfc6df982a37d54765aa",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_yorick_yorickbasicattack_onhit_1559186049_1153642577_r1_d.wav",
+    "event": "Play_sfx_Yorick_YorickBasicAttack_OnHit",
+    "event_id": 752507132,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/event_wav/Play_sfx_Yorick_YorickBasicAttack_OnHit [1559186049=1153642577] {r1} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/txtp/Play_sfx_Yorick_YorickBasicAttack_OnHit [1559186049=1153642577] {r1} {d}.txtp",
+    "media_ids": [
+      156295468,
+      460424389,
+      719506217,
+      814503239
+    ],
+    "duration": 0.992,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "388b5292f4229c0ef1092a1fec6a8aa5701240adb7b3c9f5e80df409612bdafd",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_yorick_yorickbasicattack_onhit_1559186049_1153642577_r2_d.wav",
+    "event": "Play_sfx_Yorick_YorickBasicAttack_OnHit",
+    "event_id": 752507132,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/event_wav/Play_sfx_Yorick_YorickBasicAttack_OnHit [1559186049=1153642577] {r2} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/txtp/Play_sfx_Yorick_YorickBasicAttack_OnHit [1559186049=1153642577] {r2} {d}.txtp",
+    "media_ids": [
+      156295468,
+      460424389,
+      719506217,
+      814503239
+    ],
+    "duration": 0.8573,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "f05a1fff07181e9a8f2603bfc5e2d3d975666adbee6bd9313e6ee755a03c6e43",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_yorick_yorickbasicattack_onhit_1559186049_1153642577_r3_d.wav",
+    "event": "Play_sfx_Yorick_YorickBasicAttack_OnHit",
+    "event_id": 752507132,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/event_wav/Play_sfx_Yorick_YorickBasicAttack_OnHit [1559186049=1153642577] {r3} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/txtp/Play_sfx_Yorick_YorickBasicAttack_OnHit [1559186049=1153642577] {r3} {d}.txtp",
+    "media_ids": [
+      156295468,
+      460424389,
+      719506217,
+      814503239
+    ],
+    "duration": 0.9667,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "3912954c786da6ebf7bdf071d7878adb2162795d1fe462e49fea66975f00c249",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_yorick_yorickbasicattack2_onhit_1559186049_1153642577_r1.wav",
+    "event": "Play_sfx_Yorick_YorickBasicAttack2_OnHit",
+    "event_id": 3603331076,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/event_wav/Play_sfx_Yorick_YorickBasicAttack2_OnHit [1559186049=1153642577] {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/txtp/Play_sfx_Yorick_YorickBasicAttack2_OnHit [1559186049=1153642577] {r1}.txtp",
+    "media_ids": [
+      156295468,
+      460424389,
+      719506217,
+      814503239
+    ],
+    "duration": 0.992,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "388b5292f4229c0ef1092a1fec6a8aa5701240adb7b3c9f5e80df409612bdafd",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_yorick_yorickbasicattack2_onhit_1559186049_1153642577_r2.wav",
+    "event": "Play_sfx_Yorick_YorickBasicAttack2_OnHit",
+    "event_id": 3603331076,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/event_wav/Play_sfx_Yorick_YorickBasicAttack2_OnHit [1559186049=1153642577] {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/txtp/Play_sfx_Yorick_YorickBasicAttack2_OnHit [1559186049=1153642577] {r2}.txtp",
+    "media_ids": [
+      156295468,
+      460424389,
+      719506217,
+      814503239
+    ],
+    "duration": 0.8573,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "f05a1fff07181e9a8f2603bfc5e2d3d975666adbee6bd9313e6ee755a03c6e43",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_yorick_yorickbasicattack2_onhit_1559186049_1153642577_r3.wav",
+    "event": "Play_sfx_Yorick_YorickBasicAttack2_OnHit",
+    "event_id": 3603331076,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/event_wav/Play_sfx_Yorick_YorickBasicAttack2_OnHit [1559186049=1153642577] {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/txtp/Play_sfx_Yorick_YorickBasicAttack2_OnHit [1559186049=1153642577] {r3}.txtp",
+    "media_ids": [
+      156295468,
+      460424389,
+      719506217,
+      814503239
+    ],
+    "duration": 0.9667,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "3912954c786da6ebf7bdf071d7878adb2162795d1fe462e49fea66975f00c249",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_yorick_yorickqattack_hit_1559186049_1153642577_r.wav",
+    "event": "Play_sfx_Yorick_YorickQAttack_hit",
+    "event_id": 2655254146,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/event_wav/Play_sfx_Yorick_YorickQAttack_hit [1559186049=1153642577] {r}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/txtp/Play_sfx_Yorick_YorickQAttack_hit [1559186049=1153642577] {r}.txtp",
+    "media_ids": [
+      156295468,
+      267037090,
+      460424389,
+      480284320,
+      493439629,
+      591957900,
+      719506217,
+      814503239
+    ],
+    "duration": 1.5573,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "1807d0f3af079a86a75733ff7a89ee653e18a081befea66eee9453d2fb5785fe",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_yorick_yorickq_oncast_r1.wav",
+    "event": "Play_sfx_Yorick_YorickQ_OnCast",
+    "event_id": 2732642293,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/event_wav/Play_sfx_Yorick_YorickQ_OnCast {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/txtp/Play_sfx_Yorick_YorickQ_OnCast {r1}.txtp",
+    "media_ids": [
+      20619441,
+      269108003,
+      349508824
+    ],
+    "duration": 1.5367,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "0d21078ae3236cf6197141d677e595ea9e52b5be1916ec5d704489b673471fff",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_yorick_yorickq_oncast_r2.wav",
+    "event": "Play_sfx_Yorick_YorickQ_OnCast",
+    "event_id": 2732642293,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/event_wav/Play_sfx_Yorick_YorickQ_OnCast {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/txtp/Play_sfx_Yorick_YorickQ_OnCast {r2}.txtp",
+    "media_ids": [
+      20619441,
+      269108003,
+      349508824
+    ],
+    "duration": 2.0216,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "499d8fa10da10d083cf8fc7b971f5685f073b28d62f78ca8ce277c573094afdc",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_yorick_yorickq_oncast_r3.wav",
+    "event": "Play_sfx_Yorick_YorickQ_OnCast",
+    "event_id": 2732642293,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/event_wav/Play_sfx_Yorick_YorickQ_OnCast {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/txtp/Play_sfx_Yorick_YorickQ_OnCast {r3}.txtp",
+    "media_ids": [
+      20619441,
+      269108003,
+      349508824
+    ],
+    "duration": 2.1801,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "ce10f0cb25028631d90872ce3526dcbb9fdeb2c2440abe324ace70c9af1155f2",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_yorick_yorickqattack_oncast_r.wav",
+    "event": "Play_sfx_Yorick_YorickQAttack_OnCast",
+    "event_id": 3155440993,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/event_wav/Play_sfx_Yorick_YorickQAttack_OnCast {r}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/txtp/Play_sfx_Yorick_YorickQAttack_OnCast {r}.txtp",
+    "media_ids": [
+      194838580,
+      235581797,
+      282656742,
+      539315970,
+      880556746,
+      944649281
+    ],
+    "duration": 2.265,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "2c0e666ae1667428f4b20b468866dbef9cc46516cf7150264609d80d6000fb78",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_yorick_base_death_m.wav",
+    "event": "Play_sfx_Yorick_Base_death",
+    "event_id": 3217202158,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/event_wav/Play_sfx_Yorick_Base_death {m}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/txtp/Play_sfx_Yorick_Base_death {m}.txtp",
+    "media_ids": [
+      72437326,
+      97651706,
+      117347968,
+      117381206,
+      304008630,
+      316519904,
+      780690769
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "4406789d885abc4f400b8a09fb246feffef626c5d17a5bda50c326de1bc757ab",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 43.74836734693878,
+      "source_sha256": "ed67daac0848977349530ad1f1125dfbc05251de812b75a1614de3e757b7cf49",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_sfx_yorick_yorickqbuff_onbuffactivate_r1.wav",
+    "event": "Play_sfx_Yorick_YorickQBuff_OnBuffActivate",
+    "event_id": 3502408317,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/event_wav/Play_sfx_Yorick_YorickQBuff_OnBuffActivate {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/txtp/Play_sfx_Yorick_YorickQBuff_OnBuffActivate {r1}.txtp",
+    "media_ids": [
+      70750303,
+      775924682,
+      776421470
+    ],
+    "duration": 6.8402,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "c5355ea51bff177cd176db1d04cf8e64139021b8de08eefa843d4ae0b77fb515",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_yorick_yorickqbuff_onbuffactivate_r2.wav",
+    "event": "Play_sfx_Yorick_YorickQBuff_OnBuffActivate",
+    "event_id": 3502408317,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/event_wav/Play_sfx_Yorick_YorickQBuff_OnBuffActivate {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/txtp/Play_sfx_Yorick_YorickQBuff_OnBuffActivate {r2}.txtp",
+    "media_ids": [
+      70750303,
+      775924682,
+      776421470
+    ],
+    "duration": 7.1071,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "c4ab5c3720322a65d61d9f25b7b532f913875d8340dcb7904b4da886a6a03317",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_yorick_yorickqbuff_onbuffactivate_r3.wav",
+    "event": "Play_sfx_Yorick_YorickQBuff_OnBuffActivate",
+    "event_id": 3502408317,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/event_wav/Play_sfx_Yorick_YorickQBuff_OnBuffActivate {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/audio/yorick/txtp/Play_sfx_Yorick_YorickQBuff_OnBuffActivate {r3}.txtp",
+    "media_ids": [
+      70750303,
+      775924682,
+      776421470
+    ],
+    "duration": 7.0404,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "72c302a9a21c144bf47586a2ac8e6089e5065798977eafa372f69794c474e7ba",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "deploy.ogg",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/deploy/plugins/rcp-be-lol-game-data/global/zh_cn/v1/champion-choose-vo/83.ogg",
+    "sha256": "052c217cc2a836d9b8ea132a5c9ea9e7ffdf816cc53f9483bf6e3d85575c3eef",
+    "processing": "original OGG unchanged; client choose voice playback -8dB"
+  }
+]

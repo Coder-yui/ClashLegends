@@ -704,5 +704,14 @@
     "source_path": "assets/characters/kassadin/hud/icons2d/kassadin_r.dds",
     "source_sha256": "cc2687dc9a03fba21bca6ea9cdd17ccc60345e1a7c2054b4b1a7df4af9450de1",
     "sha256": "bb9769f5b03dcc4cd999208d019fcbcbc0638299673f972e31c9594619cf4cc0"
+  },
+  {
+    "card": "yorick",
+    "skill_index": 0,
+    "path": "res://assets/skills/yorick_q.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Yorick.wad.client",
+    "source_path": "assets/characters/yorick/hud/icons2d/yorick_q.dds",
+    "source_sha256": "a9afd01d740e2fe642f206e23cd62d227b0ac1940a75531574f97d3a3eab7462",
+    "sha256": "750ac2d4cd8d8bc4a0b42aa36efbcddb83c0cf9084baeab75bdf1350f0b483cc"
   }
 ]
