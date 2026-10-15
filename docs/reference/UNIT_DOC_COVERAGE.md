@@ -26,6 +26,8 @@
 
 | 定义 / 正文（含形态） | 当前机制与边界重点 | 动画 / 音频 |
 | --- | --- | --- |
+| `scuttle_crab` · [峡谷迅捷蟹](../units/scuttle_crab.md) | 无普攻、建筑前自疗、死亡独立治疗区、范围双减速 | [动作](../units/animations/scuttle_crab.md) · [声音](../units/audio/scuttle_crab.md) · [特效](../units/effects/scuttle_crab.md) |
+| `void_scuttle_crab` · [虚空迅捷蟹](../units/void_scuttle_crab.md) | 无普攻、建筑前自疗、死亡独立治疗区、范围双减速 | [动作](../units/animations/void_scuttle_crab.md) · [声音](../units/audio/void_scuttle_crab.md) · [特效](../units/effects/void_scuttle_crab.md) |
 | `void_gate` · [兹若特传送门](../units/void_gate.md) | 6费建筑、6秒周期出兽；主动摧毁自身召唤2只、3×3占地与30碰撞半径 | [动作](../units/animations/void_gate.md) · [声音](../units/audio/void_gate.md) |
 | `void_spawn` · [虚空兽](../units/void_spawn.md) | 双单位牺牲攻城、16Tick独立单体爆炸、原版攻城音画；1金币强化360伤害及永久20%加速，强化专属粒子缺项 | [动作](../units/animations/void_spawn.md) · [声音](../units/audio/void_spawn.md) |
 | `kassadin` · [虚空行者](../units/kassadin.md) | 浮空过河、永久穿兵、无限封顶瞬移 | [动作](../units/animations/kassadin.md) · [声音](../units/audio/kassadin.md) · [特效](../units/effects/kassadin.md) |
@@ -126,3 +128,8 @@
 
 | `malzahar` · [虚空先知](../units/malzahar.md) | 空中周期召唤与下一击引导 | [动作](../units/animations/malzahar.md) · [声音](../units/audio/malzahar.md) |
 | `voidling` · [虚灵](../units/voidling.md) | 关联小型近战单位 | [动作](../units/animations/voidling.md) · [声音](../units/audio/voidling.md) |
+
+| `olaf` · [狂战士](../units/olaf.md) | 双单位近战、护盾与5秒攻速/吸血增益 | [动画](../units/animations/olaf.md) · [音频](../units/audio/olaf.md) · [特效](../units/effects/olaf.md) |
+| `olaf_single` · [狂战士（单只）](../units/olaf_single.md) | 工作台关联对象，共用狂战士机制 | [动画](../units/animations/olaf.md) · [音频](../units/audio/olaf.md) · [特效](../units/effects/olaf.md) |
+
+| `yorick` · [牧魂人](../units/yorick.md) | 目标圆心范围普攻、Q单次固定回血 | [动作](../units/animations/yorick.md) · [声音](../units/audio/yorick.md) · [特效](../units/effects/yorick.md) |

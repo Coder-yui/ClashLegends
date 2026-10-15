@@ -4,7 +4,9 @@
 
 ## 声音池与来源
 
-声音池必须非空、资源可加载为 AudioStream。攻击分段按实际攻击序号映射，不按文件名排序；随机池避免连续重复。默认事件总线 Combat，可选 Voice，事件默认额外增益 0 dB；普攻专用默认值以读取方为准。
+每个独立事件、形态、阵营或攻击段的声音池必须包含1至3个不同音频资源，可加载为 AudioStream；不同条件分别配置，不合并普通、被动或强化声音。攻击分段按实际攻击序号映射，不按文件名排序；随机池避免连续重复。默认事件总线 Combat，可选 Voice，事件默认额外增益 0 dB；普攻专用默认值以读取方为准。超过上限由validator拒绝，不在运行时静默截断。
+
+分段命中与通用命中池互斥，分段发射与通用发射事件池互斥。分段事件必须携带有效攻击序号，缺失或不大于0时报告诊断并停止该次播放，不选普通池或第1段。强化与首击出手只消费专用事件，播放失败不改播普通出手。技能命中只消费精确事件名，不去掉中心或剪段后缀。不同动作、形态、条件可以引用同一音频文件；同一随机池不能重复列出同一文件。
 
 `team_overrides` 提供蓝红平级覆盖，禁止递归；形态和阵营选择统一经 PresentationConfig。出手时保存单位、卡牌、形态、阵营、序号、首击/强化状态，后续命中不重新查当前来源形态。
 
@@ -28,7 +30,7 @@
 | `action:start/sustain/end/voice` | 已携带动作的窗口与语音，按序号去重 |
 | `action:release` | 实际发射；直接范围技能按其真实入口处理 |
 | `action:hit / hit_center` | 真实命中；nova、dual_form 等已有入口，中央可附加音层 |
-| `action:hit_first/middle/last` | 多剪真实命中阶段；每剪多目标一次，缺省回退 hit |
+| `action:hit_first/middle/last` | 多剪真实命中阶段；每剪多目标一次，分别配置精确事件，不回退 hit |
 | `action:hit_*_center` | 多剪中央替代对应普通池；同剪中心与边缘不重复叠放 |
 | `action:impact / wave_hit` | 前方区域落地 / 冲击波成功命中新目标 |
 | `action:zone_sustain/zone_end` | 已生成的固定区域，独立于施法者 |
@@ -99,3 +101,11 @@
 金克丝切枪复用`transform:start`动作声音，与同一变形序号绑定；冰冻/凝滞停止，眩晕/击退继续。另有`structure_haste:start`（真实建筑助攻收益首次获得）。被动音轨绑定单位和状态窗口，跟随位置，硬控不取消，到期、死亡、清场停止；刷新不重播。派发能力由PresentationEvents按机制字段检查。
 
 部署声音支持 `deploy:start/voice.action_time`：秒数必须位于deploy_time内，由权威或快照部署进度驱动通用音频消费者；不是新的战斗计时器。首次观察已越过节点、取消、死亡不补播，同次进度回退不重播。
+
+`mend:sustain`用于声明建筑前自疗能力的单位；GameAudioManager按同步行为状态启动/停止持续声，受控、离开、死亡及清场停止，不从本地动画判断。
+
+`empowered_buff:sustain`沿强化待发状态开始，攻击消费、死亡或清场停止；采用独立empowered持续层，赛前准备循环资源。
+
+部署语音事件可配置 `scope: "deployment_group"`：由 GameAudioManager 按阵营、卡牌及现有部署组 ID 去重，首次成功播放后抑制同组重复；无组 ID 的单只对象按实例处理。默认 `unit` 保留逐单位行为。`begin_battle()` 清空记录，生成 RPC 已携带组 ID，无新增网络载荷。该字段只允许用于 `deploy:voice`。
+
+河蟹死亡衔接动作于配置的 `death_transition_delay`（当前1秒）派发 `shrine:leap`，要求同时具有死亡治疗区与该阶段配置；祭坛展开阶段于 `death_shrine_delay`（当前2秒）派发 `shrine:start`，条件为 `death_heal_radius > 0`；死亡赏金实际入账时派发 `bounty:gain`，条件为 `death_enemy_elixir > 0`。两者通过可靠卡牌事件消费，不依附已死亡单位，重复死亡不重播；自尽仍生成祭坛声但免除赏金声。

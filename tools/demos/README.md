@@ -1,5 +1,7 @@
 # 专项复现场景
 
+- `void_scuttle_crab_review.gd`：虚空河蟹双方与普通河蟹尺寸对比、舞蹈、自尽/被击杀治疗区及清场录音截图。
+
 返回 [工具索引](../README.md)。联网统一用 `python3 tools/dev.py verify --network-render` 或 `bash tools/run_local_multiplayer.sh`（一服两端）。本页脚本仅作单机专项复现，旧联网参数会明确报错。
 
 临时看新模型或试听任意声音，优先使用通用展台；这些脚本保留特定实战问题的复现条件。
@@ -76,5 +78,9 @@ python3 tools/demos/pantheon_review_media.py --input /本次输出/pantheon-revi
 已退役 `baron_minion_network.gd`、`kayn_network_review.gd`、`mirror_network_review.gd` 及可选双进程分支：它们依赖玩家主机、固定阵营或客户端完整手牌，与现行协议不兼容。保留对应本地配方和领域套件；三进程集成负责真实会话/副本同步。逐卡专有网络视觉组合不因此自动视为已覆盖，必要时扩展现有网络夹具。旧源码可从 Git 历史追溯。
 
 虚空行者双方浮空模型、河面动作、常驻能量刃、原版R生命周期与运行音频：`Godot --path . --script tools/demos/kassadin_review.gd`。产物自动进入开发素材库，源程序只用于表现验证。
+
+- `yorick_review.gd`：牧魂人双方、同档尺寸、Q与范围提示、死亡和运行录音。
+
+`scuttle_crab_review.gd`：峡谷迅捷蟹双方模型与艾希对比、舞蹈、兰顿施放、死亡治疗区多个时点及清场截图与运行录音。
 
 - `kassadin_review.gd -- --range`：双阵营实际战场特效叠加技能数据中的伤害半径圈，仅预览脚本创建。默认暂停在落地后0.15秒，可播放/暂停、拖动0—1.2秒时间轴，或选择0.05/0.15/0.3/0.6秒关键帧。圈内接触敌方身体即满足距离判定；不把目标半径额外画成技能半径。

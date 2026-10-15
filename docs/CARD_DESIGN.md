@@ -294,9 +294,24 @@ buff主动的`ignore_unit_collision=true`以StatusInstances独立窗口控制普
 
 `death_spawn` 使用 `duration`、`spawn_id` 与 `target_scope`；给目标存活成员写入独立20Hz窗口。真实死亡时走BattleContext生成一只独立单位，窗口到期不生成，新单位不继承再生或主动资格。字段引用进入资源计划递归和卡牌校验。远程虚空鱼使用3秒窗口。
 
-
 ## 浮空地面与封顶瞬移
 
 river_traversal只放开河流，普通单位仍保留结构阻挡、地面索敌和地面受击。永久permanent_unit_phasing复用普通单位避让/接触/扫掠过滤；不跳过建筑和塔。浮空导航按结构导航revision重建缓存，桥不再是唯一通道。
 
 blink_nova在CastStart固定朝向，在impact_delay节点通过UnitLandingQuery选择有限线段上最近合法终点，瞬移后调用通用nova伤害。unlimited_uses允许max_uses之后继续施法；max_uses在这种配置中代表费用/伤害序列长度，cost_by_use与damage_by_use到最后一项后封顶。ActiveSkillRoster持有进度、付款和快照复用现有接口；UI显示次数不限。瞬移序号独立同步，避免客户端将传送插值成滑行。
+
+## 限时吸血与强化命中治疗
+
+Buff主动的`heal_ratio`可赋予与`duration`同长的限时普攻吸血；各来源独立计时，同类取最强，与原永久吸血和攻击段吸血相加。仅主机根据实际生命伤害回血；表现沿现有增益时钟及盾量同步。
+
+强化下一击empowered_attack可配置正整数hit_heal：该次攻击至少一次有效命中时，向存活来源发放一次固定治疗，溅射目标数量不放大治疗；致盲、无效主目标和同批致死来源不获益。纯护盾承伤算有效命中。范围提示splash_circle仅为直接命中的表现，复用权威命中事件。
+
+## 建筑前自疗与死亡治疗区域
+
+虚空迅捷蟹使用通用 `death_enemy_elixir` 在权威真实死亡时给对方一次金币（遵守上限）；`self_sacrifice` 主动直接死亡并免除该奖励，仍产生死亡治疗区，清场移除不奖励。
+
+`structure_mend_per_second`为正数，仅支持禁用普攻、地面、非建筑且仅索敌建筑的单位；到达射程后停止移动并回复生命，不进入普攻时间线。动作控制、外力位移与技能锁仍使用通用规则。整数治疗余量由权威Tick累积，满血不储存待回生命。
+
+`death_heal_radius / death_heal_duration / death_heal_per_second`须同时为正数；真实死亡后由效果系统建立独立定点区域，逐Tick治疗接触范围的友方普通单位，包含空军，排除建筑与死亡/凝滞目标。不同区域独立叠加，来源死亡不取消，清场统一释放。客户端仅播放可靠区域事件与接收生命快照。
+
+nova可配置`attack_slow_multiplier`，要求正数slow_duration及[0.1,1)倍率；使用现有减攻速状态，和同次移速效果共享准入。nova的impact_visual_shape/duration只声明独立范围表现。
