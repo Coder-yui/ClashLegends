@@ -2,6 +2,10 @@ class_name PresentationEvents
 extends RefCounted
 ## 当前实际派发能力表；新增 cue 必须同时实现权威派发与消费者。
 static func supports(stats: Dictionary, cue: String) -> bool:
+	if cue == "shrine:leap": return float(stats.get("death_heal_radius", 0.0)) > 0.0 and stats.has("death_transition_delay")
+	if cue == "shrine:start": return float(stats.get("death_heal_radius", 0.0)) > 0.0
+	if cue == "bounty:gain": return float(stats.get("death_enemy_elixir", 0.0)) > 0.0
+	if cue == "mend:sustain": return float(stats.get("structure_mend_per_second", 0.0)) > 0.0
 	if cue == "summon:start": return String(stats.get("spawn_side", "")) == "below" and not String(stats.get("spawn_id", "")).is_empty()
 	if cue in ["channel:sustain", "channel:zone_sustain"]: return (stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "channeled_attack")
 	if cue in ["sacrifice:start", "sacrifice:impact"]: return float(stats.get("sacrifice_damage", 0.0)) > 0.0

@@ -187,6 +187,9 @@ func clear() -> void:
 	shield_effects.clear()
 	frontal_effects.clear()
 
+func viewer_team() -> int:
+	return _controller.local_team
+
 func present_fixed_area(center: Vector2, start_radius: float, end_radius: float, duration: float, team: int, shape: StringName) -> void:
 	add_fixed_area_effect(center, start_radius, end_radius, duration, team, shape)
 	_controller.publish_skill_fx(frontal_effects.back())

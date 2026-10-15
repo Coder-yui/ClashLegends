@@ -530,5 +530,19 @@
     "method": "run",
     "scene": "battle",
     "group": "cards"
+  },
+  {
+    "id": "ScuttleCrabSuite",
+    "script": "res://tests/suites/cards/scuttle_crab_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "cards"
+  },
+  {
+    "id": "VoidScuttleCrabSuite",
+    "script": "res://tests/suites/cards/void_scuttle_crab_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "cards"
   }
 ]

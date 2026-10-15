@@ -330,6 +330,10 @@ func _tick_attached_units() -> void:
 			play_event(unit, &"sanctuary:end", unit.target_protection.center)
 		entry.sanctuary_active = sanctuary_active
 		entry.sanctuary_serial = unit.target_protection.serial
+		var mending: bool = float(unit._base_form_stats.get("structure_mend_per_second", 0.0)) > 0.0 and state.behavior == 3 and not state.frozen and not state.stunned and not state.dead and state.action_time_left <= 0.0
+		if mending and not bool(entry.get("mending", false)): _start_sustain(unit, entry, &"mend", &"mend")
+		if not mending and bool(entry.get("mending", false)): _stop_sustain(instance_id, &"mend")
+		entry.mending = mending
 		var idle := state.behavior == 1 and state.action_time_left <= 0.0 and not state.dead
 		if idle and not bool(entry.idle_active):
 			_start_sustain(unit, entry, &"idle", &"idle")
@@ -446,7 +450,7 @@ func _start_sustain(unit: Node2D, entry: Dictionary, action: StringName, layer: 
 	var player := _new_world_player()
 	player.bus = StringName(event.get("bus", "Combat"))
 	player.volume_db = float(event.get("volume_db", 0.0))
-	player.stream = _randomized_stream(PackedStringArray(event.get("pool", [])), layer in [&"explosive_shield", &"berserk", &"blood_rage", &"terrain"])
+	player.stream = _randomized_stream(PackedStringArray(event.get("pool", [])), layer in [&"mend", &"explosive_shield", &"berserk", &"blood_rage", &"terrain"])
 	add_child(player)
 	player.global_position = unit.target_protection.center if layer == &"sanctuary" and unit is Unit else _status_audio_position(unit)
 	var key := _sustain_key(unit.get_instance_id(), layer)
@@ -478,7 +482,7 @@ func _sustain_key(instance_id: int, layer: StringName = &"action") -> String:
 	return "%d:%s" % [instance_id, layer]
 
 func _stop_sustain(instance_id: int, layer: StringName = &"", fade: bool = false) -> void:
-	for candidate in [&"empowered", &"action", &"buff", &"attack", &"revival", &"idle", &"sanctuary", &"terrain", &"explosive_shield", &"berserk", &"blood_rage"] if layer == &"" else [layer]:
+	for candidate in [&"mend", &"empowered", &"action", &"buff", &"attack", &"revival", &"idle", &"sanctuary", &"terrain", &"explosive_shield", &"berserk", &"blood_rage"] if layer == &"" else [layer]:
 		_stop_sustain_key(_sustain_key(instance_id, candidate), fade)
 
 func _stop_sustain_key(key: String, fade: bool = false) -> void:
@@ -817,7 +821,7 @@ func prepare_audio(value: Variant, looping: bool = false) -> void:
 			var paths := PackedStringArray(value.pool)
 			_randomized_stream(paths)
 			if looping: _randomized_stream(paths, true)
-		for key in value: prepare_audio(value[key], String(key) in ["empowered_buff:sustain", "idle:sustain", "explosive_shield:sustain", "berserk:sustain", "blood_rage:sustain", "terrain:sustain"])
+		for key in value: prepare_audio(value[key], String(key) in ["mend:sustain", "empowered_buff:sustain", "idle:sustain", "explosive_shield:sustain", "berserk:sustain", "blood_rage:sustain", "terrain:sustain"])
 	elif value is Array:
 		for child in value: prepare_audio(child)
 

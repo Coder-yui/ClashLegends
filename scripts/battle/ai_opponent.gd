@@ -79,6 +79,7 @@ func _try_skills(reserve: float) -> void:
 
 ## 根据效果和当前收益决定是否值得消耗次数；不强制清空所有主动。
 func _skill_useful(unit: Unit, skill: Dictionary) -> bool:
+	if skill.get("kind", "") == "self_sacrifice" and unit.hp > unit.max_hp * 0.25: return false
 	if float(skill.get("heal_amount", 0.0)) > 0.0:
 		return unit.max_hp - unit.hp >= minf(float(skill.heal_amount) * 0.6, unit.max_hp * 0.25)
 	if skill.get("kind", "") == "permanent_growth":
@@ -88,6 +89,7 @@ func _skill_useful(unit: Unit, skill: Dictionary) -> bool:
 	var reach := float(skill.get("length", skill.get("range", skill.get("radius", unit.attack_range))))
 	if skill.get("kind", "") in ["buff", "timed_form", "sanctuary", "channeled_attack", "empowered_attack"]:
 		reach = unit.attack_range + 40.0
+	if skill.get("kind", "") == "self_sacrifice": reach = 200.0
 	# 永久强化没有持续时间字段；接近建筑两秒行程内即可考虑施放。
 	if skill.get("kind", "") == "sacrifice_empower": reach = unit.attack_range + unit.move_speed * 2.0
 	for enemy in get_tree().get_nodes_in_group("combatants"):

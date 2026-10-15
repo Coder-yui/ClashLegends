@@ -760,7 +760,7 @@ func _start_continuous_attack(retargeting_without_move: bool = false, blend_over
 	if _animation_player == null:
 		return
 	# 权威攻击进入范围即开始；光柱在所有进入/换目标/循环动画中持续显示。
-	_source.set_continuous_beam_visible(true)
+	_source.set_continuous_beam_visible(_source.continuous_attack)
 	_continuous_attack_active = true
 	var enter_key := "attack_retarget_enter" if retargeting_without_move else "attack_enter"
 	var configured = _animation_names.get(enter_key, _animation_names.get("attack_enter", ""))
@@ -1964,6 +1964,10 @@ func _release_model() -> void:
 	_model_resources = ModelVisualResources.new()
 	_model_root = null
 	_animation_player = null
+
+## 清场/终局中断包括长祭坛序列在内的死亡表现。
+func cancel_death_visual() -> void:
+	if _dying: _retire()
 
 func _retire() -> void:
 	if is_instance_valid(_source):

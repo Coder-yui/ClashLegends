@@ -139,7 +139,33 @@ func _draw_frontal_skill_effect(effect: Dictionary) -> void:
 		projectile_progress = clampf(projectile_elapsed / projectile_flight_duration, 0.0, 1.0)
 	var line_color := Color(0.28, 0.68, 1.0, 0.9) if int(effect.get("team", 0)) == 0 else Color(1.0, 0.34, 0.24, 0.9)
 	var fill_color := Color(line_color.r, line_color.g, line_color.b, 0.10 + 0.06 * remaining_ratio)
-	if shape in [&"aftershock", &"riftwalk_appear", &"riftwalk_vanish"]: return # 由3D原版余震粒子播放器消费。
+	if shape == &"gold_reward":
+		var alpha := minf(1.0, remaining_ratio * 3.0)
+		var text := "+%s" % String.num(length, 1).trim_suffix(".0")
+		var font := CardArt.ui_font()
+		var text_width := font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, 20).x
+		var rise := center + Vector2(-(text_width + 25.0) * 0.5, -28.0 - 34.0 * progress)
+		var tint := Color(0.28, 0.68, 1.0, alpha) if int(effect.team) == skills.viewer_team() else Color(1.0, 0.34, 0.24, alpha)
+		draw_string_outline(font, rise, text, HORIZONTAL_ALIGNMENT_LEFT, -1, 20, 4, Color(0.04, 0.06, 0.10, alpha))
+		draw_string(font, rise, text, HORIZONTAL_ALIGNMENT_LEFT, -1, 20, tint)
+		# 金币UI紧跟数字，保持金色；收益数字按观察者阵营着色。
+		var text_server := TextServerManager.get_primary_interface()
+		var font_rid: RID = font.get_rids()[0]
+		var ink_top := INF
+		var ink_bottom := -INF
+		for character in text:
+			var glyph := text_server.font_get_glyph_index(font_rid, 20, character.unicode_at(0), 0)
+			var offset := text_server.font_get_glyph_offset(font_rid, Vector2i(20, 0), glyph)
+			var glyph_size := text_server.font_get_glyph_size(font_rid, Vector2i(20, 0), glyph)
+			ink_top = minf(ink_top, offset.y)
+			ink_bottom = maxf(ink_bottom, offset.y + glyph_size.y)
+		var coin := rise + Vector2(text_width + 14.0, (ink_top + ink_bottom) * 0.5)
+		draw_circle(coin, 10.0, Color(0.24, 0.12, 0.02, alpha))
+		draw_circle(coin, 8.5, Color(1.0, 0.73, 0.14, alpha))
+		draw_arc(coin, 6.0, 0.0, TAU, 24, Color(0.67, 0.37, 0.04, alpha), 1.5, true)
+		draw_line(coin + Vector2(0.0, -3.5), coin + Vector2(0.0, 3.5), Color(1.0, 0.94, 0.61, alpha), 2.0, true)
+		return
+	if shape in [&"scuttle_void_shrine", &"scuttle_shrine", &"randuin", &"aftershock", &"riftwalk_appear", &"riftwalk_vanish"]: return # 由3D原版余震粒子播放器消费。
 	if shape == &"trapezoid" and source is Unit and source.card_id == "sett": return
 	if shape == &"shield_explosion": return # 3D 原版 W 粒子读取同一表现事件。
 

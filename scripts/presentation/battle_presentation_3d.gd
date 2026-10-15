@@ -20,6 +20,7 @@ var _anivia_effect: Node3D
 var _aurelion_effect: Node3D
 var skills: RefCounted
 var _sion_w_effect: Node3D
+var _scuttle_effect: Node3D
 var _aftershock_effect: Node3D
 var _riftwalk_effect: Node3D
 var _locket_effect: Node3D
@@ -38,6 +39,8 @@ var pending_deployments: Callable
 var _pre_deploy_views: Dictionary = {}
 
 func _process(delta: float) -> void:
+	if _scuttle_effect != null and skills != null:
+		_scuttle_effect.sync_effects(skills, _camera, viewer_team)
 	if _aftershock_effect != null and skills != null:
 		_aftershock_effect.sync_effects(skills, _camera)
 	if _riftwalk_effect != null and skills != null:
@@ -139,6 +142,8 @@ func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void
 	_world_root.add_child(_voidfish_effect)
 	_sion_w_effect = preload("res://scripts/presentation/sion_w_effect_3d.gd").new()
 	_world_root.add_child(_sion_w_effect)
+	_scuttle_effect = preload("res://scripts/presentation/scuttle_effect_3d.gd").new()
+	_world_root.add_child(_scuttle_effect)
 	_aftershock_effect = preload("res://scripts/presentation/aftershock_effect_3d.gd").new()
 	_world_root.add_child(_aftershock_effect)
 	_riftwalk_effect = preload("res://scripts/presentation/riftwalk_effect_3d.gd").new()
@@ -283,3 +288,8 @@ func project_height(point: Vector2, height: float) -> Vector2:
 func prepare_target_states(states: Dictionary) -> void:
 	for child in _world_root.get_children():
 		if child is TowerModel3D: child.prepare_target_states(states)
+
+func clear_death_visuals() -> void:
+	if not is_instance_valid(_world_root): return
+	for view in _world_root.get_children():
+		if view is UnitModel3D: view.cancel_death_visual()

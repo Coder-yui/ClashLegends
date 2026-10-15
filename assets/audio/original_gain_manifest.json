@@ -61317,6 +61317,93 @@
       "verified_by_listening": false
     },
     {
+      "file": "assets/audio/units/scuttle_crab/play_sfx_sru_crab_spawn_cast.wav",
+      "sha256": "59d6fe3728a47a738b4ce55c96b012a039d4ebb6b03820509571b8fc93f5bf34",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/audio-render/crab/txtp/Play_sfx_SRU_Crab_spawn_cast.txtp",
+          "txtp_sha256": "9f006a36864f2bb876a04f423801fa54342ddf24ff2560708b7550824008fe81",
+          "event_ids": [],
+          "media_ids": [
+            "509451067"
+          ],
+          "gain_db": 0.0
+        }
+      ],
+      "processing": "none",
+      "gain_db": 0.0
+    },
+    {
+      "file": "assets/audio/units/scuttle_crab/play_sfx_sru_crab_death_cast.wav",
+      "sha256": "1b658f98c8a43f2244943f89608e50ed05272d6fba59b835a7d43396b2aeee86",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/audio-render/crab/txtp/Play_sfx_SRU_Crab_death_cast.txtp",
+          "txtp_sha256": "b41d410c6ef989684e6e0704f9dc22dbaba45e3ef51e68aa3c1a33382fa9f07e",
+          "event_ids": [],
+          "media_ids": [
+            "1014060077"
+          ],
+          "gain_db": 0.0
+        }
+      ],
+      "processing": "death cap 1.5 seconds, fade last 0.5 seconds",
+      "gain_db": 0.0
+    },
+    {
+      "file": "assets/audio/units/scuttle_crab/play_sfx_sru_crab_sru_dance_r1.wav",
+      "sha256": "1f9352f2577a97a3562eb3af07fa12865d12e7b49dba0e35db94ec26390faecb",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/audio-render/crab/txtp/Play_sfx_SRU_Crab_Sru_Dance {r1}.txtp",
+          "txtp_sha256": "305cb319cd422d0cdd871baf68bc8531b03175cc70d3caf2e98cff2dd457b954",
+          "event_ids": [],
+          "media_ids": [
+            "869838903",
+            "999653460"
+          ],
+          "gain_db": 0.0
+        }
+      ],
+      "processing": "none",
+      "gain_db": 0.0
+    },
+    {
+      "file": "assets/audio/units/scuttle_crab/play_sfx_sru_crab_sru_dance_r2.wav",
+      "sha256": "838fec59d42ef8655a18820c1f320f18afaf998f7e51eaef4db773c232575d66",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/audio-render/crab/txtp/Play_sfx_SRU_Crab_Sru_Dance {r2}.txtp",
+          "txtp_sha256": "412b5679be5fcd52ade087070815f17dd532a0d04d1541eadd7f3d3b01bd98eb",
+          "event_ids": [],
+          "media_ids": [
+            "869838903",
+            "999653460"
+          ],
+          "gain_db": 0.0
+        }
+      ],
+      "processing": "none",
+      "gain_db": 0.0
+    },
+    {
+      "file": "assets/audio/units/scuttle_crab/play_sfx_randuinsomen_oncast.wav",
+      "sha256": "2b2558a3dc16f3828d412e30447dae62201cc292019fa6d051a05a2349eec212",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/audio-render/items/txtp/Play_sfx_RanduinsOmen_OnCast.txtp",
+          "txtp_sha256": "8a242de7a95c1a95c8415482aaa80d55d09d18a179ab0f53ae57399c38727c36",
+          "event_ids": [],
+          "media_ids": [
+            "849860276"
+          ],
+          "gain_db": 0.0
+        }
+      ],
+      "processing": "none",
+      "gain_db": 0.0
+    },
+    {
       "file": "assets/audio/units/yorick/play_sfx_yorick_yorickbasicattack_oncast_r_d.wav",
       "sha256": "7e0a71b45a0309e41dbcb0fdf67a6ee611b0083a4d4ebfc6df982a37d54765aa",
       "source_events": [
@@ -61747,6 +61834,116 @@
       "verified_by_listening": false
     },
     {
+      "file": "assets/audio/units/scuttle_crab/gold0.wav",
+      "sha256": "c9aed2d31f0212dff8ecdd3cbd3a99eb67f07cb04d072207f8b3da63fdf13c4d",
+      "source_events": [
+        {
+          "event_name": "Play_sfx_GoldAquisition_P_cast",
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/祭坛完整源件/audio-gold/txtp/Play_sfx_GoldAquisition_P_cast {r1}.txtp",
+          "txtp_sha256": "c9ce20bedd58cc836eb7c698ecf5a8eafbd9e5a107e11db06e8d01a16a728e8e"
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/祭坛完整源件/audio-gold/gold0.wav",
+          "sha256": "ddd841ebb4503291386fbbf84db7b2b705e2e2d48e3a5d204b9cde24224a5851"
+        }
+      ],
+      "processing": {
+        "description": "pcm_s16le only; full event, no normalization",
+        "wwiser_master_gain_db": 0,
+        "playback_gain_db": 0
+      }
+    },
+    {
+      "file": "assets/audio/units/scuttle_crab/gold1.wav",
+      "sha256": "28afa7495ee345607d41ab74961e141e9c4d5122ff2cc1a29bf31d0882c6ffcb",
+      "source_events": [
+        {
+          "event_name": "Play_sfx_GoldAquisition_P_cast",
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/祭坛完整源件/audio-gold/txtp/Play_sfx_GoldAquisition_P_cast {r2}.txtp",
+          "txtp_sha256": "781e1cc873755443476b8c7455425a482e196d840ba26c58df52ae1592ecac34"
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/祭坛完整源件/audio-gold/gold1.wav",
+          "sha256": "b13a9c9b03b81a1be60021b38d29008ac010e5e5a570ba2e85d20c98ab167799"
+        }
+      ],
+      "processing": {
+        "description": "pcm_s16le only; full event, no normalization",
+        "wwiser_master_gain_db": 0,
+        "playback_gain_db": 0
+      }
+    },
+    {
+      "file": "assets/audio/units/scuttle_crab/gold2.wav",
+      "sha256": "adc49206fa75aca97ecfa39ac6612e3b1b18fc696d41e6fe7f328c4ab8d9fc3c",
+      "source_events": [
+        {
+          "event_name": "Play_sfx_GoldAquisition_P_cast",
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/祭坛完整源件/audio-gold/txtp/Play_sfx_GoldAquisition_P_cast {r3}.txtp",
+          "txtp_sha256": "2d4e2cb23a948c5e1988a70003e6ac3ff8214d618da2dd788c311a5e5cfd6daf"
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/祭坛完整源件/audio-gold/gold2.wav",
+          "sha256": "6781ba575f655d2a04d08ee9120822149bc3a411f10e78e01a21d9e7068203d0"
+        }
+      ],
+      "processing": {
+        "description": "pcm_s16le only; full event, no normalization",
+        "wwiser_master_gain_db": 0,
+        "playback_gain_db": 0
+      }
+    },
+    {
+      "file": "assets/audio/units/scuttle_crab/ward0.wav",
+      "sha256": "15aafd045c2be4f370ebd4656a4b234c14b7c7e8549c7bfad68c8ed4fd6c4505",
+      "source_events": [
+        {
+          "event_name": "Play_sfx_SRU_Crab_ward_cast",
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/祭坛完整源件/audio-ward/txtp/Play_sfx_SRU_Crab_ward_cast.txtp",
+          "txtp_sha256": "87dce059a90cceda56314134297f69f136bb6913816723219437b2f9c1043fcd"
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/祭坛完整源件/audio-ward/ward0.wav",
+          "sha256": "2db37c0aeeecc22f1e738322f1418008fc83ee30b7d49fbf4139aed3329e5b67"
+        }
+      ],
+      "processing": {
+        "description": "pcm_s16le only; full event, no normalization",
+        "wwiser_master_gain_db": 0,
+        "playback_gain_db": 0
+      }
+    },
+    {
+      "file": "assets/audio/units/scuttle_crab/voidward0.wav",
+      "sha256": "9ff427d4dc5334d45d3ed38e3440ea8b1e3a1f3c33b5075f64c1d91776724ee5",
+      "source_events": [
+        {
+          "event_name": "Play_sfx_SRU_Crab_Void_ward_cast",
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/祭坛完整源件/audio-voidward/txtp/Play_sfx_SRU_Crab_Void_ward_cast.txtp",
+          "txtp_sha256": "660a5d7036f65c29bf0098af486f7dddf73c18f1eedbbb4632e31a692ec8093c"
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/祭坛完整源件/audio-voidward/voidward0.wav",
+          "sha256": "9f03c3233bb82dea1f5c9603b7ac8f83ea43107914bec19cadb765eb9648552c"
+        }
+      ],
+      "processing": {
+        "description": "pcm_s16le only; full event, no normalization",
+        "wwiser_master_gain_db": 0,
+        "playback_gain_db": 0
+      }
+    },
+    {
       "file": "assets/audio/units/olaf/deploy_pillage.wav",
       "sha256": "3323e026b4c9cf8dd9bb28c8695631c24b03712cca5977334a9514aeadf81c81",
       "source_inputs": [
@@ -61780,6 +61977,174 @@
         "normalization": false,
         "description": "wwiser -gv=0dB; vgmstream-cli -i PCM16; original event node gain -13dB retained; no normalization"
       },
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/scuttle_crab/death_leap_1.wav",
+      "sha256": "1dc589bb67f8ca4bfe1ed3329499e125061a66a9d402870fc16490b82038c738",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/河蟹全音频-20261016/LoL 普通河蟹/txtp/Play_sfx_SRU_Crab_death_leap.txtp",
+          "txtp_sha256": "cfea56ab0cb0ce4bdfb32600c988cd825aa6651b0bdea7066610fa1d6eb3e842",
+          "event": "Play_sfx_SRU_Crab_death_leap"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0,
+        "post_gain_db": 0,
+        "runtime_gain_db": 0,
+        "normalization": false,
+        "sample_rate": 44100,
+        "channels": 1,
+        "death_envelope": null
+      },
+      "duration": 1.2072789115646259,
+      "float_peak": 0.053558349609375,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/void_scuttle_crab/death_leap_1.wav",
+      "sha256": "3e8c04a282a77b0f97c42db01c6bcf5a3b9838bd121f3bdf95663aac0974f617",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/河蟹全音频-20261016/LoL 虚空河蟹/txtp/Play_sfx_SRU_Crab_Void_death_leap.txtp",
+          "txtp_sha256": "87750c9b8b8e366b68640f40cf2266fde890ff4939030b4ca868996a8889e92a",
+          "event": "Play_sfx_SRU_Crab_Void_death_leap"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0,
+        "post_gain_db": 0,
+        "runtime_gain_db": 0,
+        "normalization": false,
+        "sample_rate": 44100,
+        "channels": 1,
+        "death_envelope": null
+      },
+      "duration": 1.9072335600907029,
+      "float_peak": 0.08258056640625,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/void_scuttle_crab/death_cast_1.wav",
+      "sha256": "4863d17f636af97099f881cdccb29d2dc32c3088d9f407c19219f338da404b95",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/河蟹全音频-20261016/LoL 虚空河蟹/txtp/Play_sfx_SRU_Crab_Void_death_cast.txtp",
+          "txtp_sha256": "4f126ae40f6cb49203afd8f7dce6029c9c881dec18473ba7b37ac0b0d40e7a2a",
+          "event": "Play_sfx_SRU_Crab_Void_death_cast"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0,
+        "post_gain_db": 0,
+        "runtime_gain_db": 0,
+        "normalization": false,
+        "sample_rate": 44100,
+        "channels": 1,
+        "death_envelope": {
+          "source_duration": 3.2356009070294784,
+          "source_sha256": "2d36fb6e3f778ebb709ab5485776b1ba7ebb3156c10593cf2f7555226616a8f7",
+          "keep_seconds": 1.5,
+          "fade_start_seconds": 1.0,
+          "fade_seconds": 0.5,
+          "curve": "linear_amplitude"
+        }
+      },
+      "duration": 1.5,
+      "float_peak": 0.271240234375,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/void_scuttle_crab/spawn_cast_1.wav",
+      "sha256": "2e5a02cd674494cceb2363b1f50a84b10248c864156939a88b2ab2bfd239ba99",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/河蟹全音频-20261016/LoL 虚空河蟹/txtp/Play_sfx_SRU_Crab_Void_spawn_cast.txtp",
+          "txtp_sha256": "3c2d91673cc402b2d21e8f146b5d856fcc2b10bcaa3f2b6f393f3fc1b3598f3b",
+          "event": "Play_sfx_SRU_Crab_Void_spawn_cast"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0,
+        "post_gain_db": 0,
+        "runtime_gain_db": 0,
+        "normalization": false,
+        "sample_rate": 44100,
+        "channels": 1,
+        "death_envelope": null
+      },
+      "duration": 4.405555555555556,
+      "float_peak": 0.130584716796875,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/void_scuttle_crab/sru_dance_1.wav",
+      "sha256": "8c78537e86ecff97b018e852fc0a5fc591f184cc5d52f3655f5892e6dc6e1233",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/河蟹全音频-20261016/LoL 虚空河蟹/txtp/Play_sfx_SRU_Crab_Void_Sru_Dance {r1}.txtp",
+          "txtp_sha256": "708392b77986f5f85285e8dffb9eb578e21c632a907f669731d585e2b1c86b75",
+          "event": "Play_sfx_SRU_Crab_Void_Sru_Dance"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0,
+        "post_gain_db": 0,
+        "runtime_gain_db": 0,
+        "normalization": false,
+        "sample_rate": 44100,
+        "channels": 1,
+        "death_envelope": null
+      },
+      "duration": 2.4666439909297053,
+      "float_peak": 0.0311279296875,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/void_scuttle_crab/sru_dance_2.wav",
+      "sha256": "a62945d292544553b3b2d111a121b22d03945ea767ddd03fea853c5d6187acc7",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/河蟹全音频-20261016/LoL 虚空河蟹/txtp/Play_sfx_SRU_Crab_Void_Sru_Dance {r2}.txtp",
+          "txtp_sha256": "ec37d331d2b2e05c6172b766f87598a57485603fc6bf339c74019408f0bfd6ed",
+          "event": "Play_sfx_SRU_Crab_Void_Sru_Dance"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0,
+        "post_gain_db": 0,
+        "runtime_gain_db": 0,
+        "normalization": false,
+        "sample_rate": 44100,
+        "channels": 1,
+        "death_envelope": null
+      },
+      "duration": 2.333310657596372,
+      "float_peak": 0.033782958984375,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/void_scuttle_crab/sru_dance_3.wav",
+      "sha256": "012777eec522129e2fd3dfedca7f4a5d7e374a71e6bc7674bffd502bac1a0b1e",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/河蟹全音频-20261016/LoL 虚空河蟹/txtp/Play_sfx_SRU_Crab_Void_Sru_Dance {r3}.txtp",
+          "txtp_sha256": "bb2cfaf148097fc9edb80fe5a7f6366913031d3261d1af67c37f23e4c0660252",
+          "event": "Play_sfx_SRU_Crab_Void_Sru_Dance"
+        }
+      ],
+      "processing": {
+        "tool_master_gain_db": 0,
+        "post_gain_db": 0,
+        "runtime_gain_db": 0,
+        "normalization": false,
+        "sample_rate": 44100,
+        "channels": 1,
+        "death_envelope": null
+      },
+      "duration": 2.3999773242630384,
+      "float_peak": 0.034027099609375,
       "verified_by_listening": false
     }
   ]

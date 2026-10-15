@@ -1,0 +1,56 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Map11.wad.client",
+  "source_binary": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/crab-source/data/characters/sru_crab/sru_crab_multi_skins_skin0_skins_skin1_skins_skin2_skins_skin3_skins_skin6.bin",
+  "source_sha256": "b7c9b65c78e7d147950336949e43360a51d5bcfb47a1312bc2388bcd6ef9fd71",
+  "system": "Characters/Sru_Crab/Skins/Skin0/Particles/SRU_Crab_Base_Z_VisionRing_Red",
+  "assets": {
+    "assets/characters/sru_crab/skins/base/particles/common_sru_sigil_speed_water_edge_01.scb": {
+      "source_sha256": "4c847a454c451a4037138ce03036363b79ee53bab0e3b68462a8057d914cbf80",
+      "output": "assets/characters/sru_crab/skins/base/particles/common_sru_sigil_speed_water_edge_01.mesh.json",
+      "output_sha256": "93afcbaecb0d5070397012bce5d5e644a8747602e08132c87e7d09561106a55f"
+    },
+    "assets/shared/particles/sru_river_shore_01.tex": {
+      "source_sha256": "2bff994f214b40efe714252696fe94a45570a31382a1ed2ed966763aa779cba9",
+      "output": "assets/shared/particles/sru_river_shore_01.png",
+      "output_sha256": "3bf5b2a50cae6dc0beb2cd8e7566d57a68b09f5ee51bed499f96ecb8d1600fce"
+    },
+    "assets/shared/particles/sru_riveredging_mult_01.tex": {
+      "source_sha256": "af7af88978014402823dc8830b0145025baf60106c190d08a2f30e8440a65411",
+      "output": "assets/shared/particles/sru_riveredging_mult_01.png",
+      "output_sha256": "1c2c8f180da8bd408e249c821ecaa947d21cd011223c8933fe46a032ec2fa4d7"
+    },
+    "assets/characters/sru_crab/skins/base/particles/common_sru_sigil_speed_edge_indicator_01.scb": {
+      "source_sha256": "197c14736a95fc0dc0024a6987fc305bd53ff9151740bf23dc3c681c4b2184a8",
+      "output": "assets/characters/sru_crab/skins/base/particles/common_sru_sigil_speed_edge_indicator_01.mesh.json",
+      "output_sha256": "e1875687606fc5d8fa8ab82ed8cfd8171e267879ecb5d097c69e88cbff113201"
+    },
+    "assets/characters/sru_crab/skins/base/particles/common_sru_sigil_speed_edge_indicator_02.tex": {
+      "source_sha256": "8be967112c863e6de89e216a42a4629a2c3fa8e8922b8ffb6220b2435f7d8571",
+      "output": "assets/characters/sru_crab/skins/base/particles/common_sru_sigil_speed_edge_indicator_02.png",
+      "output_sha256": "694c95955965b95f8e6cbae64285df0105f0dede71255e5d7430772084da7306"
+    },
+    "assets/characters/sru_crab/skins/base/particles/common_sru_sigil_motespawner_01.scb": {
+      "source_sha256": "620b8f69dc3a4ad4d36081f6245a78f578b41f172bc53aa398ae1ca97a9bf9e3",
+      "output": "assets/characters/sru_crab/skins/base/particles/common_sru_sigil_motespawner_01.mesh.json",
+      "output_sha256": "74e4167f5a69c9d26070a4b0fffca028353117f23fd8d6e34f56fa2a6911949f"
+    },
+    "assets/characters/sru_crab/skins/base/particles/common_sru_sigil_motes_02.tex": {
+      "source_sha256": "9d5cc0dd48a1a62f3698c1d78640a05d7254414500d261a402670a77dd6eea20",
+      "output": "assets/characters/sru_crab/skins/base/particles/common_sru_sigil_motes_02.png",
+      "output_sha256": "25b1424c6234ad22d49490cd6aa57ae18d6f04ae7eb74d411afe0188a732b2da"
+    },
+    "assets/characters/sru_crab/skins/base/particles/common_sru_sigil_speed_blur_01.scb": {
+      "source_sha256": "52ae854fcc8f6ddc8366b73801660087ad272ad2b47c9d17efc8e8edd4808952",
+      "output": "assets/characters/sru_crab/skins/base/particles/common_sru_sigil_speed_blur_01.mesh.json",
+      "output_sha256": "cedbe076f039a6732a668c17ba6b4f70361f65f332b00bda087f15b0199d4edd"
+    },
+    "assets/characters/sru_crab/skins/base/particles/common_sru_sigil_speed_blur_01.tex": {
+      "source_sha256": "6c9ed76f966a4ba5e20d5b06ffb17c4e7ef4d9f4d7b53d48acc0023e61425a83",
+      "output": "assets/characters/sru_crab/skins/base/particles/common_sru_sigil_speed_blur_01.png",
+      "output_sha256": "0ca174f897f30d5f1493b546f8be6587f7da2079dd3becfeab71b71693401660"
+    }
+  },
+  "sampled_duration": 9,
+  "sampled_fps": 120,
+  "sampled_sha256": "0c8848e5626b8a4f36b960dcbae127ac36251e5e0e185b0d76718a0018a3b879"
+}

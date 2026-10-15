@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3]
+[ext_resource type="PackedScene" path="res://assets/units/void_scuttle_crab/source/burrow.glb" id="1"]
+[node name="BurrowView" type="Node3D"]
+[node name="Size" type="Node3D" parent="."]
+position = Vector3(0, 0.09, 0)
+scale = Vector3(1.25, 1.25, 1.25)
+[node name="SourceCentimeters" parent="Size" instance=ExtResource("1")]
+scale = Vector3(0.01, 0.01, 0.01)

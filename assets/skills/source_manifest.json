@@ -713,5 +713,26 @@
     "source_path": "assets/characters/yorick/hud/icons2d/yorick_q.dds",
     "source_sha256": "a9afd01d740e2fe642f206e23cd62d227b0ac1940a75531574f97d3a3eab7462",
     "sha256": "750ac2d4cd8d8bc4a0b42aa36efbcddb83c0cf9084baeab75bdf1350f0b483cc"
+  },
+  {
+    "card": "scuttle_crab",
+    "skill_index": 0,
+    "path": "res://assets/skills/scuttle_crab_randuin.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Global.wad.client",
+    "source_path": "assets/items/icons2d/3143_tank_t3_randuinsomen.dds",
+    "source_sha256": "fdb2251f04dc53370e1d5aa94600b7664ca50beb66c5e37c1f1721048f911d13",
+    "sha256": "59bee6343874588cbad485f97bb14a84b62fa228686bc3816f8fbbfd6144faa1"
+  },
+  {
+    "card": "void_scuttle_crab",
+    "skill_index": 0,
+    "path": "res://assets/skills/void_scuttle_crab_0.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/LeagueClient/Plugins/rcp-be-lol-game-data/default-assets.wad",
+    "source_path": "plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/1211.jpg",
+    "source_sha256": "6d68f28299224631016c7d3d5a75edd9f0a1a7c77e901b3558c4749cf04652c2",
+    "sha256": "c0178357af913848e51a4d16f1bc0110b331cf015c34cb878f1eecec817c0971",
+    "summoner_icon_id": 1211,
+    "source_title": "湮灭图标",
+    "selection": "用户指定用于归于虚空技能"
   }
 ]

@@ -20,6 +20,23 @@ func present_summon_birth(position: Vector2, team: int) -> void:
 func begin_channel_zone(unit: Unit, center: Vector2, skill: Dictionary) -> void:
 	_controller._active_skill_effect_system.begin_channel_zone(unit, center, skill)
 
+func grant_team_elixir(team: int, amount: float, source: Unit = null) -> void:
+	if amount <= 0.0 or _controller.mode == "client": return
+	# 工作台没有对局金币账户，仍预览正常击杀的完整赏金表现。
+	var gained := amount
+	if not _controller._workbench.enabled:
+		var receiver: ElixirManager = _controller._elixir_for_team(team)
+		if not is_instance_valid(receiver): return
+		var before := receiver.elixir
+		receiver.elixir += amount
+		gained = receiver.elixir - before
+	if gained > 0.0 and is_instance_valid(source):
+		_controller._skill_presentation.present_fixed_area(source.global_position, gained, gained, 1.2, team, &"gold_reward")
+		_controller.present_skill_projectile_hit({"card_id": source.card_id, "team": team}, "bounty", source.global_position, "gain")
+
+func begin_death_heal(unit: Unit, stats: Dictionary) -> void:
+	_controller._active_skill_effect_system.begin_death_heal(unit, stats)
+
 func begin_sacrifice(unit: Unit, target: Node2D) -> void:
 	_controller.begin_sacrifice(unit, target)
 

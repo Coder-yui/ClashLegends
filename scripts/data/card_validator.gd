@@ -396,6 +396,26 @@ static func _validate_combat_stats(label: String, stats: Dictionary, require_siz
 			errors.append("%s.%s: 必须为非负有限数值" % [label, field])
 	if float(stats.get("on_hit_max_health_ratio", 0.0)) > 1.0:
 		errors.append("%s.on_hit_max_health_ratio: 必须 <= 1" % label)
+	if stats.has("death_enemy_elixir") and (not (stats.death_enemy_elixir is float or stats.death_enemy_elixir is int) or not is_finite(float(stats.death_enemy_elixir)) or float(stats.death_enemy_elixir) <= 0.0):
+		errors.append(label + ".death_enemy_elixir: 必须为正有限数")
+	if stats.has("structure_mend_per_second"):
+		if float(stats.structure_mend_per_second) <= 0.0 or bool(stats.get("can_attack", true)) or not bool(stats.get("building_only", false)) or bool(stats.get("is_building", false)) or bool(stats.get("is_air", false)) or stats.has("sacrifice_damage"):
+			errors.append(label + ".structure_mend_per_second: 需要无法普攻的地面建筑索敌单位及正数治疗速率")
+	if stats.has("death_heal_radius") or stats.has("death_heal_duration") or stats.has("death_heal_per_second"):
+		for field in ["death_heal_radius", "death_heal_duration", "death_heal_per_second"]:
+			if float(stats.get(field, 0.0)) <= 0.0: errors.append(label + "." + field + ": 必须为正数")
+	if stats.has("death_transition_delay"):
+		var delay: Variant = stats.death_transition_delay
+		if not (delay is float or delay is int) or not is_finite(float(delay)) or float(delay) < 0.0 or float(delay) > float(stats.get("death_shrine_delay", 0.0)):
+			errors.append(label + ".death_transition_delay: 必须为有限非负数且不晚于祭坛展开")
+	if stats.has("death_shrine_delay"):
+		var delay: Variant = stats.death_shrine_delay
+		if not (delay is float or delay is int) or not is_finite(float(delay)) or float(delay) < 0.0 or float(delay) > float(stats.get("death_heal_delay", 0.0)):
+			errors.append(label + ".death_shrine_delay: 必须为有限非负数且不晚于回血开始")
+	if stats.has("death_heal_delay"):
+		var delay: Variant = stats.death_heal_delay
+		if not (delay is int or delay is float) or not is_finite(float(delay)) or float(delay) < 0.0:
+			errors.append(label + ".death_heal_delay: 必须为有限非负数")
 	if stats.has("sacrifice_damage") or stats.has("sacrifice_delay"):
 		for field in ["sacrifice_damage", "sacrifice_delay"]:
 			if float(stats.get(field, 0.0)) <= 0.0: errors.append(label + "." + field + ": 必须为正数")
@@ -900,6 +920,8 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 			errors.append(label + ".visual_scale_multiplier: 仅用于牺牲强化表现")
 		if skill.has("sacrifice_source") and (typeof(skill.sacrifice_source) != TYPE_BOOL or kind != &"summon"):
 			errors.append(label + ".sacrifice_source: 仅召唤技能支持布尔值")
+		if skill.has("attack_slow_multiplier") and (kind != &"nova" or float(skill.get("slow_duration", 0.0)) <= 0.0 or float(skill.attack_slow_multiplier) < 0.1 or float(skill.attack_slow_multiplier) >= 1.0):
+			errors.append(label + ".attack_slow_multiplier: 需要nova、正数持续时间及[0.1,1)倍率")
 		match kind:
 			&"sacrifice_empower":
 				if float(stats.get("sacrifice_damage", 0.0)) <= 0.0: errors.append(label + ": 需要牺牲攻击能力")
@@ -1140,7 +1162,7 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 			if skill.has(bool_field) and typeof(skill.get(bool_field)) != TYPE_BOOL:
 				errors.append("%s.%s: 必须是 bool" % [label, bool_field])
 		if skill.has("impact_visual_shape"):
-			if String(skill.get("kind", "")) not in ["frontal", "dual_form"]: errors.append("%s.impact_visual_shape: 仅适用于即时前方范围命中" % label)
+			if String(skill.get("kind", "")) not in ["frontal", "dual_form", "nova"]: errors.append("%s.impact_visual_shape: 仅适用于即时范围命中" % label)
 			if not skill.impact_visual_shape is String or String(skill.impact_visual_shape).is_empty(): errors.append("%s.impact_visual_shape: 必须为非空 String" % label)
 			if not skill.get("impact_visual_duration") is float and not skill.get("impact_visual_duration") is int: errors.append("%s.impact_visual_duration: 必须为数值" % label)
 			elif float(skill.impact_visual_duration) <= 0.0: errors.append("%s.impact_visual_duration: 必须 > 0" % label)

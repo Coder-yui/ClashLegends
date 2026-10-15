@@ -1,0 +1,61 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Map11.wad.client",
+  "source_binary": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/crab-source/data/characters/sru_crab/sru_crab_multi_skins_skin5_skins_skin7.bin",
+  "source_sha256": "8c3dd8f744cdb335134e39bdca7c6e41a40d1eb6e28a19f717229a291fb62411",
+  "system": "Characters/Sru_Crab/Skins/Skin5/Particles/Sru_Crab_Skin05_Z_VisionRing_Green",
+  "assets": {
+    "assets/characters/sru_crab/skins/skin05/particles/common_sru_sigil_speed_water_edge_01.scb": {
+      "source_sha256": "4c847a454c451a4037138ce03036363b79ee53bab0e3b68462a8057d914cbf80",
+      "output": "assets/characters/sru_crab/skins/skin05/particles/common_sru_sigil_speed_water_edge_01.mesh.json",
+      "output_sha256": "93afcbaecb0d5070397012bce5d5e644a8747602e08132c87e7d09561106a55f"
+    },
+    "assets/characters/sru_crab/skins/skin05/particles/defaultcoloroverlifetime.tex": {
+      "source_sha256": "bc06557b44402fee1498430bd4008df9598085f44b29fea2f02218473674b2f8",
+      "output": "assets/characters/sru_crab/skins/skin05/particles/defaultcoloroverlifetime.png",
+      "output_sha256": "62ed85b52d6f757f5322176cb24ccfa294cb145ba9f1978bbf6ba479341f45a8"
+    },
+    "assets/characters/sru_crab/skins/skin05/particles/common_sru_river_shore_01.tex": {
+      "source_sha256": "2bff994f214b40efe714252696fe94a45570a31382a1ed2ed966763aa779cba9",
+      "output": "assets/characters/sru_crab/skins/skin05/particles/common_sru_river_shore_01.png",
+      "output_sha256": "3bf5b2a50cae6dc0beb2cd8e7566d57a68b09f5ee51bed499f96ecb8d1600fce"
+    },
+    "assets/characters/sru_crab/skins/skin05/particles/common_sru_riveredging_mult_01.tex": {
+      "source_sha256": "af7af88978014402823dc8830b0145025baf60106c190d08a2f30e8440a65411",
+      "output": "assets/characters/sru_crab/skins/skin05/particles/common_sru_riveredging_mult_01.png",
+      "output_sha256": "1c2c8f180da8bd408e249c821ecaa947d21cd011223c8933fe46a032ec2fa4d7"
+    },
+    "assets/characters/sru_crab/skins/skin05/particles/common_sru_sigil_speed_edge_indicator_01.scb": {
+      "source_sha256": "197c14736a95fc0dc0024a6987fc305bd53ff9151740bf23dc3c681c4b2184a8",
+      "output": "assets/characters/sru_crab/skins/skin05/particles/common_sru_sigil_speed_edge_indicator_01.mesh.json",
+      "output_sha256": "e1875687606fc5d8fa8ab82ed8cfd8171e267879ecb5d097c69e88cbff113201"
+    },
+    "assets/characters/sru_crab/skins/skin05/particles/common_sru_sigil_speed_edge_indicator_01.tex": {
+      "source_sha256": "d609086dc01984b7b57b1304465eca5282faf70393494083d96d6c504c64fe9a",
+      "output": "assets/characters/sru_crab/skins/skin05/particles/common_sru_sigil_speed_edge_indicator_01.png",
+      "output_sha256": "94128b9a3563453882b86764987c59675eb5ad18b2b1db6672874eda8d68263a"
+    },
+    "assets/characters/sru_crab/skins/skin05/particles/common_sru_sigil_motespawner_01.scb": {
+      "source_sha256": "620b8f69dc3a4ad4d36081f6245a78f578b41f172bc53aa398ae1ca97a9bf9e3",
+      "output": "assets/characters/sru_crab/skins/skin05/particles/common_sru_sigil_motespawner_01.mesh.json",
+      "output_sha256": "74e4167f5a69c9d26070a4b0fffca028353117f23fd8d6e34f56fa2a6911949f"
+    },
+    "assets/characters/sru_crab/skins/skin05/particles/common_sru_sigil_motes_01.tex": {
+      "source_sha256": "c66c57c3f14d781ad600a29da5b92d215ad4d1944937d943720536ab286a19fd",
+      "output": "assets/characters/sru_crab/skins/skin05/particles/common_sru_sigil_motes_01.png",
+      "output_sha256": "e83c160fc379d6378833c1ead53010cc56ec2b813e79b4152b4622cc9a5700c2"
+    },
+    "assets/characters/sru_crab/skins/skin05/particles/common_sru_sigil_speed_blur_01.scb": {
+      "source_sha256": "52ae854fcc8f6ddc8366b73801660087ad272ad2b47c9d17efc8e8edd4808952",
+      "output": "assets/characters/sru_crab/skins/skin05/particles/common_sru_sigil_speed_blur_01.mesh.json",
+      "output_sha256": "cedbe076f039a6732a668c17ba6b4f70361f65f332b00bda087f15b0199d4edd"
+    },
+    "assets/characters/sru_crab/skins/skin05/particles/common_sru_sigil_speed_blur_01.tex": {
+      "source_sha256": "6c9ed76f966a4ba5e20d5b06ffb17c4e7ef4d9f4d7b53d48acc0023e61425a83",
+      "output": "assets/characters/sru_crab/skins/skin05/particles/common_sru_sigil_speed_blur_01.png",
+      "output_sha256": "0ca174f897f30d5f1493b546f8be6587f7da2079dd3becfeab71b71693401660"
+    }
+  },
+  "sampled_duration": 9,
+  "sampled_fps": 120,
+  "sampled_sha256": "62b8f69c541995a2ba001b1880c94aba107c58cff675923a579da9b7580ef53f"
+}

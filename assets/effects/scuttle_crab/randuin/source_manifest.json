@@ -1,0 +1,123 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Global.wad.client",
+  "source_binary": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/太阳圆盘/源件/2026-10-08-钢铁烈阳特效/items-source/items.ltk.bin",
+  "source_sha256": "41d52e6bbd40aa09658192e6efe1e17419a2b2d5cd802ea863a8c10809824b1b",
+  "system": "Items/3143/Particles/3143_Active_Cas",
+  "assets": {
+    "assets/items/3143/particles/3143_base_q_feather_tras_rgb.tex": {
+      "source_sha256": "0de9e4ed6e512e51e0d9a1a587dbb5064b8e672a0ddfd28e2e3ecad9a6b5a860",
+      "output": "assets/items/3143/particles/3143_base_q_feather_tras_rgb.png",
+      "output_sha256": "988d81b6d3957c6c66f0d83116bd515da73259e18bbc0691cb8c63180731bb12"
+    },
+    "assets/items/3143/particles/3143_base_r_bigglow02.tex": {
+      "source_sha256": "5c8141c02b1d1cd49823c9c0a030c4844637f15ee55355f3f09430848762f416",
+      "output": "assets/items/3143/particles/3143_base_r_bigglow02.png",
+      "output_sha256": "e4bdb575db099cb6d9d1cad4b07824af07b455aef9289e069c5fc39bd6e0bbef"
+    },
+    "assets/items/3143/particles/3143_ground01.tex": {
+      "source_sha256": "d115312faf6f3df27d42ba065939a046b18492b706e089acb4dd6888782f702c",
+      "output": "assets/items/3143/particles/3143_ground01.png",
+      "output_sha256": "f3043bb92cc931e43304cc469c00b2485b38d557a0cb7fb4accdfd97f72d9320"
+    },
+    "assets/items/3143/particles/3143_ground02.tex": {
+      "source_sha256": "f834e437cb7f05130a6af5c4d584e0d068d9f057317ad9fdc8c57da17b07dc1a",
+      "output": "assets/items/3143/particles/3143_ground02.png",
+      "output_sha256": "e4d00ea6ed3e39c64443bbc3545aa9487df7a5f22b010cbacb332a34e8c54a88"
+    },
+    "assets/items/3143/particles/3143_skin18_particles_1_18.tex": {
+      "source_sha256": "f7b862b03fe8e58569be7d6e4ae952c11ebe9c539a83a46e02f7839f0b08ee06",
+      "output": "assets/items/3143/particles/3143_skin18_particles_1_18.png",
+      "output_sha256": "d55c25de7bfb354575faf8fe4f7224f4832c732b9d8d0b4868084dc52f0a7ac2"
+    },
+    "assets/shared/particles/3026_items_cloudy_03.tex": {
+      "source_sha256": "91e86421fb8d0074cb8177b4637774e9a9fcc4c77c84c59461b46d92a339cdd6",
+      "output": "assets/shared/particles/3026_items_cloudy_03.png",
+      "output_sha256": "7114c12263274bfa8bbe7998929942008787999e2f2da3c798ddd96096eb8cab"
+    },
+    "assets/items/3143/particles/3143_skin19_particles_1_330.tex": {
+      "source_sha256": "5d6a2530308bd9c47b128a083af8567ce1b2df1ca79a46e71c941c345062a00f",
+      "output": "assets/items/3143/particles/3143_skin19_particles_1_330.png",
+      "output_sha256": "31950f1380184dbeb1ab2bc6e16ceb1a570fd669d5d52b72ebc367025ad61773"
+    },
+    "assets/items/3143/particles/3143_skin19_r_06.tex": {
+      "source_sha256": "1b890e6298c5d2987197dccd6d42144e6fa37422d8e9d14146b28530430c57fd",
+      "output": "assets/items/3143/particles/3143_skin19_r_06.png",
+      "output_sha256": "84d8ba7851724a7400abfb795ed79ab0de92d453f6bf3b343c695421911585cf"
+    },
+    "assets/items/3143/particles/3143_skin01_spirit_explosion.tex": {
+      "source_sha256": "533523057d23e18ecba9f58713d8e49aca07915dec914c1d103dde2d9d3d3fd2",
+      "output": "assets/items/3143/particles/3143_skin01_spirit_explosion.png",
+      "output_sha256": "f64161fe4cfec0ca3a50493c7b593e968ddca6bb6a50cd5118a5025356b5b5b0"
+    },
+    "assets/items/3143/particles/3143_skin01_swirl.tex": {
+      "source_sha256": "46bc99f1fecb26bf59696dd401a4cfc936240ed908af1f5a97de280188c1806f",
+      "output": "assets/items/3143/particles/3143_skin01_swirl.png",
+      "output_sha256": "dad83db8ac22fb9cb8b5c3739e9a5cd2691a9aa934e855519a22baafbc63c822"
+    },
+    "assets/items/3143/particles/3143_base_r_rocks.tex": {
+      "source_sha256": "c8a9a7f7ee6b651db97c065a6f8263be6492a12cc68231425c8a8cfffb555e1f",
+      "output": "assets/items/3143/particles/3143_base_r_rocks.png",
+      "output_sha256": "8e145a8028384f173e88c116a6054211bac31b1686964a87e1cb777e11dfc0cb"
+    },
+    "assets/items/3077/particles/defaultfalloff.tex": {
+      "source_sha256": "d62a1cba15bb2ca9c74677ff66c136a687a45f204a749e7ec5bdc5589579403b",
+      "output": "assets/items/3077/particles/defaultfalloff.png",
+      "output_sha256": "01f7a8a164d45a672d770c0a023acb39f5caeee04176961cd69c8f1fee431380"
+    },
+    "assets/items/3143/particles/3143_erode_2.tex": {
+      "source_sha256": "a7c908df7f01b545f1f8edb1a633bef8249eaa1411f0b709e03dc7a7133387be",
+      "output": "assets/items/3143/particles/3143_erode_2.png",
+      "output_sha256": "69bc116760d40cb13b222a9a28398e6c992073c1a60cefea995ca77052c525fb"
+    },
+    "assets/items/3143/particles/3143_distort-pinch.tex": {
+      "source_sha256": "8a6a7056ff92bd8569843c4a68f60ba6528ea88451d0d78a0fbb0f53c39bfe40",
+      "output": "assets/items/3143/particles/3143_distort-pinch.png",
+      "output_sha256": "ecf917d6d84efb1cc7763bbd796440e1b25e65a783cc8dd0f4407f54fd96e89e"
+    },
+    "assets/shared/particles/3026_items_glow_03.tex": {
+      "source_sha256": "41241eafa700d7aa8a280bc7d943c090005324d146d33777a5b8b4bda3ab977b",
+      "output": "assets/shared/particles/3026_items_glow_03.png",
+      "output_sha256": "9d1c0afae3a4040376460a1809143487b39bafa5e0d59448ca4c22bcde7dadd9"
+    },
+    "assets/items/3107/particles/item_redemption_damagewave.scb": {
+      "source_sha256": "7052c29af94522a353ac6d67d8ec36f34dac71d80363fd08b90c360ec3a9e807",
+      "output": "assets/items/3107/particles/item_redemption_damagewave.mesh.json",
+      "output_sha256": "17131921ba21c0c2463a02a9d8a69228d6c6cb0399667b13b6aeddac858f5311"
+    },
+    "assets/items/3107/particles/item_redemption_damagewave_mult.tex": {
+      "source_sha256": "b14583dd274e32a8d2d494447db3a45c4be96d14cc5f43203441f77a0ee73231",
+      "output": "assets/items/3107/particles/item_redemption_damagewave_mult.png",
+      "output_sha256": "ce6014916af05572ee775d48afcf708a09bdcd73f6e5b652a78835931308be17"
+    },
+    "assets/items/6631/particles/sylas_skin34_p_weaponswipe.scb": {
+      "source_sha256": "8c2078cbd322c0375037f223737f963bcbbfcead252a0a3ecc70afebac3a9153",
+      "output": "assets/items/6631/particles/sylas_skin34_p_weaponswipe.mesh.json",
+      "output_sha256": "e5a5dc405318d1b6a77ad9e159fd7a4e9974f1d155f32bb28468fc9cf3ef6b35"
+    },
+    "assets/items/3143/particles/3143_skin20_e_wisps.tex": {
+      "source_sha256": "bd2d58c63a55412399994ef562c6875030c7ce26cd6194ce55888979b9b56f0c",
+      "output": "assets/items/3143/particles/3143_skin20_e_wisps.png",
+      "output_sha256": "b7fa985e7b6c99a23b6df4a7aea79a4ea0e1eb91a1722a389067cbb187a5ce54"
+    },
+    "assets/items/3143/particles/3143_mis_smoke_trail.tex": {
+      "source_sha256": "1cfa6f8b8e8dc3fc77147c3333f741f653114cb73c3647fa6fb1da6ff3da13af",
+      "output": "assets/items/3143/particles/3143_mis_smoke_trail.png",
+      "output_sha256": "15f5b77860b938344762d039a9b9e68d3421bfa01928496595305e64d774bf66"
+    },
+    "assets/items/3143/particles/3143_trail_smoke.tex": {
+      "source_sha256": "a97b4e623962dae02e36e52d9f2cd45174c0928e4848fbe3cf53a49066fb50cf",
+      "output": "assets/items/3143/particles/3143_trail_smoke.png",
+      "output_sha256": "abde671398b4a0c3e9dcf633b65df327c9e444bb45cca12c05a4466441abbc5d"
+    },
+    "assets/items/3143/particles/3143_skin25_r_expo_cylinder.scb": {
+      "source_sha256": "0553d13e5e35519f98cc79b136111c2bb8b8fcbdef80428a2e918b8f2bd68d4b",
+      "output": "assets/items/3143/particles/3143_skin25_r_expo_cylinder.mesh.json",
+      "output_sha256": "fedaa7f05e73fb2f64240ab7ed2cd2b8e1773e84cf141d90dc1ed3f5e0cc28a6"
+    },
+    "assets/items/3143/particles/3143_skin25_r_up_cylinder.tex": {
+      "source_sha256": "9795a78785b1b6c60329442a1d396ea122639d55b9b18e49158b02dc42ca015b",
+      "output": "assets/items/3143/particles/3143_skin25_r_up_cylinder.png",
+      "output_sha256": "206e3e3571c384c5b2627de47c2958769aac2208da650f2fba892980bda4405e"
+    }
+  }
+}

@@ -108,6 +108,10 @@ var is_building := false:
 		is_building = value
 		_sync_structure_group()
 var building_only := false
+var _death_reward_suppressed := false
+var _death_reward_paid := false
+var structure_mending := false
+var _structure_mend_remainder := 0.0
 var can_attack := true
 var can_attack_air := true
 var continuous_attack := false
@@ -664,7 +668,7 @@ func get_visual_state_code() -> int:
 		return net_visual_state
 	if _deploy_timer > 0.0:
 		return 1 if cancelled_deployment else 0
-	if _attacking:
+	if _attacking or structure_mending:
 		return 3
 	return get_locomotion_visual_state_code()
 
@@ -1387,6 +1391,7 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prep
 		prepare_natural_lifecycle(dt)
 	if hp <= 0.0 or is_queued_for_deletion():
 		return
+	structure_mending = false
 	_prune_pending_extra_attacks()
 	if not statuses_prepared:
 		_tick_active_statuses(dt)
@@ -1436,7 +1441,7 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prep
 		_charge_timer = 0.0
 		_charged = false
 		return
-	if not can_attack and float(_base_form_stats.get("sacrifice_damage", 0.0)) <= 0.0:
+	if not can_attack and float(_base_form_stats.get("sacrifice_damage", 0.0)) <= 0.0 and float(_base_form_stats.get("structure_mend_per_second", 0.0)) <= 0.0:
 		_target = null
 		_attacking = false
 		return
@@ -1466,6 +1471,21 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prep
 			if not leave_terrain_for_attack(): return
 			battle_context.begin_sacrifice(self, _target)
 		else:
+			_chase(dt)
+		return
+	if float(_base_form_stats.get("structure_mend_per_second", 0.0)) > 0.0:
+		_update_target(false)
+		_attacking = false
+		if is_instance_valid(_target) and _target_gap(_target) <= attack_range:
+			structure_mending = true
+			_path = PackedVector2Array()
+			_path_index = 0
+			_structure_mend_remainder += float(_base_form_stats.structure_mend_per_second) * dt
+			var amount := floorf(_structure_mend_remainder)
+			_structure_mend_remainder -= amount
+			if amount > 0.0: heal(amount)
+		else:
+			_structure_mend_remainder = 0.0
 			_chase(dt)
 		return
 	attack_timeline.tick_cooldown(dt)
@@ -3019,6 +3039,12 @@ func death_spawn_state_visual() -> Vector2:
 	var remaining := buffs.remaining(&"death_spawn")
 	return Vector2(remaining, buffs.strongest(&"death_spawn", &"visual_duration", remaining)) if remaining > 0.0 else Vector2.ZERO
 
+## 主动牺牲直接结束生命；不经伤害/护盾，也不发放击杀赏金。
+func sacrifice_without_reward() -> void:
+	if hp <= 0.0 or is_queued_for_deletion() or _in_client_mode(): return
+	_death_reward_suppressed = true
+	_die(true)
+
 func _die(trigger_death_effect: bool = false) -> void:
 	channel_attack.stop(self)
 	if is_queued_for_deletion() or death_form.waiting(): return
@@ -3048,6 +3074,12 @@ func _die(trigger_death_effect: bool = false) -> void:
 			battle_context.unblock_nav_cells(nav_cells)
 		nav_cells = []
 	if is_true_death(): assist_conversion.consume(self)
+	if is_true_death() and not _in_client_mode() and battle_context != null and not _death_reward_paid:
+		_death_reward_paid = true
+		if not _death_reward_suppressed:
+			battle_context.grant_team_elixir(1 - team, float(_base_form_stats.get("death_enemy_elixir", 0.0)), self)
+	if is_true_death() and not _in_client_mode() and battle_context != null and float(_base_form_stats.get("death_heal_radius", 0.0)) > 0.0:
+		battle_context.begin_death_heal(self, _base_form_stats)
 	if is_true_death() and not _in_client_mode() and battle_context != null and buffs.remaining(&"death_spawn") > 0.0 and not active_death_spawn_id.is_empty():
 		var spawn_id := active_death_spawn_id
 		active_death_spawn_id = ""

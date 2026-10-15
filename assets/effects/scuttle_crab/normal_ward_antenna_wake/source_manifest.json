@@ -1,0 +1,21 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Map11.wad.client",
+  "source_binary": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/crab-source/data/characters/sru_crab/sru_crab_multi_skins_skin0_skins_skin1_skins_skin2_skins_skin3_skins_skin6.bin",
+  "source_sha256": "b7c9b65c78e7d147950336949e43360a51d5bcfb47a1312bc2388bcd6ef9fd71",
+  "system": "Characters/Sru_Crab/Skins/Skin0/Particles/SRU_Crab_Base_Ward_antenna_wake",
+  "assets": {
+    "assets/characters/sru_crab/skins/base/particles/common_sru_river_wake_01.scb": {
+      "source_sha256": "97acec8e47bd96747042e7a87cedf2ded4e71a321f5e84e125973fdcdbc45d6d",
+      "output": "assets/characters/sru_crab/skins/base/particles/common_sru_river_wake_01.mesh.json",
+      "output_sha256": "9786ff6ab09be7bbb8b3497f5b40344acd4e34cfe7dc383ddfb17b3dd9a4e6ff"
+    },
+    "assets/characters/sru_crab/skins/base/particles/common_sru_river_wake_01.tex": {
+      "source_sha256": "08bcc2a95582be411fbdc278a9e84e4f85410e89457ace843c825b95f99c336a",
+      "output": "assets/characters/sru_crab/skins/base/particles/common_sru_river_wake_01.png",
+      "output_sha256": "05626d66caa877fff00585486a19ef13bf409a146465185eb8e98a4ef4c5ab28"
+    }
+  },
+  "sampled_duration": 9,
+  "sampled_fps": 120,
+  "sampled_sha256": "fd0d247089fa15faf38f315e5dc95ddf6a934c925a9c8ff4d804119d02195c83"
+}

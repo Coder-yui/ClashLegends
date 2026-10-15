@@ -1450,6 +1450,7 @@ func clear_preview_battle() -> void:
 		_audio_manager.begin_battle()
 	_active_skill_effect_system.clear()
 	_skill_presentation.clear()
+	if is_instance_valid(_battle_presentation): _battle_presentation.clear_death_visuals()
 	_team_attack_boost_system.clear()
 	_sync_art_dev_panel_state()
 	queue_redraw()
@@ -2527,6 +2528,7 @@ func _end_game(winner_team: int, reason: String) -> void:
 	if is_instance_valid(_audio_manager): _audio_manager.clear_spell_flight_audio()
 	_active_skill_effect_system.clear()
 	_skill_presentation.clear()
+	if is_instance_valid(_battle_presentation): _battle_presentation.clear_death_visuals()
 	_team_attack_boost_system.clear()
 	_clear_deployment_preview()
 	if _hand != null:

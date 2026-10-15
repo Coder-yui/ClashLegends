@@ -5,6 +5,7 @@ extends RefCounted
 
 var dash_strikes: Array[DashStrikeState] = []
 var ornn_charges: Array[OrnnChargeState] = []
+var death_heal_zones: Array[Dictionary] = []
 var sacrifice_results: Array[Dictionary] = []
 var _next_result_id := 1
 var _resolved_results: Dictionary = {}
@@ -141,6 +142,8 @@ func apply(source: Unit, skill: Dictionary) -> bool:
 
 func _apply(source: Unit, skill: Dictionary) -> bool:
 	match StringName(skill.get("kind", "")):
+		&"self_sacrifice":
+			source.sacrifice_without_reward()
 		&"effect_shield":
 			source.buffs.apply(&"effect_shield", source.status_source("effect_shield"), float(skill.duration), {"haste_duration": float(skill.get("block_haste_duration", 0.0)), "attack_speed": float(skill.get("block_attack_speed_multiplier", 1.0))})
 			source.battle_context.notify_unit_audio_event(source, &"effect_shield:start", source.get_visual_screen_position())
@@ -214,6 +217,8 @@ func _apply(source: Unit, skill: Dictionary) -> bool:
 			source.battle_context.notify_unit_audio_event(source, &"active:land", landing)
 		&"nova":
 			activate_nova(source, skill)
+			if skill.has("impact_visual_shape"):
+				_presentation.present_fixed_area(source.global_position, float(skill.radius), float(skill.radius), float(skill.impact_visual_duration), source.team, StringName(skill.impact_visual_shape))
 		&"summon":
 			activate_summon(source, skill)
 		&"toggle_form":
@@ -372,6 +377,8 @@ func activate_nova(source: Unit, skill: Dictionary) -> void:
 				(combatant as Unit).apply_knockback(source.global_position, knockback, knockback_duration, knockback_mass_factor_max, displacement_order, CombatInteraction.effect_context(source))
 			if slow_duration > 0.0:
 				(combatant as Unit).apply_slow(slow_duration, slow_multiplier, source.status_source("skill"), CombatInteraction.effect_context(source))
+				if float(skill.get("attack_slow_multiplier", 1.0)) < 1.0 and not combatant.is_building:
+					(combatant as Unit).apply_attack_speed_slow(slow_duration, float(skill.attack_slow_multiplier), source.status_source("skill"), CombatInteraction.effect_context(source))
 	if not bool(skill.get("shield_on_cast_start", false)):
 		source.add_shield(float(skill.get("shield", 0.0)), float(skill.get("shield_duration", 0.0)), bool(skill.get("shield_decay", false)), source.status_source("shield"))
 
@@ -777,7 +784,60 @@ func _tick_sacrifices(dt: float) -> void:
 		_controller.present_skill_projectile_hit(result.audio_source, "sacrifice", result.center, "impact")
 	sacrifice_results = waiting
 
+func begin_death_heal(source: Unit, stats: Dictionary) -> void:
+	var zone := {"position": source.global_position, "team": source.team, "card_id": source.card_id,
+		"radius": float(stats.death_heal_radius), "remaining": float(stats.death_heal_duration),
+		"delay": float(stats.get("death_heal_delay", 0.0)), "activated": false,
+		"transition_delay": float(stats.get("death_transition_delay", -1.0)), "transition_played": not stats.has("death_transition_delay"),
+		"formation_delay": float(stats.get("death_shrine_delay", stats.get("death_heal_delay", 0.0))), "presented": false,
+		"rate": float(stats.death_heal_per_second), "remainder": 0.0,
+		"created_tick": _controller.get_authoritative_server_tick() if _controller.simulation_step_active() else -1}
+	death_heal_zones.append(zone)
+	if float(zone.formation_delay) <= 0.0: _present_death_shrine(zone)
+	if float(zone.delay) <= 0.0: zone.activated = true
+
+func _present_death_shrine(zone: Dictionary) -> void:
+	if bool(zone.presented): return
+	zone.presented = true
+	_presentation.present_fixed_area(zone.position, float(zone.radius), float(zone.radius), float(zone.remaining) + float(zone.delay), int(zone.team), &"scuttle_void_shrine" if zone.card_id == "void_scuttle_crab" else &"scuttle_shrine")
+	_controller.present_skill_projectile_hit({"card_id": zone.card_id, "team": zone.team}, "shrine", zone.position, "start")
+
+func _tick_death_heal(dt: float) -> void:
+	var alive: Array[Dictionary] = []
+	for zone in death_heal_zones:
+		if _controller.simulation_step_active() and int(zone.created_tick) == _controller.get_authoritative_server_tick():
+			alive.append(zone)
+			continue
+		if not bool(zone.transition_played):
+			zone.transition_delay = maxf(0.0, float(zone.transition_delay) - dt)
+			if float(zone.transition_delay) <= 0.00001:
+				zone.transition_played = true
+				_controller.present_skill_projectile_hit({"card_id": zone.card_id, "team": zone.team}, "shrine", zone.position, "leap")
+		var waiting := minf(dt, float(zone.delay))
+		zone.delay = maxf(0.0, float(zone.delay) - waiting)
+		if float(zone.delay) <= 0.00001: zone.delay = 0.0
+		var active_dt := maxf(0.0, dt - waiting)
+		zone.formation_delay = maxf(0.0, float(zone.formation_delay) - dt)
+		if float(zone.formation_delay) <= 0.00001: _present_death_shrine(zone)
+		if float(zone.delay) > 0.0:
+			alive.append(zone)
+			continue
+		zone.activated = true
+		var elapsed := minf(active_dt, float(zone.remaining))
+		zone.remaining = maxf(0.0, float(zone.remaining) - elapsed)
+		zone.remainder = float(zone.remainder) + float(zone.rate) * elapsed
+		var amount := floorf(float(zone.remainder) + 0.00001)
+		zone.remainder = maxf(0.0, float(zone.remainder) - amount)
+		if amount > 0.0:
+			for target in _controller.get_tree().get_nodes_in_group("combatants"):
+				if not is_instance_valid(target) or not target is Unit or target.is_building or target.hp <= 0.0 or target.team != int(zone.team): continue
+				if target.global_position.distance_to(zone.position) <= float(zone.radius) + target.body_radius:
+					target.heal(amount, {"team": int(zone.team), "position": zone.position})
+		if float(zone.remaining) > 0.00001: alive.append(zone)
+	death_heal_zones.assign(alive)
+
 func tick_effects(dt: float) -> void:
+	_tick_death_heal(dt)
 	_tick_sacrifices(dt)
 	var active_charges: Array[OrnnChargeState] = []
 	for charge in ornn_charges:
@@ -913,6 +973,7 @@ func frontal_forward(source: Unit) -> Vector2:
 
 
 func clear() -> void:
+	death_heal_zones.clear()
 	sacrifice_results.clear()
 	for charge in ornn_charges:
 		var source = charge.source_ref.get_ref()

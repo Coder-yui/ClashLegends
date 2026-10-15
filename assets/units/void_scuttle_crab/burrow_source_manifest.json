@@ -1,0 +1,39 @@
+{
+  "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/祭坛完整源件/衔接动作",
+  "animation": "scuttle_shrine_sequence",
+  "segments": [
+    [
+      "sru_crab_burrow",
+      0,
+      1
+    ],
+    [
+      "sru_crab_ward_run_toground",
+      1,
+      1
+    ],
+    [
+      "sru_crab_ward_spawn",
+      2,
+      2.7666668892
+    ],
+    [
+      "sru_crab_ward_idle",
+      4.8,
+      3.7
+    ],
+    [
+      "sru_crab_ward_tohide",
+      8.5,
+      2.3
+    ]
+  ],
+  "formation_start": 2.0,
+  "heal_start": 4.8,
+  "heal_end": 10.8,
+  "hide_start": 8.5,
+  "visual_end": 10.8,
+  "unit_conversion": 0.01,
+  "sha256": "d5e4e4edb1d6cae0f60a29068ef2f0dabc98fbd5d37a76214343898ff02a39a5",
+  "notes": "Original bone tracks, burrow resampled from 1.0667s to 1s; other source clips at original speed. Same skeleton throughout, no travel to river center. Hold terminal poses only for 20Hz boundaries."
+}
