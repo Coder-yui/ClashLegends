@@ -138,7 +138,8 @@ func _run() -> void:
 		var packed := _load_scene(String(_options.scene))
 		if packed == null:
 			return
-		await _show_scene(packed, "外部模型")
+		await _show_scene(packed, String(_options.scene).get_file().get_basename())
+		_populate_card_option()
 	else:
 		var requested_cards := String(_options.get("cards", _options.get("card", "garen"))).split(",", false)
 		if requested_cards.is_empty():
@@ -269,7 +270,7 @@ func _build_subject_controls(parent: Node) -> void:
 	_card_option = OptionButton.new()
 	_card_option.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_card_option.item_selected.connect(func(index: int):
-		if not _scene_mode and index >= 0 and index < _card_ids.size():
+		if index >= 0 and index < _card_ids.size():
 			_selected_card = _card_ids[index]
 			_status.text = "已选择来源：%s；点击“替换当前成员”或“添加成员”应用" % _selected_card
 	)
@@ -292,10 +293,6 @@ func _build_subject_controls(parent: Node) -> void:
 		_status.text = "来源形态已改为 %s；点击“替换当前成员”或“添加成员”应用" % ("变形" if index == 1 else "基础")
 	)
 	row.add_child(_form_option)
-	if _scene_mode:
-		_card_option.disabled = true
-		_team_option.disabled = true
-		_form_option.disabled = true
 	var source_actions := _row(box)
 	_button(source_actions, "替换当前成员", _replace_source_member)
 	_button(source_actions, "添加成员", _add_source_member)
@@ -423,7 +420,7 @@ func _add_slider(parent: Node, title: String, low: float, high: float, value: fl
 	return slider
 
 func _populate_card_option() -> void:
-	if _card_option == null or _scene_mode:
+	if _card_option == null:
 		return
 	_card_option.clear()
 	_card_ids.clear()
@@ -438,11 +435,13 @@ func _populate_card_option() -> void:
 	for id in _card_ids:
 		_card_option.add_item(id)
 		_card_option.set_item_tooltip(_card_option.item_count - 1, String(PresentationConfig.for_form(CardDB.get_card(id), 0).get("name", id)))
+	if _selected_card.is_empty() and not _card_ids.is_empty(): _selected_card = _card_ids[0]
 	_card_option.select(maxi(_card_ids.find(_selected_card), 0))
 
 func _load_card(id: String, team: int, form: int) -> void:
-	if _scene_mode or id.is_empty() or not CardDB.has_card(id):
+	if id.is_empty() or not CardDB.has_card(id):
 		return
+	_scene_mode = false
 	var card_stats: Dictionary = CardDB.get_card(id)
 	var deployment_member_ids: Array = card_stats.get("deployment_member_ids", [])
 	if not deployment_member_ids.is_empty():
@@ -524,13 +523,10 @@ func _make_member(source: Dictionary) -> Dictionary:
 	}
 
 func _replace_source_member() -> void:
-	if _scene_mode:
-		return
 	_load_card(_selected_card, _selected_team, _selected_form)
 
 func _add_source_member() -> void:
-	if _scene_mode:
-		return
+	_scene_mode = false
 	if CardDB.has_card(_selected_card):
 		var selected_stats: Dictionary = CardDB.get_card(_selected_card)
 		var deployment_member_ids: Array = selected_stats.get("deployment_member_ids", [])
