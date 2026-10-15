@@ -152,9 +152,9 @@ static func definition() -> Dictionary:
 			},
 			"attack_swing": [
 				[
-					"res://assets/audio/units/gnar/play_sfx_gnar_gnarbasicattack_oncast_r1_d.wav",
-					"res://assets/audio/units/gnar/play_sfx_gnar_gnarbasicattack_oncast_r2_d.wav",
-					"res://assets/audio/units/gnar/play_sfx_gnar_gnarbasicattack_oncast_r3_d.wav"
+					"res://assets/audio/units/gnar/play_sfx_gnar_gnarbasicattack2_oncast_r1.wav",
+					"res://assets/audio/units/gnar/play_sfx_gnar_gnarbasicattack2_oncast_r2.wav",
+					"res://assets/audio/units/gnar/play_sfx_gnar_gnarbasicattack2_oncast_r3.wav"
 				],
 				[
 					"res://assets/audio/units/gnar/play_sfx_gnar_gnarbasicattack2_oncast_r1.wav",
@@ -209,9 +209,9 @@ static func definition() -> Dictionary:
 				},
 				"attack_swing": [
 					[
-						"res://assets/audio/units/gnar/play_sfx_gnar_gnarbigbasicattack_oncast_r1_d.wav",
-						"res://assets/audio/units/gnar/play_sfx_gnar_gnarbigbasicattack_oncast_r2_d.wav",
-						"res://assets/audio/units/gnar/play_sfx_gnar_gnarbigbasicattack_oncast_r3_d.wav"
+						"res://assets/audio/units/gnar/play_sfx_gnar_gnarbigbasicattack2_oncast_r1_d.wav",
+						"res://assets/audio/units/gnar/play_sfx_gnar_gnarbigbasicattack2_oncast_r2_d.wav",
+						"res://assets/audio/units/gnar/play_sfx_gnar_gnarbigbasicattack2_oncast_r3_d.wav"
 					],
 					[
 						"res://assets/audio/units/gnar/play_sfx_gnar_gnarbigbasicattack2_oncast_r1_d.wav",

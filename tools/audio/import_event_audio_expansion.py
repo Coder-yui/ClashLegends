@@ -17,6 +17,7 @@ for folder in [SHARED/'named_txtp',BASE/'twistedfate/txtp',BASE/'yorick/txtp',BA
   if m:index.setdefault(int(m[1]),[]).append(p)
 manifest=[]
 def pool(event,folder,death=False,limit=3):
+ if not folder.startswith('auditions/') and not 1 <= limit <= 3:raise ValueError('Runtime audio pools allow 1 to 3 variants')
  files=sorted(index.get(event_hash(event),[]),key=lambda p:p.name)
  if not files:print('MISSING',event,flush=True);return []
  paths=[]
@@ -55,8 +56,8 @@ auditions={}
 for label,name in [('R1·Destiny 施放','Destiny_OnCast'),('R1·Destiny 生效','Destiny_OnBuffActivate'),('R1·Destiny 结束','Destiny_OnBuffDeactivate'),('R2·Gate 引导','Gate_OnBuffActivate'),('R2·Gate 落点（完整原声）','Gate_marker')]:
  auditions[label]=event(pool('Play_sfx_TwistedFate_'+name,'auditions/twisted_fate',limit=20))
 p=ROOT/'ClashLegends-开发素材库/02-候选讨论/音频/twisted_fate/试听清单.json';p.write_text(json.dumps([{'file':file,'cue':cue,'group':'twisted_fate'} for cue,event in auditions.items() for file in event['pool']],ensure_ascii=False,indent=2)+'\n')
-set_audio('imp',{'events':{'spawn:start':event(pool('Play_sfx_Yorick_YorickQ_summon','units/imp',limit=5))}},True)
-set_audio('tombstone',{'events':{'deploy:start':event(pool('Play_sfx_Yorick_YorickW_OnHitLocation','units/tombstone')),'death':event(pool('Play_sfx_Yorick_YorickW_death','units/tombstone',True,4))}})
+set_audio('imp',{'events':{'spawn:start':event(pool('Play_sfx_Yorick_YorickQ_summon','units/imp',limit=3))}},True)
+set_audio('tombstone',{'events':{'deploy:start':event(pool('Play_sfx_Yorick_YorickW_OnHitLocation','units/tombstone')),'death':event(pool('Play_sfx_Yorick_YorickW_death','units/tombstone',True,3))}})
 set_audio('heal',{'events':{'spell:cast':event(pool('Play_sfx_SummonerHeal_OnCast','spells/heal'))}})
 set_audio('sun_disc',{'events':{'shield:cast':event(pool('Play_sfx_3190Active_OnCast','units/sun_disc'))}})
 for card,kind in [('melee_minion','Melee'),('ranged_minion','Ranged'),('siege_minion','Siege'),('super_minion','Super')]:
@@ -80,7 +81,7 @@ world={}
 for team in ['Order','Chaos']:
  folder='world/'+team.lower()
  base='Play_sfx_Env_map11_'+team+'TurretMinionBasicAttack'
- world['world_tower_'+team.lower()]={'audio':{'attack_hit':pool(base+'_hit',folder,limit=4),'attack_hit_volume_db':0.0,'events':{'attack:cast':event(pool(base+'_cast',folder)),'attack:launch':event(pool(base+'_missilelaunch',folder,limit=4)),'damage:stage1':event(pool('Play_sfx_ENV_'+team+'Turret_break01',folder)),'damage:stage2':event(pool('Play_sfx_ENV_'+team+'Turret_break02',folder)),'death':event(pool('Play_sfx_ENV_'+team+'Turret_break03',folder))}}}
+ world['world_tower_'+team.lower()]={'audio':{'attack_hit':pool(base+'_hit',folder,limit=3),'attack_hit_volume_db':0.0,'events':{'attack:cast':event(pool(base+'_cast',folder)),'attack:launch':event(pool(base+'_missilelaunch',folder,limit=3)),'damage:stage1':event(pool('Play_sfx_ENV_'+team+'Turret_break01',folder)),'damage:stage2':event(pool('Play_sfx_ENV_'+team+'Turret_break02',folder)),'death':event(pool('Play_sfx_ENV_'+team+'Turret_break03',folder))}}}
  death='Play_sfx_Env_Global_EoG_'+team+'Nexus_death_'+('oc' if team=='Order' else 'cast')
  world['world_nexus_'+team.lower()]={'audio':{'events':{'spawn:start':event(pool('Play_sfx_Env_sruap_'+team.lower()+'_nexus_spawn',folder)),'idle:sustain':dict(event(pool('Play_sfx_Env_sruap_'+team.lower()+'_nexus_alive_loop',folder)),volume_db=0.0),'death':event(pool(death,folder))}}}
 (ROOT/'scripts/data/world_audio.gd').write_text('extends RefCounted\n## 系统建筑音频；原始事件见 assets/audio/event_expansion_manifest.json。\nconst DEFINITIONS = '+json.dumps(world,ensure_ascii=False,indent='\t')+'\n')

@@ -14,8 +14,7 @@
 | 发生时机 | 已接变体 | 音量调整 | 试听示例 |
 | --- | --- | --- | --- |
 | 普通攻击出手 | 6 | 0 dB | [试听 1](../../../assets/audio/units/sett/play_sfx_sett_settbasicattack2_cast_r1.wav) · [试听 2](../../../assets/audio/units/sett/play_sfx_sett_settbasicattack2_cast_r2.wav) |
-| 普通攻击命中 | 3 | 0 dB | [试听 1](../../../assets/audio/units/sett/play_sfx_sett_settbasicattack_onhit_1559186049_1153642577_r1_d.wav) · [试听 2](../../../assets/audio/units/sett/play_sfx_sett_settbasicattack_onhit_1559186049_1153642577_r2_d.wav) |
-| 普通攻击分段命中 | 12 | 0 dB | [试听 1](../../../assets/audio/units/sett/play_sfx_sett_settbasicattack2_onhit_1559186049_1153642577_r1.wav) · [试听 2](../../../assets/audio/units/sett/play_sfx_sett_settbasicattack2_onhit_1559186049_1153642577_r2.wav) |
+| 普通攻击分段命中 | 6 | 0 dB | [试听 1](../../../assets/audio/units/sett/play_sfx_sett_settbasicattack2_onhit_1559186049_1153642577_r1.wav) · [试听 2](../../../assets/audio/units/sett/play_sfx_sett_settbasicattack2_onhit_1559186049_1153642577_r2.wav) |
 | 蓄意轰拳 · 命中 | 2 | 0 dB | [试听 1](../../../assets/audio/units/sett/play_sfx_sett_settw_hit_r1.wav) · [试听 2](../../../assets/audio/units/sett/play_sfx_sett_settw_hit_r2.wav) |
 | 蓄意轰拳 · 中央命中 | 2 | 0 dB | [试听 1](../../../assets/audio/units/sett/play_sfx_sett_settw_hit_center_sweetener_r1.wav) · [试听 2](../../../assets/audio/units/sett/play_sfx_sett_settw_hit_center_sweetener_r2.wav) |
 | 蓄意轰拳 · 持续过程 | 2 | 0 dB | [试听 1](../../../assets/audio/units/sett/play_sfx_sett_settw_cast_r1.wav) · [试听 2](../../../assets/audio/units/sett/play_sfx_sett_settw_cast_r2.wav) |

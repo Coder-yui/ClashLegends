@@ -9,7 +9,7 @@
       1,
       1
     ],
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-\u5f00\u53d1\u7d20\u6750\u5e93/03-\u5236\u4f5c\u4e2d/\u865a\u7a7a\u5148\u77e5/audio/malzahar/txtp/Play_sfx_Malzahar_MalzaharVoidling_buffdeactivate {r}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空先知/audio/malzahar/txtp/Play_sfx_Malzahar_MalzaharVoidling_buffdeactivate {r}.txtp",
     "gain_db": 0,
     "normalization": false,
     "duration": 1.5,
@@ -17,56 +17,6 @@
     "death_envelope": {
       "source_duration": 2.4583219954648525,
       "source_sha256": "d217ef04d9917510d4940c2c9dca8b3d2dbe4a46bd16375c93ab23c0f335ed84",
-      "keep_seconds": 1.5,
-      "fade_start_seconds": 1.0,
-      "fade_seconds": 0.5,
-      "curve": "linear_amplitude"
-    },
-    "processing": "source PCM gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s"
-  },
-  {
-    "file": "res://assets/audio/units/voidling/death_1_2.wav",
-    "event": "Play_sfx_Malzahar_MalzaharVoidling_buffdeactivate",
-    "event_id": 2819564303,
-    "source_trigger": "Malzahar_Base_W_Voidling_Death.soundOnCreateDefault",
-    "project_trigger": "death",
-    "random_layers": [
-      1,
-      2
-    ],
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-\u5f00\u53d1\u7d20\u6750\u5e93/03-\u5236\u4f5c\u4e2d/\u865a\u7a7a\u5148\u77e5/audio/malzahar/txtp/Play_sfx_Malzahar_MalzaharVoidling_buffdeactivate {r}.txtp",
-    "gain_db": 0,
-    "normalization": false,
-    "duration": 1.5,
-    "sha256": "28ba0f6574836bf19f896883896e9ab3cf9c702b6977b3fe014dd55e57b919fc",
-    "death_envelope": {
-      "source_duration": 2.4583219954648525,
-      "source_sha256": "112b9dc9ed743a19e21e6923284170f8772cf5401a0b8fb30401eda554100217",
-      "keep_seconds": 1.5,
-      "fade_start_seconds": 1.0,
-      "fade_seconds": 0.5,
-      "curve": "linear_amplitude"
-    },
-    "processing": "source PCM gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s"
-  },
-  {
-    "file": "res://assets/audio/units/voidling/death_2_1.wav",
-    "event": "Play_sfx_Malzahar_MalzaharVoidling_buffdeactivate",
-    "event_id": 2819564303,
-    "source_trigger": "Malzahar_Base_W_Voidling_Death.soundOnCreateDefault",
-    "project_trigger": "death",
-    "random_layers": [
-      2,
-      1
-    ],
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-\u5f00\u53d1\u7d20\u6750\u5e93/03-\u5236\u4f5c\u4e2d/\u865a\u7a7a\u5148\u77e5/audio/malzahar/txtp/Play_sfx_Malzahar_MalzaharVoidling_buffdeactivate {r}.txtp",
-    "gain_db": 0,
-    "normalization": false,
-    "duration": 1.5,
-    "sha256": "40c4aa29f1bf5bc1174a33a4beb1395aecb2c9ab6e2bfba514947f27ac6280a3",
-    "death_envelope": {
-      "source_duration": 3.0208163265306123,
-      "source_sha256": "a1e3bdce6158c0e829cb3438264dd2716bb120e6efdf3fa14e2ce066639d58b3",
       "keep_seconds": 1.5,
       "fade_start_seconds": 1.0,
       "fade_seconds": 0.5,
@@ -84,7 +34,7 @@
       2,
       2
     ],
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-\u5f00\u53d1\u7d20\u6750\u5e93/03-\u5236\u4f5c\u4e2d/\u865a\u7a7a\u5148\u77e5/audio/malzahar/txtp/Play_sfx_Malzahar_MalzaharVoidling_buffdeactivate {r}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空先知/audio/malzahar/txtp/Play_sfx_Malzahar_MalzaharVoidling_buffdeactivate {r}.txtp",
     "gain_db": 0,
     "normalization": false,
     "duration": 1.5,
@@ -109,7 +59,7 @@
       3,
       1
     ],
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-\u5f00\u53d1\u7d20\u6750\u5e93/03-\u5236\u4f5c\u4e2d/\u865a\u7a7a\u5148\u77e5/audio/malzahar/txtp/Play_sfx_Malzahar_MalzaharVoidling_buffdeactivate {r}.txtp",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空先知/audio/malzahar/txtp/Play_sfx_Malzahar_MalzaharVoidling_buffdeactivate {r}.txtp",
     "gain_db": 0,
     "normalization": false,
     "duration": 1.5,
@@ -117,31 +67,6 @@
     "death_envelope": {
       "source_duration": 2.2187301587301587,
       "source_sha256": "296f301933f57fd366620818ed890ab476386cbbf2d98fb0d485cb51e401c4ee",
-      "keep_seconds": 1.5,
-      "fade_start_seconds": 1.0,
-      "fade_seconds": 0.5,
-      "curve": "linear_amplitude"
-    },
-    "processing": "source PCM gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s"
-  },
-  {
-    "file": "res://assets/audio/units/voidling/death_3_2.wav",
-    "event": "Play_sfx_Malzahar_MalzaharVoidling_buffdeactivate",
-    "event_id": 2819564303,
-    "source_trigger": "Malzahar_Base_W_Voidling_Death.soundOnCreateDefault",
-    "project_trigger": "death",
-    "random_layers": [
-      3,
-      2
-    ],
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-\u5f00\u53d1\u7d20\u6750\u5e93/03-\u5236\u4f5c\u4e2d/\u865a\u7a7a\u5148\u77e5/audio/malzahar/txtp/Play_sfx_Malzahar_MalzaharVoidling_buffdeactivate {r}.txtp",
-    "gain_db": 0,
-    "normalization": false,
-    "duration": 1.5,
-    "sha256": "5a6e82053ce8c2b5a9ed4a49254a92b78a9633c71b635de7d32f3df304eed39e",
-    "death_envelope": {
-      "source_duration": 2.2187301587301587,
-      "source_sha256": "8fab28f5e9cbacac3a18f4a207b0ab4b17400dc0acd5fbf440d16fdf9a125c0e",
       "keep_seconds": 1.5,
       "fade_start_seconds": 1.0,
       "fade_seconds": 0.5,

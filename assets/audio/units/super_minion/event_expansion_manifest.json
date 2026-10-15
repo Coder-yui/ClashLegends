@@ -66,9 +66,9 @@
     "txtp_sha256": "0ea11b59adf7c63748488b9d4e33b7dd7c84057fa714596672a686ce4c95ce0a"
   },
   {
-    "file": "assets/audio/units/super_minion/order/play_sfx_sru_orderminionsuper_sru_orderminionsuperbasicattack_onhit_r1.wav",
-    "event": "Play_sfx_SRU_OrderMinionSuper_SRU_OrderMinionSuperBasicAttack_OnHit",
-    "event_id": 927726618,
+    "file": "assets/audio/units/super_minion/order/play_sfx_sru_orderminionsuper_sru_orderminionsuperbasicattack2_onhit_r1.wav",
+    "event": "Play_sfx_SRU_OrderMinionSuper_SRU_OrderMinionSuperBasicAttack2_OnHit",
+    "event_id": 3537132338,
     "duration": 1.4167120181405897,
     "media_ids": [
       59568009,
@@ -82,15 +82,39 @@
     "tool_master_gain_db": 0.0,
     "post_gain_db": 0.0,
     "runtime_gain_db": 0.0,
-    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/23ca44b3bdc47eb4de2ee1a99312807e5caa9f3fe9d1edf56115ceea1cd32c7d.txtp",
-    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/23ca44b3bdc47eb4de2ee1a99312807e5caa9f3fe9d1edf56115ceea1cd32c7d.wav",
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/9f95554a8c2e038c926c357b355c60203374e43c228f86763067a6953ebc7b4c.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/9f95554a8c2e038c926c357b355c60203374e43c228f86763067a6953ebc7b4c.wav",
     "source_sha256": "649ac8c14577844bea63edd815dd3fd9af691bed64b80224e451640d7d937831",
-    "txtp_sha256": "cc3c464863a97b7ec3f908c66f1ed2732da96a8f930a70a17fdf48eb1d952809"
+    "txtp_sha256": "0695707ec2c011bdefb46d0e28aeba251fbd75ea8665ec39434ee49c816d58d9",
+    "equivalent_sources": [
+      {
+        "event": "Play_sfx_SRU_OrderMinionSuper_SRU_OrderMinionSuperBasicAttack_OnHit",
+        "event_id": 927726618,
+        "duration": 1.4167120181405897,
+        "media_ids": [
+          59568009,
+          460438271,
+          765723772,
+          965795940
+        ],
+        "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+        "sha256": "173158efd235a9eea03dbe440bc1535e3a75a4f9ff0d87d2ebbf8e18816a5bac",
+        "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/23ca44b3bdc47eb4de2ee1a99312807e5caa9f3fe9d1edf56115ceea1cd32c7d.txtp",
+        "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/23ca44b3bdc47eb4de2ee1a99312807e5caa9f3fe9d1edf56115ceea1cd32c7d.wav",
+        "source_sha256": "649ac8c14577844bea63edd815dd3fd9af691bed64b80224e451640d7d937831",
+        "txtp_sha256": "cc3c464863a97b7ec3f908c66f1ed2732da96a8f930a70a17fdf48eb1d952809",
+        "former_filename": "play_sfx_sru_orderminionsuper_sru_orderminionsuperbasicattack_onhit_r1.wav"
+      }
+    ]
   },
   {
-    "file": "assets/audio/units/super_minion/order/play_sfx_sru_orderminionsuper_sru_orderminionsuperbasicattack_onhit_r2.wav",
-    "event": "Play_sfx_SRU_OrderMinionSuper_SRU_OrderMinionSuperBasicAttack_OnHit",
-    "event_id": 927726618,
+    "file": "assets/audio/units/super_minion/order/play_sfx_sru_orderminionsuper_sru_orderminionsuperbasicattack2_onhit_r2.wav",
+    "event": "Play_sfx_SRU_OrderMinionSuper_SRU_OrderMinionSuperBasicAttack2_OnHit",
+    "event_id": 3537132338,
     "duration": 1.4720408163265306,
     "media_ids": [
       59568009,
@@ -104,15 +128,39 @@
     "tool_master_gain_db": 0.0,
     "post_gain_db": 0.0,
     "runtime_gain_db": 0.0,
-    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/f0607838c548ac3319babcd6f875a3d5ae60ff5a1e8c97fcc09904c38b364061.txtp",
-    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/f0607838c548ac3319babcd6f875a3d5ae60ff5a1e8c97fcc09904c38b364061.wav",
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/fedbb53ec1b977355bc4a4f09581d946f98bf3dc9aaea016b03156c3737a90ea.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/fedbb53ec1b977355bc4a4f09581d946f98bf3dc9aaea016b03156c3737a90ea.wav",
     "source_sha256": "ea865d732370d6b05542f1fc9ff70f7298909316d68245287f1310ca43475de9",
-    "txtp_sha256": "1ef77b06c6141a482632a9e051a57cddfff755a4b137c73e33bf428eb192744a"
+    "txtp_sha256": "37238dd71e385fd436fc7f2f5b5739fb1b10cd1f7309b7cab02ec1ea551dcfda",
+    "equivalent_sources": [
+      {
+        "event": "Play_sfx_SRU_OrderMinionSuper_SRU_OrderMinionSuperBasicAttack_OnHit",
+        "event_id": 927726618,
+        "duration": 1.4720408163265306,
+        "media_ids": [
+          59568009,
+          460438271,
+          765723772,
+          965795940
+        ],
+        "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+        "sha256": "98661f0ce0aaec0f95ed3d8e1d063a1fd001299706fe134d4a5b1a557142b8d3",
+        "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/f0607838c548ac3319babcd6f875a3d5ae60ff5a1e8c97fcc09904c38b364061.txtp",
+        "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/f0607838c548ac3319babcd6f875a3d5ae60ff5a1e8c97fcc09904c38b364061.wav",
+        "source_sha256": "ea865d732370d6b05542f1fc9ff70f7298909316d68245287f1310ca43475de9",
+        "txtp_sha256": "1ef77b06c6141a482632a9e051a57cddfff755a4b137c73e33bf428eb192744a",
+        "former_filename": "play_sfx_sru_orderminionsuper_sru_orderminionsuperbasicattack_onhit_r2.wav"
+      }
+    ]
   },
   {
-    "file": "assets/audio/units/super_minion/order/play_sfx_sru_orderminionsuper_sru_orderminionsuperbasicattack_onhit_r3.wav",
-    "event": "Play_sfx_SRU_OrderMinionSuper_SRU_OrderMinionSuperBasicAttack_OnHit",
-    "event_id": 927726618,
+    "file": "assets/audio/units/super_minion/order/play_sfx_sru_orderminionsuper_sru_orderminionsuperbasicattack2_onhit_r3.wav",
+    "event": "Play_sfx_SRU_OrderMinionSuper_SRU_OrderMinionSuperBasicAttack2_OnHit",
+    "event_id": 3537132338,
     "duration": 1.3344671201814058,
     "media_ids": [
       59568009,
@@ -126,10 +174,34 @@
     "tool_master_gain_db": 0.0,
     "post_gain_db": 0.0,
     "runtime_gain_db": 0.0,
-    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/a4be807ee82413b27091495ca0cded04a54df0cd9aeef3bcd397dabe36151892.txtp",
-    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/a4be807ee82413b27091495ca0cded04a54df0cd9aeef3bcd397dabe36151892.wav",
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/8942908a329f1edb3e89532d0ff024ec081aebbae4bad2afb4291eed59f1429d.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/8942908a329f1edb3e89532d0ff024ec081aebbae4bad2afb4291eed59f1429d.wav",
     "source_sha256": "0772c5e47b66f79e43eec682163f18d6ba6fbed557c682b293f4c89c9e8cbd0b",
-    "txtp_sha256": "03a5bccfccf821cc5365a94aeb642b8e3f14d192bcfcba73c13201a34a10bf80"
+    "txtp_sha256": "117e94fa13c43225c7b83e6500276548b6ca848366457c1a66a2098ed3ce61b0",
+    "equivalent_sources": [
+      {
+        "event": "Play_sfx_SRU_OrderMinionSuper_SRU_OrderMinionSuperBasicAttack_OnHit",
+        "event_id": 927726618,
+        "duration": 1.3344671201814058,
+        "media_ids": [
+          59568009,
+          460438271,
+          765723772,
+          965795940
+        ],
+        "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+        "sha256": "0e39338db73e846c18f6f52864497be3b82d7fd4f77858f3f2361f608393287d",
+        "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/a4be807ee82413b27091495ca0cded04a54df0cd9aeef3bcd397dabe36151892.txtp",
+        "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/a4be807ee82413b27091495ca0cded04a54df0cd9aeef3bcd397dabe36151892.wav",
+        "source_sha256": "0772c5e47b66f79e43eec682163f18d6ba6fbed557c682b293f4c89c9e8cbd0b",
+        "txtp_sha256": "03a5bccfccf821cc5365a94aeb642b8e3f14d192bcfcba73c13201a34a10bf80",
+        "former_filename": "play_sfx_sru_orderminionsuper_sru_orderminionsuperbasicattack_onhit_r3.wav"
+      }
+    ]
   },
   {
     "file": "assets/audio/units/super_minion/order/play_sfx_sru_orderminionsuper_sru_orderminionsuperbasicattack2_oncast_r1.wav",
@@ -198,72 +270,6 @@
     "txtp_sha256": "2368bb74ebef1975095b52813b8855a2055efc5435486c043afb1f692ea96ab0"
   },
   {
-    "file": "assets/audio/units/super_minion/order/play_sfx_sru_orderminionsuper_sru_orderminionsuperbasicattack2_onhit_r1.wav",
-    "event": "Play_sfx_SRU_OrderMinionSuper_SRU_OrderMinionSuperBasicAttack2_OnHit",
-    "event_id": 3537132338,
-    "duration": 1.4167120181405897,
-    "media_ids": [
-      59568009,
-      460438271,
-      765723772,
-      965795940
-    ],
-    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
-    "sha256": "173158efd235a9eea03dbe440bc1535e3a75a4f9ff0d87d2ebbf8e18816a5bac",
-    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
-    "tool_master_gain_db": 0.0,
-    "post_gain_db": 0.0,
-    "runtime_gain_db": 0.0,
-    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/9f95554a8c2e038c926c357b355c60203374e43c228f86763067a6953ebc7b4c.txtp",
-    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/9f95554a8c2e038c926c357b355c60203374e43c228f86763067a6953ebc7b4c.wav",
-    "source_sha256": "649ac8c14577844bea63edd815dd3fd9af691bed64b80224e451640d7d937831",
-    "txtp_sha256": "0695707ec2c011bdefb46d0e28aeba251fbd75ea8665ec39434ee49c816d58d9"
-  },
-  {
-    "file": "assets/audio/units/super_minion/order/play_sfx_sru_orderminionsuper_sru_orderminionsuperbasicattack2_onhit_r2.wav",
-    "event": "Play_sfx_SRU_OrderMinionSuper_SRU_OrderMinionSuperBasicAttack2_OnHit",
-    "event_id": 3537132338,
-    "duration": 1.4720408163265306,
-    "media_ids": [
-      59568009,
-      460438271,
-      765723772,
-      965795940
-    ],
-    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
-    "sha256": "98661f0ce0aaec0f95ed3d8e1d063a1fd001299706fe134d4a5b1a557142b8d3",
-    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
-    "tool_master_gain_db": 0.0,
-    "post_gain_db": 0.0,
-    "runtime_gain_db": 0.0,
-    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/fedbb53ec1b977355bc4a4f09581d946f98bf3dc9aaea016b03156c3737a90ea.txtp",
-    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/fedbb53ec1b977355bc4a4f09581d946f98bf3dc9aaea016b03156c3737a90ea.wav",
-    "source_sha256": "ea865d732370d6b05542f1fc9ff70f7298909316d68245287f1310ca43475de9",
-    "txtp_sha256": "37238dd71e385fd436fc7f2f5b5739fb1b10cd1f7309b7cab02ec1ea551dcfda"
-  },
-  {
-    "file": "assets/audio/units/super_minion/order/play_sfx_sru_orderminionsuper_sru_orderminionsuperbasicattack2_onhit_r3.wav",
-    "event": "Play_sfx_SRU_OrderMinionSuper_SRU_OrderMinionSuperBasicAttack2_OnHit",
-    "event_id": 3537132338,
-    "duration": 1.3344671201814058,
-    "media_ids": [
-      59568009,
-      460438271,
-      765723772,
-      965795940
-    ],
-    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
-    "sha256": "0e39338db73e846c18f6f52864497be3b82d7fd4f77858f3f2361f608393287d",
-    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
-    "tool_master_gain_db": 0.0,
-    "post_gain_db": 0.0,
-    "runtime_gain_db": 0.0,
-    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/8942908a329f1edb3e89532d0ff024ec081aebbae4bad2afb4291eed59f1429d.txtp",
-    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/8942908a329f1edb3e89532d0ff024ec081aebbae4bad2afb4291eed59f1429d.wav",
-    "source_sha256": "0772c5e47b66f79e43eec682163f18d6ba6fbed557c682b293f4c89c9e8cbd0b",
-    "txtp_sha256": "117e94fa13c43225c7b83e6500276548b6ca848366457c1a66a2098ed3ce61b0"
-  },
-  {
     "file": "assets/audio/units/super_minion/chaos/play_sfx_sru_chaosminionsuper_sru_chaosminionsuperbasicattack_oncast_r1.wav",
     "event": "Play_sfx_SRU_ChaosMinionSuper_SRU_ChaosMinionSuperBasicAttack_OnCast",
     "event_id": 2342324534,
@@ -330,9 +336,9 @@
     "txtp_sha256": "5417f0c2534b23dea0a789c8aab55f9d9d79d0baa9cc42fd5a6b2308468e80c4"
   },
   {
-    "file": "assets/audio/units/super_minion/chaos/play_sfx_sru_chaosminionsuper_sru_chaosminionsuperbasicattack_onhit_r1.wav",
-    "event": "Play_sfx_SRU_ChaosMinionSuper_SRU_ChaosMinionSuperBasicAttack_OnHit",
-    "event_id": 2362665938,
+    "file": "assets/audio/units/super_minion/chaos/play_sfx_sru_chaosminionsuper_sru_chaosminionsuperbasicattack2_onhit_r1.wav",
+    "event": "Play_sfx_SRU_ChaosMinionSuper_SRU_ChaosMinionSuperBasicAttack2_OnHit",
+    "event_id": 4234911002,
     "duration": 1.4586621315192745,
     "media_ids": [
       665034686,
@@ -346,15 +352,39 @@
     "tool_master_gain_db": 0.0,
     "post_gain_db": 0.0,
     "runtime_gain_db": 0.0,
-    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/64cb10f56ba1204ccba7ad908e2e7521f084705d050a22527029e80d2b32ffa8.txtp",
-    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/64cb10f56ba1204ccba7ad908e2e7521f084705d050a22527029e80d2b32ffa8.wav",
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/349f52d39007f4dc2e66cb2450a70386868c97ba67a8379efe065959f7bee2b3.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/349f52d39007f4dc2e66cb2450a70386868c97ba67a8379efe065959f7bee2b3.wav",
     "source_sha256": "a0c758f700de53b79ed2e9f7a1e947e9e32050d33cef6558c360729779404242",
-    "txtp_sha256": "25aa223e1d20f0d3bf1dee20e426dd2ec16f9055d5e44872b8f14160908df8e8"
+    "txtp_sha256": "1edd09e254e0d7df31b4ab1f36e629029f3db1424ac4950c0d94d833c0f78aed",
+    "equivalent_sources": [
+      {
+        "event": "Play_sfx_SRU_ChaosMinionSuper_SRU_ChaosMinionSuperBasicAttack_OnHit",
+        "event_id": 2362665938,
+        "duration": 1.4586621315192745,
+        "media_ids": [
+          665034686,
+          713565607,
+          765116358,
+          931278533
+        ],
+        "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+        "sha256": "09c4868ae9e2740660ad67fe66f2f2da897ffc0e912e4686253d8603da1f9153",
+        "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/64cb10f56ba1204ccba7ad908e2e7521f084705d050a22527029e80d2b32ffa8.txtp",
+        "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/64cb10f56ba1204ccba7ad908e2e7521f084705d050a22527029e80d2b32ffa8.wav",
+        "source_sha256": "a0c758f700de53b79ed2e9f7a1e947e9e32050d33cef6558c360729779404242",
+        "txtp_sha256": "25aa223e1d20f0d3bf1dee20e426dd2ec16f9055d5e44872b8f14160908df8e8",
+        "former_filename": "play_sfx_sru_chaosminionsuper_sru_chaosminionsuperbasicattack_onhit_r1.wav"
+      }
+    ]
   },
   {
-    "file": "assets/audio/units/super_minion/chaos/play_sfx_sru_chaosminionsuper_sru_chaosminionsuperbasicattack_onhit_r2.wav",
-    "event": "Play_sfx_SRU_ChaosMinionSuper_SRU_ChaosMinionSuperBasicAttack_OnHit",
-    "event_id": 2362665938,
+    "file": "assets/audio/units/super_minion/chaos/play_sfx_sru_chaosminionsuper_sru_chaosminionsuperbasicattack2_onhit_r2.wav",
+    "event": "Play_sfx_SRU_ChaosMinionSuper_SRU_ChaosMinionSuperBasicAttack2_OnHit",
+    "event_id": 4234911002,
     "duration": 1.123628117913832,
     "media_ids": [
       665034686,
@@ -368,15 +398,39 @@
     "tool_master_gain_db": 0.0,
     "post_gain_db": 0.0,
     "runtime_gain_db": 0.0,
-    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/28041b952cb512b135cb172268945af2e5fc2b96fb918bd4a4c073dc887d6e7c.txtp",
-    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/28041b952cb512b135cb172268945af2e5fc2b96fb918bd4a4c073dc887d6e7c.wav",
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/3e096717b88d5c12fa6ab96a5760df88a077d4aac1854798eb81fe6ea7b3c962.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/3e096717b88d5c12fa6ab96a5760df88a077d4aac1854798eb81fe6ea7b3c962.wav",
     "source_sha256": "df950033a2fcfa5f944ff15432717a13f23307e00136cf0ca982076c6640d09c",
-    "txtp_sha256": "8f3144a21b993a9725d9bfc7a0507a39c6c76c659649eceda2956899c640c4cc"
+    "txtp_sha256": "5a3b5b7b03b99347a5ba0bd574b7022ca9bf897135e6c41f7cd0e59f50ebe25c",
+    "equivalent_sources": [
+      {
+        "event": "Play_sfx_SRU_ChaosMinionSuper_SRU_ChaosMinionSuperBasicAttack_OnHit",
+        "event_id": 2362665938,
+        "duration": 1.123628117913832,
+        "media_ids": [
+          665034686,
+          713565607,
+          765116358,
+          931278533
+        ],
+        "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+        "sha256": "2f604da41871cc745942a43ad09b726b23ce483a5a6c1d15fe797ec72aa83772",
+        "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/28041b952cb512b135cb172268945af2e5fc2b96fb918bd4a4c073dc887d6e7c.txtp",
+        "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/28041b952cb512b135cb172268945af2e5fc2b96fb918bd4a4c073dc887d6e7c.wav",
+        "source_sha256": "df950033a2fcfa5f944ff15432717a13f23307e00136cf0ca982076c6640d09c",
+        "txtp_sha256": "8f3144a21b993a9725d9bfc7a0507a39c6c76c659649eceda2956899c640c4cc",
+        "former_filename": "play_sfx_sru_chaosminionsuper_sru_chaosminionsuperbasicattack_onhit_r2.wav"
+      }
+    ]
   },
   {
-    "file": "assets/audio/units/super_minion/chaos/play_sfx_sru_chaosminionsuper_sru_chaosminionsuperbasicattack_onhit_r3.wav",
-    "event": "Play_sfx_SRU_ChaosMinionSuper_SRU_ChaosMinionSuperBasicAttack_OnHit",
-    "event_id": 2362665938,
+    "file": "assets/audio/units/super_minion/chaos/play_sfx_sru_chaosminionsuper_sru_chaosminionsuperbasicattack2_onhit_r3.wav",
+    "event": "Play_sfx_SRU_ChaosMinionSuper_SRU_ChaosMinionSuperBasicAttack2_OnHit",
+    "event_id": 4234911002,
     "duration": 1.2017913832199547,
     "media_ids": [
       665034686,
@@ -390,10 +444,34 @@
     "tool_master_gain_db": 0.0,
     "post_gain_db": 0.0,
     "runtime_gain_db": 0.0,
-    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/3e24fc6f6d0012dad6a2fb8ad2dbd85093e8d802aaaf4de424c9f9151fd54af1.txtp",
-    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/3e24fc6f6d0012dad6a2fb8ad2dbd85093e8d802aaaf4de424c9f9151fd54af1.wav",
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/a6e5c31b706adb5ee60ea2c2ad531783a95401b7a463219d345f5ea74dc748ef.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/a6e5c31b706adb5ee60ea2c2ad531783a95401b7a463219d345f5ea74dc748ef.wav",
     "source_sha256": "5161c585087b55c1f5956c3ab23c1e85340dced7ef26b448881c54b2718dfcee",
-    "txtp_sha256": "a750731ff6c0f04e0e091de59f2a03e678dabb3f145298c11f84aefad9abc772"
+    "txtp_sha256": "11d662e58c3e27200cc173cb06f93734b2f36bb219bbdce76957b84a7fbd237c",
+    "equivalent_sources": [
+      {
+        "event": "Play_sfx_SRU_ChaosMinionSuper_SRU_ChaosMinionSuperBasicAttack_OnHit",
+        "event_id": 2362665938,
+        "duration": 1.2017913832199547,
+        "media_ids": [
+          665034686,
+          713565607,
+          765116358,
+          931278533
+        ],
+        "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+        "sha256": "50338e11a38ec5db19b0d276c6467fcd3d83542f483104092b71a4921cf4785f",
+        "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/3e24fc6f6d0012dad6a2fb8ad2dbd85093e8d802aaaf4de424c9f9151fd54af1.txtp",
+        "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/3e24fc6f6d0012dad6a2fb8ad2dbd85093e8d802aaaf4de424c9f9151fd54af1.wav",
+        "source_sha256": "5161c585087b55c1f5956c3ab23c1e85340dced7ef26b448881c54b2718dfcee",
+        "txtp_sha256": "a750731ff6c0f04e0e091de59f2a03e678dabb3f145298c11f84aefad9abc772",
+        "former_filename": "play_sfx_sru_chaosminionsuper_sru_chaosminionsuperbasicattack_onhit_r3.wav"
+      }
+    ]
   },
   {
     "file": "assets/audio/units/super_minion/chaos/play_sfx_sru_chaosminionsuper_sru_chaosminionsuperbasicattack2_oncast_r1.wav",
@@ -460,71 +538,5 @@
     "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/dc601d9e84048dd123d3b886b053f7c67a6984a064310f50041140a291a912c5.wav",
     "source_sha256": "73af1b94c306295d5dde6e102651b7513b6f756098beff2d56c862ae11eee70a",
     "txtp_sha256": "99519588824c3c897ba9638d135f34340a45843f2afb5460706182db0ee74b09"
-  },
-  {
-    "file": "assets/audio/units/super_minion/chaos/play_sfx_sru_chaosminionsuper_sru_chaosminionsuperbasicattack2_onhit_r1.wav",
-    "event": "Play_sfx_SRU_ChaosMinionSuper_SRU_ChaosMinionSuperBasicAttack2_OnHit",
-    "event_id": 4234911002,
-    "duration": 1.4586621315192745,
-    "media_ids": [
-      665034686,
-      713565607,
-      765116358,
-      931278533
-    ],
-    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
-    "sha256": "09c4868ae9e2740660ad67fe66f2f2da897ffc0e912e4686253d8603da1f9153",
-    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
-    "tool_master_gain_db": 0.0,
-    "post_gain_db": 0.0,
-    "runtime_gain_db": 0.0,
-    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/349f52d39007f4dc2e66cb2450a70386868c97ba67a8379efe065959f7bee2b3.txtp",
-    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/349f52d39007f4dc2e66cb2450a70386868c97ba67a8379efe065959f7bee2b3.wav",
-    "source_sha256": "a0c758f700de53b79ed2e9f7a1e947e9e32050d33cef6558c360729779404242",
-    "txtp_sha256": "1edd09e254e0d7df31b4ab1f36e629029f3db1424ac4950c0d94d833c0f78aed"
-  },
-  {
-    "file": "assets/audio/units/super_minion/chaos/play_sfx_sru_chaosminionsuper_sru_chaosminionsuperbasicattack2_onhit_r2.wav",
-    "event": "Play_sfx_SRU_ChaosMinionSuper_SRU_ChaosMinionSuperBasicAttack2_OnHit",
-    "event_id": 4234911002,
-    "duration": 1.123628117913832,
-    "media_ids": [
-      665034686,
-      713565607,
-      765116358,
-      931278533
-    ],
-    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
-    "sha256": "2f604da41871cc745942a43ad09b726b23ce483a5a6c1d15fe797ec72aa83772",
-    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
-    "tool_master_gain_db": 0.0,
-    "post_gain_db": 0.0,
-    "runtime_gain_db": 0.0,
-    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/3e096717b88d5c12fa6ab96a5760df88a077d4aac1854798eb81fe6ea7b3c962.txtp",
-    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/3e096717b88d5c12fa6ab96a5760df88a077d4aac1854798eb81fe6ea7b3c962.wav",
-    "source_sha256": "df950033a2fcfa5f944ff15432717a13f23307e00136cf0ca982076c6640d09c",
-    "txtp_sha256": "5a3b5b7b03b99347a5ba0bd574b7022ca9bf897135e6c41f7cd0e59f50ebe25c"
-  },
-  {
-    "file": "assets/audio/units/super_minion/chaos/play_sfx_sru_chaosminionsuper_sru_chaosminionsuperbasicattack2_onhit_r3.wav",
-    "event": "Play_sfx_SRU_ChaosMinionSuper_SRU_ChaosMinionSuperBasicAttack2_OnHit",
-    "event_id": 4234911002,
-    "duration": 1.2017913832199547,
-    "media_ids": [
-      665034686,
-      713565607,
-      765116358,
-      931278533
-    ],
-    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
-    "sha256": "50338e11a38ec5db19b0d276c6467fcd3d83542f483104092b71a4921cf4785f",
-    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
-    "tool_master_gain_db": 0.0,
-    "post_gain_db": 0.0,
-    "runtime_gain_db": 0.0,
-    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/a6e5c31b706adb5ee60ea2c2ad531783a95401b7a463219d345f5ea74dc748ef.txtp",
-    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/a6e5c31b706adb5ee60ea2c2ad531783a95401b7a463219d345f5ea74dc748ef.wav",
-    "source_sha256": "5161c585087b55c1f5956c3ab23c1e85340dced7ef26b448881c54b2718dfcee",
-    "txtp_sha256": "11d662e58c3e27200cc173cb06f93734b2f36bb219bbdce76957b84a7fbd237c"
   }
 ]

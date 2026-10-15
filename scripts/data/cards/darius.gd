@@ -29,30 +29,26 @@ static func definition() -> Dictionary:
 		"audio": {
   "attack_swing": [
     [
-      "res://assets/audio/units/darius/play_sfx_darius_dariusbasicattack_oncast_r1_d.wav",
-      "res://assets/audio/units/darius/play_sfx_darius_dariusbasicattack_oncast_r2_d.wav",
-      "res://assets/audio/units/darius/play_sfx_darius_dariusbasicattack_oncast_r3_d.wav",
-      "res://assets/audio/units/darius/play_sfx_darius_dariusbasicattack_oncast_r4_d.wav"
+      "res://assets/audio/units/darius/play_sfx_darius_dariusbasicattack2_oncast_r1.wav",
+      "res://assets/audio/units/darius/play_sfx_darius_dariusbasicattack2_oncast_r2.wav",
+      "res://assets/audio/units/darius/play_sfx_darius_dariusbasicattack2_oncast_r3.wav"
     ],
     [
       "res://assets/audio/units/darius/play_sfx_darius_dariusbasicattack2_oncast_r1.wav",
       "res://assets/audio/units/darius/play_sfx_darius_dariusbasicattack2_oncast_r2.wav",
-      "res://assets/audio/units/darius/play_sfx_darius_dariusbasicattack2_oncast_r3.wav",
-      "res://assets/audio/units/darius/play_sfx_darius_dariusbasicattack2_oncast_r4.wav"
+      "res://assets/audio/units/darius/play_sfx_darius_dariusbasicattack2_oncast_r3.wav"
     ]
   ],
   "attack_hit_by_segment": [
     [
-      "res://assets/audio/units/darius/play_sfx_darius_dariusbasicattack_onhit_1559186049_1153642577_r1_d.wav",
-      "res://assets/audio/units/darius/play_sfx_darius_dariusbasicattack_onhit_1559186049_1153642577_r2_d.wav",
-      "res://assets/audio/units/darius/play_sfx_darius_dariusbasicattack_onhit_1559186049_1153642577_r3_d.wav",
-      "res://assets/audio/units/darius/play_sfx_darius_dariusbasicattack_onhit_1559186049_1153642577_r4_d.wav"
+      "res://assets/audio/units/darius/play_sfx_darius_dariusbasicattack2_onhit_1559186049_1153642577_r1.wav",
+      "res://assets/audio/units/darius/play_sfx_darius_dariusbasicattack2_onhit_1559186049_1153642577_r2.wav",
+      "res://assets/audio/units/darius/play_sfx_darius_dariusbasicattack2_onhit_1559186049_1153642577_r3.wav"
     ],
     [
       "res://assets/audio/units/darius/play_sfx_darius_dariusbasicattack2_onhit_1559186049_1153642577_r1.wav",
       "res://assets/audio/units/darius/play_sfx_darius_dariusbasicattack2_onhit_1559186049_1153642577_r2.wav",
-      "res://assets/audio/units/darius/play_sfx_darius_dariusbasicattack2_onhit_1559186049_1153642577_r3.wav",
-      "res://assets/audio/units/darius/play_sfx_darius_dariusbasicattack2_onhit_1559186049_1153642577_r4.wav"
+      "res://assets/audio/units/darius/play_sfx_darius_dariusbasicattack2_onhit_1559186049_1153642577_r3.wav"
     ]
   ],
   "attack_swing_volume_db": 0.0,
@@ -60,8 +56,7 @@ static func definition() -> Dictionary:
   "empowered_hit": [
     "res://assets/audio/units/darius/play_sfx_darius_dariusexecute_onhit_r1.wav",
     "res://assets/audio/units/darius/play_sfx_darius_dariusexecute_onhit_r2.wav",
-    "res://assets/audio/units/darius/play_sfx_darius_dariusexecute_onhit_r3.wav",
-    "res://assets/audio/units/darius/play_sfx_darius_dariusexecute_onhit_r4.wav"
+    "res://assets/audio/units/darius/play_sfx_darius_dariusexecute_onhit_r3.wav"
   ],
   "events": {
     "deploy:voice": {
@@ -77,8 +72,7 @@ static func definition() -> Dictionary:
       "pool": [
         "res://assets/audio/units/darius/play_sfx_darius_dariusexecute_oncast_r1.wav",
         "res://assets/audio/units/darius/play_sfx_darius_dariusexecute_oncast_r2.wav",
-        "res://assets/audio/units/darius/play_sfx_darius_dariusexecute_oncast_r3.wav",
-        "res://assets/audio/units/darius/play_sfx_darius_dariusexecute_oncast_r4.wav"
+        "res://assets/audio/units/darius/play_sfx_darius_dariusexecute_oncast_r3.wav"
       ],
       "volume_db": 0.0,
       "bus": "Combat"

@@ -1,83 +1,5 @@
 [
   {
-    "file": "play_sfx_gnar_gnarbigbasicattack_oncast_r1_d.wav",
-    "event": "Play_sfx_Gnar_GnarBigBasicAttack_OnCast",
-    "event_id": 3316307590,
-    "media_ids": [
-      64770056,
-      78145144,
-      226706157,
-      342399424,
-      445479366,
-      469196382,
-      664776106
-    ],
-    "duration": 0.9404761904761905,
-    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
-    "sha256": "d2c118c6a012c719e0b25aa8a9499235df2e38683288390cbe64573918fd7432",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
-    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
-    "tool_master_gain_db": 0.0,
-    "post_gain_db": 0.0,
-    "runtime_gain_db": 0.0,
-    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/2b424e0653be02d42c395741cb1202061c12a9419944d2a74b452e3b36727c35.txtp",
-    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/2b424e0653be02d42c395741cb1202061c12a9419944d2a74b452e3b36727c35.wav",
-    "source_sha256": "2f56ff8eac01c3bb158fe8f69c51df0d4eb45d0bce8f12dd2c8b29061b2417d4",
-    "txtp_sha256": "bacfa7f42ad55591c57703c5273d92694b0a8e832a940707c540c7413aee1a50"
-  },
-  {
-    "file": "play_sfx_gnar_gnarbigbasicattack_oncast_r2_d.wav",
-    "event": "Play_sfx_Gnar_GnarBigBasicAttack_OnCast",
-    "event_id": 3316307590,
-    "media_ids": [
-      64770056,
-      78145144,
-      226706157,
-      342399424,
-      445479366,
-      469196382,
-      664776106
-    ],
-    "duration": 0.8974149659863946,
-    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
-    "sha256": "79704bc876d106188f584211cce27400faf1a4890971b937e5c2b4612f55e482",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
-    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
-    "tool_master_gain_db": 0.0,
-    "post_gain_db": 0.0,
-    "runtime_gain_db": 0.0,
-    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/b6885522be8f078b2247ff9cd3f7d9dd176a706471bbfcd1cb87c8e37480e89f.txtp",
-    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/b6885522be8f078b2247ff9cd3f7d9dd176a706471bbfcd1cb87c8e37480e89f.wav",
-    "source_sha256": "617a7d6174a9ec8bd234efcc6a3187fc46804dded1a27d7370f02c43e657a173",
-    "txtp_sha256": "3f2eb530bbacd7d3d0542cdf616b3de19f68653faf47fac5417f4bb3cbec24ed"
-  },
-  {
-    "file": "play_sfx_gnar_gnarbigbasicattack_oncast_r3_d.wav",
-    "event": "Play_sfx_Gnar_GnarBigBasicAttack_OnCast",
-    "event_id": 3316307590,
-    "media_ids": [
-      64770056,
-      78145144,
-      226706157,
-      342399424,
-      445479366,
-      469196382,
-      664776106
-    ],
-    "duration": 1.1124489795918366,
-    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
-    "sha256": "b63510cd957eedea936fb4bad3fbc55b130ad67909da321abc22f4d400591b68",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
-    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
-    "tool_master_gain_db": 0.0,
-    "post_gain_db": 0.0,
-    "runtime_gain_db": 0.0,
-    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/e75ca771eab9e6fdaf558ebd4b0b0601222b9fc7b216684537f299ede92a335c.txtp",
-    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/e75ca771eab9e6fdaf558ebd4b0b0601222b9fc7b216684537f299ede92a335c.wav",
-    "source_sha256": "b06f9b1eafd5ec582d5daafbf71c6b818c8b89041965f82140f39066773b89cb",
-    "txtp_sha256": "426f959471e3e897afd3b82afe803fc96eb0815ed3f16e1c4a4905590f8b5b95"
-  },
-  {
     "file": "play_sfx_gnar_gnarbigbasicattack2_oncast_r1_d.wav",
     "event": "Play_sfx_Gnar_GnarBigBasicAttack2_OnCast",
     "event_id": 3062307166,
@@ -101,7 +23,35 @@
     "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/8d32d3865cc99b8560869d9464444c7ee3bd0db5efa704ce0f806cc34151e521.txtp",
     "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/8d32d3865cc99b8560869d9464444c7ee3bd0db5efa704ce0f806cc34151e521.wav",
     "source_sha256": "2f56ff8eac01c3bb158fe8f69c51df0d4eb45d0bce8f12dd2c8b29061b2417d4",
-    "txtp_sha256": "64db30cad0f7ddb94252a8d0e8acd4bbaac530fad14c746aaae32453f659a9af"
+    "txtp_sha256": "64db30cad0f7ddb94252a8d0e8acd4bbaac530fad14c746aaae32453f659a9af",
+    "equivalent_sources": [
+      {
+        "event": "Play_sfx_Gnar_GnarBigBasicAttack_OnCast",
+        "event_id": 3316307590,
+        "media_ids": [
+          64770056,
+          78145144,
+          226706157,
+          342399424,
+          445479366,
+          469196382,
+          664776106
+        ],
+        "duration": 0.9404761904761905,
+        "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+        "sha256": "d2c118c6a012c719e0b25aa8a9499235df2e38683288390cbe64573918fd7432",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+        "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/2b424e0653be02d42c395741cb1202061c12a9419944d2a74b452e3b36727c35.txtp",
+        "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/2b424e0653be02d42c395741cb1202061c12a9419944d2a74b452e3b36727c35.wav",
+        "source_sha256": "2f56ff8eac01c3bb158fe8f69c51df0d4eb45d0bce8f12dd2c8b29061b2417d4",
+        "txtp_sha256": "bacfa7f42ad55591c57703c5273d92694b0a8e832a940707c540c7413aee1a50",
+        "former_filename": "play_sfx_gnar_gnarbigbasicattack_oncast_r1_d.wav"
+      }
+    ]
   },
   {
     "file": "play_sfx_gnar_gnarbigbasicattack2_oncast_r2_d.wav",
@@ -127,7 +77,35 @@
     "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/c3e8bc79b7c84d499e56dfe2afe671f3af2b6dadec925c0acd4db1364b09e8bb.txtp",
     "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/c3e8bc79b7c84d499e56dfe2afe671f3af2b6dadec925c0acd4db1364b09e8bb.wav",
     "source_sha256": "617a7d6174a9ec8bd234efcc6a3187fc46804dded1a27d7370f02c43e657a173",
-    "txtp_sha256": "e8a82b01e2fc417a55a93faa671aec652671330d096cb61161b55ddf1b99d766"
+    "txtp_sha256": "e8a82b01e2fc417a55a93faa671aec652671330d096cb61161b55ddf1b99d766",
+    "equivalent_sources": [
+      {
+        "event": "Play_sfx_Gnar_GnarBigBasicAttack_OnCast",
+        "event_id": 3316307590,
+        "media_ids": [
+          64770056,
+          78145144,
+          226706157,
+          342399424,
+          445479366,
+          469196382,
+          664776106
+        ],
+        "duration": 0.8974149659863946,
+        "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+        "sha256": "79704bc876d106188f584211cce27400faf1a4890971b937e5c2b4612f55e482",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+        "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/b6885522be8f078b2247ff9cd3f7d9dd176a706471bbfcd1cb87c8e37480e89f.txtp",
+        "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/b6885522be8f078b2247ff9cd3f7d9dd176a706471bbfcd1cb87c8e37480e89f.wav",
+        "source_sha256": "617a7d6174a9ec8bd234efcc6a3187fc46804dded1a27d7370f02c43e657a173",
+        "txtp_sha256": "3f2eb530bbacd7d3d0542cdf616b3de19f68653faf47fac5417f4bb3cbec24ed",
+        "former_filename": "play_sfx_gnar_gnarbigbasicattack_oncast_r2_d.wav"
+      }
+    ]
   },
   {
     "file": "play_sfx_gnar_gnarbigbasicattack2_oncast_r3_d.wav",
@@ -153,7 +131,35 @@
     "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/9029bb7f54adcd92478287fd0c374da81aa5cfdb832a597930551301a8cb2d1f.txtp",
     "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/9029bb7f54adcd92478287fd0c374da81aa5cfdb832a597930551301a8cb2d1f.wav",
     "source_sha256": "b06f9b1eafd5ec582d5daafbf71c6b818c8b89041965f82140f39066773b89cb",
-    "txtp_sha256": "c845de600b22f05db5d679e24c8064b1127ba19c54a32826d105a28dcb0590ee"
+    "txtp_sha256": "c845de600b22f05db5d679e24c8064b1127ba19c54a32826d105a28dcb0590ee",
+    "equivalent_sources": [
+      {
+        "event": "Play_sfx_Gnar_GnarBigBasicAttack_OnCast",
+        "event_id": 3316307590,
+        "media_ids": [
+          64770056,
+          78145144,
+          226706157,
+          342399424,
+          445479366,
+          469196382,
+          664776106
+        ],
+        "duration": 1.1124489795918366,
+        "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+        "sha256": "b63510cd957eedea936fb4bad3fbc55b130ad67909da321abc22f4d400591b68",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+        "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/e75ca771eab9e6fdaf558ebd4b0b0601222b9fc7b216684537f299ede92a335c.txtp",
+        "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/e75ca771eab9e6fdaf558ebd4b0b0601222b9fc7b216684537f299ede92a335c.wav",
+        "source_sha256": "b06f9b1eafd5ec582d5daafbf71c6b818c8b89041965f82140f39066773b89cb",
+        "txtp_sha256": "426f959471e3e897afd3b82afe803fc96eb0815ed3f16e1c4a4905590f8b5b95",
+        "former_filename": "play_sfx_gnar_gnarbigbasicattack_oncast_r3_d.wav"
+      }
+    ]
   },
   {
     "file": "play_sfx_gnar_gnarbigbasicattack_onhit_r1_d.wav",

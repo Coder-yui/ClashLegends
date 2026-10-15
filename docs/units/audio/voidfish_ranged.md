@@ -2,7 +2,7 @@
 
 [返回单位](../voidfish_ranged.md) · [单位索引](../README.md)
 
-- 出生：复用虚空鱼原版BelvethRMinionConverter出生声音，生成时播放一次；两层各4个随机成员的16种完整组合均已接入，第二层延后0.5秒。
+- 出生：复用虚空鱼原版BelvethRMinionConverter出生声音，生成时播放一次；两层各4个随机成员形成16种源组合，当前共用虚空鱼保留的前3种，第二层延后0.5秒。
 - 出手：BelvethRMinion_cast_ranged，原动画第11帧节点；映射后约0.36秒，配置在发射前0.10秒播放。
 - 命中：BelvethRMinion_hit_ranged，在真实弹体命中时播放，来源死亡后仍由在途弹体保留音频身份。
 - 死亡：复用虚空鱼原版死亡变体。

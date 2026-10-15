@@ -46,7 +46,10 @@ def main():
                 raise RuntimeError(f'{card_id}: no rendered event graph for {event}')
             # Keep one explicit switch combination; random variations within it are interchangeable.
             condition = lambda p: re.sub(r'\{r\d+\}', '', p.stem).strip()
-            selected = [p for p in candidates if condition(p) == condition(candidates[0])][:int(plan.get("event_variant_limits", {}).get(event, 3))]
+            limit = int(plan.get("event_variant_limits", {}).get(event, 3))
+            if not 1 <= limit <= 3:
+                raise ValueError(f'{card_id}: {event} variant limit must be between 1 and 3')
+            selected = [p for p in candidates if condition(p) == condition(candidates[0])][:limit]
             paths = []
             for txtp in selected:
                 assert re.search(r"CAkEvent\[\d+\] " + str(event_id(event)) + r"\b", txtp.read_text()), event
@@ -77,7 +80,7 @@ def main():
             audio['attack_swing'] = [pool(e) for e in plan['attack']]
             audio['attack_swing_volume_db'] = 0.0
             rows.extend((f'attack_swing[{i+1}]',e) for i,e in enumerate(plan['attack']))
-        if plan['hit']:
+        if plan['hit'] and not plan.get('hit_segments'):
             audio['attack_hit'] = pool(plan['hit'])
             audio['attack_hit_volume_db'] = 0.0
             rows.append(('attack_hit',plan['hit']))

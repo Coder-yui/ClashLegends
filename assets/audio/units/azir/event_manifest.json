@@ -1,27 +1,5 @@
 [
   {
-    "file": "play_sfx_azir_azirbasicattack_oncast_r_d.wav",
-    "event": "Play_sfx_Azir_AzirBasicAttack_OnCast",
-    "event_id": 4201699334,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/沙漠皇帝/audio/azir/event_wav/Play_sfx_Azir_AzirBasicAttack_OnCast {r} {d}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/沙漠皇帝/audio/azir/txtp/Play_sfx_Azir_AzirBasicAttack_OnCast {r} {d}.txtp",
-    "media_ids": [
-      34538628,
-      114580843,
-      168235538,
-      192753241,
-      233917312,
-      310516229,
-      315247135,
-      389192081,
-      547324685
-    ],
-    "duration": 1.9737,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "9b60035a6fd71d94dd6c1c00e2e2c5935206573103dd6abf802003648c197eac",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
-  },
-  {
     "file": "play_sfx_azir_azirbasicattack2_oncast_r.wav",
     "event": "Play_sfx_Azir_AzirBasicAttack2_OnCast",
     "event_id": 1245410782,
@@ -41,41 +19,31 @@
     "duration": 1.9737,
     "processing": "vgmstream-cli -i; source event gain retained",
     "sha256": "9b60035a6fd71d94dd6c1c00e2e2c5935206573103dd6abf802003648c197eac",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
-  },
-  {
-    "file": "play_sfx_azir_azirbasicattack_onhit_r1_d.wav",
-    "event": "Play_sfx_Azir_AzirBasicAttack_OnHit",
-    "event_id": 458923746,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/沙漠皇帝/audio/azir/event_wav/Play_sfx_Azir_AzirBasicAttack_OnHit {r1} {d}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/沙漠皇帝/audio/azir/txtp/Play_sfx_Azir_AzirBasicAttack_OnHit {r1} {d}.txtp",
-    "media_ids": [
-      20485220,
-      200058223,
-      446395018,
-      575323997
-    ],
-    "duration": 1.4909,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "0dceb9626d2a379e38112ecefede0201db3a37a24f733c9325d50458f366410a",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
-  },
-  {
-    "file": "play_sfx_azir_azirbasicattack_onhit_r2_d.wav",
-    "event": "Play_sfx_Azir_AzirBasicAttack_OnHit",
-    "event_id": 458923746,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/沙漠皇帝/audio/azir/event_wav/Play_sfx_Azir_AzirBasicAttack_OnHit {r2} {d}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/沙漠皇帝/audio/azir/txtp/Play_sfx_Azir_AzirBasicAttack_OnHit {r2} {d}.txtp",
-    "media_ids": [
-      20485220,
-      200058223,
-      446395018,
-      575323997
-    ],
-    "duration": 1.2233,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "0967c484cc42a439211874abc0cdb7a3119fa85749fd6f6a1ca86ad48df5e58b",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "equivalent_sources": [
+      {
+        "event": "Play_sfx_Azir_AzirBasicAttack_OnCast",
+        "event_id": 4201699334,
+        "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/沙漠皇帝/audio/azir/event_wav/Play_sfx_Azir_AzirBasicAttack_OnCast {r} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/沙漠皇帝/audio/azir/txtp/Play_sfx_Azir_AzirBasicAttack_OnCast {r} {d}.txtp",
+        "media_ids": [
+          34538628,
+          114580843,
+          168235538,
+          192753241,
+          233917312,
+          310516229,
+          315247135,
+          389192081,
+          547324685
+        ],
+        "duration": 1.9737,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "9b60035a6fd71d94dd6c1c00e2e2c5935206573103dd6abf802003648c197eac",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+        "former_filename": "play_sfx_azir_azirbasicattack_oncast_r_d.wav"
+      }
+    ]
   },
   {
     "file": "play_sfx_azir_azirbasicattack2_onhit_r1.wav",
@@ -92,7 +60,26 @@
     "duration": 1.4909,
     "processing": "vgmstream-cli -i; source event gain retained",
     "sha256": "0dceb9626d2a379e38112ecefede0201db3a37a24f733c9325d50458f366410a",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "equivalent_sources": [
+      {
+        "event": "Play_sfx_Azir_AzirBasicAttack_OnHit",
+        "event_id": 458923746,
+        "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/沙漠皇帝/audio/azir/event_wav/Play_sfx_Azir_AzirBasicAttack_OnHit {r1} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/沙漠皇帝/audio/azir/txtp/Play_sfx_Azir_AzirBasicAttack_OnHit {r1} {d}.txtp",
+        "media_ids": [
+          20485220,
+          200058223,
+          446395018,
+          575323997
+        ],
+        "duration": 1.4909,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "0dceb9626d2a379e38112ecefede0201db3a37a24f733c9325d50458f366410a",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+        "former_filename": "play_sfx_azir_azirbasicattack_onhit_r1_d.wav"
+      }
+    ]
   },
   {
     "file": "play_sfx_azir_azirbasicattack2_onhit_r2.wav",
@@ -109,7 +96,26 @@
     "duration": 1.2233,
     "processing": "vgmstream-cli -i; source event gain retained",
     "sha256": "0967c484cc42a439211874abc0cdb7a3119fa85749fd6f6a1ca86ad48df5e58b",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "equivalent_sources": [
+      {
+        "event": "Play_sfx_Azir_AzirBasicAttack_OnHit",
+        "event_id": 458923746,
+        "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/沙漠皇帝/audio/azir/event_wav/Play_sfx_Azir_AzirBasicAttack_OnHit {r2} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/沙漠皇帝/audio/azir/txtp/Play_sfx_Azir_AzirBasicAttack_OnHit {r2} {d}.txtp",
+        "media_ids": [
+          20485220,
+          200058223,
+          446395018,
+          575323997
+        ],
+        "duration": 1.2233,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "0967c484cc42a439211874abc0cdb7a3119fa85749fd6f6a1ca86ad48df5e58b",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+        "former_filename": "play_sfx_azir_azirbasicattack_onhit_r2_d.wav"
+      }
+    ]
   },
   {
     "file": "play_sfx_azir_base_death3d_cast.wav",

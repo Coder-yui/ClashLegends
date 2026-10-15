@@ -49,8 +49,7 @@ static func definition() -> Dictionary:
 				"deploy:start": {
 					"pool": [
 						"res://assets/audio/units/tombstone/play_sfx_yorick_yorickw_onhitlocation_r1.wav",
-						"res://assets/audio/units/tombstone/play_sfx_yorick_yorickw_onhitlocation_r2.wav"
-					],
+						],
 					"volume_db": 0.0,
 					"bus": "Combat"
 				},
@@ -58,8 +57,7 @@ static func definition() -> Dictionary:
 					"pool": [
 						"res://assets/audio/units/tombstone/play_sfx_yorick_yorickw_death_r1.wav",
 						"res://assets/audio/units/tombstone/play_sfx_yorick_yorickw_death_r2.wav",
-						"res://assets/audio/units/tombstone/play_sfx_yorick_yorickw_death_r3.wav",
-						"res://assets/audio/units/tombstone/play_sfx_yorick_yorickw_death_r4.wav"
+						"res://assets/audio/units/tombstone/play_sfx_yorick_yorickw_death_r3.wav"
 					],
 					"volume_db": 0.0,
 					"bus": "Combat"

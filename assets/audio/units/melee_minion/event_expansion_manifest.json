@@ -66,9 +66,9 @@
     "txtp_sha256": "522b7df77bfc1d5a19321cb29023fe0425a56d1cd7c261085dc4846d0eb73851"
   },
   {
-    "file": "assets/audio/units/melee_minion/order/play_sfx_sru_orderminionmelee_sru_orderminionmeleebasicattack_onhit_r1.wav",
-    "event": "Play_sfx_SRU_OrderMinionMelee_SRU_OrderMinionMeleeBasicAttack_OnHit",
-    "event_id": 3351942892,
+    "file": "assets/audio/units/melee_minion/order/play_sfx_sru_orderminionmelee_sru_orderminionmeleebasicattack2_onhit_r1.wav",
+    "event": "Play_sfx_SRU_OrderMinionMelee_SRU_OrderMinionMeleeBasicAttack2_OnHit",
+    "event_id": 532994356,
     "duration": 0.8302947845804989,
     "media_ids": [
       455556863,
@@ -82,15 +82,39 @@
     "tool_master_gain_db": 0.0,
     "post_gain_db": 0.0,
     "runtime_gain_db": 0.0,
-    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/0495e31f3dd3f5bbf51a0b358a6c5be6212ce0ca5f9f64a3506a759fb31c3da5.txtp",
-    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/0495e31f3dd3f5bbf51a0b358a6c5be6212ce0ca5f9f64a3506a759fb31c3da5.wav",
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/51560d95b8a47f2e14badcd800528cba85215fc1ba649a6fd466196011926250.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/51560d95b8a47f2e14badcd800528cba85215fc1ba649a6fd466196011926250.wav",
     "source_sha256": "06891a9e26afb7047d6930afdb181a38b07a29e0e9918063626cfcc390b67d91",
-    "txtp_sha256": "4fbf16a3a0017167d99a78210bb0abef69738bdd0d09beded14c06f96624c9cf"
+    "txtp_sha256": "942f3aed3ed1899d76d5a84153388f29734a0fa53ad331491ed027a4b1f268c1",
+    "equivalent_sources": [
+      {
+        "event": "Play_sfx_SRU_OrderMinionMelee_SRU_OrderMinionMeleeBasicAttack_OnHit",
+        "event_id": 3351942892,
+        "duration": 0.8302947845804989,
+        "media_ids": [
+          455556863,
+          488829941,
+          522168886,
+          676098358
+        ],
+        "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+        "sha256": "5690c7d70055e3431e1b2afdb72d3b044fc3340f5e4ad310d56f6ee23eba818f",
+        "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/0495e31f3dd3f5bbf51a0b358a6c5be6212ce0ca5f9f64a3506a759fb31c3da5.txtp",
+        "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/0495e31f3dd3f5bbf51a0b358a6c5be6212ce0ca5f9f64a3506a759fb31c3da5.wav",
+        "source_sha256": "06891a9e26afb7047d6930afdb181a38b07a29e0e9918063626cfcc390b67d91",
+        "txtp_sha256": "4fbf16a3a0017167d99a78210bb0abef69738bdd0d09beded14c06f96624c9cf",
+        "former_filename": "play_sfx_sru_orderminionmelee_sru_orderminionmeleebasicattack_onhit_r1.wav"
+      }
+    ]
   },
   {
-    "file": "assets/audio/units/melee_minion/order/play_sfx_sru_orderminionmelee_sru_orderminionmeleebasicattack_onhit_r2.wav",
-    "event": "Play_sfx_SRU_OrderMinionMelee_SRU_OrderMinionMeleeBasicAttack_OnHit",
-    "event_id": 3351942892,
+    "file": "assets/audio/units/melee_minion/order/play_sfx_sru_orderminionmelee_sru_orderminionmeleebasicattack2_onhit_r2.wav",
+    "event": "Play_sfx_SRU_OrderMinionMelee_SRU_OrderMinionMeleeBasicAttack2_OnHit",
+    "event_id": 532994356,
     "duration": 0.7792290249433107,
     "media_ids": [
       455556863,
@@ -104,15 +128,39 @@
     "tool_master_gain_db": 0.0,
     "post_gain_db": 0.0,
     "runtime_gain_db": 0.0,
-    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/d62f191c29ddf85e6ccf02cbf2d880e2a19a9853f89e92a7eb8e57283c011125.txtp",
-    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/d62f191c29ddf85e6ccf02cbf2d880e2a19a9853f89e92a7eb8e57283c011125.wav",
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/5fdb83e0e7ee82bbc29e55a076412fc92c38ef888e2fe35362399b37957b518f.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/5fdb83e0e7ee82bbc29e55a076412fc92c38ef888e2fe35362399b37957b518f.wav",
     "source_sha256": "44724e625d7ad1f56225bee218c10d2c05260bb8a1ea63514a5f25e348824468",
-    "txtp_sha256": "26c5e70dd0784c702aa53c0bac9448bed8154b1368f04b8ac509f3f75b397396"
+    "txtp_sha256": "56eaf36fe01505c6f8a6b079787c9a5f48d3b773d428e8450b436e03fa0b4ab2",
+    "equivalent_sources": [
+      {
+        "event": "Play_sfx_SRU_OrderMinionMelee_SRU_OrderMinionMeleeBasicAttack_OnHit",
+        "event_id": 3351942892,
+        "duration": 0.7792290249433107,
+        "media_ids": [
+          455556863,
+          488829941,
+          522168886,
+          676098358
+        ],
+        "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+        "sha256": "25e7821516e566360ae7c786cf47b16e8c2600fc031aa0990a95403cf36f8d52",
+        "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/d62f191c29ddf85e6ccf02cbf2d880e2a19a9853f89e92a7eb8e57283c011125.txtp",
+        "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/d62f191c29ddf85e6ccf02cbf2d880e2a19a9853f89e92a7eb8e57283c011125.wav",
+        "source_sha256": "44724e625d7ad1f56225bee218c10d2c05260bb8a1ea63514a5f25e348824468",
+        "txtp_sha256": "26c5e70dd0784c702aa53c0bac9448bed8154b1368f04b8ac509f3f75b397396",
+        "former_filename": "play_sfx_sru_orderminionmelee_sru_orderminionmeleebasicattack_onhit_r2.wav"
+      }
+    ]
   },
   {
-    "file": "assets/audio/units/melee_minion/order/play_sfx_sru_orderminionmelee_sru_orderminionmeleebasicattack_onhit_r3.wav",
-    "event": "Play_sfx_SRU_OrderMinionMelee_SRU_OrderMinionMeleeBasicAttack_OnHit",
-    "event_id": 3351942892,
+    "file": "assets/audio/units/melee_minion/order/play_sfx_sru_orderminionmelee_sru_orderminionmeleebasicattack2_onhit_r3.wav",
+    "event": "Play_sfx_SRU_OrderMinionMelee_SRU_OrderMinionMeleeBasicAttack2_OnHit",
+    "event_id": 532994356,
     "duration": 0.616031746031746,
     "media_ids": [
       455556863,
@@ -126,10 +174,34 @@
     "tool_master_gain_db": 0.0,
     "post_gain_db": 0.0,
     "runtime_gain_db": 0.0,
-    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/a7f9480a7eb8c08da621744249d741e8241f9ca803a8831ccdab82c9ce002c83.txtp",
-    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/a7f9480a7eb8c08da621744249d741e8241f9ca803a8831ccdab82c9ce002c83.wav",
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/82025064ed65d34117d193851ce628d18324bbb3c7e64884b6d92f8e2ecd83fc.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/82025064ed65d34117d193851ce628d18324bbb3c7e64884b6d92f8e2ecd83fc.wav",
     "source_sha256": "fdc4fab65469aa4304b605f32ef2a7d6fbe78a52855b9b4fcfe3a4b31806c8ea",
-    "txtp_sha256": "70c8043b3bef329222045f60b41d8354db0de5a91ca43ab73d13ac76604b2fec"
+    "txtp_sha256": "8f6726ae5b5d616c90d433178ffd7793ed33867d41db1106aa1fa5fa26c14526",
+    "equivalent_sources": [
+      {
+        "event": "Play_sfx_SRU_OrderMinionMelee_SRU_OrderMinionMeleeBasicAttack_OnHit",
+        "event_id": 3351942892,
+        "duration": 0.616031746031746,
+        "media_ids": [
+          455556863,
+          488829941,
+          522168886,
+          676098358
+        ],
+        "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+        "sha256": "0b4b36f75df37065334953bcaa79496c2e8f09aae606077a32bae4924be37e18",
+        "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/a7f9480a7eb8c08da621744249d741e8241f9ca803a8831ccdab82c9ce002c83.txtp",
+        "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/a7f9480a7eb8c08da621744249d741e8241f9ca803a8831ccdab82c9ce002c83.wav",
+        "source_sha256": "fdc4fab65469aa4304b605f32ef2a7d6fbe78a52855b9b4fcfe3a4b31806c8ea",
+        "txtp_sha256": "70c8043b3bef329222045f60b41d8354db0de5a91ca43ab73d13ac76604b2fec",
+        "former_filename": "play_sfx_sru_orderminionmelee_sru_orderminionmeleebasicattack_onhit_r3.wav"
+      }
+    ]
   },
   {
     "file": "assets/audio/units/melee_minion/order/play_sfx_sru_orderminionmelee_sru_orderminionmeleebasicattack2_oncast_r1.wav",
@@ -198,72 +270,6 @@
     "txtp_sha256": "52191380b2eb3597020d85600814022d8fcc3452afef429b9f7c0c5732be7c24"
   },
   {
-    "file": "assets/audio/units/melee_minion/order/play_sfx_sru_orderminionmelee_sru_orderminionmeleebasicattack2_onhit_r1.wav",
-    "event": "Play_sfx_SRU_OrderMinionMelee_SRU_OrderMinionMeleeBasicAttack2_OnHit",
-    "event_id": 532994356,
-    "duration": 0.8302947845804989,
-    "media_ids": [
-      455556863,
-      488829941,
-      522168886,
-      676098358
-    ],
-    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
-    "sha256": "5690c7d70055e3431e1b2afdb72d3b044fc3340f5e4ad310d56f6ee23eba818f",
-    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
-    "tool_master_gain_db": 0.0,
-    "post_gain_db": 0.0,
-    "runtime_gain_db": 0.0,
-    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/51560d95b8a47f2e14badcd800528cba85215fc1ba649a6fd466196011926250.txtp",
-    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/51560d95b8a47f2e14badcd800528cba85215fc1ba649a6fd466196011926250.wav",
-    "source_sha256": "06891a9e26afb7047d6930afdb181a38b07a29e0e9918063626cfcc390b67d91",
-    "txtp_sha256": "942f3aed3ed1899d76d5a84153388f29734a0fa53ad331491ed027a4b1f268c1"
-  },
-  {
-    "file": "assets/audio/units/melee_minion/order/play_sfx_sru_orderminionmelee_sru_orderminionmeleebasicattack2_onhit_r2.wav",
-    "event": "Play_sfx_SRU_OrderMinionMelee_SRU_OrderMinionMeleeBasicAttack2_OnHit",
-    "event_id": 532994356,
-    "duration": 0.7792290249433107,
-    "media_ids": [
-      455556863,
-      488829941,
-      522168886,
-      676098358
-    ],
-    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
-    "sha256": "25e7821516e566360ae7c786cf47b16e8c2600fc031aa0990a95403cf36f8d52",
-    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
-    "tool_master_gain_db": 0.0,
-    "post_gain_db": 0.0,
-    "runtime_gain_db": 0.0,
-    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/5fdb83e0e7ee82bbc29e55a076412fc92c38ef888e2fe35362399b37957b518f.txtp",
-    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/5fdb83e0e7ee82bbc29e55a076412fc92c38ef888e2fe35362399b37957b518f.wav",
-    "source_sha256": "44724e625d7ad1f56225bee218c10d2c05260bb8a1ea63514a5f25e348824468",
-    "txtp_sha256": "56eaf36fe01505c6f8a6b079787c9a5f48d3b773d428e8450b436e03fa0b4ab2"
-  },
-  {
-    "file": "assets/audio/units/melee_minion/order/play_sfx_sru_orderminionmelee_sru_orderminionmeleebasicattack2_onhit_r3.wav",
-    "event": "Play_sfx_SRU_OrderMinionMelee_SRU_OrderMinionMeleeBasicAttack2_OnHit",
-    "event_id": 532994356,
-    "duration": 0.616031746031746,
-    "media_ids": [
-      455556863,
-      488829941,
-      522168886,
-      676098358
-    ],
-    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
-    "sha256": "0b4b36f75df37065334953bcaa79496c2e8f09aae606077a32bae4924be37e18",
-    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
-    "tool_master_gain_db": 0.0,
-    "post_gain_db": 0.0,
-    "runtime_gain_db": 0.0,
-    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/82025064ed65d34117d193851ce628d18324bbb3c7e64884b6d92f8e2ecd83fc.txtp",
-    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/82025064ed65d34117d193851ce628d18324bbb3c7e64884b6d92f8e2ecd83fc.wav",
-    "source_sha256": "fdc4fab65469aa4304b605f32ef2a7d6fbe78a52855b9b4fcfe3a4b31806c8ea",
-    "txtp_sha256": "8f6726ae5b5d616c90d433178ffd7793ed33867d41db1106aa1fa5fa26c14526"
-  },
-  {
     "file": "assets/audio/units/melee_minion/chaos/play_sfx_sru_chaosminionmelee_sru_chaosminionmeleebasicattack_oncast_r1.wav",
     "event": "Play_sfx_SRU_ChaosMinionMelee_SRU_ChaosMinionMeleeBasicAttack_OnCast",
     "event_id": 2456298340,
@@ -330,9 +336,9 @@
     "txtp_sha256": "13706fbf80d12850a9370e0ffcce7ea92f6ef6f1a24fed2da952625c408d132a"
   },
   {
-    "file": "assets/audio/units/melee_minion/chaos/play_sfx_sru_chaosminionmelee_sru_chaosminionmeleebasicattack_onhit_r1.wav",
-    "event": "Play_sfx_SRU_ChaosMinionMelee_SRU_ChaosMinionMeleeBasicAttack_OnHit",
-    "event_id": 3828951820,
+    "file": "assets/audio/units/melee_minion/chaos/play_sfx_sru_chaosminionmelee_sru_chaosminionmeleebasicattack2_onhit_r1.wav",
+    "event": "Play_sfx_SRU_ChaosMinionMelee_SRU_ChaosMinionMeleeBasicAttack2_OnHit",
+    "event_id": 2519567700,
     "duration": 0.47374149659863946,
     "media_ids": [
       239995408,
@@ -346,15 +352,39 @@
     "tool_master_gain_db": 0.0,
     "post_gain_db": 0.0,
     "runtime_gain_db": 0.0,
-    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/f762721e4563f8e891cce7a01557efe9ea1188d6abd8c51bac63e03d334fdcf0.txtp",
-    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/f762721e4563f8e891cce7a01557efe9ea1188d6abd8c51bac63e03d334fdcf0.wav",
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/6395a4298278e9f5063b94673b1008b7b9f43236b6c7f8f7da17581cea9de32d.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/6395a4298278e9f5063b94673b1008b7b9f43236b6c7f8f7da17581cea9de32d.wav",
     "source_sha256": "129bb7a4cf829147c4a745559249afc70932a35827028ce42a999d1bddfee4e0",
-    "txtp_sha256": "d513a407d662e3f092c01de508cc737640103befadf56061564794748ef6ac21"
+    "txtp_sha256": "6cc0e49902739afa5cd10360e37117865c0aad975796022f8c93dad5994e29b8",
+    "equivalent_sources": [
+      {
+        "event": "Play_sfx_SRU_ChaosMinionMelee_SRU_ChaosMinionMeleeBasicAttack_OnHit",
+        "event_id": 3828951820,
+        "duration": 0.47374149659863946,
+        "media_ids": [
+          239995408,
+          808681780,
+          881928804,
+          1061667902
+        ],
+        "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+        "sha256": "cfe0dcb6d624d6fcc063a51b071da81067f4aae46e53f51982dc242734c97fda",
+        "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/f762721e4563f8e891cce7a01557efe9ea1188d6abd8c51bac63e03d334fdcf0.txtp",
+        "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/f762721e4563f8e891cce7a01557efe9ea1188d6abd8c51bac63e03d334fdcf0.wav",
+        "source_sha256": "129bb7a4cf829147c4a745559249afc70932a35827028ce42a999d1bddfee4e0",
+        "txtp_sha256": "d513a407d662e3f092c01de508cc737640103befadf56061564794748ef6ac21",
+        "former_filename": "play_sfx_sru_chaosminionmelee_sru_chaosminionmeleebasicattack_onhit_r1.wav"
+      }
+    ]
   },
   {
-    "file": "assets/audio/units/melee_minion/chaos/play_sfx_sru_chaosminionmelee_sru_chaosminionmeleebasicattack_onhit_r2.wav",
-    "event": "Play_sfx_SRU_ChaosMinionMelee_SRU_ChaosMinionMeleeBasicAttack_OnHit",
-    "event_id": 3828951820,
+    "file": "assets/audio/units/melee_minion/chaos/play_sfx_sru_chaosminionmelee_sru_chaosminionmeleebasicattack2_onhit_r2.wav",
+    "event": "Play_sfx_SRU_ChaosMinionMelee_SRU_ChaosMinionMeleeBasicAttack2_OnHit",
+    "event_id": 2519567700,
     "duration": 0.40210884353741494,
     "media_ids": [
       239995408,
@@ -368,15 +398,39 @@
     "tool_master_gain_db": 0.0,
     "post_gain_db": 0.0,
     "runtime_gain_db": 0.0,
-    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/7fca184374600b95fbb7d13a7ea69264d87116f7e4bde8e93317ae90a69e9bd1.txtp",
-    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/7fca184374600b95fbb7d13a7ea69264d87116f7e4bde8e93317ae90a69e9bd1.wav",
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/7c50b10f072c40026d8a72437840932abeae387461e1d5919cf849c1398ff377.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/7c50b10f072c40026d8a72437840932abeae387461e1d5919cf849c1398ff377.wav",
     "source_sha256": "80566c875db4fe2b1ffc2800212ae79fddd0237b80e00e76babf4c76449b0173",
-    "txtp_sha256": "6821a23fb13b41c00f1d06addeb73c78990b8afc3b89163fd1664e51112836fa"
+    "txtp_sha256": "d3389c472a60abdb996493f776473cdc431043e61bd19ff90f5d0fc61bf6b261",
+    "equivalent_sources": [
+      {
+        "event": "Play_sfx_SRU_ChaosMinionMelee_SRU_ChaosMinionMeleeBasicAttack_OnHit",
+        "event_id": 3828951820,
+        "duration": 0.40210884353741494,
+        "media_ids": [
+          239995408,
+          808681780,
+          881928804,
+          1061667902
+        ],
+        "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+        "sha256": "dace9910c223a8fd96e23813c52c535c5cece9473fad0582ddd3ed37ab740b65",
+        "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/7fca184374600b95fbb7d13a7ea69264d87116f7e4bde8e93317ae90a69e9bd1.txtp",
+        "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/7fca184374600b95fbb7d13a7ea69264d87116f7e4bde8e93317ae90a69e9bd1.wav",
+        "source_sha256": "80566c875db4fe2b1ffc2800212ae79fddd0237b80e00e76babf4c76449b0173",
+        "txtp_sha256": "6821a23fb13b41c00f1d06addeb73c78990b8afc3b89163fd1664e51112836fa",
+        "former_filename": "play_sfx_sru_chaosminionmelee_sru_chaosminionmeleebasicattack_onhit_r2.wav"
+      }
+    ]
   },
   {
-    "file": "assets/audio/units/melee_minion/chaos/play_sfx_sru_chaosminionmelee_sru_chaosminionmeleebasicattack_onhit_r3.wav",
-    "event": "Play_sfx_SRU_ChaosMinionMelee_SRU_ChaosMinionMeleeBasicAttack_OnHit",
-    "event_id": 3828951820,
+    "file": "assets/audio/units/melee_minion/chaos/play_sfx_sru_chaosminionmelee_sru_chaosminionmeleebasicattack2_onhit_r3.wav",
+    "event": "Play_sfx_SRU_ChaosMinionMelee_SRU_ChaosMinionMeleeBasicAttack2_OnHit",
+    "event_id": 2519567700,
     "duration": 0.424875283446712,
     "media_ids": [
       239995408,
@@ -390,10 +444,34 @@
     "tool_master_gain_db": 0.0,
     "post_gain_db": 0.0,
     "runtime_gain_db": 0.0,
-    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/9f016ca2a1414efa6de57445250c2bcf254ed1e35e1e89540e84639fd5782977.txtp",
-    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/9f016ca2a1414efa6de57445250c2bcf254ed1e35e1e89540e84639fd5782977.wav",
+    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/370869d178ad2300a545d7f3d42280a91deb1a3e18655768ce686fd3841ecd85.txtp",
+    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/370869d178ad2300a545d7f3d42280a91deb1a3e18655768ce686fd3841ecd85.wav",
     "source_sha256": "e651372d0d32690ea3cdad64edba6e5d34b4dcf8007ceffe4bba78753a107f40",
-    "txtp_sha256": "22ae47c0a5b2491bbec37fde0dc3719c1ed54480a4298526abc85f820e20e0ba"
+    "txtp_sha256": "4853c73ed47ceef1b3ec64c6bfffd2055911266c1107c3b5bc78cb1ea0085f76",
+    "equivalent_sources": [
+      {
+        "event": "Play_sfx_SRU_ChaosMinionMelee_SRU_ChaosMinionMeleeBasicAttack_OnHit",
+        "event_id": 3828951820,
+        "duration": 0.424875283446712,
+        "media_ids": [
+          239995408,
+          808681780,
+          881928804,
+          1061667902
+        ],
+        "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+        "sha256": "6c7441067533da3084405ff53fad670cebf8d26700ef6405c2102489b87dd1eb",
+        "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/9f016ca2a1414efa6de57445250c2bcf254ed1e35e1e89540e84639fd5782977.txtp",
+        "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/9f016ca2a1414efa6de57445250c2bcf254ed1e35e1e89540e84639fd5782977.wav",
+        "source_sha256": "e651372d0d32690ea3cdad64edba6e5d34b4dcf8007ceffe4bba78753a107f40",
+        "txtp_sha256": "22ae47c0a5b2491bbec37fde0dc3719c1ed54480a4298526abc85f820e20e0ba",
+        "former_filename": "play_sfx_sru_chaosminionmelee_sru_chaosminionmeleebasicattack_onhit_r3.wav"
+      }
+    ]
   },
   {
     "file": "assets/audio/units/melee_minion/chaos/play_sfx_sru_chaosminionmelee_sru_chaosminionmeleebasicattack2_oncast_r1.wav",
@@ -460,71 +538,5 @@
     "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/a5ecb1a802ad79815c5a78307e83c53e0baa20959b931f652d94d2ee66de8b92.wav",
     "source_sha256": "fae197bedf015eacaeca8089121467252902ee6393e8ab49ab2b0841108291f1",
     "txtp_sha256": "f25b9c475c33f9515d2a698e56e7b805840c9a4c8d806e7c6be9c87e5007acf5"
-  },
-  {
-    "file": "assets/audio/units/melee_minion/chaos/play_sfx_sru_chaosminionmelee_sru_chaosminionmeleebasicattack2_onhit_r1.wav",
-    "event": "Play_sfx_SRU_ChaosMinionMelee_SRU_ChaosMinionMeleeBasicAttack2_OnHit",
-    "event_id": 2519567700,
-    "duration": 0.47374149659863946,
-    "media_ids": [
-      239995408,
-      808681780,
-      881928804,
-      1061667902
-    ],
-    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
-    "sha256": "cfe0dcb6d624d6fcc063a51b071da81067f4aae46e53f51982dc242734c97fda",
-    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
-    "tool_master_gain_db": 0.0,
-    "post_gain_db": 0.0,
-    "runtime_gain_db": 0.0,
-    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/6395a4298278e9f5063b94673b1008b7b9f43236b6c7f8f7da17581cea9de32d.txtp",
-    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/6395a4298278e9f5063b94673b1008b7b9f43236b6c7f8f7da17581cea9de32d.wav",
-    "source_sha256": "129bb7a4cf829147c4a745559249afc70932a35827028ce42a999d1bddfee4e0",
-    "txtp_sha256": "6cc0e49902739afa5cd10360e37117865c0aad975796022f8c93dad5994e29b8"
-  },
-  {
-    "file": "assets/audio/units/melee_minion/chaos/play_sfx_sru_chaosminionmelee_sru_chaosminionmeleebasicattack2_onhit_r2.wav",
-    "event": "Play_sfx_SRU_ChaosMinionMelee_SRU_ChaosMinionMeleeBasicAttack2_OnHit",
-    "event_id": 2519567700,
-    "duration": 0.40210884353741494,
-    "media_ids": [
-      239995408,
-      808681780,
-      881928804,
-      1061667902
-    ],
-    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
-    "sha256": "dace9910c223a8fd96e23813c52c535c5cece9473fad0582ddd3ed37ab740b65",
-    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
-    "tool_master_gain_db": 0.0,
-    "post_gain_db": 0.0,
-    "runtime_gain_db": 0.0,
-    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/7c50b10f072c40026d8a72437840932abeae387461e1d5919cf849c1398ff377.txtp",
-    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/7c50b10f072c40026d8a72437840932abeae387461e1d5919cf849c1398ff377.wav",
-    "source_sha256": "80566c875db4fe2b1ffc2800212ae79fddd0237b80e00e76babf4c76449b0173",
-    "txtp_sha256": "d3389c472a60abdb996493f776473cdc431043e61bd19ff90f5d0fc61bf6b261"
-  },
-  {
-    "file": "assets/audio/units/melee_minion/chaos/play_sfx_sru_chaosminionmelee_sru_chaosminionmeleebasicattack2_onhit_r3.wav",
-    "event": "Play_sfx_SRU_ChaosMinionMelee_SRU_ChaosMinionMeleeBasicAttack2_OnHit",
-    "event_id": 2519567700,
-    "duration": 0.424875283446712,
-    "media_ids": [
-      239995408,
-      808681780,
-      881928804,
-      1061667902
-    ],
-    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
-    "sha256": "6c7441067533da3084405ff53fad670cebf8d26700ef6405c2102489b87dd1eb",
-    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
-    "tool_master_gain_db": 0.0,
-    "post_gain_db": 0.0,
-    "runtime_gain_db": 0.0,
-    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/370869d178ad2300a545d7f3d42280a91deb1a3e18655768ce686fd3841ecd85.txtp",
-    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/370869d178ad2300a545d7f3d42280a91deb1a3e18655768ce686fd3841ecd85.wav",
-    "source_sha256": "e651372d0d32690ea3cdad64edba6e5d34b4dcf8007ceffe4bba78753a107f40",
-    "txtp_sha256": "4853c73ed47ceef1b3ec64c6bfffd2055911266c1107c3b5bc78cb1ea0085f76"
   }
 ]

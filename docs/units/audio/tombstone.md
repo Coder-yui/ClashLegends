@@ -13,8 +13,8 @@
 
 | 发生时机 | 已接变体 | 音量调整 | 试听示例 |
 | --- | --- | --- | --- |
-| 死亡 | 4 | 0 dB | [试听 1](../../../assets/audio/units/tombstone/play_sfx_yorick_yorickw_death_r1.wav) · [试听 2](../../../assets/audio/units/tombstone/play_sfx_yorick_yorickw_death_r2.wav) |
-| 部署开始 | 2 | 0 dB | [试听 1](../../../assets/audio/units/tombstone/play_sfx_yorick_yorickw_onhitlocation_r1.wav) · [试听 2](../../../assets/audio/units/tombstone/play_sfx_yorick_yorickw_onhitlocation_r2.wav) |
+| 死亡 | 3 | 0 dB | [试听 1](../../../assets/audio/units/tombstone/play_sfx_yorick_yorickw_death_r1.wav) · [试听 2](../../../assets/audio/units/tombstone/play_sfx_yorick_yorickw_death_r2.wav) |
+| 部署开始 | 1 | 0 dB | [试听](../../../assets/audio/units/tombstone/play_sfx_yorick_yorickw_onhitlocation_r1.wav) |
 | 持续待机声 | 1 | 0 dB | [试听 1](../../../assets/audio/units/tombstone/play_sfx_yorick_yorickwwalllife_onbuffactivate_r1.wav) |
 | 亡者集结施法开始 | 1 | 0 dB | [试听](../../../assets/audio/units/tombstone/play_sfx_yorick_yorickw_oncast_r1.wav) |
 

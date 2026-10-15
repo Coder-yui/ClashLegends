@@ -100,17 +100,14 @@ static func definition() -> Dictionary:
     [
       "res://assets/audio/units/voidmite/attack_swing_1_1.wav",
       "res://assets/audio/units/voidmite/attack_swing_1_2.wav",
-      "res://assets/audio/units/voidmite/attack_swing_1_3.wav",
-      "res://assets/audio/units/voidmite/attack_swing_1_4.wav",
-      "res://assets/audio/units/voidmite/attack_swing_1_5.wav"
+      "res://assets/audio/units/voidmite/attack_swing_1_3.wav"
     ]
   ],
   "attack_hit_by_segment": [
     [
       "res://assets/audio/units/voidmite/attack_hit_1_1.wav",
       "res://assets/audio/units/voidmite/attack_hit_1_2.wav",
-      "res://assets/audio/units/voidmite/attack_hit_1_3.wav",
-      "res://assets/audio/units/voidmite/attack_hit_1_4.wav"
+      "res://assets/audio/units/voidmite/attack_hit_1_3.wav"
     ]
   ],
   "attack_swing_volume_db": 0.0,
@@ -121,8 +118,7 @@ static func definition() -> Dictionary:
       "pool": [
         "res://assets/audio/units/voidmite/death_1.wav",
         "res://assets/audio/units/voidmite/death_2.wav",
-        "res://assets/audio/units/voidmite/death_3.wav",
-        "res://assets/audio/units/voidmite/death_4.wav"
+        "res://assets/audio/units/voidmite/death_3.wav"
       ],
       "volume_db": 0.0,
       "bus": "Combat"

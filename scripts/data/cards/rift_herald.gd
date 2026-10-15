@@ -125,8 +125,7 @@ static func definition() -> Dictionary:
       "pool": [
         "res://assets/audio/units/rift_herald/rush_hit_1.wav",
         "res://assets/audio/units/rift_herald/rush_hit_2.wav",
-        "res://assets/audio/units/rift_herald/rush_hit_3.wav",
-        "res://assets/audio/units/rift_herald/rush_hit_4.wav"
+        "res://assets/audio/units/rift_herald/rush_hit_3.wav"
       ],
       "volume_db": 0.0,
       "bus": "Combat"
@@ -135,8 +134,7 @@ static func definition() -> Dictionary:
       "pool": [
         "res://assets/audio/units/rift_herald/rush_path_hit_1.wav",
         "res://assets/audio/units/rift_herald/rush_path_hit_2.wav",
-        "res://assets/audio/units/rift_herald/rush_path_hit_3.wav",
-        "res://assets/audio/units/rift_herald/rush_path_hit_4.wav"
+        "res://assets/audio/units/rift_herald/rush_path_hit_3.wav"
       ],
       "volume_db": 0.0,
       "bus": "Combat"
@@ -156,8 +154,8 @@ static func definition() -> Dictionary:
     },
     "spinning_punch:hit": {
       "pool": [
-        "res://assets/audio/units/rift_herald/spinning_punch_hit_1.wav",
-        "res://assets/audio/units/rift_herald/spinning_punch_hit_2.wav"
+        "res://assets/audio/units/rift_herald/attack_hit_2_1.wav",
+        "res://assets/audio/units/rift_herald/attack_hit_2_2.wav"
       ],
       "volume_db": 0.0,
       "bus": "Combat"

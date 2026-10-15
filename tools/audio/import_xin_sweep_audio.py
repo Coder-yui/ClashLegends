@@ -31,7 +31,7 @@ register({'file': output.name, 'event': 'Play_sfx_XinZhao_XinZhaoR_OnCast', 'eve
           'source_preview': str(original), 'source_sha256': sha(original), 'media_ids': [51886756,457923771],
           'duration': .65, 'processing': 'Keep combined event onset 0–0.65s; linear amplitude fade 0.55–0.65s. Initial sweep only; omit remaining tail. No normalization.', 'sha256': sha(output)})
 voices=[]
-for index in range(1,5):
+for index in range(1,4):
     original=SOURCE / f'Play_vo_XinZhao_XinZhaoR_cast3D {{r{index}}}.wav'
     txtp=original.with_suffix('.txtp')
     output=DEST / f'play_vo_xinzhao_xinzhaor_cast3d_r{index}_zh_cn.wav'
@@ -52,4 +52,4 @@ p=ROOT/'tools/audio/card_audio_plan.json';d=json.loads(p.read_text());plan=d['xi
 # Keep other current events from the card through a documented post-import call rather than replacing all pools here.
 plan['notes']+=' R起手横扫和中文喊声由 tools/audio/import_xin_sweep_audio.py 在通用导入后应用；不接持续护卫音。' if 'import_xin_sweep_audio.py' not in plan['notes'] else ''
 p.write_text(json.dumps(d,ensure_ascii=False,indent=2)+'\n')
-print('Imported 0.65s sweep and four verified R cast shout variants')
+print('Imported 0.65s sweep and three verified R cast shout variants')

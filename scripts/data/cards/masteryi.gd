@@ -48,44 +48,23 @@ static func definition() -> Dictionary:
 		"card_art": {}, # 默认 assets/cards/<card_id>_loading.*
 		"audio": {
 			"attack_hit_once_by_segment": [false, false, true],
-			"attack_hit_by_segment": [["res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1153642577_r1_d.wav", "res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1153642577_r2_d.wav", "res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1153642577_r3_d.wav", "res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1153642577_r4_d.wav", "res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1216965916_r1_d.wav", "res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1216965916_r2_d.wav", "res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1216965916_r3_d.wav", "res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1216965916_r4_d.wav", "res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_2058049674_r1_d.wav", "res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_2058049674_r2_d.wav", "res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_2058049674_r3_d.wav", "res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_2058049674_r4_d.wav", "res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_2473969246_r1_d.wav", "res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_2473969246_r2_d.wav", "res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_2473969246_r3_d.wav", "res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_2473969246_r4_d.wav"], ["res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1153642577_r1_d.wav", "res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1153642577_r2_d.wav", "res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1153642577_r3_d.wav", "res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1153642577_r4_d.wav", "res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1216965916_r1_d.wav", "res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1216965916_r2_d.wav", "res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1216965916_r3_d.wav", "res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1216965916_r4_d.wav", "res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_2058049674_r1_d.wav", "res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_2058049674_r2_d.wav", "res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_2058049674_r3_d.wav", "res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_2058049674_r4_d.wav", "res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_2473969246_r1_d.wav", "res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_2473969246_r2_d.wav", "res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_2473969246_r3_d.wav", "res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_2473969246_r4_d.wav"], ["res://assets/audio/units/masteryi/play_sfx_masteryi_masteryidoublestrike_onhit_1559186049_1153642577_r.wav"]],
+			"attack_hit_by_segment": [["res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1153642577_r1_d.wav", "res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1153642577_r2_d.wav", "res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1153642577_r3_d.wav"], ["res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1153642577_r1_d.wav", "res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1153642577_r2_d.wav", "res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1153642577_r3_d.wav"], ["res://assets/audio/units/masteryi/play_sfx_masteryi_masteryidoublestrike_onhit_1559186049_1153642577_r.wav"]],
 			"attack_swing": [
 				[
 					"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_oncast_r1.wav",
 					"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_oncast_r2.wav",
-					"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_oncast_r3.wav",
-					"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_oncast_r4.wav",
-					"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_oncast_r5.wav",
+					"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_oncast_r3.wav"
 				],
 				[
 					"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack2_oncast_r1.wav",
 					"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack2_oncast_r2.wav",
-					"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack2_oncast_r3.wav",
-					"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack2_oncast_r4.wav",
+					"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack2_oncast_r3.wav"
 				],
 				[
 					"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryidoublestrike_oncast_r1.wav",
 					"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryidoublestrike_oncast_r2.wav",
 					"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryidoublestrike_oncast_r3.wav",
 				],
-			],
-			"attack_hit": [
-				"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1153642577_r1_d.wav",
-				"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1153642577_r2_d.wav",
-				"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1153642577_r3_d.wav",
-				"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1153642577_r4_d.wav",
-				"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1216965916_r1_d.wav",
-				"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1216965916_r2_d.wav",
-				"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1216965916_r3_d.wav",
-				"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1216965916_r4_d.wav",
-				"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_2058049674_r1_d.wav",
-				"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_2058049674_r2_d.wav",
-				"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_2058049674_r3_d.wav",
-				"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_2058049674_r4_d.wav",
-				"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_2473969246_r1_d.wav",
-				"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_2473969246_r2_d.wav",
-				"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_2473969246_r3_d.wav",
-				"res://assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_2473969246_r4_d.wav",
 			],
 			"attack_swing_volume_db": 0.0, "attack_hit_volume_db": 0.0,
 			"events": {

@@ -43,7 +43,7 @@ static func definition() -> Dictionary:
 	}
 	data.audio = {
 		"events": {
-			"attack_wave:launch": {"pool": ["res://assets/audio/units/kayle/wave_launch_r1.wav", "res://assets/audio/units/kayle/wave_launch_r2.wav", "res://assets/audio/units/kayle/wave_launch_r3.wav", "res://assets/audio/units/kayle/wave_launch_r4.wav"], "volume_db": 0.0},
+			"attack_wave:launch": {"pool": ["res://assets/audio/units/kayle/wave_launch_r1.wav", "res://assets/audio/units/kayle/wave_launch_r2.wav", "res://assets/audio/units/kayle/wave_launch_r3.wav"], "volume_db": 0.0},
 			"attack_wave:hit": {"pool": ["res://assets/audio/units/kayle/wave_hit.wav"], "volume_db": 0.0},
 			"deploy:voice": {
 				"pool": [
@@ -58,8 +58,7 @@ static func definition() -> Dictionary:
 				"pool": [
 					"res://assets/audio/units/kayle/play_sfx_kayle_kaylewheal_oncast_r1.wav",
 					"res://assets/audio/units/kayle/play_sfx_kayle_kaylewheal_oncast_r2.wav",
-					"res://assets/audio/units/kayle/play_sfx_kayle_kaylewheal_oncast_r3.wav",
-					"res://assets/audio/units/kayle/play_sfx_kayle_kaylewheal_oncast_r4.wav"
+					"res://assets/audio/units/kayle/play_sfx_kayle_kaylewheal_oncast_r3.wav"
 				],
 				"bus": "Combat",
 				"volume_db": 0.0
@@ -74,16 +73,14 @@ static func definition() -> Dictionary:
 		},
 		"attack_swing": [
 			[
-				"res://assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack3_oncast_r1_d.wav",
-				"res://assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack3_oncast_r2_d.wav",
-				"res://assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack3_oncast_r3_d.wav",
-				"res://assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack3_oncast_r4_d.wav"
+				"res://assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack2_oncast_r1.wav",
+				"res://assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack2_oncast_r2.wav",
+				"res://assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack2_oncast_r3.wav"
 			],
 			[
-				"res://assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack4_oncast_r1_d.wav",
-				"res://assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack4_oncast_r2_d.wav",
-				"res://assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack4_oncast_r3_d.wav",
-				"res://assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack4_oncast_r4_d.wav"
+				"res://assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack2_oncast_r1.wav",
+				"res://assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack2_oncast_r2.wav",
+				"res://assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack2_oncast_r3.wav"
 			]
 		],
 		"attack_swing_volume_db": 0.0,
@@ -92,7 +89,7 @@ static func definition() -> Dictionary:
 				"res://assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack3_onhit.wav"
 			],
 			[
-				"res://assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack4_onhit_d.wav"
+				"res://assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack3_onhit.wav"
 			]
 		],
 		"attack_hit_volume_db": 0.0,
@@ -101,7 +98,7 @@ static func definition() -> Dictionary:
 				"res://assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack3_onmissilecast.wav"
 			],
 			[
-				"res://assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack4_onmissilecast_d.wav"
+				"res://assets/audio/units/kayle/play_sfx_kayle_kaylebasicattack3_onmissilecast.wav"
 			]
 		]
 	}

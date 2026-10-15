@@ -15,7 +15,6 @@
 | --- | --- | --- | --- |
 | 部署 | 3 | 0 dB | [英雄锁定音效](../../../assets/audio/units/gwen/champion_lockin_sfx_887.wav) · [你要找裁缝吗？](../../../assets/audio/units/gwen/play_vo_gwen_attack2dgeneral_r17_zh_cn.wav) · [剪刀飞快](../../../assets/audio/units/gwen/play_vo_gwen_attack2dgeneral_r20_zh_cn.wav) |
 | 普通攻击出手 | 6 | 0 dB | [试听 1](../../../assets/audio/units/gwen/play_sfx_gwen_gwenbasicattack_stab_cast_r1.wav) · [试听 2](../../../assets/audio/units/gwen/play_sfx_gwen_gwenbasicattack_stab_cast_r2.wav) |
-| 普通攻击命中 | 3 | 0 dB | [试听 1](../../../assets/audio/units/gwen/play_sfx_gwen_gwenbasicattack_swipe_hit_r1.wav) · [试听 2](../../../assets/audio/units/gwen/play_sfx_gwen_gwenbasicattack_swipe_hit_r2.wav) |
 | 普通攻击分段命中 | 6 | 0 dB | [试听 1](../../../assets/audio/units/gwen/play_sfx_gwen_gwenbasicattack_stab_hit_r1.wav) · [试听 2](../../../assets/audio/units/gwen/play_sfx_gwen_gwenbasicattack_stab_hit_r2.wav) |
 | 快刀乱剪 · 起剪命中 | 3 | 0 dB | [试听 1](../../../assets/audio/units/gwen/play_sfx_gwen_gwenqfirst_hit_r1.wav) · [试听 2](../../../assets/audio/units/gwen/play_sfx_gwen_gwenqfirst_hit_r2.wav) |
 | 快刀乱剪 · 起剪中央命中 | 3 | 0 dB | [试听 1](../../../assets/audio/units/gwen/play_sfx_gwen_gwenqfirst_hit_r1.wav) · [试听 2](../../../assets/audio/units/gwen/play_sfx_gwen_gwenqfirst_hit_r2.wav) |

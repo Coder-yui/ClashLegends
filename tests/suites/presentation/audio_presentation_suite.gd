@@ -1,7 +1,17 @@
 class_name AudioPresentationSuite
 extends RefCounted
 
+class RejectSpecialAudio extends GameAudioManager:
+	var ordinary_swings := 0
+	func play_event(_unit: Unit, _cue: StringName, _position: Vector2, _attack_serial: int = -1, _action_timed: bool = false, _action_serial: int = -1) -> bool:
+		return false
+	func _play_attack_swing(_card_id: String, _audio: Dictionary, _position: Vector2, _serial: int, _owner: Dictionary = {}) -> bool:
+		ordinary_swings += 1
+		return true
+
 func run(harness: Object, main: Node2D) -> void:
+	_check_audio_variant_cap(harness)
+	_check_no_audio_substitution(harness, main)
 	await _check_stasis_audio(harness, main)
 	await _check_stasis_flight_audio(harness, main)
 	_check_deploy_audio_node(harness, main)
@@ -574,7 +584,7 @@ func _check_audited_audio(harness: Object, main: Node2D) -> void:
 	audio._process(0.0)
 	harness._expect(sweep_cues.count("active:start") == 1 and sweep_cues.count("active:voice") == 1 and not xin_stats.audio.events.has("active:sustain"), "赵信主动只播一次起手横扫与喊声，不接持续护卫音")
 	var sweep_stream = load(xin_stats.audio.events["active:start"].pool[0])
-	harness._expect(is_equal_approx(sweep_stream.get_length(), 0.65) and xin_stats.audio.events["active:voice"].pool.size() == 4, "赵信横扫裁为 0.65 秒，中文 R 喊声保留四个随机变体")
+	harness._expect(is_equal_approx(sweep_stream.get_length(), 0.65) and xin_stats.audio.events["active:voice"].pool.size() == 3, "赵信横扫裁为 0.65 秒，中文 R 喊声保留三个随机变体")
 	audio.cue_played.disconnect(on_sweep)
 	var heals: Array = []
 	var on_heal := func(card, cue, _position):
@@ -1334,3 +1344,88 @@ func _check_deploy_audio_node(harness: Object, main: Node2D) -> void:
 	harness._expect(heard.size() == 1, "快照重建首次观察已越过节点，不补播历史出生声")
 	unit.free()
 	audio.cue_played.disconnect(listener)
+
+func _check_no_audio_substitution(harness: Object, main: Node2D) -> void:
+	var rejected := RejectSpecialAudio.new()
+	main.add_child(rejected)
+	rejected.set_process(false)
+	for card_id in ["garen", "missfortune"]:
+		var stats := CardDB.get_card(card_id)
+		var unit := Unit.new()
+		unit.card_id = card_id
+		unit.setup(0, stats, stats.name)
+		main.add_child(unit)
+		unit.set_process(false)
+		rejected.attach_unit(unit, stats)
+		unit._attack_visual_serial = 1
+		if card_id == "garen": unit._empowered_attack_visual_serial = 1
+		else: unit._attack_visual_first_strike = true
+		rejected._tick_attached_units()
+		harness._expect(rejected.ordinary_swings == 0, "%s 专用出手播放失败不替换为普通出手" % card_id)
+		rejected._detach_unit(unit.get_instance_id())
+		unit.free()
+	rejected.free()
+	var audio: GameAudioManager = main._audio_manager
+	var before: int = audio.budget_snapshot().counters.get("short", {}).get("played", 0)
+	harness._expect(not audio.play_attack_source({"card_id": "masteryi", "serial": 0}, Vector2.ZERO)
+		and int(audio.budget_snapshot().counters.get("short", {}).get("played", 0)) == before, "分段命中缺少有效攻击序号时不使用其他声音")
+	for card_id in ["masteryi", "gwen", "nocturne", "pantheon", "sett", "twisted_fate", "xin"]:
+		harness._expect(not CardDB.get_card(card_id).audio.has("attack_hit"), "%s 只保留完整分段命中配置" % card_id)
+	var path_errors := PackedStringArray()
+	var same_path: String = CardDB.get_card("masteryi").audio.attack_hit_by_segment[0][0]
+	CardDB.VALIDATOR._validate_audio_path_pool("duplicate_probe", [same_path, same_path], path_errors, false)
+	harness._expect(path_errors.size() == 1, "同一随机池重复列出同一资源不能冒充不同变体")
+	var launcher := Unit.new()
+	launcher.card_id = "twisted_fate"
+	var launch_stats := CardDB.get_card("twisted_fate")
+	launcher.setup(0, launch_stats, launch_stats.name)
+	main.add_child(launcher)
+	launcher.set_process(false)
+	audio.attach_unit(launcher, launch_stats)
+	harness._expect(not audio.play_event(launcher, &"attack_launch", Vector2.ZERO, 0), "分段发射缺少攻击序号时不强行选择第一段")
+	audio._detach_unit(launcher.get_instance_id())
+	launcher.free()
+	var fixture := Unit.new()
+	fixture.card_id = "gwen"
+	var stats := CardDB.get_card("gwen").duplicate(true)
+	# 只留下旧逻辑会借用的普通池；故意缺少中心/剪段事件。
+	stats.audio.events = {"active_0:hit_first": stats.audio.events["active_0:hit_first"], "active_0:hit": stats.audio.events["active_0:hit_first"]}
+	fixture.setup(0, stats, stats.name)
+	main.add_child(fixture)
+	fixture.set_process(false)
+	audio.attach_unit(fixture, stats)
+	before = int(audio.budget_snapshot().counters.get("short", {}).get("played", 0))
+	harness._expect(not audio.play_event(fixture, &"active_0:hit_first_center", Vector2.ZERO)
+		and not audio.play_event(fixture, &"active_0:hit_middle", Vector2.ZERO)
+		and int(audio.budget_snapshot().counters.get("short", {}).get("played", 0)) == before, "缺少精确技能命中事件时不改名借用声音")
+	audio._detach_unit(fixture.get_instance_id())
+	fixture.free()
+
+func _audio_pool_sizes_valid(value: Variant) -> bool:
+	if value is Dictionary:
+		for child in value.values():
+			if not _audio_pool_sizes_valid(child): return false
+	elif value is Array:
+		if not value.is_empty() and value[0] is String and String(value[0]).begins_with("res://assets/audio/"):
+			return value.size() <= CardDB.VALIDATOR.AUDIO_VARIANT_LIMIT
+		for child in value:
+			if not _audio_pool_sizes_valid(child): return false
+	return true
+
+func _check_audio_variant_cap(harness: Object) -> void:
+	var valid := true
+	for stats in CardDB.all().values():
+		valid = valid and _audio_pool_sizes_valid(stats.get("audio", {}))
+		valid = valid and _audio_pool_sizes_valid(stats.get("transformed_stats", {}).get("audio", {}))
+	valid = valid and _audio_pool_sizes_valid(preload("res://scripts/data/world_audio.gd").DEFINITIONS)
+	valid = valid and _audio_pool_sizes_valid(preload("res://scripts/data/match_audio.gd").EVENTS)
+	harness._expect(valid, "全卡、形态、阵营、系统建筑及播报的每个独立池最多三个变体")
+	var ordinary: Array = CardDB.get_card("missfortune").audio.attack_hit
+	var passive: Array = CardDB.get_card("missfortune").audio.first_strike_hit
+	harness._expect(ordinary.size() == 3 and passive.size() == 2
+		and passive.all(func(path): return path not in ordinary), "赏金猎人普通命中三变体与被动命中两变体保持独立")
+	var errors := PackedStringArray()
+	var excessive: Array = ordinary.duplicate()
+	excessive.append(passive[0])
+	CardDB.VALIDATOR._validate_audio_path_pool("variant_limit_probe", excessive, errors, false)
+	harness._expect(errors.size() == 1 and "最多3个变体" in errors[0], "四个不同声音的池被validator明确拒绝")

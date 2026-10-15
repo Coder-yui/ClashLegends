@@ -58,8 +58,8 @@ static func definition() -> Dictionary:
 				"res://assets/audio/units/kayn/kayn_assassin_attack1_2.wav"
 			],
 			[
-				"res://assets/audio/units/kayn/kayn_assassin_attack2_1.wav",
-				"res://assets/audio/units/kayn/kayn_assassin_attack2_2.wav"
+				"res://assets/audio/units/kayn/kayn_assassin_attack1_1.wav",
+				"res://assets/audio/units/kayn/kayn_assassin_attack1_2.wav"
 			],
 			[
 				"res://assets/audio/units/kayn/kayn_assassin_attack3_1.wav",

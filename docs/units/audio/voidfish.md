@@ -6,7 +6,7 @@
 
 | 动作 | 原版声音及触发 |
 | --- | --- |
-| 出生 | `BelvethRMinionConverter_buffactivate_birth`；生成时播放一次，与部署锁无关。两层各有4个随机成员，第二层延后0.5秒；16种完整组合全部进入出生池，保留两层的-24/-20dB原事件增益。重绑不重复播放。 |
+| 出生 | `BelvethRMinionConverter_buffactivate_birth`；生成时播放一次，与部署锁无关。两层各有4个随机成员，第二层延后0.5秒；当前保留前3种完整组合，保留两层的-24/-20dB原事件增益。重绑不重复播放。 |
 | 近战出手 | `BelvethRMinion_cast_melee`，媒体358266359；动作起点播放。 |
 | 近战命中 | `BelvethRMinion_hit_melee`，媒体711132112；真实命中时播放。 |
 | 死亡 | `BelvethRMinion_cast_death` 的两个随机成员，媒体580957980、421865323。时长约0.948/0.970秒，低于普通单位1.5秒上限，无需额外裁剪。 |

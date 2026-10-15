@@ -364,13 +364,11 @@ func _tick_attached_units() -> void:
 		# 强化刷新会取消旧挥击并发布新攻击序号，Buff声独立保留。
 		if not attack_cancelled and serial > 0 and empowered_serial == serial and empowered_serial != int(entry.last_empowered_serial):
 			entry.last_swing_serial = serial
-			if not play_event(unit, &"empowered_swing", unit.get_visual_screen_position()):
-				_play_attack_swing(String(entry.card_id), entry.audio, unit.get_visual_screen_position(), serial, {"unit": instance_id, "kind": "attack", "serial": serial})
+			play_event(unit, &"empowered_swing", unit.get_visual_screen_position())
 		elif not attack_cancelled and serial > 0 and serial != int(entry.last_swing_serial) and swing_due and (swing_delay <= 0.0 or not controlled):
 			entry.last_swing_serial = serial
 			if unit.is_attack_visual_first_strike():
-				if not play_event(unit, &"first_strike:cast", unit.get_visual_screen_position()):
-					_play_attack_swing(String(entry.card_id), entry.audio, unit.get_visual_screen_position(), serial, {"unit": instance_id, "kind": "attack", "serial": serial})
+				play_event(unit, &"first_strike:cast", unit.get_visual_screen_position())
 			else:
 				_play_attack_swing(String(entry.card_id), entry.audio, unit.get_visual_screen_position(), serial, {"unit": instance_id, "kind": "attack", "serial": serial})
 		entry.last_attack_serial = serial
@@ -579,15 +577,14 @@ func play_event(unit: Unit, cue: StringName, position: Vector2, attack_serial: i
 	var event: Dictionary = current_audio.get("events", {}).get(String(cue), {})
 	# 定时动作音由只读动作进度派发，忽略起手/伤害 RPC 的同名通知，避免双播。
 	if event.has("action_time") and not action_timed: return false
-	if event.is_empty() and String(cue).ends_with("_center"):
-		event = current_audio.get("events", {}).get(String(cue).trim_suffix("_center"), {})
-	if event.is_empty() and String(cue).trim_suffix("_center").get_slice(":", 1) in ["hit_first", "hit_middle", "hit_last"]:
-		event = current_audio.get("events", {}).get(String(cue).get_slice(":", 0) + ":hit", {})
 	if cue == &"attack_launch":
 		var segments: Array = current_audio.get("attack_launch_by_segment", [])
 		if not segments.is_empty():
 			var serial := unit.presentation_state().attack_serial if attack_serial < 0 else attack_serial
-			var index := posmod(maxi(serial, 1) - 1, segments.size())
+			if serial <= 0:
+				push_warning("分段发射音频缺少有效攻击序号：%s" % entry.card_id)
+				return false
+			var index := posmod(serial - 1, segments.size())
 			return _play_pool(String(entry.card_id), cue, segments[index], position, 0.0, &"Combat")
 	# 独立结果创建声由权威结果事件派发，不再随本体动作重复启动。
 	if event.get("owner", "") == "result": return false
@@ -617,8 +614,12 @@ func play_attack_source(source: Dictionary, position: Vector2, first_strike: boo
 	var cue := &"attack_hit"
 	var configured = audio.get("attack_hit", [])
 	var segments: Array = audio.get("attack_hit_by_segment", [])
-	if not segments.is_empty() and int(source.get("serial", 0)) > 0:
-		configured = segments[(int(source.serial) - 1) % segments.size()]
+	if not segments.is_empty():
+		var attack_serial := int(source.get("serial", 0))
+		if attack_serial <= 0:
+			push_warning("分段命中音频缺少有效攻击序号：%s" % card_id)
+			return false
+		configured = segments[(attack_serial - 1) % segments.size()]
 	if bool(source.get("empowered", false)) and not audio.get("empowered_hit", []).is_empty():
 		configured = audio.empowered_hit
 		cue = &"empowered_hit"
@@ -728,7 +729,11 @@ func start_projectile_launch(id: int, source: Dictionary, position: Vector2) -> 
 	var pool: Array = event.get("pool", [])
 	var segments: Array = audio.get("attack_launch_by_segment", [])
 	if not segments.is_empty():
-		pool = segments[posmod(maxi(int(source.get("serial", 1)), 1) - 1, segments.size())]
+		var serial := int(source.get("serial", 0))
+		if serial <= 0:
+			push_warning("在途分段发射音频缺少有效攻击序号：%s" % card_id)
+			return
+		pool = segments[posmod(serial - 1, segments.size())]
 	if pool.is_empty():
 		return
 	if _projectile_launch_players.size() >= WORLD_PLAYER_COUNT:

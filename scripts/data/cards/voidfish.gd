@@ -32,20 +32,7 @@ static func definition() -> Dictionary:
       "pool": [
         "res://assets/audio/units/voidfish/deploy_1.wav",
         "res://assets/audio/units/voidfish/deploy_2.wav",
-        "res://assets/audio/units/voidfish/deploy_3.wav",
-        "res://assets/audio/units/voidfish/deploy_4.wav",
-        "res://assets/audio/units/voidfish/deploy_5.wav",
-        "res://assets/audio/units/voidfish/deploy_6.wav",
-        "res://assets/audio/units/voidfish/deploy_7.wav",
-        "res://assets/audio/units/voidfish/deploy_8.wav",
-        "res://assets/audio/units/voidfish/deploy_9.wav",
-        "res://assets/audio/units/voidfish/deploy_10.wav",
-        "res://assets/audio/units/voidfish/deploy_11.wav",
-        "res://assets/audio/units/voidfish/deploy_12.wav",
-        "res://assets/audio/units/voidfish/deploy_13.wav",
-        "res://assets/audio/units/voidfish/deploy_14.wav",
-        "res://assets/audio/units/voidfish/deploy_15.wav",
-        "res://assets/audio/units/voidfish/deploy_16.wav"
+        "res://assets/audio/units/voidfish/deploy_3.wav"
       ],
       "volume_db": 0.0,
       "bus": "Combat"

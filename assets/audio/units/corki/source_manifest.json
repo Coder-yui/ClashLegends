@@ -15,8 +15,8 @@
     "txtp_sha256": "117e8c0bb136f1c54fc9b0ed8de76ecc0891cfdbcb4b479a92f550040ea56dc6"
   },
   {
-    "path": "res://assets/audio/units/corki/active_start0.wav",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_start0.wav",
+    "path": "res://assets/audio/units/corki/active_big_start0.wav",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_big_start0.wav",
     "sha256": "9afbe2f406233cbe9d656ee6de337733cd43692efd35e2f3515ddb48e859e638",
     "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
     "duration": 0.6551927437641724,
@@ -27,11 +27,28 @@
     "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/0d2fff69c4404e56cbb139217a11ff18e445eb95b61971d5f25dd75134a0a76d.txtp",
     "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/0d2fff69c4404e56cbb139217a11ff18e445eb95b61971d5f25dd75134a0a76d.wav",
     "source_sha256": "0e7ddb27c7103408c8ec7975d1aff68e9ae0e5b11e82c0b84dfe893aa95a54c0",
-    "txtp_sha256": "3d18a2d8836cde41985b5d8ac8d1fe6aa50f198901794a49d0289a0eb9799424"
+    "txtp_sha256": "3d18a2d8836cde41985b5d8ac8d1fe6aa50f198901794a49d0289a0eb9799424",
+    "equivalent_sources": [
+      {
+        "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_start0.wav",
+        "sha256": "9afbe2f406233cbe9d656ee6de337733cd43692efd35e2f3515ddb48e859e638",
+        "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+        "duration": 0.6551927437641724,
+        "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/0d2fff69c4404e56cbb139217a11ff18e445eb95b61971d5f25dd75134a0a76d.txtp",
+        "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/0d2fff69c4404e56cbb139217a11ff18e445eb95b61971d5f25dd75134a0a76d.wav",
+        "source_sha256": "0e7ddb27c7103408c8ec7975d1aff68e9ae0e5b11e82c0b84dfe893aa95a54c0",
+        "txtp_sha256": "3d18a2d8836cde41985b5d8ac8d1fe6aa50f198901794a49d0289a0eb9799424",
+        "former_filename": "active_start0.wav"
+      }
+    ]
   },
   {
-    "path": "res://assets/audio/units/corki/active_start1.wav",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_start1.wav",
+    "path": "res://assets/audio/units/corki/active_big_start1.wav",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_big_start1.wav",
     "sha256": "773ff3aa1a0765e20cc43bb12e7a059a0880229dbeee927d6c38b99c681bb231",
     "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
     "duration": 0.5833106575963719,
@@ -42,11 +59,28 @@
     "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/34a892ecf8fdd10b4871fb9273ad964fb057db51c556981e33965d7b8ab437bb.txtp",
     "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/34a892ecf8fdd10b4871fb9273ad964fb057db51c556981e33965d7b8ab437bb.wav",
     "source_sha256": "b652c012bb454c604a15f66eb414203bc52913b286a80e5c86afcac83164182f",
-    "txtp_sha256": "903564d288d3d6605713b4748ea30ac68303a0e63c7adddd7ee58678ff77b73b"
+    "txtp_sha256": "903564d288d3d6605713b4748ea30ac68303a0e63c7adddd7ee58678ff77b73b",
+    "equivalent_sources": [
+      {
+        "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_start1.wav",
+        "sha256": "773ff3aa1a0765e20cc43bb12e7a059a0880229dbeee927d6c38b99c681bb231",
+        "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+        "duration": 0.5833106575963719,
+        "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/34a892ecf8fdd10b4871fb9273ad964fb057db51c556981e33965d7b8ab437bb.txtp",
+        "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/34a892ecf8fdd10b4871fb9273ad964fb057db51c556981e33965d7b8ab437bb.wav",
+        "source_sha256": "b652c012bb454c604a15f66eb414203bc52913b286a80e5c86afcac83164182f",
+        "txtp_sha256": "903564d288d3d6605713b4748ea30ac68303a0e63c7adddd7ee58678ff77b73b",
+        "former_filename": "active_start1.wav"
+      }
+    ]
   },
   {
-    "path": "res://assets/audio/units/corki/active_start2.wav",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_start2.wav",
+    "path": "res://assets/audio/units/corki/active_big_start2.wav",
+    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_big_start2.wav",
     "sha256": "28a350545b0e879925bce1f83becd6f53b987878c0af48ae2584e3cc8f730a4a",
     "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
     "duration": 0.7499773242630385,
@@ -57,7 +91,24 @@
     "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/9bdef903a86a00890c299322b61147d9a66de80efd228aa446600abb78b87810.txtp",
     "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/9bdef903a86a00890c299322b61147d9a66de80efd228aa446600abb78b87810.wav",
     "source_sha256": "2e92c28c2d0bb5433411d4f9d062965d1c33677a82421a753550602ae5ea15c7",
-    "txtp_sha256": "1950f0810623f966420182607a33f6cfc4f450a53ac72a7c1271f9962442f2f7"
+    "txtp_sha256": "1950f0810623f966420182607a33f6cfc4f450a53ac72a7c1271f9962442f2f7",
+    "equivalent_sources": [
+      {
+        "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_start2.wav",
+        "sha256": "28a350545b0e879925bce1f83becd6f53b987878c0af48ae2584e3cc8f730a4a",
+        "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+        "duration": 0.7499773242630385,
+        "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/9bdef903a86a00890c299322b61147d9a66de80efd228aa446600abb78b87810.txtp",
+        "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/9bdef903a86a00890c299322b61147d9a66de80efd228aa446600abb78b87810.wav",
+        "source_sha256": "2e92c28c2d0bb5433411d4f9d062965d1c33677a82421a753550602ae5ea15c7",
+        "txtp_sha256": "1950f0810623f966420182607a33f6cfc4f450a53ac72a7c1271f9962442f2f7",
+        "former_filename": "active_start2.wav"
+      }
+    ]
   },
   {
     "path": "res://assets/audio/units/corki/active_release0.wav",
@@ -118,51 +169,6 @@
     "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/b684d86c948acc739eb10c5a866595f86fbfc081022b866761eef64df1020fcb.wav",
     "source_sha256": "ff1fd6605f07ff3adfe40ef711a0b6a467a3e6f13ef8c90d9c75a4b45bf4ea77",
     "txtp_sha256": "8914823292b8650abc262db79d288a831558f71601cde8514fa3ef917aa5a884"
-  },
-  {
-    "path": "res://assets/audio/units/corki/active_big_start0.wav",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_big_start0.wav",
-    "sha256": "9afbe2f406233cbe9d656ee6de337733cd43692efd35e2f3515ddb48e859e638",
-    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
-    "duration": 0.6551927437641724,
-    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
-    "tool_master_gain_db": 0.0,
-    "post_gain_db": 0.0,
-    "runtime_gain_db": 0.0,
-    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/0d2fff69c4404e56cbb139217a11ff18e445eb95b61971d5f25dd75134a0a76d.txtp",
-    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/0d2fff69c4404e56cbb139217a11ff18e445eb95b61971d5f25dd75134a0a76d.wav",
-    "source_sha256": "0e7ddb27c7103408c8ec7975d1aff68e9ae0e5b11e82c0b84dfe893aa95a54c0",
-    "txtp_sha256": "3d18a2d8836cde41985b5d8ac8d1fe6aa50f198901794a49d0289a0eb9799424"
-  },
-  {
-    "path": "res://assets/audio/units/corki/active_big_start1.wav",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_big_start1.wav",
-    "sha256": "773ff3aa1a0765e20cc43bb12e7a059a0880229dbeee927d6c38b99c681bb231",
-    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
-    "duration": 0.5833106575963719,
-    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
-    "tool_master_gain_db": 0.0,
-    "post_gain_db": 0.0,
-    "runtime_gain_db": 0.0,
-    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/34a892ecf8fdd10b4871fb9273ad964fb057db51c556981e33965d7b8ab437bb.txtp",
-    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/34a892ecf8fdd10b4871fb9273ad964fb057db51c556981e33965d7b8ab437bb.wav",
-    "source_sha256": "b652c012bb454c604a15f66eb414203bc52913b286a80e5c86afcac83164182f",
-    "txtp_sha256": "903564d288d3d6605713b4748ea30ac68303a0e63c7adddd7ee58678ff77b73b"
-  },
-  {
-    "path": "res://assets/audio/units/corki/active_big_start2.wav",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_big_start2.wav",
-    "sha256": "28a350545b0e879925bce1f83becd6f53b987878c0af48ae2584e3cc8f730a4a",
-    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
-    "duration": 0.7499773242630385,
-    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
-    "tool_master_gain_db": 0.0,
-    "post_gain_db": 0.0,
-    "runtime_gain_db": 0.0,
-    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/9bdef903a86a00890c299322b61147d9a66de80efd228aa446600abb78b87810.txtp",
-    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/9bdef903a86a00890c299322b61147d9a66de80efd228aa446600abb78b87810.wav",
-    "source_sha256": "2e92c28c2d0bb5433411d4f9d062965d1c33677a82421a753550602ae5ea15c7",
-    "txtp_sha256": "1950f0810623f966420182607a33f6cfc4f450a53ac72a7c1271f9962442f2f7"
   },
   {
     "path": "res://assets/audio/units/corki/active_big_release0.wav",

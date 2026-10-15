@@ -191,28 +191,6 @@
     "txtp_sha256": "82f503afbaab2ae4fd7dfcdeaf2416b32a9a4906f396775410662378442be80b"
   },
   {
-    "file": "assets/audio/units/sun_disc/play_sfx_env_map11_chaosturretchampionbasicattack_cast_r4.wav",
-    "event": "Play_sfx_Env_map11_ChaosTurretChampionBasicAttack_cast",
-    "event_id": 1865484908,
-    "duration": 2.555646258503401,
-    "media_ids": [
-      "263691814",
-      "343061489",
-      "564057191",
-      "701703878"
-    ],
-    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
-    "sha256": "c2b3bf9487dede9654443340760e3c560fc6221b918f198cdc080d8e7250f49e",
-    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
-    "tool_master_gain_db": 0.0,
-    "post_gain_db": 0.0,
-    "runtime_gain_db": 0.0,
-    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/56f919c2f994a197b7b7b768438327fb3dec9f15084afec23f2b788994443b76.txtp",
-    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/56f919c2f994a197b7b7b768438327fb3dec9f15084afec23f2b788994443b76.wav",
-    "source_sha256": "822b31f9dd3fab4f70f6d57a6b0dbd17fa9b9998e15520b3632ae4d163441f5e",
-    "txtp_sha256": "d2d5301dd007c277154bc7530999c367dce0a3abe2dbca2b8e2fae1056768f2b"
-  },
-  {
     "file": "assets/audio/units/sun_disc/play_sfx_env_turretbasicattack_hit_r1.wav",
     "event": "Play_sfx_Env_TurretBasicAttack_hit",
     "event_id": 1363510128,
@@ -277,27 +255,5 @@
     "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/d09cd15a383c32549f7badbc86c750b932299b4ba38c1086a7ea10d5c6f2e27b.wav",
     "source_sha256": "aad91c3ea9fe1f0f597e596b00e187fd16e10d0bc139f14df47ae224a5ea7b1d",
     "txtp_sha256": "8068d65586b5b0175fed850cc0ab5f34428cc80666a83a133a61d732a3d53d1f"
-  },
-  {
-    "file": "assets/audio/units/sun_disc/play_sfx_env_turretbasicattack_hit_r4.wav",
-    "event": "Play_sfx_Env_TurretBasicAttack_hit",
-    "event_id": 1363510128,
-    "duration": 0.8186621315192744,
-    "media_ids": [
-      "282793997",
-      "366587089",
-      "423508747",
-      "846463976"
-    ],
-    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
-    "sha256": "1cf5cb24fd87f226eee7495cc4d4a986f27929390e23434368e660a9fffc4acc",
-    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
-    "tool_master_gain_db": 0.0,
-    "post_gain_db": 0.0,
-    "runtime_gain_db": 0.0,
-    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/014fa8ed0f0e6f4e4398279d86cde3389b83b0216f76205df33577e72cb43c7c.txtp",
-    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/014fa8ed0f0e6f4e4398279d86cde3389b83b0216f76205df33577e72cb43c7c.wav",
-    "source_sha256": "75b4a365390f4bf85418f6e1426fa471ff19c7a31e21c2508e6876bd1798285c",
-    "txtp_sha256": "4798f66ac0dd75cec526ba11d03d4b1ffde991af5ddf835f0b804173f3fd0e5d"
   }
 ]

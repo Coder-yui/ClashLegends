@@ -13,14 +13,13 @@
 
 | 发生时机 | 已接变体 | 音量调整 | 试听示例 |
 | --- | --- | --- | --- |
-| 普通攻击出手 | 14 | 0 dB | [试听 1](../../../assets/audio/units/twisted_fate/play_sfx_twistedfate_cardmasterstack_cast_r1.wav) · [试听 2](../../../assets/audio/units/twisted_fate/play_sfx_twistedfate_cardmasterstack_cast_r2.wav) |
-| 普通攻击命中 | 3 | 0 dB | [试听 1](../../../assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack_onhit_r1_d.wav) · [试听 2](../../../assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack_onhit_r2_d.wav) |
-| 普通攻击分段命中 | 15 | 0 dB | [试听 1](../../../assets/audio/units/twisted_fate/play_sfx_twistedfate_cardmasterstack_hit_r1.wav) · [试听 2](../../../assets/audio/units/twisted_fate/play_sfx_twistedfate_cardmasterstack_hit_r2.wav) |
-| 普通攻击分段发射 | 7 | 0 dB | [试听 1](../../../assets/audio/units/twisted_fate/play_sfx_twistedfate_cardmasterstack_missilelaunch_r1.wav) · [试听 2](../../../assets/audio/units/twisted_fate/play_sfx_twistedfate_cardmasterstack_missilelaunch_r2.wav) |
+| 普通攻击出手 | 每段最多3；共5份 | 0 dB | [试听 1](../../../assets/audio/units/twisted_fate/play_sfx_twistedfate_cardmasterstack_cast_r1.wav) · [试听 2](../../../assets/audio/units/twisted_fate/play_sfx_twistedfate_cardmasterstack_cast_r2.wav) |
+| 普通攻击分段命中 | 每段最多3；共6份 | 0 dB | [试听 1](../../../assets/audio/units/twisted_fate/play_sfx_twistedfate_cardmasterstack_hit_r1.wav) · [试听 2](../../../assets/audio/units/twisted_fate/play_sfx_twistedfate_cardmasterstack_hit_r2.wav) |
+| 普通攻击分段发射 | 每段最多3；共6份 | 0 dB | [试听 1](../../../assets/audio/units/twisted_fate/play_sfx_twistedfate_cardmasterstack_missilelaunch_r1.wav) · [试听 2](../../../assets/audio/units/twisted_fate/play_sfx_twistedfate_cardmasterstack_missilelaunch_r2.wav) |
 | 死亡 | 3 | 0 dB | [试听 1](../../../assets/audio/units/twisted_fate/play_vo_twistedfate_death3d_r1_zh_cn.wav) · [试听 2](../../../assets/audio/units/twisted_fate/play_vo_twistedfate_death3d_r2_zh_cn.wav) |
 | 传送准备 | 3 | 0 dB | [试听 1](../../../assets/audio/units/twisted_fate/play_sfx_twistedfate_gate_marker_r1_first_1_75s.wav) · [试听 2](../../../assets/audio/units/twisted_fate/play_sfx_twistedfate_gate_marker_r2_first_1_75s.wav) |
 | 万能牌 · 命中 | 1 | 0 dB | [试听 1](../../../assets/audio/units/twisted_fate/play_sfx_twistedfate_sealfatemissile_onhit_r.wav) |
-| 万能牌 · 发射 | 4 | 0 dB | [试听 1](../../../assets/audio/units/twisted_fate/play_sfx_twistedfate_sealfatemissile_onmissilelaunch_r1.wav) · [试听 2](../../../assets/audio/units/twisted_fate/play_sfx_twistedfate_sealfatemissile_onmissilelaunch_r2.wav) |
+| 万能牌 · 发射 | 3 | 0 dB | [试听 1](../../../assets/audio/units/twisted_fate/play_sfx_twistedfate_sealfatemissile_onmissilelaunch_r1.wav) · [试听 2](../../../assets/audio/units/twisted_fate/play_sfx_twistedfate_sealfatemissile_onmissilelaunch_r2.wav) |
 | 万能牌 · 持续过程 | 3 | 0 dB | [试听 1](../../../assets/audio/units/twisted_fate/play_sfx_twistedfate_wildcards_oncast_r1.wav) · [试听 2](../../../assets/audio/units/twisted_fate/play_sfx_twistedfate_wildcards_oncast_r2.wav) |
 
 0 dB 表示不额外加减音量，不代表所有原声听起来一样响。表中给出代表性试听，完整原始素材仍保留在来源记录中。

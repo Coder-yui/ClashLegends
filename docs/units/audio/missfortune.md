@@ -13,17 +13,18 @@
 
 | 发生时机 | 已接变体 | 音量调整 | 试听示例 |
 | --- | --- | --- | --- |
-| 普通攻击出手 | 6 | 0 dB | [试听 1](../../../assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack2_oncast_r1.wav) · [试听 2](../../../assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack2_oncast_r2.wav) |
-| 普通攻击命中 | 24 | 0 dB | [试听 1](../../../assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1153642577_r1_d.wav) · [试听 2](../../../assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1153642577_r2_d.wav) |
+| 普通攻击出手 | 3 | 0 dB | [试听 1](../../../assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack2_oncast_r1.wav) · [试听 2](../../../assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack2_oncast_r2.wav) |
+| 普通攻击命中 | 3 | 0 dB | [试听 1](../../../assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1153642577_r1_d.wav) · [试听 2](../../../assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1153642577_r2_d.wav) |
+| 被动攻击命中 | 2 | 0 dB | [试听 1](../../../assets/audio/units/missfortune/play_sfx_missfortune_missfortunepassiveattack_onhit_1559186049_1153642577_r1_d.wav) · [试听 2](../../../assets/audio/units/missfortune/play_sfx_missfortune_missfortunepassiveattack_onhit_1559186049_1153642577_r2_d.wav) |
 | 部署语音 | 1 | 0 dB | [试听](../../../assets/audio/units/missfortune/play_vo_missfortune_move2dstandard_r1_zh_cn.wav) |
 | 增益结束 | 2 | 0 dB | [试听 1](../../../assets/audio/units/missfortune/play_sfx_missfortune_missfortuneviciousstrikes_onbuffdeactivate_r1.wav) · [试听 2](../../../assets/audio/units/missfortune/play_sfx_missfortune_missfortuneviciousstrikes_onbuffdeactivate_r2.wav) |
 | 增益开始 | 2 | 0 dB | [试听 1](../../../assets/audio/units/missfortune/play_sfx_missfortune_missfortuneviciousstrikes_oncast_r1.wav) · [试听 2](../../../assets/audio/units/missfortune/play_sfx_missfortune_missfortuneviciousstrikes_oncast_r2.wav) |
 | 增益持续 | 2 | 0 dB | [试听 1](../../../assets/audio/units/missfortune/play_sfx_missfortune_missfortuneviciousstrikes_onbuffactivate_r1.wav) · [试听 2](../../../assets/audio/units/missfortune/play_sfx_missfortune_missfortuneviciousstrikes_onbuffactivate_r2.wav) |
 | 普攻发射 | 3 | 0 dB | [试听 1](../../../assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onmissilelaunch_r1_d.wav) · [试听 2](../../../assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onmissilelaunch_r2_d.wav) |
 | 普攻弹体起手 | 3 | 0 dB | [试听 1](../../../assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onmissilecast_r1_d.wav) · [试听 2](../../../assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onmissilecast_r2_d.wav) |
-| 死亡 | 4 | 0 dB | [试听 1](../../../assets/audio/units/missfortune/play_vo_missfortune_death3d_r1_zh_cn.wav) · [试听 2](../../../assets/audio/units/missfortune/play_vo_missfortune_death3d_r2_zh_cn.wav) |
+| 死亡 | 3 | 0 dB | [试听 1](../../../assets/audio/units/missfortune/play_vo_missfortune_death3d_r1_zh_cn.wav) · [试听 2](../../../assets/audio/units/missfortune/play_vo_missfortune_death3d_r2_zh_cn.wav) |
 | 首次攻击起手 | 2 | 0 dB | [试听 1](../../../assets/audio/units/missfortune/play_sfx_missfortune_missfortunepassiveattack_oncast_r1_d.wav) · [试听 2](../../../assets/audio/units/missfortune/play_sfx_missfortune_missfortunepassiveattack_oncast_r2_d.wav) |
-| 首次攻击命中 | 1 | 0 dB | [试听 1](../../../assets/audio/units/missfortune/play_sfx_missfortune_missfortunepassiveattack_onhitlocation_d.wav) |
+| 首次攻击位置附加声 | 1 | 0 dB | [试听 1](../../../assets/audio/units/missfortune/play_sfx_missfortune_missfortunepassiveattack_onhitlocation_d.wav) |
 | 首次攻击弹体起手 | 2 | 0 dB | [试听 1](../../../assets/audio/units/missfortune/play_sfx_missfortune_missfortunepassiveattack_onmissilecast_r1_d.wav) · [试听 2](../../../assets/audio/units/missfortune/play_sfx_missfortune_missfortunepassiveattack_onmissilecast_r2_d.wav) |
 | 首次攻击发射 | 2 | 0 dB | [试听 1](../../../assets/audio/units/missfortune/play_sfx_missfortune_missfortunepassiveattack_onmissilelaunch_r1_d.wav) · [试听 2](../../../assets/audio/units/missfortune/play_sfx_missfortune_missfortunepassiveattack_onmissilelaunch_r2_d.wav) |
 

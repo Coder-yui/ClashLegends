@@ -17,15 +17,15 @@
 | 发生时机 | 已接变体 | 音量调整 | 试听示例 |
 | --- | --- | --- | --- |
 | 部署 | 3 | 0 dB | [人在塔在](../../../assets/audio/units/garen/champion_choose_86_zh_cn.wav) · [勇往直前](../../../assets/audio/units/garen/play_vo_garen_move2dstandard_r16_zh_cn.wav) · [保家卫国](../../../assets/audio/units/garen/play_vo_garen_move2dstandard_r11_zh_cn.wav) |
-| 普通攻击出手 | 8 | 0 dB | [试听 1](../../../assets/audio/units/garen/play_sfx_garen_garenbasicattack2_oncast_r1.wav) · [试听 2](../../../assets/audio/units/garen/play_sfx_garen_garenbasicattack2_oncast_r2.wav) |
-| 普通攻击命中 | 16 | 0 dB | [试听 1](../../../assets/audio/units/garen/play_sfx_garen_garenbasicattack_onhit_1559186049_1153642577_r1_d.wav) · [试听 2](../../../assets/audio/units/garen/play_sfx_garen_garenbasicattack_onhit_1559186049_1153642577_r2_d.wav) |
+| 普通攻击出手 | 每段最多3；共6份 | 0 dB | [试听 1](../../../assets/audio/units/garen/play_sfx_garen_garenbasicattack2_oncast_r1.wav) · [试听 2](../../../assets/audio/units/garen/play_sfx_garen_garenbasicattack2_oncast_r2.wav) |
+| 普通攻击命中 | 3 | 0 dB | [试听 1](../../../assets/audio/units/garen/play_sfx_garen_garenbasicattack_onhit_1559186049_1153642577_r1_d.wav) · [试听 2](../../../assets/audio/units/garen/play_sfx_garen_garenbasicattack_onhit_1559186049_1153642577_r2_d.wav) |
 | 死亡 | 1 | 0 dB | [试听 1](../../../assets/audio/units/garen/play_sfx_garen_death3d_cast.wav) |
 | 强化准备结束 | 1 | 0 dB | [试听 1](../../../assets/audio/units/garen/play_sfx_garen_garenq_onbuffdeactivate.wav) |
 | 强化准备开始 | 2 | 0 dB | [试听 1](../../../assets/audio/units/garen/play_sfx_garen_garenq_onbuffactivate_r1.wav) · [试听 2](../../../assets/audio/units/garen/play_sfx_garen_garenq_onbuffactivate_r2.wav) |
 | 强化攻击就绪 | 3 | 0 dB | [试听 1](../../../assets/audio/units/garen/play_sfx_garen_garenq_oncast_r1.wav) · [试听 2](../../../assets/audio/units/garen/play_sfx_garen_garenq_oncast_r2.wav) |
 | 强化攻击出手 | 1 | 0 dB | [试听 1](../../../assets/audio/units/garen/play_sfx_garen_garenqattack_oncast_r.wav) |
 | 审判 · 结束 | 3 | 0 dB | [试听 1](../../../assets/audio/units/garen/play_sfx_garen_garene_onbuffdeactivate_r1.wav) · [试听 2](../../../assets/audio/units/garen/play_sfx_garen_garene_onbuffdeactivate_r2.wav) |
-| 审判 · 命中 | 4 | 0 dB | [试听 1](../../../assets/audio/units/garen/play_sfx_garen_garene_hit_r1.wav) · [试听 2](../../../assets/audio/units/garen/play_sfx_garen_garene_hit_r2.wav) |
+| 审判 · 命中 | 3 | 0 dB | [试听 1](../../../assets/audio/units/garen/play_sfx_garen_garene_hit_r1.wav) · [试听 2](../../../assets/audio/units/garen/play_sfx_garen_garene_hit_r2.wav) |
 | 审判 · 起手 | 3 | 0 dB | [试听 1](../../../assets/audio/units/garen/play_sfx_garen_garene_oncast_r1.wav) · [试听 2](../../../assets/audio/units/garen/play_sfx_garen_garene_oncast_r2.wav) |
 | 审判 · 持续过程 | 3 | 0 dB | [试听 1](../../../assets/audio/units/garen/play_sfx_garen_garene_onbuffactivate_r1.wav) · [试听 2](../../../assets/audio/units/garen/play_sfx_garen_garene_onbuffactivate_r2.wav) |
 

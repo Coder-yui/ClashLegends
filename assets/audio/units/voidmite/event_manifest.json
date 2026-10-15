@@ -74,54 +74,6 @@
       "txtp_sha256": "5f31a3d26203ea5ac485f09d0f095987af5c1d32c21cbd8cb11bfab0f869483e"
     },
     {
-      "file": "attack_swing_1_4.wav",
-      "event": "Play_sfx_SRU_Horde_Mini_BasicAttack_cast",
-      "cue": "attack_swing_1",
-      "duration": 0.3496825396825397,
-      "event_id": 1836174592,
-      "media_ids": [
-        "6038170",
-        "242445588",
-        "686993552",
-        "539000738",
-        "290987933"
-      ],
-      "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
-      "sha256": "2050996965635202e9859e6ff9241be58df2bd2c362b043efe376a3a044fe76f",
-      "original_gain_manifest": "assets/audio/original_gain_manifest.json",
-      "tool_master_gain_db": 0.0,
-      "post_gain_db": 0.0,
-      "runtime_gain_db": 0.0,
-      "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/51d4f0b91299049d867f39f8eba469907c53e04cd5421a5bf7d6cec7b9485dbb.txtp",
-      "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/51d4f0b91299049d867f39f8eba469907c53e04cd5421a5bf7d6cec7b9485dbb.wav",
-      "source_sha256": "ae25d47c2d00f79c2b6575c643ba0c01667df940fa04cce66471aa819376313a",
-      "txtp_sha256": "21fac1115f3868ad6fc34b08a56c3467ea33da000566c5d64e2be0eec56f6412"
-    },
-    {
-      "file": "attack_swing_1_5.wav",
-      "event": "Play_sfx_SRU_Horde_Mini_BasicAttack_cast",
-      "cue": "attack_swing_1",
-      "duration": 0.33521541950113376,
-      "event_id": 1836174592,
-      "media_ids": [
-        "6038170",
-        "242445588",
-        "686993552",
-        "539000738",
-        "290987933"
-      ],
-      "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
-      "sha256": "23fa40cf2e45f0022a7809ede928fd8d1ca841611cd98121c160cc3d59f42f6e",
-      "original_gain_manifest": "assets/audio/original_gain_manifest.json",
-      "tool_master_gain_db": 0.0,
-      "post_gain_db": 0.0,
-      "runtime_gain_db": 0.0,
-      "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/a61fb6c6f77aef0768ba48b03f5e61dd6f7231b98db2ea5482ef228cb7dd391f.txtp",
-      "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/a61fb6c6f77aef0768ba48b03f5e61dd6f7231b98db2ea5482ef228cb7dd391f.wav",
-      "source_sha256": "458807c12d4ff685a5dae035b0a489ef44305cc4d1cdf0a124a3e16fd82a23f2",
-      "txtp_sha256": "0ef06fcc60f8c4e7706f41f5f74b942d012f4d07cb6d45e57e997ad29cfe2aaa"
-    },
-    {
       "file": "attack_hit_1_1.wav",
       "event": "Play_sfx_SRU_Horde_Mini_BasicAttack_hit",
       "cue": "attack_hit_1",
@@ -191,29 +143,6 @@
       "txtp_sha256": "bf9700367ab631c82396d8741582e05d3a9205c285951ed7a43d742d939f1018"
     },
     {
-      "file": "attack_hit_1_4.wav",
-      "event": "Play_sfx_SRU_Horde_Mini_BasicAttack_hit",
-      "cue": "attack_hit_1",
-      "duration": 0.3373922902494331,
-      "event_id": 3172824448,
-      "media_ids": [
-        "805212806",
-        "436370437",
-        "1000102190",
-        "658570675"
-      ],
-      "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
-      "sha256": "384ac67ca62db22ada774e9a8621d740862470fe53cf9d8c52ada406268d2d71",
-      "original_gain_manifest": "assets/audio/original_gain_manifest.json",
-      "tool_master_gain_db": 0.0,
-      "post_gain_db": 0.0,
-      "runtime_gain_db": 0.0,
-      "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/6b41249fa23f324099ff70e3fbe809edc76e56c0b9a7102ee02e73bb927077e8.txtp",
-      "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/6b41249fa23f324099ff70e3fbe809edc76e56c0b9a7102ee02e73bb927077e8.wav",
-      "source_sha256": "2789a618ff4cd36d0fc060af7ac40b71409c84899f755beb150472785401a07a",
-      "txtp_sha256": "969837580502b7b7abed34f06185496c8352ab45eb91809ba6f1a8bfc8502631"
-    },
-    {
       "file": "death_1.wav",
       "event": "Play_sfx_SRU_Horde_Mini_Death_cast",
       "cue": "death",
@@ -281,29 +210,6 @@
       "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/9e4e46f23a8040adbae1307efb288292bdddc14c7204201c3d535fc430e8cf2e.wav",
       "source_sha256": "22d329d7d6311bddb9271f92c8f23eac193ff240269e0479643a77a17fe5a5c2",
       "txtp_sha256": "a938791977ef1f883e5673e885426ff54f5aa6a502dba809df4bb097e87d35e9"
-    },
-    {
-      "file": "death_4.wav",
-      "event": "Play_sfx_SRU_Horde_Mini_Death_cast",
-      "cue": "death",
-      "duration": 0.45113378684807254,
-      "event_id": 1060160016,
-      "media_ids": [
-        "149550729",
-        "526251285",
-        "1004915346",
-        "1047246668"
-      ],
-      "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
-      "sha256": "fd0b244acd89c1789f2b66573e448c32d9a405524ff58a20cc78eeb018ff0d26",
-      "original_gain_manifest": "assets/audio/original_gain_manifest.json",
-      "tool_master_gain_db": 0.0,
-      "post_gain_db": 0.0,
-      "runtime_gain_db": 0.0,
-      "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/37c88159ae89695416238a614e723fbddf278dfdb1832ebaf59f2a5a073ac0f1.txtp",
-      "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/37c88159ae89695416238a614e723fbddf278dfdb1832ebaf59f2a5a073ac0f1.wav",
-      "source_sha256": "fed70b162a60ea644380332b60157c10d928218149750b247eba5efc60391826",
-      "txtp_sha256": "5e2a05887a119b6de9511d4e48f536d428c2f5fa71f45ed019bfe62b8948bc3c"
     },
     {
       "file": "deploy_start_1.wav",

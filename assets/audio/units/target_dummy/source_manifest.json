@@ -228,25 +228,6 @@
     "txtp_sha256": "e3aa25190966f0176eb5c75d85a2ff0fe945fde006b246d46a1c6909afce30a7"
   },
   {
-    "file": "assets/audio/units/target_dummy/play_sfx_practicedummy_onhit_r4.wav",
-    "cue": "hit",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/训练木桩/木桩音频解码/wav/play_sfx_practicedummy_onhit_r4.wav",
-    "sha256": "94b3b1e312268e5eaa3db38714aa6a430fdfbee8711bf4058fa8d1a65f42587d",
-    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
-    "archived_source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/训练木桩/源件与过程记录/木桩音频解码/wav/play_sfx_practicedummy_onhit_r4.wav",
-    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Maps/Shipping/Common.wad.client",
-    "source_audio_bank": "misc_global_sfx_audio.bnk",
-    "duration": 0.6257369614512471,
-    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
-    "tool_master_gain_db": 0.0,
-    "post_gain_db": 0.0,
-    "runtime_gain_db": 0.0,
-    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/93ace4d27733ecafc7ca3153665ef8de5f4fbc13d14ba1505d04fdc6de2d492d.txtp",
-    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/93ace4d27733ecafc7ca3153665ef8de5f4fbc13d14ba1505d04fdc6de2d492d.wav",
-    "source_sha256": "1818fe5e26106061c8ac607bae88a38e0adf93940db5294fdf677b14ec423497",
-    "txtp_sha256": "8ccd043dfbced3f99d6ddea1dba6e15aa42e3a2ed22e0d12e64008b204d0bc29"
-  },
-  {
     "file": "assets/audio/units/target_dummy/play_sfx_practicedummy_spawn_r1.wav",
     "cue": "deploy:start",
     "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/训练木桩/木桩音频解码/wav/play_sfx_practicedummy_spawn_r1.wav",

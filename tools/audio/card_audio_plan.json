@@ -232,8 +232,8 @@
       "Play_sfx_TwistedFate_CardmasterStack_missilelaunch"
     ],
     "event_variant_limits": {
-      "Play_sfx_TwistedFate_TwistedFateBasicAttack_OnMissileLaunch": 4,
-      "Play_sfx_TwistedFate_SealFateMissile_OnMissileLaunch": 4
+      "Play_sfx_TwistedFate_TwistedFateBasicAttack_OnMissileLaunch": 3,
+      "Play_sfx_TwistedFate_SealFateMissile_OnMissileLaunch": 3
     }
   },
   "xin": {

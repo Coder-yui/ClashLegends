@@ -13,8 +13,8 @@
 
 | 发生时机 | 已接变体 | 音量调整 | 试听示例 |
 | --- | --- | --- | --- |
-| 普通攻击出手 | 4 | 0 dB | [试听 1](../../../assets/audio/units/sun_disc/play_sfx_env_map11_chaosturretchampionbasicattack_cast_r1.wav) · [试听 2](../../../assets/audio/units/sun_disc/play_sfx_env_map11_chaosturretchampionbasicattack_cast_r2.wav) |
-| 普通攻击命中 | 4 | 0 dB | [试听 1](../../../assets/audio/units/sun_disc/play_sfx_env_turretbasicattack_hit_r1.wav) · [试听 2](../../../assets/audio/units/sun_disc/play_sfx_env_turretbasicattack_hit_r2.wav) |
+| 普通攻击出手 | 3 | 0 dB | [试听 1](../../../assets/audio/units/sun_disc/play_sfx_env_map11_chaosturretchampionbasicattack_cast_r1.wav) · [试听 2](../../../assets/audio/units/sun_disc/play_sfx_env_map11_chaosturretchampionbasicattack_cast_r2.wav) |
+| 普通攻击命中 | 3 | 0 dB | [试听 1](../../../assets/audio/units/sun_disc/play_sfx_env_turretbasicattack_hit_r1.wav) · [试听 2](../../../assets/audio/units/sun_disc/play_sfx_env_turretbasicattack_hit_r2.wav) |
 | 普攻发射 | 3 | 0 dB | [试听 1](../../../assets/audio/units/sun_disc/play_sfx_env_turretbasicattack_missilelaunch_r1.wav) · [试听 2](../../../assets/audio/units/sun_disc/play_sfx_env_turretbasicattack_missilelaunch_r2.wav) |
 | 死亡 | 2 | 0 dB | [试听 1](../../../assets/audio/units/sun_disc/play_sfx_azir_azirobelisksound_onbuffdeactivate_r1.wav) · [试听 2](../../../assets/audio/units/sun_disc/play_sfx_azir_azirobelisksound_onbuffdeactivate_r2.wav) |
 | 部署开始 | 1 | 0 dB | [试听 1](../../../assets/audio/units/sun_disc/play_sfx_azir_azirobelisksound_onbuffcast_r1.wav) |

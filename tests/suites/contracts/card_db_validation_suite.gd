@@ -112,7 +112,7 @@ func run(harness: Object) -> void:
 	var garen_audio: Dictionary = CardDB.get_card("garen").get("audio", {})
 	var garen_audio_ok := (
 		(garen_audio.get("attack_swing", []) as Array).size() == 2
-		and (garen_audio.get("attack_hit", []) as Array).size() == 16
+		and (garen_audio.get("attack_hit", []) as Array).size() == 3
 	)
 	var audio_schema_errors := PackedStringArray()
 	CardDB.VALIDATOR._validate_audio_config("audio_probe", {
@@ -134,7 +134,11 @@ func run(harness: Object) -> void:
 	var masteryi_events: Dictionary = masteryi_audio.get("events", {})
 	var masteryi_audio_ok := (
 		masteryi_swing_pools_ok
-		and (masteryi_audio.get("attack_hit", []) as Array).size() == 16
+		and not masteryi_audio.has("attack_hit")
+		and (masteryi_audio.get("attack_hit_by_segment", []) as Array).size() == 3
+		and (masteryi_audio.attack_hit_by_segment[0] as Array).size() == 3
+		and (masteryi_audio.attack_hit_by_segment[1] as Array).size() == 3
+		and (masteryi_audio.attack_hit_by_segment[2] as Array).size() == 1
 		and masteryi_events.has("active_buff:start")
 		and masteryi_events.has("active_buff:sustain")
 		and masteryi_events.has("active_buff:end")

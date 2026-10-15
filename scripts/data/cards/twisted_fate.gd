@@ -51,26 +51,22 @@ static func definition() -> Dictionary:
 				[
 					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack_onmissilelaunch_r1_d.wav",
 					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack_onmissilelaunch_r2_d.wav",
-					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack_onmissilelaunch_r3_d.wav",
-					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack_onmissilelaunch_r4_d.wav"
+					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack_onmissilelaunch_r3_d.wav"
 				],
 				[
 					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack_onmissilelaunch_r1_d.wav",
 					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack_onmissilelaunch_r2_d.wav",
-					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack_onmissilelaunch_r3_d.wav",
-					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack_onmissilelaunch_r4_d.wav"
+					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack_onmissilelaunch_r3_d.wav"
 				],
 				[
 					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack_onmissilelaunch_r1_d.wav",
 					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack_onmissilelaunch_r2_d.wav",
-					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack_onmissilelaunch_r3_d.wav",
-					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack_onmissilelaunch_r4_d.wav"
+					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack_onmissilelaunch_r3_d.wav"
 				],
 				[
 					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack_onmissilelaunch_r1_d.wav",
 					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack_onmissilelaunch_r2_d.wav",
-					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack_onmissilelaunch_r3_d.wav",
-					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack_onmissilelaunch_r4_d.wav"
+					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack_onmissilelaunch_r3_d.wav"
 				],
 				[
 					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_cardmasterstack_missilelaunch_r1.wav",
@@ -95,8 +91,7 @@ static func definition() -> Dictionary:
 					"pool": [
 						"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_sealfatemissile_onmissilelaunch_r1.wav",
 						"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_sealfatemissile_onmissilelaunch_r2.wav",
-						"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_sealfatemissile_onmissilelaunch_r3.wav",
-						"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_sealfatemissile_onmissilelaunch_r4.wav"
+						"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_sealfatemissile_onmissilelaunch_r3.wav"
 					],
 					"volume_db": 0.0, "bus": "Combat"
 				},
@@ -121,9 +116,9 @@ static func definition() -> Dictionary:
 			},
 			"attack_swing": [
 				[
-					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack_oncast_r1_d.wav",
-					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack_oncast_r2_d.wav",
-					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack_oncast_r3_d.wav"
+					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack2_oncast_r1.wav",
+					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack2_oncast_r2.wav",
+					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack2_oncast_r3.wav"
 				],
 				[
 					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack2_oncast_r1.wav",
@@ -131,14 +126,14 @@ static func definition() -> Dictionary:
 					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack2_oncast_r3.wav"
 				],
 				[
-					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack3_oncast_r1_d.wav",
-					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack3_oncast_r2_d.wav",
-					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack3_oncast_r3_d.wav"
+					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack2_oncast_r1.wav",
+					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack2_oncast_r2.wav",
+					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack2_oncast_r3.wav"
 				],
 				[
-					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack4_oncast_r1_d.wav",
-					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack4_oncast_r2_d.wav",
-					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack4_oncast_r3_d.wav"
+					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack2_oncast_r1.wav",
+					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack2_oncast_r2.wav",
+					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack2_oncast_r3.wav"
 				],
 				[
 					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_cardmasterstack_cast_r1.wav",
@@ -146,17 +141,12 @@ static func definition() -> Dictionary:
 				]
 			],
 			"attack_swing_volume_db": 0.0,
-			"attack_hit": [
-				"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack_onhit_r1_d.wav",
-				"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack_onhit_r2_d.wav",
-				"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack_onhit_r3_d.wav"
-			],
 			"attack_hit_volume_db": 0.0,
 			"attack_hit_by_segment": [
 				[
-					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack_onhit_r1_d.wav",
-					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack_onhit_r2_d.wav",
-					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack_onhit_r3_d.wav"
+					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack2_onhit_r1.wav",
+					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack2_onhit_r2.wav",
+					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack2_onhit_r3.wav"
 				],
 				[
 					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack2_onhit_r1.wav",
@@ -164,14 +154,14 @@ static func definition() -> Dictionary:
 					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack2_onhit_r3.wav"
 				],
 				[
-					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack3_onhit_r1_d.wav",
-					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack3_onhit_r2_d.wav",
-					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack3_onhit_r3_d.wav"
+					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack2_onhit_r1.wav",
+					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack2_onhit_r2.wav",
+					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack2_onhit_r3.wav"
 				],
 				[
-					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack4_onhit_r1_d.wav",
-					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack4_onhit_r2_d.wav",
-					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack4_onhit_r3_d.wav"
+					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack2_onhit_r1.wav",
+					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack2_onhit_r2.wav",
+					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_twistedfatebasicattack2_onhit_r3.wav"
 				],
 				[
 					"res://assets/audio/units/twisted_fate/play_sfx_twistedfate_cardmasterstack_hit_r1.wav",

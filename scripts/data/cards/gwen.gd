@@ -186,11 +186,6 @@ static func definition() -> Dictionary:
 				]
 			],
 			"attack_swing_volume_db": 0.0,
-			"attack_hit": [
-				"res://assets/audio/units/gwen/play_sfx_gwen_gwenbasicattack_swipe_hit_r1.wav",
-				"res://assets/audio/units/gwen/play_sfx_gwen_gwenbasicattack_swipe_hit_r2.wav",
-				"res://assets/audio/units/gwen/play_sfx_gwen_gwenbasicattack_swipe_hit_r3.wav"
-			],
 			"attack_hit_volume_db": 0.0,
 			"attack_hit_by_segment": [
 				[

@@ -293,25 +293,19 @@ static func definition() -> Dictionary:
 		"audio": {
 			"attack_swing": [
 				[
-					"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack_oncast_1.wav",
-					"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack_oncast_2.wav",
-					"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack_oncast_3.wav",
-					"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack_oncast_4.wav",
-					"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack_oncast_5.wav"
+					"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack2_oncast_1.wav",
+					"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack2_oncast_2.wav",
+					"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack2_oncast_3.wav"
 				],
 				[
 					"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack2_oncast_1.wav",
 					"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack2_oncast_2.wav",
-					"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack2_oncast_3.wav",
-					"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack2_oncast_4.wav",
-					"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack2_oncast_5.wav"
+					"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack2_oncast_3.wav"
 				],
 				[
-					"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack3_oncast_1.wav",
-					"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack3_oncast_2.wav",
-					"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack3_oncast_3.wav",
-					"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack3_oncast_4.wav",
-					"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack3_oncast_5.wav"
+					"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack2_oncast_1.wav",
+					"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack2_oncast_2.wav",
+					"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack2_oncast_3.wav"
 				],
 				[
 					"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxpassiveattack_oncast_1.wav"
@@ -319,9 +313,9 @@ static func definition() -> Dictionary:
 			],
 			"attack_hit_by_segment": [
 				[
-					"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack_onhit_1.wav",
-					"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack_onhit_2.wav",
-					"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack_onhit_3.wav"
+					"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack2_onhit_1.wav",
+					"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack2_onhit_2.wav",
+					"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack2_onhit_3.wav"
 				],
 				[
 					"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack2_onhit_1.wav",
@@ -329,9 +323,9 @@ static func definition() -> Dictionary:
 					"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack2_onhit_3.wav"
 				],
 				[
-					"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack3_onhit_1.wav",
-					"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack3_onhit_2.wav",
-					"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack3_onhit_3.wav"
+					"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack2_onhit_1.wav",
+					"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack2_onhit_2.wav",
+					"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack2_onhit_3.wav"
 				],
 				[
 					"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxpassiveattack_onhit_1.wav"
@@ -377,18 +371,14 @@ static func definition() -> Dictionary:
 						"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxpassiveattack_oncast_1.wav"
 					],
 					[
-						"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxrattack1_oncast_1.wav",
-						"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxrattack1_oncast_2.wav",
-						"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxrattack1_oncast_3.wav",
-						"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxrattack1_oncast_4.wav",
-						"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxrattack1_oncast_5.wav"
+						"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack2_oncast_1.wav",
+						"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack2_oncast_2.wav",
+						"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack2_oncast_3.wav"
 					],
 					[
-						"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxrattack2_oncast_1.wav",
-						"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxrattack2_oncast_2.wav",
-						"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxrattack2_oncast_3.wav",
-						"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxrattack2_oncast_4.wav",
-						"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxrattack2_oncast_5.wav"
+						"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack2_oncast_1.wav",
+						"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack2_oncast_2.wav",
+						"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack2_oncast_3.wav"
 					]
 				],
 				"attack_hit_by_segment": [
@@ -396,14 +386,14 @@ static func definition() -> Dictionary:
 						"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxpassiveattack_onhit_1.wav"
 					],
 					[
-						"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxrattack1_onhit_1.wav",
-						"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxrattack1_onhit_2.wav",
-						"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxrattack1_onhit_3.wav"
+						"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack2_onhit_1.wav",
+						"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack2_onhit_2.wav",
+						"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack2_onhit_3.wav"
 					],
 					[
-						"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxrattack2_onhit_1.wav",
-						"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxrattack2_onhit_2.wav",
-						"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxrattack2_onhit_3.wav"
+						"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack2_onhit_1.wav",
+						"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack2_onhit_2.wav",
+						"res://assets/audio/units/aatrox/play_sfx_aatrox_aatroxbasicattack2_onhit_3.wav"
 					]
 				],
 				"events": {

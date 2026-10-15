@@ -1,36 +1,24 @@
-[gd_resource type="AudioBusLayout" load_steps=4 format=3]
+[gd_resource type="AudioBusLayout" format=3 uid="uid://ljs6fa61uxxv"]
+
+[sub_resource type="AudioEffectHardLimiter" id="OutputLimiter"]
+resource_name = "Output peak protection"
+ceiling_db = -1.0
 
 [sub_resource type="AudioEffectCompressor" id="CombatCompressor"]
 resource_name = "Combat mix control"
 threshold = -18.0
 ratio = 2.0
-gain = 0.0
 attack_us = 2000.0
 release_ms = 160.0
-mix = 1.0
 
 [sub_resource type="AudioEffectCompressor" id="VoiceCompressor"]
 resource_name = "Voice mix control"
 threshold = -16.0
 ratio = 2.0
-gain = 0.0
 attack_us = 3000.0
 release_ms = 180.0
-mix = 1.0
-
-[sub_resource type="AudioEffectHardLimiter" id="OutputLimiter"]
-resource_name = "Output peak protection"
-pre_gain_db = 0.0
-ceiling_db = -1.0
-release = 0.1
 
 [resource]
-bus/0/name = &"Master"
-bus/0/solo = false
-bus/0/mute = false
-bus/0/bypass_fx = false
-bus/0/volume_db = 0.0
-bus/0/send = &""
 bus/0/effect/0/effect = SubResource("OutputLimiter")
 bus/0/effect/0/enabled = true
 bus/1/name = &"Music"

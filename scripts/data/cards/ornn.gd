@@ -61,8 +61,8 @@ static func definition() -> Dictionary:
 					"volume_db": 0.0,
 					"bus": "Voice"
 				},
-				"charge:step": {"pool": ["res://assets/audio/units/ornn/charge_step_1.wav", "res://assets/audio/units/ornn/charge_step_2.wav", "res://assets/audio/units/ornn/charge_step_3.wav", "res://assets/audio/units/ornn/charge_step_4.wav", "res://assets/audio/units/ornn/charge_step_5.wav"], "volume_db": 0.0, "bus": "Combat"},
-				"charge:trail_hit": {"pool": ["res://assets/audio/units/ornn/charge_trail_hit_1.wav", "res://assets/audio/units/ornn/charge_trail_hit_2.wav", "res://assets/audio/units/ornn/charge_trail_hit_3.wav", "res://assets/audio/units/ornn/charge_trail_hit_4.wav", "res://assets/audio/units/ornn/charge_trail_hit_5.wav"], "volume_db": 0.0, "bus": "Combat"},
+				"charge:step": {"pool": ["res://assets/audio/units/ornn/charge_step_1.wav", "res://assets/audio/units/ornn/charge_step_2.wav", "res://assets/audio/units/ornn/charge_step_3.wav"], "volume_db": 0.0, "bus": "Combat"},
+				"charge:trail_hit": {"pool": ["res://assets/audio/units/ornn/charge_trail_hit_1.wav", "res://assets/audio/units/ornn/charge_trail_hit_2.wav", "res://assets/audio/units/ornn/charge_trail_hit_3.wav"], "volume_db": 0.0, "bus": "Combat"},
 				"charge:knockup": {"pool": ["res://assets/audio/units/ornn/charge_knockup_1.wav"], "volume_db": 0.0, "bus": "Combat"},
 				"forge:arrive": {"pool": ["res://assets/audio/units/ornn/forge_arrive_1.wav"], "volume_db": 0.0, "bus": "Combat"},
 				"forge:strike": {
@@ -90,9 +90,9 @@ static func definition() -> Dictionary:
 			},
 			"attack_swing": [
 				[
-					"res://assets/audio/units/ornn/play_sfx_ornn_ornnbasicattack_oncast_r1_d.wav",
-					"res://assets/audio/units/ornn/play_sfx_ornn_ornnbasicattack_oncast_r2_d.wav",
-					"res://assets/audio/units/ornn/play_sfx_ornn_ornnbasicattack_oncast_r3_d.wav"
+					"res://assets/audio/units/ornn/play_sfx_ornn_ornnbasicattack2_oncast_r1.wav",
+					"res://assets/audio/units/ornn/play_sfx_ornn_ornnbasicattack2_oncast_r2.wav",
+					"res://assets/audio/units/ornn/play_sfx_ornn_ornnbasicattack2_oncast_r3.wav"
 				],
 				[
 					"res://assets/audio/units/ornn/play_sfx_ornn_ornnbasicattack2_oncast_r1.wav",
@@ -100,17 +100,17 @@ static func definition() -> Dictionary:
 					"res://assets/audio/units/ornn/play_sfx_ornn_ornnbasicattack2_oncast_r3.wav"
 				],
 				[
-					"res://assets/audio/units/ornn/play_sfx_ornn_ornnbasicattack3_oncast_r1_d.wav",
-					"res://assets/audio/units/ornn/play_sfx_ornn_ornnbasicattack3_oncast_r2_d.wav",
-					"res://assets/audio/units/ornn/play_sfx_ornn_ornnbasicattack3_oncast_r3_d.wav"
+					"res://assets/audio/units/ornn/play_sfx_ornn_ornnbasicattack2_oncast_r1.wav",
+					"res://assets/audio/units/ornn/play_sfx_ornn_ornnbasicattack2_oncast_r2.wav",
+					"res://assets/audio/units/ornn/play_sfx_ornn_ornnbasicattack2_oncast_r3.wav"
 				]
 			],
 			"attack_swing_volume_db": 0.0,
 			"attack_hit_by_segment": [
 				[
-					"res://assets/audio/units/ornn/play_sfx_ornn_ornnbasicattack_onhit_1559186049_1153642577_r1_d.wav",
-					"res://assets/audio/units/ornn/play_sfx_ornn_ornnbasicattack_onhit_1559186049_1153642577_r2_d.wav",
-					"res://assets/audio/units/ornn/play_sfx_ornn_ornnbasicattack_onhit_1559186049_1153642577_r3_d.wav"
+					"res://assets/audio/units/ornn/play_sfx_ornn_ornnbasicattack2_onhit_1559186049_1153642577_r1.wav",
+					"res://assets/audio/units/ornn/play_sfx_ornn_ornnbasicattack2_onhit_1559186049_1153642577_r2.wav",
+					"res://assets/audio/units/ornn/play_sfx_ornn_ornnbasicattack2_onhit_1559186049_1153642577_r3.wav"
 				],
 				[
 					"res://assets/audio/units/ornn/play_sfx_ornn_ornnbasicattack2_onhit_1559186049_1153642577_r1.wav",
@@ -118,9 +118,9 @@ static func definition() -> Dictionary:
 					"res://assets/audio/units/ornn/play_sfx_ornn_ornnbasicattack2_onhit_1559186049_1153642577_r3.wav"
 				],
 				[
-					"res://assets/audio/units/ornn/play_sfx_ornn_ornnbasicattack3_onhit_1559186049_1153642577_r1_d.wav",
-					"res://assets/audio/units/ornn/play_sfx_ornn_ornnbasicattack3_onhit_1559186049_1153642577_r2_d.wav",
-					"res://assets/audio/units/ornn/play_sfx_ornn_ornnbasicattack3_onhit_1559186049_1153642577_r3_d.wav"
+					"res://assets/audio/units/ornn/play_sfx_ornn_ornnbasicattack2_onhit_1559186049_1153642577_r1.wav",
+					"res://assets/audio/units/ornn/play_sfx_ornn_ornnbasicattack2_onhit_1559186049_1153642577_r2.wav",
+					"res://assets/audio/units/ornn/play_sfx_ornn_ornnbasicattack2_onhit_1559186049_1153642577_r3.wav"
 				]
 			]
 		},

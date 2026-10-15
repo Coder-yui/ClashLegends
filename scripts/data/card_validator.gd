@@ -1,5 +1,6 @@
 extends "res://scripts/data/card_schema.gd"
 const SHAPES = preload("res://scripts/data/card_shape_validator.gd")
+const AUDIO_VARIANT_LIMIT := 3
 
 ## 返回当前全部配置错误。空数组表示 CardDB 可以安全进入运行时。
 static func validate_all(cards: Dictionary, inspect_resources: bool = true) -> PackedStringArray:
@@ -218,6 +219,10 @@ static func _validate_audio_config(label: String, stats: Dictionary, errors: Pac
 			malformed = true
 	if malformed:
 		return
+	if audio.has("attack_hit") and audio.has("attack_hit_by_segment"):
+		errors.append("%s.audio: 分段命中与通用命中池不能同时配置" % label)
+	if audio.has("attack_launch_by_segment") and audio.get("events", {}).has("attack_launch"):
+		errors.append("%s.audio: 分段发射与通用发射池不能同时配置" % label)
 
 	if audio.has("team_overrides"):
 		var teams = audio.team_overrides
@@ -333,12 +338,18 @@ static func _validate_audio_path_pool(label: String, configured: Variant, errors
 	if not configured is Array or (configured as Array).is_empty():
 		errors.append("%s: 必须是非空资源路径数组" % label)
 		return
+	if configured.size() > AUDIO_VARIANT_LIMIT:
+		errors.append("%s: 每个声音池最多%d个变体" % [label, AUDIO_VARIANT_LIMIT])
+	var seen := {}
 	for index in (configured as Array).size():
 		var raw_path = (configured as Array)[index]
 		if not raw_path is String:
 			errors.append("%s[%d]: 期望 String 资源路径，实际 %s（%s）" % [label, index, type_string(typeof(raw_path)), str(raw_path)])
 			continue
 		var path: String = raw_path
+		if seen.has(path):
+			errors.append("%s[%d]: 同一声音池重复引用 %s" % [label, index, path])
+		seen[path] = true
 		if path.is_empty() or not path.begins_with("res://"):
 			errors.append("%s[%d]: 必须是 res:// 音频资源路径" % [label, index])
 		elif not ResourceLoader.exists(path):

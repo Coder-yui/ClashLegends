@@ -15,7 +15,7 @@
 | --- | --- | --- | --- |
 | 普通攻击出手 | 1 | 0 dB | [试听 1](../../../assets/audio/units/imp/play_sfx_yorick_yorickq_ghoulattack_cast_r1.wav) |
 | 死亡 | 3 | 0 dB | [试听 1](../../../assets/audio/units/imp/play_sfx_yorick_yorickq_ghoul_death_r1.wav) · [试听 2](../../../assets/audio/units/imp/play_sfx_yorick_yorickq_ghoul_death_r2.wav) |
-| 出生 | 5 | 0 dB | [试听 1](../../../assets/audio/units/imp/play_sfx_yorick_yorickq_summon_r1.wav) · [试听 2](../../../assets/audio/units/imp/play_sfx_yorick_yorickq_summon_r2.wav) |
+| 出生 | 3 | 0 dB | [试听 1](../../../assets/audio/units/imp/play_sfx_yorick_yorickq_summon_r1.wav) · [试听 2](../../../assets/audio/units/imp/play_sfx_yorick_yorickq_summon_r2.wav) |
 
 0 dB 表示不额外加减音量，不代表所有原声听起来一样响。表中给出代表性试听，完整原始素材仍保留在来源记录中。
 

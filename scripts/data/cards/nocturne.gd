@@ -88,9 +88,9 @@ static func definition() -> Dictionary:
 			},
 			"attack_swing": [
 				[
-					"res://assets/audio/units/nocturne/play_sfx_nocturne_nocturnebasicattack_oncast_r1_d.wav",
-					"res://assets/audio/units/nocturne/play_sfx_nocturne_nocturnebasicattack_oncast_r2_d.wav",
-					"res://assets/audio/units/nocturne/play_sfx_nocturne_nocturnebasicattack_oncast_r3_d.wav"
+					"res://assets/audio/units/nocturne/play_sfx_nocturne_nocturnebasicattack2_oncast_r1.wav",
+					"res://assets/audio/units/nocturne/play_sfx_nocturne_nocturnebasicattack2_oncast_r2.wav",
+					"res://assets/audio/units/nocturne/play_sfx_nocturne_nocturnebasicattack2_oncast_r3.wav"
 				],
 				[
 					"res://assets/audio/units/nocturne/play_sfx_nocturne_nocturnebasicattack2_oncast_r1.wav",
@@ -99,17 +99,12 @@ static func definition() -> Dictionary:
 				]
 			],
 			"attack_swing_volume_db": 0.0,
-			"attack_hit": [
-				"res://assets/audio/units/nocturne/play_sfx_nocturne_nocturnebasicattack_onhit_1559186049_1153642577_r1_d.wav",
-				"res://assets/audio/units/nocturne/play_sfx_nocturne_nocturnebasicattack_onhit_1559186049_1153642577_r2_d.wav",
-				"res://assets/audio/units/nocturne/play_sfx_nocturne_nocturnebasicattack_onhit_1559186049_1153642577_r3_d.wav"
-			],
 			"attack_hit_volume_db": 0.0,
 			"attack_hit_by_segment": [
 				[
-					"res://assets/audio/units/nocturne/play_sfx_nocturne_nocturnebasicattack_onhit_1559186049_1153642577_r1_d.wav",
-					"res://assets/audio/units/nocturne/play_sfx_nocturne_nocturnebasicattack_onhit_1559186049_1153642577_r2_d.wav",
-					"res://assets/audio/units/nocturne/play_sfx_nocturne_nocturnebasicattack_onhit_1559186049_1153642577_r3_d.wav"
+					"res://assets/audio/units/nocturne/play_sfx_nocturne_nocturnebasicattack2_onhit_1559186049_1153642577_r1.wav",
+					"res://assets/audio/units/nocturne/play_sfx_nocturne_nocturnebasicattack2_onhit_1559186049_1153642577_r2.wav",
+					"res://assets/audio/units/nocturne/play_sfx_nocturne_nocturnebasicattack2_onhit_1559186049_1153642577_r3.wav"
 				],
 				[
 					"res://assets/audio/units/nocturne/play_sfx_nocturne_nocturnebasicattack2_onhit_1559186049_1153642577_r1.wav",

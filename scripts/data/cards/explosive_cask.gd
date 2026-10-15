@@ -26,5 +26,5 @@ static func definition() -> Dictionary:
 		"card_art": {"path": "res://assets/cards/explosive_cask_loading.png"},
 		"audio": {"events": {
 			"spell:cast": {"pool": ["res://assets/audio/spells/explosive_cask/cast.wav"], "volume_db": 0.0, "bus": "Combat"},
-			"spell:strike": {"pool": ["res://assets/audio/spells/explosive_cask/boom_1.wav", "res://assets/audio/spells/explosive_cask/boom_2.wav", "res://assets/audio/spells/explosive_cask/boom_3.wav", "res://assets/audio/spells/explosive_cask/boom_4.wav"], "volume_db": 0.0, "bus": "Combat"}}},
+			"spell:strike": {"pool": ["res://assets/audio/spells/explosive_cask/boom_1.wav", "res://assets/audio/spells/explosive_cask/boom_2.wav", "res://assets/audio/spells/explosive_cask/boom_3.wav"], "volume_db": 0.0, "bus": "Combat"}}},
 	}

@@ -71,9 +71,9 @@ static func definition() -> Dictionary:
     },
     "active:start": {
       "pool": [
-        "res://assets/audio/units/corki/active_start0.wav",
-        "res://assets/audio/units/corki/active_start1.wav",
-        "res://assets/audio/units/corki/active_start2.wav"
+        "res://assets/audio/units/corki/active_big_start0.wav",
+        "res://assets/audio/units/corki/active_big_start1.wav",
+        "res://assets/audio/units/corki/active_big_start2.wav"
       ],
       "volume_db": 0.0,
       "bus": "Combat"

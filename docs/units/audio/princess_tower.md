@@ -13,9 +13,9 @@
 
 | 发生时机 | 已接变体 | 音量调整 | 试听示例 |
 | --- | --- | --- | --- |
-| 红方 · 普通攻击命中 | 4 | 0 dB | [试听 1](../../../assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_hit_r1.wav) · [试听 2](../../../assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_hit_r2.wav) |
+| 红方 · 普通攻击命中 | 3 | 0 dB | [试听 1](../../../assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_hit_r1.wav) · [试听 2](../../../assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_hit_r2.wav) |
 | 红方 · 开火起手 | 3 | 0 dB | [试听 1](../../../assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_cast_r1.wav) · [试听 2](../../../assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_cast_r2.wav) |
-| 红方 · 炮弹发射 | 4 | 0 dB | [试听 1](../../../assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_missilelaunch_r1.wav) · [试听 2](../../../assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_missilelaunch_r2.wav) |
+| 红方 · 炮弹发射 | 3 | 0 dB | [试听 1](../../../assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_missilelaunch_r1.wav) · [试听 2](../../../assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_missilelaunch_r2.wav) |
 | 红方 · 第一阶段破损 | 1 | 0 dB | [试听 1](../../../assets/audio/world/chaos/play_sfx_env_chaosturret_break01_r1.wav) |
 | 红方 · 第二阶段破损 | 1 | 0 dB | [试听 1](../../../assets/audio/world/chaos/play_sfx_env_chaosturret_break02_r1.wav) |
 | 红方 · 死亡 | 1 | 0 dB | [试听 1](../../../assets/audio/world/chaos/play_sfx_env_chaosturret_break03_r1.wav) |

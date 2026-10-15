@@ -39,7 +39,7 @@ static func definition() -> Dictionary:
 				},
 				"active:hit": {
 					"pool": [
-						"res://assets/audio/units/kayn/kayn_q_hit_1.wav"
+						"res://assets/audio/units/kayn/kayn_assassin_q_hit_1.wav"
 					],
 					"volume_db": 0.0,
 					"bus": "Combat"
@@ -55,7 +55,7 @@ static func definition() -> Dictionary:
 				},
 				"death": {
 					"pool": [
-						"res://assets/audio/units/kayn/kayn_death_1.wav"
+						"res://assets/audio/units/kayn/kayn_assassin_death_1.wav"
 					],
 					"volume_db": 0.0,
 					"bus": "Combat"
@@ -67,19 +67,19 @@ static func definition() -> Dictionary:
 					"res://assets/audio/units/kayn/kayn_attack1_2.wav"
 				],
 				[
-					"res://assets/audio/units/kayn/kayn_attack2_1.wav",
-					"res://assets/audio/units/kayn/kayn_attack2_2.wav"
+					"res://assets/audio/units/kayn/kayn_attack1_1.wav",
+					"res://assets/audio/units/kayn/kayn_attack1_2.wav"
 				],
 				[
-					"res://assets/audio/units/kayn/kayn_attack3_1.wav",
+					"res://assets/audio/units/kayn/kayn_assassin_attack3_1.wav",
 					"res://assets/audio/units/kayn/kayn_attack3_2.wav"
 				]
 			],
 			"attack_swing_volume_db": 0.0,
 			"attack_hit_volume_db": 0.0,
 			"attack_hit": [
-				"res://assets/audio/units/kayn/kayn_attack_hit_1.wav",
-				"res://assets/audio/units/kayn/kayn_attack_hit_2.wav"
+				"res://assets/audio/units/kayn/kayn_assassin_attack_hit_1.wav",
+				"res://assets/audio/units/kayn/kayn_assassin_attack_hit_2.wav"
 			]
 		},
 	}

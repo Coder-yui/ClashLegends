@@ -10,7 +10,7 @@
 | 死亡 | 原版 Death3D_cast 音效 3 个变体，走 Combat；按用户要求不接入 death:voice |
 | R 引导 | 原版 R_OnBuffActivate，跟随 channel 停止 |
 | R 区域 | 原版 RZone，2 个变体，区域独立持续 5 秒，清场/终局停止 |
-| 被动与主动 W | 原版 W_cas 的创建声音，每批裂隙开启时一次 summon:start；9 种随机层组合，保留 4.5 秒自然尾音 |
+| 被动与主动 W | 原版 W_cas 的创建声音，每批裂隙开启时一次 summon:start；3 种随机层组合（1×1、2×2、3×3，源事件共有 9 种），保留 4.5 秒自然尾音 |
 | 部署 | 中文客户端选人语音 90.ogg，文件不改增益，固定播放补偿 −12.5 dB |
 
 音效保留源事件节点增益，工具主增益及后期固定增益均为 0 dB，无归一化。死亡音效最多 1.5 秒，前 1 秒原增益，后 0.5 秒线性淡出。来源、处理和哈希见 `assets/audio/units/malzahar/source_manifest.json` 与 `spawn_source_manifest.json`；通用总线仍有动态压缩及限幅。

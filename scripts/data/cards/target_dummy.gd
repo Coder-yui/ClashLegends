@@ -56,8 +56,7 @@ static func definition() -> Dictionary:
 				"hit": {"pool": [
 					"res://assets/audio/units/target_dummy/play_sfx_practicedummy_onhit_r1.wav",
 					"res://assets/audio/units/target_dummy/play_sfx_practicedummy_onhit_r2.wav",
-					"res://assets/audio/units/target_dummy/play_sfx_practicedummy_onhit_r3.wav",
-					"res://assets/audio/units/target_dummy/play_sfx_practicedummy_onhit_r4.wav",
+					"res://assets/audio/units/target_dummy/play_sfx_practicedummy_onhit_r3.wav"
 				], "volume_db": 0.0, "bus": "Combat"},
 				"deploy:start": {"pool": [
 					"res://assets/audio/units/target_dummy/play_sfx_practicedummy_spawn_r1.wav",

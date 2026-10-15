@@ -178,9 +178,9 @@ static func definition() -> Dictionary:
 				},
 				"attack_swing": [
 						[
-								"res://assets/audio/units/sion/play_sfx_sion_sionbasicattackpassive_oncast_r1_d.wav",
-								"res://assets/audio/units/sion/play_sfx_sion_sionbasicattackpassive_oncast_r2_d.wav",
-								"res://assets/audio/units/sion/play_sfx_sion_sionbasicattackpassive_oncast_r3_d.wav"
+								"res://assets/audio/units/sion/play_sfx_sion_sionbasicattackpassive2_oncast_r1.wav",
+								"res://assets/audio/units/sion/play_sfx_sion_sionbasicattackpassive2_oncast_r2.wav",
+								"res://assets/audio/units/sion/play_sfx_sion_sionbasicattackpassive2_oncast_r3.wav"
 						],
 						[
 								"res://assets/audio/units/sion/play_sfx_sion_sionbasicattackpassive2_oncast_r1.wav",
@@ -191,9 +191,9 @@ static func definition() -> Dictionary:
 				"attack_swing_volume_db": 0.0,
 				"attack_hit_by_segment": [
 						[
-								"res://assets/audio/units/sion/play_sfx_sion_sionbasicattackpassive_onhit_r1_d.wav",
-								"res://assets/audio/units/sion/play_sfx_sion_sionbasicattackpassive_onhit_r2_d.wav",
-								"res://assets/audio/units/sion/play_sfx_sion_sionbasicattackpassive_onhit_r3_d.wav"
+								"res://assets/audio/units/sion/play_sfx_sion_sionbasicattackpassive2_onhit_r1.wav",
+								"res://assets/audio/units/sion/play_sfx_sion_sionbasicattackpassive2_onhit_r2.wav",
+								"res://assets/audio/units/sion/play_sfx_sion_sionbasicattackpassive2_onhit_r3.wav"
 						],
 						[
 								"res://assets/audio/units/sion/play_sfx_sion_sionbasicattackpassive2_onhit_r1.wav",

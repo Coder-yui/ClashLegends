@@ -83,8 +83,7 @@ const DEFINITIONS = {
 			"attack_hit": [
 				"res://assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_hit_r1.wav",
 				"res://assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_hit_r2.wav",
-				"res://assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_hit_r3.wav",
-				"res://assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_hit_r4.wav"
+				"res://assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_hit_r3.wav"
 			],
 			"attack_hit_volume_db": 0.0,
 			"events": {
@@ -101,8 +100,7 @@ const DEFINITIONS = {
 					"pool": [
 						"res://assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_missilelaunch_r1.wav",
 						"res://assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_missilelaunch_r2.wav",
-						"res://assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_missilelaunch_r3.wav",
-						"res://assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_missilelaunch_r4.wav"
+						"res://assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_missilelaunch_r3.wav"
 					],
 					"volume_db": 0.0,
 					"bus": "Combat"

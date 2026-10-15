@@ -44,9 +44,9 @@ static func definition() -> Dictionary:
 		"audio": {
 			"attack_swing": [
 				[
-					"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_oncast_r1_d.wav",
-					"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_oncast_r2_d.wav",
-					"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_oncast_r3_d.wav",
+					"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack2_oncast_r1.wav",
+					"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack2_oncast_r2.wav",
+					"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack2_oncast_r3.wav",
 				],
 				[
 					"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack2_oncast_r1.wav",
@@ -58,28 +58,7 @@ static func definition() -> Dictionary:
 			"attack_hit": [
 				"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1153642577_r1_d.wav",
 				"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1153642577_r2_d.wav",
-				"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1153642577_r3_d.wav",
-				"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1153642577_r4_d.wav",
-				"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1153642577_r5_d.wav",
-				"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1153642577_r6_d.wav",
-				"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1216965916_r1_d.wav",
-				"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1216965916_r2_d.wav",
-				"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1216965916_r3_d.wav",
-				"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1216965916_r4_d.wav",
-				"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1216965916_r5_d.wav",
-				"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1216965916_r6_d.wav",
-				"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2058049674_r1_d.wav",
-				"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2058049674_r2_d.wav",
-				"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2058049674_r3_d.wav",
-				"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2058049674_r4_d.wav",
-				"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2058049674_r5_d.wav",
-				"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2058049674_r6_d.wav",
-				"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2473969246_r1_d.wav",
-				"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2473969246_r2_d.wav",
-				"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2473969246_r3_d.wav",
-				"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2473969246_r4_d.wav",
-				"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2473969246_r5_d.wav",
-				"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_2473969246_r6_d.wav",
+				"res://assets/audio/units/missfortune/play_sfx_missfortune_missfortunebasicattack_onhit_1559186049_1153642577_r3_d.wav"
 			],
 			# 赏金猎人被动“先声夺人”：首次对每个目标的真实命中替换普通命中音。
 			"first_strike_hit": [
@@ -131,8 +110,7 @@ static func definition() -> Dictionary:
 				"death": {"pool": [
 						"res://assets/audio/units/missfortune/play_vo_missfortune_death3d_r1_zh_cn.wav",
 						"res://assets/audio/units/missfortune/play_vo_missfortune_death3d_r2_zh_cn.wav",
-						"res://assets/audio/units/missfortune/play_vo_missfortune_death3d_r3_zh_cn.wav",
-						"res://assets/audio/units/missfortune/play_vo_missfortune_death3d_r4_zh_cn.wav",
+						"res://assets/audio/units/missfortune/play_vo_missfortune_death3d_r3_zh_cn.wav"
 					], "volume_db": 0.0, "bus": "Voice"},
 			},
 		},

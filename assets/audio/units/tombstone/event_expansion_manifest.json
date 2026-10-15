@@ -41,30 +41,32 @@
     "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/efe354d9805f7af6d679520789aa0b8a77c09dfd105a8d396be258057c7e8ed5.txtp",
     "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/efe354d9805f7af6d679520789aa0b8a77c09dfd105a8d396be258057c7e8ed5.wav",
     "source_sha256": "4edcc476c39ca1cd04a7f294986420b079396623a981e592c9866340f8b66fdf",
-    "txtp_sha256": "b867bc1c34b0d5f6cc7d6fb34df03e23e98a58b65cc0d014be833891dc080530"
-  },
-  {
-    "file": "assets/audio/units/tombstone/play_sfx_yorick_yorickw_onhitlocation_r2.wav",
-    "event": "Play_sfx_Yorick_YorickW_OnHitLocation",
-    "event_id": 1115269652,
-    "duration": 3.474285714285714,
-    "media_ids": [
-      101263959,
-      244296846,
-      244580579,
-      450950991,
-      698825636
-    ],
-    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
-    "sha256": "a96c15016c81f2ca2621332df0bd0e07f9bd412c3b39503c5a0a9e5ac636acdb",
-    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
-    "tool_master_gain_db": 0.0,
-    "post_gain_db": 0.0,
-    "runtime_gain_db": 0.0,
-    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/8f5f70bc7ffa9670e592caa12f82ce5396f2d786f3cb66c650a3e0f83fceb333.txtp",
-    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/8f5f70bc7ffa9670e592caa12f82ce5396f2d786f3cb66c650a3e0f83fceb333.wav",
-    "source_sha256": "4edcc476c39ca1cd04a7f294986420b079396623a981e592c9866340f8b66fdf",
-    "txtp_sha256": "b867bc1c34b0d5f6cc7d6fb34df03e23e98a58b65cc0d014be833891dc080530"
+    "txtp_sha256": "b867bc1c34b0d5f6cc7d6fb34df03e23e98a58b65cc0d014be833891dc080530",
+    "equivalent_sources": [
+      {
+        "event": "Play_sfx_Yorick_YorickW_OnHitLocation",
+        "event_id": 1115269652,
+        "duration": 3.474285714285714,
+        "media_ids": [
+          101263959,
+          244296846,
+          244580579,
+          450950991,
+          698825636
+        ],
+        "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+        "sha256": "a96c15016c81f2ca2621332df0bd0e07f9bd412c3b39503c5a0a9e5ac636acdb",
+        "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/8f5f70bc7ffa9670e592caa12f82ce5396f2d786f3cb66c650a3e0f83fceb333.txtp",
+        "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/8f5f70bc7ffa9670e592caa12f82ce5396f2d786f3cb66c650a3e0f83fceb333.wav",
+        "source_sha256": "4edcc476c39ca1cd04a7f294986420b079396623a981e592c9866340f8b66fdf",
+        "txtp_sha256": "b867bc1c34b0d5f6cc7d6fb34df03e23e98a58b65cc0d014be833891dc080530",
+        "former_filename": "play_sfx_yorick_yorickw_onhitlocation_r2.wav"
+      }
+    ]
   },
   {
     "file": "assets/audio/units/tombstone/play_sfx_yorick_yorickw_death_r1.wav",
@@ -131,27 +133,5 @@
     "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/6180337108663a94605776ab6a99c6b170306f11cecda832e28f77b4d4341b19.wav",
     "source_sha256": "3cae37a57cf9eec513f11c5eb41660c01ca6cb234cc38d488001b40533ff6c11",
     "txtp_sha256": "3f1252b74958150f6ed9833926aaf1a690aa796f5acd80c593e211d1879d5306"
-  },
-  {
-    "file": "assets/audio/units/tombstone/play_sfx_yorick_yorickw_death_r4.wav",
-    "event": "Play_sfx_Yorick_YorickW_death",
-    "event_id": 715497681,
-    "duration": 1.5,
-    "media_ids": [
-      528204500,
-      583358077,
-      797856535,
-      939177491
-    ],
-    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
-    "sha256": "7f3f3d56c378a89858b428261c54b50832443b7e7c6ad09a5acf6adc705bac5f",
-    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
-    "tool_master_gain_db": 0.0,
-    "post_gain_db": 0.0,
-    "runtime_gain_db": 0.0,
-    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/b39fdd02eafe170623c7aecb3a4440bd2f88980170fd3cd7729fae2082d10f54.txtp",
-    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/b39fdd02eafe170623c7aecb3a4440bd2f88980170fd3cd7729fae2082d10f54.wav",
-    "source_sha256": "ac421449a490a7da1bf105dd354f9cee2496053dde3ceb9a7f6ead4bfabd1c33",
-    "txtp_sha256": "7e8ddc8872815a8604280aa10c61c8cd0f247f19f77c453e365421e853d72337"
   }
 ]

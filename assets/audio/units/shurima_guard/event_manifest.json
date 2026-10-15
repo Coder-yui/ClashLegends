@@ -36,7 +36,7 @@
     "txtp_sha256": "2983d662bc1dbb8f4f6e35844d51907e897b7e9a732483e13f81e605b1bdc6b1"
   },
   {
-    "file": "/Users/czh/Projects/Clash Legends/assets/audio/units/shurima_guard/play_sfx_azir_azirbasicattacksoldier_cast2_r1.wav",
+    "file": "play_sfx_azir_azirbasicattacksoldier_cast2_r1.wav",
     "group": "恕瑞玛卫队",
     "cue": "普攻2出手",
     "event": "Play_sfx_Azir_AzirBasicAttackSoldier_cast2 {r1}",
@@ -51,10 +51,30 @@
     "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/b1935ec009a2c59e7987dd803465551e972134c11e33cf0758cbd55e694ccd5e.txtp",
     "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/b1935ec009a2c59e7987dd803465551e972134c11e33cf0758cbd55e694ccd5e.wav",
     "source_sha256": "973ac38f8bf6bc8887d4d5e370415e624ac23e57dc733f014202d6e8fdd040df",
-    "txtp_sha256": "91ce7d3893ec5b7e61e452d5f3e06a8ef39e08d93a3ebc190567428ecce46829"
+    "txtp_sha256": "91ce7d3893ec5b7e61e452d5f3e06a8ef39e08d93a3ebc190567428ecce46829",
+    "equivalent_sources": [
+      {
+        "group": "恕瑞玛卫队",
+        "cue": "普攻3出手",
+        "event": "Play_sfx_Azir_AzirBasicAttackSoldier_cast3 {r1} {d}",
+        "duration": 0.5994331065759637,
+        "sha256": "df225c047cf6f7d092811170782ed24e7a567b5ebfb9793f2224cb63490ca849",
+        "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+        "status": "已接入",
+        "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/1ac5361dcef1ca99200c40057e83beb745ab0b432071775dd34f07786ae7c10f.txtp",
+        "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/1ac5361dcef1ca99200c40057e83beb745ab0b432071775dd34f07786ae7c10f.wav",
+        "source_sha256": "973ac38f8bf6bc8887d4d5e370415e624ac23e57dc733f014202d6e8fdd040df",
+        "txtp_sha256": "79cc23668b0bdcb096d9168b14810da56c9a3a4591bb29a74cf75772699ac15f",
+        "former_filename": "play_sfx_azir_azirbasicattacksoldier_cast3_r1.wav"
+      }
+    ]
   },
   {
-    "file": "/Users/czh/Projects/Clash Legends/assets/audio/units/shurima_guard/play_sfx_azir_azirbasicattacksoldier_cast2_r2.wav",
+    "file": "play_sfx_azir_azirbasicattacksoldier_cast2_r2.wav",
     "group": "恕瑞玛卫队",
     "cue": "普攻2出手",
     "event": "Play_sfx_Azir_AzirBasicAttackSoldier_cast2 {r2}",
@@ -69,43 +89,27 @@
     "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/26422924dbe47b718fa33694e6959328c8189fa6fb4b73662093ea930b154ce8.txtp",
     "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/26422924dbe47b718fa33694e6959328c8189fa6fb4b73662093ea930b154ce8.wav",
     "source_sha256": "9e229de544cd3e0c254bb420e1d706bdcfd6f1a7a252465a00a35e16ea8dd2a3",
-    "txtp_sha256": "2561860e6de46f76824bb970f5da0fbc04cde751b1facf3c99bbf367c1713a4d"
-  },
-  {
-    "file": "/Users/czh/Projects/Clash Legends/assets/audio/units/shurima_guard/play_sfx_azir_azirbasicattacksoldier_cast3_r1.wav",
-    "group": "恕瑞玛卫队",
-    "cue": "普攻3出手",
-    "event": "Play_sfx_Azir_AzirBasicAttackSoldier_cast3 {r1} {d}",
-    "duration": 0.5994331065759637,
-    "sha256": "df225c047cf6f7d092811170782ed24e7a567b5ebfb9793f2224cb63490ca849",
-    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
-    "status": "已接入",
-    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
-    "tool_master_gain_db": 0.0,
-    "post_gain_db": 0.0,
-    "runtime_gain_db": 0.0,
-    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/1ac5361dcef1ca99200c40057e83beb745ab0b432071775dd34f07786ae7c10f.txtp",
-    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/1ac5361dcef1ca99200c40057e83beb745ab0b432071775dd34f07786ae7c10f.wav",
-    "source_sha256": "973ac38f8bf6bc8887d4d5e370415e624ac23e57dc733f014202d6e8fdd040df",
-    "txtp_sha256": "79cc23668b0bdcb096d9168b14810da56c9a3a4591bb29a74cf75772699ac15f"
-  },
-  {
-    "file": "/Users/czh/Projects/Clash Legends/assets/audio/units/shurima_guard/play_sfx_azir_azirbasicattacksoldier_cast3_r2.wav",
-    "group": "恕瑞玛卫队",
-    "cue": "普攻3出手",
-    "event": "Play_sfx_Azir_AzirBasicAttackSoldier_cast3 {r2} {d}",
-    "duration": 0.5354195011337869,
-    "sha256": "8bdac2bb071735436d83fa5c28b7f2a60570c84e52de0edbfee1881ae1042417",
-    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
-    "status": "已接入",
-    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
-    "tool_master_gain_db": 0.0,
-    "post_gain_db": 0.0,
-    "runtime_gain_db": 0.0,
-    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/2785031cf3e50f22ac5ebd5bf80b7d9612b54194cf976b8a1ce2cf1c9e289849.txtp",
-    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/2785031cf3e50f22ac5ebd5bf80b7d9612b54194cf976b8a1ce2cf1c9e289849.wav",
-    "source_sha256": "9e229de544cd3e0c254bb420e1d706bdcfd6f1a7a252465a00a35e16ea8dd2a3",
-    "txtp_sha256": "8b69dd7cee1ab94752652c2da087f4a5db70fd3e4bf3a1930e420a5c7500f25a"
+    "txtp_sha256": "2561860e6de46f76824bb970f5da0fbc04cde751b1facf3c99bbf367c1713a4d",
+    "equivalent_sources": [
+      {
+        "group": "恕瑞玛卫队",
+        "cue": "普攻3出手",
+        "event": "Play_sfx_Azir_AzirBasicAttackSoldier_cast3 {r2} {d}",
+        "duration": 0.5354195011337869,
+        "sha256": "8bdac2bb071735436d83fa5c28b7f2a60570c84e52de0edbfee1881ae1042417",
+        "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+        "status": "已接入",
+        "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/2785031cf3e50f22ac5ebd5bf80b7d9612b54194cf976b8a1ce2cf1c9e289849.txtp",
+        "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/2785031cf3e50f22ac5ebd5bf80b7d9612b54194cf976b8a1ce2cf1c9e289849.wav",
+        "source_sha256": "9e229de544cd3e0c254bb420e1d706bdcfd6f1a7a252465a00a35e16ea8dd2a3",
+        "txtp_sha256": "8b69dd7cee1ab94752652c2da087f4a5db70fd3e4bf3a1930e420a5c7500f25a",
+        "former_filename": "play_sfx_azir_azirbasicattacksoldier_cast3_r2.wav"
+      }
+    ]
   },
   {
     "file": "/Users/czh/Projects/Clash Legends/assets/audio/units/shurima_guard/play_sfx_azir_azirbasicattacksoldier_onhit_r1.wav",

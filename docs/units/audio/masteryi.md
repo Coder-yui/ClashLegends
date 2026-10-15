@@ -13,9 +13,8 @@
 
 | 发生时机 | 已接变体 | 音量调整 | 试听示例 |
 | --- | --- | --- | --- |
-| 普通攻击出手 | 12 | 0 dB | [试听 1](../../../assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack2_oncast_r1.wav) · [试听 2](../../../assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack2_oncast_r2.wav) |
-| 普通攻击命中 | 16 | 0 dB | [试听 1](../../../assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1153642577_r1_d.wav) · [试听 2](../../../assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1153642577_r2_d.wav) |
-| 普通攻击分段命中 | 17 | 0 dB | [试听 1](../../../assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1153642577_r1_d.wav) · [试听 2](../../../assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1153642577_r2_d.wav) |
+| 普通攻击出手 | 每段最多3；共9份 | 0 dB | [试听 1](../../../assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack2_oncast_r1.wav) · [试听 2](../../../assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack2_oncast_r2.wav) |
+| 普通攻击分段命中 | 每段最多3；共4份 | 0 dB | [试听 1](../../../assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1153642577_r1_d.wav) · [试听 2](../../../assets/audio/units/masteryi/play_sfx_masteryi_masteryibasicattack_onhit_1559186049_1153642577_r2_d.wav) |
 | 增益结束 | 1 | 0 dB | [试听 1](../../../assets/audio/units/masteryi/play_sfx_masteryi_highlander_onbuffdeactivate.wav) |
 | 增益开始 | 1 | 0 dB | [试听 1](../../../assets/audio/units/masteryi/play_sfx_masteryi_highlander_onbuffactivate.wav) |
 | 增益持续 | 1 | 0 dB | [试听 1](../../../assets/audio/units/masteryi/play_sfx_masteryi_highlander_trail.wav) |

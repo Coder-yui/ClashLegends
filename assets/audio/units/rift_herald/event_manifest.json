@@ -111,7 +111,30 @@
       "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/4127eeda12484d6bb1b178ed86a452c28fa9f8683751b3851310ce119a277e94.txtp",
       "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/4127eeda12484d6bb1b178ed86a452c28fa9f8683751b3851310ce119a277e94.wav",
       "source_sha256": "8e00674bd6a7738f99a9cbf64698d410ed11888370bb1a2f89516ad40d95f7c2",
-      "txtp_sha256": "403e20d651624bccceb056d9eb678f5cdd6221548f4aab4d14cc0b7ec101a6ea"
+      "txtp_sha256": "403e20d651624bccceb056d9eb678f5cdd6221548f4aab4d14cc0b7ec101a6ea",
+      "equivalent_sources": [
+        {
+          "event": "Play_sfx_SRU_RiftHerald_SpinAttack_hit",
+          "cue": "spinning_punch:hit",
+          "duration": 1.4288888888888889,
+          "event_id": 640688907,
+          "media_ids": [
+            "641280885",
+            "194828825"
+          ],
+          "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+          "sha256": "48c35abe621007ff068aab14c2f127dc01998bb2c9efe4e4ec6b54283c60df33",
+          "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+          "tool_master_gain_db": 0.0,
+          "post_gain_db": 0.0,
+          "runtime_gain_db": 0.0,
+          "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/4a59ce017d21e185a775fa42199ca9b515f7793a2cae8dd0caa28d0a4d453c17.txtp",
+          "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/4a59ce017d21e185a775fa42199ca9b515f7793a2cae8dd0caa28d0a4d453c17.wav",
+          "source_sha256": "8e00674bd6a7738f99a9cbf64698d410ed11888370bb1a2f89516ad40d95f7c2",
+          "txtp_sha256": "f10a7b0757c749e31858162db98252d91059a2515b068c633d06ef0d23726c5c",
+          "former_filename": "spinning_punch_hit_1.wav"
+        }
+      ]
     },
     {
       "file": "attack_hit_2_2.wav",
@@ -132,7 +155,30 @@
       "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/1f477b4131639c59215d381a3e5eb11564a661cfbbfa2bdb060b935745c7cfc2.txtp",
       "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/1f477b4131639c59215d381a3e5eb11564a661cfbbfa2bdb060b935745c7cfc2.wav",
       "source_sha256": "51d89936a2bb040c36f8a7e2875a33d29a7d39ddc09eb4c8085b2c4ec20802c2",
-      "txtp_sha256": "4d42807dd8406d8f03bed9edbca3462c281c3a54a005c75926ced232334effba"
+      "txtp_sha256": "4d42807dd8406d8f03bed9edbca3462c281c3a54a005c75926ced232334effba",
+      "equivalent_sources": [
+        {
+          "event": "Play_sfx_SRU_RiftHerald_SpinAttack_hit",
+          "cue": "spinning_punch:hit",
+          "duration": 1.4975736961451247,
+          "event_id": 640688907,
+          "media_ids": [
+            "641280885",
+            "194828825"
+          ],
+          "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
+          "sha256": "1ccf3395a4865de3bb1fa1c4af233e1e59a3feecaa3cee614092012778d04914",
+          "original_gain_manifest": "assets/audio/original_gain_manifest.json",
+          "tool_master_gain_db": 0.0,
+          "post_gain_db": 0.0,
+          "runtime_gain_db": 0.0,
+          "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/1405cee0c414248e6acf7878fb9bafbf5935780ce58e31140a08e3387a7e5bb3.txtp",
+          "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/1405cee0c414248e6acf7878fb9bafbf5935780ce58e31140a08e3387a7e5bb3.wav",
+          "source_sha256": "51d89936a2bb040c36f8a7e2875a33d29a7d39ddc09eb4c8085b2c4ec20802c2",
+          "txtp_sha256": "28cdf9e748e9b31a880f4288c87648241004b6b862ebda03eb5741a4e6447dd7",
+          "former_filename": "spinning_punch_hit_2.wav"
+        }
+      ]
     },
     {
       "file": "deploy_start_1.wav",
@@ -265,29 +311,6 @@
       "txtp_sha256": "4aed4187c35b116875b3d4fadce184590ccaf26f1d1ad23a263d030a028bf1c1"
     },
     {
-      "file": "rush_hit_4.wav",
-      "event": "Play_sfx_SRU_RiftHerald_dash_hit",
-      "cue": "rush:hit",
-      "duration": 2.8484126984126985,
-      "event_id": 1304078675,
-      "media_ids": [
-        "168920450",
-        "352792633",
-        "559099630",
-        "813595593"
-      ],
-      "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
-      "sha256": "533ba4d2ccc13c6474a91acbb83b13b9bc0780c77ae615537b7048ff3db5ef9c",
-      "original_gain_manifest": "assets/audio/original_gain_manifest.json",
-      "tool_master_gain_db": 0.0,
-      "post_gain_db": 0.0,
-      "runtime_gain_db": 0.0,
-      "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/f082ed1be838106e5c47027c0977cf36b598221d59814fae14e96a8767d4fff7.txtp",
-      "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/f082ed1be838106e5c47027c0977cf36b598221d59814fae14e96a8767d4fff7.wav",
-      "source_sha256": "d862b86675e7b661f05b716a58721e790d2ec635b1ef5da8b41a4421cee5ab8a",
-      "txtp_sha256": "60eefc822ef5dccfe6c80993c3388b3a2cfd899c8859153196b70780efefd113"
-    },
-    {
       "file": "rush_path_hit_1.wav",
       "event": "Play_sfx_SRU_RiftHerald_charge_hit_minion",
       "cue": "rush:path_hit",
@@ -357,29 +380,6 @@
       "txtp_sha256": "65c6b532a6490529f3dfc1d3d5638d9d1a7aa0838e43ee75d5597d3b012ce3f9"
     },
     {
-      "file": "rush_path_hit_4.wav",
-      "event": "Play_sfx_SRU_RiftHerald_charge_hit_minion",
-      "cue": "rush:path_hit",
-      "duration": 1.9666666666666666,
-      "event_id": 635121564,
-      "media_ids": [
-        "816696460",
-        "955496193",
-        "449553040",
-        "696025361"
-      ],
-      "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
-      "sha256": "3a71b46d20e066abeee06980d3923044d901bd3ef84da3818fb9b69a0264a7a3",
-      "original_gain_manifest": "assets/audio/original_gain_manifest.json",
-      "tool_master_gain_db": 0.0,
-      "post_gain_db": 0.0,
-      "runtime_gain_db": 0.0,
-      "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/a1cd1746fb903a7a7264a85114743afd0ea679699c58a59acc16df8525f7e998.txtp",
-      "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/a1cd1746fb903a7a7264a85114743afd0ea679699c58a59acc16df8525f7e998.wav",
-      "source_sha256": "bc994f89f349d73e460c6e1a67b78f746bf51ad4feee64938fbd8eb93e040032",
-      "txtp_sha256": "8edca816d162ed4216aedf56bf2ecb1f8a11bd60677f90e99808801beba8cdd8"
-    },
-    {
       "file": "spinning_punch_start_1.wav",
       "event": "Play_sfx_SRU_RiftHerald_SpinAttack_vox",
       "cue": "spinning_punch:start",
@@ -399,48 +399,6 @@
       "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/cea0b0ca9cde2cd23e7684b921a11d61c2ca302e8cd372d4119f0a8aa050c507.wav",
       "source_sha256": "0e61cedb1d8fcb428171b67195445042978b49cb6ad9bffd485efee8d1173252",
       "txtp_sha256": "4727f7d2f9d1ae33e6d737f36277f5148ddf79aad1979af6d0d297a9fd62ea4f"
-    },
-    {
-      "file": "spinning_punch_hit_1.wav",
-      "event": "Play_sfx_SRU_RiftHerald_SpinAttack_hit",
-      "cue": "spinning_punch:hit",
-      "duration": 1.4288888888888889,
-      "event_id": 640688907,
-      "media_ids": [
-        "641280885",
-        "194828825"
-      ],
-      "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
-      "sha256": "48c35abe621007ff068aab14c2f127dc01998bb2c9efe4e4ec6b54283c60df33",
-      "original_gain_manifest": "assets/audio/original_gain_manifest.json",
-      "tool_master_gain_db": 0.0,
-      "post_gain_db": 0.0,
-      "runtime_gain_db": 0.0,
-      "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/4a59ce017d21e185a775fa42199ca9b515f7793a2cae8dd0caa28d0a4d453c17.txtp",
-      "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/4a59ce017d21e185a775fa42199ca9b515f7793a2cae8dd0caa28d0a4d453c17.wav",
-      "source_sha256": "8e00674bd6a7738f99a9cbf64698d410ed11888370bb1a2f89516ad40d95f7c2",
-      "txtp_sha256": "f10a7b0757c749e31858162db98252d91059a2515b068c633d06ef0d23726c5c"
-    },
-    {
-      "file": "spinning_punch_hit_2.wav",
-      "event": "Play_sfx_SRU_RiftHerald_SpinAttack_hit",
-      "cue": "spinning_punch:hit",
-      "duration": 1.4975736961451247,
-      "event_id": 640688907,
-      "media_ids": [
-        "641280885",
-        "194828825"
-      ],
-      "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
-      "sha256": "1ccf3395a4865de3bb1fa1c4af233e1e59a3feecaa3cee614092012778d04914",
-      "original_gain_manifest": "assets/audio/original_gain_manifest.json",
-      "tool_master_gain_db": 0.0,
-      "post_gain_db": 0.0,
-      "runtime_gain_db": 0.0,
-      "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/1405cee0c414248e6acf7878fb9bafbf5935780ce58e31140a08e3387a7e5bb3.txtp",
-      "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/1405cee0c414248e6acf7878fb9bafbf5935780ce58e31140a08e3387a7e5bb3.wav",
-      "source_sha256": "51d89936a2bb040c36f8a7e2875a33d29a7d39ddc09eb4c8085b2c4ec20802c2",
-      "txtp_sha256": "28cdf9e748e9b31a880f4288c87648241004b6b862ebda03eb5741a4e6447dd7"
     },
     {
       "file": "death_1.wav",

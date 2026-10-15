@@ -48,7 +48,7 @@ static func definition() -> Dictionary:
 		# BEGIN IMPORTED AUDIO imp
 		"audio": {
 			"events": {
-				"spawn:start": {"pool": ["res://assets/audio/units/imp/play_sfx_yorick_yorickq_summon_r1.wav", "res://assets/audio/units/imp/play_sfx_yorick_yorickq_summon_r2.wav", "res://assets/audio/units/imp/play_sfx_yorick_yorickq_summon_r3.wav", "res://assets/audio/units/imp/play_sfx_yorick_yorickq_summon_r4.wav", "res://assets/audio/units/imp/play_sfx_yorick_yorickq_summon_r5.wav"], "volume_db": 0.0, "bus": "Combat"},
+				"spawn:start": {"pool": ["res://assets/audio/units/imp/play_sfx_yorick_yorickq_summon_r1.wav", "res://assets/audio/units/imp/play_sfx_yorick_yorickq_summon_r2.wav", "res://assets/audio/units/imp/play_sfx_yorick_yorickq_summon_r3.wav"], "volume_db": 0.0, "bus": "Combat"},
 				"death": {
 					"pool": [
 						"res://assets/audio/units/imp/play_sfx_yorick_yorickq_ghoul_death_r1.wav",

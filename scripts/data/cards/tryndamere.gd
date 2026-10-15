@@ -38,40 +38,34 @@ static func definition() -> Dictionary:
     [
       "res://assets/audio/units/tryndamere/attack1_1.wav",
       "res://assets/audio/units/tryndamere/attack1_2.wav",
-      "res://assets/audio/units/tryndamere/attack1_3.wav",
-      "res://assets/audio/units/tryndamere/attack1_4.wav"
+      "res://assets/audio/units/tryndamere/attack1_3.wav"
     ],
     [
-      "res://assets/audio/units/tryndamere/attack2_1.wav",
-      "res://assets/audio/units/tryndamere/attack2_2.wav",
-      "res://assets/audio/units/tryndamere/attack2_3.wav",
-      "res://assets/audio/units/tryndamere/attack2_4.wav"
+      "res://assets/audio/units/tryndamere/attack1_1.wav",
+      "res://assets/audio/units/tryndamere/attack1_2.wav",
+      "res://assets/audio/units/tryndamere/attack1_3.wav"
     ],
     [
       "res://assets/audio/units/tryndamere/crit_1.wav",
       "res://assets/audio/units/tryndamere/crit_2.wav",
-      "res://assets/audio/units/tryndamere/crit_3.wav",
-      "res://assets/audio/units/tryndamere/crit_4.wav"
+      "res://assets/audio/units/tryndamere/crit_3.wav"
     ]
   ],
   "attack_hit_by_segment": [
     [
       "res://assets/audio/units/tryndamere/hit1_1.wav",
       "res://assets/audio/units/tryndamere/hit1_2.wav",
-      "res://assets/audio/units/tryndamere/hit1_3.wav",
-      "res://assets/audio/units/tryndamere/hit1_4.wav"
+      "res://assets/audio/units/tryndamere/hit1_3.wav"
     ],
     [
-      "res://assets/audio/units/tryndamere/hit2_1.wav",
-      "res://assets/audio/units/tryndamere/hit2_2.wav",
-      "res://assets/audio/units/tryndamere/hit2_3.wav",
-      "res://assets/audio/units/tryndamere/hit2_4.wav"
+      "res://assets/audio/units/tryndamere/hit1_1.wav",
+      "res://assets/audio/units/tryndamere/hit1_2.wav",
+      "res://assets/audio/units/tryndamere/hit1_3.wav"
     ],
     [
       "res://assets/audio/units/tryndamere/crit_hit_1.wav",
       "res://assets/audio/units/tryndamere/crit_hit_2.wav",
-      "res://assets/audio/units/tryndamere/crit_hit_3.wav",
-      "res://assets/audio/units/tryndamere/crit_hit_4.wav"
+      "res://assets/audio/units/tryndamere/crit_hit_3.wav"
     ]
   ],
   "events": {

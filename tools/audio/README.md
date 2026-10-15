@@ -8,9 +8,13 @@
 | `prepare_lol_card_audio.py --help` | 给定 WAD、Init 音频库、英雄和素材库输出目录，准备原始事件素材；需要外部转换工具 |
 | `import_card_audio.py --help` | 按明确计划与 `--cards` 选择导入；先 `--dry-run` 核对目标 |
 | `audio_manifest_merge.py` | 多个导入器共用的来源清单合并 |
+| `consolidate_audio.py` | PCM 与 Godot 导入参数均相同的 WAV 合并引用；默认只读计划，应用需素材库内的新备份目录 |
+| `limit_audio_variants.py` | 按独立声音池限制为最多3个变体，并备份移除不再引用的文件；默认只读计划，应用需素材库内的新备份目录 |
 | `death_audio_envelope.py` | 普通单位死亡声时长和淡出加工 |
 
 统一调用：`python3 tools/dev.py audio-prepare --help`、`python3 tools/dev.py audio-import --help`。临时试听用 `python3 tools/dev.py audio --directory /声音目录`。
+
+正式文件共享：先运行 `python3 tools/audio/consolidate_audio.py` 查看计划；确认后加 `--apply --backup 'ClashLegends-开发素材库/04-中间产物/<任务>/<新备份目录>'`。修改引用和来源清单后才移除相同 WAV 及其导入旁文件；备份保存原文件、原清单与 restore-map.json。来源清单的 equivalent_sources 保留每个原始事件的加工与来源记录，不是运行随机池。导入或重建之后再次检查，避免恢复不同文件名的副本；本工具不删减不同声音的变体，也不合并事件或攻击段。
 
 ## 已有专用配方
 

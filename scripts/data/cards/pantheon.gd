@@ -139,11 +139,6 @@ static func definition() -> Dictionary:
 				]
 			],
 			"attack_swing_volume_db": 0.0,
-			"attack_hit": [
-				"res://assets/audio/units/pantheon/play_sfx_pantheon_pantheonbasicattack_onhit_1559186049_1153642577_r1.wav",
-				"res://assets/audio/units/pantheon/play_sfx_pantheon_pantheonbasicattack_onhit_1559186049_1153642577_r2.wav",
-				"res://assets/audio/units/pantheon/play_sfx_pantheon_pantheonbasicattack_onhit_1559186049_1153642577_r3.wav"
-			],
 			"attack_hit_volume_db": 0.0,
 			"attack_hit_by_segment": [
 				[

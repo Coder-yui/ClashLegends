@@ -50,21 +50,18 @@ static func definition() -> Dictionary:
     [
       "res://assets/audio/units/belveth/swing_1.wav",
       "res://assets/audio/units/belveth/swing_2.wav",
-      "res://assets/audio/units/belveth/swing_3.wav",
-      "res://assets/audio/units/belveth/swing_4.wav"
+      "res://assets/audio/units/belveth/swing_3.wav"
     ],
     [
       "res://assets/audio/units/belveth/swing_1.wav",
       "res://assets/audio/units/belveth/swing_2.wav",
-      "res://assets/audio/units/belveth/swing_3.wav",
-      "res://assets/audio/units/belveth/swing_4.wav"
+      "res://assets/audio/units/belveth/swing_3.wav"
     ]
   ],
   "attack_hit": [
     "res://assets/audio/units/belveth/hit_1.wav",
     "res://assets/audio/units/belveth/hit_2.wav",
-    "res://assets/audio/units/belveth/hit_3.wav",
-    "res://assets/audio/units/belveth/hit_4.wav"
+    "res://assets/audio/units/belveth/hit_3.wav"
   ],
   "attack_swing_lead_time": 0.0,
   "attack_swing_volume_db": 0.0,

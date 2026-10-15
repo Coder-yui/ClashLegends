@@ -192,15 +192,5 @@
     "normalization": false,
     "duration": 2.05,
     "sha256": "02d2736434a7e8182678c8b2bc65f475628a2402e65e58c8fed6c63dc9b7b7cd"
-  },
-  {
-    "event": "attack_swing",
-    "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空先知/audio/malzahar/txtp/Play_sfx_MalZaharVoidling_MalZaharVoidlingBasicAttack_OnCast {r4} {d}.txtp",
-    "txtp_sha256": "eb784afa649a0a2b43bbf57d1bb6772d7b6a8182824f4f9c9e83f5b2e122bdfb",
-    "file": "res://assets/audio/units/voidling/attack_launch_4.wav",
-    "gain_db": 0,
-    "normalization": false,
-    "duration": 0.37498866213151927,
-    "sha256": "ef3cdb04f82475fc5f1c4bb5337dc5641853ec80b2226c28f7a7640c30668f08"
   }
 ]

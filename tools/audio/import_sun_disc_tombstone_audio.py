@@ -14,7 +14,7 @@ def event_hash(name):
  for c in name.lower().encode():h=((h*16777619)^c)&0xffffffff
  return h
 manifest=[]
-def export(event,card,limit=4):
+def export(event,card,limit=3):
  choices=INDEX[event_hash(event)];named=[p for p in choices if p.name.startswith(event)]
  choices=named or choices;pool=[]
  for i,source in enumerate(choices[:limit],1):

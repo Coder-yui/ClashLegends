@@ -60,33 +60,18 @@ static func definition() -> Dictionary:
 				[
 					"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack_oncast_r1.wav",
 					"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack_oncast_r2.wav",
-					"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack_oncast_r3.wav",
-					"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack_oncast_r4.wav",
+					"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack_oncast_r3.wav"
 				],
 				[
 					"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack2_oncast_r1.wav",
 					"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack2_oncast_r2.wav",
-					"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack2_oncast_r3.wav",
-					"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack2_oncast_r4.wav",
+					"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack2_oncast_r3.wav"
 				],
 			],
 			"attack_hit": [
 				"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack_onhit_1559186049_1153642577_r1_d.wav",
 				"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack_onhit_1559186049_1153642577_r2_d.wav",
-				"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack_onhit_1559186049_1153642577_r3_d.wav",
-				"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack_onhit_1559186049_1153642577_r4_d.wav",
-				"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack_onhit_1559186049_1216965916_r1_d.wav",
-				"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack_onhit_1559186049_1216965916_r2_d.wav",
-				"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack_onhit_1559186049_1216965916_r3_d.wav",
-				"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack_onhit_1559186049_1216965916_r4_d.wav",
-				"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack_onhit_1559186049_2058049674_r1_d.wav",
-				"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack_onhit_1559186049_2058049674_r2_d.wav",
-				"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack_onhit_1559186049_2058049674_r3_d.wav",
-				"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack_onhit_1559186049_2058049674_r4_d.wav",
-				"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack_onhit_1559186049_2473969246_r1_d.wav",
-				"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack_onhit_1559186049_2473969246_r2_d.wav",
-				"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack_onhit_1559186049_2473969246_r3_d.wav",
-				"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack_onhit_1559186049_2473969246_r4_d.wav",
+				"res://assets/audio/units/garen/play_sfx_garen_garenbasicattack_onhit_1559186049_1153642577_r3_d.wav"
 			],
 			"attack_swing_volume_db": 0.0,
 			"attack_hit_volume_db": 0.0,
@@ -126,8 +111,7 @@ static func definition() -> Dictionary:
 				"judgment:hit": {"pool": [
 						"res://assets/audio/units/garen/play_sfx_garen_garene_hit_r1.wav",
 						"res://assets/audio/units/garen/play_sfx_garen_garene_hit_r2.wav",
-						"res://assets/audio/units/garen/play_sfx_garen_garene_hit_r3.wav",
-						"res://assets/audio/units/garen/play_sfx_garen_garene_hit_r4.wav",
+						"res://assets/audio/units/garen/play_sfx_garen_garene_hit_r3.wav"
 					], "volume_db": 0.0},
 				"death": {"pool": [
 						"res://assets/audio/units/garen/play_sfx_garen_death3d_cast.wav",

@@ -66,28 +66,6 @@
     "txtp_sha256": "45a461937b882c03dff72fcbd97596d750a2b930e23e6dc912330c379402cdb3"
   },
   {
-    "file": "assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_hit_r4.wav",
-    "event": "Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_hit",
-    "event_id": 1256783657,
-    "duration": 2.0241043083900228,
-    "media_ids": [
-      432513021,
-      672706197,
-      835745104,
-      972133402
-    ],
-    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
-    "sha256": "b614c1bef0ae08361edf21d318050b236609016853f79895a47b767308a9f59f",
-    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
-    "tool_master_gain_db": 0.0,
-    "post_gain_db": 0.0,
-    "runtime_gain_db": 0.0,
-    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/3cb160ccdb33c562ce354905d20d2af438b78d539e33e08d9254221eee3f8564.txtp",
-    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/3cb160ccdb33c562ce354905d20d2af438b78d539e33e08d9254221eee3f8564.wav",
-    "source_sha256": "6917b37fd4e7e30b42c4647f3193971554982e720ddda33e40443f44c20aafcc",
-    "txtp_sha256": "708f289901ecc02489fe9cf5259ea4bc32685bd9baa1f2b0589736b931a77551"
-  },
-  {
     "file": "assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_cast_r1.wav",
     "event": "Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_cast",
     "event_id": 352283651,
@@ -218,28 +196,6 @@
     "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/e36f9b621c38a781f2e70cf09a8df1011782463a0ccfa49108370493fdc4d11a.wav",
     "source_sha256": "da71293bb609aa649f83509f3f721a68daa4498bb96709242b1dc762e4d23183",
     "txtp_sha256": "f24c578b920b220309e37b15030a89401f47778d0fa60e686fdbc135ccf92ad4"
-  },
-  {
-    "file": "assets/audio/world/chaos/play_sfx_env_map11_chaosturretminionbasicattack_missilelaunch_r4.wav",
-    "event": "Play_sfx_Env_map11_ChaosTurretMinionBasicAttack_missilelaunch",
-    "event_id": 3600744219,
-    "duration": 2.0058503401360546,
-    "media_ids": [
-      201534931,
-      446045041,
-      504466497,
-      988665057
-    ],
-    "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
-    "sha256": "1821488514e3e9ac37f8b07dabc22d20c817576710827f41e0279f1bbf1e7030",
-    "original_gain_manifest": "assets/audio/original_gain_manifest.json",
-    "tool_master_gain_db": 0.0,
-    "post_gain_db": 0.0,
-    "runtime_gain_db": 0.0,
-    "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/2d36c0c2f0994f88979cd8422380aa6f57bdb3ca1e82b88b35fa6dcd9b0daa21.txtp",
-    "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/2d36c0c2f0994f88979cd8422380aa6f57bdb3ca1e82b88b35fa6dcd9b0daa21.wav",
-    "source_sha256": "3c5a6bca9024f340139166c964e1d6631b07c32ebcd8f4cfb83434c8f95f22fe",
-    "txtp_sha256": "9e5f289beca98e4f1238bb0199fd2999aebb57f38865a03c1cf095ec679ecbf2"
   },
   {
     "file": "assets/audio/world/chaos/play_sfx_env_chaosturret_break01_r1.wav",

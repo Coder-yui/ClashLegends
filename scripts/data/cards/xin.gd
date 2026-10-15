@@ -74,8 +74,8 @@ static func definition() -> Dictionary:
 		# BEGIN IMPORTED AUDIO xin
 		"audio": {
 			"events": {
-				"deploy:voice": {"pool": ["res://assets/audio/units/xin/play_vo_xinzhao_xinzhaor_cast3d_r1_zh_cn.wav", "res://assets/audio/units/xin/play_vo_xinzhao_xinzhaor_cast3d_r2_zh_cn.wav", "res://assets/audio/units/xin/play_vo_xinzhao_xinzhaor_cast3d_r3_zh_cn.wav", "res://assets/audio/units/xin/play_vo_xinzhao_xinzhaor_cast3d_r4_zh_cn.wav"], "volume_db": 0.0, "bus": "Voice"},
-				"active:voice": {"pool": ["res://assets/audio/units/xin/play_vo_xinzhao_xinzhaor_cast3d_r1_zh_cn.wav", "res://assets/audio/units/xin/play_vo_xinzhao_xinzhaor_cast3d_r2_zh_cn.wav", "res://assets/audio/units/xin/play_vo_xinzhao_xinzhaor_cast3d_r3_zh_cn.wav", "res://assets/audio/units/xin/play_vo_xinzhao_xinzhaor_cast3d_r4_zh_cn.wav"], "volume_db": 0.0, "bus": "Voice"},
+				"deploy:voice": {"pool": ["res://assets/audio/units/xin/play_vo_xinzhao_xinzhaor_cast3d_r1_zh_cn.wav", "res://assets/audio/units/xin/play_vo_xinzhao_xinzhaor_cast3d_r2_zh_cn.wav", "res://assets/audio/units/xin/play_vo_xinzhao_xinzhaor_cast3d_r3_zh_cn.wav"], "volume_db": 0.0, "bus": "Voice"},
+				"active:voice": {"pool": ["res://assets/audio/units/xin/play_vo_xinzhao_xinzhaor_cast3d_r1_zh_cn.wav", "res://assets/audio/units/xin/play_vo_xinzhao_xinzhaor_cast3d_r2_zh_cn.wav", "res://assets/audio/units/xin/play_vo_xinzhao_xinzhaor_cast3d_r3_zh_cn.wav"], "volume_db": 0.0, "bus": "Voice"},
 				"deploy:hit": {"pool": ["res://assets/audio/units/xin/play_sfx_xinzhao_xinzhaor_hitlocation_knockback_r1.wav", "res://assets/audio/units/xin/play_sfx_xinzhao_xinzhaor_hitlocation_knockback_r2.wav"], "volume_db": 0.0, "bus": "Combat"},
 				"active:hit": {"pool": ["res://assets/audio/units/xin/play_sfx_xinzhao_xinzhaor_hitlocation_knockback_r1.wav", "res://assets/audio/units/xin/play_sfx_xinzhao_xinzhaor_hitlocation_knockback_r2.wav"], "volume_db": 0.0, "bus": "Combat"},
 				"deploy:start": {"pool": ["res://assets/audio/units/xin/play_sfx_xinzhao_xinzhaor_oncast_sweep.wav"], "volume_db": 0.0, "bus": "Combat"},
@@ -100,9 +100,9 @@ static func definition() -> Dictionary:
 			},
 			"attack_swing": [
 				[
-					"res://assets/audio/units/xin/play_sfx_xinzhao_xinzhaobasicattack_oncast_r1_d.wav",
-					"res://assets/audio/units/xin/play_sfx_xinzhao_xinzhaobasicattack_oncast_r2_d.wav",
-					"res://assets/audio/units/xin/play_sfx_xinzhao_xinzhaobasicattack_oncast_r3_d.wav"
+					"res://assets/audio/units/xin/play_sfx_xinzhao_xinzhaobasicattack2_oncast_r1.wav",
+					"res://assets/audio/units/xin/play_sfx_xinzhao_xinzhaobasicattack2_oncast_r2.wav",
+					"res://assets/audio/units/xin/play_sfx_xinzhao_xinzhaobasicattack2_oncast_r3.wav"
 				],
 				[
 					"res://assets/audio/units/xin/play_sfx_xinzhao_xinzhaobasicattack2_oncast_r1.wav",
@@ -116,17 +116,12 @@ static func definition() -> Dictionary:
 				]
 			],
 			"attack_swing_volume_db": 0.0,
-			"attack_hit": [
-				"res://assets/audio/units/xin/play_sfx_xinzhao_xinzhaobasicattack_onhit_1559186049_1153642577_r1_d.wav",
-				"res://assets/audio/units/xin/play_sfx_xinzhao_xinzhaobasicattack_onhit_1559186049_1153642577_r2_d.wav",
-				"res://assets/audio/units/xin/play_sfx_xinzhao_xinzhaobasicattack_onhit_1559186049_1153642577_r3_d.wav"
-			],
 			"attack_hit_volume_db": 0.0,
 			"attack_hit_by_segment": [
 				[
-					"res://assets/audio/units/xin/play_sfx_xinzhao_xinzhaobasicattack_onhit_1559186049_1153642577_r1_d.wav",
-					"res://assets/audio/units/xin/play_sfx_xinzhao_xinzhaobasicattack_onhit_1559186049_1153642577_r2_d.wav",
-					"res://assets/audio/units/xin/play_sfx_xinzhao_xinzhaobasicattack_onhit_1559186049_1153642577_r3_d.wav"
+					"res://assets/audio/units/xin/play_sfx_xinzhao_xinzhaobasicattack2_onhit_1559186049_1153642577_r1.wav",
+					"res://assets/audio/units/xin/play_sfx_xinzhao_xinzhaobasicattack2_onhit_1559186049_1153642577_r2.wav",
+					"res://assets/audio/units/xin/play_sfx_xinzhao_xinzhaobasicattack2_onhit_1559186049_1153642577_r3.wav"
 				],
 				[
 					"res://assets/audio/units/xin/play_sfx_xinzhao_xinzhaobasicattack2_onhit_1559186049_1153642577_r1.wav",
