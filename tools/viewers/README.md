@@ -70,3 +70,26 @@ python3 tools/dev.py studio --scene /绝对路径/model.glb
 点击特效页“拖动布置”后，左键在预览中移动当前特效，按住 Shift 再左键拖动调整朝向；单位放置模式也支持 Shift 拖动转向。位置与朝向数值随拖动同步。
 
 顶部“外部视角 · 布景”可从外部检查整体地图；相机模式下左键转头、中键平移、滚轮前进后退，“外部视角复位”恢复全场观察位置。两个视角均可布置对象。外部相机不改变横竖版拍摄机位；即使停留在外部视角，拍摄按钮仍输出拍摄相机画面。点击“拍摄视角”返回构图预览。
+
+摄影棚以 `--scene` 打开外部模型后，同样可以在“对象与动作”选择卡牌，点击“替换当前成员”或“添加成员”切换/组合。外部模型截图默认用源文件名命名。
+
+## 特效时间轴展台
+
+```sh
+python3 tools/dev.py effect
+python3 tools/dev.py effect --provider=res://assets/effects/kassadin/player.gd --variants=appear,vanish
+```
+
+直接使用项目粒子播放器，默认查看虚空行走。支持暂停/播放、重播、0.25/0.5/1倍速、拖动时间轴、1/120秒逐帧、粒子层开关、旋转/缩放、项目45度/俯视/侧视、实体地面开关及临时抬高。拖动时间轴会暂停；这些操作不保存到游戏。
+
+可复用范围：提供 `load_kind(kind)`、`setup_native(scale)`、`seek(age)` 和采样数据 `_data`、粒子池 `_pools`、帧缓存 `_frame` 的项目播放器；不是任意特效格式的通用导入器。默认使用源坐标的0.01缩放和单位投影，正式战场范围适配仍需工作台复核。输出诊断截图可传 `--capture-dir=<素材库内绝对路径>`。
+
+此工具沿用虚空先知HTML预览的时间轴/分层交互，使用Godot实际着色器复核项目遮挡。旧HTML原生模拟预览仍保留在素材库，不替换其源素材研究用途。
+
+深度状态接入检查（支持上述采样接口且提供静态资源清单与Shader选择方法的播放器）：
+
+```sh
+python3 tools/dev.py effect --provider=res://assets/effects/kassadin/player.gd --variants=appear,vanish,idle_blade --check-only
+```
+
+对照每层原始`miscRenderFlags & 1`与实际选择的Shader，遗漏、反向设置或未检查到粒子均失败。此命令不修改资源，也不替代渲染验收。

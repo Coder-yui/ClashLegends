@@ -13,6 +13,7 @@ COMMANDS = {
     'model': ('godot', 'tools/viewers/model_studio.gd', '模型动作展台与卡面摄影'),
     'studio': ('godot', 'tools/viewers/camera_studio.gd', '可调相机、灯光、背景并拍摄卡面的 3D 摄影棚'),
     'cover': ('godot', 'tools/viewers/cover_studio.gd', '真实峡谷封面摄影台：横竖画幅、多单位、动作与特效定格'),
+    'effect': ('godot', 'tools/viewers/effect_studio.gd', '特效时间轴、暂停逐帧、分层和地面遮挡检查'),
     'audio': ('python', 'tools/audio_review/serve.py', '目录或清单驱动的声音试听台'),
     'audio-prepare': ('python', 'tools/audio/prepare_lol_card_audio.py', '准备英雄原始音频事件工作目录'),
     'audio-import': ('python', 'tools/audio/import_card_audio.py', '按选定计划导入声音（先用 --dry-run）'),

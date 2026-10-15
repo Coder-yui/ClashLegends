@@ -52,3 +52,11 @@
 正式地图已使用assets/arena/rift_arena内的3D峡谷；可编辑制作源件仍位于项目根目录素材库的本地路径 `ClashLegends-开发素材库/03-制作中/3D地图/`。当前状态见 [竞技场](units/arena.md)，加工方法见该目录内的 `README.md`；美术场景不添加权威碰撞或导航。
 
 完整新卡接完模型与卡面后，还需 [音频接入](AUDIO_INTEGRATION.md) 和联合验收。
+
+## 原版粒子渲染状态接入
+
+新卡必须逐层保留并落实原始渲染状态，不能仅复制贴图、网格与颜色曲线。`miscRenderFlags & 1` 是关闭深度测试的标志，使用 `ParticleRenderPolicy.shader_path` 按层选择 `_no_depth.gdshader` 变体；未标记层保留深度遮挡，不能给整个效果统一关闭深度。`depth_draw_never` 仅禁止写入深度，不替代深度测试开关。
+
+同时核对混合方式、透明排序、深度偏移与软粒子参数；不支持的字段明确记录。运行材质与预加载清单必须共用 `resource_shader_path`。不以整体抬高或删除层掩盖渲染状态缺失。
+
+在通用特效展台以同一时刻对照有地面/无地面、逐层、项目机位/侧视；在实战检查双方、建筑/模型遮挡及结束清理。符合采样播放器接口的效果必须运行 `python3 tools/dev.py effect --provider=res://.../player.gd --variants=... --check-only`，它会对照源标志与实际选中着色器，并以非零退出码报告遗漏或空检查。该检查只覆盖深度测试映射，不替代其他渲染状态和实际观感验收。

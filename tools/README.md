@@ -15,6 +15,7 @@
 | 自己调机位拍卡面 | `python3 tools/dev.py studio --card garen` | [3D 摄影棚](viewers/README.md)：拖拽相机、编排多单位、调投影/灯光/背景、保存方案并按 `308×560` 卡面规格输出 PNG |
 | 拍真实峡谷封面 | `python3 tools/dev.py cover` | [封面摄影台](viewers/README.md)：多单位、多特效独立布景与定格，自由透视相机，横竖版构图与成片预览，布景手动保存/打开恢复，PNG 保存到桌面 |
 | 没有卡面时拍摄 | `python3 tools/dev.py model --capture …` | 同一个展台拍透明 PNG；先预览候选，已有卡面不覆盖 |
+| 暂停、拖动并分层查看特效 | `python3 tools/dev.py effect` | [特效展台](viewers/README.md#特效时间轴展台)：项目播放器、机位与地面遮挡对照 |
 | 临时听一批声音 | `python3 tools/dev.py audio` | [声音展台](audio_review/README.md)：目录或 manifest；筛选、波形、选段循环 |
 | 按中文台词找本地语音 | `python3 tools/audio/find_lol_voice.py --help` | [目录、事件解码与本地转写](audio/README.md) |
 | 准备或导入声音 | `audio-prepare` / `audio-import` | [音频工具](audio/README.md)，原始声音与游戏事件需明确对应 |
