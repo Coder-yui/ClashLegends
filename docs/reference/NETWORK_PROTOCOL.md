@@ -4,9 +4,9 @@
 
 | 契约 | 当前值 |
 | --- | --- |
-| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->114 |
+| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->115 |
 | 顶层快照项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd SNAPSHOT_PACKET_SIZE -->11 |
-| 单位载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd UNIT_PAYLOAD_SIZE -->63 |
+| 单位载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd UNIT_PAYLOAD_SIZE -->64 |
 | 塔载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd TOWER_PAYLOAD_SIZE -->7 |
 | 弹体载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd PROJECTILE_PAYLOAD_SIZE -->14 |
 
@@ -177,3 +177,7 @@ NetworkPlayback默认100ms，根据时钟RTT/抖动与事件/快照到达时差�
 协议113：追加 `U_BLIND`（62，bool），表示权威有效致盲标识。客户端只读绘制，不自主消费次数；非法类型拒绝整份快照。
 
 协议版本114：虚空先知裂隙开启后由CommandSchedule独立生成虚灵，受控到期延后开批；攻击时间线技能显式声明strike_type，技能出手不响应或消费致盲。单位载荷不变，出生与区域继续使用既有可靠事件及快照。
+
+### 协议115：瞬移同步
+
+单位载荷新增索引63 `teleport_serial`（非负整数），长度64。序号变化时客户端直接应用权威位置，不穿过中间路径；后续普通移动继续插值。技能无限使用通过定义的 `unlimited_uses` 识别，既有剩余次数字段只记录封顶序列进度，0不再代表无限技能失去资格；费用由双方按同一进度计算。

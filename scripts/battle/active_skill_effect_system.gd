@@ -37,6 +37,7 @@ func _init(controller: Node2D, presentation: SkillEffectPresentation) -> void:
 func prepare_cast(source: Unit, skill: Dictionary) -> Dictionary:
 	var prepared := skill.duplicate(true)
 	prepared["effect_delivery"] = CombatInteraction.Delivery.new()
+	if StringName(prepared.get("kind", "")) == &"blink_nova": prepared["cast_forward"] = frontal_forward(source)
 	if bool(prepared.get("uses_skill_resource", false)) and source.skill_resource_enabled and source.skill_resource_max > 0.0:
 		var resource_stacks := source.get_skill_resource_stacks()
 		var resource_ratio := source.get_skill_resource_ratio()
@@ -197,6 +198,18 @@ func _apply(source: Unit, skill: Dictionary) -> bool:
 					target.buffs.apply(&"ranged_attack", source.status_source("ranged_attack"), float(target_skill.duration), {"range_bonus": float(target_skill.get("range_bonus", 0.0)), "piercing": bool(target_skill.get("piercing_attacks", false)), "flight_distance": float(target_skill.get("piercing_distance", 0.0)), "projectile_speed_multiplier": float(target_skill.get("projectile_speed_multiplier", 1.0))})
 				if not bool(target_skill.get("shield_on_cast_start", false)):
 					target.add_shield(float(target_skill.get("shield", 0.0)), float(target_skill.get("shield_duration", target_skill.get("duration", 0.0))), bool(target_skill.get("shield_decay", false)), source.status_source("shield"))
+		&"blink_nova":
+			var origin := source.global_position
+			var direction: Vector2 = skill.get("cast_forward", frontal_forward(source))
+			# 配置为额外前延的基础距离，实时加上施法者半径；加2px覆盖结构分离间距及边界余量。
+			var extension := float(skill.landing_extension) + source.body_radius + 2.0 if skill.has("landing_extension") else 0.0
+			var landing := UnitLandingQuery.displacement_endpoint(source, origin, direction, float(skill.length), extension)
+			if not landing.is_finite(): return false
+			_presentation.present_fixed_area(origin, 65.0, 65.0, 3.0, source.team, &"riftwalk_vanish")
+			source.teleport_to(landing)
+			_presentation.present_fixed_area(landing, 65.0, 65.0, 3.0, source.team, &"riftwalk_appear")
+			activate_nova(source, skill)
+			source.battle_context.notify_unit_audio_event(source, &"active:land", landing)
 		&"nova":
 			activate_nova(source, skill)
 		&"summon":

@@ -8,7 +8,7 @@ class LaunchContext extends BattleContext:
 		return not blocked
 	func is_ground_segment_walkable(_from: Vector2, _to: Vector2, _radius: float, _excluded: Node = null) -> bool:
 		return not blocked
-	func find_ground_path(_from: Vector2, goal: Vector2, _target: Node2D, _radius: float) -> PackedVector2Array:
+	func find_ground_path(_from: Vector2, goal: Vector2, _target: Node2D, _radius: float, _crosses_river: bool = false) -> PackedVector2Array:
 		return PackedVector2Array([goal]) if not blocked else PackedVector2Array()
 
 func spawn(id: String, team: int, point: Vector2) -> Unit:

@@ -1524,7 +1524,8 @@ func is_ground_position_walkable(pos: Vector2, mover_radius: float, excluded: No
 			return false
 		if pos.y < mover_radius or pos.y > ArenaRules.FIELD_H - mover_radius:
 			return false
-	if not _is_ground_terrain_walkable(pos, mover_radius):
+	var crosses_river: bool = is_instance_valid(excluded) and excluded is Unit and excluded.river_traversal
+	if not crosses_river and not _is_ground_terrain_walkable(pos, mover_radius):
 		return false
 	if ignore_structures: return true
 	for c in get_tree().get_nodes_in_group("combat_structures"):
@@ -2102,7 +2103,7 @@ func _register_active_skill(unit: Unit, card_id: String, p_team: int) -> void:
 	if _is_local_player_team(p_team) and _active_skill_bar != null:
 		_active_skill_bar.show_skill(
 			active_slot, ability_id, String(carried_skill.name), stats.get("color", CardArt.DEFAULT_ACCENT),
-			float(carried_skill.get("cost", 0.0)), max_uses, max_uses, float(carried_skill.get("cooldown", 0.0)), unit.is_deployed(), CardArt.skill_icon(carried_skill)
+			float(carried_skill.get("cost", 0.0)), 0 if bool(carried_skill.get("unlimited_uses", false)) else max_uses, max_uses, float(carried_skill.get("cooldown", 0.0)), unit.is_deployed(), CardArt.skill_icon(carried_skill)
 		)
 
 ## 部署期间技能按钮保持不可点击；部署计时归零后只同步可用表现，不改变权威技能判定。
@@ -2123,7 +2124,7 @@ func _sync_active_skill_deployment_readiness() -> void:
 				float(entry.get("cooldown_left", 0.0)),
 				deployed,
 				_active_skills.cost(ability_id),
-				int(entry.get("max_uses", (entry.get("skill", {}) as Dictionary).get("max_uses", 1))),
+				0 if bool(entry.skill.get("unlimited_uses", false)) else int(entry.get("max_uses", 1)),
 				bool(entry.get("free_recast", false))
 			)
 
@@ -2343,10 +2344,26 @@ func unblock_nav_cells(cells: Array) -> void:
 
 ## 河道本身是硬障碍，A* 会自然选择总代价最低的桥。
 ## 不再拼接“桥入口 -> 桥出口”三段路径：单位踏上桥后重算时，旧实现会先把它拉回入口。
-func find_ground_path(from: Vector2, goal: Vector2, _target: Node2D, _mover_radius: float = ArenaRules.NAV_CLEARANCE) -> PackedVector2Array:
+var _river_nav: NavGrid
+var _river_nav_source: NavGrid
+var _river_nav_revision := -1
+func navigation_for_river() -> NavGrid:
+	if nav == null: return null
+	if _river_nav == null or _river_nav_source != nav or _river_nav_revision != nav.revision:
+		_river_nav = NavGrid.new()
+		_river_nav_source = nav
+		_river_nav_revision = nav.revision
+		var obstacles: Array = []
+		for structure in get_tree().get_nodes_in_group("combat_structures"):
+			if is_instance_valid(structure) and structure.hp > 0.0:
+				obstacles.append([structure.global_position, structure.body_radius + ArenaRules.NAV_CLEARANCE])
+		_river_nav.build(Vector2(ArenaRules.FIELD_W, ArenaRules.FIELD_H), -1000.0, 0.0, [], 0.0, obstacles)
+	return _river_nav
+
+func find_ground_path(from: Vector2, goal: Vector2, _target: Node2D, _mover_radius: float = ArenaRules.NAV_CLEARANCE, crosses_river: bool = false) -> PackedVector2Array:
 	if nav == null:
 		return PackedVector2Array()
-	return nav.find_path(from, goal)
+	return navigation_for_river().find_path(from, goal) if crosses_river else nav.find_path(from, goal)
 
 ## 单位死亡回调（由 unit._die 调用）：主机可靠广播死亡表现并立即清理映射。
 func on_unit_died(id: int, play_death_visual: bool = true) -> void:
@@ -2865,7 +2882,7 @@ func _rpc_frontal_skill_fx(epoch: String, net_id: int, pos: Vector2, forward: Ve
 	_skill_presentation.show_network_frontal({
 		"source_ref": null,
 		"net_id": net_id,
-		"fixed_position": shape in ["target_circle", "target_circle_strong", "star_impact", "star_impact_strong", "shockwave", "frost_storm", "aftershock"],
+		"fixed_position": shape in ["target_circle", "target_circle_strong", "star_impact", "star_impact_strong", "shockwave", "frost_storm", "aftershock", "riftwalk_appear", "riftwalk_vanish"],
 		"pos": pos,
 		"forward": forward.normalized(),
 		"source_radius": source_radius,

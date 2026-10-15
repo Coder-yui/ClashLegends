@@ -274,6 +274,8 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 func _process(delta: float) -> void:
 	if is_instance_valid(_source): visible = _source.visible_to_local_player()
 	_update_growth_mark()
+	if is_instance_valid(_model_root) and _model_root.has_method("advance_ambient_visual"):
+		_model_root.call("advance_ambient_visual", delta)
 	if is_instance_valid(_model_root) and _model_root.has_method("advance_hit_haste_visual"):
 		_model_root.call("advance_hit_haste_visual", not _dying and PresentationConfig.status_indicators_visible(_source) and _source.hit_haste_full_visual(), delta)
 	if is_instance_valid(_model_root) and _model_root.has_method("advance_skill_resource_visual"):

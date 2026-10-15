@@ -142,21 +142,21 @@ static func displacement_circles(unit: Unit) -> Array[Vector3]:
 		var structure: bool = other is Tower or (other is Unit and other.is_building)
 		if structure:
 			if unit.is_air or unit.terrain_traversal.enabled: continue
-		elif not other is Unit or other.is_air != unit.is_air or not CombatInteraction.in_stasis(other): continue
+		elif unit.ignores_unit_collision() or not other is Unit or other.is_air != unit.is_air or not CombatInteraction.in_stasis(other): continue
 		circles.append(Vector3(other.global_position.x, other.global_position.y,
 			unit.body_radius + other.body_radius + 0.002 + (ArenaRules.STRUCTURE_SEPARATION if structure else 0.0)))
 	return circles
 
 static func displacement_legal(unit: Unit, point: Vector2) -> bool:
-	return _legal(point, _regions(unit.body_radius, unit.is_air or unit.terrain_traversal.enabled), displacement_circles(unit))
+	return _legal(point, _regions(unit.body_radius, unit.is_air or unit.terrain_traversal.enabled or unit.river_traversal), displacement_circles(unit))
 
 static func displacement_recovery(unit: Unit, point: Vector2) -> Vector2:
-	return _nearest(point, unit.team, displacement_circles(unit), _regions(unit.body_radius, unit.is_air or unit.terrain_traversal.enabled), 0.02)
+	return _nearest(point, unit.team, displacement_circles(unit), _regions(unit.body_radius, unit.is_air or unit.terrain_traversal.enabled or unit.river_traversal), 0.02)
 
 ## 在一条有限线段上枚举几何边界，不以采样步长漏掉狭窄合法区间。
 ## 优先原终点，其次向前最近合法点，再退回起点方向；无解INF。
 static func displacement_endpoint(unit: Unit, origin: Vector2, direction: Vector2, distance: float, extension: float) -> Vector2:
-	var regions := _regions(unit.body_radius, unit.is_air or unit.terrain_traversal.enabled)
+	var regions := _regions(unit.body_radius, unit.is_air or unit.terrain_traversal.enabled or unit.river_traversal)
 	var circles := displacement_circles(unit)
 	var candidates: Array[float] = [distance, 0.0, distance + extension]
 	for region in regions:

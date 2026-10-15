@@ -41,8 +41,8 @@ func simulation_tick() -> int:
 func simulation_interpolation_alpha() -> float:
 	return _controller.get_sim_interpolation_alpha()
 
-func navigation() -> NavGrid:
-	return _controller.nav
+func navigation(crosses_river: bool = false) -> NavGrid:
+	return _controller.navigation_for_river() if crosses_river else _controller.nav
 
 func field_width() -> float:
 	return float(ArenaRules.FIELD_W)
@@ -59,8 +59,8 @@ func is_ground_position_walkable(position: Vector2, mover_radius: float, exclude
 func is_ground_segment_walkable(from: Vector2, to: Vector2, mover_radius: float, excluded: Node = null) -> bool:
 	return _controller.is_ground_segment_walkable(from, to, mover_radius, excluded)
 
-func find_ground_path(from: Vector2, goal: Vector2, target: Node2D, mover_radius: float) -> PackedVector2Array:
-	return _controller.find_ground_path(from, goal, target, mover_radius)
+func find_ground_path(from: Vector2, goal: Vector2, target: Node2D, mover_radius: float, crosses_river: bool = false) -> PackedVector2Array:
+	return _controller.find_ground_path(from, goal, target, mover_radius, crosses_river)
 
 func launch_attack(attacker: Node2D, target: Node2D, amount: float, projectile_speed: float, splash_radius: float, knockback: float, projectile_color: Color, effects: Dictionary = {}) -> bool:
 	return _controller.launch_attack(attacker, target, amount, projectile_speed, splash_radius, knockback, projectile_color, effects)

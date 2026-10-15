@@ -293,3 +293,10 @@ buff主动的`ignore_unit_collision=true`以StatusInstances独立窗口控制普
 ### 限时死亡生成主动
 
 `death_spawn` 使用 `duration`、`spawn_id` 与 `target_scope`；给目标存活成员写入独立20Hz窗口。真实死亡时走BattleContext生成一只独立单位，窗口到期不生成，新单位不继承再生或主动资格。字段引用进入资源计划递归和卡牌校验。远程虚空鱼使用3秒窗口。
+
+
+## 浮空地面与封顶瞬移
+
+river_traversal只放开河流，普通单位仍保留结构阻挡、地面索敌和地面受击。永久permanent_unit_phasing复用普通单位避让/接触/扫掠过滤；不跳过建筑和塔。浮空导航按结构导航revision重建缓存，桥不再是唯一通道。
+
+blink_nova在CastStart固定朝向，在impact_delay节点通过UnitLandingQuery选择有限线段上最近合法终点，瞬移后调用通用nova伤害。unlimited_uses允许max_uses之后继续施法；max_uses在这种配置中代表费用/伤害序列长度，cost_by_use与damage_by_use到最后一项后封顶。ActiveSkillRoster持有进度、付款和快照复用现有接口；UI显示次数不限。瞬移序号独立同步，避免客户端将传送插值成滑行。

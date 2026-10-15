@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3]
+[ext_resource type="PackedScene" path="res://assets/units/kassadin/source/kassadin.glb" id="1"]
+[ext_resource type="Script" path="res://assets/units/kassadin/kassadin_view.gd" id="2"]
+[node name="KassadinView" type="Node3D"]
+script = ExtResource("2")
+[node name="Model" parent="." instance=ExtResource("1")]
+position = Vector3(0, 0.4, 0)
+scale = Vector3(1.1, 1.1, 1.1)

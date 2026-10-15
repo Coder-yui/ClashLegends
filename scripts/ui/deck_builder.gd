@@ -770,6 +770,13 @@ func _update_active_skill_rules(skill: Dictionary) -> void:
 		CardDetails.format_number(maxf(float(skill.get("cooldown", 0.0)), 0.0)),
 	]
 
+	if bool(skill.get("unlimited_uses", false)):
+		_deck_info_active_uses_label.text = "%s：次数不限 · 冷却 %s秒" % [owner_label, CardDetails.format_number(float(skill.get("cooldown", 0.0)))]
+	if skill.has("cost_by_use"):
+		var costs := PackedStringArray()
+		for amount in skill.cost_by_use: costs.append(CardDetails.format_number(float(amount)))
+		_deck_info_active_cost_label.text = "金币消耗：" + " → ".join(costs) + ("（封顶）" if bool(skill.get("unlimited_uses", false)) else "")
+
 func _on_info_active_skill_selected(skill_index: int, card_id: String) -> void:
 	var skills := CardDB.active_skills_for(card_id)
 	if skills.is_empty():

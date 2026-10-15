@@ -1,0 +1,25 @@
+{
+  "model_source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/05-已完成/虚空行者/源件/虚空行者.glb",
+  "model_sha256": "774bbc67b60a5d2dc9e69ccf1df4a9b88594574368272546576b7268ce2cfb62",
+  "card_art_source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空行者/base-assets/assets/characters/kassadin/skins/base/kassadinloadscreen_0.tex",
+  "card_art_sha256": "149ace4d69588340d57eb458b452940a9733cb9afa228da37500fe73603f8863",
+  "scale": 1.1,
+  "native_bounds": [
+    [
+      -0.907,
+      -0.155,
+      -0.704
+    ],
+    [
+      0.907,
+      1.846,
+      0.499
+    ]
+  ],
+  "hidden_meshes": "源配置未声明隐藏子网格，GLB仅一个可见网格",
+  "model_original_queue_path": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/01-待开发/卡牌模型/虚空行者.glb",
+  "visual_lift": 0.4,
+  "native_particle_scale": 0.0085,
+  "native_particle_scale_evidence": "Root local Y: original SKL 117.63899993896484, supplied GLB 0.9999315; ratio 0.0085",
+  "ambient_weapon_bone": "BUFFBONE_GLB_WEAPON_1"
+}

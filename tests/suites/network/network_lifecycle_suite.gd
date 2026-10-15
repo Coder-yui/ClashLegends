@@ -30,6 +30,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_building_health_decay()
 	_check_hit_haste_visual_snapshot()
 	_check_soft_control_snapshot()
+	_check_teleport_snapshot()
 	_check_dynamic_action_clock()
 	_check_bleeding_projection()
 	_check_true_death_projection()
@@ -639,3 +640,24 @@ func _check_true_death_projection() -> void:
 	_spawn(egg)
 	_deliver(46, [soldier, dragon, bird])
 	_expect(not _main._client_units.has(78004) and _main._client_units.has(78005) and _main._client_units.size() == 3, "孵化删除蛋并生成冰鸟，迟到蛋Spawn不复活或生成额外转化物")
+
+func _check_teleport_snapshot() -> void:
+	_system.reset_session("teleport")
+	var data := _payload("kassadin", 79140, 1)
+	_deliver(2,[data])
+	var replica: Unit = _main._client_units[79140]
+	data[SNAP.U_X] = 400.0
+	data[SNAP.U_Y] = 640.0
+	data[SNAP.U_TELEPORT_SERIAL] = 1
+	_deliver(3,[data])
+	_expect(replica.position == Vector2(400,640) and replica.teleport_serial == 1,"瞬移快照直接应用位置与序号")
+	data[SNAP.U_X] = 403.0
+	_deliver(4,[data])
+	_expect(replica.position == Vector2(400,640) and replica.net_target_pos == Vector2(403,640),"同序号普通移动保留插值")
+	data[SNAP.U_TELEPORT_SERIAL] = -1
+	_deliver(5,[data])
+	_expect(_system.lifecycle.snapshot_tick == 4,"负瞬移序号拒绝整包")
+	data[SNAP.U_TELEPORT_SERIAL] = 1.5
+	_deliver(5,[data])
+	_expect(_system.lifecycle.snapshot_tick == 4,"非整数瞬移序号拒绝整包")
+	_system.reset_session("")

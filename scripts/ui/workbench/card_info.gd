@@ -59,7 +59,7 @@ func show_card(id: String, stats: Dictionary) -> void:
 			icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 			heading.add_child(icon)
 		_text(String(skill.get("name", "主动技能")), 20, heading)
-		_text("消耗 %s · %d 次 · 冷却 %ss" % [CardDetails.format_number(float(skill.get("cost", 0))), int(skill.get("max_uses", 1)), CardDetails.format_number(float(skill.get("cooldown", 0)))], 16, section)
+		_text("消耗 %s · %s · 冷却 %ss" % [CardDetails.format_number(float(skill.get("cost", 0))), ("次数不限" if bool(skill.get("unlimited_uses", false)) else "%d 次" % int(skill.get("max_uses", 1))), CardDetails.format_number(float(skill.get("cooldown", 0)))], 16, section)
 		_text(CardDetails.active_choice_description(id, i), 16, section)
 	var upgraded_id := String(stats.get("deployment_upgrade_id", ""))
 	if not upgraded_id.is_empty():

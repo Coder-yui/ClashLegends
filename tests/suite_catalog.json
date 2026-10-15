@@ -509,5 +509,12 @@
     "method": "run",
     "scene": "battle",
     "group": "cards"
+  },
+  {
+    "id": "KassadinSuite",
+    "script": "res://tests/suites/cards/kassadin_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "cards"
   }
 ]

@@ -1,0 +1,60 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Kassadin.wad.client",
+  "source_entry": "be30119e19e9eaae",
+  "source_wad_hash": "be30119e19e9eaae",
+  "source_binary_sha256": "00c19058ce2e3fab6ae2e8dd88577bf963c7e6e411f90301cde1939349b07261",
+  "system": "Characters/Kassadin/Skins/Skin0/Particles/Kassadin_Base_R_vanish",
+  "reader_revision": "c06b5bb1dba458a358628b0fd1ddef3a58a4ba43",
+  "assets": {
+    "assets/characters/kassadin/skins/base/particles/circle-flares.tex": {
+      "source_sha256": "5d70095596084ea767596bf0d58d5ee391ddf8bd631674aa0a8b4e5d1aa6ac16",
+      "output": "assets/characters/kassadin/skins/base/particles/circle-flares.png",
+      "output_sha256": "fa693d8bdf563df2bad37356c6a170ac443f377ae02791c14a73d33df5baa6fc"
+    },
+    "assets/characters/kassadin/skins/base/particles/ball32_02.tex": {
+      "source_sha256": "0976c09543b07b12fedbaad697c1bb82885289b48c16ba6428d5fa0ad9e54b1d",
+      "output": "assets/characters/kassadin/skins/base/particles/ball32_02.png",
+      "output_sha256": "a87624882232dee86f157c9d17b2a025c761004cfd4cd986537bba13217a0a6b"
+    },
+    "assets/characters/kassadin/skins/base/particles/kassadin_base_z_spikyball.scb": {
+      "source_sha256": "584010e80b13feb9b1463376cd816dcfda1a0f24d84df2fbfeb18edcda33468d",
+      "output": "assets/characters/kassadin/skins/base/particles/kassadin_base_z_spikyball.mesh.json",
+      "output_sha256": "a419c7cf0bcbe9e4ad35055546fc70cc78e458c2230b9248dd6021fadb4c1215"
+    },
+    "assets/characters/kassadin/skins/base/particles/color-hold.tex": {
+      "source_sha256": "bc06557b44402fee1498430bd4008df9598085f44b29fea2f02218473674b2f8",
+      "output": "assets/characters/kassadin/skins/base/particles/color-hold.png",
+      "output_sha256": "62ed85b52d6f757f5322176cb24ccfa294cb145ba9f1978bbf6ba479341f45a8"
+    },
+    "assets/characters/kassadin/skins/base/particles/kassadin_base_z_voidbackground_02.tex": {
+      "source_sha256": "e5d1548a7d3de7cfbc90ab41a0ba89ec4c7339d598598786b92a18e4529cb88c",
+      "output": "assets/characters/kassadin/skins/base/particles/kassadin_base_z_voidbackground_02.png",
+      "output_sha256": "85081c935d5cc934e9477f60dbac4574f77fa7f26274e309304b3700793b4eea"
+    },
+    "assets/characters/kassadin/skins/base/particles/color-bellcurve32.tex": {
+      "source_sha256": "e82fa00ed0aea98ab6229d0b27f37a57249db6b0ad4d17c9efbe1f658a641e4a",
+      "output": "assets/characters/kassadin/skins/base/particles/color-bellcurve32.png",
+      "output_sha256": "ee239ba9869e1a7ccb91d0248dd2c822db98275f6a68b39c87c8e48e256e8823"
+    },
+    "assets/characters/kassadin/skins/base/particles/distort-pinch.tex": {
+      "source_sha256": "8a6a7056ff92bd8569843c4a68f60ba6528ea88451d0d78a0fbb0f53c39bfe40",
+      "output": "assets/characters/kassadin/skins/base/particles/distort-pinch.png",
+      "output_sha256": "ecf917d6d84efb1cc7763bbd796440e1b25e65a783cc8dd0f4407f54fd96e89e"
+    },
+    "assets/characters/kassadin/skins/base/particles/aura_self.tex": {
+      "source_sha256": "41241eafa700d7aa8a280bc7d943c090005324d146d33777a5b8b4bda3ab977b",
+      "output": "assets/characters/kassadin/skins/base/particles/aura_self.png",
+      "output_sha256": "9d1c0afae3a4040376460a1809143487b39bafa5e0d59448ca4c22bcde7dadd9"
+    },
+    "assets/characters/kassadin/skins/base/particles/color-rampdown.tex": {
+      "source_sha256": "3fac764e02b2cb8dc91ff01feb7401681e8dffd631f9661a3452d210eea43220",
+      "output": "assets/characters/kassadin/skins/base/particles/color-rampdown.png",
+      "output_sha256": "9e89131a3255bff92c4488d6c42d9461d416efadf75ca9909b549ed05bdefb50"
+    },
+    "assets/characters/kassadin/skins/base/particles/voidslash.tex": {
+      "source_sha256": "fd50f8d9eed48761d517a556bb9ab7223e9719014bdefade8a3d79e530e7d63e",
+      "output": "assets/characters/kassadin/skins/base/particles/voidslash.png",
+      "output_sha256": "55a917faddae315cdbaea58e8727b7b8d9c79877fe2175a54d45871d00816125"
+    }
+  }
+}

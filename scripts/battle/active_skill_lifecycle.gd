@@ -65,4 +65,4 @@ static func is_offensive(skill: Dictionary) -> bool:
 	var kind := StringName(skill.get("kind", ""))
 	if kind == &"buff":
 		return float(skill.get("damage_multiplier", 1.0)) > 1.0 or float(skill.get("attack_speed_multiplier", 1.0)) > 1.0 or bool(skill.get("piercing_attacks", false))
-	return kind in [&"channeled_attack", &"sacrifice_empower", &"aftershock", &"frontal", &"forward_area", &"continuous_area", &"nova", &"dash_strike", &"terrain_charge", &"bleeding_execute", &"empowered_attack", &"explosive_shield", &"attack_lifesteal", &"timed_form"]
+	return kind in [&"blink_nova", &"channeled_attack", &"sacrifice_empower", &"aftershock", &"frontal", &"forward_area", &"continuous_area", &"nova", &"dash_strike", &"terrain_charge", &"bleeding_execute", &"empowered_attack", &"explosive_shield", &"attack_lifesteal", &"timed_form"]

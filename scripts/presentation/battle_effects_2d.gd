@@ -139,7 +139,7 @@ func _draw_frontal_skill_effect(effect: Dictionary) -> void:
 		projectile_progress = clampf(projectile_elapsed / projectile_flight_duration, 0.0, 1.0)
 	var line_color := Color(0.28, 0.68, 1.0, 0.9) if int(effect.get("team", 0)) == 0 else Color(1.0, 0.34, 0.24, 0.9)
 	var fill_color := Color(line_color.r, line_color.g, line_color.b, 0.10 + 0.06 * remaining_ratio)
-	if shape == &"aftershock": return # 由3D原版余震粒子播放器消费。
+	if shape in [&"aftershock", &"riftwalk_appear", &"riftwalk_vanish"]: return # 由3D原版余震粒子播放器消费。
 	if shape == &"trapezoid" and source is Unit and source.card_id == "sett": return
 	if shape == &"shield_explosion": return # 3D 原版 W 粒子读取同一表现事件。
 

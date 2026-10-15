@@ -67046,6 +67046,721 @@
       "duration": 1.3580208333333332,
       "float_peak": 0.12676496803760529,
       "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/kassadin/play_sfx_kassadin_kassadinbasicattack_oncast_r1_d.wav",
+      "sha256": "e1a719150865920327585fe296fa9a591ae6e1cb093bd5cb8b1d5caaa67ca6c7",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空行者/audio-source/kassadin/txtp/Play_sfx_Kassadin_KassadinBasicAttack_OnCast {r1} {d}.txtp",
+          "event_ids": [
+            "4256686878"
+          ],
+          "media_ids": [
+            81728881,
+            144144387,
+            466321676,
+            610637764
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空行者/audio-source/kassadin/event_wav/Play_sfx_Kassadin_KassadinBasicAttack_OnCast {r1} {d}.wav"
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false
+      },
+      "duration": 0.75,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/kassadin/play_sfx_kassadin_kassadinbasicattack_oncast_r2_d.wav",
+      "sha256": "45670057ce9817221f43f1d84330205849f5ea599092a8e5dd1c547b1cec4070",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空行者/audio-source/kassadin/txtp/Play_sfx_Kassadin_KassadinBasicAttack_OnCast {r2} {d}.txtp",
+          "event_ids": [
+            "4256686878"
+          ],
+          "media_ids": [
+            81728881,
+            144144387,
+            466321676,
+            610637764
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空行者/audio-source/kassadin/event_wav/Play_sfx_Kassadin_KassadinBasicAttack_OnCast {r2} {d}.wav"
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false
+      },
+      "duration": 0.75,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/kassadin/play_sfx_kassadin_kassadinbasicattack_oncast_r3_d.wav",
+      "sha256": "5af53d8bcb0b966f5d8a88048ddabbca5ba92cab631be3c948f0362a5d2e954c",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空行者/audio-source/kassadin/txtp/Play_sfx_Kassadin_KassadinBasicAttack_OnCast {r3} {d}.txtp",
+          "event_ids": [
+            "4256686878"
+          ],
+          "media_ids": [
+            81728881,
+            144144387,
+            466321676,
+            610637764
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空行者/audio-source/kassadin/event_wav/Play_sfx_Kassadin_KassadinBasicAttack_OnCast {r3} {d}.wav"
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false
+      },
+      "duration": 0.75,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/kassadin/play_sfx_kassadin_kassadinbasicattack2_oncast_r1.wav",
+      "sha256": "e1a719150865920327585fe296fa9a591ae6e1cb093bd5cb8b1d5caaa67ca6c7",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空行者/audio-source/kassadin/txtp/Play_sfx_Kassadin_KassadinBasicAttack2_OnCast {r1}.txtp",
+          "event_ids": [
+            "3492068262"
+          ],
+          "media_ids": [
+            81728881,
+            144144387,
+            466321676,
+            610637764
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空行者/audio-source/kassadin/event_wav/Play_sfx_Kassadin_KassadinBasicAttack2_OnCast {r1}.wav"
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false
+      },
+      "duration": 0.75,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/kassadin/play_sfx_kassadin_kassadinbasicattack2_oncast_r2.wav",
+      "sha256": "45670057ce9817221f43f1d84330205849f5ea599092a8e5dd1c547b1cec4070",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空行者/audio-source/kassadin/txtp/Play_sfx_Kassadin_KassadinBasicAttack2_OnCast {r2}.txtp",
+          "event_ids": [
+            "3492068262"
+          ],
+          "media_ids": [
+            81728881,
+            144144387,
+            466321676,
+            610637764
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空行者/audio-source/kassadin/event_wav/Play_sfx_Kassadin_KassadinBasicAttack2_OnCast {r2}.wav"
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false
+      },
+      "duration": 0.75,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/kassadin/play_sfx_kassadin_kassadinbasicattack2_oncast_r3.wav",
+      "sha256": "5af53d8bcb0b966f5d8a88048ddabbca5ba92cab631be3c948f0362a5d2e954c",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空行者/audio-source/kassadin/txtp/Play_sfx_Kassadin_KassadinBasicAttack2_OnCast {r3}.txtp",
+          "event_ids": [
+            "3492068262"
+          ],
+          "media_ids": [
+            81728881,
+            144144387,
+            466321676,
+            610637764
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空行者/audio-source/kassadin/event_wav/Play_sfx_Kassadin_KassadinBasicAttack2_OnCast {r3}.wav"
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false
+      },
+      "duration": 0.75,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/kassadin/play_sfx_kassadin_kassadinbasicattack_onhit_r1_d.wav",
+      "sha256": "69721ef934742ba4c435ca65111ff91c796823d4e2770ad3716c70eb6f20ac63",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空行者/audio-source/kassadin/txtp/Play_sfx_Kassadin_KassadinBasicAttack_OnHit {r1} {d}.txtp",
+          "event_ids": [
+            "3980458410"
+          ],
+          "media_ids": [
+            308442531,
+            522616430,
+            592767397,
+            633853976
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空行者/audio-source/kassadin/event_wav/Play_sfx_Kassadin_KassadinBasicAttack_OnHit {r1} {d}.wav"
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false
+      },
+      "duration": 0.950794,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/kassadin/play_sfx_kassadin_kassadinbasicattack_onhit_r2_d.wav",
+      "sha256": "61d1a5851c406869786148103a612626ebcb1b478261770139bc43ae7c5f2a6c",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空行者/audio-source/kassadin/txtp/Play_sfx_Kassadin_KassadinBasicAttack_OnHit {r2} {d}.txtp",
+          "event_ids": [
+            "3980458410"
+          ],
+          "media_ids": [
+            308442531,
+            522616430,
+            592767397,
+            633853976
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空行者/audio-source/kassadin/event_wav/Play_sfx_Kassadin_KassadinBasicAttack_OnHit {r2} {d}.wav"
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false
+      },
+      "duration": 0.961383,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/kassadin/play_sfx_kassadin_kassadinbasicattack_onhit_r3_d.wav",
+      "sha256": "fa12b8d0c996f94d043cef5881aeb9591bfa45a399ef3039aabd4b775f1170c4",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空行者/audio-source/kassadin/txtp/Play_sfx_Kassadin_KassadinBasicAttack_OnHit {r3} {d}.txtp",
+          "event_ids": [
+            "3980458410"
+          ],
+          "media_ids": [
+            308442531,
+            522616430,
+            592767397,
+            633853976
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空行者/audio-source/kassadin/event_wav/Play_sfx_Kassadin_KassadinBasicAttack_OnHit {r3} {d}.wav"
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false
+      },
+      "duration": 0.985283,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/kassadin/play_sfx_kassadin_kassadinbasicattack2_onhit_r1.wav",
+      "sha256": "69721ef934742ba4c435ca65111ff91c796823d4e2770ad3716c70eb6f20ac63",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空行者/audio-source/kassadin/txtp/Play_sfx_Kassadin_KassadinBasicAttack2_OnHit {r1}.txtp",
+          "event_ids": [
+            "3056257282"
+          ],
+          "media_ids": [
+            308442531,
+            522616430,
+            592767397,
+            633853976
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空行者/audio-source/kassadin/event_wav/Play_sfx_Kassadin_KassadinBasicAttack2_OnHit {r1}.wav"
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false
+      },
+      "duration": 0.950794,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/kassadin/play_sfx_kassadin_kassadinbasicattack2_onhit_r2.wav",
+      "sha256": "61d1a5851c406869786148103a612626ebcb1b478261770139bc43ae7c5f2a6c",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空行者/audio-source/kassadin/txtp/Play_sfx_Kassadin_KassadinBasicAttack2_OnHit {r2}.txtp",
+          "event_ids": [
+            "3056257282"
+          ],
+          "media_ids": [
+            308442531,
+            522616430,
+            592767397,
+            633853976
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空行者/audio-source/kassadin/event_wav/Play_sfx_Kassadin_KassadinBasicAttack2_OnHit {r2}.wav"
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false
+      },
+      "duration": 0.961383,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/kassadin/play_sfx_kassadin_kassadinbasicattack2_onhit_r3.wav",
+      "sha256": "fa12b8d0c996f94d043cef5881aeb9591bfa45a399ef3039aabd4b775f1170c4",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空行者/audio-source/kassadin/txtp/Play_sfx_Kassadin_KassadinBasicAttack2_OnHit {r3}.txtp",
+          "event_ids": [
+            "3056257282"
+          ],
+          "media_ids": [
+            308442531,
+            522616430,
+            592767397,
+            633853976
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空行者/audio-source/kassadin/event_wav/Play_sfx_Kassadin_KassadinBasicAttack2_OnHit {r3}.wav"
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false
+      },
+      "duration": 0.985283,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/kassadin/play_sfx_kassadin_riftwalk_oncast_r1.wav",
+      "sha256": "f730f57e1fb0cb5621b8360d4fe0eb090a14d7c709445bbb362c274ca229f8dd",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空行者/audio-source/kassadin/txtp/Play_sfx_Kassadin_RiftWalk_OnCast {r1}.txtp",
+          "event_ids": [
+            "3455635748"
+          ],
+          "media_ids": [
+            417338590,
+            646587089,
+            1032762839
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空行者/audio-source/kassadin/event_wav/Play_sfx_Kassadin_RiftWalk_OnCast {r1}.wav"
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false
+      },
+      "duration": 1.440136,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/kassadin/play_sfx_kassadin_riftwalk_oncast_r2.wav",
+      "sha256": "f73ab4a8aba6cca9b0f250e7892c6fcc66244b226993dfc208412abf7d945f1f",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空行者/audio-source/kassadin/txtp/Play_sfx_Kassadin_RiftWalk_OnCast {r2}.txtp",
+          "event_ids": [
+            "3455635748"
+          ],
+          "media_ids": [
+            417338590,
+            646587089,
+            1032762839
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空行者/audio-source/kassadin/event_wav/Play_sfx_Kassadin_RiftWalk_OnCast {r2}.wav"
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false
+      },
+      "duration": 2.208322,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/kassadin/play_sfx_kassadin_riftwalk_oncast_r3.wav",
+      "sha256": "9ad1b62586f59aec67966bbb9596c34338314aec4fa87899eaae4adfac04a5cc",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空行者/audio-source/kassadin/txtp/Play_sfx_Kassadin_RiftWalk_OnCast {r3}.txtp",
+          "event_ids": [
+            "3455635748"
+          ],
+          "media_ids": [
+            417338590,
+            646587089,
+            1032762839
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空行者/audio-source/kassadin/event_wav/Play_sfx_Kassadin_RiftWalk_OnCast {r3}.wav"
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false
+      },
+      "duration": 2.444444,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/kassadin/play_sfx_kassadin_riftwalk_buffactivate_r1.wav",
+      "sha256": "fd7bbcf7e0b675a0e81502309b29e9e787c6fa84976940daee6aba468f96ace6",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空行者/audio-source/kassadin/txtp/Play_sfx_Kassadin_RiftWalk_buffactivate {r1}.txtp",
+          "event_ids": [
+            "919923950"
+          ],
+          "media_ids": [
+            554367314,
+            891824491
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空行者/audio-source/kassadin/event_wav/Play_sfx_Kassadin_RiftWalk_buffactivate {r1}.wav"
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false
+      },
+      "duration": 1.79966,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/kassadin/play_sfx_kassadin_riftwalk_buffactivate_r2.wav",
+      "sha256": "260e6645db316a8a3ce98f9778595304a9524b64582f0627dd860bcdb71911b3",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空行者/audio-source/kassadin/txtp/Play_sfx_Kassadin_RiftWalk_buffactivate {r2}.txtp",
+          "event_ids": [
+            "919923950"
+          ],
+          "media_ids": [
+            554367314,
+            891824491
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空行者/audio-source/kassadin/event_wav/Play_sfx_Kassadin_RiftWalk_buffactivate {r2}.wav"
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained",
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false
+      },
+      "duration": 2.100476,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/kassadin/play_vo_kassadin_death3d_r1_zh_cn.wav",
+      "sha256": "db7952211a15c9c25fd9b17358ad007dff508cc69645ddbe7a389aa1794f3afc",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空行者/audio-source/kassadin_vo/txtp/Play_vo_Kassadin_Death3D {r1}.txtp",
+          "event_ids": [
+            "4049121528"
+          ],
+          "media_ids": [
+            111346250,
+            245430982,
+            1486524238,
+            1744714335
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空行者/audio-source/kassadin_vo/event_wav/Play_vo_Kassadin_Death3D {r1}.wav"
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false
+      },
+      "duration": 1.5,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/kassadin/play_vo_kassadin_death3d_r2_zh_cn.wav",
+      "sha256": "d160a574c590c51d4af82c523ee3b94ec83bb57dd9cbff32ea4ee4e0ae5688bb",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空行者/audio-source/kassadin_vo/txtp/Play_vo_Kassadin_Death3D {r2}.txtp",
+          "event_ids": [
+            "4049121528"
+          ],
+          "media_ids": [
+            111346250,
+            245430982,
+            1486524238,
+            1744714335
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空行者/audio-source/kassadin_vo/event_wav/Play_vo_Kassadin_Death3D {r2}.wav"
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false
+      },
+      "duration": 1.5,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/kassadin/play_vo_kassadin_death3d_r3_zh_cn.wav",
+      "sha256": "ef7a963619645d948337dd1f868ce95ed13dc8b6b6092efddaa7451bdb068848",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空行者/audio-source/kassadin_vo/txtp/Play_vo_Kassadin_Death3D {r3}.txtp",
+          "event_ids": [
+            "4049121528"
+          ],
+          "media_ids": [
+            111346250,
+            245430982,
+            1486524238,
+            1744714335
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空行者/audio-source/kassadin_vo/event_wav/Play_vo_Kassadin_Death3D {r3}.wav"
+        }
+      ],
+      "processing": {
+        "description": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+        "sample_rate": 44100,
+        "channels": 1,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": 0.0,
+        "normalization": false,
+        "original_ogg": false
+      },
+      "duration": 1.5,
+      "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/units/kassadin/deploy.ogg",
+      "sha256": "560512e6244249e0ac4b77a1d53bec2279c54883b742bf39b1e2431ba454818b",
+      "source_events": [],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空行者/deploy-source/plugins/rcp-be-lol-game-data/global/zh_cn/v1/champion-choose-vo/38.ogg"
+        }
+      ],
+      "processing": {
+        "description": "Original OGG copied unchanged; runtime client voice compensation -13.5 dB",
+        "sample_rate": 48000,
+        "channels": 2,
+        "tool_master_gain_db": 0.0,
+        "post_gain_db": 0.0,
+        "runtime_gain_db": -13.5,
+        "normalization": false,
+        "original_ogg": true
+      },
+      "duration": 5.948458,
+      "verified_by_listening": false
     }
   ]
 }

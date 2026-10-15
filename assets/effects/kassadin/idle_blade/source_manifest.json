@@ -1,0 +1,35 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Kassadin.wad.client",
+  "source_entry": "1f763d8663eaf5f0",
+  "source_wad_hash": "1f763d8663eaf5f0",
+  "source_binary_sha256": "fa5ad794c5174a024d3a2f9b7909f307477e8a1844e5ac8022ef767d6a95a48d",
+  "system": "Characters/Kassadin/Skins/Skin0/Particles/Kassadin_Base_idle_blade",
+  "reader_revision": "c06b5bb1dba458a358628b0fd1ddef3a58a4ba43",
+  "assets": {
+    "assets/characters/kassadin/skins/base/particles/kassadin_base_blademesh.scb": {
+      "source_sha256": "1f954572dbdb947dcc4ae05c213d4854f525a0c02d7640b3993a4a20d11d5fdf",
+      "output": "assets/characters/kassadin/skins/base/particles/kassadin_base_blademesh.mesh.json",
+      "output_sha256": "2ba9171440986bf65bd7d698ed28b657ab0948a82359106b8f615447645b0dd7"
+    },
+    "assets/characters/kassadin/skins/base/particles/kassadin_base_z_voidbackground_04.tex": {
+      "source_sha256": "55a40503d95c6f109b39d33ed201f3aab6990f7109fd7bfc648f3d79aa8cd99c",
+      "output": "assets/characters/kassadin/skins/base/particles/kassadin_base_z_voidbackground_04.png",
+      "output_sha256": "408e0ea7fe00f6084c076efbff87c51ba06a4041c36d53aa391288d4e82116a5"
+    },
+    "assets/characters/kassadin/skins/base/particles/kassadin_base_idle_blade.tex": {
+      "source_sha256": "3772a1aa6a92ff739c2ba4d729c8ca84052ecb0520208230c5d435212278662b",
+      "output": "assets/characters/kassadin/skins/base/particles/kassadin_base_idle_blade.png",
+      "output_sha256": "537c106f80913e6d15415e293579f3a4d7d335d347dd26c590323c435a30ed47"
+    },
+    "assets/characters/kassadin/skins/base/particles/kassadin_base_blademesh_outerglow.scb": {
+      "source_sha256": "37db0b86b4524e3943d7a8e891f407e48333409c1437f6450acbabe44005c237",
+      "output": "assets/characters/kassadin/skins/base/particles/kassadin_base_blademesh_outerglow.mesh.json",
+      "output_sha256": "c7757b25892a1c97a7965846f64df13fa6ad6274464ce766057d491906fd6c7e"
+    },
+    "assets/characters/kassadin/skins/base/particles/color-hold.tex": {
+      "source_sha256": "bc06557b44402fee1498430bd4008df9598085f44b29fea2f02218473674b2f8",
+      "output": "assets/characters/kassadin/skins/base/particles/color-hold.png",
+      "output_sha256": "62ed85b52d6f757f5322176cb24ccfa294cb145ba9f1978bbf6ba479341f45a8"
+    }
+  }
+}

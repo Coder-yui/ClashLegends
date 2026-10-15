@@ -100,6 +100,9 @@ var visual_radius := 14.0
 var mass := 4.0
 var sight_range := DEFAULT_SIGHT_RANGE
 var is_air := false
+var teleport_serial := 0
+var river_traversal := false
+var permanent_unit_phasing := false
 var is_building := false:
 	set(value):
 		is_building = value
@@ -474,6 +477,8 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	if team >= 0 and team < projectile_colors.size():
 		projectile_color = projectile_colors[team]
 	is_air = stats.get("is_air", false)
+	river_traversal = bool(stats.get("river_traversal", false))
+	permanent_unit_phasing = bool(stats.get("permanent_unit_phasing", false))
 	# 单位 2D 层（血条/状态圈）必须盖在防御塔 2D 层之上：塔层 z_index=10，
 	# 地面单位取 11、空中单位取 12；否则贴塔/水晶作战的单位血条会被建筑血条挡住。
 	z_index = 12 if is_air else 11
@@ -1361,9 +1366,19 @@ func leave_terrain_for_attack() -> bool:
 	terrain_traversal.update(self)
 	return true
 
-## 幽灵疾步只放开普通单位接触；建筑占地与导航仍按原规则。
+## 不连续位移同时重置表现插值；序号由快照同步。
+func teleport_to(point: Vector2) -> void:
+	global_position = point
+	_prev_pos = point
+	net_target_pos = point
+	teleport_serial += 1
+	_path = PackedVector2Array()
+	_path_index = 0
+	_repath_cd = 0.0
+
+## 幽灵能力只放开普通单位接触；建筑占地与导航仍按原规则。
 func ignores_unit_collision() -> bool:
-	return not is_building and buffs.any_flag(&"unit_phasing", &"enabled")
+	return not is_building and (permanent_unit_phasing or buffs.any_flag(&"unit_phasing", &"enabled"))
 
 func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prepared: bool = false) -> void:
 	if hp <= 0.0 and not death_form.waiting():
@@ -2136,7 +2151,7 @@ func _find_reachable_attack_path() -> void:
 	for point in candidates:
 		if global_position.distance_to(point) >= best_cost:
 			break
-		var route := battle_context.find_ground_path(global_position, point, _target, body_radius)
+		var route := battle_context.find_ground_path(global_position, point, _target, body_radius, river_traversal)
 		if route.size() < 2 or route[route.size() - 1].distance_to(center) > reach:
 			continue
 		var cost := 0.0
@@ -2163,7 +2178,7 @@ func _recompute_path_to(goal: Vector2) -> void:
 		return
 	var full: PackedVector2Array
 	if battle_context != null:
-		full = battle_context.find_ground_path(global_position, goal, _target, body_radius)
+		full = battle_context.find_ground_path(global_position, goal, _target, body_radius, river_traversal)
 	else:
 		full = nav_grid.find_path(global_position, goal)
 	if full.size() >= 2:
@@ -2945,7 +2960,7 @@ func is_walkable_at(pos: Vector2) -> bool:
 	return nav_grid.is_walkable(pos)
 
 func _get_nav() -> NavGrid:
-	return battle_context.navigation() if battle_context != null else null
+	return battle_context.navigation(river_traversal) if battle_context != null else null
 
 func _in_client_mode() -> bool:
 	return battle_context != null and battle_context.is_net_client()

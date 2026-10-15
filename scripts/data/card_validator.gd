@@ -115,6 +115,9 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 		errors.append("%s.cost: 必须 >= 0" % card_id)
 	if float(stats.get("radius", 0.0)) <= 0.0:
 		errors.append("%s.radius: 必须 > 0" % card_id)
+	for flag in ["river_traversal", "permanent_unit_phasing"]:
+		if bool(stats.get(flag, false)) and (String(stats.get("type", "")) != "unit" or bool(stats.get("is_air", false)) or bool(stats.get("is_building", false))):
+			errors.append("%s.%s: 仅支持地面普通单位" % [card_id, flag])
 	_validate_terrain_traversal(card_id, stats, errors)
 	_validate_growth(card_id, stats, errors)
 	_validate_deployment(card_id, stats, errors)
@@ -871,6 +874,8 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 		var skill_cost := float(skill.get("cost", -1.0))
 		if skill_cost < 0.0:
 			errors.append("%s.cost: 必须 >= 0" % label)
+		if bool(skill.get("unlimited_uses", false)) and (not skill.has("cost_by_use") or not skill.has("damage_by_use") or kind != &"blink_nova"):
+			errors.append(label + ".unlimited_uses: 需要blink_nova及费用/伤害序列")
 		var max_uses := int(skill.get("max_uses", 0))
 		if max_uses <= 0:
 			errors.append("%s.max_uses: 必须 > 0" % label)
@@ -941,6 +946,10 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 				for field in [&"radius", &"duration"]:
 					if float(skill.get(field, 0.0)) <= 0.0:
 						errors.append("%s.%s: 必须 > 0" % [label, field])
+			&"blink_nova":
+				_require_fields(label, skill, [&"length", &"radius", &"damage"], errors)
+				if skill.has("landing_extension") and float(skill.landing_extension) < 0.0:
+					errors.append(label + ".landing_extension: 必须非负")
 			&"nova": _require_fields(label, skill, [&"radius", &"damage"], errors)
 			&"timed_form":
 				if stats.get("transformed_stats", {}).is_empty() or float(stats.get("form_lifetime", 0.0)) <= 0.0:
@@ -1123,11 +1132,12 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 			errors.append("%s.center_width: 必须 >= 0" % label)
 		if skill.has("fan_inner_arc") and typeof(skill.fan_inner_arc) != TYPE_BOOL:
 			errors.append("%s.fan_inner_arc: 必须是 bool" % label)
-		for sequence_field in ["damage_by_use", "visual_actions_by_use", "projectile_visuals_by_use", "projectile_impact_visuals_by_use"]:
+		for sequence_field in ["cost_by_use", "damage_by_use", "visual_actions_by_use", "projectile_visuals_by_use", "projectile_impact_visuals_by_use"]:
 			if skill.has(sequence_field):
-				if String(skill.get("kind", "")) != "frontal" or skill[sequence_field].size() != int(skill.get("max_uses", 1)):
+				if String(skill.get("kind", "")) not in ["frontal", "blink_nova"] or skill[sequence_field].size() != int(skill.get("max_uses", 1)):
 					errors.append("%s.%s: 需要frontal且序列长度等于max_uses" % [label, sequence_field])
 				for value in skill[sequence_field]:
+					if sequence_field == "cost_by_use" and float(value) < 0.0: errors.append("%s.cost_by_use: 费用不能为负数" % label)
 					if sequence_field == "damage_by_use" and float(value) <= 0.0:
 						errors.append("%s.damage_by_use: 伤害必须为正数" % label)
 					if sequence_field == "visual_actions_by_use" and not stats.get("visual_animations", {}).get("visual_actions", {}).has(value):

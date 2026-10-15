@@ -74,6 +74,7 @@ const DEFINITIONS = [
 	preload("res://scripts/data/cards/sion.gd"),
 	preload("res://scripts/data/cards/darius.gd"),
 	preload("res://scripts/data/cards/ornn.gd"),
+	preload("res://scripts/data/cards/kassadin.gd"),
 ]
 static var _cards: Dictionary = {}
 static var _definition_errors := PackedStringArray()

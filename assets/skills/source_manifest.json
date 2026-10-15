@@ -686,5 +686,14 @@
     "source_path": "assets/characters/malzahar/hud/icons2d/malzahar_w.dds",
     "source_sha256": "efc7da1120ab1b9023bcd4391c1218bd3575a83c960b46f6dada4ece6135b3e9",
     "sha256": "74f568442170aade9cb10e71702b4dea5b151fcc3e48d283f670eb301439648c"
+  },
+  {
+    "card": "kassadin",
+    "skill_index": 0,
+    "path": "res://assets/skills/kassadin_r.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Kassadin.wad.client",
+    "source_path": "assets/characters/kassadin/hud/icons2d/kassadin_r.dds",
+    "source_sha256": "cc2687dc9a03fba21bca6ea9cdd17ccc60345e1a7c2054b4b1a7df4af9450de1",
+    "sha256": "bb9769f5b03dcc4cd999208d019fcbcbc0638299673f972e31c9594619cf4cc0"
   }
 ]

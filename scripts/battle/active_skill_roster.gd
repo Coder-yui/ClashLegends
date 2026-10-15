@@ -69,6 +69,9 @@ func skill_for_cast(id: int) -> Dictionary:
 static func prepare_use(definition: Dictionary, index: int) -> Dictionary:
 	var skill := definition.duplicate(true)
 	var damages: Array = skill.get("damage_by_use", [])
+	if bool(skill.get("unlimited_uses", false)): index = mini(index, int(skill.get("max_uses", 1)) - 1)
+	var costs: Array = skill.get("cost_by_use", [])
+	if index >= 0 and index < costs.size(): skill.cost = costs[index]
 	var actions: Array = skill.get("visual_actions_by_use", [])
 	if index >= 0 and index < damages.size(): skill.damage = damages[index]
 	if index >= 0 and index < actions.size(): skill.visual_action = actions[index]
@@ -92,7 +95,7 @@ func grant_recast(id: int) -> void:
 
 func cost(id: int) -> float:
 	if not _entries.has(id): return 0.0
-	return 0.0 if bool(_entries[id].get("free_recast", false)) else maxf(float(_entries[id].skill.get("cost", 0.0)), 0.0)
+	return 0.0 if bool(_entries[id].get("free_recast", false)) else maxf(float(skill_for_cast(id).get("cost", 0.0)), 0.0)
 
 func replace_replica(id: int, uses: int, cooldown: float, free_recast: bool = false) -> void:
 	if not _entries.has(id): return
@@ -109,7 +112,7 @@ func qualified(id: int, expected_team: int, card_allowed: Callable) -> bool:
 	if expected_team >= 0 and int(entry.team) != expected_team: return false
 	if String(entry.skill.get("kind", "")) == "bleeding_execute" and unit.is_empowered_attack_ready_visual(): return false
 	if not bool(entry.get("free_recast", false)):
-		if int(entry.get("uses_remaining", entry.get("max_uses", 1))) <= 0: return false
+		if not bool(entry.skill.get("unlimited_uses", false)) and int(entry.get("uses_remaining", entry.get("max_uses", 1))) <= 0: return false
 		if float(entry.get("cooldown_left", 0.0)) > 0.001: return false
 	return card_allowed.call(int(entry.team), String(entry.card_id)) and unit.is_deployed()
 

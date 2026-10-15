@@ -80,7 +80,8 @@ const U_LIFESTEAL_VISUAL_STATE := 59
 const U_BUFF_VISUAL_CLOCK := 60
 const U_RESTORATION_SHIELD_STATE := 61
 const U_BLIND := 62
-const UNIT_PAYLOAD_SIZE := 63
+const U_TELEPORT_SERIAL := 63
+const UNIT_PAYLOAD_SIZE := 64
 
 const P_ID := 0
 const P_X := 1
@@ -244,6 +245,7 @@ func apply(snapshot_bytes: PackedByteArray, terminal: bool = false, expected_tic
 		if not haste.is_finite() or haste.x < 0.0 or haste.y < 0.0 or haste.y != floorf(haste.y): return false
 		if (haste.x > 0.0) != (haste.y > 0.0) or bool(payload[U_STRUCTURE_HASTE]) != (haste.x > 0.0): return false
 		if not payload[U_BLIND] is bool: return false
+		if not payload[U_TELEPORT_SERIAL] is int or payload[U_TELEPORT_SERIAL] < 0: return false
 		if not payload[U_ATTACK_SPEED_SLOW] is bool: return false
 		if not payload[U_ACTION_CLOCK] is Vector2: return false
 		if not (payload[U_TEAM_ATTACK_BOOST_MULTIPLIER] is int or payload[U_TEAM_ATTACK_BOOST_MULTIPLIER] is float): return false
@@ -309,6 +311,10 @@ func _apply_units(units_data: Array) -> void:
 		u.active_skill_card_id = String(d[U_SPAWN].args[12])
 		_controller.sync_network_unit_skill(u, int(d[U_SPAWN].args[5]), int(d[U_SPAWN].args[6]))
 		u.net_target_pos = Vector2(d[U_X], d[U_Y])
+		if u.teleport_serial != int(d[U_TELEPORT_SERIAL]):
+			u.teleport_serial = int(d[U_TELEPORT_SERIAL])
+			u.global_position = u.net_target_pos
+			u._prev_pos = u.net_target_pos
 		u.sync_network_form(int(d[U_FORM]), int(d[U_FORM_CHANGE_SERIAL]))
 		u.hp = BattleNumbers.quantity(float(d[U_HP]))
 		u.net_visual_state = int(d[U_VISUAL_STATE])
@@ -583,5 +589,5 @@ func _unit_snapshot_payload(id: int, u: Unit, has_continuous_target: bool = fals
 		u.death_spawn_state_visual(),
 		u.lifesteal_state_visual(), u.active_buff_clock_visual(),
 		u.restoration_shield_state_visual(),
-		u.blind_visual(),
+		u.blind_visual(), u.teleport_serial,
 	]

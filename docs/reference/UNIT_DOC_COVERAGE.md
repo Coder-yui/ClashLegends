@@ -2,7 +2,7 @@
 
 [返回单位索引](../units/README.md)
 
-更新于2026-10-13。当前覆盖全部70项CardDB定义、71篇卡牌/形态正文及4篇系统对象正文。数量包含不可组卡的形态和召唤物，不等于可选卡池数量。
+更新于2026-10-15。当前覆盖全部已注册CardDB定义、对应卡牌/形态正文及4篇系统对象正文。数量包含不可组卡的形态和召唤物，不等于可选卡池数量。
 
 本页维护注册定义、玩法正文和素材入口之间的对应关系。修改卡牌时，对照编译定义及下列消费者核对数值、条件与时序；编队采用实际成员定义，覆盖形态采用基础与transformed_stats合并值，召唤部署采用生成入口的覆盖值。本页收录不代表本次逐卡重新运行、目视或试听通过。
 
@@ -28,6 +28,7 @@
 | --- | --- | --- |
 | `void_gate` · [兹若特传送门](../units/void_gate.md) | 6费建筑、6秒周期出兽；主动摧毁自身召唤2只、3×3占地与30碰撞半径 | [动作](../units/animations/void_gate.md) · [声音](../units/audio/void_gate.md) |
 | `void_spawn` · [虚空兽](../units/void_spawn.md) | 双单位牺牲攻城、16Tick独立单体爆炸、原版攻城音画；1金币强化360伤害及永久20%加速，强化专属粒子缺项 | [动作](../units/animations/void_spawn.md) · [声音](../units/audio/void_spawn.md) |
+| `kassadin` · [虚空行者](../units/kassadin.md) | 浮空过河、永久穿兵、无限封顶瞬移 | [动作](../units/animations/kassadin.md) · [声音](../units/audio/kassadin.md) · [特效](../units/effects/kassadin.md) |
 | `nocturne` · [永恒梦魇](../units/nocturne.md) | 3费空中近战、五击范围追加、完整敌方效果抵挡 | [动作](../units/animations/nocturne.md) · [声音](../units/audio/nocturne.md) · [特效](../units/effects/nocturne.md) |
 | `jinx` · [金克丝](../units/jinx.md) | 5费火箭炮、45范围空地溅射、3秒建筑助攻、2秒衰减加速 | [动作](../units/animations/jinx.md) · [声音](../units/audio/jinx.md) |
 | `jinx`覆盖形态 · [轻机枪](../units/jinx_minigun.md) | 170射程、1秒间隔、三层命中攻速、切枪清层重置后摇 | 复用金克丝入口 |
