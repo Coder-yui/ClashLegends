@@ -35,6 +35,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_edges(stats)
 	_check_constrained_landing()
 	_check_spell_audio()
+	_check_effect_footprint()
 	main._sim_tick_id = old_tick
 	_clean()
 
@@ -189,3 +190,58 @@ func _check_spell_audio() -> void:
 	audio.cue_played.disconnect(capture)
 	audio.begin_battle()
 	audio.set_process(was_processing)
+
+func _check_effect_footprint() -> void:
+	var viewport := SubViewport.new()
+	viewport.size = Vector2i(720, 1280)
+	_main.add_child(viewport)
+	var camera := Camera3D.new()
+	viewport.add_child(camera)
+	camera.projection = Camera3D.PROJECTION_ORTHOGONAL
+	camera.keep_aspect = Camera3D.KEEP_HEIGHT
+	camera.size = 32.0
+	camera.position = Vector3(0, 24, 24)
+	camera.look_at(Vector3.ZERO)
+	for flipped in [false, true]:
+		if flipped: camera.rotate_object_local(Vector3.BACK, PI)
+		var ground := preload("res://scripts/presentation/void_summoning_ground_3d.gd").new()
+		viewport.add_child(ground)
+		var preview := SpellSystem.new(_main)
+		for point in [Vector2(360, 330), Vector2(160, 850), Vector2(600, 1050)]:
+			preview.summon_effects.append({"pos": point, "radius": 160.0, "duration": 8.0, "timer": 8.0, "team": int(flipped)})
+		for age in [0.1, 0.5, 1.5, 4.0, 7.5]:
+			for entry in preview.summon_effects: entry.timer = 8.0 - age
+			ground.sync_effects(preview, camera)
+			for entry in preview.summon_effects:
+				var player: Node3D = ground._views[entry.view_id]
+				var rim_count := 0
+				var max_error := 0.0
+				# Evaluate the actual cylinder mesh and current shader sample, including
+				# projection/scale. A generic unit circle would miss the old 525 divisor.
+				for index in player._data.emitters.size():
+					if not player._data.emitters[index].name in ["Voiddiscglow1", "Voiddiscglow2"]: continue
+					for item in player._pools[index]:
+						if not item.visible: continue
+						rim_count += 1
+						var mat: ShaderMaterial = item.material_override
+						var sample: PackedFloat32Array = mat.get_shader_parameter("p")
+						var axes := Basis(Vector3(sample[12], sample[15], sample[18]), Vector3(sample[13], sample[16], sample[19]), Vector3(sample[14], sample[17], sample[20]))
+						var shape: Basis = mat.get_shader_parameter("shape_basis")
+						var center: Vector3 = player.projection_basis * Vector3(sample[1], sample[2], sample[3])
+						var vertices: PackedVector3Array = item.mesh.surface_get_arrays(0)[Mesh.ARRAY_VERTEX]
+						var outer_radius := 0.0
+						for vertex in vertices: outer_radius = maxf(outer_radius, Vector2(vertex.x, vertex.z).length())
+						for vertex in vertices:
+							# The sloped cylinder also contains an inner ring; only its outer
+							# vertices describe the field boundary.
+							if Vector2(vertex.x, vertex.z).length() < outer_radius * 0.999: continue
+							var local: Vector3 = center + shape * (axes * (vertex * Vector3(sample[4], sample[5], sample[6])))
+							local.y = 0.0
+							var screen := camera.unproject_position(player.to_global(local))
+							max_error = maxf(max_error, absf(screen.distance_to(entry.pos) - float(entry.radius)))
+				_expect(rim_count > 0 and max_error < 0.25, "双方视角/中心边缘/持续阶段的实际外圈网格贴合160像素范围 error=%s rims=%s" % [max_error, rim_count])
+		preview.clear()
+		ground.sync_effects(preview, camera)
+		_expect(ground._views.is_empty() and ground.get_child_count() == 0, "区域结束释放范围表现")
+		ground.free()
+	viewport.free()
