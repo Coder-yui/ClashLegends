@@ -100,6 +100,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_expect(model._cape_materials.size() == 2, "原版披风两层材质均接到蒙皮表面")
 	model.advance_ambient_visual(0.5)
 	_expect(model._cape_materials[0] != model._cape_materials[1] and model._age == 0.5, "披风两层独立实例并按表现时钟推进")
+	_check_stopped_modifiers(model)
 	model.free()
 	var visuals = main._projectile_system._hit_visuals
 	visuals.clear()
@@ -112,6 +113,27 @@ func run(harness: Object, main: Node2D) -> void:
 	visuals.play_hit({"card_id":"yorick"},Vector2(300,900))
 	visuals.clear()
 	_expect(visuals._circles.is_empty(), "清场取消尚未结束的范围圈")
+
+func _check_stopped_modifiers(model: Node3D) -> void:
+	var animation: AnimationPlayer = model._cape_path.player
+	animation.play("Idle1")
+	animation.advance(0.0)
+	model._weapon_blend._process_modification()
+	model.set_visual_blend(&"Idle1", 0.2)
+	animation.pause()
+	model._cape_path.reset_pool_visual()
+	model._cape_path._process_modification()
+	_expect(model._cape_path._initialized, "暂停仍持有有效采样，保留披风修饰")
+	animation.stop(true)
+	_expect(not animation.assigned_animation.is_empty() and not animation.is_animation_active(), "停止后保留片名不代表仍有当前动画")
+	model._cape_path.reset_pool_visual()
+	model._cape_path._process_modification()
+	model._weapon_blend._process_modification()
+	_expect(not model._cape_path._initialized, "停止后披风不读取已失效的动画时钟")
+	for library in animation.get_animation_library_list(): animation.remove_animation_library(library)
+	model._cape_path._process_modification()
+	model._weapon_blend._process_modification()
+	_expect(not model._cape_path._initialized, "预热回收移除动画库后修饰器保持停用")
 
 func _spawn(id: String, team: int, at: Vector2) -> Unit:
 	return _main._spawn_unit(UnitSpawnRequest.new(team,id,at,{"deploy_time_override":0.0}))

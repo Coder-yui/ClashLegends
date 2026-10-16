@@ -63,7 +63,7 @@ func _sample_weapon(time: float) -> Transform3D:
 
 func _process_modification() -> void:
 	_initialize_bones()
-	if _weapon < 0 or not is_instance_valid(player): return
+	if _weapon < 0 or not is_instance_valid(player) or not player.is_animation_active() or not player.has_animation(player.assigned_animation): return
 	var skeleton := get_skeleton()
 	if _blending and player.assigned_animation == _clip:
 		var time := player.current_animation_position

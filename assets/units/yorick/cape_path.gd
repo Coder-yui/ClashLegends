@@ -82,7 +82,8 @@ func _sample_path(distance: float) -> Vector3:
 	return _history.back() + _tail_direction * remaining
 
 func _process_modification() -> void:
-	if not is_instance_valid(player) or player.assigned_animation.is_empty(): return
+	# stop() 保留 assigned_animation，预热回收还会移除动画库；pause() 则仍有有效姿态。
+	if not is_instance_valid(player) or not player.is_animation_active() or not player.has_animation(player.assigned_animation): return
 	_initialize_bones()
 	var skeleton := get_skeleton()
 	var transform := skeleton.global_transform
