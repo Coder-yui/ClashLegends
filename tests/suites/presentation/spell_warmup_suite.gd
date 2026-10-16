@@ -7,6 +7,7 @@ func run(harness: Object, main: Node2D) -> void:
 	await _selection_boundaries()
 	_declaration_contract()
 	_sett_selection()
+	_deployment_plans()
 	var cards := {"target_dummy": true, "sett": true, "anivia": true, "sion": true, "aurelionsol": true, "kayle_ranged": true, "gwen": true, "tristana": true, "sun_disc": true, "lightning": true, "zap": true, "stasis": true, "explosive_cask": true, "malzahar": true}
 	var resources := MatchResources.new()
 	resources.prepare(cards.keys())
@@ -81,14 +82,15 @@ func _selection_boundaries() -> void:
 	_expect(resources.cards.size() == plan.cards.size(), "资源收集与可达闭包一致")
 	_expect(not resources.resources.has("res://assets/units/aatrox/ultimate_view.tscn"), "未选主动形态未进入实际资源集合")
 	var forbidden := {"sion": true, "sun_disc": true}
+	var planned_paths := WARMUP.dependency_paths(plan.cards, plan)
 	for path in WARMUP.dependency_paths(forbidden):
 		# 允许其他本局特效引用同一文件；按资源路径去重，不按技能强删共享素材。
-		if path not in WARMUP.dependency_paths(plan.cards, plan):
+		if path not in planned_paths:
 			_expect(not resources.resources.has(path), "未携带技能独占依赖未加载：" + path)
 	_expect(not plan.definition("anivia").audio.events.has("frost_storm:start"), "未选风暴的专属声音不加载")
 	_expect(plan.definition("anivia").audio.events.has("attack_launch"), "普通攻击声音保留")
 	_expect(not plan.definition("gwen", 0).audio.events.has("sanctuary:sustain") and plan.definition("gwen", 1).audio.events.has("sanctuary:sustain"), "双方技能声音按各自选择过滤")
-	_expect("res://assets/effects/stasis/bard_swirl.png" not in WARMUP.dependency_paths(plan.cards, plan), "没有凝滞不加载金身纹理")
+	_expect("res://assets/effects/stasis/bard_swirl.png" not in planned_paths, "没有凝滞不加载金身纹理")
 	var gold_plan: RefCounted = planner.for_match([["gwen", "tristana", "stasis"], []], [{}, {}])
 	_expect(not gold_plan.allows("stasis") and "res://assets/effects/stasis/bard_swirl.png" in WARMUP.dependency_paths(gold_plan.cards, gold_plan), "普通槽凝滞也需要金身资源")
 	var root := Node3D.new()
@@ -179,3 +181,30 @@ func _sett_selection() -> void:
 		_expect(active.effects.any(func(request): return request.variant == kind and request.provider == "res://assets/effects/sett/player.gd"), "主动腕豪声明特效：" + kind)
 	for shader in ["body_mix", "body_add", "body_add_overlay", "body_pure_add", "add_overlay", "mix_overlay", "warp_overlay"]:
 		_expect("res://assets/effects/sett/" + shader + ".gdshader" in on, "运行时着色器路径进入资源计划：" + shader)
+
+func _deployment_plans() -> void:
+	var groups := ["minion_squad", "melee_minion_squad", "ranged_minion_squad", "heavy_minion_squad", "super_minion_squad", "siege_minion_squad"]
+	var planner = load("res://scripts/presentation/match_resource_plan.gd")
+	var plan: RefCounted = planner.for_match([groups, []], [{}, {}])
+	var expected := groups + ["melee_minion", "ranged_minion", "super_minion", "siege_minion"]
+	_expect(CardDB.all().size() == 77 and CardDB.selectable_ids().size() == 64 and plan.errors.is_empty() and plan.cards.size() == expected.size() and expected.all(func(id): return plan.cards.has(id)), "六编队改为生成计划后保持77定义/64可选及相同四种成员可达闭包")
+	var resources := MatchResources.new()
+	resources.plan = plan
+	# 不把成员作为额外根传入，避免系统兵线恰好兜底掩盖递归收集失效。
+	resources.prepare(groups)
+	_expect(resources.errors.is_empty() and resources.cards.size() == plan.cards.size(), "实际资源收集递归生成计划成员，与计划闭包一致")
+	var specs := MatchModelPool.build_specs(resources.cards, plan)
+	var targets := {"melee_minion": 14, "ranged_minion": 12, "super_minion": 6, "siege_minion": 8}
+	for id in targets:
+		for team in [0, 1]:
+			var path := PresentationConfig.scene_path(CardDB.get_card(id), team)
+			_expect(resources.resources.has(path) and specs.has(path) and specs[path].any(func(use): return use.id == id and use.team == team and use.count == (targets[id] if team == 0 else 4)), "成员模型与两波库存按生成数量进入预热：%s 阵营%d" % [id, team])
+	for id in groups:
+		var single: RefCounted = planner.for_match([[id], []], [{}, {}])
+		for member in CardDB.get_card(id).spawn_plan.members:
+			_expect(single.cards.has(member) and single.allows(member, 0, 0), "主动槽编队保留成员的技能/音频/效果可达资格：" + id)
+		_expect(not specs.values().any(func(uses): return uses.any(func(use): return use.id == id)), "生成计划本身不预建伪实体模型：" + id)
+	var melee_path := PresentationConfig.scene_path(CardDB.get_card("melee_minion"), 0)
+	var active: RefCounted = planner.for_match([["melee_minion_squad"], []], [{}, {}])
+	var inactive: RefCounted = planner.for_match([["garen", "ashe", "melee_minion_squad"], []], [{}, {}])
+	_expect(active.definition("melee_minion", 0).has("visual_active_buff_scene") and not inactive.definition("melee_minion", 0).has("visual_active_buff_scene") and resources.resources.has(melee_path), "成员基础模型始终准备，男爵覆层仍只随主动资格进入闭包")

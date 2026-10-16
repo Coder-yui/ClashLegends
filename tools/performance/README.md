@@ -1,16 +1,36 @@
 # Mac 性能基准
 
-从项目根目录执行，使用 `godot-version.txt` 的标准版引擎。正式结果须 `result.json` 中 `valid=true`，报告记录引擎、工作区内容指纹、M5/内存、参数、日志和实际渲染截图。截图主动绘制后读取，避免窗口不触发绘制信号时无限等待；测试窗口临时置顶。基准期间不要修改工作区或同时运行其他重负载。
+当前先使用下列本地监督入口；本次安全工具改造尚未启动 Godot，Python 假进程回归不代表实际渲染验收。旧无保护基准、160 弹体场景和默认五轮压力配方不自动执行。基准期间保持工作区稳定，并由操作者确认没有另一份引擎或重负载任务；全局锁只覆盖同一 `safe_probe` 入口。
+
+## 有界检查入口
 
 ```sh
-python3 tools/performance/benchmark.py --render --counts 32,64,128
-python3 tools/performance/benchmark.py --render --counts 64 --audio off
-python3 tools/performance/benchmark.py --render --counts 64 --visual off --audio off
-python3 tools/performance/benchmark.py --render --case burst --counts 32
-python3 tools/performance/benchmark.py --render --case effects --counts 64 --record-audio
-python3 tools/performance/benchmark.py --render --case match --counts 1
-python3 tools/performance/benchmark.py --counts 32,64,128 --visual off --audio off
+# 默认只做逐顶点/UV/cache合同，headless；每次创建新证据目录。
+python3 tools/performance/safe_probe.py --mode contracts
+# 以下分别是明确选择的画面检查，不会顺带跑计时或额外规模。
+python3 tools/performance/safe_probe.py --mode capture --total 12
+python3 tools/performance/safe_probe.py --mode capture --total 24
+# 出生索引低负载CPU/合同；需要画面时显式选择capture。
+python3 tools/performance/safe_probe.py --probe particle --mode contracts
 ```
+
+`--godot` 可指定已有标准版引擎；不安装软件。`--reference` 指向本任务保存的原始脚本，默认在素材库 `04-中间产物/architecture_refactor/batch2b/reference/`。`--output` 必须是新的目录，默认仍在本任务素材库。原始引擎 stdout/stderr 在 `engine.log`，Godot 自身日志在 `godot.log`；`launched.json` 保存实际 argv、PID/PGID，`watchdog.json` 保存停止原因、RSS 与清理证明，`result.json` 另含合同结果和相关组件运行前后 SHA。只比较这些组件身份，不冒充全工作区身份。
+
+本地 Python 包装器在聊天连接之外监督已启动的专属进程组：启动前先验证 RSS 和进程组可见性；监控失败时禁止创建引擎。准备和执行合计最多20秒（`--seconds`只能缩短），首次主线程心跳宽限最多6秒；首次心跳后超过2秒没有递增进度即停止，包括资源准备期间。引擎固定30FPS。RSS按整个拥有组累计，绝对上限1GiB；ready后取3个稳定样本（跨度不超过8MiB或5%），再限制在该基线+256MiB与1GiB的较小值，1秒仍不稳定也停止。这里的RSS不是显存或GPU资源上限。
+
+停止只对创建的 PID=PGID 组发送 TERM，短宽限后 KILL；必须核实该组无活进程才能确认清理（已死zombie除外），不能仅凭leader退出宣称结束。组状态不可读记为未确认，失败/超时保留证据。Python包装器被SIGKILL、系统或驱动失去响应时不能保证恢复；本保护不是GPU内存/OOM根因诊断，也不是继续扩大负载的理由。单个合法准备片段若超过心跳边界，结果就是未验证，不自动延长阈值。
+
+几何场景只支持**全场总量12或24**；五类弹体分配为`[2,4,4,1,1]`或`[4,8,8,2,2]`，其中网格投影重弹体4/8已包含在总数中。爆炸场景也仅12/24个效果。每档仅两对截图：12为team0飞行/team1爆炸，24反向；两档合计四对，保持720×1280和项目9:16窗口。截图按自然帧完成后读取，不用`force_draw`绕开帧率。`--mode timing`是单独的可选入口，仅AB/BA一轮对、每侧每轮默认2样本（1..3），不截图、不逐样本GPU读回；这点样本不足以建立稳定尾分位或整局收益结论。polygon脚本调用不是GPU drawcall。旧`--render/--counts/--rounds`参数在几何脚本中直接拒绝，不能无意重跑旧160场景。
+
+`--probe particle`固定`counts=1,8`、1轮×2样本，支持`contracts/capture`，脚本产物在`probe/`子目录，保持运动/stop/回退/共享索引寿命合同。`effect_dependency_probe.py`默认也改为受监督的headless典型单轮单样本；`--render`才进入同样有界的Compatibility路径。裸GUI探针缺少包装器token会拒绝。这些入口仍需按本次实际改动选跑；历史通过不能替代当前代码的解析、运行或目视确认。
+
+需要复用到未接心跳的机制套件时，可从 Python 调用 `run_guarded(command, output, require_heartbeat=False)`，仅在引擎参数含显式`--headless`时允许；报告范围固定为“headless correctness: wall+RSS only, no responsiveness guarantee”。仍保留20秒、1GiB绝对RSS、并发锁和整个拥有组清理；没有真实ready心跳时不建立加载前的假基线，也不提供增长或主线程响应保证。普通验证执行器原有超时规则另列，不默认为享有本保护。
+
+Python安全回归（只启动很小的Python假进程，无Godot/GPU）：`python3 -m unittest tools.tests.test_safe_probe -v`。正常Mac进程可见权限下验证监控预检、并发锁、心跳/墙钟/RSS停止、TERM忽略及残留子进程强杀；沙箱若禁止`ps`，真实探针必须在预检失败处停止。
+
+## 历史基准口径（当前不自动执行）
+
+以下保留已有结果的解释，不能作为当前安全入口或重跑指令。`benchmark.py`、`first_events.gd`和旧重复工作批量入口没有自动获得上述心跳/内存保护；需要另行设计有界片段，不能直接照旧压力参数启动。正式结果仍须记录引擎、组件或工作区身份范围、机器、参数、原日志和实际渲染证据。
 
 - `load`：确定位置、双方桥头拥挤，四分之一寒冰，其余近战兵；高生命、零基础伤害，保持负载。32/64/128 的布局不同，不能只从数量推断线性倍率。
 - `burst`：第 60 帧同时生成指定数量纳尔，第 180 帧同时变形，单独记录同步调用耗时。
@@ -22,6 +42,8 @@ python3 tools/performance/benchmark.py --counts 32,64,128 --visual off --audio o
 预算：当前 Mac 的目标为 60 渲染 FPS（16.67 ms）和 20 Hz 权威模拟（50 ms）。目标是评估阈值，不是已保证每种压力场景达标。默认走菜单的完整加载入口，加载完成后才开始局中统计；保留出牌、召唤及变形的慢帧。load批量生成调用另记，不能用该场景的帧分位数代表部署尖峰。积压含不足一 Tick 的余数，另记最终值。
 
 无界面模式用每帧 0.05 秒推进，只能用于逻辑成本，不能报告为实际 FPS。快照使用真实存活实体完整载荷，测的是构建、序列化、压缩和字节数；不等于网络往返延迟。RSS 每 0.25 秒取样，Godot 静态内存不含全部显存。保留深复制确保表现不拥有权威数据，是否优化由实测支持。
+
+`metrics.json` schema 2 将快照与弹体复制诊断移到主计时循环之后：`snapshot_ms`、`snapshot_bytes`、`particle_copy_ms` 各为最终战场状态的 20 次样本，`diagnostic_policy=20_final_state_samples_after_measurement`。它们不代表整局随 Tick 变化的分布，也不再给 `frame_ms` / `main_process_ms` 额外加入一次快照构建和弹体复制。`tick_ms` 只包围正式 `_sim_step`；`main_process_ms` 包含正式 Main 编排及基准计数开销；实际渲染的 `frame_ms` 包含上一帧主循环、表现、渲染和系统等待。旧 schema 1 的帧数据含每 Tick 额外诊断，不能直接据两种口径宣称游戏性能提升。
 
 ## 准备路径与重复测量
 
@@ -44,4 +66,70 @@ GDScript 基准可追加 `--perf-deck=id1,id2,...` 与 `--perf-remote-deck=id1,i
 
 `tools/performance/first_events.gd` 固定每卡240帧、每帧1/60模拟步长，事件在第0帧部署、第60帧主动及冻结/治疗、第140帧死亡/召唤。记录每帧间隔、事件调用/模拟CPU耗时、前一完成帧的根及3D视口渲染CPU/GPU时间、引擎资源计数、内存、cue与模型池指标。帧间隔包含上一帧事件、表现回调、渲染及系统等待；GPU计时返回0可能表示不支持，不能解释成GPU零耗时；资源计数不是磁盘读取跟踪。高生命、绕过经济及手动先锋命中用于可重复诊断，不是正常对局密度。截图须显式`--capture`，在片段结束后保存。
 
-通过`-- --output=/绝对证据目录 --perf-remote-deck=gnar,anivia,belveth,rift_herald,garen,ashe,freeze,heal`固定对手。cue记录不等于主观试听，也不隔离音频解码耗时。比较至少五轮交错A/B，并保留逐帧时间关联与所有反向指标，不将零池缺货写成无卡顿。
+
+通过`-- --output=/绝对证据目录 --perf-remote-deck=gnar,anivia,belveth,rift_herald,garen,ashe,freeze,heal`固定对手。cue记录不等于主观试听，也不隔离音频解码耗时。历史加载比较曾采用至少五轮交错A/B；这只是旧结果口径，当前不推荐或自动重跑该负载。保留逐帧时间关联与所有反向指标，不能将零池缺货写成无卡顿。
+
+## 重复工作 CPU 配对测量（历史）
+
+旧入口为 `repeated_work.py --reference ... --output ...`，以下描述已有测量口径，不在当前有界检查中自动调用。
+
+`repeated_work.gd` 在同一当前代码身份上比较四项成本；旧实现只从指定的五份归档源码读取，删除 `class_name` 后作为独立临时脚本编译，不回滚工作区。归档必须包含 `network_snapshot_system.gd`、`network_playback.gd`、`match_card_growth.gd`、`active_skill_roster.gd`、`main.gd`。执行器保存五份 SHA256、当前完整工作区指纹、引擎/CPU/内存、命令、日志及结构化结果，前后指纹变化即无效。输出目录必须尚不存在。
+
+第2A历史负载为32/64/128个存活实体（四分之一寒冰，其余近战兵，双方交替）和六塔，不创建弹体；固定双方八卡，走当前正式资源准备、保留第1批成员闭包与模型库存声明。工具关闭3D创建、声音和自动模拟，显式保存当前资源列表与模型池计划；不测绘制、完整模拟Tick或FPS，不与旧库存口径的局部基准直接比较。该历史批次每项5轮、每轮每侧20个样本，轮序交替AB/BA；记录每样本及每操作耗时、p50/p95/p99、调用数。比较、准备与轮间帧清理不进入计时；计时仍包含两侧相同的循环、回调和结果累计开销，不将这些微基准耗时当作整个生产帧的成本。
+
+- 解码/应用：两个独立真实Main客户端先建立相同实体；预生成相同载荷、递增Tick的包。旧路径为归档的轻量 `packet_tick` 加当前 `apply(bytes)`，新路径为当前 `decode_validated` 加 `apply_decoded`，两者应用阶段使用相同加强后的静态校验。每包必须成功应用且最终副本等价；不拿同Tick重复拒绝当应用成本。
+- 公共采集：归档 `capture` 为每个接收方重采世界，对比一次 `capture_public_frame` 后分别编码；同时测两投影 `[0,1]` 和终局含本地记录的三投影 `[0,1,0]`。金币分别3/8、双方凯隐成长不同；所有压缩输出必须逐包一致，并另查私有字段隔离。明确列出公共采集次数和编码次数；当前公共帧固化成本包含在计时内。
+- 成长：每样本连续100次同值输入，旧归档成长所有者复制状态并调用真正 `CardHand._refresh`，新路径调用当前 `Main.apply_growth_snapshot`；计数子类继续执行 `super._refresh`，不以空计数替代UI工作。初次建控件与成长状态在计时外准备；同值刷新次数必须为旧100/新0，另查一次变化仍刷新一次。
+- 费用：每样本1000次查询，按全部正式技能、已消费次数及免费再施放组合循环；旧归档 `cost` 的完整技能深复制对比当前纯费用查询。逐组合及累计返回值必须相同，真正施法副本仍由生产 `skill_for_cast` 创建。
+
+队列内存单独测试1/16/64/256份独立解码对象，并持续填充至数量或当前原始序列化字节预算门禁首次拒绝；记录填充峰、丢弃对象释放、drain返回数组仍持有、返回数组释放、再次填充后clear等阶段的Godot静态活跃分配与对象数，并与旧压缩包队列比较。当前16MiB是原始序列化字节累计预算，**不是解码对象堆内存上界**。执行器的进程RSS峰包含这段刻意的队列压力，不代表正常战斗内存；OS/引擎分配器保留内存时RSS也不必随引用释放立即下降。
+
+
+### 真实队列窗口与独占缓冲回放
+
+```sh
+python3 tools/performance/repeated_work.py --network-trace normal --output /新的绝对路径/queue-normal
+python3 tools/performance/repeated_work.py --network-trace impaired --output /新的绝对路径/queue-impaired
+python3 tools/performance/repeated_work.py --replay-trace /绝对路径/queue-normal/queue-trace/client0.bin --output /新的绝对路径/replay-normal-client0
+```
+
+采集复用现有三进程执行器与真实握手/终局断言，仅给测试夹具传入 `CLASH_QUEUE_TRACE_DIR`。不带诊断参数时不安装探针，正式生产类和线上协议不变。`network_queue_probe.gd` 继承生产 `NetworkPlayback`，在真实入队、出队和清空完成后记录队列总数、快照数、raw字节、播放延迟、输入服务器时间和返回序列；原始压缩包在故障延迟之后、进入生产RPC之前与入队对象配对，既不额外解码，也不保存解码副本。`impaired` 保留丢弃三分之一快照和20/120ms交错等待；这段解码前等待只持压缩包，不能算作解码队列驻留。结束时分别保存两个客户端的二进制轨迹与摘要。
+
+摘要给全轨迹及 `snapshot_count>0` 的occupied样本p50/p95/峰值，另列每包压缩/raw大小、实体和弹体数量、入队拒绝和故障主动丢包。**分位数按操作边界采样加权，不是按墙钟时间加权**；峰值包含入队后、同帧出队前的状态。采集会保留压缩归档和操作日志，其运行RSS不代表无探针的游戏内存。
+
+离线回放先调用 `CardDB.all()` 完成77定义的编译冻结，再对本轨迹全部包做两遍完整验证解码并释放引用，随后才取两条队列的测量基线。`decode_warmup` 独立列出定义缓存、首遍及次遍解码的静态内存变化；正常对局在收包前已加载定义，这笔一次性全局缓存不是队列常驻。首次真实回放未预热，当前队列列混入固定1,179,964字节残留，旧路径在其后运行已热；原始结果保留为不可直接比较的首次证据，修正结果使用新的 `warm-final` 目录。
+
+离线回放将相同压缩归档、轨迹与采样数组放在计量基底中，按同一真实顺序重新调用入队、adaptive延迟更新、出队和清空，并逐步核对占用、raw计数和返回事件顺序。旧路径每次 `duplicate()` 后写回同一个字节，强制COW脱离，确保每个入队压缩缓冲独占；内容不变。新路径每次独立验证解码，两个路径分别记录队列静态活跃分配增量、对象增量、occupied分位数、包含ready返回数组仍持有时的峰值、ready释放及clear后的增量；不把采集归档、预加载资源或采样数组算作队列成本。最初64MiB版本的旧辅助列未写入脱离COW，仅是共享压缩缓冲的容器下界，原结果保留，不能与修正后的独占缓冲列混为同口径。
+
+同一离线入口另取轨迹中最大的实际载荷，复制32次、只改服务器Tick，按20Hz到达/60Hz出队分别设1/2/3/4Tick固定窗口。它是受控负载诊断，真实normal/impaired的adaptive轨迹单列；不将合成窗口当公网、任意卡组或最大实体规模保证。固定延迟也可通过测试专用 `--queue-trace-delay-ticks=1..4` 参数指定，普通诊断默认保持adaptive。
+
+当前单包解压上限1MiB。16MiB累计raw预算以200ms最大播放窗口、120ms既有故障注入与50ms一个包为有限边界：`ceil((200+120)/50)+1=8` 个最大合法包，再留8包约400ms余量。raw预算仍不是对象堆上限；trace回放列出8/16/64MiB候选对实际峰值的容纳情况，接近1MiB包的精确边界由网络生命周期回归验证。它不承诺任意主线程停顿或WAN条件，也不把当前样本最大包称为游戏可出现的最大包。
+
+headless/Dummy的正式资源准备使用主线程分批加载，集合/模型池/效果预热保持；可渲染模式仍走原异步。CPU配对双方使用同一当前加载模式，准备在计时外；不得把前后headless准备模式差别称为真实GUI加载提速。`resources_usec`含主线程读取，`threaded_requests`和`threaded_wait_usec`在此模式为0。
+
+
+## 表现与依赖重复工作
+
+- `projectile_geometry_check.gd`：几何合同与少量Compatibility画面统一通过本页`safe_probe.py`入口；旧大档五轮结果仅保留历史证据，不继续补跑。
+- `particle_birth_probe.gd`：保留193帧stop/回退/世界坐标隔离和重复创建释放；当前入口为`safe_probe.py --probe particle`，不再推荐旧32/128实例和7×20配方。
+- `effect_dependency_probe.py --output <新证据目录>`：默认受监督headless、典型冰鸟storm、paired、1轮×1样本；明确`--render`才跑Compatibility。压力虚空召唤或cold须单独显式选择，每个引擎进程仍最多20秒，任何失败停止后续步骤。历史5×5数据只按其原身份/负载解释，不是当前默认或整局FPS。首次指引擎首次解析，OS文件缓存可能已暖。
+
+大JSON优化只移除依赖收集对数值frames的重复解析；播放器数据驻留与预热保持。依赖头不增加永久解析缓存，完整源哈希避免过期头漏资源，涉及效果资源、依赖清单或显式`--full`的verify计划运行只读`effect_dependencies.py --check`；纯文档不附带该步骤。当前文件大于等于1MiB时生成；需要更新时显式`python3 tools/maintenance/effect_dependencies.py --write`，不改源JSON。所有正式效果JSON均纳入导出包含规则。
+
+Main真实七消费者的共享视图对照与连续跨局窗口诊断保存在本任务素材库，测试用代理仅在工具中使用；正式ProjectileSystem不增加持久统计器。按内容代次共享，不能把同帧更新前后硬合并成一次，也不能把固定帧delta的wall耗时称为游戏FPS。
+
+## 正常单局开局
+
+`python3 tools/performance/match_loading.py --output <素材库内的新目录>` 只运行一个新进程中的真实 Solo/DeckBuilder 确认和开局，不重复进入、不注入压力单位/技能。固定八张玩家卡、AI组牌种子246813579，正常Compatibility/60FPS上限、系统音频、原窗口配置；加载后只取一张自然帧截图。正常资源准备、完整采样年龄/粒子池、模型与声音仍在开战前完成。输出 `loading.json` 分段、路径集合hash、模型各路径预算/库存/CPU与绘制、效果帧等待/覆盖计数，`engine.log` 和 `watchdog.json` 保留退出与保护结果。性能比较须核对卡组、技能、资源路径和层覆盖；不能把30FPS诊断与60FPS正常准备直接相比。
+
+这是独立的单局政策，不放宽上述几何/粒子探针的20秒/1GiB默认值。启动前确认没有其他Godot进程，读取物理内存、内存压力及当前可用比例估计；压力须为normal且估计可用至少8GiB。RSS预算取“当前估计可用减6GiB”和3GiB的较小值，总超时60秒、初始心跳6秒、主线程失去响应2秒；每秒检查系统压力，压力变化或估计可用低于4GiB即停止。仍用独立监督器、同一并发锁和本次拥有进程组清理。压力工具的可用比例不是空闲物理页数，RSS也不包括全部GPU资源；该政策只适用于当前Mac上的有界单场准备，不是产品内存上限或系统失去响应后的保证。监督器默认仍为30FPS，只有此入口显式选择60，其他参数或更高帧率拒绝。
+
+`resource_stage_usec` 是主线程依赖收集加后台加载的墙钟，后台部分含读取、引擎反序列化、任务队列与逐帧轮询，不能全称磁盘IO。`render_usec` 是同步强制绘制调用墙钟，含驱动等待，不是GPU计时器；`frame_wait_usec` 含自然绘制、同步及限帧等待，不能等同CPU忙碌。JSON读取/解析的本次细分来自临时诊断调用，已恢复原玩家源码，测量脚本与恢复映射归档在交付证据内；普通工具不改写正式资源。所有新进程均有引擎缓存首次加载，操作系统文件缓存/Shader驱动缓存未清空；不能称为系统冷启动。
+
+
+`--profile heavy`选择用户要求的偏重合法双方卡组：双方主动槽镜像，蓝方腕豪/虚空召唤/迅捷蟹/传送门/剑魔/凯隐/重装部队，红方冰鸟/格温圣霭/赛恩/龙王/狂战士/天使/凝滞。测试子类只固定对手卡组，不改变正式Main。`match_loading_plan.gd`仅盘点原样本和这一候选的依赖/容量，不能作为加载性能。`progress.json`每约0.5秒保存部分阶段，以免保护停止后丢失已完成证据。本次heavy触发全局压力warning被清理，无完整耗时；不自动重跑。模型金身预热与效果绘制去重分别计量；可变网格和多遍材质保留全部绘制，避免同RID更新顶点漏提交。最新保守收紧尚未在引擎中复验，初版5.773秒不能视为当前最终值，见[交付记录](../../docs/deliveries/2026-10-16_match_loading.md)。
+
+
+虚空召唤离线数据用`python3 tools/maintenance/compact_samples.py --write`生成，`--check`逐位核对并检查确定性；Python3.14标准库Zstandard，无安装步骤。源JSON保留，运行不展开它；维度/源SHA/载荷SHA失配停止准备。`compact_sample_check.gd`是带心跳的CPU全数据等价入口，须由监督器启动，不当作战斗性能。`match_resource_audit.gd`只追踪已知定义/字面量/场景传递路径，并用真实缓存状态确认；不能从preload文本推断全部运行时资源。最终重组记录见交付，普通组旧5.773秒不可当最终值。
+
+单场入口现允许已确认的用户`--editor`进程继续存在并计入系统余量，拒绝其他Godot游戏；不关闭编辑器。`resource-audit.json`的完整来源解析在Main准备计时后执行，外部按钮到报告时间含诊断开销；直接使用`main.total_usec`作开局准备。预热retained只输出类型/配方计数，没有为降低数字删除可变粒子材质。

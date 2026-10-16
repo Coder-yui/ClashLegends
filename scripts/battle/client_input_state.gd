@@ -21,6 +21,9 @@ func visit_cards(visitor: Callable) -> void:
 func skill(id: int, request: int) -> void:
 	_skills[id] = request
 
+func has_skill(id: int) -> bool:
+	return _skills.has(id)
+
 func finish_skill(id: int, request: int) -> bool:
 	if int(_skills.get(id, -1)) != request: return false
 	_skills.erase(id)

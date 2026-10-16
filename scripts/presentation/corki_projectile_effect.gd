@@ -13,7 +13,7 @@ func setup(system: Node2D) -> void:
 	additive.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
 	material = additive
 func _draw() -> void:
-	for projectile in _system.visible_snapshot().values():
+	for projectile in _system.visible_view().values():
 		if StringName(projectile.get("visual", "")) != &"corki_bullet": continue
 		draw_set_transform(_system._visual_position(projectile), _system._direction(projectile).angle() + PI * 0.5)
 		# 原版贴图亮端为弹头，拖尾沿飞行反方向延伸。
@@ -25,15 +25,9 @@ func _draw() -> void:
 static func draw_flight(canvas: Node2D, position: Vector2, direction: Vector2, big: bool) -> void:
 	canvas.draw_set_transform(position, direction.angle() + PI * 0.5)
 	# SCB原版网格投影到画布，保留逐面UV；纹理图集不能直接当精灵。
-	var scale := 0.25 if big else 0.20
-	for face in preload("res://assets/effects/corki/missile_geometry.gd").FACES:
-		var points := PackedVector2Array()
-		var uvs := PackedVector2Array()
-		for index in 3:
-			var v: Array = face.v[index]
-			points.append(Vector2(float(v[0]), float(v[2]) * 0.85 - float(v[1]) * 0.53) * scale)
-			uvs.append(Vector2(float(face.uv[index][0]), float(face.uv[index][1])))
-		canvas.draw_polygon(points, PackedColorArray([Color.WHITE]), uvs, effect_texture(BIG) if big else effect_texture(MISSILE))
+	var texture := effect_texture(BIG) if big else effect_texture(MISSILE)
+	for face in _projected_faces():
+		canvas.draw_polygon(face.big_points if big else face.points, _white_colors, face.uvs, texture)
 	canvas.draw_set_transform(Vector2.ZERO)
 
 static func draw_impact(canvas: Node2D, effect: Dictionary) -> void:
@@ -55,5 +49,29 @@ static func effect_texture(path: String) -> Texture2D:
 
 static func resource_manifest(variant: String) -> Dictionary:
 	if variant == "bullet": return {"paths": [BULLET]}
-	if variant == "missile": return {"paths": [MISSILE, BIG, RING, FLAME]}
+	if variant == "missile":
+		_projected_faces()
+		return {"paths": [MISSILE, BIG, RING, FLAME]}
 	return {}
+
+# 两种尺寸按原表达式各投影一次，避免改用Canvas缩放产生不同的浮点舍入。
+static var _projected_cache: Array[Dictionary] = []
+static var _white_colors := PackedColorArray([Color.WHITE])
+
+static func _projected_faces() -> Array[Dictionary]:
+	if not _projected_cache.is_empty(): return _projected_cache
+	for source in preload("res://assets/effects/corki/missile_geometry.gd").FACES:
+		var points := PackedVector2Array()
+		var big_points := PackedVector2Array()
+		var uvs := PackedVector2Array()
+		for index in 3:
+			var vertex: Array = source.v[index]
+			var projected := Vector2(float(vertex[0]), float(vertex[2]) * 0.85 - float(vertex[1]) * 0.53)
+			points.append(projected * 0.20)
+			big_points.append(projected * 0.25)
+			uvs.append(Vector2(float(source.uv[index][0]), float(source.uv[index][1])))
+		var face := {"points": points, "big_points": big_points, "uvs": uvs}
+		face.make_read_only()
+		_projected_cache.append(face)
+	_projected_cache.make_read_only()
+	return _projected_cache

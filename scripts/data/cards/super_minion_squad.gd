@@ -6,14 +6,10 @@ static func definition() -> Dictionary:
 		"gameplay": {
 			"name": "攻城部队", "cost": 6, "type": "unit", "selectable": true,
 			"description": "一次部署2只超级兵，并排站位，间隔2.5格。主动技能：男爵之力，消耗2金币，可用1次，为本次部署中仍存活的超级兵施加超级兵的男爵之力。",
-			# 聚合卡提供完整单位字段以通过通用数据契约；真正生成时读取超级兵成员卡数据。
-			"hp": 720, "damage": 72, "range": MELEE_RANGE_MIN,
-			"speed": SPEED_MEDIUM, "interval": 1.15, "first_hit": 0.38,
-			"size_tier": SIZE_SLIGHTLY_LARGE, "radius": RADIUS_SLIGHTLY_LARGE,
-			"mass": 6.0, "sight": 200.0,
-			"deployment_count": 2, "deployment_spacing": 100.0, "deployment_formation": "line",
-			"deployment_member_ids": ["super_minion", "super_minion"],
-			"is_air": false, "building_only": false, "can_attack_air": false,
+			"spawn_plan": {
+				"members": ["super_minion", "super_minion"],
+				"spacing": 100.0, "formation": "line",
+			},
 			"active_skills": [{
 				"name": "男爵之力", "kind": "buff", "cost": 2, "max_uses": 1, "cooldown": 7.0,
 				"target_scope": "deployment_group", "duration": 5.0,
@@ -25,7 +21,6 @@ static func definition() -> Dictionary:
 		},
 		"visual": {
 			"active_skills": [{"icon_path": "res://assets/skills/super_minion_squad_0.png"}],
-			"visual_radius": RADIUS_SLIGHTLY_LARGE + VISUAL_RADIUS_PADDING,
 			"color": Color(0.52, 0.55, 0.62),
 		},
 		"card_art": {},

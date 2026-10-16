@@ -31,7 +31,7 @@ func sync_effects(projectiles: Node2D, camera: Camera3D) -> void:
 			_mists.erase(id)
 	present.clear()
 	if projectiles == null: return
-	var snapshot: Dictionary = projectiles.visible_snapshot()
+	var snapshot: Dictionary = projectiles.visible_view()
 	for id in snapshot:
 		var projectile: Dictionary = snapshot[id]
 		if String(projectile.get("visual", "")) != "tristana_bullet": continue

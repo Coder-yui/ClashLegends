@@ -164,7 +164,8 @@ func is_card_deploy_position_valid(p_team: int, card_id: String, pos: Vector2, c
 	# 只有卡牌显式要求时才限制整排跨度；普通编队与单单位共用落点格，
 	# 越界或落在地形、结构上的成员由生成入口逐兵纠正。
 	if check_formation and bool(stats.get("deploy_formation_requires_in_bounds", false)):
-		var margin := (int(stats.get("deployment_count", 1)) - 1) * float(stats.get("deployment_spacing", 0.0)) * 0.5
+		var plan := CardDB.deployment_plan(card_id)
+		var margin: float = (plan.members.size() - 1) * float(plan.spacing) * 0.5
 		if pos.x < margin or pos.x > ArenaRules.FIELD_W - margin:
 			return false
 	var deploy_zone: String = String(stats.get("deploy_zone", "own_side")) if player_deployment else "global"

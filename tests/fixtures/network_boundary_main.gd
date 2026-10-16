@@ -1,6 +1,9 @@
 extends "res://scripts/main.gd"
 ## 故障只注入测试场景；生产协议和 RPC 路径不变。
 var loading_wait_observed := false
+var _boundary_offer_seen: Dictionary = {}
+var _boundary_pending_offer: Dictionary = {}
+var _boundary_fault_dispatched := false
 
 func _ready() -> void:
 	server_auto_restart = boundary_case() == "restart"
@@ -15,17 +18,54 @@ func boundary_case() -> String:
 
 @rpc("authority", "call_remote", "reliable")
 func _rpc_offer(epoch: String, protocol: int, fingerprint: String, assigned_team: int) -> void:
-	if assigned_team == 0 and boundary_case() in ["protocol", "content"]:
+	if boundary_case() not in ["protocol", "content"]:
+		super._rpc_offer(epoch, protocol, fingerprint, assigned_team)
+		return
+	if assigned_team == 0:
+		super._rpc_offer(epoch, protocol, fingerprint, assigned_team)
+	elif assigned_team == 1:
+		# 身份来自真实offer；第二席暂不提交卡组，等待两端都实际收到offer。
 		local_team = assigned_team
-		await get_tree().create_timer(1.0).timeout
-		if boundary_case() == "protocol":
-			super._rpc_offer(epoch, protocol - 1, fingerprint, assigned_team)
-		else:
-			_session.join(epoch)
-			_snapshot_system.reset_session(epoch)
-			_rpc_register_deck.rpc_id(1, _deck, _active_skill_choices, epoch, protocol, "incompatible-content")
+		_boundary_pending_offer = {"epoch": epoch, "protocol": protocol, "fingerprint": fingerprint, "team": assigned_team}
 	else:
 		super._rpc_offer(epoch, protocol, fingerprint, assigned_team)
+		return
+	_rpc_boundary_offer_seen.rpc_id(1, epoch)
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_boundary_offer_seen(epoch: String) -> void:
+	var sender := multiplayer.get_remote_sender_id()
+	if boundary_case() not in ["protocol", "content"] or mode != "server" or not _session.accepts(sender, epoch, MatchSession.Phase.LOBBY): return
+	_boundary_offer_seen[sender] = true
+	_maybe_inject_boundary_fault()
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_register_deck(deck: Array, active_skill_choices: Dictionary = {}, epoch: String = "", protocol: int = -1, fingerprint: String = "") -> void:
+	super._rpc_register_deck(deck, active_skill_choices, epoch, protocol, fingerprint)
+	_maybe_inject_boundary_fault()
+
+func _maybe_inject_boundary_fault() -> void:
+	if boundary_case() not in ["protocol", "content"] or mode != "server" or _boundary_fault_dispatched or _session.phase != MatchSession.Phase.LOBBY or _session.players.size() != 2: return
+	var first := _session.peer_for_team(0)
+	var second := _session.peer_for_team(1)
+	if not _boundary_offer_seen.has(first) or not _boundary_offer_seen.has(second) or not _session.has_deck(first): return
+	_boundary_fault_dispatched = true
+	print("[BOUNDARY_HANDSHAKE] 双方真实offer已确认，第一席卡组已验证，向第二席注入：", boundary_case())
+	_rpc_boundary_inject_fault.rpc_id(second, _session.session_id)
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_boundary_inject_fault(epoch: String) -> void:
+	if mode != "client" or _boundary_pending_offer.get("epoch") != epoch or _boundary_pending_offer.get("team") != local_team or _session.phase != MatchSession.Phase.LOBBY: return
+	var offer := _boundary_pending_offer
+	_boundary_pending_offer = {}
+	if boundary_case() == "protocol":
+		# 经正式客户端offer入口拒绝旧协议；join仍记录真实会话供终态比对。
+		super._rpc_offer(epoch, int(offer.protocol) - 1, String(offer.fingerprint), int(offer.team))
+	elif boundary_case() == "content":
+		# 内容故障必须经正式服务端注册入口拒绝，不能在客户端自造失败。
+		if not _session.join(epoch): return
+		_snapshot_system.reset_session(epoch)
+		_rpc_register_deck.rpc_id(1, _deck, _active_skill_choices, epoch, int(offer.protocol), "incompatible-content")
 
 @rpc("authority", "call_remote", "reliable")
 func _rpc_start(epoch: String, remote_deck: Array, remote_choices: Dictionary) -> void:

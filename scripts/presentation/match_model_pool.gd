@@ -10,6 +10,7 @@ const REFILL_SLICE_USEC := 1000
 var capacity := {}
 var initial_capacity := {}
 var _packed := {}
+var _wrapper_templates := {}
 var _clips := {}
 var _runtime_safe := {}
 var _refill := {}
@@ -18,6 +19,7 @@ var refill_metrics := {"completed": 0, "steps": 0, "max_step_usec": 0, "max_slic
 
 var errors := PackedStringArray()
 var metrics := {}
+var preparation_by_path := {}
 var _world: Node3D
 var _render_samples: Array[Node3D] = []
 var cancelled := false:
@@ -26,29 +28,12 @@ var cancelled := false:
 		if value:
 			for sample in _render_samples:
 				if is_instance_valid(sample): sample.hide()
-var preparation_times := {"instantiate_usec": 0, "animation_usec": 0, "render_usec": 0, "sample_prepare_usec": 0, "draws": 0, "animation_draws_skipped": 0, "stasis_samples": 0, "stealth_samples": 0, "predeployment_samples": 0, "overlay_draws_skipped": 0}
+var preparation_times := {"instantiate_usec": 0, "animation_usec": 0, "render_usec": 0, "frame_wait_usec": 0, "sample_prepare_usec": 0, "draws": 0, "animation_draws_skipped": 0, "stasis_samples": 0, "stealth_samples": 0, "predeployment_samples": 0, "overlay_draws_skipped": 0}
 
 ## 每卡/阵营只有一个并发来源；同卡互斥形态同路径取最大，独立来源累加。
 ## 两轮爆发窗口有界保留；循环依赖只扫描已去重闭包一次，不按整场累计数量扩张。
 static func build_specs(cards: Dictionary, plan: RefCounted = null) -> Dictionary:
-	var demand := {}
-	for id in cards:
-		demand[id] = maxi(int(MatchResources.SYSTEM_UNIT_BUDGET.get(id, 2)), int(CardDB.get_card(String(id)).get("deployment_count", 1)))
-	var summoned := {}
-	for id in cards:
-		var base: Dictionary = plan.definition(String(id)) if plan != null else CardDB.get_card(String(id))
-		var per_source := {}
-		for form in range(2 if base.has("transformed_stats") else 1):
-			var per_form := {}
-			var stats := PresentationConfig.for_form(base, form).duplicate()
-			stats.erase("transformed_stats")
-			_collect_demand(stats, per_form)
-			for child in per_form: per_source[child] = maxi(int(per_source.get(child, 0)), int(per_form[child]))
-		for child in per_source: summoned[child] = int(summoned.get(child, 0)) + int(per_source[child]) * int(base.get("deployment_count", 1))
-	for child in summoned: demand[child] = maxi(int(demand.get(child, 2)), mini(32, int(summoned[child]) * 2))
-	# 镜像是额外并发来源，复制闭包内任一卡及其召唤物均需库存。
-	if cards.keys().any(func(id): return bool(CardDB.get_card(String(id)).get("resource_dependencies", {}).get("copy_deck_skills", false))):
-		for id in demand: demand[id] = mini(64, int(demand[id]) * 2)
+	var demands := [_team_demand(cards, plan, 0), _team_demand(cards, plan, 1)]
 	var specs := {}
 	for id in cards:
 		var base: Dictionary = plan.definition(String(id)) if plan != null else CardDB.get_card(String(id))
@@ -62,12 +47,38 @@ static func build_specs(cards: Dictionary, plan: RefCounted = null) -> Dictionar
 				if path.is_empty(): continue
 				if not specs.has(path): specs[path] = []
 				# 两个形态仍分别预热映射，但相同路径不重复计算库存。
-				specs[path].append({"id": id, "stats": stats, "team": team, "form": form, "count": 0 if seen.has(path) else demand[id]})
+				specs[path].append({"id": id, "stats": stats, "team": team, "form": form, "count": 0 if seen.has(path) else demands[team][id]})
 				seen[path] = true
 	return specs
 
+static func _team_demand(cards: Dictionary, plan: RefCounted, team: int) -> Dictionary:
+	var demand := {}
+	for id in cards:
+		if plan != null and team not in plan.cards.get(id, []): continue
+		demand[id] = maxi(int(MatchResources.SYSTEM_UNIT_BUDGET.get(id, 2)), int(CardDB.get_card(String(id)).get("deployment_count", 1)))
+	var summoned := {}
+	for id in cards:
+		if not demand.has(id): continue
+		var base: Dictionary = plan.definition(String(id), team) if plan != null else CardDB.get_card(String(id))
+		var per_source := {}
+		for form in range(2 if base.has("transformed_stats") else 1):
+			var per_form := {}
+			var stats := PresentationConfig.for_form(base, form).duplicate()
+			stats.erase("transformed_stats")
+			_collect_demand(stats, per_form)
+			for child in per_form: per_source[child] = maxi(int(per_source.get(child, 0)), int(per_form[child]))
+		for child in per_source: summoned[child] = int(summoned.get(child, 0)) + int(per_source[child]) * int(base.get("deployment_count", 1))
+	for child in summoned: demand[child] = maxi(int(demand.get(child, 2)), mini(32, int(summoned[child]) * 2))
+	# 镜像只扩充所在阵营；不能替敌方复制或把敌方编队/召唤预算加到本方。
+	if demand.keys().any(func(id): return bool(CardDB.get_card(String(id)).get("resource_dependencies", {}).get("copy_deck_skills", false))):
+		for id in demand: demand[id] = mini(64, int(demand[id]) * 2)
+	return demand
+
 static func _collect_demand(value: Variant, demand: Dictionary) -> void:
 	if value is Dictionary:
+		if value.has("spawn_plan"):
+			for id in value.spawn_plan.members:
+				demand[String(id)] = int(demand.get(String(id), 0)) + 1
 		for field in MatchResources.REFERENCES:
 			if value.has(field):
 				var id := String(value[field])
@@ -91,6 +102,8 @@ func prepare(resources: Dictionary, world: Node3D, camera: Camera3D, cards: Dict
 	for path in resources:
 		if not (String(path).begins_with("res://assets/units/") or String(path).begins_with("res://assets/effects/")) or not String(path).ends_with(".tscn") or instances.has(path):
 			continue
+		var path_started := Time.get_ticks_usec()
+		var before_times := preparation_times.duplicate()
 		var packed := resources[path] as PackedScene
 		if packed == null: continue
 		var batch: Array[Node3D] = []
@@ -114,7 +127,7 @@ func prepare(resources: Dictionary, world: Node3D, camera: Camera3D, cards: Dict
 		for use in uses: ModelVisualResources.collect_clip_names(use.stats.get("visual_animations", {}), _clips[path])
 		while batch.size() < int(initial_capacity[path]):
 			var started := Time.get_ticks_usec()
-			var node := packed.instantiate()
+			var node := instantiate_visual(packed)
 			if not node is Node3D:
 				node.free()
 				errors.append("模型根节点必须是Node3D: " + String(path))
@@ -143,7 +156,7 @@ func prepare(resources: Dictionary, world: Node3D, camera: Camera3D, cards: Dict
 			batch.append(node)
 			# 不把场景树交给后台线程；以完整实例为最小单元分帧让出主线程。
 			if Time.get_ticks_usec() - slice_started >= LOADING_SLICE_USEC:
-				await tree.process_frame
+				await _wait_frame(tree)
 				if cancelled or not is_instance_valid(world): return
 				slice_started = Time.get_ticks_usec()
 		if batch.is_empty(): continue
@@ -166,11 +179,12 @@ func prepare(resources: Dictionary, world: Node3D, camera: Camera3D, cards: Dict
 				source.card_id = String(spec.id)
 				source.position = Vector2(360, 640)
 				sample = UnitModel3D.new()
+				sample.model_factory = instantiate_visual
 				sample.process_mode = Node.PROCESS_MODE_DISABLED
 				world.add_child(sample)
 				sample.setup(source, packed, camera, spec.stats.get("visual_animations", {}), float(spec.stats.get("visual_forward_yaw", 0.0)), String(spec.stats.get("visual_active_buff_scene", "")))
 			else:
-				sample = packed.instantiate() as Node3D
+				sample = instantiate_visual(packed) as Node3D
 				sample.process_mode = Node.PROCESS_MODE_DISABLED
 				world.add_child(sample)
 			_render_samples.append(sample)
@@ -178,7 +192,7 @@ func prepare(resources: Dictionary, world: Node3D, camera: Camera3D, cards: Dict
 			# 实例的脚下光圈和蒙皮材质同样需要首次绘制。
 			sample.position += Vector3(0, 3, 0)
 			for mesh in sample.find_children("*", "GeometryInstance3D", true, false): mesh.show()
-			await tree.process_frame
+			await _wait_frame(tree)
 			if cancelled or not is_instance_valid(world): return
 			for player in sample.find_children("*", "AnimationPlayer", true, false):
 				if player.is_playing(): player.advance(0.0)
@@ -198,7 +212,7 @@ func prepare(resources: Dictionary, world: Node3D, camera: Camera3D, cards: Dict
 							drawn_geometry[configuration] = true
 						else: preparation_times.animation_draws_skipped += 1
 						if Time.get_ticks_usec() - slice_started >= LOADING_SLICE_USEC:
-							await tree.process_frame
+							await _wait_frame(tree)
 							if cancelled or not is_instance_valid(world): return
 							slice_started = Time.get_ticks_usec()
 				if is_instance_valid(sample._active_buff_visual):
@@ -233,7 +247,7 @@ func prepare(resources: Dictionary, world: Node3D, camera: Camera3D, cards: Dict
 					preparation_times.predeployment_samples += 1
 					sample.advance_visual(progress)
 					_draw_sample()
-					await tree.process_frame
+					await _wait_frame(tree)
 					if cancelled or not is_instance_valid(world): return
 			rendered_paths[path] = true
 			# 保留绘制资源/骨骼/材质实例；样本不再播放，不需持有独立的巨大动画副本。
@@ -242,6 +256,9 @@ func prepare(resources: Dictionary, world: Node3D, camera: Camera3D, cards: Dict
 				for library in player.get_animation_library_list(): player.remove_animation_library(library)
 			sample.hide()
 		instances[path] = batch
+		var path_times := {"total_usec": Time.get_ticks_usec() - path_started, "instances": batch.size(), "capacity": count, "runtime_safe": _runtime_safe.get(path, false)}
+		for key in preparation_times: path_times[key] = int(preparation_times[key]) - int(before_times[key])
+		preparation_by_path[path] = path_times
 	if not cancelled and is_instance_valid(world):
 		for id in cards:
 			if float(CardDB.get_card(String(id)).get("stealth_delay", 0.0)) > 0.0:
@@ -283,7 +300,7 @@ func advance_refill(delta: float) -> void:
 		return
 	match int(_refill.stage):
 		0:
-			var node := (_packed[path] as PackedScene).instantiate() as Node3D
+			var node := instantiate_visual(_packed[path]) as Node3D
 			node.hide() # 必须先隐藏再入树；不绘制、不播放声音或驱动权威状态。
 			node.process_mode = Node.PROCESS_MODE_DISABLED
 			_world.add_child(node)
@@ -335,7 +352,7 @@ func take(packed: PackedScene) -> Node:
 		if capacity.has(path): metric.exhausted += 1
 		else: metric.unplanned += 1
 		var started := Time.get_ticks_usec()
-		var fresh := packed.instantiate()
+		var fresh := instantiate_visual(packed)
 		fresh.set_meta("pool_path", path)
 		if fresh is Node3D and is_instance_valid(_world) and capacity.has(path):
 			_world.add_child(fresh)
@@ -404,6 +421,7 @@ func release_sources() -> void:
 	_refill_ready = false
 	_discard_refill()
 	_packed.clear()
+	_wrapper_templates.clear()
 	_clips.clear()
 	for source in _sample_sources:
 		if is_instance_valid(source): source.free()
@@ -442,3 +460,15 @@ static func mesh_configuration(meshes: Array) -> String:
 				var material := mesh.get_active_material(surface)
 				configuration.append(material.get_instance_id() if material != null else 0)
 	return var_to_str(configuration)
+
+func _wait_frame(tree: SceneTree) -> void:
+	var started := Time.get_ticks_usec()
+	await tree.process_frame
+	preparation_times.frame_wait_usec += Time.get_ticks_usec() - started
+
+## Per-match deterministic wrapper templates; never share pose, player or live Animation.
+func instantiate_visual(packed: PackedScene) -> Node:
+	var node := packed.instantiate()
+	if node.has_method("use_match_visual_templates"):
+		node.call("use_match_visual_templates", _wrapper_templates)
+	return node

@@ -9,6 +9,10 @@ var _player: AnimationPlayer
 var _normal_mesh: ArrayMesh
 var _wing_mesh: ArrayMesh
 var _full_mesh: ArrayMesh
+var _match_templates := {}
+
+func use_match_visual_templates(templates: Dictionary) -> void:
+	_match_templates = templates
 
 func _ready() -> void:
 	_initial_ultimate_form = ultimate_form
@@ -22,14 +26,24 @@ func prepare_visual_animations() -> void:
 	if _mesh == null or _player == null:
 		return
 	_full_mesh = _mesh.mesh as ArrayMesh
-	_normal_mesh = _filter_surfaces(["Wings"])
-	_wing_mesh = _filter_surfaces(["Shoulder"])
+	if not _match_templates.has(_full_mesh):
+		var libraries := {}
+		var target := _player.get_node(_player.root_node).get_path_to(get_node("Model"))
+		for name in _player.get_animation_library_list():
+			libraries[name] = _height_template(_player.get_animation_library(name), target)
+		_match_templates[_full_mesh] = {"normal": _filter_surfaces(["Wings"]), "wing": _filter_surfaces(["Shoulder"]), "libraries": libraries}
+	var template: Dictionary = _match_templates[_full_mesh]
+	_normal_mesh = template.normal
+	_wing_mesh = template.wing
 	_mesh.mesh = _full_mesh if ultimate_form else _normal_mesh
 	var skeleton := _mesh.get_parent() as Skeleton3D
 	var snap := preload("res://assets/units/aatrox/weapon_snap.gd").new()
 	snap.player = _player
 	skeleton.add_child(snap)
-	_prepare_air_attack_height()
+	# Templates are never assigned as live mutable animations: every player owns copies.
+	for name in template.libraries:
+		_player.remove_animation_library(name)
+		_player.add_animation_library(name, ModelVisualResources.copy_library(template.libraries[name]))
 
 func _filter_surfaces(hidden: Array) -> ArrayMesh:
 	var result := ArrayMesh.new()
@@ -60,25 +74,20 @@ func _update_surfaces(clip: StringName, source_time: float) -> void:
 	else:
 		_mesh.mesh = _full_mesh if ultimate_form else _normal_mesh
 
-func _prepare_air_attack_height() -> void:
-	# 地面版被动增加原生浮空量，与大灭动作姿态衔接；每条片段都有同一轨道，交给AnimationPlayer混合。
-	var target := _player.get_node(_player.root_node).get_path_to(get_node("Model"))
-	for library_name in _player.get_animation_library_list():
-		var library := _player.get_animation_library(library_name).duplicate(true) as AnimationLibrary
-		_player.remove_animation_library(library_name)
-		_player.add_animation_library(library_name, library)
-		for clip in library.get_animation_list():
-			var animation := library.get_animation(clip)
-			var track := animation.add_track(Animation.TYPE_POSITION_3D)
-			animation.track_set_path(track, target)
-			var lift := 0.0
-			animation.position_track_insert_key(track, 0.0, Vector3(0, lift, 0))
-
-		if library.has_animation("Passive_Attack"):
-			var passive := library.get_animation("Passive_Attack").duplicate(true) as Animation
-			var track := passive.find_track(target, Animation.TYPE_POSITION_3D)
-			passive.track_set_key_value(track, 0, Vector3(0, NATIVE_AIR_LIFT, 0))
-			library.add_animation("Passive_Attack_Ult", passive)
+func _height_template(source: AnimationLibrary, target: NodePath) -> AnimationLibrary:
+	# One deterministic derived library per imported mesh in this match.
+	var library := ModelVisualResources.copy_library(source)
+	for clip in library.get_animation_list():
+		var animation := library.get_animation(clip)
+		var track := animation.add_track(Animation.TYPE_POSITION_3D)
+		animation.track_set_path(track, target)
+		animation.position_track_insert_key(track, 0.0, Vector3.ZERO)
+	if library.has_animation("Passive_Attack"):
+		var passive := ModelVisualResources.copy_animation(library.get_animation("Passive_Attack"))
+		var track := passive.find_track(target, Animation.TYPE_POSITION_3D)
+		passive.track_set_key_value(track, 0, Vector3(0, NATIVE_AIR_LIFT, 0))
+		library.add_animation("Passive_Attack_Ult", passive)
+	return library
 
 func set_visual_form(form_index: int) -> void:
 	ultimate_form = form_index == 1

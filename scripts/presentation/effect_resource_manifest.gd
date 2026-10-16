@@ -48,7 +48,7 @@ static func files(request: Dictionary, errors: PackedStringArray) -> Dictionary:
 			errors.append("效果数据不存在: " + path)
 			continue
 		raw.append(path)
-		var data: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
+		var data: Variant = dependency_data(String(path), raw)
 		if data == null:
 			errors.append("效果数据无法解析: " + path)
 			continue
@@ -84,3 +84,18 @@ static func _collect_shaders(value: Variant, player: Script, paths: Array) -> vo
 			for child in value.values(): _collect_shaders(child, player, paths)
 	elif value is Array:
 		for child in value: _collect_shaders(child, player, paths)
+
+## Large sampled sources keep their original player data. A tiny generated header
+## avoids parsing numeric frames just to collect dependencies. Validate the whole
+## source, never trust timestamps; edits safely fall back to the original parser.
+static func dependency_data(path: String, raw: Array) -> Variant:
+	var header_path := path.get_basename() + ".dependencies.json"
+	if FileAccess.file_exists(header_path):
+		var parser := JSON.new()
+		if parser.parse(FileAccess.get_file_as_string(header_path)) == OK:
+			var header: Variant = parser.data
+			if header is Dictionary and typeof(header.get("schema")) in [TYPE_INT, TYPE_FLOAT] and float(header.schema) == 1.0 and header.get("source") is String and header.source == path and header.get("source_sha256") is String and header.get("data") is Dictionary and header.data.get("emitters") is Array:
+				if header.source_sha256 == FileAccess.get_sha256(path):
+					if header_path not in raw: raw.append(header_path)
+					return header.data
+	return JSON.parse_string(FileAccess.get_file_as_string(path))

@@ -428,7 +428,7 @@ func _populate_card_option() -> void:
 		var stats: Dictionary = CardDB.get_card(id)
 		var base := PresentationConfig.for_form(stats, 0)
 		var has_own_model := not String(PresentationConfig.scene_path(base, 0)).is_empty()
-		var has_deployment_members: bool = not stats.get("deployment_member_ids", []).is_empty()
+		var has_deployment_members: bool = stats.has("spawn_plan")
 		if has_own_model or has_deployment_members:
 			_card_ids.append(id)
 	_card_ids.sort()
@@ -443,9 +443,9 @@ func _load_card(id: String, team: int, form: int) -> void:
 		return
 	_scene_mode = false
 	var card_stats: Dictionary = CardDB.get_card(id)
-	var deployment_member_ids: Array = card_stats.get("deployment_member_ids", [])
-	if not deployment_member_ids.is_empty():
-		_load_composite_card(id, team, form, deployment_member_ids, card_stats)
+	var members: Array = CardDB.deployment_plan(id).get("members", [])
+	if card_stats.has("spawn_plan"):
+		_load_composite_card(id, team, form, members, card_stats)
 		return
 	var source := _resolve_card_source(id, team, form)
 	if source.is_empty():
@@ -529,9 +529,9 @@ func _add_source_member() -> void:
 	_scene_mode = false
 	if CardDB.has_card(_selected_card):
 		var selected_stats: Dictionary = CardDB.get_card(_selected_card)
-		var deployment_member_ids: Array = selected_stats.get("deployment_member_ids", [])
-		if not deployment_member_ids.is_empty():
-			_load_composite_card(_selected_card, _selected_team, _selected_form, deployment_member_ids, selected_stats)
+		var members: Array = CardDB.deployment_plan(_selected_card).get("members", [])
+		if selected_stats.has("spawn_plan"):
+			_load_composite_card(_selected_card, _selected_team, _selected_form, members, selected_stats)
 			return
 	var source := _resolve_card_source(_selected_card, _selected_team, _selected_form)
 	if source.is_empty():

@@ -42,7 +42,14 @@ func _sim_step(dt: float) -> void:
 	movement_ms.append(_movement.last_movement_usec / 1000.0)
 	collision_ms.append(_movement.last_collision_usec / 1000.0)
 	max_combatants = maxi(max_combatants, get_tree().get_nodes_in_group("combatants").size())
-	started = Time.get_ticks_usec()
+
+## 在主采样循环结束后测最终状态；诊断工作不得污染 frame/main_process 分布。
+func sample_final_state_diagnostics(samples: int = 20) -> void:
+	for sample in samples:
+		_sample_state_diagnostics()
+
+func _sample_state_diagnostics() -> void:
+	var started := Time.get_ticks_usec()
 	var snapshot := _snapshot_system.capture()
 	snapshot_ms.append((Time.get_ticks_usec() - started) / 1000.0)
 	snapshot_bytes.append(float(snapshot.size()))
@@ -83,9 +90,9 @@ func is_ground_position_walkable(pos: Vector2, mover_radius: float, excluded: No
 	_navigation_count += 1
 	return result
 
-func find_ground_path(from: Vector2, goal: Vector2, target: Node2D, mover_radius: float = ArenaRules.NAV_CLEARANCE) -> PackedVector2Array:
+func find_ground_path(from: Vector2, goal: Vector2, target: Node2D, mover_radius: float = ArenaRules.NAV_CLEARANCE, crosses_river: bool = false) -> PackedVector2Array:
 	var started := Time.get_ticks_usec()
-	var result := super.find_ground_path(from, goal, target, mover_radius)
+	var result := super.find_ground_path(from, goal, target, mover_radius, crosses_river)
 	_path_usec += Time.get_ticks_usec() - started
 	return result
 

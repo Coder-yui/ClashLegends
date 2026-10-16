@@ -61,7 +61,7 @@ def main():
         for run_index, count in enumerate(counts * args.repeat):
             folder = out / (str(count) + "-" + str(run_index + 1))
             folder.mkdir()
-            command = [args.godot, *([] if args.render else ['--headless']), '--path', str(ROOT),
+            command = [args.godot, *([] if args.render else ['--headless']), '--log-file', str(folder / 'godot.log'), '--path', str(ROOT),
                        '--script', 'tools/performance/benchmark.gd', '--', '--perf-case=' + args.case,
                        '--perf-entry=' + args.entry, '--perf-prepare=' + args.prepare, '--perf-count=' + str(count), '--perf-seconds=' + str(args.seconds),
                        '--perf-visual=' + args.visual, '--perf-audio=' + args.audio,

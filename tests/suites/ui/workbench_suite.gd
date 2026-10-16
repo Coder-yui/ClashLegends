@@ -8,6 +8,67 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_artdev_workbench()
 	_check_desktop_camera()
 	_check_explicit_inspection()
+	await _check_simulation_pause()
+
+func _check_simulation_pause() -> void:
+	var panel := DevelopmentWorkbench.new()
+	_main.add_child(panel)
+	panel.setup(CardDB.all())
+	_main._art_dev_panel = panel
+	_main._workbench.enabled = true
+	_main._workbench.inspect_enabled = true
+	panel.workspace_changed.connect(_main._set_workbench_battle_active)
+	panel.item_selected.connect(_main._set_art_dev_selection)
+	panel.show_workspace(1)
+	var source: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "garen", Vector2(260, 1000), {"deploy_time_override": 0.0, "active_slot": 0}))
+	var target: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "ashe", Vector2(260, 940), {"deploy_time_override": 0.0}))
+	target.freeze(2.0)
+	_main._active_skills.consume(source.active_ability_id)
+	_main.preview_active_skill(source, {"name": "暂停回归", "kind": "buff", "duration": 2.0, "cast_duration": 1.0, "impact_delay": 0.4, "shield": 100.0, "shield_duration": 2.0, "cast_locks": ["movement", "attack", "facing"]})
+	_main._process(0.025)
+	panel._pause_button.pressed.emit()
+	_expect(panel.accepts_battle_input() and not panel.can_advance_simulation() and not _main.can_advance_simulation(), "工作台暂停独立关闭模拟推进，保留地图输入许可")
+	var tick: int = _main._sim_tick_id
+	var clock_ticks: int = _main._simulation_clock.ticks
+	var remainder: float = _main._simulation_clock.remainder
+	var packet: PackedByteArray = _main._snapshot_system.capture(0)
+	# 单机不注册网络实体索引，另查真实单位载荷，不能拿空单位包证明HP/坐标不变。
+	var source_state: Array = _main._snapshot_system._unit_snapshot_payload(1, source)
+	var target_state: Array = _main._snapshot_system._unit_snapshot_payload(2, target)
+	var impacts: Array = _main._commands.inspect_impacts().duplicate(true)
+	var cast_left := source.active_skill_cast_timer
+	var frozen_left := target.control.frozen_timer
+	var cooldown: float = _main.get_active_skill_snapshot(source.active_ability_id).cooldown_left
+	for frame in 5: _main._process(5.0)
+	_main.set_process(true)
+	for frame in 3: await _main.get_tree().process_frame
+	_main.set_process(false)
+	_expect(_main._sim_tick_id == tick and _main._simulation_clock.ticks == clock_ticks and _main._simulation_clock.remainder == remainder, "暂停墙钟不进入固定时钟，Tick和已有余量保持不变")
+	_expect(_main._snapshot_system.capture(0) == packet and _main._snapshot_system._unit_snapshot_payload(1, source) == source_state and _main._snapshot_system._unit_snapshot_payload(2, target) == target_state and source.active_skill_cast_timer == cast_left and target.control.frozen_timer == frozen_left and _main.get_active_skill_snapshot(source.active_ability_id).cooldown_left == cooldown and _main._commands.inspect_impacts() == impacts, "暂停保持HP、坐标、状态、技能起手、冷却与待命中时钟不变")
+	panel._select_item("training_dummy")
+	panel.set_select_mode(false)
+	_main._workbench_map_click(Vector2(420, 1050))
+	var placed: Unit = _main._art_dev_selected_unit()
+	_expect(placed != null and placed.card_id == "training_dummy" and _main._sim_tick_id == tick, "暂停期间仍经正式工作台入口摆放对象，不推进模拟")
+	panel._pause_button.pressed.emit()
+	_main._process(0.025)
+	_expect(_main._sim_tick_id == tick + 1 and _main._simulation_clock.ticks == clock_ticks + 1 and is_zero_approx(_main._simulation_clock.remainder), "恢复只消费暂停前余量与新帧，不追赶25秒暂停墙钟")
+	_expect(source.active_skill_cast_timer < cast_left and target.control.frozen_timer < frozen_left and _main.get_active_skill_snapshot(source.active_ability_id).cooldown_left < cooldown, "恢复后技能起手、冷却与控制时钟正常推进")
+	for workspace in [0, 2]:
+		panel.show_workspace(workspace)
+		_main._process(1.0)
+		_expect(not panel.accepts_battle_input() and not _main.can_advance_simulation() and _main._sim_tick_id == tick + 1, "切离实战页停止模拟（页%d）" % workspace)
+	panel.show_workspace(1)
+	panel._show_library(true)
+	_main._process(1.0)
+	_expect(not panel.accepts_battle_input() and not _main.can_advance_simulation() and _main._sim_tick_id == tick + 1, "牌库遮罩暂停战场，保持原有输入隔离")
+	panel._show_library(false)
+	_expect(_main.can_advance_simulation(), "关闭牌库恢复实战页模拟许可")
+	_main._pause_workbench_battle(false)
+	_main._workbench.enabled = false
+	_main._art_dev_panel = null
+	_main._clear_art_dev_units()
+	panel.free()
 
 func _check_artdev_active_skill_timeline() -> void:
 	var old_deck: Array = _main._deck.duplicate()
@@ -60,6 +121,17 @@ func _check_artdev_workbench() -> void:
 	panel.active_skill_requested.connect(_main._use_art_dev_active_skill)
 	panel.skill_resource_requested.connect(_main._set_art_dev_skill_resource)
 	panel.spell_active_changed.connect(func(enabled): _main._workbench.spell_active = enabled)
+	panel.show_workspace(2)
+	panel._select_item("heavy_minion_squad")
+	var member_text := "\n".join(PackedStringArray(panel._card_info.find_children("*", "Label", true, false).map(func(label): return label.text)))
+	_expect(panel._card_info.card_id == "heavy_minion_squad" and member_text.contains("超级兵 ×1（每只）") and member_text.contains("炮车兵 ×1（每只）") and panel._preview.model == null and panel._model_hint.text.contains("编队按成员生成"), "工作台真实信息页分开显示异构成员事实，不把部署卡当独立模型")
+	panel._library.configure(false, true)
+	panel._filter_cards("heavy_minion_squad")
+	_expect(panel._library.entries.is_empty(), "无独立模型的纯部署卡不污染模型选择目录")
+	panel._library.configure(false, false)
+	panel._filter_cards("heavy_minion_squad")
+	_expect(panel._library.entries.size() == 1 and panel._library.entries[0].type == "unit", "纯部署卡仍可从工作台正式单位牌库选择")
+	panel.show_workspace(0)
 	panel._filter_cards("虚空兽")
 	_expect(panel._library.entries.size() == 2 and "void_spawn_single" not in CardDB.selectable_ids(), "工作台区分双只卡与单只虚空兽，单只不进入正式卡组")
 	panel._select_item("void_spawn_single")

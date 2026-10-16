@@ -1,6 +1,7 @@
 {
   "entry": "AGENTS.md",
   "current": [
+    "docs/README.md",
     "docs/AGENT_WORKFLOW.md",
     "docs/MAINTENANCE_ARCHITECTURE.md",
     "docs/status/IMPLEMENTATION.md",
@@ -12,6 +13,11 @@
     "docs/reference/UNIT_DOC_COVERAGE.md"
   ],
   "routes": {
+    "design": [
+      "docs/MAINTENANCE_ARCHITECTURE.md",
+      "scripts/README.md",
+      "docs/CARD_DESIGN.md"
+    ],
     "structure": [
       "docs/MAINTENANCE_ARCHITECTURE.md",
       "tests/README.md"
@@ -39,6 +45,11 @@
     ],
     "tools": [
       "tools/README.md",
+      "tests/README.md"
+    ],
+    "performance": [
+      "docs/MAINTENANCE_ARCHITECTURE.md",
+      "tools/performance/README.md",
       "tests/README.md"
     ]
   },

@@ -5,6 +5,7 @@ extends CanvasLayer
 const ARENA_BACKGROUND_PATH := "res://assets/arena/arena_rift_v4.png"
 
 var _deck: Array = []
+# 详情浏览/编辑偏好可包含组外卡；交付对局时另按最终卡组投影。
 var _active_skill_choices: Dictionary = {}
 var _skin_choices: Dictionary = {}
 var _deck_layer: CanvasLayer
@@ -42,7 +43,7 @@ func open(initial_deck: Array, active_skill_choices: Dictionary, skin_choices: D
 	_active_skill_choices = active_skill_choices.duplicate(true)
 	_skin_choices = skin_choices.duplicate(true)
 	_pick_deck_ui(func() -> void:
-		confirmed.call(_deck.duplicate(), _active_skill_choices.duplicate(true), _skin_choices.duplicate(true))
+		confirmed.call(_deck.duplicate(), _match_active_skill_choices(), _skin_choices.duplicate(true))
 	)
 
 func _make_menu_button(text: String) -> Button:
@@ -589,6 +590,20 @@ func _open_card_info(card_id: String) -> void:
 	details.add_child(_make_card_info_body(CardDetails.brief_description(stats)))
 	details.add_child(_make_card_info_heading("属性"))
 	details.add_child(_make_card_attribute_grid(stats))
+	var member_sections := CardDetails.deployment_member_sections(stats)
+	if not member_sections.is_empty():
+		var member_scroll := ScrollContainer.new()
+		member_scroll.name = "DeploymentMembers"
+		member_scroll.custom_minimum_size.y = 180.0
+		member_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+		details.add_child(member_scroll)
+		var member_body := VBoxContainer.new()
+		member_body.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		member_body.add_theme_constant_override("separation", 7)
+		member_scroll.add_child(member_body)
+		for member in member_sections:
+			member_body.add_child(_make_card_info_subheading("%s ×%d（每只）" % [member.name, member.count]))
+			member_body.add_child(_make_card_attribute_rows(member.attributes))
 	var upgrade_stats := CardDB.get_unit_stats(String(stats.get("deployment_upgrade_id", "")))
 	if not upgrade_stats.is_empty():
 		details.add_child(_make_card_info_subheading("%s（%d金币部署）" % [upgrade_stats.name, upgrade_stats.cost]))
@@ -702,12 +717,15 @@ func _make_card_info_subheading(text: String) -> Label:
 	return label
 
 func _make_card_attribute_grid(stats: Dictionary, quantity_override: String = "") -> Control:
+	return _make_card_attribute_rows(CardDetails.attributes(stats, quantity_override))
+
+func _make_card_attribute_rows(attributes: Array[Dictionary]) -> Control:
 	var grid := GridContainer.new()
 	grid.columns = 2
 	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	grid.add_theme_constant_override("h_separation", 10)
 	grid.add_theme_constant_override("v_separation", 6)
-	for attribute in CardDetails.attributes(stats, quantity_override):
+	for attribute in attributes:
 		var attribute_value := String(attribute.get("value", ""))
 		if attribute_value.is_empty():
 			continue
@@ -878,6 +896,13 @@ func _confirm_deck(after_start: Callable) -> void:
 			_deck.append(card_id)
 	_clear_deck_ui()
 	after_start.call()
+
+func _match_active_skill_choices() -> Dictionary:
+	var choices := {}
+	for card_id in _deck:
+		var skills := CardDB.active_skills_for(card_id)
+		choices[card_id] = clampi(int(_active_skill_choices.get(card_id, 0)), 0, maxi(skills.size(), 1) - 1)
+	return choices
 
 func _clear_deck_ui() -> void:
 	_close_card_info()

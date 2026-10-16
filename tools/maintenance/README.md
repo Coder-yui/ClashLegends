@@ -15,6 +15,11 @@ python3 -m unittest discover -s tools/maintenance -p 'test_*.py'
 
 导航/形态例外由 `docs/navigation.json` 声明，修改路线时同步导航正文。当前事实使用 `<!-- current-fact: 源码相对路径 常量名 -->数值`，只检查显式声明的事实，不以中文关键词推断规则。历史原文的版本不参与事实比较，但链接和章节锚点仍检查，新增断链不能静默忽略。
 
-`export_card_facts.gd` 通过 Godot 读取编译后的 CardDB，导出机械数值；`check_card_facts.py` 将单位手册中的 `<!-- card-fact: 卡牌ID 字段路径 -->数值` 与导出值核对。首批三张卡及八个必需字段由检查器声明，删除标记、未知字段或数值漂移都会失败；普通中文玩法不改写。`verify` 自动执行导出和核对，JSON 留在本次验证目录。新增覆盖需在检查器登记卡牌并在其手册标记必需字段。
+`export_card_facts.gd` 通过 Godot 读取编译后的 CardDB，导出机械数值；`check_card_facts.py` 将单位手册中的 `<!-- card-fact: 卡牌ID 字段路径 -->数值` 与导出值核对。首批三张卡及八个必需字段由检查器声明，删除标记、未知字段或数值漂移都会失败；普通中文玩法不改写。`verify` 仅在相关定义/实体数值或显式全量计划需要时执行导出和核对，JSON 留在本次验证目录；纯文档只做静态事实核对，不启动引擎。新增覆盖需在检查器登记卡牌并在其手册标记必需字段。
 
 部署时间标记 `deploy_time` 仅指实体出现后的部署锁定；`pre_deploy_time` 为出现前预部署，通用命令缓冲不合入两者。`audit_project.py` 另检查突进、穿地形、致死换形对象不绕过 Unit 转换接口写字段；对应失败夹具防止审计静默失效。
+
+
+## 原生采样运行格式
+
+`effect_dependencies.py --write/--check`维护22份大型sampled源的依赖头，保留完整源SHA与元数据，避免为依赖枚举展开frames。`compact_samples.py --write`仅为虚空召唤离线生成sampled.clps，`--check`逐位核对并检查确定性生成；使用Python3.14标准库compression.zstd，无安装步骤。原JSON保留，索引int64、数值float64，运行按源/载荷SHA验证后直接解压Packed数组，失配要求重新生成。生成/校验可能读取大源，不附带于纯文档审计；按实际资源改动明确选择。完整当前结果和未验范围见[单局加载记录](../../docs/deliveries/2026-10-16_match_loading.md)。

@@ -1,6 +1,6 @@
 # Clash Legends
 
-Godot 4.x / GDScript 的 1v1 卡牌即时对战学习项目。独立服务器/单机固定 20Hz，2D 权威模拟与独立模型、特效、音频表现分离。默认窗口 `720×1280`（9:16），支持调整与 F11 全屏；战场逻辑 `720×1280`，外围显示随比例扩展，手牌覆盖底部展示区。
+Godot 4.x / GDScript 的 1v1 卡牌即时对战学习项目。独立服务器/单机固定 20Hz，2D 权威模拟与独立模型、特效、音频表现分离。设计画布 `720×1280`（9:16），Mac 启动窗口按可用桌面尽量放大，支持调整与 F11 全屏；战场逻辑 `720×1280`，外围显示随比例扩展，手牌覆盖底部展示区。
 
 ## 开始
 
@@ -10,7 +10,8 @@ Godot 4.x / GDScript 的 1v1 卡牌即时对战学习项目。独立服务器/�
 
 ```sh
 Godot --path . -- --mode=workbench
-Godot --headless --path . --script tests/mechanics_check.gd
+python3 tools/dev.py verify --plan
+python3 tools/dev.py verify
 ```
 
 工作台提供全卡搜索、模型旋转/缩放、动画暂停/定位、真实技能与控制测试、声音变体试听。完整用法见 [工作台手册](docs/DEVELOPMENT_WORKBENCH.md)。
@@ -20,7 +21,7 @@ Godot --headless --path . --script tests/mechanics_check.gd
 - [文档首页](docs/README.md)：按任务找当前手册；[任务导航](docs/AGENT_WORKFLOW.md)用于具体开发。
 - [新卡与素材接入](docs/NEW_CARD_CHECKLIST.md)：五阶段执行、迁移记录与联合验收。
 - [工具目录](tools/README.md)：音频加工、渲染演示和只读仓库审计。
-- [模块与数据流](docs/MAINTENANCE_ARCHITECTURE.md)：Main 编排、battle 权威系统、逐卡定义、独立表现。
+- [整体设计地图与分层](docs/MAINTENANCE_ARCHITECTURE.md)：游戏循环、固定阶段、数据/命令/状态/表现的所有者，以及当前边界和未来拆分。
 - [卡牌索引](docs/units/README.md)：当前卡牌与系统对象；定义位于 `scripts/data/cards/`。
 - [测试与联机](tests/README.md)：统一 mechanics、server + 两个 join、真实渲染和试听要求。
 - [当前待办](docs/DEV_PLAN.md)。历史只在追溯时从文档索引进入。

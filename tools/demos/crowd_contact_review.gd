@@ -27,7 +27,13 @@ func _run() -> void:
 		if arg.begins_with("--columns="): columns = int(arg.get_slice("=", 1))
 		if arg.begins_with("--crowd-count="): count = int(arg.get_slice("=", 1))
 		if arg.begins_with("--contact-range="): range_override = float(arg.get_slice("=", 1))
-	var spacing := float(CardDB.get_unit_stats(card_id).radius) * 2.0 + 4.0
+	var stats := CardDB.get_unit_stats(card_id)
+	if stats.is_empty():
+		push_error("crowd_contact_review requires a real unit definition, not a spell or deployment card: " + card_id)
+		main.free()
+		quit(1)
+		return
+	var spacing := float(stats.radius) * 2.0 + 4.0
 	for index in count:
 		var pos := tower.position + Vector2((index % columns - (columns - 1) * 0.5) * spacing, 100 + (index / columns) * spacing)
 		var unit: Unit = main._spawn_unit(UnitSpawnRequest.new(0, card_id, pos, {"deploy_time_override": 0}))

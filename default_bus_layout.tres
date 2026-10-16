@@ -1,4 +1,4 @@
-[gd_resource type="AudioBusLayout" format=3 uid="uid://ljs6fa61uxxv"]
+[gd_resource type="AudioBusLayout" format=3 uid="uid://ixfyx01vdghp"]
 
 [sub_resource type="AudioEffectHardLimiter" id="OutputLimiter"]
 resource_name = "Output peak protection"

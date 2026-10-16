@@ -327,7 +327,7 @@ func _build_battle_page(page: Control) -> void:
 	_pause_button = _button(tools, "暂停", func():
 		_battle_paused = not _battle_paused
 		_pause_button.text = "继续" if _battle_paused else "暂停"
-		workspace_changed.emit(_workspace == 1 and not _battle_paused))
+		workspace_changed.emit(can_advance_simulation()))
 	_button(tools, "复位", func(): _set_battle_zoom(1.0)).tooltip_text = "地图复位到 100%"
 	_select_mode_button = _button(tools, "放置", func(): set_select_mode(not _select_mode))
 	_select_mode_button.toggle_mode = true
@@ -529,7 +529,7 @@ func _show_library(open: bool) -> void:
 		_library.configure(_workspace == 1, _workspace == 0)
 		_search.grab_focus()
 	else: _search.release_focus()
-	workspace_changed.emit(_workspace == 1 and not open and not _battle_paused)
+	workspace_changed.emit(can_advance_simulation())
 
 func set_select_mode(value: bool) -> void:
 	_select_mode = value
@@ -655,7 +655,7 @@ func _refresh_assets() -> void:
 		_animation_option.set_item_metadata(_animation_option.item_count - 1, clip)
 		_animation_option.set_item_mapped(_animation_option.item_count - 1, mappings.has(String(clip)))
 	_animation_option.disabled = clips.is_empty()
-	_model_hint.text = "无 3D 模型 · 法术请在实战区检查效果" if _preview.model == null else "独立素材观察 · %d 个片段 · 真实衔接请到实战区" % clips.size()
+	_model_hint.text = "编队按成员生成 · 请在实战区查看，成员模型可单独选择" if stats.has("spawn_plan") else ("无 3D 模型 · 法术请在实战区检查效果" if _preview.model == null else "独立素材观察 · %d 个片段 · 真实衔接请到实战区" % clips.size())
 	_reset_camera()
 	_timeline.max_value = 0.01
 	_timeline.value = 0
@@ -744,6 +744,9 @@ func _stop_audio() -> void:
 func accepts_battle_input() -> bool:
 	return _workspace == 1 and not _library_open
 
+func can_advance_simulation() -> bool:
+	return accepts_battle_input() and not _battle_paused
+
 func show_workspace(index: int) -> void:
 	_workspace = clampi(index, 0, _pages.size() - 1)
 	for i in _pages.size():
@@ -759,7 +762,7 @@ func show_workspace(index: int) -> void:
 	_stop_audio()
 	if _workspace == 2:
 		_audio_status.text = "未配置音频 · 当前对象没有可试听的声音。" if _audio_entries.is_empty() else "%d 个文件变体 · 按事件筛选，双击试听" % _audio_entries.size()
-	workspace_changed.emit(_workspace == 1 and not _battle_paused)
+	workspace_changed.emit(can_advance_simulation())
 
 func _process(_delta: float) -> void:
 	if _workspace == 0 and _preview.player != null and not _preview.player.assigned_animation.is_empty():

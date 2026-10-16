@@ -1,6 +1,6 @@
 # 游戏运行代码导航
 
-返回 [项目入口](../README.md)。权威子系统按[战斗目录导航](battle/README.md)定位。离线提取、转换、摄影与试听工具在 [tools](../tools/README.md)；这里仅放游戏运行和工作台代码。
+返回 [项目入口](../README.md)。先用[整体设计地图](../docs/MAINTENANCE_ARCHITECTURE.md#整体设计地图)理解游戏循环与分层，再按本页定位文件；权威子系统细分见[战斗目录导航](battle/README.md)。离线提取、转换、摄影与试听工具在 [tools](../tools/README.md)；这里仅放游戏运行和工作台代码。
 
 | 位置 | 职责与复用方式 |
 | --- | --- |
@@ -15,6 +15,19 @@
 | `ui/workbench/` | 工作台模型预览、实战配方与正式音频清单；`audio_catalog.gd` 只展开配置，`model_preview.gd` 供独立摄影复用 |
 
 新增卡牌先读 [新卡清单](../docs/NEW_CARD_CHECKLIST.md)；结构修改读 [维护架构](../docs/MAINTENANCE_ARCHITECTURE.md)。共享组件留在所属领域，离线工具通过公开入口复用，避免复制整套摄影棚或把工具逻辑塞入 Main。
+
+## 按一条运行路径定位
+
+| 要追踪什么 | 先看这些入口 |
+| --- | --- |
+| 备战到开局 | `ui/deck_builder.gd` → Main 的开局/加载流程 → `battle/match_session.gd`、`presentation/match_resource_plan.gd`、`presentation/match_resources.gd` |
+| 一次卡牌或主动操作 | Main 的 `play_card` / `use_active_skill` → `battle/command_schedule.gd`、`command_payment.gd`、`active_skill_roster.gd` |
+| 一个权威 Tick | `battle/fixed_step_clock.gd` → `battle/battle_simulation.gd` → 对应状态/移动/命中系统；[阶段表](../docs/MAINTENANCE_ARCHITECTURE.md#一个权威-tick-的阶段)解释顺序 |
+| 一张卡生成什么 | `data/cards/<id>.gd` → CardDB 的 `get_card` / `deployment_plan` / `get_unit_stats` → Main 生成入口与 `battle/unit_spawn_request.gd` |
+| 主机状态怎样到客户端 | `battle/network_snapshot_system.gd` → `network_playback.gd` → Main 副本应用与 `network_entity_lifecycle.gd`；字段只查[联网契约](../docs/reference/NETWORK_PROTOCOL.md) |
+| 一个画面或声音 | `presentation/unit_presentation_state.gd`、`battle/projectile_system.gd` 的只读视图或真实事件 → `presentation/` / `audio/` 的消费者 |
+
+共享定义只回答配置，实例与排程保存可变状态，表现投影只供读取。Main 仍含部分领域协调与部署几何；这张路径表说明当前入口，不表示所有业务已从 Main 抽离。
 
 `diagnostics/release_smoke.gd` 是仅由专用命令行参数启动的发布包探针，验证真实开局、命令和终局；不进入正常菜单流程。
 

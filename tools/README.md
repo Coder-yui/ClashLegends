@@ -20,7 +20,7 @@
 | 按中文台词找本地语音 | `python3 tools/audio/find_lol_voice.py --help` | [目录、事件解码与本地转写](audio/README.md) |
 | 准备或导入声音 | `audio-prepare` / `audio-import` | [音频工具](audio/README.md)，原始声音与游戏事件需明确对应 |
 | 看技能、特效与实战 | `python3 tools/dev.py workbench` | [开发工作台](../docs/DEVELOPMENT_WORKBENCH.md) |
-| 执行可追溯自动验证 | `python3 tools/dev.py verify` | 审计、导入、机制、超时清理与版本/日志归档；见 [测试手册](../tests/README.md) |
+| 执行可追溯自动验证 | `python3 tools/dev.py verify --plan` 后执行 `verify` | 按影响选择静态门禁、导入与相关套件，保留日志及超时清理；全量须显式 `--full`，见 [测试手册](../tests/README.md) |
 | 测量 Mac 性能与声音拥挤 | `python3 tools/performance/benchmark.py --render` | [基准说明](performance/README.md) |
 | 导出当前 Mac 应用 | `python3 tools/release/export_macos.py` | [发布说明](release/README.md) |
 | 查项目资源和文档 | `python3 tools/dev.py audit` | 只读审计；重复文件和无字面引用只是人工检查线索 |

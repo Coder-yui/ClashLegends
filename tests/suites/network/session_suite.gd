@@ -1,5 +1,17 @@
 extends RefCounted
 
+# 只替换网络传输，资格、请求序号、排程、扣费与生命周期均走正式入口。
+class SkillInputFixture extends "res://scripts/main.gd":
+	var sent_skills: Array = []
+	func _send_skill_request(ability_id: int, input_tick: int, request_id: int) -> void:
+		sent_skills.append([ability_id, input_tick, request_id])
+
+class CountingCardHand extends CardHand:
+	var refreshes := 0
+	func _refresh(value: float) -> void:
+		refreshes += 1
+		super._refresh(value)
+
 func run(harness: Object) -> void:
 	var session := MatchSession.new()
 	session.open("epoch")
@@ -54,11 +66,212 @@ func run(harness: Object) -> void:
 	harness._expect(main._session.phase == MatchSession.Phase.DISCONNECTED and main._menu_status.text.contains("超时"), "加载超时停止并提示，不无限等待")
 	main.free()
 	harness._expect(MatchSession.content_fingerprint() == MatchSession.content_fingerprint() and MatchSession.content_fingerprint().length() == 64, "内容指纹稳定且完整")
+	var legacy_fingerprint := var_to_bytes([115, CardDB.all(), MatchRules.REGULATION_TIME, MatchRules.OVERTIME_TIME, FixedStepClock.STEP]).hex_encode().sha256_text()
+	harness._expect(MatchSession.PROTOCOL_VERSION == 116 and NetworkSnapshotSystem.SNAPSHOT_PROTOCOL_VERSION == MatchSession.PROTOCOL_VERSION and MatchSession.content_fingerprint() != legacy_fingerprint, "协议116同时拥有握手/快照版本，并与115相同卡牌规则的旧指纹隔离")
 
 	_check_private_hand_and_adaptation(harness)
 	_check_buffer_clock_and_playback(harness)
 	_check_default_local_deck(harness)
 	_check_client_team_presentation(harness)
+	_check_skill_input_ownership(harness)
+	_check_skill_payment_without_ui(harness)
+	_check_skill_transfer_and_free_recast(harness)
+	_check_growth_refresh_changes(harness)
+
+func _check_growth_refresh_changes(harness: Object) -> void:
+	var main = _skill_fixture(harness, true, false)
+	main._deck[0] = "kayn"
+	var hand := CountingCardHand.new()
+	main._hand = hand
+	main.add_child(hand)
+	hand.setup(main._elixir, main._deck)
+	hand.growth_progress_query = func(id: String) -> Dictionary: return main._card_growth.progress(0, id)
+	hand.visual_card_query = func(id: String) -> String: return main._card_growth.resolved_id(0, id)
+	hand.set_visible_state(["kayn", "ashe", "teemo", "freeze"], "heal")
+	hand.refreshes = 0
+	var state := {0: {"kayn": {"ranged": 0, "melee": 0, "unlocked": "kayn"}}}
+	main.apply_growth_snapshot(state)
+	for repeat in 100: main.apply_growth_snapshot(state.duplicate(true))
+	harness._expect(hand.refreshes == 1 and main._card_growth.snapshot() == state, "100份内容相同的成长快照只在首次变化刷新真实手牌一次")
+	state[0].kayn.ranged = 1
+	harness._expect(main._card_growth.progress(0, "kayn").ranged == 0, "接收后的成长状态与调用方字典隔离")
+	main.apply_growth_snapshot(state)
+	var bars: Control = hand._button_slots[0].get_node("GrowthBars")
+	harness._expect(hand.refreshes == 2 and (bars.get_node("ranged0") as ColorRect).color == CardHand.GROWTH_BLUE and main._card_growth.progress(0, "kayn").ranged == 1, "尚未换形的单次远程进度也更新真实成长条")
+	state[0].kayn.melee = 1
+	main.apply_growth_snapshot(state)
+	harness._expect(hand.refreshes == 3 and (bars.get_node("melee0") as ColorRect).color == CardHand.GROWTH_RED, "近战进度独立参与完整UI状态变化判断")
+	state[0].kayn.ranged = 4
+	state[0].kayn.unlocked = "kayn_assassin"
+	main.apply_growth_snapshot(state)
+	for repeat in 100: main.apply_growth_snapshot(state.duplicate(true))
+	harness._expect(hand.refreshes == 4 and hand._growth_forms.get("kayn") == "kayn_assassin" and hand._growth_notice.visible and not bars.visible, "解锁形态更新卡面与通知，同值快照不重复刷新")
+	var refreshes := hand.refreshes
+	main._elixir.elixir = 0.0
+	harness._expect(hand.refreshes == refreshes + 1 and hand._button_slots[0].disabled, "金币变化继续独立刷新可支付状态")
+	refreshes = hand.refreshes
+	hand.set_card_pending("ashe", true)
+	harness._expect(hand.refreshes == refreshes + 1 and hand.is_card_pending("ashe") and hand._button_slots[1].disabled, "本地pending变化继续独立刷新按钮反馈")
+	refreshes = hand.refreshes
+	hand.set_visible_state(["kayn", "ashe", "teemo", "freeze"], "tombstone")
+	main.apply_growth_snapshot(state.duplicate(true))
+	harness._expect(hand.refreshes == refreshes + 1 and hand.get_next_card() == "tombstone" and hand.is_card_pending("ashe"), "下一张变化继续刷新，重复成长包不覆盖金币或pending")
+	main._hand = null
+	hand.free()
+	main.apply_growth_snapshot({})
+	harness._expect(main._card_growth.snapshot().is_empty() and not main._card_growth.apply_snapshot({}), "无UI仍接收成长状态，重复空状态不报告变化")
+	main.free()
+
+func _skill_fixture(harness: Object, client: bool, ui: bool) -> Node2D:
+	var main := SkillInputFixture.new()
+	harness.root.add_child(main)
+	main.set_process(false)
+	main.mode = "client" if client else "local"
+	main.local_team = 0
+	main._match_started = true
+	main._deck = ["garen", "xin", "ashe", "teemo", "freeze", "heal", "tombstone", "gnar"]
+	main._session.join("skill-input")
+	main._session.phase = MatchSession.Phase.RUNNING
+	main._elixir = ElixirManager.new()
+	main.add_child(main._elixir)
+	main._elixir.elixir = 10.0
+	if ui: _install_skill_bar(main)
+	return main
+
+func _install_skill_bar(main: Node2D) -> void:
+	if main._active_skill_bar != null: main._active_skill_bar.free()
+	main._active_skill_bar = ActiveSkillBar.new()
+	main._active_skill_bar.can_submit = main._can_submit_active_skill
+	main.add_child(main._active_skill_bar)
+	for id in main._active_skills.ids():
+		var entry: Dictionary = main._active_skills.entry(id)
+		main._active_skill_bar.show_skill(int(entry.slot), id, String(entry.skill.name), Color.WHITE, main._active_skills.cost(id), int(entry.max_uses), int(entry.uses_remaining), float(entry.cooldown_left))
+	main._sync_active_skill_deployment_readiness()
+
+func _skill_source(main: Node2D, id: int = 7, card_id: String = "garen") -> Unit:
+	var unit := Unit.new()
+	unit.card_id = card_id
+	unit.active_skill_card_id = card_id
+	unit.setup(0, CardDB.get_card(card_id), card_id)
+	unit._deploy_timer = 0.0
+	unit.active_ability_id = id
+	unit.active_ability_slot = 0
+	main.add_child(unit)
+	main._register_active_skill(unit, card_id, 0)
+	return unit
+
+func _check_skill_input_ownership(harness: Object) -> void:
+	for variant in ["ui", "none", "rebuilt"]:
+		var main = _skill_fixture(harness, true, variant != "none")
+		var unit := _skill_source(main)
+		var id := unit.active_ability_id
+		if main._active_skill_bar != null: main._active_skill_bar.set_pending(id, true)
+		harness._expect(main._can_submit_active_skill(id, 0), "UI残留pending不拥有技能资格：" + variant)
+		harness._expect(main.use_active_skill(id, 0, 0, true) and not main.use_active_skill(id, 0, 0, true) and main.sent_skills.size() == 1 and main._client_inputs.has_skill(id) and main._elixir.elixir == 10.0, "已发未确认请求只发一次且客户端不付款：" + variant)
+		var request: int = main._network_request_id
+		if variant == "rebuilt": _install_skill_bar(main)
+		harness._expect(not main._can_submit_active_skill(id, 0) and (main._active_skill_bar == null or main._active_skill_bar.is_pending(id)), "销毁重建UI从领域重建反馈且不能解锁在途请求：" + variant)
+		main._rpc_active_skill_rejected("old", id, request)
+		main._rpc_active_skill_rejected("skill-input", id, request - 1)
+		harness._expect(main._client_inputs.has_skill(id), "旧会话或旧request拒绝不能清除当前技能请求：" + variant)
+		main._rpc_active_skill_rejected("skill-input", id, request)
+		harness._expect(not main._client_inputs.has_skill(id) and main._can_submit_active_skill(id, 0), "匹配拒绝清理领域pending且恢复资格：" + variant)
+		var authority := NetworkCommandState.new()
+		for outcome in ["executed", "cancelled"]:
+			harness._expect(main.use_active_skill(id, 0, 0, true), "重试通过真实技能提交入口：" + variant)
+			var command := authority.create("skill", 0, "garen", id, Vector2.ZERO, 100, 110)
+			main._rpc_command_scheduled("skill-input", command)
+			if main._active_skill_bar != null: main._active_skill_bar.set_pending(id, false)
+			harness._expect(main._network_commands.has_skill(id) and not main._client_inputs.has_skill(id) and not main._can_submit_active_skill(id, 0) and main._commands.inspect_skills().is_empty(), "已受理公开命令接手pending而不创建客户端权威排程：" + variant)
+			if main._active_skill_bar != null:
+				main._sync_active_skill_deployment_readiness()
+				main._active_skill_bar.set_pending_seconds(id, 0.4)
+				main._sync_active_skill_deployment_readiness()
+				main._sync_active_skill_deployment_readiness()
+				harness._expect(main._active_skill_bar.is_pending(id) and main._active_skill_bar._pending_labels[0].text == "0.4", "重复同步恢复领域pending投影并保留现有倒数：" + variant)
+			# completion清理不应依赖按钮存在，保留客户端输入兜底记录验证此合同。
+			main._client_inputs.skill(id, main._network_request_id)
+			if outcome == "executed": main._rpc_active_skill_used("skill-input", id, 1, 3.0, false)
+			main._rpc_command_finished("skill-input", command.id, outcome)
+			harness._expect(not main._client_inputs.has_skill(id) and not main._network_commands.has_skill(id) and main._can_submit_active_skill(id, 0) == (outcome == "cancelled") and main._elixir.elixir == 10.0, "执行/取消完成清理pending，资格仍服从权威CD：" + variant + "/" + outcome)
+			main._active_skills.replace_replica(id, 2, 0.0)
+			main._sync_active_skill_deployment_readiness()
+			main.use_active_skill(id, 0, 0, true)
+			main._rpc_command_finished("skill-input", command.id, outcome)
+			main._rpc_active_skill_rejected("skill-input", id, main._network_request_id - 1)
+			harness._expect(main._client_inputs.has_skill(id), "重复旧完成与迟到旧拒绝不能清理下一次请求：" + variant)
+			main._rpc_active_skill_rejected("skill-input", id, main._network_request_id)
+		main._client_inputs.skill(id, 99)
+		main.reset_network_clock()
+		main._session = MatchSession.new()
+		main._session.join("reopened")
+		main._session.phase = MatchSession.Phase.RUNNING
+		main._client_inputs.skill(id, 100)
+		main._rpc_active_skill_rejected("skill-input", id, 100)
+		harness._expect(main._client_inputs.has_skill(id) and main._network_commands.inspect().is_empty(), "重开清理旧排程且旧局拒绝不能污染新局请求：" + variant)
+		main._on_active_skill_unit_died(id)
+		harness._expect(not main._client_inputs.has_skill(id) and not main._can_submit_active_skill(id, 0), "死亡清理未确认输入且不依赖UI：" + variant)
+		var replacement := _skill_source(main, 8)
+		main._client_inputs.skill(8, 101)
+		_skill_source(main, 9)
+		harness._expect(not main._client_inputs.has_skill(8) and replacement.active_ability_id == -1, "同槽替换清理旧资格的未确认输入：" + variant)
+		main._client_inputs.skill(9, 102)
+		main._end_game(-1, "disconnect")
+		harness._expect(not main._client_inputs.has_skill(9) and main._network_commands.inspect().is_empty() and main._commands.inspect_skills().is_empty(), "终局统一清理所有层次的pending：" + variant)
+		main.free()
+
+func _check_skill_payment_without_ui(harness: Object) -> void:
+	for variant in ["ui", "none", "rebuilt"]:
+		for outcome in ["executed", "cancelled"]:
+			var main = _skill_fixture(harness, false, variant != "none")
+			var unit := _skill_source(main)
+			var id := unit.active_ability_id
+			var cost: float = main._active_skills.cost(id)
+			var queued: bool = main.use_active_skill(id, 0)
+			if variant == "rebuilt": _install_skill_bar(main)
+			harness._expect(queued and not main.use_active_skill(id, 0) and main._commands.inspect_skills().size() == 1 and is_equal_approx(main._elixir.elixir, 10.0 - cost), "权威队列阻止重复付款，UI生命周期不改变余额：" + variant)
+			main._sim_tick_id = 9
+			main._tick_pending_active_skills(main.SIM_DT)
+			harness._expect(main._commands.inspect_skills().size() == 1 and main._active_skills.entry(id).uses_remaining == 2, "第9Tick不提前执行或消费次数：" + variant)
+			if outcome == "cancelled": unit.stun(1.0)
+			main._sim_tick_id = 10
+			main._tick_pending_active_skills(main.SIM_DT)
+			var state: Dictionary = main.get_active_skill_snapshot(id)
+			var expected_balance := 10.0 if outcome == "cancelled" else 10.0 - cost
+			harness._expect(main._commands.inspect_skills().is_empty() and main._network_commands.inspect().is_empty() and is_equal_approx(main._elixir.elixir, expected_balance) and state.uses_remaining == (2 if outcome == "cancelled" else 1) and (state.cooldown_left == 0.0 if outcome == "cancelled" else state.cooldown_left > 0.0), "第10Tick执行仅消费一次，存活取消只退款一次且不消费CD：" + variant + "/" + outcome)
+			main._tick_pending_active_skills(main.SIM_DT)
+			harness._expect(is_equal_approx(main._elixir.elixir, expected_balance), "重复处理完成队列不会再付款或退款：" + variant)
+			main.free()
+
+func _check_skill_transfer_and_free_recast(harness: Object) -> void:
+	for variant in ["ui", "none", "rebuilt"]:
+		var main = _skill_fixture(harness, true, variant != "none")
+		main._deck[0] = "minion_squad"
+		var members: Array[Unit] = main._spawn_card_units(0, "minion_squad", Vector2(300, 900), 0.0, 0)
+		var leader := members[0]
+		var id := leader.active_ability_id
+		main._client_inputs.skill(id, 1)
+		if variant == "rebuilt": _install_skill_bar(main)
+		leader.hp = 0.0
+		main._on_active_skill_unit_died(id)
+		harness._expect(main._active_skills.has(id) and main._active_skills.entry(id).unit != leader and main._client_inputs.has_skill(id) and not main._can_submit_active_skill(id, 0), "编队队长死亡转交保留同一资格与在途请求：" + variant)
+		main.clear_network_unit_skill(leader)
+		harness._expect(main._client_inputs.has_skill(id), "清理旧队长不得抹掉新队长继承的在途请求：" + variant)
+		main.clear_network_unit_skill(main._active_skills.entry(id).unit)
+		harness._expect(not main._client_inputs.has_skill(id) and not main._active_skills.has(id), "网络移除当前资格拥有者清理在途请求：" + variant)
+		main.free()
+		main = _skill_fixture(harness, false, variant != "none")
+		main._deck[0] = "darius"
+		var source := _skill_source(main, 7, "darius")
+		main._active_skills.replace_replica(7, 1, 6.0, true)
+		main._elixir.elixir = 0.0
+		harness._expect(main.use_active_skill(7, 0) and not main.use_active_skill(7, 0) and main._elixir.elixir == 0.0, "免费追斩可越过付费冷却但不能重复入队：" + variant)
+		if variant == "rebuilt": _install_skill_bar(main)
+		main._sim_tick_id = 10
+		main._tick_pending_active_skills(main.SIM_DT)
+		var state: Dictionary = main.get_active_skill_snapshot(source.active_ability_id)
+		harness._expect(state.uses_remaining == 1 and state.cooldown_left == 6.0 and not state.free_recast and main._elixir.elixir == 0.0 and main._commands.inspect_skills().is_empty(), "免费执行不付款、不扣次数、不重启付费冷却：" + variant)
+		main.free()
 
 func _check_default_local_deck(harness: Object) -> void:
 	var local = load("res://scenes/main.tscn").instantiate()

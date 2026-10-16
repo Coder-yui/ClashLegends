@@ -694,7 +694,7 @@ func begin_undying_rage(duration: float) -> void:
 	buffs.apply(&"undying", status_source("undying"), duration, {"health_floor": 1.0})
 	skill_resource_value = skill_resource_max
 	# 满怒刷新未释放攻击，以完整暴击前摇同步动作和伤害。
-	cancel_basic_attack(&"empowered_reset")
+	cancel_basic_attack(ActionCancellation.EMPOWERED_RESET)
 	apply_active_buff(duration, 1.0, 1.0, 1.0)
 
 func action_permissions() -> int:
@@ -1034,7 +1034,7 @@ func _tick_skill_resource_decay(dt: float) -> void:
 ## 强化下一击刷新普攻周期；完整新前摇由本Tick的权威攻击入口开始。
 func prepare_empowered_attack(damage_multiplier: float, speed_multiplier: float = 1.0, applied_blind_charges: int = 0, effects: Dictionary = {}) -> void:
 	var was_attacking := _attacking
-	cancel_basic_attack(&"empowered_reset")
+	cancel_basic_attack(ActionCancellation.EMPOWERED_RESET)
 	empowered_attack_effects = effects.duplicate(true)
 	empowered_attack_ready = true
 	empowered_attack_damage_multiplier = maxf(damage_multiplier, 0.0)
@@ -1358,7 +1358,7 @@ func leave_terrain_for_attack() -> bool:
 	if not terrain_traversal.inside:
 		return true
 	if _attacking:
-		cancel_basic_attack(&"terrain_exit")
+		cancel_basic_attack(ActionCancellation.TERRAIN_EXIT)
 	if not point.is_finite():
 		return false
 	global_position = point
@@ -1656,7 +1656,7 @@ func apply_forced_displacement(direction: Vector2, distance: float, duration: fl
 	_move_intent = Vector2.ZERO
 	_forced_movement = false
 	CombatInteraction.record_combat_effect(self, interaction)
-	cancel_controlled_action(&"knockback", false)
+	cancel_controlled_action(ActionCancellation.KNOCKBACK, false)
 	return true
 
 ## 结束/中断只修正非法的实际位置；不执行技能命中、到达或路径收益。
@@ -1710,7 +1710,7 @@ func apply_knockback(origin: Vector2, distance: float, duration: float = 0.2, ma
 	var mass_factor := clampf(4.0 / maxf(mass, 1.0), 0.35, maxf(mass_factor_max, 0.35))
 	knockback.replace(direction, distance * mass_factor, duration)
 	CombatInteraction.record_combat_effect(self, interaction)
-	cancel_controlled_action(&"knockback")
+	cancel_controlled_action(ActionCancellation.KNOCKBACK)
 
 func _tick_knockback_movement(dt: float) -> void:
 	# 最后一 Tick 只结算剩余时长，避免浮点余量让 0.25s 击退多走一个完整 20Hz Tick。
@@ -2637,10 +2637,11 @@ func cancel_controlled_action(reason: StringName, recover_position: bool = true)
 	if cancel_displacement: cancel_skill_cast(recover_position)
 
 func cancel_basic_attack(reason: StringName) -> void:
-	if reason in [&"stun", &"freeze", &"stasis", &"knockback", &"death_form", &"silence", &"taunt"]:
+	assert(ActionCancellation.valid_reason(reason), "未声明的动作取消原因：%s" % reason)
+	if reason in [ActionCancellation.STUN, ActionCancellation.FREEZE, ActionCancellation.STASIS, ActionCancellation.KNOCKBACK, ActionCancellation.DEATH_FORM, ActionCancellation.SILENCE, ActionCancellation.TAUNT]:
 		channel_attack.stop(self)
 	action_cancel_serial += 1
-	if reason in [&"freeze", &"stasis", &"death_form"] or (team_attack_boost_forging and reason in [&"stun", &"knockback"]):
+	if reason in [ActionCancellation.FREEZE, ActionCancellation.STASIS, ActionCancellation.DEATH_FORM] or (team_attack_boost_forging and reason in [ActionCancellation.STUN, ActionCancellation.KNOCKBACK]):
 		cancelled_visual_serial = maxi(cancelled_visual_serial, get_visual_action_serial())
 		cancelled_deployment = cancelled_deployment or _deploy_timer > 0.0
 	last_action_cancellation = {"serial": action_cancel_serial, "reason": String(reason),
@@ -2664,12 +2665,7 @@ func cancel_basic_attack(reason: StringName) -> void:
 	cancel_charge()
 
 static func valid_action_cancellation(payload: Dictionary) -> bool:
-	if payload.is_empty(): return true
-	for key in ["serial", "attack", "action", "form"]:
-		if not payload.get(key) is int or int(payload[key]) < 0: return false
-	if payload.has("cancelled_action") and (not payload.cancelled_action is int or int(payload.cancelled_action) < -1): return false
-	if payload.has("cancelled_deployment") and not payload.cancelled_deployment is bool: return false
-	return payload.get("reason") is String and String(payload.reason) in ["freeze", "stasis", "stun", "knockback", "death_form", "empowered_reset", "silence", "taunt"]
+	return ActionCancellation.valid_payload(payload)
 
 func apply_action_cancellation(payload: Dictionary) -> void:
 	if not valid_action_cancellation(payload) or int(payload.get("serial", 0)) <= action_cancel_serial:
@@ -2701,7 +2697,7 @@ func _receive_stasis(duration: float, source: StringName, interaction: Dictionar
 	if knockback.collisionless or skill_dash_active: recover_displacement_position()
 	control.hard.apply(&"stasis", source, duration, {})
 	buffs.suppressed = true
-	cancel_basic_attack(&"stasis")
+	cancel_basic_attack(ActionCancellation.STASIS)
 	cancel_skill_cast()
 	knockback.cancel(&"stasis")
 	if structure_rush.phase == StructureRushState.Phase.DASHING:
@@ -2720,7 +2716,7 @@ func silence(duration: float, source: StringName = &"legacy", interaction: Dicti
 		battle_context.damage_batch().defer_effect(func(): silence(duration, source, interaction))
 		return
 	control.hard.apply(&"silence", source, duration, {})
-	if channel_attack.active(): cancel_basic_attack(&"silence")
+	if channel_attack.active(): cancel_basic_attack(ActionCancellation.SILENCE)
 
 func taunt(caster: Unit, duration: float) -> void:
 	if not is_instance_valid(caster) or caster.hp <= 0.0 or caster.is_air or caster.team == team: return
@@ -2732,7 +2728,7 @@ func taunt(caster: Unit, duration: float) -> void:
 		return
 	taunt_source = weakref(caster)
 	control.hard.apply(&"taunt", caster.status_source("taunt"), duration, {})
-	if channel_attack.active() or _target != caster: cancel_basic_attack(&"taunt")
+	if channel_attack.active() or _target != caster: cancel_basic_attack(ActionCancellation.TAUNT)
 	_target = caster
 
 func _exit_tree() -> void:
@@ -2752,7 +2748,7 @@ func _receive_freeze(duration: float, source: StringName, interaction: Dictionar
 	CombatInteraction.record_combat_effect(self, interaction)
 	get_visual_facing_direction()
 	if control.refresh_freeze(duration, source):
-		cancel_basic_attack(&"freeze")
+		cancel_basic_attack(ActionCancellation.FREEZE)
 		cancel_skill_cast()
 	if duration > 0.0: structure_rush.interrupt_preparation(self)
 	queue_redraw()
@@ -2771,7 +2767,7 @@ func _receive_stun(duration: float, source: StringName, interaction: Dictionary 
 	CombatInteraction.record_combat_effect(self, interaction)
 	get_visual_facing_direction()
 	if control.refresh_stun(duration, source):
-		cancel_controlled_action(&"stun")
+		cancel_controlled_action(ActionCancellation.STUN)
 	if duration > 0.0: structure_rush.interrupt_preparation(self)
 	queue_redraw()
 
@@ -2995,7 +2991,7 @@ func begin_death_form_transition(delay: float) -> void:
 	growth_body_scale = 1.0
 	set_sacrifice_stats(Vector3(0.0, 1.0, 1.0))
 	sacrifice_empowerment = Vector2.ONE
-	cancel_basic_attack(&"death_form")
+	cancel_basic_attack(ActionCancellation.DEATH_FORM)
 	cancel_skill_cast()
 	clear_shields()
 	if knockback.collisionless: recover_displacement_position()

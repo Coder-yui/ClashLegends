@@ -33,17 +33,6 @@ var _last_buff_visible := false
 var _last_stealth_pose := false
 
 var _state: UnitPresentationState
-var _control_stage := &""
-var _saved_control_clip := &""
-var _saved_control_position := 0.0
-var _saved_control_speed := 1.0
-var _saved_control_section := Vector2(-1.0, -1.0)
-var _saved_control_loop_mode := Animation.LOOP_NONE
-var _saved_control_action_serial := -1
-var _saved_control_action_name := &""
-var _saved_control_attack_serial := -1
-var _saved_control_state := -1
-var _saved_control_locomotion_state := -1
 var _current_clip_speed := 1.0
 var _stable_head_offset := NAN
 var _projectile_anchor: Node3D
@@ -248,7 +237,6 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 		_animation_player = _model_resources.bind_model(_model_root, allowed)
 	_model_resources.configure_frost(is_instance_valid(_source) and _source.is_building)
 	_stable_head_offset = NAN
-	_control_stage = &""
 	if _animation_player == null:
 		push_warning("单位 3D 模型中未找到 AnimationPlayer")
 	else:
@@ -418,8 +406,8 @@ func _sync_visual(force: bool, delta: float) -> void:
 				_pending_attack_serial = attack_serial
 			else:
 				_play_attack(attack_serial)
-	# 控制恢复后的 play_section 在部分 AnimationPlayer 时序下会先清空
-	# current_animation，再错过 animation_finished 回调；权威动作窗口已结束且
+	# 裁剪动作的播放器可能先清空 current_animation 并错过 animation_finished；
+	# 权威动作窗口已结束且
 	# 播放器已停止时，必须主动交还给基础状态，不能把最后一帧出拳姿态留住。
 	if _playing_visual_action and _source.get_visual_action_time_left() <= 0.0 and not _animation_player.is_playing():
 		_finish_visual_action()
@@ -504,8 +492,6 @@ func _on_presentation_cue(cue: StringName) -> void:
 func _play_visual_action(action_name: StringName, preserve_visual_pose: bool = false, presentation_only: bool = false) -> void:
 	_idle_transition_animation = &""
 	if action_name == &"":
-		if _control_stage != &"":
-			_invalidate_control_restore()
 		_clear_visual_action_state()
 		return
 	if _animation_player == null:
@@ -542,8 +528,6 @@ func _play_visual_action(action_name: StringName, preserve_visual_pose: bool = f
 	_active_action_blend_in = float(descriptor.get("blend_in", -1.0))
 	_active_action_blend_out = float(descriptor.get("blend_out", -1.0))
 	_active_action_sequence_blend = float(descriptor.get("sequence_blend", -1.0))
-	if preserve_visual_pose:
-		_invalidate_control_restore()
 	_playing_attack = false
 	_holding_attack_pose = false
 	_attack_hit_pending = false
@@ -620,18 +604,6 @@ func _clear_visual_action_state() -> void:
 	_holding_attack_pose = false
 	_attack_hit_pending = false
 	_attack_recover_pending = false
-
-func _invalidate_control_restore() -> void:
-	_saved_control_clip = &""
-	_saved_control_position = 0.0
-	_saved_control_speed = 1.0
-	_saved_control_section = Vector2(-1.0, -1.0)
-	_saved_control_loop_mode = Animation.LOOP_NONE
-	_saved_control_action_serial = -1
-	_saved_control_action_name = &""
-	_saved_control_attack_serial = -1
-	_saved_control_state = -1
-	_saved_control_locomotion_state = -1
 
 func _default_action_kind(action_name: StringName) -> StringName:
 	return &"transform" if String(action_name).contains("transform") or action_name == &"revert" else &"skill"
@@ -1429,12 +1401,6 @@ func _on_animation_finished(animation_name: StringName) -> void:
 	# 场景重建可先释放权威单位；死亡表现仍独立播放，其余回调不再读取旧单位。
 	if not _dying and not is_instance_valid(_source):
 		return
-	if not _dying and _control_stage != &"":
-		if _control_stage == &"enter":
-			_play_control_clip("stun_loop", &"loop")
-		elif _control_stage == &"exit":
-			_restore_control_pose()
-		return
 	if _dying:
 		if animation_name == _death_animation:
 			if not _start_death_followup():
@@ -1635,7 +1601,6 @@ func _start_death_followup() -> bool:
 		_animation_player = _model_resources.bind_model(_model_root, allowed)
 	_model_resources.configure_frost(is_instance_valid(_source) and _source.is_building)
 	_stable_head_offset = NAN
-	_control_stage = &""
 	if _animation_player == null or not _animation_player.has_animation(followup_name):
 		return false
 	_animation_player.animation_finished.connect(_on_animation_finished)
@@ -1749,8 +1714,6 @@ func _on_action_cancelled(payload: Dictionary) -> void:
 	if String(payload.get("reason", "")) == "death_form":
 		# 致死动作直接接管当前冻结姿势，不先绕到Idle，也不恢复旧攻击。
 		_was_controlled = false
-		_control_stage = &""
-		_invalidate_control_restore()
 		_animation_player.speed_scale = 1.0
 		return
 	if freeze_pose:
@@ -1780,8 +1743,6 @@ func _sync_control_override() -> bool:
 		return false
 	if _source.death_form.waiting():
 		_was_controlled = false
-		_control_stage = &""
-		_invalidate_control_restore()
 		_animation_player.speed_scale = 1.0
 		return false
 	if _state.frozen:
@@ -1818,57 +1779,6 @@ func _sync_visual_action_while_controlled() -> void:
 		_play_visual_action(&"")
 	elif serial > _source.cancelled_visual_serial and _source.get_visual_action_time_left() > 0.0:
 		_play_visual_action(_source.get_visual_action_name())
-
-func _play_control_clip(key: String, stage: StringName) -> void:
-	var clip := _first_valid_animation(key)
-	if clip == &"" and stage == &"enter":
-		_play_control_clip("stun_loop", &"loop")
-		return
-	_control_stage = stage if clip != &"" else &"hold"
-	if clip != &"":
-		_animation_player.get_animation(clip).loop_mode = Animation.LOOP_LINEAR if stage == &"loop" else Animation.LOOP_NONE
-		_play_clip(clip, &"action_in")
-
-func _restore_control_pose() -> void:
-	_control_stage = &""
-	var action_still_valid := (
-		_saved_control_action_serial >= 0
-		and _source.get_visual_action_serial() == _saved_control_action_serial
-		and _source.get_visual_action_name() == _saved_control_action_name
-		and _saved_control_action_name != &""
-	)
-	var non_action_context_still_valid := (
-		_saved_control_action_name == &""
-		and _source.get_visual_action_serial() == _saved_control_action_serial
-		and _source.get_attack_visual_serial() == _saved_control_attack_serial
-		and _source.get_visual_state_code() == _saved_control_state
-		and _source.get_locomotion_visual_state_code() == _saved_control_locomotion_state
-	)
-	var restore_context_valid := action_still_valid or non_action_context_still_valid
-	if restore_context_valid and _saved_control_clip != &"" and _animation_player.has_animation(_saved_control_clip):
-		var saved_animation := _animation_player.get_animation(_saved_control_clip)
-		if saved_animation != null:
-			saved_animation.loop_mode = _saved_control_loop_mode
-		_set_model_visual_clip(_saved_control_clip)
-		_current_clip_speed = _saved_control_speed
-		var section := _saved_control_section
-		var has_saved_section := section.y > section.x + 0.0001
-		if has_saved_section:
-			var restore_blend_fallback := _active_action_blend_out if action_still_valid else -1.0
-			var blend := _resolve_clip_blend(_saved_control_clip, &"action_out", restore_blend_fallback)
-			_last_clip_transition_kind = &"action_out"
-			_last_clip_blend_time = blend
-			_animation_player.play_section(_saved_control_clip, section.x, section.y, blend, _saved_control_speed)
-			_animation_player.seek(clampf(_saved_control_position, section.x, section.y), true)
-		else:
-			_play_clip(_saved_control_clip, &"action_out", _saved_control_speed)
-			_animation_player.seek(_saved_control_position, true)
-	else:
-		_invalidate_control_restore()
-		# 取消或新序号替换了旧动作时，不恢复旧 Pose；新动作由权威剩余时间对齐。
-		if _source.get_visual_action_name() != &"" and _source.get_visual_action_time_left() > 0.0:
-			_play_visual_action(_source.get_visual_action_name())
-	_animation_player.speed_scale = 1.0
 
 ## 晚到的普攻序号从权威已流逝阶段开始；分段计时仍纯表现，不触发命中。
 func _align_attack_progress(elapsed: float) -> void:

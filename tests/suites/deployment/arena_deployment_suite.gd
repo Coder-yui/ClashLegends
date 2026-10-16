@@ -1,6 +1,12 @@
 class_name ArenaDeploymentSuite
 extends "res://tests/suites/battle_suite.gd"
 ## 竞技场与部署领域：场地网格、部署规则、出牌/部署延迟与 pocket 解锁回归。
+class SecondLandingUnavailable extends DeploymentRules:
+	var planned := 0
+	func resolve_anchored_spawn(team: int, card_id: String, stats: Dictionary, desired: Vector2, player_deployment: bool) -> Vector2:
+		planned += 1
+		if planned == 2: return Vector2.INF
+		return super.resolve_anchored_spawn(team, card_id, stats, desired, player_deployment)
 
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
@@ -11,6 +17,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_formation_centers()
 	_check_multi_unit_card_centers()
 	_check_multi_unit_deployment_edges()
+	_check_squad_landing_retry()
 	_check_large_unit_front_row_exit()
 	_check_landing_position_correction()
 	_check_tower_ingress_guards()
@@ -145,9 +152,9 @@ func _check_multi_unit_card_centers() -> void:
 		var center := Vector2(340.0, 860.0) if team == 0 else Vector2(380.0, 420.0)
 		var old_history: Dictionary = _main._card_history.get_last(team)
 		for card_id in CardDB.all():
-			var stats := CardDB.get_unit_stats(card_id)
-			var member_ids: Array = stats.get("deployment_member_ids", [])
-			var count := member_ids.size() if not member_ids.is_empty() else int(stats.get("deployment_count", 1))
+			var stats := CardDB.get_card(card_id)
+			var plan := CardDB.deployment_plan(card_id)
+			var count: int = plan.get("members", []).size()
 			if count <= 1: continue
 			var before := _main.get_tree().get_nodes_in_group("combatants").map(func(actor): return actor.get_instance_id())
 			_main._on_card_selected(card_id)
@@ -176,9 +183,9 @@ func _check_multi_unit_deployment_edges() -> void:
 	var cards: Array[String] = []
 	var constrained: Array[String] = []
 	for card_id in CardDB.all():
-		var stats := CardDB.get_unit_stats(card_id)
-		var member_ids: Array = stats.get("deployment_member_ids", [])
-		var count := member_ids.size() if not member_ids.is_empty() else int(stats.get("deployment_count", 1))
+		var stats := CardDB.get_card(card_id)
+		var plan := CardDB.deployment_plan(card_id)
+		var count: int = plan.get("members", []).size()
 		if bool(stats.get("deploy_formation_requires_in_bounds", false)): constrained.append(card_id)
 		if count > 1 and card_id != "shurima_guard": cards.append(card_id)
 	_expect(not cards.is_empty() and constrained == ["shurima_guard"] and not bool(CardDB.get_card("sand_soldier").get("deploy_formation_requires_in_bounds", false)), "只有恕瑞玛卫队声明整排边界限制，召唤黄沙士兵不继承")
@@ -203,9 +210,9 @@ func _check_multi_unit_deployment_edges() -> void:
 		_main.local_team = team
 		var old_history: Dictionary = _main._card_history.get_last(team)
 		for card_id in cards:
-			var stats := CardDB.get_unit_stats(card_id)
-			var member_ids: Array = stats.get("deployment_member_ids", [])
-			var count := member_ids.size() if not member_ids.is_empty() else int(stats.get("deployment_count", 1))
+			var stats := CardDB.get_card(card_id)
+			var plan := CardDB.deployment_plan(card_id)
+			var count: int = plan.get("members", []).size()
 			for blue_center in [Vector2(20, 860), Vector2(700, 860), Vector2(340, 700), Vector2(60, 1020)]:
 				var center: Vector2 = blue_center if team == 0 else Vector2(ArenaRules.FIELD_W, ArenaRules.FIELD_H) - blue_center
 				var before := _main.get_tree().get_nodes_in_group("combatants").map(func(actor): return actor.get_instance_id())
@@ -223,6 +230,39 @@ func _check_multi_unit_deployment_edges() -> void:
 		_main._card_history.replace_replica(team, old_history)
 	_main.local_team = original_team
 	_main._on_card_selected("")
+
+func _check_squad_landing_retry() -> void:
+	# 第二名成员的落点失败，必须证明第一名尚未生成；恢复后只产生一整批。
+	var rules: DeploymentRules = _main._deployment_rules
+	var failed := SecondLandingUnavailable.new()
+	failed.combatants = rules.combatants
+	failed.towers = rules.towers
+	failed.ground_walkable = rules.ground_walkable
+	var saved_deck: Array = _main._deck.duplicate()
+	_main._deck[0] = "minion_squad"
+	var before := _main.get_tree().get_nodes_in_group("combatants").map(func(actor): return actor.get_instance_id())
+	var pending_before: int = _main._commands.inspect_deployments().size()
+	_main._deployment_rules = failed
+	var first: Array[Unit] = _main._spawn_card_units(0, "minion_squad", Vector2(340, 860), 0.0, 0, 123)
+	_main._deployment_rules = rules
+	var generated := _main.get_tree().get_nodes_in_group("combatants").filter(func(actor): return actor is Unit and actor.get_instance_id() not in before)
+	var pending: Array = _main._commands.inspect_deployments()
+	var retry: Dictionary = pending.back() if pending.size() > pending_before else {}
+	_expect(failed.planned == 2 and first.is_empty() and generated.is_empty() and pending.size() == pending_before + 1 and retry.get("card_id") == "minion_squad" and retry.get("active_slot") == 0 and retry.get("id") == 123, "后续成员落点无解时不生成半队，原来源卡/主动槽/部署身份随整队重试保留")
+	_main._tick_pending_card_pre_deployments(FixedStepClock.STEP)
+	generated = _main.get_tree().get_nodes_in_group("combatants").filter(func(actor): return actor is Unit and actor.get_instance_id() not in before)
+	var complete: bool = generated.size() == 6 and _main._commands.inspect_deployments().size() == pending_before
+	if complete:
+		var leader: Unit = generated[0]
+		complete = leader.active_ability_slot == 0 and _main._active_skills.entry(leader.active_ability_id).get("card_id") == "minion_squad"
+		complete = complete and generated.all(func(member): return member.deployment_group_id == leader.deployment_group_id and member.active_skill_card_id == "minion_squad")
+		_expect(complete, "落点恢复后生成唯一完整编队，并保留整队身份与原卡主动资格")
+		_main._active_skills.remove(leader.active_ability_id)
+		if _main._active_skill_bar != null: _main._active_skill_bar.remove_skill(leader.active_ability_id)
+	else:
+		_expect(false, "落点恢复后生成唯一完整编队")
+	for member in generated: member.free()
+	_main._deck = saved_deck
 
 func _check_large_unit_front_row_exit() -> void:
 	var stats: Dictionary = CardDB.get_card("garen").duplicate()

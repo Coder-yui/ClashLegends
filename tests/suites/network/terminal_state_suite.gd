@@ -1,5 +1,18 @@
 extends RefCounted
 ## 两个独立 Main 场景，经正式命中/终局与真实编码数据验证可靠终态。
+class CountingSnapshot extends NetworkSnapshotSystem:
+	var public_captures := 0
+	func capture_public_frame() -> Array:
+		public_captures += 1
+		return super.capture_public_frame()
+
+class ObservedClientSnapshot extends NetworkSnapshotSystem:
+	var applied_projectiles: Dictionary = {}
+	func _apply_projectiles(payloads: Array) -> void:
+		super._apply_projectiles(payloads)
+		# 记录正式应用到终局清场之间的只读结果，不补字段或改变输入。
+		applied_projectiles = _projectile_system.visible_view()
+
 func run(harness: Object) -> void:
 	var host = load("res://scenes/main.tscn").instantiate()
 	var client = load("res://scenes/main.tscn").instantiate()
@@ -11,13 +24,51 @@ func run(harness: Object) -> void:
 	client.set_process(false)
 	host._ai.enabled = false
 	client._ai.enabled = false
+	var snapshots := CountingSnapshot.new(host, host._projectile_system)
+	host._snapshot_system = snapshots
+	client._snapshot_system = ObservedClientSnapshot.new(client, client._projectile_system)
 	host._snapshot_system.reset_session("terminal")
+	host.mode = "server"
 	client.mode = "client"
 	client.local_team = 1
 	client._snapshot_system.reset_session("terminal")
+	client._session.session_id = "terminal"
+	client._session.opponent_id = 1
+	client._session.phase = MatchSession.Phase.RUNNING
+	host._elixir_p1 = ElixirManager.new()
+	host.add_child(host._elixir_p1)
+	_check_public_frame(harness, host, snapshots)
+	var cancelled_units: Array[Unit] = []
+	for _reason in ActionCancellation.REASONS:
+		var source: Unit = host._spawn_unit(UnitSpawnRequest.new(0, "garen", Vector2(100 + cancelled_units.size() * 50, 900), {"deploy_time_override": 0.0}))
+		cancelled_units.append(source)
+	# 先复制出生，再经真实 RPC 接收每种生产取消载荷；快照随后重复交付仍应幂等。
+	client._rpc_snapshot(host._snapshot_system.capture())
+	for index in cancelled_units.size():
+		var source := cancelled_units[index]
+		var reason: StringName = ActionCancellation.REASONS[index]
+		source.cancel_basic_attack(reason)
+		harness._expect(Unit.valid_action_cancellation(source.last_action_cancellation), "生产取消合同接受：" + String(reason))
+		client._rpc_action_cancelled("terminal", source.net_id, bytes_to_var(var_to_bytes(source.last_action_cancellation)))
+		var replica: Unit = client._client_units[source.net_id]
+		harness._expect(replica.last_action_cancellation == source.last_action_cancellation, "即时取消 RPC 字节往返：" + String(reason))
+		source.cancel_basic_attack(reason)
 	host._sim_tick_id = 100
 	var before: PackedByteArray = host._snapshot_system.capture()
 	client._rpc_snapshot(before)
+	for source in cancelled_units:
+		var replica: Unit = client._client_units[source.net_id]
+		harness._expect(replica.action_cancel_serial == 2 and replica.last_action_cancellation == source.last_action_cancellation, "普通快照取消往返：" + String(source.last_action_cancellation.reason))
+		var malformed: Dictionary = source.last_action_cancellation.duplicate(true)
+		malformed.reason = "unregistered_reason"
+		malformed.serial = 100
+		client._rpc_action_cancelled("terminal", source.net_id, malformed)
+		harness._expect(replica.action_cancel_serial == 2 and not Unit.valid_action_cancellation(malformed), "即时取消拒绝未知原因且不污染序号")
+		source.cancel_basic_attack(ActionCancellation.REASONS[cancelled_units.find(source)])
+	var malformed_packet: Array = bytes_to_var(before.decompress_dynamic(1024 * 1024, FileAccess.COMPRESSION_DEFLATE))
+	malformed_packet[NetworkSnapshotSystem.S_SERVER_TICK] = 101
+	malformed_packet[NetworkSnapshotSystem.S_UNITS][0][NetworkSnapshotSystem.U_CANCELLATION].reason = "unregistered_reason"
+	harness._expect(not client._snapshot_system.apply(var_to_bytes(malformed_packet).compress(FileAccess.COMPRESSION_DEFLATE)), "普通快照整体拒绝未知取消原因")
 	var initial_hp: float = client._king_enemy.hp
 	var cues: Array[StringName] = []
 	var listener := func(card: String, cue: StringName, _pos: Vector2):
@@ -40,12 +91,35 @@ func run(harness: Object) -> void:
 		harness._expect(not main._audio_manager._sustain_players.is_empty() and not main._audio_manager._zone_players.is_empty() and not main._audio_manager._projectile_launch_players.is_empty(), "终局测试开始时确实同时存在 Buff、区域和飞行音轨")
 	# 快照刚发出后，下一 Tick 的真实弹体击杀水晶。
 	host._sim_tick_id = 101
+	# 本枚强化弹体未出现在任何普通快照中，来源释放后仅由可靠终态首次恢复。
+	var speed_source: Unit = host._spawn_unit(UnitSpawnRequest.new(0, "anivia", Vector2(90, 1120), {"deploy_time_override": 0.0}))
+	var speed_target: Unit = host._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(600, 1120), {"deploy_time_override": 0.0}))
+	speed_source.buffs.apply(&"ranged_attack", speed_source.status_source("terminal_speed"), 2.0, {"projectile_speed_multiplier": 1.75})
+	var expected_speed: float = speed_source.projectile_speed * 1.75
+	harness._expect(host.launch_attack(speed_source, speed_target, 5.0, speed_source.projectile_speed, 0.0, 0.0, Color.WHITE), "终态测试经真实发射入口创建强化速度弹体")
+	var flight_id: int = host._projectile_system.projectiles.keys().back()
+	speed_source.buffs.advance(2.0)
+	speed_source.free()
+	harness._expect(not client._projectile_system.client_snapshot().has(flight_id), "终态前客户端完全未知该在途弹体")
+	var captures_before_end: int = snapshots.public_captures
 	host.launch_attack(host._towers[0], host._king_enemy, 100000.0, 100000.0, 0.0, 0.0, Color.WHITE)
 	host._tick_projectiles(0.05)
 	host._tick_match_rules(0.05)
 	harness._expect(host.game_over and host._king_enemy.hp == 0.0 and client._king_enemy.hp == initial_hp, "致胜一击发生在上次普通快照之后，客户端尚未知道伤害")
+	harness._expect(snapshots.public_captures == captures_before_end + 1, "终局清场前公共单位/弹体/塔/时钟只采集一次")
 	var terminal: Dictionary = bytes_to_var(var_to_bytes(host._terminal_result))
+	_check_terminal_speed_rejection(harness, client, terminal, flight_id)
+	var invalid_terminal: Dictionary = terminal.duplicate(true)
+	var invalid_final: Array = bytes_to_var(invalid_terminal.terminal_state.decompress_dynamic(1024 * 1024, FileAccess.COMPRESSION_DEFLATE))
+	invalid_final[NetworkSnapshotSystem.S_UNITS][0][NetworkSnapshotSystem.U_CANCELLATION].reason = "unregistered_reason"
+	invalid_terminal.terminal_state = var_to_bytes(invalid_final).compress(FileAccess.COMPRESSION_DEFLATE)
+	client._rpc_end(invalid_terminal)
+	harness._expect(not client.game_over and not client._snapshot_system.terminal_applied, "终局快照整体拒绝未知取消原因，仍可接收合法终态")
 	client._rpc_end(terminal)
+	harness._expect(client._snapshot_system.applied_projectiles.has(flight_id) and client._snapshot_system.applied_projectiles[flight_id].speed == expected_speed and client._snapshot_system.applied_projectiles[flight_id].visual_path.progress > 0.0, "可靠终态正式应用首次恢复未知已飞弹体的原强化速度，随后才清场")
+	for source in cancelled_units:
+		var replica: Unit = client._client_units[source.net_id]
+		harness._expect(replica.action_cancel_serial == 3 and replica.last_action_cancellation == source.last_action_cancellation, "终局快照取消往返：" + String(source.last_action_cancellation.reason))
 	harness._expect(client.game_over and client._king_enemy.hp == host._king_enemy.hp and client._king_enemy.nav_cells.is_empty(), "可靠终态在结束 UI 前应用最终生命与塔摧毁/导航状态")
 	harness._expect(terminal.winner_team == 0 and terminal.reason == "nexus" and terminal.final_tick == 101 and cues.is_empty(), "结果使用队伍/原因/最终 Tick，客户端爆炸第五秒前不播失败")
 	for main in [host, client]:
@@ -95,3 +169,62 @@ func run(harness: Object) -> void:
 	next.set_process(false)
 	harness._expect(not next.game_over and not next._match_rules.finished and next._terminal_result.is_empty() and not next._snapshot_system.terminal_applied and not next._audio_manager._battle_ended, "退出后新局重建比赛、网络与音频生命周期")
 	next.free()
+
+func _check_terminal_speed_rejection(harness: Object, client, terminal: Dictionary, flight_id: int) -> void:
+	var packet: Array = bytes_to_var(terminal.terminal_state.decompress_dynamic(NetworkSnapshotSystem.MAX_DECODED_BYTES, FileAccess.COMPRESSION_DEFLATE))
+	var rows: Array = packet[NetworkSnapshotSystem.S_PROJECTILES]
+	var index := -1
+	for row_index in rows.size():
+		if int(rows[row_index][NetworkSnapshotSystem.P_ID]) == flight_id:
+			index = row_index
+			break
+	harness._expect(index >= 0 and rows[index].size() == 15 and float(rows[index][NetworkSnapshotSystem.P_SPEED]) > 0.0, "终局清场前真实采集保留15字段在途弹体")
+	if index < 0: return
+	var clock := [client._authoritative_server_tick, client._estimated_server_tick, client._estimated_server_tick_fraction, client._has_estimated_server_tick]
+	var lifecycle := [client._snapshot_system.lifecycle.snapshot_tick, client._snapshot_system.lifecycle.snapshot_revision, client._snapshot_system.lifecycle.snapshot_ids.duplicate(), client._snapshot_system.lifecycle.spawns.duplicate(true)]
+	var units: Dictionary = client._client_units.duplicate()
+	var health := {}
+	for id in units: health[id] = units[id].hp
+	var towers: Array = client._towers.map(func(tower): return tower.hp)
+	var wallet: float = client._elixir.elixir
+	var growth: Dictionary = client._card_growth.snapshot()
+	var timer: float = client._match_rules.time_left
+	var projectiles: Dictionary = client._projectile_system.client_snapshot()
+	var observed: Dictionary = client._snapshot_system.applied_projectiles
+	# 完整类型/有限值/正数域矩阵由NetworkLifecycle维护；这里保留真实终局入口的代表边界。
+	for invalid in ["320", INF, 0.0, "legacy14", "legacy115"]:
+		var bad := packet.duplicate(true)
+		if invalid is String and invalid == "legacy14": bad[NetworkSnapshotSystem.S_PROJECTILES][index].pop_back()
+		elif invalid is String and invalid == "legacy115": bad[NetworkSnapshotSystem.S_VERSION] = 115
+		else: bad[NetworkSnapshotSystem.S_PROJECTILES][index][NetworkSnapshotSystem.P_SPEED] = invalid
+		var envelope := terminal.duplicate(true)
+		envelope.terminal_state = var_to_bytes(bad).compress(FileAccess.COMPRESSION_DEFLATE)
+		client._rpc_end(envelope)
+		var unchanged: bool = not client.game_over and not client._snapshot_system.terminal_applied and client._terminal_result.is_empty() and client._client_units == units and client._elixir.elixir == wallet and client._card_growth.snapshot() == growth and client._match_rules.time_left == timer and client._towers.map(func(tower): return tower.hp) == towers and client._projectile_system.client_snapshot() == projectiles and is_same(client._snapshot_system.applied_projectiles, observed)
+		unchanged = unchanged and [client._authoritative_server_tick, client._estimated_server_tick, client._estimated_server_tick_fraction, client._has_estimated_server_tick] == clock and [client._snapshot_system.lifecycle.snapshot_tick, client._snapshot_system.lifecycle.snapshot_revision, client._snapshot_system.lifecycle.snapshot_ids, client._snapshot_system.lifecycle.spawns] == lifecycle
+		for id in units: unchanged = unchanged and units[id].hp == health[id]
+		harness._expect(unchanged, "真实终局RPC整体拒绝速度/旧格式且实体、塔、时钟、经济、成长、终态无部分写入：" + str(invalid))
+
+func _check_public_frame(harness: Object, host, snapshots: CountingSnapshot) -> void:
+	var captures := snapshots.public_captures
+	snapshots.send()
+	harness._expect(snapshots.public_captures == captures, "没有真实接收端时send不采集公共世界")
+	var saved_growth: Dictionary = host._card_growth.snapshot()
+	var blue_wallet: ElixirManager = host._elixir_for_team(0)
+	var red_wallet: ElixirManager = host._elixir_for_team(1)
+	var blue_elixir: float = blue_wallet.elixir
+	var red_elixir: float = red_wallet.elixir
+	blue_wallet.elixir = 3.0
+	red_wallet.elixir = 8.0
+	host._card_growth.replace_replica({0: {"kayn": {"ranged": 1, "melee": 2, "unlocked": "kayn"}}, 1: {"kayn": {"ranged": 2, "melee": 3, "unlocked": "kayn"}}})
+	var frame := snapshots.capture_public_frame()
+	var fixed_frame := var_to_bytes(frame)
+	var blue: Array = bytes_to_var(snapshots.encode_frame(frame, 0).decompress_dynamic(NetworkSnapshotSystem.MAX_DECODED_BYTES, FileAccess.COMPRESSION_DEFLATE))
+	var red: Array = bytes_to_var(snapshots.encode_frame(frame, 1).decompress_dynamic(NetworkSnapshotSystem.MAX_DECODED_BYTES, FileAccess.COMPRESSION_DEFLATE))
+	harness._expect(snapshots.public_captures == captures + 1 and frame.is_read_only() and frame[NetworkSnapshotSystem.S_UNITS].is_read_only() and frame[NetworkSnapshotSystem.S_CLIENT_ELIXIR] == null and frame[NetworkSnapshotSystem.S_CARD_GROWTH] == null and var_to_bytes(frame) == fixed_frame, "双端编码共享一份冻结公共帧，私有占位不被写回")
+	harness._expect(blue[NetworkSnapshotSystem.S_CLIENT_ELIXIR] == 3.0 and red[NetworkSnapshotSystem.S_CLIENT_ELIXIR] == 8.0 and blue[NetworkSnapshotSystem.S_CARD_GROWTH].keys() == [0] and red[NetworkSnapshotSystem.S_CARD_GROWTH].keys() == [1], "同一公共帧分别投影本方钱包与成长，不泄露对手私有状态")
+	for field in [NetworkSnapshotSystem.S_UNITS, NetworkSnapshotSystem.S_PROJECTILES, NetworkSnapshotSystem.S_TOWERS, NetworkSnapshotSystem.S_SERVER_TICK, NetworkSnapshotSystem.S_SESSION, NetworkSnapshotSystem.S_LIFECYCLE_REVISION, NetworkSnapshotSystem.S_MATCH_TIMER, NetworkSnapshotSystem.S_OVERTIME]:
+		harness._expect(blue[field] == red[field] and blue[field] == frame[field], "两端公共世界/时钟完全相同：%d" % field)
+	blue_wallet.elixir = blue_elixir
+	red_wallet.elixir = red_elixir
+	host._card_growth.replace_replica(saved_growth)

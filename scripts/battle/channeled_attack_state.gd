@@ -14,7 +14,7 @@ func begin(source: Unit, target: Node2D) -> void:
 	if not CombatInteraction.allows(target, source, source.team, source.global_position): return
 	var skill := prepared
 	prepared = {}
-	source.cancel_basic_attack(&"empowered_reset")
+	source.cancel_basic_attack(ActionCancellation.EMPOWERED_RESET)
 	remaining = float(skill.duration)
 	target_ref = weakref(target)
 	status_source = source.status_source("channel")

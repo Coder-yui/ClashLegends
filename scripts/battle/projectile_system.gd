@@ -20,6 +20,13 @@ var _missile_visuals: Node2D
 var _weapon_visuals: Node2D
 var _pending_attack_waves: Array[Dictionary] = []
 var _visual_origin_cache: Dictionary = {}
+const VISIBLE_FIELDS := ["visual_id", "pos", "direction", "color", "radius", "visual", "visual_height", "visual_scale", "visual_offset", "visual_launch_pos", "speed", "impact_visual", "first_strike", "source_form_index"]
+const VISIBLE_PATH_FIELDS := ["start", "end", "origin_offset", "start_model_offset", "end_model_offset", "contact_radius", "progress", "wave", "fixed_muzzle", "air"]
+const VISIBLE_ENTITY_FIELDS := ["id", "local_id", "team", "position", "unit", "king"]
+var _visible_generation := 0
+var _cached_visible_generation := -1
+var _cached_visible_client := false
+var _cached_visible_view: Dictionary = {}
 
 func setup(context: BattleContext) -> void:
 	_context = context
@@ -48,6 +55,7 @@ func apply_client_targets(targets: Dictionary) -> void:
 			entry.visual_offset = _client_projectiles[id].visual_offset
 		next[id] = entry
 	_client_projectiles = next
+	_invalidate_visible_view()
 
 func client_snapshot() -> Dictionary:
 	return _client_projectiles.duplicate(true)
@@ -58,8 +66,51 @@ func authoritative_snapshot() -> Dictionary:
 func visible_snapshot() -> Dictionary:
 	return client_snapshot() if _context != null and _context.is_net_client() else authoritative_snapshot()
 
+## 同一内容代次共享只读表现投影，不携带攻击者/目标节点或战斗配置别名。
+## Main在同帧内可能先表现、后模拟/网络插值，不能按引擎帧号复用旧内容。
+func visible_view() -> Dictionary:
+	var client := _context != null and _context.is_net_client()
+	if _cached_visible_generation != _visible_generation or _cached_visible_client != client:
+		_cached_visible_view = _build_visible_view(_client_projectiles if client else projectiles)
+		_cached_visible_generation = _visible_generation
+		_cached_visible_client = client
+	return _cached_visible_view
+
+func _build_visible_view(source: Dictionary) -> Dictionary:
+	var view := {}
+	for id in source:
+		var projectile: Dictionary = source[id]
+		var entry := {}
+		for key in VISIBLE_FIELDS:
+			if projectile.has(key): entry[key] = projectile[key]
+		if projectile.has("visual_path"):
+			var path: Dictionary = projectile.visual_path
+			var visible_path := {}
+			for key in VISIBLE_PATH_FIELDS:
+				if path.has(key): visible_path[key] = path[key]
+			for role in ["source", "target"]:
+				if not path.has(role): continue
+				var descriptor: Dictionary = path[role]
+				var visible_entity := {}
+				for key in VISIBLE_ENTITY_FIELDS:
+					if descriptor.has(key): visible_entity[key] = descriptor[key]
+				visible_entity.make_read_only()
+				visible_path[role] = visible_entity
+			visible_path.make_read_only()
+			entry["visual_path"] = visible_path
+		entry.make_read_only()
+		view[id] = entry
+	view.make_read_only()
+	return view
+
+func _invalidate_visible_view() -> void:
+	_visible_generation += 1
+	_cached_visible_generation = -1
+	_cached_visible_view = {}
+
 func clear_client() -> void:
 	_client_projectiles.clear()
+	_invalidate_visible_view()
 	_visual_origin_cache.clear()
 	if is_instance_valid(_native_visuals): _native_visuals.clear()
 	if is_instance_valid(_hit_visuals): _hit_visuals.clear()
@@ -159,6 +210,7 @@ func launch(attacker: Node2D, target: Node2D, amount: float, projectile_speed: f
 		# 固定保存炮口偏移，后续沿权威方向直行，不追踪目标或武器。
 		projectiles[id].visual_path["wave"] = true
 		projectiles[id].visual_path["fixed_muzzle"] = true
+	_invalidate_visible_view()
 	if projectile_visual in [&"baron_siege", &"baron_ranged"]:
 		_context.show_projectile_impact(start_position + visual_offset - Vector2(0, projectile_visual_height), 1.0, projectile_color, StringName(String(projectile_visual) + "_cast"))
 	if attacker is Unit:
@@ -203,6 +255,7 @@ func _queue_attack_wave(source: Unit, target: Node2D, sword_id: int) -> void:
 		"max_radius": float(wave.near_width) * float(wave.max_scale) * 0.5, "visual_path": path}, true)
 	projectiles.erase(wave_id)
 	_pending_attack_waves.append({"id": wave_id, "delay": float(wave.delay), "projectile": pending})
+	_invalidate_visible_view()
 
 static func _visual_entity(entity: Node2D) -> Dictionary:
 	return {"id": entity.net_id, "local_id": entity.get_instance_id(), "team": entity.team, "position": entity.global_position, "unit": true} if entity is Unit else {"team": entity.team, "position": entity.global_position, "unit": false, "king": entity.is_king}
@@ -213,11 +266,13 @@ func _tick_pending_waves(dt: float) -> void:
 		pending.delay = maxf(float(pending.delay) - dt, 0.0)
 		if pending.delay <= 0.0001:
 			projectiles[pending.id] = pending.projectile
+			_invalidate_visible_view()
 			wave_audio.emit(pending.projectile.presentation_source, "attack_wave", pending.projectile.pos, "launch")
 			_pending_attack_waves.remove_at(i)
 
 ## 保护建立时立即断开旧追踪；来源同Tick稍后入圈也不能救回这枚弹体。
 func invalidate_target_locks(target: Node2D) -> void:
+	var changed := false
 	for id in projectiles.keys():
 		var projectile: Dictionary = projectiles[id]
 		if bool(projectile.get("skill_fan", false)) or projectile.get("target") != target: continue
@@ -225,9 +280,14 @@ func invalidate_target_locks(target: Node2D) -> void:
 		if CombatInteraction.allows(target, source if is_instance_valid(source) else null, int(projectile.team), projectile.source_pos): continue
 		if bool(projectile.get("owned_launch_audio", false)): launch_audio_stopped.emit(id)
 		projectiles.erase(id)
+		changed = true
+	if changed: _invalidate_visible_view()
 	queue_redraw()
 
 func tick(dt: float) -> void:
+	# 结算回调也可能查询表现；进入及离开可变阶段都不能留下旧投影。
+	var had_projectiles := not projectiles.is_empty()
+	if had_projectiles: _invalidate_visible_view()
 	# 到期波在本Tick末创建，下一Tick才前进；延迟期不绘制、不碰撞。
 	var finished := []
 	# 同 Tick 的箭共享开始时的碰撞对象，前箭击杀也不会让并排后箭穿过尸体打后排。
@@ -284,6 +344,7 @@ func tick(dt: float) -> void:
 			launch_audio_stopped.emit(id)
 		projectiles.erase(id)
 	_tick_pending_waves(dt)
+	if had_projectiles: _invalidate_visible_view()
 	queue_redraw()
 
 ## 扇形直线技能弹体；阻挡/穿透由数据决定，同次施法共享目标去重。
@@ -321,6 +382,7 @@ func launch_skill_fan(source: Unit, skill: Dictionary, forward: Vector2) -> void
 			"visual_scale": maxf(float(skill.get("projectile_visual_width", radius * 2.0)) / (radius * 2.0), 1.0),
 		}
 		_next_id += 1
+	_invalidate_visible_view()
 	queue_redraw()
 
 func _tick_skill_arrow(projectile: Dictionary, dt: float, colliders: Array) -> bool:
@@ -441,13 +503,18 @@ static func _wave_sweep_overlaps(point: Vector2, radius: float, distance: float,
 	return false
 
 func tick_client_interpolation(delta: float) -> void:
+	var changed := false
 	for id in _client_projectiles:
 		var projectile: Dictionary = _client_projectiles[id]
-		projectile.pos = (projectile.pos as Vector2).lerp(projectile.target_pos, minf(delta * 14.0, 1.0))
+		var next_pos := (projectile.pos as Vector2).lerp(projectile.target_pos, minf(delta * 14.0, 1.0))
 		var visual_offset: Vector2 = projectile.get("visual_offset", Vector2.ZERO)
 		var target_visual_offset: Vector2 = projectile.get("target_visual_offset", Vector2.ZERO)
-		projectile.visual_offset = visual_offset.lerp(target_visual_offset, minf(delta * 14.0, 1.0))
+		var next_offset := visual_offset.lerp(target_visual_offset, minf(delta * 14.0, 1.0))
+		changed = changed or projectile.pos != next_pos or visual_offset != next_offset
+		projectile.pos = next_pos
+		projectile.visual_offset = next_offset
 		_client_projectiles[id] = projectile
+	if changed: _invalidate_visible_view()
 	queue_redraw()
 
 func tick_visuals(delta: float) -> void:
@@ -487,6 +554,7 @@ func clear_all() -> void:
 			launch_audio_stopped.emit(id)
 	projectiles.clear()
 	_client_projectiles.clear()
+	_invalidate_visible_view()
 	impact_effects.clear()
 	queue_redraw()
 

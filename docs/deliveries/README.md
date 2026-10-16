@@ -4,6 +4,9 @@
 
 ## 当前任务
 
+- [2026-10-16：正常单局开局准备优化](2026-10-16_match_loading.md)
+
+- [2026-10-16：架构精简与重构](2026-10-16_architecture_refactor.md)
 - [2026-10-16：窗口、预热修复与工作区同步](2026-10-16_window_warmup_workspace_sync.md)
 - [2026-10-16：9:16 窗口与外围显示适配](2026-10-16_window_adaptation.md)
 - [2026-10-16：Shader 特效预热修复](2026-10-16_effect_warmup_shader_fix.md)

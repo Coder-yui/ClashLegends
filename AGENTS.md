@@ -7,9 +7,10 @@ Clash Legends 是 Godot 4.x 标准版（GDScript）的 1v1 卡牌即时对战学
 1. 先读 `docs/AGENT_WORKFLOW.md`，按任务类型选择最少当前专项资料；历史归档和改动记录仅在追溯或用户指定时定向读取，问题档案按具体任务读取。
 2. 先看 `git status --short --branch`，不得覆盖用户已有修改。
 3. F5 运行 `scenes/main.tscn`；内容审查进入“卡牌开发工作台”，用法见 `docs/DEVELOPMENT_WORKBENCH.md`。
-4. 核心回归：`Godot --headless --path . --script tests/mechanics_check.gd`。
+4. 先用 `python3 tools/dev.py verify --plan` 查看按改动生成的验证范围，再执行 `verify` 或明确的 `--suite` / `--group`。纯文档只查链接与一致性；局部修改只跑本模块及直接消费者；协议、时序、生命周期等跨模块变化才扩大。仅确有必要的重大跨域改动或里程碑显式运行一次 `verify --full`，小修复不例行全量。命令与边界见 `tests/README.md`。
 5. 美术任务还必须在实际渲染中目视验收。
 6. 完整新卡按“2D 权威逻辑 → 3D 模型/动画 → 卡面 → 音频 → 联合验收”推进；音频按 `docs/AUDIO_INTEGRATION.md` 执行并在实际运行中试听。缺素材或未支持的事件必须记录，不得默认为已完成。
+7. 同一实现已通过的验证按代码身份复用；只有新改动、失败或未解决的直接风险才重跑相关检查。`tests/mechanics_check.gd` 只负责执行已选套件，裸入口不隐式全量；完整原始入口须显式 `-- --all-suites`。
 
 ## 任务改动记录
 

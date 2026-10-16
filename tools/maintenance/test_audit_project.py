@@ -6,7 +6,22 @@ from pathlib import Path
 from audit_project import audit
 
 
-class AuditTests(unittest.TestCase):
+class AuditFixture:
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+        self.write('scripts/data/card_db.gd', 'preload("res://scripts/data/cards/example.gd")')
+        self.write('scripts/data/cards/example.gd', 'extends RefCounted\n')
+        self.write('docs/units/example.md', '[definition](../../scripts/data/cards/example.gd)\n')
+
+    def write(self, name, value):
+        path = self.root / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(value)
+
+
+class AuditTests(AuditFixture, unittest.TestCase):
     def test_suite_catalog_rejects_duplicates_and_missing_registration(self):
         self.write('tests/suites/combat/first_suite.gd', 'extends RefCounted\nfunc run(): pass\n')
         entry = dict(id='first', script='res://tests/suites/combat/first_suite.gd', method='run', scene='battle', group='combat')
@@ -33,19 +48,6 @@ class AuditTests(unittest.TestCase):
         self.assertTrue(any('retired player-host' in e for e in audit(self.root)['errors']))
         self.write('tools/demos/example.gd', '# historical host note\nif main.mode == "server": pass\n')
         self.assertEqual(audit(self.root)['errors'], [])
-
-    def setUp(self):
-        self.temp = tempfile.TemporaryDirectory()
-        self.addCleanup(self.temp.cleanup)
-        self.root = Path(self.temp.name)
-        self.write('scripts/data/card_db.gd', 'preload("res://scripts/data/cards/example.gd")')
-        self.write('scripts/data/cards/example.gd', 'extends RefCounted\n')
-        self.write('docs/units/example.md', '[definition](../../scripts/data/cards/example.gd)\n')
-
-    def write(self, name, value):
-        path = self.root / name
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(value)
 
     def test_valid_links_and_intentional_invalid_fixture(self):
         self.write('tests/fixture.gd', 'var invalid = "res://missing.wav"')
@@ -102,7 +104,7 @@ class AuditTests(unittest.TestCase):
 
 
 
-class NavigationTests(AuditTests):
+class NavigationTests(AuditFixture, unittest.TestCase):
     def manifest(self, **values):
         import json
         self.write('docs/navigation.json', json.dumps(values))

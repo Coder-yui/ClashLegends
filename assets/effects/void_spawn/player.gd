@@ -44,15 +44,22 @@ func load_kind(kind: String) -> void:
 				continue
 			if not _meshes.has(e.mesh_path): _meshes[e.mesh_path] = _mesh(e.mesh_path)
 			materials.append(_material(e))
-		_cache[kind] = {"data": data, "materials": materials}
+		var births := _index_particle_births(data) if kind == "trail" else {}
+		births.make_read_only()
+		_cache[kind] = {"data": data, "materials": materials, "births": births}
 	_data = _cache[kind].data
-	if kind == "trail":
-		for frame_index in _data.frames.size():
-			for emitter_index in _data.frames[frame_index].size():
-				for particle in _data.frames[frame_index][emitter_index]:
-					var key := Vector2i(emitter_index, int(particle[0]))
-					if not _particle_births.has(key): _particle_births[key] = float(frame_index) / float(_data.fps)
+	_particle_births = _cache[kind].births
 	_materials.assign(_cache[kind].materials)
+
+## 出生采样只由不可变帧数据决定；世界出生位置仍由每个实例独立保存。
+static func _index_particle_births(data: Dictionary) -> Dictionary:
+	var births := {}
+	for frame_index in data.frames.size():
+		for emitter_index in data.frames[frame_index].size():
+			for particle in data.frames[frame_index][emitter_index]:
+				var key := Vector2i(emitter_index, int(particle[0]))
+				if not births.has(key): births[key] = float(frame_index) / float(data.fps)
+	return births
 
 func setup_native(unit_scale: float) -> void:
 	scale = Vector3.ONE * unit_scale

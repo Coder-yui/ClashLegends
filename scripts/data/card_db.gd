@@ -125,9 +125,22 @@ static func has_card(card_id: String) -> bool:
 ## 只读取可生成的单位/建筑数据；系统召唤物同样是 selectable=false 的正式条目。
 static func get_unit_stats(card_id: String) -> Dictionary:
 	var stats := get_card(card_id)
-	if StringName(stats.get("type", "")) not in [&"unit", &"building"]:
+	if stats.has("spawn_plan") or StringName(stats.get("type", "")) not in [&"unit", &"building"]:
 		return {}
 	return stats
+
+## 纯部署卡直接持有唯一计划；旧同质单位卡仅由其自身数量/间距单向投影。
+## members 顺序即生成顺序，重复引用表达数量，不再维护第二份 count。
+static func deployment_plan(card_id: String) -> Dictionary:
+	var card := get_card(card_id)
+	if card.has("spawn_plan"):
+		return card.spawn_plan
+	if get_unit_stats(card_id).is_empty(): return {}
+	var members: Array[String] = []
+	for index in maxi(int(card.get("deployment_count", 1)), 1): members.append(card_id)
+	var plan := {"members": members, "spacing": maxf(float(card.get("deployment_spacing", 0.0)), 0.0), "formation": String(card.get("deployment_formation", "ring"))}
+	_freeze(plan)
+	return plan
 
 ## 返回一张卡可供主动槽选择的技能集合；一次出战仍只从候选集合中携带一个。
 static func active_skills_for(card_id: String) -> Array[Dictionary]:

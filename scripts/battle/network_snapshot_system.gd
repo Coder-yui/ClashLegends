@@ -15,6 +15,23 @@ const S_SESSION := 8
 const S_LIFECYCLE_REVISION := 9
 const S_CARD_GROWTH := 10
 const SNAPSHOT_PACKET_SIZE := 11
+const MAX_DECODED_BYTES := 1024 * 1024
+
+## 只由完整静态校验后的解码入口创建；队列共享递归只读内容，不复制世界。
+class DecodedSnapshot extends RefCounted:
+	var _packet: Array
+	var _unit_ids: Dictionary
+	var _raw_bytes_size: int
+	var packet: Array:
+		get: return _packet
+	var unit_ids: Dictionary:
+		get: return _unit_ids
+	var raw_bytes_size: int:
+		get: return _raw_bytes_size
+	func _init(value: Array, ids: Dictionary, byte_count: int) -> void:
+		_packet = value
+		_unit_ids = ids
+		_raw_bytes_size = byte_count
 
 ## 当前版本使用固定长度载荷；协议变更必须同步提高 SNAPSHOT_PROTOCOL_VERSION。
 const U_ID := 0
@@ -97,7 +114,9 @@ const P_VISUAL_OFFSET_Y := 10
 const P_VISUAL_SCALE := 11
 const P_FIRST_STRIKE := 12
 const P_VISUAL_PATH := 13
-const PROJECTILE_PAYLOAD_SIZE := 14
+## 权威出膛速度（世界坐标单位/秒），有限且>0；客户端仅用于表现年龄。
+const P_SPEED := 14
+const PROJECTILE_PAYLOAD_SIZE := 15
 
 const T_HP := 0
 const T_ACTIVATED := 1
@@ -134,6 +153,9 @@ func register_spawn(args: Array) -> Dictionary:
 func receive_spawn(session_id: String, descriptor: Dictionary, snapshot_payload: Array = []) -> void:
 	if _controller.mode != "client" or terminal_applied or _controller.game_over or not lifecycle.accepts_session(session_id) or not _valid_spawn(descriptor):
 		return
+	_receive_validated_spawn(descriptor, snapshot_payload)
+
+func _receive_validated_spawn(descriptor: Dictionary, snapshot_payload: Array = []) -> void:
 	var args: Array = descriptor.args.duplicate(true)
 	# 快照可能已重建甚至移除实体，可靠预部署/出生事件才到达。
 	# 无论是否需要重建，这一出生事实都结束对应的旧部署提示。
@@ -176,99 +198,140 @@ func _valid_spawn(descriptor: Dictionary) -> bool:
 	return typeof(args[4]) in [TYPE_INT, TYPE_FLOAT] and is_finite(float(args[4])) and args[9] is String and args[11] is bool and args[12] is String and CardDB.has_card(args[12]) and args[13] is Vector2 and (args[13].is_finite() or args[13] == Vector2.INF)
 
 
-## 仅用于网络播放排程，真正应用时仍执行完整载荷校验。
+## 兼容检查入口；生产接收端持有 decode_validated() 的结果，不能用本方法预解码。
 func packet_tick(snapshot_bytes: PackedByteArray) -> int:
-	var raw := snapshot_bytes.decompress_dynamic(1024 * 1024, FileAccess.COMPRESSION_DEFLATE)
-	if raw.is_empty(): return -1
-	var decoded = bytes_to_var(raw)
-	if not decoded is Array or decoded.size() != SNAPSHOT_PACKET_SIZE: return -1
-	if decoded[S_VERSION] != SNAPSHOT_PROTOCOL_VERSION or not decoded[S_SESSION] is String or not lifecycle.accepts_session(decoded[S_SESSION]): return -1
-	return int(decoded[S_SERVER_TICK]) if decoded[S_SERVER_TICK] is int and int(decoded[S_SERVER_TICK]) >= 0 else -1
+	var decoded := decode_validated(snapshot_bytes)
+	if decoded == null or not lifecycle.accepts_session(decoded.packet[S_SESSION]): return -1
+	return int(decoded.packet[S_SERVER_TICK])
 
-func apply(snapshot_bytes: PackedByteArray, terminal: bool = false, expected_tick: int = -1) -> bool:
-	if _controller.mode != "client" or terminal_applied or _controller.game_over:
-		return false
-	var raw_bytes := snapshot_bytes.decompress_dynamic(1024 * 1024, FileAccess.COMPRESSION_DEFLATE)
+func decode_validated(snapshot_bytes: PackedByteArray) -> DecodedSnapshot:
+	var raw_bytes := snapshot_bytes.decompress_dynamic(MAX_DECODED_BYTES, FileAccess.COMPRESSION_DEFLATE)
 	if raw_bytes.is_empty():
-		return false
+		return null
 	var decoded = bytes_to_var(raw_bytes)
 	if not decoded is Array or decoded.size() != SNAPSHOT_PACKET_SIZE:
-		return false
+		return null
 	if not decoded[S_VERSION] is int or int(decoded[S_VERSION]) != SNAPSHOT_PROTOCOL_VERSION:
-		return false
-	if not decoded[S_SESSION] is String or not lifecycle.accepts_session(decoded[S_SESSION]):
-		return false
-	if not MatchCardGrowth.valid_snapshot(decoded[S_CARD_GROWTH]): return false
-	if not decoded[S_SERVER_TICK] is int or not decoded[S_LIFECYCLE_REVISION] is int or int(decoded[S_LIFECYCLE_REVISION]) < 0:
-		return false
+		return null
+	if not decoded[S_SESSION] is String:
+		return null
+	if not MatchCardGrowth.valid_snapshot(decoded[S_CARD_GROWTH]): return null
+	if not decoded[S_SERVER_TICK] is int or int(decoded[S_SERVER_TICK]) < 0 or not decoded[S_LIFECYCLE_REVISION] is int or int(decoded[S_LIFECYCLE_REVISION]) < 0:
+		return null
 	if not decoded[S_UNITS] is Array or not decoded[S_PROJECTILES] is Array or not decoded[S_TOWERS] is Array:
-		return false
-	if terminal and int(decoded[S_SERVER_TICK]) != expected_tick:
-		return false
+		return null
+	if not _finite_number(decoded[S_CLIENT_ELIXIR]) or not _finite_number(decoded[S_MATCH_TIMER]) or not decoded[S_OVERTIME] is bool: return null
+	if float(decoded[S_CLIENT_ELIXIR]) < 0.0 or float(decoded[S_CLIENT_ELIXIR]) > ElixirManager.MAX_ELIXIR or float(decoded[S_MATCH_TIMER]) < 0.0: return null
 	var units_data: Array = decoded[S_UNITS]
 	var projectiles_data: Array = decoded[S_PROJECTILES]
 	var towers_data: Array = decoded[S_TOWERS]
 	if not _payloads_have_size(units_data, UNIT_PAYLOAD_SIZE):
-		return false
+		return null
 	if not _payloads_have_size(projectiles_data, PROJECTILE_PAYLOAD_SIZE):
-		return false
+		return null
 	if not _payloads_have_size(towers_data, TOWER_PAYLOAD_SIZE):
-		return false
+		return null
 	for payload: Array in towers_data:
-		if not payload[T_STASIS] is bool: return false
+		for field in [T_HP, T_SHIELD_RATIO, T_SHIELD_CAPACITY_RATIO]:
+			if not _finite_number(payload[field]): return null
+		for field in [T_ACTIVATED, T_STUNNED, T_FROZEN]:
+			if not payload[field] is int or payload[field] not in [0, 1]: return null
+		if not payload[T_STASIS] is bool: return null
+		if float(payload[T_HP]) < 0.0 or float(payload[T_SHIELD_RATIO]) < 0.0 or float(payload[T_SHIELD_RATIO]) > 1.0 or float(payload[T_SHIELD_CAPACITY_RATIO]) < 0.0: return null
+	var projectile_ids := {}
+	for payload: Array in projectiles_data:
+		if not payload[P_ID] is int or payload[P_ID] < 0 or projectile_ids.has(payload[P_ID]): return null
+		projectile_ids[payload[P_ID]] = true
+		for field in [P_X, P_Y, P_RADIUS, P_DIRECTION_X, P_DIRECTION_Y, P_VISUAL_HEIGHT, P_VISUAL_OFFSET_X, P_VISUAL_OFFSET_Y, P_VISUAL_SCALE, P_SPEED]:
+			if not _finite_number(payload[field]): return null
+		if float(payload[P_RADIUS]) < 0.0 or float(payload[P_VISUAL_HEIGHT]) < 0.0 or float(payload[P_VISUAL_SCALE]) <= 0.0 or float(payload[P_SPEED]) <= 0.0: return null
+		if not payload[P_COLOR] is Color or not _finite_value(payload[P_COLOR]): return null
+		if not payload[P_VISUAL] is String or not payload[P_FIRST_STRIKE] is int or payload[P_FIRST_STRIKE] not in [0, 1]: return null
+		if not payload[P_VISUAL_PATH] is Dictionary or not _valid_visual_path(payload[P_VISUAL_PATH]): return null
 	var ids := {}
 	for payload: Array in units_data:
-		if not payload[U_STEALTH] is bool or not payload[U_STASIS] is bool: return false
-		if not payload[U_HIT_HASTE_FULL] is bool or not payload[U_STRUCTURE_HASTE] is bool: return false
+		for field in [U_X, U_Y, U_HP, U_CONTINUOUS_X, U_CONTINUOUS_Y, U_FACING_DIRECTION_X, U_FACING_DIRECTION_Y, U_ACTION_DURATION, U_ACTION_TIME_LEFT, U_SKILL_RESOURCE_RATIO, U_ACTIVE_SPEED_MULTIPLIER, U_ACTIVE_ATTACK_SPEED_MULTIPLIER, U_ACTIVE_SKILL_COOLDOWN, U_SHIELD_RATIO, U_SHIELD_CAPACITY_RATIO, U_ATTACK_ELAPSED, U_MOVEMENT_RATE, U_DEPLOY_LEFT]:
+			if not _finite_number(payload[field]): return null
+		for field in [U_FROZEN, U_HAS_CONTINUOUS_TARGET, U_SLOW, U_STUN, U_ATTACKING_STRUCTURE, U_EMPOWERED_READY, U_SKILL_RESOURCE_ENABLED, U_ACTIVE_BUFF_ACTIVE, U_ATTACK_FIRST_STRIKE]:
+			if not payload[field] is int or payload[field] not in [0, 1]: return null
+		for field in [U_VISUAL_STATE, U_ATTACK_SERIAL, U_FORM, U_ACTION_SERIAL, U_FORM_CHANGE_SERIAL, U_LOCOMOTION, U_EMPOWERED_ATTACK_SERIAL, U_ACTIVE_SKILL_USES_REMAINING]:
+			if not payload[field] is int or payload[field] < 0: return null
+		if not payload[U_ACTION_NAME] is String: return null
+		for field in [U_HP, U_ACTION_DURATION, U_ACTION_TIME_LEFT, U_ACTIVE_SKILL_COOLDOWN, U_SHIELD_CAPACITY_RATIO, U_ATTACK_ELAPSED, U_DEPLOY_LEFT]:
+			if float(payload[field]) < 0.0: return null
+		for field in [U_SKILL_RESOURCE_RATIO, U_SHIELD_RATIO]:
+			if float(payload[field]) < 0.0 or float(payload[field]) > 1.0: return null
+		if float(payload[U_ACTIVE_SPEED_MULTIPLIER]) < 1.0 or float(payload[U_ACTIVE_ATTACK_SPEED_MULTIPLIER]) <= 0.0 or float(payload[U_MOVEMENT_RATE]) <= 0.0: return null
+		if payload[U_VISUAL_STATE] > 3 or payload[U_LOCOMOTION] > 2 or payload[U_FORM] > 1: return null
+		if not payload[U_STEALTH] is bool or not payload[U_STASIS] is bool: return null
+		if not payload[U_HIT_HASTE_FULL] is bool or not payload[U_STRUCTURE_HASTE] is bool: return null
 		for field in [U_LIFESTEAL_VISUAL_STATE, U_BUFF_VISUAL_CLOCK]:
-			if not payload[field] is Vector2: return false
+			if not payload[field] is Vector2: return null
 			var clock: Vector2 = payload[field]
-			if not clock.is_finite() or clock.x < 0.0 or clock.y < 0.0: return false
-			if clock.y == 0.0 and clock.x != 0.0: return false
-			if field == U_LIFESTEAL_VISUAL_STATE and clock.y not in [0.0, 1.0]: return false
-			if field == U_BUFF_VISUAL_CLOCK and clock.x > clock.y + 2.1: return false
-		if not payload[U_RESTORATION_SHIELD_STATE] is Vector2: return false
+			if not clock.is_finite() or clock.x < 0.0 or clock.y < 0.0: return null
+			if clock.y == 0.0 and clock.x != 0.0: return null
+			if field == U_LIFESTEAL_VISUAL_STATE and clock.y not in [0.0, 1.0]: return null
+			if field == U_BUFF_VISUAL_CLOCK and clock.x > clock.y + 2.1: return null
+		if not payload[U_RESTORATION_SHIELD_STATE] is Vector2: return null
 		var ward: Vector2 = payload[U_RESTORATION_SHIELD_STATE]
-		if not ward.is_finite() or ward.x < 0.0 or ward.y < ward.x or ((ward.x > 0.0) != (ward.y > 0.0)): return false
-		if not payload[U_DEATH_SPAWN_STATE] is Vector2: return false
+		if not ward.is_finite() or ward.x < 0.0 or ward.y < ward.x or ((ward.x > 0.0) != (ward.y > 0.0)): return null
+		if not payload[U_DEATH_SPAWN_STATE] is Vector2: return null
 		var regeneration: Vector2 = payload[U_DEATH_SPAWN_STATE]
-		if not regeneration.is_finite() or regeneration.x < 0.0 or regeneration.y < regeneration.x: return false
-		if (regeneration.x > 0.0) != (regeneration.y > 0.0): return false
-		if not payload[U_SACRIFICE_STATS] is Vector3: return false
+		if not regeneration.is_finite() or regeneration.x < 0.0 or regeneration.y < regeneration.x: return null
+		if (regeneration.x > 0.0) != (regeneration.y > 0.0): return null
+		if not payload[U_SACRIFICE_STATS] is Vector3: return null
 		var empowered_stats: Vector3 = payload[U_SACRIFICE_STATS]
-		if not empowered_stats.is_finite() or empowered_stats.x < 0.0 or empowered_stats.y < 1.0 or empowered_stats.z < 1.0: return false
-		if not payload[U_SACRIFICE_EMPOWERMENT] is Vector2: return false
+		if not empowered_stats.is_finite() or empowered_stats.x < 0.0 or empowered_stats.y < 1.0 or empowered_stats.z < 1.0: return null
+		if not payload[U_SACRIFICE_EMPOWERMENT] is Vector2: return null
 		var empowerment: Vector2 = payload[U_SACRIFICE_EMPOWERMENT]
-		if not empowerment.is_finite() or empowerment.x < 1.0 or empowerment.y < 1.0: return false
-		if not payload[U_STRUCTURE_HASTE_STATE] is Vector2: return false
+		if not empowerment.is_finite() or empowerment.x < 1.0 or empowerment.y < 1.0: return null
+		if not payload[U_STRUCTURE_HASTE_STATE] is Vector2: return null
 		var haste: Vector2 = payload[U_STRUCTURE_HASTE_STATE]
-		if not haste.is_finite() or haste.x < 0.0 or haste.y < 0.0 or haste.y != floorf(haste.y): return false
-		if (haste.x > 0.0) != (haste.y > 0.0) or bool(payload[U_STRUCTURE_HASTE]) != (haste.x > 0.0): return false
-		if not payload[U_BLIND] is bool: return false
-		if not payload[U_TELEPORT_SERIAL] is int or payload[U_TELEPORT_SERIAL] < 0: return false
-		if not payload[U_ATTACK_SPEED_SLOW] is bool: return false
-		if not payload[U_ACTION_CLOCK] is Vector2: return false
-		if not (payload[U_TEAM_ATTACK_BOOST_MULTIPLIER] is int or payload[U_TEAM_ATTACK_BOOST_MULTIPLIER] is float): return false
-		if not is_finite(float(payload[U_TEAM_ATTACK_BOOST_MULTIPLIER])) or float(payload[U_TEAM_ATTACK_BOOST_MULTIPLIER]) < 1.0: return false
-		if not payload[U_GROWTH] is Vector2: return false
+		if not haste.is_finite() or haste.x < 0.0 or haste.y < 0.0 or haste.y != floorf(haste.y): return null
+		if (haste.x > 0.0) != (haste.y > 0.0) or bool(payload[U_STRUCTURE_HASTE]) != (haste.x > 0.0): return null
+		if not payload[U_BLIND] is bool: return null
+		if not payload[U_TELEPORT_SERIAL] is int or payload[U_TELEPORT_SERIAL] < 0: return null
+		if not payload[U_ATTACK_SPEED_SLOW] is bool: return null
+		if not payload[U_ACTION_CLOCK] is Vector2: return null
+		if not (payload[U_TEAM_ATTACK_BOOST_MULTIPLIER] is int or payload[U_TEAM_ATTACK_BOOST_MULTIPLIER] is float): return null
+		if not is_finite(float(payload[U_TEAM_ATTACK_BOOST_MULTIPLIER])) or float(payload[U_TEAM_ATTACK_BOOST_MULTIPLIER]) < 1.0: return null
+		if not payload[U_GROWTH] is Vector2: return null
 		var growth: Vector2 = payload[U_GROWTH]
-		if not is_finite(growth.x) or not is_finite(growth.y) or growth.x < 0.0 or growth.y < 1.0: return false
+		if not is_finite(growth.x) or not is_finite(growth.y) or growth.x < 0.0 or growth.y < 1.0: return null
 		var action_clock: Vector2 = payload[U_ACTION_CLOCK]
-		if not action_clock.is_finite() or action_clock.x not in [0.0, 1.0] or action_clock.y < 0.0: return false
-		if not payload[U_EXPLOSIVE_SHIELD] is bool: return false
-		if not DeathFormState.valid_snapshot(payload[U_DEATH_FORM]): return false
-		if not TargetProtectionState.valid_snapshot(payload[U_TARGET_PROTECTION]): return false
-		if not payload[U_FREE_RECAST] is bool or not payload[U_BLEED_STACKS] is int or int(payload[U_BLEED_STACKS]) < 0 or not (payload[U_BLOOD_RAGE] is float or payload[U_BLOOD_RAGE] is int) or not is_finite(float(payload[U_BLOOD_RAGE])) or float(payload[U_BLOOD_RAGE]) < 0.0: return false
-		if not payload[U_CONTINUOUS_TARGET_AIR_ID] is int or int(payload[U_CONTINUOUS_TARGET_AIR_ID]) < -1: return false
+		if not action_clock.is_finite() or action_clock.x not in [0.0, 1.0] or action_clock.y < 0.0: return null
+		if not payload[U_EXPLOSIVE_SHIELD] is bool: return null
+		if not DeathFormState.valid_snapshot(payload[U_DEATH_FORM]): return null
+		if not TargetProtectionState.valid_snapshot(payload[U_TARGET_PROTECTION]): return null
+		if not payload[U_FREE_RECAST] is bool or not payload[U_BLEED_STACKS] is int or int(payload[U_BLEED_STACKS]) < 0 or not (payload[U_BLOOD_RAGE] is float or payload[U_BLOOD_RAGE] is int) or not is_finite(float(payload[U_BLOOD_RAGE])) or float(payload[U_BLOOD_RAGE]) < 0.0: return null
+		if not payload[U_CONTINUOUS_TARGET_AIR_ID] is int or int(payload[U_CONTINUOUS_TARGET_AIR_ID]) < -1: return null
 		if not payload[U_ACTION_PERMISSIONS] is int or int(payload[U_ACTION_PERMISSIONS]) < 0 or (int(payload[U_ACTION_PERMISSIONS]) & ~ControlState.ALL_PERMISSIONS) != 0:
-			return false
+			return null
 		if not payload[U_CANCELLATION] is Dictionary or not Unit.valid_action_cancellation(payload[U_CANCELLATION]):
-			return false
+			return null
 		if not payload[U_ID] is int or ids.has(payload[U_ID]) or not payload[U_SPAWN] is Dictionary or not _valid_spawn(payload[U_SPAWN]):
-			return false
+			return null
 		if int(payload[U_SPAWN].args[3]) != int(payload[U_ID]) or int(payload[U_SPAWN].birth_tick) > int(decoded[S_SERVER_TICK]) or int(payload[U_SPAWN].birth_revision) > int(decoded[S_LIFECYCLE_REVISION]):
-			return false
+			return null
 		ids[payload[U_ID]] = true
+	_freeze(decoded)
+	ids.make_read_only()
+	return DecodedSnapshot.new(decoded, ids, raw_bytes.size())
+
+func apply(snapshot_bytes: PackedByteArray, terminal: bool = false, expected_tick: int = -1) -> bool:
+	return apply_decoded(decode_validated(snapshot_bytes), terminal, expected_tick)
+
+## 包内容已经完整静态验证；这里只重查从入队到播放期间可能改变的会话/终态/时钟。
+func apply_decoded(snapshot: DecodedSnapshot, terminal: bool = false, expected_tick: int = -1) -> bool:
+	if snapshot == null or _controller.mode != "client" or terminal_applied or _controller.game_over:
+		return false
+	var decoded := snapshot.packet
+	if not lifecycle.accepts_session(decoded[S_SESSION]): return false
+	if terminal and int(decoded[S_SERVER_TICK]) != expected_tick: return false
+	var units_data: Array = decoded[S_UNITS]
+	var projectiles_data: Array = decoded[S_PROJECTILES]
+	var towers_data: Array = decoded[S_TOWERS]
+	var ids := snapshot.unit_ids
 	if not terminal and not lifecycle.snapshot_is_new(int(decoded[S_SERVER_TICK]), int(decoded[S_LIFECYCLE_REVISION])):
 		return false
 	if terminal and (int(decoded[S_SERVER_TICK]) < lifecycle.snapshot_tick or int(decoded[S_LIFECYCLE_REVISION]) < lifecycle.snapshot_revision):
@@ -287,6 +350,50 @@ func apply(snapshot_bytes: PackedByteArray, terminal: bool = false, expected_tic
 	terminal_applied = terminal
 	return true
 
+static func _finite_number(value: Variant) -> bool:
+	return (value is int or value is float) and is_finite(float(value))
+
+static func _finite_value(value: Variant) -> bool:
+	if value is float: return is_finite(value)
+	if value is Vector2 or value is Vector3: return value.is_finite()
+	if value is Color: return is_finite(value.r) and is_finite(value.g) and is_finite(value.b) and is_finite(value.a)
+	if value is Dictionary:
+		for key in value:
+			if not (key is String or key is int) or not _finite_value(value[key]): return false
+		return true
+	if value is Array:
+		for child in value:
+			if not _finite_value(child): return false
+		return true
+	return value is int or value is bool or value is String
+
+static func _valid_visual_path(path: Dictionary) -> bool:
+	if path.is_empty(): return true
+	if not _finite_value(path): return false
+	for field in ["start", "end", "origin_offset"]:
+		if not path.get(field) is Vector2: return false
+	for field in ["start_model_offset", "end_model_offset"]:
+		if path.has(field) and not path[field] is Vector2: return false
+	for field in ["progress", "contact_radius"]:
+		if not _finite_number(path.get(field)) or float(path[field]) < 0.0: return false
+	if not path.get("wave") is bool: return false
+	for field in ["fixed_muzzle", "air"]:
+		if path.has(field) and not path[field] is bool: return false
+	for field in ["source", "target"]:
+		if not path.get(field) is Dictionary: return false
+		var entity: Dictionary = path[field]
+		if not entity.get("unit") is bool or not entity.get("team") is int or entity.team not in [0, 1] or not entity.get("position") is Vector2: return false
+		if entity.unit:
+			if not entity.get("id") is int or entity.id < -1 or not entity.get("local_id") is int or entity.local_id < 0: return false
+		elif not entity.get("king") is bool: return false
+	return true
+
+static func _freeze(value: Variant) -> void:
+	if value is Dictionary or value is Array:
+		for child in value.values() if value is Dictionary else value: _freeze(child)
+		value.make_read_only()
+
+
 func _payloads_have_size(payloads: Array, expected_size: int) -> bool:
 	for payload in payloads:
 		if not payload is Array or payload.size() != expected_size:
@@ -302,7 +409,7 @@ func _apply_units(units_data: Array) -> void:
 			continue
 		var u = _controller.find_client_unit(d[U_ID])
 		if not is_instance_valid(u):
-			receive_spawn(lifecycle.session_id, d[U_SPAWN], d)
+			_receive_validated_spawn(d[U_SPAWN], d)
 			u = _controller.find_client_unit(d[U_ID])
 		if not is_instance_valid(u):
 			continue
@@ -431,6 +538,7 @@ func _apply_projectiles(projectiles_data: Array) -> void:
 			"visual_offset": Vector2(d[P_VISUAL_OFFSET_X], d[P_VISUAL_OFFSET_Y]),
 			"target_visual_offset": Vector2(d[P_VISUAL_OFFSET_X], d[P_VISUAL_OFFSET_Y]),
 			"visual_scale": float(d[P_VISUAL_SCALE]), "first_strike": int(d[P_FIRST_STRIKE]) == 1,
+			"speed": float(d[P_SPEED]),
 		}
 	_projectile_system.apply_client_targets(targets)
 
@@ -444,12 +552,20 @@ func _apply_towers(towers_data: Array) -> void:
 
 
 func send() -> void:
+	var recipients := {}
 	for team in _controller._session.players:
 		var peer: int = _controller._session.peer_for_team(team)
-		if _controller.multiplayer.get_peers().has(peer):
-			_controller._rpc_snapshot.rpc_id(peer, capture(team))
+		if _controller.multiplayer.get_peers().has(peer): recipients[team] = peer
+	if recipients.is_empty(): return
+	var frame := capture_public_frame()
+	for team in recipients:
+		_controller._rpc_snapshot.rpc_id(recipients[team], encode_frame(frame, team))
 
 func capture(receiver_team: int = 1) -> PackedByteArray:
+	return encode_frame(capture_public_frame(), receiver_team)
+
+## 清场前采集一次公共世界；私有槽只留占位，不能携带另一席的经济或成长。
+func capture_public_frame() -> Array:
 	var units_data := []
 	var units: Dictionary = _controller.authoritative_units_snapshot()
 	for id in units:
@@ -474,17 +590,18 @@ func capture(receiver_team: int = 1) -> PackedByteArray:
 	var towers_data := []
 	for tower in _controller._towers:
 		towers_data.append(_tower_snapshot_payload(tower))
-	var match_state: Dictionary = _controller.network_match_snapshot(receiver_team)
-	var snapshot_bytes := var_to_bytes(_snapshot_packet(
-		units_data,
-		projectiles_data,
-		towers_data,
-		match_state.elixir,
-		match_state.time_left,
-		match_state.overtime,
-		receiver_team,
-	)).compress(FileAccess.COMPRESSION_DEFLATE)
-	return snapshot_bytes
+	var frame: Array = [SNAPSHOT_PROTOCOL_VERSION, _controller._sim_tick_id, units_data, projectiles_data,
+		towers_data, null, _controller._match_rules.time_left, _controller._match_rules.overtime,
+		lifecycle.session_id, lifecycle.revision, null]
+	_freeze(frame)
+	return frame
+
+func encode_frame(frame: Array, receiver_team: int = 1) -> PackedByteArray:
+	# 仅复制11个顶层引用；已固化世界保持共享，每端独立生成自己的私有投影。
+	var packet := frame.duplicate()
+	packet[S_CLIENT_ELIXIR] = _controller.network_match_snapshot(receiver_team).elixir
+	packet[S_CARD_GROWTH] = _controller.growth_snapshot(receiver_team)
+	return var_to_bytes(packet).compress(FileAccess.COMPRESSION_DEFLATE)
 
 
 func _snapshot_packet(units_data: Array, projectiles_data: Array, towers_data: Array, client_elixir: float, match_timer: float, overtime: bool, receiver_team: int = 1) -> Array:
@@ -525,7 +642,7 @@ func _projectile_snapshot_payload(id: int, projectile: Dictionary) -> Array:
 		String(projectile.get("visual", &"orb")), direction.x, direction.y,
 		projectile.get("visual_height", 0.0), visual_offset.x, visual_offset.y,
 		projectile.get("visual_scale", 1.0), 1 if bool(projectile.get("effects", {}).get("first_strike", false)) else 0,
-		projectile.get("visual_path", {}).duplicate(true),
+		projectile.get("visual_path", {}).duplicate(true), float(projectile.speed),
 	]
 
 

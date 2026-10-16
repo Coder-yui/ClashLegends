@@ -551,5 +551,26 @@
     "method": "run",
     "scene": "battle",
     "group": "cards"
+  },
+  {
+    "id": "DependencyHeaderSuite",
+    "script": "res://tests/suites/presentation/dependency_header_suite.gd",
+    "method": "run",
+    "scene": "none",
+    "group": "presentation"
+  },
+  {
+    "id": "MatchLoadingSuite",
+    "script": "res://tests/suites/presentation/match_loading_suite.gd",
+    "method": "run",
+    "scene": "none",
+    "group": "presentation"
+  },
+  {
+    "id": "LoadingAssetsSuite",
+    "script": "res://tests/suites/presentation/loading_assets_suite.gd",
+    "method": "run",
+    "scene": "none",
+    "group": "presentation"
   }
 ]

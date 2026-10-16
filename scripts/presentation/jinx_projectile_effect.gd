@@ -44,23 +44,18 @@ func _draw() -> void:
 	_glow.queue_redraw()
 	_smoke.queue_redraw()
 	_blast.queue_redraw()
-	for projectile in _system.visible_snapshot().values():
+	for projectile in _system.visible_view().values():
 		var kind := StringName(projectile.get("visual", ""))
 		if kind not in [&"jinx_rocket", &"jinx_bullet"]: continue
 		var direction: Vector2 = _system._direction(projectile)
 		draw_set_transform(_system._visual_position(projectile), direction.angle())
 		if kind == &"jinx_rocket":
-			for face in GEOMETRY.FACES:
-				var points := PackedVector2Array()
-				var uvs := PackedVector2Array()
-				for i in 3:
-					var v: Array = face.v[i]
-					points.append(Vector2(-float(v[0]), float(v[2]) * 0.85 - float(v[1]) * 0.53) * 0.25)
-					uvs.append(Vector2(float(face.uv[i][0]), float(face.uv[i][1])))
-				draw_polygon(points, PackedColorArray([Color.WHITE]), uvs, effect_texture(ROCKET))
+			var texture := effect_texture(ROCKET)
+			for face in _projected_faces():
+				draw_polygon(face.points, _white_colors, face.uvs, texture)
 		draw_set_transform(Vector2.ZERO)
 func _draw_glow() -> void:
-	for projectile in _system.visible_snapshot().values():
+	for projectile in _system.visible_view().values():
 		var kind := StringName(projectile.get("visual", ""))
 		if kind not in [&"jinx_rocket", &"jinx_bullet"]: continue
 		var direction: Vector2 = _system._direction(projectile)
@@ -105,6 +100,27 @@ static func effect_texture(path: String) -> Texture2D:
 	return _textures[path]
 
 static func resource_manifest(variant: String) -> Dictionary:
-	if variant == "rocket": return {"paths": [ROCKET, FLAME, SMOKE, TRAIL]}
+	if variant == "rocket":
+		_projected_faces()
+		return {"paths": [ROCKET, FLAME, SMOKE, TRAIL]}
 	if variant == "bullet": return {"paths": [BULLET]}
 	return {}
+
+# 原版逐面顺序与UV不变；正式资源准备解析manifest时预建，独立工具首次绘制也可复用。
+static var _projected_cache: Array[Dictionary] = []
+static var _white_colors := PackedColorArray([Color.WHITE])
+
+static func _projected_faces() -> Array[Dictionary]:
+	if not _projected_cache.is_empty(): return _projected_cache
+	for source in GEOMETRY.FACES:
+		var points := PackedVector2Array()
+		var uvs := PackedVector2Array()
+		for index in 3:
+			var vertex: Array = source.v[index]
+			points.append(Vector2(-float(vertex[0]), float(vertex[2]) * 0.85 - float(vertex[1]) * 0.53) * 0.25)
+			uvs.append(Vector2(float(source.uv[index][0]), float(source.uv[index][1])))
+		var face := {"points": points, "uvs": uvs}
+		face.make_read_only()
+		_projected_cache.append(face)
+	_projected_cache.make_read_only()
+	return _projected_cache

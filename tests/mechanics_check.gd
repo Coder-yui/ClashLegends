@@ -30,6 +30,10 @@ func _run() -> void:
 		for id in ids: print(id)
 		quit(0)
 		return
+	if selected.is_empty() and "--all-suites" not in OS.get_cmdline_user_args():
+		push_error("请选择 --suite=<ID>；完整里程碑回归须显式 --all-suites。按改动选测请用 python3 tools/dev.py verify --plan")
+		quit(2)
+		return
 	for id in selected:
 		if not ids.has(id):
 			push_error("未知套件：" + id)

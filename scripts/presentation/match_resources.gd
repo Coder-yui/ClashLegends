@@ -19,6 +19,7 @@ var threaded_wait_usec := 0
 # 系统兵线每种单位可占两路；准备两波重叠窗口，根集合与预算使用同一声明。
 const SYSTEM_UNIT_BUDGET := {"melee_minion": 4, "ranged_minion": 4, "siege_minion": 4, "super_minion": 4}
 const LOADING_REQUEST_WINDOW := 128 # 引擎任务队列窗口，不是创建128条线程。
+const HEADLESS_LOAD_BATCH := 16 # Dummy 纹理资源在主线程创建；批间仍响应取消。
 const REFERENCES := ["assist_conversion_unit_id", "assist_conversion_building_id", "growth_ranged_id", "growth_melee_id", "deployment_upgrade_id", "spawn_id", "death_spawn_id", "death_replacement_id", "timed_revival_id", "rush_spawn_id"]
 
 func prepare(card_ids: Array) -> void:
@@ -44,7 +45,7 @@ func prepare(card_ids: Array) -> void:
 			else: raw_files[path] = true
 	preparation_usec += Time.get_ticks_usec() - started
 
-## 只在线程读取资源；定义遍历、类型检查和场景实例化仍属于主线程。
+## 可渲染后端在线程加载资源；定义遍历、类型检查和场景实例化仍属于主线程。
 ## 有界请求避免加载线程争抢全部 CPU；只在完成后 get，不阻塞等待未完成资源。
 func prepare_async(card_ids: Array, tree: SceneTree, stop: Callable = Callable()) -> void:
 	_collect_only = true
@@ -52,6 +53,21 @@ func prepare_async(card_ids: Array, tree: SceneTree, stop: Callable = Callable()
 	_collect_only = false
 	var started := Time.get_ticks_usec()
 	var waiting: Array = _pending.keys()
+	if DisplayServer.get_name() == "headless":
+		# Dummy 后端的纹理 RID 容器未启用线程安全。加载相同的完整集合，
+		# 避免工作线程反序列化纹理时与主线程 UI/模型创建资源交错。
+		for index in waiting.size():
+			if _cancelled or (stop.is_valid() and bool(stop.call())): break
+			var load_started := Time.get_ticks_usec()
+			var path: String = waiting[index]
+			var resource := ResourceLoader.get_cached_ref(path)
+			if resource == null: resource = load(path)
+			for expected in _pending[path]: _accept(path, resource, expected)
+			preparation_usec += Time.get_ticks_usec() - load_started
+			if (index + 1) % HEADLESS_LOAD_BATCH == 0 and index + 1 < waiting.size():
+				await tree.process_frame
+		_pending.clear()
+		return
 	var active: Array[String] = _active
 	while not waiting.is_empty() or not active.is_empty():
 		var stopping := _cancelled or (stop.is_valid() and bool(stop.call()))
@@ -136,8 +152,8 @@ func _collect(value: Variant, expected: StringName = &"") -> void:
 			if key == "resource_dependencies": continue
 			if key in REFERENCES:
 				_prepare_card(String(value[key]))
-			elif key == "deployment_member_ids" and value[key] is Array:
-				for member_id in value[key]:
+			elif key == "spawn_plan" and value[key] is Dictionary:
+				for member_id in value[key].members:
 					_prepare_card(String(member_id))
 			var child_type := expected
 			if key == "audio": child_type = &"AudioStream"

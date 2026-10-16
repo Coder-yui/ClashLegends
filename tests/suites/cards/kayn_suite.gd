@@ -11,6 +11,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_terrain_attack_exit()
 	_crystal_dash_exit()
 	_terrain_external_movement()
+	_terrain_attack_cancellation()
 	_dash_collision_and_timing()
 	_dynamic_dash()
 	_dash()
@@ -343,6 +344,30 @@ func _weapon_blend_and_q() -> void:
 			if sample[0] > 0.43: _expect(is_zero_approx(view._last_clip_blend_time), "Q内部连续片段零混合：" + id)
 		view.free()
 		unit.free()
+
+func _terrain_attack_cancellation() -> void:
+	# 真实接触把已起手单位挤入河流，下一次出地形取消不能毒化后续快照。
+	var saved_mode: String = _main.mode
+	_main.mode = "server"
+	var outside := Vector2(360, ArenaRules.RIVER_Y + ArenaRules.RIVER_HALF + 19)
+	var source := _make("kayn", 0, outside)
+	var target := _make("garen", 1, outside + Vector2(30, 0))
+	var blocker := _make("garen", 0, outside + Vector2(0, 25))
+	source._target = target
+	source._attacking = true
+	_contact_step(source, blocker)
+	_expect(source.terrain_traversal.inside and source._attacking, "起手后自然接触可将凯隐挤进河流")
+	source.leave_terrain_for_attack()
+	_expect(source.last_action_cancellation.get("reason") == "terrain_exit" and Unit.valid_action_cancellation(source.last_action_cancellation), "真实出地形产生可同步的取消合同")
+	var bytes: PackedByteArray = _main._snapshot_system.capture()
+	var packet: Array = bytes_to_var(bytes.decompress_dynamic(1024 * 1024, FileAccess.COMPRESSION_DEFLATE))
+	var payloads: Array = packet[NetworkSnapshotSystem.S_UNITS].filter(func(payload): return payload[NetworkSnapshotSystem.U_ID] == source.net_id)
+	_expect(payloads.size() == 1 and payloads[0][NetworkSnapshotSystem.U_CANCELLATION] == source.last_action_cancellation, "真实接触取消持续进入正式压缩快照")
+	for unit in [source, target, blocker]: _main._net_units.erase(unit.net_id)
+	source.free()
+	target.free()
+	blocker.free()
+	_main.mode = saved_mode
 
 func _terrain_external_movement() -> void:
 	var a := _make("kayn", 0, Vector2(360, ArenaRules.RIVER_Y + ArenaRules.RIVER_HALF + 19))

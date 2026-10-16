@@ -233,7 +233,7 @@ func _apply(source: Unit, skill: Dictionary) -> bool:
 			activate_continuous_area(source, skill)
 		&"channeled_attack":
 			source.channel_attack.prepared = skill.duplicate(true)
-			source.cancel_basic_attack(&"empowered_reset")
+			source.cancel_basic_attack(ActionCancellation.EMPOWERED_RESET)
 		&"empowered_attack":
 			source.prepare_empowered_attack(
 				float(skill.get("empowered_damage_multiplier", 1.0)),

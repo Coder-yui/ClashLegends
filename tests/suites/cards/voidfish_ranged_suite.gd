@@ -53,7 +53,7 @@ func _clean() -> void:
 
 func _check_visual_snapshot() -> void:
 	var system := NetworkSnapshotSystem.new(_main, _main._projectile_system)
-	var payload := system._projectile_snapshot_payload(991, {"pos": Vector2(120, 340), "color": Color.PURPLE, "radius": 4.0, "visual": &"voidfish_missile", "direction": Vector2.UP})
+	var payload := system._projectile_snapshot_payload(991, {"pos": Vector2(120, 340), "color": Color.PURPLE, "radius": 4.0, "visual": &"voidfish_missile", "direction": Vector2.UP, "speed": 320.0})
 	var old_mode: String = _main.mode
 	var old_team: int = _main.local_team
 	_main.mode = "client"

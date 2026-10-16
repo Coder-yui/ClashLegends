@@ -12,7 +12,7 @@ func setup(system: ProjectileSystem) -> void:
 
 func advance(delta: float) -> void:
 	var seen := {}
-	var visible := _system.visible_snapshot()
+	var visible := _system.visible_view()
 	for id in visible:
 		var p: Dictionary = visible[id]
 		var visual := String(p.get("visual", ""))

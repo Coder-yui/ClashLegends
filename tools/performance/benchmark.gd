@@ -140,6 +140,7 @@ func run() -> void:
 		elif (rendered and elapsed >= duration) or (not rendered and frames >= int(duration * 20.0)):
 			break
 		if frames % (600 if rendered else 1000) == 0: print("[PERF_PROGRESS] case=%s frames=%d tick=%d" % [case, frames, main._sim_tick_id])
+	main.sample_final_state_diagnostics()
 	if rendered:
 		await process_frame
 		RenderingServer.force_draw()
@@ -149,7 +150,7 @@ func run() -> void:
 		var wav := record.get_recording()
 		if wav != null: wav.save_to_wav(output.path_join("master-mix.wav"))
 		AudioServer.remove_bus_effect(0, record_index)
-	var result := {"schema": 1, "capture_policy": "after_measurement", "case": case, "count": count, "seed": 12345, "rendered": rendered,
+	var result := {"schema": 2, "capture_policy": "after_measurement", "diagnostic_policy": "20_final_state_samples_after_measurement", "case": case, "count": count, "seed": 12345, "rendered": rendered,
 		"preparation": option("--perf-prepare", "menu"), "entry": option("--perf-entry", "fresh"), "first_exit": first_exit,
 		"loading_frame_ms": distribution(loading_frames), "video_memory_bytes": Performance.get_monitor(Performance.RENDER_VIDEO_MEM_USED),
 		"deck": main._deck, "remote_deck": main._remote_deck,

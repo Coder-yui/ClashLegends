@@ -1,9 +1,11 @@
 extends "res://tests/suites/battle_suite.gd"
 ## 六种编队的内容差异；共享资格生命周期在 deployment/ 中验证。
+const SQUAD_IDS := ["minion_squad", "melee_minion_squad", "ranged_minion_squad", "heavy_minion_squad", "super_minion_squad", "siege_minion_squad"]
 
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
+	_check_card_definition_boundary()
 	_check_minion_squad(main)
 	_check_melee_minion_squad(main)
 	_check_ranged_minion_squad(main)
@@ -11,16 +13,53 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_super_minion_squad(main)
 	_check_siege_minion_squad(main)
 
+func _check_card_definition_boundary() -> void:
+	_expect(CardDB.all().size() == 77 and CardDB.selectable_ids().size() == 64, "分离编队卡与实体定义后注册表77项、可选牌64张保持不变")
+	for card_id in SQUAD_IDS:
+		var card := CardDB.get_card(card_id)
+		var plan := CardDB.deployment_plan(card_id)
+		_expect(card.type == "unit" and CardDB.get_unit_stats(card_id).is_empty(), "编队仍是单位出牌类，但不能作为单实体读取：" + card_id)
+		var forbidden := ["hp", "damage", "range", "speed", "interval", "first_hit", "size_tier", "radius", "mass", "sight", "is_air", "building_only", "can_attack_air", "projectile_speed", "projectile_spawn_at_edge", "projectile_spawn_offset", "projectile_collision_radius", "visual_radius", "visual_scene_path", "visual_scene_paths", "visual_animations", "deployment_member_ids", "deployment_count", "deployment_spacing", "deployment_formation"]
+		_expect(forbidden.all(func(field): return not card.has(field)), "编队卡不保留假战斗/模型属性或旧部署字段：" + card_id)
+		_expect(plan == card.spawn_plan and plan.members.all(func(id): return not CardDB.get_unit_stats(id).is_empty()), "生成计划只引用真实成员定义：" + card_id)
+		_expect(card.spawn_plan.is_read_only() and card.spawn_plan.members.is_read_only(), "原生生成计划及成员列表递归只读：" + card_id)
+	var malformed_plans := [
+		{"members": [], "spacing": 28.0, "formation": "square"},
+		{"members": ["missing_member"], "spacing": 28.0, "formation": "ring"},
+		{"members": ["minion_squad"], "spacing": 28.0, "formation": "ring"},
+		{"members": [42], "spacing": 28.0, "formation": "ring"},
+		{"members": ["melee_minion", "melee_minion"], "spacing": -1.0, "formation": "line"},
+		{"members": ["melee_minion", "melee_minion"], "spacing": NAN, "formation": "line"},
+		{"members": ["melee_minion"], "spacing": 28.0, "formation": "unknown"},
+		{"members": ["melee_minion"], "spacing": 28.0, "formation": "square"},
+		{"members": ["melee_minion"], "spacing": 28.0, "formation": "depth_line"},
+		{"members": ["melee_minion"], "spacing": 28.0, "formation": "ring", "count": 4},
+	]
+	for index in malformed_plans.size():
+		var cards := CardDB.all().duplicate(true)
+		cards.melee_minion_squad.spawn_plan = malformed_plans[index]
+		var errors := CardDB.VALIDATOR.validate_all(cards, false)
+		_expect("spawn_plan" in "；".join(errors), "生成计划拒绝空成员、错误引用/类型、非法几何或重复数量字段：%d" % index)
+
+func _check_member_definitions(group: Array[Unit], source_id: String) -> void:
+	var actual_ids: Array[String] = []
+	for member in group:
+		actual_ids.append(member.card_id)
+		var stats := CardDB.get_unit_stats(member.card_id)
+		_expect(member.active_skill_card_id == source_id and member.hp == float(stats.hp) and member.max_hp == float(stats.hp) and member.damage == float(stats.damage) and member.attack_range == float(stats.range) and member.move_speed == float(stats.speed) and is_equal_approx(member.attack_interval, float(stats.interval)) and member.body_radius == float(stats.radius), "成员战斗属性来自自身定义，主动归属保留来源卡：%s/%s" % [source_id, member.card_id])
+	_expect(actual_ids == CardDB.deployment_plan(source_id).members, "生成成员顺序/数量与计划完全一致：" + source_id)
+
 func _check_minion_squad(main: Node2D) -> void:
-	var stats := CardDB.get_unit_stats("minion_squad")
+	var stats := CardDB.get_card("minion_squad")
+	var plan := CardDB.deployment_plan("minion_squad")
 	var skill: Dictionary = stats.active_skills[0]
-	var member_ids: Array = stats.deployment_member_ids
+	var member_ids: Array = plan.members
 	_expect(
 		stats.cost == 3
 		and member_ids.size() == 6
 		and member_ids.count("melee_minion") == 3
 		and member_ids.count("ranged_minion") == 3
-		and stats.deployment_formation == &"polygon",
+		and plan.formation == &"polygon",
 		"小兵分队为3费、3近战兵+3远程兵的六边形六顶点编队",
 	)
 	_expect(
@@ -38,6 +77,7 @@ func _check_minion_squad(main: Node2D) -> void:
 	main._deck = ["minion_squad", "garen", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
 	main._active_skill_choices["minion_squad"] = 0
 	var group: Array[Unit] = main._spawn_card_units(0, "minion_squad", Vector2(360, 1020), 0.0, 0)
+	_check_member_definitions(group, "minion_squad")
 	var group_id := group[0].deployment_group_id if not group.is_empty() else -1
 	var offsets: Array[Vector2] = main._deployment_formation_offsets(6, 44.0, 0, "polygon")
 	var expected_positions := {}
@@ -71,14 +111,15 @@ func _check_minion_squad(main: Node2D) -> void:
 	main._active_skill_choices = old_skill_choices
 
 func _check_melee_minion_squad(main: Node2D) -> void:
-	var stats := CardDB.get_unit_stats("melee_minion_squad")
+	var stats := CardDB.get_card("melee_minion_squad")
+	var plan := CardDB.deployment_plan("melee_minion_squad")
 	var skill: Dictionary = stats.active_skills[0]
-	var member_ids: Array = stats.deployment_member_ids
+	var member_ids: Array = plan.members
 	_expect(
 		stats.cost == 2
 		and member_ids.size() == 4
 		and member_ids.all(func(member_id): return member_id == "melee_minion")
-		and stats.deployment_formation == &"square",
+		and plan.formation == &"square",
 		"近战兵小队为2费、4只近战兵的正方形编队",
 	)
 	_expect(
@@ -96,6 +137,7 @@ func _check_melee_minion_squad(main: Node2D) -> void:
 	main._deck = ["melee_minion_squad", "garen", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
 	main._active_skill_choices["melee_minion_squad"] = 0
 	var group: Array[Unit] = main._spawn_card_units(0, "melee_minion_squad", Vector2(360, 1020), 0.0, 0)
+	_check_member_definitions(group, "melee_minion_squad")
 	var group_id := group[0].deployment_group_id if not group.is_empty() else -1
 	var offsets: Array[Vector2] = main._deployment_formation_offsets(4, 28.0, 0, "square")
 	var expected_positions := {}
@@ -132,14 +174,15 @@ func _check_melee_minion_squad(main: Node2D) -> void:
 	main._active_skill_choices = old_skill_choices
 
 func _check_ranged_minion_squad(main: Node2D) -> void:
-	var stats := CardDB.get_unit_stats("ranged_minion_squad")
+	var stats := CardDB.get_card("ranged_minion_squad")
+	var plan := CardDB.deployment_plan("ranged_minion_squad")
 	var skill: Dictionary = stats.active_skills[0]
-	var member_ids: Array = stats.deployment_member_ids
+	var member_ids: Array = plan.members
 	_expect(
 		stats.cost == 2
 		and member_ids.size() == 3
 		and member_ids.all(func(member_id): return member_id == "ranged_minion")
-		and stats.deployment_formation == &"polygon",
+		and plan.formation == &"polygon",
 		"远程兵小队为2费、3只远程兵的三角形编队",
 	)
 	_expect(
@@ -157,6 +200,7 @@ func _check_ranged_minion_squad(main: Node2D) -> void:
 	main._deck = ["ranged_minion_squad", "garen", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
 	main._active_skill_choices["ranged_minion_squad"] = 0
 	var group: Array[Unit] = main._spawn_card_units(0, "ranged_minion_squad", Vector2(360, 1020), 0.0, 0)
+	_check_member_definitions(group, "ranged_minion_squad")
 	var group_id := group[0].deployment_group_id if not group.is_empty() else -1
 	var offsets: Array[Vector2] = main._deployment_formation_offsets(3, 24.0, 0, "polygon")
 	var expected_positions := {}
@@ -194,15 +238,16 @@ func _check_ranged_minion_squad(main: Node2D) -> void:
 	main._active_skill_choices = old_skill_choices
 
 func _check_heavy_minion_squad(main: Node2D) -> void:
-	var stats := CardDB.get_unit_stats("heavy_minion_squad")
+	var stats := CardDB.get_card("heavy_minion_squad")
+	var plan := CardDB.deployment_plan("heavy_minion_squad")
 	var skill: Dictionary = stats.active_skills[0]
-	var member_ids: Array = stats.deployment_member_ids
+	var member_ids: Array = plan.members
 	_expect(
 		stats.cost == 5
 		and member_ids == ["super_minion", "siege_minion"]
-		and stats.deployment_count == 2
-		and is_equal_approx(float(stats.deployment_spacing), 100.0)
-		and stats.deployment_formation == &"depth_line",
+		and plan.members.size() == 2
+		and is_equal_approx(float(plan.spacing), 100.0)
+		and plan.formation == &"depth_line",
 		"重装部队为5费、超级兵前置与炮车兵后置的2.5格纵列",
 	)
 	_expect(
@@ -221,6 +266,7 @@ func _check_heavy_minion_squad(main: Node2D) -> void:
 	main._active_skill_choices["heavy_minion_squad"] = 0
 	# 远离己方水晶；中体型炮车在旧后排点1070会触发合法出生避让。
 	var group: Array[Unit] = main._spawn_card_units(0, "heavy_minion_squad", Vector2(360, 940), 0.0, 0)
+	_check_member_definitions(group, "heavy_minion_squad")
 	var group_id := group[0].deployment_group_id if not group.is_empty() else -1
 	var offsets: Array[Vector2] = main._deployment_formation_offsets(2, 100.0, 0, "depth_line")
 	var expected_positions := {}
@@ -258,15 +304,16 @@ func _check_heavy_minion_squad(main: Node2D) -> void:
 	main._active_skill_choices = old_skill_choices
 
 func _check_super_minion_squad(main: Node2D) -> void:
-	var stats := CardDB.get_unit_stats("super_minion_squad")
+	var stats := CardDB.get_card("super_minion_squad")
+	var plan := CardDB.deployment_plan("super_minion_squad")
 	var skill: Dictionary = stats.active_skills[0]
-	var member_ids: Array = stats.deployment_member_ids
+	var member_ids: Array = plan.members
 	_expect(
 		stats.cost == 6
 		and member_ids == ["super_minion", "super_minion"]
-		and stats.deployment_count == 2
-		and is_equal_approx(float(stats.deployment_spacing), 100.0)
-		and stats.deployment_formation == &"line",
+		and plan.members.size() == 2
+		and is_equal_approx(float(plan.spacing), 100.0)
+		and plan.formation == &"line",
 		"攻城部队为6费、两只超级兵并排且间隔2.5格",
 	)
 	_expect(
@@ -284,6 +331,7 @@ func _check_super_minion_squad(main: Node2D) -> void:
 	main._deck = ["super_minion_squad", "garen", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
 	main._active_skill_choices["super_minion_squad"] = 0
 	var group: Array[Unit] = main._spawn_card_units(0, "super_minion_squad", Vector2(360, 1020), 0.0, 0)
+	_check_member_definitions(group, "super_minion_squad")
 	var group_id := group[0].deployment_group_id if not group.is_empty() else -1
 	var offsets: Array[Vector2] = main._deployment_formation_offsets(2, 100.0, 0, "line")
 	var expected_positions := {}
@@ -317,14 +365,15 @@ func _check_super_minion_squad(main: Node2D) -> void:
 	main._active_skill_choices = old_skill_choices
 
 func _check_siege_minion_squad(main: Node2D) -> void:
-	var stats := CardDB.get_unit_stats("siege_minion_squad")
+	var stats := CardDB.get_card("siege_minion_squad")
+	var plan := CardDB.deployment_plan("siege_minion_squad")
 	var skill: Dictionary = stats.active_skills[0]
-	var member_ids: Array = stats.deployment_member_ids
+	var member_ids: Array = plan.members
 	_expect(
 		stats.cost == 7
 		and member_ids == ["siege_minion", "siege_minion", "siege_minion"]
-		and stats.deployment_count == 3
-		and stats.deployment_formation == &"polygon",
+		and plan.members.size() == 3
+		and plan.formation == &"polygon",
 		"炮车部队为7费、3只炮车兵的三角形编队",
 	)
 	_expect(
@@ -342,8 +391,9 @@ func _check_siege_minion_squad(main: Node2D) -> void:
 	main._deck = ["siege_minion_squad", "garen", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
 	main._active_skill_choices["siege_minion_squad"] = 0
 	var group: Array[Unit] = main._spawn_card_units(0, "siege_minion_squad", Vector2(360, 1020), 0.0, 0)
+	_check_member_definitions(group, "siege_minion_squad")
 	var group_id := group[0].deployment_group_id if not group.is_empty() else -1
-	var radius := float(stats.deployment_spacing)
+	var radius := float(plan.spacing)
 	var offsets: Array[Vector2] = main._deployment_formation_offsets(3, radius, 0, "polygon")
 	var expected_positions := {}
 	for offset in offsets:

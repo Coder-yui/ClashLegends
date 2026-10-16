@@ -57,7 +57,7 @@ func _tick_delivery(dt: float) -> bool:
 		if source.is_stunned() or source._knockback_timer > 0.0:
 			# 准备结束仍受控也不能开始位移；取消不伪造撞墙/抵达。
 			source.skill_dash_active = true
-			source.cancel_controlled_action(&"stun" if source.is_stunned() else &"knockback")
+			source.cancel_controlled_action(ActionCancellation.STUN if source.is_stunned() else ActionCancellation.KNOCKBACK)
 			cancelled = true
 			_finish(source)
 			return false

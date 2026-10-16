@@ -8,7 +8,14 @@ class ReleasingWalkabilityUnit extends Unit:
 		if is_instance_valid(other): other.free()
 		return true
 
+class CountingSkillRoster extends ActiveSkillRoster:
+	var preparations := 0
+	func skill_for_cast(id: int) -> Dictionary:
+		preparations += 1
+		return super.skill_for_cast(id)
+
 func run(harness: Object) -> void:
+	_check_skill_cost_queries(harness)
 	_check_state_ownership(harness)
 	_check_dash_cast_identity(harness)
 	_check_clock_budget(harness)
@@ -35,6 +42,54 @@ func run(harness: Object) -> void:
 	gold.sim_tick(6.0)
 	harness._expect(gold.elixir == 7.0 and is_equal_approx(gold._timer, 0.4), "金币跨多个周期回复并保留余量")
 	gold.free()
+
+## 保留本批修改前的完整施放展开作为独立对照，覆盖费用以外的按次变体。
+func _legacy_prepare_use(definition: Dictionary, index: int) -> Dictionary:
+	var skill := definition.duplicate(true)
+	if bool(skill.get("unlimited_uses", false)): index = mini(index, int(skill.get("max_uses", 1)) - 1)
+	for pair in [["cost_by_use", "cost"], ["damage_by_use", "damage"], ["visual_actions_by_use", "visual_action"], ["projectile_visuals_by_use", "projectile_visual"], ["projectile_impact_visuals_by_use", "projectile_impact_visual"]]:
+		var values: Array = skill.get(pair[0], [])
+		if index >= 0 and index < values.size(): skill[pair[1]] = values[index]
+	return skill
+
+func _check_skill_cost_queries(harness: Object) -> void:
+	var before := var_to_bytes(CardDB.all())
+	var roster := CountingSkillRoster.new()
+	var unit := Unit.new()
+	unit.active_ability_slot = 0
+	unit.active_ability_id = 17
+	var count := 0
+	for card_id in CardDB.all():
+		for definition in CardDB.get_card(card_id).get("active_skills", []):
+			roster.clear()
+			roster.register(unit, card_id, 0, definition)
+			var max_uses := maxi(int(definition.get("max_uses", 1)), 1)
+			var equivalent := true
+			for used in range(max_uses + 3):
+				var remaining := maxi(max_uses - used, 0)
+				roster.replace_replica(17, remaining, 0.0)
+				var actual_index := max_uses - remaining
+				var legacy := _legacy_prepare_use(definition, actual_index)
+				var expected := maxf(float(legacy.get("cost", 0.0)), 0.0)
+				var queries_before := roster.preparations
+				for repeat in 5:
+					equivalent = equivalent and is_equal_approx(roster.cost(17), expected)
+				equivalent = equivalent and roster.preparations == queries_before and roster.entry(17).uses_remaining == remaining
+				equivalent = equivalent and ActiveSkillRoster.cost_for_use(definition, used) == maxf(float(_legacy_prepare_use(definition, used).get("cost", 0.0)), 0.0)
+				equivalent = equivalent and ActiveSkillRoster.prepare_use(definition, used) == _legacy_prepare_use(definition, used)
+				var prepared := roster.skill_for_cast(17)
+				equivalent = equivalent and prepared == legacy and not is_same(prepared, definition)
+				prepared["cost"] = 9876
+				roster.replace_replica(17, remaining, 4.0, true)
+				equivalent = equivalent and roster.cost(17) == 0.0 and roster.entry(17).cooldown_left == 4.0
+			count += 1
+			harness._expect(equivalent, "全部合法使用次数及耗尽边界费用等价、查询不展开施放或推进次数：" + card_id + "/" + String(definition.get("name", "")))
+	for definition in [{}, {"cost": -2}, {"cost": 5, "cost_by_use": [1], "max_uses": 3}, {"cost": 8, "cost_by_use": [0, 1, 2], "max_uses": 3, "unlimited_uses": true}]:
+		for index in [-1, 0, 1, 2, 3, 100]:
+			harness._expect(ActiveSkillRoster.cost_for_use(definition, index) == maxf(float(_legacy_prepare_use(definition, index).get("cost", 0.0)), 0.0) and ActiveSkillRoster.prepare_use(definition, index) == _legacy_prepare_use(definition, index), "纯费用规则保持缺省、非负、短表回退与无限封顶：%s/%d" % [str(definition), index])
+	roster.clear()
+	harness._expect(count > 0 and roster.cost(17) == 0.0 and before == var_to_bytes(CardDB.all()), "遍历正式主动能力后共享定义逐字节不变，未知资格费用为零")
+	unit.free()
 
 func check_contracts(harness: Object, main: Node2D) -> void:
 	_check_freed_instance_guards(harness, main)

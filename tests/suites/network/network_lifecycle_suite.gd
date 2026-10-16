@@ -1,6 +1,16 @@
 extends "res://tests/suites/battle_suite.gd"
 ## 真实压缩/序列化数据与 RPC 生命周期事件重放，状态由独立协议实例持有。
 const SNAP = preload("res://scripts/battle/network_snapshot_system.gd")
+class CountingSnapshot extends NetworkSnapshotSystem:
+	var decodes := 0
+	var public_captures := 0
+	func decode_validated(bytes: PackedByteArray) -> DecodedSnapshot:
+		decodes += 1
+		return super.decode_validated(bytes)
+	func capture_public_frame() -> Array:
+		public_captures += 1
+		return super.capture_public_frame()
+
 var _system: NetworkSnapshotSystem
 
 func run(harness: Object, main: Node2D) -> void:
@@ -25,6 +35,7 @@ func run(harness: Object, main: Node2D) -> void:
 	main._battle_presentation = null
 	_system = SNAP.new(main, main._projectile_system)
 	main._snapshot_system = _system
+	_check_decoded_pipeline()
 	_check_payload_contract()
 	_check_tower_stasis()
 	_check_building_health_decay()
@@ -325,10 +336,15 @@ func _check_permission_projection() -> void:
 	_main._session.opponent_id = 1
 	_main._session.session_id = "skill-receipts"
 	_main._session.phase = MatchSession.Phase.RUNNING
-	_main._active_skill_bar.set_pending(73500, true)
+	_main._client_inputs.skill(73500, 3)
+	_main._sync_active_skill_deployment_readiness()
 	_expect(not _main._can_submit_active_skill(73500, 1), "客户端等待回执时不可重复提交")
+	var accepted := {"id": 9001, "kind": "skill", "team": 1, "card_id": "gnar", "ability_id": 73500, "pos": Vector2(300, 800), "input_tick": 0, "execute_tick": 10}
+	_main._rpc_command_scheduled(_main._session.session_id, accepted)
 	_main._rpc_active_skill_used(_main._session.session_id, 73500, 1, 0.0)
-	_expect(not _main._active_skill_bar.is_pending(73500) and _main._can_submit_active_skill(73500, 1), "客户端成功回执解除pending，不遗留永久禁用")
+	_expect(not _main._client_inputs.has_skill(73500) and not _main._can_submit_active_skill(73500, 1), "已受理排程接手等待状态，技能结果通知不能提前解除pending")
+	_main._rpc_command_finished(_main._session.session_id, 9001, "executed")
+	_expect(not _main._active_skill_bar.is_pending(73500) and _main._can_submit_active_skill(73500, 1), "正式完成通知解除pending，不遗留永久禁用")
 	_main._active_skill_bar.set_pending(73500, true)
 	_main._client_inputs.skill(73500, 4)
 	_main._rpc_active_skill_rejected(_main._session.session_id, 73500, 4)
@@ -661,3 +677,287 @@ func _check_teleport_snapshot() -> void:
 	_deliver(5,[data])
 	_expect(_system.lifecycle.snapshot_tick == 4,"非整数瞬移序号拒绝整包")
 	_system.reset_session("")
+
+func _assert_bad_packet_atomic(packet: Array, label: String, as_terminal: bool = false) -> void:
+	var tick: int = _main._authoritative_server_tick
+	var estimated: int = _main._estimated_server_tick
+	var fraction: float = _main._estimated_server_tick_fraction
+	var has_estimate: bool = _main._has_estimated_server_tick
+	var revision := _system.lifecycle.snapshot_revision
+	var ids := _system.lifecycle.snapshot_ids.duplicate()
+	var entities: Dictionary = _main._client_units.duplicate()
+	var health := {}
+	for id in entities: health[id] = entities[id].hp
+	var wallet: float = _main._elixir.elixir
+	var growth: Dictionary = _main._card_growth.snapshot()
+	var timer: float = _main._match_rules.time_left
+	var received: int = _main._snapshots_received
+	var queued: int = _main._network_playback.size()
+	var projectiles: Dictionary = _main._projectile_system.client_snapshot()
+	var projectile_view: Dictionary = _main._projectile_system.visible_view()
+	var terminal: bool = _system.terminal_applied
+	var candidate := packet.duplicate(true)
+	candidate[SNAP.S_SERVER_TICK] = tick + 1
+	candidate[SNAP.S_LIFECYCLE_REVISION] = revision + 1
+	candidate[SNAP.S_CLIENT_ELIXIR] = 2.0 if _system._finite_number(candidate[SNAP.S_CLIENT_ELIXIR]) else candidate[SNAP.S_CLIENT_ELIXIR]
+	if not candidate[SNAP.S_UNITS].is_empty() and _system._finite_number(candidate[SNAP.S_UNITS][0][SNAP.U_HP]): candidate[SNAP.S_UNITS][0][SNAP.U_HP] = 101.0
+	var bytes := var_to_bytes(candidate).compress(FileAccess.COMPRESSION_DEFLATE)
+	if as_terminal:
+		_expect(not _system.apply(bytes, true, int(candidate[SNAP.S_SERVER_TICK])), "可靠终态同样拒绝坏包：" + label)
+	else:
+		_main._rpc_snapshot(bytes)
+	var unchanged: bool = _main._authoritative_server_tick == tick and _main._estimated_server_tick == estimated and _main._estimated_server_tick_fraction == fraction and _main._has_estimated_server_tick == has_estimate and _system.lifecycle.snapshot_revision == revision and _system.lifecycle.snapshot_ids == ids and _main._client_units == entities and _main._elixir.elixir == wallet and _main._card_growth.snapshot() == growth and _main._match_rules.time_left == timer and _main._snapshots_received == received and _main._network_playback.size() == queued and _main._projectile_system.client_snapshot() == projectiles and is_same(projectile_view, _main._projectile_system.visible_view()) and _system.terminal_applied == terminal
+	for id in entities: unchanged = unchanged and entities[id].hp == health[id]
+	_expect(unchanged, "完整解码拒绝坏包且实体/时钟/生命周期/经济/成长/排程无副作用：" + label)
+
+func _check_decoded_pipeline() -> void:
+	var previous := _system
+	var counting := CountingSnapshot.new(_main, _main._projectile_system)
+	_system = counting
+	_main._snapshot_system = counting
+	_system.reset_session("decoded-pipeline")
+	var unit := _payload("garen", 79500, 1)
+	var packet := _system._snapshot_packet([unit], [], [], 5.0, 180.0, false)
+	packet[SNAP.S_SERVER_TICK] = 2
+	packet[SNAP.S_LIFECYCLE_REVISION] = 2
+	var bytes := var_to_bytes(packet).compress(FileAccess.COMPRESSION_DEFLATE)
+	var decoded := _system.decode_validated(bytes)
+	_expect(decoded != null and decoded.packet.is_read_only() and decoded.packet[SNAP.S_UNITS].is_read_only() and decoded.packet[SNAP.S_UNITS][0].is_read_only() and decoded.packet[SNAP.S_UNITS][0][SNAP.U_SPAWN].args.is_read_only() and decoded.unit_ids.is_read_only(), "解码后的完整包/载荷/出生描述/身份集合递归只读")
+	_expect(_main._client_units.is_empty() and _system.lifecycle.snapshot_tick == -1, "解码校验本身不创建实体或推进快照屏障")
+	_expect(_system.apply_decoded(decoded) and not _system.apply_decoded(decoded), "已解码包首次应用成功，重复应用保持幂等")
+	for field in [SNAP.U_X, SNAP.U_HP, SNAP.U_FACING_DIRECTION_Y, SNAP.U_ACTIVE_SKILL_COOLDOWN]:
+		for invalid in ["bad", NAN, INF, -INF]:
+			var bad := packet.duplicate(true)
+			bad[SNAP.S_UNITS].append(unit.duplicate(true))
+			bad[SNAP.S_UNITS][1][SNAP.U_ID] = 79501
+			bad[SNAP.S_UNITS][1][SNAP.U_SPAWN].args[3] = 79501
+			bad[SNAP.S_UNITS][1][field] = invalid
+			_assert_bad_packet_atomic(bad, "尾部单位字段%d" % field)
+	for field in [SNAP.S_CLIENT_ELIXIR, SNAP.S_MATCH_TIMER, SNAP.S_OVERTIME]:
+		var bad := packet.duplicate(true)
+		bad[field] = "bad"
+		_assert_bad_packet_atomic(bad, "主包字段%d" % field)
+	for field in [SNAP.U_FROZEN, SNAP.U_ATTACK_SERIAL, SNAP.U_ACTION_NAME]:
+		var bad := packet.duplicate(true)
+		bad[SNAP.S_UNITS][0][field] = true
+		_assert_bad_packet_atomic(bad, "单位字段类型%d" % field)
+	var projectile := [1, -10.0, 20.0, Color.WHITE, 4.0, "orb", 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0, {}, 320.0]
+	for field in [SNAP.P_X, SNAP.P_RADIUS, SNAP.P_COLOR, SNAP.P_VISUAL_PATH]:
+		var bad := packet.duplicate(true)
+		bad[SNAP.S_PROJECTILES] = [projectile.duplicate(true)]
+		bad[SNAP.S_PROJECTILES][0][field] = "bad"
+		_assert_bad_packet_atomic(bad, "弹体字段%d" % field)
+	var tower := _system._tower_snapshot_payload(_main._towers[0])
+	for field in [SNAP.T_HP, SNAP.T_ACTIVATED, SNAP.T_SHIELD_RATIO]:
+		var bad := packet.duplicate(true)
+		bad[SNAP.S_TOWERS] = [tower.duplicate(), tower.duplicate()]
+		bad[SNAP.S_TOWERS][1][field] = INF
+		_assert_bad_packet_atomic(bad, "尾部塔字段%d" % field)
+	var path := {"start": Vector2(-10, 20), "end": Vector2(800, 20), "origin_offset": Vector2.ZERO, "progress": 2.0, "contact_radius": 4.0, "wave": false, "source": {"unit": true, "id": -1, "local_id": 1, "team": 0, "position": Vector2.ZERO}, "target": {"unit": false, "king": true, "team": 1, "position": Vector2(800, 20)}}
+	projectile[SNAP.P_VISUAL_PATH] = path
+	var with_path := packet.duplicate(true)
+	with_path[SNAP.S_PROJECTILES] = [projectile]
+	_expect(_system.decode_validated(var_to_bytes(with_path).compress(FileAccess.COMPRESSION_DEFLATE)) != null, "合法场外坐标、零方向、未到达实体描述与progress>1仍可解码")
+	_expect(SNAP.P_SPEED == 14 and SNAP.PROJECTILE_PAYLOAD_SIZE == 15 and MatchSession.PROTOCOL_VERSION > 115, "弹体速度是追加第15字段并与旧协议115隔离")
+	for positive in [1, 0.125, 937.5]:
+		var valid_speed := with_path.duplicate(true)
+		valid_speed[SNAP.S_PROJECTILES][0][SNAP.P_SPEED] = positive
+		_expect(_system.decode_validated(var_to_bytes(valid_speed).compress(FileAccess.COMPRESSION_DEFLATE)) != null, "弹体速度接受真实正数，不依赖卡牌基础速度：" + str(positive))
+	for invalid in [null, true, "320", [], {}, NAN, INF, -INF, 0, -1.0]:
+		var invalid_speed := with_path.duplicate(true)
+		var tail: Array = projectile.duplicate(true)
+		tail[SNAP.P_ID] = 2
+		tail[SNAP.P_SPEED] = invalid
+		invalid_speed[SNAP.S_PROJECTILES].append(tail)
+		_assert_bad_packet_atomic(invalid_speed, "尾部弹体速度类型/有限值/正数域：" + str(invalid))
+		_assert_bad_packet_atomic(invalid_speed, "尾部弹体速度类型/有限值/正数域：" + str(invalid), true)
+	var legacy_projectile := with_path.duplicate(true)
+	legacy_projectile[SNAP.S_PROJECTILES][0].pop_back()
+	_assert_bad_packet_atomic(legacy_projectile, "缺速度的旧14字段弹体")
+	_assert_bad_packet_atomic(legacy_projectile, "缺速度的旧14字段弹体", true)
+	var extra_projectile := with_path.duplicate(true)
+	extra_projectile[SNAP.S_PROJECTILES][0].append(320.0)
+	_assert_bad_packet_atomic(extra_projectile, "多余第16字段弹体")
+	_assert_bad_packet_atomic(extra_projectile, "多余第16字段弹体", true)
+	var legacy_protocol := with_path.duplicate(true)
+	legacy_protocol[SNAP.S_VERSION] = 115
+	_assert_bad_packet_atomic(legacy_protocol, "旧协议115即使携带新弹体字段也拒绝")
+	_assert_bad_packet_atomic(legacy_protocol, "旧协议115即使携带新弹体字段也拒绝", true)
+	for invalid in [[], {"start": Vector2(NAN, 0)}, {"source": "bad"}, {"source": {"team": "bad"}}]:
+		var bad := with_path.duplicate(true)
+		if invalid is Dictionary: bad[SNAP.S_PROJECTILES][0][SNAP.P_VISUAL_PATH].merge(invalid, true)
+		else: bad[SNAP.S_PROJECTILES][0][SNAP.P_VISUAL_PATH] = invalid
+		_assert_bad_packet_atomic(bad, "弹体路径嵌套类型/有限值")
+	var duplicate_projectile := with_path.duplicate(true)
+	duplicate_projectile[SNAP.S_PROJECTILES].append(projectile.duplicate(true))
+	_assert_bad_packet_atomic(duplicate_projectile, "重复弹体身份")
+	var saved_peer: ENetMultiplayerPeer = _main._network_peer
+	var saved_session: MatchSession = _main._session
+	_main._network_peer = ENetMultiplayerPeer.new()
+	_main._session = MatchSession.new()
+	_main._session.session_id = "decoded-pipeline"
+	_main._session.opponent_id = 1
+	_main._session.phase = MatchSession.Phase.RUNNING
+	packet[SNAP.S_SERVER_TICK] = 3
+	unit[SNAP.U_HP] = 123.0
+	bytes = var_to_bytes(packet).compress(FileAccess.COMPRESSION_DEFLATE)
+	var decodes := counting.decodes
+	_main._rpc_snapshot(bytes)
+	_expect(counting.decodes == decodes + 1 and _main._network_playback.snapshot_count() == 1, "真实RPC仅解码一次后持有已验证对象入队")
+	var ready: Array[Dictionary] = _main._network_playback.advance(5.0)
+	for event in ready: _main.callv(event.method, event.args)
+	_expect(counting.decodes == decodes + 1 and _main._client_units[79500].hp == 123.0 and _main._network_playback.snapshot_bytes() == 0, "出队应用不再次解码，队列移交后归还字节预算")
+	ready.clear()
+	_main._network_peer = saved_peer
+	_main._session = saved_session
+	var stale := _system.decode_validated(bytes)
+	_expect(not _system.apply_decoded(stale), "等待期间已被更新的快照不能回拨")
+	packet[SNAP.S_SERVER_TICK] = 4
+	var future := _system.decode_validated(var_to_bytes(packet).compress(FileAccess.COMPRESSION_DEFLATE))
+	_main._authoritative_server_tick = 5
+	_expect(not _system.apply_decoded(future) and _system.lifecycle.snapshot_tick == 3, "出队重新检查权威时钟，拒绝已落后包且不改变生命周期")
+	_main._authoritative_server_tick = 3
+	_main.game_over = true
+	_expect(not _system.apply_decoded(future), "等待期间终局禁止应用旧解码对象")
+	_main.game_over = false
+	_system.terminal_applied = true
+	_expect(not _system.apply_decoded(future), "可靠终态屏障禁止应用队列残留")
+	_system.terminal_applied = false
+	_system.receive_death("decoded-pipeline", 79500, 4, false)
+	_expect(_system.apply_decoded(future) and not _main._client_units.has(79500), "解码后收到真实死亡事件，应用时重新查墓碑而不复活")
+	_expect(not _system.apply_decoded(future, true, 5) and not _system.terminal_applied, "最终Tick不匹配不改变终态屏障")
+	_expect(_system.apply_decoded(future, true, 4) and _system.terminal_applied, "同Tick同revision的可靠终态可以覆盖普通快照")
+	_system.reset_session("next-epoch")
+	_expect(not _system.apply_decoded(future) and _main._client_units.is_empty(), "换会话后外部仍持有的旧只读包不能应用")
+	_check_terminal_projectile_queue(counting, with_path)
+	_check_snapshot_queue_budget(counting, packet)
+	_system.reset_session("")
+	_system = previous
+	_main._snapshot_system = previous
+
+func _check_terminal_projectile_queue(counting: CountingSnapshot, template: Array) -> void:
+	_system.reset_session("terminal-projectile-speed")
+	var terminal := template.duplicate(true)
+	terminal[SNAP.S_SESSION] = "terminal-projectile-speed"
+	terminal[SNAP.S_SERVER_TICK] = 20
+	terminal[SNAP.S_LIFECYCLE_REVISION] = 20
+	terminal[SNAP.S_PROJECTILES][0][SNAP.P_SPEED] = 937.5
+	var pending := terminal.duplicate(true)
+	pending[SNAP.S_SERVER_TICK] = 21
+	pending[SNAP.S_LIFECYCLE_REVISION] = 21
+	pending[SNAP.S_PROJECTILES][0][SNAP.P_SPEED] = 1337.0
+	var decoded := counting.decode_validated(var_to_bytes(pending).compress(FileAccess.COMPRESSION_DEFLATE))
+	var held: WeakRef = weakref(decoded)
+	_expect(decoded != null and _main._network_playback.enqueue_snapshot(decoded), "终局前队列持有完整15字段的未来弹体包")
+	decoded = null
+	_expect(_main._client_units.is_empty() and _system.apply(var_to_bytes(terminal).compress(FileAccess.COMPRESSION_DEFLATE), true, 20), "可靠终态可首次恢复未知实体和新15字段弹体")
+	var visible: Dictionary = _main._projectile_system.visible_view()
+	_expect(_system.terminal_applied and _main._authoritative_server_tick == 20 and _main._client_units.has(79500) and visible.has(1) and is_equal_approx(float(visible[1].speed), 937.5), "终态恢复保留权威出膛速度并建立屏障")
+	var decodes := counting.decodes
+	var ready: Array[Dictionary] = _main._network_playback.advance(24.0)
+	_expect(ready.size() == 1 and _main._network_playback.snapshot_count() == 0 and _main._network_playback.snapshot_bytes() == 0 and held.get_ref() != null, "终态后出队归还字节预算，返回数组仍持有解码对象")
+	if ready.size() == 1: _main.callv(ready[0].method, ready[0].args)
+	_expect(counting.decodes == decodes and _main._authoritative_server_tick == 20 and is_equal_approx(float(_main._projectile_system.visible_view()[1].speed), 937.5), "终态屏障阻止队列残留覆盖速度/时钟，且不重复解码")
+	ready.clear()
+	_expect(held.get_ref() == null, "释放出队数组后最后一份终态残留解码引用释放")
+	_system.reset_session("next-epoch")
+
+func _budget_member(template: Array, index: int) -> Array:
+	var member := template.duplicate(true)
+	member[SNAP.U_ID] = 80000 + index
+	member[SNAP.U_SPAWN].args[3] = member[SNAP.U_ID]
+	var position := Vector2(240, 900) if index == 0 else Vector2(600, 360) if index == 1 else Vector2(240, 360)
+	member[SNAP.U_X] = position.x
+	member[SNAP.U_Y] = position.y
+	member[SNAP.U_SPAWN].args[2] = position
+	if index == 0: member[SNAP.U_SPAWN].args[1] = 0
+	return member
+
+func _budget_projectile(id: int) -> Array:
+	var start := Vector2(240, 900)
+	var end := Vector2(600, 360)
+	return _system._projectile_snapshot_payload(id, {
+		"pos": start.lerp(end, 0.25), "direction": start.direction_to(end), "speed": 937.5,
+		"color": Color.WHITE, "radius": 4.0, "visual": CardDB.get_unit_stats("ashe").get("projectile_visual", "orb"),
+		"visual_height": 30.0, "visual_scale": 1.0, "visual_offset": Vector2(0, -30),
+		"effects": {"first_strike": true}, "visual_path": {
+			"start": start, "end": end, "origin_offset": Vector2.ZERO,
+			"start_model_offset": Vector2(0, -30), "end_model_offset": Vector2(0, -30),
+			"progress": 0.25, "contact_radius": 24.0, "wave": false,
+			"source": {"unit": true, "id": 80000, "local_id": 0, "team": 0, "position": start},
+			"target": {"unit": true, "id": 80001, "local_id": 0, "team": 1, "position": end},
+		},
+	})
+
+func _weak_alive(reference: WeakRef) -> bool:
+	# 将 get_ref 的临时强引用限制在本调用内；不能让测试 VM 栈延长被测对象寿命。
+	return reference.get_ref() != null
+
+func _check_snapshot_queue_budget(counting: CountingSnapshot, packet: Array) -> void:
+	var playback := NetworkPlayback.new()
+	var decoded := counting.decode_validated(var_to_bytes(packet).compress(FileAccess.COMPRESSION_DEFLATE))
+	var complete := true
+	for index in NetworkPlayback.MAX_QUEUED - 1: complete = playback.enqueue_snapshot(decoded) and complete
+	complete = playback.enqueue(1, &"event", []) and complete
+	_expect(complete and playback.size() == 4096 and playback.snapshot_count() == 4095 and not playback.enqueue_snapshot(decoded) and not playback.enqueue(1, &"event", []), "混合普通事件与快照共用4096项总上限")
+	var held: WeakRef = weakref(decoded)
+	decoded = null
+	playback.clear()
+	_expect(held.get_ref() == null and playback.size() == 0 and playback.snapshot_count() == 0 and playback.snapshot_bytes() == 0, "清队列释放最后一份解码对象引用及全部字节/数量预算")
+	# 正式单位+16条真实15字段弹体，覆盖新增speed后的混合包；不加padding或伪造raw_bytes_size。
+	var large := packet.duplicate(true)
+	var template := _payload("ashe", 80000, 1)
+	large[SNAP.S_UNITS] = []
+	large[SNAP.S_PROJECTILES] = []
+	for index in 16: large[SNAP.S_PROJECTILES].append(_budget_projectile(90000 + index))
+	_expect(large[SNAP.S_PROJECTILES].all(func(row): return row.size() == 15 and is_equal_approx(float(row[SNAP.P_SPEED]), 937.5)), "预算夹具通过正式序列化器生成含真实速度的15字段弹体")
+	var empty_size := var_to_bytes(large).size()
+	var member_size := var_to_bytes(template).size()
+	var target_count := maxi(1, floori(float(SNAP.MAX_DECODED_BYTES - empty_size) / float(member_size)))
+	for index in target_count:
+		large[SNAP.S_UNITS].append(_budget_member(template, index))
+	var raw := var_to_bytes(large)
+	# Variant编码边界大小以实际序列化结果为准，保证每包合法且尽量贴近单包上限。
+	while raw.size() > SNAP.MAX_DECODED_BYTES:
+		large[SNAP.S_UNITS].pop_back()
+		raw = var_to_bytes(large)
+	while raw.size() + member_size <= SNAP.MAX_DECODED_BYTES:
+		large[SNAP.S_UNITS].append(_budget_member(template, large[SNAP.S_UNITS].size()))
+		raw = var_to_bytes(large)
+	_expect(raw.size() <= SNAP.MAX_DECODED_BYTES and raw.size() > SNAP.MAX_DECODED_BYTES - member_size * 2, "唯一单位/出生身份+15字段弹体的混合快照贴近1MiB上限，没有额外padding")
+	var oversized := large.duplicate(true)
+	oversized[SNAP.S_UNITS].append(_budget_member(template, oversized[SNAP.S_UNITS].size()))
+	_expect(var_to_bytes(oversized).size() > SNAP.MAX_DECODED_BYTES, "再增加一个正式单位即越过1MiB；尺寸依据完整序列化而非旧协议估值")
+	oversized.clear()
+	var all_accepted := true
+	var independent := true
+	var identities := {}
+	var held_large: Array[WeakRef] = []
+	var raw_total := 0
+	for index in 16:
+		large[SNAP.S_SERVER_TICK] = 100 + index
+		decoded = counting.decode_validated(var_to_bytes(large).compress(FileAccess.COMPRESSION_DEFLATE))
+		all_accepted = decoded != null and all_accepted
+		if decoded != null:
+			independent = not identities.has(decoded.get_instance_id()) and independent
+			identities[decoded.get_instance_id()] = true
+			held_large.append(weakref(decoded))
+			raw_total += decoded.raw_bytes_size
+			all_accepted = playback.enqueue_snapshot(decoded) and all_accepted
+	decoded = null
+	_expect(all_accepted and independent and identities.size() == 16 and playback.snapshot_count() == 16 and playback.snapshot_bytes() == raw_total and raw_total <= NetworkPlayback.MAX_SNAPSHOT_BYTES, "8份播放窗口加8份余量的16个近最大116混合包均独立解码并入队")
+	large[SNAP.S_SERVER_TICK] = 116
+	decoded = counting.decode_validated(var_to_bytes(large).compress(FileAccess.COMPRESSION_DEFLATE))
+	_expect(decoded != null and raw_total + decoded.raw_bytes_size > NetworkPlayback.MAX_SNAPSHOT_BYTES and not playback.enqueue_snapshot(decoded) and playback.snapshot_count() == 16, "下一份真实近最大包超过16MiB原始字节预算时明确拒绝且不增加持有量")
+	var rejected: WeakRef = weakref(decoded)
+	print("[SNAPSHOT_BURST_BUDGET] ", {"protocol": SNAP.SNAPSHOT_PROTOCOL_VERSION, "projectile_fields": SNAP.PROJECTILE_PAYLOAD_SIZE, "projectiles_per_packet": large[SNAP.S_PROJECTILES].size(), "units_per_packet": large[SNAP.S_UNITS].size(), "raw_bytes_per_packet": raw.size(), "compressed_bytes_per_packet": var_to_bytes(large).compress(FileAccess.COMPRESSION_DEFLATE).size(), "accepted": playback.snapshot_count(), "queued_raw_bytes": playback.snapshot_bytes(), "budget_raw_bytes": NetworkPlayback.MAX_SNAPSHOT_BYTES})
+	playback.clear()
+	_expect(held_large.all(func(reference: WeakRef): return reference.get_ref() == null), "清理预算突发时16份独立解码对象全部释放")
+	_expect(playback.snapshot_bytes() == 0 and playback.enqueue_snapshot(decoded), "预算溢出清理后被拒的合法116包可以正常重新入队")
+	decoded = null
+	var ready: Array[Dictionary] = playback.advance(120.0)
+	_expect(ready.size() == 1 and playback.snapshot_count() == 0 and playback.snapshot_bytes() == 0 and _weak_alive(rejected), "出队归还混合包全部raw预算，ready仍拥有解码引用")
+	playback.clear()
+	_expect(_weak_alive(rejected), "清空已空队列不销毁调用方仍持有的ready内容")
+	ready.clear()
+	_expect(not _weak_alive(rejected), "调用方释放ready后近最大116包最终释放")

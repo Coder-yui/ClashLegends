@@ -1,5 +1,5 @@
 extends SceneTree
-## 非 headless：查看实际卡牌详情和塔生命整数；输出卡牌数值清单供后续平衡使用。
+## 查看实际卡牌详情和塔生命整数；输出卡牌数值清单。headless 仅检查与输出数值，不截图。
 var OUTPUT := preload("res://tools/lib/development_paths.gd").output("clash-numeric-review")
 func _initialize() -> void:
 	_run.call_deferred()
@@ -10,9 +10,19 @@ func _run() -> void:
 		var stats := CardDB.get_card(id)
 		if String(stats.type) == "spell":
 			continue
-		rows.append(_row(String(stats.name), stats))
-		if stats.has("transformed_stats"):
-			rows.append(_row(String(stats.name) + "（变形）", stats.transformed_stats))
+		var entity := CardDB.get_unit_stats(String(id))
+		if entity.is_empty():
+			var plan := CardDB.deployment_plan(String(id))
+			var counts := {}
+			for member_id in plan.get("members", []):
+				counts[member_id] = int(counts.get(member_id, 0)) + 1
+			for member_id in counts:
+				var member := CardDB.get_unit_stats(String(member_id))
+				rows.append(_row("%s / %s ×%d（单体数值）" % [stats.name, member.name, counts[member_id]], member))
+			continue
+		rows.append(_row(String(stats.name), entity))
+		if entity.has("transformed_stats"):
+			rows.append(_row(String(stats.name) + "（变形）", entity.transformed_stats))
 	FileAccess.open(OUTPUT + "/card-values.md", FileAccess.WRITE).store_string("\n".join(rows) + "\n")
 	var main = load("res://scenes/main.tscn").instantiate()
 	root.add_child(main)
@@ -47,5 +57,7 @@ func _run() -> void:
 func _row(label: String, stats: Dictionary) -> String:
 	return "| %s | %s | %s%s | %s | %s | %s |" % [label, BattleNumbers.format_value(float(stats.hp)), BattleNumbers.format_value(float(stats.damage)), " DPS" if bool(stats.get("is_continuous_attack", false)) else "", BattleNumbers.format_value(float(stats.interval)), BattleNumbers.format_value(float(stats.get("first_hit", 0))), BattleNumbers.format_value(float(stats.speed))]
 func _capture(label: String) -> void:
+	if DisplayServer.get_name() == "headless":
+		return
 	await RenderingServer.frame_post_draw
 	root.get_texture().get_image().save_png(OUTPUT + "/" + label + ".png")

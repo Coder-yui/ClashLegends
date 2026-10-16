@@ -3,6 +3,8 @@ extends Node3D
 ## The authority supplies age; this node never advances battle state.
 const ROOT := "res://assets/effects/void_summoning/"
 static var _data: Dictionary = {}
+static var _samples: RefCounted
+var preparation_errors := PackedStringArray()
 static var _meshes: Dictionary = {}
 static var _materials: Array[ShaderMaterial] = []
 var _pools: Array = []
@@ -16,16 +18,21 @@ const GROUND_PLANES := ["Temp_Mesh6", "Temp_Mesh7", "AOE_Indicator", "Voidglow",
 func shape_basis_for(emitter_name: String) -> Basis:
 	return projection_basis if emitter_name in FOOTPRINT_SHAPES else Basis.IDENTITY
 
-static func prewarm() -> void:
-	if not _data.is_empty(): return
-	_data = JSON.parse_string(FileAccess.get_file_as_string(ROOT + "sampled.json"))
+static func prewarm() -> bool:
+	if not _data.is_empty(): return true
+	_samples = preload("res://scripts/presentation/compact_particle_samples.gd").new()
+	if not _samples.read(ROOT + "sampled.clps", ROOT + "sampled.json"): return false
+	_data = _samples.data
 	for e in _data.emitters:
 		var mesh_path: String = e.mesh_path
 		if not _meshes.has(mesh_path): _meshes[mesh_path] = _mesh(mesh_path)
 		_materials.append(_material(e))
+	return true
 
 func setup_native(unit_scale: float) -> void:
-	prewarm()
+	if not prewarm():
+		preparation_errors = _samples.errors.duplicate()
+		return
 	scale = Vector3.ONE * unit_scale
 	for e in _data.emitters: _pools.append([])
 	seek(0.0)
@@ -34,16 +41,17 @@ func advance(delta: float) -> void:
 	seek(_age + delta)
 
 func seek(age: float) -> void:
+	if _data.is_empty(): return
 	_age = maxf(age, 0.0)
-	var frame := mini(int(_age * float(_data.fps)), _data.frames.size() - 1)
+	var frame := mini(int(_age * float(_data.fps)), _samples.frames - 1)
 	if frame == _frame: return
 	_frame = frame
-	var values: Array = _data.frames[frame]
-	for emitter_index in values.size():
+	for emitter_index in _data.emitters.size():
 		var e: Dictionary = _data.emitters[emitter_index]
 		var pool: Array = _pools[emitter_index]
-		var particles: Array = values[emitter_index]
-		while pool.size() < particles.size():
+		var count: int = _samples.count(frame, emitter_index)
+		var begin: int = _samples.begin(frame, emitter_index)
+		while pool.size() < count:
 			var item := MeshInstance3D.new()
 			item.mesh = _meshes[e.mesh_path]
 			item.material_override = _materials[emitter_index].duplicate()
@@ -55,12 +63,13 @@ func seek(age: float) -> void:
 			pool.append(item)
 		for j in pool.size():
 			var item: MeshInstance3D = pool[j]
-			item.visible = j < particles.size() and _age <= float(_data.duration)
+			item.visible = j < count and _age <= float(_data.duration)
 			if item.visible:
-				item.material_override.set_shader_parameter("p", PackedFloat32Array(particles[j]))
+				var sample: Array = _samples.row(begin + j)
+				item.material_override.set_shader_parameter("p", PackedFloat32Array(sample))
 				var camera := get_viewport().get_camera_3d()
 				if camera != null:
-					var values_j: Array = particles[j]
+					var values_j: Array = sample
 					var center := to_global(projection_basis * Vector3(values_j[1], values_j[2], values_j[3]))
 					item.sorting_offset = camera.global_position.distance_to(center) - camera.global_position.distance_to(global_position)
 
@@ -128,7 +137,10 @@ static func resource_shader_path(e: Dictionary) -> String:
 
 static func resource_manifest(variant: String) -> Dictionary:
 	if variant != "zone": return {}
-	return {"json": [ROOT + "sampled.json"], "sample": {"player": ROOT + "player.gd", "setup": "native", "kind": "zone", "scale": 0.005, "times": [0.1, 0.5, 1.5]}}
+	return {"raw": [ROOT + "sampled.clps"], "json": [ROOT + "sampled.json"], "sample": {"player": ROOT + "player.gd", "setup": "native", "kind": "zone", "scale": 0.005, "times": [0.1, 0.5, 1.5]}}
 
 func load_kind(_kind: String) -> void:
 	prewarm()
+
+func resource_sample_ages() -> Array[float]:
+	return _samples.sample_ages() if not _data.is_empty() else []

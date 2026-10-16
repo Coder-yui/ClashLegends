@@ -81,7 +81,8 @@ static func _validate_team_attack_boost(card_id: String, stats: Dictionary, erro
 static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStringArray, inspect_resources: bool = true) -> void:
 	if not SHAPES.validate(card_id, stats, errors):
 		return
-	_require_fields(card_id, stats, [&"name", &"cost", &"type", &"description", &"radius", &"color"], errors)
+	_require_fields(card_id, stats, [&"name", &"cost", &"type", &"description", &"color"], errors)
+	if not stats.has("spawn_plan"): _require_fields(card_id, stats, [&"radius"], errors)
 	if stats.has("stealth_delay") and (float(stats.stealth_delay) <= 0.0 or stats.get("type", "") != "unit" or bool(stats.get("is_building", false)) or bool(stats.get("is_continuous_attack", false))):
 		errors.append(card_id + ".stealth_delay: 仅普通单位支持正数脱战隐身时间")
 	for skill in stats.get("active_skills", []):
@@ -114,17 +115,21 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 		errors.append("%s.name: 不能为空" % card_id)
 	if float(stats.get("cost", -1.0)) < 0.0:
 		errors.append("%s.cost: 必须 >= 0" % card_id)
-	if float(stats.get("radius", 0.0)) <= 0.0:
+	if not stats.has("spawn_plan") and float(stats.get("radius", 0.0)) <= 0.0:
 		errors.append("%s.radius: 必须 > 0" % card_id)
 	for flag in ["river_traversal", "permanent_unit_phasing"]:
 		if bool(stats.get(flag, false)) and (String(stats.get("type", "")) != "unit" or bool(stats.get("is_air", false)) or bool(stats.get("is_building", false))):
 			errors.append("%s.%s: 仅支持地面普通单位" % [card_id, flag])
 	_validate_terrain_traversal(card_id, stats, errors)
 	_validate_growth(card_id, stats, errors)
+	if stats.has("spawn_plan") and card_type != &"unit": errors.append(card_id + ".spawn_plan: 仅单位出牌类支持生成计划")
 	_validate_deployment(card_id, stats, errors)
 	match card_type:
 		&"unit":
-			_validate_combat_stats(card_id, stats, true, errors)
+			if stats.has("spawn_plan"):
+				_validate_spawn_card(card_id, stats, errors)
+			else:
+				_validate_combat_stats(card_id, stats, true, errors)
 		&"building":
 			_validate_combat_stats(card_id, stats, false, errors)
 			_validate_building(card_id, stats, errors)
@@ -621,15 +626,12 @@ static func _validate_references(card_id: String, stats: Dictionary, cards: Dict
 		var upgrade: Dictionary = cards[upgrade_id]
 		if stats.get("type") != "unit" or upgrade.get("type") != "unit" or bool(upgrade.get("selectable", true)) or upgrade.has("deployment_upgrade_id") or float(upgrade.get("cost", 0)) <= float(stats.get("cost", 0)) or float(upgrade.get("cost", 0)) > 10:
 			errors.append("%s.deployment_upgrade_id: 必须引用更高费、至多10费、不可选且无升级链的单位" % card_id)
-		for key in ["is_air", "radius", "deploy_zone", "deployment_count", "deployment_member_ids", "pre_deploy_time"]:
+		for key in ["is_air", "radius", "deploy_zone", "deployment_count", "spawn_plan", "pre_deploy_time"]:
 			if stats.get(key) != upgrade.get(key):
 				errors.append("%s.deployment_upgrade_id: 两形态部署几何与编队配置必须相同 (%s)" % [card_id, key])
-	var deployment_members: Variant = stats.get("deployment_member_ids", [])
-	if deployment_members is Array:
-		for index in range((deployment_members as Array).size()):
-			var member_id := String((deployment_members as Array)[index])
-			if not _unit_reference_exists(member_id, cards):
-				errors.append("%s.deployment_member_ids[%d]: 引用了不存在或不可生成的单位 %s" % [card_id, index, member_id])
+	for member_id in stats.get("spawn_plan", {}).get("members", []):
+		if not _unit_reference_exists(String(member_id), cards):
+			errors.append("%s.spawn_plan.members: 引用了不存在或不可生成的实体 %s" % [card_id, member_id])
 	var skills: Array = stats.get("active_skills", []) if stats.get("active_skills", []) is Array else []
 	for index in range(skills.size()):
 		var skill = skills[index]
@@ -643,7 +645,7 @@ static func _validate_references(card_id: String, stats: Dictionary, cards: Dict
 static func _unit_reference_exists(card_id: String, cards: Dictionary) -> bool:
 	if not cards.has(card_id) or not cards[card_id] is Dictionary:
 		return false
-	return cards[card_id].get("type", "") in [&"unit", &"building"]
+	return not cards[card_id].has("spawn_plan") and cards[card_id].get("type", "") in [&"unit", &"building"]
 
 static func _validate_visual_config(label: String, stats: Dictionary, errors: PackedStringArray, inspect_resources: bool = true) -> void:
 	if not SHAPES.validate(label, stats, errors):
@@ -1399,10 +1401,12 @@ static func _validate_known_fields(label: String, data: Dictionary, known_fields
 static func _validate_numbers(label: String, data: Dictionary, errors: PackedStringArray) -> void:
 	for raw_key in data:
 		var key := str(raw_key)
-		if key.begins_with("visual_") or key.begins_with("projectile_visual_") or key.begins_with("continuous_beam_") or key in ["audio", "card_art", "deployment_member_ids"]:
+		if key.begins_with("visual_") or key.begins_with("projectile_visual_") or key.begins_with("continuous_beam_") or key in ["audio", "card_art"]:
 			continue
 		var value = data[raw_key]
-		if key == "transformed_stats" and value is Dictionary:
+		if key == "spawn_plan" and value is Dictionary:
+			if value.has("spacing"): _validate_number_value(label + ".spawn_plan.spacing", value.spacing, 0.01, errors)
+		elif key == "transformed_stats" and value is Dictionary:
 			_validate_numbers(label + "." + key, value, errors)
 		elif key == "active_skills" and value is Array:
 			for index in value.size():
@@ -1469,6 +1473,20 @@ static func _validate_growth(card_id: String, stats: Dictionary, errors: PackedS
 			errors.append("%s: 成长目前只支持普通单体普攻" % card_id)
 
 
+static func _validate_spawn_card(card_id: String, stats: Dictionary, errors: PackedStringArray) -> void:
+	var fields := ["name", "cost", "type", "description", "selectable", "spawn_plan", "active_skills", "color", "card_art", "icon_path", "audio", "deploy_zone", "pre_deploy_time", "deploy_pocket_requires_both_towers", "deploy_ignore_structures", "footprint_tiles", "deploy_formation_requires_in_bounds"]
+	for field in stats:
+		if field not in fields: errors.append("%s.spawn_plan: 纯部署卡不能持有实体/重复部署字段 %s" % [card_id, field])
+	var plan: Dictionary = stats.spawn_plan
+	_require_fields(card_id + ".spawn_plan", plan, ["members", "spacing", "formation"], errors)
+	var members: Array = plan.get("members", [])
+	var spacing := float(plan.get("spacing", 0.0))
+	var formation := String(plan.get("formation", ""))
+	if members.is_empty(): errors.append(card_id + ".spawn_plan.members: 需要非空实体引用列表")
+	if spacing < 0.0 or (members.size() > 1 and spacing <= 0.0): errors.append(card_id + ".spawn_plan.spacing: 多成员间距必须为正")
+	if formation not in ["ring", "line", "polygon", "square", "depth_line"]: errors.append(card_id + ".spawn_plan.formation: 未支持的阵型")
+	if (formation == "square" and members.size() != 4) or (formation == "depth_line" and members.size() != 2): errors.append(card_id + ".spawn_plan.formation: 阵型与成员数不匹配")
+
 static func _validate_deployment(card_id: String, stats: Dictionary, errors: PackedStringArray) -> void:
 	var card_type := StringName(stats.get("type", ""))
 	if stats.has("deploy_zone"):
@@ -1505,9 +1523,13 @@ static func _validate_deployment(card_id: String, stats: Dictionary, errors: Pac
 	if String(stats.get("deployment_formation", "ring")) == "depth_line" and int(stats.get("deployment_count", 0)) != 2:
 		errors.append("%s.deployment_formation: depth_line 必须搭配2名成员" % card_id)
 	if bool(stats.get("deploy_formation_requires_in_bounds", false)):
-		if card_type != &"unit" or String(stats.get("deployment_formation", "ring")) != "line" or int(stats.get("deployment_count", 1)) <= 1:
+		var plan: Dictionary = stats.get("spawn_plan", {})
+		var count: int = plan.get("members", []).size() if not plan.is_empty() else int(stats.get("deployment_count", 1))
+		var formation := String(plan.get("formation", stats.get("deployment_formation", "ring")))
+		var spacing := float(plan.get("spacing", stats.get("deployment_spacing", 0.0)))
+		if card_type != &"unit" or formation != "line" or count <= 1:
 			errors.append("%s.deploy_formation_requires_in_bounds: 仅支持多单位横排" % card_id)
-		elif (int(stats.get("deployment_count", 1)) - 1) * float(stats.get("deployment_spacing", 0.0)) > ArenaRules.FIELD_W:
+		elif (count - 1) * spacing > ArenaRules.FIELD_W:
 			errors.append("%s.deploy_formation_requires_in_bounds: 横排中心跨度不能超过战场" % card_id)
 	if stats.has("deployment_count"):
 		if card_type != &"unit":
@@ -1517,14 +1539,6 @@ static func _validate_deployment(card_id: String, stats: Dictionary, errors: Pac
 			errors.append("%s.deployment_count: 必须 > 0" % card_id)
 		if deployment_count > 1 and float(stats.get("deployment_spacing", 0.0)) <= 0.0:
 			errors.append("%s.deployment_spacing: 编队数量大于 1 时必须 > 0" % card_id)
-	if stats.has("deployment_member_ids"):
-		var member_ids = stats.get("deployment_member_ids")
-		if card_type != &"unit":
-			errors.append("%s.deployment_member_ids: 只有单位卡可以使用异构编队" % card_id)
-		elif not member_ids is Array or (member_ids as Array).is_empty():
-			errors.append("%s.deployment_member_ids: 必须是非空成员卡 ID 数组" % card_id)
-		elif stats.has("deployment_count") and int(stats.get("deployment_count", 0)) != (member_ids as Array).size():
-			errors.append("%s.deployment_member_ids: 成员数量必须与 deployment_count 一致" % card_id)
 
 
 static func _validate_bleed(card_id: String, stats: Dictionary, errors: PackedStringArray) -> void:

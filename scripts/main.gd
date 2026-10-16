@@ -176,7 +176,7 @@ func _ready() -> void:
 	_simulation_clock.max_work_usec = 8000
 	_battle_simulation.setup(self)
 	_simulation_clock.step = _sim_step
-	_simulation_clock.running = func(): return not game_over
+	_simulation_clock.running = can_advance_simulation
 	_combat = CombatResolver.new()
 	_combat.attack_hit.connect(_notify_attack_presentation)
 	add_child(_combat)
@@ -433,6 +433,7 @@ func _load_battle(start_battle: Callable, network: bool = false) -> void:
 		return
 	var started := Time.get_ticks_msec()
 	var stage_start := Time.get_ticks_usec()
+	var loading_started := stage_start
 	start_battle.call()
 	preparation_metrics.scene_usec = Time.get_ticks_usec() - stage_start
 	stage_start = Time.get_ticks_usec()
@@ -461,6 +462,7 @@ func _load_battle(start_battle: Callable, network: bool = false) -> void:
 	if network and _session.phase == MatchSession.Phase.DISCONNECTED and not game_over:
 		_end_game(-1, "disconnect")
 	preparation_metrics.opponent_wait_usec = Time.get_ticks_usec() - stage_start
+	preparation_metrics.total_usec = Time.get_ticks_usec() - loading_started
 	loading.hide()
 	loading.queue_free()
 	_battle_loading = false
@@ -476,30 +478,43 @@ func _watch_network_loading(epoch: String) -> void:
 		await tree.process_frame
 
 func _prepare_match_assets() -> void:
+	preparation_metrics.card_art_cache = CardArt.retain_match_textures(_deck + _remote_deck)
+	var stage_started := Time.get_ticks_usec()
 	_resources.plan = preload("res://scripts/presentation/match_resource_plan.gd").for_match([_deck, _remote_deck], [_active_skill_choices, _remote_active_skill_choices])
 	if not _resources.plan.errors.is_empty():
 		_fail_preparation(_resources.plan.errors)
 		return
+	preparation_metrics.plan_usec = Time.get_ticks_usec() - stage_started
+	stage_started = Time.get_ticks_usec()
 	await _resources.prepare_async(_deck + _remote_deck + MatchResources.SYSTEM_UNIT_BUDGET.keys(), get_tree(), func(): return game_over)
+	preparation_metrics.resource_stage_usec = Time.get_ticks_usec() - stage_started
 	preparation_metrics.threaded_requests = _resources.threaded_requests
 	preparation_metrics.threaded_wait_usec = _resources.threaded_wait_usec
 	if game_over: return
 	if not _resources.errors.is_empty():
 		_fail_preparation(_resources.errors)
 		return
+	stage_started = Time.get_ticks_usec()
 	for id in _resources.cards:
 		_audio_manager.prepare_audio(_resources.plan.definition(String(id)).get("audio", {}))
 	_audio_manager.prepare_audio(preload("res://scripts/data/world_audio.gd").DEFINITIONS)
 	_audio_manager.prepare_audio(preload("res://scripts/data/match_audio.gd").EVENTS)
+	preparation_metrics.audio_usec = Time.get_ticks_usec() - stage_started
 	if not is_instance_valid(_battle_presentation): return
+	stage_started = Time.get_ticks_usec()
 	_battle_presentation.resource_plan = _resources.plan
 	await _battle_presentation.model_pool.prepare(_resources.resources, _battle_presentation._world_root, _battle_presentation._camera, _resources.cards, _resources.plan)
+	preparation_metrics.model_pool_usec = Time.get_ticks_usec() - stage_started
 	if is_instance_valid(_battle_presentation) and not _battle_presentation.model_pool.errors.is_empty(): _fail_preparation(_battle_presentation.model_pool.errors)
 	if is_instance_valid(_battle_presentation) and not game_over and not _battle_presentation.model_pool.cancelled:
+		stage_started = Time.get_ticks_usec()
 		_battle_presentation.prepare_target_states(_resources.plan.target_states)
 		await _battle_presentation.spell_warmup.prepare_ground(_battle_presentation, _resources.plan, func(): return game_over)
+		preparation_metrics.ground_usec = Time.get_ticks_usec() - stage_started
 		if not is_instance_valid(_battle_presentation) or game_over: return
+		stage_started = Time.get_ticks_usec()
 		await _battle_presentation.spell_warmup.prepare(_resources.cards, _battle_presentation._world_root, _battle_presentation._camera, func(): return game_over, _resources.plan)
+		preparation_metrics.effects_usec = Time.get_ticks_usec() - stage_started
 		if is_instance_valid(_battle_presentation) and not _battle_presentation.spell_warmup.errors.is_empty(): _fail_preparation(_battle_presentation.spell_warmup.errors)
 
 func _fail_preparation(errors: PackedStringArray) -> void:
@@ -869,8 +884,9 @@ func _rpc_command_scheduled(epoch: String, command: Dictionary) -> void:
 	if not _network_commands.receive(command): return
 	# 只准备已知资源/记录时序，不创建实体，不提前暴露对方的操作提示。
 	_resources.prepare([command.card_id])
-	if command.kind == "skill" and int(command.team) == local_team and _active_skill_bar != null:
-		_active_skill_bar.set_pending(int(command.ability_id), true)
+	if command.kind == "skill" and int(command.team) == local_team:
+		_client_inputs.forget_skill(int(command.ability_id))
+		if _active_skill_bar != null: _active_skill_bar.set_pending(int(command.ability_id), true)
 	network_command_announced.emit(command.duplicate(true))
 
 func _complete_network_command(id: int, outcome: String) -> void:
@@ -884,9 +900,10 @@ func _rpc_command_finished(epoch: String, id: int, outcome: String) -> void:
 	if outcome not in ["executed", "cancelled"]: return
 	var command := _network_commands.finish(id)
 	if command.is_empty(): return
-	if command.kind == "skill" and int(command.team) == local_team and _active_skill_bar != null:
-		_active_skill_bar.set_pending(int(command.ability_id), _network_commands.has_skill(int(command.ability_id)))
-		if not _network_commands.has_skill(int(command.ability_id)): _client_inputs.forget_skill(int(command.ability_id))
+	if command.kind == "skill" and int(command.team) == local_team:
+		var pending := _network_commands.has_skill(int(command.ability_id))
+		if not pending: _client_inputs.forget_skill(int(command.ability_id))
+		if _active_skill_bar != null: _active_skill_bar.set_pending(int(command.ability_id), pending)
 	network_command_finished.emit(command, outcome)
 
 ## 红方使用同一画布构图翻转，让自己半场显示在屏幕下方。
@@ -1982,7 +1999,9 @@ func _tick_slow_effect_visuals(delta: float) -> void:
 func _spawn_card_units(team: int, card_id: String, pos: Vector2, deploy_time_override: float = -1.0, active_slot: int = -1, pre_deploy_id: int = -1, deployment_card_id: String = "", mirror_generation: int = -1) -> Array[Unit]:
 	if not _card_history.is_latest_mirror(team, mirror_generation): active_slot = -1
 	var spawn_card_id := card_id if deployment_card_id.is_empty() else deployment_card_id
-	var stats := CardDB.get_unit_stats(spawn_card_id)
+	var stats := CardDB.get_card(spawn_card_id)
+	var plan := CardDB.deployment_plan(spawn_card_id)
+	if plan.is_empty(): return []
 	if String(stats.get("type", "unit")) == "building":
 		var resolved := _nearest_valid_building_spawn(team, card_id, pos)
 		if not resolved.is_finite():
@@ -1994,22 +2013,22 @@ func _spawn_card_units(team: int, card_id: String, pos: Vector2, deploy_time_ove
 		bool(stats.get("tower_ruin_foundation", false))
 		and _destroyed_princess_tower_at_card_center(pos) != null
 	)
-	var member_ids: Array = stats.get("deployment_member_ids", [])
-	var count := member_ids.size() if not member_ids.is_empty() else maxi(int(stats.get("deployment_count", 1)), 1)
-	var spacing := maxf(float(stats.get("deployment_spacing", 0.0)), 0.0)
+	var member_ids: Array = plan.members
+	var count := member_ids.size()
+	var spacing := float(plan.spacing)
 	var group_id := -1
 	if count > 1:
 		group_id = _next_deployment_group_id
 		_next_deployment_group_id += 1
-	var formation := String(stats.get("deployment_formation", "ring"))
+	var formation := String(plan.formation)
 	var offsets := _deployment_formation_offsets(count, spacing, team, formation)
 	# 先规划整个编队；无落点时沿用建筑已付费等待队列，不能生成半批再重试。
 	var positions: Array[Vector2] = []
 	for index in range(count):
 		var member_pos := pos + offsets[index]
-		var member_card_id := spawn_card_id if member_ids.is_empty() else String(member_ids[index])
+		var member_card_id := String(member_ids[index])
 		var member_stats := CardDB.get_unit_stats(member_card_id)
-		var member_radius := float(member_stats.get("radius", stats.get("radius", 14.0)))
+		var member_radius := float(member_stats.radius)
 		member_pos.x = clampf(member_pos.x, member_radius, ArenaRules.FIELD_W - member_radius)
 		member_pos.y = clampf(member_pos.y, member_radius, ArenaRules.FIELD_H - member_radius)
 		var requested_member_pos := member_pos
@@ -2026,7 +2045,7 @@ func _spawn_card_units(team: int, card_id: String, pos: Vector2, deploy_time_ove
 	var spawned: Array[Unit] = []
 	for index in range(count):
 		var member_slot := active_slot if index == 0 else -1
-		var member_card_id := spawn_card_id if member_ids.is_empty() else String(member_ids[index])
+		var member_card_id := String(member_ids[index])
 		var member_pos := positions[index]
 		var skill_source_card_id := card_id
 		var member := _spawn_unit(UnitSpawnRequest.new(team, member_card_id, member_pos, {
@@ -2159,6 +2178,7 @@ func _register_active_skill(unit: Unit, card_id: String, p_team: int) -> void:
 	var max_uses := maxi(int(carried_skill.get("max_uses", 1)), 1)
 	var replaced_id := _active_skills.register(unit, card_id, p_team, carried_skill)
 	if replaced_id >= 0:
+		_client_inputs.forget_skill(replaced_id)
 		_cancel_pending_active_skill(replaced_id)
 		if _active_skill_bar != null: _active_skill_bar.remove_skill(replaced_id)
 	unit.died.connect(_on_active_skill_unit_died.bind(ability_id), CONNECT_ONE_SHOT)
@@ -2180,6 +2200,10 @@ func _sync_active_skill_deployment_readiness() -> void:
 		var valid_unit := unit as Unit
 		var deployed := valid_unit.is_deployed() and not valid_unit.death_form.used
 		if _is_local_player_team(int(entry.team)) and _active_skill_bar != null:
+			var pending := _client_inputs.has_skill(ability_id) or _network_commands.has_skill(ability_id) or _commands.has_pending_skill(ability_id)
+			# 仅比较投影视图以保留正在显示的倒数；它不参与提交资格。
+			if _active_skill_bar.is_pending(ability_id) != pending:
+				_active_skill_bar.set_pending(ability_id, pending)
 			_active_skill_bar.update_skill_state(
 				ability_id,
 				int(entry.get("uses_remaining", entry.get("max_uses", 1))),
@@ -2195,6 +2219,7 @@ func _on_active_skill_unit_died(ability_id: int) -> void:
 	if replacement != null:
 		replacement.died.connect(_on_active_skill_unit_died.bind(ability_id), CONNECT_ONE_SHOT)
 		return
+	_client_inputs.forget_skill(ability_id)
 	_active_skills.remove(ability_id)
 	_cancel_pending_active_skill(ability_id, false)
 	if _active_skill_bar != null: _active_skill_bar.remove_skill(ability_id)
@@ -2209,9 +2234,9 @@ func use_active_skill(ability_id: int, expected_team: int = -1, requester_peer_i
 	if client_request:
 		if mode != "client" or not _can_submit_active_skill(ability_id, local_team):
 			return false
-		if _active_skill_bar != null: _active_skill_bar.set_pending(ability_id, true)
 		_network_request_id += 1
 		_client_inputs.skill(ability_id, _network_request_id)
+		if _active_skill_bar != null: _active_skill_bar.set_pending(ability_id, true)
 		_send_skill_request(ability_id, _input_tick_for_new_command(), _network_request_id)
 		return true
 	if is_net_client(): return false
@@ -2302,7 +2327,7 @@ func _can_submit_active_skill(ability_id: int, expected_team: int = -1) -> bool:
 	if _network_peer != null and _session.phase != MatchSession.Phase.RUNNING: return false
 	if not _active_skill_has_qualification(ability_id, expected_team): return false
 	if _commands.has_pending_skill(ability_id): return false
-	if _active_skill_bar != null and _active_skill_bar.is_pending(ability_id): return false
+	if _client_inputs.has_skill(ability_id) or _network_commands.has_skill(ability_id): return false
 	var entry: Dictionary = _active_skills.entry(ability_id)
 	var payer := _elixir_for_team(int(entry.team))
 	var cost := _active_skills.cost(ability_id)
@@ -2453,13 +2478,21 @@ var _sim_step_active := false
 func _sim_step(dt: float) -> void:
 	_battle_simulation.step(dt)
 
+## 输入许可与模拟推进分开：工作台暂停时仍可摆放，但不累计暂停墙钟。
+func can_advance_simulation() -> bool:
+	if mode == "client" or not _match_started or game_over:
+		return false
+	if _workbench.enabled:
+		return _workbench.battle_active and _art_dev_panel != null and _art_dev_panel.can_advance_simulation()
+	return true
+
 func _process(delta: float) -> void:
 	if mode == "server":
 		if _session.phase == MatchSession.Phase.LOADING and Time.get_ticks_msec() - _network_loading_started > 30000:
 			_network_failed("等待客户端加载超时")
 		if _session.phase == MatchSession.Phase.LOBBY and not _session.players.is_empty() and Time.get_ticks_msec() - _network_loading_started > 30000:
 			_network_failed("等待玩家或卡组超时")
-		if not _match_started or game_over: return
+		if not can_advance_simulation(): return
 		_simulation_clock.advance(delta)
 		_snapshot_timer -= delta
 		if _snapshot_timer <= 0.0 and not game_over:
@@ -2469,6 +2502,8 @@ func _process(delta: float) -> void:
 	if _session.phase == MatchSession.Phase.LOADING and Time.get_ticks_msec() - _network_loading_started > 30000:
 		_network_failed("等待对方加载超时")
 	if game_over:
+		return
+	if _workbench.enabled and not can_advance_simulation():
 		return
 	_update_command_countdowns()
 	if mode == "client":
@@ -2486,15 +2521,13 @@ func _process(delta: float) -> void:
 		queue_redraw()
 		return
 	if _workbench.enabled:
-		if _art_dev_panel != null and not _art_dev_panel.accepts_battle_input():
-			return
 		_tick_slow_effect_visuals(delta)
 		_skill_presentation.tick_visuals(delta)
 		queue_redraw()
 		_simulation_clock.advance(delta)
 		_sync_art_dev_panel_state()
 		return
-	if not _match_started or game_over:
+	if not can_advance_simulation():
 		return
 	# 更新冰冻视觉效果
 	_tick_slow_effect_visuals(delta)
@@ -2566,14 +2599,16 @@ func _update_elixir_rate() -> void:
 func _end_game(winner_team: int, reason: String) -> void:
 	if game_over:
 		return
+	var terminal_frame: Array = []
 	if mode != "client":
-		_terminal_result = {"session_id": _snapshot_system.lifecycle.session_id, "final_tick": _sim_tick_id, "winner_team": winner_team, "reason": reason, "terminal_state": _snapshot_system.capture()}
+		terminal_frame = _snapshot_system.capture_public_frame()
+		_terminal_result = {"session_id": _snapshot_system.lifecycle.session_id, "final_tick": _sim_tick_id, "winner_team": winner_team, "reason": reason, "terminal_state": _snapshot_system.encode_frame(terminal_frame)}
 	if mode == "server":
 		for team in _session.players:
 			var peer := _session.peer_for_team(team)
 			if _network_peer == null or not multiplayer.get_peers().has(peer): continue
 			var result := _terminal_result.duplicate()
-			result.terminal_state = _snapshot_system.capture(team)
+			result.terminal_state = _snapshot_system.encode_frame(terminal_frame, team)
 			_rpc_end.rpc_id(peer, result)
 	game_over = true
 	_session.finish(reason == "disconnect")
@@ -2888,6 +2923,7 @@ func remove_network_unit(net_id: int, play_death_visual: bool = true) -> void:
 func clear_network_unit_skill(unit: Unit) -> void:
 	var id := unit.active_ability_id
 	if _active_skills.entry(id).get("unit") == unit:
+		_client_inputs.forget_skill(id)
 		_active_skills.remove(id)
 		if _active_skill_bar != null:
 			_active_skill_bar.remove_skill(id)
@@ -2908,20 +2944,22 @@ func sync_network_unit_skill(unit: Unit, ability_id: int, slot: int) -> void:
 ## 因此先序列化并 DEFLATE 压缩成单个字节载荷，客户端解包后仍只做表现插值。
 @rpc("authority", "call_remote", "unreliable")
 func _rpc_snapshot(snapshot_bytes: PackedByteArray) -> void:
+	if mode != "client" or game_over or _snapshot_system.terminal_applied: return
+	if _network_peer != null and _session.phase != MatchSession.Phase.RUNNING: return
+	var decoded := _snapshot_system.decode_validated(snapshot_bytes)
+	if decoded == null or not _snapshot_system.lifecycle.accepts_session(decoded.packet[NetworkSnapshotSystem.S_SESSION]): return
 	if _network_peer == null:
-		_snapshot_system.apply(snapshot_bytes)
+		_snapshot_system.apply_decoded(decoded)
 		return
-	if mode != "client" or game_over or _session.phase != MatchSession.Phase.RUNNING: return
-	var tick := _snapshot_system.packet_tick(snapshot_bytes)
-	if tick < 0: return
+	var tick: int = decoded.packet[NetworkSnapshotSystem.S_SERVER_TICK]
 	_observe_network_arrival(tick)
 	if not _has_estimated_server_tick:
 		_estimated_server_tick = tick
 		_has_estimated_server_tick = true
-	if not _network_playback.enqueue(tick, &"_apply_buffered_snapshot", [snapshot_bytes]): _network_failed("网络快照队列已满，对局停止")
+	if not _network_playback.enqueue_snapshot(decoded): _network_failed("网络快照队列已满，对局停止")
 
-func _apply_buffered_snapshot(snapshot_bytes: PackedByteArray) -> void:
-	_snapshot_system.apply(snapshot_bytes)
+func _apply_buffered_snapshot(decoded: NetworkSnapshotSystem.DecodedSnapshot) -> void:
+	_snapshot_system.apply_decoded(decoded)
 
 ## 主机 → 客户端：冰冻法术视觉
 @rpc("authority", "call_remote", "reliable")
@@ -3108,7 +3146,8 @@ func _draw_deployment_preview(stats: Dictionary) -> void:
 		draw_circle(_deployment_preview_pos, spell_radius, Color(color.r, color.g, color.b, 0.12))
 		draw_arc(_deployment_preview_pos, spell_radius, 0.0, TAU, 48, color, 2.0, true)
 	elif type == "unit":
-		var unit_radius: float = minf(float(stats.get("radius", ArenaRules.TILE_SIZE * 0.5)), ArenaRules.TILE_SIZE * 0.42)
+		var unit_stats: Dictionary = CardDB.get_unit_stats(String(stats.spawn_plan.members[0])) if stats.has("spawn_plan") else stats
+		var unit_radius: float = minf(float(unit_stats.radius), ArenaRules.TILE_SIZE * 0.42)
 		draw_circle(_deployment_preview_pos, unit_radius, Color(color.r, color.g, color.b, 0.26))
 		draw_arc(_deployment_preview_pos, unit_radius, 0.0, TAU, 32, color, 2.0, true)
 	else:
@@ -3274,6 +3313,7 @@ func _clear_active_slot(team: int, slot: int) -> void:
 			unit.active_ability_id = -1
 			unit.active_ability_slot = -1
 			unit.clear_carried_active_skill_resource()
+		_client_inputs.forget_skill(int(id))
 		_cancel_pending_active_skill(int(id))
 		_active_skills.remove(int(id))
 		if _active_skill_bar != null: _active_skill_bar.remove_skill(int(id))
@@ -3290,8 +3330,8 @@ func growth_snapshot(receiver_team: int = 1) -> Dictionary:
 	return state
 
 func apply_growth_snapshot(value: Dictionary) -> void:
-	_card_growth.replace_replica(value)
-	if _hand != null: _hand._refresh(0.0)
+	var changed := _card_growth.apply_snapshot(value)
+	if changed and _hand != null: _hand._refresh(0.0)
 
 @rpc("authority", "call_remote", "reliable")
 func _rpc_unit_forge_audio(epoch: String, net_id: int, cue: String, position: Vector2) -> void:

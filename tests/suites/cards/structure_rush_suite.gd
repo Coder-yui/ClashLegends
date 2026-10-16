@@ -140,7 +140,8 @@ func run(harness: Object, main: Node2D) -> void:
 		rush_view._animation_player.current_animation == "Dash_Windup"
 		and is_zero_approx(rush_view._animation_player.current_animation_position)
 		and rush_view._action_sequence.index == 0
-		and rush_view._saved_control_action_serial == -1
+		and rush_view._last_visual_action_serial == source.get_visual_action_serial()
+		and rush_view._active_action_name == source.get_visual_action_name()
 	)
 	_expect(audio._sustain_players.has(audio_key) and source.get_visual_action_time_left() > 0.0 and control_restart_visual and control_restart_audio and no_rift_herald_stun_visual, "先锋眩晕无专用 Stun 映射；取消旧动作后即使跳过取消帧也不恢复旧序列，准备从起点重启且准备音按新序号重播")
 	# 让权威模拟保留原有“控制结束边界”Tick；上面的 0 只用于表现层断帧验证。

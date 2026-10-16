@@ -21,12 +21,19 @@ static func validate(label: String, stats: Dictionary, errors: PackedStringArray
 			check(path, value, "color", errors)
 		elif key == "footprint_tiles":
 			check(path, value, "vector2i", errors)
-		elif key in ["projectile_impact_visuals_by_use", "projectile_visuals_by_use", "visual_actions_by_use", "visual_scene_paths", "resource_visual_actions", "cast_locks", "deployment_member_ids"]:
+		elif key in ["projectile_impact_visuals_by_use", "projectile_visuals_by_use", "visual_actions_by_use", "visual_scene_paths", "resource_visual_actions", "cast_locks"]:
 			array(path, value, "text", errors)
 		elif key == "projectile_colors":
 			array(path, value, "color", errors)
 		elif key in NUMERIC_ARRAY_FIELDS:
 			array(path, value, "numbers" if key in ["resource_hit_damage_sequences", "resource_hit_delay_sequences", "attack_extra_hit_damage_multipliers", "attack_extra_hit_delays"] else "number", errors)
+		elif key == "spawn_plan":
+			if check(path, value, "dictionary", errors):
+				for field in value:
+					if field == "members": array(path + ".members", value[field], "text", errors)
+					elif field == "formation": check(path + ".formation", value[field], "text", errors)
+					elif field == "spacing": check(path + ".spacing", value[field], "number", errors)
+					else: errors.append(path + ": 未知生成计划字段 " + str(field))
 		elif key == "resource_dependencies":
 			_resources(path, value, errors)
 		elif key == "active_skills":

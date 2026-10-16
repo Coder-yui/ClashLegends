@@ -69,9 +69,9 @@ func skill_for_cast(id: int) -> Dictionary:
 static func prepare_use(definition: Dictionary, index: int) -> Dictionary:
 	var skill := definition.duplicate(true)
 	var damages: Array = skill.get("damage_by_use", [])
-	if bool(skill.get("unlimited_uses", false)): index = mini(index, int(skill.get("max_uses", 1)) - 1)
+	index = _use_index(definition, index)
 	var costs: Array = skill.get("cost_by_use", [])
-	if index >= 0 and index < costs.size(): skill.cost = costs[index]
+	if index >= 0 and index < costs.size(): skill.cost = _cost_at_index(definition, index)
 	var actions: Array = skill.get("visual_actions_by_use", [])
 	if index >= 0 and index < damages.size(): skill.damage = damages[index]
 	if index >= 0 and index < actions.size(): skill.visual_action = actions[index]
@@ -80,6 +80,17 @@ static func prepare_use(definition: Dictionary, index: int) -> Dictionary:
 	var impacts: Array = skill.get("projectile_impact_visuals_by_use", [])
 	if index >= 0 and index < impacts.size(): skill.projectile_impact_visual = impacts[index]
 	return skill
+
+static func _use_index(definition: Dictionary, index: int) -> int:
+	return mini(index, int(definition.get("max_uses", 1)) - 1) if bool(definition.get("unlimited_uses", false)) else index
+
+static func _cost_at_index(definition: Dictionary, index: int) -> Variant:
+	var costs: Array = definition.get("cost_by_use", [])
+	return costs[index] if index >= 0 and index < costs.size() else definition.get("cost", 0.0)
+
+## 资格与UI查询只读数值；完整技能副本留到实际施放时构造。
+static func cost_for_use(definition: Dictionary, index: int) -> float:
+	return maxf(float(_cost_at_index(definition, _use_index(definition, index))), 0.0)
 
 func consume(id: int) -> void:
 	var entry: Dictionary = _entries[id]
@@ -95,7 +106,9 @@ func grant_recast(id: int) -> void:
 
 func cost(id: int) -> float:
 	if not _entries.has(id): return 0.0
-	return 0.0 if bool(_entries[id].get("free_recast", false)) else maxf(float(skill_for_cast(id).get("cost", 0.0)), 0.0)
+	var current: Dictionary = _entries[id]
+	if bool(current.get("free_recast", false)): return 0.0
+	return cost_for_use(current.skill, int(current.max_uses) - int(current.uses_remaining))
 
 func replace_replica(id: int, uses: int, cooldown: float, free_recast: bool = false) -> void:
 	if not _entries.has(id): return

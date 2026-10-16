@@ -37,6 +37,13 @@ static func texture_for(card_id: String) -> Texture2D:
 	_textures[card_id] = null
 	return null
 
+## Deck browsing may load all card faces. Drop unused cache ownership before this match.
+static func retain_match_textures(card_ids: Array) -> Dictionary:
+	var before := _textures.size()
+	for id in _textures.keys():
+		if id not in card_ids: _textures.erase(id)
+	return {"before": before, "after": _textures.size(), "released_cache_entries": before - _textures.size()}
+
 ## 缺省图标返回 null，由 UI 保留既有文字占位。
 static func skill_icon(skill: Dictionary) -> Texture2D:
 	var path := String(skill.get("icon_path", ""))

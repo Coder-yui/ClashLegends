@@ -37,7 +37,7 @@ func sync_effects(skills: RefCounted, projectiles: Node2D, camera: Camera3D) -> 
 			_storms.erase(id)
 	present.clear()
 	if projectiles == null: return
-	var visible: Dictionary = projectiles.visible_snapshot()
+	var visible: Dictionary = projectiles.visible_view()
 	for id in visible:
 		var projectile: Dictionary = visible[id]
 		if String(projectile.get("visual", "")) != "ice_cone": continue

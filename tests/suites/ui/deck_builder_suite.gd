@@ -91,6 +91,16 @@ func run(harness: Object, main: Node2D) -> void:
 	for card_id in ["minion_squad", "melee_minion_squad", "ranged_minion_squad", "heavy_minion_squad", "super_minion_squad", "siege_minion_squad"]:
 		builder._open_card_info(card_id)
 		_expect(builder._deck_info_active_option.get_item_icon(0) == CardArt.skill_icon(CardDB.active_skills_for(card_id)[0]) and builder._deck_info_active_option.get_item_icon(0) != null, "组合部队详情显示已配置图标：" + card_id)
+		var stats := CardDB.get_card(card_id)
+		var members := CardDetails.deployment_member_sections(stats)
+		var member_scroll := builder._deck_info_overlay.find_child("DeploymentMembers", true, false) as ScrollContainer
+		_expect(not stats.has("hp") and not CardDetails.attributes(stats).any(func(row): return row.name == "生命") and not members.is_empty() and member_scroll != null, "纯部署卡不展示虚构生命，真实详情提供有界成员属性区：" + card_id)
+		for member in members:
+			var real := CardDB.get_unit_stats(member.id)
+			_expect(member.attributes.any(func(row): return row.name == "生命" and row.value == CardDetails.format_number(roundf(float(real.hp)))) and member.attributes.any(func(row): return row.name == "单次伤害" and row.value == CardDetails.format_number(roundf(float(real.damage)))), "成员详情读取真实每只生命与伤害：" + member.id)
+		if card_id == "heavy_minion_squad" and member_scroll != null:
+			var displayed := "\n".join(PackedStringArray(member_scroll.find_children("*", "Label", true, false).map(func(label): return label.text)))
+			_expect(displayed.contains("超级兵 ×1（每只）") and displayed.contains("炮车兵 ×1（每只）") and displayed.contains("生命：720") and displayed.contains("生命：390") and displayed.contains("单次伤害：72") and displayed.contains("单次伤害：58"), "备战真实详情同时显示重装部队两个不同成员的正确数值")
 	_expect(CardArt.skill_icon({"name": "无素材技能"}) == null, "缺省图标仍返回空纹理以保留文字占位能力")
 	builder._close_card_info()
 	builder._on_deck_slot_pressed(0)
@@ -109,6 +119,7 @@ func run(harness: Object, main: Node2D) -> void:
 			_expect(choice >= 0 and choice < maxi(skills.size(), 1), "随机主动槽使用该卡合法技能索引")
 	builder._clear_deck_ui()
 	await _main.get_tree().process_frame
+	await _check_confirmed_skill_choices()
 
 	await _check_background_resources()
 
@@ -228,6 +239,55 @@ func run(harness: Object, main: Node2D) -> void:
 	_expect(not is_instance_valid(cancelled_resources._drain) and cancelled_resources._active.is_empty(), "加载场景销毁后后台请求仍被完整领取并释放收尾节点")
 	for frame in 3: await _main.get_tree().process_frame
 	_expect(not _main.get_tree().paused, "加载中退出释放暂停状态，旧准备任务不能继续访问场景")
+
+func _check_confirmed_skill_choices() -> void:
+	var initial := ["ashe", "tombstone", "gnar", "aatrox", "aurelionsol", "rift_herald", "heal", "freeze"]
+	for scenario in ["browse", "remove", "random", "selected"]:
+		var result := {}
+		var builder := DeckBuilder.new()
+		_main.add_child(builder)
+		var deck := initial.duplicate()
+		if scenario in ["remove", "selected"]: deck[0] = "garen"
+		builder.open(deck, {"ashe": 999, "gnar": -1}, {}, func(cards: Array, choices: Dictionary, _skins: Dictionary) -> void:
+			result["deck"] = cards
+			result["choices"] = choices
+		)
+		var outside_id := "garen"
+		if scenario == "random":
+			# 先经详情页编辑九张技能卡，再随机八张，必有旧偏好落在组外。
+			var browsed: Array[String] = []
+			for id in CardDB.selectable_ids():
+				if CardDB.active_skills_for(id).is_empty(): continue
+				builder._open_card_info(id)
+				builder._on_info_active_skill_selected(1, id)
+				browsed.append(id)
+				if browsed.size() == 9: break
+			builder._randomize_deck()
+			for id in browsed:
+				if not builder._deck_selected.has(id):
+					outside_id = id
+					break
+		builder._open_card_info(outside_id)
+		builder._on_info_active_skill_selected(1, outside_id)
+		builder._close_card_info()
+		if scenario == "remove":
+			builder._on_deck_slot_pressed(0)
+			builder._perform_deck_context_action()
+			builder._on_deck_slot_pressed(0)
+			builder._on_deck_pool_card_pressed("ashe")
+		_expect(builder._active_skill_choices.has(outside_id) and builder._deck_selected.has(outside_id) == (scenario == "selected"), "备战保留详情编辑偏好与实际入组状态：" + scenario)
+		builder._deck_confirm.emit_signal("pressed")
+		_expect(result.has("deck") and result.has("choices"), "真实确认按钮交付最终出战配置：" + scenario)
+		if result.has("choices"):
+			if scenario == "selected":
+				_expect(result.choices.get(outside_id, -1) == 1, "最终出战配置保留已入组卡的合法技能选择")
+			else:
+				_expect(not result.choices.has(outside_id), "确认时只投影最终八张牌，排除浏览/移除/随机残留：" + scenario)
+			_expect(MatchSession.valid_deck(result.deck, result.choices), "最终出战配置通过服务器严格卡组校验：" + scenario)
+			var invalid: Dictionary = result.choices.duplicate()
+			invalid["ashe" if scenario == "selected" else outside_id] = 0
+			_expect(not MatchSession.valid_deck(result.deck, invalid), "服务器继续拒绝组外技能选择：" + scenario)
+		await _main.get_tree().process_frame
 
 func _check_background_resources() -> void:
 	var threaded := MatchResources.new()

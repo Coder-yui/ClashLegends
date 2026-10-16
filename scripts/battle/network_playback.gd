@@ -7,6 +7,11 @@ const MAX_DELAY_TICKS := 4.0
 var delay_ticks := DELAY_TICKS
 var _delay_samples: Array[float] = []
 const MAX_QUEUED := 4096
+## 20Hz下200ms播放+120ms迟到+50ms边界不超过8个最大包；另留8包突发余量。
+## 这是解压后序列化字节预算，不是Variant堆上限，也不保证任意长主循环停顿。
+const MAX_SNAPSHOT_BYTES := 16 * 1024 * 1024
+var _queued_snapshot_bytes := 0
+var _queued_snapshots := 0
 var _queue: Array[Dictionary] = []
 var _serial := 0
 var _needs_sort := false
@@ -29,6 +34,21 @@ func enqueue(at_tick: int, method: StringName, args: Array) -> bool:
 	_queue.append({"tick": at_tick, "method": method, "args": args.duplicate(true), "serial": _serial})
 	return true
 
+func enqueue_snapshot(snapshot: NetworkSnapshotSystem.DecodedSnapshot) -> bool:
+	if snapshot == null or _queue.size() >= MAX_QUEUED or _queued_snapshot_bytes + snapshot.raw_bytes_size > MAX_SNAPSHOT_BYTES: return false
+	_needs_sort = true
+	_serial += 1
+	_queue.append({"tick": snapshot.packet[NetworkSnapshotSystem.S_SERVER_TICK], "method": &"_apply_buffered_snapshot", "args": [snapshot], "serial": _serial, "snapshot_bytes": snapshot.raw_bytes_size})
+	_queued_snapshot_bytes += snapshot.raw_bytes_size
+	_queued_snapshots += 1
+	return true
+
+func snapshot_bytes() -> int:
+	return _queued_snapshot_bytes
+
+func snapshot_count() -> int:
+	return _queued_snapshots
+
 func advance(server_tick: float) -> Array[Dictionary]:
 	tick = maxf(tick, server_tick - delay_ticks)
 	if _needs_sort:
@@ -40,11 +60,17 @@ func advance(server_tick: float) -> Array[Dictionary]:
 		_needs_sort = false
 	var ready: Array[Dictionary] = []
 	while not _queue.is_empty() and float(_queue[0].tick) <= tick:
-		ready.append(_queue.pop_front())
+		var event: Dictionary = _queue.pop_front()
+		if event.has("snapshot_bytes"):
+			_queued_snapshot_bytes -= int(event.snapshot_bytes)
+			_queued_snapshots -= 1
+		ready.append(event)
 	return ready
 
 func clear() -> void:
 	_queue.clear()
+	_queued_snapshot_bytes = 0
+	_queued_snapshots = 0
 	_needs_sort = false
 	_delay_samples.clear()
 	delay_ticks = DELAY_TICKS

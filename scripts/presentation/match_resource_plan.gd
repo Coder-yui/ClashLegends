@@ -57,8 +57,8 @@ func _references(value: Variant, team: int, selected: Array) -> void:
 		for key in value:
 			if key in MatchResources.REFERENCES:
 				_enqueue(String(value[key]), team, selected if key in INHERIT else [])
-			elif key == "deployment_member_ids":
-				for id in value[key]: _enqueue(String(id), team, selected)
+			elif key == "spawn_plan":
+				for id in value[key].members: _enqueue(String(id), team, selected)
 			_references(value[key], team, selected)
 	elif value is Array:
 		for child in value: _references(child, team, selected)

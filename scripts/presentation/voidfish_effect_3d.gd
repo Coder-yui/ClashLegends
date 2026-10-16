@@ -9,7 +9,7 @@ var _missiles: Dictionary = {}
 func sync_effects(_skills: RefCounted, projectiles: Node2D, camera: Camera3D) -> void:
 	var present := {}
 	if projectiles == null: return
-	var visible: Dictionary = projectiles.visible_snapshot()
+	var visible: Dictionary = projectiles.visible_view()
 	for id in visible:
 		var projectile: Dictionary = visible[id]
 		if String(projectile.get("visual", "")) != "voidfish_missile": continue

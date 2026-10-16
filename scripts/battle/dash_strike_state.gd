@@ -43,7 +43,7 @@ func _tick_delivery(dt: float) -> bool:
 		return false
 	var remaining := dt
 	if not stopped and (source.is_stunned() or source._knockback_timer > 0.0):
-		source.cancel_controlled_action(&"stun" if source.is_stunned() else &"knockback")
+		source.cancel_controlled_action(ActionCancellation.STUN if source.is_stunned() else ActionCancellation.KNOCKBACK)
 		cancelled = true
 		_finish(source)
 		return false

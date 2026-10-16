@@ -10,15 +10,21 @@ func _initialize() -> void:
 	for card_id in CardDB.all():
 		var stats := CardDB.get_card(card_id)
 		var facts := {}
-		for field in ["cost", "hp", "damage", "interval", "deploy_time", "pre_deploy_time"]:
+		for field in ["cost", "hp", "damage", "interval", "deploy_time"]:
 			if stats.has(field):
 				facts[field] = stats[field]
-		# 通过实际消费者解析实体部署锁，避免检查器另存默认值。
-		if String(stats.get("type", "")) != "spell":
-			var unit := Unit.new()
-			unit.setup(0, stats, str(stats.name))
-			facts["deploy_time"] = unit.deploy_time
-			unit.free()
+		var entity := CardDB.get_unit_stats(card_id)
+		if not entity.is_empty():
+			facts.merge(_entity_facts(entity), true)
+		elif stats.has("spawn_plan"):
+			# 部署卡没有实体数值；每个成员事实只从真实单位定义读取。
+			var plan := CardDB.deployment_plan(card_id)
+			facts["spawn_plan"] = plan
+			var members := {}
+			for member_id in plan.get("members", []):
+				if not members.has(member_id):
+					members[member_id] = _entity_facts(CardDB.get_unit_stats(String(member_id)))
+			facts["members"] = members
 		facts["pre_deploy_time"] = stats.get("pre_deploy_time", 0.0)
 		var skills := CardDB.active_skills_for(card_id)
 		for index in skills.size():
@@ -33,3 +39,15 @@ func _initialize() -> void:
 	file.store_string(JSON.stringify({"schema": 1, "cards": cards}, "\t") + "\n")
 	print("Exported compiled card facts: ", cards.size())
 	quit()
+
+func _entity_facts(stats: Dictionary) -> Dictionary:
+	var facts := {}
+	for field in ["hp", "damage", "range", "speed", "radius", "interval", "first_hit"]:
+		if stats.has(field):
+			facts[field] = stats[field]
+	# 通过实际消费者解析实体部署锁，避免检查器另存默认值。
+	var unit := Unit.new()
+	unit.setup(0, stats, String(stats.name))
+	facts["deploy_time"] = unit.deploy_time
+	unit.free()
+	return facts

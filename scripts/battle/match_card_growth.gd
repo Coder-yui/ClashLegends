@@ -26,7 +26,13 @@ func snapshot() -> Dictionary:
 	return _teams.duplicate(true)
 
 func replace_replica(value: Dictionary) -> void:
+	apply_snapshot(value)
+
+## 完整成长状态参与比较；进度变化即使尚未换形也必须刷新手牌。
+func apply_snapshot(value: Dictionary) -> bool:
+	if _teams == value: return false
 	_teams = value.duplicate(true)
+	return true
 
 func clear() -> void:
 	_teams.clear()

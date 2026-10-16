@@ -26,8 +26,10 @@ func run(harness: SceneTree, scenario: String) -> void:
 			if main.mode == "client" and main.get_authoritative_server_tick() >= 5 and main._elixir.elixir == 10 and not buildings_sent:
 				buildings_sent = true
 				var pos := Vector2(300, 440 if main.local_team == 1 else 840)
-				main._rpc_deploy_request.rpc_id(1, "tombstone", pos, main.get_authoritative_server_tick(), main._session.session_id, 1)
-				main._rpc_deploy_request.rpc_id(1, "sun_disc", pos, main.get_authoritative_server_tick(), main._session.session_id, 2)
+				# 与真实客户端点击共用估计时钟；已播放快照Tick包含副本缓冲延迟。
+				var input_tick: int = main._input_tick_for_new_command()
+				main._rpc_deploy_request.rpc_id(1, "tombstone", pos, input_tick, main._session.session_id, 1)
+				main._rpc_deploy_request.rpc_id(1, "sun_disc", pos, input_tick, main._session.session_id, 2)
 		if scenario == "load_disconnect" and main.mode == "client" and main.local_team == 0 and main._battle_loading and is_instance_valid(main._battle_presentation) and not acted:
 			acted = true
 			main._close_network()
@@ -39,7 +41,11 @@ func run(harness: SceneTree, scenario: String) -> void:
 			acted = true
 			main._close_network()
 			main._on_server_disconnected()
-		if scenario in ["slow", "slow_second_client", "restart", "buildings"] and main.mode == "server" and main._sim_tick_id >= 25 and not acted:
+		# 建筑场景等待真实生成、付款/轮换和排程完成；外层40秒预算仍限制失败路径。
+		if scenario == "buildings" and main.mode == "server" and not acted and _building_commands_completed(main):
+			acted = true
+			main._end_game(-1, "draw")
+		if scenario in ["slow", "slow_second_client", "restart"] and main.mode == "server" and main._sim_tick_id >= 25 and not acted:
 			acted = true
 			main._end_game(-1, "draw")
 		if scenario == "restart" and main.game_over and not restarted:
@@ -50,7 +56,11 @@ func run(harness: SceneTree, scenario: String) -> void:
 			var previous_team: int = main.local_team
 			if main.mode == "client":
 				# 真实返回按钮释放连接并回菜单；服务器在两端离开后自动重建。
-				var button: Button = main.get_node("MatchResult").get_child(1)
+				var button := _return_button(main)
+				if button == null:
+					push_error("restart fixture cannot find the real return-to-menu button")
+					harness.quit(1)
+					return
 				button.pressed.emit()
 			while is_instance_valid(main) and harness.current_scene == main:
 				await harness.process_frame
@@ -106,3 +116,23 @@ func _new_main(harness: SceneTree) -> Node2D:
 	harness.root.add_child(main)
 	harness.current_scene = main
 	return main
+
+func _return_button(main: Node) -> Button:
+	var result := main.get_node_or_null("MatchResult")
+	if result == null: return null
+	for child in result.find_children("*", "Button", true, false):
+		if child is Button and child.text == "返回主菜单": return child
+	return null
+
+func _building_commands_completed(main: Node) -> bool:
+	if not main._match_started or main.game_over: return false
+	if not main._commands.inspect_cards().is_empty() or not main._commands.inspect_deployments().is_empty() or not main._network_commands.inspect().is_empty(): return false
+	if main._elixir.elixir != 3 or main._elixir_p1.elixir != 3: return false
+	for team in [0, 1]:
+		var found := {"tombstone": 0, "sun_disc": 0}
+		for unit in main._net_units.values():
+			if is_instance_valid(unit) and unit is Unit and unit.team == team and unit.is_building and found.has(unit.card_id): found[unit.card_id] += 1
+		if found.tombstone != 1 or found.sun_disc != 1: return false
+		var hand: Array = main.get_authoritative_hand(team)
+		if "tombstone" in hand or "sun_disc" in hand: return false
+	return true

@@ -34,6 +34,8 @@ func show_card(id: String, stats: Dictionary) -> void:
 	_text("费用：" + ("上一张卡本身费用" if String(stats.get("spell_kind", "")) == "mirror" else CardDetails.format_number(float(stats.get("cost", 0)))), 16, identity)
 	_text(CardDetails.brief_description(stats), 16, identity)
 	_attributes(stats, "属性")
+	for member in CardDetails.deployment_member_sections(stats):
+		_attribute_rows(member.attributes, "%s ×%d（每只）" % [member.name, member.count])
 	var abilities := GridContainer.new()
 	abilities.columns = 2
 	abilities.add_theme_constant_override("h_separation", 16)
@@ -67,13 +69,16 @@ func show_card(id: String, stats: Dictionary) -> void:
 		_attributes(upgraded, String(upgraded.get("name", "强化部署")))
 
 func _attributes(stats: Dictionary, title: String) -> void:
+	_attribute_rows(CardDetails.attributes(stats), title)
+
+func _attribute_rows(attributes: Array[Dictionary], title: String) -> void:
 	_text(title, 20)
 	var grid := GridContainer.new()
 	grid.columns = 4
 	grid.add_theme_constant_override("h_separation", 14)
 	grid.add_theme_constant_override("v_separation", 4)
 	_body.add_child(grid)
-	for attribute in CardDetails.attributes(stats):
+	for attribute in attributes:
 		for value in [attribute.name, attribute.value]:
 			var label := Label.new()
 			label.text = str(value)

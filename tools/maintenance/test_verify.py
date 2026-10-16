@@ -6,6 +6,7 @@ import unittest
 import sys
 import tempfile
 import subprocess
+from unittest.mock import patch
 
 spec = importlib.util.spec_from_file_location('verify', Path(__file__).resolve().parents[1] / 'verify.py')
 verify = importlib.util.module_from_spec(spec)
@@ -13,6 +14,212 @@ spec.loader.exec_module(verify)
 
 
 class VerifyTests(unittest.TestCase):
+    def test_default_verification_runs_safe_tools_gate_and_stops_on_failure(self):
+        for tool_passed in [True, False]:
+            with self.subTest(tool_passed=tool_passed), tempfile.TemporaryDirectory() as folder:
+                root = Path(folder)
+                (root / 'tests').mkdir()
+                (root / 'tests/suite_catalog.json').write_text('[{"id":"a","group":"contracts"}]')
+                (root / 'godot-version.txt').write_text('fixture-engine')
+                (root / 'tools/maintenance').mkdir(parents=True)
+                (root / 'tools/tests').mkdir()
+                (root / 'tools/maintenance/test_fixture.py').touch()
+                (root / 'tools/tests/test_fixture.py').touch()
+                commands = []
+                def step(name, command, *_args):
+                    commands.append((name, command))
+                    return {'passed': name != 'tool-tests' or tool_passed}
+                with patch.object(verify, 'ROOT', root), \
+                     patch.object(verify, 'identity', return_value={'content_sha256': 'fixed'}), \
+                     patch.object(verify.subprocess, 'check_output', return_value='fixture-engine'), \
+                     patch.object(verify, 'run_step', side_effect=step), \
+                     patch.object(sys, 'argv', ['verify', '--full', '--changed', 'README.md', '--godot', 'fixture', '--output', str(root / 'output')]):
+                    self.assertEqual(verify.main(), 0 if tool_passed else 1)
+                names = [name for name, _ in commands]
+                self.assertEqual(names[:3], ['audit', 'verifier-tests', 'tool-tests'])
+                self.assertEqual(commands[2][1][1:], ['-m', 'unittest', 'discover', '-s', 'tools/tests', '-p', 'test_*.py'])
+                self.assertEqual('import' in names, tool_passed)
+
+    def test_stale_effect_dependencies_stop_before_engine_import(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            (root / 'tests').mkdir()
+            (root / 'tests/suite_catalog.json').write_text('[{"id":"a","group":"contracts"}]')
+            (root / 'godot-version.txt').write_text('fixture-engine')
+            names = []
+            commands = {}
+            def step(name, command, *_args):
+                names.append(name)
+                commands[name] = command
+                return {'passed': name != 'effect-dependencies'}
+            with patch.object(verify, 'ROOT', root), \
+                 patch.object(verify, 'identity', return_value={'content_sha256': 'fixed'}), \
+                 patch.object(verify.subprocess, 'check_output', return_value='fixture-engine'), \
+                 patch.object(verify, 'run_step', side_effect=step), \
+                 patch.object(sys, 'argv', ['verify', '--full', '--changed', 'README.md', '--godot', 'fixture', '--output', str(root / 'output')]):
+                self.assertEqual(verify.main(), 1)
+            self.assertIn('effect-dependencies', names)
+            self.assertEqual(commands['effect-dependencies'][1:],
+                             ['tools/maintenance/effect_dependencies.py', '--check'])
+            self.assertNotIn('import', names)
+
+    def real_plan(self, *paths, **options):
+        return verify.verification_plan(verify.ROOT, (verify.ROOT / 'tests/suite_catalog.json').read_text(), list(paths), **options)
+
+    def test_docs_and_clean_plans_have_no_engine_or_python_test_gate(self):
+        for paths in [(), ('README.md', 'docs/reference/NETWORK_PROTOCOL.md', 'docs/navigation.json')]:
+            plan = self.real_plan(*paths)
+            self.assertFalse(plan['blocked'])
+            self.assertEqual(plan['suites'], [])
+            self.assertEqual(plan['python_tests'], [])
+            self.assertEqual([x[0] for x in verify.planned_commands(plan, None, Path('unused'))], ['audit', 'diff-check'])
+
+    def test_protocol_expands_consumers_but_does_not_select_all_cards(self):
+        plan = self.real_plan('scripts/battle/network_snapshot_system.gd')
+        self.assertFalse(plan['blocked'])
+        self.assertIn('network_lifecycle_suite', plan['suites'])
+        self.assertIn('terminal_state_suite', plan['suites'])
+        self.assertIn('ProjectileSuite', plan['suites'])
+        self.assertIn('TerminalAudioSuite', plan['suites'])
+        self.assertLess(plan['suite_count'], plan['catalog_suite_count'])
+        self.assertNotIn('SionSuite', plan['suites'])
+        self.assertEqual(plan['python_tests'], [])
+
+    def test_projectile_view_child_routes_to_existing_owner_suite(self):
+        plan = self.real_plan('tests/fixtures/projectile_view_checks.gd')
+        self.assertEqual(plan['suites'], ['ProjectileSuite'])
+        self.assertNotIn('ProjectileViewSuite', plan['suites'])
+        combined = self.real_plan('tests/suites/combat/projectile_suite.gd',
+                                  'tests/fixtures/projectile_view_checks.gd',
+                                  'tests/fixtures/projectile_view_checks.gd.uid')
+        self.assertEqual(combined['suites'], ['ProjectileSuite'])
+        self.assertEqual(combined['unknown_paths'], [])
+        self.assertFalse(combined['blocked'])
+        for consumer in ['jinx_projectile_effect', 'corki_projectile_effect', 'anivia_effect_3d',
+                         'gwen_tristana_effect_3d', 'voidfish_effect_3d', 'kayle_projectile_visuals']:
+            with self.subTest(consumer=consumer):
+                self.assertIn('ProjectileSuite', self.real_plan('scripts/presentation/' + consumer + '.gd')['suites'])
+
+    def test_ui_local_selects_direct_session_consumer(self):
+        plan = self.real_plan('scripts/ui/deck_builder.gd')
+        self.assertIn('DeckBuilderSuite', plan['suites'])
+        self.assertIn('session_suite', plan['suites'])
+        self.assertNotIn('ProjectileSuite', plan['suites'])
+        self.assertFalse(plan['blocked'])
+
+    def test_timing_and_lifecycle_expand_domains(self):
+        for path in ['scripts/battle/fixed_step_clock.gd', 'scripts/main.gd']:
+            plan = self.real_plan(path)
+            for suite in ['network_lifecycle_suite', 'numeric_system_suite', 'ArenaDeploymentSuite', 'StatusBoundarySuite']:
+                self.assertIn(suite, plan['suites'])
+            self.assertLess(plan['suite_count'], plan['catalog_suite_count'])
+
+    def test_unknown_or_wide_automatic_plan_requires_explicit_scope(self):
+        unknown = self.real_plan('unexpected/runtime.py')
+        self.assertEqual(unknown['unknown_paths'], ['unexpected/runtime.py'])
+        self.assertTrue(unknown['requires_explicit_scope'])
+        mixed = self.real_plan('README.md', 'unexpected/runtime.py')
+        self.assertTrue(mixed['blocked'])
+        wide = self.real_plan('scripts/main.gd', 'scripts/unit.gd')
+        self.assertTrue(wide['requires_explicit_scope'])
+        explicit = self.real_plan('unexpected/runtime.py', suites=['ProjectileSuite'])
+        self.assertFalse(explicit['blocked'])
+        self.assertEqual(explicit['suites'], ['ProjectileSuite'])
+        self.assertEqual(explicit['unknown_paths'], ['unexpected/runtime.py'])
+
+    def test_full_reads_single_catalog_and_keeps_network_explicit(self):
+        plan = self.real_plan(full=True)
+        self.assertEqual(plan['suites'], verify.expected_suites((verify.ROOT / 'tests/suite_catalog.json').read_text()))
+        names = [x[0] for x in verify.planned_commands(plan, 'fixture', Path('unused'))]
+        self.assertNotIn('network', names)
+        self.assertTrue(plan['effect_dependencies'])
+        self.assertTrue(plan['card_facts'])
+        self.assertIn('tools/tests/test_safe_probe.py', plan['python_tests'])
+        command = next(command for name, command in verify.planned_commands(plan, 'fixture', Path('unused')) if name == 'mechanics')
+        self.assertEqual(sum(arg.startswith('--suite=') for arg in command), plan['catalog_suite_count'])
+
+    def test_cached_script_scope_skips_import_but_resource_or_full_requires_it(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            (root / '.godot').mkdir()
+            (root / '.godot/global_script_class_cache.cfg').write_text('class CachedProbe')
+            source = json.dumps([{'id': 'ProjectileSuite', 'script': 'res://tests/suites/combat/projectile_suite.gd', 'group': 'combat'}])
+            plan = verify.verification_plan(root, source, [], suites=['ProjectileSuite'])
+            self.assertNotIn('import', [name for name, _ in verify.planned_commands(plan, 'fixture', Path('unused'))])
+            (root / 'scripts/battle').mkdir(parents=True)
+            (root / 'scripts/battle/new_probe.gd').write_text('class_name NewProbe')
+            new_class = verify.verification_plan(root, source, ['scripts/battle/new_probe.gd'])
+            self.assertTrue(new_class['requires_import'])
+            resource = verify.verification_plan(root, source, ['assets/texture.png'], suites=['ProjectileSuite'])
+            self.assertIn('import', [name for name, _ in verify.planned_commands(resource, 'fixture', Path('unused'))])
+            full = verify.verification_plan(root, source, [], full=True)
+            self.assertTrue(full['requires_import'])
+
+    def test_tools_gate_selects_modules_and_never_import_recipes(self):
+        plan = self.real_plan('tools/performance/safe_probe.py')
+        self.assertEqual(plan['python_tests'], ['tools/tests/test_safe_probe.py'])
+        self.assertEqual(plan['suites'], [])
+        own = self.real_plan('tools/maintenance/test_verify.py')
+        self.assertEqual(own['python_tests'], ['tools/maintenance/test_verify.py'])
+        effect = self.real_plan('tools/maintenance/effect_dependencies.py')
+        self.assertEqual(effect['python_tests'], ['tools/maintenance/test_effect_dependencies.py'])
+        commands = verify.planned_commands(effect, None, Path('unused'))
+        self.assertIn(('effect-dependencies', [sys.executable, 'tools/maintenance/effect_dependencies.py', '--check']), commands)
+        self.assertFalse(any('--write' in command or 'audio-import' in command for _, command in commands))
+        self.assertNotIn('import', [name for name, _ in commands])
+
+    def test_selected_maintenance_files_run_in_real_subprocess_import_context(self):
+        # Exercise real sibling imports, not a mocked run_step or this test's
+        # already populated sys.path. Never recurse into test_verify/full gates.
+        for filename in ['test_audit_project.py', 'test_effect_dependencies.py', 'test_card_facts.py']:
+            with self.subTest(filename=filename):
+                plan = self.real_plan()
+                plan['python_tests'] = ['tools/maintenance/' + filename]
+                commands = verify.planned_commands(plan, None, Path('unused'))
+                selected = [(name, command) for name, command in commands if name.startswith('verifier-tests')]
+                self.assertEqual(len(selected), 1)
+                command = selected[0][1]
+                self.assertEqual(command[1:], ['-m', 'unittest', 'discover', '-s', 'tools/maintenance', '-p', filename])
+                result = subprocess.run(command, cwd=verify.ROOT, capture_output=True, text=True, timeout=30)
+                self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+                self.assertIn('Ran ', result.stderr)
+                self.assertIn('\nOK', result.stderr)
+
+    def test_git_changed_includes_index_worktree_deleted_and_untracked(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            subprocess.run(['git', 'init', '-q', folder], check=True)
+            for name in ['staged.py', 'worktree.py', 'rename.py']:
+                (root / name).write_text('before')
+            subprocess.run(['git', 'add', '.'], cwd=root, check=True)
+            subprocess.run(['git', '-c', 'user.name=Test', '-c', 'user.email=test@example.invalid', 'commit', '-qm', 'baseline'], cwd=root, check=True)
+            (root / 'staged.py').write_text('after')
+            subprocess.run(['git', 'add', 'staged.py'], cwd=root, check=True)
+            (root / 'worktree.py').write_text('after')
+            subprocess.run(['git', 'mv', 'rename.py', 'renamed.py'], cwd=root, check=True)
+            (root / 'new.py').write_text('new')
+            self.assertEqual(verify.changed_paths(root), ['new.py', 'rename.py', 'renamed.py', 'staged.py', 'worktree.py'])
+
+    def test_changed_paths_cannot_escape_repository(self):
+        for value in ['../escape.gd', '/outside/repo.gd']:
+            with self.assertRaises(ValueError):
+                self.real_plan(value)
+
+    def test_plan_is_read_only_and_never_resolves_engine(self):
+        with tempfile.TemporaryDirectory() as folder:
+            output = Path(folder) / 'must-not-exist'
+            with patch.object(sys, 'argv', ['verify', '--plan', '--changed', 'README.md', '--output', str(output)]), \
+                 patch.object(verify, 'find_godot', side_effect=AssertionError('must not locate engine')), \
+                 patch.object(verify, 'run_step', side_effect=AssertionError('must not run checks')), \
+                 patch.object(verify, 'identity', side_effect=AssertionError('must not hash workspace')):
+                self.assertEqual(verify.main(), 0)
+            self.assertFalse(output.exists())
+
+    def test_explicit_suite_ignores_unrelated_dirty_worktree_without_changed(self):
+        with patch.object(sys, 'argv', ['verify', '--plan', '--suite', 'ProjectileSuite']), \
+             patch.object(verify, 'changed_paths', side_effect=AssertionError('explicit scope must not inherit unrelated dirty files')):
+            self.assertEqual(verify.main(), 0)
+
     def log(self, **updates):
         result = dict(schema=1, checks=12, failed=0, completed_suites=['a', 'b'])
         result.update(updates)

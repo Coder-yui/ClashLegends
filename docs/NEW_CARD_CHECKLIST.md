@@ -42,13 +42,11 @@
 ## 联合验收与记录
 
 ```sh
-python3 tools/maintenance/audit_project.py
-Godot --headless --path . --editor --import --quit
-Godot --headless --path . --script tests/mechanics_check.gd
-git diff --check
+python3 tools/dev.py verify --plan
+python3 tools/dev.py verify
 ```
 
-检查最终“全部通过”和错误日志，不能只看退出码。完整命令与联网/渲染要求见 [测试手册](../tests/README.md)。
+按计划选择新卡的通用契约、独特机制及直接消费者；新增协议、时序或生命周期才扩大对应领域和联网边界。完整新卡仍须完成五阶段联合验收，但每次素材或数值小修不重复全量机制；仅必要的重大跨域合入或里程碑显式 `verify --full` 一次。检查所选套件的最终“全部通过”和错误日志，不能只看退出码。选择规则与联网/渲染要求见 [测试手册](../tests/README.md)。
 
 总览写中文数值与玩法，动画/音频/特效各自说明；强关联互链，蓝红合篇。素材处理记录留在素材目录，已结束过程归档；截图录音统一放项目根目录素材库 `04-中间产物/`，源模型和来源清单不能当缓存删除。
 

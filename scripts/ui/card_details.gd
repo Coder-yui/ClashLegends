@@ -9,6 +9,7 @@ static func type_name(card_type: String, stats: Dictionary = {}) -> String:
 		"spell": return "法术"
 		"building": return "建筑"
 		_:
+			if stats.has("spawn_plan"): return "地面编队"
 			return "空军" if bool(stats.get("is_air", false)) else "地面"
 
 static func brief_description(stats: Dictionary) -> String:
@@ -54,8 +55,8 @@ static func attributes(stats: Dictionary, quantity_override: String = "") -> Arr
 		return result
 
 	var quantity := quantity_override if not quantity_override.is_empty() else str(maxi(int(stats.get("deployment_count", 1)), 1))
-	if card_type == "unit" and stats.has("deployment_member_ids"):
-		var member_ids: Array = stats.get("deployment_member_ids", [])
+	if stats.has("spawn_plan"):
+		var member_ids: Array = stats.spawn_plan.members
 		var unique_members := {}
 		for member_id in member_ids:
 			unique_members[String(member_id)] = true
@@ -147,23 +148,35 @@ static func target_name(stats: Dictionary) -> String:
 	return "空中和地面" if bool(stats.get("can_attack_air", false)) else "地面"
 
 static func deployment_member_summary(stats: Dictionary) -> String:
+	var parts: Array[String] = []
+	for member in deployment_member_sections(stats):
+		parts.append("%s×%d" % [member.name, member.count])
+	return "、".join(parts)
+
+## 每种成员只列一次；所有数值从实际实体定义读取，卡牌本身没有战斗属性。
+static func deployment_member_sections(stats: Dictionary) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
 	var counts := {}
 	var order: Array[String] = []
-	for raw_id in stats.get("deployment_member_ids", []):
+	for raw_id in stats.get("spawn_plan", {}).get("members", []):
 		var id := String(raw_id)
 		if not counts.has(id):
 			counts[id] = 0
 			order.append(id)
 		counts[id] += 1
-	var parts: Array[String] = []
 	for id in order:
-		var member_stats := CardDB.get_card(id)
-		parts.append("%s×%d" % [String(member_stats.get("name", id)), int(counts[id])])
-	return "、".join(parts)
+		var member_stats := CardDB.get_unit_stats(id)
+		var rows: Array[Dictionary] = []
+		for row in attributes(member_stats):
+			if row.name in ["生命", "单次伤害", "每秒伤害", "攻击间隔", "攻击距离", "移速", "目标", "体积"]:
+				rows.append(row)
+		result.append({"id": id, "name": String(member_stats.get("name", id)), "count": int(counts[id]), "attributes": rows})
+	return result
 
 static func deployment_formation_name(stats: Dictionary) -> String:
-	var count := maxi(int(stats.get("deployment_count", stats.get("deployment_member_ids", []).size())), 1)
-	match StringName(stats.get("deployment_formation", "ring")):
+	var plan: Dictionary = stats.get("spawn_plan", {})
+	var count := maxi(plan.get("members", []).size(), 1)
+	match StringName(plan.get("formation", "ring")):
 		&"polygon":
 			if count == 3:
 				return "三角形三个顶点"

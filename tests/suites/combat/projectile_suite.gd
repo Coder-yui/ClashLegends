@@ -11,6 +11,8 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_imp_tower_damage()
 	_check_splash_and_knockback()
 	_check_authority_ignores_presentation()
+	# 共享已有战场准备，表现视图合同不再重复创建独立Main场景。
+	preload("res://tests/fixtures/projectile_view_checks.gd").new().run(harness, main)
 
 func _check_projectile_travel() -> void:
 	var attacker_stats: Dictionary = CardDB.get_card("ashe").duplicate()
@@ -133,7 +135,7 @@ func _check_projectile_visual_snapshot() -> void:
 	var payload := snapshot_system._projectile_snapshot_payload(991, {
 		"pos": Vector2(120.0, 340.0), "color": Color(1.0, 0.34, 0.08), "radius": 4.0,
 		"visual": &"orb", "direction": Vector2.UP, "visual_height": 46.75,
-		"visual_offset": Vector2(0.0, -20.0), "visual_scale": 2.25,
+		"visual_offset": Vector2(0.0, -20.0), "visual_scale": 2.25, "speed": 320.0,
 	})
 	var old_mode: String = _main.mode
 	var old_mode_team: int = _main.local_team

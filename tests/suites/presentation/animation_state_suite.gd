@@ -13,13 +13,13 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_finished_source_idle_transition()
 	_check_cast_policies_and_snapshot()
 	_check_control_interruptions()
+	_check_control_pose_generation()
 	_check_idle_tail_deploy()
 	_check_deploy_control_priority()
 	_check_deploy_control_endings()
 
 func _check_control_interruptions() -> void:
-	# 眩晕会经过 UnitModel3D 的控制覆盖恢复路径；冻结则走动作重新对齐路径。
-	# 眩晕保留多段动作 section 和倍率；冰冻取消旧动作且不续播。
+	# 眩晕保留有效技能的 section 和倍率继续播放；冻结取消旧动作且不续播。
 	var sett_stats: Dictionary = CardDB.get_card("sett").duplicate(true)
 	sett_stats["deploy_time"] = 0.0
 	var sett := Unit.new()
@@ -653,3 +653,75 @@ func _check_idle_tail_deploy() -> void:
 		_expect(is_equal_approx(view._current_clip_speed, 1.0), card + "部署保持Idle原速")
 		view.free()
 		unit.free()
+
+## 真实双方模型：冻结只拥有当前姿势，状态/形态序号决定后续动作，不保存旧动作续播。
+func _check_control_pose_generation() -> void:
+	for team in [0, 1]:
+		var unit := _spawn_test_unit("gnar", team, Vector2(300 + 100 * team, 900))
+		_main._battle_presentation.attach_unit(unit, CardDB.get_card("gnar"))
+		var view := _view_for(unit)
+		_expect(view != null, "双方控制姿势回归建立正式纳尔模型：%d" % team)
+		if view == null:
+			unit.free()
+			continue
+		view.set_process(false)
+		unit._move_intent = Vector2.UP * unit.move_speed
+		view._process(0.0)
+		var player := view._animation_player
+		player.advance(0.15)
+		var clip := player.current_animation
+		var pose := player.current_animation_position
+		unit.freeze(0.5, &"initial")
+		view._process(0.0)
+		unit.freeze(0.8, &"refresh")
+		view._process(0.05)
+		player.advance(0.1)
+		_expect(player.current_animation == clip and is_equal_approx(player.current_animation_position, pose) and player.speed_scale == 0.0,
+			"重复冰冻刷新不切片段、seek或续播当前姿势：%d" % team)
+		# 此入口也是客户端收到新形态后使用的共享形态提交；不让动画决定权威换形。
+		unit._apply_form(1, false)
+		unit.play_visual_action(&"transform", 1.5)
+		view._process(0.0)
+		player = view._animation_player
+		var form_pose := player.current_animation_position
+		var form_clip := player.current_animation
+		player.advance(0.1)
+		_expect(unit.form_index == 1 and player.speed_scale == 0.0 and player.current_animation == form_clip
+			and is_equal_approx(player.current_animation_position, form_pose) and view._last_visual_action_serial == unit.get_visual_action_serial(),
+			"冻结中正式换形保持新模型冻结并消费动作身份，不补播旧形态：%d" % team)
+		unit.stun(1.0)
+		SuiteUtils.set_control_window(unit.control, &"freeze", 0.0)
+		view._process(0.0)
+		_expect(unit.is_stunned() and player.speed_scale > 0.0 and view._current_state == 1 and not view._playing_visual_action,
+			"解冻仍眩晕直接进入合法待机，不恢复冻结前移动或转换：%d" % team)
+		SuiteUtils.set_control_window(unit.control, &"stun", 0.0)
+		unit.play_visual_action(&"active", 1.2)
+		view._process(0.0)
+		player.advance(0.15)
+		clip = player.current_animation
+		pose = player.current_animation_position
+		var action_serial := view._last_visual_action_serial
+		var stale := unit.last_action_cancellation.duplicate(true)
+		stale["reason"] = "freeze"
+		unit.apply_action_cancellation(stale)
+		_expect(player.current_animation == clip and is_equal_approx(player.current_animation_position, pose)
+			and player.speed_scale > 0.0 and view._playing_visual_action and view._last_visual_action_serial == action_serial,
+			"Unit正式取消入口拒绝旧取消serial，不覆盖当前有效技能：%d" % team)
+		stale = {"serial": unit.action_cancel_serial + 1, "reason": "freeze", "attack": 0, "action": 0, "form": unit.form_change_serial - 1}
+		unit.apply_action_cancellation(stale)
+		_expect(player.current_animation == clip and is_equal_approx(player.current_animation_position, pose)
+			and player.speed_scale > 0.0 and view._playing_visual_action and view._last_visual_action_serial == action_serial,
+			"表现取消入口拒绝晚到旧形态generation，不覆盖当前技能：%d" % team)
+		unit.freeze(0.8, &"death-test")
+		view._process(0.0)
+		unit.take_damage(unit.hp + 1.0)
+		view._process(0.0)
+		var death_clip := player.current_animation
+		player.advance(0.1)
+		var stats := PresentationConfig.for_form(CardDB.get_card("gnar"), 0)
+		var replaced := view.replace_visual(load(PresentationConfig.scene_path(stats, team)), stats.visual_animations, float(stats.get("visual_forward_yaw", 0.0)))
+		_expect(view._dying and death_clip == "GnarBig_Death_anm" and player.current_animation == death_clip
+			and player.speed_scale > 0.0 and player.current_animation_position >= 0.09 and not replaced,
+			"真实致死覆盖冻结且死亡代理拒绝晚到换形，死亡片段继续推进：%d" % team)
+		view.free()
+		if is_instance_valid(unit): unit.free()

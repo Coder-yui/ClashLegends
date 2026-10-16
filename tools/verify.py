@@ -60,6 +60,240 @@ def expected_suites(source: str, selected: list[str] | None = None, groups: list
             or entry.get('group') in (groups or [])]
 
 
+
+def changed_paths(root: Path) -> list[str]:
+    """HEAD includes both index/worktree edits; no-renames preserves both endpoints."""
+    def git(*args):
+        return subprocess.check_output(['git', *args], cwd=root).split(b'\0')
+    return sorted({os.fsdecode(p) for p in
+                   git('diff', 'HEAD', '--name-only', '--no-renames', '-z') +
+                   git('ls-files', '--others', '--exclude-standard', '-z') if p})
+
+
+def verification_plan(root: Path, source: str, paths: list[str], *, full: bool = False,
+                      suites: list[str] | None = None, groups: list[str] | None = None) -> dict:
+    """Risk routes select catalog entries, never register another suite list.
+
+    Script stems/groups resolve through the sole suite_catalog.json. Direct class
+    consumers supplement routes; ubiquitous Main/Unit/CardDB use explicit domains.
+    Unknown paths stop automatic execution rather than silently claiming coverage.
+    """
+    catalog = json.loads(source)
+    all_suites = expected_suites(source, suites, groups)
+    explicit = bool(suites or groups)
+    chosen, tools, unknown, reasons = set(), set(), [], []
+    card_facts = full
+    effects = full
+    requires_import = full
+    cache = root / '.godot/global_script_class_cache.cfg'
+    cache_text = cache.read_text(errors='replace') if cache.is_file() else ''
+    stems = {Path(e.get('script', '')).stem: e['id'] for e in catalog}
+    # A script can expose multiple catalog methods (maintenance is one example).
+    def add_stems(*names):
+        chosen.update(e['id'] for e in catalog if Path(e.get('script', '')).stem in names)
+    def add_groups(*names):
+        chosen.update(e['id'] for e in catalog if e.get('group') in names)
+    python_tests = sorted(root.glob('tools/maintenance/test_*.py')) + sorted(root.glob('tools/tests/test_*.py'))
+    if full:
+        chosen.update(all_suites)
+        tools.update(str(p.relative_to(root)) for p in python_tests)
+    normalized = []
+    for raw in paths:
+        path = Path(raw)
+        if path.is_absolute():
+            try:
+                path = path.relative_to(root.resolve())
+            except ValueError:
+                raise ValueError('Changed path is outside the repository: ' + raw)
+        if '..' in path.parts:
+            raise ValueError('Changed path must stay inside the repository: ' + raw)
+        normalized.append(path.as_posix().removeprefix('./'))
+    for path in sorted(set(normalized)):
+        before = set(chosen)
+        matched = True
+        domain = 'local'
+        effective = path.removesuffix('.uid').removesuffix('.import')
+        stem = Path(effective).stem
+        if effective.startswith(('assets/', 'scenes/')) or effective == 'project.godot':
+            requires_import = True
+        if effective.endswith('.md') or effective.startswith(('docs/', '需求文档/')):
+            domain = 'documentation'
+        elif effective in ('tests/suite_catalog.json', 'tests/mechanics_check.gd', 'tests/suites/battle_suite.gd'):
+            # Changes to shared harness/registration require an explicit milestone scope.
+            matched = full or explicit
+            domain = 'shared-test-harness: explicit scope required'
+        elif effective.startswith('tests/suites/'):
+            resolved_stem = stem
+            add_stems(resolved_stem)
+            matched = resolved_stem in stems
+            if stem in ('network_integration_suite', 'network_boundary_suite'):
+                add_groups('network')
+                matched = True
+                domain = 'network-fixture: real three-peer checks require explicit network flags'
+        elif effective.startswith('tests/fixtures/'):
+            if stem == 'projectile_view_checks':
+                add_stems('projectile_suite')
+            elif stem.startswith('network_'):
+                add_groups('network')
+                domain = 'network-fixture'
+            elif stem.startswith('void_gate_'):
+                add_stems('void_gate_suite', 'spell_projection_suite', 'spell_warmup_suite')
+            elif stem == 'native_path_search':
+                add_stems('navigation_collision_suite', 'arena_deployment_suite')
+            else:
+                matched = False
+        elif effective.startswith(('scripts/data/', 'scripts/unit')):
+            card_facts = True
+            add_stems('card_db_validation_suite', 'content_contract_suite', 'maintenance_suite')
+            if '/cards/' in effective:
+                add_groups('deployment')
+                add_stems('deck_builder_suite', 'spell_warmup_suite')
+                # Definitions and their direct tests, including form/family aliases.
+                family = stem.split('_')[0]
+                for entry in catalog:
+                    test_stem = Path(entry.get('script', '')).stem
+                    if test_stem.startswith(family) or ('minion' in stem and test_stem == 'minion_squad_suite'):
+                        chosen.add(entry['id'])
+            else:
+                add_groups('combat', 'status', 'deployment', 'network', 'ui')
+            domain = 'card-definition' if '/cards/' in effective else 'shared-data/entity'
+        elif effective == 'scripts/main.gd' or effective in ('project.godot', 'godot-version.txt') or effective.startswith('scenes/'):
+            add_groups('contracts', 'network', 'combat', 'status', 'deployment', 'ui', 'presentation')
+            domain = 'lifecycle/cross-domain'
+        elif effective.startswith('scripts/battle/'):
+            if stem.startswith('network_') or stem in ('match_session', 'client_input_state'):
+                add_groups('network')
+                add_stems('projectile_suite', 'terminal_audio_suite', 'maintenance_suite', 'deck_builder_suite')
+                domain = 'protocol/session'
+            elif stem in ('fixed_step_clock', 'battle_simulation', 'battle_context', 'match_lifecycle', 'match_rules'):
+                add_groups('network', 'combat', 'deployment', 'status')
+                add_stems('workbench_suite', 'animation_state_suite', 'terminal_audio_suite')
+                domain = '20Hz/lifecycle'
+            elif stem == 'projectile_system':
+                add_stems('projectile_suite', 'numeric_system_suite', 'network_lifecycle_suite',
+                          'terminal_state_suite', 'kayle_suite', 'anivia_suite', 'gwen_suite',
+                          'jinx_suite', 'corki_suite', 'voidfish_ranged_suite', 'nocturne_suite',
+                          'spell_projection_suite', 'spell_warmup_suite')
+            elif stem in ('match_card_growth', 'active_skill_roster'):
+                add_stems('maintenance_suite', 'session_suite', 'kayn_suite', 'deck_builder_suite', 'active_skill_suite')
+            else:
+                add_groups('combat', 'status', 'deployment')
+                add_stems('network_lifecycle_suite')
+        elif effective.startswith('scripts/ui/'):
+            add_groups('ui')
+            if stem in ('deck_builder', 'card_details', 'card_hand', 'card_info'):
+                add_stems('session_suite', 'card_db_validation_suite')
+        elif effective.startswith('scripts/presentation/'):
+            if 'projectile' in stem or stem in ('anivia_effect_3d', 'gwen_tristana_effect_3d', 'voidfish_effect_3d'):
+                add_stems('projectile_suite')
+            elif stem in ('match_resources', 'match_resource_plan', 'match_model_pool', 'effect_resource_manifest'):
+                add_stems('deck_builder_suite', 'spell_warmup_suite', 'dependency_header_suite', 'presentation_suite')
+                effects = True
+            else:
+                add_groups('presentation')
+                add_stems('workbench_suite')
+        elif effective.startswith('scripts/audio/') or effective == 'default_bus_layout.tres':
+            add_stems('audio_presentation_suite', 'terminal_audio_suite', 'terminal_state_suite', 'spell_warmup_suite')
+            tools.update(str(p.relative_to(root)) for p in python_tests if 'audio' in p.name or 'gain' in p.name)
+        elif effective.startswith('assets/'):
+            add_stems('presentation_suite', 'spell_warmup_suite', 'animation_state_suite')
+            if effective.startswith('assets/effects/'):
+                effects = True
+                add_stems('dependency_header_suite', 'spell_projection_suite')
+            for part in Path(effective).parts[2:-1]:
+                if len(part) > 2:
+                    chosen.update(e['id'] for e in catalog if Path(e.get('script', '')).stem.startswith(part + '_'))
+            domain = 'resource: actual render/listen acceptance remains manual'
+        elif effective.startswith('tools/'):
+            candidates = [p for p in python_tests if p.relative_to(root).as_posix() == effective or p.stem == 'test_' + stem or
+                          effective in p.read_text().split('\nclass ', 1)[0] or
+                          (effective.startswith('tools/performance/') and p.stem == 'test_safe_probe') or
+                          (effective.startswith(('tools/lib/', 'tools/viewers/', 'tools/dev', 'tools/stage')) and p.stem == 'test_reusable_tools')]
+            tools.update(str(p.relative_to(root)) for p in candidates)
+            if stem in ('effect_dependencies', 'test_effect_dependencies', 'export_card_facts', 'check_card_facts', 'test_card_facts'):
+                effects |= 'effect' in stem
+                card_facts |= 'card_facts' in stem
+                if card_facts:
+                    add_stems('card_db_validation_suite', 'content_contract_suite')
+            matched = bool(candidates) or stem in ('export_card_facts', 'effect_dependencies', 'check_card_facts')
+            domain = 'tool-module'
+        elif effective in ('.gitignore', '.gitattributes', 'export_presets.cfg'):
+            tools.update(str(p.relative_to(root)) for p in python_tests if p.stem in ('test_audit_project', 'test_reusable_tools'))
+            domain = 'repository/export-configuration'
+        else:
+            matched = False
+        # Include tests directly reading the changed class/path. This is deliberately
+        # one edge, not a transitive walk through Main that expands every local edit.
+        runtime = root / effective
+        if effective.startswith('scripts/') and runtime.is_file():
+            text = runtime.read_text(errors='replace')
+            match = re.search(r'^class_name\s+(\w+)', text, re.M)
+            token = match.group(1) if match else None
+            if token and not re.search(r'\b' + re.escape(token) + r'\b', cache_text):
+                requires_import = True
+            for entry in catalog:
+                test = root / entry.get('script', '').removeprefix('res://')
+                if not test.is_file():
+                    continue
+                contents = test.read_text(errors='replace')
+                if effective in contents or (token and token not in ('Main', 'Unit', 'CardDB') and
+                                             re.search(r'\b' + re.escape(token) + r'\b', contents)):
+                    chosen.add(entry['id'])
+        if not matched:
+            unknown.append(path)
+        reasons.append({'path': path, 'risk': domain, 'suites': [e['id'] for e in catalog if e['id'] in chosen - before]})
+    if effects:
+        tools.update(str(p.relative_to(root)) for p in python_tests if p.name == 'test_effect_dependencies.py')
+    if card_facts:
+        tools.update(str(p.relative_to(root)) for p in python_tests if p.name == 'test_card_facts.py')
+    if explicit:
+        chosen = set(all_suites)
+    selected = [e['id'] for e in catalog if e['id'] in chosen]
+    broad = (len(selected) >= max(12, (len(catalog) * 3 + 4) // 5) or
+             any(r['risk'] in ('lifecycle/cross-domain', 'shared-data/entity') for r in reasons))
+    requires_scope = not (full or explicit) and (bool(unknown) or broad)
+    return {'schema': 1, 'mode': 'full' if full else 'explicit' if explicit else 'changed',
+            'changed_paths': sorted(set(normalized)), 'suites': selected,
+            'suite_count': len(selected), 'catalog_suite_count': len(catalog),
+            'python_tests': sorted(tools), 'card_facts': card_facts, 'effect_dependencies': effects,
+            'requires_import': requires_import,
+            'import_policy': 'Import only for --full/--import, resources/scenes/project settings, or missing global class cache; cached script edits reuse imports',
+            'unknown_paths': unknown, 'blocked': requires_scope, 'requires_explicit_scope': requires_scope,
+            'scope_reason': ('Unrecognized paths need an explicit scope' if unknown else
+                             'Automatic selection is broad (shared lifecycle/data or at least 60% of the catalog); narrow --changed or use --suite/--group/--full' if broad else ''),
+            'reasons': reasons, 'network': 'Only when --network/--network-boundaries/--network-render is explicitly supplied',
+            'manual_acceptance': 'Actual rendering/audio/performance acceptance is separate; this plan does not establish it'}
+
+
+def planned_commands(plan: dict, godot: str | None, output: Path, reverse: bool = False,
+                     network: bool = False) -> list[tuple[str, list[str]]]:
+    commands = [('audit', [sys.executable, 'tools/maintenance/audit_project.py'])]
+    for directory, label in [('tools/maintenance', 'verifier-tests'), ('tools/tests', 'tool-tests')]:
+        tests = [p for p in plan['python_tests'] if str(Path(p).parent) == directory]
+        if tests:
+            # Discovery supplies each test directory's import context. Several
+            # maintenance tests import sibling modules by their local names.
+            # Only an explicit full plan discovers the whole directory.
+            patterns = ['test_*.py'] if plan['mode'] == 'full' else [Path(p).name for p in tests]
+            for pattern in patterns:
+                name = label if len(patterns) == 1 else label + '-' + Path(pattern).stem
+                commands.append((name, [sys.executable, '-m', 'unittest', 'discover',
+                                        '-s', directory, '-p', pattern]))
+    if plan['effect_dependencies']:
+        commands.append(('effect-dependencies', [sys.executable, 'tools/maintenance/effect_dependencies.py', '--check']))
+    if plan['requires_import'] and (plan['suites'] or network or plan['card_facts']):
+        commands.append(('import', [godot or '<Godot>', '--headless', '--path', '.', '--editor', '--import', '--quit']))
+    if plan['card_facts']:
+        commands.extend([
+            ('card-facts-export', [godot or '<Godot>', '--headless', '--path', '.', '--script', 'tools/maintenance/export_card_facts.gd', '--', str(output / 'card-facts.json')]),
+            ('card-facts-check', [sys.executable, 'tools/maintenance/check_card_facts.py', str(output / 'card-facts.json')])])
+    if plan['suites']:
+        commands.append(('mechanics', [godot or '<Godot>', '--headless', '--path', '.', '--script', 'tests/mechanics_check.gd', '--',
+                                      *['--suite=' + name for name in plan['suites']],
+                                      *(['--reverse-suites'] if reverse else [])]))
+    commands.append(('diff-check', ['git', 'diff', '--check']))
+    return commands
+
 def validate_mechanics(log: str, expected: list[str]) -> tuple[dict | None, list[str]]:
     errors = []
     markers = [line[len(RESULT_PREFIX):] for line in log.splitlines() if line.startswith(RESULT_PREFIX)]
@@ -247,6 +481,10 @@ def run_network(godot: str, output: Path, timeout: float, port: int = 0, rendere
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--changed', action='append', nargs='+', metavar='PATH', help='Replace git changes with explicit repository paths; repeatable')
+    parser.add_argument('--full', action='store_true', help='Explicit milestone: all catalog suites and safe Python checks; no implicit three-peer network')
+    parser.add_argument('--import', dest='prepare_import', action='store_true', help='Explicitly rebuild Godot import/global-class cache before engine checks')
+    parser.add_argument('--plan', action='store_true', help='Print read-only JSON selection/commands; do not create output or start Godot')
     parser.add_argument('--group', action='append', help='Select a catalog group; repeat or combine with --suite (union)')
     parser.add_argument('--list-suites', action='store_true', help='List suite IDs by group without running checks')
     parser.add_argument('--suite', action='append', help='Run only a named mechanics suite; repeat to select several')
@@ -263,6 +501,8 @@ def main() -> int:
         parser.error('--network-port must be 0 or 1024..65535')
     if args.timeout <= 0:
         parser.error('--timeout must be positive')
+    if args.full and (args.suite or args.group):
+        parser.error('--full cannot be combined with --suite/--group')
     try:
         source = (ROOT / 'tests/suite_catalog.json').read_text()
         selection = expected_suites(source, args.suite, args.group)
@@ -271,32 +511,39 @@ def main() -> int:
                 if entry['id'] in selection:
                     print(f"{entry['group']:14} {entry['id']}")
             return 0
-        args.suite = selection if args.suite or args.group else None
-    except ValueError as exc:
+        paths = [p for batch in args.changed for p in batch] if args.changed else ([] if args.suite or args.group or args.full else changed_paths(ROOT))
+        plan = verification_plan(ROOT, source, paths, full=args.full, suites=args.suite, groups=args.group)
+        args.suite = plan['suites']
+    except (ValueError, OSError, subprocess.SubprocessError) as exc:
         parser.error(str(exc))
-    godot = args.godot or find_godot()
+    wants_network = args.network or args.network_render or args.network_boundaries
+    needs_engine = bool(plan['suites'] or plan['card_facts'] or wants_network)
+    plan['requires_import'] |= args.prepare_import or (needs_engine and not (ROOT / '.godot/global_script_class_cache.cfg').is_file())
+    preview = planned_commands(plan, args.godot, Path('<output>'), args.reverse_suites, wants_network)
+    plan['steps'] = [{'name': name, 'command': command} for name, command in preview]
+    plan['explicit_network'] = bool(wants_network)
+    plan['network_cases'] = (['normal'] if wants_network else []) + (
+        ['protocol', 'content', 'slow', 'slow_second_client', 'load_disconnect', 'load_timeout',
+         'disconnect', 'restart', 'buildings', 'impaired'] if args.network_boundaries else [])
+    if args.plan or plan['blocked']:
+        print(json.dumps(plan, ensure_ascii=False, indent=2))
+        if plan['blocked'] and not args.plan:
+            print('Execution blocked: choose a narrower --changed scope, explicit --suite/--group, or --full.', file=sys.stderr)
+        return 2 if plan['blocked'] else 0
+    godot = (args.godot or find_godot()) if needs_engine else None
     output = (args.output or ROOT / 'ClashLegends-开发素材库/04-中间产物/构建与验证/verification' / datetime.now().strftime('%Y%m%d-%H%M%S-%f')).resolve()
     output.mkdir(parents=True, exist_ok=False)
     report = {'schema': 1, 'started_at': datetime.now(timezone.utc).isoformat(), 'workspace': str(ROOT),
-              'identity_before': identity(ROOT), 'steps': [], 'manual_acceptance': 'Not performed'}
+              'identity_before': identity(ROOT), 'plan': plan, 'steps': [], 'manual_acceptance': 'Not performed'}
     try:
-        if not godot:
-            raise RuntimeError('Godot executable not found; set --godot or GODOT_BIN')
-        report['engine'] = subprocess.check_output([godot, '--version'], text=True, timeout=15).strip()
-        required_engine = (ROOT / "godot-version.txt").read_text().strip()
-        if report["engine"] != required_engine:
-            raise RuntimeError(f"Engine mismatch: expected {required_engine}, got {report['engine']}")
-        commands = [
-            ('audit', [sys.executable, 'tools/maintenance/audit_project.py']),
-            ('verifier-tests', [sys.executable, '-m', 'unittest', 'discover', '-s', 'tools/maintenance', '-p', 'test_*.py']),
-            ('import', [godot, '--headless', '--path', '.', '--editor', '--import', '--quit']),
-            ('card-facts-export', [godot, '--headless', '--path', '.', '--script', 'tools/maintenance/export_card_facts.gd', '--', str(output / 'card-facts.json')]),
-            ('card-facts-check', [sys.executable, 'tools/maintenance/check_card_facts.py', str(output / 'card-facts.json')]),
-            ('mechanics', [godot, '--headless', '--path', '.', '--script', 'tests/mechanics_check.gd', '--',
-                           *['--suite=' + name for name in (args.suite or [])],
-                           *(['--reverse-suites'] if args.reverse_suites else [])]),
-            ('diff-check', ['git', 'diff', '--check']),
-        ]
+        if needs_engine:
+            if not godot:
+                raise RuntimeError('Godot executable not found; set --godot or GODOT_BIN')
+            report['engine'] = subprocess.check_output([godot, '--version'], text=True, timeout=15).strip()
+            required_engine = (ROOT / "godot-version.txt").read_text().strip()
+            if report["engine"] != required_engine:
+                raise RuntimeError(f"Engine mismatch: expected {required_engine}, got {report['engine']}")
+        commands = planned_commands(plan, godot, output, args.reverse_suites, wants_network)
         for name, command in commands:
             step = run_step(name, command, output, args.timeout, args.suite)
             report['steps'].append(step)

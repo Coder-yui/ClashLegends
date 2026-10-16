@@ -15,8 +15,11 @@ func run(harness: SceneTree) -> void:
 	var announced: Array = []
 	var completed: Array = []
 	main.network_command_announced.connect(func(command):
-		announced.append([command.kind, command.team, command.execute_tick - command.input_tick, command.execute_tick - main.get_estimated_server_tick()]))
-	main.network_command_finished.connect(func(command, outcome): completed.append([command.kind, command.team, outcome]))
+		announced.append([command.kind, command.team, command.execute_tick - command.input_tick, command.execute_tick - main.get_estimated_server_tick()])
+		print("[NETWORK_COMMAND_TRACE] ", {"stage": "announced", "role": main.mode, "team": command.team, "kind": command.kind, "input_tick": command.input_tick, "execute_tick": command.execute_tick, "estimated_tick": main.get_estimated_server_tick(), "authority_tick": main.get_authoritative_server_tick()}))
+	main.network_command_finished.connect(func(command, outcome):
+		completed.append([command.kind, command.team, outcome])
+		print("[NETWORK_COMMAND_TRACE] ", {"stage": "finished", "role": main.mode, "team": command.team, "kind": command.kind, "outcome": outcome, "execute_tick": command.execute_tick, "estimated_tick": main.get_estimated_server_tick(), "authority_tick": main.get_authoritative_server_tick()}))
 	var playback_peak := 0
 	var delay_bounds := Vector2(4.0, 1.0)
 	if not capture_dir.is_empty() and main.mode == "client":
@@ -26,6 +29,16 @@ func run(harness: SceneTree) -> void:
 		AudioServer.add_bus_effect(0, recorder)
 		recorder.set_recording_active(true)
 	var double_nexus := OS.get_environment("CLASH_TEST_DOUBLE_NEXUS") == "1"
+	# 确定覆盖终局跨过4秒雾区到期与第二次金币回复；仅测试入口读取。
+	var terminal_not_before := 85
+	var terminal_override := OS.get_environment("CLASH_TEST_TERMINAL_TICK")
+	if not terminal_override.is_empty():
+		if not terminal_override.is_valid_int() or int(terminal_override) < 85 or int(terminal_override) > 160:
+			push_error("CLASH_TEST_TERMINAL_TICK must be an integer in 85..160")
+			main.free()
+			harness.quit(1)
+			return
+		terminal_not_before = int(terminal_override)
 	var result_cues: Array[StringName] = []
 	if main._audio_manager != null:
 		main._audio_manager.cue_played.connect(func(card, cue, _pos):
@@ -51,6 +64,8 @@ func run(harness: SceneTree) -> void:
 	var status_passed := false
 	var mist_seen := {}
 	var mist_exit_applied := false
+	var mist_pair_active := false
+	var mist_observation: Dictionary = {}
 	while Time.get_ticks_msec() - start < 20000:
 		await harness.process_frame
 		if main.mode == "server" and main._match_started and not shields_added:
@@ -75,9 +90,22 @@ func run(harness: SceneTree) -> void:
 			var exiting: Unit = status_case.mist[1]
 			exiting.apply_knockback(exiting.position + Vector2.LEFT, 180.0, 0.2, 1.0)
 		var mist_registry: Dictionary = main._client_units if main.mode == "client" else main._net_units
+		var mist_ids: Array = []
 		for mist_id in mist_registry:
 			var mist_unit: Unit = mist_registry[mist_id]
 			if mist_unit.target_protection.active(): mist_seen[mist_id] = true
+			if mist_unit.card_id == "gwen": mist_ids.append(mist_id)
+		# 真实出生ID确定角色：先生成者留在雾内，后生成者在50Tick强制退出。
+		# 观察其正式有效窗口，不要求延后的终局仍保留已经自然到期的4秒效果。
+		mist_ids.sort()
+		var observed_tick: int = main.get_authoritative_server_tick()
+		if mist_ids.size() == 2:
+			var retained_active: bool = mist_registry[mist_ids[0]].target_protection.active()
+			var exited_active: bool = mist_registry[mist_ids[1]].target_protection.active()
+			if observed_tick < 50 and retained_active and exited_active: mist_pair_active = true
+			if observed_tick >= 55 and observed_tick <= 85 and mist_pair_active and retained_active and not exited_active and mist_observation.is_empty():
+				mist_observation = {"tick": observed_tick, "retained_id": mist_ids[0], "exited_id": mist_ids[1], "both_previously_active": mist_pair_active, "retained_active": retained_active, "exited_active": exited_active}
+				print("[NETWORK_MIST_OBSERVATION] ", mist_observation)
 		if main.mode == "client" and main._match_started and main.get_estimated_server_tick() >= 5 and not sent_requests:
 			sent_requests = true
 			var epoch: String = main._session.session_id
@@ -94,7 +122,10 @@ func run(harness: SceneTree) -> void:
 				RenderingServer.force_draw(false)
 				harness.root.get_texture().get_image().save_png(capture_dir.path_join("client%d-input.png" % main.local_team))
 			main._rpc_active_skill_request.rpc_id(1, 999, input_tick, "old-session", 100)
-		if main.mode == "client" and main._match_started and main.get_authoritative_server_tick() >= 57 and not sent_skill:
+		# 仅在正式输入时钟与当前单调探针估计一致时点击；长帧后等待正式探针校正，
+		# 不改写 input_tick、不补发已拒绝请求，也不放宽服务器 late/future 策略。
+		var fresh_input_clock: bool = main._network_clock.synchronized and absf(float(main.get_estimated_server_tick()) - main._network_clock.estimate(Time.get_ticks_msec())) <= 1.5
+		if main.mode == "client" and main._match_started and main.get_authoritative_server_tick() >= 57 and fresh_input_clock and not sent_skill:
 			for ability in main._active_skills.ids():
 				var entry: Dictionary = main._active_skills.entry(ability)
 				if entry.card_id == "garen" and entry.team == main.local_team and main._elixir.elixir >= float(entry.skill.cost):
@@ -137,7 +168,8 @@ func run(harness: SceneTree) -> void:
 			boundary_unit.apply_knockback(Vector2(600, 850), 10, 0.1, 1.4, [boundary_unit.combat_source_id, 2, 0])
 			boundary_unit.apply_knockback(Vector2(400, 850), 30, 0.4, 1.4, [boundary_unit.combat_source_id, 1, 0])
 			main._combat.commit_batch()
-		if main.mode == "server" and main._match_started and main._sim_tick_id >= 85 and not fired:
+		# 必须观察真实技能接纳、team1中断与双方完成后才能终局；外层20秒仍是硬上限。
+		if main.mode == "server" and main._match_started and main._sim_tick_id >= terminal_not_before and interrupted_skill and main.fixture_skills_completed() and not fired:
 			fired = true
 			# 使用真实普攻弹体致胜，覆盖“上一快照刚发出”的终局路径。
 			main.launch_attack(main._towers[0], main._king_enemy, 100000.0, 100000.0, 0.0, 0.0, Color.WHITE)
@@ -159,6 +191,9 @@ func run(harness: SceneTree) -> void:
 	if outsider != null:
 		outsider.close()
 	var result := {"schema": 1, "role": "server" if main.mode == "server" else "client%d" % main.local_team, "passed": main.game_over}
+	result["terminal_not_before"] = terminal_not_before
+	result["skill_progress"] = {"sent": sent_skill, "interrupted": interrupted_skill, "accepted": main.accepted_fixture_skills, "completed": main.completed_fixture_skills, "refunds": main.fixture_refunds}
+	result["mist_observation"] = mist_observation
 	if recorder != null:
 		recorder.set_recording_active(false)
 		var wav := recorder.get_recording()
@@ -183,7 +218,7 @@ func run(harness: SceneTree) -> void:
 			var pos := unit.net_target_pos if main.mode == "client" else unit.global_position
 			units.append([id, unit.card_id, unit.hp, snappedf(pos.x, 0.01), snappedf(pos.y, 0.01), snappedf(unit.get_shield_ratio(), 0.000001), snappedf(unit.get_shield_capacity_ratio(), 0.000001), unit.form_index, unit.net_form_change_serial if main.mode == "client" else unit.form_change_serial, unit.get_attack_visual_serial(), unit.action_cancel_serial, unit.cancelled_visual_serial, unit.action_permissions(), snappedf(unit.get_visual_facing_direction().x, 0.00001), snappedf(unit.get_visual_facing_direction().y, 0.00001), main.get_active_skill_snapshot(unit.active_ability_id), unit.target_protection.snapshot()])
 		result["units"] = units
-		result["passed"] = result.audio_stopped and result.winner_team == (-1 if double_nexus else 0) and main._king_enemy.hp == 0.0 and not result.session_id.is_empty()
+		result["passed"] = result.audio_stopped and result.winner_team == (-1 if double_nexus else 0) and main._king_enemy.hp == 0.0 and not result.session_id.is_empty() and int(result.final_tick) >= terminal_not_before
 		var session_guards: bool = sent_requests and sent_skill if main.mode == "client" else outsider_rejected and stable_callback and main._session.request_sequence(1) == 2 and main._session.request_sequence(0) == 2 and main.get_authoritative_queue(1).back() == "garen" and interrupted_skill
 		if main.mode == "server":
 			result["player_states"] = [_private_state(main, 0), _private_state(main, 1)]
@@ -207,7 +242,12 @@ func run(harness: SceneTree) -> void:
 			result["adaptive_playback"] = adaptive_ok
 			result["passed"] = result.passed and buffer_ok and adaptive_ok
 		result["remote_elixir"] = main._elixir.elixir if main.mode == "client" else main._elixir_p1.elixir
-		session_guards = session_guards and (result.remote_elixir == 1.0 if main.mode == "server" or main.local_team == 1 else result.remote_elixir >= 0.0)
+		# team1初始5-盖伦5，技能预扣与原收据退款净0；初期倍率1，金币只由实际Tick回复。
+		var expected_team1_coins := float(floor((float(result.final_tick) * main.SIM_DT + 0.0000001) / ElixirManager.REGEN_INTERVAL))
+		result["expected_team1_coins"] = expected_team1_coins
+		session_guards = session_guards and (result.remote_elixir == expected_team1_coins if main.mode == "server" or main.local_team == 1 else result.remote_elixir >= 0.0)
+		if main.mode == "server":
+			session_guards = session_guards and main.fixture_refunds.size() == 1 and main.fixture_refunds[0].passed
 		result["session_guards"] = session_guards
 		if main.mode == "server":
 			result["status_rules"] = status_checked and status_passed
@@ -217,10 +257,7 @@ func run(harness: SceneTree) -> void:
 			result["outsider_rejected"] = outsider_rejected
 			result["callback_stable"] = stable_callback
 			result["remote_queue"] = main.get_authoritative_queue(1)
-		var active_mists := 0
-		for mist_id in mist_seen:
-			if registry.has(mist_id) and registry[mist_id].target_protection.active(): active_mists += 1
-		result["mist_replication"] = mist_seen.size() == 2 and active_mists == 1
+		result["mist_replication"] = mist_seen.size() == 2 and mist_pair_active and not mist_observation.is_empty()
 		result["passed"] = result.passed and session_guards and result.mist_replication
 		# 有 GPU 的执行可以保存终局画面；不作为听感确认。
 		for arg in OS.get_cmdline_user_args():
