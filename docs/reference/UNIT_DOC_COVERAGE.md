@@ -2,7 +2,7 @@
 
 [返回单位索引](../units/README.md)
 
-更新于2026-10-15。当前覆盖全部已注册CardDB定义、对应卡牌/形态正文及4篇系统对象正文。数量包含不可组卡的形态和召唤物，不等于可选卡池数量。
+更新于2026-10-16。当前覆盖全部已注册CardDB定义、对应卡牌/形态正文及4篇系统对象正文。数量包含不可组卡的形态和召唤物，不等于可选卡池数量。
 
 本页维护注册定义、玩法正文和素材入口之间的对应关系。修改卡牌时，对照编译定义及下列消费者核对数值、条件与时序；编队采用实际成员定义，覆盖形态采用基础与transformed_stats合并值，召唤部署采用生成入口的覆盖值。本页收录不代表本次逐卡重新运行、目视或试听通过。
 
@@ -26,6 +26,7 @@
 
 | 定义 / 正文（含形态） | 当前机制与边界重点 | 动画 / 音频 |
 | --- | --- | --- |
+| `void_summoning` · [虚空召唤](../units/void_summoning.md) | 4格8秒10鱼；首次0.5秒/之后每0.8秒召唤；固定随机落点/边界；双方死亡转化；0.8秒出生与区域到期边界 | [声音](../units/audio/void_summoning.md) · [特效](../units/effects/void_summoning.md) |
 | `scuttle_crab` · [峡谷迅捷蟹](../units/scuttle_crab.md) | 无普攻、建筑前自疗、死亡独立治疗区、范围双减速 | [动作](../units/animations/scuttle_crab.md) · [声音](../units/audio/scuttle_crab.md) · [特效](../units/effects/scuttle_crab.md) |
 | `void_scuttle_crab` · [虚空迅捷蟹](../units/void_scuttle_crab.md) | 无普攻、建筑前自疗、死亡独立治疗区、范围双减速 | [动作](../units/animations/void_scuttle_crab.md) · [声音](../units/audio/void_scuttle_crab.md) · [特效](../units/effects/void_scuttle_crab.md) |
 | `void_gate` · [兹若特传送门](../units/void_gate.md) | 6费建筑、6秒周期出兽；主动摧毁自身召唤2只、3×3占地与30碰撞半径 | [动作](../units/animations/void_gate.md) · [声音](../units/audio/void_gate.md) |

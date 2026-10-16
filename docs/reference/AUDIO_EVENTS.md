@@ -92,7 +92,7 @@
 
 持续主动增益支持`active_buff:attack_launch`和`active_buff:attack_hit`专属攻击音。权威发射时选取具体cue，命中读取出手时`presentation_source.active_buff`，不按命中瞬间剩余增益猜测；沿用真实伤害收据与命中去重。
 
-腐蚀法术支持`spell:zone_sustain`：正式施法通过Main的区域音频入口开始，复用GameAudioManager.start_zone_audio与可靠_rpc_zone_audio；区域5秒到期后保留原始尾声，清场和终局立即停止，暂停恢复沿用区域播放器。该事件仅对spell_kind=corrosion登记，普通spell:cast不再重复播放同段音轨。
+腐蚀法术支持`spell:zone_sustain`：正式施法通过Main的区域音频入口开始，复用GameAudioManager.start_zone_audio与可靠_rpc_zone_audio；区域5秒到期后保留原始尾声，清场和终局立即停止，暂停恢复沿用区域播放器。该事件对spell_kind=corrosion及void_summoning登记，普通spell:cast不再重复播放同段音轨。
 
 区域持续音支持布尔`natural_tail`（默认false，仅`:zone_sustain`）：保留原始单段音轨至自然结束，声音计时至少覆盖原音长度，不循环重播；暂停、清场、终局和预算淘汰仍统一管理。此字段不延长权威区域或视觉。腐蚀配置true，原音6.547188秒，权威区域5秒。
 
@@ -109,3 +109,5 @@
 部署语音事件可配置 `scope: "deployment_group"`：由 GameAudioManager 按阵营、卡牌及现有部署组 ID 去重，首次成功播放后抑制同组重复；无组 ID 的单只对象按实例处理。默认 `unit` 保留逐单位行为。`begin_battle()` 清空记录，生成 RPC 已携带组 ID，无新增网络载荷。该字段只允许用于 `deploy:voice`。
 
 河蟹死亡衔接动作于配置的 `death_transition_delay`（当前1秒）派发 `shrine:leap`，要求同时具有死亡治疗区与该阶段配置；祭坛展开阶段于 `death_shrine_delay`（当前2秒）派发 `shrine:start`，条件为 `death_heal_radius > 0`；死亡赏金实际入账时派发 `bounty:gain`，条件为 `death_enemy_elixir > 0`。两者通过可靠卡牌事件消费，不依附已死亡单位，重复死亡不重播；自尽仍生成祭坛声但免除赏金声。
+
+虚空召唤的 `spell:zone_sustain` 使用虚空女皇大招施放、激活、持续循环预合成的3条8秒序列，`natural_tail=true`避免开始段重播；到8秒区域结束停止。1秒激活衔接属于项目适配。出生/攻击/死亡由各虚空鱼自身事件派发。
