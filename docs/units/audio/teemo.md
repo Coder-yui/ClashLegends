@@ -18,8 +18,8 @@
 | 普通攻击命中 | 2 | 0 dB | [试听 1](../../../assets/audio/units/teemo/play_sfx_teemo_teemobasicattack_onhit_r1.wav) · [试听 2](../../../assets/audio/units/teemo/play_sfx_teemo_teemobasicattack_onhit_r2.wav) |
 | 普攻发射 | 2 | 0 dB | [试听 1](../../../assets/audio/units/teemo/play_sfx_teemo_teemobasicattack_onmissilelaunch_r1.wav) · [试听 2](../../../assets/audio/units/teemo/play_sfx_teemo_teemobasicattack_onmissilelaunch_r2.wav) |
 | 死亡 | 3 | 0 dB | [试听 1](../../../assets/audio/units/teemo/play_vo_teemo_death3d_r1_zh_cn.wav) · [试听 2](../../../assets/audio/units/teemo/play_vo_teemo_death3d_r2_zh_cn.wav) |
-| 强化攻击发射 | 2 | 0 dB | [试听 1](../../../assets/audio/units/teemo/play_sfx_teemo_teemoq_onmissilelaunch_r1.wav) · [试听 2](../../../assets/audio/units/teemo/play_sfx_teemo_teemoq_onmissilelaunch_r2.wav) |
-| 强化攻击出手 | 1 | 0 dB | [试听 1](../../../assets/audio/units/teemo/play_sfx_teemo_teemoq_oncast.wav) |
+| 致盲吹箭发射 | 2 | 0 dB | [试听 1](../../../assets/audio/units/teemo/play_sfx_teemo_teemoq_onmissilelaunch_r1.wav) · [试听 2](../../../assets/audio/units/teemo/play_sfx_teemo_teemoq_onmissilelaunch_r2.wav) |
+| 致盲吹箭出手 | 1 | 0 dB | [试听 1](../../../assets/audio/units/teemo/play_sfx_teemo_teemoq_oncast.wav) |
 
 0 dB 表示不额外加减音量，不代表所有原声听起来一样响。表中给出代表性试听，完整原始素材仍保留在来源记录中。
 

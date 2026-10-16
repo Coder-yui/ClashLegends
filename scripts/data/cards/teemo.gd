@@ -14,9 +14,9 @@ static func definition() -> Dictionary:
 			"projectile_spawn_at_edge": true, "projectile_spawn_offset": 7.5, "projectile_collision_radius": 4.0,
 			"is_air": false, "building_only": false, "can_attack_air": true,
 			"active_skills": [{
-					"name": "致盲", "kind": "empowered_attack",
+					"name": "致盲", "kind": "empowered_attack", "strike_type": "skill",
 					"cost": 0, "max_uses": 2, "cooldown": 4.0,
-					"description": "强化下一次普通攻击；命中单位后使其接下来的两次普通攻击（包括强化普攻）不造成伤害。技能生效时刷新普攻，打断旧攻击并立即重新开始强化攻击前摇。",
+					"description": "下一次出手释放致盲吹箭，属于技能，不受致盲影响且不消耗自身致盲次数；命中单位后使其接下来的两次普通攻击（包括强化普攻）不造成伤害。技能生效时刷新普攻，打断旧攻击并立即重新开始吹箭前摇。",
 					"empowered_damage_multiplier": 1.0, "blind_charges": 2,
 				}],
 		},
