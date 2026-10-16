@@ -11,6 +11,7 @@ var _old_position: Vector2i
 var _old_content_size: Vector2i
 var _old_transform: Transform2D
 var _old_min_size: Vector2i
+var _old_aspect: Window.ContentScaleAspect
 
 func install(window: Window) -> void:
 	_window = window
@@ -19,6 +20,8 @@ func install(window: Window) -> void:
 	_old_content_size = window.content_scale_size
 	_old_transform = window.canvas_transform
 	_old_min_size = window.min_size
+	_old_aspect = window.content_scale_aspect
+	window.content_scale_aspect = Window.CONTENT_SCALE_ASPECT_KEEP
 	window.content_scale_size = SIZE
 	center(1.0)
 	if DisplayServer.get_name() != "headless":
@@ -55,6 +58,7 @@ func restore() -> void:
 	if not is_instance_valid(_window): return
 	_window.canvas_transform = _old_transform
 	_window.content_scale_size = _old_content_size
+	_window.content_scale_aspect = _old_aspect
 	_window.min_size = _old_min_size
 	if DisplayServer.get_name() != "headless":
 		_window.size = _old_size

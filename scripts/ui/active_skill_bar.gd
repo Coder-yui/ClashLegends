@@ -4,11 +4,12 @@ extends CanvasLayer
 
 signal skill_pressed(ability_id: int)
 
-const BUTTON_SIZE := Vector2(58.0, 58.0)
+const LAYOUT := preload("res://scripts/ui/battle_layout.gd")
+const BUTTON_SIZE := Vector2.ONE * LAYOUT.SKILL_SIZE
 const ICON_SIZE := BUTTON_SIZE - Vector2(8.0, 8.0)
-## 对齐战场底部两侧、手牌区上方的固定圆位（720×1400 设计分辨率）。
+## 图标利用最后排两侧不可部署角区；文字在手牌上方的一格布景带。
 const DESIGN_WIDTH := 720.0
-const LEFT_SLOT_POSITION := Vector2(23.0, 1195.0)
+const LEFT_SLOT_POSITION := Vector2(23.0, 0.0)
 const RIGHT_SLOT_POSITION := Vector2(DESIGN_WIDTH - LEFT_SLOT_POSITION.x - BUTTON_SIZE.x, LEFT_SLOT_POSITION.y)
 const SLOT_POSITIONS := [LEFT_SLOT_POSITION, RIGHT_SLOT_POSITION]
 
@@ -35,7 +36,8 @@ var _rule_labels: Array[Label] = []
 func _ready() -> void:
 	layer = 12
 	var root := Control.new()
-	root.set_anchors_preset(Control.PRESET_FULL_RECT)
+	root.size = Vector2(DESIGN_WIDTH, 85.0)
+	apply_layout(get_viewport().get_visible_rect().size)
 	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(root)
 	for slot_index in range(2):
@@ -81,7 +83,7 @@ func _ready() -> void:
 		button.add_child(pending_label)
 		_pending_labels.append(pending_label)
 		var rule_label := Label.new()
-		rule_label.position = Vector2(clampf(SLOT_POSITIONS[slot_index].x + BUTTON_SIZE.x * 0.5 - 60.0, 4.0, DESIGN_WIDTH - 124.0), SLOT_POSITIONS[slot_index].y + BUTTON_SIZE.y + 2.0)
+		rule_label.position = Vector2(SLOT_POSITIONS[slot_index].x + BUTTON_SIZE.x + 8.0 if slot_index == 0 else SLOT_POSITIONS[slot_index].x - 128.0, 32.0)
 		rule_label.size = Vector2(120.0, 20.0)
 		rule_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		rule_label.add_theme_font_override("font", CardArt.ui_font())
@@ -93,6 +95,11 @@ func _ready() -> void:
 		rule_label.visible = false
 		root.add_child(rule_label)
 		_rule_labels.append(rule_label)
+
+
+func apply_layout(view_size: Vector2) -> void:
+	scale = Vector2.ONE * LAYOUT.ui_scale(view_size)
+	offset = LAYOUT.skill_origin(view_size)
 
 
 func show_skill(slot_index: int, ability_id: int, skill_name: String, accent: Color, skill_cost: float = 0.0, max_uses: int = 1, uses_remaining: int = 1, cooldown: float = 0.0, deployment_ready: bool = true, icon: Texture2D = null) -> void:

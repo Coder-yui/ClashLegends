@@ -22,8 +22,8 @@ var _growth_forms: Dictionary = {}
 const GROWTH_BLUE := Color(0.18, 0.68, 1.0)
 const GROWTH_RED := Color(1.0, 0.24, 0.28)
 
-const BATTLE_FIELD_HEIGHT := 1280.0
-const HAND_AREA_HEIGHT := 120.0
+const LAYOUT := preload("res://scripts/ui/battle_layout.gd")
+const HAND_AREA_HEIGHT := LAYOUT.HAND_HEIGHT
 const HAND_CARD_HEIGHT := 86.0
 const HAND_CARD_WIDTH := 112.0
 
@@ -93,31 +93,31 @@ func is_card_pending(card_id: String) -> bool:
 
 func _build_ui() -> void:
 	var root := Control.new()
-	root.set_anchors_preset(Control.PRESET_FULL_RECT)
+	root.size = Vector2(LAYOUT.HUD_WIDTH, HAND_AREA_HEIGHT)
 	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(root)
 
 	_growth_notice = Label.new()
 	_growth_notice.name = "GrowthNotice"
-	_growth_notice.position = Vector2(10, BATTLE_FIELD_HEIGHT - 40)
-	_growth_notice.size = Vector2(700, 36)
+	_growth_notice.position = Vector2(216, -31)
+	_growth_notice.size = Vector2(288, 26)
 	_growth_notice.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_growth_notice.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_growth_notice.add_theme_font_override("font", CardArt.ui_font())
-	_growth_notice.add_theme_font_size_override("font_size", 24)
+	_growth_notice.add_theme_font_size_override("font_size", 18)
 	_growth_notice.add_theme_color_override("font_outline_color", Color(0.01, 0.02, 0.05))
 	_growth_notice.add_theme_constant_override("outline_size", 6)
 	_growth_notice.hide()
 	root.add_child(_growth_notice)
 
-	# 手牌区固定在 1280~1400 的场外区域，卡框不能回伸到竞技场。
+	# 手牌浮于场外展示区，位置统一由屏幕布局给出。
 	var panel := PanelContainer.new()
 	panel.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	panel.offset_top = BATTLE_FIELD_HEIGHT
-	panel.offset_bottom = BATTLE_FIELD_HEIGHT + HAND_AREA_HEIGHT
+	panel.offset_top = 0.0
+	panel.offset_bottom = HAND_AREA_HEIGHT
 	panel.grow_vertical = Control.GROW_DIRECTION_END
 	panel.custom_minimum_size = Vector2(0.0, HAND_AREA_HEIGHT)
-	panel.add_theme_stylebox_override("panel", CardArt.frame_style(Color(0.018, 0.085, 0.17, 0.99), Color(0.08, 0.50, 0.86, 1.0), 3, 0))
+	panel.add_theme_stylebox_override("panel", CardArt.frame_style(Color(0.018, 0.085, 0.17, 0.86), Color(0.08, 0.50, 0.86, 1.0), 3, 0))
 	root.add_child(panel)
 	var content_margin := MarginContainer.new()
 	content_margin.add_theme_constant_override("margin_left", 10)
@@ -215,6 +215,11 @@ func _build_ui() -> void:
 		tick.offset_right = 1.0
 		_elixir_bar.add_child(tick)
 	_refresh(_elixir.elixir)
+	apply_layout(get_viewport().get_visible_rect().size)
+
+func apply_layout(view_size: Vector2) -> void:
+	scale = Vector2.ONE * LAYOUT.ui_scale(view_size)
+	offset = LAYOUT.hand_origin(view_size)
 
 func _on_slot_pressed(slot_idx: int) -> void:
 	if slot_idx < 0 or slot_idx >= _hand.size(): return

@@ -242,7 +242,7 @@ func _pick_deck_ui(after_start: Callable) -> void:
 	pool_controls.add_child(_deck_sort_option)
 	var scroll := ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	scroll.custom_minimum_size = Vector2(0.0, 560.0)
+	scroll.custom_minimum_size = Vector2(0.0, 160.0)
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	vbox.add_child(scroll)
 	var grid := GridContainer.new()

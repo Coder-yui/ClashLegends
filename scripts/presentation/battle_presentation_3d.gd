@@ -34,7 +34,12 @@ var _lightning_effect: Node3D
 
 var _viewport: SubViewport
 var _world_root: Node3D
-var _camera: Camera3D
+var _camera: Camera3D # 固定720×1280投影基准，所有模型/效果继续使用权威二维坐标。
+var _projection_viewport: SubViewport
+var _render_camera: Camera3D
+var _overlay: Sprite2D
+var _field_size: Vector2
+var _base_camera_size: float
 var model_pool := MatchModelPool.new()
 var pending_deployments: Callable
 var _pre_deploy_views: Dictionary = {}
@@ -109,6 +114,8 @@ func sync_pre_deployments(deployments: Array, delta: float = 0.0) -> void:
 func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void:
 	process_priority = 100 # 单位表现更新后再处理隐藏模型库存。
 	viewer_team = 1 if flipped else 0
+	_field_size = field_size
+	_base_camera_size = field_size.y / tile_size
 	_viewport = SubViewport.new()
 	_viewport.name = "UnitViewport3D"
 	_viewport.size = Vector2i(roundi(field_size.x), roundi(field_size.y))
@@ -123,7 +130,14 @@ func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void
 
 	_create_environment()
 	_world_root.add_child(preload("res://assets/arena/rift_arena/rift_arena.tscn").instantiate())
-	_create_camera(field_size.y / tile_size)
+	# 只用于射线/反投影计算，不渲染、不复制场景。
+	_projection_viewport = SubViewport.new()
+	_projection_viewport.name = "BattleProjectionReference"
+	_projection_viewport.size = Vector2i(field_size)
+	_projection_viewport.own_world_3d = true
+	_projection_viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
+	add_child(_projection_viewport)
+	_create_camera(_base_camera_size)
 	# 画布翻转场地；3D 相机反向滚转，让人物保持直立，射线投影仍对应权威场地坐标。
 	if flipped:
 		_camera.rotate_object_local(Vector3.BACK, PI)
@@ -166,6 +180,15 @@ func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void
 	_lightning_effect = preload("res://scripts/presentation/lightning_spell_effect_3d.gd").new()
 	_world_root.add_child(_lightning_effect)
 
+	_render_camera = Camera3D.new()
+	_render_camera.name = "BattleRenderCamera"
+	_render_camera.projection = Camera3D.PROJECTION_ORTHOGONAL
+	_render_camera.keep_aspect = Camera3D.KEEP_HEIGHT
+	_render_camera.near = _camera.near
+	_render_camera.far = _camera.far
+	_world_root.add_child(_render_camera)
+	_render_camera.current = true
+
 	# 地图与模型共享深度；2D 部署提示、脚下标记与血条绘制在视口上方。
 	var overlay := Sprite2D.new()
 	overlay.name = "UnitOverlay3D"
@@ -174,6 +197,19 @@ func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void
 	# 地形裁切水晶开口，凹槽遮挡在 3D 内完成。
 	overlay.z_index = -1
 	add_child(overlay)
+	_overlay = overlay
+	set_view_rect(Rect2(Vector2.ZERO, field_size))
+
+## 仅扩大绘制取景；投影基准和世界模型位置不随窗口变化。
+func set_view_rect(rect: Rect2) -> void:
+	if _render_camera == null: return
+	_viewport.size = Vector2i(rect.size)
+	_overlay.position = rect.position
+	_render_camera.size = _base_camera_size * rect.size.y / _field_size.y
+	_camera.force_update_transform()
+	_render_camera.global_transform = _camera.global_transform
+	_render_camera.global_position += _camera.project_ray_origin(rect.get_center()) - _camera.project_ray_origin(_field_size * 0.5)
+	_render_camera.force_update_transform()
 
 func attach_unit(unit: Unit, stats: Dictionary) -> bool:
 	if resource_plan != null and resource_plan.cards.has(unit.card_id):
@@ -247,7 +283,7 @@ func _create_camera(field_rows: float) -> void:
 	_camera.near = 0.1
 	_camera.far = 100.0
 	_camera.position = Vector3(0.0, 24.0, 24.0)
-	_world_root.add_child(_camera)
+	_projection_viewport.add_child(_camera)
 	_camera.look_at(Vector3.ZERO, Vector3.UP)
 	_camera.current = true
 

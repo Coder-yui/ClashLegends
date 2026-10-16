@@ -81,7 +81,9 @@ func _check_official_arena_grid() -> void:
 	for column in range(6, 12):
 		full_back_row = full_back_row and _main.is_card_deploy_position_valid(0, "xin", Vector2(column * 40.0 + 20.0, 1260.0))
 	_expect(full_back_row, "国王塔后方中央 6 格组成完整可部署行")
-	_expect(int(ProjectSettings.get_setting("display/window/size/viewport_height")) > int(ArenaRules.FIELD_H), "手牌区位于战场之外，不遮挡最后一行")
+	var size: Vector2 = _main.get_viewport_rect().size
+	var canvas := preload("res://scripts/ui/battle_layout.gd").canvas(size)
+	_expect(_main._hand.offset.y >= (canvas * Vector2(360, ArenaRules.FIELD_H)).y, "手牌区位于显示战场之外，不遮挡最后一行")
 
 func _check_card_deployment_preview() -> void:
 	# 鼠标落在格子内部任意位置时，兵种预览和最终部署坐标都必须是该格格心。

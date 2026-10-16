@@ -1,6 +1,7 @@
 extends Node2D
 ## 主场景：战场搭建、部署输入、敌方占位出兵、胜负判定。
 
+const BATTLE_LAYOUT := preload("res://scripts/ui/battle_layout.gd")
 const WORKBENCH_SCRIPT := preload("res://scripts/ui/development_workbench.gd")
 const ACTIVE_SKILL_BAR_SCRIPT := preload("res://scripts/ui/active_skill_bar.gd")
 const SPELL_SYSTEM_SCRIPT := preload("res://scripts/battle/spell_system.gd")
@@ -164,7 +165,13 @@ func _ready() -> void:
 	if cli.get("mode", "") == "server":
 		mode = "server"
 		local_team = -1
-	if has_presentation(): _setup_arena_background()
+	if has_presentation():
+		if not get_tree().has_meta("display_window_initialized"):
+			BATTLE_LAYOUT.fit_window(get_window())
+			get_tree().set_meta("display_window_initialized", true)
+		get_viewport().size_changed.connect(_refresh_display_layout)
+		_setup_arena_background()
+		_refresh_display_layout()
 	_simulation_clock.max_ticks_per_advance = 4
 	_simulation_clock.max_work_usec = 8000
 	_battle_simulation.setup(self)
@@ -279,44 +286,83 @@ func _show_menu() -> void:
 	_menu_layer = CanvasLayer.new()
 	add_child(_menu_layer)
 	var root := Control.new()
+	root.name = "ModeMenu"
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_menu_layer.add_child(root)
+	# 菜单图片属于屏幕层，与战场取景/红方翻转无关；峡谷沿原图中心等比裁切。
+	var background := TextureRect.new()
+	background.name = "MenuBackground"
+	background.texture = load(ARENA_BACKGROUND_PATH)
+	background.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	background.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	background.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(background)
+	background.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	var shade := ColorRect.new()
+	shade.name = "MenuShade"
+	shade.color = Color(0, 0, 0, 0.20)
+	shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(shade)
+	shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	var margin := MarginContainer.new()
+	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	for side in ["left", "right", "top", "bottom"]:
+		margin.add_theme_constant_override("margin_" + side, 48)
+	root.add_child(margin)
+	var scroll := ScrollContainer.new()
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	margin.add_child(scroll)
 	var center := CenterContainer.new()
-	center.set_anchors_preset(Control.PRESET_FULL_RECT)
-	root.add_child(center)
+	center.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	center.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	scroll.add_child(center)
 	var vbox := VBoxContainer.new()
-	vbox.add_theme_constant_override("separation", 14)
+	vbox.name = "ModeOptions"
+	vbox.add_theme_constant_override("separation", 16)
 	center.add_child(vbox)
+	var resize_menu := func(): vbox.custom_minimum_size.x = minf(560.0, maxf(0.0, root.size.x - 96.0))
+	root.resized.connect(resize_menu)
+	resize_menu.call()
 	var title := Label.new()
+	title.name = "Title"
 	title.text = "Clash Legends"
 	title.add_theme_font_size_override("font_size", 48)
+	title.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.75))
+	title.add_theme_constant_override("outline_size", 4)
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(title)
 	var btn_solo := _make_menu_button("单机对战 AI")
+	btn_solo.name = "Solo"
 	btn_solo.pressed.connect(func(): _pick_deck_ui(_start_local_with_loading))
 	vbox.add_child(btn_solo)
 	var btn_art_dev := _make_menu_button("卡牌开发工作台")
+	btn_art_dev.name = "Workbench"
 	btn_art_dev.pressed.connect(_start_art_dev)
 	vbox.add_child(btn_art_dev)
-	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 8)
 	_ip_input = LineEdit.new()
+	_ip_input.name = "ServerIP"
 	_ip_input.text = "127.0.0.1"
-	_ip_input.custom_minimum_size = Vector2(220, 0)
+	_ip_input.custom_minimum_size = Vector2(0, 60)
+	_ip_input.add_theme_font_size_override("font_size", 24)
 	_ip_input.placeholder_text = "服务器 IP 地址"
-	row.add_child(_ip_input)
+	vbox.add_child(_ip_input)
 	var btn_join := _make_menu_button("连接服务器")
+	btn_join.name = "Join"
 	btn_join.pressed.connect(func(): _pick_deck_ui(func(): _start_client(_ip_input.text.strip_edges())))
-	row.add_child(btn_join)
-	vbox.add_child(row)
+	vbox.add_child(btn_join)
 	_menu_status = Label.new()
+	_menu_status.name = "Status"
+	_menu_status.custom_minimum_size.y = 48.0
+	_menu_status.add_theme_font_size_override("font_size", 20)
+	_menu_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_menu_status.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(_menu_status)
 
 func _make_menu_button(text: String) -> Button:
 	var b := Button.new()
 	b.text = text
-	b.custom_minimum_size = Vector2(260, 44)
+	b.custom_minimum_size = Vector2(0, 72)
+	b.add_theme_font_size_override("font_size", 26)
 	return b
 
 func _pick_deck_ui(after_start: Callable) -> void:
@@ -843,16 +889,29 @@ func _rpc_command_finished(epoch: String, id: int, outcome: String) -> void:
 		if not _network_commands.has_skill(int(command.ability_id)): _client_inputs.forget_skill(int(command.ability_id))
 	network_command_finished.emit(command, outcome)
 
-## 客户端是上方玩家：相机旋转 180°，让自己半场显示在屏幕下方
+## 红方使用同一画布构图翻转，让自己半场显示在屏幕下方。
 func _flip_camera() -> void:
-	var cam := Camera2D.new()
-	# 只旋转 1280px 高的战场；下方额外的 120px 手牌区保持不动。
-	var viewport_height := get_viewport_rect().size.y
-	cam.position = Vector2(ArenaRules.FIELD_W / 2.0, ArenaRules.FIELD_H - viewport_height / 2.0)
-	cam.ignore_rotation = false
-	cam.rotation = PI
-	add_child(cam)
-	cam.make_current()
+	_refresh_display_layout()
+
+func _refresh_display_layout() -> void:
+	if _workbench.enabled or not has_presentation(): return
+	var size := get_viewport_rect().size
+	var transform := BATTLE_LAYOUT.canvas(size, local_team == 1)
+	get_viewport().canvas_transform = transform
+	if is_instance_valid(_battle_presentation):
+		_battle_presentation.set_view_rect(BATTLE_LAYOUT.visible_world(size, transform))
+	if is_instance_valid(_hand): _hand.apply_layout(size)
+	if is_instance_valid(_active_skill_bar): _active_skill_bar.apply_layout(size)
+	if is_instance_valid(_timer_label):
+		var ui_scale := BATTLE_LAYOUT.ui_scale(size)
+		_timer_label.scale = Vector2.ONE * ui_scale
+		_timer_label.position = Vector2(size.x * 0.5 + 228.0 * ui_scale, 8.0 * ui_scale)
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F11:
+		var window := get_window()
+		window.mode = Window.MODE_WINDOWED if window.mode in [Window.MODE_FULLSCREEN, Window.MODE_EXCLUSIVE_FULLSCREEN] else Window.MODE_FULLSCREEN
+		get_viewport().set_input_as_handled()
 
 func _setup_player_ui() -> void:
 	if not _battle_loading:
@@ -1063,6 +1122,7 @@ func _setup_battle_presentation() -> void:
 	_battle_presentation.projectiles = _projectile_system
 	_battle_presentation.pending_deployments = _commands.inspect_deployments
 	_arena_background_sprite.hide()
+	_refresh_display_layout()
 
 ## 顶部右侧的比赛计时器
 func _create_timer_ui() -> void:
@@ -1071,7 +1131,7 @@ func _create_timer_ui() -> void:
 	_timer_label = Label.new()
 	_timer_label.add_theme_font_size_override("font_size", 32)
 	# CR 计时器位于顶部右侧；避开按官方格位上移后的敌方国王塔血条。
-	_timer_label.position = Vector2(ArenaRules.FIELD_W - 132.0, 8.0)
+	_timer_label.position = Vector2(get_viewport_rect().size.x * 0.5 + 228.0, 8.0)
 	layer.add_child(_timer_label)
 	_update_timer_label()
 
@@ -1190,11 +1250,11 @@ func _unhandled_input(event: InputEvent) -> void:
 	if game_over or _selected_card == "":
 		return
 	if event is InputEventMouseMotion:
-		_update_deployment_preview(get_global_mouse_position())
+		_update_deployment_preview(get_viewport().canvas_transform.affine_inverse() * event.position)
 		return
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		# 点击前再刷新一次，确保刚进入目标格时使用的是屏幕上看到的那一格。
-		_update_deployment_preview(get_global_mouse_position())
+		_update_deployment_preview(get_viewport().canvas_transform.affine_inverse() * event.position)
 		if not _deployment_preview_visible:
 			return
 		var my_team := local_team
@@ -2548,17 +2608,24 @@ func _end_game(winner_team: int, reason: String) -> void:
 	overlay.name = "MatchResult"
 	overlay.layer = 100
 	add_child(overlay)
+	var center := CenterContainer.new()
+	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	overlay.add_child(center)
+	var column := VBoxContainer.new()
+	column.alignment = BoxContainer.ALIGNMENT_CENTER
+	column.add_theme_constant_override("separation", 24)
+	center.add_child(column)
 	var label := Label.new()
 	label.text = _match_result_text(winner_team, reason)
 	label.add_theme_font_size_override("font_size", 32)
-	label.position = Vector2(60, 590)
-	overlay.add_child(label)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	column.add_child(label)
 	var back := Button.new()
 	back.text = "返回主菜单"
-	back.position = Vector2(260, 680)
-	back.size = Vector2(200, 70)
+	back.custom_minimum_size = Vector2(200, 70)
+	back.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	back.pressed.connect(return_to_main_menu)
-	overlay.add_child(back)
+	column.add_child(back)
 
 func _match_result_text(winner_team: int, reason: String) -> String:
 	if reason == "disconnect":

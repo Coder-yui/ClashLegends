@@ -4,6 +4,18 @@ extends "res://tests/suites/battle_suite.gd"
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
+	await _main.get_tree().process_frame
+	await _main.get_tree().process_frame
+	var menu: Control = _main._menu_layer.get_node("ModeMenu")
+	for name in ["Title", "Solo", "Workbench", "ServerIP", "Join", "Status"]:
+		var control := menu.find_child(name, true, false) as Control
+		_expect(control != null and menu.get_global_rect().encloses(control.get_global_rect()), "开局模式页内容完整可见：" + name)
+	var background: TextureRect = menu.get_node("MenuBackground")
+	_expect(background.texture.resource_path == _main.ARENA_BACKGROUND_PATH and background.stretch_mode == TextureRect.STRETCH_KEEP_ASPECT_COVERED, "模式页保留原图并等比覆盖窗口")
+	_expect(background.get_global_rect().is_equal_approx(menu.get_global_rect()) and background.mouse_filter == Control.MOUSE_FILTER_IGNORE, "背景充满屏幕且不拦截模式按钮")
+	var layout := preload("res://scripts/ui/battle_layout.gd")
+	_expect(layout.default_client_size(Vector2i(2940,1688), Vector2i(0,64), 2.0) == Vector2i(900,1600), "本机Retina可用桌面扣除标题栏和边距后得到精确9:16窗口")
+	_expect(layout.default_client_size(Vector2i(1470,844), Vector2i(0,32), 1.0) == Vector2i(450,800), "1倍屏幕也按9:16像素整数单位尽量填充可用桌面")
 	_main._deck = []
 	_main._pick_deck_ui(func() -> void: return)
 	await _main.get_tree().process_frame
