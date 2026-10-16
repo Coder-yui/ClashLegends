@@ -544,5 +544,12 @@
     "method": "run",
     "scene": "battle",
     "group": "cards"
+  },
+  {
+    "id": "VoidSummoningSuite",
+    "script": "res://tests/suites/cards/void_summoning_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "cards"
   }
 ]

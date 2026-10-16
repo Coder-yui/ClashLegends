@@ -23,6 +23,7 @@ static func attributes(stats: Dictionary, quantity_override: String = "") -> Arr
 	if card_type == "spell":
 		result.append({"name": "类型", "value": type_name(card_type, stats)})
 		var target := "友方单位" if StringName(stats.get("spell_kind", "")) == &"heal" else "敌方单位"
+		if String(stats.get("spell_kind", "")) == "void_summoning": target = "区域召唤己方虚空鱼"
 		if String(stats.get("spell_kind", "")) == "stasis": target = "双方单位（含空军、建筑卡）"
 		result.append({"name": "目标", "value": target})
 		result.append({"name": "作用范围", "value": "%s（%.2f格）" % [format_number(float(stats.get("radius", 0.0))), float(stats.get("radius", 0.0)) / TILE_SIZE]})
@@ -38,6 +39,11 @@ static func attributes(stats: Dictionary, quantity_override: String = "") -> Arr
 			result.append({"name": "向外击退", "value": "%s（受质量与地形影响）" % format_number(float(stats.knockback))})
 			result.append({"name": "塔 / 水晶伤害", "value": "%s%%" % format_number(float(stats.tower_damage_multiplier) * 100.0)})
 			return result
+		if String(stats.get("spell_kind", "")) == "void_summoning":
+			result.append({"name": "召唤数量", "value": str(stats.spawn_count)})
+			result.append({"name": "首次召唤", "value": "%s秒" % format_number(float(stats.spawn_initial_delay))})
+			result.append({"name": "召唤间隔", "value": "%s秒" % format_number(float(stats.interval))})
+			result.append({"name": "出生等待", "value": "%s秒" % format_number(float(stats.spawn_deploy_time))})
 		if String(stats.get("spell_kind", "")) == "corrosion":
 			result.append({"name": "每次伤害", "value": format_number(float(stats.damage))})
 			result.append({"name": "伤害间隔", "value": "%s秒" % format_number(float(stats.interval))})

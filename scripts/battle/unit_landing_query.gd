@@ -8,7 +8,7 @@ static func find_position(unit: Unit, desired: Vector2, allow_terrain: bool) -> 
 	return _nearest(desired, unit.team, circles, regions)
 
 ## 出生避让只排除静态建筑及凝滞占位，普通单位（包括冰冻）留给自然碰撞。
-static func find_spawn_position(desired: Vector2, radius: float, air: bool, team: int, combatants: Array, regions: Array[Rect2]) -> Vector2:
+static func find_spawn_position(desired: Vector2, radius: float, air: bool, team: int, combatants: Array, regions: Array[Rect2], limit_center: Vector2 = Vector2.INF, limit_radius: float = 0.0) -> Vector2:
 	var circles: Array[Vector3] = []
 	for other in combatants:
 		if not is_instance_valid(other) or other.hp <= 0.0: continue
@@ -20,15 +20,18 @@ static func find_spawn_position(desired: Vector2, radius: float, air: bool, team
 		circles.append(Vector3(other.global_position.x, other.global_position.y,
 			radius + other.body_radius + 0.002 + (ArenaRules.STRUCTURE_SEPARATION if structure else 0.0)))
 	# Vector2单精度的圆周交点距离会有微小误差，等距容差只用于出生查询。
-	return _nearest(desired, team, circles, regions, 0.02)
+	return _nearest(desired, team, circles, regions, 0.02, limit_center, limit_radius)
 
-static func _nearest(desired: Vector2, team: int, circles: Array[Vector3], regions: Array[Rect2], tie_epsilon: float = 0.0001) -> Vector2:
+static func _nearest(desired: Vector2, team: int, circles: Array[Vector3], regions: Array[Rect2], tie_epsilon: float = 0.0001, limit_center: Vector2 = Vector2.INF, limit_radius: float = 0.0) -> Vector2:
 	var candidates: Array[Vector2] = []
 	for region in regions:
 		candidates.append(Vector2(clampf(desired.x,region.position.x,region.end.x),clampf(desired.y,region.position.y,region.end.y)))
 		for point in [region.position,region.end,Vector2(region.position.x,region.end.y),Vector2(region.end.x,region.position.y)]: candidates.append(point)
-	for index in circles.size():
-		var circle: Vector3 = circles[index]
+	# 圈内召唤把范围圆加入候选边界，但不当作排斥圆。
+	var boundaries: Array[Vector3] = circles.duplicate()
+	if limit_center.is_finite(): boundaries.append(Vector3(limit_center.x, limit_center.y, limit_radius))
+	for index in boundaries.size():
+		var circle: Vector3 = boundaries[index]
 		var center := Vector2(circle.x,circle.y)
 		var direction := center.direction_to(desired)
 		if direction.is_zero_approx(): direction = Vector2.UP if team == 0 else Vector2.DOWN
@@ -44,8 +47,8 @@ static func _nearest(desired: Vector2, team: int, circles: Array[Vector3], regio
 				if delta >= 0.0:
 					candidates.append(Vector2(center.x+sqrt(delta),y))
 					candidates.append(Vector2(center.x-sqrt(delta),y))
-		for other_index in range(index+1,circles.size()):
-			var other: Vector3 = circles[other_index]
+		for other_index in range(index+1,boundaries.size()):
+			var other: Vector3 = boundaries[other_index]
 			var offset := Vector2(other.x,other.y)-center
 			var distance := offset.length()
 			if distance < 0.00001 or distance > circle.z+other.z or distance < absf(circle.z-other.z): continue
@@ -59,6 +62,7 @@ static func _nearest(desired: Vector2, team: int, circles: Array[Vector3], regio
 	var best := Vector2(INF,INF)
 	var best_distance := INF
 	for point in candidates:
+		if limit_center.is_finite() and point.distance_squared_to(limit_center) > limit_radius * limit_radius + 0.01: continue
 		var distance := desired.distance_squared_to(point)
 		if distance > best_distance+tie_epsilon or not _legal(point,regions,circles): continue
 		if absf(distance-best_distance) <= tie_epsilon and best.is_finite():

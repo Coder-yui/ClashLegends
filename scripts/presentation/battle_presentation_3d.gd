@@ -26,6 +26,7 @@ var _riftwalk_effect: Node3D
 var _locket_effect: Node3D
 var spells: RefCounted
 var _freeze_ground: Node3D
+var _summoning_ground: Node3D
 var _corrosion_ground: Node3D
 var _cask_effect: Node3D
 var _stasis_effect: Node3D
@@ -68,6 +69,8 @@ func _process(delta: float) -> void:
 		_lightning_effect.sync_effects(spells, _camera)
 	if _freeze_ground != null and spells != null:
 		_freeze_ground.sync_effects(spells, _camera)
+	if _summoning_ground != null and spells != null:
+		_summoning_ground.sync_effects(spells, _camera)
 	if _corrosion_ground != null and spells != null:
 		_corrosion_ground.sync_effects(spells, _camera)
 	if _cask_effect != null and spells != null:
@@ -152,6 +155,8 @@ func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void
 	_world_root.add_child(_locket_effect)
 	_freeze_ground = preload("res://scripts/presentation/freeze_ground_3d.gd").new()
 	_world_root.add_child(_freeze_ground)
+	_summoning_ground = preload("res://scripts/presentation/void_summoning_ground_3d.gd").new()
+	_world_root.add_child(_summoning_ground)
 	_corrosion_ground = preload("res://scripts/presentation/corrosion_ground_3d.gd").new()
 	_world_root.add_child(_corrosion_ground)
 	_cask_effect = preload("res://scripts/presentation/explosive_cask_3d.gd").new()

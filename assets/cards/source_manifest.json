@@ -144,5 +144,15 @@
     "source_sha256": "1252102ac204e85615d5418ef18c04c1130c00f0b81fe94ed3d9c2bcdab480ff",
     "sha256": "1252102ac204e85615d5418ef18c04c1130c00f0b81fe94ed3d9c2bcdab480ff",
     "processing": "用户指定原图直接复制，未裁切、缩放或改色。"
+  },
+  {
+    "card": "void_summoning",
+    "path": "res://assets/cards/void_summoning_loading.png",
+    "source_package": "AI generated with built-in imagegen",
+    "source_path": "reference: assets/cards/voidfish_loading.png",
+    "reference_sha256": "fe0014f4e6092d728a29a3f4e378a37e8679f33da5dfffb1121fcc4935ac5cd4",
+    "sha256": "f71d5c3a0e0e1c1470a6add130d57b4738008d848ee883576c8c96063b99d5f7",
+    "processing": "内置imagegen，参考图引导的新构图；无后期编辑，保留生成PNG。",
+    "prompt": "Create a polished fantasy strategy game spell card illustration, portrait 11:20 aspect ratio, full bleed, no border, no text, no letters or UI. Use the supplied image only as creature identity reference: small squat dark blue armored void fish with large angular golden face plate, luminous magenta mouth and triangular dorsal fin. New composition showing summoning magic: a broad luminous purple circular rift on dark stone ground, several of these exact small void fish emerging from separate swirling violet portals, one large readable foreground fish half-emerged with purple energy coiling around it, three smaller fish farther back, mysterious deep violet atmosphere, gold highlights, magical particles and concentric summoning runes without readable writing. Dynamic top-down three-quarter perspective, rich painterly high-end game splash illustration, strong silhouette, clear summoning action, crisp focal creature, dramatic violet and gold light. Preserve species proportions and golden mask from reference, avoid humanoids, ordinary fish, sharks, dragons, giant monsters. Artwork must read at small card size; foreground main creature and portal centered with breathing room for card cropping."
   }
 ]

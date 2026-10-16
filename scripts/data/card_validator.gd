@@ -38,7 +38,7 @@ static func _validate_card_id(card_id: String, errors: PackedStringArray) -> voi
 
 static func _validate_periodic_summons(card_id: String, stats: Dictionary, errors: PackedStringArray) -> void:
 	for field in ["spawn_flight_duration", "spawn_defer_while_controlled", "spawn_initial_delay", "spawn_sequence_interval"]:
-		if stats.has(field) and not stats.has("spawn_interval"): errors.append(card_id + "." + field + ": 必须配置周期召唤")
+		if stats.has(field) and not stats.has("spawn_interval") and not (field == "spawn_initial_delay" and stats.get("spell_kind", "") == "void_summoning"): errors.append(card_id + "." + field + ": 必须配置周期召唤")
 	for field in ["spawn_initial_delay", "spawn_sequence_interval"]:
 		if stats.has(field) and float(stats[field]) < 0.0: errors.append(card_id + "." + field + ": 必须非负")
 	if stats.has("spawn_sequence_interval") and stats.get("spawn_side", "") != "below": errors.append(card_id + ".spawn_sequence_interval: 要求下方召唤")
@@ -48,7 +48,7 @@ static func _validate_periodic_summons(card_id: String, stats: Dictionary, error
 		if float(stats.spawn_flight_duration) <= 0.0 or stats.get("spawn_side", "") != "bilateral": errors.append(card_id + ".spawn_flight_duration: 要求正时长和左右召唤")
 	if stats.has("spawn_deploy_time") and float(stats.spawn_deploy_time) < 0.0: errors.append(card_id + ".spawn_deploy_time: 必须非负")
 	if not stats.has("spawn_interval"):
-		if stats.has("spawn_deploy_time"): errors.append(card_id + ".spawn_deploy_time: 必须配置周期召唤")
+		if stats.has("spawn_deploy_time") and stats.get("spell_kind", "") != "void_summoning": errors.append(card_id + ".spawn_deploy_time: 必须配置周期召唤或召唤法术")
 		if stats.has("spawn_distance"): errors.append(card_id + ".spawn_distance: 必须配置周期召唤")
 		return
 	if String(stats.get("type", "")) not in ["unit", "building"]: errors.append(card_id + ".spawn_interval: 仅单位或建筑支持周期召唤")
@@ -139,6 +139,16 @@ static func _validate_card(card_id: String, stats: Dictionary, errors: PackedStr
 			elif float(stats.get("duration", 0.0)) <= 0.0:
 				errors.append("%s.duration: 法术持续时间必须 > 0" % card_id)
 			match spell_kind:
+				&"void_summoning":
+					_require_fields(card_id, stats, [&"spawn_id", &"spawn_count", &"spawn_deploy_time", &"interval", &"spawn_initial_delay"], errors)
+					if int(stats.get("spawn_count", 0)) <= 0 or float(stats.get("spawn_deploy_time", -1.0)) < 0.0:
+						errors.append(card_id + ": 召唤数量必须为正，出生时间必须非负")
+					var summon_interval := float(stats.get("interval", 0.0))
+					var first_spawn := float(stats.get("spawn_initial_delay", -1.0))
+					var last_spawn := first_spawn + summon_interval * (int(stats.get("spawn_count", 0)) - 1)
+					var duration := float(stats.get("duration", 0.0))
+					if summon_interval < FixedStepClock.STEP or first_spawn < 0.0 or not is_equal_approx(summon_interval / FixedStepClock.STEP, roundf(summon_interval / FixedStepClock.STEP)) or not is_equal_approx(first_spawn / FixedStepClock.STEP, roundf(first_spawn / FixedStepClock.STEP)) or last_spawn > duration + 0.0001 or last_spawn + summon_interval <= duration:
+						errors.append(card_id + ": 首次召唤及间隔须对齐固定Tick，数量须覆盖持续时间内的全部召唤节点")
 				&"explosive_cask":
 					_require_fields(card_id, stats, [&"damage", &"knockback", &"tower_damage_multiplier", &"flight_speed"], errors)
 					if float(stats.get("damage", 0)) <= 0 or float(stats.get("knockback", 0)) <= 0:
@@ -1122,6 +1132,8 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 			&"spell_explosive_cask":
 				if String(stats.get("spell_kind", "")) != "explosive_cask" or float(skill.get("damage", 0)) <= float(stats.get("damage", 0)):
 					errors.append("%s: 酒桶强化只用于爆破酒桶且伤害必须高于基础值" % label)
+			&"spell_void_summoning":
+				if String(stats.get("spell_kind", "")) != "void_summoning": errors.append(label + ": 虚空献祭只用于虚空召唤")
 			&"spell_corrosion":
 				if String(stats.get("spell_kind", "")) != "corrosion":
 					errors.append("%s: 腐蚀强化只用于腐蚀法术" % label)

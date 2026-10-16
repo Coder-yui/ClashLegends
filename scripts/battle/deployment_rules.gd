@@ -248,12 +248,12 @@ func nearest_valid_building_spawn(team: int, card_id: String, requested: Vector2
 
 ## 召唤不受手牌阵营区域限制：建筑按完整网格占地，兵种按连续地面几何。
 ## 合法原点保留，非法原点找最近可行点；无解返回INF，由生成入口拒绝非法落地。
-func resolve_summoned_spawn(team: int, card_id: String, stats: Dictionary, desired: Vector2) -> Vector2:
+func resolve_summoned_spawn(team: int, card_id: String, stats: Dictionary, desired: Vector2, limit_center: Vector2 = Vector2.INF, limit_radius: float = 0.0) -> Vector2:
 	if bool(stats.get("is_building", false)):
 		return nearest_valid_building_spawn(team, card_id, desired, false)
 	var radius := float(stats.get("radius", 14.0))
 	var air := bool(stats.get("is_air", false))
-	return UnitLandingQuery.find_spawn_position(desired, radius, air, team, combatants.call(), UnitLandingQuery._regions(radius, air))
+	return UnitLandingQuery.find_spawn_position(desired, radius, air, team, combatants.call(), UnitLandingQuery._regions(radius, air), limit_center, limit_radius)
 
 ## 碰撞存在不等于不可推动；冰冻和普通军队不在此过滤。
 func anchored_spawn_clear(pos: Vector2, stats: Dictionary) -> bool:

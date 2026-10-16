@@ -1,0 +1,105 @@
+{
+  "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Global.wad.client",
+  "source_entry": "items",
+  "source_wad_hash": "1d720f4f42640c18",
+  "source_binary_sha256": "41d52e6bbd40aa09658192e6efe1e17419a2b2d5cd802ea863a8c10809824b1b",
+  "system": "Items/223069/Particles/223069_Indicator_On",
+  "reader_revision": "c06b5bb1dba458a358628b0fd1ddef3a58a4ba43",
+  "assets": {
+    "assets/items/3068/particles/global_item_atlas_indicator_circle.scb": {
+      "source_sha256": "1932e041b2db8cb0ac3a47be9a5aaa73390206b580202f9df578c7f99b05131c",
+      "output": "assets/items/3068/particles/global_item_atlas_indicator_circle.mesh.json",
+      "output_sha256": "7b5dd76ce64cca03b34c1a162db2eed02887b6942707161dff535b9b60d6c326"
+    },
+    "assets/items/3068/particles/item_6662_gradient.tex": {
+      "source_sha256": "bcb1a7d01047a36ff1aa24300a9a7f42d0d8a175ad4bf6884c1720275fc1920e",
+      "output": "assets/items/3068/particles/item_6662_gradient.png",
+      "output_sha256": "6f8cf78ada39171d5027a8fc410eab550a38bc406355c0d620ac046d474752a0"
+    },
+    "assets/items/3068/particles/ha_pororay_mult.tex": {
+      "source_sha256": "4b23b4edeb79ac8d101b943b42fb55dbe223eb18c57b04e1cd36be7cf1727436",
+      "output": "assets/items/3068/particles/ha_pororay_mult.png",
+      "output_sha256": "b827b2b48649d19e02a0a327b19702e83221539dbd892c5870efc17675a183db"
+    },
+    "assets/items/3068/particles/orbglow.tex": {
+      "source_sha256": "ce4a5c2a523070b0ed069be4af8cde55bef5ffa731529ed093c8c2c2e99709a6",
+      "output": "assets/items/3068/particles/orbglow.png",
+      "output_sha256": "f79a3442ab9d49f30ee0392577de7731d8dee3871fd4c4e2bd44a3b37da85f4c"
+    },
+    "assets/items/223069/particles/malzahar_base_w_edgeswirl.tex": {
+      "source_sha256": "cd1819bb30d72d332747a3055a9b1db51969b7df1302de873f42146dcb9cb143",
+      "output": "assets/items/223069/particles/malzahar_base_w_edgeswirl.png",
+      "output_sha256": "61e676880ac2f5dacc8a108a8f1b44aa71968e3efc45292eac6eea68dd60d442"
+    },
+    "assets/items/223069/particles/malzahar_base_w_groundsprawl_1.scb": {
+      "source_sha256": "9399f45c49ddbb3d77159a6de741253a580b7128d390572231d43d5a1f58e7d2",
+      "output": "assets/items/223069/particles/malzahar_base_w_groundsprawl_1.mesh.json",
+      "output_sha256": "9f614e9d840d3956667511d9fbbf74c931394ba0e1ca4161e265ae2273b03112"
+    },
+    "assets/items/223069/particles/malzahar_base_w_voidtentacles_01.tex": {
+      "source_sha256": "501510f700668083a2996669d51deab158bbec801ff3165c3931adf049102245",
+      "output": "assets/items/223069/particles/malzahar_base_w_voidtentacles_01.png",
+      "output_sha256": "767cd1cda3edc3a99a21f303d2a1805577261735bf5ab866f29cfd3972301271"
+    },
+    "assets/items/223069/particles/malzahar_base_w_gradient_1.tex": {
+      "source_sha256": "9b122e39a02e1371669384bc9b2ab6fb1c7306a98af9a58820e699bd23c04a10",
+      "output": "assets/items/223069/particles/malzahar_base_w_gradient_1.png",
+      "output_sha256": "b98cae51ac442a1608ec3aaa99cae6dbb6ecb71547162805511626d5d4dc32a0"
+    },
+    "assets/items/223069/particles/3161glow.tex": {
+      "source_sha256": "6ff507c306873cc98aeb82f8c70f3fa9b36c242f2591e8fb28b2802eaab182f8",
+      "output": "assets/items/223069/particles/3161glow.png",
+      "output_sha256": "d8223fc76f9682ce6908ff640add93808b5567f19223957e4f0f7170f43830c1"
+    },
+    "assets/items/223069/particles/malzahar_base_z_cylinder_1.scb": {
+      "source_sha256": "65c81ba5afca9737f56f3cfd9e0fa815d7f04520d91ec4b736726a53db704e84",
+      "output": "assets/items/223069/particles/malzahar_base_z_cylinder_1.mesh.json",
+      "output_sha256": "9cf5222d9b496c3b320af4368406dfe5bd13cf6b6eea5e04d2ec429d7e7415db"
+    },
+    "assets/items/223069/particles/dissolve_cloudy_03.tex": {
+      "source_sha256": "91e86421fb8d0074cb8177b4637774e9a9fcc4c77c84c59461b46d92a339cdd6",
+      "output": "assets/items/223069/particles/dissolve_cloudy_03.png",
+      "output_sha256": "7114c12263274bfa8bbe7998929942008787999e2f2da3c798ddd96096eb8cab"
+    },
+    "assets/items/223069/particles/malzahar_base_z_gradient_1.tex": {
+      "source_sha256": "9b122e39a02e1371669384bc9b2ab6fb1c7306a98af9a58820e699bd23c04a10",
+      "output": "assets/items/223069/particles/malzahar_base_z_gradient_1.png",
+      "output_sha256": "b98cae51ac442a1608ec3aaa99cae6dbb6ecb71547162805511626d5d4dc32a0"
+    },
+    "assets/items/223069/particles/belveth_base_e_praxis.scb": {
+      "source_sha256": "7312a539bc14302cbf7835ea973147f7776b6bfbe2f1b0789e5a0cee5e53908c",
+      "output": "assets/items/223069/particles/belveth_base_e_praxis.mesh.json",
+      "output_sha256": "24c4bf1a52575820a9edfbf551412bdc112497bac7a6ddb9efcaffc6e2466e2f"
+    },
+    "assets/items/223069/particles/belveth_base_e_smokeedge.tex": {
+      "source_sha256": "70a36547c60203eb258f5ee24ca934ea7f083bfdbb531428eaac67da3f9622d8",
+      "output": "assets/items/223069/particles/belveth_base_e_smokeedge.png",
+      "output_sha256": "dfcc623434d2768f36cac87661f2bc6d6e066a678cdf4e3fe52da117b0c1429a"
+    },
+    "assets/items/223069/particles/augment_divebomber_small_mote.tex": {
+      "source_sha256": "15b98d9687468dec8647067764dd9f73dad6c63488a7ebc206801bfeb66cf8fe",
+      "output": "assets/items/223069/particles/augment_divebomber_small_mote.png",
+      "output_sha256": "d75d67c5e341ff2ac2098794cd1cb993efdb1e89a17d2eff56f2819ff00ccebd"
+    },
+    "assets/items/223069/particles/223069voidlogo_blurred.tex": {
+      "source_sha256": "e4048b332621161bf1dae12b54f96f9629a03961723020e0df4e4651eed9a005",
+      "output": "assets/items/223069/particles/223069voidlogo_blurred.png",
+      "output_sha256": "e9450f3519790d88140ff79b8e1fd0226bade412c2a41cfe81e3be8a21e75b55"
+    },
+    "assets/maps/particles/kiwi/augment_ceremony_generic_alpha1.tex": {
+      "source_sha256": "e409bf0ab0c89212e3dea26b920f14362dffde3cb5d70f412ea73bc1edb48a64",
+      "output": "assets/maps/particles/kiwi/augment_ceremony_generic_alpha1.png",
+      "output_sha256": "8278d3e99004113505f6b72ffe01b8af6cbe768cd00707dc452a9a011ee47bee"
+    },
+    "assets/maps/particles/kiwi/rammus_base_erosion.tex": {
+      "source_sha256": "19a40db9fffece468d81f49cab9c314f3bae5ec38b01289cac73b55052e93f98",
+      "output": "assets/maps/particles/kiwi/rammus_base_erosion.png",
+      "output_sha256": "8e05961e4b3e3b4dd99a5a1dde8da2bb47df1fbc5a37339b141129349442c5df"
+    },
+    "assets/items/223069/particles/shards.tex": {
+      "source_sha256": "d29b851e37e2dfdd9a06c8d881aec5c2e3c2f0f4d2dc32027ed1a404143f37b5",
+      "output": "assets/items/223069/particles/shards.png",
+      "output_sha256": "c28ecd1987c42ef08f73a3db795225675110244b6d1404945cbd959737c8552d"
+    }
+  }
+}

@@ -3,6 +3,9 @@ extends RefCounted
 ## 数据驱动法术的权威执行与持续区域。
 ## Main 只负责出牌编排；新增 spell_kind 时在这里实现一次，并由 CardDB 拒绝未实现的配置。
 
+var summon_zones: Array[Dictionary] = []
+var summon_effects: Array[Dictionary] = []
+
 var corrosion_zones: Array[Dictionary] = []
 var corrosion_effects: Array[Dictionary] = []
 
@@ -41,6 +44,9 @@ func cast(team: int, stats: Dictionary, position: Vector2, active_enabled: bool 
 
 func _resolve_cast(team: int, stats: Dictionary, position: Vector2, active_enabled: bool, active_skill_index: int) -> bool:
 	match StringName(stats.get("spell_kind", "")):
+		&"void_summoning":
+			_start_summoning(team, stats, position, active_enabled)
+			return true
 		&"explosive_cask":
 			_apply_explosive_cask(team, stats, position, active_enabled, active_skill_index)
 			return true
@@ -153,6 +159,7 @@ func show_heal(position: Vector2, radius: float, duration: float, team: int, enh
 	heal_effects.append({"pos": position, "radius": radius, "timer": duration, "duration": duration, "team": team, "enhanced": enhanced, "global_heal": global_heal})
 
 func tick(dt: float) -> void:
+	_tick_summoning()
 	_tick_corrosion()
 	_tick_flights()
 	_tick_lightning()
@@ -189,6 +196,8 @@ func _apply_slow_zone(zone: Dictionary, dt: float) -> void:
 
 
 func tick_visuals(delta: float) -> void:
+	for effect in summon_effects: effect.timer = maxf(0.0, float(effect.timer) - delta)
+	summon_effects.assign(summon_effects.filter(func(effect): return float(effect.timer) > 0.0))
 	for hit in cask_hits: hit.timer = maxf(0.0, float(hit.timer) - delta)
 	cask_hits.assign(cask_hits.filter(func(hit): return float(hit.timer) > 0.0))
 	for effect in corrosion_effects:
@@ -228,6 +237,8 @@ func tick_visuals(delta: float) -> void:
 
 
 func clear() -> void:
+	summon_zones.clear()
+	summon_effects.clear()
 	corrosion_zones.clear()
 	corrosion_effects.clear()
 	spell_flights.clear()
@@ -471,3 +482,72 @@ func _apply_explosive_cask(team: int, stats: Dictionary, position: Vector2, enha
 				resolver.submit_knockback(target, position, float(stats.knockback), 0.2, 1.4, order, result, interaction)
 			elif bool(result.landed) and is_instance_valid(target) and target.hp > 0:
 				target.apply_knockback(position, float(stats.knockback), 0.2, 1.4, order, interaction)
+
+
+## 固定Tick间隔召唤，局部种子落点不消费战斗随机流。
+func _start_summoning(team: int, stats: Dictionary, pos: Vector2, enhanced: bool) -> void:
+	_effect_serial += 1
+	var tick: int = _controller.get_authoritative_server_tick()
+	var ticks := maxi(1, ceili(float(stats.duration) / FixedStepClock.STEP))
+	var zone := {"team": team, "pos": pos, "radius": float(stats.radius), "stats": stats,
+		"start_tick": tick, "end_tick": tick + ticks, "index": 0, "enhanced": enhanced, "deaths": {}, "offsets": _summoning_offsets(int(stats.spawn_count), float(stats.radius), pos, float(CardDB.get_unit_stats(String(stats.spawn_id)).radius))}
+	summon_zones.append(zone)
+	show_summoning(pos, float(stats.radius), float(stats.duration), team)
+	_controller.present_summoning_spell(pos, float(stats.radius), float(stats.duration), team)
+	_tick_summoning()
+
+## 固定局部种子只决定本卡的形状，不消耗全局或战斗随机序列。
+func _summoning_offsets(count: int, radius: float, center: Vector2 = Vector2.INF, body_radius: float = 0.0) -> Array[Vector2]:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 223069
+	var offsets: Array[Vector2] = []
+	for index in count:
+		var chosen := Vector2.ZERO
+		var best_spacing := -1.0
+		# 固定候选数的最远点选择：不规则，同时避免随机扎堆。
+		for attempt in 64:
+			var candidate := Vector2.from_angle(rng.randf() * TAU) * sqrt(rng.randf()) * radius * 0.9
+			if center.is_finite():
+				var point := center + candidate
+				if point.x < body_radius or point.x > ArenaRules.FIELD_W - body_radius or point.y < body_radius or point.y > ArenaRules.FIELD_H - body_radius: continue
+			var spacing := INF
+			for previous in offsets: spacing = minf(spacing, candidate.distance_squared_to(previous))
+			if spacing > best_spacing:
+				chosen = candidate
+				best_spacing = spacing
+		offsets.append(chosen)
+	return offsets
+
+func _tick_summoning() -> void:
+	var tick: int = _controller.get_authoritative_server_tick()
+	var alive: Array[Dictionary] = []
+	for zone in summon_zones:
+		var count := int(zone.stats.spawn_count)
+		var interval_ticks := maxi(1, roundi(float(zone.stats.interval) / FixedStepClock.STEP))
+		while int(zone.index) < count:
+			var index := int(zone.index)
+			var due := int(zone.start_tick) + roundi(float(zone.stats.spawn_initial_delay) / FixedStepClock.STEP) + index * interval_ticks
+			if tick < due: break
+			_spawn_zone_fish(zone, zone.pos + zone.offsets[index])
+			zone.index = index + 1
+		if tick < int(zone.end_tick): alive.append(zone)
+	summon_zones.assign(alive)
+
+func _spawn_zone_fish(zone: Dictionary, pos: Vector2) -> void:
+	_controller.spawn_summoned(int(zone.team), String(zone.stats.spawn_id), pos, float(zone.stats.spawn_deploy_time), "", -1, Vector2.INF, zone.pos, float(zone.radius))
+
+func on_unit_death(unit: Unit) -> void:
+	if not is_instance_valid(unit) or unit.is_building or not unit.is_true_death(): return
+	if unit.card_id == "voidfish": return
+	var tick: int = _controller.get_authoritative_server_tick()
+	for zone in summon_zones:
+		if not bool(zone.enhanced) or tick >= int(zone.end_tick): continue
+		if unit.global_position.distance_to(zone.pos) > float(zone.radius): continue
+		var id := unit.get_instance_id()
+		if zone.deaths.has(id): continue
+		zone.deaths[id] = true
+		_spawn_zone_fish(zone, unit.global_position)
+
+func show_summoning(pos: Vector2, radius: float, duration: float, team: int) -> void:
+	if not _controller.has_presentation(): return
+	summon_effects.append({"pos": pos, "radius": radius, "duration": duration, "timer": duration, "team": team})

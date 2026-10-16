@@ -62146,6 +62146,306 @@
       "duration": 2.3999773242630384,
       "float_peak": 0.034027099609375,
       "verified_by_listening": false
+    },
+    {
+      "file": "assets/audio/spells/void_summoning/cast_sequence_1.wav",
+      "sha256": "763aa6a616c74879ca39b5c012c8404f158799417e7a79d952dbb414336353af",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/虚空女皇大招音频-20261016/sfx/txtp/Play_sfx_Belveth_BelvethR_OnCast__choice_single.txtp",
+          "txtp_sha256": "8d6fc4220dc9795f7c5912891d69b7ea3a0e5c5384025c9b304360b715a7ce7d",
+          "event": "Play_sfx_Belveth_BelvethR_OnCast",
+          "event_ids": [
+            "117965364"
+          ],
+          "media_ids": [
+            "825113311"
+          ]
+        },
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/虚空女皇大招音频-20261016/sfx/txtp/Play_sfx_Belveth_BelvethR_transform__choice_single.txtp",
+          "txtp_sha256": "c67556be5c2260f8db9ee3d19c0f928d06588cb6de4c643294c059d32f0bdcae",
+          "event": "Play_sfx_Belveth_BelvethR_transform",
+          "event_ids": [
+            "837869894"
+          ],
+          "media_ids": [
+            "790672174"
+          ]
+        },
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/虚空女皇大招音频-20261016/sfx/txtp/Play_sfx_Belveth_BelvethR_buffactivate_other__choice_1.txtp",
+          "txtp_sha256": "31c3d696bd698ce2e09882f46cfe87ab8854c3e141714e9e7b6459df548f32f6",
+          "event": "Play_sfx_Belveth_BelvethR_buffactivate_other",
+          "event_ids": [
+            "3678404665"
+          ],
+          "media_ids": [
+            "802853825",
+            "1039209550",
+            "289448400",
+            "344052811"
+          ]
+        },
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/虚空女皇大招音频-20261016/sfx/txtp/Play_sfx_Belveth_BelvethR_buffactivate_loop__choice_single.txtp",
+          "txtp_sha256": "4d532fa072ce4a7257c45afc41282d62caa1404e84f4c878fca1058dbc6397c5",
+          "event": "Play_sfx_Belveth_BelvethR_buffactivate_loop",
+          "event_ids": [
+            "3683661751"
+          ],
+          "media_ids": [
+            "218146870"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空召唤/audio-belveth-r/BelvethR_OnCast_1.float.wav",
+          "sha256": "62dc360f1b3db7bc72d520b5be762eedd34d3b590a19c6f929b9fd419d252d72"
+        },
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空召唤/audio-belveth-r/BelvethR_transform_1.float.wav",
+          "sha256": "9c703acf73aad24f0f829418ba01e12d2df8c25b40689cd9c28988099e3d4eaf"
+        },
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空召唤/audio-belveth-r/BelvethR_buffactivate_other_1.float.wav",
+          "sha256": "c99bcc9c48846c13f7c138e9cad729bca305ce0edbd5acc6449d8694c5ce2dc1"
+        },
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空召唤/audio-belveth-r/BelvethR_buffactivate_loop_1.float.wav",
+          "sha256": "d39ea83ca2bd5a792de826cbadfd318fead943169da97e5e2af4fb45ffb0ec9a"
+        }
+      ],
+      "processing": {
+        "filter_complex": "[0:a]aresample=48000,apad,atrim=duration=8[a];[1:a]aresample=48000,adelay=1000:all=1,apad,atrim=duration=8[b];[2:a]aresample=48000,adelay=1000:all=1,apad,atrim=duration=8[c];[3:a]aresample=48000,atrim=duration=7,adelay=1000:all=1,apad,atrim=duration=8[d];[a][b][c][d]amix=inputs=4:normalize=0:duration=longest,atrim=duration=8[out]",
+        "duration": 8.0,
+        "normalization": false,
+        "timeline": [
+          {
+            "at": 0.0,
+            "event": "Play_sfx_Belveth_BelvethR_OnCast"
+          },
+          {
+            "at": 1.0,
+            "event": "Play_sfx_Belveth_BelvethR_transform"
+          },
+          {
+            "at": 1.0,
+            "event": "Play_sfx_Belveth_BelvethR_buffactivate_other"
+          },
+          {
+            "at": 1.0,
+            "until": 8.0,
+            "event": "Play_sfx_Belveth_BelvethR_buffactivate_loop",
+            "repeat_original_cycle": true
+          }
+        ],
+        "timing_basis": "1 s source castTime; activation/loop transition is project adaptation because client Lua has no runtime callbacks"
+      },
+      "peak": 0.4282805919647217,
+      "wwiser_master_gain_db": 0,
+      "playback_gain_db": 0
+    },
+    {
+      "file": "assets/audio/spells/void_summoning/cast_sequence_2.wav",
+      "sha256": "83dc24fd597742d1e8a04ed54051aaa0bd2c6d8b75063ad0532936ee1b626245",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/虚空女皇大招音频-20261016/sfx/txtp/Play_sfx_Belveth_BelvethR_OnCast__choice_single.txtp",
+          "txtp_sha256": "8d6fc4220dc9795f7c5912891d69b7ea3a0e5c5384025c9b304360b715a7ce7d",
+          "event": "Play_sfx_Belveth_BelvethR_OnCast",
+          "event_ids": [
+            "117965364"
+          ],
+          "media_ids": [
+            "825113311"
+          ]
+        },
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/虚空女皇大招音频-20261016/sfx/txtp/Play_sfx_Belveth_BelvethR_transform__choice_single.txtp",
+          "txtp_sha256": "c67556be5c2260f8db9ee3d19c0f928d06588cb6de4c643294c059d32f0bdcae",
+          "event": "Play_sfx_Belveth_BelvethR_transform",
+          "event_ids": [
+            "837869894"
+          ],
+          "media_ids": [
+            "790672174"
+          ]
+        },
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/虚空女皇大招音频-20261016/sfx/txtp/Play_sfx_Belveth_BelvethR_buffactivate_other__choice_2.txtp",
+          "txtp_sha256": "526b515619732b2c68963fea081394317cb3fa3fb3312d288d5c283046332374",
+          "event": "Play_sfx_Belveth_BelvethR_buffactivate_other",
+          "event_ids": [
+            "3678404665"
+          ],
+          "media_ids": [
+            "802853825",
+            "1039209550",
+            "289448400",
+            "344052811"
+          ]
+        },
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/虚空女皇大招音频-20261016/sfx/txtp/Play_sfx_Belveth_BelvethR_buffactivate_loop__choice_single.txtp",
+          "txtp_sha256": "4d532fa072ce4a7257c45afc41282d62caa1404e84f4c878fca1058dbc6397c5",
+          "event": "Play_sfx_Belveth_BelvethR_buffactivate_loop",
+          "event_ids": [
+            "3683661751"
+          ],
+          "media_ids": [
+            "218146870"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空召唤/audio-belveth-r/BelvethR_OnCast_1.float.wav",
+          "sha256": "62dc360f1b3db7bc72d520b5be762eedd34d3b590a19c6f929b9fd419d252d72"
+        },
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空召唤/audio-belveth-r/BelvethR_transform_1.float.wav",
+          "sha256": "9c703acf73aad24f0f829418ba01e12d2df8c25b40689cd9c28988099e3d4eaf"
+        },
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空召唤/audio-belveth-r/BelvethR_buffactivate_other_2.float.wav",
+          "sha256": "29bf04618e3ca0ef1f9d7844575c7896b0b41174c629548c1d957334df905f6e"
+        },
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空召唤/audio-belveth-r/BelvethR_buffactivate_loop_1.float.wav",
+          "sha256": "d39ea83ca2bd5a792de826cbadfd318fead943169da97e5e2af4fb45ffb0ec9a"
+        }
+      ],
+      "processing": {
+        "filter_complex": "[0:a]aresample=48000,apad,atrim=duration=8[a];[1:a]aresample=48000,adelay=1000:all=1,apad,atrim=duration=8[b];[2:a]aresample=48000,adelay=1000:all=1,apad,atrim=duration=8[c];[3:a]aresample=48000,atrim=duration=7,adelay=1000:all=1,apad,atrim=duration=8[d];[a][b][c][d]amix=inputs=4:normalize=0:duration=longest,atrim=duration=8[out]",
+        "duration": 8.0,
+        "normalization": false,
+        "timeline": [
+          {
+            "at": 0.0,
+            "event": "Play_sfx_Belveth_BelvethR_OnCast"
+          },
+          {
+            "at": 1.0,
+            "event": "Play_sfx_Belveth_BelvethR_transform"
+          },
+          {
+            "at": 1.0,
+            "event": "Play_sfx_Belveth_BelvethR_buffactivate_other"
+          },
+          {
+            "at": 1.0,
+            "until": 8.0,
+            "event": "Play_sfx_Belveth_BelvethR_buffactivate_loop",
+            "repeat_original_cycle": true
+          }
+        ],
+        "timing_basis": "1 s source castTime; activation/loop transition is project adaptation because client Lua has no runtime callbacks"
+      },
+      "peak": 0.4348100423812866,
+      "wwiser_master_gain_db": 0,
+      "playback_gain_db": 0
+    },
+    {
+      "file": "assets/audio/spells/void_summoning/cast_sequence_3.wav",
+      "sha256": "3ef132b9e6b9a1a7ca8c2917a2a291d7e396e5ada0ef2e1d104ac88a114d63a0",
+      "source_events": [
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/虚空女皇大招音频-20261016/sfx/txtp/Play_sfx_Belveth_BelvethR_OnCast__choice_single.txtp",
+          "txtp_sha256": "8d6fc4220dc9795f7c5912891d69b7ea3a0e5c5384025c9b304360b715a7ce7d",
+          "event": "Play_sfx_Belveth_BelvethR_OnCast",
+          "event_ids": [
+            "117965364"
+          ],
+          "media_ids": [
+            "825113311"
+          ]
+        },
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/虚空女皇大招音频-20261016/sfx/txtp/Play_sfx_Belveth_BelvethR_transform__choice_single.txtp",
+          "txtp_sha256": "c67556be5c2260f8db9ee3d19c0f928d06588cb6de4c643294c059d32f0bdcae",
+          "event": "Play_sfx_Belveth_BelvethR_transform",
+          "event_ids": [
+            "837869894"
+          ],
+          "media_ids": [
+            "790672174"
+          ]
+        },
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/虚空女皇大招音频-20261016/sfx/txtp/Play_sfx_Belveth_BelvethR_buffactivate_other__choice_3.txtp",
+          "txtp_sha256": "b8cb6bae2e907857c4d540a184d0ab1b653cbde4e492288986c5668139694edd",
+          "event": "Play_sfx_Belveth_BelvethR_buffactivate_other",
+          "event_ids": [
+            "3678404665"
+          ],
+          "media_ids": [
+            "802853825",
+            "1039209550",
+            "289448400",
+            "344052811"
+          ]
+        },
+        {
+          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/虚空女皇大招音频-20261016/sfx/txtp/Play_sfx_Belveth_BelvethR_buffactivate_loop__choice_single.txtp",
+          "txtp_sha256": "4d532fa072ce4a7257c45afc41282d62caa1404e84f4c878fca1058dbc6397c5",
+          "event": "Play_sfx_Belveth_BelvethR_buffactivate_loop",
+          "event_ids": [
+            "3683661751"
+          ],
+          "media_ids": [
+            "218146870"
+          ]
+        }
+      ],
+      "source_inputs": [
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空召唤/audio-belveth-r/BelvethR_OnCast_1.float.wav",
+          "sha256": "62dc360f1b3db7bc72d520b5be762eedd34d3b590a19c6f929b9fd419d252d72"
+        },
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空召唤/audio-belveth-r/BelvethR_transform_1.float.wav",
+          "sha256": "9c703acf73aad24f0f829418ba01e12d2df8c25b40689cd9c28988099e3d4eaf"
+        },
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空召唤/audio-belveth-r/BelvethR_buffactivate_other_3.float.wav",
+          "sha256": "eecd3d18a8d73cb7cec9a348a1037ace5ca238d3cb200c1772bfe63df43f1ede"
+        },
+        {
+          "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/虚空召唤/audio-belveth-r/BelvethR_buffactivate_loop_1.float.wav",
+          "sha256": "d39ea83ca2bd5a792de826cbadfd318fead943169da97e5e2af4fb45ffb0ec9a"
+        }
+      ],
+      "processing": {
+        "filter_complex": "[0:a]aresample=48000,apad,atrim=duration=8[a];[1:a]aresample=48000,adelay=1000:all=1,apad,atrim=duration=8[b];[2:a]aresample=48000,adelay=1000:all=1,apad,atrim=duration=8[c];[3:a]aresample=48000,atrim=duration=7,adelay=1000:all=1,apad,atrim=duration=8[d];[a][b][c][d]amix=inputs=4:normalize=0:duration=longest,atrim=duration=8[out]",
+        "duration": 8.0,
+        "normalization": false,
+        "timeline": [
+          {
+            "at": 0.0,
+            "event": "Play_sfx_Belveth_BelvethR_OnCast"
+          },
+          {
+            "at": 1.0,
+            "event": "Play_sfx_Belveth_BelvethR_transform"
+          },
+          {
+            "at": 1.0,
+            "event": "Play_sfx_Belveth_BelvethR_buffactivate_other"
+          },
+          {
+            "at": 1.0,
+            "until": 8.0,
+            "event": "Play_sfx_Belveth_BelvethR_buffactivate_loop",
+            "repeat_original_cycle": true
+          }
+        ],
+        "timing_basis": "1 s source castTime; activation/loop transition is project adaptation because client Lua has no runtime callbacks"
+      },
+      "peak": 0.44971442222595215,
+      "wwiser_master_gain_db": 0,
+      "playback_gain_db": 0
     }
   ]
 }

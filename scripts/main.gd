@@ -710,6 +710,7 @@ const BUFFERED_BATTLE_EVENTS := {
 	&"_rpc_card_event": true,
 	&"_rpc_card_pre_deploy_started": true,
 	&"_rpc_corrosion_fx": true,
+	&"_rpc_summoning_fx": true,
 	&"_rpc_freeze_fx": true,
 	&"_rpc_heal_fx": true,
 	&"_rpc_lightning_area": true,
@@ -1575,12 +1576,12 @@ func _push_units_around(pos: Vector2, radius: float) -> void:
 				u.global_position = new_pos
 
 ## 墓碑等建筑的召唤入口。召唤偏移可能指向塔/建筑，生成前必须找到最近合法位置。
-func spawn_summoned(p_team: int, card_id: String, pos: Vector2, deploy_time_override: float = -1.0, visual_transition: String = "", death_replacement_charges_override: int = -1, summon_visual_origin: Vector2 = Vector2.INF) -> Unit:
+func spawn_summoned(p_team: int, card_id: String, pos: Vector2, deploy_time_override: float = -1.0, visual_transition: String = "", death_replacement_charges_override: int = -1, summon_visual_origin: Vector2 = Vector2.INF, limit_center: Vector2 = Vector2.INF, limit_radius: float = 0.0) -> Unit:
 	var stats: Dictionary = CardDB.get_unit_stats(card_id)
 	if stats.is_empty():
 		push_error("尝试生成不存在的召唤单位：%s" % card_id)
 		return null
-	var resolved := _deployment_rules.resolve_summoned_spawn(p_team, card_id, stats, pos)
+	var resolved := _deployment_rules.resolve_summoned_spawn(p_team, card_id, stats, pos, limit_center, limit_radius)
 	if not resolved.is_finite():
 		push_warning("召唤物没有合法出生点：%s team=%d pos=%s" % [card_id, p_team, pos])
 		return null
@@ -3365,3 +3366,20 @@ func present_cask_hit(pos: Vector2, team: int) -> void:
 	_play_card_event(_presentation_event_id, "explosive_cask", "spell:hit", pos, 0, team)
 	if mode == "server":
 		_broadcast(_rpc_card_event, [network_session_id(), _presentation_event_id, "explosive_cask", "spell:hit", pos, 0, team])
+
+
+func present_summoning_spell(pos: Vector2, radius: float, duration: float, p_team: int) -> void:
+	_presentation_event_id += 1
+	if _audio_manager != null:
+		_audio_manager.start_zone_audio(_presentation_event_id, "void_summoning", 0, "spell", pos, duration, p_team)
+	if mode == "server":
+		_broadcast(_rpc_zone_audio, [network_session_id(), _presentation_event_id, "void_summoning", 0, "spell", pos, duration, p_team])
+		_broadcast(_rpc_summoning_fx, [network_session_id(), _presentation_event_id, pos, radius, duration, p_team])
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_summoning_fx(epoch: String, event_id: int, pos: Vector2, radius: float, duration: float, p_team: int) -> void:
+	if mode != "client" or game_over or not _session.accepts(1, epoch, MatchSession.Phase.RUNNING): return
+	if p_team not in [0, 1] or not pos.is_finite() or not is_finite(radius) or not is_finite(duration) or radius <= 0.0 or duration <= 0.0: return
+	if event_id <= _last_card_event_id: return
+	_last_card_event_id = event_id
+	_spell_system.show_summoning(pos, radius, duration, p_team)

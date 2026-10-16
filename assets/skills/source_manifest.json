@@ -734,5 +734,14 @@
     "summoner_icon_id": 1211,
     "source_title": "湮灭图标",
     "selection": "用户指定用于归于虚空技能"
+  },
+  {
+    "card": "void_summoning",
+    "skill_index": 0,
+    "path": "res://assets/skills/void_summoning_0.png",
+    "source_package": "Global.wad.client",
+    "source_path": "assets/items/icons2d/223069_kiwi_voidimmolation.dds",
+    "source_sha256": "4a4fc42d27ad077270c720313470309ca5d34ab1d77271cb5f419c6ac37833e1",
+    "sha256": "607b2306e88ec20026dc355b8e6fbb06259522e8c1f1e3cfe2ff83929ae0c876"
   }
 ]

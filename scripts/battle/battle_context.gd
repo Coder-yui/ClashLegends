@@ -103,6 +103,9 @@ func notify_unit_hit(net_id: int) -> void:
 func notify_unit_audio_event(unit: Unit, cue: StringName, position: Vector2) -> void:
 	_controller.notify_unit_audio_event(unit, cue, position)
 
+func resolve_unit_death(unit: Unit) -> void:
+	_controller._spell_system.on_unit_death(unit)
+
 func notify_unit_died(net_id: int, play_death_visual: bool = true) -> void:
 	_controller.on_unit_died(net_id, play_death_visual)
 

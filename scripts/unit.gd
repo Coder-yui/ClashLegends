@@ -1408,6 +1408,8 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prep
 	# 卡牌生成后进入部署时间：自身不索敌、不移动、不攻击，但实体已经存在，
 	# 会参与碰撞，也能被敌方索敌、命中、受伤和施加状态。
 	if _deploy_timer > 0.0:
+		# 当前Tick生成的部署实体从下一Tick计时，避免出生特效少走一帧。
+		if battle_context != null and lifecycle_birth_tick == battle_context.simulation_tick(): return
 		_deploy_timer = maxf(0.0, _deploy_timer - dt)
 		if _deploy_timer < 0.000001:
 			_deploy_timer = 0.0
@@ -3059,6 +3061,8 @@ func _die(trigger_death_effect: bool = false) -> void:
 	if is_queued_for_deletion(): return
 	control.clear_on_death()
 	clear_shields()
+	if is_true_death() and not _in_client_mode() and battle_context != null:
+		battle_context.resolve_unit_death(self)
 	if death_outcome == DeathOutcome.DEATH_FORM:
 		assist_conversion.consume(self)
 		death_form.begin(self)
