@@ -7,7 +7,7 @@ var _material: ShaderMaterial
 
 static func resource_manifest(variant: String) -> Dictionary:
 	if variant not in ["beam", "zone"]: return {}
-	return {"paths": [ROOT + variant + ".gdshader"], "sample": {"player": ROOT + "player.gd", "kind": variant, "setup": "native"}}
+	return {"paths": [ROOT + variant + ".gdshader"], "sample": {"player": ROOT + "player.gd", "kind": variant, "setup": "native", "times": [0.025, 0.1, 0.5, 1.5]}}
 
 func load_kind(kind: String) -> void:
 	_kind = kind

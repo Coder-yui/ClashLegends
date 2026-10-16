@@ -59,14 +59,17 @@ func _sample(card: String, recipe: Dictionary, world: Node3D, camera: Camera3D, 
 		else:
 			player.load_kind(kind)
 			player.setup_native(0.01)
-	for age in sample_ages(player._data):
+	# 采样粒子从数据补齐出生帧；程序化 Shader 效果由提供者声明采样时刻。
+	var ages: Array = sample_ages(player._data) if "_data" in player else recipe.times
+	for age in ages:
 		if stop.is_valid() and bool(stop.call()): break
 		if player is Node2D: player.sample(age, 1.0)
 		else: player.seek(age)
 		_retain(player)
 		_draw()
 		await world.get_tree().process_frame
-	sampled_layers[card + "/" + kind] = player._pools.filter(func(pool): return not pool.is_empty()).size()
+	if "_pools" in player:
+		sampled_layers[card + "/" + kind] = player._pools.filter(func(pool): return not pool.is_empty()).size()
 	player.free()
 
 func _view(recipe: Dictionary, world: Node3D, camera: Camera3D, stop: Callable) -> void:

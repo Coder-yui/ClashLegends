@@ -7,7 +7,7 @@ func run(harness: Object, main: Node2D) -> void:
 	await _selection_boundaries()
 	_declaration_contract()
 	_sett_selection()
-	var cards := {"target_dummy": true, "sett": true, "anivia": true, "sion": true, "aurelionsol": true, "kayle_ranged": true, "gwen": true, "tristana": true, "sun_disc": true, "lightning": true, "zap": true, "stasis": true, "explosive_cask": true}
+	var cards := {"target_dummy": true, "sett": true, "anivia": true, "sion": true, "aurelionsol": true, "kayle_ranged": true, "gwen": true, "tristana": true, "sun_disc": true, "lightning": true, "zap": true, "stasis": true, "explosive_cask": true, "malzahar": true}
 	var resources := MatchResources.new()
 	resources.prepare(cards.keys())
 	_expect(resources.errors.is_empty(), "调整后的法术资源完整加载")
@@ -31,6 +31,11 @@ func run(harness: Object, main: Node2D) -> void:
 		if not manifest.has("sample"): continue
 		var recipe: Dictionary = manifest.sample
 		var player: Script = load(recipe.player)
+		if not manifest.has("json"):
+			_expect(not recipe.times.is_empty(), "程序化效果声明预热采样时刻：" + recipe.kind)
+			for path in manifest.paths:
+				_expect(warm.retained.any(func(resource): return resource is ShaderMaterial and resource.shader.resource_path == path), "程序化效果实际采样并保留Shader材质：" + path)
+			continue
 		var data: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(manifest.json[0]))
 		var expected := 0
 		for layer in data.emitters.size():
@@ -50,6 +55,12 @@ func run(harness: Object, main: Node2D) -> void:
 	var cancelled = WARMUP.new()
 	await cancelled.prepare(cards, presentation._world_root, presentation._camera, func(): return true)
 	_expect(cancelled.prepared.is_empty() and cancelled.retained.is_empty(), "取消加载不创建预热资源")
+	var shader_cancelled = WARMUP.new()
+	var shader_calls := [0]
+	var shader_recipe: Dictionary = preload("res://assets/effects/malzahar/nether_grasp/player.gd").resource_manifest("beam").sample
+	await shader_cancelled._sample("malzahar", shader_recipe, presentation._world_root, presentation._camera, func(): shader_calls[0] += 1; return shader_calls[0] > 1)
+	_expect(not shader_cancelled.retained.is_empty() and shader_calls[0] == 2, "程序化效果实际采样后响应取消")
+	_expect(presentation._world_root.get_child_count() == child_count, "程序化效果取消后清理节点且不读取粒子池")
 
 func _selection_boundaries() -> void:
 	var planner = load("res://scripts/presentation/match_resource_plan.gd")
