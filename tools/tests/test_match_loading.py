@@ -1,11 +1,20 @@
-"""Machine-headroom policy checks; no engine or external process is launched."""
+"""Machine-headroom policy checks; only a tiny Python process, no engine."""
 from pathlib import Path
 import sys
 import unittest
+from unittest.mock import patch
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'performance'))
 import match_loading as loading
 
 class MatchLoadingBudgetTests(unittest.TestCase):
+    def test_process_query_tolerates_non_utf8_arguments(self):
+        self.assertEqual(loading.command(sys.executable, '-c', 'import os; os.write(1, bytes([255]))'), '\ufffd')
+
+    def test_invalid_memory_readings_fail_closed(self):
+        for query in ['unreadable', 'free percentage: 101%']:
+            with patch.object(loading, 'command', side_effect=[str(16 * loading.GIB), '1', query]):
+                with self.assertRaises(ValueError): loading.memory_state()
+
     def state(self, gib, pressure=1):
         return dict(available_estimate_bytes=int(gib * loading.GIB), pressure_level=pressure)
 

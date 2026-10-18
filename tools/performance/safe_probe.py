@@ -159,7 +159,8 @@ def _interruption_handlers():
 
 def _heartbeat(path: Path, token: str, pid: int, previous: int):
     try:
-        if path.stat().st_size > 4096:
+        status = path.stat()
+        if status.st_size > 4096:
             return None
         value = json.loads(path.read_text())
         if not isinstance(value, dict):
@@ -168,6 +169,8 @@ def _heartbeat(path: Path, token: str, pid: int, previous: int):
                 or type(value.get('sequence')) is not int or value['sequence'] <= previous
                 or type(value.get('ready')) is not bool):
             return None
+        # A previously unread but old pulse cannot refresh responsiveness to now.
+        value['_file_age_seconds'] = max(0.0, time.time() - status.st_mtime)
         return value
     except (OSError, ValueError, TypeError):
         return None
@@ -234,7 +237,7 @@ def run_guarded(command: list[str], output: Path, *, env: dict | None = None,
                     pulse = _heartbeat(heartbeat_path, token, process.pid, sequence)
                     if pulse:
                         sequence = pulse['sequence']
-                        last_heartbeat = now
+                        last_heartbeat = now - pulse['_file_age_seconds']
                         report.update(heartbeat_seen=True, last_sequence=sequence, last_phase=pulse.get('phase', ''))
                         if pulse['ready'] and ready_since is None:
                             ready_since = now

@@ -29,19 +29,24 @@ def identity(root: Path) -> dict:
     paths = sorted(set(git('ls-files', '-z').split(b'\0') +
                        git('ls-files', '--others', '--exclude-standard', '-z').split(b'\0')) - {b''})
     digest = hashlib.sha256()
+    files = {}
     for raw in paths:
         path = root / os.fsdecode(raw)
         digest.update(raw + b'\0')
+        file_digest = hashlib.sha256()
         if path.is_file():
             with path.open('rb') as stream:
                 for chunk in iter(lambda: stream.read(1024 * 1024), b''):
                     digest.update(chunk)
+                    file_digest.update(chunk)
+            files[os.fsdecode(raw)] = file_digest.hexdigest()
         else:
             digest.update(b'<deleted>')
+            files[os.fsdecode(raw)] = None
         digest.update(b'\0')
     status = git('status', '--porcelain=v1').decode()
     return {'commit': git('rev-parse', 'HEAD').decode().strip(), 'dirty': bool(status),
-            'status': status, 'content_sha256': digest.hexdigest(), 'file_count': len(paths)}
+            'status': status, 'content_sha256': digest.hexdigest(), 'file_count': len(paths), 'files_sha256': files}
 
 
 def expected_suites(source: str, selected: list[str] | None = None, groups: list[str] | None = None) -> list[str]:
@@ -165,7 +170,7 @@ def verification_plan(root: Path, source: str, paths: list[str], *, full: bool =
                 add_groups('network')
                 add_stems('projectile_suite', 'terminal_audio_suite', 'maintenance_suite', 'deck_builder_suite')
                 domain = 'protocol/session'
-            elif stem in ('fixed_step_clock', 'battle_simulation', 'battle_context', 'match_lifecycle', 'match_rules'):
+            elif stem in ('fixed_step_clock', 'battle_simulation', 'battle_context', 'match_lifecycle', 'match_rules', 'match_runtime'):
                 add_groups('network', 'combat', 'deployment', 'status')
                 add_stems('workbench_suite', 'animation_state_suite', 'terminal_audio_suite')
                 domain = '20Hz/lifecycle'
@@ -321,7 +326,33 @@ def validate_mechanics(log: str, expected: list[str]) -> tuple[dict | None, list
     return result, errors
 
 
-def run_step(name: str, command: list[str], output: Path, timeout: float, suites: list[str] | None = None) -> dict:
+def run_engine(*args, **kwargs):
+    from verification_guard import run_engine as guarded
+    return guarded(*args, **kwargs)
+
+
+def run_step(name: str, command: list[str], output: Path, timeout: float, suites: list[str] | None = None, guard_profile: str | None = None) -> dict:
+    if guard_profile and name in {'import', 'card-facts-export'}:
+        raise ValueError('authority-logic does not cover import/card-facts; protected step refused')
+    if guard_profile and name == 'mechanics':
+        guarded_output = output / (name + '-guard')
+        supervision = run_engine(command, guarded_output, timeout, profile=guard_profile, heartbeat=True)
+        path = output / f'{name}.log'
+        log_file = guarded_output / 'engine.log'
+        log = log_file.read_text(errors='replace') if log_file.exists() else ''
+        path.write_text(log)
+        errors = [] if supervision['passed'] else ['Supervisor: ' + supervision['reason']]
+        if ERROR_PATTERN.search(log): errors.append('Unexpected error in log')
+        step = dict(name=name, command=command, exit_code=supervision.get('exit_code'),
+                    seconds=supervision.get('seconds', 0), log=str(path), errors=errors,
+                    supervision=supervision)
+        if name == 'mechanics':
+            result, validation_errors = validate_mechanics(log, expected_suites((ROOT / 'tests/suite_catalog.json').read_text(), suites))
+            step['result'] = result
+            errors.extend(validation_errors)
+        step['passed'] = not errors
+        print(f"[{name}] {'PASS' if step['passed'] else 'FAIL'} — {path}", flush=True)
+        return step
     path = output / f'{name}.log'
     started = time.monotonic()
     timed_out = False
@@ -495,8 +526,10 @@ def main() -> int:
     parser.add_argument('--network-render', action='store_true', help='Run network integration with visible rendering and capture final frames')
     parser.add_argument('--godot', default=os.environ.get('GODOT_BIN'))
     parser.add_argument('--output', type=Path)
-    parser.add_argument('--timeout', type=float, default=600, help='Timeout in seconds per step')
+    parser.add_argument('--timeout', type=float, help='Per-step timeout: ordinary default 600s; authority-logic default 20s, explicit values must be <=20s')
+    parser.add_argument('--guard-profile', choices=['authority-logic'], help='Explicit Mac-only supervision for reviewed lightweight logic/injection suites; no import/network/loading')
     args = parser.parse_args()
+    args.timeout = args.timeout if args.timeout is not None else (20 if args.guard_profile else 600)
     if args.network_port and not 1024 <= args.network_port <= 65535:
         parser.error('--network-port must be 0 or 1024..65535')
     if args.timeout <= 0:
@@ -520,6 +553,19 @@ def main() -> int:
     needs_engine = bool(plan['suites'] or plan['card_facts'] or wants_network)
     plan['requires_import'] |= args.prepare_import or (needs_engine and not (ROOT / '.godot/global_script_class_cache.cfg').is_file())
     preview = planned_commands(plan, args.godot, Path('<output>'), args.reverse_suites, wants_network)
+    if args.guard_profile:
+        from verification_guard import AUTHORITY_SUITES, policy
+        try:
+            plan['supervision'] = policy(args.guard_profile, args.timeout)
+            if not args.plan and sys.platform != 'darwin':
+                raise ValueError('authority-logic supervision supports macOS only; protected run refused')
+            if not plan['suites'] or set(plan['suites']) - AUTHORITY_SUITES or wants_network or plan['requires_import'] or plan['card_facts']:
+                raise ValueError('authority-logic only supports reviewed lightweight logic/injection suites with existing imports; import/card-facts/network/other suites require a separately reviewed policy')
+        except ValueError as exc:
+            parser.error(str(exc))
+    else:
+        plan['supervision'] = {'profile': None, 'wall_seconds_per_step': args.timeout,
+                               'scope': 'Legacy timeout/process-group handling; no new RSS/system-pressure/heartbeat guarantee'}
     plan['steps'] = [{'name': name, 'command': command} for name, command in preview]
     plan['explicit_network'] = bool(wants_network)
     plan['network_cases'] = (['normal'] if wants_network else []) + (
@@ -545,7 +591,10 @@ def main() -> int:
                 raise RuntimeError(f"Engine mismatch: expected {required_engine}, got {report['engine']}")
         commands = planned_commands(plan, godot, output, args.reverse_suites, wants_network)
         for name, command in commands:
-            step = run_step(name, command, output, args.timeout, args.suite)
+            if args.guard_profile:
+                step = run_step(name, command, output, args.timeout, args.suite, guard_profile=args.guard_profile)
+            else:
+                step = run_step(name, command, output, args.timeout, args.suite)
             report['steps'].append(step)
             if not step['passed']:
                 break

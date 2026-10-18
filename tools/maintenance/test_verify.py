@@ -1,5 +1,7 @@
 """Failure-path fixtures: even an engine exit of zero must not hide broken suites."""
 import importlib.util
+import contextlib
+import io
 import json
 from pathlib import Path
 import unittest
@@ -14,6 +16,62 @@ spec.loader.exec_module(verify)
 
 
 class VerifyTests(unittest.TestCase):
+    def test_plan_reports_explicit_load_and_timeout_policy(self):
+        for extra, expected in [([], 600), (['--guard-profile', 'authority-logic'], 20)]:
+            output = io.StringIO()
+            with patch.object(sys, 'argv', ['verify', '--plan', '--suite', 'GrowthSpatialSuite', *extra]), contextlib.redirect_stdout(output):
+                self.assertEqual(verify.main(), 0)
+            supervision = json.loads(output.getvalue())['supervision']
+            self.assertEqual(supervision.get('wall_seconds', supervision.get('wall_seconds_per_step')), expected)
+
+    def test_lightweight_boundary_scope_is_explicit_and_keeps_heavy_suites_out(self):
+        for selected in ['LightweightContractSuite', 'StartupNetworkBoundary', 'WorldOwnershipSuite', 'RuntimeOwnershipSuite', 'UnitMutationSuite', 'StrictContractSuite']:
+            output = io.StringIO()
+            with patch.object(sys, 'argv', ['verify', '--plan', '--guard-profile', 'authority-logic',
+                                           '--suite', selected]), contextlib.redirect_stdout(output):
+                self.assertEqual(verify.main(), 0)
+            plan = json.loads(output.getvalue())
+            self.assertEqual(plan['suites'], [selected])
+            self.assertFalse(plan['requires_import'])
+            self.assertFalse(plan['card_facts'])
+        for heavy in ['PresentationSuite', 'AUDIO_PRESENTATION_SUITE_SCRIPT', 'CardDBValidationSuite']:
+            with patch.object(sys, 'argv', ['verify', '--plan', '--guard-profile', 'authority-logic',
+                                           '--suite', heavy]), contextlib.redirect_stderr(io.StringIO()):
+                with self.assertRaises(SystemExit): verify.main()
+
+    def test_protected_cli_rejects_scope_timeout_and_unsupported_platform(self):
+        cases = [(['--suite', 'JinxSuite'], 'darwin'),
+                 (['--suite', 'GrowthSpatialSuite', '--timeout', '60'], 'darwin'),
+                 (['--suite', 'GrowthSpatialSuite'], 'linux')]
+        for options, platform in cases:
+            with patch.object(sys, 'argv', ['verify', '--guard-profile', 'authority-logic', *options]), patch.object(sys, 'platform', platform), patch.object(verify, 'find_godot') as find, contextlib.redirect_stderr(io.StringIO()):
+                with self.assertRaises(SystemExit) as error: verify.main()
+                self.assertEqual(error.exception.code, 2)
+                find.assert_not_called()
+
+    def test_explicit_engine_step_fails_closed_through_supervisor(self):
+        for name in ['mechanics']:
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as folder:
+                with patch.object(verify, 'run_engine', return_value=dict(passed=False, reason='monitor_unavailable')) as guard, patch.object(verify.subprocess, 'Popen') as spawn:
+                    result = verify.run_step(name, ['fake-engine', '--headless'], Path(folder), 20, ['GrowthSpatialSuite'], guard_profile='authority-logic')
+                guard.assert_called_once()
+                spawn.assert_not_called()
+                self.assertFalse(result['passed'])
+                self.assertIn('Supervisor: monitor_unavailable', result['errors'])
+
+    def test_protected_import_is_refused_without_legacy_fallback(self):
+        for name in ['import', 'card-facts-export']:
+            with tempfile.TemporaryDirectory() as folder, patch.object(verify.subprocess, 'Popen') as spawn:
+                with self.assertRaises(ValueError):
+                    verify.run_step(name, ['fake-engine'], Path(folder), 20, guard_profile='authority-logic')
+                spawn.assert_not_called()
+
+    def test_ordinary_mechanics_keeps_explicit_timeout_without_mac_monitor(self):
+        with tempfile.TemporaryDirectory() as folder, patch.object(verify, 'run_engine') as guard:
+            result = verify.run_step('import', [sys.executable, '-c', 'print("tiny fixture")'], Path(folder), 0.75)
+        self.assertTrue(result['passed'])
+        guard.assert_not_called()
+
     def test_default_verification_runs_safe_tools_gate_and_stops_on_failure(self):
         for tool_passed in [True, False]:
             with self.subTest(tool_passed=tool_passed), tempfile.TemporaryDirectory() as folder:
@@ -108,7 +166,7 @@ class VerifyTests(unittest.TestCase):
         self.assertFalse(plan['blocked'])
 
     def test_timing_and_lifecycle_expand_domains(self):
-        for path in ['scripts/battle/fixed_step_clock.gd', 'scripts/main.gd']:
+        for path in ['scripts/battle/match_runtime.gd', 'scripts/battle/fixed_step_clock.gd', 'scripts/main.gd']:
             plan = self.real_plan(path)
             for suite in ['network_lifecycle_suite', 'numeric_system_suite', 'ArenaDeploymentSuite', 'StatusBoundarySuite']:
                 self.assertIn(suite, plan['suites'])
@@ -290,6 +348,9 @@ class VerifyTests(unittest.TestCase):
         self.assertFalse(before['dirty'])
         self.assertTrue(first['dirty'])
         self.assertNotEqual(first['content_sha256'], second['content_sha256'])
+        self.assertEqual(first['files_sha256']['new.txt'], verify.hashlib.sha256(b'one').hexdigest())
+        self.assertEqual(second['files_sha256']['new.txt'], verify.hashlib.sha256(b'two').hexdigest())
+        self.assertEqual(before['files_sha256'], {})
         self.assertEqual(before['commit'], second['commit'])
 
     def test_nonzero_exit_fails(self):

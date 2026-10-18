@@ -103,6 +103,11 @@ class GuardTests(unittest.TestCase):
         self.assertFalse(result['passed'])
         self.assert_clean(result)
 
+    def test_unread_stale_pulse_does_not_refresh_receive_time(self):
+        result = self.run_child("pulse(1); os.utime(path,(time.time()-10,time.time()-10)); time.sleep(10)")
+        self.assertEqual(result['reason'], 'main_thread_heartbeat_timeout', result)
+        self.assert_clean(result)
+
     def test_missing_heartbeat_has_bounded_startup_grace(self):
         result = self.run_child('time.sleep(10)')
         self.assertEqual(result['reason'], 'startup_heartbeat_timeout', result)

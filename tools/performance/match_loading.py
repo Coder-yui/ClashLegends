@@ -8,7 +8,10 @@ import json
 import re
 import subprocess
 import time
-from safe_probe import Limits, MIB, ROOT, group_rss_bytes, run_guarded
+try:
+    from .safe_probe import Limits, MIB, ROOT, group_rss_bytes, run_guarded
+except ImportError:  # Direct CLI invocation.
+    from safe_probe import Limits, MIB, ROOT, group_rss_bytes, run_guarded
 
 GIB = 1024 * MIB
 
@@ -29,15 +32,21 @@ class MatchLimits(Limits):
                 raise ValueError(key + ' outside match startup policy')
 
 
-def command(*args):
-    return subprocess.run(args, text=True, capture_output=True, check=True, timeout=2).stdout
+def command(*args, timeout=2):
+    return subprocess.run(args, text=True, errors='replace', capture_output=True, check=True, timeout=timeout).stdout
 
 
-def memory_state():
-    physical = int(command('/usr/sbin/sysctl', '-n', 'hw.memsize').strip())
-    pressure = int(command('/usr/sbin/sysctl', '-n', 'kern.memorystatus_vm_pressure_level').strip())
-    query = command('/usr/bin/memory_pressure', '-Q')
-    percent = int(re.search(r'free percentage: (\d+)%', query)[1])
+def memory_state(*, read=None):
+    read = read or command
+    physical = int(read('/usr/sbin/sysctl', '-n', 'hw.memsize').strip())
+    pressure = int(read('/usr/sbin/sysctl', '-n', 'kern.memorystatus_vm_pressure_level').strip())
+    query = read('/usr/bin/memory_pressure', '-Q')
+    match = re.search(r'free percentage: (\d+)%', query)
+    if match is None:
+        raise ValueError('Unreadable system memory availability')
+    percent = int(match[1])
+    if physical <= 0 or not 0 <= percent <= 100:
+        raise ValueError('Invalid system memory reading')
     return dict(physical_bytes=physical, pressure_level=pressure, available_percent=percent,
                 available_estimate_bytes=physical * percent // 100)
 
