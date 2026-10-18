@@ -22,7 +22,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_expect(notice.entries.size() == count + 1 and notice.entries[-1].texture == CardArt.skill_icon(CardDB.get_card("mirror")), "镜像法术只显示镜像图标一次")
 	var unit := main._spawn_unit(UnitSpawnRequest.new(0, "garen", Vector2(300, 900), {"deploy_time_override": 0.0})) as Unit
 	var skill: Dictionary = CardDB.active_skills_for("garen")[1]
-	_expect(main._start_active_skill_cast(unit, skill), "主动技能成功起手")
+	_expect(main.runtime._start_active_skill_cast(unit, skill), "主动技能成功起手")
 	_expect(notice.entries[-1].texture == CardArt.skill_icon(skill), "主动技能显示实际候选图标")
 	notice._process(1.4)
 	_expect(notice.entries.is_empty(), "消散后释放提示数据")
@@ -34,8 +34,8 @@ func run(harness: Object, main: Node2D) -> void:
 	notice.presentation.viewer_team = 1
 	_expect(notice.color_for(1) == blue and notice.color_for(0) == red, "红方视角仍为己方蓝圈敌方红圈")
 	notice.presentation.viewer_team = 0
-	var old_mode: String = main.mode
-	main.mode = "client"
+	var old_mode: String = main.runtime.mode
+	main.runtime.mode = "client"
 	var event_id: int = main._last_card_event_id + 1
 	var args := [event_id, "heal", "cast:notice", Vector2.ZERO, 1, 1]
 	preload("res://tests/fixtures/network_fixture.gd").deliver(main, &"_rpc_card_event", args)
@@ -44,5 +44,5 @@ func run(harness: Object, main: Node2D) -> void:
 	_expect(notice.entries.size() == 1, "客户端重复消息不重播")
 	main._rpc_card_event("expired-session", event_id + 1, "heal", "cast:notice", Vector2.ZERO, 0, 0)
 	_expect(notice.entries.size() == 1, "旧会话提示拒绝")
-	main.mode = old_mode
+	main.runtime.mode = old_mode
 	notice.clear()

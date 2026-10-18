@@ -52,27 +52,27 @@ func run(harness: Object, main: Node2D) -> void:
 		_expect(source.hp == 0, "同批致死来源无治疗收益")
 		for unit in [source,primary,nearby,far,friend,air]:
 			if is_instance_valid(unit): unit.free()
-	var old_deck: Array = main._deck.duplicate()
-	main._deck[0] = "yorick"
-	var paid: Unit = main._spawn_card_units(0,"yorick",Vector2(250,1100),0.0,0)[0]
+	var old_deck: Array = main.runtime._deck.duplicate()
+	main.runtime._deck[0] = "yorick"
+	var paid: Unit = main.runtime._spawn_card_units(0,"yorick",Vector2(250,1100),0.0,0)[0]
 	var target := _spawn("target_dummy",1,Vector2(295,1100))
 	target.hp = 10000
 	target.max_hp = 10000
 	var id := paid.active_ability_id
 	for use in 3:
-		main._elixir.elixir = 10.0
-		_expect(main.use_active_skill(id,0) and main._elixir.elixir == 9.0, "Q正式请求消费1金币")
+		main.runtime.account(0 if main.runtime.mode == "server" else main.runtime.local_team).elixir = 10.0
+		_expect(main.use_active_skill(id,0) and main.runtime.account(0 if main.runtime.mode == "server" else main.runtime.local_team).elixir == 9.0, "Q正式请求消费1金币")
 		_expect(not main.use_active_skill(id,0), "排队中不接受重复请求")
 		_run_main_ticks(12)
-		var payload: Array = main._snapshot_system._unit_snapshot_payload(paid.net_id,paid)
+		var payload: Array = preload("res://tests/fixtures/network_fixture.gd").snapshot_payload(main._snapshot_system, 12345,paid)
 		_expect(payload.size() == NetworkSnapshotSystem.UNIT_PAYLOAD_SIZE and int(payload[NetworkSnapshotSystem.U_EMPOWERED_READY]) == int(paid.empowered_attack_ready), "Q武装状态使用现有快照字段")
 		if paid.empowered_attack_ready: _strike(paid,target)
 		_expect(not main.use_active_skill(id,0), "Q冷却期间拒绝再次施放")
-		main._tick_active_skill_cooldowns(6.0)
+		main.runtime._tick_active_skill_cooldowns(6.0)
 	_expect(not main.use_active_skill(id,0), "三次耗尽后不可施放")
 	paid.free()
 	target.free()
-	main._deck = old_deck
+	main.runtime._deck = old_deck
 	for value in [-1, 0, NAN, "120"]:
 		var stats: Dictionary = CardDB.get_card("yorick").duplicate(true)
 		stats.active_skills[0].hit_heal = value

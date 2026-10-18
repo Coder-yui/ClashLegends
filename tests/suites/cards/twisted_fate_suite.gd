@@ -61,29 +61,29 @@ func _check_global_ground_deployment() -> void:
 	var river_bottom := Vector2(360.0, 660.0)
 	var left_bridge_top := Vector2(ArenaRules.BRIDGE_X_LEFT, river_top.y)
 	var right_bridge_bottom := Vector2(ArenaRules.BRIDGE_X_RIGHT, river_bottom.y)
-	var enemy_king: Vector2 = _main._king_enemy.global_position
-	var player_king: Vector2 = _main._king_player.global_position
+	var enemy_king: Vector2 = _main.world.king(1).global_position
+	var player_king: Vector2 = _main.world.king(0).global_position
 	_expect(
-		_main.is_card_deploy_position_valid(0, "twisted_fate", enemy_side)
-		and _main.is_card_deploy_position_valid(0, "twisted_fate", own_side)
-		and _main.is_card_deploy_position_valid(1, "twisted_fate", enemy_side)
-		and _main.is_card_deploy_position_valid(1, "twisted_fate", own_side)
-		and _main.is_card_deploy_position_valid(0, "twisted_fate", center_ground)
-		and _main.is_card_deploy_position_valid(0, "twisted_fate", left_bridge_top)
-		and _main.is_card_deploy_position_valid(0, "twisted_fate", right_bridge_bottom)
-		and _main.is_card_deploy_position_valid(1, "twisted_fate", left_bridge_top),
+		_main.runtime.is_card_deploy_position_valid(0, "twisted_fate", enemy_side)
+		and _main.runtime.is_card_deploy_position_valid(0, "twisted_fate", own_side)
+		and _main.runtime.is_card_deploy_position_valid(1, "twisted_fate", enemy_side)
+		and _main.runtime.is_card_deploy_position_valid(1, "twisted_fate", own_side)
+		and _main.runtime.is_card_deploy_position_valid(0, "twisted_fate", center_ground)
+		and _main.runtime.is_card_deploy_position_valid(0, "twisted_fate", left_bridge_top)
+		and _main.runtime.is_card_deploy_position_valid(0, "twisted_fate", right_bridge_bottom)
+		and _main.runtime.is_card_deploy_position_valid(1, "twisted_fate", left_bridge_top),
 		"卡牌大师可在敌我双方、中场河道外、左右桥面的地面落点部署",
 	)
 	_expect(
-		not _main.is_card_deploy_position_valid(0, "twisted_fate", river_top)
-		and not _main.is_card_deploy_position_valid(0, "twisted_fate", river_bottom)
-		and not _main.is_card_deploy_position_valid(0, "twisted_fate", enemy_king)
-		and not _main.is_card_deploy_position_valid(0, "twisted_fate", player_king),
+		not _main.runtime.is_card_deploy_position_valid(0, "twisted_fate", river_top)
+		and not _main.runtime.is_card_deploy_position_valid(0, "twisted_fate", river_bottom)
+		and not _main.runtime.is_card_deploy_position_valid(0, "twisted_fate", enemy_king)
+		and not _main.runtime.is_card_deploy_position_valid(0, "twisted_fate", player_king),
 		"卡牌大师不能落在非桥面河道、或防御塔/水晶占地格",
 	)
 
 func _check_two_stage_deployment() -> void:
-	_main._commands.clear_deployments()
+	_main.runtime._commands.clear_deployments()
 	var desired := Vector2(60.0, 100.0)
 	var before_count := 0
 	for combatant in _main.get_tree().get_nodes_in_group("combatants"):
@@ -97,7 +97,7 @@ func _check_two_stage_deployment() -> void:
 	_main.play_card(0, "twisted_fate", desired, {"immediate": true, "validate_position": false})
 	_main._play_card_event(_main._presentation_event_id, "twisted_fate", "pre_deploy:start", desired)
 	_expect(cues.size() == 1, "预部署开始播放一次 Gate_marker，重复可靠事件 ID 不重播")
-	var scheduled: bool = _main._commands.inspect_deployments().size() == 1
+	var scheduled: bool = _main.runtime._commands.inspect_deployments().size() == 1
 	var no_unit_during_pre_stage := true
 	for combatant in _main.get_tree().get_nodes_in_group("combatants"):
 		if combatant is Unit and (combatant as Unit).card_id == "twisted_fate":
@@ -105,11 +105,11 @@ func _check_two_stage_deployment() -> void:
 	_expect(scheduled and no_unit_during_pre_stage and before_count == 0, "1.3 秒预部署只显示卡牌落点提示，不生成卡牌大师")
 	for _tick in range(25):
 		_main._sim_step(_main.SIM_DT)
-	var still_waiting: bool = _main._commands.inspect_deployments().size() == 1
+	var still_waiting: bool = _main.runtime._commands.inspect_deployments().size() == 1
 	var unit_before_second_stage: bool = _latest_twisted_fate() == null
 	_main._sim_step(_main.SIM_DT)
 	var unit := _latest_twisted_fate()
-	var spawned_after_pre_deploy: bool = unit != null and _main._commands.inspect_deployments().is_empty()
+	var spawned_after_pre_deploy: bool = unit != null and _main.runtime._commands.inspect_deployments().is_empty()
 	var unit_locked: bool = unit != null and not unit.is_deployed() and is_equal_approx(unit._deploy_timer, 0.45)
 	for _tick in range(8):
 		_main._sim_step(_main.SIM_DT)
@@ -125,7 +125,7 @@ func _check_two_stage_deployment() -> void:
 	_main._audio_manager.cue_played.disconnect(listener)
 	if unit != null and is_instance_valid(unit):
 		unit.free()
-	_main._commands.clear_deployments()
+	_main.runtime._commands.clear_deployments()
 
 func _latest_twisted_fate() -> Unit:
 	var latest: Unit = null
@@ -163,15 +163,25 @@ func _check_wild_cards_visual() -> void:
 		paths_match = paths_match and projectile.color == skill.projectile_colors[index] and is_equal_approx(float(projectile.speed), 400.0)
 		index += 1
 	_expect(paths_match and index == 3, "万能牌扇形提示与三张牌共用起点、方向和长度")
-	var old_mode: String = _main.mode
-	var old_mode_team: int = _main.local_team
-	_main.mode = "client"
-	_main.local_team = 1
-	preload("res://tests/fixtures/network_fixture.gd").deliver(_main, "_rpc_frontal_skill_fx", [-1, caster.position, Vector2.DOWN, caster.body_radius, float(effect.length), 0.0, float(effect.duration), 1, String(effect.shape), 0.0, 0.0, float(effect.arc_degrees), int(effect.projectile_count)])
+	var old_mode: String = _main.runtime.mode
+	var old_mode_team: int = _main.runtime.local_team
+	_main.runtime.mode = "client"
+	_main.runtime.local_team = 1
+	# 依附预警必须指向仍存在的网络副本；不再用无来源ID模拟有效事件。
+	var previous_client_source = _main.world.replica_units_snapshot().get(caster.net_id)
+	_main.world.register_replica_unit(caster)
+	_main._skill_presentation.clear()
+	var network_effect: Dictionary = effect.duplicate(true)
+	network_effect.erase("source_ref")
+	network_effect.forward = Vector2.DOWN
+	network_effect.team = 1
+	preload("res://tests/fixtures/network_fixture.gd").deliver(_main, "_rpc_skill_fx", [987654, network_effect])
 	var replay: Dictionary = _main._skill_presentation.frontal_effects.back()
 	_expect(replay.shape == "fan_shared" and replay.projectile_count == 3 and replay.forward == Vector2.DOWN, "客户端范围 RPC 保留完整扇形提示和红方朝向")
-	_main.mode = old_mode
-	_main.local_team = old_mode_team
+	if previous_client_source == null: _main.world.forget_replica_unit(caster.net_id)
+	else: _main.world.register_replica_unit(previous_client_source)
+	_main.runtime.mode = old_mode
+	_main.runtime.local_team = old_mode_team
 	_main._projectile_system.clear_all()
 	_main._active_skill_effect_system.clear()
 	_main._skill_presentation.clear()

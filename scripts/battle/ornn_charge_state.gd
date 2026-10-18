@@ -56,7 +56,7 @@ func _tick_delivery(dt: float) -> bool:
 	if not stopped:
 		if source.is_stunned() or source._knockback_timer > 0.0:
 			# 准备结束仍受控也不能开始位移；取消不伪造撞墙/抵达。
-			source.skill_dash_active = true
+			source.set_dash_moving(serial, true)
 			source.cancel_controlled_action(ActionCancellation.STUN if source.is_stunned() else ActionCancellation.KNOCKBACK)
 			cancelled = true
 			_finish(source)
@@ -119,11 +119,11 @@ func _advance_charge(source: Unit, max_distance: float, requested_distance: floa
 		impact_center = _contact_point(source)
 		stopped = true
 		collided = true
-		source.skill_dash_active = false
+		source.set_dash_moving(serial, false)
 		remaining = 0.0
 	if not stopped and travelled + 0.000001 >= max_distance:
 		stopped = true
-		source.skill_dash_active = false
+		source.set_dash_moving(serial, false)
 
 func _structure_contact(source: Unit, start: Vector2, end: Vector2) -> Node2D:
 	var nearest := INF
@@ -136,7 +136,7 @@ func _structure_contact(source: Unit, start: Vector2, end: Vector2) -> Node2D:
 		for index in range(samples + 1):
 			var ratio := float(index) / float(samples)
 			var point := start.lerp(end, ratio)
-			var gap: float = structure.surface_gap_to_circle(point, source.body_radius) if structure.has_method("surface_gap_to_circle") else point.distance_to(structure.global_position) - structure.body_radius - source.body_radius
+			var gap: float = structure.surface_gap_to_circle(point, source.body_radius)
 			if gap > ArenaRules.STRUCTURE_SEPARATION + 0.1:
 				continue
 			var distance := segment_length * ratio
@@ -159,8 +159,8 @@ func _hit_trail(source: Unit, start: Vector2, end: Vector2, excluded: Node2D) ->
 		if closest.distance_to(target.global_position) > float(skill.width) * 0.5 + target.body_radius:
 			continue
 		trail_hit_ids[identity] = true
-		if _active_damage(source, target, float(skill.trail_damage), source.global_position):
-			source.battle_context.notify_unit_audio_event(source, &"charge:trail_hit", target.global_position)
+		var receipt := _active_damage(source, target, float(skill.trail_damage), source.global_position)
+		_present_hit(source, target, receipt, &"charge:trail_hit")
 
 func _resolve_blast(source: Unit) -> void:
 	# 碰撞爆发同时覆盖空地目标，独立于奥恩仅攻击建筑的普攻索敌能力。
@@ -176,20 +176,26 @@ func _resolve_blast(source: Unit) -> void:
 		if blast_hit_ids.has(identity):
 			continue
 		blast_hit_ids[identity] = true
-		if _active_damage(source, target, float(skill.damage), center) and target is Unit and not target.is_building:
-			source.battle_context.notify_unit_audio_event(source, &"charge:knockup", target.global_position)
-		if target.has_method("stun") and target.hp > 0.0:
-			if target is Unit:
-				target.stun(float(skill.stun_duration), source.status_source("ornn_charge"), CombatInteraction.effect_context(source))
-			else:
-				target.stun(float(skill.stun_duration), source.status_source("ornn_charge"), CombatInteraction.effect_context(source))
+		var receipt := _active_damage(source, target, float(skill.damage), center)
+		if target is Unit and not target.is_building: _present_hit(source, target, receipt, &"charge:knockup")
+		assert(target is Unit or target is Tower, "奥恩冲撞目标必须提供正式控制合同")
+		if target.hp > 0.0:
+			target.stun(float(skill.stun_duration), source.status_source("ornn_charge"), CombatInteraction.effect_context(source))
 
-func _active_damage(source: Unit, target: Node2D, amount: float, origin: Vector2) -> bool:
-	if source.battle_context != null:
-		return source.battle_context.apply_damage_pulse(source, target, amount, 0.0, origin, false)
-	else:
-		target.take_damage(BattleNumbers.quantity(amount), source, source.team, origin)
-		return true
+func _active_damage(source: Unit, target: Node2D, amount: float, origin: Vector2) -> Dictionary:
+	assert(source.battle_context != null, "OrnnChargeState需要已登记的战场来源")
+	return source.battle_context.apply_damage_pulse(source, target, amount, 0.0, origin, false)
+
+func _present_hit(source: Unit, target: Node2D, result: Dictionary, cue: StringName) -> void:
+	var source_ref: WeakRef = weakref(source)
+	var position := target.global_position
+	var notify := func():
+		var live_source = source_ref.get_ref()
+		if result.landed and is_instance_valid(live_source):
+			live_source.battle_context.notify_unit_audio_event(live_source, cue, position)
+	var resolver: CombatResolver = source.battle_context.damage_batch()
+	if resolver.collecting: resolver.defer_effect(notify)
+	else: notify.call()
 
 func _finish(source: Unit) -> void:
 	finished = true

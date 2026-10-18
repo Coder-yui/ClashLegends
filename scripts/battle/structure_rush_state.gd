@@ -150,9 +150,7 @@ func _first_structure_contact(unit: Unit, distance: float) -> Dictionary:
 	return result
 
 func _structure_gap(structure: Node2D, point: Vector2, radius: float) -> float:
-	if structure.has_method("surface_gap_to_circle"):
-		return structure.surface_gap_to_circle(point, radius)
-	return maxf(0.0, point.distance_to(structure.global_position) - structure.body_radius - radius)
+	return structure.surface_gap_to_circle(point, radius)
 
 func _valid_target(unit: Unit) -> bool:
 	return is_instance_valid(target) and target.hp > 0.0 and not target.is_queued_for_deletion() and target.team != unit.team and unit._is_struct(target) and CombatInteraction.allows(target, unit)
@@ -199,7 +197,7 @@ func _impact(unit: Unit) -> void:
 		_audio(unit, &"rush:hit")
 		# 代价明确扣当前生命，不由护盾抵消，也不发放吸血/普攻收益。
 		if is_instance_valid(unit) and unit.hp > 0.0:
-			unit.hp = maxf(1.0, unit.hp - BattleNumbers.quantity(unit.hp * float(config.rush_self_health_ratio)))
+			unit.pay_rush_health_cost(float(config.rush_self_health_ratio))
 		var count := int(config.rush_spawn_count)
 		var radius := float(CardDB.get_unit_stats(String(config.rush_spawn_id)).radius)
 		var side := Vector2(-impact_direction.y, impact_direction.x)
@@ -239,10 +237,7 @@ func _approach_launch_point(unit: Unit, dt: float) -> void:
 		_launch_nav_revision = revision
 		_launch_target_position = target.global_position
 		# 失败也覆盖旧路线，不能向旧目标继续移动。
-		unit._path = PackedVector2Array()
-		unit._path_index = 0
-		unit._path_target = target
-		unit._path_goal = Vector2.INF
+		unit.set_structure_approach_path(PackedVector2Array(), target, Vector2.INF)
 		var goal := Vector2.INF
 		var best := INF
 		var best_path := PackedVector2Array()
@@ -277,11 +272,7 @@ func _approach_launch_point(unit: Unit, dt: float) -> void:
 					goal = candidate
 					best_path = path
 		if goal.is_finite():
-			unit._path = best_path
-			unit._path.append(goal)
-			unit._path_index = 0
-			unit._path_target = target
-			unit._path_goal = goal
+			unit.set_structure_approach_path(best_path, target, goal)
 		_launch_retry = 0.4
 		search_usec += Time.get_ticks_usec() - started
 	if not unit._path.is_empty(): unit._follow_current_path(dt)

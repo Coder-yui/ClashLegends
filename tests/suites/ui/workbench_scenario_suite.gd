@@ -15,10 +15,10 @@ func run(harness: Object, main: Node2D) -> void:
 	var center: Unit = main._art_dev_selected_unit()
 	var count := _units(main).size()
 	harness._expect(center != null and center.card_id == "garen" and count == 9, "敌人包围布置当前卡与八名敌军，保留当前技能控制对象")
-	main._towers[0].take_damage(100000.0)
+	main.world.towers_snapshot()[0].take_damage(100000.0)
 	await main._load_workbench_preset("surrounded")
 	harness._expect(_units(main).size() == count and not is_instance_valid(center), "重建经典场景清掉上轮对象，不重复累积单位")
-	harness._expect(main._towers[0].hp == main._towers[0].max_hp and not main._towers[0].nav_cells.is_empty(), "重建场景恢复被摧毁的塔和导航占地，保持实验起点一致")
+	harness._expect(main.world.towers_snapshot()[0].hp == main.world.towers_snapshot()[0].max_hp and not main.world.towers_snapshot()[0].nav_cells.is_empty(), "重建场景恢复被摧毁的塔和导航占地，保持实验起点一致")
 	var blue: Vector2 = main._art_dev_selected_unit().position
 	main._workbench.team = 1
 	await main._load_workbench_preset("surrounded")

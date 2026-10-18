@@ -36,7 +36,7 @@ func _dash(team: int) -> void:
 	_expect(source.position.distance_to(origin + direction * 3.0 * ArenaRules.TILE_SIZE) < 0.01, "双方突进准确推进3格")
 	_expect(dash.finished and not source.skill_dash_active and source.active_skill_cast_timer == 0, "突进正常结束释放动作锁")
 	_expect(source.building_only and source.is_air and not source._target_is_attackable(air) and not source._target_is_attackable(ground), "本体飞行且普通攻击拒绝空中和地面单位")
-	var tower: Tower = _main._towers[(1-team)*2]
+	var tower: Tower = _main.world.towers_snapshot()[(1-team)*2]
 	var tower_hp: float = tower.hp
 	dash._hit(source, tower.position, tower.position, false)
 	_expect(tower.hp == tower_hp - 100, "突进可伤害路径上的敌方建筑")
@@ -179,7 +179,7 @@ func _dash_target_modes() -> void:
 		skill.erase("air_only")
 		skill.merge(mode, true)
 		var dash := DashStrikeState.new(source, skill)
-		var tower: Tower = _main._towers[2]
+		var tower: Tower = _main.world.towers_snapshot()[2]
 		var tower_hp := tower.hp
 		for repeat in 2:
 			dash._hit(source, source.position, Vector2(360, 780), false)

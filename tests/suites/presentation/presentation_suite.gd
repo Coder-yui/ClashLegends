@@ -40,16 +40,16 @@ func _check_heal_range_team() -> void:
 			spells.cast(team, CardDB.get_card("heal"), Vector2(300, 900), choice >= 0, maxi(choice, 0))
 			var effect: Dictionary = spells.heal_effects.back()
 			_expect(int(effect.team) == team and bool(effect.enhanced) == (choice >= 0) and bool(effect.global_heal) == (choice == 0), "治疗普通/强化/过量范围表现保留施法阵营：%d/%d" % [team, choice])
-	var old_mode: String = _main.mode
-	var old_mode_team: int = _main.local_team
-	var old_session: MatchSession = _main._session
-	var old_game_over: bool = _main.game_over
-	_main.mode = "client"
-	_main.local_team = 1
-	_main.game_over = false
-	_main._session = MatchSession.new()
-	_main._session.join("heal-team-review")
-	_main._session.phase = MatchSession.Phase.RUNNING
+	var old_mode: String = _main.runtime.mode
+	var old_mode_team: int = _main.runtime.local_team
+	var old_session: MatchSession = _main.runtime.session
+	var old_game_over: bool = _main.runtime.game_over
+	_main.runtime.mode = "client"
+	_main.runtime.local_team = 1
+	_main.runtime.game_over = false
+	_main.runtime.session = MatchSession.new()
+	_main.runtime.session.join("heal-team-review")
+	_main.runtime.session.phase = MatchSession.Phase.RUNNING
 	var patient := _spawn_test_unit("garen", 1, Vector2(300, 900))
 	patient.hp -= 100
 	var hp := patient.hp
@@ -60,15 +60,15 @@ func _check_heal_range_team() -> void:
 	var count := spells.heal_effects.size()
 	_main._rpc_heal_fx("heal-team-review", Vector2.ZERO, 110, 1.2, 2)
 	_main._rpc_heal_fx("stale", Vector2.ZERO, 110, 1.2, 1)
-	_main.game_over = true
+	_main.runtime.game_over = true
 	_main._rpc_heal_fx("heal-team-review", Vector2.ZERO, 110, 1.2, 1)
 	_expect(spells.heal_effects.size() == count, "治疗表现拒绝非法阵营、旧会话及终局事件")
 	patient.free()
 	spells.heal_effects.resize(old_size)
-	_main.mode = old_mode
-	_main.local_team = old_mode_team
-	_main._session = old_session
-	_main.game_over = old_game_over
+	_main.runtime.mode = old_mode
+	_main.runtime.local_team = old_mode_team
+	_main.runtime.session = old_session
+	_main.runtime.game_over = old_game_over
 
 func _check_structure_art_integration() -> void:
 	var wrapper_paths := [
@@ -489,9 +489,9 @@ func _check_visual_state_contract() -> void:
 	air_unit.setup(0, air_stats, air_stats.name)
 	_main.add_child(air_unit)
 	var z_layers_ok: bool = (
-		_main._towers[0].z_index == 10
-		and _main._king_player.z_index == 10
-		and unit.z_index > _main._towers[0].z_index
+		_main.world.towers_snapshot()[0].z_index == 10
+		and _main.world.king(0).z_index == 10
+		and unit.z_index > _main.world.towers_snapshot()[0].z_index
 		and air_unit.z_index > unit.z_index
 	)
 	_expect(z_layers_ok, "单位血条 2D 层位于塔/水晶层之上，空中单位再高于地面单位")
@@ -603,13 +603,13 @@ func _check_health_bar_team_anchor() -> void:
 	var screen_feet := canvas * camera.unproject_position(ground)
 	var screen_head := canvas * camera.unproject_position(ground + Vector3.UP)
 	_expect(screen_head.y < screen_feet.y, "3D 相机配合翻转画布后模型头部仍高于脚底")
-	var previous_mode: String = _main.mode
-	var previous_mode_team: int = _main.local_team
-	_main.mode = "client"
-	_main.local_team = 1
+	var previous_mode: String = _main.runtime.mode
+	var previous_mode_team: int = _main.runtime.local_team
+	_main.runtime.mode = "client"
+	_main.runtime.local_team = 1
 	_expect(red.get_health_bar_fill_color() == Color(0.2, 0.9, 0.2) and blue.get_health_bar_fill_color() == Color(0.95, 0.25, 0.25), "客户端己方绿血条、敌方红血条")
-	_main.mode = previous_mode
-	_main.local_team = previous_mode_team
+	_main.runtime.mode = previous_mode
+	_main.runtime.local_team = previous_mode_team
 	client_view.free()
 	if blue_view != null:
 		blue_view._update_health_bar_anchor()
@@ -642,14 +642,14 @@ func _check_shared_render_interpolation() -> void:
 	_main.add_child(unit)
 	unit._prev_pos = Vector2(300.0, 900.0)
 	unit.position = Vector2(300.0, 903.9)
-	var saved_accumulator: float = _main._simulation_clock.remainder
-	_main._simulation_clock.remainder = 0.0
+	var saved_accumulator: float = _main.runtime._simulation_clock.remainder
+	_main.runtime._simulation_clock.remainder = 0.0
 	var at_start := unit.get_visual_screen_position()
-	_main._simulation_clock.remainder = _main.SIM_DT * 0.5
+	_main.runtime._simulation_clock.remainder = _main.SIM_DT * 0.5
 	var at_half := unit.get_visual_screen_position()
-	_main._simulation_clock.remainder = _main.SIM_DT
+	_main.runtime._simulation_clock.remainder = _main.SIM_DT
 	var at_end := unit.get_visual_screen_position()
-	_main._simulation_clock.remainder = saved_accumulator
+	_main.runtime._simulation_clock.remainder = saved_accumulator
 	var monotonic := at_start.y < at_half.y and at_half.y < at_end.y
 	var exact := is_equal_approx(at_start.y, 900.0) and is_equal_approx(at_half.y, 901.95) and is_equal_approx(at_end.y, 903.9)
 	_expect(monotonic and exact, "高速单位使用主模拟器统一 alpha 在前后状态间单调插值")
@@ -1278,14 +1278,14 @@ func _check_display_layout() -> void:
 	# 最后一行的中央格确实可部署，而一格边距落在权威场外。
 	for team in [0, 1]:
 		var back_y := 1260.0 if team == 0 else 20.0
-		_expect(_main.is_card_deploy_position_valid(team, "garen", Vector2(260, back_y)), "最后可部署格心来自真实部署规则")
+		_expect(_main.runtime.is_card_deploy_position_valid(team, "garen", Vector2(260, back_y)), "最后可部署格心来自真实部署规则")
 	_expect(layout.BASE_TOP == -40.0 and layout.BASE_BOTTOM == 1320.0, "一格边距从最后一格外边缘派生，非格心或水晶中心")
 	var legal_tiles: Array[Rect2] = []
 	for team in [0,1]:
 		for row in ArenaRules.ARENA_ROWS:
 			for column in ArenaRules.ARENA_COLUMNS:
 				var tile := Vector2i(column,row)
-				if _main.is_card_deploy_position_valid(team,"garen",_main._arena_tile_center(tile)):
+				if _main.runtime.is_card_deploy_position_valid(team,"garen",_main.runtime._deployment_rules.arena_tile_center(tile)):
 					legal_tiles.append(Rect2(Vector2(tile)*ArenaRules.TILE_SIZE,Vector2.ONE*ArenaRules.TILE_SIZE))
 	for flipped in [false, true]:
 		var view := BattlePresentation3D.new()

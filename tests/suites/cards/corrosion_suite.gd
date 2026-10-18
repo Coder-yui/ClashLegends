@@ -63,10 +63,10 @@ func run(harness: Object, main: Node2D) -> void:
 	var bad := CardDB.get_card("corrosion").duplicate(true)
 	bad.active_skills[0].slow_multiplier = 1.0
 	_expect(not CardDB.VALIDATOR.validate_all({"corrosion": bad}, false).is_empty(), "强化腐蚀拒绝无效减速倍率")
-	var deck: Array = _main._deck.duplicate()
-	_main._deck = ["corrosion", "garen", "ashe", "teemo", "xin", "heal", "freeze", "zap"]
-	_expect(_main.card_cost_for_team(0, "corrosion") == 4, "强化腐蚀额外费用0，总费用4")
-	_main._deck = deck
+	var deck: Array = _main.runtime._deck.duplicate()
+	_main.runtime._deck = ["corrosion", "garen", "ashe", "teemo", "xin", "heal", "freeze", "zap"]
+	_expect(_main.runtime.card_cost_for_team(0, "corrosion") == 4, "强化腐蚀额外费用0，总费用4")
+	_main.runtime._deck = deck
 	_check_half_second_schedule()
 	_check_structures()
 	_check_backline_and_audio()
@@ -83,7 +83,7 @@ func _spawn(card: String, pos: Vector2, team: int = 1) -> Unit:
 	return unit
 func _advance(count: int) -> void:
 	for index in count:
-		_main.set("_sim_tick_id", _main.get_authoritative_server_tick() + 1)
+		_main.runtime.set("_sim_tick_id", _main.get_authoritative_server_tick() + 1)
 		var batch: CombatResolver = _main.combat_service()
 		batch.begin_batch(_main.get_authoritative_server_tick(), "corrosion_test")
 		_spells.tick(FixedStepClock.STEP)
@@ -91,15 +91,15 @@ func _advance(count: int) -> void:
 
 func _check_replica() -> void:
 	_spells.clear()
-	var mode: String = _main.mode
-	var mode_team: int = _main.local_team
-	var session: MatchSession = _main._session
-	_main.mode = "client"
-	_main.local_team = 1
-	_main._session = MatchSession.new()
-	_main._session.opponent_id = 1
-	_main._session.session_id = "corrosion-test"
-	_main._session.phase = MatchSession.Phase.RUNNING
+	var mode: String = _main.runtime.mode
+	var mode_team: int = _main.runtime.local_team
+	var session: MatchSession = _main.runtime.session
+	_main.runtime.mode = "client"
+	_main.runtime.local_team = 1
+	_main.runtime.session = MatchSession.new()
+	_main.runtime.session.opponent_id = 1
+	_main.runtime.session.session_id = "corrosion-test"
+	_main.runtime.session.phase = MatchSession.Phase.RUNNING
 	var id: int = _main._last_card_event_id + 100
 	_main._rpc_corrosion_fx("old", id, Vector2(360, 640), 110, 4, 0)
 	_expect(_spells.corrosion_effects.is_empty(), "腐蚀拒绝旧会话")
@@ -108,13 +108,13 @@ func _check_replica() -> void:
 	_expect(_spells.corrosion_effects.size() == 1 and _spells.corrosion_zones.is_empty(), "副本去重且只创建表现")
 	_main._rpc_corrosion_fx("corrosion-test", id + 1, Vector2(360, 640), 110, 4, 7)
 	_expect(_spells.corrosion_effects.size() == 1, "腐蚀拒绝非法阵营")
-	_main.game_over = true
+	_main.runtime.game_over = true
 	_main._rpc_corrosion_fx("corrosion-test", id + 2, Vector2(360, 640), 110, 4, 1)
 	_expect(_spells.corrosion_effects.size() == 1, "终局不恢复腐蚀表现")
-	_main.game_over = false
-	_main.mode = mode
-	_main.local_team = mode_team
-	_main._session = session
+	_main.runtime.game_over = false
+	_main.runtime.mode = mode
+	_main.runtime.local_team = mode_team
+	_main.runtime.session = session
 
 func _check_structures() -> void:
 	_spells.clear()

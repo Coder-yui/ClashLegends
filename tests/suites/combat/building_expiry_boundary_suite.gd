@@ -3,7 +3,7 @@ extends "res://tests/suites/battle_suite.gd"
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
-	for tower in main._towers: tower.can_attack = false
+	for tower in main.world.towers_snapshot(): tower.can_attack = false
 	for permutation in 16:
 		_check_due_attack(permutation)
 	_check_stale_acceptance()
@@ -50,7 +50,7 @@ func _check_due_attack(permutation: int) -> void:
 	_main._sim_step(0.05)
 	_expect(building.nav_cells.is_empty() and not building.is_in_group("combatants"), "到期提交解除导航与战斗集合")
 	var state := [attacker._attack_hit_index, attacker.attack_timeline.cooldown, attacker.hp, attacker.skill_resource_value, attacker._target == backup]
-	if "--verbose-checks" in OS.get_cmdline_user_args(): print("EXPIRY_BOUNDARY permutation=", permutation, " tick=", _main._sim_tick_id, " state=", state)
+	if "--verbose-checks" in OS.get_cmdline_user_args(): print("EXPIRY_BOUNDARY permutation=", permutation, " tick=", _main.runtime._sim_tick_id, " state=", state)
 	_expect(building.hp == 0 and state == [0, 0.0, 100.0, 0.0, true], "自然到期在全体攻击资格之前：不出手、不消耗段/间隔、无收益且一致转火")
 	for unit in [attacker, building, backup]: unit.free()
 
@@ -144,7 +144,7 @@ func _check_tombstone_death_summons() -> void:
 			building.add_shield(100, 30)
 			var before := _main.get_tree().get_nodes_in_group("combatants").filter(func(c): return c is Unit and c.card_id == "imp")
 			if cause == "damage":
-				_main._combat.begin_batch(_main._sim_tick_id, "tombstone_death_test")
+				_main._combat.begin_batch(_main.runtime._sim_tick_id, "tombstone_death_test")
 				building.take_damage(1000)
 				building.take_damage(1000)
 				_main._combat.commit_batch()

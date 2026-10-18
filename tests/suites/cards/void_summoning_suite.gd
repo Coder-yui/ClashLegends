@@ -3,16 +3,16 @@ extends "res://tests/suites/battle_suite.gd"
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
-	var old_tick: int = main._sim_tick_id
+	var old_tick: int = main.runtime._sim_tick_id
 	_check_birth_tick()
 	var stats := CardDB.get_card("void_summoning")
 	for team in [0, 1]:
 		_clean()
-		main._sim_tick_id = 100
+		main.runtime._sim_tick_id = 100
 		_expect(main._spell_system.cast(team, stats, Vector2(360, 640)), "双方均可施放")
 		_expect(_fish().is_empty(), "起始不提前生成")
 		for tick in range(101, 261):
-			main._sim_tick_id = tick
+			main.runtime._sim_tick_id = tick
 			main._spell_system.tick(0.05)
 			_expect(_fish().size() == (0 if tick < 110 else mini(10, 1 + (tick - 110) / 16)), "首次0.5秒，此后每0.8秒准确增加一只")
 		_expect(_fish().size() == 10, "8秒内精确生成10只")
@@ -22,13 +22,13 @@ func run(harness: Object, main: Node2D) -> void:
 			_expect(fish.team == team and is_equal_approx(fish.deploy_time, 0.8), "归属施法方且出生仅0.8秒")
 			_expect(fish.position.distance_to(Vector2(360, 640)) <= 160.001, "出生中心在范围内")
 			_expect(not fish.is_deployed(), "出生阶段不行动")
-			main._sim_tick_id += 1
+			main.runtime._sim_tick_id += 1
 			for i in 15: fish.sim_tick(0.05)
 			_expect(not fish.is_deployed(), "0.75秒仍未结束出生")
 			fish.sim_tick(0.05)
 			_expect(fish.is_deployed(), "0.8秒允许行动，不再等1秒")
 		_expect(positions.size() == 10, "10个落点分散且不重合")
-		main._sim_tick_id = 261
+		main.runtime._sim_tick_id = 261
 		main._spell_system.tick(0.05)
 		_expect(main._spell_system.summon_zones.is_empty(), "到期清理区域")
 		_check_conversion(team, stats)
@@ -36,12 +36,12 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_constrained_landing()
 	_check_spell_audio()
 	_check_effect_footprint()
-	main._sim_tick_id = old_tick
+	main.runtime._sim_tick_id = old_tick
 	_clean()
 
 func _check_conversion(team: int, stats: Dictionary) -> void:
 	_clean()
-	_main._sim_tick_id = 200
+	_main.runtime._sim_tick_id = 200
 	_main._spell_system.cast(team, stats, Vector2(360, 640), true)
 	for victim_team in [team, 1 - team]:
 		var victim: Unit = _main.spawn_summoned(victim_team, "melee_minion", Vector2(360, 640), 0.0)
@@ -64,7 +64,7 @@ func _check_conversion(team: int, stats: Dictionary) -> void:
 	var count := _fish().size()
 	outside.take_damage(99999)
 	_expect(_fish().size() == count, "圈外死亡不转化")
-	_main._sim_tick_id = 360
+	_main.runtime._sim_tick_id = 360
 	var expired: Unit = _main.spawn_summoned(team, "melee_minion", Vector2(360, 640), 0.0)
 	expired.take_damage(99999)
 	_expect(_fish().size() == count, "结束Tick即使区域尚未清扫也不转化")
@@ -74,7 +74,7 @@ func _check_conversion(team: int, stats: Dictionary) -> void:
 	plain.take_damage(99999)
 	_expect(_fish().is_empty(), "未强化不转化")
 	_main._spell_system.clear()
-	_main._sim_tick_id += 100
+	_main.runtime._sim_tick_id += 100
 	_main._spell_system.tick(0.05)
 	_expect(_fish().is_empty(), "清场取消后续召唤")
 
@@ -88,22 +88,22 @@ func _clean() -> void:
 
 func _check_birth_tick() -> void:
 	_clean()
-	var active: bool = _main._sim_step_active
-	_main._sim_step_active = true
+	var active: bool = _main.runtime._sim_step_active
+	_main.runtime._sim_step_active = true
 	_expect(_main.play_card(0, "void_summoning", Vector2(360, 640), {"immediate": true, "validate_position": false}), "正式play_card入口可召唤")
-	_main._sim_tick_id += 10
+	_main.runtime._sim_tick_id += 10
 	_main._spell_system.tick(0.05)
 	var fish: Unit = _fish()[0]
 	fish.sim_tick(0.05)
 	_expect(is_equal_approx(fish._deploy_timer, 0.8), "生成当Tick不提前扣出生时间")
 	for i in 15:
-		_main._sim_tick_id += 1
+		_main.runtime._sim_tick_id += 1
 		fish.sim_tick(0.05)
 	_expect(not fish.is_deployed(), "真实权威时钟0.75秒不能行动")
-	_main._sim_tick_id += 1
+	_main.runtime._sim_tick_id += 1
 	fish.sim_tick(0.05)
 	_expect(fish.is_deployed(), "真实权威时钟0.8秒即可行动")
-	_main._sim_step_active = active
+	_main.runtime._sim_step_active = active
 	_clean()
 
 func _check_edges(stats: Dictionary) -> void:
@@ -118,10 +118,10 @@ func _check_edges(stats: Dictionary) -> void:
 		var first: Array[Vector2] = []
 		for repeat in 2:
 			_clean()
-			_main._sim_tick_id = 500
+			_main.runtime._sim_tick_id = 500
 			_main._spell_system.cast(repeat, stats, center)
 			for tick in range(501, 661):
-				_main._sim_tick_id = tick
+				_main.runtime._sim_tick_id = tick
 				_main._spell_system.tick(0.05)
 			_expect(_fish().size() == 10, "边界仍完整召唤10只：" + str(center))
 			var actual: Array[Vector2] = []
@@ -129,7 +129,7 @@ func _check_edges(stats: Dictionary) -> void:
 				actual.append(fish.position)
 				_expect(fish.position.distance_to(center) <= 160.001, "最终合法修正后仍在法术圈内")
 				_expect(fish.position.x >= fish.body_radius and fish.position.x <= 720.0 - fish.body_radius and fish.position.y >= fish.body_radius and fish.position.y <= 1280.0 - fish.body_radius, "整个碰撞体在地图内")
-				_expect(fish.is_air or _main.is_ground_position_walkable(fish.position, fish.body_radius), "按空中/地面类型检查地形")
+				_expect(fish.is_air or _main.world.is_ground_position_walkable(fish.position, fish.body_radius), "按空中/地面类型检查地形")
 			var distinct := {}
 			for point in actual: distinct[point] = true
 			_expect(distinct.size() == 10, "边界修正不把多个落点挤在同一点")

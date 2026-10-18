@@ -31,7 +31,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_expect(main.preview_active_skill(king, skill), "工作台走正式生命周期可在冰冻中施放")
 	_expect(king.is_frozen() and king.skill_resource_value == 2.0 and king.buffs.remaining(&"undying") == 4.0, "技能不解控，立即满怒与保命")
 	_expect(Unit.valid_action_cancellation(king.last_action_cancellation), "满怒刷新使用可同步的动作取消合同")
-	var snap: Array = main._snapshot_system._unit_snapshot_payload(4242, king)
+	var snap: Array = preload("res://tests/fixtures/network_fixture.gd").snapshot_payload(main._snapshot_system, 4242, king)
 	_expect(snap[NetworkSnapshotSystem.U_SKILL_RESOURCE_RATIO] == 1.0 and snap[NetworkSnapshotSystem.U_SKILL_RESOURCE_ENABLED], "快照同步满怒与被动资源可见性")
 	_expect(snap[NetworkSnapshotSystem.U_ACTIVE_BUFF_ACTIVE] and snap[NetworkSnapshotSystem.U_FROZEN], "快照同时表达保命表现与冻结，不伪造解控")
 	king.hp = 10.0
@@ -62,24 +62,24 @@ func run(harness: Object, main: Node2D) -> void:
 	_expect(controlled.can_start_active_skill(skill), "击退允许释放")
 	controlled.apply_stasis(2.0)
 	_expect(not controlled.can_start_active_skill(skill) and not main.preview_active_skill(controlled, skill), "凝滞禁止技能且不建立保命")
-	var old_deck: Array = main._deck.duplicate()
-	main._deck[0] = "tryndamere"
-	var paid: Unit = main._spawn_card_units(0, "tryndamere", Vector2(500, 1050), 0.0, 0)[0]
+	var old_deck: Array = main.runtime._deck.duplicate()
+	main.runtime._deck[0] = "tryndamere"
+	var paid: Unit = main.runtime._spawn_card_units(0, "tryndamere", Vector2(500, 1050), 0.0, 0)[0]
 	paid.freeze(3.0)
-	main._elixir.elixir = 8.0
-	_expect(main.use_active_skill(paid.active_ability_id, 0) and main._elixir.elixir == 5.0, "正式请求扣3费，受控可提交")
-	main._sim_tick_id += 10
-	main._tick_pending_active_skills(0.05)
+	main.runtime.account(0 if main.runtime.mode == "server" else main.runtime.local_team).elixir = 8.0
+	_expect(main.use_active_skill(paid.active_ability_id, 0) and main.runtime.account(0 if main.runtime.mode == "server" else main.runtime.local_team).elixir == 5.0, "正式请求扣3费，受控可提交")
+	main.runtime._sim_tick_id += 10
+	main.runtime._tick_pending_active_skills(0.05)
 	_expect(paid.buffs.remaining(&"undying") > 0.0 and paid.is_frozen(), "命令缓冲后受控仍可生效")
-	var entry: Dictionary = main._active_skills.entry(paid.active_ability_id)
+	var entry: Dictionary = main.runtime._active_skills.entry(paid.active_ability_id)
 	_expect(entry.uses_remaining == 0 and entry.cooldown_left == 15.0 and not main.use_active_skill(paid.active_ability_id, 0), "一次使用并启动15秒冷却")
-	var rejected: Unit = main._spawn_card_units(0, "tryndamere", Vector2(550, 1000), 0.0, 0)[0]
-	main._elixir.elixir = 8.0
+	var rejected: Unit = main.runtime._spawn_card_units(0, "tryndamere", Vector2(550, 1000), 0.0, 0)[0]
+	main.runtime.account(0 if main.runtime.mode == "server" else main.runtime.local_team).elixir = 8.0
 	_expect(main.use_active_skill(rejected.active_ability_id, 0), "凝滞前成功提交技能")
 	rejected.apply_stasis(2.0)
-	main._sim_tick_id += 10
-	main._tick_pending_active_skills(0.05)
-	_expect(main._elixir.elixir == 8.0 and main._active_skills.entry(rejected.active_ability_id).uses_remaining == 1 and rejected.buffs.remaining(&"undying") == 0.0, "等待期间进入凝滞则一次退款、保留次数且不施加保护")
+	main.runtime._sim_tick_id += 10
+	main.runtime._tick_pending_active_skills(0.05)
+	_expect(main.runtime.account(0 if main.runtime.mode == "server" else main.runtime.local_team).elixir == 8.0 and main.runtime._active_skills.entry(rejected.active_ability_id).uses_remaining == 1 and rejected.buffs.remaining(&"undying") == 0.0, "等待期间进入凝滞则一次退款、保留次数且不施加保护")
 	var blind := _spawn(0, Vector2(200, 900))
 	blind.skill_resource_value = 2.0
 	blind.apply_blind(1)
@@ -91,7 +91,7 @@ func run(harness: Object, main: Node2D) -> void:
 	blind.apply_stasis(2.0)
 	blind.buffs.advance(4.0)
 	_expect(blind.buffs.remaining(&"undying") == 0.0, "凝滞不延长保命窗口")
-	main._deck = old_deck
+	main.runtime._deck = old_deck
 	for bad in ["wrong", -1.0, 1.0, INF]:
 		var cards := CardDB.all().duplicate(true)
 		cards.tryndamere.rage_crit_multiplier = bad

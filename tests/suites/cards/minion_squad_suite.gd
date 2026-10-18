@@ -72,14 +72,14 @@ func _check_minion_squad(main: Node2D) -> void:
 		"小兵分队男爵之力为2费、每次部署1次、冷却6秒并复用成员技能效果",
 	)
 
-	var old_deck: Array = main._deck.duplicate()
-	var old_skill_choices: Dictionary = main._active_skill_choices.duplicate(true)
-	main._deck = ["minion_squad", "garen", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
-	main._active_skill_choices["minion_squad"] = 0
-	var group: Array[Unit] = main._spawn_card_units(0, "minion_squad", Vector2(360, 1020), 0.0, 0)
+	var old_deck: Array = main.runtime._deck.duplicate()
+	var old_skill_choices: Dictionary = main.runtime._active_skill_choices.duplicate(true)
+	main.runtime._deck = ["minion_squad", "garen", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
+	main.runtime._active_skill_choices["minion_squad"] = 0
+	var group: Array[Unit] = main.runtime._spawn_card_units(0, "minion_squad", Vector2(360, 1020), 0.0, 0)
 	_check_member_definitions(group, "minion_squad")
 	var group_id := group[0].deployment_group_id if not group.is_empty() else -1
-	var offsets: Array[Vector2] = main._deployment_formation_offsets(6, 44.0, 0, "polygon")
+	var offsets: Array[Vector2] = main.runtime._deployment_formation_offsets(6, 44.0, 0, "polygon")
 	var expected_positions := {}
 	for offset in offsets:
 		expected_positions[Vector2(360, 1020) + offset] = true
@@ -100,15 +100,15 @@ func _check_minion_squad(main: Node2D) -> void:
 
 	# 转交、付款与次数由 DeploymentSkillSuite 统一覆盖。
 	var ability_id := group[0].active_ability_id
-	if main._active_skills.has(ability_id):
-		main._active_skills.remove(ability_id)
+	if main.runtime._active_skills.has(ability_id):
+		main.runtime._active_skills.remove(ability_id)
 		if main._active_skill_bar != null:
 			main._active_skill_bar.remove_skill(ability_id)
 	for member in group:
 		if is_instance_valid(member):
 			member.free()
-	main._deck = old_deck
-	main._active_skill_choices = old_skill_choices
+	main.runtime._deck = old_deck
+	main.runtime._active_skill_choices = old_skill_choices
 
 func _check_melee_minion_squad(main: Node2D) -> void:
 	var stats := CardDB.get_card("melee_minion_squad")
@@ -132,14 +132,14 @@ func _check_melee_minion_squad(main: Node2D) -> void:
 		"近战兵小队男爵之力消耗1金币并复用近战兵技能配置",
 	)
 
-	var old_deck: Array = main._deck.duplicate()
-	var old_skill_choices: Dictionary = main._active_skill_choices.duplicate(true)
-	main._deck = ["melee_minion_squad", "garen", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
-	main._active_skill_choices["melee_minion_squad"] = 0
-	var group: Array[Unit] = main._spawn_card_units(0, "melee_minion_squad", Vector2(360, 1020), 0.0, 0)
+	var old_deck: Array = main.runtime._deck.duplicate()
+	var old_skill_choices: Dictionary = main.runtime._active_skill_choices.duplicate(true)
+	main.runtime._deck = ["melee_minion_squad", "garen", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
+	main.runtime._active_skill_choices["melee_minion_squad"] = 0
+	var group: Array[Unit] = main.runtime._spawn_card_units(0, "melee_minion_squad", Vector2(360, 1020), 0.0, 0)
 	_check_member_definitions(group, "melee_minion_squad")
 	var group_id := group[0].deployment_group_id if not group.is_empty() else -1
-	var offsets: Array[Vector2] = main._deployment_formation_offsets(4, 28.0, 0, "square")
+	var offsets: Array[Vector2] = main.runtime._deployment_formation_offsets(4, 28.0, 0, "square")
 	var expected_positions := {}
 	for offset in offsets:
 		expected_positions[Vector2(360, 1020) + offset] = true
@@ -163,15 +163,15 @@ func _check_melee_minion_squad(main: Node2D) -> void:
 
 	# 转交、付款与次数由 DeploymentSkillSuite 统一覆盖。
 	var ability_id := group[0].active_ability_id
-	if main._active_skills.has(ability_id):
-		main._active_skills.remove(ability_id)
+	if main.runtime._active_skills.has(ability_id):
+		main.runtime._active_skills.remove(ability_id)
 		if main._active_skill_bar != null:
 			main._active_skill_bar.remove_skill(ability_id)
 	for member in group:
 		if is_instance_valid(member):
 			member.free()
-	main._deck = old_deck
-	main._active_skill_choices = old_skill_choices
+	main.runtime._deck = old_deck
+	main.runtime._active_skill_choices = old_skill_choices
 
 func _check_ranged_minion_squad(main: Node2D) -> void:
 	var stats := CardDB.get_card("ranged_minion_squad")
@@ -195,14 +195,14 @@ func _check_ranged_minion_squad(main: Node2D) -> void:
 		"远程兵小队男爵之力消耗1金币并复用远程兵技能配置",
 	)
 
-	var old_deck: Array = main._deck.duplicate()
-	var old_skill_choices: Dictionary = main._active_skill_choices.duplicate(true)
-	main._deck = ["ranged_minion_squad", "garen", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
-	main._active_skill_choices["ranged_minion_squad"] = 0
-	var group: Array[Unit] = main._spawn_card_units(0, "ranged_minion_squad", Vector2(360, 1020), 0.0, 0)
+	var old_deck: Array = main.runtime._deck.duplicate()
+	var old_skill_choices: Dictionary = main.runtime._active_skill_choices.duplicate(true)
+	main.runtime._deck = ["ranged_minion_squad", "garen", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
+	main.runtime._active_skill_choices["ranged_minion_squad"] = 0
+	var group: Array[Unit] = main.runtime._spawn_card_units(0, "ranged_minion_squad", Vector2(360, 1020), 0.0, 0)
 	_check_member_definitions(group, "ranged_minion_squad")
 	var group_id := group[0].deployment_group_id if not group.is_empty() else -1
-	var offsets: Array[Vector2] = main._deployment_formation_offsets(3, 24.0, 0, "polygon")
+	var offsets: Array[Vector2] = main.runtime._deployment_formation_offsets(3, 24.0, 0, "polygon")
 	var expected_positions := {}
 	for offset in offsets:
 		expected_positions[Vector2(360, 1020) + offset] = true
@@ -227,15 +227,15 @@ func _check_ranged_minion_squad(main: Node2D) -> void:
 
 	# 转交、付款与次数由 DeploymentSkillSuite 统一覆盖。
 	var ability_id := group[0].active_ability_id
-	if main._active_skills.has(ability_id):
-		main._active_skills.remove(ability_id)
+	if main.runtime._active_skills.has(ability_id):
+		main.runtime._active_skills.remove(ability_id)
 		if main._active_skill_bar != null:
 			main._active_skill_bar.remove_skill(ability_id)
 	for member in group:
 		if is_instance_valid(member):
 			member.free()
-	main._deck = old_deck
-	main._active_skill_choices = old_skill_choices
+	main.runtime._deck = old_deck
+	main.runtime._active_skill_choices = old_skill_choices
 
 func _check_heavy_minion_squad(main: Node2D) -> void:
 	var stats := CardDB.get_card("heavy_minion_squad")
@@ -260,15 +260,15 @@ func _check_heavy_minion_squad(main: Node2D) -> void:
 		"重装部队共用超级兵男爵之力的施放门槛并按成员复用效果",
 	)
 
-	var old_deck: Array = main._deck.duplicate()
-	var old_skill_choices: Dictionary = main._active_skill_choices.duplicate(true)
-	main._deck = ["heavy_minion_squad", "garen", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
-	main._active_skill_choices["heavy_minion_squad"] = 0
+	var old_deck: Array = main.runtime._deck.duplicate()
+	var old_skill_choices: Dictionary = main.runtime._active_skill_choices.duplicate(true)
+	main.runtime._deck = ["heavy_minion_squad", "garen", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
+	main.runtime._active_skill_choices["heavy_minion_squad"] = 0
 	# 远离己方水晶；中体型炮车在旧后排点1070会触发合法出生避让。
-	var group: Array[Unit] = main._spawn_card_units(0, "heavy_minion_squad", Vector2(360, 940), 0.0, 0)
+	var group: Array[Unit] = main.runtime._spawn_card_units(0, "heavy_minion_squad", Vector2(360, 940), 0.0, 0)
 	_check_member_definitions(group, "heavy_minion_squad")
 	var group_id := group[0].deployment_group_id if not group.is_empty() else -1
-	var offsets: Array[Vector2] = main._deployment_formation_offsets(2, 100.0, 0, "depth_line")
+	var offsets: Array[Vector2] = main.runtime._deployment_formation_offsets(2, 100.0, 0, "depth_line")
 	var expected_positions := {}
 	for offset in offsets:
 		expected_positions[Vector2(360, 940) + offset] = true
@@ -293,15 +293,15 @@ func _check_heavy_minion_squad(main: Node2D) -> void:
 
 	# 转交、付款与次数由 DeploymentSkillSuite 统一覆盖。
 	var ability_id := group[0].active_ability_id
-	if main._active_skills.has(ability_id):
-		main._active_skills.remove(ability_id)
+	if main.runtime._active_skills.has(ability_id):
+		main.runtime._active_skills.remove(ability_id)
 		if main._active_skill_bar != null:
 			main._active_skill_bar.remove_skill(ability_id)
 	for member in group:
 		if is_instance_valid(member):
 			member.free()
-	main._deck = old_deck
-	main._active_skill_choices = old_skill_choices
+	main.runtime._deck = old_deck
+	main.runtime._active_skill_choices = old_skill_choices
 
 func _check_super_minion_squad(main: Node2D) -> void:
 	var stats := CardDB.get_card("super_minion_squad")
@@ -326,14 +326,14 @@ func _check_super_minion_squad(main: Node2D) -> void:
 		"攻城部队消耗2金币、可用1次并复用超级兵男爵之力",
 	)
 
-	var old_deck: Array = main._deck.duplicate()
-	var old_skill_choices: Dictionary = main._active_skill_choices.duplicate(true)
-	main._deck = ["super_minion_squad", "garen", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
-	main._active_skill_choices["super_minion_squad"] = 0
-	var group: Array[Unit] = main._spawn_card_units(0, "super_minion_squad", Vector2(360, 1020), 0.0, 0)
+	var old_deck: Array = main.runtime._deck.duplicate()
+	var old_skill_choices: Dictionary = main.runtime._active_skill_choices.duplicate(true)
+	main.runtime._deck = ["super_minion_squad", "garen", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
+	main.runtime._active_skill_choices["super_minion_squad"] = 0
+	var group: Array[Unit] = main.runtime._spawn_card_units(0, "super_minion_squad", Vector2(360, 1020), 0.0, 0)
 	_check_member_definitions(group, "super_minion_squad")
 	var group_id := group[0].deployment_group_id if not group.is_empty() else -1
-	var offsets: Array[Vector2] = main._deployment_formation_offsets(2, 100.0, 0, "line")
+	var offsets: Array[Vector2] = main.runtime._deployment_formation_offsets(2, 100.0, 0, "line")
 	var expected_positions := {}
 	for offset in offsets:
 		expected_positions[Vector2(360, 1020) + offset] = true
@@ -354,15 +354,15 @@ func _check_super_minion_squad(main: Node2D) -> void:
 
 	# 转交、付款与次数由 DeploymentSkillSuite 统一覆盖。
 	var ability_id := group[0].active_ability_id
-	if main._active_skills.has(ability_id):
-		main._active_skills.remove(ability_id)
+	if main.runtime._active_skills.has(ability_id):
+		main.runtime._active_skills.remove(ability_id)
 		if main._active_skill_bar != null:
 			main._active_skill_bar.remove_skill(ability_id)
 	for member in group:
 		if is_instance_valid(member):
 			member.free()
-	main._deck = old_deck
-	main._active_skill_choices = old_skill_choices
+	main.runtime._deck = old_deck
+	main.runtime._active_skill_choices = old_skill_choices
 
 func _check_siege_minion_squad(main: Node2D) -> void:
 	var stats := CardDB.get_card("siege_minion_squad")
@@ -386,15 +386,15 @@ func _check_siege_minion_squad(main: Node2D) -> void:
 		"炮车部队消耗3金币、可用1次并复用炮车兵男爵之力",
 	)
 
-	var old_deck: Array = main._deck.duplicate()
-	var old_skill_choices: Dictionary = main._active_skill_choices.duplicate(true)
-	main._deck = ["siege_minion_squad", "garen", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
-	main._active_skill_choices["siege_minion_squad"] = 0
-	var group: Array[Unit] = main._spawn_card_units(0, "siege_minion_squad", Vector2(360, 1020), 0.0, 0)
+	var old_deck: Array = main.runtime._deck.duplicate()
+	var old_skill_choices: Dictionary = main.runtime._active_skill_choices.duplicate(true)
+	main.runtime._deck = ["siege_minion_squad", "garen", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
+	main.runtime._active_skill_choices["siege_minion_squad"] = 0
+	var group: Array[Unit] = main.runtime._spawn_card_units(0, "siege_minion_squad", Vector2(360, 1020), 0.0, 0)
 	_check_member_definitions(group, "siege_minion_squad")
 	var group_id := group[0].deployment_group_id if not group.is_empty() else -1
 	var radius := float(plan.spacing)
-	var offsets: Array[Vector2] = main._deployment_formation_offsets(3, radius, 0, "polygon")
+	var offsets: Array[Vector2] = main.runtime._deployment_formation_offsets(3, radius, 0, "polygon")
 	var expected_positions := {}
 	for offset in offsets:
 		expected_positions[Vector2(360, 1020) + offset] = true
@@ -421,12 +421,12 @@ func _check_siege_minion_squad(main: Node2D) -> void:
 
 	# 转交、付款与次数由 DeploymentSkillSuite 统一覆盖。
 	var ability_id := group[0].active_ability_id
-	if main._active_skills.has(ability_id):
-		main._active_skills.remove(ability_id)
+	if main.runtime._active_skills.has(ability_id):
+		main.runtime._active_skills.remove(ability_id)
 		if main._active_skill_bar != null:
 			main._active_skill_bar.remove_skill(ability_id)
 	for member in group:
 		if is_instance_valid(member):
 			member.free()
-	main._deck = old_deck
-	main._active_skill_choices = old_skill_choices
+	main.runtime._deck = old_deck
+	main.runtime._active_skill_choices = old_skill_choices

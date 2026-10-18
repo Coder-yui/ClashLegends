@@ -139,7 +139,7 @@ func _init(controller: Node2D, projectile_system: ProjectileSystem) -> void:
 
 
 func reset_session(session_id: String) -> void:
-	for id in _controller.client_unit_ids():
+	for id in _controller.world.replica_unit_ids():
 		_controller.remove_network_unit(id, false)
 	_projectile_system.clear_client()
 	terminal_applied = false
@@ -151,11 +151,11 @@ func register_spawn(args: Array) -> Dictionary:
 	return lifecycle.spawns[int(args[3])]
 
 func receive_spawn(session_id: String, descriptor: Dictionary, snapshot_payload: Array = []) -> void:
-	if _controller.mode != "client" or terminal_applied or _controller.game_over or not lifecycle.accepts_session(session_id) or not _valid_spawn(descriptor):
+	if _controller.runtime.mode != "client" or terminal_applied or _controller.runtime.game_over or not lifecycle.accepts_session(session_id) or not _valid_spawn(descriptor):
 		return
 	_receive_validated_spawn(descriptor, snapshot_payload)
 
-func _receive_validated_spawn(descriptor: Dictionary, snapshot_payload: Array = []) -> void:
+func _receive_validated_spawn(descriptor: Dictionary, snapshot_payload: Array = []) -> bool:
 	var args: Array = descriptor.args.duplicate(true)
 	# 快照可能已重建甚至移除实体，可靠预部署/出生事件才到达。
 	# 无论是否需要重建，这一出生事实都结束对应的旧部署提示。
@@ -164,18 +164,23 @@ func _receive_validated_spawn(descriptor: Dictionary, snapshot_payload: Array = 
 	var birth := int(descriptor.birth_tick)
 	var birth_revision := int(descriptor.birth_revision)
 	if not lifecycle.accepts_spawn(id, birth_revision):
-		return
-	var existing = _controller.find_client_unit(id)
+		return true
+	var existing = _controller.world.find_replica_unit(id)
 	if is_instance_valid(existing):
-		return
+		return true
 	lifecycle.register_spawn(id, birth, birth_revision, args)
 	if not snapshot_payload.is_empty():
 		args[2] = Vector2(snapshot_payload[U_X], snapshot_payload[U_Y])
 		args[4] = float(snapshot_payload[U_DEPLOY_LEFT])
 	_controller.create_network_unit.callv(args)
+	if not is_instance_valid(_controller.world.find_replica_unit(id)):
+		lifecycle.spawns.erase(id)
+		_controller._fail_contract("出生应用失败：无法创建单位 id=%s card=%s" % [id, args[0]])
+		return false
+	return true
 
 func receive_death(session_id: String, id: int, tick: int, play_death_visual: bool) -> void:
-	if _controller.mode != "client" or terminal_applied or _controller.game_over or not lifecycle.accepts_session(session_id) or tick < 0:
+	if _controller.runtime.mode != "client" or terminal_applied or _controller.runtime.game_over or not lifecycle.accepts_session(session_id) or tick < 0:
 		return
 	lifecycle.mark_destroyed(id, tick)
 	_controller.remove_network_unit(id, play_death_visual)
@@ -198,12 +203,6 @@ func _valid_spawn(descriptor: Dictionary) -> bool:
 	return typeof(args[4]) in [TYPE_INT, TYPE_FLOAT] and is_finite(float(args[4])) and args[9] is String and args[11] is bool and args[12] is String and CardDB.has_card(args[12]) and args[13] is Vector2 and (args[13].is_finite() or args[13] == Vector2.INF)
 
 
-## 兼容检查入口；生产接收端持有 decode_validated() 的结果，不能用本方法预解码。
-func packet_tick(snapshot_bytes: PackedByteArray) -> int:
-	var decoded := decode_validated(snapshot_bytes)
-	if decoded == null or not lifecycle.accepts_session(decoded.packet[S_SESSION]): return -1
-	return int(decoded.packet[S_SERVER_TICK])
-
 func decode_validated(snapshot_bytes: PackedByteArray) -> DecodedSnapshot:
 	var raw_bytes := snapshot_bytes.decompress_dynamic(MAX_DECODED_BYTES, FileAccess.COMPRESSION_DEFLATE)
 	if raw_bytes.is_empty():
@@ -225,6 +224,7 @@ func decode_validated(snapshot_bytes: PackedByteArray) -> DecodedSnapshot:
 	var units_data: Array = decoded[S_UNITS]
 	var projectiles_data: Array = decoded[S_PROJECTILES]
 	var towers_data: Array = decoded[S_TOWERS]
+	if towers_data.size() != 6: return null
 	if not _payloads_have_size(units_data, UNIT_PAYLOAD_SIZE):
 		return null
 	if not _payloads_have_size(projectiles_data, PROJECTILE_PAYLOAD_SIZE):
@@ -318,12 +318,9 @@ func decode_validated(snapshot_bytes: PackedByteArray) -> DecodedSnapshot:
 	ids.make_read_only()
 	return DecodedSnapshot.new(decoded, ids, raw_bytes.size())
 
-func apply(snapshot_bytes: PackedByteArray, terminal: bool = false, expected_tick: int = -1) -> bool:
-	return apply_decoded(decode_validated(snapshot_bytes), terminal, expected_tick)
-
 ## 包内容已经完整静态验证；这里只重查从入队到播放期间可能改变的会话/终态/时钟。
 func apply_decoded(snapshot: DecodedSnapshot, terminal: bool = false, expected_tick: int = -1) -> bool:
-	if snapshot == null or _controller.mode != "client" or terminal_applied or _controller.game_over:
+	if snapshot == null or _controller.runtime.mode != "client" or terminal_applied or _controller.runtime.game_over:
 		return false
 	var decoded := snapshot.packet
 	if not lifecycle.accepts_session(decoded[S_SESSION]): return false
@@ -339,12 +336,15 @@ func apply_decoded(snapshot: DecodedSnapshot, terminal: bool = false, expected_t
 	# 可靠 RPC 仍可能在不同发送周期交错到达；较早 tick 不能回拨客户端命令时钟。
 	if not _controller._accept_authoritative_server_tick(int(decoded[S_SERVER_TICK])):
 		return false
+	if _controller.world.towers_snapshot().size() != 6:
+		_controller._fail_contract("快照应用失败：本地战场必须有6座塔")
+		return false
 
 	lifecycle.accept_snapshot(int(decoded[S_SERVER_TICK]), int(decoded[S_LIFECYCLE_REVISION]), ids)
-	_apply_units(units_data)
+	if not _apply_units(units_data): return false
 	_apply_projectiles(projectiles_data)
 	_apply_towers(towers_data)
-	_controller.apply_growth_snapshot(decoded[S_CARD_GROWTH])
+	_controller.runtime.apply_growth_snapshot(decoded[S_CARD_GROWTH])
 	_controller.apply_network_match_snapshot(float(decoded[S_CLIENT_ELIXIR]), float(decoded[S_MATCH_TIMER]), bool(decoded[S_OVERTIME]))
 
 	terminal_applied = terminal
@@ -401,29 +401,31 @@ func _payloads_have_size(payloads: Array, expected_size: int) -> bool:
 	return true
 
 
-func _apply_units(units_data: Array) -> void:
+func _apply_units(units_data: Array) -> bool:
 	var seen := {}
 	for d: Array in units_data:
 		seen[d[U_ID]] = true
 		if lifecycle.destroyed.has(d[U_ID]):
 			continue
-		var u = _controller.find_client_unit(d[U_ID])
+		var u = _controller.world.find_replica_unit(d[U_ID])
 		if not is_instance_valid(u):
-			_receive_validated_spawn(d[U_SPAWN], d)
-			u = _controller.find_client_unit(d[U_ID])
+			if not _receive_validated_spawn(d[U_SPAWN], d): return false
+			u = _controller.world.find_replica_unit(d[U_ID])
 		if not is_instance_valid(u):
-			continue
-		u.apply_action_cancellation(d[U_CANCELLATION])
-		u._deploy_timer = maxf(float(d[U_DEPLOY_LEFT]), 0.0)
+			_controller._fail_contract("快照应用失败：无法创建单位 id=%s card=%s" % [d[U_ID], d[U_SPAWN].args[0]])
+			return false
+		# 单位高风险字段只进入已校验载荷的副本恢复，不调用权威转换。
+		u.restore_replica_combat_state({
+			"cancellation": d[U_CANCELLATION], "deploy_left": d[U_DEPLOY_LEFT],
+			"position": Vector2(d[U_X], d[U_Y]), "teleport": d[U_TELEPORT_SERIAL],
+			"form": d[U_FORM], "form_serial": d[U_FORM_CHANGE_SERIAL], "hp": d[U_HP],
+			"growth": d[U_GROWTH], "sacrifice_stats": d[U_SACRIFICE_STATS],
+			"sacrifice_empowerment": d[U_SACRIFICE_EMPOWERMENT], "team_boost": d[U_TEAM_ATTACK_BOOST_MULTIPLIER],
+			"frozen": d[U_FROZEN] == 1, "stunned": d[U_STUN] == 1, "stasis": d[U_STASIS],
+			"protection": d[U_TARGET_PROTECTION], "death_form": d[U_DEATH_FORM], "bleed": d[U_BLEED_STACKS],
+		})
 		u.active_skill_card_id = String(d[U_SPAWN].args[12])
 		_controller.sync_network_unit_skill(u, int(d[U_SPAWN].args[5]), int(d[U_SPAWN].args[6]))
-		u.net_target_pos = Vector2(d[U_X], d[U_Y])
-		if u.teleport_serial != int(d[U_TELEPORT_SERIAL]):
-			u.teleport_serial = int(d[U_TELEPORT_SERIAL])
-			u.global_position = u.net_target_pos
-			u._prev_pos = u.net_target_pos
-		u.sync_network_form(int(d[U_FORM]), int(d[U_FORM_CHANGE_SERIAL]))
-		u.hp = BattleNumbers.quantity(float(d[U_HP]))
 		u.net_visual_state = int(d[U_VISUAL_STATE])
 		u.net_attack_visual_serial = int(d[U_ATTACK_SERIAL])
 		u.net_attack_visual_first_strike = int(d[U_ATTACK_FIRST_STRIKE]) == 1
@@ -437,7 +439,6 @@ func _apply_units(units_data: Array) -> void:
 		u.net_attack_speed_slow_active = d[U_ATTACK_SPEED_SLOW]
 		u.net_blind_active = d[U_BLIND]
 		u.net_stun_active = int(d[U_STUN]) == 1
-		u.control.apply_replica_flags(int(d[U_FROZEN]) == 1, u.net_stun_active)
 		var action_serial := int(d[U_ACTION_SERIAL])
 		if action_serial >= u.net_visual_action_serial:
 			u.net_visual_action_serial = action_serial
@@ -446,14 +447,6 @@ func _apply_units(units_data: Array) -> void:
 		u.net_attacking_structure = int(d[U_ATTACKING_STRUCTURE]) == 1
 		# 时长和剩余时间让晚到客户端从权威进度开始播放。
 		u.net_visual_action_clock = d[U_ACTION_CLOCK]
-		u.team_attack_boost_multiplier = float(d[U_TEAM_ATTACK_BOOST_MULTIPLIER])
-		var growth: Vector2 = d[U_GROWTH]
-		u.max_hp += growth.x - u.growth_health_bonus
-		u.body_radius = u.body_radius / u.growth_body_scale * growth.y
-		u.visual_radius = u.visual_radius / u.growth_body_scale * growth.y
-		u.growth_health_bonus = growth.x
-		u.growth_body_scale = growth.y
-		u.queue_redraw()
 		u.net_visual_action_duration = maxf(float(d[U_ACTION_DURATION]), 0.0)
 		u.net_visual_action_time_left = clampf(float(d[U_ACTION_TIME_LEFT]), 0.0, u.net_visual_action_duration)
 		if not u.last_action_cancellation.is_empty():
@@ -476,15 +469,11 @@ func _apply_units(units_data: Array) -> void:
 		u.net_active_attack_speed_multiplier = maxf(float(d[U_ACTIVE_ATTACK_SPEED_MULTIPLIER]), 0.01)
 		u.net_attack_elapsed = maxf(float(d[U_ATTACK_ELAPSED]), 0.0)
 		u.net_action_permissions = int(d[U_ACTION_PERMISSIONS])
-		u.target_protection.apply_replica(d[U_TARGET_PROTECTION])
-		u.death_form.apply_replica(d[U_DEATH_FORM])
 		u.net_explosive_shield = d[U_EXPLOSIVE_SHIELD]
 		u.net_movement_rate = maxf(float(d[U_MOVEMENT_RATE]), 0.01)
 		u.net_stealth_hidden = d[U_STEALTH]
-		u.control._replace_hard(&"stasis", 0.15 if d[U_STASIS] else 0.0)
 		u.net_active_buff_active = int(d[U_ACTIVE_BUFF_ACTIVE]) == 1
 		_controller.apply_network_skill_state(u, int(d[U_ACTIVE_SKILL_USES_REMAINING]), float(d[U_ACTIVE_SKILL_COOLDOWN]), bool(d[U_FREE_RECAST]))
-		u.bleeding.replica_stacks = int(d[U_BLEED_STACKS])
 		u.net_blood_rage = float(d[U_BLOOD_RAGE])
 		u.net_death_spawn_state = d[U_DEATH_SPAWN_STATE]
 		u.net_lifesteal_visual_state = d[U_LIFESTEAL_VISUAL_STATE]
@@ -492,8 +481,6 @@ func _apply_units(units_data: Array) -> void:
 		u.net_hit_haste_full = d[U_HIT_HASTE_FULL]
 		u.net_structure_haste = d[U_STRUCTURE_HASTE]
 		u.net_structure_haste_state = d[U_STRUCTURE_HASTE_STATE]
-		u.sacrifice_empowerment = d[U_SACRIFICE_EMPOWERMENT]
-		u.set_sacrifice_stats(d[U_SACRIFICE_STATS])
 		u.net_restoration_shield_state = d[U_RESTORATION_SHIELD_STATE]
 		u.net_shield_ratio = clampf(float(d[U_SHIELD_RATIO]), 0.0, 1.0)
 		u.net_shield_capacity_ratio = maxf(float(d[U_SHIELD_CAPACITY_RATIO]), 0.0)
@@ -514,12 +501,13 @@ func _apply_units(units_data: Array) -> void:
 		u.queue_redraw()
 
 	var gone := []
-	for id in _controller.client_unit_ids():
+	for id in _controller.world.replica_unit_ids():
 		if not seen.has(id) and lifecycle.snapshot_can_remove(id):
 			gone.append(id)
 	for id in gone:
 		lifecycle.mark_destroyed(id, lifecycle.snapshot_tick)
 		_controller.remove_network_unit(id, true)
+	return true
 
 
 func _apply_projectiles(projectiles_data: Array) -> void:
@@ -543,39 +531,50 @@ func _apply_projectiles(projectiles_data: Array) -> void:
 	_projectile_system.apply_client_targets(targets)
 
 func _apply_towers(towers_data: Array) -> void:
-	for i in range(mini(towers_data.size(), _controller._towers.size())):
+	var towers: Array[Tower] = _controller.world.towers_snapshot()
+	for i in towers.size():
 		var tower_data: Array = towers_data[i]
-		_controller._towers[i].apply_network_state(
+		towers[i].apply_network_state(
 			float(tower_data[T_HP]), int(tower_data[T_ACTIVATED]) == 1,
 			int(tower_data[T_STUNNED]) == 1, float(tower_data[T_SHIELD_RATIO]),
 			float(tower_data[T_SHIELD_CAPACITY_RATIO]), int(tower_data[T_FROZEN]) == 1, bool(tower_data[T_STASIS]))
 
 
 func send() -> void:
+	if _controller.runtime.game_over or not _valid_authority_towers(_controller.world.towers_snapshot()): return
 	var recipients := {}
-	for team in _controller._session.players:
-		var peer: int = _controller._session.peer_for_team(team)
+	for team in _controller.runtime.session.players:
+		var peer: int = _controller.runtime.session.peer_for_team(team)
 		if _controller.multiplayer.get_peers().has(peer): recipients[team] = peer
 	if recipients.is_empty(): return
 	var frame := capture_public_frame()
+	if frame.is_empty(): return
 	for team in recipients:
 		_controller._rpc_snapshot.rpc_id(recipients[team], encode_frame(frame, team))
 
 func capture(receiver_team: int = 1) -> PackedByteArray:
-	return encode_frame(capture_public_frame(), receiver_team)
+	var frame := capture_public_frame()
+	return encode_frame(frame, receiver_team) if not frame.is_empty() else PackedByteArray()
 
 ## 清场前采集一次公共世界；私有槽只留占位，不能携带另一席的经济或成长。
 func capture_public_frame() -> Array:
+	var towers: Array[Tower] = _controller.world.towers_snapshot()
+	if not _valid_authority_towers(towers): return []
 	var units_data := []
-	var units: Dictionary = _controller.authoritative_units_snapshot()
+	var units: Dictionary = _controller.world.authoritative_units_snapshot()
 	for id in units:
 		# 非类型化读取：单位可能已 queue_free，类型化赋值会先于有效性检查报错。
 		var u = units.get(id)
 		if u == null or not is_instance_valid(u) or (u.hp <= 0.0 and not u.death_form.waiting()):
 			continue
+		if not lifecycle.spawns.has(id) or not _valid_spawn(lifecycle.spawns[id]) or int(lifecycle.spawns[id].args[3]) != id:
+			# 内部事实损坏不能补零出生、压出可传播的错误快照。
+			_controller._fail_contract("战场契约失败：单位缺少当前出生描述 id=%s card=%s" % [id, u.card_id])
+			return []
 		units_data.append(_unit_snapshot_payload(
 			id,
 			u,
+			lifecycle.spawns[id],
 			u.has_continuous_visual_target(),
 			u.get_continuous_visual_target_position(),
 			u.get_visual_facing_direction(),
@@ -585,39 +584,46 @@ func capture_public_frame() -> Array:
 	var authoritative_projectiles := _projectile_system.authoritative_snapshot()
 	for id in authoritative_projectiles:
 		var projectile: Dictionary = authoritative_projectiles[id]
+		for field in ["pos", "direction", "color", "radius", "visual", "speed"]:
+			if not projectile.has(field):
+				_controller._fail_contract("弹体快照缺少必需字段：id=%s field=%s" % [id, field])
+				return []
 		projectiles_data.append(_projectile_snapshot_payload(id, projectile))
 
 	var towers_data := []
-	for tower in _controller._towers:
+	for tower in towers:
 		towers_data.append(_tower_snapshot_payload(tower))
-	var frame: Array = [SNAPSHOT_PROTOCOL_VERSION, _controller._sim_tick_id, units_data, projectiles_data,
-		towers_data, null, _controller._match_rules.time_left, _controller._match_rules.overtime,
+	var frame: Array = [SNAPSHOT_PROTOCOL_VERSION, _controller.runtime._sim_tick_id, units_data, projectiles_data,
+		towers_data, null, _controller.runtime._match_rules.time_left, _controller.runtime._match_rules.overtime,
 		lifecycle.session_id, lifecycle.revision, null]
 	_freeze(frame)
 	return frame
 
+## 固定索引包括已摧毁的塔；HP不决定拓扑。缺席/释放/错序不能变成可发布帧。
+func _valid_authority_towers(towers: Array[Tower]) -> bool:
+	if towers.size() != 6:
+		_controller._fail_contract("权威战场拓扑错误：必须有6座塔，实际%s座" % towers.size())
+		return false
+	var ids := {}
+	for index in towers.size():
+		var tower = towers[index]
+		if not is_instance_valid(tower) or tower.is_queued_for_deletion():
+			_controller._fail_contract("权威战场拓扑错误：塔索引%s已释放或待删除" % index)
+			return false
+		var expected_team := index / 2 if index < 4 else index - 4
+		if ids.has(tower.get_instance_id()) or tower.team != expected_team or tower.is_king != (index >= 4) or (index >= 4 and _controller.world.king(expected_team) != tower):
+			_controller._fail_contract("权威战场拓扑错误：塔索引%s重复、错序或水晶引用不一致" % index)
+			return false
+		ids[tower.get_instance_id()] = true
+	return true
+
 func encode_frame(frame: Array, receiver_team: int = 1) -> PackedByteArray:
 	# 仅复制11个顶层引用；已固化世界保持共享，每端独立生成自己的私有投影。
 	var packet := frame.duplicate()
-	packet[S_CLIENT_ELIXIR] = _controller.network_match_snapshot(receiver_team).elixir
-	packet[S_CARD_GROWTH] = _controller.growth_snapshot(receiver_team)
+	packet[S_CLIENT_ELIXIR] = _controller.runtime.network_match_snapshot(receiver_team).elixir
+	packet[S_CARD_GROWTH] = _controller.runtime.growth_snapshot(receiver_team)
 	return var_to_bytes(packet).compress(FileAccess.COMPRESSION_DEFLATE)
 
-
-func _snapshot_packet(units_data: Array, projectiles_data: Array, towers_data: Array, client_elixir: float, match_timer: float, overtime: bool, receiver_team: int = 1) -> Array:
-	return [
-		SNAPSHOT_PROTOCOL_VERSION,
-		_controller._sim_tick_id,
-		units_data,
-		projectiles_data,
-		towers_data,
-		client_elixir,
-		match_timer,
-		overtime,
-		lifecycle.session_id,
-		lifecycle.revision,
-		_controller.growth_snapshot(receiver_team),
-	]
 
 
 func _tower_snapshot_payload(tower: Tower) -> Array:
@@ -635,11 +641,11 @@ func _tower_snapshot_payload(tower: Tower) -> Array:
 ## 弹体载荷集中构造，确保新增纯表现字段在主机和客户端使用同一固定顺序。
 func _projectile_snapshot_payload(id: int, projectile: Dictionary) -> Array:
 	var visual_offset: Vector2 = projectile.get("visual_offset", Vector2.ZERO)
-	var direction: Vector2 = projectile.get("direction", Vector2.UP)
-	var position: Vector2 = projectile.get("pos", Vector2.ZERO)
+	var direction: Vector2 = projectile.direction
+	var position: Vector2 = projectile.pos
 	return [
-		id, position.x, position.y, projectile.get("color", Color.WHITE), projectile.get("radius", 4.0),
-		String(projectile.get("visual", &"orb")), direction.x, direction.y,
+		id, position.x, position.y, projectile.color, projectile.radius,
+		String(projectile.visual), direction.x, direction.y,
 		projectile.get("visual_height", 0.0), visual_offset.x, visual_offset.y,
 		projectile.get("visual_scale", 1.0), 1 if bool(projectile.get("effects", {}).get("first_strike", false)) else 0,
 		projectile.get("visual_path", {}).duplicate(true), float(projectile.speed),
@@ -647,20 +653,18 @@ func _projectile_snapshot_payload(id: int, projectile: Dictionary) -> Array:
 
 
 ## 单位载荷集中构造；读写两端共用当前固定字段表。
-func _unit_snapshot_payload(id: int, u: Unit, has_continuous_target: bool = false, continuous_target_pos: Vector2 = Vector2.ZERO, facing_direction: Vector2 = Vector2.ZERO) -> Array:
+func _unit_snapshot_payload(id: int, u: Unit, birth: Dictionary, has_continuous_target: bool = false, continuous_target_pos: Vector2 = Vector2.ZERO, facing_direction: Vector2 = Vector2.ZERO) -> Array:
 	if facing_direction.is_zero_approx():
 		facing_direction = u.get_visual_facing_direction()
 	var skill_card_id := u.active_skill_card_id if not u.active_skill_card_id.is_empty() else u.card_id
-	var active_skill_state: Dictionary = _controller.get_active_skill_snapshot(u.active_ability_id)
-	var descriptor: Dictionary = lifecycle.spawns.get(id, {"birth_tick": 0, "birth_revision": 0, "args": [u.card_id, u.team, u.global_position, id, u.deploy_time, u.active_ability_id, u.active_ability_slot, -1, u.deployment_group_id, String(u.visual_spawn_transition), u.death_replacement_charges, u.built_on_tower_ruin, skill_card_id, u.summon_visual_origin]}).duplicate(true)
+	var active_skill_state: Dictionary = _controller.runtime.get_active_skill_snapshot(u.active_ability_id)
+	assert(_valid_spawn(birth) and int(birth.args[3]) == id, "快照编码缺少当前14字段出生事实: id=%s" % id)
+	var descriptor: Dictionary = birth.duplicate(true)
 	# 主动资格会转交/被新部署替换；重建必须使用当前资格而非原始出生资格。
 	descriptor.args[5] = u.active_ability_id
 	descriptor.args[6] = u.active_ability_slot
 	descriptor.args[10] = u.death_replacement_charges
-	if descriptor.args.size() <= 12:
-		descriptor.args.append(skill_card_id)
-	else:
-		descriptor.args[12] = skill_card_id
+	descriptor.args[12] = skill_card_id
 	return [
 		id, u.global_position.x, u.global_position.y, u.hp,
 		1 if u.control.frozen_timer > 0.0 else 0,

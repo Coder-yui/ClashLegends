@@ -574,7 +574,7 @@ func _check_piercing_cards() -> void:
 func _check_ashe_release_vs_collision() -> void:
 	for distance in [80.0, 180.0]:
 		_main._projectile_system.clear_all()
-		_main._commands.clear_impacts()
+		_main.runtime._commands.clear_impacts()
 		var source := _spawn_test_unit("ashe", 0, Vector2(360, 1000))
 		source.damage = 0.0
 		source.move_speed = 0.0
@@ -582,14 +582,14 @@ func _check_ashe_release_vs_collision() -> void:
 		target.body_radius = 24.0
 		var skill: Dictionary = CardDB.active_skills_for("ashe")[0]
 		var initial_hp := target.hp
-		var cast_tick: int = _main._sim_tick_id
-		_expect(_main._start_active_skill_cast(source, skill), "艾希时序夹具通过正式 CastStart 入口开始")
+		var cast_tick: int = _main.runtime._sim_tick_id
+		_expect(_main.runtime._start_active_skill_cast(source, skill), "艾希时序夹具通过正式 CastStart 入口开始")
 		var release_tick := -1
 		var collision_tick := -1
 		for step in range(1, 13):
 			_main._sim_step(_main.SIM_DT)
-			if release_tick < 0 and not _main._projectile_system.projectiles.is_empty(): release_tick = _main._sim_tick_id - cast_tick
-			if collision_tick < 0 and target.hp < initial_hp: collision_tick = _main._sim_tick_id - cast_tick
+			if release_tick < 0 and not _main._projectile_system.projectiles.is_empty(): release_tick = _main.runtime._sim_tick_id - cast_tick
+			if collision_tick < 0 and target.hp < initial_hp: collision_tick = _main.runtime._sim_tick_id - cast_tick
 		_expect(release_tick == 4, "0.16 秒效果延迟在 CastStart 后第 4 Tick（0.20 秒）发射")
 		_expect(collision_tick == (5 if distance == 80.0 else 9), "碰撞时刻取决于目标距离：近目标第5Tick命中，远目标第9Tick命中")
 		_expect(target.hp == initial_hp - 70.0, "同次箭阵碰撞只对目标结算一次伤害")
@@ -597,7 +597,7 @@ func _check_ashe_release_vs_collision() -> void:
 		source.free()
 		target.free()
 	_main._projectile_system.clear_all()
-	_main._commands.clear_impacts()
+	_main.runtime._commands.clear_impacts()
 
 func _check_empowered_resets() -> void:
 	for card in ["garen", "teemo", "darius"]:
@@ -642,11 +642,11 @@ func _check_sett_fixed_release() -> void:
 	sett._body_facing_direction = Vector2.UP
 	var target := _spawn_dummy(Vector2(280, 1000))
 	_main._skill_lifecycle.start(sett, CardDB.active_skills_for("sett")[0])
-	for tick in 15: _main._commands.tick_impacts(0.05)
+	for tick in 15: _main.runtime._commands.tick_impacts(0.05)
 	var impacts: Array = _main._skill_presentation.frontal_effects.filter(func(e): return String(e.shape).begins_with("sett_w_impact"))
 	_expect(impacts.is_empty() and is_equal_approx(target.hp, 3000), "轰拳伤害时刻之前没有冲击事件")
 	sett.global_position = Vector2(280,1120)
-	_main._commands.tick_impacts(0.05)
+	_main.runtime._commands.tick_impacts(0.05)
 	impacts = _main._skill_presentation.frontal_effects.filter(func(e): return String(e.shape).begins_with("sett_w_impact"))
 	_expect(impacts.size() == 1 and target.hp < 3000, "第16个固定Tick同时产生伤害与冲击事件，不依赖动画推进")
 	if not impacts.is_empty():
@@ -665,7 +665,7 @@ func _check_sett_fixed_release() -> void:
 		replica.tick_visuals(3.0)
 		_expect(replica.frontal_effects.is_empty(), "冲击事件独立自然回收")
 	for unit in [sett,target]: unit.free()
-	_main._commands.clear_impacts()
+	_main.runtime._commands.clear_impacts()
 	_main._skill_presentation.clear()
 
 func _check_sett_outer_footprint() -> void:

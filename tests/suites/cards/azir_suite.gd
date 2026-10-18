@@ -9,14 +9,14 @@ func run(harness: Object, main: Node2D) -> void:
 			var target := _spawn("ashe", 1 - team, Vector2(400, 900))
 			var before := _count("sand_soldier", team)
 			_hit(source, target, 1)
-			main._sim_tick_id += delay
+			main.runtime._sim_tick_id += delay
 			target.take_damage(99999)
 			_expect(_count("sand_soldier", team) == before + (1 if delay <= 40 else 0), "转化40Tick包含边界，41Tick排除；阵营%d 延迟%d" % [team, delay])
 		var refreshed := _spawn("ashe", 1 - team, Vector2(450, 1000))
 		_hit(source, refreshed, 1)
-		main._sim_tick_id += 39
+		main.runtime._sim_tick_id += 39
 		_hit(source, refreshed, 1)
-		main._sim_tick_id += 40
+		main.runtime._sim_tick_id += 40
 		var before := _count("sand_soldier", team)
 		refreshed.take_damage(99999)
 		_expect(_count("sand_soldier", team) == before + 1, "再次真实命中刷新窗口")
@@ -27,7 +27,7 @@ func run(harness: Object, main: Node2D) -> void:
 		var second := _spawn("azir", team, Vector2(330, 900))
 		var victim := _spawn("ashe", 1 - team, Vector2(440, 950))
 		before = _count("sand_soldier", team)
-		main._combat.begin_batch(main._sim_tick_id, "azir_shared_kill")
+		main._combat.begin_batch(main.runtime._sim_tick_id, "azir_shared_kill")
 		_hit(source, victim, 99999)
 		_hit(second, victim, 99999)
 		main._combat.commit_batch()
@@ -60,7 +60,7 @@ func run(harness: Object, main: Node2D) -> void:
 		building._tick_building_lifetime(0.05)
 		_expect(_count("sun_disc", team) == before + 1, "窗口内建筑自然到期也转化")
 		var tower: Tower
-		for candidate in main._towers:
+		for candidate in main.world.towers_snapshot():
 			if candidate.team != team and not candidate.is_king:
 				tower = candidate
 				break
@@ -136,7 +136,7 @@ func _count(id: String, team: int) -> int:
 func _clear() -> void:
 	for actor in _main.get_tree().get_nodes_in_group("combatants"):
 		if actor is Unit:
-			if not actor.nav_cells.is_empty(): _main.unblock_nav_cells(actor.nav_cells)
+			_main.world.release_structure_footprint(actor)
 			actor.free()
 
 func _check_definition_contracts() -> void:
@@ -171,8 +171,8 @@ func _check_client_beam() -> void:
 	target.net_id = 992
 	source.set_meta("projectile_model_offset", Vector2(25,-80))
 	target.set_meta("projectile_model_offset", Vector2(0,-45))
-	var old_mode: String = _main.mode
-	_main.mode = "client"
+	var old_mode: String = _main.runtime.mode
+	_main.runtime.mode = "client"
 	var hp := target.hp
 	var descriptor := PresentationConfig.attack_source(source)
 	descriptor.hit_origin = source.position
@@ -188,7 +188,7 @@ func _check_client_beam() -> void:
 	_main._projectile_system.clear_client()
 	_expect(views._views.is_empty(), "客户端清场清除未播完的光束")
 	_expect(_main.BUFFERED_BATTLE_EVENTS.has(&"_rpc_attack_hit_visual"), "光束纳入可靠战斗时间轴事件")
-	_main.mode = old_mode
+	_main.runtime.mode = old_mode
 	_clear()
 
 func _check_true_death_rewards() -> void:
@@ -198,7 +198,7 @@ func _check_true_death_rewards() -> void:
 			var dragon := _spawn("aurelionsol", 0, Vector2(250, 1000))
 			dragon.configure_carried_active_skill(CardDB.active_skills_for("aurelionsol")[0])
 			var victim := _spawn(card, 1, Vector2(400, 900))
-			_main._combat.begin_batch(_main._sim_tick_id, "true_death")
+			_main._combat.begin_batch(_main.runtime._sim_tick_id, "true_death")
 			if reverse: _hit(azir, victim, 99999)
 			_hit(dragon, victim, 99999)
 			_hit(dragon, victim, 99999)
@@ -252,7 +252,7 @@ func _check_true_death_rewards() -> void:
 		dragon = _spawn("aurelionsol", 0, Vector2(250, 1000))
 		dragon.configure_carried_active_skill(CardDB.active_skills_for("aurelionsol")[0])
 		var victim := _spawn("sion", 1, Vector2(400, 900))
-		_main._combat.begin_batch(_main._sim_tick_id, "dead_source")
+		_main._combat.begin_batch(_main.runtime._sim_tick_id, "dead_source")
 		if reverse: dragon.take_damage(99999)
 		_hit(azir, victim, 1)
 		_hit(dragon, victim, 99999)

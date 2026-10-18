@@ -317,37 +317,37 @@ func _check_sun_disc() -> void:
 
 	# 活塔仍按原 3x3 阻挡。塔毁后，太阳圆盘仅精确塔中心合法；
 	# 普通卡牌把塔墟视为地面，太阳圆盘偏离中心的重叠均非法。
-	var own_tower: Tower = _main._towers[0]
-	var enemy_tower: Tower = _main._towers[2]
+	var own_tower: Tower = _main.world.towers_snapshot()[0]
+	var enemy_tower: Tower = _main.world.towers_snapshot()[2]
 	var own_hp := own_tower.hp
 	var enemy_hp := enemy_tower.hp
-	var own_ruin_tiles: Array[Vector2i] = _main._structure_deployment_tiles(own_tower)
-	var alive_tower_blocked: bool = not _main.is_card_deploy_position_valid(0, "sun_disc", own_tower.position)
+	var own_ruin_tiles: Array[Vector2i] = _main.runtime._deployment_rules.structure_deployment_tiles(own_tower)
+	var alive_tower_blocked: bool = not _main.runtime.is_card_deploy_position_valid(0, "sun_disc", own_tower.position)
 	own_tower.hp = 0.0
 	enemy_tower.hp = 0.0
 	var all_own_ruin_centers_valid := true
 	for tile in own_ruin_tiles:
-		all_own_ruin_centers_valid = all_own_ruin_centers_valid and (_main.is_card_deploy_position_valid(0, "sun_disc", _main._arena_tile_center(tile)) == _main._arena_tile_center(tile).is_equal_approx(own_tower.position))
+		all_own_ruin_centers_valid = all_own_ruin_centers_valid and (_main.runtime.is_card_deploy_position_valid(0, "sun_disc", _main.runtime._deployment_rules.arena_tile_center(tile)) == _main.runtime._deployment_rules.arena_tile_center(tile).is_equal_approx(own_tower.position))
 	var all_enemy_ruin_centers_valid := true
-	for tile in _main._structure_deployment_tiles(enemy_tower):
-		all_enemy_ruin_centers_valid = all_enemy_ruin_centers_valid and (_main.is_card_deploy_position_valid(0, "sun_disc", _main._arena_tile_center(tile)) == _main._arena_tile_center(tile).is_equal_approx(enemy_tower.position))
-	var edge_overlap_center: Vector2 = _main._arena_tile_center(Vector2i(own_ruin_tiles[0].x - 1, own_ruin_tiles[0].y + 1))
-	var ruin_edge_overlap_blocked: bool = not _main.is_card_deploy_position_valid(0, "sun_disc", edge_overlap_center)
+	for tile in _main.runtime._deployment_rules.structure_deployment_tiles(enemy_tower):
+		all_enemy_ruin_centers_valid = all_enemy_ruin_centers_valid and (_main.runtime.is_card_deploy_position_valid(0, "sun_disc", _main.runtime._deployment_rules.arena_tile_center(tile)) == _main.runtime._deployment_rules.arena_tile_center(tile).is_equal_approx(enemy_tower.position))
+	var edge_overlap_center: Vector2 = _main.runtime._deployment_rules.arena_tile_center(Vector2i(own_ruin_tiles[0].x - 1, own_ruin_tiles[0].y + 1))
+	var ruin_edge_overlap_blocked: bool = not _main.runtime.is_card_deploy_position_valid(0, "sun_disc", edge_overlap_center)
 	_expect(
 		alive_tower_blocked and all_own_ruin_centers_valid and all_enemy_ruin_centers_valid and ruin_edge_overlap_blocked,
 		"活塔继续阻挡太阳圆盘；塔毁后只有精确中心（含敌方 pocket 外塔位）可重建，偏离中心重叠拒绝",
 	)
 
-	_expect(_main.is_card_deploy_position_valid(0, "tombstone", own_tower.position)
-		and _main.is_card_deploy_position_valid(0, "garen", own_tower.position),
+	_expect(_main.runtime.is_card_deploy_position_valid(0, "tombstone", own_tower.position)
+		and _main.runtime.is_card_deploy_position_valid(0, "garen", own_tower.position),
 		"非太阳圆盘建筑与兵种可在己方塔墟正常下牌")
 
 	# 由卡牌生成入口固化塔墟状态；禁用 nav 仅避免专项测试改写主场景共享网格。
-	var saved_nav = _main.nav
-	_main.nav = null
-	var ruined_spawn: Unit = _main._spawn_card_units(0, "sun_disc", own_tower.position, 0.0)[0]
-	var normal_spawn: Unit = _main._spawn_card_units(0, "sun_disc", Vector2(360.0, 900.0), 0.0)[0]
-	_main.nav = saved_nav
+	var saved_nav = _main.world.nav
+	_main.world.nav = null
+	var ruined_spawn: Unit = _main.runtime._spawn_card_units(0, "sun_disc", own_tower.position, 0.0)[0]
+	var normal_spawn: Unit = _main.runtime._spawn_card_units(0, "sun_disc", Vector2(360.0, 900.0), 0.0)[0]
+	_main.world.nav = saved_nav
 	var ruined_hp := ruined_spawn.hp
 	ruined_spawn._building_tick(100.0)
 	var ruined_view: UnitModel3D = null
@@ -399,9 +399,9 @@ func _check_sun_disc() -> void:
 	var air_inside := _make_apex_turret_test_unit(CardDB.get_card("aurelionsol"), 0, Vector2(390.0, 650.0), true)
 	var ground_outside := _make_apex_turret_test_unit(CardDB.get_card("melee_minion"), 0, Vector2(360.0, 580.0), false)
 	var enemy_inside := _make_apex_turret_test_unit(CardDB.get_card("melee_minion"), 1, Vector2(330.0, 650.0), false)
-	var friendly_tower: Tower = _main._towers[0]
-	var friendly_crystal: Tower = _main._king_player
-	var enemy_tower_outside: Tower = _main._towers[2]
+	var friendly_tower: Tower = _main.world.towers_snapshot()[0]
+	var friendly_crystal: Tower = _main.world.king(0)
+	var enemy_tower_outside: Tower = _main.world.towers_snapshot()[2]
 	for structure in [friendly_tower, friendly_crystal, enemy_tower_outside]:
 		structure.clear_shields()
 	_main._active_skill_effect_system.apply_area_shield(source, skill)
@@ -530,8 +530,8 @@ func _check_minion_line_mechanism() -> void:
 	ranged_red.free()
 	siege_blue.free()
 
-	var old_waves_enabled: bool = _main._minion_waves_enabled
-	_main._minion_waves_enabled = true
+	var old_waves_enabled: bool = _main.runtime._minion_waves_enabled
+	_main.runtime._minion_waves_enabled = true
 	_expect(
 		is_equal_approx(_main.MATCH_TIME, 185.0)
 		and is_equal_approx(_main.OVERTIME_TIME, 120.0)
@@ -540,119 +540,119 @@ func _check_minion_line_mechanism() -> void:
 		"正赛 185 秒、加时 120 秒，普通兵线 45 秒、炮车兵线 30 秒"
 	)
 	var first_wave_ok := _run_scheduled_wave(4.95, 5.0, MinionWaveSchedule.MINION_WAVE_NORMAL)
-	var first_interval_ok := is_equal_approx(_main._minion_waves.next_wave_time, 50.0)
+	var first_interval_ok := is_equal_approx(_main.runtime._minion_waves.next_wave_time, 50.0)
 	_expect(first_wave_ok, "0:05 首波双方两路生成近战兵，0.5 秒后补远程兵")
 	var second_wave_ok := _run_scheduled_wave(49.95, 50.0, MinionWaveSchedule.MINION_WAVE_NORMAL)
-	var second_interval_ok := is_equal_approx(_main._minion_waves.next_wave_time, 95.0)
+	var second_interval_ok := is_equal_approx(_main.runtime._minion_waves.next_wave_time, 95.0)
 	var third_wave_ok := _run_scheduled_wave(94.95, 95.0, MinionWaveSchedule.MINION_WAVE_NORMAL)
-	var third_interval_ok := is_equal_approx(_main._minion_waves.next_wave_time, 140.0)
+	var third_interval_ok := is_equal_approx(_main.runtime._minion_waves.next_wave_time, 140.0)
 	_expect(second_wave_ok and third_wave_ok and first_interval_ok and second_interval_ok and third_interval_ok, "普通阶段兵线时间为 0:05、0:50、1:35，间隔保持 45 秒")
 
 	_clear_minion_test_units()
-	_main._minion_waves.pending.clear()
-	_main._minion_waves.elapsed = 124.95
-	_main._minion_waves.next_wave_time = 140.0
-	_main._match_rules.time_left = _main.MATCH_TIME
-	_main._match_rules.overtime = false
-	_main._tick_minion_waves(0.05)
+	_main.runtime._minion_waves.pending.clear()
+	_main.runtime._minion_waves.elapsed = 124.95
+	_main.runtime._minion_waves.next_wave_time = 140.0
+	_main.runtime._match_rules.time_left = _main.MATCH_TIME
+	_main.runtime._match_rules.overtime = false
+	_main.runtime._tick_minion_waves(0.05)
 	var double_start_front := _minion_test_units()
 	var double_start_front_ok := double_start_front.size() == 4
 	for minion in double_start_front:
 		double_start_front_ok = double_start_front_ok and minion.card_id == "melee_minion"
-	_expect(double_start_front_ok and is_equal_approx(_main._minion_waves.next_wave_time, 155.0), "2:05 立即生成炮车线，并取消普通阶段原定的 2:20 兵线")
-	_main._tick_minion_waves(0.5)
+	_expect(double_start_front_ok and is_equal_approx(_main.runtime._minion_waves.next_wave_time, 155.0), "2:05 立即生成炮车线，并取消普通阶段原定的 2:20 兵线")
+	_main.runtime._tick_minion_waves(0.5)
 	_expect(_wave_cards_ok("melee_minion", "siege_minion"), "2:05 炮车线的后排为炮车兵")
 	var next_double_wave_ok := _run_scheduled_wave(154.95, 155.0, MinionWaveSchedule.MINION_WAVE_SIEGE)
 	_expect(next_double_wave_ok, "双倍金币阶段从 2:05 起按 30 秒间隔继续生成炮车线")
 
-	_main._minion_waves.elapsed = 0.0
-	_main._match_rules.time_left = _main.MATCH_TIME
-	_main._match_rules.overtime = false
-	_main._update_elixir_rate()
-	var one_x_at_start := is_equal_approx(_main._elixir.regen_multiplier, 1.0)
-	_main._minion_waves.elapsed = 124.95
-	_main._match_rules.time_left = _main.DOUBLE_ELIXIR_TIME + 0.05
-	_main._update_elixir_rate()
-	var one_x_before_double := is_equal_approx(_main._elixir.regen_multiplier, 1.0)
-	_main._minion_waves.elapsed = 125.0
-	_main._match_rules.time_left = _main.DOUBLE_ELIXIR_TIME
-	_main._update_elixir_rate()
-	var two_x_at_double_start := is_equal_approx(_main._elixir.regen_multiplier, 2.0)
-	_main._minion_waves.elapsed = 130.0
-	_main._match_rules.time_left = 55.0
-	_main._update_elixir_rate()
-	var two_x_after_double_start := is_equal_approx(_main._elixir.regen_multiplier, 2.0)
-	_main._match_rules.overtime = true
-	_main._match_rules.time_left = _main.OVERTIME_TIME
-	_main._update_elixir_rate()
-	var two_x_in_overtime: bool = is_equal_approx(_main._elixir.regen_multiplier, 2.0)
-	_main._match_rules.time_left = _main.OVERTIME_TRIPLE_ELIXIR_TIME
-	_main._update_elixir_rate()
-	var three_x_at_overtime_last_minute: bool = is_equal_approx(_main._elixir.regen_multiplier, 3.0)
+	_main.runtime._minion_waves.elapsed = 0.0
+	_main.runtime._match_rules.time_left = _main.MATCH_TIME
+	_main.runtime._match_rules.overtime = false
+	_main.runtime._update_elixir_rate()
+	var one_x_at_start := is_equal_approx(_main.runtime.account(0 if _main.runtime.mode == "server" else _main.runtime.local_team).regen_multiplier, 1.0)
+	_main.runtime._minion_waves.elapsed = 124.95
+	_main.runtime._match_rules.time_left = _main.DOUBLE_ELIXIR_TIME + 0.05
+	_main.runtime._update_elixir_rate()
+	var one_x_before_double := is_equal_approx(_main.runtime.account(0 if _main.runtime.mode == "server" else _main.runtime.local_team).regen_multiplier, 1.0)
+	_main.runtime._minion_waves.elapsed = 125.0
+	_main.runtime._match_rules.time_left = _main.DOUBLE_ELIXIR_TIME
+	_main.runtime._update_elixir_rate()
+	var two_x_at_double_start := is_equal_approx(_main.runtime.account(0 if _main.runtime.mode == "server" else _main.runtime.local_team).regen_multiplier, 2.0)
+	_main.runtime._minion_waves.elapsed = 130.0
+	_main.runtime._match_rules.time_left = 55.0
+	_main.runtime._update_elixir_rate()
+	var two_x_after_double_start := is_equal_approx(_main.runtime.account(0 if _main.runtime.mode == "server" else _main.runtime.local_team).regen_multiplier, 2.0)
+	_main.runtime._match_rules.overtime = true
+	_main.runtime._match_rules.time_left = _main.OVERTIME_TIME
+	_main.runtime._update_elixir_rate()
+	var two_x_in_overtime: bool = is_equal_approx(_main.runtime.account(0 if _main.runtime.mode == "server" else _main.runtime.local_team).regen_multiplier, 2.0)
+	_main.runtime._match_rules.time_left = _main.OVERTIME_TRIPLE_ELIXIR_TIME
+	_main.runtime._update_elixir_rate()
+	var three_x_at_overtime_last_minute: bool = is_equal_approx(_main.runtime.account(0 if _main.runtime.mode == "server" else _main.runtime.local_team).regen_multiplier, 3.0)
 	_expect(one_x_at_start and one_x_before_double, "正赛 0:00~2:05 金币倍率为 1x")
 	_expect(two_x_at_double_start and two_x_after_double_start and two_x_in_overtime, "2:05 后及加时前一分钟金币倍率为 2x")
 	_expect(three_x_at_overtime_last_minute, "加时最后一分钟金币倍率为 3x")
 
 	var tower_hps: Array[float] = []
-	for tower in _main._towers:
+	for tower in _main.world.towers_snapshot():
 		tower_hps.append(tower.hp)
-	_main._match_rules.overtime = false
-	_main._match_rules.time_left = 0.0
-	_main._minion_waves.elapsed = 185.0
-	_main._minion_waves.next_wave_time = 185.0
-	_main._towers[0].hp = 0.0
-	_main.game_over = false
-	_main._match_rules.finished = false
-	_main._simulation_clock.remainder = 0.0
+	_main.runtime._match_rules.overtime = false
+	_main.runtime._match_rules.time_left = 0.0
+	_main.runtime._minion_waves.elapsed = 185.0
+	_main.runtime._minion_waves.next_wave_time = 185.0
+	_main.world.towers_snapshot()[0].hp = 0.0
+	_main.runtime.game_over = false
+	_main.runtime._match_rules.finished = false
+	_main.runtime._simulation_clock.remainder = 0.0
 	_clear_minion_test_units()
-	_main._minion_waves.pending.clear()
-	_main._tick_match_rules(0.0)
-	_expect(_main.game_over and not _main._match_rules.overtime and _minion_test_units().is_empty(), "3:05 若正赛已分出胜负则直接结束，不生成 3:05 兵线")
-	for index in _main._towers.size():
-		_main._towers[index].hp = tower_hps[index]
+	_main.runtime._minion_waves.pending.clear()
+	_main.runtime._tick_match_rules(0.0)
+	_expect(_main.runtime.game_over and not _main.runtime._match_rules.overtime and _minion_test_units().is_empty(), "3:05 若正赛已分出胜负则直接结束，不生成 3:05 兵线")
+	for index in _main.world.towers_snapshot().size():
+		_main.world.towers_snapshot()[index].hp = tower_hps[index]
 
-	_main._match_rules.overtime = false
-	_main._match_rules.time_left = 0.0
-	_main._minion_waves.elapsed = 185.0
-	_main._minion_waves.next_wave_time = 185.0
-	_main.game_over = false
-	_main._match_rules.finished = false
-	_main._simulation_clock.remainder = 0.0
-	_main._tick_match_rules(0.0)
-	var overtime_front_ok: bool = _main._match_rules.overtime and not _main.game_over and _minion_test_units().size() == 4
+	_main.runtime._match_rules.overtime = false
+	_main.runtime._match_rules.time_left = 0.0
+	_main.runtime._minion_waves.elapsed = 185.0
+	_main.runtime._minion_waves.next_wave_time = 185.0
+	_main.runtime.game_over = false
+	_main.runtime._match_rules.finished = false
+	_main.runtime._simulation_clock.remainder = 0.0
+	_main.runtime._tick_match_rules(0.0)
+	var overtime_front_ok: bool = _main.runtime._match_rules.overtime and not _main.runtime.game_over and _minion_test_units().size() == 4
 	for minion in _minion_test_units():
 		overtime_front_ok = overtime_front_ok and minion.card_id == "melee_minion"
-	_main._tick_minion_waves(0.5)
+	_main.runtime._tick_minion_waves(0.5)
 	var overtime_wave_ok: bool = overtime_front_ok and _wave_cards_ok("melee_minion", "siege_minion")
 	_expect(overtime_wave_ok, "3:05 只有实际进入加时才立即生成炮车线")
 	_clear_minion_test_units()
-	_main._minion_waves.pending.clear()
+	_main.runtime._minion_waves.pending.clear()
 	var overtime_215_ok := _run_scheduled_wave(214.95, 215.0, MinionWaveSchedule.MINION_WAVE_SIEGE, true)
 	var overtime_245_ok := _run_scheduled_wave(244.95, 245.0, MinionWaveSchedule.MINION_WAVE_SIEGE, true)
 	var overtime_275_ok := _run_scheduled_wave(274.95, 275.0, MinionWaveSchedule.MINION_WAVE_SIEGE, true)
 	_expect(overtime_215_ok and overtime_245_ok and overtime_275_ok, "加时继续在 3:35、4:05、4:35 生成炮车线，间隔为 30 秒")
 
 	_clear_minion_test_units()
-	_main._minion_waves.pending.clear()
-	_main._match_rules.overtime = true
-	_main._match_rules.time_left = 0.0
-	_main._minion_waves.elapsed = 305.0
-	_main._minion_waves.next_wave_time = 305.0
-	_main.game_over = false
-	_main._match_rules.finished = false
-	_main._simulation_clock.remainder = 0.0
-	_main._tick_match_rules(0.0)
-	_expect(_main.game_over and _minion_test_units().is_empty(), "5:05 加时结束，不生成理论上的下一波兵线")
+	_main.runtime._minion_waves.pending.clear()
+	_main.runtime._match_rules.overtime = true
+	_main.runtime._match_rules.time_left = 0.0
+	_main.runtime._minion_waves.elapsed = 305.0
+	_main.runtime._minion_waves.next_wave_time = 305.0
+	_main.runtime.game_over = false
+	_main.runtime._match_rules.finished = false
+	_main.runtime._simulation_clock.remainder = 0.0
+	_main.runtime._tick_match_rules(0.0)
+	_expect(_main.runtime.game_over and _minion_test_units().is_empty(), "5:05 加时结束，不生成理论上的下一波兵线")
 
-	for index in _main._towers.size():
-		_main._towers[index].hp = tower_hps[index]
+	for index in _main.world.towers_snapshot().size():
+		_main.world.towers_snapshot()[index].hp = tower_hps[index]
 
 	_clear_minion_test_units()
-	_main._minion_waves.pending.clear()
-	var enemy_left_hp: float = _main._towers[2].hp
-	_main._towers[2].hp = 0.0
-	_main._minion_waves.elapsed = 0.0
-	_main._spawn_minion_wave(MinionWaveSchedule.MINION_WAVE_NORMAL)
+	_main.runtime._minion_waves.pending.clear()
+	var enemy_left_hp: float = _main.world.towers_snapshot()[2].hp
+	_main.world.towers_snapshot()[2].hp = 0.0
+	_main.runtime._minion_waves.elapsed = 0.0
+	_main.runtime._spawn_minion_wave(MinionWaveSchedule.MINION_WAVE_NORMAL)
 	var upgraded_front_ok := false
 	var untouched_front_ok := false
 	for minion in _minion_test_units():
@@ -661,17 +661,17 @@ func _check_minion_line_mechanism() -> void:
 		elif minion.team == 0 and minion.position.x > ArenaRules.FIELD_W * 0.5:
 			untouched_front_ok = minion.card_id == "melee_minion"
 	_expect(upgraded_front_ok and untouched_front_ok, "推掉敌方左塔后，仅己方左路后续近战兵替换为超级兵")
-	_main._towers[2].hp = enemy_left_hp
+	_main.world.towers_snapshot()[2].hp = enemy_left_hp
 	_clear_minion_test_units()
-	_main._minion_waves.pending.clear()
-	_main._minion_waves.elapsed = 0.0
-	_main._minion_waves.next_wave_time = MinionWaveSchedule.FIRST_MINION_WAVE_TIME
-	_main._match_rules.time_left = _main.MATCH_TIME
-	_main._match_rules.overtime = false
-	_main.game_over = false
-	_main._match_rules.finished = false
-	_main._simulation_clock.remainder = 0.0
-	_main._minion_waves_enabled = old_waves_enabled
+	_main.runtime._minion_waves.pending.clear()
+	_main.runtime._minion_waves.elapsed = 0.0
+	_main.runtime._minion_waves.next_wave_time = MinionWaveSchedule.FIRST_MINION_WAVE_TIME
+	_main.runtime._match_rules.time_left = _main.MATCH_TIME
+	_main.runtime._match_rules.overtime = false
+	_main.runtime.game_over = false
+	_main.runtime._match_rules.finished = false
+	_main.runtime._simulation_clock.remainder = 0.0
+	_main.runtime._minion_waves_enabled = old_waves_enabled
 	_main._audio_manager.begin_battle()
 	_main._hand.show()
 	_main._active_skill_bar.show()
@@ -682,16 +682,16 @@ func _check_minion_line_mechanism() -> void:
 
 func _run_scheduled_wave(elapsed_before: float, wave_time: float, wave_type: String, overtime: bool = false) -> bool:
 	_clear_minion_test_units()
-	_main._minion_waves.pending.clear()
-	_main._minion_waves.elapsed = elapsed_before
-	_main._minion_waves.next_wave_time = wave_time
-	_main._match_rules.time_left = _main.OVERTIME_TIME if overtime else _main.MATCH_TIME
-	_main._match_rules.overtime = overtime
-	_main._tick_minion_waves(0.05)
+	_main.runtime._minion_waves.pending.clear()
+	_main.runtime._minion_waves.elapsed = elapsed_before
+	_main.runtime._minion_waves.next_wave_time = wave_time
+	_main.runtime._match_rules.time_left = _main.OVERTIME_TIME if overtime else _main.MATCH_TIME
+	_main.runtime._match_rules.overtime = overtime
+	_main.runtime._tick_minion_waves(0.05)
 	var front_only_ok := _minion_test_units().size() == 4
 	for minion in _minion_test_units():
 		front_only_ok = front_only_ok and minion.card_id in ["melee_minion", "super_minion"]
-	_main._tick_minion_waves(0.5)
+	_main.runtime._tick_minion_waves(0.5)
 	return front_only_ok and _wave_cards_ok("melee_minion", "siege_minion" if wave_type == MinionWaveSchedule.MINION_WAVE_SIEGE else "ranged_minion")
 
 func _wave_cards_ok(front_card: String, rear_card: String) -> bool:
@@ -761,7 +761,7 @@ func _clear_minion_test_units() -> void:
 		minion.free()
 
 func _check_tombstone_footprint() -> void:
-	var snapped: Vector2 = _main._snap_card_position("tombstone", Vector2(467.0, 873.0))
+	var snapped: Vector2 = _main.runtime._snap_card_position("tombstone", Vector2(467.0, 873.0))
 	_expect(
 		is_equal_approx(fmod(snapped.x, ArenaRules.TILE_SIZE), ArenaRules.TILE_SIZE * 0.5)
 		and is_equal_approx(fmod(snapped.y, ArenaRules.TILE_SIZE), ArenaRules.TILE_SIZE * 0.5),
@@ -777,7 +777,7 @@ func _check_tombstone_footprint() -> void:
 	tombstone.position = snapped
 	tombstone.setup(0, stats, stats.name)
 	_main.add_child(tombstone)
-	_main._register_dynamic_building(tombstone)
+	_main.world.register_dynamic_building(tombstone)
 	var footprint_ok := tombstone.footprint_tiles == Vector2i(3, 3)
 	var first: Vector2 = snapped - Vector2.ONE * ArenaRules.TILE_SIZE
 	var footprint_blocks_deployment := true
@@ -785,11 +785,11 @@ func _check_tombstone_footprint() -> void:
 	for y in range(3):
 		for x in range(3):
 			var occupied_center: Vector2 = first + Vector2(x, y) * ArenaRules.TILE_SIZE
-			footprint_blocks_deployment = footprint_blocks_deployment and not _main.is_card_deploy_position_valid(0, "xin", occupied_center)
+			footprint_blocks_deployment = footprint_blocks_deployment and not _main.runtime.is_card_deploy_position_valid(0, "xin", occupied_center)
 			if x != 1 or y != 1:
-				footprint_outer_tiles_remain_walkable = footprint_outer_tiles_remain_walkable and _main.is_ground_position_walkable(occupied_center, 0.0)
+				footprint_outer_tiles_remain_walkable = footprint_outer_tiles_remain_walkable and _main.world.is_ground_position_walkable(occupied_center, 0.0)
 	var adjacent_center: Vector2 = first + Vector2.LEFT * ArenaRules.TILE_SIZE
-	var adjacent_deployment_allowed: bool = _main.is_card_deploy_position_valid(0, "xin", adjacent_center)
+	var adjacent_deployment_allowed: bool = _main.runtime.is_card_deploy_position_valid(0, "xin", adjacent_center)
 	_expect(
 		footprint_ok
 		and configured_stats.footprint_tiles == Vector2i(3, 3)
@@ -801,12 +801,12 @@ func _check_tombstone_footprint() -> void:
 		"墓碑使用 3x3 下牌占地和 50 表现半径，权威碰撞仍为半径 40；九格封锁下牌但外围八格与相邻格保持可通行",
 	)
 
-	var expected_nav_cells: Array = _main.nav.cells_for_circle(
+	var expected_nav_cells: Array = _main.world.nav.cells_for_circle(
 		tombstone.position,
 		tombstone.body_radius + ArenaRules.NAV_CLEARANCE,
 	)
-	var footprint_nav_cells: Array = _main.nav.cells_for_rect(
-		_main._structure_deployment_rect(tombstone).grow(ArenaRules.NAV_CLEARANCE),
+	var footprint_nav_cells: Array = _main.world.nav.cells_for_rect(
+		_main.runtime._deployment_rules.structure_deployment_rect(tombstone).grow(ArenaRules.NAV_CLEARANCE),
 	)
 	var footprint_only_corner_found := false
 	for cell in footprint_nav_cells:
@@ -832,11 +832,11 @@ func _check_tombstone_does_not_push_air_units() -> void:
 	var before_pos: Vector2 = dragon.global_position
 	_expect(dragon.is_air, "龙王 is_air=true，属于空军")
 	# 先直接调用 _push_units_around：墓碑 radius=40，龙王 radius≈21，中心距 0 < 61 → 若不加 is_air 保护必推。
-	_main._push_units_around(shared_pos, 40.0)
+	_main.world.push_units_around(shared_pos, 40.0)
 	var after_direct: Vector2 = dragon.global_position
 	_expect(before_pos.is_equal_approx(after_direct), "直接推挤时龙王位置不动：before=%s after=%s" % [str(before_pos), str(after_direct)])
 	# 再走 _execute_card_deployment 真实链路：building 分支会先 _push_units_around 再生成墓碑。
-	_main._execute_card_deployment(0, "tombstone", shared_pos)
+	_main.runtime._execute_card_deployment(0, "tombstone", shared_pos)
 	var after_execute: Vector2 = dragon.global_position
 	_expect(before_pos.is_equal_approx(after_execute), "真实墓碑落地在龙王上方时，龙王位置仍保持不变")
 	# 清理：查找生成的墓碑并销毁
@@ -889,8 +889,8 @@ func _check_tombstone_spawn_cycle() -> void:
 	var diagonal_corner := left.position + Vector2(40.0, 40.0)
 	var direct_overlap := left.position + Vector2(30.0, 0.0)
 	_expect(
-		_main.is_ground_position_walkable(diagonal_corner, CardDB.RADIUS_EXTREMELY_SMALL)
-		and not _main.is_ground_position_walkable(direct_overlap, CardDB.RADIUS_EXTREMELY_SMALL),
+		_main.world.is_ground_position_walkable(diagonal_corner, CardDB.RADIUS_EXTREMELY_SMALL)
+		and not _main.world.is_ground_position_walkable(direct_overlap, CardDB.RADIUS_EXTREMELY_SMALL),
 		"墓碑扩大为 3x3 格占地后，实际碰撞仍为半径 40 的圆柱，圆外可通行而圆内不可穿过"
 	)
 	for imp in _imp_units():
@@ -958,12 +958,12 @@ func _check_baron_buff_visual() -> void:
 			var hit_ok: bool = mesh.material_overlay.next_pass == buff_overlay
 			view._process(0.06)
 			hit_ok = hit_ok and mesh.material_overlay == buff_overlay
-			var payload: Array = _main._snapshot_system._unit_snapshot_payload(123, unit)
+			var payload: Array = preload("res://tests/fixtures/network_fixture.gd").snapshot_payload(_main._snapshot_system, 123, unit)
 			var snapshot_ok := int(payload[NetworkSnapshotSystem.U_ACTIVE_BUFF_ACTIVE]) == 1
 			var unchanged := unit.body_radius == radius and unit.hp == hp and unit.position == position
 			unit._tick_active_statuses(float(skill.duration) + 0.1)
 			view._process(0.3)
-			payload = _main._snapshot_system._unit_snapshot_payload(123, unit)
+			payload = preload("res://tests/fixtures/network_fixture.gd").snapshot_payload(_main._snapshot_system, 123, unit)
 			var expired_ok: bool = not view._active_buff_visual.visible and mesh.material_overlay == view._model_resources.original_overlay(0) and int(payload[NetworkSnapshotSystem.U_ACTIVE_BUFF_ACTIVE]) == 0
 			_main._active_skill_effect_system.apply(unit, skill)
 			view._process(0.3)

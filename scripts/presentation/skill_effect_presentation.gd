@@ -139,7 +139,8 @@ func show_skill_effect(event_id: int, payload: Dictionary) -> void:
 func show_network_frontal(payload: Dictionary) -> void:
 	var effect := payload.duplicate(true)
 	effect.source_ref = null
-	frontal_effects.append(effect)
+	if _source_allows_effect(effect):
+		frontal_effects.append(effect)
 
 func tick_visuals(delta: float) -> void:
 	for index in range(shield_effects.size() - 1, -1, -1):
@@ -148,16 +149,29 @@ func tick_visuals(delta: float) -> void:
 	var alive: Array[Dictionary] = []
 	for effect in frontal_effects:
 		if String(effect.get("shape", "")) == "team_attack_boost_hammer":
-			var target = _controller.find_client_unit(int(effect.get("target_net_id", -1))) if _controller.is_net_client() else instance_from_id(int(effect.get("target_instance_id", 0)))
+			var target = _controller.world.find_replica_unit(int(effect.get("target_net_id", -1))) if _controller.is_net_client() else instance_from_id(int(effect.get("target_instance_id", 0)))
 			if not is_instance_valid(target) or target.hp <= 0.0 or not CombatInteraction.allows_allied_target(target, int(effect.get("team", target.team))): continue
 			effect.end_position = target.get_visual_screen_position()
-		var source = effect_source(effect)
-		if not bool(effect.get("fixed_position", false)) and source is Unit and (source.hp <= 0.0 or source.is_frozen() or int(effect.get("cast_serial", source.active_skill_cast_serial)) <= source.cancelled_skill_cast_serial or int(effect.get("action_serial", 2147483647)) <= source.cancelled_visual_serial):
+		if not _source_allows_effect(effect):
 			continue
 		effect.timer = maxf(0.0, float(effect.timer) - delta)
 		if float(effect.timer) > 0.001:
 			alive.append(effect)
 	frontal_effects.assign(alive)
+
+## 固定区域已独立生成；依附预警必须仍有有效来源且未越过取消屏障。
+func _source_allows_effect(effect: Dictionary) -> bool:
+	if bool(effect.get("fixed_position", false)):
+		return true
+	var source = effect_source(effect)
+	return is_instance_valid(source) and source is Unit and not source.is_queued_for_deletion() and source.hp > 0.0 and not source.is_frozen() and int(effect.get("cast_serial", source.active_skill_cast_serial)) > source.cancelled_skill_cast_serial and int(effect.get("action_serial", 2147483647)) > source.cancelled_visual_serial
+
+## RPC销毁和快照补删均走Main的同一实体清理入口；固定效果不依附来源。
+func remove_source(net_id: int) -> void:
+	for index in range(frontal_effects.size() - 1, -1, -1):
+		var effect := frontal_effects[index]
+		if not bool(effect.get("fixed_position", false)) and int(effect.get("net_id", -1)) == net_id:
+			frontal_effects.remove_at(index)
 
 func effect_source(effect: Dictionary):
 	var source_ref = effect.get("source_ref")
@@ -167,7 +181,7 @@ func effect_source(effect: Dictionary):
 			return source
 	var net_id := int(effect.get("net_id", -1))
 	if net_id >= 0:
-		var client_source = _controller.find_client_unit(net_id)
+		var client_source = _controller.world.find_replica_unit(net_id)
 		if is_instance_valid(client_source) and client_source is Unit:
 			return client_source
 	return null
@@ -188,7 +202,7 @@ func clear() -> void:
 	frontal_effects.clear()
 
 func viewer_team() -> int:
-	return _controller.local_team
+	return _controller.runtime.local_team
 
 func present_fixed_area(center: Vector2, start_radius: float, end_radius: float, duration: float, team: int, shape: StringName) -> void:
 	add_fixed_area_effect(center, start_radius, end_radius, duration, team, shape)

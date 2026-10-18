@@ -42,7 +42,7 @@ func run(harness: Object, main: Node2D) -> void:
 	projectile.clear_all()
 	# 3秒包含边界；另一来源造成致命伤，原攻击者仍获得收益。
 	source.record_structure_attack(ground)
-	main._sim_tick_id += 60
+	main.runtime._sim_tick_id += 60
 	ground.take_damage(99999)
 	_expect(source.structure_haste_visual() and is_equal_approx(source.active_speed_multiplier, 2.0), "3秒内队友摧毁建筑触发100%移速")
 	_expect(is_equal_approx(source.active_attack_speed_multiplier, 1.3), "被动30%攻速")
@@ -54,7 +54,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_expect(source.active_speed_multiplier == 1.0 and source.active_attack_speed_multiplier == 1.0, "6秒加速与攻速到期")
 	var late := _spawn("target_dummy", 1, Vector2(400, 1000))
 	source.record_structure_attack(late)
-	main._sim_tick_id += 61
+	main.runtime._sim_tick_id += 61
 	late.take_damage(99999)
 	_expect(not source.structure_haste_visual(), "超过3秒的建筑击败不算参与")
 	var normal := _spawn("ashe", 1, Vector2(400, 1050))
@@ -69,7 +69,7 @@ func run(harness: Object, main: Node2D) -> void:
 	source.buffs.clear_family(&"structure_haste")
 	var decay := _spawn("target_dummy", 1, Vector2(500, 1100))
 	resolver.resolve_attack_hit(0, source.position, decay, 1, 0, 0, source, source.position, source.form_index)
-	main._sim_tick_id += 60
+	main.runtime._sim_tick_id += 60
 	decay.hp = 1
 	decay._tick_building_lifetime(0.05)
 	_expect(decay.hp == 0 and source.structure_haste_visual(), "建筑被命中后自然衰血致死触发助攻")
@@ -78,7 +78,7 @@ func run(harness: Object, main: Node2D) -> void:
 	for marked in [false, true]:
 		var expired := _spawn("target_dummy", 1, Vector2(500, 1100))
 		if marked: source.record_structure_attack(expired)
-		main._sim_tick_id += 61
+		main.runtime._sim_tick_id += 61
 		expired._lifespan_left = 0.05
 		expired._tick_building_lifetime(0.05)
 		_expect(not source.structure_haste_visual(), "未命中或命中超过3秒的建筑自然死亡不触发")
@@ -93,7 +93,7 @@ func run(harness: Object, main: Node2D) -> void:
 		_expect(not source.structure_haste_visual(), "纯死亡表现不能发放被动")
 		tower.take_damage(100)
 		_expect(source.structure_haste_visual(), "防御塔与水晶权威致死均触发")
-		var payload: Array = main._snapshot_system._unit_snapshot_payload(source.net_id, source)
+		var payload: Array = preload("res://tests/fixtures/network_fixture.gd").snapshot_payload(main._snapshot_system, 12345, source)
 		_expect(payload[NetworkSnapshotSystem.U_STRUCTURE_HASTE] == true and payload[NetworkSnapshotSystem.U_ACTIVE_SPEED_MULTIPLIER] == 2.0, "快照携带独立被动窗口与速度")
 		source.apply_stasis(0.5)
 		_expect(source.active_speed_multiplier == 1.0 and source.active_attack_speed_multiplier == 1.0, "凝滞抑制已有被动属性")
@@ -105,32 +105,32 @@ func run(harness: Object, main: Node2D) -> void:
 		tower.free()
 	if is_instance_valid(natural): natural.free()
 	var lethal := _spawn("target_dummy", 1, Vector2(400, 1100))
-	resolver.begin_batch(main._sim_tick_id, &"jinx_test")
+	resolver.begin_batch(main.runtime._sim_tick_id, &"jinx_test")
 	resolver.resolve_attack_hit(0, source.position, lethal, 99999, 0, 0, source, source.position, 0)
 	resolver.submit_damage(source, 99999, lethal, 1, lethal.position)
 	resolver.commit_batch()
 	_expect(not source.structure_haste_visual(), "同批互杀不向死亡来源发放被动")
 	for unit in [source, ground, air, ally, late, normal, lethal]:
 		if is_instance_valid(unit): unit.free()
-	var old_deck: Array = main._deck.duplicate()
-	main._deck[0] = "jinx"
-	var paid: Unit = main._spawn_card_units(0, "jinx", Vector2(250, 1100), 0.0, 0)[0]
+	var old_deck: Array = main.runtime._deck.duplicate()
+	main.runtime._deck[0] = "jinx"
+	var paid: Unit = main.runtime._spawn_card_units(0, "jinx", Vector2(250, 1100), 0.0, 0)[0]
 	var id := paid.active_ability_id
-	main._elixir.elixir = 7.0
+	main.runtime.account(0 if main.runtime.mode == "server" else main.runtime.local_team).elixir = 7.0
 	for use in 5:
 		_expect(main.use_active_skill(id, 0), "正式入口接受换武器%d" % (use + 1))
 		_expect(not main.use_active_skill(id, 0), "排队期间不重复受理")
-		main._sim_tick_id += 10
-		main._tick_pending_active_skills(0.05)
-		var entry: Dictionary = main._active_skills.entry(id)
+		main.runtime._sim_tick_id += 10
+		main.runtime._tick_pending_active_skills(0.05)
+		var entry: Dictionary = main.runtime._active_skills.entry(id)
 		_expect(entry.uses_remaining == 4 - use and entry.cooldown_left == 4.0, "真实开始消费次数并启动4秒CD")
 		_expect(paid.form_index == (use + 1) % 2, "五次主动交替武器")
-		_expect(main._elixir.elixir == 7.0, "换武器费用0")
+		_expect(main.runtime.account(0 if main.runtime.mode == "server" else main.runtime.local_team).elixir == 7.0, "换武器费用0")
 		_expect(not main.use_active_skill(id, 0), "CD内或耗尽不可换枪")
-		main._active_skills.tick(4.0)
+		main.runtime._active_skills.tick(4.0)
 		paid.prepare_action_clocks(4.0)
 	_expect(not main.use_active_skill(id, 0), "五次用尽")
-	main._deck = old_deck
+	main.runtime._deck = old_deck
 	paid.free()
 	for value in [-1, "bad", INF]:
 		var cards := CardDB.all().duplicate(true)
@@ -183,7 +183,7 @@ func _check_switch_controls() -> void:
 		var view := _view_for(unit)
 		view._sync_visual(false, 0.0)
 		_expect(unit.form_index == 1 and unit.projectile_visual == &"jinx_bullet" and is_equal_approx(unit.form_transition_timer, 0.37), "属性与弹体立即换成新形态，建立0.37秒变形窗口")
-		var payload: Array = _main._snapshot_system._unit_snapshot_payload(unit.net_id, unit)
+		var payload: Array = preload("res://tests/fixtures/network_fixture.gd").snapshot_payload(_main._snapshot_system, 12345, unit)
 		_expect(payload[NetworkSnapshotSystem.U_ACTION_NAME] == "transform" and (int(payload[NetworkSnapshotSystem.U_ACTION_PERMISSIONS]) & ControlState.BASIC_ATTACK) == 0, "快照同步变形动作和禁攻击权限")
 		var owner: Dictionary = _main._audio_manager._event_owner(unit, &"transform:start")
 		_expect(owner.kind == "action" and owner.serial == serial, "切枪声音归属可取消的变形动作")
@@ -237,7 +237,7 @@ func _check_haste_placement() -> void:
 	effect.free()
 	var unit := _spawn("jinx", 0, Vector2(200, 1000))
 	var view := _view_for(unit)
-	unit._grant_structure_haste(_main._sim_tick_id)
+	unit._grant_structure_haste(_main.runtime._sim_tick_id)
 	view._sync_visual(false, 0.1)
 	view._update_active_buff_visual(0.4)
 	var original: ActiveBuffVisual3D = view._active_buff_visual
@@ -248,31 +248,31 @@ func _check_haste_placement() -> void:
 
 func _check_six_second_haste() -> void:
 	var unit := _spawn("jinx", 0, Vector2(200, 1000))
-	unit._grant_structure_haste(_main._sim_tick_id)
+	unit._grant_structure_haste(_main.runtime._sim_tick_id)
 	_expect(unit.structure_haste_state_visual() == Vector2(6, 1), "首层完整6秒窗口")
 	for tick in 60: unit._tick_active_statuses(0.05)
 	_expect(is_equal_approx(unit.active_speed_multiplier, 1.5), "6秒线性衰减的中点为50%移速加成")
 	unit.attack_timeline.begin_recovery(1.0, 0.2, 1.3)
 	var remaining_before := unit.attack_timeline.recovery
-	unit._grant_structure_haste(_main._sim_tick_id)
+	unit._grant_structure_haste(_main.runtime._sim_tick_id)
 	_expect(unit.structure_haste_state_visual() == Vector2(6, 2), "未结束时再次触发加层并将全部层刷新6秒")
 	_expect(is_equal_approx(unit.active_speed_multiplier, 2.0) and is_equal_approx(unit.active_attack_speed_multiplier, 1.6), "移速只重置为100%加成，2层攻速为60%")
 	_expect(is_equal_approx(unit.attack_timeline.recovery * 1.6, remaining_before * 1.3), "叠层攻速保留攻击周期归一化进度")
 	for tick in 40: unit._tick_active_statuses(0.05)
-	unit._grant_structure_haste(_main._sim_tick_id)
+	unit._grant_structure_haste(_main.runtime._sim_tick_id)
 	_expect(unit.structure_haste_state_visual() == Vector2(6, 3) and is_equal_approx(unit.active_attack_speed_multiplier, 1.9), "连续触发可达到3层90%，不是最多2层")
 	unit.toggle_weapon_form()
 	_expect(unit.structure_haste_state_visual() == Vector2(6, 3), "换枪继承所有被动层及新窗口")
 	unit.apply_stasis(0.2)
-	unit._grant_structure_haste(_main._sim_tick_id)
+	unit._grant_structure_haste(_main.runtime._sim_tick_id)
 	_expect(unit.structure_haste_state_visual() == Vector2(6, 3) and unit.active_attack_speed_multiplier == 1.0, "凝滞拒绝新增层且只抑制属性，保留已有层")
-	var payload: Array = _main._snapshot_system._unit_snapshot_payload(unit.net_id, unit)
+	var payload: Array = preload("res://tests/fixtures/network_fixture.gd").snapshot_payload(_main._snapshot_system, 12345, unit)
 	_expect(payload[NetworkSnapshotSystem.U_STRUCTURE_HASTE_STATE] == Vector2(6, 3), "凝滞快照保留层数及倒计时")
 	for tick in 119: unit._tick_active_statuses(0.05)
 	_expect(unit.buffs.stack_count(&"structure_haste") == 3 and is_equal_approx(unit.buffs.remaining(&"structure_haste"), 0.05), "刷新后的第119Tick仍保留全部3层")
 	unit._tick_active_statuses(0.05)
 	_expect(unit.structure_haste_state_visual() == Vector2.ZERO and unit.active_attack_speed_multiplier == 1.0, "第120Tick全部层数与加速一同到期")
-	unit._grant_structure_haste(_main._sim_tick_id)
+	unit._grant_structure_haste(_main.runtime._sim_tick_id)
 	_expect(unit.structure_haste_state_visual() == Vector2(6, 1), "到期后再次触发从1层开始")
 	unit.buffs.clear_family(&"structure_haste")
 	var a := _spawn("target_dummy", 1, Vector2(250, 1000))
@@ -280,7 +280,7 @@ func _check_six_second_haste() -> void:
 	unit.record_structure_attack(a)
 	unit.record_structure_attack(b)
 	var resolver: CombatResolver = _main.combat_service()
-	resolver.begin_batch(_main._sim_tick_id, &"jinx_double_structure")
+	resolver.begin_batch(_main.runtime._sim_tick_id, &"jinx_double_structure")
 	resolver.resolve_attack_hit(0, unit.position, a, 999999, 45.0, 0.0, unit, unit.position)
 	resolver.commit_batch()
 	_expect(unit.structure_haste_state_visual() == Vector2(6, 2), "同一批次两座建筑真实死亡叠为2层")

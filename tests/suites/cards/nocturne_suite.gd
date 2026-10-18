@@ -81,7 +81,7 @@ func run(harness: Object, main: Node2D) -> void:
 	reward_context.delivery = reward_delivery
 	_expect(CombatInteraction.blocks_effect(rewarded, reward_context), "W成功抵挡触发奖励")
 	_expect(is_equal_approx(rewarded.active_attack_speed_multiplier, 1.3) and not rewarded.get_active_buff_active_visual(), "抵挡后30%攻速且护盾表现关闭")
-	var reward_snapshot: Array = _main._snapshot_system._unit_snapshot_payload(4243, rewarded)
+	var reward_snapshot: Array = preload("res://tests/fixtures/network_fixture.gd").snapshot_payload(_main._snapshot_system, 4243, rewarded)
 	_expect(is_equal_approx(float(reward_snapshot[NetworkSnapshotSystem.U_ACTIVE_ATTACK_SPEED_MULTIPLIER]), 1.3) and not reward_snapshot[NetworkSnapshotSystem.U_ACTIVE_BUFF_ACTIVE], "攻速奖励快照1.3且护盾关闭")
 	rewarded.buffs.advance(0.5)
 	CombatInteraction.blocks_effect(rewarded, reward_context)
@@ -156,22 +156,22 @@ func run(harness: Object, main: Node2D) -> void:
 	var cooldown := unit.attack_timeline.cooldown
 	_expect(_main.preview_active_skill(unit, skill), "正式主动生命周期可开盾")
 	_expect(unit.buffs.remaining(&"effect_shield") == 1.5 and unit.attack_timeline.cooldown == cooldown, "开盾即时生效且保留普攻进度")
-	var snap: Array = _main._snapshot_system._unit_snapshot_payload(4242, unit)
+	var snap: Array = preload("res://tests/fixtures/network_fixture.gd").snapshot_payload(_main._snapshot_system, 4242, unit)
 	_expect(snap[NetworkSnapshotSystem.U_ACTIVE_BUFF_ACTIVE], "护盾表现通过既有快照状态同步")
 	_expect(skill.cost == 2 and skill.max_uses == 1 and skill.cooldown == 10.0, "主动费用次数冷却契约")
 
 	_check_shield_visual_refresh()
-	var old_deck: Array = _main._deck.duplicate()
-	var old_choices: Dictionary = _main._active_skill_choices.duplicate(true)
-	_main._deck = ["nocturne", "xin", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
-	_main._active_skill_choices["nocturne"] = 1
+	var old_deck: Array = _main.runtime._deck.duplicate()
+	var old_choices: Dictionary = _main.runtime._active_skill_choices.duplicate(true)
+	_main.runtime._deck = ["nocturne", "xin", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
+	_main.runtime._active_skill_choices["nocturne"] = 1
 	var selected: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "nocturne", Vector2(360, 1100), {"deploy_time_override": 0.0, "active_slot": 0}))
-	var carried: Dictionary = _main._active_skills.entry(selected.active_ability_id).skill
+	var carried: Dictionary = _main.runtime._active_skills.entry(selected.active_ability_id).skill
 	_expect(carried.name == "暗影之刃" and carried.kind == "empowered_attack" and carried.icon_path == "res://assets/skills/nocturne_p.png", "备战选择只携带暗影之刃及原版被动图标")
-	_main._on_active_skill_unit_died(selected.active_ability_id)
+	_main.runtime._on_active_skill_unit_died(selected.active_ability_id)
 	selected.free()
-	_main._active_skill_choices = old_choices
-	_main._deck = old_deck
+	_main.runtime._active_skill_choices = old_choices
+	_main.runtime._deck = old_deck
 
 func arm(unit: Unit) -> void:
 	unit.buffs.apply(&"effect_shield", &"test", 1.5, {})

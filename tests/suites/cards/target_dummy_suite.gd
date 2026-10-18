@@ -83,18 +83,18 @@ func run(harness: Object, main: Node2D) -> void:
 	_expect(resume.hp == resume_hp - 40.0, "凝滞解除恢复剩余减伤，不重新建立窗口")
 	_run_main_ticks(30)
 	_expect(resume.buffs.remaining(&"damage_reduction") == 0.0, "完整模拟50Tick状态到期")
-	var old_deck: Array = main._deck.duplicate()
-	main._deck[0] = "target_dummy"
-	var paid: Unit = main._spawn_card_units(0, "target_dummy", Vector2(500, 1100), 0.0, 0)[0]
-	main._elixir.elixir = 8.0
-	_expect(main.use_active_skill(paid.active_ability_id, 0) and main._elixir.elixir == 6.0, "正式技能请求扣2费")
-	main._sim_tick_id += 10
-	main._tick_pending_active_skills(0.05)
-	var entry: Dictionary = main._active_skills.entry(paid.active_ability_id)
+	var old_deck: Array = main.runtime._deck.duplicate()
+	main.runtime._deck[0] = "target_dummy"
+	var paid: Unit = main.runtime._spawn_card_units(0, "target_dummy", Vector2(500, 1100), 0.0, 0)[0]
+	main.runtime.account(0 if main.runtime.mode == "server" else main.runtime.local_team).elixir = 8.0
+	_expect(main.use_active_skill(paid.active_ability_id, 0) and main.runtime.account(0 if main.runtime.mode == "server" else main.runtime.local_team).elixir == 6.0, "正式技能请求扣2费")
+	main.runtime._sim_tick_id += 10
+	main.runtime._tick_pending_active_skills(0.05)
+	var entry: Dictionary = main.runtime._active_skills.entry(paid.active_ability_id)
 	_expect(entry.uses_remaining == 0 and entry.cooldown_left == 10.0 and not main.use_active_skill(paid.active_ability_id, 0), "一次资格及10秒冷却")
-	var snap: Array = main._snapshot_system._unit_snapshot_payload(4444, paid)
+	var snap: Array = preload("res://tests/fixtures/network_fixture.gd").snapshot_payload(main._snapshot_system, 4444, paid)
 	_expect(snap[NetworkSnapshotSystem.U_ACTIVE_BUFF_ACTIVE], "快照同步余震增益表现")
-	main._deck = old_deck
+	main.runtime._deck = old_deck
 	for invalid in [-0.1, 1.1, INF, "bad"]:
 		var cards := CardDB.all().duplicate(true)
 		cards.target_dummy.active_skills[0].damage_reduction = invalid

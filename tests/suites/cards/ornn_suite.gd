@@ -316,7 +316,7 @@ func _check_forge_snapshot_and_waiting() -> void:
 	_expect(source.team_attack_boost_forging and source._move_intent==Vector2.ZERO,"移动/普通减速可停步起锻")
 	var serial := source.get_visual_action_serial()
 	_advance_boost(system,0.3)
-	var snap: Array=bytes_to_var(var_to_bytes(_main._snapshot_system._unit_snapshot_payload(source.net_id,source)))
+	var snap: Array=bytes_to_var(var_to_bytes(preload("res://tests/fixtures/network_fixture.gd").snapshot_payload(_main._snapshot_system, 12345,source)))
 	_expect(snap[NetworkSnapshotSystem.U_ACTION_NAME]=="ornn_forge" and snap[NetworkSnapshotSystem.U_ACTION_SERIAL]==serial,"锻造名称与序号进入既有快照")
 	var permissions := int(snap[NetworkSnapshotSystem.U_ACTION_PERMISSIONS])
 	_expect((permissions & ControlState.MOVE)==0 and (permissions & ControlState.BASIC_ATTACK)==0 and (permissions & ControlState.START_SKILL)!=0,"锻造同步锁住行走普攻但允许主动抢占")

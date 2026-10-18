@@ -5,7 +5,7 @@ func run(harness: SceneTree) -> void:
 	main.set_script(preload("res://tests/fixtures/network_integration_main.gd"))
 	harness.root.add_child(main)
 	harness.current_scene = main
-	if main.mode == "server": main._auto_test = false
+	if main.runtime.mode == "server": main._auto_test = false
 	var capture_dir := ""
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--network-render-dir="): capture_dir = arg.trim_prefix("--network-render-dir=")
@@ -16,13 +16,13 @@ func run(harness: SceneTree) -> void:
 	var completed: Array = []
 	main.network_command_announced.connect(func(command):
 		announced.append([command.kind, command.team, command.execute_tick - command.input_tick, command.execute_tick - main.get_estimated_server_tick()])
-		print("[NETWORK_COMMAND_TRACE] ", {"stage": "announced", "role": main.mode, "team": command.team, "kind": command.kind, "input_tick": command.input_tick, "execute_tick": command.execute_tick, "estimated_tick": main.get_estimated_server_tick(), "authority_tick": main.get_authoritative_server_tick()}))
+		print("[NETWORK_COMMAND_TRACE] ", {"stage": "announced", "role": main.runtime.mode, "team": command.team, "kind": command.kind, "input_tick": command.input_tick, "execute_tick": command.execute_tick, "estimated_tick": main.get_estimated_server_tick(), "authority_tick": main.get_authoritative_server_tick()}))
 	main.network_command_finished.connect(func(command, outcome):
 		completed.append([command.kind, command.team, outcome])
-		print("[NETWORK_COMMAND_TRACE] ", {"stage": "finished", "role": main.mode, "team": command.team, "kind": command.kind, "outcome": outcome, "execute_tick": command.execute_tick, "estimated_tick": main.get_estimated_server_tick(), "authority_tick": main.get_authoritative_server_tick()}))
+		print("[NETWORK_COMMAND_TRACE] ", {"stage": "finished", "role": main.runtime.mode, "team": command.team, "kind": command.kind, "outcome": outcome, "execute_tick": command.execute_tick, "estimated_tick": main.get_estimated_server_tick(), "authority_tick": main.get_authoritative_server_tick()}))
 	var playback_peak := 0
 	var delay_bounds := Vector2(4.0, 1.0)
-	if not capture_dir.is_empty() and main.mode == "client":
+	if not capture_dir.is_empty() and main.runtime.mode == "client":
 		DirAccess.make_dir_recursive_absolute(capture_dir)
 		recorder = AudioEffectRecord.new()
 		recording_slot = AudioServer.get_bus_effect_count(0)
@@ -68,28 +68,28 @@ func run(harness: SceneTree) -> void:
 	var mist_observation: Dictionary = {}
 	while Time.get_ticks_msec() - start < 20000:
 		await harness.process_frame
-		if main.mode == "server" and main._match_started and not shields_added:
-			main._towers[0].add_shield(300, 2, true)
-			main._towers[0].add_shield(300, 8)
-			main._card_growth.replace_replica({0: {"kayn": {"ranged": 1, "melee": 0, "unlocked": "kayn"}}, 1: {"kayn": {"ranged": 0, "melee": 2, "unlocked": "kayn"}}})
+		if main.runtime.mode == "server" and main.runtime._match_started and not shields_added:
+			main.world.towers_snapshot()[0].add_shield(300, 2, true)
+			main.world.towers_snapshot()[0].add_shield(300, 8)
+			main.runtime._card_growth.replace_replica({0: {"kayn": {"ranged": 1, "melee": 0, "unlocked": "kayn"}}, 1: {"kayn": {"ranged": 0, "melee": 2, "unlocked": "kayn"}}})
 			shields_added = true
-		if main.mode == "server" and main._match_started and main._sim_tick_id >= 10 and status_case.is_empty():
+		if main.runtime.mode == "server" and main.runtime._match_started and main.runtime._sim_tick_id >= 10 and status_case.is_empty():
 			status_case = _begin_status_case(main)
-		if main.mode == "server" and not status_case.is_empty():
+		if main.runtime.mode == "server" and not status_case.is_empty():
 			var gnar: Unit = status_case.gnar
 			if gnar.is_frozen() and gnar.pending_form_generation == gnar.form_change_serial and gnar.transform_hit_count == 6:
 				status_pending_seen = true
-			if main._sim_tick_id >= 48 and not status_checked:
+			if main.runtime._sim_tick_id >= 48 and not status_checked:
 				status_checked = true
 				status_passed = status_pending_seen and gnar.form_index == 1 and gnar.is_stunned() and gnar.pending_form_generation == -1
-				status_passed = status_passed and gnar.active_skill_cast_serial == 0 and main._active_skills.entry(gnar.active_ability_id).uses_remaining == main._active_skills.entry(gnar.active_ability_id).max_uses and status_case.payment.is_settled()
+				status_passed = status_passed and gnar.active_skill_cast_serial == 0 and main.runtime._active_skills.entry(gnar.active_ability_id).uses_remaining == main.runtime._active_skills.entry(gnar.active_ability_id).max_uses and status_case.payment.is_settled()
 				status_passed = status_passed and status_case.star_target.hp == status_case.star_target.max_hp - 120 and status_case.frozen_target.hp == status_case.frozen_target.max_hp and status_case.stunned_target.hp < status_case.stunned_target.max_hp
 				print("[NETWORK_STATUS] ", {"passed": status_passed, "pending_seen": status_pending_seen, "form": gnar.form_index, "star_hp": status_case.star_target.hp, "frozen_hp": status_case.frozen_target.hp, "stunned_hp": status_case.stunned_target.hp})
-		if main.mode == "server" and not status_case.is_empty() and main._sim_tick_id >= 50 and not mist_exit_applied:
+		if main.runtime.mode == "server" and not status_case.is_empty() and main.runtime._sim_tick_id >= 50 and not mist_exit_applied:
 			mist_exit_applied = true
 			var exiting: Unit = status_case.mist[1]
 			exiting.apply_knockback(exiting.position + Vector2.LEFT, 180.0, 0.2, 1.0)
-		var mist_registry: Dictionary = main._client_units if main.mode == "client" else main._net_units
+		var mist_registry: Dictionary = main.world.replica_units_snapshot() if main.runtime.mode == "client" else main.world.authoritative_units_snapshot()
 		var mist_ids: Array = []
 		for mist_id in mist_registry:
 			var mist_unit: Unit = mist_registry[mist_id]
@@ -106,41 +106,41 @@ func run(harness: SceneTree) -> void:
 			if observed_tick >= 55 and observed_tick <= 85 and mist_pair_active and retained_active and not exited_active and mist_observation.is_empty():
 				mist_observation = {"tick": observed_tick, "retained_id": mist_ids[0], "exited_id": mist_ids[1], "both_previously_active": mist_pair_active, "retained_active": retained_active, "exited_active": exited_active}
 				print("[NETWORK_MIST_OBSERVATION] ", mist_observation)
-		if main.mode == "client" and main._match_started and main.get_estimated_server_tick() >= 5 and not sent_requests:
+		if main.runtime.mode == "client" and main.runtime._match_started and main.get_estimated_server_tick() >= 5 and not sent_requests:
 			sent_requests = true
-			var epoch: String = main._session.session_id
-			main._rpc_register_deck.rpc_id(1, main._deck, main._active_skill_choices, epoch, MatchSession.PROTOCOL_VERSION, MatchSession.content_fingerprint())
+			var epoch: String = main.runtime.session.session_id
+			main._rpc_register_deck.rpc_id(1, main.runtime._deck, main.runtime._active_skill_choices, epoch, MatchSession.PROTOCOL_VERSION, MatchSession.content_fingerprint())
 			var input_tick: int = main.get_estimated_server_tick()
-			var before_hand: Array = main.get_authoritative_hand(main.local_team)
-			var before_coins: float = main._elixir.elixir
-			var submitted: bool = main.play_card(main.local_team, "garen", Vector2(300, 580 if main.local_team == 1 else 1000), {"client_request": true, "elixir": main._elixir})
-			immediate_feedback = submitted and main._client_inputs.has_card("garen") and main._hand.is_card_pending("garen") and main.get_authoritative_hand(main.local_team) == before_hand and main._elixir.elixir == before_coins and main._commands.inspect_cards().is_empty()
+			var before_hand: Array = main.get_authoritative_hand(main.runtime.local_team)
+			var before_coins: float = main.runtime.account(0 if main.runtime.mode == "server" else main.runtime.local_team).elixir
+			var submitted: bool = main.play_card(main.runtime.local_team, "garen", Vector2(300, 580 if main.runtime.local_team == 1 else 1000), {"client_request": true, "elixir": main.runtime.account(0 if main.runtime.mode == "server" else main.runtime.local_team)})
+			immediate_feedback = submitted and main._client_inputs.has_card("garen") and main._hand.is_card_pending("garen") and main.get_authoritative_hand(main.runtime.local_team) == before_hand and main.runtime.account(0 if main.runtime.mode == "server" else main.runtime.local_team).elixir == before_coins and main.runtime._commands.inspect_cards().is_empty()
 			if not capture_dir.is_empty():
 				# 等待 CanvasItem 完成本帧重绘，避免截到点击前的画面。
 				await harness.process_frame
 				await harness.process_frame
 				RenderingServer.force_draw(false)
-				harness.root.get_texture().get_image().save_png(capture_dir.path_join("client%d-input.png" % main.local_team))
+				harness.root.get_texture().get_image().save_png(capture_dir.path_join("client%d-input.png" % main.runtime.local_team))
 			main._rpc_active_skill_request.rpc_id(1, 999, input_tick, "old-session", 100)
 		# 仅在正式输入时钟与当前单调探针估计一致时点击；长帧后等待正式探针校正，
 		# 不改写 input_tick、不补发已拒绝请求，也不放宽服务器 late/future 策略。
 		var fresh_input_clock: bool = main._network_clock.synchronized and absf(float(main.get_estimated_server_tick()) - main._network_clock.estimate(Time.get_ticks_msec())) <= 1.5
-		if main.mode == "client" and main._match_started and main.get_authoritative_server_tick() >= 57 and fresh_input_clock and not sent_skill:
-			for ability in main._active_skills.ids():
-				var entry: Dictionary = main._active_skills.entry(ability)
-				if entry.card_id == "garen" and entry.team == main.local_team and main._elixir.elixir >= float(entry.skill.cost):
-					sent_skill = main.use_active_skill(ability, main.local_team, 0, true)
+		if main.runtime.mode == "client" and main.runtime._match_started and main.get_authoritative_server_tick() >= 57 and fresh_input_clock and not sent_skill:
+			for ability in main.runtime._active_skills.ids():
+				var entry: Dictionary = main.runtime._active_skills.entry(ability)
+				if entry.card_id == "garen" and entry.team == main.runtime.local_team and main.runtime.account(0 if main.runtime.mode == "server" else main.runtime.local_team).elixir >= float(entry.skill.cost):
+					sent_skill = main.use_active_skill(ability, main.runtime.local_team, 0, true)
 					break
-		if main.mode == "server" and not interrupted_skill:
-			for pending in main._commands.inspect_skills():
+		if main.runtime.mode == "server" and not interrupted_skill:
+			for pending in main.runtime._commands.inspect_skills():
 				if int(pending.team) != 1: continue
-				var unit: Unit = main._active_skills.entry(int(pending.ability_id)).unit
+				var unit: Unit = main.runtime._active_skills.entry(int(pending.ability_id)).unit
 				unit.add_shield(300, 2, true)
 				unit.add_shield(200, 6)
 				unit.stun(2.0)
 				interrupted_skill = true
 				break
-		if main.mode == "server" and main._match_started and main._sim_tick_id >= 20 and not outsider_started:
+		if main.runtime.mode == "server" and main.runtime._match_started and main.runtime._sim_tick_id >= 20 and not outsider_started:
 			outsider_started = true
 			outsider = ENetMultiplayerPeer.new()
 			outsider.peer_disconnected.connect(func(_id): outsider_disconnected[0] = true)
@@ -149,11 +149,11 @@ func run(harness: SceneTree) -> void:
 			if outsider.get_connection_status() != MultiplayerPeer.CONNECTION_DISCONNECTED:
 				outsider.poll()
 			outsider_rejected = outsider_disconnected[0] or outsider.get_connection_status() == MultiplayerPeer.CONNECTION_DISCONNECTED
-		if main.mode == "server" and main._sim_tick_id >= 55 and not stable_callback:
+		if main.runtime.mode == "server" and main.runtime._sim_tick_id >= 55 and not stable_callback:
 			var before: int = main.get_child_count()
-			main._on_peer_connected(main._session.peer_for_team(1))
-			stable_callback = main.get_child_count() == before and main._towers.size() == 6 and main._session.phase == MatchSession.Phase.RUNNING
-		if main.mode == "server" and main._match_started and main._sim_tick_id >= 40 and expired_id < 0:
+			main._on_peer_connected(main.runtime.session.peer_for_team(1))
+			stable_callback = main.get_child_count() == before and main.world.towers_snapshot().size() == 6 and main.runtime.session.phase == MatchSession.Phase.RUNNING
+		if main.runtime.mode == "server" and main.runtime._match_started and main.runtime._sim_tick_id >= 40 and expired_id < 0:
 			var building: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "tombstone", Vector2(500, 950), {"deploy_time_override": 0}))
 			building.spawn_interval = 0
 			building._lifespan_left = 0.05
@@ -161,74 +161,74 @@ func run(harness: SceneTree) -> void:
 			boundary_unit = main._spawn_unit(UnitSpawnRequest.new(0, "masteryi", Vector2(480, 850), {"deploy_time_override": 0}))
 			boundary_unit.apply_knockback(Vector2(400, 850), 40, 0.4)
 			boundary_unit.freeze(0.05)
-		if main.mode == "server" and main._sim_tick_id >= 42 and not takeover_applied and is_instance_valid(boundary_unit):
+		if main.runtime.mode == "server" and main.runtime._sim_tick_id >= 42 and not takeover_applied and is_instance_valid(boundary_unit):
 			takeover_applied = true
-			main._combat.begin_batch(main._sim_tick_id, "network_boundary_takeover")
+			main._combat.begin_batch(main.runtime._sim_tick_id, "network_boundary_takeover")
 			# 高序号先收集，低序号后收集；终态位置由正式快照/RPC 对比。
 			boundary_unit.apply_knockback(Vector2(600, 850), 10, 0.1, 1.4, [boundary_unit.combat_source_id, 2, 0])
 			boundary_unit.apply_knockback(Vector2(400, 850), 30, 0.4, 1.4, [boundary_unit.combat_source_id, 1, 0])
 			main._combat.commit_batch()
 		# 必须观察真实技能接纳、team1中断与双方完成后才能终局；外层20秒仍是硬上限。
-		if main.mode == "server" and main._match_started and main._sim_tick_id >= terminal_not_before and interrupted_skill and main.fixture_skills_completed() and not fired:
+		if main.runtime.mode == "server" and main.runtime._match_started and main.runtime._sim_tick_id >= terminal_not_before and interrupted_skill and main.fixture_skills_completed() and not fired:
 			fired = true
 			# 使用真实普攻弹体致胜，覆盖“上一快照刚发出”的终局路径。
-			main.launch_attack(main._towers[0], main._king_enemy, 100000.0, 100000.0, 0.0, 0.0, Color.WHITE)
+			main.launch_attack(main.world.towers_snapshot()[0], main.world.king(1), 100000.0, 100000.0, 0.0, 0.0, Color.WHITE)
 			if double_nexus:
-				main.launch_attack(main._towers[2], main._king_player, 100000.0, 100000.0, 0.0, 0.0, Color.WHITE)
-		if not capture_dir.is_empty() and main.mode == "client" and main._match_started:
+				main.launch_attack(main.world.towers_snapshot()[2], main.world.king(0), 100000.0, 100000.0, 0.0, 0.0, Color.WHITE)
+		if not capture_dir.is_empty() and main.runtime.mode == "client" and main.runtime._match_started:
 			var tick: int = main.get_authoritative_server_tick()
 			for checkpoint in [8, 12, 32, 50, 62]:
 				if tick >= checkpoint and not captured.has(checkpoint):
 					captured[checkpoint] = tick
 					RenderingServer.force_draw(false)
-					harness.root.get_texture().get_image().save_png(capture_dir.path_join("%s-status-%d.png" % ["client%d" % main.local_team, checkpoint]))
+					harness.root.get_texture().get_image().save_png(capture_dir.path_join("%s-status-%d.png" % ["client%d" % main.runtime.local_team, checkpoint]))
 		playback_peak = maxi(playback_peak, main._network_playback.size())
-		if main.mode == "client" and main._network_clock.synchronized:
+		if main.runtime.mode == "client" and main._network_clock.synchronized:
 			delay_bounds.x = minf(delay_bounds.x, main._network_playback.delay_ticks)
 			delay_bounds.y = maxf(delay_bounds.y, main._network_playback.delay_ticks)
-		if main.game_over:
+		if main.runtime.game_over:
 			break
 	if outsider != null:
 		outsider.close()
-	var result := {"schema": 1, "role": "server" if main.mode == "server" else "client%d" % main.local_team, "passed": main.game_over}
+	var result := {"schema": 1, "role": "server" if main.runtime.mode == "server" else "client%d" % main.runtime.local_team, "passed": main.runtime.game_over}
 	result["terminal_not_before"] = terminal_not_before
 	result["skill_progress"] = {"sent": sent_skill, "interrupted": interrupted_skill, "accepted": main.accepted_fixture_skills, "completed": main.completed_fixture_skills, "refunds": main.fixture_refunds}
 	result["mist_observation"] = mist_observation
 	if recorder != null:
 		recorder.set_recording_active(false)
 		var wav := recorder.get_recording()
-		result["audio_recorded"] = wav != null and not wav.data.is_empty() and wav.save_to_wav(capture_dir.path_join(("client%d" % main.local_team) + "-status.wav")) == OK
+		result["audio_recorded"] = wav != null and not wav.data.is_empty() and wav.save_to_wav(capture_dir.path_join(("client%d" % main.runtime.local_team) + "-status.wav")) == OK
 		result["capture_ticks"] = captured
 		AudioServer.remove_bus_effect(0, recording_slot)
-	if main.game_over:
+	if main.runtime.game_over:
 		result["session_id"] = main._terminal_result.session_id
 		result["final_tick"] = main._terminal_result.final_tick
 		result["winner_team"] = main._terminal_result.winner_team
 		result["reason"] = main._terminal_result.reason
-		result["tower_hp"] = main._towers.map(func(t): return t.hp)
-		result["tower_controls"] = main._towers.map(func(t): return [t.frozen_timer > 0, t.control.stun_timer > 0])
-		result["tower_shields"] = main._towers.map(func(t): return [snappedf(t.get_shield_ratio(), 0.000001), snappedf(t.get_shield_capacity_ratio(), 0.000001)])
+		result["tower_hp"] = main.world.towers_snapshot().map(func(t): return t.hp)
+		result["tower_controls"] = main.world.towers_snapshot().map(func(t): return [t.frozen_timer > 0, t.control.stun_timer > 0])
+		result["tower_shields"] = main.world.towers_snapshot().map(func(t): return [snappedf(t.get_shield_ratio(), 0.000001), snappedf(t.get_shield_capacity_ratio(), 0.000001)])
 		result["audio_stopped"] = main._audio_manager == null or main._audio_manager.battle_audio_stopped()
 		var units: Array = []
-		var registry: Dictionary = main._client_units if main.mode == "client" else main._net_units
+		var registry: Dictionary = main.world.replica_units_snapshot() if main.runtime.mode == "client" else main.world.authoritative_units_snapshot()
 		var ids: Array = registry.keys()
 		ids.sort()
 		for id in ids:
 			var unit: Unit = registry[id]
-			var pos := unit.net_target_pos if main.mode == "client" else unit.global_position
-			units.append([id, unit.card_id, unit.hp, snappedf(pos.x, 0.01), snappedf(pos.y, 0.01), snappedf(unit.get_shield_ratio(), 0.000001), snappedf(unit.get_shield_capacity_ratio(), 0.000001), unit.form_index, unit.net_form_change_serial if main.mode == "client" else unit.form_change_serial, unit.get_attack_visual_serial(), unit.action_cancel_serial, unit.cancelled_visual_serial, unit.action_permissions(), snappedf(unit.get_visual_facing_direction().x, 0.00001), snappedf(unit.get_visual_facing_direction().y, 0.00001), main.get_active_skill_snapshot(unit.active_ability_id), unit.target_protection.snapshot()])
+			var pos := unit.net_target_pos if main.runtime.mode == "client" else unit.global_position
+			units.append([id, unit.card_id, unit.hp, snappedf(pos.x, 0.01), snappedf(pos.y, 0.01), snappedf(unit.get_shield_ratio(), 0.000001), snappedf(unit.get_shield_capacity_ratio(), 0.000001), unit.form_index, unit.net_form_change_serial if main.runtime.mode == "client" else unit.form_change_serial, unit.get_attack_visual_serial(), unit.action_cancel_serial, unit.cancelled_visual_serial, unit.action_permissions(), snappedf(unit.get_visual_facing_direction().x, 0.00001), snappedf(unit.get_visual_facing_direction().y, 0.00001), main.runtime.get_active_skill_snapshot(unit.active_ability_id), unit.target_protection.snapshot()])
 		result["units"] = units
-		result["passed"] = result.audio_stopped and result.winner_team == (-1 if double_nexus else 0) and main._king_enemy.hp == 0.0 and not result.session_id.is_empty() and int(result.final_tick) >= terminal_not_before
-		var session_guards: bool = sent_requests and sent_skill if main.mode == "client" else outsider_rejected and stable_callback and main._session.request_sequence(1) == 2 and main._session.request_sequence(0) == 2 and main.get_authoritative_queue(1).back() == "garen" and interrupted_skill
-		if main.mode == "server":
+		result["passed"] = result.audio_stopped and result.winner_team == (-1 if double_nexus else 0) and main.world.king(1).hp == 0.0 and not result.session_id.is_empty() and int(result.final_tick) >= terminal_not_before
+		var session_guards: bool = sent_requests and sent_skill if main.runtime.mode == "client" else outsider_rejected and stable_callback and main.runtime.session.request_sequence(1) == 2 and main.runtime.session.request_sequence(0) == 2 and main.runtime.get_authoritative_queue(1).back() == "garen" and interrupted_skill
+		if main.runtime.mode == "server":
 			result["player_states"] = [_private_state(main, 0), _private_state(main, 1)]
 		else:
-			result["player_state"] = _private_state(main, main.local_team)
-			result["hand_projection"] = main._authoritative_card_cycles.is_empty() and main.get_authoritative_queue(main.local_team).is_empty() and main._client_hand.version == 1 and main._client_hand.acknowledged_request == 1 and main._hand.get_next_card() == main.get_next_card(main.local_team)
+			result["player_state"] = _private_state(main, main.runtime.local_team)
+			result["hand_projection"] = main.runtime._authoritative_card_cycles.is_empty() and main.runtime.get_authoritative_queue(main.runtime.local_team).is_empty() and main._client_hand.version == 1 and main._client_hand.acknowledged_request == 1 and main._hand.get_next_card() == main.get_next_card(main.runtime.local_team)
 			result["immediate_feedback"] = immediate_feedback
 			result["passed"] = result.passed and result.hand_projection and immediate_feedback
-			result["passed"] = result.passed and not main._card_growth.snapshot().has(1 - main.local_team)
-		if main.mode == "client":
+			result["passed"] = result.passed and not main.runtime._card_growth.snapshot().has(1 - main.runtime.local_team)
+		if main.runtime.mode == "client":
 			var buffer_ok: bool = main._network_clock.synchronized and playback_peak > 0
 			for side in [0, 1]:
 				for kind in ["card", "skill"]:
@@ -241,48 +241,48 @@ func run(harness: SceneTree) -> void:
 			adaptive_ok = adaptive_ok and (delay_bounds.y >= 3.0 if "--network-impaired" in OS.get_cmdline_user_args() else delay_bounds.x < 2.0)
 			result["adaptive_playback"] = adaptive_ok
 			result["passed"] = result.passed and buffer_ok and adaptive_ok
-		result["remote_elixir"] = main._elixir.elixir if main.mode == "client" else main._elixir_p1.elixir
+		result["remote_elixir"] = main.runtime.account(0 if main.runtime.mode == "server" else main.runtime.local_team).elixir if main.runtime.mode == "client" else main.runtime.account(1).elixir
 		# team1初始5-盖伦5，技能预扣与原收据退款净0；初期倍率1，金币只由实际Tick回复。
 		var expected_team1_coins := float(floor((float(result.final_tick) * main.SIM_DT + 0.0000001) / ElixirManager.REGEN_INTERVAL))
 		result["expected_team1_coins"] = expected_team1_coins
-		session_guards = session_guards and (result.remote_elixir == expected_team1_coins if main.mode == "server" or main.local_team == 1 else result.remote_elixir >= 0.0)
-		if main.mode == "server":
+		session_guards = session_guards and (result.remote_elixir == expected_team1_coins if main.runtime.mode == "server" or main.runtime.local_team == 1 else result.remote_elixir >= 0.0)
+		if main.runtime.mode == "server":
 			session_guards = session_guards and main.fixture_refunds.size() == 1 and main.fixture_refunds[0].passed
 		result["session_guards"] = session_guards
-		if main.mode == "server":
+		if main.runtime.mode == "server":
 			result["status_rules"] = status_checked and status_passed
-			result["passed"] = result.passed and status_checked and status_passed and takeover_applied and not main._net_units.has(expired_id)
-			result["boundary_lifecycle"] = takeover_applied and not main._net_units.has(expired_id)
-			result["request_sequence"] = [main._session.request_sequence(0), main._session.request_sequence(1)]
+			result["passed"] = result.passed and status_checked and status_passed and takeover_applied and not main.world.authoritative_units_snapshot().has(expired_id)
+			result["boundary_lifecycle"] = takeover_applied and not main.world.authoritative_units_snapshot().has(expired_id)
+			result["request_sequence"] = [main.runtime.session.request_sequence(0), main.runtime.session.request_sequence(1)]
 			result["outsider_rejected"] = outsider_rejected
 			result["callback_stable"] = stable_callback
-			result["remote_queue"] = main.get_authoritative_queue(1)
+			result["remote_queue"] = main.runtime.get_authoritative_queue(1)
 		result["mist_replication"] = mist_seen.size() == 2 and mist_pair_active and not mist_observation.is_empty()
 		result["passed"] = result.passed and session_guards and result.mist_replication
 		# 有 GPU 的执行可以保存终局画面；不作为听感确认。
 		for arg in OS.get_cmdline_user_args():
-			if main.mode == "client" and arg.begins_with("--network-render-dir="):
+			if main.runtime.mode == "client" and arg.begins_with("--network-render-dir="):
 				var directory := arg.trim_prefix("--network-render-dir=")
 				DirAccess.make_dir_recursive_absolute(directory)
 				await harness.process_frame
 				await harness.process_frame
 				RenderingServer.force_draw(false)
-				harness.root.get_texture().get_image().save_png(directory.path_join(("client%d" % main.local_team) + ".png"))
-	if main.game_over and main.mode == "client":
+				harness.root.get_texture().get_image().save_png(directory.path_join(("client%d" % main.runtime.local_team) + ".png"))
+	if main.runtime.game_over and main.runtime.mode == "client":
 		var silent_before_finish := result_cues.is_empty()
 		var expected_tracks := 2 if double_nexus else 1
 		var preserved: bool = main._audio_manager._nexus_players.size() == expected_tracks
 		var audio_deadline := Time.get_ticks_msec() + 20000
 		while main._audio_manager._terminal_audio_pending and Time.get_ticks_msec() < audio_deadline:
 			await harness.process_frame
-		var expected: Array = [] if double_nexus else ([&"defeat"] if main.local_team == 1 else [&"victory"])
+		var expected: Array = [] if double_nexus else ([&"defeat"] if main.runtime.local_team == 1 else [&"victory"])
 		result["audio_sequence"] = silent_before_finish and preserved and not main._audio_manager._terminal_audio_pending and result_cues == expected
 		result["result_cues"] = result_cues
 		result["double_nexus"] = double_nexus
 		result["passed"] = result.passed and result.audio_sequence
 	if recorder != null: result["passed"] = result.passed and result.audio_recorded and captured.size() == 5
-	if main.mode == "server":
-		result["audio_sequence"] = main._audio_manager == null and main._battle_presentation == null and main._hand == null and main._effects_view == null and main._resources.resources.is_empty() and main._projectile_system.get_child_count() == 0 and main.local_team == -1
+	if main.runtime.mode == "server":
+		result["audio_sequence"] = main._audio_manager == null and main._battle_presentation == null and main._hand == null and main._effects_view == null and main._resources.resources.is_empty() and main._projectile_system.get_child_count() == 0 and main.runtime.local_team == -1
 		result["passed"] = result.passed and result.audio_sequence
 	print("[NETWORK_RESULT] " + JSON.stringify(result))
 	# 留出可靠结果送达和音频线程释放的窗口，然后关闭自己的 ENet peer。
@@ -293,15 +293,15 @@ func run(harness: SceneTree) -> void:
 
 ## 使用正式创建、弹体和技能排程；主机断言规则，终局单位列表由执行器逐项对比双端。
 func _begin_status_case(main: Node2D) -> Dictionary:
-	for tower in main._towers: tower.can_attack = false
-	main._towers[0].freeze(10)
-	main._towers[1].stun(10)
-	var saved_history: Dictionary = main._card_history.get_last(0)
-	main._elixir.elixir = 10.0
+	for tower in main.world.towers_snapshot(): tower.can_attack = false
+	main.world.towers_snapshot()[0].freeze(10)
+	main.world.towers_snapshot()[1].stun(10)
+	var saved_history: Dictionary = main.runtime._card_history.get_last(0)
+	main.runtime.account(0 if main.runtime.mode == "server" else main.runtime.local_team).elixir = 10.0
 	var gnar: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "gnar", Vector2(80, 1000), {"deploy_time_override": 0, "active_slot": 1}))
 	var queued: bool = main.use_active_skill(gnar.active_ability_id, 0)
 	assert(queued)
-	var payment: CommandPayment = main._commands.inspect_skills().back().payment
+	var payment: CommandPayment = main.runtime._commands.inspect_skills().back().payment
 	var gnar_target := _status_target(main, 1, Vector2(80, 900))
 	gnar.freeze(0.5)
 	gnar.stun(10)
@@ -310,8 +310,8 @@ func _begin_status_case(main: Node2D) -> Dictionary:
 	var star_target := _status_target(main, 1, Vector2(360, 825))
 	var star_skill: Dictionary = CardDB.active_skills_for("aurelionsol")[0].duplicate(true)
 	star_skill["cast_forward"] = Vector2.UP
-	main._start_active_skill_cast(star, star_skill)
-	main._commands.tick_impacts(float(star_skill.result_creation_delay))
+	main.runtime._start_active_skill_cast(star, star_skill)
+	main.runtime._commands.tick_impacts(float(star_skill.result_creation_delay))
 	star.freeze(10)
 	star.apply_knockback(star.position + Vector2.LEFT * 40, 100, 0.4)
 	var targets: Array[Unit] = []
@@ -321,7 +321,7 @@ func _begin_status_case(main: Node2D) -> Dictionary:
 		var target := _status_target(main, 1, origin + Vector2(0, -80))
 		var skill: Dictionary = CardDB.active_skills_for("sett")[0].duplicate(true)
 		skill["cast_forward"] = Vector2.UP
-		main._start_active_skill_cast(caster, skill)
+		main.runtime._start_active_skill_cast(caster, skill)
 		if frozen: caster.freeze(10)
 		else: caster.stun(10)
 		targets.append(target)
@@ -337,7 +337,7 @@ func _begin_status_case(main: Node2D) -> Dictionary:
 		main.preview_active_skill(angel, CardDB.active_skills_for("kayle")[0])
 		angel.stun(10)
 		wallet.free()
-	main._card_history.replace_replica(0, saved_history)
+	main.runtime._card_history.replace_replica(0, saved_history)
 	var mist_units: Array[Unit] = []
 	for position in [Vector2(65, 800), Vector2(360, 1100)]:
 		var mist: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "gwen", position, {"deploy_time_override": 0}))
@@ -352,5 +352,5 @@ func _status_target(main: Node2D, team: int, position: Vector2) -> Unit:
 	return target
 
 func _private_state(main: Node2D, team: int) -> Dictionary:
-	return {"coins": main._elixir_for_team(team).elixir, "hand": main.get_authoritative_hand(team),
-		"next": main.get_next_card(team), "history": main._card_history.get_last(team), "growth": main.growth_snapshot(team)}
+	return {"coins": main.runtime.account(team).elixir, "hand": main.get_authoritative_hand(team),
+		"next": main.get_next_card(team), "history": main.runtime._card_history.get_last(team), "growth": main.runtime.growth_snapshot(team)}

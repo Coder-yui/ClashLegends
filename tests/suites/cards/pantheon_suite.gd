@@ -14,13 +14,13 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_resource_audio()
 	var skill: Dictionary = CardDB.active_skills_for("pantheon")[0]
 	for team in [0, 1]:
-		_expect(_main.is_card_deploy_position_valid(team, "pantheon", Vector2(360, 400 if team == 0 else 880)), "敌方半场合法地面允许部署")
-		_expect(not _main.is_card_deploy_position_valid(team, "pantheon", Vector2(360, 640)), "全图部署仍拒绝河道")
+		_expect(_main.runtime.is_card_deploy_position_valid(team, "pantheon", Vector2(360, 400 if team == 0 else 880)), "敌方半场合法地面允许部署")
+		_expect(not _main.runtime.is_card_deploy_position_valid(team, "pantheon", Vector2(360, 640)), "全图部署仍拒绝河道")
 		var same_zone := true
 		for x in range(20, 720, 40):
 			for y in range(20, 1280, 40):
 				var point := Vector2(x, y)
-				same_zone = same_zone and _main.is_card_deploy_position_valid(team, "pantheon", point) == _main.is_card_deploy_position_valid(team, "twisted_fate", point)
+				same_zone = same_zone and _main.runtime.is_card_deploy_position_valid(team, "pantheon", point) == _main.runtime.is_card_deploy_position_valid(team, "twisted_fate", point)
 		_expect(same_zone, "双方全场逐格部署范围与卡牌大师一致")
 		var source: Unit = _main._spawn_unit(UnitSpawnRequest.new(team, "pantheon", Vector2(360, 900), {"deploy_time_override": 0.0}))
 		source.add_skill_resource(4)
@@ -59,35 +59,35 @@ func run(harness: Object, main: Node2D) -> void:
 	_expect(not preload("res://scripts/data/card_validator.gd").validate_all({"pantheon": invalid}, false).is_empty(), "拒绝负数施法增怒")
 
 func _check_payment() -> void:
-	var deck: Array = _main._deck.duplicate()
-	_main._deck[0] = "pantheon"
+	var deck: Array = _main.runtime._deck.duplicate()
+	_main.runtime._deck[0] = "pantheon"
 	var source: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "pantheon", Vector2(360, 1000), {"deploy_time_override": 0.0, "active_slot": 0}))
 	var ability := source.active_ability_id
 	source.move_speed = 0.0
-	_main._elixir.elixir = 10
+	_main.runtime.account(0 if _main.runtime.mode == "server" else _main.runtime.local_team).elixir = 10
 	source.skill_resource_value = 3
-	_expect(_main.use_active_skill(ability, 0) and _main._elixir.elixir == 9.0 and source.skill_resource_value == 3, "请求扣1金币，排队不提前改变红怒")
-	_main._sim_tick_id += 10
-	_main._tick_pending_active_skills(0.05)
-	_expect(source.skill_resource_value == 4 and _main._active_skills.entry(ability).uses_remaining == 2 and _main._active_skills.entry(ability).cooldown_left == 4.0, "开始时增加红怒、扣次数并启动4秒冷却")
+	_expect(_main.use_active_skill(ability, 0) and _main.runtime.account(0 if _main.runtime.mode == "server" else _main.runtime.local_team).elixir == 9.0 and source.skill_resource_value == 3, "请求扣1金币，排队不提前改变红怒")
+	_main.runtime._sim_tick_id += 10
+	_main.runtime._tick_pending_active_skills(0.05)
+	_expect(source.skill_resource_value == 4 and _main.runtime._active_skills.entry(ability).uses_remaining == 2 and _main.runtime._active_skills.entry(ability).cooldown_left == 4.0, "开始时增加红怒、扣次数并启动4秒冷却")
 	_expect(not _main.use_active_skill(ability, 0), "冷却中不可重复请求")
 	source.prepare_action_clocks(4.0)
-	_main._tick_active_skill_cooldowns(4.0)
-	_expect(_main.use_active_skill(ability, 0) and _main._elixir.elixir == 8.0, "4秒后允许第二次释放")
-	_main._sim_tick_id += 10
-	_main._tick_pending_active_skills(0.05)
-	_expect(source.skill_resource_value == 0 and _main._active_skills.entry(ability).uses_remaining == 1, "第二次满怒释放清空红怒并保留最后一次")
+	_main.runtime._tick_active_skill_cooldowns(4.0)
+	_expect(_main.use_active_skill(ability, 0) and _main.runtime.account(0 if _main.runtime.mode == "server" else _main.runtime.local_team).elixir == 8.0, "4秒后允许第二次释放")
+	_main.runtime._sim_tick_id += 10
+	_main.runtime._tick_pending_active_skills(0.05)
+	_expect(source.skill_resource_value == 0 and _main.runtime._active_skills.entry(ability).uses_remaining == 1, "第二次满怒释放清空红怒并保留最后一次")
 	source.prepare_action_clocks(4.0)
-	_main._tick_active_skill_cooldowns(4.0)
-	_expect(_main.use_active_skill(ability, 0) and _main._elixir.elixir == 7.0, "第三次仍扣1金币")
-	_main._sim_tick_id += 10
-	_main._tick_pending_active_skills(0.05)
-	_expect(source.skill_resource_value == 1 and _main._active_skills.entry(ability).uses_remaining == 0, "第三次普通Q增怒并耗尽次数")
+	_main.runtime._tick_active_skill_cooldowns(4.0)
+	_expect(_main.use_active_skill(ability, 0) and _main.runtime.account(0 if _main.runtime.mode == "server" else _main.runtime.local_team).elixir == 7.0, "第三次仍扣1金币")
+	_main.runtime._sim_tick_id += 10
+	_main.runtime._tick_pending_active_skills(0.05)
+	_expect(source.skill_resource_value == 1 and _main.runtime._active_skills.entry(ability).uses_remaining == 0, "第三次普通Q增怒并耗尽次数")
 	source.prepare_action_clocks(4.0)
-	_main._tick_active_skill_cooldowns(4.0)
-	_expect(not _main.use_active_skill(ability, 0) and _main._elixir.elixir == 7.0, "三次耗尽拒绝且不再扣费")
+	_main.runtime._tick_active_skill_cooldowns(4.0)
+	_expect(not _main.use_active_skill(ability, 0) and _main.runtime.account(0 if _main.runtime.mode == "server" else _main.runtime.local_team).elixir == 7.0, "三次耗尽拒绝且不再扣费")
 	source.free()
-	_main._deck = deck
+	_main.runtime._deck = deck
 
 func _check_visual_contract() -> void:
 	var stats: Dictionary = CardDB.get_card("pantheon")
@@ -195,7 +195,7 @@ func _check_pre_deployment() -> void:
 	var path := preload("res://scripts/battle/pre_deployment_sweep.gd")
 	var stats := CardDB.get_card("pantheon")
 	for team in [0, 1]:
-		var center: Vector2 = _main._snap_card_position("pantheon", Vector2(360, 900 if team == 0 else 380), team)
+		var center: Vector2 = _main.runtime._snap_card_position("pantheon", Vector2(360, 900 if team == 0 else 380), team)
 		var forward := Vector2.UP if team == 0 else Vector2.DOWN
 		var rear := path.start_position(center, team, stats)
 		_expect(rear == center - forward * 120.0, "双方彗星着地位置都在下牌点己方侧3格")
@@ -207,7 +207,7 @@ func _check_pre_deployment() -> void:
 		var hp: Array = [enemy.hp, far.hp, ally.hp, air.hp, outside.hp]
 		var count := _main.get_tree().get_nodes_in_group("combatants").size()
 		_main.play_card(team, "pantheon", center, {"immediate": true, "validate_position": false})
-		var pending: Array = _main._commands.inspect_deployments()
+		var pending: Array = _main.runtime._commands.inspect_deployments()
 		_expect(pending.size() == 1 and enemy.hp == hp[0], "长矛落下不提前造成伤害")
 		presentation.sync_pre_deployments(pending)
 		presentation.sync_pre_deployments(pending)
@@ -220,32 +220,32 @@ func _check_pre_deployment() -> void:
 		_expect(view._point_at(0.65).distance_to(view.ground(rear)) < 0.001, "彗星准确落在后方3格")
 		view.advance_visual(1.0)
 		_expect(view._point_at(1.3).distance_to(view.ground(center)) < 0.001 and enemy.hp == hp[0], "表现推进到终点不结算伤害")
-		for tick in 12: _main._tick_pending_card_pre_deployments(0.05)
+		for tick in 12: _main.runtime._tick_pending_card_pre_deployments(0.05)
 		_expect(enemy.hp == hp[0] and far.hp == hp[1], "前12Tick长矛和空中阶段无伤害")
-		_main._tick_pending_card_pre_deployments(0.05)
+		_main.runtime._tick_pending_card_pre_deployments(0.05)
 		_expect(enemy.hp == hp[0] - 100 and far.hp == hp[1], "第13Tick后方着地先命中近处，未波及前方不扣血")
-		for tick in 12: _main._tick_pending_card_pre_deployments(0.05)
+		for tick in 12: _main.runtime._tick_pending_card_pre_deployments(0.05)
 		_expect(_main.get_tree().get_nodes_in_group("combatants").size() == count, "滑行冲击波没有单位、碰撞或可攻击实体")
 		_expect(enemy.hp == hp[0] - 100 and far.hp == hp[1] - 100, "波前推进才命中前方，沿途每人一次")
 		_expect(ally.hp == hp[2] and air.hp == hp[3] and outside.hp == hp[4], "不伤友军、空军和范围外目标")
-		_main._tick_pending_card_pre_deployments(0.05)
+		_main.runtime._tick_pending_card_pre_deployments(0.05)
 		var unit: Unit = _main._latest_unit_for_card("pantheon", team)
 		_expect(unit != null and unit.position.distance_to(center) < 0.001 and unit._deploy_timer == 1.0, "第26Tick抵达长矛后生成并开始完整1秒拿矛收势")
 		_expect(enemy.hp == hp[0] - 100 and far.hp == hp[1] - 100, "拿矛时不重复结算登场伤害")
-		presentation.sync_pre_deployments(_main._commands.inspect_deployments())
+		presentation.sync_pre_deployments(_main.runtime._commands.inspect_deployments())
 		_expect(presentation._pre_deploy_views.is_empty() and not view.visible, "实体生成移除残影")
 		for actor in [unit, enemy, far, ally, air, outside]: actor.free()
 	# 权威跨步扫掠必须覆盖两帧之间，不漏过整段路径；取消和视觉副本不得伤害。
 	var enemy: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(360, 840), {"deploy_time_override": 0.0}))
 	var hp := enemy.hp
 	_main.play_card(0, "pantheon", Vector2(360, 780), {"immediate": true, "validate_position": false})
-	_main._commands.tick_deployment_visuals(0.7)
+	_main.runtime._commands.tick_deployment_visuals(0.7)
 	_expect(enemy.hp == hp, "客户端计时入口不能触发伤害")
-	_main._commands.clear_deployments()
-	_main._tick_pending_card_pre_deployments(2.0)
+	_main.runtime._commands.clear_deployments()
+	_main.runtime._tick_pending_card_pre_deployments(2.0)
 	_expect(enemy.hp == hp, "清场取消未完成冲击波")
 	_main.play_card(0, "pantheon", Vector2(360, 780), {"immediate": true, "validate_position": false})
-	_main._tick_pending_card_pre_deployments(1.3)
+	_main.runtime._tick_pending_card_pre_deployments(1.3)
 	_expect(enemy.hp == hp - 100, "一次跨完整滑行也扫过路径中间的敌人")
 	_main._latest_unit_for_card("pantheon", 0).free()
 	enemy.free()
@@ -254,11 +254,11 @@ func _check_pre_deployment() -> void:
 	hp = victim.hp
 	for cast in 2:
 		_main.play_card(0, "pantheon", Vector2(360, 780), {"immediate": true, "validate_position": false})
-	_main._tick_pending_card_pre_deployments(0.65)
+	_main.runtime._tick_pending_card_pre_deployments(0.65)
 	_expect(victim.hp == hp - 200, "两次独立登场各结算一次，命中集合不共享")
-	_main._commands.clear_deployments()
+	_main.runtime._commands.clear_deployments()
 	victim.free()
-	var tower: Tower = _main._towers[0]
+	var tower: Tower = _main.world.towers_snapshot()[0]
 	var tower_hp := tower.hp
 	var entry := {"card_id": "pantheon", "team": 1 - tower.team, "pos": tower.global_position}
 	path.advance(entry, 0.0, 1.3, [tower])

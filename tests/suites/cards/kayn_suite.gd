@@ -29,7 +29,7 @@ func _make(id: String, team: int, point: Vector2) -> Unit:
 	return _main._spawn_unit(UnitSpawnRequest.new(team, id, point, {"deploy_time_override": 0.0}))
 
 func _growth() -> void:
-	_main._card_growth.clear()
+	_main.runtime._card_growth.clear()
 	var a := _make("kayn", 0, Vector2(300,900))
 	var b := _make("kayn", 0, Vector2(350,900))
 	var ranged := _make("ashe", 1, Vector2(400,900))
@@ -38,19 +38,19 @@ func _growth() -> void:
 	_main._combat.begin_batch(0, "blind_growth")
 	a._perform_attack_strike(ranged, 80)
 	_main._combat.commit_batch()
-	_expect(ranged.hp == 10000 and _main._card_growth.progress(0, "kayn").is_empty() and a.blind_attack_charges == 0, "致盲普攻消费致盲但不伤害、不获得能量")
+	_expect(ranged.hp == 10000 and _main.runtime._card_growth.progress(0, "kayn").is_empty() and a.blind_attack_charges == 0, "致盲普攻消费致盲但不伤害、不获得能量")
 	for hit in 3: _main._combat.resolve_attack_hit(0,a.position,ranged,1,0,0,a,a.position,0)
-	_expect(_main._card_growth.resolved_id(0,"kayn") == "kayn", "远程3次尚未解锁")
+	_expect(_main.runtime._card_growth.resolved_id(0,"kayn") == "kayn", "远程3次尚未解锁")
 	_main._combat.begin_batch(0,"growth")
 	_main._combat.resolve_attack_hit(0,b.position,ranged,1,0,0,b,b.position,0)
 	_main._combat.commit_batch()
-	_expect(_main._card_growth.resolved_id(0,"kayn") == "kayn_assassin", "同队第二凯隐共享第四次命中解锁蓝凯")
+	_expect(_main.runtime._card_growth.resolved_id(0,"kayn") == "kayn_assassin", "同队第二凯隐共享第四次命中解锁蓝凯")
 	_expect(a.card_id == "kayn" and a.damage == 80, "场上旧凯隐保持普通")
-	_expect(_main._card_growth.resolved_id(1,"kayn") == "kayn", "双方成长隔离")
-	for hit in 6: _main._card_growth.record_hit(a,b) # 队友不计
-	_expect(_main._card_growth.resolved_id(0,"kayn") == "kayn_assassin", "解锁不反转")
+	_expect(_main.runtime._card_growth.resolved_id(1,"kayn") == "kayn", "双方成长隔离")
+	for hit in 6: _main.runtime._card_growth.record_hit(a,b) # 队友不计
+	_expect(_main.runtime._card_growth.resolved_id(0,"kayn") == "kayn_assassin", "解锁不反转")
 	a.free();b.free();ranged.free()
-	_main._card_growth.clear()
+	_main.runtime._card_growth.clear()
 
 func _terrain() -> void:
 	var a := _make("kayn",0,Vector2(360,850))
@@ -97,28 +97,28 @@ func _dash() -> void:
 	a.free();enemy.free()
 
 func _control_and_growth_deployment() -> void:
-	_main._card_growth.clear()
+	_main.runtime._card_growth.clear()
 	var source := _make("kayn",0,Vector2(360,950))
 	var target := _make("garen",1,Vector2(360,850))
-	for hit in 6: _main._card_growth.record_hit(source,target)
-	_expect(_main._card_growth.resolved_id(0,"kayn") == "kayn_slayer", "六次近战解锁红凯")
-	var old_deck: Array = _main._deck.duplicate()
-	_main._deck[0] = "kayn"
+	for hit in 6: _main.runtime._card_growth.record_hit(source,target)
+	_expect(_main.runtime._card_growth.resolved_id(0,"kayn") == "kayn_slayer", "六次近战解锁红凯")
+	var old_deck: Array = _main.runtime._deck.duplicate()
+	_main.runtime._deck[0] = "kayn"
 	_expect(_main.play_card(0,"kayn",Vector2(250,950),{"immediate":true,"validate_position":false}), "正式出牌入口接受已成长来源卡")
 	var grown: Unit = _main._latest_unit_for_card("kayn",0)
 	_expect(grown != null and grown.card_id == "kayn_slayer" and grown.max_hp == 950 and grown.active_skill_card_id == "kayn", "后续部署红凯且保留原牌主动归属")
 	if grown != null: grown.free()
-	_main._card_growth.clear()
-	for hit in 4: _main._card_growth.record_hit(source, _make("ashe",1,Vector2(650,1100)))
+	_main.runtime._card_growth.clear()
+	for hit in 4: _main.runtime._card_growth.record_hit(source, _make("ashe",1,Vector2(650,1100)))
 	_main.play_card(0,"kayn",Vector2(250,950),{"immediate":true,"validate_position":false})
 	grown = _main._latest_unit_for_card("kayn",0)
 	if grown != null:
 		grown.active_ability_id = 99030
 		grown.active_ability_slot = 0
-		_main._register_active_skill(grown,"kayn",0)
-	_expect(grown != null and grown.card_id == "kayn_assassin" and _main._active_skills.cost(grown.active_ability_id) == 1, "蓝凯从普通来源卡部署后主动实际费用为1")
+		_main.runtime._register_active_skill(grown,"kayn",0)
+	_expect(grown != null and grown.card_id == "kayn_assassin" and _main.runtime._active_skills.cost(grown.active_ability_id) == 1, "蓝凯从普通来源卡部署后主动实际费用为1")
 	if grown != null: grown.free()
-	_main._deck = old_deck
+	_main.runtime._deck = old_deck
 	var skill: Dictionary = CardDB.active_skills_for("kayn")[0]
 	source.active_skill_cast_facing = Vector2.UP
 	var dash := DashStrikeState.new(source,skill)
@@ -136,7 +136,7 @@ func _control_and_growth_deployment() -> void:
 	source.free();target.free()
 	for unit in _main.get_tree().get_nodes_in_group("combatants"):
 		if unit is Unit and unit.card_id == "ashe" and unit.position == Vector2(650,1100): unit.free()
-	_main._card_growth.clear()
+	_main.runtime._card_growth.clear()
 
 func _schema() -> void:
 	for field in ["growth_ranged_hits","growth_melee_hits","terrain_entry_heal"]:
@@ -148,23 +148,23 @@ func _schema() -> void:
 	_expect(not CardDB.VALIDATOR.validate_all(cards,false).is_empty(), "穿地形布尔字段类型校验")
 
 func _queued_form() -> void:
-	_main._card_growth.clear()
-	_main._commands.clear()
-	_main._deck = ["kayn","garen","ashe","teemo","xin","freeze","heal","pix"]
-	preload("res://tests/fixtures/network_fixture.gd").fixed_cycle(_main,0,_main._deck)
-	_main._elixir.elixir = 10.0
-	_expect(_main.play_card(0,"kayn",Vector2(300,900),{"elixir":_main._elixir}), "未成长时成功付款入队")
+	_main.runtime._card_growth.clear()
+	_main.runtime._commands.clear()
+	_main.runtime._deck = ["kayn","garen","ashe","teemo","xin","freeze","heal","pix"]
+	preload("res://tests/fixtures/network_fixture.gd").fixed_cycle(_main,0,_main.runtime._deck)
+	_main.runtime.account(0 if _main.runtime.mode == "server" else _main.runtime.local_team).elixir = 10.0
+	_expect(_main.play_card(0,"kayn",Vector2(300,900),{"elixir":_main.runtime.account(0 if _main.runtime.mode == "server" else _main.runtime.local_team)}), "未成长时成功付款入队")
 	var source := _make("kayn",0,Vector2(600,1100))
 	var target := _make("ashe",1,Vector2(650,1100))
-	for hit in 4: _main._card_growth.record_hit(source,target)
-	var command: Dictionary = _main._commands.inspect_cards()[0]
-	_main._sim_tick_id = int(command.execute_tick)
-	_main._tick_pending_card_deployments(0.05)
+	for hit in 4: _main.runtime._card_growth.record_hit(source,target)
+	var command: Dictionary = _main.runtime._commands.inspect_cards()[0]
+	_main.runtime._sim_tick_id = int(command.execute_tick)
+	_main.runtime._tick_pending_card_deployments(0.05)
 	var result: Unit = _main._latest_unit_for_card("kayn",0)
 	_expect(result.card_id == "kayn", "等待期间解锁不追溯改变已接受的普通部署")
-	_expect(_main._elixir.elixir == 6.0 and "kayn" in _main.get_authoritative_queue(0), "成长不额外扣费且来源牌正常进入递补")
+	_expect(_main.runtime.account(0 if _main.runtime.mode == "server" else _main.runtime.local_team).elixir == 6.0 and "kayn" in _main.runtime.get_authoritative_queue(0), "成长不额外扣费且来源牌正常进入递补")
 	result.free();source.free();target.free()
-	_main._card_growth.clear()
+	_main.runtime._card_growth.clear()
 
 func _dash_edges() -> void:
 	var a := _make("kayn_slayer",0,Vector2(360,1000))
@@ -347,8 +347,8 @@ func _weapon_blend_and_q() -> void:
 
 func _terrain_attack_cancellation() -> void:
 	# 真实接触把已起手单位挤入河流，下一次出地形取消不能毒化后续快照。
-	var saved_mode: String = _main.mode
-	_main.mode = "server"
+	var saved_mode: String = _main.runtime.mode
+	_main.runtime.mode = "server"
 	var outside := Vector2(360, ArenaRules.RIVER_Y + ArenaRules.RIVER_HALF + 19)
 	var source := _make("kayn", 0, outside)
 	var target := _make("garen", 1, outside + Vector2(30, 0))
@@ -363,11 +363,11 @@ func _terrain_attack_cancellation() -> void:
 	var packet: Array = bytes_to_var(bytes.decompress_dynamic(1024 * 1024, FileAccess.COMPRESSION_DEFLATE))
 	var payloads: Array = packet[NetworkSnapshotSystem.S_UNITS].filter(func(payload): return payload[NetworkSnapshotSystem.U_ID] == source.net_id)
 	_expect(payloads.size() == 1 and payloads[0][NetworkSnapshotSystem.U_CANCELLATION] == source.last_action_cancellation, "真实接触取消持续进入正式压缩快照")
-	for unit in [source, target, blocker]: _main._net_units.erase(unit.net_id)
+	for unit in [source, target, blocker]: _main.world.forget_authority_unit(unit.net_id)
 	source.free()
 	target.free()
 	blocker.free()
-	_main.mode = saved_mode
+	_main.runtime.mode = saved_mode
 
 func _terrain_external_movement() -> void:
 	var a := _make("kayn", 0, Vector2(360, ArenaRules.RIVER_Y + ArenaRules.RIVER_HALF + 19))
@@ -386,7 +386,7 @@ func _terrain_external_movement() -> void:
 	a.position = Vector2(360, 950)
 	a.terrain_traversal.update(a)
 	var center := a.position
-	_main._push_units_around(center, 30)
+	_main.world.push_units_around(center, 30)
 	_expect(a.position.distance_to(center) >= a.body_radius + 30 - 0.001, "建筑落地通用推挤也处理凯隐")
 	var building := _make("tombstone", 0, center)
 	a.position = center
@@ -408,7 +408,7 @@ func _dash_collision_and_timing() -> void:
 	target.hp = 1000
 	var skill: Dictionary = CardDB.active_skills_for("kayn")[0]
 	var dash := DashStrikeState.new(a, skill)
-	_main._push_units_around(a.position, 30)
+	_main.world.push_units_around(a.position, 30)
 	_expect(a.position == Vector2(360, 1000), "突进穿碰撞阶段也不被新建筑的部署推挤挪位")
 	dash.tick(0.05)
 	_expect(target.hp == 1000, "Q首步不会提前伤害整条未来路径上的目标")
@@ -548,7 +548,7 @@ func _attack_hit_timing() -> void:
 			_expect(target.hp < 10000.0, "普攻在首个到期20Hz Tick扣血：%s/%s" % [id, rate])
 		unit.free()
 		target.free()
-	_main._card_growth.clear()
+	_main.runtime._card_growth.clear()
 
 func _dynamic_dash() -> void:
 	var skill: Dictionary = CardDB.active_skills_for("kayn")[0]
@@ -683,9 +683,9 @@ func _growth_hand_ui() -> void:
 	growth.replace_replica({1: {"kayn": {"ranged": 4, "melee": 0, "unlocked": "kayn_assassin"}}})
 	hand._refresh(0.0)
 	_expect(hand._growth_notice.text == "凯隐已经升级为影流刺客" and hand._growth_notice.get_theme_color("font_color") == hand.GROWTH_BLUE, "蓝凯使用准确蓝字升级提示")
-	var saved: Dictionary = _main._card_growth.snapshot()
-	_main._card_growth.replace_replica({0: {"kayn": {"ranged": 4, "melee": 0, "unlocked": "kayn_assassin"}}, 1: {"kayn": {"ranged": 0, "melee": 2, "unlocked": "kayn"}}})
-	_expect(not _main.growth_snapshot().has(0) and _main.growth_snapshot().has(1), "发给客户端的成长快照不泄露主机进度")
-	_main._card_growth.replace_replica(saved)
+	var saved: Dictionary = _main.runtime._card_growth.snapshot()
+	_main.runtime._card_growth.replace_replica({0: {"kayn": {"ranged": 4, "melee": 0, "unlocked": "kayn_assassin"}}, 1: {"kayn": {"ranged": 0, "melee": 2, "unlocked": "kayn"}}})
+	_expect(not _main.runtime.growth_snapshot().has(0) and _main.runtime.growth_snapshot().has(1), "发给客户端的成长快照不泄露主机进度")
+	_main.runtime._card_growth.replace_replica(saved)
 	hand.free()
 	elixir.free()

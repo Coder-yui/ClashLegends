@@ -214,7 +214,7 @@ func _check_extra_boundaries() -> void:
 	unit=make("voidmite",Vector2(360,900))
 	unit.apply_forced_displacement(Vector2.UP,80,0.4)
 	step(unit,2)
-	var snap: Array = _main._snapshot_system._unit_snapshot_payload(unit.net_id,unit)
+	var snap: Array = preload("res://tests/fixtures/network_fixture.gd").snapshot_payload(_main._snapshot_system, 12345,unit)
 	var decoded: Array = bytes_to_var(var_to_bytes(snap))
 	_expect(decoded[NetworkSnapshotSystem.U_ACTION_PERMISSIONS]==unit.action_permissions() and (int(decoded[NetworkSnapshotSystem.U_ACTION_PERMISSIONS]) & ControlState.MOVE)==0,"快照沿用权威行动锁无需客户端重算轨迹")
 	_expect(is_equal_approx(float(decoded[NetworkSnapshotSystem.U_X]),unit.position.x) and is_equal_approx(float(decoded[NetworkSnapshotSystem.U_Y]),unit.position.y),"快照包含实际强制位移位置")

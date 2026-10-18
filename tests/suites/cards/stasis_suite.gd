@@ -13,15 +13,15 @@ func run(harness: Object, main: Node2D) -> void:
 	spells.cast(0, CardDB.get_card("stasis"), center, true)
 	_expect(not CombatInteraction.in_stasis(ally), "凝滞弹体抵达前不生效")
 	var impact := int(spells.spell_flights[0].impact_tick)
-	main.set("_sim_tick_id", impact - 1)
+	main.runtime.set("_sim_tick_id", impact - 1)
 	spells.tick(FixedStepClock.STEP)
 	_expect(not CombatInteraction.in_stasis(enemy), "凝滞不提前一Tick命中")
-	main.set("_sim_tick_id", impact)
+	main.runtime.set("_sim_tick_id", impact)
 	spells.tick(FixedStepClock.STEP)
 	_expect(ally.control.stasis_timer == 2.0 and enemy.control.stasis_timer == 3.0, "免费强化友方2秒敌方3秒")
 	_expect(not CombatInteraction.in_stasis(outside), "凝滞不影响范围外单位")
 	_expect(ally.action_permissions() == 0 and ally.active_speed_multiplier == 1.0, "凝滞禁用行动并抑制增益")
-	var snapshot: Array = main.get("_snapshot_system")._unit_snapshot_payload(9001, ally)
+	var snapshot: Array = preload("res://tests/fixtures/network_fixture.gd").snapshot_payload(main.get("_snapshot_system"), 9001, ally)
 	_expect(snapshot[NetworkSnapshotSystem.U_STASIS] == true and snapshot[NetworkSnapshotSystem.U_ACTION_PERMISSIONS] == 0, "快照同步凝滞与禁用权限")
 	var hp := ally.hp
 	_expect(not ally.take_damage(100, enemy) and ally.hp == hp, "凝滞免疫直接伤害")
@@ -44,7 +44,7 @@ func run(harness: Object, main: Node2D) -> void:
 	for i in 60: enemy._tick_active_statuses(FixedStepClock.STEP)
 	_expect(not CombatInteraction.in_stasis(enemy), "普通3秒凝滞第60Tick解除")
 	spells.cast(0, CardDB.get_card("stasis"), center, false)
-	main.set("_sim_tick_id", int(spells.spell_flights[0].impact_tick))
+	main.runtime.set("_sim_tick_id", int(spells.spell_flights[0].impact_tick))
 	spells.tick(FixedStepClock.STEP)
 	_expect(ally.control.stasis_timer == 3.0, "未强化友方同样凝滞3秒")
 	_expect(int(CardDB.get_card("stasis").cost) == 3 and int(CardDB.active_skills_for("stasis")[0].cost) == 0, "凝滞费用3金币强化0金币")
@@ -53,17 +53,17 @@ func run(harness: Object, main: Node2D) -> void:
 		unit.remove_from_group("combatants")
 		unit.queue_free()
 
-	var saved_deck: Array = main._deck.duplicate()
-	main._deck = ["stasis", "garen", "ashe", "teemo", "xin", "heal", "freeze", "zap"]
-	_expect(main.card_cost_for_team(0, "stasis") == 3, "主动槽凝滞仍只收3金币")
-	main._deck = saved_deck
-	var saved_session: MatchSession = main._session
-	main.mode = "client"
-	main.local_team = 1
-	main._session = MatchSession.new()
-	main._session.opponent_id = 1
-	main._session.session_id = "stasis-test"
-	main._session.phase = MatchSession.Phase.RUNNING
+	var saved_deck: Array = main.runtime._deck.duplicate()
+	main.runtime._deck = ["stasis", "garen", "ashe", "teemo", "xin", "heal", "freeze", "zap"]
+	_expect(main.runtime.card_cost_for_team(0, "stasis") == 3, "主动槽凝滞仍只收3金币")
+	main.runtime._deck = saved_deck
+	var saved_session: MatchSession = main.runtime.session
+	main.runtime.mode = "client"
+	main.runtime.local_team = 1
+	main.runtime.session = MatchSession.new()
+	main.runtime.session.opponent_id = 1
+	main.runtime.session.session_id = "stasis-test"
+	main.runtime.session.phase = MatchSession.Phase.RUNNING
 	var saved_event_id: int = main._last_card_event_id
 	var event_id: int = main._last_card_event_id + 10
 	main._rpc_spell_flight("old-session", event_id, 1, "stasis", Vector2(360,1160), center, 110, 0, 10, 0)
@@ -80,14 +80,14 @@ func run(harness: Object, main: Node2D) -> void:
 	var tail: float = spells.stasis_effects[0].timer
 	main._rpc_spell_arrival("stasis-test", event_id + 1, 1, "stasis", center, 0)
 	_expect(spells.stasis_effects[0].impacted and spells.stasis_effects[0].timer == tail, "抵达驱动爆炸且重复事件不重启尾段")
-	main.game_over = true
+	main.runtime.game_over = true
 	main._rpc_spell_flight("stasis-test", event_id + 2, 2, "stasis", Vector2.ZERO, center, 110, 0, 10, 0)
 	_expect(spells.stasis_effects.size() == 1, "终局拒绝新在途表现")
-	main.game_over = false
+	main.runtime.game_over = false
 	main._last_card_event_id = saved_event_id
-	main._session = saved_session
-	main.mode = "local"
-	main.local_team = 0
+	main.runtime.session = saved_session
+	main.runtime.mode = "local"
+	main.runtime.local_team = 0
 	spells.clear()
 	_check_exceptions(main)
 	_check_placement(main)
@@ -162,24 +162,24 @@ func _check_placement(main: Node2D) -> void:
 		var blocker := _unit(main, "garen", team, pos)
 		blocker.apply_stasis(3)
 		var before := blocker.position
-		var spawned: Array = main._spawn_card_units(team, "garen", pos, 0.0)
+		var spawned: Array = main.runtime._spawn_card_units(team, "garen", pos, 0.0)
 		_expect(spawned.size() == 1, "凝滞桥边部署找到合法落点")
 		if not spawned.is_empty():
 			var unit: Unit = spawned[0]
 			positions.append(unit.position)
-			_expect(main.is_card_deploy_position_valid(team, "garen", unit.position) and main.is_ground_position_walkable(unit.position, unit.body_radius), "避让仍在玩家部署范围和完整地形内")
+			_expect(main.runtime.is_card_deploy_position_valid(team, "garen", unit.position) and main.world.is_ground_position_walkable(unit.position, unit.body_radius), "避让仍在玩家部署范围和完整地形内")
 			_expect(unit.position.distance_to(blocker.position) >= unit.body_radius + blocker.body_radius - 0.001 and blocker.position == before, "新下单位避让且凝滞占位不动")
 		_retire(spawned + [blocker])
 	_expect(positions.size() == 2 and positions[0].distance_to(Vector2(720,1280) - positions[1]) < 0.01, "镜像阵营落点对称：%s" % [positions])
 	var frozen := _unit(main, "garen", 0, Vector2(180,800))
 	frozen.freeze(3)
-	var normal: Array = main._spawn_card_units(0, "garen", frozen.position, 0.0)
+	var normal: Array = main.runtime._spawn_card_units(0, "garen", frozen.position, 0.0)
 	_expect(normal.size() == 1 and normal[0].position == frozen.position, "冰冻不触发特殊出生避让，保留自然碰撞")
 	_retire(normal + [frozen])
 	var anchor := _unit(main, "garen", 0, Vector2(500,800))
 	anchor.apply_stasis(3)
 	var before := anchor.position
-	var building: Array = main._spawn_card_units(0, "tombstone", anchor.position, 0.0)
+	var building: Array = main.runtime._spawn_card_units(0, "tombstone", anchor.position, 0.0)
 	_expect(building.size() == 1 and anchor.position == before and building[0].position.distance_to(before) >= building[0].body_radius + anchor.body_radius, "建筑先选合法避让点，不能先推动凝滞单位")
 	_retire(building + [anchor])
 	anchor = _unit(main, "garen", 0, Vector2(180,400))
@@ -190,13 +190,13 @@ func _check_placement(main: Node2D) -> void:
 	anchor = _unit(main, "garen", 0, Vector2(180,800))
 	anchor.body_radius = 2000
 	anchor.apply_stasis(3)
-	var waiting: Array = main._spawn_card_units(0, "garen", Vector2(180,800), 0.0)
+	var waiting: Array = main.runtime._spawn_card_units(0, "garen", Vector2(180,800), 0.0)
 	_expect(waiting.is_empty(), "无合法落点不生成越界或重叠玩家单位")
-	_expect(main._commands.inspect_deployments().size() == 1, "无落点沿用已付费等待队列")
+	_expect(main.runtime._commands.inspect_deployments().size() == 1, "无落点沿用已付费等待队列")
 	_retire([anchor])
-	main._tick_pending_card_pre_deployments(0.05)
+	main.runtime._tick_pending_card_pre_deployments(0.05)
 	var resumed: Array = main.get_tree().get_nodes_in_group("combatants").filter(func(c): return c is Unit)
-	_expect(resumed.size() == 1 and main._commands.inspect_deployments().is_empty(), "空间恢复后只生成一次，不重复付费或留队列")
+	_expect(resumed.size() == 1 and main.runtime._commands.inspect_deployments().is_empty(), "空间恢复后只生成一次，不重复付费或留队列")
 	_retire(resumed)
 
 func _check_flights(main: Node2D) -> void:
@@ -204,11 +204,11 @@ func _check_flights(main: Node2D) -> void:
 	spells.clear()
 	spells.cast(0, CardDB.get_card("stasis"), Vector2(360,1000))
 	var impact := int(spells.spell_flights[0].impact_tick)
-	var before_tick: int = main._sim_tick_id
+	var before_tick: int = main.runtime._sim_tick_id
 	main._process(0.8)
-	_expect(main._sim_tick_id - before_tick <= 4, "掉帧仍保留固定步赶步预算")
+	_expect(main.runtime._sim_tick_id - before_tick <= 4, "掉帧仍保留固定步赶步预算")
 	_expect(not spells.stasis_effects[0].impacted and not spells.spell_flights.is_empty(), "渲染掉帧不能使权威在途法术提前落地")
-	main._sim_tick_id = impact
+	main.runtime._sim_tick_id = impact
 	spells.tick(0.05)
 	_expect(spells.stasis_effects[0].impacted and spells.spell_flights.is_empty(), "权威抵达同时切换落地表现")
 	spells.clear()
@@ -218,8 +218,8 @@ func _check_flights(main: Node2D) -> void:
 	var target := _unit(main, "garen", 1, Vector2(180,800))
 	spells.cast(0, slow, target.position)
 	var expected := ceili(Vector2(360,1160).distance_to(target.position) / 450.0 / 0.05)
-	_expect(int(spells.spell_flights[0].impact_tick) - main._sim_tick_id == expected and not target.is_frozen(), "另一法术按不同配置速度复用在途调度")
-	main._sim_tick_id = int(spells.spell_flights[0].impact_tick)
+	_expect(int(spells.spell_flights[0].impact_tick) - main.runtime._sim_tick_id == expected and not target.is_frozen(), "另一法术按不同配置速度复用在途调度")
+	main.runtime._sim_tick_id = int(spells.spell_flights[0].impact_tick)
 	spells.tick(0.05)
 	_expect(target.is_frozen(), "通用在途法术抵达后才执行自身效果")
 	_retire([target])
@@ -231,37 +231,37 @@ func _check_flights(main: Node2D) -> void:
 	_check_card_timing(main)
 
 func _check_card_timing(main: Node2D) -> void:
-	var deck: Array = main._deck.duplicate()
-	var remote_deck: Array = main._remote_deck.duplicate()
-	var cycles: Dictionary = main._authoritative_card_cycles.duplicate()
-	main._deck = ["stasis", "garen", "ashe", "teemo", "xin", "heal", "freeze", "zap"]
-	main._remote_deck = main._deck.duplicate()
+	var deck: Array = main.runtime._deck.duplicate()
+	var remote_deck: Array = main.runtime._remote_deck.duplicate()
+	var cycles: Dictionary = main.runtime._authoritative_card_cycles.duplicate()
+	main.runtime._deck = ["stasis", "garen", "ashe", "teemo", "xin", "heal", "freeze", "zap"]
+	main.runtime._remote_deck = main.runtime._deck.duplicate()
 	for team in [0, 1]:
-		main._authoritative_card_cycles[team] = CardCycle.new(main._deck, false)
+		main.runtime._authoritative_card_cycles[team] = CardCycle.new(main.runtime._deck, false)
 		var pos := Vector2(180,820) if team == 0 else Vector2(540,460)
 		var unit := _unit(main, "garen", team, pos)
 		unit.move_speed = 0
-		var start: int = main._sim_tick_id
+		var start: int = main.runtime._sim_tick_id
 		_expect(main.play_card(team, "stasis", pos), "双方通过真实play_card提交凝滞")
 		for tick in 9: main._sim_step(0.05)
 		_expect(main._spell_system.spell_flights.is_empty() and not unit.is_frozen(), "公用0.5秒延迟未结束时不发射不生效")
 		main._sim_step(0.05)
 		var impact: int = main._spell_system.spell_flights[0].impact_tick
-		_expect(main._sim_tick_id == start + 10 and impact == start + 19, "双方镜像距离均在10Tick发射19Tick抵达")
+		_expect(main.runtime._sim_tick_id == start + 10 and impact == start + 19, "双方镜像距离均在10Tick发射19Tick抵达")
 		for tick in 8: main._sim_step(0.05)
 		_expect(not unit.is_frozen(), "抵达前一Tick仍不凝滞")
 		main._sim_step(0.05)
 		_expect(CombatInteraction.in_stasis(unit), "抵达边界才凝滞")
 		_retire([unit])
 		main._spell_system.clear()
-	main._deck = deck
-	main._remote_deck = remote_deck
-	main._authoritative_card_cycles = cycles
+	main.runtime._deck = deck
+	main.runtime._remote_deck = remote_deck
+	main.runtime._authoritative_card_cycles = cycles
 	main._spell_system.cast(0, CardDB.get_card("stasis"), Vector2(180,800))
-	var tick: int = main._sim_tick_id
+	var tick: int = main.runtime._sim_tick_id
 	main._end_game(0, "time")
 	for step in 30: main._sim_step(0.05)
-	_expect(main._sim_tick_id == tick and main._spell_system.spell_flights.is_empty() and main._spell_system.stasis_effects.is_empty(), "终局清理在途/表现且不再抵达")
+	_expect(main.runtime._sim_tick_id == tick and main._spell_system.spell_flights.is_empty() and main._spell_system.stasis_effects.is_empty(), "终局清理在途/表现且不再抵达")
 
 func _check_towers(main: Node2D) -> void:
 	var spells: SpellSystem = main._spell_system
@@ -269,14 +269,14 @@ func _check_towers(main: Node2D) -> void:
 		var stats := CardDB.get_card("stasis").duplicate(true)
 		stats.radius = 5000.0
 		spells._apply_stasis(source_team, stats, Vector2(360,640), true, 0)
-		for tower: Tower in main._towers:
+		for tower: Tower in main.world.towers_snapshot():
 			if tower.is_king:
 				_expect(not CombatInteraction.in_stasis(tower), "双方水晶均免疫凝滞")
 			else:
 				_expect(tower.control.stasis_timer == (2.0 if tower.team == source_team else 3.0), "双方防御塔按友方强化2秒/敌方3秒凝滞")
-		for tower: Tower in main._towers: tower.control.hard.clear_family(&"stasis")
+		for tower: Tower in main.world.towers_snapshot(): tower.control.hard.clear_family(&"stasis")
 	for team in [0, 1]:
-		var tower: Tower = main._towers[0 if team == 0 else 2]
+		var tower: Tower = main.world.towers_snapshot()[0 if team == 0 else 2]
 		var enemy := _unit(main, "garen", 1-team, tower.position + Vector2(90,0))
 		tower._target = enemy
 		tower._lock_windup = 0.15
@@ -330,7 +330,7 @@ func _check_indicators_and_grit(main: Node2D) -> void:
 	sett.skill_resource_value = 200
 	sett.hp = 500
 	sett.team_attack_boost_multiplier = 1.2
-	sett.mark_skill_resource_combat_activity()
+	sett.record_combat_activity()
 	sett._attacking = true
 	_expect(PresentationConfig.status_indicators_visible(sett), "普通状态显示实体附属标识")
 	sett.apply_stasis(3)
@@ -349,23 +349,23 @@ func _check_indicators_and_grit(main: Node2D) -> void:
 		sett._tick_active_statuses(0.05)
 		sett.prepare_action_clocks(0.05)
 	_expect(PresentationConfig.status_indicators_visible(sett) and is_equal_approx(sett.skill_resource_value, 150) and sett.hp == 500, "解除标识按实时150豪意和500生命恢复，不回滚旧值")
-	var original_mode: String = main.mode
-	var original_mode_team: int = main.local_team
-	main.mode = "client"
-	main.local_team = 1
+	var original_mode: String = main.runtime.mode
+	var original_mode_team: int = main.runtime.local_team
+	main.runtime.mode = "client"
+	main.runtime.local_team = 1
 	sett.control.hard.apply(&"stasis", &"replica", 1, {})
 	_expect(not PresentationConfig.status_indicators_visible(sett), "客户端凝滞标志同样隐藏附属标识")
 	sett.control.hard.clear_family(&"stasis")
 	_expect(PresentationConfig.status_indicators_visible(sett), "客户端解除按当前状态恢复附属标识")
-	main.mode = original_mode
-	main.local_team = original_mode_team
+	main.runtime.mode = original_mode
+	main.runtime.local_team = original_mode_team
 	_retire([sett])
 	for card in ["tombstone", "garen"]:
 		var unit := _unit(main, card, 0, Vector2(300,900))
 		unit.apply_stasis(3)
 		_expect(not PresentationConfig.status_indicators_visible(unit), "建筑与普通单位统一使用凝滞标识门禁")
 		_retire([unit])
-	var tower: Tower = main._towers[0]
+	var tower: Tower = main.world.towers_snapshot()[0]
 	tower.apply_stasis(3)
 	_expect(not PresentationConfig.status_indicators_visible(tower), "防御塔金身隐藏血条等标识")
 	tower.control.hard.clear_family(&"stasis")
@@ -375,7 +375,7 @@ func _check_stasis_target_and_bypass(main: Node2D) -> void:
 	for team in [0, 1]:
 		var tower: Tower
 		var king: Tower
-		for candidate: Tower in main._towers:
+		for candidate: Tower in main.world.towers_snapshot():
 			if candidate.team == team: continue
 			if candidate.is_king: king = candidate
 			elif candidate.position.x < 360: tower = candidate

@@ -117,12 +117,12 @@ func _check_gwen_snip_snip_skill() -> void:
 	var on_hit_cue := func(card, cue, _position):
 		if card == "gwen" and ":hit_" in String(cue): hit_cues.append(String(cue))
 	_main._audio_manager.cue_played.connect(on_hit_cue)
-	_main._queue_active_skill_impact(gwen, prepared_full, float(prepared_full.impact_delay))
+	_main.runtime._queue_active_skill_impact(gwen, prepared_full, float(prepared_full.impact_delay))
 	for _tick in 3:
-		_main._commands.tick_impacts(0.05)
+		_main.runtime._commands.tick_impacts(0.05)
 	var first_cut := is_equal_approx(gwen.hp, 400.0) and gwen.restoration_fx_timer > 0.0 and is_equal_approx(center_before - center.hp, 40.0 * 1.2 + roundf(center.max_hp * 0.05))
 	for _tick in 25:
-		_main._commands.tick_impacts(0.05)
+		_main.runtime._commands.tick_impacts(0.05)
 	var all_cuts := (
 		is_equal_approx(center_before - center.hp, 160.0 * 1.2 + 5.0 * roundf(center.max_hp * 0.05))
 		and is_equal_approx(edge_before - edge.hp, 160.0 + 5.0 * roundf(edge.max_hp * 0.05))
@@ -130,7 +130,7 @@ func _check_gwen_snip_snip_skill() -> void:
 		and is_equal_approx(outside_arc.hp, outside_arc_before)
 	)
 	for _tick in 12:
-		_main._commands.tick_impacts(0.05)
+		_main.runtime._commands.tick_impacts(0.05)
 	_expect(
 		first_cut and all_cuts and is_equal_approx(gwen.hp, 400.0)
 		and gwen.is_active_skill_movement_locked() and gwen.is_active_skill_attack_locked() and gwen.is_active_skill_facing_locked(),
@@ -153,10 +153,10 @@ func _check_gwen_snip_snip_skill() -> void:
 		if scenario == "immune": center.target_protection.begin(center.position, 30.0, 2.0)
 		var cast: Dictionary = prepared_partial if scenario == "partial" else prepared_full
 		gwen.begin_active_skill_cast(1.5, Vector2.UP, cast.cast_locks)
-		_main._queue_active_skill_impact(gwen, cast, float(cast.impact_delay))
+		_main.runtime._queue_active_skill_impact(gwen, cast, float(cast.impact_delay))
 		for tick in range(1, 32):
 			if scenario == "late" and tick == 4: center.position = Vector2(5000, 4890)
-			_main._commands.tick_impacts(0.05)
+			_main.runtime._commands.tick_impacts(0.05)
 			if scenario == "late" and tick == 3:
 				_expect(is_equal_approx(gwen.hp, 200.0), "格温满层首剪落空不提前回血")
 			if scenario == "late" and tick == 13:
@@ -220,7 +220,7 @@ func _check_gwen_mechanic() -> void:
 	var before := target.hp
 	_main.launch_attack(gwen, target, 62.0 * 1.5, 0.0, 0.0, 0.0, gwen.color)
 	_expect(before - target.hp == 144.0, "强化倍率只影响普攻基础值，被动不放大")
-	for tower in [_main._towers[3], _main._king_enemy]:
+	for tower in [_main.world.towers_snapshot()[3], _main.world.king(1)]:
 		before = tower.hp
 		_main.launch_attack(gwen, tower, 62.0, 0.0, 0.0, 0.0, gwen.color)
 		_expect(before - tower.hp == 82.0, "防御塔与水晶被动固定附加 20 点")
@@ -236,22 +236,22 @@ func _check_gwen_mechanic() -> void:
 	var skill: Dictionary = _main._active_skill_effect_system.prepare_cast(gwen, stats.active_skills[0])
 	skill["cast_forward"] = Vector2.UP
 	target.position = Vector2(600, 1100)
-	_main._queue_active_skill_impact(gwen, skill, float(skill.impact_delay))
+	_main.runtime._queue_active_skill_impact(gwen, skill, float(skill.impact_delay))
 	for _tick in 35:
-		_main._commands.tick_impacts(0.05)
+		_main.runtime._commands.tick_impacts(0.05)
 	_expect(gwen.hp == 300.0, "满层技能完全空放不回血")
 	# 只在首剪击杀也算本次命中；结束后空放不能继承上一轮命中。
 	target.position = Vector2(360, 790)
 	target.hp = 1.0
-	_main._queue_active_skill_impact(gwen, skill, float(skill.impact_delay))
+	_main.runtime._queue_active_skill_impact(gwen, skill, float(skill.impact_delay))
 	for _tick in 35:
-		_main._commands.tick_impacts(0.05)
+		_main.runtime._commands.tick_impacts(0.05)
 	_expect(gwen.hp == 400.0, "满层首剪击杀、后续空剪仍只回复一次 100")
-	_main._queue_active_skill_impact(gwen, skill, float(skill.impact_delay))
+	_main.runtime._queue_active_skill_impact(gwen, skill, float(skill.impact_delay))
 	for _tick in 35:
-		_main._commands.tick_impacts(0.05)
+		_main.runtime._commands.tick_impacts(0.05)
 	_expect(gwen.hp == 400.0, "后续空放不会复用上一次施法命中记录")
-	var tower: Tower = _main._towers[3]
+	var tower: Tower = _main.world.towers_snapshot()[3]
 	var tower_before := tower.hp
 	gwen.position = tower.position + Vector2.DOWN * 100.0
 	var tower_cut: Dictionary = stats.active_skills[0].duplicate(true)
@@ -276,7 +276,7 @@ func _check_gwen_tower_combat() -> void:
 	gwen_stats["deploy_time"] = 0.0
 	gwen_stats["hp"] = 100000.0
 	# —— 场景一：攻击敌方公主塔 ——
-	var tower: Tower = _main._towers[3]
+	var tower: Tower = _main.world.towers_snapshot()[3]
 	var stop_distance: float = tower.body_radius + gwen_stats.radius + gwen_stats.range
 	var gwen := Unit.new()
 	gwen.position = tower.position + Vector2.DOWN * (stop_distance + 12.0)
@@ -300,10 +300,10 @@ func _check_gwen_tower_combat() -> void:
 	tower.hp = tower_hp
 	# —— 场景二：攻击敌方水晶（国王塔）——
 	# 冻结两座敌方公主塔做隔离，保证水晶战斗期间对格温的伤害只可能来自水晶。
-	var left_princess: Tower = _main._towers[2]
+	var left_princess: Tower = _main.world.towers_snapshot()[2]
 	left_princess.freeze(999.0)
 	tower.freeze(999.0)
-	var king: Tower = _main._king_enemy
+	var king: Tower = _main.world.king(1)
 	var king_was_active := king.activated
 	var king_hp := king.hp
 	var king_stop: float = king.body_radius + gwen_stats.radius + gwen_stats.range
@@ -397,7 +397,7 @@ func _check_gwen_target_and_damage() -> void:
 	hp = gwen.hp
 	_main.combat_service().resolve_attack_hit(1, attacker.position, gwen, 10.0, 100.0, 0.0, attacker)
 	_expect(gwen.hp == hp - 10.0, "格温正常承受范围命中")
-	var tower: Tower = _main._towers[2]
+	var tower: Tower = _main.world.towers_snapshot()[2]
 	var pos := gwen.position
 	gwen.position = tower.position + Vector2.DOWN * 100.0
 	_expect(tower._target_is_valid(gwen), "敌塔正常选中格温")
@@ -434,7 +434,7 @@ func _check_hallowed_mist() -> void:
 		_expect(gwen.hp == hp and gwen.shield_hp == shield and gwen._knockback_timer == 0.0 and gwen.control.slow_timer <= 3.0, "圈外圆形技能整组伤害、击退和减速均被阻止")
 		_main._active_skill_effect_system.apply_frontal_stun(enemy, {"length": 250.0, "width": 100.0, "damage": 100, "stun_duration": 5.0}, Vector2.LEFT)
 		_expect(gwen.hp == hp and gwen.shield_hp == shield and gwen.control.stun_timer <= 2.0, "圈外前方技能不能伤害或刷新控制")
-		var tower: Tower = _main._towers[0 if side == 1 else 2]
+		var tower: Tower = _main.world.towers_snapshot()[0 if side == 1 else 2]
 		var old_tower_position := tower.position
 		var old_tower_team := tower.team
 		tower.team = 1 - side
@@ -471,7 +471,7 @@ func _check_hallowed_mist() -> void:
 		_main._spell_system.apply_freeze(gwen.position, 20.0, 0.0, enemy.team, 5.0, 0.1)
 		_main._spell_system.tick(0.05)
 		_expect(gwen.control.slow_timer <= 3.0, "圈内法术区域也不能新增或刷新减速")
-		var nexus: Tower = _main._king_player if enemy.team == 0 else _main._king_enemy
+		var nexus: Tower = _main.world.king(0) if enemy.team == 0 else _main.world.king(1)
 		var nexus_position := nexus.position
 		nexus.position = gwen.position + Vector2(120, 0)
 		_main._spell_system.apply_freeze(gwen.position, 20.0, 1.0, enemy.team)
@@ -517,36 +517,36 @@ func _check_hallowed_mist() -> void:
 	_main._spell_system.clear()
 
 func _check_mist_cost_and_cooldown() -> void:
-	var deck: Array = _main._deck.duplicate()
-	_main._deck[0] = "gwen"
-	var choices: Dictionary = _main._active_skill_choices.duplicate(true)
-	_main._active_skill_choices["gwen"] = 1
+	var deck: Array = _main.runtime._deck.duplicate()
+	_main.runtime._deck[0] = "gwen"
+	var choices: Dictionary = _main.runtime._active_skill_choices.duplicate(true)
+	_main.runtime._active_skill_choices["gwen"] = 1
 	var gwen: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "gwen", Vector2(360, 1000), {"deploy_time_override": 0.0, "active_slot": 0}))
 	var ability := gwen.active_ability_id
 	gwen.move_speed = 0.0
-	_main._elixir.elixir = 10
-	_expect(_main.use_active_skill(ability, 0) and _main._elixir.elixir == 9.0, "正式请求丝缕缠流扣1金币")
-	_main._sim_tick_id += 10
-	_main._tick_pending_active_skills(0.05)
-	_expect(gwen.target_protection.active() and _main._active_skills.entry(ability).uses_remaining == 1 and _main._active_skills.entry(ability).cooldown_left == 8.0, "开始时消费次数并启动8秒冷却")
-	_expect(not _main.use_active_skill(ability, 0) and _main._elixir.elixir == 9.0, "冷却中拒绝请求且不额外扣费")
+	_main.runtime.account(0 if _main.runtime.mode == "server" else _main.runtime.local_team).elixir = 10
+	_expect(_main.use_active_skill(ability, 0) and _main.runtime.account(0 if _main.runtime.mode == "server" else _main.runtime.local_team).elixir == 9.0, "正式请求丝缕缠流扣1金币")
+	_main.runtime._sim_tick_id += 10
+	_main.runtime._tick_pending_active_skills(0.05)
+	_expect(gwen.target_protection.active() and _main.runtime._active_skills.entry(ability).uses_remaining == 1 and _main.runtime._active_skills.entry(ability).cooldown_left == 8.0, "开始时消费次数并启动8秒冷却")
+	_expect(not _main.use_active_skill(ability, 0) and _main.runtime.account(0 if _main.runtime.mode == "server" else _main.runtime.local_team).elixir == 9.0, "冷却中拒绝请求且不额外扣费")
 	gwen.prepare_action_clocks(4.0)
-	_main._tick_active_skill_cooldowns(4.0)
-	_expect(not gwen.target_protection.active() and not _main.use_active_skill(ability, 0) and _main._elixir.elixir == 9.0, "结界4秒结束时仍需等待4秒冷却且不扣费")
+	_main.runtime._tick_active_skill_cooldowns(4.0)
+	_expect(not gwen.target_protection.active() and not _main.use_active_skill(ability, 0) and _main.runtime.account(0 if _main.runtime.mode == "server" else _main.runtime.local_team).elixir == 9.0, "结界4秒结束时仍需等待4秒冷却且不扣费")
 	gwen.prepare_action_clocks(4.0)
-	_main._tick_active_skill_cooldowns(4.0)
-	_expect(_main.use_active_skill(ability, 0) and _main._elixir.elixir == 8.0, "冷却结束允许第二次且再扣1金币")
-	_main._sim_tick_id += 10
-	_main._tick_pending_active_skills(0.05)
-	_expect(_main._active_skills.entry(ability).uses_remaining == 0 and gwen.target_protection.active(), "第二次结界重新建立并耗尽次数")
+	_main.runtime._tick_active_skill_cooldowns(4.0)
+	_expect(_main.use_active_skill(ability, 0) and _main.runtime.account(0 if _main.runtime.mode == "server" else _main.runtime.local_team).elixir == 8.0, "冷却结束允许第二次且再扣1金币")
+	_main.runtime._sim_tick_id += 10
+	_main.runtime._tick_pending_active_skills(0.05)
+	_expect(_main.runtime._active_skills.entry(ability).uses_remaining == 0 and gwen.target_protection.active(), "第二次结界重新建立并耗尽次数")
 	gwen.prepare_action_clocks(4.0)
-	_main._tick_active_skill_cooldowns(4.0)
-	_main._tick_active_skill_cooldowns(4.0)
-	_expect(not _main.use_active_skill(ability, 0) and _main._elixir.elixir == 8.0, "两次后不可继续施放")
+	_main.runtime._tick_active_skill_cooldowns(4.0)
+	_main.runtime._tick_active_skill_cooldowns(4.0)
+	_expect(not _main.use_active_skill(ability, 0) and _main.runtime.account(0 if _main.runtime.mode == "server" else _main.runtime.local_team).elixir == 8.0, "两次后不可继续施放")
 	gwen.take_damage(99999)
 	gwen.free()
-	_main._active_skill_choices = choices
-	_main._deck = deck
+	_main.runtime._active_skill_choices = choices
+	_main.runtime._deck = deck
 
 func _check_mist_audio_lifecycle() -> void:
 	var audio: GameAudioManager = _main._audio_manager

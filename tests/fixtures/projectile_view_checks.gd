@@ -9,7 +9,7 @@ class CountingProjectiles extends ProjectileSystem:
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
-	_expect(_main.mode == "local" and not _main.game_over, "弹体表现子检查承接正常本地战场")
+	_expect(_main.runtime.mode == "local" and not _main.runtime.game_over, "弹体表现子检查承接正常本地战场")
 	_main._projectile_system.clear_all()
 	_main.reset_network_clock()
 	_check_authority_view()
@@ -94,8 +94,8 @@ func _check_client_interpolation() -> void:
 	var targets := owner.authoritative_snapshot()
 	targets[id]["target_pos"] = targets[id].pos
 	targets[id]["target_visual_offset"] = targets[id].visual_offset
-	var old_mode: String = _main.mode
-	_main.mode = "client"
+	var old_mode: String = _main.runtime.mode
+	_main.runtime.mode = "client"
 	owner.apply_client_targets(targets)
 	var first := owner.visible_view()
 	_expect(not is_same(first, authority) and first[id].pos == authority[id].pos, "模式切换选择客户端内容，不误用权威缓存")
@@ -127,7 +127,7 @@ func _check_client_interpolation() -> void:
 	_expect(owner.visible_view().is_empty(), "完整收包删除消失的可见弹体")
 	owner.clear_client()
 	_expect(owner.visible_view().is_empty(), "客户端clear后不残留可见缓存")
-	_main.mode = old_mode
+	_main.runtime.mode = old_mode
 	_expect(owner.visible_view().has(id) and owner.visible_view()[id].pos == original, "切回权威端选择未被客户端插值改变的真实内容")
 	owner.clear_all()
 	owner.free()
@@ -196,14 +196,14 @@ func _sync_flight_effect(view: Node3D, card: String, system: ProjectileSystem, c
 	else: view.sync_effects(_main._skill_presentation, system, camera)
 
 func _capture_next_flight(snapshot: NetworkSnapshotSystem, system: ProjectileSystem, tick: int) -> Array:
-	var mode_before: String = _main.mode
-	var tick_before: int = _main._sim_tick_id
-	_main.mode = "local"
-	_main._sim_tick_id = tick
+	var mode_before: String = _main.runtime.mode
+	var tick_before: int = _main.runtime._sim_tick_id
+	_main.runtime.mode = "local"
+	_main.runtime._sim_tick_id = tick
 	system.tick(0.05)
 	var frame := snapshot.capture_public_frame()
-	_main._sim_tick_id = tick_before
-	_main.mode = mode_before
+	_main.runtime._sim_tick_id = tick_before
+	_main.runtime.mode = mode_before
 	return frame
 
 func _check_wire_speed_and_consumers() -> void:
@@ -244,16 +244,16 @@ func _check_wire_speed_and_consumers() -> void:
 	for target in targets: target.free()
 
 func _check_received_flight_effects(snapshot: NetworkSnapshotSystem, system: ProjectileSystem, frame: Array, specs: Array, ids: Array[int], speeds: Array[float]) -> void:
-	var old_mode: String = _main.mode
-	var old_team: int = _main.local_team
-	_main.mode = "client"
-	_main.local_team = 1
+	var old_mode: String = _main.runtime.mode
+	var old_team: int = _main.runtime.local_team
+	_main.runtime.mode = "client"
+	_main.runtime.local_team = 1
 	var decoded := snapshot.decode_validated(snapshot.encode_frame(frame))
 	var applied := decoded != null and snapshot.apply_decoded(decoded)
 	_expect(applied, "真实capture/encode/decode/apply往返完整速度元数据")
 	if not applied:
-		_main.mode = old_mode
-		_main.local_team = old_team
+		_main.runtime.mode = old_mode
+		_main.runtime.local_team = old_team
 		return
 	var first := system.visible_view()
 	_expect(not _has_object(first), "真实客户端飞行视图不依赖已经释放的来源对象")
@@ -286,8 +286,8 @@ func _check_received_flight_effects(snapshot: NetworkSnapshotSystem, system: Pro
 		_sync_flight_effect(views[index], specs[index].card, system, camera)
 		_expect(views[index]._missiles.is_empty(), "清场释放普通快照创建的弹体表现")
 		views[index].free()
-	_main.mode = old_mode
-	_main.local_team = old_team
+	_main.runtime.mode = old_mode
+	_main.runtime.local_team = old_team
 
 func _check_end_and_new_owner() -> void:
 	var system: ProjectileSystem = _main._projectile_system

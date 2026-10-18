@@ -3,7 +3,7 @@ extends "res://tests/suites/battle_suite.gd"
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
-	for tower in main._towers: tower.can_attack = false
+	for tower in main.world.towers_snapshot(): tower.can_attack = false
 	_check_continuous_takeover()
 	_check_authoritative_launch_order()
 	_check_terrain_and_independent_state()
@@ -69,7 +69,7 @@ func _check_swept_obstacles() -> void:
 	unit.free()
 	var building: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "tombstone", Vector2(360, 800), {"deploy_time_override": 0}))
 	var obstacles: Array = [building]
-	obstacles.append_array(_main._towers)
+	obstacles.append_array(_main.world.towers_snapshot())
 	for obstacle in obstacles:
 		unit = _locked_unit(obstacle.position - Vector2(110, 0))
 		unit.apply_knockback(unit.position - Vector2(100, 0), 880, 0.2)
@@ -192,7 +192,7 @@ func _check_terrain_and_independent_state() -> void:
 	for i in 6:
 		unit.sim_tick(0.05)
 		_main._movement.tick(0.05)
-	_expect(unit.position.x >= unit.body_radius and _main.is_ground_position_walkable(unit.position, unit.body_radius, unit), "接管后的普通击退仍受场地和结构约束")
+	_expect(unit.position.x >= unit.body_radius and _main.world.is_ground_position_walkable(unit.position, unit.body_radius, unit), "接管后的普通击退仍受场地和结构约束")
 	_main._combat.begin_batch(500, "subsequence")
 	unit.apply_knockback(Vector2(200, 800), 5, 0.1, 1.4, [42, 1, 0])
 	unit.apply_knockback(Vector2(0, 800), 5, 0.1, 1.4, [42, 1, 1])

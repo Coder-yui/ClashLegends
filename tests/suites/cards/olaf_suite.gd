@@ -4,9 +4,9 @@ func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
 	for team in [0, 1]:
-		var old: Array[Unit] = main._spawn_card_units(team, "olaf", Vector2(250, 1000), 0.0)
-		var group: Array[Unit] = main._spawn_card_units(team, "olaf", Vector2(420, 1000), 0.0)
-		var enemy: Array[Unit] = main._spawn_card_units(1 - team, "olaf", Vector2(400, 250), 0.0)
+		var old: Array[Unit] = main.runtime._spawn_card_units(team, "olaf", Vector2(250, 1000), 0.0)
+		var group: Array[Unit] = main.runtime._spawn_card_units(team, "olaf", Vector2(420, 1000), 0.0)
+		var enemy: Array[Unit] = main.runtime._spawn_card_units(1 - team, "olaf", Vector2(400, 250), 0.0)
 		_expect(group.size() == 2 and is_equal_approx(group[0].position.distance_to(group[1].position), 64.0), "狂战士双方横排间隔1.6格")
 		var skill: Dictionary = CardDB.active_skills_for("olaf")[0]
 		main._active_skill_effect_system.apply(group[0], skill)

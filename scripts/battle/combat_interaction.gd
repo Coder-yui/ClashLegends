@@ -42,13 +42,7 @@ static func blocks_effect(target: Node2D, context: Dictionary = {}) -> bool:
 	var blocked: bool = target.buffs.remaining(&"effect_shield") > 0.0
 	if delivery != null: delivery.outcomes[id] = blocked
 	if not blocked: return false
-	var haste_duration: float = target.buffs.strongest(&"effect_shield", &"haste_duration", 0.0)
-	var attack_speed: float = target.buffs.strongest(&"effect_shield", &"attack_speed", 1.0)
-	target.buffs.clear_family(&"effect_shield")
-	if haste_duration > 0.0 and attack_speed > 1.0:
-		target.buffs.apply(&"hit_haste", target.status_source("effect_shield_reward"), haste_duration, {"attack_speed": attack_speed})
-	if target.battle_context != null:
-		target.battle_context.notify_unit_audio_event(target, &"effect_shield:block", target.global_position)
+	target.consume_effect_shield()
 	return true
 
 static func allows_allied_target(target: Unit, team: int) -> bool:
@@ -62,7 +56,7 @@ static func in_stasis(target: Node2D) -> bool:
 ## 友方硬控同样记录接受方；普通友方收益不调用此入口。
 static func record_combat_effect(target, context: Dictionary = {}) -> void:
 	if not is_instance_valid(target): return
-	if target.has_method("record_combat_activity"): target.record_combat_activity()
+	if target is Unit: target.record_combat_activity()
 	var source = context.get("source")
-	if is_instance_valid(source) and source != target and source.team != target.team and source.has_method("record_combat_activity"):
+	if is_instance_valid(source) and source != target and source.team != target.team and source is Unit:
 		source.record_combat_activity()

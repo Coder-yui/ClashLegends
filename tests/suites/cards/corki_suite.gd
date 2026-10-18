@@ -46,25 +46,25 @@ func run(harness: Object, main: Node2D) -> void:
 		if is_instance_valid(unit): unit.free()
 	system.clear_all()
 
-	var old_deck: Array = main._deck.duplicate()
-	main._deck[0] = "corki"
-	var paid: Unit = main._spawn_card_units(0, "corki", Vector2(250, 1100), 0.0, 0)[0]
+	var old_deck: Array = main.runtime._deck.duplicate()
+	main.runtime._deck[0] = "corki"
+	var paid: Unit = main.runtime._spawn_card_units(0, "corki", Vector2(250, 1100), 0.0, 0)[0]
 	var id := paid.active_ability_id
-	main._elixir.elixir = 9.0
+	main.runtime.account(0 if main.runtime.mode == "server" else main.runtime.local_team).elixir = 9.0
 	for use in 3:
-		var prepared: Dictionary = main._active_skills.skill_for_cast(id)
+		var prepared: Dictionary = main.runtime._active_skills.skill_for_cast(id)
 		_expect(prepared.projectile_impact_visual == ("corki_explosion_big" if use == 2 else "corki_explosion"), "超级导弹独立红色爆炸表现")
 		_expect(prepared.damage == [100, 100, 180][use], "按实际消费次数选择普通/超级伤害")
 		_expect(prepared.visual_action == ("active_big" if use == 2 else "active"), "第三枚使用独立动作与声音")
-		main._elixir.elixir = 9.0 - use
+		main.runtime.account(0 if main.runtime.mode == "server" else main.runtime.local_team).elixir = 9.0 - use
 		_expect(main.use_active_skill(id, 0), "正式入口接受第%d枚" % (use + 1))
 		_expect(not main.use_active_skill(id, 0), "排队期间拒绝重复请求")
-		main._sim_tick_id += 10
-		main._tick_pending_active_skills(0.05)
-		var entry: Dictionary = main._active_skills.entry(id)
+		main.runtime._sim_tick_id += 10
+		main.runtime._tick_pending_active_skills(0.05)
+		var entry: Dictionary = main.runtime._active_skills.entry(id)
 		_expect(entry.uses_remaining == 2 - use and entry.cooldown_left == 3.0, "开始时消费一次并启动3秒冷却")
 		_expect(not main.use_active_skill(id, 0), "冷却或耗尽期间拒绝")
-		_expect(main._elixir.elixir == 8.0 - use, "每次仅扣一金币")
+		_expect(main.runtime.account(0 if main.runtime.mode == "server" else main.runtime.local_team).elixir == 8.0 - use, "每次仅扣一金币")
 		_run_main_ticks(3)
 		var missile: Dictionary = system.projectiles.values()[0]
 		_expect(missile.damage == [100, 100, 180][use], "正式排程实际发出的弹体固化次数伤害")
@@ -77,7 +77,7 @@ func run(harness: Object, main: Node2D) -> void:
 		system.clear_all()
 	_expect(not main.use_active_skill(id, 0), "第三枚后永远耗尽本次部署资格")
 	_expect(CardDB.active_skills_for("corki")[0].damage == 100, "逐次副本不修改共享定义")
-	main._deck = old_deck
+	main.runtime._deck = old_deck
 	for change in [{"projectile_impact_visuals_by_use": ["bad", "bad", "bad"]}, {"projectile_impact_visuals_by_use": ["corki_explosion"]}, {"projectile_impact_visuals_by_use": "bad"}, {"damage_by_use": [100, 180]}, {"damage_by_use": [100, INF, 180]}, {"damage_by_use": "bad"}, {"projectile_explosion_radius": -1}, {"projectile_explosion_radius": "bad"}, {"projectile_stop_on_hit": false}, {"visual_actions_by_use": ["bad", "bad", "bad"]}, {"projectile_visuals_by_use": ["bad", "bad", "bad"]}]:
 		var cards := CardDB.all().duplicate(true)
 		cards.corki.active_skills[0].merge(change, true)

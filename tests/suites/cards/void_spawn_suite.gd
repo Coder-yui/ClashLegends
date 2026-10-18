@@ -66,9 +66,9 @@ func _check_explosion() -> void:
 
 func _check_group() -> void:
 	_clean()
-	var old_deck: Array = _main._deck.duplicate()
-	_main._deck[0] = "void_spawn"
-	var members: Array = _main._spawn_card_units(0, "void_spawn", Vector2(340, 1040), 0.0, 0)
+	var old_deck: Array = _main.runtime._deck.duplicate()
+	_main.runtime._deck[0] = "void_spawn"
+	var members: Array = _main.runtime._spawn_card_units(0, "void_spawn", Vector2(340, 1040), 0.0, 0)
 	_expect(members.size() == 2 and is_equal_approx(members[0].position.distance_to(members[1].position), 48.0), "两只横向并排中心间隔1.2格")
 	_expect(CardDB.active_skills_for("void_spawn").size() == 1, "编队具有一次强化技能")
 	_expect(not members[0].ignores_unit_collision() and members[0].active_speed_multiplier == 1.0, "默认保持正常碰撞与移速")
@@ -81,7 +81,7 @@ func _check_group() -> void:
 	_expect(wounded.hp == 133.0 and wounded.max_hp == 199.0 and wounded.body_radius == 18.75, "重复效果不叠加生命碰撞")
 	var events: Dictionary = CardDB.get_card("void_spawn").audio.events
 	_expect(events["deploy:start"].pool.size() == 1 and events["active:cast"].pool.size() == 1 and events["deploy:start"].pool[0] != events["active:cast"].pool[0], "部署技能各使用一个独立声音")
-	_main._deck = old_deck
+	_main.runtime._deck = old_deck
 	_clean()
 
 func _check_deployment_lanes() -> void:
@@ -96,8 +96,8 @@ func _check_deployment_lanes() -> void:
 			_clean()
 			var center := Vector2((column + 0.5) * ArenaRules.TILE_SIZE, 860.0 if team == 0 else 420.0)
 			var expected_left := 2 if column == 7 else 0 if column == 10 else 1
-			var members: Array[Unit] = _main._spawn_card_units(team, "void_spawn", center)
-			var spawn_ok: bool = members.size() == 2 and _main.is_card_deploy_position_valid(team, "void_spawn", center)
+			var members: Array[Unit] = _main.runtime._spawn_card_units(team, "void_spawn", center)
+			var spawn_ok: bool = members.size() == 2 and _main.runtime.is_card_deploy_position_valid(team, "void_spawn", center)
 			var targets_left := 0
 			for member in members:
 				spawn_ok = spawn_ok and absf(member.position.x - center.x) == 24.0 and absf(member.position.x - ArenaRules.FIELD_W * 0.5) >= 4.0
@@ -316,21 +316,21 @@ func _check_native_layer_placement() -> void:
 		view.free()
 
 func _check_empower() -> void:
-	var old_deck: Array = _main._deck.duplicate()
-	_main._deck[0] = "void_spawn"
+	var old_deck: Array = _main.runtime._deck.duplicate()
+	_main.runtime._deck[0] = "void_spawn"
 	for lose_leader in [false, true]:
 		_clean()
-		var outsiders: Array = _main._spawn_card_units(0, "void_spawn", Vector2(200, 1100), 0.0)
-		var members: Array = _main._spawn_card_units(0, "void_spawn", Vector2(340, 1000), 0.0, 0)
+		var outsiders: Array = _main.runtime._spawn_card_units(0, "void_spawn", Vector2(200, 1100), 0.0)
+		var members: Array = _main.runtime._spawn_card_units(0, "void_spawn", Vector2(340, 1000), 0.0, 0)
 		var ability: int = members[0].active_ability_id
 		var skill: Dictionary = CardDB.active_skills_for("void_spawn")[0]
 		_expect(skill.cost == 1 and skill.max_uses == 1 and skill.icon_path == "res://assets/skills/void_spawn_0.png", "强化1金币每组一次，使用云顶fixed图标")
-		_main._elixir.elixir = 10.0
-		_expect(_main.use_active_skill(ability, 0) and _main._elixir.elixir == 9.0, "正式技能请求扣除1金币")
+		_main.runtime.account(0 if _main.runtime.mode == "server" else _main.runtime.local_team).elixir = 10.0
+		_expect(_main.use_active_skill(ability, 0) and _main.runtime.account(0 if _main.runtime.mode == "server" else _main.runtime.local_team).elixir == 9.0, "正式技能请求扣除1金币")
 		if lose_leader: members[0].take_damage(9999.0)
-		_main._sim_tick_id += 10
-		_main._tick_pending_active_skills(0.05)
-		_expect(_main._active_skills.entry(ability).uses_remaining == 0 and not _main.use_active_skill(ability, 0), "强化次数消耗且不能重复使用")
+		_main.runtime._sim_tick_id += 10
+		_main.runtime._tick_pending_active_skills(0.05)
+		_expect(_main.runtime._active_skills.entry(ability).uses_remaining == 0 and not _main.use_active_skill(ability, 0), "强化次数消耗且不能重复使用")
 		for member in members:
 			if member.hp <= 0:
 				_expect(member.sacrifice_empowerment == Vector2.ONE, "死亡成员不复活或获得强化")
@@ -356,7 +356,7 @@ func _check_empower() -> void:
 		var impact: Dictionary = _main._skill_presentation.frontal_effects.back()
 		_expect(impact.forward == leap.forward and impact.visual_scale == leap.visual_scale, "抵达载荷保留起跳方向与强化体型")
 	_clean()
-	var members: Array = _main._spawn_card_units(0, "void_spawn", Vector2(340, 1000), 0.0, 0)
+	var members: Array = _main.runtime._spawn_card_units(0, "void_spawn", Vector2(340, 1000), 0.0, 0)
 	var target := _spawn("target_dummy", 1, Vector2(340, 900))
 	_main.begin_sacrifice(members[0], target)
 	_main._active_skill_effect_system.apply(members[1], CardDB.active_skills_for("void_spawn")[0])
@@ -374,7 +374,7 @@ func _check_empower() -> void:
 	_expect(wounded.hp == 133.0 and wounded.max_hp == 199.0 and wounded.body_radius == 18.75, "重复效果不叠加生命碰撞")
 	var events: Dictionary = CardDB.get_card("void_spawn").audio.events
 	_expect(events["deploy:start"].pool.size() == 1 and events["active:cast"].pool.size() == 1 and events["deploy:start"].pool[0] != events["active:cast"].pool[0], "部署技能各使用一个独立声音")
-	_main._deck = old_deck
+	_main.runtime._deck = old_deck
 	_clean()
 
 func _check_empowered_aura() -> void:

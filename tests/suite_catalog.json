@@ -572,5 +572,68 @@
     "method": "run",
     "scene": "none",
     "group": "presentation"
+  },
+  {
+    "id": "GrowthSpatialSuite",
+    "script": "res://tests/suites/cards/growth_spatial_suite.gd",
+    "method": "run",
+    "scene": "none",
+    "group": "cards"
+  },
+  {
+    "id": "StructureRewardSuite",
+    "script": "res://tests/suites/cards/structure_reward_suite.gd",
+    "method": "run",
+    "scene": "none",
+    "group": "cards"
+  },
+  {
+    "id": "AuthorityTimingSuite",
+    "script": "res://tests/suites/status/authority_timing_suite.gd",
+    "method": "run",
+    "scene": "none",
+    "group": "status"
+  },
+  {
+    "id": "LightweightContractSuite",
+    "script": "res://tests/suites/presentation/lightweight_contract_suite.gd",
+    "method": "run",
+    "scene": "none",
+    "group": "presentation"
+  },
+  {
+    "id": "StartupNetworkBoundary",
+    "script": "res://tests/suites/presentation/lightweight_contract_suite.gd",
+    "method": "check_network_failures",
+    "scene": "none",
+    "group": "presentation"
+  },
+  {
+    "id": "WorldOwnershipSuite",
+    "script": "res://tests/suites/combat/world_ownership_suite.gd",
+    "method": "run",
+    "scene": "none",
+    "group": "combat"
+  },
+  {
+    "id": "RuntimeOwnershipSuite",
+    "script": "res://tests/suites/combat/runtime_ownership_suite.gd",
+    "method": "run",
+    "scene": "none",
+    "group": "combat"
+  },
+  {
+    "id": "UnitMutationSuite",
+    "script": "res://tests/suites/combat/unit_mutation_suite.gd",
+    "method": "run",
+    "scene": "none",
+    "group": "combat"
+  },
+  {
+    "id": "StrictContractSuite",
+    "script": "res://tests/suites/contracts/strict_contract_suite.gd",
+    "method": "run",
+    "scene": "none",
+    "group": "contracts"
   }
 ]

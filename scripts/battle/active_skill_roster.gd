@@ -59,7 +59,7 @@ func clear() -> void:
 
 func tick(dt: float) -> void:
 	for entry in _entries.values():
-		entry.cooldown_left = maxf(float(entry.get("cooldown_left", 0.0)) - dt, 0.0)
+		entry.cooldown_left = maxf(float(entry.cooldown_left) - dt, 0.0)
 
 ## 在真正开始前按已消费次数生成本次副本；失败请求不会推进序列。
 func skill_for_cast(id: int) -> Dictionary:
@@ -94,10 +94,10 @@ static func cost_for_use(definition: Dictionary, index: int) -> float:
 
 func consume(id: int) -> void:
 	var entry: Dictionary = _entries[id]
-	if bool(entry.get("free_recast", false)):
+	if bool(entry.free_recast):
 		entry.free_recast = false
 		return
-	entry.uses_remaining = maxi(int(entry.get("uses_remaining", entry.get("max_uses", 1))) - 1, 0)
+	entry.uses_remaining = maxi(int(entry.uses_remaining) - 1, 0)
 	entry.cooldown_left = maxf(float(entry.skill.get("cooldown", 0.0)), 0.0)
 
 func grant_recast(id: int) -> void:
@@ -124,9 +124,9 @@ func qualified(id: int, expected_team: int, card_allowed: Callable) -> bool:
 	if unit.death_form.used: return false
 	if expected_team >= 0 and int(entry.team) != expected_team: return false
 	if String(entry.skill.get("kind", "")) == "bleeding_execute" and unit.is_empowered_attack_ready_visual(): return false
-	if not bool(entry.get("free_recast", false)):
-		if not bool(entry.skill.get("unlimited_uses", false)) and int(entry.get("uses_remaining", entry.get("max_uses", 1))) <= 0: return false
-		if float(entry.get("cooldown_left", 0.0)) > 0.001: return false
+	if not bool(entry.free_recast):
+		if not bool(entry.skill.get("unlimited_uses", false)) and int(entry.uses_remaining) <= 0: return false
+		if float(entry.cooldown_left) > 0.001: return false
 	return card_allowed.call(int(entry.team), String(entry.card_id)) and unit.is_deployed()
 
 func transfer(id: int, members: Callable) -> Unit:

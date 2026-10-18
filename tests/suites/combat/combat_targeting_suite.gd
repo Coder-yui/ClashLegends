@@ -107,13 +107,13 @@ func _check_crystal_target_and_nearest_attack_target() -> void:
 
 	# 两座敌方公主塔都还存活时，贴近水晶的单位也应能把水晶作为合法目标。
 	var crystal_attacker := Unit.new()
-	crystal_attacker.position = _main._king_enemy.position + Vector2.DOWN * 100.0
+	crystal_attacker.position = _main.world.king(1).position + Vector2.DOWN * 100.0
 	crystal_attacker.setup(0, attacker_stats, attacker_stats.name)
 	_main.add_child(crystal_attacker)
-	crystal_attacker._target = _main._towers[3]
+	crystal_attacker._target = _main.world.towers_snapshot()[3]
 	crystal_attacker._update_target()
-	var princesses_alive: bool = _main._towers[2].hp > 0.0 and _main._towers[3].hp > 0.0
-	_expect(princesses_alive and crystal_attacker._target == _main._king_enemy, "公主塔未被摧毁时，进入攻击范围的单位也能选择敌方水晶")
+	var princesses_alive: bool = _main.world.towers_snapshot()[2].hp > 0.0 and _main.world.towers_snapshot()[3].hp > 0.0
+	_expect(princesses_alive and crystal_attacker._target == _main.world.king(1), "公主塔未被摧毁时，进入攻击范围的单位也能选择敌方水晶")
 	crystal_attacker.free()
 
 func _check_per_card_sight() -> void:
@@ -382,7 +382,7 @@ func _check_freed_target_cleanup() -> void:
 	attacker.free()
 
 func _check_tower_loses_out_of_range_target() -> void:
-	var tower: Tower = _main._towers[0]
+	var tower: Tower = _main.world.towers_snapshot()[0]
 	var stats: Dictionary = CardDB.get_card("xin").duplicate()
 	stats["deploy_time"] = 0.0
 	var enemy := Unit.new()
@@ -402,7 +402,7 @@ func _check_tower_loses_out_of_range_target() -> void:
 	enemy.free()
 
 func _check_landing_body_push_retargets_attacker() -> void:
-	var tower: Tower = _main._towers[0]
+	var tower: Tower = _main.world.towers_snapshot()[0]
 	var enemy_stats: Dictionary = CardDB.get_card("xin").duplicate()
 	var defender_stats: Dictionary = CardDB.get_card("garen").duplicate()
 	enemy_stats["deploy_time"] = 0.0
@@ -424,7 +424,7 @@ func _check_landing_body_push_retargets_attacker() -> void:
 	enemy.attack_timeline.windup = _main.SIM_DT * 3.0
 	enemy._attack_visual_pending = true
 	var before_distance := enemy.position.distance_to(tower.position)
-	var overlap_deploy_allowed: bool = _main.is_card_deploy_position_valid(0, "garen", landing_pos)
+	var overlap_deploy_allowed: bool = _main.runtime.is_card_deploy_position_valid(0, "garen", landing_pos)
 	_main._sim_step(_main.SIM_DT)
 	var pushed_from_tower := enemy.position.distance_to(tower.position) > before_distance + 1.0
 	var no_fake_knockback := enemy._knockback_timer == 0.0 and defender._knockback_timer == 0.0
@@ -450,29 +450,29 @@ func _check_destroyed_lane_targets_king() -> void:
 	blue_left.position = Vector2(204.0, 520.0)
 	blue_left.setup(0, stats, stats.name)
 	_main.add_child(blue_left)
-	var red_left_hp: float = _main._towers[2].hp
-	_main._towers[2].hp = 0.0
+	var red_left_hp: float = _main.world.towers_snapshot()[2].hp
+	_main.world.towers_snapshot()[2].hp = 0.0
 	blue_left._update_target()
-	_expect(blue_left._target == _main._king_enemy, "左路敌方公主塔摧毁后，同路单位转推敌方水晶而不是跨向右塔")
-	_main._towers[2].hp = red_left_hp
+	_expect(blue_left._target == _main.world.king(1), "左路敌方公主塔摧毁后，同路单位转推敌方水晶而不是跨向右塔")
+	_main.world.towers_snapshot()[2].hp = red_left_hp
 	blue_left.free()
 
 	var red_right := Unit.new()
 	red_right.position = Vector2(516.0, 760.0)
 	red_right.setup(1, stats, stats.name)
 	_main.add_child(red_right)
-	var blue_right_hp: float = _main._towers[1].hp
-	_main._towers[1].hp = 0.0
+	var blue_right_hp: float = _main.world.towers_snapshot()[1].hp
+	_main.world.towers_snapshot()[1].hp = 0.0
 	red_right._update_target()
-	_expect(red_right._target == _main._king_player, "右路我方公主塔摧毁后，敌方单位镜像转推我方水晶而不是跨向左塔")
-	_main._towers[1].hp = blue_right_hp
+	_expect(red_right._target == _main.world.king(0), "右路我方公主塔摧毁后，敌方单位镜像转推我方水晶而不是跨向左塔")
+	_main.world.towers_snapshot()[1].hp = blue_right_hp
 	red_right.free()
 
 func _check_unit_reaches_and_damages_tower() -> void:
 	var stats: Dictionary = CardDB.get_card("garen").duplicate(true)
 	stats["deploy_time"] = 0.0
 	stats["hp"] = 100000.0
-	var tower: Tower = _main._towers[3]
+	var tower: Tower = _main.world.towers_snapshot()[3]
 	var unit := Unit.new()
 	var stop_distance: float = tower.body_radius + stats.radius + stats.range
 	unit.position = tower.position + Vector2.DOWN * (stop_distance + 12.0)
@@ -573,8 +573,8 @@ func _check_sett_recovery_without_target() -> void:
 		unit.free()
 
 func _check_king_activation() -> void:
-	var king: Tower = _main._king_player
-	var princess: Tower = _main._towers[0]
+	var king: Tower = _main.world.king(0)
+	var princess: Tower = _main.world.towers_snapshot()[0]
 	var saved_hp: float = princess.hp
 	var saved_nav_cells: Array = princess.nav_cells.duplicate()
 	princess.hp = 0.0
@@ -584,7 +584,7 @@ func _check_king_activation() -> void:
 	princess.hp = saved_hp
 	if princess.nav_cells.is_empty() and not saved_nav_cells.is_empty():
 		princess.nav_cells = saved_nav_cells.duplicate()
-		_main.nav.set_cells_blocked(princess.nav_cells, true)
+		_main.world.nav.set_cells_blocked(princess.nav_cells, true)
 
 ## 进入射程不需要“走够时间”；只有真实上一击留下的冷却能推迟下一击。
 func _check_first_attack_and_reentry_timing() -> void:
@@ -641,7 +641,7 @@ func _check_tower_competes_with_units() -> void:
 		var enemy := Unit.new()
 		enemy.setup(1-team, target_stats, "塔边敌人")
 		_main.add_child(enemy)
-		for tower in _main._towers:
+		for tower in _main.world.towers_snapshot():
 			if tower.team == team:
 				continue
 			var toward := Vector2.DOWN if team == 0 else Vector2.UP

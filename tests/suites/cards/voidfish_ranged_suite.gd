@@ -14,7 +14,7 @@ func run(harness: Object, main: Node2D) -> void:
 	var skill: Dictionary = CardDB.active_skills_for("voidfish_ranged")[0]
 	for team in [0, 1]:
 		_clean()
-		var members: Array = _main._spawn_card_units(team, "voidfish_ranged", Vector2(350, 950), 0.0, 0)
+		var members: Array = _main.runtime._spawn_card_units(team, "voidfish_ranged", Vector2(350, 950), 0.0, 0)
 		_expect(members.size() == 3, "双方正式卡各生成三只")
 		_expect(absf((members[1].position - members[0].position).cross(members[2].position - members[0].position)) > 1.0, "三角阵型不退化为直线")
 		var other: Unit = _main._spawn_unit(UnitSpawnRequest.new(team, "voidfish_ranged", Vector2(150, 950), {"deploy_time_override": 0.0}))
@@ -54,16 +54,16 @@ func _clean() -> void:
 func _check_visual_snapshot() -> void:
 	var system := NetworkSnapshotSystem.new(_main, _main._projectile_system)
 	var payload := system._projectile_snapshot_payload(991, {"pos": Vector2(120, 340), "color": Color.PURPLE, "radius": 4.0, "visual": &"voidfish_missile", "direction": Vector2.UP, "speed": 320.0})
-	var old_mode: String = _main.mode
-	var old_team: int = _main.local_team
-	_main.mode = "client"
-	_main.local_team = 1
+	var old_mode: String = _main.runtime.mode
+	var old_team: int = _main.runtime.local_team
+	_main.runtime.mode = "client"
+	_main.runtime.local_team = 1
 	system._apply_projectiles([payload])
 	var projectile: Dictionary = _main._projectile_system.client_snapshot().get(991, {})
 	_expect(String(projectile.get("visual", "")) == "voidfish_missile", "远程虚空鱼原版弹体标识通过客户端快照往返")
 	_main._projectile_system.clear_client()
-	_main.mode = old_mode
-	_main.local_team = old_team
+	_main.runtime.mode = old_mode
+	_main.runtime.local_team = old_team
 	var view = load("res://assets/units/voidfish_ranged/voidfish_ranged_view.tscn").instantiate()
 	_main.add_child(view)
 	view.prepare_visual_animations()
@@ -239,10 +239,10 @@ func _check_regeneration_visual() -> void:
 		source.buffs.advance(0.65)
 		view._update_active_buff_visual(0.0)
 		_expect(effect.visible and not effect._wisps.any(func(w): return w.visible) and view._last_buff_visible, "持续阶段只保留模型紫色覆层，上升光流不循环")
-		var payload := NetworkSnapshotSystem.new(_main, _main._projectile_system)._unit_snapshot_payload(981, source)
+		var payload := preload("res://tests/fixtures/network_fixture.gd").snapshot_payload(NetworkSnapshotSystem.new(_main, _main._projectile_system), 981, source)
 		_expect(payload[NetworkSnapshotSystem.U_DEATH_SPAWN_STATE].is_equal_approx(Vector2(2.0, 3.0)), "权威快照保留剩余和总时长")
-		var mode: String = _main.mode
-		_main.mode = "client"
+		var mode: String = _main.runtime.mode
+		_main.runtime.mode = "client"
 		source.net_death_spawn_state = payload[NetworkSnapshotSystem.U_DEATH_SPAWN_STATE]
 		source.buffs.clear_family(&"death_spawn")
 		view._update_active_buff_visual(0.0)
@@ -250,7 +250,7 @@ func _check_regeneration_visual() -> void:
 		source.net_death_spawn_state = Vector2.ZERO
 		view._update_active_buff_visual(0.0)
 		_expect(not effect.visible and not view._last_buff_visible and effect.overlay_instances.all(func(m): return float(m.get_shader_parameter("strength")) == 0.0), "窗口清零恢复原模型材质")
-		_main.mode = mode
+		_main.runtime.mode = mode
 		source.free()
 
 func _check_regeneration_warmup() -> void:
@@ -302,14 +302,14 @@ func _check_splash_randomization() -> void:
 	_expect(first.sample(20) == second.sample(20), "指定视觉seed可复现源参数以便校验")
 
 func _check_army() -> void:
-	var old_deck: Array = _main._deck.duplicate()
-	var old_team: int = _main.local_team
-	_main._deck[0] = "voidfish_ranged_army"
+	var old_deck: Array = _main.runtime._deck.duplicate()
+	var old_team: int = _main.runtime.local_team
+	_main.runtime._deck[0] = "voidfish_ranged_army"
 	for team in [0, 1]:
 		_clean()
-		_main.local_team = team
+		_main.runtime.local_team = team
 		var center := Vector2(360, 940 if team == 0 else 340)
-		var wallet = _main._elixir_for_team(team)
+		var wallet = _main.runtime.account(team)
 		wallet.elixir = 10.0
 		_expect(_main.play_card(team, "voidfish_ranged_army", center, {"immediate": true, "elixir": wallet, "active_slot": 0}), "大军通过正式放牌入口部署")
 		var members: Array = _main.get_tree().get_nodes_in_group("combatants").filter(func(n): return n is Unit and n.card_id == "voidfish_ranged_army" and n.team == team)
@@ -320,7 +320,7 @@ func _check_army() -> void:
 		for i in 6:
 			_expect(absf(members[i].position.distance_to(centroid) - 36.0) < 0.01 and absf(members[i].position.distance_to(members[(i + 1) % 6].position) - 36.0) < 0.01, "六成员均在正六边形顶点，中心留空")
 			members[i]._deploy_timer = 0.0
-		var other: Array = _main._spawn_card_units(team, "voidfish_ranged", Vector2(150, center.y), 0.0)
+		var other: Array = _main.runtime._spawn_card_units(team, "voidfish_ranged", Vector2(150, center.y), 0.0)
 		var skill: Dictionary = CardDB.active_skills_for("voidfish_ranged_army")[0]
 		_main._active_skill_effect_system.apply(members[0], skill)
 		for member in members:
@@ -336,18 +336,18 @@ func _check_army() -> void:
 		_expect(_children(team).is_empty(), "六只新鱼再次死亡无递归再生")
 		_clean()
 		# 正式技能付款，待执行时原持有者死亡，剩余五只继承整批资格。
-		var paid: Array = _main._spawn_card_units(team, "voidfish_ranged_army", center, 0.0, 0)
+		var paid: Array = _main.runtime._spawn_card_units(team, "voidfish_ranged_army", center, 0.0, 0)
 		var ability: int = paid[0].active_ability_id
 		wallet.elixir = 10.0
 		_expect(_main.use_active_skill(ability, team) and wallet.elixir == 8.0, "大军主动按原技能只收2费")
 		paid[0].take_damage(9999.0)
-		_main._sim_tick_id += 10
-		_main._tick_pending_active_skills(0.05)
+		_main.runtime._sim_tick_id += 10
+		_main.runtime._tick_pending_active_skills(0.05)
 		for i in range(1, 6):
 			_expect(paid[i].buffs.remaining(&"death_spawn") == 3.0, "队长死亡后五个存活成员执行再生")
 		_expect(wallet.elixir == 8.0 and not _main.use_active_skill(ability, team), "资格转交不重复收费且技能仍限一次")
 	_clean()
-	_main._deck = old_deck
-	_main.local_team = old_team
+	_main.runtime._deck = old_deck
+	_main.runtime.local_team = old_team
 	var plan = load("res://scripts/presentation/match_resource_plan.gd").for_match([["voidfish_ranged_army"], []], [{}, {}])
 	_expect(plan.cards.has("voidfish_ranged_single"), "大军预热递归包含再生单只")

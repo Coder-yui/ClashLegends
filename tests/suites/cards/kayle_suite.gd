@@ -3,26 +3,26 @@ extends "res://tests/suites/battle_suite.gd"
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
-	main._deck = ["kayle", "garen", "ashe", "teemo", "xin", "freeze", "heal", "pix"]
-	for tower in main._towers: tower.can_attack = false
+	main.runtime._deck = ["kayle", "garen", "ashe", "teemo", "xin", "freeze", "heal", "pix"]
+	for tower in main.world.towers_snapshot(): tower.can_attack = false
 	for money in [2.99, 3.0, 5.99, 6.0, 10.0]:
 		_clear()
-		preload("res://tests/fixtures/network_fixture.gd").fixed_cycle(main, 0, main._deck)
-		main._elixir.elixir = money
+		preload("res://tests/fixtures/network_fixture.gd").fixed_cycle(main, 0, main.runtime._deck)
+		main.runtime.account(0 if main.runtime.mode == "server" else main.runtime.local_team).elixir = money
 		var expected_id := "kayle_ranged" if money >= 6 else "kayle"
 		var cost := 6 if money >= 6 else 3
-		_expect(main.card_cost_for_team(0, "kayle") == cost, "费用在6金币边界同步切换")
+		_expect(main.runtime.card_cost_for_team(0, "kayle") == cost, "费用在6金币边界同步切换")
 		_expect(main._hand._display_cost("kayle", CardDB.get_card("kayle")) == cost, "手牌费用与权威一致")
-		var accepted: bool = main.play_card(0, "kayle", Vector2(300, 900), {"elixir": main._elixir})
+		var accepted: bool = main.play_card(0, "kayle", Vector2(300, 900), {"elixir": main.runtime.account(0 if main.runtime.mode == "server" else main.runtime.local_team)})
 		_expect(accepted == (money >= 3), "不足3拒绝，足够3接受")
 		if not accepted:
-			_expect(main._commands.inspect_cards().is_empty() and is_equal_approx(main._elixir.elixir, money), "拒绝不扣费不入队")
+			_expect(main.runtime._commands.inspect_cards().is_empty() and is_equal_approx(main.runtime.account(0 if main.runtime.mode == "server" else main.runtime.local_team).elixir, money), "拒绝不扣费不入队")
 			continue
-		_expect(is_equal_approx(main._elixir.elixir, money - cost), "只扣所选形态实际费用")
-		var command: Dictionary = main._commands.inspect_cards()[0]
-		main._elixir.elixir = 10 if money < 6 else 0
-		main._sim_tick_id = int(command.execute_tick)
-		main._tick_pending_card_deployments(0.05)
+		_expect(is_equal_approx(main.runtime.account(0 if main.runtime.mode == "server" else main.runtime.local_team).elixir, money - cost), "只扣所选形态实际费用")
+		var command: Dictionary = main.runtime._commands.inspect_cards()[0]
+		main.runtime.account(0 if main.runtime.mode == "server" else main.runtime.local_team).elixir = 10 if money < 6 else 0
+		main.runtime._sim_tick_id = int(command.execute_tick)
+		main.runtime._tick_pending_card_deployments(0.05)
 		var unit: Unit = main._latest_unit_for_card("kayle", 0)
 		_expect(unit != null and unit.card_id == expected_id, "等待期间跨过6金币仍保持付款形态")
 		_expect(unit.active_skill_card_id == "kayle" and unit.active_ability_id >= 0, "衍生形态保留下牌与主动槽资格")
@@ -31,26 +31,26 @@ func run(harness: Object, main: Node2D) -> void:
 		unit.hp = 100
 		var ability := unit.active_ability_id
 		_expect(main.use_active_skill(ability, 0), "W正式排程接受")
-		var before: float = main._elixir.elixir
+		var before: float = main.runtime.account(0 if main.runtime.mode == "server" else main.runtime.local_team).elixir
 		for _i in 11:
-			main._sim_tick_id += 1
-			main._tick_pending_active_skills(0.05)
-			main._commands.tick_impacts(0.05)
+			main.runtime._sim_tick_id += 1
+			main.runtime._tick_pending_active_skills(0.05)
+			main.runtime._commands.tick_impacts(0.05)
 		_expect(unit.hp == 260 and is_equal_approx(unit.active_speed_multiplier, 1.3), "W实际开始治疗160并加速30%")
-		_expect(main._elixir.elixir == before, "W不消耗金币")
+		_expect(main.runtime.account(0 if main.runtime.mode == "server" else main.runtime.local_team).elixir == before, "W不消耗金币")
 		_expect(not main.use_active_skill(ability, 0), "6秒冷却不能连续施放")
 		unit._tick_active_statuses(0.95)
 		_expect(is_equal_approx(unit.active_speed_multiplier, 1.3), "加速前19Tick仍生效")
 		unit._tick_active_statuses(0.05)
 		_expect(is_equal_approx(unit.active_speed_multiplier, 1.0), "20Tick后加速结束")
 		unit.prepare_action_clocks(1.0)
-		main._tick_active_skill_cooldowns(6.0)
+		main.runtime._tick_active_skill_cooldowns(6.0)
 		_expect(main.use_active_skill(ability, 0), "冷却结束可以第二次释放")
-		main._sim_tick_id += 10
-		main._tick_pending_active_skills(0.05)
-		main._commands.tick_impacts(0.05)
+		main.runtime._sim_tick_id += 10
+		main.runtime._tick_pending_active_skills(0.05)
+		main.runtime._commands.tick_impacts(0.05)
 		_expect(unit.hp == 420, "第二次再回复160生命")
-		main._tick_active_skill_cooldowns(6.0)
+		main.runtime._tick_active_skill_cooldowns(6.0)
 		_expect(not main.use_active_skill(ability, 0), "两次耗尽后不能再用")
 	_clear()
 	var ranged: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "kayle_ranged", Vector2(300, 900), {"deploy_time_override": 0.0}))
@@ -91,7 +91,7 @@ func _test_hit_haste() -> void:
 		var nearby: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(320, 820), {"deploy_time_override": 0.0}))
 		_expect(is_equal_approx(source.attack_interval, 1.5), "两形态基础间隔降至1.5秒")
 		_expect(is_equal_approx(source.active_attack_speed_multiplier, 1.0), "未命中无层数")
-		_main._combat._resolve_immediate_attack_hit(0, source.position, victim, 1, source.splash_radius, 0, source)
+		_main._combat.resolve_attack_hit(0, source.position, victim, 1, source.splash_radius, 0, source)
 		_expect(is_equal_approx(source.active_attack_speed_multiplier, 1.1), "单击溅射多人也只叠一层")
 		source._tick_active_statuses(2.0)
 		source.attack_timeline.begin_windup(1.1, 1.1)
@@ -122,11 +122,11 @@ func _test_hit_haste() -> void:
 	_expect(is_equal_approx(archer.active_attack_speed_multiplier, 1.0), "远程创建弹体不提前叠层")
 	for i in 12: _main._tick_projectiles(0.05)
 	_expect(is_equal_approx(archer.active_attack_speed_multiplier, 1.1), "远程实际抵达后叠层")
-	var snapshot: Array = _main._snapshot_system._unit_snapshot_payload(123, archer)
+	var snapshot: Array = preload("res://tests/fixtures/network_fixture.gd").snapshot_payload(_main._snapshot_system, 123, archer)
 	_expect(is_equal_approx(float(snapshot[preload("res://scripts/battle/network_snapshot_system.gd").U_ACTIVE_ATTACK_SPEED_MULTIPLIER]), 1.1), "快照携带被动的最终攻速倍率")
 	var prior := archer.active_attack_speed_multiplier
 	target.hp = 0
-	_main._combat._resolve_immediate_attack_hit(0, archer.position, target, 1, 0, 0, archer)
+	_main._combat.resolve_attack_hit(0, archer.position, target, 1, 0, 0, archer)
 	_expect(is_equal_approx(archer.active_attack_speed_multiplier, prior), "无效目标没有命中收益")
 	_expect(is_equal_approx(CardDB.get_card("kayle").range, 56.0), "近战表面距离1.4格")
 	var catalog := preload("res://scripts/ui/workbench/card_catalog.gd")
@@ -139,7 +139,7 @@ func _test_hit_haste() -> void:
 	_expect(not preload("res://scripts/data/card_validator.gd").validate_all(bad, false).is_empty(), "拒绝缺少持续时间")
 
 func _clear() -> void:
-	_main._commands.clear()
+	_main.runtime._commands.clear()
 	_main._projectile_system.clear_all()
 	for c in _main.get_tree().get_nodes_in_group("combatants"):
 		if c is Unit: c.free()
@@ -162,10 +162,10 @@ func _test_wave() -> void:
 	var payloads: Array = []
 	for id in _main._projectile_system.projectiles:
 		payloads.append(_main._snapshot_system._projectile_snapshot_payload(id, _main._projectile_system.projectiles[id]))
-	var old_mode: String = _main.mode
-	var old_mode_team: int = _main.local_team
-	_main.mode = "client"
-	_main.local_team = 1
+	var old_mode: String = _main.runtime.mode
+	var old_mode_team: int = _main.runtime.local_team
+	_main.runtime.mode = "client"
+	_main.runtime.local_team = 1
 	_main._snapshot_system._apply_projectiles(payloads)
 	_main._projectile_system.tick_visuals(0.05)
 	var views: Dictionary = _main._projectile_system._native_visuals._views
@@ -174,8 +174,8 @@ func _test_wave() -> void:
 		_expect(not shot.visual_path.is_empty() and shot.visual_path.end == primary.position, "客户端接收出手锁定的纯表现路径")
 	_main._projectile_system.clear_client()
 	_expect(_main._projectile_system._native_visuals._views.is_empty(), "客户端清场立即释放焰浪表现")
-	_main.mode = old_mode
-	_main.local_team = old_mode_team
+	_main.runtime.mode = old_mode
+	_main.runtime.local_team = old_mode_team
 	for i in 20: _main._tick_projectiles(0.05)
 	_expect(primary.hp == before[0] - 160, "主目标可叠加105+55")
 	_expect(back.hp == before[1] - 55, "焰浪穿过主目标继续伤害地面后排")
@@ -195,7 +195,7 @@ func _test_wave() -> void:
 			_expect(projectile.direction.x > 0.0, "光剑仍追踪原目标")
 	_clear()
 	caster = _main._spawn_unit(UnitSpawnRequest.new(0, "kayle_ranged", Vector2(300, 900), {"deploy_time_override": 0.0}))
-	var enemy_tower: Tower = _main._king_enemy
+	var enemy_tower: Tower = _main.world.king(1)
 	var old_position := enemy_tower.position
 	var old_hp := enemy_tower.hp
 	enemy_tower.position = Vector2(300, 800)
@@ -268,7 +268,7 @@ func _test_wave_targets_and_scale() -> void:
 		var air: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "anivia", Vector2(325, target.position.y), {"deploy_time_override": 0}))
 		var ground: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(325, target.position.y), {"deploy_time_override": 0}))
 		var building: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "tombstone", Vector2(275, target.position.y), {"deploy_time_override": 0}))
-		var enemy_tower: Tower = _main._king_enemy
+		var enemy_tower: Tower = _main.world.king(1)
 		var old_position := enemy_tower.position
 		enemy_tower.position = Vector2(270, target.position.y)
 		var air_hp := air.hp

@@ -34,8 +34,8 @@ func run(harness: Object, main: Node2D) -> void:
 
 func _check_lane_weight_field() -> void:
 	_check_native_path_search()
-	var lane_weight: float = _main.nav.get_lane_weight_at(Vector2(ArenaRules.BRIDGE_X_LEFT, 800.0))
-	var center_weight: float = _main.nav.get_lane_weight_at(Vector2(ArenaRules.FIELD_W * 0.5, 800.0))
+	var lane_weight: float = _main.world.nav.get_lane_weight_at(Vector2(ArenaRules.BRIDGE_X_LEFT, 800.0))
+	var center_weight: float = _main.world.nav.get_lane_weight_at(Vector2(ArenaRules.FIELD_W * 0.5, 800.0))
 	_expect(lane_weight < center_weight, "半格路线场使左右推进区成本低于场地中央")
 
 func _check_native_path_search() -> void:
@@ -59,7 +59,7 @@ func _check_native_path_search() -> void:
 	_expect(matched == fixture.cases.size(), "搜索核心逐格匹配 %d/%d 组原始 ARM64 路线（含等价路线的堆顺序）" % [matched, fixture.cases.size()])
 
 func _check_bridge_path() -> void:
-	var path: PackedVector2Array = _main.nav.find_path(Vector2(360.0, 820.0), Vector2(360.0, 460.0))
+	var path: PackedVector2Array = _main.world.nav.find_path(Vector2(360.0, 820.0), Vector2(360.0, 460.0))
 	var crosses_bridge := false
 	var crosses_river_elsewhere := false
 	for i in range(1, path.size()):
@@ -143,8 +143,8 @@ func _check_king_back_spawn_never_retreats() -> void:
 	stats["hp"] = 100000.0
 	var unit := Unit.new()
 	unit.setup(0, stats, stats.name)
-	unit.position = _main._snap_card_position("garen", Vector2(340.0, 1260.0), 0)
-	var deploy_valid: bool = _main.is_card_deploy_position_valid(0, "garen", Vector2(340.0, 1260.0))
+	unit.position = _main.runtime._snap_card_position("garen", Vector2(340.0, 1260.0), 0)
+	var deploy_valid: bool = _main.runtime.is_card_deploy_position_valid(0, "garen", Vector2(340.0, 1260.0))
 	_main.add_child(unit)
 	var start_y := unit.position.y
 	var previous_y := unit.position.y
@@ -195,7 +195,7 @@ func _check_right_corner_keeps_outer_side() -> void:
 	unit.setup(0, stats, stats.name)
 	unit.position = Vector2(ArenaRules.FIELD_W - unit.body_radius, 1220.0)
 	_main.add_child(unit)
-	var right_tower: Tower = _main._towers[1]
+	var right_tower: Tower = _main.world.towers_snapshot()[1]
 	var min_x_behind_tower := unit.position.x
 	var passed_tower := false
 	for _tick in 220:
@@ -215,11 +215,11 @@ func _check_weighted_lane_march() -> void:
 	unit.position = Vector2(ArenaRules.FIELD_W * 0.5, 820.0)
 	unit.setup(0, stats, stats.name)
 	_main.add_child(unit)
-	unit._target = _main._towers[2]
+	unit._target = _main.world.towers_snapshot()[2]
 	unit._chase(_main.SIM_DT)
 	var enters_lane := false
 	for point in unit._path:
-		enters_lane = enters_lane or _main.nav.get_lane_weight_at(point) <= 1.0
+		enters_lane = enters_lane or _main.world.nav.get_lane_weight_at(point) <= 1.0
 	_expect(not unit._path.is_empty() and enters_lane and unit._move_intent.y < 0.0, "无仇恨单位会从非主路自然汇入带权左右路")
 	var first_path: PackedVector2Array = unit._path.duplicate()
 	unit._chase(_main.SIM_DT)
@@ -290,7 +290,7 @@ func _check_bridge_queue() -> void:
 	rear.free()
 
 func _check_tower_follower_splits_quickly() -> void:
-	var tower: Tower = _main._towers[2]
+	var tower: Tower = _main.world.towers_snapshot()[2]
 	var tower_hp := tower.hp
 	tower.hp = 100000.0
 	var stats: Dictionary = CardDB.get_card("sett").duplicate()
@@ -505,9 +505,9 @@ func _check_mass_weighting() -> void:
 ## 拆分后先于索敌/pocket 用例执行，必须在用例结束时还原塔的血量与导航占地。
 func _snapshot_towers() -> Array:
 	var snapshot := []
-	for tower: Tower in _main._towers:
+	for tower: Tower in _main.world.towers_snapshot():
 		snapshot.append({"tower": tower, "hp": tower.hp, "nav_cells": tower.nav_cells.duplicate()})
-	for king: Tower in [_main._king_player, _main._king_enemy]:
+	for king: Tower in [_main.world.king(0), _main.world.king(1)]:
 		snapshot.append({"tower": king, "hp": king.hp, "nav_cells": king.nav_cells.duplicate()})
 	return snapshot
 
@@ -517,7 +517,7 @@ func _restore_towers(snapshot: Array) -> void:
 		tower.hp = entry["hp"]
 		if tower.nav_cells.is_empty() and not entry["nav_cells"].is_empty():
 			tower.nav_cells = entry["nav_cells"].duplicate()
-			_main.nav.set_cells_blocked(tower.nav_cells, true)
+			_main.world.nav.set_cells_blocked(tower.nav_cells, true)
 
 func _check_lane_stress() -> void:
 	var towers_snapshot := _snapshot_towers()
@@ -686,7 +686,7 @@ func _check_contact_avoidance_boundaries() -> void:
 func _check_garen_defender() -> void:
 	for team in [0, 1]:
 		var direction := Vector2.UP if team == 0 else Vector2.DOWN
-		var tower: Tower = _main._towers[2 if team == 0 else 0]
+		var tower: Tower = _main.world.towers_snapshot()[2 if team == 0 else 0]
 		var garen: Unit = _main._spawn_unit(UnitSpawnRequest.new(team, "garen", tower.position - direction * 180.0, {"deploy_time_override": 0}))
 		var defender: Unit = _main._spawn_unit(UnitSpawnRequest.new(1 - team, "masteryi", garen.position + direction * 45.0, {"deploy_time_override": 0}))
 		garen.hp = 100000

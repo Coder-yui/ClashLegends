@@ -4,12 +4,14 @@ extends RefCounted
 ## 这里只转发稳定的战斗服务，不保存模拟状态，也不承担依赖注入框架职责。
 
 var _controller: Node2D
+var _world: RefCounted
 
 func interrupt_team_attack_boost(unit: Unit) -> void:
 	_controller._team_attack_boost_system.interrupt(unit)
 
-func _init(controller: Node2D) -> void:
+func _init(controller: Node2D, world: RefCounted) -> void:
 	_controller = controller
+	_world = world
 
 func present_summon_portal(position: Vector2, team: int) -> void:
 	_controller._skill_presentation.present_fixed_area(position, 28.0, 28.0, 3.0, team, &"voidling_portal")
@@ -21,12 +23,14 @@ func begin_channel_zone(unit: Unit, center: Vector2, skill: Dictionary) -> void:
 	_controller._active_skill_effect_system.begin_channel_zone(unit, center, skill)
 
 func grant_team_elixir(team: int, amount: float, source: Unit = null) -> void:
-	if amount <= 0.0 or _controller.mode == "client": return
+	if amount <= 0.0 or _controller.runtime.mode == "client": return
 	# 工作台没有对局金币账户，仍预览正常击杀的完整赏金表现。
 	var gained := amount
 	if not _controller._workbench.enabled:
-		var receiver: ElixirManager = _controller._elixir_for_team(team)
-		if not is_instance_valid(receiver): return
+		var receiver: ElixirManager = _controller.runtime.account(team)
+		if not is_instance_valid(receiver):
+			_controller._fail_contract("结算契约失败：奖励账户缺失 team=%s" % team)
+			return
 		var before := receiver.elixir
 		receiver.elixir += amount
 		gained = receiver.elixir - before
@@ -44,10 +48,10 @@ func queue_expiry_explosion(unit: Unit, skill: Dictionary) -> void:
 	_controller.queue_expiry_explosion(unit, skill)
 
 func find_unit_landing(unit: Unit, desired: Vector2, allow_terrain: bool) -> Vector2:
-	return UnitLandingQuery.find_position(unit, desired, allow_terrain)
+	return _world.find_unit_landing(unit, desired, allow_terrain)
 
 func record_growth_hit(unit: Unit, target: Node2D) -> void:
-	_controller.record_growth_hit(unit, target)
+	_controller.runtime.record_growth_hit(unit, target)
 
 func is_net_client() -> bool:
 	return _controller.is_net_client()
@@ -59,42 +63,42 @@ func simulation_interpolation_alpha() -> float:
 	return _controller.get_sim_interpolation_alpha()
 
 func navigation(crosses_river: bool = false) -> NavGrid:
-	return _controller.navigation_for_river() if crosses_river else _controller.nav
+	return _world.navigation_for_river() if crosses_river else _world.nav
 
 func field_width() -> float:
 	return float(ArenaRules.FIELD_W)
 
 func ensure_unit_form_resize_safe(unit: Unit) -> void:
-	_controller.ensure_unit_form_resize_safe(unit)
+	_world.ensure_unit_form_resize_safe(unit)
 
 func spawn_summoned(team: int, card_id: String, position: Vector2, deploy_time_override: float = -1.0, visual_transition: String = "", death_replacement_charges_override: int = -1, summon_visual_origin: Vector2 = Vector2.INF) -> Unit:
 	return _controller.spawn_summoned(team, card_id, position, deploy_time_override, visual_transition, death_replacement_charges_override, summon_visual_origin)
 
 func is_ground_position_walkable(position: Vector2, mover_radius: float, excluded: Node = null) -> bool:
-	return _controller.is_ground_position_walkable(position, mover_radius, excluded)
+	return _world.is_ground_position_walkable(position, mover_radius, excluded)
 
 func is_ground_segment_walkable(from: Vector2, to: Vector2, mover_radius: float, excluded: Node = null) -> bool:
-	return _controller.is_ground_segment_walkable(from, to, mover_radius, excluded)
+	return _world.is_ground_segment_walkable(from, to, mover_radius, excluded)
 
 func find_ground_path(from: Vector2, goal: Vector2, target: Node2D, mover_radius: float, crosses_river: bool = false) -> PackedVector2Array:
-	return _controller.find_ground_path(from, goal, target, mover_radius, crosses_river)
+	return _world.find_ground_path(from, goal, target, mover_radius, crosses_river)
 
 func launch_attack(attacker: Node2D, target: Node2D, amount: float, projectile_speed: float, splash_radius: float, knockback: float, projectile_color: Color, effects: Dictionary = {}) -> bool:
 	return _controller.launch_attack(attacker, target, amount, projectile_speed, splash_radius, knockback, projectile_color, effects)
 
 ## 所有持续伤害共用的权威脉冲入口：目标筛选/计时由调用方负责，护盾、死亡和命中回调由战场统一结算。
 ## counts_as_attack 仅供龙王吐息这类持续普攻使用；主动技能伤害传 false，避免给普攻资源或命中回血。
-func apply_damage_pulse(source: Node2D, target: Node2D, amount: float, splash_radius: float = 0.0, origin: Vector2 = Vector2(INF, INF), counts_as_attack: bool = false, source_form_index: int = -1, effects: Dictionary = {}) -> bool:
+func apply_damage_pulse(source: Node2D, target: Node2D, amount: float, splash_radius: float = 0.0, origin: Vector2 = Vector2(INF, INF), counts_as_attack: bool = false, source_form_index: int = -1, effects: Dictionary = {}) -> Dictionary:
 	return _controller.apply_damage_pulse(source, target, amount, splash_radius, origin, counts_as_attack, source_form_index, effects)
 
-func resolve_attack_hit(team: int, origin: Vector2, primary: Node2D, amount: float, radius: float, knockback: float, from: Node2D, source_position: Vector2, source_form_index: int, effects: Dictionary = {}, counts_as_attack: bool = true) -> bool:
+func resolve_attack_hit(team: int, origin: Vector2, primary: Node2D, amount: float, radius: float, knockback: float, from: Node2D, source_position: Vector2, source_form_index: int, effects: Dictionary = {}, counts_as_attack: bool = true) -> Dictionary:
 	return _controller.combat_service().resolve_attack_hit(team, origin, primary, amount, radius, knockback, from, source_position, source_form_index, effects, counts_as_attack)
 
 func show_projectile_impact(position: Vector2, radius: float, color: Color, visual: StringName) -> void:
 	_controller.show_projectile_impact(position, radius, color, visual)
 
-func unblock_nav_cells(cells: Array) -> void:
-	_controller.unblock_nav_cells(cells)
+func release_structure_footprint(structure: Node2D) -> void:
+	_world.release_structure_footprint(structure)
 
 func notify_unit_hit(net_id: int) -> void:
 	_controller.on_unit_hit(net_id)
@@ -113,7 +117,7 @@ func notify_tower_hit(tower: Tower) -> void:
 	_controller.on_tower_hit(tower)
 
 func grant_skill_recast(unit: Unit) -> void:
-	_controller.grant_skill_recast(unit)
+	_controller.runtime.grant_skill_recast(unit)
 
 func damage_batch() -> CombatResolver:
 	return _controller.combat_service()
@@ -128,10 +132,10 @@ func notify_action_cancelled(unit: Unit, payload: Dictionary) -> void:
 	_controller.notify_action_cancelled(unit, payload)
 
 func schedule_summon_sequence(team: int, card_id: String, pos: Vector2, count: int, interval: float, deploy_time: float) -> void:
-	_controller.schedule_summon_sequence(team, card_id, pos, count, interval, deploy_time)
+	_controller.runtime.schedule_summon_sequence(team, card_id, pos, count, interval, deploy_time)
 
-func schedule_summon_flight(source: Unit, card_id: String, pos: Vector2, duration: float, deploy_time: float) -> void:
-	_controller.schedule_summon_flight(source, card_id, pos, duration, deploy_time)
+func schedule_summon_flight(source: Unit, card_id: String, pos: Vector2, duration: float, deploy_time: float) -> bool:
+	return _controller.runtime.schedule_summon_flight(source, card_id, pos, duration, deploy_time)
 
 func invalidate_target_locks(unit: Node2D) -> void:
 	_controller.projectile_service().invalidate_target_locks(unit)
@@ -141,4 +145,4 @@ func has_presentation() -> bool:
 	return _controller.has_presentation()
 
 func local_player_team() -> int:
-	return _controller.local_team
+	return _controller.runtime.local_team

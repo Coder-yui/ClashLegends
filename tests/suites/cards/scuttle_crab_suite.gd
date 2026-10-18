@@ -11,7 +11,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_expect(crab.structure_mending and crab.get_visual_state_code() == 3, "建筑射程内进入跳舞状态")
 	_expect(crab.hp == 330 and building.hp == building_hp, "跳舞每秒回血30而不伤建筑")
 	_expect(crab._target == building and not crab._attacking, "忽略旁边敌军且不启动攻击时间线")
-	var payload: Array = main._snapshot_system._unit_snapshot_payload(crab.net_id, crab)
+	var payload: Array = preload("res://tests/fixtures/network_fixture.gd").snapshot_payload(main._snapshot_system, 12345, crab)
 	_expect(int(payload[NetworkSnapshotSystem.U_VISUAL_STATE]) == 3, "客户端通过既有行为快照播放舞蹈")
 	crab.hp = crab.max_hp
 	crab.sim_tick(0.05)

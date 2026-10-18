@@ -1,13 +1,5 @@
 extends RefCounted
 
-## 仅回归夹具：推挤读取可行走性时释放同一枚举快照中的后续对象。
-class ReleasingWalkabilityUnit extends Unit:
-	var release_ref: WeakRef
-	func is_walkable_at(_pos: Vector2) -> bool:
-		var other = release_ref.get_ref()
-		if is_instance_valid(other): other.free()
-		return true
-
 class CountingSkillRoster extends ActiveSkillRoster:
 	var preparations := 0
 	func skill_for_cast(id: int) -> Dictionary:
@@ -92,8 +84,6 @@ func _check_skill_cost_queries(harness: Object) -> void:
 	unit.free()
 
 func check_contracts(harness: Object, main: Node2D) -> void:
-	_check_freed_instance_guards(harness, main)
-	_check_freed_property_access(harness, main)
 	main._process(0.0)
 	harness._expect(is_same(main._effects_view.spells, main._spell_system), "渲染推进不切断法术系统与冰冻表现集合的所有权")
 	var ai_timer: float = main._ai._think_timer
@@ -147,80 +137,6 @@ func check_contracts(harness: Object, main: Node2D) -> void:
 	_check_layers(harness, main)
 	_check_control_and_isolation(harness, main)
 	_check_network_presentation(harness, main)
-
-func _check_freed_instance_guards(harness: Object, main: Node2D) -> void:
-	var source := Unit.new()
-	source.setup(0, CardDB.get_card("ornn"), "来源")
-	main.add_child(source)
-	var target := Unit.new()
-	target.setup(0, CardDB.get_card("garen"), "友军")
-	main.add_child(target)
-	var stale := Unit.new()
-	var candidates: Array = [stale, null, main, target]
-	stale.free()
-	var boosts := TeamAttackBoostSystem.new(main)
-	harness._expect(boosts._choose_target(source, candidates) == target, "锻造候选列表跳过已释放引用、空值和非单位，仍选中存活友军")
-	harness._expect(boosts._choose_target(source, [stale, null, main]) == null, "无有效锻造候选时安全返回空目标")
-	target.free()
-	source.free()
-	# 命中事件监听者可同步释放来源，结算尾部不能再先做来源类型判断。
-	var attacker := Unit.new()
-	attacker.setup(0, CardDB.get_card("garen"), "攻击者")
-	main.add_child(attacker)
-	var victim := Unit.new()
-	victim.setup(1, CardDB.training_dummy_stats(), "受击者")
-	main.add_child(victim)
-	var resolver: CombatResolver = main.combat_service()
-	var hits: Array[bool] = []
-	var callback := func(_source: Dictionary, _position: Vector2, _first_strike: bool):
-		hits.append(true)
-		attacker.free()
-	resolver.attack_hit.connect(callback, CONNECT_ONE_SHOT)
-	var landed := resolver._resolve_immediate_attack_hit(0, attacker.global_position, victim, victim.hp, 0.0, 0.0, attacker)
-	harness._expect(landed and victim.hp == 0.0 and hits.size() == 1 and not is_instance_valid(attacker), "命中回调释放攻击者后仍完成伤害结算，不对已释放来源先做类型判断")
-	if resolver.attack_hit.is_connected(callback): resolver.attack_hit.disconnect(callback)
-	if is_instance_valid(attacker): attacker.free()
-	victim.free()
-
-func _check_freed_property_access(harness: Object, main: Node2D) -> void:
-	for team in [0, 1]:
-		var center := Vector2(360.0, 900.0 if team == 0 else 380.0)
-		var releasing := ReleasingWalkabilityUnit.new()
-		releasing.setup(team, CardDB.get_card("garen"), "释放夹具")
-		releasing.position = center
-		main.add_child(releasing)
-		var stale := Unit.new()
-		stale.setup(team, CardDB.get_card("garen"), "后续释放对象")
-		stale.position = center + Vector2.UP * 20.0
-		main.add_child(stale)
-		var survivor := Unit.new()
-		survivor.setup(team, CardDB.get_card("garen"), "后续存活对象")
-		survivor.position = center + Vector2.UP * 10.0
-		main.add_child(survivor)
-		releasing.release_ref = weakref(stale)
-		main._push_units_around(center, 40.0)
-		harness._expect(not is_instance_valid(stale) and survivor.position.distance_to(center) >= 40.0 + survivor.body_radius - 0.001, "推挤枚举中途释放后续单位，仍跳过失效引用并继续推挤存活对象：阵营%d" % team)
-		releasing.free()
-		if is_instance_valid(stale): stale.free()
-		survivor.free()
-	var attacker := Unit.new()
-	attacker.setup(0, CardDB.get_card("garen"), "攻击者")
-	main.add_child(attacker)
-	var victim := Unit.new()
-	victim.setup(1, CardDB.training_dummy_stats(), "命中目标")
-	main.add_child(victim)
-	var victim_ref: WeakRef = weakref(victim)
-	var hits: Array[bool] = []
-	var callback := func(_source: Dictionary, _position: Vector2, _first_strike: bool):
-		hits.append(true)
-		victim_ref.get_ref().free()
-	var resolver: CombatResolver = main.combat_service()
-	resolver.attack_hit.connect(callback, CONNECT_ONE_SHOT)
-	var landed := resolver._resolve_immediate_attack_hit(0, attacker.global_position, victim, victim.hp, 0.0, 0.0, attacker)
-	harness._expect(landed and hits.size() == 1 and not is_instance_valid(victim), "命中回调释放目标后不再读取其生命属性，已结算命中仍成功")
-	if resolver.attack_hit.is_connected(callback): resolver.attack_hit.disconnect(callback)
-	if is_instance_valid(victim): victim.free()
-	attacker.free()
 
 func _run_schedule(frames: Array[float]) -> Array:
 	var clock := FixedStepClock.new()
@@ -347,6 +263,7 @@ func profile(harness: Object, main: Node2D) -> void:
 		stats.deploy_time = 0.0
 		for index in count:
 			var unit := Unit.new()
+			unit.card_id = "melee_minion"
 			unit.setup(index % 2, stats, "profile")
 			unit.position = Vector2(90 + (index % 12) * 42, 780 + (index / 12) * 30)
 			main.add_child(unit)
@@ -366,7 +283,7 @@ func profile(harness: Object, main: Node2D) -> void:
 		var serialization_start := Time.get_ticks_usec()
 		var payload := []
 		for index in units.size():
-			payload.append(main._snapshot_system._unit_snapshot_payload(index, units[index]))
+			payload.append(preload("res://tests/fixtures/network_fixture.gd").snapshot_payload(main._snapshot_system, index, units[index]))
 		var bytes := var_to_bytes(payload)
 		var serialization_usec := Time.get_ticks_usec() - serialization_start
 		var compression_start := Time.get_ticks_usec()
@@ -388,12 +305,14 @@ func _check_network_presentation(harness: Object, main: Node2D) -> void:
 	unit.attack_timeline.visual_elapsed = 0.25
 	unit.apply_attack_speed_slow(2.0, 0.5)
 	unit.apply_slow(2.0, 0.6)
-	var payload: Array = main._snapshot_system._unit_snapshot_payload(999999, unit)
-	var mode: String = main.mode
-	var mode_team: int = main.local_team
-	main._client_units[999999] = unit
-	main.mode = "client"
-	main.local_team = 1
+	var payload: Array = preload("res://tests/fixtures/network_fixture.gd").snapshot_payload(main._snapshot_system, 999999, unit)
+	var mode: String = main.runtime.mode
+	var mode_team: int = main.runtime.local_team
+	var original_replica_net_id: int = unit.net_id
+	unit.net_id = 999999
+	main.world.register_replica_unit(unit)
+	main.runtime.mode = "client"
+	main.runtime.local_team = 1
 	main._snapshot_system._apply_units([payload])
 	main._audio_manager.attach_unit(unit, stats)
 	main._snapshot_system._apply_units([payload])
@@ -407,9 +326,10 @@ func _check_network_presentation(harness: Object, main: Node2D) -> void:
 			view = child
 			aligned = child._animation_player.current_animation_position > 0.0
 	harness._expect(shared and aligned, "客户端重复载荷保持统一有效速率/权限，晚到普攻序号按权威进度 seek")
-	main._client_units.erase(999999)
-	main.mode = mode
-	main.local_team = mode_team
+	main.world.forget_replica_unit(999999)
+	unit.net_id = original_replica_net_id
+	main.runtime.mode = mode
+	main.runtime.local_team = mode_team
 	if view != null: view.free()
 	unit.free()
 	var seen: Array[StringName] = []

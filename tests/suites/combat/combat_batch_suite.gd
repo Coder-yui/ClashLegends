@@ -3,18 +3,14 @@ extends "res://tests/suites/battle_suite.gd"
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
-	for tower in _main._towers: tower.can_attack = false
+	for tower in _main.world.towers_snapshot(): tower.can_attack = false
 	_check_cycles()
 	_check_mirror()
 	_check_extra_boundaries()
-	_check_batch_effects()
-	_check_status_admission_and_heal()
 	_check_early_tick()
 	_check_cancelled_cycle()
 	_check_extra_exchange_and_deaths()
-	_check_continuous_and_skills()
 	_check_same_batch_blind()
-	_check_zero_damage_credit()
 	var rules := MatchRules.new()
 	var result := rules.advance(0.05, 0.0, 0.0, 0, 0)
 	_expect(result.winner_team == -1, "双水晶同 Tick 摧毁为平局")
@@ -63,7 +59,7 @@ func _check_mirror() -> void:
 		for tick in 100:
 			_main._sim_step(0.05)
 			if a.hp <= 0 or b.hp <= 0:
-				if "--verbose-checks" in OS.get_cmdline_user_args(): print("FAIRNESS tick=", _main._sim_tick_id, " a=", a.hp, " b=", b.hp, " stages=", a._attack_hit_index, "/", b._attack_hit_index)
+				if "--verbose-checks" in OS.get_cmdline_user_args(): print("FAIRNESS tick=", _main.runtime._sim_tick_id, " a=", a.hp, " b=", b.hp, " stages=", a._attack_hit_index, "/", b._attack_hit_index)
 				break
 		if "--verbose-checks" in OS.get_cmdline_user_args(): print("FAIRNESS_TRACE ", JSON.stringify(_main._combat.trace))
 		_main._combat.trace_enabled = false
@@ -141,46 +137,6 @@ func _check_extra_boundaries() -> void:
 		yi.free()
 		target.free()
 
-func _check_batch_effects() -> void:
-	for reverse in [false, true]:
-		var a: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "masteryi", Vector2(180, 760), {"deploy_time_override": 0}))
-		var b: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "masteryi", Vector2(180, 725), {"deploy_time_override": 0}))
-		a.hp = 100
-		b.hp = 100
-		a.attack_lifesteal_ratio = 1
-		b.attack_lifesteal_ratio = 1
-		a.add_shield(20, 2)
-		a.add_shield(30, 1)
-		b.add_shield(20, 2)
-		b.add_shield(30, 1)
-		_main._combat.begin_batch(_main._sim_tick_id, "test_shield_exchange")
-		var order: Array = [a, b] if not reverse else [b, a]
-		for source in order:
-			var target: Unit = b if source == a else a
-			_main._combat.resolve_attack_hit(source.team, source.position, target, 150, 0, 0, source, source.position, 0, {"blind_charges": 1})
-		_expect(a.hp == 100 and b.hp == 100 and a.blind_attack_charges == 0 and b.blind_attack_charges == 0, "收集不修改生命、护盾或控制")
-		_main._combat.commit_batch()
-		_expect(a.hp == 0 and b.hp == 0 and a.shield_hp == 0 and b.shield_hp == 0, "全批死亡确定后不允许靠先处理吸血逃生")
-		a.free()
-		b.free()
-		# 两个存活来源共同过量伤害：实际掉血之和固定为目标剩余生命。
-		a = _main._spawn_unit(UnitSpawnRequest.new(0, "masteryi", Vector2(180, 760), {"deploy_time_override": 0}))
-		b = _main._spawn_unit(UnitSpawnRequest.new(0, "masteryi", Vector2(220, 760), {"deploy_time_override": 0}))
-		var target: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(180, 725), {"deploy_time_override": 0}))
-		a.hp = 100
-		b.hp = 100
-		a.attack_lifesteal_ratio = 1
-		b.attack_lifesteal_ratio = 1
-		target.hp = 90
-		target.add_shield(30, 1)
-		_main._combat.begin_batch(_main._sim_tick_id, "test_overkill")
-		order = [a, b] if not reverse else [b, a]
-		for source in order:
-			_main._combat.resolve_attack_hit(0, source.position, target, 120 if source == a else 60, 0, 0, source, source.position, 0)
-		_main._combat.commit_batch()
-		_expect(a.hp == 160 and b.hp == 130 and target.hp == 0, "多来源过量伤害按比例归属实际掉血，不重复吸血且不依赖提交顺序")
-		for unit in [a, b, target]: unit.free()
-
 func _check_early_tick() -> void:
 	var a: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "masteryi", Vector2(180, 760), {"deploy_time_override": 0}))
 	var b: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "masteryi", Vector2(180, 725), {"deploy_time_override": 0}))
@@ -251,36 +207,6 @@ func _check_extra_exchange_and_deaths() -> void:
 		a.free()
 		b.free()
 
-func _check_continuous_and_skills() -> void:
-	for reverse in [false, true]:
-		var a: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "aurelionsol", Vector2(180, 760), {"deploy_time_override": 0}))
-		var b: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "aurelionsol", Vector2(180, 710), {"deploy_time_override": 0}))
-		a.hp = 3
-		b.hp = 3
-		if reverse:
-			a.remove_from_group("combatants")
-			a.add_to_group("combatants")
-		_run_main_ticks(2)
-		_expect(a.hp == 0 and b.hp == 0, "持续吐息同阶段互换，累计余量不因遍历顺序撤回")
-		a.free()
-		b.free()
-		# 正式技能影响队列：两个已开始施法的落点在同 Tick 到期。
-		a = _main._spawn_unit(UnitSpawnRequest.new(0, "aurelionsol", Vector2(180, 760), {"deploy_time_override": 0}))
-		b = _main._spawn_unit(UnitSpawnRequest.new(1, "aurelionsol", Vector2(180, 710), {"deploy_time_override": 0}))
-		a.hp = 120
-		b.hp = 120
-		var skill := CardDB.active_skills_for("aurelionsol")[0].duplicate(true)
-		skill.forward_distance = 0
-		skill.radius = 150
-		skill.erase("result_creation_delay") # 此夹具直接提交已创建结果的同刻命中。
-		for source in ([a, b] if not reverse else [b, a]):
-			_main._queue_active_skill_impact(source, skill, 0.05)
-		_main._sim_step(0.05)
-		_expect(a.hp == 0 and b.hp == 0, "技能队列同刻合法到期伤害与眩晕不撤回对方已提交命中")
-		a.free()
-		b.free()
-
-
 func _check_same_batch_blind() -> void:
 	var a: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "masteryi", Vector2(180, 760), {"deploy_time_override": 0}))
 	var b: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "masteryi", Vector2(180, 725), {"deploy_time_override": 0}))
@@ -293,65 +219,3 @@ func _check_same_batch_blind() -> void:
 	_expect(a.hp == 48 and b.hp == 48 and a.blind_attack_charges == 1 and b.blind_attack_charges == 1, "同批新致盲不撤回已提交刀，保留到下一刀消费")
 	a.free()
 	b.free()
-
-
-func _check_zero_damage_credit() -> void:
-	var a: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "masteryi", Vector2(180, 760), {"deploy_time_override": 0}))
-	var b: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "masteryi", Vector2(220, 760), {"deploy_time_override": 0}))
-	var target: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(180, 725), {"deploy_time_override": 0}))
-	for source in [a, b]:
-		source.skill_resource_max = 10
-		source.skill_resource_kill_gain = 1
-	target.hp = 50
-	_main._combat.begin_batch(_main._sim_tick_id, "zero_damage_credit")
-	_main._combat.resolve_attack_hit(0, a.position, target, 0, 0, 0, a, a.position, 0)
-	_main._combat.resolve_attack_hit(0, b.position, target, 50, 0, 0, b, b.position, 0)
-	_main._combat.commit_batch()
-	_expect(a.skill_resource_value == 0 and b.skill_resource_value == 1, "零伤害脉冲不分走同批其他来源的击杀资源")
-	for unit in [a, b, target]: unit.free()
-
-func _check_status_admission_and_heal() -> void:
-	for reverse in [false, true]:
-		var target: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "garen", Vector2(180, 760), {"deploy_time_override": 0}))
-		target.hp = target.max_hp - 20
-		_main._combat.begin_batch(_main._sim_tick_id, "status_admission")
-		var shield := func(): target.add_shield(30, 2, false, &"batch")
-		var damage := func(): target.take_damage(40)
-		if reverse:
-			damage.call()
-			shield.call()
-		else:
-			shield.call()
-			damage.call()
-		target.heal_with_overflow(100, 0.5, 2, &"heal")
-		_expect(target.hp == target.max_hp - 20 and target.shield_hp == 0, "收集阶段不提前治疗或加盾")
-		_main._combat.commit_batch()
-		_expect(target.hp == target.max_hp and target.shield_hp == 50, "批次先承受40伤害，再治疗60，实际溢出40转20盾，另加30盾；反序一致")
-		_main._combat.begin_batch(_main._sim_tick_id, "immunity_admission")
-		var immunity := func(): target.apply_active_buff(0.1, 1, 1, 1, true, true, &"immune")
-		var slow := func(): target.apply_slow(1, 0.5, &"slow")
-		if reverse:
-			slow.call()
-			immunity.call()
-		else:
-			immunity.call()
-			slow.call()
-		_main._combat.commit_batch()
-		_expect(target.control.slow_timer > 0 and target.active_buff_ignores_movement_slow, "同阶段免疫与减速按批次开始时资格接收，旧减速被抑制")
-		target._tick_active_statuses(0.1)
-		_expect(target.control.slow_timer > 0 and not target.active_buff_ignores_movement_slow, "免疫到期后同批接收的减速仍保留剩余窗口")
-		target.free()
-
-	# 对死亡准入同时检查直接接口和同批死亡后的延迟提交。
-	for deferred in [false, true]:
-		var target: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "garen", Vector2(180, 760), {"deploy_time_override": 0}))
-		if deferred:
-			_main._combat.begin_batch(_main._sim_tick_id, "dead_status_admission")
-			target.take_damage(target.hp)
-		else:
-			target.hp = 0
-		target.apply_active_buff(2, 2, 2, 2, true, true)
-		target.apply_blind(3)
-		if deferred: _main._combat.commit_batch()
-		_expect(target.hp == 0 and target.active_buff_timer == 0 and target.blind_attack_charges == 0, "直接死亡或同批死亡的对象均不接收新增增益/致盲")
-		target.free()

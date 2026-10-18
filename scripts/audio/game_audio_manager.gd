@@ -13,6 +13,14 @@ const WORLD_MAX_DISTANCE := 1100.0
 const WORLD_ATTENUATION := 0.55
 const WORLD_PANNING_STRENGTH := 0.35
 
+## 同一层表负责位置跟随、清理与循环策略；空cue保留原始单段音轨。
+const UNIT_SUSTAIN_LAYERS := {
+	&"mend": &"mend:sustain", &"empowered": &"empowered_buff:sustain",
+	&"idle": &"idle:sustain", &"explosive_shield": &"explosive_shield:sustain",
+	&"berserk": &"berserk:sustain", &"blood_rage": &"blood_rage:sustain", &"terrain": &"terrain:sustain",
+	&"action": &"", &"buff": &"", &"attack": &"", &"revival": &"", &"sanctuary": &"",
+}
+
 ## 卡牌/系统建筑共用查询依赖；测试可注入完整形态与阵营定义。
 var definition_lookup: Callable = PresentationConfig.audio_stats
 
@@ -32,6 +40,7 @@ var _unit_entries: Dictionary = {}
 var _stasis_sources: Dictionary = {}
 var _spell_flight_players: Dictionary = {}
 var _stream_pool_cache: Dictionary = {}
+var preparation_errors := PackedStringArray()
 var _preview_hit_queue: Array[Dictionary] = []
 var _preview_serials: Dictionary = {}
 var _voice_serial := 0
@@ -416,7 +425,7 @@ func _tick_attached_units() -> void:
 		if full and not bool(entry.resource_full):
 			play_event(unit, &"resource_full", unit.get_visual_screen_position())
 		entry.resource_full = full
-		for layer in [&"action", &"buff", &"attack", &"revival", &"idle", &"sanctuary", &"terrain", &"explosive_shield", &"berserk", &"blood_rage"]:
+		for layer in UNIT_SUSTAIN_LAYERS:
 			var sustained: AudioStreamPlayer2D = _sustain_players.get(_sustain_key(instance_id, layer))
 			if sustained != null:
 				sustained.global_position = unit.target_protection.center if layer == &"sanctuary" else unit.get_visual_screen_position()
@@ -427,7 +436,7 @@ func _tick_attached_units() -> void:
 	for instance_id in stale_ids:
 		_detach_unit(instance_id)
 
-## 每单位 action/buff/attack 独立长音层；只有持续普攻片段结束后续播。
+## 每单位分层持续音；单段动作/复生自然结束，状态循环层退出时停止。
 func _start_sustain(unit: Node2D, entry: Dictionary, action: StringName, layer: StringName = &"action") -> void:
 	if _battle_ended or _battle_paused:
 		return
@@ -450,7 +459,7 @@ func _start_sustain(unit: Node2D, entry: Dictionary, action: StringName, layer: 
 	var player := _new_world_player()
 	player.bus = StringName(event.get("bus", "Combat"))
 	player.volume_db = float(event.get("volume_db", 0.0))
-	player.stream = _randomized_stream(PackedStringArray(event.get("pool", [])), layer in [&"mend", &"explosive_shield", &"berserk", &"blood_rage", &"terrain"])
+	player.stream = _randomized_stream(PackedStringArray(event.get("pool", [])), not String(UNIT_SUSTAIN_LAYERS.get(layer, &"")).is_empty())
 	add_child(player)
 	player.global_position = unit.target_protection.center if layer == &"sanctuary" and unit is Unit else _status_audio_position(unit)
 	var key := _sustain_key(unit.get_instance_id(), layer)
@@ -482,7 +491,7 @@ func _sustain_key(instance_id: int, layer: StringName = &"action") -> String:
 	return "%d:%s" % [instance_id, layer]
 
 func _stop_sustain(instance_id: int, layer: StringName = &"", fade: bool = false) -> void:
-	for candidate in [&"mend", &"empowered", &"action", &"buff", &"attack", &"revival", &"idle", &"sanctuary", &"terrain", &"explosive_shield", &"berserk", &"blood_rage"] if layer == &"" else [layer]:
+	for candidate in UNIT_SUSTAIN_LAYERS.keys() if layer == &"" else [layer]:
 		_stop_sustain_key(_sustain_key(instance_id, candidate), fade)
 
 func _stop_sustain_key(key: String, fade: bool = false) -> void:
@@ -815,15 +824,16 @@ func _play_pool(card_id: String, cue: StringName, configured: Variant, position:
 	return true
 
 ## 加载阶段只创建音轨资源，不启动播放器、事件或计数。
-func prepare_audio(value: Variant, looping: bool = false) -> void:
+func prepare_audio(value: Variant, looping: bool = false) -> bool:
 	if value is Dictionary:
 		if value.has("pool"):
 			var paths := PackedStringArray(value.pool)
 			_randomized_stream(paths)
 			if looping: _randomized_stream(paths, true)
-		for key in value: prepare_audio(value[key], String(key) in ["mend:sustain", "empowered_buff:sustain", "idle:sustain", "explosive_shield:sustain", "berserk:sustain", "blood_rage:sustain", "terrain:sustain"])
+		for key in value: prepare_audio(value[key], StringName(key) in UNIT_SUSTAIN_LAYERS.values())
 	elif value is Array:
 		for child in value: prepare_audio(child)
+	return preparation_errors.is_empty()
 
 func _randomized_stream(paths: PackedStringArray, looping: bool = false) -> AudioStreamRandomizer:
 	var cache_key := ("loop:" if looping else "") + "\n".join(paths)
@@ -833,9 +843,12 @@ func _randomized_stream(paths: PackedStringArray, looping: bool = false) -> Audi
 	randomizer.playback_mode = AudioStreamRandomizer.PLAYBACK_RANDOM_NO_REPEATS
 	for path in paths:
 		if not ResourceLoader.exists(path):
-			push_warning("音频资源不可用：" + path)
-			continue
+			preparation_errors.append("音频资源不存在：" + path)
+			return null
 		var stream := load(path) as AudioStream
+		if stream == null:
+			preparation_errors.append("音频资源必须是AudioStream：" + path)
+			return null
 		if looping and stream is AudioStreamWAV:
 			stream = stream.duplicate() as AudioStreamWAV
 			var wav := stream as AudioStreamWAV
@@ -889,8 +902,8 @@ func play_card_event(card_id: String, cue: String, position: Vector2, form: int 
 
 func _on_sustain_finished(key: String, player: AudioStreamPlayer2D) -> void:
 	if _sustain_players.get(key) == player:
-		# 持续普攻是无固定总时长的状态；重放完整循环片段，仍由状态退出清理。
-		if key.ends_with(":attack") or key.ends_with(":idle"):
+		# 状态循环层与持续普攻在非WAV片段结束后续播；尾音不重启。
+		if key.count(":") == 1 and (key.ends_with(":attack") or not String(UNIT_SUSTAIN_LAYERS.get(StringName(key.get_slice(":", 1)), &"")).is_empty()):
 			player.play()
 			return
 		_stop_sustain_key(key)

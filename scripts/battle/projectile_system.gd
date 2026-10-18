@@ -140,7 +140,7 @@ func launch(attacker: Node2D, target: Node2D, amount: float, projectile_speed: f
 	if projectile_speed <= 0.0:
 		if first_strike and attacker is Unit:
 			_context.notify_unit_audio_event(attacker as Unit, &"first_strike:missile_launch", attacker.global_position)
-		return _context.resolve_attack_hit(attacker.team, attacker.global_position, target, amount, splash_radius, knockback, attacker, attacker.global_position, source_form_index, effects)
+		return _context.resolve_attack_hit(attacker.team, attacker.global_position, target, amount, splash_radius, knockback, attacker, attacker.global_position, source_form_index, effects).accepted
 	if attacker is Unit:
 		projectile_speed *= attacker.buffs.strongest(&"ranged_attack", &"projectile_speed_multiplier", 1.0)
 	var direction := attacker.global_position.direction_to(target.global_position)
@@ -443,20 +443,27 @@ func _tick_skill_delivery(projectile: Dictionary, dt: float, colliders: Array) -
 			if CombatInteraction.blocks_effect(target, CombatInteraction.effect_context(source, projectile.team, projectile.source_pos)):
 				if not piercing: return true
 				continue
-			var landed := _context.resolve_attack_hit(projectile.team, origin, target, projectile.damage, 0.0, 0.0, source, projectile.source_pos, projectile.source_form_index, projectile.get("effects", {}), bool(projectile.get("basic_piercing", false)))
-			if landed:
+			var receipt := _context.resolve_attack_hit(projectile.team, origin, target, projectile.damage, 0.0, 0.0, source, projectile.source_pos, projectile.source_form_index, projectile.get("effects", {}), bool(projectile.get("basic_piercing", false)))
+			var target_ref: WeakRef = weakref(target)
+			var interaction := CombatInteraction.effect_context(source, projectile.team, projectile.source_pos)
+			var hit_position: Vector2 = projectile.pos
+			var apply_hit := func():
+				if not receipt.landed: return
+				var hit_target = target_ref.get_ref()
 				if bool(projectile.skill.get("passive_wave", false)) and not bool(projectile.cast.sound_played):
 					projectile.cast.sound_played = true
-					wave_audio.emit(projectile.presentation_source, "attack_wave", projectile.pos, "hit")
-				if is_instance_valid(target) and target is Unit and target.hp > 0.0:
+					wave_audio.emit(projectile.presentation_source, "attack_wave", hit_position, "hit")
+				if is_instance_valid(hit_target) and hit_target is Unit and hit_target.hp > 0.0:
 					var skill: Dictionary = projectile.skill
 					if float(skill.get("slow_duration", 0.0)) > 0.0:
-						target.apply_slow(float(skill.slow_duration), float(skill.get("slow_multiplier", 1.0)), projectile.status_source, CombatInteraction.effect_context(source, projectile.team, projectile.source_pos))
+						hit_target.apply_slow(float(skill.slow_duration), float(skill.get("slow_multiplier", 1.0)), projectile.status_source, interaction)
 					if float(skill.get("stun_duration", 0.0)) > 0.0:
-						target.stun(float(skill.stun_duration), projectile.status_source, CombatInteraction.effect_context(source, projectile.team, projectile.source_pos))
+						hit_target.stun(float(skill.stun_duration), projectile.status_source, interaction)
 				if not bool(projectile.get("basic_piercing", false)) and not bool(projectile.skill.get("passive_wave", false)) and (piercing or not bool(projectile.cast.sound_played)):
 					projectile.cast.sound_played = true
-					skill_hit.emit(projectile.presentation_source, String(projectile.skill.get("visual_action", "")), projectile.pos)
+					skill_hit.emit(projectile.presentation_source, String(projectile.skill.get("visual_action", "")), hit_position)
+			if _context.damage_batch().collecting: _context.damage_batch().defer_effect(apply_hit)
+			else: apply_hit.call()
 		# 非穿透箭仍被已命中过的实体阻挡；穿透牌继续处理本 Tick 沿途目标。
 		if not piercing:
 			return true

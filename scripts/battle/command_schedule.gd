@@ -1,7 +1,7 @@
 class_name CommandSchedule
 extends RefCounted
 const BUFFER_TICKS := 10
-## 命令与施法排程的唯一状态所有者。入队资格/费用由 Main 校验，排程不读取 Main。
+## 命令与施法排程的唯一状态所有者。入队资格/费用由 MatchRuntime 校验，排程不读取 Main。
 var _card_commands: Array[Dictionary] = []
 var _skill_commands: Array[Dictionary] = []
 var _pre_deployments: Array[Dictionary] = []
@@ -29,10 +29,13 @@ func _take_due(queue: Array[Dictionary], tick: int) -> Array[Dictionary]:
 	queue.assign(waiting)
 	return ready
 
-func take_pre_deployments(dt: float, combatants: Array = []) -> Array[Dictionary]:
+func take_pre_deployments(dt: float, combatants: Array = [], tick: int = -1) -> Array[Dictionary]:
 	var ready: Array[Dictionary] = []
 	var waiting: Array[Dictionary] = []
 	for entry in _pre_deployments:
+		if tick >= 0 and int(entry.get("created_tick", -1)) == tick:
+			waiting.append(entry)
+			continue
 		var before := float(entry.duration) - float(entry.time_left)
 		entry.time_left = maxf(float(entry.get("time_left", 0.0)) - dt, 0.0)
 		if not combatants.is_empty():
@@ -128,9 +131,9 @@ func has_pending_skill(ability_id: int) -> bool:
 		if int(command.ability_id) == ability_id: return true
 	return false
 
-func enqueue_deployment(team: int, card_id: String, pos: Vector2, time_left: float, active_slot: int = -1, id: int = -1, duration: float = -1.0, deployment_card_id: String = "", mirror_generation: int = -1) -> void:
+func enqueue_deployment(team: int, card_id: String, pos: Vector2, time_left: float, active_slot: int = -1, id: int = -1, duration: float = -1.0, deployment_card_id: String = "", mirror_generation: int = -1, created_tick: int = -1) -> void:
 	_pre_deployments.append({"team": team, "card_id": card_id, "pos": pos, "time_left": time_left,
-		"deployment_card_id": deployment_card_id, "mirror_generation": mirror_generation, "active_slot": active_slot, "id": id, "duration": time_left if duration < 0.0 else duration})
+		"created_tick": created_tick, "deployment_card_id": deployment_card_id, "mirror_generation": mirror_generation, "active_slot": active_slot, "id": id, "duration": time_left if duration < 0.0 else duration})
 
 func allocate_deployment_id() -> int:
 	var id := _next_pre_deploy_id

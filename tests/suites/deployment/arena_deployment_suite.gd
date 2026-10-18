@@ -37,56 +37,56 @@ func _check_official_arena_grid() -> void:
 	)
 	_expect(dimensions_ok, "竞技场使用 18x32 格、两格河道与三格桥")
 	var towers_ok: bool = (
-		_main._towers[0].position == Vector2(140.0, 1020.0)
-		and _main._towers[1].position == Vector2(580.0, 1020.0)
-		and _main._towers[2].position == Vector2(140.0, 260.0)
-		and _main._towers[3].position == Vector2(580.0, 260.0)
-		and _main._king_player.position == Vector2(360.0, 1160.0)
-		and _main._king_enemy.position == Vector2(360.0, 120.0)
+		_main.world.towers_snapshot()[0].position == Vector2(140.0, 1020.0)
+		and _main.world.towers_snapshot()[1].position == Vector2(580.0, 1020.0)
+		and _main.world.towers_snapshot()[2].position == Vector2(140.0, 260.0)
+		and _main.world.towers_snapshot()[3].position == Vector2(580.0, 260.0)
+		and _main.world.king(0).position == Vector2(360.0, 1160.0)
+		and _main.world.king(1).position == Vector2(360.0, 120.0)
 	)
 	_expect(towers_ok, "公主塔与国王塔落在参考项目的镜像格位")
 	var tower_sizes_ok: bool = (
-		_main._towers[0].footprint_tiles == Vector2i(3, 3)
-		and is_equal_approx(_main._towers[0].body_radius, 54.0)
-		and is_equal_approx(_main._towers[0].visual_radius, 60.0)
-		and is_equal_approx(_main._towers[0].attack_range, 240.0)
-		and is_equal_approx(_main._towers[0].max_hp, 2100.0)
-		and _main._king_player.footprint_tiles == Vector2i(4, 4)
-		and is_equal_approx(_main._king_player.body_radius, 72.0)
-		and is_equal_approx(_main._king_player.visual_radius, 80.0)
-		and is_equal_approx(_main._king_player.attack_range, 0.0)
-		and is_equal_approx(_main._king_player.max_hp, 3600.0)
-		and not _main._king_player.can_attack
+		_main.world.towers_snapshot()[0].footprint_tiles == Vector2i(3, 3)
+		and is_equal_approx(_main.world.towers_snapshot()[0].body_radius, 54.0)
+		and is_equal_approx(_main.world.towers_snapshot()[0].visual_radius, 60.0)
+		and is_equal_approx(_main.world.towers_snapshot()[0].attack_range, 240.0)
+		and is_equal_approx(_main.world.towers_snapshot()[0].max_hp, 2100.0)
+		and _main.world.king(0).footprint_tiles == Vector2i(4, 4)
+		and is_equal_approx(_main.world.king(0).body_radius, 72.0)
+		and is_equal_approx(_main.world.king(0).visual_radius, 80.0)
+		and is_equal_approx(_main.world.king(0).attack_range, 0.0)
+		and is_equal_approx(_main.world.king(0).max_hp, 3600.0)
+		and not _main.world.king(0).can_attack
 		and is_equal_approx(Tower.PRINCESS_HEALTH_BAR_WIDTH, 120.0)
 		and is_equal_approx(Tower.KING_HEALTH_BAR_WIDTH, 160.0)
 		and Tower.HEALTH_BAR_HEIGHT >= float(Tower.HEALTH_TEXT_SIZE)
-		and _main._towers[0]._health_text() == "2100"
+		and _main.world.towers_snapshot()[0]._health_text() == "2100"
 	)
 	_expect(tower_sizes_ok, "塔/水晶生命提升 50%，血条保持原宽度且只显示当前生命，水晶不具备攻击能力")
-	_expect(_main.is_card_deploy_position_valid(0, "xin", Vector2(20.0, 700.0)), "我方靠河左上角可部署")
-	_expect(_main.is_card_deploy_position_valid(0, "xin", Vector2(700.0, 700.0)), "我方靠河右上角可部署")
+	_expect(_main.runtime.is_card_deploy_position_valid(0, "xin", Vector2(20.0, 700.0)), "我方靠河左上角可部署")
+	_expect(_main.runtime.is_card_deploy_position_valid(0, "xin", Vector2(700.0, 700.0)), "我方靠河右上角可部署")
 	var same_front_row: bool = (
-		_main.is_card_deploy_position_valid(0, "xin", Vector2(300.0, 700.0))
-		and _main.is_card_deploy_position_valid(0, "garen", Vector2(300.0, 700.0))
-		and _main.is_card_deploy_position_valid(0, "ashe", Vector2(300.0, 700.0))
+		_main.runtime.is_card_deploy_position_valid(0, "xin", Vector2(300.0, 700.0))
+		and _main.runtime.is_card_deploy_position_valid(0, "garen", Vector2(300.0, 700.0))
+		and _main.runtime.is_card_deploy_position_valid(0, "ashe", Vector2(300.0, 700.0))
 	)
 	_expect(same_front_row, "不同体型兵种在同一部署格拥有相同的可部署资格")
-	_expect(_main.is_card_deploy_position_valid(1, "xin", Vector2(20.0, 580.0)), "敌方视角对应靠河角格同样可部署")
+	_expect(_main.runtime.is_card_deploy_position_valid(1, "xin", Vector2(20.0, 580.0)), "敌方视角对应靠河角格同样可部署")
 	var princess_footprint_locked: bool = (
-		not _main.is_card_deploy_position_valid(0, "garen", Vector2(100.0, 980.0))
-		and _main.is_card_deploy_position_valid(0, "garen", Vector2(60.0, 1020.0))
+		not _main.runtime.is_card_deploy_position_valid(0, "garen", Vector2(100.0, 980.0))
+		and _main.runtime.is_card_deploy_position_valid(0, "garen", Vector2(60.0, 1020.0))
 	)
 	_expect(princess_footprint_locked, "存活公主塔只封锁精确 3x3 格，塔外相邻格不受体型半径额外影响")
 	var nexus_footprint_locked: bool = (
-		not _main.is_card_deploy_position_valid(0, "garen", Vector2(300.0, 1100.0))
-		and _main.is_card_deploy_position_valid(0, "garen", Vector2(260.0, 1100.0))
+		not _main.runtime.is_card_deploy_position_valid(0, "garen", Vector2(300.0, 1100.0))
+		and _main.runtime.is_card_deploy_position_valid(0, "garen", Vector2(260.0, 1100.0))
 	)
 	_expect(nexus_footprint_locked, "存活水晶只封锁精确 4x4 格，水晶外相邻格仍按网格规则处理")
-	_expect(_main._pos_in_deploy_zone(Vector2(260.0, 1260.0), 0, false), "国王塔正后方中央格可部署")
-	_expect(_main._pos_in_deploy_zone(Vector2(20.0, 1260.0), 0, false) == false, "国王塔后方两侧不可部署")
+	_expect(_main.runtime._deployment_rules.pos_in_deploy_zone(Vector2(260.0, 1260.0), 0, false), "国王塔正后方中央格可部署")
+	_expect(_main.runtime._deployment_rules.pos_in_deploy_zone(Vector2(20.0, 1260.0), 0, false) == false, "国王塔后方两侧不可部署")
 	var full_back_row := true
 	for column in range(6, 12):
-		full_back_row = full_back_row and _main.is_card_deploy_position_valid(0, "xin", Vector2(column * 40.0 + 20.0, 1260.0))
+		full_back_row = full_back_row and _main.runtime.is_card_deploy_position_valid(0, "xin", Vector2(column * 40.0 + 20.0, 1260.0))
 	_expect(full_back_row, "国王塔后方中央 6 格组成完整可部署行")
 	var size: Vector2 = _main.get_viewport_rect().size
 	var canvas := preload("res://scripts/ui/battle_layout.gd").canvas(size)
@@ -97,7 +97,7 @@ func _check_card_deployment_preview() -> void:
 	_main._on_card_selected("xin")
 	_main._update_deployment_preview(Vector2(63.0, 742.0))
 	var expected_tile := Vector2i(1, 18)
-	var expected_center: Vector2 = _main._arena_tile_center(expected_tile)
+	var expected_center: Vector2 = _main.runtime._deployment_rules.arena_tile_center(expected_tile)
 	var valid_preview: bool = (
 		_main._deployment_preview_visible
 		and _main._deployment_preview_tile == expected_tile
@@ -127,8 +127,8 @@ func _position_range_center(positions: Array[Vector2]) -> Vector2:
 func _check_formation_centers() -> void:
 	for formation in ["ring", "polygon", "square", "line", "depth_line"]:
 		for count in range(1, 8):
-			var blue: Array[Vector2] = _main._deployment_formation_offsets(count, 36.0, 0, formation)
-			var red: Array[Vector2] = _main._deployment_formation_offsets(count, 36.0, 1, formation)
+			var blue: Array[Vector2] = _main.runtime._deployment_formation_offsets(count, 36.0, 0, formation)
+			var red: Array[Vector2] = _main.runtime._deployment_formation_offsets(count, 36.0, 1, formation)
 			var centered := blue.size() == count and red.size() == count
 			if centered:
 				centered = _position_range_center(blue).length() < 0.0001 and _position_range_center(red).length() < 0.0001
@@ -137,20 +137,20 @@ func _check_formation_centers() -> void:
 			for index in blue.size():
 				mirrored = mirrored and (blue[index] + red[index]).length() < 0.0001
 			_expect(mirrored, "%s 的 %d 人编队保留成员顺序与红蓝镜像" % [formation, count])
-	var triangle: Array[Vector2] = _main._deployment_formation_offsets(3, 24.0, 0, "polygon")
+	var triangle: Array[Vector2] = _main.runtime._deployment_formation_offsets(3, 24.0, 0, "polygon")
 	_expect(triangle.size() == 3 and absf(triangle[0].y + 18.0) < 0.0001 and absf(triangle[1].y - 18.0) < 0.0001 and absf(triangle[2].y - 18.0) < 0.0001,
 		"三角形前端与后排距点击点各18像素，范围中心取代原外接圆中心")
 	_expect(triangle.size() == 3 and absf(triangle[0].distance_to(triangle[1]) - sqrt(3.0) * 24.0) < 0.0001 and absf(triangle[1].distance_to(triangle[2]) - sqrt(3.0) * 24.0) < 0.0001,
 		"三角形居中只平移，仍保留原三角形边长")
 
 func _check_multi_unit_card_centers() -> void:
-	var original_team: int = _main.local_team
+	var original_team: int = _main.runtime.local_team
 	var checked_cards := 0
 	for team in [0, 1]:
-		_main.local_team = team
+		_main.runtime.local_team = team
 		var pointer := Vector2(343.0, 863.0) if team == 0 else Vector2(383.0, 423.0)
 		var center := Vector2(340.0, 860.0) if team == 0 else Vector2(380.0, 420.0)
-		var old_history: Dictionary = _main._card_history.get_last(team)
+		var old_history: Dictionary = _main.runtime._card_history.get_last(team)
 		for card_id in CardDB.all():
 			var stats := CardDB.get_card(card_id)
 			var plan := CardDB.deployment_plan(card_id)
@@ -174,8 +174,8 @@ func _check_multi_unit_card_centers() -> void:
 				_expect(midpoint_ok, "重装部队双方均以间隔中点部署，前后各50像素，不按不同碰撞半径加权")
 			for member in members: member.free()
 			checked_cards += 1
-		_main._card_history.replace_replica(team, old_history)
-	_main.local_team = original_team
+		_main.runtime._card_history.replace_replica(team, old_history)
+	_main.runtime.local_team = original_team
 	_main._on_card_selected("")
 	_expect(checked_cards > 0, "全卡遍历确实检查了双方多单位部署，避免空夹具通过")
 
@@ -191,24 +191,24 @@ func _check_multi_unit_deployment_edges() -> void:
 	_expect(not cards.is_empty() and constrained == ["shurima_guard"] and not bool(CardDB.get_card("sand_soldier").get("deploy_formation_requires_in_bounds", false)), "只有恕瑞玛卫队声明整排边界限制，召唤黄沙士兵不继承")
 	_expect(cards.has("voidfish_ranged_army"), "六只大军纳入全卡部署边缘检查")
 	var original_hp: Array[float] = []
-	for tower in _main._towers: original_hp.append(tower.hp)
+	for tower in _main.world.towers_snapshot(): original_hp.append(tower.hp)
 	for team in [0, 1]:
 		for mask in 4:
-			for index in _main._towers.size(): _main._towers[index].hp = original_hp[index]
-			_main._towers[2 if team == 0 else 0].hp = 0.0 if mask & 1 else original_hp[2 if team == 0 else 0]
-			_main._towers[3 if team == 0 else 1].hp = 0.0 if mask & 2 else original_hp[3 if team == 0 else 1]
+			for index in _main.world.towers_snapshot().size(): _main.world.towers_snapshot()[index].hp = original_hp[index]
+			_main.world.towers_snapshot()[2 if team == 0 else 0].hp = 0.0 if mask & 1 else original_hp[2 if team == 0 else 0]
+			_main.world.towers_snapshot()[3 if team == 0 else 1].hp = 0.0 if mask & 2 else original_hp[3 if team == 0 else 1]
 			for card_id in cards:
 				var same_cells := true
 				for row in ArenaRules.ARENA_ROWS:
 					for column in ArenaRules.ARENA_COLUMNS:
-						var center: Vector2 = _main._arena_tile_center(Vector2i(column, row))
-						same_cells = same_cells and _main.is_card_deploy_position_valid(team, card_id, center) == _main.is_card_deploy_position_valid(team, "xin", center)
+						var center: Vector2 = _main.runtime._deployment_rules.arena_tile_center(Vector2i(column, row))
+						same_cells = same_cells and _main.runtime.is_card_deploy_position_valid(team, card_id, center) == _main.runtime.is_card_deploy_position_valid(team, "xin", center)
 				_expect(same_cells, "%s 阵营%d拆塔状态%d：全部部署格与单单位相同" % [card_id, team, mask])
-	for index in _main._towers.size(): _main._towers[index].hp = original_hp[index]
-	var original_team: int = _main.local_team
+	for index in _main.world.towers_snapshot().size(): _main.world.towers_snapshot()[index].hp = original_hp[index]
+	var original_team: int = _main.runtime.local_team
 	for team in [0, 1]:
-		_main.local_team = team
-		var old_history: Dictionary = _main._card_history.get_last(team)
+		_main.runtime.local_team = team
+		var old_history: Dictionary = _main.runtime._card_history.get_last(team)
 		for card_id in cards:
 			var stats := CardDB.get_card(card_id)
 			var plan := CardDB.deployment_plan(card_id)
@@ -224,45 +224,45 @@ func _check_multi_unit_deployment_edges() -> void:
 				var legal := members.size() == count
 				for member in members:
 					legal = legal and member.position.x >= member.body_radius and member.position.x <= ArenaRules.FIELD_W - member.body_radius and member.position.y >= member.body_radius and member.position.y <= ArenaRules.FIELD_H - member.body_radius
-					if not member.is_air: legal = legal and _main.is_ground_position_walkable(member.position, member.body_radius, member)
+					if not member.is_air: legal = legal and _main.world.is_ground_position_walkable(member.position, member.body_radius, member)
 				_expect(preview_ok and accepted and legal, "%s 阵营%d落点%s：边缘、河岸、塔旁正常出牌，完整编队逐兵纠正到合法位置" % [card_id, team, center])
 				for member in members: member.free()
-		_main._card_history.replace_replica(team, old_history)
-	_main.local_team = original_team
+		_main.runtime._card_history.replace_replica(team, old_history)
+	_main.runtime.local_team = original_team
 	_main._on_card_selected("")
 
 func _check_squad_landing_retry() -> void:
 	# 第二名成员的落点失败，必须证明第一名尚未生成；恢复后只产生一整批。
-	var rules: DeploymentRules = _main._deployment_rules
+	var rules: DeploymentRules = _main.runtime._deployment_rules
 	var failed := SecondLandingUnavailable.new()
 	failed.combatants = rules.combatants
 	failed.towers = rules.towers
 	failed.ground_walkable = rules.ground_walkable
-	var saved_deck: Array = _main._deck.duplicate()
-	_main._deck[0] = "minion_squad"
+	var saved_deck: Array = _main.runtime._deck.duplicate()
+	_main.runtime._deck[0] = "minion_squad"
 	var before := _main.get_tree().get_nodes_in_group("combatants").map(func(actor): return actor.get_instance_id())
-	var pending_before: int = _main._commands.inspect_deployments().size()
-	_main._deployment_rules = failed
-	var first: Array[Unit] = _main._spawn_card_units(0, "minion_squad", Vector2(340, 860), 0.0, 0, 123)
-	_main._deployment_rules = rules
+	var pending_before: int = _main.runtime._commands.inspect_deployments().size()
+	_main.runtime._deployment_rules = failed
+	var first: Array[Unit] = _main.runtime._spawn_card_units(0, "minion_squad", Vector2(340, 860), 0.0, 0, 123)
+	_main.runtime._deployment_rules = rules
 	var generated := _main.get_tree().get_nodes_in_group("combatants").filter(func(actor): return actor is Unit and actor.get_instance_id() not in before)
-	var pending: Array = _main._commands.inspect_deployments()
+	var pending: Array = _main.runtime._commands.inspect_deployments()
 	var retry: Dictionary = pending.back() if pending.size() > pending_before else {}
 	_expect(failed.planned == 2 and first.is_empty() and generated.is_empty() and pending.size() == pending_before + 1 and retry.get("card_id") == "minion_squad" and retry.get("active_slot") == 0 and retry.get("id") == 123, "后续成员落点无解时不生成半队，原来源卡/主动槽/部署身份随整队重试保留")
-	_main._tick_pending_card_pre_deployments(FixedStepClock.STEP)
+	_main.runtime._tick_pending_card_pre_deployments(FixedStepClock.STEP)
 	generated = _main.get_tree().get_nodes_in_group("combatants").filter(func(actor): return actor is Unit and actor.get_instance_id() not in before)
-	var complete: bool = generated.size() == 6 and _main._commands.inspect_deployments().size() == pending_before
+	var complete: bool = generated.size() == 6 and _main.runtime._commands.inspect_deployments().size() == pending_before
 	if complete:
 		var leader: Unit = generated[0]
-		complete = leader.active_ability_slot == 0 and _main._active_skills.entry(leader.active_ability_id).get("card_id") == "minion_squad"
+		complete = leader.active_ability_slot == 0 and _main.runtime._active_skills.entry(leader.active_ability_id).get("card_id") == "minion_squad"
 		complete = complete and generated.all(func(member): return member.deployment_group_id == leader.deployment_group_id and member.active_skill_card_id == "minion_squad")
 		_expect(complete, "落点恢复后生成唯一完整编队，并保留整队身份与原卡主动资格")
-		_main._active_skills.remove(leader.active_ability_id)
+		_main.runtime._active_skills.remove(leader.active_ability_id)
 		if _main._active_skill_bar != null: _main._active_skill_bar.remove_skill(leader.active_ability_id)
 	else:
 		_expect(false, "落点恢复后生成唯一完整编队")
 	for member in generated: member.free()
-	_main._deck = saved_deck
+	_main.runtime._deck = saved_deck
 
 func _check_large_unit_front_row_exit() -> void:
 	var stats: Dictionary = CardDB.get_card("garen").duplicate()
@@ -270,7 +270,7 @@ func _check_large_unit_front_row_exit() -> void:
 	stats["hp"] = 100000.0
 	var unit := Unit.new()
 	unit.setup(0, stats, stats.name)
-	unit.position = _main._snap_card_position("garen", Vector2(300.0, 700.0), 0)
+	unit.position = _main.runtime._snap_card_position("garen", Vector2(300.0, 700.0), 0)
 	_main.add_child(unit)
 	var start := unit.position
 	for _tick in 100:
@@ -291,16 +291,16 @@ func _check_landing_position_correction() -> void:
 		var desired: Vector2 = landing_case[1]
 		var unit: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "garen", desired))
 		var corrected: bool = not unit.position.is_equal_approx(desired)
-		var physically_valid: bool = _main.is_ground_position_walkable(unit.position, unit.body_radius, unit)
+		var physically_valid: bool = _main.world.is_ground_position_walkable(unit.position, unit.body_radius, unit)
 		all_corrected = all_corrected and corrected and physically_valid
 		unit.free()
 	_expect(all_corrected, "盖伦落在河岸、桥边、塔体或水晶重叠格时会被修正到最近合法位置")
 
 func _check_tower_ingress_guards() -> void:
-	var king: Tower = _main._king_player
-	_expect(not _main.is_card_deploy_position_valid(0, "xin", king.position), "玩家与联机请求不能在存活国王塔上部署")
-	_expect(not _main.is_card_deploy_position_valid(1, "xin", Vector2(ArenaRules.BRIDGE_X_LEFT, 250.0)), "AI 的旧出兵坐标会被统一占位校验拒绝")
-	_expect(_main.is_card_deploy_position_valid(1, "xin", Vector2(ArenaRules.BRIDGE_X_LEFT, 460.0)), "AI 改用公主塔前方合法格出兵")
+	var king: Tower = _main.world.king(0)
+	_expect(not _main.runtime.is_card_deploy_position_valid(0, "xin", king.position), "玩家与联机请求不能在存活国王塔上部署")
+	_expect(not _main.runtime.is_card_deploy_position_valid(1, "xin", Vector2(ArenaRules.BRIDGE_X_LEFT, 250.0)), "AI 的旧出兵坐标会被统一占位校验拒绝")
+	_expect(_main.runtime.is_card_deploy_position_valid(1, "xin", Vector2(ArenaRules.BRIDGE_X_LEFT, 460.0)), "AI 改用公主塔前方合法格出兵")
 	var tombstone: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "tombstone", Vector2(480.0, 1080.0)))
 	# 召唤偏移位于墓碑占地内时，生成前改到最近合法位置。
 	var desired_summon := tombstone.position + Vector2(-24.0, 0.0)
@@ -309,31 +309,31 @@ func _check_tower_ingress_guards() -> void:
 	# 方形绘制角附近只要没有进入塔的碰撞圆，单位就可以自然侧绕。
 	var corner := king.position + Vector2(87.0, 87.0)
 	var outside_old_circle: bool = corner.distance_to(king.position) > king.body_radius + 14.0
-	_expect(outside_old_circle and _main.is_ground_position_walkable(corner, 14.0), "塔使用圆形碰撞，单位可沿塔角外侧通过")
+	_expect(outside_old_circle and _main.world.is_ground_position_walkable(corner, 14.0), "塔使用圆形碰撞，单位可沿塔角外侧通过")
 	imp.free()
 	tombstone._die()
 
 func _check_command_tick_estimation() -> void:
-	var old_mode: String = _main.mode
-	var old_mode_team: int = _main.local_team
+	var old_mode: String = _main.runtime.mode
+	var old_mode_team: int = _main.runtime.local_team
 	var old_authoritative_tick: int = _main._authoritative_server_tick
 	var old_estimated_tick: int = _main._estimated_server_tick
 	var old_estimated_fraction: float = _main._estimated_server_tick_fraction
 	var old_has_estimate: bool = _main._has_estimated_server_tick
-	var old_sim_tick: int = _main._sim_tick_id
-	_main.mode = "server"
-	_main._sim_tick_id = 103
-	var case_one_target: int = _main._resolve_command_execute_tick(100)
-	_main._sim_tick_id = 108
-	var case_two_target: int = _main._resolve_command_execute_tick(100)
-	_main._sim_tick_id = 110
-	var late_target: int = _main._resolve_command_execute_tick(100)
-	_main._sim_tick_id = 103
-	var obviously_old_target: int = _main._resolve_command_execute_tick(103 - _main.COMMAND_MAX_LATENCY_TICKS - 1)
-	var obviously_future_target: int = _main._resolve_command_execute_tick(103 + _main.COMMAND_CLOCK_FUTURE_TOLERANCE + 1)
-	var host_local_target: int = _main._resolve_command_execute_tick()
-	_main.mode = "client"
-	_main.local_team = 1
+	var old_sim_tick: int = _main.runtime._sim_tick_id
+	_main.runtime.mode = "server"
+	_main.runtime._sim_tick_id = 103
+	var case_one_target: int = _main.runtime._resolve_command_execute_tick(100)
+	_main.runtime._sim_tick_id = 108
+	var case_two_target: int = _main.runtime._resolve_command_execute_tick(100)
+	_main.runtime._sim_tick_id = 110
+	var late_target: int = _main.runtime._resolve_command_execute_tick(100)
+	_main.runtime._sim_tick_id = 103
+	var obviously_old_target: int = _main.runtime._resolve_command_execute_tick(103 - _main.COMMAND_MAX_LATENCY_TICKS - 1)
+	var obviously_future_target: int = _main.runtime._resolve_command_execute_tick(103 + _main.COMMAND_CLOCK_FUTURE_TOLERANCE + 1)
+	var host_local_target: int = _main.runtime._resolve_command_execute_tick()
+	_main.runtime.mode = "client"
+	_main.runtime.local_team = 1
 	_main._authoritative_server_tick = 100
 	_main._estimated_server_tick = 100
 	_main._estimated_server_tick_fraction = 0.0
@@ -341,41 +341,23 @@ func _check_command_tick_estimation() -> void:
 	var client_input_tick: int = _main._input_tick_for_new_command()
 	_main._advance_estimated_server_tick(0.23)
 	var estimated_after_gap: int = _main.get_estimated_server_tick()
-	var client_target_after_gap: int = _main._resolve_command_execute_tick(_main._input_tick_for_new_command())
-	var snapshot_system := NetworkSnapshotSystem.new(_main, _main._projectile_system)
-	var newer_but_behind_estimate := [
-		NetworkSnapshotSystem.SNAPSHOT_PROTOCOL_VERSION, 102,
-		[], [], [], 0.0, 180.0, false, _main._snapshot_system.lifecycle.session_id, 0, {},
-	]
-	snapshot_system.apply(var_to_bytes(newer_but_behind_estimate).compress(FileAccess.COMPRESSION_DEFLATE))
-	var estimate_survives_stale_snapshot: bool = (
-		_main._authoritative_server_tick == 102
-		and _main.get_estimated_server_tick() == estimated_after_gap
-	)
-	var incompatible_version_packet := [
-		NetworkSnapshotSystem.SNAPSHOT_PROTOCOL_VERSION - 1, 103,
-		[], [], [], 0.0, 180.0, false, _main._snapshot_system.lifecycle.session_id, 0, {},
-	]
-	snapshot_system.apply(var_to_bytes(incompatible_version_packet).compress(FileAccess.COMPRESSION_DEFLATE))
-	var incompatible_version_rejected: bool = _main._authoritative_server_tick == 102
-	var stale_packet := [
-		NetworkSnapshotSystem.SNAPSHOT_PROTOCOL_VERSION, 101,
-		[], [], [], 0.0, 180.0, false, _main._snapshot_system.lifecycle.session_id, 0, {},
-	]
-	snapshot_system.apply(var_to_bytes(stale_packet).compress(FileAccess.COMPRESSION_DEFLATE))
-	var stale_snapshot_rejected: bool = _main._authoritative_server_tick == 102
+	var client_target_after_gap: int = _main.runtime._resolve_command_execute_tick(_main._input_tick_for_new_command())
+	var snapshot_checks := preload("res://tests/fixtures/network_fixture.gd").clock_snapshot_window(_main, estimated_after_gap)
+	var estimate_survives_stale_snapshot: bool = snapshot_checks.newer_applied and snapshot_checks.estimate_survives
+	var incompatible_version_rejected: bool = snapshot_checks.incompatible_rejected
+	var stale_snapshot_rejected: bool = snapshot_checks.stale_rejected
 	var current_client_tick: int = _main.get_estimated_server_tick()
-	_main.mode = "server"
-	_main._sim_tick_id = current_client_tick
-	var host_target_from_client_input: int = _main._resolve_command_execute_tick(current_client_tick)
+	_main.runtime.mode = "server"
+	_main.runtime._sim_tick_id = current_client_tick
+	var host_target_from_client_input: int = _main.runtime._resolve_command_execute_tick(current_client_tick)
 	var host_client_share_timeline: bool = host_target_from_client_input == client_target_after_gap
-	_main.mode = old_mode
-	_main.local_team = old_mode_team
+	_main.runtime.mode = old_mode
+	_main.runtime.local_team = old_mode_team
 	_main._authoritative_server_tick = old_authoritative_tick
 	_main._estimated_server_tick = old_estimated_tick
 	_main._estimated_server_tick_fraction = old_estimated_fraction
 	_main._has_estimated_server_tick = old_has_estimate
-	_main._sim_tick_id = old_sim_tick
+	_main.runtime._sim_tick_id = old_sim_tick
 	_expect(
 		case_one_target == 110
 		and case_two_target == 110
@@ -401,13 +383,13 @@ func _check_card_play_delay() -> void:
 	target.setup(1, target_stats, target_stats.name)
 	_main.add_child(target)
 	var combatants_before := _main.get_tree().get_nodes_in_group("combatants").size()
-	_main._deploy_card(0, "ashe", Vector2(280.0, 980.0))
-	_main._deploy_card(0, "tombstone", Vector2(480.0, 1000.0))
-	_main._deploy_card(0, "freeze", target.position)
+	_main.runtime._deploy_card(0, "ashe", Vector2(280.0, 980.0))
+	_main.runtime._deploy_card(0, "tombstone", Vector2(480.0, 1000.0))
+	_main.runtime._deploy_card(0, "freeze", target.position)
 	var command_buffer_contract: bool = (
-		_main._commands.inspect_cards().size() == 3
-		and int(_main._commands.inspect_cards()[0].execute_tick) == _main._sim_tick_id + _main.COMMAND_DELAY_TICKS
-		and not _main._commands.inspect_cards()[0].has("time_left")
+		_main.runtime._commands.inspect_cards().size() == 3
+		and int(_main.runtime._commands.inspect_cards()[0].execute_tick) == _main.runtime._sim_tick_id + _main.COMMAND_DELAY_TICKS
+		and not _main.runtime._commands.inspect_cards()[0].has("time_left")
 	)
 	for _i in 9:
 		_main._sim_step(_main.SIM_DT)
@@ -468,20 +450,20 @@ func _check_deploy_delay() -> void:
 	unit.free()
 
 func _check_pocket_deployment() -> void:
-	var princess: Tower = _main._towers[2]
+	var princess: Tower = _main.world.towers_snapshot()[2]
 	var saved_hp: float = princess.hp
 	var saved_nav_cells: Array = princess.nav_cells.duplicate()
 	princess.hp = 0.0
 	_main._sim_step(_main.SIM_DT)
 	var left_pocket := Vector2(204.0, 520.0)
 	var right_pocket := Vector2(516.0, 520.0)
-	_expect(_main._pos_in_deploy_zone(left_pocket, 0, false), "破坏左路公主塔后解锁对应 pocket 部署区")
-	_expect(not _main._pos_in_deploy_zone(right_pocket, 0, false), "未破坏的另一路不会提前解锁部署区")
+	_expect(_main.runtime._deployment_rules.pos_in_deploy_zone(left_pocket, 0, false), "破坏左路公主塔后解锁对应 pocket 部署区")
+	_expect(not _main.runtime._deployment_rules.pos_in_deploy_zone(right_pocket, 0, false), "未破坏的另一路不会提前解锁部署区")
 	# 还原现场：本用例只验证部署区解锁，恢复血量与导航占用，不向其他领域 suite 泄露“公主塔已摧毁”。
 	princess.hp = saved_hp
 	if princess.nav_cells.is_empty() and not saved_nav_cells.is_empty():
 		princess.nav_cells = saved_nav_cells.duplicate()
-		_main.nav.set_cells_blocked(princess.nav_cells, true)
+		_main.world.nav.set_cells_blocked(princess.nav_cells, true)
 
 func _check_deployment_unlocks_first_attack() -> void:
 	var unit := Unit.new()
@@ -521,12 +503,12 @@ func _check_structure_query_membership() -> void:
 	var oracle := _main.get_tree().get_nodes_in_group("combatants").filter(func(c): return c is Tower or (c is Unit and c.is_building))
 	var indexed := _main.get_tree().get_nodes_in_group("combat_structures")
 	_expect(oracle.size() == indexed.size() and oracle.all(func(c): return indexed.has(c)), "建筑查询索引包含全部塔与建筑，排除普通单位")
-	_expect(not _main.is_ground_position_walkable(building.position, 10.0) and _main.is_ground_position_walkable(ordinary.position, 10.0), "结构查询只阻挡建筑，不把普通单位当静态障碍")
+	_expect(not _main.world.is_ground_position_walkable(building.position, 10.0) and _main.world.is_ground_position_walkable(ordinary.position, 10.0), "结构查询只阻挡建筑，不把普通单位当静态障碍")
 	building.is_building = false
 	ordinary.is_building = true
-	_expect(not building.is_in_group("combat_structures") and ordinary.is_in_group("combat_structures") and not _main.is_ground_position_walkable(ordinary.position, 10.0), "运行实例建筑状态变化同步查询索引")
+	_expect(not building.is_in_group("combat_structures") and ordinary.is_in_group("combat_structures") and not _main.world.is_ground_position_walkable(ordinary.position, 10.0), "运行实例建筑状态变化同步查询索引")
 	ordinary.hp = 0.0
-	_expect(_main.is_ground_position_walkable(ordinary.position, 10.0), "死亡建筑立即不阻挡，即使节点尚未释放")
+	_expect(_main.world.is_ground_position_walkable(ordinary.position, 10.0), "死亡建筑立即不阻挡，即使节点尚未释放")
 	building.free()
 	ordinary.free()
 	_expect(_main.get_tree().get_nodes_in_group("combat_structures").size() == indexed.size() - 1, "释放建筑不会留下结构索引项")

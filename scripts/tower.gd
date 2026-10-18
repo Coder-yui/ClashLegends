@@ -196,7 +196,7 @@ func sim_tick(dt: float, statuses_prepared: bool = false) -> void:
 	# 国王塔休眠中：不索敌不攻击
 	if is_king and not activated:
 		return
-	_cooldown = maxf(0.0, _cooldown - dt)
+	_cooldown = AttackTimeline.tick_remaining(_cooldown, dt)
 	if not _target_is_valid(_target):
 		_target = null
 		_lock_windup = 0.0
@@ -207,7 +207,7 @@ func sim_tick(dt: float, statuses_prepared: bool = false) -> void:
 	if _target == null:
 		return
 	if _lock_windup > 0.0:
-		_lock_windup = maxf(0.0, _lock_windup - dt)
+		_lock_windup = AttackTimeline.tick_remaining(_lock_windup, dt)
 		if _lock_windup > 0.0:
 			return
 	if _cooldown <= 0.0:
@@ -250,6 +250,9 @@ func _find_enemy_in_range() -> Node2D:
 			best_gap = gap
 			best = c
 	return best
+
+func clear_channel_stun(source: StringName) -> void:
+	control.remove_stun_source(source)
 
 func take_damage(amount: float, _from: Node2D = null, _source_team: int = -1, _source_position: Vector2 = Vector2(INF, INF), attached: bool = false) -> bool:
 	if not CombatInteraction.allows(self, _from, _source_team, _source_position, attached): return false
@@ -342,8 +345,7 @@ func apply_network_state(health: float, active: bool, stunned: bool, shield_rati
 		bleeding.clear()
 		notify_visual_destroyed()
 	if hp <= 0.0 and not nav_cells.is_empty() and battle_context != null:
-		battle_context.unblock_nav_cells(nav_cells)
-		nav_cells = []
+		battle_context.release_structure_footprint(self)
 	queue_redraw()
 
 ## 塔不会像单位一样立即释放，因此血量快照本身可反复兜底这个一次性表现事件。

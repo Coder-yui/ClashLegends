@@ -99,7 +99,7 @@ func _check_gnar_mechanic() -> void:
 	_main.add_child(resize_gnar)
 	var resize_origin := resize_gnar.position
 	resize_gnar.transform_to_mega()
-	var resize_safe: bool = resize_gnar.position != resize_origin and _main.is_ground_position_walkable(resize_gnar.position, resize_gnar.body_radius, resize_gnar)
+	var resize_safe: bool = resize_gnar.position != resize_origin and _main.world.is_ground_position_walkable(resize_gnar.position, resize_gnar.body_radius, resize_gnar)
 	_expect(resize_safe, "小纳尔在河岸/桥角变大时会按新半径移到最近安全点，不会因瞬时体积增大卡住")
 
 	# 周围单位使用统一圆柱推挤处理，不做伤害或击退；即使纳尔贴场地边缘，另一侧单位也应被推出。
@@ -133,7 +133,7 @@ func _check_gnar_mechanic() -> void:
 		crowd_separated = (
 			crowd_separated
 			and crowded_gnar.position.distance_to(neighbor.position) >= required_gap
-			and _main.is_ground_position_walkable(neighbor.position, neighbor.body_radius, neighbor)
+			and _main.world.is_ground_position_walkable(neighbor.position, neighbor.body_radius, neighbor)
 		)
 	var edge_gnar := Unit.new()
 	var edge_neighbor := Unit.new()
@@ -150,8 +150,8 @@ func _check_gnar_mechanic() -> void:
 		_main._movement._resolve_unit_collisions(_main.SIM_DT, _main._movement._active_mobile_units())
 	var edge_separated: bool = (
 		edge_gnar.position.distance_to(edge_neighbor.position) >= edge_gnar.body_radius + edge_neighbor.body_radius - ArenaRules.COLLISION_SLOP - 0.1
-		and _main.is_ground_position_walkable(edge_gnar.position, edge_gnar.body_radius, edge_gnar)
-		and _main.is_ground_position_walkable(edge_neighbor.position, edge_neighbor.body_radius, edge_neighbor)
+		and _main.world.is_ground_position_walkable(edge_gnar.position, edge_gnar.body_radius, edge_gnar)
+		and _main.world.is_ground_position_walkable(edge_neighbor.position, edge_neighbor.body_radius, edge_neighbor)
 	)
 	_expect(pushed_on_resize_tick and crowd_separated and edge_separated, "纳尔变大当帧开始按质量挤开周围单位，密集包围与贴边场景最终都无重叠、无单位被卡进地形")
 
@@ -200,12 +200,12 @@ func _check_gnar_mechanic() -> void:
 	var telegraph_queued: bool = (
 		front.hp == front_hp
 		and is_zero_approx(front.control.stun_timer)
-		and _main._commands.inspect_impacts().size() == 1
+		and _main.runtime._commands.inspect_impacts().size() == 1
 		and _main._skill_presentation.frontal_effects.size() == 1
 	)
-	_main._commands.tick_impacts(float(skill.transform_impact_delay) - 0.05)
+	_main.runtime._commands.tick_impacts(float(skill.transform_impact_delay) - 0.05)
 	var waits_for_hand_impact := front.hp == front_hp and is_zero_approx(front.control.stun_timer)
-	_main._commands.tick_impacts(0.05)
+	_main.runtime._commands.tick_impacts(0.05)
 	var frontal_hit_ok := front.hp == front_hp - float(skill.damage) and is_equal_approx(front.control.stun_timer, 1.0)
 	var filtering_ok := back.hp == back_hp and is_zero_approx(back.control.stun_timer) and air.hp == air_hp and is_zero_approx(air.control.stun_timer)
 	var frozen_position := front.position
@@ -219,11 +219,11 @@ func _check_gnar_mechanic() -> void:
 	_main.preview_active_skill(active_small, skill)
 	var mega_waits_for_impact: bool = (
 		active_small.get_visual_action_name() == &"active"
-		and _main._commands.inspect_impacts().size() == 1
+		and _main.runtime._commands.inspect_impacts().size() == 1
 		and is_equal_approx(active_small.active_skill_cast_timer, float(skill.cast_duration))
 	)
 	_expect(mega_waits_for_impact, "大纳尔主动固定方向并锁定行动，直接播放 Spell2 后延迟到 0.8 秒手掌触地时结算")
-	_main._commands.clear_impacts()
+	_main.runtime._commands.clear_impacts()
 	_main._skill_presentation.frontal_effects.clear()
 	active_small.active_skill_cast_timer = 0.0
 	active_small.active_skill_cast_facing = Vector2.ZERO
@@ -386,7 +386,7 @@ func _check_gnar_art_integration() -> void:
 		)
 		view._on_animation_finished(&"gnar_runtime/Rage_Spell2_Transform")
 		unit._move_intent = Vector2.ZERO
-		unit._target = _main._towers[0]
+		unit._target = _main.world.towers_snapshot()[0]
 		unit._attacking = true
 		view._play_attack(1)
 		turret_attack_playing = view._animation_player.current_animation == "GnarBig_Turret_Attack01_anm"
@@ -480,7 +480,7 @@ func _check_gnar_art_integration() -> void:
 	if is_instance_valid(unit):
 		unit.free()
 	# 清理待结算主动技能现场，避免污染后续领域 suite。
-	_main._commands.clear_impacts()
+	_main.runtime._commands.clear_impacts()
 	_main._skill_presentation.frontal_effects.clear()
 
 func _check_frozen_pending_generation() -> void:

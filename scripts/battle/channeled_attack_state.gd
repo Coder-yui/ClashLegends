@@ -6,13 +6,18 @@ var target_ref: WeakRef
 var remaining := 0.0
 var status_source: StringName
 
+func prepare(skill: Dictionary) -> void:
+	assert(skill.has("effect_delivery") and skill.effect_delivery is CombatInteraction.Delivery, "引导必须使用prepare_cast建立的Delivery")
+	prepared = skill.duplicate(true)
+
 func active() -> bool:
 	return remaining > 0.0
 
 func begin(source: Unit, target: Node2D) -> void:
 	if not is_instance_valid(target) or target.hp <= 0.0: return
 	if not CombatInteraction.allows(target, source, source.team, source.global_position): return
-	var skill := prepared
+	var skill := prepared.duplicate(true)
+	assert(skill.effect_delivery is CombatInteraction.Delivery, "引导Delivery丢失")
 	prepared = {}
 	source.cancel_basic_attack(ActionCancellation.EMPOWERED_RESET)
 	remaining = float(skill.duration)
@@ -20,14 +25,16 @@ func begin(source: Unit, target: Node2D) -> void:
 	status_source = source.status_source("channel")
 	source.begin_active_skill_cast(remaining, target.global_position - source.global_position)
 	source.play_visual_action(&"channel", remaining)
-	if target.has_method("stun"):
-		var apply_control := func():
-			if not is_instance_valid(source) or not active() or not is_instance_valid(target): return
-			if target_ref == null or target_ref.get_ref() != target: return
-			target.stun(remaining, status_source, CombatInteraction.effect_context(source, source.team, source.global_position))
-		if source.battle_context.damage_batch().collecting:
-			source.battle_context.damage_batch().defer_effect(apply_control)
-		else: apply_control.call()
+	var interaction := CombatInteraction.effect_context(source, source.team, source.global_position)
+	interaction["delivery"] = skill.effect_delivery
+	assert(target is Unit or target is Tower, "引导目标必须提供正式控制合同")
+	var apply_control := func():
+		if not is_instance_valid(source) or not active() or not is_instance_valid(target): return
+		if target_ref == null or target_ref.get_ref() != target: return
+		target.stun(remaining, status_source, interaction)
+	if source.battle_context.damage_batch().collecting:
+		source.battle_context.damage_batch().defer_effect(apply_control)
+	else: apply_control.call()
 	source.battle_context.begin_channel_zone(source, target.global_position, skill)
 
 func tick(source: Unit, dt: float) -> void:
@@ -45,8 +52,8 @@ func tick(source: Unit, dt: float) -> void:
 func stop(source: Unit) -> void:
 	if target_ref == null: return
 	var target = target_ref.get_ref()
-	if is_instance_valid(target) and target.get("control") is ControlState:
-		target.control.hard.remove_source(&"stun", status_source)
+	if is_instance_valid(target):
+		target.clear_channel_stun(status_source)
 	target_ref = null
 	remaining = 0.0
 	source.cancelled_visual_serial = maxi(source.cancelled_visual_serial, source.get_visual_action_serial())

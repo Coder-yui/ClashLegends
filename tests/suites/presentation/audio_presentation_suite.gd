@@ -109,10 +109,10 @@ func run(harness: Object, main: Node2D) -> void:
 	client_unit.setup(0, stats, stats.name)
 	main.add_child(client_unit)
 	client_unit.set_battle_context(main.battle_context)
-	var previous_mode: String = main.mode
-	var previous_mode_team: int = main.local_team
-	main.mode = "client"
-	main.local_team = 1
+	var previous_mode: String = main.runtime.mode
+	var previous_mode_team: int = main.runtime.local_team
+	main.runtime.mode = "client"
+	main.runtime.local_team = 1
 	audio.attach_unit(client_unit, stats)
 	cues.clear()
 	client_unit.net_attack_visual_serial = 1
@@ -125,8 +125,8 @@ func run(harness: Object, main: Node2D) -> void:
 	client_unit.net_visual_action_time_left = 0.0
 	audio._process(0.0)
 	harness._expect(cues == [&"empowered_swing", &"judgment:start", &"judgment:sustain", &"judgment:end"], "客户端音频跟随快照动作与强化序号，重复快照不重播")
-	main.mode = previous_mode
-	main.local_team = previous_mode_team
+	main.runtime.mode = previous_mode
+	main.runtime.local_team = previous_mode_team
 	client_unit.free()
 	var yi_cues: Array[StringName] = []
 	var yi_listener := func(card_id: String, cue: StringName, _position: Vector2):
@@ -187,10 +187,10 @@ func run(harness: Object, main: Node2D) -> void:
 	main.add_child(mf_target)
 	mf_target.global_position = Vector2(360.0, 600.0)
 	var target_hp_before := mf_target.hp
-	var passive_landed: bool = main._combat.resolve_attack_hit(0, mf.global_position, mf_target, 20.0, 0.0, 0.0, mf, mf.global_position, -1, {"first_strike": true})
-	var regular_landed: bool = main._combat.resolve_attack_hit(0, mf.global_position, mf_target, 20.0, 0.0, 0.0, mf, mf.global_position)
+	var passive_receipt: Dictionary = main._combat.resolve_attack_hit(0, mf.global_position, mf_target, 20.0, 0.0, 0.0, mf, mf.global_position, -1, {"first_strike": true})
+	var regular_receipt: Dictionary = main._combat.resolve_attack_hit(0, mf.global_position, mf_target, 20.0, 0.0, 0.0, mf, mf.global_position)
 	harness._expect(
-		passive_landed and regular_landed and mf_cues == [&"first_strike_hit", &"first_strike:hit_location", &"attack_hit"]
+		passive_receipt.landed and regular_receipt.landed and mf_cues == [&"first_strike_hit", &"first_strike:hit_location", &"attack_hit"]
 		and is_equal_approx(mf_target.hp, target_hp_before - 40.0),
 		"赏金猎人被动首次真实命中替换普通命中音，后续命中恢复普通音且不改变伤害结算",
 	)
@@ -294,10 +294,10 @@ func _check_ranged_audio(harness: Object, main: Node2D) -> void:
 	var hp_a := victims[0].hp
 	var hp_b := victims[1].hp
 	source.active_skill_cast_facing = Vector2.RIGHT
-	main._queue_active_skill_impact(source, skill, float(skill.impact_delay))
-	main._commands.tick_impacts(float(skill.impact_delay) - 0.02)
+	main.runtime._queue_active_skill_impact(source, skill, float(skill.impact_delay))
+	main.runtime._commands.tick_impacts(float(skill.impact_delay) - 0.02)
 	harness._expect(cues == [&"active:start"] and is_equal_approx(victims[0].hp, hp_a), "万箭齐发权威释放节点前不播放释放或命中")
-	main._commands.tick_impacts(0.02)
+	main.runtime._commands.tick_impacts(0.02)
 	harness._expect(cues == [&"active:start", &"active:release"] and is_equal_approx(victims[0].hp, hp_a), "万箭齐发释放只创建弹体与离弦声，飞行抵达前不伤害或播命中声")
 	main._tick_projectiles(0.25)
 	harness._expect(cues == [&"active:start", &"active:release", &"active:hit"] and is_equal_approx(victims[0].hp, hp_a - 70.0) and is_equal_approx(victims[1].hp, hp_b - 70.0), "万箭齐发实际释放时发声，多目标分别受伤但只播放一次技能命中声")
@@ -305,18 +305,21 @@ func _check_ranged_audio(harness: Object, main: Node2D) -> void:
 	main._active_skill_effect_system.apply_frontal(source, skill, Vector2.LEFT)
 	harness._expect(cues == [&"active:release"], "万箭齐发空扇区有释放音而无命中音")
 	cues.clear()
-	var previous_mode: String = main.mode
-	var previous_mode_team: int = main.local_team
-	main.mode = "client"
-	main.local_team = 1
-	main._client_units[987654] = source
+	var previous_mode: String = main.runtime.mode
+	var previous_mode_team: int = main.runtime.local_team
+	main.runtime.mode = "client"
+	main.runtime.local_team = 1
+	var original_replica_net_id: int = source.net_id
+	source.net_id = 987654
+	main.world.register_replica_unit(source)
 	preload("res://tests/fixtures/network_fixture.gd").deliver(main, "_rpc_unit_audio_event", [987654, "attack_launch", source.global_position])
 	preload("res://tests/fixtures/network_fixture.gd").deliver(main, "_rpc_unit_audio_event", [987654, "active:release", source.global_position])
 	preload("res://tests/fixtures/network_fixture.gd").deliver(main, "_rpc_unit_audio_event", [987654, "active:hit", source.global_position])
 	harness._expect(cues == [&"attack_launch", &"active:release", &"active:hit"] and is_equal_approx(victims[0].hp, hp_a - 70.0), "客户端重放寒冰离弦和技能事件，不重复结算伤害")
-	main._client_units.erase(987654)
-	main.mode = previous_mode
-	main.local_team = previous_mode_team
+	main.world.forget_replica_unit(987654)
+	source.net_id = original_replica_net_id
+	main.runtime.mode = previous_mode
+	main.runtime.local_team = previous_mode_team
 	cues.clear()
 	source.notify_visual_death()
 	source.notify_visual_death()
@@ -337,10 +340,10 @@ func _check_batch_audio(harness: Object, main: Node2D) -> void:
 	dragon.setup(0, CardDB.get_card(dragon.card_id), "龙王")
 	main.add_child(dragon)
 	dragon.set_battle_context(main.battle_context)
-	var old_mode: String = main.mode
-	var old_mode_team: int = main.local_team
-	main.mode = "client"
-	main.local_team = 1
+	var old_mode: String = main.runtime.mode
+	var old_mode_team: int = main.runtime.local_team
+	main.runtime.mode = "client"
+	main.runtime.local_team = 1
 	audio.attach_unit(dragon, CardDB.get_card(dragon.card_id))
 	var cues: Array[StringName] = []
 	var listener := func(id: String, cue: StringName, _pos: Vector2):
@@ -378,8 +381,8 @@ func _check_batch_audio(harness: Object, main: Node2D) -> void:
 	harness._expect(not audio._sustain_players.has(key) and cues.back() == &"death", "死亡彻底清理吐息层")
 	audio.cue_played.disconnect(listener)
 	dragon.free()
-	main.mode = old_mode
-	main.local_team = old_mode_team
+	main.runtime.mode = old_mode
+	main.runtime.local_team = old_mode_team
 	var teemo := Unit.new()
 	teemo.card_id = "teemo"
 	teemo.setup(0, CardDB.get_card("teemo"), "提莫")
@@ -638,10 +641,10 @@ func _check_projectile_launch_lifetime(harness: Object, main: Node2D) -> void:
 	projectiles.tick(0.05)
 	harness._expect(audio._projectile_launch_players.is_empty() and not second_player.playing, "目标死亡使弹体消失时，发射声也停止")
 	target.free()
-	var previous_mode: String = main.mode
-	var previous_mode_team: int = main.local_team
-	main.mode = "client"
-	main.local_team = 1
+	var previous_mode: String = main.runtime.mode
+	var previous_mode_team: int = main.runtime.local_team
+	main.runtime.mode = "client"
+	main.runtime.local_team = 1
 	var remote_id := projectiles._next_id
 	projectiles._next_id += 1
 	var saved_source := {"card_id": "gnar", "form": 0, "serial": 1}
@@ -657,8 +660,8 @@ func _check_projectile_launch_lifetime(harness: Object, main: Node2D) -> void:
 	preload("res://tests/fixtures/network_fixture.gd").deliver(main, "_rpc_projectile_launch_audio", [remote_id, saved_source, Vector2.ZERO, true])
 	projectiles.clear_all()
 	harness._expect(audio._projectile_launch_players.is_empty(), "客户端清场清理所有弹体持有的发射声")
-	main.mode = previous_mode
-	main.local_team = previous_mode_team
+	main.runtime.mode = previous_mode
+	main.runtime.local_team = previous_mode_team
 
 func _check_apex_audio_timing(harness: Object, main: Node2D) -> void:
 	var audio: GameAudioManager = main._audio_manager
@@ -710,21 +713,21 @@ func _check_apex_audio_timing(harness: Object, main: Node2D) -> void:
 	cues.clear()
 	var skill: Dictionary = CardDB.active_skills_for("apex_turret")[0].duplicate(true)
 	skill["cast_forward"] = Vector2.RIGHT
-	main._start_active_skill_cast(source, skill)
+	main.runtime._start_active_skill_cast(source, skill)
 	audio._process(0.0)
 	hp_before = victim.hp
 	harness._expect(cues == [&"laser:sustain"], "大炮台激光先播 OnCast 蓄能，不提前发射或命中")
-	main._commands.tick_impacts(0.40)
+	main.runtime._commands.tick_impacts(0.40)
 	source.freeze(1.0)
-	main._commands.tick_impacts(0.5)
-	harness._expect(cues == [&"laser:sustain"] and victim.hp == hp_before and main._commands.inspect_impacts().is_empty(), "激光出膛前冻结取消发射与伤害排程")
+	main.runtime._commands.tick_impacts(0.5)
+	harness._expect(cues == [&"laser:sustain"] and victim.hp == hp_before and main.runtime._commands.inspect_impacts().is_empty(), "激光出膛前冻结取消发射与伤害排程")
 	SuiteUtils.set_control_window(source.control, &"freeze", 0.0)
-	main._commands.tick_impacts(0.05)
+	main.runtime._commands.tick_impacts(0.05)
 	harness._expect(victim.hp == hp_before and main._projectile_system.projectiles.is_empty(), "解冻不迟发已取消激光")
 	cues.clear()
-	main._start_active_skill_cast(source, skill)
+	main.runtime._start_active_skill_cast(source, skill)
 	audio._process(0.0)
-	main._commands.tick_impacts(0.45)
+	main.runtime._commands.tick_impacts(0.45)
 	harness._expect(cues == [&"laser:sustain", &"laser:release"] and victim.hp == hp_before, "新激光0.45秒出膛，未接触目标无伤害")
 	main._projectile_system.tick(0.04)
 	harness._expect(victim.hp == hp_before and cues.back() == &"laser:release", "激光离开炮口但未接触目标时无伤害和命中音")
@@ -732,14 +735,14 @@ func _check_apex_audio_timing(harness: Object, main: Node2D) -> void:
 	harness._expect(cues == [&"laser:sustain", &"laser:release", &"laser:hit"] and victim.hp < hp_before, "激光弹体真实接触才播放命中音，发射声不重复")
 	cues.clear()
 	source.active_skill_cast_facing = Vector2.LEFT
-	main._queue_active_skill_impact(source, skill, 0.45)
-	main._commands.tick_impacts(0.45)
+	main.runtime._queue_active_skill_impact(source, skill, 0.45)
+	main.runtime._commands.tick_impacts(0.45)
 	main._projectile_system.tick(0.3)
 	harness._expect(cues == [&"laser:release"], "激光空击有发射声，无命中音")
 	cues.clear()
-	main._queue_active_skill_impact(source, skill, 0.45)
+	main.runtime._queue_active_skill_impact(source, skill, 0.45)
 	source.hp = 0.0
-	main._commands.tick_impacts(1.0)
+	main.runtime._commands.tick_impacts(1.0)
 	harness._expect(cues.is_empty(), "炮台死亡取消尚未发射的激光音频和伤害")
 	source.hp = source.max_hp
 	source._attacking = false
@@ -972,9 +975,9 @@ func _check_tombstone_active_cast(harness: Object, main: Node2D) -> void:
 	cues.clear()
 	var skill: Dictionary = CardDB.active_skills_for("tombstone")[0]
 	skill["impact_delay"] = 999.0
-	var started: bool = main._start_active_skill_cast(unit, skill)
+	var started: bool = main.runtime._start_active_skill_cast(unit, skill)
 	var ok: bool = started and cues == [&"active:cast"]
-	main._commands.clear_impacts()
+	main.runtime._commands.clear_impacts()
 	audio.cue_played.disconnect(listener)
 	audio._detach_unit(unit.get_instance_id())
 	unit.free()
@@ -986,47 +989,47 @@ func _check_match_announcements(harness: Object, main: Node2D) -> void:
 	var listener := func(card, cue, _position):
 		if card == "match": cues.append(cue)
 	main._audio_manager.cue_played.connect(listener)
-	var saved_elapsed: float = main._minion_waves.elapsed
-	var saved_next: float = main._minion_waves.next_wave_time
-	var saved_pending: Array = main._minion_waves.pending.duplicate(true)
-	var saved_mode: String = main.mode
-	var saved_mode_team: int = main.local_team
-	var saved_over: bool = main.game_over
-	var saved_finished: bool = main._match_rules.finished
+	var saved_elapsed: float = main.runtime._minion_waves.elapsed
+	var saved_next: float = main.runtime._minion_waves.next_wave_time
+	var saved_pending: Array = main.runtime._minion_waves.pending.duplicate(true)
+	var saved_mode: String = main.runtime.mode
+	var saved_mode_team: int = main.runtime.local_team
+	var saved_over: bool = main.runtime.game_over
+	var saved_finished: bool = main.runtime._match_rules.finished
 	var old_children: Array = main.get_children()
-	main.mode = "local"
-	main.local_team = 0
-	main.game_over = false
-	main._minion_waves.elapsed = 4.9
-	main._minion_waves.next_wave_time = 5.0
-	main._minion_waves.pending.clear()
-	main._tick_minion_waves(0.05)
+	main.runtime.mode = "local"
+	main.runtime.local_team = 0
+	main.runtime.game_over = false
+	main.runtime._minion_waves.elapsed = 4.9
+	main.runtime._minion_waves.next_wave_time = 5.0
+	main.runtime._minion_waves.pending.clear()
+	main.runtime._tick_minion_waves(0.05)
 	harness._expect(cues.is_empty(), "首波播报在4.95秒前不提前播放")
-	main._tick_minion_waves(0.05)
-	main._tick_minion_waves(0.05)
+	main.runtime._tick_minion_waves(0.05)
+	main.runtime._tick_minion_waves(0.05)
 	harness._expect(cues == [&"minions_spawn"], "第5秒首波兵线只播一次全军出击")
-	main.mode = "client"
-	main.local_team = 1
+	main.runtime.mode = "client"
+	main.runtime.local_team = 1
 	preload("res://tests/fixtures/network_fixture.gd").deliver(main, "_rpc_card_event", [main._last_card_event_id, "match", "minions_spawn", Vector2.ZERO])
 	harness._expect(cues.size() == 1, "可靠首波播报重放按事件ID去重")
 	main._end_game(0, "nexus")
 	main._end_game(0, "nexus")
 	harness._expect(cues.count(&"defeat") == 1 and cues.count(&"victory") == 0, "主机胜利时客户端只播一次失败")
-	main.mode = "local"
-	main.local_team = 0
-	main.game_over = false
+	main.runtime.mode = "local"
+	main.runtime.local_team = 0
+	main.runtime.game_over = false
 	main._audio_manager.begin_battle()
 	main._end_game(0, "nexus")
 	harness._expect(cues.count(&"victory") == 1, "本地胜利播放胜利播报")
 	for child in main.get_children():
 		if child not in old_children: child.free()
-	main._minion_waves.elapsed = saved_elapsed
-	main._minion_waves.next_wave_time = saved_next
-	main._minion_waves.pending.assign(saved_pending)
-	main.mode = saved_mode
-	main.local_team = saved_mode_team
-	main.game_over = saved_over
-	main._match_rules.finished = saved_finished
+	main.runtime._minion_waves.elapsed = saved_elapsed
+	main.runtime._minion_waves.next_wave_time = saved_next
+	main.runtime._minion_waves.pending.assign(saved_pending)
+	main.runtime.mode = saved_mode
+	main.runtime.local_team = saved_mode_team
+	main.runtime.game_over = saved_over
+	main.runtime._match_rules.finished = saved_finished
 	main._audio_manager.begin_battle()
 	main._hand.show()
 	main._active_skill_bar.show()
@@ -1127,20 +1130,20 @@ func _check_team_audio_routes(harness: Object, main: Node2D) -> void:
 		tower.free()
 	# 真正的客户端 RPC 解码参数包含阵营；用可区分的红方形态配置观察最终播放器。
 	var saved_audio: GameAudioManager = main._audio_manager
-	var saved_mode: String = main.mode
-	var saved_mode_team: int = main.local_team
+	var saved_mode: String = main.runtime.mode
+	var saved_mode_team: int = main.runtime.local_team
 	var saved_card_event: int = main._last_card_event_id
 	main._audio_manager = audio
-	main.mode = "client"
-	main.local_team = 1
+	main.runtime.mode = "client"
+	main.runtime.local_team = 1
 	for player in audio._world_players: player.stop()
 	preload("res://tests/fixtures/network_fixture.gd").deliver(main, &"_rpc_card_event", [saved_card_event + 1, "gnar", "probe:start", Vector2.ZERO, 1, 1])
 	harness._expect(audio._world_players[0].volume_db == -40.0, "卡牌 RPC 从红方大形态一路传到音频选择入口")
 	preload("res://tests/fixtures/network_fixture.gd").deliver(main, &"_rpc_zone_audio", [100, "gnar", 1, "pulse", Vector2.ZERO, 1.0, 1])
 	harness._expect(audio._zone_players[100].player.volume_db == -40.0, "区域 RPC 保存红方大形态来源")
 	main._audio_manager = saved_audio
-	main.mode = saved_mode
-	main.local_team = saved_mode_team
+	main.runtime.mode = saved_mode
+	main.runtime.local_team = saved_mode_team
 	main._last_card_event_id = saved_card_event
 	audio.free()
 
@@ -1193,9 +1196,9 @@ func _check_independent_creation_audio(harness: Object, main: Node2D) -> void:
 		skill["cast_forward"] = Vector2.UP
 		var cue: StringName = &"active_strong:start" if full else &"active:start"
 		for player in audio._world_players: player.stop()
-		main._start_active_skill_cast(source, skill)
+		main.runtime._start_active_skill_cast(source, skill)
 		harness._expect(cues.count(cue) == 0, "星辰创建前不播放独立飞出声")
-		main._commands.tick_impacts(float(skill.full_resource_result_creation_delay if full else skill.result_creation_delay))
+		main.runtime._commands.tick_impacts(float(skill.full_resource_result_creation_delay if full else skill.result_creation_delay))
 		var flights: Array = audio._world_players.filter(func(player): return player.playing)
 		audio._process(0.0)
 		harness._expect(cues.count(cue) == 1 and not flights.is_empty(), "星辰创建即播放一次独立飞出声，动作观察不重复启动")
@@ -1204,7 +1207,7 @@ func _check_independent_creation_audio(harness: Object, main: Node2D) -> void:
 		harness._expect(not flights.is_empty() and flights.all(func(player): return player.playing and player.get_meta("action_owner", {}).is_empty()), "普通与满层星辰的已创建飞出声不随来源冻结或销毁停止")
 		for player in flights: player.stop()
 		audio.cue_played.disconnect(callback)
-		main._commands.clear_impacts()
+		main.runtime._commands.clear_impacts()
 		main._active_skill_effect_system.clear()
 		main._skill_presentation.clear()
 
@@ -1243,7 +1246,7 @@ func _check_stasis_audio(harness: Object, main: Node2D) -> void:
 		audio._tick_stasis_audio()
 		harness._expect(not audio._sustain_players.has(key), "死亡清理凝滞音")
 		unit.free()
-	for tower: Tower in main._towers:
+	for tower: Tower in main.world.towers_snapshot():
 		if tower.is_king: continue
 		tower.apply_stasis(2.0)
 		audio._tick_stasis_audio()

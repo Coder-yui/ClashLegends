@@ -16,7 +16,7 @@ func run(harness: Object, main: Node2D) -> void:
 	var layout := preload("res://scripts/ui/battle_layout.gd")
 	_expect(layout.default_client_size(Vector2i(2940,1688), Vector2i(0,64), 2.0) == Vector2i(900,1600), "本机Retina可用桌面扣除标题栏和边距后得到精确9:16窗口")
 	_expect(layout.default_client_size(Vector2i(1470,844), Vector2i(0,32), 1.0) == Vector2i(450,800), "1倍屏幕也按9:16像素整数单位尽量填充可用桌面")
-	_main._deck = []
+	_main.runtime._deck = []
 	_main._pick_deck_ui(func() -> void: return)
 	await _main.get_tree().process_frame
 	await _main.get_tree().process_frame
@@ -125,7 +125,7 @@ func run(harness: Object, main: Node2D) -> void:
 
 	var loading_match = load("res://scenes/main.tscn").instantiate()
 	_main.get_tree().root.add_child(loading_match)
-	loading_match._deck = ["tombstone", "gnar", "aatrox", "ashe", "aurelionsol", "rift_herald", "heal", "freeze"]
+	loading_match.runtime._deck = ["tombstone", "gnar", "aatrox", "ashe", "aurelionsol", "rift_herald", "heal", "freeze"]
 	var started := Time.get_ticks_msec()
 	loading_match._start_local_with_loading()
 	loading_match._start_local_with_loading()
@@ -133,7 +133,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_expect(_main.get_tree().paused and loading_match._battle_loading and not loading_match._audio_manager.can_process(), "加载阶段暂停战斗与音频，重复点击不重复开局")
 	while loading_match._battle_loading:
 		await _main.get_tree().process_frame
-	_expect(Time.get_ticks_msec() - started >= 1000 and not _main.get_tree().paused and loading_match._towers.size() == 6, "加载至少一秒后恢复对局且只创建一份战场")
+	_expect(Time.get_ticks_msec() - started >= 1000 and not _main.get_tree().paused and loading_match.world.towers_snapshot().size() == 6, "加载至少一秒后恢复对局且只创建一份战场")
 	_expect(loading_match._resources.cards.has("imp") and loading_match._resources.cards.has("super_minion"), "本场资源准备递归包含召唤物和后续超级兵")
 	var transformed := PresentationConfig.for_form(CardDB.get_card("gnar"), 1)
 	_expect(loading_match._resources.resources.has(PresentationConfig.scene_path(transformed, 1)), "本场资源覆盖对方模型与变身形态")

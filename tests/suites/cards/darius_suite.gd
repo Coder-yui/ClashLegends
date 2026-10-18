@@ -75,10 +75,10 @@ func _check_execution() -> void:
 	_expect(hp_before - target.hp == 225 and target.bleeding.stacks(source) == 2, "断头台按原1层结算225，再施加第2层")
 	source.active_ability_id = 99001
 	source.active_ability_slot = 0
-	_main._active_skills.register(source, "darius", 0, CardDB.active_skills_for("darius")[0])
+	_main.runtime._active_skills.register(source, "darius", 0, CardDB.active_skills_for("darius")[0])
 	target.hp = 1
 	_strike(source, target, true)
-	_expect(source.active_damage_multiplier == 2.0 and _main.get_active_skill_snapshot(99001).free_recast, "劈砍击杀立刻获得血怒与免费追斩")
+	_expect(source.active_damage_multiplier == 2.0 and _main.runtime.get_active_skill_snapshot(99001).free_recast, "劈砍击杀立刻获得血怒与免费追斩")
 	var fresh := _unit("garen", 1)
 	_strike(source, fresh, true)
 	_expect(fresh.hp == 690 and fresh.bleeding.stacks(source) == 4, "血怒断头台无层造成360并直接叠满")
@@ -86,42 +86,42 @@ func _check_execution() -> void:
 	fresh.queue_free()
 
 func _check_payment() -> void:
-	var deck: Array = _main._deck.duplicate()
-	_main._deck[0] = "darius"
+	var deck: Array = _main.runtime._deck.duplicate()
+	_main.runtime._deck[0] = "darius"
 	var source := _unit("darius", 0)
 	source.active_ability_id = 99002
 	source.active_ability_slot = 0
-	_main._register_active_skill(source, "darius", 0)
-	_main._elixir.elixir = 5.0
-	_expect(_main.use_active_skill(99002, 0) and _main._elixir.elixir == 3.0, "付费断头台请求扣2金币")
+	_main.runtime._register_active_skill(source, "darius", 0)
+	_main.runtime.account(0 if _main.runtime.mode == "server" else _main.runtime.local_team).elixir = 5.0
+	_expect(_main.use_active_skill(99002, 0) and _main.runtime.account(0 if _main.runtime.mode == "server" else _main.runtime.local_team).elixir == 3.0, "付费断头台请求扣2金币")
 	_run_main_ticks(10)
-	var state: Dictionary = _main.get_active_skill_snapshot(99002)
+	var state: Dictionary = _main.runtime.get_active_skill_snapshot(99002)
 	_expect(state.uses_remaining == 1 and is_equal_approx(state.cooldown_left, 16.0) and source.empowered_attack_ready, "开始时扣次数启动16秒且武装下一击")
 	_expect(not _main.use_active_skill(99002, 0), "已武装技能不能重复提交")
 	var target := _unit("garen", 1)
 	target.hp = 1
 	_strike(source, target)
-	_expect(_main.get_active_skill_snapshot(99002).free_recast, "已武装的真实劈砍击杀赠送免费资格")
-	_main._elixir.elixir = 0.0
-	_expect(_main.use_active_skill(99002, 0) and _main._elixir.elixir == 0.0, "付费冷却中零金币可提交免费追斩")
+	_expect(_main.runtime.get_active_skill_snapshot(99002).free_recast, "已武装的真实劈砍击杀赠送免费资格")
+	_main.runtime.account(0 if _main.runtime.mode == "server" else _main.runtime.local_team).elixir = 0.0
+	_expect(_main.use_active_skill(99002, 0) and _main.runtime.account(0 if _main.runtime.mode == "server" else _main.runtime.local_team).elixir == 0.0, "付费冷却中零金币可提交免费追斩")
 	_run_main_ticks(10)
-	state = _main.get_active_skill_snapshot(99002)
+	state = _main.runtime.get_active_skill_snapshot(99002)
 	_expect(state.uses_remaining == 1 and not state.free_recast and is_equal_approx(state.cooldown_left, 15.5), "免费使用不占次数且冷却继续从16走到15.5")
 	target = _unit("garen", 1)
 	_strike(source, target)
 	_expect(not _main.use_active_skill(99002, 0), "免费追斩未击杀回到原付费冷却")
-	_main._active_skills.grant_recast(99002)
-	_main._active_skills.tick(20.0)
-	state = _main.get_active_skill_snapshot(99002)
-	_expect(state.free_recast and state.cooldown_left == 0.0 and _main._active_skills.cost(99002) == 0.0, "付费CD完成不会覆盖未消费免费资格")
-	_main._active_skills.consume(99002)
-	_expect(_main._active_skills.cost(99002) == 2.0, "免费用尽后才恢复2金币技能")
-	_main._active_skills.consume(99002)
-	_main._active_skills.grant_recast(99002)
-	_expect(_main.get_active_skill_snapshot(99002).uses_remaining == 0 and _main._can_submit_active_skill(99002, 0), "付费2次耗尽仍能使用击杀赠送资格")
+	_main.runtime._active_skills.grant_recast(99002)
+	_main.runtime._active_skills.tick(20.0)
+	state = _main.runtime.get_active_skill_snapshot(99002)
+	_expect(state.free_recast and state.cooldown_left == 0.0 and _main.runtime._active_skills.cost(99002) == 0.0, "付费CD完成不会覆盖未消费免费资格")
+	_main.runtime._active_skills.consume(99002)
+	_expect(_main.runtime._active_skills.cost(99002) == 2.0, "免费用尽后才恢复2金币技能")
+	_main.runtime._active_skills.consume(99002)
+	_main.runtime._active_skills.grant_recast(99002)
+	_expect(_main.runtime.get_active_skill_snapshot(99002).uses_remaining == 0 and _main.runtime._can_submit_active_skill(99002, 0), "付费2次耗尽仍能使用击杀赠送资格")
 	target.queue_free()
 	source.queue_free()
-	_main._deck = deck
+	_main.runtime._deck = deck
 
 func _check_schema() -> void:
 	for field in ["bleed_damage_per_second", "bleed_duration", "bleed_max_stacks", "blood_rage_duration", "blood_rage_damage_multiplier", "empowered_first_hit"]:
@@ -175,7 +175,7 @@ func _check_lifecycle() -> void:
 
 func _check_tower_cleanup() -> void:
 	var source := _unit("darius", 0)
-	var tower: Tower = _main._towers[2]
+	var tower: Tower = _main.world.towers_snapshot()[2]
 	tower.bleeding.apply(tower, source, source.bleed_definition, false)
 	_expect(tower.bleeding.stacks(source) == 1, "防御塔接受流血")
 	_main.clear_preview_battle()
@@ -233,23 +233,23 @@ func _check_execution_true_death() -> void:
 		var victim := _unit(card, 1)
 		source.active_ability_id = 99003
 		source.active_ability_slot = 0
-		_main._active_skills.register(source, "darius", 0, CardDB.active_skills_for("darius")[0])
+		_main.runtime._active_skills.register(source, "darius", 0, CardDB.active_skills_for("darius")[0])
 		victim.hp = 1
 		_strike(source, victim, true)
-		_expect(bool(_main.get_active_skill_snapshot(99003).free_recast) == (card != "anivia"), "处决刷新读取真正死亡：本体赛恩及蛋碎触发，化蛋不触发")
+		_expect(bool(_main.runtime.get_active_skill_snapshot(99003).free_recast) == (card != "anivia"), "处决刷新读取真正死亡：本体赛恩及蛋碎触发，化蛋不触发")
 		if card == "sion":
 			victim.death_form.created_tick = -1
 			for tick in 40: victim.death_form.advance(victim, 0.05)
-			_main._active_skills.register(source, "darius", 0, CardDB.active_skills_for("darius")[0])
+			_main.runtime._active_skills.register(source, "darius", 0, CardDB.active_skills_for("darius")[0])
 			source.active_ability_id = 99003
 			source.active_ability_slot = 0
 			victim.hp = 1
 			_strike(source, victim, true)
-			_expect(not _main.get_active_skill_snapshot(99003).free_recast, "狂暴赛恩终结不触发处决刷新")
+			_expect(not _main.runtime.get_active_skill_snapshot(99003).free_recast, "狂暴赛恩终结不触发处决刷新")
 			var ordinary := _unit("garen", 1)
 			ordinary.hp = 1
 			_strike(source, ordinary, true)
-			_expect(_main.get_active_skill_snapshot(99003).free_recast, "同一来源仍可从普通真正死亡获得处决刷新")
+			_expect(_main.runtime.get_active_skill_snapshot(99003).free_recast, "同一来源仍可从普通真正死亡获得处决刷新")
 			ordinary.free()
 		source.free()
 		victim.free()

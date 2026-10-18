@@ -690,6 +690,50 @@ func can_start_active_skill(skill: Dictionary) -> bool:
 		return hp > 0.0 and is_deployed() and not CombatInteraction.in_stasis(self) and not death_form.used
 	return (action_permissions() & ControlState.START_SKILL) != 0
 
+func apply_damage_reduction(duration: float, reduction: float, expiry_skill: Dictionary, source: StringName) -> void:
+	buffs.apply(&"damage_reduction", source, duration, {"reduction": reduction, "expiry_skill": expiry_skill})
+
+func apply_effect_shield(duration: float, haste_duration: float, attack_speed: float, source: StringName) -> void:
+	buffs.apply(&"effect_shield", source, duration, {"haste_duration": haste_duration, "attack_speed": attack_speed})
+
+## Delivery判准入后立即预留一次盾；奖励入口自行延迟至提交后。
+func consume_effect_shield() -> bool:
+	if buffs.remaining(&"effect_shield") <= 0.0: return false
+	var duration := buffs.strongest(&"effect_shield", &"haste_duration", 0.0)
+	var speed := buffs.strongest(&"effect_shield", &"attack_speed", 1.0)
+	buffs.clear_family(&"effect_shield")
+	if duration > 0.0 and speed > 1.0: grant_effect_shield_reward(duration, speed)
+	if battle_context != null: battle_context.notify_unit_audio_event(self, &"effect_shield:block", global_position)
+	return true
+
+func apply_death_spawn(id: String, duration: float, source: StringName) -> void:
+	active_death_spawn_id = id
+	buffs.apply(&"death_spawn", source, duration, {"visual_duration": duration})
+
+func apply_timed_lifesteal(duration: float, ratio: float, source: StringName) -> void:
+	buffs.apply(&"timed_lifesteal", source, duration, {"ratio": ratio})
+
+func apply_unit_phasing(duration: float, source: StringName) -> void:
+	buffs.apply(&"unit_phasing", source, duration, {"enabled": true})
+
+func apply_ranged_attack(duration: float, range_bonus: float, piercing: bool, flight_distance: float, projectile_multiplier: float, source: StringName) -> void:
+	buffs.apply(&"ranged_attack", source, duration, {"range_bonus": range_bonus, "piercing": piercing, "flight_distance": flight_distance, "projectile_speed_multiplier": projectile_multiplier})
+
+func prepare_execute_attack(skill: Dictionary) -> void:
+	empowered_execute = skill
+	prepare_empowered_attack(1.0, 1.0, 0, {"strike_type": skill.get("strike_type", "basic_attack")})
+
+func prepare_channeled_attack(skill: Dictionary) -> void:
+	channel_attack.prepare(skill)
+	cancel_basic_attack(ActionCancellation.EMPOWERED_RESET)
+
+func begin_target_protection(radius: float, duration: float) -> void:
+	target_protection.begin(global_position, radius, duration)
+	if battle_context != null: battle_context.invalidate_target_locks(self)
+
+func clear_channel_stun(source: StringName) -> void:
+	control.remove_stun_source(source)
+
 func begin_undying_rage(duration: float) -> void:
 	buffs.apply(&"undying", status_source("undying"), duration, {"health_floor": 1.0})
 	skill_resource_value = skill_resource_max
@@ -899,6 +943,9 @@ func apply_dash_motion(point: Vector2) -> void:
 	global_position = Vector2(clampf(point.x, body_radius, ArenaRules.FIELD_W - body_radius), clampf(point.y, body_radius, ArenaRules.FIELD_H - body_radius))
 	terrain_traversal.update(self)
 
+func set_dash_moving(serial: int, moving: bool) -> void:
+	if serial == active_skill_cast_serial: skill_dash_active = moving
+
 func sync_dash_cast(serial: int, moving: bool, duration: float, progress: float, rate: float, remaining: float) -> void:
 	if serial != active_skill_cast_serial:
 		return
@@ -942,8 +989,12 @@ func begin_active_skill_cast(duration: float, facing: Vector2, cast_locks: Array
 	if is_active_skill_movement_locked():
 		_move_intent = Vector2.ZERO
 
-## 在 Cast Start 锁定本次资源倍率并清空旧资源。施法期间新获得的资源留给下一次技能，
-## 从而保证强动画选择、权威伤害与联网表现始终来自同一个资源快照。
+## 部分资源施法沿用原固定增量规则，不混入命中/受击奖励。
+func grant_partial_cast_resource(amount: float) -> void:
+	skill_resource_value = minf(skill_resource_max, skill_resource_value + amount)
+	queue_redraw()
+
+## Cast Start清空旧资源，施法期间新获得的资源留给下一次技能。
 func consume_skill_resource_ratio() -> float:
 	var ratio := get_skill_resource_ratio()
 	skill_resource_value = 0.0
@@ -1010,10 +1061,6 @@ func record_combat_activity(reveal: bool = false) -> void:
 	combat_idle_seconds = 0.0
 	stealth.activity(reveal)
 
-# 兼容技能资源/工作台调用；只记录一次公共战斗事实。
-func mark_skill_resource_combat_activity() -> void:
-	record_combat_activity()
-
 func has_sustained_combat() -> bool:
 	if _attacking or (active_skill_cast_timer > 0.0 and active_skill_offensive): return true
 	if _knockback_timer > 0.0: return true
@@ -1044,29 +1091,54 @@ func prepare_empowered_attack(damage_multiplier: float, speed_multiplier: float 
 	attack_timeline.restart_visual()
 	queue_redraw()
 
-## 以差值恢复牺牲强化属性，重复快照不叠加生命上限或身体倍率。
+## 永久上限转换；补偿只由一次性获得的调用方指定，不是治疗、不产生治疗收益。
+## 缩上限是否裁剪由换形调用方明确选择；死亡清理不借此复活。
+func _change_max_health(value: float, compensation: float = 0.0, clamp_current: bool = false) -> void:
+	max_hp = value
+	if hp > 0.0: hp += maxf(compensation, 0.0)
+	if clamp_current: hp = minf(hp, max_hp)
+
+func apply_sacrifice_empowerment(damage_multiplier: float, visual_scale: float, health_ratio: float, body_scale: float, speed_multiplier: float) -> bool:
+	if _in_client_mode() or hp <= 0.0 or float(_base_form_stats.get("sacrifice_damage", 0.0)) <= 0.0 or sacrifice_empowerment.x > 1.0: return false
+	sacrifice_empowerment = Vector2(damage_multiplier, visual_scale)
+	var bonus := BattleNumbers.quantity(max_hp * health_ratio)
+	set_sacrifice_stats(Vector3(bonus, body_scale, speed_multiplier))
+	_change_max_health(max_hp, bonus)
+	return true
+
+## 冲撞的生命代价：绕过盾与敌方伤害，不触发受击资源或击杀。
+func pay_rush_health_cost(ratio: float) -> void:
+	if hp > 0.0: hp = maxf(1.0, hp - BattleNumbers.quantity(hp * ratio))
+
+## 权威牺牲强化的取得/清除用差值更新；副本只走restore_replica_combat_state。
 func set_sacrifice_stats(value: Vector3) -> void:
-	max_hp += value.x - sacrifice_stats.x
+	var old_body_radius := body_radius
+	_change_max_health(max_hp + value.x - sacrifice_stats.x)
 	body_radius = body_radius / sacrifice_stats.y * value.y
 	sacrifice_stats = value
-	_path.clear()
-	_repath_cd = 0.0
-	queue_redraw()
+	_finish_body_change(old_body_radius, is_air)
 
 ## 成长与普通换形分别持有状态；仅首次获得时增加当前生命。
 func apply_permanent_growth(health_ratio: float, body_scale: float) -> bool:
 	if not is_finite(health_ratio) or not is_finite(body_scale) or health_ratio <= 0.0 or body_scale <= 1.0: return false
 	if hp <= 0.0 or growth_body_scale > 1.0 or not CombatInteraction.allows_allied_target(self, team) or is_building or card_id == "anivia_egg": return false
+	var old_body_radius := body_radius
 	growth_health_bonus = BattleNumbers.quantity(max_hp * health_ratio)
 	growth_body_scale = body_scale
-	max_hp += growth_health_bonus
-	hp += growth_health_bonus
+	_change_max_health(max_hp + growth_health_bonus, growth_health_bonus)
 	body_radius *= growth_body_scale
 	visual_radius *= growth_body_scale
-	_path.clear()
-	_repath_cd = 0.0
-	queue_redraw()
+	_finish_body_change(old_body_radius, is_air)
 	return true
+
+## 权威体型转换的共同收尾；副本只清本地路径，落点始终服从主机。
+func _finish_body_change(old_body_radius: float, was_air: bool) -> void:
+	_path.clear()
+	_path_index = 0
+	_repath_cd = 0.0
+	if (body_radius > old_body_radius or (was_air and not is_air)) and not _in_client_mode() and battle_context != null:
+		battle_context.ensure_unit_form_resize_safe(self)
+	queue_redraw()
 
 ## 给后续真正命中的普攻附加吸血，不改攻击计时。
 func apply_attack_lifesteal(heal_ratio: float, max_health_ratio: float = 1.0) -> void:
@@ -1110,15 +1182,51 @@ func _cancel_attack_for_cast() -> void:
 ## 客户端只接受主机快照中的形态。战斗数值用于正确显示体型、血条和目标过滤，
 ## 当前生命会在同一份快照中由主机值覆盖，不在这里发放变身生命增量。
 func sync_network_form(next_form_index: int, next_form_serial: int = 0) -> void:
-	next_form_index = clampi(next_form_index, 0, 1)
-	# 双向变形时用权威形态序号过滤晚到的旧快照，不能再按形态数字大小判断新旧。
-	if next_form_serial < net_form_change_serial:
-		return
+	if next_form_serial < net_form_change_serial: return
+	var changed := form_index != next_form_index
 	net_form_change_serial = next_form_serial
-	net_form_index = next_form_index
-	if form_index == net_form_index:
-		return
-	_apply_form(net_form_index, false, false)
+	form_change_serial = next_form_serial
+	net_form_index = clampi(next_form_index, 0, 1)
+	form_index = net_form_index
+	if not changed: return
+	var stats: Dictionary = transformed_stats if form_index == 1 else _base_form_stats
+	max_hp = BattleNumbers.quantity(float(stats.get("hp", max_hp))) + growth_health_bonus + sacrifice_stats.x
+	_load_form_attributes(stats)
+	body_radius *= sacrifice_stats.y
+	_health_bar_center = Vector2(0.0, -visual_radius - HEALTH_BAR_HEAD_GAP - HEALTH_BAR_HEIGHT * 0.5)
+	form_changed.emit(form_index)
+
+## 仅NetworkSnapshotSystem完整校验后的客户端调用。恢复生命/属性/控制投影，
+## 不治疗、不消费盾、不修权威落点、不取消动作或增加形态/施法代次。
+func restore_replica_combat_state(state: Dictionary) -> void:
+	if not _in_client_mode(): return
+	apply_action_cancellation(state.cancellation)
+	_deploy_timer = maxf(float(state.deploy_left), 0.0)
+	net_target_pos = state.position
+	if teleport_serial != int(state.teleport):
+		teleport_serial = int(state.teleport)
+		global_position = net_target_pos
+		_prev_pos = net_target_pos
+	sync_network_form(int(state.form), int(state.form_serial))
+	var growth: Vector2 = state.growth
+	max_hp += growth.x - growth_health_bonus
+	body_radius = body_radius / growth_body_scale * growth.y
+	visual_radius = visual_radius / growth_body_scale * growth.y
+	growth_health_bonus = growth.x
+	growth_body_scale = growth.y
+	var sacrifice: Vector3 = state.sacrifice_stats
+	max_hp += sacrifice.x - sacrifice_stats.x
+	body_radius = body_radius / sacrifice_stats.y * sacrifice.y
+	sacrifice_stats = sacrifice
+	sacrifice_empowerment = state.sacrifice_empowerment
+	team_attack_boost_multiplier = float(state.team_boost)
+	hp = BattleNumbers.quantity(float(state.hp))
+	control.apply_replica_flags(state.frozen, state.stunned)
+	control.apply_replica_stasis(state.stasis)
+	target_protection.apply_replica(state.protection)
+	death_form.apply_replica(state.death_form)
+	bleeding.replica_stacks = int(state.bleed)
+	queue_redraw()
 
 ## 属性瞬时切换，复用变形时钟锁普攻；动作/硬控/快照沿用通用变形合同。
 func toggle_weapon_form() -> void:
@@ -1132,32 +1240,43 @@ func toggle_weapon_form() -> void:
 func record_structure_attack(target: Node2D) -> void:
 	if battle_context == null or _in_client_mode() or hp <= 0.0 or float(_base_form_stats.get("structure_assist_window", 0.0)) <= 0.0: return
 	if target.team == team or not (target is Tower or (target is Unit and target.is_building)): return
+	# Node 实例身份贯穿该结构的真实死亡；仅保留弱引用，结构释放后回收账本项。
+	# 不能在 defeated 时删除窗口：同批命中收益仍需刷新首次补刀/过期旧助攻。
+	for previous in _structure_assists.keys():
+		if _structure_assists[previous].target.get_ref() == null: _structure_assists.erase(previous)
 	var identity := target.get_instance_id()
+	if _structure_assists.has(identity) and _structure_assists[identity].consumed: return
 	var callback := _on_assisted_structure_destroyed.bind(identity)
 	var death_signal: Signal = target.defeated if target is Tower else target.died
 	if not death_signal.is_connected(callback): death_signal.connect(callback, CONNECT_ONE_SHOT)
-	_structure_assists[identity] = battle_context.simulation_tick()
+	_structure_assists[identity] = {"target": weakref(target), "hit_tick": battle_context.simulation_tick(), "consumed": false}
 	if target.hp <= 0.0: _on_assisted_structure_destroyed(identity)
 
 func _on_assisted_structure_destroyed(identity: int) -> void:
 	if not _structure_assists.has(identity) or battle_context == null: return
-	var hit_tick := int(_structure_assists[identity])
-	_structure_assists.erase(identity)
 	if battle_context.damage_batch().committing:
-		battle_context.damage_batch().defer_benefit(_grant_structure_haste.bind(hit_tick))
+		battle_context.damage_batch().defer_benefit(_consume_structure_assist.bind(identity))
 	else:
-		_grant_structure_haste(hit_tick)
+		_consume_structure_assist(identity)
+
+func _consume_structure_assist(identity: int) -> void:
+	if not _structure_assists.has(identity): return
+	var entry: Dictionary = _structure_assists[identity]
+	var target = entry.target.get_ref()
+	if entry.consumed or not is_instance_valid(target) or target.hp > 0.0: return
+	if target is Unit and not target.is_true_death(): return
+	# 每个来源对同一结构真实死亡只消费一次，资格仍在全批扣血后检查。
+	entry.consumed = true
+	_grant_structure_haste(int(entry.hit_tick))
 
 func _grant_structure_haste(hit_tick: int) -> void:
 	if hp <= 0.0 or CombatInteraction.in_stasis(self): return
 	if battle_context.simulation_tick() - hit_tick > ceili(float(_base_form_stats.structure_assist_window) * 20.0): return
-	var previous_speed := _effective_attack_speed_multiplier()
 	var starting := buffs.remaining(&"structure_haste") <= 0.0
 	var stacks := buffs.stack_count(&"structure_haste") + 1
 	var attack_speed := snappedf(1.0 + stacks * (float(_base_form_stats.structure_haste_attack_speed) - 1.0), 0.01)
-	buffs.apply(&"structure_haste", status_source("structure_haste"), float(_base_form_stats.structure_haste_duration), {
+	apply_attack_speed_buff(&"structure_haste", status_source("structure_haste"), float(_base_form_stats.structure_haste_duration), {
 		"speed_bonus": float(_base_form_stats.structure_haste_speed_bonus), "attack_speed": attack_speed, "stacks": stacks})
-	_rescale_attack_phase(previous_speed)
 	if starting: battle_context.notify_unit_audio_event(self, &"structure_haste:start", global_position)
 
 func transform_to_mega(active_cast: bool = false) -> bool:
@@ -1181,7 +1300,7 @@ func transform_to_small() -> bool:
 	play_visual_action(&"revert", form_transition_timer)
 	return true
 
-func _apply_form(next_form_index: int, grant_max_hp_increase: bool, advance_form_serial: bool = true) -> void:
+func _apply_form(next_form_index: int, grant_max_hp_increase: bool) -> void:
 	pending_form_generation = -1
 	_pending_extra_attacks.clear()
 	var next_stats: Dictionary = transformed_stats if next_form_index == 1 else _base_form_stats
@@ -1190,17 +1309,35 @@ func _apply_form(next_form_index: int, grant_max_hp_increase: bool, advance_form
 	var old_max_hp := max_hp
 	var old_body_radius := body_radius
 	var was_air := is_air
-	max_hp = BattleNumbers.quantity(float(next_stats.get("hp", max_hp))) + growth_health_bonus
-	if grant_max_hp_increase:
-		hp = minf(hp + maxf(max_hp - old_max_hp, 0.0), max_hp)
-	else:
-		hp = minf(hp, max_hp)
-	damage = BattleNumbers.quantity(float(next_stats.get("damage", damage)))
-	attack_passive_multipliers = next_stats.get("attack_passive_multipliers", []).duplicate()
-	attack_lifesteal_ratios = next_stats.get("attack_lifesteal_ratios", []).duplicate()
+	var next_max := BattleNumbers.quantity(float(next_stats.get("hp", max_hp))) + growth_health_bonus
+	_change_max_health(next_max, maxf(next_max - old_max_hp, 0.0) if grant_max_hp_increase else 0.0, true)
+	_load_form_attributes(next_stats)
 	if not attack_passive_multipliers.is_empty():
 		_attack_hit_index = 0
 		_attack_swing_count = 0
+	form_index = next_form_index
+	net_form_index = next_form_index
+	form_change_serial += 1
+	net_form_change_serial = form_change_serial
+	transform_hit_count = 0
+	# 攻击形态和射程已经改变，旧前摇/后摇不能带入新形态；在途远程弹体仍由主机独立推进。
+	_target = null
+	_attacking = false
+	attack_timeline.cancel(true)
+	_attack_visual_pending = false
+	_attack_visual_first_strike = false
+	_path = PackedVector2Array()
+	_path_index = 0
+	cancel_charge()
+	_health_bar_center = Vector2(0.0, -visual_radius - HEALTH_BAR_HEAD_GAP - HEALTH_BAR_HEIGHT * 0.5)
+	form_changed.emit(form_index)
+	_finish_body_change(old_body_radius, was_air)
+
+## 仅装载定义属性，不操作生命、动作代次、落点或奖励。
+func _load_form_attributes(next_stats: Dictionary) -> void:
+	damage = BattleNumbers.quantity(float(next_stats.get("damage", damage)))
+	attack_passive_multipliers = next_stats.get("attack_passive_multipliers", []).duplicate()
+	attack_lifesteal_ratios = next_stats.get("attack_lifesteal_ratios", []).duplicate()
 	on_hit_max_health_ratio = float(next_stats.get("on_hit_max_health_ratio", 0.0))
 	on_hit_tower_damage = BattleNumbers.quantity(float(next_stats.get("on_hit_tower_damage", 0.0)))
 	attack_range = float(next_stats.get("range", attack_range))
@@ -1229,29 +1366,6 @@ func _apply_form(next_form_index: int, grant_max_hp_increase: bool, advance_form
 	projectile_impact_visual = StringName(next_stats.get("projectile_impact_visual", projectile_impact_visual))
 	splash_radius = float(next_stats.get("splash_radius", splash_radius))
 	attack_knockback = float(next_stats.get("knockback", attack_knockback))
-	form_index = next_form_index
-	net_form_index = next_form_index
-	if advance_form_serial:
-		form_change_serial += 1
-		net_form_change_serial = form_change_serial
-	else:
-		form_change_serial = net_form_change_serial
-	transform_hit_count = 0
-	# 攻击形态和射程已经改变，旧前摇/后摇不能带入新形态；在途远程弹体仍由主机独立推进。
-	_target = null
-	_attacking = false
-	attack_timeline.cancel(true)
-	_attack_visual_pending = false
-	_attack_visual_first_strike = false
-	_path = PackedVector2Array()
-	_path_index = 0
-	cancel_charge()
-	_health_bar_center = Vector2(0.0, -visual_radius - HEALTH_BAR_HEAD_GAP - HEALTH_BAR_HEIGHT * 0.5)
-	form_changed.emit(form_index)
-	# 放大碰撞半径后立即做一次地形/建筑安全修正；单位间重叠仍交给本 tick 的统一推挤。
-	if (body_radius > old_body_radius or (was_air and not is_air)) and not _in_client_mode() and battle_context != null:
-		battle_context.ensure_unit_form_resize_safe(self)
-	queue_redraw()
 
 func is_form_transitioning() -> bool:
 	return form_transition_timer > 0.0
@@ -1351,7 +1465,30 @@ func set_continuous_beam_origin_world_position(world_position: Vector2) -> void:
 	continuous_beam_origin_tracks_model = true
 	queue_redraw()
 
-## 固定 tick 模拟入口，由 main._sim_step 以 SIM_DT 驱动
+## 冲撞所有者提供搜索结果，Unit保存唯一寻路缓存。
+func set_structure_approach_path(path: PackedVector2Array, target: Node2D, goal: Vector2) -> void:
+	_path = path.duplicate()
+	if goal.is_finite(): _path.append(goal)
+	_path_index = 0
+	_path_target = target
+	_path_goal = goal
+
+## 权威不连续位置转换的共同收尾；普通20Hz步进由MovementSystem独占提交。
+func _relocate_authority(point: Vector2, clear_target: bool = false) -> void:
+	global_position = point
+	_prev_pos = point
+	net_target_pos = point
+	_path = PackedVector2Array()
+	_path_index = 0
+	_repath_cd = 0.0
+	if clear_target: _path_target = null
+
+func apply_body_resize_position(point: Vector2) -> void:
+	if not _in_client_mode(): _relocate_authority(point)
+
+func apply_deployment_push_position(point: Vector2) -> void:
+	if not _in_client_mode(): _relocate_authority(point)
+
 ## 攻击出地形是一次位置转换：同步插值、网络目标与寻路缓存。
 func leave_terrain_for_attack() -> bool:
 	var point := terrain_traversal.attack_exit(self, _target)
@@ -1361,24 +1498,15 @@ func leave_terrain_for_attack() -> bool:
 		cancel_basic_attack(ActionCancellation.TERRAIN_EXIT)
 	if not point.is_finite():
 		return false
-	global_position = point
-	_prev_pos = point
-	net_target_pos = point
-	_path = PackedVector2Array()
-	_path_index = 0
-	_repath_cd = 0.0
+	_relocate_authority(point)
 	terrain_traversal.update(self)
 	return true
 
 ## 不连续位移同时重置表现插值；序号由快照同步。
 func teleport_to(point: Vector2) -> void:
-	global_position = point
-	_prev_pos = point
-	net_target_pos = point
+	if _in_client_mode(): return
+	_relocate_authority(point)
 	teleport_serial += 1
-	_path = PackedVector2Array()
-	_path_index = 0
-	_repath_cd = 0.0
 
 ## 幽灵能力只放开普通单位接触；建筑占地与导航仍按原规则。
 func ignores_unit_collision() -> bool:
@@ -1427,12 +1555,13 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prep
 	if _deploy_timer <= 0.0 and spawn_initial_delay_left > 0.0 and not summons_started:
 		spawn_initial_delay_left = maxf(0.0, spawn_initial_delay_left - dt)
 	channel_attack.tick(self, dt)
-	if channel_attack.active(): return
 	if not is_building and spawn_interval > 0.0 and not summons_started:
 		if not _initial_summons_spawned:
 			_spawn_initial_summons()
 		else:
 			_tick_periodic_summons(dt)
+	# 引导只锁自主行动，不暂停独立被动时钟或到期产出。
+	if channel_attack.active(): return
 	if is_building:
 		_building_tick(dt, true, summons_started)
 		if hp <= 0.0 or is_queued_for_deletion():
@@ -1667,16 +1796,11 @@ func recover_displacement_position() -> bool:
 		return true
 	var point := UnitLandingQuery.displacement_recovery(self, global_position)
 	if point.is_finite():
-		global_position = point
-		_prev_pos = point
-		_path = PackedVector2Array()
-		_path_index = 0
-		_path_target = null
-		_repath_cd = 0.0
+		_relocate_authority(point, true)
 		knockback.recovery_pending = false
 		return true
 	# 全场无解：不出界、不伪造到达。停在场内并在后续Tick重试。
-	global_position = Vector2(clampf(global_position.x, body_radius, ArenaRules.FIELD_W-body_radius), clampf(global_position.y, body_radius, ArenaRules.FIELD_H-body_radius))
+	_relocate_authority(Vector2(clampf(global_position.x, body_radius, ArenaRules.FIELD_W-body_radius), clampf(global_position.y, body_radius, ArenaRules.FIELD_H-body_radius)), true)
 	knockback.recovery_pending = true
 	return false
 
@@ -1718,9 +1842,7 @@ func _tick_knockback_movement(dt: float) -> void:
 	_forced_movement = true
 
 func _target_gap(target: Node2D) -> float:
-	if target.has_method("surface_gap_to_circle"):
-		return target.surface_gap_to_circle(global_position, body_radius)
-	return maxf(0.0, global_position.distance_to(target.global_position) - body_radius - target.body_radius)
+	return target.surface_gap_to_circle(global_position, body_radius)
 
 ## 人物与建筑都使用权威圆柱的圆形底面；建筑部署方格只负责限制下牌。
 func surface_gap_to_circle(center: Vector2, radius: float) -> float:
@@ -2273,7 +2395,7 @@ func _attack(dt: float) -> void:
 			empowered_attack_blind_charges = 0
 		# 挥击序号与表现层攻击动画序号同步推进，供命中回血按三段循环取模。
 		_attack_swing_count += 1
-		mark_skill_resource_combat_activity()
+		record_combat_activity()
 		if rage_crit_multiplier > 1.0:
 			if rage_critical:
 				if buffs.remaining(&"undying") <= 0.0: skill_resource_value = 0.0
@@ -2490,7 +2612,7 @@ func _tick_pending_extra_attacks(dt: float) -> void:
 		if not is_instance_valid(target) or not target is Node2D or target.hp <= 0.0:
 			continue
 		_attack_swing_count += 1
-		mark_skill_resource_combat_activity()
+		record_combat_activity()
 		add_skill_resource(skill_resource_attack_gain)
 		basic_attack_sequence += 1
 		var effects := {"presentation_source": pending.presentation_source, "attack_id": basic_attack_sequence, "cycle_id": pending.get("cycle_id", _attack_visual_serial)}
@@ -2525,11 +2647,9 @@ func on_attack_landed(attack_form_index: int = -1, landed_damage: float = 0.0, s
 	var definition := PresentationConfig.for_form(_base_form_stats, form_index)
 	var max_stacks := int(definition.get("hit_haste_max_stacks", 0))
 	if max_stacks > 0:
-		var previous_speed := _effective_attack_speed_multiplier()
 		var stacks := mini(int(buffs.strongest(&"hit_haste", &"stacks", 0.0)) + 1, max_stacks)
-		buffs.apply(&"hit_haste", &"attack", float(definition.hit_haste_duration), {
+		apply_attack_speed_buff(&"hit_haste", &"attack", float(definition.hit_haste_duration), {
 			"stacks": stacks, "attack_speed": 1.0 + stacks * float(definition.hit_haste_per_stack)})
-		_rescale_attack_phase(previous_speed)
 	add_skill_resource(skill_resource_hit_gain)
 	_try_heal_on_hit(submitted_swing)
 	var cycle_ratio := 0.0
@@ -2610,11 +2730,8 @@ func _try_attack_lifesteal(landed_damage: float, cycle_ratio: float = 0.0) -> vo
 	var ratio := attack_lifesteal_ratio + cycle_ratio + buffs.strongest(&"timed_lifesteal", &"ratio", 0.0)
 	if ratio <= 0.0 or landed_damage <= 0.0:
 		return
-	var hp_before_heal := hp
 	var health_cap := BattleNumbers.quantity(max_hp * attack_lifesteal_max_health_ratio)
-	hp = minf(hp + BattleNumbers.quantity(landed_damage * ratio), health_cap)
-	_present_heal_gain(hp_before_heal)
-	queue_redraw()
+	_receive_health_gain(landed_damage * ratio, health_cap, false)
 
 func cancel_skill_cast(recover_position: bool = true) -> void:
 	if recover_position and skill_dash_active and hp > 0.0: recover_displacement_position()
@@ -2804,20 +2921,36 @@ func _receive_apply_attack_speed_slow(duration: float, multiplier: float, source
 	_rescale_attack_phase(previous_speed)
 	queue_redraw()
 
+## 任何攻速增益开始/刷新都保持前摇、后摇、间隔及额外攻击的归一化进度。
+## 到期和减攻速入口仍由旧新有效速率调用同一 _rescale_attack_phase 合同。
+func apply_attack_speed_buff(family: StringName, source: StringName, duration: float, potency: Dictionary) -> void:
+	var previous_speed := _effective_attack_speed_multiplier()
+	buffs.apply(family, source, duration, potency)
+	_rescale_attack_phase(previous_speed)
+
+## 护盾消费属于收集期的立即预留，收益只在全批扣血/控制完成后授予存活者。
+func grant_effect_shield_reward(duration: float, attack_speed: float) -> void:
+	if battle_context != null:
+		var batch := battle_context.damage_batch()
+		if batch.collecting or batch.committing:
+			batch.defer_benefit(func(): grant_effect_shield_reward(duration, attack_speed))
+			return
+	if hp <= 0.0 or death_form.waiting(): return
+	apply_attack_speed_buff(&"hit_haste", status_source("effect_shield_reward"), duration, {"attack_speed": attack_speed})
+	queue_redraw()
+
 func apply_active_buff(duration: float, speed_multiplier: float, damage_multiplier: float, attack_speed_multiplier: float, ignores_movement_slow: bool = false, ignores_attack_speed_slow: bool = false, source: StringName = &"legacy", interaction: Dictionary = {}) -> void:
 	if not CombatInteraction.allows_effect(self, interaction): return
 	if hp <= 0.0: return
 	if battle_context != null and battle_context.damage_batch().collecting:
 		battle_context.damage_batch().defer_effect(func(): apply_active_buff(duration, speed_multiplier, damage_multiplier, attack_speed_multiplier, ignores_movement_slow, ignores_attack_speed_slow, source))
 		return
-	var previous_speed := _effective_attack_speed_multiplier()
-	buffs.apply(&"buff", source, duration, {"speed": speed_multiplier, "damage": damage_multiplier,
+	apply_attack_speed_buff(&"buff", source, duration, {"speed": speed_multiplier, "damage": damage_multiplier,
 		"attack_speed": attack_speed_multiplier, "ignore_movement_slow": ignores_movement_slow,
 		"ignore_attack_speed_slow": ignores_attack_speed_slow})
 	if is_finite(duration) and duration > 0.0:
 		_buff_visual_start_tick = buffs.tick_index
 		_buff_visual_duration = active_buff_timer
-	_rescale_attack_phase(previous_speed)
 	queue_redraw()
 
 func add_shield(amount: float, duration: float, decays: bool = false, source: StringName = &"legacy", interaction: Dictionary = {}, expiry_effect: Dictionary = {}) -> void:
@@ -2923,9 +3056,13 @@ func heal(amount: float, interaction: Dictionary = {}) -> void:
 	if hp <= 0.0 or amount <= 0.0:
 		return
 	# 普通治疗不能突破基础上限，也不能把已经存在的溢出生命反向截回基础上限。
-	var hp_before_heal := hp
-	hp = maxf(hp, minf(hp + BattleNumbers.quantity(amount), max_hp))
-	_present_heal_gain(hp_before_heal)
+	_receive_health_gain(amount, max_hp)
+
+func _receive_health_gain(amount: float, cap: float, preserve_overflow: bool = true) -> void:
+	var previous := hp
+	var next := minf(hp + BattleNumbers.quantity(amount), cap)
+	hp = maxf(hp, next) if preserve_overflow else next
+	_present_heal_gain(previous)
 	queue_redraw()
 
 func take_damage(amount: float, from: Node2D = null, source_team: int = -1, source_position: Vector2 = Vector2(INF, INF), attached: bool = false) -> bool:
@@ -3037,6 +3174,14 @@ func death_spawn_state_visual() -> Vector2:
 	var remaining := buffs.remaining(&"death_spawn")
 	return Vector2(remaining, buffs.strongest(&"death_spawn", &"visual_duration", remaining)) if remaining > 0.0 else Vector2.ZERO
 
+## 保留召唤替换的原死亡/奖励时序，先释放占位。
+func end_life_for_summon() -> void:
+	_die()
+
+func finish_sacrifice_leap() -> void:
+	_skip_death_visual = true
+	_die(false)
+
 ## 主动牺牲直接结束生命；不经伤害/护盾，也不发放击杀赏金。
 func sacrifice_without_reward() -> void:
 	if hp <= 0.0 or is_queued_for_deletion() or _in_client_mode(): return
@@ -3071,8 +3216,7 @@ func _die(trigger_death_effect: bool = false) -> void:
 	# 建筑卡死亡 → 解除导航网格占地
 	if is_building and not nav_cells.is_empty():
 		if battle_context != null:
-			battle_context.unblock_nav_cells(nav_cells)
-		nav_cells = []
+			battle_context.release_structure_footprint(self)
 	if is_true_death(): assist_conversion.consume(self)
 	if is_true_death() and not _in_client_mode() and battle_context != null and not _death_reward_paid:
 		_death_reward_paid = true

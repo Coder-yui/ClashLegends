@@ -22,7 +22,7 @@ func _spawn(card: String, pos: Vector2, team: int = 1) -> Unit:
 
 func _advance(count: int) -> void:
 	for index in count:
-		_main.set("_sim_tick_id", _main.get_authoritative_server_tick() + 1)
+		_main.runtime.set("_sim_tick_id", _main.get_authoritative_server_tick() + 1)
 		var batch: CombatResolver = _main.combat_service()
 		batch.begin_batch(_main.get_authoritative_server_tick(), "spell_test")
 		_spells.tick(FixedStepClock.STEP)
@@ -128,22 +128,22 @@ func _clear() -> void:
 
 
 func _check_cost_and_replica() -> void:
-	var saved_deck: Array = _main._deck.duplicate()
-	_main._deck = ["zap", "lightning", "garen", "ashe", "teemo", "xin", "heal", "freeze"]
-	_expect(_main.card_cost_for_team(0, "zap") == 3 and _main.card_cost_for_team(0, "lightning") == 7, "主动槽两张法术各增加1金币")
-	_main._deck = ["garen", "ashe", "zap", "lightning", "teemo", "xin", "heal", "freeze"]
-	_expect(_main.card_cost_for_team(0, "zap") == 2 and _main.card_cost_for_team(0, "lightning") == 6, "普通槽法术保持2/6金币")
-	_main._deck = saved_deck
+	var saved_deck: Array = _main.runtime._deck.duplicate()
+	_main.runtime._deck = ["zap", "lightning", "garen", "ashe", "teemo", "xin", "heal", "freeze"]
+	_expect(_main.runtime.card_cost_for_team(0, "zap") == 3 and _main.runtime.card_cost_for_team(0, "lightning") == 7, "主动槽两张法术各增加1金币")
+	_main.runtime._deck = ["garen", "ashe", "zap", "lightning", "teemo", "xin", "heal", "freeze"]
+	_expect(_main.runtime.card_cost_for_team(0, "zap") == 2 and _main.runtime.card_cost_for_team(0, "lightning") == 6, "普通槽法术保持2/6金币")
+	_main.runtime._deck = saved_deck
 	_spells.clear()
-	var saved_mode: String = _main.mode
-	var saved_mode_team: int = _main.local_team
-	var saved_session: MatchSession = _main._session
-	_main.mode = "client"
-	_main.local_team = 1
-	_main._session = MatchSession.new()
-	_main._session.opponent_id = 1
-	_main._session.session_id = "lightning-test"
-	_main._session.phase = MatchSession.Phase.RUNNING
+	var saved_mode: String = _main.runtime.mode
+	var saved_mode_team: int = _main.runtime.local_team
+	var saved_session: MatchSession = _main.runtime.session
+	_main.runtime.mode = "client"
+	_main.runtime.local_team = 1
+	_main.runtime.session = MatchSession.new()
+	_main.runtime.session.opponent_id = 1
+	_main.runtime.session.session_id = "lightning-test"
+	_main.runtime.session.phase = MatchSession.Phase.RUNNING
 	var event_id: int = _main._last_card_event_id + 100
 	_main._rpc_lightning_fx("old-session", event_id, "zap", Vector2(360, 640), 90, 0)
 	_expect(_spells.lightning_effects.is_empty(), "旧会话电击表现拒绝")
@@ -152,13 +152,13 @@ func _check_cost_and_replica() -> void:
 	_expect(_spells.lightning_effects.size() == 1 and _spells.lightning_casts.is_empty(), "客户端落雷去重且不创建权威排程")
 	_main._rpc_lightning_fx("lightning-test", event_id - 1, "lightning", Vector2(360, 640), 120, 1)
 	_expect(_spells.lightning_effects.size() == 1, "晚到旧表现不会重新播放")
-	_main.game_over = true
+	_main.runtime.game_over = true
 	_main._rpc_lightning_fx("lightning-test", event_id + 1, "lightning", Vector2(360, 640), 120, 1)
 	_expect(_spells.lightning_effects.size() == 1, "终局拒绝电击表现")
-	_main.game_over = false
-	_main.mode = saved_mode
-	_main.local_team = saved_mode_team
-	_main._session = saved_session
+	_main.runtime.game_over = false
+	_main.runtime.mode = saved_mode
+	_main.runtime.local_team = saved_mode_team
+	_main.runtime.session = saved_session
 
 
 func _check_skip_and_new_target() -> void:

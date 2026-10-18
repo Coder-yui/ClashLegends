@@ -105,7 +105,9 @@ func prepare(resources: Dictionary, world: Node3D, camera: Camera3D, cards: Dict
 		var path_started := Time.get_ticks_usec()
 		var before_times := preparation_times.duplicate()
 		var packed := resources[path] as PackedScene
-		if packed == null: continue
+		if packed == null:
+			errors.append("模型池资源必须是PackedScene: " + String(path))
+			return
 		var batch: Array[Node3D] = []
 		# 首波/编队按数量预建；常规卡保留两份，双方不同模型分别准备。
 		var uses: Array = specs.get(path, [])

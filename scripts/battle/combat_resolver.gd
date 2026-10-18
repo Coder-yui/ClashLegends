@@ -3,69 +3,6 @@ extends Node2D
 ## 真实命中、溅射、附带效果与存活来源收益；表现事件只传值。
 signal attack_hit(source: Dictionary, position: Vector2, first_strike: bool)
 
-func _resolve_immediate_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: float, radius: float, knockback: float, from: Node2D = null, source_position: Vector2 = Vector2(INF, INF), source_form_index: int = -1, effects: Dictionary = {}, counts_as_attack: bool = true) -> bool:
-	if not effects.has("presentation_source") and is_instance_valid(from) and (from is Unit or from is Tower):
-		effects = effects.duplicate(true)
-		effects["presentation_source"] = PresentationConfig.attack_source(from)
-	if primary == null or not is_instance_valid(primary) or primary.hp <= 0.0:
-		return false
-	var impact_pos := primary.global_position
-	var ground_only := bool(effects.get("ground_only", false))
-	var match_primary_air := bool(effects.get("splash_match_primary_air", false))
-	var primary_air: bool = primary is Unit and primary.is_air
-	if ground_only and primary is Unit and (primary as Unit).is_air:
-		return false
-	if radius <= 0.0:
-		var was_alive: bool = primary.hp > 0.0
-		var hit_amount := BattleNumbers.quantity(amount)
-		if counts_as_attack and is_instance_valid(from) and from is Unit:
-			hit_amount += (from as Unit).on_hit_passive_damage(primary)
-		var result := _hit(primary, hit_amount, amount, from, p_team, source_position, effects)
-		var landed: bool = result.landed
-		if landed and is_instance_valid(primary):
-			_apply_attack_hit_effects(primary, effects, from)
-			if counts_as_attack and is_instance_valid(primary) and is_instance_valid(from) and from is Unit:
-				_settle_bleeding_attack(primary, from, effects, result)
-				if from.battle_context != null: from.battle_context.record_growth_hit(from, primary)
-		if landed and counts_as_attack and is_instance_valid(primary) and is_instance_valid(from) and from is Unit and from.hp > 0.0:
-			(from as Unit).record_structure_attack(primary)
-			(from as Unit).on_attack_landed(source_form_index, float(result.health_lost), -1, int(effects.get("source_generation", -1)))
-		if landed and counts_as_attack:
-			attack_hit.emit(effects.get("presentation_source", {}), primary.global_position if is_instance_valid(primary) else impact_pos, bool(effects.get("first_strike", false)))
-		if landed and was_alive and is_instance_valid(primary) and primary.hp <= 0.0 and is_instance_valid(from) and from is Unit and from.hp > 0.0:
-			(from as Unit).on_enemy_killed(primary)
-		if landed and knockback > 0.0 and is_instance_valid(primary) and primary is Unit and primary.hp > 0.0:
-			(primary as Unit).apply_knockback(origin, knockback, 0.2, 1.4, [], CombatInteraction.effect_context(from, p_team, source_position))
-		return landed
-	var any_landed := false
-	for c in get_tree().get_nodes_in_group("combatants"):
-		if not is_instance_valid(c) or c.team == p_team or c.hp <= 0.0:
-			continue
-		if ground_only and c is Unit and (c as Unit).is_air:
-			continue
-		if match_primary_air and (c is Unit and c.is_air) != primary_air:
-			continue
-		if c.global_position.distance_to(impact_pos) <= radius + c.body_radius:
-			var was_alive: bool = c.hp > 0.0
-			var hit_amount := BattleNumbers.quantity(amount)
-			if counts_as_attack and is_instance_valid(from) and from is Unit:
-				hit_amount += (from as Unit).on_hit_passive_damage(c)
-			var result := _hit(c, hit_amount, amount, from, p_team, source_position, effects)
-			var landed: bool = result.landed
-			if landed and is_instance_valid(c):
-				_apply_attack_hit_effects(c, effects, from)
-				if counts_as_attack and is_instance_valid(from) and from is Unit: from.record_structure_attack(c)
-			any_landed = landed or any_landed
-			if landed and was_alive and is_instance_valid(c) and c.hp <= 0.0 and is_instance_valid(from) and from is Unit and from.hp > 0.0:
-				(from as Unit).on_enemy_killed(c)
-			if landed and knockback > 0.0 and is_instance_valid(c) and c is Unit and c.hp > 0.0:
-				(c as Unit).apply_knockback(origin, knockback, 0.2, 1.4, [], CombatInteraction.effect_context(from, p_team, source_position))
-	if any_landed and counts_as_attack and is_instance_valid(from) and from is Unit and from.hp > 0.0:
-		(from as Unit).on_attack_landed(source_form_index, 0.0, -1, int(effects.get("source_generation", -1))) # 范围吸血尚未设计，不把名义伤害作为掉血。
-	if any_landed and counts_as_attack:
-		attack_hit.emit(effects.get("presentation_source", {}), impact_pos, bool(effects.get("first_strike", false)))
-	return any_landed
-
 func _settle_bleeding_attack(target: Node2D, source: Unit, effects: Dictionary, result: Dictionary) -> void:
 	if not effects.has("bleed_definition"): return
 	var definition: Dictionary = effects.bleed_definition
@@ -97,6 +34,7 @@ func _hit(target: Node2D, hit_amount: float, raw_amount: float, source: Node2D, 
 var collecting := false
 var committing := false
 var _hits: Array[Dictionary] = []
+var _attack_receipts: Array[Dictionary] = []
 var _effects: Array[Callable] = []
 var _benefits: Array[Callable] = []
 var _deaths: Dictionary = {}
@@ -123,7 +61,8 @@ func defer_death(unit: Unit, trigger: bool) -> void:
 
 func submit_damage(target: Node2D, amount: float, source: Node2D, team: int, position: Vector2, attached: bool = false) -> Dictionary:
 	var accepted: bool = is_instance_valid(target) and not target.is_queued_for_deletion() and target.hp > 0.0 and CombatInteraction.allows(target, source, team, position, attached)
-	var result := {"accepted": accepted, "landed": false, "damage": BattleNumbers.quantity(amount), "health_lost": 0.0, "shield_absorbed": 0.0, "overkill": 0.0, "assist_conversion": AssistConversionState.source_definition(source)}
+	var result := BattleNumbers.pending_hit(accepted, amount)
+	result["assist_conversion"] = AssistConversionState.source_definition(source)
 	var blocked := accepted and BattleNumbers.quantity(amount) > 0 and CombatInteraction.blocks_effect(target, CombatInteraction.effect_context(source, team, position, attached))
 	result["blocked"] = blocked
 	if accepted:
@@ -146,8 +85,10 @@ func commit_batch() -> void:
 	for hit in _hits:
 		var target = hit.target
 		# 在任何本批扣血之前冻结最终资格，不能逐刀用实时 hp 撤回同刻命中。
-		hit.result.landed = is_instance_valid(target) and not target.is_queued_for_deletion() and bool(hit.result.accepted) and not bool(hit.result.get("blocked", false))
-		if not hit.result.landed: continue
+		var will_land: bool = is_instance_valid(target) and not target.is_queued_for_deletion() and bool(hit.result.accepted) and not bool(hit.result.blocked)
+		if not will_land:
+			BattleNumbers.settle_hit(hit.result, false)
+			continue
 		if not groups.has(target): groups[target] = []
 		groups[target].append(hit)
 	# 独立盾层仍由 ShieldState 消耗。每刀保留记录与回调；同批盾量和实际掉血
@@ -158,7 +99,7 @@ func commit_batch() -> void:
 		# 本批所有有效参与者先登记，再扣血，避免同刻最后一刀或遍历顺序漏记。
 		for hit in groups[target]:
 			if float(hit.result.damage) > 0.0:
-				target.assist_conversion.record(target, hit.result.get("assist_conversion", {}))
+				target.assist_conversion.record(target, hit.result.assist_conversion)
 		var before_hp := float(target.hp)
 		var before_shield := float(target.shield_hp)
 		for hit in groups[target]:
@@ -168,33 +109,46 @@ func commit_batch() -> void:
 		var absorbed := maxf(before_shield - float(target.shield_hp), 0.0)
 		for hit in groups[target]:
 			var share := float(hit.result.damage) / total if total > 0.0 else 0.0
-			hit.result.health_lost = lost * share
-			hit.result.shield_absorbed = absorbed * share
+			BattleNumbers.settle_hit(hit.result, true, lost * share, absorbed * share)
 			if (lost + absorbed) * share > 0.0:
 				CombatInteraction.record_combat_effect(target, CombatInteraction.effect_context(hit.source if is_instance_valid(hit.source) else null))
-			hit.result.overkill = maxf(float(hit.result.damage) - (lost + absorbed) * share, 0.0)
+	for receipt in _attack_receipts:
+		var lost := 0.0
+		var absorbed := 0.0
+		var any_landed := false
+		for hit in receipt.hits:
+			assert(hit.settled, "攻击子命中必须先提交")
+			any_landed = any_landed or hit.landed
+			lost += float(hit.health_lost)
+			absorbed += float(hit.shield_absorbed)
+		BattleNumbers.settle_hit(receipt, any_landed, lost, absorbed)
 	# take_damage 已固定全批存活状态与死亡结果，再施加控制和发放存活收益。
-	for callback in _effects: callback.call()
+	for callback in _effects:
+		if callback.is_valid(): callback.call()
 	_commit_knockbacks()
 	# 回调本身可调用资源入口；退出 committing 后才执行，避免二次排队。
 	committing = false
-	for callback in _benefits: callback.call()
+	for callback in _benefits:
+		if callback.is_valid(): callback.call()
 	for unit in _deaths:
+		if not is_instance_valid(unit): continue
 		_record("death_commit", null, unit)
 		unit._die(bool(_deaths[unit]))
 	_hits.clear()
+	_attack_receipts.clear()
 	_effects.clear()
 	_benefits.clear()
 	_deaths.clear()
 	_kill_awards.clear()
 
-func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: float, radius: float, knockback: float, from: Node2D = null, source_position: Vector2 = Vector2(INF, INF), source_form_index: int = -1, effects: Dictionary = {}, counts_as_attack: bool = true) -> bool:
-	if not collecting:
-		begin_batch(0, "immediate_attack")
-		var accepted := resolve_attack_hit(p_team, origin, primary, amount, radius, knockback, from, source_position, source_form_index, effects, counts_as_attack)
-		commit_batch()
-		return accepted
-	if not is_instance_valid(primary) or primary.hp <= 0.0: return false
+func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: float, radius: float, knockback: float, from: Node2D = null, source_position: Vector2 = Vector2(INF, INF), source_form_index: int = -1, effects: Dictionary = {}, counts_as_attack: bool = true) -> Dictionary:
+	var receipt := BattleNumbers.pending_hit(false, 0.0)
+	receipt["hits"] = []
+	var own_batch := not collecting
+	if own_batch: begin_batch(0, "immediate_attack")
+	if not is_instance_valid(primary) or primary.hp <= 0.0:
+		if own_batch: commit_batch()
+		return receipt
 	effects = effects.duplicate(true)
 	if not effects.has("presentation_source") and is_instance_valid(from):
 		effects.presentation_source = PresentationConfig.attack_source(from)
@@ -204,9 +158,10 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 	var cleave_radius := float(effects.get("cleave_radius", 0.0))
 	var targets: Array = [primary] if radius <= 0.0 and cleave_radius <= 0.0 else get_tree().get_nodes_in_group("combatants")
 	var landed := false
-	var hit_results: Array[Dictionary] = []
+	var hit_results: Array = receipt.hits
 	var impact := primary.global_position
 	var swing: int = from._attack_swing_count if from is Unit else 0
+	var source_ref: WeakRef = weakref(from) if is_instance_valid(from) else null
 	for target in targets:
 		if not is_instance_valid(target) or target.hp <= 0.0: continue
 		if radius > 0.0 and (target.team == p_team or target.global_position.distance_to(impact) > radius + target.body_radius): continue
@@ -220,56 +175,94 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 		if not result.accepted: continue
 		hit_results.append(result)
 		landed = true
-		var fixed_target: Node2D = target
+		var target_ref: WeakRef = weakref(target)
+		var primary_hit: bool = target == primary
 		defer_effect(func():
-			if not result.landed: return
-			_apply_attack_hit_effects(fixed_target, effects, from)
-			if counts_as_attack and radius <= 0.0 and (cleave_radius <= 0.0 or fixed_target == primary) and is_instance_valid(from) and from is Unit:
-				_settle_bleeding_attack(fixed_target, from, effects, result)
-				if from.battle_context != null: from.battle_context.record_growth_hit(from, fixed_target))
-		if knockback > 0.0 and fixed_target is Unit:
-			submit_knockback(fixed_target, origin, knockback, 0.2, 1.4, displacement_order, result, CombatInteraction.effect_context(from, p_team, source_position))
+			var landed_target = _node_from(target_ref)
+			var landed_source = _node_from(source_ref)
+			if not result.landed or not is_instance_valid(landed_target): return
+			_apply_attack_hit_effects(landed_target, effects, landed_source)
+			if counts_as_attack and radius <= 0.0 and (cleave_radius <= 0.0 or primary_hit) and landed_source is Unit:
+				_settle_bleeding_attack(landed_target, landed_source, effects, result)
+				if landed_source.battle_context != null: landed_source.battle_context.record_growth_hit(landed_source, landed_target))
+		if knockback > 0.0 and target is Unit:
+			submit_knockback(target, origin, knockback, 0.2, 1.4, displacement_order, result, CombatInteraction.effect_context(from, p_team, source_position))
 		defer_benefit(func():
-			if not result.landed: return
-			if not is_instance_valid(from) or not from is Unit or from.hp <= 0.0: return
-			if counts_as_attack: from.record_structure_attack(fixed_target)
-			if counts_as_attack and radius <= 0.0 and (cleave_radius <= 0.0 or fixed_target == primary):
-				from.on_attack_landed(source_form_index, float(result.health_lost), swing, int(effects.get("source_generation", -1)))
-			# 同批多人共同致死只给存活参与者一次自己的击杀收益，不按遍历挑尾刀。
-			if fixed_target.hp <= 0.0 and float(result.health_lost) > 0.0:
-				var key := "%s:%s" % [from.get_instance_id(), fixed_target.get_instance_id()]
-				if not _kill_awards.has(key):
-					_kill_awards[key] = true
-					from.on_enemy_killed(fixed_target))
+			var landed_source = _node_from(source_ref)
+			var landed_target = _node_from(target_ref)
+			if not result.landed or not landed_source is Unit or landed_source.hp <= 0.0: return
+			if counts_as_attack and is_instance_valid(landed_target): landed_source.record_structure_attack(landed_target)
+			if counts_as_attack and radius <= 0.0 and (cleave_radius <= 0.0 or primary_hit):
+				landed_source.on_attack_landed(source_form_index, float(result.health_lost), swing, int(effects.get("source_generation", -1)))
+			if is_instance_valid(landed_target): _award_hit_kill(landed_source, landed_target, result))
 	if landed:
 		if cleave_radius > 0.0:
 			defer_effect(func():
-				if hit_results.any(func(result): return result.landed) and is_instance_valid(from) and from.battle_context != null:
-					from.battle_context.notify_unit_audio_event(from, &"cleave:hit", from.global_position))
+				var landed_source = _node_from(source_ref)
+				if hit_results.any(func(result): return result.landed) and is_instance_valid(landed_source) and landed_source.battle_context != null:
+					landed_source.battle_context.notify_unit_audio_event(landed_source, &"cleave:hit", landed_source.global_position))
 		if float(effects.get("hit_heal", 0.0)) > 0.0:
 			defer_benefit(func():
-				if hit_results.any(func(result): return result.landed) and is_instance_valid(from) and from is Unit and from.hp > 0.0:
-					from.heal(float(effects.hit_heal)))
+				var landed_source = _node_from(source_ref)
+				if hit_results.any(func(result): return result.landed) and is_instance_valid(landed_source) and landed_source is Unit and landed_source.hp > 0.0:
+					landed_source.heal(float(effects.hit_heal)))
 		if float(effects.get("cleave_heal_ratio", 0.0)) > 0.0:
 			defer_benefit(func():
-				if not is_instance_valid(from) or not from is Unit or from.hp <= 0.0: return
+				var landed_source = _node_from(source_ref)
+				if not is_instance_valid(landed_source) or not landed_source is Unit or landed_source.hp <= 0.0: return
 				var damage_total := 0.0
 				for result in hit_results:
 					if result.landed: damage_total += float(result.health_lost)
-				from.heal(damage_total * float(effects.cleave_heal_ratio)))
+				landed_source.heal(damage_total * float(effects.cleave_heal_ratio)))
 		var completion: Callable = effects.get("delivery_callback", Callable())
 		if completion.is_valid():
-			defer_effect(func(): completion.call(hit_results.any(func(result): return result.landed or bool(result.get("blocked", false)))))
+			defer_effect(func():
+				if completion.is_valid(): completion.call(hit_results.any(func(result): return result.landed or bool(result.blocked))))
 		if counts_as_attack and radius > 0.0:
 			defer_benefit(func():
-				if hit_results.any(func(result): return result.landed) and is_instance_valid(from) and from is Unit and from.hp > 0.0:
-					from.on_attack_landed(source_form_index, 0.0, swing, int(effects.get("source_generation", -1))))
+				var landed_source = _node_from(source_ref)
+				if hit_results.any(func(result): return result.landed) and is_instance_valid(landed_source) and landed_source is Unit and landed_source.hp > 0.0:
+					landed_source.on_attack_landed(source_form_index, 0.0, swing, int(effects.get("source_generation", -1))))
 		if counts_as_attack:
 			defer_effect(func():
 				if hit_results.any(func(result): return result.landed):
 					attack_hit.emit(effects.get("presentation_source", {}), impact, bool(effects.get("first_strike", false))))
-	return landed
+	if landed:
+		receipt.accepted = true
+		receipt.settled = false
+		for result in hit_results:
+			receipt.damage += result.damage
+			receipt.blocked = receipt.blocked or result.blocked
+		_attack_receipts.append(receipt)
+	if own_batch: commit_batch()
+	return receipt
 
+## 技能普通伤害也返回同一可提交回执；不伪装普攻，不增加普攻资源/成长。
+func resolve_damage_hit(target: Node2D, amount: float, source: Node2D, team: int, position: Vector2, award_kill: bool = false) -> Dictionary:
+	var own_batch := not collecting
+	if own_batch: begin_batch(0, "immediate_damage")
+	var result := submit_damage(target, amount, source, team, position)
+	if award_kill:
+		var source_ref: WeakRef = weakref(source) if is_instance_valid(source) else null
+		var target_ref: WeakRef = weakref(target) if is_instance_valid(target) else null
+		defer_benefit(func():
+			var landed_source = _node_from(source_ref)
+			var landed_target = _node_from(target_ref)
+			if is_instance_valid(landed_source) and is_instance_valid(landed_target): _award_hit_kill(landed_source, landed_target, result))
+	if own_batch: commit_batch()
+	return result
+
+func _node_from(reference: WeakRef) -> Node2D:
+	return reference.get_ref() if reference != null else null
+
+## 同批存活参与者每目标只领一次击杀；即时/正式技能和普攻共用。
+func _award_hit_kill(source: Node2D, target: Node2D, result: Dictionary) -> void:
+	if not result.settled or not result.landed or float(result.health_lost) <= 0.0: return
+	if not is_instance_valid(source) or not source is Unit or source.hp <= 0.0 or not is_instance_valid(target) or target.hp > 0.0: return
+	var key := "%s:%s" % [source.get_instance_id(), target.get_instance_id()]
+	if _kill_awards.has(key): return
+	_kill_awards[key] = true
+	source.on_enemy_killed(target)
 
 # 来源身份在出生注册时确定；来源内事件序号在出手/技能排队时分配并随弹体保存。
 var _next_source_id := 1

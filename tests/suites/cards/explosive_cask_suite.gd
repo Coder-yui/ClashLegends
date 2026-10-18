@@ -11,14 +11,14 @@ func run(harness: Object, main: Node2D) -> void:
 	var hp: Array = units.map(func(u): return u.hp)
 	spells.cast(0, CardDB.get_card("explosive_cask"), center)
 	var impact := int(spells.spell_flights[0].impact_tick)
-	main.set("_sim_tick_id", impact - 1)
+	main.runtime.set("_sim_tick_id", impact - 1)
 	main.combat_service().begin_batch(main.get_authoritative_server_tick(), "cask_test")
 	spells.tick(FixedStepClock.STEP)
 	main.combat_service().commit_batch()
 	_expect(units[0].hp == hp[0], "酒桶抵达前不造成伤害")
 	# 抵达重新查询目标：离开范围的对象不命中。
 	units[4].position = center + Vector2(0, -90)
-	main.set("_sim_tick_id", impact)
+	main.runtime.set("_sim_tick_id", impact)
 	main.combat_service().begin_batch(main.get_authoritative_server_tick(), "cask_test")
 	spells.tick(FixedStepClock.STEP)
 	main.combat_service().commit_batch()
@@ -31,7 +31,7 @@ func run(harness: Object, main: Node2D) -> void:
 	var protected_hp := units[1].hp
 	var old_hp := units[0].hp
 	spells.cast(0, CardDB.get_card("explosive_cask"), center, true)
-	main.set("_sim_tick_id", int(spells.spell_flights[0].impact_tick))
+	main.runtime.set("_sim_tick_id", int(spells.spell_flights[0].impact_tick))
 	main.combat_service().begin_batch(main.get_authoritative_server_tick(), "cask_test")
 	spells.tick(FixedStepClock.STEP)
 	main.combat_service().commit_batch()
@@ -41,7 +41,7 @@ func run(harness: Object, main: Node2D) -> void:
 		if not target is Tower or target.team != 1: continue
 		var before: float = target.hp
 		spells.cast(0, CardDB.get_card("explosive_cask"), target.position)
-		main.set("_sim_tick_id", int(spells.spell_flights[0].impact_tick))
+		main.runtime.set("_sim_tick_id", int(spells.spell_flights[0].impact_tick))
 		main.combat_service().begin_batch(main.get_authoritative_server_tick(), "cask_test")
 		spells.tick(FixedStepClock.STEP)
 		main.combat_service().commit_batch()
@@ -50,7 +50,7 @@ func run(harness: Object, main: Node2D) -> void:
 	units[0].knockback.cancel(&"test")
 	var shielded_hp := units[0].hp
 	spells.cast(0, CardDB.get_card("explosive_cask"), center)
-	main.set("_sim_tick_id", int(spells.spell_flights[0].impact_tick))
+	main.runtime.set("_sim_tick_id", int(spells.spell_flights[0].impact_tick))
 	main.combat_service().begin_batch(main.get_authoritative_server_tick(), "cask_shield")
 	spells.tick(FixedStepClock.STEP)
 	_expect(units[0].knockback.remaining == 0.0, "收集伤害阶段不提前击退")
@@ -60,16 +60,16 @@ func run(harness: Object, main: Node2D) -> void:
 	units[0].buffs.apply(&"effect_shield", &"cask_test", 1.5, {})
 	var blocked_hp := units[0].hp
 	spells.cast(0, CardDB.get_card("explosive_cask"), center)
-	main.set("_sim_tick_id", int(spells.spell_flights[0].impact_tick))
+	main.runtime.set("_sim_tick_id", int(spells.spell_flights[0].impact_tick))
 	main.combat_service().begin_batch(main.get_authoritative_server_tick(), "cask_effect_shield")
 	spells.tick(FixedStepClock.STEP)
 	main.combat_service().commit_batch()
 	_expect(units[0].hp == blocked_hp and units[0].knockback.remaining == 0.0, "法术盾同时抵挡爆桶伤害与击退")
 	_expect(units[0].buffs.remaining(&"effect_shield") == 0.0, "爆桶只消费一次法术盾")
-	var saved_deck: Array = main._deck.duplicate()
-	main._deck = ["explosive_cask", "garen", "ashe", "teemo", "xin", "heal", "freeze", "zap"]
-	_expect(main.card_cost_for_team(0, "explosive_cask") == 4, "主动槽酒桶3+1金币")
-	main._deck = saved_deck
+	var saved_deck: Array = main.runtime._deck.duplicate()
+	main.runtime._deck = ["explosive_cask", "garen", "ashe", "teemo", "xin", "heal", "freeze", "zap"]
+	_expect(main.runtime.card_cost_for_team(0, "explosive_cask") == 4, "主动槽酒桶3+1金币")
+	main.runtime._deck = saved_deck
 	spells.clear()
 	spells.show_flight(99, "explosive_cask", Vector2.ZERO, center, 105, 0, 10)
 	spells.tick_visuals(5.0)

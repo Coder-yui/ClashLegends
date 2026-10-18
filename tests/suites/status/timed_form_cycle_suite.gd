@@ -83,7 +83,7 @@ func run(harness: Object, main: Node2D) -> void:
 	source.transform_to_mega()
 	source.position = Vector2(360, 640)
 	source.transform_to_small()
-	_h._expect(_main.is_ground_position_walkable(source.position, source.body_radius, source), "河道上空到期时回到合法地面位置")
+	_h._expect(_main.world.is_ground_position_walkable(source.position, source.body_radius, source), "河道上空到期时回到合法地面位置")
 	var replica := _unit("aatrox", 0)
 	replica.hp = 100
 	replica.sync_network_form(1, 1)
@@ -154,7 +154,7 @@ func _check_animation_revision() -> void:
 	_h._expect(not unit.is_empowered_attack_ready_visual(), "首刀不是被动，不使用持剑移动")
 	unit._attack_swing_count = 3
 	_h._expect(unit.is_empowered_attack_ready_visual(), "第三刀提交后下一击被动就绪")
-	var payload: Array = _main._snapshot_system._unit_snapshot_payload(0, unit)
+	var payload: Array = preload("res://tests/fixtures/network_fixture.gd").snapshot_payload(_main._snapshot_system, 0, unit)
 	_h._expect(payload[NetworkSnapshotSystem.U_EMPOWERED_READY] == 1, "权威快照发送循环被动就绪，不只发送技能强化标记")
 	unit._attack_visual_pending = true
 	unit._try_start_attack_visual(0.0)

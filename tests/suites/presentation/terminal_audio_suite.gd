@@ -20,13 +20,13 @@ func run(harness: Object, main: Node2D) -> void:
 	var cues: Array[StringName] = []
 	audio.cue_played.connect(func(card, cue, _position):
 		if card == "match": cues.append(cue))
-	for tower in [main._king_player, main._king_enemy]:
+	for tower in [main.world.king(0), main.world.king(1)]:
 		var event: Dictionary = audio._card_audio(PresentationConfig.world_card_id(tower)).events.death
 		audio._stream_pool_cache["\n".join(PackedStringArray(event.pool))] = _stream(12.0)
 	for cue in ["victory", "defeat"]:
 		var event: Dictionary = preload("res://scripts/data/match_audio.gd").EVENTS[cue]
 		audio._stream_pool_cache["\n".join(PackedStringArray(event.pool))] = _stream(0.1)
-	for tower in [main._king_player, main._king_enemy]:
+	for tower in [main.world.king(0), main.world.king(1)]:
 		audio.begin_battle()
 		cues.clear()
 		audio.play_nexus_destruction(tower)
@@ -51,17 +51,17 @@ func run(harness: Object, main: Node2D) -> void:
 	# 退出菜单或开始新局后，旧爆炸和旧播报回调均不能触发结果或淡出。
 	audio.begin_battle()
 	cues.clear()
-	audio.finish_match_audio("defeat", [main._king_enemy])
+	audio.finish_match_audio("defeat", [main.world.king(1)])
 	var stale: AudioStreamPlayer2D = audio._nexus_players.values()[0]
 	var generation := audio._terminal_audio_generation
 	audio.end_battle()
-	audio._on_nexus_finished(main._king_enemy.get_instance_id(), stale, generation)
+	audio._on_nexus_finished(main.world.king(1).get_instance_id(), stale, generation)
 	audio._on_result_announcement_finished(generation)
 	audio._tick_terminal_audio(10.0)
 	_expect(cues.is_empty() and not audio._terminal_audio_pending, "菜单清理取消第五秒播报及旧淡出回调")
 	audio.begin_battle()
 	audio.definition_lookup = func(_id): return {"audio": {"events": {}}}
-	audio.finish_match_audio("defeat", [main._king_enemy])
+	audio.finish_match_audio("defeat", [main.world.king(1)])
 	_expect(cues == [&"defeat"], "爆炸资源缺失直接播报，不永久等待")
 	audio.begin_battle()
 	cues.clear()
@@ -77,16 +77,16 @@ func _check_tower_only_results() -> void:
 		match_scene._start_local()
 		match_scene.set_process(false)
 		match_scene._ai.enabled = false
-		match_scene._minion_waves_enabled = false
+		match_scene.runtime._minion_waves_enabled = false
 		var cues: Array[StringName] = []
 		match_scene._audio_manager.cue_played.connect(func(card, cue, _pos):
 			if card == "match": cues.append(cue))
-		match_scene._match_rules.overtime = true
-		var victim: Tower = match_scene._towers[2] if winner == 0 else match_scene._towers[0]
+		match_scene.runtime._match_rules.overtime = true
+		var victim: Tower = match_scene.world.towers_snapshot()[2] if winner == 0 else match_scene.world.towers_snapshot()[0]
 		victim.take_damage(victim.hp + 1.0)
 		match_scene._sim_step(0.05)
 		var expected: StringName = &"victory" if winner == 0 else &"defeat"
-		_expect(match_scene.game_over and match_scene._terminal_result.reason == "towers" and match_scene._king_player.hp > 0.0 and match_scene._king_enemy.hp > 0.0 and cues == [expected], "双方水晶存活、仅防御塔摧毁分出胜负时立即播放正确结果语音")
+		_expect(match_scene.runtime.game_over and match_scene._terminal_result.reason == "towers" and match_scene.world.king(0).hp > 0.0 and match_scene.world.king(1).hp > 0.0 and cues == [expected], "双方水晶存活、仅防御塔摧毁分出胜负时立即播放正确结果语音")
 		match_scene._end_game(winner, "towers")
 		_expect(cues.size() == 1, "防御塔终局重复通知不重复播报")
 		match_scene.free()

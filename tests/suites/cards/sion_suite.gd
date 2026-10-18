@@ -163,9 +163,10 @@ func _check_schema() -> void:
 func _check_authoritative_timing() -> void:
 	var unit := _unit("sion", 0, Vector2(350, 900))
 	unit.take_damage(10000)
-	_main._net_units[98000] = unit
-	_expect(_main.authoritative_units_snapshot().has(98000), "主机实体索引保留零血等待者，快照不可误删")
-	_main._net_units.erase(98000)
+	_main.world.register_authority_unit(unit, true)
+	_expect(_main.world.authoritative_units_snapshot().has(unit.net_id), "主机实体索引保留零血等待者，快照不可误删")
+	_main.world.forget_authority_unit(unit.net_id)
+	unit.net_id = -1
 	unit.prepare_natural_lifecycle(0.05)
 	_expect(unit.death_form.waiting_ticks == 40, "致死当Tick自然生命周期不得提前扣复生时间")
 	_run_main_ticks(39)
@@ -217,38 +218,38 @@ func _check_audio_lifecycle() -> void:
 	_expect(not manager._sustain_players.has(berserk_key), "最终死亡立即停止狂暴持续音")
 
 func _check_paid_skill() -> void:
-	var deck: Array = _main._deck.duplicate()
-	_main._deck[0] = "sion"
+	var deck: Array = _main.runtime._deck.duplicate()
+	_main.runtime._deck[0] = "sion"
 	var unit := _unit("sion", 0, Vector2(350, 900))
 	unit.move_speed = 0.0
 	unit.active_ability_id = 98001
 	unit.active_ability_slot = 0
-	_main._register_active_skill(unit, "sion", 0)
-	_main._elixir.elixir = 1.0
-	_expect(not _main.use_active_skill(98001, 0) and _main._elixir.elixir == 1.0, "不足2金币拒绝W且不扣款")
-	_main._elixir.elixir = 5.0
-	_expect(_main.use_active_skill(98001, 0) and _main._elixir.elixir == 3.0, "W入队扣2金币")
+	_main.runtime._register_active_skill(unit, "sion", 0)
+	_main.runtime.account(0 if _main.runtime.mode == "server" else _main.runtime.local_team).elixir = 1.0
+	_expect(not _main.use_active_skill(98001, 0) and _main.runtime.account(0 if _main.runtime.mode == "server" else _main.runtime.local_team).elixir == 1.0, "不足2金币拒绝W且不扣款")
+	_main.runtime.account(0 if _main.runtime.mode == "server" else _main.runtime.local_team).elixir = 5.0
+	_expect(_main.use_active_skill(98001, 0) and _main.runtime.account(0 if _main.runtime.mode == "server" else _main.runtime.local_team).elixir == 3.0, "W入队扣2金币")
 	_run_main_ticks(10)
-	var state: Dictionary = _main.get_active_skill_snapshot(98001)
+	var state: Dictionary = _main.runtime.get_active_skill_snapshot(98001)
 	_expect(unit.shield_hp == 600 and state.uses_remaining == 1 and is_equal_approx(state.cooldown_left, 8.0), "W真正开始消耗1次并启动8秒冷却")
 	_expect(not _main.use_active_skill(98001, 0), "W冷却中拒绝再次提交")
 	_run_main_ticks(160)
 	_expect(_main.use_active_skill(98001, 0), "W8秒冷却结束允许第二次")
 	_run_main_ticks(10)
-	_expect(_main.get_active_skill_snapshot(98001).uses_remaining == 0 and not _main.use_active_skill(98001, 0), "W最多2次，不允许第三次")
+	_expect(_main.runtime.get_active_skill_snapshot(98001).uses_remaining == 0 and not _main.use_active_skill(98001, 0), "W最多2次，不允许第三次")
 	unit.queue_free()
 	# 等待命令期间致死复生：保留实例使付款原路退回，不耗次数。
 	unit = _unit("sion", 0, Vector2(350, 900))
 	unit.active_ability_id = 98002
 	unit.active_ability_slot = 0
-	_main._register_active_skill(unit, "sion", 0)
-	_main._elixir.elixir = 5.0
+	_main.runtime._register_active_skill(unit, "sion", 0)
+	_main.runtime.account(0 if _main.runtime.mode == "server" else _main.runtime.local_team).elixir = 5.0
 	_expect(_main.use_active_skill(98002, 0), "复生前可正常提交W")
 	unit.take_damage(10000)
 	_run_main_ticks(10)
-	_expect(_main._elixir.elixir >= 5.0 and int(_main.get_active_skill_snapshot(98002).get("uses_remaining", -1)) == 2 and unit.shield_hp == 0, "等待命令期间致死复生取消W，退款且不耗次数")
+	_expect(_main.runtime.account(0 if _main.runtime.mode == "server" else _main.runtime.local_team).elixir >= 5.0 and int(_main.runtime.get_active_skill_snapshot(98002).get("uses_remaining", -1)) == 2 and unit.shield_hp == 0, "等待命令期间致死复生取消W，退款且不耗次数")
 	unit.queue_free()
-	_main._deck = deck
+	_main.runtime._deck = deck
 
 func _check_whole_attack_animation() -> void:
 	for form in [0, 1]:

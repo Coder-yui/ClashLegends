@@ -24,8 +24,7 @@ func consume(target: Node2D) -> void:
 	if target.battle_context.simulation_tick() > int(_mark.expires_tick): return
 	var building: bool = target is Tower or (target is Unit and target.is_building)
 	if building and not target.nav_cells.is_empty():
-		target.battle_context.unblock_nav_cells(target.nav_cells)
-		target.nav_cells = []
+		target.battle_context.release_structure_footprint(target)
 	var id := String(_mark.building_id if building else _mark.unit_id)
 	# 原结构的导航占位已释放；不继承主动资格，也不赋予塔墟免衰减。
 	target.battle_context.spawn_summoned(int(_mark.team), id, target.global_position)

@@ -33,7 +33,7 @@ func run(harness: Object, main: Node2D) -> void:
 	main._audio_manager.cue_played.connect(record_sound)
 	var skill: Dictionary = CardDB.get_card("twitch").active_skills[0]
 	var system: ActiveSkillEffectSystem = main._active_skill_effect_system
-	system.apply(rat, skill)
+	system.apply_decoded(system.decode_validated(rat), skill)
 	_expect(rat.attack_range == 200.0 and is_equal_approx(rat.active_attack_speed_multiplier, 1.5) and rat.piercing_attacks_active(), "火力全开同时改变攻速射程与弹体类型")
 	var projectile: ProjectileSystem = main._projectile_system
 	rat.set_meta("projectile_model_offset", Vector2(14, -48))
@@ -67,7 +67,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_expect(aside.hp == before_aside and projectile.projectiles.is_empty(), "侧面目标不命中，射程结束销毁")
 	var mover_source := _spawn("twitch", 0, Vector2(100, 1100))
 	var mover := _spawn("sett", 1, Vector2(260, 1100))
-	system.apply(mover_source, skill)
+	system.apply_decoded(system.decode_validated(mover_source), skill)
 	projectile.launch(mover_source, mover, 68.0, 520.0, 0.0, 0.0, mover_source.color)
 	var launch_direction: Vector2 = projectile.projectiles.values()[0].direction
 	var mover_hp := mover.hp
@@ -108,20 +108,20 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_animation_mapping()
 	_check_deployment_first_frame()
 	_check_stealth_effect_resources()
-	var old_deck: Array = main._deck.duplicate()
-	main._deck[0] = "twitch"
-	var units: Array[Unit] = main._spawn_card_units(0, "twitch", Vector2(500, 1050), 0.0, 0)
+	var old_deck: Array = main.runtime._deck.duplicate()
+	main.runtime._deck[0] = "twitch"
+	var units: Array[Unit] = main.runtime._spawn_card_units(0, "twitch", Vector2(500, 1050), 0.0, 0)
 	var paid := units[0]
 	var ability := paid.active_ability_id
-	main._elixir.elixir = 8.0
-	_expect(main.use_active_skill(ability, 0) and main._elixir.elixir == 6.0, "正式技能请求扣2金币")
+	main.runtime.account(0 if main.runtime.mode == "server" else main.runtime.local_team).elixir = 8.0
+	_expect(main.use_active_skill(ability, 0) and main.runtime.account(0 if main.runtime.mode == "server" else main.runtime.local_team).elixir == 6.0, "正式技能请求扣2金币")
 	_expect(paid.stealth_hidden(), "等待命令缓冲期间不提前破隐")
-	main._sim_tick_id += 10
-	main._tick_pending_active_skills(0.05)
-	main._commands.tick_impacts(0.05)
+	main.runtime._sim_tick_id += 10
+	main.runtime._tick_pending_active_skills(0.05)
+	main.runtime._commands.tick_impacts(0.05)
 	_expect(paid.stealth_hidden() and paid.piercing_attacks_active(), "正式技能起手保持隐身并进入穿透窗口")
-	_expect(main._active_skills.entry(ability).uses_remaining == 0 and not main.use_active_skill(ability, 0), "一次使用后拒绝重复请求")
-	main._deck = old_deck
+	_expect(main.runtime._active_skills.entry(ability).uses_remaining == 0 and not main.use_active_skill(ability, 0), "一次使用后拒绝重复请求")
+	main.runtime._deck = old_deck
 
 func _spawn(id: String, team: int, pos: Vector2) -> Unit:
 	return _main._spawn_unit(UnitSpawnRequest.new(team, id, pos, {"deploy_time_override": 0.0}))

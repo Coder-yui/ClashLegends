@@ -23,45 +23,45 @@ func _check_simulation_pause() -> void:
 	var source: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "garen", Vector2(260, 1000), {"deploy_time_override": 0.0, "active_slot": 0}))
 	var target: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "ashe", Vector2(260, 940), {"deploy_time_override": 0.0}))
 	target.freeze(2.0)
-	_main._active_skills.consume(source.active_ability_id)
+	_main.runtime._active_skills.consume(source.active_ability_id)
 	_main.preview_active_skill(source, {"name": "暂停回归", "kind": "buff", "duration": 2.0, "cast_duration": 1.0, "impact_delay": 0.4, "shield": 100.0, "shield_duration": 2.0, "cast_locks": ["movement", "attack", "facing"]})
 	_main._process(0.025)
 	panel._pause_button.pressed.emit()
 	_expect(panel.accepts_battle_input() and not panel.can_advance_simulation() and not _main.can_advance_simulation(), "工作台暂停独立关闭模拟推进，保留地图输入许可")
-	var tick: int = _main._sim_tick_id
-	var clock_ticks: int = _main._simulation_clock.ticks
-	var remainder: float = _main._simulation_clock.remainder
+	var tick: int = _main.runtime._sim_tick_id
+	var clock_ticks: int = _main.runtime._simulation_clock.ticks
+	var remainder: float = _main.runtime._simulation_clock.remainder
 	var packet: PackedByteArray = _main._snapshot_system.capture(0)
 	# 单机不注册网络实体索引，另查真实单位载荷，不能拿空单位包证明HP/坐标不变。
-	var source_state: Array = _main._snapshot_system._unit_snapshot_payload(1, source)
-	var target_state: Array = _main._snapshot_system._unit_snapshot_payload(2, target)
-	var impacts: Array = _main._commands.inspect_impacts().duplicate(true)
+	var source_state: Array = preload("res://tests/fixtures/network_fixture.gd").snapshot_payload(_main._snapshot_system, 1, source)
+	var target_state: Array = preload("res://tests/fixtures/network_fixture.gd").snapshot_payload(_main._snapshot_system, 2, target)
+	var impacts: Array = _main.runtime._commands.inspect_impacts().duplicate(true)
 	var cast_left := source.active_skill_cast_timer
 	var frozen_left := target.control.frozen_timer
-	var cooldown: float = _main.get_active_skill_snapshot(source.active_ability_id).cooldown_left
+	var cooldown: float = _main.runtime.get_active_skill_snapshot(source.active_ability_id).cooldown_left
 	for frame in 5: _main._process(5.0)
 	_main.set_process(true)
 	for frame in 3: await _main.get_tree().process_frame
 	_main.set_process(false)
-	_expect(_main._sim_tick_id == tick and _main._simulation_clock.ticks == clock_ticks and _main._simulation_clock.remainder == remainder, "暂停墙钟不进入固定时钟，Tick和已有余量保持不变")
-	_expect(_main._snapshot_system.capture(0) == packet and _main._snapshot_system._unit_snapshot_payload(1, source) == source_state and _main._snapshot_system._unit_snapshot_payload(2, target) == target_state and source.active_skill_cast_timer == cast_left and target.control.frozen_timer == frozen_left and _main.get_active_skill_snapshot(source.active_ability_id).cooldown_left == cooldown and _main._commands.inspect_impacts() == impacts, "暂停保持HP、坐标、状态、技能起手、冷却与待命中时钟不变")
+	_expect(_main.runtime._sim_tick_id == tick and _main.runtime._simulation_clock.ticks == clock_ticks and _main.runtime._simulation_clock.remainder == remainder, "暂停墙钟不进入固定时钟，Tick和已有余量保持不变")
+	_expect(_main._snapshot_system.capture(0) == packet and preload("res://tests/fixtures/network_fixture.gd").snapshot_payload(_main._snapshot_system, 1, source) == source_state and preload("res://tests/fixtures/network_fixture.gd").snapshot_payload(_main._snapshot_system, 2, target) == target_state and source.active_skill_cast_timer == cast_left and target.control.frozen_timer == frozen_left and _main.runtime.get_active_skill_snapshot(source.active_ability_id).cooldown_left == cooldown and _main.runtime._commands.inspect_impacts() == impacts, "暂停保持HP、坐标、状态、技能起手、冷却与待命中时钟不变")
 	panel._select_item("training_dummy")
 	panel.set_select_mode(false)
 	_main._workbench_map_click(Vector2(420, 1050))
 	var placed: Unit = _main._art_dev_selected_unit()
-	_expect(placed != null and placed.card_id == "training_dummy" and _main._sim_tick_id == tick, "暂停期间仍经正式工作台入口摆放对象，不推进模拟")
+	_expect(placed != null and placed.card_id == "training_dummy" and _main.runtime._sim_tick_id == tick, "暂停期间仍经正式工作台入口摆放对象，不推进模拟")
 	panel._pause_button.pressed.emit()
 	_main._process(0.025)
-	_expect(_main._sim_tick_id == tick + 1 and _main._simulation_clock.ticks == clock_ticks + 1 and is_zero_approx(_main._simulation_clock.remainder), "恢复只消费暂停前余量与新帧，不追赶25秒暂停墙钟")
-	_expect(source.active_skill_cast_timer < cast_left and target.control.frozen_timer < frozen_left and _main.get_active_skill_snapshot(source.active_ability_id).cooldown_left < cooldown, "恢复后技能起手、冷却与控制时钟正常推进")
+	_expect(_main.runtime._sim_tick_id == tick + 1 and _main.runtime._simulation_clock.ticks == clock_ticks + 1 and is_zero_approx(_main.runtime._simulation_clock.remainder), "恢复只消费暂停前余量与新帧，不追赶25秒暂停墙钟")
+	_expect(source.active_skill_cast_timer < cast_left and target.control.frozen_timer < frozen_left and _main.runtime.get_active_skill_snapshot(source.active_ability_id).cooldown_left < cooldown, "恢复后技能起手、冷却与控制时钟正常推进")
 	for workspace in [0, 2]:
 		panel.show_workspace(workspace)
 		_main._process(1.0)
-		_expect(not panel.accepts_battle_input() and not _main.can_advance_simulation() and _main._sim_tick_id == tick + 1, "切离实战页停止模拟（页%d）" % workspace)
+		_expect(not panel.accepts_battle_input() and not _main.can_advance_simulation() and _main.runtime._sim_tick_id == tick + 1, "切离实战页停止模拟（页%d）" % workspace)
 	panel.show_workspace(1)
 	panel._show_library(true)
 	_main._process(1.0)
-	_expect(not panel.accepts_battle_input() and not _main.can_advance_simulation() and _main._sim_tick_id == tick + 1, "牌库遮罩暂停战场，保持原有输入隔离")
+	_expect(not panel.accepts_battle_input() and not _main.can_advance_simulation() and _main.runtime._sim_tick_id == tick + 1, "牌库遮罩暂停战场，保持原有输入隔离")
 	panel._show_library(false)
 	_expect(_main.can_advance_simulation(), "关闭牌库恢复实战页模拟许可")
 	_main._pause_workbench_battle(false)
@@ -71,8 +71,8 @@ func _check_simulation_pause() -> void:
 	panel.free()
 
 func _check_artdev_active_skill_timeline() -> void:
-	var old_deck: Array = _main._deck.duplicate()
-	_main._deck = ["garen", "xin", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
+	var old_deck: Array = _main.runtime._deck.duplicate()
+	_main.runtime._deck = ["garen", "xin", "freeze", "ashe", "teemo", "masteryi", "tombstone", "aurelionsol"]
 	var source: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "garen", Vector2(260.0, 680.0), {"deploy_time_override": 0.0, "active_slot": 0}))
 	var ability_id: int = source.active_ability_id
 	var skill: Dictionary = {
@@ -85,12 +85,12 @@ func _check_artdev_active_skill_timeline() -> void:
 		"shield_duration": 2.0,
 		"cast_locks": ["movement", "attack", "facing"],
 	}
-	var pending_before: int = _main._commands.inspect_impacts().size()
+	var pending_before: int = _main.runtime._commands.inspect_impacts().size()
 	var previewed: bool = _main.preview_active_skill(source, skill)
 	var command_buffer_skipped: bool = (
 		previewed
-		and _main._commands.inspect_skills().is_empty()
-		and _main._commands.inspect_impacts().size() == pending_before + 1
+		and _main.runtime._commands.inspect_skills().is_empty()
+		and _main.runtime._commands.inspect_impacts().size() == pending_before + 1
 		and source.active_skill_cast_timer > 0.0
 		and is_zero_approx(source.shield_hp)
 	)
@@ -99,9 +99,9 @@ func _check_artdev_active_skill_timeline() -> void:
 	_run_main_ticks(1)
 	var impact_after_delay: bool = source.shield_hp > 0.0
 	_expect(command_buffer_skipped and no_early_impact and impact_after_delay, "ArtDev 只跳过 Command Buffer，普通主动仍按 Cast Start→impact_delay→Gameplay Impact 结算")
-	_main._on_active_skill_unit_died(ability_id)
+	_main.runtime._on_active_skill_unit_died(ability_id)
 	source.free()
-	_main._deck = old_deck
+	_main.runtime._deck = old_deck
 
 func _check_artdev_workbench() -> void:
 	var old_panel: DevelopmentWorkbench = _main._art_dev_panel
@@ -381,7 +381,7 @@ func _check_artdev_workbench() -> void:
 	)
 	_expect(sett_resource_visible, "ArtDev 腕豪显示 0–200 连续豪意条并允许直接调整测试值")
 
-	_main._commands.clear_impacts()
+	_main.runtime._commands.clear_impacts()
 	_main._active_skill_effect_system.clear()
 	_main._skill_presentation.clear()
 	if is_instance_valid(gwen):
@@ -471,8 +471,8 @@ func _check_explicit_inspection() -> void:
 	panel._library._shelf_grid.get_child(0).pressed.emit()
 	_expect(panel._quick_cards.is_empty(), "编辑框点击槽位移除")
 	panel._show_library(false)
-	var group: Array[Unit] = _main._spawn_card_units(0, "minion_squad", Vector2(200, 850), 0.0)
-	var other: Array[Unit] = _main._spawn_card_units(0, "minion_squad", Vector2(500, 850), 0.0)
+	var group: Array[Unit] = _main.runtime._spawn_card_units(0, "minion_squad", Vector2(200, 850), 0.0)
+	var other: Array[Unit] = _main.runtime._spawn_card_units(0, "minion_squad", Vector2(500, 850), 0.0)
 	_main._workbench.inspect(group[1])
 	_main._sync_art_dev_panel_state()
 	_main._run_workbench_scenario("freeze")

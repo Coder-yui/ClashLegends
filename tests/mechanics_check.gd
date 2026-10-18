@@ -8,8 +8,10 @@ var _checks := 0
 var _verbose := "--verbose-checks" in OS.get_cmdline_user_args()
 var _main: Node2D
 var _suite_root_ids: Array = []
+var _heartbeat: RefCounted
 
 func _initialize() -> void:
+	_heartbeat = preload("res://tools/performance/safe_probe_heartbeat.gd").new(self)
 	call_deferred("_run")
 
 func _run() -> void:
@@ -42,11 +44,13 @@ func _run() -> void:
 	if "--reverse-suites" in OS.get_cmdline_user_args(): catalog.reverse()
 	for entry in catalog:
 		if not selected.is_empty() and not selected.has(entry.id): continue
+		_heartbeat.set_phase("prepare:" + entry.id)
 		var started := Time.get_ticks_msec()
 		var checks_before := _checks
 		var failed_before := _failed
 		seed(12345)
 		await _prepare_suite(entry.scene)
+		_heartbeat.set_phase("run:" + entry.id, true)
 		print("[套件] " + entry.id)
 		var script = load(entry.script)
 		if script == null or not script.can_instantiate():
@@ -87,7 +91,7 @@ func _prepare_suite(scene_kind: String) -> void:
 		_main._start_local()
 		_main.set_process(false)
 		_main._ai.enabled = false
-		_main._minion_waves_enabled = false
+		_main.runtime._minion_waves_enabled = false
 
 func _clear_suite() -> void:
 	if is_instance_valid(_main): _main.free()

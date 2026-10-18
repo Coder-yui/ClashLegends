@@ -467,11 +467,11 @@ func _check_cast_policies_and_snapshot() -> void:
 	stationary.shields.absorb(75.0)
 	stationary.apply_active_buff(100.0, 1.5, 1.0, 1.4)
 	stationary.active_ability_id = 9001
-	_main._active_skills.register(stationary, stationary.card_id, stationary.team, {"max_uses": 2})
-	_main._active_skills.replace_replica(stationary.active_ability_id, 2, 1.25)
-	var payload := NetworkSnapshotSystem.new(_main, _main._projectile_system)._unit_snapshot_payload(77, stationary)
+	_main.runtime._active_skills.register(stationary, stationary.card_id, stationary.team, {"max_uses": 2})
+	_main.runtime._active_skills.replace_replica(stationary.active_ability_id, 2, 1.25)
+	var payload := preload("res://tests/fixtures/network_fixture.gd").snapshot_payload(NetworkSnapshotSystem.new(_main, _main._projectile_system), 77, stationary)
 	var snapshot_system := NetworkSnapshotSystem.new(_main, _main._projectile_system)
-	var snapshot_packet := snapshot_system._snapshot_packet([], [], [], 0.0, _main._match_rules.time_left, _main._match_rules.overtime)
+	var snapshot_packet := preload("res://tests/fixtures/network_fixture.gd").packet(snapshot_system, [], [], preload("res://tests/fixtures/network_fixture.gd").tower_payloads(snapshot_system), 0.0, _main.runtime._match_rules.time_left, _main.runtime._match_rules.overtime)
 	var snapshot_contract: bool = (
 		payload.size() == NetworkSnapshotSystem.UNIT_PAYLOAD_SIZE
 		and int(payload[NetworkSnapshotSystem.U_ACTION_SERIAL]) == stationary.get_visual_action_serial()
@@ -491,7 +491,7 @@ func _check_cast_policies_and_snapshot() -> void:
 		and is_equal_approx(float(payload[NetworkSnapshotSystem.U_SHIELD_CAPACITY_RATIO]), stationary.shield_max_hp / stationary.max_hp)
 		and snapshot_packet.size() == NetworkSnapshotSystem.SNAPSHOT_PACKET_SIZE
 		and int(snapshot_packet[NetworkSnapshotSystem.S_VERSION]) == NetworkSnapshotSystem.SNAPSHOT_PROTOCOL_VERSION
-		and int(snapshot_packet[NetworkSnapshotSystem.S_SERVER_TICK]) == _main._sim_tick_id
+		and int(snapshot_packet[NetworkSnapshotSystem.S_SERVER_TICK]) == _main.runtime._sim_tick_id
 	)
 	_expect(stationary_locked and attacks_after_cast, "默认技能施法独立锁住移动与普攻，并在窗口结束后立即允许攻击")
 	_expect(mobile_cast_policy, "cast_locks 可配置允许移动施法，同时继续禁止普通攻击")
@@ -500,7 +500,7 @@ func _check_cast_policies_and_snapshot() -> void:
 	for unit in [stationary, mobile, unrestricted, near_dummy, far_dummy]:
 		if is_instance_valid(unit):
 			unit.free()
-	_main._active_skills.remove(9001)
+	_main.runtime._active_skills.remove(9001)
 
 func _check_repeated_attack_restart() -> void:
 	var stats: Dictionary = CardDB.get_card("gnar").transformed_stats.duplicate(true)
@@ -606,10 +606,10 @@ func _check_deploy_control_endings() -> void:
 			view.free()
 			unit.free()
 	# 初次客户端表现已受晕：权威投影仍在部署，本地计时不作为生命周期来源。
-	var saved_mode: String = _main.mode
-	var saved_mode_team: int = _main.local_team
-	_main.mode = "client"
-	_main.local_team = 1
+	var saved_mode: String = _main.runtime.mode
+	var saved_mode_team: int = _main.runtime.local_team
+	_main.runtime.mode = "client"
+	_main.runtime.local_team = 1
 	for card in ["garen", "pantheon"]:
 		var stats: Dictionary = CardDB.get_card(card)
 		var unit := Unit.new()
@@ -630,8 +630,8 @@ func _check_deploy_control_endings() -> void:
 		_expect(view._current_state == 1 and not view._playing_deploy_sequence, "%s客户端部署结束仍眩晕转待机" % card)
 		view.free()
 		unit.free()
-	_main.mode = saved_mode
-	_main.local_team = saved_mode_team
+	_main.runtime.mode = saved_mode
+	_main.runtime.local_team = saved_mode_team
 
 func _check_idle_tail_deploy() -> void:
 	for card in ["ashe", "anivia", "anivia_egg", "darius", "lulu", "pix", "voidfish", "melee_minion", "ranged_minion", "siege_minion", "super_minion", "tryndamere"]:

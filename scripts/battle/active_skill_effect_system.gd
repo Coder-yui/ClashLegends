@@ -45,8 +45,7 @@ func prepare_cast(source: Unit, skill: Dictionary) -> Dictionary:
 		if not bool(prepared.get("resource_consume_only_full", false)) or resource_ratio >= 0.999:
 			source.consume_skill_resource_ratio()
 		else:
-			source.skill_resource_value = minf(source.skill_resource_max, source.skill_resource_value + float(prepared.get("resource_nonfull_cast_gain", 0.0)))
-			source.queue_redraw()
+			source.grant_partial_cast_resource(float(prepared.get("resource_nonfull_cast_gain", 0.0)))
 		prepared["resource_ratio"] = resource_ratio
 		prepared["resource_stacks"] = resource_stacks
 		var damage_by_stacks = prepared.get("resource_damage_by_stacks", [])
@@ -110,7 +109,7 @@ func prepare_dual_form_cast(source: Unit, skill: Dictionary) -> Dictionary:
 ## Cast Start 的效果必须在施法窗口开始时发生；它不依赖动画，也不等待 EffectExecution。
 func apply_cast_start(source: Unit, skill: Dictionary) -> void:
 	if StringName(skill.get("kind", "")) == &"aftershock":
-		source.buffs.apply(&"damage_reduction", source.status_source("aftershock"), float(skill.duration), {"reduction": float(skill.damage_reduction), "expiry_skill": skill})
+		source.apply_damage_reduction(float(skill.duration), float(skill.damage_reduction), skill, source.status_source("aftershock"))
 	if StringName(skill.get("kind", "")) == &"undying_rage":
 		source.begin_undying_rage(float(skill.duration))
 	if not bool(skill.get("shield_on_cast_start", false)):
@@ -145,23 +144,17 @@ func _apply(source: Unit, skill: Dictionary) -> bool:
 		&"self_sacrifice":
 			source.sacrifice_without_reward()
 		&"effect_shield":
-			source.buffs.apply(&"effect_shield", source.status_source("effect_shield"), float(skill.duration), {"haste_duration": float(skill.get("block_haste_duration", 0.0)), "attack_speed": float(skill.get("block_attack_speed_multiplier", 1.0))})
+			source.apply_effect_shield(float(skill.duration), float(skill.get("block_haste_duration", 0.0)), float(skill.get("block_attack_speed_multiplier", 1.0)), source.status_source("effect_shield"))
 			source.battle_context.notify_unit_audio_event(source, &"effect_shield:start", source.get_visual_screen_position())
 		&"aftershock", &"undying_rage":
 			pass # 效果在 Cast Start 原子生效，受控不取消已施加的独立状态。
 		&"death_spawn":
 			for target in _skill_target_units(source, skill):
-				target.active_death_spawn_id = String(skill.spawn_id)
-				target.buffs.apply(&"death_spawn", source.status_source("death_spawn"), float(skill.duration), {"visual_duration": float(skill.duration)})
+				target.apply_death_spawn(String(skill.spawn_id), float(skill.duration), source.status_source("death_spawn"))
 		&"sacrifice_empower":
 			var applied := false
 			for target in _skill_target_units(source, skill):
-				if float(target._base_form_stats.get("sacrifice_damage", 0.0)) <= 0.0 or target.sacrifice_empowerment.x > 1.0: continue
-				target.sacrifice_empowerment = Vector2(float(skill.damage_multiplier), float(skill.visual_scale_multiplier))
-				var health_bonus := BattleNumbers.quantity(target.max_hp * float(skill.health_bonus_ratio))
-				target.set_sacrifice_stats(Vector3(health_bonus, float(skill.body_scale_multiplier), float(skill.speed_multiplier)))
-				target.hp += health_bonus
-				applied = true
+				applied = target.apply_sacrifice_empowerment(float(skill.damage_multiplier), float(skill.visual_scale_multiplier), float(skill.health_bonus_ratio), float(skill.body_scale_multiplier), float(skill.speed_multiplier)) or applied
 			return applied
 		&"permanent_growth":
 			return apply_permanent_growth(source, skill)
@@ -171,14 +164,12 @@ func _apply(source: Unit, skill: Dictionary) -> bool:
 		&"dash_strike":
 			dash_strikes.append(DashStrikeState.new(source, skill))
 		&"bleeding_execute":
-			source.empowered_execute = skill
-			source.prepare_empowered_attack(1.0, 1.0, 0, {"strike_type": skill.get("strike_type", "basic_attack")})
+			source.prepare_execute_attack(skill)
 		&"explosive_shield":
 			if source.hp <= 0.0 or source.death_form.used: return false
 			source.add_shield(float(skill.shield), float(skill.shield_duration), false, source.status_source("explosive_shield"), {}, skill)
 		&"sanctuary":
-			source.target_protection.begin(source.global_position, float(skill.radius), float(skill.duration))
-			_controller.projectile_service().invalidate_target_locks(source)
+			source.begin_target_protection(float(skill.radius), float(skill.duration))
 		&"timed_form":
 			return source.transform_to_mega(true)
 		&"buff":
@@ -196,11 +187,11 @@ func _apply(source: Unit, skill: Dictionary) -> bool:
 					source.status_source(String(skill.get("name", "buff")))
 				)
 				if float(target_skill.get("heal_ratio", 0.0)) > 0.0:
-					target.buffs.apply(&"timed_lifesteal", source.status_source("timed_lifesteal"), float(target_skill.duration), {"ratio": float(target_skill.heal_ratio)})
+					target.apply_timed_lifesteal(float(target_skill.duration), float(target_skill.heal_ratio), source.status_source("timed_lifesteal"))
 				if bool(target_skill.get("ignore_unit_collision", false)):
-					target.buffs.apply(&"unit_phasing", source.status_source("unit_phasing"), float(target_skill.duration), {"enabled": true})
+					target.apply_unit_phasing(float(target_skill.duration), source.status_source("unit_phasing"))
 				if target_skill.has("range_bonus") or target_skill.has("piercing_attacks") or target_skill.has("projectile_speed_multiplier"):
-					target.buffs.apply(&"ranged_attack", source.status_source("ranged_attack"), float(target_skill.duration), {"range_bonus": float(target_skill.get("range_bonus", 0.0)), "piercing": bool(target_skill.get("piercing_attacks", false)), "flight_distance": float(target_skill.get("piercing_distance", 0.0)), "projectile_speed_multiplier": float(target_skill.get("projectile_speed_multiplier", 1.0))})
+					target.apply_ranged_attack(float(target_skill.duration), float(target_skill.get("range_bonus", 0.0)), bool(target_skill.get("piercing_attacks", false)), float(target_skill.get("piercing_distance", 0.0)), float(target_skill.get("projectile_speed_multiplier", 1.0)), source.status_source("ranged_attack"))
 				if not bool(target_skill.get("shield_on_cast_start", false)):
 					target.add_shield(float(target_skill.get("shield", 0.0)), float(target_skill.get("shield_duration", target_skill.get("duration", 0.0))), bool(target_skill.get("shield_decay", false)), source.status_source("shield"))
 		&"blink_nova":
@@ -232,8 +223,7 @@ func _apply(source: Unit, skill: Dictionary) -> bool:
 		&"continuous_area":
 			activate_continuous_area(source, skill)
 		&"channeled_attack":
-			source.channel_attack.prepared = skill.duplicate(true)
-			source.cancel_basic_attack(ActionCancellation.EMPOWERED_RESET)
+			source.prepare_channeled_attack(skill)
 		&"empowered_attack":
 			source.prepare_empowered_attack(
 				float(skill.get("empowered_damage_multiplier", 1.0)),
@@ -312,7 +302,7 @@ func apply_area_shield(source: Unit, skill: Dictionary) -> void:
 		if not is_instance_valid(combatant) or not combatant is Node2D or combatant.hp <= 0.0:
 			continue
 		var ally = combatant
-		if ally.team != source.team or not ally.has_method("add_shield"):
+		if ally.team != source.team:
 			continue
 		if source.surface_gap_to_circle(ally.global_position, ally.body_radius) > radius:
 			continue
@@ -326,7 +316,7 @@ func _skill_target_units(source: Unit, skill: Dictionary) -> Array[Unit]:
 	if StringName(skill.get("target_scope", "self")) != &"deployment_group" or source.deployment_group_id < 0:
 		if CombatInteraction.allows_allied_target(source, source.team): targets.append(source)
 		return targets
-	for member in _controller.living_deployment_members(source.deployment_group_id, source.team):
+	for member in _controller.runtime.living_deployment_members(source.deployment_group_id, source.team):
 		if CombatInteraction.allows_allied_target(member, source.team): targets.append(member)
 	return targets
 
@@ -360,7 +350,7 @@ func activate_nova(source: Unit, skill: Dictionary) -> void:
 	var ground_only := bool(skill.get("ground_only", false))
 	var slow_duration := float(skill.get("slow_duration", 0.0))
 	var slow_multiplier := float(skill.get("slow_multiplier", 1.0))
-	var any_landed := false
+	var receipts: Array[Dictionary] = []
 	for combatant in _controller.get_tree().get_nodes_in_group("combatants"):
 		if combatant == source or not is_instance_valid(combatant) or combatant.team == source.team or combatant.hp <= 0.0:
 			continue
@@ -371,7 +361,7 @@ func activate_nova(source: Unit, skill: Dictionary) -> void:
 			continue
 		if (amount > 0.0 or float(skill.get("stun_duration", 0.0)) > 0.0 or float(skill.get("knockback", 0.0)) > 0.0) and CombatInteraction.blocks_effect(combatant, CombatInteraction.effect_context(source)): continue
 		if amount > 0.0:
-			any_landed = _damage_combatant(source, combatant, amount, source.global_position) or any_landed
+			receipts.append(_damage_combatant(source, combatant, amount, source.global_position))
 		if is_instance_valid(combatant) and combatant is Unit and combatant.hp > 0.0:
 			if knockback > 0.0:
 				(combatant as Unit).apply_knockback(source.global_position, knockback, knockback_duration, knockback_mass_factor_max, displacement_order, CombatInteraction.effect_context(source))
@@ -386,8 +376,11 @@ func activate_nova(source: Unit, skill: Dictionary) -> void:
 ## 持续范围伤害不保存固定中心；每次脉冲都以 source.global_position 为中心。
 ## 首次伤害在第一个 tick_interval 到达时结算，持续 duration 秒，避免把施法
 ## 起始帧重复算成额外伤害。技能窗口可只锁 attack，让施法者继续移动/转向。
-	if any_landed:
-		_controller.notify_unit_audio_event(source, StringName(String(skill.get("visual_action", "")) + ":hit"), source.global_position)
+	var source_ref: WeakRef = weakref(source)
+	_after_damage(func():
+		var live_source = source_ref.get_ref()
+		if receipts.any(func(result): return result.landed) and is_instance_valid(live_source):
+			_controller.notify_unit_audio_event(live_source, StringName(String(skill.get("visual_action", "")) + ":hit"), live_source.global_position))
 
 func activate_continuous_area(source: Unit, skill: Dictionary) -> void:
 	var duration := maxf(float(skill.get("duration", skill.get("cast_duration", 0.0))), 0.0)
@@ -424,7 +417,7 @@ func _apply_continuous_delivery(source: Unit, effect: Dictionary) -> void:
 	var radius := maxf(float(effect.get("radius", 0.0)), 0.0)
 	var amount := maxf(float(effect.get("damage", 0.0)), 0.0)
 	var ground_only := bool(effect.get("ground_only", false))
-	var any_landed := false
+	var receipts: Array[Dictionary] = []
 	for combatant in _controller.get_tree().get_nodes_in_group("combatants"):
 		var source_team := int(effect.get("team", source.team if source != null else -1))
 		if combatant == source or not is_instance_valid(combatant) or combatant.team == source_team or combatant.hp <= 0.0:
@@ -436,18 +429,21 @@ func _apply_continuous_delivery(source: Unit, effect: Dictionary) -> void:
 			continue
 		if amount > 0.0:
 			if source != null and is_instance_valid(source):
-				any_landed = _damage_combatant(source, combatant, amount, center) or any_landed
+				receipts.append(_damage_combatant(source, combatant, amount, center))
 			else:
-				combatant.take_damage(amount, null, source_team, effect.get("source_position", center))
+				receipts.append(BattleNumbers.hit(combatant, amount, null, source_team, effect.get("source_position", center)))
 		if is_instance_valid(combatant) and combatant is Unit and combatant.hp > 0.0 and float(effect.get("slow_duration", 0.0)) > 0.0:
 			(combatant as Unit).apply_slow(float(effect.get("slow_duration", 0.0)), float(effect.get("slow_multiplier", 1.0)), effect.status_source, CombatInteraction.effect_context(source, int(effect.team), effect.get("source_position", center)))
 	var action := String(effect.get("visual_action", ""))
-	if any_landed and not action.is_empty():
-		_controller.notify_unit_audio_event(source, StringName(action + ":hit"), center)
+	var source_ref: WeakRef = weakref(source) if is_instance_valid(source) else null
+	_after_damage(func():
+		var live_source = source_ref.get_ref() if source_ref != null else null
+		if receipts.any(func(result): return result.landed) and not action.is_empty():
+			_controller.notify_unit_audio_event(live_source, StringName(action + ":hit"), center))
 
 
 func begin_channel_zone(source: Unit, center: Vector2, skill: Dictionary) -> void:
-	continuous_area_effects.append({"source_ref": weakref(source), "source_position": source.global_position,
+	continuous_area_effects.append({"effect_delivery": skill.get("effect_delivery"), "source_ref": weakref(source), "source_position": source.global_position,
 		"team": source.team, "fixed_position": true, "center": center, "radius": float(skill.radius),
 		"damage": float(skill.zone_damage), "time_left": float(skill.zone_duration),
 		"next_tick": float(skill.zone_tick_interval), "tick_interval": float(skill.zone_tick_interval),
@@ -470,7 +466,7 @@ func activate_summon(source: Unit, skill: Dictionary) -> void:
 	var summon_center := source.global_position
 	var source_radius := source.body_radius
 	if bool(skill.get("sacrifice_source", false)):
-		source._die() # 先释放建筑占位，召唤不依赖已死亡来源。
+		source.end_life_for_summon() # 先释放建筑占位，召唤不依赖已死亡来源。
 	for index in range(count):
 		var angle := TAU * float(index) / float(count)
 		var offset := Vector2.RIGHT.rotated(angle) * (source_radius + summon_radius + Unit.SUMMON_SEPARATION)
@@ -480,14 +476,15 @@ func activate_summon(source: Unit, skill: Dictionary) -> void:
 ## 扇形/梯形主动统一按施法开始时锁定的朝向结算。目标碰撞圆会扩张边界，
 ## 但动画、箭矢线条和预警多边形都不参与权威命中。
 func apply_frontal(source: Unit, skill: Dictionary, forward: Vector2 = Vector2.ZERO) -> void:
+	var source_ref: WeakRef = weakref(source)
 	var action := String(skill.get("visual_action", ""))
 	if not action.is_empty():
 		_controller.notify_unit_audio_event(source, StringName(action + ":release"), source.global_position)
 	if bool(skill.get("projectile_stop_on_hit", false)) or bool(skill.get("projectile_piercing", false)):
 		_controller.projectile_service().launch_skill_fan(source, skill, frontal_forward(source) if forward.length_squared() < 0.001 else forward.normalized())
 		return
-	var any_landed := false
-	var center_landed := false
+	var receipts: Array[Dictionary] = []
+	var center_receipts: Array[Dictionary] = []
 	forward = frontal_forward(source) if forward.length_squared() < 0.001 else forward.normalized()
 	_presentation.present_frontal_impact(source, skill, forward)
 	var side := Vector2(-forward.y, forward.x)
@@ -573,30 +570,34 @@ func apply_frontal(source: Unit, skill: Dictionary, forward: Vector2 = Vector2.Z
 			var hit_amount := BattleNumbers.quantity(amount * damage_multiplier)
 			if bool(skill.get("applies_on_hit_passive", false)):
 				hit_amount += source.on_hit_passive_damage(combatant)
-			var landed := _damage_combatant(source, combatant, hit_amount)
-			if landed and skill.get("cast_hit_state") is CastHitState:
+			var receipt := _damage_combatant(source, combatant, hit_amount)
+			receipts.append(receipt)
+			if in_center: center_receipts.append(receipt)
+			if skill.get("cast_hit_state") is CastHitState:
 				var state: CastHitState = skill.cast_hit_state
-				if not state.landed:
+				_after_damage(func():
+					if not receipt.landed or state.landed: return
 					state.landed = true
-					var heal_amount := float(skill.get("first_hit_heal", 0.0))
-					if heal_amount > 0.0:
-						source.heal(heal_amount)
-			any_landed = landed or any_landed
-			center_landed = (landed and in_center) or center_landed
+					var live_source = source_ref.get_ref()
+					if is_instance_valid(live_source) and live_source.hp > 0.0:
+						live_source.heal(float(skill.get("first_hit_heal", 0.0))), true)
 		if is_instance_valid(combatant) and combatant is Unit and combatant.hp > 0.0 and float(skill.get("slow_duration", 0.0)) > 0.0:
 			(combatant as Unit).apply_slow(float(skill.slow_duration), float(skill.get("slow_multiplier", 1.0)), source.status_source("skill"), CombatInteraction.effect_context(source))
-	if any_landed and not action.is_empty():
-		var cue := action + ":hit"
-		if skill.has("hit_audio_phase"):
-			cue += "_" + String(skill.hit_audio_phase)
-			if center_landed:
-				cue += "_center"
-		_controller.notify_unit_audio_event(source, StringName(cue), source.global_position)
+	_after_damage(func():
+		var live_source = source_ref.get_ref()
+		if not is_instance_valid(live_source) or action.is_empty(): return
+		var center_landed := center_receipts.any(func(result): return result.landed)
+		if receipts.any(func(result): return result.landed):
+			var cue := action + ":hit"
+			if skill.has("hit_audio_phase"):
+				cue += "_" + String(skill.hit_audio_phase)
+				if center_landed: cue += "_center"
+			_controller.notify_unit_audio_event(live_source, StringName(cue), live_source.global_position)
+		if center_landed:
+			_controller.notify_unit_audio_event(live_source, StringName(action + ":hit_center"), live_source.global_position))
 
 
 ## 向施法开始时锁定方向的前方圆形区域落下一颗星；冲击波由固定 tick 独立扩散。
-	if center_landed and not action.is_empty():
-		_controller.notify_unit_audio_event(source, StringName(action + ":hit_center"), source.global_position)
 
 func apply_forward_area(source: Unit, skill: Dictionary, forward: Vector2 = Vector2.ZERO) -> void:
 	var context: Dictionary = skill.get("independent_result", {})
@@ -628,7 +629,7 @@ func apply_forward_area(source: Unit, skill: Dictionary, forward: Vector2 = Vect
 			_damage_result(source, combatant, amount, context)
 		if is_instance_valid(combatant) and combatant is Unit and combatant.hp > 0.0 and float(skill.get("slow_duration", 0.0)) > 0.0:
 			(combatant as Unit).apply_slow(float(skill.slow_duration), float(skill.get("slow_multiplier", 1.0)), context.status_source, CombatInteraction.effect_context(source, source_team, context.get("source_position", center)))
-		if is_instance_valid(combatant) and combatant.hp > 0.0 and stun_duration > 0.0 and combatant.has_method("stun"):
+		if is_instance_valid(combatant) and combatant.hp > 0.0 and stun_duration > 0.0:
 			combatant.stun(stun_duration, context.status_source, CombatInteraction.effect_context(source, source_team, context.get("source_position", center)))
 	var zone_duration := maxf(float(skill.get("zone_duration", 0.0)), 0.0)
 	var zone_tick_interval := maxf(float(skill.get("zone_tick_interval", 1.0)), 0.01)
@@ -703,23 +704,25 @@ func prepare_forward_area_result(source: Unit, skill: Dictionary, cast_forward: 
 
 
 
-func _damage_result(source: Unit, target: Node2D, amount: float, context: Dictionary) -> bool:
+func _damage_result(source: Unit, target: Node2D, amount: float, context: Dictionary) -> Dictionary:
 	return _controller.combat_service().resolve_attack_hit(int(context.team), context.center, target, amount, 0.0, 0.0,
 		source if is_instance_valid(source) else null, context.get("source_position", context.center), int(context.form),
 		{"presentation_source": context.audio_source}, false)
 
 
-func _damage_combatant(source: Unit, combatant: Node2D, amount: float, origin: Vector2 = Vector2(INF, INF)) -> bool:
+func _damage_combatant(source: Unit, combatant: Node2D, amount: float, origin: Vector2 = Vector2(INF, INF)) -> Dictionary:
 	if not is_instance_valid(source) or not is_instance_valid(combatant) or combatant.hp <= 0.0 or amount <= 0.0:
-		return false
-	if source.battle_context != null:
-		return source.battle_context.apply_damage_pulse(source, combatant, amount, 0.0, origin, false)
-	var was_alive: bool = combatant.hp > 0.0
+		return BattleNumbers.pending_hit(false, amount)
 	var source_position := source.global_position if origin.x == INF else origin
-	var landed: bool = combatant.take_damage(amount, source, source.team, source_position)
-	if landed and was_alive and is_instance_valid(combatant) and combatant.hp <= 0.0 and is_instance_valid(source):
-		source.on_enemy_killed(combatant)
-	return landed
+	return _controller.combat_service().resolve_damage_hit(combatant, amount, source, source.team, source_position, true)
+
+## 只把真实结果的消费者推迟到相应提交阶段；即时模式已完成原正式小批次。
+func _after_damage(callback: Callable, benefit: bool = false) -> void:
+	var resolver: CombatResolver = _controller.combat_service()
+	if resolver.collecting:
+		if benefit: resolver.defer_benefit(callback)
+		else: resolver.defer_effect(callback)
+	else: callback.call()
 
 
 func queue_expiry_explosion(source: Unit, skill: Dictionary) -> void:
@@ -750,8 +753,7 @@ func begin_sacrifice(source: Unit, target: Node2D) -> void:
 	_presentation.frontal_effects.append(effect)
 	_controller.publish_skill_fx(effect)
 	_controller.present_skill_projectile_hit(audio_source, "sacrifice", source.global_position, "start")
-	source._skip_death_visual = true
-	source._die(false)
+	source.finish_sacrifice_leap()
 
 func _sacrifice_target_valid(target: Node2D, source_team: int) -> bool:
 	return is_instance_valid(target) and not target.is_queued_for_deletion() and target.hp > 0.0 and target.team != source_team and (target is Tower or (target is Unit and target.is_building))
@@ -914,13 +916,14 @@ func _tick_expanding_shockwaves(dt: float) -> void:
 				continue
 			shockwave.hit_ids[instance_id] = true
 			var hit_position: Vector2 = combatant.global_position
-			var landed := false
+			var receipt: Dictionary
 			if is_instance_valid(source) and source is Unit:
-				landed = _damage_combatant(source as Unit, combatant, float(shockwave.damage), shockwave.center)
+				receipt = _damage_combatant(source as Unit, combatant, float(shockwave.damage), shockwave.center)
 			else:
-				landed = combatant.take_damage(float(shockwave.damage), null, int(shockwave.team), shockwave.get("source_position", shockwave.center))
-			if landed:
-				_controller.present_skill_projectile_hit(shockwave.get("audio_source", {}), String(shockwave.get("visual_action", "")), combatant.global_position if is_instance_valid(combatant) else hit_position, "wave_hit")
+				receipt = BattleNumbers.hit(combatant, float(shockwave.damage), null, int(shockwave.team), shockwave.get("source_position", shockwave.center))
+			_after_damage(func():
+				if receipt.landed:
+					_controller.present_skill_projectile_hit(shockwave.get("audio_source", {}), String(shockwave.get("visual_action", "")), hit_position, "wave_hit"))
 			if is_instance_valid(combatant) and combatant is Unit and combatant.hp > 0.0 and float(shockwave.slow_duration) > 0.0:
 				(combatant as Unit).apply_slow(float(shockwave.slow_duration), float(shockwave.slow_multiplier), shockwave.status_source, CombatInteraction.effect_context(source, int(shockwave.team), shockwave.get("source_position", shockwave.center)))
 		CombatInteraction.current_delivery = previous
@@ -938,7 +941,7 @@ func apply_frontal_stun(source: Unit, skill: Dictionary, forward: Vector2) -> vo
 	var amount := maxf(float(skill.get("damage", 0.0)), 0.0)
 	var stun_duration := maxf(float(skill.get("stun_duration", 0.0)), 0.0)
 	var ground_only := bool(skill.get("ground_only", true))
-	var any_landed := false
+	var receipts: Array[Dictionary] = []
 	for combatant in _controller.get_tree().get_nodes_in_group("combatants"):
 		if combatant == source or not is_instance_valid(combatant) or combatant.team == source.team or combatant.hp <= 0.0:
 			continue
@@ -954,16 +957,18 @@ func apply_frontal_stun(source: Unit, skill: Dictionary, forward: Vector2) -> vo
 			continue
 		if (amount > 0.0 or float(skill.get("stun_duration", 0.0)) > 0.0 or float(skill.get("knockback", 0.0)) > 0.0) and CombatInteraction.blocks_effect(combatant, CombatInteraction.effect_context(source)): continue
 		if amount > 0.0:
-			any_landed = combatant.take_damage(amount, source, source.team, source.global_position) or any_landed
-		if is_instance_valid(combatant) and combatant.hp > 0.0 and stun_duration > 0.0 and combatant.has_method("stun"):
+			receipts.append(BattleNumbers.hit(combatant, amount, source, source.team, source.global_position))
+		if is_instance_valid(combatant) and combatant.hp > 0.0 and stun_duration > 0.0:
 			combatant.stun(stun_duration, source.status_source("skill"), CombatInteraction.effect_context(source))
 
 
-	if any_landed:
+	var source_ref: WeakRef = weakref(source)
+	_after_damage(func():
+		var live_source = source_ref.get_ref()
+		if not is_instance_valid(live_source) or not receipts.any(func(result): return result.landed): return
 		var action := String(skill.get("visual_action", "active"))
-		if action.is_empty():
-			action = "transform_active"
-		_controller.notify_unit_audio_event(source, StringName(action + ":hit"), source.global_position)
+		if action.is_empty(): action = "transform_active"
+		_controller.notify_unit_audio_event(live_source, StringName(action + ":hit"), live_source.global_position))
 
 func frontal_forward(source: Unit) -> Vector2:
 	var forward := source.get_visual_facing_direction()

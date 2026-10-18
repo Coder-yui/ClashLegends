@@ -137,10 +137,10 @@ func _check_projectile_visual_snapshot() -> void:
 		"visual": &"orb", "direction": Vector2.UP, "visual_height": 46.75,
 		"visual_offset": Vector2(0.0, -20.0), "visual_scale": 2.25, "speed": 320.0,
 	})
-	var old_mode: String = _main.mode
-	var old_mode_team: int = _main.local_team
-	_main.mode = "client"
-	_main.local_team = 1
+	var old_mode: String = _main.runtime.mode
+	var old_mode_team: int = _main.runtime.local_team
+	_main.runtime.mode = "client"
+	_main.runtime.local_team = 1
 	_main._projectile_system.clear_client()
 	snapshot_system._apply_projectiles([payload])
 	var client_projectile: Dictionary = _main._projectile_system.client_snapshot().get(991, {})
@@ -151,8 +151,8 @@ func _check_projectile_visual_snapshot() -> void:
 		"弹体快照协议同步橙红颜色与纯表现尺寸倍率，客户端不会回退为普通小光球",
 	)
 	_main._projectile_system.clear_client()
-	_main.mode = old_mode
-	_main.local_team = old_mode_team
+	_main.runtime.mode = old_mode
+	_main.runtime.local_team = old_mode_team
 
 ## 墓碑小鬼的生命值与公主塔单次伤害一致，确保一次塔击恰好击杀。
 func _check_imp_tower_damage() -> void:

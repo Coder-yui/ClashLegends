@@ -32,6 +32,9 @@ func _replace_hard(family: StringName, duration: float) -> void:
 func refresh_freeze(duration: float, source: StringName = &"legacy") -> bool:
 	return hard.apply(&"freeze", source, duration, {})
 
+func remove_stun_source(source: StringName) -> void:
+	hard.remove_source(&"stun", source)
+
 func refresh_stun(duration: float, source: StringName = &"legacy") -> bool:
 	return hard.apply(&"stun", source, duration, {})
 
@@ -50,6 +53,9 @@ func tick_hard_controls(dt: float) -> void:
 func apply_replica_flags(frozen: bool, stunned: bool) -> void:
 	_replace_hard(&"freeze", 0.15 if frozen else 0.0)
 	_replace_hard(&"stun", 0.15 if stunned else 0.0)
+
+func apply_replica_stasis(active: bool) -> void:
+	_replace_hard(&"stasis", 0.15 if active else 0.0)
 
 func apply_replica_stun(stunned: bool) -> void:
 	_replace_hard(&"stun", 0.15 if stunned else 0.0)
