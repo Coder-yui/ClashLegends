@@ -21,17 +21,17 @@
 | 要追踪什么 | 先看这些入口 |
 | --- | --- |
 | 备战到开局 | `ui/deck_builder.gd` → Main 的开局/加载流程 → `battle/match_session.gd`、`presentation/match_resource_plan.gd`、`presentation/match_resources.gd` |
-| 一次卡牌或主动操作 | Main 的 `play_card` / `use_active_skill` → `battle/command_schedule.gd`、`command_payment.gd`、`active_skill_roster.gd` |
+| 一次卡牌或主动操作 | Main 的 `play_card` / `use_active_skill` → `battle/match_runtime.gd`统一受理、支付与执行 → `battle/command_schedule.gd`、`command_payment.gd`、`active_skill_roster.gd` |
 | 一个权威 Tick | `battle/fixed_step_clock.gd` → `battle/battle_simulation.gd` → 对应状态/移动/命中系统；[阶段表](../docs/MAINTENANCE_ARCHITECTURE.md#一个权威-tick-的阶段)解释顺序 |
-| 一张卡生成什么 | `data/cards/<id>.gd` → CardDB 的 `get_card` / `deployment_plan` / `get_unit_stats` → Main 生成入口与 `battle/unit_spawn_request.gd` |
+| 一张卡生成什么 | `data/cards/<id>.gd` → CardDB 的 `get_card` / `deployment_plan` / `get_unit_stats` → MatchRuntime生成计划 → Main节点工厂与 `battle/unit_spawn_request.gd` |
 | 主机状态怎样到客户端 | `battle/network_snapshot_system.gd` → `network_playback.gd` → Main 副本应用与 `network_entity_lifecycle.gd`；字段只查[联网契约](../docs/reference/NETWORK_PROTOCOL.md) |
 | 一个画面或声音 | `presentation/unit_presentation_state.gd`、`battle/projectile_system.gd` 的只读视图或真实事件 → `presentation/` / `audio/` 的消费者 |
 
-共享定义只回答配置，实例与排程保存可变状态，表现投影只供读取。Main 仍含部分领域协调与部署几何；这张路径表说明当前入口，不表示所有业务已从 Main 抽离。
+共享定义只回答配置，实例与排程保存可变状态，表现投影只供读取。Main保留节点、输入、资源和RPC/表现适配；这张路径表说明当前入口，不表示所有业务已从 Main 抽离。
 
 `diagnostics/release_smoke.gd` 是仅由专用命令行参数启动的发布包探针，验证真实开局、命令和终局；不进入正常菜单流程。
 
-业务所有者：`battle/command_schedule.gd` 管理排程，`active_skill_roster.gd` 管理技能资格，`card_cycle.gd` 管理牌序，`deployment_rules.gd` 管理部署判断，`knockback_state.gd` 管理击退轨迹；工作台会话在 `ui/workbench/session.gd`。Main 保留装配、场景与 UI/RPC。
+对局所有者为 [MatchRuntime](battle/match_runtime.gd)：真实持有并操作排程、主动资格、牌序、成长、兵线、比赛规则和20Hz时钟；账户绑定现有ElixirManager。具体子状态：`battle/command_schedule.gd` 管理排程，`active_skill_roster.gd` 管理技能资格，`card_cycle.gd` 管理牌序，`deployment_rules.gd` 管理部署判断，`knockback_state.gd` 管理击退轨迹；工作台会话在 `ui/workbench/session.gd`。Main 保留装配、场景与 UI/RPC。
 
 工作台组件按职责划分：`session` 持有会话，`card_catalog` 展开正式目录，`card_library` 搜索与快捷栏，`card_info` 只读详情，`animation_picker` 动作列表，`desktop_layout` 窗口与观察变换。主 UI 负责装配，不将状态回写卡牌定义。
 
@@ -39,3 +39,5 @@
 
 
 联机时间与操作：`battle/network_clock.gd`校准服务器时钟，`battle/network_command_state.gd`保存出牌/技能的公开准备与完成身份，`battle/network_playback.gd`按同一Tick时间轴应用快照/表现事件。只有CommandSchedule/BattleSimulation执行真实命令，客户端时间轴不能驱动战斗规则。
+
+战场实体与空间的实际所有者为 [BattleWorld](battle/battle_world.gd)：塔/水晶、主机网络ID与副本索引、导航占位与连续空间/体型交接。Main保留节点挂载、资源与表现/RPC适配，Runtime负责生成配置；BattleContext的空间调用直接进入World。

@@ -86,6 +86,8 @@ CardValidator 检查字段、类型、时序、资源、召唤与动作关系；
 
 ## 部署区域解锁
 
+部署区域只支持`own_side`与`global`；退役的`global_no_river`必须显式迁移为`global`，沿用实际落点合法性校验。
+
 默认单位与建筑按敌方单路防御塔是否被摧毁解锁该路前沿部署区。`gameplay.deploy_pocket_requires_both_towers = true` 要求敌方两路防御塔均被摧毁才开放两路前沿区域；未满足时仍使用未破塔的己方区域。当前用于恕瑞玛卫队。该字段仅适用于 `own_side` 单位或建筑，选卡高亮、落点预览和正式出牌共用规则，不改变河道、结构占位与编队边界校验。
 
 普通编队与单单位共用部署格资格，成员偏移越界或不适合落地时由通用生成入口逐兵纠正。`gameplay.deploy_formation_requires_in_bounds = true` 额外要求横排的成员中心跨度留在场内；默认关闭，当前仅恕瑞玛卫队启用。该字段仅支持多单位横排，不按身体半径扩大拒绝区域，也不影响成员后续落点纠正；召唤的独立黄沙士兵不继承这个限制。
@@ -105,7 +107,7 @@ CardValidator 检查字段、类型、时序、资源、召唤与动作关系；
 
 变形配置分别写在 `gameplay.transformed_stats`、`visual.transformed_stats`、`audio.transformed_stats`，每项仍只包含所属域的字段；编译为同一个运行期 `transformed_stats`。形态音频保持原有选择语义，不隐式继承另一形态。可参考纳尔定义。编译只发生在内容初始化；编译结果深复制并递归只读，运行实例继续持有自己的副本。
 
-`CardShapeValidator` 先检查容器、字段类型和数值有限性，类型失败时停止后续资源及跨字段校验；通过后由原 validator 检查必填、范围、引用、资源和真实消费者。新增字段除了白名单和消费者，还须更新类型/域分类及异常输入回归。错误包含卡牌、字段路径、期望类型与实际值。
+`CardShapeValidator` 先对整张注册表检查键、容器、字段类型和数值有限性；任一卡形状失败时返回所收集的形状错误，不进入语义和跨引用读取，避免引用顺序影响校验安全。整表形状通过后由 validator 检查必填、范围、引用、资源和真实消费者。新增字段除了白名单和消费者，还须更新类型/域分类及异常输入回归。错误包含卡牌、字段路径、期望类型与实际值。
 
 
 ### 表现资源依赖契约
@@ -324,4 +326,4 @@ Buff主动的`heal_ratio`可赋予与`duration`同长的限时普攻吸血；各
 
 `death_heal_radius / death_heal_duration / death_heal_per_second`须同时为正数；真实死亡后由效果系统建立独立定点区域，逐Tick治疗接触范围的友方普通单位，包含空军，排除建筑与死亡/凝滞目标。不同区域独立叠加，来源死亡不取消，清场统一释放。客户端仅播放可靠区域事件与接收生命快照。
 
-nova可配置`attack_slow_multiplier`，要求正数slow_duration及[0.1,1)倍率；使用现有减攻速状态，和同次移速效果共享准入。nova的impact_visual_shape/duration只声明独立范围表现。
+nova可配置`attack_slow_multiplier`，要求正数slow_duration及[0.1,1)倍率；使用现有减攻速状态，和同次移速效果共享准入。nova的impact_visual_shape/duration只声明独立范围表现。nova没有眩晕消费者，配置`stun_duration`（包括0）会明确拒绝；旧夹具须移除此字段，不能把其存在当作眩晕覆盖。

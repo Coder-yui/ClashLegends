@@ -24,7 +24,7 @@ python3 tools/performance/safe_probe.py --probe particle --mode contracts
 
 `--probe particle`固定`counts=1,8`、1轮×2样本，支持`contracts/capture`，脚本产物在`probe/`子目录，保持运动/stop/回退/共享索引寿命合同。`effect_dependency_probe.py`默认也改为受监督的headless典型单轮单样本；`--render`才进入同样有界的Compatibility路径。裸GUI探针缺少包装器token会拒绝。这些入口仍需按本次实际改动选跑；历史通过不能替代当前代码的解析、运行或目视确认。
 
-需要复用到未接心跳的机制套件时，可从 Python 调用 `run_guarded(command, output, require_heartbeat=False)`，仅在引擎参数含显式`--headless`时允许；报告范围固定为“headless correctness: wall+RSS only, no responsiveness guarantee”。仍保留20秒、1GiB绝对RSS、并发锁和整个拥有组清理；没有真实ready心跳时不建立加载前的假基线，也不提供增长或主线程响应保证。普通验证执行器原有超时规则另列，不默认为享有本保护。
+独立调用`run_guarded(command, output, require_heartbeat=False)`仍仅允许显式headless，默认20秒/1GiB。只有显式`verify --guard-profile authority-logic`经审查的三个轻量无表现套件（GrowthSpatialSuite、StructureRewardSuite、AuthorityTimingSuite）使用新增`verification_guard.py`政策：默认20秒（显式超出拒绝）、RSS至多768MiB、正常压力及至少2.5GiB当前可用，保留2GiB；三个内存查询共用0.2秒截止。其他平台拒绝此受保护运行，监控失败不降级。普通verify、导入/数值导出、三进程联网不自动获得新保护或新的限制；正式单局加载仍是下文既有独立政策，未改成轻量预算，也未在本轮重测。采样为轮询目标，不是硬实时承诺。所选引擎身份、小写godot和编辑器共存、心跳年龄及完整边界见[测试手册](../../tests/README.md#查看计划与执行)。
 
 Python安全回归（只启动很小的Python假进程，无Godot/GPU）：`python3 -m unittest tools.tests.test_safe_probe -v`。正常Mac进程可见权限下验证监控预检、并发锁、心跳/墙钟/RSS停止、TERM忽略及残留子进程强杀；沙箱若禁止`ps`，真实探针必须在预检失败处停止。
 
@@ -77,7 +77,7 @@ GDScript 基准可追加 `--perf-deck=id1,id2,...` 与 `--perf-remote-deck=id1,i
 
 第2A历史负载为32/64/128个存活实体（四分之一寒冰，其余近战兵，双方交替）和六塔，不创建弹体；固定双方八卡，走当前正式资源准备、保留第1批成员闭包与模型库存声明。工具关闭3D创建、声音和自动模拟，显式保存当前资源列表与模型池计划；不测绘制、完整模拟Tick或FPS，不与旧库存口径的局部基准直接比较。该历史批次每项5轮、每轮每侧20个样本，轮序交替AB/BA；记录每样本及每操作耗时、p50/p95/p99、调用数。比较、准备与轮间帧清理不进入计时；计时仍包含两侧相同的循环、回调和结果累计开销，不将这些微基准耗时当作整个生产帧的成本。
 
-- 解码/应用：两个独立真实Main客户端先建立相同实体；预生成相同载荷、递增Tick的包。旧路径为归档的轻量 `packet_tick` 加当前 `apply(bytes)`，新路径为当前 `decode_validated` 加 `apply_decoded`，两者应用阶段使用相同加强后的静态校验。每包必须成功应用且最终副本等价；不拿同Tick重复拒绝当应用成本。
+- 解码/应用：两个独立真实Main客户端先建立相同实体；预生成相同载荷、递增Tick的包。旧路径为归档的轻量 `packet_tick` 加当前 `decode_validated`/`apply_decoded`（显式复现重复解码），新路径为当前 `decode_validated` 加 `apply_decoded`，两者应用阶段使用相同加强后的静态校验。每包必须成功应用且最终副本等价；不拿同Tick重复拒绝当应用成本。
 - 公共采集：归档 `capture` 为每个接收方重采世界，对比一次 `capture_public_frame` 后分别编码；同时测两投影 `[0,1]` 和终局含本地记录的三投影 `[0,1,0]`。金币分别3/8、双方凯隐成长不同；所有压缩输出必须逐包一致，并另查私有字段隔离。明确列出公共采集次数和编码次数；当前公共帧固化成本包含在计时内。
 - 成长：每样本连续100次同值输入，旧归档成长所有者复制状态并调用真正 `CardHand._refresh`，新路径调用当前 `Main.apply_growth_snapshot`；计数子类继续执行 `super._refresh`，不以空计数替代UI工作。初次建控件与成长状态在计时外准备；同值刷新次数必须为旧100/新0，另查一次变化仍刷新一次。
 - 费用：每样本1000次查询，按全部正式技能、已消费次数及免费再施放组合循环；旧归档 `cost` 的完整技能深复制对比当前纯费用查询。逐组合及累计返回值必须相同，真正施法副本仍由生产 `skill_for_cast` 创建。

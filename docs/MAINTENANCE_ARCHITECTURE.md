@@ -33,13 +33,13 @@ flowchart TD
 | 设计问题 | 当前代码边界 | 扩展时保留的约束 |
 | --- | --- | --- |
 | 一张卡能做什么 | CardDB 的四域只读定义；部署卡的生成计划引用真实实体定义 | 配置表达已有能力；实例生命、目标、次数和计时不写回定义 |
-| 一次操作何时生效 | Main 接收操作，CommandSchedule 管排程和付款收据 | 玩家、AI、RPC 共用准入和正式命令时序；输入或动画回调不能直接判伤害 |
+| 一次操作何时生效 | Main 适配输入/RPC，MatchRuntime 受理、付款，CommandSchedule 管排程和收据 | 玩家、AI、RPC 共用准入和正式命令时序；输入或动画回调不能直接判伤害 |
 | 世界怎样向前走 | FixedStepClock 输入经过时间，BattleSimulation 按固定阶段调用状态所有者 | 单机/服务器唯一权威；客户端只请求与接收，不推进规则时钟 |
 | 玩家怎样看到结果 | 权威状态产生只读表现投影、网络快照和真实事件 | 模型、界面和声音消费结果；渲染插值和播放时钟不能反向驱动规则 |
 
 数据依次经过“作者配置 → 已编译只读定义 → 对局配置/生成请求 → 实体和排程的实例状态 → 接收方可见投影”。这些对象不能互相充当缓存或状态副本：来源卡不等于实际生成的成员定义，主动槽不等于实体身份，浏览偏好也不等于最终出战配置。六类小兵的 `spawn_plan` 已明确区分部署卡与实体；其他同质卡仍沿用其现有定义单向投影，具体边界见[编队卡与实体定义](CARD_DESIGN.md#编队卡与实体定义)。
 
-正式出牌入口为 `Main.play_card()`，主动入口为 `Main.use_active_skill()`；普通单位生成落到 `_spawn_unit(UnitSpawnRequest)`，法术落到 `_cast_spell()`。工作台仍复用这些正式能力，但卡牌预览可显式使用 immediate 模式，主动预览通过 `preview_active_skill()` 跳过对局请求等待与资格消费；真实起手、延迟命中和控制规则继续由同一实现执行。工作台不是额外一套战斗引擎。
+正式出牌入口为 `Main.play_card()`，主动入口为 `Main.use_active_skill()`；两个入口把权威请求交给MatchRuntime，客户端分支只记录请求反馈并发送RPC；普通单位生成落到 `_spawn_unit(UnitSpawnRequest)`，法术落到 `_cast_spell()`。工作台仍复用这些正式能力，但卡牌预览可显式使用 immediate 模式，主动预览通过 `preview_active_skill()` 跳过对局请求等待与资格消费；真实起手、延迟命中和控制规则继续由同一实现执行。工作台不是额外一套战斗引擎。
 
 ### 一个权威 Tick 的阶段
 
@@ -54,6 +54,8 @@ flowchart TD
 | 5 | 队伍增幅、预部署完成、移动与保护位置、弹体命中 | 各所有者推进自己的状态，弹体仍按阶段批结算 |
 | 6 | 塔激活、障碍释放及比赛结果 | 根据本 Tick 全部结果判断终局，再供快照与表现读取 |
 
+Runtime在状态更新后发通知，Main据此刷新技能readiness、手牌或计时；权威准入不读取CardHand或按钮pending。客户端输入pending只影响请求反馈与重复发送。自动联网样本逻辑留在Main的开发适配，由原塔收尾后的通知触发，不属于Simulation。World继续显式处理塔激活/占位与导航维护。
+
 工作台复用这些阶段，但不运行正式对局的金币/AI、常规兵线与比赛倒计时。状态更新与表现刷新使用不同的时间：权威 Tick 决定数值与位置，渲染帧只在已知状态间插值，客户端播放轴只决定何时应用已收到的副本和事件。暂停关闭推进入口，不能通过继续积累固定时钟再补跑来模拟暂停。
 
 ## 模块职责
@@ -62,29 +64,36 @@ flowchart TD
 
 ```mermaid
 flowchart LR
-    D[CardDB：只读四域定义] --> M[Main：单机或服务器命令入口]
-    U[玩家UI、AI或RPC请求] --> M
-    M --> Q[CommandSchedule与付款收据]
-    T[FixedStepClock] --> S[BattleSimulation固定阶段]
+    D[CardDB：只读四域] --> M[Main：装配、输入、RPC]
+    M --> R[MatchRuntime：请求、付款、对局状态]
+    M --> W[BattleWorld：实体索引、导航、落点]
+    R --> Q[CommandSchedule：排程与付款收据]
+    R --> T[FixedStepClock：20Hz、积压保留]
+    T --> S[BattleSimulation：固定阶段]
     Q --> S
-    S --> W[Unit、Tower与领域状态所有者]
-    W --> P[只读表现投影与真实事件]
-    P --> V[模型、特效、声音与UI]
-    W --> N[按接收方编码的快照]
-    N --> C[客户端校验与NetworkPlayback]
-    C --> R[客户端只读副本]
-    R --> V
-    D --> L[本局资源计划与预热]
+    S --> W
+    S --> U[Unit/Tower：具名转换、状态所有者]
+    U --> C[CombatInteraction/Delivery：准入身份]
+    C --> B[CombatResolver：收集、提交、收益、死亡]
+    B --> H[HitReceipt：提交后的实际结果]
+    H --> V[只读表现事件：模型、特效、音频、UI]
+    W --> N[NetworkSnapshotSystem：世界与实体投影]
+    U --> N
+    N --> P[校验、NetworkPlayback、客户端副本]
+    P --> V
+    D --> L[资源计划、类型校验、加载与预热]
     L --> V
 ```
 
-图中箭头表示主要数据消费方向；Main 仍装配并调用领域系统。客户端副本由网络应用入口写入，图中的“只读”指客户端规则和表现消费者不能自行推进这些权威状态。
+图中箭头表示主要调用或消费方向；Main装配Runtime与World，BattleContext让实体访问同一服务。MatchRuntime持有并操作命令、资格、牌序、成长、兵线与规则，BattleSimulation只调度同一Tick的既有阶段。客户端副本由网络应用入口写入，图中的“只读”指客户端规则和表现消费者不能自行推进这些权威状态。
 
 | 层 | 状态所有者与职责 |
 | --- | --- |
 | 定义 | CardDB 注册逐卡四域；CardDefinitionCompiler 合并，CardShapeValidator 前置类型检查，CardValidator 校验语义与资源；共享定义递归只读 |
-| 编排 | Main 装配节点、比赛生命周期、UI/RPC、固定阶段调用；Unit/Tower 通过 BattleContext 使用服务，不能反向探测 current_scene |
-| 固定阶段 | BattleSimulation 编排同一权威 Tick 的状态、命令、技能、单位、移动、弹体与胜负；独立服务器、单机和工作台共用，客户端拒绝调用 |
+| 编排 | Main 装配节点、会话生命周期、资源与UI/RPC；MatchRuntime拥有对局领域状态和固定时钟；Unit/Tower 通过 BattleContext 使用服务，不能反向探测 current_scene |
+| 世界 | [BattleWorld](../scripts/battle/battle_world.gd) 独占塔集合/水晶引用、权威网络实体与客户端副本索引、网络ID分配、导航与建筑占位、连续空间/落点/体型安全收尾；combatants仍取场景组快照，不另建行动注册表 |
+| 对局领域 | [MatchRuntime](../scripts/battle/match_runtime.gd) 实际持有CommandSchedule、ActiveSkillRoster、MatchRules、MinionWaveSchedule、CardPlayHistory、MatchCardGrowth、双方权威CardCycle、FixedStepClock及Tick/阶段权限；统一受理、支付、执行、取消和退款；绑定现有ElixirManager，不复制余额；不持有Main控制器 |
+| 固定阶段 | BattleSimulation接收Runtime/World，编排同一权威 Tick 的状态、命令、技能、单位、移动、弹体与胜负；独立服务器、单机和工作台共用，客户端拒绝调用 |
 | 比赛 | FixedStepClock 积压与 Tick；MatchRules 时间/胜负；MatchSession 双玩家身份映射/握手/独立命令序号；ElixirManager 金币；MinionWaveSchedule 兵线阶段、延迟条目与有序生成请求 |
 | 卡牌命令 | CardCycle 服务端/单机完整牌序与独立随机源，ClientHandState仅保存客户端四张手牌/下一张/版本，ClientInputState持有请求反馈；CardPlayHistory 最近成功出牌/镜像代次；MatchCardGrowth 每阵营局内成长；CommandSchedule 排程（含不依附来源的在途召唤），CommandPayment 一次性付款收据 |
 | 部署 | UnitSpawnRequest 具名生成参数（不改变网络载荷）；DeploymentRules 区域/建筑合法落点；PreDeploymentSweep 预部署轨迹与扫掠查询；部署命中集合随排程条目存活 |
@@ -113,23 +122,61 @@ flowchart LR
 
 独立服务器/单机固定 20Hz；每帧最多赶 4 Tick，或已耗时 8 ms 后停止继续赶步，积压保留，单 Tick 不截断。客户端只请求操作、接收快照及事件，不自行解除控制、判伤害或提前换形。
 
-Main.can_advance_simulation 统一运行门禁并供 FixedStepClock.running 消费；工作台由 WorkbenchSession.battle_active 与面板当前页/牌库/手动暂停共同决定。暂停帧不调用 advance，避免累计暂停墙钟；节点 process_mode 只暂停子节点回调。地图输入许可独立保留，允许暂停布置场景。
+Runtime持有FixedStepClock（20Hz、每帧4Tick/8ms、积压保留），Main.can_advance_simulation提供场景运行门禁供clock.running消费；工作台由 WorkbenchSession.battle_active 与面板当前页/牌库/手动暂停共同决定。暂停帧不调用 advance，避免累计暂停墙钟；节点 process_mode 只暂停子节点回调。地图输入许可独立保留，允许暂停布置场景。
 
 同源状态刷新/替换、异源独立到期、强度聚合见[状态共通合同](status/CORE.md)；动作取消与权限见[动作合同](status/ACTIONS.md)。状态正时长向上取整到 Tick。AttackTimeline 的取消、命中与后摇写入分开，避免形态变化后写回旧阶段。
 
 CombatResolver 按阶段收集并统一提交；单位行动阶段先固定 combatants 参与者名单，再推进建筑自然生命周期；自然退出生成的对象不回头加入本阶段名单。普通击退按出生身份、来源事件序号及子序号排序，不以遍历顺序分配身份。真实在途弹体保留出手来源和形态；来源死亡后仍可命中，但不给死者生命或技能资源收益。规则细节见[卡牌机制](CARD_DESIGN.md)、[数值](NUMERIC_SYSTEM.md)和[移动接触](BATTLE_CONTACT_MODEL.md)。
 
+## Unit高风险写入口
+
+Unit仍协调能力，不复制AttackTimeline、ControlState、DeathFormState、ShieldState。生产效果通过具名接口写状态，以下为允许写入点；初始化、开发预览与客户端投影明确区别于权威变化。
+
+| 字段/事实 | 权威写入入口及所有者 | 具名例外 |
+| --- | --- | --- |
+| `hp` | `take_damage`；`heal`/`heal_with_overflow`与内部`_receive_health_gain`；到期盾`_restore_shield_health`；`pay_rush_health_cost`；生命周期自然衰血、`_die`、`apply_death_form_decay`、`complete_death_form_transition` | `setup`初值；`restore_replica_combat_state`直接覆盖主机值，不治疗/消费盾/发奖 |
+| `max_hp`、成长与牺牲体型 | `_change_max_health`由`apply_permanent_growth`、`apply_sacrifice_empowerment`/`set_sacrifice_stats`、`_apply_form`协调；`begin_death_form_transition`清成长 | `setup`；副本只差值恢复成长/牺牲属性，形态装载只共用无生命/动作副作用的`_load_form_attributes` |
+| `form_index`、`form_change_serial` | `_apply_form`，保留原换形取消与空间收尾 | `sync_network_form`只接受主机序号，不增加代次；模型池离树样本的初始化形态不是战斗实体 |
+| 硬控/减速与技能状态 | `freeze`/`stun`/`apply_stasis`/`silence`/`taunt`及减速入口委托ControlState；`clear_channel_stun`只清同来源；`apply_damage_reduction`、`apply_effect_shield`/`consume_effect_shield`、`apply_death_spawn`、`apply_timed_lifesteal`、`apply_unit_phasing`、`apply_ranged_attack`委托StatusInstances | 副本走ControlState的`apply_replica_*`、DeathFormState/TargetProtectionState的`apply_replica`，不施加权威效果 |
+| 攻击/施法代次和剩余时钟 | AttackTimeline、取消、`begin_active_skill_cast`/`sync_dash_cast`/`finish_dash_cast`，Ornn通过带序号`set_dash_moving`；强化/引导分别用`prepare_execute_attack`、`prepare_channeled_attack` | 网络只应用取消屏障、部署剩余时间及`net_*`表现字段；不推进权威动作 |
+| 攻速增益 | `apply_attack_speed_buff`及原到期/减速入口统一`_rescale_attack_phase`，不重启归一化进度 | 副本最终倍率只写表现值 |
+| 普通权威位置 | MovementSystem提交每Tick运动/击退/接触；Unit的`apply_dash_motion`提交连续技能子步 | Main出生工厂的`position`初始化；客户端`_process`只向`net_target_pos`表现插值 |
+| 不连续位置与路径/插值缓存 | `teleport_to`、`leave_terrain_for_attack`、`recover_displacement_position`、World选点后调用`apply_body_resize_position`/`apply_deployment_push_position`，共同`_relocate_authority`；连续突进保留Tick起点 | 副本仅主机传送序号变化时重置位置/插值，不查询落点；不改变权威与表现坐标分工 |
+| 寻路缓存 | Unit寻路/体型/取消收尾；StructureRushState提供搜索结果给`set_structure_approach_path` | 初始化空路径；网络恢复不使用权威寻路 |
+| 技能资源 | Unit消费/命中/受击/击杀/衰减；部分资源施法用`grant_partial_cast_resource`，保持原增量规则 | Main工作台`_set_art_dev_skill_resource`显式设置预览值；副本资源比率只写`net_skill_resource_ratio` |
+| 盾层、流血与死亡资格 | 原ShieldState/BleedState/DeathFormState仍唯一保存和消费；`end_life_for_summon`/`finish_sacrifice_leap`保留原死亡顺序 | 副本只恢复可见投影和等待事实，不产生死亡奖励或新的复生资格 |
+
+HitReceipt仍是字典：`accepted`表示受理/排队，`settled`表示最终提交；提交前`landed=false`，提交后才表示真实命中。`health_lost`与`shield_absorbed`为实际结果，同批过量伤害按原比例分配；名义`damage`不作为吸血量。零伤害合法受理保留原命中规则，但不分走其他来源的击杀收益。效果盾的收集期预留及Delivery独立身份、结构死亡事实幂等账本均保留。
+
+BattleNumbers构造/结算回执；CombatResolver统一提交和发放真实击杀收益，`resolve_attack_hit`即时调用也走正式小批次，统一返回含`hits`的总回执，不再保留旧即时别名或双义bool；子命中提交后、效果/收益之前汇合总回执。纯离树对象可直接调用BattleNumbers，复用相同回执核心，不另发奖；奥恩冲撞必须有真实BattleContext，缺失直接断言失败。普攻/范围吸血、命中资源/成长/结构助攻、流血处决、突进回血/冲撞生成均读取提交结果；格温首次命中回血也在提交后且每次施法只发一次。流余量和弹体命中集合可按受理预留，它们不是收益；技能箭控制与命中声读取提交后的回执。ChanneledAttackState必须收到prepare_cast建立的Delivery，不再在begin补造身份；Unit/Tower控制合同明确校验，已知调用方全部迁移。同步表现监听者释放实体时，Resolver的延后收益以弱引用查询存活对象；失效Callable和死亡节点安全跳过。
+
+## 严格契约与正常边界
+
+当前接口只服务本项目当前生产与测试消费者；迁移时一起修改调用方，不维护旧Main代理、字段别名、旧RPC签名或快照双入口。缺必需事实要反馈原因并停止相应操作，不能补造事实后报告成功。细节由以下所有者维护：
+
+| 输入或错误 | 当前处理 | 合法边界 |
+| --- | --- | --- |
+| 配置形状与资源声明 | CardValidator先完成整表形状预检，再读跨引用；声明路径缺失/类型错误进入启动失败 | 定义允许空卡面、空声音或省略技能图标；声明路径后必须有效 |
+| 内部快照/出生事实与塔拓扑 | 当前六塔、14字段出生描述及必需弹体字段缺失进入ContractFailure；可靠出生工厂失败向停止路径传播 | 陈旧生命周期消息、已存在实体是幂等边界；远端坏包完整拒绝，不写入部分状态 |
+| 权威落点 | 无解查询返回Vector2.INF；普通生成拒绝，体型安全交接失败停止本局 | 付费部署按既有排程等待合法位置；不改为免费成功或新增退款 |
+| 生命周期与收益 | 来源/目标释放使用弱引用和幂等清理；当前批次收尾后停止后续失败阶段 | 已提交伤害不撤销，失效来源不领取收益，独立区域按自身寿命继续 |
+| 资源能力与缓存 | 模型扩展能力、合法可选视觉参数及来源刷新桶按定义处理；依赖头失效重新校验原数据 | 属于当前有效数据/缓存路径，不代表支持旧协议或吞掉原数据加载失败 |
+
+先知引导期间召唤计时和到期释放照常；控制仍沿用已有待发与已开门序列合同，见[下一击引导](status/ACTIONS.md#下一击引导)。不能把引导的行动锁误作周期产出门禁。测试监督和失败清理也属于必须保留的安全边界，不承诺“绝对不存在任何默认值或fallback”。
+
 ## 比赛与网络生命周期
 
 MatchSession 在服务器绑定两名玩家，独立保存玩家身份、阵营、连接和请求序号；两端校验协议版本、内容指纹和合法卡组，再分别加载并确认就绪。服务器无本地玩家，不实例化界面、模型池及音频管理器。加载不推进战斗；准备和等待共享 30 秒超时，局中不能重注册卡组。请求按会话/连接映射阵营/各玩家单调序号校验，所有表现事件携带会话身份。
 
-NetworkEntityLifecycle 按生命周期序号区分同 Tick 生成与销毁；快照能恢复未知实体，旧会话不能污染新局。ProjectileSystem 独占客户端弹体目标与插值位置；外部表现通过visible_view共享无权威对象别名、嵌套只读的表现投影，权威/测试snapshot入口仍返回隔离副本。投影按内容代次失效：Main先取天使表现，再模拟/网络应用与逐渲染帧插值，随后其他process/draw读取，因此同帧更新前后允许分别构建，不能按Engine帧号盲缓存。Main持有网络实体索引。
+NetworkEntityLifecycle 按生命周期序号区分同 Tick 生成与销毁；快照能恢复未知实体，旧会话不能污染新局。ProjectileSystem 独占客户端弹体目标与插值位置；外部表现通过visible_view共享无权威对象别名、嵌套只读的表现投影，权威/测试snapshot入口仍返回隔离副本。投影按内容代次失效：Main先取天使表现，再模拟/网络应用与逐渲染帧插值，随后其他process/draw读取，因此同帧更新前后允许分别构建，不能按Engine帧号盲缓存。BattleWorld持有网络实体索引；NetworkSnapshotSystem直接读取World隔离快照，Main仅在网络生命周期适配中请求增删并收尾技能/表现。
 
-NetworkSnapshotSystem.decode_validated 只解压与完整静态校验，不写状态；返回递归只读的 DecodedSnapshot，生产接收端直接入 NetworkPlayback，播放时 apply_decoded 重新检查会话、客户端模式、终态、Tick/生命周期序号与权威时钟。兼容 apply(bytes) 只组合这两步。单包、队列与累计原始字节的精确预算见[联网契约](reference/NETWORK_PROTOCOL.md)，字节预算不等于 Variant 堆内存上限。出队返回数组释放或 clear 后不保留快照缓存。
+NetworkSnapshotSystem.decode_validated 只解压与完整静态校验，不写状态；返回递归只读的 DecodedSnapshot，生产接收端直接入 NetworkPlayback，播放时 apply_decoded 重新检查会话、客户端模式、终态、Tick/生命周期序号与权威时钟。旧 packet_tick/apply(bytes) 入口已删除，所有调用方显式解码后应用同一结果。单包、队列与累计原始字节的精确预算见[联网契约](reference/NETWORK_PROTOCOL.md)，字节预算不等于 Variant 堆内存上限。出队返回数组释放或 clear 后不保留快照缓存。
 
 发送时先确认接收者；无接收者不采集世界，有接收者只采集一次只读公共帧，各端单独编码金币与成长。终局在清场前采集一次，供本地记录及双方投影。本地解码和公共帧复用不改变线格式，不引入增量快照；当前协议值只在[联网契约](reference/NETWORK_PROTOCOL.md)维护。
 
 终局可靠信封包含最终快照；客户端先应用状态再显示结果，重复终态幂等，普通快照不能恢复战斗。终局清命令、弹体、区域及常规战斗音频，水晶爆炸独占音轨自然结束后触发本地结果播报；客户端返回菜单释放本场 ENet；正常终局两端离开或断线失败后服务器重建干净会话。规则或载荷变更须提升协议版本，精确契约唯一入口为[网络协议](reference/NETWORK_PROTOCOL.md)。不支持局内断线续接。
+
+配置校验失败、资源准备失败及服务端端口绑定失败统一进入启动失败入口，显示具体原因并取消准备、清理命令与表现；不创建胜负、比分或终局快照。加载期间收到网络中止同样处理；运行期断线与正常终局仍沿用比赛终态。重复失败不重复显示面板或恢复战斗。
 
 ## 状态与排程所有权
 
@@ -195,11 +242,13 @@ WorkbenchSession 只注入放置、选中、清场、重建、暂停及视图更
 
 ### 当前实现与后续拆分
 
-当前已由 BattleSimulation 收拢固定阶段，CommandSchedule/CommandPayment 管排程与一次付款，ActiveSkillRoster 管技能资格，CardCycle/ClientHandState 分开权威牌序与客户端可见手牌。主动请求已与按钮状态分离；六类小兵使用生成计划；表现与网络已减少重复投影、采集和解码；费用和成长刷新只做必要工作。以上是已实施边界，具体实现见本页对应章节，测量结果只在实际交付与性能证据中报告。
+当前MatchRuntime持有并操作对局状态、请求受理与经济，BattleSimulation只访问Runtime/World并保持各独立结算批次；CommandSchedule/CommandPayment 管排程与一次付款，ActiveSkillRoster 管技能资格，CardCycle/ClientHandState 分开权威牌序与客户端可见手牌。主动请求已与按钮状态分离；六类小兵使用生成计划；表现与网络已减少重复投影、采集和解码；费用和成长刷新只做必要工作。以上是已实施边界，具体实现见本页对应章节，测量结果只在实际交付与性能证据中报告。
 
-Main、Unit、UnitModel3D 仍较大。Main 还承担会话、RPC、命令协调、部分部署几何与场景装配；BattleContext 仍转发到场景控制器，权威实体仍是 Godot 节点。当前未形成独立于场景树的纯模拟内核，也没有把每项职责物理拆成独立包。
+Main、Unit、UnitModel3D 仍较大。Main承担会话、RPC、资源/节点装配与表现适配；MatchRuntime承担命令协调、部署资格/生成计划和规则推进；BattleContext的空间/落点/导航直接访问BattleWorld，其余能力继续使用原服务适配，权威实体仍是Godot节点。当前未形成独立于场景树的纯模拟内核，也没有把每项职责物理拆成独立包。
 
-后续候选工作是继续收拢对局与命令边界、统一其他内容家族的来源卡/生成定义关系，以及拆清属性派生与一次性生命补偿。它们尚未实施，须按真实扩展需求逐项设计和验证。移动空间索引、更多粒子重构或额外缓存也须先有场景测量；不因文件变长就引入 ECS、逐英雄子类、通用技能 DSL 或没有职责的转发层。
+Unit属性派生、一次性生命补偿和状态写入已通过具名接口区分，见[Unit高风险写入口](#unit高风险写入口)；不再把这一边界列为未完成。后续候选仅包括其他内容家族的来源卡/生成定义关系，以及有实际需求时进一步物理拆分Unit；本轮不继续拆文件。移动空间索引、更多粒子重构或额外缓存也须先有场景测量；不因文件变长就引入 ECS、逐英雄子类、通用技能 DSL 或没有职责的转发层。
+
+World是实际数据所有者，不把查询回绕Main。Main的迁移期索引/nav读取口、空间/部署查询代理、会话/角色/终局/钱包字段别名已删除；生产、工具和测试直接使用World、Runtime及DeploymentRules的当前接口。World的集合查询仍返回隔离只读容器，实体自身由权威逻辑修改。性能计数在派生World拦截，本地基准显式登记实体身份与出生描述，不要求生产快照补造。节点仍直接挂Main；来源ID继续由CombatResolver在child_entered_tree时分配，World不按HP猜测删除等待复生者。Runtime/Simulation及Unit高风险写入口与HitReceipt已收口。
 
 设备、性能和联网未验证范围见[开发状态](DEV_PLAN.md)。历次记录见[归档](archive/README.md)，日常任务从[任务导航](AGENT_WORKFLOW.md)进入当前专题。
 

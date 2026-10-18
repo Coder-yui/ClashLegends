@@ -40,7 +40,29 @@ python3 tools/dev.py verify --changed scripts/battle/match_card_growth.gd
 
 已有未提交工作较多时，记录中说明哪些文件属于本轮、哪些已有代码身份和通过证据可复用。不能省略已受影响文件，也不能把之前代码的结果当作当前通过。未知路径在计划列为 unknown 并阻止自动执行；共享生命周期、共享数据等高影响入口或自动范围过广也要求显式确定边界。先补充明确的 `--suite` / `--group`，或经判断显式 `--full`，不自动升级全量。`--full` 与 `--suite` / `--group` 不混用。
 
-计划可能包含审计、相关 Python 检查、依赖头精确核对、Godot 导入、卡牌数值核对、所选机制或明确请求的联网；只执行本次需要的步骤，失败即停。通用工具测试只覆盖自包含逻辑，不执行素材导入配方；可选依赖跳过原样保留。每步默认超时 600 秒并清理进程组；通过 `--godot /绝对路径/Godot`、`--timeout 900`、`--output /新的目录` 指定环境。`python3 tools/dev.py doctor` 查询本机依赖。
+计划可能包含审计、相关 Python 检查、依赖头精确核对、Godot 导入、卡牌数值核对、所选机制或明确请求的联网；只执行本次需要的步骤，失败即停。通用工具测试不执行素材导入配方。普通`verify`保留既有每步默认600秒及`--timeout`语义，不自动套用新的Mac内存政策，也未因此获得RSS/系统压力/心跳保证。通过`--godot`（或GODOT_BIN）、`--output`指定环境。
+
+本轮受保护入口须显式选择：
+
+```sh
+python3 tools/dev.py verify --guard-profile authority-logic --suite GrowthSpatialSuite --suite StructureRewardSuite --timeout 20
+```
+
+`authority-logic`只支持GrowthSpatialSuite、StructureRewardSuite、AuthorityTimingSuite、LightweightContractSuite、StartupNetworkBoundary、WorldOwnershipSuite、RuntimeOwnershipSuite、UnitMutationSuite与StrictContractSuite九个经审查的轻量套件及已有导入缓存；导入、数值导出、其他套件、正式加载和三进程network均不属于该政策，混用会拒绝，不降级为普通运行。仅macOS受支持，其他平台或监控不可用明确拒绝受保护启动；普通跨平台入口不依赖这套Mac监控。计划JSON明确输出所选政策。该模式默认20秒，显式`--timeout`必须在(0,20]，超出直接报错，不静默截短；普通入口仍默认600秒。
+
+轻量预算取RSS上限768MiB与估算可用量减2GiB的较小值，至少须能分配512MiB，即正常压力且估算可用至少2.5GiB；8GiB物理内存机器有足够实际余量也可运行。运行中可用量低于2GiB或压力变化即停。不再套ready+256MiB额外增长上限，绝对RSS预算仍生效。主线程心跳首次6秒、之后2秒，脚本30FPS；RSS轮询目标0.1秒、系统内存每秒取样，三个系统内存命令共用0.2秒截止，超时即监控失败。频率是轮询目标而非硬实时保证，进程查询/调度可带来短延迟；不得串联多个2秒查询。旧但尚未读取的心跳按文件实际年龄判断，不以读取时间刷新。已有进程按所选引擎的argv/规范路径及Godot/godot/godot4名称检查，只允许编辑器共存，不终止这些进程。停止后核实整个自有组无活进程，证据在`mechanics-guard/watchdog.json`；不保证GPU或系统恢复。正式加载另沿用`match_loading.py`既有政策，不与轻量政策混同。
+
+`UnitMutationSuite`使用同一无资源authority_battle，覆盖生命/属性/状态/位置具名写入口、HitReceipt提交、首次命中回血、死亡复生和完整验证后的副本恢复；它是同批生命/治疗/零伤害收益、持续攻击/技能同刻命中及释放引用六组检查的唯一执行入口；原CombatBatchSuite/maintenance_contracts删除重复调用，原检查正文迁入本套件，死亡、控制、身份与提交顺序未删。它不运行这两个旧套件的其他内容。`verify`每次结果的identity同时保存逐文件`files_sha256`（删除项为null），覆盖生产、测试和工具，可精确比较后续变化。
+
+`GrowthSpatialSuite` 与 `StructureRewardSuite` 使用 `authority_battle.gd` 复用正式Main服务、出生、空间查询、20Hz模拟、resolver/弹体和快照字段应用，不创建UI、模型或音频、不监听端口。前者覆盖成长/换形/牺牲强化的空间交接、真正未强化客户端首次接收更大半径，以及重复副本不叠属性/不调用权威空间修正；后者通过真实弹体覆盖同塔先命中再致死仅一层、同批两塔两层、首次/队友补刀、过期、同批互杀、凝滞和建筑亡语。它们证明所列逻辑边界，不代替画面/声音或三进程联网验收。
+
+`AuthorityTimingSuite`复用同一无表现夹具，覆盖先知R延后控制/独立区域的施法身份、引导中周期召唤与受控待发/已发序列、梦魇护盾收集期一次预留与提交后攻速收益、攻速开始/刷新/到期及减益叠加、同批死亡、塔首击/间隔精确Tick，以及正式非immediate的卡牌大师/潘森创建边界与扫掠。它不读取模型、UI或音频，不监听网络；合并相同场景下的阶段断言，避免按前摇/后摇/间隔重复造局。可单独使用`--guard-profile authority-logic --suite AuthorityTimingSuite --timeout 20`，不扩大到其他套件。
+
+`LightweightContractSuite`将表现生命周期、配置契约与启动失败边界合并在一个限定专项中：复用无表现权威夹具，直接投递技能事件、可靠销毁与快照补删；检查固定区域寿命、无效来源/取消屏障、当前全卡无资源校验、跨引用坏容器、退役字段迁移和凯尔详情。坏容器矩阵在一个引用字段保留五种形状×两种注册顺序，其他五个引用字段各保留代表坏形状×两种顺序；整表预检先于引用读取，避免把相同预检重复六遍。音频只读取约367KiB的三个已导入约里克强化片段，检查原轨/循环副本、跟随和暂停/消费/死亡清理，不准备其他声音。启动失败通过注入，不加载资源或绑定端口；正常平局直接检查终态与文字。它不实例化模型/UI、不预热、不运行完整音频/内容/表现套件，不启动联网或重渲染。使用`--guard-profile authority-logic --suite LightweightContractSuite --timeout 20`；此明确白名单没有降低监督预算，重型套件仍拒绝。
+
+`StartupNetworkBoundary`复用同一个lightweight_contract_suite.gd，仅选择`check_network_failures`方法，不执行该文件全批或音频检查。无资源、端口、UI或重载，通过状态注入覆盖客户端/服务端LOBBY、LOADING、RUNNING分流、单次中止/终态与重复调用幂等；新MatchSession可按原握手门禁完成准备并拒绝旧身份。`_network_peer`从未创建，因此null仅说明夹具初态；关闭和服务端重建只记录入口请求，不证明真实peer关闭、重连或服务端场景重建。命令为`--guard-profile authority-logic --suite StartupNetworkBoundary --timeout 20`。
+
+`RuntimeOwnershipSuite`使用同一无资源权威夹具，覆盖无效/重复请求零副作用、同一账户支付与取消幂等、主动资格替换/编队转交、AI绑定、出生Tick、独立批次及收集→效果→收益→死亡顺序、比赛/加时/终局，以及客户端只发送请求并应用副本。TracingCombat仅记录既有正式阶段后调用super，不替换结算逻辑。新增专项显式纳入authority-logic白名单，限20秒、原内存/压力/心跳保护；不运行UI、模型、音频、端口、重预热或多进程联网。
 
 已有缓存的局部 GDScript 或显式套件默认不重复 editor import；资源、场景、项目配置、缺失类缓存、新增 `class_name` 或显式全量在确有引擎检查时按计划导入。需要主动重建缓存可加 `--import`；它不运行素材制作配方。
 
@@ -68,7 +90,7 @@ python3 tools/dev.py verify --suite OrnnSuite --reverse-suites
 
 重复 `--group` 或 `--suite` 取并集，按注册顺序只执行一次；未知名称报错。显式选择默认不纳入无关的 Git 脏文件；如需同时分析已知文件，另加 `--changed`。选跑只证明该范围。原始 Godot 入口支持 `-- --list-suites`、`-- --suite=ProjectileSuite`，以及与选择一起使用的 `--reverse-suites`；领域与影响选择由 Python 执行器展开。需要完整原始执行时使用 `-- --all-suites`，日常优先用有计划和严格日志的 `verify`。
 
-每套件固定种子 12345，按需新建菜单/对局，关闭自动主循环、AI 与常规兵线；结束释放场景，检查 combatants 和根节点无遗留。套件内部多个用例仍须清理自己的临时状态。跨套件不能复用可变场景来换取速度。
+每套件固定种子 12345，按需新建菜单/对局，关闭自动主循环、AI 与常规兵线；结束释放场景，检查 combatants 和根节点无遗留。套件内部多个用例仍须清理自己的临时状态。跨套件不能复用可变场景来换取速度。合并重复检查应把同一合同交给一个执行所有者；其他套件的独有集成场景继续保留。删减映射与当次口径见[本轮收尾记录](../docs/deliveries/2026-10-18_测试精简与文档封板.md#测试精简与覆盖映射)，不把历史断言总数当作质量目标。
 
 ## 分类与覆盖所有者
 
@@ -167,3 +189,7 @@ SpellWarmupSuite验证法术JSON内部资源收集、非本局法术过滤、飞
 ProjectileSuite 内的 view 子检查覆盖内容代次、同帧前后读取、嵌套只读且无Object别名、旧snapshot副本隔离、逐渲染插值、延迟波/取消/死源独立/形态代次、clear/终局/新局，与原弹体套件复用场景。DependencyHeaderSuite 默认输出 `small-fixture/header-contract-only`，用小夹具验证依赖头匹配、元数据/嵌套资源保留、去重，以及缺失/损坏/源变更/错误类型回退；不会再次完整解析最大83MiB采样源。相关资源/清单改动或显式全量计划中的 Python `effect_dependencies.py --check` 仍核对全部22份源件及依赖头的精确生成，过期时在引擎导入前停止。需要定向复核 Godot 全源投影时，可在原始入口的 `--suite=DependencyHeaderSuite` 后显式加 `--full-dependency-headers`；此项不属于默认低负载门禁。AnimationState 与 StructureRush 保留真实控制姿势及动作身份合同，不再断言已删除的私有恢复字段。
 
 投影几何逐面合同、粒子出生索引多实例隔离和真实渲染像素/CPU对照见[性能工具](../tools/performance/README.md)。headless合同不替代Compatibility实际画面、预热或跨局清理检查。
+
+`WorldOwnershipSuite`复用authority_battle，无模型、UI、音频、资源预热或端口。集中覆盖塔/水晶顺序与只读查询、正式出生Tick/双身份ID、动态建筑死亡/叠加占地、零血等待与真实移除、权威成长/副本落点、可靠销毁与快照补删、工作台清场/一次轻量重建，并复用既有依附效果投递小检查；只实例化性能World以确认计数入口/本地诊断快照，不运行基准。明确纳入既有authority-logic白名单，监督预算不变；不据此声明GUI/联网/性能验收。
+
+`StrictContractSuite`使用无资源authority_battle与故障注入：检查旧代理删除、当前卡库合同、显式卡面收集、未知/缺失/错误类型资源传播、唯一快照解码/应用、完整6塔与14字段出生描述、缺出生记录/副本创建失败/本地缺塔的停止反馈。无UI、音频、模型、预热、端口或自动推进模拟；显式纳入现有authority-logic监督白名单，不修改预算。

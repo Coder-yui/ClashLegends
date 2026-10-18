@@ -1,9 +1,11 @@
 # 权威战斗系统导航
 
-本目录只维护战场规则、状态与网络状态投影；[Main](../main.gd) 装配并按固定阶段调用，[Unit](../unit.gd)/[Tower](../tower.gd) 通过 BattleContext 使用服务。完整所有权合同见[维护架构](../../docs/MAINTENANCE_ARCHITECTURE.md)。
+本目录维护战场规则、状态与网络投影；[Main](../main.gd) 装配Runtime/World，[BattleSimulation](battle_simulation.gd)按固定阶段调用，[Unit](../unit.gd)/[Tower](../tower.gd) 通过 BattleContext 使用服务。完整所有权合同见[维护架构](../../docs/MAINTENANCE_ARCHITECTURE.md)。
 
 | 修改内容 | 文件 |
 | --- | --- |
+| 对局受理、付款、排程、账户绑定与领域状态 | `match_runtime` |
+| 战场实体索引、导航、占位与空间交接 | `battle_world` |
 | 共享阶段、时钟、比赛、金币、简单单机 AI | `battle_simulation`、`fixed_step_clock`、`minion_wave_schedule`、`match_rules`、`elixir_manager`、`ai_opponent` |
 | 手牌、镜像、局内成长 | `card_cycle`、`client_hand_state`、`card_play_history`、`match_card_growth` |
 | 排程、付款、主动资格 | `command_schedule`、`command_payment`、`active_skill_roster`、`active_skill_lifecycle` |
