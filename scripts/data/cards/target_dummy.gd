@@ -35,7 +35,7 @@ static func definition() -> Dictionary:
 			"visual_animations": {"deploy": "Spawn", "idle": "Idle1_Base", "death": "Death", "death_duration": 1.0,
 				"visual_actions": {"hit": {"animation": "Hit", "kind": "skill", "priority": 10, "blend_in": 0.04, "blend_out": 0.08}}},
 		},
-		"card_art": {},
+		"card_art": {"path": "res://assets/cards/target_dummy_loading.png"},
 		"audio": {
 			"events": {
 				"active_buff:sustain": {"pool": [

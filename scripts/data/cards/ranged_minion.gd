@@ -112,5 +112,5 @@ static func definition() -> Dictionary:
 			],
 		},
 		# END EVENT AUDIO ranged_minion
-		"card_art": {},
+		"card_art": {"path": "res://assets/cards/ranged_minion_loading.png"},
 	}

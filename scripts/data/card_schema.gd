@@ -85,7 +85,7 @@ const NEXUS_VISUAL_CONFIG := {
 }
 
 const CARD_TYPES := [&"unit", &"spell", &"building"]
-const DEPLOY_ZONES := [&"own_side", &"global_no_river", &"global"]
+const DEPLOY_ZONES := [&"own_side", &"global"]
 const SIZE_RADII := {
 	SIZE_EXTREMELY_SMALL: RADIUS_EXTREMELY_SMALL,
 	SIZE_SMALL: RADIUS_SMALL,

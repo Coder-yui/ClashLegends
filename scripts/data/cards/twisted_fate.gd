@@ -171,5 +171,5 @@ static func definition() -> Dictionary:
 			],
 		},
 		# END IMPORTED AUDIO twisted_fate
-		"card_art": {},
+		"card_art": {"path": "res://assets/cards/twisted_fate_loading.png"},
 	}

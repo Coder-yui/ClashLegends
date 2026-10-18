@@ -65,5 +65,5 @@ static func definition() -> Dictionary:
 			},
 		},
 		# END EVENT AUDIO tombstone
-		"card_art": {},
+		"card_art": {"path": "res://assets/cards/tombstone_loading.png"},
 	}

@@ -23,5 +23,5 @@ static func definition() -> Dictionary:
 			"active_skills": [{"icon_path": "res://assets/skills/melee_minion_squad_0.png"}],
 			"color": Color(0.48, 0.58, 0.82),
 		},
-		"card_art": {},
+		"card_art": {"path": "res://assets/cards/melee_minion_squad_loading.png"},
 	}

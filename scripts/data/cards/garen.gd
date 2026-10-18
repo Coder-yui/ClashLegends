@@ -54,7 +54,7 @@ static func definition() -> Dictionary:
 				},{ "icon_path": "res://assets/skills/garen_1.png", "visual_action": "judgment",
 				}],
 		},
-		"card_art": {}, # 默认 assets/cards/<card_id>_loading.*
+		"card_art": {"path": "res://assets/cards/garen_loading.jpg"},
 		"audio": {
 			"attack_swing": [
 				[

@@ -16,7 +16,7 @@ static func definition() -> Dictionary:
 			"visual_scene_path": "res://assets/units/voidfish/voidfish_view.tscn", "visual_forward_yaw": 0.0,
 			"visual_animations": {"visual_actions": {"scatter_birth": {"animation": "Idle1", "kind": "deploy", "priority": 10, "blend_in": 0.0, "blend_out": 0.08}}, "deploy": "Idle1", "idle": "Idle1", "move": "Run", "attack": ["attack_1_anm"], "death": "Death", "death_duration": 0.6},
 		},
-		"card_art": {}, "audio": {
+		"card_art": {"path": "res://assets/cards/voidfish_loading.png"}, "audio": {
   "attack_swing": [
     [
       "res://assets/audio/units/voidfish/swing_1.wav"

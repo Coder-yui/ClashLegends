@@ -40,7 +40,7 @@ static func definition() -> Dictionary:
 			"projectile_visual_height": 52.0,
 			"color": Color(0.80, 0.35, 0.60),
 		},
-		"card_art": {}, # 默认 assets/cards/<card_id>_loading.*
+		"card_art": {"path": "res://assets/cards/missfortune_loading.jpg"},
 		"audio": {
 			"attack_swing": [
 				[

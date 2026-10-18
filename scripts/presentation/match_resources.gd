@@ -126,25 +126,16 @@ func _accept(path: String, resource: Resource, expected: StringName) -> void:
 	else: resources[path] = resource
 
 func _prepare_card(id: String) -> void:
-	if cards.has(id) or not CardDB.has_card(id):
+	if cards.has(id): return
+	if not CardDB.has_card(id):
+		errors.append("本局资源引用未知卡牌: " + id)
 		return
 	if plan != null and not plan.cards.has(id):
 		errors.append("本局资源计划外卡牌: " + id)
 		return
 	cards[id] = true
 	_collect(plan.definition(id) if plan != null else CardDB.get_card(id))
-	if _collect_only:
-		# 正式卡面由定义收集；保留旧卡面命名的兼容发现，但不在此同步读取。
-		if String(CardDB.get_card(id).get("card_art", {}).get("path", "")).is_empty():
-			for extension in CardArt.CARD_ART_EXTENSIONS:
-				var path := "%s%s_loading.%s" % [CardArt.CARD_ART_DIR, id, extension]
-				if ResourceLoader.exists(path):
-					_collect(path, &"Texture2D")
-					break
-		return
-	var art := CardArt.texture_for(id)
-	if art != null:
-		resources[art.resource_path] = art
+	# 卡面与模型/声音一样只来自定义，错误通过 errors 交给启动失败入口。
 
 func _collect(value: Variant, expected: StringName = &"") -> void:
 	if value is Dictionary:

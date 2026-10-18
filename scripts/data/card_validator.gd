@@ -16,9 +16,13 @@ static func validate_all(cards: Dictionary, inspect_resources: bool = true) -> P
 		if not cards[raw_card_id] is Dictionary:
 			errors.append("%s: 期望 Dictionary，实际 %s（%s）" % [card_id, type_string(typeof(cards[raw_card_id])), str(cards[raw_card_id])])
 			continue
+		SHAPES.validate(card_id, cards[raw_card_id], errors)
+	# 整张表的形状是所有跨引用读取的前置合同，不能边检查边解引用。
+	if not errors.is_empty():
+		return errors
+	for raw_card_id in cards:
+		var card_id := String(raw_card_id)
 		var stats: Dictionary = cards[raw_card_id]
-		if not SHAPES.validate(card_id, stats, errors):
-			continue
 		if stats.has("icon_path") and (not String(stats.icon_path).begins_with("res://assets/") or (inspect_resources and not load(String(stats.icon_path)) is Texture2D)):
 			errors.append(card_id + ".icon_path: 必须指向 assets 内有效的 Texture2D")
 		_validate_card_id(card_id, errors)
@@ -997,7 +1001,10 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 				_require_fields(label, skill, [&"length", &"radius", &"damage"], errors)
 				if skill.has("landing_extension") and float(skill.landing_extension) < 0.0:
 					errors.append(label + ".landing_extension: 必须非负")
-			&"nova": _require_fields(label, skill, [&"radius", &"damage"], errors)
+			&"nova":
+				_require_fields(label, skill, [&"radius", &"damage"], errors)
+				if skill.has("stun_duration"):
+					errors.append(label + ".stun_duration: nova 未实现眩晕；请移除此字段，眩晕能力须使用已支持的技能类型")
 			&"timed_form":
 				if stats.get("transformed_stats", {}).is_empty() or float(stats.get("form_lifetime", 0.0)) <= 0.0:
 					errors.append("%s: 限时变形需要 transformed_stats 与正数 form_lifetime" % label)
@@ -1492,7 +1499,7 @@ static func _validate_deployment(card_id: String, stats: Dictionary, errors: Pac
 	if stats.has("deploy_zone"):
 		var dz := StringName(stats.get("deploy_zone", ""))
 		if dz not in DEPLOY_ZONES:
-			errors.append("%s.deploy_zone: 必须是 DEPLOY_ZONES 之一 (%s)" % [card_id, "、".join(DEPLOY_ZONES)])
+			errors.append("%s.deploy_zone: 必须是 DEPLOY_ZONES 之一 (%s)；global_no_river 已退役，全场部署请迁移为 global 并沿用落点合法性校验" % [card_id, "、".join(DEPLOY_ZONES)])
 	if bool(stats.get("deploy_pocket_requires_both_towers", false)) and (String(stats.get("deploy_zone", "own_side")) != "own_side" or card_type == &"spell"):
 		errors.append("%s.deploy_pocket_requires_both_towers: 仅支持 own_side 单位或建筑" % card_id)
 	if stats.has("deploy_ignore_structures") and typeof(stats.deploy_ignore_structures) != TYPE_BOOL:

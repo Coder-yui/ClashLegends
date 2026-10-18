@@ -104,5 +104,5 @@ static func definition() -> Dictionary:
 			],
 		},
 		# END EVENT AUDIO super_minion
-		"card_art": {},
+		"card_art": {"path": "res://assets/cards/super_minion_loading.png"},
 	}

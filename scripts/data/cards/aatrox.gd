@@ -289,7 +289,7 @@ static func definition() -> Dictionary:
 				}
 			}
 		},
-		"card_art": {},
+		"card_art": {"path": "res://assets/cards/aatrox_loading.png"},
 		"audio": {
 			"attack_swing": [
 				[

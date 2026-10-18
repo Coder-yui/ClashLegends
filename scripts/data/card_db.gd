@@ -198,10 +198,7 @@ static func size_tier_name(size_tier: StringName) -> String:
 
 ## 新卡/测试夹具共用编译入口；仅内容构建时合并一次，运行查询零复制。
 static func compile_definition(definition: Dictionary) -> Dictionary:
-	var stats: Dictionary = DEFINITION_COMPILER.compile(definition)
-	if not stats.is_empty() and not stats.has("card_art"):
-		stats.card_art = {}
-	return stats
+	return DEFINITION_COMPILER.compile(definition)
 
 ## 金币足够时选择配置的高费部署单位；只在提交前调用，排程保存结果。
 static func deployment_card_id(card_id: String, available: float) -> String:

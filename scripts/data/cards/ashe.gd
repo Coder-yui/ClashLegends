@@ -47,7 +47,7 @@ static func definition() -> Dictionary:
 			"active_skills": [{ "icon_path": "res://assets/skills/ashe_0.png", "visual_action": "active", "projectile_visual_height": 45.0, "projectile_visual_forward_offset": 20.0,
 				}],
 		},
-		"card_art": {}, # 默认 assets/cards/<card_id>_loading.*
+		"card_art": {"path": "res://assets/cards/ashe_loading.jpg"},
 		"audio": {
 			"attack_swing": [
 				[

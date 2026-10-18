@@ -28,7 +28,7 @@ static func definition() -> Dictionary:
 			"visual_forward_yaw": 0.0, "color": Color(0.35, 0.75, 0.65),
 			"visual_animations": {"deploy": "Crab_Spawn", "idle": "Idle1", "move": "Run", "attack_loop": "Crab_Dance", "death_followup_scene_path": "res://assets/units/scuttle_crab/burrow_view.tscn", "death_followup_animation": "scuttle_shrine_sequence", "death_followup_immediate": true},
 		},
-		"card_art": {}, "audio": {
+		"card_art": {"path": "res://assets/cards/scuttle_crab_loading.png"}, "audio": {
   "events": {
 "shrine:leap": {"pool": ["res://assets/audio/units/scuttle_crab/death_leap_1.wav"], "volume_db": 0.0, "bus": "Combat"},
 "shrine:start": {"pool": ["res://assets/audio/units/scuttle_crab/ward0.wav"], "volume_db": 0.0, "bus": "Combat"},

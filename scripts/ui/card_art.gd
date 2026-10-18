@@ -2,8 +2,6 @@ class_name CardArt
 extends RefCounted
 ## 卡牌 UI 表现层。卡面、费用角标和名称条只负责显示，不参与卡牌数值或战斗逻辑。
 
-const CARD_ART_DIR := "res://assets/cards/"
-const CARD_ART_EXTENSIONS := ["jpg", "png", "webp"]
 ## 卡面会裁切 Loading Screen，因此 UI 使用更接近实体卡牌的宽比例，而不是原图比例。
 const CARD_FRAME_ASPECT := 0.72
 const DEFAULT_ACCENT := Color(0.30, 0.62, 0.94)
@@ -24,18 +22,12 @@ static func texture_for(card_id: String) -> Texture2D:
 	if _textures.has(card_id):
 		return _textures[card_id]
 	var configured := String(CardDB.get_card(card_id).get("card_art", {}).get("path", ""))
-	var candidates: Array[String] = []
-	if not configured.is_empty():
-		candidates.append(configured)
-	else:
-		for extension in CARD_ART_EXTENSIONS:
-			candidates.append("%s%s_loading.%s" % [CARD_ART_DIR, card_id, extension])
-	for path in candidates:
-		if ResourceLoader.exists(path):
-			_textures[card_id] = load(path) as Texture2D
-			return _textures[card_id]
-	_textures[card_id] = null
-	return null
+	# 空配置明确表示无卡面；已声明路径失败不能被缓存成“无素材”。
+	if configured.is_empty(): return null
+	var texture := load(configured) as Texture2D
+	assert(texture != null, "%s.card_art.path: Texture2D 加载失败: %s" % [card_id, configured])
+	if texture != null: _textures[card_id] = texture
+	return texture
 
 ## Deck browsing may load all card faces. Drop unused cache ownership before this match.
 static func retain_match_textures(card_ids: Array) -> Dictionary:
@@ -47,9 +39,10 @@ static func retain_match_textures(card_ids: Array) -> Dictionary:
 ## 缺省图标返回 null，由 UI 保留既有文字占位。
 static func skill_icon(skill: Dictionary) -> Texture2D:
 	var path := String(skill.get("icon_path", ""))
-	if path.is_empty() or not ResourceLoader.exists(path):
-		return null
-	return load(path) as Texture2D
+	if path.is_empty(): return null
+	var texture := load(path) as Texture2D
+	assert(texture != null, "skill.icon_path: Texture2D 加载失败: " + path)
+	return texture
 
 static func frame_size_for_height(height: float) -> Vector2:
 	return Vector2(roundf(height * CARD_FRAME_ASPECT), height)

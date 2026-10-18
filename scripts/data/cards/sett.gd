@@ -190,5 +190,5 @@ static func definition() -> Dictionary:
 			],
 		},
 		# END IMPORTED AUDIO sett
-		"card_art": {},
+		"card_art": {"path": "res://assets/cards/sett_loading.jpg"},
 	}

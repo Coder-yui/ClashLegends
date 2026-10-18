@@ -78,5 +78,5 @@ static func definition() -> Dictionary:
 			},
 		},
 		# END EVENT AUDIO sun_disc
-		"card_art": {},
+		"card_art": {"path": "res://assets/cards/sun_disc_loading.png"},
 	}

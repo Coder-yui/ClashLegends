@@ -105,5 +105,5 @@ static func definition() -> Dictionary:
 			],
 		},
 		# END IMPORTED AUDIO teemo
-		"card_art": {},
+		"card_art": {"path": "res://assets/cards/teemo_loading.jpg"},
 	}

@@ -165,5 +165,5 @@ static func definition() -> Dictionary:
 			},
 		},
 		# END IMPORTED AUDIO aurelionsol
-		"card_art": {},
+		"card_art": {"path": "res://assets/cards/aurelionsol_loading.jpg"},
 	}

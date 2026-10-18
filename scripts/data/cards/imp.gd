@@ -67,5 +67,5 @@ static func definition() -> Dictionary:
 			"attack_swing_volume_db": 0.0,
 		},
 		# END IMPORTED AUDIO imp
-		"card_art": {},
+		"card_art": {"path": "res://assets/cards/imp_loading.png"},
 	}

@@ -28,5 +28,5 @@ static func definition() -> Dictionary:
 		},
 		"audio": {"events": {"death": {"pool": ["res://assets/audio/units/anivia/play_vo_anivia_death3d_r1_zh_cn.wav", "res://assets/audio/units/anivia/play_vo_anivia_death3d_r2_zh_cn.wav", "res://assets/audio/units/anivia/play_vo_anivia_death3d_r3_zh_cn.wav"], "volume_db": 0.0, "bus": "Voice"}, "revival:sustain": {"pool": ["res://assets/audio/units/anivia/anivia_rebirth_full_half.wav"], "volume_db": 0.0}},
 		},
-		"card_art": {},
+		"card_art": {"path": "res://assets/cards/anivia_egg_loading.png"},
 	}

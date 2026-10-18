@@ -206,5 +206,5 @@ static func definition() -> Dictionary:
 			],
 		},
 		# END IMPORTED AUDIO gwen
-		"card_art": {},
+		"card_art": {"path": "res://assets/cards/gwen_loading.jpg"},
 	}

@@ -122,5 +122,5 @@ static func definition() -> Dictionary:
 			"attack_hit_volume_db": 0.0
 		},
 		# END IMPORTED AUDIO twitch
-		"card_art": {},
+		"card_art": {"path": "res://assets/cards/twitch_loading.png"},
 	}

@@ -44,5 +44,5 @@ static func definition() -> Dictionary:
 			},
 		},
 		# END EVENT AUDIO freeze
-		"card_art": {},
+		"card_art": {"path": "res://assets/cards/freeze_loading.png"},
 	}

@@ -47,5 +47,5 @@ static func definition() -> Dictionary:
 			},
 		},
 		# END EVENT AUDIO heal
-		"card_art": {},
+		"card_art": {"path": "res://assets/cards/heal_loading.png"},
 	}

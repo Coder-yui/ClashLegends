@@ -84,7 +84,7 @@ static func definition() -> Dictionary:
 },
 			"active_skills": [{"icon_path": "res://assets/skills/rift_herald_0.png", "visual_action": "spinning_punch"}],
 		},
-		"card_art": {},
+		"card_art": {"path": "res://assets/cards/rift_herald_loading.png"},
 		"audio": {
   "attack_swing": [
     [

@@ -203,7 +203,7 @@ static func passives(stats: Dictionary) -> Array[Dictionary]:
 	if float(stats.get("rage_crit_multiplier", 1.0)) > 1.0:
 		result.append({"name": "战斗狂怒", "description": "普通攻击出手获得1点怒气，最多2点。满怒下一击造成%s倍伤害、消耗怒气且不产怒；取消前摇不消耗，致盲出手仍消费。" % format_number(float(stats.rage_crit_multiplier))})
 	if float(stats.get("attack_wave_damage", 0.0)) > 0.0:
-		result.append({"name": "焰浪", "description": "每次远程普攻附带一道固定方向的穿透焰浪，光剑出手后延迟%s秒发出，按主目标锁定对空或对地，沿出手瞬间固定的轴线横向1→2倍线性扩宽（最大合法射程含余波为标尺），终点为当时目标位置后%s格；对同类别敌人造成%d伤害一次（对地包含塔和水晶），可与光剑伤害叠加。焰浪不额外叠加攻速被动。" % [format_number(float(stats.attack_wave_delay)), format_number(float(stats.attack_wave_tail_distance) / TILE_SIZE), int(stats.attack_wave_damage)]})
+		result.append({"name": "焰浪", "description": "每次远程普攻附带一道固定方向的穿透焰浪，光剑出手后延迟%s秒发出，沿出手瞬间固定的轴线横向1→2倍线性扩宽（最大合法射程含余波为标尺），终点为当时目标位置后%s格；同时对路径内的空中、地面单位及建筑、塔和水晶造成%d伤害一次，可与光剑伤害叠加。焰浪不额外叠加攻速被动。" % [format_number(float(stats.attack_wave_delay)), format_number(float(stats.attack_wave_tail_distance) / TILE_SIZE), int(stats.attack_wave_damage)]})
 	if int(stats.get("hit_haste_max_stacks", 0)) > 0:
 		result.append({"name": "机枪预热" if float(stats.get("structure_assist_window", 0.0)) > 0.0 else "登神之阶", "description": "每次普攻实际命中获得1层，每层提高%s%%攻速，最多%d层；每次命中刷新全部层数的%s秒持续时间，溅射多人只获得1层。" % [format_number(float(stats.hit_haste_per_stack) * 100.0), int(stats.hit_haste_max_stacks), format_number(float(stats.hit_haste_duration))]})
 	if float(stats.get("rush_distance", 0.0)) > 0.0:

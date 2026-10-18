@@ -109,5 +109,5 @@ static func definition() -> Dictionary:
 			],
 		},
 		# END EVENT AUDIO siege_minion
-		"card_art": {},
+		"card_art": {"path": "res://assets/cards/siege_minion_loading.png"},
 	}

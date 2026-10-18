@@ -136,5 +136,5 @@ static func definition() -> Dictionary:
 			],
 		},
 		# END IMPORTED AUDIO xin
-		"card_art": {},
+		"card_art": {"path": "res://assets/cards/xin_loading.jpg"},
 	}

@@ -60,7 +60,7 @@ static func definition() -> Dictionary:
 				"projectile_visual_height": 60.0, "projectile_visual_width": 12.0,
 			}],
 		},
-		"card_art": {}, "audio": {
+		"card_art": {"path": "res://assets/cards/corki_loading.png"}, "audio": {
   "events": {
     "attack_launch": {
       "pool": [

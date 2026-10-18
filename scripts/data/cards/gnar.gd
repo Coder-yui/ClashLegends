@@ -229,5 +229,5 @@ static func definition() -> Dictionary:
 			},
 		},
 		# END IMPORTED AUDIO gnar
-		"card_art": {},
+		"card_art": {"path": "res://assets/cards/gnar_loading.png"},
 	}
