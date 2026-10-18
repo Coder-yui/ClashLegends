@@ -3,7 +3,7 @@ extends Node3D
 ## The authority supplies age; this node never advances battle state.
 const ROOT := "res://assets/effects/freeze/"
 static var _cache: Dictionary = {}
-var freeze_occluder := Vector4.ZERO
+var freeze_occluder := Vector4.ZERO # Render SCREEN_UV center.xy / radii.zw.
 var _data: Dictionary = {}
 static var _meshes: Dictionary = {}
 var _materials: Array[ShaderMaterial] = []

@@ -17,6 +17,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_structure_art_integration()
 	_check_stasis_debris()
 	_check_freeze_surfaces()
+	_check_freeze_occlusion_projection()
 	await _check_corrosion_warmup()
 	_check_unit_size_tiers()
 	_check_visual_state_contract()
@@ -1075,7 +1076,7 @@ func _check_freeze_surfaces() -> void:
 	var first_mesh := first.mesh
 	var red: MeshInstance3D = ground._views[1]
 	_expect(first.material_override.get_shader_parameter("rim_color") == ground.BLUE_RIM and red.material_override.get_shader_parameter("rim_color") == ground.RED_RIM, "冰纹外圈按施法阵营区分蓝红，冰面共用材质")
-	_expect(ground._players.size() >= 4 and ground._players[2].get_meta("kind") == "trundle" and ground._players[2].freeze_occluder.z == 110.0, "强化首帧已有大圈，内圈遮住巨魔W")
+	_expect(ground._players.size() >= 4 and ground._players[2].get_meta("kind") == "trundle" and ground._players[2].freeze_occluder.z > 0.0 and ground._players[2].freeze_occluder.w > 0.0, "强化首帧已有大圈，内圈遮住巨魔W")
 	var dark_base := false
 	for emitter in ground._players[2]._data.emitters:
 		if String(emitter.name) == "Ground_black": dark_base = true
@@ -1094,6 +1095,48 @@ func _check_freeze_surfaces() -> void:
 	ground.sync_effects(spells,_main._battle_presentation._camera)
 	_expect(ground._players[0].get_meta("kind") == "iceborn" and first.material_override.get_shader_parameter("rim_color") == ground.RED_RIM, "相同位置复用地面槽位仍更新施法阵营颜色")
 	spells.clear()
+
+func _check_freeze_occlusion_projection() -> void:
+	var presentation: BattlePresentation3D = _main._battle_presentation
+	var ground: Node3D = presentation._freeze_ground
+	var camera: Camera3D = presentation._camera
+	var old_transform := camera.transform
+	var old_rect := Rect2(presentation._overlay.position, Vector2(presentation._viewport.size))
+	var layout := preload("res://scripts/ui/battle_layout.gd")
+	var spells := SpellSystem.new(_main)
+	for flipped in [false, true]:
+		camera.transform = old_transform
+		if flipped: camera.rotate_object_local(Vector3.BACK, PI)
+		for size in [Vector2(720,1280), Vector2(720,1600), Vector2(1280,720)]:
+			var rect: Rect2 = layout.visible_world(size, layout.canvas(size, flipped))
+			presentation.set_view_rect(rect)
+			spells.clear()
+			for team in [0, 1]:
+				var point := Vector2(190,350) if team == 0 else Vector2(530,900)
+				spells.show_freeze(point, 110, 3, 2, team, 137.5)
+			# Keep the same particle frame across resizes: the mask must still update.
+			spells.tick_visuals(1.5)
+			ground.sync_effects(spells, camera)
+			for index in 2:
+				var point: Vector2 = spells.freeze_effects[index].pos
+				var player: Node3D = ground._players[index + 2]
+				var mask: Vector4 = player.freeze_occluder
+				var mapped := Vector2(mask.x, mask.y) * rect.size + rect.position
+				var radii := Vector2(mask.z, mask.w) * rect.size
+				_expect(mapped.distance_to(point) < 0.01 and radii.distance_to(Vector2(110,110)) < 0.01, "双方/翻转/竖屏长屏横屏的强化遮罩与权威落点及半径一致")
+				_expect(ground._players[index].freeze_occluder == Vector4.ZERO, "普通冰面不启用减速遮罩")
+				var matches := true
+				for pool in player._pools:
+					for item in pool:
+						if item.visible: matches = matches and item.material_override.get_shader_parameter("freeze_occluder").is_equal_approx(mask)
+				_expect(matches, "视口变化时同一粒子帧的实际材质也更新遮罩")
+			spells.tick_visuals(1.6)
+			ground.sync_effects(spells, camera)
+			_expect(ground._players[0].freeze_occluder == Vector4.ZERO and ground._players[1].freeze_occluder == Vector4.ZERO, "3秒解冻后移除双方遮罩，露出完整减速场")
+	spells.clear()
+	ground.sync_effects(spells, camera)
+	camera.transform = old_transform
+	presentation.set_view_rect(old_rect)
 
 func _check_animation_copy() -> void:
 	var source := Animation.new()

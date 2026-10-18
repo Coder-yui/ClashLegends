@@ -1,3 +1,4 @@
+// Render-viewport UV center and radii, independent of battlefield/window pixels.
 uniform vec4 freeze_occluder = vec4(0.0);
 uniform float p[38];
 uniform bool is_mesh=false;
@@ -96,7 +97,7 @@ void vertex() {
  if(push_pull!=0.0){vec3 world=(MODEL_MATRIX*vec4(pos,1.0)).xyz;VERTEX+=(inverse(mat3(MODEL_MATRIX))*normalize(world-CAMERA_POSITION_WORLD))*push_pull*unit_scale;}
 }
 void fragment() {
- if(freeze_occluder.z > 0.0 && distance(FRAGCOORD.xy,freeze_occluder.xy) < freeze_occluder.z) discard;
+ if(freeze_occluder.z > 0.0 && freeze_occluder.w > 0.0 && length((SCREEN_UV-freeze_occluder.xy)/freeze_occluder.zw) < 1.0) discard;
  if(is_mesh && cull_mesh && !FRONT_FACING)discard;
  vec4 texel=texture(source_texture,addressed(base_uv,address_mode));
  if(has_ramp) texel*=texture(ramp_texture,has_mult?mult_uv:vec2(p[35],p[36]));

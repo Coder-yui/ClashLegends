@@ -53,7 +53,7 @@ func _sync_view(index: int, effect: Dictionary, camera: Camera3D, kind: String) 
 	var source_age := age * 2.0 / float(effect.duration) if kind == "iceborn" else age
 	player.freeze_occluder = Vector4.ZERO
 	if kind == "trundle" and age < float(effect.get("freeze_duration", 0.0)):
-		player.freeze_occluder = Vector4(center.x, center.y, float(effect.get("freeze_radius", 0.0)), 0.0)
+		player.freeze_occluder = _screen_occluder(camera, center, float(effect.get("freeze_radius", 0.0)))
 	player.show()
 	player.seek(maxf(source_age, 1.0 / 120.0))
 	var view := _views[index]
@@ -61,6 +61,19 @@ func _sync_view(index: int, effect: Dictionary, camera: Camera3D, kind: String) 
 	view.material_override.set_shader_parameter("rim_color", BLUE_RIM if int(effect.get("team", 0)) == 0 else RED_RIM)
 	var bounds := Rect2(center - Vector2.ONE * radius, Vector2.ONE * radius * 2.0)
 	if view.get_meta("bounds", Rect2()) != bounds: _update_mesh(view, bounds, camera)
+
+func _screen_occluder(reference: Camera3D, center: Vector2, radius: float) -> Vector4:
+	# The render camera includes the visible-world margin; the reference camera
+	# still uses authoritative 720×1280 coordinates. Compare in render SCREEN_UV.
+	var viewport := get_viewport()
+	var camera := viewport.get_camera_3d()
+	if camera == null: camera = reference
+	var size := Vector2(viewport.size)
+	var world := PROJECTION.ground(reference, center)
+	var screen := camera.unproject_position(world)
+	var edge := camera.unproject_position(PROJECTION.ground(reference, center + Vector2(radius, 0.0)))
+	var screen_radius := screen.distance_to(edge)
+	return Vector4(screen.x / size.x, screen.y / size.y, screen_radius / size.x, screen_radius / size.y)
 
 func _update_mesh(view: MeshInstance3D, bounds: Rect2, camera: Camera3D) -> void:
 	view.set_meta("bounds", bounds)
