@@ -13,8 +13,8 @@ func _run() -> void:
 	main._start_local()
 	main.set_process(false)
 	main._ai.enabled = false
-	main._minion_waves_enabled = false
-	for tower in main._towers: tower.can_attack = false
+	main.runtime._minion_waves_enabled = false
+	for tower in main.world.towers_snapshot(): tower.can_attack = false
 	var a: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "garen", Vector2(320, 880), {"deploy_time_override": 0}))
 	var b: Unit = main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(320, 800), {"deploy_time_override": 0}))
 	var units: Array[Unit] = [a, b]
@@ -46,7 +46,7 @@ func _run() -> void:
 	front.free()
 	rear.free()
 	target.free()
-	var tower: Tower = main._towers[2]
+	var tower: Tower = main.world.towers_snapshot()[2]
 	var attacker: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "garen", tower.position + Vector2.DOWN * 180.0, {"deploy_time_override": 0}))
 	var defender: Unit = main._spawn_unit(UnitSpawnRequest.new(1, "masteryi", attacker.position + Vector2.UP * 45.0, {"deploy_time_override": 0}))
 	attacker._target = tower

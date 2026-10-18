@@ -54,9 +54,9 @@ func _run() -> void:
 		await create_timer(0.6).timeout
 		await snap("rage_" + str(team))
 		panel.show_workspace(2)
-		var paused_tick: int = main._sim_tick_id
+		var paused_tick: int = main.runtime._sim_tick_id
 		await create_timer(0.5).timeout
-		assert(main._sim_tick_id == paused_tick)
+		assert(main.runtime._sim_tick_id == paused_tick)
 		panel.show_workspace(1)
 		await create_timer(4.0).timeout
 		await snap("rage_end_" + str(team))

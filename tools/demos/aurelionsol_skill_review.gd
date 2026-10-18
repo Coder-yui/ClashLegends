@@ -14,7 +14,7 @@ func _run() -> void:
 	main._art_dev_panel.show_workspace(1)
 	main._art_dev_panel.hide()
 	main.set_process(false)
-	for tower in main._towers: tower.can_attack = false
+	for tower in main.world.towers_snapshot(): tower.can_attack = false
 	for team in [0, 1]:
 		for strong in [false, true]:
 			main._clear_art_dev_units()

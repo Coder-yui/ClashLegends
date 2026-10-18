@@ -15,10 +15,10 @@ func _run() -> void:
 	current_scene = main
 	main._start_local()
 	main._ai.enabled = false
-	main._minion_waves_enabled = false
-	for tower in main._towers: tower.can_attack = false
+	main.runtime._minion_waves_enabled = false
+	for tower in main.world.towers_snapshot(): tower.can_attack = false
 	for attempt in 150:
-		if main._match_started: break
+		if main.runtime._match_started: break
 		await create_timer(0.1).timeout
 	if "--deploy-voice" in OS.get_cmdline_user_args():
 		await _review_deploy_voice()
@@ -80,7 +80,7 @@ func _run() -> void:
 	quit()
 
 func _review_ui() -> void:
-	main._deck[0] = "kayn"
+	main.runtime._deck[0] = "kayn"
 	for card in ["kayn","kayn_assassin","kayn_slayer"]:
 		main._clear_art_dev_units()
 		main.play_card(0,card,Vector2(360,950),{"immediate":true,"validate_position":false})
@@ -89,9 +89,9 @@ func _review_ui() -> void:
 		unit.active_skill_card_id = "kayn"
 		unit.active_ability_id = 99031
 		unit.active_ability_slot = 0
-		main._register_active_skill(unit,"kayn",0)
+		main.runtime._register_active_skill(unit,"kayn",0)
 		await create_timer(1.2).timeout
-		main._elixir.elixir = 5.0
+		main.runtime.account(0 if main.runtime.mode == "server" else main.runtime.local_team).elixir = 5.0
 		await shot(card+"_skill_ready")
 		main.use_active_skill(unit.active_ability_id,0)
 		await create_timer(0.2).timeout
@@ -100,7 +100,7 @@ func _review_ui() -> void:
 		await shot(card+"_skill_cooldown")
 		main._deck_builder = DeckBuilder.new()
 		main.add_child(main._deck_builder)
-		main._deck_builder.open(main._deck,main._active_skill_choices,main._skin_choices,func(_deck,_skills,_skins): pass)
+		main._deck_builder.open(main.runtime._deck,main.runtime._active_skill_choices,main._skin_choices,func(_deck,_skills,_skins): pass)
 		main._deck_builder._open_card_info(card)
 		await create_timer(0.2).timeout
 		await shot(card+"_card_info")

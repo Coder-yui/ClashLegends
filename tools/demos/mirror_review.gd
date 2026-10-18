@@ -14,12 +14,12 @@ func _run() -> void:
 	main = load("res://scenes/main.tscn").instantiate()
 	root.add_child(main)
 	current_scene = main
-	main._deck = DECK.duplicate()
-	main._active_skill_choices = {"garen": 1, "heal": 1}
+	main.runtime._deck = DECK.duplicate()
+	main.runtime._active_skill_choices = {"garen": 1, "heal": 1}
 	main._start_local()
 	main._ai.enabled = false
-	main._minion_waves_enabled = false
-	for tower in main._towers: tower.can_attack = false
+	main.runtime._minion_waves_enabled = false
+	for tower in main.world.towers_snapshot(): tower.can_attack = false
 	await create_timer(0.6).timeout
 	await shot("01_random_opening")
 	var record := AudioEffectRecord.new()
@@ -34,9 +34,9 @@ func _run() -> void:
 	await shot("03_two_skill_slots")
 	await play("mirror", Vector2(500, 1000))
 	await shot("04_replaced_mirror_slot")
-	for id in main._active_skills.ids():
-		if main._active_skills.entry(id).slot == 0:
-			main._elixir.elixir = 10
+	for id in main.runtime._active_skills.ids():
+		if main.runtime._active_skills.entry(id).slot == 0:
+			main.runtime.account(0 if main.runtime.mode == "server" else main.runtime.local_team).elixir = 10
 			main.use_active_skill(int(id), 0)
 	await create_timer(1.2).timeout
 	await play("heal", Vector2(380, 960))
@@ -49,7 +49,7 @@ func _run() -> void:
 	AudioServer.remove_bus_effect(0, slot)
 	main._deck_builder = DeckBuilder.new()
 	main.add_child(main._deck_builder)
-	main._deck_builder.open(main._deck, main._active_skill_choices, {}, func(_deck, _skills, _skins): pass)
+	main._deck_builder.open(main.runtime._deck, main.runtime._active_skill_choices, {}, func(_deck, _skills, _skins): pass)
 	main._deck_builder._open_card_info("mirror")
 	await create_timer(0.3).timeout
 	await shot("06_mirror_details")
@@ -61,7 +61,7 @@ func _run() -> void:
 	quit()
 
 func put_in_hand(card_id: String) -> void:
-	var cycle: CardCycle = main._authoritative_card_cycles[0]
+	var cycle: CardCycle = main.runtime._authoritative_card_cycles[0]
 	var hand := cycle.hand()
 	var queue := cycle.queue()
 	if card_id not in hand:
@@ -73,8 +73,8 @@ func put_in_hand(card_id: String) -> void:
 
 func play(card_id: String, pos: Vector2) -> void:
 	put_in_hand(card_id)
-	main._elixir.elixir = 10
-	if not main.play_card(0, card_id, pos, {"elixir": main._elixir}): push_error("镜像渲染配方下牌失败: " + card_id)
+	main.runtime.account(0 if main.runtime.mode == "server" else main.runtime.local_team).elixir = 10
+	if not main.play_card(0, card_id, pos, {"elixir": main.runtime.account(0 if main.runtime.mode == "server" else main.runtime.local_team)}): push_error("镜像渲染配方下牌失败: " + card_id)
 	await create_timer(1.25).timeout
 	for unit in get_nodes_in_group("combatants"):
 		if unit is Unit: unit.move_speed = 0

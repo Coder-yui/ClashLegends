@@ -42,9 +42,9 @@ func _run() -> void:
 	await process_frame
 	main._start_local()
 	main._ai.enabled = false
-	main._minion_waves_enabled = false
+	main.runtime._minion_waves_enabled = false
 	main.set_process(false)
-	for tower in main._towers:
+	for tower in main.world.towers_snapshot():
 		tower.take_damage(101.5)
 		print("[数值渲染] tower hp=", tower.hp, " text=", tower._health_text())
 	await create_timer(0.3).timeout

@@ -10,9 +10,9 @@ func _run() -> void:
 	main._start_local()
 	main.set_process(false)
 	main._ai.enabled = false
-	main._minion_waves_enabled = false
-	for t in main._towers: t.can_attack = false
-	var tower: Tower = main._towers[2]
+	main.runtime._minion_waves_enabled = false
+	for t in main.world.towers_snapshot(): t.can_attack = false
+	var tower: Tower = main.world.towers_snapshot()[2]
 	tower.max_hp = 1000000
 	tower.hp = tower.max_hp
 	var units: Array[Unit] = []

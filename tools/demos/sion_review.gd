@@ -19,10 +19,10 @@ func _run() -> void:
 	current_scene = main
 	main._start_local()
 	main._ai.enabled = false
-	main._minion_waves_enabled = false
-	for tower in main._towers: tower.can_attack = false
+	main.runtime._minion_waves_enabled = false
+	for tower in main.world.towers_snapshot(): tower.can_attack = false
 	for attempt in 100:
-		if main._match_started: break
+		if main.runtime._match_started: break
 		await create_timer(0.1).timeout
 	if "--frozen-revival" in OS.get_cmdline_user_args():
 		await _run_frozen_revival()
@@ -30,9 +30,9 @@ func _run() -> void:
 	if "--attack-order" in OS.get_cmdline_user_args():
 		await _run_attack_order()
 		return
-	main._deck[0] = "sion"
+	main.runtime._deck[0] = "sion"
 	main._audio_manager.cue_played.connect(func(card: String, cue: StringName, _position: Vector2):
-		if card == "sion": print("SION_AUDIO ", cue, " tick=", main._sim_tick_id, " ms=", Time.get_ticks_msec()))
+		if card == "sion": print("SION_AUDIO ", cue, " tick=", main.runtime._sim_tick_id, " ms=", Time.get_ticks_msec()))
 	var record := AudioEffectRecord.new()
 	var slot := AudioServer.get_bus_effect_count(0)
 	AudioServer.add_bus_effect(0, record)
@@ -48,7 +48,7 @@ func _run() -> void:
 		if team == 0:
 			unit.active_ability_id = 9000
 			unit.active_ability_slot = 0
-			main._register_active_skill(unit, "sion", 0)
+			main.runtime._register_active_skill(unit, "sion", 0)
 		main.play_card(1-team, "anivia", center + Vector2(70, 0), {"immediate": true, "validate_position": false})
 		var air: Unit = main._latest_unit_for_card("anivia", 1-team)
 		air.move_speed = 0.0
@@ -60,7 +60,7 @@ func _run() -> void:
 		await shot("team%d_run" % team)
 		unit.move_speed = 0.0
 		if team == 0:
-			main._elixir.elixir = 5.0
+			main.runtime.account(0 if main.runtime.mode == "server" else main.runtime.local_team).elixir = 5.0
 			main.use_active_skill(unit.active_ability_id, 0)
 			await create_timer(0.2).timeout
 			await shot("team0_skill_pending")
@@ -102,7 +102,7 @@ func _run() -> void:
 	AudioServer.remove_bus_effect(0, slot)
 	main._deck_builder = DeckBuilder.new()
 	main.add_child(main._deck_builder)
-	main._deck_builder.open(main._deck, main._active_skill_choices, main._skin_choices, func(_deck, _skills, _skins): pass)
+	main._deck_builder.open(main.runtime._deck, main.runtime._active_skill_choices, main._skin_choices, func(_deck, _skills, _skins): pass)
 	main._deck_builder._open_card_info("sion")
 	await create_timer(0.2).timeout
 	await shot("sion_card_info")
@@ -143,7 +143,7 @@ func _run_frozen_revival() -> void:
 
 func _run_attack_order() -> void:
 	var target: Tower
-	for tower in main._towers:
+	for tower in main.world.towers_snapshot():
 		if tower.team == 1:
 			target = tower
 			break

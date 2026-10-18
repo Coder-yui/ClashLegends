@@ -51,9 +51,9 @@ func _run() -> void:
 		assert(heat != null and heat.visible and heat.skin != null)
 		assert(heat.get_node(heat.skeleton) is Skeleton3D)
 		panel.show_workspace(2)
-		var paused_tick: int = main._sim_tick_id
+		var paused_tick: int = main.runtime._sim_tick_id
 		await create_timer(0.5).timeout
-		assert(main._sim_tick_id == paused_tick)
+		assert(main.runtime._sim_tick_id == paused_tick)
 		panel.show_workspace(1)
 		await create_timer(5.0).timeout
 		await snap("q_end_" + str(team))

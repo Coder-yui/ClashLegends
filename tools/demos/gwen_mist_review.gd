@@ -14,13 +14,13 @@ func _run() -> void:
 	current_scene = main
 	main._start_local()
 	main._ai.enabled = false
-	main._minion_waves_enabled = false
-	for tower in main._towers: tower.can_attack = false
+	main.runtime._minion_waves_enabled = false
+	for tower in main.world.towers_snapshot(): tower.can_attack = false
 	for attempt in 100:
-		if main._match_started: break
+		if main.runtime._match_started: break
 		await create_timer(0.1).timeout
-	main._active_skill_choices["gwen"] = 1
-	main._deck[0] = "gwen"
+	main.runtime._active_skill_choices["gwen"] = 1
+	main.runtime._deck[0] = "gwen"
 	main._audio_manager.cue_played.connect(func(card: String, cue: StringName, position: Vector2):
 		if card == "gwen": print("MIST_AUDIO ", cue, " at ", position))
 	var record := AudioEffectRecord.new()
@@ -36,7 +36,7 @@ func _run() -> void:
 		if team == 0:
 			gwen.active_ability_id = 9000
 			gwen.active_ability_slot = 0
-			main._register_active_skill(gwen, "gwen", team)
+			main.runtime._register_active_skill(gwen, "gwen", team)
 		gwen.move_speed = 0.0
 		gwen.hp = 10000; gwen.max_hp = 10000
 		main.play_card(1-team, "ashe", center + Vector2(180, 0), {"immediate": true, "validate_position": false})
@@ -72,7 +72,7 @@ func _run() -> void:
 	AudioServer.remove_bus_effect(0, slot)
 	main._deck_builder = DeckBuilder.new()
 	main.add_child(main._deck_builder)
-	main._deck_builder.open(main._deck, main._active_skill_choices, main._skin_choices, func(_deck, _skills, _skins): pass)
+	main._deck_builder.open(main.runtime._deck, main.runtime._active_skill_choices, main._skin_choices, func(_deck, _skills, _skins): pass)
 	main._deck_builder._open_card_info("gwen")
 	await create_timer(0.1).timeout
 	await shot("gwen_skill_info")

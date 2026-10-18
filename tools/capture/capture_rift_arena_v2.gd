@@ -19,11 +19,11 @@ class CandidatePreviewMain extends "res://scripts/main.gd":
 				for row in ArenaRules.ARENA_ROWS:
 					for column in ArenaRules.ARENA_COLUMNS:
 						var tile := Vector2i(column, row)
-						if _tile_in_ground_deploy_zone(tile, 0):
+						if runtime._deployment_rules.tile_in_ground_deploy_zone(tile, 0):
 							draw_rect(Rect2(Vector2(tile) * ArenaRules.TILE_SIZE,
 								Vector2.ONE * ArenaRules.TILE_SIZE), Color(0.40, 0.70, 1.00, 0.15))
 			_draw_deployment_preview(stats)
-		_commands.draw_deployments(_draw_card_pre_deploy_indicator)
+		runtime._commands.draw_deployments(_draw_card_pre_deploy_indicator)
 
 class InspectionControls extends Node:
 	var handler: Callable
@@ -70,7 +70,7 @@ func _capture() -> void:
 	_main._start_local()
 	_main.set_process(false)
 	_main._ai.enabled = false
-	_main._minion_waves_enabled = false
+	_main.runtime._minion_waves_enabled = false
 	_presentation = _main._battle_presentation
 	_candidate = _presentation._world_root.get_node("RiftArena")
 	if _candidate.get_script() == null or not _candidate.get_script().can_instantiate():

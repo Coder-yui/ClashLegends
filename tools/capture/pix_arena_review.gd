@@ -13,9 +13,9 @@ func run() -> void:
  main._start_local()
  main.set_process(false)
  main._ai.enabled = false
- main._minion_waves_enabled = false
- main._spawn_card_units(0, "pix", Vector2(360, 850), 0.0)
- main._spawn_card_units(1, "pix", Vector2(360, 430), 0.0)
+ main.runtime._minion_waves_enabled = false
+ main.runtime._spawn_card_units(0, "pix", Vector2(360, 850), 0.0)
+ main.runtime._spawn_card_units(1, "pix", Vector2(360, 430), 0.0)
  await create_timer(3.0).timeout
  await RenderingServer.frame_post_draw
  root.get_texture().get_image().save_png(output.path_join("arena.png"))

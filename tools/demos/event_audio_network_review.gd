@@ -10,20 +10,20 @@ func _run() -> void:
 	root.add_child(main)
 	current_scene = main
 	main._start_local()
-	main._minion_waves_enabled = false
+	main.runtime._minion_waves_enabled = false
 	if main._ai != null: main._ai.enabled = false
 	var start := Time.get_ticks_msec()
 	main._audio_manager.cue_played.connect(func(id, cue, _pos):
-		if id == "sun_disc": print("[Event] ", main.mode, " t=", (Time.get_ticks_msec()-start)/1000.0, " ", cue, " waves=", main._skill_presentation.shield_effects.size()))
+		if id == "sun_disc": print("[Event] ", main.runtime.mode, " t=", (Time.get_ticks_msec()-start)/1000.0, " ", cue, " waves=", main._skill_presentation.shield_effects.size()))
 	var recorder := AudioEffectRecord.new()
 	var bus_index := AudioServer.get_bus_effect_count(0)
 	AudioServer.add_bus_effect(0, recorder)
 	recorder.set_recording_active(true)
 	for _i in range(100):
-		if main._match_started: break
+		if main.runtime._match_started: break
 		await create_timer(0.1).timeout
 	await create_timer(0.5).timeout
-	for tower in main._towers: tower.can_attack = false
+	for tower in main.world.towers_snapshot(): tower.can_attack = false
 	main.play_card(0, "sun_disc", Vector2(280, 840), {"immediate": true, "validate_position": false})
 	main.play_card(1, "sun_disc", Vector2(420, 820), {"immediate": true, "validate_position": false})
 	await RenderingServer.frame_post_draw
@@ -37,15 +37,15 @@ func _run() -> void:
 			if unit is Unit and unit.card_id == "sun_disc" and not seen.has(unit.team):
 				seen[unit.team] = true
 				main._active_skill_effect_system.apply_area_shield(unit, CardDB.get_card("sun_disc").active_skills[0])
-				print("[Event appeared] ", main.mode, " team=", unit.team, " deploy=", unit._deploy_timer, " ready=", unit.is_deployed())
+				print("[Event appeared] ", main.runtime.mode, " team=", unit.team, " deploy=", unit._deploy_timer, " ready=", unit.is_deployed())
 				await RenderingServer.frame_post_draw
 				root.get_texture().get_image().save_png(OUTPUT + "/appeared_%s.png" % unit.team)
 	recorder.set_recording_active(false)
 	var recording := recorder.get_recording()
-	if recording != null: recording.save_to_wav(OUTPUT + "/" + String(main.mode) + ".wav")
+	if recording != null: recording.save_to_wav(OUTPUT + "/" + String(main.runtime.mode) + ".wav")
 	AudioServer.remove_bus_effect(0, bus_index)
 	main.set_process(false)
-	main.mode = "local"
+	main.runtime.mode = "local"
 	main._clear_art_dev_units()
 	await process_frame
 	main.queue_free()

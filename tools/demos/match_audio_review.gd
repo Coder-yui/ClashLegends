@@ -13,30 +13,30 @@ func _run() -> void:
 	main._audio_manager.cue_played.connect(func(id, cue, _pos):
 		if id == "match":
 			seen.append(String(cue))
-			print("[match audio] ",main.mode," ",cue," battle=",main._minion_waves.elapsed))
+			print("[match audio] ",main.runtime.mode," ",cue," battle=",main.runtime._minion_waves.elapsed))
 	for _i in range(100):
-		if main._match_started: break
+		if main.runtime._match_started: break
 		await create_timer(0.1).timeout
 	var recorder := AudioEffectRecord.new()
 	var slot := AudioServer.get_bus_effect_count(0)
 	AudioServer.add_bus_effect(0,recorder)
 	recorder.set_recording_active(true)
-	for tower in main._towers: tower.can_attack=false
+	for tower in main.world.towers_snapshot(): tower.can_attack=false
 	# Deploy through the same card entry used by the workbench.
 	main.play_card(0,"ranged_minion",Vector2(320,920),{"immediate":true,"validate_position":false})
 	await create_timer(5.4).timeout
 	root.get_texture().get_image().save_png(OUTPUT+"/first_wave.png")
 	await create_timer(1.2).timeout
-	main._king_enemy.take_damage(10000)
+	main.world.king(1).take_damage(10000)
 	await create_timer(4).timeout
 	root.get_texture().get_image().save_png(OUTPUT+"/victory.png")
 	recorder.set_recording_active(false)
 	var wav := recorder.get_recording()
-	if wav != null: wav.save_to_wav(OUTPUT+"/"+main.mode+".wav")
+	if wav != null: wav.save_to_wav(OUTPUT+"/"+main.runtime.mode+".wav")
 	AudioServer.remove_bus_effect(0,slot)
 	var expected := "victory"
 	var ok := seen.count("minions_spawn")==1 and seen.count(expected)==1
-	print("[match audio result] ",main.mode," ",ok," ",seen)
+	print("[match audio result] ",main.runtime.mode," ",ok," ",seen)
 	main.queue_free()
 	await process_frame
 	quit(0 if ok else 1)

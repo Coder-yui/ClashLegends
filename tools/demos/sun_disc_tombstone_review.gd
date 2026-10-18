@@ -11,10 +11,10 @@ func _run() -> void:
 	root.add_child(main)
 	current_scene = main
 	main._start_local()
-	main._minion_waves_enabled = false
+	main.runtime._minion_waves_enabled = false
 	if main._ai != null: main._ai.enabled = false
 	await create_timer(0.5).timeout
-	for tower in main._towers:
+	for tower in main.world.towers_snapshot():
 		tower.can_attack = false
 		main._audio_manager.stop_building_audio(tower.get_instance_id())
 	var start := Time.get_ticks_msec()

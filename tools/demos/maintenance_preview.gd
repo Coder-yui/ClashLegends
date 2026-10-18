@@ -13,7 +13,7 @@ func _run() -> void:
 	current_scene = main
 	main._start_local()
 	main._ai.enabled = false
-	main._minion_waves_enabled = false
+	main.runtime._minion_waves_enabled = false
 	var left: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "garen", Vector2(260, 920), {"deploy_time_override": 0.0}))
 	var right: Unit = main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(260, 790), {"deploy_time_override": 0.0}))
 	main._spawn_unit(UnitSpawnRequest.new(0, "missfortune", Vector2(450, 1000), {"deploy_time_override": 0.0}))
@@ -50,11 +50,11 @@ func _status_migration() -> void:
 	root.add_child(main)
 	current_scene = main
 	main._start_local()
-	while not main._match_started: await process_frame
+	while not main.runtime._match_started: await process_frame
 	main.set_process(false)
 	main._ai.enabled = false
-	main._minion_waves_enabled = false
-	for tower in main._towers: tower.can_attack = false
+	main.runtime._minion_waves_enabled = false
+	for tower in main.world.towers_snapshot(): tower.can_attack = false
 	var recorder := AudioEffectRecord.new()
 	var slot := AudioServer.get_bus_effect_count(0)
 	AudioServer.add_bus_effect(0, recorder)
@@ -74,7 +74,7 @@ func _status_migration() -> void:
 		for card in cards:
 			for unit in get_nodes_in_group("combatants"):
 				if unit is Unit: unit.free()
-			main._commands.clear_impacts()
+			main.runtime._commands.clear_impacts()
 			main._active_skill_effect_system.clear()
 			main._skill_presentation.clear()
 			main._projectile_system.clear_all()
@@ -93,7 +93,7 @@ func _status_migration() -> void:
 				source.configure_carried_active_skill(skill)
 				source.skill_resource_value = source.skill_resource_max
 			recorder.set_recording_active(true)
-			if not skill.is_empty() and "--no-skill" not in OS.get_cmdline_user_args(): main._start_active_skill_cast(source, skill)
+			if not skill.is_empty() and "--no-skill" not in OS.get_cmdline_user_args(): main.runtime._start_active_skill_cast(source, skill)
 			if boundary_review:
 				source.stun(0.6)
 				for proxy in main._battle_presentation._world_root.get_children():

@@ -15,10 +15,10 @@ func _run() -> void:
 	current_scene = main
 	main._start_local()
 	main._ai.enabled = false
-	main._minion_waves_enabled = false
-	for tower in main._towers: tower.can_attack = false
+	main.runtime._minion_waves_enabled = false
+	for tower in main.world.towers_snapshot(): tower.can_attack = false
 	for attempt in 100:
-		if main._match_started: break
+		if main.runtime._match_started: break
 		await create_timer(0.1).timeout
 	if "--review-live" in OS.get_cmdline_user_args():
 		for arg in OS.get_cmdline_user_args():
@@ -119,7 +119,7 @@ func _run() -> void:
 	AudioServer.remove_bus_effect(0, slot)
 	main._deck_builder = DeckBuilder.new()
 	main.add_child(main._deck_builder)
-	main._deck_builder.open(main._deck, main._active_skill_choices, main._skin_choices, func(_deck, _skills, _skins): pass)
+	main._deck_builder.open(main.runtime._deck, main.runtime._active_skill_choices, main._skin_choices, func(_deck, _skills, _skins): pass)
 	main._deck_builder._open_card_info("pantheon")
 	await create_timer(0.2).timeout
 	await shot("pantheon_card_info")

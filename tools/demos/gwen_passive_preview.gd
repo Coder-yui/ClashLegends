@@ -11,8 +11,8 @@ func _run() -> void:
 	current_scene = main
 	main._start_local()
 	main._ai.enabled = false
-	main._minion_waves_enabled = false
-	for tower in main._towers:
+	main.runtime._minion_waves_enabled = false
+	for tower in main.world.towers_snapshot():
 		tower.can_attack = false
 	var record := AudioEffectRecord.new()
 	var effect_index := AudioServer.get_bus_effect_count(0)

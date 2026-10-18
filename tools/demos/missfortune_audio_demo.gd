@@ -11,7 +11,7 @@ func _run() -> void:
 	main._start_local()
 	main.set_process(false)
 	main._ai.enabled = false
-	main._minion_waves_enabled = false
+	main.runtime._minion_waves_enabled = false
 	main._audio_manager.cue_played.connect(func(id, cue, _pos): print("[missfortune audio] ", id, " ", cue))
 	var record := AudioEffectRecord.new()
 	var master := AudioServer.get_bus_index("Master")

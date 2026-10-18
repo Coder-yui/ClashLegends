@@ -17,11 +17,11 @@ func _run() -> void:
 	main._audio_manager.cue_played.connect(func(id: String, cue: StringName, _position: Vector2):
 		if id in ["rift_herald", "voidmite"] and is_instance_valid(reviewed_source):
 			print("AUDIO team=", reviewed_source.team, " card=", id, " cue=", cue, " action_elapsed=", reviewed_source.get_visual_action_duration() - reviewed_source.get_visual_action_time_left()))
-	main._minion_waves_enabled = false
+	main.runtime._minion_waves_enabled = false
 	main._ai.enabled = false
-	for tower in main._towers: tower.can_attack = false
+	for tower in main.world.towers_snapshot(): tower.can_attack = false
 	for attempt in 100:
-		if main._match_started: break
+		if main.runtime._match_started: break
 		await create_timer(0.1).timeout
 	var record := AudioEffectRecord.new()
 	var record_index := AudioServer.get_bus_effect_count(0)

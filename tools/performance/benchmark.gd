@@ -42,7 +42,7 @@ func run() -> void:
 	if case == "herald": deck[2] = "rift_herald"
 	var requested_deck := option("--perf-deck", "")
 	if not requested_deck.is_empty(): deck = Array(requested_deck.split(","))
-	main._deck = deck.duplicate()
+	main.runtime._deck = deck.duplicate()
 	root.add_child(main)
 	current_scene = main
 	main.set_process(false)
@@ -55,7 +55,7 @@ func run() -> void:
 		first_exit = {"memory": OS.get_static_memory_usage(), "objects": Performance.get_monitor(Performance.OBJECT_COUNT)}
 		main = load("res://scenes/main.tscn").instantiate()
 		main.set_script(preload("res://tools/performance/benchmark_main.gd"))
-		main._deck = deck.duplicate()
+		main.runtime._deck = deck.duplicate()
 		root.add_child(main)
 		current_scene = main
 		main.set_process(false)
@@ -74,7 +74,7 @@ func run() -> void:
 	process_frame.disconnect(sample_loading_frame)
 	main.set_process(false)
 	main._ai.enabled = false
-	main._minion_waves_enabled = case == "match"
+	main.runtime._minion_waves_enabled = case == "match"
 	main.drive_match = case == "match"
 	if not audio_enabled: main._audio_manager.end_battle()
 	print("[PERF_STAGE] scene ready")
@@ -98,7 +98,7 @@ func run() -> void:
 		var now := Time.get_ticks_usec()
 		var elapsed := (now - started) / 1000000.0
 		frame_ms.append((now - last_frame) / 1000.0)
-		if frame_ms.back() > 16.67: slow_frames.append({"frame": frames, "tick": main._sim_tick_id, "ms": frame_ms.back()})
+		if frame_ms.back() > 16.67: slow_frames.append({"frame": frames, "tick": main.runtime._sim_tick_id, "ms": frame_ms.back()})
 		var dt: float = (now - last_frame) / 1000000.0 if rendered else 0.05
 		last_frame = now
 		if case == "burst" and frames == 60:
@@ -118,7 +118,7 @@ func run() -> void:
 				if unit is Unit: unit.take_damage(10000000)
 			for team in [0, 1]:
 				var source: Unit = main._spawn_unit(UnitSpawnRequest.new(team, "rift_herald", Vector2(360, 850 if team == 0 else 430), {"deploy_time_override": 0.0}))
-				source.structure_rush.target = main._towers[2 if team == 0 else 0]
+				source.structure_rush.target = main.world.towers_snapshot()[2 if team == 0 else 0]
 				source.structure_rush.direction = Vector2.UP if team == 0 else Vector2.DOWN
 				source.structure_rush.target.hp = 10000000
 				source.structure_rush._impact(source)
@@ -128,18 +128,18 @@ func run() -> void:
 		var before := Time.get_ticks_usec()
 		main._process(dt)
 		main_process_ms.append((Time.get_ticks_usec() - before) / 1000.0)
-		backlog_ms.append(main._simulation_clock.remainder * 1000.0)
+		backlog_ms.append(main.runtime._simulation_clock.remainder * 1000.0)
 		objects.append(Performance.get_monitor(Performance.OBJECT_COUNT))
 		memory_bytes.append(float(OS.get_static_memory_usage()))
 		frames += 1
 		if case == "match":
-			if main.game_over: break
-			if main._sim_tick_id > 6120 or elapsed > 420.0:
+			if main.runtime.game_over: break
+			if main.runtime._sim_tick_id > 6120 or elapsed > 420.0:
 				push_error("完整对局未在规则上限内结束")
 				break
 		elif (rendered and elapsed >= duration) or (not rendered and frames >= int(duration * 20.0)):
 			break
-		if frames % (600 if rendered else 1000) == 0: print("[PERF_PROGRESS] case=%s frames=%d tick=%d" % [case, frames, main._sim_tick_id])
+		if frames % (600 if rendered else 1000) == 0: print("[PERF_PROGRESS] case=%s frames=%d tick=%d" % [case, frames, main.runtime._sim_tick_id])
 	main.sample_final_state_diagnostics()
 	if rendered:
 		await process_frame
@@ -153,7 +153,7 @@ func run() -> void:
 	var result := {"schema": 2, "capture_policy": "after_measurement", "diagnostic_policy": "20_final_state_samples_after_measurement", "case": case, "count": count, "seed": 12345, "rendered": rendered,
 		"preparation": option("--perf-prepare", "menu"), "entry": option("--perf-entry", "fresh"), "first_exit": first_exit,
 		"loading_frame_ms": distribution(loading_frames), "video_memory_bytes": Performance.get_monitor(Performance.RENDER_VIDEO_MEM_USED),
-		"deck": main._deck, "remote_deck": main._remote_deck,
+		"deck": main.runtime._deck, "remote_deck": main.runtime._remote_deck,
 		"resource_paths": main._resources.resources.keys(), "resource_cards": main._resources.cards.keys(),
 		"pool_capacity": main._battle_presentation.model_pool.capacity if is_instance_valid(main._battle_presentation) else {},
 		"loading_stages": main.get("preparation_metrics"), "pool": main._battle_presentation.model_pool.get("metrics") if is_instance_valid(main._battle_presentation) else {},
@@ -163,7 +163,7 @@ func run() -> void:
 		"events": events, "slow_frames": slow_frames, "objects": distribution(objects),
 		"visual": option("--perf-visual", "on"), "audio": audio_enabled,
 		"engine": Engine.get_version_info().string, "renderer": RenderingServer.get_current_rendering_method(),
-		"recorded_audio": record != null, "backlog_final_ms": main._simulation_clock.remainder * 1000.0, "frames": frames, "ticks": main._sim_tick_id, "setup_ms": setup_ms,
+		"recorded_audio": record != null, "backlog_final_ms": main.runtime._simulation_clock.remainder * 1000.0, "frames": frames, "ticks": main.runtime._sim_tick_id, "setup_ms": setup_ms,
 		"frame_ms": distribution(frame_ms), "main_process_ms": distribution(main_process_ms),
 		"tick_ms": distribution(main.tick_ms), "movement_ms": distribution(main.movement_ms),
 		"collision_ms": distribution(main.collision_ms), "navigation_ms": distribution(main.navigation_ms),
@@ -172,8 +172,8 @@ func run() -> void:
 		"backlog_ms": distribution(backlog_ms), "spawn_ms": distribution(spawn_ms), "transform_ms": distribution(transform_ms),
 		"memory_bytes": distribution(memory_bytes), "max_combatants": main.max_combatants,
 		"audio_budget": main._audio_manager.budget_snapshot(), "commands": main.commands,
-		"game_over": main.game_over, "terminal": main._terminal_result.get("reason", ""),
-		"completed": main.game_over if case == "match" else (spawned and transformed if case == "burst" else true)}
+		"game_over": main.runtime.game_over, "terminal": main._terminal_result.get("reason", ""),
+		"completed": main.runtime.game_over if case == "match" else (spawned and transformed if case == "burst" else true)}
 	main.free()
 	await create_timer(0.25).timeout
 	result.memory_after_exit = OS.get_static_memory_usage()

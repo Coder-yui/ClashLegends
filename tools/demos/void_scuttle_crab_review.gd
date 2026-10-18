@@ -37,9 +37,9 @@ func _run() -> void:
 		for effect in main._skill_presentation.frontal_effects: effect.timer = float(effect.duration)-age
 		await _capture("shrine-"+str(age))
 		if age == 0.8:
-			main.local_team = 1
+			main.runtime.local_team = 1
 			await _capture("reward-enemy-view")
-			main.local_team = 0
+			main.runtime.local_team = 0
 	main._skill_presentation.clear()
 	await create_timer(1.5).timeout
 	await _capture("cleared")

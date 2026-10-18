@@ -13,8 +13,8 @@ func _run() -> void:
 	main._start_local()
 	main.set_process(false)
 	main._ai.enabled = false
-	main._minion_waves_enabled = false
-	for tower in main._towers: tower.can_attack = false
+	main.runtime._minion_waves_enabled = false
+	for tower in main.world.towers_snapshot(): tower.can_attack = false
 	var a: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "masteryi", Vector2(180, 760), {"deploy_time_override": 0}))
 	var b: Unit = main._spawn_unit(UnitSpawnRequest.new(1, "masteryi", Vector2(180, 725), {"deploy_time_override": 0}))
 	a.hp = a.damage
@@ -22,7 +22,7 @@ func _run() -> void:
 	for tick in 12:
 		main._sim_step(0.05)
 		if a.hp <= 0 or b.hp <= 0:
-			print("[render mirror] tick=", main._sim_tick_id, " hp=", a.hp, "/", b.hp)
+			print("[render mirror] tick=", main.runtime._sim_tick_id, " hp=", a.hp, "/", b.hp)
 			await _capture("mirror-death")
 			break
 		await create_timer(0.05).timeout
@@ -38,7 +38,7 @@ func _run() -> void:
 		if yi._attack_hit_index != last:
 			last = yi._attack_hit_index
 			if last % 3 == 0:
-				print("[render combo] tick=", main._sim_tick_id, " main_attack=", last, " extras=", yi._pending_extra_attacks.size())
+				print("[render combo] tick=", main.runtime._sim_tick_id, " main_attack=", last, " extras=", yi._pending_extra_attacks.size())
 				await _capture("combo-" + str(last))
 		if last == 9 and yi._pending_extra_attacks.is_empty(): break
 		await create_timer(0.05).timeout
@@ -53,7 +53,7 @@ func _run() -> void:
 	main._audio_manager.cue_played.connect(func(card, cue, _position):
 		if card == "match" or String(card).begins_with("world_nexus"):
 			print("[terminal audio] ms=", Time.get_ticks_msec() - started, " ", card, " ", cue))
-	main._king_enemy.take_damage(main._king_enemy.hp + 1)
+	main.world.king(1).take_damage(main.world.king(1).hp + 1)
 	main._sim_step(0.05)
 	await _capture("terminal-immediate")
 	var deadline := Time.get_ticks_msec() + 30000

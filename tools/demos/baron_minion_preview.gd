@@ -15,8 +15,8 @@ func _run() -> void:
 	current_scene = _main
 	_main._start_local()
 	_main._ai.enabled = false
-	_main._minion_waves_enabled = false
-	for tower in _main._towers:
+	_main.runtime._minion_waves_enabled = false
+	for tower in _main.world.towers_snapshot():
 		tower.can_attack = false
 	for team in [0, 1]:
 		for i in range(4):

@@ -94,9 +94,9 @@ func _run() -> void:
 	controls_scroll.scroll_vertical = 0
 	panel._set_battle_zoom(1.0)
 	panel.show_workspace(2)
-	var paused_tick: int = main._sim_tick_id
+	var paused_tick: int = main.runtime._sim_tick_id
 	await create_timer(0.3).timeout
-	if main._sim_tick_id != paused_tick:
+	if main.runtime._sim_tick_id != paused_tick:
 		push_error("素材观察期间实战仍在推进")
 		quit(1)
 		return
@@ -117,7 +117,7 @@ func _run() -> void:
 	await _capture("form")
 	panel.show_workspace(1)
 	await create_timer(0.2).timeout
-	if main._sim_tick_id <= paused_tick:
+	if main.runtime._sim_tick_id <= paused_tick:
 		push_error("返回实战没有恢复权威 Tick")
 		quit(1)
 		return
@@ -162,12 +162,12 @@ func _review_deployment() -> void:
 		var main = load("res://scenes/main.tscn").instantiate()
 		root.add_child(main)
 		current_scene = main
-		main._deck = [card, "garen", "ashe", "teemo", "freeze", "masteryi", "tombstone", "aurelionsol"]
+		main.runtime._deck = [card, "garen", "ashe", "teemo", "freeze", "masteryi", "tombstone", "aurelionsol"]
 		main._start_local()
 		main._ai.enabled = false
 		main.set_process(false)
 		main.set_physics_process(false)
-		main._elixir.elixir = 10
+		main.runtime.account(0 if main.runtime.mode == "server" else main.runtime.local_team).elixir = 10
 		if not main.play_card(0, card, Vector2(x, 1260)):
 			push_error("正式下牌失败")
 			quit(1)

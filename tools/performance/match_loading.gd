@@ -14,8 +14,8 @@ class FixedOpponentMain extends "res://scripts/main.gd":
 	var fixed_deck: Array = []
 	var fixed_choices := {}
 	func _setup_battle_presentation() -> void:
-		_remote_deck = fixed_deck.duplicate()
-		_remote_active_skill_choices = fixed_choices.duplicate()
+		runtime._remote_deck = fixed_deck.duplicate()
+		runtime._remote_active_skill_choices = fixed_choices.duplicate()
 		super._setup_battle_presentation()
 
 func _initialize() -> void:
@@ -47,8 +47,8 @@ func run() -> void:
 	await process_frame
 	await process_frame
 	var main: Node2D = current_scene
-	main._deck = DECK_PLANS.HEAVY_BLUE.duplicate() if profile == "heavy" else DECK.duplicate()
-	main._active_skill_choices = DECK_PLANS.HEAVY_CHOICES[0].duplicate() if profile == "heavy" else {"anivia": 0, "gwen": 0, "tristana": 0, "gnar": 0}
+	main.runtime._deck = DECK_PLANS.HEAVY_BLUE.duplicate() if profile == "heavy" else DECK.duplicate()
+	main.runtime._active_skill_choices = DECK_PLANS.HEAVY_CHOICES[0].duplicate() if profile == "heavy" else {"anivia": 0, "gwen": 0, "tristana": 0, "gnar": 0}
 	button(main, "单机对战 AI").pressed.emit()
 	await process_frame
 	audit_stages.append(audit.snapshot("deck_browser"))
@@ -89,7 +89,7 @@ func run() -> void:
 		for spec in specs[path]: spec_counts[path].append({"id": spec.id, "team": spec.team, "form": spec.form, "count": spec.count})
 	var paths: Array = main._resources.resources.keys()
 	paths.sort()
-	var report := {"profile": profile, "engine": Engine.get_version_info().string, "display": DisplayServer.get_name(), "rendering": RenderingServer.get_current_rendering_method(), "gpu": RenderingServer.get_video_adapter_name(), "audio_driver": AudioServer.get_driver_name(), "deck": main._deck, "remote_deck": main._remote_deck, "choices": main._active_skill_choices, "remote_choices": main._remote_active_skill_choices, "confirm_to_loaded_usec": Time.get_ticks_usec() - started, "main": main.preparation_metrics, "resources": paths.size(), "paths_sha256": JSON.stringify(paths).sha256_text(), "cards": main._resources.cards, "raw_files": main._resources.raw_files.keys(), "model_times": pool.preparation_times, "model_by_path": pool.preparation_by_path, "model_metrics": pool.metrics, "wrapper_templates": pool._wrapper_templates.size(), "retained_by_recipe": warm.retained_by_recipe, "specs": spec_counts, "effects": warm.timings, "effect_draws": warm.draws, "effect_draws_skipped": warm.repeated_draws_skipped, "effect_drawn_resources": warm._drawn_resources.size(), "sampled_layers": warm.sampled_layers, "retained": warm.retained.size(), "errors": Array(main._resources.errors) + Array(pool.errors) + Array(warm.errors), "static_bytes": OS.get_static_memory_usage(), "static_peak_bytes": OS.get_static_memory_peak_usage()}
+	var report := {"profile": profile, "engine": Engine.get_version_info().string, "display": DisplayServer.get_name(), "rendering": RenderingServer.get_current_rendering_method(), "gpu": RenderingServer.get_video_adapter_name(), "audio_driver": AudioServer.get_driver_name(), "deck": main.runtime._deck, "remote_deck": main.runtime._remote_deck, "choices": main.runtime._active_skill_choices, "remote_choices": main.runtime._remote_active_skill_choices, "confirm_to_loaded_usec": Time.get_ticks_usec() - started, "main": main.preparation_metrics, "resources": paths.size(), "paths_sha256": JSON.stringify(paths).sha256_text(), "cards": main._resources.cards, "raw_files": main._resources.raw_files.keys(), "model_times": pool.preparation_times, "model_by_path": pool.preparation_by_path, "model_metrics": pool.metrics, "wrapper_templates": pool._wrapper_templates.size(), "retained_by_recipe": warm.retained_by_recipe, "specs": spec_counts, "effects": warm.timings, "effect_draws": warm.draws, "effect_draws_skipped": warm.repeated_draws_skipped, "effect_drawn_resources": warm._drawn_resources.size(), "sampled_layers": warm.sampled_layers, "retained": warm.retained.size(), "errors": Array(main._resources.errors) + Array(pool.errors) + Array(warm.errors), "static_bytes": OS.get_static_memory_usage(), "static_peak_bytes": OS.get_static_memory_peak_usage()}
 	FileAccess.open(output.path_join("loading.json"), FileAccess.WRITE).store_string(JSON.stringify(report, "\t"))
 	# One natural battle frame and one screenshot, outside preparation timing.
 	await process_frame

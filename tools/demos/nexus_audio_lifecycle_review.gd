@@ -15,7 +15,7 @@ func _run() -> void:
 	main._audio_manager.cue_played.connect(func(id, cue, _pos):
 		if String(id).begins_with("world_nexus"): print("[水晶声音] ", (Time.get_ticks_msec()-start)/1000.0, " ", id, " ", cue))
 	main._start_local()
-	main._minion_waves_enabled = false
+	main.runtime._minion_waves_enabled = false
 	if main._ai != null: main._ai.enabled = false
 	await create_timer(1).timeout
 	await RenderingServer.frame_post_draw
@@ -26,7 +26,7 @@ func _run() -> void:
 	await create_timer(4).timeout
 	await RenderingServer.frame_post_draw
 	root.get_texture().get_image().save_png(OUTPUT + "/idle.png")
-	main._king_enemy.take_damage(main._king_enemy.hp + 1)
+	main.world.king(1).take_damage(main.world.king(1).hp + 1)
 	await create_timer(0.3).timeout
 	await RenderingServer.frame_post_draw
 	root.get_texture().get_image().save_png(OUTPUT + "/death.png")

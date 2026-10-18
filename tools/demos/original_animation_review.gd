@@ -94,7 +94,7 @@ func _review_card(id: String, team: int, form: String) -> void:
 		trace.close()
 		return
 	# 预部署卡先推进正式生成队列，仍保留完整落地动作供后续采样。
-	main._tick_pending_card_pre_deployments(float(CardDB.get_card(id).get("pre_deploy_time", 0.0)) + Unit.SIM_DT)
+	main.runtime._tick_pending_card_pre_deployments(float(CardDB.get_card(id).get("pre_deploy_time", 0.0)) + Unit.SIM_DT)
 	unit = main._latest_unit_for_card(id, team)
 	if not is_instance_valid(unit):
 		_fail("生成后未找到 Unit")

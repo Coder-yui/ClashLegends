@@ -16,7 +16,7 @@ func _run() -> void:
 	main._start_local()
 	main.set_process(false)
 	main._ai.enabled = false
-	main._minion_waves_enabled = false
+	main.runtime._minion_waves_enabled = false
 	if "--knockback" in OS.get_cmdline_user_args():
 		await _review_knockback()
 		quit()
@@ -51,7 +51,7 @@ func _capture(label: String) -> void:
 
 ## 普通击退：一名撞岸、两名真实接触；不提供尚未实现的强制位移演示。
 func _review_knockback() -> void:
-	for tower in main._towers: tower.can_attack = false
+	for tower in main.world.towers_snapshot(): tower.can_attack = false
 	var shore: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "masteryi", Vector2(360, 750), {"deploy_time_override": 0}))
 	var mover: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "masteryi", Vector2(260, 850), {"deploy_time_override": 0}))
 	var receiver: Unit = main._spawn_unit(UnitSpawnRequest.new(1, "masteryi", Vector2(360, 850), {"deploy_time_override": 0}))

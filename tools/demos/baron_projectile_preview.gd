@@ -20,8 +20,8 @@ func _run() -> void:
 	current_scene = main
 	main._start_local()
 	main._ai.enabled = false
-	main._minion_waves_enabled = false
-	for tower in main._towers: tower.can_attack = false
+	main.runtime._minion_waves_enabled = false
+	for tower in main.world.towers_snapshot(): tower.can_attack = false
 	main.play_card(0, card, Vector2(360, 850), {"immediate": true, "validate_position": false})
 	main.play_card(1, target_card, Vector2(360, 850) + Vector2.UP.rotated(target_angle) * target_distance, {"immediate": true, "validate_position": false})
 	await create_timer(1.1).timeout

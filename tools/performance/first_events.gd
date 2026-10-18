@@ -28,7 +28,7 @@ func run() -> void:
 	Engine.max_fps = 60
 	main = load("res://scenes/main.tscn").instantiate()
 	main.set_script(preload("res://tools/performance/benchmark_main.gd"))
-	main._deck = ["gnar", "anivia", "belveth", "rift_herald", "garen", "ashe", "freeze", "heal"]
+	main.runtime._deck = ["gnar", "anivia", "belveth", "rift_herald", "garen", "ashe", "freeze", "heal"]
 	root.add_child(main)
 	current_scene = main
 	seed(12345)
@@ -40,9 +40,9 @@ func run() -> void:
 	var setup_ms := (Time.get_ticks_usec() - setup_start) / 1000.0
 	main.set_process(false)
 	main._ai.enabled = false
-	main._minion_waves_enabled = false
-	for tower in main._towers: tower.can_attack = false
-	main._audio_manager.cue_played.connect(func(card, cue, _pos): cues.append({"case": current_card, "frame": current_frame, "tick": main._sim_tick_id, "card": card, "cue": cue}))
+	main.runtime._minion_waves_enabled = false
+	for tower in main.world.towers_snapshot(): tower.can_attack = false
+	main._audio_manager.cue_played.connect(func(card, cue, _pos): cues.append({"case": current_card, "frame": current_frame, "tick": main.runtime._sim_tick_id, "card": card, "cue": cue}))
 	var viewport := root.get_viewport_rid()
 	RenderingServer.viewport_set_measure_render_time(viewport, true)
 	var world_viewport: RID = main._battle_presentation._viewport.get_viewport_rid()
@@ -61,7 +61,7 @@ func run() -> void:
 			await process_frame
 			current_frame = frame
 			var now := Time.get_ticks_usec()
-			var row := {"frame": frame, "tick_before": main._sim_tick_id, "elapsed_ms": (now - started) / 1000.0,
+			var row := {"frame": frame, "tick_before": main.runtime._sim_tick_id, "elapsed_ms": (now - started) / 1000.0,
 				"interval_ms": (now - last) / 1000.0, "resources_before": Performance.get_monitor(Performance.OBJECT_RESOURCE_COUNT),
 				"previous_render_cpu_ms": RenderingServer.viewport_get_measured_render_time_cpu(viewport),
 				"previous_render_gpu_ms": RenderingServer.viewport_get_measured_render_time_gpu(viewport),
@@ -90,7 +90,7 @@ func run() -> void:
 				if not skills.is_empty() and is_instance_valid(source):
 					source.configure_carried_active_skill(skills[0])
 					source.skill_resource_value = source.skill_resource_max
-					main._start_active_skill_cast(source, skills[0])
+					main.runtime._start_active_skill_cast(source, skills[0])
 				events.append({"frame": frame, "event": "skill", "ms": (Time.get_ticks_usec() - before) / 1000.0})
 				before = Time.get_ticks_usec()
 				main.play_card(0, "freeze", Vector2(140, 600), {"immediate": true, "validate_position": false})
@@ -103,7 +103,7 @@ func run() -> void:
 					if card == "gnar": source.transform_to_mega()
 					elif card in ["belveth", "anivia"]: source.take_damage(10000000)
 					elif card == "rift_herald":
-						source.structure_rush.target = main._towers[2]
+						source.structure_rush.target = main.world.towers_snapshot()[2]
 						source.structure_rush.direction = Vector2.UP
 						source.structure_rush._impact(source)
 				events.append({"frame": frame, "event": "transform_death_summon", "ms": (Time.get_ticks_usec() - before) / 1000.0})

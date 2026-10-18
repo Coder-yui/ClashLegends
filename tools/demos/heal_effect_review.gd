@@ -136,7 +136,7 @@ func _review_control(main: Node, panel: CanvasLayer) -> void:
 		await create_timer(0.45).timeout
 		await _capture_control(card + "-stun-b")
 	panel._set_battle_zoom(1.0)
-	for tower in main._towers: tower.stun(10.0)
+	for tower in main.world.towers_snapshot(): tower.stun(10.0)
 	await create_timer(0.3).timeout
 	await _capture_control("towers")
 	main.queue_free()

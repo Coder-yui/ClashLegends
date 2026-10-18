@@ -17,12 +17,12 @@ func _run() -> void:
 	current_scene = main
 	main._start_local()
 	main._ai.enabled = false
-	main._minion_waves_enabled = false
-	for tower in main._towers: tower.can_attack = false
+	main.runtime._minion_waves_enabled = false
+	for tower in main.world.towers_snapshot(): tower.can_attack = false
 	for attempt in 100:
-		if main._match_started: break
+		if main.runtime._match_started: break
 		await create_timer(0.1).timeout
-	main._deck[0] = "darius"
+	main.runtime._deck[0] = "darius"
 	main._audio_manager.cue_played.connect(func(card: String, cue: StringName, _position: Vector2):
 		if card == "darius": print("DARIUS_AUDIO ", cue))
 	var record := AudioEffectRecord.new()
@@ -40,7 +40,7 @@ func _run() -> void:
 		if team == 0:
 			unit.active_ability_id = 99010
 			unit.active_ability_slot = 0
-			main._register_active_skill(unit, "darius", 0)
+			main.runtime._register_active_skill(unit, "darius", 0)
 		main.play_card(1-team, "garen", center + Vector2(60, -40 if team == 0 else 40), {"immediate": true, "validate_position": false})
 		var target: Unit = main._latest_unit_for_card("garen", 1-team)
 		target.move_speed = 0.0
@@ -53,7 +53,7 @@ func _run() -> void:
 		await shot("team%d_blood_rage" % team)
 		target.hp = 300
 		if team == 0:
-			main._elixir.elixir = 5.0
+			main.runtime.account(0 if main.runtime.mode == "server" else main.runtime.local_team).elixir = 5.0
 			main.use_active_skill(unit.active_ability_id, 0)
 			await create_timer(0.2).timeout
 			await shot("team0_paid_pending")
@@ -63,7 +63,7 @@ func _run() -> void:
 		await create_timer(1.0).timeout
 		await shot("team%d_free_recast" % team)
 		if team == 0:
-			print("DARIUS_RECAST ", main.get_active_skill_snapshot(unit.active_ability_id))
+			print("DARIUS_RECAST ", main.runtime.get_active_skill_snapshot(unit.active_ability_id))
 			main.play_card(1, "garen", center + Vector2(60, -40), {"immediate": true, "validate_position": false})
 			var next: Unit = main._latest_unit_for_card("garen", 1)
 			next.move_speed = 0.0
@@ -85,7 +85,7 @@ func _run() -> void:
 	AudioServer.remove_bus_effect(0, slot)
 	main._deck_builder = DeckBuilder.new()
 	main.add_child(main._deck_builder)
-	main._deck_builder.open(main._deck, main._active_skill_choices, main._skin_choices, func(_deck, _skills, _skins): pass)
+	main._deck_builder.open(main.runtime._deck, main.runtime._active_skill_choices, main._skin_choices, func(_deck, _skills, _skins): pass)
 	main._deck_builder._open_card_info("darius")
 	await create_timer(0.2).timeout
 	await shot("darius_card_info")

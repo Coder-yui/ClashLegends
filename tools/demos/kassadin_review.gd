@@ -55,7 +55,7 @@ func _run() -> void:
 	for unit in units:
 		var skill: Dictionary = CardDB.active_skills_for("kassadin")[0].duplicate(true)
 		skill.cast_forward = Vector2.UP if unit.team == 0 else Vector2.DOWN
-		main._start_active_skill_cast(unit,skill)
+		main.runtime._start_active_skill_cast(unit,skill)
 		main._active_skill_effect_system.apply(unit,skill)
 	for age in [0.05,0.15,0.3,0.6,1.1,2.0,3.0]:
 		for effect in main._skill_presentation.frontal_effects: effect.timer = 3.0-age

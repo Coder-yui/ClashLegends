@@ -15,13 +15,13 @@ func _capture() -> void:
 	main._start_art_dev()
 	main._art_dev_panel.hide()
 
-	var ruined_tower: Tower = main._towers[0]
+	var ruined_tower: Tower = main.world.towers_snapshot()[0]
 	ruined_tower.take_damage(ruined_tower.max_hp + 1.0)
 	for _frame in range(150):
 		await process_frame
 
-	var ruined_disc: Unit = main._spawn_card_units(0, "sun_disc", ruined_tower.position)[0]
-	var normal_disc: Unit = main._spawn_card_units(1, "sun_disc", Vector2(580.0, 380.0))[0]
+	var ruined_disc: Unit = main.runtime._spawn_card_units(0, "sun_disc", ruined_tower.position)[0]
+	var normal_disc: Unit = main.runtime._spawn_card_units(1, "sun_disc", Vector2(580.0, 380.0))[0]
 	main._spawn_unit(UnitSpawnRequest.new(1, "aurelionsol", Vector2(140.0, 770.0), {"deploy_time_override": 0.0}))
 	var projectile_target: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "melee_minion", Vector2(580.0, 620.0), {"deploy_time_override": 0.0}))
 	for _frame in range(12):

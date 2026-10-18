@@ -37,14 +37,14 @@ func _run() -> void:
 	main = load("res://scenes/main.tscn").instantiate()
 	root.add_child(main)
 	current_scene = main
-	main._deck = ["garen", "gnar", "target_dummy", "ashe", "belveth", "freeze", "stasis", "zap"]
+	main.runtime._deck = ["garen", "gnar", "target_dummy", "ashe", "belveth", "freeze", "stasis", "zap"]
 	main._start_local()
 	seed(60104)
 	main.set_process(false)
 	main._ai.enabled = false
-	main._minion_waves_enabled = false
+	main.runtime._minion_waves_enabled = false
 	# Preview fixture: neutral arena structures do not interfere with the subject.
-	for actor in main._towers + [main._king_player, main._king_enemy]: actor.can_attack = false
+	for actor in main.world.towers_snapshot() + [main.world.king(0), main.world.king(1)]: actor.can_attack = false
 	for child in main.get_children():
 		if child is CanvasLayer: child.hide()
 	main._audio_manager.cue_played.connect(func(id, cue, pos): _event("audio", {"card": id, "cue": cue, "pos": [pos.x, pos.y]}))
@@ -59,7 +59,7 @@ func _run() -> void:
 		if frame % 3 == 0: _sample()
 		# Movie mode normally forces this; explicit drawing also handles background windows.
 		RenderingServer.force_draw(false)
-	_event("capture_end", {"ticks": main._sim_tick_id, "control_frame": control_frame})
+	_event("capture_end", {"ticks": main.runtime._sim_tick_id, "control_frame": control_frame})
 	trace.close()
 	main.queue_free()
 	await process_frame
@@ -84,7 +84,7 @@ func _setup() -> void:
 		_play("target_dummy", 1, Vector2(360, 400))
 		subject = _play("gnar", 0, Vector2(360, 540))
 	elif shot == "tower":
-		tower = main._towers[0]
+		tower = main.world.towers_snapshot()[0]
 		subject = _play("garen", 1, tower.position + Vector2(0, -110))
 		# Arrange a stage threshold; production damage crosses it during recording.
 		tower.hp = tower.max_hp * 2.0 / 3.0 + 88.0
@@ -174,7 +174,7 @@ func _actions() -> void:
 	elif shot.begins_with("herald_") and not applied:
 		# Time only the real spell launch. Deployment, preparation, dash and impact remain autonomous.
 		var spell_team := 1 if shot == "herald_enemy_stasis" else 0
-		var origin: Vector2 = main._king_enemy.position if spell_team == 1 else main._king_player.position
+		var origin: Vector2 = main.world.king(1).position if spell_team == 1 else main.world.king(0).position
 		var stats := CardDB.get_card("stasis")
 		var flight_time := ceilf(maxf(float(stats.flight_min_duration), origin.distance_to(herald_spell_center) / float(stats.flight_speed)) / FixedStepClock.STEP - 0.00000001) * FixedStepClock.STEP
 		if subject.structure_rush.phase == StructureRushState.Phase.PREPARING and subject.structure_rush.remaining <= flight_time - 0.15 + 0.000001:

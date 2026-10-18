@@ -16,10 +16,10 @@ class ProbeMain extends "res://scripts/main.gd":
 	func _setup_battle_presentation() -> void: pass
 	func _start_local() -> void:
 		super._start_local()
-		_remote_deck = _deck.duplicate()
-		_remote_active_skill_choices = _active_skill_choices.duplicate()
+		runtime._remote_deck = runtime._deck.duplicate()
+		runtime._remote_active_skill_choices = runtime._active_skill_choices.duplicate()
 		_ai.enabled = false
-		_minion_waves_enabled = false
+		runtime._minion_waves_enabled = false
 
 class CountingHand extends CardHand:
 	var refreshes := 0
@@ -51,7 +51,7 @@ func load_reference(file_name: String) -> GDScript:
 func make_main() -> Node2D:
 	var main: Node2D = load("res://scenes/main.tscn").instantiate()
 	main.set_script(ProbeMain)
-	main._deck = DECK.duplicate()
+	main.runtime._deck = DECK.duplicate()
 	root.add_child(main)
 	main.set_process(false)
 	seed(12345)
@@ -63,10 +63,10 @@ func make_main() -> Node2D:
 	main._hand.free()
 	main._hand = CountingHand.new()
 	main.add_child(main._hand)
-	main._hand.setup(main._elixir, DECK)
-	main._hand.growth_progress_query = func(id: String): return main._card_growth.progress(main.local_team, id)
-	main._hand.visual_card_query = func(id: String): return main._card_growth.resolved_id(main.local_team, id)
-	main._hand.cost_query = func(id: String): return main.card_cost_for_team(main.local_team, id)
+	main._hand.setup(main.runtime.account(0 if main.runtime.mode == "server" else main.runtime.local_team), DECK)
+	main._hand.growth_progress_query = func(id: String): return main.runtime._card_growth.progress(main.runtime.local_team, id)
+	main._hand.visual_card_query = func(id: String): return main.runtime._card_growth.resolved_id(main.runtime.local_team, id)
+	main._hand.cost_query = func(id: String): return main.runtime.card_cost_for_team(main.runtime.local_team, id)
 	main._hand.set_cycle_state(DECK.slice(0, 4), DECK.slice(4, 8))
 	return main
 
@@ -109,13 +109,13 @@ func private_growth(team: int) -> Dictionary: return {team: GROWTH[team]}
 
 func measure_count(count: int) -> Dictionary:
 	var host: Node2D = await make_main()
-	host.mode = "server"
+	host.runtime.mode = "server"
 	host._snapshot_system.reset_session("repeated-work")
-	host._card_growth.replace_replica(GROWTH)
-	host._elixir.elixir = 3.0
-	host._elixir_p1 = ElixirManager.new()
-	host.add_child(host._elixir_p1)
-	host._elixir_p1.elixir = 8.0
+	host.runtime._card_growth.replace_replica(GROWTH)
+	host.runtime.account(0 if host.runtime.mode == "server" else host.runtime.local_team).elixir = 3.0
+	host.runtime.bind_account(1, ElixirManager.new())
+	host.add_child(host.runtime.account(1))
+	host.runtime.account(1).elixir = 8.0
 	for index in count:
 		var team := index % 2
 		var card := "ashe" if index % 4 == 0 else "melee_minion"
@@ -125,14 +125,14 @@ func measure_count(count: int) -> Dictionary:
 	var a: Node2D = await make_main()
 	var b: Node2D = await make_main()
 	for client in [a, b]:
-		client.mode = "client"
-		client.local_team = 0
+		client.runtime.mode = "client"
+		client.runtime.local_team = 0
 		client._snapshot_system.reset_session("repeated-work")
 	var old_parser: RefCounted = legacy_snapshot.new(a, a._projectile_system)
 	old_parser.lifecycle.reset("repeated-work")
-	host._sim_tick_id = 1000
+	host.runtime._sim_tick_id = 1000
 	var warm: PackedByteArray = host._snapshot_system.capture(0)
-	for client in [a, b]: check(client._snapshot_system.apply(warm), "initial replica warmup")
+	for client in [a, b]: check(client._snapshot_system.apply_decoded(client._snapshot_system.decode_validated(warm)), "initial replica warmup")
 	var packets: Array[PackedByteArray] = []
 	var frame: Array = host._snapshot_system.capture_public_frame()
 	for index in rounds * samples:
@@ -146,7 +146,7 @@ func measure_count(count: int) -> Dictionary:
 			var bytes: PackedByteArray = packets[cursor[0]]
 			cursor[0] += 1
 			var tick: int = old_parser.packet_tick(bytes)
-			if a._snapshot_system.apply(bytes): accepted[0] += 1
+			if a._snapshot_system.apply_decoded(a._snapshot_system.decode_validated(bytes)): accepted[0] += 1
 			return tick,
 		func():
 			var decoded = b._snapshot_system.decode_validated(packets[cursor[1]])
@@ -182,7 +182,7 @@ func measure_count(count: int) -> Dictionary:
 	for depth in [1, 16, 64, 256]:
 		queue_memory.append(queue_probe(a._snapshot_system, warm, depth, false))
 	queue_memory.append(queue_probe(a._snapshot_system, warm, NetworkPlayback.MAX_QUEUED + 1, true))
-	var result := {"count": count, "deck": host._deck, "remote_deck": host._remote_deck,
+	var result := {"count": count, "deck": host.runtime._deck, "remote_deck": host.runtime._remote_deck,
 		"resource_cards": host._resources.cards.keys(), "resource_paths": host._resources.resources.keys(),
 		"pool_specs": pool_summary(host), "decode_apply": decode, "capture": captures,
 		"growth": growth, "cost": cost, "queue_memory": queue_memory,
@@ -196,11 +196,11 @@ func measure_count(count: int) -> Dictionary:
 
 func replica_state(main: Node2D) -> Array:
 	var units: Array = []
-	for id in main._client_units:
-		units.append(main._snapshot_system._unit_snapshot_payload(int(id), main._client_units[id]))
+	for id in main.world.replica_units_snapshot():
+		units.append(main._snapshot_system._unit_snapshot_payload(int(id), main.world.replica_units_snapshot()[id], main._snapshot_system.lifecycle.spawns[id]))
 	var towers: Array = []
-	for tower in main._towers: towers.append(main._snapshot_system._tower_snapshot_payload(tower))
-	return [units, towers, main._projectile_system.client_snapshot(), main._card_growth.snapshot(), main._elixir.elixir, main._match_rules.snapshot()]
+	for tower in main.world.towers_snapshot(): towers.append(main._snapshot_system._tower_snapshot_payload(tower))
+	return [units, towers, main._projectile_system.client_snapshot(), main.runtime._card_growth.snapshot(), main.runtime.account(0 if main.runtime.mode == "server" else main.runtime.local_team).elixir, main.runtime._match_rules.snapshot()]
 
 func pool_summary(main: Node2D) -> Dictionary:
 	var result := {}
@@ -215,7 +215,7 @@ func measure_growth(main: Node2D) -> Dictionary:
 	var old: RefCounted = legacy_growth.new()
 	var payload := private_growth(0)
 	old.replace_replica(payload)
-	main.apply_growth_snapshot(payload)
+	main.runtime.apply_growth_snapshot(payload)
 	var counts := [0, 0]
 	var hand: CountingHand = main._hand
 	# 旧ref状态用于旧增长查询；UI执行真实_refresh，不替换成空计数器。
@@ -232,18 +232,18 @@ func measure_growth(main: Node2D) -> Dictionary:
 		func():
 			hand.growth_progress_query = query
 			var before := hand.refreshes
-			for index in 100: main.apply_growth_snapshot(payload)
+			for index in 100: main.runtime.apply_growth_snapshot(payload)
 			counts[1] += hand.refreshes - before
 			return true, 100)
 	hand.growth_progress_query = query
 	check(counts == [rounds * samples * 100, 0], "same growth UI refresh counts")
-	check(old.snapshot() == main._card_growth.snapshot(), "growth final states")
+	check(old.snapshot() == main.runtime._card_growth.snapshot(), "growth final states")
 	result.refreshes = counts
-	result.old_source = "reference MatchCardGrowth.replace_replica + real CardHand._refresh, equivalent archived Main.apply_growth_snapshot body"
+	result.old_source = "reference MatchCardGrowth.replace_replica + real CardHand._refresh, equivalent archived Main.runtime.apply_growth_snapshot body"
 	var changed := payload.duplicate(true)
 	changed[0].kayn.ranged = 3
 	var before := hand.refreshes
-	main.apply_growth_snapshot(changed)
+	main.runtime.apply_growth_snapshot(changed)
 	check(hand.refreshes == before + 1, "changed growth still refreshes exactly once")
 	return result
 

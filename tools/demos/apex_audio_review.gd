@@ -13,20 +13,20 @@ func _run() -> void:
 	for arg in OS.get_cmdline_user_args():
 		if arg == "--team=1": team = 1
 	main._start_local()
-	main._minion_waves_enabled = false
+	main.runtime._minion_waves_enabled = false
 	if main._ai != null: main._ai.enabled = false
 	var started := Time.get_ticks_msec()
 	main._audio_manager.cue_played.connect(func(id, cue, _pos):
-		if id == "apex_turret": print("[apex] ", main.mode, " t=", (Time.get_ticks_msec() - started) / 1000.0, " ", cue))
+		if id == "apex_turret": print("[apex] ", main.runtime.mode, " t=", (Time.get_ticks_msec() - started) / 1000.0, " ", cue))
 	var recorder := AudioEffectRecord.new()
 	var bus_index := AudioServer.get_bus_effect_count(0)
 	AudioServer.add_bus_effect(0, recorder)
 	recorder.set_recording_active(true)
 	for _attempt in range(100):
-		if main._match_started: break
+		if main.runtime._match_started: break
 		await create_timer(0.1).timeout
 	await create_timer(0.5).timeout
-	for tower in main._towers: tower.can_attack = false
+	for tower in main.world.towers_snapshot(): tower.can_attack = false
 	main.play_card(1 - team, "garen", Vector2(360, 640), {"immediate": true, "validate_position": false})
 	var target: Unit = main._latest_unit_for_card("garen", 1 - team)
 	target.freeze(30.0)
@@ -56,12 +56,12 @@ func _run() -> void:
 	await create_timer(3.0).timeout
 	recorder.set_recording_active(false)
 	var wav := recorder.get_recording()
-	if wav != null: wav.save_to_wav(OUTPUT + "/" + String(main.mode) + ".wav")
+	if wav != null: wav.save_to_wav(OUTPUT + "/" + String(main.runtime.mode) + ".wav")
 	AudioServer.remove_bus_effect(0, bus_index)
 	await RenderingServer.frame_post_draw
 	root.get_texture().get_image().save_png(OUTPUT + "/battle.png")
 	main.set_process(false)
-	main.mode = "local"
+	main.runtime.mode = "local"
 	main._clear_art_dev_units()
 	await process_frame
 	main.queue_free()
