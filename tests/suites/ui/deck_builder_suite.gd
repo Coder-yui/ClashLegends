@@ -190,6 +190,7 @@ func run(harness: Object, main: Node2D) -> void:
 			source.setup(int(mite_teams[index % mite_teams.size()]), CardDB.get_card("voidmite"), "voidmite")
 			sources.append(source)
 			var view := UnitModel3D.new()
+			view.material_states = ModelVisualResources.tool_material_states()
 			view.model_factory = pool.take
 			view.model_recycler = pool.recycle
 			loading_match._battle_presentation._world_root.add_child(view)

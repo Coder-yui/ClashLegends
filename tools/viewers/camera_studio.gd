@@ -565,6 +565,9 @@ func _rebuild_group_preview(keep_camera: bool) -> void:
 			"scale": member.get("scale", 1.0),
 		})
 	var rendered: Array = _preview.show_packed_scenes(entries)
+	if not _preview.errors.is_empty():
+		_fail("；".join(_preview.errors))
+		return
 	var rebuilt: Array[Dictionary] = []
 	for index in rendered.size():
 		if index >= _members.size():

@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "source": "res://assets/units/gnar/source/gnar_small.glb",
+  "output": "res://assets/generated/model_templates/gnar_small.res",
+  "extra_clips": [
+    "Run1_In"
+  ],
+  "cards": [
+    "gnar"
+  ],
+  "animation_operations": [],
+  "mesh_filters": [
+    {
+      "node": "Meshes",
+      "output": "filtered",
+      "exclude_surfaces": [
+        2
+      ]
+    }
+  ],
+  "composed_animations": [
+    {
+      "library": "gnar_runtime",
+      "output": "Revert_Transform",
+      "scale": "Revert_Scale",
+      "base": "Scale_Base",
+      "pose": "Gnar_Revert_anm",
+      "scale_start_overrides": {
+        "Skeleton/Skeleton3D:Root_Lower": 2.45,
+        "Skeleton/Skeleton3D:Root_Upper": 2.45
+      }
+    }
+  ],
+  "import_settings_sha256": "d827455decc8600e876adff2f59961d1eed0c1c837dd7acfb9a684560b49878c"
+}

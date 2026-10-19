@@ -127,7 +127,7 @@ func _run() -> void:
 	await process_frame
 	var clips := _preview.show_packed_scene(packed)
 	if _preview.model == null:
-		_fail("The scene root must be Node3D")
+		_fail("；".join(_preview.errors) if not _preview.errors.is_empty() else "The scene root must be Node3D")
 		return
 	if _preview.model.has_method("prepare_visual_animations"):
 		_preview.model.call("prepare_visual_animations")

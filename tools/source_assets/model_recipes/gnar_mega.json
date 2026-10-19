@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "source": "res://assets/units/gnar/source/gnar_mega.glb",
+  "output": "res://assets/generated/model_templates/gnar_mega.res",
+  "extra_clips": [
+    "Run_In"
+  ],
+  "cards": [
+    "gnar"
+  ],
+  "animation_operations": [],
+  "mesh_filters": [
+    {
+      "node": "Meshes",
+      "output": "filtered",
+      "hidden_bone": "Rock"
+    }
+  ],
+  "composed_animations": [
+    {
+      "library": "gnar_runtime",
+      "output": "Rage_Transform",
+      "scale": "Rage_Scale",
+      "base": "Rage_Scale_Base",
+      "pose": "Rage_Move",
+      "scale_start_overrides": {
+        "Skeleton/Skeleton3D:Root": 0.68,
+        "Skeleton/Skeleton3D:Tail1": 1.470588
+      }
+    },
+    {
+      "library": "gnar_runtime",
+      "output": "Rage_Spell2_Transform",
+      "scale": "Rage_Scale",
+      "base": "Rage_Scale_Base",
+      "pose": "GnarBig_Spell2_Tran_anm",
+      "scale_start_overrides": {
+        "Skeleton/Skeleton3D:Root": 0.68,
+        "Skeleton/Skeleton3D:Tail1": 1.470588
+      }
+    }
+  ],
+  "import_settings_sha256": "797fc71e382c7da3362a693236f1ad70fcb33831f66e10f8409d164244fa1bf1"
+}

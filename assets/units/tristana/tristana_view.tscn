@@ -2,6 +2,7 @@
 [ext_resource type="PackedScene" path="res://assets/units/tristana/source/tristana.glb" id="1"]
 [ext_resource type="Script" path="res://assets/units/tristana/tristana_view.gd" id="2"]
 [node name="TristanaView" type="Node3D"]
+metadata/model_pool_construction = {"version": 1, "mode": "loading-only", "scripts": []}
 script = ExtResource("2")
 [node name="Model" parent="." instance=ExtResource("1")]
 scale = Vector3(1.45, 1.45, 1.45)

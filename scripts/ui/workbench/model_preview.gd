@@ -5,6 +5,7 @@ signal camera_changed
 
 ## 工具摄影棚开启后使用交互相机、三点灯光和竖幅画布；普通工作台保持原来的静态观察器行为。
 var studio_mode := false
+var errors := PackedStringArray()
 var player: AnimationPlayer
 var model: Node3D
 var _viewport: SubViewport
@@ -109,6 +110,7 @@ func show_definition(stats: Dictionary, team: int) -> PackedStringArray:
 ## 工具展台也使用同一套灯光、实例隔离、动作播放与包围盒取景。
 func show_packed_scene(packed: PackedScene) -> PackedStringArray:
 	_clear_preview_models()
+	errors.clear()
 	player = null
 	if packed == null:
 		return PackedStringArray()
@@ -117,13 +119,13 @@ func show_packed_scene(packed: PackedScene) -> PackedStringArray:
 		return PackedStringArray()
 	_pivot.add_child(model)
 	_pivot.rotation = Vector3.ZERO
-	_find_player(model)
-	if player != null:
-		for library_name in player.get_animation_library_list():
-			var library := player.get_animation_library(library_name).duplicate(true) as AnimationLibrary
-			player.remove_animation_library(library_name)
-			player.add_animation_library(library_name, library)
-		player.stop()
+	errors = ModelVisualResources.prepare_visual_root(model)
+	if not errors.is_empty():
+		model.free()
+		model = null
+		return PackedStringArray()
+	player = ModelVisualResources.prepare_instance_animations(model)
+	if player != null: player.stop()
 	var bounds: Array[AABB] = []
 	_collect_bounds(model, bounds)
 	var box := AABB(Vector3.ZERO, Vector3.ONE)
@@ -148,6 +150,7 @@ func show_packed_scene(packed: PackedScene) -> PackedStringArray:
 ## 返回值保留了 wrapper、model、player 和动画列表，供工具面板调整每个成员。
 func show_packed_scenes(entries: Array) -> Array:
 	_clear_preview_models()
+	errors.clear()
 	var result: Array = []
 	for entry in entries:
 		if not entry is Dictionary:
@@ -167,10 +170,13 @@ func show_packed_scenes(entries: Array) -> Array:
 			wrapper.free()
 			continue
 		wrapper.add_child(instance)
-		var instance_player := _find_player_in(instance)
-		if instance_player != null:
-			_duplicate_animation_libraries(instance_player)
-			instance_player.stop()
+		errors.append_array(ModelVisualResources.prepare_visual_root(instance))
+		if not errors.is_empty():
+			wrapper.free()
+			_clear_preview_models()
+			return []
+		var instance_player := ModelVisualResources.prepare_instance_animations(instance)
+		if instance_player != null: instance_player.stop()
 		_model_roots.append(wrapper)
 		_models.append(instance)
 		_players.append(instance_player)
@@ -203,21 +209,6 @@ func _clear_preview_models() -> void:
 	model = null
 	player = null
 
-func _duplicate_animation_libraries(target_player: AnimationPlayer) -> void:
-	for library_name in target_player.get_animation_library_list():
-		var library := target_player.get_animation_library(library_name).duplicate(true) as AnimationLibrary
-		target_player.remove_animation_library(library_name)
-		target_player.add_animation_library(library_name, library)
-
-func _find_player_in(node: Node) -> AnimationPlayer:
-	if node is AnimationPlayer:
-		return node as AnimationPlayer
-	for child in node.get_children():
-		var found := _find_player_in(child)
-		if found != null:
-			return found
-	return null
-
 func _recalculate_bounds(reset_camera: bool) -> void:
 	var bounds: Array[AABB] = []
 	if not _model_roots.is_empty():
@@ -245,12 +236,6 @@ func _recalculate_bounds(reset_camera: bool) -> void:
 			_apply_camera()
 	else:
 		set_zoom(1.0)
-
-func _find_player(node: Node) -> void:
-	if node is AnimationPlayer and player == null:
-		player = node
-	for child in node.get_children():
-		_find_player(child)
 
 func _collect_bounds(node: Node, output: Array[AABB]) -> void:
 	if node is MeshInstance3D and node.mesh != null and node.is_visible_in_tree():

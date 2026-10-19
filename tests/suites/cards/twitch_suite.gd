@@ -134,7 +134,7 @@ func _check_ghost_materials() -> void:
 	mesh.mesh.material = original
 	root.add_child(mesh)
 	var resources := ModelVisualResources.new()
-	resources.bind_model(root)
+	resources.bind_model(root, {}, ModelVisualResources.tool_material_states())
 	resources.apply_overlays(false, false, false, false, true)
 	var ghost := mesh.get_active_material(0) as BaseMaterial3D
 	_expect(ghost != original and ghost.transparency == BaseMaterial3D.TRANSPARENCY_ALPHA and ghost.albedo_color.a < 0.5, "隐身创建实例独立半透明材质")
@@ -212,6 +212,7 @@ func _check_control_entry() -> void:
 func _check_animation_mapping() -> void:
 	var rat := _spawn("twitch", 0, Vector2(300, 1000))
 	var view := UnitModel3D.new()
+	view.material_states = ModelVisualResources.tool_material_states()
 	var camera := Camera3D.new()
 	_main.add_child(camera)
 	camera.position = Vector3(0, 10, 20)

@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "source": "res://assets/units/void_gate/source/void_gate.glb",
+  "output": "res://assets/generated/model_templates/void_gate.res",
+  "extra_clips": [
+    "Spawn",
+    "Idle1",
+    "Spit",
+    "Death"
+  ],
+  "cards": [
+    "void_gate"
+  ],
+  "animation_operations": [
+    {
+      "kind": "absolute_delta",
+      "clip": "Spit",
+      "base": "Idle1"
+    },
+    {
+      "kind": "clip_settings",
+      "clip": "Death",
+      "length": 2.2
+    }
+  ],
+  "mesh_filters": [],
+  "import_settings_sha256": "5caca982624771dafca0214ed4389e2319e323f4eba5a46ee2a486d08412802b"
+}

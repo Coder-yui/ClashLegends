@@ -41,6 +41,7 @@ func _ready() -> void:
 	_build_static_ui()
 	# 3D 表现层：赵信出场播放 Spell4 新月护卫，木桩显示各自 3D 模型。
 	_presentation = BattlePresentation3D.new()
+	_presentation.tool_material_mode = true
 	add_child(_presentation)
 	_presentation.setup(Vector2(FIELD_W, FIELD_H), 40.0)
 	spawn_round()

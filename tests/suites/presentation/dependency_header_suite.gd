@@ -1,61 +1,40 @@
 extends RefCounted
+## Small generated-artifact contract, no real source parsing or player prewarm.
 const MANIFEST = preload("res://scripts/presentation/effect_resource_manifest.gd")
 
 func run(harness: Object) -> void:
-	var path := "/tmp/clash-effect-dependencies-%d.json" % OS.get_process_id()
-	var header_path := path.get_basename() + ".dependencies.json"
-	var original := {"fps": 30, "emitters": [{"name": "test", "enabled": false, "texture_path": "res://assets/arena/arena_rift_v4.png", "nested": {"mesh": "res://assets/units/gnar/gnar_mega_view.tscn", "blendMode": 4}}], "frames": [[[[1, 2, 3]]]]}
-	FileAccess.open(path, FileAccess.WRITE).store_string(JSON.stringify(original))
-	var header := {"schema": 1, "source": path, "source_sha256": FileAccess.get_sha256(path), "data": {"fps": 30, "emitters": original.emitters}}
-	FileAccess.open(header_path, FileAccess.WRITE).store_string(JSON.stringify(header))
-	header = JSON.parse_string(FileAccess.get_file_as_string(header_path))
-	var raw: Array = []
-	var data: Variant = MANIFEST.dependency_data(path, raw)
-	harness._expect(data == header.data and not data.has("frames") and raw == [header_path], "匹配完整源SHA的依赖头保留元数据且登记原始依赖")
-	data = MANIFEST.dependency_data(path, raw)
-	harness._expect(data == header.data and raw == [header_path], "重复收集只登记一次依赖头且保留禁用层及嵌套资源/Shader字段")
-	original.frames[0][0][0][0] = 9
-	FileAccess.open(path, FileAccess.WRITE).store_string(JSON.stringify(original))
-	original = JSON.parse_string(FileAccess.get_file_as_string(path))
-	raw.clear()
-	data = MANIFEST.dependency_data(path, raw)
-	harness._expect(data == original and raw.is_empty(), "源文件变化后旧依赖头不会漏加载，回退完整JSON")
-	for field in ["schema", "source", "source_sha256", "data"]:
-		var invalid := header.duplicate(true)
-		invalid.source_sha256 = FileAccess.get_sha256(path)
+	var path := "/tmp/clash-effect-artifact-%d.json" % OS.get_process_id()
+	var request := {"provider": ("res" + "://fixture.gd"), "variant": "filtered"}
+	var valid := {"schema": 1, "generator": "effect-artifacts-v1", "policy": "effect-files-v1", "provider": request.provider, "variant": request.variant, "policy_sha256": "a".repeat(64), "source_identity": {("res" + "://absent-source.json"): "b".repeat(64)}, "selection": {"sample": {"kind": "filtered"}}, "resources": [("res" + "://fixture.png")], "raw": [("res" + "://runtime.json")]}
+	_write(path, JSON.stringify(valid))
+	var errors := PackedStringArray()
+	var result := MANIFEST.read_artifact(path, request, errors)
+	harness._expect(errors.is_empty() and result.resources == valid.resources and result.raw == [("res" + "://runtime.json"), path], "生成依赖直接消费；源文件不必存在；资源与原始数据分开登记")
+	for field in ["schema", "generator", "policy", "provider", "variant", "source_identity", "selection", "policy_sha256", "resources", "raw"]:
+		var invalid := valid.duplicate(true)
 		invalid[field] = -1
-		FileAccess.open(header_path, FileAccess.WRITE).store_string(JSON.stringify(invalid))
-		raw.clear()
-		harness._expect(MANIFEST.dependency_data(path, raw) == original and raw.is_empty(), "无效依赖头合同回退：" + field)
-	for invalid_data in [{}, {"emitters": "wrong type"}]:
-		var invalid := header.duplicate(true)
-		invalid.source_sha256 = FileAccess.get_sha256(path)
-		invalid.data = invalid_data
-		FileAccess.open(header_path, FileAccess.WRITE).store_string(JSON.stringify(invalid))
-		raw.assign(["/tmp/already-collected.json"])
-		harness._expect(MANIFEST.dependency_data(path, raw) == original and raw == ["/tmp/already-collected.json"], "依赖头缺失/错误发射器结构回退且不污染已有原始依赖")
-	FileAccess.open(header_path, FileAccess.WRITE).store_string("not json")
-	raw.clear()
-	harness._expect(MANIFEST.dependency_data(path, raw) == original and raw.is_empty(), "损坏依赖头安全回退完整数据")
-	DirAccess.remove_absolute(header_path)
-	harness._expect(MANIFEST.dependency_data(path, raw) == original, "缺少依赖头仍支持原始JSON")
+		_write(path, JSON.stringify(invalid))
+		errors.clear()
+		result = MANIFEST.read_artifact(path, request, errors)
+		harness._expect(not errors.is_empty() and result.resources.is_empty() and result.raw.is_empty(), "错误产物显式拒绝，无源解析回退：" + field)
+	for text in ["not json", " ".repeat(MANIFEST.MAX_BYTES + 1), JSON.stringify({"schema": 1})]:
+		_write(path, text)
+		errors.clear()
+		MANIFEST.read_artifact(path, request, errors)
+		harness._expect(not errors.is_empty(), "损坏/超大/缺字段产物拒绝")
+	var invalid := valid.duplicate(true)
+	invalid.resources = [("res" + "://../escape.png")]
+	_write(path, JSON.stringify(invalid))
+	errors.clear()
+	MANIFEST.read_artifact(path, request, errors)
+	harness._expect(not errors.is_empty(), "越界路径拒绝")
 	DirAccess.remove_absolute(path)
-	if "--full-dependency-headers" in OS.get_cmdline_user_args():
-		print("[DEPENDENCY_HEADER_SCOPE] explicit-full-source-projection")
-		var count := _check_formal(harness, "res://assets/effects", 0)
-		harness._expect(count > 0, "显式全量模式：正式依赖头均纳入源数据等价检查")
-	else:
-		print("[DEPENDENCY_HEADER_SCOPE] small-fixture/header-contract-only; formal source/header equivalence belongs to tools/maintenance/effect_dependencies.py --check")
+	errors.clear()
+	MANIFEST.read_artifact(path, request, errors)
+	harness._expect(not errors.is_empty(), "缺产物显式拒绝")
+	errors.clear()
+	MANIFEST.files({"provider": ("res" + "://unknown.gd"), "variant": "unknown"}, errors)
+	harness._expect(not errors.is_empty(), "未知provider/variant显式拒绝")
 
-func _check_formal(harness: Object, folder: String, count: int) -> int:
-	for file in DirAccess.get_files_at(folder):
-		if not file.ends_with(".dependencies.json"): continue
-		var header: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(folder.path_join(file)))
-		var full: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(header.source))
-		full.erase("frames")
-		var raw: Array = []
-		var projected: Variant = MANIFEST.dependency_data(header.source, raw)
-		harness._expect(projected == full and raw == [folder.path_join(file)], "正式依赖头完整保留所有发射器/资源/Shader判别字段：" + header.source)
-		count += 1
-	for child in DirAccess.get_directories_at(folder): count = _check_formal(harness, folder.path_join(child), count)
-	return count
+func _write(path: String, text: String) -> void:
+	FileAccess.open(path, FileAccess.WRITE).store_string(text)

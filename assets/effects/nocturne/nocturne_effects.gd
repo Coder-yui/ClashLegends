@@ -57,3 +57,12 @@ func prepare_resource_sample(skills: Array, draw: Callable) -> void:
 	for step in 20:
 		advance(shield_enabled, 0.1)
 		draw.call()
+
+func reset_prepared_visual() -> void:
+	if is_instance_valid(shield): shield.free()
+	shield = null
+	for entry in bursts:
+		if is_instance_valid(entry.node): entry.node.free()
+	bursts.clear()
+	active = false
+	super.reset_prepared_visual()

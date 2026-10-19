@@ -13,6 +13,7 @@ func _create_effect() -> void:
 		var index := skeleton.find_bone("Buffbone_Glb_Weapon_1")
 		if index < 0: continue
 		_attachment = BoneAttachment3D.new()
+		if is_in_group("prepared_buff_bank"): _attachment.add_to_group("prepared_buff_aux")
 		_attachment.bone_idx = index
 		skeleton.add_child(_attachment)
 		_player = PLAYER.new()
@@ -36,4 +37,10 @@ func advance_status(status_active: bool, shown: bool, delta: float) -> void:
 	_player.seek(minf(_age, 5.0))
 
 func _exit_tree() -> void:
+	if is_in_group("prepared_buff_bank"): return
 	if is_instance_valid(_attachment): _attachment.queue_free()
+
+func release_prepared_visual() -> void:
+	if is_instance_valid(_attachment): _attachment.free()
+	_attachment = null
+	_player = null

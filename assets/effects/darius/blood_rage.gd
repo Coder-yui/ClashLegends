@@ -42,3 +42,8 @@ func advance(enabled: bool, delta: float) -> void:
 		_sparks[index].position = Vector3(cos(angle) * _radius, 0.1 + phase * 1.7, sin(angle) * _radius)
 		_sparks[index].scale = Vector3.ONE * _fade * sin(phase * PI)
 	visible = _fade > 0.0
+
+func reset_prepared_visual() -> void:
+	_elapsed = 0.0
+	_fade = 0.0
+	super.reset_prepared_visual()

@@ -3,6 +3,7 @@
 [ext_resource type="PackedScene" path="res://assets/units/anivia/source/anivia_order.glb" id="1_anivia"]
 
 [node name="AniviaView" type="Node3D"]
+metadata/model_pool_construction = {"version": 1, "mode": "step-bind", "scripts": []}
 
 [node name="Model" parent="." instance=ExtResource("1_anivia")]
 scale = Vector3(0.013662, 0.013662, 0.013662)

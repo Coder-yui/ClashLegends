@@ -1,0 +1,12 @@
+{
+  "schema": 1,
+  "source": "res://assets/units/voidfish/source/voidfish.glb",
+  "output": "res://assets/generated/model_templates/voidfish.res",
+  "cards": [
+    "voidfish"
+  ],
+  "extra_clips": [],
+  "animation_operations": [],
+  "mesh_filters": [],
+  "import_settings_sha256": "4a5126358b6d3a7549c75e8b58734e4401e9accda407ed59a792e23332a8eaba"
+}

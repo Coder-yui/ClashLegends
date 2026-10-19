@@ -381,6 +381,7 @@ func _check_empowered_aura() -> void:
 	_clean()
 	var source := _spawn("void_spawn", 0, Vector2(300, 850))
 	var proxy := UnitModel3D.new()
+	proxy.material_states = ModelVisualResources.tool_material_states()
 	_main.add_child(proxy)
 	proxy._source = source
 	proxy._state = UnitPresentationState.new(source)

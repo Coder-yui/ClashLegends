@@ -1,27 +1,9 @@
-extends Node3D
+extends "res://scripts/presentation/model_template_view.gd"
 ## 两种虚空鱼共用原版Transform出生；零部署时间的女皇散出物不播放。
-var prepared := false
-func _ready() -> void:
-	prepare_visual_animations()
-
-func prepare_visual_animations() -> void:
-	if prepared: return
-	prepared = true
-	for instance in find_children("*", "MeshInstance3D", true, false):
-		var original: ArrayMesh = instance.mesh
-		var filtered := ArrayMesh.new()
-		for surface in original.get_surface_count():
-			var material := original.surface_get_material(surface)
-			if material != null and material.resource_name == _hidden_surface(): continue
-			filtered.add_surface_from_arrays(original.surface_get_primitive_type(surface), original.surface_get_arrays(surface))
-			filtered.surface_set_material(filtered.get_surface_count() - 1, material)
-		instance.mesh = filtered
-
 const PARTICLES = preload("res://assets/effects/voidfish_ranged/player.gd")
 const BODY_REVEAL_TIME := 0.72 # 0.2起发+0.5寿命，含采样边界，确保剪影已清除。
 const SPAWN_DURATION := 0.78 # 原始最后一层0.2起发+0.55寿命，含采样边界。
 
-func _hidden_surface() -> String: return "Ranged"
 var _skeleton: Skeleton3D
 var _source: Unit
 var _spawn: Node3D

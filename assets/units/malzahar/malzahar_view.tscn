@@ -2,6 +2,7 @@
 [ext_resource type="PackedScene" path="res://assets/units/malzahar/source/malzahar.glb" id="1"]
 [ext_resource type="Script" path="res://assets/units/malzahar/malzahar_view.gd" id="2"]
 [node name="ModelView" type="Node3D"]
+metadata/model_pool_construction = {"version": 1, "mode": "loading-only", "scripts": []}
 script = ExtResource("2")
 [node name="Model" parent="." instance=ExtResource("1")]
 scale = Vector3(0.015, 0.015, 0.015)

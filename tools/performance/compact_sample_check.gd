@@ -16,7 +16,7 @@ func run() -> void:
 	var before := OS.get_static_memory_usage()
 	var started := Time.get_ticks_usec()
 	var samples := DATASET.new()
-	var source := "res://assets/effects/void_summoning/sampled.json"
+	var source := "res://tools/source_assets/void_summoning/sampled.json"
 	if not samples.read("res://assets/effects/void_summoning/sampled.clps", source):
 		print(samples.errors); quit(1); return
 	var compact_usec := Time.get_ticks_usec() - started

@@ -1,5 +1,6 @@
 extends RefCounted
 ## 效果提供者声明文件和采样方法。这里不认识卡牌或技能名称。
+const COVERAGE = preload("res://scripts/presentation/effect_warmup_coverage.gd")
 
 static func requests(cards: Dictionary, plan: RefCounted, definitions: Dictionary) -> Array[Dictionary]:
 	if plan != null: return plan.effects
@@ -27,75 +28,47 @@ static func resolve(request: Dictionary, errors: PackedStringArray) -> Dictionar
 	if manifest.is_empty(): errors.append("未知效果变体: %s / %s" % [path, request.variant])
 	for state in manifest.get("target_states", []):
 		if state not in ["stasis", "freeze"]: errors.append("未知目标表现状态: %s / %s" % [path, state])
+	if manifest.has("sample") and COVERAGE.plan(manifest.sample, errors).is_empty(): return {}
 	return manifest
 
-## JSON 保留在独立的原始文件清单中；纹理/场景/Shader 才交给 ResourceLoader。
+## Generated per provider/variant. No source parsing, fingerprints or process-wide cache.
+const DIRECTORY := "res://assets/generated/effect_dependencies/"
+const SCHEMA := 1
+const POLICY := "effect-files-v1"
+const GENERATOR := "effect-artifacts-v1"
+const MAX_BYTES := 262144
+
+static func artifact_path(request: Dictionary) -> String:
+	return DIRECTORY + (String(request.provider) + "\n" + String(request.variant)).sha256_text() + ".json"
+
 static func files(request: Dictionary, errors: PackedStringArray) -> Dictionary:
-	var manifest := resolve(request, errors)
-	var paths: Array = manifest.get("paths", []).duplicate()
-	var raw: Array = []
-	var sample: Dictionary = manifest.get("sample", {})
-	var player_path := String(sample.get("player", manifest.get("emitter_provider", "")))
-	var player: Script = load(player_path) if not player_path.is_empty() else null
-	for path in manifest.get("raw", []):
-		if path not in raw: raw.append(path)
-	if manifest.has("emitter_source"):
-		var emitters: Array = load(manifest.emitter_source).resource_emitters()
-		_collect_files(emitters, paths, raw)
-		_collect_shaders(emitters, load(manifest.emitter_source), paths)
-	for path in manifest.get("json", []):
-		if not FileAccess.file_exists(path):
-			errors.append("效果数据不存在: " + path)
-			continue
-		raw.append(path)
-		var data: Variant = dependency_data(String(path), raw)
-		if data == null:
-			errors.append("效果数据无法解析: " + path)
-			continue
-		if manifest.has("systems"):
-			var systems := {}
-			for key in manifest.systems:
-				if not data is Dictionary or not data.has(key): errors.append("效果数据缺少系统: %s / %s" % [path, key])
-				else: systems[key] = data[key]
-			data = systems
-		var emitters: Variant = data.get("emitters", data) if data is Dictionary else data
-		if player != null and sample.has("kind") and player.has_method("layer_enabled"):
-			emitters = emitters.filter(func(emitter): return player.layer_enabled(String(sample.kind), String(emitter.name)))
-		_collect_files(emitters, paths, raw)
-		if player != null and player.has_method("resource_shader_path"): _collect_shaders(emitters, player, paths)
-		for shader_provider in manifest.get("shader_providers", []): _collect_shaders(emitters, load(shader_provider), paths)
-	return {"resources": paths, "raw": raw}
+	return read_artifact(artifact_path(request), request, errors)
 
-static func _collect_files(value: Variant, paths: Array, raw: Array) -> void:
-	if value is Dictionary:
-		for child in value.values(): _collect_files(child, paths, raw)
-	elif value is Array:
-		for child in value: _collect_files(child, paths, raw)
-	elif value is String and value.begins_with("res://"):
-		var target: Array = raw if value.ends_with(".json") else paths
-		if value not in target: target.append(value)
-
-static func _collect_shaders(value: Variant, player: Script, paths: Array) -> void:
-	if value is Dictionary:
-		if (player.resource_shader_matches(value) if player.has_method("resource_shader_matches") else value.has("blendMode")):
-			var path: String = player.resource_shader_path(value)
-			if path not in paths: paths.append(path)
-		else:
-			for child in value.values(): _collect_shaders(child, player, paths)
-	elif value is Array:
-		for child in value: _collect_shaders(child, player, paths)
-
-## Large sampled sources keep their original player data. A tiny generated header
-## avoids parsing numeric frames just to collect dependencies. Validate the whole
-## source, never trust timestamps; edits safely fall back to the original parser.
-static func dependency_data(path: String, raw: Array) -> Variant:
-	var header_path := path.get_basename() + ".dependencies.json"
-	if FileAccess.file_exists(header_path):
-		var parser := JSON.new()
-		if parser.parse(FileAccess.get_file_as_string(header_path)) == OK:
-			var header: Variant = parser.data
-			if header is Dictionary and typeof(header.get("schema")) in [TYPE_INT, TYPE_FLOAT] and float(header.schema) == 1.0 and header.get("source") is String and header.source == path and header.get("source_sha256") is String and header.get("data") is Dictionary and header.data.get("emitters") is Array:
-				if header.source_sha256 == FileAccess.get_sha256(path):
-					if header_path not in raw: raw.append(header_path)
-					return header.data
-	return JSON.parse_string(FileAccess.get_file_as_string(path))
+static func read_artifact(path: String, request: Dictionary, errors: PackedStringArray) -> Dictionary:
+	var empty := {"resources": [], "raw": []}
+	var file := FileAccess.open(path, FileAccess.READ)
+	if file == null or file.get_length() < 2 or file.get_length() > MAX_BYTES:
+		errors.append("效果依赖产物缺失/长度错误，运行 python3 tools/dev.py resources --write: " + path)
+		return empty
+	var parser := JSON.new()
+	if parser.parse(file.get_as_text()) != OK:
+		errors.append("效果依赖产物JSON损坏: " + path)
+		return empty
+	var value: Variant = parser.data
+	if not value is Dictionary or typeof(value.get("schema")) not in [TYPE_INT, TYPE_FLOAT] or value.schema != SCHEMA or not value.get("generator") is String or value.generator != GENERATOR or not value.get("policy") is String or value.policy != POLICY or not value.get("provider") is String or value.provider != request.provider or not value.get("variant") is String or value.variant != request.variant:
+		errors.append("效果依赖产物schema/策略/身份错误: " + path)
+		return empty
+	if not value.get("source_identity") is Dictionary or not value.get("selection") is Dictionary or not value.get("policy_sha256") is String or value.policy_sha256.length() != 64 or not value.policy_sha256.is_valid_hex_number(false):
+		errors.append("效果依赖产物生成身份错误: " + path)
+		return empty
+	for key in ["resources", "raw"]:
+		if not value.get(key) is Array or value[key].size() > 4096:
+			errors.append("效果依赖产物数组错误: " + path)
+			return empty
+		for item in value[key]:
+			if not item is String or not item.begins_with("res://") or ".." in item or item.length() > 1024:
+				errors.append("效果依赖产物路径错误: " + path)
+				return empty
+	var raw: Array = value.raw.duplicate()
+	if path not in raw: raw.append(path)
+	return {"resources": value.resources, "raw": raw, "selection": value.selection}

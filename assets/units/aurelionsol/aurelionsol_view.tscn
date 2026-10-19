@@ -5,6 +5,7 @@
 [ext_resource type="Script" path="res://assets/units/aurelionsol/aurelionsol_view.gd" id="2_anchor"]
 
 [node name="AurelionSolView" type="Node3D"]
+metadata/model_pool_construction = {"version": 1, "mode": "loading-only", "scripts": []}
 script = ExtResource("2_anchor")
 
 [node name="Model" parent="." instance=ExtResource("1_aurelionsol")]

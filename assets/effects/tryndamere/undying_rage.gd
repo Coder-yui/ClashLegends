@@ -79,3 +79,11 @@ func advance(enabled: bool, delta: float) -> void:
 static func resource_manifest(variant: String) -> Dictionary:
 	if variant != "default": return {}
 	return {"json": [SOURCE], "shader_providers": ["res://assets/units/pantheon/arrival/particle_player.gd"], "paths": ["res://assets/effects/tryndamere/attached_add.gdshader", "res://assets/effects/tryndamere/undying_rage.gdshader"]}
+
+func reset_prepared_visual() -> void:
+	if is_instance_valid(_player): _player.free()
+	_player = null
+	_age = 0.0
+	_tail = 0.0
+	active = false
+	super.reset_prepared_visual()

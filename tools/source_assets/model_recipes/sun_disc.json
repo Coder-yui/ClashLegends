@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "source": "res://assets/units/sun_disc/source/sun_disc.glb",
+  "output": "res://assets/generated/model_templates/sun_disc.res",
+  "cards": [
+    "sun_disc"
+  ],
+  "extra_clips": [],
+  "animation_operations": [
+    {
+      "kind": "filter_bones",
+      "clips": [
+        "Attack1_BASE",
+        "Attack2_BASE"
+      ],
+      "bones": [
+        "C_Buffbone_Glb_Chest_Loc",
+        "Buffbone_Cstm_Obelisk_Tip"
+      ]
+    }
+  ],
+  "mesh_filters": [],
+  "import_settings_sha256": "4dff9dfff27a25c8b0dfaac62cb0c815ea30e993d0889446c44cd433207e6ee3"
+}

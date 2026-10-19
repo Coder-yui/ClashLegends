@@ -1,6 +1,7 @@
 [gd_scene load_steps=2 format=3]
 [ext_resource type="PackedScene" path="res://assets/units/target_dummy/source/red.glb" id="1"]
 [node name="TrainingDummy" type="Node3D"]
+metadata/model_pool_construction = {"version": 1, "mode": "step-bind", "scripts": []}
 [node name="Model" parent="." instance=ExtResource("1")]
 position = Vector3(0, -0.0209, 0)
 scale = Vector3(2.25, 2.25, 2.25)

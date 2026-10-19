@@ -3,6 +3,7 @@
 [ext_resource type="PackedScene" path="res://assets/units/twisted_fate/source/twisted_fate.glb" id="1_twisted_fate"]
 
 [node name="TwistedFateView" type="Node3D"]
+metadata/model_pool_construction = {"version": 1, "mode": "step-bind", "scripts": []}
 
 [node name="Model" parent="." instance=ExtResource("1_twisted_fate")]
 scale = Vector3(0.012, 0.012, 0.012)

@@ -21,7 +21,7 @@ func shape_basis_for(emitter_name: String) -> Basis:
 static func prewarm() -> bool:
 	if not _data.is_empty(): return true
 	_samples = preload("res://scripts/presentation/compact_particle_samples.gd").new()
-	if not _samples.read(ROOT + "sampled.clps", ROOT + "sampled.json"): return false
+	if not _samples.read(ROOT + "sampled.clps", "res://tools/source_assets/void_summoning/sampled.json"): return false
 	_data = _samples.data
 	for e in _data.emitters:
 		var mesh_path: String = e.mesh_path
@@ -137,7 +137,7 @@ static func resource_shader_path(e: Dictionary) -> String:
 
 static func resource_manifest(variant: String) -> Dictionary:
 	if variant != "zone": return {}
-	return {"raw": [ROOT + "sampled.clps"], "json": [ROOT + "sampled.json"], "sample": {"player": ROOT + "player.gd", "setup": "native", "kind": "zone", "scale": 0.005, "times": [0.1, 0.5, 1.5]}}
+	return {"raw": [ROOT + "sampled.clps"], "dependency_json": ["res://tools/source_assets/void_summoning/sampled.json"], "sample": {"player": ROOT + "player.gd", "setup": "native", "kind": "zone", "scale": 0.005, "times": [0.1, 0.5, 1.5]}}
 
 func load_kind(_kind: String) -> void:
 	prewarm()

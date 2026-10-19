@@ -51,6 +51,16 @@ func advance(enabled: bool, delta: float) -> void:
 	_orb.material_override.set_shader_parameter("elapsed", _elapsed)
 
 func _exit_tree() -> void:
+	if is_in_group("prepared_buff_bank"): return
 	if is_instance_valid(_attachment):
 		_attachment.hide()
 		_attachment.queue_free()
+
+func reset_prepared_visual() -> void:
+	_elapsed = 0.0
+	super.reset_prepared_visual()
+
+func release_prepared_visual() -> void:
+	if is_instance_valid(_attachment): _attachment.free()
+	_attachment = null
+	_orb = null

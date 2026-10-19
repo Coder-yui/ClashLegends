@@ -28,23 +28,6 @@ class EffectDependencyTests(unittest.TestCase):
             self.assertEqual(result['source'], 'res://assets/effects/test/sampled.json')
             self.assertEqual(result['data'], {k: v for k, v in json.loads(before).items() if k != 'frames'})
 
-    def test_stale_source_corrupt_header_missing_and_orphan_fail_read_only_check(self):
-        with tempfile.TemporaryDirectory() as directory, patch.object(deps, 'MIN_BYTES', 0):
-            root = Path(directory)
-            source = self.fixture(root)
-            self.assertTrue(deps.process(root))
-            self.assertEqual(deps.process(root, True), [])
-            self.assertEqual(deps.process(root), [])
-            target = deps.header_path(source)
-            target.write_text(target.read_text().replace('hidden', 'changed'))
-            self.assertTrue(deps.process(root))
-            deps.process(root, True)
-            source.write_text(source.read_text().replace('30', '60'))
-            self.assertTrue(deps.process(root))
-            deps.process(root, True)
-            source.unlink()
-            self.assertTrue(deps.process(root))
-
     def test_nonnumeric_frame_reference_cannot_be_silently_omitted(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

@@ -3,6 +3,7 @@
 [ext_resource type="PackedScene" path="res://assets/units/melee_minion/source/melee_minion_chaos.glb" id="1_model"]
 
 [node name="MeleeMinionChaosView" type="Node3D"]
+metadata/model_pool_construction = {"version": 1, "mode": "step-bind", "scripts": []}
 
 [node name="Model" parent="." instance=ExtResource("1_model")]
 position = Vector3(0, 0.038, 0)

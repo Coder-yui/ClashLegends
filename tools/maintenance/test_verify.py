@@ -16,6 +16,21 @@ spec.loader.exec_module(verify)
 
 
 class VerifyTests(unittest.TestCase):
+    def test_resource_worker_and_supervisor_select_same_resource_gate(self):
+        for source in ['tools/maintenance/resource_process.py', 'tools/maintenance/resource_offline_worker.py', 'tools/maintenance/resource_build_records.py', 'tools/maintenance/compact_legacy_review.py']:
+            plan = verify.verification_plan(verify.ROOT, (verify.ROOT / 'tests/suite_catalog.json').read_text(), [source])
+            self.assertEqual(plan['unknown_paths'], [])
+            self.assertTrue(plan['effect_dependencies'])
+            self.assertIn('tools/maintenance/test_resource_process.py', plan['python_tests'])
+            self.assertIn('tools/maintenance/test_resource_incremental.py', plan['python_tests'])
+
+    def test_coverage_review_registry_selects_resource_gate_and_narrow_contract(self):
+        plan = verify.verification_plan(verify.ROOT, (verify.ROOT / 'tests/suite_catalog.json').read_text(),
+                                        ['tools/maintenance/effect_coverage_reviews.json'])
+        self.assertEqual(plan['unknown_paths'], [])
+        self.assertTrue(plan['effect_dependencies'])
+        self.assertIn('tools/maintenance/test_coverage_reviews.py', plan['python_tests'])
+
     def test_plan_reports_explicit_load_and_timeout_policy(self):
         for extra, expected in [([], 600), (['--guard-profile', 'authority-logic'], 20)]:
             output = io.StringIO()
@@ -118,7 +133,7 @@ class VerifyTests(unittest.TestCase):
                 self.assertEqual(verify.main(), 1)
             self.assertIn('effect-dependencies', names)
             self.assertEqual(commands['effect-dependencies'][1:],
-                             ['tools/maintenance/effect_dependencies.py', '--check'])
+                             ['tools/maintenance/resource_artifacts.py', '--check'])
             self.assertNotIn('import', names)
 
     def real_plan(self, *paths, **options):
@@ -141,7 +156,7 @@ class VerifyTests(unittest.TestCase):
         self.assertIn('TerminalAudioSuite', plan['suites'])
         self.assertLess(plan['suite_count'], plan['catalog_suite_count'])
         self.assertNotIn('SionSuite', plan['suites'])
-        self.assertEqual(plan['python_tests'], [])
+        self.assertEqual(plan['python_tests'], ['tools/maintenance/test_effect_dependencies.py', 'tools/maintenance/test_resource_artifacts.py'])
 
     def test_projectile_view_child_routes_to_existing_owner_suite(self):
         plan = self.real_plan('tests/fixtures/projectile_view_checks.gd')
@@ -220,9 +235,9 @@ class VerifyTests(unittest.TestCase):
         own = self.real_plan('tools/maintenance/test_verify.py')
         self.assertEqual(own['python_tests'], ['tools/maintenance/test_verify.py'])
         effect = self.real_plan('tools/maintenance/effect_dependencies.py')
-        self.assertEqual(effect['python_tests'], ['tools/maintenance/test_effect_dependencies.py'])
+        self.assertEqual(effect['python_tests'], ['tools/maintenance/test_effect_dependencies.py', 'tools/maintenance/test_resource_artifacts.py'])
         commands = verify.planned_commands(effect, None, Path('unused'))
-        self.assertIn(('effect-dependencies', [sys.executable, 'tools/maintenance/effect_dependencies.py', '--check']), commands)
+        self.assertIn(('effect-dependencies', [sys.executable, 'tools/maintenance/resource_artifacts.py', '--check']), commands)
         self.assertFalse(any('--write' in command or 'audio-import' in command for _, command in commands))
         self.assertNotIn('import', [name for name, _ in commands])
 

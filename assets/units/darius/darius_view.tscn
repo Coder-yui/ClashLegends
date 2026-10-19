@@ -1,5 +1,6 @@
 [gd_scene load_steps=2 format=3]
 [ext_resource type="PackedScene" path="res://assets/units/darius/source/darius.glb" id="1"]
 [node name="DariusView" type="Node3D"]
+metadata/model_pool_construction = {"version": 1, "mode": "step-bind", "scripts": []}
 [node name="Model" parent="." instance=ExtResource("1")]
 scale = Vector3(0.013125, 0.013125, 0.013125)

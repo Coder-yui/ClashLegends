@@ -1,0 +1,16 @@
+[gd_scene load_steps=5 format=3]
+[sub_resource type="BoxMesh" id="mesh"]
+[sub_resource type="Animation" id="idle"]
+resource_name = "Idle"
+length = 1.0
+[sub_resource type="Animation" id="death"]
+resource_name = "Death"
+length = 0.8
+[sub_resource type="AnimationLibrary" id="library"]
+_data = {&"Idle": SubResource("idle"), &"Death": SubResource("death")}
+[node name="FixtureModel" type="Node3D"]
+metadata/model_pool_construction = {"version": 1, "mode": "step-bind", "scripts": []}
+[node name="Body" type="MeshInstance3D" parent="."]
+mesh = SubResource("mesh")
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {&"": SubResource("library")}
