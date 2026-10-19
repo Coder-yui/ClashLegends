@@ -442,6 +442,11 @@ func _register_active_skill(unit: Unit, card_id: String, p_team: int) -> void:
 	var carried_skill: Dictionary = available_skills[chosen_skill_index]
 	unit.configure_carried_active_skill(carried_skill)
 	var ability_id := unit.active_ability_id
+	# 槽位替换会清掉旧实体身份，先释放它绑定的死亡回调。
+	for old_id in _active_skills.ids():
+		var old_entry := _active_skills.entry(old_id)
+		if int(old_entry.team) == p_team and int(old_entry.slot) == unit.active_ability_slot:
+			_disconnect_skill_death(old_entry.unit, int(old_id))
 	var replaced_id := _active_skills.register(unit, card_id, p_team, carried_skill)
 	if replaced_id >= 0:
 		_cancel_pending_active_skill(replaced_id)
@@ -449,7 +454,13 @@ func _register_active_skill(unit: Unit, card_id: String, p_team: int) -> void:
 	unit.died.connect(_on_active_skill_unit_died.bind(ability_id), CONNECT_ONE_SHOT)
 	event.emit("skill_registered", {"id": ability_id})
 
+func _disconnect_skill_death(unit, ability_id: int) -> void:
+	if not is_instance_valid(unit): return
+	var callback := _on_active_skill_unit_died.bind(ability_id)
+	if unit.died.is_connected(callback): unit.died.disconnect(callback)
+
 func _on_active_skill_unit_died(ability_id: int) -> void:
+	_disconnect_skill_death(_active_skills.entry(ability_id).get("unit"), ability_id)
 	var replacement := _active_skills.transfer(ability_id, living_deployment_members)
 	if replacement != null:
 		replacement.died.connect(_on_active_skill_unit_died.bind(ability_id), CONNECT_ONE_SHOT)
@@ -831,6 +842,7 @@ func apply_skill_replica(id: int, uses: int, cooldown: float, recast: bool = fal
 
 func clear_replica_skill(unit: Unit) -> void:
 	var id := unit.active_ability_id
+	_disconnect_skill_death(unit, id)
 	if _active_skills.entry(id).get("unit") == unit:
 		_active_skills.remove(id)
 		event.emit("skill_removed", {"id": id})

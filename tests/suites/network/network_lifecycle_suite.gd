@@ -198,6 +198,28 @@ func run(harness: Object, main: Node2D) -> void:
 	_deliver(3, [member])
 	var group_entry: Dictionary = main.runtime._active_skills.entry(72000)
 	_expect(group_entry.get("card_id") == "minion_squad" and group_entry.get("skill", {}).get("target_scope") == &"deployment_group", "快照转交使用编队技能而非成员自身技能")
+	var member_unit: Unit = main.world.replica_units_snapshot()[72001]
+	var death_callback: Callable = main.runtime._on_active_skill_unit_died.bind(72000)
+	_expect(member_unit.died.is_connected(death_callback), "编队技能资格建立死亡回调")
+	var unqualified: Array = member.duplicate(true)
+	unqualified[SNAP.U_SPAWN].args[5] = -1
+	unqualified[SNAP.U_SPAWN].args[6] = -1
+	_deliver(4, [unqualified])
+	_expect(not member_unit.died.is_connected(death_callback) and not main.runtime._active_skills.has(72000), "快照清除资格同时释放旧死亡回调")
+	_deliver(5, [member])
+	_deliver(6, [member])
+	_expect(member_unit.died.is_connected(death_callback) and main.runtime._active_skills.entry(72000).get("unit") == member_unit, "同资格恢复及重复快照只保留一个有效死亡连接")
+	var successor: Array = member.duplicate(true)
+	successor[SNAP.U_ID] = 72002
+	successor[SNAP.U_SPAWN].args[3] = 72002
+	successor[SNAP.U_SPAWN].birth_tick = 7
+	successor[SNAP.U_SPAWN].birth_revision = 7
+	# 同帧先看到接任者，后看到旧成员失去资格，复现快照实体遍历顺序。
+	_deliver(7, [successor, unqualified])
+	var successor_unit: Unit = main.world.replica_units_snapshot()[72002]
+	_expect(not member_unit.died.is_connected(death_callback) and successor_unit.died.is_connected(death_callback), "资格转交先解绑旧实体再连接接任者")
+	member_unit.died.emit()
+	_expect(main.runtime._active_skills.entry(72000).get("unit") == successor_unit, "旧成员迟到死亡不能移除接任者技能资格")
 	_system.reset_session("cancellation")
 	var cancelled := _payload("garen", 73000, 1)
 	cancelled[SNAP.U_DEPLOY_LEFT] = 0.0
@@ -328,7 +350,7 @@ func _check_permission_projection() -> void:
 		unit.active_skill_cast_timer = 100.0 if phase == "ready" else 0.0
 		unit.form_transition_timer = 100.0 if phase == "ready" else 0.0
 		_main._sync_active_skill_deployment_readiness()
-		_expect(_main.runtime._can_submit_active_skill(73500, 1) == (phase != "deploy") and _main._active_skill_bar._buttons[0].disabled == (phase == "deploy"), "客户端按钮/提交只读基础资格，临时权限不阻止入队 " + phase)
+		_expect(_main._can_submit_active_skill(73500, 1) == (phase != "deploy") and _main._active_skill_bar._buttons[0].disabled == (phase == "deploy"), "客户端按钮/提交只读基础资格，临时权限不阻止入队 " + phase)
 		_expect(((unit.action_permissions() & ControlState.START_SKILL) != 0) == (phase == "ready"), "快照权限投影 " + phase)
 		tick += 1
 	var saved_session: MatchSession = _main.runtime.session
@@ -338,17 +360,17 @@ func _check_permission_projection() -> void:
 	_main.runtime.session.phase = MatchSession.Phase.RUNNING
 	_main._client_inputs.skill(73500, 3)
 	_main._sync_active_skill_deployment_readiness()
-	_expect(not _main.runtime._can_submit_active_skill(73500, 1), "客户端等待回执时不可重复提交")
+	_expect(not _main._can_submit_active_skill(73500, 1), "客户端等待回执时不可重复提交")
 	var accepted := {"id": 9001, "kind": "skill", "team": 1, "card_id": "gnar", "ability_id": 73500, "pos": Vector2(300, 800), "input_tick": 0, "execute_tick": 10}
 	_main._rpc_command_scheduled(_main.runtime.session.session_id, accepted)
 	_main._rpc_active_skill_used(_main.runtime.session.session_id, 73500, 1, 0.0)
-	_expect(not _main._client_inputs.has_skill(73500) and not _main.runtime._can_submit_active_skill(73500, 1), "已受理排程接手等待状态，技能结果通知不能提前解除pending")
+	_expect(not _main._client_inputs.has_skill(73500) and not _main._can_submit_active_skill(73500, 1), "已受理排程接手等待状态，技能结果通知不能提前解除pending")
 	_main._rpc_command_finished(_main.runtime.session.session_id, 9001, "executed")
-	_expect(not _main._active_skill_bar.is_pending(73500) and _main.runtime._can_submit_active_skill(73500, 1), "正式完成通知解除pending，不遗留永久禁用")
+	_expect(not _main._active_skill_bar.is_pending(73500) and _main._can_submit_active_skill(73500, 1), "正式完成通知解除pending，不遗留永久禁用")
 	_main._active_skill_bar.set_pending(73500, true)
 	_main._client_inputs.skill(73500, 4)
 	_main._rpc_active_skill_rejected(_main.runtime.session.session_id, 73500, 4)
-	_expect(not _main._active_skill_bar.is_pending(73500) and _main.runtime._can_submit_active_skill(73500, 1), "客户端拒绝回执恢复提交资格")
+	_expect(not _main._active_skill_bar.is_pending(73500) and _main._can_submit_active_skill(73500, 1), "客户端拒绝回执恢复提交资格")
 	_main.runtime.session = saved_session
 	var invalid := projected.duplicate(true)
 	invalid[SNAP.U_ACTION_PERMISSIONS] = 64

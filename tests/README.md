@@ -79,6 +79,8 @@ Godot --headless --path . --script tests/mechanics_check.gd -- --suite=Projectil
 git diff --check
 ```
 
+联网状态夹具通过本方权威账户验证凯尔金币门槛并恢复测试前余额；不传临时钱包绕过账户归属。客户端pending回归使用Main实际提交适配入口，领域资格仍由Runtime检查。network_lifecycle_suite覆盖资格清除、恢复、重复快照、先接任后清除的实体顺序，以及旧持有者迟到死亡；三进程运行核对真实终局，断线但没有可靠终局时输出失败并正常退出。
+
 ## 对象池单项恢复检查
 
 `python3 tools/performance/model_refill_check.py --output <素材库内新目录>` 是本项独立小入口，不运行整场加载或压力卡组。复用现有监督器，20秒、768MiB绝对RSS及ready后256MiB增长上限、30FPS、6秒初始/2秒后续主线程心跳；启动要求normal压力且估计可用至少8GiB（沿用6GiB系统储备政策），运行中估计可用低于4GiB或压力变化即停。允许已确认编辑器，拒绝其他游戏进程；不关闭用户应用。进程组清理、已有导入缓存及逐文件身份核对保留。

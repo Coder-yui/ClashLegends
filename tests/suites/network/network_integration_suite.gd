@@ -190,7 +190,8 @@ func run(harness: SceneTree) -> void:
 			break
 	if outsider != null:
 		outsider.close()
-	var result := {"schema": 1, "role": "server" if main.runtime.mode == "server" else "client%d" % main.runtime.local_team, "passed": main.runtime.game_over}
+	var has_terminal: bool = main.runtime.game_over and not main._terminal_result.is_empty()
+	var result := {"schema": 1, "role": "server" if main.runtime.mode == "server" else "client%d" % main.runtime.local_team, "passed": has_terminal}
 	result["terminal_not_before"] = terminal_not_before
 	result["skill_progress"] = {"sent": sent_skill, "interrupted": interrupted_skill, "accepted": main.accepted_fixture_skills, "completed": main.completed_fixture_skills, "refunds": main.fixture_refunds}
 	result["mist_observation"] = mist_observation
@@ -200,7 +201,7 @@ func run(harness: SceneTree) -> void:
 		result["audio_recorded"] = wav != null and not wav.data.is_empty() and wav.save_to_wav(capture_dir.path_join(("client%d" % main.runtime.local_team) + "-status.wav")) == OK
 		result["capture_ticks"] = captured
 		AudioServer.remove_bus_effect(0, recording_slot)
-	if main.runtime.game_over:
+	if has_terminal:
 		result["session_id"] = main._terminal_result.session_id
 		result["final_tick"] = main._terminal_result.final_tick
 		result["winner_team"] = main._terminal_result.winner_team
@@ -268,7 +269,7 @@ func run(harness: SceneTree) -> void:
 				await harness.process_frame
 				RenderingServer.force_draw(false)
 				harness.root.get_texture().get_image().save_png(directory.path_join(("client%d" % main.runtime.local_team) + ".png"))
-	if main.runtime.game_over and main.runtime.mode == "client":
+	if has_terminal and main.runtime.mode == "client":
 		var silent_before_finish := result_cues.is_empty()
 		var expected_tracks := 2 if double_nexus else 1
 		var preserved: bool = main._audio_manager._nexus_players.size() == expected_tracks
@@ -326,8 +327,9 @@ func _begin_status_case(main: Node2D) -> Dictionary:
 		else: caster.stun(10)
 		targets.append(target)
 	# 金币门槛选择通过正式出牌入口，出生载荷携带实际形态和原卡资格。
+	var wallet: ElixirManager = main.runtime.account(0)
+	var saved_coins := wallet.elixir
 	for available in [3.0, 6.0]:
-		var wallet := ElixirManager.new()
 		wallet.elixir = available
 		assert(main.play_card(0, "kayle", Vector2(560 + available * 10, 1180), {"immediate": true, "validate_position": false, "elixir": wallet}))
 		var angel: Unit = main._latest_unit_for_card("kayle", 0)
@@ -336,7 +338,7 @@ func _begin_status_case(main: Node2D) -> Dictionary:
 		angel.hp -= 160
 		main.preview_active_skill(angel, CardDB.active_skills_for("kayle")[0])
 		angel.stun(10)
-		wallet.free()
+	wallet.elixir = saved_coins
 	main.runtime._card_history.replace_replica(0, saved_history)
 	var mist_units: Array[Unit] = []
 	for position in [Vector2(65, 800), Vector2(360, 1100)]:
