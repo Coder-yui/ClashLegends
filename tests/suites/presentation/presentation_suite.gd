@@ -571,7 +571,6 @@ func _check_health_bar_team_anchor() -> void:
 	var click_position := Vector2(210, 900)
 	_expect((canvas.affine_inverse() * (canvas * click_position)).is_equal_approx(click_position), "客户端屏幕点击可逆映射到权威落点")
 	var client_view := BattlePresentation3D.new()
-	client_view.tool_material_mode = true
 	_main.add_child(client_view)
 	client_view.setup(Vector2(720, 1280), 40.0, true)
 	for team in [0, 1]:
@@ -888,7 +887,7 @@ func _check_model_resources_owner() -> void:
 		player.add_animation_library(&"", library)
 		root.add_child(player)
 		var owner := ModelVisualResources.new()
-		players.append(owner.bind_model(root, {}, ModelVisualResources.tool_material_states()))
+		players.append(owner.bind_model(root))
 		owners.append(owner)
 		roots.append(root)
 	players[0].get_animation(&"probe").length = 2.0
@@ -914,7 +913,7 @@ func _check_model_resources_owner() -> void:
 	_expect(buff_variants.size() == 6 and not owners[0].overlay_state_repeats_base(3), "真正不同的强化和控制组合必须保留六种预热绘制")
 	owners[0].clear()
 	_expect(mesh.material_overlay == original and owners[0].meshes().is_empty(), "释放资源恢复原始覆盖并清空模型引用")
-	owners[0].bind_model(roots[1], {}, ModelVisualResources.tool_material_states())
+	owners[0].bind_model(roots[1])
 	_expect(owners[0].meshes().size() == 1 and owners[0].original_overlay(0) == original, "重新绑定只保留新模型材质状态")
 	for owner in owners: owner.clear()
 	for root in roots: root.free()
@@ -1184,7 +1183,7 @@ func _check_animation_copy() -> void:
 	library.add_animation("RESET", Animation.new())
 	player.add_animation_library("", library)
 	var owner := ModelVisualResources.new()
-	owner.begin_bind(root, {"first": true, "alias": true}, ModelVisualResources.tool_material_states())
+	owner.begin_bind(root, {"first": true, "alias": true})
 	_expect(not owner.step_bind(), "分步动画准备未完成时不会宣告就绪")
 	while not owner.step_bind(): pass
 	_expect(player.has_animation("first") and player.has_animation("alias") and player.has_animation("RESET") and not player.has_animation("unused"), "片段筛选保留需求、别名和RESET，排除未使用动作")
@@ -1290,7 +1289,6 @@ func _check_display_layout() -> void:
 					legal_tiles.append(Rect2(Vector2(tile)*ArenaRules.TILE_SIZE,Vector2.ONE*ArenaRules.TILE_SIZE))
 	for flipped in [false, true]:
 		var view := BattlePresentation3D.new()
-		view.tool_material_mode = true
 		_main.add_child(view)
 		view.setup(layout.FIELD_SIZE, ArenaRules.TILE_SIZE, flipped)
 		for size in [Vector2(720,1280), Vector2(720,1440), Vector2(720,1560), Vector2(720,1600), Vector2(360,640), Vector2(1080,1920), Vector2(1280,1280), Vector2(2276,1280)]:

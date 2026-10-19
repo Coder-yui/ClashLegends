@@ -4,16 +4,6 @@ extends Node3D
 
 var _shares_tower_base := false
 var _ruin_world_yaw := INF
-@export var visual_template: Resource
-
-func _ready() -> void:
-	prepare_visual_animations()
-
-func visual_animation_contract() -> Dictionary:
-	if visual_template == null or visual_template.get_script() != preload("res://scripts/presentation/model_visual_template.gd") or visual_template.schema != 1 or visual_template.libraries.is_empty():
-		push_error("Sun disc requires generated model template v1")
-		return {}
-	return {"version": 1, "player": get_node("DiscModel").find_child("AnimationPlayer", true, false), "libraries": visual_template.libraries}
 
 
 ## 原版 AzirSunDiscBasicAttack 的 FixedSpeedMovement.mStartBoneName 为 joint2。
@@ -60,10 +50,25 @@ func finish_visual_death() -> void:
 		ruin_root.hide()
 
 
-## 磁盘模板已在开发生成时裁掉静态基座轨道。直接摄影和bind共用一次副本。
+## 原 AzirSunDisc Disk 遮罩只启用第 11/12 号骨骼。
+## 复制实例动画后裁掉静态基座轨道，两个攻击片段只驱动圆盘上部。
 func prepare_visual_animations() -> void:
-	if not bool(get_meta("defer_animation_ownership", false)):
-		ModelVisualResources.prepare_instance_animations(self)
+	var players := get_node("DiscModel").find_children("*", "AnimationPlayer", true, false)
+	if players.is_empty():
+		return
+	var player := players[0] as AnimationPlayer
+	for library_name in player.get_animation_library_list():
+		var library := player.get_animation_library(library_name).duplicate(true) as AnimationLibrary
+		for clip_name in ["Attack1_BASE", "Attack2_BASE"]:
+			if not library.has_animation(clip_name):
+				continue
+			var clip := library.get_animation(clip_name)
+			for track in range(clip.get_track_count() - 1, -1, -1):
+				var bone := String(clip.track_get_path(track).get_concatenated_subnames())
+				if bone not in ["C_Buffbone_Glb_Chest_Loc", "Buffbone_Cstm_Obelisk_Tip"]:
+					clip.remove_track(track)
+		player.remove_animation_library(library_name)
+		player.add_animation_library(library_name, library)
 
 func reset_pool_visual() -> void:
 	_shares_tower_base = false

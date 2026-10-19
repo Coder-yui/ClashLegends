@@ -56,7 +56,3 @@ func prepare_resource_sample(_skills: Array, draw: Callable) -> void:
 		status_state = Vector2(age, 3.0)
 		advance_status(true, true, 0.0)
 		draw.call()
-
-func reset_prepared_visual() -> void:
-	_previous_origin = Vector3.INF
-	super.reset_prepared_visual()

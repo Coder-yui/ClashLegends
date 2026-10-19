@@ -559,7 +559,6 @@ func _check_dynamic_action_clock() -> void:
 	_main.add_child(camera)
 	camera.look_at(Vector3.ZERO)
 	var view := UnitModel3D.new()
-	view.material_states = ModelVisualResources.tool_material_states()
 	_main.add_child(view)
 	var stats := CardDB.get_card("kayn_slayer")
 	var ready := view.setup(replica, load(stats.visual_scene_path), camera, stats.visual_animations, 0.0)

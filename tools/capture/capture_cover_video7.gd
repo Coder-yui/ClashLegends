@@ -55,7 +55,6 @@ func _initialize() -> void:
 
 func _build() -> void:
 	_presentation = BattlePresentation3D.new()
-	_presentation.tool_material_mode = true
 	root.add_child(_presentation)
 	_presentation.setup(Vector2(ArenaRules.FIELD_W, ArenaRules.FIELD_H), ArenaRules.TILE_SIZE)
 	_world_root = _presentation._world_root

@@ -121,13 +121,3 @@ func _source_scale_x() -> float:
 func _source_scale_y() -> float:
 	var p := _rng.randf()
 	return lerpf(1.0, 1.2, p / 0.5) if p < 0.5 else lerpf(1.2, 2.0, (p - 0.5) / 0.5)
-
-func reset_prepared_visual() -> void:
-	_elapsed = 0.0
-	_emission = 0.0
-	_status_active = false
-	_clear_particles()
-	super.reset_prepared_visual()
-
-func can_preserve_prepared_state() -> bool:
-	return true

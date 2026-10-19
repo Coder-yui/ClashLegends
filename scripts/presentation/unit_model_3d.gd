@@ -128,15 +128,7 @@ var _height_from := 0.0
 var _height_to := 0.0
 var _height_elapsed := 0.0
 var _height_duration := -1.0
-signal resource_failed(errors: PackedStringArray)
-var material_states: Dictionary = {} # 调用方必须显式选择match或tool。
-var _preserved_buff := {}
-
-func _material_failure() -> bool:
-	resource_failed.emit(_model_resources.errors)
-	return false
 var model_factory: Callable
-var model_factory_errors: Callable # 工厂拒绝时保留实际原因；无错误源的工具给明确上下文。
 var model_recycler: Callable
 
 func setup(unit: Unit, packed: PackedScene, camera: Camera3D, animations: Dictionary, forward_yaw: float, buff_scene_path: String = "") -> bool:
@@ -162,7 +154,6 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 	# form_changed，也不能替换掉死亡动画并留下一个永不再同步的静止模型。
 	if _dying:
 		return false
-	if material_states.get("mode") not in ["match", "tool"]: return false
 	var had_model := _model_root != null and is_instance_valid(_model_root)
 	var reuse := had_model and _model_root.has_method("set_visual_form") and _model_root.has_method("can_reuse_visual") and bool(_model_root.call("can_reuse_visual", packed.resource_path))
 	var previous_height := _model_root.position.y if had_model else 0.0
@@ -170,10 +161,10 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 	if not reuse:
 		var instance: Node = model_factory.call(packed) if model_factory.is_valid() else packed.instantiate()
 		if not instance is Node3D:
-			if is_instance_valid(instance): instance.queue_free()
+			instance.queue_free()
 			return false
 		if had_model:
-			_release_model(is_instance_valid(_active_buff_visual) and _active_buff_scene_path == buff_scene_path and _active_buff_visual.preserve_on_form_change)
+			_release_model()
 		_model_root = instance as Node3D
 	_animation_names = animations.duplicate(true)
 	_idle_transition_animation = &""
@@ -229,8 +220,7 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 		_model_root.position.y = _height_from
 	_start_spawn_transition_if_needed()
 	if _model_root.has_method("prepare_visual_animations") and not _model_root.has_meta("prepared_model_resources"):
-		_model_resources.errors.append_array(ModelVisualResources.prepare_visual_root(_model_root))
-		if not _model_resources.errors.is_empty(): return _material_failure()
+		_model_root.call("prepare_visual_animations")
 	if _model_root.has_method("configure_unit_visual"):
 		_model_root.call("configure_unit_visual", _source)
 	if reuse:
@@ -244,17 +234,15 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 		var allowed := {}
 		if ModelVisualResources.supports_clip_filter(_model_root):
 			ModelVisualResources.collect_clip_names(_animation_names, allowed)
-		_animation_player = _model_resources.bind_model(_model_root, allowed, material_states)
-		if not _model_resources.errors.is_empty(): return _material_failure()
-	if not _model_resources.require_material_states(material_states): return _material_failure()
-	if not _model_resources.configure_frost(is_instance_valid(_source) and _source.is_building): return _material_failure()
+		_animation_player = _model_resources.bind_model(_model_root, allowed)
+	_model_resources.configure_frost(is_instance_valid(_source) and _source.is_building)
 	_stable_head_offset = NAN
 	if _animation_player == null:
 		push_warning("单位 3D 模型中未找到 AnimationPlayer")
 	else:
 		if not _animation_player.animation_finished.is_connected(_on_animation_finished):
 			_animation_player.animation_finished.connect(_on_animation_finished)
-	if not _replace_active_buff_visual(buff_scene_path): return _material_failure()
+	_replace_active_buff_visual(buff_scene_path)
 	_configure_looping_animations()
 	if is_instance_valid(_projectile_anchor): _projectile_anchor.free()
 	_projectile_anchor = preload("res://scripts/presentation/projectile_model_anchor.gd").create(_model_root)
@@ -268,7 +256,6 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 		if _animation_player != null:
 			_animation_player.advance(0.0)
 		_update_hit_flash(0.0)
-	if material_states.get("mode") == "match": _update_active_buff_visual(0.0)
 	_update_health_bar_anchor()
 	return true
 
@@ -283,9 +270,9 @@ func _process(delta: float) -> void:
 		_model_root.call("advance_skill_resource_visual", not _dying and PresentationConfig.status_indicators_visible(_source) and _source.is_skill_resource_visible() and _source.get_skill_resource_ratio() >= 0.999, delta)
 	if is_instance_valid(_model_root) and _model_root.has_method("advance_deployment_visual") and is_instance_valid(_source):
 		_model_root.call("advance_deployment_visual", _source.deploy_time - _source._deploy_timer, _source.deploy_time, not _dying and PresentationConfig.status_indicators_visible(_source) and not _source.cancelled_deployment)
+	_update_active_buff_visual(delta)
 	_update_hit_flash(delta)
 	if _dying:
-		_update_active_buff_visual(delta)
 		if _model_root != null and _model_root.has_method("stop_continuous_attack_visual"):
 			_model_root.call("stop_continuous_attack_visual")
 		return
@@ -297,13 +284,11 @@ func _process(delta: float) -> void:
 	_tick_spawn_transition(delta)
 	if _sync_control_override():
 		_sync_transform(false, delta)
-		_update_active_buff_visual(delta)
 		_update_continuous_beam_origin(delta)
 		_update_health_bar_anchor()
 		return
 	_update_attack_stages(delta)
 	_sync_visual(false, delta)
-	_update_active_buff_visual(delta)
 	_update_continuous_beam_origin(delta)
 	_update_health_bar_anchor()
 
@@ -956,7 +941,6 @@ func _visual_bounds_bottom_y() -> float:
 		return INF
 	var bottom := INF
 	for node in _model_root.find_children("*", "MeshInstance3D", true, false):
-		if not ModelVisualResources.is_model_geometry(node): continue
 		var mesh_instance := node as MeshInstance3D
 		var bounds := mesh_instance.get_aabb()
 		for corner_index in range(8):
@@ -1598,10 +1582,8 @@ func _start_death_followup() -> bool:
 		return false
 	var instance: Node = model_factory.call(packed) if model_factory.is_valid() else packed.instantiate()
 	if not instance is Node3D:
-		if is_instance_valid(instance): instance.queue_free()
-		if model_factory_errors.is_valid(): _model_resources.errors.append_array(model_factory_errors.call())
-		if _model_resources.errors.is_empty(): _model_resources.errors.append("Death-followup model factory failed: " + scene_path)
-		return _material_failure()
+		instance.queue_free()
+		return false
 	if _model_root != null and is_instance_valid(_model_root):
 		_release_model()
 	_model_root = instance as Node3D
@@ -1616,10 +1598,8 @@ func _start_death_followup() -> bool:
 		var allowed := {}
 		if ModelVisualResources.supports_clip_filter(_model_root):
 			ModelVisualResources.collect_clip_names(_animation_names, allowed)
-		_animation_player = _model_resources.bind_model(_model_root, allowed, material_states)
-		if not _model_resources.errors.is_empty(): return _material_failure()
-	if not _model_resources.require_material_states(material_states): return _material_failure()
-	if not _model_resources.configure_frost(is_instance_valid(_source) and _source.is_building): return _material_failure()
+		_animation_player = _model_resources.bind_model(_model_root, allowed)
+	_model_resources.configure_frost(is_instance_valid(_source) and _source.is_building)
 	_stable_head_offset = NAN
 	if _animation_player == null or not _animation_player.has_animation(followup_name):
 		return false
@@ -1707,7 +1687,7 @@ func _update_hit_flash(delta: float) -> void:
 		_set_hit_flash(false)
 
 func _set_hit_flash(enabled: bool) -> void:
-	if not _model_resources.apply_overlays(enabled, _state.frozen and not _dying, _last_buff_visible, not _dying and is_instance_valid(_source) and CombatInteraction.in_stasis(_source), not _dying and is_instance_valid(_source) and _source.stealth_hidden()): _material_failure()
+	_model_resources.apply_overlays(enabled, _state.frozen and not _dying, _last_buff_visible, not _dying and is_instance_valid(_source) and CombatInteraction.in_stasis(_source), not _dying and is_instance_valid(_source) and _source.stealth_hidden())
 
 ## 冰冻优先保持当前姿态；眩晕片段自身播放。无素材明确回退为保持姿态。
 func _on_action_cancelled(payload: Dictionary) -> void:
@@ -1818,32 +1798,11 @@ func _align_attack_progress(elapsed: float) -> void:
 		_animation_player.seek(minf(_attack_clip_start + clip_elapsed * _current_clip_speed, _attack_clip_end), true)
 
 
-func _replace_active_buff_visual(scene_path: String) -> bool:
-	if material_states.get("mode") == "tool": return _replace_tool_buff(scene_path)
-	var key := ModelVisualResources.buff_key(scene_path, _source.visual_radius, _source.team) if not scene_path.is_empty() else ""
-	if not _preserved_buff.is_empty():
-		var previous: ModelVisualResources = _preserved_buff.owner
-		var node: ActiveBuffVisual3D = _preserved_buff.node
-		if not scene_path.is_empty() and not _model_resources.preserve_buff(previous, node, key): return false
-		_preserved_buff.clear()
-	if is_instance_valid(_active_buff_visual) and (key.is_empty() or _active_buff_visual != _model_resources.buff_node(key)):
-		_model_resources.park_buff(_active_buff_visual)
-	_active_buff_visual = null
-	_active_buff_scene_path = scene_path
-	_last_buff_visible = false
-	if not _model_resources.select_buff(key): return false
-	if key.is_empty(): return true
-	_active_buff_visual = _model_resources.buff_node(key)
-	if _active_buff_visual == null: return false
-	_sync_prepared_buff_transform()
-	_active_buff_visual.process_mode = Node.PROCESS_MODE_INHERIT
-	return true
-
-func _replace_tool_buff(scene_path: String) -> bool:
+func _replace_active_buff_visual(scene_path: String) -> void:
 	if is_instance_valid(_active_buff_visual) and _active_buff_scene_path == scene_path and _active_buff_visual.preserve_on_form_change:
 		_model_resources.configure_buff(_active_buff_visual.make_overlay)
 		_update_active_buff_visual(0.0)
-		return true
+		return
 	_active_buff_scene_path = scene_path
 	if is_instance_valid(_active_buff_visual):
 		_active_buff_visual.hide()
@@ -1852,30 +1811,23 @@ func _replace_tool_buff(scene_path: String) -> bool:
 	_model_resources.configure_buff()
 	_last_buff_visible = false
 	if scene_path.is_empty():
-		return true
+		return
 	var packed := load(scene_path) as PackedScene
 	if packed == null:
-		return true
+		return
 	_active_buff_visual = (model_factory.call(packed) if model_factory.is_valid() else packed.instantiate()) as ActiveBuffVisual3D
 	if _active_buff_visual == null:
-		return true
+		return
 	add_child(_active_buff_visual)
 	_active_buff_visual.configure(_source.visual_radius, _source.team)
 	_active_buff_visual.bind_model(_model_root)
 	_model_resources.configure_buff(_active_buff_visual.make_overlay)
 	_update_active_buff_visual(0.0)
 
-	return true
-
-func _sync_prepared_buff_transform() -> void:
-	if material_states.get("mode") != "match" or not is_instance_valid(_active_buff_visual): return
-	var key := ModelVisualResources.buff_key(_active_buff_scene_path, _source.visual_radius, _source.team)
-	_active_buff_visual.global_transform = global_transform * _model_resources.buff_transform(key)
 
 func _update_active_buff_visual(delta: float) -> void:
 	if not is_instance_valid(_active_buff_visual):
 		return
-	_sync_prepared_buff_transform()
 	if _active_buff_visual.follow_model_anchor and is_instance_valid(_projectile_anchor):
 		_active_buff_visual.global_position = _projectile_anchor.global_position
 	var status_active := is_instance_valid(_source) and _state.active_buff
@@ -1910,15 +1862,8 @@ func _exit_tree() -> void:
 	_model_resources.clear()
 
 ## 完成死亡片段或换模型后才移交；代理、源信号和附属效果不进入模型池。
-func _release_model(preserve_buff: bool = false) -> void:
+func _release_model() -> void:
 	if not is_instance_valid(_model_root): return
-	if material_states.get("mode") == "match" and is_instance_valid(_active_buff_visual):
-		if preserve_buff:
-			_active_buff_visual.set_meta("preserve_prepared_buff", true)
-			_preserved_buff = {"owner": _model_resources, "node": _active_buff_visual}
-		else:
-			_model_resources.park_buff(_active_buff_visual)
-			_active_buff_visual = null
 	if _animation_player != null and _animation_player.animation_finished.is_connected(_on_animation_finished):
 		_animation_player.animation_finished.disconnect(_on_animation_finished)
 	var recycled := model_recycler.is_valid() and bool(model_recycler.call(_model_root, _model_resources, _animation_player))

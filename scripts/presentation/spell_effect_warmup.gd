@@ -1,10 +1,7 @@
 extends RefCounted
 ## 通用效果准备执行器：选择归卡牌，资源和采样配方归效果提供者。
 const MANIFEST = preload("res://scripts/presentation/effect_resource_manifest.gd")
-const COVERAGE = preload("res://scripts/presentation/effect_warmup_coverage.gd")
 var retained: Array[Resource] = []
-# The Array pins identities for this warmup's lifetime; paths do not identify instances.
-var _retained_ids: Dictionary = {}
 var prepared: Array[String] = []
 var draws := 0
 var sampled_layers: Dictionary = {}
@@ -14,16 +11,8 @@ var retained_by_recipe := {}
 var draw_usec := 0
 var frame_wait_usec := 0
 var repeated_draws_skipped := 0
-var resource_scan_usec := 0
 var _drawn_resources := {}
 var _completed: Dictionary = {}
-var coverage_reports := {}
-# Optional observation only; the normal path never installs this callback.
-var diagnostic_observer: Callable
-
-func _observe(stage: String, detail: Dictionary = {}) -> void:
-	if diagnostic_observer.is_valid(): diagnostic_observer.call(stage, detail)
-
 
 static func dependency_paths(cards: Dictionary, plan: RefCounted = null) -> Array[String]:
 	var paths: Array[String] = []
@@ -52,26 +41,16 @@ func prepare(cards: Dictionary, world: Node3D, camera: Camera3D, stop: Callable 
 		for request in grouped[card]:
 			if stop.is_valid() and bool(stop.call()): return
 			var manifest := MANIFEST.resolve(request, errors)
-			if not errors.is_empty(): return
 			var key: String = request.provider + ":" + request.variant
 			if manifest.has("sample") or manifest.has("view"): drew = true
 			if _completed.has(key): continue
-			_observe("recipe_begin", {"card": card, "recipe": key, "age_index": -1, "age_count": 0, "age": -1.0})
 			var started := Time.get_ticks_usec()
 			var draws_before := draws
 			var draw_before := draw_usec
 			var wait_before := frame_wait_usec
 			var retained_before := retained.size()
-			if manifest.has("sample"):
-				var recipe: Dictionary = manifest.sample
-				if recipe.get("fixed_sampled_layers", false):
-					recipe = MANIFEST.files(request, errors).get("selection", {}).get("sample", {})
-					if not recipe.get("fixed_sampled_layers", false) or not recipe.has("coverage"):
-						errors.append("固定采样层缺少生成产物")
-						return
-				await _sample(card, recipe, world, camera, stop)
+			if manifest.has("sample"): await _sample(card, manifest.sample, world, camera, stop)
 			elif manifest.has("view"): await _view(manifest.view, world, camera, stop)
-			if not errors.is_empty(): return
 			if stop.is_valid() and bool(stop.call()): return
 			var types := {}
 			for index in range(retained_before, retained.size()):
@@ -80,16 +59,10 @@ func prepare(cards: Dictionary, world: Node3D, camera: Camera3D, stop: Callable 
 			retained_by_recipe[key] = types
 			timings[key] = {"total_usec": Time.get_ticks_usec() - started, "draws": draws - draws_before, "draw_usec": draw_usec - draw_before, "frame_wait_usec": frame_wait_usec - wait_before}
 			_completed[key] = true
-			_observe("recipe_done")
 		if drew: prepared.append(card)
 
 func _sample(card: String, recipe: Dictionary, world: Node3D, camera: Camera3D, stop: Callable) -> void:
-	if recipe.get("fixed_sampled_layers", false):
-		await _sample_fixed_layers(card, recipe, world, camera, stop)
-		return
 	var kind := String(recipe.kind)
-	var coverage := COVERAGE.plan(recipe, errors)
-	if coverage.is_empty(): return
 	var setup_started := Time.get_ticks_usec()
 	var player: Node = load(recipe.player).new()
 	if recipe.setup == "2d":
@@ -103,13 +76,7 @@ func _sample(card: String, recipe: Dictionary, world: Node3D, camera: Camera3D, 
 		if recipe.setup == "native_kind": player.setup_native(0.01, kind)
 		else:
 			player.load_kind(kind)
-			if recipe.setup == "provider_sample":
-				if coverage.strategy != COVERAGE.STATIC or not player.has_method("setup_resource_sample"):
-					errors.append("声明覆盖缺少提供者代表样本setup")
-					player.free()
-					return
-				player.setup_resource_sample(camera)
-			else: player.setup_native(0.01)
+			player.setup_native(0.01)
 	if "preparation_errors" in player and not player.preparation_errors.is_empty():
 		errors.append_array(player.preparation_errors)
 		player.free()
@@ -117,43 +84,16 @@ func _sample(card: String, recipe: Dictionary, world: Node3D, camera: Camera3D, 
 	var setup_usec := Time.get_ticks_usec() - setup_started
 	timings[card + "/" + kind + "/setup_usec"] = setup_usec
 	# 采样粒子从数据补齐出生帧；程序化 Shader 效果由提供者声明采样时刻。
-	_observe("ages_before", {"player_id": player.get_instance_id()})
-	var declared: bool = coverage.strategy == COVERAGE.STATIC
-	var ages: Array = coverage.samples.map(func(sample): return sample.age) if declared else (player.resource_sample_ages() if player.has_method("resource_sample_ages") else (sample_ages(player._data) if "_data" in player else recipe.times))
-	var report := {"strategy": coverage.strategy, "ages": ages, "seek_usec": 0, "retain_usec": 0, "scan_usec": 0, "samples": [], "temporary_player_freed": false}
-	coverage_reports[card + "/" + kind] = report
-	_observe("ages_after", {"age_count": ages.size()})
-	for age_index in ages.size():
-		var age: Variant = ages[age_index]
+	var ages: Array = player.resource_sample_ages() if player.has_method("resource_sample_ages") else (sample_ages(player._data) if "_data" in player else recipe.times)
+	for age in ages:
 		if stop.is_valid() and bool(stop.call()): break
-		_observe("seek_before", {"age_index": age_index, "age": age})
-		var started := Time.get_ticks_usec()
 		if player is Node2D: player.sample(age, 1.0)
 		else: player.seek(age)
-		report.seek_usec += Time.get_ticks_usec() - started
-		_observe("seek_after")
-		if declared:
-			started = Time.get_ticks_usec()
-			var states := COVERAGE.inspect(player, coverage, coverage.samples[age_index], errors)
-			report.scan_usec += Time.get_ticks_usec() - started
-			report.samples.append({"age": age, "states": states})
-			if not errors.is_empty(): break
-		_observe("retain_before")
-		started = Time.get_ticks_usec()
 		_retain(player)
-		report.retain_usec += Time.get_ticks_usec() - started
-		_observe("retain_after")
-		# A declared sample is a complete audited state, always actually drawn once.
-		# It does not use private material identity to infer more work or reuse.
-		if declared: await _draw(world.get_tree())
-		else:
-			var scan_before := resource_scan_usec
-			await _draw_resources(player, world.get_tree())
-			report.scan_usec += resource_scan_usec - scan_before
+		await _draw_resources(player, world.get_tree())
 	if "_pools" in player:
 		sampled_layers[card + "/" + kind] = player._pools.filter(func(pool): return not pool.is_empty()).size()
 	player.free()
-	report.temporary_player_freed = true
 
 func _view(recipe: Dictionary, world: Node3D, camera: Camera3D, stop: Callable) -> void:
 	var view: Node3D = load(recipe.script).new()
@@ -190,14 +130,9 @@ func prepare_ground(presentation: Node, plan: RefCounted, stop: Callable) -> voi
 ## 只复用同一实例资源的已提交绘制；所有年龄仍 seek/保留，新增粒子材质/网格仍绘制。
 ## 当前播放器只对静态ArrayMesh更新数值uniform；可变网格、多遍、未知/标准材质及2D保持逐样本绘制。
 func _draw_resources(node: Node, tree: SceneTree) -> void:
-	_observe("resource_scan_before")
-	var started := Time.get_ticks_usec()
 	var resources := visible_shader_resources(node)
-	resource_scan_usec += Time.get_ticks_usec() - started
-	_observe("resource_scan_after", {"resource_keys": resources.size(), "force": resources.has("force")})
 	if DisplayServer.get_name() != "headless" and not resources.has("force") and resources.keys().all(func(key): return _drawn_resources.has(key)):
 		repeated_draws_skipped += 1
-		_observe("draw_skipped")
 		return
 	await _draw(tree)
 	_drawn_resources.merge(resources)
@@ -220,7 +155,6 @@ static func visible_shader_resources(node: Node) -> Dictionary:
 
 func _draw(tree: SceneTree) -> void:
 	var started := Time.get_ticks_usec()
-	_observe("draw_wait")
 	if DisplayServer.get_name() == "headless":
 		await tree.process_frame
 	else:
@@ -228,7 +162,6 @@ func _draw(tree: SceneTree) -> void:
 		await RenderingServer.frame_post_draw
 		draws += 1
 	frame_wait_usec += Time.get_ticks_usec() - started
-	_observe("draw_resumed")
 
 ## 固定持续阶段之外，逐层补首个出生帧，避免短暂/延迟层落在采样间隙。
 static func sample_ages(data: Dictionary) -> Array[float]:
@@ -251,38 +184,8 @@ static func sample_ages(data: Dictionary) -> Array[float]:
 func _retain(node: Node) -> void:
 	if node is Polygon2D:
 		for resource in [node.texture, node.material]:
-			_retain_resource(resource)
+			if resource != null and resource not in retained: retained.append(resource)
 	if node is MeshInstance3D:
 		for resource in [node.mesh, node.material_override]:
-			_retain_resource(resource)
+			if resource != null and resource not in retained: retained.append(resource)
 	for child in node.get_children(): _retain(child)
-
-func _retain_resource(resource: Resource) -> void:
-	if resource == null: return
-	var identity := resource.get_instance_id()
-	if _retained_ids.has(identity): return
-	_retained_ids[identity] = true
-	retained.append(resource)
-
-func release_retained_resources() -> void:
-	_retained_ids.clear()
-	retained.clear()
-
-## Generated layer representatives have their own owner, never a formal instance pool.
-func _sample_fixed_layers(card: String, recipe: Dictionary, world: Node3D, camera: Camera3D, stop: Callable) -> void:
-	const FIXED = preload("res://scripts/presentation/sampled_effect_coverage.gd")
-	if not FIXED.valid(recipe.get("coverage", {})):
-		errors.append("固定采样层覆盖契约损坏"); return
-	var started := Time.get_ticks_usec()
-	var player: Node3D = load(recipe.player).new()
-	world.add_child(player)
-	player.load_kind(recipe.kind)
-	var loaded := Time.get_ticks_usec()
-	FIXED.prepare(player, recipe.coverage, camera, errors)
-	var built := Time.get_ticks_usec()
-	if errors.is_empty() and not (stop.is_valid() and bool(stop.call())):
-		_retain(player)
-		var retained_at := Time.get_ticks_usec()
-		await _draw(world.get_tree())
-		coverage_reports[card + "/" + recipe.kind] = {"strategy": FIXED.STRATEGY, "layers": recipe.coverage.layers.size(), "template_load_usec": loaded - started, "representatives_usec": built - loaded, "retain_usec": retained_at - built, "pool_transferred": false}
-	player.free()

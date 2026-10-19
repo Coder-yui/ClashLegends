@@ -220,16 +220,8 @@ def verification_plan(root: Path, source: str, paths: list[str], *, full: bool =
                 card_facts |= 'card_facts' in stem
                 if card_facts:
                     add_stems('card_db_validation_suite', 'content_contract_suite')
-            artifact_tool = effective.startswith(('tools/source_assets/', 'tools/generated/', 'tools/release/')) or stem in ('resource_artifacts', 'resource_contracts', 'resource_pack_contract', 'check_resource_contracts', 'effect_manifest_builder', 'sampled_coverage_builder', 'sampled_shader_contract', 'generate_effect_artifacts', 'model_template_builder', 'resource_process', 'resource_offline_worker', 'resource_build_records', 'compact_legacy_review', 'coverage_reviews', 'effect_coverage_reviews')
-            if artifact_tool:
-                effects = True
-                tools.update(str(p.relative_to(root)) for p in python_tests if p.stem in ('test_resource_artifacts', 'test_compact_samples', 'test_effect_dependencies', 'test_coverage_reviews', 'test_resource_process', 'test_resource_incremental'))
-            matched = bool(candidates) or artifact_tool or stem in ('export_card_facts', 'effect_dependencies', 'check_card_facts')
+            matched = bool(candidates) or stem in ('export_card_facts', 'effect_dependencies', 'check_card_facts')
             domain = 'tool-module'
-        elif effective.startswith('addons/resource_artifacts/'):
-            effects = True
-            tools.update(str(p.relative_to(root)) for p in python_tests if p.stem == 'test_resource_artifacts')
-            domain = 'development-artifact-gate'
         elif effective in ('.gitignore', '.gitattributes', 'export_presets.cfg'):
             tools.update(str(p.relative_to(root)) for p in python_tests if p.stem in ('test_audit_project', 'test_reusable_tools'))
             domain = 'repository/export-configuration'
@@ -255,10 +247,8 @@ def verification_plan(root: Path, source: str, paths: list[str], *, full: bool =
         if not matched:
             unknown.append(path)
         reasons.append({'path': path, 'risk': domain, 'suites': [e['id'] for e in catalog if e['id'] in chosen - before]})
-    if any(p.startswith(('scripts/', 'assets/', 'tools/source_assets/', 'tools/maintenance/resource_artifacts', 'tools/maintenance/compact_samples', 'tools/maintenance/effect_', 'tools/maintenance/generate_effect_', 'tools/generated/', 'tools/release/', 'addons/resource_artifacts/')) or p in ('project.godot', 'export_presets.cfg') for p in normalized):
-        effects = True
     if effects:
-        tools.update(str(p.relative_to(root)) for p in python_tests if p.name in ('test_effect_dependencies.py', 'test_resource_artifacts.py'))
+        tools.update(str(p.relative_to(root)) for p in python_tests if p.name == 'test_effect_dependencies.py')
     if card_facts:
         tools.update(str(p.relative_to(root)) for p in python_tests if p.name == 'test_card_facts.py')
     if explicit:
@@ -295,7 +285,7 @@ def planned_commands(plan: dict, godot: str | None, output: Path, reverse: bool 
                 commands.append((name, [sys.executable, '-m', 'unittest', 'discover',
                                         '-s', directory, '-p', pattern]))
     if plan['effect_dependencies']:
-        commands.append(('effect-dependencies', [sys.executable, 'tools/maintenance/resource_artifacts.py', '--check']))
+        commands.append(('effect-dependencies', [sys.executable, 'tools/maintenance/effect_dependencies.py', '--check']))
     if plan['requires_import'] and (plan['suites'] or network or plan['card_facts']):
         commands.append(('import', [godot or '<Godot>', '--headless', '--path', '.', '--editor', '--import', '--quit']))
     if plan['card_facts']:

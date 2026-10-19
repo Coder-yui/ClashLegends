@@ -25,7 +25,6 @@ func _run() -> void:
 	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	stage.add_child(bg)
 	presentation = BattlePresentation3D.new()
-	presentation.tool_material_mode = true
 	stage.add_child(presentation)
 	presentation.setup(Vector2(720,1280),40.0)
 	audio = GameAudioManager.new()

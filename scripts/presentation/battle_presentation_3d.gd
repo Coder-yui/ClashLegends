@@ -5,21 +5,7 @@ extends Node
 
 var spell_warmup := preload("res://scripts/presentation/spell_effect_warmup.gd").new()
 var viewer_team := 0
-signal resource_failed(errors: PackedStringArray)
-var material_errors := PackedStringArray()
-var tool_material_mode := false
 var resource_plan: RefCounted
-
-func _material_failure(errors: PackedStringArray) -> void:
-	material_errors.append_array(errors)
-	resource_failed.emit(errors)
-
-func _set_material_plan(view: UnitModel3D, path: String) -> bool:
-	view.material_states = ModelVisualResources.tool_material_states() if tool_material_mode else model_pool.states_for_path(path)
-	if view.material_states.get("mode") not in ["match", "tool"]:
-		_material_failure(PackedStringArray(["Unplanned presentation model path: " + path]))
-		return false
-	return true
 
 func visual_team(team: int) -> int:
 	return 0 if team == viewer_team else 1
@@ -57,9 +43,6 @@ var _base_camera_size: float
 var model_pool := MatchModelPool.new()
 var pending_deployments: Callable
 var _pre_deploy_views: Dictionary = {}
-
-func _init() -> void:
-	model_pool.resource_failed.connect(_material_failure)
 
 func _process(delta: float) -> void:
 	if _scuttle_effect != null and skills != null:
@@ -229,9 +212,6 @@ func set_view_rect(rect: Rect2) -> void:
 	_render_camera.force_update_transform()
 
 func attach_unit(unit: Unit, stats: Dictionary) -> bool:
-	if not tool_material_mode and (resource_plan == null or not resource_plan.cards.has(unit.card_id) or visual_team(unit.team) not in resource_plan.cards[unit.card_id]):
-		_material_failure(PackedStringArray(["Unplanned presentation card/team: " + unit.card_id]))
-		return false
 	if resource_plan != null and resource_plan.cards.has(unit.card_id):
 		stats = resource_plan.definition(unit.card_id, visual_team(unit.team))
 	var visual_stats := PresentationConfig.for_form(stats, unit.get_form_index())
@@ -243,19 +223,12 @@ func attach_unit(unit: Unit, stats: Dictionary) -> bool:
 		push_warning("无法加载单位 3D 表现：%s" % scene_path)
 		return false
 	var view := UnitModel3D.new()
-	if not _set_material_plan(view, scene_path):
-		view.free()
-		return false
-	view.resource_failed.connect(_material_failure)
 	view.model_factory = model_pool.take
-	view.model_factory_errors = func(): return model_pool.errors
 	view.model_recycler = model_pool.recycle
 	_world_root.add_child(view)
 	var animations: Dictionary = visual_stats.get("visual_animations", {})
 	var forward_yaw: float = visual_stats.get("visual_forward_yaw", 0.0)
-	var previous_errors := material_errors.size()
 	if not view.setup(unit, packed, _camera, animations, forward_yaw, String(visual_stats.get("visual_active_buff_scene", ""))):
-		if material_errors.size() == previous_errors: _material_failure(model_pool.errors if not model_pool.errors.is_empty() else PackedStringArray(["Unit model attach failed: " + scene_path]))
 		view.queue_free()
 		return false
 	_sion_w_effect.track(unit)
@@ -276,14 +249,12 @@ func _on_unit_form_changed(form_index: int, unit: Unit, view: UnitModel3D, base_
 	if packed == null:
 		push_warning("无法加载单位形态 3D 表现：%s" % scene_path)
 		return
-	if not _set_material_plan(view, scene_path): return
-	var replaced := view.replace_visual(
+	view.replace_visual(
 		packed,
 		visual_stats.get("visual_animations", {}),
 		float(visual_stats.get("visual_forward_yaw", 0.0)),
 		String(visual_stats.get("visual_active_buff_scene", ""))
 	)
-	if not replaced: _material_failure(PackedStringArray(["Unit model form replacement failed: " + scene_path]))
 
 func attach_tower(tower: Tower, config: Dictionary) -> bool:
 	var scene_paths: Array = config.get("scene_paths", [])
@@ -346,7 +317,6 @@ func _create_environment() -> void:
 
 func _exit_tree() -> void:
 	model_pool.release_sources()
-	spell_warmup.release_retained_resources()
 
 ## 世界高度由本机相机投影，适配红方翻转；不参与权威落点计算。
 func project_height(point: Vector2, height: float) -> Vector2:

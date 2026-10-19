@@ -5,7 +5,6 @@
 [ext_resource type="Script" path="res://assets/units/twitch/twitch_view.gd" id="2"]
 
 [node name="TwitchView" type="Node3D"]
-metadata/model_pool_construction = {"version": 1, "mode": "loading-only", "scripts": []}
 
 script = ExtResource("2")
 

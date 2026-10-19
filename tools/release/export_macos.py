@@ -7,7 +7,6 @@ import importlib.util
 import json
 from pathlib import Path
 import subprocess
-from pck_audit import audit as audit_pck
 
 ROOT = Path(__file__).resolve().parents[2]
 spec = importlib.util.spec_from_file_location('verify', ROOT / 'tools/verify.py')
@@ -27,8 +26,6 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--godot', default='/Applications/Godot.app/Contents/MacOS/Godot')
     args = parser.parse_args()
-    # Fail before creating an export process; never auto-regenerate during release.
-    subprocess.run([__import__('sys').executable, str(ROOT / 'tools/maintenance/resource_artifacts.py'), '--check'], cwd=ROOT, check=True)
     output = ROOT / 'ClashLegends-开发素材库/04-中间产物/构建与验证/macos' / datetime.now().strftime('%Y%m%d-%H%M%S-%f')
     output.mkdir(parents=True)
     app = output / 'Clash Legends.app'
@@ -51,9 +48,6 @@ def main():
             step = verify.run_step(name, command, output, timeout)
             report['steps'].append(step)
             if not step['passed']: raise RuntimeError(name + ' failed')
-        packs = list(app.rglob('*.pck'))
-        if len(packs) != 1: raise RuntimeError('Expected exactly one native PCK')
-        report['pck_audit'] = audit_pck(packs[0], ROOT, json.loads((ROOT / 'tools/generated/effect_artifacts.json').read_text()))
         executables = list((app / 'Contents/MacOS').iterdir())
         if len(executables) != 1: raise RuntimeError('Expected exactly one app executable')
         executable = executables[0]
@@ -75,7 +69,7 @@ def main():
                 step['result'] = result
         report['artifacts'] = {str(p.relative_to(app)): {'bytes': p.stat().st_size, 'sha256': sha256(p)}
                                for p in sorted(app.rglob('*')) if p.is_file()}
-    except (OSError, ValueError, RuntimeError, subprocess.SubprocessError) as exc:
+    except (OSError, RuntimeError, subprocess.SubprocessError) as exc:
         report['error'] = str(exc)
     report['identity_after'] = verify.identity(ROOT)
     report['passed'] = 'error' not in report and len(report['steps']) == 5 and report['identity_before']['content_sha256'] == report['identity_after']['content_sha256']

@@ -6,16 +6,14 @@ const EFFECTS = preload("res://scripts/presentation/effect_resource_manifest.gd"
 var effects: Array[Dictionary] = []
 var target_states: Dictionary = {}
 var errors := PackedStringArray()
-var decks: Array = [] # 出牌根与可达闭包分离；库存不能把所有衍生物再当出牌来源。
 var cards: Dictionary = {}
 var skills: Dictionary = {}
 var _pending: Array[Dictionary] = []
 
-static func for_match(match_decks: Array, choices: Array) -> RefCounted:
+static func for_match(decks: Array, choices: Array) -> RefCounted:
 	var plan: RefCounted = load("res://scripts/presentation/match_resource_plan.gd").new()
-	plan.decks = match_decks.duplicate(true)
-	for team in match_decks.size():
-		var deck: Array = match_decks[team]
+	for team in decks.size():
+		var deck: Array = decks[team]
 		var active_copy := deck.slice(0, 2).any(func(id): return bool(CardDB.get_card(String(id)).get("resource_dependencies", {}).get("copy_deck_skills", false)))
 		for slot in deck.size():
 			var id := String(deck[slot])
@@ -32,9 +30,6 @@ static func for_match(match_decks: Array, choices: Array) -> RefCounted:
 		EFFECTS.collect_requests(plan.definition(id), id, plan.effects)
 	for request in plan.effects:
 		for state in EFFECTS.resolve(request, plan.errors).get("target_states", []): plan.target_states[state] = true
-	# 在读取/实例化模型资源之前拒绝未审阅的巨大需求或生产循环。
-	var model_plan: RefCounted = preload("res://scripts/presentation/match_model_demand.gd").build(plan.cards, plan)
-	plan.errors.append_array(model_plan.errors)
 	return plan
 
 func _enqueue(id: String, team: int, selected: Array) -> void:
@@ -74,15 +69,15 @@ func allows(id: String, index: int = -1, team: int = -1) -> bool:
 		if index in skills[id][side] or (index < 0 and not skills[id][side].is_empty()): return true
 	return false
 
-func definition(id: String, team: int = -1, active_enabled: bool = true) -> Dictionary:
-	return _filter(CardDB.get_card(id), id, team, active_enabled)
+func definition(id: String, team: int = -1) -> Dictionary:
+	return _filter(CardDB.get_card(id), id, team)
 
-func _filter(base: Dictionary, id: String, team: int, active_enabled: bool = true) -> Dictionary:
+func _filter(base: Dictionary, id: String, team: int) -> Dictionary:
 	var result := base.duplicate()
 	if base.has("active_skills"):
 		var selected: Array = []
 		for index in base.active_skills.size():
-			if active_enabled and allows(id, index, team): selected.append(base.active_skills[index])
+			if allows(id, index, team): selected.append(base.active_skills[index])
 		result.active_skills = selected
 	# 技能明确拥有的字段，仅在该技能可达时加入；其他字段默认属于基础能力。
 	var claimed := {}
@@ -91,11 +86,11 @@ func _filter(base: Dictionary, id: String, team: int, active_enabled: bool = tru
 	for index in original_skills.size():
 		for field in original_skills[index].get("resource_dependencies", {}).get("fields", []):
 			claimed[field] = true
-			if active_enabled and allows(id, index, team): available[field] = true
+			if allows(id, index, team): available[field] = true
 	for field in claimed:
 		if not available.has(field): result.erase(field)
 	if result.has("transformed_stats"):
-		result.transformed_stats = _filter(result.transformed_stats, id, team, active_enabled)
+		result.transformed_stats = _filter(result.transformed_stats, id, team)
 	if base.has("visual_scene_paths"):
 		var paths: Array = base.visual_scene_paths.duplicate()
 		for side in paths.size():
@@ -106,7 +101,7 @@ func _filter(base: Dictionary, id: String, team: int, active_enabled: bool = tru
 	capabilities.active_skills = []
 	var original: Array = CardDB.get_card(id).get("active_skills", [])
 	for index in original.size():
-		if active_enabled and allows(id, index, team): capabilities.active_skills.append(original[index])
+		if allows(id, index, team): capabilities.active_skills.append(original[index])
 	if not capabilities.get("active_skills", []).any(func(skill): return bool(skill.get("uses_skill_resource", false))):
 		capabilities.skill_resource_max = 0.0
 	if base.has("audio"):

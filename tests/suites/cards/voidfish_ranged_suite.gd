@@ -169,7 +169,6 @@ func _check_projectile_origin_and_timing() -> void:
 			var fish: Unit = _main._spawn_unit(UnitSpawnRequest.new(team, "voidfish_ranged_single", Vector2(300, 800), {"deploy_time_override": 0.0}))
 			var target: Unit = _main._spawn_unit(UnitSpawnRequest.new(1-team, "garen", fish.position + Vector2(0, -130 if team == 0 else 130), {"deploy_time_override": 0.0}))
 			var view := UnitModel3D.new()
-			view.material_states = ModelVisualResources.tool_material_states()
 			_main.add_child(view)
 			var stats := CardDB.get_card("voidfish_ranged_single")
 			view.setup(fish, load(stats.visual_scene_path), camera, stats.visual_animations, 0.0)

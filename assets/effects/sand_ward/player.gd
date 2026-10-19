@@ -3,16 +3,6 @@ extends ActiveBuffVisual3D
 const ROOT := "res://assets/effects/sand_ward/"
 const SHELL = preload("res://assets/effects/sand_ward/shell.gdshader")
 const SAND = preload("res://assets/effects/sand_ward/sand.gdshader")
-# Complete fixed topology at first visible age. Source/render-mode audit is a build gate;
-# runtime checks actual geometry/materials before drawing. No live pool is transferred.
-static func warmup_coverage() -> Dictionary:
-	return {"version": 1, "strategy": "static-untextured-primitives-v1",
-		"samples": [{"age": 0.08, "states": ["shell", "grain"]}],
-		"states": [
-			{"id": "shell", "mesh": "SphereMesh", "geometry": [0.7, 2.5, 64, 32], "shader": ROOT + "shell.gdshader", "count": 1, "uniforms": ["elapsed"],
-				"render_modes": ["unshaded", "blend_add", "cull_back", "depth_draw_never", "shadows_disabled"]},
-			{"id": "grain", "mesh": "QuadMesh", "geometry": [0.06, 0.09], "shader": ROOT + "sand.gdshader", "count": 24, "uniforms": ["opacity"],
-				"render_modes": ["unshaded", "blend_add", "cull_disabled", "depth_draw_never", "shadows_disabled"]}]}
 var _shell: MeshInstance3D
 var _grains: Array[MeshInstance3D] = []
 var _skeleton: Skeleton3D
@@ -84,6 +74,8 @@ func seek(age: float) -> void:
 	_update_effects(maxf(age, 0.0))
 static func resource_manifest(variant: String) -> Dictionary:
 	if variant != "ward": return {}
-	return {"paths": [ROOT + "shell.gdshader", ROOT + "sand.gdshader"], "sample": {"player": ROOT + "player.gd", "kind": "ward", "setup": "native", "coverage": warmup_coverage()}}
-func prepare_resource_sample(_skills: Array, draw: Callable) -> PackedStringArray:
-	return preload("res://scripts/presentation/effect_warmup_coverage.gd").prepare_attached(self, warmup_coverage(), draw)
+	return {"paths": [ROOT + "shell.gdshader", ROOT + "sand.gdshader"], "sample": {"player": ROOT + "player.gd", "kind": "ward", "setup": "native"}}
+func prepare_resource_sample(_skills: Array, draw: Callable) -> void:
+	for age in [0.08, 0.25, 1.0]:
+		seek(age)
+		draw.call()

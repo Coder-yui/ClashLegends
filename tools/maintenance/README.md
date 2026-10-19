@@ -22,14 +22,4 @@ python3 -m unittest discover -s tools/maintenance -p 'test_*.py'
 
 ## 原生采样运行格式
 
-统一入口为 `python3 tools/dev.py resources --write/--check`，版本化清单、源件/策略失效、编辑器/verify/导出门禁与新卡操作见[资源生成流程](../../docs/RESOURCE_ARTIFACTS.md)。`effect_dependencies.py` 只提供数值采样元数据投影，CLI 转交统一入口；不再生成旧依赖头。`compact_samples.py --check` 可独立重做虚空召唤全部 int64/float64 位等价和确定性生成检查。`resource_contracts.py` 顺序执行受保护微型格式与无源件隔离 PCK 合同，不启动对局或美术预览。
-
-模型模板已并入同一resources --write/--check：配方在tools/source_assets/model_recipes，builder只加工离树导入模型，不跑包装脚本/对局。model_contracts.py默认运行剑魔/圆盘所有权小合同，--batch2运行整表面/材质闭包合同，--materials-only仅该批夹具，--compile-render只编译探针；--render为对应批次的独立最小摄影对照；均复用既有保护阈值。操作与输入失效规则见[资源生成流程](../../docs/RESOURCE_ARTIFACTS.md#模型模板与一次实例所有权)。
-
-resource_offline_worker.py仅由统一resources入口的resource_process监督启动，不裸跑、不写正式assets。它仅执行offline-plan中的dirty CLPS/逐源投影jobs，生成暂存产物与最后的完成报告；退出/回收确认后才启动Godot。resource_build_records保存逐产物真实身份；model-only复用已认证特效产物，no-op不启动子进程；两阶段保留原保护门槛。resource_process在拒绝前保存真实内存/RSS/时间，所有写入失败显式停止；单文件原子发布、部分生成恢复和微型测试边界见[资源生成流程](../../docs/RESOURCE_ARTIFACTS.md#生成保护的观测与进程边界)。
-
-严格材质补充入口：`python3 tools/maintenance/model_contracts.py --strict-materials`只跑小夹具、两个库存实例及直接attach/pool入口；`--strict-materials --render`为有限代表摄影，金身以同帧隔离视口消除TIME跨帧差异，`--stasis-only`仅复验金身。都复用原监督器，不是整场首用/性能证明。
-
-剩余模型小批入口为`model_contracts.py --remaining --baseline <实施前源码快照目录>`：顺序加载单类模型，对照原动画、原生网格/LOD、私有材质和复位；`--select`缩到受影响模型，`--consumers-only`验证六个真实模型/形态的UnitModel资源移交。`--remaining --render`只运行VoidGate/Yorick/Gnar三种机制代表；Pantheon未通过严格渲染、正式实现保持原样。快照和候选只存在本地素材库，不进入运行assets或导出；没有快照时数据对照明确停止，不用当前实现充当旧参照。
-
-模型库存收敛入口为`python3 tools/maintenance/model_inventory_revision.py`：默认纯账单/全定义选择和巨大批量/深度/循环门禁；`--mode capabilities`只逐一检查六个模板，`--mode scheduler`只查虚拟时钟调度及真实取消信号清理，`--mode compile-runtime`只编译，`--mode runtime`显式启动一次真实Runtime小轨迹。使用同一resource_process保护，不自动串跑/重试或扩大整场；首轮/旧储备/构造能力、单步补货和真实有限轨迹结果见[库存契约](../../docs/MODEL_POOL_DEMAND.md)。旧手写事件库存探针已移出运行工具目录，源与证据只保留素材库。`--mode failures`仅用小夹具验证补货四阶段错误只通知Main一次、取消释放，以及死亡替身工厂null保留原错误；不运行对局、sampled家族或渲染。
+`effect_dependencies.py --write/--check`维护22份大型sampled源的依赖头，保留完整源SHA与元数据，避免为依赖枚举展开frames。`compact_samples.py --write`仅为虚空召唤离线生成sampled.clps，`--check`逐位核对并检查确定性生成；使用Python3.14标准库compression.zstd，无安装步骤。原JSON保留，索引int64、数值float64，运行按源/载荷SHA验证后直接解压Packed数组，失配要求重新生成。生成/校验可能读取大源，不附带于纯文档审计；按实际资源改动明确选择。完整当前结果和未验范围见[单局加载记录](../../docs/deliveries/2026-10-16_match_loading.md)。

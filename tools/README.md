@@ -74,5 +74,3 @@ python3 -m unittest discover -s tools/tests
 python3 -m unittest discover -s tools/maintenance -p 'test_*.py'
 python3 tools/dev.py audit
 ```
-
-资源生成、检查与导出门禁：`python3 tools/dev.py resources --write/--check`，详见[资源生成流程](../docs/RESOURCE_ARTIFACTS.md)。

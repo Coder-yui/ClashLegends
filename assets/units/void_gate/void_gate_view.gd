@@ -1,4 +1,4 @@
-extends "res://scripts/presentation/model_template_view.gd"
+extends Node3D
 ## 待机粒子跨吐兽连续存在；吐兽独立叠加，死亡和回池统一清理。
 const PARTICLES = preload("res://assets/effects/void_gate/player.gd")
 const DURATIONS := {"spawn": 7.2, "idle": 64.0, "spit": 2.6, "death": 2.2}
@@ -13,16 +13,41 @@ var _idle_started := false
 var _idle_age := 0.0
 var _spit_delta: Animation
 
-func _initialize_template_geometry() -> bool:
+func _ready() -> void:
 	process_priority = 20
-	_animation = _template_player
-	_skeleton = find_children("*", "Skeleton3D", true, false)[0] as Skeleton3D
-	# 只读引用导入的原始delta，不把它重复序列化到模板；连续Idle相位仍属本实例。
-	_spit_delta = _animation.get_animation("Spit")
-	if _spit_delta == null or _skeleton == null:
-		preparation_errors.append("VoidGate requires imported Spit delta and skeleton")
-		return false
-	return true
+	_animation = find_child("AnimationPlayer", true, false) as AnimationPlayer
+	for node in find_children("*", "Skeleton3D", true, false):
+		_skeleton = node
+		break
+	# Death源动作只有1秒。延长末姿态持有窗口，不降低原动画速度。
+	if _animation != null and _animation.has_animation("Death"):
+		var name := _animation.find_animation_library(_animation.get_animation("Death"))
+		var library := _animation.get_animation_library(name).duplicate() as AnimationLibrary
+		_spit_delta = library.get_animation("Spit")
+		var absolute := _spit_delta.duplicate() as Animation
+		var idle := library.get_animation("Idle1")
+		# AnimationPlayer's blend source must also be absolute; retain the untouched delta
+		# separately for the continuous Idle+Spit overlay below.
+		for track in absolute.get_track_count():
+			var base_track := idle.find_track(absolute.track_get_path(track), absolute.track_get_type(track))
+			if base_track < 0: continue
+			for key in absolute.track_get_key_count(track):
+				var t := absolute.track_get_key_time(track, key)
+				match absolute.track_get_type(track):
+					Animation.TYPE_POSITION_3D:
+						absolute.track_set_key_value(track, key, idle.position_track_interpolate(base_track, t) + _spit_delta.position_track_interpolate(track, t))
+					Animation.TYPE_ROTATION_3D:
+						absolute.track_set_key_value(track, key, idle.rotation_track_interpolate(base_track, t) * _spit_delta.rotation_track_interpolate(track, t))
+					Animation.TYPE_SCALE_3D:
+						absolute.track_set_key_value(track, key, idle.scale_track_interpolate(base_track, t) * _spit_delta.scale_track_interpolate(track, t))
+		library.remove_animation("Spit")
+		library.add_animation("Spit", absolute)
+		var death := library.get_animation("Death").duplicate() as Animation
+		death.length = DURATIONS.death
+		library.remove_animation("Death")
+		library.add_animation("Death", death)
+		_animation.remove_animation_library(name)
+		_animation.add_animation_library(name, library)
 
 func _effect(kind: String) -> Node3D:
 	if not _effects.has(kind):

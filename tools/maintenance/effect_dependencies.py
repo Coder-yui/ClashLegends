@@ -1,12 +1,19 @@
-"""Development-only lossless metadata projection; CLI routes to unified artifacts."""
+"""Generate/check small, source-hashed headers for large sampled effect JSON.
+
+This never changes sampled sources. Runtime checks the complete source hash and
+falls back to the source on a missing/stale header; verify checks exact generation.
+"""
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 import math
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+MIN_BYTES = 1024 * 1024
+SUFFIX = '.dependencies.json'
 
 
 def numeric_frames(value):
@@ -15,50 +22,57 @@ def numeric_frames(value):
     return type(value) in (int, float) and math.isfinite(value)
 
 
-def metadata_projection(data, source: Path, root: Path, source_sha: str) -> dict:
-    """Metadata only, after caller's numeric/compact validation has succeeded."""
-    header = {key: value for key, value in data.items() if key != 'frames'}
-    return {'schema': 1, 'source': 'res://' + source.relative_to(root).as_posix(),
-            'source_sha256': source_sha, 'data': header}
-
-
-def validate_document_shape(data, source):
-    if not isinstance(data, dict) or not isinstance(data.get('emitters'), list) or not isinstance(data.get('frames'), list):
-        raise ValueError(f'Unsupported sampled frame shape: {source}')
-
-
-def project_document(data, source: Path, root: Path, source_sha: str, *, progress=None) -> dict:
-    validate_document_shape(data, source)
-    for frame in data['frames']:
-        if progress: progress('projection:validate-frame')
-        if not numeric_frames(frame): raise ValueError(f'Unsupported sampled frame shape: {source}')
-    return metadata_projection(data, source, root, source_sha)
-
-
 def project(source: Path, root: Path) -> dict:
     raw = source.read_bytes()
     data = json.loads(raw)
-    source_sha = hashlib.sha256(raw).hexdigest()
-    del raw
-    return project_document(data, source, root, source_sha)
+    if (not isinstance(data, dict) or not isinstance(data.get('emitters'), list)
+            or not isinstance(data.get('frames'), list) or not numeric_frames(data['frames'])):
+        raise ValueError(f'Unsupported sampled frame shape: {source}')
+    # Only numeric frame samples are omitted. Every emitter field, nested
+    # resource reference, shader discriminator and layer name stays identical.
+    header = {key: value for key, value in data.items() if key != 'frames'}
+    return {'schema': 1, 'source': 'res://' + source.relative_to(root).as_posix(),
+            'source_sha256': hashlib.sha256(raw).hexdigest(), 'data': header}
 
 
-def encode_projection(entry):
-    return (json.dumps(entry, ensure_ascii=False, sort_keys=True, separators=(',', ':'), allow_nan=False) + '\n').encode()
+def header_path(source: Path) -> Path:
+    return source.with_name(source.stem + SUFFIX)
 
 
-def project_compact_header(header, source: Path, root: Path, source_sha: str):
-    """Only for a CLPS whose complete content and validation receipt are verified."""
-    uri = 'res://' + source.relative_to(root).as_posix()
-    if header.get('source') != uri or header.get('source_sha256') != source_sha:
-        raise ValueError('Compact projection source identity mismatch')
-    data = header['data']
-    if not isinstance(data, dict) or 'frames' in data or not isinstance(data.get('emitters'), list):
-        raise ValueError('Invalid compact metadata projection')
-    return {'schema': 1, 'source': uri, 'source_sha256': source_sha, 'data': data}
+def process(root: Path, write: bool = False) -> list[str]:
+    sources = sorted(source for source in (root / 'assets/effects').rglob('sampled.json')
+                     if source.stat().st_size >= MIN_BYTES)
+    errors = []
+    expected_paths = {header_path(source) for source in sources}
+    for source in sources:
+        target = header_path(source)
+        try:
+            expected = project(source, root)
+            text = json.dumps(expected, ensure_ascii=False, separators=(',', ':'), allow_nan=False) + '\n'
+            if write:
+                target.write_text(text, encoding='utf-8')
+            elif not target.is_file() or target.read_text(encoding='utf-8') != text:
+                errors.append(f'Missing/stale dependency header: {target.relative_to(root)}')
+        except (ValueError, OSError) as error:
+            errors.append(str(error))
+    for target in sorted((root / 'assets/effects').rglob('*' + SUFFIX)):
+        if target not in expected_paths:
+            errors.append(f'Orphan dependency header: {target.relative_to(root)}')
+    return errors
 
 
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument('--write', action='store_true', help='Regenerate headers; never modify sampled sources.')
+    mode.add_argument('--check', action='store_true', help='Read-only exact source/header check (default).')
+    args = parser.parse_args()
+    errors = process(ROOT, args.write)
+    for error in errors:
+        print(error)
+    print(f'Effect dependency headers: {len(errors)} errors')
+    return 1 if errors else 0
 
-if __name__ == "__main__":
-    from resource_artifacts import main
+
+if __name__ == '__main__':
     raise SystemExit(main())

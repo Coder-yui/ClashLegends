@@ -144,7 +144,6 @@ func _build() -> void:
 
 func _build_scene() -> void:
 	_presentation = BattlePresentation3D.new()
-	_presentation.tool_material_mode = true
 	root.add_child(_presentation)
 	_presentation.setup(Vector2(ArenaRules.FIELD_W, ArenaRules.FIELD_H), ArenaRules.TILE_SIZE)
 	_world = _presentation._world_root
@@ -491,11 +490,7 @@ func _add_member(card_id: String, team: int, form: int, first: bool) -> void:
 				var p := bounds.position + bounds.size * Vector3(corner & 1, (corner >> 1) & 1, (corner >> 2) & 1)
 				bottom = minf(bottom, staging.to_local(mesh.to_global(p)).y)
 		if is_finite(bottom): model.position.y += CardDB.AIR_VISUAL_ELEVATION - bottom
-	var preparation_errors := ModelVisualResources.prepare_visual_root(model)
-	if not preparation_errors.is_empty():
-		_status.text = "；".join(preparation_errors)
-		staging.free()
-		return
+	if model.has_method("prepare_visual_animations"): model.call("prepare_visual_animations")
 	var player := model.find_child("AnimationPlayer", true, false) as AnimationPlayer
 	var clips := player.get_animation_list() if player != null else PackedStringArray()
 	var member := {"model": staging, "player": player, "card_id": card_id, "team": team, "form": form, "clips": clips, "clip": "", "time": 0.0}

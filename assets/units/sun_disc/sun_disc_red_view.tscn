@@ -1,15 +1,11 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://assets/units/sun_disc/sun_disc_view.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://assets/units/sun_disc/source/sun_disc.glb" id="2_disc"]
 [ext_resource type="PackedScene" path="res://assets/units/sun_disc/source/princess_tower_ruin_red.glb" id="3_ruin"]
 
-[ext_resource type="Resource" path="res://assets/generated/model_templates/sun_disc.res" id="template"]
-
 [node name="SunDiscRedView" type="Node3D"]
-metadata/model_pool_construction = {"version": 1, "mode": "loading-only", "scripts": []}
 script = ExtResource("1_script")
-visual_template = ExtResource("template")
 
 [node name="DiscModel" parent="." instance=ExtResource("2_disc")]
 scale = Vector3(0.0172, 0.0172, 0.0172)

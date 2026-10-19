@@ -982,8 +982,6 @@ func _setup_battle_presentation() -> void:
 	if _battle_presentation != null:
 		return
 	_battle_presentation = load("res://scripts/presentation/battle_presentation_3d.gd").new()
-	_battle_presentation.tool_material_mode = _workbench.enabled
-	_battle_presentation.resource_failed.connect(_fail_preparation)
 	add_child(_battle_presentation)
 	_battle_presentation.setup(Vector2(ArenaRules.FIELD_W, ArenaRules.FIELD_H), ArenaRules.TILE_SIZE, runtime.local_team == 1)
 	_battle_presentation.spells = _spell_system

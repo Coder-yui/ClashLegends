@@ -3,7 +3,6 @@
 [ext_resource type="PackedScene" path="res://assets/units/imp/source/imp.glb" id="1_imp"]
 
 [node name="ImpView" type="Node3D"]
-metadata/model_pool_construction = {"version": 1, "mode": "step-bind", "scripts": []}
 
 [node name="Model" parent="." instance=ExtResource("1_imp")]
 position = Vector3(0, 0.012, 0)

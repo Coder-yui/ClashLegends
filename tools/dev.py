@@ -17,7 +17,6 @@ COMMANDS = {
     'audio': ('python', 'tools/audio_review/serve.py', '目录或清单驱动的声音试听台'),
     'audio-prepare': ('python', 'tools/audio/prepare_lol_card_audio.py', '准备英雄原始音频事件工作目录'),
     'audio-import': ('python', 'tools/audio/import_card_audio.py', '按选定计划导入声音（先用 --dry-run）'),
-    'resources': ('python', 'tools/maintenance/resource_artifacts.py', '生成/check版本化特效依赖与紧凑产物'),
     'verify': ('python', 'tools/verify.py', '可追溯自动验证：审计、导入、机制、日志与版本'),
     'audit': ('python', 'tools/maintenance/audit_project.py', '项目资源、文档、注册审计'),
     'workbench': ('workbench', '', '完整实战与技能审查'),
@@ -42,10 +41,6 @@ def main():
     if command not in COMMANDS:
         print(f'Unknown command: {command}', file=sys.stderr); return 2
     kind, target, _ = COMMANDS[command]
-    if kind == 'workbench':
-        # Official card preview consumes the same generated dependencies as a match.
-        status = subprocess.call([sys.executable, str(PROJECT / 'tools/maintenance/resource_artifacts.py'), '--check'], cwd=PROJECT)
-        if status: return status
     if kind == 'python': cmd = [sys.executable, str(PROJECT / target), *args]
     elif kind == 'workbench': cmd = [godot(), '--path', str(PROJECT), '--', '--mode=workbench', *args]
     else: cmd = [godot(), '--path', str(PROJECT), '--script', target, '--', *args]

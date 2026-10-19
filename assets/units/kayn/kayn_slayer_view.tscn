@@ -2,7 +2,6 @@
 [ext_resource type="PackedScene" path="res://assets/units/kayn/source/kayn.glb" id="1"]
 [ext_resource type="Script" path="res://assets/units/kayn/kayn_view.gd" id="2"]
 [node name="KaynView" type="Node3D"]
-metadata/model_pool_construction = {"version": 1, "mode": "loading-only", "scripts": []}
 script = ExtResource("2")
 form = 2
 [node name="Model" parent="." instance=ExtResource("1")]

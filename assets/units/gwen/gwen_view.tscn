@@ -3,7 +3,6 @@
 [ext_resource type="PackedScene" path="res://assets/units/gwen/source/gwen.glb" id="1_gwen"]
 
 [node name="GwenView" type="Node3D"]
-metadata/model_pool_construction = {"version": 1, "mode": "step-bind", "scripts": []}
 
 [node name="Model" parent="." instance=ExtResource("1_gwen")]
 position = Vector3(0, -0.0585, 0)

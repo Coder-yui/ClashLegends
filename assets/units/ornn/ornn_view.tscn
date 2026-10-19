@@ -1,15 +1,11 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="PackedScene" path="res://assets/units/ornn/source/ornn.glb" id="1_ornn"]
 
 [ext_resource type="Script" path="res://assets/units/ornn/ornn_view.gd" id="2_wrapper"]
 
-[ext_resource type="Resource" path="res://assets/generated/model_templates/ornn.res" id="template"]
-
 [node name="OrnnView" type="Node3D"]
-metadata/model_pool_construction = {"version": 1, "mode": "step-bind", "scripts": ["res://assets/units/ornn/ornn_view.gd"]}
 script = ExtResource("2_wrapper")
-visual_template = ExtResource("template")
 
 [node name="Model" parent="." instance=ExtResource("1_ornn")]
 position = Vector3(0, 0.002, 0)

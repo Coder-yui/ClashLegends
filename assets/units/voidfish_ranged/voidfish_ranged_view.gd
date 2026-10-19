@@ -1,5 +1,7 @@
 extends "res://scripts/presentation/voidfish_model_view.gd"
 
+func _hidden_surface() -> String: return "Melee"
+
 ## 原版 BelvethVoidlingRangedAttack.FixedSpeedMovement.mStartBoneName。
 func create_projectile_anchor() -> Node3D:
 	_find_bones()

@@ -39,18 +39,3 @@ func on_hit() -> void:
 ## 将状态存续与暂时隐藏区分开，避免凝滞恢复被误判为重新触发。
 func advance_status(_status_active: bool, shown: bool, delta: float) -> void:
 	advance(shown, delta)
-
-## 缓存节点固定挂在模型根，挂接代理时只设置top_level变换，不触发_exit_tree。
-func reset_prepared_visual() -> void:
-	status_state = Vector2.ZERO
-	shield_active = false
-	advance_status(false, false, 0.0)
-	active = false
-	visible = false
-
-func can_preserve_prepared_state() -> bool:
-	return false
-
-## 仅owner真正释放缓存时调用；树内移交不会销毁骨骼附属节点。
-func release_prepared_visual() -> void:
-	pass

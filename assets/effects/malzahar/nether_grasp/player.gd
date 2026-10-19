@@ -7,23 +7,7 @@ var _material: ShaderMaterial
 
 static func resource_manifest(variant: String) -> Dictionary:
 	if variant not in ["beam", "zone"]: return {}
-	var sample := {"player": ROOT + "player.gd", "kind": variant, "setup": "native", "times": [0.025, 0.1, 0.5, 1.5], "coverage": {"strategy": "legacy-age-identity-v1"}}
-	if variant == "beam":
-		sample.setup = "provider_sample"
-		sample.coverage = {"version": 1, "strategy": "static-untextured-primitives-v1",
-			"samples": [{"age": 0.1, "states": ["beam"]}],
-			"states": [{"id": "beam", "mesh": "QuadMesh", "geometry": [1.0, 1.0], "count": 1,
-				"shader": ROOT + "beam.gdshader", "uniforms": ["elapsed", "strength"], "uniform_ranges": {"strength": [0.1, 1.0]},
-				"render_modes": ["unshaded", "blend_add", "cull_disabled", "depth_draw_never", "shadows_disabled", "fog_disabled"]}]}
-	return {"paths": [ROOT + variant + ".gdshader"], "sample": sample}
-
-## Match the formal beam consumer: native unit Quad, endpoints set the world basis.
-## The old .01 scale sample could occupy less than one pixel and had no endpoints.
-func setup_resource_sample(camera: Camera3D) -> void:
-	var projection = preload("res://scripts/presentation/spell_effect_projection.gd")
-	var start: Vector3 = projection.ground(camera, Vector2(280, 640)) + Vector3.UP
-	var end: Vector3 = projection.ground(camera, Vector2(440, 640)) + Vector3.UP
-	set_endpoints(start, end, camera)
+	return {"paths": [ROOT + variant + ".gdshader"], "sample": {"player": ROOT + "player.gd", "kind": variant, "setup": "native", "times": [0.025, 0.1, 0.5, 1.5]}}
 
 func load_kind(kind: String) -> void:
 	_kind = kind
@@ -57,11 +41,6 @@ func set_endpoints(start: Vector3, end: Vector3, camera: Camera3D) -> void:
 		return
 	visible = true
 	var along := delta.normalized()
-	var across := along.cross(camera.global_position - position)
-	if across.length_squared() < 0.000001:
-		# Project a camera axis off the beam; a fixed RIGHT fallback can be parallel.
-		across = camera.global_basis.x - along * camera.global_basis.x.dot(along)
-		if across.length_squared() < 0.000001:
-			across = along.cross(Vector3.UP if absf(along.y) < 0.9 else Vector3.RIGHT)
-	across = across.normalized()
+	var across := along.cross(camera.global_position - position).normalized()
+	if across.length_squared() < 0.000001: across = Vector3.RIGHT
 	basis = Basis(across * 0.5, along * delta.length(), across.cross(along))

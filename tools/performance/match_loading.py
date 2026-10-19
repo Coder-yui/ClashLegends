@@ -61,20 +61,13 @@ def budget(state):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', type=Path, required=True)
-    parser.add_argument('--profile', choices=['representative', 'heavy', 'summon', 'diverse'], default='representative')
-    parser.add_argument('--inventory', action='store_true', help='Collect definitions only; no models, audio or GPU draw')
-    parser.add_argument('--diagnostic', action='store_true', help='One A-only observation, at most 20s; never a completed loading baseline')
-    parser.add_argument('--observe', action='store_true', help='Formal one-profile loading with A-equivalent observation and the original 60s limit')
+    parser.add_argument('--profile', choices=['representative', 'heavy'], default='representative')
     args = parser.parse_args()
-    if args.observe and (args.inventory or args.diagnostic or args.profile == 'representative'):
-        parser.error('observe requires one fixed profile and cannot combine with inventory/diagnostic')
-    if args.diagnostic and (args.profile != 'heavy' or args.inventory):
-        parser.error('diagnostic requires --profile heavy and cannot be inventory')
     output = args.output.resolve()
     output.mkdir(parents=True, exist_ok=False)
     state = memory_state()
     processes = command('/bin/ps', '-axo', 'pid=,pgid=,rss=,comm=')
-    engine_args = [line for line in command('/bin/ps', '-axo', 'pid=,comm=,args=').splitlines() if re.match(r'^\s*\d+\s+.*?/godot[^/\s]*\s', line, re.IGNORECASE)]
+    engine_args = [line for line in command('/bin/ps', '-axo', 'pid=,comm=,args=').splitlines() if re.match(r'^\s*\d+\s+.*?/Godot\s', line)]
     if any(' --editor' not in line for line in engine_args):
         raise RuntimeError('Existing Godot process: no second instance launched')
     cap = budget(state)
@@ -100,37 +93,17 @@ def main():
               'scripts/ui/card_art.gd')]
     def identity():
         return {str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest() for path in inputs}
-    def workspace_identity():
-        paths = subprocess.check_output(['git', 'ls-files', '-z', '-c', '-o', '--exclude-standard'], cwd=ROOT).split(b'\0')
-        return {name.decode(): hashlib.file_digest((ROOT / name.decode()).open('rb'), 'sha256').hexdigest()
-                for name in sorted(set(paths)) if name and (ROOT / name.decode()).is_file()}
-    full_before = workspace_identity()
-    (output / 'workspace-before.json').write_text(json.dumps(full_before, indent=2))
-    (output / 'measurement-tool.diff').write_text(command('git', 'diff', '--', 'tools/performance/match_loading.py', 'tools/performance/match_loading.gd', 'tools/performance/match_loading_plan.gd'))
     before = identity()
     argv = ['/Applications/Godot.app/Contents/MacOS/Godot', '--path', str(ROOT),
             '--rendering-method', 'gl_compatibility', '--log-file', str(output / 'godot.log'),
-            '--script', ('tools/performance/match_loading_plan.gd' if args.inventory else 'tools/performance/match_loading.gd'), '--', '--output=' + str(output), '--profile=' + args.profile]
-    if args.inventory: argv.insert(1, '--headless')
-    if args.diagnostic: argv.append('--diagnostic')
-    if args.observe: argv.append('--observe')
-    report = run_guarded(argv, output, limits=MatchLimits(rss_bytes=cap, wall_seconds=20 if args.diagnostic else 60), rss_reader=monitored_rss, max_fps=60)
-    full_after = workspace_identity()
-    (output / 'workspace-after.json').write_text(json.dumps(full_after, indent=2))
-    report['workspace_unchanged'] = full_before == full_after
-    report['production_commit'] = command('git', 'rev-parse', 'HEAD').strip()
-    if full_before != full_after: report.update(passed=False, reason='workspace_changed')
+            '--script', 'tools/performance/match_loading.gd', '--', '--output=' + str(output), '--profile=' + args.profile]
+    report = run_guarded(argv, output, limits=MatchLimits(rss_bytes=cap), rss_reader=monitored_rss, max_fps=60)
     report['memory_samples'] = health_samples
     report['component_sha256_before'] = before
     report['component_sha256_after'] = identity()
     if before != report['component_sha256_after']:
         report.update(passed=False, reason='measured_component_changed')
-    if args.diagnostic:
-        report['diagnostic_mode'] = True
-        report['loading_completed'] = bool(report.get('ready_seen') and (output / 'loading.json').exists())
-        diagnostic_file = output / 'diagnostic-result.json'
-        if diagnostic_file.exists(): report['diagnostic_observation'] = json.loads(diagnostic_file.read_text())
-    if report['passed'] and not args.inventory and not args.diagnostic:
+    if report['passed']:
         try:
             data = json.loads((output / 'loading.json').read_text())
             log = (output / 'engine.log').read_text()
