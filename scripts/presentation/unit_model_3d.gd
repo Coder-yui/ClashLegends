@@ -89,11 +89,13 @@ var _move_override_animation := &""
 var _idle_cycle_index := 0
 var _idle_cycle_active_animation := &""
 var _idle_transition_animation := &""
+var _cue_transition_active := false
 var _idle_transition_exit_blend := -1.0
 # 最近一次统一播放入口实际采用的策略与时长，供表现回归验证；不参与状态决策。
 var _last_clip_transition_kind := &""
 var _last_clip_blend_time := 0.0
 var _last_full_resource_move := false
+var _last_buff_pose := false
 var _last_empowered_ready := false
 var _last_haste_active := false
 var _last_terrain_move_active := false
@@ -199,6 +201,8 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 	_last_clip_transition_kind = &""
 	_last_clip_blend_time = 0.0
 	_last_full_resource_move = false
+	_last_buff_pose = _state.active_buff
+	_cue_transition_active = false
 	_last_empowered_ready = _source.is_empowered_attack_ready_visual()
 	_last_haste_active = _source.get_active_speed_multiplier_visual() > 1.001
 	_last_terrain_move_active = false
@@ -421,6 +425,15 @@ func _sync_visual(force: bool, delta: float) -> void:
 		_last_stealth_pose = stealth_pose
 		if not _playing_visual_action and not _playing_attack and not _playing_deploy_sequence and locomotion_state in [1, 2]:
 			_transition_to_basic_state(locomotion_state, _transition_blend(&"locomotion"))
+	var buff_pose := _state.active_buff
+	if buff_pose != _last_buff_pose:
+		_last_buff_pose = buff_pose
+		if (_animation_names.has("active_buff_idle") or _animation_names.has("active_buff_move")) and not _playing_visual_action and not _playing_attack and not _playing_deploy_sequence and locomotion_state in [1, 2]:
+			# 可靠结束事件可先于状态快照到达，随后的buff下降沿不能覆盖其收势。
+			if buff_pose or not _cue_transition_active:
+				var route := "active_buff:start>%s" % ("move" if locomotion_state == 2 else "idle")
+				var from := &"active_buff:start" if buff_pose and _animation_names.get("transitions", {}).has(route) else &"locomotion"
+				_transition_to_basic_state(locomotion_state, _transition_blend(&"locomotion"), from)
 	var empowered_ready := _source.is_empowered_attack_ready_visual()
 	if empowered_ready != _last_empowered_ready:
 		_last_empowered_ready = empowered_ready
@@ -485,6 +498,14 @@ func _on_presentation_cue(cue: StringName) -> void:
 	if _dying or _animation_player == null or not is_instance_valid(_source): return
 	if _state.dead or _state.frozen or _state.stunned or _state.behavior in [0, 3] or _source.death_form.waiting(): return
 	if _playing_attack or _holding_attack_pose or _playing_visual_action or _playing_deploy_sequence: return
+	var locomotion := _source.get_locomotion_visual_state_code()
+	var route := "%s>%s" % [cue, "move" if locomotion == 2 else "idle"]
+	if locomotion in [1, 2] and _animation_names.get("transitions", {}).has(route):
+		# 事件收势使用基础衔接通道：不持有技能动作锁、不排队，任何新动作可接管。
+		_transition_to_basic_state(locomotion, -1.0, cue)
+		_cue_transition_active = true
+		_last_buff_pose = _state.active_buff
+		return
 	var descriptor: Dictionary = _animation_names.get("visual_actions", {}).get(String(cue), {})
 	if descriptor.is_empty() or int(descriptor.get("priority", 40)) >= int(ACTION_PRIORITY[&"attack"]): return
 	_play_visual_action(cue, false, true)
@@ -541,6 +562,7 @@ func _play_visual_action(action_name: StringName, preserve_visual_pose: bool = f
 		_seek_visual_action(maxf(authoritative_duration - _source.get_visual_action_time_left(), 0.0))
 
 func _play_visual_action_clip(animation_name: StringName) -> void:
+	_cue_transition_active = false
 	var animation := _animation_player.get_animation(animation_name)
 	if animation == null:
 		return
@@ -615,6 +637,7 @@ func _set_model_visual_clip(animation_name: StringName) -> void:
 ## 所有 AnimationPlayer 切换都经过这一层：Godot 会从当前任意播放进度的骨骼 Pose
 ## crossfade 到目标片段，不再假设源末帧与目标首帧天然一致。
 func _play_clip(animation_name: StringName, transition_kind: StringName = &"default", playback_speed: float = 1.0, blend_override: float = -1.0) -> void:
+	_cue_transition_active = false
 	_current_clip_speed = playback_speed
 	if _animation_player == null or animation_name == &"" or not _animation_player.has_animation(animation_name):
 		return
@@ -658,6 +681,8 @@ func _transition_clip(from_action: StringName, to_action: StringName) -> StringN
 
 func _transition_config(from_action: StringName, to_action: StringName) -> Variant:
 	var transitions: Dictionary = _animation_names.get("transitions", {})
+	var event_edge := "%s>%s" % [from_action, to_action]
+	if String(from_action).contains(":") and transitions.has(event_edge): return transitions[event_edge]
 	if to_action == &"move" and _terrain_move_animation() != &"":
 		var terrain_edge := "%s>terrain_move" % _animation_player.assigned_animation
 		if transitions.has(terrain_edge): return transitions[terrain_edge]
@@ -1027,6 +1052,9 @@ func _play_state(state: int, blend_time: float = -1.0) -> void:
 	if state != 2:
 		_move_override_animation = &""
 	var configured = _move_override_animation if state == 2 and _move_override_animation != &"" else _animation_names.get(String(key), "")
+	if state in [1, 2] and _state.active_buff:
+		var buff_clip := _first_valid_animation("active_buff_idle" if state == 1 else "active_buff_move")
+		if buff_clip != &"": configured = buff_clip
 	if state == 1 and _source.is_empowered_attack_ready_visual():
 		var empowered_idle := _first_valid_animation("empowered_idle")
 		if empowered_idle != &"":
@@ -1354,7 +1382,7 @@ func _configure_looping_animations() -> void:
 			var move_animation := _animation_player.get_animation(move_name)
 			if move_animation != null:
 				move_animation.loop_mode = Animation.LOOP_LINEAR
-	for key in ["stealth_idle", "stealth_move", "initial_move", "attack_move", "empowered_idle", "empowered_move", "haste_move", "terrain_move", "full_resource_move"]:
+	for key in ["active_buff_idle", "active_buff_move", "stealth_idle", "stealth_move", "initial_move", "attack_move", "empowered_idle", "empowered_move", "haste_move", "terrain_move", "full_resource_move"]:
 		for value in _animation_list(key):
 			var routed_move := StringName(value)
 			if routed_move != &"" and _animation_player.has_animation(routed_move):

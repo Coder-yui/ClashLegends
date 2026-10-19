@@ -40,6 +40,8 @@
 
 `transition_blends` 可覆盖策略。`clip_blends` 精确的“源片段>目标片段”优先，其次通配目标，之后才回退动作/路线覆盖和全局策略；零值合法，不能把某卡值改为全局默认。
 
+`transitions` 支持已派发表现事件的 `事件名>idle/move`（例如 `counter_strike:explode>idle`）：事件路线显式优先，按当时移动状态选择可打断的基础衔接，不持有技能动作锁，正在攻击/受控时不抢播或补播。`active_buff:start>idle/move`由增益上升沿启动；已开始的结束事件衔接不会被晚到的增益下降沿覆盖。事件来源由CardValidator校验，片段仍参加资源契约检查。
+
 `transitions` 先匹配实际来源片段到 move/idle，再匹配行为路线。地形内移动可优先配置 `来源片段>terrain_move`，随后接 `terrain_move` 循环。转场描述可提供 `blend_in / blend_out` 和非负 `start_time`，起点必须小于原片长。
 
 进入移动的来源优先级：专用 ToRun → 按段转跑 → 通用 move_enter。一条路线只选一种。使用过渡素材时首尾采用 sequence；完全没有时用 action_out。通用入跑用于部署/待机/攻击进入移动；技能与变形应选自身路线或直接混合。

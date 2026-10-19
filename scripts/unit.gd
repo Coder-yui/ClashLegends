@@ -690,6 +690,17 @@ func can_start_active_skill(skill: Dictionary) -> bool:
 		return hp > 0.0 and is_deployed() and not CombatInteraction.in_stasis(self) and not death_form.used
 	return (action_permissions() & ControlState.START_SKILL) != 0
 
+## 普攻免疫窗口由权威状态计时；到期结果沿既有独立爆炸队列提交。
+func begin_counter_strike(skill: Dictionary) -> void:
+	_buff_visual_start_tick = buffs.tick_index
+	_buff_visual_duration = float(skill.duration)
+	buffs.apply(&"counter_strike", &"active", float(skill.duration), {"enabled": true, "dodges": 0, "max_dodges": int(skill.max_dodges), "expiry_skill": skill})
+
+func try_dodge_basic_attack() -> bool:
+	if _in_client_mode() or hp <= 0.0 or not buffs.any_flag(&"counter_strike", &"enabled"): return false
+	buffs.increment_capped(&"counter_strike", &"dodges", &"max_dodges")
+	return true
+
 func apply_damage_reduction(duration: float, reduction: float, expiry_skill: Dictionary, source: StringName) -> void:
 	buffs.apply(&"damage_reduction", source, duration, {"reduction": reduction, "expiry_skill": expiry_skill})
 
@@ -886,7 +897,7 @@ func active_buff_clock_visual() -> Vector2:
 	return Vector2(age, _buff_visual_duration)
 
 func get_active_buff_active_visual() -> bool:
-	return net_active_buff_active if _in_client_mode() else active_buff_timer > 0.0 or buffs.remaining(&"damage_reduction") > 0.0 or buffs.remaining(&"effect_shield") > 0.0
+	return net_active_buff_active if _in_client_mode() else active_buff_timer > 0.0 or buffs.remaining(&"counter_strike") > 0.0 or buffs.remaining(&"damage_reduction") > 0.0 or buffs.remaining(&"effect_shield") > 0.0
 
 func get_active_speed_multiplier_visual() -> float:
 	return net_active_speed_multiplier if _in_client_mode() else active_speed_multiplier
@@ -2997,6 +3008,10 @@ func _tick_active_statuses(dt: float) -> void:
 		if hp > 0.0 and battle_context != null: battle_context.queue_expiry_explosion(self, effect)
 	shields.expired_effects.clear()
 	for expired in buffs.advance(dt):
+		if expired.family == &"counter_strike" and hp > 0.0 and not CombatInteraction.in_stasis(self) and battle_context != null:
+			var explosion: Dictionary = expired.potency.expiry_skill.duplicate(true)
+			explosion.damage = float(explosion.damage) * (1.0 + int(expired.potency.dodges) * float(explosion.damage_per_dodge))
+			battle_context.queue_expiry_explosion(self, explosion)
 		if expired.family == &"effect_shield" and hp > 0.0 and battle_context != null:
 			battle_context.notify_unit_audio_event(self, &"effect_shield:end", global_position)
 		if expired.family == &"damage_reduction" and expired.potency.has("expiry_skill") and hp > 0.0 and not CombatInteraction.in_stasis(self) and battle_context != null:

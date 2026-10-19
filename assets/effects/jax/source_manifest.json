@@ -1,0 +1,272 @@
+{
+  "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Jax.wad.client",
+  "package_sha256": "d9233553a8626b2870dd680bc6137192fc5377a0abd74929f8aa95ecceb9d152",
+  "files": [
+    {
+      "path": "assets/characters/jax/skins/base/particles/alphaslice_bubbles_02_01.tex",
+      "wad_hash": "1887b5570d4fa157",
+      "size": 87420,
+      "sha256": "2d23625bf9cc3c29af0db565babaa76378445c6a85732beba3ec29767ac76f2b"
+    },
+    {
+      "path": "assets/characters/jax/skins/base/particles/aura_self.tex",
+      "wad_hash": "9678e7d6618283d1",
+      "size": 21884,
+      "sha256": "41241eafa700d7aa8a280bc7d943c090005324d146d33777a5b8b4bda3ab977b"
+    },
+    {
+      "path": "assets/characters/jax/skins/base/particles/flame_ring.tex",
+      "wad_hash": "c3ce7816a388aff2",
+      "size": 21884,
+      "sha256": "6dea85664f47bda9c3038dc3490e1e616ef1253d9477d0fab54d6dd0d6970c4a"
+    },
+    {
+      "path": "assets/characters/jax/skins/base/particles/glowflare.tex",
+      "wad_hash": "78be365e00eec1af",
+      "size": 43716,
+      "sha256": "5ed52b7de0aff936dc9d3774b80a230829245a7e1a30ed5f4911d6e7a310bfb7"
+    },
+    {
+      "path": "assets/characters/jax/skins/base/particles/hiteffect_gradient_64.tex",
+      "wad_hash": "7e75bda35954b6b2",
+      "size": 43716,
+      "sha256": "dc9807463354d41df294a02ac43c982a0dc22988504a452c6b4362c1a4d4d358"
+    },
+    {
+      "path": "assets/characters/jax/skins/base/particles/jax_base_e_airtrail04.scb",
+      "wad_hash": "9ede299375837d18",
+      "size": 34496,
+      "sha256": "eeebaded66dcd65edee51f872fd6b7178d60aa5ca06f0d348bd24eba7cae6380"
+    },
+    {
+      "path": "assets/characters/jax/skins/base/particles/jax_base_e_airtrail10.scb",
+      "wad_hash": "7ab9e3fcf8dc0c87",
+      "size": 242640,
+      "sha256": "1aedb94ae4bf38a2142d68d8c90d1b8ebdd2cb6568e22ab5b2d935ee36d3dce0"
+    },
+    {
+      "path": "assets/characters/jax/skins/base/particles/jax_base_e_airtrail11.scb",
+      "wad_hash": "3606ce9c6b39d445",
+      "size": 28432,
+      "sha256": "ca84d0acc05a20a17dce576363449e1a1ac5c2ecbe7652fae521725d8726a297"
+    },
+    {
+      "path": "assets/characters/jax/skins/base/particles/jax_base_e_bigglow02.tex",
+      "wad_hash": "1e21f9f8751db977",
+      "size": 87420,
+      "sha256": "5c8141c02b1d1cd49823c9c0a030c4844637f15ee55355f3f09430848762f416"
+    },
+    {
+      "path": "assets/characters/jax/skins/base/particles/jax_base_e_color04.tex",
+      "wad_hash": "9867280db9b8f40a",
+      "size": 10948,
+      "sha256": "0573506efb930001825a9c0e7a0965c78de2ba9e83b2074d5024332cc0459cd2"
+    },
+    {
+      "path": "assets/characters/jax/skins/base/particles/jax_base_e_dodgemesh.scb",
+      "wad_hash": "061419a6984c82a6",
+      "size": 38932,
+      "sha256": "81f67b2aff83f92e052246e70102cb222c90ac490d1d13c5b3a6553dc994d2ae"
+    },
+    {
+      "path": "assets/characters/jax/skins/base/particles/jax_base_e_dome_flames.tex",
+      "wad_hash": "4a0205f10bfa17f7",
+      "size": 87420,
+      "sha256": "5ec7d39c6385aa2de6881967acb4bc0fa5b7191f37f8b610ed0d5252de98df61"
+    },
+    {
+      "path": "assets/characters/jax/skins/base/particles/jax_base_e_fireflicker.tex",
+      "wad_hash": "5ff303b6ddbf89fc",
+      "size": 2756,
+      "sha256": "747e8184bd457f6087d59e3f19e951a333c7756a25673de65571e6bd1b2ad51b"
+    },
+    {
+      "path": "assets/characters/jax/skins/base/particles/jax_base_e_flecks.tex",
+      "wad_hash": "25b098f1318abd26",
+      "size": 21884,
+      "sha256": "0da8259264f445fe802bd066cb249a8901c39d3ab85c1b7dd20197412841c187"
+    },
+    {
+      "path": "assets/characters/jax/skins/base/particles/jax_base_e_glow05_01.tex",
+      "wad_hash": "7ab9e2724eed748d",
+      "size": 87420,
+      "sha256": "b817ae23531e9bc34719b9dddaa96e2efd13039991cde41371e5112155456921"
+    },
+    {
+      "path": "assets/characters/jax/skins/base/particles/jax_base_e_ground.tex",
+      "wad_hash": "6042b6214d23d52b",
+      "size": 87420,
+      "sha256": "ca3d14f5eef7d4058d6f5d022decce9be13b3cca6525e242bf2346052c6dec4c"
+    },
+    {
+      "path": "assets/characters/jax/skins/base/particles/jax_base_e_indicatorring_01.scb",
+      "wad_hash": "d00754bd75b5c346",
+      "size": 52032,
+      "sha256": "e602f119deba5c90483a484a40f0ceca46eca7224fa32e861867df9fd8f1a328"
+    },
+    {
+      "path": "assets/characters/jax/skins/base/particles/jax_base_e_mesh_dome.scb",
+      "wad_hash": "d0156b5d87eeb23d",
+      "size": 44800,
+      "sha256": "c1a17e61e4bd402ab4ea0e3e44260b22c890d45a1d4a393067c9a9849633f2cc"
+    },
+    {
+      "path": "assets/characters/jax/skins/base/particles/jax_base_e_meshedge.tex",
+      "wad_hash": "d0b642bdb2498f71",
+      "size": 43716,
+      "sha256": "63489a8333738b4c2e6ede30623217460bd25e3b03cba021c4caad4c9c2f47f2"
+    },
+    {
+      "path": "assets/characters/jax/skins/base/particles/jax_base_e_smokering_dissolve.tex",
+      "wad_hash": "e49481b2b1cc82d2",
+      "size": 87420,
+      "sha256": "6623a88c9c2bcaa6a72e38f7f6d8e6291aedeeeda60bcfe8c141b2f3237fc626"
+    },
+    {
+      "path": "assets/characters/jax/skins/base/particles/jax_base_e_spark.tex",
+      "wad_hash": "9dfb9078577de5e6",
+      "size": 708,
+      "sha256": "3b8adb42e7ff431ab407a53ef37b3c85474c2627d12bb6fe0319c14fbd6e21d7"
+    },
+    {
+      "path": "assets/characters/jax/skins/base/particles/jax_base_e_trail02_01.tex",
+      "wad_hash": "fc61acc471254e13",
+      "size": 43740,
+      "sha256": "985d421d13fd304cb1597f37b463aa0ff6acdfe0defc243e0447d37fa637947d"
+    },
+    {
+      "path": "assets/characters/jax/skins/base/particles/jax_base_e_trail11.tex",
+      "wad_hash": "2881a6976a763a64",
+      "size": 21916,
+      "sha256": "092f131c9fe46216f5123765e9d880481a0f746d24d3d2e16a8a94c7ac960c43"
+    },
+    {
+      "path": "assets/characters/jax/skins/base/particles/jax_base_e_trail13.tex",
+      "wad_hash": "7e569b901f8861a4",
+      "size": 43740,
+      "sha256": "0441d56958c767a49c6d221e674ecb7b926472a731b9b82d1e5e8778ac136fd3"
+    },
+    {
+      "path": "assets/characters/jax/skins/base/particles/jax_base_e_trail19.tex",
+      "wad_hash": "152506401e3468fc",
+      "size": 21916,
+      "sha256": "7b563da0370753c1304b6856896f727f5e31feb2ea949b9440e569a35611d86d"
+    },
+    {
+      "path": "assets/characters/jax/skins/base/particles/jax_base_e_trail20.tex",
+      "wad_hash": "72545a0f62a8ecf5",
+      "size": 21916,
+      "sha256": "a3092f47e864608a7a4f826df17dc28fc695550ca66bfbc287c709d5ac74003e"
+    },
+    {
+      "path": "assets/characters/jax/skins/base/particles/jax_base_e_trailgrey_01.tex",
+      "wad_hash": "75dd6b013074b418",
+      "size": 43740,
+      "sha256": "dea37971a2348a519b7d02d8c730c7294e1e75ace336fe9790d14f179f996fac"
+    },
+    {
+      "path": "assets/characters/jax/skins/base/particles/jax_base_e_wave06.tex",
+      "wad_hash": "7f8a82d2dd36b7c8",
+      "size": 43716,
+      "sha256": "17b4b96f6b2aaa7584c0b99eb8a20f18c83d1fa72c22b4eb79139ad0cc699c76"
+    },
+    {
+      "path": "assets/characters/jax/skins/base/particles/jax_base_e_wingsmult.tex",
+      "wad_hash": "a2cb179348929c62",
+      "size": 87420,
+      "sha256": "1065327bd3f6f7c70d2c88caca8e264dc914d70d016e6703783c4a7f74796ab3"
+    },
+    {
+      "path": "assets/characters/jax/skins/base/particles/jax_base_q_sheen2.tex",
+      "wad_hash": "2f64f79c96599354",
+      "size": 87420,
+      "sha256": "584719a141a2010e9ea594f71e8eff1e70849b77b83b61dfcdf54cfb3854fbe5"
+    },
+    {
+      "path": "assets/characters/jax/skins/base/particles/jax_base_q_smokeerode.tex",
+      "wad_hash": "fd2d0c3fb7b1b01a",
+      "size": 10948,
+      "sha256": "25bd91b0578fd9223d27992676ac84084a8710798240e6107a4e3253887fae54"
+    },
+    {
+      "path": "assets/characters/jax/skins/base/particles/jax_base_r_bigglow02.tex",
+      "wad_hash": "f167fb15cc83704d",
+      "size": 21884,
+      "sha256": "abeef23de4ad5508f456904b894c4812d5f18bd35e71f00d8a1bdb0b0830455a"
+    },
+    {
+      "path": "assets/characters/jax/skins/base/particles/jax_base_r_buf_glow.tex",
+      "wad_hash": "eaeaa2b8b065888e",
+      "size": 43716,
+      "sha256": "ec364fb8dc32c098351c7be7c5e1b327c6c8caca25548b4b4bb532047fa2f6e7"
+    },
+    {
+      "path": "assets/characters/jax/skins/base/particles/jax_base_r_trail13.tex",
+      "wad_hash": "dc3f63be3fda7356",
+      "size": 43740,
+      "sha256": "0441d56958c767a49c6d221e674ecb7b926472a731b9b82d1e5e8778ac136fd3"
+    },
+    {
+      "path": "assets/characters/jax/skins/base/particles/jax_base_w_mis_01_ribbon.tex",
+      "wad_hash": "bfbe99db3e869726",
+      "size": 10972,
+      "sha256": "97d0b13cca6a72a17216abe176fdc4eb216c607ab9fbc46710e628935df9a8b4"
+    },
+    {
+      "path": "assets/characters/jax/skins/base/particles/jax_flame_trail_circle.tex",
+      "wad_hash": "02c4e5c4445138e7",
+      "size": 87452,
+      "sha256": "eb5a1184e8bcc31ef2f95122d77c2e7f8d1bf1888b41b8d84f959e133ccffe4d"
+    },
+    {
+      "path": "assets/characters/jax/skins/base/particles/jax_ground_circle.tex",
+      "wad_hash": "a5ce99273a03fa59",
+      "size": 174788,
+      "sha256": "b99a24eb65e8caa5ae6af4d76e484f4b837776469045346ce8eef596ca433864"
+    },
+    {
+      "path": "assets/characters/jax/skins/base/particles/lux_skin07_e_distort.tex",
+      "wad_hash": "547a1c8f984a3c8f",
+      "size": 21884,
+      "sha256": "41241eafa700d7aa8a280bc7d943c090005324d146d33777a5b8b4bda3ab977b"
+    },
+    {
+      "path": "assets/characters/jax/skins/base/particles/tar_flashglow.tex",
+      "wad_hash": "5d8b49bad214e748",
+      "size": 87420,
+      "sha256": "5ec608b433607045639c0854a29b4ec6aa6e5ab2f1765004eeb8d7f8d61b6a2f"
+    }
+  ],
+  "note": "Integrated assets; source definitions and sample hashes retained for reproducibility.",
+  "systems": {
+    "buf": {
+      "source": "Characters/Jax/Skins/Skin0/Particles/Jax_base_E_buf",
+      "raw_sha256": "077b24fbf7c7cd3e26f826f90688441614fa6ba8f1a90ef4208da897b6fb9516",
+      "sampled_sha256": "7e57f44ca81cc596c6c508e37cff682da0e1fa7203ace7e370411911315b0bdd"
+    },
+    "cas": {
+      "source": "Characters/Jax/Skins/Skin0/Particles/Jax_base_E_cas",
+      "raw_sha256": "a55ad5fe182092a242ea5b679862957bb19617ca65c406f44a73babe418677f7",
+      "sampled_sha256": "4d207c1c86e6ada55cd4d9459ae808d67b30cd946745bb37eea8b92ed2522f86"
+    },
+    "tar": {
+      "source": "Characters/Jax/Skins/Skin0/Particles/Jax_base_E_tar",
+      "raw_sha256": "12bcaa2a87f2bb220ab8f148523fe6e00987308880850d6314bd83978f23aceb",
+      "sampled_sha256": "078d8efda7f8b81fc65bac5195bb2d90a30f517296e05e34d9e7b98182227aed"
+    }
+  },
+  "adaptation": "120Hz seed79; all variants native scale 0.0085*1.25=0.010625 (measured SKN/GLB bounds); no camera compensation; caster systems at model ground root; original JaxE castRadius375 -> authority radius159.38; target runtime attachment bone unavailable, target ground root fallback without invented height",
+  "buff_stop": "soft stop at2s; original particleLinger: range ring0.2s dome0.25s topglow1s; source curves and cas unchanged",
+  "cast_particle_scale": {
+    "value": 2.0,
+    "applies_to": "cas particle dimensions on all three axes; emitter centers, model conversion and buf/tar stay unchanged",
+    "basis": "visual reconstruction against Riot official Jax E video, not a recovered server call",
+    "reference": "https://lol.dyn.riotcdn.net/x/videos/champion-abilities/0024/ability_0024_E1.mp4",
+    "reference_frames": [
+      60,
+      74,
+      77
+    ],
+    "verification": "Compared visible burst/smoke envelope, not fully transparent wave maximum. Whole-node scaling rejected because it also raises emitter centers."
+  }
+}

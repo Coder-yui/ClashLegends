@@ -78,3 +78,10 @@ func stack_count(family: StringName) -> int:
 		if effect.family == family:
 			count = maxi(count, int(effect.potency.get("stacks", 0)))
 	return count
+
+## 更新活动窗口内的计数，不刷新开始或到期Tick。
+func increment_capped(family: StringName, field: StringName, limit_field: StringName) -> void:
+	if suppressed: return
+	for effect in _instances:
+		if effect.family == family:
+			effect.potency[field] = mini(int(effect.potency.get(field, 0)) + 1, int(effect.potency.get(limit_field, 0)))

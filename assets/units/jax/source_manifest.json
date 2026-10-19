@@ -1,0 +1,25 @@
+{
+  "source_model": "ClashLegends-开发素材库/01-待开发/卡牌模型/武器大师.glb",
+  "source_sha256": "0bf80332c8635bd7f8c14977b92673eced9259ddb5d67c9d5dd41ef22c98ae2b",
+  "runtime_model": "assets/units/jax/source/jax.glb",
+  "wrapper_scale": 1.25,
+  "hidden_submeshes": [
+    "Bluefish",
+    "Goldfish"
+  ],
+  "card_art_source": "assets/characters/jax/skins/base/jaxloadscreen_0.tex",
+  "card_art_sha256": "b98b1e7f2bdcf261f7171eaeb495d8ddc28235ef546e1574bd80e8c9d6af92a8",
+  "source_to_glb_scale": 0.0085,
+  "scale_evidence": "SKN vs GLB mesh bounds ratios X=0.008499999859 Y=0.008500000286 Z=0.008500000037",
+  "animation_transitions": {
+    "source": "ClashLegends-开发素材库/03-制作中/武器大师/animations.ritobin",
+    "ordinary": [
+      "Idle1_Base>Run_Base:Run_In",
+      "Run_Base>Idle1_Base:Idle_In",
+      "Attack1>Idle/Run:Attack1_To_Idle/Run",
+      "Attack2>Idle/Run:Attack2_To_Idle/Run"
+    ],
+    "e_start": "Spell3 Sequencer: Spell3_Intro -> IsMoving(Spell3_Run, Spell3_Idle); GLB intro imported as Spell3_Run_Intro_anm",
+    "e_end": "Spell3B IsMoving: Spell3b_run / Spell3_B_Idle_anm; presentation-only, interruptible, no authoritative cast lock"
+  }
+}

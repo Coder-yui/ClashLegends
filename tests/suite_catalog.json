@@ -635,5 +635,12 @@
     "method": "run",
     "scene": "none",
     "group": "contracts"
+  },
+  {
+    "id": "JaxSuite",
+    "script": "res://tests/suites/cards/jax_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "cards"
   }
 ]

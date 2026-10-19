@@ -165,7 +165,7 @@ func _draw_frontal_skill_effect(effect: Dictionary) -> void:
 		draw_arc(coin, 6.0, 0.0, TAU, 24, Color(0.67, 0.37, 0.04, alpha), 1.5, true)
 		draw_line(coin + Vector2(0.0, -3.5), coin + Vector2(0.0, 3.5), Color(1.0, 0.94, 0.61, alpha), 2.0, true)
 		return
-	if shape in [&"scuttle_void_shrine", &"scuttle_shrine", &"randuin", &"aftershock", &"riftwalk_appear", &"riftwalk_vanish"]: return # 由3D原版余震粒子播放器消费。
+	if shape in [&"scuttle_void_shrine", &"scuttle_shrine", &"randuin", &"counter_strike", &"counter_strike_hit", &"aftershock", &"riftwalk_appear", &"riftwalk_vanish"]: return # 由3D原版余震粒子播放器消费。
 	if shape == &"trapezoid" and source is Unit and source.card_id == "sett": return
 	if shape == &"shield_explosion": return # 3D 原版 W 粒子读取同一表现事件。
 

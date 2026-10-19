@@ -62446,6 +62446,459 @@
       "peak": 0.44971442222595215,
       "wwiser_master_gain_db": 0,
       "playback_gain_db": 0
+    },
+    {
+      "file": "assets/audio/units/jax/play_sfx_jax_jaxbasicattack_oncast_r1_d.wav",
+      "sha256": "6efa7102138c89113f670b9b7a0ed895eda4fbcc782f830008f3766f474aa152",
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/txtp/Play_sfx_Jax_JaxBasicAttack_OnCast {r1} {d}.txtp",
+          "txtp_sha256": "44fe4fcc1f646ebb8ddaf072f5ff6fe62d4aef02f0727173708ecc74ed293637",
+          "event_ids": [
+            "3891765476"
+          ],
+          "media_ids": [
+            "581722606",
+            "886727638",
+            "980213568"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/jax/play_sfx_jax_jaxbasicattack_oncast_r2_d.wav",
+      "sha256": "5e4b32cef9e49fd7fa7d8c82c0ca565130464210e0a8b78b6b2575ee33918376",
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/txtp/Play_sfx_Jax_JaxBasicAttack_OnCast {r2} {d}.txtp",
+          "txtp_sha256": "6488cbc63798d43cda140ed0b83778f64800c0dbb15c870a9d45d69d73215e27",
+          "event_ids": [
+            "3891765476"
+          ],
+          "media_ids": [
+            "581722606",
+            "886727638",
+            "980213568"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/jax/play_sfx_jax_jaxbasicattack_oncast_r3_d.wav",
+      "sha256": "1cf2e29c53f63ec0a87d816b9deb2050deac97caabd94648f572a9889561b15f",
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/txtp/Play_sfx_Jax_JaxBasicAttack_OnCast {r3} {d}.txtp",
+          "txtp_sha256": "ecebf3da57a524bac171b77c23871185c4062b056433ec2e907c74399b5d8bae",
+          "event_ids": [
+            "3891765476"
+          ],
+          "media_ids": [
+            "581722606",
+            "886727638",
+            "980213568"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/jax/play_sfx_jax_jaxbasicattack2_oncast_r1.wav",
+      "sha256": "6efa7102138c89113f670b9b7a0ed895eda4fbcc782f830008f3766f474aa152",
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/txtp/Play_sfx_Jax_JaxBasicAttack2_OnCast {r1}.txtp",
+          "txtp_sha256": "e8ffeba0f39a5c02a7e2dd02f5e3a5fb39db3907e966ef0aaa8c5bb8bdbce8bd",
+          "event_ids": [
+            "475429628"
+          ],
+          "media_ids": [
+            "581722606",
+            "886727638",
+            "980213568"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/jax/play_sfx_jax_jaxbasicattack2_oncast_r2.wav",
+      "sha256": "5e4b32cef9e49fd7fa7d8c82c0ca565130464210e0a8b78b6b2575ee33918376",
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/txtp/Play_sfx_Jax_JaxBasicAttack2_OnCast {r2}.txtp",
+          "txtp_sha256": "3ba0ccd6e77ec9d7337eccd1c210a418692336890e1b815de2d4043bebd0788b",
+          "event_ids": [
+            "475429628"
+          ],
+          "media_ids": [
+            "581722606",
+            "886727638",
+            "980213568"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/jax/play_sfx_jax_jaxbasicattack2_oncast_r3.wav",
+      "sha256": "1cf2e29c53f63ec0a87d816b9deb2050deac97caabd94648f572a9889561b15f",
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/txtp/Play_sfx_Jax_JaxBasicAttack2_OnCast {r3}.txtp",
+          "txtp_sha256": "e3254cc99dc50a1c5c6fcd9d1965b084d0ffdd177fe815e57537ece579193c7f",
+          "event_ids": [
+            "475429628"
+          ],
+          "media_ids": [
+            "581722606",
+            "886727638",
+            "980213568"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/jax/play_sfx_jax_jaxbasicattack_onhit_1559186049_1153642577_r_d.wav",
+      "sha256": "aebee8847ed9e60136fa00ba9b5662c43829c05d9f288c825966206277bffa4a",
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/txtp/Play_sfx_Jax_JaxBasicAttack_OnHit [1559186049=1153642577] {r} {d}.txtp",
+          "txtp_sha256": "93924bba6175ffcee06ed4d5b6e5d2d8e88eb2d151ab75bcc753094ec4e2581a",
+          "event_ids": [
+            "3379570572"
+          ],
+          "media_ids": [
+            "14847114",
+            "201654580",
+            "236648208",
+            "489009794",
+            "594421991",
+            "773096690",
+            "1066726079"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/jax/play_sfx_jax_jaxbasicattack2_onhit_1559186049_1153642577_r.wav",
+      "sha256": "aebee8847ed9e60136fa00ba9b5662c43829c05d9f288c825966206277bffa4a",
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/txtp/Play_sfx_Jax_JaxBasicAttack2_OnHit [1559186049=1153642577] {r}.txtp",
+          "txtp_sha256": "6399c9d7afc7b044b0a67ab90f7d24af9bdb1d6c2d87e5206cef0539ec78806d",
+          "event_ids": [
+            "3955034836"
+          ],
+          "media_ids": [
+            "14847114",
+            "201654580",
+            "236648208",
+            "489009794",
+            "594421991",
+            "773096690",
+            "1066726079"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/jax/play_sfx_jax_jaxe_onbuffactivate_r1.wav",
+      "sha256": "4ebe776a0cb2c1234f97550c5117656b65a0a219c441ccd2a9c6f630720e0d2e",
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/txtp/Play_sfx_Jax_JaxE_OnBuffActivate {r1}.txtp",
+          "txtp_sha256": "d42d0bcad8f2e7dfd724a6b633280c2eae09e818512edd99965cd218fb14a1b8",
+          "event_ids": [
+            "1990760336"
+          ],
+          "media_ids": [
+            "252382905",
+            "338032282",
+            "558406425"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/jax/play_sfx_jax_jaxe_onbuffactivate_r2.wav",
+      "sha256": "433a1c8811918d6e3a0a1c5876f6c008e0e5f87564d39ee2019cccb5a2f47f1a",
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/txtp/Play_sfx_Jax_JaxE_OnBuffActivate {r2}.txtp",
+          "txtp_sha256": "ed8ea02e88e34006ff6de761f46cb9f1d2edce0e02cfd18bbc14c9ba33d4ff4c",
+          "event_ids": [
+            "1990760336"
+          ],
+          "media_ids": [
+            "252382905",
+            "338032282",
+            "558406425"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/jax/play_sfx_jax_jaxe_onbuffactivate_r3.wav",
+      "sha256": "552fc0f0f997c624aba4ed4fd93695eb9e817a7cb5d72ab3c940c90abead47dd",
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/txtp/Play_sfx_Jax_JaxE_OnBuffActivate {r3}.txtp",
+          "txtp_sha256": "19baf79c092ee2b2d9f27d5a33853e3513044c687927a082676b91a7e2df2b92",
+          "event_ids": [
+            "1990760336"
+          ],
+          "media_ids": [
+            "252382905",
+            "338032282",
+            "558406425"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/jax/play_sfx_jax_jaxe_onbuffdeactivate_r1.wav",
+      "sha256": "9b176eac00998612d2754487dfe3640f56ad5990f1ea975f51e4b5503cac17ef",
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/txtp/Play_sfx_Jax_JaxE_OnBuffDeactivate {r1}.txtp",
+          "txtp_sha256": "f4b1bbacea4beeef35181b12c8bcc607dbf3d4c04b5d63a99c24f7689491f8f4",
+          "event_ids": [
+            "3253200769"
+          ],
+          "media_ids": [
+            "600385664",
+            "720165762",
+            "979182295"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/jax/play_sfx_jax_jaxe_onbuffdeactivate_r2.wav",
+      "sha256": "03b4ec1474f9b9e26e34d8f6969f5d79311277cec08343bf308d595e781d3d17",
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/txtp/Play_sfx_Jax_JaxE_OnBuffDeactivate {r2}.txtp",
+          "txtp_sha256": "21e7ce812ad2b3e4d0f7066be29640f4a09edf61b7c01763fc115c373042e024",
+          "event_ids": [
+            "3253200769"
+          ],
+          "media_ids": [
+            "600385664",
+            "720165762",
+            "979182295"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/jax/play_sfx_jax_jaxe_onbuffdeactivate_r3.wav",
+      "sha256": "15a46ef418ace73fa1d882a818ff8760c91418ff873aa186e32790fe8a194279",
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/txtp/Play_sfx_Jax_JaxE_OnBuffDeactivate {r3}.txtp",
+          "txtp_sha256": "b2e6cbec4c19956b77d98a1d7bec1cebdea1354c2a4da0c5f5f47741e21eb737",
+          "event_ids": [
+            "3253200769"
+          ],
+          "media_ids": [
+            "600385664",
+            "720165762",
+            "979182295"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/jax/play_sfx_jax_death3d_cast.wav",
+      "sha256": "4786176e9c2288d16925bafb5ca7ddc6f166601f174654b68816f8cc529f550c",
+      "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/txtp/Play_sfx_Jax_Death3D_cast.txtp",
+          "txtp_sha256": "178f08018c33928b5ab46f633076867082f54a300a06fea5fd560158238652b0",
+          "event_ids": [
+            "1597633005"
+          ],
+          "media_ids": [
+            "269634236"
+          ]
+        }
+      ],
+      "death_envelope": {
+        "source_duration": 4.367324263038549,
+        "source_sha256": "7ec6da807ae49a41229d3abff934a00ff12fdac07a7419035d1fa4116dea55b8",
+        "keep_seconds": 1.5,
+        "fade_start_seconds": 1.0,
+        "fade_seconds": 0.5,
+        "curve": "linear_amplitude"
+      }
+    },
+    {
+      "file": "assets/audio/units/jax/play_sfx_jax_respawn3d_buffactivate.wav",
+      "sha256": "70fa709d740074cb21acbe0f538081908a01c3044de64fff9695a97150fcc6cc",
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/txtp/Play_sfx_Jax_Respawn3D_buffactivate.txtp",
+          "txtp_sha256": "c4b97d5c329ba3d2103dc3a648021f6b3a995e66a1272f74b1326984a995d6d6",
+          "event_ids": [
+            "820923018"
+          ],
+          "media_ids": [
+            "99919096"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/jax/play_vo_jax_death3d_r1_zh_cn.wav",
+      "sha256": "1f36f3a6bad1da6ac7ce4bf0de5e8cc288002c922564e63e16590b2e23cb9946",
+      "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax_vo/txtp/Play_vo_Jax_Death3D {r1}.txtp",
+          "txtp_sha256": "c1c7034b3aaa3aceba1b6fa6e3e60d0969d61096084af22d7ee09a3d6bc83d00",
+          "event_ids": [
+            "470767417"
+          ],
+          "media_ids": [
+            "117533501",
+            "265242099",
+            "280109821",
+            "1437536476",
+            "1703159820"
+          ]
+        }
+      ],
+      "death_envelope": {
+        "source_duration": 4.543990929705215,
+        "source_sha256": "ba0185f42d1e60a638b6751ce0acef914842ee3e7880aafa64662f8d7d6a9c81",
+        "keep_seconds": 1.5,
+        "fade_start_seconds": 1.0,
+        "fade_seconds": 0.5,
+        "curve": "linear_amplitude"
+      }
+    },
+    {
+      "file": "assets/audio/units/jax/play_vo_jax_death3d_r2_zh_cn.wav",
+      "sha256": "3087d2715c9430362368734b89ac6cea0ecd8bf271b4f4f737184a78a816f353",
+      "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax_vo/txtp/Play_vo_Jax_Death3D {r2}.txtp",
+          "txtp_sha256": "e6bd51c616ed68389784fd4b28ed8aee2528341ff9b28edb7a16764dd74ae514",
+          "event_ids": [
+            "470767417"
+          ],
+          "media_ids": [
+            "117533501",
+            "265242099",
+            "280109821",
+            "1437536476",
+            "1703159820"
+          ]
+        }
+      ],
+      "death_envelope": {
+        "source_duration": 3.306643990929705,
+        "source_sha256": "6c1a35bbfad198f51d891ad0c8b794c388f66ebcb53e933ebd049d10e815e163",
+        "keep_seconds": 1.5,
+        "fade_start_seconds": 1.0,
+        "fade_seconds": 0.5,
+        "curve": "linear_amplitude"
+      }
+    },
+    {
+      "file": "assets/audio/units/jax/play_vo_jax_death3d_r3_zh_cn.wav",
+      "sha256": "7bc9d409f894c503e4d41ecfd81a33a45dcd76da8efb6ae95d4a0fcf10664154",
+      "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax_vo/txtp/Play_vo_Jax_Death3D {r3}.txtp",
+          "txtp_sha256": "81cb95bb27256d462d2fb653fab3b00159636a84a5b2f260c481b4874308959c",
+          "event_ids": [
+            "470767417"
+          ],
+          "media_ids": [
+            "117533501",
+            "265242099",
+            "280109821",
+            "1437536476",
+            "1703159820"
+          ]
+        }
+      ],
+      "death_envelope": {
+        "source_duration": 2.9866439909297053,
+        "source_sha256": "d13e1b9311e67caa26bf0b04f809d3929dff84fb023bb2a4c2859842c4ace170",
+        "keep_seconds": 1.5,
+        "fade_start_seconds": 1.0,
+        "fade_seconds": 0.5,
+        "curve": "linear_amplitude"
+      }
+    },
+    {
+      "file": "assets/audio/units/jax/deploy.ogg",
+      "sha256": "ebb7832d4c61e46b0975560b3a7d0e1a67c8fcd2f48e07a536da57ac2e3b2cd7",
+      "processing": "original OGG; playback -8 dB",
+      "source_events": [],
+      "source_file": "ClashLegends-开发素材库/03-制作中/武器大师/deploy-voice/plugins/rcp-be-lol-game-data/global/zh_cn/v1/champion-choose-vo/24.ogg",
+      "playback_gain_db": -8.0
+    },
+    {
+      "file": "assets/audio/units/jax/play_sfx_jax_jaxe_hit_r1.wav",
+      "sha256": "b2a2f0d0a8fbb8cf4be5b656d1ebb90d7d2e22eab935add67023ac3569eb9a06",
+      "processing": "vgmstream-cli fresh decode; wwiser -gv=0dB; original event gain",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/txtp/Play_sfx_Jax_JaxE_hit {r1}.txtp",
+          "txtp_sha256": "e8a9d0a18d05d1fd4e6e3c3831a52bf04b5d33ef7cd02d64577ae2ab91b5e60d",
+          "event_ids": [
+            "266163458"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/jax/play_sfx_jax_jaxe_hit_r2.wav",
+      "sha256": "eabae82915dafe0ae6f52a432737a58d6517b59cdb57d8967106b879bb9decf8",
+      "processing": "vgmstream-cli fresh decode; wwiser -gv=0dB; original event gain",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/txtp/Play_sfx_Jax_JaxE_hit {r2}.txtp",
+          "txtp_sha256": "68256e475ef8df57ba43ab9df0bf1a302a7037c23d4ca054ea9dcf872a75fbb9",
+          "event_ids": [
+            "266163458"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/units/jax/play_sfx_jax_jaxe_hit_r3.wav",
+      "sha256": "28ea65f923ea7fdb4f2998fe384c97b5e751d3c2bf59a79052ceaf1f0767061a",
+      "processing": "vgmstream-cli fresh decode; wwiser -gv=0dB; original event gain",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/txtp/Play_sfx_Jax_JaxE_hit {r3}.txtp",
+          "txtp_sha256": "d320b7e85ca8a1baaf625bd6c40c0007d08dea92a2b30c19d05e1eb71ee2db47",
+          "event_ids": [
+            "266163458"
+          ]
+        }
+      ]
     }
   ]
 }

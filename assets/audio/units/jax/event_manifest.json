@@ -1,0 +1,385 @@
+[
+  {
+    "file": "play_sfx_jax_jaxbasicattack_oncast_r1_d.wav",
+    "event": "Play_sfx_Jax_JaxBasicAttack_OnCast",
+    "event_id": 3891765476,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/event_wav/Play_sfx_Jax_JaxBasicAttack_OnCast {r1} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/txtp/Play_sfx_Jax_JaxBasicAttack_OnCast {r1} {d}.txtp",
+    "media_ids": [
+      581722606,
+      886727638,
+      980213568
+    ],
+    "duration": 0.8333,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "6efa7102138c89113f670b9b7a0ed895eda4fbcc782f830008f3766f474aa152",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_jax_jaxbasicattack_oncast_r2_d.wav",
+    "event": "Play_sfx_Jax_JaxBasicAttack_OnCast",
+    "event_id": 3891765476,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/event_wav/Play_sfx_Jax_JaxBasicAttack_OnCast {r2} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/txtp/Play_sfx_Jax_JaxBasicAttack_OnCast {r2} {d}.txtp",
+    "media_ids": [
+      581722606,
+      886727638,
+      980213568
+    ],
+    "duration": 0.8333,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "5e4b32cef9e49fd7fa7d8c82c0ca565130464210e0a8b78b6b2575ee33918376",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_jax_jaxbasicattack_oncast_r3_d.wav",
+    "event": "Play_sfx_Jax_JaxBasicAttack_OnCast",
+    "event_id": 3891765476,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/event_wav/Play_sfx_Jax_JaxBasicAttack_OnCast {r3} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/txtp/Play_sfx_Jax_JaxBasicAttack_OnCast {r3} {d}.txtp",
+    "media_ids": [
+      581722606,
+      886727638,
+      980213568
+    ],
+    "duration": 0.9,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "1cf2e29c53f63ec0a87d816b9deb2050deac97caabd94648f572a9889561b15f",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_jax_jaxbasicattack2_oncast_r1.wav",
+    "event": "Play_sfx_Jax_JaxBasicAttack2_OnCast",
+    "event_id": 475429628,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/event_wav/Play_sfx_Jax_JaxBasicAttack2_OnCast {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/txtp/Play_sfx_Jax_JaxBasicAttack2_OnCast {r1}.txtp",
+    "media_ids": [
+      581722606,
+      886727638,
+      980213568
+    ],
+    "duration": 0.8333,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "6efa7102138c89113f670b9b7a0ed895eda4fbcc782f830008f3766f474aa152",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_jax_jaxbasicattack2_oncast_r2.wav",
+    "event": "Play_sfx_Jax_JaxBasicAttack2_OnCast",
+    "event_id": 475429628,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/event_wav/Play_sfx_Jax_JaxBasicAttack2_OnCast {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/txtp/Play_sfx_Jax_JaxBasicAttack2_OnCast {r2}.txtp",
+    "media_ids": [
+      581722606,
+      886727638,
+      980213568
+    ],
+    "duration": 0.8333,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "5e4b32cef9e49fd7fa7d8c82c0ca565130464210e0a8b78b6b2575ee33918376",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_jax_jaxbasicattack2_oncast_r3.wav",
+    "event": "Play_sfx_Jax_JaxBasicAttack2_OnCast",
+    "event_id": 475429628,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/event_wav/Play_sfx_Jax_JaxBasicAttack2_OnCast {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/txtp/Play_sfx_Jax_JaxBasicAttack2_OnCast {r3}.txtp",
+    "media_ids": [
+      581722606,
+      886727638,
+      980213568
+    ],
+    "duration": 0.9,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "1cf2e29c53f63ec0a87d816b9deb2050deac97caabd94648f572a9889561b15f",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_jax_jaxbasicattack_onhit_1559186049_1153642577_r_d.wav",
+    "event": "Play_sfx_Jax_JaxBasicAttack_OnHit",
+    "event_id": 3379570572,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/event_wav/Play_sfx_Jax_JaxBasicAttack_OnHit [1559186049=1153642577] {r} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/txtp/Play_sfx_Jax_JaxBasicAttack_OnHit [1559186049=1153642577] {r} {d}.txtp",
+    "media_ids": [
+      14847114,
+      201654580,
+      236648208,
+      489009794,
+      594421991,
+      773096690,
+      1066726079
+    ],
+    "duration": 0.8506,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "aebee8847ed9e60136fa00ba9b5662c43829c05d9f288c825966206277bffa4a",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_jax_jaxbasicattack2_onhit_1559186049_1153642577_r.wav",
+    "event": "Play_sfx_Jax_JaxBasicAttack2_OnHit",
+    "event_id": 3955034836,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/event_wav/Play_sfx_Jax_JaxBasicAttack2_OnHit [1559186049=1153642577] {r}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/txtp/Play_sfx_Jax_JaxBasicAttack2_OnHit [1559186049=1153642577] {r}.txtp",
+    "media_ids": [
+      14847114,
+      201654580,
+      236648208,
+      489009794,
+      594421991,
+      773096690,
+      1066726079
+    ],
+    "duration": 0.8506,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "aebee8847ed9e60136fa00ba9b5662c43829c05d9f288c825966206277bffa4a",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_jax_jaxe_onbuffactivate_r1.wav",
+    "event": "Play_sfx_Jax_JaxE_OnBuffActivate",
+    "event_id": 1990760336,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/event_wav/Play_sfx_Jax_JaxE_OnBuffActivate {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/txtp/Play_sfx_Jax_JaxE_OnBuffActivate {r1}.txtp",
+    "media_ids": [
+      252382905,
+      338032282,
+      558406425
+    ],
+    "duration": 5.1666,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "4ebe776a0cb2c1234f97550c5117656b65a0a219c441ccd2a9c6f630720e0d2e",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_jax_jaxe_onbuffactivate_r2.wav",
+    "event": "Play_sfx_Jax_JaxE_OnBuffActivate",
+    "event_id": 1990760336,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/event_wav/Play_sfx_Jax_JaxE_OnBuffActivate {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/txtp/Play_sfx_Jax_JaxE_OnBuffActivate {r2}.txtp",
+    "media_ids": [
+      252382905,
+      338032282,
+      558406425
+    ],
+    "duration": 5.1666,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "433a1c8811918d6e3a0a1c5876f6c008e0e5f87564d39ee2019cccb5a2f47f1a",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_jax_jaxe_onbuffactivate_r3.wav",
+    "event": "Play_sfx_Jax_JaxE_OnBuffActivate",
+    "event_id": 1990760336,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/event_wav/Play_sfx_Jax_JaxE_OnBuffActivate {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/txtp/Play_sfx_Jax_JaxE_OnBuffActivate {r3}.txtp",
+    "media_ids": [
+      252382905,
+      338032282,
+      558406425
+    ],
+    "duration": 5.1666,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "552fc0f0f997c624aba4ed4fd93695eb9e817a7cb5d72ab3c940c90abead47dd",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_jax_jaxe_onbuffdeactivate_r1.wav",
+    "event": "Play_sfx_Jax_JaxE_OnBuffDeactivate",
+    "event_id": 3253200769,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/event_wav/Play_sfx_Jax_JaxE_OnBuffDeactivate {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/txtp/Play_sfx_Jax_JaxE_OnBuffDeactivate {r1}.txtp",
+    "media_ids": [
+      600385664,
+      720165762,
+      979182295
+    ],
+    "duration": 1.561,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "9b176eac00998612d2754487dfe3640f56ad5990f1ea975f51e4b5503cac17ef",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_jax_jaxe_onbuffdeactivate_r2.wav",
+    "event": "Play_sfx_Jax_JaxE_OnBuffDeactivate",
+    "event_id": 3253200769,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/event_wav/Play_sfx_Jax_JaxE_OnBuffDeactivate {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/txtp/Play_sfx_Jax_JaxE_OnBuffDeactivate {r2}.txtp",
+    "media_ids": [
+      600385664,
+      720165762,
+      979182295
+    ],
+    "duration": 1.561,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "03b4ec1474f9b9e26e34d8f6969f5d79311277cec08343bf308d595e781d3d17",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_jax_jaxe_onbuffdeactivate_r3.wav",
+    "event": "Play_sfx_Jax_JaxE_OnBuffDeactivate",
+    "event_id": 3253200769,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/event_wav/Play_sfx_Jax_JaxE_OnBuffDeactivate {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/txtp/Play_sfx_Jax_JaxE_OnBuffDeactivate {r3}.txtp",
+    "media_ids": [
+      600385664,
+      720165762,
+      979182295
+    ],
+    "duration": 1.561,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "15a46ef418ace73fa1d882a818ff8760c91418ff873aa186e32790fe8a194279",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_jax_death3d_cast.wav",
+    "event": "Play_sfx_Jax_Death3D_cast",
+    "event_id": 1597633005,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/event_wav/Play_sfx_Jax_Death3D_cast.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/txtp/Play_sfx_Jax_Death3D_cast.txtp",
+    "media_ids": [
+      269634236
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "4786176e9c2288d16925bafb5ca7ddc6f166601f174654b68816f8cc529f550c",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 4.367324263038549,
+      "source_sha256": "7ec6da807ae49a41229d3abff934a00ff12fdac07a7419035d1fa4116dea55b8",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_sfx_jax_respawn3d_buffactivate.wav",
+    "event": "Play_sfx_Jax_Respawn3D_buffactivate",
+    "event_id": 820923018,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/event_wav/Play_sfx_Jax_Respawn3D_buffactivate.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/txtp/Play_sfx_Jax_Respawn3D_buffactivate.txtp",
+    "media_ids": [
+      99919096
+    ],
+    "duration": 3.3333,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "70fa709d740074cb21acbe0f538081908a01c3044de64fff9695a97150fcc6cc",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_vo_jax_death3d_r1_zh_cn.wav",
+    "event": "Play_vo_Jax_Death3D",
+    "event_id": 470767417,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax_vo/event_wav/Play_vo_Jax_Death3D {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax_vo/txtp/Play_vo_Jax_Death3D {r1}.txtp",
+    "media_ids": [
+      117533501,
+      265242099,
+      280109821,
+      1437536476,
+      1703159820
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "1f36f3a6bad1da6ac7ce4bf0de5e8cc288002c922564e63e16590b2e23cb9946",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 4.543990929705215,
+      "source_sha256": "ba0185f42d1e60a638b6751ce0acef914842ee3e7880aafa64662f8d7d6a9c81",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_vo_jax_death3d_r2_zh_cn.wav",
+    "event": "Play_vo_Jax_Death3D",
+    "event_id": 470767417,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax_vo/event_wav/Play_vo_Jax_Death3D {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax_vo/txtp/Play_vo_Jax_Death3D {r2}.txtp",
+    "media_ids": [
+      117533501,
+      265242099,
+      280109821,
+      1437536476,
+      1703159820
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "3087d2715c9430362368734b89ac6cea0ecd8bf271b4f4f737184a78a816f353",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 3.306643990929705,
+      "source_sha256": "6c1a35bbfad198f51d891ad0c8b794c388f66ebcb53e933ebd049d10e815e163",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_vo_jax_death3d_r3_zh_cn.wav",
+    "event": "Play_vo_Jax_Death3D",
+    "event_id": 470767417,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax_vo/event_wav/Play_vo_Jax_Death3D {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax_vo/txtp/Play_vo_Jax_Death3D {r3}.txtp",
+    "media_ids": [
+      117533501,
+      265242099,
+      280109821,
+      1437536476,
+      1703159820
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "7bc9d409f894c503e4d41ecfd81a33a45dcd76da8efb6ae95d4a0fcf10664154",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 2.9866439909297053,
+      "source_sha256": "d13e1b9311e67caa26bf0b04f809d3929dff84fb023bb2a4c2859842c4ace170",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "deploy.ogg",
+    "event": "client champion-choose-vo/24",
+    "source_file": "ClashLegends-开发素材库/03-制作中/武器大师/deploy-voice/plugins/rcp-be-lol-game-data/global/zh_cn/v1/champion-choose-vo/24.ogg",
+    "sha256": "ebb7832d4c61e46b0975560b3a7d0e1a67c8fcd2f48e07a536da57ac2e3b2cd7",
+    "processing": "original OGG; playback -8 dB"
+  },
+  {
+    "file": "play_sfx_jax_jaxe_hit_r1.wav",
+    "event": "Play_sfx_Jax_JaxE_hit",
+    "event_id": 266163458,
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/txtp/Play_sfx_Jax_JaxE_hit {r1}.txtp",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/event_wav/Play_sfx_Jax_JaxE_hit {r1}.wav",
+    "duration": 3.1999773242630387,
+    "sha256": "b2a2f0d0a8fbb8cf4be5b656d1ebb90d7d2e22eab935add67023ac3569eb9a06",
+    "processing": "vgmstream-cli fresh decode; wwiser -gv=0dB; original event gain"
+  },
+  {
+    "file": "play_sfx_jax_jaxe_hit_r2.wav",
+    "event": "Play_sfx_Jax_JaxE_hit",
+    "event_id": 266163458,
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/txtp/Play_sfx_Jax_JaxE_hit {r2}.txtp",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/event_wav/Play_sfx_Jax_JaxE_hit {r2}.wav",
+    "duration": 3.333310657596372,
+    "sha256": "eabae82915dafe0ae6f52a432737a58d6517b59cdb57d8967106b879bb9decf8",
+    "processing": "vgmstream-cli fresh decode; wwiser -gv=0dB; original event gain"
+  },
+  {
+    "file": "play_sfx_jax_jaxe_hit_r3.wav",
+    "event": "Play_sfx_Jax_JaxE_hit",
+    "event_id": 266163458,
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/txtp/Play_sfx_Jax_JaxE_hit {r3}.txtp",
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/武器大师/audio-source/jax/event_wav/Play_sfx_Jax_JaxE_hit {r3}.wav",
+    "duration": 3.2999773242630384,
+    "sha256": "28ea65f923ea7fdb4f2998fe384c97b5e751d3c2bf59a79052ceaf1f0767061a",
+    "processing": "vgmstream-cli fresh decode; wwiser -gv=0dB; original event gain"
+  }
+]

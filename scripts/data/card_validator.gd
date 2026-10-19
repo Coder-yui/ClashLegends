@@ -743,7 +743,7 @@ static func _validate_visual_config(label: String, stats: Dictionary, errors: Pa
 					errors.append("%s.visual_animations.clip_blends.%s: 必须是有限非负秒数" % [label, edge])
 	for state in [
 		&"deploy", &"idle", &"idle_cycle", &"move", &"move_enter", &"haste_move", &"terrain_move", &"full_resource_move", &"move_cycle", &"attack", &"attack_hit", &"attack_recover",
-		&"initial_move", &"attack_structure", &"attack_move", &"attack_to_move", &"empowered_idle", &"empowered_move", &"empowered_attack",
+		&"initial_move", &"attack_structure", &"attack_move", &"attack_to_move", &"active_buff_idle", &"active_buff_move", &"empowered_idle", &"empowered_move", &"empowered_attack",
 		&"empowered_attack_hit", &"empowered_attack_recover", &"empowered_attack_to_move",
 	]:
 		if not animations.has(state):
@@ -789,6 +789,10 @@ static func _validate_visual_config(label: String, stats: Dictionary, errors: Pa
 		else:
 			for transition in transitions:
 				var transition_label := "%s.visual_animations.transitions.%s" % [label, transition]
+				var route := String(transition).split(">")
+				if route.size() == 2 and route[0].contains(":"):
+					if route[1] not in ["idle", "move"] or not PresentationEvents.supports(stats, route[0]):
+						errors.append("%s: 事件衔接必须使用已支持的表现事件并指向idle/move" % transition_label)
 				var transition_config = transitions[transition]
 				if transition_config is Dictionary:
 					_validate_visual_transition_descriptor(transition_label, transition_config, errors)
@@ -910,6 +914,8 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 				errors.append(label + ".strike_type: 仅攻击时间线技能支持 basic_attack / skill")
 		if kind in [&"channeled_attack", &"bleeding_execute"] and String(skill.get("strike_type", "")) != "skill":
 			errors.append(label + ".strike_type: 目标技能必须声明 skill")
+		if (skill.has("damage_per_dodge") or skill.has("max_dodges")) and kind != &"counter_strike":
+			errors.append(label + ": 免疫计数参数仅用于counter_strike")
 		if skill.has("damage_reduction") and kind != &"aftershock":
 			errors.append(label + ".damage_reduction: 仅用于aftershock")
 		for option in ["air_only", "dash_spin"]:
@@ -1093,6 +1099,13 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 					errors.append("%s.damage: 必须 >= 0" % label)
 				if float(skill.get("duration", 0.0)) > float(skill.get("cast_duration", 0.0)):
 					errors.append("%s.duration: 不得大于 cast_duration" % label)
+			&"counter_strike":
+				_require_fields(label, skill, [&"duration", &"radius", &"damage", &"damage_per_dodge", &"max_dodges", &"stun_duration"], errors)
+				for field in [&"duration", &"radius", &"damage", &"damage_per_dodge", &"max_dodges", &"stun_duration"]:
+					if float(skill.get(field, 0.0)) <= 0.0: errors.append(label + "." + String(field) + ": 必须为正")
+				if float(skill.get("max_dodges", 0.0)) != floorf(float(skill.get("max_dodges", 0.0))): errors.append(label + ".max_dodges: 必须是整数")
+				if float(skill.get("cast_duration", 0.0)) != 0.0 or float(skill.get("impact_delay", 0.0)) != 0.0 or skill.has("visual_action"):
+					errors.append(label + ": 反击风暴必须瞬时建立独立状态")
 			&"aftershock":
 				_require_fields(label, skill, [&"duration", &"damage_reduction", &"radius", &"damage"], errors)
 				if float(skill.get("duration", 0.0)) <= 0.0 or float(skill.get("radius", 0.0)) <= 0.0 or float(skill.get("damage", -1.0)) < 0.0:
@@ -1436,6 +1449,7 @@ static func _validate_number_value(label: String, value: Variant, step: float, e
 		errors.append("%s: 必须是整数数值" % label)
 
 static func _validate_hit_haste(card_id: String, stats: Dictionary, errors: PackedStringArray) -> void:
+	if stats.has("hit_haste_name") and (String(stats.hit_haste_name).strip_edges().is_empty() or not stats.has("hit_haste_max_stacks")): errors.append(card_id + ".hit_haste_name: 要求非空名称及命中攻速配置")
 	if ["hit_haste_max_stacks", "hit_haste_per_stack", "hit_haste_duration"].any(func(field): return stats.has(field)):
 		for field in ["hit_haste_max_stacks", "hit_haste_per_stack", "hit_haste_duration"]:
 			if float(stats.get(field, 0.0)) <= 0.0:

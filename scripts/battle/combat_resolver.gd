@@ -171,6 +171,8 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 		var hit_amount := float(BattleNumbers.quantity(amount)) if cleave_radius <= 0.0 or target == primary else 0.0
 		if cleave_radius > 0.0: hit_amount += float(effects.cleave_damage)
 		if counts_as_attack and from is Unit: hit_amount += from.on_hit_passive_damage(target)
+		# 到达目标时判断，包含在途普攻和溅射；技能攻击不消费免疫次数。
+		if counts_as_attack and String(effects.get("strike_type", "basic_attack")) == "basic_attack" and target is Unit and CombatInteraction.allows(target, from, p_team, source_position) and target.try_dodge_basic_attack(): continue
 		var result := _hit(target, hit_amount, amount, from, p_team, source_position, effects)
 		if not result.accepted: continue
 		hit_results.append(result)

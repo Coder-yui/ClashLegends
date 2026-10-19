@@ -108,6 +108,8 @@ func prepare_dual_form_cast(source: Unit, skill: Dictionary) -> Dictionary:
 
 ## Cast Start 的效果必须在施法窗口开始时发生；它不依赖动画，也不等待 EffectExecution。
 func apply_cast_start(source: Unit, skill: Dictionary) -> void:
+	if StringName(skill.get("kind", "")) == &"counter_strike":
+		source.begin_counter_strike(skill)
 	if StringName(skill.get("kind", "")) == &"aftershock":
 		source.apply_damage_reduction(float(skill.duration), float(skill.damage_reduction), skill, source.status_source("aftershock"))
 	if StringName(skill.get("kind", "")) == &"undying_rage":
@@ -146,7 +148,7 @@ func _apply(source: Unit, skill: Dictionary) -> bool:
 		&"effect_shield":
 			source.apply_effect_shield(float(skill.duration), float(skill.get("block_haste_duration", 0.0)), float(skill.get("block_attack_speed_multiplier", 1.0)), source.status_source("effect_shield"))
 			source.battle_context.notify_unit_audio_event(source, &"effect_shield:start", source.get_visual_screen_position())
-		&"aftershock", &"undying_rage":
+		&"counter_strike", &"aftershock", &"undying_rage":
 			pass # 效果在 Cast Start 原子生效，受控不取消已施加的独立状态。
 		&"death_spawn":
 			for target in _skill_target_units(source, skill):
@@ -361,8 +363,20 @@ func activate_nova(source: Unit, skill: Dictionary) -> void:
 			continue
 		if (amount > 0.0 or float(skill.get("stun_duration", 0.0)) > 0.0 or float(skill.get("knockback", 0.0)) > 0.0) and CombatInteraction.blocks_effect(combatant, CombatInteraction.effect_context(source)): continue
 		if amount > 0.0:
-			receipts.append(_damage_combatant(source, combatant, amount, source.global_position))
+			var receipt := _damage_combatant(source, combatant, amount, source.global_position)
+			receipts.append(receipt)
+			if String(skill.get("kind", "")) == "counter_strike":
+				var target_point: Vector2 = combatant.global_position
+				var hit_source_ref: WeakRef = weakref(source)
+				var hit_team := source.team
+				_after_damage(func():
+					if not receipt.landed: return
+					_presentation.present_fixed_area(target_point, 30.0, 30.0, 0.8, hit_team, &"counter_strike_hit")
+					var live_source = hit_source_ref.get_ref()
+					if is_instance_valid(live_source): _controller.notify_unit_audio_event(live_source, &"counter_strike:hit", target_point))
 		if is_instance_valid(combatant) and combatant is Unit and combatant.hp > 0.0:
+			if String(skill.get("kind", "")) == "counter_strike":
+				(combatant as Unit).stun(float(skill.stun_duration), source.status_source("counter_strike"), CombatInteraction.effect_context(source))
 			if knockback > 0.0:
 				(combatant as Unit).apply_knockback(source.global_position, knockback, knockback_duration, knockback_mass_factor_max, displacement_order, CombatInteraction.effect_context(source))
 			if slow_duration > 0.0:
@@ -855,7 +869,10 @@ func tick_effects(dt: float) -> void:
 		var explosion: Dictionary = pending.skill.duplicate(true)
 		explosion.erase("shield")
 		activate_nova(source, explosion)
-		if String(explosion.get("kind", "")) == "aftershock":
+		if String(explosion.get("kind", "")) == "counter_strike":
+			_presentation.present_fixed_area(source.global_position, float(explosion.radius), float(explosion.radius), 1.2, source.team, &"counter_strike")
+			_controller.notify_unit_audio_event(source, &"counter_strike:explode", source.global_position)
+		elif String(explosion.get("kind", "")) == "aftershock":
 			_presentation.present_fixed_area(source.global_position, float(explosion.radius), float(explosion.radius), 1.8, source.team, &"aftershock")
 			_controller.notify_unit_audio_event(source, &"aftershock:explode", source.global_position)
 		else:
