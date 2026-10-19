@@ -53,7 +53,7 @@ beam的Quad为1×1，顶点/法线/切线/UV/index固定，Shader无纹理，只
 
 ## 固定采样层候选（未启用）
 
-`sampled-fixed-layers-v1` 的候选实现位于 `sampled_effect_coverage.gd`，开发扫描位于 `sampled_coverage_builder.gd`。当前**没有正式提供者声明 `fixed_sampled_layers=true`**，所有 sampled 仍用旧算法。CPU 数据合同已通过。新增azir/cast1两层真实复验确认默认参数枚举/复制后的精确签名匹配，但同帧代表对照因诊断视口空世界报错而整体失败；诊断修复后只有9项headless世界隔离合同，尚无修复后真实图像证明，不能称为完成迁移。详细矩阵、失败及恢复边界见[本轮记录](deliveries/2026-10-18_preload_effect_coverage.md#2026-10-19固定采样层候选未启用)。
+`sampled-fixed-layers-v1` 的候选实现位于 `sampled_effect_coverage.gd`，开发扫描位于 `sampled_coverage_builder.gd`。当前**没有正式提供者声明 `fixed_sampled_layers=true`**，所有 sampled 仍用旧算法。CPU 数据合同已通过。azir/cast1两层真实复验确认默认参数枚举/复制后的精确签名匹配。独立视口修复后两图像素相同，但新增每层可见性检查发现flash代表无可辨识像素：最大几何面积行落在近黑ramp尾端。最终可见性验收失败，不能称为完成迁移。详细矩阵、失败及恢复边界见[本轮记录](deliveries/2026-10-18_preload_effect_coverage.md#2026-10-19固定采样层候选未启用)。
 
 候选接入协议限定为已有 `load_kind/_data/_materials/_meshes/shape_basis_for/layer_enabled` 的固定采样模板家族：全部活跃层无 trail、实际 soft-depth、distortion、蒙皮、多遍或动态网格；顶点格式精确为非索引三角形 position/color/UV。源 Shader 可以声明休眠 depth sampler，但 `has_soft=false` 的固定分支必须经审阅绑定，不将真实 screen/depth 路径纳入此资格。不同 Shader/render_mode、网格源/格式、所有固定 uniform、纹理引用、billboard/mesh 分支和层身份分别保留，绝不按同 Shader 或 RID 合并。
 
@@ -68,4 +68,4 @@ beam的Quad为1×1，顶点/法线/切线/UV/index固定，Shader无纹理，只
 
 原工厂未设置的uniform代表**该版本Shader的准确默认值**。复制材质后若引擎物化同一默认值仍匹配；任何其他非默认值（包括1e-12）拒绝，不将null当通配符。显式override与Shader默认值在生成契约中分别标记。纹理原件及存在的.import配置加入资格必需输入，开发全局身份亦纳入effects/.import；不从.godot导入缓存建立可移植资格。
 
-674项CPU合同通过，覆盖模拟默认值物化、非默认值拒绝、纹理/类型/引擎/几何/覆层/priority变化。该结果不能替代真实后端。历史审批拒绝保留在阶段记录。用户新增授权的一次azir/cast1两层真实复验现已执行：两层实际factory→枚举→duplicate默认物化及完整签名匹配；正式首用两图相同，但同帧分层代表对照因SubViewport.world_3d为null报错，外层guard明确失败。诊断入口已改显式独立World3D，9项headless合同通过；未追加真实运行，因此没有修复后的同帧代表图或新资格/正式provider启用。内层134项passed不能覆盖脚本错误；当前状态见[最终收尾](deliveries/2026-10-18_preload_mechanism_analysis.md#2026-10-19授权后的最终收尾)。
+674项CPU合同通过，覆盖模拟默认值物化、非默认值拒绝、纹理/类型/引擎/几何/覆层/priority变化。该结果不能替代真实后端。历史审批拒绝保留在阶段记录。用户已追加本任务必要修复后再验授权。诊断入口修复独立World3D/相机就绪后，两层实际factory→枚举→duplicate签名及同帧/正式首用像素全等；原空世界失败及134项假阳性保留。目视没有放行取景不足/空白相等，新增每层独立区域可见性检查后最终138项中flash失败（twirl/flash抽样9/0），原最大面积代表取frame31/ramp坐标0.95238近黑尾端。没有放宽标准或修改原采样行，全部候选继续关闭；当前状态见[最终收尾](deliveries/2026-10-18_preload_mechanism_analysis.md#2026-10-19授权后的最终收尾)。
