@@ -195,6 +195,24 @@ static func comparison_viewport() -> SubViewport:
 	viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	return viewport
 
+static func comparison_target(slot: int) -> Vector2:
+	return Vector2(180 + slot * 360, 400 + slot * 450)
+
+static func comparison_position(parent: Node3D, eye: Camera3D, row: Array, slot: int, basis: Basis) -> Vector3:
+	var center := basis * Vector3(row[1], row[2], row[3])
+	return parent.to_local(preload("res://scripts/presentation/spell_effect_projection.gd").ground(eye, comparison_target(slot))) - center
+
+func visible_cell_samples(picture: Image, slot: int) -> int:
+	var target := Vector2i(comparison_target(slot))
+	var background := picture.get_pixel(0, 0)
+	var count := 0
+	for y in range(target.y - 150, target.y + 150, 3):
+		for x in range(target.x - 150, target.x + 150, 3):
+			var color := picture.get_pixel(x, y)
+			if maxf(absf(color.r - background.r), maxf(absf(color.g - background.g), absf(color.b - background.b))) > 1.0 / 255.0:
+				count += 1
+	return count
+
 func representative_pair(recipe: Dictionary) -> Dictionary:
 	var viewports := []
 	for side in 2:
@@ -203,34 +221,45 @@ func representative_pair(recipe: Dictionary) -> Dictionary:
 		viewport.world_3d.environment = root.world_3d.environment
 		var host := Node3D.new(); viewport.add_child(host)
 		var eye := Camera3D.new(); host.add_child(eye)
-		eye.transform = camera.transform; eye.projection = camera.projection; eye.size = camera.size; eye.current = true
+		eye.transform = camera.transform; eye.projection = camera.projection; eye.size = 18.0; eye.current = true
+		eye.force_update_transform()
+		# A new SubViewport's camera/size must reach the renderer before screen projection.
+		await process_frame
+		await RenderingServer.frame_post_draw
 		var player: Node3D = load(recipe.player).new(); host.add_child(player); player.load_kind(recipe.kind)
 		if side == 0:
 			var errors := PackedStringArray(); FIXED.prepare(player, recipe.coverage, eye, errors)
 			check(errors.is_empty(), "representative pair " + str(errors))
+			for slot in recipe.coverage.layers.size():
+				player.get_child(slot).position = comparison_position(player, eye, recipe.coverage.layers[slot].row, slot, player.projection_basis)
 		else:
 			# Keep the real production-created node/row for each generated frame, no helper material cloning.
 			player.setup_native(0.01)
 			var bucket := Node3D.new(); host.add_child(bucket); bucket.scale = player.scale
-			for layer in recipe.coverage.layers:
+			for slot in recipe.coverage.layers.size():
+				var layer: Dictionary = recipe.coverage.layers[slot]
 				player.seek((float(layer.frame) + 0.25) / float(player._data.fps))
 				var item: MeshInstance3D = player._pools[int(layer.index)][int(layer.particle)]
 				player.remove_child(item); bucket.add_child(item)
 				item.transform = Transform3D.IDENTITY
-				var target := Vector2(180 + (int(layer.index) % 4) * 120, 400 + (int(layer.index) / 4) * 80)
-				var center: Vector3 = player.projection_basis * Vector3(layer.row[1], layer.row[2], layer.row[3])
-				item.position = bucket.to_local(preload("res://scripts/presentation/spell_effect_projection.gd").ground(eye, target)) - center
+				item.position = comparison_position(bucket, eye, layer.row, slot, player.projection_basis)
 				item.sorting_offset = 0.0
 				player._pools[int(layer.index)].remove_at(int(layer.particle))
 			player.free()
 		viewports.append(viewport)
+	await process_frame
 	await RenderingServer.frame_post_draw
 	images["generated-representatives"] = viewports[0].get_texture().get_image()
 	images["production-representatives"] = viewports[1].get_texture().get_image()
 	var equal: bool = images["generated-representatives"].get_data() == images["production-representatives"].get_data()
 	check(equal, "same-frame production representative image equality")
+	var visible_samples := []
+	for slot in recipe.coverage.layers.size():
+		var count := visible_cell_samples(images["generated-representatives"], slot)
+		visible_samples.append(count)
+		check(count > 0, "representative cell visibly rendered: " + recipe.coverage.layers[slot].name)
 	for viewport in viewports: viewport.free()
-	return {"same_frame_equal": equal, "layers": recipe.coverage.layers.size()}
+	return {"same_frame_equal": equal, "layers": recipe.coverage.layers.size(), "visible_cell_samples": visible_samples, "camera_size": 18.0}
 
 func snapshot(material: ShaderMaterial) -> Dictionary:
 	var result := {}
