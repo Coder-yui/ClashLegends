@@ -6,6 +6,8 @@
 python3 tools/release/export_macos.py
 ```
 
+导出前必须通过[资源生成门禁](../../docs/RESOURCE_ARTIFACTS.md)，导出后原生 PCK 审计要求全部 runtime raw/生成清单按原路径收录、字节相同且不含开发源或旧依赖头。直接使用 Godot 原生 Export/裸 CLI 不代替本入口的检查。
+
 输出位于 `ClashLegends-开发素材库/04-中间产物/构建与验证/macos/<时间>/Clash Legends.app`；`result.json` 记录工作区身份、引擎版本、模板 SHA256、所有应用文件 SHA256、导出日志、签名校验和菜单/单机启动冒烟（必须收到发布包内 `--release-smoke=menu|match` 的结构化成功结果）。该脚本固定版本不匹配就失败；运行中不得改源文件。首次先让 Godot 完成资源导入。
 
 `export_presets.cfg` 可入版本控制，未放密钥、密码或本机绝对路径。Godot 的 `.godot/export_credentials.cfg` 由 `.godot/` 忽略规则保护。预设使用内建 ad-hoc 签名，仅本机测试，不是已公证的公开发行包。使用 universal 模板需同时导入 S3TC/BPTC 和 ETC2/ASTC；官方模板只有 universal，单独 arm64 预设会报告缺少二进制。

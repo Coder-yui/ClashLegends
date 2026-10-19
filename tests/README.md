@@ -40,7 +40,7 @@ python3 tools/dev.py verify --changed scripts/battle/match_card_growth.gd
 
 已有未提交工作较多时，记录中说明哪些文件属于本轮、哪些已有代码身份和通过证据可复用。不能省略已受影响文件，也不能把之前代码的结果当作当前通过。未知路径在计划列为 unknown 并阻止自动执行；共享生命周期、共享数据等高影响入口或自动范围过广也要求显式确定边界。先补充明确的 `--suite` / `--group`，或经判断显式 `--full`，不自动升级全量。`--full` 与 `--suite` / `--group` 不混用。
 
-计划可能包含审计、相关 Python 检查、依赖头精确核对、Godot 导入、卡牌数值核对、所选机制或明确请求的联网；只执行本次需要的步骤，失败即停。通用工具测试不执行素材导入配方。普通`verify`保留既有每步默认600秒及`--timeout`语义，不自动套用新的Mac内存政策，也未因此获得RSS/系统压力/心跳保证。通过`--godot`（或GODOT_BIN）、`--output`指定环境。
+计划可能包含审计、相关 Python 检查、版本化资源输入/产物精确核对、Godot 导入、卡牌数值核对、所选机制或明确请求的联网；只执行本次需要的步骤，失败即停。通用工具测试不执行素材导入配方。普通`verify`保留既有每步默认600秒及`--timeout`语义，不自动套用新的Mac内存政策，也未因此获得RSS/系统压力/心跳保证。通过`--godot`（或GODOT_BIN）、`--output`指定环境。
 
 本轮受保护入口须显式选择：
 
@@ -178,15 +178,15 @@ python3 -m unittest discover -s tools/tests -p 'test_*.py'
 
 两组按改动计划选用，`--full` 才统一执行全部安全 Python 门禁：前者验证审计和执行器的失败路径，后者验证通用素材工具的自包含逻辑。纯文档不附带这些工具测试。静态链接/注册审计不能代替受影响的机制回归。数值检查首批覆盖赛恩、凯隐、潘森的费用、生命、伤害、攻击间隔、实体部署锁定，以及主动费用、次数和冷却；未标记的数值、玩法解释和听感仍需人工核对。历史长篇测试说明保留在[归档](../docs/archive/2026-09-26/tests_README.md)。
 
-LoadingAssetsSuite检查本场卡面缓存所有权、剑魔共享派生模板与活体动画/材质隔离，以及紧凑采样坏头/源SHA拒收；完整数据逐位等价由受监督compact_sample_check另验。
+LoadingAssetsSuite检查本场卡面缓存所有权、剑魔共享派生模板与活体动画/材质隔离，以及紧凑采样坏头/摘要格式拒收；完整数据逐位等价由受监督compact_sample_check另验。
 
-MatchLoadingSuite 以无游戏资源的小场景检查双方编队/召唤/镜像预算隔离，以及预热绘制资源身份与保守回退；真实单局计时另见 [性能工具](../tools/performance/README.md#正常单局开局)。
+MatchLoadingSuite以纯定义/源场景文本检查全部模型构造声明schema、旧储备与独立系统来源，以及无游戏模型的小型绘制身份。`python3 tools/maintenance/model_inventory_revision.py`补充开发复杂度/数量/循环门禁及账单；`--mode capabilities`仅六个同构模板逐一构造，`--mode scheduler`以虚拟时钟检查单步/有限退让/轮转/活跃额度和真实取消清理，`--mode compile-runtime`只编译，`--mode runtime`经真实MatchRuntime出牌/主动/被动/周期/亡语驱动有限消费，记录真实帧delta，补货依据已发生工作时钟，不手写事件代替权威链。各模式不自动串跑或重试；断言数不是场景数，具体覆盖、原2次缺货及调度修正后单次复验边界见[库存契约](../docs/MODEL_POOL_DEMAND.md)。真实单局计时另见[性能工具](../tools/performance/README.md#正常单局开局)。
 
 SpellWarmupSuite验证法术JSON内部资源收集、非本局法术过滤、飞行/落地/命中样本准备、取消与节点清理，并确认无权威事件副作用；GPU准备须另跑实际渲染，headless不替代绘制验收。
 
 ## 表现重复工作回归
 
-ProjectileSuite 内的 view 子检查覆盖内容代次、同帧前后读取、嵌套只读且无Object别名、旧snapshot副本隔离、逐渲染插值、延迟波/取消/死源独立/形态代次、clear/终局/新局，与原弹体套件复用场景。DependencyHeaderSuite 默认输出 `small-fixture/header-contract-only`，用小夹具验证依赖头匹配、元数据/嵌套资源保留、去重，以及缺失/损坏/源变更/错误类型回退；不会再次完整解析最大83MiB采样源。相关资源/清单改动或显式全量计划中的 Python `effect_dependencies.py --check` 仍核对全部22份源件及依赖头的精确生成，过期时在引擎导入前停止。需要定向复核 Godot 全源投影时，可在原始入口的 `--suite=DependencyHeaderSuite` 后显式加 `--full-dependency-headers`；此项不属于默认低负载门禁。AnimationState 与 StructureRush 保留真实控制姿势及动作身份合同，不再断言已删除的私有恢复字段。
+ProjectileSuite 内的 view 子检查覆盖内容代次、同帧前后读取、嵌套只读且无Object别名、旧snapshot副本隔离、逐渲染插值、延迟波/取消/死源独立/形态代次、clear/终局/新局，与原弹体套件复用场景。DependencyHeaderSuite 保留注册 ID，现用小夹具验证版本化清单缺失、损坏、错误schema/策略/身份/数组/路径显式拒绝，不再回退源JSON或支持旧依赖头。全库源/层/Shader策略内容身份及产物 SHA 由 `python3 tools/dev.py resources --check` 在相关 verify 计划中检查；微型 CLPS 长度/offset/数组边界和无源件隔离 PCK 合同用受保护 `python3 tools/maintenance/resource_contracts.py`。完整入口见[资源生成流程](../docs/RESOURCE_ARTIFACTS.md)。AnimationState 与 StructureRush 保留真实控制姿势及动作身份合同，不再断言已删除的私有恢复字段。
 
 投影几何逐面合同、粒子出生索引多实例隔离和真实渲染像素/CPU对照见[性能工具](../tools/performance/README.md)。headless合同不替代Compatibility实际画面、预热或跨局清理检查。
 

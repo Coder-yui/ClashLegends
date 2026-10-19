@@ -1,5 +1,15 @@
 # Mac 性能基准
 
+## 单效果状态覆盖原型
+
+`--family beam`选择本轮16项窄CPU合同；加`--render`只渲染一次蚂蚱R单Quad，沙盾CPU夹具在首帧前已释放，不渲染沙盾。新样本使用正式端点/尺寸，参照为相同正确端点的旧4年龄算法，不与旧亚像素native样本作质量不同的性能比较。资格仅在明确审阅后手工登记，探针不写资格记录。
+
+`python3 tools/performance/effect_coverage_probe.py` 只执行沙盾32项窄CPU合同；显式 `--render` 才运行一次Compatibility实际绘制。固定顺序为新策略一次准备 → 新建正式实例首次消费 → 原7年龄路径 → 新建正式实例；不启动Main/整场、不并行、不自动重试。新路径先行，后续原路径已经受进程/驱动缓存影响，不能把单次数字当冷启动或稳定提速。
+
+沿用safe_probe的20秒/1GiB/30FPS、启动6秒/心跳2秒、ready后增长256MiB、自有进程组清理；叠加整机normal及启动可用估计≥8GiB、运行≥4GiB，每秒检查。允许已有编辑器，拒绝其他Godot游戏；不清理用户进程。结果保存完整源码身份、RSS/保护、分段准备/seek/retain/scan/等待、实际状态和正式消费时间。PNG在计时后写出。使用生产configure/bind_model/advance_status，但无宿主模型、无战斗；不能替代完整实战或全硬件首用验收。契约与未迁移边界见[覆盖说明](../../docs/EFFECT_WARMUP_COVERAGE.md)。
+
+保留资源身份去重的窄合同位于`SpellWarmupSuite.check_retained_identity()`；`retained_resource_check.gd`只执行这个无模型素材的资源图检查，须由现有监督器提供token运行，不调用完整重型套件。覆盖旧新ID顺序、追加统计、晚出现子节点和ImmediateMesh后续surface/material、会话释放；headless不能替代真实预热。2026-10-18第一阶段仅追加一次受保护A渲染，详情和异常证据见同一任务交付记录及素材库`optimization_phase1_retained_identity/`，不自动进入批渲染或重跑对局。
+
 当前先使用下列本地监督入口；本次安全工具改造尚未启动 Godot，Python 假进程回归不代表实际渲染验收。旧无保护基准、160 弹体场景和默认五轮压力配方不自动执行。基准期间保持工作区稳定，并由操作者确认没有另一份引擎或重负载任务；全局锁只覆盖同一 `safe_probe` 入口。
 
 ## 有界检查入口
@@ -114,7 +124,7 @@ headless/Dummy的正式资源准备使用主线程分批加载，集合/模型�
 - `particle_birth_probe.gd`：保留193帧stop/回退/世界坐标隔离和重复创建释放；当前入口为`safe_probe.py --probe particle`，不再推荐旧32/128实例和7×20配方。
 - `effect_dependency_probe.py --output <新证据目录>`：默认受监督headless、典型冰鸟storm、paired、1轮×1样本；明确`--render`才跑Compatibility。压力虚空召唤或cold须单独显式选择，每个引擎进程仍最多20秒，任何失败停止后续步骤。历史5×5数据只按其原身份/负载解释，不是当前默认或整局FPS。首次指引擎首次解析，OS文件缓存可能已暖。
 
-大JSON优化只移除依赖收集对数值frames的重复解析；播放器数据驻留与预热保持。依赖头不增加永久解析缓存，完整源哈希避免过期头漏资源，涉及效果资源、依赖清单或显式`--full`的verify计划运行只读`effect_dependencies.py --check`；纯文档不附带该步骤。当前文件大于等于1MiB时生成；需要更新时显式`python3 tools/maintenance/effect_dependencies.py --write`，不改源JSON。所有正式效果JSON均纳入导出包含规则。
+资源依赖发现与源件 SHA 已移到[开发生成与门禁](../../docs/RESOURCE_ARTIFACTS.md)。运行按 provider/variant 小清单加载，不回退源 JSON。旧 `effect_dependency_probe` 依赖历史解析器与旧源布局，只作历史证据，不用于当前阶段验收。当前不再以旧依赖头或旧路径作为运行契约。
 
 Main真实七消费者的共享视图对照与连续跨局窗口诊断保存在本任务素材库，测试用代理仅在工具中使用；正式ProjectileSystem不增加持久统计器。按内容代次共享，不能把同帧更新前后硬合并成一次，也不能把固定帧delta的wall耗时称为游戏FPS。
 
@@ -127,9 +137,28 @@ Main真实七消费者的共享视图对照与连续跨局窗口诊断保存在�
 `resource_stage_usec` 是主线程依赖收集加后台加载的墙钟，后台部分含读取、引擎反序列化、任务队列与逐帧轮询，不能全称磁盘IO。`render_usec` 是同步强制绘制调用墙钟，含驱动等待，不是GPU计时器；`frame_wait_usec` 含自然绘制、同步及限帧等待，不能等同CPU忙碌。JSON读取/解析的本次细分来自临时诊断调用，已恢复原玩家源码，测量脚本与恢复映射归档在交付证据内；普通工具不改写正式资源。所有新进程均有引擎缓存首次加载，操作系统文件缓存/Shader驱动缓存未清空；不能称为系统冷启动。
 
 
-`--profile heavy`选择用户要求的偏重合法双方卡组：双方主动槽镜像，蓝方腕豪/虚空召唤/迅捷蟹/传送门/剑魔/凯隐/重装部队，红方冰鸟/格温圣霭/赛恩/龙王/狂战士/天使/凝滞。测试子类只固定对手卡组，不改变正式Main。`match_loading_plan.gd`仅盘点原样本和这一候选的依赖/容量，不能作为加载性能。`progress.json`每约0.5秒保存部分阶段，以免保护停止后丢失已完成证据。本次heavy触发全局压力warning被清理，无完整耗时；不自动重跑。模型金身预热与效果绘制去重分别计量；可变网格和多遍材质保留全部绘制，避免同RID更新顶点漏提交。最新保守收紧尚未在引擎中复验，初版5.773秒不能视为当前最终值，见[交付记录](../../docs/deliveries/2026-10-16_match_loading.md)。
+`--profile heavy`选择偏重混合双方卡组，`summon`选择召唤／变形闭包，`diverse`选择多类特效／冰冻；三组固定双方八卡和技能选择，共用`match_loading_plan.gd`的配置。双方主动槽第一张均为镜像，只扩展本方卡牌所选技能。测试子类只固定对手卡组，不改变正式Main。`--inventory --output <素材库内的新目录>`在同一监督器下仅收集这三组定义、合法性、路径、raw文件与模型定义预算，不实例化模型或准备音频，不作为GPU加载性能。正式启动仍每次只选一组，无自动批量或重试。
+
+`progress.json`每约0.5秒保存最后阶段和已完成模型／效果计时；完整`loading.json`、资源审计和战场截图只在完成后保存。保护中止时不得把最后checkpoint当完整耗时。每次前后保存Git可见文件的逐文件SHA256及工具diff，ignored导入缓存不在该身份范围。模型金身预热与效果绘制去重分别计量；可变网格和多遍材质保留全部绘制。2026-10-18三组依赖合法，heavy真实启动触发60秒总时限、未ready；后续两组停止，没有完整三组基线或画面验收，见[本次记录](../../docs/deliveries/2026-10-18_preload_baseline.md)。历史压力warning及初版5.773秒的限制见[旧交付记录](../../docs/deliveries/2026-10-16_match_loading.md)，不能作为本次结果。
 
 
-虚空召唤离线数据用`python3 tools/maintenance/compact_samples.py --write`生成，`--check`逐位核对并检查确定性；Python3.14标准库Zstandard，无安装步骤。源JSON保留，运行不展开它；维度/源SHA/载荷SHA失配停止准备。`compact_sample_check.gd`是带心跳的CPU全数据等价入口，须由监督器启动，不当作战斗性能。`match_resource_audit.gd`只追踪已知定义/字面量/场景传递路径，并用真实缓存状态确认；不能从preload文本推断全部运行时资源。最终重组记录见交付，普通组旧5.773秒不可当最终值。
+虚空召唤离线数据用`python3 tools/maintenance/compact_samples.py --write`生成，`--check`逐位核对并检查确定性；Python3.14标准库Zstandard，无安装步骤。源JSON位于 tools/source_assets/void_summoning/，运行不读取；源身份在开发/构建验证，运行保留维度/长度/载荷SHA及偏移边界验证。`compact_sample_check.gd`是带心跳的CPU全数据等价入口，须由监督器启动，不当作战斗性能。`match_resource_audit.gd`只追踪已知定义/字面量/场景传递路径，并用真实缓存状态确认；不能从preload文本推断全部运行时资源。最终重组记录见交付，普通组旧5.773秒不可当最终值。
 
 单场入口现允许已确认的用户`--editor`进程继续存在并计入系统余量，拒绝其他Godot游戏；不关闭编辑器。`resource-audit.json`的完整来源解析在Main准备计时后执行，外部按钮到报告时间含诊断开销；直接使用`main.total_usec`作开局准备。预热retained只输出类型/配方计数，没有为降低数字删除可变粒子材质。
+
+
+`--profile heavy --diagnostic`仅用于明确授权的一次A短诊断，禁止与inventory组合。总墙钟收紧为20秒，其余正式单局保护不变；默认关闭的warmup观察回调保留采样和自然draw，内存事件每0.5秒输出`diagnostic-timeline.jsonl`，记录两类帧信号、当前年龄/阶段和只读窗口状态。若draw_wait连续5秒且process仍推进，会记录可区分的信号状态后提前退出；该退出没有ready，不当作加载完成。一次授权不自动运行B/C或失败重试。2026-10-18唯一追加诊断正常完成14.961秒、原等待未复现，根因未证实；实际窗口900×1600，不能与未记录窗口状态的首轮中止算收益。详见本次交付及素材库诊断附录。
+
+
+`--profile summon --observe`或`--profile diverse --observe`保留同一观测器但使用正式60秒上限，不使用短诊断提前分类退出。每次只运行一个profile，不能与inventory/diagnostic组合；本轮B/C各一次，未自动重试。正式开始前实时保存live-config.json与合法性。2026-10-18最终三组有效样本A/B/C为14.961/8.376/10.051秒；原A首次中止根因仍未知，详见同一交付记录。B最后0.5秒阶段事件尾部未刷新，retain仅能给观察下界；最终loading.json各配方total/frame_wait仍完整，不能补估尾段。
+
+
+第四阶段模型库存采用[首轮预算、旧储备与构造契约](../../docs/MODEL_POOL_DEMAND.md)。静态inventory输出最终计划数量，不再额外截断；旧32/64只在需求层作为明确保留的有限缓存政策，首轮预算优先，巨大计划在开发门禁拒绝。真实loading报告分列构造声明、首轮来源、旧储备和可耗尽限制。窄入口为`tools/maintenance/model_inventory_revision.py`，默认纯账单，capabilities/scheduler/compile-runtime/runtime分别显式选择；沿用resource_process的20秒/1GiB、pressure/余量/心跳/进程组清理，不自动A/B/C。旧30FPS轨迹暴露帧间隔门槛导致0补货/2次同步缺货。修正按已发生主线程工作有限退让、每帧一步后，仅一次同输入复验得到10命中/0缺货、6个补货、62步最长659μs；不增加初始库存。闲置容量不含活体，不能据静态数量推断局中总内存；有限轨迹不能当整场流畅通过。
+
+
+### 固定采样层候选
+
+`python3 tools/performance/effect_coverage_probe.py --family sampled` 只执行受保护 headless CPU 合同：11份候选声明、三个机制代表、正式seek与层生命周期、既有primitive/beam小合同。正式provider没有启用新策略。`--render` 会进入真实后端合同及单代表对照；本轮该入口已在材质合同处失败，额外渲染复验被审批拒绝，须先取得针对该失败的明确复验授权。不得自行重试、调阈值或扩大到全库。见[覆盖边界](../../docs/EFFECT_WARMUP_COVERAGE.md)。
+
+
+固定层定向复验入口现限定为`--family sampled --render`→`--targeted`：仅编译azir/cast1两层，逐字段保存工厂→枚举属性→duplicate的类型/精确值；任何不符均在图片流程前停止，全部满足因果链才进入同帧图像和正式新实例首用。该入口本次未获执行批准；不能直接启动。CPU入口仍检查11份声明/三个机制代表，不调用真实渲染。默认值修订、第二次审批拒绝和资格边界见[第二阶段记录](../../docs/deliveries/2026-10-18_preload_effect_coverage.md)。
