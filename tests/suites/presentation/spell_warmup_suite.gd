@@ -194,11 +194,11 @@ func _deployment_plans() -> void:
 	resources.prepare(groups)
 	_expect(resources.errors.is_empty() and resources.cards.size() == plan.cards.size(), "实际资源收集递归生成计划成员，与计划闭包一致")
 	var specs := MatchModelPool.build_specs(resources.cards, plan)
-	var targets := {"melee_minion": 14, "ranged_minion": 12, "super_minion": 6, "siege_minion": 8}
+	var targets := {"melee_minion": 18, "ranged_minion": 16, "super_minion": 10, "siege_minion": 12}
 	for id in targets:
 		for team in [0, 1]:
 			var path := PresentationConfig.scene_path(CardDB.get_card(id), team)
-			_expect(resources.resources.has(path) and specs.has(path) and specs[path].any(func(use): return use.id == id and use.team == team and use.count == (targets[id] if team == 0 else 4)), "成员模型与两波库存按生成数量进入预热：%s 阵营%d" % [id, team])
+			_expect(resources.resources.has(path) and specs.has(path) and specs[path].any(func(use): return use.id == id and use.team == team and use.count == (targets[id] if team == 0 else 4)), "成员模型按编队来源加系统兵线保留有限库存：%s 阵营%d" % [id, team])
 	for id in groups:
 		var single: RefCounted = planner.for_match([[id], []], [{}, {}])
 		for member in CardDB.get_card(id).spawn_plan.members:

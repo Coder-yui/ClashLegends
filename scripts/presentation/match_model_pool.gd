@@ -15,7 +15,14 @@ var _clips := {}
 var _runtime_safe := {}
 var _refill := {}
 var _refill_ready := false
-var refill_metrics := {"completed": 0, "steps": 0, "max_step_usec": 0, "max_slice_usec": 0, "busy_frames": 0, "by_path": {}}
+const REFILL_SCHEDULER = preload("res://scripts/presentation/model_refill_scheduler.gd")
+var _refill_scheduler := REFILL_SCHEDULER.new()
+var _refill_cursor := 0
+var _refill_frame_tree: SceneTree
+var _refill_frame_id := 0
+var _refill_frame_started := 0
+var refill_step_observer: Callable
+var refill_metrics := {"completed": 0, "steps": 0, "max_step_usec": 0, "max_slice_usec": 0, "busy_frames": 0, "by_path": {}, "budget_overruns": 0}
 
 var errors := PackedStringArray()
 var metrics := {}
@@ -26,67 +33,27 @@ var cancelled := false:
 	set(value):
 		cancelled = value
 		if value:
+			_stop_refill()
 			for sample in _render_samples:
 				if is_instance_valid(sample): sample.hide()
 var preparation_times := {"instantiate_usec": 0, "animation_usec": 0, "render_usec": 0, "frame_wait_usec": 0, "sample_prepare_usec": 0, "draws": 0, "animation_draws_skipped": 0, "stasis_samples": 0, "stealth_samples": 0, "predeployment_samples": 0, "overlay_draws_skipped": 0}
 
-## 每卡/阵营只有一个并发来源；同卡互斥形态同路径取最大，独立来源累加。
-## 两轮爆发窗口有界保留；循环依赖只扫描已去重闭包一次，不按整场累计数量扩张。
+const DEMAND = preload("res://scripts/presentation/match_model_demand.gd")
+var demand_plan: RefCounted
+
+## 资源可达、首轮预算与有限缓存分别计算；同路径仍保留全部形态/部署成员。
 static func build_specs(cards: Dictionary, plan: RefCounted = null) -> Dictionary:
-	var demands := [_team_demand(cards, plan, 0), _team_demand(cards, plan, 1)]
+	return specs_from_demand(DEMAND.build(cards, plan))
+
+static func specs_from_demand(demand: RefCounted) -> Dictionary:
 	var specs := {}
-	for id in cards:
-		var base: Dictionary = plan.definition(String(id)) if plan != null else CardDB.get_card(String(id))
-		for team in range(2):
-			if plan != null and team not in plan.cards.get(id, []): continue
-			if plan != null: base = plan.definition(String(id), team)
-			var seen := {}
-			for form in range(2 if base.has("transformed_stats") else 1):
-				var stats := PresentationConfig.for_form(base, form)
-				var path := PresentationConfig.scene_path(stats, team)
-				if path.is_empty(): continue
-				if not specs.has(path): specs[path] = []
-				# 两个形态仍分别预热映射，但相同路径不重复计算库存。
-				specs[path].append({"id": id, "stats": stats, "team": team, "form": form, "count": 0 if seen.has(path) else demands[team][id]})
-				seen[path] = true
+	for path in demand.paths:
+		var uses: Array = demand.paths[path].uses.duplicate(true)
+		for index in uses.size():
+			uses[index].count = int(demand.paths[path].capacity) if index == 0 else 0
+			uses[index].initial = int(demand.paths[path].initial) if index == 0 else 0
+		specs[path] = uses
 	return specs
-
-static func _team_demand(cards: Dictionary, plan: RefCounted, team: int) -> Dictionary:
-	var demand := {}
-	for id in cards:
-		if plan != null and team not in plan.cards.get(id, []): continue
-		demand[id] = maxi(int(MatchResources.SYSTEM_UNIT_BUDGET.get(id, 2)), int(CardDB.get_card(String(id)).get("deployment_count", 1)))
-	var summoned := {}
-	for id in cards:
-		if not demand.has(id): continue
-		var base: Dictionary = plan.definition(String(id), team) if plan != null else CardDB.get_card(String(id))
-		var per_source := {}
-		for form in range(2 if base.has("transformed_stats") else 1):
-			var per_form := {}
-			var stats := PresentationConfig.for_form(base, form).duplicate()
-			stats.erase("transformed_stats")
-			_collect_demand(stats, per_form)
-			for child in per_form: per_source[child] = maxi(int(per_source.get(child, 0)), int(per_form[child]))
-		for child in per_source: summoned[child] = int(summoned.get(child, 0)) + int(per_source[child]) * int(base.get("deployment_count", 1))
-	for child in summoned: demand[child] = maxi(int(demand.get(child, 2)), mini(32, int(summoned[child]) * 2))
-	# 镜像只扩充所在阵营；不能替敌方复制或把敌方编队/召唤预算加到本方。
-	if demand.keys().any(func(id): return bool(CardDB.get_card(String(id)).get("resource_dependencies", {}).get("copy_deck_skills", false))):
-		for id in demand: demand[id] = mini(64, int(demand[id]) * 2)
-	return demand
-
-static func _collect_demand(value: Variant, demand: Dictionary) -> void:
-	if value is Dictionary:
-		if value.has("spawn_plan"):
-			for id in value.spawn_plan.members:
-				demand[String(id)] = int(demand.get(String(id), 0)) + 1
-		for field in MatchResources.REFERENCES:
-			if value.has(field):
-				var id := String(value[field])
-				var count := int(value.get(String(field).trim_suffix("_id") + "_count", 1))
-				demand[id] = int(demand.get(id, 0)) + count
-		for child in value.values(): _collect_demand(child, demand)
-	elif value is Array:
-		for child in value: _collect_demand(child, demand)
 
 func _metric(path: String) -> Dictionary:
 	if not metrics.has(path): metrics[path] = {"hits": 0, "misses": 0, "recycled": 0, "active": 0, "peak": 0, "instantiate_usec": 0, "unplanned": 0, "exhausted": 0, "unsupported_recycle": 0, "prepare_animation_usec": 0, "prepare_wrapper_usec": 0}
@@ -97,7 +64,10 @@ func prepare(resources: Dictionary, world: Node3D, camera: Camera3D, cards: Dict
 	if cancelled: return
 	_world = world
 	var tree := world.get_tree()
-	var specs := build_specs(cards, plan)
+	demand_plan = DEMAND.build(cards, plan)
+	errors.append_array(demand_plan.errors)
+	if not errors.is_empty(): return
+	var specs := specs_from_demand(demand_plan)
 	var slice_started := Time.get_ticks_usec()
 	for path in resources:
 		if not (String(path).begins_with("res://assets/units/") or String(path).begins_with("res://assets/effects/")) or not String(path).ends_with(".tscn") or instances.has(path):
@@ -109,21 +79,11 @@ func prepare(resources: Dictionary, world: Node3D, camera: Camera3D, cards: Dict
 			errors.append("模型池资源必须是PackedScene: " + String(path))
 			return
 		var batch: Array[Node3D] = []
-		# 首波/编队按数量预建；常规卡保留两份，双方不同模型分别准备。
 		var uses: Array = specs.get(path, [])
-		var count := 2
-		if not uses.is_empty():
-			count = 0
-			for use in uses: count += int(use.count)
-		count = mini(count, 64)
+		# 只有真实模型消费者的路径保留库存；附属/入场效果仍执行下方原有绘制。
+		var count := int(demand_plan.paths.get(path, {}).get("capacity", 0))
 		capacity[path] = count
-		var initial := 1
-		if not uses.is_empty():
-			initial = 0
-			for use in uses:
-				if int(use.count) > 0:
-					initial += maxi(int(use.stats.get("deployment_count", 1)), ceili(float(use.count) / 2.0))
-		initial_capacity[path] = mini(initial, count)
+		initial_capacity[path] = int(demand_plan.paths.get(path, {}).get("initial", 0))
 		_packed[path] = packed
 		_clips[path] = {}
 		for use in uses: ModelVisualResources.collect_clip_names(use.stats.get("visual_animations", {}), _clips[path])
@@ -142,13 +102,25 @@ func prepare(resources: Dictionary, world: Node3D, camera: Camera3D, cards: Dict
 			# 包装脚本可能在_ready中整体加工网格/动画，不能用时间预算抢占。
 			var safe := ModelVisualResources.supports_clip_filter(node) and instantiate_usec <= REFILL_SLICE_USEC
 			_runtime_safe[path] = bool(_runtime_safe.get(path, true)) and safe
-			if not _runtime_safe[path]: initial_capacity[path] = count
 			started = Time.get_ticks_usec()
 			if node.has_method("prepare_visual_animations"): node.call("prepare_visual_animations")
-			_metric(path).prepare_wrapper_usec += Time.get_ticks_usec() - started
+			var wrapper_usec := Time.get_ticks_usec() - started
+			_metric(path).prepare_wrapper_usec += wrapper_usec
 			var bind_started := Time.get_ticks_usec()
 			var model_resources := ModelVisualResources.new()
-			var player := model_resources.bind_model(node, _allowed_clips(path, node))
+			model_resources.begin_bind(node, _allowed_clips(path, node))
+			var bind_usec := Time.get_ticks_usec() - bind_started
+			# 扩展动画库会整体复制，不能当成单片段可抢占能力。
+			var incremental := model_resources._copy_jobs.all(func(job): return not job.has("source"))
+			var max_step_usec := 0
+			while true:
+				var step_started := Time.get_ticks_usec()
+				var done := model_resources.step_bind()
+				max_step_usec = maxi(max_step_usec, Time.get_ticks_usec() - step_started)
+				if done: break
+			var player := model_resources.animation_player()
+			_runtime_safe[path] = bool(_runtime_safe[path]) and incremental and wrapper_usec <= REFILL_SLICE_USEC and bind_usec <= REFILL_SLICE_USEC and max_step_usec <= REFILL_SLICE_USEC
+			if not _runtime_safe[path]: initial_capacity[path] = count
 			_metric(path).prepare_animation_usec += Time.get_ticks_usec() - bind_started
 			node.set_meta("prepared_model_resources", model_resources)
 			node.set_meta("prepared_animation_player", player)
@@ -161,7 +133,6 @@ func prepare(resources: Dictionary, world: Node3D, camera: Camera3D, cards: Dict
 				await _wait_frame(tree)
 				if cancelled or not is_instance_valid(world): return
 				slice_started = Time.get_ticks_usec()
-		if batch.is_empty(): continue
 		if uses.is_empty(): uses = [{}]
 		var warmed_configs := {}
 		for spec in uses:
@@ -171,7 +142,7 @@ func prepare(resources: Dictionary, world: Node3D, camera: Camera3D, cards: Dict
 			var sample_started := Time.get_ticks_usec()
 			var sample: Node3D
 			var source: Unit
-			if not spec.is_empty():
+			if not spec.is_empty() and not bool(spec.get("auxiliary", false)):
 				# 使用离树的只读源，不生成权威单位、不派发出生事件或音频。
 				source = Unit.new()
 				source.setup(int(spec.team), spec.stats, String(spec.id))
@@ -269,41 +240,83 @@ func prepare(resources: Dictionary, world: Node3D, camera: Camera3D, cards: Dict
 
 	if not cancelled and is_instance_valid(world):
 		_refill_ready = true
+		_ensure_refill_clock()
 
 func _allowed_clips(path: String, node: Node) -> Dictionary:
 	return _clips.get(path, {}) if ModelVisualResources.supports_clip_filter(node) else {}
 
-## 只补回首轮闲置库存，并受原有总容量约束；回收已足够时不继续制造。
-func _needs_refill(path: String) -> bool:
-	var idle: int = instances.get(path, []).size()
-	return bool(_runtime_safe.get(path, false)) and idle < int(initial_capacity.get(path, 0)) and idle + int(_metric(path).active) < int(capacity.get(path, 0))
+## capacity是闲置缓存上限，不是活体额度；活跃单位不能使周期补货永久失效。
+func _idle_target(path: String) -> int:
+	return mini(int(initial_capacity.get(path, 0)), int(capacity.get(path, 0)))
 
-func advance_refill(delta: float) -> void:
+func _needs_refill(path: String) -> bool:
+	return bool(_runtime_safe.get(path, false)) and instances.get(path, []).size() < _idle_target(path)
+
+## 每个完整任务后按路径轮转；不反复选择相同低水位路径饿死其他队列。
+func _select_refill_path() -> String:
+	var paths := initial_capacity.keys()
+	for offset in paths.size():
+		var index := (_refill_cursor + offset) % paths.size()
+		var path: String = paths[index]
+		if _needs_refill(path):
+			_refill_cursor = (index + 1) % paths.size()
+			return path
+	return ""
+
+func _refill_now_usec() -> int:
+	return Time.get_ticks_usec()
+
+func _ensure_refill_clock() -> bool:
+	if is_instance_valid(_refill_frame_tree): return true
+	if not is_instance_valid(_world) or not _world.is_inside_tree(): return false
+	_refill_frame_tree = _world.get_tree()
+	_refill_frame_tree.process_frame.connect(_refill_begin_frame)
+	return false # 当前帧没有起点观测；从下一真实process_frame开始。
+
+func _refill_begin_frame() -> void:
+	_refill_frame_id += 1
+	_refill_frame_started = _refill_now_usec()
+
+func _foreground_work_usec() -> int:
+	return maxi(0, _refill_now_usec() - _refill_frame_started)
+
+func advance_refill(_delta: float) -> void:
 	if cancelled or not _refill_ready or not is_instance_valid(_world): return
-	# 慢帧让战斗优先。单个引擎实例化无法中断，因此重步骤每帧最多一个。
-	if delta > 0.020:
-		refill_metrics.busy_frames += 1
-		return
-	var started := Time.get_ticks_usec()
+	if not _ensure_refill_clock(): return
 	if _refill.is_empty():
-		var best := ""
-		var ratio := 2.0
-		for path in initial_capacity:
-			if not _needs_refill(path): continue
-			var stock_ratio := float(instances[path].size()) / float(initial_capacity[path])
-			if stock_ratio < ratio:
-				best = path
-				ratio = stock_ratio
-		if best.is_empty(): return
-		_refill = {"path": best, "stage": 0}
+		var selected := _select_refill_path()
+		if selected.is_empty(): return
+		_refill = {"path": selected, "stage": 0}
 	var path: String = _refill.path
 	if not _needs_refill(path):
 		_discard_refill()
 		return
+	var foreground := _foreground_work_usec()
+	if not _refill_scheduler.allow_step(_refill_frame_id, foreground):
+		refill_metrics.busy_frames = int(_refill_scheduler.metrics.foreground_deferrals)
+		return
+	var stage: int = _refill.stage
+	var started := _refill_now_usec()
+	_run_refill_step(path) # 每个真实帧至多一个不可抢占步骤；不在本帧循环补完动画/实例。
+	var elapsed := _refill_now_usec() - started
+	_refill_scheduler.finished_step(elapsed)
+	refill_metrics.scheduler = _refill_scheduler.metrics
+	refill_metrics.by_path[path] = maxi(int(refill_metrics.by_path.get(path, 0)), elapsed)
+	if elapsed > REFILL_SLICE_USEC: refill_metrics.budget_overruns += 1
+	refill_metrics.steps += 1
+	refill_metrics.max_slice_usec = maxi(refill_metrics.max_slice_usec, elapsed)
+	if refill_step_observer.is_valid(): refill_step_observer.call({"frame": _refill_frame_id, "path": path, "stage": stage, "foreground_usec": foreground, "wall_usec": elapsed})
+
+func _run_refill_step(path: String) -> void:
+	var started := _refill_now_usec()
 	match int(_refill.stage):
 		0:
 			var node := instantiate_visual(_packed[path]) as Node3D
-			node.hide() # 必须先隐藏再入树；不绘制、不播放声音或驱动权威状态。
+			if node == null:
+				errors.append("Refill model root must be Node3D: " + path)
+				cancelled = true
+				return
+			node.hide()
 			node.process_mode = Node.PROCESS_MODE_DISABLED
 			_world.add_child(node)
 			_refill.node = node
@@ -317,31 +330,32 @@ func advance_refill(delta: float) -> void:
 			_refill.owner = owner
 			_refill.stage = 3
 		3:
-			while true:
-				var step_started := Time.get_ticks_usec()
-				var done: bool = _refill.owner.step_bind()
-				refill_metrics.max_step_usec = maxi(refill_metrics.max_step_usec, Time.get_ticks_usec() - step_started)
-				if done:
-					var node: Node3D = _refill.node
-					node.set_meta("prepared_model_resources", _refill.owner)
-					node.set_meta("prepared_animation_player", _refill.owner.animation_player())
-					node.set_meta("pool_path", path)
-					if _can_recycle(node): node.set_meta("pool_state", _capture_state(node))
-					instances[path].append(node)
-					_refill.clear()
-					refill_metrics.completed += 1
-					break
-				if Time.get_ticks_usec() - started >= REFILL_SLICE_USEC: break
-	var elapsed := Time.get_ticks_usec() - started
-	refill_metrics.by_path[path] = maxi(int(refill_metrics.by_path.get(path, 0)), elapsed)
-	# 驱动/系统波动仍可能超预算；本局不再补充此路径，保留领取与回收后备。
-	if elapsed > REFILL_SLICE_USEC * 2: _runtime_safe[path] = false
-	refill_metrics.steps += 1
-	refill_metrics.max_slice_usec = maxi(refill_metrics.max_slice_usec, elapsed)
+			var done: bool = _refill.owner.step_bind()
+			refill_metrics.max_step_usec = maxi(refill_metrics.max_step_usec, _refill_now_usec() - started)
+			if done:
+				var node: Node3D = _refill.node
+				node.set_meta("prepared_model_resources", _refill.owner)
+				node.set_meta("prepared_animation_player", _refill.owner.animation_player())
+				node.set_meta("pool_path", path)
+				if _can_recycle(node): node.set_meta("pool_state", _capture_state(node))
+				instances[path].append(node)
+				_refill.clear()
+				refill_metrics.completed += 1
 
 func _discard_refill() -> void:
+	if _refill.has("owner"): _refill.owner.clear()
 	if _refill.has("node") and is_instance_valid(_refill.node): _refill.node.free()
 	_refill.clear()
+
+func _stop_refill() -> void:
+	_refill_ready = false
+	_discard_refill()
+	if is_instance_valid(_refill_frame_tree) and _refill_frame_tree.process_frame.is_connected(_refill_begin_frame):
+		_refill_frame_tree.process_frame.disconnect(_refill_begin_frame)
+	_refill_frame_tree = null
+	_refill_frame_started = 0
+	_refill_frame_id = 0
+	_refill_scheduler.reset_clock()
 
 func take(packed: PackedScene) -> Node:
 	var path := packed.resource_path
@@ -420,11 +434,14 @@ func recycle(node: Node3D, owner: ModelVisualResources, player: AnimationPlayer)
 
 func release_sources() -> void:
 	cancelled = true
+	refill_step_observer = Callable()
 	_refill_ready = false
 	_discard_refill()
 	_packed.clear()
 	_wrapper_templates.clear()
 	_clips.clear()
+	_runtime_safe.clear()
+	demand_plan = null
 	for source in _sample_sources:
 		if is_instance_valid(source): source.free()
 	_sample_sources.clear()

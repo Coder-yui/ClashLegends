@@ -133,3 +133,7 @@ Main真实七消费者的共享视图对照与连续跨局窗口诊断保存在�
 虚空召唤离线数据用`python3 tools/maintenance/compact_samples.py --write`生成，`--check`逐位核对并检查确定性；Python3.14标准库Zstandard，无安装步骤。源JSON保留，运行不展开它；维度/源SHA/载荷SHA失配停止准备。`compact_sample_check.gd`是带心跳的CPU全数据等价入口，须由监督器启动，不当作战斗性能。`match_resource_audit.gd`只追踪已知定义/字面量/场景传递路径，并用真实缓存状态确认；不能从preload文本推断全部运行时资源。最终重组记录见交付，普通组旧5.773秒不可当最终值。
 
 单场入口现允许已确认的用户`--editor`进程继续存在并计入系统余量，拒绝其他Godot游戏；不关闭编辑器。`resource-audit.json`的完整来源解析在Main准备计时后执行，外部按钮到报告时间含诊断开销；直接使用`main.total_usec`作开局准备。预热retained只输出类型/配方计数，没有为降低数字删除可变粒子材质。
+
+## 河岸寻路单Tick基准
+
+`Godot --headless --path . --script tools/performance/river_navigation_probe.gd` 使用无表现权威夹具，双方阵营的盖伦、武器大师和峡谷先锋各重复3次，每例最多700个固定Tick。每例创建新World，测量冷导航缓存；计时仅包含单位 `sim_tick` 和实际移动结算，位置合法性检查在计时外。输出每例首Tick、最慢Tick、P95、命中结果、身体合法性和追击停顿Tick数。它不加载模型、声音或联网，不是整场渲染帧率验收。对比时保持相同脚本和场景，不与其他引擎测试并发执行；日志重定向到素材库专项目录。
