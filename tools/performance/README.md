@@ -158,7 +158,7 @@ Main真实七消费者的共享视图对照与连续跨局窗口诊断保存在�
 
 ### 固定采样层候选
 
-`python3 tools/performance/effect_coverage_probe.py --family sampled` 只执行受保护 headless CPU 合同：11份候选声明、三个机制代表、正式seek与层生命周期、既有primitive/beam小合同。正式provider没有启用新策略。`--render` 会进入真实后端合同及单代表对照；历史真实后端入口曾在材质合同处失败，后续额外复验当时被审批拒绝。用户现已明确授权azir/cast1两层一次定向真实复验；当前仅因原正常压力/启动可用≥8GiB门槛未满足而尚未启动。不得扩大已授权范围、放宽阈值或扩到全库。见[覆盖边界](../../docs/EFFECT_WARMUP_COVERAGE.md)。
+`python3 tools/performance/effect_coverage_probe.py --family sampled` 只执行受保护 headless CPU 合同：11份候选声明、三个机制代表、正式seek与层生命周期、既有primitive/beam小合同。正式provider没有启用新策略。`--render` 会进入真实后端合同及单代表对照；历史真实后端入口曾在材质合同处失败，后续额外复验当时被审批拒绝。用户新增授权的azir/cast1两层一次真实复验已在原门槛恢复后执行：实际默认值/复制签名匹配，但同帧代表对照的SubViewport空世界导致脚本错误，外层guard失败。诊断修复后仅有headless合同，不当作真实图像通过；不得自行追加真实运行、扩大范围或放宽阈值。见[覆盖边界](../../docs/EFFECT_WARMUP_COVERAGE.md)。
 
 
-固定层定向复验入口现限定为`--family sampled --render`→`--targeted`：仅编译azir/cast1两层，逐字段保存工厂→枚举属性→duplicate的类型/精确值；任何不符均在图片流程前停止，全部满足因果链才进入同帧图像和正式新实例首用。用户已明确授权该两层一次真实复验；原收尾时系统压力2、可用估计约5.28GiB；用户关闭应用后，02:25:52 UTC原门槛复核仍为压力2、约5.44GiB，未满足既有正常压力/启动可用≥8GiB门槛，故仍未调用该入口的preflight、未启动渲染。此门槛由effect_coverage_probe.py原有memory_state()→budget(state)调用执行，局部负载仍为20秒/1GiB/30FPS，没有改用A的60秒/3GiB。CPU入口仍检查11份声明/三个机制代表，不调用真实渲染。历史失败、拒绝和资格边界见[第二阶段记录](../../docs/deliveries/2026-10-18_preload_effect_coverage.md)；当前授权及阻塞见[最终收尾](../../docs/deliveries/2026-10-18_preload_mechanism_analysis.md#2026-10-19授权后的最终收尾)。
+固定层定向复验入口现限定为`--family sampled --render`→`--targeted`：仅编译azir/cast1两层，逐字段保存工厂→枚举属性→duplicate的类型/精确值；任何不符均在图片流程前停止，全部满足因果链才进入同帧图像和正式新实例首用。该两层一次真实复验已实际执行。两层工厂→枚举→duplicate精确链通过；正式两图相同，但同帧代表图因空world_3d未生成，外层检查正确失败，不能依内层passed放行。comparison_viewport现显式分配独立World3D，headless9项通过，尚未追加真实图像复验。此门槛由effect_coverage_probe.py原有memory_state()→budget(state)调用执行，局部负载仍为20秒/1GiB/30FPS，没有改用A的60秒/3GiB。CPU入口仍检查11份声明/三个机制代表，不调用真实渲染。历史失败、拒绝和资格边界见[第二阶段记录](../../docs/deliveries/2026-10-18_preload_effect_coverage.md)；当前授权及阻塞见[最终收尾](../../docs/deliveries/2026-10-18_preload_mechanism_analysis.md#2026-10-19授权后的最终收尾)。

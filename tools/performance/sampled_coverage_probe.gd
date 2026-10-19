@@ -188,12 +188,18 @@ func render_probe(entry: Dictionary, result: Dictionary) -> void:
 	result.order = ["CPU contracts/loads", "declared", "new formal", "old ages", "new formal"]
 	result.context = {"renderer": RenderingServer.get_current_rendering_method(), "viewport": root.size, "frame_cap": Engine.max_fps, "limitation": "ordered warm-process wall/wait diagnostics; no GPU timing or cold-cache claim"}
 
+static func comparison_viewport() -> SubViewport:
+	var viewport := SubViewport.new()
+	viewport.size = Vector2i(720, 1280)
+	viewport.world_3d = World3D.new()
+	viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	return viewport
+
 func representative_pair(recipe: Dictionary) -> Dictionary:
 	var viewports := []
 	for side in 2:
-		var viewport := SubViewport.new()
-		viewport.size = Vector2i(720, 1280); viewport.own_world_3d = true
-		viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS; root.add_child(viewport)
+		var viewport := comparison_viewport()
+		root.add_child(viewport)
 		viewport.world_3d.environment = root.world_3d.environment
 		var host := Node3D.new(); viewport.add_child(host)
 		var eye := Camera3D.new(); host.add_child(eye)
