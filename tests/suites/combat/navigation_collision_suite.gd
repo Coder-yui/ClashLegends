@@ -5,6 +5,8 @@ extends "res://tests/suites/battle_suite.gd"
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
+	_check_body_navigation_cache()
+	_check_cross_river_dummy()
 	_check_direct_approach_after_bridge()
 	_check_bridge_building_attack_positions()
 	_check_bridge_horizontal_building_stall()
@@ -812,3 +814,70 @@ func _check_bridge_horizontal_building_stall() -> void:
 			_expect(legal and unit._attack_hit_index > 0 and unit._target == target, "桥岸水平追击不持续撞河，先出桥再攻击（team=%d bridge=%.0f pos=%s）" % [team, bridge_x, unit.position])
 			unit.free()
 			target.free()
+
+## 中央两岸的木桩曾让备用攻击路线全部被桥角净空检查否决。
+func _check_cross_river_dummy() -> void:
+	for team in [0, 1]:
+		for radius in [12.0, 21.0, 24.0, 27.0]:
+			var sign_y := 1.0 if team == 0 else -1.0
+			var dummy := Unit.new()
+			dummy.setup(1 - team, CardDB.training_dummy_stats(), "dummy")
+			dummy.position = Vector2(360, ArenaRules.RIVER_Y - sign_y * 60.0)
+			_main.add_child(dummy)
+			_main.world.register_dynamic_building(dummy)
+			var unit: Unit = _main._spawn_unit(UnitSpawnRequest.new(team, "garen", Vector2(360, ArenaRules.RIVER_Y + sign_y * 100.0), {"deploy_time_override": 0}))
+			unit.body_radius = radius
+			unit._target = dummy
+			unit._recompute_path()
+			var legal := not unit._path.is_empty()
+			for i in range(1, unit._path.size()):
+				legal = legal and unit.battle_context.is_ground_segment_walkable(unit._path[i - 1], unit._path[i], radius, unit)
+			_expect(legal, "隔河木桩路线全段满足身体净空 team=%d radius=%.0f" % [team, radius])
+			var movers: Array[Unit] = [unit]
+			for tick in 500:
+				unit.sim_tick(0.05)
+				_main._movement._apply_unit_movement(0.05, movers)
+				legal = legal and unit.is_walkable_at(unit.position)
+				if dummy.hp < dummy.max_hp: break
+			_expect(legal and dummy.hp < dummy.max_hp, "隔河追击可过桥并命中木桩且身体不入河 team=%d radius=%.0f" % [team, radius])
+			_main.world.release_structure_footprint(dummy)
+			dummy.free()
+			unit.free()
+
+func _check_body_navigation_cache() -> void:
+	var start := Vector2(100, 900)
+	var goal := Vector2(400, 900)
+	var before: PackedVector2Array = _main.world.find_ground_path(start, goal, null, 27.0)
+	var repeated: PackedVector2Array = _main.world.find_ground_path(start, goal, null, 27.0)
+	_expect(not before.is_empty() and before == repeated, "身体净空缓存复用不改变同条件路径")
+	var blocker := Unit.new()
+	blocker.setup(1, CardDB.training_dummy_stats(), "dummy")
+	blocker.position = Vector2(250, 900)
+	_main.add_child(blocker)
+	_main.world.register_dynamic_building(blocker)
+	var candidates: Array[Vector2] = [goal, goal + Vector2(0, 20)]
+	var blocked: PackedVector2Array = _main.world.find_ground_path_to_any(start, candidates, 27.0)
+	var legal := blocked.size() >= 2 and blocked != before
+	for i in range(1, blocked.size()):
+		legal = legal and _main.world.is_ground_segment_walkable(blocked[i - 1], blocked[i], 27.0)
+	_expect(legal, "新增建筑使已缓存邻接边失效，多站位搜索仍绕开完整身体碰撞圆")
+	_main.world.release_structure_footprint(blocker)
+	blocker.free()
+	var restored: PackedVector2Array = _main.world.find_ground_path(start, goal, null, 27.0)
+	_expect(restored == before, "建筑移除后重建净空缓存并恢复原路线")
+	var checks := 0
+	var all_safe := true
+	var random := RandomNumberGenerator.new()
+	random.seed = 73019
+	for radius in [12.0, 21.0, 24.0, 27.0]:
+		for iteration in 160:
+			var a := Vector2(random.randf_range(50, 670), random.randf_range(500, 780))
+			var b := Vector2(random.randf_range(50, 670), random.randf_range(500, 780))
+			if not _main.world._navigation_segment_walkable(a, b, radius, false): continue
+			checks += 1
+			for sample in 401:
+				all_safe = all_safe and _main.world.is_ground_position_walkable(a.lerp(b, float(sample) / 400.0), radius)
+	_expect(checks > 20 and all_safe, "解析净空判定接受的线段经密集采样仍全身合法，不以减少检查换取性能")
+	var ground: PackedVector2Array = _main.world.find_ground_path(Vector2(360,740), Vector2(360,540), null, 27.0)
+	var crossing: PackedVector2Array = _main.world.find_ground_path(Vector2(360,740), Vector2(360,540), null, 27.0, true)
+	_expect(not ground.is_empty() and not crossing.is_empty() and ground != crossing, "普通与可跨河地面单位的净空缓存相互隔离")

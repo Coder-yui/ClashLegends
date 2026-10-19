@@ -25,7 +25,7 @@ var _base_blocked := {}
 var _block_counts := {}
 
 ## 构建网格：河道（除桥）永久阻挡，obstacles = [[pos, radius], ...] 圆形占地阻挡
-func build(size: Vector2, river_y: float, river_half: float, bridge_xs: Array, bridge_half: float, obstacles: Array) -> void:
+func build(size: Vector2, river_y: float, river_half: float, bridge_xs: Array, bridge_half: float, obstacles: Array, clearance: float = ArenaRules.NAV_CLEARANCE) -> void:
 	var cols := int(size.x / CELL_SIZE)
 	var rows := int(size.y / CELL_SIZE)
 	_region = Rect2i(0, 0, cols, rows)
@@ -42,7 +42,7 @@ func build(size: Vector2, river_y: float, river_half: float, bridge_xs: Array, b
 			_costs[index] = _lane_costs[index]
 			# 与河岸一样为身体留出边界：最外侧半格中心只有 10px 余量，
 			# 不能作为大单位绕水晶的路径点，否则移动层钳制位置后永远到不了。
-			var outside_body_bounds := world_pos.x < ArenaRules.NAV_CLEARANCE or world_pos.x > size.x - ArenaRules.NAV_CLEARANCE or world_pos.y < ArenaRules.NAV_CLEARANCE or world_pos.y > size.y - ArenaRules.NAV_CLEARANCE
+			var outside_body_bounds := world_pos.x < clearance or world_pos.x > size.x - clearance or world_pos.y < clearance or world_pos.y > size.y - clearance
 			if outside_body_bounds or _is_river_blocked(world_pos, river_y, river_half, bridge_xs, bridge_half):
 				_base_blocked[cell] = true
 				_costs[cell.x + cell.y * cols] = -1
@@ -50,7 +50,7 @@ func build(size: Vector2, river_y: float, river_half: float, bridge_xs: Array, b
 		set_cells_blocked(cells_for_circle(o[0], o[1]), true)
 
 func _is_river_blocked(pos: Vector2, river_y: float, river_half: float, bridge_xs: Array, bridge_half: float) -> bool:
-	# 正好与河岸相切的导航格允许通行；最大单位半径已包含在 river_half 中。
+	# 正好与河岸相切的导航格允许通行；本次导航净空已包含在 river_half 中。
 	if absf(pos.y - river_y) >= river_half:
 		return false
 	for bx in bridge_xs:
@@ -142,7 +142,7 @@ func set_cells_blocked(cells: Array, blocked: bool) -> void:
 				_block_counts[key] = count
 
 ## A* 寻路：无节点数上限；起终点若落在阻挡格内自动取最近可行走格
-func find_path(from: Vector2, to: Vector2) -> PackedVector2Array:
+func find_path(from: Vector2, to: Vector2, segment_check: Callable = Callable(), edge_cache: Dictionary = {}) -> PackedVector2Array:
 	if _costs.is_empty():
 		return PackedVector2Array()
 	var from_cell := _nearest_walkable_cell(from, world_to_cell(from))
@@ -150,7 +150,11 @@ func find_path(from: Vector2, to: Vector2) -> PackedVector2Array:
 	var to_cell := _nearest_walkable_cell(to, from_cell)
 	if from_cell == to_cell:
 		return PackedVector2Array()
-	var cells := _search.find_cells(_region.size, _costs, from_cell, to_cell, ROAD_COST)
+	var can_step := Callable()
+	if segment_check.is_valid():
+		can_step = func(a: Vector2i, b: Vector2i) -> bool:
+			return _checked_edge(a, b, segment_check, edge_cache)
+	var cells := _search.find_cells(_region.size, _costs, from_cell, to_cell, ROAD_COST, can_step)
 	var raw := PackedVector2Array()
 	for cell in cells:
 		raw.append(cell_to_world(cell))
@@ -163,7 +167,44 @@ func find_path(from: Vector2, to: Vector2) -> PackedVector2Array:
 	for point in raw:
 		if anchored[anchored.size() - 1].distance_to(point) > 0.01:
 			anchored.append(point)
-	return _smooth_path(anchored)
+	if segment_check.is_valid() and not segment_check.call(from, anchored[1]):
+		return PackedVector2Array()
+	return _smooth_path(anchored, segment_check)
+
+## 一次多终点A*，按现有路线权重选择先抵达的合法站位，避免逐候选重复搜索。
+func find_path_to_any(from: Vector2, candidates: Array[Vector2], segment_check: Callable, edge_cache: Dictionary) -> PackedVector2Array:
+	if _costs.is_empty() or candidates.is_empty(): return PackedVector2Array()
+	var start := _nearest_walkable_cell(from, world_to_cell(from))
+	var goals := {}
+	for point in candidates:
+		var cell := world_to_cell(point)
+		if _is_cell_blocked(cell): continue
+		var center := cell_to_world(cell)
+		if not segment_check.call(center, point): continue
+		var index := cell.x + cell.y * _region.size.x
+		if not goals.has(index) or center.distance_squared_to(point) < center.distance_squared_to(goals[index]):
+			goals[index] = point
+	if goals.is_empty(): return PackedVector2Array()
+	var first: int = goals.keys()[0]
+	var can_step := func(a: Vector2i, b: Vector2i) -> bool:
+		return _checked_edge(a, b, segment_check, edge_cache)
+	var cells := _search.find_cells(_region.size, _costs, start, Vector2i(first % _region.size.x, first / _region.size.x), ROAD_COST, can_step, goals)
+	if cells.is_empty(): return PackedVector2Array()
+	var path := PackedVector2Array([from])
+	for cell in cells:
+		var point := cell_to_world(cell)
+		if path[-1].distance_to(point) > 0.01: path.append(point)
+	var last: Vector2i = cells[-1]
+	var end: Vector2 = goals[last.x + last.y * _region.size.x]
+	if path[-1].distance_to(end) > 0.01: path.append(end)
+	if path.size() < 2 or not segment_check.call(from, path[1]): return PackedVector2Array()
+	return _smooth_path(path, segment_check)
+
+## 缓存由World按半径/跨河能力/建筑revision隔离；只缓存固定格心邻接边。
+func _checked_edge(a: Vector2i, b: Vector2i, check: Callable, cache: Dictionary) -> bool:
+	var key := Vector2i(a.x + a.y * _region.size.x, b.x + b.y * _region.size.x)
+	if not cache.has(key): cache[key] = check.call(cell_to_world(a), cell_to_world(b))
+	return cache[key]
 
 ## 起点/终点落在阻挡格（塔占地、兵贴河沿）时，环形外扩找最近可行走格
 func _nearest_walkable_cell(pos: Vector2, reference: Vector2i) -> Vector2i:
@@ -209,7 +250,7 @@ func _line_walkable(from: Vector2, to: Vector2) -> bool:
 	return true
 
 ## 路径平滑：去掉可直线通行的中间拐点，走位更接近 CR 的自然曲线
-func _smooth_path(path: PackedVector2Array) -> PackedVector2Array:
+func _smooth_path(path: PackedVector2Array, segment_check: Callable = Callable()) -> PackedVector2Array:
 	if path.size() <= 2:
 		return path
 	var result := PackedVector2Array()
@@ -217,7 +258,7 @@ func _smooth_path(path: PackedVector2Array) -> PackedVector2Array:
 	var anchor := 0
 	var i := 2
 	while i < path.size():
-		if _line_walkable(path[anchor], path[i]):
+		if _line_walkable(path[anchor], path[i]) and (not segment_check.is_valid() or segment_check.call(path[anchor], path[i])):
 			i += 1
 		else:
 			result.append(path[i - 1])

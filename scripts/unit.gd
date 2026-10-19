@@ -2272,7 +2272,7 @@ func _attack_path_valid() -> bool:
 		and battle_context.is_ground_segment_walkable(global_position, _path[_path_index], body_radius, self))
 
 ## 仅常规迎敌侧终点无效时搜索攻击区域。格心同时满足实际身体净空和射程，
-## 按路线长度选可达站位；距离下界剪枝，避免对整个攻击区域逐格跑 A*。
+## 一次多终点搜索按既有导航权重选可达站位，不再逐候选重复跑 A*。
 func _find_reachable_attack_path() -> void:
 	var nav := _get_nav()
 	if nav == null:
@@ -2287,29 +2287,9 @@ func _find_reachable_attack_path() -> void:
 			var point := nav.cell_to_world(Vector2i(x, y))
 			if point.distance_to(center) <= reach and nav.is_walkable(point) and battle_context.is_ground_position_walkable(point, body_radius, self):
 				candidates.append(point)
-	candidates.sort_custom(func(a: Vector2, b: Vector2) -> bool:
-		return global_position.distance_squared_to(a) < global_position.distance_squared_to(b))
-	_path = PackedVector2Array()
-	_path_index = 0
-	var best_cost := INF
-	for point in candidates:
-		if global_position.distance_to(point) >= best_cost:
-			break
-		var route := battle_context.find_ground_path(global_position, point, _target, body_radius, river_traversal)
-		if route.size() < 2 or route[route.size() - 1].distance_to(center) > reach:
-			continue
-		var cost := 0.0
-		var legal := true
-		for i in range(1, route.size()):
-			if not battle_context.is_ground_segment_walkable(route[i - 1], route[i], body_radius, self):
-				legal = false
-				break
-			cost += route[i - 1].distance_to(route[i])
-		if legal and cost < best_cost:
-			best_cost = cost
-			_path = route
-			_path_index = 1
-			_path_goal = route[route.size() - 1]
+	_path = battle_context.find_ground_path_to_any(global_position, candidates, body_radius, river_traversal)
+	_path_index = 1 if _path.size() >= 2 else 0
+	if not _path.is_empty(): _path_goal = _path[-1]
 
 func _recompute_path_to(goal: Vector2) -> void:
 	_repath_cd = REPATH_INTERVAL

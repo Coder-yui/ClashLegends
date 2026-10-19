@@ -11,6 +11,9 @@ var nav: NavGrid
 var _river_nav: NavGrid
 var _river_nav_source: NavGrid
 var _river_nav_revision := -1
+var _body_nav_cache := {}
+var _body_nav_source: NavGrid
+var _body_nav_revision := -1
 
 func _init(scene_root: Node2D) -> void:
 	_root = scene_root
@@ -168,6 +171,10 @@ func structure_gap_to_circle(c: Node2D, center: Vector2, radius: float) -> float
 ## 导航格负责全局路线；这里补足塔角/建筑角最多半格的离散误差。
 
 func is_ground_position_walkable(pos: Vector2, mover_radius: float, excluded: Node = null, allow_deploy_edge_center: bool = false, ignore_structures: bool = false) -> bool:
+	var crosses_river: bool = is_instance_valid(excluded) and excluded is Unit and excluded.river_traversal
+	return _ground_position_walkable(pos, mover_radius, excluded, allow_deploy_edge_center, ignore_structures, crosses_river)
+
+func _ground_position_walkable(pos: Vector2, mover_radius: float, excluded: Node, allow_deploy_edge_center: bool, ignore_structures: bool, crosses_river: bool) -> bool:
 	# 玩家部署允许第一/最后一列、第一/最后一行的格心作为出生点；
 	# 单位会从边缘格向场内移动。正常战斗移动仍要求整个圆柱留在场内。
 	if allow_deploy_edge_center:
@@ -178,7 +185,6 @@ func is_ground_position_walkable(pos: Vector2, mover_radius: float, excluded: No
 			return false
 		if pos.y < mover_radius or pos.y > ArenaRules.FIELD_H - mover_radius:
 			return false
-	var crosses_river: bool = is_instance_valid(excluded) and excluded is Unit and excluded.river_traversal
 	if not crosses_river and not is_ground_terrain_walkable(pos, mover_radius):
 		return false
 	if ignore_structures: return true
@@ -280,7 +286,74 @@ func navigation_for_river() -> NavGrid:
 		_river_nav.build(Vector2(ArenaRules.FIELD_W, ArenaRules.FIELD_H), -1000.0, 0.0, [], 0.0, obstacles)
 	return _river_nav
 
-func find_ground_path(from: Vector2, goal: Vector2, _target: Node2D, _mover_radius: float = ArenaRules.NAV_CLEARANCE, crosses_river: bool = false) -> PackedVector2Array:
-	if nav == null:
+## 半径与跨河能力决定导航净空；建筑占地修订后统一失效。
+func find_ground_path(from: Vector2, goal: Vector2, _target: Node2D, mover_radius: float = ArenaRules.NAV_CLEARANCE, crosses_river: bool = false) -> PackedVector2Array:
+	return _find_ground_route(from, [goal], mover_radius, crosses_river, false)
+
+func find_ground_path_to_any(from: Vector2, goals: Array[Vector2], mover_radius: float, crosses_river: bool = false) -> PackedVector2Array:
+	return _find_ground_route(from, goals, mover_radius, crosses_river, true)
+
+func _find_ground_route(from: Vector2, goals: Array[Vector2], mover_radius: float, crosses_river: bool, multiple: bool) -> PackedVector2Array:
+	if nav == null or goals.is_empty():
 		return PackedVector2Array()
-	return navigation_for_river().find_path(from, goal) if crosses_river else nav.find_path(from, goal)
+	if _body_nav_source != nav or _body_nav_revision != nav.revision:
+		_body_nav_cache.clear()
+		_body_nav_source = nav
+		_body_nav_revision = nav.revision
+	var key := Vector2(mover_radius, 1.0 if crosses_river else 0.0)
+	if not _body_nav_cache.has(key):
+		var body_nav := NavGrid.new()
+		var obstacles: Array = []
+		for structure in structures():
+			if is_instance_valid(structure) and structure.hp > 0.0:
+				obstacles.append([structure.global_position, structure.body_radius + mover_radius + ArenaRules.STRUCTURE_SEPARATION])
+		body_nav.build(Vector2(ArenaRules.FIELD_W, ArenaRules.FIELD_H),
+			-1000.0 if crosses_river else ArenaRules.RIVER_Y,
+			0.0 if crosses_river else ArenaRules.RIVER_HALF + mover_radius,
+			[ArenaRules.BRIDGE_X_LEFT, ArenaRules.BRIDGE_X_RIGHT],
+			ArenaRules.BRIDGE_HALF - mover_radius, obstacles, mover_radius)
+		_body_nav_cache[key] = {"grid": body_nav, "edges": {}}
+	var segment_check := func(a: Vector2, b: Vector2) -> bool:
+		return _navigation_segment_walkable(a, b, mover_radius, crosses_river)
+	# 部署允许边缘格心及轻微压岸；先退出已有重叠，与移动层的脱离规则一致。
+	# 此前缀只修正起点，不能放宽正常路线或冲撞的全身净空。
+	var start := Vector2(clampf(from.x, mover_radius, ArenaRules.FIELD_W - mover_radius), clampf(from.y, mover_radius, ArenaRules.FIELD_H - mover_radius))
+	if not crosses_river and not is_ground_terrain_walkable(start, mover_radius):
+		start.y = ArenaRules.RIVER_Y + (1.0 if from.y >= ArenaRules.RIVER_Y else -1.0) * (ArenaRules.RIVER_HALF + mover_radius)
+	var grid: NavGrid = _body_nav_cache[key].grid
+	var edges: Dictionary = _body_nav_cache[key].edges
+	var path := grid.find_path_to_any(start, goals, segment_check, edges) if multiple else grid.find_path(start, goals[0], segment_check, edges)
+	if not path.is_empty() and not start.is_equal_approx(from): path.insert(0, from)
+	return path
+
+## 连续线段解析检查：场地矩形、收窄桥面和按身体扩张的建筑圆。
+## 比逐4px取样更严格，不遗漏采样点之间的薄切角。
+func _navigation_segment_walkable(from: Vector2, to: Vector2, radius: float, crosses_river: bool) -> bool:
+	for point in [from, to]:
+		if point.x < radius or point.x > ArenaRules.FIELD_W - radius or point.y < radius or point.y > ArenaRules.FIELD_H - radius: return false
+	if not crosses_river:
+		var low := ArenaRules.RIVER_Y - ArenaRules.RIVER_HALF - radius
+		var high := ArenaRules.RIVER_Y + ArenaRules.RIVER_HALF + radius
+		var begin := 0.0
+		var end := 1.0
+		if is_zero_approx(to.y - from.y):
+			if from.y <= low or from.y >= high: end = -1.0
+		else:
+			var a := (low - from.y) / (to.y - from.y)
+			var b := (high - from.y) / (to.y - from.y)
+			begin = maxf(0.0, minf(a, b))
+			end = minf(1.0, maxf(a, b))
+		if end > begin:
+			var x1 := lerpf(from.x, to.x, begin)
+			var x2 := lerpf(from.x, to.x, end)
+			var half := ArenaRules.BRIDGE_HALF - radius
+			var fits := false
+			for bridge in [ArenaRules.BRIDGE_X_LEFT, ArenaRules.BRIDGE_X_RIGHT]:
+				fits = fits or (minf(x1, x2) >= bridge - half and maxf(x1, x2) <= bridge + half)
+			if not fits: return false
+	for structure in structures():
+		if not is_instance_valid(structure) or structure.hp <= 0.0: continue
+		var closest := Geometry2D.get_closest_point_to_segment(structure.global_position, from, to)
+		var clearance: float = radius + structure.body_radius + ArenaRules.STRUCTURE_SEPARATION
+		if closest.distance_squared_to(structure.global_position) < clearance * clearance: return false
+	return true

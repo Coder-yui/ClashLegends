@@ -83,6 +83,9 @@ func is_ground_segment_walkable(from: Vector2, to: Vector2, mover_radius: float,
 func find_ground_path(from: Vector2, goal: Vector2, target: Node2D, mover_radius: float, crosses_river: bool = false) -> PackedVector2Array:
 	return _world.find_ground_path(from, goal, target, mover_radius, crosses_river)
 
+func find_ground_path_to_any(from: Vector2, goals: Array[Vector2], mover_radius: float, crosses_river: bool = false) -> PackedVector2Array:
+	return _world.find_ground_path_to_any(from, goals, mover_radius, crosses_river)
+
 func launch_attack(attacker: Node2D, target: Node2D, amount: float, projectile_speed: float, splash_radius: float, knockback: float, projectile_color: Color, effects: Dictionary = {}) -> bool:
 	return _controller.launch_attack(attacker, target, amount, projectile_speed, splash_radius, knockback, projectile_color, effects)
 

@@ -8,6 +8,8 @@ class LaunchContext extends BattleContext:
 		return not blocked
 	func is_ground_segment_walkable(_from: Vector2, _to: Vector2, _radius: float, _excluded: Node = null) -> bool:
 		return not blocked
+	func find_ground_path_to_any(from: Vector2, goals: Array[Vector2], _radius: float, _crosses_river: bool = false) -> PackedVector2Array:
+		return PackedVector2Array([from, goals[0]]) if not blocked and not goals.is_empty() else PackedVector2Array()
 	func find_ground_path(_from: Vector2, goal: Vector2, _target: Node2D, _radius: float, _crosses_river: bool = false) -> PackedVector2Array:
 		return PackedVector2Array([goal]) if not blocked else PackedVector2Array()
 
@@ -48,6 +50,7 @@ func clear_units() -> void:
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
+	_check_cross_river_body_clearance()
 	_check_rush_submission()
 	_check_recovery_boundary()
 	_check_failed_launch_search()
@@ -345,7 +348,13 @@ func _check_preparation_structure_lock() -> void:
 			var serial := source.get_visual_action_serial()
 			# 最后一步使用偏轴建筑，验证不能转向较近的新目标。
 			var placement := tower.position + outward * 120.0 + Vector2(40.0 if insertion_tick == 49 else 0.0, 0.0)
-			_expect(_main.play_card(1 - team, "apex_turret", placement, {"immediate": true}), "准备阶段通过正式出牌入口放下挡路建筑")
+			# 四次独立的插入建筑用例不能共享上一轮花掉的金币。
+			var wallet: ElixirManager = _main.runtime.account(1 - team)
+			var saved_elixir: float = wallet.elixir
+			wallet.elixir = 10.0
+			var accepted: bool = _main.play_card(1 - team, "apex_turret", placement, {"immediate": true})
+			wallet.elixir = saved_elixir
+			_expect(accepted, "准备阶段通过正式出牌入口放下挡路建筑")
 			var buildings := _main.get_tree().get_nodes_in_group("combatants").filter(func(c): return c is Unit and c.card_id == "apex_turret")
 			_expect(buildings.size() == 1, "准备阶段挡路建筑已经实际生成")
 			if buildings.size() != 1:
@@ -390,6 +399,11 @@ func _check_failed_launch_search() -> void:
 	_main.world.nav.set_cells_blocked([Vector2i(0, 0)], false)
 	rush._approach_launch_point(source, 0.05)
 	_expect(rush.search_count == 13, "建筑移除也使失败/成功结果失效")
+	for tick in 24: rush._approach_launch_point(source, 0.05)
+	_expect(rush.search_count == 13, "发起点路线有效时跨过重试周期不再重复全候选搜索")
+	source.body_radius += 1.0
+	rush._approach_launch_point(source, 0.05)
+	_expect(rush.search_count == 14, "先锋体型改变立即重新按实际半径搜索发起点")
 	clear_units()
 
 ## 正式 Main 边界：碰撞仍在行动阶段，只有旧 RECOVERY 时钟提前推进。
@@ -476,3 +490,40 @@ func _check_rush_submission() -> void:
 		_main.runtime._on_active_skill_unit_died(id)
 		clear_units()
 	_main.runtime._deck = deck
+
+func _check_cross_river_body_clearance() -> void:
+	for team in [0, 1]:
+		var sign_y := 1.0 if team == 0 else -1.0
+		var dummy := structure(Vector2(360, ArenaRules.RIVER_Y - sign_y * 60.0))
+		dummy.team = 1 - team
+		_main.world.register_dynamic_building(dummy)
+		var source := spawn("rift_herald", team, Vector2(360, ArenaRules.RIVER_Y + sign_y * 100.0))
+		var legal := true
+		var prepared := false
+		for tick in 700:
+			step(source)
+			legal = legal and source.is_walkable_at(source.position)
+			if source.structure_rush.phase == StructureRushState.Phase.PREPARING:
+				prepared = true
+				legal = legal and source.battle_context.is_ground_position_walkable(source.position, source.body_radius, source)
+				legal = legal and source.battle_context.is_ground_segment_walkable(source.position, source.structure_rush.endpoint, source.body_radius, source)
+			if dummy.hp < dummy.max_hp: break
+		_expect(prepared and legal and dummy.hp <= dummy.max_hp - 500.0, "先锋隔河寻找全身合法发起点并完成冲撞 team=%d" % team)
+		_main.world.release_structure_footprint(dummy)
+		clear_units()
+	# 中心线在桥上，但27px身体越过桥边；不能据中心点允许起冲。
+	var bridge_edge := Vector2(ArenaRules.BRIDGE_X_LEFT + ArenaRules.BRIDGE_HALF - 5.0, ArenaRules.RIVER_Y)
+	_expect(_main.world.is_ground_terrain_walkable(bridge_edge, 1.0) and not _main.world.is_ground_terrain_walkable(bridge_edge, 27.0), "先锋冲撞位置按自身半径而非中心点判合法")
+
+	# 仅压岸1px时，第一段采样可能已经合法；起点仍须独立按整个身体检查。
+	var target_dummy := structure(Vector2(360, 850))
+	target_dummy.team = 0
+	_main.world.register_dynamic_building(target_dummy)
+	var edge_source := spawn("rift_herald", 1, Vector2(360, 740))
+	edge_source.position = Vector2(360, ArenaRules.RIVER_Y + ArenaRules.RIVER_HALF + edge_source.body_radius - 1.0)
+	step(edge_source)
+	_expect(edge_source.structure_rush.phase == StructureRushState.Phase.READY, "先锋身体仍压岸时不能因后续采样合法直接起冲")
+	step(edge_source, 8)
+	_expect(edge_source.structure_rush.phase == StructureRushState.Phase.PREPARING and edge_source.is_walkable_at(edge_source.position), "先锋先退出出生压岸再从全身合法位置准备冲撞")
+	_main.world.release_structure_footprint(target_dummy)
+	clear_units()

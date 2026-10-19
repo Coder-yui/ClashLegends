@@ -16,6 +16,7 @@ var _launch_target_id := 0
 var _launch_nav_revision := -1
 var _launch_target_position := Vector2.INF
 var _launch_retry := 0.0
+var _launch_radius := -1.0
 # 累积计数供测试/性能采样读取；不逐 Tick 输出。
 var search_count := 0
 var candidate_count := 0
@@ -61,6 +62,11 @@ func tick(unit: Unit, dt: float) -> bool:
 			awaiting_reprepare = false
 			return false
 		if unit._target_gap(target) > float(config.rush_distance):
+			awaiting_reprepare = false
+			unit._chase(dt)
+			return true
+		# 边缘部署可能暂时压岸；先按普通移动退出，不能从身体不合法的位置起冲。
+		if not unit.battle_context.is_ground_position_walkable(unit.global_position, unit.body_radius, unit):
 			awaiting_reprepare = false
 			unit._chase(dt)
 			return true
@@ -224,24 +230,25 @@ func _audio(unit: Unit, cue: StringName) -> void:
 	if is_instance_valid(unit) and unit.battle_context != null:
 		unit.battle_context.notify_unit_audio_event(unit, cue, unit.global_position)
 
-## 找最近可达的发起点：桥面可用，水域与建筑仍按整段圆柱检查。
+## 按导航代价找可达发起点：桥面可用，水域与建筑仍按整段圆柱检查。
 func _approach_launch_point(unit: Unit, dt: float) -> void:
 	_launch_retry -= dt
 	var nav := unit.battle_context.navigation()
 	var revision := nav.revision if nav != null else -1
 	var invalid_path := unit._path_index < unit._path.size() and not unit.battle_context.is_ground_segment_walkable(unit.global_position, unit._path[unit._path_index], unit.body_radius, unit)
-	if _launch_retry <= 0.000001 or _launch_target_id != target.get_instance_id() or _launch_nav_revision != revision or _launch_target_position != target.global_position or invalid_path:
+	var exhausted := unit._path_index >= unit._path.size()
+	if (exhausted and _launch_retry <= 0.000001) or _launch_target_id != target.get_instance_id() or _launch_nav_revision != revision or _launch_target_position != target.global_position or _launch_radius != unit.body_radius or invalid_path:
 		var started := Time.get_ticks_usec()
 		search_count += 1
 		_launch_target_id = target.get_instance_id()
 		_launch_nav_revision = revision
 		_launch_target_position = target.global_position
+		_launch_radius = unit.body_radius
 		# 失败也覆盖旧路线，不能向旧目标继续移动。
 		unit.set_structure_approach_path(PackedVector2Array(), target, Vector2.INF)
 		var goal := Vector2.INF
-		var best := INF
-		var best_path := PackedVector2Array()
-		# 以导航格心与目标周围候选点搜索，按实际步行路线长度选最近点。
+		var candidates: Array[Vector2] = []
+		# 收集合法发起点，一次多终点搜索选择低导航代价路线。
 		var clearance: float = unit.body_radius + target.body_radius + ArenaRules.STRUCTURE_SEPARATION + 0.1
 		var reach: float = float(config.rush_distance) + unit.body_radius + target.body_radius
 		var center := target.global_position
@@ -253,25 +260,16 @@ func _approach_launch_point(unit: Unit, dt: float) -> void:
 				var candidate := Vector2((column + 0.5) * ArenaRules.TILE_SIZE, (row + 0.5) * ArenaRules.TILE_SIZE)
 				var distance: float = candidate.distance_to(target.global_position)
 				if distance <= clearance or distance - unit.body_radius - target.body_radius > float(config.rush_distance): continue
-				if unit.global_position.distance_to(candidate) >= best: continue
 				if not unit.battle_context.is_ground_position_walkable(candidate, unit.body_radius, unit): continue
 				var landing: Vector2 = target.global_position + target.global_position.direction_to(candidate) * clearance
 				if not unit.battle_context.is_ground_segment_walkable(candidate, landing, unit.body_radius, unit): continue
-				path_count += 1
-				var path := unit.battle_context.find_ground_path(unit.global_position, candidate, target, unit.body_radius)
-				if path.is_empty(): continue
-				if not unit.battle_context.is_ground_segment_walkable(path[-1], candidate, unit.body_radius, unit): continue
-				var path_length := 0.0
-				var previous := unit.global_position
-				for point in path:
-					path_length += previous.distance_to(point)
-					previous = point
-				path_length += previous.distance_to(candidate)
-				if path_length < best:
-					best = path_length
-					goal = candidate
-					best_path = path
-		if goal.is_finite():
+				candidates.append(candidate)
+		var best_path := PackedVector2Array()
+		if not candidates.is_empty():
+			path_count += 1
+			best_path = unit.battle_context.find_ground_path_to_any(unit.global_position, candidates, unit.body_radius, unit.river_traversal)
+		if not best_path.is_empty():
+			goal = best_path[-1]
 			unit.set_structure_approach_path(best_path, target, goal)
 		_launch_retry = 0.4
 		search_usec += Time.get_ticks_usec() - started

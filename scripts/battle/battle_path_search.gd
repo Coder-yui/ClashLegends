@@ -12,9 +12,9 @@ var _heap := PackedInt32Array()
 var _heap_index := PackedInt32Array()
 
 ## -1 表示调用者禁止进入。可通行代价须 >= heuristic_cost，保证启发式一致。
-## 搜索层与原生一样允许斜向夹角；实际身体/地形限制由移动层处理。
+## 默认保留原生斜向展开；调用者可用 can_step 过滤不满足身体净空的邻接边。
 func find_cells(size: Vector2i, costs: PackedInt32Array, start: Vector2i, goal: Vector2i,
-		heuristic_cost: int = 5) -> Array[Vector2i]:
+		heuristic_cost: int = 5, can_step: Callable = Callable(), goals: Dictionary = {}) -> Array[Vector2i]:
 	var result: Array[Vector2i] = []
 	var region := Rect2i(Vector2i.ZERO, size)
 	if size.x <= 0 or size.y <= 0 or costs.size() != size.x * size.y:
@@ -25,6 +25,12 @@ func find_cells(size: Vector2i, costs: PackedInt32Array, start: Vector2i, goal: 
 	var target := goal.x + goal.y * size.x
 	if costs[source] < 0 or costs[target] < 0:
 		return result
+	var goal_low := goal
+	var goal_high := goal
+	for index in goals:
+		var point := Vector2i(int(index) % size.x, int(index) / size.x)
+		goal_low = goal_low.min(point)
+		goal_high = goal_high.max(point)
 	var count := costs.size()
 	_g.resize(count)
 	_f.resize(count)
@@ -43,8 +49,8 @@ func find_cells(size: Vector2i, costs: PackedInt32Array, start: Vector2i, goal: 
 	while not _heap.is_empty():
 		var current := _pop()
 		_state[current] = 2
-		if current == target:
-			var cursor := target
+		if (goals.is_empty() and current == target) or goals.has(current):
+			var cursor := current
 			while cursor != -1:
 				result.append(Vector2i(cursor % size.x, cursor / size.x))
 				cursor = _parent[cursor]
@@ -58,6 +64,8 @@ func find_cells(size: Vector2i, costs: PackedInt32Array, start: Vector2i, goal: 
 			var index := next.x + next.y * size.x
 			if costs[index] < 0 or _state[index] == 2:
 				continue # 原生本模式 refresh_open=true, reopen_closed=false。
+			if can_step.is_valid() and not can_step.call(cell, next):
+				continue
 			var step := 14 if direction.x != 0 and direction.y != 0 else 10
 			var score := _g[current] + costs[index] * step
 			if _state[index] == 1 and score >= _g[index]:
@@ -65,6 +73,8 @@ func find_cells(size: Vector2i, costs: PackedInt32Array, start: Vector2i, goal: 
 			_parent[index] = current
 			_g[index] = score
 			var delta := (goal - next).abs()
+			if not goals.is_empty():
+				delta = Vector2i(maxi(maxi(goal_low.x - next.x, next.x - goal_high.x), 0), maxi(maxi(goal_low.y - next.y, next.y - goal_high.y), 0))
 			_f[index] = score + heuristic_cost * (10 * (delta.x + delta.y) - 6 * mini(delta.x, delta.y))
 			if _state[index] == 0:
 				_state[index] = 1

@@ -160,7 +160,12 @@ func _check_multi_unit_card_centers() -> void:
 			_main._on_card_selected(card_id)
 			_main._update_deployment_preview(pointer)
 			var preview_ok: bool = _main._deployment_preview_valid and _main._deployment_preview_pos == center
+			# immediate 只跳过命令等待，仍走正式扣费；每个几何用例独立准备余额。
+			var wallet: ElixirManager = _main.runtime.account(team)
+			var saved_elixir: float = wallet.elixir
+			wallet.elixir = 10.0
 			var accepted: bool = _main.play_card(team, card_id, pointer, {"immediate": true})
+			wallet.elixir = saved_elixir
 			var members := _main.get_tree().get_nodes_in_group("combatants").filter(func(actor): return actor is Unit and actor.get_instance_id() not in before)
 			var positions: Array[Vector2] = []
 			for member in members: positions.append(member.position)
@@ -219,7 +224,11 @@ func _check_multi_unit_deployment_edges() -> void:
 				_main._on_card_selected(card_id)
 				_main._update_deployment_preview(center)
 				var preview_ok: bool = _main._deployment_preview_valid and _main._deployment_preview_pos == center
+				var wallet: ElixirManager = _main.runtime.account(team)
+				var saved_elixir: float = wallet.elixir
+				wallet.elixir = 10.0
 				var accepted: bool = _main.play_card(team, card_id, center, {"immediate": true})
+				wallet.elixir = saved_elixir
 				var members := _main.get_tree().get_nodes_in_group("combatants").filter(func(actor): return actor is Unit and actor.get_instance_id() not in before)
 				var legal := members.size() == count
 				for member in members:
