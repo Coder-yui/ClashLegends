@@ -38,6 +38,19 @@
 
 本补正只改工具导航及本记录；按文档范围检查，不启动测试/测量/生成。两条producer末尾空行仍保留，避免在禁止生成时使现有产物身份失效。补充只读git状态另发现18个未跟踪.gd.uid伴随文件，在原干净状态核对后出现；全部保留且不纳入本次文档提交，不推断创建者。最终工作区状态以最新实际git输出为准，前述干净状态仅对应原三提交收尾时点。
 
+
+### 用户关闭应用后的原门槛复核与UID收尾
+
+用户随后表示已关闭能关闭的无关应用，授权自行解决中间问题并继续原范围。文档补正已先提交推送为3a818f5ff9b14fc4387a71ce7332bbe5297f6a76；本轮不重跑任何已完成测量，不扩大验收规模或改变保护。
+
+先只读核查仍只有用户Godot编辑器PID6389，无match_loading/effect_coverage_probe/resource_process测试残留或可确认自有可回收进程。02:22:28 UTC读取pressure=2、available=36%（约5.76GiB）；02:25:52.428529至02:25:52.434906 UTC的实际保存样本为pressure=2、available=34%、5,841,155,522字节（约5.44GiB），调用原budget(state)仍明确拒绝。此次不是调用A/沙皇入口后的新失败进程，没有消耗两项真实运行额度。带原始vm_stat、swap及进程列表的证据为本机preload-final-closeout/resume-preflight/system-preflight.json与processes.txt。
+
+可用量实现核对：[Apple memory_pressure](https://github.com/apple-oss-distributions/system_cmds/blob/main/memory_pressure/memory_pressure.c)的get_percent_free调用memorystatus_get_level；[XNU vm_pressure_response](https://github.com/apple-oss-distributions/xnu/blob/main/osfmk/vm/vm_pageout.c)由available page count/total pages计算整数百分比。项目用physical_bytes×percent//100转为估计，不是vm_stat的纯free页或精确可分配承诺；整数百分比有量化误差，不能解释距8GiB的数GiB缺口。独立pressure=2也已不满足原必须等于1的条件。当前VM统计显示大量压缩与交换：首个诊断样本压缩器413611×16384字节（约6.31GiB），swap used 5890.88MiB（约5.75GiB）；这是系统状态，不证明某个应用泄漏或内存一定不可恢复。没有证据将现公式判为错误，故未修改memory_state/budget、未降门槛、未purge系统缓存/改OS/关闭用户应用。
+
+18个新UID逐项确认：均为本批d1560802/1b6374ee新增脚本的.gd.uid伴随文件；每份一行合法uid://标识，对应源存在，仓库UID无重复/冲突。沿用已有Godot脚本伴随文件版本管理方式纳入提交，不将可复现身份当临时缓存删除。完整清单及源新增提交、SHA在resume-preflight/uid-review.json。UID不改变资源生成器输入中的GDScript内容，未触发重生成；两条producer空行警告继续保留，不为风格改动重新生成。
+
+本轮只补UID与本文、工具导航的状态说明，按文档/伴随元数据范围审计；当前A整局加载与沙皇真实材质链/同帧画面/首用依然未验收，已授权但被原系统条件阻塞。尚无安全的自有资源可清理来解除条件，不能把完成提交与完整性能目标混为完成。
+
 ## 2026-10-19：静态收口审查（当前）
 
 后续已按授权修复本节三处发现，通过窄合同并完成两个沙盾辅助pin续记与增量生成，当前资源门禁0错误，见[集成修订](#2026-10-19三处集成修订当前)。本节的“本轮仅改文档/check0错误”限定静态审查当次，不描述后续修订。
