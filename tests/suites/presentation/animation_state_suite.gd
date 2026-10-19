@@ -428,6 +428,8 @@ func _check_cast_policies_and_snapshot() -> void:
 	near_dummy.position = Vector2(260.0, 860.0)
 	far_dummy.position = Vector2(360.0, 790.0)
 	for unit in [stationary, mobile, unrestricted]:
+		# setup只配置属性，出生身份由创建方显式提供。
+		unit.card_id = "gnar"
 		unit.setup(0, stats, stats.name)
 		_main.add_child(unit)
 	near_dummy.setup(1, dummy_stats, "近端木桩")
@@ -467,13 +469,20 @@ func _check_cast_policies_and_snapshot() -> void:
 	stationary.shields.absorb(75.0)
 	stationary.apply_active_buff(100.0, 1.5, 1.0, 1.4)
 	stationary.active_ability_id = 9001
+	stationary.active_ability_slot = 0
 	_main.runtime._active_skills.register(stationary, stationary.card_id, stationary.team, {"max_uses": 2})
 	_main.runtime._active_skills.replace_replica(stationary.active_ability_id, 2, 1.25)
-	var payload := preload("res://tests/fixtures/network_fixture.gd").snapshot_payload(NetworkSnapshotSystem.new(_main, _main._projectile_system), 77, stationary)
 	var snapshot_system := NetworkSnapshotSystem.new(_main, _main._projectile_system)
-	var snapshot_packet := preload("res://tests/fixtures/network_fixture.gd").packet(snapshot_system, [], [], preload("res://tests/fixtures/network_fixture.gd").tower_payloads(snapshot_system), 0.0, _main.runtime._match_rules.time_left, _main.runtime._match_rules.overtime)
+	var payload := preload("res://tests/fixtures/network_fixture.gd").snapshot_payload(snapshot_system, 77, stationary)
+	var snapshot_packet := preload("res://tests/fixtures/network_fixture.gd").packet(snapshot_system, [payload], [], preload("res://tests/fixtures/network_fixture.gd").tower_payloads(snapshot_system), 0.0, _main.runtime._match_rules.time_left, _main.runtime._match_rules.overtime)
+	var decoded := snapshot_system.decode_validated(var_to_bytes(snapshot_packet).compress(FileAccess.COMPRESSION_DEFLATE))
+	_expect(decoded != null and decoded.packet[NetworkSnapshotSystem.S_UNITS] == [payload], "动作快照携带合法出生事实并通过真实序列化解码")
 	var snapshot_contract: bool = (
 		payload.size() == NetworkSnapshotSystem.UNIT_PAYLOAD_SIZE
+		and payload[NetworkSnapshotSystem.U_SPAWN].args[0] == "gnar"
+		and payload[NetworkSnapshotSystem.U_SPAWN].args[12] == "gnar"
+		and payload[NetworkSnapshotSystem.U_SPAWN].args[5] == 9001
+		and payload[NetworkSnapshotSystem.U_SPAWN].args[6] == 0
 		and int(payload[NetworkSnapshotSystem.U_ACTION_SERIAL]) == stationary.get_visual_action_serial()
 		and String(payload[NetworkSnapshotSystem.U_ACTION_NAME]) == "active"
 		and is_equal_approx(float(payload[NetworkSnapshotSystem.U_ACTION_DURATION]), 1.2)
