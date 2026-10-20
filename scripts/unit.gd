@@ -237,6 +237,8 @@ var restoration_fx_timer := 0.0 # 纯表现秒数，不进入权威快照
 enum DeathOutcome { NONE, DEATH, DEATH_FORM, REPLACEMENT, FORM_END, HATCH }
 var death_outcome := DeathOutcome.NONE
 
+var deployment_shield_reduction := 0.0
+var net_deployment_shield_active := false
 var shields := ShieldState.new()
 var shield_hp: float:
 	get: return shields.total_hp()
@@ -562,6 +564,9 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 		skill_resource_enabled = true
 		skill_resource_max = _configured_skill_resource_max
 	shields.clear()
+	deployment_shield_reduction = float(stats.get("deployment_shield_reduction", 0.0))
+	shields.add_permanent(float(stats.get("deployment_shield", 0.0)), &"deployment")
+	net_deployment_shield_active = shields.has_source(&"deployment")
 	transform_after_hits = maxi(int(stats.get("transform_after_hits", 0)), 0)
 	revert_after_hits = maxi(int(stats.get("revert_after_hits", 0)), 0)
 	transform_duration = maxf(float(stats.get("transform_duration", 0.0)), 0.0)
@@ -2992,6 +2997,9 @@ func show_restoration_heal() -> void:
 func has_explosive_shield() -> bool:
 	return net_explosive_shield if _in_client_mode() else shields.has_expiry_effect()
 
+func deployment_shield_active_visual() -> bool:
+	return net_deployment_shield_active if _in_client_mode() else shields.has_source(&"deployment")
+
 func clear_shields() -> void:
 	shields.clear()
 	queue_redraw()
@@ -3071,8 +3079,14 @@ func take_damage(amount: float, from: Node2D = null, source_team: int = -1, sour
 		CombatInteraction.record_combat_effect(self, CombatInteraction.effect_context(from, source_team, source_position))
 	if BattleNumbers.quantity(amount) > 0:
 		assist_conversion.record(self, AssistConversionState.source_definition(from))
-	var remaining_damage := BattleNumbers.quantity(maxf(amount, 0.0) * (1.0 - buffs.strongest(&"damage_reduction", &"reduction", 0.0)))
+	var reduction := buffs.strongest(&"damage_reduction", &"reduction", 0.0)
+	if shields.has_source(&"deployment"):
+		reduction = maxf(reduction, deployment_shield_reduction)
+	var remaining_damage := BattleNumbers.quantity(maxf(amount, 0.0) * (1.0 - reduction))
+	var had_deployment_shield := shields.has_source(&"deployment")
 	remaining_damage = shields.absorb(remaining_damage)
+	if had_deployment_shield and not shields.has_source(&"deployment") and battle_context != null:
+		battle_context.notify_unit_audio_event(self, &"deployment_shield:break", global_position)
 	if not shields.broken_effects.is_empty() and battle_context != null:
 		battle_context.notify_unit_audio_event(self, &"explosive_shield:break", global_position)
 	shields.broken_effects.clear()
@@ -3503,16 +3517,22 @@ func _draw_sweep_fx() -> void:
 	SWEEP_EFFECT.draw_effect(self, deploy_sweep_radius, get_visual_facing_direction(), 1.0 - _sweep_fx_timer / SWEEP_FX_DURATION)
 
 func _draw_active_sweep_fx() -> void:
-	if get_visual_action_time_left() <= 0.0:
-		return
+	var radius := active_sweep_visual_radius()
+	if radius <= 0.0: return
 	var elapsed := get_visual_action_duration() - get_visual_action_time_left()
-	if elapsed >= SWEEP_FX_DURATION:
-		return
+	SWEEP_EFFECT.draw_effect(self, radius, get_visual_facing_direction(), elapsed / SWEEP_FX_DURATION)
+
+## A dedicated impact effect replaces the generic nova sweep, including on clients.
+func active_sweep_visual_radius() -> float:
+	if get_visual_action_time_left() <= 0.0: return 0.0
+	var elapsed := get_visual_action_duration() - get_visual_action_time_left()
+	if elapsed >= SWEEP_FX_DURATION: return 0.0
 	var stats := transformed_stats if get_form_index() == 1 else _base_form_stats
 	for skill in stats.get("active_skills", []):
 		if String(skill.get("kind", "")) == "nova" and StringName(skill.get("visual_action", "")) == get_visual_action_name():
-			SWEEP_EFFECT.draw_effect(self, float(skill.get("radius", 0.0)), get_visual_facing_direction(), elapsed / SWEEP_FX_DURATION)
-			return
+			if not String(skill.get("impact_visual_shape", "")).is_empty(): return 0.0
+			return float(skill.get("radius", 0.0))
+	return 0.0
 
 func _on_stealth_changed(hidden: bool) -> void:
 	if battle_context != null and is_inside_tree() and hp > 0.0 and not _in_client_mode():

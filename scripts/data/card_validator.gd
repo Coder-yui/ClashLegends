@@ -31,6 +31,9 @@ static func validate_all(cards: Dictionary, inspect_resources: bool = true) -> P
 		_validate_card(card_id, stats, errors, inspect_resources)
 		_validate_references(card_id, stats, cards, errors)
 		_validate_resource_dependencies(card_id, stats, errors, inspect_resources)
+		if stats.has("deployment_shield") or stats.has("deployment_shield_reduction"):
+			if stats.get("type", "") != "unit" or float(stats.get("deployment_shield", 0.0)) <= 0.0 or float(stats.get("deployment_shield_reduction", -1.0)) < 0.0 or float(stats.get("deployment_shield_reduction", 2.0)) > 1.0:
+				errors.append(card_id + ".deployment_shield: 要求单位、正数护盾及0到1的减伤比例")
 		if stats.has("rage_crit_multiplier"):
 			if float(stats.rage_crit_multiplier) <= 1.0 or float(stats.get("skill_resource_max", 0.0)) != 2.0 or float(stats.get("projectile_speed", 0.0)) > 0.0 or bool(stats.get("is_continuous_attack", false)) or stats.get("type", "") != "unit":
 				errors.append(card_id + ".rage_crit_multiplier: 要求两点资源的离散近战单位及大于1的暴击倍率")

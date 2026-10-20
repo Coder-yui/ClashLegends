@@ -20,11 +20,21 @@ func add(amount: float, duration: float, decays: bool = false, restore_on_expiry
 		"expiry_effect": expiry_effect.duplicate(true), "restore_on_expiry": restore_on_expiry, "rate": amount / duration if decays else 0.0, "remainder": 0.0})
 	return id
 
+func add_permanent(amount: float, source: StringName) -> int:
+	var id := add(amount, 1.0, false, false, source)
+	if id >= 0:
+		_layers[-1]["permanent"] = true
+	return id
+
+func has_source(source: StringName) -> bool:
+	return _layers.any(func(layer): return layer.source == source and float(layer.hp) > 0.0)
+
 func tick(dt: float) -> bool:
 	if dt <= 0.0 or not is_finite(dt):
 		return false
 	var restore := false
 	for layer in _layers:
+		if bool(layer.get("permanent", false)): continue
 		var elapsed := minf(dt, float(layer.left))
 		layer.left = maxf(0.0, float(layer.left) - dt)
 		var total := float(layer.remainder) + float(layer.rate) * elapsed
@@ -42,6 +52,8 @@ func tick(dt: float) -> bool:
 func absorb(amount: float) -> float:
 	var remaining := float(BattleNumbers.quantity(amount))
 	_layers.sort_custom(func(a, b):
+		if bool(a.get("permanent", false)) != bool(b.get("permanent", false)):
+			return not bool(a.get("permanent", false))
 		if is_equal_approx(float(a.left), float(b.left)):
 			return int(a.id) < int(b.id)
 		return float(a.left) < float(b.left))

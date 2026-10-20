@@ -642,5 +642,12 @@
     "method": "run",
     "scene": "battle",
     "group": "cards"
+  },
+  {
+    "id": "MalphiteSuite",
+    "script": "res://tests/suites/cards/malphite_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "cards"
   }
 ]

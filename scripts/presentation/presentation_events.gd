@@ -19,6 +19,8 @@ static func supports(stats: Dictionary, cue: String) -> bool:
 	if cue in ["stealth:enter", "stealth:exit"]: return float(stats.get("stealth_delay", 0.0)) > 0.0
 	if cue in ["attack_wave:launch", "attack_wave:hit"]: return float(stats.get("attack_wave_damage", 0.0)) > 0.0
 	if cue in ["terrain:enter", "terrain:sustain", "terrain:exit"]: return bool(stats.get("terrain_traversal", false))
+	if cue == "deployment_shield:break": return float(stats.get("deployment_shield", 0.0)) > 0.0
+	if cue == "active:impact" and (stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "nova"): return true
 	if cue == "active:land": return (stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "blink_nova")
 	if cue == "active:spin": return (stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "dash_strike")
 	if cue == "execute:kill": return (stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "bleeding_execute")

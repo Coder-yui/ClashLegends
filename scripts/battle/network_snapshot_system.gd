@@ -98,7 +98,8 @@ const U_BUFF_VISUAL_CLOCK := 60
 const U_RESTORATION_SHIELD_STATE := 61
 const U_BLIND := 62
 const U_TELEPORT_SERIAL := 63
-const UNIT_PAYLOAD_SIZE := 64
+const U_DEPLOYMENT_SHIELD := 64
+const UNIT_PAYLOAD_SIZE := 65
 
 const P_ID := 0
 const P_X := 1
@@ -263,6 +264,7 @@ func decode_validated(snapshot_bytes: PackedByteArray) -> DecodedSnapshot:
 			if float(payload[field]) < 0.0 or float(payload[field]) > 1.0: return null
 		if float(payload[U_ACTIVE_SPEED_MULTIPLIER]) < 1.0 or float(payload[U_ACTIVE_ATTACK_SPEED_MULTIPLIER]) <= 0.0 or float(payload[U_MOVEMENT_RATE]) <= 0.0: return null
 		if payload[U_VISUAL_STATE] > 3 or payload[U_LOCOMOTION] > 2 or payload[U_FORM] > 1: return null
+		if not payload[U_DEPLOYMENT_SHIELD] is bool: return null
 		if not payload[U_STEALTH] is bool or not payload[U_STASIS] is bool: return null
 		if not payload[U_HIT_HASTE_FULL] is bool or not payload[U_STRUCTURE_HASTE] is bool: return null
 		for field in [U_LIFESTEAL_VISUAL_STATE, U_BUFF_VISUAL_CLOCK]:
@@ -482,6 +484,7 @@ func _apply_units(units_data: Array) -> bool:
 		u.net_structure_haste = d[U_STRUCTURE_HASTE]
 		u.net_structure_haste_state = d[U_STRUCTURE_HASTE_STATE]
 		u.net_restoration_shield_state = d[U_RESTORATION_SHIELD_STATE]
+		u.net_deployment_shield_active = d[U_DEPLOYMENT_SHIELD]
 		u.net_shield_ratio = clampf(float(d[U_SHIELD_RATIO]), 0.0, 1.0)
 		u.net_shield_capacity_ratio = maxf(float(d[U_SHIELD_CAPACITY_RATIO]), 0.0)
 		if (
@@ -710,5 +713,5 @@ func _unit_snapshot_payload(id: int, u: Unit, birth: Dictionary, has_continuous_
 		u.death_spawn_state_visual(),
 		u.lifesteal_state_visual(), u.active_buff_clock_visual(),
 		u.restoration_shield_state_visual(),
-		u.blind_visual(), u.teleport_serial,
+		u.blind_visual(), u.teleport_serial, u.deployment_shield_active_visual(),
 	]

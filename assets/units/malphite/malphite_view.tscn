@@ -1,0 +1,6 @@
+[gd_scene load_steps=3 format=3]
+[ext_resource type="PackedScene" path="res://assets/units/malphite/source/malphite.glb" id="1"]
+[ext_resource type="Script" path="res://assets/units/malphite/malphite_view.gd" id="2"]
+[node name="MalphiteView" type="Node3D"]
+script = ExtResource("2")
+[node name="Model" parent="." instance=ExtResource("1")]

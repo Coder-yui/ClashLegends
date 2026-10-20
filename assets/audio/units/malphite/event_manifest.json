@@ -1,0 +1,329 @@
+[
+  {
+    "file": "play_sfx_malphite_malphitebasicattack_oncast_r1_d.wav",
+    "event": "Play_sfx_Malphite_MalphiteBasicAttack_OnCast",
+    "event_id": 2462115198,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/event_wav/Play_sfx_Malphite_MalphiteBasicAttack_OnCast {r1} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/txtp/Play_sfx_Malphite_MalphiteBasicAttack_OnCast {r1} {d}.txtp",
+    "media_ids": [
+      10180290,
+      218780253,
+      245666285
+    ],
+    "duration": 0.3948,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "8b9f4a1ef373d9a4a0db1b8c316f16d33be06a26b6622f67f242f6702a25d506",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_malphite_malphitebasicattack_oncast_r2_d.wav",
+    "event": "Play_sfx_Malphite_MalphiteBasicAttack_OnCast",
+    "event_id": 2462115198,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/event_wav/Play_sfx_Malphite_MalphiteBasicAttack_OnCast {r2} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/txtp/Play_sfx_Malphite_MalphiteBasicAttack_OnCast {r2} {d}.txtp",
+    "media_ids": [
+      10180290,
+      218780253,
+      245666285
+    ],
+    "duration": 0.4133,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "fd3a141b6193e1619151a1cf9d355f83335df451e7dcd018b371174ee8c28a5b",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_malphite_malphitebasicattack_oncast_r3_d.wav",
+    "event": "Play_sfx_Malphite_MalphiteBasicAttack_OnCast",
+    "event_id": 2462115198,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/event_wav/Play_sfx_Malphite_MalphiteBasicAttack_OnCast {r3} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/txtp/Play_sfx_Malphite_MalphiteBasicAttack_OnCast {r3} {d}.txtp",
+    "media_ids": [
+      10180290,
+      218780253,
+      245666285
+    ],
+    "duration": 0.3973,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "49706df14d30f9b5fe155047e3dbb3e696f74bb3a34a388ae71452778579b291",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_malphite_malphitebasicattack2_oncast_r1.wav",
+    "event": "Play_sfx_Malphite_MalphiteBasicAttack2_OnCast",
+    "event_id": 1356816262,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/event_wav/Play_sfx_Malphite_MalphiteBasicAttack2_OnCast {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/txtp/Play_sfx_Malphite_MalphiteBasicAttack2_OnCast {r1}.txtp",
+    "media_ids": [
+      10180290,
+      218780253,
+      245666285
+    ],
+    "duration": 0.3948,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "8b9f4a1ef373d9a4a0db1b8c316f16d33be06a26b6622f67f242f6702a25d506",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_malphite_malphitebasicattack2_oncast_r2.wav",
+    "event": "Play_sfx_Malphite_MalphiteBasicAttack2_OnCast",
+    "event_id": 1356816262,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/event_wav/Play_sfx_Malphite_MalphiteBasicAttack2_OnCast {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/txtp/Play_sfx_Malphite_MalphiteBasicAttack2_OnCast {r2}.txtp",
+    "media_ids": [
+      10180290,
+      218780253,
+      245666285
+    ],
+    "duration": 0.4133,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "fd3a141b6193e1619151a1cf9d355f83335df451e7dcd018b371174ee8c28a5b",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_malphite_malphitebasicattack2_oncast_r3.wav",
+    "event": "Play_sfx_Malphite_MalphiteBasicAttack2_OnCast",
+    "event_id": 1356816262,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/event_wav/Play_sfx_Malphite_MalphiteBasicAttack2_OnCast {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/txtp/Play_sfx_Malphite_MalphiteBasicAttack2_OnCast {r3}.txtp",
+    "media_ids": [
+      10180290,
+      218780253,
+      245666285
+    ],
+    "duration": 0.3973,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "49706df14d30f9b5fe155047e3dbb3e696f74bb3a34a388ae71452778579b291",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_malphite_malphitebasicattack_onhit_1559186049_1153642577_r1_d.wav",
+    "event": "Play_sfx_Malphite_MalphiteBasicAttack_OnHit",
+    "event_id": 2879616394,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/event_wav/Play_sfx_Malphite_MalphiteBasicAttack_OnHit [1559186049=1153642577] {r1} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/txtp/Play_sfx_Malphite_MalphiteBasicAttack_OnHit [1559186049=1153642577] {r1} {d}.txtp",
+    "media_ids": [
+      278777164,
+      312465873,
+      365680144
+    ],
+    "duration": 0.8453,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "2109dc4bcc9a66fa443a897a35be8fe05d5bc2232103d893cf4a519f2ce0d083",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_malphite_malphitebasicattack_onhit_1559186049_1153642577_r2_d.wav",
+    "event": "Play_sfx_Malphite_MalphiteBasicAttack_OnHit",
+    "event_id": 2879616394,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/event_wav/Play_sfx_Malphite_MalphiteBasicAttack_OnHit [1559186049=1153642577] {r2} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/txtp/Play_sfx_Malphite_MalphiteBasicAttack_OnHit [1559186049=1153642577] {r2} {d}.txtp",
+    "media_ids": [
+      278777164,
+      312465873,
+      365680144
+    ],
+    "duration": 0.8573,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "7490f9eba0d5ff484870f6a2646b130c3a3431de98b79b563ae55c9fece9d5b8",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_malphite_malphitebasicattack_onhit_1559186049_1153642577_r3_d.wav",
+    "event": "Play_sfx_Malphite_MalphiteBasicAttack_OnHit",
+    "event_id": 2879616394,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/event_wav/Play_sfx_Malphite_MalphiteBasicAttack_OnHit [1559186049=1153642577] {r3} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/txtp/Play_sfx_Malphite_MalphiteBasicAttack_OnHit [1559186049=1153642577] {r3} {d}.txtp",
+    "media_ids": [
+      278777164,
+      312465873,
+      365680144
+    ],
+    "duration": 0.8723,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "12dfe08e58326c1e171f0bd76d947432b3e7a5ecfe3f92e2ab40a7fdd0ebd410",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_malphite_malphitebasicattack2_onhit_1559186049_1153642577_r1.wav",
+    "event": "Play_sfx_Malphite_MalphiteBasicAttack2_OnHit",
+    "event_id": 3729041762,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/event_wav/Play_sfx_Malphite_MalphiteBasicAttack2_OnHit [1559186049=1153642577] {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/txtp/Play_sfx_Malphite_MalphiteBasicAttack2_OnHit [1559186049=1153642577] {r1}.txtp",
+    "media_ids": [
+      278777164,
+      312465873,
+      365680144
+    ],
+    "duration": 0.8453,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "2109dc4bcc9a66fa443a897a35be8fe05d5bc2232103d893cf4a519f2ce0d083",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_malphite_malphitebasicattack2_onhit_1559186049_1153642577_r2.wav",
+    "event": "Play_sfx_Malphite_MalphiteBasicAttack2_OnHit",
+    "event_id": 3729041762,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/event_wav/Play_sfx_Malphite_MalphiteBasicAttack2_OnHit [1559186049=1153642577] {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/txtp/Play_sfx_Malphite_MalphiteBasicAttack2_OnHit [1559186049=1153642577] {r2}.txtp",
+    "media_ids": [
+      278777164,
+      312465873,
+      365680144
+    ],
+    "duration": 0.8573,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "7490f9eba0d5ff484870f6a2646b130c3a3431de98b79b563ae55c9fece9d5b8",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_malphite_malphitebasicattack2_onhit_1559186049_1153642577_r3.wav",
+    "event": "Play_sfx_Malphite_MalphiteBasicAttack2_OnHit",
+    "event_id": 3729041762,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/event_wav/Play_sfx_Malphite_MalphiteBasicAttack2_OnHit [1559186049=1153642577] {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/txtp/Play_sfx_Malphite_MalphiteBasicAttack2_OnHit [1559186049=1153642577] {r3}.txtp",
+    "media_ids": [
+      278777164,
+      312465873,
+      365680144
+    ],
+    "duration": 0.8723,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "12dfe08e58326c1e171f0bd76d947432b3e7a5ecfe3f92e2ab40a7fdd0ebd410",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_malphite_landslide_oncast.wav",
+    "event": "Play_sfx_Malphite_Landslide_OnCast",
+    "event_id": 2483402372,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/event_wav/Play_sfx_Malphite_Landslide_OnCast.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/txtp/Play_sfx_Malphite_Landslide_OnCast.txtp",
+    "media_ids": [
+      1045794121
+    ],
+    "duration": 0.4716,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "f211732d276a12a034c812aff52b8b78d14836267a7694c7492bd2ee9fa20be3",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_malphite_landslide_hit.wav",
+    "event": "Play_sfx_Malphite_Landslide_hit",
+    "event_id": 4017075449,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/event_wav/Play_sfx_Malphite_Landslide_hit.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/txtp/Play_sfx_Malphite_Landslide_hit.txtp",
+    "media_ids": [
+      233503083
+    ],
+    "duration": 1.7819,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "1bd585b665b3f6632e816b51ec3a6da3d740c021ffdecc632dbbe9ff97464483",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_malphite_malphiteshieldeffect_onbuffactivate.wav",
+    "event": "Play_sfx_Malphite_MalphiteShieldEffect_OnBuffActivate",
+    "event_id": 850273111,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/event_wav/Play_sfx_Malphite_MalphiteShieldEffect_OnBuffActivate.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/txtp/Play_sfx_Malphite_MalphiteShieldEffect_OnBuffActivate.txtp",
+    "media_ids": [
+      203686964
+    ],
+    "duration": 1.564,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "7037e860fd0122e4d6dea978531285d72a0e9dd9aab2d92132986869b08d3a9f",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_malphite_malphiteshieldeffect_onbuffdeactivate.wav",
+    "event": "Play_sfx_Malphite_MalphiteShieldEffect_OnBuffDeactivate",
+    "event_id": 3201553342,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/event_wav/Play_sfx_Malphite_MalphiteShieldEffect_OnBuffDeactivate.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/txtp/Play_sfx_Malphite_MalphiteShieldEffect_OnBuffDeactivate.txtp",
+    "media_ids": [
+      750653838
+    ],
+    "duration": 2.5571,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "0d07582667fac2088d2e318be30ff13cb4f8ebb2d20af1ce19e63d326d41d17a",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_vo_malphite_death3d_r1_zh_cn.wav",
+    "event": "Play_vo_Malphite_Death3D",
+    "event_id": 807091106,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite_vo/event_wav/Play_vo_Malphite_Death3D {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite_vo/txtp/Play_vo_Malphite_Death3D {r1}.txtp",
+    "media_ids": [
+      549779120,
+      584161010,
+      2090745874
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "01d9ecbdf2550d96fde4ae089a34faf3a91053d8e163467e3d4278426675bf65",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 3.3830612244897957,
+      "source_sha256": "e4627ec173093a9edc0a2b0c6338e7b227095ada3efd88f9f79229f185903703",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_vo_malphite_death3d_r2_zh_cn.wav",
+    "event": "Play_vo_Malphite_Death3D",
+    "event_id": 807091106,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite_vo/event_wav/Play_vo_Malphite_Death3D {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite_vo/txtp/Play_vo_Malphite_Death3D {r2}.txtp",
+    "media_ids": [
+      549779120,
+      584161010,
+      2090745874
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "8b198338b8c0f577219fd71c6f534b94c7dc9ad81c38e19afb1f5c83af118811",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 3.3147392290249433,
+      "source_sha256": "07379ca726dc981e5344a9d62e5a2ae3f47887fcee0866a014ed057226e9507c",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_vo_malphite_death3d_r3_zh_cn.wav",
+    "event": "Play_vo_Malphite_Death3D",
+    "event_id": 807091106,
+    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite_vo/event_wav/Play_vo_Malphite_Death3D {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite_vo/txtp/Play_vo_Malphite_Death3D {r3}.txtp",
+    "media_ids": [
+      549779120,
+      584161010,
+      2090745874
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "34b979934588882994af9a5bc299876b7a2e54d71f4e54546a5b467f8a03a0a5",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 3.5850340136054424,
+      "source_sha256": "f6627b0dd3de5f3fb4deb38d4f9feb1da4a1c203d755ee9c86cb3c1837ad15c9",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "deploy.ogg",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/LeagueClient/Plugins/rcp-be-lol-game-data/zh_CN-assets.wad",
+    "source_path": "plugins/rcp-be-lol-game-data/global/zh_cn/v1/champion-choose-vo/54.ogg",
+    "sha256": "c1b0f8cb63f0a99f50ddc9173282d6b9c2bcc3f110de71ffaf61f7394638a621",
+    "processing": "original OGG copied unchanged; runtime deployment voice offset -12 dB"
+  }
+]

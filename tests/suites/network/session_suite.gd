@@ -66,8 +66,8 @@ func run(harness: Object) -> void:
 	harness._expect(main.runtime.session.phase == MatchSession.Phase.DISCONNECTED and main._menu_status.text.contains("超时"), "加载超时停止并提示，不无限等待")
 	main.free()
 	harness._expect(MatchSession.content_fingerprint() == MatchSession.content_fingerprint() and MatchSession.content_fingerprint().length() == 64, "内容指纹稳定且完整")
-	var legacy_fingerprint := var_to_bytes([116, CardDB.all(), MatchRules.REGULATION_TIME, MatchRules.OVERTIME_TIME, FixedStepClock.STEP]).hex_encode().sha256_text()
-	harness._expect(MatchSession.PROTOCOL_VERSION == 117 and NetworkSnapshotSystem.SNAPSHOT_PROTOCOL_VERSION == MatchSession.PROTOCOL_VERSION and MatchSession.content_fingerprint() != legacy_fingerprint, "协议117同时拥有握手/快照版本，并与116相同卡牌规则的旧指纹隔离")
+	var legacy_fingerprint := var_to_bytes([117, CardDB.all(), MatchRules.REGULATION_TIME, MatchRules.OVERTIME_TIME, FixedStepClock.STEP]).hex_encode().sha256_text()
+	harness._expect(MatchSession.PROTOCOL_VERSION == 118 and NetworkSnapshotSystem.SNAPSHOT_PROTOCOL_VERSION == MatchSession.PROTOCOL_VERSION and MatchSession.content_fingerprint() != legacy_fingerprint, "协议118同时拥有握手/快照版本，并与117相同卡牌规则的旧指纹隔离")
 
 	_check_private_hand_and_adaptation(harness)
 	_check_buffer_clock_and_playback(harness)

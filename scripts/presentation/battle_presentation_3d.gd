@@ -22,6 +22,7 @@ var skills: RefCounted
 var _sion_w_effect: Node3D
 var _scuttle_effect: Node3D
 var _aftershock_effect: Node3D
+var _malphite_effect: Node3D
 var _riftwalk_effect: Node3D
 var _locket_effect: Node3D
 var spells: RefCounted
@@ -45,6 +46,8 @@ var pending_deployments: Callable
 var _pre_deploy_views: Dictionary = {}
 
 func _process(delta: float) -> void:
+	if _malphite_effect != null and skills != null:
+		_malphite_effect.sync_effects(skills, _camera)
 	if _scuttle_effect != null and skills != null:
 		_scuttle_effect.sync_effects(skills, _camera, viewer_team)
 	if _aftershock_effect != null and skills != null:
@@ -163,6 +166,8 @@ func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void
 	_world_root.add_child(_scuttle_effect)
 	_aftershock_effect = preload("res://scripts/presentation/aftershock_effect_3d.gd").new()
 	_world_root.add_child(_aftershock_effect)
+	_malphite_effect = preload("res://scripts/presentation/malphite_effect_3d.gd").new()
+	_world_root.add_child(_malphite_effect)
 	_riftwalk_effect = preload("res://scripts/presentation/riftwalk_effect_3d.gd").new()
 	_world_root.add_child(_riftwalk_effect)
 	_locket_effect = preload("res://scripts/presentation/locket_effect_3d.gd").new()
@@ -331,6 +336,7 @@ func prepare_target_states(states: Dictionary) -> void:
 		if child is TowerModel3D: child.prepare_target_states(states)
 
 func clear_death_visuals() -> void:
+	if is_instance_valid(_malphite_effect): _malphite_effect.clear_detached()
 	if not is_instance_valid(_world_root): return
 	for view in _world_root.get_children():
 		if view is UnitModel3D: view.cancel_death_visual()

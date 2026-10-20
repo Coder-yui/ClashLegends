@@ -62899,6 +62899,411 @@
           ]
         }
       ]
+    },
+    {
+      "file": "assets/audio/units/malphite/play_sfx_malphite_malphitebasicattack_oncast_r1_d.wav",
+      "sha256": "8b9f4a1ef373d9a4a0db1b8c316f16d33be06a26b6622f67f242f6702a25d506",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/txtp/Play_sfx_Malphite_MalphiteBasicAttack_OnCast {r1} {d}.txtp",
+          "txtp_sha256": "dcf4ebd6dbd527d33c643a2570b642f24e1b84a56f1b67f70c83c62ac1b072f6",
+          "event_ids": [
+            "2462115198"
+          ],
+          "media_ids": [
+            "10180290",
+            "218780253",
+            "245666285"
+          ]
+        }
+      ],
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "post_gain_db": 0.0
+    },
+    {
+      "file": "assets/audio/units/malphite/play_sfx_malphite_malphitebasicattack_oncast_r2_d.wav",
+      "sha256": "fd3a141b6193e1619151a1cf9d355f83335df451e7dcd018b371174ee8c28a5b",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/txtp/Play_sfx_Malphite_MalphiteBasicAttack_OnCast {r2} {d}.txtp",
+          "txtp_sha256": "8c38e3bb71a74f57bd42ab51d476852198b41eadd8af35a84b717addbf22af47",
+          "event_ids": [
+            "2462115198"
+          ],
+          "media_ids": [
+            "10180290",
+            "218780253",
+            "245666285"
+          ]
+        }
+      ],
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "post_gain_db": 0.0
+    },
+    {
+      "file": "assets/audio/units/malphite/play_sfx_malphite_malphitebasicattack_oncast_r3_d.wav",
+      "sha256": "49706df14d30f9b5fe155047e3dbb3e696f74bb3a34a388ae71452778579b291",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/txtp/Play_sfx_Malphite_MalphiteBasicAttack_OnCast {r3} {d}.txtp",
+          "txtp_sha256": "eee318bcca30fabb0cadac230357b28086465d67de73021fbd9d1ec05abc6842",
+          "event_ids": [
+            "2462115198"
+          ],
+          "media_ids": [
+            "10180290",
+            "218780253",
+            "245666285"
+          ]
+        }
+      ],
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "post_gain_db": 0.0
+    },
+    {
+      "file": "assets/audio/units/malphite/play_sfx_malphite_malphitebasicattack2_oncast_r1.wav",
+      "sha256": "8b9f4a1ef373d9a4a0db1b8c316f16d33be06a26b6622f67f242f6702a25d506",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/txtp/Play_sfx_Malphite_MalphiteBasicAttack2_OnCast {r1}.txtp",
+          "txtp_sha256": "02fd9c5c6e98392eedce3efde27cb90f1b0766de06ccd1859bc0d6d24b326038",
+          "event_ids": [
+            "1356816262"
+          ],
+          "media_ids": [
+            "10180290",
+            "218780253",
+            "245666285"
+          ]
+        }
+      ],
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "post_gain_db": 0.0
+    },
+    {
+      "file": "assets/audio/units/malphite/play_sfx_malphite_malphitebasicattack2_oncast_r2.wav",
+      "sha256": "fd3a141b6193e1619151a1cf9d355f83335df451e7dcd018b371174ee8c28a5b",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/txtp/Play_sfx_Malphite_MalphiteBasicAttack2_OnCast {r2}.txtp",
+          "txtp_sha256": "db0da3e206aa58db80de50feff11888b5948ebfd466c81e8676349fa3d6e21cc",
+          "event_ids": [
+            "1356816262"
+          ],
+          "media_ids": [
+            "10180290",
+            "218780253",
+            "245666285"
+          ]
+        }
+      ],
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "post_gain_db": 0.0
+    },
+    {
+      "file": "assets/audio/units/malphite/play_sfx_malphite_malphitebasicattack2_oncast_r3.wav",
+      "sha256": "49706df14d30f9b5fe155047e3dbb3e696f74bb3a34a388ae71452778579b291",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/txtp/Play_sfx_Malphite_MalphiteBasicAttack2_OnCast {r3}.txtp",
+          "txtp_sha256": "a8f344504544568e511aba6d0fe69bc03357fe232939e4a2dac62478c7cc68a6",
+          "event_ids": [
+            "1356816262"
+          ],
+          "media_ids": [
+            "10180290",
+            "218780253",
+            "245666285"
+          ]
+        }
+      ],
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "post_gain_db": 0.0
+    },
+    {
+      "file": "assets/audio/units/malphite/play_sfx_malphite_malphitebasicattack_onhit_1559186049_1153642577_r1_d.wav",
+      "sha256": "2109dc4bcc9a66fa443a897a35be8fe05d5bc2232103d893cf4a519f2ce0d083",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/txtp/Play_sfx_Malphite_MalphiteBasicAttack_OnHit [1559186049=1153642577] {r1} {d}.txtp",
+          "txtp_sha256": "4d0f3b826aba3ca9c363a3527bf1e71d690d1a9520f3a309a5253ac1311713c4",
+          "event_ids": [
+            "2879616394"
+          ],
+          "media_ids": [
+            "278777164",
+            "312465873",
+            "365680144"
+          ]
+        }
+      ],
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "post_gain_db": 0.0
+    },
+    {
+      "file": "assets/audio/units/malphite/play_sfx_malphite_malphitebasicattack_onhit_1559186049_1153642577_r2_d.wav",
+      "sha256": "7490f9eba0d5ff484870f6a2646b130c3a3431de98b79b563ae55c9fece9d5b8",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/txtp/Play_sfx_Malphite_MalphiteBasicAttack_OnHit [1559186049=1153642577] {r2} {d}.txtp",
+          "txtp_sha256": "f886e6d099c0721fce7eb131cd1300aeb3d13ce819fed6ebd872852257b965cb",
+          "event_ids": [
+            "2879616394"
+          ],
+          "media_ids": [
+            "278777164",
+            "312465873",
+            "365680144"
+          ]
+        }
+      ],
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "post_gain_db": 0.0
+    },
+    {
+      "file": "assets/audio/units/malphite/play_sfx_malphite_malphitebasicattack_onhit_1559186049_1153642577_r3_d.wav",
+      "sha256": "12dfe08e58326c1e171f0bd76d947432b3e7a5ecfe3f92e2ab40a7fdd0ebd410",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/txtp/Play_sfx_Malphite_MalphiteBasicAttack_OnHit [1559186049=1153642577] {r3} {d}.txtp",
+          "txtp_sha256": "0b694d87441a4e028c7f8c44a2efd0e1f9f5b55316ee70242c511e148256fba5",
+          "event_ids": [
+            "2879616394"
+          ],
+          "media_ids": [
+            "278777164",
+            "312465873",
+            "365680144"
+          ]
+        }
+      ],
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "post_gain_db": 0.0
+    },
+    {
+      "file": "assets/audio/units/malphite/play_sfx_malphite_malphitebasicattack2_onhit_1559186049_1153642577_r1.wav",
+      "sha256": "2109dc4bcc9a66fa443a897a35be8fe05d5bc2232103d893cf4a519f2ce0d083",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/txtp/Play_sfx_Malphite_MalphiteBasicAttack2_OnHit [1559186049=1153642577] {r1}.txtp",
+          "txtp_sha256": "e32288effc7200dd3805a0ee5d67053c5c8c5d31c2bdee33e3bc769a7efd5d01",
+          "event_ids": [
+            "3729041762"
+          ],
+          "media_ids": [
+            "278777164",
+            "312465873",
+            "365680144"
+          ]
+        }
+      ],
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "post_gain_db": 0.0
+    },
+    {
+      "file": "assets/audio/units/malphite/play_sfx_malphite_malphitebasicattack2_onhit_1559186049_1153642577_r2.wav",
+      "sha256": "7490f9eba0d5ff484870f6a2646b130c3a3431de98b79b563ae55c9fece9d5b8",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/txtp/Play_sfx_Malphite_MalphiteBasicAttack2_OnHit [1559186049=1153642577] {r2}.txtp",
+          "txtp_sha256": "105ff9a344d31cb77a4b6a628a883b01d12982273fd3434d3948a96ebcf9392c",
+          "event_ids": [
+            "3729041762"
+          ],
+          "media_ids": [
+            "278777164",
+            "312465873",
+            "365680144"
+          ]
+        }
+      ],
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "post_gain_db": 0.0
+    },
+    {
+      "file": "assets/audio/units/malphite/play_sfx_malphite_malphitebasicattack2_onhit_1559186049_1153642577_r3.wav",
+      "sha256": "12dfe08e58326c1e171f0bd76d947432b3e7a5ecfe3f92e2ab40a7fdd0ebd410",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/txtp/Play_sfx_Malphite_MalphiteBasicAttack2_OnHit [1559186049=1153642577] {r3}.txtp",
+          "txtp_sha256": "4e07056c08e64c65e79c631c5742d174dd61f0cbf6163b030a33925b286fa3ee",
+          "event_ids": [
+            "3729041762"
+          ],
+          "media_ids": [
+            "278777164",
+            "312465873",
+            "365680144"
+          ]
+        }
+      ],
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "post_gain_db": 0.0
+    },
+    {
+      "file": "assets/audio/units/malphite/play_sfx_malphite_landslide_oncast.wav",
+      "sha256": "f211732d276a12a034c812aff52b8b78d14836267a7694c7492bd2ee9fa20be3",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/txtp/Play_sfx_Malphite_Landslide_OnCast.txtp",
+          "txtp_sha256": "e769c72995cdeb60c374c9977e187181f7ce4ca6898fb5279287741723aa595b",
+          "event_ids": [
+            "2483402372"
+          ],
+          "media_ids": [
+            "1045794121"
+          ]
+        }
+      ],
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "post_gain_db": 0.0
+    },
+    {
+      "file": "assets/audio/units/malphite/play_sfx_malphite_landslide_hit.wav",
+      "sha256": "1bd585b665b3f6632e816b51ec3a6da3d740c021ffdecc632dbbe9ff97464483",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/txtp/Play_sfx_Malphite_Landslide_hit.txtp",
+          "txtp_sha256": "74db205f5b1f53d6e90f9e4bde34f9b63690f56eb0e6d9d172364fa4cb75164e",
+          "event_ids": [
+            "4017075449"
+          ],
+          "media_ids": [
+            "233503083"
+          ]
+        }
+      ],
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "post_gain_db": 0.0
+    },
+    {
+      "file": "assets/audio/units/malphite/play_sfx_malphite_malphiteshieldeffect_onbuffactivate.wav",
+      "sha256": "7037e860fd0122e4d6dea978531285d72a0e9dd9aab2d92132986869b08d3a9f",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/txtp/Play_sfx_Malphite_MalphiteShieldEffect_OnBuffActivate.txtp",
+          "txtp_sha256": "c18b1ae05d9dfca063f3ad8a1e7f30f6dde74ec05a12d7049023ff9d957815c5",
+          "event_ids": [
+            "850273111"
+          ],
+          "media_ids": [
+            "203686964"
+          ]
+        }
+      ],
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "post_gain_db": 0.0
+    },
+    {
+      "file": "assets/audio/units/malphite/play_sfx_malphite_malphiteshieldeffect_onbuffdeactivate.wav",
+      "sha256": "0d07582667fac2088d2e318be30ff13cb4f8ebb2d20af1ce19e63d326d41d17a",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite/txtp/Play_sfx_Malphite_MalphiteShieldEffect_OnBuffDeactivate.txtp",
+          "txtp_sha256": "642fc25a05b21e54fcd8d31c9cf3b1d42ba89e75c5a25e20ab0fa32bc305b8b3",
+          "event_ids": [
+            "3201553342"
+          ],
+          "media_ids": [
+            "750653838"
+          ]
+        }
+      ],
+      "processing": "vgmstream-cli -i; source event gain retained",
+      "post_gain_db": 0.0
+    },
+    {
+      "file": "assets/audio/units/malphite/play_vo_malphite_death3d_r1_zh_cn.wav",
+      "sha256": "01d9ecbdf2550d96fde4ae089a34faf3a91053d8e163467e3d4278426675bf65",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite_vo/txtp/Play_vo_Malphite_Death3D {r1}.txtp",
+          "txtp_sha256": "3ddbab9b3048c11abd54a274eb450597689dfe1c868c1831bad36b7c5990fbd4",
+          "event_ids": [
+            "807091106"
+          ],
+          "media_ids": [
+            "549779120",
+            "584161010",
+            "2090745874"
+          ]
+        }
+      ],
+      "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+      "post_gain_db": 0.0,
+      "death_envelope": {
+        "source_duration": 3.3830612244897957,
+        "source_sha256": "e4627ec173093a9edc0a2b0c6338e7b227095ada3efd88f9f79229f185903703",
+        "keep_seconds": 1.5,
+        "fade_start_seconds": 1.0,
+        "fade_seconds": 0.5,
+        "curve": "linear_amplitude"
+      }
+    },
+    {
+      "file": "assets/audio/units/malphite/play_vo_malphite_death3d_r2_zh_cn.wav",
+      "sha256": "8b198338b8c0f577219fd71c6f534b94c7dc9ad81c38e19afb1f5c83af118811",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite_vo/txtp/Play_vo_Malphite_Death3D {r2}.txtp",
+          "txtp_sha256": "8bf1f10f70d6021a9f8fe6bbdc25b426245acc5b4e5a47628cf7e03c630faded",
+          "event_ids": [
+            "807091106"
+          ],
+          "media_ids": [
+            "549779120",
+            "584161010",
+            "2090745874"
+          ]
+        }
+      ],
+      "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+      "post_gain_db": 0.0,
+      "death_envelope": {
+        "source_duration": 3.3147392290249433,
+        "source_sha256": "07379ca726dc981e5344a9d62e5a2ae3f47887fcee0866a014ed057226e9507c",
+        "keep_seconds": 1.5,
+        "fade_start_seconds": 1.0,
+        "fade_seconds": 0.5,
+        "curve": "linear_amplitude"
+      }
+    },
+    {
+      "file": "assets/audio/units/malphite/play_vo_malphite_death3d_r3_zh_cn.wav",
+      "sha256": "34b979934588882994af9a5bc299876b7a2e54d71f4e54546a5b467f8a03a0a5",
+      "source_events": [
+        {
+          "txtp": "ClashLegends-开发素材库/03-制作中/熔岩巨兽/audio-source/malphite_vo/txtp/Play_vo_Malphite_Death3D {r3}.txtp",
+          "txtp_sha256": "f9ee659c74cccf51072c659c19daaee6d4c15c8d269b926cac1accfbf670ab54",
+          "event_ids": [
+            "807091106"
+          ],
+          "media_ids": [
+            "549779120",
+            "584161010",
+            "2090745874"
+          ]
+        }
+      ],
+      "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+      "post_gain_db": 0.0,
+      "death_envelope": {
+        "source_duration": 3.5850340136054424,
+        "source_sha256": "f6627b0dd3de5f3fb4deb38d4f9feb1da4a1c203d755ee9c86cb3c1837ad15c9",
+        "keep_seconds": 1.5,
+        "fade_start_seconds": 1.0,
+        "fade_seconds": 0.5,
+        "curve": "linear_amplitude"
+      }
+    },
+    {
+      "file": "assets/audio/units/malphite/deploy.ogg",
+      "sha256": "c1b0f8cb63f0a99f50ddc9173282d6b9c2bcc3f110de71ffaf61f7394638a621",
+      "source_package": "/Users/czh/Downloads/LOL_Asset_Source/LeagueClient/Plugins/rcp-be-lol-game-data/zh_CN-assets.wad",
+      "source_path": "plugins/rcp-be-lol-game-data/global/zh_cn/v1/champion-choose-vo/54.ogg",
+      "processing": "original OGG copied unchanged; runtime deployment voice offset -12 dB",
+      "post_gain_db": 0.0,
+      "runtime_volume_db": -12.0
     }
   ]
 }

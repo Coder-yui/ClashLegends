@@ -210,6 +210,7 @@ func _apply(source: Unit, skill: Dictionary) -> bool:
 			source.battle_context.notify_unit_audio_event(source, &"active:land", landing)
 		&"nova":
 			activate_nova(source, skill)
+			_controller.notify_unit_audio_event(source, &"active:impact", source.global_position)
 			if skill.has("impact_visual_shape"):
 				_presentation.present_fixed_area(source.global_position, float(skill.radius), float(skill.radius), float(skill.impact_visual_duration), source.team, StringName(skill.impact_visual_shape))
 		&"summon":

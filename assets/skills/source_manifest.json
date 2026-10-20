@@ -752,5 +752,14 @@
     "source_path": "assets/characters/jax/hud/icons2d/jaxe.dds",
     "source_sha256": "07e8ae84d601001008ea1dd20eeecbc330f7dd4d3c1f61e62f5d5014f64862dd",
     "sha256": "7ab853d4940eb2bc3f685938e9d21b2b2babebcacfe7ffb34c650468d8afda61"
+  },
+  {
+    "card": "malphite",
+    "skill_index": 0,
+    "path": "res://assets/skills/malphite_e.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Malphite.wad.client",
+    "source_path": "assets/characters/malphite/hud/icons2d/malphite_e.dds",
+    "source_sha256": "003074b8a67ca59805982817e82586ec12e943d4ff9d21669a2a1f60f4031e6c",
+    "sha256": "cb0add5e94e249abc40d33ea20b4d4cf1fdd2ce3694f2f87b8a28f58c71cfada"
   }
 ]
