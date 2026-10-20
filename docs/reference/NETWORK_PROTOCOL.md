@@ -4,9 +4,9 @@
 
 | 契约 | 当前值 |
 | --- | --- |
-| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->117 |
+| 协议版本 | <!-- current-fact: scripts/battle/match_session.gd PROTOCOL_VERSION -->118 |
 | 顶层快照项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd SNAPSHOT_PACKET_SIZE -->11 |
-| 单位载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd UNIT_PAYLOAD_SIZE -->64 |
+| 单位载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd UNIT_PAYLOAD_SIZE -->65 |
 | 塔载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd TOWER_PAYLOAD_SIZE -->7 |
 | 弹体载荷项数 | <!-- current-fact: scripts/battle/network_snapshot_system.gd PROJECTILE_PAYLOAD_SIZE -->15 |
 
@@ -18,7 +18,11 @@
 
 RPC 端点留在 Main，服务器与两个客户端保持相同节点路径。服务器绑定两名玩家席位，以连接反查阵营；两名玩家分别维护单调请求序号，拒绝旧会话及非参与者。服务器没有本地玩家，公共战场事件发给两端，私有状态按接收阵营生成。表现系统只产生通知，客户端播放图像与声音。
 
-生产快照通过 `decode_validated` 解压/静态校验一次，递归只读结果直接进入播放队列；`apply_decoded` 在出队时重新检查会话、终态、Tick/生命周期序号和权威时钟。坏包在到达估时及任何实体/成长/金币写入之前拒绝。单包解压上限1MiB；队列最多4096项，快照额外受16MiB累计原始序列化字节预算限制（不是实际堆上限），溢出显式断开。发送方对当前接收者共用一次只读公共世界采集，金币及成长逐端投影；终局在清场前共用一次采集。预算依据为20Hz、最大200ms播放、测试120ms迟到与50ms边界共不超过8个1MiB最大包，再留8包突发余量；不保证任意长主循环停顿或WAN突发。当前协议117的弹体载荷为15项，单位、塔和顶层长度不变；塔集合必须完整包含6行。旧定向技能RPC已删除，统一使用_rpc_skill_fx；出生/死亡RPC必须显式携带当前会话和生命周期参数。
+生产快照通过 `decode_validated` 解压/静态校验一次，递归只读结果直接进入播放队列；`apply_decoded` 在出队时重新检查会话、终态、Tick/生命周期序号和权威时钟。坏包在到达估时及任何实体/成长/金币写入之前拒绝。单包解压上限1MiB；队列最多4096项，快照额外受16MiB累计原始序列化字节预算限制（不是实际堆上限），溢出显式断开。发送方对当前接收者共用一次只读公共世界采集，金币及成长逐端投影；终局在清场前共用一次采集。预算依据为20Hz、最大200ms播放、测试120ms迟到与50ms边界共不超过8个1MiB最大包，再留8包突发余量；不保证任意长主循环停顿或WAN突发。当前协议118的弹体载荷为15项，单位载荷65项，塔和顶层长度不变；塔集合必须完整包含6行。旧定向技能RPC已删除，统一使用_rpc_skill_fx；出生/死亡RPC必须显式携带当前会话和生命周期参数。
+
+### 协议118：部署护盾状态
+
+单位载荷索引64为布尔值 `U_DEPLOYMENT_SHIELD`，仅表示部署护盾层仍存在；其他来源护盾不能延长该表现。客户端仅切换原版护盾外观，减伤与破盾仍由主机结算。
 
 ### 协议117：唯一表现入口与完整世界合同
 

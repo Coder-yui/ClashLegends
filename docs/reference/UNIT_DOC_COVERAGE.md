@@ -136,3 +136,5 @@
 | `yorick` · [牧魂人](../units/yorick.md) | 目标圆心范围普攻、Q单次固定回血 | [动作](../units/animations/yorick.md) · [声音](../units/audio/yorick.md) · [特效](../units/effects/yorick.md) |
 
 | `jax` · [武器大师](../units/jax.md) | 范围普攻、8层攻速、反击风暴普攻免疫与到期眩晕 | [动画](../units/animations/jax.md) · [音频](../units/audio/jax.md) · [特效](../units/effects/jax.md) |
+
+| `malphite` · [熔岩巨兽](../units/malphite.md) | 部署护盾与减伤、圆形双减速 | [动画](../units/animations/malphite.md) · [音频](../units/audio/malphite.md) · [特效](../units/effects/malphite.md) |
