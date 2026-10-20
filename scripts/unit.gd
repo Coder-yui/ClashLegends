@@ -3403,7 +3403,6 @@ func _draw() -> void:
 	var hp_ratio := minf(raw_hp_ratio, 1.0)
 	var overheal_ratio := maxf(raw_hp_ratio - 1.0, 0.0)
 	var shield_health_ratio := get_shield_health_ratio()
-	var shield_capacity_ratio := get_shield_capacity_ratio()
 	if death_form.waiting() or not is_equal_approx(raw_hp_ratio, 1.0) or shield_health_ratio > 0.0 or team_attack_boost_multiplier > 1.0:
 		var bar_w := visual_radius * 2.0
 		var bar_rect := Rect2(
@@ -3412,15 +3411,14 @@ func _draw() -> void:
 			bar_w,
 			HEALTH_BAR_HEIGHT
 		)
-		draw_rect(bar_rect, Color(0.15, 0.15, 0.15))
-		# 生命与护盾共用一条固定宽度的容量条；护盾始终接在当前生命段之后。
-		var combined_capacity := 1.0 + shield_capacity_ratio
-		var hp_width := bar_w * hp_ratio / combined_capacity
-		var shield_width := bar_w * shield_health_ratio / combined_capacity
+		# 固定每点生命的像素比例；护盾不能压缩生命段，否则破盾时会看似回血。
+		draw_rect(Rect2(bar_rect.position, Vector2(bar_w * maxf(1.0, raw_hp_ratio + shield_health_ratio), HEALTH_BAR_HEIGHT)), Color(0.15, 0.15, 0.15))
+		var hp_width := bar_w * hp_ratio
+		var shield_width := bar_w * shield_health_ratio
 		if hp_width > 0.0:
 			draw_rect(Rect2(bar_rect.position, Vector2(hp_width, HEALTH_BAR_HEIGHT)), get_health_bar_fill_color())
 		if shield_width > 0.0:
-			draw_rect(Rect2(Vector2(bar_rect.position.x + hp_width, bar_rect.position.y), Vector2(shield_width, HEALTH_BAR_HEIGHT)), Color.WHITE)
+			draw_rect(Rect2(Vector2(bar_rect.position.x + bar_w * raw_hp_ratio, bar_rect.position.y), Vector2(shield_width, HEALTH_BAR_HEIGHT)), Color.WHITE)
 		# 溢出生命画在基础血条右侧，长度直接表示超过基础上限的比例；皮克斯最多延伸 50%。
 		if overheal_ratio > 0.0:
 			draw_rect(
