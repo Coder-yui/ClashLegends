@@ -22,14 +22,9 @@ func sync_effects(spells: RefCounted, camera: Camera3D) -> void:
 			# 大型电击的120是选敌范围，定点表现不随选敌范围膨胀。
 			var radius := float(effect.radius) if area else 90.0
 			var world_radius := _ground(camera, effect.pos + Vector2(radius, 0)).distance_to(player.position)
-			if area:
-				# 地面仍在XZ平面；反投影圆形权威范围，补偿俯视压缩。
-				var across := (_ground(camera, effect.pos + Vector2(radius, 0)) - player.position) / world_radius
-				var along := (_ground(camera, effect.pos + Vector2(0, radius)) - player.position) / world_radius
-				player.ground_basis = Basis(across, Vector3.UP, along)
 			player.setup_native("stormsurge" if area else "electrocute", world_radius / (1050.0 if area else 550.0))
-			var screen_ground := camera.unproject_position(player.position)
-			var screen_up := camera.unproject_position(player.position + Vector3.UP)
+			var screen_ground := BattleGroundProjection.unproject(camera, player.position)
+			var screen_up := BattleGroundProjection.unproject(camera, player.position + Vector3.UP)
 			var pixels_per_world_y := maxf(absf(screen_up.y - screen_ground.y), 0.001)
 			# 固定适中屏幕高度，避免靠近下方的落雷贯穿整屏。
 			player.configure_sky(SKY_HEIGHT_PIXELS / pixels_per_world_y, "stormsurge" if area else "electrocute")
@@ -41,8 +36,8 @@ func sync_effects(spells: RefCounted, camera: Camera3D) -> void:
 			_views.erase(id)
 
 func _ground(camera: Camera3D, point: Vector2) -> Vector3:
-	var origin := camera.project_ray_origin(point)
-	var direction := camera.project_ray_normal(point)
+	var origin := BattleGroundProjection.ray_origin(camera, point)
+	var direction := BattleGroundProjection.ray_normal(camera, point)
 	return origin + direction * ((0.06 - origin.y) / direction.y)
 
 static func resource_manifest(variant: String) -> Dictionary:

@@ -83,7 +83,7 @@ void vertex() {
  }
  // Billboard centers follow the same field; camera-facing quad sizes stay circular.
  if(!billboard || is_mesh){
-  if(ground_layer)pos.y=0.0;
+  // Preserve sampled native height; camera projection supplies foreshortening.
   pos=projection_basis*center+shape_basis*(pos-center);
  }
  VERTEX=pos;

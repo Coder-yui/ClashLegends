@@ -23,11 +23,11 @@ func _draw() -> void:
 		if StringName(effect.get("visual", "")) in [&"corki_explosion", &"corki_explosion_big"]: draw_impact(self, effect)
 
 static func draw_flight(canvas: Node2D, position: Vector2, direction: Vector2, big: bool) -> void:
-	canvas.draw_set_transform(position, direction.angle() + PI * 0.5)
+	canvas.draw_set_transform(position)
 	# SCB原版网格投影到画布，保留逐面UV；纹理图集不能直接当精灵。
 	var texture := effect_texture(BIG) if big else effect_texture(MISSILE)
 	for face in _projected_faces():
-		canvas.draw_polygon(face.big_points if big else face.points, _white_colors, face.uvs, texture)
+		canvas.draw_polygon(BattleGroundProjection.native_canvas_face(face.vertices, direction.angle() + PI * 0.5, 0.25 if big else 0.20), _white_colors, face.uvs, texture)
 	canvas.draw_set_transform(Vector2.ZERO)
 
 static func draw_impact(canvas: Node2D, effect: Dictionary) -> void:
@@ -63,14 +63,17 @@ static func _projected_faces() -> Array[Dictionary]:
 	for source in preload("res://assets/effects/corki/missile_geometry.gd").FACES:
 		var points := PackedVector2Array()
 		var big_points := PackedVector2Array()
+		var vertices := PackedVector3Array()
 		var uvs := PackedVector2Array()
 		for index in 3:
 			var vertex: Array = source.v[index]
-			var projected := Vector2(float(vertex[0]), float(vertex[2]) * 0.85 - float(vertex[1]) * 0.53)
+			var native := Vector3(vertex[0], vertex[1], vertex[2])
+			vertices.append(native)
+			var projected := BattleGroundProjection.native_canvas_point(native)
 			points.append(projected * 0.20)
 			big_points.append(projected * 0.25)
 			uvs.append(Vector2(float(source.uv[index][0]), float(source.uv[index][1])))
-		var face := {"points": points, "big_points": big_points, "uvs": uvs}
+		var face := {"points": points, "big_points": big_points, "uvs": uvs, "vertices": vertices}
 		face.make_read_only()
 		_projected_cache.append(face)
 	_projected_cache.make_read_only()

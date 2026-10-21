@@ -90,7 +90,7 @@ void vertex() {
  }
  // Distributions follow the footprint. Only authored range bodies deform.
  if(is_mesh || (!billboard && !is_ray))pos=projection_basis*center+shape_basis*(pos-center);
- if(ground_layer)pos.y=0.0;
+ // Preserve sampled native height; camera projection supplies foreshortening.
  native_rim=vec3(0.0);
  if(is_mesh && has_fresnel){
   // Original mesh_vs: normals follow mWorld, rim is computed per vertex.

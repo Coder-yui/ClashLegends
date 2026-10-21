@@ -25,6 +25,26 @@ func run(harness: Object, main: Node2D) -> void:
 				_expect(absf(camera.unproject_position(rim).distance_to(point) - 110.0) < 0.01, "不同视角及圆周方向均保持110屏幕半径")
 			var end := PROJECTION.flight_position(camera, Vector2(360, 1150), point, 1.0, 160.0, 60.0)
 			_expect(end.distance_to(center) < 0.001, "空中弧线末端准确衔接范围中心")
+	camera.set_meta("uniform_ground", true)
+	camera.position = Vector3(0, sin(deg_to_rad(54.0)), cos(deg_to_rad(54.0))) * 24.0
+	camera.look_at(Vector3.ZERO)
+	for point in [Vector2(180,300), Vector2(360,640), Vector2(540,1000)]:
+		var center := PROJECTION.ground(camera, point)
+		var beam_end := camera.project_position(BattleGroundProjection.reference_point(camera, point), 12.0)
+		_expect(BattleGroundProjection.unproject(camera, beam_end).distance_to(point) < 0.001, "喷吐端点保留统一坐标映射")
+		var basis := PROJECTION.footprint_basis(camera, point, 160.0)
+		var x := PROJECTION.ground(camera, point + Vector2(160,0)) - center
+		var z := PROJECTION.ground(camera, point + Vector2(0,160)) - center
+		_expect(absf(x.length()-z.length()) < 0.001, "54度权威地面距离各向同性")
+		_expect(absf(basis.determinant()-1.0) < 0.001, "54度特效基底无拉伸与压平")
+		var screen := camera.unproject_position(center)
+		var rx := camera.unproject_position(center+x).distance_to(screen)
+		var rz := camera.unproject_position(center+z).distance_to(screen)
+		_expect(absf(rz/rx-BattleGroundProjection.Q) < 0.001, "54度圆形地面由相机自然投影为椭圆")
+	for yaw in [0.0, PI * 0.5, PI]:
+		var top := BattleGroundProjection.native_canvas_point(Vector3(2,3,4), yaw)
+		var base := BattleGroundProjection.native_canvas_point(Vector3(2,0,4), yaw)
+		_expect(absf(top.x-base.x) < 0.001 and top.y < base.y, "弹体转向不旋转世界竖直高度")
 	viewport.free()
 	var player := PLAYER.new()
 	main.add_child(player)

@@ -87,7 +87,7 @@ void vertex() {
  }
  // Distributions follow the footprint. Only authored range bodies deform.
  if(is_mesh || (!billboard && !is_ray))pos=projection_basis*center+shape_basis*(pos-center);
- if(ground_layer)pos.y=0.0;
+ // Preserve sampled native height; camera projection supplies foreshortening.
  VERTEX=pos;
  base_uv=layer_uv(texuv,21,uv_center,uv_flip,cell);
  mult_uv=layer_uv(texuv,28,mult_center,mult_flip,cell_mult);

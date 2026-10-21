@@ -51,7 +51,7 @@ func advance_continuous_attack_visual(active: bool, endpoint: Vector2, camera: C
 	var mouth := get_beam_origin_world()
 	# Preserve the existing screen-space ground/air target contract at mouth depth.
 	var depth := -camera.to_local(mouth).z
-	var end := camera.project_position(endpoint, depth)
+	var end := camera.project_position(BattleGroundProjection.reference_point(camera, endpoint), depth)
 	var along := end - mouth
 	if along.length_squared() < 0.0001:
 		stop_continuous_attack_visual()

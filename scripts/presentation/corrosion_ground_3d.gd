@@ -47,10 +47,7 @@ func _sync_effects(effects: Array, camera: Camera3D) -> void:
 			ring.material_override = material
 			add_child(ring)
 			_update_mesh(ring, Rect2(effect.pos - Vector2.ONE * float(effect.radius), Vector2.ONE * float(effect.radius) * 2.0), camera)
-			var vertical := _ground(camera, effect.pos + Vector2(0, float(effect.radius))) - player.position
-			var horizontal := _ground(camera, effect.pos + Vector2(float(effect.radius), 0)) - player.position
-			var warp := Basis(horizontal / world_radius, Vector3.UP, vertical / world_radius)
-			_views[id] = {"player": player, "ring": ring, "warp": warp, "age": 0.0}
+			_views[id] = {"player": player, "ring": ring, "age": 0.0}
 		var view: Dictionary = _views[id]
 		# 原版5秒曲线映射到卡牌持续时间；表现时钟暂停时不推进。
 		var age := elapsed * 5.0 / float(effect.duration)
@@ -58,8 +55,6 @@ func _sync_effects(effects: Array, camera: Camera3D) -> void:
 		view.age = age
 		for particle in view.player._particles:
 			var node: MeshInstance3D = particle.node
-			node.global_position = view.player.position + view.warp * (node.global_position - view.player.position)
-			node.global_basis = view.warp * node.global_basis
 			# Compress the source linger erosion into the final 0.4 seconds of
 			# the authoritative zone; no damaging-looking residue after expiry.
 			var fade := smoothstep(4.6, 5.0, age)
@@ -73,8 +68,8 @@ func _sync_effects(effects: Array, camera: Camera3D) -> void:
 			_views.erase(id)
 
 func _ground(camera: Camera3D, point: Vector2) -> Vector3:
-	var origin := camera.project_ray_origin(point)
-	var direction := camera.project_ray_normal(point)
+	var origin := BattleGroundProjection.ray_origin(camera, point)
+	var direction := BattleGroundProjection.ray_normal(camera, point)
 	return origin + direction * ((0.06 - origin.y) / direction.y)
 
 func _update_mesh(view: MeshInstance3D, bounds: Rect2, camera: Camera3D) -> void:
@@ -85,8 +80,8 @@ func _update_mesh(view: MeshInstance3D, bounds: Rect2, camera: Camera3D) -> void
 	var vertices := PackedVector3Array()
 	for corner in corners:
 		var screen: Vector2 = center + corner * radius
-		var origin := camera.project_ray_origin(screen)
-		var direction := camera.project_ray_normal(screen)
+		var origin := BattleGroundProjection.ray_origin(camera, screen)
+		var direction := BattleGroundProjection.ray_normal(camera, screen)
 		# 正交相机逆投影四角：画面上始终匹配110px权威圆形范围。
 		vertices.append(origin + direction * ((0.04 - origin.y) / direction.y))
 	var arrays := []

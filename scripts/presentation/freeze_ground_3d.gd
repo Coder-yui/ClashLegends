@@ -72,8 +72,9 @@ func _screen_occluder(reference: Camera3D, center: Vector2, radius: float) -> Ve
 	var world := PROJECTION.ground(reference, center)
 	var screen := camera.unproject_position(world)
 	var edge := camera.unproject_position(PROJECTION.ground(reference, center + Vector2(radius, 0.0)))
+	var vertical := camera.unproject_position(PROJECTION.ground(reference, center + Vector2(0.0, radius)))
 	var screen_radius := screen.distance_to(edge)
-	return Vector4(screen.x / size.x, screen.y / size.y, screen_radius / size.x, screen_radius / size.y)
+	return Vector4(screen.x / size.x, screen.y / size.y, screen_radius / size.x, screen.distance_to(vertical) / size.y)
 
 func _update_mesh(view: MeshInstance3D, bounds: Rect2, camera: Camera3D) -> void:
 	view.set_meta("bounds", bounds)
@@ -83,9 +84,9 @@ func _update_mesh(view: MeshInstance3D, bounds: Rect2, camera: Camera3D) -> void
 	var vertices := PackedVector3Array()
 	for corner in corners:
 		var screen: Vector2 = center + corner * radius
-		var origin := camera.project_ray_origin(screen)
-		var direction := camera.project_ray_normal(screen)
-		# 正交相机逆投影四角：画面上始终匹配对应权威圆形范围。
+		var origin := BattleGroundProjection.ray_origin(camera, screen)
+		var direction := BattleGroundProjection.ray_normal(camera, screen)
+		# 正交相机逆投影四角：地面上匹配权威圆形范围，屏幕形状由相机决定。
 		vertices.append(origin + direction * ((0.065 - origin.y) / direction.y))
 	var arrays := []
 	arrays.resize(Mesh.ARRAY_MAX)

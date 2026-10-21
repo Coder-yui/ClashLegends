@@ -85,7 +85,7 @@ void vertex() {
  }
  pos.xz=center.xz+(pos.xz-center.xz)*bolt_width;
  pos.y*=sky_scale;
- if(ground_layer)pos=ground_basis*vec3(pos.x,0.0,pos.z);
+ if(ground_layer)pos=ground_basis*pos; // Preserve native vertical geometry.
  height_above_ground=pos.y;
  VERTEX=pos;
  base_uv=layer_uv(texuv,21,uv_center,uv_flip,cell);

@@ -48,11 +48,11 @@ func _draw() -> void:
 		var kind := StringName(projectile.get("visual", ""))
 		if kind not in [&"jinx_rocket", &"jinx_bullet"]: continue
 		var direction: Vector2 = _system._direction(projectile)
-		draw_set_transform(_system._visual_position(projectile), direction.angle())
+		draw_set_transform(_system._visual_position(projectile))
 		if kind == &"jinx_rocket":
 			var texture := effect_texture(ROCKET)
 			for face in _projected_faces():
-				draw_polygon(face.points, _white_colors, face.uvs, texture)
+				draw_polygon(BattleGroundProjection.native_canvas_face(face.vertices, direction.angle(), 0.25), _white_colors, face.uvs, texture)
 		draw_set_transform(Vector2.ZERO)
 func _draw_glow() -> void:
 	for projectile in _system.visible_view().values():
@@ -114,12 +114,15 @@ static func _projected_faces() -> Array[Dictionary]:
 	if not _projected_cache.is_empty(): return _projected_cache
 	for source in GEOMETRY.FACES:
 		var points := PackedVector2Array()
+		var vertices := PackedVector3Array()
 		var uvs := PackedVector2Array()
 		for index in 3:
 			var vertex: Array = source.v[index]
-			points.append(Vector2(-float(vertex[0]), float(vertex[2]) * 0.85 - float(vertex[1]) * 0.53) * 0.25)
+			var native := Vector3(-float(vertex[0]), vertex[1], vertex[2])
+			vertices.append(native)
+			points.append(BattleGroundProjection.native_canvas_point(native) * 0.25)
 			uvs.append(Vector2(float(source.uv[index][0]), float(source.uv[index][1])))
-		var face := {"points": points, "uvs": uvs}
+		var face := {"points": points, "uvs": uvs, "vertices": vertices}
 		face.make_read_only()
 		_projected_cache.append(face)
 	_projected_cache.make_read_only()

@@ -25,9 +25,8 @@ func advance_status(status_active: bool, shown: bool, delta: float) -> void:
 	visible = shown
 	_age = _age + delta if status_active else 0.0
 	if _player == null: return
-	var camera := get_viewport().get_camera_3d()
-	if camera != null:
-		_player.projection_basis = PROJECTION.footprint_basis(camera, camera.unproject_position(global_position), 110.0)
+	# Buff inherits native model space; no render-camera footprint stretching.
+	_player.projection_basis = Basis.IDENTITY
 	_player.seek(maxf(_age, 1.0 / 120.0))
 	var sample: Array = _player.attached_sample()
 	for surface in overlay_instances:

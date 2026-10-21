@@ -23,8 +23,8 @@ func _draw() -> void:
 	for i in 65:
 		var angle := TAU * float(i) / 64.0
 		points.append(center + Vector2(cos(angle) * 27.0 * reveal, sin(angle) * 40.0))
-	# 镜面中心落在释放点，压平为约57×36px的地面椭圆。
-	draw_set_transform(Vector2(0, 19.35), 0.0, Vector2(1.05, 0.45))
+	# 保留镜面自身长宽比；贴地俯视缩短由统一画布完成。
+	draw_set_transform(Vector2(0, 43), 0.0, Vector2.ONE)
 	draw_colored_polygon(points, Color(tint.darkened(0.65), 0.66 * alpha))
 	draw_polyline(points, Color(tint, 0.15 * alpha), 9, true)
 	draw_polyline(points, Color(highlight, alpha), 3, true)

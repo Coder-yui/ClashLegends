@@ -6,7 +6,7 @@ static func _ellipse(center: Vector2, radius: float, begin: float = 0.0, end: fl
 	var points := PackedVector2Array()
 	for i in 49:
 		var angle := lerpf(begin, end, float(i) / 48.0)
-		points.append(center + Vector2(cos(angle), sin(angle) * 0.52) * radius)
+		points.append(center + Vector2(cos(angle), sin(angle)) * radius)
 	return points
 
 static func _leaf(canvas: Node2D, center: Vector2, angle: float, size: float, color: Color, squash: float = 1.0) -> void:
@@ -32,6 +32,6 @@ static func draw_wave(canvas: Node2D, skills: RefCounted, effect: Dictionary) ->
 		var drift := angle + sin(progress * PI) * (0.22 if i % 2 == 0 else -0.22)
 		var distance := reach * (0.80 + float(i % 3) * 0.10)
 		var point: Vector2 = skills.project_height(effect.pos, float(effect.height) + sin(progress * PI) * 0.55)
-		point += Vector2(cos(drift), sin(drift) * 0.52) * distance
+		point += Vector2(cos(drift), sin(drift)) * distance
 		var color := Color(0.72, 0.96, 0.52, fade * 0.98)
 		_leaf(canvas, point, angle + progress * (5.0 if i % 2 else -4.0), 8.0 + float(i % 3) * 1.5, color, 0.45 + absf(cos(progress * 9.0 + i)) * 0.55)

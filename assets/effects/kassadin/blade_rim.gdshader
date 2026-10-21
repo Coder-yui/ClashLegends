@@ -90,7 +90,7 @@ void vertex() {
  }
  // Distributions follow the footprint. Only authored range bodies deform.
  if(is_mesh || (!billboard && !is_ray))pos=projection_basis*center+shape_basis*(pos-center);
- if(ground_layer)pos.y=0.0;
+ // Preserve sampled native height; camera projection supplies foreshortening.
  VERTEX=pos;
  vec3 world=(MODEL_MATRIX*vec4(pos,1.0)).xyz;
  vec3 surface=mat3(MODEL_MATRIX)*shape_basis*axes*(NORMAL*size);
