@@ -12,6 +12,7 @@ static func snapshot(studio: SceneTree) -> Dictionary:
 		members.append({"card_id": member.card_id, "team": member.team, "form": member.form,
 			"transform": member.model.transform, "clip": member.clip,
 			"time": player.current_animation_position if player != null and player.is_playing() else member.time,
+			"status": member.status, "status_time": member.status_time,
 			"default_position": member.default_position, "default_yaw": member.default_yaw})
 	var effects: Array = []
 	for effect in studio.get("_effects"):
@@ -59,6 +60,9 @@ static func valid(state: Variant) -> bool:
 		if not member.get("card_id") is String or not member.get("clip") is String: return false
 		if member.get("team") not in [0, 1] or member.get("form") not in [0, 1]: return false
 		if not _transform_ok(member.get("transform")) or not _number_ok(member.get("time")): return false
+		if member.get("status", "none") not in ["none", "stasis", "freeze", "stun"]: return false
+		if not _number_ok(member.get("status_time", 0.0)): return false
+		if member.get("status_time", 0.0) < 0.0 or member.get("status_time", 0.0) > 1.0: return false
 		if not member.get("default_position") is Vector3 or not member.default_position.is_finite(): return false
 		if not _number_ok(member.get("default_yaw")): return false
 	for effect in state.effects:

@@ -3,6 +3,9 @@ extends SceneTree
 ## 只操作表现副本，不创建对局、不驱动伤害或移动规则。
 
 const SceneStore = preload("res://tools/viewers/cover/scene_store.gd")
+const StatusOverlay = preload("res://tools/viewers/cover/status_overlay.gd")
+const MEMBER_STATES := ["none", "stasis", "freeze", "stun"]
+const MEMBER_STATE_NAMES := ["无状态", "凝滞（金身）", "冰冻", "眩晕"]
 
 const DEFAULT_CARD := "pantheon"
 const OUTPUT_9X16 := Vector2i(1080, 1920)
@@ -60,6 +63,8 @@ var _ratio_option: OptionButton
 var _time_slider: HSlider
 var _effect_slider: HSlider
 var _time_label: Label
+var _member_status: OptionButton
+var _status_time: HSlider
 var _effect_label: Label
 var _capture_name: LineEdit
 var _camera_fov: HSlider
@@ -133,10 +138,14 @@ func _build() -> void:
 	_build_ui()
 	await process_frame
 	_populate_cards()
+	_refresh_member_ui()
 
 	_status.text = "已载入真实峡谷地图与透视相机；相机模式左键转头、中键平移、滚轮前后移动；添加单位或特效开始布景"
 	if _scene_enabled: _restore_scene()
 	_scene_ready = true
+	if not _smoke:
+		root.grab_focus()
+		print("COVER_STUDIO_READY: %s, %d members, %d effects" % [_ratio, _members.size(), _effects.size()])
 	if _smoke:
 		await process_frame
 		if _smoke_capture: await _capture()
@@ -176,6 +185,8 @@ func _build_scene() -> void:
 				child._show_alive_surfaces()
 	# 塔的正式屏幕坐标在 720×1280 权威画布上完成投影；塔就位后再切封面输出比例。
 	_viewport.size = _canvas_size
+	# 正式表现现已分离投影基准与渲染相机；拍摄控制必须操作真正输出画面的相机。
+	_camera = _presentation._render_camera
 	_camera.projection = Camera3D.PROJECTION_PERSPECTIVE
 	_camera.near = 0.05
 	_camera.far = 1000.0
@@ -193,6 +204,11 @@ func _build_scene() -> void:
 	_external_viewport.add_child(_external_camera)
 	_external_camera.current = true
 	_reset_external_camera()
+	for view in [[_viewport, _camera], [_external_viewport, _external_camera]]:
+		var status_overlay := StatusOverlay.new()
+		status_overlay.camera = view[1]
+		status_overlay.members = _members
+		view[0].add_child(status_overlay)
 
 func _setup_towers() -> void:
 	for spec in TOWER_SPECS:
@@ -357,6 +373,7 @@ func _build_subject_controls(parent: Node) -> void:
 	_member_option = OptionButton.new()
 	_member_option.item_selected.connect(_select_member)
 	box.add_child(_member_option)
+	_build_member_status_controls(box)
 	_member_position_x = _slider(box, "单位位置 X", -50.0, 50.0, 0.0, func(value): _update_selected_member_transform())
 	_member_position_y = _slider(box, "单位高度 Y", -4.0, 12.0, 0.0, func(value): _update_selected_member_transform())
 	_member_position_z = _slider(box, "单位位置 Z", -50.0, 50.0, 0.0, func(value): _update_selected_member_transform())
@@ -379,6 +396,21 @@ func _build_subject_controls(parent: Node) -> void:
 		if not _time_updating: _seek_member(value))
 	_time_label = Label.new()
 	box.add_child(_time_label)
+
+func _build_member_status_controls(parent: Node) -> void:
+	var states := _section(parent, "当前单位的控制状态")
+	_member_status = OptionButton.new()
+	for state_name in MEMBER_STATE_NAMES: _member_status.add_item(state_name)
+	_member_status.item_selected.connect(func(index: int): _set_member_status(MEMBER_STATES[index]))
+	states.add_child(_member_status)
+	_status_time = _slider(states, "眩晕漩涡时间", 0.0, 1.0, 0.0, _seek_member_status)
+	var state_transport := _row(states)
+	_button(state_transport, "播放漩涡", func(): _set_status_playing(true))
+	_button(state_transport, "定格漩涡", func(): _set_status_playing(false))
+	var state_hint := Label.new()
+	state_hint.text = "状态持续保留，选择“无状态”解除。凝滞和冰冻定格当前姿势，仍可拖动动作时间挑选姿态。"
+	state_hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	states.add_child(state_hint)
 
 func _build_effect_controls(parent: Node) -> void:
 	var box := _section(parent, "添加与编辑独立特效")
@@ -491,9 +523,12 @@ func _add_member(card_id: String, team: int, form: int, first: bool) -> void:
 				bottom = minf(bottom, staging.to_local(mesh.to_global(p)).y)
 		if is_finite(bottom): model.position.y += CardDB.AIR_VISUAL_ELEVATION - bottom
 	if model.has_method("prepare_visual_animations"): model.call("prepare_visual_animations")
-	var player := model.find_child("AnimationPlayer", true, false) as AnimationPlayer
+	var resources := ModelVisualResources.new()
+	var player := resources.bind_model(model)
+	resources.configure_frost(bool(stats.get("is_building", false)))
 	var clips := player.get_animation_list() if player != null else PackedStringArray()
-	var member := {"model": staging, "player": player, "card_id": card_id, "team": team, "form": form, "clips": clips, "clip": "", "time": 0.0}
+	var member := {"model": staging, "player": player, "resources": resources, "card_id": card_id, "team": team, "form": form, "clips": clips, "clip": "", "time": 0.0,
+		"status": "none", "status_time": 0.0, "status_playing": false}
 	var idle = stats.get("visual_animations", {}).get("idle", "")
 	if idle is Array: idle = idle[0] if not idle.is_empty() else ""
 	member["clip"] = String(idle) if String(idle) in clips else _preferred_clip(clips)
@@ -518,7 +553,10 @@ func _refresh_member_ui() -> void:
 	for index in _members.size(): _member_option.add_item("%02d · %s" % [index + 1, _members[index].card_id])
 	if _selected_member >= 0 and _selected_member < _member_option.item_count: _member_option.select(_selected_member)
 	_clip_option.clear()
+	_member_status.disabled = _selected_member < 0 or _selected_member >= _members.size()
 	if _selected_member < 0 or _selected_member >= _members.size():
+		_member_status.select(0)
+		_status_time.set_value_no_signal(0.0)
 		_time_label.text = "尚未选择单位"
 		return
 	var member: Dictionary = _members[_selected_member]
@@ -530,6 +568,8 @@ func _refresh_member_ui() -> void:
 	_time_slider.max_value = maxf(duration, 0.001)
 	_time_slider.set_value_no_signal(clampf(float(member.time), 0.0, _time_slider.max_value))
 	_time_label.text = "动作：%.3f / %.3f 秒" % [float(member.time), _time_slider.max_value]
+	_member_status.select(MEMBER_STATES.find(member.status))
+	_status_time.set_value_no_signal(member.status_time)
 	_sync_member_transform_controls()
 
 func _select_member(index: int) -> void:
@@ -608,10 +648,35 @@ func _seek_member(value: float) -> void:
 
 func _set_member_playing(playing: bool) -> void:
 	if _selected_member < 0 or _selected_member >= _members.size(): return
-	var player: AnimationPlayer = _members[_selected_member].player
+	var member: Dictionary = _members[_selected_member]
+	if playing and member.status in ["stasis", "freeze"]:
+		_status.text = "凝滞 / 冰冻保持姿势；可拖动动作时间选姿，或解除状态后播放"
+		return
+	var player: AnimationPlayer = member.player
 	if player == null: return
 	if playing: player.play(String(_members[_selected_member].clip))
 	else: player.pause()
+
+func _set_member_status(state: String) -> void:
+	if _selected_member < 0 or _selected_member >= _members.size(): return
+	var member: Dictionary = _members[_selected_member]
+	member.status = state
+	member.status_playing = false
+	if state in ["stasis", "freeze"] and member.player != null:
+		if member.player.is_playing(): member.time = member.player.current_animation_position
+		member.player.pause()
+	member.resources.apply_overlays(false, state == "freeze", false, state == "stasis")
+	_refresh_member_ui()
+	_status.text = "%s：%s（手动解除前持续保留）" % [member.card_id, MEMBER_STATE_NAMES[MEMBER_STATES.find(state)]]
+
+func _seek_member_status(value: float) -> void:
+	if _selected_member < 0 or _selected_member >= _members.size(): return
+	_members[_selected_member].status_time = value
+	_members[_selected_member].status_playing = false
+
+func _set_status_playing(playing: bool) -> void:
+	if _selected_member < 0 or _selected_member >= _members.size(): return
+	_members[_selected_member].status_playing = playing and _members[_selected_member].status == "stun"
 
 func _add_effect(kind: String) -> void:
 	var team := _effect_team.selected
@@ -804,6 +869,10 @@ func _pointer_to_ground(point: Vector2) -> Vector3:
 
 func _process(delta: float) -> bool:
 	if _capture_busy: return false
+	for member in _members:
+		if member.status_playing:
+			member.status_time = fposmod(member.status_time + delta, 1.0)
+			if _selected_member >= 0 and member == _members[_selected_member]: _status_time.set_value_no_signal(member.status_time)
 	for entry in _effects:
 		if entry.playing:
 			entry.time = minf(entry.time + delta, entry.duration)
@@ -900,6 +969,7 @@ func _capture() -> void:
 	_capture_busy = true
 	# 暂停所有对象，输出与构图预览共享同一张固定分辨率纹理。
 	for member in _members:
+		member.status_playing = false
 		if member.player != null:
 			if member.player.is_playing(): member.time = member.player.current_animation_position
 			member.player.pause()
@@ -956,6 +1026,8 @@ func _restore_scene() -> void:
 		member.default_position = entry.default_position
 		member.default_yaw = entry.default_yaw
 		_apply_member_clip(member, entry.clip, entry.time)
+		_set_member_status(entry.get("status", "none"))
+		member.status_time = float(entry.get("status_time", 0.0))
 	for entry in state.effects:
 		var effect: Dictionary = entry.duplicate(true)
 		effect.node = null
