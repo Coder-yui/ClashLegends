@@ -1,7 +1,7 @@
 [
   {
     "path": "res://assets/audio/units/corki/attack_launch0.wav",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/attack_launch0.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/attack_launch0.wav",
     "sha256": "c5c605bb506487caa1583093c3f527827284fef1ca4733cd8fc84d29f36adc0c",
     "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
     "duration": 1.945827664399093,
@@ -16,7 +16,7 @@
   },
   {
     "path": "res://assets/audio/units/corki/active_big_start0.wav",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_big_start0.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_big_start0.wav",
     "sha256": "9afbe2f406233cbe9d656ee6de337733cd43692efd35e2f3515ddb48e859e638",
     "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
     "duration": 0.6551927437641724,
@@ -30,7 +30,7 @@
     "txtp_sha256": "3d18a2d8836cde41985b5d8ac8d1fe6aa50f198901794a49d0289a0eb9799424",
     "equivalent_sources": [
       {
-        "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_start0.wav",
+        "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_start0.wav",
         "sha256": "9afbe2f406233cbe9d656ee6de337733cd43692efd35e2f3515ddb48e859e638",
         "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
         "duration": 0.6551927437641724,
@@ -48,7 +48,7 @@
   },
   {
     "path": "res://assets/audio/units/corki/active_big_start1.wav",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_big_start1.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_big_start1.wav",
     "sha256": "773ff3aa1a0765e20cc43bb12e7a059a0880229dbeee927d6c38b99c681bb231",
     "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
     "duration": 0.5833106575963719,
@@ -62,7 +62,7 @@
     "txtp_sha256": "903564d288d3d6605713b4748ea30ac68303a0e63c7adddd7ee58678ff77b73b",
     "equivalent_sources": [
       {
-        "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_start1.wav",
+        "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_start1.wav",
         "sha256": "773ff3aa1a0765e20cc43bb12e7a059a0880229dbeee927d6c38b99c681bb231",
         "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
         "duration": 0.5833106575963719,
@@ -80,7 +80,7 @@
   },
   {
     "path": "res://assets/audio/units/corki/active_big_start2.wav",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_big_start2.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_big_start2.wav",
     "sha256": "28a350545b0e879925bce1f83becd6f53b987878c0af48ae2584e3cc8f730a4a",
     "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
     "duration": 0.7499773242630385,
@@ -94,7 +94,7 @@
     "txtp_sha256": "1950f0810623f966420182607a33f6cfc4f450a53ac72a7c1271f9962442f2f7",
     "equivalent_sources": [
       {
-        "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_start2.wav",
+        "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_start2.wav",
         "sha256": "28a350545b0e879925bce1f83becd6f53b987878c0af48ae2584e3cc8f730a4a",
         "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
         "duration": 0.7499773242630385,
@@ -112,7 +112,7 @@
   },
   {
     "path": "res://assets/audio/units/corki/active_release0.wav",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_release0.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_release0.wav",
     "sha256": "c7873466cffec27c81550f079896d1be34161ec4068fc5a3a4a730e3d5b0ed5a",
     "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
     "duration": 2.136439909297052,
@@ -127,7 +127,7 @@
   },
   {
     "path": "res://assets/audio/units/corki/active_hit0.wav",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_hit0.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_hit0.wav",
     "sha256": "194abc179ce6d8e75160c3bfdbcf5696369bd6dce18c4b1943e305a098922bd7",
     "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
     "duration": 2.4395691609977326,
@@ -142,7 +142,7 @@
   },
   {
     "path": "res://assets/audio/units/corki/active_hit1.wav",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_hit1.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_hit1.wav",
     "sha256": "59c62c6e54b93965f53cae15f4c9f7e814808b970421fac0db1757a15605e517",
     "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
     "duration": 2.4395691609977326,
@@ -157,7 +157,7 @@
   },
   {
     "path": "res://assets/audio/units/corki/active_hit2.wav",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_hit2.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_hit2.wav",
     "sha256": "fce8e54b5c69d5b16aa8d359a3bafb0131434fdbcbd064dde32688802a8047c2",
     "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
     "duration": 2.4395691609977326,
@@ -172,7 +172,7 @@
   },
   {
     "path": "res://assets/audio/units/corki/active_big_release0.wav",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_big_release0.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_big_release0.wav",
     "sha256": "158cd0503fca4e02367a244416292b4bc15c3de832823831fb386079f20f2fe5",
     "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
     "duration": 3.166643990929705,
@@ -187,7 +187,7 @@
   },
   {
     "path": "res://assets/audio/units/corki/active_big_hit0.wav",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_big_hit0.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/active_big_hit0.wav",
     "sha256": "f8a310d80f412598bf5dca2a003ffe2d77451a75c71ee4ab391b730c15feb0da",
     "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
     "duration": 3.9999773242630385,
@@ -202,7 +202,7 @@
   },
   {
     "path": "res://assets/audio/units/corki/attack_hit0.wav",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/attack_hit0.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/attack_hit0.wav",
     "sha256": "bfde318fe339ab13fc4f8a31ce22f0bdb56832e15a34c8a86e3b6c59d62196dd",
     "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
     "duration": 1.2124943310657597,
@@ -217,7 +217,7 @@
   },
   {
     "path": "res://assets/audio/units/corki/deploy_ace.wav",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/choose/plugins/rcp-be-lol-game-data/global/zh_cn/v1/champion-choose-vo/42.ogg",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/库奇/choose/plugins/rcp-be-lol-game-data/global/zh_cn/v1/champion-choose-vo/42.ogg",
     "sha256": "9959925f5f69a83eed0178a1abc2a3f1bf82fe06b7334b805135812ace279e31",
     "duration": 3.388480725623583,
     "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
@@ -230,7 +230,7 @@
   },
   {
     "path": "res://assets/audio/units/corki/deploy_ready.wav",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/voice-loaded/wav/Play_vo_Corki_CorkiLoaded_cast {r2}.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/库奇/voice-loaded/wav/Play_vo_Corki_CorkiLoaded_cast {r2}.wav",
     "sha256": "912cc8d7afed6caa01b37781a80da6ef5126574034f80fae8582bc4fc4d982b1",
     "duration": 1.2292517006802721,
     "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
@@ -245,7 +245,7 @@
   },
   {
     "path": "res://assets/audio/units/corki/deploy_burning.wav",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/voice-move/wav/Play_vo_Corki_Move2DStandard {r1}.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/库奇/voice-move/wav/Play_vo_Corki_Move2DStandard {r1}.wav",
     "sha256": "8538c7186cd7092fe60ea656009cbb7a5558cc48a069a600fb424341d14cff2f",
     "duration": 1.976984126984127,
     "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
@@ -260,7 +260,7 @@
   },
   {
     "path": "res://assets/audio/units/corki/death0.wav",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/death0.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/库奇/death0.wav",
     "sha256": "2cf451febf6111e95a38797c9b7c80ddb927add11a2e7d8cdc901e9a8159ec85",
     "duration": 1.0908390022675738,
     "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
@@ -275,7 +275,7 @@
   },
   {
     "path": "res://assets/audio/units/corki/death1.wav",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/death1.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/库奇/death1.wav",
     "sha256": "313278abc4780bd542f27f474014d23ed52707dca173fdba970760a731c38729",
     "duration": 1.9457596371882087,
     "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
@@ -290,7 +290,7 @@
   },
   {
     "path": "res://assets/audio/units/corki/death2.wav",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/death2.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/库奇/death2.wav",
     "sha256": "559f3253a0279589dc2845a97bfa76f8b3e3a804515c2b8c1630c80fa4213ba0",
     "duration": 1.3204988662131518,
     "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
@@ -305,7 +305,7 @@
   },
   {
     "path": "res://assets/audio/units/corki/attack_swing0.wav",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/attack_swing0.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/库奇/弹体音频复核/attack_swing0.wav",
     "sha256": "523786769bd3cd854cb46e74361a1b18ab154e311dc2cd2f383b8df12efebe5a",
     "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
     "duration": 0.6551927437641724,

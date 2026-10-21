@@ -55,7 +55,7 @@ func _capture() -> void:
 		quit(1)
 		return
 	root.size = Vector2i(720, 1400)
-	root.title = "Clash Legends — Rift Arena"
+	root.title = "ClashLegends — Rift Arena"
 	RenderingServer.set_default_clear_color(STUDIO_BACKGROUND)
 	_output = ProjectSettings.globalize_path(OUTPUT_PATH)
 	if DirAccess.make_dir_recursive_absolute(_output) != OK:

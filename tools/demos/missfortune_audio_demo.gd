@@ -1,6 +1,6 @@
 extends SceneTree
 ## 手动试听：Godot --path . --script tools/demos/missfortune_audio_demo.gd
-## 录音输出到 /Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/预览与验证/clash_missfortune_audio.wav，覆盖普攻、W 和死亡。
+## 录音输出到 /Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/预览与验证/clash_missfortune_audio.wav，覆盖普攻、W 和死亡。
 
 func _initialize() -> void:
 	_run.call_deferred()

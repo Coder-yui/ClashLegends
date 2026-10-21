@@ -3,8 +3,8 @@
     "file": "play_sfx_azir_azirbasicattack2_oncast_r.wav",
     "event": "Play_sfx_Azir_AzirBasicAttack2_OnCast",
     "event_id": 1245410782,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/沙漠皇帝/audio/azir/event_wav/Play_sfx_Azir_AzirBasicAttack2_OnCast {r}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/沙漠皇帝/audio/azir/txtp/Play_sfx_Azir_AzirBasicAttack2_OnCast {r}.txtp",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠皇帝/audio/azir/event_wav/Play_sfx_Azir_AzirBasicAttack2_OnCast {r}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠皇帝/audio/azir/txtp/Play_sfx_Azir_AzirBasicAttack2_OnCast {r}.txtp",
     "media_ids": [
       34538628,
       114580843,
@@ -24,8 +24,8 @@
       {
         "event": "Play_sfx_Azir_AzirBasicAttack_OnCast",
         "event_id": 4201699334,
-        "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/沙漠皇帝/audio/azir/event_wav/Play_sfx_Azir_AzirBasicAttack_OnCast {r} {d}.wav",
-        "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/沙漠皇帝/audio/azir/txtp/Play_sfx_Azir_AzirBasicAttack_OnCast {r} {d}.txtp",
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠皇帝/audio/azir/event_wav/Play_sfx_Azir_AzirBasicAttack_OnCast {r} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠皇帝/audio/azir/txtp/Play_sfx_Azir_AzirBasicAttack_OnCast {r} {d}.txtp",
         "media_ids": [
           34538628,
           114580843,
@@ -49,8 +49,8 @@
     "file": "play_sfx_azir_azirbasicattack2_onhit_r1.wav",
     "event": "Play_sfx_Azir_AzirBasicAttack2_OnHit",
     "event_id": 2462287466,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/沙漠皇帝/audio/azir/event_wav/Play_sfx_Azir_AzirBasicAttack2_OnHit {r1}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/沙漠皇帝/audio/azir/txtp/Play_sfx_Azir_AzirBasicAttack2_OnHit {r1}.txtp",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠皇帝/audio/azir/event_wav/Play_sfx_Azir_AzirBasicAttack2_OnHit {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠皇帝/audio/azir/txtp/Play_sfx_Azir_AzirBasicAttack2_OnHit {r1}.txtp",
     "media_ids": [
       20485220,
       200058223,
@@ -65,8 +65,8 @@
       {
         "event": "Play_sfx_Azir_AzirBasicAttack_OnHit",
         "event_id": 458923746,
-        "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/沙漠皇帝/audio/azir/event_wav/Play_sfx_Azir_AzirBasicAttack_OnHit {r1} {d}.wav",
-        "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/沙漠皇帝/audio/azir/txtp/Play_sfx_Azir_AzirBasicAttack_OnHit {r1} {d}.txtp",
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠皇帝/audio/azir/event_wav/Play_sfx_Azir_AzirBasicAttack_OnHit {r1} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠皇帝/audio/azir/txtp/Play_sfx_Azir_AzirBasicAttack_OnHit {r1} {d}.txtp",
         "media_ids": [
           20485220,
           200058223,
@@ -85,8 +85,8 @@
     "file": "play_sfx_azir_azirbasicattack2_onhit_r2.wav",
     "event": "Play_sfx_Azir_AzirBasicAttack2_OnHit",
     "event_id": 2462287466,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/沙漠皇帝/audio/azir/event_wav/Play_sfx_Azir_AzirBasicAttack2_OnHit {r2}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/沙漠皇帝/audio/azir/txtp/Play_sfx_Azir_AzirBasicAttack2_OnHit {r2}.txtp",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠皇帝/audio/azir/event_wav/Play_sfx_Azir_AzirBasicAttack2_OnHit {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠皇帝/audio/azir/txtp/Play_sfx_Azir_AzirBasicAttack2_OnHit {r2}.txtp",
     "media_ids": [
       20485220,
       200058223,
@@ -101,8 +101,8 @@
       {
         "event": "Play_sfx_Azir_AzirBasicAttack_OnHit",
         "event_id": 458923746,
-        "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/沙漠皇帝/audio/azir/event_wav/Play_sfx_Azir_AzirBasicAttack_OnHit {r2} {d}.wav",
-        "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/沙漠皇帝/audio/azir/txtp/Play_sfx_Azir_AzirBasicAttack_OnHit {r2} {d}.txtp",
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠皇帝/audio/azir/event_wav/Play_sfx_Azir_AzirBasicAttack_OnHit {r2} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠皇帝/audio/azir/txtp/Play_sfx_Azir_AzirBasicAttack_OnHit {r2} {d}.txtp",
         "media_ids": [
           20485220,
           200058223,
@@ -121,8 +121,8 @@
     "file": "play_sfx_azir_base_death3d_cast.wav",
     "event": "Play_sfx_Azir_Base_Death3D_cast",
     "event_id": 2467032946,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/沙漠皇帝/audio/azir/event_wav/Play_sfx_Azir_Base_Death3D_cast.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/沙漠皇帝/audio/azir/txtp/Play_sfx_Azir_Base_Death3D_cast.txtp",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠皇帝/audio/azir/event_wav/Play_sfx_Azir_Base_Death3D_cast.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/沙漠皇帝/audio/azir/txtp/Play_sfx_Azir_Base_Death3D_cast.txtp",
     "media_ids": [
       783145165
     ],

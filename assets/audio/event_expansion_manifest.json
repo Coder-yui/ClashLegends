@@ -3,7 +3,7 @@
     "file": "assets/audio/auditions/twisted_fate/play_sfx_twistedfate_destiny_oncast_r1.wav",
     "event": "Play_sfx_TwistedFate_Destiny_OnCast",
     "event_id": 3466689298,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Destiny_OnCast {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Destiny_OnCast {r1}.txtp",
     "duration": 3.494988662131519,
     "media_ids": [
       349208112,
@@ -16,7 +16,7 @@
     "file": "assets/audio/auditions/twisted_fate/play_sfx_twistedfate_destiny_oncast_r2.wav",
     "event": "Play_sfx_TwistedFate_Destiny_OnCast",
     "event_id": 3466689298,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Destiny_OnCast {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Destiny_OnCast {r2}.txtp",
     "duration": 3.641655328798186,
     "media_ids": [
       349208112,
@@ -29,7 +29,7 @@
     "file": "assets/audio/auditions/twisted_fate/play_sfx_twistedfate_destiny_onbuffactivate_r1.wav",
     "event": "Play_sfx_TwistedFate_Destiny_OnBuffActivate",
     "event_id": 423395175,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Destiny_OnBuffActivate {r} {m}.txtp",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Destiny_OnBuffActivate {r} {m}.txtp",
     "duration": 5.029319727891156,
     "media_ids": [
       9393280,
@@ -45,7 +45,7 @@
     "file": "assets/audio/auditions/twisted_fate/play_sfx_twistedfate_destiny_onbuffdeactivate_r1.wav",
     "event": "Play_sfx_TwistedFate_Destiny_OnBuffDeactivate",
     "event_id": 2406561102,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Destiny_OnBuffDeactivate {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Destiny_OnBuffDeactivate {r1}.txtp",
     "duration": 0.7126530612244898,
     "media_ids": [
       27411234,
@@ -59,7 +59,7 @@
     "file": "assets/audio/auditions/twisted_fate/play_sfx_twistedfate_destiny_onbuffdeactivate_r2.wav",
     "event": "Play_sfx_TwistedFate_Destiny_OnBuffDeactivate",
     "event_id": 2406561102,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Destiny_OnBuffDeactivate {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Destiny_OnBuffDeactivate {r2}.txtp",
     "duration": 0.8214965986394558,
     "media_ids": [
       27411234,
@@ -73,7 +73,7 @@
     "file": "assets/audio/auditions/twisted_fate/play_sfx_twistedfate_destiny_onbuffdeactivate_r3.wav",
     "event": "Play_sfx_TwistedFate_Destiny_OnBuffDeactivate",
     "event_id": 2406561102,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Destiny_OnBuffDeactivate {r3}.txtp",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Destiny_OnBuffDeactivate {r3}.txtp",
     "duration": 0.9709977324263038,
     "media_ids": [
       27411234,
@@ -87,7 +87,7 @@
     "file": "assets/audio/auditions/twisted_fate/play_sfx_twistedfate_gate_onbuffactivate_r1.wav",
     "event": "Play_sfx_TwistedFate_Gate_OnBuffActivate",
     "event_id": 1984802836,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Gate_OnBuffActivate {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Gate_OnBuffActivate {r1}.txtp",
     "duration": 1.8906575963718821,
     "media_ids": [
       136098865,
@@ -101,7 +101,7 @@
     "file": "assets/audio/auditions/twisted_fate/play_sfx_twistedfate_gate_onbuffactivate_r2.wav",
     "event": "Play_sfx_TwistedFate_Gate_OnBuffActivate",
     "event_id": 1984802836,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Gate_OnBuffActivate {r2}.txtp",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Gate_OnBuffActivate {r2}.txtp",
     "duration": 1.9289795918367347,
     "media_ids": [
       136098865,
@@ -115,7 +115,7 @@
     "file": "assets/audio/auditions/twisted_fate/play_sfx_twistedfate_gate_onbuffactivate_r3.wav",
     "event": "Play_sfx_TwistedFate_Gate_OnBuffActivate",
     "event_id": 1984802836,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Gate_OnBuffActivate {r3}.txtp",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/twistedfate/txtp/Play_sfx_TwistedFate_Gate_OnBuffActivate {r3}.txtp",
     "duration": 1.7533333333333334,
     "media_ids": [
       136098865,

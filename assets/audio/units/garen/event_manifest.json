@@ -655,10 +655,10 @@
     "txtp_sha256": "0074b874358629636e2be7534bd2aaba1a9a26794e818172d68c415cf316c0da"
   },
   {
-    "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/garen/play_vo_garen_attack2dgeneral_r1_zh_cn.wav",
+    "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/garen/play_vo_garen_attack2dgeneral_r1_zh_cn.wav",
     "event": "Play_vo_Garen_Attack2DGeneral",
     "event_id": 2975547734,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/garen_select_review_20260914/txtp/Play_vo_Garen_Attack2DGeneral {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/garen_select_review_20260914/txtp/Play_vo_Garen_Attack2DGeneral {r1}.txtp",
     "media_ids": [
       235912900,
       1821508110,

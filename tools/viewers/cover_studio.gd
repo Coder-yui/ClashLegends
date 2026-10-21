@@ -91,7 +91,7 @@ var _pan_dragging := false
 func _initialize() -> void:
 	# 项目主窗口是 720×1400 竖屏；封面拍摄台需要预览区和右侧控制面板并排显示。
 	# 在构建界面前切换到独立横向工具窗口，避免控制面板被挤到窗口外。
-	root.title = "Clash Legends · 真实峡谷封面摄影台"
+	root.title = "ClashLegends · 真实峡谷封面摄影台"
 	root.size = Vector2i(1280, 900)
 	root.content_scale_size = Vector2i(1280, 900)
 	root.min_size = Vector2i(1120, 760)

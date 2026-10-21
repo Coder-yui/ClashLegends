@@ -4,8 +4,8 @@ from original_gain import render_fresh
 import hashlib,json,re,subprocess,os
 from death_audio_envelope import apply_death_envelope
 ROOT=Path(__file__).resolve().parents[2]
-BASE=Path('/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch')
-SHARED=Path('/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review')
+BASE=Path('/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch')
+SHARED=Path('/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review')
 def event_hash(s):
  h=2166136261
  for c in s.lower().encode():h=((h*16777619)^c)&0xffffffff

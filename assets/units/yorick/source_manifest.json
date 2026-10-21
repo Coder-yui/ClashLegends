@@ -1,7 +1,7 @@
 {
-  "model_source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/01-待开发/卡牌模型/牧魂人 (1).glb",
+  "model_source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/01-待开发/卡牌模型/牧魂人 (1).glb",
   "model_sha256": "ec2a6458f2da873a2341b619f3a54c2116853e5189167a3a2848d0f8bdb2c857",
-  "cape_source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/cape-definition.txt",
+  "cape_source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/牧魂人/cape-definition.txt",
   "layers": [
     {
       "name": "Hair_Avatar_4",
@@ -25,25 +25,25 @@
   "attack_mapping": "castFrame 10 at 30fps / 1.833333s * 1.5s = 0.272727s; first_hit 0.27, 20Hz actual 0.30s",
   "textures": [
     {
-      "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/source/assets/characters/yorick/skins/base/particles/yorick_base_idle_cape_tex.tex",
+      "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/牧魂人/source/assets/characters/yorick/skins/base/particles/yorick_base_idle_cape_tex.tex",
       "source_sha256": "fa02c892083b88ff4dbf910d6e3a85b49fef525907ebd281b9b9ae8b04c56857",
       "file": "assets/units/yorick/cape_flow.png",
       "sha256": "26bd700f76b4cef9e8c9f98bd0d7b3cb2cfe41d5f1e8422924288c89b072b464"
     },
     {
-      "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/source/assets/characters/yorick/skins/base/particles/yorick_base_cape_color.tex",
+      "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/牧魂人/source/assets/characters/yorick/skins/base/particles/yorick_base_cape_color.tex",
       "source_sha256": "eee726e7cb6d516e48d22168810ca2fd10968f0b128710f23cf885892eec0343",
       "file": "assets/units/yorick/cape_color.png",
       "sha256": "ebc11a36be76e9d42f5bc2a255ee5c21ccaf7d3e672490d8274b590d7cf0fc1b"
     },
     {
-      "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/source/assets/characters/yorick/skins/base/yorickloadscreen.tex",
+      "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/牧魂人/source/assets/characters/yorick/skins/base/yorickloadscreen.tex",
       "source_sha256": "925e03b86a012a516454c617c910b5f3a724b800fd3c6c546f339cb3a59fbb70",
       "file": "assets/cards/yorick_loading.png",
       "sha256": "06c4c2d929653096c27b9e086973382dbbfdbb1f83ff7dfbfe999ed51271a45b"
     }
   ],
-  "archived_model_source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/牧魂人/源模型/牧魂人 (1).glb",
+  "archived_model_source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/牧魂人/源模型/牧魂人 (1).glb",
   "cape_path": {
     "rig_source": "core/data/characters/yorick/skins/skin0.ritobin",
     "animation_source": "core/data/characters/yorick/animations/skin0.ritobin",

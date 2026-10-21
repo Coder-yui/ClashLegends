@@ -1,7 +1,7 @@
 extends SceneTree
 ## 从皮克斯 3D 包装场景拍摄多单位卡面。
 ## 运行：Godot --path . --script tools/capture/capture_pix_card_art.gd
-## 动作选片：追加 -- --inspect-attacks，输出 /Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/预览与验证/pix_attack_contact_sheet.png。
+## 动作选片：追加 -- --inspect-attacks，输出 /Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/预览与验证/pix_attack_contact_sheet.png。
 
 const PIX_SCENE := "res://assets/units/pix/pix_view.tscn"
 const RENDER_SIZE := Vector2i(616, 1120)

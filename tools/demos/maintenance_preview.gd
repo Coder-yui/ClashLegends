@@ -1,5 +1,5 @@
 extends SceneTree
-## 实际渲染 QA 工具，不是自动 mechanics 入口。截图输出 /Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/预览与验证/clash-maintenance-render。
+## 实际渲染 QA 工具，不是自动 mechanics 入口。截图输出 /Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/预览与验证/clash-maintenance-render。
 func _initialize() -> void:
 	call_deferred("_run")
 

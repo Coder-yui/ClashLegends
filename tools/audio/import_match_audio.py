@@ -3,7 +3,7 @@ from pathlib import Path
 from original_gain import render_fresh
 import json,re,subprocess,wave,hashlib,runpy
 ROOT=Path(__file__).resolve().parents[2]
-LIB=Path('/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工')
+LIB=Path('/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工')
 SELECT={
 'victory':('胜利 · 已接入结尾','Play_vo_Announcer_Global_Female1_OnVictory'),
 'defeat':('失败 · 已接入结尾','Play_vo_Announcer_Global_Female1_OnDefeat'),

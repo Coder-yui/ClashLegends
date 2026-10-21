@@ -28,7 +28,7 @@ def main():
     args = parser.parse_args()
     output = ROOT / 'ClashLegends-开发素材库/04-中间产物/构建与验证/macos' / datetime.now().strftime('%Y%m%d-%H%M%S-%f')
     output.mkdir(parents=True)
-    app = output / 'Clash Legends.app'
+    app = output / 'ClashLegends.app'
     report = {'schema': 1, 'identity_before': verify.identity(ROOT), 'steps': [],
               'target': 'current M5 Mac tested / universal binary / local testing / ad-hoc signing', 'app': str(app)}
     try:

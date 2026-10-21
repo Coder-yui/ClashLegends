@@ -3,8 +3,8 @@
     "file": "play_sfx_nocturne_nocturnebasicattack2_oncast_r1.wav",
     "event": "Play_sfx_Nocturne_NocturneBasicAttack2_OnCast",
     "event_id": 1589380390,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneBasicAttack2_OnCast {r1}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneBasicAttack2_OnCast {r1}.txtp",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneBasicAttack2_OnCast {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneBasicAttack2_OnCast {r1}.txtp",
     "media_ids": [
       168764120,
       264243793,
@@ -19,8 +19,8 @@
       {
         "event": "Play_sfx_Nocturne_NocturneBasicAttack_OnCast",
         "event_id": 3436667806,
-        "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneBasicAttack_OnCast {r1} {d}.wav",
-        "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneBasicAttack_OnCast {r1} {d}.txtp",
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneBasicAttack_OnCast {r1} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneBasicAttack_OnCast {r1} {d}.txtp",
         "media_ids": [
           168764120,
           264243793,
@@ -39,8 +39,8 @@
     "file": "play_sfx_nocturne_nocturnebasicattack2_oncast_r2.wav",
     "event": "Play_sfx_Nocturne_NocturneBasicAttack2_OnCast",
     "event_id": 1589380390,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneBasicAttack2_OnCast {r2}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneBasicAttack2_OnCast {r2}.txtp",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneBasicAttack2_OnCast {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneBasicAttack2_OnCast {r2}.txtp",
     "media_ids": [
       168764120,
       264243793,
@@ -55,8 +55,8 @@
       {
         "event": "Play_sfx_Nocturne_NocturneBasicAttack_OnCast",
         "event_id": 3436667806,
-        "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneBasicAttack_OnCast {r2} {d}.wav",
-        "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneBasicAttack_OnCast {r2} {d}.txtp",
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneBasicAttack_OnCast {r2} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneBasicAttack_OnCast {r2} {d}.txtp",
         "media_ids": [
           168764120,
           264243793,
@@ -75,8 +75,8 @@
     "file": "play_sfx_nocturne_nocturnebasicattack2_oncast_r3.wav",
     "event": "Play_sfx_Nocturne_NocturneBasicAttack2_OnCast",
     "event_id": 1589380390,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneBasicAttack2_OnCast {r3}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneBasicAttack2_OnCast {r3}.txtp",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneBasicAttack2_OnCast {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneBasicAttack2_OnCast {r3}.txtp",
     "media_ids": [
       168764120,
       264243793,
@@ -91,8 +91,8 @@
       {
         "event": "Play_sfx_Nocturne_NocturneBasicAttack_OnCast",
         "event_id": 3436667806,
-        "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneBasicAttack_OnCast {r3} {d}.wav",
-        "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneBasicAttack_OnCast {r3} {d}.txtp",
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneBasicAttack_OnCast {r3} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneBasicAttack_OnCast {r3} {d}.txtp",
         "media_ids": [
           168764120,
           264243793,
@@ -111,8 +111,8 @@
     "file": "play_sfx_nocturne_nocturneumbrabladesattack_oncast_r1.wav",
     "event": "Play_sfx_Nocturne_NocturneUmbraBladesAttack_OnCast",
     "event_id": 2813193866,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneUmbraBladesAttack_OnCast {r1}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneUmbraBladesAttack_OnCast {r1}.txtp",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneUmbraBladesAttack_OnCast {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneUmbraBladesAttack_OnCast {r1}.txtp",
     "media_ids": [
       104188284,
       398246198,
@@ -128,8 +128,8 @@
     "file": "play_sfx_nocturne_nocturneumbrabladesattack_oncast_r2.wav",
     "event": "Play_sfx_Nocturne_NocturneUmbraBladesAttack_OnCast",
     "event_id": 2813193866,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneUmbraBladesAttack_OnCast {r2}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneUmbraBladesAttack_OnCast {r2}.txtp",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneUmbraBladesAttack_OnCast {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneUmbraBladesAttack_OnCast {r2}.txtp",
     "media_ids": [
       104188284,
       398246198,
@@ -145,8 +145,8 @@
     "file": "play_sfx_nocturne_nocturneumbrabladesattack_oncast_r3.wav",
     "event": "Play_sfx_Nocturne_NocturneUmbraBladesAttack_OnCast",
     "event_id": 2813193866,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneUmbraBladesAttack_OnCast {r3}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneUmbraBladesAttack_OnCast {r3}.txtp",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneUmbraBladesAttack_OnCast {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneUmbraBladesAttack_OnCast {r3}.txtp",
     "media_ids": [
       104188284,
       398246198,
@@ -162,8 +162,8 @@
     "file": "play_sfx_nocturne_nocturnebasicattack2_onhit_1559186049_1153642577_r1.wav",
     "event": "Play_sfx_Nocturne_NocturneBasicAttack2_OnHit",
     "event_id": 2236238210,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneBasicAttack2_OnHit [1559186049=1153642577] {r1}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneBasicAttack2_OnHit [1559186049=1153642577] {r1}.txtp",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneBasicAttack2_OnHit [1559186049=1153642577] {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneBasicAttack2_OnHit [1559186049=1153642577] {r1}.txtp",
     "media_ids": [
       7569282,
       16571779,
@@ -178,8 +178,8 @@
       {
         "event": "Play_sfx_Nocturne_NocturneBasicAttack_OnHit",
         "event_id": 2171979562,
-        "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneBasicAttack_OnHit [1559186049=1153642577] {r1} {d}.wav",
-        "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneBasicAttack_OnHit [1559186049=1153642577] {r1} {d}.txtp",
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneBasicAttack_OnHit [1559186049=1153642577] {r1} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneBasicAttack_OnHit [1559186049=1153642577] {r1} {d}.txtp",
         "media_ids": [
           7569282,
           16571779,
@@ -198,8 +198,8 @@
     "file": "play_sfx_nocturne_nocturnebasicattack2_onhit_1559186049_1153642577_r2.wav",
     "event": "Play_sfx_Nocturne_NocturneBasicAttack2_OnHit",
     "event_id": 2236238210,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneBasicAttack2_OnHit [1559186049=1153642577] {r2}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneBasicAttack2_OnHit [1559186049=1153642577] {r2}.txtp",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneBasicAttack2_OnHit [1559186049=1153642577] {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneBasicAttack2_OnHit [1559186049=1153642577] {r2}.txtp",
     "media_ids": [
       7569282,
       16571779,
@@ -214,8 +214,8 @@
       {
         "event": "Play_sfx_Nocturne_NocturneBasicAttack_OnHit",
         "event_id": 2171979562,
-        "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneBasicAttack_OnHit [1559186049=1153642577] {r2} {d}.wav",
-        "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneBasicAttack_OnHit [1559186049=1153642577] {r2} {d}.txtp",
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneBasicAttack_OnHit [1559186049=1153642577] {r2} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneBasicAttack_OnHit [1559186049=1153642577] {r2} {d}.txtp",
         "media_ids": [
           7569282,
           16571779,
@@ -234,8 +234,8 @@
     "file": "play_sfx_nocturne_nocturnebasicattack2_onhit_1559186049_1153642577_r3.wav",
     "event": "Play_sfx_Nocturne_NocturneBasicAttack2_OnHit",
     "event_id": 2236238210,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneBasicAttack2_OnHit [1559186049=1153642577] {r3}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneBasicAttack2_OnHit [1559186049=1153642577] {r3}.txtp",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneBasicAttack2_OnHit [1559186049=1153642577] {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneBasicAttack2_OnHit [1559186049=1153642577] {r3}.txtp",
     "media_ids": [
       7569282,
       16571779,
@@ -250,8 +250,8 @@
       {
         "event": "Play_sfx_Nocturne_NocturneBasicAttack_OnHit",
         "event_id": 2171979562,
-        "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneBasicAttack_OnHit [1559186049=1153642577] {r3} {d}.wav",
-        "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneBasicAttack_OnHit [1559186049=1153642577] {r3} {d}.txtp",
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneBasicAttack_OnHit [1559186049=1153642577] {r3} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneBasicAttack_OnHit [1559186049=1153642577] {r3} {d}.txtp",
         "media_ids": [
           7569282,
           16571779,
@@ -270,8 +270,8 @@
     "file": "play_sfx_nocturne_nocturneumbrabladesattack_hit_r1_d.wav",
     "event": "Play_sfx_Nocturne_NocturneUmbraBladesAttack_hit",
     "event_id": 3408196235,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneUmbraBladesAttack_hit {r1} {d}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneUmbraBladesAttack_hit {r1} {d}.txtp",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneUmbraBladesAttack_hit {r1} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneUmbraBladesAttack_hit {r1} {d}.txtp",
     "media_ids": [
       7569282,
       16571779,
@@ -287,8 +287,8 @@
     "file": "play_sfx_nocturne_nocturneumbrabladesattack_hit_r2_d.wav",
     "event": "Play_sfx_Nocturne_NocturneUmbraBladesAttack_hit",
     "event_id": 3408196235,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneUmbraBladesAttack_hit {r2} {d}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneUmbraBladesAttack_hit {r2} {d}.txtp",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneUmbraBladesAttack_hit {r2} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneUmbraBladesAttack_hit {r2} {d}.txtp",
     "media_ids": [
       7569282,
       16571779,
@@ -304,8 +304,8 @@
     "file": "play_sfx_nocturne_nocturneumbrabladesattack_hit_r3_d.wav",
     "event": "Play_sfx_Nocturne_NocturneUmbraBladesAttack_hit",
     "event_id": 3408196235,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneUmbraBladesAttack_hit {r3} {d}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneUmbraBladesAttack_hit {r3} {d}.txtp",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneUmbraBladesAttack_hit {r3} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneUmbraBladesAttack_hit {r3} {d}.txtp",
     "media_ids": [
       7569282,
       16571779,
@@ -321,8 +321,8 @@
     "file": "play_sfx_nocturne_nocturneshroudofdarkness_oncast_r1.wav",
     "event": "Play_sfx_Nocturne_NocturneShroudofDarkness_OnCast",
     "event_id": 691682749,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneShroudofDarkness_OnCast {r1}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneShroudofDarkness_OnCast {r1}.txtp",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneShroudofDarkness_OnCast {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneShroudofDarkness_OnCast {r1}.txtp",
     "media_ids": [
       703400332,
       830573667,
@@ -338,8 +338,8 @@
     "file": "play_sfx_nocturne_nocturneshroudofdarkness_oncast_r2.wav",
     "event": "Play_sfx_Nocturne_NocturneShroudofDarkness_OnCast",
     "event_id": 691682749,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneShroudofDarkness_OnCast {r2}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneShroudofDarkness_OnCast {r2}.txtp",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneShroudofDarkness_OnCast {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneShroudofDarkness_OnCast {r2}.txtp",
     "media_ids": [
       703400332,
       830573667,
@@ -355,8 +355,8 @@
     "file": "play_sfx_nocturne_nocturneshroudofdarkness_oncast_r3.wav",
     "event": "Play_sfx_Nocturne_NocturneShroudofDarkness_OnCast",
     "event_id": 691682749,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneShroudofDarkness_OnCast {r3}.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneShroudofDarkness_OnCast {r3}.txtp",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_NocturneShroudofDarkness_OnCast {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_NocturneShroudofDarkness_OnCast {r3}.txtp",
     "media_ids": [
       703400332,
       830573667,
@@ -372,8 +372,8 @@
     "file": "play_sfx_nocturne_death3d_cast.wav",
     "event": "Play_sfx_Nocturne_Death3D_cast",
     "event_id": 165702720,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_Death3D_cast.wav",
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_Death3D_cast.txtp",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/event_wav/Play_sfx_Nocturne_Death3D_cast.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/永恒梦魇/audio-source/nocturne/txtp/Play_sfx_Nocturne_Death3D_cast.txtp",
     "media_ids": [
       294950982
     ],

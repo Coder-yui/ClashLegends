@@ -345,10 +345,10 @@
     "txtp_sha256": "144f2dd426facc332613cfd794b748d6452b401b5d7a2b4487572da4b252ecba"
   },
   {
-    "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenqfirst_cast_r.wav",
+    "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenqfirst_cast_r.wav",
     "event": "Play_sfx_Gwen_GwenQFirst_cast",
     "event_id": 1117487748,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenQFirst_cast {r}.wav",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenQFirst_cast {r}.wav",
     "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/aa31dd0885aa3ee3b34a5a272d60f5d3fe7fd98fb9ad11e6c63a92a7c1ac3ee0.txtp",
     "media_ids": [
       53754217,
@@ -366,10 +366,10 @@
     "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
   },
   {
-    "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenqlast_cast_r.wav",
+    "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenqlast_cast_r.wav",
     "event": "Play_sfx_Gwen_GwenQLast_cast",
     "event_id": 2146811922,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenQLast_cast {r}.wav",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenQLast_cast {r}.wav",
     "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/842af6bdf37c86485acf0e22b1f94ca0f345b8f91d402a48bbb74f4b2d9f3d22.txtp",
     "media_ids": [
       164825511,
@@ -409,10 +409,10 @@
     "source_preview": null
   },
   {
-    "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenqmiddle_1stack_cast_r1.wav",
+    "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenqmiddle_1stack_cast_r1.wav",
     "event": "Play_sfx_Gwen_GwenQMiddle_1stack_cast",
     "event_id": 268254909,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenQMiddle_1stack_cast {r1}.wav",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenQMiddle_1stack_cast {r1}.wav",
     "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/d118756c4bf3db3bfa16533b814ce3be24383b4afe4cdbd161ec25dee630658d.txtp",
     "media_ids": [
       164825511,
@@ -426,10 +426,10 @@
     "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
   },
   {
-    "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenqmiddle_1stack_cast_r2.wav",
+    "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenqmiddle_1stack_cast_r2.wav",
     "event": "Play_sfx_Gwen_GwenQMiddle_1stack_cast",
     "event_id": 268254909,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenQMiddle_1stack_cast {r2}.wav",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenQMiddle_1stack_cast {r2}.wav",
     "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/8594ea820aaa2a5b675cb75a44b35d108cceb6720b78467e2e15c4ba08745dbe.txtp",
     "media_ids": [
       164825511,
@@ -443,10 +443,10 @@
     "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
   },
   {
-    "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenqmiddle_1stack_cast_r3.wav",
+    "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenqmiddle_1stack_cast_r3.wav",
     "event": "Play_sfx_Gwen_GwenQMiddle_1stack_cast",
     "event_id": 268254909,
-    "source_preview": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenQMiddle_1stack_cast {r3}.wav",
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/gwen/event_wav/Play_sfx_Gwen_GwenQMiddle_1stack_cast {r3}.wav",
     "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/0cb3faf49416e96e298bfcf4bbae98598ded8e031d2c9f39a441497680cd335b.txtp",
     "media_ids": [
       164825511,
@@ -748,7 +748,7 @@
     "txtp_sha256": "18c55e5b35431f417536984245b4c99553677816da58268c57406b4d8e5e9deb"
   },
   {
-    "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenw_cast_r1.wav",
+    "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenw_cast_r1.wav",
     "event": "Play_sfx_Gwen_GwenW_cast",
     "event_id": 3236859832,
     "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/32ce6eb8d3c2d8c42ad03401d0b4a1672d3c5a8b29baee70c1120f7ee0b33a1f.txtp",
@@ -762,7 +762,7 @@
     "sha256": "e5dc003ce459f273f7b2d651a402f3639794af0c78645147fa22f4acbc40cf29"
   },
   {
-    "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenw_cast_r2.wav",
+    "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenw_cast_r2.wav",
     "event": "Play_sfx_Gwen_GwenW_cast",
     "event_id": 3236859832,
     "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/76b39db5b2f1ff4dac727f779fb73c778823436833eea859812d713cd54e236d.txtp",
@@ -776,7 +776,7 @@
     "sha256": "1907c81017e3f96e62748dbd75763089679530b9903c13e4452f0aca74fa46af"
   },
   {
-    "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenw_cast_r3.wav",
+    "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenw_cast_r3.wav",
     "event": "Play_sfx_Gwen_GwenW_cast",
     "event_id": 3236859832,
     "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/0b420e827b64122f21e9fb748a798abb45cbc6824364d688d0ba85b055e90d17.txtp",
@@ -790,7 +790,7 @@
     "sha256": "c5a054f17e325dc22115fa298a92987dd40ca93d291270b4b94e34c9a7fccebe"
   },
   {
-    "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenw_buffactivate_r_m.wav",
+    "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenw_buffactivate_r_m.wav",
     "event": "Play_sfx_Gwen_GwenW_buffactivate",
     "event_id": 3882395433,
     "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/4bd6dc1c5022e3062984040f89bb354caf85aff0595c2a4df28da096c0367775.txtp",
@@ -805,7 +805,7 @@
     "sha256": "4d452d024ff0def68914f44aa511e496da8ed7c3c50076155a94715ad0026a86"
   },
   {
-    "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenw_buffdeactivate_r1.wav",
+    "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenw_buffdeactivate_r1.wav",
     "event": "Play_sfx_Gwen_GwenW_buffdeactivate",
     "event_id": 3057272456,
     "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/d7a879dc69bf0266ec2dc45a0e67d4b17efc7908057b84c191a1bdfeb1009aba.txtp",
@@ -818,7 +818,7 @@
     "sha256": "bb191cb4ac382f89745fe5b3cb56fe3036dcada4fa83e9bb0a73520d86f08b8e"
   },
   {
-    "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenw_buffdeactivate_r2.wav",
+    "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenw_buffdeactivate_r2.wav",
     "event": "Play_sfx_Gwen_GwenW_buffdeactivate",
     "event_id": 3057272456,
     "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/8004c0733316f3e278bc34eb2e6e0ab2cf4fffeb94a5eacbef122e0b44d348cd.txtp",
@@ -920,10 +920,10 @@
     "txtp_sha256": "4578a39b946ca2d2eaca0068707d844e8fcea8ae61162a25e4e361a32842f93b"
   },
   {
-    "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_champselect_lockin_event253_r1.wav",
+    "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_champselect_lockin_event253_r1.wav",
     "event": "Champion Select Lock-in SFX (client pregame UI event 253)",
     "event_id": 2343061899,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/champselect_audio_review_20260914/txtp/misc_client_pregameui_default_sfx_events-0253-event {r1}.txtp",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/champselect_audio_review_20260914/txtp/misc_client_pregameui_default_sfx_events-0253-event {r1}.txtp",
     "media_ids": [
       807369731,
       601627384,
@@ -1021,7 +1021,7 @@
     "duration": 1.1320408163265305,
     "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
     "sha256": "002bcd499259f549fb640370b65cbf0a26bb252824648809b9decd01525bea04",
-    "migrated_from": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenw_cast_r1.wav",
+    "migrated_from": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenw_cast_r1.wav",
     "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Gwen.wad.client",
     "media_ids": [
       188850940,
@@ -1043,7 +1043,7 @@
     "duration": 1.1320408163265305,
     "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
     "sha256": "7fc3edef7e8643c79738af4f4e13ae875ed42db86c4f7833bf796a49b12ddd39",
-    "migrated_from": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenw_cast_r2.wav",
+    "migrated_from": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenw_cast_r2.wav",
     "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Gwen.wad.client",
     "media_ids": [
       188850940,
@@ -1065,7 +1065,7 @@
     "duration": 1.1320408163265305,
     "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
     "sha256": "5849226f5899824b7a6ea3334694a51221ae04c432afc19adf3ab6c1ecb665f4",
-    "migrated_from": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenw_cast_r3.wav",
+    "migrated_from": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenw_cast_r3.wav",
     "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Gwen.wad.client",
     "media_ids": [
       188850940,
@@ -1087,7 +1087,7 @@
     "duration": 3.131156462585034,
     "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
     "sha256": "2bc1f906e5b542997a027e5db175298f3485133ab46cdcdbfac555343f7b9b43",
-    "migrated_from": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenw_buffdeactivate_r1.wav",
+    "migrated_from": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenw_buffdeactivate_r1.wav",
     "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Gwen.wad.client",
     "media_ids": [
       250909294,
@@ -1108,7 +1108,7 @@
     "duration": 2.967097505668934,
     "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
     "sha256": "8ba42835ea2609c8152028b9280d5cd2743336575bbe9de69accf4d14a5d6158",
-    "migrated_from": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenw_buffdeactivate_r2.wav",
+    "migrated_from": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/gwen/play_sfx_gwen_gwenw_buffdeactivate_r2.wav",
     "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Gwen.wad.client",
     "media_ids": [
       250909294,

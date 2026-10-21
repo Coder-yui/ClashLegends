@@ -1,7 +1,7 @@
 [
   {
     "event": "Play_vo_Sion_Move2DFirst",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/voice_battle/wav/Play_vo_Sion_Move2DFirst {r2}.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/赛恩/voice_battle/wav/Play_vo_Sion_Move2DFirst {r2}.wav",
     "source_sha256": "a852c3f82e229c93f9f9105b615def00976de340c802060f77a4e1a4998c6b5d",
     "path": "res://assets/audio/units/sion/deploy_battle.wav",
     "sha256": "537ac9522d9f7beb6e68719bf26262c70317ebf716d1ee9d7313a171a91eabb3",
@@ -19,7 +19,7 @@
   },
   {
     "event": "Play_vo_Sion_SionQSoundAfterHalf_OnBuffDeactivate",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/voice_crush/wav/Play_vo_Sion_SionQSoundAfterHalf_OnBuffDeactivate {r4}.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/赛恩/voice_crush/wav/Play_vo_Sion_SionQSoundAfterHalf_OnBuffDeactivate {r4}.wav",
     "source_sha256": "6404d65ee89510b3ccc027f011707faf9bc879919d22c74f0626b5b8593f8072",
     "path": "res://assets/audio/units/sion/deploy_crush.wav",
     "sha256": "3ed862d51c3e8bde8b8a0de3955d4a69d96a229a21d21552b49c3b1869f01fec",
@@ -37,7 +37,7 @@
   },
   {
     "event": "Play_vo_Sion_SionWSoundShield_OnBuffCast",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/voice_dying/wav/Play_vo_Sion_SionWSoundShield_OnBuffCast {r6}.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/赛恩/voice_dying/wav/Play_vo_Sion_SionWSoundShield_OnBuffCast {r6}.wav",
     "source_sha256": "242cf1ede804398a6ec0aa4e1a8ead1d55721ad1b4cf1962f8b79c23cc825bf6",
     "path": "res://assets/audio/units/sion/deploy_dying.wav",
     "sha256": "e90540e2b26fa36886f9837677be41284652db6e65acae2d361f75df75c0f4d9",
@@ -607,7 +607,7 @@
   },
   {
     "event": "Play_vo_Sion_SionPassiveZombie_OnBuffDeactivate",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/passive_death_voice/wav/Play_vo_Sion_SionPassiveZombie_OnBuffDeactivate {r1}.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/赛恩/passive_death_voice/wav/Play_vo_Sion_SionPassiveZombie_OnBuffDeactivate {r1}.wav",
     "source_sha256": "22cfbec60eb421ac201f9905c36d918aef95b12632100183263812b0974d33e2",
     "path": "res://assets/audio/units/sion/passive_death_0.wav",
     "sha256": "a5dbf02d7e90812f4caf104ecaa249f9460b63624bcb7d8f096713ae66933576",
@@ -623,7 +623,7 @@
   },
   {
     "event": "Play_vo_Sion_SionPassiveZombie_OnBuffDeactivate",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/passive_death_voice/wav/Play_vo_Sion_SionPassiveZombie_OnBuffDeactivate {r2}.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/赛恩/passive_death_voice/wav/Play_vo_Sion_SionPassiveZombie_OnBuffDeactivate {r2}.wav",
     "source_sha256": "17a5b45ed18a1f7bcd691f7dc498c3867997048d40284e1fc5d85733e6d3b9ac",
     "path": "res://assets/audio/units/sion/passive_death_1.wav",
     "sha256": "7ddfd16d678a4f4e50b5798d8eaaecfd5551d3504f1797f97a8bfb68870f7baa",
@@ -639,7 +639,7 @@
   },
   {
     "event": "Play_vo_Sion_SionPassiveZombie_OnBuffDeactivate",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/赛恩/passive_death_voice/wav/Play_vo_Sion_SionPassiveZombie_OnBuffDeactivate {r3}.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/赛恩/passive_death_voice/wav/Play_vo_Sion_SionPassiveZombie_OnBuffDeactivate {r3}.wav",
     "source_sha256": "1b264b239e33033df3f66010d9d0f89dcc5e325e8d4daf3bd466a57f99942dae",
     "path": "res://assets/audio/units/sion/passive_death_2.wav",
     "sha256": "7cb14e491c47a6f4aa20e1f0cc5848a612fde15f6448d08c0d684191c6172aab",

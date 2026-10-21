@@ -1,5 +1,5 @@
 extends SceneTree
-## 非 headless 运行；生成 /Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/预览与验证/clash-workbench-*.png，并核对工作区暂停边界。
+## 非 headless 运行；生成 /Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/预览与验证/clash-workbench-*.png，并核对工作区暂停边界。
 func _initialize() -> void:
 	call_deferred("_run")
 func _run() -> void:

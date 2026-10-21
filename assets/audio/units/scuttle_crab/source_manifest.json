@@ -3,7 +3,7 @@
     {
       "path": "res://assets/audio/units/scuttle_crab/play_sfx_sru_crab_spawn_cast.wav",
       "source_event": "Play_sfx_SRU_Crab_spawn_cast",
-      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/audio-render/crab/txtp/Play_sfx_SRU_Crab_spawn_cast.txtp",
+      "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/audio-render/crab/txtp/Play_sfx_SRU_Crab_spawn_cast.txtp",
       "source_txtp_sha256": "9f006a36864f2bb876a04f423801fa54342ddf24ff2560708b7550824008fe81",
       "source_duration": 2.296485,
       "processing": "none",
@@ -15,7 +15,7 @@
     {
       "path": "res://assets/audio/units/scuttle_crab/play_sfx_sru_crab_death_cast.wav",
       "source_event": "Play_sfx_SRU_Crab_death_cast",
-      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/audio-render/crab/txtp/Play_sfx_SRU_Crab_death_cast.txtp",
+      "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/audio-render/crab/txtp/Play_sfx_SRU_Crab_death_cast.txtp",
       "source_txtp_sha256": "b41d410c6ef989684e6e0704f9dc22dbaba45e3ef51e68aa3c1a33382fa9f07e",
       "source_duration": 1.942426,
       "processing": "death cap 1.5 seconds, fade last 0.5 seconds",
@@ -27,7 +27,7 @@
     {
       "path": "res://assets/audio/units/scuttle_crab/play_sfx_sru_crab_sru_dance_r1.wav",
       "source_event": "Play_sfx_SRU_Crab_Sru_Dance {r1}",
-      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/audio-render/crab/txtp/Play_sfx_SRU_Crab_Sru_Dance {r1}.txtp",
+      "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/audio-render/crab/txtp/Play_sfx_SRU_Crab_Sru_Dance {r1}.txtp",
       "source_txtp_sha256": "305cb319cd422d0cdd871baf68bc8531b03175cc70d3caf2e98cff2dd457b954",
       "source_duration": 1.517324,
       "processing": "none",
@@ -39,7 +39,7 @@
     {
       "path": "res://assets/audio/units/scuttle_crab/play_sfx_sru_crab_sru_dance_r2.wav",
       "source_event": "Play_sfx_SRU_Crab_Sru_Dance {r2}",
-      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/audio-render/crab/txtp/Play_sfx_SRU_Crab_Sru_Dance {r2}.txtp",
+      "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/audio-render/crab/txtp/Play_sfx_SRU_Crab_Sru_Dance {r2}.txtp",
       "source_txtp_sha256": "412b5679be5fcd52ade087070815f17dd532a0d04d1541eadd7f3d3b01bd98eb",
       "source_duration": 1.497324,
       "processing": "none",
@@ -51,7 +51,7 @@
     {
       "path": "res://assets/audio/units/scuttle_crab/play_sfx_randuinsomen_oncast.wav",
       "source_event": "Play_sfx_RanduinsOmen_OnCast",
-      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/audio-render/items/txtp/Play_sfx_RanduinsOmen_OnCast.txtp",
+      "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/audio-render/items/txtp/Play_sfx_RanduinsOmen_OnCast.txtp",
       "source_txtp_sha256": "8a242de7a95c1a95c8415482aaa80d55d09d18a179ab0f53ae57399c38727c36",
       "source_duration": 6.124989,
       "processing": "none",
@@ -63,9 +63,9 @@
     {
       "path": "res://assets/audio/units/scuttle_crab/gold0.wav",
       "source_event": "Play_sfx_GoldAquisition_P_cast",
-      "source_wav": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/祭坛完整源件/audio-gold/gold0.wav",
+      "source_wav": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/祭坛完整源件/audio-gold/gold0.wav",
       "source_txtp": [
-        "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/祭坛完整源件/audio-gold/txtp/Play_sfx_GoldAquisition_P_cast {r1}.txtp"
+        "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/祭坛完整源件/audio-gold/txtp/Play_sfx_GoldAquisition_P_cast {r1}.txtp"
       ],
       "wwiser_master_gain_db": 0,
       "playback_gain_db": 0,
@@ -75,9 +75,9 @@
     {
       "path": "res://assets/audio/units/scuttle_crab/gold1.wav",
       "source_event": "Play_sfx_GoldAquisition_P_cast",
-      "source_wav": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/祭坛完整源件/audio-gold/gold1.wav",
+      "source_wav": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/祭坛完整源件/audio-gold/gold1.wav",
       "source_txtp": [
-        "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/祭坛完整源件/audio-gold/txtp/Play_sfx_GoldAquisition_P_cast {r2}.txtp"
+        "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/祭坛完整源件/audio-gold/txtp/Play_sfx_GoldAquisition_P_cast {r2}.txtp"
       ],
       "wwiser_master_gain_db": 0,
       "playback_gain_db": 0,
@@ -87,9 +87,9 @@
     {
       "path": "res://assets/audio/units/scuttle_crab/gold2.wav",
       "source_event": "Play_sfx_GoldAquisition_P_cast",
-      "source_wav": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/祭坛完整源件/audio-gold/gold2.wav",
+      "source_wav": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/祭坛完整源件/audio-gold/gold2.wav",
       "source_txtp": [
-        "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/祭坛完整源件/audio-gold/txtp/Play_sfx_GoldAquisition_P_cast {r3}.txtp"
+        "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/祭坛完整源件/audio-gold/txtp/Play_sfx_GoldAquisition_P_cast {r3}.txtp"
       ],
       "wwiser_master_gain_db": 0,
       "playback_gain_db": 0,
@@ -99,9 +99,9 @@
     {
       "path": "res://assets/audio/units/scuttle_crab/ward0.wav",
       "source_event": "Play_sfx_SRU_Crab_ward_cast",
-      "source_wav": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/祭坛完整源件/audio-ward/ward0.wav",
+      "source_wav": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/祭坛完整源件/audio-ward/ward0.wav",
       "source_txtp": [
-        "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/祭坛完整源件/audio-ward/txtp/Play_sfx_SRU_Crab_ward_cast.txtp"
+        "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/祭坛完整源件/audio-ward/txtp/Play_sfx_SRU_Crab_ward_cast.txtp"
       ],
       "wwiser_master_gain_db": 0,
       "playback_gain_db": 0,
@@ -111,9 +111,9 @@
     {
       "path": "res://assets/audio/units/scuttle_crab/voidward0.wav",
       "source_event": "Play_sfx_SRU_Crab_Void_ward_cast",
-      "source_wav": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/祭坛完整源件/audio-voidward/voidward0.wav",
+      "source_wav": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/祭坛完整源件/audio-voidward/voidward0.wav",
       "source_txtp": [
-        "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/祭坛完整源件/audio-voidward/txtp/Play_sfx_SRU_Crab_Void_ward_cast.txtp"
+        "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/祭坛完整源件/audio-voidward/txtp/Play_sfx_SRU_Crab_Void_ward_cast.txtp"
       ],
       "wwiser_master_gain_db": 0,
       "playback_gain_db": 0,
@@ -123,7 +123,7 @@
     {
       "path": "res://assets/audio/units/scuttle_crab/death_leap_1.wav",
       "source_event": "Play_sfx_SRU_Crab_death_leap",
-      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/河蟹全音频-20261016/LoL 普通河蟹/txtp/Play_sfx_SRU_Crab_death_leap.txtp",
+      "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/02-候选讨论/河蟹全音频-20261016/LoL 普通河蟹/txtp/Play_sfx_SRU_Crab_death_leap.txtp",
       "source_txtp_sha256": "cfea56ab0cb0ce4bdfb32600c988cd825aa6651b0bdea7066610fa1d6eb3e842",
       "source_duration": 1.2072789115646259,
       "processing": "fresh original event PCM; no normalization",
@@ -138,14 +138,14 @@
     }
   ],
   "source_banks": [
-    "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/audio-common/assets/sounds/wwise2016/sfx/shared/items_global_audio.bnk",
-    "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/audio-common/assets/sounds/wwise2016/sfx/shared/items_global_events.bnk",
-    "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/audio-common/assets/sounds/wwise2016/sfx/shared/init.bnk",
-    "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/audio-crab/assets/sounds/wwise2016/sfx/shared/npc_map11_crab_sfx_events.bnk",
-    "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/audio-crab/assets/sounds/wwise2016/sfx/shared/npc_map11_crab_sfx_audio.bnk",
-    "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/祭坛完整源件/gold-gameplay/assets/sounds/wwise2016/sfx/shared/misc_gameplay_sfx_audio.bnk",
-    "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/祭坛完整源件/gold-gameplay/assets/sounds/wwise2016/sfx/shared/misc_gameplay_sfx_events.bnk",
-    "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/祭坛完整源件/void-audio-bank/assets/sounds/wwise2016/sfx/shared/npc_map11_crab_void_sfx_events.bnk",
-    "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/祭坛完整源件/void-audio-bank/assets/sounds/wwise2016/sfx/shared/npc_map11_crab_void_sfx_audio.bnk"
+    "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/audio-common/assets/sounds/wwise2016/sfx/shared/items_global_audio.bnk",
+    "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/audio-common/assets/sounds/wwise2016/sfx/shared/items_global_events.bnk",
+    "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/audio-common/assets/sounds/wwise2016/sfx/shared/init.bnk",
+    "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/audio-crab/assets/sounds/wwise2016/sfx/shared/npc_map11_crab_sfx_events.bnk",
+    "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/audio-crab/assets/sounds/wwise2016/sfx/shared/npc_map11_crab_sfx_audio.bnk",
+    "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/祭坛完整源件/gold-gameplay/assets/sounds/wwise2016/sfx/shared/misc_gameplay_sfx_audio.bnk",
+    "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/祭坛完整源件/gold-gameplay/assets/sounds/wwise2016/sfx/shared/misc_gameplay_sfx_events.bnk",
+    "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/祭坛完整源件/void-audio-bank/assets/sounds/wwise2016/sfx/shared/npc_map11_crab_void_sfx_events.bnk",
+    "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/峡谷迅捷蟹/祭坛完整源件/void-audio-bank/assets/sounds/wwise2016/sfx/shared/npc_map11_crab_void_sfx_audio.bnk"
   ]
 }

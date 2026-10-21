@@ -32,8 +32,9 @@ def main():
     args = parser.parse_args()
     repo = Path(__file__).resolve().parents[2]
     output = args.output.resolve()
-    if not output.is_relative_to(repo / "ClashLegends-promo-materials"):
-        parser.error("Output must be inside the project's ignored promo directory")
+    promo = repo.parent / "ClashLegends-promo-materials"
+    if not output.is_relative_to(promo.resolve()):
+        parser.error(f"Output must be inside the sibling promo directory: {promo}")
     for sub in ("raw", "clips", "qa", "logs"):
         (output / sub).mkdir(parents=True, exist_ok=True)
     # Preflight the whole request before starting; never overwrite an earlier take.

@@ -5,8 +5,9 @@
 __pycache__/
 *.py[cod]
 
-# 开发素材与宣传素材只作为本地工作区，不进入版本库
+# 开发素材与回滚备份只作为本地工作区，不进入版本库；保留旧宣传路径防误写
 /ClashLegends-开发素材库/
+/ClashLegends-rollback-backups/
 /ClashLegends-promo-materials/
 
 # 防止旧工具误写产物进入版本库；审计会报错

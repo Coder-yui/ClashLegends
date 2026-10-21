@@ -1,7 +1,7 @@
 [
   {
     "event": "Play_vo_Darius_Move2DStandard",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/德莱厄斯/voice-move/wav/Play_vo_Darius_Move2DStandard {r3}.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德莱厄斯/voice-move/wav/Play_vo_Darius_Move2DStandard {r3}.wav",
     "source_sha256": "9967bb00db141c99eebf264174d61adac969373ed0769311ef1013facf36b23b",
     "path": "res://assets/audio/units/darius/deploy_rise.wav",
     "sha256": "78904da316fe34db74a58f6279573d27b82d4c741e32e2cc51cadb71f55d887f",
@@ -19,7 +19,7 @@
   },
   {
     "event": "Play_vo_Darius_Move2DStandard",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/德莱厄斯/voice-move/wav/Play_vo_Darius_Move2DStandard {r4}.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德莱厄斯/voice-move/wav/Play_vo_Darius_Move2DStandard {r4}.wav",
     "source_sha256": "8b40afa4575d91895a1dd9557a7db2205e962ac3bd15bd06a16fb592e8808b82",
     "path": "res://assets/audio/units/darius/deploy_cowardice.wav",
     "sha256": "7da34098b6285f0a72e330382bae449ea73e6d9e39d133a499eb7f453f94c22c",
@@ -37,7 +37,7 @@
   },
   {
     "event": "Play_vo_Darius_Move2DStandard",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/德莱厄斯/voice-move/wav/Play_vo_Darius_Move2DStandard {r1}.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德莱厄斯/voice-move/wav/Play_vo_Darius_Move2DStandard {r1}.wav",
     "source_sha256": "bbddd7a1cb67e710745ab94612961652dfaa414f45020bfcce34b926fa121221",
     "path": "res://assets/audio/units/darius/deploy_fight.wav",
     "sha256": "fb36696f885d4ae20d2cf60e56d12898e46f8797a04254fb935adeee47a870d6",
@@ -55,7 +55,7 @@
   },
   {
     "event": "Play_sfx_Darius_DariusBasicAttack2_OnCast",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariusbasicattack2_oncast_r1.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariusbasicattack2_oncast_r1.wav",
     "source_sha256": "b3691fd00aba7d9eeb6c9cd989a9151464803dfa7c2901a171110a769f401843",
     "path": "res://assets/audio/units/darius/play_sfx_darius_dariusbasicattack2_oncast_r1.wav",
     "sha256": "4a839cf0ca74a5494910119b195b8473d403bb0d226495a7fce07d7acd9afb7a",
@@ -73,7 +73,7 @@
     "equivalent_sources": [
       {
         "event": "Play_sfx_Darius_DariusBasicAttack_OnCast",
-        "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariusbasicattack_oncast_r1_d.wav",
+        "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariusbasicattack_oncast_r1_d.wav",
         "source_sha256": "b3691fd00aba7d9eeb6c9cd989a9151464803dfa7c2901a171110a769f401843",
         "sha256": "4a839cf0ca74a5494910119b195b8473d403bb0d226495a7fce07d7acd9afb7a",
         "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
@@ -93,7 +93,7 @@
   },
   {
     "event": "Play_sfx_Darius_DariusBasicAttack2_OnCast",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariusbasicattack2_oncast_r2.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariusbasicattack2_oncast_r2.wav",
     "source_sha256": "d7e1336a65789347be4a61aeaace0d41b8f9b924ea3d6cc2f61984c431ec433d",
     "path": "res://assets/audio/units/darius/play_sfx_darius_dariusbasicattack2_oncast_r2.wav",
     "sha256": "9c278c42432b1c983d9eb30bc7357ab65e1a9d0c562294e1fd6fdd248b4b2fbd",
@@ -111,7 +111,7 @@
     "equivalent_sources": [
       {
         "event": "Play_sfx_Darius_DariusBasicAttack_OnCast",
-        "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariusbasicattack_oncast_r2_d.wav",
+        "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariusbasicattack_oncast_r2_d.wav",
         "source_sha256": "d7e1336a65789347be4a61aeaace0d41b8f9b924ea3d6cc2f61984c431ec433d",
         "sha256": "9c278c42432b1c983d9eb30bc7357ab65e1a9d0c562294e1fd6fdd248b4b2fbd",
         "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
@@ -131,7 +131,7 @@
   },
   {
     "event": "Play_sfx_Darius_DariusBasicAttack2_OnCast",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariusbasicattack2_oncast_r3.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariusbasicattack2_oncast_r3.wav",
     "source_sha256": "a33e497e8b8fcaed57a928e28185d18f895376c40e0a024977fedb5132413d57",
     "path": "res://assets/audio/units/darius/play_sfx_darius_dariusbasicattack2_oncast_r3.wav",
     "sha256": "ad01cca6cf561a5b5e5d713c03faf8341e787f75b77b3bd35b240fce4c4082a2",
@@ -149,7 +149,7 @@
     "equivalent_sources": [
       {
         "event": "Play_sfx_Darius_DariusBasicAttack_OnCast",
-        "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariusbasicattack_oncast_r3_d.wav",
+        "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariusbasicattack_oncast_r3_d.wav",
         "source_sha256": "a33e497e8b8fcaed57a928e28185d18f895376c40e0a024977fedb5132413d57",
         "sha256": "ad01cca6cf561a5b5e5d713c03faf8341e787f75b77b3bd35b240fce4c4082a2",
         "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
@@ -169,7 +169,7 @@
   },
   {
     "event": "Play_sfx_Darius_DariusBasicAttack2_OnHit",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariusbasicattack2_onhit_1559186049_1153642577_r1.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariusbasicattack2_onhit_1559186049_1153642577_r1.wav",
     "source_sha256": "28d2b2a077531f3e271450d847452d821453ceb93a3b5faef590437d8a27d380",
     "path": "res://assets/audio/units/darius/play_sfx_darius_dariusbasicattack2_onhit_1559186049_1153642577_r1.wav",
     "sha256": "4350ff8839e2b7f6765884aff25d2a213eb565d12b5c0318ddb0cbc9a8ad0b1f",
@@ -187,7 +187,7 @@
     "equivalent_sources": [
       {
         "event": "Play_sfx_Darius_DariusBasicAttack_OnHit",
-        "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariusbasicattack_onhit_1559186049_1153642577_r1_d.wav",
+        "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariusbasicattack_onhit_1559186049_1153642577_r1_d.wav",
         "source_sha256": "28d2b2a077531f3e271450d847452d821453ceb93a3b5faef590437d8a27d380",
         "sha256": "4350ff8839e2b7f6765884aff25d2a213eb565d12b5c0318ddb0cbc9a8ad0b1f",
         "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
@@ -207,7 +207,7 @@
   },
   {
     "event": "Play_sfx_Darius_DariusBasicAttack2_OnHit",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariusbasicattack2_onhit_1559186049_1153642577_r2.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariusbasicattack2_onhit_1559186049_1153642577_r2.wav",
     "source_sha256": "43909ec984d78e459a25454b44b28eebb483cb3b44875bbe3ff478fc2c2f915a",
     "path": "res://assets/audio/units/darius/play_sfx_darius_dariusbasicattack2_onhit_1559186049_1153642577_r2.wav",
     "sha256": "93ecdacef08a7ad5883d3104396a7cd54eb51408b696e991c2d49c87fd45df55",
@@ -225,7 +225,7 @@
     "equivalent_sources": [
       {
         "event": "Play_sfx_Darius_DariusBasicAttack_OnHit",
-        "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariusbasicattack_onhit_1559186049_1153642577_r2_d.wav",
+        "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariusbasicattack_onhit_1559186049_1153642577_r2_d.wav",
         "source_sha256": "43909ec984d78e459a25454b44b28eebb483cb3b44875bbe3ff478fc2c2f915a",
         "sha256": "93ecdacef08a7ad5883d3104396a7cd54eb51408b696e991c2d49c87fd45df55",
         "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
@@ -245,7 +245,7 @@
   },
   {
     "event": "Play_sfx_Darius_DariusBasicAttack2_OnHit",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariusbasicattack2_onhit_1559186049_1153642577_r3.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariusbasicattack2_onhit_1559186049_1153642577_r3.wav",
     "source_sha256": "fa8cf297f1fc9437aebae4bf1eeffae97eba86497a486acd1fcfc3592593dc90",
     "path": "res://assets/audio/units/darius/play_sfx_darius_dariusbasicattack2_onhit_1559186049_1153642577_r3.wav",
     "sha256": "a6f8695498e4959609dc4d8e692a4bd04e82376cbc6653d06929b9734ec2e786",
@@ -263,7 +263,7 @@
     "equivalent_sources": [
       {
         "event": "Play_sfx_Darius_DariusBasicAttack_OnHit",
-        "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariusbasicattack_onhit_1559186049_1153642577_r3_d.wav",
+        "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariusbasicattack_onhit_1559186049_1153642577_r3_d.wav",
         "source_sha256": "fa8cf297f1fc9437aebae4bf1eeffae97eba86497a486acd1fcfc3592593dc90",
         "sha256": "a6f8695498e4959609dc4d8e692a4bd04e82376cbc6653d06929b9734ec2e786",
         "processing": "2026-10-04: regenerated original bank event with wwiser -gv=0dB (or original LCU OGG); explicit temporal recipe; no normalization, post gain or runtime compensation. See assets/audio/original_gain_manifest.json.",
@@ -283,7 +283,7 @@
   },
   {
     "event": "Play_sfx_Darius_DariusExecute_OnHit",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariusexecute_onhit_r1.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariusexecute_onhit_r1.wav",
     "source_sha256": "2e1a73e13b95c8e8f4af87904aa9cacc57f7a4e8928cfac2f97e095ae59c7bfe",
     "path": "res://assets/audio/units/darius/play_sfx_darius_dariusexecute_onhit_r1.wav",
     "sha256": "dea64501050a60db848d78161fccf53d9fc86ef8aa15ff691e16fd1a9ea1994b",
@@ -301,7 +301,7 @@
   },
   {
     "event": "Play_sfx_Darius_DariusExecute_OnHit",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariusexecute_onhit_r2.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariusexecute_onhit_r2.wav",
     "source_sha256": "b340ca8d82b2e915fbc5c947212efc923a6e4b0aec4c9e4ad38b4b7fb222ffa1",
     "path": "res://assets/audio/units/darius/play_sfx_darius_dariusexecute_onhit_r2.wav",
     "sha256": "2102967a5b907d862f01a1eeda75373209ddfbb0b6bf9724135fcb4e24129fba",
@@ -319,7 +319,7 @@
   },
   {
     "event": "Play_sfx_Darius_DariusExecute_OnHit",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariusexecute_onhit_r3.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariusexecute_onhit_r3.wav",
     "source_sha256": "8a0ed1f71d341bec19c74c94f9e028c699ec0022d91fb1ac98a5f94c895fde9b",
     "path": "res://assets/audio/units/darius/play_sfx_darius_dariusexecute_onhit_r3.wav",
     "sha256": "83df2bf28bdf665d4d9560d6a5773f1247a11cce577d72553964f33d21738eb0",
@@ -337,7 +337,7 @@
   },
   {
     "event": "Play_sfx_Darius_DariusExecute_OnCast",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariusexecute_oncast_r1.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariusexecute_oncast_r1.wav",
     "source_sha256": "320637b284bb467343788f520279ffaaeb836bb511a70cc98ca8426913a0ddcb",
     "path": "res://assets/audio/units/darius/play_sfx_darius_dariusexecute_oncast_r1.wav",
     "sha256": "00e0fdd11e3d9bfd63480dbf7cd61a6f722591301a1db02e49fde0654a68353a",
@@ -355,7 +355,7 @@
   },
   {
     "event": "Play_sfx_Darius_DariusExecute_OnCast",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariusexecute_oncast_r2.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariusexecute_oncast_r2.wav",
     "source_sha256": "e4899f4b1a63be5226cefefd930d9d2ca52e1c05f01fad6a2f072057f2a1ce50",
     "path": "res://assets/audio/units/darius/play_sfx_darius_dariusexecute_oncast_r2.wav",
     "sha256": "2a435b1601f00ded3d05f1b77e9f558de6591a29bebd7d0dce452cc6f3fca003",
@@ -373,7 +373,7 @@
   },
   {
     "event": "Play_sfx_Darius_DariusExecute_OnCast",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariusexecute_oncast_r3.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariusexecute_oncast_r3.wav",
     "source_sha256": "a3284877f658e143c8ddda8913531179284571a900490b7df460492dd2d0a373",
     "path": "res://assets/audio/units/darius/play_sfx_darius_dariusexecute_oncast_r3.wav",
     "sha256": "d0b2010cafa0a366d1c27fa49ab0844c473eb5fa57c22ed4f04d2493480d9cec",
@@ -391,7 +391,7 @@
   },
   {
     "event": "Play_sfx_Darius_DariusHemoMax_OnBuffActivate",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariushemomax_onbuffactivate_r1.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariushemomax_onbuffactivate_r1.wav",
     "source_sha256": "2c723bb437d2bb03760079518c95c1340a58059d0690fb603a7e04850bf59b20",
     "path": "res://assets/audio/units/darius/play_sfx_darius_dariushemomax_onbuffactivate_r1.wav",
     "sha256": "f9fbaba66f803f511391210a76a6e7b9504f48a9cf89c7fbc006342068e04e7a",
@@ -409,7 +409,7 @@
   },
   {
     "event": "Play_sfx_Darius_DariusHemoMax_OnBuffActivate",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariushemomax_onbuffactivate_r2.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariushemomax_onbuffactivate_r2.wav",
     "source_sha256": "e12a8a037688df3e8986b9029e9852b63c5b26f45ab363fcc900453ec653c822",
     "path": "res://assets/audio/units/darius/play_sfx_darius_dariushemomax_onbuffactivate_r2.wav",
     "sha256": "fd4e6f0a6f0a86a8bde95e0b64e46012ac075a10982f1d576f475ac6f7a74fa4",
@@ -427,7 +427,7 @@
   },
   {
     "event": "Play_sfx_Darius_DariusExecute_hit_kill",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariusexecute_hit_kill_r1.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariusexecute_hit_kill_r1.wav",
     "source_sha256": "ba7c0a8889bb2e4f243e03e8372189698c5fa52c1b4b2fa82fd8814a302cbddd",
     "path": "res://assets/audio/units/darius/play_sfx_darius_dariusexecute_hit_kill_r1.wav",
     "sha256": "35cf3e398a73a44c88393accb1e5c07e5e182d31eac1400d9f08506653128528",
@@ -445,7 +445,7 @@
   },
   {
     "event": "Play_sfx_Darius_DariusExecute_hit_kill",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariusexecute_hit_kill_r2.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariusexecute_hit_kill_r2.wav",
     "source_sha256": "23fce0e47c8add79690157dd4ef6a0586f42a4ecbb77c6e4bf4ff352d9c14d95",
     "path": "res://assets/audio/units/darius/play_sfx_darius_dariusexecute_hit_kill_r2.wav",
     "sha256": "23ba4fcbc58d56c359edef121e50ebdcb29576e992536aef4b9cade953349376",
@@ -463,7 +463,7 @@
   },
   {
     "event": "Play_sfx_Darius_DariusExecute_hit_kill",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariusexecute_hit_kill_r3.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariusexecute_hit_kill_r3.wav",
     "source_sha256": "3d8636ae6e9076ed13f0fd9dd521c4a247d537466a56d748ab7a75ba45485d7e",
     "path": "res://assets/audio/units/darius/play_sfx_darius_dariusexecute_hit_kill_r3.wav",
     "sha256": "baaea7c911d6dd67f32d78b3d14c315b54697fab2054dbdd3e5c7c3e1cca4f71",
@@ -481,7 +481,7 @@
   },
   {
     "event": "Play_sfx_Darius_Death3D_cast",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_death3d_cast.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_death3d_cast.wav",
     "source_sha256": "cb9a5b22777d0b0000f486cc544d8be0dfc9dec8bd61653ce43f6eea01053767",
     "path": "res://assets/audio/units/darius/play_sfx_darius_death3d_cast.wav",
     "sha256": "62e56bd9bd249d7c6e154ee0e52d4d735eccdcd35149e734146791da1f8eaa2d",
@@ -499,7 +499,7 @@
   },
   {
     "event": "Play_sfx_Darius_DariusHemoMax_loop",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariushemomax_loop.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/德莱厄斯/audio-render/play_sfx_darius_dariushemomax_loop.wav",
     "source_sha256": "45db4b6c57cd3cba955b2b8ac2a78872d23b91afef2a8b9b53e87d01b688a2cb",
     "path": "res://assets/audio/units/darius/play_sfx_darius_dariushemomax_loop.wav",
     "sha256": "057258989682533729fc309fa3378e6b7a532d1833b3289b36192f647715936c",

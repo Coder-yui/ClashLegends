@@ -1,6 +1,6 @@
 # AGENTS.md — AI 协作边界
 
-Clash Legends 是 Godot 4.x 标准版（GDScript）的 1v1 卡牌即时对战学习项目。默认窗口为 `720×1280`（9:16），可调整与 F11 全屏；权威战场仍为 `720×1280`，场外底部操作区覆盖外围展示背景。
+ClashLegends 是 Godot 4.x 标准版（GDScript）的 1v1 卡牌即时对战学习项目。默认窗口为 `720×1280`（9:16），可调整与 F11 全屏；权威战场仍为 `720×1280`，场外底部操作区覆盖外围展示背景。
 
 ## 开始与验证
 
@@ -26,9 +26,11 @@ Clash Legends 是 Godot 4.x 标准版（GDScript）的 1v1 卡牌即时对战学
 - 每卡定义位于 `scripts/data/cards/<card_id>.gd` 的 gameplay / visual / card_art / audio 域，CardDB 统一注册查询；共享定义递归只读，运行实例持有自己的状态。新增字段须有读取方、schema/validator 与回归。
 - `radius` 是权威半径；`visual_radius` 与模型缩放只影响表现。
 - 战斗对象加入 `combatants`，提供 `team`、`hp`、`body_radius`、`take_damage(...)`。
-- `assets/` 仅放已接入资源及运行依赖，不存候选、失败版本或归档。素材与产物统一放项目根目录的 `ClashLegends-开发素材库/`，按待开发、候选讨论、制作中、中间产物、已完成分类；宣传素材独立放项目根目录的 `ClashLegends-promo-materials/`。这两个目录是本地工作区，已加入 `.gitignore`，不随代码提交；正式接入资源必须同步到 `assets/`。
+- `assets/` 仅放已接入资源及运行依赖，不存候选、失败版本或归档。素材与产物统一放项目根目录的 `ClashLegends-开发素材库/`，按待开发、候选讨论、制作中、中间产物、已完成分类；宣传素材位于游戏工程同级的 `../ClashLegends-promo-materials/`，网站位于 `../ClashLegendsWeb/`。宣传目录由用户手工管理：各期视频直接放根目录，封面与成片合放；不生成 README 或历史归档，废弃内容移入废纸篓。开发素材库和项目内 `ClashLegends-rollback-backups/` 由 `.gitignore` 忽略，宣传目录在游戏仓库之外；正式接入资源必须同步到 `assets/`。
 - 找素材先归档到开发素材库内，复用 `tools/dev.py model` / `audio` 展示；仅正式接入后进入卡牌开发工作台。不得为每次讨论重写展台或将候选塞入正式配置。
 - 实战试接入用 `tools/dev.py stage` 创建素材库内副本，完成验证后同步最终改动与依赖；当前制作中地图使用 `stage --arena --open`。输出路径、素材阶段迁移与备份边界见 [任务导航](docs/AGENT_WORKFLOW.md)。
+
+三板块位置、历史归档和路径迁移见 [本机项目布局](docs/reference/PROJECT_LAYOUT.md)。
 
 ## 代码入口
 

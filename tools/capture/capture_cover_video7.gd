@@ -13,8 +13,7 @@ const UNDYING_RAGE := preload("res://assets/effects/tryndamere/undying_rage.tscn
 const KAYLE_RANGED := preload("res://assets/units/kayle/ranged_view.tscn")
 const AIR_ELEVATION := 2.3
 
-const DEFAULT_OUT_16X9 := "res://ClashLegends-promo-materials/ClashLegends宣传素材/Video7素材/cover_background_16x9.png"
-const DEFAULT_OUT_9X16 := "res://ClashLegends-promo-materials/ClashLegends宣传素材/Video7素材/cover_background_9x16.png"
+const OUTPUT_DIRECTORY := "ClashLegends-promo-materials/Video07-卡牌数量翻倍/03-封面与成片"
 
 const TOWER_SPECS := [
 	[0, Vector2(ArenaRules.BRIDGE_X_LEFT,  25.5 * ArenaRules.TILE_SIZE), false],
@@ -50,7 +49,9 @@ func _initialize() -> void:
 		elif arg.begins_with("--out="):
 			_out_path = arg.trim_prefix("--out=")
 	if _out_path.is_empty():
-		_out_path = DEFAULT_OUT_16X9 if _ratio == "16x9" else DEFAULT_OUT_9X16
+		var project_root := ProjectSettings.globalize_path("res://").trim_suffix("/")
+		var directory := project_root.get_base_dir().path_join(OUTPUT_DIRECTORY)
+		_out_path = directory.path_join("cover_background_%s.png" % _ratio)
 	call_deferred("_build")
 
 func _build() -> void:

@@ -1,4 +1,4 @@
-# Clash Legends
+# ClashLegends
 
 Godot 4.x / GDScript 的 1v1 卡牌即时对战学习项目。独立服务器/单机固定 20Hz，2D 权威模拟与独立模型、特效、音频表现分离。设计画布 `720×1280`（9:16），Mac 启动窗口按可用桌面尽量放大，支持调整与 F11 全屏；战场逻辑 `720×1280`，外围显示随比例扩展，手牌覆盖底部展示区。
 
@@ -28,10 +28,12 @@ python3 tools/dev.py verify
 
 普通卡复用通用 Unit；出牌统一经过 `play_card()`，新增机制扩展共享系统。素材和动画不能决定伤害、移动、碰撞或技能时刻。协作边界见 [AGENTS.md](AGENTS.md)。实际修改的记录规则见 [任务导航](docs/AGENT_WORKFLOW.md#改动记录)，小任务直接依据对话。
 
-素材与迭代：正式资源在 `assets/`；候选、制作中版本和产物统一在项目根目录的 `ClashLegends-开发素材库/`。宣传素材独立在项目根目录的 `ClashLegends-promo-materials/`。这两个目录是本地工作区，已由 `.gitignore` 忽略；需要进入游戏的最终资源必须同步到 `assets/`，来源和验收结论写入文档。分类与展台流程见 [任务导航](docs/AGENT_WORKFLOW.md)。
+素材与迭代：正式资源在 `assets/`；候选、制作中版本和产物统一在项目根目录的 `ClashLegends-开发素材库/`。宣传素材位于同级 `../ClashLegends-promo-materials/`，介绍网站位于同级 `../ClashLegendsWeb/`。开发素材库与项目内回滚备份由 `.gitignore` 忽略，宣传目录在游戏仓库之外；需要进入游戏的最终资源必须同步到 `assets/`，来源和验收结论写入文档。分类与展台流程见 [任务导航](docs/AGENT_WORKFLOW.md)。
 
 ## 本地客户端—服务器对战
 
 运行 `bash tools/run_local_multiplayer.sh`，自动启动无窗口服务器和两个客户端窗口。默认 UDP 端口39152，可用 `CLASH_PORT` 覆盖；关闭两个窗口或按Ctrl-C清理本组进程。该脚本直接使用默认卡组开局；需要自选卡组时，单独启动服务器，再打开两个普通游戏窗口，在菜单中选卡并连接127.0.0.1。
 
 服务器命令：`Godot --headless --path . -- --mode=server`。两个客户端均使用 `Godot --path . -- --mode=join --ip=127.0.0.1`。服务器分配阵营，不占玩家席位；首期断线结束对局，不支持掉线重连。正常终局两端离开后服务器等待下一局。
+
+本机三板块位置、散落产物归档和路径迁移见 [项目布局](docs/reference/PROJECT_LAYOUT.md)。

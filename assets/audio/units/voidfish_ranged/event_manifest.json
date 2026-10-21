@@ -10,7 +10,7 @@
         {
           "path": "res://assets/audio/units/voidfish_ranged/swing_1.wav",
           "sha256": "6f650cecf941c0db03fb3e738ef8f5c3bc2ef9f9df99e3e22599eecea7d337a2",
-          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/远程虚空鱼/audio/1607962849/belveth_base_sfx_events-0279-event.txtp"
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/远程虚空鱼/audio/1607962849/belveth_base_sfx_events-0279-event.txtp"
         }
       ]
     },
@@ -21,7 +21,7 @@
         {
           "path": "res://assets/audio/units/voidfish_ranged/hit_1.wav",
           "sha256": "77ffbd7b734f33ea295f1131bb498cbbd32554e53ca26cd32c56ad660a9e3809",
-          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/远程虚空鱼/audio/2043463311/belveth_base_sfx_events-0303-event.txtp"
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/远程虚空鱼/audio/2043463311/belveth_base_sfx_events-0303-event.txtp"
         }
       ]
     }

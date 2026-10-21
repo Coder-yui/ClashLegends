@@ -140,7 +140,7 @@
   {
     "card": "voidfish_ranged_army",
     "path": "res://assets/cards/voidfish_ranged_army_loading.png",
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/3D摄影棚/shots/远程虚空鱼_6单位_20261013_141508.png",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/3D摄影棚/shots/远程虚空鱼_6单位_20261013_141508.png",
     "source_sha256": "1252102ac204e85615d5418ef18c04c1130c00f0b81fe94ed3d9c2bcdab480ff",
     "sha256": "1252102ac204e85615d5418ef18c04c1130c00f0b81fe94ed3d9c2bcdab480ff",
     "processing": "用户指定原图直接复制，未裁切、缩放或改色。"

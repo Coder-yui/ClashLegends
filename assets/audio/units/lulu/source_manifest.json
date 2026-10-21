@@ -119,7 +119,7 @@
     "source_sha256": "ea2d0a4528c5f52914211aa760f265353c277c7328ffcddf4adf9d810b50932e"
   },
   {
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/lulu/play_sfx_lulu_lulur_oncast_r1.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/02-候选讨论/音频/lulu/play_sfx_lulu_lulur_oncast_r1.wav",
     "output": "play_sfx_lulu_lulur_oncast_r1.wav",
     "sha256": "95b2200710831e51beab1c1a9ef91c60afc3707c6db369e64910fd35610b0569",
     "duration": 0.7434013605442177,
@@ -134,7 +134,7 @@
     "txtp_sha256": "6df3a7fe1c05b64c5016a4eea1c89ec157c6a9dcac4ba054d5e463359e0456ac"
   },
   {
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/lulu/play_sfx_lulu_lulur_oncast_r3.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/02-候选讨论/音频/lulu/play_sfx_lulu_lulur_oncast_r3.wav",
     "output": "play_sfx_lulu_lulur_oncast_r3.wav",
     "sha256": "19f44a7419e851f690a8fedd7aad2d76fb3602396c926a34caebbdcd258f9d9f",
     "duration": 0.7816780045351474,
@@ -149,7 +149,7 @@
     "txtp_sha256": "f767e36c55a1b82164f9b7da11ae7531a1815d5d29be441132aa902f0ede945d"
   },
   {
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/lulu/play_sfx_lulu_lulur_oncast_r2.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/02-候选讨论/音频/lulu/play_sfx_lulu_lulur_oncast_r2.wav",
     "output": "play_sfx_lulu_lulur_oncast_r2.wav",
     "sha256": "3f3f2451f78521b8a69d5c883bbb3a38ee47b75e2f7ffc644829abd651848389",
     "duration": 0.6713605442176871,
@@ -164,7 +164,7 @@
     "txtp_sha256": "752d06897ee866c699a6bb9b42f6f93fc6f01c3633f9dde8cc61aa5da16b10b1"
   },
   {
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/deployment_audio_review/voice_candidates_20260914/lulu/wav/Play_vo_Lulu_Move2DStandard_r1_.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/deployment_audio_review/voice_candidates_20260914/lulu/wav/Play_vo_Lulu_Move2DStandard_r1_.wav",
     "output": "deploy_slide.wav",
     "text": "我建议滑着走。",
     "identification": "local MLX Whisper; subjective listening pending",
@@ -181,7 +181,7 @@
     "txtp_sha256": "036a4d560fcb50ec8d7e0c436a10b2ea83e7e9faeb0c52ded7cf825fbc42605a"
   },
   {
-    "source": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/deployment_audio_review/voice_candidates_20260914/lulu/wav/Play_vo_Lulu_Move2DStandard_r8_.wav",
+    "source": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/02-候选讨论/音频/来源批次/deployment_audio_review/voice_candidates_20260914/lulu/wav/Play_vo_Lulu_Move2DStandard_r8_.wav",
     "output": "deploy_dewdrop.wav",
     "text": "大鼻子露珠。",
     "identification": "local MLX Whisper; subjective listening pending",

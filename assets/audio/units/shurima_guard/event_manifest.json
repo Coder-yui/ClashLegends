@@ -1,6 +1,6 @@
 [
   {
-    "file": "/Users/czh/Projects/Clash Legends/assets/audio/units/shurima_guard/play_sfx_azir_azirbasicattacksoldier_cast1_r1.wav",
+    "file": "/Users/czh/Projects/ClashLegends/assets/audio/units/shurima_guard/play_sfx_azir_azirbasicattacksoldier_cast1_r1.wav",
     "group": "恕瑞玛卫队",
     "cue": "普攻1出手",
     "event": "Play_sfx_Azir_AzirBasicAttackSoldier_cast1 {r1}",
@@ -18,7 +18,7 @@
     "txtp_sha256": "b9bc4588634e8043469dd389c2e1502531cd9837bd82e6a771f12f39b1e92353"
   },
   {
-    "file": "/Users/czh/Projects/Clash Legends/assets/audio/units/shurima_guard/play_sfx_azir_azirbasicattacksoldier_cast1_r2.wav",
+    "file": "/Users/czh/Projects/ClashLegends/assets/audio/units/shurima_guard/play_sfx_azir_azirbasicattacksoldier_cast1_r2.wav",
     "group": "恕瑞玛卫队",
     "cue": "普攻1出手",
     "event": "Play_sfx_Azir_AzirBasicAttackSoldier_cast1 {r2}",
@@ -112,7 +112,7 @@
     ]
   },
   {
-    "file": "/Users/czh/Projects/Clash Legends/assets/audio/units/shurima_guard/play_sfx_azir_azirbasicattacksoldier_onhit_r1.wav",
+    "file": "/Users/czh/Projects/ClashLegends/assets/audio/units/shurima_guard/play_sfx_azir_azirbasicattacksoldier_onhit_r1.wav",
     "group": "恕瑞玛卫队",
     "cue": "士兵命中",
     "event": "Play_sfx_Azir_AzirBasicAttackSoldier_OnHit [1559186049=1153642577] {r1}",
@@ -130,7 +130,7 @@
     "txtp_sha256": "99ef641ea03d411a302ee74df85fa99cf84a19257cd82728c96cc6526524c3a6"
   },
   {
-    "file": "/Users/czh/Projects/Clash Legends/assets/audio/units/shurima_guard/play_sfx_azir_azirbasicattacksoldier_onhit_r2.wav",
+    "file": "/Users/czh/Projects/ClashLegends/assets/audio/units/shurima_guard/play_sfx_azir_azirbasicattacksoldier_onhit_r2.wav",
     "group": "恕瑞玛卫队",
     "cue": "士兵命中",
     "event": "Play_sfx_Azir_AzirBasicAttackSoldier_OnHit [1559186049=1153642577] {r2}",
@@ -148,7 +148,7 @@
     "txtp_sha256": "23ee4deb5ca7b1357e62def995a53b091353bb24781edf9274ec1644fd2f3594"
   },
   {
-    "file": "/Users/czh/Projects/Clash Legends/assets/audio/units/shurima_guard/play_sfx_azir_azirwspawnsound_onbuffcast_r1.wav",
+    "file": "/Users/czh/Projects/ClashLegends/assets/audio/units/shurima_guard/play_sfx_azir_azirwspawnsound_onbuffcast_r1.wav",
     "group": "恕瑞玛卫队",
     "cue": "召唤出场",
     "event": "Play_sfx_Azir_AzirWSpawnSound_OnBuffCast {r1}",
@@ -166,7 +166,7 @@
     "txtp_sha256": "ac7f58986235f179c65adc45c752b3eb2cc2824a71d8900fd5842f0392a73252"
   },
   {
-    "file": "/Users/czh/Projects/Clash Legends/assets/audio/units/shurima_guard/play_sfx_azir_azirwspawnsound_onbuffcast_r2.wav",
+    "file": "/Users/czh/Projects/ClashLegends/assets/audio/units/shurima_guard/play_sfx_azir_azirwspawnsound_onbuffcast_r2.wav",
     "group": "恕瑞玛卫队",
     "cue": "召唤出场",
     "event": "Play_sfx_Azir_AzirWSpawnSound_OnBuffCast {r2}",
@@ -184,7 +184,7 @@
     "txtp_sha256": "43c062f3d112e29daac28230b6134edca0c5229681e78ca2ab3009e1c7ef3fe7"
   },
   {
-    "file": "/Users/czh/Projects/Clash Legends/assets/audio/units/shurima_guard/play_sfx_azir_azirwspawnsound_onbuffdeactivate_r1.wav",
+    "file": "/Users/czh/Projects/ClashLegends/assets/audio/units/shurima_guard/play_sfx_azir_azirwspawnsound_onbuffdeactivate_r1.wav",
     "group": "恕瑞玛卫队",
     "cue": "消散死亡",
     "event": "Play_sfx_Azir_AzirWSpawnSound_OnBuffDeactivate {r1}",
@@ -202,7 +202,7 @@
     "txtp_sha256": "96d546083173aeb697e8f53bd6ec77b86ce0782f0c9b8dfbd9ff7b686417765c"
   },
   {
-    "file": "/Users/czh/Projects/Clash Legends/assets/audio/units/shurima_guard/play_sfx_azir_azirwspawnsound_onbuffdeactivate_r2.wav",
+    "file": "/Users/czh/Projects/ClashLegends/assets/audio/units/shurima_guard/play_sfx_azir_azirwspawnsound_onbuffdeactivate_r2.wav",
     "group": "恕瑞玛卫队",
     "cue": "消散死亡",
     "event": "Play_sfx_Azir_AzirWSpawnSound_OnBuffDeactivate {r2}",
@@ -220,7 +220,7 @@
     "txtp_sha256": "eb67411e25dca4ad43db308f64c69d76bbfb91267ce0ec841f79640ef848491d"
   },
   {
-    "file": "/Users/czh/Projects/Clash Legends/assets/audio/units/shurima_guard/play_sfx_azir_azireshield_onbuffcast_r1.wav",
+    "file": "/Users/czh/Projects/ClashLegends/assets/audio/units/shurima_guard/play_sfx_azir_azireshield_onbuffcast_r1.wav",
     "group": "恕瑞玛卫队",
     "cue": "护盾施放",
     "event": "Play_sfx_Azir_AzirEShield_OnBuffCast {r1}",

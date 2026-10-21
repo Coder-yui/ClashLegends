@@ -22,7 +22,7 @@
     "file": "assets/audio/units/sun_disc/play_sfx_3190shield_onbuffactivate_r1.wav",
     "event": "Play_sfx_3190Shield_OnBuffActivate",
     "event_id": 3467612698,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/items_global_events-1511-event.txtp",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/shared_audio_review/named_txtp/items_global_events-1511-event.txtp",
     "duration": 3.8271201814058955,
     "media_ids": [
       420581881,

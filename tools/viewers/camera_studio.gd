@@ -125,7 +125,7 @@ func _run() -> void:
 	_selected_team = int(_options.get("team", "0"))
 	_selected_form = int(_options.get("form", "0"))
 	_scene_mode = _options.has("scene")
-	root.title = "Clash Legends · 3D 卡面摄影棚"
+	root.title = "ClashLegends · 3D 卡面摄影棚"
 	root.size = Vector2i(1280, 900)
 	# 项目主窗口是 720×1400 竖屏；摄影棚是独立横向工具，必须同步内容画布，否则 Godot 会在两侧加黑边。
 	root.content_scale_size = Vector2i(1280, 900)

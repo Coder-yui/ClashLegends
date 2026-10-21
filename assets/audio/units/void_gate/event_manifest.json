@@ -10,17 +10,17 @@
         {
           "path": "res://assets/audio/units/void_gate/deploy_start_1.wav",
           "sha256": "8b79956db4de05c51716cc075d8f74531e37f71bf12c735ea42522f03c744ca1",
-          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/兹若特传送门/audio/1149196031/npc_global_voidgate_sfx_events-0009-event {r1}.txtp"
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/兹若特传送门/audio/1149196031/npc_global_voidgate_sfx_events-0009-event {r1}.txtp"
         },
         {
           "path": "res://assets/audio/units/void_gate/deploy_start_2.wav",
           "sha256": "ff34fbb814a90ed37435b33b1f81947043051ff0002b9658e49d3a3ca6c2eb68",
-          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/兹若特传送门/audio/1149196031/npc_global_voidgate_sfx_events-0009-event {r2}.txtp"
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/兹若特传送门/audio/1149196031/npc_global_voidgate_sfx_events-0009-event {r2}.txtp"
         },
         {
           "path": "res://assets/audio/units/void_gate/deploy_start_3.wav",
           "sha256": "0a14501f7241bdb09594d3e19b244a60b7315b1bbf6414b52b6b52c5abd9094d",
-          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/兹若特传送门/audio/1149196031/npc_global_voidgate_sfx_events-0009-event {r3}.txtp"
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/兹若特传送门/audio/1149196031/npc_global_voidgate_sfx_events-0009-event {r3}.txtp"
         }
       ]
     },
@@ -31,7 +31,7 @@
         {
           "path": "res://assets/audio/units/void_gate/death_1.wav",
           "sha256": "44f0e1f14b8fbc493253faa605b8504bac6c52cb50c1a7c67cae774ff3e79d22",
-          "txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/兹若特传送门/audio/2228067756/npc_global_voidgate_sfx_events-0013-event.txtp"
+          "txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/兹若特传送门/audio/2228067756/npc_global_voidgate_sfx_events-0013-event.txtp"
         }
       ]
     }

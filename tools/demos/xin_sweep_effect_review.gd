@@ -1,5 +1,5 @@
 extends SceneTree
-## 实际工作台双阵营部署/主动横扫截图；输出 /Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/预览与验证/clash-xin-sweep-review。
+## 实际工作台双阵营部署/主动横扫截图；输出 /Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/预览与验证/clash-xin-sweep-review。
 func _initialize() -> void:
 	_run.call_deferred()
 

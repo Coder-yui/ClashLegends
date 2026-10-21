@@ -380,23 +380,23 @@
   {
     "source": "original Spell4 Slide SKN/SKL with fly/slide ANM; lol2gltf conversion",
     "output": "res://assets/units/pantheon/r_original/pantheon_r_proxy.glb",
-    "source_record": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/大招落地研究/models/pantheon_r_proxy.glb.source.json",
+    "source_record": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/潘森/大招落地研究/models/pantheon_r_proxy.glb.source.json",
     "sha256": "c173913d6f2d11ad7b02e593683c46dd0821733ee4a08468bdf5b2f00a913e40",
     "conversion_inputs": [
       {
-        "path": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/大招落地研究/effects-source/assets/characters/pantheon/skins/base/particles/pantheon_base_spell4_slide.skn",
+        "path": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/潘森/大招落地研究/effects-source/assets/characters/pantheon/skins/base/particles/pantheon_base_spell4_slide.skn",
         "sha256": "08950f6aedd94d4a55481313dcafa21e625ca996539a55d849c7665c0983469d"
       },
       {
-        "path": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/大招落地研究/effects-source/assets/characters/pantheon/skins/base/particles/pantheon_base_spell4_slide.skl",
+        "path": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/潘森/大招落地研究/effects-source/assets/characters/pantheon/skins/base/particles/pantheon_base_spell4_slide.skl",
         "sha256": "0735ec420ad50b91a6905bee25391f5f5833613e2abb2c66560cde5ca1ee2a32"
       },
       {
-        "path": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/大招落地研究/model-animations/pantheon_spell4_fly.anm",
+        "path": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/潘森/大招落地研究/model-animations/pantheon_spell4_fly.anm",
         "sha256": "652bfee0b44cba980bcf117ae151d1597e56b873ff2a3fda5bdce1f88370d9c0"
       },
       {
-        "path": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/03-制作中/潘森/大招落地研究/model-animations/pantheon_spell4_slide.anm",
+        "path": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/潘森/大招落地研究/model-animations/pantheon_spell4_slide.anm",
         "sha256": "003542e3cd8245067cd5331c0139e9c60a94f8dbe4ed695c849858cf68e28528"
       }
     ]

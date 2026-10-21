@@ -517,7 +517,7 @@
     "txtp_sha256": "63e18eed1022d753de20ce7620f0d5b3d5eb53a8d18dbc426eb6bb04cbac53d2"
   },
   {
-    "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/xin/play_sfx_xinzhao_xinzhaor_oncast.wav",
+    "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/02-候选讨论/音频/未接入/units/xin/play_sfx_xinzhao_xinzhaor_oncast.wav",
     "event": "Play_sfx_XinZhao_XinZhaoR_OnCast",
     "event_id": 489959008,
     "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/5882f651b4d457b0d99ccae89abb14051d61de810732b3f90cad01594d18fe04.txtp",

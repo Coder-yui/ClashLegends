@@ -274,7 +274,7 @@ func _show_menu() -> void:
 	resize_menu.call()
 	var title := Label.new()
 	title.name = "Title"
-	title.text = "Clash Legends"
+	title.text = "ClashLegends"
 	title.add_theme_font_size_override("font_size", 48)
 	title.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.75))
 	title.add_theme_constant_override("outline_size", 4)
@@ -619,7 +619,7 @@ func _rpc_offer(epoch: String, protocol: int, fingerprint: String, assigned_team
 		_network_failed("协议或卡牌规则版本不一致")
 		return
 	runtime.local_team = assigned_team
-	DisplayServer.window_set_title("Clash Legends — 玩家 %d" % (runtime.local_team + 1))
+	DisplayServer.window_set_title("ClashLegends — 玩家 %d" % (runtime.local_team + 1))
 	_network_loading_started = Time.get_ticks_msec()
 	_snapshot_system.reset_session(epoch)
 	_rpc_register_deck.rpc_id(1, runtime._deck, runtime._active_skill_choices, epoch, protocol, fingerprint)

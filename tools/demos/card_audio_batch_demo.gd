@@ -1,5 +1,5 @@
 extends SceneTree
-## 正式工作台出牌/技能事件的可复现录音；输出到 /Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/预览与验证/clash-card-audio。
+## 正式工作台出牌/技能事件的可复现录音；输出到 /Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/预览与验证/clash-card-audio。
 const CARDS := ["aurelionsol", "sett", "gwen", "teemo", "twisted_fate", "xin", "gnar", "anivia", "apex_turret", "pix", "imp"]
 func _initialize() -> void:
 	_run.call_deferred()

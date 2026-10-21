@@ -3,7 +3,7 @@
     {
       "path": "res://assets/audio/units/void_scuttle_crab/death_leap_1.wav",
       "source_event": "Play_sfx_SRU_Crab_Void_death_leap",
-      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/河蟹全音频-20261016/LoL 虚空河蟹/txtp/Play_sfx_SRU_Crab_Void_death_leap.txtp",
+      "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/02-候选讨论/河蟹全音频-20261016/LoL 虚空河蟹/txtp/Play_sfx_SRU_Crab_Void_death_leap.txtp",
       "source_txtp_sha256": "87750c9b8b8e366b68640f40cf2266fde890ff4939030b4ca868996a8889e92a",
       "source_duration": 1.9072335600907029,
       "processing": "fresh original event PCM; no normalization",
@@ -19,7 +19,7 @@
     {
       "path": "res://assets/audio/units/void_scuttle_crab/death_cast_1.wav",
       "source_event": "Play_sfx_SRU_Crab_Void_death_cast",
-      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/河蟹全音频-20261016/LoL 虚空河蟹/txtp/Play_sfx_SRU_Crab_Void_death_cast.txtp",
+      "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/02-候选讨论/河蟹全音频-20261016/LoL 虚空河蟹/txtp/Play_sfx_SRU_Crab_Void_death_cast.txtp",
       "source_txtp_sha256": "4f126ae40f6cb49203afd8f7dce6029c9c881dec18473ba7b37ac0b0d40e7a2a",
       "source_duration": 3.2356009070294784,
       "processing": "fresh original event PCM; no normalization; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
@@ -43,7 +43,7 @@
     {
       "path": "res://assets/audio/units/void_scuttle_crab/spawn_cast_1.wav",
       "source_event": "Play_sfx_SRU_Crab_Void_spawn_cast",
-      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/河蟹全音频-20261016/LoL 虚空河蟹/txtp/Play_sfx_SRU_Crab_Void_spawn_cast.txtp",
+      "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/02-候选讨论/河蟹全音频-20261016/LoL 虚空河蟹/txtp/Play_sfx_SRU_Crab_Void_spawn_cast.txtp",
       "source_txtp_sha256": "3c2d91673cc402b2d21e8f146b5d856fcc2b10bcaa3f2b6f393f3fc1b3598f3b",
       "source_duration": 4.405555555555556,
       "processing": "fresh original event PCM; no normalization",
@@ -59,7 +59,7 @@
     {
       "path": "res://assets/audio/units/void_scuttle_crab/sru_dance_1.wav",
       "source_event": "Play_sfx_SRU_Crab_Void_Sru_Dance",
-      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/河蟹全音频-20261016/LoL 虚空河蟹/txtp/Play_sfx_SRU_Crab_Void_Sru_Dance {r1}.txtp",
+      "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/02-候选讨论/河蟹全音频-20261016/LoL 虚空河蟹/txtp/Play_sfx_SRU_Crab_Void_Sru_Dance {r1}.txtp",
       "source_txtp_sha256": "708392b77986f5f85285e8dffb9eb578e21c632a907f669731d585e2b1c86b75",
       "source_duration": 2.4666439909297053,
       "processing": "fresh original event PCM; no normalization",
@@ -75,7 +75,7 @@
     {
       "path": "res://assets/audio/units/void_scuttle_crab/sru_dance_2.wav",
       "source_event": "Play_sfx_SRU_Crab_Void_Sru_Dance",
-      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/河蟹全音频-20261016/LoL 虚空河蟹/txtp/Play_sfx_SRU_Crab_Void_Sru_Dance {r2}.txtp",
+      "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/02-候选讨论/河蟹全音频-20261016/LoL 虚空河蟹/txtp/Play_sfx_SRU_Crab_Void_Sru_Dance {r2}.txtp",
       "source_txtp_sha256": "ec37d331d2b2e05c6172b766f87598a57485603fc6bf339c74019408f0bfd6ed",
       "source_duration": 2.333310657596372,
       "processing": "fresh original event PCM; no normalization",
@@ -91,7 +91,7 @@
     {
       "path": "res://assets/audio/units/void_scuttle_crab/sru_dance_3.wav",
       "source_event": "Play_sfx_SRU_Crab_Void_Sru_Dance",
-      "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/02-候选讨论/河蟹全音频-20261016/LoL 虚空河蟹/txtp/Play_sfx_SRU_Crab_Void_Sru_Dance {r3}.txtp",
+      "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/02-候选讨论/河蟹全音频-20261016/LoL 虚空河蟹/txtp/Play_sfx_SRU_Crab_Void_Sru_Dance {r3}.txtp",
       "source_txtp_sha256": "bb2cfaf148097fc9edb80fe5a7f6366913031d3261d1af67c37f23e4c0660252",
       "source_duration": 2.3999773242630384,
       "processing": "fresh original event PCM; no normalization",

@@ -287,7 +287,7 @@
     "txtp_sha256": "bcac16f25458345990d3eacd4cb617dcada69aed6b7f6dc39b3989fda5e807a0"
   },
   {
-    "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/音频/历史版本/units/anivia/play_sfx_anivia_rebirth_onbuffactivate.wav",
+    "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/音频/历史版本/units/anivia/play_sfx_anivia_rebirth_onbuffactivate.wav",
     "event": "Play_sfx_Anivia_Rebirth_OnBuffActivate",
     "event_id": 3510664673,
     "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/d0e30db686322b86298985a4d9e77e68c3dd9aabb2a5eda0f744ac4d61b897fd.txtp",
@@ -299,10 +299,10 @@
     "processing": "vgmstream-cli -i; source event gain retained"
   },
   {
-    "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/音频/历史版本/units/anivia/play_sfx_anivia_rebirth_cast.wav",
+    "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/音频/历史版本/units/anivia/play_sfx_anivia_rebirth_cast.wav",
     "event": "Play_sfx_Anivia_Rebirth_cast",
     "event_id": 484621663,
-    "source_txtp": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/anivia/txtp/Play_sfx_Anivia_Rebirth_cast.txtp",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/素材加工/card_audio_batch/anivia/txtp/Play_sfx_Anivia_Rebirth_cast.txtp",
     "media_ids": [
       930829679
     ],
@@ -311,7 +311,7 @@
     "processing": "vgmstream-cli -i; source event gain retained"
   },
   {
-    "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/音频/历史版本/units/anivia/anivia_rebirth_incubation_3s.wav",
+    "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/音频/历史版本/units/anivia/anivia_rebirth_incubation_3s.wav",
     "event": "Play_sfx_Anivia_Rebirth_OnBuffActivate",
     "event_id": 3510664673,
     "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/d0e30db686322b86298985a4d9e77e68c3dd9aabb2a5eda0f744ac4d61b897fd.txtp",
@@ -321,10 +321,10 @@
     "duration": 3.0,
     "sha256": "897d1e6a5fb8d1a9fb25aa71995cff965cb1e58424971e6e3efe18ccfb34c0f4",
     "processing": "Complete 6.797687 s source processed once with atempo=2 (pitch preserved), then split at output 3.0 s without fades; first segment owned by egg until death/revival",
-    "derived_from": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/音频/历史版本/units/anivia/play_sfx_anivia_rebirth_onbuffactivate.wav"
+    "derived_from": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/音频/历史版本/units/anivia/play_sfx_anivia_rebirth_onbuffactivate.wav"
   },
   {
-    "file": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/音频/历史版本/units/anivia/anivia_rebirth_success.wav",
+    "file": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/音频/历史版本/units/anivia/anivia_rebirth_success.wav",
     "event": "Play_sfx_Anivia_Rebirth_OnBuffActivate",
     "event_id": 3510664673,
     "source_txtp": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/d0e30db686322b86298985a4d9e77e68c3dd9aabb2a5eda0f744ac4d61b897fd.txtp",
@@ -334,7 +334,7 @@
     "duration": 0.4069160997732426,
     "sha256": "91a247f5124b0dfa2111609dac26feb7a1421b276427884c81ebc6866001ad49",
     "processing": "Complete 6.797687 s source processed once with atempo=2 (pitch preserved), then split at output 3.0 s without fades; remaining ~0.4 s on successful revival only",
-    "derived_from": "/Users/czh/Projects/Clash Legends/ClashLegends-开发素材库/04-中间产物/音频/历史版本/units/anivia/play_sfx_anivia_rebirth_onbuffactivate.wav"
+    "derived_from": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/音频/历史版本/units/anivia/play_sfx_anivia_rebirth_onbuffactivate.wav"
   },
   {
     "file": "anivia_rebirth_full_half.wav",

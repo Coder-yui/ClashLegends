@@ -4,18 +4,17 @@ extends SceneTree
 ##
 ## 用法：
 ##   Godot --path . --script tools/capture/capture_cover_combat.gd -- --ratio=9x16
-##   Godot --path . --script tools/capture/capture_cover_combat.gd -- --ratio=16x9 --out=res://ClashLegends-promo-materials/ClashLegends宣传素材/Video5素材/cover_background_16x9.png
+##   Godot --path . --script tools/capture/capture_cover_combat.gd -- --ratio=16x9 --out=/绝对路径/cover_background_16x9.png
 ##
 ## 参数：
 ##   --ratio=9x16|16x9   输出比例，默认 9x16
-##   --out=<路径>         输出 png 路径，默认按比例输出到 Video5素材
+##   --out=<路径>         输出 png 路径，默认按比例输出到项目同级宣传素材库对应视频的 03-封面与成片
 
 const AATROX_ULT := preload("res://assets/units/aatrox/ultimate_view.tscn")
 const HERALD := preload("res://assets/units/rift_herald/rift_herald_view.tscn")
 const AIR_ELEVATION := 2.3
 
-const DEFAULT_OUT_9X16 := "res://ClashLegends-promo-materials/ClashLegends宣传素材/Video5素材/cover_background_9x16.png"
-const DEFAULT_OUT_16X9 := "res://ClashLegends-promo-materials/ClashLegends宣传素材/Video5素材/cover_background_16x9.png"
+const OUTPUT_DIRECTORY := "ClashLegends-promo-materials/Video05-新3D竞技场和音效接入演示/03-封面与成片"
 
 # 复用 main.gd _create_towers() 坐标
 const TOWER_SPECS := [
@@ -47,7 +46,9 @@ func _initialize() -> void:
 		elif arg.begins_with("--out="):
 			_out_path = arg.trim_prefix("--out=")
 	if _out_path.is_empty():
-		_out_path = DEFAULT_OUT_16X9 if _ratio == "16x9" else DEFAULT_OUT_9X16
+		var project_root := ProjectSettings.globalize_path("res://").trim_suffix("/")
+		var directory := project_root.get_base_dir().path_join(OUTPUT_DIRECTORY)
+		_out_path = directory.path_join("cover_background_%s.png" % _ratio)
 	call_deferred("_build")
 
 func _build() -> void:
