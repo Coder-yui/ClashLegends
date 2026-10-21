@@ -388,7 +388,7 @@ func _draw() -> void:
 		draw_circle(Vector2(0, -visual_radius * 0.4), visual_radius * 0.35, crown_color)
 	# 血条：塔3格、水晶4格（每格40px）。敌方红条在建筑上方；
 	# 己方塔绿条在塔身中央，己方水晶绿条贴着水晶底座下方。
-	draw_set_transform(Vector2.ZERO, -get_global_transform_with_canvas().get_rotation(), Vector2.ONE)
+	draw_set_transform(Vector2.ZERO, -get_global_transform_with_canvas().get_rotation(), Vector2(1.0, 1.0 / BattleGroundProjection.Q))
 	var bar_w := KING_HEALTH_BAR_WIDTH if is_king else PRINCESS_HEALTH_BAR_WIDTH
 	var bar_h := HEALTH_BAR_HEIGHT
 	var ratio := maxf(hp / max_hp, 0.0)

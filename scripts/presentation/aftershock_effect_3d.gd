@@ -30,8 +30,8 @@ func sync_effects(skills: RefCounted, camera: Camera3D) -> void:
 		if counter:
 			# 只定位落点，Jax粒子不再接受相机足印变形；高度不计入横向缩放。
 			# 与单位模型采用同一地面根点；不额外抬高粒子系统。
-			var ray_origin := camera.project_ray_origin(point)
-			var ray_direction := camera.project_ray_normal(point)
+			var ray_origin := BattleGroundProjection.ray_origin(camera, point)
+			var ray_direction := BattleGroundProjection.ray_normal(camera, point)
 			view.position = ray_origin + ray_direction * (-ray_origin.y / ray_direction.y)
 			view.projection_basis = Basis.IDENTITY
 			var native_player = load("res://assets/effects/jax/player.gd")

@@ -90,8 +90,8 @@ func sync_effects(skills: RefCounted, camera: Camera3D) -> void:
 			views.erase(id)
 
 func _at_height(camera: Camera3D, screen: Vector2, height: float) -> Vector3:
-	var origin := camera.project_ray_origin(screen)
-	var direction := camera.project_ray_normal(screen)
+	var origin := BattleGroundProjection.ray_origin(camera, screen)
+	var direction := BattleGroundProjection.ray_normal(camera, screen)
 	return origin + direction * ((height - origin.y) / direction.y)
 
 func _w_scale(camera: Camera3D, point: Vector2) -> float:

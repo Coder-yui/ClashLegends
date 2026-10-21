@@ -11,8 +11,8 @@ func setup(view_camera: Camera3D, point: Vector2, source_team: int) -> void:
 	team = source_team
 
 func ground(point: Vector2) -> Vector3:
-	var origin := camera.project_ray_origin(point)
-	var direction := camera.project_ray_normal(point)
+	var origin := BattleGroundProjection.ray_origin(camera, point)
+	var direction := BattleGroundProjection.ray_normal(camera, point)
 	return origin + direction * (-origin.y / direction.y)
 
 func advance_visual(_progress: float) -> void:

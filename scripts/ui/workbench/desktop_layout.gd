@@ -34,25 +34,25 @@ func install(window: Window) -> void:
 func center(value: float) -> void:
 	zoom = clampf(value, 1.0, 3.0)
 	var scale := FIT_SCALE * zoom
-	_apply(FIELD_RECT.get_center() - FIELD_SIZE * scale / 2.0)
+	_apply(FIELD_RECT.get_center() - FIELD_SIZE * Vector2(scale, scale * BattleGroundProjection.Q) / 2.0)
 
 func zoom_at(value: float, screen_position: Vector2) -> void:
 	var world_position := _window.canvas_transform.affine_inverse() * screen_position
 	zoom = clampf(value, 1.0, 3.0)
-	_apply(screen_position - world_position * FIT_SCALE * zoom)
+	_apply(screen_position - world_position * Vector2(FIT_SCALE * zoom, FIT_SCALE * zoom * BattleGroundProjection.Q))
 
 func pan(delta: Vector2) -> void:
 	_apply(_window.canvas_transform.origin + delta)
 
 func _apply(origin: Vector2) -> void:
 	var scale := FIT_SCALE * zoom
-	var displayed := FIELD_SIZE * scale
+	var displayed := FIELD_SIZE * Vector2(scale, scale * BattleGroundProjection.Q)
 	for axis in 2:
 		if displayed[axis] <= FIELD_RECT.size[axis]:
 			origin[axis] = FIELD_RECT.position[axis] + (FIELD_RECT.size[axis] - displayed[axis]) / 2.0
 		else:
 			origin[axis] = clampf(origin[axis], FIELD_RECT.end[axis] - displayed[axis], FIELD_RECT.position[axis])
-	_window.canvas_transform = Transform2D(Vector2(scale, 0), Vector2(0, scale), origin)
+	_window.canvas_transform = Transform2D(Vector2(scale, 0), Vector2(0, scale * BattleGroundProjection.Q), origin)
 
 func restore() -> void:
 	if not is_instance_valid(_window): return

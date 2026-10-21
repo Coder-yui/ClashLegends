@@ -1067,6 +1067,9 @@ func _update_deployment_preview(pointer_pos: Vector2) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if _workbench.enabled:
 		if _art_dev_panel == null or not _art_dev_panel.accepts_battle_input(): return
+		if event is InputEventMouseMotion:
+			_selected_card = _workbench.selection if CardDB.has_card(_workbench.selection) and not _art_dev_panel.is_select_mode() else ""
+			_update_deployment_preview(get_viewport().canvas_transform.affine_inverse() * event.position)
 		if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 			_workbench_map_click(get_viewport().canvas_transform.affine_inverse() * event.position)
 		return

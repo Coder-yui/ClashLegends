@@ -24,7 +24,7 @@ const GROWTH_RED := Color(1.0, 0.24, 0.28)
 
 const LAYOUT := preload("res://scripts/ui/battle_layout.gd")
 const HAND_AREA_HEIGHT := LAYOUT.HAND_HEIGHT
-const HAND_CARD_HEIGHT := 86.0
+const HAND_CARD_HEIGHT := 110.0
 const HAND_CARD_WIDTH := 112.0
 
 # 卡组轮换
@@ -99,7 +99,7 @@ func _build_ui() -> void:
 
 	_growth_notice = Label.new()
 	_growth_notice.name = "GrowthNotice"
-	_growth_notice.position = Vector2(216, -31)
+	_growth_notice.position = Vector2(216, -55)
 	_growth_notice.size = Vector2(288, 26)
 	_growth_notice.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_growth_notice.mouse_filter = Control.MOUSE_FILTER_IGNORE

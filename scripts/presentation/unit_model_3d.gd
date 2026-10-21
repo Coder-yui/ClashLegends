@@ -946,8 +946,8 @@ func _advance_move_cycle() -> void:
 	_play_move_cycle_clip()
 
 func _screen_to_ground(screen_position: Vector2) -> Vector3:
-	var origin := _camera.project_ray_origin(screen_position)
-	var direction := _camera.project_ray_normal(screen_position)
+	var origin := BattleGroundProjection.ray_origin(_camera, screen_position)
+	var direction := BattleGroundProjection.ray_normal(_camera, screen_position)
 	if absf(direction.y) < 0.0001:
 		return Vector3.ZERO
 	return origin + direction * (-origin.y / direction.y)
@@ -987,22 +987,22 @@ func _update_health_bar_anchor() -> void:
 	var height_span := _model_air_height - _model_ground_height
 	if absf(height_span) > 0.001:
 		elevation = CardDB.AIR_VISUAL_ELEVATION * clampf((_model_root.position.y - _model_ground_height) / height_span, 0.0, 1.0)
-	_source.set_status_effect_world_position(_camera.unproject_position(_screen_to_ground(_source.get_visual_screen_position()) + Vector3.UP * elevation))
+	_source.set_status_effect_world_position(BattleGroundProjection.unproject(_camera, _screen_to_ground(_source.get_visual_screen_position()) + Vector3.UP * elevation))
 
 	if is_instance_valid(_projectile_anchor):
-		_source.set_meta("projectile_model_offset", _camera.unproject_position(_projectile_anchor.global_position) - ground_screen)
+		_source.set_meta("projectile_model_offset", BattleGroundProjection.unproject(_camera, _projectile_anchor.global_position) - ground_screen)
 	# 建筑等横向展开模型可由包装场景提供稳定的 3D 顶端锚点；仍只影响 UI 投影。
 	if _model_root != null and _model_root.has_method("get_health_bar_anchor_local"):
 		var local_anchor = _model_root.call("get_health_bar_anchor_local")
 		if local_anchor is Vector3:
 			var world_anchor := _model_root.to_global(local_anchor as Vector3)
 			if not _camera.is_position_behind(world_anchor):
-				var anchor_screen := _camera.unproject_position(world_anchor)
+				var anchor_screen := BattleGroundProjection.unproject(_camera, world_anchor)
 				_source.set_visual_head_world_position(Vector2(ground_screen.x, anchor_screen.y))
 				return
 	var anchor_node := _model_root.get_node_or_null("HeadAnchor") as Node3D
 	if anchor_node != null:
-		_source.set_visual_head_world_position(Vector2(ground_screen.x, _camera.unproject_position(anchor_node.global_position).y))
+		_source.set_visual_head_world_position(Vector2(ground_screen.x, BattleGroundProjection.unproject(_camera, anchor_node.global_position).y))
 		return
 	if not is_nan(_stable_head_offset):
 		_source.set_visual_head_world_position(Vector2(ground_screen.x, ground_screen.y + _stable_head_offset))
@@ -1023,7 +1023,7 @@ func _update_health_bar_anchor() -> void:
 			var world_corner := mesh_instance.to_global(corner)
 			if _camera.is_position_behind(world_corner):
 				continue
-			top_screen_y = minf(top_screen_y, _camera.unproject_position(world_corner).y * screen_sign)
+			top_screen_y = minf(top_screen_y, BattleGroundProjection.unproject(_camera, world_corner).y * screen_sign)
 			found_visible_point = true
 	if found_visible_point:
 		# 武器/披风等网格也在 AABB 内，直接取最顶点会把血条拉离头部；
@@ -1034,7 +1034,7 @@ func _update_health_bar_anchor() -> void:
 		if _source.is_air:
 			var air_base_world := global_position + Vector3.UP * CardDB.AIR_VISUAL_ELEVATION
 			if not _camera.is_position_behind(air_base_world):
-				visual_base_screen_y = _camera.unproject_position(air_base_world).y * screen_sign
+				visual_base_screen_y = BattleGroundProjection.unproject(_camera, air_base_world).y * screen_sign
 		top_screen_y = maxf(top_screen_y, visual_base_screen_y - max_head_height)
 		_stable_head_offset = top_screen_y * screen_sign - ground_screen.y
 		_source.set_visual_head_world_position(Vector2(ground_screen.x, top_screen_y * screen_sign))
@@ -1660,7 +1660,7 @@ func _update_continuous_beam_origin(delta: float = 0.0) -> void:
 			return
 		mouth_world = anchor.global_position
 	if not _camera.is_position_behind(mouth_world):
-		_source.set_continuous_beam_origin_world_position(_camera.unproject_position(mouth_world))
+		_source.set_continuous_beam_origin_world_position(BattleGroundProjection.unproject(_camera, mouth_world))
 
 func _create_team_ring() -> void:
 	if not _source.show_team_ring:

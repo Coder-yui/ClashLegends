@@ -1101,7 +1101,7 @@ func _check_freeze_occlusion_projection() -> void:
 	var ground: Node3D = presentation._freeze_ground
 	var camera: Camera3D = presentation._camera
 	var old_transform := camera.transform
-	var old_rect := Rect2(presentation._overlay.position, Vector2(presentation._viewport.size))
+	var old_rect := Rect2(presentation._overlay.position, Vector2(presentation._viewport.size) * presentation._overlay.scale)
 	var layout := preload("res://scripts/ui/battle_layout.gd")
 	var spells := SpellSystem.new(_main)
 	for flipped in [false, true]:
@@ -1121,9 +1121,10 @@ func _check_freeze_occlusion_projection() -> void:
 				var point: Vector2 = spells.freeze_effects[index].pos
 				var player: Node3D = ground._players[index + 2]
 				var mask: Vector4 = player.freeze_occluder
-				var mapped := Vector2(mask.x, mask.y) * rect.size + rect.position
-				var radii := Vector2(mask.z, mask.w) * rect.size
-				_expect(mapped.distance_to(point) < 0.01 and radii.distance_to(Vector2(110,110)) < 0.01, "双方/翻转/竖屏长屏横屏的强化遮罩与权威落点及半径一致")
+				var drawn_size := Vector2(presentation._viewport.size) * presentation._overlay.scale
+				var mapped := Vector2(mask.x, mask.y) * drawn_size + rect.position
+				var radii := Vector2(mask.z, mask.w) * drawn_size
+				_expect(mapped.distance_to(point) < 0.01 and radii.distance_to(Vector2(110,110)) < 0.01, "双方/翻转/竖屏长屏横屏的强化遮罩与权威落点及半径一致：%s %s -> %s %s" % [size,point,mapped,radii])
 				_expect(ground._players[index].freeze_occluder == Vector4.ZERO, "普通冰面不启用减速遮罩")
 				var matches := true
 				for pool in player._pools:
@@ -1275,11 +1276,11 @@ func _check_display_layout() -> void:
 	var original_skill_scale: Vector2 = _main._active_skill_bar.scale
 	var original_selected: String = _main._selected_card
 	var previous_canvas := _main.get_viewport().canvas_transform
-	# 最后一行的中央格确实可部署，而一格边距落在权威场外。
+	# 最后一行的中央格确实可部署，而两格边距落在权威场外。
 	for team in [0, 1]:
 		var back_y := 1260.0 if team == 0 else 20.0
 		_expect(_main.runtime.is_card_deploy_position_valid(team, "garen", Vector2(260, back_y)), "最后可部署格心来自真实部署规则")
-	_expect(layout.BASE_TOP == -40.0 and layout.BASE_BOTTOM == 1320.0, "一格边距从最后一格外边缘派生，非格心或水晶中心")
+	_expect(layout.BASE_TOP == -80.0 and layout.BASE_BOTTOM == 1360.0, "两格边距从最后一格外边缘派生，非格心或水晶中心")
 	var legal_tiles: Array[Rect2] = []
 	for team in [0,1]:
 		for row in ArenaRules.ARENA_ROWS:
@@ -1303,26 +1304,21 @@ func _check_display_layout() -> void:
 			_main._active_skill_bar.apply_layout(size)
 			var hand_top: float = _main._hand.offset.y
 			_expect(field.position.x >= 0.0 and field.end.x <= size.x and field.position.y >= 0.0 and field.end.y <= hand_top, "手机比例完整战场不被手牌遮挡：%s/%s" % [size,flipped])
-			_expect(is_equal_approx(hand_top + layout.HAND_HEIGHT * ui_scale, size.y), "手牌保留120基准高度并贴底")
+			_expect(is_equal_approx(hand_top + layout.HAND_HEIGHT * ui_scale, size.y), "手牌保留160基准高度并贴底")
 			var controls: Array = _main._active_skill_bar._buttons + _main._active_skill_bar._rule_labels
 			for control in controls:
 				var control_rect := Rect2(_main._active_skill_bar.transform * control.position, control.size * ui_scale)
-				var clear := true
-				for tile_rect in legal_tiles:
-					var first: Vector2 = transform * tile_rect.position
-					var last: Vector2 = transform * tile_rect.end
-					if control_rect.intersects(Rect2(first.min(last),(first-last).abs())): clear = false
-				_expect(clear and control_rect.end.y <= hand_top, "图标和文字不遮挡任何真实合法部署格或手牌：%s/%s" % [size,flipped])
-			_expect(_main._hand.offset.y + _main._hand._growth_notice.position.y * ui_scale >= field.end.y, "成长提示完整落在一格布景带")
+				_expect(control_rect.position.y >= hand_top - layout.SKILL_OVERLAY_HEIGHT * ui_scale and control_rect.end.y <= hand_top, "技能控件悬浮在地图底部80像素内，不进入手牌区：%s/%s" % [size,flipped])
+			_expect(_main._hand.offset.y + _main._hand._growth_notice.position.y * ui_scale >= field.end.y, "成长提示完整落在两格布景带")
 			for label in _main._active_skill_bar._rule_labels:
-				_expect(label.position.y >= 0.0 and label.position.y + label.size.y <= layout.SKILL_SIZE, "技能规则文字与图标横排，完整位于一格布景带")
+				_expect(label.position.y >= 0.0 and label.position.y + label.size.y <= layout.SKILL_SIZE, "技能规则文字与图标横排，完整位于两格布景带")
 			var top: Vector2 = transform.affine_inverse() * Vector2(size.x * 0.5, 0)
 			var bottom: Vector2 = transform.affine_inverse() * Vector2(size.x * 0.5, hand_top)
 			var low := minf(top.y, bottom.y)
 			var high := maxf(top.y, bottom.y)
 			var base_ratio := is_equal_approx(size.x / size.y, 9.0/16.0)
 			if base_ratio:
-				_expect(is_equal_approx(low, layout.BASE_TOP) and is_equal_approx(high, layout.BASE_BOTTOM), "所有像素尺寸的9:16，上边及手牌线精确对齐场外一格")
+				_expect(is_equal_approx(low, layout.BASE_TOP) and is_equal_approx(high, layout.BASE_BOTTOM), "所有像素尺寸的9:16，上边及手牌线精确对齐场外两格")
 			elif size.x / size.y < 9.0 / 16.0:
 				_expect(low < layout.BASE_TOP and high > layout.BASE_BOTTOM and is_equal_approx(layout.BASE_TOP-low, high-layout.BASE_BOTTOM), "长屏在基准构图上下对称扩展")
 			else:
@@ -1337,16 +1333,16 @@ func _check_display_layout() -> void:
 				_expect(is_equal_approx(width,base_width), "基准和长屏左右范围由同一来源计算，无舍入硬编码")
 			_expect(is_equal_approx(transform.x.length() / ui_scale, layout.BASE_WORLD_SCALE), "整体尺寸只等比缩放，长屏不额外放大战场")
 			for point in [Vector2.ZERO, Vector2(720,1280), Vector2(210,900), Vector2(360,640)]:
-				var ray: Vector3 = view._camera.project_ray_origin(point)
-				var direction: Vector3 = view._camera.project_ray_normal(point)
+				var ray: Vector3 = BattleGroundProjection.ray_origin(view._camera, point)
+				var direction: Vector3 = BattleGroundProjection.ray_normal(view._camera, point)
 				var ground := ray + direction * (-ray.y / direction.y)
-				var drawn: Vector2 = view._render_camera.unproject_position(ground) + rect.position
-				_expect(drawn.distance_to(point) < 0.02, "扩大取景仍与固定投影重合：%s/%s/%s" % [size,flipped,point])
+				var drawn: Vector2 = view._render_camera.unproject_position(ground) * view._overlay.scale + rect.position
+				_expect(drawn.distance_to(point) < 0.02, "扩大取景仍与固定投影重合：%s/%s/%s -> %s" % [size,flipped,point,drawn])
 				_expect((transform.affine_inverse() * (transform * point)).distance_to(point) < 0.01, "屏幕输入可逆到权威战场：%s/%s" % [size,flipped])
 			_main._selected_card = "garen"
 			for point in [Vector2(-1,900), Vector2(721,900), Vector2(360,1320), Vector2(360,-40)]:
 				_main._update_deployment_preview(point)
-				_expect(not _main._deployment_preview_visible, "一格布景带点击不成为部署落点")
+				_expect(not _main._deployment_preview_visible, "两格布景带点击不成为部署落点")
 			_main._update_deployment_preview(Vector2(300,900))
 			_expect(_main._deployment_preview_visible and _main._deployment_preview_valid, "构图不改变合法部署区域")
 			_main._selected_card = "lightning"

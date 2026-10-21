@@ -49,8 +49,8 @@ func sync_effects(projectiles: Node2D, camera: Camera3D) -> void:
 		view.age += (projectile.pos as Vector2).distance_to(view.last) / maxf(float(projectile.speed), 1.0)
 		view.last = projectile.pos
 		var player: Node3D = view.player
-		var origin := camera.project_ray_origin(point)
-		var ray := camera.project_ray_normal(point)
+		var origin := BattleGroundProjection.ray_origin(camera, point)
+		var ray := BattleGroundProjection.ray_normal(camera, point)
 		player.position = origin + ray * ((1.6 - origin.y) / ray.y)
 		var direction: Vector2 = projectiles._direction(projectile)
 		var forward := (PROJECTION.ground(camera, point + direction) - PROJECTION.ground(camera, point)).normalized()

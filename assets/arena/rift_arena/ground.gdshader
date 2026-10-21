@@ -21,7 +21,7 @@ void vertex() { world_position=(MODEL_MATRIX*vec4(VERTEX,1.0)).xyz; }
 #include "res://assets/arena/rift_arena/nexus_aperture.gdshaderinc"
 void fragment() {
     clip_nexus_well(world_position, INV_VIEW_MATRIX[2].xyz);
-    vec2 tile=vec2(world_position.x+9.0,world_position.z/sqrt(2.0)+16.0);
+    vec2 tile=vec2(world_position.x+9.0,world_position.z+16.0);
     float broad=noise(tile*.24);
     float spread=5.5;
     if(tile.y<6.5) { spread*=clamp((tile.y-3.0)/3.5,0.0,1.0); }

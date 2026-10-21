@@ -56,6 +56,6 @@ func sync_effects(_skills: RefCounted, projectiles: Node2D, camera: Camera3D) ->
 			_missiles.erase(id)
 
 func _at_height(camera: Camera3D, point: Vector2, height: float) -> Vector3:
-	var origin := camera.project_ray_origin(point)
-	var ray := camera.project_ray_normal(point)
+	var origin := BattleGroundProjection.ray_origin(camera, point)
+	var ray := BattleGroundProjection.ray_normal(camera, point)
 	return origin + ray * ((height - origin.y) / ray.y) if absf(ray.y) > 0.00001 else PROJECTION.ground(camera, point)

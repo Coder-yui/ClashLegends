@@ -69,8 +69,8 @@ func advance(delta: float) -> void:
 
 func _place_hit(player: Node3D, camera: Camera3D, point: Vector2) -> void:
 	# 光束终点和受击层共用屏幕挂点；保留真实高度以接受正常遮挡。
-	var origin := camera.project_ray_origin(point)
-	var direction := camera.project_ray_normal(point)
+	var origin := BattleGroundProjection.ray_origin(camera, point)
+	var direction := BattleGroundProjection.ray_normal(camera, point)
 	player.global_position = origin + direction * ((1.0 - origin.y) / direction.y)
 
 func _update_view(view: Dictionary, current_pose: bool = false) -> void:
@@ -105,8 +105,8 @@ func _anchor_position(body: Node2D, camera: Camera3D, fallback: Vector2) -> Vect
 		var skeleton := anchor.get_parent() as Skeleton3D
 		if skeleton != null and anchor.bone_idx >= 0:
 			# 直接读本帧骨骼姿势，避免 BoneAttachment 延迟通知造成一帧拖尾。
-			return camera.unproject_position(skeleton.to_global(skeleton.get_bone_global_pose(anchor.bone_idx).origin))
-	return camera.unproject_position(anchor.global_position)
+			return BattleGroundProjection.unproject(camera, skeleton.to_global(skeleton.get_bone_global_pose(anchor.bone_idx).origin))
+	return BattleGroundProjection.unproject(camera, anchor.global_position)
 
 func _body(id: int, allow_local: bool) -> Node2D:
 	if id < 0: return null

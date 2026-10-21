@@ -170,9 +170,9 @@ func _sync_position() -> void:
 	if _source == null or _camera == null:
 		return
 	position = _screen_to_ground(_source.global_position)
-	_source.set_stun_head_world_position(_camera.unproject_position(to_global(Vector3(0, _status_head_height, 0))))
+	_source.set_stun_head_world_position(BattleGroundProjection.unproject(_camera, to_global(Vector3(0, _status_head_height, 0))))
 	if is_instance_valid(_projectile_anchor):
-		_source.set_meta("projectile_model_offset", _camera.unproject_position(_projectile_anchor.global_position) - _camera.unproject_position(global_position))
+		_source.set_meta("projectile_model_offset", BattleGroundProjection.unproject(_camera, _projectile_anchor.global_position) - BattleGroundProjection.unproject(_camera, global_position))
 
 func _cache_status_head_height() -> void:
 	var meshes: Array[MeshInstance3D] = []
@@ -184,8 +184,8 @@ func _cache_status_head_height() -> void:
 			_status_head_height = maxf(_status_head_height, to_local(mesh.to_global(p)).y)
 
 func _screen_to_ground(screen_position: Vector2) -> Vector3:
-	var origin := _camera.project_ray_origin(screen_position)
-	var direction := _camera.project_ray_normal(screen_position)
+	var origin := BattleGroundProjection.ray_origin(_camera, screen_position)
+	var direction := BattleGroundProjection.ray_normal(_camera, screen_position)
 	if absf(direction.y) < 0.0001:
 		return Vector3.ZERO
 	return origin + direction * (-origin.y / direction.y)

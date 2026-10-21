@@ -132,7 +132,9 @@ func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void
 	_viewport.add_child(_world_root)
 
 	_create_environment()
-	_world_root.add_child(preload("res://assets/arena/rift_arena/rift_arena.tscn").instantiate())
+	var arena := preload("res://assets/arena/rift_arena/rift_arena.tscn").instantiate()
+	arena.scale.z = 1.0 / sqrt(2.0) # Undo baked 45-degree map compensation.
+	_world_root.add_child(arena)
 	# 只用于射线/反投影计算，不渲染、不复制场景。
 	_projection_viewport = SubViewport.new()
 	_projection_viewport.name = "BattleProjectionReference"
@@ -208,12 +210,15 @@ func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void
 ## 仅扩大绘制取景；投影基准和世界模型位置不随窗口变化。
 func set_view_rect(rect: Rect2) -> void:
 	if _render_camera == null: return
-	_viewport.size = Vector2i(rect.size)
+	_viewport.size = Vector2i(roundi(rect.size.x), ceili(rect.size.y * BattleGroundProjection.Q))
+	_overlay.scale.y = 1.0 / BattleGroundProjection.Q
+	# Keep exact projection scale despite integer texture dimensions; extend coverage by <1 pixel.
+	var rendered_center := rect.position + Vector2(_viewport.size) * _overlay.scale * 0.5
 	_overlay.position = rect.position
-	_render_camera.size = _base_camera_size * rect.size.y / _field_size.y
+	_render_camera.size = _base_camera_size * float(_viewport.size.y) / _field_size.y
 	_camera.force_update_transform()
 	_render_camera.global_transform = _camera.global_transform
-	_render_camera.global_position += _camera.project_ray_origin(rect.get_center()) - _camera.project_ray_origin(_field_size * 0.5)
+	_render_camera.global_position += BattleGroundProjection.ray_origin(_camera, rendered_center) - BattleGroundProjection.ray_origin(_camera, _field_size * 0.5)
 	_render_camera.force_update_transform()
 
 func attach_unit(unit: Unit, stats: Dictionary) -> bool:
@@ -287,7 +292,8 @@ func _create_camera(field_rows: float) -> void:
 	_camera.size = field_rows
 	_camera.near = 0.1
 	_camera.far = 100.0
-	_camera.position = Vector3(0.0, 24.0, 24.0)
+	_camera.set_meta("uniform_ground", true)
+	_camera.position = Vector3(0.0, sin(deg_to_rad(54.0)), cos(deg_to_rad(54.0))) * 34.0
 	_projection_viewport.add_child(_camera)
 	_camera.look_at(Vector3.ZERO, Vector3.UP)
 	_camera.current = true
@@ -326,10 +332,10 @@ func _exit_tree() -> void:
 ## 世界高度由本机相机投影，适配红方翻转；不参与权威落点计算。
 func project_height(point: Vector2, height: float) -> Vector2:
 	if _camera == null: return point
-	var origin := _camera.project_ray_origin(point)
-	var direction := _camera.project_ray_normal(point)
+	var origin := BattleGroundProjection.ray_origin(_camera, point)
+	var direction := BattleGroundProjection.ray_normal(_camera, point)
 	if absf(direction.y) < 0.0001: return point
-	return _camera.unproject_position(origin + direction * (-origin.y / direction.y) + Vector3.UP * height)
+	return BattleGroundProjection.unproject(_camera, origin + direction * (-origin.y / direction.y) + Vector3.UP * height)
 
 func prepare_target_states(states: Dictionary) -> void:
 	for child in _world_root.get_children():

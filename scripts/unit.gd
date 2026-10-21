@@ -3398,7 +3398,8 @@ func _draw() -> void:
 	_draw_active_sweep_fx()
 	# 血条和资源条绕其屏幕锚点反向旋转，填充方向与上下关系不随场地倒转。
 	var ui_rotation := -get_global_transform_with_canvas().get_rotation()
-	draw_set_transform(_vis_offset + _health_bar_center - _health_bar_center.rotated(ui_rotation), ui_rotation, Vector2.ONE)
+	var ui_scale := Vector2(1.0, 1.0 / BattleGroundProjection.Q)
+	draw_set_transform(_vis_offset + _health_bar_center - (_health_bar_center * ui_scale).rotated(ui_rotation), ui_rotation, ui_scale)
 	var raw_hp_ratio := presentation_state().health_ratio
 	var hp_ratio := minf(raw_hp_ratio, 1.0)
 	var overheal_ratio := maxf(raw_hp_ratio - 1.0, 0.0)
