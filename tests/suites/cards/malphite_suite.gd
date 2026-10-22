@@ -72,6 +72,16 @@ func _presentation() -> void:
 	# Headless lifecycle fixture keeps the real skeleton; materials are checked in rendered review.
 	for mesh in model.find_children("*", "MeshInstance3D", true, false): mesh.free()
 	proxy.add_child(model)
+	proxy.rotation.y = 0.4
+	var animation_player: AnimationPlayer = model.find_child("AnimationPlayer", true, false)
+	animation_player.play("Spell3")
+	animation_player.seek(animation_player.get_animation("Spell3").length * (8.0 / 19.0), true)
+	animation_player.advance(0.0)
+	model._skeleton.force_update_all_bone_transforms()
+	var event_pose: Transform3D = model._skeleton.global_transform * model._skeleton.get_bone_global_pose(model._hand)
+	_expect(model._cast_hand_pose.is_equal_approx(model._skeleton.get_bone_global_pose(model._hand)), "事件骨骼采样与真实Spell3第8帧一致")
+	animation_player.seek(0.45, true)
+	animation_player.advance(0.0)
 	var unit := _unit("malphite", 0, Vector2(300, 900))
 	model.configure_unit_visual(unit)
 	_expect(unit.body_radius == CardDB.RADIUS_LARGE, "模型缩放不改变大体型半径24")
@@ -95,11 +105,24 @@ func _presentation() -> void:
 	var cast: Node3D = effects._detached[0]
 	_expect(cast.scale.is_equal_approx(Vector3.ONE * 0.01), "E使用独立160像素范围等比缩放")
 	var origin := cast.global_position
-	var hand: Vector3 = model._skeleton.to_global(model._skeleton.get_bone_global_pose(model._hand).origin)
-	_expect(origin.is_equal_approx(hand), "施放粒子来自当前右手而非模型根")
+	_expect(origin.is_equal_approx(event_pose.origin), "晚帧仍从第8帧右手位置释放，不取偏晚姿势")
+	_expect(cast.cast_orientation.is_equal_approx(event_pose.basis.orthonormalized()), "完整传递手部旋转并移除骨骼缩放")
+	var orientation: Basis = cast.cast_orientation
+	cast.seek(0.3)
+	for i in cast._data.emitters.size():
+		var emitter: Dictionary = cast._data.emitters[i]
+		var follows := bool(emitter.localOrientation) or bool(emitter.particleLocalOrientation)
+		for item in cast._pools[i]:
+			_expect(item.basis.is_equal_approx(orientation if follows else Basis.IDENTITY), "源局部层跟随手部，世界层重力不上翻：" + String(emitter.name))
+	var palette_material: ShaderMaterial = cast._pools[1][0].material_override
+	_expect(palette_material.get_shader_parameter("has_palette") == true, "Trigger_3接入源火焰调色板")
+	_expect(is_equal_approx(float(palette_material.get_shader_parameter("palette_row")), 9.5 / 16.0), "调色板使用源第9行中心，不取默认行")
+	_expect(palette_material.get_shader_parameter("palette_texture") is Texture2D, "调色板是正式可加载依赖")
 	proxy.position += Vector3(3, 0, 1)
+	proxy.rotation.y += 1.2
 	model.advance_ambient_visual(0.0)
 	_expect(cast.global_position.is_equal_approx(origin) and effects._detached.size() == 1, "施放粒子脱离单位移动且不重复创建")
+	_expect(cast.cast_orientation.is_equal_approx(orientation), "施放后单位转身不再旋转已释放特效")
 	unit.clear_shields()
 	model.advance_ambient_visual(0.0)
 	_expect(effects._detached.size() == 2, "破盾粒子也由独立表现所有者持有")
@@ -128,7 +151,20 @@ func _presentation() -> void:
 	_expect(effects._detached.size() == 3 and is_instance_valid(cast), "模型死亡回收不截断已释放的碎石与施放粒子")
 	effects._process(4.1)
 	_expect(effects._detached.is_empty(), "独立粒子到期回收")
-	effects.spawn_detached("cas", Transform3D.IDENTITY)
+	for degrees in range(0, 360, 45):
+		var facing := Basis(Vector3.UP, deg_to_rad(float(degrees)))
+		var rotated := Transform3D(facing * event_pose.basis.orthonormalized(), Vector3.ZERO)
+		var directional = effects.spawn_detached("cas", rotated)
+		directional.seek(0.3)
+		var values: Array = directional._data.frames[36][0][0]
+		var normal := Vector3(values[13], values[16], values[19])
+		var world_normal: Vector3 = directional._pools[0][0].global_basis.orthonormalized() * normal
+		_expect(absf(world_normal.dot(Vector3.UP)) > 0.85, "八方向裂地网格接近平躺，不再竖立：%d" % degrees)
+		var debris: Node3D = directional._pools[3][0]
+		_expect(debris.global_basis.orthonormalized().is_equal_approx(Basis.IDENTITY), "八方向碎石仍使用世界重力：%d" % degrees)
+	var errors := PackedStringArray()
+	var resources := preload("res://scripts/presentation/effect_resource_manifest.gd").files({"provider": "res://assets/effects/malphite/player.gd", "variant": "cas"}, errors)
+	_expect(errors.is_empty() and "res://assets/effects/malphite/cas/assets/characters/malphite/skins/skin16/particles/flame_trail_gradient.png" in resources.resources, "调色板进入赛前预加载资源清单")
 	effects.clear_detached()
 	_expect(effects._detached.is_empty(), "清场显式回收独立粒子")
 	world.queue_free()

@@ -30,6 +30,11 @@ uniform vec2 mult_flip=vec2(0.0);
 uniform int address_mode=0;
 uniform int mult_address=0;
 uniform int erosion_address=0;
+uniform bool has_palette=false;
+uniform sampler2D palette_texture : repeat_enable, filter_linear;
+uniform vec4 palette_mix=vec4(1.0,0.0,0.0,0.0);
+uniform float palette_row=0.0;
+uniform int palette_address=0;
 uniform bool has_mult=false;
 uniform bool has_ramp=false;
 uniform bool has_erosion=false;
@@ -105,6 +110,10 @@ void fragment() {
  #endif
  if(is_mesh && cull_mesh && !FRONT_FACING)discard;
  vec4 texel=texture(source_texture,addressed(base_uv,address_mode));
+ if(has_palette){
+  vec2 palette_uv=vec2(clamp(dot(texel,palette_mix),0.0,1.0),palette_row);
+  texel.rgb=texture(palette_texture,addressed(palette_uv,palette_address)).rgb;
+ }
  if(has_ramp) texel*=texture(ramp_texture,has_mult?mult_uv:vec2(p[35],p[36]));
  if(has_mult) texel*=texture(mult_texture,addressed(mult_uv,mult_address));
  vec4 lit=texel*tint;

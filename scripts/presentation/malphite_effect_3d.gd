@@ -13,6 +13,10 @@ func spawn_detached(kind: String, placement: Transform3D, source: Node3D = null,
 	add_child(player)
 	player.load_kind(kind)
 	player.global_transform = placement
+	if kind == "cas":
+		# Source local-orientation flags are per emitter, not a rotation of every layer.
+		player.cast_orientation = placement.basis.orthonormalized()
+		player.global_basis = Basis.IDENTITY
 	player.setup_native(preload("res://assets/units/malphite/visual_scale.gd").E_EFFECT_SCALE if kind == "cas" else PLAYER.NATIVE_SCALE)
 	if source != null: player.bind_motion(source)
 	player.seek(age)

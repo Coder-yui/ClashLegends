@@ -15,6 +15,8 @@ var _particle_scale := 1.0
 var _frame := -1
 var _last_basis := Basis.IDENTITY
 var projection_basis := Basis.IDENTITY
+var cast_orientation := Basis.IDENTITY
+var _kind := ""
 var _motion_source: WeakRef
 var _motion_generation := 0
 var _motion_previous := Vector3.ZERO
@@ -64,6 +66,7 @@ func shape_basis_for(_emitter_name: String) -> Basis:
 	return Basis.IDENTITY
 
 func load_kind(kind: String) -> void:
+	_kind = kind
 	_particle_scale = CAST_PARTICLE_SCALE if kind == "cas" else 1.0
 	if not _cache.has(kind):
 		var data: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(ROOT + kind + "/sampled.json"))
@@ -104,6 +107,8 @@ func seek(age: float) -> void:
 		while pool.size() < particles.size():
 			var item := MeshInstance3D.new()
 			item.mesh = _meshes[e.mesh_path]
+			if _kind == "cas" and (bool(e.localOrientation) or bool(e.particleLocalOrientation)):
+				item.basis = cast_orientation
 			item.material_override = _materials[emitter_index].duplicate()
 			item.material_override.set_shader_parameter("projection_basis", projection_basis)
 			item.material_override.set_shader_parameter("shape_basis", shape_basis_for(e.name))
@@ -123,7 +128,7 @@ func seek(age: float) -> void:
 				item.material_override.set_shader_parameter("p", particle)
 				var camera := get_viewport().get_camera_3d()
 				if camera != null:
-					var center := to_global(projection_basis * Vector3(particle[1], particle[2], particle[3]))
+					var center := item.to_global(projection_basis * Vector3(particle[1], particle[2], particle[3]))
 					item.sorting_offset = camera.global_position.distance_to(center) - camera.global_position.distance_to(global_position)
 
 func make_overlay(original: Material) -> Material:
@@ -186,6 +191,13 @@ static func _material(e: Dictionary) -> ShaderMaterial:
 		"has_mult":not e.mult_path.is_empty(), "has_ramp":not e.color_path.is_empty() and e.erosion == null,
 		"has_erosion":e.erosion != null, "has_soft":e.soft != null, "push_pull":e.depthPushPull,
 	}
+	if e.get("palette_path", "") != "":
+		# E Trigger_3 has a constant source palette: row 9 of 16, red-channel lookup.
+		var palette: Dictionary = e.palette
+		params.merge({"has_palette": true, "palette_mix": _v4(palette.mix.constant),
+			"palette_row": (float(palette.selector.constant[0]) + 0.5) / float(palette.count),
+			"palette_address": int(palette.addressMode)})
+		result.set_shader_parameter("palette_texture", load(e.palette_path))
 	if e.multUv != null:
 		params.merge({"mult_center":_v2(e.multUv.center),"mult_flip":Vector2(float(e.multUv.flipU),float(e.multUv.flipV)),"mult_address":int(e.multUv.addressMode)})
 	if e.erosion != null:

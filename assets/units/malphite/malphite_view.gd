@@ -8,6 +8,7 @@ var _unit: WeakRef
 var _shield: Node3D
 var _skeleton: Skeleton3D
 var _hand := -1
+var _cast_hand_pose := Transform3D.IDENTITY
 var _pending_cast := false
 var _materials: Array[StandardMaterial3D] = []
 var _age := 0.0
@@ -22,6 +23,36 @@ func _ready() -> void:
 	_skeleton = find_child("Skeleton3D", true, false) as Skeleton3D
 	if _skeleton != null:
 		_hand = _skeleton.find_bone("R_BUFFBONE_GLB_HAND_LOC")
+		_cast_hand_pose = _sample_cast_hand_pose()
+
+## Sample the authored event once, without seeking or changing the live animation.
+## A late render/network frame must not release from a later wrist rotation.
+func _sample_cast_hand_pose() -> Transform3D:
+	var animation_player := find_child("AnimationPlayer", true, false) as AnimationPlayer
+	if _hand < 0 or animation_player == null or not animation_player.has_animation("Spell3"):
+		push_error("Malphite E requires Spell3 and the right-hand event bone")
+		return Transform3D.IDENTITY
+	var animation := animation_player.get_animation("Spell3")
+	var sample_time := animation.length * SIZING.E_EVENT_RATIO
+	var chain: Array[int] = []
+	var bone := _hand
+	while bone >= 0:
+		chain.push_front(bone)
+		bone = _skeleton.get_bone_parent(bone)
+	var pose := Transform3D.IDENTITY
+	for index in chain:
+		var rest := _skeleton.get_bone_rest(index)
+		var position := rest.origin
+		var rotation := rest.basis.get_rotation_quaternion()
+		var bone_scale := rest.basis.get_scale()
+		for track in animation.get_track_count():
+			if String(animation.track_get_path(track).get_concatenated_subnames()) != _skeleton.get_bone_name(index): continue
+			match animation.track_get_type(track):
+				Animation.TYPE_POSITION_3D: position = animation.position_track_interpolate(track, sample_time)
+				Animation.TYPE_ROTATION_3D: rotation = animation.rotation_track_interpolate(track, sample_time)
+				Animation.TYPE_SCALE_3D: bone_scale = animation.scale_track_interpolate(track, sample_time)
+		pose *= Transform3D(Basis(rotation).scaled(bone_scale), position)
+	return pose
 
 func configure_unit_visual(unit: Unit) -> void:
 	set_meta("visual_generation", int(get_meta("visual_generation", 0)) + 1)
@@ -61,12 +92,12 @@ func _set_surface(shielded: bool) -> void:
 		material.albedo_texture = ROCK if shielded else MOLTEN
 
 ## The presentation world owns released particles; the pooled model owns only attachments.
-func _release(kind: String, origin: Vector3, age: float = 0.0) -> void:
+func _release(kind: String, placement: Transform3D, age: float = 0.0) -> void:
 	var world := get_parent().get_parent()
 	var owner_ref = world.get_meta("malphite_effect_owner", null)
 	var effect_owner = owner_ref.get_ref() if owner_ref is WeakRef else null
 	if not is_instance_valid(effect_owner): return
-	var transform := Transform3D(global_basis.orthonormalized(), origin)
+	var transform := Transform3D(placement.basis.orthonormalized(), placement.origin)
 	effect_owner.spawn_detached(kind, transform, self if kind == "break" else null, age)
 
 func _sync_shield_state() -> void:
@@ -75,7 +106,7 @@ func _sync_shield_state() -> void:
 	var shielded: bool = unit.deployment_shield_active_visual()
 	if shielded == _had_shield: return
 	_set_surface(shielded)
-	if not shielded: _release("break", global_position)
+	if not shielded: _release("break", global_transform)
 	_had_shield = shielded
 
 func advance_ambient_visual(delta: float) -> void:
@@ -95,8 +126,8 @@ func advance_ambient_visual(delta: float) -> void:
 			if age >= trigger:
 				_pending_cast = false
 				if is_instance_valid(_skeleton) and _hand >= 0:
-					var origin := _skeleton.to_global(_skeleton.get_bone_global_pose(_hand).origin)
-					_release("cas", origin, age - trigger)
+					var placement := _skeleton.global_transform * _cast_hand_pose
+					_release("cas", placement, age - trigger)
 		_age += maxf(delta, 0.0)
 	_shield.visible = shielded and _age <= 4.0
 	_shield.seek(_age)
