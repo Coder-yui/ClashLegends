@@ -113,11 +113,15 @@ python3 tools/dev.py verify --suite OrnnSuite --reverse-suites
 | `suites/network/` / network | 单进程协议/会话/副本/终态；三进程脚本由网络模式单独调度 |
 | `suites/cards/` / cards | 逐卡特有规则、数值、动作与特殊效果；六种普通小兵编队集中在 MinionSquadSuite |
 | `suites/battle_suite.gd`、`suite_utils.gd` | 共享绑定、断言、固定Tick、既有模型代理查询与内容夹具；不单独注册 |
-| `fixtures/` | 网络场景、固定牌序辅助、原始寻路输入及 ProjectileSuite 调用的 `projectile_view_checks.gd` 子检查 |
+| `fixtures/` | 网络场景、固定牌序辅助、原始寻路输入、ProjectileSuite 的 `projectile_view_checks.gd` 及 AudioPresentationSuite 的 `attack_audio_checks.gd` 子检查 |
 
 新增用例先找所有者，遵循以下去重边界：
 
 纯内容/状态夹具放SuiteUtils；依赖当前对局的固定Tick、单位夹具及模型查询放battle_suite。不同生成路径（真实play_card、直接Unit.setup、带部署覆盖）不强行合并，否则会隐藏部署或归属差异。场景释放与随机种子仍只由统一入口管理。
+
+公共夹具按前提复用：`BattleSuite._spawn_ready_unit` 只封装正式出生和零部署等待；直接命中/发射用例先调用 `SuiteUtils.begin_attack_visual` 建立真实出手身份，不能给所有单位默认填序号。菜单工作台没有比赛钱包；使用对局场景测试工作台时，局部解绑并恢复账户，正式付款测试仍使用出牌阵营的钱包。新用例不要依赖全局卡牌总数或前一用例留下的余额、终局与塔冷却。
+
+音频攻击序号警告属于验证失败。只有验证非法序号拒绝行为的反例可用 `expect_audio_serial_warning` 声明精确文本；执行器要求区间内恰好一次匹配警告，未声明、缺失、重复、错卡、嵌套或未闭合均失败。正式音频链路回归通过索敌和20Hz模拟触发多次攻击，不直接调用命中结算、不手写序号。
 
 当前专项覆盖包括：
 
