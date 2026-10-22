@@ -232,6 +232,12 @@ MatchModelPool为剑魔等显式接受模板的包装提供本场字典；剑魔
 
 包装同时提供 can_reuse_visual(scene_path) 与 set_visual_form(form_index) 且接受目标场景时，保留模型、骨骼、AnimationPlayer 和实例资源，只重置动作调度、更新映射并从原姿势混合。首次装配记录根高度，避免攻击补高污染换形基准；其他单位仍走换模型路径。
 
+## 移动突进与事件姿态
+
+[MovementStrikeState](../scripts/battle/movement_strike_state.gd) 持有单目标突进的准备配置、目标弱引用和执行时钟。抵达结算与固定接触续冲共用目标准入、落点查询及 CombatResolver 命中结算；接触路径分为起跳、追踪、一次命中或踢空、续冲落地。Unit 仅接入固定 Tick、控制取消和蓄势入口，不让模型动作决定命中。接触阶段的眩晕保护不清除眩晕计时，禁锢、冻结及外力仍按各自合同处理，详见[行动限制](status/ACTIONS.md)。
+
+UnitModel3D 的事件过渡统一读取配置；`replace_attack` 只替换画面姿态，不取消权威攻击或补发伤害。后续新攻击序号接管，控制期间消费事件而不在解控后补播。模型包装可通过 `consumes_layered_action` 接管独立骨骼层，基础播放器继续保持移动相位；遮罩采样留在对应模型包装，不进入 Unit 或战斗系统。字段语义见[动画配置](reference/ANIMATION_CONFIGURATION.md)。
+
 ## 扩展接口
 
 WorkbenchSession 只注入放置、选中、清场、重建、暂停及视图更新端口；Main 保留节点生命周期与正式操作入口。模型/声音页只读正式配置，候选使用通用离线展台。工作台不承担验收持久化或报告导出。

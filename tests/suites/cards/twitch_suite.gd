@@ -33,7 +33,7 @@ func run(harness: Object, main: Node2D) -> void:
 	main._audio_manager.cue_played.connect(record_sound)
 	var skill: Dictionary = CardDB.get_card("twitch").active_skills[0]
 	var system: ActiveSkillEffectSystem = main._active_skill_effect_system
-	system.apply_decoded(system.decode_validated(rat), skill)
+	system.apply(rat, skill)
 	_expect(rat.attack_range == 200.0 and is_equal_approx(rat.active_attack_speed_multiplier, 1.5) and rat.piercing_attacks_active(), "火力全开同时改变攻速射程与弹体类型")
 	var projectile: ProjectileSystem = main._projectile_system
 	rat.set_meta("projectile_model_offset", Vector2(14, -48))
@@ -67,7 +67,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_expect(aside.hp == before_aside and projectile.projectiles.is_empty(), "侧面目标不命中，射程结束销毁")
 	var mover_source := _spawn("twitch", 0, Vector2(100, 1100))
 	var mover := _spawn("sett", 1, Vector2(260, 1100))
-	system.apply_decoded(system.decode_validated(mover_source), skill)
+	system.apply(mover_source, skill)
 	projectile.launch(mover_source, mover, 68.0, 520.0, 0.0, 0.0, mover_source.color)
 	var launch_direction: Vector2 = projectile.projectiles.values()[0].direction
 	var mover_hp := mover.hp
