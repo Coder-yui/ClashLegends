@@ -141,6 +141,8 @@ func _check_wild_cards_visual() -> void:
 	stats["deploy_time"] = 0.0
 	var skill: Dictionary = stats.active_skills[0]
 	var caster := Unit.new()
+	caster.card_id = "twisted_fate"
+	caster.net_id = 987654
 	caster.position = Vector2(360.0, 900.0)
 	caster.setup(0, stats, stats.name)
 	_main.add_child(caster)

@@ -76,6 +76,7 @@ func _check_attack_rounding() -> void:
 	source.attack_timeline.cooldown = 0.0
 	source.attack_timeline.recovery = 0.0
 	var before := target.hp
+	SuiteUtils.begin_attack_visual(source, target)
 	source._attack(_main.SIM_DT)
 	_expect(before - target.hp == 125, "104点普攻乘1.2后按项目数值规则取整为125")
 	_clear_owned()

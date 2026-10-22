@@ -4,11 +4,11 @@ func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
 	var skill: Dictionary = CardDB.active_skills_for("corki")[0]
-	var source := _spawn("corki", 0, Vector2(200, 900))
-	var first := _spawn("target_dummy", 1, Vector2(310, 900))
-	var air := _spawn("corki", 1, Vector2(310, 930))
-	var behind := _spawn("target_dummy", 1, Vector2(400, 900))
-	var ally := _spawn("target_dummy", 0, Vector2(310, 880))
+	var source := _spawn_ready_unit("corki", 0, Vector2(200, 900))
+	var first := _spawn_ready_unit("target_dummy", 1, Vector2(310, 900))
+	var air := _spawn_ready_unit("corki", 1, Vector2(310, 930))
+	var behind := _spawn_ready_unit("target_dummy", 1, Vector2(400, 900))
+	var ally := _spawn_ready_unit("target_dummy", 0, Vector2(310, 880))
 	var first_hp := first.hp
 	var air_hp := air.hp
 	var behind_hp := behind.hp
@@ -82,6 +82,3 @@ func run(harness: Object, main: Node2D) -> void:
 		var cards := CardDB.all().duplicate(true)
 		cards.corki.active_skills[0].merge(change, true)
 		_expect(not CardDB.VALIDATOR.validate_all(cards, false).is_empty(), "非法序列、爆炸配置和类型被拒绝")
-
-func _spawn(card: String, team: int, pos: Vector2) -> Unit:
-	return _main._spawn_unit(UnitSpawnRequest.new(team, card, pos, {"deploy_time_override": 0.0}))

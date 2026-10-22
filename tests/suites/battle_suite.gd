@@ -25,3 +25,7 @@ func _view_for(unit: Unit) -> UnitModel3D:
 		if child is UnitModel3D and child._source == unit:
 			return child as UnitModel3D
 	return null
+
+## 正式出生、跳过部署等待；保留各套件原来的位置解析与身份登记。
+func _spawn_ready_unit(card_id: String, team: int, position: Vector2) -> Unit:
+	return _main._spawn_unit(UnitSpawnRequest.new(team, card_id, position, {"deploy_time_override": 0.0}))

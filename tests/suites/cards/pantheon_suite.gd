@@ -206,6 +206,7 @@ func _check_pre_deployment() -> void:
 		var outside: Unit = _main._spawn_unit(UnitSpawnRequest.new(1-team, "garen", center + Vector2(160, 0), {"deploy_time_override": 0.0}))
 		var hp: Array = [enemy.hp, far.hp, ally.hp, air.hp, outside.hp]
 		var count := _main.get_tree().get_nodes_in_group("combatants").size()
+		_main.runtime.account(team).elixir = 10
 		_main.play_card(team, "pantheon", center, {"immediate": true, "validate_position": false})
 		var pending: Array = _main.runtime._commands.inspect_deployments()
 		_expect(pending.size() == 1 and enemy.hp == hp[0], "长矛落下不提前造成伤害")
@@ -238,12 +239,14 @@ func _check_pre_deployment() -> void:
 	# 权威跨步扫掠必须覆盖两帧之间，不漏过整段路径；取消和视觉副本不得伤害。
 	var enemy: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(360, 840), {"deploy_time_override": 0.0}))
 	var hp := enemy.hp
+	_main.runtime.account(0).elixir = 10
 	_main.play_card(0, "pantheon", Vector2(360, 780), {"immediate": true, "validate_position": false})
 	_main.runtime._commands.tick_deployment_visuals(0.7)
 	_expect(enemy.hp == hp, "客户端计时入口不能触发伤害")
 	_main.runtime._commands.clear_deployments()
 	_main.runtime._tick_pending_card_pre_deployments(2.0)
 	_expect(enemy.hp == hp, "清场取消未完成冲击波")
+	_main.runtime.account(0).elixir = 10
 	_main.play_card(0, "pantheon", Vector2(360, 780), {"immediate": true, "validate_position": false})
 	_main.runtime._tick_pending_card_pre_deployments(1.3)
 	_expect(enemy.hp == hp - 100, "一次跨完整滑行也扫过路径中间的敌人")
@@ -253,6 +256,7 @@ func _check_pre_deployment() -> void:
 	var victim: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(360, 840), {"deploy_time_override": 0.0}))
 	hp = victim.hp
 	for cast in 2:
+		_main.runtime.account(0).elixir = 10
 		_main.play_card(0, "pantheon", Vector2(360, 780), {"immediate": true, "validate_position": false})
 	_main.runtime._tick_pending_card_pre_deployments(0.65)
 	_expect(victim.hp == hp - 200, "两次独立登场各结算一次，命中集合不共享")

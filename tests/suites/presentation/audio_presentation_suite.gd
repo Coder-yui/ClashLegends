@@ -10,6 +10,7 @@ class RejectSpecialAudio extends GameAudioManager:
 		return true
 
 func run(harness: Object, main: Node2D) -> void:
+	preload("res://tests/fixtures/attack_audio_checks.gd").new().run(harness, main)
 	_check_audio_variant_cap(harness)
 	_check_no_audio_substitution(harness, main)
 	await _check_stasis_audio(harness, main)
@@ -1370,7 +1371,7 @@ func _check_no_audio_substitution(harness: Object, main: Node2D) -> void:
 	rejected.free()
 	var audio: GameAudioManager = main._audio_manager
 	var before: int = audio.budget_snapshot().counters.get("short", {}).get("played", 0)
-	harness._expect(not audio.play_attack_source({"card_id": "masteryi", "serial": 0}, Vector2.ZERO)
+	harness._expect(not SuiteUtils.expect_audio_serial_warning("分段命中音频缺少有效攻击序号：masteryi", func(): return audio.play_attack_source({"card_id": "masteryi", "serial": 0}, Vector2.ZERO))
 		and int(audio.budget_snapshot().counters.get("short", {}).get("played", 0)) == before, "分段命中缺少有效攻击序号时不使用其他声音")
 	for card_id in ["masteryi", "gwen", "nocturne", "pantheon", "sett", "twisted_fate", "xin"]:
 		harness._expect(not CardDB.get_card(card_id).audio.has("attack_hit"), "%s 只保留完整分段命中配置" % card_id)
@@ -1385,7 +1386,7 @@ func _check_no_audio_substitution(harness: Object, main: Node2D) -> void:
 	main.add_child(launcher)
 	launcher.set_process(false)
 	audio.attach_unit(launcher, launch_stats)
-	harness._expect(not audio.play_event(launcher, &"attack_launch", Vector2.ZERO, 0), "分段发射缺少攻击序号时不强行选择第一段")
+	harness._expect(not SuiteUtils.expect_audio_serial_warning("分段发射音频缺少有效攻击序号：twisted_fate", func(): return audio.play_event(launcher, &"attack_launch", Vector2.ZERO, 0)), "分段发射缺少攻击序号时不强行选择第一段")
 	audio._detach_unit(launcher.get_instance_id())
 	launcher.free()
 	var fixture := Unit.new()

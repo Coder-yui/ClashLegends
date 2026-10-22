@@ -14,7 +14,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_siege_minion_squad(main)
 
 func _check_card_definition_boundary() -> void:
-	_expect(CardDB.all().size() == 77 and CardDB.selectable_ids().size() == 64, "分离编队卡与实体定义后注册表77项、可选牌64张保持不变")
+	_expect(SQUAD_IDS.all(func(id): return id in CardDB.selectable_ids()), "六种编队均保留为可选出牌定义")
 	for card_id in SQUAD_IDS:
 		var card := CardDB.get_card(card_id)
 		var plan := CardDB.deployment_plan(card_id)

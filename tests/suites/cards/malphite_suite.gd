@@ -3,7 +3,7 @@ extends "res://tests/suites/battle_suite.gd"
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
-	var unit := _unit("malphite", 0, Vector2(300, 900))
+	var unit := _spawn_ready_unit("malphite", 0, Vector2(300, 900))
 	_expect(unit.shield_hp == 400.0, "部署获得400独立护盾")
 	var initial_mode: String = main.runtime.mode
 	main.runtime.mode = "client"
@@ -24,13 +24,13 @@ func run(harness: Object, main: Node2D) -> void:
 	var snapshot: Array = preload("res://tests/fixtures/network_fixture.gd").snapshot_payload(main._snapshot_system, 4401, unit)
 	_expect(snapshot[NetworkSnapshotSystem.U_DEPLOYMENT_SHIELD] == false, "快照明确同步专属盾破碎")
 	unit.free()
-	unit = _unit("malphite", 0, Vector2(300, 900))
-	var center := _unit("garen", 1, Vector2(320, 900))
-	var edge := _unit("garen", 1, Vector2(117, 900))
-	var outside := _unit("garen", 1, Vector2(485, 900))
-	var diagonal := _unit("garen", 1, Vector2(440, 1040))
-	var air := _unit("anivia", 1, Vector2(320, 920))
-	var friend := _unit("garen", 0, Vector2(320, 880))
+	unit = _spawn_ready_unit("malphite", 0, Vector2(300, 900))
+	var center := _spawn_ready_unit("garen", 1, Vector2(320, 900))
+	var edge := _spawn_ready_unit("garen", 1, Vector2(117, 900))
+	var outside := _spawn_ready_unit("garen", 1, Vector2(485, 900))
+	var diagonal := _spawn_ready_unit("garen", 1, Vector2(440, 1040))
+	var air := _spawn_ready_unit("anivia", 1, Vector2(320, 920))
+	var friend := _spawn_ready_unit("garen", 0, Vector2(320, 880))
 	var targets := [center, edge, outside, diagonal, air, friend]
 	var hp_before: Array = targets.map(func(target): return target.hp)
 	var skill: Dictionary = CardDB.active_skills_for("malphite")[0]
@@ -51,14 +51,11 @@ func run(harness: Object, main: Node2D) -> void:
 		cards.malphite.deployment_shield_reduction = invalid
 		_expect(not CardDB.VALIDATOR.validate_all(cards, false).is_empty(), "拒绝非法减伤倍率")
 
-	var xin := _unit("xin", 0, Vector2(300, 800))
+	var xin := _spawn_ready_unit("xin", 0, Vector2(300, 800))
 	xin.play_visual_action(&"active", 0.65)
 	_expect(xin.active_sweep_visual_radius() > 0.0, "赵信仍保留通用环身枪芒")
 	xin.free()
 	_presentation()
-
-func _unit(id: String, team: int, point: Vector2) -> Unit:
-	return _main._spawn_unit(UnitSpawnRequest.new(team, id, point, {"deploy_time_override": 0.0}))
 
 func _presentation() -> void:
 	var world := Node3D.new()
@@ -82,7 +79,7 @@ func _presentation() -> void:
 	_expect(model._cast_hand_pose.is_equal_approx(model._skeleton.get_bone_global_pose(model._hand)), "事件骨骼采样与真实Spell3第8帧一致")
 	animation_player.seek(0.45, true)
 	animation_player.advance(0.0)
-	var unit := _unit("malphite", 0, Vector2(300, 900))
+	var unit := _spawn_ready_unit("malphite", 0, Vector2(300, 900))
 	model.configure_unit_visual(unit)
 	_expect(unit.body_radius == CardDB.RADIUS_LARGE, "模型缩放不改变大体型半径24")
 	_expect(model._hand >= 0, "源右手挂点映射到GLB大写骨名")
@@ -137,7 +134,7 @@ func _presentation() -> void:
 	_expect(partial, "破盾已出生粒子仅部分继承位移")
 	model.begin_visual_death(0.8)
 	unit.free()
-	unit = _unit("malphite", 0, Vector2(300, 900))
+	unit = _spawn_ready_unit("malphite", 0, Vector2(300, 900))
 	model.configure_unit_visual(unit)
 	unit.clear_shields()
 	model.begin_visual_death(0.8)

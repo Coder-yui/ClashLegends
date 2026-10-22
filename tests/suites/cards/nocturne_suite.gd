@@ -16,6 +16,7 @@ func run(harness: Object, main: Node2D) -> void:
 		unit.attack_timeline.cooldown = 0.0
 		unit.attack_timeline.windup = 0.0
 		unit.attack_timeline.recovery = 0.0
+		SuiteUtils.begin_attack_visual(unit, foe)
 		unit._attack(0.05)
 		_expect(before - foe.hp == 95.0, "普通攻击不再有第五击被动 %d" % index)
 		_expect(nearby - neighbour.hp == 0.0, "普通攻击不溅射 %d" % index)

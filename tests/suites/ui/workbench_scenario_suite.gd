@@ -8,6 +8,7 @@ func run(harness: Object, main: Node2D) -> void:
 	var before := main.get_tree().get_nodes_in_group("combatants").size()
 	await main._load_workbench_preset("surrounded")
 	harness._expect(main.get_tree().get_nodes_in_group("combatants").size() == before, "经典场景入口在正式比赛中不可用")
+	var accounts := SuiteUtils.detach_battle_accounts(main)
 	main._workbench.enabled = true
 	main._workbench.selection = "garen"
 	main._workbench.team = 0
@@ -47,6 +48,7 @@ func run(harness: Object, main: Node2D) -> void:
 	main._workbench.enabled = old_mode
 	main._workbench.selection = old_selection
 	main._workbench.team = old_team
+	SuiteUtils.restore_battle_accounts(main, accounts)
 
 func _units(main: Node2D) -> Array[Unit]:
 	var result: Array[Unit] = []

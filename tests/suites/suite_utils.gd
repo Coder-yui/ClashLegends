@@ -140,3 +140,29 @@ static func replace_carried_skill(roster: ActiveSkillRoster, id: int, skill: Dic
 static func set_control_window(control: ControlState, family: StringName, seconds: float) -> void:
 	control.hard.clear_family(family)
 	control.hard.apply(family, &"fixture", seconds, {})
+
+## 直接命中/发射夹具跳过了索敌与起手，须显式建立真实出手身份。
+## 只调用正式起手入口；不预设序号、不造成伤害、不把所有出生单位当成已攻击。
+static func begin_attack_visual(unit: Unit, target: Node2D) -> void:
+	unit._target = target
+	unit._attack_visual_pending = true
+	unit._try_start_attack_visual(0.0)
+
+## 故意缺少音频序号的反例保留真实警告；执行器要求此区间恰好出现一次指定警告。
+static func expect_audio_serial_warning(message: String, action: Callable) -> bool:
+	print("[EXPECTED_AUDIO_SERIAL_WARNING_BEGIN] " + message)
+	var result: bool = action.call()
+	print("[EXPECTED_AUDIO_SERIAL_WARNING_END]")
+	return result
+
+## 菜单进入工作台时没有比赛钱包；调用方必须在结束后恢复原绑定。
+static func detach_battle_accounts(main: Node2D) -> Dictionary:
+	var accounts := {}
+	for team in [0, 1]:
+		accounts[team] = main.runtime.account(team)
+		main.runtime.bind_account(team, null)
+	return accounts
+
+static func restore_battle_accounts(main: Node2D, accounts: Dictionary) -> void:
+	for team in accounts:
+		main.runtime.bind_account(team, accounts[team])

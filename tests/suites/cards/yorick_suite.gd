@@ -4,12 +4,12 @@ func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
 	for team in [0, 1]:
-		var source := _spawn("yorick", team, Vector2(260, 900))
-		var primary := _spawn("garen", 1-team, Vector2(305, 900))
-		var nearby := _spawn("garen", 1-team, Vector2(350, 900))
-		var far := _spawn("garen", 1-team, Vector2(390, 900))
-		var friend := _spawn("garen", team, Vector2(305, 920))
-		var air := _spawn("anivia", 1-team, Vector2(305, 900))
+		var source := _spawn_ready_unit("yorick", team, Vector2(260, 900))
+		var primary := _spawn_ready_unit("garen", 1-team, Vector2(305, 900))
+		var nearby := _spawn_ready_unit("garen", 1-team, Vector2(350, 900))
+		var far := _spawn_ready_unit("garen", 1-team, Vector2(390, 900))
+		var friend := _spawn_ready_unit("garen", team, Vector2(305, 920))
+		var air := _spawn_ready_unit("anivia", 1-team, Vector2(305, 900))
 		source.hp = 400
 		_strike(source, primary)
 		_expect(primary.hp == primary.max_hp-110 and nearby.hp == nearby.max_hp-110, "牧魂人双方普攻以目标而非自身为圆心，主次目标各一次110")
@@ -39,7 +39,7 @@ func run(harness: Object, main: Node2D) -> void:
 		_expect(source.hp == 400, "无有效命中不回血")
 		# 同批致死的来源不能靠已提交Q复活。
 		primary.free()
-		primary = _spawn("garen",1-team,Vector2(305,900))
+		primary = _spawn_ready_unit("garen",1-team,Vector2(305,900))
 		primary.add_shield(1000, 10.0)
 		source._deal_attack_damage_to(primary,220,{"hit_heal":120,"ground_only":true})
 		_expect(primary.hp == primary.max_hp and source.hp == 520, "纯护盾承伤属于有效命中，固定治疗不冒充吸血")
@@ -55,7 +55,7 @@ func run(harness: Object, main: Node2D) -> void:
 	var old_deck: Array = main.runtime._deck.duplicate()
 	main.runtime._deck[0] = "yorick"
 	var paid: Unit = main.runtime._spawn_card_units(0,"yorick",Vector2(250,1100),0.0,0)[0]
-	var target := _spawn("target_dummy",1,Vector2(295,1100))
+	var target := _spawn_ready_unit("target_dummy",1,Vector2(295,1100))
 	target.hp = 10000
 	target.max_hp = 10000
 	var id := paid.active_ability_id
@@ -77,7 +77,7 @@ func run(harness: Object, main: Node2D) -> void:
 		var stats: Dictionary = CardDB.get_card("yorick").duplicate(true)
 		stats.active_skills[0].hit_heal = value
 		_expect(not CardDB.VALIDATOR.validate_all({"yorick":stats},false).is_empty(), "拒绝非法强化命中回血")
-	var voiced := _spawn("yorick",0,Vector2(250,1000))
+	var voiced := _spawn_ready_unit("yorick",0,Vector2(250,1000))
 	var audio: GameAudioManager = main._audio_manager
 	voiced.prepare_empowered_attack(2.0)
 	audio._process(0.0)
@@ -134,9 +134,6 @@ func _check_stopped_modifiers(model: Node3D) -> void:
 	model._cape_path._process_modification()
 	model._weapon_blend._process_modification()
 	_expect(not model._cape_path._initialized, "预热回收移除动画库后修饰器保持停用")
-
-func _spawn(id: String, team: int, at: Vector2) -> Unit:
-	return _main._spawn_unit(UnitSpawnRequest.new(team,id,at,{"deploy_time_override":0.0}))
 
 func _strike(source: Unit, target: Unit) -> void:
 	source._target = target

@@ -7,8 +7,8 @@ func run(harness: Object, main: Node2D) -> void:
 	await _check_mid_attack_buff()
 	await _check_pose_controls()
 	_check_covered_attack_delivery()
-	var source := _unit("jax", 0, Vector2(300, 900))
-	var enemy := _unit("jax", 1, Vector2(360, 900))
+	var source := _spawn_ready_unit("jax", 0, Vector2(300, 900))
+	var enemy := _spawn_ready_unit("jax", 1, Vector2(360, 900))
 	var skill: Dictionary = CardDB.active_skills_for("jax")[0]
 	var deployed: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "jax", Vector2(200,1100)))
 	_expect(deployed.deploy_time == 2.0 and deployed._deploy_timer == 2.0, "部署窗口为2秒")
@@ -18,6 +18,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_expect(main.preview_active_skill(source, skill), "反击风暴正式生命周期开始")
 	source.add_shield(100.0, 4.0)
 	for hit in 8:
+		SuiteUtils.begin_attack_visual(enemy, source)
 		var result := resolver.resolve_attack_hit(1, enemy.position, source, 60.0, 0.0, 0.0, enemy, enemy.position)
 		_expect(not result.landed, "免疫普攻不形成有效命中")
 	_expect(enemy.buffs.stack_count(&"hit_haste") == 0, "被免疫攻击不发攻击者命中收益")
@@ -28,6 +29,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_expect(source.buffs.strongest(&"counter_strike", &"dodges", 0.0) == 5, "免疫次数增长封顶五次")
 	resolver.resolve_damage_hit(source, 120.0, enemy, 1, enemy.position)
 	_expect(source.hp == 1080.0 and source.shield_hp == 0.0, "技能仍可消耗护盾并造成伤害")
+	SuiteUtils.begin_attack_visual(enemy, source)
 	resolver.resolve_attack_hit(1, enemy.position, source, 20.0, 0.0, 0.0, enemy, enemy.position, -1, {"strike_type": "skill"})
 	_expect(source.hp == 1060.0, "技能型强化攻击不被普攻免疫")
 	var before := enemy.hp
@@ -41,6 +43,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_expect(enemy.is_stunned(), "结束施加眩晕")
 	main._active_skill_effect_system.tick_effects(0.05)
 	_expect(enemy.hp == before - 300.0, "结束伤害只触发一次")
+	SuiteUtils.begin_attack_visual(enemy, source)
 	resolver.resolve_attack_hit(1, enemy.position, source, 20.0, 0.0, 0.0, enemy, enemy.position)
 	_expect(source.hp == 1040.0, "窗口结束正常承受普攻")
 	for i in 10:
@@ -55,15 +58,16 @@ func run(harness: Object, main: Node2D) -> void:
 	source._tick_active_statuses(2.0)
 	main._active_skill_effect_system.tick_effects(0.05)
 	_expect(enemy.hp == before - 300.0, "凝滞中到期不爆发")
-	var dead := _unit("jax", 0, Vector2(360, 960))
+	var dead := _spawn_ready_unit("jax", 0, Vector2(360, 960))
 	dead.begin_counter_strike(skill)
 	dead._tick_active_statuses(2.0)
 	dead.take_damage(99999.0)
 	main._active_skill_effect_system.tick_effects(0.05)
 	_expect(enemy.hp == before - 300.0, "排队后死亡取消反击")
-	var fresh := _unit("jax", 0, Vector2(500, 1000))
-	var first := _unit("jax", 1, Vector2(550, 1000))
-	var second := _unit("jax", 1, Vector2(550, 1020))
+	var fresh := _spawn_ready_unit("jax", 0, Vector2(500, 1000))
+	var first := _spawn_ready_unit("jax", 1, Vector2(550, 1000))
+	var second := _spawn_ready_unit("jax", 1, Vector2(550, 1020))
+	SuiteUtils.begin_attack_visual(fresh, first)
 	resolver.resolve_attack_hit(0, fresh.position, first, 125.0, 35.0, 0.0, fresh, fresh.position)
 	_expect(first.hp == 975.0 and second.hp == 975.0 and fresh.buffs.stack_count(&"hit_haste") == 1, "范围伤害命中两人只叠一层")
 	fresh._tick_active_statuses(3.0)
@@ -76,11 +80,11 @@ func run(harness: Object, main: Node2D) -> void:
 	main._active_skill_effect_system.tick_effects(0.05)
 	_expect(first.hp == 825.0 and first.is_stunned(), "冰冻中自然到期仍造成基础伤害和眩晕")
 	# 半径150的2D圆形边界；纵向不随原生特效的镜头椭圆压缩。
-	var ring_source := _unit("jax", 0, Vector2(350,750))
+	var ring_source := _spawn_ready_unit("jax", 0, Vector2(350,750))
 	var boundary_targets: Array[Unit] = []
 	for direction in [Vector2.RIGHT, Vector2.UP]:
 		for distance in [170.0,172.0]:
-			var target := _unit("jax", 1, ring_source.position + direction * distance)
+			var target := _spawn_ready_unit("jax", 1, ring_source.position + direction * distance)
 			target.position = ring_source.position + direction * distance
 			boundary_targets.append(target)
 	main._active_skill_effect_system.activate_nova(ring_source, skill)
@@ -108,12 +112,9 @@ func run(harness: Object, main: Node2D) -> void:
 	for unit in [source, enemy, dead, fresh, first, second]:
 		if is_instance_valid(unit): unit.free()
 
-func _unit(id: String, team: int, point: Vector2) -> Unit:
-	return _main._spawn_unit(UnitSpawnRequest.new(team, id, point, {"deploy_time_override": 0.0}))
-
 func _check_animation_transitions() -> void:
 	for moving in [false, true]:
-		var unit := _unit("jax", 0, Vector2(300, 1050))
+		var unit := _spawn_ready_unit("jax", 0, Vector2(300, 1050))
 		var view := _view_for(unit)
 		_expect(view != null, "武器大师动画代理存在")
 		if view == null:
@@ -173,7 +174,7 @@ func _check_animation_transitions() -> void:
 	_expect(not CardDB.VALIDATOR.validate_all(cards, false).is_empty(), "未知事件衔接被配置校验拒绝")
 
 func _check_mid_attack_buff() -> void:
-	var unit := _unit("jax", 0, Vector2(300, 1050))
+	var unit := _spawn_ready_unit("jax", 0, Vector2(300, 1050))
 	var view := _view_for(unit)
 	unit._attacking = true
 	unit._attack_visual_serial = 1
@@ -196,7 +197,7 @@ func _check_mid_attack_buff() -> void:
 func _check_pose_controls() -> void:
 	for kind in ["stun", "freeze", "stasis"]:
 		for ending in [false, true]:
-			var unit := _unit("jax", 0, Vector2(300, 1050))
+			var unit := _spawn_ready_unit("jax", 0, Vector2(300, 1050))
 			var view := _view_for(unit)
 			unit.begin_counter_strike(CardDB.active_skills_for("jax")[0])
 			view._sync_visual(false, 0.0)
@@ -226,7 +227,7 @@ func _check_pose_controls() -> void:
 			_expect(view._animation_player.current_animation == "Spell3_Attack1", "解控后新攻击正常接管")
 			view.free()
 			unit.free()
-	var displaced := _unit("jax", 0, Vector2(300, 1050))
+	var displaced := _spawn_ready_unit("jax", 0, Vector2(300, 1050))
 	var displaced_view := _view_for(displaced)
 	displaced.begin_counter_strike(CardDB.active_skills_for("jax")[0])
 	displaced_view._sync_visual(false, 0.0)
@@ -242,7 +243,7 @@ func _check_pose_controls() -> void:
 	_expect(displaced_view._animation_player.current_animation == "Spell3_Idle", "击退结束E仍有效则恢复持续动作，不重播起手")
 	displaced_view.free()
 	displaced.free()
-	var simultaneous := _unit("jax", 0, Vector2(300, 1050))
+	var simultaneous := _spawn_ready_unit("jax", 0, Vector2(300, 1050))
 	var simultaneous_view := _view_for(simultaneous)
 	simultaneous._attacking = true
 	simultaneous._attack_visual_serial = 1
@@ -259,8 +260,8 @@ func _check_pose_controls() -> void:
 
 func _check_covered_attack_delivery() -> void:
 	for ending in [false, true]:
-		var unit := _unit("jax", 0, Vector2(300, 1050))
-		var target := _unit("target_dummy", 1, Vector2(340, 1050))
+		var unit := _spawn_ready_unit("jax", 0, Vector2(300, 1050))
+		var target := _spawn_ready_unit("target_dummy", 1, Vector2(340, 1050))
 		var view := _view_for(unit)
 		var cues: Array = []
 		var record := func(id: String, cue: StringName, _position: Vector2):

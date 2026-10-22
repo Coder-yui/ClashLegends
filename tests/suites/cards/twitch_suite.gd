@@ -3,12 +3,12 @@ extends "res://tests/suites/battle_suite.gd"
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
-	var rat := _spawn("twitch", 0, Vector2(200, 900))
+	var rat := _spawn_ready_unit("twitch", 0, Vector2(200, 900))
 	var transitions: Array[bool] = []
 	rat.stealth.changed.connect(func(hidden: bool): transitions.append(hidden))
-	var front := _spawn("sett", 1, Vector2(300, 900))
-	var back := _spawn("garen", 1, Vector2(400, 900))
-	var aside := _spawn("garen", 1, Vector2(350, 1000))
+	var front := _spawn_ready_unit("sett", 1, Vector2(300, 900))
+	var back := _spawn_ready_unit("garen", 1, Vector2(400, 900))
+	var aside := _spawn_ready_unit("garen", 1, Vector2(350, 1000))
 	_expect(rat.stealth_hidden() and not front._target_is_attackable(rat), "隐身图奇不能被敌方新锁定")
 	_expect(rat.visible_to_team(0) and rat.visible_to_team(1), "双方玩家始终看见隐身模型")
 	_expect(CombatInteraction.allows(rat, front), "隐身仍允许范围及已释放命中")
@@ -47,9 +47,9 @@ func run(harness: Object, main: Node2D) -> void:
 	bolt.pos += Vector2(26, 0)
 	_expect(projectile._visual_position(bolt).is_equal_approx(muzzle + Vector2(26, 0)), "离弦后不跟随武器偏移，保持直线")
 	bolt.pos -= Vector2(26, 0)
-	var distant := _spawn("garen", 1, Vector2(485, 900))
+	var distant := _spawn_ready_unit("garen", 1, Vector2(485, 900))
 	var distant_hp := distant.hp
-	var beyond := _spawn("garen", 1, Vector2(700, 900))
+	var beyond := _spawn_ready_unit("garen", 1, Vector2(700, 900))
 	var beyond_hp := beyond.hp
 	var before_front := front.hp
 	var before_back := back.hp
@@ -65,8 +65,8 @@ func run(harness: Object, main: Node2D) -> void:
 	_expect(sounds.has(&"active_buff:attack_launch") and sounds.has(&"active_buff:attack_hit"), "大招发射和真实穿透碰撞使用原版R专属声音")
 	main._audio_manager.cue_played.disconnect(record_sound)
 	_expect(aside.hp == before_aside and projectile.projectiles.is_empty(), "侧面目标不命中，射程结束销毁")
-	var mover_source := _spawn("twitch", 0, Vector2(100, 1100))
-	var mover := _spawn("sett", 1, Vector2(260, 1100))
+	var mover_source := _spawn_ready_unit("twitch", 0, Vector2(100, 1100))
+	var mover := _spawn_ready_unit("sett", 1, Vector2(260, 1100))
 	system.apply(mover_source, skill)
 	projectile.launch(mover_source, mover, 68.0, 520.0, 0.0, 0.0, mover_source.color)
 	var launch_direction: Vector2 = projectile.projectiles.values()[0].direction
@@ -78,8 +78,9 @@ func run(harness: Object, main: Node2D) -> void:
 	_expect(mover.hp == mover_hp, "高速横移目标可躲过穿透普攻")
 	mover_source.free()
 	mover.free()
-	var hidden := _spawn("twitch", 0, Vector2(200, 900))
+	var hidden := _spawn_ready_unit("twitch", 0, Vector2(200, 900))
 	hidden.record_combat_activity(true)
+	SuiteUtils.begin_attack_visual(front, hidden)
 	projectile.launch(front, hidden, 20.0, 100.0, 0.0, 0.0, front.color)
 	_age(hidden, 40)
 	var before := hidden.hp
@@ -123,9 +124,6 @@ func run(harness: Object, main: Node2D) -> void:
 	_expect(main.runtime._active_skills.entry(ability).uses_remaining == 0 and not main.use_active_skill(ability, 0), "一次使用后拒绝重复请求")
 	main.runtime._deck = old_deck
 
-func _spawn(id: String, team: int, pos: Vector2) -> Unit:
-	return _main._spawn_unit(UnitSpawnRequest.new(team, id, pos, {"deploy_time_override": 0.0}))
-
 func _check_ghost_materials() -> void:
 	var root := Node3D.new()
 	var mesh := MeshInstance3D.new()
@@ -159,12 +157,12 @@ func _age(rat: Unit, ticks: int) -> void:
 
 func _check_control_entry() -> void:
 	for family in ["stun", "freeze", "stasis"]:
-		var rat := _spawn("twitch", 0, Vector2(300,1050))
+		var rat := _spawn_ready_unit("twitch", 0, Vector2(300,1050))
 		_control(rat, family, 3)
 		_age(rat, 45)
 		_expect(rat.stealth_hidden(), "已有隐身不被%s打破" % family)
 		rat.free()
-		rat = _spawn("twitch", 0, Vector2(300,1050))
+		rat = _spawn_ready_unit("twitch", 0, Vector2(300,1050))
 		rat.record_combat_activity(true)
 		_control(rat, family, 3)
 		_age(rat, 59)
@@ -176,7 +174,7 @@ func _check_control_entry() -> void:
 		_age(rat, 1)
 		_expect(rat.stealth_hidden(), "%s解除后2秒入隐，无第二重等待" % family)
 		rat.free()
-	var rat := _spawn("twitch", 0, Vector2(300,1050))
+	var rat := _spawn_ready_unit("twitch", 0, Vector2(300,1050))
 	rat.record_combat_activity(true)
 	rat.stun(2)
 	rat.freeze(3)
@@ -188,7 +186,7 @@ func _check_control_entry() -> void:
 	_age(rat, 40)
 	_expect(rat.stealth_hidden(), "三控解除后连续空闲2秒入隐")
 	rat.free()
-	rat = _spawn("twitch", 0, Vector2(300,1050))
+	rat = _spawn_ready_unit("twitch", 0, Vector2(300,1050))
 	rat.record_combat_activity(true)
 	rat.stun(1)
 	_age(rat, 10)
@@ -200,7 +198,7 @@ func _check_control_entry() -> void:
 	_age(rat, 40)
 	_expect(rat.stealth_hidden(), "续期控制结束后空闲2秒入隐")
 	rat.free()
-	rat = _spawn("twitch", 0, Vector2(300,1050))
+	rat = _spawn_ready_unit("twitch", 0, Vector2(300,1050))
 	rat.record_combat_activity(true)
 	rat.apply_slow(4, 0.5)
 	_age(rat, 40)
@@ -210,7 +208,7 @@ func _check_control_entry() -> void:
 	rat.free()
 
 func _check_animation_mapping() -> void:
-	var rat := _spawn("twitch", 0, Vector2(300, 1000))
+	var rat := _spawn_ready_unit("twitch", 0, Vector2(300, 1000))
 	var view := UnitModel3D.new()
 	var camera := Camera3D.new()
 	_main.add_child(camera)

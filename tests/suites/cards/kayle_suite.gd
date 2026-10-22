@@ -59,6 +59,7 @@ func run(harness: Object, main: Node2D) -> void:
 	var ally: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "garen", Vector2(285, 780), {"deploy_time_override": 0.0}))
 	var far: Unit = main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(450, 780), {"deploy_time_override": 0.0}))
 	var start := [target.hp, air.hp, ally.hp, far.hp]
+	SuiteUtils.begin_attack_visual(ranged, target)
 	_expect(main.launch_attack(ranged, target, ranged.damage, ranged.projectile_speed, ranged.splash_radius, 0, Color.YELLOW), "远程真实发射弹体")
 	_expect(target.hp == start[0] and air.hp == start[1], "出手不提前造成伤害")
 	ranged.free()
@@ -91,6 +92,7 @@ func _test_hit_haste() -> void:
 		var nearby: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(320, 820), {"deploy_time_override": 0.0}))
 		_expect(is_equal_approx(source.attack_interval, 1.5), "两形态基础间隔降至1.5秒")
 		_expect(is_equal_approx(source.active_attack_speed_multiplier, 1.0), "未命中无层数")
+		SuiteUtils.begin_attack_visual(source, victim)
 		_main._combat.resolve_attack_hit(0, source.position, victim, 1, source.splash_radius, 0, source)
 		_expect(is_equal_approx(source.active_attack_speed_multiplier, 1.1), "单击溅射多人也只叠一层")
 		source._tick_active_statuses(2.0)
@@ -118,6 +120,7 @@ func _test_hit_haste() -> void:
 	_clear()
 	var archer: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "kayle_ranged", Vector2(300, 900), {"deploy_time_override": 0.0}))
 	var target: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(300, 780), {"deploy_time_override": 0.0}))
+	SuiteUtils.begin_attack_visual(archer, target)
 	_main.launch_attack(archer, target, 1, archer.projectile_speed, archer.splash_radius, 0, Color.YELLOW)
 	_expect(is_equal_approx(archer.active_attack_speed_multiplier, 1.0), "远程创建弹体不提前叠层")
 	for i in 12: _main._tick_projectiles(0.05)
@@ -126,6 +129,7 @@ func _test_hit_haste() -> void:
 	_expect(is_equal_approx(float(snapshot[preload("res://scripts/battle/network_snapshot_system.gd").U_ACTIVE_ATTACK_SPEED_MULTIPLIER]), 1.1), "快照携带被动的最终攻速倍率")
 	var prior := archer.active_attack_speed_multiplier
 	target.hp = 0
+	SuiteUtils.begin_attack_visual(archer, target)
 	_main._combat.resolve_attack_hit(0, archer.position, target, 1, 0, 0, archer)
 	_expect(is_equal_approx(archer.active_attack_speed_multiplier, prior), "无效目标没有命中收益")
 	_expect(is_equal_approx(CardDB.get_card("kayle").range, 56.0), "近战表面距离1.4格")
@@ -153,6 +157,7 @@ func _test_wave() -> void:
 	var outside: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(300, 550), {"deploy_time_override": 0.0}))
 	var ally: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "garen", Vector2(300, 720), {"deploy_time_override": 0.0}))
 	var before := [primary.hp, back.hp, side.hp, outside.hp, ally.hp]
+	SuiteUtils.begin_attack_visual(caster, primary)
 	_expect(_main.launch_attack(caster, primary, caster.damage, caster.projectile_speed, 0, 0, Color.YELLOW), "一次普攻创建光剑和焰浪")
 	_expect(_main._projectile_system.projectiles.size() == 1 and _main._projectile_system._pending_attack_waves.size() == 1, "光剑先创建，焰浪尚在延迟队列")
 	_main._tick_projectiles(0.05)
@@ -184,6 +189,7 @@ func _test_wave() -> void:
 	_expect(_main._projectile_system.projectiles.is_empty(), "抵达出手锁定终点后销毁")
 	# 光剑可追踪转向，焰浪在创建后方向固定。
 	primary.position = Vector2(300, 800)
+	SuiteUtils.begin_attack_visual(caster, primary)
 	_main.launch_attack(caster, primary, 1, caster.projectile_speed, 0, 0, Color.YELLOW)
 	primary.position = Vector2(450, 800)
 	_main._tick_projectiles(0.05)
@@ -199,6 +205,7 @@ func _test_wave() -> void:
 	var old_position := enemy_tower.position
 	var old_hp := enemy_tower.hp
 	enemy_tower.position = Vector2(300, 800)
+	SuiteUtils.begin_attack_visual(caster, enemy_tower)
 	_main.launch_attack(caster, enemy_tower, 105, caster.projectile_speed, 0, 0, Color.YELLOW)
 	for i in 20: _main._tick_projectiles(0.05)
 	_expect(enemy_tower.hp == old_hp - 160, "水晶同样承受光剑与焰浪")
@@ -229,6 +236,7 @@ func _wave_lifecycle(distance: float, remove_target: bool) -> float:
 	target.position = caster.position + Vector2.UP * distance
 	var target_at_launch := target.position
 	var system: ProjectileSystem = _main._projectile_system
+	SuiteUtils.begin_attack_visual(caster, target)
 	_main.launch_attack(caster, target, 105, caster.projectile_speed, 0, 0, Color.YELLOW)
 	var pending: Dictionary = system._pending_attack_waves[0]
 	var wave: Dictionary = pending.projectile
@@ -252,6 +260,7 @@ func _wave_lifecycle(distance: float, remove_target: bool) -> float:
 	_expect((wave.pos as Vector2).is_equal_approx(target_at_launch + Vector2.UP * 40.0), "波前准确终止在旧目标位置后1格")
 	_expect(float(wave.radius) > initial_radius, "锁定路线仍随飞行逐渐扩宽")
 	var replacement: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(300, 800), {"deploy_time_override": 0.0}))
+	SuiteUtils.begin_attack_visual(caster, replacement)
 	_main.launch_attack(caster, replacement, 105, caster.projectile_speed, 0, 0, Color.YELLOW)
 	_expect(system._pending_attack_waves.size() == 1, "新一次出手存在独立待创建波")
 	system.clear_all()
@@ -277,6 +286,7 @@ func _test_wave_targets_and_scale() -> void:
 		var building_hp := building.hp
 		var tower_hp := enemy_tower.hp
 		var system: ProjectileSystem = _main._projectile_system
+		SuiteUtils.begin_attack_visual(source, target)
 		_main.launch_attack(source, target, 105, 420, 0, 0, Color.YELLOW)
 		_expect(system.projectiles.size() == 1, "每次普攻仅一枚光剑权威弹体")
 		var sword_id: int = system.projectiles.keys()[0]
@@ -297,6 +307,7 @@ func _test_wave_targets_and_scale() -> void:
 		# 近目标终点更近，归一化标尺不随这次实际短路径缩小。
 		system.clear_all()
 		target.position = source.position + Vector2.UP * 100
+		SuiteUtils.begin_attack_visual(source, target)
 		_main.launch_attack(source, target, 105, 420, 0, 0, Color.YELLOW)
 		wave = system._pending_attack_waves[0].projectile
 		var visual_air: bool = wave.visual_path.air
@@ -320,6 +331,7 @@ func _test_wave_audio() -> void:
 		var caster: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "kayle_ranged", Vector2(300, 900), {"deploy_time_override": 0.0}))
 		var target: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(300, 800), {"deploy_time_override": 0.0}))
 		var rear: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(300, 770), {"deploy_time_override": 0.0}))
+		SuiteUtils.begin_attack_visual(caster, target)
 		_main.launch_attack(caster, target, 105, caster.projectile_speed, 0, 0, Color.YELLOW)
 		_expect(events.is_empty(), "光剑创建不提前播放焰浪发射声")
 		caster.free()
@@ -338,6 +350,7 @@ func _test_wave_audio() -> void:
 	events.clear()
 	var caster: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "kayle_ranged", Vector2(300, 900), {"deploy_time_override": 0.0}))
 	var target: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "garen", Vector2(300, 800), {"deploy_time_override": 0.0}))
+	SuiteUtils.begin_attack_visual(caster, target)
 	_main.launch_attack(caster, target, 105, caster.projectile_speed, 0, 0, Color.YELLOW)
 	system.clear_all()
 	system.tick(0.2)
@@ -352,6 +365,7 @@ func _test_sword_facing() -> void:
 		caster.set_meta("projectile_model_offset", Vector2(0, -80))
 		target.set_meta("projectile_model_offset", Vector2(0, -30))
 		var system: ProjectileSystem = _main._projectile_system
+		SuiteUtils.begin_attack_visual(caster, target)
 		system.launch(caster, target, 1, caster.projectile_speed, 0, 0, Color.YELLOW)
 		system.tick_visuals(0.008)
 		var view: Dictionary = system._native_visuals._views.values()[0]

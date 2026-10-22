@@ -19,9 +19,6 @@ func run(harness: Object) -> void:
 	_main.free()
 	_main = null
 
-func _spawn(id: String, team: int, pos: Vector2) -> Unit:
-	return _main._spawn_unit(UnitSpawnRequest.new(team, id, pos, {"deploy_time_override": 0.0}))
-
 func _clear() -> void:
 	_main._active_skill_effect_system.clear()
 	_main._projectile_system.clear_all()
@@ -34,9 +31,9 @@ func _shield(target: Unit) -> void:
 	_main._active_skill_effect_system.apply(target, _main._active_skill_effect_system.prepare_cast(target, skill))
 
 func _test_channel(shield_first: bool) -> void:
-	var caster := _spawn("malzahar", 0, Vector2(360, 950))
-	var target := _spawn("nocturne", 1, Vector2(360, 850))
-	var bystander := _spawn("target_dummy", 1, Vector2(400, 850))
+	var caster := _spawn_ready_unit("malzahar", 0, Vector2(360, 950))
+	var target := _spawn_ready_unit("nocturne", 1, Vector2(360, 850))
+	var bystander := _spawn_ready_unit("target_dummy", 1, Vector2(400, 850))
 	var effects = _main._active_skill_effect_system
 	if shield_first: _shield(target)
 	var skill: Dictionary = effects.prepare_cast(caster, CardDB.active_skills_for("malzahar")[0])
@@ -72,8 +69,8 @@ func _start_channel(caster: Unit, target: Unit) -> void:
 	_main._combat.commit_batch()
 
 func _test_channel_summons() -> void:
-	var caster := _spawn("malzahar", 0, Vector2(360, 960))
-	var target := _spawn("target_dummy", 1, Vector2(360, 850))
+	var caster := _spawn_ready_unit("malzahar", 0, Vector2(360, 960))
+	var target := _spawn_ready_unit("target_dummy", 1, Vector2(360, 850))
 	caster.spawn_initial_delay_left = 0.0
 	caster._initial_summons_spawned = true
 	caster._spawn_timer = 0.1 # 定位到既有8秒周期的最后两步。
@@ -94,8 +91,8 @@ func _test_channel_summons() -> void:
 	_expect(_units("voidling").size() == 3 and _main.runtime._commands.inspect_summons().is_empty(), "来源死亡保留已发序列，不补发受控待发批次")
 	_clear()
 	for kind in ["stun", "freeze", "stasis"]:
-		caster = _spawn("malzahar", 0, Vector2(360, 960))
-		target = _spawn("target_dummy", 1, Vector2(360, 850))
+		caster = _spawn_ready_unit("malzahar", 0, Vector2(360, 960))
+		target = _spawn_ready_unit("target_dummy", 1, Vector2(360, 850))
 		caster.spawn_initial_delay_left = 0.0
 		caster._initial_summons_spawned = true
 		caster._spawn_timer = 0.05
@@ -109,7 +106,7 @@ func _test_channel_summons() -> void:
 		_run_main_ticks(1)
 		_expect(_main.runtime._commands.inspect_summons().size() == 3 and is_equal_approx(caster._spawn_timer, 8.0), "解控立即释放一批并重计周期:" + kind)
 		_clear()
-	caster = _spawn("malzahar", 0, Vector2(360, 960))
+	caster = _spawn_ready_unit("malzahar", 0, Vector2(360, 960))
 	caster._deploy_timer = 0.1
 	caster.spawn_initial_delay_left = 0.05
 	_run_main_ticks(1)
@@ -120,8 +117,8 @@ func _test_channel_summons() -> void:
 	_expect(_main.runtime._commands.inspect_summons().size() == 3 and caster._initial_summons_spawned, "部署完成后首次延迟按原规则启动")
 
 func _test_haste() -> void:
-	var target := _spawn("nocturne", 0, Vector2(360, 900))
-	var attacker := _spawn("garen", 1, Vector2(360, 820))
+	var target := _spawn_ready_unit("nocturne", 0, Vector2(360, 900))
+	var attacker := _spawn_ready_unit("garen", 1, Vector2(360, 820))
 	target.attack_timeline.windup = 0.39
 	target.attack_timeline.recovery = 0.65
 	target.attack_timeline.cooldown = 0.91
@@ -163,7 +160,7 @@ func _phases_equal(target: Unit, windup: float, recovery: float, cooldown: float
 
 func _test_tower() -> void:
 	var tower: Tower = _main.world.towers_snapshot()[0]
-	var target := _spawn("target_dummy", 1, tower.position + Vector2(150, 0))
+	var target := _spawn_ready_unit("target_dummy", 1, tower.position + Vector2(150, 0))
 	tower.can_attack = true
 	tower._target = null
 	tower._cooldown = 0.0
@@ -189,10 +186,10 @@ func _test_deployment(id: String) -> void:
 	_main.runtime.account(0).elixir = 10
 	_main.runtime._authoritative_card_cycles[0] = CardCycle.new(deck, false)
 	var center := Vector2(360, 900)
-	var victim := _spawn("garen", 1, center + Vector2(0, 110))
+	var victim := _spawn_ready_unit("garen", 1, center + Vector2(0, 110))
 	victim.can_attack = false
 	victim.move_speed = 0.0
-	var air := _spawn("malzahar", 1, center + Vector2(0, 110))
+	var air := _spawn_ready_unit("malzahar", 1, center + Vector2(0, 110))
 	air.can_attack = false
 	air.spawn_interval = 0.0
 	var health := victim.hp

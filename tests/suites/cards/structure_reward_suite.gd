@@ -9,9 +9,6 @@ func run(harness: Object) -> void:
 	_main.free()
 	_main = null
 
-func _spawn(id: String, team: int, pos: Vector2) -> Unit:
-	return _main._spawn_unit(UnitSpawnRequest.new(team, id, pos, {"deploy_time_override": 0.0}))
-
 func _hit(source: Unit, target: Node2D, amount: float) -> void:
 	_expect(_main._projectile_system.launch(source, target, amount, 1000.0, 0.0, 0.0, Color.WHITE), "正式弹体发射")
 	# 只推进弹体阶段，避免额外单位自主普攻影响本次致死批次。
@@ -24,9 +21,9 @@ func _hit(source: Unit, target: Node2D, amount: float) -> void:
 func _check_case(kind: String) -> void:
 	var target: Node2D = _main.world.towers_snapshot()[2]
 	target.hp = 1000.0
-	var source := _spawn("jinx", 0, target.position + Vector2(100, 0))
-	var ally := _spawn("ashe", 0, target.position + Vector2(100, 30))
-	if kind == "building": target = _spawn("tombstone", 1, Vector2(360, 400))
+	var source := _spawn_ready_unit("jinx", 0, target.position + Vector2(100, 0))
+	var ally := _spawn_ready_unit("ashe", 0, target.position + Vector2(100, 30))
+	if kind == "building": target = _spawn_ready_unit("tombstone", 1, Vector2(360, 400))
 	if kind != "first":
 		_hit(source, target, 10.0)
 		_expect(target.hp > 0.0 and source.buffs.stack_count(&"structure_haste") == 0, "非致死命中只登记窗口:" + kind)

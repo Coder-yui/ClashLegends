@@ -5,7 +5,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_test_w_composition()
 	_test_projectile_alignment()
 	var cues: Array = []
-	var source := _spawn("malzahar", 0, Vector2(360, 1000))
+	var source := _spawn_ready_unit("malzahar", 0, Vector2(360, 1000))
 	source.presentation_cue.connect(func(cue): cues.append(cue))
 	source._deploy_timer = 0.05
 	_tick_source(source)
@@ -30,7 +30,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_expect(_children().size() == 3, "8秒前无下一批")
 	_tick_source(source)
 	_expect(_children().size() == 4, "下一批开门0.25秒后生成首只")
-	var target := _spawn("garen", 1, Vector2(360, 900))
+	var target := _spawn_ready_unit("garen", 1, Vector2(360, 900))
 	var skill: Dictionary = CardDB.get_card("malzahar").active_skills[0]
 	var effects = main._active_skill_effect_system
 	effects.apply(source, effects.prepare_cast(source, skill))
@@ -52,8 +52,8 @@ func run(harness: Object, main: Node2D) -> void:
 	for i in 8: effects.tick_effects(0.5)
 	_expect(effects.continuous_area_effects.is_empty(), "区域满5秒精确结束")
 	for reason in ["freeze", "stasis", "knockback", "forced", "silence", "taunt", "death"]:
-		var caster := _spawn("malzahar", 0, Vector2(220, 1000))
-		var victim := _spawn("garen", 1, Vector2(250, 920))
+		var caster := _spawn_ready_unit("malzahar", 0, Vector2(220, 1000))
+		var victim := _spawn_ready_unit("garen", 1, Vector2(250, 920))
 		caster.prepare_channeled_attack(effects.prepare_cast(caster, skill))
 		caster.channel_attack.begin(caster, victim)
 		match reason:
@@ -68,8 +68,8 @@ func run(harness: Object, main: Node2D) -> void:
 		caster.free()
 		victim.free()
 		effects.clear()
-	var blinded := _spawn("malzahar", 0, Vector2(220, 1000))
-	var dummy := _spawn("target_dummy", 1, Vector2(250, 920))
+	var blinded := _spawn_ready_unit("malzahar", 0, Vector2(220, 1000))
+	var dummy := _spawn_ready_unit("target_dummy", 1, Vector2(250, 920))
 	blinded.prepare_channeled_attack(effects.prepare_cast(blinded, skill))
 	blinded.apply_blind(2)
 	blinded._target = dummy
@@ -88,8 +88,8 @@ func run(harness: Object, main: Node2D) -> void:
 	cards = CardDB.all().duplicate(true)
 	cards.malzahar.spawn_sequence_interval = "bad"
 	_expect(not CardDB.VALIDATOR.validate_all(cards, false).is_empty(), "拒绝非数值逐只间隔")
-	var batch_source := _spawn("malzahar", 0, Vector2(220,1000))
-	var batch_target := _spawn("garen", 1, Vector2(250,920))
+	var batch_source := _spawn_ready_unit("malzahar", 0, Vector2(220,1000))
+	var batch_target := _spawn_ready_unit("garen", 1, Vector2(250,920))
 	batch_source.prepare_channeled_attack(effects.prepare_cast(batch_source, skill))
 	main._combat.begin_batch(99, "channel_cancel")
 	batch_source.channel_attack.begin(batch_source, batch_target)
@@ -97,15 +97,15 @@ func run(harness: Object, main: Node2D) -> void:
 	main._combat.commit_batch()
 	_expect(not batch_target.is_stunned(), "同批已取消引导不延后补眩晕")
 	var before_views: int = main._skill_presentation.frontal_effects.size()
-	var payload := {"pos":Vector2(360,900), "dir":Vector2.UP, "length":90.0, "width":90.0, "duration":5.0, "team":0, "shape":"nether_zone"}
+	var payload := {"pos":Vector2(360,900), "dir":Vector2.UP, "length":90.0, "width":90.0, "duration":5.0, "team":0, "shape":"nether_zone", "fixed_position":true}
 	main._skill_presentation.show_skill_effect(90909, payload)
 	main._skill_presentation.show_skill_effect(90909, payload)
 	_expect(main._skill_presentation.frontal_effects.size() == before_views + 1, "网络区域表现事件去重")
 	cards = CardDB.all().duplicate(true)
 	cards.malzahar.spawn_sequence_interval = 4.0
 	_expect(not CardDB.VALIDATOR.validate_all(cards, false).is_empty(), "拒绝跨周期重叠的逐只召唤")
-	var freed_source := _spawn("malzahar", 0, Vector2(220,1000))
-	var freed_target := _spawn("pix", 1, Vector2(250,920))
+	var freed_source := _spawn_ready_unit("malzahar", 0, Vector2(220,1000))
+	var freed_target := _spawn_ready_unit("pix", 1, Vector2(250,920))
 	freed_source.prepare_channeled_attack(effects.prepare_cast(freed_source, skill))
 	freed_source.channel_attack.begin(freed_source, freed_target)
 	freed_target.free()
@@ -114,8 +114,8 @@ func run(harness: Object, main: Node2D) -> void:
 	_expect(freed_source.get_continuous_visual_target_position().is_finite(), "目标释放后端点安全回退")
 	freed_source.channel_attack.tick(freed_source, 0.05)
 	_expect(not freed_source.channel_attack.active(), "目标释放后下一权威Tick解除自身锁")
-	var replica_source := _spawn("malzahar", 0, Vector2(220,1000))
-	var replica_target := _spawn("garen", 1, Vector2(250,920))
+	var replica_source := _spawn_ready_unit("malzahar", 0, Vector2(220,1000))
+	var replica_target := _spawn_ready_unit("garen", 1, Vector2(250,920))
 	replica_source.prepare_channeled_attack(effects.prepare_cast(replica_source, skill))
 	replica_source.channel_attack.begin(replica_source, replica_target)
 	var snapshot: Array = preload("res://tests/fixtures/network_fixture.gd").snapshot_payload(main._snapshot_system, 999998, replica_source, true, replica_target.position)
@@ -143,9 +143,6 @@ func _tick_source(source: Unit) -> void:
 func _children() -> Array:
 	return _main.get_tree().get_nodes_in_group("combatants").filter(func(u): return is_instance_valid(u) and u is Unit and u.card_id == "voidling")
 
-func _spawn(id: String, team: int, pos: Vector2) -> Unit:
-	return _main._spawn_unit(UnitSpawnRequest.new(team, id, pos, {"deploy_time_override": 0.0}))
-
 func _check_w() -> void:
 	var previous_deck: Array = _main.runtime._deck.duplicate()
 	_main.runtime._deck[0] = "malzahar"
@@ -157,7 +154,7 @@ func _check_w() -> void:
 	_main._ai.enabled = false
 	_main.runtime._minion_waves_enabled = false
 	var skill: Dictionary = CardDB.active_skills_for("malzahar")[1]
-	var caster := _spawn("malzahar", 0, Vector2(300,1000))
+	var caster := _spawn_ready_unit("malzahar", 0, Vector2(300,1000))
 	caster.spawn_interval = 0.0
 	caster.active_ability_id = 90221
 	caster.active_ability_slot = 0
@@ -186,7 +183,7 @@ func _check_w() -> void:
 		_expect(_main.use_active_skill(90221,0), "W六秒后可再次请求")
 		_run_main_ticks(40)
 	_expect(int(_main.runtime._active_skills.entry(90221).uses_remaining)==0 and not _main.use_active_skill(90221,0), "W三次耗尽拒绝第四次")
-	var cancelled := _spawn("malzahar",0,Vector2(400,1000))
+	var cancelled := _spawn_ready_unit("malzahar",0,Vector2(400,1000))
 	cancelled.spawn_interval = 0.0
 	var before := _children().size()
 	_main._skill_lifecycle.start(cancelled,skill)
@@ -197,7 +194,7 @@ func _check_w() -> void:
 	cards.malzahar.active_skills[1].spawn_sequence_interval = 0.0
 	_expect(not CardDB.VALIDATOR.validate_all(cards,false).is_empty(), "W拒绝零逐只间隔")
 
-	var dying := _spawn("malzahar",0,Vector2(450,1000))
+	var dying := _spawn_ready_unit("malzahar",0,Vector2(450,1000))
 	dying.spawn_interval=0.0
 	before=_children().size()
 	_main._skill_lifecycle.start(dying,skill)
@@ -246,7 +243,7 @@ func _test_w_composition() -> void:
 func _check_independent_summons() -> void:
 	_main.runtime._commands.clear()
 	for control_kind in ["stun", "freeze", "stasis"]:
-		var caster := _spawn("malzahar", 0, Vector2(320, 1000))
+		var caster := _spawn_ready_unit("malzahar", 0, Vector2(320, 1000))
 		caster._initial_summons_spawned = true
 		caster._spawn_timer = 0.05
 		match control_kind:
@@ -262,7 +259,7 @@ func _check_independent_summons() -> void:
 		caster.free()
 		for i in 25: _main.runtime._tick_summon_flights(0.05)
 		_expect(_children().size() == before + 3, control_kind + "开门后释放来源，三只照常出生")
-	var cleared := _spawn("malzahar", 0, Vector2(320, 1000))
+	var cleared := _spawn_ready_unit("malzahar", 0, Vector2(320, 1000))
 	cleared._spawn_batch()
 	var before := _children().size()
 	_main.runtime._commands.clear()
@@ -271,7 +268,7 @@ func _check_independent_summons() -> void:
 	cleared.free()
 
 func _check_strike_type() -> void:
-	var caster := _spawn("malzahar", 0, Vector2(320, 1000))
+	var caster := _spawn_ready_unit("malzahar", 0, Vector2(320, 1000))
 	caster.apply_blind(3)
 	_expect(not caster._consume_blind_for_strike({"strike_type": "skill"}) and caster.blind_attack_charges == 3, "通用技能出手无需斩杀标记即可免疫致盲")
 	_expect(caster._consume_blind_for_strike({"execute_reset": true}) and caster.blind_attack_charges == 2, "斩杀收益标记不能决定致盲类别")
@@ -293,9 +290,9 @@ func _check_r_layers() -> void:
 	view.sync_effects(presentation, camera)
 	for id in ["area_1", "area_2"]:
 		var zone = view.views[id]
-		var center := camera.unproject_position(zone.global_position)
+		var center := BattleGroundProjection.unproject(camera, zone.global_position)
 		for point in [Vector3.RIGHT, Vector3.LEFT, Vector3.FORWARD, Vector3.BACK]:
-			var edge := camera.unproject_position(zone.to_global(point))
+			var edge := BattleGroundProjection.unproject(camera, zone.to_global(point))
 			_expect(absf(center.distance_to(edge) - 90.0) < 0.01, "自制紫色区域四向边界对应权威90像素")
 	presentation.frontal_effects.clear()
 	view.sync_effects(presentation, camera)

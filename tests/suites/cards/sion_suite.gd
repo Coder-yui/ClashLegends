@@ -17,12 +17,9 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_whole_attack_animation()
 	_check_frozen_revival()
 
-func _unit(card: String, team: int, pos: Vector2) -> Unit:
-	return _main._spawn_unit(UnitSpawnRequest.new(team, card, pos, {"deploy_time_override": 0.0}))
-
 func _check_revival() -> void:
-	var unit := _unit("sion", 0, Vector2(300, 900))
-	var enemy := _unit("garen", 1, Vector2(500, 900))
+	var unit := _spawn_ready_unit("sion", 0, Vector2(300, 900))
+	var enemy := _spawn_ready_unit("garen", 1, Vector2(500, 900))
 	_expect(unit.building_only and unit.hp == 2400, "赛恩常态高血量且只攻击建筑")
 	_main._combat.begin_batch(0, "sion_lethal")
 	unit.take_damage(2500, enemy)
@@ -56,8 +53,8 @@ func _check_revival() -> void:
 	enemy.queue_free()
 
 func _check_shield() -> void:
-	var unit := _unit("sion", 0, Vector2(300, 900))
-	var air := _unit("anivia", 1, Vector2(340, 900))
+	var unit := _spawn_ready_unit("sion", 0, Vector2(300, 900))
+	var air := _spawn_ready_unit("anivia", 1, Vector2(340, 900))
 	var skill := CardDB.active_skills_for("sion")[0]
 	_main._active_skill_effect_system.apply(unit, skill)
 	unit.take_damage(599)
@@ -85,7 +82,7 @@ func _check_shield() -> void:
 	air.queue_free()
 
 func _check_shield_animation() -> void:
-	var unit := _unit("sion", 0, Vector2(300, 900))
+	var unit := _spawn_ready_unit("sion", 0, Vector2(300, 900))
 	unit._deploy_timer = 0.0
 	unit._move_intent = Vector2.RIGHT
 	unit._body_facing_direction = Vector2.RIGHT
@@ -118,7 +115,7 @@ func _check_shield_animation() -> void:
 
 func _check_shield_freeze_transition() -> void:
 	for next_state in [1, 2, 3]:
-		var unit := _unit("sion", 0, Vector2(300, 900))
+		var unit := _spawn_ready_unit("sion", 0, Vector2(300, 900))
 		unit._deploy_timer = 0.0
 		var view: UnitModel3D
 		for child in _main._battle_presentation._world_root.get_children():
@@ -161,7 +158,7 @@ func _check_schema() -> void:
 	_expect(not DeathFormState.valid_snapshot([false, 20]) and not DeathFormState.valid_snapshot([true, -1]), "拒绝非法复生快照")
 
 func _check_authoritative_timing() -> void:
-	var unit := _unit("sion", 0, Vector2(350, 900))
+	var unit := _spawn_ready_unit("sion", 0, Vector2(350, 900))
 	unit.take_damage(10000)
 	_main.world.register_authority_unit(unit, true)
 	_expect(_main.world.authoritative_units_snapshot().has(unit.net_id), "主机实体索引保留零血等待者，快照不可误删")
@@ -176,7 +173,7 @@ func _check_authoritative_timing() -> void:
 	unit.queue_free()
 
 func _check_audio_lifecycle() -> void:
-	var unit := _unit("sion", 0, Vector2(350, 900))
+	var unit := _spawn_ready_unit("sion", 0, Vector2(350, 900))
 	var manager: GameAudioManager = _main._audio_manager
 	var cues: Array[StringName] = []
 	var collect := func(card: String, cue: StringName, _position: Vector2):
@@ -220,7 +217,7 @@ func _check_audio_lifecycle() -> void:
 func _check_paid_skill() -> void:
 	var deck: Array = _main.runtime._deck.duplicate()
 	_main.runtime._deck[0] = "sion"
-	var unit := _unit("sion", 0, Vector2(350, 900))
+	var unit := _spawn_ready_unit("sion", 0, Vector2(350, 900))
 	unit.move_speed = 0.0
 	unit.active_ability_id = 98001
 	unit.active_ability_slot = 0
@@ -239,7 +236,7 @@ func _check_paid_skill() -> void:
 	_expect(_main.runtime.get_active_skill_snapshot(98001).uses_remaining == 0 and not _main.use_active_skill(98001, 0), "W最多2次，不允许第三次")
 	unit.queue_free()
 	# 等待命令期间致死复生：保留实例使付款原路退回，不耗次数。
-	unit = _unit("sion", 0, Vector2(350, 900))
+	unit = _spawn_ready_unit("sion", 0, Vector2(350, 900))
 	unit.active_ability_id = 98002
 	unit.active_ability_slot = 0
 	_main.runtime._register_active_skill(unit, "sion", 0)
@@ -253,7 +250,7 @@ func _check_paid_skill() -> void:
 
 func _check_whole_attack_animation() -> void:
 	for form in [0, 1]:
-		var unit := _unit("sion", 0, Vector2(350, 900))
+		var unit := _spawn_ready_unit("sion", 0, Vector2(350, 900))
 		if form == 1: unit._apply_form(1, false)
 		var view: UnitModel3D
 		for child in _main._battle_presentation._world_root.get_children():
@@ -274,7 +271,7 @@ func _check_whole_attack_animation() -> void:
 		unit.queue_free()
 
 func _check_frozen_revival() -> void:
-	var unit := _unit("sion", 0, Vector2(350, 900))
+	var unit := _spawn_ready_unit("sion", 0, Vector2(350, 900))
 	var view: UnitModel3D
 	for child in _main._battle_presentation._world_root.get_children():
 		if child is UnitModel3D and child._source == unit: view = child
@@ -318,7 +315,7 @@ func _check_frozen_revival() -> void:
 	unit.queue_free()
 
 func _check_native_w_lifecycle() -> void:
-	var unit := _unit("sion", 0, Vector2(300, 900))
+	var unit := _spawn_ready_unit("sion", 0, Vector2(300, 900))
 	var fx = _main._battle_presentation._sion_w_effect
 	var camera = _main._battle_presentation._camera
 	var skills = _main._skill_presentation
@@ -350,9 +347,9 @@ func _check_native_w_lifecycle() -> void:
 	_expect(fx._bursts.is_empty(), "清场释放W爆炸表现")
 
 func _check_expanded_shield_radius() -> void:
-	var unit := _unit("sion", 0, Vector2(360, 800))
-	var inside := _unit("garen", 1, Vector2.ZERO)
-	var outside := _unit("garen", 1, Vector2.ZERO)
+	var unit := _spawn_ready_unit("sion", 0, Vector2(360, 800))
+	var inside := _spawn_ready_unit("garen", 1, Vector2.ZERO)
+	var outside := _spawn_ready_unit("garen", 1, Vector2.ZERO)
 	inside.position = unit.position + Vector2(200.0 + inside.body_radius - 1.0, 0.0)
 	outside.position = unit.position - Vector2(200.0 + outside.body_radius + 1.0, 0.0)
 	var inside_hp := inside.hp
@@ -372,7 +369,7 @@ func _check_shield_batch_contract() -> void:
 	var skill := CardDB.active_skills_for("sion")[0]
 	for shield_first in [true, false]:
 		for damage in [100, 3000]:
-			var unit := _unit("sion", 0, Vector2(300, 900))
+			var unit := _spawn_ready_unit("sion", 0, Vector2(300, 900))
 			_main._combat.begin_batch(0, "shield_order")
 			if shield_first: _main._active_skill_effect_system.apply(unit, skill)
 			unit.take_damage(damage)
@@ -380,8 +377,8 @@ func _check_shield_batch_contract() -> void:
 			_main._combat.commit_batch()
 			_expect(unit.hp == maxf(2400 - damage, 0) and unit.shield_hp == (600 if damage < 2400 else 0), "W与伤害正反提交均不追溯抵挡同批伤害，致死不获盾")
 			unit.free()
-	var unit := _unit("sion", 0, Vector2(300, 900))
-	var target := _unit("garen", 1, Vector2(350, 900))
+	var unit := _spawn_ready_unit("sion", 0, Vector2(300, 900))
+	var target := _spawn_ready_unit("garen", 1, Vector2(350, 900))
 	unit.apply_stasis(1.0)
 	_main._active_skill_effect_system.apply(unit, skill)
 	_expect(unit.shield_hp == 0, "W通用护盾入口拒绝凝滞中的新盾")

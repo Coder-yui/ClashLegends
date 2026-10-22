@@ -649,6 +649,8 @@ func _check_minion_line_mechanism() -> void:
 
 	_clear_minion_test_units()
 	_main.runtime._minion_waves.pending.clear()
+	_main.runtime.game_over = false
+	_main.runtime._match_rules.finished = false
 	var enemy_left_hp: float = _main.world.towers_snapshot()[2].hp
 	_main.world.towers_snapshot()[2].hp = 0.0
 	_main.runtime._minion_waves.elapsed = 0.0
@@ -997,11 +999,13 @@ func _check_baron_projectile_card(card: String) -> void:
 	_main.add_child(target)
 	var system: ProjectileSystem = _main._projectile_system
 	system.clear_all()
+	SuiteUtils.begin_attack_visual(source, target)
 	system.launch(source, target, 10, 300, 0, 0, Color.WHITE)
 	var normal: Dictionary = system.projectiles.values()[0].duplicate()
 	system.clear_all()
 	SuiteUtils.set_buff_window(source, 1.0)
 	var hp := target.hp
+	SuiteUtils.begin_attack_visual(source, target)
 	system.launch(source, target, 10, 300, 0, 0, Color.WHITE)
 	var projectile: Dictionary = system.projectiles.values()[0]
 	var payload: Array = _main._snapshot_system._projectile_snapshot_payload(1, projectile)
@@ -1010,6 +1014,7 @@ func _check_baron_projectile_card(card: String) -> void:
 	system.tick(1.0)
 	_expect(is_equal_approx(target.hp, hp - 10) and system.projectiles.is_empty() and system.impact_effects[-1].visual == StringName(visual + "_hit"), "已出膛强化炮弹不随 Buff 到期变色，命中只结算一次并播放自制命中特效")
 	system.clear_all()
+	SuiteUtils.begin_attack_visual(source, target)
 	system.launch(source, target, 10, 300, 0, 0, Color.WHITE)
 	_expect(system.projectiles.values()[0].visual == normal.visual, "强化到期后的新炮弹恢复普通外观")
 	system.clear_all()

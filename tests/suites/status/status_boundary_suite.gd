@@ -87,7 +87,7 @@ func _check_revival_order() -> void:
 		egg.position = Vector2(360, 900)
 		attacker.position = Vector2(360, 930)
 		egg._timed_revival_left = 0.1
-		attacker._target = egg
+		SuiteUtils.begin_attack_visual(attacker, egg)
 		attacker._attacking = true
 		attacker.attack_timeline.windup = 0.05
 		attacker.attack_timeline.cooldown = 0.0

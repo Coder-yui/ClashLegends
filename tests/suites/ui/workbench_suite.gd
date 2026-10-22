@@ -4,11 +4,13 @@ extends "res://tests/suites/battle_suite.gd"
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
+	var accounts := SuiteUtils.detach_battle_accounts(main)
 	_check_artdev_active_skill_timeline()
 	_check_artdev_workbench()
 	_check_desktop_camera()
 	_check_explicit_inspection()
 	await _check_simulation_pause()
+	SuiteUtils.restore_battle_accounts(main, accounts)
 
 func _check_simulation_pause() -> void:
 	var panel := DevelopmentWorkbench.new()

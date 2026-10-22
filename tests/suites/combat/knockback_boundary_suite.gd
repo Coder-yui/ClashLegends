@@ -16,6 +16,7 @@ func run(harness: Object, main: Node2D) -> void:
 		main._combat.begin_batch(100, "ordered_knockbacks")
 		for source in ([b, a] if reverse else [a, b]):
 			var order := [10 if source == a else 20, 1, 0]
+			SuiteUtils.begin_attack_visual(source, target)
 			main._combat.resolve_attack_hit(0, source.position, target, 1, 0, 10 if source == b else 40, source, source.position, 0, {"displacement_order": order})
 		main._combat.commit_batch()
 		_expect(target._knockback_velocity.x < 0 and is_equal_approx(target._knockback_velocity.length(), 50), "同批后序合法事件接管：更短击退胜出，不依赖收集排列")
@@ -171,6 +172,7 @@ func _check_authoritative_launch_order() -> void:
 		_main.move_child(b, a.get_index())
 		_main._combat.begin_batch(400, "normal_launch")
 		for source in ([b, a] if reverse else [a, b]):
+			SuiteUtils.begin_attack_visual(source, target)
 			_main.launch_attack(source, target, 1, 0, 0, 10, Color.WHITE)
 		_main._combat.commit_batch()
 		_expect(ids[0] < ids[1] and target._knockback_velocity.x < 0, "正式出手入口固定出生身份，节点与出手收集顺序不改变同阶段接管者")

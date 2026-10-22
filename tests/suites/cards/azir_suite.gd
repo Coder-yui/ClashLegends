@@ -4,15 +4,15 @@ func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
 	for team in [0, 1]:
-		var source := _spawn("azir", team, Vector2(300, 900))
+		var source := _spawn_ready_unit("azir", team, Vector2(300, 900))
 		for delay in [39, 40, 41]:
-			var target := _spawn("ashe", 1 - team, Vector2(400, 900))
+			var target := _spawn_ready_unit("ashe", 1 - team, Vector2(400, 900))
 			var before := _count("sand_soldier", team)
 			_hit(source, target, 1)
 			main.runtime._sim_tick_id += delay
 			target.take_damage(99999)
 			_expect(_count("sand_soldier", team) == before + (1 if delay <= 40 else 0), "转化40Tick包含边界，41Tick排除；阵营%d 延迟%d" % [team, delay])
-		var refreshed := _spawn("ashe", 1 - team, Vector2(450, 1000))
+		var refreshed := _spawn_ready_unit("ashe", 1 - team, Vector2(450, 1000))
 		_hit(source, refreshed, 1)
 		main.runtime._sim_tick_id += 39
 		_hit(source, refreshed, 1)
@@ -20,25 +20,25 @@ func run(harness: Object, main: Node2D) -> void:
 		var before := _count("sand_soldier", team)
 		refreshed.take_damage(99999)
 		_expect(_count("sand_soldier", team) == before + 1, "再次真实命中刷新窗口")
-		var air := _spawn("corki", 1 - team, Vector2(450, 1050))
+		var air := _spawn_ready_unit("corki", 1 - team, Vector2(450, 1050))
 		before = _count("sand_soldier", team)
 		_hit(source, air, 99999)
 		_expect(_count("sand_soldier", team) == before + 1, "直接击杀空军也生成地面士兵")
-		var second := _spawn("azir", team, Vector2(330, 900))
-		var victim := _spawn("ashe", 1 - team, Vector2(440, 950))
+		var second := _spawn_ready_unit("azir", team, Vector2(330, 900))
+		var victim := _spawn_ready_unit("ashe", 1 - team, Vector2(440, 950))
 		before = _count("sand_soldier", team)
 		main._combat.begin_batch(main.runtime._sim_tick_id, "azir_shared_kill")
 		_hit(source, victim, 99999)
 		_hit(second, victim, 99999)
 		main._combat.commit_batch()
 		_expect(_count("sand_soldier", team) == before + 1, "双沙皇同批击杀只转化一次")
-		var shielded := _spawn("ashe", 1 - team, Vector2(440, 1000))
+		var shielded := _spawn_ready_unit("ashe", 1 - team, Vector2(440, 1000))
 		shielded.add_shield(500, 10)
 		_hit(source, shielded, 1)
 		before = _count("sand_soldier", team)
 		shielded.take_damage(99999)
 		_expect(_count("sand_soldier", team) == before + 1, "护盾承受的真实命中计入参与")
-		var blocked := _spawn("ashe", 1 - team, Vector2(500, 1000))
+		var blocked := _spawn_ready_unit("ashe", 1 - team, Vector2(500, 1000))
 		blocked.apply_stasis(2.0, &"azir_test")
 		_hit(source, blocked, 99)
 		blocked.control.clear_on_death()
@@ -52,7 +52,7 @@ func run(harness: Object, main: Node2D) -> void:
 		for actor in main.get_tree().get_nodes_in_group("combatants"):
 			if actor is Unit and actor.card_id == "sand_soldier": unqualified = unqualified and actor.active_ability_id < 0 and AssistConversionState.source_definition(actor).is_empty()
 		_expect(unqualified, "士兵不继承主动资格和转化被动")
-		var building := _spawn("target_dummy", 1 - team, Vector2(500, 1100))
+		var building := _spawn_ready_unit("target_dummy", 1 - team, Vector2(500, 1100))
 		before = _count("sun_disc", team)
 		_hit(source, building, 1)
 		building.hp = 1
@@ -74,7 +74,7 @@ func run(harness: Object, main: Node2D) -> void:
 			var hp := disc.hp
 			disc._tick_building_lifetime(0.05)
 			_expect(not disc.built_on_tower_ruin and disc.hp < hp, "被动塔位圆盘持续自然衰减")
-		var marked := _spawn("ashe", 1 - team, Vector2(420, 1050))
+		var marked := _spawn_ready_unit("ashe", 1 - team, Vector2(420, 1050))
 		_hit(source, marked, 1)
 		source.take_damage(99999)
 		before = _count("sand_soldier", team)
@@ -93,9 +93,9 @@ func run(harness: Object, main: Node2D) -> void:
 func _check_instant_attack() -> void:
 	for team in [0, 1]:
 		for distance in [90.0, 230.0]:
-			var source := _spawn("azir", team, Vector2(320, 900))
-			var target := _spawn("ashe", 1-team, Vector2(320+distance, 900))
-			source._target = target
+			var source := _spawn_ready_unit("azir", team, Vector2(320, 900))
+			var target := _spawn_ready_unit("ashe", 1-team, Vector2(320+distance, 900))
+			SuiteUtils.begin_attack_visual(source, target)
 			source.attack_timeline.begin_windup(source.first_hit_time, 1.0)
 			var hp := target.hp
 			var count: int = _main._projectile_system.projectiles.size()
@@ -112,8 +112,8 @@ func _check_instant_attack() -> void:
 			_expect(views._views.is_empty(), "光束0.25秒后释放且不重复扣血")
 			_expect(target.hp == hp-130, "表现推进不再次结算伤害")
 			_clear()
-	var source := _spawn("azir", 0, Vector2(320, 900))
-	var target := _spawn("ashe", 1, Vector2(500, 900))
+	var source := _spawn_ready_unit("azir", 0, Vector2(320, 900))
+	var target := _spawn_ready_unit("ashe", 1, Vector2(500, 900))
 	target.apply_stasis(1.0, &"azir_test")
 	var hp := target.hp
 	source._target = target
@@ -121,10 +121,8 @@ func _check_instant_attack() -> void:
 	_expect(target.hp == hp and _main._projectile_system._hit_visuals._views.is_empty(), "凝滞拒绝的攻击既无伤害也无光束")
 	_clear()
 
-func _spawn(id: String, team: int, pos: Vector2) -> Unit:
-	return _main._spawn_unit(UnitSpawnRequest.new(team, id, pos, {"deploy_time_override": 0.0}))
-
 func _hit(source: Unit, target: Node2D, damage: float) -> void:
+	SuiteUtils.begin_attack_visual(source, target)
 	_main.combat_service().resolve_attack_hit(source.team, source.position, target, damage, 0, 0, source, source.position, 0)
 
 func _count(id: String, team: int) -> int:
@@ -165,8 +163,8 @@ func _check_beam_warmup() -> void:
 	_expect(resources.errors.is_empty() and resources.resources.has("res://assets/effects/azir/beam.gdshader"), "普攻光束Shader及召唤资源完整闭包")
 
 func _check_client_beam() -> void:
-	var source := _spawn("azir", 0, Vector2(300, 900))
-	var target := _spawn("ashe", 1, Vector2(460, 900))
+	var source := _spawn_ready_unit("azir", 0, Vector2(300, 900))
+	var target := _spawn_ready_unit("ashe", 1, Vector2(460, 900))
 	source.net_id = 991
 	target.net_id = 992
 	source.set_meta("projectile_model_offset", Vector2(25,-80))
@@ -194,10 +192,10 @@ func _check_client_beam() -> void:
 func _check_true_death_rewards() -> void:
 	for reverse in [false, true]:
 		for card in ["sion", "anivia", "anivia_egg", "ashe"]:
-			var azir := _spawn("azir", 0, Vector2(250, 900))
-			var dragon := _spawn("aurelionsol", 0, Vector2(250, 1000))
+			var azir := _spawn_ready_unit("azir", 0, Vector2(250, 900))
+			var dragon := _spawn_ready_unit("aurelionsol", 0, Vector2(250, 1000))
 			dragon.configure_carried_active_skill(CardDB.active_skills_for("aurelionsol")[0])
-			var victim := _spawn(card, 1, Vector2(400, 900))
+			var victim := _spawn_ready_unit(card, 1, Vector2(400, 900))
 			_main._combat.begin_batch(_main.runtime._sim_tick_id, "true_death")
 			if reverse: _hit(azir, victim, 99999)
 			_hit(dragon, victim, 99999)
@@ -219,8 +217,8 @@ func _check_true_death_rewards() -> void:
 			_clear()
 	# 狂暴第一条命未登记沙皇资格，第二条命有新命中也不能转化。
 	for natural in [false, true]:
-		var azir := _spawn("azir", 0, Vector2(250, 900))
-		var victim := _spawn("sion", 1, Vector2(400, 900))
+		var azir := _spawn_ready_unit("azir", 0, Vector2(250, 900))
+		var victim := _spawn_ready_unit("sion", 1, Vector2(400, 900))
 		victim.take_damage(99999)
 		victim.death_form.created_tick = -1
 		for tick in 40: victim.death_form.advance(victim, 0.05)
@@ -229,10 +227,10 @@ func _check_true_death_rewards() -> void:
 		else: _hit(azir, victim, 99999)
 		_expect(_count("sand_soldier", 0) == 0 and not victim.is_true_death(), "狂暴自然结束/被杀均拒绝新转化资格")
 		_clear()
-	var azir := _spawn("azir", 0, Vector2(250, 900))
-	var dragon := _spawn("aurelionsol", 0, Vector2(250, 1000))
+	var azir := _spawn_ready_unit("azir", 0, Vector2(250, 900))
+	var dragon := _spawn_ready_unit("aurelionsol", 0, Vector2(250, 1000))
 	dragon.configure_carried_active_skill(CardDB.active_skills_for("aurelionsol")[0])
-	var egg := _spawn("anivia_egg", 1, Vector2(400, 900))
+	var egg := _spawn_ready_unit("anivia_egg", 1, Vector2(400, 900))
 	_hit(azir, egg, 1)
 	egg._tick_timed_revival(3.0)
 	_expect(not egg.is_true_death() and _count("sand_soldier", 0) == 0 and dragon.skill_resource_value == 0, "带助攻标记蛋正常孵化不转化、不计击杀")
@@ -248,10 +246,10 @@ func _check_true_death_rewards() -> void:
 
 	# 同批死亡来源不得因亡语/孵化或收益顺序恢复资格。
 	for reverse in [false, true]:
-		azir = _spawn("azir", 0, Vector2(250, 900))
-		dragon = _spawn("aurelionsol", 0, Vector2(250, 1000))
+		azir = _spawn_ready_unit("azir", 0, Vector2(250, 900))
+		dragon = _spawn_ready_unit("aurelionsol", 0, Vector2(250, 1000))
 		dragon.configure_carried_active_skill(CardDB.active_skills_for("aurelionsol")[0])
-		var victim := _spawn("sion", 1, Vector2(400, 900))
+		var victim := _spawn_ready_unit("sion", 1, Vector2(400, 900))
 		_main._combat.begin_batch(_main.runtime._sim_tick_id, "dead_source")
 		if reverse: dragon.take_damage(99999)
 		_hit(azir, victim, 1)

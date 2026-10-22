@@ -3,7 +3,7 @@ extends "res://tests/suites/battle_suite.gd"
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
-	var source := _spawn("lulu", 0, Vector2(360, 1000))
+	var source := _spawn_ready_unit("lulu", 0, Vector2(360, 1000))
 	source._deploy_timer = 0.1
 	source.sim_tick(0.05)
 	_expect(_pix().is_empty(), "部署完成前不召唤皮克斯")
@@ -22,15 +22,15 @@ func run(harness: Object, main: Node2D) -> void:
 	main.runtime._tick_summon_flights(0.25)
 	_expect(_pix().size() == 4, "7秒再次发出并到达生成两只")
 	var skill: Dictionary = CardDB.get_card("lulu").active_skills[0]
-	var near := _spawn("garen", 0, Vector2(390, 1000))
-	var far := _spawn("garen", 0, Vector2(460, 1000))
-	var outside := _spawn("ornn", 0, Vector2(600, 1000))
-	var egg := _spawn("anivia_egg", 0, Vector2(360, 1005))
-	var tower := _spawn("tombstone", 0, Vector2(360, 1040))
-	var air_enemy := _spawn("pix", 1, Vector2(400, 1010))
-	var enemy := _spawn("melee_minion", 1, Vector2(400, 1000))
-	var outside_enemy := _spawn("pix", 1, Vector2(550, 1000))
-	var enemy_building := _spawn("tombstone", 1, Vector2(400, 1040))
+	var near := _spawn_ready_unit("garen", 0, Vector2(390, 1000))
+	var far := _spawn_ready_unit("garen", 0, Vector2(460, 1000))
+	var outside := _spawn_ready_unit("ornn", 0, Vector2(600, 1000))
+	var egg := _spawn_ready_unit("anivia_egg", 0, Vector2(360, 1005))
+	var tower := _spawn_ready_unit("tombstone", 0, Vector2(360, 1040))
+	var air_enemy := _spawn_ready_unit("pix", 1, Vector2(400, 1010))
+	var enemy := _spawn_ready_unit("melee_minion", 1, Vector2(400, 1000))
+	var outside_enemy := _spawn_ready_unit("pix", 1, Vector2(550, 1000))
+	var enemy_building := _spawn_ready_unit("tombstone", 1, Vector2(400, 1040))
 	_expect(ActiveSkillEffectSystem.growth_target(source, skill) == near, "同费选近者，高费圈外和建筑蛋排除")
 	near.hp = 100.0
 	var before := near.max_hp
@@ -60,12 +60,12 @@ func run(harness: Object, main: Node2D) -> void:
 	_expect(not effects.apply(source, pending), "空目标释放返回失败")
 	effects.apply(source, pending)
 	_expect(calls[0] == 1, "失败回退收据只执行一次")
-	var air_friend := _spawn("pix", 0, Vector2(365, 1000))
+	var air_friend := _spawn_ready_unit("pix", 0, Vector2(365, 1000))
 	enemy.knockback.advance(1.0)
 	air_enemy.knockback.advance(1.0)
 	effects.apply(source, skill)
 	_expect(air_friend.growth_body_scale == 1.3 and air_enemy._knockback_timer > 0.0 and enemy._knockback_timer > 0.0, "空中受益者同时击退附近空军和地面敌军")
-	var gnar := _spawn("gnar", 0, Vector2(100, 1000))
+	var gnar := _spawn_ready_unit("gnar", 0, Vector2(100, 1000))
 	gnar.apply_permanent_growth(0.3, 1.3)
 	var bonus := gnar.growth_health_bonus
 	gnar.transform_to_mega(true)
@@ -97,7 +97,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_expect(main.runtime.account(0 if main.runtime.mode == "server" else main.runtime.local_team).elixir == 8.0 and main.runtime._active_skills.entry(ability).uses_remaining == 2 and main.runtime._active_skills.entry(ability).cooldown_left == 0.0, "生效时空目标回退金币次数和冷却")
 	main.runtime._commands.tick_impacts(1.0)
 	_expect(main.runtime.account(0 if main.runtime.mode == "server" else main.runtime.local_team).elixir == 8.0, "后续Tick不重复退费")
-	var valid := _spawn("garen", 0, Vector2(380, 1000))
+	var valid := _spawn_ready_unit("garen", 0, Vector2(380, 1000))
 	_expect(main.use_active_skill(ability, 0), "有目标可请求")
 	main.runtime._sim_tick_id += 10
 	main.runtime._tick_pending_active_skills(0.05)
@@ -109,14 +109,14 @@ func run(harness: Object, main: Node2D) -> void:
 	main.runtime._tick_summon_flights(0.25)
 	var survivors := _pix()
 	_expect(survivors.size() == 2 and survivors.all(func(pix): return is_instance_valid(pix) and pix.hp > 0.0), "璐璐死亡后已召唤皮克斯独立存活")
-	var sion := _spawn("sion", 0, Vector2(100, 1000))
+	var sion := _spawn_ready_unit("sion", 0, Vector2(100, 1000))
 	var base_max := sion.max_hp
 	sion.apply_permanent_growth(0.3, 1.3)
 	sion.take_damage(100000)
 	_expect(sion.growth_body_scale == 1.0 and sion.growth_health_bonus == 0.0 and sion.max_hp == base_max, "致死复生入口清理成长倍率和生命增量")
 	# 独立起手测试：20Hz生效节点及起手后控制，不借动画推进效果。
 	for control_kind in ["none", "stun", "freeze", "knockback"]:
-		var caster := _spawn("lulu", 0, Vector2(650, 1150))
+		var caster := _spawn_ready_unit("lulu", 0, Vector2(650, 1150))
 		_expect(main.runtime._start_active_skill_cast(caster, skill), "控制用例可正式起手:" + control_kind)
 		if control_kind == "stun": caster.stun(1.0)
 		if control_kind == "freeze": caster.freeze(1.0)
@@ -129,7 +129,7 @@ func run(harness: Object, main: Node2D) -> void:
 		main.runtime._commands.tick_impacts(1.0)
 	for pix in _pix(): pix.free()
 	for family in [&"stun", &"freeze", &"stasis"]:
-		var summoner := _spawn("lulu", 0, Vector2(300, 1100))
+		var summoner := _spawn_ready_unit("lulu", 0, Vector2(300, 1100))
 		summoner.control.hard.apply(family, &"fixture", 20.0, {})
 		summoner._spawn_initial_summons()
 		_expect(not summoner._initial_summons_spawned and main.runtime._commands.inspect_summons().is_empty(), "首次召唤受控等待:" + String(family))
@@ -150,7 +150,7 @@ func run(harness: Object, main: Node2D) -> void:
 		main.runtime._tick_summon_flights(0.25)
 		_expect(_pix().size() == 2, "来源释放不取消在途召唤:" + String(family))
 		for pix in _pix(): pix.free()
-	var edge := _spawn("lulu", 0, Vector2(20, 1000))
+	var edge := _spawn_ready_unit("lulu", 0, Vector2(20, 1000))
 	edge._spawn_batch()
 	var queued: Array = main.runtime._commands.inspect_summons()
 	_expect(float(queued[0].pos.x) == float(CardDB.get_unit_stats("pix").radius), "靠边落点在特效发出前夹紧")
@@ -171,9 +171,6 @@ func run(harness: Object, main: Node2D) -> void:
 	main.runtime._deck = old_deck
 	for unit in main.get_tree().get_nodes_in_group("combatants"):
 		if unit is Unit: unit.free()
-
-func _spawn(id: String, team: int, pos: Vector2) -> Unit:
-	return _main._spawn_unit(UnitSpawnRequest.new(team, id, pos, {"deploy_time_override": 0.0}))
 
 func _pix() -> Array:
 	return _main.get_tree().get_nodes_in_group("combatants").filter(func(u): return u is Unit and u.card_id == "pix" and u.team == 0)

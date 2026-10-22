@@ -11,7 +11,9 @@ func run(harness: Object, main: Node2D) -> void:
 		# 走工作台真实放牌入口，保留一批旧兵和一批敌兵检查隔离。
 		var old: Array[Unit] = main.runtime._spawn_card_units(0, card_id, Vector2(360, 1100), 0.0)
 		var enemy: Array[Unit] = main.runtime._spawn_card_units(1, card_id, Vector2(360, 200), 0.0)
+		var accounts := SuiteUtils.detach_battle_accounts(main)
 		main._place_art_dev_item(Vector2(360, 900))
+		SuiteUtils.restore_battle_accounts(main, accounts)
 		var chosen: Unit = main._art_dev_selected_unit()
 		_expect(chosen != null, card_id + " 工作台记录本次下牌")
 		var members: Array[Unit] = main.runtime.living_deployment_members(chosen.deployment_group_id, 0)

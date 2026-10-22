@@ -16,9 +16,6 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_native_layer_placement()
 	_check_empowered_aura()
 
-func _spawn(id: String, team: int, pos: Vector2) -> Unit:
-	return _main._spawn_unit(UnitSpawnRequest.new(team, id, pos, {"deploy_time_override": 0.0}))
-
 func _clean() -> void:
 	_main._active_skill_effect_system.clear()
 	_main._skill_presentation.clear()
@@ -29,15 +26,15 @@ func _clean() -> void:
 func _check_explosion() -> void:
 	for team in [0, 1]:
 		_clean()
-		var tower := _spawn("target_dummy", 1 - team, Vector2(300, 900))
-		var source := _spawn("void_spawn", team, Vector2(300, 970))
-		var enemy := _spawn("garen", 1 - team, Vector2(340, 922))
-		var ally := _spawn("garen", team, Vector2(280, 922))
-		var air := _spawn("voidfish", 1 - team, Vector2(300, 922))
-		var frozen := _spawn("garen", 1 - team, Vector2(310, 922))
+		var tower := _spawn_ready_unit("target_dummy", 1 - team, Vector2(300, 900))
+		var source := _spawn_ready_unit("void_spawn", team, Vector2(300, 970))
+		var enemy := _spawn_ready_unit("garen", 1 - team, Vector2(340, 922))
+		var ally := _spawn_ready_unit("garen", team, Vector2(280, 922))
+		var air := _spawn_ready_unit("voidfish", 1 - team, Vector2(300, 922))
+		var frozen := _spawn_ready_unit("garen", 1 - team, Vector2(310, 922))
 		frozen.apply_stasis(3.0)
 		source.global_position = tower.global_position + Vector2(0, 60)
-		var collateral := _spawn("target_dummy", 1 - team, tower.global_position + Vector2(5, 0))
+		var collateral := _spawn_ready_unit("target_dummy", 1 - team, tower.global_position + Vector2(5, 0))
 		var before := [tower.hp, enemy.hp, ally.hp, air.hp, frozen.hp, collateral.hp]
 		source.sim_tick(0.05)
 		_expect(source.hp == 0.0 and source.is_queued_for_deletion() and not source.is_in_group("combatants"), "双方起跳立即真实死亡并退出战斗集合")
@@ -52,8 +49,8 @@ func _check_explosion() -> void:
 		_main._active_skill_effect_system.tick_effects(0.05)
 		_expect(tower.hp == before[0] - 240, "爆炸不重复")
 	_clean()
-	var tower := _spawn("target_dummy", 1, Vector2(300, 900))
-	var source := _spawn("void_spawn", 0, Vector2(300, 970))
+	var tower := _spawn_ready_unit("target_dummy", 1, Vector2(300, 900))
+	var source := _spawn_ready_unit("void_spawn", 0, Vector2(300, 970))
 	source.freeze(0.2)
 	source.sim_tick(0.05)
 	_expect(source.hp > 0.0 and _main._active_skill_effect_system.sacrifice_results.is_empty(), "起跳前硬控阻止牺牲")
@@ -72,7 +69,7 @@ func _check_group() -> void:
 	_expect(members.size() == 2 and is_equal_approx(members[0].position.distance_to(members[1].position), 48.0), "两只横向并排中心间隔1.2格")
 	_expect(CardDB.active_skills_for("void_spawn").size() == 1, "编队具有一次强化技能")
 	_expect(not members[0].ignores_unit_collision() and members[0].active_speed_multiplier == 1.0, "默认保持正常碰撞与移速")
-	var wounded := _spawn("void_spawn", 0, Vector2(250, 1000))
+	var wounded := _spawn_ready_unit("void_spawn", 0, Vector2(250, 1000))
 	wounded.hp = 100.0
 	var skill: Dictionary = CardDB.active_skills_for("void_spawn")[0]
 	_main._active_skill_effect_system.apply(wounded, skill)
@@ -125,18 +122,27 @@ func _check_tower_budget() -> void:
 			if actor is Tower:
 				actor.hp = actor.max_hp
 				actor._target = null
-		var source := _spawn("void_spawn", team, Vector2(ArenaRules.BRIDGE_X_LEFT, 700.0 if team == 0 else 580.0))
+				actor._cooldown = 0.0
+				actor._lock_windup = 0.0
+				actor.activated = not actor.is_king
+		var source := _spawn_ready_unit("void_spawn", team, Vector2(ArenaRules.BRIDGE_X_LEFT, 700.0 if team == 0 else 580.0))
 		var last_hp := source.hp
+		var health_steps: Array[float] = []
+		var hit_ticks: Array[int] = []
 		var started := false
 		for tick in 240:
 			if not is_instance_valid(source) or source.hp <= 0.0: break
 			last_hp = source.hp
 			_run_main_ticks(1)
+			if source.hp != last_hp:
+				health_steps.append(source.hp)
+				hit_ticks.append(tick + 1)
 			if not _main._active_skill_effect_system.sacrifice_results.is_empty():
 				started = true
 				break
-		print("[虚空兽冲塔] team=%d started=%s 起跳前生命=%s" % [team, started, last_hp])
-		_expect(started and last_hp > 0.0 and last_hp <= CardDB.PRINCESS_TOWER_STATS.damage, "单只桥头冲塔成功且再承受一次塔伤即死")
+		# 精确0.2秒首击/0.8秒间隔已去掉旧浮点残差多等的一Tick，不能沿用旧3击起跳预算。
+		_expect(not started and health_steps == [111.0, 56.0, 1.0, 0.0] and hit_ticks == [50, 63, 77, 90], "双方桥头单只按精确塔时钟承受四击，第90Tick死亡而不生成牺牲结果")
+		_expect(source._target_gap(source._target) <= source.attack_range and last_hp == 1.0, "第四发在进入起跳射程当Tick命中，死亡后不得在下一Tick补起跳")
 	_clean()
 
 func _check_schema() -> void:
@@ -150,14 +156,14 @@ func _check_schema() -> void:
 
 func _check_independent_and_phasing() -> void:
 	_clean()
-	var target := _spawn("target_dummy", 1, Vector2(300, 900))
-	var source := _spawn("void_spawn", 0, Vector2(300, 970))
+	var target := _spawn_ready_unit("target_dummy", 1, Vector2(300, 900))
+	var source := _spawn_ready_unit("void_spawn", 0, Vector2(300, 970))
 	_main.begin_sacrifice(source, target)
 	var effect: Dictionary = _main._skill_presentation.frontal_effects.back().duplicate(true)
 	var center: Vector2 = _main._active_skill_effect_system.sacrifice_results[0].center
 	target.free()
 	source.free()
-	var arriving := _spawn("garen", 1, center + Vector2(100, 0))
+	var arriving := _spawn_ready_unit("garen", 1, center + Vector2(100, 0))
 	arriving.global_position = center
 	var before := arriving.hp
 	for tick in 16: _main._active_skill_effect_system.tick_effects(0.05)
@@ -171,8 +177,8 @@ func _check_independent_and_phasing() -> void:
 	replica.tick_visuals(3.1)
 	_expect(replica.frontal_effects.is_empty() and arriving.hp == before, "客户端表现到期只清理代理，不追加伤害")
 	_clean()
-	var a := _spawn("void_spawn", 0, Vector2(300, 1000))
-	var b := _spawn("garen", 1, Vector2(400, 1000))
+	var a := _spawn_ready_unit("void_spawn", 0, Vector2(300, 1000))
+	var b := _spawn_ready_unit("garen", 1, Vector2(400, 1000))
 	b.global_position = a.global_position + Vector2(10, 0)
 	var movement := MovementSystem.new()
 	var units: Array[Unit] = [a, b]
@@ -198,8 +204,8 @@ func _check_effect_lifecycle() -> void:
 	for particles in sampled.frames.back(): remaining += particles.size()
 	_expect(remaining == 0, "原版爆裂结束帧没有残留粒子")
 	_clean()
-	var target := _spawn("target_dummy", 1, Vector2(300, 900))
-	var source := _spawn("void_spawn", 0, Vector2(300, 960))
+	var target := _spawn_ready_unit("target_dummy", 1, Vector2(300, 900))
+	var source := _spawn_ready_unit("void_spawn", 0, Vector2(300, 960))
 	source.sim_tick(0.05)
 	source.free()
 	for tick in 16: _main._active_skill_effect_system.tick_effects(0.05)
@@ -216,8 +222,8 @@ func _check_effect_lifecycle() -> void:
 func _check_target_contract() -> void:
 	for invalidation in ["freed", "dead", "allied", "stasis"]:
 		_clean()
-		var target := _spawn("target_dummy", 1, Vector2(300, 900))
-		var source := _spawn("void_spawn", 0, Vector2(300, 960))
+		var target := _spawn_ready_unit("target_dummy", 1, Vector2(300, 900))
+		var source := _spawn_ready_unit("void_spawn", 0, Vector2(300, 960))
 		_main.begin_sacrifice(source, target)
 		source.free()
 		var before := target.hp
@@ -226,22 +232,22 @@ func _check_target_contract() -> void:
 			"dead": target.hp = 0.0
 			"allied": target.team = 0
 			"stasis": target.apply_stasis(2.0)
-		var neighbor := _spawn("target_dummy", 1, Vector2(300, 900))
+		var neighbor := _spawn_ready_unit("target_dummy", 1, Vector2(300, 900))
 		var neighbor_hp := neighbor.hp
 		for tick in 16: _main._active_skill_effect_system.tick_effects(0.05)
 		_expect(neighbor.hp == neighbor_hp and (not is_instance_valid(target) or target.hp == (0.0 if invalidation == "dead" else before)), "目标失效/保护不改打邻居：" + invalidation)
 		_expect(_main._active_skill_effect_system.sacrifice_results.is_empty(), "目标失效仍正常完成独立结果：" + invalidation)
 	_clean()
-	var source := _spawn("void_spawn", 0, Vector2(300, 960))
-	var enemy := _spawn("garen", 1, Vector2(300, 900))
+	var source := _spawn_ready_unit("void_spawn", 0, Vector2(300, 960))
+	var enemy := _spawn_ready_unit("garen", 1, Vector2(300, 900))
 	_main.begin_sacrifice(source, enemy)
 	_expect(source.hp > 0.0 and _main._active_skill_effect_system.sacrifice_results.is_empty(), "直接入口也拒绝非建筑目标")
 	_clean()
 
 func _check_continuous_replica() -> void:
 	_clean()
-	var source := _spawn("void_spawn", 0, Vector2(300, 960))
-	var target := _spawn("target_dummy", 1, Vector2(300, 900))
+	var source := _spawn_ready_unit("void_spawn", 0, Vector2(300, 960))
+	var target := _spawn_ready_unit("target_dummy", 1, Vector2(300, 900))
 	_main.begin_sacrifice(source, target)
 	var leap: Dictionary = _main._skill_presentation.frontal_effects.back().duplicate(true)
 	leap.erase("source_ref")
@@ -342,8 +348,8 @@ func _check_empower() -> void:
 			member._tick_active_statuses(0.05)
 			_expect(is_equal_approx(member.active_speed_multiplier, 1.2) and member.sacrifice_empowerment == Vector2(1.5, 1.25), "240Tick后永久移速与爆炸强化保留")
 		for outsider in outsiders: _expect(outsider.sacrifice_empowerment == Vector2.ONE and outsider.active_buff_timer == 0.0, "其他部署批次不受影响")
-		var target := _spawn("target_dummy", 1, Vector2(340, 900))
-		var neighbor := _spawn("target_dummy", 1, Vector2(350, 910))
+		var target := _spawn_ready_unit("target_dummy", 1, Vector2(340, 900))
+		var neighbor := _spawn_ready_unit("target_dummy", 1, Vector2(350, 910))
 		var before := target.hp
 		_main.begin_sacrifice(members[1], target)
 		var leap: Dictionary = _main._skill_presentation.frontal_effects.back()
@@ -357,7 +363,7 @@ func _check_empower() -> void:
 		_expect(impact.forward == leap.forward and impact.visual_scale == leap.visual_scale, "抵达载荷保留起跳方向与强化体型")
 	_clean()
 	var members: Array = _main.runtime._spawn_card_units(0, "void_spawn", Vector2(340, 1000), 0.0, 0)
-	var target := _spawn("target_dummy", 1, Vector2(340, 900))
+	var target := _spawn_ready_unit("target_dummy", 1, Vector2(340, 900))
 	_main.begin_sacrifice(members[0], target)
 	_main._active_skill_effect_system.apply(members[1], CardDB.active_skills_for("void_spawn")[0])
 	_expect(_main._active_skill_effect_system.sacrifice_results[0].damage == 240.0 and members[1].sacrifice_empowerment.x == 1.5, "已起跳成员的独立结果不被后续强化追溯修改")
@@ -365,7 +371,7 @@ func _check_empower() -> void:
 		var stats := CardDB.get_card("void_spawn").duplicate(true)
 		stats.active_skills[0][field] = 0.0
 		_expect(not CardDB.VALIDATOR.validate_all({"void_spawn": stats}, false).is_empty(), "强化拒绝非法字段 " + field)
-	var wounded := _spawn("void_spawn", 0, Vector2(250, 1000))
+	var wounded := _spawn_ready_unit("void_spawn", 0, Vector2(250, 1000))
 	wounded.hp = 100.0
 	var skill: Dictionary = CardDB.active_skills_for("void_spawn")[0]
 	_main._active_skill_effect_system.apply(wounded, skill)
@@ -379,7 +385,7 @@ func _check_empower() -> void:
 
 func _check_empowered_aura() -> void:
 	_clean()
-	var source := _spawn("void_spawn", 0, Vector2(300, 850))
+	var source := _spawn_ready_unit("void_spawn", 0, Vector2(300, 850))
 	var proxy := UnitModel3D.new()
 	_main.add_child(proxy)
 	proxy._source = source

@@ -25,6 +25,7 @@ func _strike(source: Unit, target: Node2D, execute: bool = false) -> void:
 	source.blind_attack_charges = 0
 	if execute: _main._active_skill_effect_system.apply(source, CardDB.active_skills_for("darius")[0])
 	_main._combat.begin_batch(0, "darius_test")
+	SuiteUtils.begin_attack_visual(source, target)
 	source._attack(0.05)
 	_main._combat.commit_batch()
 
@@ -137,6 +138,7 @@ func _check_lifecycle() -> void:
 	source._target = target
 	source.attack_timeline.cancel(true)
 	_main._combat.begin_batch(0, "darius_simultaneous")
+	SuiteUtils.begin_attack_visual(source, target)
 	source._attack(0.05)
 	source.take_damage(10, target)
 	_main._combat.commit_batch()
@@ -150,6 +152,7 @@ func _check_lifecycle() -> void:
 	source._target = target
 	source.blind_attack_charges = 1
 	source.attack_timeline.cancel(true)
+	SuiteUtils.begin_attack_visual(source, target)
 	source._attack(0.05)
 	_expect(target.hp == target.max_hp and target.bleeding.total_stacks() == 0, "致盲挥空不造成流血或血怒")
 	_strike(source, target)

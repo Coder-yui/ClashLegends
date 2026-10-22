@@ -100,7 +100,7 @@ func _check_formation_boundary_schema() -> void:
 func _check_two_tower_deployment() -> void:
 	var old_deck: Array = _main.runtime._deck.duplicate()
 	var old_cycles: Dictionary = _main.runtime._authoritative_card_cycles.duplicate()
-	var old_elixir: float = _main.runtime.account(0 if _main.runtime.mode == "server" else _main.runtime.local_team).elixir
+	var old_balances := [_main.runtime.account(0).elixir, _main.runtime.account(1).elixir]
 	var old_remote_deck: Array = _main.runtime._remote_deck
 	_main.runtime._deck = ["shurima_guard", "garen", "ashe", "heal", "xin", "teemo", "freeze", "pix"]
 	_main.runtime._remote_deck = _main.runtime._deck.duplicate()
@@ -127,11 +127,11 @@ func _check_two_tower_deployment() -> void:
 			var lane_pos := Vector2(300 if side == 0 else 420, enemy_y)
 			_expect(_main.runtime.is_card_deploy_position_valid(team, "garen", lane_pos), "普通卡继续单路解锁")
 			_expect(not _main.runtime._deployment_rules.tile_in_ground_deploy_zone(_main.runtime._deployment_rules.world_to_arena_tile(lane_pos), team, true), "卫队区域高亮同样禁止单路解锁")
-			_main.runtime.account(0 if _main.runtime.mode == "server" else _main.runtime.local_team).elixir = 10
+			_main.runtime.account(team).elixir = 10
 			var hand: Array = _main.get_authoritative_hand(team)
 			var commands: int = _main.runtime._commands.inspect_cards().size()
-			var accepted: bool = _main.play_card(team, "shurima_guard", lane_pos, {"elixir": _main.runtime.account(0 if _main.runtime.mode == "server" else _main.runtime.local_team)})
-			_expect(not accepted and _main.runtime.account(0 if _main.runtime.mode == "server" else _main.runtime.local_team).elixir == 10 and _main.get_authoritative_hand(team) == hand and _main.runtime._commands.inspect_cards().size() == commands, "单路非法出牌不扣费、不轮换、不入队")
+			var accepted: bool = _main.play_card(team, "shurima_guard", lane_pos, {"elixir": _main.runtime.account(team)})
+			_expect(not accepted and _main.runtime.account(team).elixir == 10 and _main.get_authoritative_hand(team) == hand and _main.runtime._commands.inspect_cards().size() == commands, "单路非法出牌不扣费、不轮换、不入队")
 			if team == 0:
 				_main._on_card_selected("shurima_guard")
 				_main._update_deployment_preview(lane_pos)
@@ -146,8 +146,8 @@ func _check_two_tower_deployment() -> void:
 		if team == 0:
 			_main._update_deployment_preview(target)
 			_expect(_main._deployment_preview_valid, "卫队双路破塔落点预览变为合法")
-		_main.runtime.account(0 if _main.runtime.mode == "server" else _main.runtime.local_team).elixir = 10
-		_expect(_main.play_card(team, "shurima_guard", target, {"elixir": _main.runtime.account(0 if _main.runtime.mode == "server" else _main.runtime.local_team)}) and _main.runtime.account(0 if _main.runtime.mode == "server" else _main.runtime.local_team).elixir == 3 and "shurima_guard" not in _main.get_authoritative_hand(team) and _main.runtime._commands.inspect_cards().size() == 1, "双破正式出牌扣7金币、轮换并进入部署队列")
+		_main.runtime.account(team).elixir = 10
+		_expect(_main.play_card(team, "shurima_guard", target, {"elixir": _main.runtime.account(team)}) and _main.runtime.account(team).elixir == 3 and "shurima_guard" not in _main.get_authoritative_hand(team) and _main.runtime._commands.inspect_cards().size() == 1, "双破正式出牌扣7金币、轮换并进入部署队列")
 		_main.runtime._commands.clear_cards()
 		left.hp = hp.x
 		right.hp = hp.y
@@ -155,7 +155,7 @@ func _check_two_tower_deployment() -> void:
 	_main.runtime._deck = old_deck
 	_main.runtime._remote_deck = old_remote_deck
 	_main.runtime._authoritative_card_cycles = old_cycles
-	_main.runtime.account(0 if _main.runtime.mode == "server" else _main.runtime.local_team).elixir = old_elixir
+	for team in [0, 1]: _main.runtime.account(team).elixir = old_balances[team]
 	var stats := CardDB.get_card("shurima_guard").duplicate(true)
 	for invalid in [null, 1, "true"]:
 		stats.deploy_pocket_requires_both_towers = invalid

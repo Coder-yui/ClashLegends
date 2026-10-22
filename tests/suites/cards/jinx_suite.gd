@@ -12,10 +12,10 @@ func run(harness: Object, main: Node2D) -> void:
 	_check_blast_boundary()
 	_check_haste_placement()
 	_check_six_second_haste()
-	var source := _spawn("jinx", 0, Vector2(200, 900))
-	var ground := _spawn("target_dummy", 1, Vector2(320, 900))
-	var air := _spawn("corki", 1, Vector2(325, 925))
-	var ally := _spawn("target_dummy", 0, Vector2(325, 880))
+	var source := _spawn_ready_unit("jinx", 0, Vector2(200, 900))
+	var ground := _spawn_ready_unit("target_dummy", 1, Vector2(320, 900))
+	var air := _spawn_ready_unit("corki", 1, Vector2(325, 925))
+	var ally := _spawn_ready_unit("target_dummy", 0, Vector2(325, 880))
 	var ground_hp := ground.hp
 	var air_hp := air.hp
 	var ally_hp := ally.hp
@@ -52,22 +52,22 @@ func run(harness: Object, main: Node2D) -> void:
 	_expect(source.structure_haste_visual(), "换形保留罪恶快感")
 	for i in 60: source._tick_active_statuses(0.05)
 	_expect(source.active_speed_multiplier == 1.0 and source.active_attack_speed_multiplier == 1.0, "6秒加速与攻速到期")
-	var late := _spawn("target_dummy", 1, Vector2(400, 1000))
+	var late := _spawn_ready_unit("target_dummy", 1, Vector2(400, 1000))
 	source.record_structure_attack(late)
 	main.runtime._sim_tick_id += 61
 	late.take_damage(99999)
 	_expect(not source.structure_haste_visual(), "超过3秒的建筑击败不算参与")
-	var normal := _spawn("ashe", 1, Vector2(400, 1050))
+	var normal := _spawn_ready_unit("ashe", 1, Vector2(400, 1050))
 	source.record_structure_attack(normal)
 	normal.take_damage(99999)
 	_expect(not source.structure_haste_visual(), "击败普通单位不触发")
-	var natural := _spawn("target_dummy", 1, Vector2(500, 1100))
+	var natural := _spawn_ready_unit("target_dummy", 1, Vector2(500, 1100))
 	source.record_structure_attack(natural)
 	natural._lifespan_left = 0.05
 	natural._tick_building_lifetime(0.05)
 	_expect(source.structure_haste_visual(), "建筑被命中后3秒内自然到期触发助攻")
 	source.buffs.clear_family(&"structure_haste")
-	var decay := _spawn("target_dummy", 1, Vector2(500, 1100))
+	var decay := _spawn_ready_unit("target_dummy", 1, Vector2(500, 1100))
 	resolver.resolve_attack_hit(0, source.position, decay, 1, 0, 0, source, source.position, source.form_index)
 	main.runtime._sim_tick_id += 60
 	decay.hp = 1
@@ -76,7 +76,7 @@ func run(harness: Object, main: Node2D) -> void:
 	source.buffs.clear_family(&"structure_haste")
 	decay.free()
 	for marked in [false, true]:
-		var expired := _spawn("target_dummy", 1, Vector2(500, 1100))
+		var expired := _spawn_ready_unit("target_dummy", 1, Vector2(500, 1100))
 		if marked: source.record_structure_attack(expired)
 		main.runtime._sim_tick_id += 61
 		expired._lifespan_left = 0.05
@@ -104,7 +104,7 @@ func run(harness: Object, main: Node2D) -> void:
 		source.buffs.clear_family(&"structure_haste")
 		tower.free()
 	if is_instance_valid(natural): natural.free()
-	var lethal := _spawn("target_dummy", 1, Vector2(400, 1100))
+	var lethal := _spawn_ready_unit("target_dummy", 1, Vector2(400, 1100))
 	resolver.begin_batch(main.runtime._sim_tick_id, &"jinx_test")
 	resolver.resolve_attack_hit(0, source.position, lethal, 99999, 0, 0, source, source.position, 0)
 	resolver.submit_damage(source, 99999, lethal, 1, lethal.position)
@@ -137,11 +137,8 @@ func run(harness: Object, main: Node2D) -> void:
 		cards.jinx.structure_assist_window = value
 		_expect(not CardDB.VALIDATOR.validate_all(cards, false).is_empty(), "助攻字段拒绝非法数值与类型")
 
-func _spawn(card: String, team: int, pos: Vector2) -> Unit:
-	return _main._spawn_unit(UnitSpawnRequest.new(team, card, pos, {"deploy_time_override": 0.0}))
-
 func _check_animation_routes() -> void:
-	var unit := _spawn("jinx", 0, Vector2(200, 1000))
+	var unit := _spawn_ready_unit("jinx", 0, Vector2(200, 1000))
 	var view := _view_for(unit)
 	_expect(view != null, "金克丝具有实际3D代理")
 	if view != null:
@@ -176,8 +173,8 @@ func _check_animation_routes() -> void:
 
 func _check_switch_controls() -> void:
 	for effect in ["none", "stun", "freeze", "stasis", "knockback"]:
-		var unit := _spawn("jinx", 0, Vector2(200, 1000))
-		var target := _spawn("target_dummy", 1, Vector2(270, 1000))
+		var unit := _spawn_ready_unit("jinx", 0, Vector2(200, 1000))
+		var target := _spawn_ready_unit("target_dummy", 1, Vector2(270, 1000))
 		unit.toggle_weapon_form()
 		var serial := unit.get_visual_action_serial()
 		var view := _view_for(unit)
@@ -235,7 +232,7 @@ func _check_haste_placement() -> void:
 	effect.advance_status(false, false, 0.1)
 	_expect(effect._particles.is_empty() and not effect.visible, "增益结束立即清理速度线")
 	effect.free()
-	var unit := _spawn("jinx", 0, Vector2(200, 1000))
+	var unit := _spawn_ready_unit("jinx", 0, Vector2(200, 1000))
 	var view := _view_for(unit)
 	unit._grant_structure_haste(_main.runtime._sim_tick_id)
 	view._sync_visual(false, 0.1)
@@ -247,7 +244,7 @@ func _check_haste_placement() -> void:
 	unit.free()
 
 func _check_six_second_haste() -> void:
-	var unit := _spawn("jinx", 0, Vector2(200, 1000))
+	var unit := _spawn_ready_unit("jinx", 0, Vector2(200, 1000))
 	unit._grant_structure_haste(_main.runtime._sim_tick_id)
 	_expect(unit.structure_haste_state_visual() == Vector2(6, 1), "首层完整6秒窗口")
 	for tick in 60: unit._tick_active_statuses(0.05)
@@ -275,8 +272,8 @@ func _check_six_second_haste() -> void:
 	unit._grant_structure_haste(_main.runtime._sim_tick_id)
 	_expect(unit.structure_haste_state_visual() == Vector2(6, 1), "到期后再次触发从1层开始")
 	unit.buffs.clear_family(&"structure_haste")
-	var a := _spawn("target_dummy", 1, Vector2(250, 1000))
-	var b := _spawn("target_dummy", 1, Vector2(270, 1000))
+	var a := _spawn_ready_unit("target_dummy", 1, Vector2(250, 1000))
+	var b := _spawn_ready_unit("target_dummy", 1, Vector2(270, 1000))
 	unit.record_structure_attack(a)
 	unit.record_structure_attack(b)
 	var resolver: CombatResolver = _main.combat_service()
@@ -294,7 +291,7 @@ func _check_six_second_haste() -> void:
 	_expect(is_equal_approx(effect.blast_radius(45.0, 0.25, false), 45.0), "主要火焰在前四分之一阶段展开到完整伤害半径")
 
 func _check_moving_switch() -> void:
-	var unit := _spawn("jinx", 0, Vector2(200, 1000))
+	var unit := _spawn_ready_unit("jinx", 0, Vector2(200, 1000))
 	var view := _view_for(unit)
 	for form in 2:
 		unit.toggle_weapon_form()
@@ -317,7 +314,7 @@ func _check_moving_switch() -> void:
 	unit.free()
 
 func _check_gait_continuity() -> void:
-	var unit := _spawn("jinx", 0, Vector2(200, 1000))
+	var unit := _spawn_ready_unit("jinx", 0, Vector2(200, 1000))
 	var view := _view_for(unit)
 	for form in 2:
 		unit.toggle_weapon_form()
@@ -345,7 +342,7 @@ func _check_gait_continuity() -> void:
 	unit.free()
 
 func _check_swap_capture_and_muzzle() -> void:
-	var unit := _spawn("jinx", 0, Vector2(200, 1000))
+	var unit := _spawn_ready_unit("jinx", 0, Vector2(200, 1000))
 	var view := _view_for(unit)
 	for form in 2:
 		unit._move_intent = Vector2.UP
@@ -375,7 +372,7 @@ func _check_swap_capture_and_muzzle() -> void:
 	unit.free()
 
 func _check_final_pose_handoff() -> void:
-	var unit := _spawn("jinx", 0, Vector2(200, 1000))
+	var unit := _spawn_ready_unit("jinx", 0, Vector2(200, 1000))
 	var view := _view_for(unit)
 	var model = view._model_root
 	unit._move_intent = Vector2.UP
@@ -402,10 +399,10 @@ func _check_final_pose_handoff() -> void:
 	unit.free()
 
 func _check_blast_boundary() -> void:
-	var source := _spawn("jinx", 0, Vector2(200, 1000))
-	var center := _spawn("target_dummy", 1, Vector2(400, 1000))
-	var touching := _spawn("ashe", 1, Vector2.ZERO)
-	var outside := _spawn("ashe", 1, Vector2.ZERO)
+	var source := _spawn_ready_unit("jinx", 0, Vector2(200, 1000))
+	var center := _spawn_ready_unit("target_dummy", 1, Vector2(400, 1000))
+	var touching := _spawn_ready_unit("ashe", 1, Vector2.ZERO)
+	var outside := _spawn_ready_unit("ashe", 1, Vector2.ZERO)
 	touching.position = center.position + Vector2(45.0 + touching.body_radius, 0)
 	outside.position = center.position - Vector2(45.0 + outside.body_radius + 0.1, 0)
 	var touching_hp := touching.hp

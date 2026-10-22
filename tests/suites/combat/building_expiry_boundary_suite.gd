@@ -67,6 +67,7 @@ func _check_stale_acceptance() -> void:
 	source.attack_timeline.cooldown = 0.0
 	source._attack_hit_index = 2
 	source._attack_swing_count = 2
+	SuiteUtils.begin_attack_visual(source, target)
 	source._attack(0.05)
 	# 故障注入：非生命周期边界的强制对象销毁，仍需失效回执；正式自然退休已在上面的固定边界验证。
 	target.queue_free()
@@ -115,6 +116,7 @@ func _check_lifecycle_edges() -> void:
 	building.add_shield(100, 10)
 	_main._combat.begin_batch(200, "shield_landed")
 	var result: Dictionary = _main._combat.submit_damage(building, 10, source, 0, source.position)
+	SuiteUtils.begin_attack_visual(source, building)
 	_main._combat.resolve_attack_hit(0, source.position, building, 10, 0, 0, source, source.position, 0)
 	_main._combat.commit_batch()
 	_expect(result.landed and result.health_lost == 0 and source.hp == 110 and source.skill_resource_value == 2, "存活建筑全盾吸收仍是合法命中，回血和资源正常发放")

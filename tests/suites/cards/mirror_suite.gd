@@ -212,6 +212,7 @@ func _check_building_and_rejections() -> void:
 
 func _check_workbench() -> void:
 	_reset()
+	var accounts := SuiteUtils.detach_battle_accounts(_main)
 	_main._workbench.enabled = true
 	_main._workbench.team = 0
 	_main._workbench.skill_choices["garen"] = 1
@@ -227,6 +228,7 @@ func _check_workbench() -> void:
 	_main._place_art_dev_item(Vector2(500, 900))
 	_expect(_main._art_dev_selected_skill().is_empty(), "工作台普通镜像不提供技能")
 	_main._workbench.enabled = false
+	SuiteUtils.restore_battle_accounts(_main, accounts)
 	_main._workbench.last_units.clear()
 	_main._workbench.last_groups.clear()
 

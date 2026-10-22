@@ -12,7 +12,7 @@ func run(harness: Object, main: Node2D) -> void:
 			_expect(shader != null and shader.code.contains("depth_test_disabled") == expected, "原始深度测试标志落实到实际着色器："+kind+"/"+String(emitter.name))
 			if expected: disabled += 1
 		_expect(disabled == (0 if kind == "idle_blade" else 3), "只关闭原版指定层深度测试，不影响其他层")
-	var source := _spawn("kassadin", 0, Vector2(360, 700))
+	var source := _spawn_ready_unit("kassadin", 0, Vector2(360, 700))
 	_expect(not source.is_air and source.river_traversal, "浮空仍为地面单位")
 	_expect(source.ignores_unit_collision(), "虚空之石永久穿过普通单位")
 	_expect(source.is_walkable_at(Vector2(360, 640)), "中路河道可通过")
@@ -50,17 +50,17 @@ func run(harness: Object, main: Node2D) -> void:
 		model.configure_unit_visual(source)
 		model.advance_ambient_visual(0.1)
 		_expect(model._blade.visible, "模型复用后恢复常驻刀刃")
-	var ordinary := _spawn("garen", 0, Vector2(360, 700))
+	var ordinary := _spawn_ready_unit("garen", 0, Vector2(360, 700))
 	_expect(not ordinary.is_walkable_at(Vector2(360, 640)), "普通地面单位仍受河流阻挡")
-	var building := _spawn("target_dummy", 1, Vector2(360, 500))
+	var building := _spawn_ready_unit("target_dummy", 1, Vector2(360, 500))
 	_expect(not source.is_walkable_at(building.position), "仍受建筑圆柱阻挡")
 	var route: PackedVector2Array = main.world.find_ground_path(Vector2(360, 700), Vector2(360, 580), null, 18.0, true)
 	_expect(route.size() >= 2, "浮空导航可直接跨越中路河道")
 	for point in route: _expect(absf(point.x - 360.0) <= 30.0, "跨河路线不绕桥")
 	# 河流本身不改变攻击、移动或主动技能资格，双方一致。
 	for team in [0, 1]:
-		var river_unit := _spawn("kassadin", team, Vector2(280, 640))
-		var river_enemy := _spawn("kassadin", 1-team, Vector2(320, 640))
+		var river_unit := _spawn_ready_unit("kassadin", team, Vector2(280, 640))
+		var river_enemy := _spawn_ready_unit("kassadin", 1-team, Vector2(320, 640))
 		river_unit.teleport_to(Vector2(280,640))
 		river_enemy.teleport_to(Vector2(320,640))
 		river_unit.attack_timeline.cooldown = 0.0
@@ -90,15 +90,15 @@ func run(harness: Object, main: Node2D) -> void:
 	var skill: Dictionary = CardDB.active_skills_for("kassadin")[0].duplicate(true)
 	source.position = Vector2(260, 900)
 	skill.cast_forward = Vector2.RIGHT
-	var enemy := _spawn("garen", 1, Vector2(430, 900))
-	var air := _spawn("nocturne", 1, Vector2(440, 920))
-	var ally := _spawn("garen", 0, Vector2(420, 880))
+	var enemy := _spawn_ready_unit("garen", 1, Vector2(430, 900))
+	var air := _spawn_ready_unit("nocturne", 1, Vector2(440, 920))
+	var ally := _spawn_ready_unit("garen", 0, Vector2(420, 880))
 	var health := [enemy.hp, air.hp, ally.hp]
 	main._active_skill_effect_system.apply(source, skill)
 	_expect(source.position.distance_to(Vector2(420, 900)) < 0.1, "虚空行走瞬移160像素")
 	_expect(enemy.hp == health[0]-80 and air.hp == health[1]-80 and ally.hp == health[2], "落地范围伤害对地对空且不伤友军")
-	var edge_in := _spawn("garen", 1, Vector2(800, 1000))
-	var edge_out := _spawn("garen", 1, Vector2(800, 1100))
+	var edge_in := _spawn_ready_unit("garen", 1, Vector2(800, 1000))
+	var edge_out := _spawn_ready_unit("garen", 1, Vector2(800, 1100))
 	edge_in.teleport_to(source.position + Vector2(70.0 + edge_in.body_radius - 0.1, 0))
 	edge_out.teleport_to(source.position + Vector2(0, 70.0 + edge_out.body_radius + 0.1))
 	var edge_health := [edge_in.hp, edge_out.hp]
@@ -170,5 +170,3 @@ func run(harness: Object, main: Node2D) -> void:
 	var renewed: Unit = main.runtime._spawn_card_units(0,"kassadin",Vector2(350,1100),0.0,0)[0]
 	_expect(main.runtime._active_skills.cost(renewed.active_ability_id) == 0 and not main.runtime._active_skills.has(id),"重新部署费用归零并替换旧主动资格")
 	main.runtime._deck = old_deck
-func _spawn(card: String, team: int, pos: Vector2) -> Unit:
-	return _main._spawn_unit(UnitSpawnRequest.new(team, card, pos, {"deploy_time_override": 0.0}))
