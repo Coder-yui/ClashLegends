@@ -177,11 +177,14 @@ func _check_source_lifetime_and_form() -> void:
 	pair[1].free()
 	owner.clear_all()
 	pair = _pair("gnar")
+	# 换形会执行完整身体落点校验，不能沿用纯弹体用例的场外隔离坐标。
+	pair[0].position = Vector2(100, 800)
+	pair[1].position = Vector2(600, 800)
 	_launch(owner, pair)
 	var launched := owner.visible_view()
 	var id: int = launched.keys()[0]
 	var generation: int = owner.projectiles[id].effects.source_generation
-	_expect(pair[0].transform_to_mega(), "真实纳尔换形成功")
+	_expect(pair[0].transform_to_mega() and not _main.runtime.game_over and UnitLandingQuery.legal(pair[0], pair[0].position, false), "真实纳尔换形成功且保持合法落点和运行中的战场")
 	owner.tick(0.05)
 	_expect(owner.visible_view()[id].visual == launched[id].visual and owner.visible_view()[id].source_form_index == 0 and owner.projectiles[id].effects.source_generation == generation and pair[0].form_change_serial > generation, "来源换形不改出手弹体外观、形态或generation归因")
 	target_hp = pair[1].hp

@@ -157,7 +157,12 @@ func prepare(resources: Dictionary, world: Node3D, camera: Camera3D, cards: Dict
 				world.add_child(sample)
 				sample.setup(source, packed, camera, spec.stats.get("visual_animations", {}), float(spec.stats.get("visual_forward_yaw", 0.0)), String(spec.stats.get("visual_active_buff_scene", "")))
 			else:
-				sample = instantiate_visual(packed) as Node3D
+				var sample_node := instantiate_visual(packed)
+				if not sample_node is Node3D:
+					if is_instance_valid(sample_node): sample_node.free()
+					errors.append("模型根节点必须是Node3D: " + String(path))
+					return
+				sample = sample_node
 				sample.process_mode = Node.PROCESS_MODE_DISABLED
 				world.add_child(sample)
 			_render_samples.append(sample)

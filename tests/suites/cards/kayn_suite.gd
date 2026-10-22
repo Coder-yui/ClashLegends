@@ -17,6 +17,7 @@ func run(harness: Object, main: Node2D) -> void:
 	_dash()
 	_control_and_growth_deployment()
 	_dash_edges()
+	_controlled_terrain_retention()
 	_queued_form()
 	_schema()
 	_workbench_forms_and_animation()
@@ -98,6 +99,11 @@ func _dash() -> void:
 
 func _control_and_growth_deployment() -> void:
 	_main.runtime._card_growth.clear()
+	# immediate仅省略排程，仍走正式扣费；两次4费部署须显式准备账户。
+	var payer: ElixirManager = _main.runtime.account(0)
+	var saved_elixir: float = payer.elixir
+	payer.elixir = 10.0
+	var ranged_targets: Array[Unit] = []
 	var source := _make("kayn",0,Vector2(360,950))
 	var target := _make("garen",1,Vector2(360,850))
 	for hit in 6: _main.runtime._card_growth.record_hit(source,target)
@@ -109,15 +115,21 @@ func _control_and_growth_deployment() -> void:
 	_expect(grown != null and grown.card_id == "kayn_slayer" and grown.max_hp == 950 and grown.active_skill_card_id == "kayn", "后续部署红凯且保留原牌主动归属")
 	if grown != null: grown.free()
 	_main.runtime._card_growth.clear()
-	for hit in 4: _main.runtime._card_growth.record_hit(source, _make("ashe",1,Vector2(650,1100)))
-	_main.play_card(0,"kayn",Vector2(250,950),{"immediate":true,"validate_position":false})
-	grown = _main._latest_unit_for_card("kayn",0)
-	if grown != null:
+	for hit in 4:
+		var ranged := _make("ashe",1,Vector2(650,1100))
+		ranged_targets.append(ranged)
+		_main.runtime._card_growth.record_hit(source, ranged)
+	var accepted: bool = _main.play_card(0,"kayn",Vector2(250,950),{"immediate":true,"validate_position":false})
+	_expect(accepted and payer.elixir == 2.0, "两次正式成长部署各扣4费，第二次请求确实成功")
+	grown = _main._latest_unit_for_card("kayn",0) if accepted else null
+	_expect(grown != null and grown != source, "蓝凯部署返回新实体而非既有成长来源")
+	if grown != null and grown != source:
 		grown.active_ability_id = 99030
 		grown.active_ability_slot = 0
 		_main.runtime._register_active_skill(grown,"kayn",0)
 	_expect(grown != null and grown.card_id == "kayn_assassin" and _main.runtime._active_skills.cost(grown.active_ability_id) == 1, "蓝凯从普通来源卡部署后主动实际费用为1")
-	if grown != null: grown.free()
+	if grown != null and grown != source: grown.free()
+	payer.elixir = saved_elixir
 	_main.runtime._deck = old_deck
 	var skill: Dictionary = CardDB.active_skills_for("kayn")[0]
 	source.active_skill_cast_facing = Vector2.UP
@@ -134,8 +146,8 @@ func _control_and_growth_deployment() -> void:
 	source.take_damage(30)
 	_expect(source.hp == 620, "突进仍可被伤害命中")
 	source.free();target.free()
-	for unit in _main.get_tree().get_nodes_in_group("combatants"):
-		if unit is Unit and unit.card_id == "ashe" and unit.position == Vector2(650,1100): unit.free()
+	for unit in ranged_targets:
+		if is_instance_valid(unit): unit.free()
 	_main.runtime._card_growth.clear()
 
 func _schema() -> void:
@@ -689,3 +701,26 @@ func _growth_hand_ui() -> void:
 	_main.runtime._card_growth.replace_replica(saved)
 	hand.free()
 	elixir.free()
+
+## 穿地形能力决定落点合法性；控制取消不能把凯隐按普通地面单位挤出河流或建筑。
+func _controlled_terrain_retention() -> void:
+	for id in ["kayn", "kayn_assassin", "kayn_slayer"]:
+		for terrain in ["river", "building"]:
+			for status in ["root", "stun", "freeze", "stasis"]:
+				var point := Vector2(360,640) if terrain == "river" else Vector2(360,1000)
+				var building: Unit = _make("tombstone",0,point) if terrain == "building" else null
+				var unit := _make(id,0,point)
+				unit.position = point
+				unit.begin_active_skill_cast(1.0,Vector2.UP)
+				var dash := DashStrikeState.new(unit,CardDB.active_skills_for(id)[0])
+				dash.tick(0.01)
+				var before := unit.position
+				_expect(not UnitLandingQuery.legal(unit,before,false) and UnitLandingQuery.displacement_legal(unit,before), "凯隐穿地形落点与普通地面判定不同：%s/%s" % [id,terrain])
+				match status:
+					"root": unit.root(0.5)
+					"stun": unit.stun(0.5)
+					"freeze": unit.freeze(0.5)
+					"stasis": unit.apply_stasis(0.5)
+				_expect(not dash.tick(0.05) and dash.cancelled and not dash.spin_hit and unit.position.is_equal_approx(before) and UnitLandingQuery.displacement_legal(unit,unit.position), "控制取消自主突进但保留地形内合法位置：%s/%s/%s" % [id,terrain,status])
+				unit.free()
+				if building != null: building.free()

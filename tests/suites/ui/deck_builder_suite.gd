@@ -206,9 +206,15 @@ func run(harness: Object, main: Node2D) -> void:
 	var before_refill: int = pool.refill_metrics.completed
 	var held := pool.take(packed) as Node3D
 	loading_match._battle_presentation._world_root.add_child(held)
+	# 补充门禁使用真实帧编号和前台耗时，不再读取传入delta；用虚拟帧边沿驱动状态机。
+	pool._ensure_refill_clock()
+	pool._refill_begin_frame()
+	pool._refill_frame_started -= 50000
+	var before_steps: int = pool.refill_metrics.steps
 	pool.advance_refill(0.05)
-	_expect(pool._refill.is_empty(), "慢帧暂停后台补充")
+	_expect(pool.refill_metrics.steps == before_steps, "前台耗时50毫秒时不执行后台补充步骤")
 	for frame in 1000:
+		pool._refill_begin_frame()
 		pool.advance_refill(1.0 / 60.0)
 		if pool.instances[mite_path].size() == initial_stock: break
 	_expect(pool.refill_metrics.completed > before_refill and pool.instances[mite_path].size() == initial_stock, "单位仍存活时按预算补回已领取库存")
@@ -220,6 +226,7 @@ func run(harness: Object, main: Node2D) -> void:
 		var node := pool.take(packed) as Node3D
 		loading_match._battle_presentation._world_root.add_child(node)
 		borrowed.append(node)
+	pool._refill_begin_frame()
 	pool.advance_refill(1.0 / 60.0)
 	var pending: Node3D = pool._refill.get("node")
 	pool.release_sources()

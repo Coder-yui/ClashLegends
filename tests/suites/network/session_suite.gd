@@ -58,16 +58,22 @@ func run(harness: Object) -> void:
 	harness._expect(main.runtime._commands.inspect_deployments().is_empty() and main._audio_manager._projectile_launch_players.is_empty(), "旧局表现事件不能创建新局部署标记或飞行声")
 	main.runtime.session = MatchSession.new()
 	main._on_connection_failed()
-	harness._expect(main.runtime.session.phase == MatchSession.Phase.DISCONNECTED and main._network_peer == null and main._menu_status.text.contains("连接失败"), "连接失败有明确提示且可留在菜单重新选择")
+	harness._expect(main.runtime.session.phase == MatchSession.Phase.DISCONNECTED and main._network_peer == null and _has_startup_failure(main, "连接失败"), "连接失败显示原因及返回主菜单按钮")
+	# 启动失败已终止整个场景；超时必须使用新的连接场景。
+	main.free()
+	main = load("res://scenes/main.tscn").instantiate()
+	harness.root.add_child(main)
+	main.set_process(false)
+	main.runtime.mode = "client"
 	main.runtime.session = MatchSession.new()
 	main.runtime.session.join("timeout")
 	main._network_loading_started = Time.get_ticks_msec() - 30001
 	main._process(0.0)
-	harness._expect(main.runtime.session.phase == MatchSession.Phase.DISCONNECTED and main._menu_status.text.contains("超时"), "加载超时停止并提示，不无限等待")
+	harness._expect(main.runtime.session.phase == MatchSession.Phase.DISCONNECTED and _has_startup_failure(main, "超时"), "加载超时停止并显示可返回菜单的失败界面")
 	main.free()
 	harness._expect(MatchSession.content_fingerprint() == MatchSession.content_fingerprint() and MatchSession.content_fingerprint().length() == 64, "内容指纹稳定且完整")
-	var legacy_fingerprint := var_to_bytes([117, CardDB.all(), MatchRules.REGULATION_TIME, MatchRules.OVERTIME_TIME, FixedStepClock.STEP]).hex_encode().sha256_text()
-	harness._expect(MatchSession.PROTOCOL_VERSION == 118 and NetworkSnapshotSystem.SNAPSHOT_PROTOCOL_VERSION == MatchSession.PROTOCOL_VERSION and MatchSession.content_fingerprint() != legacy_fingerprint, "协议118同时拥有握手/快照版本，并与117相同卡牌规则的旧指纹隔离")
+	var legacy_fingerprint := var_to_bytes([118, CardDB.all(), MatchRules.REGULATION_TIME, MatchRules.OVERTIME_TIME, FixedStepClock.STEP]).hex_encode().sha256_text()
+	harness._expect(MatchSession.PROTOCOL_VERSION == 119 and NetworkSnapshotSystem.SNAPSHOT_PROTOCOL_VERSION == MatchSession.PROTOCOL_VERSION and MatchSession.content_fingerprint() != legacy_fingerprint, "协议119同时拥有握手/快照版本，并与118相同卡牌规则的旧指纹隔离")
 
 	_check_private_hand_and_adaptation(harness)
 	_check_buffer_clock_and_playback(harness)
@@ -77,6 +83,13 @@ func run(harness: Object) -> void:
 	_check_skill_payment_without_ui(harness)
 	_check_skill_transfer_and_free_recast(harness)
 	_check_growth_refresh_changes(harness)
+
+func _has_startup_failure(main: Node2D, message: String) -> bool:
+	var overlay := main.get_node_or_null("StartupFailure")
+	if overlay == null or not main.runtime.game_over or not main._terminal_result.is_empty(): return false
+	var labels := overlay.find_children("*", "Label", true, false)
+	var buttons := overlay.find_children("*", "Button", true, false)
+	return labels.any(func(label): return message in label.text) and buttons.any(func(button): return button.text == "返回主菜单" and button.pressed.is_connected(main.return_to_main_menu))
 
 func _check_growth_refresh_changes(harness: Object) -> void:
 	var main = _skill_fixture(harness, true, false)
@@ -141,7 +154,7 @@ func _skill_fixture(harness: Object, client: bool, ui: bool) -> Node2D:
 func _install_skill_bar(main: Node2D) -> void:
 	if main._active_skill_bar != null: main._active_skill_bar.free()
 	main._active_skill_bar = ActiveSkillBar.new()
-	main._active_skill_bar.can_submit = main.runtime._can_submit_active_skill
+	main._active_skill_bar.can_submit = main._can_submit_active_skill
 	main.add_child(main._active_skill_bar)
 	for id in main.runtime._active_skills.ids():
 		var entry: Dictionary = main.runtime._active_skills.entry(id)
@@ -166,23 +179,23 @@ func _check_skill_input_ownership(harness: Object) -> void:
 		var unit := _skill_source(main)
 		var id := unit.active_ability_id
 		if main._active_skill_bar != null: main._active_skill_bar.set_pending(id, true)
-		harness._expect(main.runtime._can_submit_active_skill(id, 0), "UI残留pending不拥有技能资格：" + variant)
+		harness._expect(main._can_submit_active_skill(id, 0), "UI残留pending不拥有技能资格：" + variant)
 		harness._expect(main.use_active_skill(id, 0, 0, true) and not main.use_active_skill(id, 0, 0, true) and main.sent_skills.size() == 1 and main._client_inputs.has_skill(id) and main.runtime.account(0 if main.runtime.mode == "server" else main.runtime.local_team).elixir == 10.0, "已发未确认请求只发一次且客户端不付款：" + variant)
 		var request: int = main._network_request_id
 		if variant == "rebuilt": _install_skill_bar(main)
-		harness._expect(not main.runtime._can_submit_active_skill(id, 0) and (main._active_skill_bar == null or main._active_skill_bar.is_pending(id)), "销毁重建UI从领域重建反馈且不能解锁在途请求：" + variant)
+		harness._expect(not main._can_submit_active_skill(id, 0) and (main._active_skill_bar == null or main._active_skill_bar.is_pending(id)), "销毁重建UI从领域重建反馈且不能解锁在途请求：" + variant)
 		main._rpc_active_skill_rejected("old", id, request)
 		main._rpc_active_skill_rejected("skill-input", id, request - 1)
 		harness._expect(main._client_inputs.has_skill(id), "旧会话或旧request拒绝不能清除当前技能请求：" + variant)
 		main._rpc_active_skill_rejected("skill-input", id, request)
-		harness._expect(not main._client_inputs.has_skill(id) and main.runtime._can_submit_active_skill(id, 0), "匹配拒绝清理领域pending且恢复资格：" + variant)
+		harness._expect(not main._client_inputs.has_skill(id) and main._can_submit_active_skill(id, 0), "匹配拒绝清理领域pending且恢复资格：" + variant)
 		var authority := NetworkCommandState.new()
 		for outcome in ["executed", "cancelled"]:
 			harness._expect(main.use_active_skill(id, 0, 0, true), "重试通过真实技能提交入口：" + variant)
 			var command := authority.create("skill", 0, "garen", id, Vector2.ZERO, 100, 110)
 			main._rpc_command_scheduled("skill-input", command)
 			if main._active_skill_bar != null: main._active_skill_bar.set_pending(id, false)
-			harness._expect(main._network_commands.has_skill(id) and not main._client_inputs.has_skill(id) and not main.runtime._can_submit_active_skill(id, 0) and main.runtime._commands.inspect_skills().is_empty(), "已受理公开命令接手pending而不创建客户端权威排程：" + variant)
+			harness._expect(main._network_commands.has_skill(id) and not main._client_inputs.has_skill(id) and not main._can_submit_active_skill(id, 0) and main.runtime._commands.inspect_skills().is_empty(), "已受理公开命令接手pending而不创建客户端权威排程：" + variant)
 			if main._active_skill_bar != null:
 				main._sync_active_skill_deployment_readiness()
 				main._active_skill_bar.set_pending_seconds(id, 0.4)
@@ -193,7 +206,7 @@ func _check_skill_input_ownership(harness: Object) -> void:
 			main._client_inputs.skill(id, main._network_request_id)
 			if outcome == "executed": main._rpc_active_skill_used("skill-input", id, 1, 3.0, false)
 			main._rpc_command_finished("skill-input", command.id, outcome)
-			harness._expect(not main._client_inputs.has_skill(id) and not main._network_commands.has_skill(id) and main.runtime._can_submit_active_skill(id, 0) == (outcome == "cancelled") and main.runtime.account(0 if main.runtime.mode == "server" else main.runtime.local_team).elixir == 10.0, "执行/取消完成清理pending，资格仍服从权威CD：" + variant + "/" + outcome)
+			harness._expect(not main._client_inputs.has_skill(id) and not main._network_commands.has_skill(id) and main._can_submit_active_skill(id, 0) == (outcome == "cancelled") and main.runtime.account(0 if main.runtime.mode == "server" else main.runtime.local_team).elixir == 10.0, "执行/取消完成清理pending，资格仍服从权威CD：" + variant + "/" + outcome)
 			main.runtime._active_skills.replace_replica(id, 2, 0.0)
 			main._sync_active_skill_deployment_readiness()
 			main.use_active_skill(id, 0, 0, true)
@@ -210,7 +223,7 @@ func _check_skill_input_ownership(harness: Object) -> void:
 		main._rpc_active_skill_rejected("skill-input", id, 100)
 		harness._expect(main._client_inputs.has_skill(id) and main._network_commands.inspect().is_empty(), "重开清理旧排程且旧局拒绝不能污染新局请求：" + variant)
 		main.runtime._on_active_skill_unit_died(id)
-		harness._expect(not main._client_inputs.has_skill(id) and not main.runtime._can_submit_active_skill(id, 0), "死亡清理未确认输入且不依赖UI：" + variant)
+		harness._expect(not main._client_inputs.has_skill(id) and not main._can_submit_active_skill(id, 0), "死亡清理未确认输入且不依赖UI：" + variant)
 		var replacement := _skill_source(main, 8)
 		main._client_inputs.skill(8, 101)
 		_skill_source(main, 9)
@@ -254,7 +267,7 @@ func _check_skill_transfer_and_free_recast(harness: Object) -> void:
 		if variant == "rebuilt": _install_skill_bar(main)
 		leader.hp = 0.0
 		main.runtime._on_active_skill_unit_died(id)
-		harness._expect(main.runtime._active_skills.has(id) and main.runtime._active_skills.entry(id).unit != leader and main._client_inputs.has_skill(id) and not main.runtime._can_submit_active_skill(id, 0), "编队队长死亡转交保留同一资格与在途请求：" + variant)
+		harness._expect(main.runtime._active_skills.has(id) and main.runtime._active_skills.entry(id).unit != leader and main._client_inputs.has_skill(id) and not main._can_submit_active_skill(id, 0), "编队队长死亡转交保留同一资格与在途请求：" + variant)
 		main.clear_network_unit_skill(leader)
 		harness._expect(main._client_inputs.has_skill(id), "清理旧队长不得抹掉新队长继承的在途请求：" + variant)
 		main.clear_network_unit_skill(main.runtime._active_skills.entry(id).unit)
