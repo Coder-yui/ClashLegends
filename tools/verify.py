@@ -123,7 +123,7 @@ def verification_plan(root: Path, source: str, paths: list[str], *, full: bool =
             requires_import = True
         if effective.endswith('.md') or effective.startswith(('docs/', '需求文档/')):
             domain = 'documentation'
-        elif effective in ('tests/suite_catalog.json', 'tests/mechanics_check.gd', 'tests/suites/battle_suite.gd'):
+        elif effective in ('tests/suite_catalog.json', 'tests/mechanics_check.gd', 'tests/suites/battle_suite.gd', 'tests/suites/suite_utils.gd'):
             # Changes to shared harness/registration require an explicit milestone scope.
             matched = full or explicit
             domain = 'shared-test-harness: explicit scope required'
@@ -136,7 +136,9 @@ def verification_plan(root: Path, source: str, paths: list[str], *, full: bool =
                 matched = True
                 domain = 'network-fixture: real three-peer checks require explicit network flags'
         elif effective.startswith('tests/fixtures/'):
-            if stem == 'projectile_view_checks':
+            if stem == 'attack_audio_checks':
+                add_stems('audio_presentation_suite')
+            elif stem == 'projectile_view_checks':
                 add_stems('projectile_suite')
             elif stem.startswith('network_'):
                 add_groups('network')
@@ -299,8 +301,40 @@ def planned_commands(plan: dict, godot: str | None, output: Path, reverse: bool 
     commands.append(('diff-check', ['git', 'diff', '--check']))
     return commands
 
-def validate_mechanics(log: str, expected: list[str]) -> tuple[dict | None, list[str]]:
+def audio_serial_warning_errors(log: str) -> list[str]:
+    """Negative fixtures must bracket exactly one matching diagnostic; all others fail."""
+    begin = '[EXPECTED_AUDIO_SERIAL_WARNING_BEGIN] '
+    end = '[EXPECTED_AUDIO_SERIAL_WARNING_END]'
+    diagnostic = re.compile(r'^(?:在途)?分段(?:命中|发射)音频缺少(?:有效)?攻击序号：\S+$')
     errors = []
+    expected = None
+    seen = 0
+    for raw in log.splitlines():
+        line = raw.strip()
+        if line.startswith(begin):
+            if expected is not None:
+                errors.append('Nested expected audio warning scope')
+            expected, seen = line[len(begin):], 0
+            if not diagnostic.fullmatch(expected):
+                errors.append('Invalid expected audio warning')
+        elif line == end:
+            if expected is None or seen != 1:
+                errors.append('Expected exactly one audio warning in fixture scope')
+            expected = None
+        elif line.startswith('WARNING: '):
+            message = line[len('WARNING: '):]
+            if diagnostic.fullmatch(message):
+                if message != expected:
+                    errors.append('Unexpected audio attack serial warning: ' + message)
+                else:
+                    seen += 1
+    if expected is not None:
+        errors.append('Unclosed expected audio warning scope')
+    return errors
+
+
+def validate_mechanics(log: str, expected: list[str]) -> tuple[dict | None, list[str]]:
+    errors = audio_serial_warning_errors(log)
     markers = [line[len(RESULT_PREFIX):] for line in log.splitlines() if line.startswith(RESULT_PREFIX)]
     if len(markers) != 1:
         return None, ['Expected exactly one structured mechanics result']

@@ -143,6 +143,12 @@ class VerifyTests(unittest.TestCase):
         self.assertNotIn('SionSuite', plan['suites'])
         self.assertEqual(plan['python_tests'], [])
 
+    def test_attack_audio_fixture_keeps_one_execution_owner(self):
+        for suffix in ['', '.uid']:
+            plan = self.real_plan('tests/fixtures/attack_audio_checks.gd' + suffix)
+            self.assertEqual(plan['suites'], ['AUDIO_PRESENTATION_SUITE_SCRIPT'])
+            self.assertEqual(plan['unknown_paths'], [])
+
     def test_projectile_view_child_routes_to_existing_owner_suite(self):
         plan = self.real_plan('tests/fixtures/projectile_view_checks.gd')
         self.assertEqual(plan['suites'], ['ProjectileSuite'])
@@ -308,6 +314,21 @@ class VerifyTests(unittest.TestCase):
 
     def test_complete(self):
         self.assertEqual(verify.validate_mechanics(self.log(), ['a', 'b'])[1], [])
+
+    def test_audio_serial_warning_scopes(self):
+        message = '分段命中音频缺少有效攻击序号：masteryi'
+        warning = 'WARNING: ' + message + '\n'
+        begin = '[EXPECTED_AUDIO_SERIAL_WARNING_BEGIN] ' + message + '\n'
+        end = '[EXPECTED_AUDIO_SERIAL_WARNING_END]\n'
+        cases = [(warning, False), (begin + warning + end, True),
+                 (begin + end, False), (begin + warning * 2 + end, False),
+                 (begin + warning, False), (end, False),
+                 (begin + begin + warning + end, False),
+                 (begin + warning.replace('masteryi', 'sett') + end, False),
+                 ('WARNING: unrelated diagnostic\n', True)]
+        for prefix, passed in cases:
+            with self.subTest(prefix=prefix):
+                self.assertEqual(not verify.validate_mechanics(prefix + self.log(), ['a', 'b'])[1], passed)
 
     def test_silent_runtime_error(self):
         self.assertTrue(verify.validate_mechanics('SCRIPT ERROR: invalid call\n' + self.log(), ['a', 'b'])[1])
