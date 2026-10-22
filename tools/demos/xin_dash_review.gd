@@ -66,7 +66,7 @@ func _capture(label: String) -> void:
 	root.get_texture().get_image().save_png(output + label + ".png")
 
 func _add_range_ring(center: Vector2) -> void:
-	# 只用于验收的108px权威范围参考圈，不进入正式特效。
+	# 只用于验收的权威范围参考圈（读取当前技能配置），不进入正式特效。
 	var mesh := ImmediateMesh.new()
 	var material := StandardMaterial3D.new()
 	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
@@ -74,7 +74,7 @@ func _add_range_ring(center: Vector2) -> void:
 	mesh.surface_begin(Mesh.PRIMITIVE_LINE_STRIP,material)
 	var projection = preload("res://scripts/presentation/spell_effect_projection.gd")
 	for index in 97:
-		mesh.surface_add_vertex(projection.ground(main._battle_presentation._camera,center+Vector2.from_angle(TAU*index/96.0)*108.0))
+		mesh.surface_add_vertex(projection.ground(main._battle_presentation._camera,center+Vector2.from_angle(TAU*index/96.0)*float(CardDB.active_skills_for("xin")[1].charge_impact_radius)))
 	mesh.surface_end()
 	review_ring = MeshInstance3D.new()
 	review_ring.mesh = mesh

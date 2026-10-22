@@ -1,7 +1,6 @@
 {
   "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/XinZhao.wad.client",
   "systems": {
-    "cas": "XinZhao_Rework_Base_E_Cas",
     "hit": "XinZhao_Base_E_AOE_Swirl_Tar",
     "buff": "XinZhao_Base_W_HandGlow_Cas"
   },
@@ -9,7 +8,7 @@
   "native_scale": 0.0108,
   "projection": "native XYZ; no camera stretch",
   "buff_attachment": "Weapon_Main; XinZhaoEBattleCry persistent effect 0xd1bfda36",
-  "adaptation": "Original base E AoE impact at primary target, 108 authority pixels (AoERadius 250 * model scale 0.0108 * 40 pixels/world unit). Omit Primary_Target challenge marker. Native Spell3 stretched to 0.35 s without controlling authority.",
+  "adaptation": "Original base E AoE impact at primary target, uniformly scaled to 70 authority pixels (70 / AoERadius 250 / 40 pixels per world unit = 0.007). Weapon buff retains model scale 0.0108. Omit Primary_Target challenge marker. Native Spell3 stretched to 0.35 s without controlling authority. CAS omitted by user decision; post-ASU runtime invocation was not confirmed.",
   "collected_source_assets": {
     "assets/characters/briar/skins/base/particles/aura_self.tex": "736c4711157ffc157872a7d19a484ec0d648fe8e6b77ccfb61a1ba7969aff914",
     "assets/characters/briar/skins/base/particles/briar_base_r_smokeringmesh.scb": "9ee102b02c9f51f2ff5c43e5756e52179c7ddf4d325b82ec65c3efe1ef29c438",
@@ -53,16 +52,15 @@
     "assets/maps/particles/cherry_1_5/annie_base_q_sparks_2x2.tex": "7ebf2ddde59c5dcf50ecc683cb4c9591852766006748a2a4681ba4ae198739eb"
   },
   "raw_systems": {
-    "cas": "aa91fcd76ada75c20b41d1e5561f295695b43eaeb759158b1332d0e85a656742",
     "hit": "4d047dd72364d26c38428e9d087a2ebb89154db2af6e7bc982bd7b6c2034560b",
     "buff": "058f0840cb06824e6c8febd3f3efcb8b0abfa80962d5bf337a52cb1f4b11e6ff"
   },
   "impact_placement": {
-    "authority_radius_pixels": 108,
+    "authority_radius_pixels": 70,
     "original_aoe_radius": 250,
     "pixels_per_world_unit": 40,
-    "native_scale": 0.0108,
-    "ground_origin_height": 0.2544,
+    "native_scale": 0.007,
+    "ground_origin_height": 0.186,
     "reason": "Ground decal authored at y=-18; lift native root by 18 source units relative to ground, keep XYZ proportions."
   },
   "buff_placement": "Full current Weapon_Main global bone transform, including model scale; preserve authored particle offset (0,0,-60), size (220,36,1), orientation and five-second timeline. No additional scale override.",

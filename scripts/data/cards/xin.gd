@@ -35,8 +35,8 @@ static func definition() -> Dictionary:
 				}, {
 					"name": "无畏冲锋", "kind": "movement_strike",
 					"cost": 1, "max_uses": 2, "cooldown": 8.0,
-					"description": "下一次攻击距离提升至4格，突进至目标身前，对目标周围108像素内地面敌人造成一次普攻伤害，不受致盲影响；命中后攻击速度提高40%，持续5秒。",
-					"charge_impact_radius": 108.0, "charge_attack_range": 160.0, "charge_dash_speed": 800.0, "charge_visual_duration": 0.35,
+					"description": "下一次攻击距离提升至4格，突进至目标身前，对目标周围70像素内地面敌人造成一次普攻伤害，不受致盲影响；命中后攻击速度提高40%，持续5秒。",
+					"charge_impact_radius": 70.0, "charge_attack_range": 160.0, "charge_dash_speed": 800.0, "charge_visual_duration": 0.35,
 					"ignore_blind": true, "attack_speed_multiplier": 1.4, "duration": 5.0,
 					"cast_duration": 0.0, "impact_delay": 0.0, "cast_locks": [],
 				}],
@@ -78,7 +78,7 @@ static func definition() -> Dictionary:
 			"color": Color(0.85, 0.30, 0.25),
 			"active_skills": [{ "icon_path": "res://assets/skills/xin_0.png",
 					"visual_action": "active",
-				}, {"icon_path": "res://assets/skills/xin_e.png", "resource_dependencies": {"effects": [{"provider": "res://assets/effects/xin_dash/player.gd", "variant": "cas"}, {"provider": "res://assets/effects/xin_dash/player.gd", "variant": "hit"}, {"provider": "res://assets/effects/xin_dash/player.gd", "variant": "buff"}]}}],
+				}, {"icon_path": "res://assets/skills/xin_e.png", "resource_dependencies": {"effects": [{"provider": "res://assets/effects/xin_dash/player.gd", "variant": "hit"}, {"provider": "res://assets/effects/xin_dash/player.gd", "variant": "buff"}]}}],
 		},
 		# BEGIN IMPORTED AUDIO xin
 		"audio": {

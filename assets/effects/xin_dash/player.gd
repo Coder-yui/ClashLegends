@@ -1,11 +1,11 @@
 extends Node3D
 ## 赵信原版E粒子采样，保留原生XYZ比例。
 const NATIVE_SCALE := 0.0108
-# 原包AoERadius250 × 模型0.0108 × 40px/world = 108px；不按相机压扁。
-const IMPACT_RADIUS_PIXELS := 108.0
+# 命中层按70px / 原包AoERadius250 / 40px每世界单位等比缩放，不按相机压扁。
+const IMPACT_RADIUS_PIXELS := 70.0
+const IMPACT_SCALE := IMPACT_RADIUS_PIXELS / 250.0 / 40.0
 # 原版Decal_Ground出生高度-18；整体抬起18个原单位，让裂地层落在地面。
-const IMPACT_HEIGHT := 18.0 * NATIVE_SCALE
-const CAST_PARTICLE_SCALE := 1.0
+const IMPACT_HEIGHT := 18.0 * IMPACT_SCALE
 const ROOT := "res://assets/effects/xin_dash/"
 static var _cache: Dictionary = {}
 var _data: Dictionary = {}
@@ -14,7 +14,6 @@ var _materials: Array[ShaderMaterial] = []
 var _pools: Array = []
 var _attached: Array[Dictionary] = []
 var _age := 0.0
-var _particle_scale := 1.0
 var _frame := -1
 var _last_basis := Basis.IDENTITY
 var projection_basis := Basis.IDENTITY
@@ -25,7 +24,6 @@ func shape_basis_for(_emitter_name: String) -> Basis:
 	return Basis.IDENTITY
 
 func load_kind(kind: String) -> void:
-	_particle_scale = CAST_PARTICLE_SCALE if kind == "cas" else 1.0
 	if not _cache.has(kind):
 		var data: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(ROOT + kind + "/sampled.json"))
 		var materials: Array[ShaderMaterial] = []
@@ -73,7 +71,6 @@ func seek(age: float) -> void:
 				item.material_override.set_shader_parameter("projection_basis", projection_basis)
 				item.material_override.set_shader_parameter("shape_basis", shape_basis_for(e.name))
 				var particle := PackedFloat32Array(particles[j])
-				for axis in range(4, 7): particle[axis] *= _particle_scale
 				item.material_override.set_shader_parameter("p", particle)
 				var camera := get_viewport().get_camera_3d()
 				if camera != null:

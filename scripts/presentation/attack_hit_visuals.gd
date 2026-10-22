@@ -150,6 +150,6 @@ func play_movement_hit(card_id: String, position: Vector2, world: Node3D, camera
 	var player = load("res://assets/effects/xin_dash/player.gd").new()
 	world.add_child(player)
 	player.load_kind("hit")
-	player.setup_native(player.NATIVE_SCALE)
+	player.setup_native(player.IMPACT_SCALE)
 	player.global_position = preload("res://scripts/presentation/spell_effect_projection.gd").ground(camera, position) + Vector3.UP * player.IMPACT_HEIGHT
 	_hits.append({"player": player, "camera": camera, "age": 0.0, "duration": 1.1, "ground_height": player.IMPACT_HEIGHT, "fixed": true, "view": {"end": position}})

@@ -474,11 +474,11 @@ func _check_dash_area_and_weapon() -> void:
 	var units: Array[Unit] = [source,target]
 	var inside: Unit = _main._spawn_unit(UnitSpawnRequest.new(1,"hecarim",Vector2(390,1127.9),{"deploy_time_override":0.0}))
 	var outside: Unit = _main._spawn_unit(UnitSpawnRequest.new(1,"hecarim",Vector2(390,871.9),{"deploy_time_override":0.0}))
-	inside.position = target.position + Vector2(0,108+inside.body_radius-0.1)
-	outside.position = target.position - Vector2(0,108+outside.body_radius+0.1)
-	var ally: Unit = _main._spawn_unit(UnitSpawnRequest.new(0,"hecarim",Vector2(490,1000),{"deploy_time_override":0.0}))
-	var air: Unit = _main._spawn_unit(UnitSpawnRequest.new(1,"voidfish",Vector2(390,1080),{"deploy_time_override":0.0}))
-	var building: Unit = _main._spawn_unit(UnitSpawnRequest.new(1,"target_dummy",Vector2(480,950),{"deploy_time_override":0.0}))
+	inside.position = target.position + Vector2(0,70+inside.body_radius-0.1)
+	outside.position = target.position - Vector2(0,70+outside.body_radius+0.1)
+	var ally: Unit = _main._spawn_unit(UnitSpawnRequest.new(0,"hecarim",Vector2(440,1000),{"deploy_time_override":0.0}))
+	var air: Unit = _main._spawn_unit(UnitSpawnRequest.new(1,"voidfish",Vector2(390,1050),{"deploy_time_override":0.0}))
+	var building: Unit = _main._spawn_unit(UnitSpawnRequest.new(1,"target_dummy",Vector2(440,950),{"deploy_time_override":0.0}))
 	units.append_array([inside,outside,ally,air,building])
 	var health: Array = units.map(func(unit): return unit.hp)
 	var impacts: Array[Vector2] = []
@@ -488,9 +488,9 @@ func _check_dash_area_and_weapon() -> void:
 	source.hp = 300
 	source._attack_swing_count = 2
 	source.blind_attack_charges = 2
-	_expect(source.movement_strike.tick(source,0.05), "108像素范围冲锋正常起手")
+	_expect(source.movement_strike.tick(source,0.05), "70像素范围冲锋正常起手")
 	_advance_strike(source,12)
-	_expect(target.hp==health[1]-68 and inside.hp==health[2]-68 and outside.hp==health[3], "主目标只伤害一次，108像素按身体边缘包含圈内并排除圈外")
+	_expect(target.hp==health[1]-68 and inside.hp==health[2]-68 and outside.hp==health[3], "主目标只伤害一次，70像素按身体边缘包含圈内并排除圈外")
 	_expect(ally.hp==health[4] and air.hp==health[5] and building.hp==health[6]-68, "范围伤害排除友军和空军，包含建筑")
 	_expect(impacts.size()==1 and impacts[0].is_equal_approx(target.position), "多人受伤只在主目标中心发布一次原版冲击")
 	_expect(source.hp==360 and source.blind_attack_charges==2 and is_equal_approx(source.active_attack_speed_multiplier,1.4), "多人命中不重复第三击回血且保留致盲豁免与40%攻速")
@@ -526,13 +526,14 @@ func _check_hit_ground_refresh() -> void:
 	var point := Vector2(360, 900)
 	effects.play_movement_hit("xin", point, world, camera)
 	var hit: Node3D = effects._hits[0].player
-	var expected := preload("res://scripts/presentation/spell_effect_projection.gd").ground(camera, point) + Vector3.UP * 0.1944
+	_expect(hit.scale.is_equal_approx(Vector3.ONE * 0.007), "命中层XYZ等比缩放至70像素范围，起手和枪光不随之缩小")
+	var expected := preload("res://scripts/presentation/spell_effect_projection.gd").ground(camera, point) + Vector3.UP * 0.126
 	effects.advance(0.05)
 	effects._process(0.0)
 	_expect(hit.global_position.is_equal_approx(expected), "逻辑推进后的逐帧挂点刷新保持赵信冲击贴地高度")
 	camera.position.x += 2.0
 	effects._process(0.0)
-	expected = preload("res://scripts/presentation/spell_effect_projection.gd").ground(camera, point) + Vector3.UP * 0.1944
+	expected = preload("res://scripts/presentation/spell_effect_projection.gd").ground(camera, point) + Vector3.UP * 0.126
 	_expect(hit.global_position.is_equal_approx(expected), "相机变化重新定位冲击仍保留地面偏移")
 	effects.advance(1.1)
 	_expect(effects._hits.is_empty() and not is_instance_valid(hit), "冲击到期释放粒子与挂点记录")
