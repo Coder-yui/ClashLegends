@@ -2,8 +2,7 @@
   "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Hecarim.wad.client",
   "systems": {
     "aoe": "Hecarim_Base_W_AoE",
-    "cas": "Hecarim_Base_W_cas",
-    "eff": "Hecarim_Base_W_eff"
+    "cas": "Hecarim_Base_W_cas"
   },
   "sampling_fps": 120,
   "duration": 5,
@@ -303,5 +302,8 @@
   "geometry": "res://assets/effects/hecarim/geometry.gd",
   "untextured_layers": "qcas/trail_flourish_skin retained in source, not rendered as a default white quad",
   "q_weapon_trail_limitation": "Reconstructed from native Q_buf curves, smoke texture and sampled Hecarim_Spell1_anm BUFFBONE_GLB_WEAPON_1 path. Camera-facing connected ribbon, birth order, smoothing 2, cutoff 1050, tiling 800. Bone attachment is project adaptation; no Riot server attachment script available.",
-  "w_visible_boundary": "W_AoE/Temp_Mesh original green indicator line: interpolated mesh radius at texture radial brightness centroid 0.26173765, multiplied by source scale 6 = 517.7974672797. Team color replaces this same texture line. No separate 2D arc."
+  "w_visible_boundary": "W_AoE/Temp_Mesh original green indicator line: interpolated mesh radius at texture radial brightness centroid 0.26173765, multiplied by source scale 6 = 517.7974672797. Team color replaces this same texture line. No separate 2D arc.",
+  "excluded_systems": {
+    "Hecarim_Base_W_eff": "Original package resource, but no verified cast binding; purple hunterscall layer removed from W cast."
+  }
 }

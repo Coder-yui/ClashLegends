@@ -9,17 +9,26 @@ var _unit: WeakRef
 var _cas: Node3D
 var _buf: Node3D
 var _dead := false
+var _w_upper: SkeletonModifier3D
+
+func consumes_layered_action(action: StringName) -> bool:
+	return action == &"active:cast"
 
 func configure_unit_visual(unit: Unit) -> void:
 	_unit = weakref(unit)
 	_dead = false
 	_ensure_effects()
+	if is_instance_valid(_w_upper): _w_upper.reset_visual()
 	_hide_effects()
 
 func _ensure_effects() -> void:
 	if is_instance_valid(_cas): return
 	_skeleton = find_child("Skeleton3D", true, false) as Skeleton3D
 	if _skeleton != null: _torso_bone = _skeleton.find_bone("root")
+	if _skeleton != null:
+		_w_upper = preload("res://assets/units/hecarim/w_upperbody.gd").new()
+		_skeleton.add_child(_w_upper)
+		_w_upper.configure(self, find_child("AnimationPlayer", true, false) as AnimationPlayer)
 	_cas = Native.new()
 	_buf = Native.new()
 	for entry in [[_cas, "qcas"], [_buf, "qbuf"]]:
@@ -37,7 +46,7 @@ func advance_ambient_visual(_delta: float) -> void:
 		return
 	# action名称保留最近一次事件，结束后不会清空；仅在冲刺动作窗口内抑制Q。
 	# 普通攻击序号、elapsed及动作剩余时间均由快照提供。
-	var charge_active: bool = unit.get_visual_action_name() == &"charge_strike" and unit.get_visual_action_time_left() > 0.0
+	var charge_active: bool = unit.get_visual_action_name() in [&"charge_strike", &"charge_followthrough"] and unit.get_visual_action_time_left() > 0.0
 	var shown: bool = unit.get_visual_state_code() == 3 and unit.get_attack_visual_serial() > 0 and not charge_active
 	var age: float = unit.get_attack_elapsed_visual() * Q_SOURCE_LENGTH / maxf(unit.attack_interval, 0.01)
 	_cas.visible = shown

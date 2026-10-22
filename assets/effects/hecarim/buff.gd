@@ -11,7 +11,7 @@ func bind_model(model: Node3D) -> void:
 func configure(_radius: float, _team: int = 0) -> void:
 	position = Vector3(0.0, GEOMETRY.GROUND_CLEARANCE, 0.0)
 	status_source = "active_buff_clock"
-	for kind in ["aoe", "cas", "eff"]:
+	for kind in ["aoe", "cas"]:
 		var part := PLAYER.new()
 		add_child(part)
 		part.load_kind(kind)

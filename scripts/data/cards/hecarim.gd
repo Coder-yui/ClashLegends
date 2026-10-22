@@ -4,19 +4,20 @@ static func definition() -> Dictionary:
 	return {
 		"gameplay": {
 			"name": "战争之影", "cost": 4, "type": "unit",
-			"description": "旋斩攻击四周地面敌人。连续自主移动3格后加速，下一击可从2格内突进到目标面前并眩晕1.5秒；蓄势时受阻会重置；突进可穿障，硬控会打断。",
+			"description": "旋斩攻击四周地面敌人。连续自主移动3.5格后加速，下一击可从2格内接触目标时踢击，随后沿原方向续冲；击退0.5秒并眩晕1.5秒；致盲时只突进，不造成伤害或控制；蓄势时受阻会重置；突进可穿障，踢击不被眩晕打断，冰冻、凝滞、禁锢和击退会打断；落地可立即普攻。",
 			"hp": 850, "damage": 80, "range": 32.0, "attack_self_radius": 85.0,
 			"speed": SPEED_FAST, "interval": 1.2, "first_hit": 0.15,
 			"size_tier": SIZE_SLIGHTLY_LARGE, "radius": RADIUS_SLIGHTLY_LARGE,
 			"mass": 6.0, "sight": 240.0,
 			"is_air": false, "building_only": false, "can_attack_air": false,
-			"charge_distance": 120.0, "charge_speed_multiplier": 1.5,
+			"charge_distance": 140.0, "charge_speed_multiplier": 1.5,
 			"charge_attack_range": 80.0, "charge_dash_speed": 420.0, "charge_stun_duration": 1.5,
+			"charge_landing_side": "front", "charge_follow_distance": 24.0, "charge_follow_duration": 0.67, "charge_contact_duration": 0.4, "charge_knockback": 40.0, "charge_knockback_duration": 0.5,
 			"active_skills": [{
 				"name": "恐惧之灵", "kind": "continuous_area", "cost": 2, "max_uses": 1, "cooldown": 15.0,
-				"description": "开启4秒领域，每0.5秒对周围地面敌人造成20伤害。领域伤害和普通攻击按实际生命伤害的30%治疗自身；期间可以移动和攻击。",
+				"description": "起手0.44秒期间锁攻击，随后开启4秒领域，每0.5秒对周围地面敌人造成20伤害。领域伤害和普通攻击按实际生命伤害的30%治疗自身；期间可以移动和攻击。",
 				"radius": 120.0, "damage": 20, "duration": 4.0, "tick_interval": 0.5,
-				"heal_ratio": 0.3, "ground_only": true, "impact_delay": 0.0, "cast_duration": 4.0, "cast_locks": [],
+				"heal_ratio": 0.3, "ground_only": true, "impact_delay": 0.44, "cast_duration": 0.44, "cast_locks": ["attack"],
 			}],
 		},
 		"visual": {
@@ -27,14 +28,15 @@ static func definition() -> Dictionary:
 				"idle": "Hecarim_idle1_anm", "move": "Run", "charge_move": "Spell3run", "attack": ["Hecarim_Spell1_anm"],
 				"death": "Death", "death_duration": 0.8,
 				"visual_actions": {
-					"charge_strike": {"animation": "Spell3", "kind": "skill", "durations": [1.0]},
+					"charge_strike": {"animation": "Spell3", "kind": "skill", "durations": [0.4], "clip_ranges": [[0.0, 0.4]]},
+					"charge_followthrough": {"animation": "Spell3", "kind": "skill", "durations": [0.67], "clip_ranges": [[0.4, 1.066667]], "blend_in": 0.0},
 					"active:cast": {"animation": "Hecarim_Spell2_anm", "kind": "skill", "priority": 10, "durations": [1.566667]},
 				},
 			},
 			"attack_hit_visual": "hecarim_q",
 			"resource_dependencies": {"effects": [{"provider": "res://assets/effects/hecarim/player.gd", "variant": "qcas"}, {"provider": "res://assets/effects/hecarim/player.gd", "variant": "qbuf"}, {"provider": "res://assets/effects/hecarim/player.gd", "variant": "qtar"}]},
 			"visual_active_buff_scene": "res://assets/effects/hecarim/buff.tscn",
-			"active_skills": [{"resource_dependencies": {"fields": ["visual_active_buff_scene"], "effects": [{"provider": "res://assets/effects/hecarim/player.gd", "variant": "aoe"}, {"provider": "res://assets/effects/hecarim/player.gd", "variant": "cas"}, {"provider": "res://assets/effects/hecarim/player.gd", "variant": "eff"}]}, "icon_path": "res://assets/skills/hecarim_w.png"}],
+			"active_skills": [{"visual_action": "active:cast", "resource_dependencies": {"fields": ["visual_active_buff_scene"], "effects": [{"provider": "res://assets/effects/hecarim/player.gd", "variant": "aoe"}, {"provider": "res://assets/effects/hecarim/player.gd", "variant": "cas"}]}, "icon_path": "res://assets/skills/hecarim_w.png"}],
 		},
 		# BEGIN IMPORTED AUDIO hecarim
 		"audio": {
