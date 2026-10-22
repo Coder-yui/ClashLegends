@@ -1,7 +1,8 @@
 extends Node3D
 ## 武器大师原版 E 粒子采样。
 ## The authority supplies age; this node never advances battle state.
-const NATIVE_SCALE := 0.010625 # 原始SKN→当前GLB实测0.0085 × 模型包装1.25
+const MODEL_NATIVE_SCALE := 0.010625 # 原始SKN→当前GLB实测0.0085 × 模型包装1.25
+const NATIVE_SCALE := MODEL_NATIVE_SCALE * (150.0 / 159.375) # E范围调至150px，三轴同比缩小
 # 结束施放是独立实例。按 Riot 官方 E 演示中可见的爆发/烟圈校准整组；
 # 只缩放粒子尺寸，不缩放发射中心；整体 Node 缩放会把120源单位高度翻倍。
 # 不用 wave 在透明度归零时的最大几何边界，不逐层修形。

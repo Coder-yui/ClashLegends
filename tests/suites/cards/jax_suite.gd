@@ -3,7 +3,10 @@ extends "res://tests/suites/battle_suite.gd"
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
-	_check_animation_transitions()
+	await _check_animation_transitions()
+	await _check_mid_attack_buff()
+	await _check_pose_controls()
+	_check_covered_attack_delivery()
 	var source := _unit("jax", 0, Vector2(300, 900))
 	var enemy := _unit("jax", 1, Vector2(360, 900))
 	var skill: Dictionary = CardDB.active_skills_for("jax")[0]
@@ -72,11 +75,11 @@ func run(harness: Object, main: Node2D) -> void:
 	fresh._tick_active_statuses(2.0)
 	main._active_skill_effect_system.tick_effects(0.05)
 	_expect(first.hp == 825.0 and first.is_stunned(), "冰冻中自然到期仍造成基础伤害和眩晕")
-	# 半径159.38的2D圆形边界；纵向不随原生特效的镜头椭圆压缩。
+	# 半径150的2D圆形边界；纵向不随原生特效的镜头椭圆压缩。
 	var ring_source := _unit("jax", 0, Vector2(350,750))
 	var boundary_targets: Array[Unit] = []
 	for direction in [Vector2.RIGHT, Vector2.UP]:
-		for distance in [179.38,181.38]:
+		for distance in [170.0,172.0]:
 			var target := _unit("jax", 1, ring_source.position + direction * distance)
 			target.position = ring_source.position + direction * distance
 			boundary_targets.append(target)
@@ -142,26 +145,23 @@ func _check_animation_transitions() -> void:
 		unit.presentation_cue.emit(&"counter_strike:explode")
 		unit._move_intent = Vector2.ZERO if moving else Vector2.UP * unit.move_speed
 		view._sync_visual(false, 0.0)
-		_expect(player.current_animation != ending, "移动/停止立即打断E结束表现")
+		_expect(player.current_animation == ("Spell3_B_Idle_anm" if moving else "Spell3b_run"), "移动/停止切换E结束版本")
 		unit._move_intent = Vector2.ZERO
 		view._sync_visual(false, 0.0)
 		unit.presentation_cue.emit(&"counter_strike:explode")
 		unit._attacking = true
 		unit._attack_visual_serial += 1
 		view._sync_visual(false, 0.0)
-		_expect(player.current_animation == "Attack_1_anm", "新普攻立即打断E结束表现")
-		unit.presentation_cue.emit(&"counter_strike:explode")
-		_expect(player.current_animation == "Attack_1_anm", "正在攻击时不抢播或排队结束动画")
-		unit._attacking = false
-		view._sync_visual(false, 0.0)
-		_expect(player.current_animation == "Attack1_To_Idle", "第一击退出攻击接原版待机收势")
-		unit._attacking = true
+		_expect(player.current_animation == "Spell3_B_Idle_anm", "结束事件与新攻击同帧时E优先")
+		await _main.get_tree().process_frame
 		unit._attack_visual_serial += 1
 		view._sync_visual(false, 0.0)
-		unit._attacking = false
-		unit._move_intent = Vector2.UP * unit.move_speed
+		_expect(player.current_animation == "Attack_2_anm", "下一次新攻击立即接管E结束")
+		unit.presentation_cue.emit(&"counter_strike:explode")
+		_expect(player.current_animation == "Spell3_B_Idle_anm", "正在攻击时结束动作立即覆盖画面")
+		player.advance(player.current_animation_length + 0.01)
 		view._sync_visual(false, 0.0)
-		_expect(player.current_animation == "Attack2_To_Run", "第二击退出攻击接原版转跑收势")
+		_expect(player.current_animation == "Idle1_Base", "结束播完不补播被覆盖的旧攻击")
 		unit.presentation_cue.emit(&"counter_strike:explode")
 		unit.stun(0.5)
 		view._process(0.0)
@@ -171,3 +171,128 @@ func _check_animation_transitions() -> void:
 	var cards := CardDB.all().duplicate(true)
 	cards.jax.visual_animations.transitions["unknown:event>idle"] = "Idle_In"
 	_expect(not CardDB.VALIDATOR.validate_all(cards, false).is_empty(), "未知事件衔接被配置校验拒绝")
+
+func _check_mid_attack_buff() -> void:
+	var unit := _unit("jax", 0, Vector2(300, 1050))
+	var view := _view_for(unit)
+	unit._attacking = true
+	unit._attack_visual_serial = 1
+	unit.attack_timeline.visual_elapsed = 0.12
+	view._sync_visual(false, 0.0)
+	var serial := unit.get_attack_visual_serial()
+	unit.begin_counter_strike(CardDB.active_skills_for("jax")[0])
+	view._sync_visual(false, 0.0)
+	_expect(view._animation_player.current_animation == "Spell3_Run_Intro_anm", "攻击中开E立即覆盖为起手")
+	_expect(view._animation_player.current_animation_position == 0.0, "E起手从头播放，攻击进度独立保留")
+	_expect(unit.get_attack_visual_serial() == serial and unit.get_attack_elapsed_visual() == 0.12 and unit.active_skill_cast_timer == 0.0, "开E不重启攻击或增加施法锁")
+	for index in range(2, 7):
+		await _main.get_tree().process_frame
+		unit._attack_visual_serial = index
+		view._sync_visual(false, 0.0)
+		_expect(view._animation_player.current_animation == "Spell3_Attack%d" % ((index - 1) % 3 + 1), "E三段攻击持续循环")
+	view.free()
+	unit.free()
+
+func _check_pose_controls() -> void:
+	for kind in ["stun", "freeze", "stasis"]:
+		for ending in [false, true]:
+			var unit := _unit("jax", 0, Vector2(300, 1050))
+			var view := _view_for(unit)
+			unit.begin_counter_strike(CardDB.active_skills_for("jax")[0])
+			view._sync_visual(false, 0.0)
+			if ending: unit.presentation_cue.emit(&"counter_strike:explode")
+			view._animation_player.advance(0.1)
+			var clip := view._animation_player.current_animation
+			var position := view._animation_player.current_animation_position
+			match kind:
+				"stun": unit.stun(0.3)
+				"freeze": unit.freeze(0.3)
+				"stasis": unit.apply_stasis(0.3)
+			view._process(0.0)
+			_expect(view._attack_pose_event == &"", "硬控清除E事件姿态调度")
+			if kind != "stun":
+				_expect(view._animation_player.current_animation == clip and is_equal_approx(view._animation_player.current_animation_position, position) and view._animation_player.speed_scale == 0.0, "冰冻/凝滞保留受控瞬间姿势")
+			else:
+				_expect(view._animation_player.current_animation == "Idle1_Base", "眩晕使用普通Idle而非E持续")
+			unit.presentation_cue.emit(&"counter_strike:explode")
+			_expect(view._attack_pose_event == &"", "受控期间E结束事件消费但不抢播")
+			unit.control.tick_hard_controls(0.4)
+			view._process(0.0)
+			_expect(view._animation_player.current_animation not in ["Spell3_Run_Intro_anm", "Spell3_B_Idle_anm", "Spell3b_run"], "解控不续播或补播E起手/结束")
+			await _main.get_tree().process_frame
+			unit._attacking = true
+			unit._attack_visual_serial += 1
+			view._sync_visual(false, 0.0)
+			_expect(view._animation_player.current_animation == "Spell3_Attack1", "解控后新攻击正常接管")
+			view.free()
+			unit.free()
+	var displaced := _unit("jax", 0, Vector2(300, 1050))
+	var displaced_view := _view_for(displaced)
+	displaced.begin_counter_strike(CardDB.active_skills_for("jax")[0])
+	displaced_view._sync_visual(false, 0.0)
+	displaced.apply_knockback(displaced.position + Vector2.LEFT * 40, 90.0, 0.5)
+	displaced_view._process(0.0)
+	_expect(displaced_view._animation_player.current_animation == "Idle1_Base", "E中击退使用普通Idle")
+	displaced.presentation_cue.emit(&"counter_strike:explode")
+	displaced_view._process(0.0)
+	_expect(displaced_view._animation_player.current_animation == "Idle1_Base", "击退期间E结束不能覆盖普通Idle")
+	for tick in 12: displaced.sim_tick(0.05)
+	displaced._move_intent = Vector2.ZERO
+	displaced_view._process(0.0)
+	_expect(displaced_view._animation_player.current_animation == "Spell3_Idle", "击退结束E仍有效则恢复持续动作，不重播起手")
+	displaced_view.free()
+	displaced.free()
+	var simultaneous := _unit("jax", 0, Vector2(300, 1050))
+	var simultaneous_view := _view_for(simultaneous)
+	simultaneous._attacking = true
+	simultaneous._attack_visual_serial = 1
+	simultaneous.begin_counter_strike(CardDB.active_skills_for("jax")[0])
+	simultaneous_view._sync_visual(false, 0.0)
+	_expect(simultaneous_view._animation_player.current_animation == "Spell3_Run_Intro_anm", "新攻击与开E同帧时起手优先")
+	simultaneous.take_damage(99999.0)
+	_expect(simultaneous_view._dying and simultaneous_view._attack_pose_event == &"" and simultaneous_view._animation_player.assigned_animation == "Death", "死亡直接接管并清除E姿态")
+	simultaneous_view.free()
+	if is_instance_valid(simultaneous): simultaneous.free()
+	var cards := CardDB.all().duplicate(true)
+	cards.jax.visual_animations.transitions["active_buff:start>idle"].replace_attack = "yes"
+	_expect(not CardDB.VALIDATOR.validate_all(cards, false).is_empty(), "事件姿态配置拒绝非布尔值")
+
+func _check_covered_attack_delivery() -> void:
+	for ending in [false, true]:
+		var unit := _unit("jax", 0, Vector2(300, 1050))
+		var target := _unit("target_dummy", 1, Vector2(340, 1050))
+		var view := _view_for(unit)
+		var cues: Array = []
+		var record := func(id: String, cue: StringName, _position: Vector2):
+			if id == "jax": cues.append(cue)
+		_main._audio_manager.cue_played.connect(record)
+		if ending: unit.begin_counter_strike(CardDB.active_skills_for("jax")[0])
+		unit._target = target
+		unit._attacking = true
+		unit._attack_visual_pending = true
+		unit.attack_timeline.begin_windup(unit._next_attack_first_hit_time(), 1.0)
+		unit._attack(0.05)
+		view._sync_visual(false, 0.0)
+		_main._audio_manager._process(0.0)
+		var windup := unit.attack_timeline.windup
+		var cooldown := unit.attack_timeline.cooldown
+		var serial := unit.get_attack_visual_serial()
+		var hp := target.hp
+		var circles: int = _main._projectile_system._hit_visuals._circles.size()
+		if ending: unit.presentation_cue.emit(&"counter_strike:explode")
+		else: unit.begin_counter_strike(CardDB.active_skills_for("jax")[0])
+		view._sync_visual(false, 0.0)
+		_expect(unit.attack_timeline.windup == windup and unit.attack_timeline.cooldown == cooldown and unit.get_attack_visual_serial() == serial, "E姿态覆盖不更改攻击计时或序号")
+		for tick in 3: unit._attack(0.05)
+		_expect(target.hp == hp, "被E覆盖的前摇仍在原命中时刻前等待")
+		unit._attack(0.05)
+		_expect(target.hp == hp - 125.0 and unit.basic_attack_sequence == 1, "被覆盖攻击仍在第五Tick造成一次125伤害")
+		_expect(is_equal_approx(unit.attack_timeline.cooldown, 1.4 / 1.1), "被覆盖攻击保留命中后首层被动的正常攻速换算")
+		_expect(&"attack_swing" in cues and &"attack_hit" in cues, "攻击挥击和真实命中声音仍由原攻击事件触发")
+		_expect(_main._projectile_system._hit_visuals._circles.size() == circles + 1, "真实命中继续生成攻击范围特效")
+		view._sync_visual(false, 0.0)
+		_expect(view._animation_player.current_animation == ("Spell3_B_Idle_anm" if ending else "Spell3_Run_Intro_anm"), "命中结算不抢回旧攻击动画")
+		_main._audio_manager.cue_played.disconnect(record)
+		view.free()
+		unit.free()
+		target.free()
