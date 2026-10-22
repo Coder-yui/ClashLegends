@@ -1592,6 +1592,10 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prep
 		_building_tick(dt, true, summons_started)
 		if hp <= 0.0 or is_queued_for_deletion():
 			return
+	# 已起跳的接触踢击保留眩晕剩余时间，但不由眩晕取消位移或命中。
+	if control.stun_timer > 0.0 and movement_strike.stun_protected() and not is_frozen() and not _forced_movement and not knockback.recovery_pending:
+		movement_strike.tick(self, dt)
+		return
 	if is_frozen() or control.stun_timer > 0.0 or knockback.recovery_pending:
 		if control.frozen_timer <= 0.0 and control.stun_timer <= 0.0:
 			queue_redraw()
@@ -1753,7 +1757,7 @@ func on_movement_applied(distance: float, dt: float) -> void:
 		elif charge_time > 0.0:
 			_charge_timer = minf(_charge_timer + dt, charge_time)
 			_charged = _charge_timer + 0.000001 >= charge_time
-	elif _move_intent.length_squared() > 0.001 or (not _charged and (charge_time > 0.0 or charge_distance > 0.0)):
+	elif _move_intent.length_squared() > 0.001 or (not _charged and (charge_time > 0.0 or charge_distance > 0.0)) or float(_base_form_stats.get("charge_contact_duration", 0.0)) > 0.0:
 		# 有行进意图但被堵停，不能站在原地继续积攒冲锋。
 		cancel_charge()
 
@@ -2767,6 +2771,7 @@ func cancel_skill_cast(recover_position: bool = true) -> void:
 
 ## 有效眩晕/击退只取消正在自主位移的技能，不取消已停下的普通尾段。
 func cancel_controlled_action(reason: StringName, recover_position: bool = true) -> void:
+	if reason == ActionCancellation.STUN and movement_strike.stun_protected(): return
 	var cancel_displacement := skill_dash_active
 	if movement_strike.in_transit(): cancelled_visual_serial = maxi(cancelled_visual_serial, get_visual_action_serial())
 	if cancel_displacement:
@@ -2881,7 +2886,7 @@ func root(duration: float, source: StringName = &"legacy", interaction: Dictiona
 		return
 	control.hard.apply(&"root", source, duration, {})
 	CombatInteraction.record_combat_effect(self, interaction)
-	if movement_strike.in_transit(): cancel_charge()
+	if movement_strike.in_transit() or float(_base_form_stats.get("charge_contact_duration", 0.0)) > 0.0: cancel_charge()
 	if skill_dash_active: cancel_skill_cast()
 	if not _forced_movement: _move_intent = Vector2.ZERO
 	structure_rush.interrupt_preparation(self)

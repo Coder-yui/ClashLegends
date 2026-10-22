@@ -154,6 +154,7 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 	effects = effects.duplicate(true)
 	if not effects.has("presentation_source") and is_instance_valid(from):
 		effects.presentation_source = PresentationConfig.attack_source(from)
+	knockback = float(effects.get("movement_strike_knockback", knockback))
 	var displacement_order: Array = effects.get("displacement_order", [])
 	if knockback > 0.0 and displacement_order.is_empty():
 		displacement_order = next_displacement_order(from)
@@ -194,7 +195,7 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 				_settle_bleeding_attack(landed_target, landed_source, effects, result)
 				if landed_source.battle_context != null: landed_source.battle_context.record_growth_hit(landed_source, landed_target))
 		if knockback > 0.0 and target is Unit:
-			submit_knockback(target, origin, knockback, 0.2, 1.4, displacement_order, result, CombatInteraction.effect_context(from, p_team, source_position))
+			submit_knockback(target, effects.get("movement_strike_knockback_origin", origin), knockback, float(effects.get("knockback_duration", 0.2)), 1.4, displacement_order, result, CombatInteraction.effect_context(from, p_team, source_position))
 		defer_benefit(func():
 			var landed_source = _node_from(source_ref)
 			var landed_target = _node_from(target_ref)

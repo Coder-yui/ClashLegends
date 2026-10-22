@@ -103,7 +103,7 @@ const ACTIVE_SKILL_TARGET_SCOPES := [&"self", &"deployment_group"]
 const CAST_LOCKS := [&"movement", &"attack", &"facing"]
 const VISUAL_ACTION_KINDS := [&"deploy", &"transform", &"skill"]
 const VISUAL_ACTION_DESCRIPTOR_FIELDS := [&"animation", &"durations", &"clip_ranges", &"kind", &"priority", &"blend_in", &"blend_out", &"sequence_blend"]
-const VISUAL_TRANSITION_DESCRIPTOR_FIELDS := [&"animation", &"blend_in", &"blend_out", &"start_time"]
+const VISUAL_TRANSITION_DESCRIPTOR_FIELDS := [&"replace_attack", &"animation", &"blend_in", &"blend_out", &"start_time"]
 const TRANSITION_BLEND_FIELDS := [&"default", &"locomotion", &"action_in", &"action_out", &"attack", &"sequence", &"death", &"model_swap"]
 
 ## Validator 会检测未知或未登记字段。新增字段必须同时实现运行时读取逻辑、
@@ -145,7 +145,7 @@ const CARD_FIELDS := [
 	&"continuous_beam_origin_height", &"continuous_beam_forward_offset",
 	&"deploy_sweep_name", &"deploy_sweep_radius", &"deploy_sweep_damage", &"deploy_sweep_knockback",
 	&"deploy_sweep_duration", &"deploy_sweep_mass_factor_max",
-	&"attack_self_radius", &"charge_distance", &"charge_attack_range", &"charge_dash_speed", &"charge_landing_side", &"charge_impact_radius", &"charge_stun_duration", &"heal_every_hits", &"heal_amount", &"charge_time", &"charge_speed_multiplier",
+	&"attack_self_radius", &"charge_distance", &"charge_attack_range", &"charge_dash_speed", &"charge_landing_side", &"charge_impact_radius", &"charge_stun_duration", &"charge_knockback", &"charge_knockback_duration", &"charge_follow_distance", &"charge_follow_duration", &"charge_contact_duration", &"heal_every_hits", &"heal_amount", &"charge_time", &"charge_speed_multiplier",
 	&"on_hit_slow_duration", &"on_hit_slow_multiplier", &"on_hit_max_health_ratio", &"on_hit_tower_damage", &"charge_damage_multiplier", &"attack_pattern", &"attack_damage_multipliers", &"first_strike_damage_multiplier",
 	&"attack_extra_hit_damage_multipliers", &"attack_extra_hit_delays",
 	&"attack_passive_multipliers", &"attack_lifesteal_ratios", &"form_lifetime", &"form_lifetime_after_transition", &"form_speed_boost_duration", &"form_speed_boost_multiplier", &"form_refresh_on_kill",

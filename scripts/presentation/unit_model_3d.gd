@@ -90,6 +90,11 @@ var _idle_cycle_index := 0
 var _idle_cycle_active_animation := &""
 var _idle_transition_animation := &""
 var _cue_transition_active := false
+# 无权威动作锁的事件姿态；只在新攻击序号到来时让出画面。
+var _attack_pose_event := &""
+var _attack_pose_clip := &""
+var _attack_pose_priority_frame := -1
+var _attack_pose_controlled := false
 var _idle_transition_exit_blend := -1.0
 # 最近一次统一播放入口实际采用的策略与时长，供表现回归验证；不参与状态决策。
 var _last_clip_transition_kind := &""
@@ -203,6 +208,10 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 	_last_clip_blend_time = 0.0
 	_last_full_resource_move = false
 	_last_buff_pose = _state.active_buff
+	_attack_pose_event = &""
+	_attack_pose_clip = &""
+	_attack_pose_priority_frame = -1
+	_attack_pose_controlled = false
 	_cue_transition_active = false
 	_last_empowered_ready = _source.is_empowered_attack_ready_visual()
 	_last_haste_active = _source.get_active_speed_multiplier_visual() > 1.001
@@ -407,7 +416,7 @@ func _sync_visual(force: bool, delta: float) -> void:
 	var attack_serial_changed := attack_serial != _last_attack_serial
 	if attack_serial_changed:
 		_last_attack_serial = attack_serial
-		if not _uses_continuous_state_animations():
+		if not _uses_continuous_state_animations() and _attack_pose_priority_frame != Engine.get_process_frames():
 			if _playing_visual_action and _active_action_priority > int(ACTION_PRIORITY.get(&"attack", 20)):
 				_pending_attack_serial = attack_serial
 			else:
@@ -430,7 +439,8 @@ func _sync_visual(force: bool, delta: float) -> void:
 	var buff_pose := _state.active_buff
 	if buff_pose != _last_buff_pose:
 		_last_buff_pose = buff_pose
-		if (_animation_names.has("active_buff_idle") or _animation_names.has("active_buff_move")) and not _playing_visual_action and not _playing_attack and not _playing_deploy_sequence and locomotion_state in [1, 2]:
+		var replaced := buff_pose and _start_attack_pose_event(&"active_buff:start")
+		if not replaced and (_animation_names.has("active_buff_idle") or _animation_names.has("active_buff_move")) and not _playing_visual_action and not _playing_attack and not _playing_deploy_sequence and locomotion_state in [1, 2]:
 			# 可靠结束事件可先于状态快照到达，随后的buff下降沿不能覆盖其收势。
 			if buff_pose or not _cue_transition_active:
 				var route := "active_buff:start>%s" % ("move" if locomotion_state == 2 else "idle")
@@ -465,7 +475,9 @@ func _sync_visual(force: bool, delta: float) -> void:
 	# 出场演出：单位生成首帧启动序列；部署结束后让位给基础状态机。
 	_update_deploy_sequence_lifecycle()
 	# 出场技能序列在部署锁定期间保持动作，不被其他状态打断。
-	if _playing_visual_action:
+	if _attack_pose_event != &"":
+		_refresh_attack_pose_event()
+	elif _playing_visual_action:
 		pass
 	elif _playing_deploy_sequence:
 		pass
@@ -488,12 +500,12 @@ func _sync_visual(force: bool, delta: float) -> void:
 		_current_state = 1
 		_play_state(1)
 	if _animation_player != null:
-		var playback_scale := _state.attack_rate if _playing_attack else (_state.movement_rate if _current_state == 2 and not _playing_visual_action else 1.0)
+		var playback_scale := _state.attack_rate if _playing_attack else (_state.movement_rate if _current_state == 2 and not _playing_visual_action and _attack_pose_event == &"" else 1.0)
 		if _playing_visual_action and _source.get_visual_action_clock().x > 0.5:
 			playback_scale = _source.get_visual_action_clock().y
 		_animation_player.speed_scale = 0.0 if _state.frozen else playback_scale
 
-## 事件动作仅在空闲/移动时展示；攻击、控制、变形优先且不排队补播。
+## 默认事件只在空闲/移动展示；replace_attack可覆盖攻击姿态，控制/变形仍优先。
 func _on_presentation_cue(cue: StringName) -> void:
 	if is_instance_valid(_active_buff_visual): _active_buff_visual.on_cue(cue)
 	if cue in [&"stealth:enter", &"stealth:exit"]:
@@ -503,6 +515,7 @@ func _on_presentation_cue(cue: StringName) -> void:
 			effect.setup(cue == &"stealth:enter")
 		return
 	if _dying or _animation_player == null or not is_instance_valid(_source): return
+	if _start_attack_pose_event(cue): return
 	if _state.dead or _state.frozen or _state.stunned or _state.behavior in [0, 3] or _source.death_form.waiting(): return
 	if _playing_attack or _holding_attack_pose or _playing_visual_action or _playing_deploy_sequence: return
 	var locomotion := _source.get_locomotion_visual_state_code()
@@ -517,7 +530,69 @@ func _on_presentation_cue(cue: StringName) -> void:
 	if descriptor.is_empty() or int(descriptor.get("priority", 40)) >= int(ACTION_PRIORITY[&"attack"]): return
 	_play_visual_action(cue, false, true)
 
+func _event_transition(cue: StringName, locomotion: int) -> Dictionary:
+	var route := "%s>%s" % [cue, "move" if locomotion == 2 else "idle"]
+	var descriptor = _animation_names.get("transitions", {}).get(route, {})
+	return descriptor if descriptor is Dictionary else {}
+
+func _event_replaces_attack(cue: StringName, locomotion: int) -> bool:
+	var descriptor := _event_transition(cue, locomotion)
+	return descriptor.get("replace_attack", false)
+
+## replace_attack 是事件姿态覆盖，不发送权威动作、不取消或重启攻击时间线。
+func _buff_idle_suppressed() -> bool:
+	# 用已同步的行动权限识别击退/强制位移；禁锢仍允许原地攻击，不在此覆盖。
+	return _event_replaces_attack(&"active_buff:start", 1) and (_state.stunned or (not _state.can_move and not _state.can_attack))
+
+func _start_attack_pose_event(cue: StringName) -> bool:
+	var locomotion := _source.get_locomotion_visual_state_code()
+	var descriptor := _event_transition(cue, locomotion)
+	if not descriptor.get("replace_attack", false): return false
+	# 受控时也消费事件；不转交旧事件路线，不在解控时补播。
+	if _state.dead or _state.frozen or _state.stunned or _buff_idle_suppressed() or locomotion == 0 or _playing_deploy_sequence or _playing_visual_action:
+		_last_buff_pose = _state.active_buff
+		return true
+	var clip := StringName(descriptor.get("animation", ""))
+	if not _animation_player.has_animation(clip): return false
+	_playing_attack = false
+	_holding_attack_pose = false
+	_attack_hit_pending = false
+	_attack_recover_pending = false
+	_pending_attack_serial = 0
+	_active_attack_animation = &""
+	_move_sequence_active = false
+	_idle_transition_animation = &""
+	_current_state = locomotion
+	_animation_player.get_animation(clip).loop_mode = Animation.LOOP_NONE
+	_play_clip(clip, &"sequence", 1.0, float(descriptor.get("blend_in", 0.0)))
+	_animation_player.seek(0.0, true)
+	_attack_pose_event = cue
+	_attack_pose_clip = clip
+	_attack_pose_priority_frame = Engine.get_process_frames()
+	_cue_transition_active = true
+	_last_buff_pose = _state.active_buff
+	return true
+
+func _refresh_attack_pose_event() -> void:
+	var locomotion := _source.get_locomotion_visual_state_code()
+	var descriptor := _event_transition(_attack_pose_event, locomotion)
+	if not descriptor.get("replace_attack", false): return
+	var clip := StringName(descriptor.get("animation", ""))
+	_current_state = locomotion
+	if clip == _attack_pose_clip or not _animation_player.has_animation(clip): return
+	var cue := _attack_pose_event
+	var phase := _animation_player.current_animation_position / maxf(_animation_player.current_animation_length, 0.001)
+	_animation_player.get_animation(clip).loop_mode = Animation.LOOP_NONE
+	_play_clip(clip, &"sequence", 1.0, 0.0)
+	_animation_player.seek(phase * _animation_player.get_animation(clip).length, true)
+	_attack_pose_event = cue
+	_attack_pose_clip = clip
+	_cue_transition_active = true
+
 func _play_visual_action(action_name: StringName, preserve_visual_pose: bool = false, presentation_only: bool = false) -> void:
+	# 模型可以用独立骨骼层消费动作，基础播放器继续保留移动相位。
+	if is_instance_valid(_model_root) and _model_root.has_method("consumes_layered_action") and _model_root.call("consumes_layered_action", action_name):
+		return
 	_idle_transition_animation = &""
 	if action_name == &"":
 		_clear_visual_action_state()
@@ -645,6 +720,8 @@ func _set_model_visual_clip(animation_name: StringName) -> void:
 ## crossfade 到目标片段，不再假设源末帧与目标首帧天然一致。
 func _play_clip(animation_name: StringName, transition_kind: StringName = &"default", playback_speed: float = 1.0, blend_override: float = -1.0) -> void:
 	_cue_transition_active = false
+	_attack_pose_event = &""
+	_attack_pose_clip = &""
 	_current_clip_speed = playback_speed
 	if _animation_player == null or animation_name == &"" or not _animation_player.has_animation(animation_name):
 		return
@@ -1062,7 +1139,7 @@ func _play_state(state: int, blend_time: float = -1.0) -> void:
 	if state != 2:
 		_move_override_animation = &""
 	var configured = _move_override_animation if state == 2 and _move_override_animation != &"" else _animation_names.get(String(key), "")
-	if state in [1, 2] and _state.active_buff:
+	if state in [1, 2] and _state.active_buff and not _buff_idle_suppressed():
 		var buff_clip := _first_valid_animation("active_buff_idle" if state == 1 else "active_buff_move")
 		if buff_clip != &"": configured = buff_clip
 	if state == 1 and _source.is_empowered_attack_ready_visual():
@@ -1448,6 +1525,13 @@ func _on_animation_finished(animation_name: StringName) -> void:
 				_finish_model_visual_death()
 				_retire()
 		return
+	if _attack_pose_event != &"":
+		if animation_name == _attack_pose_clip:
+			_attack_pose_event = &""
+			_attack_pose_clip = &""
+			_current_state = _source.get_locomotion_visual_state_code()
+			_play_state(_current_state, 0.0)
+		return
 	if _playing_visual_action:
 		if _source.get_visual_action_clock().x > 0.5: return
 		if animation_name == _active_visual_action:
@@ -1494,7 +1578,11 @@ func _on_animation_finished(animation_name: StringName) -> void:
 	# AnimationPlayer 停在非循环动画的最后一帧。只要模拟仍锁定攻击目标，
 	# 就保留这套骨骼姿态，下一次攻击从此处短混合到另一套动作。
 	var state := _source.get_visual_state_code()
-	if state == 3:
+	if state == 3 and _state.active_buff and _event_replaces_attack(&"active_buff:start", 1):
+		_holding_attack_pose = false
+		_current_state = _source.get_locomotion_visual_state_code()
+		_play_state(_current_state, 0.0)
+	elif state == 3:
 		_holding_attack_pose = true
 		_current_state = 3
 	else:
@@ -1545,6 +1633,8 @@ func _on_source_died() -> void:
 	if _dying:
 		return
 	_dying = true
+	_attack_pose_event = &""
+	_attack_pose_clip = &""
 	_idle_transition_animation = &""
 	_pending_attack_serial = 0
 	_death_followup_started = false
@@ -1739,6 +1829,9 @@ func _on_action_cancelled(payload: Dictionary) -> void:
 	var freeze_pose := String(payload.get("reason", "")) in ["freeze", "stasis"] and _last_visual_action_serial <= int(payload.get("action", 0))
 	var cancel_action := _last_visual_action_serial > 0 and _last_visual_action_serial <= int(payload.get("cancelled_action", -1))
 	if not cancel_attack and not freeze_pose and not cancel_action: return
+	_attack_pose_event = &""
+	_attack_pose_clip = &""
+	_last_buff_pose = _state.active_buff
 	if cancel_attack:
 		_last_attack_serial = maxi(_last_attack_serial, int(payload.get("attack", 0)))
 		_pending_attack_serial = 0
@@ -1786,12 +1879,22 @@ func _sync_control_override() -> bool:
 		_was_controlled = false
 		_animation_player.speed_scale = 1.0
 		return false
+	var idle_control := _state.stunned or _buff_idle_suppressed()
+	if _state.frozen or idle_control:
+		_attack_pose_controlled = true
+		_attack_pose_event = &""
+		_attack_pose_clip = &""
+		_last_buff_pose = _state.active_buff
 	if _state.frozen:
 		_was_controlled = true
 		_animation_player.speed_scale = 0.0
 		# 冻结期间可能换形，消费新模型动作身份，不补播转换。
 		_last_visual_action_serial = _source.get_visual_action_serial()
 		return true
+	if _attack_pose_controlled and not idle_control:
+		_attack_pose_controlled = false
+		_last_buff_pose = _state.active_buff
+		_current_state = -1
 	if _was_controlled:
 		_was_controlled = false
 		_animation_player.speed_scale = 1.0
@@ -1805,9 +1908,10 @@ func _sync_control_override() -> bool:
 	if _state.stunned:
 		_sync_visual_action_while_controlled()
 	# 眩晕保留已开始的技能/部署/转换；普通动作由取消事件切到 Idle。
-	if _state.stunned and not _playing_visual_action and not _playing_deploy_sequence and _source.get_locomotion_visual_state_code() != 0:
-		if _current_state != 1:
-			_transition_to_basic_state(1, 0.1)
+	if idle_control and not _playing_visual_action and not _playing_deploy_sequence and _source.get_locomotion_visual_state_code() != 0:
+		if _current_state != 1 or (_buff_idle_suppressed() and _animation_player.assigned_animation != _first_valid_animation("idle")):
+			_current_state = 1
+			_play_state(1, 0.1)
 		return true
 	return false
 

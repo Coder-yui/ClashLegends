@@ -108,6 +108,7 @@ static func _animations(path: String, value: Variant, errors: PackedStringArray)
 						if not check(field_path, field, "text", errors): continue
 						if field == "animation": check(field_path, descriptor[field], "names", errors)
 						elif field == "kind": check(field_path, descriptor[field], "text", errors)
+						elif field == "replace_attack": check(field_path, descriptor[field], "bool", errors)
 						elif field in ["durations", "clip_ranges"]: array(field_path, descriptor[field], "numbers", errors)
 						else: check(field_path, descriptor[field], "number", errors)
 			"visual_action_durations", "clip_blends", "transition_blends":

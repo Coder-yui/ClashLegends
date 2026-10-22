@@ -470,6 +470,15 @@ static func _validate_combat_stats(label: String, stats: Dictionary, require_siz
 	if stats.has("attack_self_radius") and (not is_finite(float(stats.attack_self_radius)) or float(stats.attack_self_radius) <= 0.0 or float(stats.get("projectile_speed", 0.0)) > 0.0 or float(stats.get("splash_radius", 0.0)) > 0.0):
 		errors.append(label + ".attack_self_radius: 只支持正半径直接近战")
 	if float(stats.get("charge_impact_radius", 0.0)) < 0.0: errors.append(label + ".charge_impact_radius: 必须非负")
+	if stats.has("charge_contact_duration") or stats.has("charge_follow_distance") or stats.has("charge_follow_duration"):
+		for field in ["charge_follow_distance", "charge_follow_duration", "charge_contact_duration", "charge_attack_range"]:
+			if not is_finite(float(stats.get(field, 0.0))) or float(stats.get(field, 0.0)) <= 0.0:
+				errors.append(label + "." + field + ": 接触续冲需要成组正数")
+		if String(stats.get("charge_landing_side", "front")) != "front": errors.append(label + ": 接触续冲必须从目标前侧命中")
+	if stats.has("charge_knockback") or stats.has("charge_knockback_duration"):
+		for field in ["charge_knockback", "charge_knockback_duration", "charge_attack_range"]:
+			if not is_finite(float(stats.get(field, 0.0))) or float(stats.get(field, 0.0)) <= 0.0:
+				errors.append(label + "." + field + ": 突进击退需要成组正数")
 	if stats.has("charge_landing_side") and stats.charge_landing_side not in ["front", "back"]: errors.append(label + ".charge_landing_side: 必须为front或back")
 	if stats.has("charge_attack_range") or stats.has("charge_dash_speed") or stats.has("charge_stun_duration"):
 		for field in ["charge_distance", "charge_attack_range", "charge_dash_speed", "charge_stun_duration"]:
@@ -809,6 +818,8 @@ static func _validate_visual_config(label: String, stats: Dictionary, errors: Pa
 				var transition_config = transitions[transition]
 				if transition_config is Dictionary:
 					_validate_visual_transition_descriptor(transition_label, transition_config, errors)
+					if transition_config.get("replace_attack", false) == true and (route.size() != 2 or not route[0].contains(":")):
+						errors.append("%s.replace_attack: 仅用于事件衔接" % transition_label)
 				else:
 					_validate_animation_name_value(transition_label, transition_config, errors)
 	if animations.has("transition_blends"):
@@ -867,6 +878,10 @@ static func _validate_visual_action_descriptor(label: String, descriptor: Dictio
 
 static func _validate_visual_transition_descriptor(label: String, descriptor: Dictionary, errors: PackedStringArray) -> void:
 	_validate_known_fields(label, descriptor, VISUAL_TRANSITION_DESCRIPTOR_FIELDS, errors)
+	if descriptor.has("replace_attack") and not descriptor.replace_attack is bool:
+		errors.append("%s.replace_attack: 必须是 bool" % label)
+	if descriptor.get("replace_attack", false) == true and not (descriptor.get("animation") is String or descriptor.get("animation") is StringName):
+		errors.append("%s.replace_attack: 必须配置单段动画" % label)
 	_require_fields(label, descriptor, [&"animation"], errors)
 	_validate_animation_name_value("%s.animation" % label, descriptor.get("animation", ""), errors)
 	for blend_field in [&"blend_in", &"blend_out", &"start_time"]:
@@ -1112,8 +1127,7 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 						errors.append("%s.%s: 必须 > 0" % [label, positive_field])
 				if float(skill.get("damage", 0.0)) < 0.0:
 					errors.append("%s.damage: 必须 >= 0" % label)
-				if float(skill.get("duration", 0.0)) > float(skill.get("cast_duration", 0.0)):
-					errors.append("%s.duration: 不得大于 cast_duration" % label)
+				# 领域存续由效果系统计时，可长于起手动作/攻击锁窗口。
 			&"counter_strike":
 				_require_fields(label, skill, [&"duration", &"radius", &"damage", &"damage_per_dodge", &"max_dodges", &"stun_duration"], errors)
 				for field in [&"duration", &"radius", &"damage", &"damage_per_dodge", &"max_dodges", &"stun_duration"]:
