@@ -15,6 +15,7 @@
 | `attack_hit / attack_recover` | 按普攻段对应命中与恢复片段 |
 | `attack_move / attack_to_move` | 拳间移动或按段转跑；空字符串表示无专用片段 |
 | `terrain_move` | 穿地形能力单位位于地形内的循环移动动作；只读几何查询，离开后恢复普通移动，不能触发回血 |
+| `charge_move` | 连续移动蓄势后的冲刺跑步，读取权威同步标志，与普通加速分离 |
 | `empowered_* / haste_move` | 强化待击的移动/攻击/收势/转跑，或主动加速移动 |
 | `attack_enter / attack_retarget_enter / attack_loop` | 持续攻击起手、换目标和循环 |
 | `visual_actions` | 技能与变形动作；映射名需与技能所选动作一致 |

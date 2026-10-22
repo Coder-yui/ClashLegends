@@ -209,6 +209,10 @@ static func passives(stats: Dictionary) -> Array[Dictionary]:
 	if float(stats.get("rush_distance", 0.0)) > 0.0:
 		result.append({"name": "虚空冲撞", "description": "一生一次：距建筑%s格内，在最近的合法位置准备%s秒后冲撞。准备免击退，冻结/眩晕后重新准备；冲撞免控，沿途地面敌军受到%d伤害并被挤向两旁。准备、冲撞及撞后收势期间不能施放其他主动技能。撞击建筑造成%d伤害，扣自身当前生命%s%%，爆发%d只虚空蠕虫。桥面可冲，不能穿过河水。" % [format_number(float(stats.rush_distance) / TILE_SIZE), format_number(float(stats.rush_prepare_time)), int(stats.rush_path_damage), int(stats.rush_building_damage), format_number(float(stats.rush_self_health_ratio) * 100), int(stats.rush_spawn_count)]})
 
+	if float(stats.get("attack_self_radius", 0.0)) > 0.0:
+		result.append({"name": "旋斩", "description": "普通攻击以自身为中心，对周围%s格内的地面敌人造成同等伤害。" % format_number(float(stats.attack_self_radius) / TILE_SIZE)})
+	if float(stats.get("charge_distance", 0.0)) > 0.0:
+		result.append({"name": "毁灭冲锋", "description": "连续自主移动%s格后移速提高%s%%，下一击从%s格内冲到目标面前并眩晕%s秒。蓄势时受阻停下、硬控及击退会重置；突进途中无碰撞，可穿河和建筑，硬控打断后恢复合法落点。" % [format_number(float(stats.charge_distance) / TILE_SIZE), format_number((float(stats.charge_speed_multiplier) - 1.0) * 100.0), format_number(float(stats.charge_attack_range) / TILE_SIZE), format_number(float(stats.charge_stun_duration))]})
 	if bool(stats.get("is_continuous_attack", false)):
 		result.append({"name": "龙息", "description": "持续造成每秒%s伤害，并对目标周围%s范围造成伤害。" % [format_number(float(stats.get("damage", 0.0))), format_number(float(stats.get("splash_radius", 0.0)))]})
 	elif float(stats.get("splash_radius", 0.0)) > 0.0 and float(stats.get("damage", 0.0)) > 0.0:

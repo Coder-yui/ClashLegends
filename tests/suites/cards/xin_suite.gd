@@ -5,6 +5,10 @@ extends "res://tests/suites/battle_suite.gd"
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
+	_check_hit_ground_refresh()
+	_check_dash_area_and_weapon()
+	_check_collisionless_strike()
+	_check_movement_strike()
 	_check_xin_deploy_sweep()
 	_check_xin_art_integration()
 	_check_xin_animation_routes_and_active()
@@ -314,3 +318,223 @@ func _check_xin_animation_routes_and_active() -> void:
 	for unit in [xin, dummy, air, building, tower]:
 		if is_instance_valid(unit):
 			unit.free()
+
+func _check_movement_strike() -> void:
+	var source: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "xin", Vector2(300, 1000), {"deploy_time_override": 0.0}))
+	var target: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "hecarim", Vector2(502, 1000), {"deploy_time_override": 0.0}))
+	var skill: Dictionary = CardDB.active_skills_for("xin")[1]
+	source.movement_strike.arm(skill)
+	_expect(not source.can_start_active_skill(skill), "已准备冲锋时不可重复付款覆盖")
+	_expect(not source.movement_strike.tick(source, 0.05), "冲锋不触达四格之外")
+	target.position.x = source.position.x + source.body_radius + target.body_radius + 160.0
+	source.blind_attack_charges = 2
+	var initial_hp := target.hp
+	_expect(source.movement_strike.tick(source, 0.05), "四格身体边缘内开始真实突进")
+	_expect(target.hp == initial_hp, "起手尚未抵达不提前伤害")
+	for frame in 25:
+		if source.movement_strike.target_ref == null: break
+		_main._movement.tick(0.05)
+		source._move_intent = Vector2.ZERO
+		source.movement_strike.tick(source, 0.05)
+	_expect(target.hp == initial_hp - 68.0 and source.blind_attack_charges == 2, "突进一次68伤害且不消费致盲")
+	_expect(source._target_gap(target) >= -0.05, "抵达目标身前不重叠")
+	_expect(is_equal_approx(source.active_attack_speed_multiplier, 1.4), "真实命中获得40%攻速")
+	_expect(not source.movement_strike.is_armed() and skill.charge_attack_range == 160.0, "技能消费且共享配置不变")
+	_expect(source._attack_visual_pending, "突进恢复后重新准备普通攻击动作序号")
+	var snapshots := NetworkSnapshotSystem.new(_main, _main._projectile_system)
+	var fixture = preload("res://tests/fixtures/network_fixture.gd")
+	var payload: Array = fixture.snapshot_payload(snapshots, 77, source)
+	var packet: Array = fixture.packet(snapshots, [payload], [], fixture.tower_payloads(snapshots), 0.0, _main.runtime._match_rules.time_left, false)
+	var decoded = snapshots.decode_validated(var_to_bytes(packet).compress(FileAccess.COMPRESSION_DEFLATE))
+	_expect(decoded != null and payload[NetworkSnapshotSystem.U_ACTION_NAME] == "charge_strike" and is_equal_approx(float(payload[NetworkSnapshotSystem.U_ACTIVE_ATTACK_SPEED_MULTIPLIER]), 1.4) and payload[NetworkSnapshotSystem.U_BUFF_VISUAL_CLOCK].y == 5.0, "压缩快照携带突进动作、40%攻速和五秒特效时钟")
+	for frame in 99: source._tick_active_statuses(0.05)
+	_expect(is_equal_approx(source.active_attack_speed_multiplier, 1.4), "攻速持续至4.95秒")
+	source._tick_active_statuses(0.05)
+	_expect(source.active_attack_speed_multiplier == 1.0, "五秒到期恢复基础攻速")
+	source.attack_timeline.cancel(true)
+	source.movement_strike.arm(skill)
+	source.position = Vector2(350, 700)
+	target.position = Vector2(350, 580)
+	_expect(source.movement_strike.tick(source, 0.05), "技能冲锋允许跨河")
+	source.cancel_charge()
+	source.movement_strike.arm(skill)
+	source.position = Vector2(300, 1000)
+	target.position = Vector2(440, 1000)
+	_expect(source.movement_strike.tick(source, 0.05), "再次起手")
+	source.stun(0.5)
+	_expect(source.movement_strike.target_ref == null, "眩晕中断正在进行的突进")
+	source.control.hard.clear_family(&"stun")
+	source.attack_timeline.cancel(true)
+	source.movement_strike.arm(skill)
+	source.movement_strike.tick(source, 0.05)
+	target.free()
+	_expect(source.movement_strike.tick(source, 0.05) and not source.movement_strike.is_armed() and source.active_attack_speed_multiplier == 1.0, "目标途中释放安全取消且不奖励攻速")
+	source.free()
+
+func _strike_pair(start: Vector2, end: Vector2) -> Array[Unit]:
+	var source: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "xin", start, {"deploy_time_override": 0.0}))
+	var target: Unit = _main._spawn_unit(UnitSpawnRequest.new(1, "hecarim", end, {"deploy_time_override": 0.0}))
+	source.movement_strike.arm(CardDB.active_skills_for("xin")[1])
+	return [source, target]
+
+func _advance_strike(source: Unit, count: int) -> void:
+	for frame in count:
+		if not source.movement_strike.in_transit(): break
+		_main._movement.tick(0.05)
+		source._move_intent = Vector2.ZERO
+		source.movement_strike.tick(source, 0.05)
+
+func _check_collisionless_strike() -> void:
+	var pair := _strike_pair(Vector2(350,720), Vector2(350,540))
+	var source := pair[0]
+	var target := pair[1]
+	var hp := target.hp
+	_expect(source.movement_strike.tick(source,0.05), "跨河突进找到对岸身前落点")
+	_advance_strike(source, 1)
+	_expect(source.movement_strike.in_transit() and not UnitLandingQuery.displacement_legal(source,source.position), "河中推进保留突进且暂不参与地形碰撞")
+	_advance_strike(source, 12)
+	_expect(target.hp == hp-68 and UnitLandingQuery.legal(source, source.position, false), "跨河抵达合法身前并只伤害一次")
+	source.free()
+	target.free()
+	for kind in ["stun", "freeze", "root", "stasis", "knockback", "forced"]:
+		pair = _strike_pair(Vector2(350,720), Vector2(350,540))
+		source = pair[0]
+		target = pair[1]
+		hp = target.hp
+		source.movement_strike.tick(source,0.05)
+		_advance_strike(source,1)
+		var interrupted_at := source.position
+		match kind:
+			"stun": source.stun(0.5)
+			"freeze": source.freeze(0.5)
+			"root": source.root(0.5)
+			"stasis": source.apply_stasis(0.5)
+			"knockback": source.apply_knockback(source.position + Vector2.UP*20,40,0.3)
+			"forced": source.apply_forced_displacement(Vector2.DOWN,80,0.3)
+		_expect(not source.movement_strike.in_transit() and not source.movement_strike.is_armed(), kind + "消耗并打断正在进行的突进")
+		_expect(target.hp == hp and source.active_attack_speed_multiplier == 1.0, kind + "中断不补伤害或攻速")
+		if kind == "forced":
+			_expect(source.knockback.in_transit and source.position.is_equal_approx(interrupted_at), "新外力从真实中断位置接管，不被旧突进恢复覆盖")
+		else:
+			_expect(UnitLandingQuery.displacement_legal(source,source.position), kind + "中断后使用通用恢复落点")
+		if kind == "root":
+			_expect((source.action_permissions() & ControlState.MOVE)==0 and (source.action_permissions() & ControlState.BASIC_ATTACK)!=0, "禁锢保留普攻只限制自主移动")
+			source._prepare_movement(Vector2.RIGHT,0.05)
+			_expect(source._move_intent.is_zero_approx(), "禁锢阻止自主移动意图")
+			for frame in 10: source.control.tick_hard_controls(0.05)
+			_expect((source.action_permissions() & ControlState.MOVE)!=0, "禁锢按硬控时钟独立到期")
+		source.free()
+		target.free()
+	pair = _strike_pair(Vector2(250,1000), Vector2(420,1000))
+	source = pair[0]
+	target = pair[1]
+	var front := UnitLandingQuery.find_strike_position(source,target,Vector2.RIGHT)
+	var blocker: Unit = _main._spawn_unit(UnitSpawnRequest.new(0,"hecarim",front,{"deploy_time_override":0.0}))
+	var side := UnitLandingQuery.find_strike_position(source,target,Vector2.RIGHT)
+	_expect(side.is_finite() and absf(side.y-target.position.y)>1 and side.x<=target.position.x+0.01, "正前被占用时选前半圆合法身侧")
+	blocker.free()
+	var back_skill: Dictionary = CardDB.active_skills_for("xin")[1].duplicate(true)
+	back_skill.charge_landing_side = "back"
+	source.movement_strike.arm(back_skill)
+	source.movement_strike.tick(source,0.05)
+	_advance_strike(source,15)
+	_expect(source.position.x>target.position.x and target.hp==782.0 and UnitLandingQuery.legal(source,source.position,false), "配置身后时穿过目标到身后合法落点结算")
+	source.free()
+	target.free()
+
+	# 同阵营建筑与单位只作为沿途障碍；不可因穿障而推走它们。
+	for interrupted in [false, true]:
+		pair = _strike_pair(Vector2(250,1000), Vector2(440,1000))
+		source = pair[0]
+		target = pair[1]
+		var obstacle: Unit = _main._spawn_unit(UnitSpawnRequest.new(0,"target_dummy",Vector2(330,1000),{"deploy_time_override":0.0}))
+		var obstacle_position := obstacle.position
+		hp = target.hp
+		source.movement_strike.tick(source,0.05)
+		_advance_strike(source,2)
+		_expect(source.movement_strike.in_transit() and not UnitLandingQuery.displacement_legal(source,source.position), "突进实际穿入建筑且仍可作为受击目标")
+		var before_damage := source.hp
+		source.take_damage(1.0)
+		_expect(source.hp==before_damage-1.0, "无碰撞突进不提供无敌")
+		if interrupted:
+			source.freeze(0.5)
+			_expect(UnitLandingQuery.displacement_legal(source,source.position) and target.hp==hp, "建筑内冰冻恢复到合法区域且不命中")
+		else:
+			_advance_strike(source,12)
+			_expect(target.hp==hp-68.0 and UnitLandingQuery.legal(source,source.position,false), "穿建筑后合法落地并结算")
+		_expect(obstacle.position==obstacle_position, "穿障不推挤沿途建筑")
+		source.free()
+		target.free()
+		obstacle.free()
+
+func _check_dash_area_and_weapon() -> void:
+	var pair := _strike_pair(Vector2(200,1000),Vector2(390,1000))
+	var source := pair[0]
+	var target := pair[1]
+	var units: Array[Unit] = [source,target]
+	var inside: Unit = _main._spawn_unit(UnitSpawnRequest.new(1,"hecarim",Vector2(390,1127.9),{"deploy_time_override":0.0}))
+	var outside: Unit = _main._spawn_unit(UnitSpawnRequest.new(1,"hecarim",Vector2(390,871.9),{"deploy_time_override":0.0}))
+	inside.position = target.position + Vector2(0,108+inside.body_radius-0.1)
+	outside.position = target.position - Vector2(0,108+outside.body_radius+0.1)
+	var ally: Unit = _main._spawn_unit(UnitSpawnRequest.new(0,"hecarim",Vector2(490,1000),{"deploy_time_override":0.0}))
+	var air: Unit = _main._spawn_unit(UnitSpawnRequest.new(1,"voidfish",Vector2(390,1080),{"deploy_time_override":0.0}))
+	var building: Unit = _main._spawn_unit(UnitSpawnRequest.new(1,"target_dummy",Vector2(480,950),{"deploy_time_override":0.0}))
+	units.append_array([inside,outside,ally,air,building])
+	var health: Array = units.map(func(unit): return unit.hp)
+	var impacts: Array[Vector2] = []
+	var callback := func(id: String, cue: StringName, point: Vector2):
+		if id == "xin" and cue == &"charge:hit": impacts.append(point)
+	_main._audio_manager.cue_played.connect(callback)
+	source.hp = 300
+	source._attack_swing_count = 2
+	source.blind_attack_charges = 2
+	_expect(source.movement_strike.tick(source,0.05), "108像素范围冲锋正常起手")
+	_advance_strike(source,12)
+	_expect(target.hp==health[1]-68 and inside.hp==health[2]-68 and outside.hp==health[3], "主目标只伤害一次，108像素按身体边缘包含圈内并排除圈外")
+	_expect(ally.hp==health[4] and air.hp==health[5] and building.hp==health[6]-68, "范围伤害排除友军和空军，包含建筑")
+	_expect(impacts.size()==1 and impacts[0].is_equal_approx(target.position), "多人受伤只在主目标中心发布一次原版冲击")
+	_expect(source.hp==360 and source.blind_attack_charges==2 and is_equal_approx(source.active_attack_speed_multiplier,1.4), "多人命中不重复第三击回血且保留致盲豁免与40%攻速")
+	_main._audio_manager.cue_played.disconnect(callback)
+	var view = load("res://assets/units/xin/xin_view.tscn").instantiate()
+	_main.add_child(view)
+	view.configure_unit_visual(source)
+	view.scale = Vector3.ONE*1.3
+	view.rotation.y = 0.7
+	view.advance_ambient_visual(0.05)
+	_expect(view._buff.visible and view._buff.global_transform.is_equal_approx(view._skeleton.global_transform*view._skeleton.get_bone_global_pose(view._weapon)), "枪上增益完整继承武器骨骼位置朝向和缩放，不重复缩放")
+	for frame in 100: source._tick_active_statuses(0.05)
+	view.advance_ambient_visual(0.05)
+	_expect(not view._buff.visible, "五秒到期清理枪上攻速特效")
+	source.apply_active_buff(2.0, 1.0, 1.2, 1.0, false, false, &"non_haste_probe")
+	view.advance_ambient_visual(0.05)
+	_expect(not view._buff.visible, "其他非攻速增益不能触发无畏冲锋枪光")
+	view.free()
+	for unit in units: unit.free()
+	var invalid := CardDB.all().duplicate(true)
+	invalid.xin.active_skills[1].charge_impact_radius = -1.0
+	_expect(not CardDB.VALIDATOR.validate_all(invalid,false).is_empty(), "突进范围配置拒绝负数")
+
+func _check_hit_ground_refresh() -> void:
+	var world := Node3D.new()
+	_main.add_child(world)
+	var camera := Camera3D.new()
+	world.add_child(camera)
+	camera.position = Vector3(0, 20, 20)
+	camera.look_at(Vector3.ZERO)
+	var effects = load("res://scripts/presentation/attack_hit_visuals.gd").new()
+	_main.add_child(effects)
+	var point := Vector2(360, 900)
+	effects.play_movement_hit("xin", point, world, camera)
+	var hit: Node3D = effects._hits[0].player
+	var expected := preload("res://scripts/presentation/spell_effect_projection.gd").ground(camera, point) + Vector3.UP * 0.1944
+	effects.advance(0.05)
+	effects._process(0.0)
+	_expect(hit.global_position.is_equal_approx(expected), "逻辑推进后的逐帧挂点刷新保持赵信冲击贴地高度")
+	camera.position.x += 2.0
+	effects._process(0.0)
+	expected = preload("res://scripts/presentation/spell_effect_projection.gd").ground(camera, point) + Vector3.UP * 0.1944
+	_expect(hit.global_position.is_equal_approx(expected), "相机变化重新定位冲击仍保留地面偏移")
+	effects.advance(1.1)
+	_expect(effects._hits.is_empty() and not is_instance_valid(hit), "冲击到期释放粒子与挂点记录")
+	effects.free()
+	world.free()

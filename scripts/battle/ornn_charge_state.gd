@@ -45,6 +45,11 @@ func _tick_delivery(dt: float) -> bool:
 		cancelled = true
 		_finish(source)
 		return false
+	if not stopped and source.control.hard.remaining(&"root") > 0.0:
+		source.cancel_skill_cast()
+		cancelled = true
+		_finish(source)
+		return false
 	var prepare := float(skill.charge_prepare_time)
 	var dash_duration := float(skill.length) / float(skill.fixed_speed)
 	var recovery := float(skill.charge_recovery_time) if hit_obstacle else float(skill.charge_miss_recovery_time)

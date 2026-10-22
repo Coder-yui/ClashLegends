@@ -671,5 +671,129 @@
     "source_preview": "ClashLegends-开发素材库/04-中间产物/原版增益重导/2026-10-04/clean/f34f91af19c3e21cf664886b2f28366fa39453ba32b5609ffe592e66bbaeada0.wav",
     "source_sha256": "bbdc6656c124cd3274a6f0e3d8b2c9504c898bac55deecccf2d8be241dfe8573",
     "txtp_sha256": "724e348346ec7c73b2bbb99828309b8a0859c5d0c75a2d3d9ef9644164d7df8f"
+  },
+  {
+    "file": "play_sfx_xinzhao_xinzhaoedash_cast_r1.wav",
+    "event": "Play_sfx_XinZhao_XinZhaoEDash_cast",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/赵信无畏冲锋/audio/xinzhao/txtp/Play_sfx_XinZhao_XinZhaoEDash_cast {r1}.txtp",
+    "source_sha256": "2f8de40b0415c79a62dc73dc3237d3f4d24d58769cc2140793f8a0ee47c76b43",
+    "sha256": "ae2477ff4d3b144a4a8b798e98ccd28c35bb174796a394e5a55a3a1bda66ba69",
+    "duration": 1.2459410430839002,
+    "processing": "wwiser -gv=0dB; freshly decoded vgmstream; no normalization or additional gain",
+    "event_id": 2385643030,
+    "media_ids": [
+      43451691,
+      207530361,
+      336852364
+    ],
+    "selection_note": "media_ids为该TXTP可达候选集合；随机选择由TXTP分组索引指定。",
+    "post_gain_db": 0.0,
+    "runtime_volume_db": 0.0
+  },
+  {
+    "file": "play_sfx_xinzhao_xinzhaoedash_cast_r2.wav",
+    "event": "Play_sfx_XinZhao_XinZhaoEDash_cast",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/赵信无畏冲锋/audio/xinzhao/txtp/Play_sfx_XinZhao_XinZhaoEDash_cast {r2}.txtp",
+    "source_sha256": "aed79bb51ca52720a1d21fcfec58158431e5ba1c0287aa4960897b20ce6743d5",
+    "sha256": "e648584bf6651d6424f6f16b93ed837f9072dbb3d80b6ce7fe25d8d19158df63",
+    "duration": 1.2922222222222222,
+    "processing": "wwiser -gv=0dB; freshly decoded vgmstream; no normalization or additional gain",
+    "event_id": 2385643030,
+    "media_ids": [
+      43451691,
+      207530361,
+      336852364
+    ],
+    "selection_note": "media_ids为该TXTP可达候选集合；随机选择由TXTP分组索引指定。",
+    "post_gain_db": 0.0,
+    "runtime_volume_db": 0.0
+  },
+  {
+    "file": "play_sfx_xinzhao_xinzhaoedash_cast_r3.wav",
+    "event": "Play_sfx_XinZhao_XinZhaoEDash_cast",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/赵信无畏冲锋/audio/xinzhao/txtp/Play_sfx_XinZhao_XinZhaoEDash_cast {r3}.txtp",
+    "source_sha256": "3f90368fd8a9e1612a2280cf88f2d01df0785696a5da586b30bee686eb85d978",
+    "sha256": "f8db5b1caa1dfe62ef699cb420b31410bfaf7dbb1611d5f0dd3ab6130fdb5771",
+    "duration": 1.406439909297052,
+    "processing": "wwiser -gv=0dB; freshly decoded vgmstream; no normalization or additional gain",
+    "event_id": 2385643030,
+    "media_ids": [
+      43451691,
+      207530361,
+      336852364
+    ],
+    "selection_note": "media_ids为该TXTP可达候选集合；随机选择由TXTP分组索引指定。",
+    "post_gain_db": 0.0,
+    "runtime_volume_db": 0.0
+  },
+  {
+    "file": "play_sfx_xinzhao_xinzhaoedash_hit_r1.wav",
+    "event": "Play_sfx_XinZhao_XinZhaoEDash_hit",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/赵信无畏冲锋/audio/xinzhao/txtp/Play_sfx_XinZhao_XinZhaoEDash_hit {r1}.txtp",
+    "source_sha256": "a47fafd8823f4358c4b3ae716e4961a7690fade8348982845e39be774fc4e0bb",
+    "sha256": "7d69983baaa79f81c44fd06149a6b8f827496b27df2043b5d9c1aa5b9a2a2abd",
+    "duration": 2.156031746031746,
+    "processing": "wwiser -gv=0dB; freshly decoded vgmstream; no normalization or additional gain",
+    "event_id": 2412064306,
+    "media_ids": [
+      220981590,
+      850155836,
+      1017850387
+    ],
+    "selection_note": "media_ids为该TXTP可达候选集合；随机选择由TXTP分组索引指定。",
+    "post_gain_db": 0.0,
+    "runtime_volume_db": 0.0
+  },
+  {
+    "file": "play_sfx_xinzhao_xinzhaoedash_hit_r2.wav",
+    "event": "Play_sfx_XinZhao_XinZhaoEDash_hit",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/赵信无畏冲锋/audio/xinzhao/txtp/Play_sfx_XinZhao_XinZhaoEDash_hit {r2}.txtp",
+    "source_sha256": "ceaf18a95e34e6b9544971df8b26e9e398059ec59f3a5e96a618aba14996238d",
+    "sha256": "b0a4593de750c6e94a2ada8f2cc56324524889eb7841213e1e012d7b889b7bad",
+    "duration": 2.196485260770975,
+    "processing": "wwiser -gv=0dB; freshly decoded vgmstream; no normalization or additional gain",
+    "event_id": 2412064306,
+    "media_ids": [
+      220981590,
+      850155836,
+      1017850387
+    ],
+    "selection_note": "media_ids为该TXTP可达候选集合；随机选择由TXTP分组索引指定。",
+    "post_gain_db": 0.0,
+    "runtime_volume_db": 0.0
+  },
+  {
+    "file": "play_sfx_xinzhao_xinzhaoedash_hit_r3.wav",
+    "event": "Play_sfx_XinZhao_XinZhaoEDash_hit",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/赵信无畏冲锋/audio/xinzhao/txtp/Play_sfx_XinZhao_XinZhaoEDash_hit {r3}.txtp",
+    "source_sha256": "6ac2ab41f74bdc7e3830ef91a6730a844b44b2cf47b0e5dbfd63957fb0272de5",
+    "sha256": "2d780c7ffe7bcad65a44854bc75dc94c21df33febdc04940cbc157774bfdb985",
+    "duration": 2.1906802721088434,
+    "processing": "wwiser -gv=0dB; freshly decoded vgmstream; no normalization or additional gain",
+    "event_id": 2412064306,
+    "media_ids": [
+      220981590,
+      850155836,
+      1017850387
+    ],
+    "selection_note": "media_ids为该TXTP可达候选集合；随机选择由TXTP分组索引指定。",
+    "post_gain_db": 0.0,
+    "runtime_volume_db": 0.0
+  },
+  {
+    "file": "play_sfx_xinzhao_xinzhaoebattlecry_buffactivate_loop.wav",
+    "event": "Play_sfx_XinZhao_XinZhaoEBattleCry_buffactivate_loop",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/赵信无畏冲锋/audio/xinzhao/txtp/Play_sfx_XinZhao_XinZhaoEBattleCry_buffactivate_loop.txtp",
+    "source_sha256": "3a11ea4b7ac0d1f379034631840de9b2170b9c3610412862ac9790af39d9d93e",
+    "sha256": "27e5deecb9e5363cc697ad5a960d52413aa126221a306e28e7734ed38c458aef",
+    "duration": 3.1025396825396827,
+    "processing": "wwiser -gv=0dB; freshly decoded vgmstream; no normalization or additional gain",
+    "event_id": 2462806474,
+    "media_ids": [
+      159237439
+    ],
+    "selection_note": "media_ids为该TXTP可达候选集合；随机选择由TXTP分组索引指定。",
+    "post_gain_db": 0.0,
+    "runtime_volume_db": 0.0
   }
 ]

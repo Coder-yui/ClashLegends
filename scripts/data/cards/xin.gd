@@ -32,6 +32,13 @@ static func definition() -> Dictionary:
 					"ground_only": true,
 					"impact_delay": 0.0, "cast_duration": 1.0,
 					"cast_locks": ["movement", "attack", "facing"],
+				}, {
+					"name": "无畏冲锋", "kind": "movement_strike",
+					"cost": 1, "max_uses": 2, "cooldown": 8.0,
+					"description": "下一次攻击距离提升至4格，突进至目标身前，对目标周围108像素内地面敌人造成一次普攻伤害，不受致盲影响；命中后攻击速度提高40%，持续5秒。",
+					"charge_impact_radius": 108.0, "charge_attack_range": 160.0, "charge_dash_speed": 800.0, "charge_visual_duration": 0.35,
+					"ignore_blind": true, "attack_speed_multiplier": 1.4, "duration": 5.0,
+					"cast_duration": 0.0, "impact_delay": 0.0, "cast_locks": [],
 				}],
 		},
 		"visual": { "visual_radius": RADIUS_MEDIUM + VISUAL_RADIUS_PADDING,
@@ -58,9 +65,11 @@ static func definition() -> Dictionary:
 				# 第一、二段攻击复用通用 RunIn；第三段被动攻击使用素材专用转跑动作。
 				"attack_to_move": ["", "", "PassiveAA_to_Run_XinZhaoRework_anm"],
 				"visual_actions": {
+					"charge_strike": {"animation": "Spell3", "durations": [0.35], "kind": "skill", "blend_in": 0.0},
 					"active": {"animation": "Spell4", "durations": [1.0], "kind": "skill", "blend_in": 0.0},
 				},
 				"transitions": {
+					"Spell3>move": "RunIn",
 					"deploy>move": "Spell4_To_Run",
 					"skill>move": "Spell4_To_Run",
 				},
@@ -69,11 +78,15 @@ static func definition() -> Dictionary:
 			"color": Color(0.85, 0.30, 0.25),
 			"active_skills": [{ "icon_path": "res://assets/skills/xin_0.png",
 					"visual_action": "active",
-				}],
+				}, {"icon_path": "res://assets/skills/xin_e.png", "resource_dependencies": {"effects": [{"provider": "res://assets/effects/xin_dash/player.gd", "variant": "cas"}, {"provider": "res://assets/effects/xin_dash/player.gd", "variant": "hit"}, {"provider": "res://assets/effects/xin_dash/player.gd", "variant": "buff"}]}}],
 		},
 		# BEGIN IMPORTED AUDIO xin
 		"audio": {
 			"events": {
+				"charge:start": {"pool": ["res://assets/audio/units/xin/play_sfx_xinzhao_xinzhaoedash_cast_r1.wav", "res://assets/audio/units/xin/play_sfx_xinzhao_xinzhaoedash_cast_r2.wav", "res://assets/audio/units/xin/play_sfx_xinzhao_xinzhaoedash_cast_r3.wav"], "volume_db": 0.0, "bus": "Combat"},
+				"charge:hit": {"pool": ["res://assets/audio/units/xin/play_sfx_xinzhao_xinzhaoedash_hit_r1.wav", "res://assets/audio/units/xin/play_sfx_xinzhao_xinzhaoedash_hit_r2.wav", "res://assets/audio/units/xin/play_sfx_xinzhao_xinzhaoedash_hit_r3.wav"], "volume_db": 0.0, "bus": "Combat"},
+				"active_buff:sustain": {"pool": ["res://assets/audio/units/xin/play_sfx_xinzhao_xinzhaoebattlecry_buffactivate_loop.wav"], "volume_db": 0.0, "bus": "Combat"},
+
 				"deploy:voice": {"pool": ["res://assets/audio/units/xin/play_vo_xinzhao_xinzhaor_cast3d_r1_zh_cn.wav", "res://assets/audio/units/xin/play_vo_xinzhao_xinzhaor_cast3d_r2_zh_cn.wav", "res://assets/audio/units/xin/play_vo_xinzhao_xinzhaor_cast3d_r3_zh_cn.wav"], "volume_db": 0.0, "bus": "Voice"},
 				"active:voice": {"pool": ["res://assets/audio/units/xin/play_vo_xinzhao_xinzhaor_cast3d_r1_zh_cn.wav", "res://assets/audio/units/xin/play_vo_xinzhao_xinzhaor_cast3d_r2_zh_cn.wav", "res://assets/audio/units/xin/play_vo_xinzhao_xinzhaor_cast3d_r3_zh_cn.wav"], "volume_db": 0.0, "bus": "Voice"},
 				"deploy:hit": {"pool": ["res://assets/audio/units/xin/play_sfx_xinzhao_xinzhaor_hitlocation_knockback_r1.wav", "res://assets/audio/units/xin/play_sfx_xinzhao_xinzhaor_hitlocation_knockback_r2.wav"], "volume_db": 0.0, "bus": "Combat"},

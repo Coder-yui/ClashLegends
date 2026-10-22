@@ -1,0 +1,307 @@
+{
+  "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Hecarim.wad.client",
+  "systems": {
+    "aoe": "Hecarim_Base_W_AoE",
+    "cas": "Hecarim_Base_W_cas",
+    "eff": "Hecarim_Base_W_eff"
+  },
+  "sampling_fps": 120,
+  "duration": 5,
+  "emission_stop_at": 4,
+  "native_scale": 0.005793771096951856,
+  "projection": "native XYZ; no camera stretch",
+  "source_dependencies": {
+    "package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Hecarim.wad.client",
+    "package_sha256": "088440b981a911f7921b76c5bbf053f3d1d2cf5d51ba1215fb1193ef309160d5",
+    "files": [
+      {
+        "path": "assets/characters/hecarim/skins/base/particles/common_aura_self.tex",
+        "wad_hash": "6c55205a11a14fb3",
+        "size": 21884,
+        "sha256": "41241eafa700d7aa8a280bc7d943c090005324d146d33777a5b8b4bda3ab977b"
+      },
+      {
+        "path": "assets/characters/hecarim/skins/base/particles/common_color-bellcurve32.tex",
+        "wad_hash": "5ccbaad153b40941",
+        "size": 5500,
+        "sha256": "e82fa00ed0aea98ab6229d0b27f37a57249db6b0ad4d17c9efbe1f658a641e4a"
+      },
+      {
+        "path": "assets/characters/hecarim/skins/base/particles/common_color-hunterscall2.tex",
+        "wad_hash": "4e8700acb4dce4ac",
+        "size": 2756,
+        "sha256": "705eb5b577c4cf2edbe87b2fa3a908aa66ec8ee0cadef92d3e429265f1d465d4"
+      },
+      {
+        "path": "assets/characters/hecarim/skins/base/particles/common_color-rampdown.tex",
+        "wad_hash": "45f73ba1cc11e263",
+        "size": 2756,
+        "sha256": "3fac764e02b2cb8dc91ff01feb7401681e8dffd631f9661a3452d210eea43220"
+      },
+      {
+        "path": "assets/characters/hecarim/skins/base/particles/common_distort-heat.tex",
+        "wad_hash": "b0f39581c2a44a18",
+        "size": 87420,
+        "sha256": "53132720a423ce822525e9f2373e59772fa04091f020c4a1a6284aa505c9b212"
+      },
+      {
+        "path": "assets/characters/hecarim/skins/base/particles/common_feroscioushowl_cas2_base_prgba.tex",
+        "wad_hash": "c6ed4ccd85466742",
+        "size": 10948,
+        "sha256": "69976c3d08251984388539590571e47e729b7a11c9fcf5b48652daa6615a3332"
+      },
+      {
+        "path": "assets/characters/hecarim/skins/base/particles/common_hunterscall01.tex",
+        "wad_hash": "b3c94f6603315aac",
+        "size": 87420,
+        "sha256": "282e89036dc75ac47116a64b4112681b436c622bc4a9114954fe8193d5f38bcc"
+      },
+      {
+        "path": "assets/characters/hecarim/skins/base/particles/hecarim_base_i_cosmic_mult.tex",
+        "wad_hash": "b3c5ea4b142a50bc",
+        "size": 21884,
+        "sha256": "b34fcd63ff3836264601d6a9340177e5cdf5b35cbb64f30072827bc1aa657544"
+      },
+      {
+        "path": "assets/characters/hecarim/skins/base/particles/hecarim_base_i_mis_cosmic_trail.tex",
+        "wad_hash": "5d027fc2c1e6bd7f",
+        "size": 10972,
+        "sha256": "087aa8d7297986c5b4eda73731a7afeb0a1c979b3808453b66962c4c6b6e3869"
+      },
+      {
+        "path": "assets/characters/hecarim/skins/base/particles/hecarim_base_i_mis_smoke_trail.tex",
+        "wad_hash": "dd33c58646d3226b",
+        "size": 87452,
+        "sha256": "b07944bcc5ba608c0f3b188c866894ff21d79111679688ea29a7dbcb9e1218d9"
+      },
+      {
+        "path": "assets/characters/hecarim/skins/base/particles/hecarim_base_i_motes.tex",
+        "wad_hash": "c2cea27ff4da692b",
+        "size": 2756,
+        "sha256": "625b4d71a67001ca78bc97a1c630f06a2e060d1a6daa11c37d343ea2f6ffbd60"
+      },
+      {
+        "path": "assets/characters/hecarim/skins/base/particles/hecarim_base_idle_embers.tex",
+        "wad_hash": "f813ca6275ff1a1f",
+        "size": 21884,
+        "sha256": "2de6131a55c270a795b1002401845faf9c11fb439995d2ed8b8b86db7e169aff"
+      },
+      {
+        "path": "assets/characters/hecarim/skins/base/particles/hecarim_base_shockwave.tex",
+        "wad_hash": "3c605201e008762c",
+        "size": 87420,
+        "sha256": "66810142ab584828563cd1e261a3d5c93c86db087d27fc3261d05b4282b8692b"
+      },
+      {
+        "path": "assets/characters/hecarim/skins/base/particles/hecarim_base_trail_normal.tex",
+        "wad_hash": "69edaac336ad8a6a",
+        "size": 5500,
+        "sha256": "e10db5ba1a301417b8889ccb2ea8dc80b784b51561b5e50c08a5993dbeb6a744"
+      },
+      {
+        "path": "assets/characters/hecarim/skins/base/particles/hecarim_base_w_border_ring.scb",
+        "wad_hash": "87f0c5aa7a1e77c4",
+        "size": 18112,
+        "sha256": "a99f0d5428d9f6c9bbcd4faefb4976b111255d9587792e11fb1cadc8110d4793"
+      },
+      {
+        "path": "assets/characters/hecarim/skins/base/particles/hecarim_base_w_buf_circle_blue.tex",
+        "wad_hash": "af09df62035a5191",
+        "size": 2756,
+        "sha256": "3bc7363f14f5b02de67cafc0a44423e5f6f8264d3a4a5992e8d22987a7c1cce4"
+      },
+      {
+        "path": "assets/characters/hecarim/skins/base/particles/hecarim_base_w_cas_swirl.scb",
+        "wad_hash": "1d3087e523668a48",
+        "size": 24912,
+        "sha256": "fef74b66d12051791c2b03e9315da91e10c8cc7daf8b75269c9ce1a883d29ffc"
+      },
+      {
+        "path": "assets/characters/hecarim/skins/base/particles/hecarim_base_w_circle_mesh.scb",
+        "wad_hash": "10c0be64be0217dc",
+        "size": 31552,
+        "sha256": "ed09ace7123b22d10f079d6602935cf7c629e0c340e5067f0cbcd8f4e489e663"
+      },
+      {
+        "path": "assets/characters/hecarim/skins/base/particles/hecarim_base_w_cylinder.scb",
+        "wad_hash": "f989ce56863fae69",
+        "size": 17632,
+        "sha256": "9b3f00e40533f54327bd87e119768a5a12900ec290be43a579995bfa17e0100a"
+      },
+      {
+        "path": "assets/characters/hecarim/skins/base/particles/hecarim_base_w_fill_circle.scb",
+        "wad_hash": "9a68334c3f0c106c",
+        "size": 26432,
+        "sha256": "9f2abd94935978d246c023a195769a9e999198634876fedb073a5a315f4f0acb"
+      },
+      {
+        "path": "assets/characters/hecarim/skins/base/particles/hecarim_base_w_ghoul_swirl.tex",
+        "wad_hash": "ab246783ee285211",
+        "size": 174812,
+        "sha256": "0df861b9be1d0ad64fcca02497fdf42a636a82361d83b355fb60af4ae0b20228"
+      },
+      {
+        "path": "assets/characters/hecarim/skins/base/particles/hecarim_base_w_indicator.tex",
+        "wad_hash": "f581e3bb08175136",
+        "size": 174812,
+        "sha256": "85e48a29ba211238643fb8008ae7c24ce4de3dfa53f0fc286ad467263af0e012"
+      },
+      {
+        "path": "assets/characters/hecarim/skins/base/particles/hecarim_base_w_indicator_ring.scb",
+        "wad_hash": "825b78672e4371fc",
+        "size": 18112,
+        "sha256": "4cb52835afc3e67f1fbc43fa5735cc63549583e549e9bb807ce39efd6ecf6d3d"
+      },
+      {
+        "path": "assets/characters/hecarim/skins/base/particles/hecarim_base_w_indicator_ult.tex",
+        "wad_hash": "72899c2da2aa3e79",
+        "size": 87420,
+        "sha256": "dde6907cdc1285416cc9d1037bb1953c77bdcec98e6760a8a6e38b32e4f24b9c"
+      },
+      {
+        "path": "assets/characters/hecarim/skins/base/particles/hecarim_base_wispy.tex",
+        "wad_hash": "efe0478d0fe573e7",
+        "size": 87420,
+        "sha256": "6c16e696c7e73363b10a828297635dcd92daa483f9fd5fcc350961aa37729443"
+      },
+      {
+        "path": "assets/characters/samira/skins/base/particles/samira_base_p_flame_mult.tex",
+        "wad_hash": "3cd3927c0fe94902",
+        "size": 87420,
+        "sha256": "735fefc26bcb076b3f274bdffac7a6d3a6c847dad921253288cf2d1e8a0dba37"
+      },
+      {
+        "path": "assets/characters/samira/skins/base/particles/samira_base_p_screen_flames_soft.tex",
+        "wad_hash": "cc5bb3899c204f2a",
+        "size": 87420,
+        "sha256": "ffe7cbda8b8be78b3093bf2b45a0cd1c928b64dcff335a2270a19a04c30d4a4b"
+      },
+      {
+        "path": "assets/shared/particles/bigglow02_2.tex",
+        "wad_hash": "b4f44f95abaa3e8a",
+        "size": 2756,
+        "sha256": "6a347f4c46ff7541c05bf2d175df0e6874ff4477fb0fd7f411bf9c20c0ab819a"
+      }
+    ],
+    "note": "Staged source assets only. Model materials and particle dependencies must be verified before project integration."
+  },
+  "raw_system_sha256": {
+    "eff.raw.json": "84233b1d25b02067768fabf40e05485fa046d41c674224cf8d3b13d2de381118",
+    "eff02.raw.json": "044e01e438c1701ddc40b14477811e252352c037ad5d31ea88c4aaf5a29376da",
+    "aoe.raw.json": "3154b373224c5be735232d8b07b5169a6e00270716900bfdf8e139a5ba179db5",
+    "cas.raw.json": "1673fb12175f075618da94b0361f44bdaa917b225d854a1a8f96d4344a1f5329",
+    "qcas.raw.json": "1aaa4e357ead76dd5f9c88f0b2c5b143a4ef5cd13fec3277616d5908495d2d92",
+    "qbuf.raw.json": "845dc9af07f9f51fd5a024ebaaf1f91cb2ece89fa5c5257c60820f08f46072de",
+    "qweapon.raw.json": "910be81de97d5e94837f31caa3e8bbc80234d9476555db8b8865d5c6e9330e07",
+    "qtar.raw.json": "961d5186466348db5ed17ea61ae279b467abb1ed909c22cd1a39cc8079fb9864"
+  },
+  "q_systems": {
+    "qcas": "Hecarim_Base_Q_Cas",
+    "qbuf": "Hecarim_Base_Q_buf",
+    "qtar": "Hecarim_Base_Q_tar"
+  },
+  "q_sampling": {
+    "fps": 120,
+    "duration": 1.5,
+    "native_scale": 0.006649224260664642,
+    "animation_clock": "attack elapsed * 0.96774149 / base attack interval"
+  },
+  "q_source_dependencies": [
+    {
+      "path": "ASSETS/Characters/Hecarim/Skins/Base/Particles/Hecarim_Base_I_Cosmic_Mult.tex",
+      "sha256": "b34fcd63ff3836264601d6a9340177e5cdf5b35cbb64f30072827bc1aa657544"
+    },
+    {
+      "path": "ASSETS/Characters/Hecarim/Skins/Base/Particles/Hecarim_Base_Idle_Embers.tex",
+      "sha256": "2de6131a55c270a795b1002401845faf9c11fb439995d2ed8b8b86db7e169aff"
+    },
+    {
+      "path": "ASSETS/Characters/Hecarim/Skins/Base/Particles/Hecarim_Base_Q_Horizontal_Grad.tex",
+      "sha256": "2dbb78767dc54203c2226f228d7ec2e54d2368bed93521fff6d9ac8ac0ea72ba"
+    },
+    {
+      "path": "ASSETS/Characters/Hecarim/Skins/Base/Particles/Hecarim_Base_Q_MuzzleFlash_Backdrop.tex",
+      "sha256": "699f96366d21c189399ad266b94a911b197ae396d474a17c373a4afe24861c64"
+    },
+    {
+      "path": "ASSETS/Characters/Hecarim/Skins/Base/Particles/Hecarim_Base_Q_Sharp_Ray.tex",
+      "sha256": "c4a4687e46911ccb533a2fbef486d144b53da24c26a6c46f104750bc3b1c15dc"
+    },
+    {
+      "path": "ASSETS/Characters/Hecarim/Skins/Base/Particles/Hecarim_Base_Q_Slash_tar.scb",
+      "sha256": "2e35e57c53f2f8d1c4d16161e7ec3b0e4e339fbd56218bf067ae748987abbdec"
+    },
+    {
+      "path": "ASSETS/Characters/Hecarim/Skins/Base/Particles/Hecarim_Base_Q_Swoosh_Framesheet.tex",
+      "sha256": "335fc73e365d60075b93dc8b78664cd712b87e4bf39c5060d7eadd7ec86f5c9f"
+    },
+    {
+      "path": "ASSETS/Characters/Hecarim/Skins/Base/Particles/Hecarim_Base_Shockwave.tex",
+      "sha256": "66810142ab584828563cd1e261a3d5c93c86db087d27fc3261d05b4282b8692b"
+    },
+    {
+      "path": "ASSETS/Characters/Hecarim/Skins/Base/Particles/Hecarim_Base_Smoke_Trail02.tex",
+      "sha256": "1e466b1e87960f89aa9a0a769355aff60f20db1fe9fee6a495b6ecb7518085cd"
+    },
+    {
+      "path": "ASSETS/Characters/Hecarim/Skins/Base/Particles/Hecarim_Base_Trail_Normal.tex",
+      "sha256": "e10db5ba1a301417b8889ccb2ea8dc80b784b51561b5e50c08a5993dbeb6a744"
+    },
+    {
+      "path": "ASSETS/Characters/Hecarim/Skins/Base/Particles/Hecarim_Base_Wispy.tex",
+      "sha256": "6c16e696c7e73363b10a828297635dcd92daa483f9fd5fcc350961aa37729443"
+    },
+    {
+      "path": "ASSETS/Characters/Hecarim/Skins/Base/Particles/Hecarim_Base_colorGrad.tex",
+      "sha256": "cc6b41e3f530aaf0c34160fcaaf6edb06415a685d60cb18c62965df8a3b8631c"
+    },
+    {
+      "path": "ASSETS/Characters/Hecarim/Skins/Base/Particles/Hecarim_Base_softTrail.tex",
+      "sha256": "5b0ffa5d223c2b3158e821bd8dd31be161812f327741898acf57141a55a9a047"
+    },
+    {
+      "path": "ASSETS/Characters/Hecarim/Skins/Base/Particles/Hecarim_base_Q_Weapon_Gradient.tex",
+      "sha256": "817e18ad12aab612b6f85c506d7cdee9fd1c1002c01c9182f8cdb03934134558"
+    },
+    {
+      "path": "ASSETS/Characters/Hecarim/Skins/Base/Particles/common_Flare-Omnimax.tex",
+      "sha256": "452ff1dac9561752a117ea727cbf9e6e24a535ee92da6818df084e09a1b43f33"
+    },
+    {
+      "path": "ASSETS/Characters/Hecarim/Skins/Skin08/Particles/Hecarim_Skin08_Glow.tex",
+      "sha256": "d2b0455a61633c374d4153fca0eb7c3b19249b69f28995e07404dc6e9a4a00c2"
+    },
+    {
+      "path": "ASSETS/Characters/Hecarim/Skins/Skin08/Particles/Hecarim_Skin08_Glow2.tex",
+      "sha256": "2c8381f9307d29a59145a119e860fd3a70044a29d7c0f1d1e56b06d0296485fa"
+    },
+    {
+      "path": "ASSETS/Characters/Hecarim/Skins/Skin08/Particles/Hecarim_Skin08_Noise2.tex",
+      "sha256": "07d1c6d028aed8b8733a6f71a674229c25a161ce521a62c40247b94a6b27eaee"
+    },
+    {
+      "path": "ASSETS/Characters/Hecarim/Skins/Skin08/Particles/Hecarim_Skin08_Trail2.tex",
+      "sha256": "3722f9dcd21255145d2083993df4db4959b9ffcf38d5ebb7b5b4f2635c488e1c"
+    },
+    {
+      "path": "ASSETS/Characters/Hecarim/Skins/Skin08/Particles/Hecarim_Skin08_Trail3.tex",
+      "sha256": "10a3622ab848247d6e5928a9ba2a1f7a6a82217732016c15a42e6076807f2261"
+    },
+    {
+      "path": "ASSETS/Characters/Hecarim/Skins/Skin08/Particles/Q_Mesh.scb",
+      "sha256": "ddf659cce3a5c3a348bfedaa3bb7474c218671b0e1cd0ff4a565139b506ef034"
+    },
+    {
+      "path": "ASSETS/Shared/Particles/bigglow02_2.tex",
+      "sha256": "6a347f4c46ff7541c05bf2d175df0e6874ff4477fb0fd7f411bf9c20c0ab819a"
+    }
+  ],
+  "placement": {
+    "w": "foot XZ, ground y=0.04",
+    "q": "foot XZ, upper-body root bone height; project adaptation"
+  },
+  "geometry": "res://assets/effects/hecarim/geometry.gd",
+  "untextured_layers": "qcas/trail_flourish_skin retained in source, not rendered as a default white quad",
+  "q_weapon_trail_limitation": "Reconstructed from native Q_buf curves, smoke texture and sampled Hecarim_Spell1_anm BUFFBONE_GLB_WEAPON_1 path. Camera-facing connected ribbon, birth order, smoothing 2, cutoff 1050, tiling 800. Bone attachment is project adaptation; no Riot server attachment script available.",
+  "w_visible_boundary": "W_AoE/Temp_Mesh original green indicator line: interpolated mesh radius at texture radial brightness centroid 0.26173765, multiplied by source scale 6 = 517.7974672797. Team color replaces this same texture line. No separate 2D arc."
+}

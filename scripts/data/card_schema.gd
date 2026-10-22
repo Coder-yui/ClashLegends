@@ -98,7 +98,7 @@ const SIZE_RADII := {
 const PROJECTILE_VISUALS := [&"malzahar_missile", &"voidfish_missile", &"tristana_bullet", &"jinx_rocket", &"jinx_bullet", &"corki_bullet", &"fireball", &"crossbow_bolt", &"venom_bolt", &"magic_orb", &"kayle_sword", &"orb", &"arrow", &"needle", &"boomerang", &"ice_cone"]
 const VISUAL_SPAWN_TRANSITIONS := [&"drop", &"rebirth"]
 const SPELL_KINDS := [&"void_summoning", &"explosive_cask", &"corrosion", &"stasis", &"zap", &"lightning", &"freeze", &"heal", &"mirror"]
-const ACTIVE_SKILL_KINDS := [&"counter_strike", &"spell_void_summoning", &"self_sacrifice", &"blink_nova", &"channeled_attack", &"death_spawn", &"sacrifice_empower", &"spell_explosive_cask", &"effect_shield", &"toggle_form", &"aftershock", &"spell_corrosion", &"undying_rage", &"spell_freeze", &"spell_stasis", &"permanent_growth", &"spell_lightning", &"dash_strike", &"terrain_charge", &"bleeding_execute", &"explosive_shield", &"sanctuary", &"timed_form", &"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"continuous_area", &"empowered_attack", &"attack_lifesteal", &"area_shield", &"restoration_shield", &"spell_heal"]
+const ACTIVE_SKILL_KINDS := [&"movement_strike", &"counter_strike", &"spell_void_summoning", &"self_sacrifice", &"blink_nova", &"channeled_attack", &"death_spawn", &"sacrifice_empower", &"spell_explosive_cask", &"effect_shield", &"toggle_form", &"aftershock", &"spell_corrosion", &"undying_rage", &"spell_freeze", &"spell_stasis", &"permanent_growth", &"spell_lightning", &"dash_strike", &"terrain_charge", &"bleeding_execute", &"explosive_shield", &"sanctuary", &"timed_form", &"nova", &"buff", &"summon", &"dual_form", &"frontal", &"forward_area", &"continuous_area", &"empowered_attack", &"attack_lifesteal", &"area_shield", &"restoration_shield", &"spell_heal"]
 const ACTIVE_SKILL_TARGET_SCOPES := [&"self", &"deployment_group"]
 const CAST_LOCKS := [&"movement", &"attack", &"facing"]
 const VISUAL_ACTION_KINDS := [&"deploy", &"transform", &"skill"]
@@ -145,7 +145,7 @@ const CARD_FIELDS := [
 	&"continuous_beam_origin_height", &"continuous_beam_forward_offset",
 	&"deploy_sweep_name", &"deploy_sweep_radius", &"deploy_sweep_damage", &"deploy_sweep_knockback",
 	&"deploy_sweep_duration", &"deploy_sweep_mass_factor_max",
-	&"heal_every_hits", &"heal_amount", &"charge_time", &"charge_speed_multiplier",
+	&"attack_self_radius", &"charge_distance", &"charge_attack_range", &"charge_dash_speed", &"charge_landing_side", &"charge_impact_radius", &"charge_stun_duration", &"heal_every_hits", &"heal_amount", &"charge_time", &"charge_speed_multiplier",
 	&"on_hit_slow_duration", &"on_hit_slow_multiplier", &"on_hit_max_health_ratio", &"on_hit_tower_damage", &"charge_damage_multiplier", &"attack_pattern", &"attack_damage_multipliers", &"first_strike_damage_multiplier",
 	&"attack_extra_hit_damage_multipliers", &"attack_extra_hit_delays",
 	&"attack_passive_multipliers", &"attack_lifesteal_ratios", &"form_lifetime", &"form_lifetime_after_transition", &"form_speed_boost_duration", &"form_speed_boost_multiplier", &"form_refresh_on_kill",
@@ -161,7 +161,7 @@ const CARD_FIELDS := [
 const AUDIO_FIELDS := [&"team_overrides", &"attack_launch_until_impact", &"attack_hit_once_by_segment", &"attack_swing_lead_time", &"attack_swing", &"attack_hit", &"attack_launch_by_segment", &"attack_hit_by_segment", &"empowered_hit", &"first_strike_hit", &"attack_swing_volume_db", &"attack_hit_volume_db", &"events"]
 const VISUAL_ANIMATION_FIELDS := [
 	&"stealth_idle", &"stealth_move", &"active_buff_attack",
-	&"stun_enter", &"stun_loop", &"stun_exit", &"deploy", &"deploy_durations", &"deploy_clip_ratio", &"idle", &"idle_cycle", &"move", &"move_enter", &"haste_move", &"terrain_move", &"full_resource_move",
+	&"stun_enter", &"stun_loop", &"stun_exit", &"deploy", &"deploy_durations", &"deploy_clip_ratio", &"idle", &"idle_cycle", &"move", &"move_enter", &"haste_move", &"charge_move", &"terrain_move", &"full_resource_move",
 	&"move_cycle", &"attack", &"attack_enter", &"attack_retarget_enter", &"attack_loop",
 	&"attack_clip_ranges", &"attack_hit_clip_ranges", &"attack_hit", &"attack_hit_duration", &"attack_recover", &"attack_recover_delay", &"attack_reference_interval",
 	&"initial_move", &"attack_structure", &"attack_move", &"attack_to_move",
@@ -171,6 +171,7 @@ const VISUAL_ANIMATION_FIELDS := [
 	&"visual_action_durations", &"transitions", &"transition_blends", &"clip_blends",
 ]
 const ACTIVE_SKILL_FIELDS := [
+	&"charge_attack_range", &"charge_dash_speed", &"charge_landing_side", &"charge_impact_radius", &"charge_visual_duration", &"ignore_blind",
 	&"damage_per_dodge", &"max_dodges",
 	&"strike_type",
 	&"visual_scale_multiplier",

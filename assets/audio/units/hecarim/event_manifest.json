@@ -1,0 +1,435 @@
+[
+  {
+    "file": "play_sfx_hecarim_hecarimrapidslash_oncast_r1.wav",
+    "event": "Play_sfx_Hecarim_HecarimRapidSlash_OnCast",
+    "event_id": 3740404387,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim/event_wav/Play_sfx_Hecarim_HecarimRapidSlash_OnCast {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim/txtp/Play_sfx_Hecarim_HecarimRapidSlash_OnCast {r1}.txtp",
+    "media_ids": [
+      174942357,
+      545141109,
+      565088924,
+      590573422
+    ],
+    "duration": 1.6037,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "cdb073e18e4ae170d15909bccdcab3fdb8207d634c773e16632ea720f10866ef",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_hecarim_hecarimrapidslash_oncast_r2.wav",
+    "event": "Play_sfx_Hecarim_HecarimRapidSlash_OnCast",
+    "event_id": 3740404387,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim/event_wav/Play_sfx_Hecarim_HecarimRapidSlash_OnCast {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim/txtp/Play_sfx_Hecarim_HecarimRapidSlash_OnCast {r2}.txtp",
+    "media_ids": [
+      174942357,
+      545141109,
+      565088924,
+      590573422
+    ],
+    "duration": 1.301,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "50d611af126cf471e7b0682ec51154301b2b8bcd5cfb7fb60f823ad1330af389",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_hecarim_hecarimrapidslash_oncast_r3.wav",
+    "event": "Play_sfx_Hecarim_HecarimRapidSlash_OnCast",
+    "event_id": 3740404387,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim/event_wav/Play_sfx_Hecarim_HecarimRapidSlash_OnCast {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim/txtp/Play_sfx_Hecarim_HecarimRapidSlash_OnCast {r3}.txtp",
+    "media_ids": [
+      174942357,
+      545141109,
+      565088924,
+      590573422
+    ],
+    "duration": 1.301,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "50d611af126cf471e7b0682ec51154301b2b8bcd5cfb7fb60f823ad1330af389",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_hecarim_hecarimrapidslash_hit_r1.wav",
+    "event": "Play_sfx_Hecarim_HecarimRapidSlash_hit",
+    "event_id": 1937336912,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim/event_wav/Play_sfx_Hecarim_HecarimRapidSlash_hit {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim/txtp/Play_sfx_Hecarim_HecarimRapidSlash_hit {r1}.txtp",
+    "media_ids": [
+      470549977,
+      720616464,
+      747367606,
+      891844991
+    ],
+    "duration": 1.1329,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "6b4cb6af2ef1a66287adb302004fcaf216a4f17b82797a53b0ae250b303a6fe6",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_hecarim_hecarimrapidslash_hit_r2.wav",
+    "event": "Play_sfx_Hecarim_HecarimRapidSlash_hit",
+    "event_id": 1937336912,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim/event_wav/Play_sfx_Hecarim_HecarimRapidSlash_hit {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim/txtp/Play_sfx_Hecarim_HecarimRapidSlash_hit {r2}.txtp",
+    "media_ids": [
+      470549977,
+      720616464,
+      747367606,
+      891844991
+    ],
+    "duration": 0.8237,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "b1ac6655c5a8235830ef5277f7b822229ec82e9d764ce59cdc92769d9c00a4de",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_hecarim_hecarimrapidslash_hit_r3.wav",
+    "event": "Play_sfx_Hecarim_HecarimRapidSlash_hit",
+    "event_id": 1937336912,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim/event_wav/Play_sfx_Hecarim_HecarimRapidSlash_hit {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim/txtp/Play_sfx_Hecarim_HecarimRapidSlash_hit {r3}.txtp",
+    "media_ids": [
+      470549977,
+      720616464,
+      747367606,
+      891844991
+    ],
+    "duration": 1.4365,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "6822554c9ab59d3d3aa51f3905b834b9cf2508dc29dcc7f55f2b20bd3b60ef80",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_hecarim_hecarimrampattack_oncast_r1.wav",
+    "event": "Play_sfx_Hecarim_HecarimRampAttack_OnCast",
+    "event_id": 1013679048,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim/event_wav/Play_sfx_Hecarim_HecarimRampAttack_OnCast {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim/txtp/Play_sfx_Hecarim_HecarimRampAttack_OnCast {r1}.txtp",
+    "media_ids": [
+      634816510,
+      988227549
+    ],
+    "duration": 0.6518,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "c233ca61b0382daac60df336aeb40db33631feae07808fa37597ba726f30ab1b",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_hecarim_hecarimrampattack_oncast_r2.wav",
+    "event": "Play_sfx_Hecarim_HecarimRampAttack_OnCast",
+    "event_id": 1013679048,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim/event_wav/Play_sfx_Hecarim_HecarimRampAttack_OnCast {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim/txtp/Play_sfx_Hecarim_HecarimRampAttack_OnCast {r2}.txtp",
+    "media_ids": [
+      634816510,
+      988227549
+    ],
+    "duration": 1.3636,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "aff679d2bf89ee98feb20414cbd33a4cf8fc9800e197ce6427ca377ba6039757",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_hecarim_hecarimrampattack_onhit_r1.wav",
+    "event": "Play_sfx_Hecarim_HecarimRampAttack_OnHit",
+    "event_id": 784484952,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim/event_wav/Play_sfx_Hecarim_HecarimRampAttack_OnHit {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim/txtp/Play_sfx_Hecarim_HecarimRampAttack_OnHit {r1}.txtp",
+    "media_ids": [
+      121966113,
+      329731495,
+      649514276,
+      893081477
+    ],
+    "duration": 2.6665,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "3176589234e4a1896690c30a9a5fd53ea8b0c953b5a80ae74eff3265e9475f2a",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_hecarim_hecarimrampattack_onhit_r2.wav",
+    "event": "Play_sfx_Hecarim_HecarimRampAttack_OnHit",
+    "event_id": 784484952,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim/event_wav/Play_sfx_Hecarim_HecarimRampAttack_OnHit {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim/txtp/Play_sfx_Hecarim_HecarimRampAttack_OnHit {r2}.txtp",
+    "media_ids": [
+      121966113,
+      329731495,
+      649514276,
+      893081477
+    ],
+    "duration": 1.9817,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "c4d576254a67fe458cee4189da58a82f2a96ea702916c9f53078a26be48b10eb",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_hecarim_hecarimrampattack_onhit_r3.wav",
+    "event": "Play_sfx_Hecarim_HecarimRampAttack_OnHit",
+    "event_id": 784484952,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim/event_wav/Play_sfx_Hecarim_HecarimRampAttack_OnHit {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim/txtp/Play_sfx_Hecarim_HecarimRampAttack_OnHit {r3}.txtp",
+    "media_ids": [
+      121966113,
+      329731495,
+      649514276,
+      893081477
+    ],
+    "duration": 1.624,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "444197b365af26fea20e5a76fbe73168f40da524223eca3c10ad842d39d7b3c1",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_hecarim_death3d_cast.wav",
+    "event": "Play_sfx_Hecarim_Death3D_cast",
+    "event_id": 1984635147,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim/event_wav/Play_sfx_Hecarim_Death3D_cast.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim/txtp/Play_sfx_Hecarim_Death3D_cast.txtp",
+    "media_ids": [
+      708941421
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "215285e77ea5eb32d0b2a3c62f8e3d4284ecf2da81e122fe17b337bf7eb4eaab",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 3.9800680272108844,
+      "source_sha256": "f7463541f3b23a3bfc60cf2a791f74c43bd8bc3d02879afd1bb3b501767de7e0",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_vo_hecarim_death3d_r1_zh_cn.wav",
+    "event": "Play_vo_Hecarim_Death3D",
+    "event_id": 1492718799,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim_vo/event_wav/Play_vo_Hecarim_Death3D {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim_vo/txtp/Play_vo_Hecarim_Death3D {r1}.txtp",
+    "media_ids": [
+      41085995,
+      1053573173,
+      1309358461,
+      1693263333
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "c75106040aa7385d4efb4e960ff1531442bafbdff7b73ae52b02040cce6358a2",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 3.6022448979591837,
+      "source_sha256": "6a4708a8d90404b03f6f087b9609fd7c4167e609fb54011cc94c34a55b78f09e",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_vo_hecarim_death3d_r2_zh_cn.wav",
+    "event": "Play_vo_Hecarim_Death3D",
+    "event_id": 1492718799,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim_vo/event_wav/Play_vo_Hecarim_Death3D {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim_vo/txtp/Play_vo_Hecarim_Death3D {r2}.txtp",
+    "media_ids": [
+      41085995,
+      1053573173,
+      1309358461,
+      1693263333
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "72aa438aee3b3becfeb9fbd8bcd55a0d7b9311374b8dc76bb745a157f78d9f38",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 3.063446712018141,
+      "source_sha256": "cf866c9b9efd6ebe48083333d4f96a22ff8f23e1cedf116ce9f5b199ed88945e",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_vo_hecarim_death3d_r3_zh_cn.wav",
+    "event": "Play_vo_Hecarim_Death3D",
+    "event_id": 1492718799,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim_vo/event_wav/Play_vo_Hecarim_Death3D {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim_vo/txtp/Play_vo_Hecarim_Death3D {r3}.txtp",
+    "media_ids": [
+      41085995,
+      1053573173,
+      1309358461,
+      1693263333
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "03a5586dde575f9fac855c670d94ba55c231417483bcf979589b527ed12dd1bd",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 3.3268934240362813,
+      "source_sha256": "18e151d8e4ece6bbd367b4b0e375e1223c0a9b4511e9e5115e3b4bb6c50b875a",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_vo_hecarim_move2dstandard_r1_zh_cn.wav",
+    "event": "Play_vo_Hecarim_Move2DStandard",
+    "event_id": 2152677382,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim_vo/event_wav/Play_vo_Hecarim_Move2DStandard {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim_vo/txtp/Play_vo_Hecarim_Move2DStandard {r1}.txtp",
+    "media_ids": [
+      108419399,
+      432069436,
+      659734249,
+      812404504,
+      966423743,
+      1024073668,
+      1259146861,
+      1362338805
+    ],
+    "duration": 6.2224,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "a1ab81d3c0b9d560eab50331f17f409d30670c44e82941f7b03b439b3a62818b",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_vo_hecarim_move2dstandard_r2_zh_cn.wav",
+    "event": "Play_vo_Hecarim_Move2DStandard",
+    "event_id": 2152677382,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim_vo/event_wav/Play_vo_Hecarim_Move2DStandard {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim_vo/txtp/Play_vo_Hecarim_Move2DStandard {r2}.txtp",
+    "media_ids": [
+      108419399,
+      432069436,
+      659734249,
+      812404504,
+      966423743,
+      1024073668,
+      1259146861,
+      1362338805
+    ],
+    "duration": 4.9315,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "a78a90d2088c3f6e1d50778e31dbb57600d87abf2288e4ee8aa3a7a26743ae6f",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_vo_hecarim_move2dstandard_r3_zh_cn.wav",
+    "event": "Play_vo_Hecarim_Move2DStandard",
+    "event_id": 2152677382,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim_vo/event_wav/Play_vo_Hecarim_Move2DStandard {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim_vo/txtp/Play_vo_Hecarim_Move2DStandard {r3}.txtp",
+    "media_ids": [
+      108419399,
+      432069436,
+      659734249,
+      812404504,
+      966423743,
+      1024073668,
+      1259146861,
+      1362338805
+    ],
+    "duration": 3.1788,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "ea59cae01f618e3785218c381e8bd1a7659d988837c4d221310564ca5920ab41",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_hecarim_hecarimw_oncast_r1.wav",
+    "event": "Play_sfx_Hecarim_HecarimW_OnCast",
+    "event_id": 18257771,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim/event_wav/Play_sfx_Hecarim_HecarimW_OnCast {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim/txtp/Play_sfx_Hecarim_HecarimW_OnCast {r1}.txtp",
+    "media_ids": [
+      370682124,
+      653630699
+    ],
+    "duration": 4.9579,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "b31779e00859221a7b03055a68859651d9799442142ba5742f98f3f96353da34",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_hecarim_hecarimw_oncast_r2.wav",
+    "event": "Play_sfx_Hecarim_HecarimW_OnCast",
+    "event_id": 18257771,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim/event_wav/Play_sfx_Hecarim_HecarimW_OnCast {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim/txtp/Play_sfx_Hecarim_HecarimW_OnCast {r2}.txtp",
+    "media_ids": [
+      370682124,
+      653630699
+    ],
+    "duration": 4.9221,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "64a0de4451a504b030289b285516749442c3f38024d52923c92a99dd4bac8881",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_hecarim_hecarimw_onbuffactivate_r1.wav",
+    "event": "Play_sfx_Hecarim_HecarimW_OnBuffActivate",
+    "event_id": 2435684630,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim/event_wav/Play_sfx_Hecarim_HecarimW_OnBuffActivate {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim/txtp/Play_sfx_Hecarim_HecarimW_OnBuffActivate {r1}.txtp",
+    "media_ids": [
+      458911927,
+      1043555040
+    ],
+    "duration": 5.5131,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "6949ef6b15ee54efb7826fd93c6b18013a35890fdc422fd1ace23c87226d9891",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_hecarim_hecarimw_onbuffactivate_r2.wav",
+    "event": "Play_sfx_Hecarim_HecarimW_OnBuffActivate",
+    "event_id": 2435684630,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim/event_wav/Play_sfx_Hecarim_HecarimW_OnBuffActivate {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim/txtp/Play_sfx_Hecarim_HecarimW_OnBuffActivate {r2}.txtp",
+    "media_ids": [
+      458911927,
+      1043555040
+    ],
+    "duration": 5.111,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "be2f67ae6370b9681f167b420f985043fbfd6eea9e153acf426b312609595641",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_hecarim_hecarimw_onbuffdeactivate_r1.wav",
+    "event": "Play_sfx_Hecarim_HecarimW_OnBuffDeactivate",
+    "event_id": 3683086007,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim/event_wav/Play_sfx_Hecarim_HecarimW_OnBuffDeactivate {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim/txtp/Play_sfx_Hecarim_HecarimW_OnBuffDeactivate {r1}.txtp",
+    "media_ids": [
+      721882947,
+      742107310
+    ],
+    "duration": 4.0643,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "80753eaae52706cacf63b014492117aed5cd0bc31c3c2787c5db2a28a553ed78",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_hecarim_hecarimw_onbuffdeactivate_r2.wav",
+    "event": "Play_sfx_Hecarim_HecarimW_OnBuffDeactivate",
+    "event_id": 3683086007,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim/event_wav/Play_sfx_Hecarim_HecarimW_OnBuffDeactivate {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim/txtp/Play_sfx_Hecarim_HecarimW_OnBuffDeactivate {r2}.txtp",
+    "media_ids": [
+      721882947,
+      742107310
+    ],
+    "duration": 4.4751,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "177181e3dcdc0070e2f0efb9e51e5704f71a2d481f13a1f4fb96b0b9e3d0cc5f",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  }
+]

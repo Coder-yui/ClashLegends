@@ -99,7 +99,8 @@ const U_RESTORATION_SHIELD_STATE := 61
 const U_BLIND := 62
 const U_TELEPORT_SERIAL := 63
 const U_DEPLOYMENT_SHIELD := 64
-const UNIT_PAYLOAD_SIZE := 65
+const U_CHARGED := 65
+const UNIT_PAYLOAD_SIZE := 66
 
 const P_ID := 0
 const P_X := 1
@@ -253,7 +254,7 @@ func decode_validated(snapshot_bytes: PackedByteArray) -> DecodedSnapshot:
 	for payload: Array in units_data:
 		for field in [U_X, U_Y, U_HP, U_CONTINUOUS_X, U_CONTINUOUS_Y, U_FACING_DIRECTION_X, U_FACING_DIRECTION_Y, U_ACTION_DURATION, U_ACTION_TIME_LEFT, U_SKILL_RESOURCE_RATIO, U_ACTIVE_SPEED_MULTIPLIER, U_ACTIVE_ATTACK_SPEED_MULTIPLIER, U_ACTIVE_SKILL_COOLDOWN, U_SHIELD_RATIO, U_SHIELD_CAPACITY_RATIO, U_ATTACK_ELAPSED, U_MOVEMENT_RATE, U_DEPLOY_LEFT]:
 			if not _finite_number(payload[field]): return null
-		for field in [U_FROZEN, U_HAS_CONTINUOUS_TARGET, U_SLOW, U_STUN, U_ATTACKING_STRUCTURE, U_EMPOWERED_READY, U_SKILL_RESOURCE_ENABLED, U_ACTIVE_BUFF_ACTIVE, U_ATTACK_FIRST_STRIKE]:
+		for field in [U_FROZEN, U_HAS_CONTINUOUS_TARGET, U_SLOW, U_STUN, U_ATTACKING_STRUCTURE, U_EMPOWERED_READY, U_SKILL_RESOURCE_ENABLED, U_ACTIVE_BUFF_ACTIVE, U_ATTACK_FIRST_STRIKE, U_CHARGED]:
 			if not payload[field] is int or payload[field] not in [0, 1]: return null
 		for field in [U_VISUAL_STATE, U_ATTACK_SERIAL, U_FORM, U_ACTION_SERIAL, U_FORM_CHANGE_SERIAL, U_LOCOMOTION, U_EMPOWERED_ATTACK_SERIAL, U_ACTIVE_SKILL_USES_REMAINING]:
 			if not payload[field] is int or payload[field] < 0: return null
@@ -485,6 +486,7 @@ func _apply_units(units_data: Array) -> bool:
 		u.net_structure_haste_state = d[U_STRUCTURE_HASTE_STATE]
 		u.net_restoration_shield_state = d[U_RESTORATION_SHIELD_STATE]
 		u.net_deployment_shield_active = d[U_DEPLOYMENT_SHIELD]
+		u.net_charged = int(d[U_CHARGED]) == 1
 		u.net_shield_ratio = clampf(float(d[U_SHIELD_RATIO]), 0.0, 1.0)
 		u.net_shield_capacity_ratio = maxf(float(d[U_SHIELD_CAPACITY_RATIO]), 0.0)
 		if (
@@ -713,5 +715,5 @@ func _unit_snapshot_payload(id: int, u: Unit, birth: Dictionary, has_continuous_
 		u.death_spawn_state_visual(),
 		u.lifesteal_state_visual(), u.active_buff_clock_visual(),
 		u.restoration_shield_state_visual(),
-		u.blind_visual(), u.teleport_serial, u.deployment_shield_active_visual(),
+		u.blind_visual(), u.teleport_serial, u.deployment_shield_active_visual(), int(u.is_charged_visual()),
 	]

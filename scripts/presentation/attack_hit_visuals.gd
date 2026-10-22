@@ -1,5 +1,6 @@
 extends Node2D
 ## 真实命中后的短时光束；只读表现事件，不参与飞行、碰撞或伤害。
+const HECARIM_PLAYER = preload("res://assets/effects/hecarim/player.gd")
 const HIT_PLAYER = preload("res://assets/effects/azir/player.gd")
 const PLAYER = preload("res://assets/effects/azir/beam_player.gd")
 var _context: BattleContext
@@ -15,8 +16,8 @@ func _process(_delta: float) -> void:
 	for view in _views: _update_view(view, true)
 	for hit in _hits:
 		if not is_instance_valid(hit.camera): continue
-		_update_endpoints(hit.view, true)
-		_place_hit(hit.player, hit.camera, hit.view.end)
+		if not hit.get("fixed", false): _update_endpoints(hit.view, true)
+		_place_hit_entry(hit)
 		hit.player.seek(hit.age)
 
 func setup(system: ProjectileSystem) -> void:
@@ -25,6 +26,15 @@ func setup(system: ProjectileSystem) -> void:
 
 func play_hit(source: Dictionary, position: Vector2, world: Node3D = null, camera: Camera3D = null) -> void:
 	var stats := PresentationConfig.for_form(CardDB.get_card(String(source.get("card_id", ""))), int(source.get("form", 0)))
+	if String(stats.get("attack_hit_visual", "")) == "hecarim_q":
+		if is_instance_valid(world) and is_instance_valid(camera):
+			var hit := HECARIM_PLAYER.new()
+			world.add_child(hit)
+			hit.load_kind("qtar")
+			hit.setup_native(0.005)
+			_place_hit(hit, camera, position)
+			_hits.append({"player": hit, "camera": camera, "age": 0.0, "fixed": true, "view": {"end": position}})
+		return
 	if String(stats.get("attack_hit_visual", "")) == "splash_circle":
 		_circles.append({"position": position, "radius": float(stats.get("splash_radius", 0.0)), "age": 0.0})
 		queue_redraw()
@@ -59,13 +69,19 @@ func advance(delta: float) -> void:
 	for index in range(_hits.size() - 1, -1, -1):
 		var hit := _hits[index]
 		hit.age += delta
-		if hit.age >= 0.7 or not is_instance_valid(hit.camera):
+		if hit.age >= float(hit.get("duration", 0.7)) or not is_instance_valid(hit.camera):
 			if is_instance_valid(hit.player): hit.player.free()
 			_hits.remove_at(index)
 		else:
-			_update_endpoints(hit.view)
-			_place_hit(hit.player, hit.camera, hit.view.end)
+			if not hit.get("fixed", false): _update_endpoints(hit.view)
+			_place_hit_entry(hit)
 			hit.player.seek(hit.age)
+
+func _place_hit_entry(hit: Dictionary) -> void:
+	if hit.has("ground_height"):
+		hit.player.global_position = preload("res://scripts/presentation/spell_effect_projection.gd").ground(hit.camera, hit.view.end) + Vector3.UP * float(hit.ground_height)
+	else:
+		_place_hit(hit.player, hit.camera, hit.view.end)
 
 func _place_hit(player: Node3D, camera: Camera3D, point: Vector2) -> void:
 	# 光束终点和受击层共用屏幕挂点；保留真实高度以接受正常遮挡。
@@ -128,3 +144,12 @@ func _draw() -> void:
 		var alpha := 1.0 - float(circle.age) / 0.3
 		draw_circle(circle.position, circle.radius, Color(0.9, 0.08, 0.05, 0.18 * alpha))
 		draw_arc(circle.position, circle.radius, 0.0, TAU, 64, Color(1.0, 0.15, 0.1, 0.8 * alpha), 2.0, true)
+
+func play_movement_hit(card_id: String, position: Vector2, world: Node3D, camera: Camera3D) -> void:
+	if card_id != "xin" or not is_instance_valid(world) or not is_instance_valid(camera): return
+	var player = load("res://assets/effects/xin_dash/player.gd").new()
+	world.add_child(player)
+	player.load_kind("hit")
+	player.setup_native(player.NATIVE_SCALE)
+	player.global_position = preload("res://scripts/presentation/spell_effect_projection.gd").ground(camera, position) + Vector3.UP * player.IMPACT_HEIGHT
+	_hits.append({"player": player, "camera": camera, "age": 0.0, "duration": 1.1, "ground_height": player.IMPACT_HEIGHT, "fixed": true, "view": {"end": position}})

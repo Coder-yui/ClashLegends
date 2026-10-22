@@ -1414,7 +1414,7 @@ func notify_unit_audio_event(unit: Unit, cue: StringName, position: Vector2) -> 
 	unit.presentation_cue.emit(cue)
 	if cue == &"revival:end" and _audio_manager != null:
 		_audio_manager.complete_revival(unit)
-	if cue in [&"deploy:hit", &"replacement:start", &"revival:end", &"shield:cast", &"shield:applied"]:
+	if cue in [&"charge:hit", &"deploy:hit", &"replacement:start", &"revival:end", &"shield:cast", &"shield:applied"]:
 		present_skill_projectile_hit(PresentationConfig.attack_source(unit), String(cue).get_slice(":", 0), position, String(cue).get_slice(":", 1))
 		return
 	if _audio_manager != null:
@@ -2216,6 +2216,8 @@ func _play_card_event(event_id: int, card_id: String, cue: String, pos: Vector2,
 		_effects_view.add_child(mirror)
 	if card_id == "explosive_cask" and cue == "spell:hit" and _battle_presentation != null:
 		_spell_system.cask_hits.append({"id": event_id, "pos": pos, "timer": 0.7})
+	if cue == "charge:hit" and _battle_presentation != null and is_instance_valid(_projectile_system._hit_visuals):
+		_projectile_system._hit_visuals.play_movement_hit(card_id, pos, _battle_presentation._world_root, _battle_presentation._camera)
 	if cue == "shield:cast":
 		_skill_presentation.present_area_shield(card_id, form, pos)
 	if _audio_manager != null:

@@ -33,6 +33,7 @@ static func supports(stats: Dictionary, cue: String) -> bool:
 		return float(stats.get("rush_distance", 0.0)) > 0.0
 	if cue in ["forge:pulse", "forge:strike", "forge:arrive", "forge:cancel"]:
 		return stats.has("team_attack_boost_multiplier")
+	if cue in ["charge:start", "charge:hit"] and (float(stats.get("charge_attack_range", 0.0)) > 0.0 or (stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "movement_strike")): return true
 	if cue in ["charge:start", "charge:trail_hit", "charge:impact", "charge:step", "charge:knockup"]:
 		return (stats.get("active_skills", []) as Array).any(func(skill): return String(skill.get("kind", "")) == "terrain_charge")
 	var spell := String(stats.get("type", "")) == "spell"
@@ -93,7 +94,7 @@ static func supports(stats: Dictionary, cue: String) -> bool:
 			return float(stats.get("active_transform_duration", stats.get("transform_duration", 0.0))) > 0.0
 		if cue in ["empowered_ready", "empowered_swing"] and kind in ["empowered_attack", "bleeding_execute"]:
 			return true
-		if cue in ["active_buff:start", "active_buff:end", "active_buff:sustain", "active_buff:attack_launch", "active_buff:attack_hit"] and kind in ["buff", "undying_rage", "aftershock", "counter_strike"]:
+		if cue in ["active_buff:start", "active_buff:end", "active_buff:sustain", "active_buff:attack_launch", "active_buff:attack_hit"] and (kind in ["buff", "undying_rage", "aftershock", "counter_strike", "movement_strike"] or (kind == "continuous_area" and float(skill.get("heal_ratio", 0.0)) > 0.0)):
 			return float(skill.get("duration", 0.0)) > 0.0
 		var actions: Array = [String(skill.get("visual_action", "")), String(skill.get("full_resource_visual_action", ""))]
 		actions.append_array(skill.get("resource_visual_actions", []))

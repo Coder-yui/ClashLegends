@@ -20,6 +20,8 @@ func _apply_attack_hit_effects(target: Node2D, effects: Dictionary, source: Node
 	if is_instance_valid(target) and target is Unit and target.hp > 0.0:
 		if float(effects.get("on_hit_slow_duration", 0.0)) > 0.0:
 			target.apply_slow(float(effects.on_hit_slow_duration), float(effects.on_hit_slow_multiplier), effects.on_hit_status_source, effects.on_hit_context)
+		if float(effects.get("stun_duration", 0.0)) > 0.0:
+			target.stun(float(effects.stun_duration), source.status_source("movement_strike") if is_instance_valid(source) else &"movement_strike", CombatInteraction.effect_context(source))
 		var blind_charges := maxi(int(effects.get("blind_charges", 0)), 0)
 		if blind_charges > 0:
 			(target as Unit).apply_blind(blind_charges, CombatInteraction.effect_context(source if is_instance_valid(source) else null))
@@ -156,7 +158,10 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 	if knockback > 0.0 and displacement_order.is_empty():
 		displacement_order = next_displacement_order(from)
 	var cleave_radius := float(effects.get("cleave_radius", 0.0))
-	var targets: Array = [primary] if radius <= 0.0 and cleave_radius <= 0.0 else get_tree().get_nodes_in_group("combatants")
+	var self_radius := float(effects.get("self_radius", 0.0))
+	var movement_radius := float(effects.get("movement_strike_radius", 0.0))
+	var impact_radius := maxf(radius, movement_radius)
+	var targets: Array = [primary] if impact_radius <= 0.0 and cleave_radius <= 0.0 and self_radius <= 0.0 else get_tree().get_nodes_in_group("combatants")
 	var landed := false
 	var hit_results: Array = receipt.hits
 	var impact := primary.global_position
@@ -164,13 +169,14 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 	var source_ref: WeakRef = weakref(from) if is_instance_valid(from) else null
 	for target in targets:
 		if not is_instance_valid(target) or target.hp <= 0.0: continue
-		if radius > 0.0 and (target.team == p_team or target.global_position.distance_to(impact) > radius + target.body_radius): continue
+		if self_radius > 0.0 and (target.team == p_team or target.global_position.distance_to(source_position) > self_radius + target.body_radius): continue
+		if impact_radius > 0.0 and (target.team == p_team or target.global_position.distance_to(impact) > impact_radius + target.body_radius): continue
 		if bool(effects.get("ground_only", false)) and target is Unit and target.is_air: continue
 		if bool(effects.get("splash_match_primary_air", false)) and (target is Unit and target.is_air) != (primary is Unit and primary.is_air): continue
 		if cleave_radius > 0.0 and (target.team == p_team or (target != primary and target.global_position.distance_to(effects.cleave_center) > cleave_radius + target.body_radius)): continue
 		var hit_amount := float(BattleNumbers.quantity(amount)) if cleave_radius <= 0.0 or target == primary else 0.0
 		if cleave_radius > 0.0: hit_amount += float(effects.cleave_damage)
-		if counts_as_attack and from is Unit: hit_amount += from.on_hit_passive_damage(target)
+		if counts_as_attack and from is Unit and (movement_radius <= 0.0 or target == primary): hit_amount += from.on_hit_passive_damage(target)
 		# 到达目标时判断，包含在途普攻和溅射；技能攻击不消费免疫次数。
 		if counts_as_attack and String(effects.get("strike_type", "basic_attack")) == "basic_attack" and target is Unit and CombatInteraction.allows(target, from, p_team, source_position) and target.try_dodge_basic_attack(): continue
 		var result := _hit(target, hit_amount, amount, from, p_team, source_position, effects)
@@ -184,7 +190,7 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 			var landed_source = _node_from(source_ref)
 			if not result.landed or not is_instance_valid(landed_target): return
 			_apply_attack_hit_effects(landed_target, effects, landed_source)
-			if counts_as_attack and radius <= 0.0 and (cleave_radius <= 0.0 or primary_hit) and landed_source is Unit:
+			if counts_as_attack and (movement_radius <= 0.0 or primary_hit) and radius <= 0.0 and (cleave_radius <= 0.0 or primary_hit) and landed_source is Unit:
 				_settle_bleeding_attack(landed_target, landed_source, effects, result)
 				if landed_source.battle_context != null: landed_source.battle_context.record_growth_hit(landed_source, landed_target))
 		if knockback > 0.0 and target is Unit:
@@ -194,10 +200,28 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 			var landed_target = _node_from(target_ref)
 			if not result.landed or not landed_source is Unit or landed_source.hp <= 0.0: return
 			if counts_as_attack and is_instance_valid(landed_target): landed_source.record_structure_attack(landed_target)
-			if counts_as_attack and radius <= 0.0 and (cleave_radius <= 0.0 or primary_hit):
+			if counts_as_attack and (movement_radius <= 0.0 or primary_hit) and radius <= 0.0 and (cleave_radius <= 0.0 or primary_hit) and self_radius <= 0.0:
 				landed_source.on_attack_landed(source_form_index, float(result.health_lost), swing, int(effects.get("source_generation", -1)))
 			if is_instance_valid(landed_target): _award_hit_kill(landed_source, landed_target, result))
 	if landed:
+		# 整次突进只发布一次主目标中心冲击与攻速，不按范围内人数叠加。
+		if bool(effects.get("movement_strike", false)):
+			defer_effect(func():
+				var landed_source = _node_from(source_ref)
+				if hit_results.any(func(hit): return hit.landed) and is_instance_valid(landed_source) and landed_source.battle_context != null:
+					landed_source.battle_context.notify_unit_audio_event(landed_source, &"charge:hit", impact))
+			defer_benefit(func():
+				var landed_source = _node_from(source_ref)
+				if not landed_source is Unit or landed_source.hp <= 0.0 or not hit_results.any(func(hit): return hit.landed): return
+				if float(effects.get("movement_strike_haste_duration", 0.0)) > 0.0:
+					landed_source.apply_active_buff(float(effects.movement_strike_haste_duration), 1.0, 1.0, float(effects.movement_strike_haste), false, false, landed_source.status_source("movement_strike")))
+		if counts_as_attack and self_radius > 0.0:
+			defer_benefit(func():
+				var landed_source = _node_from(source_ref)
+				if not landed_source is Unit or landed_source.hp <= 0.0 or not hit_results.any(func(result): return result.landed): return
+				var total := 0.0
+				for hit in hit_results: total += float(hit.health_lost)
+				landed_source.on_attack_landed(source_form_index, total, swing, int(effects.get("source_generation", -1))))
 		if cleave_radius > 0.0:
 			defer_effect(func():
 				var landed_source = _node_from(source_ref)
@@ -227,7 +251,7 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 					landed_source.on_attack_landed(source_form_index, 0.0, swing, int(effects.get("source_generation", -1))))
 		if counts_as_attack:
 			defer_effect(func():
-				if hit_results.any(func(result): return result.landed):
+				if hit_results.any(func(result): return result.landed) and not bool(effects.get("movement_strike", false)):
 					attack_hit.emit(effects.get("presentation_source", {}), impact, bool(effects.get("first_strike", false))))
 	if landed:
 		receipt.accepted = true

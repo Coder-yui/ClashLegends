@@ -761,5 +761,23 @@
     "source_path": "assets/characters/malphite/hud/icons2d/malphite_e.dds",
     "source_sha256": "003074b8a67ca59805982817e82586ec12e943d4ff9d21669a2a1f60f4031e6c",
     "sha256": "cb0add5e94e249abc40d33ea20b4d4cf1fdd2ce3694f2f87b8a28f58c71cfada"
+  },
+  {
+    "card": "hecarim",
+    "skill_index": 0,
+    "path": "res://assets/skills/hecarim_w.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Hecarim.wad.client",
+    "source_path": "assets/characters/hecarim/hud/icons2d/hecarim_spiritofdread.dds",
+    "source_sha256": "643cc853445db6bdbcf2c94c8357cae2c186533e18def0949829dcbf3be6a293",
+    "sha256": "0e36e278e7a7bfe3cb2a7cd251d6e0a3c289981d01e92da0a017acaa4e09edbf"
+  },
+  {
+    "card": "xin",
+    "skill_index": 1,
+    "path": "res://assets/skills/xin_e.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/XinZhao.wad.client",
+    "source_path": "assets/characters/xinzhao/hud/icons2d/xinzhaoreworke.dds",
+    "source_sha256": "958df03d1c9e149451f81c0e9a7044bcc4f458b479d74d549e0f90e90ae27812",
+    "sha256": "3adf16139a8c02e61211d9166898da9011d3f5e83319a5e86a8e8e918536b348"
   }
 ]

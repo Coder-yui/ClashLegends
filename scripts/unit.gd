@@ -172,6 +172,9 @@ var deploy_sweep_mass_factor_max := 1.4
 var heal_every_hits := 0
 var heal_amount := 0.0
 var structure_rush := StructureRushState.new()
+var movement_strike := MovementStrikeState.new()
+var charge_distance := 0.0
+var _charge_distance_travelled := 0.0
 var charge_time := 0.0
 var charge_speed_multiplier := 1.0
 var charge_damage_multiplier := 1.0
@@ -332,6 +335,7 @@ var _attacking := false
 var _attack_visual_serial := 0
 var net_attack_elapsed := 0.0
 var net_movement_rate := 1.0
+var net_charged := false
 var net_action_permissions := 0
 var _body_facing_direction := Vector2.ZERO
 var lifecycle_birth_tick := -1
@@ -532,6 +536,7 @@ func setup(p_team: int, stats: Dictionary, _p_name: String) -> void:
 	heal_every_hits = stats.get("heal_every_hits", 0)
 	heal_amount = stats.get("heal_amount", 0.0)
 	structure_rush.configure(stats)
+	charge_distance = float(stats.get("charge_distance", 0.0))
 	charge_time = stats.get("charge_time", 0.0)
 	charge_speed_multiplier = stats.get("charge_speed_multiplier", 1.0)
 	charge_damage_multiplier = stats.get("charge_damage_multiplier", 1.0)
@@ -691,6 +696,8 @@ func get_locomotion_visual_state_code() -> int:
 
 ## 3D 与 2D 表现都直接读取同一个最终渲染位置，不依赖彼此的 _process 执行顺序。
 func can_start_active_skill(skill: Dictionary) -> bool:
+	if control.hard.remaining(&"root") > 0.0 and String(skill.get("kind", "")) in ["dash_strike", "movement_strike", "terrain_charge"]: return false
+	if StringName(skill.get("kind", "")) == &"movement_strike" and movement_strike.is_armed(): return false
 	if StringName(skill.get("kind", "")) == &"undying_rage":
 		return hp > 0.0 and is_deployed() and not CombatInteraction.in_stasis(self) and not death_form.used
 	return (action_permissions() & ControlState.START_SKILL) != 0
@@ -789,6 +796,9 @@ func presentation_state() -> UnitPresentationState:
 
 func get_attack_elapsed_visual() -> float:
 	return net_attack_elapsed if _in_client_mode() else attack_timeline.visual_elapsed
+
+func is_charged_visual() -> bool:
+	return net_charged if _in_client_mode() else _charged
 
 func get_effective_movement_rate_visual() -> float:
 	if _in_client_mode():
@@ -902,7 +912,7 @@ func active_buff_clock_visual() -> Vector2:
 	return Vector2(age, _buff_visual_duration)
 
 func get_active_buff_active_visual() -> bool:
-	return net_active_buff_active if _in_client_mode() else active_buff_timer > 0.0 or buffs.remaining(&"counter_strike") > 0.0 or buffs.remaining(&"damage_reduction") > 0.0 or buffs.remaining(&"effect_shield") > 0.0
+	return net_active_buff_active if _in_client_mode() else active_buff_timer > 0.0 or buffs.remaining(&"timed_lifesteal") > 0.0 or buffs.remaining(&"counter_strike") > 0.0 or buffs.remaining(&"damage_reduction") > 0.0 or buffs.remaining(&"effect_shield") > 0.0
 
 func get_active_speed_multiplier_visual() -> float:
 	return net_active_speed_multiplier if _in_client_mode() else active_speed_multiplier
@@ -1585,8 +1595,7 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prep
 	if is_frozen() or control.stun_timer > 0.0 or knockback.recovery_pending:
 		if control.frozen_timer <= 0.0 and control.stun_timer <= 0.0:
 			queue_redraw()
-		_charge_timer = 0.0
-		_charged = false
+		cancel_charge()
 		return
 	if not can_attack and float(_base_form_stats.get("sacrifice_damage", 0.0)) <= 0.0 and float(_base_form_stats.get("structure_mend_per_second", 0.0)) <= 0.0:
 		_target = null
@@ -1597,8 +1606,7 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prep
 		attack_timeline.advance_visual(dt, _effective_attack_speed_multiplier())
 	_tick_pending_extra_attacks(dt)
 	if _forced_movement:
-		_charge_timer = 0.0
-		_charged = false
+		cancel_charge()
 		return
 	# 突进期间由技能效果推进位置；结束后仍由施法锁阻止普攻和自主移动。
 	if skill_dash_active: return
@@ -1610,6 +1618,7 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prep
 	if form_transition_timer > 0.0:
 		_tick_form_transition_movement(dt)
 		return
+	if movement_strike.tick(self, dt): return
 	if structure_rush.phase == StructureRushState.Phase.RECOVERY or structure_rush.tick(self, dt):
 		return
 	if float(_base_form_stats.get("sacrifice_damage", 0.0)) > 0.0:
@@ -1663,6 +1672,11 @@ func sim_tick(dt: float, natural_lifecycle_prepared: bool = false, statuses_prep
 			_attacking = true
 			if attack_timeline.recovery > 0.0:
 				return
+	# 已准备的突进必须由通用突进状态消费；后摇刚结束也不能落回普通攻击。
+	if movement_strike.is_armed():
+		_update_target(false)
+		_chase(dt)
+		return
 	# 已起手的一击保持前摇；普通射程只用于起手，宽限只在命中节点检查。
 	var committed_attack := _attacking and not continuous_attack and (attack_timeline.windup > 0.0 or not _attack_visual_pending)
 	_update_target(committed_attack)
@@ -1721,19 +1735,25 @@ func is_deployed() -> bool:
 	return _deploy_timer <= 0.0
 
 func cancel_charge() -> void:
+	_charge_distance_travelled = 0.0
+	movement_strike.cancel(self)
 	_charge_timer = 0.0
 	_charged = false
 
 func on_movement_applied(distance: float, dt: float) -> void:
 	target_protection.check_position(global_position)
+	if movement_strike.in_transit(): return
 	if _forced_movement:
 		cancel_charge()
 		return
 	if distance > 0.01:
-		if charge_time > 0.0:
+		if charge_distance > 0.0:
+			_charge_distance_travelled = minf(_charge_distance_travelled + distance, charge_distance)
+			_charged = _charge_distance_travelled + 0.000001 >= charge_distance
+		elif charge_time > 0.0:
 			_charge_timer = minf(_charge_timer + dt, charge_time)
-			_charged = _charge_timer >= charge_time
-	elif _move_intent.length_squared() > 0.001:
+			_charged = _charge_timer + 0.000001 >= charge_time
+	elif _move_intent.length_squared() > 0.001 or (not _charged and (charge_time > 0.0 or charge_distance > 0.0)):
 		# 有行进意图但被堵停，不能站在原地继续积攒冲锋。
 		cancel_charge()
 
@@ -1839,7 +1859,7 @@ func apply_knockback(origin: Vector2, distance: float, duration: float = 0.2, ma
 	if battle_context != null and battle_context.damage_batch().collecting:
 		battle_context.damage_batch().submit_knockback(self, origin, distance, duration, mass_factor_max, displacement_order, {}, interaction)
 		return
-	if knockback.collisionless and not recover_displacement_position(): return
+	if (knockback.collisionless or movement_strike.in_transit()) and not recover_displacement_position(): return
 	structure_rush.interrupt_preparation(self)
 	# 当前没有异步位移完成回调。只替换状态，清掉旧 Tick 尚未消费的移动意图。
 	_move_intent = Vector2.ZERO
@@ -2169,6 +2189,7 @@ func _nearest_tower_from(towers: Array[Tower]) -> Tower:
 	return best
 
 func _chase(dt: float) -> void:
+	if control.hard.remaining(&"root") > 0.0: return
 	# 建筑共享通用索敌和攻击状态机，但永远不能为了圈外目标移动。
 	if is_building:
 		return
@@ -2235,6 +2256,7 @@ func _follow_current_path(dt: float) -> void:
 			_recompute_path()
 
 func _prepare_movement(direction: Vector2, _dt: float) -> void:
+	if control.hard.remaining(&"root") > 0.0: return
 	if direction.length_squared() < 0.001:
 		return
 	# 路径拐点和路线汇入采用短暂方向插值，形成弧线感，避免突然水平切线。
@@ -2365,6 +2387,8 @@ func _attack(dt: float) -> void:
 				first_strike = true
 		basic_attack_sequence += 1
 		var attack_effects: Dictionary = {"attack_id": basic_attack_sequence, "cycle_id": _attack_visual_serial}
+		if float(_base_form_stats.get("attack_self_radius", 0.0)) > 0.0:
+			attack_effects["self_radius"] = float(_base_form_stats.attack_self_radius)
 		if first_strike:
 			# 效果随弹体携带到真实命中点；表现层不会在出手或预判 first_hit 时播放被动音。
 			attack_effects["first_strike"] = true
@@ -2556,7 +2580,7 @@ func on_hit_passive_effects() -> Dictionary:
 
 ## 选目标与前摇可以复用普攻；致盲只作用于普通/强化普攻的正式出手。
 func _consume_blind_for_strike(effects: Dictionary) -> bool:
-	if String(effects.get("strike_type", "basic_attack")) == "skill" or blind_attack_charges <= 0: return false
+	if bool(effects.get("ignore_blind", false)) or String(effects.get("strike_type", "basic_attack")) == "skill" or blind_attack_charges <= 0: return false
 	blind_attack_charges -= 1
 	queue_redraw()
 	return true
@@ -2744,6 +2768,7 @@ func cancel_skill_cast(recover_position: bool = true) -> void:
 ## 有效眩晕/击退只取消正在自主位移的技能，不取消已停下的普通尾段。
 func cancel_controlled_action(reason: StringName, recover_position: bool = true) -> void:
 	var cancel_displacement := skill_dash_active
+	if movement_strike.in_transit(): cancelled_visual_serial = maxi(cancelled_visual_serial, get_visual_action_serial())
 	if cancel_displacement:
 		cancelled_visual_serial = maxi(cancelled_visual_serial, get_visual_action_serial())
 	cancel_basic_attack(reason)
@@ -2846,6 +2871,20 @@ func taunt(caster: Unit, duration: float) -> void:
 
 func _exit_tree() -> void:
 	channel_attack.stop(self)
+
+## 禁锢限制自主移动，保留普攻、转向与外力；独立来源和计时复用硬控容器。
+func root(duration: float, source: StringName = &"legacy", interaction: Dictionary = {}) -> void:
+	if hp <= 0.0 or not is_finite(duration) or duration <= 0.0 or structure_rush.control_immune(): return
+	if not CombatInteraction.allows_effect(self, interaction) or CombatInteraction.blocks_effect(self, interaction): return
+	if battle_context != null and battle_context.damage_batch().collecting:
+		battle_context.damage_batch().defer_effect(func(): root(duration, source, interaction))
+		return
+	control.hard.apply(&"root", source, duration, {})
+	CombatInteraction.record_combat_effect(self, interaction)
+	if movement_strike.in_transit(): cancel_charge()
+	if skill_dash_active: cancel_skill_cast()
+	if not _forced_movement: _move_intent = Vector2.ZERO
+	structure_rush.interrupt_preparation(self)
 
 func freeze(duration: float, source: StringName = &"legacy", interaction: Dictionary = {}) -> void:
 	if not CombatInteraction.allows_effect(self, interaction): return

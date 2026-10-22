@@ -467,6 +467,16 @@ static func _validate_combat_stats(label: String, stats: Dictionary, require_siz
 	if stats.has("timed_revival_delay"):
 		if float(stats.get("timed_revival_delay", 0.0)) <= 0.0:
 			errors.append("%s.timed_revival_delay: 必须 > 0" % label)
+	if stats.has("attack_self_radius") and (not is_finite(float(stats.attack_self_radius)) or float(stats.attack_self_radius) <= 0.0 or float(stats.get("projectile_speed", 0.0)) > 0.0 or float(stats.get("splash_radius", 0.0)) > 0.0):
+		errors.append(label + ".attack_self_radius: 只支持正半径直接近战")
+	if float(stats.get("charge_impact_radius", 0.0)) < 0.0: errors.append(label + ".charge_impact_radius: 必须非负")
+	if stats.has("charge_landing_side") and stats.charge_landing_side not in ["front", "back"]: errors.append(label + ".charge_landing_side: 必须为front或back")
+	if stats.has("charge_attack_range") or stats.has("charge_dash_speed") or stats.has("charge_stun_duration"):
+		for field in ["charge_distance", "charge_attack_range", "charge_dash_speed", "charge_stun_duration"]:
+			if not is_finite(float(stats.get(field, 0.0))) or float(stats.get(field, 0.0)) <= 0.0:
+				errors.append(label + "." + field + ": 移动突进需要成组正数")
+		if bool(stats.get("is_air", false)) or bool(stats.get("is_building", false)) or float(stats.get("projectile_speed", 0.0)) > 0.0:
+			errors.append(label + ": 移动突进只支持地面近战单位")
 	if stats.has("death_replacement_id") and int(stats.get("death_replacement_charges", 0)) <= 0:
 		errors.append("%s.death_replacement_charges: 声明死亡替身时必须 > 0" % label)
 	if stats.has("timed_revival_death_replacement_charges") and int(stats.get("timed_revival_death_replacement_charges", -1)) < 0:
@@ -536,8 +546,8 @@ static func _validate_projectile(label: String, stats: Dictionary, errors: Packe
 	var speed := float(stats.get("projectile_speed", 0.0))
 	if speed < 0.0:
 		errors.append("%s.projectile_speed: 必须 >= 0" % label)
-	if stats.has("attack_hit_visual") and (String(stats.attack_hit_visual) not in ["azir_beam", "splash_circle"] or speed > 0.0):
-		errors.append("%s.attack_hit_visual: 仅支持直接命中的 azir_beam / splash_circle 表现" % label)
+	if stats.has("attack_hit_visual") and (String(stats.attack_hit_visual) not in ["azir_beam", "splash_circle", "hecarim_q"] or speed > 0.0):
+		errors.append("%s.attack_hit_visual: 仅支持直接命中的 azir_beam / splash_circle / hecarim_q 表现" % label)
 	if stats.has("active_buff_projectile_visual"):
 		if speed <= 0.0 or not (stats.active_buff_projectile_visual is String or stats.active_buff_projectile_visual is StringName) or StringName(stats.active_buff_projectile_visual) not in PROJECTILE_VISUALS + [&"baron_siege", &"baron_ranged"]:
 			errors.append("%s.active_buff_projectile_visual: 需要远程弹体及已实现的弹体外观" % label)
@@ -745,7 +755,7 @@ static func _validate_visual_config(label: String, stats: Dictionary, errors: Pa
 				if typeof(value) not in [TYPE_FLOAT, TYPE_INT] or not is_finite(float(value)) or float(value) < 0.0:
 					errors.append("%s.visual_animations.clip_blends.%s: 必须是有限非负秒数" % [label, edge])
 	for state in [
-		&"deploy", &"idle", &"idle_cycle", &"move", &"move_enter", &"haste_move", &"terrain_move", &"full_resource_move", &"move_cycle", &"attack", &"attack_hit", &"attack_recover",
+		&"deploy", &"idle", &"idle_cycle", &"move", &"move_enter", &"haste_move", &"charge_move", &"terrain_move", &"full_resource_move", &"move_cycle", &"attack", &"attack_hit", &"attack_recover",
 		&"initial_move", &"attack_structure", &"attack_move", &"attack_to_move", &"active_buff_idle", &"active_buff_move", &"empowered_idle", &"empowered_move", &"empowered_attack",
 		&"empowered_attack_hit", &"empowered_attack_recover", &"empowered_attack_to_move",
 	]:
@@ -1094,6 +1104,8 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 					if float(skill.get("zone_slow_multiplier", 1.0)) < 0.1 or float(skill.get("zone_slow_multiplier", 1.0)) > 1.0:
 						errors.append("%s.zone_slow_multiplier: 必须在 0.1 到 1.0 之间" % label)
 			&"continuous_area":
+				if skill.has("heal_ratio") and (not is_finite(float(skill.heal_ratio)) or float(skill.heal_ratio) <= 0.0 or float(skill.heal_ratio) > 1.0):
+					errors.append(label + ".heal_ratio: 必须在 (0,1] 内")
 				_require_fields(label, skill, [&"radius", &"damage", &"duration", &"tick_interval", &"cast_duration"], errors)
 				for positive_field in [&"radius", &"duration", &"tick_interval", &"cast_duration"]:
 					if float(skill.get(positive_field, 0.0)) <= 0.0:
@@ -1127,6 +1139,15 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 				_require_fields(label, skill, [&"duration", &"radius", &"zone_duration", &"zone_damage", &"zone_tick_interval"], errors)
 				for field in ["duration", "radius", "zone_duration", "zone_tick_interval"]:
 					if float(skill.get(field, 0.0)) <= 0.0: errors.append(label + "." + field + ": 必须为正数")
+			&"movement_strike":
+				if float(skill.get("charge_impact_radius", 0.0)) < 0.0: errors.append(label + ".charge_impact_radius: 必须非负")
+				if skill.get("charge_landing_side", "front") not in ["front", "back"]: errors.append(label + ".charge_landing_side: 必须为front或back")
+				_require_fields(label, skill, [&"charge_attack_range", &"charge_dash_speed", &"duration", &"attack_speed_multiplier"], errors)
+				for field in ["charge_attack_range", "charge_dash_speed", "duration", "charge_visual_duration"]:
+					if float(skill.get(field, 0.0)) <= 0.0: errors.append(label + "." + field + ": 必须为正数")
+				if float(skill.get("attack_speed_multiplier", 0.0)) < 1.0 or float(stats.get("projectile_speed", 0.0)) > 0.0 or bool(stats.get("is_continuous_attack", false)):
+					errors.append(label + ": 突进攻击需要离散近战和至少1倍攻速")
+				if skill.has("ignore_blind") and not skill.ignore_blind is bool: errors.append(label + ".ignore_blind: 必须为布尔值")
 			&"empowered_attack":
 				if skill.has("hit_heal") and float(skill.hit_heal) <= 0.0:
 					errors.append(label + ".hit_heal: 命中回血必须为正数")

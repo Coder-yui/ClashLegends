@@ -31,7 +31,7 @@ func _apply_unit_movement(dt: float, units: Array[Unit]) -> void:
 	for unit in units:
 		var key := _unit_order_key(unit)
 		if unit.skill_dash_active or CombatInteraction.in_stasis(unit): continue
-		if unit.knockback.in_transit:
+		if unit.knockback.in_transit or unit.movement_strike.in_transit():
 			unit.global_position += unit._move_intent * dt
 			unit.global_position = Vector2(clampf(unit.position.x, unit.body_radius, ArenaRules.FIELD_W-unit.body_radius), clampf(unit.position.y, unit.body_radius, ArenaRules.FIELD_H-unit.body_radius))
 			unit.finish_forced_displacement_step()
@@ -80,7 +80,7 @@ func _clip_knockback_contacts(units: Array[Unit], velocities: Dictionary, dt: fl
 		for j in units.size():
 			var b := units[j]
 			if not a.is_building and not b.is_building and (a.ignores_unit_collision() or b.ignores_unit_collision()): continue
-			if a.knockback.in_transit or b.knockback.in_transit: continue
+			if a.knockback.in_transit or b.knockback.in_transit or a.movement_strike.in_transit() or b.movement_strike.in_transit(): continue
 			if a == b or a.skill_dash_active or b.skill_dash_active or a.is_air != b.is_air or b.structure_rush.displacement_immune(): continue
 			if b._forced_movement and j < i: continue
 			var ka := _unit_order_key(a)
@@ -234,14 +234,14 @@ func _active_mobile_units() -> Array[Unit]:
 
 func _adjust_unit_velocity(unit: Unit, units: Array[Unit], dt: float) -> Vector2:
 	var desired: Vector2 = unit._move_intent
-	if unit._forced_movement:
+	if unit._forced_movement or unit.movement_strike.in_transit():
 		unit._avoidance_turn = 0.0
 		return desired
 	if desired.length_squared() > 0.001:
 		var direction := desired.normalized()
 		var side := Vector2(-direction.y, direction.x)
 		for other in units:
-			if other.knockback.in_transit: continue
+			if other.knockback.in_transit or other.movement_strike.in_transit(): continue
 			if not other.is_building and not unit.is_building and (unit.ignores_unit_collision() or other.ignores_unit_collision()): continue
 			if other == unit or other.skill_dash_active or unit.skill_dash_active or other.is_air != unit.is_air:
 				continue
@@ -292,7 +292,7 @@ func _collect_unit_contacts(units: Array[Unit]) -> Dictionary:
 		for j in range(i + 1, units.size()):
 			var b := units[j]
 			if not a.is_building and not b.is_building and (a.ignores_unit_collision() or b.ignores_unit_collision()): continue
-			if a.knockback.in_transit or b.knockback.in_transit: continue
+			if a.knockback.in_transit or b.knockback.in_transit or a.movement_strike.in_transit() or b.movement_strike.in_transit(): continue
 			if a.skill_dash_active or b.skill_dash_active or a.structure_rush.control_immune() or b.structure_rush.control_immune(): continue
 			if a.is_air != b.is_air:
 				continue

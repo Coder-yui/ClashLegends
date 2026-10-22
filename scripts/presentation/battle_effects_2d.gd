@@ -170,6 +170,9 @@ func _draw_frontal_skill_effect(effect: Dictionary) -> void:
 	if shape == &"shield_explosion": return # 3D 原版 W 粒子读取同一表现事件。
 
 	if shape == &"continuous_area":
+		if source is Unit and source.has_model_art and source.card_id == "hecarim":
+			# 红蓝直接覆盖原版3D绿色指示线，避免两套范围边缘错位。
+			return
 		var radius := maxf(length, 0.0)
 		var pulse := 0.5 + 0.5 * sin(progress * TAU * 2.0)
 		draw_circle(center, radius, Color(line_color.r, line_color.g, line_color.b, 0.035 + 0.025 * pulse))

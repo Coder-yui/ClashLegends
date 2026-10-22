@@ -188,3 +188,14 @@ static func displacement_endpoint(unit: Unit, origin: Vector2, direction: Vector
 	if is_finite(best_forward): return origin + direction*best_forward
 	if is_finite(best_backward): return origin + direction*best_backward
 	return Vector2(INF, INF)
+
+## 前后以起手接近方向定义；优先指定侧，受阻仅沿该半圆尝试身侧，不偷换到另一侧。
+static func find_strike_position(unit: Unit, target: Node2D, approach: Vector2, side: String = "front") -> Vector2:
+	var outward := approach if side == "back" else -approach
+	var radius: float = unit.body_radius + target.body_radius + 2.0
+	if target is Tower or (target is Unit and target.is_building): radius += ArenaRules.STRUCTURE_SEPARATION
+	var allow_terrain := unit.is_air or unit.terrain_traversal.enabled
+	for angle in [0.0, PI/8.0, -PI/8.0, PI/4.0, -PI/4.0, 3.0*PI/8.0, -3.0*PI/8.0, PI/2.0, -PI/2.0]:
+		var point: Vector2 = target.global_position + outward.rotated(angle) * radius
+		if legal(unit, point, allow_terrain): return point
+	return Vector2.INF

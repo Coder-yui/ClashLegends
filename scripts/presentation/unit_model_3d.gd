@@ -98,6 +98,7 @@ var _last_full_resource_move := false
 var _last_buff_pose := false
 var _last_empowered_ready := false
 var _last_haste_active := false
+var _last_charged := false
 var _last_terrain_move_active := false
 # 出场技能序列：deploy 配置为数组时，从单位生成的部署阶段首帧开始依次播放；
 # 单段部署（如赵信 1 秒 Spell4）继续由基础状态通道按 deploy_time 缩放；
@@ -205,6 +206,7 @@ func replace_visual(packed: PackedScene, animations: Dictionary, forward_yaw: fl
 	_cue_transition_active = false
 	_last_empowered_ready = _source.is_empowered_attack_ready_visual()
 	_last_haste_active = _source.get_active_speed_multiplier_visual() > 1.001
+	_last_charged = _source.is_charged_visual()
 	_last_terrain_move_active = false
 	if not reuse:
 		add_child(_model_root)
@@ -444,6 +446,11 @@ func _sync_visual(force: bool, delta: float) -> void:
 	if full_resource_move != _last_full_resource_move:
 		_last_full_resource_move = full_resource_move
 		if not _playing_visual_action and not _playing_attack and not _playing_deploy_sequence and locomotion_state == 2:
+			_transition_to_basic_state(2, _transition_blend(&"locomotion"))
+	var charged := _source.is_charged_visual()
+	if charged != _last_charged:
+		_last_charged = charged
+		if _animation_names.has("charge_move") and not _playing_visual_action and not _playing_attack and not _playing_deploy_sequence and locomotion_state == 2:
 			_transition_to_basic_state(2, _transition_blend(&"locomotion"))
 	var haste_active := _source.get_active_speed_multiplier_visual() > 1.001
 	if haste_active != _last_haste_active:
@@ -868,6 +875,9 @@ func _full_resource_move_animation() -> StringName:
 	return _first_valid_animation("full_resource_move")
 
 func _move_animation_for_route(from_action: StringName) -> StringName:
+	if _source.is_charged_visual():
+		var charge_clip := _first_valid_animation("charge_move")
+		if charge_clip != &"": return charge_clip
 	var terrain_move := _terrain_move_animation()
 	if terrain_move != &"": return terrain_move
 	var full_move := _full_resource_move_animation()
@@ -1063,6 +1073,9 @@ func _play_state(state: int, blend_time: float = -1.0) -> void:
 		var haste_move := _first_valid_animation("haste_move")
 		if haste_move != &"":
 			configured = haste_move
+	if state == 2 and _source.is_charged_visual():
+		var charge_clip := _first_valid_animation("charge_move")
+		if charge_clip != &"": configured = charge_clip
 	if state == 2:
 		var terrain_move := _terrain_move_animation()
 		if terrain_move != &"": configured = terrain_move
@@ -1382,7 +1395,7 @@ func _configure_looping_animations() -> void:
 			var move_animation := _animation_player.get_animation(move_name)
 			if move_animation != null:
 				move_animation.loop_mode = Animation.LOOP_LINEAR
-	for key in ["active_buff_idle", "active_buff_move", "stealth_idle", "stealth_move", "initial_move", "attack_move", "empowered_idle", "empowered_move", "haste_move", "terrain_move", "full_resource_move"]:
+	for key in ["active_buff_idle", "active_buff_move", "stealth_idle", "stealth_move", "initial_move", "attack_move", "empowered_idle", "empowered_move", "haste_move", "charge_move", "terrain_move", "full_resource_move"]:
 		for value in _animation_list(key):
 			var routed_move := StringName(value)
 			if routed_move != &"" and _animation_player.has_animation(routed_move):

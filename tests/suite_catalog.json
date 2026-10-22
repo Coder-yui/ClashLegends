@@ -649,5 +649,12 @@
     "method": "run",
     "scene": "battle",
     "group": "cards"
+  },
+  {
+    "id": "HecarimSuite",
+    "script": "res://tests/suites/cards/hecarim_suite.gd",
+    "method": "run",
+    "scene": "battle",
+    "group": "cards"
   }
 ]

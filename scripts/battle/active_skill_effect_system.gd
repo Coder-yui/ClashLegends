@@ -143,6 +143,8 @@ func apply(source: Unit, skill: Dictionary) -> bool:
 
 func _apply(source: Unit, skill: Dictionary) -> bool:
 	match StringName(skill.get("kind", "")):
+		&"movement_strike":
+			source.movement_strike.arm(skill)
 		&"self_sacrifice":
 			source.sacrifice_without_reward()
 		&"effect_shield":
@@ -404,7 +406,12 @@ func activate_continuous_area(source: Unit, skill: Dictionary) -> void:
 	var amount := maxf(float(skill.get("damage", 0.0)), 0.0)
 	if duration <= 0.0 or radius <= 0.0 or amount <= 0.0:
 		return
+	if float(skill.get("heal_ratio", 0.0)) > 0.0:
+		source.apply_timed_lifesteal(duration, float(skill.heal_ratio), source.status_source("skill_area"))
+		source._buff_visual_start_tick = source.buffs.tick_index
+		source._buff_visual_duration = duration
 	continuous_area_effects.append({
+		"heal_ratio": float(skill.get("heal_ratio", 0.0)),
 		"effect_delivery": CombatInteraction.current_delivery, "created_tick": _controller.get_authoritative_server_tick() if _controller.simulation_step_active() else -1,
 		"status_source": source.status_source("skill_area"), "cast_serial": source.active_skill_cast_serial, "action_serial": source.get_visual_action_serial(),
 		"source_ref": weakref(source),
@@ -453,6 +460,10 @@ func _apply_continuous_delivery(source: Unit, effect: Dictionary) -> void:
 	var source_ref: WeakRef = weakref(source) if is_instance_valid(source) else null
 	_after_damage(func():
 		var live_source = source_ref.get_ref() if source_ref != null else null
+		if is_instance_valid(live_source) and live_source.hp > 0.0 and float(effect.get("heal_ratio", 0.0)) > 0.0:
+			var total := 0.0
+			for receipt in receipts: total += float(receipt.health_lost)
+			live_source.heal(total * float(effect.heal_ratio))
 		if receipts.any(func(result): return result.landed) and not action.is_empty():
 			_controller.notify_unit_audio_event(live_source, StringName(action + ":hit"), center))
 
@@ -898,6 +909,9 @@ func _tick_continuous_area_effects(dt: float) -> void:
 		# 跟随施法者的持续范围在冰冻取消后终止；固定落点区域
 		# 已经脱离施法动作，不因凤凰死亡或被控制而缩短 3 秒寿命。
 		if not fixed_position and source is Unit and (source.is_frozen() or int(effect.get("cast_serial", source.active_skill_cast_serial)) <= source.cancelled_skill_cast_serial or int(effect.get("action_serial", 2147483647)) <= source.cancelled_visual_serial):
+			if float(effect.get("heal_ratio", 0.0)) > 0.0:
+				source.buffs.remove_source(&"timed_lifesteal", effect.status_source)
+				source._buff_visual_start_tick = -1
 			continue
 		effect.time_left = maxf(float(effect.time_left) - dt, 0.0)
 		effect.next_tick = float(effect.next_tick) - dt

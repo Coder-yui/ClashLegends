@@ -65,12 +65,14 @@ func clear_on_death() -> void:
 	hard.clear_family(&"stasis")
 	hard.clear_family(&"freeze")
 	hard.clear_family(&"stun")
+	hard.clear_family(&"root")
 	hard.clear_family(&"silence")
 	hard.clear_family(&"taunt")
 
 func permissions() -> int:
 	if stasis_timer > 0.0: return 0
 	var allowed := ALL_PERMISSIONS
+	if hard.remaining(&"root") > 0.0: allowed &= ~MOVE
 	if frozen_timer > 0.0 or stun_timer > 0.0:
 		allowed &= ~(MOVE | BASIC_ATTACK | START_SKILL | TURN)
 	if frozen_timer > 0.0:
