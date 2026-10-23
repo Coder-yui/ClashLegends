@@ -663,5 +663,12 @@
     "method": "run",
     "scene": "none",
     "group": "cards"
+  },
+  {
+    "id": "EkkoSuite",
+    "script": "res://tests/suites/cards/ekko_suite.gd",
+    "method": "run",
+    "scene": "none",
+    "group": "cards"
   }
 ]

@@ -13,6 +13,12 @@ func _init(controller: Node2D, world: RefCounted) -> void:
 	_controller = controller
 	_world = world
 
+## 表现只读主动资格；工作台允许预览，明确标记无技能的样本除外。
+func has_carried_skill_visual(unit: Unit) -> bool:
+	if _controller._workbench.enabled:
+		return not bool(unit.get_meta("workbench_no_skill", false))
+	return unit.active_ability_id >= 0 and unit.active_ability_slot in [0, 1]
+
 func present_summon_portal(position: Vector2, team: int) -> void:
 	_controller._skill_presentation.present_fixed_area(position, 28.0, 28.0, 3.0, team, &"voidling_portal")
 

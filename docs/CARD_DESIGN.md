@@ -358,3 +358,5 @@ nova可配置`attack_slow_multiplier`，要求正数slow_duration及[0.1,1)倍�
 
 
 资源可声明 `skill_resource_passive`，使普通槽也启用相同资源机制，替换或移除主动技能不清空被动资源。`skill_resource_duration`规定每次正向获得资源刷新整组期限，到期一次性清空，不与渐进衰减同时配置。`skill_resource_move_per_stack`按层增加移动倍率；`skill_resource_full_move_bonus`在满层替代逐层加成。当前悍勇本色为4秒、每层5%、满层30%。消耗资源立即取消相应加速，施法阻断时不叠层也不刷新期限。权威层负责计时和移速，表现继续读取既有资源比例与移动倍率快照。
+
+时间刺客的同目标第三击与4秒回溯见[单位手册](units/ekko.md)。`repeat_hit_*`按来源单位与目标分别累计有效命中，每个目标达到阈值仅触发一次，切换目标不重置；仅支持单体离散近战；`position_history_duration`限制历史窗口，`rewind_nova`在Cast Start锁定历史点并回复满血，Impact结算合法落点与范围伤害；均由权威执行。

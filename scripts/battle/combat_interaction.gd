@@ -11,6 +11,7 @@ static func allows(target: Node2D, source: Node2D = null, source_team: int = -1,
 	if not is_instance_valid(target): return false
 	if in_stasis(target) or (target is Unit and target.death_form.waiting()): return false
 	if attached or not target is Unit: return true
+	if target.control.hard.remaining(&"untargetable") > 0.0: return false
 	if is_instance_valid(source):
 		source_team = int(source.team)
 		source_position = source.global_position
@@ -19,7 +20,7 @@ static func allows(target: Node2D, source: Node2D = null, source_team: int = -1,
 	return not protection.active() or not protection.contains(target.global_position) or protection.contains(source_position)
 
 static func can_acquire(target, observer_team: int) -> bool:
-	return is_instance_valid(target) and not in_stasis(target) and (not target is Unit or target.perceived_by_team(observer_team))
+	return is_instance_valid(target) and not in_stasis(target) and (not target is Unit or (target.control.hard.remaining(&"untargetable") <= 0.0 and target.perceived_by_team(observer_team)))
 
 static func effect_context(source: Node2D = null, team: int = -1, position: Vector2 = Vector2(INF, INF), attached: bool = false) -> Dictionary:
 	return {"source": source, "team": team, "position": position, "attached": attached, "delivery": current_delivery}

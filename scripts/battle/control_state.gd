@@ -62,6 +62,7 @@ func apply_replica_stun(stunned: bool) -> void:
 
 ## 致死结算建立新的生命阶段，旧硬控不能阻塞死亡/复生表现或继承给下一条命。
 func clear_on_death() -> void:
+	hard.clear_family(&"untargetable")
 	hard.clear_family(&"stasis")
 	hard.clear_family(&"freeze")
 	hard.clear_family(&"stun")

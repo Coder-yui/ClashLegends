@@ -788,5 +788,14 @@
     "source_path": "assets/characters/samira/hud/icons2d/samirar1.dds",
     "source_sha256": "3c9a046a574ad45f1491fa72c7610558fc6337c006022638946c3f916479f72f",
     "sha256": "6aa9a14e16de6fe0c1905cbfb29b33aaa99989e4ce20057f9f0ccbe832511d32"
+  },
+  {
+    "card": "ekko",
+    "skill_index": 0,
+    "path": "res://assets/skills/ekko_r.png",
+    "source_package": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Ekko.wad.client",
+    "source_path": "assets/characters/ekko/hud/icons2d/ekko_r.dds",
+    "source_sha256": "ce75590ca67349dbdf6421bb5c5b964fe5afebb19dc6c780abb8cb4e7ad8375a",
+    "sha256": "be97c2d855e71132136ea85eabfd4b15974281cc90b4f07b12e9f6a9c2df5d4c"
   }
 ]

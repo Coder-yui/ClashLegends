@@ -410,6 +410,11 @@ static func _validate_combat_stats(label: String, stats: Dictionary, require_siz
 	var cycle_animation_count: int = cycle_animations.size() if cycle_animations is Array else 1
 	if stats.has("attack_passive_multipliers") and cycle_animation_count != stats.attack_passive_multipliers.size():
 		errors.append("%s.attack_passive_multipliers: 必须与攻击动作等长" % label)
+	if stats.has("repeat_hit_count"):
+		if int(stats.repeat_hit_count) < 2 or int(stats.repeat_hit_count) != float(stats.repeat_hit_count): errors.append(label + ".repeat_hit_count: 需要至少2次的整数")
+		if float(stats.get("repeat_hit_multiplier", 0.0)) <= 1.0 or float(stats.get("repeat_hit_haste_duration", 0.0)) <= 0.0 or float(stats.get("repeat_hit_speed_multiplier", 0.0)) <= 1.0: errors.append(label + ": 连击需要伤害倍率、加速持续时间和速度倍率")
+		if float(stats.get("projectile_speed", 0.0)) > 0.0 or float(stats.get("splash_radius", 0.0)) > 0.0 or bool(stats.get("is_continuous_attack", false)): errors.append(label + ": 连击目前仅支持单体离散近战")
+	if stats.has("position_history_duration") and (float(stats.position_history_duration) <= 0.0 or float(stats.position_history_duration) > 10.0): errors.append(label + ".position_history_duration: 必须在(0,10]内")
 	if float(stats.get("form_speed_boost_duration", 0.0)) < 0.0 or float(stats.get("form_speed_boost_multiplier", 1.0)) < 1.0:
 		errors.append("%s: 形态加速时长必须非负，倍率至少为1" % label)
 	if float(stats.get("form_lifetime", 0.0)) < 0.0 or (bool(stats.get("form_refresh_on_kill", false)) and float(stats.get("form_lifetime", 0.0)) <= 0.0):
@@ -1069,6 +1074,10 @@ static func _validate_active_skills(card_id: String, stats: Dictionary, errors: 
 				for field in [&"radius", &"duration"]:
 					if float(skill.get(field, 0.0)) <= 0.0:
 						errors.append("%s.%s: 必须 > 0" % [label, field])
+			&"rewind_nova":
+				for field in ["rewind_seconds", "radius", "damage", "impact_delay"]:
+					if float(skill.get(field, 0.0)) <= 0.0: errors.append(label + "." + field + ": 必须 > 0")
+				if float(skill.get("rewind_seconds", 0.0)) > float(stats.get("position_history_duration", 0.0)): errors.append(label + ": 回溯必须有足够历史窗口")
 			&"blink_nova":
 				_require_fields(label, skill, [&"length", &"radius", &"damage"], errors)
 				if skill.has("landing_extension") and float(skill.landing_extension) < 0.0:

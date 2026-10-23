@@ -1937,6 +1937,12 @@ func surface_gap_to_circle(center: Vector2, radius: float) -> float:
 
 ## 旧动作窗口在命令执行前推进一次；本边界新动作从下个边界开始推进。
 func prepare_action_clocks(dt: float) -> void:
+	if not _in_client_mode() and float(_base_form_stats.get("position_history_duration", 0.0)) > 0.0:
+		if _position_history.is_empty(): _position_history.append({"time": 0.0, "position": global_position})
+		_position_history_age += dt
+		_position_history.append({"time": _position_history_age, "position": global_position})
+		while _position_history.size() > 1 and float(_position_history[1].time) <= _position_history_age - float(_base_form_stats.position_history_duration):
+			_position_history.pop_front()
 	# 已有隐身是否解除独立于脱战资格；这里只消费公共空闲时长。
 	stealth.sync_idle(combat_idle_seconds)
 	target_protection.advance(dt, global_position)
@@ -2559,6 +2565,45 @@ func _try_start_attack_visual(time_until_hit: float) -> void:
 	if empowered_attack_ready:
 		_empowered_attack_visual_serial = _attack_visual_serial
 
+## 有界权威位置历史与各目标独立、仅触发一次的命中状态；客户端不推进。
+var _position_history: Array[Dictionary] = []
+var _position_history_age := 0.0
+var _repeat_hit_targets: Dictionary = {}
+
+func historical_position(seconds: float) -> Vector2:
+	if _position_history.is_empty(): return global_position
+	var point: Vector2 = _position_history[0].position
+	for sample in _position_history:
+		if float(sample.time) > _position_history_age - seconds + 0.00001: break
+		point = sample.position
+	return point
+
+func repeat_hit_bonus(target: Node2D, amount: float) -> float:
+	var count := int(_base_form_stats.get("repeat_hit_count", 0))
+	if count <= 0: return 0.0
+	var entry: Dictionary = _repeat_hit_targets.get(target.get_instance_id(), {})
+	if entry.is_empty() or entry.target.get_ref() != target: return 0.0
+	return amount * (float(_base_form_stats.get("repeat_hit_multiplier", 1.0)) - 1.0) if int(entry.hits) == count - 1 else 0.0
+
+func record_repeat_hit(target: Node2D) -> void:
+	var count := int(_base_form_stats.get("repeat_hit_count", 0))
+	if count <= 0: return
+	# 弱引用不延长目标生命周期；保留存活目标的已触发状态，换目标不重置。
+	for id in _repeat_hit_targets.keys():
+		if _repeat_hit_targets[id].target.get_ref() == null:
+			_repeat_hit_targets.erase(id)
+	var id := target.get_instance_id()
+	var entry: Dictionary = _repeat_hit_targets.get(id, {})
+	if entry.is_empty() or entry.target.get_ref() != target:
+		entry = {"target": weakref(target), "hits": 0}
+		_repeat_hit_targets[id] = entry
+	if int(entry.hits) >= count: return
+	entry.hits = int(entry.hits) + 1
+	if int(entry.hits) < count or hp <= 0.0: return
+	# 所有目标共用同一来源：倍率始终1.8，同源重触发仅刷新3秒窗口。
+	apply_active_buff(float(_base_form_stats.repeat_hit_haste_duration), float(_base_form_stats.repeat_hit_speed_multiplier), 1.0, 1.0, false, false, status_source("repeat_hit"))
+	if battle_context != null: battle_context.notify_unit_audio_event(self, &"passive:proc", global_position)
+
 ## 每次真实命中的独立附加量；中央/强化等基础倍率不影响它。
 func on_hit_passive_damage(target: Node2D) -> float:
 	if on_hit_max_health_ratio <= 0.0:
@@ -2600,9 +2645,10 @@ func _deal_attack_damage_to(target: Node2D, amount: float, effects: Dictionary =
 		return battle_context.launch_attack(self, target, amount, 0.0 if close_attack else projectile_speed, splash_radius, attack_knockback, projectile_color, effects)
 	else:
 		var was_alive: bool = target.hp > 0.0
-		var result := BattleNumbers.hit(target, BattleNumbers.quantity(amount) + on_hit_passive_damage(target), self, team, global_position)
+		var result := BattleNumbers.hit(target, BattleNumbers.quantity(amount + repeat_hit_bonus(target, amount)) + on_hit_passive_damage(target), self, team, global_position)
 		var landed: bool = result.landed
 		if landed:
+			record_repeat_hit(target)
 			if target is Unit and target.hp > 0.0 and effects.has("on_hit_slow_duration"):
 				target.apply_slow(float(effects.on_hit_slow_duration), float(effects.on_hit_slow_multiplier), effects.on_hit_status_source, effects.on_hit_context)
 			if target is Unit and int(effects.get("blind_charges", 0)) > 0:

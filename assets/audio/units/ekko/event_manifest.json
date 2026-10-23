@@ -1,0 +1,564 @@
+[
+  {
+    "file": "play_sfx_ekko_ekkor_oncast_r1.wav",
+    "event": "Play_sfx_Ekko_EkkoR_OnCast",
+    "event_id": 3890539990,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/audio/ekko/event_wav/Play_sfx_Ekko_EkkoR_OnCast {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/audio/ekko/txtp/Play_sfx_Ekko_EkkoR_OnCast {r1}.txtp",
+    "media_ids": [
+      26933874,
+      189212273,
+      499800238
+    ],
+    "duration": 1.2407,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "193e316a64ba517744c48e4e17d51c7fd7ebdc7193e81e25f3bdd95d9e42811a",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ekko_ekkor_oncast_r2.wav",
+    "event": "Play_sfx_Ekko_EkkoR_OnCast",
+    "event_id": 3890539990,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/audio/ekko/event_wav/Play_sfx_Ekko_EkkoR_OnCast {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/audio/ekko/txtp/Play_sfx_Ekko_EkkoR_OnCast {r2}.txtp",
+    "media_ids": [
+      26933874,
+      189212273,
+      499800238
+    ],
+    "duration": 1.2486,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "b19acd4c73ca9dfa3850e3d8dae3025b9a63b81c164a8602ea2cd18b8919b301",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ekko_ekkor_oncast_r3.wav",
+    "event": "Play_sfx_Ekko_EkkoR_OnCast",
+    "event_id": 3890539990,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/audio/ekko/event_wav/Play_sfx_Ekko_EkkoR_OnCast {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/audio/ekko/txtp/Play_sfx_Ekko_EkkoR_OnCast {r3}.txtp",
+    "media_ids": [
+      26933874,
+      189212273,
+      499800238
+    ],
+    "duration": 1.1969,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "ca4772ae8d6528ed789315564eb3be6e8fe1a2decf269cbfd1f3799c26f1889f",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ekko_ekkor_buffactivate_r1.wav",
+    "event": "Play_sfx_Ekko_EkkoR_buffactivate",
+    "event_id": 2229581868,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/audio/ekko/event_wav/Play_sfx_Ekko_EkkoR_buffactivate {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/audio/ekko/txtp/Play_sfx_Ekko_EkkoR_buffactivate {r1}.txtp",
+    "media_ids": [
+      582962609,
+      970644005
+    ],
+    "duration": 0.6537,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "1500dab83ad62494e096ee8f19364749531e472563ae32f3888b63ac5e08dd2a",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ekko_ekkor_buffactivate_r2.wav",
+    "event": "Play_sfx_Ekko_EkkoR_buffactivate",
+    "event_id": 2229581868,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/audio/ekko/event_wav/Play_sfx_Ekko_EkkoR_buffactivate {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/audio/ekko/txtp/Play_sfx_Ekko_EkkoR_buffactivate {r2}.txtp",
+    "media_ids": [
+      582962609,
+      970644005
+    ],
+    "duration": 0.6273,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "20ba180391b884372464618323b223d75dfe49b1228de3c420c53679c024bd11",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ekko_ekkopassive_hit_r1.wav",
+    "event": "Play_sfx_Ekko_EkkoPassive_hit",
+    "event_id": 2131699254,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/audio/ekko/event_wav/Play_sfx_Ekko_EkkoPassive_hit {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/audio/ekko/txtp/Play_sfx_Ekko_EkkoPassive_hit {r1}.txtp",
+    "media_ids": [
+      177393971,
+      613510410,
+      614206374
+    ],
+    "duration": 1.5933,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "da4c1b95bdb83a13b215745ef0bcd698a189d593c9faa10df8db41f43f8d4da1",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ekko_ekkopassive_hit_r2.wav",
+    "event": "Play_sfx_Ekko_EkkoPassive_hit",
+    "event_id": 2131699254,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/audio/ekko/event_wav/Play_sfx_Ekko_EkkoPassive_hit {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/audio/ekko/txtp/Play_sfx_Ekko_EkkoPassive_hit {r2}.txtp",
+    "media_ids": [
+      177393971,
+      613510410,
+      614206374
+    ],
+    "duration": 1.528,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "39004d679a819f72e905b74635005d82baddc6d5c868fd326d3182f980452369",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ekko_ekkopassive_hit_r3.wav",
+    "event": "Play_sfx_Ekko_EkkoPassive_hit",
+    "event_id": 2131699254,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/audio/ekko/event_wav/Play_sfx_Ekko_EkkoPassive_hit {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/audio/ekko/txtp/Play_sfx_Ekko_EkkoPassive_hit {r3}.txtp",
+    "media_ids": [
+      177393971,
+      613510410,
+      614206374
+    ],
+    "duration": 1.7318,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "c70f2173a223839e80ef58875b1effd3177e2793030d37e1a522b104241ed9a0",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "play_sfx_ekko_death3d_cast.wav",
+    "event": "Play_sfx_Ekko_Death3D_cast",
+    "event_id": 3260466868,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/audio/ekko/event_wav/Play_sfx_Ekko_Death3D_cast.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/audio/ekko/txtp/Play_sfx_Ekko_Death3D_cast.txtp",
+    "media_ids": [
+      123547698
+    ],
+    "duration": 1.5,
+    "processing": "vgmstream-cli -i; source event gain retained; death: first 1.5s, unchanged first 1s, linear amplitude fade to zero over final 0.5s",
+    "sha256": "d9ea3dfa411e51d1ececa4d739d226f6518d3631b5e4816eca86297977b04678",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。",
+    "death_envelope": {
+      "source_duration": 5.84156462585034,
+      "source_sha256": "2d466e5b74d5be0598d1a522252d4f4ba994c230ae600103ad35e4d72349c2fe",
+      "keep_seconds": 1.5,
+      "fade_start_seconds": 1.0,
+      "fade_seconds": 0.5,
+      "curve": "linear_amplitude"
+    }
+  },
+  {
+    "file": "play_sfx_ekko_ekkobasicattackp1_oncast_r1_d.wav",
+    "event": "Play_sfx_Ekko_EkkoBasicAttackP1_OnCast",
+    "event_id": 3731574289,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/attack-p-revision/Play_sfx_Ekko_EkkoBasicAttackP1_OnCast {r1} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/audio/ekko/txtp/Play_sfx_Ekko_EkkoBasicAttackP1_OnCast {r1} {d}.txtp",
+    "media_ids": [
+      1116276,
+      4606268,
+      6863586,
+      12541819,
+      14110402
+    ],
+    "duration": 0.7377,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "6bacd8fe594d1efd100b09e7dbdfa6d5724581bf5f9e07813d5df16d471e3e1e",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体。",
+    "equivalent_sources": [
+      {
+        "file": "play_sfx_ekko_ekkobasicattackp2_oncast_r1_d.wav",
+        "event": "Play_sfx_Ekko_EkkoBasicAttackP2_OnCast",
+        "event_id": 3612966240,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/attack-p-revision/Play_sfx_Ekko_EkkoBasicAttackP2_OnCast {r1} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/audio/ekko/txtp/Play_sfx_Ekko_EkkoBasicAttackP2_OnCast {r1} {d}.txtp",
+        "media_ids": [
+          1116276,
+          4606268,
+          6863586,
+          12541819,
+          14110402
+        ],
+        "duration": 0.7377,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "6bacd8fe594d1efd100b09e7dbdfa6d5724581bf5f9e07813d5df16d471e3e1e",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体。"
+      },
+      {
+        "file": "play_sfx_ekko_ekkobasicattackp3_oncast_r1_d.wav",
+        "event": "Play_sfx_Ekko_EkkoBasicAttackP3_OnCast",
+        "event_id": 2404186307,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/attack-p-revision/Play_sfx_Ekko_EkkoBasicAttackP3_OnCast {r1} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/audio/ekko/txtp/Play_sfx_Ekko_EkkoBasicAttackP3_OnCast {r1} {d}.txtp",
+        "media_ids": [
+          1116276,
+          4606268,
+          6863586,
+          12541819,
+          14110402
+        ],
+        "duration": 0.7377,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "6bacd8fe594d1efd100b09e7dbdfa6d5724581bf5f9e07813d5df16d471e3e1e",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体。"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_ekko_ekkobasicattackp1_oncast_r2_d.wav",
+    "event": "Play_sfx_Ekko_EkkoBasicAttackP1_OnCast",
+    "event_id": 3731574289,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/attack-p-revision/Play_sfx_Ekko_EkkoBasicAttackP1_OnCast {r2} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/audio/ekko/txtp/Play_sfx_Ekko_EkkoBasicAttackP1_OnCast {r2} {d}.txtp",
+    "media_ids": [
+      1116276,
+      4606268,
+      6863586,
+      12541819,
+      14110402
+    ],
+    "duration": 0.8729,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "188bf3f4174d36e59352400a519911eece3a92e5bcb18704282bce1e48606bfe",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体。",
+    "equivalent_sources": [
+      {
+        "file": "play_sfx_ekko_ekkobasicattackp2_oncast_r2_d.wav",
+        "event": "Play_sfx_Ekko_EkkoBasicAttackP2_OnCast",
+        "event_id": 3612966240,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/attack-p-revision/Play_sfx_Ekko_EkkoBasicAttackP2_OnCast {r2} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/audio/ekko/txtp/Play_sfx_Ekko_EkkoBasicAttackP2_OnCast {r2} {d}.txtp",
+        "media_ids": [
+          1116276,
+          4606268,
+          6863586,
+          12541819,
+          14110402
+        ],
+        "duration": 0.8729,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "188bf3f4174d36e59352400a519911eece3a92e5bcb18704282bce1e48606bfe",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体。"
+      },
+      {
+        "file": "play_sfx_ekko_ekkobasicattackp3_oncast_r2_d.wav",
+        "event": "Play_sfx_Ekko_EkkoBasicAttackP3_OnCast",
+        "event_id": 2404186307,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/attack-p-revision/Play_sfx_Ekko_EkkoBasicAttackP3_OnCast {r2} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/audio/ekko/txtp/Play_sfx_Ekko_EkkoBasicAttackP3_OnCast {r2} {d}.txtp",
+        "media_ids": [
+          1116276,
+          4606268,
+          6863586,
+          12541819,
+          14110402
+        ],
+        "duration": 0.8729,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "188bf3f4174d36e59352400a519911eece3a92e5bcb18704282bce1e48606bfe",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体。"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_ekko_ekkobasicattackp1_oncast_r3_d.wav",
+    "event": "Play_sfx_Ekko_EkkoBasicAttackP1_OnCast",
+    "event_id": 3731574289,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/attack-p-revision/Play_sfx_Ekko_EkkoBasicAttackP1_OnCast {r3} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/audio/ekko/txtp/Play_sfx_Ekko_EkkoBasicAttackP1_OnCast {r3} {d}.txtp",
+    "media_ids": [
+      1116276,
+      4606268,
+      6863586,
+      12541819,
+      14110402
+    ],
+    "duration": 0.6806,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "bf9e0c06776958a4e9c8e7fd9b7a1b5407cbed4a44db8aa35f4b211f6b6d0566",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体。",
+    "equivalent_sources": [
+      {
+        "file": "play_sfx_ekko_ekkobasicattackp2_oncast_r3_d.wav",
+        "event": "Play_sfx_Ekko_EkkoBasicAttackP2_OnCast",
+        "event_id": 3612966240,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/attack-p-revision/Play_sfx_Ekko_EkkoBasicAttackP2_OnCast {r3} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/audio/ekko/txtp/Play_sfx_Ekko_EkkoBasicAttackP2_OnCast {r3} {d}.txtp",
+        "media_ids": [
+          1116276,
+          4606268,
+          6863586,
+          12541819,
+          14110402
+        ],
+        "duration": 0.6806,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "bf9e0c06776958a4e9c8e7fd9b7a1b5407cbed4a44db8aa35f4b211f6b6d0566",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体。"
+      },
+      {
+        "file": "play_sfx_ekko_ekkobasicattackp3_oncast_r3_d.wav",
+        "event": "Play_sfx_Ekko_EkkoBasicAttackP3_OnCast",
+        "event_id": 2404186307,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/attack-p-revision/Play_sfx_Ekko_EkkoBasicAttackP3_OnCast {r3} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/audio/ekko/txtp/Play_sfx_Ekko_EkkoBasicAttackP3_OnCast {r3} {d}.txtp",
+        "media_ids": [
+          1116276,
+          4606268,
+          6863586,
+          12541819,
+          14110402
+        ],
+        "duration": 0.6806,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "bf9e0c06776958a4e9c8e7fd9b7a1b5407cbed4a44db8aa35f4b211f6b6d0566",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体。"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_ekko_ekkobasicattackp1_onhit_1559186049_1153642577_r1_d.wav",
+    "event": "Play_sfx_Ekko_EkkoBasicAttackP1_OnHit",
+    "event_id": 2990224811,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/attack-p-revision/Play_sfx_Ekko_EkkoBasicAttackP1_OnHit [1559186049=1153642577] {r1} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/audio/ekko/txtp/Play_sfx_Ekko_EkkoBasicAttackP1_OnHit [1559186049=1153642577] {r1} {d}.txtp",
+    "media_ids": [
+      22316817,
+      35164649,
+      52088793,
+      55522224
+    ],
+    "duration": 0.8829,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "5d16b12a9dc3e03a0abd4de62b6355ac452e4422410aa64ad2d07f6f1b58cc16",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体。",
+    "equivalent_sources": [
+      {
+        "file": "play_sfx_ekko_ekkobasicattackp2_onhit_1559186049_1153642577_r1_d.wav",
+        "event": "Play_sfx_Ekko_EkkoBasicAttackP2_OnHit",
+        "event_id": 2357939296,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/attack-p-revision/Play_sfx_Ekko_EkkoBasicAttackP2_OnHit [1559186049=1153642577] {r1} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/audio/ekko/txtp/Play_sfx_Ekko_EkkoBasicAttackP2_OnHit [1559186049=1153642577] {r1} {d}.txtp",
+        "media_ids": [
+          22316817,
+          35164649,
+          52088793,
+          55522224
+        ],
+        "duration": 0.8829,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "5d16b12a9dc3e03a0abd4de62b6355ac452e4422410aa64ad2d07f6f1b58cc16",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体。"
+      },
+      {
+        "file": "play_sfx_ekko_ekkobasicattackp3_onhit_1559186049_1153642577_r1_d.wav",
+        "event": "Play_sfx_Ekko_EkkoBasicAttackP3_OnHit",
+        "event_id": 2820532713,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/attack-p-revision/Play_sfx_Ekko_EkkoBasicAttackP3_OnHit [1559186049=1153642577] {r1} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/audio/ekko/txtp/Play_sfx_Ekko_EkkoBasicAttackP3_OnHit [1559186049=1153642577] {r1} {d}.txtp",
+        "media_ids": [
+          22316817,
+          35164649,
+          52088793,
+          55522224
+        ],
+        "duration": 0.8829,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "5d16b12a9dc3e03a0abd4de62b6355ac452e4422410aa64ad2d07f6f1b58cc16",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体。"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_ekko_ekkobasicattackp1_onhit_1559186049_1153642577_r2_d.wav",
+    "event": "Play_sfx_Ekko_EkkoBasicAttackP1_OnHit",
+    "event_id": 2990224811,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/attack-p-revision/Play_sfx_Ekko_EkkoBasicAttackP1_OnHit [1559186049=1153642577] {r2} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/audio/ekko/txtp/Play_sfx_Ekko_EkkoBasicAttackP1_OnHit [1559186049=1153642577] {r2} {d}.txtp",
+    "media_ids": [
+      22316817,
+      35164649,
+      52088793,
+      55522224
+    ],
+    "duration": 0.9008,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "e7e2ad75afde07f0554508393d687176a05e9cfd8dd1837cb6fa0ca1d9be6861",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体。",
+    "equivalent_sources": [
+      {
+        "file": "play_sfx_ekko_ekkobasicattackp2_onhit_1559186049_1153642577_r2_d.wav",
+        "event": "Play_sfx_Ekko_EkkoBasicAttackP2_OnHit",
+        "event_id": 2357939296,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/attack-p-revision/Play_sfx_Ekko_EkkoBasicAttackP2_OnHit [1559186049=1153642577] {r2} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/audio/ekko/txtp/Play_sfx_Ekko_EkkoBasicAttackP2_OnHit [1559186049=1153642577] {r2} {d}.txtp",
+        "media_ids": [
+          22316817,
+          35164649,
+          52088793,
+          55522224
+        ],
+        "duration": 0.9008,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "e7e2ad75afde07f0554508393d687176a05e9cfd8dd1837cb6fa0ca1d9be6861",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体。"
+      },
+      {
+        "file": "play_sfx_ekko_ekkobasicattackp3_onhit_1559186049_1153642577_r2_d.wav",
+        "event": "Play_sfx_Ekko_EkkoBasicAttackP3_OnHit",
+        "event_id": 2820532713,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/attack-p-revision/Play_sfx_Ekko_EkkoBasicAttackP3_OnHit [1559186049=1153642577] {r2} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/audio/ekko/txtp/Play_sfx_Ekko_EkkoBasicAttackP3_OnHit [1559186049=1153642577] {r2} {d}.txtp",
+        "media_ids": [
+          22316817,
+          35164649,
+          52088793,
+          55522224
+        ],
+        "duration": 0.9008,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "e7e2ad75afde07f0554508393d687176a05e9cfd8dd1837cb6fa0ca1d9be6861",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体。"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_ekko_ekkobasicattackp1_onhit_1559186049_1153642577_r3_d.wav",
+    "event": "Play_sfx_Ekko_EkkoBasicAttackP1_OnHit",
+    "event_id": 2990224811,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/attack-p-revision/Play_sfx_Ekko_EkkoBasicAttackP1_OnHit [1559186049=1153642577] {r3} {d}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/audio/ekko/txtp/Play_sfx_Ekko_EkkoBasicAttackP1_OnHit [1559186049=1153642577] {r3} {d}.txtp",
+    "media_ids": [
+      22316817,
+      35164649,
+      52088793,
+      55522224
+    ],
+    "duration": 0.9018,
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "sha256": "8f52b5fc84cfb84b42063af8eb733a0b565cce5593d36482f4427d15dc9580b5",
+    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体。",
+    "equivalent_sources": [
+      {
+        "file": "play_sfx_ekko_ekkobasicattackp2_onhit_1559186049_1153642577_r3_d.wav",
+        "event": "Play_sfx_Ekko_EkkoBasicAttackP2_OnHit",
+        "event_id": 2357939296,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/attack-p-revision/Play_sfx_Ekko_EkkoBasicAttackP2_OnHit [1559186049=1153642577] {r3} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/audio/ekko/txtp/Play_sfx_Ekko_EkkoBasicAttackP2_OnHit [1559186049=1153642577] {r3} {d}.txtp",
+        "media_ids": [
+          22316817,
+          35164649,
+          52088793,
+          55522224
+        ],
+        "duration": 0.9018,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "8f52b5fc84cfb84b42063af8eb733a0b565cce5593d36482f4427d15dc9580b5",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体。"
+      },
+      {
+        "file": "play_sfx_ekko_ekkobasicattackp3_onhit_1559186049_1153642577_r3_d.wav",
+        "event": "Play_sfx_Ekko_EkkoBasicAttackP3_OnHit",
+        "event_id": 2820532713,
+        "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/attack-p-revision/Play_sfx_Ekko_EkkoBasicAttackP3_OnHit [1559186049=1153642577] {r3} {d}.wav",
+        "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/audio/ekko/txtp/Play_sfx_Ekko_EkkoBasicAttackP3_OnHit [1559186049=1153642577] {r3} {d}.txtp",
+        "media_ids": [
+          22316817,
+          35164649,
+          52088793,
+          55522224
+        ],
+        "duration": 0.9018,
+        "processing": "vgmstream-cli -i; source event gain retained",
+        "sha256": "8f52b5fc84cfb84b42063af8eb733a0b565cce5593d36482f4427d15dc9580b5",
+        "selection_note": "首个明确 Switch 条件，最多三个外层随机变体。"
+      }
+    ]
+  },
+  {
+    "file": "play_sfx_ekko_ekkor_buffdeactivate_r1.wav",
+    "event": "Play_sfx_Ekko_EkkoR_buffdeactivate",
+    "event_id": 1519710781,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/full-r-audio/Play_sfx_Ekko_EkkoR_buffdeactivate {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/audio/ekko/txtp/Play_sfx_Ekko_EkkoR_buffdeactivate {r1}.txtp",
+    "duration": 2.9936507936507937,
+    "sha256": "8bda92f8a842a08cddbebda0d995e0c6018470cdb70f445d2e92d6c60d7ab6a4",
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "media_ids": [
+      262721832,
+      799097783
+    ]
+  },
+  {
+    "file": "play_sfx_ekko_ekkor_buffdeactivate_r2.wav",
+    "event": "Play_sfx_Ekko_EkkoR_buffdeactivate",
+    "event_id": 1519710781,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/full-r-audio/Play_sfx_Ekko_EkkoR_buffdeactivate {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/audio/ekko/txtp/Play_sfx_Ekko_EkkoR_buffdeactivate {r2}.txtp",
+    "duration": 3.012244897959184,
+    "sha256": "84a90f041727e0855875a73ce0f081026d01b8c8154a85405e95ae7da2f52457",
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "media_ids": [
+      262721832,
+      799097783
+    ]
+  },
+  {
+    "file": "play_vo_ekko_ekkor_cast3d_r1.wav",
+    "event": "Play_vo_Ekko_EkkoR_cast3D",
+    "event_id": 1794721276,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/full-r-audio/Play_vo_Ekko_EkkoR_cast3D {r1}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/audio/ekko_vo/r_txtp/Play_vo_Ekko_EkkoR_cast3D {r1}.txtp",
+    "duration": 0.82,
+    "sha256": "b4d3e71fb1bf0fb01ddb2e95b3b11d5f45f72be8b3e3be8f365cbd37e5912520",
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "media_ids": [
+      1566055489,
+      1698186694,
+      1932670102
+    ]
+  },
+  {
+    "file": "play_vo_ekko_ekkor_cast3d_r2.wav",
+    "event": "Play_vo_Ekko_EkkoR_cast3D",
+    "event_id": 1794721276,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/full-r-audio/Play_vo_Ekko_EkkoR_cast3D {r2}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/audio/ekko_vo/r_txtp/Play_vo_Ekko_EkkoR_cast3D {r2}.txtp",
+    "duration": 0.8033333333333333,
+    "sha256": "cda57df0afbbc2043f7d3074b4c6597d2497ddbb36142d2599b90ce08e4f7438",
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "media_ids": [
+      1566055489,
+      1698186694,
+      1932670102
+    ]
+  },
+  {
+    "file": "play_vo_ekko_ekkor_cast3d_r3.wav",
+    "event": "Play_vo_Ekko_EkkoR_cast3D",
+    "event_id": 1794721276,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/full-r-audio/Play_vo_Ekko_EkkoR_cast3D {r3}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/audio/ekko_vo/r_txtp/Play_vo_Ekko_EkkoR_cast3D {r3}.txtp",
+    "duration": 1.2166666666666666,
+    "sha256": "f18b5a33318f6869f5da4a7c25de18f50870c009bfdb0c9b7f468ef0d0bad83d",
+    "processing": "vgmstream-cli -i; source event gain retained",
+    "media_ids": [
+      1566055489,
+      1698186694,
+      1932670102
+    ]
+  },
+  {
+    "file": "play_vo_ekko_attack2dgeneral_r5.wav",
+    "event": "Play_vo_Ekko_Attack2DGeneral",
+    "event_id": 1328898779,
+    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/deploy-revision/Play_vo_Ekko_Attack2DGeneral {r5}.wav",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/时间刺客/deploy-revision/txtp/Play_vo_Ekko_Attack2DGeneral {r5}.txtp",
+    "duration": 1.2703401360544218,
+    "sha256": "9d14cbc8bea48c8a7b83f01c463ccb5695de83344ef40cfaf96cf4674c13d927",
+    "processing": "vgmstream-cli -i; wwiser -gv=0dB; source event gain retained",
+    "selection_note": "用户指定部署台词：让我再重复一次。原始攻击指令事件第5变体；本地中文转写核对。",
+    "media_ids": [
+      780490105
+    ]
+  }
+]

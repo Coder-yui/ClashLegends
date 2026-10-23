@@ -177,7 +177,7 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 		if cleave_radius > 0.0 and (target.team == p_team or (target != primary and target.global_position.distance_to(effects.cleave_center) > cleave_radius + target.body_radius)): continue
 		var hit_amount := float(BattleNumbers.quantity(amount)) if cleave_radius <= 0.0 or target == primary else 0.0
 		if cleave_radius > 0.0: hit_amount += float(effects.cleave_damage)
-		if counts_as_attack and from is Unit and (movement_radius <= 0.0 or target == primary): hit_amount += from.on_hit_passive_damage(target)
+		if counts_as_attack and from is Unit and (movement_radius <= 0.0 or target == primary): hit_amount += from.on_hit_passive_damage(target) + from.repeat_hit_bonus(target, hit_amount)
 		# 到达目标时判断，包含在途普攻和溅射；技能攻击不消费免疫次数。
 		if counts_as_attack and String(effects.get("strike_type", "basic_attack")) == "basic_attack" and target is Unit and CombatInteraction.allows(target, from, p_team, source_position) and target.try_dodge_basic_attack(): continue
 		var result := _hit(target, hit_amount, amount, from, p_team, source_position, effects)
@@ -192,6 +192,7 @@ func resolve_attack_hit(p_team: int, origin: Vector2, primary: Node2D, amount: f
 			if not result.landed or not is_instance_valid(landed_target): return
 			_apply_attack_hit_effects(landed_target, effects, landed_source)
 			if counts_as_attack and (movement_radius <= 0.0 or primary_hit) and radius <= 0.0 and (cleave_radius <= 0.0 or primary_hit) and landed_source is Unit:
+				landed_source.record_repeat_hit(landed_target)
 				_settle_bleeding_attack(landed_target, landed_source, effects, result)
 				if landed_source.battle_context != null: landed_source.battle_context.record_growth_hit(landed_source, landed_target))
 		if knockback > 0.0 and target is Unit:

@@ -38,6 +38,7 @@ func _init(controller: Node2D, presentation: SkillEffectPresentation) -> void:
 func prepare_cast(source: Unit, skill: Dictionary) -> Dictionary:
 	var prepared := skill.duplicate(true)
 	prepared["effect_delivery"] = CombatInteraction.Delivery.new()
+	if StringName(prepared.get("kind", "")) == &"rewind_nova": prepared["rewind_position"] = source.historical_position(float(prepared.rewind_seconds))
 	if StringName(prepared.get("kind", "")) == &"blink_nova": prepared["cast_forward"] = frontal_forward(source)
 	if bool(prepared.get("uses_skill_resource", false)) and source.skill_resource_enabled and source.skill_resource_max > 0.0:
 		var resource_stacks := source.get_skill_resource_stacks()
@@ -108,6 +109,10 @@ func prepare_dual_form_cast(source: Unit, skill: Dictionary) -> Dictionary:
 
 ## Cast Start 的效果必须在施法窗口开始时发生；它不依赖动画，也不等待 EffectExecution。
 func apply_cast_start(source: Unit, skill: Dictionary) -> void:
+	if StringName(skill.get("kind", "")) == &"rewind_nova":
+		source.heal(source.max_hp)
+		source.control.hard.apply(&"untargetable", source.status_source("rewind"), float(skill.impact_delay), {})
+		_presentation.present_fixed_area(source.global_position, float(skill.radius), float(skill.radius), float(skill.impact_delay), source.team, &"rewind_vanish")
 	if StringName(skill.get("kind", "")) == &"counter_strike":
 		source.begin_counter_strike(skill)
 	if StringName(skill.get("kind", "")) == &"aftershock":
@@ -198,6 +203,13 @@ func _apply(source: Unit, skill: Dictionary) -> bool:
 					target.apply_ranged_attack(float(target_skill.duration), float(target_skill.get("range_bonus", 0.0)), bool(target_skill.get("piercing_attacks", false)), float(target_skill.get("piercing_distance", 0.0)), float(target_skill.get("projectile_speed_multiplier", 1.0)), source.status_source("ranged_attack"))
 				if not bool(target_skill.get("shield_on_cast_start", false)):
 					target.add_shield(float(target_skill.get("shield", 0.0)), float(target_skill.get("shield_duration", target_skill.get("duration", 0.0))), bool(target_skill.get("shield_decay", false)), source.status_source("shield"))
+		&"rewind_nova":
+			var landing := UnitLandingQuery.find_position(source, skill.get("rewind_position", source.global_position), false)
+			if not landing.is_finite(): landing = source.global_position
+			source.teleport_to(landing)
+			_presentation.present_fixed_area(landing, float(skill.radius), float(skill.radius), 2.5, source.team, &"rewind_appear")
+			activate_nova(source, skill)
+			source.battle_context.notify_unit_audio_event(source, &"active:land", landing)
 		&"blink_nova":
 			var origin := source.global_position
 			var direction: Vector2 = skill.get("cast_forward", frontal_forward(source))
@@ -368,6 +380,11 @@ func activate_nova(source: Unit, skill: Dictionary) -> void:
 		if amount > 0.0:
 			var receipt := _damage_combatant(source, combatant, amount, source.global_position)
 			receipts.append(receipt)
+			if String(skill.get("kind", "")) == "rewind_nova":
+				var hit_point: Vector2 = combatant.global_position
+				var hit_team := source.team
+				_after_damage(func():
+					if receipt.landed: _presentation.present_fixed_area(hit_point, 30.0, 30.0, 1.0, hit_team, &"rewind_hit"))
 			if String(skill.get("kind", "")) == "counter_strike":
 				var target_point: Vector2 = combatant.global_position
 				var hit_source_ref: WeakRef = weakref(source)

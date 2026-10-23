@@ -24,6 +24,7 @@ var _sion_w_effect: Node3D
 var _scuttle_effect: Node3D
 var _aftershock_effect: Node3D
 var _malphite_effect: Node3D
+var _rewind_effect: Node3D
 var _riftwalk_effect: Node3D
 var _locket_effect: Node3D
 var spells: RefCounted
@@ -55,6 +56,8 @@ func _process(delta: float) -> void:
 		_aftershock_effect.sync_effects(skills, _camera)
 	if _riftwalk_effect != null and skills != null:
 		_riftwalk_effect.sync_effects(skills, _camera)
+	if _rewind_effect != null and skills != null:
+		_rewind_effect.sync_effects(skills, _camera)
 	if _samira_projectiles != null:
 		_samira_projectiles.set_sources(projectiles, _camera)
 	if _gwen_tristana_effect != null:
@@ -177,6 +180,8 @@ func setup(field_size: Vector2, tile_size: float, flipped: bool = false) -> void
 	_world_root.add_child(_malphite_effect)
 	_riftwalk_effect = preload("res://scripts/presentation/riftwalk_effect_3d.gd").new()
 	_world_root.add_child(_riftwalk_effect)
+	_rewind_effect = preload("res://scripts/presentation/rewind_effect_3d.gd").new()
+	_world_root.add_child(_rewind_effect)
 	_locket_effect = preload("res://scripts/presentation/locket_effect_3d.gd").new()
 	_world_root.add_child(_locket_effect)
 	_freeze_ground = preload("res://scripts/presentation/freeze_ground_3d.gd").new()
@@ -248,6 +253,7 @@ func attach_unit(unit: Unit, stats: Dictionary) -> bool:
 		return false
 	_sion_w_effect.track(unit)
 	_sett_effect.track(unit, view)
+	_rewind_effect.track(unit, view)
 	unit.has_model_art = true
 	unit.queue_redraw()
 	unit.form_changed.connect(_on_unit_form_changed.bind(unit, view, stats))

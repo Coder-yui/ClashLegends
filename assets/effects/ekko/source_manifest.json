@@ -1,0 +1,123 @@
+{
+  "source_wad": "/Users/czh/Downloads/LOL_Asset_Source/Game/DATA/FINAL/Champions/Ekko.wad.client",
+  "variants": [
+    {
+      "variant": "end",
+      "raw_source": "ClashLegends-开发素材库/03-制作中/时间刺客/end.raw.json",
+      "raw_sha256": "57a33a0641bb4c7447ba0afa1b60f675ffe61a5091817d49058043945fff36fd",
+      "sample_sha256": "1e66a833e69a7e1ebf6dfb7e9176a09d7df2eee4735e7e0990c5e9367120f9d6",
+      "emitters": 13
+    },
+    {
+      "variant": "r-ChargeUp",
+      "raw_source": "ClashLegends-开发素材库/03-制作中/时间刺客/r-ChargeUp.raw.json",
+      "raw_sha256": "c543045001a5cc0b100605bfedf0b77478d2ceff316ad6c170b9a8140a1fd4e1",
+      "sample_sha256": "e12d4adf8e1ddac79daa6d77e3e01cb25961bf8a406a6bd21ebe6e290572c912",
+      "emitters": 2
+    },
+    {
+      "variant": "r-RewindIndicator",
+      "raw_source": "ClashLegends-开发素材库/03-制作中/时间刺客/r-RewindIndicator.raw.json",
+      "raw_sha256": "e80502bae174878ce30664cbec5e111eaa745b5d7bff2ac4e5e4d6ccd0fde492",
+      "sample_sha256": "731909c7005f832c463ff890d5debf3d4c88bbe3c377e0cee4ea5c74c9778da3",
+      "emitters": 3
+    },
+    {
+      "variant": "r-RewindPose1",
+      "raw_source": "ClashLegends-开发素材库/03-制作中/时间刺客/r-RewindPose1.raw.json",
+      "raw_sha256": "ff62e4b0ccf154aa505f4133f08d96140046edadc8cedf6173881568957d4b62",
+      "sample_sha256": "5b1de6861391d991bd7801aa78b803faf6029ca5ac6c09a50674c444e323b8f1",
+      "emitters": 2
+    },
+    {
+      "variant": "r-Tar",
+      "raw_source": "ClashLegends-开发素材库/03-制作中/时间刺客/r-Tar.raw.json",
+      "raw_sha256": "3b9379454476d42a2a27dbb1552a1aeca21a9a12a9ab3003f6c5183ae5258b02",
+      "sample_sha256": "ecfadd853594bcc0b28e4f8420875382b04eee8f9786fbc0f0285caf94308018",
+      "emitters": 13
+    },
+    {
+      "variant": "r-Tar_Impact",
+      "raw_source": "ClashLegends-开发素材库/03-制作中/时间刺客/r-Tar_Impact.raw.json",
+      "raw_sha256": "62fe9b8729fab652b36e288ec68c1a369180b337bf7c2039da0ecc7f8a0276fa",
+      "sample_sha256": "b33dedf9c9cce932b8238b5341cb2076ac8469b560ed9013aca706510c49696a",
+      "emitters": 8
+    },
+    {
+      "variant": "r-TimeDevice_Active",
+      "raw_source": "ClashLegends-开发素材库/03-制作中/时间刺客/r-TimeDevice_Active.raw.json",
+      "raw_sha256": "ecd9923ce55966849043fa3f94b4f2468c61aecec6d55a006300ab38c29d89b5",
+      "sample_sha256": "d45870bf1497f7a8aade6e130489b4de211af674aa3a88fa482fdc599987e09c",
+      "emitters": 3
+    },
+    {
+      "variant": "r-TrailEnd",
+      "raw_source": "ClashLegends-开发素材库/03-制作中/时间刺客/r-TrailEnd.raw.json",
+      "raw_sha256": "07203f166de331280e5abf0638e39981f008e9d7da58a9909f772c775a1e6005",
+      "sample_sha256": "2c5943170eea4bd09a1f99d3f1a10c2262d3f4cfed3a3dc84866fd87034517e9",
+      "emitters": 7
+    },
+    {
+      "variant": "vanish",
+      "raw_source": "ClashLegends-开发素材库/03-制作中/时间刺客/vanish.raw.json",
+      "raw_sha256": "c6cc3380210107538af3d421caf0d82d3cc2a02897a78aea1186c830367e28bc",
+      "sample_sha256": "08d7a65a40f60b6cd3ecd761bf5d3671f5272a0e970585740f224cf4c6dd3e87",
+      "emitters": 1
+    },
+    {
+      "variant": "r-TrailEnd_Red",
+      "raw_source": "ClashLegends-开发素材库/03-制作中/时间刺客/r-TrailEnd_Red.raw.json",
+      "raw_sha256": "d8db4d2db64a73b3ea6de60cce1948a39e33a12f128e006a44920ac47b8a8338",
+      "sample_sha256": "f535ca22a3121e13446319be808fa7db12606aa561b3ea763698afc362ebe669",
+      "emitters": 8
+    },
+    {
+      "variant": "r-RewindIndicator_Red",
+      "raw_source": "ClashLegends-开发素材库/03-制作中/时间刺客/r-RewindIndicator_Red.raw.json",
+      "raw_sha256": "27a928f16095f32169548c99d95ea3dd3c9e04bff84192f3032d52f00da57444",
+      "sample_sha256": "407c50437345856b4aca39782b6743d4320d30a91bf37f05e313ac5043c3e732",
+      "emitters": 3
+    },
+    {
+      "variant": "r-RewindPose2",
+      "raw_source": "ClashLegends-开发素材库/03-制作中/时间刺客/r-RewindPose2.raw.json",
+      "raw_sha256": "9ebe0c3e185deb6dbc27c24457ae982c8b04d2f5a2da5ed72e323009a93a1b03",
+      "sample_sha256": "ffd4f1a0957fbde165bb75846c6c647418ad3bdb80e5629c5ac1670077245c23",
+      "emitters": 2
+    },
+    {
+      "variant": "r-RewindPose3",
+      "raw_source": "ClashLegends-开发素材库/03-制作中/时间刺客/r-RewindPose3.raw.json",
+      "raw_sha256": "258b41759ebb264dad666c139af15245831f2aee1856ba1d1d9fe31508708296",
+      "sample_sha256": "1f3122ed3d9e4f9393016bba6658b443bb0822a7dda7abb757bb709a81f562d5",
+      "emitters": 2
+    },
+    {
+      "variant": "r-RewindPose4",
+      "raw_source": "ClashLegends-开发素材库/03-制作中/时间刺客/r-RewindPose4.raw.json",
+      "raw_sha256": "f97d0624696868f9688f78c132932e357af74e20cad69a12629461ebfb420f89",
+      "sample_sha256": "f28ce65d80fb6f80ebf19d290db55f32537435eabbb5bc46043811fdd419e341",
+      "emitters": 2
+    },
+    {
+      "variant": "r-RewindPose5",
+      "raw_source": "ClashLegends-开发素材库/03-制作中/时间刺客/r-RewindPose5.raw.json",
+      "raw_sha256": "4ff58e48e062892d724ffefa58fbb2a09ee039ece5bb673c387a2edffebb9afb",
+      "sample_sha256": "f6d2bba85aa10a3ed2c480237f0d0f87bae2ce41f1e7432f6c98398d489c0e2a",
+      "emitters": 2
+    },
+    {
+      "variant": "r-RewindPose6",
+      "raw_source": "ClashLegends-开发素材库/03-制作中/时间刺客/r-RewindPose6.raw.json",
+      "raw_sha256": "6eb0ca36d5f0e89d36f331b1e820cb4e64d1641741c4641fe87222a0260398d5",
+      "sample_sha256": "d2533912767fc6991ebb96c5065a04a2a62b8e4b4a3774125bb4dfe09d6287d9",
+      "emitters": 2
+    }
+  ],
+  "pose_policy": "回卷按原版RewindPose1至6顺序播放；持续历史影子不生成TrailEndPose白色拖影。",
+  "empty_source": "ChargeIndicator原始系统无发射器，不生成伪造层。",
+  "timeline": "本地EkkoR mCastTime=0.25；结合Riot官网技能演示采用0.25起手+0.5回卷，0.75落地立即解锁。AOERing提前在目的地播放0.5秒，落地仅Tar。源动画完整长度不是行动锁。 治疗在Cast Start立即回满，伤害在落地结算，落地不重复治疗。",
+  "attached_material_policy": "保留源配色；移除无实机调用依据的end/Avatar落地本体Buff绑定，源数据保留。TrailEnd和命中层仍按源附着。",
+  "scale_policy": "伤害半径固定140像素，AOERing/Tar/vanish按140/40/375缩放；人物姿态和随身特效保留模型校准0.01345，避免人物残影随范围缩小。",
+  "reference_video": "https://lol.dyn.riotcdn.net/x/videos/champion-abilities/0245/ability_0245_R1.mp4"
+}

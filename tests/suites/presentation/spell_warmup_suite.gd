@@ -65,6 +65,11 @@ func run(harness: Object, main: Node2D) -> void:
 
 func _selection_boundaries() -> void:
 	var planner = load("res://scripts/presentation/match_resource_plan.gd")
+	var no_rewind: RefCounted = planner.for_match([["garen", "gwen", "ekko"], []], [{}, {}])
+	var with_rewind: RefCounted = planner.for_match([["ekko"], []], [{}, {}])
+	_expect(not no_rewind.effects.any(func(request): return request.card == "ekko"), "普通槽艾克不进入技能预热请求")
+	_expect(not WARMUP.dependency_paths(no_rewind.cards, no_rewind).any(func(path): return path.begins_with("res://assets/effects/ekko/")), "普通槽艾克不加载R粒子依赖")
+	_expect(with_rewind.effects.any(func(request): return request.card == "ekko"), "主动槽艾克保留R资源声明")
 	var blue := ["gwen", "tristana", "sion", "anivia", "freeze", "sun_disc", "aatrox", "mirror"]
 	var red := ["gwen", "nocturne", "kayle", "jinx", "darius", "tombstone", "gnar", "garen"]
 	var plan: RefCounted = planner.for_match([blue, red], [{"gwen": 0}, {"gwen": 1, "nocturne": 1}])
@@ -187,7 +192,7 @@ func _deployment_plans() -> void:
 	var planner = load("res://scripts/presentation/match_resource_plan.gd")
 	var plan: RefCounted = planner.for_match([groups, []], [{}, {}])
 	var expected := groups + ["melee_minion", "ranged_minion", "super_minion", "siege_minion"]
-	_expect(CardDB.all().size() == 81 and CardDB.selectable_ids().size() == 68 and plan.errors.is_empty() and plan.cards.size() == expected.size() and expected.all(func(id): return plan.cards.has(id)), "六编队改为生成计划后保持81定义/68可选及相同四种成员可达闭包")
+	_expect(CardDB.all().size() == 82 and CardDB.selectable_ids().size() == 69 and plan.errors.is_empty() and plan.cards.size() == expected.size() and expected.all(func(id): return plan.cards.has(id)), "六编队改为生成计划后保持82定义/69可选及相同四种成员可达闭包")
 	var resources := MatchResources.new()
 	resources.plan = plan
 	# 不把成员作为额外根传入，避免系统兵线恰好兜底掩盖递归收集失效。
