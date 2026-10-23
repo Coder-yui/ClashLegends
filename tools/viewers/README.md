@@ -81,7 +81,7 @@ python3 tools/dev.py effect
 python3 tools/dev.py effect --provider=res://assets/effects/kassadin/player.gd --variants=appear,vanish
 ```
 
-直接使用项目粒子播放器，默认查看虚空行走。支持暂停/播放、重播、0.25/0.5/1倍速、拖动时间轴、1/120秒逐帧、粒子层开关、旋转/缩放、项目45度/俯视/侧视、实体地面开关及临时抬高。拖动时间轴会暂停；这些操作不保存到游戏。
+直接使用项目粒子播放器，默认查看虚空行走。支持暂停/播放、重播、0.25/0.5/1倍速、拖动时间轴、1/120秒逐帧、粒子层开关、旋转/缩放、项目54度/俯视/侧视、实体地面开关及临时抬高。拖动时间轴会暂停；这些操作不保存到游戏。
 
 可复用范围：提供 `load_kind(kind)`、`setup_native(scale)`、`seek(age)` 和采样数据 `_data`、粒子池 `_pools`、帧缓存 `_frame` 的项目播放器；不是任意特效格式的通用导入器。默认使用源坐标的0.01缩放和单位投影，正式战场范围适配仍需工作台复核。输出诊断截图可传 `--capture-dir=<素材库内绝对路径>`。
 
@@ -94,3 +94,15 @@ python3 tools/dev.py effect --provider=res://assets/effects/kassadin/player.gd -
 ```
 
 对照每层原始`miscRenderFlags & 1`与实际选择的Shader，遗漏、反向设置或未检查到粒子均失败。此命令不修改资源，也不替代渲染验收。
+
+艾克等具有模型附着层或轨迹层的播放器，可附加 `--attachment-model=res://assets/units/ekko/ekko.glb --motion`。模型仅用于附着材质预览，轨迹使用展台合成圆弧，不代表实战本体与影子的绑定；分层开关同时控制附着层与轨迹层。
+
+连接线与模型对照示例：
+```bash
+python3 tools/dev.py effect --provider=res://assets/effects/ekko/player.gd --variants=r-RewindIndicator,r-RewindIndicator_Red,end,r-TrailEnd,r-TrailEnd_Red --attachment-model=res://assets/units/ekko/ekko.glb --model-scale=1.48 --trail-ghost=r-TrailEnd --motion
+```
+`--model-scale` 独立设置已转换模型比例，不再误用源粒子的0.01；`--trail-ghost` 为轨迹末端附着层变体，红版随当前变体切换。轨迹为合成圆弧，显示本体与4秒前影子；源特效仍由运行播放器绘制。原模型显示开关用于区分角色本身和Avatar叠加层。
+
+项目实际比例可使用 `--native-scale=0.01345 --model-scale=1.48 --zoom=14`；默认仍为源粒子0.01。艾克已撤销end/Avatar本体附着和TrailEndPose1持续拖影，当前变体列表应排除r-TrailEndPose1。
+
+艾克范围层 `end`、`r-Tar` 使用 `--native-scale=0.0093333333` 对应140像素；人物附着与六套回卷姿态使用0.01345。两类比例分别检查，不能用人物比例衡量伤害圈。
