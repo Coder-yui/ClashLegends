@@ -280,69 +280,6 @@
     }
   },
   {
-    "file": "play_vo_hecarim_move2dstandard_r1_zh_cn.wav",
-    "event": "Play_vo_Hecarim_Move2DStandard",
-    "event_id": 2152677382,
-    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim_vo/event_wav/Play_vo_Hecarim_Move2DStandard {r1}.wav",
-    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim_vo/txtp/Play_vo_Hecarim_Move2DStandard {r1}.txtp",
-    "media_ids": [
-      108419399,
-      432069436,
-      659734249,
-      812404504,
-      966423743,
-      1024073668,
-      1259146861,
-      1362338805
-    ],
-    "duration": 6.2224,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "a1ab81d3c0b9d560eab50331f17f409d30670c44e82941f7b03b439b3a62818b",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
-  },
-  {
-    "file": "play_vo_hecarim_move2dstandard_r2_zh_cn.wav",
-    "event": "Play_vo_Hecarim_Move2DStandard",
-    "event_id": 2152677382,
-    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim_vo/event_wav/Play_vo_Hecarim_Move2DStandard {r2}.wav",
-    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim_vo/txtp/Play_vo_Hecarim_Move2DStandard {r2}.txtp",
-    "media_ids": [
-      108419399,
-      432069436,
-      659734249,
-      812404504,
-      966423743,
-      1024073668,
-      1259146861,
-      1362338805
-    ],
-    "duration": 4.9315,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "a78a90d2088c3f6e1d50778e31dbb57600d87abf2288e4ee8aa3a7a26743ae6f",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
-  },
-  {
-    "file": "play_vo_hecarim_move2dstandard_r3_zh_cn.wav",
-    "event": "Play_vo_Hecarim_Move2DStandard",
-    "event_id": 2152677382,
-    "source_preview": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim_vo/event_wav/Play_vo_Hecarim_Move2DStandard {r3}.wav",
-    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/03-制作中/战争之影/audio/hecarim_vo/txtp/Play_vo_Hecarim_Move2DStandard {r3}.txtp",
-    "media_ids": [
-      108419399,
-      432069436,
-      659734249,
-      812404504,
-      966423743,
-      1024073668,
-      1259146861,
-      1362338805
-    ],
-    "duration": 3.1788,
-    "processing": "vgmstream-cli -i; source event gain retained",
-    "sha256": "ea59cae01f618e3785218c381e8bd1a7659d988837c4d221310564ca5920ab41",
-    "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
-  },
-  {
     "file": "play_sfx_hecarim_hecarimw_oncast_r1.wav",
     "event": "Play_sfx_Hecarim_HecarimW_OnCast",
     "event_id": 18257771,
@@ -431,5 +368,56 @@
     "processing": "vgmstream-cli -i; source event gain retained",
     "sha256": "177181e3dcdc0070e2f0efb9e51e5704f71a2d481f13a1f4fb96b0b9e3d0cc5f",
     "selection_note": "首个明确 Switch 条件，最多三个外层随机变体；media_ids 为该 TXTP 可达媒体，嵌套随机未穷举。"
+  },
+  {
+    "file": "deploy_face_death_zh_cn.wav",
+    "event": "Play_vo_Hecarim_HecarimW_cast3D",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/人马部署调整-20261023/W-leaves/37208729.txtp",
+    "media_ids": [
+      37208729
+    ],
+    "duration": 2.8586167800453515,
+    "processing": "wwiser -gv=0dB; vgmstream-cli -i; no normalization",
+    "selection_note": "Selected speech layer only; omit W grunt layer and 2.5s delay; retain -13 dB event gain",
+    "transcript": "面对死亡。",
+    "sha256": "e2713e4e906837f49a8c1c6ab32e75392ce1013d24bc2e2a93f882eb3818ff5d"
+  },
+  {
+    "file": "play_vo_hecarim_attack2dgeneral_r2_zh_cn.wav",
+    "event": "Play_vo_Hecarim_Attack2DGeneral",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/人马部署调整-20261023/Attack2DGeneral/txtp/Play_vo_Hecarim_Attack2DGeneral {r2}.txtp",
+    "media_ids": [
+      290168425,
+      328762079,
+      599885265,
+      1037444005,
+      1773440730,
+      1898387291
+    ],
+    "duration": 3.2978684807256236,
+    "processing": "wwiser -gv=0dB; vgmstream-cli -i; no normalization",
+    "selection_note": "Outer random variant 2; original event gain",
+    "transcript": "冲破他们的阵型。",
+    "sha256": "3ca89efdb7e28ce88315a88df70ba66f16589447f5e887923748e622fe218fb1"
+  },
+  {
+    "file": "play_vo_hecarim_move2dstandard_r3_zh_cn.wav",
+    "event": "Play_vo_Hecarim_Move2DStandard",
+    "source_txtp": "/Users/czh/Projects/ClashLegends/ClashLegends-开发素材库/04-中间产物/人马部署调整-20261023/Move2DStandard/txtp/Play_vo_Hecarim_Move2DStandard {r3}.txtp",
+    "media_ids": [
+      108419399,
+      432069436,
+      659734249,
+      812404504,
+      966423743,
+      1024073668,
+      1259146861,
+      1362338805
+    ],
+    "duration": 3.1788208616780045,
+    "processing": "wwiser -gv=0dB; vgmstream-cli -i; no normalization",
+    "selection_note": "Outer random variant 3; original event gain",
+    "transcript": "我从不休息。",
+    "sha256": "ea59cae01f618e3785218c381e8bd1a7659d988837c4d221310564ca5920ab41"
   }
 ]

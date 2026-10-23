@@ -10,7 +10,7 @@ Q旋斩、E冲刺、W领域、死亡原始事件；原版事件增益。
 | `charge:hit` | `Play_sfx_Hecarim_HecarimRampAttack_OnHit` |
 | `death` | `Play_sfx_Hecarim_Death3D_cast` |
 | `death:voice` | `Play_vo_Hecarim_Death3D` |
-| `deploy:voice` | `Play_vo_Hecarim_Move2DStandard` |
+| `deploy:voice` | “面对死亡。”W台词层37208729 / “冲破他们的阵型。”Attack2DGeneral r2 / “我从不休息。”Move2DStandard r3 |
 | `active:cast` | `Play_sfx_Hecarim_HecarimW_OnCast` |
 | `active_buff:sustain` | `Play_sfx_Hecarim_HecarimW_OnBuffActivate` |
 | `active_buff:end` | `Play_sfx_Hecarim_HecarimW_OnBuffDeactivate` |

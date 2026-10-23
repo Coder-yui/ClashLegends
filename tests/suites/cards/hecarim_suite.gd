@@ -3,6 +3,7 @@ extends "res://tests/suites/battle_suite.gd"
 func run(harness: Object, main: Node2D) -> void:
 	_harness = harness
 	_main = main
+	_check_deployment()
 	_check_w_upperbody()
 	_check_w_release()
 	var source := _unit(0, Vector2(300, 1000))
@@ -359,3 +360,23 @@ func _check_contact_contract() -> void:
 	source.on_movement_applied(0.0,0.05)
 	_expect(not source._charged, "就绪状态停止移动也清零，起跳消费例外由阶段保护")
 	source.free()
+
+func _check_deployment() -> void:
+	var unit: Unit = _main._spawn_unit(UnitSpawnRequest.new(0, "hecarim", Vector2(350, 1000)))
+	var view := _view_for(unit)
+	view._play_state(0, 0.0)
+	var player := view._animation_player
+	_expect(player.current_animation == &"Hecarim_Idle3_anm" and is_equal_approx(view._current_clip_speed, 2.0), "人马部署使用Idle3并以2倍速播放")
+	player.advance(0.5)
+	_expect(is_equal_approx(player.current_animation_position, 1.0), "部署半秒对应Idle3源片第一秒")
+	for tick in 19: unit.sim_tick(0.05)
+	_expect(not unit.is_deployed(), "部署第19Tick仍保留权威部署锁")
+	unit.sim_tick(0.05)
+	_expect(unit.is_deployed(), "部署第20Tick解锁，不延长玩法时长")
+	for state in [1, 2, 3]:
+		view._play_state(0, 0.0)
+		if state == 3: view._play_attack(1)
+		else: view._play_state(state)
+		_expect(is_equal_approx(view._last_clip_blend_time, 0.12), "部署到待机/移动/旋斩保留0.12秒姿势混合：%d" % state)
+	view.free()
+	unit.free()

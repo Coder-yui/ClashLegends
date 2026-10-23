@@ -17,6 +17,14 @@ func _run() -> void:
 	main.set_physics_process(false)
 	main.set_process(false)
 	panel._set_battle_zoom(1.3)
+	if "--deployment" in OS.get_cmdline_user_args():
+		await _review_deployment()
+		recorder.set_recording_active(false)
+		recorder.get_recording().save_to_wav(preload("res://tools/lib/development_paths.gd").output("hecarim-deployment.wav"))
+		main.queue_free()
+		await process_frame
+		quit()
+		return
 	var deployment: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "hecarim", Vector2(350,850)))
 	for step in range(41):
 		if step in [0,20,40]:
@@ -89,3 +97,22 @@ func _capture(label: String) -> void:
 	var path := preload("res://tools/lib/development_paths.gd").output("hecarim-"+label+".png")
 	root.get_texture().get_image().save_png(path)
 	print("[Hecarim render] ",path)
+
+func _review_deployment() -> void:
+	for route in ["idle", "move", "attack"]:
+		main.clear_preview_battle()
+		var unit: Unit = main._spawn_unit(UnitSpawnRequest.new(0, "hecarim", Vector2(350, 850)))
+		if route == "idle":
+			unit.move_speed = 0.0
+			unit.sight_range = 0.0
+			unit.can_attack = false
+		elif route == "attack":
+			main._spawn_unit(UnitSpawnRequest.new(1, "target_dummy", Vector2(350, 790), {"deploy_time_override": 0.0}))
+		for step in 70:
+			if step in [0, 10, 19, 20, 21, 23, 26]:
+				await _capture("deployment-" + route + "-%02d" % step)
+				for view in main._battle_presentation._world_root.get_children():
+					if view is UnitModel3D and view._source == unit:
+						print("HECARIM_DEPLOY route=", route, " tick=", step, " clip=", view._animation_player.current_animation, " speed=", view._current_clip_speed, " blend=", view._last_clip_blend_time)
+			main._sim_step(0.05)
+			await create_timer(0.05).timeout

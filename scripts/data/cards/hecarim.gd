@@ -25,6 +25,8 @@ static func definition() -> Dictionary:
 			"color": Color(0.16, 0.75, 0.67), "visual_forward_yaw": 0.0,
 			"visual_scene_path": "res://assets/units/hecarim/hecarim_view.tscn",
 			"visual_animations": {
+				"deploy": "Hecarim_Idle3_anm", "deploy_clip_ratio": 2.0 / 4.999996662139893,
+				"clip_blends": {"Hecarim_Idle3_anm>Hecarim_idle1_anm": 0.12, "Hecarim_Idle3_anm>Run": 0.12, "Hecarim_Idle3_anm>Hecarim_Spell1_anm": 0.12},
 				"idle": "Hecarim_idle1_anm", "move": "Run", "charge_move": "Spell3run", "attack": ["Hecarim_Spell1_anm"],
 				"death": "Death", "death_duration": 0.8,
 				"visual_actions": {
@@ -76,8 +78,8 @@ static func definition() -> Dictionary:
 				},
 				"deploy:voice": {
 					"pool": [
-						"res://assets/audio/units/hecarim/play_vo_hecarim_move2dstandard_r1_zh_cn.wav",
-						"res://assets/audio/units/hecarim/play_vo_hecarim_move2dstandard_r2_zh_cn.wav",
+						"res://assets/audio/units/hecarim/deploy_face_death_zh_cn.wav",
+						"res://assets/audio/units/hecarim/play_vo_hecarim_attack2dgeneral_r2_zh_cn.wav",
 						"res://assets/audio/units/hecarim/play_vo_hecarim_move2dstandard_r3_zh_cn.wav"
 					],
 					"volume_db": 0.0,
