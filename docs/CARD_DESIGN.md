@@ -342,6 +342,8 @@ nova可配置`attack_slow_multiplier`，要求正数slow_duration及[0.1,1)倍�
 
 `charge_distance`按自主移动实际路程累计，受阻停下、硬控、击退或攻击重置；不读取动画速度。`charge_attack_range / charge_dash_speed / charge_stun_duration`成组定义蓄满后的近战突进，MovementStrikeState经MovementSystem无碰撞推进，可穿河流、建筑和单位，命中才提交伤害和眩晕。仅地面直接近战支持；无目标或无合法落点时仍按常规寻路。可选charge_landing_side为front（默认）或back，以起手接近方向定义，指定侧不可用时尝试该半圆身侧。落点按完整身体及其他实体检查；目标失效或硬控中断复用Unit.recover_displacement_position，不补伤害和收益。`attack_self_radius`使普通攻击以出手者为圆心命中多个目标，命中收益每次攻击一次，吸血按各目标实际生命伤害合计。
 
+`continuous_area`仅在`cast_duration > impact_delay`、施法锁攻击且不锁移动时，以领域半径覆盖追击距离；起手结束才生效的领域沿用普通追击距离，避免起手提前停步清空移动蓄势。该区分由权威阶段时序决定，不依赖英雄身份或动画。
+
 `continuous_area.heal_ratio`为(0,1]，同时赋予同长普攻吸血及每次范围脉冲的实际掉血治疗；冰冻取消时同时移除本次吸血。领域时钟独立于低优先级施法动画，普攻可以接管W表现，客户端仅镜像时钟与生命结果。
 
 ## 通用突进攻击

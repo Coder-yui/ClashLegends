@@ -228,9 +228,14 @@ func _check_w_release() -> void:
 		var skill: Dictionary = CardDB.active_skills_for("hecarim")[0].duplicate(true)
 		_expect(_main.runtime._skill_lifecycle.start(unit, skill), "W可启动")
 		_expect(unit.is_active_skill_attack_locked() and not unit.is_active_skill_movement_locked(), "W起手只锁攻击不锁移动")
+		_expect(is_equal_approx(unit.attack_range, 32.0), "W起手保留普通追击距离，不在领域边缘提前停步")
+		var start_position := unit.position
 		for tick in 8:
 			_main.runtime._commands.tick_impacts(0.05)
 			_step_pair(unit)
+			if charged:
+				_expect(unit._charged and unit.position.x > start_position.x, "W起手每Tick继续自主移动并保留蓄势")
+				start_position = unit.position
 		_expect(not unit.get_active_buff_active_visual() and unit.get_attack_visual_serial() == 0 and not unit.movement_strike.in_transit(), "W前0.4秒不生效不攻击")
 		_main.runtime._commands.tick_impacts(0.05)
 		_step_pair(unit)
