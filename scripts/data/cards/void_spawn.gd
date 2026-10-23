@@ -6,7 +6,7 @@ static func definition() -> Dictionary:
 			"name": "虚空兽", "cost": 3, "type": "unit",
 			"description": "并排部署2只虚空兽，只追击建筑。进入射程后立即牺牲自身，跃向固定落点，0.8秒后爆炸，只对锁定的目标建筑造成240伤害。",
 			"hp": 166, "damage": 0, "range": MELEE_RANGE_MIN, "can_attack": false,
-			"speed": SPEED_FAST, "interval": 0.8, "first_hit": 0.8,
+			"speed": 80.0, "interval": 0.8, "first_hit": 0.8,
 			"size_tier": SIZE_SLIGHTLY_SMALL, "radius": RADIUS_SLIGHTLY_SMALL,
 			"mass": 2.0, "sight": 180.0, "deploy_time": 1.0,
 			"is_air": false, "building_only": true, "can_attack_air": false,

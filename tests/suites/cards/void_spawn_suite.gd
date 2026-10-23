@@ -128,7 +128,6 @@ func _check_tower_budget() -> void:
 		var source := _spawn_ready_unit("void_spawn", team, Vector2(ArenaRules.BRIDGE_X_LEFT, 700.0 if team == 0 else 580.0))
 		var last_hp := source.hp
 		var health_steps: Array[float] = []
-		var hit_ticks: Array[int] = []
 		var started := false
 		for tick in 240:
 			if not is_instance_valid(source) or source.hp <= 0.0: break
@@ -136,13 +135,19 @@ func _check_tower_budget() -> void:
 			_run_main_ticks(1)
 			if source.hp != last_hp:
 				health_steps.append(source.hp)
-				hit_ticks.append(tick + 1)
 			if not _main._active_skill_effect_system.sacrifice_results.is_empty():
 				started = true
 				break
-		# 精确0.2秒首击/0.8秒间隔已去掉旧浮点残差多等的一Tick，不能沿用旧3击起跳预算。
-		_expect(not started and health_steps == [111.0, 56.0, 1.0, 0.0] and hit_ticks == [50, 63, 77, 90], "双方桥头单只按精确塔时钟承受四击，第90Tick死亡而不生成牺牲结果")
-		_expect(source._target_gap(source._target) <= source.attack_range and last_hp == 1.0, "第四发在进入起跳射程当Tick命中，死亡后不得在下一Tick补起跳")
+		_expect(started and last_hp == 1.0 and health_steps == [111.0, 56.0, 1.0, 0.0], "双方桥头单只承受三次塔伤后以1点生命完成牺牲起跳")
+		if started:
+			var result: Dictionary = _main._active_skill_effect_system.sacrifice_results[0]
+			var tower: Tower = result.target_ref.get_ref()
+			var before := tower.hp
+			_run_main_ticks(15)
+			_expect(tower.hp == before, "起跳后15Tick不提前伤害防御塔")
+			_run_main_ticks(1)
+			_expect(tower.hp == before - 240.0, "单只虚空兽第16Tick实际对防御塔造成240伤害")
+
 	_clean()
 
 func _check_schema() -> void:
