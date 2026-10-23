@@ -6,6 +6,8 @@
 
 战斗逻辑决定位置、命中、碰撞和死亡；模型、动画、卡面、特效与声音只表现结果。模型大小和身体碰撞半径分别维护，不能为了修画面改变战斗数值。
 
+项目默认 UI 主题为 `assets/ui/default_theme.tres`，与 `CardArt.ui_font()` 共用 `assets/ui/chinese_font.tres` 的中文系统字体链。终局提示、工具窗口、下拉菜单及提示框默认继承该主题；需要局部主题时保留共用字体，避免中文缺字。
+
 运行时由 BattlePresentation3D 连接单位/建筑与包装场景；普通模型共用 UnitModel3D 或 TowerModel3D，不为每个英雄复制一套状态机。
 
 ## 正式接入后的素材位置

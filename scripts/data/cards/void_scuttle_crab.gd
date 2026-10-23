@@ -14,6 +14,7 @@ static func definition() -> Dictionary:
 		"color": Color(0.6, 0.3, 0.8), "active_skills": [{"icon_path": "res://assets/skills/void_scuttle_crab_0.png"}]}, true)
 	result.visual.resource_dependencies.effects = [{"provider": "res://assets/effects/scuttle_crab/void_ward_antenna_wake/player.gd", "variant": "default"}, {"provider": "res://assets/effects/scuttle_crab/void_z_visionring_green/player.gd", "variant": "default"}, {"provider": "res://assets/effects/scuttle_crab/void_z_visionring_red/player.gd", "variant": "default"}]
 	result.visual.visual_animations.death_followup_scene_path = "res://assets/units/void_scuttle_crab/burrow_view.tscn"
+	result.card_art = {"path": "res://assets/cards/void_scuttle_crab_loading.png"}
 	result.audio.events.erase("active:cast")
 	result.audio.events["bounty:gain"] = {"pool": ["res://assets/audio/units/scuttle_crab/gold0.wav", "res://assets/audio/units/scuttle_crab/gold1.wav", "res://assets/audio/units/scuttle_crab/gold2.wav"], "volume_db": 0.0, "bus": "Combat"}
 	result.audio.events["shrine:start"] = {"pool": ["res://assets/audio/units/scuttle_crab/voidward0.wav"], "volume_db": 0.0, "bus": "Combat"}

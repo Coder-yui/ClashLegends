@@ -25,6 +25,10 @@ window/size/viewport_height=1280
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 
+[gui]
+
+theme/custom="res://assets/ui/default_theme.tres"
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"

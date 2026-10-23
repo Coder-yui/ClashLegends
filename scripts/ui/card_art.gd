@@ -6,17 +6,12 @@ extends RefCounted
 const CARD_FRAME_ASPECT := 0.72
 const DEFAULT_ACCENT := Color(0.30, 0.62, 0.94)
 const ELIXIR_PURPLE := Color(0.83, 0.16, 0.93)
-static var _card_ui_font: SystemFont
+const UI_FONT: SystemFont = preload("res://assets/ui/chinese_font.tres")
 static var _textures: Dictionary = {}
 
-## 默认字体对少数字（例如“远”“程”）可能没有回退字形，卡牌文字统一走中文系统字体链。
+## 卡牌与全局主题共用中文系统字体链，覆盖弹窗和独立摄影工具。
 static func ui_font() -> SystemFont:
-	if _card_ui_font == null:
-		_card_ui_font = SystemFont.new()
-		_card_ui_font.font_names = PackedStringArray([
-			"Hiragino Sans GB", "STHeiti", "Microsoft YaHei", "Noto Sans CJK SC", "WenQuanYi Micro Hei", "Arial Unicode MS"
-		])
-	return _card_ui_font
+	return UI_FONT
 
 static func texture_for(card_id: String) -> Texture2D:
 	if _textures.has(card_id):
